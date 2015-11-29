@@ -1,0 +1,82 @@
+/*
+ * Copyright 2010-2015 OpenXcom Developers.
+ *
+ * This file is part of OpenXcom.
+ *
+ * OpenXcom is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * OpenXcom is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef OPENXCOM__SAVEGAMESTATE
+#define OPENXCOM__SAVEGAMESTATE
+
+//#include <string>
+//#include <SDL.h>
+
+#include "OptionsBaseState.h"
+
+#include "../Engine/State.h"
+
+#include "../Savegame/SavedGame.h"
+
+
+namespace OpenXcom
+{
+
+class Text;
+
+
+/**
+ * Saves the current game with an optional message.
+ */
+class SaveGameState
+	:
+		public State
+{
+
+private:
+	int _firstRun;
+	std::string _file;
+
+	OptionsOrigin _origin;
+	SaveType _type;
+
+	Text* _txtStatus;
+
+
+	public:
+		/// Creates the Save Game state.
+		SaveGameState(
+				OptionsOrigin origin,
+				const std::string& file,
+				SDL_Color* const palette);
+		/// Creates the Save Game state.
+		SaveGameState(
+				OptionsOrigin origin,
+				SaveType type,
+				SDL_Color* const palette);
+		/// Cleans up the Save Game state.
+		~SaveGameState();
+
+		/// Creates the interface.
+		void buildUi(
+				SDL_Color* const palette,
+				bool dropText = false);
+
+		/// Saves the game.
+		void think();
+};
+
+}
+
+#endif

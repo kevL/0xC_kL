@@ -1,0 +1,14 @@
+/build/
+/data/
+/deps/
+/nbproject/
+/res/
+/source_YAML/
+
+Makefile
+.dep.inc
+README.md
+README.txt
+LICENSE.txt
+CHANGELOG.txt
+
