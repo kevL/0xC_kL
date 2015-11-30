@@ -22,6 +22,8 @@
 
 #include "../Engine/State.h"
 
+//#include <vector>
+
 
 namespace OpenXcom
 {
@@ -121,16 +123,16 @@ private:
 
 
 	public:
-		/// Creates the Soldiers state.
+		/// Creates the Soldier Performance state.
 		SoldierDiaryPerformanceState(
 				Base* const base,
 				const size_t soldierId,
 				SoldierDiaryOverviewState* const soldierDiaryState,
 				const int display);
-		/// Cleans up the Soldiers state.
+		/// Cleans up the Soldier Performance state.
 		~SoldierDiaryPerformanceState();
 
-		/// Updates the soldier info.
+		/// Updates the info.
 		void init();
 
 		/// Draw sprites.

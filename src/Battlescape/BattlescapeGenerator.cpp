@@ -1779,7 +1779,7 @@ void BattlescapeGenerator::deployAliens(AlienDeployment* const deployRule) // pr
 					// <- Yankes; https://github.com/Yankes/OpenXcom/commit/4c252470aa2e261b0f449a56aaea5d5b0cb2229c
 /*					if (itemLevel > (*data).itemSets.size() - 1)
 					{
-						std::stringstream ststr;
+						std::ostringstream ststr;
 						ststr	<< "Unit generator encountered an error: not enough item sets defined, expected: "
 								<< (itemLevel+1) << " found: " << (*data).itemSets.size();
 						throw Exception(ststr.str());
@@ -2057,19 +2057,17 @@ int BattlescapeGenerator::loadMAP( // private.
 
 	block->setSizeZ(size_z);
 
-	std::stringstream ststr;
+	std::ostringstream oststr;
 	if (size_z > _battleSave->getMapSizeZ())
 	{
-		ststr << "Height of map " + file.str() + " too big for this mission, block is " << size_z << ", expected: " << _battleSave->getMapSizeZ();
-		throw Exception(ststr.str());
+		oststr << "Height of map " + file.str() + " too big for this mission, block is " << size_z << ", expected: " << _battleSave->getMapSizeZ();
+		throw Exception(oststr.str());
 	}
-
-
-	if (size_x != block->getSizeX()
+	else if (size_x != block->getSizeX()
 		|| size_y != block->getSizeY())
 	{
-		ststr << "Map block is not of the size specified " + file.str() + " is " << size_x << "x" << size_y << " , expected: " << block->getSizeX() << "x" << block->getSizeY();
-		throw Exception(ststr.str());
+		oststr << "Map block is not of the size specified " + file.str() + " is " << size_x << "x" << size_y << " , expected: " << block->getSizeX() << "x" << block->getSizeY();
+		throw Exception(oststr.str());
 	}
 
 	int
@@ -2561,7 +2559,6 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const scri
 	bool success;
 
 	// process script
-//	MapScript* scriptCommand;
 	for (std::vector<MapScript*>::const_iterator
 			i = script->begin();
 			i != script->end();
@@ -2687,7 +2684,14 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const scri
 
 					case MSC_ADDUFO:
 						// as above, note that the craft and the ufo will never be allowed to overlap.
-						// TODO: make _ufopos a vector ;|p
+						// significant difference here is that we accept a UFOName string here to choose the UFO map
+						// and we store the UFO positions in a vector, which we iterate later when actually loading the
+						// map and route data. this makes it possible to add multiple UFOs to a single map
+						// IMPORTANTLY: all the UFOs must use _exactly_ the same MCD set.
+						// this is fine for most UFOs but it does mean small scouts can't be combined with larger ones
+						// unless some major alterations are done to the MCD sets and maps themselves beforehand
+						// this is because serializing all the MCDs is an implementational nightmare from my perspective,
+						// and modders can take care of all that manually on their end. - Warboy opus
 						//Log(LOG_INFO) << "MSC_ADDUFO ->";
 						if (_rules->getUfo((*i)->getUfoType()) != nullptr)
 							ufoTerrain = _rules->getUfo((*i)->getUfoType())->getBattlescapeTerrainData();

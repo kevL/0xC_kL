@@ -148,7 +148,7 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 
 					std::wostringstream woststr;
 					woststr << L"  ";
-					woststr << (*j)->getName().c_str();
+					woststr << (*j)->getName();
 
 					int
 						skip (0),
@@ -187,14 +187,12 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 		{
 			if (qualifiedAward == true)
 				_lstSoldiers->setCellText(
-										titleRow,
-										0,
-										tr((*i).first).arg(tr(qualifier).c_str()).c_str());
+										titleRow, 0,
+										tr((*i).first).arg(tr(qualifier)));
 			else
 				_lstSoldiers->setCellText(
-										titleRow,
-										0,
-										tr((*i).first).c_str());
+										titleRow, 0,
+										tr((*i).first));
 
 			_lstSoldiers->setRowColor(titleRow, GREEN);
 
@@ -240,7 +238,7 @@ void CeremonyState::lstInfoMouseOver(Action*)
 {
 	const size_t row = _lstSoldiers->getSelectedRow();
 	if (_titleRows.find(row) != _titleRows.end())
-		_txtMedalInfo->setText(tr(_titleRows[row].c_str()));
+		_txtMedalInfo->setText(tr(_titleRows[row]));
 	else
 		_txtMedalInfo->setText(L"");
 }

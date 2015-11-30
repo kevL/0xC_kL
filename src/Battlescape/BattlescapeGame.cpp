@@ -850,7 +850,7 @@ void BattlescapeGame::handleAI(BattleUnit* const unit)
 //		ss.clear();
 //		ss << L"Attack type = " << action.type
 //				<< ", target = " << action.target
-//				<< ", weapon = " << action.weapon->getRules()->getName().c_str();
+//				<< ", weapon = " << Language::utf8ToWstr(action.weapon->getRules()->getName());
 //		_parentState->debug(ss.str());
 
 		//Log(LOG_INFO) << ". . in action.type";

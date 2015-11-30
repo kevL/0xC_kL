@@ -286,7 +286,7 @@ void OptionsAdvancedState::lstOptionsClick(Action* action)
 	_lstOptions->setCellText(
 						sel,
 						1,
-						settingText.c_str());
+						settingText);
 }
 
 void OptionsAdvancedState::lstOptionsMouseOver(Action*)
@@ -298,7 +298,7 @@ void OptionsAdvancedState::lstOptionsMouseOver(Action*)
 	if (setting)
 		desc = tr(setting->description() + "_DESC");
 
-	_txtTooltip->setText(desc.c_str());
+	_txtTooltip->setText(desc);
 }
 
 /**

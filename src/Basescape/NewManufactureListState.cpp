@@ -129,7 +129,7 @@ NewManufactureListState::NewManufactureListState(
 			i != _possibleProductions.end();
 			++i)
 	{
-		cat = (*i)->getCategory().c_str();
+		cat = (*i)->getCategory();
 
 		if (std::find(
 				_catStrings.begin(),
@@ -194,7 +194,7 @@ void NewManufactureListState::lstProdClick(Action*)
 			i != _possibleProductions.end();
 			++i)
 	{
-		if ((*i)->getType().c_str() == _displayedStrings[_lstManufacture->getSelectedRow()])
+		if ((*i)->getType() == _displayedStrings[_lstManufacture->getSelectedRow()])
 		{
 			manufRule = *i;
 			break;
@@ -249,13 +249,13 @@ void NewManufactureListState::fillProductionList()
 			++i)
 	{
 		if (_catStrings[_cbxCategory->getSelected()] == "STR_ALL_ITEMS"
-			|| (*i)->getCategory().c_str() == _catStrings[_cbxCategory->getSelected()])
+			|| (*i)->getCategory() == _catStrings[_cbxCategory->getSelected()])
 		{
 			_lstManufacture->addRow(
 								2,
 								tr((*i)->getType()).c_str(),
-								tr((*i)->getCategory ()).c_str());
-			_displayedStrings.push_back((*i)->getType().c_str());
+								tr((*i)->getCategory()).c_str());
+			_displayedStrings.push_back((*i)->getType());
 		}
 	}
 }

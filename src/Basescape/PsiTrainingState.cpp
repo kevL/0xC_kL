@@ -163,8 +163,8 @@ void PsiTrainingState::init()
 		}
 		else
 		{
-			woststr2 << tr("STR_UNKNOWN").c_str();
-			woststr1 << tr("STR_UNKNOWN").c_str();
+			woststr2 << tr("STR_UNKNOWN");
+			woststr1 << tr("STR_UNKNOWN");
 		}
 
 		std::wstring wst;
@@ -230,7 +230,7 @@ void PsiTrainingState::lstSoldiersPress(Action* action)
 				_lstSoldiers->setCellText(
 										_sel,
 										3,
-										tr("STR_YES").c_str());
+										tr("STR_YES"));
 				_lstSoldiers->setRowColor(
 										_sel,
 										_lstSoldiers->getSecondaryColor());
@@ -246,7 +246,7 @@ void PsiTrainingState::lstSoldiersPress(Action* action)
 			_lstSoldiers->setCellText(
 									_sel,
 									3,
-									tr("STR_NO").c_str());
+									tr("STR_NO"));
 			_lstSoldiers->setRowColor(
 									_sel,
 									_lstSoldiers->getColor());

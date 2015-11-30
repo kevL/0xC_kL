@@ -768,18 +768,12 @@ void Screen::updateScale( // static.
 		break;
 	}
 
-	int
-		screenWidth = Screen::ORIGINAL_WIDTH,
-		screenHeight = Screen::ORIGINAL_HEIGHT;
-
 	width = std::max(
 					width,
-					screenWidth);
-//					Screen::ORIGINAL_WIDTH);
+					Screen::ORIGINAL_WIDTH);
 	height = std::max(
 					height,
-					screenHeight);
-//					Screen::ORIGINAL_HEIGHT);
+					Screen::ORIGINAL_HEIGHT);
 
 	if (change == true
 		&& (Options::baseXResolution != width

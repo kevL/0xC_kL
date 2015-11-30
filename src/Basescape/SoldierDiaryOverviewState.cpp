@@ -20,6 +20,7 @@
 #include "SoldierDiaryOverviewState.h"
 
 //#include <string>
+//#include <vector>
 
 #include "SoldierDiaryMissionState.h"
 #include "SoldierDiaryPerformanceState.h"
@@ -48,11 +49,11 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Soldiers screen.
+ * Diary screen that shows all the missions a soldier has.
  * @param base					- pointer to the Base to get info from
  * @param soldierId				- ID of the selected soldier
- * @param soldierInfoState		-
- * @param soldierInfoDeadState	-
+ * @param soldierInfoState		- pointer to the Soldier Info screen
+ * @param soldierInfoDeadState	- pointer to the Dead Soldier Info screen
  */
 SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 		Base* const base,
@@ -220,7 +221,7 @@ SoldierDiaryOverviewState::~SoldierDiaryOverviewState()
 {}
 
 /**
- * Clears all the variables and reinitializes the list of medals for the soldier.
+ * Clears and reinitializes the list of missions for the soldier.
  */
 void SoldierDiaryOverviewState::init()
 {
@@ -279,19 +280,19 @@ void SoldierDiaryOverviewState::init()
 					strYear;
 
 				if ((*i)->country == "STR_UNKNOWN")
-					strLocation << tr((*i)->region.c_str());
+					strLocation << tr((*i)->region);
 				else
-					strLocation << tr((*i)->country.c_str());
+					strLocation << tr((*i)->country);
 
 				if ((*i)->success == true)
 					strStatus << tr("STR_MISSION_WIN");
 				else
 					strStatus << tr("STR_MISSION_LOSS");
 
-				strStatus << " - " << tr((*i)->rating.c_str());
+				strStatus << " - " << tr((*i)->rating);
 
 				strDay << (*i)->timeStat.getDayString(_game->getLanguage());
-				strMonth << tr((*i)->timeStat.getMonthString().c_str());
+				strMonth << tr((*i)->timeStat.getMonthString());
 				strYear << (*i)->timeStat.getYear();
 
 				_lstDiary->addRow(

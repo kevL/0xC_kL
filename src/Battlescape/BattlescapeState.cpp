@@ -1634,9 +1634,9 @@ inline void BattlescapeState::handle(Action* action)
 					saveAIMap();
 				}
 			}
-			else if (_gameSave->isIronman() == false)
+
+			if (_gameSave->isIronman() == false)
 			{
-				// not works in debug mode to prevent conflict in hotkeys by default
 				if (action->getDetails()->key.keysym.sym == Options::keyQuickSave)		// f6 - quickSave
 				{
 					beep = true;
@@ -3550,17 +3550,11 @@ void BattlescapeState::resize(
 		return;
 	}
 
-	int
-		screenWidth = Screen::ORIGINAL_WIDTH,
-		screenHeight = Screen::ORIGINAL_HEIGHT;
-
 	Options::baseXResolution = std::max(
-//									Screen::ORIGINAL_WIDTH,
-									screenWidth,
+									Screen::ORIGINAL_WIDTH,
 									Options::displayWidth / divisor);
 	Options::baseYResolution = std::max(
-//									Screen::ORIGINAL_HEIGHT,
-									screenHeight,
+									Screen::ORIGINAL_HEIGHT,
 									static_cast<int>(static_cast<double>(Options::displayHeight) / pixelRatioY / static_cast<double>(divisor)));
 
 	dX = Options::baseXResolution - dX;

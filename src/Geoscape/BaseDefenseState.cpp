@@ -252,7 +252,7 @@ void BaseDefenseState::nextStep()
 
 					_lstDefenses->addRow(
 									3,
-									tr(defFac->getRules()->getType()).c_str(),
+									tr(defFac->getRules()->getType()),
 									L" ",L" ");
 					++_row;
 					if (_row > 14) _lstDefenses->scrollDown(true);
@@ -261,7 +261,7 @@ void BaseDefenseState::nextStep()
 				case BD_FIRE:
 					_lstDefenses->setCellText(
 											_row - 1, 1,
-											tr("STR_FIRING").c_str());
+											tr("STR_FIRING"));
 //					_lstDefenses->setCellColor(_row - 1, 1, 160, /* slate */ true);
 
 					_game->getResourcePack()->playSoundFX(
@@ -284,14 +284,14 @@ void BaseDefenseState::nextStep()
 
 						_lstDefenses->setCellText(
 											_row - 1, 2,
-											tr("STR_HIT").c_str());
+											tr("STR_HIT"));
 //						_lstDefenses->setCellColor(_row - 1, 2, 32, /* green */ true);
 					}
 					else
 					{
 						_lstDefenses->setCellText(
 											_row - 1, 2,
-											tr("STR_MISSED").c_str());
+											tr("STR_MISSED"));
 //						_lstDefenses->setCellColor(_row - 1, 2, 144, /* brown */ true);
 					}
 

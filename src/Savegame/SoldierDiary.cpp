@@ -577,10 +577,10 @@ void SoldierDiary::updateDiary(
 		}
 	}
 
-	++_regionTotal[missionStatistics->region.c_str()];
-	++_countryTotal[missionStatistics->country.c_str()];
-	++_typeTotal[missionStatistics->getMissionTypeLowerCase().c_str()];
-	++_ufoTotal[missionStatistics->ufo.c_str()];
+	++_regionTotal[missionStatistics->region];
+	++_countryTotal[missionStatistics->country];
+	++_typeTotal[missionStatistics->getMissionTypeLowerCase()];
+	++_ufoTotal[missionStatistics->ufo];
 	_scoreTotal += missionStatistics->score;
 
 	if (missionStatistics->success == true)
@@ -905,40 +905,45 @@ bool SoldierDiary::manageAwards(const Ruleset* const rules)
 									++detail)
 							{
 								//Log(LOG_INFO) << ". . . . . . . [6] iter DETAIL = " << (*detail);
-								static const std::string bType_array[] =
-								{
-									"BT_NONE","BT_FIREARM","BT_AMMO","BT_MELEE","BT_GRENADE","BT_PROXYGRENADE","BT_MEDIKIT","BT_SCANNER","BT_MINDPROBE","BT_PSIAMP","BT_FLARE","BT_CORPSE","BT_END"
-								};
-								static const std::vector<std::string> bType_vect (bType_array, bType_array + 13);
+								size_t
+									bType = 0,
+									dType = 0;
 
-								size_t bType = 0;
+								static const std::string
+									bType_array[BATS] =
+									{
+										"BT_NONE",		"BT_FIREARM",		"BT_AMMO",		"BT_MELEE",
+										"BT_GRENADE",	"BT_PROXYGRENADE",	"BT_MEDIKIT",	"BT_SCANNER",
+										"BT_MINDPROBE",	"BT_PSIAMP",		"BT_FLARE",		"BT_CORPSE",
+										"BT_END"
+									},
+									dType_array[DATS] =
+									{
+										"DT_NONE",	"DT_AP",		"DT_IN",	"DT_HE",
+										"DT_LASER",	"DT_PLASMA",	"DT_STUN",	"DT_MELEE",
+										"DT_ACID",	"DT_SMOKE",		"DT_END"
+									};
+
 								for (
 										;
-										bType != bType_vect.size();
+										bType != BATS;
 										++bType)
 								{
 									//Log(LOG_INFO) << ". . . . . . . . [7] iter bType";
-									if (*detail == bType_vect[bType])
+									if (*detail == bType_array[bType])
 									{
 										//Log(LOG_INFO) << ". . . . . . . . . bType = " << (*detail);
 										break;
 									}
 								}
 
-								static const std::string dType_array[] =
-								{
-									"DT_NONE","DT_AP","DT_IN","DT_HE","DT_LASER","DT_PLASMA","DT_STUN","DT_MELEE","DT_ACID","DT_SMOKE","DT_END"
-								};
-								static const std::vector<std::string> dType_vect (dType_array, dType_array + 11);
-
-								size_t dType = 0;
 								for (
 										;
-										dType != dType_vect.size();
+										dType != DATS;
 										++dType)
 								{
 									//Log(LOG_INFO) << ". . . . . . . . [7] iter dType";
-									if (*detail == dType_vect[dType])
+									if (*detail == dType_array[dType])
 									{
 										//Log(LOG_INFO) << ". . . . . . . . . dType = " << (*detail);
 										break;
@@ -1126,7 +1131,7 @@ std::map<std::string, int> SoldierDiary::getAlienRankTotal() const
 			i != _killList.end();
 			++i)
 	{
-		++ret[(*i)->_rank.c_str()];
+		++ret[(*i)->_rank];
 	}
 
 	return ret;
@@ -1145,7 +1150,7 @@ std::map<std::string, int> SoldierDiary::getAlienRaceTotal() const
 			i != _killList.end();
 			++i)
 	{
-		++ret[(*i)->_race.c_str()];
+		++ret[(*i)->_race];
 	}
 
 	return ret;
@@ -1163,7 +1168,7 @@ std::map<std::string, int> SoldierDiary::getWeaponTotal() const
 			i != _killList.end();
 			++i)
 	{
-		++ret[(*i)->_weapon.c_str()];
+		++ret[(*i)->_weapon];
 	}
 
 	return ret;
@@ -1182,7 +1187,7 @@ std::map<std::string, int> SoldierDiary::getWeaponAmmoTotal() const
 			i != _killList.end();
 			++i)
 	{
-		++ret[(*i)->_weaponAmmo.c_str()];
+		++ret[(*i)->_weaponAmmo];
 	}
 
 	return ret;

@@ -20,8 +20,6 @@
 #ifndef OPENXCOM_SOLDIERDIARYMISSIONSTATE_H
 #define OPENXCOM_SOLDIERDIARYMISSIONSTATE_H
 
-//#include <vector>
-
 #include "../Engine/State.h"
 
 
@@ -37,7 +35,7 @@ class Window;
 
 
 /**
- * Select Mission window that shows mission details for a soldier.
+ * A small window that shows mission details for a soldier.
  */
 class SoldierDiaryMissionState
 	:

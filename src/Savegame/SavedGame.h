@@ -26,7 +26,6 @@
 //#include <time.h>
 //#include <stdint.h>
 
-//#include "CraftId.h"
 #include "GameTime.h"
 #include "Soldier.h"
 

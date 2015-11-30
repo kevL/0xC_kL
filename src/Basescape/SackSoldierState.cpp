@@ -87,11 +87,11 @@ SackSoldierState::SackSoldierState(
 					(ActionHandler)& SackSoldierState::btnCancelClick,
 					Options::keyCancel);
 
-	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setText(tr("STR_SACK"));
+	_txtTitle->setAlign(ALIGN_CENTER);
 
-	_txtSoldier->setAlign(ALIGN_CENTER);
 	_txtSoldier->setText(_base->getSoldiers()->at(_soldierId)->getName());
+	_txtSoldier->setAlign(ALIGN_CENTER);
 }
 
 /**

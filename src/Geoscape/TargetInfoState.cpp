@@ -96,7 +96,7 @@ TargetInfoState::TargetInfoState(
 	_txtTitle->setAlign(ALIGN_CENTER);
 	std::wostringstream woststr;
 	woststr << L'\x01' << _target->getName(_game->getLanguage());
-	_txtTitle->setText(woststr.str().c_str());
+	_txtTitle->setText(woststr.str());
 
 	_edtTarget->setVisible(false);
 	for (std::vector<AlienBase*>::const_iterator

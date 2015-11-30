@@ -2576,7 +2576,7 @@ void GeoscapeState::time1Hour()
 		{
 			resetTimer();
 			popup(new ErrorMessageState(
-								tr("STR_STORAGE_EXCEEDED").arg((*i)->getName()).c_str(),
+								tr("STR_STORAGE_EXCEEDED").arg((*i)->getName()),
 								_palette,
 								_rules->getInterface("geoscape")->getElement("errorMessage")->color,
 								"BACK12.SCR", // "BACK13.SCR"
@@ -3902,7 +3902,6 @@ void GeoscapeState::determineAlienMissions() // private.
 	std::map<int, bool> conditions;
 
 	RuleMissionScript* directive;
-
 	for (std::vector<std::string>::const_iterator
 			i = _rules->getMissionScriptList()->begin();
 			i != _rules->getMissionScriptList()->end();
@@ -3938,15 +3937,13 @@ void GeoscapeState::determineAlienMissions() // private.
 			i != availableMissions.end();
 			++i)
 	{
-		directive = *i;
 		bool
 			process (true),
 			success (false);
 
 		for (std::vector<int>::const_iterator
-				j = directive->getConditions().begin();
-				j != directive->getConditions().end()
-					&& process == true;
+				j = (*i)->getConditions().begin();
+				j != (*i)->getConditions().end() && process == true;
 				++j)
 		{
 			std::map<int, bool>::const_iterator found (conditions.find(std::abs(*j)));
@@ -3955,45 +3952,42 @@ void GeoscapeState::determineAlienMissions() // private.
 				   || (found->second == false && *j < 0));
 		}
 
-		if (directive->getLabel() > 0
-			&& conditions.find(directive->getLabel()) != conditions.end())
+		if ((*i)->getLabel() > 0
+			&& conditions.find((*i)->getLabel()) != conditions.end())
 		{
-			std::stringstream ststr;
-			ststr << "Mission generator encountered an error: multiple commands: ["
-				  << directive->getType() << "] and ";
+			std::ostringstream err;
+			err << "Mission generator encountered an error: multiple commands: ["
+				<< (*i)->getType() << "] and ";
 			for (std::vector<RuleMissionScript*>::const_iterator
 					j = availableMissions.begin();
 					j != availableMissions.end();
 					++j)
 			{
 				if (*j != *i
-					&& directive->getLabel() == (*j)->getLabel())
+					&& (*j)->getLabel() == (*i)->getLabel())
 				{
-					ststr << "["
-						  << (*j)->getType()
-						  << "]";
+					err << "["
+						<< (*j)->getType()
+						<< "]";
 				}
 			}
-			ststr << " are sharing the same label: ["
-				  << directive->getLabel()
-				  << "]";
-			throw Exception(ststr.str());
+			err << " are sharing the same label: ["
+				<< (*i)->getLabel()
+				<< "]";
+			throw Exception(err.str());
 		}
 
-		if (process == true
-			&& RNG::percent(directive->getExecutionOdds()) == true)
-		{
-			success = processCommand(directive);
-		}
+		if (process == true && RNG::percent((*i)->getExecutionOdds()) == true)
+			success = processDirective((*i));
 
-		if (directive->getLabel() > 0)
+		if ((*i)->getLabel() > 0)
 		{
-			if (conditions.find(directive->getLabel()) != conditions.end())
+			if (conditions.find((*i)->getLabel()) != conditions.end())
 			{
-				throw Exception("Error in mission scripts: " + directive->getType()
+				throw Exception("Error in mission scripts: " + (*i)->getType()
 								+ ". Two or more commands share the same label.");
 			}
-			conditions[directive->getLabel()] = success;
+			conditions[(*i)->getLabel()] = success;
 		}
 	}
 }
@@ -4003,7 +3997,7 @@ void GeoscapeState::determineAlienMissions() // private.
  * @param directive - the directive from which to read information
  * @return, true if the command successfully produced a new mission
  */
-bool GeoscapeState::processCommand(RuleMissionScript* const directive) // private.
+bool GeoscapeState::processDirective(RuleMissionScript* const directive) // private.
 {
 	AlienStrategy& strategy (_gameSave->getAlienStrategy());
 	const int month (_game->getSavedGame()->getMonthsPassed());
@@ -4550,17 +4544,11 @@ void GeoscapeState::resize(
 		return;
 	}
 
-	int
-		screenWidth = Screen::ORIGINAL_WIDTH,
-		screenHeight = Screen::ORIGINAL_HEIGHT;
-
 	Options::baseXResolution = std::max(
-//									Screen::ORIGINAL_WIDTH,
-									screenWidth,
+									Screen::ORIGINAL_WIDTH,
 									Options::displayWidth / divisor);
 	Options::baseYResolution = std::max(
-//									Screen::ORIGINAL_HEIGHT,
-									screenHeight,
+									Screen::ORIGINAL_HEIGHT,
 									static_cast<int>(static_cast<double>(Options::displayHeight)
 										/ pixelRatioY / static_cast<double>(divisor)));
 

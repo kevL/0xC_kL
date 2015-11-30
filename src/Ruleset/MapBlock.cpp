@@ -63,7 +63,7 @@ void MapBlock::load(const YAML::Node& node)
 	if (_size_x % 10 != 0
 		|| _size_y % 10 != 0)
 	{
-		std::stringstream error;
+		std::ostringstream error;
 		error << "Error: MapBlock " << _type << ": Size must be divisible by ten";
 		throw Exception(error.str());
 	}
@@ -73,7 +73,7 @@ void MapBlock::load(const YAML::Node& node)
 		_groups.clear();
 
 		if (block.Type() == YAML::NodeType::Sequence)
-			_groups = block.as<std::vector<int> >(_groups);
+			_groups = block.as<std::vector<int>>(_groups);
 		else
 			_groups.push_back(block.as<int>(0));
 	}
@@ -83,12 +83,12 @@ void MapBlock::load(const YAML::Node& node)
 		_revealedFloors.clear();
 
 		if (block.Type() == YAML::NodeType::Sequence)
-			_revealedFloors = block.as<std::vector<int> >(_revealedFloors);
+			_revealedFloors = block.as<std::vector<int>>(_revealedFloors);
 		else
 			_revealedFloors.push_back(block.as<int>(0));
 	}
 
-	_items = node["items"].as<std::map<std::string, std::vector<Position> > >(_items);
+	_items = node["items"].as<std::map<std::string, std::vector<Position>>>(_items);
 }
 
 /**

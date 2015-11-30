@@ -570,7 +570,7 @@ void DebriefingState::btnOkClick(Action*)
 			{
 				_game->pushState(new AlienContainmentState(_base, OPT_BATTLESCAPE));
 				_game->pushState(new ErrorMessageState(
-												tr("STR_CONTAINMENT_EXCEEDED").arg(_base->getName()).c_str(),
+												tr("STR_CONTAINMENT_EXCEEDED").arg(_base->getName()),
 												_palette,
 												_rules->getInterface("debriefing")->getElement("errorMessage")->color,
 												"BACK04.SCR",
@@ -582,7 +582,7 @@ void DebriefingState::btnOkClick(Action*)
 			{
 //				_game->pushState(new SellState(_base, OPT_BATTLESCAPE));
 				_game->pushState(new ErrorMessageState(
-												tr("STR_STORAGE_EXCEEDED").arg(_base->getName()).c_str(),
+												tr("STR_STORAGE_EXCEEDED").arg(_base->getName()),
 												_palette,
 												_rules->getInterface("debriefing")->getElement("errorMessage")->color,
 												_game->getResourcePack()->getRandomBackground(),

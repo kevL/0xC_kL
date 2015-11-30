@@ -287,7 +287,7 @@ void SoundSet::loadCatByIndex(
 
 	if (index >= sndFile.getAmount())
 	{
-		std::stringstream err;
+		std::ostringstream err;
 		err << file << " does not contain " << index << " sound files.";
 		throw Exception(err.str());
 	}

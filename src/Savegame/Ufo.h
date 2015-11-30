@@ -23,7 +23,6 @@
 //#include <string>
 //#include <yaml-cpp/yaml.h>
 
-#include "CraftId.h"
 #include "MovingTarget.h"
 
 

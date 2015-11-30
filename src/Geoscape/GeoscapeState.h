@@ -174,7 +174,7 @@ private:
 //	/// Handle land mission generation.
 //	void setupLandMission();
 	/// Process each individual mission script command.
-	bool processCommand(RuleMissionScript* const missionCommand);
+	bool processDirective(RuleMissionScript* const directive);
 
 	/// Handler for hot-keying a time-compression key.
 	void keyTimeCompressionPress(Action* action);

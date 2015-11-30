@@ -23,7 +23,6 @@
 //#include <string>
 //#include <vector>
 
-#include "CraftId.h"
 #include "MovingTarget.h"
 
 
@@ -105,7 +104,7 @@ private:
 		void load(
 				const YAML::Node& node,
 				const Ruleset* const rules,
-				SavedGame* const save);
+				SavedGame* const gameSave);
 		/// Saves the Craft to YAML.
 		YAML::Node save() const;
 		/// Saves the Craft's ID to YAML.

@@ -32,9 +32,8 @@
 
 #include "../Engine/Action.h"
 #include "../Engine/Game.h"
-//#include "../Engine/Language.h" // for logging CraftId tuple
 #include "../Engine/LocalizedText.h"
-#include "../Engine/Logger.h"
+//#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Screen.h"

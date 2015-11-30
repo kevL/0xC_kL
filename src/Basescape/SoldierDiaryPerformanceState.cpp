@@ -22,8 +22,6 @@
 //#include <string>
 
 #include "SoldierDiaryOverviewState.h"
-#include "SoldierInfoState.h"
-#include "SoldierInfoDeadState.h"
 
 #include "../Engine/Action.h"
 #include "../Engine/Game.h"
@@ -51,7 +49,8 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements for the Performance screens.
+ * Diary screen that displays/hides the several screens that document a
+ * soldier's Performance.
  * @param base		- pointer to the Base to get info from
  * @param soldierId	- ID of the selected soldier
  * @param overview	- pointer to SoldierDiaryOverviewState
@@ -365,7 +364,7 @@ SoldierDiaryPerformanceState::~SoldierDiaryPerformanceState()
 {}
 
 /**
- *  Clears all the variables and reinitializes the list of kills or missions for the soldier.
+ *  Clears and reinitializes the several Performance screens for each soldier.
  */
 void SoldierDiaryPerformanceState::init()
 {
@@ -545,11 +544,11 @@ void SoldierDiaryPerformanceState::init()
 		{
 			if ((*j).first != "NUL_UFO")
 			{
-				std::wstringstream
+				std::wostringstream
 					woststr1,
 					woststr2;
 
-				woststr1 << tr((*j).first.c_str());
+				woststr1 << tr((*j).first);
 				woststr2 << (*j).second;
 
 				lstArray[i]->addRow(
@@ -571,7 +570,7 @@ void SoldierDiaryPerformanceState::init()
 			break;
 
 		const RuleAward* const awardRule (_game->getRuleset()->getAwardsList()[(*i)->getType()]);
-		std::wstringstream
+		std::wostringstream
 			woststr1,
 			woststr2,
 			woststr3,
@@ -579,17 +578,17 @@ void SoldierDiaryPerformanceState::init()
 
 		if ((*i)->getQualifier() != "noQual")
 		{
-			woststr1 << tr((*i)->getType().c_str()).arg(tr((*i)->getQualifier()).c_str());
-			woststr4 << tr(awardRule->getDescription().c_str()).arg(tr((*i)->getQualifier()).c_str());
+			woststr1 << tr((*i)->getType()).arg(tr((*i)->getQualifier()));
+			woststr4 << tr(awardRule->getDescription()).arg(tr((*i)->getQualifier()));
 		}
 		else
 		{
-			woststr1 << tr((*i)->getType().c_str());
-			woststr4 << tr(awardRule->getDescription().c_str());
+			woststr1 << tr((*i)->getType());
+			woststr4 << tr(awardRule->getDescription());
 		}
 
-		woststr2 << tr((*i)->getClassDescription().c_str());
-		woststr3 << tr((*i)->getClassDegree().c_str());
+		woststr2 << tr((*i)->getClassDescription());
+		woststr3 << tr((*i)->getClassDegree());
 
 		_lstAwards->addRow(
 						3,
@@ -597,7 +596,7 @@ void SoldierDiaryPerformanceState::init()
 						woststr2.str().c_str(),
 						woststr3.str().c_str());
 
-		_awardsListEntry.push_back(woststr4.str().c_str());
+		_awardsListEntry.push_back(woststr4.str());
 
 		drawSprites();
 	}

@@ -23,6 +23,8 @@
 //#include <string>
 //#include <vector>
 
+//#include <yaml-cpp/yaml.h>
+
 #include "SavedGame.h" // GameDifficulty enum
 #include "Soldier.h"
 

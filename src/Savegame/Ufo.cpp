@@ -620,7 +620,7 @@ const std::string& Ufo::getAlienRace() const
 
 /**
  * Sets a pointer to a craft that shot down this Ufo.
- * @param craft - address of CraftID (CraftId.h)
+ * @param craft - reference to CraftID (CraftId.h)
  */
 void Ufo::setShotDownByCraftId(const CraftId& craft)
 {

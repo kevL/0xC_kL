@@ -81,16 +81,16 @@ private:
 
 
 	public:
-		/// Creates the Soldiers state.
+		/// Creates the Soldier Diary state.
 		SoldierDiaryOverviewState(
 				Base* const base,
 				size_t soldierId,
 				SoldierInfoState* soldierInfoState,
 				SoldierInfoDeadState* soldierInfoDeadState);
-		/// Cleans up the Soldiers state.
+		/// Cleans up the Soldier Diary state.
 		~SoldierDiaryOverviewState();
 
-		/// Updates the soldier info.
+		/// Updates the list info.
 		void init();
 
 		/// Sets the soldier's ID.

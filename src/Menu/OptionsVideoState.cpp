@@ -387,9 +387,9 @@ void OptionsVideoState::updateDisplayResolution()
 void OptionsVideoState::txtDisplayWidthChange(Action*)
 {
 	int width = 0;
-	std::wstringstream woststr;
-	woststr << std::dec << _txtDisplayWidth->getText();
-	woststr >> std::dec >> width;
+	std::wstringstream wststr;
+	wststr << std::dec << _txtDisplayWidth->getText();
+	wststr >> std::dec >> width;
 	Options::newDisplayWidth = width;
 
 	// Update resolution mode
@@ -420,9 +420,9 @@ void OptionsVideoState::txtDisplayWidthChange(Action*)
 void OptionsVideoState::txtDisplayHeightChange(Action*)
 {
 	int height = 0;
-	std::wstringstream woststr;
-	woststr << std::dec << _txtDisplayHeight->getText();
-	woststr >> std::dec >> height;
+	std::wstringstream wststr;
+	wststr << std::dec << _txtDisplayHeight->getText();
+	wststr >> std::dec >> height;
 	Options::newDisplayHeight = height;
 
 	// Update resolution mode

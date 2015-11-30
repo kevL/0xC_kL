@@ -22,9 +22,14 @@
 
 #include "Target.h"
 
+//#include <utility>
+
 
 namespace OpenXcom
 {
+
+typedef std::pair<std::string, int> CraftId;
+
 
 /**
  * Base class for moving targets on the globe with a certain speed and destination.

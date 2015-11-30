@@ -20,6 +20,7 @@
 #include "SoldierDiaryMissionState.h"
 
 //#include <sstream>
+//#include <vector>
 
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
@@ -43,7 +44,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Soldier Diary Mission-description window.
+ * Initializes all the elements in the Soldier Diary missions-description window.
  * @param base		- pointer to the Base to get info from
  * @param soldierId	- ID of the selected soldier
  * @param entry		- listrow to get mission info from
@@ -230,20 +231,20 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 				strStatus;
 //				strAmmo;
 
-			strRace << tr((*i)->_race.c_str());
-			strRank << tr((*i)->_rank.c_str());
-			strWeapon << tr((*i)->_weapon.c_str());
-			strUnit << strRace.str().c_str() << " " << strRank.str().c_str();
+			strRace << tr((*i)->_race);
+			strRank << tr((*i)->_rank);
+			strWeapon << tr((*i)->_weapon);
+			strUnit << strRace.str() << " " << strRank.str();
 
 			if ((*i)->getUnitStatusString() == "STATUS_DEAD")
 			{
-				strStatus << tr("STR_KILLED").c_str();
+				strStatus << tr("STR_KILLED");
 //				++killQty; // below_ Count both kills & stuns.
 //				stunOrKill = true;
 			}
 			else
 			{
-				strStatus << tr("STR_STUNNED").c_str();
+				strStatus << tr("STR_STUNNED");
 //				stunOrKill = true;
 			}
 

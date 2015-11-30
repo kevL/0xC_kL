@@ -272,19 +272,13 @@ void FlcPlayer::SDLPolling()
 
 			case SDL_VIDEORESIZE:
 			{
-				int
-					screenWidth = Screen::ORIGINAL_WIDTH,
-					screenHeight = Screen::ORIGINAL_HEIGHT;
-
 				if (Options::allowResize == true)
 				{
 					Options::newDisplayWidth = Options::displayWidth = std::max(
-//																			Screen::ORIGINAL_WIDTH,
-																			screenWidth,
+																			Screen::ORIGINAL_WIDTH,
 																			event.resize.w);
 					Options::newDisplayHeight = Options::displayHeight = std::max(
-//																			Screen::ORIGINAL_HEIGHT,
-																			screenHeight,
+																			Screen::ORIGINAL_HEIGHT,
 																			event.resize.h);
 
 					if (_mainScreen != _realScreen->getSurface()->getSurface())

@@ -285,17 +285,11 @@ void Game::run()
 					{
 						if (startupEvent == false)
 						{
-							int
-								screenWidth = Screen::ORIGINAL_WIDTH,
-								screenHeight = Screen::ORIGINAL_HEIGHT;
-
 							Options::newDisplayWidth = Options::displayWidth = std::max(
-//																					Screen::ORIGINAL_WIDTH,
-																					screenWidth,
+																					Screen::ORIGINAL_WIDTH,
 																					_event.resize.w);
 							Options::newDisplayHeight = Options::displayHeight = std::max(
-//																					Screen::ORIGINAL_HEIGHT,
-																					screenHeight,
+																					Screen::ORIGINAL_HEIGHT,
 																					_event.resize.h);
 							int
 								dX = 0,

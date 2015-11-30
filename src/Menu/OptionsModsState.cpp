@@ -133,12 +133,12 @@ void OptionsModsState::lstModsClick(Action*)
 													selectedMod);
 	if (i != Options::rulesets.end())
 	{
-		_lstMods->setCellText(_lstMods->getSelectedRow(), 1, tr("STR_NO").c_str());
+		_lstMods->setCellText(_lstMods->getSelectedRow(), 1, tr("STR_NO"));
 		Options::rulesets.erase(i);
 	}
 	else
 	{
-		_lstMods->setCellText(_lstMods->getSelectedRow(), 1, tr("STR_YES").c_str());
+		_lstMods->setCellText(_lstMods->getSelectedRow(), 1, tr("STR_YES"));
 		Options::rulesets.push_back(selectedMod);
 	}
 
