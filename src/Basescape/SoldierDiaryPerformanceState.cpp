@@ -560,17 +560,13 @@ void SoldierDiaryPerformanceState::init()
 		{
 			if ((*j).first != "NUL_UFO")
 			{
-				std::wostringstream
-					woststr1,
-					woststr2;
-
-				woststr1 << tr((*j).first);
-				woststr2 << (*j).second;
+				std::wostringstream woststr;
+				woststr << (*j).second;
 
 				lstArray[i]->addRow(
 								2,
-								woststr1.str().c_str(),
-								woststr2.str().c_str());
+								tr((*j).first).c_str(),
+								woststr.str().c_str());
 				lstArray[i]->setCellColor(row++, 0, YELLOW);
 			}
 		}
@@ -588,31 +584,26 @@ void SoldierDiaryPerformanceState::init()
 		const RuleAward* const awardRule (_game->getRuleset()->getAwardsList()[(*i)->getType()]);
 		std::wostringstream
 			woststr1,
-			woststr2,
-			woststr3,
-			woststr4;
+			woststr2;
 
-		if ((*i)->getQualifier() != "noQual")
+		if ((*i)->getQualifier() == "noQual")
 		{
-			woststr1 << tr((*i)->getType()).arg(tr((*i)->getQualifier()));
-			woststr4 << tr(awardRule->getDescription()).arg(tr((*i)->getQualifier()));
+			woststr1 << tr((*i)->getType());
+			woststr2 << tr(awardRule->getDescription());
 		}
 		else
 		{
-			woststr1 << tr((*i)->getType());
-			woststr4 << tr(awardRule->getDescription());
+			woststr1 << tr((*i)->getType()).arg(tr((*i)->getQualifier()));
+			woststr2 << tr(awardRule->getDescription()).arg(tr((*i)->getQualifier()));
 		}
-
-		woststr2 << tr((*i)->getClassDescription());
-		woststr3 << tr((*i)->getClassDegree());
 
 		_lstAwards->addRow(
 						3,
 						woststr1.str().c_str(),
-						woststr2.str().c_str(),
-						woststr3.str().c_str());
+						tr((*i)->getClassDescription()).c_str(),
+						tr((*i)->getClassDegree()).c_str());
 
-		_awardsListEntry.push_back(woststr4.str());
+		_awardsListEntry.push_back(woststr2.str());
 
 		drawSprites();
 	}

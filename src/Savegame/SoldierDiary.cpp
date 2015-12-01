@@ -590,7 +590,7 @@ void SoldierDiary::updateDiary(
 	{
 		++_winTotal;
 
-		if (missionStatistics->type != "STR_SMALL_SCOUT"
+		if (   missionStatistics->type != "STR_SMALL_SCOUT"
 			&& missionStatistics->type != "STR_MEDIUM_SCOUT"
 			&& missionStatistics->type != "STR_LARGE_SCOUT"
 			&& missionStatistics->type != "STR_SUPPLY_SHIP")

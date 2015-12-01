@@ -1653,12 +1653,7 @@ void BattlescapeGame::checkForCasualties(
 		&& attacker->getGeoscapeSoldier() != nullptr)
 	{
 		killStatMission = _battleSave->getGeoscapeSave()->getMissionStatistics()->size();
-
-		killStatTurn = _battleSave->getTurn() * 3;
-		if (_battleSave->getSide() == FACTION_HOSTILE)
-			killStatTurn += 1;
-		else if (_battleSave->getSide() == FACTION_NEUTRAL)
-			killStatTurn += 2;
+		killStatTurn = _battleSave->getTurn() * 3 + static_cast<int>(_battleSave->getSide());
 
 		if (weapon != nullptr)
 		{

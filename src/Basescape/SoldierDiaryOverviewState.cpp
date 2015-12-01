@@ -273,35 +273,30 @@ void SoldierDiaryOverviewState::init()
 			if (*j == missionId) // This mission is in the soldier's vector of missions.
 			{
 				std::wostringstream
-					strLocation,
-					strStatus,
-					strDay,
-					strMonth,
-					strYear;
+					location,
+					status,
+					year;
 
 				if ((*i)->country == "STR_UNKNOWN")
-					strLocation << tr((*i)->region);
+					location << tr((*i)->region);
 				else
-					strLocation << tr((*i)->country);
+					location << tr((*i)->country);
 
 				if ((*i)->success == true)
-					strStatus << tr("STR_MISSION_WIN");
+					status << tr("STR_MISSION_WIN");
 				else
-					strStatus << tr("STR_MISSION_LOSS");
+					status << tr("STR_MISSION_LOSS");
 
-				strStatus << " - " << tr((*i)->rating);
+				status << " - " << tr((*i)->rating);
 
-				strDay << (*i)->timeStat.getDayString(_game->getLanguage());
-				strMonth << tr((*i)->timeStat.getMonthString());
-				strYear << (*i)->timeStat.getYear();
-
+				year << (*i)->timeStat.getYear();
 				_lstDiary->addRow(
 								5,
-								strLocation.str().c_str(),
-								strStatus.str().c_str(),
-								strDay.str().c_str(),
-								strMonth.str().c_str(),
-								strYear.str().c_str());
+								location.str().c_str(),
+								status.str().c_str(),
+								(*i)->timeStat.getDayString(_game->getLanguage()).c_str(),
+								tr((*i)->timeStat.getMonthString()).c_str(),
+								year.str().c_str());
 				break;
 			}
 		}

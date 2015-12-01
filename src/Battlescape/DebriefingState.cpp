@@ -320,42 +320,26 @@ DebriefingState::DebriefingState()
 		}
 	}
 
-	std::wstring rating; // Calculate rating
+	std::string rating; // Calculate rating
 	if (total < -99)
 	{
-		rating = tr("STR_RATING_TERRIBLE");
-		_missionStatistics->rating = "STR_RATING_TERRIBLE";
 		_music = OpenXcom::res_MUSIC_TAC_DEBRIEFING_BAD;
+		rating = "STR_RATING_TERRIBLE";
 	}
 	else
 	{
 		_music = OpenXcom::res_MUSIC_TAC_DEBRIEFING;
 
 		if (total < 101)
-		{
-			rating = tr("STR_RATING_POOR");
-			_missionStatistics->rating = "STR_RATING_POOR";
-		}
+			rating = "STR_RATING_POOR";
 		else if (total < 351)
-		{
-			rating = tr("STR_RATING_OK");
-			_missionStatistics->rating = "STR_RATING_OK";
-		}
+			rating = "STR_RATING_OK";
 		else if (total < 751)
-		{
-			rating = tr("STR_RATING_GOOD");
-			_missionStatistics->rating = "STR_RATING_GOOD";
-		}
+			rating = "STR_RATING_GOOD";
 		else if (total < 1251)
-		{
-			rating = tr("STR_RATING_EXCELLENT");
-			_missionStatistics->rating = "STR_RATING_EXCELLENT";
-		}
+			rating = "STR_RATING_EXCELLENT";
 		else
-		{
-			rating = tr("STR_RATING_STUPENDOUS");
-			_missionStatistics->rating = "STR_RATING_EXCELLENT";
-		}
+			rating = "STR_RATING_STUPENDOUS";
 	}
 
 	if (_skirmish == false && _missionCost != 0)
@@ -367,14 +351,15 @@ DebriefingState::DebriefingState()
 	else
 		_txtCost->setVisible(false);
 
-//	_txtRating->setText(tr("STR_RATING").arg(rating));
-	_txtRating->setText(rating);
+//	_txtRating->setText(tr("STR_RATING").arg(tr(rating)));
+	_txtRating->setText(tr(rating));
 	_txtRating->setAlign(ALIGN_CENTER);
 
 
 	// Soldier Diary ->
 	SavedBattleGame* const battleSave = _gameSave->getBattleSave();
 
+	_missionStatistics->rating = rating;
 	_missionStatistics->id = _gameSave->getMissionStatistics()->size();
 	_missionStatistics->shade = battleSave->getTacticalShade();
 

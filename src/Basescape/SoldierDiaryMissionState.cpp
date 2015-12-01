@@ -229,27 +229,25 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	{
 		if ((*i)->_mission == static_cast<int>(missionId))
 		{
+			++killQty;
+			points += (*i)->_points;
+
 			std::wostringstream
 				unit,
-				weapon,
 				status;
 
 			unit << tr((*i)->_race) << " " << tr((*i)->_rank);
-			weapon << tr((*i)->_weapon);
 
 			if ((*i)->_status == STATUS_DEAD)
 				status << tr("STR_KILLED");
 			else
 				status << tr("STR_STUNNED");
 
-			++killQty;
-			points += (*i)->_points;
-
 			_lstKills->addRow(
 							3,
 							status.str().c_str(),
 							unit.str().c_str(),
-							weapon.str().c_str());
+							tr((*i)->_weapon).c_str());
 			_lstKills->setCellColor(row++, 0, YELLOW);
 		}
 	}
