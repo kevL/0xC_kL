@@ -32,7 +32,7 @@
 namespace OpenXcom
 {
 
-class Ruleset;
+struct BattleUnitKill;
 
 
 /**

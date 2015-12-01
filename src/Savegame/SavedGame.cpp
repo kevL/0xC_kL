@@ -39,6 +39,7 @@
 #include "GameTime.h"
 #include "ItemContainer.h"
 #include "MissionSite.h"
+#include "MissionStatistics.h"
 #include "Production.h"
 #include "Region.h"
 #include "ResearchProject.h"

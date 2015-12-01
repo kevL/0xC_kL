@@ -29,6 +29,7 @@
 #include "../fmath.h"
 
 #include "BattleItem.h"
+#include "BattleUnitStatistics.h"
 #include "SavedGame.h"
 #include "SavedBattleGame.h"
 #include "Soldier.h"

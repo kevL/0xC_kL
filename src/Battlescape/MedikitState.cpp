@@ -42,9 +42,10 @@
 #include "../Ruleset/RuleItem.h"
 
 #include "../Savegame/BattleItem.h"
-#include "../Savegame/BattleUnit.h"
+//#include "../Savegame/BattleUnit.h"
+#include "../Savegame/BattleUnitStatistics.h"
 #include "../Savegame/SavedBattleGame.h"
-#include "../Savegame/SavedGame.h"
+//#include "../Savegame/SavedGame.h"
 
 
 namespace OpenXcom
@@ -214,9 +215,7 @@ MedikitState::MedikitState(BattleAction* action)
 
 	_numHealth->setColor(RED);
 	_numTotalHP->setColor(RED);
-
-	const int hp = _action->targetUnit->getBaseStats()->health;
-	_numTotalHP->setValue(static_cast<unsigned>(hp));
+	_numTotalHP->setValue(static_cast<unsigned>(_action->targetUnit->getBaseStats()->health));
 
 //	_barHealth->setScale();
 //	_barEnergy->setScale();

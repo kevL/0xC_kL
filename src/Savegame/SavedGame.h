@@ -26,7 +26,6 @@
 //#include <time.h>
 //#include <stdint.h>
 
-#include "GameTime.h"
 #include "Soldier.h"
 
 #include "../Ruleset/RuleAlienMission.h"
@@ -56,6 +55,8 @@ class Target;
 class TextList;
 class Ufo;
 class Waypoint;
+
+struct MissionStatistics;
 
 
 /**
@@ -90,117 +91,6 @@ enum GameMode
 {
 	MODE_GEOSCAPE,		// 0
 	MODE_BATTLESCAPE	// 1
-};
-
-
-/**
- * Container for mission statistics.
- */
-struct MissionStatistics
-{
-	bool
-		success,
-		valiantCrux;
-
-	int
-		id,
-		score,
-		shade;
-
-	std::string
-		alienRace,
-		country,
-		rating,
-		region,
-		type,
-		ufo;
-
-	std::map<int, int> injuryList;
-
-	GameTime timeStat;
-
-
-	///
-/*	std::string getMissionTypeLowerCase()
-	{
-		if		(type == "STR_UFO_CRASH_RECOVERY")	return "STR_UFO_CRASH_RECOVERY_LC";
-		else if (type == "STR_UFO_GROUND_ASSAULT")	return "STR_UFO_GROUND_ASSAULT_LC";
-		else if (type == "STR_BASE_DEFENSE")		return "STR_BASE_DEFENSE_LC";
-		else if (type == "STR_ALIEN_BASE_ASSAULT")	return "STR_ALIEN_BASE_ASSAULT_LC";
-		else if (type == "STR_TERROR_MISSION")		return "STR_TERROR_MISSION_LC";
-		else if (type == "STR_PORT_ATTACK")			return "STR_PORT_ATTACK_LC";
-		else										return "type error";
-	} */
-
-	///
-	void load(const YAML::Node& node)
-	{
-		timeStat.load(node["time"]);
-
-		id			= node["id"]			.as<int>(id);
-		region		= node["region"]		.as<std::string>(region);
-		country		= node["country"]		.as<std::string>(country);
-		type		= node["type"]			.as<std::string>(type);
-		ufo			= node["ufo"]			.as<std::string>(ufo);
-		success		= node["success"]		.as<bool>(success);
-		score		= node["score"]			.as<int>(score);
-		rating		= node["rating"]		.as<std::string>(rating);
-		alienRace	= node["alienRace"]		.as<std::string>(alienRace);
-		shade		= node["shade"]			.as<int>(shade);
-		injuryList	= node["injuryList"]	.as<std::map<int, int> >(injuryList);
-		valiantCrux	= node["valiantCrux"]	.as<bool>(valiantCrux);
-	}
-
-	///
-	YAML::Node save() const
-	{
-		YAML::Node node;
-
-		node["id"]			= id;
-		node["time"]		= timeStat.save();
-		node["region"]		= region;
-		node["country"]		= country;
-		node["type"]		= type;
-		node["ufo"]			= ufo;
-		node["success"]		= success;
-		node["score"]		= score;
-		node["rating"]		= rating;
-		node["alienRace"]	= alienRace;
-		node["shade"]		= shade;
-		node["injuryList"]	= injuryList;
-
-		if (valiantCrux == true)
-			 node["valiantCrux"] = valiantCrux;
-
-		return node;
-	}
-
-	/// cTor.
-	explicit MissionStatistics(const YAML::Node& node)
-		:
-			timeStat(0,0,0,0,0,0)
-	{
-		load(node);
-	}
-
-	/// cTor.
-	MissionStatistics()
-		:
-			id(0),
-			timeStat(0,0,0,0,0,0),
-			region("STR_REGION_UNKNOWN"),
-			country("STR_UNKNOWN"),
-			ufo("NUL_UFO"),
-			success(false),
-			score(0),
-			alienRace("STR_UNKNOWN"),
-			shade(0),
-			valiantCrux(false)
-	{}
-
-	/// dTor.
-	~MissionStatistics()
-	{}
 };
 
 

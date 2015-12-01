@@ -20,6 +20,7 @@
 #ifndef OPENXCOM_BATTLESCAPEGAME_H
 #define OPENXCOM_BATTLESCAPEGAME_H
 
+#include <cstddef> // nullptr (for NB code-assistant only)
 #include <list>
 //#include <string>
 #include <vector>

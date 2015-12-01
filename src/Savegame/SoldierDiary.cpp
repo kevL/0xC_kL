@@ -19,6 +19,9 @@
 
 #include "SoldierDiary.h"
 
+#include "BattleUnitStatistics.h"
+#include "MissionStatistics.h"
+
 #include "../Ruleset/RuleAward.h"
 #include "../Ruleset/Ruleset.h"
 
@@ -538,8 +541,8 @@ YAML::Node SoldierDiary::save() const
 /**
  * Updates this SoldierDiary's statistics.
  * @note BattleUnitKill is a substruct of BattleUnitStatistics.
- * @param unitStatistics	- pointer to BattleUnitStatistics to get stats from (BattleUnit.h)
- * @param missionStatistics	- pointer to MissionStatistics to get stats from (SavedGame.h)
+ * @param unitStatistics	- pointer to BattleUnitStatistics to get stats from (BattleUnitStatistics.h)
+ * @param missionStatistics	- pointer to MissionStatistics to get stats from (MissionStatistics.h)
  * @param rules				- pointer to Ruleset
  */
 void SoldierDiary::updateDiary(
@@ -560,11 +563,11 @@ void SoldierDiary::updateDiary(
 
 		_pointTotal += (*i)->_points; // kL - if hostile unit was MC'd this should be halved
 
-		if ((*i)->getUnitFactionString() == "FACTION_HOSTILE")
+		if ((*i)->_faction == FACTION_HOSTILE)
 		{
-			if ((*i)->getUnitStatusString() == "STATUS_DEAD")
+			if ((*i)->_status == STATUS_DEAD)
 				++_killTotal;
-			else if ((*i)->getUnitStatusString() == "STATUS_UNCONSCIOUS")
+			else //if ((*i)->_status == STATUS_UNCONSCIOUS)
 				++_stunTotal;
 
 			if ((*i)->hostileTurn() == true)
@@ -1322,6 +1325,7 @@ void SoldierDiary::awardOriginalEight()
 {
 	_solAwards.push_back(new SoldierAward("STR_MEDAL_ORIGINAL8_NAME"));
 }
+
 
 
 //____________________________________//

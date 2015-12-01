@@ -75,21 +75,23 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 	_btnExit->onMouseClick((ActionHandler)& ExtraAlienInfoState::btnExit);
 	_btnExit->onKeyboardPress(
 					(ActionHandler)& ExtraAlienInfoState::btnExit,
-					Options::keyCancel);
-	_btnExit->onKeyboardPress(
-					(ActionHandler)& ExtraAlienInfoState::btnExit,
 					Options::keyOk);
 	_btnExit->onKeyboardPress(
 					(ActionHandler)& ExtraAlienInfoState::btnExit,
 					Options::keyOkKeypad);
+	_btnExit->onKeyboardPress(
+					(ActionHandler)& ExtraAlienInfoState::btnExit,
+					Options::keyCancel);
 
 	_lstInfo->setColumns(2, 125, 25);
 	_lstInfo->setColor(uPed_BLUE_SLATE);
 	_lstInfo->setDot();
+	_lstInfo->setMargin();
 
 	_lstWeapon->setColumns(3, 100, 25, 25);
 	_lstWeapon->setColor(uPed_BLUE_SLATE);
 	_lstWeapon->setDot();
+	_lstWeapon->setMargin();
 
 
 	std::string alienId;
@@ -99,17 +101,17 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 		alienId = defs->id;
 
 	const RuleUnit* unitRule;
-	if (_game->getRuleset()->getUnit(alienId + "_SOLDIER") != NULL)
+	if (_game->getRuleset()->getUnit(alienId + "_SOLDIER") != nullptr)
 		unitRule = _game->getRuleset()->getUnit(alienId + "_SOLDIER");
-	else if (_game->getRuleset()->getUnit(alienId + "_TERRORIST") != NULL)
+	else if (_game->getRuleset()->getUnit(alienId + "_TERRORIST") != nullptr)
 		unitRule = _game->getRuleset()->getUnit(alienId + "_TERRORIST");
 	else
 	{
-		unitRule = NULL;
+		unitRule = nullptr;
 		Log(LOG_INFO) << "ERROR: rules not found for unit - " << alienId;
 	}
 
-	if (unitRule != NULL)
+	if (unitRule != nullptr)
 	{
 		const RuleArmor* const armorRule = _game->getRuleset()->getArmor(unitRule->getArmor());
 
@@ -137,7 +139,7 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 		{
 			std::string terrorWeapon = unitRule->getRace().substr(4) + "_WEAPON";
 			const RuleItem* const itRule = _game->getRuleset()->getItem(terrorWeapon);
-			if (itRule != NULL)
+			if (itRule != nullptr)
 			{
 				const DamageType dType = itRule->getDamageType();
 				const std::string stType = ArticleState::getDamageTypeText(dType);

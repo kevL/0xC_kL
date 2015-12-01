@@ -62,9 +62,10 @@
 #include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/BattleItem.h"
-#include "../Savegame/BattleUnit.h"
+//#include "../Savegame/BattleUnit.h"
+#include "../Savegame/BattleUnitStatistics.h"
 #include "../Savegame/SavedBattleGame.h"
-#include "../Savegame/SavedGame.h"
+//#include "../Savegame/SavedGame.h"
 #include "../Savegame/Tile.h"
 
 

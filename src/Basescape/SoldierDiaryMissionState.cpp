@@ -19,6 +19,7 @@
 
 #include "SoldierDiaryMissionState.h"
 
+#include <cstddef> // nullptr (for NB code-assistant only)
 //#include <sstream>
 //#include <vector>
 
@@ -34,7 +35,9 @@
 #include "../Resource/ResourcePack.h"
 
 #include "../Savegame/Base.h"
-#include "../Savegame/SavedGame.h"
+#include "../Savegame/BattleUnitStatistics.h"
+#include "../Savegame/MissionStatistics.h"
+//#include "../Savegame/SavedGame.h"
 //#include "../Savegame/Soldier.h"
 #include "../Savegame/SoldierDead.h"
 #include "../Savegame/SoldierDiary.h"
@@ -218,7 +221,6 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 		killQty (0),
 		points (0);
 	size_t row (0);
-//	bool stunOrKill = false;
 
 	for (std::vector<BattleUnitKill*>::const_iterator
 			i = diary->getKills().begin();
@@ -228,48 +230,29 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 		if ((*i)->_mission == static_cast<int>(missionId))
 		{
 			std::wostringstream
-				strRace,
-				strRank,
-				strWeapon,
-				strUnit,
-				strStatus;
-//				strAmmo;
+				unit,
+				weapon,
+				status;
 
-			strRace << tr((*i)->_race);
-			strRank << tr((*i)->_rank);
-			strWeapon << tr((*i)->_weapon);
-			strUnit << strRace.str() << " " << strRank.str();
+			unit << tr((*i)->_race) << " " << tr((*i)->_rank);
+			weapon << tr((*i)->_weapon);
 
-			if ((*i)->getUnitStatusString() == "STATUS_DEAD")
-			{
-				strStatus << tr("STR_KILLED");
-//				++killQty; // below_ Count both kills & stuns.
-//				stunOrKill = true;
-			}
+			if ((*i)->_status == STATUS_DEAD)
+				status << tr("STR_KILLED");
 			else
-			{
-				strStatus << tr("STR_STUNNED");
-//				stunOrKill = true;
-			}
+				status << tr("STR_STUNNED");
 
 			++killQty;
 			points += (*i)->_points;
 
 			_lstKills->addRow(
 							3,
-							strStatus.str().c_str(),
-							strUnit.str().c_str(),
-							strWeapon.str().c_str());
+							status.str().c_str(),
+							unit.str().c_str(),
+							weapon.str().c_str());
 			_lstKills->setCellColor(row++, 0, YELLOW);
 		}
 	}
-
-//	if (stunOrKill == false)
-//	{
-//		std::wostringstream wossKills;
-//		wossKills << tr("STR_NO_KILLS");
-//		_lstKills->addRow(1, wossKills.str().c_str()); // should change to/add shots-connected ...
-//	}
 
 	if (killQty != 0)
 	{
