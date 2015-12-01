@@ -106,9 +106,9 @@ struct BattleAction
 	BattleAction()
 		:
 			type(BA_NONE),
-			actor(NULL),
-			targetUnit(NULL),
-			weapon(NULL),
+			actor(nullptr),
+			targetUnit(nullptr),
+			weapon(nullptr),
 			TU(0),
 			targeting(false),
 			value(0),
@@ -131,9 +131,9 @@ struct BattleAction
 		void clearAction() // kL
 		{
 			type = BA_NONE;
-			actor = NULL;
-			targetUnit = NULL;
-			weapon = NULL;
+			actor = nullptr;
+			targetUnit = nullptr;
+			weapon = nullptr;
 			TU = 0;
 			targeting = false;
 			value = 0;
@@ -248,8 +248,8 @@ private:
 
 		/// Checks for casualties in battle.
 		void checkForCasualties(
-				const BattleItem* const weapon = NULL,
-				BattleUnit* attacker = NULL,
+				const BattleItem* const weapon = nullptr,
+				BattleUnit* attacker = nullptr,
 				bool hiddenExpl = false,
 				bool terrainExpl = false,
 				bool execution = false);

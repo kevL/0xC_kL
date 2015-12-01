@@ -28,6 +28,14 @@
 namespace OpenXcom
 {
 
+enum SoldierDiaryDisplay
+{
+	DIARY_KILLS,	// 0
+	DIARY_MISSIONS,	// 1
+	DIARY_MEDALS	// 2
+};
+
+
 class Base;
 class Soldier;
 class SoldierDead;
@@ -60,13 +68,11 @@ private:
 		PINK	= 241,
 		PURPLE	= 246;
 
-	bool
-		_displayKills,
-		_displayMissions,
-		_displayAwards;
 	size_t
 		_lastScrollPos,
 		_soldierId;
+
+	SoldierDiaryDisplay _display;
 
 	std::vector<std::wstring> _awardsListEntry;
 
@@ -105,7 +111,9 @@ private:
 		* _btnNext,
 		* _btnKills,
 		* _btnMissions,
-		* _btnAwards;
+		* _btnAwards,
+
+		* _displayGroup;
 	TextList
 		* _lstRank,
 		* _lstRace,
@@ -128,7 +136,7 @@ private:
 				Base* const base,
 				const size_t soldierId,
 				SoldierDiaryOverviewState* const soldierDiaryState,
-				const int display);
+				const SoldierDiaryDisplay display);
 		/// Cleans up the Soldier Performance state.
 		~SoldierDiaryPerformanceState();
 

@@ -121,7 +121,7 @@ struct MissionStatistics
 
 
 	///
-	std::string getMissionTypeLowerCase()
+/*	std::string getMissionTypeLowerCase()
 	{
 		if		(type == "STR_UFO_CRASH_RECOVERY")	return "STR_UFO_CRASH_RECOVERY_LC";
 		else if (type == "STR_UFO_GROUND_ASSAULT")	return "STR_UFO_GROUND_ASSAULT_LC";
@@ -130,7 +130,7 @@ struct MissionStatistics
 		else if (type == "STR_TERROR_MISSION")		return "STR_TERROR_MISSION_LC";
 		else if (type == "STR_PORT_ATTACK")			return "STR_PORT_ATTACK_LC";
 		else										return "type error";
-	}
+	} */
 
 	///
 	void load(const YAML::Node& node)

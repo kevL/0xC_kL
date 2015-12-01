@@ -1662,8 +1662,7 @@ inline void BattlescapeState::handle(Action* action)
 			}
 
 #ifdef _WIN32
-			if (beep == true)
-				MessageBeep(MB_OK);
+			if (beep == true) MessageBeep(MB_OK);
 #endif
 		}
 	}

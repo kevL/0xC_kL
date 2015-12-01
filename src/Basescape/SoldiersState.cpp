@@ -33,6 +33,7 @@
 #include "../Engine/Action.h"
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
+//#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 #include "../Engine/Screen.h"
 #include "../Engine/Sound.h"
@@ -52,8 +53,8 @@
 #include "../Savegame/Soldier.h"
 
 
-//#include "../Ruleset/RuleAward.h" // debug SoldierDiary.
-//#include "../Ruleset/Ruleset.h" // debug SoldierDiary.
+//#include "../Ruleset/RuleAward.h"	// debug SoldierDiary.
+//#include "../Ruleset/Ruleset.h"	// debug SoldierDiary.
 
 
 namespace OpenXcom

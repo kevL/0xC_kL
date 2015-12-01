@@ -108,7 +108,7 @@ private:
 		/// Handler for clicking the Missions button.
 		void btnMissionsClick(Action* action);
 		/// Handler for clicking the Commendations button.
-		void btnCommendationsClick(Action* action);
+		void btnMedalsClick(Action* action);
 		/// Handler for clicking on mission list.
 		void lstDiaryInfoClick(Action* action);
 };

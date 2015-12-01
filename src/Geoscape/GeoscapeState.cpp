@@ -991,12 +991,15 @@ void GeoscapeState::handle(Action* action)
 
 	if (action->getDetails()->type == SDL_KEYDOWN)
 	{
+		bool beep = false;
+
 		if (Options::debug == true)
 		{
 			if ((SDL_GetModState() & KMOD_CTRL) != 0)
 			{
-				if (action->getDetails()->key.keysym.sym == SDLK_d)	// "ctrl-d" - enable debug mode
+				if (action->getDetails()->key.keysym.sym == SDLK_d)				// "ctrl-d" - enable debug mode
 				{
+					beep = true;
 					_gameSave->toggleDebugMode();
 					if (_gameSave->getDebugMode() == true)
 					{
@@ -1015,34 +1018,75 @@ void GeoscapeState::handle(Action* action)
 						_debug = "";
 					}
 				}
-				else if (action->getDetails()->key.keysym.sym == SDLK_c	// "ctrl-c" - cycle areas
-					&& _gameSave->getDebugMode() == true)				// ctrl+c is also handled in Game::run() where the 'cycle' is determined.
+				else if (_gameSave->getDebugMode() == true)
 				{
-					_txtDebug->setText(L"");
-					_debug = "DEBUG MODE : ";
+					if (action->getDetails()->key.keysym.sym == SDLK_c)			// "ctrl-c" - cycle areas
+					{															// note: also handled in Game::run() where the 'cycle' is determined.
+						beep = true;
+						_txtDebug->setText(L"");
+						_debug = "DEBUG MODE : ";
 
-					if (_globe->getDebugType() == 0)
-						_debug += "country : ";
-					else if (_globe->getDebugType() == 1)
-						_debug += "region : ";
-					else if (_globe->getDebugType() == 2)
-						_debug += "missionZones : ";
+						if (_globe->getDebugType() == 0)
+							_debug += "country : ";
+						else if (_globe->getDebugType() == 1)
+							_debug += "region : ";
+						else if (_globe->getDebugType() == 2)
+							_debug += "missionZones : ";
+					}
+					else if (action->getDetails()->key.keysym.sym == SDLK_a)	// "ctrl-a" - delete soldier awards
+					{															// note: Clears awards of the living, not of the Memorial Dead.
+						beep = true;
+						_txtDebug->setText(L"SOLDIER COMMENDATIONS DELETED");
+						for (std::vector<Base*>::const_iterator
+								i = _game->getSavedGame()->getBases()->begin();
+								i != _game->getSavedGame()->getBases()->end();
+								++i)
+						{
+							for (std::vector<Soldier*>::const_iterator
+									j = (*i)->getSoldiers()->begin();
+									j != (*i)->getSoldiers()->end();
+									++j)
+							{
+								for (std::vector<SoldierAward*>::const_iterator
+										k = (*j)->getDiary()->getSoldierAwards()->begin();
+										k != (*j)->getDiary()->getSoldierAwards()->end();
+										++k)
+								{
+									delete *k;									// is this redundant
+								}
+								(*j)->getDiary()->getSoldierAwards()->clear();	// is this redundant
+							}
+						}
+					}
+					else
+						_txtDebug->setText(L"");
 				}
 			}
 		}
-		else if (_gameSave->isIronman() == false) // quick save and quick load
+
+		if (_gameSave->isIronman() == false) // quick save and quick load
 		{
-			if (action->getDetails()->key.keysym.sym == Options::keyQuickSave)
+			if (action->getDetails()->key.keysym.sym == Options::keyQuickSave)		// f6 - quickSave
+			{
+				beep = true;
 				popup(new SaveGameState(
 									OPT_GEOSCAPE,
 									SAVE_QUICK,
 									_palette));
-			else if (action->getDetails()->key.keysym.sym == Options::keyQuickLoad)
+			}
+			else if (action->getDetails()->key.keysym.sym == Options::keyQuickLoad)	// f5 - quickLoad
+			{
+				beep = true;
 				popup(new LoadGameState(
 									OPT_GEOSCAPE,
 									SAVE_QUICK,
 									_palette));
+			}
 		}
+
+#ifdef _WIN32
+		if (beep == true) MessageBeep(MB_OK);
+#endif
 	}
 
 	if (_dogfights.empty() == false)

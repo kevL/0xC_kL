@@ -235,7 +235,7 @@ struct BattleUnitKill
 		return false;
 	}
 
-}; // end BattlUnitKill.
+}; // end BattleUnitKill.
 
 
 /**

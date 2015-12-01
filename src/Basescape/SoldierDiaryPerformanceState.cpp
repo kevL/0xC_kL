@@ -54,19 +54,18 @@ namespace OpenXcom
  * @param base		- pointer to the Base to get info from
  * @param soldierId	- ID of the selected soldier
  * @param overview	- pointer to SoldierDiaryOverviewState
- * @param display	- 0 displays Kills stats
-					  1 displays Missions stats
-					  2 displays Awards stats
+ * @param display	- SoldierDiaryDisplay (SoldierDiaryPerformanceState.h)
  */
 SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 		Base* const base,
 		const size_t soldierId,
 		SoldierDiaryOverviewState* const overview,
-		const int display)
+		const SoldierDiaryDisplay display)
 	:
 		_base(base),
 		_soldierId(soldierId),
 		_overview(overview),
+		_display(display),
 		_lastScrollPos(0),
 		_diary(nullptr)
 {
@@ -79,25 +78,6 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	{
 		_list = _base->getSoldiers();
 		_listDead = nullptr;
-	}
-
-	if (display == 0)
-	{
-		_displayKills = true;
-		_displayMissions =
-		_displayAwards = false;
-	}
-	else if (display == 1)
-	{
-		_displayMissions = true;
-		_displayKills =
-		_displayAwards = false;
-	}
-	else // display == 2
-	{
-		_displayAwards = true;
-		_displayKills =
-		_displayMissions = false;
 	}
 
 	_window				= new Window(this, 320, 200);
@@ -355,6 +335,23 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	_txtMedalInfo->setColor(BROWN);
 	_txtMedalInfo->setHighContrast();
 	_txtMedalInfo->setWordWrap();
+
+
+	switch (_display)
+	{
+		case DIARY_KILLS:
+			_displayGroup = _btnKills;
+		break;
+		case DIARY_MISSIONS:
+			_displayGroup = _btnMissions;
+		break;
+		case DIARY_MEDALS:
+			_displayGroup = _btnAwards;
+	}
+
+	_btnKills->setGroup(&_displayGroup);
+	_btnMissions->setGroup(&_displayGroup);
+	_btnAwards->setGroup(&_displayGroup);
 }
 
 /**
@@ -390,45 +387,64 @@ void SoldierDiaryPerformanceState::init()
 	_lstAwards->scrollTo(0);
 	_lastScrollPos = 0;
 
-	_txtRace->setVisible(_displayKills); // set visibility for Kill stats
-	_txtRank->setVisible(_displayKills);
-	_txtWeapon->setVisible(_displayKills);
-	_lstRace->setVisible(_displayKills);
-	_lstRank->setVisible(_displayKills);
-	_lstWeapon->setVisible(_displayKills);
-	_lstKillTotals->setVisible(_displayKills);
 
-	_txtLocation->setVisible(_displayMissions); // set visibility for Mission stats
-	_txtType->setVisible(_displayMissions);
-	_txtUFO->setVisible(_displayMissions);
-	_lstLocation->setVisible(_displayMissions);
-	_lstType->setVisible(_displayMissions);
-	_lstUFO->setVisible(_displayMissions);
-	_lstMissionTotals->setVisible(_displayMissions);
+	bool vis;
 
-	if (_game->getRuleset()->getAwardsList().empty() == true) // set visibility for Award stats
-		_displayAwards = false;
-
-	_txtMedalName->setVisible(_displayAwards);
-	_txtMedalLevel->setVisible(_displayAwards);
-	_txtMedalClass->setVisible(_displayAwards);
-	_lstAwards->setVisible(_displayAwards);
-	_txtMedalInfo->setVisible(_displayAwards);
-
-	if (_displayKills == true)
+	if (_display == DIARY_KILLS) // set visibility for Kill stats
+	{
+		vis = true;
 		_btnKills->setColor(YELLOW);
+	}
 	else
+	{
+		vis = false;
 		_btnKills->setColor(BLUE);
+	}
+	_txtRace->setVisible(vis);
+	_txtRank->setVisible(vis);
+	_txtWeapon->setVisible(vis);
+	_lstRace->setVisible(vis);
+	_lstRank->setVisible(vis);
+	_lstWeapon->setVisible(vis);
+	_lstKillTotals->setVisible(vis);
 
-	if (_displayMissions == true)
+
+	if (_display == DIARY_MISSIONS) // set visibility for Mission stats
+	{
+		vis = true;
 		_btnMissions->setColor(YELLOW);
+	}
 	else
+	{
+		vis = false;
 		_btnMissions->setColor(BLUE);
+	}
+	_txtLocation->setVisible(vis);
+	_txtType->setVisible(vis);
+	_txtUFO->setVisible(vis);
+	_lstLocation->setVisible(vis);
+	_lstType->setVisible(vis);
+	_lstUFO->setVisible(vis);
+	_lstMissionTotals->setVisible(vis);
 
-	if (_displayAwards == true)
+
+//	_btnAwards->setVisible(_game->getRuleset()->getAwardsList().empty() == false); // safety.
+
+	if (_display == DIARY_MEDALS) // set visibility for awarded Medals
+	{
+		vis = true;
 		_btnAwards->setColor(YELLOW);
+	}
 	else
+	{
+		vis = false;
 		_btnAwards->setColor(BLUE);
+	}
+	_txtMedalName->setVisible(vis);
+	_txtMedalLevel->setVisible(vis);
+	_txtMedalClass->setVisible(vis);
+	_lstAwards->setVisible(vis);
+	_txtMedalInfo->setVisible(vis);
 
 
 	_awardsListEntry.clear();
@@ -607,39 +623,38 @@ void SoldierDiaryPerformanceState::init()
  */
 void SoldierDiaryPerformanceState::drawSprites()
 {
-	if (_displayAwards == false)
-		return;
-
-	for (size_t
-			i = 0;
-			i != LIST_ROWS;
-			++i)
+	if (_display == DIARY_MEDALS)
 	{
-		_srfSprite[i]->clear();
-		_srfDecor[i]->clear();
-	}
-
-	const RuleAward* awardRule;
-	int sprite;
-	const size_t scroll = _lstAwards->getScroll();
-	size_t j = 0;
-
-	for (std::vector<SoldierAward*>::const_iterator
-			i = _diary->getSoldierAwards()->begin();
-			i != _diary->getSoldierAwards()->end();
-			++i,
-				++j)
-	{
-		if (j >= scroll // show awards that are visible on the list
-			&& j - scroll < _srfSprite.size())
+		for (size_t
+				i = 0;
+				i != LIST_ROWS;
+				++i)
 		{
-			awardRule = _game->getRuleset()->getAwardsList()[(*i)->getType()]; // handle award sprites
-			sprite = awardRule->getSprite();
-			_srtSprite->getFrame(sprite)->blit(_srfSprite[j - scroll]);
+			_srfSprite[i]->clear();
+			_srfDecor[i]->clear();
+		}
 
-			sprite = static_cast<int>((*i)->getClassLevel()); // handle award decoration sprites
-			if (sprite != 0)
-				_srtDecor->getFrame(sprite)->blit(_srfDecor[j - scroll]);
+		const RuleAward* awardRule;
+		const size_t scroll = _lstAwards->getScroll();
+		int sprite;
+
+		size_t j = 0;
+		for (std::vector<SoldierAward*>::const_iterator
+				i = _diary->getSoldierAwards()->begin();
+				i != _diary->getSoldierAwards()->end();
+				++i, ++j)
+		{
+			if (j >= scroll // show awards that are visible on the list
+				&& j - scroll < _srfSprite.size())
+			{
+				awardRule = _game->getRuleset()->getAwardsList()[(*i)->getType()]; // handle award sprites
+				sprite = awardRule->getSprite();
+				_srtSprite->getFrame(sprite)->blit(_srfSprite[j - scroll]);
+
+				sprite = static_cast<int>((*i)->getClassLevel()); // handle award decoration sprites
+				if (sprite != 0)
+					_srtDecor->getFrame(sprite)->blit(_srfDecor[j - scroll]);
+			}
 		}
 	}
 }
@@ -697,10 +712,7 @@ void SoldierDiaryPerformanceState::btnNextClick(Action*)
  */
 void SoldierDiaryPerformanceState::btnKillsToggle(Action*)
 {
-	_displayKills = true;
-	_displayMissions =
-	_displayAwards = false;
-
+	_display = DIARY_KILLS;
 	init();
 }
 
@@ -709,10 +721,7 @@ void SoldierDiaryPerformanceState::btnKillsToggle(Action*)
  */
 void SoldierDiaryPerformanceState::btnMissionsToggle(Action*)
 {
-	_displayMissions = true;
-	_displayKills =
-	_displayAwards = false;
-
+	_display = DIARY_MISSIONS;
 	init();
 }
 
@@ -721,10 +730,7 @@ void SoldierDiaryPerformanceState::btnMissionsToggle(Action*)
  */
 void SoldierDiaryPerformanceState::btnCommendationsToggle(Action*)
 {
-	_displayAwards = true;
-	_displayKills =
-	_displayMissions = false;
-
+	_display = DIARY_MEDALS;
 	init();
 }
 

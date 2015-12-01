@@ -134,20 +134,20 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 
 
 	_window->setColor(BLUE);
-	_window->setBackground(_game->getResourcePack()->getSurface("BACK14.SCR"));
+	_window->setBackground(_game->getResourcePack()->getSurface("BACK16.SCR"));
 
 	_btnOk->setColor(YELLOW);
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick((ActionHandler)& SoldierDiaryMissionState::btnOkClick);
 	_btnOk->onKeyboardPress(
 			(ActionHandler)& SoldierDiaryMissionState::btnOkClick,
-			Options::keyCancel);
-	_btnOk->onKeyboardPress(
-			(ActionHandler)& SoldierDiaryMissionState::btnOkClick,
 			Options::keyOk);
 	_btnOk->onKeyboardPress(
 			(ActionHandler)& SoldierDiaryMissionState::btnOkClick,
 			Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(
+			(ActionHandler)& SoldierDiaryMissionState::btnOkClick,
+			Options::keyCancel);
 
 	_txtTitle->setColor(YELLOW);
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -160,26 +160,28 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 
 	_txtMissionType->setColor(YELLOW);
 	_txtMissionType->setSecondaryColor(WHITE);
-	_txtMissionType->setText(tr("STR_MISSION_TYPE").arg(tr(stats->at(missionId)->getMissionTypeLowerCase())));
+	_txtMissionType->setText(tr("STR_MISSION_TYPE").arg(tr(stats->at(missionId)->type))); // 'type' was, getMissionTypeLowerCase()
 
-	_txtUFO->setColor(YELLOW);
-	_txtUFO->setSecondaryColor(WHITE);
-	_txtUFO->setText(tr("STR_UFO_TYPE").arg(tr(stats->at(missionId)->ufo)));
-	if (stats->at(missionId)->ufo == "NUL_UFO")
-		_txtUFO->setVisible(false);
-
-	_txtRace->setColor(YELLOW);
-	_txtRace->setSecondaryColor(WHITE);
-	_txtRace->setText(tr("STR_RACE_TYPE").arg(tr(stats->at(missionId)->alienRace)));
-	if (stats->at(missionId)->alienRace == "STR_UNKNOWN")
-		_txtRace->setVisible(false);
-
-	if (stats->at(missionId)->type == "STR_BASE_DEFENSE"
-		|| stats->at(missionId)->type == "STR_ALIEN_BASE_ASSAULT")
+	if (stats->at(missionId)->ufo != "NUL_UFO")
 	{
-		_txtDaylight->setVisible(false);
+		_txtUFO->setColor(YELLOW);
+		_txtUFO->setSecondaryColor(WHITE);
+		_txtUFO->setText(tr("STR_UFO_TYPE").arg(tr(stats->at(missionId)->ufo)));
 	}
 	else
+		_txtUFO->setVisible(false);
+
+	if (stats->at(missionId)->alienRace != "STR_UNKNOWN")
+	{
+		_txtRace->setColor(YELLOW);
+		_txtRace->setSecondaryColor(WHITE);
+		_txtRace->setText(tr("STR_RACE_TYPE").arg(tr(stats->at(missionId)->alienRace)));
+	}
+	else
+		_txtRace->setVisible(false);
+
+	if (stats->at(missionId)->type != "STR_BASE_DEFENSE"
+		&& stats->at(missionId)->type != "STR_ALIEN_BASE_ASSAULT")
 	{
 		_txtDaylight->setColor(YELLOW);
 		_txtDaylight->setSecondaryColor(WHITE);
@@ -188,10 +190,10 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 		else
 			_txtDaylight->setText(tr("STR_DAYLIGHT_TYPE").arg(tr("STR_NIGHT")));
 	}
-
-	if (daysWounded == 0)
-		_txtDaysWounded->setVisible(false);
 	else
+		_txtDaylight->setVisible(false);
+
+	if (daysWounded != 0)
 	{
 		_txtDaysWounded->setColor(YELLOW);
 		_txtDaysWounded->setSecondaryColor(WHITE);
@@ -202,6 +204,8 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 		else
 			_txtDaysWounded->setText(tr("STR_DAYS_WOUNDED").arg(daysWounded).arg(L" dy"));
 	}
+	else
+		_txtDaysWounded->setVisible(false);
 
 	_srfLine->drawLine(0,0, 120,0, YELLOW + 1);
 

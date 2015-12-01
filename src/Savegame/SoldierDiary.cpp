@@ -579,7 +579,7 @@ void SoldierDiary::updateDiary(
 
 	++_regionTotal[missionStatistics->region];
 	++_countryTotal[missionStatistics->country];
-	++_typeTotal[missionStatistics->getMissionTypeLowerCase()];
+	++_typeTotal[missionStatistics->type]; // 'type' was, getMissionTypeLowerCase()
 	++_ufoTotal[missionStatistics->ufo];
 	_scoreTotal += missionStatistics->score;
 
