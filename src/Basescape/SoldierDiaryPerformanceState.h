@@ -130,6 +130,9 @@ private:
 	Window
 		* _window;
 
+	/// Draw medal sprites.
+	void drawMedals();
+
 
 	public:
 		/// Creates the Soldier Performance state.
@@ -143,9 +146,6 @@ private:
 
 		/// Updates the info.
 		void init();
-
-		/// Draw sprites.
-		void drawSprites();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

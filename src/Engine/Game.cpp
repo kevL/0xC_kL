@@ -27,8 +27,8 @@
 #endif */ // kL_end.
 
 //#include <cmath>
+#include <cstddef> // nullptr (for NB code-assistant only)
 //#include <sstream>
-//#include <cstddef> // nullptr (for NB code-assistant only)
 
 #include <SDL_mixer.h>
 
@@ -285,12 +285,26 @@ void Game::run()
 					{
 						if (startupEvent == false)
 						{
+// G++ linker wants it this way ...
+#ifdef _DEBUG
+							const int
+								screenWidth = Screen::ORIGINAL_WIDTH,
+								screenHeight = Screen::ORIGINAL_HEIGHT;
+
+							Options::newDisplayWidth = Options::displayWidth = std::max(
+																					screenWidth,
+																					_event.resize.w);
+							Options::newDisplayHeight = Options::displayHeight = std::max(
+																					screenHeight,
+																					_event.resize.h);
+#else
 							Options::newDisplayWidth = Options::displayWidth = std::max(
 																					Screen::ORIGINAL_WIDTH,
 																					_event.resize.w);
 							Options::newDisplayHeight = Options::displayHeight = std::max(
 																					Screen::ORIGINAL_HEIGHT,
 																					_event.resize.h);
+#endif
 							int
 								dX = 0,
 								dY = 0;

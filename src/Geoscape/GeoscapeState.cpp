@@ -4589,6 +4589,20 @@ void GeoscapeState::resize(
 		return;
 	}
 
+// G++ linker wants it this way ...
+#ifdef _DEBUG
+	const int
+		screenWidth = Screen::ORIGINAL_WIDTH,
+		screenHeight = Screen::ORIGINAL_HEIGHT;
+
+	Options::baseXResolution = std::max(
+									screenWidth,
+									Options::displayWidth / divisor);
+	Options::baseYResolution = std::max(
+									screenHeight,
+									static_cast<int>(static_cast<double>(Options::displayHeight)
+										/ pixelRatioY / static_cast<double>(divisor)));
+#else
 	Options::baseXResolution = std::max(
 									Screen::ORIGINAL_WIDTH,
 									Options::displayWidth / divisor);
@@ -4596,6 +4610,7 @@ void GeoscapeState::resize(
 									Screen::ORIGINAL_HEIGHT,
 									static_cast<int>(static_cast<double>(Options::displayHeight)
 										/ pixelRatioY / static_cast<double>(divisor)));
+#endif
 
 	dX = Options::baseXResolution - dX;
 	dY = Options::baseYResolution - dY;

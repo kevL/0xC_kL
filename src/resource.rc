@@ -1,0 +1,59 @@
+//#include "version.h"
+//
+// BUG: MinGW-w64 'windres' has major (pathing) problems. Netbeans' resource
+// management prob does also. Here's one guy's fix, but it didn't work for me:
+// windres --preprocessor=i686-w64-mingw32-g++.exe --preprocessor-arg=-E --preprocessor-arg=-xc-header --preprocessor-arg=-DRC_INVOKED -i resource.rc -o resource.rc.o
+// - apparently because windres hates relative paths. Note, could try using
+// '--preprocessor=i686-w64-mingw32-gcc.exe' ... ps. I tried using --include-dir(s)
+// but that didn't work.
+
+
+#ifdef _DEBUG
+#	define RC_FILE "0xC_kL_d.exe\0"
+#else
+#	define RC_FILE "0xC_kL_r.exe\0"
+#endif
+
+#define RC_DESC "0xC_kL\0"
+
+
+1 VERSIONINFO
+  FILEVERSION		1,0,0,0 //OPENXCOM_VERSION_NUMBER
+  PRODUCTVERSION	1,0,0,0 //OPENXCOM_VERSION_NUMBER
+
+  FILEFLAGSMASK	0x0000003fL
+#ifdef _DEBUG
+  FILEFLAGS		0x00000001L //(VER_PRIVATEBUILD|VER_PRERELEASE|VER_DEBUG) See 'verrsrc.h'
+#else
+  FILEFLAGS		0x00000000L
+#endif
+  FILEOS		0x00040004L
+  FILETYPE		0x00000001L
+  FILESUBTYPE	0x00000000L
+
+
+BEGIN
+	BLOCK "StringFileInfo"
+	BEGIN
+		BLOCK "040904e4"
+		BEGIN
+			VALUE "CompanyName",      "ndpc\0"
+			VALUE "FileDescription",  RC_DESC
+			VALUE "FileVersion",      "1.0.0.kL\0" //OPENXCOM_VERSION_LONG
+			VALUE "InternalName",     RC_FILE
+			VALUE "LegalCopyright",   "(c)2010-2015\0"
+			VALUE "OriginalFilename", RC_FILE
+			VALUE "ProductName",      RC_DESC
+			VALUE "ProductVersion",   "1.0.0.kL\0" //OPENXCOM_VERSION_LONG
+			VALUE "Comments",         "kevL build MinGW-w64 32bit\0"
+		END
+	END
+
+	BLOCK "VarFileInfo"
+	BEGIN
+		VALUE "Translation", 0x0409, 1252
+	END
+END
+
+
+2 ICON "../res/windows/openxcom.ico"

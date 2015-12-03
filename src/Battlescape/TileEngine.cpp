@@ -4459,7 +4459,7 @@ int TileEngine::unitOpensDoor(
 //						{
 //							checkPos.push_back(std::make_pair(Position(1, 0, 0), O_WESTWALL));		// one tile east
 //							checkPos.push_back(std::make_pair(Position(1, 0, 0), O_NORTHWALL));		// one tile east
-//						}
+//						} */
 /*						if (rtClick
 							|| testAdjacentDoor(posUnit, O_NORTHWALL, 1)) // kL
 						{
@@ -4483,7 +4483,7 @@ int TileEngine::unitOpensDoor(
 //						{
 //							checkPos.push_back(std::make_pair(Position(1, 0, 0), O_WESTWALL));		// one tile east
 //							checkPos.push_back(std::make_pair(Position(0, 1, 0), O_NORTHWALL));		// one tile south
-//						}
+//						} */
 /*						if (rtClick
 							|| testAdjacentDoor(posUnit, O_NORTHWALL, 3)) // kL
 						{
@@ -4505,7 +4505,7 @@ int TileEngine::unitOpensDoor(
 //						{
 //							checkPos.push_back(std::make_pair(Position(0, 1, 0), O_WESTWALL));		// one tile south
 //							checkPos.push_back(std::make_pair(Position(0, 1, 0), O_NORTHWALL));		// one tile south
-//						}
+//						} */
 /*						if (rtClick
 							|| testAdjacentDoor(posUnit, O_NORTHWALL, 5)) // kL
 						{
@@ -4533,7 +4533,7 @@ int TileEngine::unitOpensDoor(
 //						{
 //							checkPos.push_back(std::make_pair(Position( 0,-1, 0), O_WESTWALL));		// one tile north
 //							checkPos.push_back(std::make_pair(Position(-1, 0, 0), O_NORTHWALL));	// one tile west
-//						}
+//						} */
 /*						if (rtClick
 							|| testAdjacentDoor(posUnit, O_NORTHWALL, 7)) // kL
 						{

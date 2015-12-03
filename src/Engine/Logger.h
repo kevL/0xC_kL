@@ -25,26 +25,26 @@
 //#include <stdio.h>
 
 #ifdef _WIN32 // see also: pch.h ... & Engine/Language.cpp & Engine/CrossPlatform.cpp
-	#ifndef NOMINMAX
-		#define NOMINMAX
-	#endif
+#	ifndef NOMINMAX
+#		define NOMINMAX
+#	endif
 
-	#ifndef WIN32_LEAN_AND_MEAN
-		#define WIN32_LEAN_AND_MEAN
-	#endif
+#	ifndef WIN32_LEAN_AND_MEAN
+#		define WIN32_LEAN_AND_MEAN
+#	endif
 
-	#include <windows.h>
+#	include <windows.h>
 
 	// the following macros interfere with std::max and std::min as used throughout ...
 	// Should be taken care of by NOMINMAX above^
 //	#undef min
 //	#undef max
 
-	#ifndef LOCALE_INVARIANT
-		#define LOCALE_INVARIANT 0x007f
-	#endif
+#	ifndef LOCALE_INVARIANT
+#		define LOCALE_INVARIANT 0x007f
+#	endif
 #else
-	#include <time.h>
+#	include <time.h>
 #endif
 
 
@@ -59,12 +59,12 @@ inline std::string now();
  */
 enum SeverityLevel
 {
-	LOG_FATAL,		// Something horrible has happened and the game is going to die!
-	LOG_ERROR,		// Something bad happened but we can still move on.
-	LOG_WARNING,	// Something weird happened, nothing special but it's good to know.
-	LOG_INFO,		// Useful information for users/developers to help debug and figure stuff out.
-	LOG_DEBUG,		// Purely test stuff to help developers implement, not really relevant to users.
-	LOG_VERBOSE     // Extra details that even Max Planck wouldn't have cared about 90% of the time.
+	LOG_FATAL,		// 0 - Something horrible has happened and the game is going to die!
+	LOG_ERROR,		// 1 - Something bad happened but we can still move on.
+	LOG_WARNING,	// 2 - Something weird happened, nothing special but it's good to know.
+	LOG_INFO,		// 3 - Useful information for users/developers to help debug and figure stuff out.
+	LOG_DEBUG,		// 4 - Purely test stuff to help developers implement, not really relevant to users.
+	LOG_VERBOSE     // 5 - Extra details that even Planck wouldn't have cared about 90% of the time.
 };
 
 /**
@@ -77,9 +77,9 @@ class Logger
 {
 
 private:
-	///
+	/// Logger copy constructor
 	Logger(const Logger&);
-	///
+	/// Logger assignment operator
 	Logger& operator= (const Logger&);
 
 
@@ -88,9 +88,9 @@ private:
 
 
 		public:
-			///
+			/// cTor.
 			Logger();
-			///
+			/// dTor.
 			virtual ~Logger();
 
 			///
@@ -105,29 +105,36 @@ private:
 };
 
 
-///
+/**
+ *
+ */
 inline Logger::Logger()
 {}
 
-///
+/**
+ *
+ */
 inline std::ostringstream& Logger::get(SeverityLevel level)
 {
 	_oststr << "[" << toString(level) << "]" << "\t";
 	return _oststr;
 }
 
-///
-inline Logger::~Logger()
+/**
+ *
+ */
+inline Logger::~Logger() // virtual.
 {
 	_oststr << std::endl;
 	if (reportingLevel() == LOG_DEBUG || reportingLevel() == LOG_VERBOSE)
 	{
+		// FIX: Print to console is not working as expected in MinGW-w64.
 		std::fprintf(
-					stderr,
+					stdout, // was 'stderr'
 					"%s",
 					_oststr.str().c_str());
 
-		std::fflush(stderr);
+		std::fflush(stdout); // was 'stderr'
 	}
 
 	std::ostringstream oststr;
@@ -142,40 +149,47 @@ inline Logger::~Logger()
 	std::fclose(file);
 }
 
-///
-inline SeverityLevel& Logger::reportingLevel()
+/**
+ *
+ */
+inline SeverityLevel& Logger::reportingLevel() // static.
 {
 	static SeverityLevel reportingLevel = LOG_DEBUG;
 	return reportingLevel;
 }
 
-///
-inline std::string& Logger::logFile()
+/**
+ *
+ */
+inline std::string& Logger::logFile() // static.
 {
 	static std::string logFile = "openxcom.log";
 	return logFile;
 }
 
-inline std::string Logger::toString(SeverityLevel level)
+/**
+ *
+ */
+inline std::string Logger::toString(SeverityLevel level) // static.
 {
 	static const char* const buffer[] =
 	{
-		"FATAL",
-		"ERROR",
-		"WARN",
-		"INFO",
-		"DEBUG",
-		"VERBOSE"
+		"FATAL",	// 0 - LOG_FATAL
+		"ERROR",	// 1 - LOG_ERROR
+		"WARN",		// 2 - LOG_WARNING
+		"INFO",		// 3 - LOG_INFO
+		"DEBUG",	// 4 - LOG_DEBUG
+		"VERBOSE"	// 5 - LOG_VERBOSE
 	};
 
 	return buffer[level];
 }
 
-#define Log(level) \
-	if (level > Logger::reportingLevel()) ; \
-	else Logger().get(level)
+#define Log(level) if (level > Logger::reportingLevel()) ; else Logger().get(level)
 
-///
+/**
+ *
+ */
 inline std::string now()
 {
 	const int
@@ -193,7 +207,7 @@ inline std::string now()
 					date,
 					MAX_LEN) == 0)
 	{
-		return "Error in Now()";
+		return "Error in Now() [1]";
 	}
 
 	if (GetTimeFormatA(
@@ -204,7 +218,7 @@ inline std::string now()
 					tyme,
 					MAX_LEN) == 0)
 	{
-		return "Error in Now()";
+		return "Error in Now() [2]";
 	}
 
 	char result[MAX_RESULT] = {0};

@@ -768,12 +768,26 @@ void Screen::updateScale( // static.
 		break;
 	}
 
+// G++ linker wants it this way ...
+#ifdef _DEBUG
+	const int
+		screenWidth = Screen::ORIGINAL_WIDTH,
+		screenHeight = Screen::ORIGINAL_HEIGHT;
+
+	width = std::max(
+					width,
+					screenWidth);
+	height = std::max(
+					height,
+					screenHeight);
+#else
 	width = std::max(
 					width,
 					Screen::ORIGINAL_WIDTH);
 	height = std::max(
 					height,
 					Screen::ORIGINAL_HEIGHT);
+#endif
 
 	if (change == true
 		&& (Options::baseXResolution != width

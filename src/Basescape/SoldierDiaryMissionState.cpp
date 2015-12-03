@@ -72,7 +72,7 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	_txtKills		= new Text(80, 9, 188, 78);
 	_txtPoints		= new Text(80, 9, 188, 87);
 
-	_srfLine		= new Surface(120, 1, 100, 99);
+	_srfLine		= new Surface(120, 1, 100, 98);
 	_lstKills		= new TextList(217, 49, 50, 101);
 
 	_btnOk			= new TextButton(180, 16, 70, 152);

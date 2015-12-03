@@ -427,11 +427,11 @@ void SoldierDiary::load(const YAML::Node& node)
 		}
 	}
 
-	_missionIdList					= node["missionIdList"]					.as<std::vector<int> >(_missionIdList);
-	_regionTotal					= node["regionTotal"]					.as<std::map<std::string, int> >(_regionTotal);
-	_countryTotal					= node["countryTotal"]					.as<std::map<std::string, int> >(_countryTotal);
-	_typeTotal						= node["typeTotal"]						.as<std::map<std::string, int> >(_typeTotal);
-	_ufoTotal						= node["ufoTotal"]						.as<std::map<std::string, int> >(_ufoTotal);
+	_missionIdList					= node["missionIdList"]					.as<std::vector<int>>(_missionIdList);
+	_regionTotal					= node["regionTotal"]					.as<std::map<std::string, int>>(_regionTotal);
+	_countryTotal					= node["countryTotal"]					.as<std::map<std::string, int>>(_countryTotal);
+	_typeTotal						= node["typeTotal"]						.as<std::map<std::string, int>>(_typeTotal);
+	_ufoTotal						= node["ufoTotal"]						.as<std::map<std::string, int>>(_ufoTotal);
 	_scoreTotal						= node["scoreTotal"]					.as<int>(_scoreTotal);
 	_pointTotal						= node["pointTotal"]					.as<int>(_pointTotal);
 	_killTotal						= node["killTotal"]						.as<int>(_killTotal);

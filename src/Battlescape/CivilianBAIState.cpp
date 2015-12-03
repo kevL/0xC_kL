@@ -230,9 +230,9 @@ int CivilianBAIState::countHostiles()
 
 	_aggroTarget = nullptr;
 
-	const Position origin = _battleSave->getTileEngine()->getSightOriginVoxel(_unit);
+	const Position originVoxel = _battleSave->getTileEngine()->getSightOriginVoxel(_unit);
 
-	Position target;
+	Position targetVoxel;
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
@@ -249,9 +249,9 @@ int CivilianBAIState::countHostiles()
 											(*i)->getPosition());
 				if (distTest < dist
 					&& _battleSave->getTileEngine()->canTargetUnit(
-																&origin,
+																&originVoxel,
 																(*i)->getTile(),
-																&target,
+																&targetVoxel,
 																_unit) == true)
 				{
 					dist = distTest;

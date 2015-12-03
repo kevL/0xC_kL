@@ -507,16 +507,21 @@ void SoldierDiaryPerformanceState::init()
 						wst3.c_str(),
 						wst4.c_str());
 
-	wst1 =
-	wst2 =
-	wst3 = L"";
 
 	if (_diary->getKillTotal() != 0) // Kill stats ->
 		wst1 = tr("STR_KILLS").arg(_diary->getKillTotal());
+	else
+		wst1 = L"";
+
 	if (_diary->getStunTotal() != 0)
 		wst2 = tr("STR_STUNS").arg(_diary->getStunTotal());
+	else
+		wst2 = L"";
+
 	if (_diary->getScorePoints() != 0)
 		wst3 = tr("STR_SCORE_VALUE").arg(_diary->getScorePoints());
+	else
+		wst3 = L"";
 
 	_lstKillTotals->addRow(
 						3,
@@ -525,8 +530,8 @@ void SoldierDiaryPerformanceState::init()
 						wst3.c_str());
 
 
-	const size_t lstRows (6);
-	TextList* const lstArray[lstRows] = // Kill & Mission stats ->
+	const size_t lstCols (6);
+	TextList* const lstArray[lstCols] = // Mission & Kill stats ->
 	{
 		_lstRace,
 		_lstRank,
@@ -536,7 +541,7 @@ void SoldierDiaryPerformanceState::init()
 		_lstUFO
 	};
 
-	const std::map<std::string, int> mapArray[lstRows] =
+	const std::map<std::string, int> mapArray[lstCols] =
 	{
 		_diary->getAlienRaceTotal(),
 		_diary->getAlienRankTotal(),
@@ -548,11 +553,10 @@ void SoldierDiaryPerformanceState::init()
 
 	for (size_t
 			i = 0;
-			i != lstRows;
+			i != lstCols;
 			++i)
 	{
 		size_t row (0);
-
 		for (std::map<std::string, int>::const_iterator
 				j = mapArray[i].begin();
 				j != mapArray[i].end();
@@ -605,14 +609,14 @@ void SoldierDiaryPerformanceState::init()
 
 		_awardsListEntry.push_back(woststr2.str());
 
-		drawSprites();
+		drawMedals();
 	}
 }
 
 /**
  * Draws sprites.
  */
-void SoldierDiaryPerformanceState::drawSprites()
+void SoldierDiaryPerformanceState::drawMedals() // private.
 {
 	if (_display == DIARY_MEDALS)
 	{
@@ -726,7 +730,7 @@ void SoldierDiaryPerformanceState::btnCommendationsToggle(Action*)
 }
 
 /**
- *
+ * Display a Medal's mouse-over info.
  */
 void SoldierDiaryPerformanceState::lstInfoMouseOver(Action*)
 {
@@ -760,7 +764,7 @@ void SoldierDiaryPerformanceState::think()
 	if (_lastScrollPos != _lstAwards->getScroll())
 	{
 		_lastScrollPos = _lstAwards->getScroll();
-		drawSprites();
+		drawMedals();
 	}
 }
 

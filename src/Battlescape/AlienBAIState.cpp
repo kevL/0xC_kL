@@ -736,13 +736,9 @@ void AlienBAIState::setupAmbush() // private.
 
 	if (selectClosestKnownEnemy() == true)
 	{
-		const int
-			BASE_SUCCESS_SYSTEMATIC	= 100,
-			COVER_BONUS				= 25,
-			FAST_PASS_THRESHOLD		= 80;
-
+		const TileEngine* const te = _battleSave->getTileEngine();
 		Position
-			originVoxel = _battleSave->getTileEngine()->getSightOriginVoxel(_aggroTarget),
+			originVoxel = te->getSightOriginVoxel(_aggroTarget),
 			scanVoxel, // placeholder.
 			pos;
 		const Tile* tile;
@@ -773,12 +769,12 @@ void AlienBAIState::setupAmbush() // private.
 				} */
 
 				if (countSpottingUnits(pos) == 0
-					&& _battleSave->getTileEngine()->canTargetUnit( // make sure Unit can't be seen here.
-																&originVoxel,
-																tile,
-																&scanVoxel,
-																_aggroTarget,
-																_unit) == false)
+					&& te->canTargetUnit( // make sure Unit can't be seen here.
+									&originVoxel,
+									tile,
+									&scanVoxel,
+									_aggroTarget,
+									_unit) == false)
 				{
 					pf->setPathingUnit(_unit);
 					pf->calculate(_unit, pos); // make sure Unit can move here
@@ -798,8 +794,8 @@ void AlienBAIState::setupAmbush() // private.
 
 						if (pf->getStartDirection() != -1)
 						{
-							if (_battleSave->getTileEngine()->faceWindow(pos) != -1)	// ideally get behind some cover,
-								score += COVER_BONUS;									// like say a window or low wall.
+							if (te->faceWindow(pos) != -1)	// ideally get behind some cover,
+								score += COVER_BONUS;		// like say a window or low wall.
 
 							if (score > bestScore)
 							{
@@ -812,6 +808,7 @@ void AlienBAIState::setupAmbush() // private.
 									_tuAmbush = tuAmbush;
 
 								bestScore = score;
+								static const int FAST_PASS_THRESHOLD = 80;
 								if (bestScore > FAST_PASS_THRESHOLD)
 									break;
 							}
@@ -824,7 +821,6 @@ void AlienBAIState::setupAmbush() // private.
 		if (bestScore > 0)
 		{
 			_ambushAction->type = BA_MOVE;
-
 			originVoxel = Position::toVoxelSpaceCentered(
 													_ambushAction->target,
 													_unit->getHeight(true)
@@ -845,17 +841,15 @@ void AlienBAIState::setupAmbush() // private.
 				pos = posNext;
 
 				tile = _battleSave->getTile(pos);
-				if (_battleSave->getTileEngine()->canTargetUnit( // do a virtual fire calculation
-															&originVoxel,
-															tile,
-															&scanVoxel,
-															_unit,
-															_aggroTarget) == true)
+				if (te->canTargetUnit( // do a virtual fire calculation
+									&originVoxel,
+									tile,
+									&scanVoxel,
+									_unit,
+									_aggroTarget) == true)
 				{
 					// if unit can virtually fire at the hypothetical target it knows which way to face.
-					_ambushAction->finalFacing = _battleSave->getTileEngine()->getDirectionTo(
-																						_ambushAction->target,
-																						pos);
+					_ambushAction->finalFacing = te->getDirectionTo(_ambushAction->target, pos);
 					break;
 				}
 			}
@@ -1007,15 +1001,7 @@ void AlienBAIState::setupEscape() // private.
 		dist = 0;
 
 	// weights of various factors in choosing a tile to which to withdraw
-	const int
-		EXPOSURE_PENALTY		= 10,
-		FIRE_PENALTY			= 40,
-		BASE_SUCCESS_SYSTEMATIC	= 100,
-		BASE_SUCCESS_DESPERATE	= 110,
-		FAST_PASS_THRESHOLD		= 100,	// a tileScore that's good enough to quit the while loop early;
-										// it's subjective, hand-tuned and may need tweaking
-		CUR_TILE_PREF			= 15,
-		unitsSpotting = countSpottingUnits(_unit->getPosition());
+	const int unitsSpotting = countSpottingUnits(_unit->getPosition());
 
 	Position bestTile (0,0,0);
 	const Tile* tile;
@@ -1132,8 +1118,7 @@ void AlienBAIState::setupEscape() // private.
 			} */
 		}
 
-		if (tile != NULL
-			&& tileScore > bestTileScore)
+		if (tile != NULL && tileScore > bestTileScore)
 		{
 			// calculate TUs to tile
 			// this could be gotten w/ findReachable() somehow but that would break something for sure
@@ -1159,9 +1144,9 @@ void AlienBAIState::setupEscape() // private.
 					tile->setPreviewTu(tileScore);
 				} */
 			}
-
 			pf->abortPath();
 
+			static const int FAST_PASS_THRESHOLD = 100;
 			if (bestTileScore > FAST_PASS_THRESHOLD)
 				coverFound = true; // good enough, gogo-agogo!!
 		}
@@ -1195,12 +1180,8 @@ int AlienBAIState::countKnownTargets() const // private.
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		if (validTarget(
-					*i,
-					true,true) == true)
-		{
+		if (validTarget(*i, true, true) == true)
 			++ret;
-		}
 	}
 
 	return ret;
@@ -1288,7 +1269,6 @@ int AlienBAIState::selectNearestTarget() // private.
 						(*i)->getTile()) == true)
 		{
 			++ret;
-
 			distTest = TileEngine::distance(
 										_unit->getPosition(),
 										(*i)->getPosition());
@@ -1666,10 +1646,8 @@ void AlienBAIState::evaluateAIMode() // private.
 		// AI_AMBUSH,	// 1
 		// AI_COMBAT,	// 2
 		// AI_ESCAPE	// 3
-		const float decision = static_cast<float>(RNG::generate(
-															1,
-															std::max(
-																1,
+		const float decision = static_cast<float>(RNG::generate(1,
+															std::max(1,
 																static_cast<int>(std::floor(patrolOdds + ambushOdds + combatOdds + escapeOdds)))));
 		//Log(LOG_INFO) << "decision = " << decision;
 		if (decision <= patrolOdds)
@@ -1774,10 +1752,6 @@ bool AlienBAIState::findFirePoint() // private.
 	std::vector<Position> tileSearch = _battleSave->getTileSearch();
 	RNG::shuffle(tileSearch);
 
-	const int
-		BASE_SUCCESS_SYSTEMATIC	= 100,
-		FAST_PASS_THRESHOLD		= 125;
-
 	_attackAction->type = BA_RETHINK;
 
 	Position
@@ -1848,6 +1822,7 @@ bool AlienBAIState::findFirePoint() // private.
 																							pos,
 																							_aggroTarget->getPosition());
 
+					static const int FAST_PASS_THRESHOLD = 125;
 					if (tileScore > FAST_PASS_THRESHOLD)
 						break;
 				}
@@ -2197,11 +2172,8 @@ bool AlienBAIState::pathWaypoints() // private.
 			while (dir != -1
 				&& dir2 == dir)
 			{
-				pf->directionToVector(
-									dir,
-									&vect);
+				pf->directionToVector(dir, &vect);
 				pos += vect; // step along path one tile
-
 				dir = pf->dequeuePath();
 			}
 			// dir changed:
@@ -2532,10 +2504,8 @@ bool AlienBAIState::psiAction() // private.
 					i != _battleSave->getUnits()->end();
 					++i)
 			{
-				if ((*i)->getGeoscapeSoldier() != NULL // what about doggies .... Should use isFearable() for doggies ....
-					&& validTarget( // will check for Mc, Exposed, etc.
-								*i,
-								true) == true
+				if ((*i)->getGeoscapeSoldier() != NULL	// what about doggies .... Should use isFearable() for doggies ....
+					&& validTarget(*i, true) == true	// will check for Mc, Exposed, etc.
 					&& (itRule->isLosRequired() == false
 						|| std::find(
 								_unit->getHostileUnits()->begin(),
@@ -2677,7 +2647,7 @@ bool AlienBAIState::validTarget( // private.
 		bool includeCivs) const
 {
 	//Log(LOG_INFO) << "AlienBAIState::validTarget() ID " << unit->getId();
-	if (unit->getFaction() == FACTION_HOSTILE				// target must not be on aLien side
+/*	if (unit->getFaction() == FACTION_HOSTILE				// target must not be on aLien side
 		|| unit->isOut_t(OUT_STAT) == true					// ignore targets that are dead/unconscious
 //		|| unit->isOut(true, true) == true
 		|| unit->getExposed() == -1
@@ -2687,11 +2657,22 @@ bool AlienBAIState::validTarget( // private.
 			&& unit->getTile()->getDangerous() == true))	// target has not been grenaded
 	{
 		return false;
+	} */
+
+	if ((unit->getFaction() == FACTION_PLAYER				// target must not be on aLien side
+			|| (unit->getFaction() == FACTION_NEUTRAL
+				&& includeCivs == true))
+		&& unit->isOut_t(OUT_STAT) == false					// ignore targets that are dead/unconscious
+		&& unit->getExposed() != -1
+		&& unit->getExposed() <= _intelligence				// target must be a unit that this aLien 'knows about'
+		&& (assessDanger == false
+			|| unit->getTile()->getDangerous() == false))	// target has not been grenaded
+	{
+		//Log(LOG_INFO) << ". . ret TRUE";
+		return true;
 	}
 
-	//Log(LOG_INFO) << ". . ret = " << (unit->getFaction() == FACTION_PLAYER);
-	return unit->getFaction() == FACTION_PLAYER
-		|| includeCivs == true;
+	return false;
 }
 
 /**

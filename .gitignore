@@ -3,6 +3,7 @@
 /deps/
 /nbproject/
 /res/
+/source_SDL/
 /source_YAML/
 
 Makefile
@@ -12,3 +13,4 @@ README.txt
 LICENSE.txt
 CHANGELOG.txt
 
+*.o

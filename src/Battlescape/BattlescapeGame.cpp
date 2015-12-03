@@ -1743,8 +1743,8 @@ void BattlescapeGame::checkForCasualties(
 						}
 						else												// Support unit
 						{
-							killStatRace = "STR_SUPPORT";
-							killStatRank = "STR_HEAVY_WEAPONS_PLATFORM";
+							killStatRace = "STR_HEAVY_WEAPONS_PLATFORM";
+							killStatRank = "STR_SUPPORT";
 						}
 					}
 					else if (defender->getOriginalFaction() == FACTION_HOSTILE)	// <- aLien DIED

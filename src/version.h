@@ -24,15 +24,11 @@
 
 
 //#define OPENXCOM_VERSION_SHORT "1.0"
-
-//#define OPENXCOM_VERSION_LONG "1.0.0.0"
 #define OPENXCOM_VERSION_LONG "1.0.0.kL"
-
 #define OPENXCOM_VERSION_NUMBER 1,0,0,0
 
 #ifndef OPENXCOM_VERSION_GIT
-//	#define OPENXCOM_VERSION_GIT ""
-	#define OPENXCOM_VERSION_GIT "oXc_kL"
+	#define OPENXCOM_VERSION_GIT "0xC_kL"
 #endif
 
 
@@ -44,7 +40,6 @@ namespace Version
 
 /// Local Time for saved file stamp.
 std::string timeStamp();
-
 /// Gets version as a time string.
 std::string getBuildDate(bool built = true);
 
