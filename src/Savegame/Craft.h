@@ -88,7 +88,7 @@ private:
 	std::vector<Vehicle*> _vehicles;
 
 	/// Calculates the Craft's minimum fuel required to go to a base.
-	int calcFuelLimit(const Base* const base) const;
+//	int calcFuelLimit(const Base* const base) const;
 
 
 	public:

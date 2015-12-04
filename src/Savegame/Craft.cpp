@@ -87,10 +87,10 @@ Craft::Craft(
 			i != _crRule->getWeapons();
 			++i)
 	{
-		_weapons.push_back(NULL);
+		_weapons.push_back(nullptr);
 	}
 
-	if (_base != NULL)
+	if (_base != nullptr)
 		setBase(_base);
 
 	_loadCap = _crRule->getMaxItems() + _crRule->getSoldiers() * 10;
@@ -149,7 +149,7 @@ void Craft::load(
 		{
 			const std::string type = (*i)["type"].as<std::string>();
 			if (type != "0"
-				&& rules->getCraftWeapon(type) != NULL)
+				&& rules->getCraftWeapon(type) != nullptr)
 			{
 				CraftWeapon* const cw = new CraftWeapon(
 													rules->getCraftWeapon(type),
@@ -158,7 +158,7 @@ void Craft::load(
 				_weapons[j++] = cw;
 			}
 			else
-				_weapons[j++] = NULL;
+				_weapons[j++] = nullptr;
 		}
 	}
 
@@ -185,7 +185,7 @@ void Craft::load(
 			++i)
 	{
 		const std::string type = (*i)["type"].as<std::string>();
-		if (rules->getItem(type) != NULL)
+		if (rules->getItem(type) != nullptr)
 		{
 			const int armorSize = rules->getArmor(rules->getUnit(type)->getArmor())->getSize();
 			Vehicle* const vhcl = new Vehicle(
@@ -381,7 +381,7 @@ void Craft::changeRules(RuleCraft* const crRule)
 			i != _crRule->getWeapons();
 			++i)
 	{
-		_weapons.push_back(NULL);
+		_weapons.push_back(nullptr);
 	}
 }
 
@@ -489,11 +489,11 @@ void Craft::setCraftStatus(const std::string& status)
  */
 std::string Craft::getAltitude() const
 {
-	if (_dest == NULL)
+	if (_dest == nullptr)
 		return "STR_LOW_UC";
 
 	const Ufo* const ufo = dynamic_cast<Ufo*>(_dest);
-	if (ufo != NULL)
+	if (ufo != nullptr)
 	{
 		if (ufo->getAltitude() == "STR_GROUND")
 			return "STR_VERY_LOW";
@@ -524,7 +524,7 @@ void Craft::setDestination(Target* const dest)
 		_takeOff = 75;
 		setSpeed(_crRule->getMaxSpeed() / 10);
 	}
-	else if (dest == NULL)
+	else if (dest == nullptr)
 		setSpeed(_crRule->getMaxSpeed() / 2);
 	else
 		setSpeed(_crRule->getMaxSpeed());
@@ -546,7 +546,7 @@ int Craft::getNumWeapons() const
 				i != _weapons.end();
 				++i)
 		{
-			if (*i != NULL)
+			if (*i != nullptr)
 				++ret;
 		}
 	}
@@ -743,24 +743,15 @@ int Craft::getFuelConsumption() const
 
 /**
  * Gets the minimum required fuel for this Craft to get back to Base.
+ * @note This now assumes that Craft cannot be transferred during mid-flight.
  * @return, fuel amount
  */
 int Craft::getFuelLimit() const
 {
-	return calcFuelLimit(_base);
-}
-
-/**
- * Calculates the minimum required fuel for this Craft to get back to Base.
- * @note Speed and distance are in radians.
- * @param base - pointer to a target Base
- * @return, fuel amount
- */
-int Craft::calcFuelLimit(const Base* const base) const // private.
-{
+//	return calcFuelLimit(_base);
 	double dist;
-	if (_dest == NULL)
-		dist = getDistance(base);
+	if (_dest == nullptr)
+		dist = getDistance(_base);
 	else
 		dist = getDistance(_dest) + _base->getDistance(_dest);
 
@@ -768,11 +759,21 @@ int Craft::calcFuelLimit(const Base* const base) const // private.
 
 	return static_cast<int>(std::ceil(
 		   static_cast<double>(getFuelConsumption()) * dist / speed));
-/*	double
+}
+
+/*
+ * Calculates the minimum required fuel for this Craft to get back to Base.
+ * @note Speed and distance are in radians.
+ * @param base - pointer to a target Base
+ * @return, fuel amount
+ *
+int Craft::calcFuelLimit(const Base* const base) const // private.
+{
+	double
 		dist,
 		patrol_factor;
 
-	if (_dest != NULL)
+	if (_dest != nullptr)
 	{
 		patrol_factor = 1.;
 		dist = getDistance(_dest) + _base->getDistance(_dest);
@@ -789,8 +790,8 @@ int Craft::calcFuelLimit(const Base* const base) const // private.
 	const double speed = static_cast<double>(_crRule->getMaxSpeed()) * unitToRads / 6.;
 
 	return static_cast<int>(std::ceil(
-		   static_cast<double>(getFuelConsumption()) * dist * patrol_factor / speed)); */
-}
+		   static_cast<double>(getFuelConsumption()) * dist * patrol_factor / speed));
+} */
 
 /**
  * Sends this Craft back to its origin Base.
@@ -838,7 +839,7 @@ void Craft::think()
 		if (reachedDestination() == true
 			&& _dest == dynamic_cast<Target*>(_base))
 		{
-			setDestination(NULL);
+			setDestination(nullptr);
 			setSpeed(0);
 
 			_lowFuel =
@@ -868,7 +869,7 @@ void Craft::checkup()
 			i != _weapons.end();
 			++i)
 	{
-		if (*i != NULL)
+		if (*i != nullptr)
 		{
 			++cw;
 
@@ -944,7 +945,7 @@ std::string Craft::rearm(const Ruleset* const rules)
 			i != _weapons.end();
 			++i)
 	{
-		if (*i != NULL
+		if (*i != nullptr
 			&& (*i)->getRearming() == true)
 		{
 			test.clear();
@@ -1221,7 +1222,7 @@ int Craft::getDowntime(bool& delayed)
 			i != _weapons.end();
 			++i)
 	{
-		if (*i != NULL
+		if (*i != nullptr
 			&& (*i)->getRearming() == true)
 		{
 			const int reqQty = (*i)->getRules()->getAmmoMax() - (*i)->getAmmo();

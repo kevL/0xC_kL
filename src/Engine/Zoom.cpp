@@ -29,22 +29,21 @@
 #include "Scalers/xbrz.h"		// xBRZ
 
 #if (_MSC_VER >= 1400) || (defined(__MINGW32__) && defined(__SSE2__))
-	#ifndef __SSE2__
-		#define __SSE2__
-	#endif
+#	ifndef __SSE2__
+#		define __SSE2__
+#	endif
 
-	// probably Visual Studio (or Intel C++ which should also work)
-	#include <intrin.h>
+#	include <intrin.h> // probably Visual Studio (or Intel C++ which should also work)
 #endif
 
 #ifdef __GNUC__
-	#if (__i386__ || __x86_64__)
-		#include <cpuid.h>
-	#endif
+#	if (__i386__ || __x86_64__)
+#		include <cpuid.h>
+#	endif
 #endif
 
 #ifdef __SSE2__
-	#include <emmintrin.h> // for SSE2 intrinsics; see http://msdn.microsoft.com/en-us/library/has3d153%28v=vs.71%29.aspx
+#	include <emmintrin.h> // for SSE2 intrinsics; see http://msdn.microsoft.com/en-us/library/has3d153%28v=vs.71%29.aspx
 #endif
 
 
