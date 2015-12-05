@@ -166,7 +166,7 @@ bool OpenGL::lock(
 {
 	pitch = iwidth * ibpp;
 
-	return (data = buffer) != NULL; // kL_adj.
+	return (data = buffer) != nullptr; // kL_adj.
 }
 
 /**
@@ -552,8 +552,8 @@ OpenGL::OpenGL()
 		fragmentshader(0),
 		linear(false),
 		vertexshader(0),
-		buffer(NULL),
-		buffer_surface(NULL),
+		buffer(nullptr),
+		buffer_surface(nullptr),
 		iwidth(0),
 		iheight(0),
 		iformat(GL_UNSIGNED_INT_8_8_8_8_REV),	// this didn't seem to be set anywhere before...

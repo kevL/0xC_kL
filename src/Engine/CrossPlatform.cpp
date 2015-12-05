@@ -99,7 +99,7 @@ void showError(const std::string& error)
 {
 #ifdef _WIN32
 	MessageBoxA(
-			NULL,
+			nullptr,
 			error.c_str(),
 			"OpenXcom Error",
 			MB_ICONERROR | MB_OK);
@@ -146,9 +146,9 @@ std::vector<std::string> findDataFolders()
 
 	// Get Documents folder
 	if (SUCCEEDED(SHGetFolderPathA(
-								NULL,
+								nullptr,
 								CSIDL_PERSONAL,
-								NULL,
+								nullptr,
 								SHGFP_TYPE_CURRENT,
 								path)))
 	{
@@ -160,7 +160,7 @@ std::vector<std::string> findDataFolders()
 
 	// Get binary directory
 	if (GetModuleFileNameA(
-						NULL,
+						nullptr,
 						path,
 						MAX_PATH) != 0)
 	{
@@ -254,9 +254,9 @@ std::vector<std::string> findUserFolders()
 
 	// Get Documents folder
 	if (SUCCEEDED(SHGetFolderPathA(
-								NULL,
+								nullptr,
 								CSIDL_PERSONAL,
-								NULL,
+								nullptr,
 								SHGFP_TYPE_CURRENT,
 								path)))
 	{
@@ -268,7 +268,7 @@ std::vector<std::string> findUserFolders()
 
 	// Get binary directory
 	if (GetModuleFileNameA(
-						NULL,
+						nullptr,
 						path,
 						MAX_PATH) != 0)
 	{
@@ -687,7 +687,7 @@ bool folderExists(const std::string& path)
 	return (PathIsDirectoryA(path.c_str()) != FALSE);
 #elif __MORPHOS__
 	BPTR l = Lock(path.c_str(), SHARED_LOCK);
-	if (l != NULL)
+	if (l != nullptr)
 	{
 		UnLock(l);
 		return 1;
@@ -711,7 +711,7 @@ bool fileExists(const std::string& path)
 	return (PathFileExistsA(path.c_str()) != FALSE);
 #elif __MORPHOS__
 	BPTR l = Lock(path.c_str(), SHARED_LOCK);
-	if (l != NULL)
+	if (l != nullptr)
 	{
 		UnLock(l);
 		return 1;
@@ -939,8 +939,8 @@ std::pair<std::wstring, std::wstring> timeToString(time_t timeIn)
 	FileTimeToLocalFileTime(&ft, &ft);
 	FileTimeToSystemTime(&ft, &st);
 
-	GetDateFormatW(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, NULL, localDate, 25);
-	GetTimeFormatW(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &st, NULL, localTime, 25);
+	GetDateFormatW(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, nullptr, localDate, 25);
+	GetTimeFormatW(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &st, nullptr, localTime, 25);
 #endif
 */
 	const struct tm* const timeInfo = std::localtime(&timeIn);
@@ -968,7 +968,7 @@ std::string timeString()
 {
 	char curTime[13];
 
-	time_t timeOut = std::time(NULL);
+	time_t timeOut = std::time(nullptr);
 	struct tm* timeInfo = std::localtime(&timeOut);
 
 	std::strftime(
@@ -1137,13 +1137,14 @@ std::string getDosPath()
 #endif
 }
 
+#ifdef _WIN32
 /**
  * Sets the window icon for _WIN32 build configuration.
  * @param winResource -
  */
 void setWindowIcon(int winResource)
 {
-	const HINSTANCE handle = GetModuleHandle(NULL);
+	const HINSTANCE handle = GetModuleHandle(nullptr);
 	const HICON icon = LoadIcon(
 							handle,
 							MAKEINTRESOURCE(winResource));
@@ -1160,7 +1161,7 @@ void setWindowIcon(int winResource)
 					(LONG_PTR)icon);
 	}
 }
-
+#else
 /**
  * Sets the window icon if not _WIN32 build.
  * @param unixPath -
@@ -1171,12 +1172,13 @@ void setWindowIcon(const std::string& unixPath)
 	// so here's an ugly hack to match this ugly reasoning
 	const std::string utf8 = Language::wstrToUtf8(Language::fsToWstr(CrossPlatform::getDataFile(unixPath)));
 	SDL_Surface* const icon = IMG_Load(utf8.c_str());
-	if (icon != NULL)
+	if (icon != nullptr)
 	{
-		SDL_WM_SetIcon(icon, NULL);
+		SDL_WM_SetIcon(icon, nullptr);
 		SDL_FreeSurface(icon);
 	}
 }
+#endif
 
 }
 

@@ -123,7 +123,7 @@ ArticleDefinitionList Ufopaedia::getAvailableArticles( // protected/static.
 /**
  * Creates a new article State dependent on the given ArticleDefinition.
  * @param article - pointer to ArticleDefinition to create from
- * @return, pointer to ArticleState object if created or NULL otherwise
+ * @return, pointer to ArticleState object if created or nullptr otherwise
  */
 ArticleState* Ufopaedia::createArticleState(ArticleDefinition* const article) // protected/static.
 {
@@ -160,7 +160,7 @@ ArticleState* Ufopaedia::createArticleState(ArticleDefinition* const article) //
 		return new ArticleStateAward(dynamic_cast<ArticleDefinitionAward*>(article));
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**

@@ -48,10 +48,10 @@ Text::Text(
 			width,
 			height,
 			x,y),
-		_big(NULL),
-		_small(NULL),
-		_font(NULL),
-		_lang(NULL),
+		_big(nullptr),
+		_small(nullptr),
+		_font(nullptr),
+		_lang(nullptr),
 		_wrap(false),
 		_invert(false),
 		_contrast(1),
@@ -434,7 +434,7 @@ void Text::addTextHeight(int pad)
  */
 void Text::processText() // private.
 {
-	if (_font != NULL && _lang != NULL)
+	if (_font != nullptr && _lang != nullptr)
 	{
 		std::wstring* wst = &_text;
 
@@ -642,7 +642,7 @@ void Text::draw()
 	Surface::draw();
 
 	if (_text.empty() == true
-		|| _font == NULL)
+		|| _font == nullptr)
 	{
 		return;
 	}

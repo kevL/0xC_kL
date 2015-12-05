@@ -150,7 +150,7 @@ private:
 		static const size_t SEARCH_SIZE = SEARCH_DIST * SEARCH_DIST;
 
 		/// Creates a new battle save based on the current generic save.
-		explicit SavedBattleGame(const std::vector<OperationPool*>* const titles = NULL);
+		explicit SavedBattleGame(const std::vector<OperationPool*>* const titles = nullptr);
 		/// Cleans up the saved game.
 		~SavedBattleGame();
 
@@ -244,7 +244,7 @@ private:
 				|| pos.y >= _mapsize_y
 				|| pos.z >= _mapsize_z)
 			{
-				return NULL;
+				return nullptr;
 			}
 			return _tiles[getTileIndex(pos)]; }
 
@@ -374,7 +374,7 @@ private:
 				bool isXCOM = true) const;
 		/// Gets the morale modifier based on the highest ranked, living xcom/alien unit, or for a unit passed into this function.
 		int getMoraleModifier(
-				const BattleUnit* const unit = NULL,
+				const BattleUnit* const unit = nullptr,
 				bool isXCOM = true) const;
 
 		/// Checks whether a particular faction has eyes on *unit (whether any unit on that faction sees *unit).

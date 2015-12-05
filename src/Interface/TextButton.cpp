@@ -54,10 +54,10 @@ TextButton::TextButton(
 			height,
 			x,y),
 		_color(0),
-		_group(NULL),
+		_group(nullptr),
 		_contrast(1),
 		_geoscapeButton(false),
-		_comboBox(NULL)
+		_comboBox(nullptr)
 {
 	_text = new Text(
 					width,
@@ -83,7 +83,7 @@ TextButton::~TextButton()
  */
 bool TextButton::isButtonHandled(Uint8 btn)
 {
-	if (_comboBox != NULL)
+	if (_comboBox != nullptr)
 		return (btn == SDL_BUTTON_LEFT);
 	else
 		return InteractiveSurface::isButtonHandled(btn);
@@ -318,7 +318,7 @@ void TextButton::draw()
 	}
 
 	bool press;
-	if (_group == NULL)
+	if (_group == nullptr)
 		press = isButtonPressed();
 	else
 		press = (*_group == this);
@@ -343,12 +343,12 @@ void TextButton::draw()
 void TextButton::mousePress(Action* action, State* state)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		&& _group != NULL)
+		&& _group != nullptr)
 	{
 		TextButton* pre = *_group;
 		*_group = this;
 
-		if (pre != NULL)
+		if (pre != nullptr)
 			pre->draw();
 
 		draw();
@@ -356,17 +356,17 @@ void TextButton::mousePress(Action* action, State* state)
 
 	if (isButtonHandled(action->getDetails()->button.button) == true)
 	{
-		if (soundPress != NULL
-//			&& _group == NULL
+		if (soundPress != nullptr
+//			&& _group == nullptr
 			&& action->getDetails()->button.button != SDL_BUTTON_WHEELUP
 			&& action->getDetails()->button.button != SDL_BUTTON_WHEELDOWN
-			&& (_comboBox == NULL
+			&& (_comboBox == nullptr
 				|| _comboBox->getVisible() == true))
 		{
 			soundPress->play(Mix_GroupAvailable(0));
 		}
 
-/*		if (_comboBox != NULL // moved to mouseRelease()
+/*		if (_comboBox != nullptr // moved to mouseRelease()
 			&& _comboBox->getVisible() == true)
 		{
 			_comboBox->toggle();
@@ -387,7 +387,7 @@ void TextButton::mouseRelease(Action* action, State* state)
 {
 	if (isButtonHandled(action->getDetails()->button.button) == true)
 	{
-		if (_comboBox != NULL // was in mousePress()
+		if (_comboBox != nullptr // was in mousePress()
 			&& _comboBox->getVisible() == true)
 		{
 			_comboBox->toggle();
@@ -408,7 +408,7 @@ void TextButton::setComboBox(ComboBox* comboBox)
 {
 	_comboBox = comboBox;
 
-	if (_comboBox != NULL)
+	if (_comboBox != nullptr)
 		_text->setX(-6);
 //	else _text->setX(0);
 }

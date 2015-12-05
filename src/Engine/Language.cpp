@@ -137,10 +137,10 @@ std::string Language::wstrToUtf8(const std::wstring& src)
 								0,
 								&src[0],
 								static_cast<int>(src.size()),
-								NULL,
+								nullptr,
 								0,
-								NULL,
-								NULL);
+								nullptr,
+								nullptr);
 	std::string st (bytes, 0); // init.
 	WideCharToMultiByte(
 					CP_UTF8,
@@ -149,8 +149,8 @@ std::string Language::wstrToUtf8(const std::wstring& src)
 					static_cast<int>(src.size()),
 					&st[0],
 					bytes,
-					NULL,
-					NULL);
+					nullptr,
+					nullptr);
 
 	return st;
 #else
@@ -223,10 +223,10 @@ std::string Language::wstrToCp(const std::wstring& src)
 								0,
 								&src[0],
 								static_cast<int>(src.size()),
-								NULL,
+								nullptr,
 								0,
-								NULL,
-								NULL);
+								nullptr,
+								nullptr);
 	std::string st (bytes, 0); // init.
 	WideCharToMultiByte(
 					CP_ACP,
@@ -235,8 +235,8 @@ std::string Language::wstrToCp(const std::wstring& src)
 					static_cast<int>(src.size()),
 					&st[0],
 					bytes,
-					NULL,
-					NULL);
+					nullptr,
+					nullptr);
 
 	return st;
 #else
@@ -289,7 +289,7 @@ std::wstring Language::utf8ToWstr(const std::string& src)
 								0,
 								&src[0],
 								static_cast<int>(src.size()),
-								NULL,
+								nullptr,
 								0);
 	std::wstring wst (bytes, 0); // init.
 	MultiByteToWideChar(
@@ -374,7 +374,7 @@ std::wstring Language::cpToWstr(const std::string& src)
 								0,
 								&src[0],
 								static_cast<int>(src.size()),
-								NULL,
+								nullptr,
 								0);
 	std::wstring wst (bytes, 0); // init.
 	MultiByteToWideChar(
@@ -538,7 +538,7 @@ void Language::load(
 		}
 	}
 
-	if (extras != NULL)
+	if (extras != nullptr)
 	{
 		for (std::map<std::string, std::string>::const_iterator
 				i = extras->getStrings()->begin();

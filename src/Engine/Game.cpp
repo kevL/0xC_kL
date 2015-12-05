@@ -111,7 +111,7 @@ Game::Game(const std::string& title)
 
 	// Set the window icon
 #ifdef _WIN32
-	CrossPlatform::setWindowIcon(103);
+	CrossPlatform::setWindowIcon(2);
 #else
 	CrossPlatform::setWindowIcon("openxcom.png");
 #endif

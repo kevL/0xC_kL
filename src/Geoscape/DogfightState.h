@@ -248,11 +248,11 @@ private:
 
 		/// Gets pointer to the UFO in this dogfight.
 		Ufo* getUfo() const;
-		/// Sets the UFO associated with this dogfight to NULL.
+		/// Sets the UFO associated with this dogfight to nullptr.
 		void clearUfo();
 		/// Gets pointer to the xCom Craft in this dogfight.
 		Craft* getCraft() const;
-		/// Sets pointer to the xCom Craft in this dogfight to NULL.
+		/// Sets pointer to the xCom Craft in this dogfight to nullptr.
 		void clearCraft();
 
 		/// Gets the current distance between UFO and Craft.

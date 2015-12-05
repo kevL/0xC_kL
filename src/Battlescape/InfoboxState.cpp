@@ -93,7 +93,7 @@ void InfoboxState::handle(Action* action)
  */
 void InfoboxState::think()
 {
-	_timer->think(this, NULL);
+	_timer->think(this, nullptr);
 }
 
 /**

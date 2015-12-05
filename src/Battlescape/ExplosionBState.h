@@ -75,7 +75,7 @@ private:
 				const Position center,
 				BattleItem* const item,
 				BattleUnit* const unit,
-				Tile* const tile = NULL,
+				Tile* const tile = nullptr,
 				bool lowerWeapon = false,
 				bool meleeSuccess = false,
 				bool forceCamera = false);

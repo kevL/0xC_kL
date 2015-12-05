@@ -273,7 +273,7 @@ void ScrollBar::mouseRelease(Action* action, State* state)
 void ScrollBar::think()
 {
 	InteractiveSurface::think();
-	_timer->think(NULL, this);
+	_timer->think(nullptr, this);
 }
 
 /**
@@ -281,7 +281,7 @@ void ScrollBar::think()
  */
 void ScrollBar::scroll()
 {
-	Uint8* keystate = SDL_GetKeyState(NULL);
+	Uint8* keystate = SDL_GetKeyState(nullptr);
 	if (keystate[SDLK_UP] == 1 || keystate[SDLK_KP8] == 1)
 		_list->scrollUp();											// up 1 line
 	else if (keystate[SDLK_DOWN] == 1 || keystate[SDLK_KP2] == 1)
@@ -368,13 +368,13 @@ void ScrollBar::draw()
  */
 void ScrollBar::drawTrack()
 {
-	if (_bg != NULL)
+	if (_bg != nullptr)
 	{
 		_track->copy(_bg);
 
 		if (_contrast == true)
 			_track->offset(-5,1);
-		else if (_list->getComboBox() != NULL)
+		else if (_list->getComboBox() != nullptr)
 			_track->offset(1, Palette::PAL_bgID);
 		else
 			_track->offset(-5, Palette::PAL_bgID);

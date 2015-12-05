@@ -87,7 +87,7 @@ private:
 		GeoscapeCraftState(
 				Craft* craft,
 				GeoscapeState* geo,
-				Waypoint* waypoint = NULL,
+				Waypoint* waypoint = nullptr,
 				bool doublePop = false,
 				bool transpose = false);
 		/// Cleans up the Geoscape Craft state.

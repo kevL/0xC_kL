@@ -562,7 +562,7 @@ void BasescapeState::viewLeftClick(Action*)
 	const BaseFacility* const fac = _view->getSelectedFacility();
 	bool bPop = false;
 
-	if (fac == NULL) // dirt.
+	if (fac == nullptr) // dirt.
 	{
 		_game->pushState(new MonthlyCostsState(_base));
 		bPop = true;
@@ -576,7 +576,7 @@ void BasescapeState::viewLeftClick(Action*)
 					i != _base->getCrafts()->size();
 					++i)
 			{
-				if (fac->getCraft() == NULL
+				if (fac->getCraft() == nullptr
 					|| fac->getCraft()->getCraftStatus() == "STR_OUT")
 				{
 					_game->pushState(new CraftsState(_base));
@@ -655,7 +655,7 @@ void BasescapeState::viewLeftClick(Action*)
 void BasescapeState::viewRightClick(Action*)
 {
 	BaseFacility* const fac = _view->getSelectedFacility();
-	if (fac != NULL)
+	if (fac != nullptr)
 	{
 		if (fac->inUse() == true)
 			_game->pushState(new ErrorMessageState(
@@ -686,12 +686,12 @@ void BasescapeState::viewMouseOver(Action*)
 	std::wostringstream woststr;
 
 	const BaseFacility* const fac = _view->getSelectedFacility();
-	if (fac != NULL)
+	if (fac != nullptr)
 	{
 		_txtFacility->setAlign(ALIGN_LEFT);
 		woststr << tr(fac->getRules()->getType());
 
-		if (fac->getCraft() != NULL)
+		if (fac->getCraft() != nullptr)
 			woststr << L" " << tr("STR_CRAFT_")
 								.arg(fac->getCraft()->getName(_game->getLanguage()));
 	}

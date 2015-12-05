@@ -195,7 +195,7 @@ void BaseDetectionState::think()
 	if (_window->isPopupDone() == false)
 		_window->think();
 	else if (_base->getBaseExposed() == true)
-		_blinkTimer->think(this, NULL);
+		_blinkTimer->think(this, nullptr);
 }
 
 /**

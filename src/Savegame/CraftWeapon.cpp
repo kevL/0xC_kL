@@ -235,7 +235,7 @@ CraftWeaponProjectile* CraftWeapon::fire() const
 int CraftWeapon::getClipsLoaded(const Ruleset* const rules) const
 {
 	const RuleItem* const clip = rules->getItem(_cwRule->getClipItem());
-	if (clip != NULL
+	if (clip != nullptr
 		&& clip->getClipSize() > 0)
 	{
 		return static_cast<int>(std::floor(

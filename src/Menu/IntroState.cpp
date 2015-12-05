@@ -52,7 +52,7 @@ namespace OpenXcom
 IntroState::IntroState(const bool wasLetterBoxed)
 	:
 		_wasLetterBoxed(wasLetterBoxed),
-		_flcPlayer(NULL)
+		_flcPlayer(nullptr)
 {
 //	_oldMusic = Options::musicVolume;
 //	_oldSound = Options::soundVolume;
@@ -377,8 +377,8 @@ AudioSequence(
 		FlcPlayer* flcPlayer)
 	:
 		rp(resources),
-		m(NULL),
-		s(NULL),
+		m(nullptr),
+		s(nullptr),
 		trackPosition(0),
 		_flcPlayer(flcPlayer)
 {}
@@ -425,7 +425,7 @@ void operator()()
 		{
 			for (soundInFile
 					**sounds = introSounds;
-					*sounds != NULL;
+					*sounds != nullptr;
 					++sounds) // try hybrid sound set, then intro.cat or sample3.cat alone
 			{
 				const soundInFile* const sf = (*sounds) + command;
@@ -434,7 +434,7 @@ void operator()()
 				s = rp->getSound(
 								sf->catFile,
 								sf->sound);
-				if (s != NULL)
+				if (s != nullptr)
 				{
 					s->play(-1); // kL
 //kL				int channel = trackPosition %4; // use at most four channels to play sound effects

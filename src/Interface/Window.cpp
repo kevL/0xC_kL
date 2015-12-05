@@ -65,7 +65,7 @@ Window::Window(
 		_state(state),
 		_popType(popType),
 		_toggle(toggle),
-		_bg(NULL),
+		_bg(nullptr),
 		_dX(-x),
 		_dY(-y),
 		_color(0),
@@ -88,7 +88,7 @@ Window::Window(
 		_hidden = true;
 		_timer->start();
 
-		if (_state != NULL)
+		if (_state != nullptr)
 		{
 			_screen = _state->isScreen();
 			if (_screen == true && _toggle == true) // <- for opening UfoPaedia in battlescape w/ black BG.
@@ -116,7 +116,7 @@ void Window::think()
 		_hidden = false;
 	}
 
-	_timer->think(NULL, this);
+	_timer->think(nullptr, this);
 }
 
 /**
@@ -279,7 +279,7 @@ void Window::draw()
 
 	if (rect.w != 0 && rect.h != 0)
 	{
-		if (_bg != NULL)
+		if (_bg != nullptr)
 		{
 			_bg->getCrop()->x = static_cast<Sint16>(static_cast<int>(rect.x) - _dX - _bgX);
 			_bg->getCrop()->y = static_cast<Sint16>(static_cast<int>(rect.y) - _dY - _bgY);

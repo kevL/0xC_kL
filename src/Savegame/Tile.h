@@ -158,7 +158,7 @@ protected:
 				MovementType moveType) const;
 
 		/// Checks if this tile has a floor.
-		bool hasNoFloor(const Tile* const tileBelow = NULL) const;
+		bool hasNoFloor(const Tile* const tileBelow = nullptr) const;
 
 		/// Checks if the Tile is a big wall.
 		bool isBigWall() const;
@@ -179,7 +179,7 @@ protected:
 		/// Opens a door.
 		int openDoor(
 				const MapDataType partType,
-				const BattleUnit* const unit = NULL);
+				const BattleUnit* const unit = nullptr);
 //				const BattleActionType reserved = BA_NONE);
 		/**
 		 * Checks if the ufo door is open or opening.
@@ -190,7 +190,7 @@ protected:
 		 * @return, true if ufo-door is valid and not closed
 		 */
 		bool isUfoDoorOpen(MapDataType partType) const
-		{	return _objects[partType] != NULL
+		{	return _objects[partType] != nullptr
 				&& _objects[partType]->isUfoDoor() == true
 				&& _curFrame[partType] != 0; }
 		/// Closes ufo door.
@@ -260,7 +260,7 @@ protected:
 //		{ return _smoke; }
 
 		/// Ends this tile's turn. Units catch on fire.
-		void hitStuff(SavedBattleGame* const battleSave = NULL);
+		void hitStuff(SavedBattleGame* const battleSave = nullptr);
 
 		/// Animates the tile parts.
 		void animateTile();
@@ -273,7 +273,7 @@ protected:
 		/// Sets a unit on this tile.
 		void setUnit(
 				BattleUnit* const unit,
-				const Tile* const tileBelow = NULL);
+				const Tile* const tileBelow = nullptr);
 		/// Sets a unit transitorily on this Tile.
 		void setTransitUnit(BattleUnit* const unit);
 		/**

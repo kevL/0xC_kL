@@ -177,7 +177,7 @@ void OptionsAdvancedState::addSettings(const std::vector<OptionInfo>& settings)
 /**
  * Gets the currently selected setting.
  * @param sel Selected row.
- * @return, Pointer to option, NULL if none selected.
+ * @return, Pointer to option, nullptr if none selected.
  */
 OptionInfo* OptionsAdvancedState::getSetting(size_t sel)
 {

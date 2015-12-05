@@ -107,7 +107,7 @@ ArticleStateUfo::ArticleStateUfo(const ArticleDefinitionUfo* const defs)
 	std::ostringstream oststr;
 	oststr << "INTERWIN_" << sprite;
 	Surface* const srfPreview = _game->getResourcePack()->getSurface(oststr.str());
-	if (srfPreview != NULL)
+	if (srfPreview != nullptr)
 		srfPreview->blit(_image);
 
 	_txtInfo = new Text(300, 50, 10, 140);

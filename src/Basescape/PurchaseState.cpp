@@ -19,10 +19,9 @@
 
 #include "PurchaseState.h"
 
-//#include <cfloat>
-//#include <climits>
-//#include <cmath>
 #include <iomanip>
+//#include <limits>
+//#include <map>
 //#include <sstream>
 
 #include "../fmath.h"
@@ -310,7 +309,7 @@ PurchaseState::PurchaseState(Base* const base)
 		clRule = rules->getItem(cwRule->getClipItem());
 		type = clRule->getType();
 
-		if (clRule->getBuyCost() != 0) // clRule != NULL && // + isResearched
+		if (clRule->getBuyCost() != 0) // clRule != nullptr && // + isResearched
 		{
 			_orderQty.push_back(0);
 			_items.push_back(type);
@@ -493,8 +492,8 @@ void PurchaseState::think()
 {
 	State::think();
 
-	_timerInc->think(this, NULL);
-	_timerDec->think(this, NULL);
+	_timerInc->think(this, nullptr);
+	_timerDec->think(this, nullptr);
 }
 
 /**
@@ -766,7 +765,6 @@ void PurchaseState::increaseByValue(int qtyDelta)
 	if (error.empty() == false)
 	{
 		_timerInc->stop();
-
 		const RuleInterface* const uiRule = _game->getRuleset()->getInterface("buyMenu");
 		_game->pushState(new ErrorMessageState(
 											error,

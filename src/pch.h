@@ -18,6 +18,61 @@
 #	define _USE_MATH_DEFINES
 #endif
 
+#include <algorithm>	// min/max
+#include <cassert>		// asserts
+#include <climits>		// integer limits
+#include <cmath>		// math functions
+#include <cstddef>		// defs, nullptr etc.
+#include <cstdint>		// integer typedefs
+#include <cstring>		// strings & arrays
+#include <ctime>		// time, CrossPlatform
+#include <cctype>		// character tests & conversions
+#include <exception>	// exceptions
+#include <fstream>		// file streams
+#include <functional>	// functors
+#include <iomanip>		// precision etc.
+#include <limits>		// numeric_limits
+#include <list>			// lists
+#include <locale>		// localization, CrossPlatform
+#include <map>			// maps
+#include <queue>		// queues
+#include <set>			// sets
+#include <sstream>		// streams
+#include <stack>		// lifo stacks
+#include <string>		// strings
+#include <utility>		// pairs
+#include <vector>		// vectors
+
+#if HAVE_ALLOCA_H
+#	include <alloca.h>		// scalers ->
+#endif
+#include <assert.h>		// <cassert>
+#if HAVE_CONFIG_H
+#	include <config.h>
+#endif
+#include <stdint.h>
+#include <stdlib.h>
+
+#include <sys/stat.h>	// CrossPlatform
+#include <sys/types.h>	// dirent.h
+#include <dirent.h>
+
+/*
+#ifdef _WIN32
+	#ifndef NOMINMAX
+		#define NOMINMAX
+	#endif
+
+	#ifndef WIN32_LEAN_AND_MEAN
+		#define WIN32_LEAN_AND_MEAN
+	#endif
+
+	#include <windows.h>
+#endif */
+
+
+
+/*
 #include <algorithm>
 //#include <assert.h>
 #include <bitset>
@@ -62,7 +117,7 @@
 #include <utility>
 #include <vector>
 //#include <wchar.h>
-
+*/
 
 // see also: Engine/CrossPlatform.cpp & Engine/Language.cpp & Engine/Logger.h
 /*
@@ -73,7 +128,7 @@
 
 #	define WIN32_LEAN_AND_MEAN
 #	include <windows.h>
-//#	include <shlobj.h>		// No, causes conflict OR
+//#	include <shlobj.h>	// No, causes conflict OR
 //#	include <shlwapi.h>	// this causes conflict ....
 #	include <direct.h>
 #	include <malloc.h>
@@ -132,16 +187,17 @@
 #endif
 
 #include <SDL.h>
-#include <SDL_endian.h>
+//#include <SDL_endian.h>
+#include <SDL_events.h>
 #include <SDL_gfxPrimitives.h>
 #include <SDL_image.h>
-#include <SDL_keysym.h>
+//#include <SDL_keysym.h>
 #include <SDL_mixer.h>
-//#include <SDL_opengl.h> // done above^
-#include <SDL_syswm.h>
+#include <SDL_stdinc.h> // for 'Uint8'(etc) types
+//#include <SDL_syswm.h>
 //#include <SDL_thread.h>
-#include <SDL_types.h>
-//#include <SDL_video.h>
+//#include <SDL_types.h>
+#include <SDL_video.h>
 
 
 #include <yaml-cpp/yaml.h>

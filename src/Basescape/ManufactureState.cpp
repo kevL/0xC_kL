@@ -52,7 +52,7 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the Manufacture screen.
  * @param base	- pointer to the Base to get info from
- * @param state	- pointer to the BasescapeState (default NULL when geoscape-invoked)
+ * @param state	- pointer to the BasescapeState (default nullptr when geoscape-invoked)
  */
 ManufactureState::ManufactureState(
 		Base* const base,
@@ -372,7 +372,7 @@ void ManufactureState::lstManufactureClick(Action*)
  */
 void ManufactureState::miniClick(Action*)
 {
-	if (_state != NULL) // cannot switch bases if coming from geoscape.
+	if (_state != nullptr) // cannot switch bases if coming from geoscape.
 	{
 		const size_t baseId = _mini->getHoveredBase();
 		if (baseId < _baseList->size())

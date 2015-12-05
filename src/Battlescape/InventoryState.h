@@ -134,7 +134,7 @@ private:
 		/// Creates the Inventory state.
 		InventoryState(
 				bool tuMode = false,
-				BattlescapeState* const parent = NULL);
+				BattlescapeState* const parent = nullptr);
 		/// Cleans up the Inventory state.
 		~InventoryState();
 

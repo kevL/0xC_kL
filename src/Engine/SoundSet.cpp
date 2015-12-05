@@ -82,7 +82,7 @@ void SoundSet::loadCat(
 
 		// If there's no WAV header (44 bytes), add it
 		// Assuming sounds are 8-bit 8000Hz (DOS version)
-		unsigned char* newsound = NULL;
+		unsigned char* newsound = nullptr;
 		if (wav == false)
 		{
 			if (bytes != 0)
@@ -240,7 +240,7 @@ Sound* SoundSet::getSound(size_t id)
 	if (_sounds.find(id) != _sounds.end())
 		return _sounds[id];
 
-	return NULL;
+	return nullptr;
 }
 
 

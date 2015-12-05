@@ -79,9 +79,9 @@ Inventory::Inventory(
 			height,
 			x,y),
 		_game(game),
-		_selUnit(NULL),
-		_selItem(NULL),
-		_mouseOverItem(NULL),
+		_selUnit(nullptr),
+		_selItem(nullptr),
+		_mouseOverItem(nullptr),
 		_tuMode(true),
 		_atBase(atBase),
 		_groundOffset(0),
@@ -294,7 +294,7 @@ void Inventory::drawItems()
 	_items->clear();
 	_grenadeFuses.clear();
 
-	if (_selUnit != NULL)
+	if (_selUnit != nullptr)
 	{
 		SurfaceSet* const srt = _game->getResourcePack()->getSurfaceSet("BIGOBS.PCK");
 		Surface* srf;
@@ -307,7 +307,7 @@ void Inventory::drawItems()
 			if (*i != _selItem)
 			{
 				srf = srt->getFrame((*i)->getRules()->getBigSprite());
-				if (srf != NULL) // safety.
+				if (srf != nullptr) // safety.
 				{
 					if ((*i)->getSlot()->getType() == INV_SLOT)
 					{
@@ -352,7 +352,7 @@ void Inventory::drawItems()
 				&& (*i)->getRules()->getInventoryWidth() != 0)
 			{
 				srf = srt->getFrame((*i)->getRules()->getBigSprite());
-				if (srf != NULL) // safety.
+				if (srf != nullptr) // safety.
 				{
 					srf->setX((*i)->getSlot()->getX()
 							+ ((*i)->getSlotX() - _groundOffset) * RuleInventory::SLOT_W);
@@ -398,7 +398,7 @@ void Inventory::drawItems()
 /**
  * Moves an item to a specified slot in the selected unit's inventory.
  * @param item	- pointer to a BattleItem
- * @param slot	- pointer to RuleInventory slot or NULL if none
+ * @param slot	- pointer to RuleInventory slot or nullptr if none
  * @param x		- X position in slot (default 0)
  * @param y		- Y position in slot (default 0)
  */
@@ -408,14 +408,14 @@ void Inventory::moveItem( // private.
 		int x,
 		int y)
 {
-	if (slot == NULL) // Make items vanish (eg. ammo in weapons)
+	if (slot == nullptr) // Make items vanish (eg. ammo in weapons)
 	{
 		if (item->getSlot()->getType() == INV_GROUND)
 			_selUnit->getTile()->removeItem(item);
 		else
 			item->moveToOwner();
 
-		item->setSlot(NULL);
+		item->setSlot(nullptr);
 	}
 	else
 	{
@@ -426,13 +426,13 @@ void Inventory::moveItem( // private.
 				item->moveToOwner();
 				_selUnit->getTile()->addItem(item, item->getSlot());
 
-				if (item->getUnit() != NULL
+				if (item->getUnit() != nullptr
 					&& item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
 				{
 					item->getUnit()->setPosition(_selUnit->getPosition());
 				}
 			}
-			else if (item->getSlot() == NULL					// unload a weapon clip to left hand
+			else if (item->getSlot() == nullptr					// unload a weapon clip to left hand
 				|| item->getSlot()->getType() == INV_GROUND)	// or pick up item.
 			{
 				if (_tuMode == true									// To prevents units from picking up large objects and running around with
@@ -445,7 +445,7 @@ void Inventory::moveItem( // private.
 				item->moveToOwner(_selUnit);
 				_selUnit->getTile()->removeItem(item);
 
-				if (item->getUnit() != NULL
+				if (item->getUnit() != nullptr
 					&& item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
 				{
 					item->getUnit()->setPosition(Position(-1,-1,-1));
@@ -463,7 +463,7 @@ void Inventory::moveItem( // private.
  * Checks if an item in a certain slot position would overlap with any other inventory item.
  * @param unit	- pointer to current unit
  * @param item	- pointer to battle item
- * @param slot	- pointer to inventory slot, or NULL if none
+ * @param slot	- pointer to inventory slot, or nullptr if none
  * @param x		- X position in slot (default 0)
  * @param y		- Y position in slot (default 0)
  * @return, true if there's overlap
@@ -489,7 +489,7 @@ bool Inventory::overlapItems( // static.
 			}
 		}
 	}
-	else if (unit->getTile() != NULL)
+	else if (unit->getTile() != nullptr)
 	{
 		for (std::vector<BattleItem*>::const_iterator
 				i = unit->getTile()->getInventory()->begin();
@@ -508,7 +508,7 @@ bool Inventory::overlapItems( // static.
  * Gets the inventory slot located in the specified mouse position.
  * @param x - pointer to mouse X position; returns the slot's X position
  * @param y - pointer to mouse Y position; returns the slot's Y position
- * @return, pointer to slot rules or NULL if none
+ * @return, pointer to slot rules or nullptr if none
  */
 RuleInventory* Inventory::getSlotInPosition( // private.
 		int* x,
@@ -523,12 +523,12 @@ RuleInventory* Inventory::getSlotInPosition( // private.
 			return i->second;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**
  * Returns the item currently grabbed by the player.
- * @return, pointer to selected BattleItem or NULL if none
+ * @return, pointer to selected BattleItem or nullptr if none
  */
 BattleItem* Inventory::getSelectedItem() const
 {
@@ -537,11 +537,11 @@ BattleItem* Inventory::getSelectedItem() const
 
 /**
  * Changes the item currently grabbed by the player.
- * @param item - pointer to selected BattleItem (default NULL)
+ * @param item - pointer to selected BattleItem (default nullptr)
  */
 void Inventory::setSelectedItem(BattleItem* const item)
 {
-	if (item != NULL && item->getRules()->isFixed() == false)
+	if (item != nullptr && item->getRules()->isFixed() == false)
 	{
 		_selItem = item;
 
@@ -555,7 +555,7 @@ void Inventory::setSelectedItem(BattleItem* const item)
 	}
 	else
 	{
-		_selItem = NULL;
+		_selItem = nullptr;
 		_selection->clear();
 	}
 
@@ -564,7 +564,7 @@ void Inventory::setSelectedItem(BattleItem* const item)
 
 /**
  * Returns the item currently under mouse cursor.
- * @return, pointer to a BattleItem or NULL if none
+ * @return, pointer to a BattleItem or nullptr if none
  */
 BattleItem* Inventory::getMouseOverItem() const
 {
@@ -573,14 +573,14 @@ BattleItem* Inventory::getMouseOverItem() const
 
 /**
  * Changes the item currently under mouse cursor.
- * @param item - pointer to a BattleItem or NULL if none
+ * @param item - pointer to a BattleItem or nullptr if none
  */
 void Inventory::setMouseOverItem(BattleItem* const item)
 {
-	if (item != NULL && item->getRules()->isFixed() == false)
+	if (item != nullptr && item->getRules()->isFixed() == false)
 		_mouseOverItem = item;
 	else
-		_mouseOverItem = NULL;
+		_mouseOverItem = nullptr;
 }
 
 /**
@@ -611,7 +611,7 @@ void Inventory::think()
 	SDL_WarpMouse(x, y);		// move the mouse back to avoid cursor creep */
 
 	_warning->think();
-	_animTimer->think(NULL, this);
+	_animTimer->think(nullptr, this);
 }
 
 /**
@@ -642,17 +642,17 @@ void Inventory::mouseOver(Action* action, State* state)
 	_selection->setY(static_cast<int>(std::floor(
 					action->getAbsoluteYMouse())) - (_selection->getHeight() / 2) - getY());
 
-	if (_selUnit != NULL)
+	if (_selUnit != nullptr)
 	{
 		int
 			x = static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX(),
 			y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
 
 		RuleInventory* const slot = getSlotInPosition(&x,&y);
-		if (slot != NULL)
+		if (slot != nullptr)
 		{
 			if (_tuMode == true
-				&& _selItem != NULL
+				&& _selItem != nullptr
 				&& fitItem(slot, _selItem, true) == true)
 			{
 				_tuCost = _selItem->getSlot()->getCost(slot);
@@ -671,7 +671,7 @@ void Inventory::mouseOver(Action* action, State* state)
 		else
 		{
 			_tuCost = -1;
-			setMouseOverItem(NULL);
+			setMouseOverItem(nullptr);
 		}
 
 		_selection->setX(static_cast<int>(std::floor(
@@ -694,23 +694,23 @@ void Inventory::mouseClick(Action* action, State* state)
 
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
-		if (_selUnit == NULL)
+		if (_selUnit == nullptr)
 			return;
 
-		if (_selItem == NULL) // Pickup or Move item.
+		if (_selItem == nullptr) // Pickup or Move item.
 		{
 			int
 				x = static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX(),
 				y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
 
 			RuleInventory* const slot = getSlotInPosition(&x,&y);
-			if (slot != NULL)
+			if (slot != nullptr)
 			{
 				if (slot->getType() == INV_GROUND)
 					x += _groundOffset;
 
 				BattleItem* const item = _selUnit->getItem(slot, x,y);
-				if (item != NULL)
+				if (item != nullptr)
 				{
 					if ((SDL_GetModState() & KMOD_CTRL) != 0) // Move item.
 					{
@@ -718,7 +718,7 @@ void Inventory::mouseClick(Action* action, State* state)
 							placed = false,
 							toGround = true;
 
-						RuleInventory* slotTarget = NULL;
+						RuleInventory* slotTarget = nullptr;
 
 						if (slot->getType() == INV_HAND
 							|| (slot->getType() != INV_GROUND
@@ -729,12 +729,12 @@ void Inventory::mouseClick(Action* action, State* state)
 						}
 						else
 						{
-							if (_selUnit->getItem("STR_RIGHT_HAND") == NULL)
+							if (_selUnit->getItem("STR_RIGHT_HAND") == nullptr)
 							{
 								toGround = false;
 								slotTarget = _game->getRuleset()->getInventory("STR_RIGHT_HAND");
 							}
-							else if (_selUnit->getItem("STR_LEFT_HAND") == NULL)
+							else if (_selUnit->getItem("STR_LEFT_HAND") == nullptr)
 							{
 								toGround = false;
 								slotTarget = _game->getRuleset()->getInventory("STR_LEFT_HAND");
@@ -743,7 +743,7 @@ void Inventory::mouseClick(Action* action, State* state)
 								slotTarget = _game->getRuleset()->getInventory("STR_GROUND");
 						}
 
-						if (slotTarget != NULL)
+						if (slotTarget != nullptr)
 						{
 							if (toGround == true)
 							{
@@ -773,7 +773,7 @@ void Inventory::mouseClick(Action* action, State* state)
 
 							if (placed == true)
 							{
-								_mouseOverItem = NULL; // remove cursor info 'cause item is no longer under the cursor
+								_mouseOverItem = nullptr; // remove cursor info 'cause item is no longer under the cursor
 								mouseOver(action, state);
 							}
 						}
@@ -815,7 +815,7 @@ void Inventory::mouseClick(Action* action, State* state)
 
 			RuleInventory* slot = getSlotInPosition(&x,&y);
 
-			if (slot != NULL)
+			if (slot != nullptr)
 			{
 				if (slot->getType() == INV_GROUND)
 					x += _groundOffset;
@@ -825,7 +825,7 @@ void Inventory::mouseClick(Action* action, State* state)
 				const bool canStack = slot->getType() == INV_GROUND
 								   && canBeStacked(item, _selItem) == true;
 
-				if (item == NULL // Put item in empty slot or stack it if possible.
+				if (item == nullptr // Put item in empty slot or stack it if possible.
 					|| item == _selItem
 					|| canStack == true)
 				{
@@ -894,14 +894,14 @@ void Inventory::mouseClick(Action* action, State* state)
 						_warning->showMessage(_game->getLanguage()->getString("STR_WRONG_AMMUNITION_FOR_THIS_WEAPON"));
 					else
 					{
-						if (item->getAmmoItem() != NULL)
+						if (item->getAmmoItem() != nullptr)
 							_warning->showMessage(_game->getLanguage()->getString("STR_WEAPON_IS_ALREADY_LOADED"));
 						else if (_tuMode == false
 							|| _selUnit->spendTimeUnits(item->getRules()->getReloadTu()) == true)
 						{
 							_tuCost = -1;
 
-							moveItem(_selItem, NULL);
+							moveItem(_selItem, nullptr);
 
 							item->setAmmoItem(_selItem);
 							_selItem->moveToOwner();
@@ -925,7 +925,7 @@ void Inventory::mouseClick(Action* action, State* state)
 				y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
 
 				slot = getSlotInPosition(&x,&y);
-				if (slot != NULL
+				if (slot != nullptr
 					&& slot->getType() == INV_GROUND)
 				{
 					x += _groundOffset;
@@ -958,7 +958,7 @@ void Inventory::mouseClick(Action* action, State* state)
 	{
 		_tuCost = -1;
 
-		if (_selItem == NULL)
+		if (_selItem == nullptr)
 		{
 			if ((SDL_GetModState() & KMOD_CTRL) == 0)
 			{
@@ -972,13 +972,13 @@ void Inventory::mouseClick(Action* action, State* state)
 							y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
 
 						const RuleInventory* const slot = getSlotInPosition(&x,&y);
-						if (slot != NULL)
+						if (slot != nullptr)
 						{
 							if (slot->getType() == INV_GROUND)
 								x += _groundOffset;
 
 							BattleItem* const item = _selUnit->getItem(slot, x,y);
-							if (item != NULL)
+							if (item != nullptr)
 							{
 								const RuleItem* const itRule = item->getRules();
 								if (itRule->isGrenade() == true)
@@ -994,7 +994,7 @@ void Inventory::mouseClick(Action* action, State* state)
 											_warning->showMessage(activated);
 										}
 										else // This is where activation warning for nonProxy preBattle grenades goes.
-											_game->pushState(new PrimeGrenadeState(NULL, true, item, this));
+											_game->pushState(new PrimeGrenadeState(nullptr, true, item, this));
 									}
 									else // deFuse grenade
 									{
@@ -1012,7 +1012,7 @@ void Inventory::mouseClick(Action* action, State* state)
 									arrangeGround(false);
 									soundId = ResourcePack::ITEM_DROP;
 
-									_mouseOverItem = NULL; // remove cursor info 'cause item is no longer under the cursor
+									_mouseOverItem = nullptr; // remove cursor info 'cause item is no longer under the cursor
 									mouseOver(action, state);
 								}
 							}
@@ -1029,13 +1029,13 @@ void Inventory::mouseClick(Action* action, State* state)
 					y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
 
 				RuleInventory* const slot = getSlotInPosition(&x,&y);
-				if (slot != NULL)
+				if (slot != nullptr)
 				{
 					if (slot->getType() == INV_GROUND)
 						x += _groundOffset;
 
 					BattleItem* const item = _selUnit->getItem(slot, x,y);
-					if (item != NULL)
+					if (item != nullptr)
 					{
 						std::string article = item->getRules()->getType(); // strip const. yay,
 						Ufopaedia::openArticle(_game, article);
@@ -1072,7 +1072,7 @@ void Inventory::mouseClick(Action* action, State* state)
  */
 bool Inventory::unload()
 {
-	if (_selItem == NULL
+	if (_selItem == nullptr
 		|| _selItem->selfPowered() == true
 		|| _game->getSavedGame()->isResearched(_selItem->getRules()->getRequirements()) == false)
 	{
@@ -1080,7 +1080,7 @@ bool Inventory::unload()
 	}
 
 	BattleItem* const ammo = _selItem->getAmmoItem();
-	if (ammo == NULL)
+	if (ammo == nullptr)
 	{
 		if (_selItem->getRules()->getCompatibleAmmo()->empty() == false)
 			_warning->showMessage(_game->getLanguage()->getString("STR_NO_AMMUNITION_LOADED"));
@@ -1111,7 +1111,7 @@ bool Inventory::unload()
 		if (_tuMode == false)
 		{
 			slot = _game->getRuleset()->getInventory("STR_GROUND");
-			owner = NULL;
+			owner = nullptr;
 		}
 		else
 		{
@@ -1130,7 +1130,7 @@ bool Inventory::unload()
 		moveItem(ammo, slot);
 		ammo->moveToOwner(owner);
 
-		if (owner == NULL)
+		if (owner == nullptr)
 			arrangeGround(false);
 		else
 			drawItems();
@@ -1164,7 +1164,7 @@ void Inventory::arrangeGround(bool alterOffset)
 
 	_stackLevel.clear();
 
-	if (_selUnit != NULL) // kL_note: That should never happen.
+	if (_selUnit != nullptr) // kL_note: That should never happen.
 	{
 		// first move all items out of the way -> a big number in X direction to right
 		for (std::vector<BattleItem*>::const_iterator
@@ -1210,7 +1210,7 @@ void Inventory::arrangeGround(bool alterOffset)
 																	ground,
 																	x + xd,
 																	y + yd);
-							fit = (item == NULL);
+							fit = (item == nullptr);
 
 							if (canBeStacked(item, *i) == true)
 								fit = true;
@@ -1246,7 +1246,7 @@ void Inventory::arrangeGround(bool alterOffset)
 	if (alterOffset == true)
 	{
 		int itemWidth;
-		if (_selItem != NULL)
+		if (_selItem != nullptr)
 			itemWidth = _selItem->getRules()->getInventoryWidth();
 		else
 			itemWidth = 0;
@@ -1328,14 +1328,14 @@ bool Inventory::canBeStacked(
 		const BattleItem* const itemA,
 		const BattleItem* const itemB)
 {
-	return (itemA != NULL && itemB != NULL																// both items actually exist
+	return (itemA != nullptr && itemB != nullptr																// both items actually exist
 		&& itemA->getRules() == itemB->getRules()														// both items have the same ruleset
-		&& ((itemA->getAmmoItem() == NULL && itemB->getAmmoItem() == NULL)								// either they both have no ammo
+		&& ((itemA->getAmmoItem() == nullptr && itemB->getAmmoItem() == nullptr)								// either they both have no ammo
 			|| (itemA->getAmmoItem() && itemB->getAmmoItem()											// or they both have ammo
 				&& itemA->getAmmoItem()->getRules() == itemB->getAmmoItem()->getRules()					// and the same ammo type
 				&& itemA->getAmmoItem()->getAmmoQuantity() == itemB->getAmmoItem()->getAmmoQuantity()))	// and the same ammo quantity
 		&& itemA->getFuse() == -1 && itemB->getFuse() == -1												// and neither is set to explode
-		&& itemA->getUnit() == NULL && itemB->getUnit() == NULL											// and neither is a corpse or unconscious unit
+		&& itemA->getUnit() == nullptr && itemB->getUnit() == nullptr											// and neither is a corpse or unconscious unit
 		&& itemA->getPainKillerQuantity() == itemB->getPainKillerQuantity()								// and if it's a medkit, it has the same number of charges
 		&& itemA->getHealQuantity() == itemB->getHealQuantity()
 		&& itemA->getStimulantQuantity() == itemB->getStimulantQuantity());

@@ -68,7 +68,7 @@ private:
 		/// Creates the Confirm Landing state.
 		ConfirmLandingState(
 				Craft* const craft,
-				RuleTexture* texRule = NULL,
+				RuleTexture* texRule = nullptr,
 				const int shade = -1);
 		/// Cleans up the Confirm Landing state.
 		~ConfirmLandingState();

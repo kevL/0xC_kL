@@ -19,7 +19,7 @@
 
 #include "PathfindingNode.h"
 
-//#include <math.h>
+//#include <cmath>
 
 
 namespace OpenXcom

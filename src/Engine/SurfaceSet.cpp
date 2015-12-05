@@ -285,7 +285,7 @@ Surface* SurfaceSet::getFrame(const int i)
 	if (_frames.find(i) != _frames.end())
 		return _frames[i];
 
-	return NULL;
+	return nullptr;
 }
 
 /**

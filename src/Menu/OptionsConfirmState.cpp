@@ -108,7 +108,7 @@ void OptionsConfirmState::think()
 {
 	State::think();
 
-	_timer->think(this, NULL);
+	_timer->think(this, nullptr);
 }
 
 /**
@@ -123,7 +123,7 @@ void OptionsConfirmState::countdown()
 	_txtTimer->setText(tr("STR_DISPLAY_OPTIONS_REVERT").arg(ss.str()));
 
 	if (_countdown == 0)
-		btnNoClick(NULL);
+		btnNoClick(nullptr);
 }
 
 /**

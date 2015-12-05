@@ -128,7 +128,7 @@ ConfirmLandingState::ConfirmLandingState(
 	Ufo* const ufo = dynamic_cast<Ufo*>(_craft->getDestination());
 	MissionSite* const site = dynamic_cast<MissionSite*>(_craft->getDestination());
 
-	if (ufo != nullptr || site != NULL) // ... else it's an aLienBase assault (NOT defense nor Cydonia).
+	if (ufo != nullptr || site != nullptr) // ... else it's an aLienBase assault (NOT defense nor Cydonia).
 	{
 		double // Determine if Craft is landing at a City.
 			lon = _craft->getLongitude(),
@@ -139,7 +139,7 @@ ConfirmLandingState::ConfirmLandingState(
 				i = _game->getSavedGame()->getRegions()->begin();
 				i != _game->getSavedGame()->getRegions()->end()
 					&& city == false;
-//					&& _city == NULL;
+//					&& _city == nullptr;
 				++i)
 		{
 			if ((*i)->getRules()->insideRegion(lon,lat) == true)
@@ -148,7 +148,7 @@ ConfirmLandingState::ConfirmLandingState(
 						j = (*i)->getRules()->getCities()->begin();
 						j != (*i)->getRules()->getCities()->end()
 							&& city == false;
-//							&& _city == NULL;
+//							&& _city == nullptr;
 						++j)
 				{
 					if (AreSame((*j)->getLongitude(), lon)
@@ -164,7 +164,7 @@ ConfirmLandingState::ConfirmLandingState(
 
 		std::string terrainType;
 
-		if (ufo != NULL) // UFO crashed/landed
+		if (ufo != nullptr) // UFO crashed/landed
 			terrainType = ufo->getUfoTerrainType();		// Ufo-object stores the terrainType value.
 		else // missionSite
 			terrainType = site->getSiteTerrainType();	// missionSite-object stores the terrainType value.
@@ -173,10 +173,10 @@ ConfirmLandingState::ConfirmLandingState(
 		if (terrainType.empty() == true) // Determine terrainType/RuleTerrain and store it.
 		{
 			Log(LOG_INFO) << ". determine Terrain";
-			if (site != NULL) // missionSite
+			if (site != nullptr) // missionSite
 			{
 				Log(LOG_INFO) << ". . missionSite";
-//				if (_city != NULL) // missionSite is at a City.
+//				if (_city != nullptr) // missionSite is at a City.
 				{
 					std::vector<std::string> terrainList;
 					// terrains for Missions can be/are defined in both AlienDeployment AND through RuleGlobe(Textures)
@@ -243,7 +243,7 @@ ConfirmLandingState::ConfirmLandingState(
 			}
 			else // is UFO
 			{
-//				if (_city != NULL) // UFO at a City (eg. Battleship on Infiltration trajectory)
+//				if (_city != nullptr) // UFO at a City (eg. Battleship on Infiltration trajectory)
 				if (city == true)
 				{
 					Log(LOG_INFO) << ". . UFO at City";
@@ -279,7 +279,7 @@ ConfirmLandingState::ConfirmLandingState(
 		}
 		Log(LOG_INFO) << ". chosen terrainType = " << terrainType;
 
-		if (_terrainRule == NULL) // '_terrainRule' can be set above^ if missionSite <-
+		if (_terrainRule == nullptr) // '_terrainRule' can be set above^ if missionSite <-
 			_terrainRule = _game->getRuleset()->getTerrain(terrainType);
 
 		_txtTexture->setText(tr("STR_TEXTURE_").arg(tr(terrainType)));
@@ -298,9 +298,9 @@ ConfirmLandingState::ConfirmLandingState(
 	_txtMessage->setBig();
 
 	std::wostringstream woststr;
-	if (ufo != NULL)
+	if (ufo != nullptr)
 	{
-//		const RuleUfo* const ufoRule = ufo->getRules(); if (ufoRule != NULL)
+//		const RuleUfo* const ufoRule = ufo->getRules(); if (ufoRule != nullptr)
 		woststr << tr(ufo->getRules()->getType());
 
 		if (ufo->getHyperDetected() == true) // only ufoType shows if not hyperdetected.
@@ -370,7 +370,7 @@ void ConfirmLandingState::btnYesClick(Action*)
 	BattlescapeGenerator bGen (_game);
 	bGen.setCraft(_craft);
 
-	if (ufo != NULL)
+	if (ufo != nullptr)
 	{
 		if (ufo->getUfoStatus() == Ufo::CRASHED)
 			battle->setTacticalType("STR_UFO_CRASH_RECOVERY");
@@ -382,9 +382,9 @@ void ConfirmLandingState::btnYesClick(Action*)
 		bGen.setTerrain(_terrainRule); // kL
 		bGen.setShade(_shade);
 //		bGen.setTacTexture(_texRule); // was an INT <- !!!
-//		bGen.setIsCity(_city != NULL); // kL
+//		bGen.setIsCity(_city != nullptr); // kL
 	}
-	else if (site != NULL)
+	else if (site != nullptr)
 	{
 		battle->setTacticalType(site->getSiteDeployment()->getType());
 
@@ -394,13 +394,13 @@ void ConfirmLandingState::btnYesClick(Action*)
 		bGen.setShade(_shade);
 //		bGen.setTacTexture(_texRule); // was an INT <- !!!
 	}
-	else if (alienBase != NULL)
+	else if (alienBase != nullptr)
 	{
 		battle->setTacticalType("STR_ALIEN_BASE_ASSAULT");
 
 		bGen.setAlienBase(alienBase);
 		bGen.setAlienRace(alienBase->getAlienRace());
-//		bGen.setTacTexture(NULL); // was an INT <- !!! bGen default NULL
+//		bGen.setTacTexture(nullptr); // was an INT <- !!! bGen default nullptr
 	}
 	else
 	{
@@ -419,7 +419,7 @@ void ConfirmLandingState::btnYesClick(Action*)
 void ConfirmLandingState::btnNoClick(Action*)
 {
 //	_craft->returnToBase();
-	_craft->setDestination(NULL);
+	_craft->setDestination(nullptr);
 	_game->popState();
 }
 

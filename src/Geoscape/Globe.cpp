@@ -576,7 +576,7 @@ Polygon* Globe::getPolygonAtCoord( // private.
 			return *i;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -942,7 +942,7 @@ bool Globe::insideLand(
 		double lon,
 		double lat) const
 {
-	return (getPolygonAtCoord(lon,lat) != NULL);
+	return (getPolygonAtCoord(lon,lat) != nullptr);
 }
 
 /**
@@ -1215,8 +1215,8 @@ void Globe::think()
 			_game->getSavedGame()->getGlobeLatitude());
 	}
 
-	_blinkTimer->think(NULL, this);
-	_rotTimer->think(NULL, this);
+	_blinkTimer->think(nullptr, this);
+	_rotTimer->think(nullptr, this);
 }
 
 /**
@@ -2332,7 +2332,7 @@ void Globe::drawFlights()
 					++j)
 			{
 				if ((*j)->getCraftStatus() == "STR_OUT"
-					&& (*j)->getDestination() != NULL)
+					&& (*j)->getDestination() != nullptr)
 				{
 					const double
 						lon1 = (*j)->getLongitude(),
@@ -2478,7 +2478,7 @@ void Globe::mouseOver(Action* action, State* state)
 		// the mouse-release event is missed for any reason.
 		// (checking: is the dragScroll-mouse-button still pressed?)
 		// However if the SDL is also missed the release event, then it is to no avail :(
-		if ((SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(Options::geoDragScrollButton)) == 0)
+		if ((SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::geoDragScrollButton)) == 0)
 		{
 			// so we missed again the mouse-release :(
 			// Check if we have to revoke the scrolling, because it was too short in time, so it was a click
@@ -2639,7 +2639,7 @@ void Globe::mouseClick(Action* action, State* state)
 	if (_isMouseScrolling == true)
 	{
 		if (action->getDetails()->button.button != Options::geoDragScrollButton
-			&& (SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(Options::geoDragScrollButton)) == 0)
+			&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::geoDragScrollButton)) == 0)
 		{
 			// so we missed again the mouse-release :(
 			// Check if we have to revoke the scrolling, because it was too short in time, so it was a click
@@ -2746,7 +2746,7 @@ void Globe::getPolygonTextureAndShade(
 													0)];
 
 	const Polygon* const poly = getPolygonAtCoord(lon,lat);
-	if (poly != NULL)
+	if (poly != nullptr)
 		*texture = poly->getPolyTexture();
 	else
 		*texture = -1;
@@ -2764,7 +2764,7 @@ void Globe::getPolygonTexture(
 		int* texture) const
 {
 	const Polygon* const poly = getPolygonAtCoord(lon,lat);
-	if (poly != NULL)
+	if (poly != nullptr)
 		*texture = poly->getPolyTexture();
 	else
 		*texture = -1;

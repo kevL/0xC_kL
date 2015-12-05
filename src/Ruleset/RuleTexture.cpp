@@ -115,7 +115,7 @@ std::string RuleTexture::getTextureDeployment() const
 /**
  * Calculates a random terrain for a mission-target based on this texture's
  * available TextureDetail.
- * @param target - pointer to the mission Target (default NULL to exclude geographical bounds)
+ * @param target - pointer to the mission Target (default nullptr to exclude geographical bounds)
  * @return, terrain type
  */
 std::string RuleTexture::getTextureTerrain(const Target* const target) const
@@ -135,7 +135,7 @@ std::string RuleTexture::getTextureTerrain(const Target* const target) const
 		if (i->weight != 0)
 		{
 			bool insideArea = false;
-			if (target != NULL)
+			if (target != nullptr)
 			{
 				lon = target->getLongitude();
 				lat = target->getLatitude();
@@ -149,7 +149,7 @@ std::string RuleTexture::getTextureTerrain(const Target* const target) const
 				}
 			}
 
-			if (target == NULL || insideArea == true)
+			if (target == nullptr || insideArea == true)
 			{
 				Log(LOG_INFO) << ". . weight = " << i->weight;
 				totalWeight += i->weight;

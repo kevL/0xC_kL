@@ -408,7 +408,7 @@ void ComboBox::handle(Action* action, State* state)
 
 	if (_toggled == true)
 	{
-		if (_change != NULL)
+		if (_change != nullptr)
 			(state->*_change)(action);
 
 		_toggled = false;
@@ -428,7 +428,7 @@ void ComboBox::toggle(bool init)
 	if (_window->getVisible() == true)
 		modal = this;
 	else
-		modal = NULL;
+		modal = nullptr;
 
 	_state->setModal(modal);
 

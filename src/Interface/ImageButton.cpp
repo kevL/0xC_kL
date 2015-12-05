@@ -74,13 +74,13 @@ Uint8 ImageButton::getColor() const
 /**
  * Changes the button group this image button belongs to.
  * @param group - pointer to the pressed button pointer in the group;
- *				  NULL makes it a regular button
+ *				  nullptr makes it a regular button
  */
 void ImageButton::setGroup(ImageButton** group)
 {
 	_group = group;
 
-	if (_group != NULL && *_group == this)
+	if (_group != nullptr && *_group == this)
 		invert(_color + 3);
 }
 
@@ -92,7 +92,7 @@ void ImageButton::setGroup(ImageButton** group)
  */
 void ImageButton::mousePress(Action* action, State* state)
 {
-	if (_group != NULL)
+	if (_group != nullptr)
 	{
 		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		{

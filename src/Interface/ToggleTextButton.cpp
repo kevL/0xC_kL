@@ -46,7 +46,7 @@ ToggleTextButton::ToggleTextButton(
 			x,y),
 		_originalColor(std::numeric_limits<uint8_t>::max()),
 		_invertedColor(std::numeric_limits<uint8_t>::max()),
-		_fakeGroup(NULL)
+		_fakeGroup(nullptr)
 {
 	_isPressed = false;
 	TextButton::setGroup(&_fakeGroup);
@@ -70,7 +70,7 @@ void ToggleTextButton::mousePress(Action* action, State* state)
 		|| action->getDetails()->button.button == SDL_BUTTON_RIGHT)
 	{
 		_isPressed = !_isPressed;
-		_fakeGroup = _isPressed ? this : NULL; // this is the trick that makes TextButton stick
+		_fakeGroup = _isPressed ? this : nullptr; // this is the trick that makes TextButton stick
 
 		if (_isPressed == true
 			&& _invertedColor != std::numeric_limits<uint8_t>::max())
@@ -94,7 +94,7 @@ void ToggleTextButton::setPressed(bool pressed)
 	if (_isPressed != pressed)
 	{
 		_isPressed = pressed;
-		_fakeGroup = _isPressed ? this : NULL;
+		_fakeGroup = _isPressed ? this : nullptr;
 
 		if (_isPressed == true
 			&& _invertedColor != std::numeric_limits<uint8_t>::max())
@@ -125,7 +125,7 @@ void ToggleTextButton::setColor(Uint8 color)
 void ToggleTextButton::setInvertColor(Uint8 color)
 {
 	_invertedColor = color;
-	_fakeGroup = NULL;
+	_fakeGroup = nullptr;
 
 	_redraw = true;
 }
@@ -136,7 +136,7 @@ void ToggleTextButton::setInvertColor(Uint8 color)
 void ToggleTextButton::draw()
 {
 	if (_invertedColor != std::numeric_limits<uint8_t>::max())
-		_fakeGroup = NULL; // nevermind, TextButton. We'll invert the surface ourselves.
+		_fakeGroup = nullptr; // nevermind, TextButton. We'll invert the surface ourselves.
 
 	TextButton::draw();
 

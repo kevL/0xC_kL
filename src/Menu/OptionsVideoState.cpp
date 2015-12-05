@@ -50,10 +50,10 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 	:
 		OptionsBaseState(origin),
 		_gameCurrent(0)
-//		_displayMode(NULL),
-//		_btnWindowed(NULL),
-//		_btnFullscreen(NULL),
-//		_btnBorderless(NULL)
+//		_displayMode(nullptr),
+//		_btnWindowed(nullptr),
+//		_btnFullscreen(nullptr),
+//		_btnBorderless(nullptr)
 {
 	setCategory(_btnVideo);
 
@@ -85,7 +85,7 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 	_btnLockMouse				= new ToggleTextButton(104, 16, 206, 110);
 
 	// Get available fullscreen modes
-	_res = SDL_ListModes(NULL, SDL_FULLSCREEN);
+	_res = SDL_ListModes(nullptr, SDL_FULLSCREEN);
 	if (_res != (SDL_Rect**)-1
 		&& _res != (SDL_Rect**)0)
 	{

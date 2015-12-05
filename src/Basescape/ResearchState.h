@@ -73,7 +73,7 @@ private:
 		/// Creates the Research state.
 		ResearchState(
 				Base* const base,
-				BasescapeState* const state = NULL);
+				BasescapeState* const state = nullptr);
 		/// Cleans up the Research state.
 		~ResearchState();
 

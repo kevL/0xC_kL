@@ -19,10 +19,9 @@
 
 #include "TransferItemsState.h"
 
-//#include <cfloat>
-//#include <climits>
-//#include <cmath>
 #include <iomanip>
+//#include <limits>
+//#include <map>
 //#include <sstream>
 
 #include "../fmath.h"
@@ -284,8 +283,8 @@ void TransferItemsState::init()
 			++i)
 	{
 		if ((*i)->getCraftStatus() != "STR_OUT")
-//			|| (Options::canTransferCraftsWhileAirborne == true // TODO: Don't allow transfering airborne Craft until I rework the auto-transfer of onboard Soldiers & Items & Vehicles.
-//				&& (*i)->getFuel() >= (*i)->getFuelLimit(_baseTarget)))
+//			|| (Options::canTransferCraftsWhileAirborne == true			// TODO: Don't allow transfering airborne Craft until I rework
+//				&& (*i)->getFuel() >= (*i)->getFuelLimit(_baseTarget)))	// the auto-transfer of onboard Soldiers & Items & Vehicles.
 		{
 			_transferQty.push_back(0);
 			_baseQty.push_back(1);
@@ -658,8 +657,8 @@ void TransferItemsState::completeTransfer()
 								_baseTarget->getCrafts()->push_back(craft);
 								craft->setBase(_baseTarget, false);
 
-//								if (craft->getFuel() <= craft->getFuelLimit(_baseTarget)) // never runs. Craft that don't have enough fuel to reach TargetBase aren't even in the vector.
-//								{
+//								if (craft->getFuel() <= craft->getFuelLimit(_baseTarget))	// never runs. Craft that don't have enough fuel
+//								{															// to reach TargetBase aren't even in the vector.
 //									craft->setLowFuel();
 //									craft->returnToBase();
 //								}

@@ -56,9 +56,9 @@ TextList::TextList(
 			width,
 			height,
 			x,y),
-		_big(NULL),
-		_small(NULL),
-		_font(NULL),
+		_big(nullptr),
+		_small(nullptr),
+		_font(nullptr),
 		_scroll(0),
 		_visibleRows(0),
 		_selRow(0),
@@ -69,8 +69,8 @@ TextList::TextList(
 		_condensed(false),
 		_contrast(false),
 		_wrap(false),
-		_bg(NULL),
-		_selector(NULL),
+		_bg(nullptr),
+		_selector(nullptr),
 		_margin(8),
 		_scrollable(true),
 		_arrowPos(-1),
@@ -84,7 +84,7 @@ TextList::TextList(
 		_rightRelease(0),
 		_arrowsLeftEdge(0),
 		_arrowsRightEdge(0),
-		_comboBox(NULL)
+		_comboBox(nullptr)
 {
 	_up = new ArrowButton(
 						ARROW_BIG_UP,
@@ -159,7 +159,7 @@ void TextList::setX(int x)
 	_down->setX(getX() + getWidth() + _scrollPos);
 	_scrollbar->setX(getX() + getWidth() + _scrollPos);
 
-	if (_selector != NULL)
+	if (_selector != nullptr)
 		_selector->setX(getX());
 }
 
@@ -175,7 +175,7 @@ void TextList::setY(int y)
 	_down->setY(getY() + getHeight() - 12);
 	_scrollbar->setY(_up->getY() + _up->getHeight());
 
-	if (_selector != NULL)
+	if (_selector != nullptr)
 		_selector->setY(getY());
 }
 
@@ -576,7 +576,7 @@ void TextList::setPalette(
 			++i)
 		(*i)->setPalette(colors, firstcolor, ncolors);
 
-	if (_selector != NULL)
+	if (_selector != nullptr)
 		_selector->setPalette(colors, firstcolor, ncolors);
 
 	_up->setPalette(colors, firstcolor, ncolors);
@@ -1328,7 +1328,7 @@ void TextList::mouseClick(Action* action, State* state)
 		if (_selRow < _rows.size())
 		{
 			InteractiveSurface::mouseClick(action, state);
-			if (_comboBox != NULL
+			if (_comboBox != nullptr
 				&& action->getDetails()->button.button == SDL_BUTTON_LEFT)
 			{
 				_comboBox->setSelected(_selRow);
@@ -1389,7 +1389,7 @@ void TextList::mouseOver(Action* action, State* state)
 
 			if (_contrast == true)
 				_selector->offset(-10,1);
-			else if (_comboBox != NULL)
+			else if (_comboBox != nullptr)
 				_selector->offset(1, Palette::PAL_bgID);
 			else
 				_selector->offset(-10, Palette::PAL_bgID);

@@ -91,7 +91,7 @@ private:
 		/// Gets the item's ammo item.
 		BattleItem* getAmmoItem() const;
 		/// Sets the item's ammo item.
-		int setAmmoItem(BattleItem* const item = NULL);
+		int setAmmoItem(BattleItem* const item = nullptr);
 		/// Checks if this item uses ammo OR is self-powered.
 		bool selfPowered() const;
 		/// Spends a bullet from this BattleItem.
@@ -109,11 +109,11 @@ private:
 		/// Gets the item's previous owner.
 		BattleUnit* getPreviousOwner() const;
 		/// Sets the owner.
-		void setOwner(BattleUnit* const owner = NULL);
+		void setOwner(BattleUnit* const owner = nullptr);
 		/// Sets the item's previous owner.
 		void setPreviousOwner(BattleUnit* const owner);
 		/// Removes the item from previous owner and moves to new owner.
-		void moveToOwner(BattleUnit* const owner = NULL);
+		void moveToOwner(BattleUnit* const owner = nullptr);
 
 		/// Gets the item's inventory slot.
 		RuleInventory* getSlot() const;
@@ -131,7 +131,7 @@ private:
 		bool occupiesSlot(
 				int x,
 				int y,
-				const BattleItem* const item = NULL) const;
+				const BattleItem* const item = nullptr) const;
 
 		/// Gets the item's tile.
 		Tile* getTile() const;

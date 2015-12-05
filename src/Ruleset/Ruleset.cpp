@@ -511,7 +511,7 @@ void Ruleset::validateMissions() const
 					j != missions.end();
 					++j)
 			{
-				if (getAlienMission(*j) != NULL
+				if (getAlienMission(*j) != nullptr
 					&& (getAlienMission(*j)->getObjective() == alm_SITE) != isSite)
 				{
 					throw Exception("Error with MissionScript: " + (*i).first + " cannot mix terror/non-terror missions in a single command, so sayeth the wise Alfonso.");
@@ -594,7 +594,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 	{
 //		const std::string type = (*i)["type"].as<std::string>();
 		RuleCountry* const rule = loadRule(*i, &_countries, &_countriesIndex);
-		if (rule != NULL) rule->load(*i);
+		if (rule != nullptr) rule->load(*i);
 	}
 
 	for (YAML::const_iterator
@@ -603,7 +603,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleRegion* const rule = loadRule(*i, &_regions, &_regionsIndex);
-		if (rule != NULL) rule->load(*i);
+		if (rule != nullptr) rule->load(*i);
 	}
 
 	for (YAML::const_iterator
@@ -612,7 +612,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleBaseFacility* const rule = loadRule(*i, &_facilities, &_facilitiesIndex);
-		if (rule != NULL)
+		if (rule != nullptr)
 		{
 			_facilityListOrder += 100;
 			rule->load(*i, _modIndex, _facilityListOrder);
@@ -625,7 +625,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleCraft* const rule = loadRule(*i, &_crafts, &_craftsIndex);
-		if (rule != NULL)
+		if (rule != nullptr)
 		{
 			_craftListOrder += 100;
 			rule->load(*i, this, _modIndex, _craftListOrder);
@@ -638,7 +638,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleCraftWeapon* const rule = loadRule(*i, &_craftWeapons, &_craftWeaponsIndex);
-		if (rule != NULL) rule->load(*i, _modIndex);
+		if (rule != nullptr) rule->load(*i, _modIndex);
 	}
 
 	for (YAML::const_iterator
@@ -647,7 +647,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleItem* const rule = loadRule(*i, &_items, &_itemsIndex);
-		if (rule != NULL)
+		if (rule != nullptr)
 		{
 			_itemListOrder += 100;
 			rule->load(*i, _modIndex, _itemListOrder);
@@ -660,7 +660,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleUfo* const rule = loadRule(*i, &_ufos, &_ufosIndex);
-		if (rule != NULL) rule->load(*i, this);
+		if (rule != nullptr) rule->load(*i, this);
 	}
 
 	for (YAML::const_iterator
@@ -669,7 +669,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleInventory* const rule = loadRule(*i, &_invs, &_invsIndex, "id");
-		if (rule != NULL)
+		if (rule != nullptr)
 		{
 			_invListOrder += 10;
 			rule->load(*i, _invListOrder);
@@ -682,7 +682,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleTerrain* const rule = loadRule(*i, &_terrains, &_terrainIndex);
-		if (rule != NULL) rule->load(*i, this);
+		if (rule != nullptr) rule->load(*i, this);
 	}
 
 	for (YAML::const_iterator
@@ -706,7 +706,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleArmor* const rule = loadRule(*i, &_armors, &_armorsIndex);
-		if (rule != NULL)
+		if (rule != nullptr)
 			rule->load(*i);
 	}
 
@@ -716,7 +716,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleSoldier* const rule = loadRule(*i, &_soldiers, &_soldiersIndex);
-		if (rule != NULL) rule->load(*i);
+		if (rule != nullptr) rule->load(*i);
 	}
 
 	for (YAML::const_iterator
@@ -725,7 +725,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleUnit* const rule = loadRule(*i, &_units);
-		if (rule != NULL) rule->load(*i, _modIndex);
+		if (rule != nullptr) rule->load(*i, _modIndex);
 	}
 
 	for (YAML::const_iterator
@@ -734,7 +734,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		AlienRace* const rule = loadRule(*i, &_alienRaces, &_aliensIndex);
-		if (rule != NULL) rule->load(*i);
+		if (rule != nullptr) rule->load(*i);
 	}
 
 	for (YAML::const_iterator
@@ -743,7 +743,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		AlienDeployment* const rule = loadRule(*i, &_alienDeployments, &_deploymentsIndex);
-		if (rule != NULL) rule->load(*i);
+		if (rule != nullptr) rule->load(*i);
 	}
 
 	for (YAML::const_iterator
@@ -752,7 +752,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleResearch* const rule = loadRule(*i, &_research, &_researchIndex);
-		if (rule != NULL)
+		if (rule != nullptr)
 		{
 			_researchListOrder += 100;
 			rule->load(*i, _researchListOrder);
@@ -768,7 +768,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleManufacture* const rule = loadRule(*i, &_manufacture, &_manufactureIndex);
-		if (rule != NULL)
+		if (rule != nullptr)
 		{
 			_manufactureListOrder += 100;
 			rule->load(*i, _manufactureListOrder);
@@ -804,10 +804,10 @@ void Ruleset::loadFile(const std::string& file) // protected.
 					case UFOPAEDIA_TYPE_AWARD:			articleRule = new ArticleDefinitionAward();			break;
 
 					default:
-						articleRule = NULL; // safety.
+						articleRule = nullptr; // safety.
 				}
 
-				if (articleRule != NULL)
+				if (articleRule != nullptr)
 				{
 					_ufopaediaArticles[id] = articleRule;
 					_ufopaediaIndex.push_back(id);
@@ -866,8 +866,8 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["ufoTrajectories"].end();
 			++i)
 	{
-		UfoTrajectory* const rule = loadRule(*i, &_ufoTrajectories, NULL, "id");
-		if (rule != NULL) rule->load(*i);
+		UfoTrajectory* const rule = loadRule(*i, &_ufoTrajectories, nullptr, "id");
+		if (rule != nullptr) rule->load(*i);
 	}
 
 	for (YAML::const_iterator
@@ -876,7 +876,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleAlienMission* const rule = loadRule(*i, &_alienMissions, &_alienMissionsIndex);
-		if (rule != NULL) rule->load(*i);
+		if (rule != nullptr) rule->load(*i);
 	}
 
 	_alienItemLevels = doc["alienItemLevels"].as<std::vector< std::vector<int> > >(_alienItemLevels);
@@ -969,7 +969,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleInterface* const rule = loadRule(*i, &_interfaces);
-		if (rule != NULL) rule->load(*i);
+		if (rule != nullptr) rule->load(*i);
 	}
 
 	if (doc["globe"])
@@ -1082,7 +1082,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleMissionScript* const rule = loadRule(*i, &_missionScripts, &_missionScriptIndex);
-		if (rule != NULL) rule->load(*i);
+		if (rule != nullptr) rule->load(*i);
 	}
 
 /*	for (std::vector<std::string>::const_iterator // refresh _psiRequirements for psiStrengthEval
@@ -1104,7 +1104,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		RuleVideo* const rule = loadRule(*i, &_videos);
-		if (rule != NULL) rule->load(*i);
+		if (rule != nullptr) rule->load(*i);
 	}
 }
 
@@ -1112,9 +1112,9 @@ void Ruleset::loadFile(const std::string& file) // protected.
  * Loads a rule element adding/removing from vectors as necessary.
  * @param node	- reference a YAML node
  * @param types	- pointer to a map associated to the rule type
- * @param index	- pointer to a vector of indices for the rule type (default NULL)
+ * @param index	- pointer to a vector of indices for the rule type (default nullptr)
  * @param keyId	- reference the rule's key-ID (default "type")
- * @return, pointer to new rule if one was created or NULL if one was removed
+ * @return, pointer to new rule if one was created or nullptr if one was removed
  */
 template<typename T>
 T* Ruleset::loadRule(
@@ -1123,7 +1123,7 @@ T* Ruleset::loadRule(
 		std::vector<std::string>* index,
 		const std::string& keyId)
 {
-	T* rule = NULL;
+	T* rule = nullptr;
 
 	if (node[keyId])
 	{
@@ -1136,7 +1136,7 @@ T* Ruleset::loadRule(
 			rule = new T(type);
 			(*types)[type] = rule;
 
-			if (index != NULL)
+			if (index != nullptr)
 				index->push_back(type);
 		}
 	}
@@ -1147,7 +1147,7 @@ T* Ruleset::loadRule(
 		if (i != types->end())
 			types->erase(i);
 
-		if (index != NULL)
+		if (index != nullptr)
 		{
 			const std::vector<std::string>::const_iterator j = std::find(
 																	index->begin(),
@@ -1276,7 +1276,7 @@ RuleCountry* Ruleset::getCountry(const std::string& id) const
 	if (i != _countries.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1299,7 +1299,7 @@ RuleRegion* Ruleset::getRegion(const std::string& id) const
 	if (i != _regions.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1322,7 +1322,7 @@ RuleBaseFacility* Ruleset::getBaseFacility(const std::string& id) const
 	if (i != _facilities.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1345,7 +1345,7 @@ RuleCraft* Ruleset::getCraft(const std::string& id) const
 	if (i != _crafts.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1368,7 +1368,7 @@ RuleCraftWeapon* Ruleset::getCraftWeapon(const std::string& id) const
 	if (i != _craftWeapons.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1383,14 +1383,14 @@ const std::vector<std::string>& Ruleset::getCraftWeaponsList() const
 /**
  * Returns the rules for the specified item.
  * @param id - reference an Item type
- * @return, pointer to Rule for the Item or NULL if the item is not found
+ * @return, pointer to Rule for the Item or nullptr if the item is not found
  */
 RuleItem* Ruleset::getItem(const std::string& id) const
 {
 	if (_items.find(id) != _items.end())
 		return _items.find(id)->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1413,7 +1413,7 @@ RuleUfo* Ruleset::getUfo(const std::string& id) const
 	if (i != _ufos.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1437,7 +1437,7 @@ RuleTerrain* Ruleset::getTerrain(const std::string& type) const
 	if (i != _terrains.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1487,7 +1487,7 @@ RuleSoldier* Ruleset::getSoldier(const std::string& type) const
 	if (i != _soldiers.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1510,7 +1510,7 @@ RuleUnit* Ruleset::getUnit(const std::string& type) const
 	if (i != _units.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1524,7 +1524,7 @@ AlienRace* Ruleset::getAlienRace(const std::string& type) const
 	if (i != _alienRaces.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1547,7 +1547,7 @@ AlienDeployment* Ruleset::getDeployment(const std::string& name) const
 	if (i != _alienDeployments.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1570,7 +1570,7 @@ RuleArmor* Ruleset::getArmor(const std::string& name) const
 	if (i != _armors.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1620,7 +1620,7 @@ ArticleDefinition* Ruleset::getUfopaediaArticle(const std::string& name) const
 	if (i != _ufopaediaArticles.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1652,7 +1652,7 @@ RuleInventory* Ruleset::getInventory(const std::string& id) const
 	if (i != _invs.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1675,7 +1675,7 @@ RuleResearch* Ruleset::getResearch(const std::string& id) const
 	if (i != _research.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1698,7 +1698,7 @@ RuleManufacture* Ruleset::getManufacture(const std::string& id) const
 	if (i != _manufacture.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1748,7 +1748,7 @@ const UfoTrajectory* Ruleset::getUfoTrajectory(const std::string& id) const
 	if (i != _ufoTrajectories.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1762,7 +1762,7 @@ const RuleAlienMission* Ruleset::getAlienMission(const std::string& id) const
 	if (i != _alienMissions.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1801,7 +1801,7 @@ const RuleAlienMission* Ruleset::getRandomMission(
 			return i->second;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1843,7 +1843,7 @@ const GameTime& Ruleset::getStartingTime() const
 /**
  * Gets an MCDPatch.
  * @param id - the ID of the MCDPatch
- * @return, pointer to the MCDPatch based on ID or NULL if none defined
+ * @return, pointer to the MCDPatch based on ID or nullptr if none defined
  */
 MCDPatch* Ruleset::getMCDPatch(const std::string& id) const
 {
@@ -1851,7 +1851,7 @@ MCDPatch* Ruleset::getMCDPatch(const std::string& id) const
 	if (i != _MCDPatches.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1993,20 +1993,20 @@ struct compareRule<RuleArmor>
 			* const itRule1 = _ruleset->getItem(armorRule1->getStoreItem()),
 			* const itRule2 = _ruleset->getItem(armorRule2->getStoreItem());
 
-/*		if (itRule1 == NULL && itRule2 == NULL)
+/*		if (itRule1 == nullptr && itRule2 == nullptr)
 //			return (armorRule1 < armorRule2); // tiebreaker, don't care about order, pointers are good as any.
 			return false; // just return true, no false.
 
-		if (itRule1 == NULL)
+		if (itRule1 == nullptr)
 			return true;
 
-		if (itRule2 == NULL)
+		if (itRule2 == nullptr)
 			return false; */
 
-		if (itRule2 == NULL)
+		if (itRule2 == nullptr)
 			return false;
 
-		if (itRule1 == NULL)
+		if (itRule1 == nullptr)
 			return true;
 
 		return (itRule1->getListOrder() < itRule2->getListOrder());
@@ -2157,7 +2157,7 @@ Soldier* Ruleset::genSoldier(
 					&_names,
 					gameSave->getCanonicalId("STR_SOLDIER"));
 }
-/*	Soldier* soldier = NULL;
+/*	Soldier* soldier = nullptr;
 	int newId = save->getId("STR_SOLDIER");
 
 	// Original X-COM gives up after 10 tries so they did the same here
@@ -2257,7 +2257,7 @@ std::string Ruleset::getFontName() const
 				++i)
 		{
 			RuleBaseFacility* facRule = getBaseFacility(*i);
-			if (facRule == NULL)
+			if (facRule == nullptr)
 				continue;
 
 			int radarRange = facRule->getRadarRange();
@@ -2287,7 +2287,7 @@ int Ruleset::getMaxRadarRange() const
 			++i)
 	{
 		const RuleBaseFacility* const facRule = getBaseFacility(*i);
-		if (facRule != NULL)
+		if (facRule != nullptr)
 		{
 			const int range = facRule->getRadarRange();
 			if (range > ret)
@@ -2336,7 +2336,7 @@ RuleInterface* Ruleset::getInterface(const std::string& id) const
 	if (i != _interfaces.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -2386,7 +2386,7 @@ RuleMissionScript* Ruleset::getMissionScript(const std::string& id) const
 	if (i != _missionScripts.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -2403,7 +2403,7 @@ const std::vector<MapScript*>* Ruleset::getMapScript(const std::string& id) cons
 		return &i->second;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**

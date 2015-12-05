@@ -279,10 +279,10 @@ void CraftEquipmentState::init()
 
 	// Reset stuff when coming back from pre-battle Inventory.
 	const SavedBattleGame* const battleSave = _game->getSavedGame()->getBattleSave();
-	if (battleSave != NULL)
+	if (battleSave != nullptr)
 	{
 		_selUnitId = battleSave->getSelectedUnit()->getBattleOrder();
-		_game->getSavedGame()->setBattleSave(NULL);
+		_game->getSavedGame()->setBattleSave(nullptr);
 		_craft->setInBattlescape(false);
 	}
 
@@ -297,8 +297,8 @@ void CraftEquipmentState::think()
 {
 	State::think();
 
-	_timerLeft->think(this, NULL);
-	_timerRight->think(this, NULL);
+	_timerLeft->think(this, nullptr);
+	_timerRight->think(this, nullptr);
 }
 
 /**
@@ -723,7 +723,7 @@ void CraftEquipmentState::btnInventoryClick(Action*)
 	_game->getSavedGame()->setBattleSave(battle);
 	BattlescapeGenerator bgen = BattlescapeGenerator(_game);
 
-	bgen.runInventory(_craft, NULL, _selUnitId);
+	bgen.runInventory(_craft, nullptr, _selUnitId);
 
 	_game->getScreen()->clear();
 	_game->pushState(new InventoryState());

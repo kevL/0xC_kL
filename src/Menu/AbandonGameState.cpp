@@ -127,7 +127,7 @@ void AbandonGameState::btnYesClick(Action*)
 //		_game->getScreen()->resetDisplay(false);
 
 		_game->setState(new MainMenuState());
-		_game->setSavedGame(NULL);
+		_game->setSavedGame(nullptr);
 	}
 	else
 		_game->pushState(new SaveGameState(

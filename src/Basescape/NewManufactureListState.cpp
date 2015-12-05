@@ -188,7 +188,7 @@ void NewManufactureListState::lstProdClick(Action*)
 {
 	_scroll = _lstManufacture->getScroll();
 
-	const RuleManufacture* manufRule = NULL;
+	const RuleManufacture* manufRule = nullptr;
 	for (std::vector<const RuleManufacture*>::iterator
 			i = _possibleProductions.begin();
 			i != _possibleProductions.end();

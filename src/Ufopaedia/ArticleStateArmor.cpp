@@ -75,7 +75,7 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 	std::string look = armorRule->getSpriteInventory();
 	look += "M0.SPK";
 	if (CrossPlatform::fileExists(CrossPlatform::getDataFile("UFOGRAPH/" + look)) == false
-		&& _game->getResourcePack()->getSurface(look) == NULL)
+		&& _game->getResourcePack()->getSurface(look) == nullptr)
 	{
 		look = armorRule->getSpriteInventory() + ".SPK";
 	}

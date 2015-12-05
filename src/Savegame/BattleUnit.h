@@ -284,7 +284,7 @@ private:
 				RuleArmor* const armor,
 				const GameDifficulty diff,
 				const int month = 0, // for upping aLien stats as time progresses.
-				BattlescapeGame* const battleGame = NULL);
+				BattlescapeGame* const battleGame = nullptr);
 		/// Cleans up the BattleUnit.
 		~BattleUnit();
 
@@ -462,7 +462,7 @@ private:
 				const BattleItem* item) const;
 		int getActionTu(
 				const BattleActionType bat,
-				const RuleItem* itRule = NULL) const;
+				const RuleItem* itRule = nullptr) const;
 
 		/// Spends time units if possible.
 		bool spendTimeUnits(int tu);
@@ -498,7 +498,7 @@ private:
 				const BattleAction& action,
 				const BattleActionType bat = BA_NONE) const;
 		/// Calculates this unit's accuracy modifier.
-		double getAccuracyModifier(const BattleItem* const item = NULL) const;
+		double getAccuracyModifier(const BattleItem* const item = nullptr) const;
 
 		/// Sets this unit's armor value.
 		void setArmor(
@@ -557,7 +557,7 @@ private:
 		/// Sets the Tile this unit is standing on.
 		void setTile(
 				Tile* const tile,
-				const Tile* const tileBelow = NULL);
+				const Tile* const tileBelow = nullptr);
 		/// Gets this unit's Tile.
 		Tile* getTile() const;
 
@@ -654,7 +654,7 @@ private:
 
 		/// Gets this unit's name.
 		std::wstring getName(
-				const Language* const lang = NULL,
+				const Language* const lang = nullptr,
 				bool debugId = false) const;
 
 		/// Gets this unit's stats.
@@ -740,7 +740,7 @@ private:
 		BattleUnit* getChargeTarget() const;
 
 		/// Gets the carried weight in strength units.
-		int getCarriedWeight(const BattleItem* const dragItem = NULL) const;
+		int getCarriedWeight(const BattleItem* const dragItem = nullptr) const;
 
 		/// Sets how many turns this unit will be exposed for.
 		void setExposed(int turns = 0);
@@ -750,7 +750,7 @@ private:
 		/// This call this after the default copy constructor deletes this unit's sprite-cache.
 		void invalidateCache();
 
-		/// Gets this BattleUnit's rules if non-Soldier else NULL.
+		/// Gets this BattleUnit's rules if non-Soldier else nullptr.
 		RuleUnit* getUnitRules() const
 		{ return _unitRule; }
 

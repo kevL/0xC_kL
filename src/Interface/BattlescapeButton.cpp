@@ -43,10 +43,10 @@ BattlescapeButton::BattlescapeButton(
 			height,
 			x,y),
 		_color(0),
-		_group(NULL),
+		_group(nullptr),
 		_inverted(false),
 		_toggleMode(INVERT_NONE),
-		_altSurface(NULL)
+		_altSurface(nullptr)
 {}
 
 /**
@@ -77,13 +77,13 @@ Uint8 BattlescapeButton::getColor() const
 
 /**
  * Changes the button group this battlescape button belongs to.
- * @param group - oointer to the pressed button pointer in the group; NULL makes it a regular button
+ * @param group - oointer to the pressed button pointer in the group; nullptr makes it a regular button
  */
 void BattlescapeButton::setGroup(BattlescapeButton** group)
 {
 	_group = group;
 
-	if (_group != NULL
+	if (_group != nullptr
 		&& *_group == this)
 	{
 		_inverted = true;
@@ -98,7 +98,7 @@ void BattlescapeButton::setGroup(BattlescapeButton** group)
  */
 void BattlescapeButton::mousePress(Action* action, State* state)
 {
-	if (_group != NULL)
+	if (_group != nullptr)
 	{
 		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		{
@@ -258,7 +258,7 @@ void BattlescapeButton::setX(int x)
 {
 	Surface::setX(x);
 
-	if (_altSurface != NULL)
+	if (_altSurface != nullptr)
 		_altSurface->setX(x);
 }
 
@@ -270,7 +270,7 @@ void BattlescapeButton::setY(int y)
 {
 	Surface::setY(y);
 
-	if (_altSurface != NULL)
+	if (_altSurface != nullptr)
 		_altSurface->setY(y);
 }
 

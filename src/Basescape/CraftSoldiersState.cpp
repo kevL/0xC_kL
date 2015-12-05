@@ -168,11 +168,11 @@ void CraftSoldiersState::init()
 
 	// Reset stuff when coming back from pre-battle Inventory.
 	const SavedBattleGame* const battleSave = _game->getSavedGame()->getBattleSave();
-	if (battleSave != NULL)
+	if (battleSave != nullptr)
 	{
 // unfortunately this would rely on the list of battleSoldiers *not* changing when entering/cancelling InventoryState
 //		_selUnitId = battleSave->getSelectedUnit()->getBattleOrder();
-		_game->getSavedGame()->setBattleSave(NULL);
+		_game->getSavedGame()->setBattleSave(nullptr);
 		_craft->setInBattlescape(false);
 	}
 
@@ -192,7 +192,7 @@ void CraftSoldiersState::init()
 						tr((*i)->getRankString()).c_str(),
 						(*i)->getCraftString(_game->getLanguage()).c_str());
 
-		if ((*i)->getCraft() == NULL)
+		if ((*i)->getCraft() == nullptr)
 			color = _lstSoldiers->getColor();
 		else
 		{
@@ -257,7 +257,7 @@ void CraftSoldiersState::btnUnloadClick(Action*)
 			++i)
 	{
 		if ((*i)->getCraft() == _craft)
-			(*i)->setCraft(NULL);
+			(*i)->setCraft(nullptr);
 	}
 
 	_base->setRecallRow(
@@ -286,14 +286,14 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 		Soldier* const sol = _base->getSoldiers()->at(_lstSoldiers->getSelectedRow());
 
 		if (sol->getRecovery() != 0
-			|| (sol->getCraft() != NULL
+			|| (sol->getCraft() != nullptr
 				&& sol->getCraft()->getCraftStatus() == "STR_OUT"))
 		{
 			return;
 		}
 
 		Uint8 color;
-		if (sol->getCraft() == NULL
+		if (sol->getCraft() == nullptr
 			&& _craft->getSpaceAvailable() != 0
 			&& _craft->getLoadCapacity() - _craft->calcLoadCurrent() > 9)
 		{
@@ -307,10 +307,10 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 		{
 			color = _lstSoldiers->getColor();
 
-			if (sol->getCraft() != NULL
+			if (sol->getCraft() != nullptr
 				&& sol->getCraft()->getCraftStatus() != "STR_OUT")
 			{
-				sol->setCraft(NULL);
+				sol->setCraft(nullptr);
 				_lstSoldiers->setCellText(
 										row, 2,
 										tr("STR_NONE_UC"));
@@ -457,7 +457,7 @@ void CraftSoldiersState::btnInventoryClick(Action*)
 
 	bgen.runInventory(_craft);
 // unfortunately this would rely on the list of battleSoldiers *not* changing when entering/cancelling InventoryState
-//	bgen.runInventory(_craft, NULL, _selUnitId);
+//	bgen.runInventory(_craft, nullptr, _selUnitId);
 
 	_game->getScreen()->clear();
 	_game->pushState(new InventoryState());

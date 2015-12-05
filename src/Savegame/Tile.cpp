@@ -65,7 +65,7 @@ Tile::Tile(const Position& pos)
 		_fire(0),
 		_explosive(0),
 		_explosiveType(0),
-		_unit(NULL),
+		_unit(nullptr),
 		_animOffset(0),
 		_markerColor(0),
 		_visible(false),
@@ -303,10 +303,10 @@ bool Tile::isVoid(
 		const bool testInventory,
 		const bool testVolatiles) const
 {
-	bool ret = _objects[O_FLOOR] == NULL
-			&& _objects[O_WESTWALL] == NULL
-			&& _objects[O_NORTHWALL] == NULL
-			&& _objects[O_OBJECT] == NULL;
+	bool ret = _objects[O_FLOOR] == nullptr
+			&& _objects[O_WESTWALL] == nullptr
+			&& _objects[O_NORTHWALL] == nullptr
+			&& _objects[O_OBJECT] == nullptr;
 
 	if (testInventory == true)
 		ret = ret
@@ -329,7 +329,7 @@ int Tile::getTuCostTile(
 		MapDataType partType,
 		MovementType moveType) const
 {
-	if (_objects[partType] != NULL
+	if (_objects[partType] != nullptr
 		&& !(_objects[partType]->isUfoDoor() == true
 			&& _curFrame[partType] > 1)
 		&& !(partType == O_OBJECT
@@ -344,18 +344,18 @@ int Tile::getTuCostTile(
 /**
  * Gets whether this tile has a floor or not.
  * @note If no tile-part defined as floor then it has no floor.
- * @param tileBelow - the tile below this tile (default NULL)
+ * @param tileBelow - the tile below this tile (default nullptr)
  * @return, true if tile has no floor
  */
 bool Tile::hasNoFloor(const Tile* const tileBelow) const
 {
-	if (tileBelow != NULL
+	if (tileBelow != nullptr
 		&& tileBelow->getTerrainLevel() == -24)
 	{
 		return false;
 	}
 
-	if (_objects[O_FLOOR] != NULL)
+	if (_objects[O_FLOOR] != nullptr)
 		return _objects[O_FLOOR]->isNoFloor();
 
 	// NOTE: Technically a bigWallBlock object-part could be a valid floor
@@ -370,7 +370,7 @@ bool Tile::hasNoFloor(const Tile* const tileBelow) const
  */
 bool Tile::isBigWall() const
 {
-	if (_objects[O_OBJECT] != NULL)
+	if (_objects[O_OBJECT] != nullptr)
 		return (_objects[O_OBJECT]->getBigwall() != BIGWALL_NONE);
 
 	return false;
@@ -385,10 +385,10 @@ bool Tile::isBigWall() const
 int Tile::getTerrainLevel() const
 {
 	int level = 0;
-	if (_objects[static_cast<size_t>(O_FLOOR)] != NULL)
+	if (_objects[static_cast<size_t>(O_FLOOR)] != nullptr)
 		level = _objects[static_cast<size_t>(O_FLOOR)]->getTerrainLevel();
 
-	if (_objects[static_cast<size_t>(O_OBJECT)] != NULL)
+	if (_objects[static_cast<size_t>(O_OBJECT)] != nullptr)
 		level = std::min(
 					level,
 					_objects[static_cast<size_t>(O_OBJECT)]->getTerrainLevel());
@@ -411,16 +411,16 @@ int Tile::getTerrainLevel() const
 int Tile::getFootstepSound(const Tile* const tileBelow) const
 {
 	int sound = -1;
-	if (_objects[static_cast<size_t>(O_OBJECT)] != NULL
+	if (_objects[static_cast<size_t>(O_OBJECT)] != nullptr
 		&& _objects[static_cast<size_t>(O_OBJECT)]->getBigwall() < BIGWALL_NESW // ie. None or Block
 		&& _objects[static_cast<size_t>(O_OBJECT)]->getFootstepSound() > 0) // > -1
 	{
 		sound = _objects[static_cast<size_t>(O_OBJECT)]->getFootstepSound();
 	}
-	else if (_objects[static_cast<size_t>(O_FLOOR)] != NULL)
+	else if (_objects[static_cast<size_t>(O_FLOOR)] != nullptr)
 		sound = _objects[static_cast<size_t>(O_FLOOR)]->getFootstepSound();
-	else if (_objects[static_cast<size_t>(O_OBJECT)] == NULL
-		&& tileBelow != NULL
+	else if (_objects[static_cast<size_t>(O_OBJECT)] == nullptr
+		&& tileBelow != nullptr
 		&& tileBelow->getTerrainLevel() == -24)
 	{
 		sound = tileBelow->getMapData(O_OBJECT)->getFootstepSound();
@@ -432,7 +432,7 @@ int Tile::getFootstepSound(const Tile* const tileBelow) const
 /**
  * Open a door on this Tile.
  * @param partType		- a tile part type (MapData.h)
- * @param unit			- pointer to a BattleUnit (default NULL)
+ * @param unit			- pointer to a BattleUnit (default nullptr)
 // * @param reserved	- BattleActionType (BattlescapeGame.h) (default BA_NONE)
  * @return, -1 no door opened
  *			 0 normal door
@@ -445,18 +445,18 @@ int Tile::openDoor(
 		const BattleUnit* const unit)
 //		const BattleActionType reserved)
 {
-	if (_objects[partType] != NULL)
+	if (_objects[partType] != nullptr)
 	{
 		if (_objects[partType]->isDoor() == true)
 		{
-			if (_unit != NULL
+			if (_unit != nullptr
 				&& _unit != unit
 				&& _unit->getPosition() != getPosition())
 			{
 				return DR_NONE;
 			}
 
-			if (unit != NULL
+			if (unit != nullptr
 				&& unit->getTimeUnits() < _objects[partType]->getTuCostPart(unit->getMoveTypeUnit()))
 //											+ unit->getActionTu(reserved, unit->getMainHandWeapon(false)))
 			{
@@ -469,7 +469,7 @@ int Tile::openDoor(
 					_mapDataSetId[partType],
 					_objects[partType]->getDataset()->getObjects()->at(_objects[partType]->getAltMCD())->getPartType());
 
-			setMapData(NULL,-1,-1, partType);
+			setMapData(nullptr,-1,-1, partType);
 
 			return DR_OPEN_WOOD;
 		}
@@ -478,7 +478,7 @@ int Tile::openDoor(
 		{
 			if (_curFrame[partType] == 0) // ufo door part 0 - door is closed
 			{
-				if (unit != NULL
+				if (unit != nullptr
 					&& unit->getTimeUnits() < _objects[partType]->getTuCostPart(unit->getMoveTypeUnit()))
 //												+ unit->getActionTu(reserved, unit->getMainHandWeapon(false)))
 				{
@@ -544,7 +544,7 @@ void Tile::setDiscovered(
 			_discovered[1] = true;
 		}
 
-		if (_unit != NULL)
+		if (_unit != nullptr)
 			_unit->clearCache();
 	}
 }
@@ -625,7 +625,7 @@ void Tile::destroyTilepart(
 {
 	int tLevel = 0;
 
-	if (_objects[partType] != NULL)
+	if (_objects[partType] != nullptr)
 	{
 		if (_objects[partType]->isGravLift() == true
 			|| _objects[partType]->getArmor() == 255) // <- set to 255 in MCD for Truly Indestructability.
@@ -642,7 +642,7 @@ void Tile::destroyTilepart(
 		const MapData* const origData = _objects[partType];
 		const int origDataSetId = _mapDataSetId[partType];
 
-		setMapData(NULL,-1,-1, partType);
+		setMapData(nullptr,-1,-1, partType);
 
 		if (origData->getDieMCD() != 0)
 		{
@@ -662,12 +662,12 @@ void Tile::destroyTilepart(
 
 	if (partType == O_FLOOR) // check if the floor on the lowest level is gone.
 	{
-		if (_pos.z == 0 && _objects[O_FLOOR] == NULL)
+		if (_pos.z == 0 && _objects[O_FLOOR] == nullptr)
 			setMapData( // replace with scorched earth
 					MapDataSet::getScorchedEarthTile(),
 					1,0, O_FLOOR);
 
-		if (_objects[O_OBJECT] != NULL // destroy the object if floor is gone.
+		if (_objects[O_OBJECT] != nullptr // destroy the object if floor is gone.
 			&& _objects[O_OBJECT]->getBigwall() == BIGWALL_NONE)
 		{
 
@@ -678,9 +678,9 @@ void Tile::destroyTilepart(
 	if (tLevel == -24) // destroy the object-above if its support is gone.
 	{
 		Tile* const tileAbove = battleSave->getTile(_pos + Position(0,0,1));
-		if (tileAbove != NULL
-			&& tileAbove->getMapData(O_FLOOR) == NULL
-			&& tileAbove->getMapData(O_OBJECT) != NULL
+		if (tileAbove != nullptr
+			&& tileAbove->getMapData(O_FLOOR) == nullptr
+			&& tileAbove->getMapData(O_OBJECT) != nullptr
 			&& tileAbove->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NONE)
 		{
 			destroyTilepart(O_OBJECT, battleSave); // stop floating lampposts.
@@ -759,7 +759,7 @@ int Tile::getFlammability() const
 			i != PARTS_TILE;
 			++i)
 	{
-		if (_objects[i] != NULL
+		if (_objects[i] != nullptr
 			&& _objects[i]->getFlammable() < burn)
 		{
 			burn = _objects[i]->getFlammable();
@@ -820,7 +820,7 @@ int Tile::getFuel(MapDataType partType) const
 				i != PARTS_TILE;
 				++i)
 		{
-			if (_objects[i] != NULL
+			if (_objects[i] != nullptr
 				&& _objects[i]->getFuel() > fuel)
 			{
 				fuel = _objects[i]->getFuel();
@@ -961,7 +961,7 @@ int Tile::getSmoke() const
  */
 bool Tile::isSmokable() const // private.
 {
-	return _objects[O_OBJECT] == NULL
+	return _objects[O_OBJECT] == nullptr
 		|| (_objects[O_OBJECT]->getBigwall() != BIGWALL_NESW
 			&& _objects[O_OBJECT]->getBigwall() != BIGWALL_NWSE
 			&& _objects[O_OBJECT]->blockSmoke() == false);
@@ -975,9 +975,9 @@ bool Tile::isSmokable() const // private.
  */
 bool Tile::isFirable() const // private.
 {
-	return (_objects[O_FLOOR] != NULL
+	return (_objects[O_FLOOR] != nullptr
 		&& _objects[O_FLOOR]->blockFire() == false)
-		&& (_objects[O_OBJECT] == NULL
+		&& (_objects[O_OBJECT] == nullptr
 			|| (_objects[O_OBJECT]->getBigwall() != BIGWALL_NESW
 				&& _objects[O_OBJECT]->getBigwall() != BIGWALL_NWSE
 				&& _objects[O_OBJECT]->blockFire() == false));
@@ -989,7 +989,7 @@ bool Tile::isFirable() const // private.
  * smoke/fire spreads to them; this is so that units would have to end their
  * turn on a tile before smoke/fire damages them. That is they get a chance to
  * get off the tile during their turn.
- * @param battleSave - pointer to the current SavedBattleGame (default NULL Vs. units)
+ * @param battleSave - pointer to the current SavedBattleGame (default nullptr Vs. units)
  */
 void Tile::hitStuff(SavedBattleGame* const battleSave)
 {
@@ -1013,8 +1013,8 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 
 	float vulnr;
 
-	if (battleSave == NULL)	// damage standing units at end of faction's turn-phase. Notice this hits only the primary quadrant!
-//		&& _unit != NULL)	// safety. call from BattlescapeGame::endTurnPhase() checks only Tiles w/ units, but that could change ....
+	if (battleSave == nullptr)	// damage standing units at end of faction's turn-phase. Notice this hits only the primary quadrant!
+//		&& _unit != nullptr)	// safety. call from BattlescapeGame::endTurnPhase() checks only Tiles w/ units, but that could change ....
 	{
 		//Log(LOG_INFO) << ". . hit Unit";
 		if (pSmoke != 0
@@ -1054,7 +1054,7 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 			}
 		}
 	}
-	else //if (battleSave != NULL) // try to destroy items & kill unconscious units at end of full-turns
+	else //if (battleSave != nullptr) // try to destroy items & kill unconscious units at end of full-turns
 	{
 		//Log(LOG_INFO) << ". . hit Inventory's ground-items";
 		BattleUnit* unit;
@@ -1068,7 +1068,7 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 			{
 				unit = (*i)->getUnit();
 
-				if (unit != NULL
+				if (unit != nullptr
 					&& unit->getUnitStatus() == STATUS_UNCONSCIOUS
 					&& unit->getTakenExpl() == false)
 				{
@@ -1102,7 +1102,7 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 				{
 					unit = (*i)->getUnit();
 
-					if (unit != NULL
+					if (unit != nullptr
 						&& unit->getUnitStatus() == STATUS_UNCONSCIOUS
 						&& unit->getTakenFire() == false)
 					{
@@ -1131,7 +1131,7 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 						done = (i == _inventory.end());
 					}
 					else if (pFire > (*i)->getRules()->getArmor() // no modifier when destroying items, not even corpse in bodyarmor.
-						&& (unit == NULL || unit->getUnitStatus() == STATUS_DEAD))
+						&& (unit == nullptr || unit->getUnitStatus() == STATUS_DEAD))
 					{
 						//Log(LOG_INFO) << ". . destroy item";
 						battleSave->removeItem(*i);	// This should not kill *and* remove a unit's corpse on the same
@@ -1165,7 +1165,7 @@ void Tile::animateTile()
 			i != PARTS_TILE;
 			++i)
 	{
-		if (_objects[i] != NULL)
+		if (_objects[i] != nullptr)
 		{
 			const int isPsycho = _objects[i]->isPsychedelic();
 			if (isPsycho == 0)
@@ -1221,8 +1221,8 @@ Surface* Tile::getSprite(int part) const
 	const size_t i = static_cast<size_t>(part);
 
 	const MapData* const data = _objects[i];
-	if (data == NULL)
-		return NULL;
+	if (data == nullptr)
+		return nullptr;
 
 	return data->getDataset()->getSurfaceset()->getFrame(data->getSprite(_curFrame[i]));
 }
@@ -1230,13 +1230,13 @@ Surface* Tile::getSprite(int part) const
 /**
  * Sets a unit on this Tile.
  * @param unit		- pointer to a BattleUnit
- * @param tileBelow	- pointer to the Tile below this Tile (default NULL)
+ * @param tileBelow	- pointer to the Tile below this Tile (default nullptr)
  */
 void Tile::setUnit(
 		BattleUnit* const unit,
 		const Tile* const tileBelow)
 {
-	if (unit != NULL)
+	if (unit != nullptr)
 		unit->setTile(this, tileBelow);
 
 	_unit = unit;
@@ -1284,7 +1284,7 @@ void Tile::removeItem(BattleItem* const item)
 		}
 	}
 
-	item->setTile(NULL);
+	item->setTile(nullptr);
 }
 
 /**
@@ -1308,8 +1308,8 @@ int Tile::getCorpseSprite(bool* fired) const
 				i != _inventory.end();
 				++i)
 		{
-			if ((*i)->getUnit() != NULL
-				&& (*i)->getUnit()->getGeoscapeSoldier() != NULL)
+			if ((*i)->getUnit() != nullptr
+				&& (*i)->getUnit()->getGeoscapeSoldier() != nullptr)
 			{
 				weightTest = (*i)->getRules()->getWeight();
 				if (weightTest > weight)
@@ -1331,7 +1331,7 @@ int Tile::getCorpseSprite(bool* fired) const
 					i != _inventory.end();
 					++i)
 			{
-				if ((*i)->getUnit() != NULL)
+				if ((*i)->getUnit() != nullptr)
 				{
 					weightTest = (*i)->getRules()->getWeight();
 					if (weightTest > weight)
@@ -1381,7 +1381,7 @@ int Tile::getTopSprite(bool* primed) const
 
 	if (_inventory.empty() == false)
 	{
-		const BattleItem* grenade (NULL);
+		const BattleItem* grenade (nullptr);
 		*primed = false;
 		BattleType bType;
 
@@ -1406,7 +1406,7 @@ int Tile::getTopSprite(bool* primed) const
 			}
 		}
 
-		if (grenade != NULL)
+		if (grenade != nullptr)
 			return grenade->getRules()->getFloorSprite();
 
 		int
@@ -1448,7 +1448,7 @@ int Tile::hasUnconsciousUnit(bool playerOnly) const
 	{
 		const BattleUnit* const bu ((*i)->getUnit());
 
-		if (bu != NULL
+		if (bu != nullptr
 			&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
 			&& (bu->getOriginalFaction() == FACTION_PLAYER
 				|| playerOnly == false))

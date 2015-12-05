@@ -169,7 +169,7 @@ void NewGameState::btnOkClick(Action*)
  */
 void NewGameState::btnCancelClick(Action*)
 {
-	_game->setSavedGame(NULL);
+	_game->setSavedGame(nullptr);
 	_game->popState();
 }
 

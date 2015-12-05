@@ -100,8 +100,8 @@ void ScannerView::draw()
 				yPos = _unit->getPosition().y + y;
 
 				tile = battleSave->getTile(Position(xPos,yPos,z));
-				if (tile != NULL
-					&& tile->getUnit() != NULL
+				if (tile != nullptr
+					&& tile->getUnit() != nullptr
 					&& tile->getUnit()->getMotionPoints() != 0)
 				{
 					if (_dotsDone == false)

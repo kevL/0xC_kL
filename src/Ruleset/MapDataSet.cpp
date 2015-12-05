@@ -38,8 +38,8 @@ namespace OpenXcom
 {
 
 MapData
-	* MapDataSet::_blankTile = NULL,
-	* MapDataSet::_scorchedTile = NULL;
+	* MapDataSet::_blankTile = nullptr,
+	* MapDataSet::_scorchedTile = nullptr;
 
 
 /**
@@ -53,7 +53,7 @@ MapDataSet::MapDataSet(
 	:
 		_name(name),
 		_game(game),
-		_surfaceSet(NULL),
+		_surfaceSet(nullptr),
 		_loaded(false)
 {}
 
@@ -316,7 +316,7 @@ void MapDataSet::loadData()
 	std::ostringstream test;
 	test << _name << ".PCK";
 	SurfaceSet* const srt = _game->getResourcePack()->getSurfaceSet(test.str());
-	if (srt != NULL)
+	if (srt != nullptr)
 		_surfaceSet = srt;
 	else
 	{
@@ -353,7 +353,7 @@ void MapDataSet::unloadData()
 		std::ostringstream test;
 		test << _name << ".PCK";
 		const SurfaceSet* const srt = _game->getResourcePack()->getSurfaceSet(test.str());
-		if (srt == NULL)
+		if (srt == nullptr)
 			delete _surfaceSet;
 
 		_loaded = false;

@@ -240,7 +240,7 @@ std::wstring CraftsState::getAltStatus(Craft* const craft)
 		status = tr("STR_RETURNING_TO_BASE");
 		_cellColor = BROWN;
 	}
-	else if (craft->getDestination() == NULL)
+	else if (craft->getDestination() == nullptr)
 	{
 		status = tr("STR_PATROLLING");
 		_cellColor = BLUE;
@@ -248,7 +248,7 @@ std::wstring CraftsState::getAltStatus(Craft* const craft)
 	else
 	{
 		const Ufo* const ufo = dynamic_cast<Ufo*>(craft->getDestination());
-		if (ufo != NULL)
+		if (ufo != nullptr)
 		{
 			if (craft->isInDogfight() == true)
 				status = tr("STR_TAILING_UFO").arg(ufo->getId());

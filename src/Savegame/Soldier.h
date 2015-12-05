@@ -107,8 +107,8 @@ private:
 		/// Creates a new soldier.
 		Soldier(
 				const RuleSoldier* const solRule,
-				const RuleArmor* const armorRule = NULL,
-				const std::vector<SoldierNamePool*>* const names = NULL,
+				const RuleArmor* const armorRule = nullptr,
+				const std::vector<SoldierNamePool*>* const names = nullptr,
 				int id = 0);
 		/// Cleans up the soldier.
 		~Soldier();
@@ -140,7 +140,7 @@ private:
 		/// Gets the soldier's craft.
 		Craft* getCraft() const;
 		/// Sets the soldier's craft.
-		void setCraft(Craft* const craft = NULL);
+		void setCraft(Craft* const craft = nullptr);
 		/// Gets the soldier's craft string.
 		std::wstring getCraftString(Language* lang) const;
 

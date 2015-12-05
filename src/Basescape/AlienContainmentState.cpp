@@ -179,7 +179,7 @@ AlienContainmentState::AlienContainmentState(
 			++i)
 	{
 		itRule = _game->getRuleset()->getItem((*i)->getRules()->getType());
-		if (itRule != NULL && itRule->isAlien() == true)
+		if (itRule != nullptr && itRule->isAlien() == true)
 			baseProjects.push_back((*i)->getRules()->getType());
 	}
 
@@ -275,8 +275,8 @@ void AlienContainmentState::think()
 {
 	State::think();
 
-	_timerInc->think(this, NULL);
-	_timerDec->think(this, NULL);
+	_timerInc->think(this, nullptr);
+	_timerDec->think(this, nullptr);
 }
 
 /**

@@ -470,7 +470,7 @@ bool init(
 	FILE* const file = std::fopen(
 								Logger::logFile().c_str(),
 								"w");
-	if (file == NULL)
+	if (file == nullptr)
 	{
 		std::fclose(file); // kL
 		throw Exception(st + " not found");

@@ -76,7 +76,7 @@ TextEdit::~TextEdit()
 	delete _timer;
 
 	SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL); // in case it was left focused
-	_state->setModal(NULL);
+	_state->setModal(nullptr);
 }
 
 /**
@@ -137,7 +137,7 @@ void TextEdit::setFocus(
 			SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
 
 			if (_modal == true)
-				_state->setModal(NULL);
+				_state->setModal(nullptr);
 		}
 	}
 }
@@ -348,7 +348,7 @@ void TextEdit::setPalette(
  */
 void TextEdit::think()
 {
-	_timer->think(NULL, this);
+	_timer->think(nullptr, this);
 }
 
 /**
@@ -560,7 +560,7 @@ void TextEdit::keyboardPress(Action* action, State* state)
 
 	_redraw = true;
 
-	if (_change != NULL)
+	if (_change != nullptr)
 		(state->*_change)(action);
 
 	InteractiveSurface::keyboardPress(action, state);

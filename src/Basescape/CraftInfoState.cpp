@@ -228,9 +228,9 @@ void CraftInfoState::init()
 	State::init();
 
 	// Reset stuff when coming back from pre-battle Inventory.
-	if (_game->getSavedGame()->getBattleSave() != NULL)
+	if (_game->getSavedGame()->getBattleSave() != nullptr)
 	{
-		_game->getSavedGame()->setBattleSave(NULL);
+		_game->getSavedGame()->setBattleSave(nullptr);
 		_craft->setInBattlescape(false);
 	}
 
@@ -390,7 +390,7 @@ void CraftInfoState::init()
 	if (crRule->getWeapons() > 0)
 	{
 		cw = _craft->getWeapons()->at(0);
-		if (cw != NULL)
+		if (cw != nullptr)
 		{
 			cwRule = cw->getRules();
 
@@ -436,7 +436,7 @@ void CraftInfoState::init()
 	if (crRule->getWeapons() > 1)
 	{
 		cw = _craft->getWeapons()->at(1);
-		if (cw != NULL)
+		if (cw != nullptr)
 		{
 			cwRule = cw->getRules();
 
@@ -523,7 +523,7 @@ void CraftInfoState::think()
 	if (_window->isPopupDone() == false)
 		_window->think();
 	else if (_blinkTimer->isRunning() == true)
-		_blinkTimer->think(this, NULL);
+		_blinkTimer->think(this, nullptr);
 }
 
 /**

@@ -136,7 +136,7 @@ static void uivector_cleanup(void* p)
 {
   ((uivector*)p)->size = ((uivector*)p)->allocsize = 0;
   lodepng_free(((uivector*)p)->data);
-  ((uivector*)p)->data = NULL;
+  ((uivector*)p)->data = nullptr;
 }
 
 /*returns 1 if success, 0 if failure ==> nothing done*/
@@ -169,7 +169,7 @@ static unsigned uivector_resizev(uivector* p, size_t size, unsigned value)
 
 static void uivector_init(uivector* p)
 {
-  p->data = NULL;
+  p->data = nullptr;
   p->size = p->allocsize = 0;
 }
 
@@ -228,12 +228,12 @@ static void ucvector_cleanup(void* p)
 {
   ((ucvector*)p)->size = ((ucvector*)p)->allocsize = 0;
   lodepng_free(((ucvector*)p)->data);
-  ((ucvector*)p)->data = NULL;
+  ((ucvector*)p)->data = nullptr;
 }
 
 static void ucvector_init(ucvector* p)
 {
-  p->data = NULL;
+  p->data = nullptr;
   p->size = p->allocsize = 0;
 }
 
@@ -289,7 +289,7 @@ static unsigned string_resize(char** out, size_t size)
 /*init a {char*, size_t} pair for use as string*/
 static void string_init(char** out)
 {
-  *out = NULL;
+  *out = nullptr;
   string_resize(out, 0);
 }
 
@@ -297,7 +297,7 @@ static void string_init(char** out)
 static void string_cleanup(char** out)
 {
   lodepng_free(*out);
-  *out = NULL;
+  *out = nullptr;
 }
 
 static void string_set(char** out, const char* in)
@@ -2134,7 +2134,7 @@ static unsigned zlib_decompress(unsigned char** out, size_t* outsize, const unsi
 unsigned lodepng_zlib_compress(unsigned char** out, size_t* outsize, const unsigned char* in,
                                size_t insize, const LodePNGCompressSettings* settings)
 {
-  /*initially, *out must be NULL and outsize 0, if you just give some random *out
+  /*initially, *out must be nullptr and outsize 0, if you just give some random *out
   that's pointing to a non allocated buffer, this'll crash*/
   ucvector outv;
   size_t i;
@@ -2693,8 +2693,8 @@ static unsigned LodePNGUnknownChunks_copy(LodePNGInfo* dest, const LodePNGInfo* 
 static void LodePNGText_init(LodePNGInfo* info)
 {
   info->text_num = 0;
-  info->text_keys = NULL;
-  info->text_strings = NULL;
+  info->text_keys = nullptr;
+  info->text_strings = nullptr;
 }
 
 static void LodePNGText_cleanup(LodePNGInfo* info)
@@ -2756,10 +2756,10 @@ unsigned lodepng_add_text(LodePNGInfo* info, const char* key, const char* str)
 static void LodePNGIText_init(LodePNGInfo* info)
 {
   info->itext_num = 0;
-  info->itext_keys = NULL;
-  info->itext_langtags = NULL;
-  info->itext_transkeys = NULL;
-  info->itext_strings = NULL;
+  info->itext_keys = nullptr;
+  info->itext_langtags = nullptr;
+  info->itext_transkeys = nullptr;
+  info->itext_strings = nullptr;
 }
 
 static void LodePNGIText_cleanup(LodePNGInfo* info)
@@ -6161,7 +6161,7 @@ unsigned decode(std::vector<unsigned char>& out, unsigned& w, unsigned& h,
                 State& state,
                 const unsigned char* in, size_t insize)
 {
-  unsigned char* buffer = NULL;
+  unsigned char* buffer = nullptr;
   unsigned error = lodepng_decode(&buffer, &w, &h, &state, in, insize);
   if(buffer && !error)
   {

@@ -147,7 +147,7 @@ void CraftArmorState::init()
 	if (_base->getCrafts()->empty() == false)
 		craft = _base->getCrafts()->at(_craftId);
 	else
-		craft = NULL;
+		craft = nullptr;
 
 	size_t row = 0;
 	for (std::vector<Soldier*>::const_iterator
@@ -162,7 +162,7 @@ void CraftArmorState::init()
 						(*i)->getCraftString(_game->getLanguage()).c_str());
 
 		Uint8 color;
-		if ((*i)->getCraft() == NULL)
+		if ((*i)->getCraft() == nullptr)
 			color = _lstSoldiers->getColor();
 		else
 		{
@@ -226,7 +226,7 @@ void CraftArmorState::lstSoldiersPress(Action* action)
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		const Soldier* const soldier = _base->getSoldiers()->at(soldierId);
-		if (soldier->getCraft() == NULL
+		if (soldier->getCraft() == nullptr
 			|| soldier->getCraft()->getCraftStatus() != "STR_OUT")
 		{
 			_game->pushState(new SoldierArmorState(

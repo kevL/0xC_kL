@@ -117,7 +117,7 @@ CraftWeaponsState::CraftWeaponsState(
 	_lstWeapons->setSelectable();
 	_lstWeapons->addRow(1, tr("STR_NONE_UC").c_str());
 
-	_cwRules.push_back(NULL); // no weapon/disarm.
+	_cwRules.push_back(nullptr); // no weapon/disarm.
 
 	const std::vector<std::string>& cwList = _game->getRuleset()->getCraftWeaponsList();
 	for (std::vector<std::string>::const_iterator
@@ -184,18 +184,18 @@ void CraftWeaponsState::lstWeaponsClick(Action*)
 	const RuleCraftWeapon* cwRule (_cwRules[_lstWeapons->getSelectedRow()]);
 
 	std::string launcherType;
-	if (cwRule != NULL)
+	if (cwRule != nullptr)
 	{
 		launcherType = cwRule->getLauncherItem();
 		if (storage->getItemQty(launcherType) == 0
-			|| (cw != NULL && cw->getRules() == cwRule))
+			|| (cw != nullptr && cw->getRules() == cwRule))
 		{
 			launcherType.clear();
 		}
 	}
 
-	if (cw != NULL
-		&& (cwRule == NULL || launcherType.empty() == false))
+	if (cw != nullptr
+		&& (cwRule == nullptr || launcherType.empty() == false))
 	{
 		storage->addItem(cw->getRules()->getLauncherItem());
 		storage->addItem(
@@ -203,7 +203,7 @@ void CraftWeaponsState::lstWeaponsClick(Action*)
 					cw->getClipsLoaded(_game->getRuleset()));
 
 		delete cw;
-		_craft->getWeapons()->at(_pod) = NULL;
+		_craft->getWeapons()->at(_pod) = nullptr;
 	}
 
 	if (launcherType.empty() == false)
@@ -215,10 +215,10 @@ void CraftWeaponsState::lstWeaponsClick(Action*)
 		_craft->getWeapons()->at(_pod) = cw;
 		_craft->checkup();
 
-		cwRule = NULL;
+		cwRule = nullptr;
 	}
 
-	if (cwRule == NULL)
+	if (cwRule == nullptr)
 		_game->popState();
 }
 

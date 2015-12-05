@@ -269,7 +269,7 @@ ProductionProgress Production::step(
 											k != (*j)->getWeapons()->end();
 											++k)
 									{
-										if (*k != NULL
+										if (*k != nullptr
 											&& (*k)->getRules()->getClipItem() == i->first)
 										{
 											(*k)->setCantLoad(false);

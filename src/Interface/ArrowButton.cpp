@@ -48,7 +48,7 @@ ArrowButton::ArrowButton(
 			height,
 			x,y),
 		_shape(shape),
-		_list(NULL)
+		_list(nullptr)
 {
 	_timer = new Timer(77);
 	_timer->onTimer((SurfaceHandler)& ArrowButton::scroll);
@@ -67,7 +67,7 @@ ArrowButton::~ArrowButton()
  */
 bool ArrowButton::isButtonHandled(Uint8 btn)
 {
-	if (_list != NULL)
+	if (_list != nullptr)
 		return btn == SDL_BUTTON_LEFT
 			|| btn == SDL_BUTTON_RIGHT;
 	else
@@ -341,7 +341,7 @@ void ArrowButton::draw()
  */
 void ArrowButton::think()
 {
-	_timer->think(NULL, this);
+	_timer->think(nullptr, this);
 }
 
 /**
@@ -364,7 +364,7 @@ void ArrowButton::mousePress(Action* action, State* state)
 {
 	ImageButton::mousePress(action, state);
 
-	if (_list != NULL)
+	if (_list != nullptr)
 	{
 		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 			_timer->start();
@@ -384,7 +384,7 @@ void ArrowButton::mouseRelease(Action* action, State* state)
 {
 	ImageButton::mouseRelease(action, state);
 
-	if (_list != NULL
+	if (_list != nullptr
 		&& action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		_timer->stop();
@@ -400,7 +400,7 @@ void ArrowButton::mouseClick(Action* action, State* state)
 {
 	ImageButton::mouseClick(action, state);
 
-	if (_list != NULL
+	if (_list != nullptr
 		&& action->getDetails()->button.button == SDL_BUTTON_RIGHT)
 	{
 		if (_shape == ARROW_BIG_UP)

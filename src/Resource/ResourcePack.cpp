@@ -163,7 +163,7 @@ Font* ResourcePack::getFont(const std::string& name) const
 	if (i != _fonts.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -177,7 +177,7 @@ Surface* ResourcePack::getSurface(const std::string& name) const
 	if (i != _surfaces.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -191,7 +191,7 @@ SurfaceSet* ResourcePack::getSurfaceSet(const std::string& name) const
 	if (i != _sets.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -235,7 +235,7 @@ void ResourcePack::playMusic(
 	{
 		//Log(LOG_INFO) << ". new trak = " << trackType;
 		const Music* const music = getRandomMusic(trackType, terrainType);
-		if (music != _muteMusic) // note: '_muteMusic'= NULL
+		if (music != _muteMusic) // note: '_muteMusic'= nullptr
 		{
 			if (Options::musicAlwaysLoop == false
 				&& (trackType == OpenXcom::res_MUSIC_WIN		// never loop these tracks
@@ -267,7 +267,7 @@ void ResourcePack::fadeMusic(
 	if (Mix_PlayingMusic() == 0)
 		return;
 
-	if (Mix_GetMusicType(NULL) != MUS_MID)
+	if (Mix_GetMusicType(nullptr) != MUS_MID)
 	{
 		game->setInputActive(false);
 
@@ -389,7 +389,7 @@ Sound* ResourcePack::getSound(
 			return i->second->getSound(soundId);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -425,7 +425,7 @@ Palette* ResourcePack::getPalette(const std::string& name) const
 	if (i != _palettes.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 /**

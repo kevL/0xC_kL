@@ -65,7 +65,7 @@ ArticleState::~ArticleState() // virtual/protected.
 void ArticleState::think()
 {
 	State::think();
-	_timer->think(this, NULL);
+	_timer->think(this, nullptr);
 }
 
 /**
@@ -73,11 +73,11 @@ void ArticleState::think()
  */
 void ArticleState::keyRepeat() // private.
 {
-	Uint8* keystate = SDL_GetKeyState(NULL);
+	Uint8* keystate = SDL_GetKeyState(nullptr);
 	if (keystate[Options::keyGeoRight] == 1 || keystate[SDLK_KP6] == 1)
-		btnNextClick(NULL);
+		btnNextClick(nullptr);
 	else if (keystate[Options::keyGeoLeft] == 1 || keystate[SDLK_KP4] == 1)
-		btnPrevClick(NULL);
+		btnPrevClick(nullptr);
 }
 
 /**

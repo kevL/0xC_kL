@@ -59,17 +59,17 @@ BaseView::BaseView(
 			width,
 			height,
 			x,y),
-		_base(NULL),
-		_texture(NULL),
-		_srfDog(NULL),
-		_selFacility(NULL),
-		_big(NULL),
-		_small(NULL),
-		_lang(NULL),
+		_base(nullptr),
+		_texture(nullptr),
+		_srfDog(nullptr),
+		_selFacility(nullptr),
+		_big(nullptr),
+		_small(nullptr),
+		_lang(nullptr),
 		_gridX(0),
 		_gridY(0),
 		_selSize(0),
-		_selector(NULL),
+		_selector(nullptr),
 		_blink(true)
 {
 	for (size_t
@@ -82,7 +82,7 @@ BaseView::BaseView(
 				y != Base::BASE_SIZE;
 				++y)
 		{
-			_facilities[x][y] = NULL;
+			_facilities[x][y] = nullptr;
 		}
 	}
 
@@ -125,7 +125,7 @@ void BaseView::initText(
 void BaseView::setBase(Base* base)
 {
 	_base = base;
-	_selFacility = NULL;
+	_selFacility = nullptr;
 
 	for (size_t
 			x = 0;
@@ -137,7 +137,7 @@ void BaseView::setBase(Base* base)
 				y != Base::BASE_SIZE;
 				++y)
 		{
-			_facilities[x][y] = NULL;
+			_facilities[x][y] = nullptr;
 		}
 	}
 
@@ -207,9 +207,9 @@ BaseFacility* BaseView::getSelectedFacility() const
 void BaseView::resetSelectedFacility()
 {
 	_facilities[static_cast<size_t>(_selFacility->getX())]
-			   [static_cast<size_t>(_selFacility->getY())] = NULL;
+			   [static_cast<size_t>(_selFacility->getY())] = nullptr;
 
-	_selFacility = NULL;
+	_selFacility = nullptr;
 }
 
 /**
@@ -294,7 +294,7 @@ bool BaseView::isPlaceable(const RuleBaseFacility* const facRule) const
 				y != facSize;
 				++y)
 		{
-			if (_facilities[gridX + x][gridY + y] != NULL)
+			if (_facilities[gridX + x][gridY + y] != nullptr)
 				return false;
 		}
 	}
@@ -308,7 +308,7 @@ bool BaseView::isPlaceable(const RuleBaseFacility* const facRule) const
 		if ((	   gridX != 0							// check left
 				&& gridY + i < Base::BASE_SIZE
 				&& _facilities[gridX - 1]
-							  [gridY + i] != NULL
+							  [gridY + i] != nullptr
 				&& (allowQ == true
 					|| _facilities[gridX - 1]
 								  [gridY + i]
@@ -317,7 +317,7 @@ bool BaseView::isPlaceable(const RuleBaseFacility* const facRule) const
 			|| (   gridX + i < Base::BASE_SIZE			// check top
 				&& gridY != 0
 				&& _facilities[gridX + i]
-							  [gridY - 1] != NULL
+							  [gridY - 1] != nullptr
 				&& (allowQ == true
 					|| _facilities[gridX + i]
 								  [gridY - 1]
@@ -326,7 +326,7 @@ bool BaseView::isPlaceable(const RuleBaseFacility* const facRule) const
 			|| (   gridX + facSize < Base::BASE_SIZE	// check right
 				&& gridY + i < Base::BASE_SIZE
 				&& _facilities[gridX + facSize]
-							  [gridY + i] != NULL
+							  [gridY + i] != nullptr
 				&& (allowQ == true
 					|| _facilities[gridX + facSize]
 								  [gridY + i]
@@ -335,7 +335,7 @@ bool BaseView::isPlaceable(const RuleBaseFacility* const facRule) const
 			|| (   gridX + i < Base::BASE_SIZE			// check bottom
 				&& gridY + facSize < Base::BASE_SIZE
 				&& _facilities[gridX + i]
-							  [gridY + facSize] != NULL
+							  [gridY + facSize] != nullptr
 				&& (allowQ == true
 					|| _facilities[gridX + i]
 								  [gridY + facSize]
@@ -368,7 +368,7 @@ bool BaseView::isQueuedBuilding(const RuleBaseFacility* const facRule) const
 		if ((	   gridX != 0							// check left
 				&& gridY + i < Base::BASE_SIZE
 				&& _facilities[gridX - 1]
-							  [gridY + i] != NULL
+							  [gridY + i] != nullptr
 				&& _facilities[gridX - 1]
 							  [gridY + i]
 						->buildFinished() == true)
@@ -376,7 +376,7 @@ bool BaseView::isQueuedBuilding(const RuleBaseFacility* const facRule) const
 			|| (   gridX + i < Base::BASE_SIZE			// check top
 				&& gridY != 0
 				&& _facilities[gridX + i]
-							  [gridY - 1] != NULL
+							  [gridY - 1] != nullptr
 				&& _facilities[gridX + i]
 							  [gridY - 1]
 						->buildFinished() == true)
@@ -384,7 +384,7 @@ bool BaseView::isQueuedBuilding(const RuleBaseFacility* const facRule) const
 			|| (   gridX + facSize < Base::BASE_SIZE	// check right
 				&& gridY + i < Base::BASE_SIZE
 				&& _facilities[gridX + facSize]
-							  [gridY + i] != NULL
+							  [gridY + i] != nullptr
 				&& _facilities[gridX + facSize]
 							  [gridY + i]
 						->buildFinished() == true)
@@ -392,7 +392,7 @@ bool BaseView::isQueuedBuilding(const RuleBaseFacility* const facRule) const
 			|| (   gridX + i < Base::BASE_SIZE			// check bottom
 				&& gridY + facSize < Base::BASE_SIZE
 				&& _facilities[gridX + i]
-							  [gridY + facSize] != NULL
+							  [gridY + facSize] != nullptr
 				&& _facilities[gridX + i]
 							  [gridY + facSize]
 						->buildFinished() == true))
@@ -490,7 +490,7 @@ void BaseView::updateNeighborFacilityBuildTime( // private.
 		const BaseFacility* const facility,
 		BaseFacility* const neighbor)
 {
-	if (facility != NULL && neighbor != NULL)
+	if (facility != nullptr && neighbor != nullptr)
 	{
 		const int
 			facBuild = facility->getBuildTime(),
@@ -510,7 +510,7 @@ void BaseView::updateNeighborFacilityBuildTime( // private.
  */
 void BaseView::think()
 {
-	_timer->think(NULL, this);
+	_timer->think(nullptr, this);
 }
 
 /**
@@ -635,7 +635,7 @@ void BaseView::draw()
 						y != facY + facSize;
 						++y)
 				{
-					if (_facilities[x][y] != NULL
+					if (_facilities[x][y] != nullptr
 						&& _facilities[x][y]->buildFinished() == true)
 					{
 						srfTunnel = _texture->getFrame(7);
@@ -653,7 +653,7 @@ void BaseView::draw()
 						x != facX + facSize;
 						++x)
 				{
-					if (_facilities[x][y] != NULL
+					if (_facilities[x][y] != nullptr
 						&& _facilities[x][y]->buildFinished() == true)
 					{
 						srfTunnel = _texture->getFrame(8);
@@ -672,7 +672,7 @@ void BaseView::draw()
 			i != _base->getFacilities()->end();
 			++i)
 	{
-		(*i)->setCraft(NULL); // NULL these to prepare hangers for population by Crafts.
+		(*i)->setCraft(nullptr); // nullptr these to prepare hangers for population by Crafts.
 
 		const int facSize = static_cast<int>((*i)->getRules()->getSize());
 		int j = 0;
@@ -748,12 +748,12 @@ void BaseView::draw()
 				++x)
 		{
 			fac = _facilities[x][y];
-			if (fac != NULL)
+			if (fac != nullptr)
 			{
 				if (i != _base->getCrafts()->end()
 					&& fac->buildFinished() == true
 					&& fac->getRules()->getCrafts() != 0
-					&& fac->getCraft() == NULL)
+					&& fac->getCraft() == nullptr)
 				{
 					if ((*i)->getCraftStatus() != "STR_OUT")
 					{
@@ -770,7 +770,7 @@ void BaseView::draw()
 				}
 
 				if (hasDog == true
-					&& (fac->getCraft() == NULL
+					&& (fac->getCraft() == nullptr
 						|| fac->getCraft()->getCraftStatus() == "STR_OUT"))
 				{
 					const int facSize = static_cast<int>(fac->getRules()->getSize());
@@ -805,7 +805,7 @@ void BaseView::blit(Surface* surface)
 {
 	Surface::blit(surface);
 
-	if (_selector != NULL)
+	if (_selector != nullptr)
 		_selector->blit(surface);
 }
 
@@ -842,7 +842,7 @@ void BaseView::mouseOver(Action* action, State* state)
 	}
 	else
 	{
-		_selFacility = NULL;
+		_selFacility = nullptr;
 		if (_selSize != 0)
 			_selector->setVisible(false);
 	}
@@ -857,7 +857,7 @@ void BaseView::mouseOver(Action* action, State* state)
  */
 void BaseView::mouseOut(Action* action, State* state)
 {
-	_selFacility = NULL;
+	_selFacility = nullptr;
 	if (_selSize != 0)
 		_selector->setVisible(false);
 

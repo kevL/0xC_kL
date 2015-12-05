@@ -62,7 +62,7 @@ ManufactureInfoState::ManufactureInfoState(
 	:
 		_base(base),
 		_manufRule(manufRule),
-		_production(NULL),
+		_production(nullptr),
 		_producedItemsValue(0)
 {
 	buildUi();
@@ -78,7 +78,7 @@ ManufactureInfoState::ManufactureInfoState(
 		Production* const production)
 	:
 		_base(base),
-		_manufRule(NULL),
+		_manufRule(nullptr),
 		_production(production),
 		_producedItemsValue(0)
 {
@@ -176,7 +176,7 @@ void ManufactureInfoState::buildUi() // private.
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));
 
-	_txtTitle->setText(tr(_manufRule != NULL ? _manufRule->getType() : _production->getRules()->getType()));
+	_txtTitle->setText(tr(_manufRule != nullptr ? _manufRule->getType() : _production->getRules()->getType()));
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 
@@ -233,7 +233,7 @@ void ManufactureInfoState::buildUi() // private.
 					(ActionHandler)& ManufactureInfoState::btnOkClick,
 					Options::keyCancel);
 
-	if (_production == NULL)
+	if (_production == nullptr)
 	{
 		_btnOk->setVisible(false);
 		_production = new Production(_manufRule, 0);
@@ -368,7 +368,7 @@ void ManufactureInfoState::btnStopClick(Action*) // private.
  */
 void ManufactureInfoState::btnOkClick(Action*) // private.
 {
-	if (_manufRule != NULL)
+	if (_manufRule != nullptr)
 		_production->startProduction(
 								_base,
 								_game->getSavedGame());
@@ -383,7 +383,7 @@ void ManufactureInfoState::exitState() // private.
 {
 	_game->popState();
 
-	if (_manufRule != NULL)
+	if (_manufRule != nullptr)
 		_game->popState();
 }
 
@@ -869,11 +869,11 @@ void ManufactureInfoState::think() // private.
 {
 	State::think();
 
-	_timerMoreEngineer->think(this, NULL);
-	_timerLessEngineer->think(this, NULL);
+	_timerMoreEngineer->think(this, nullptr);
+	_timerLessEngineer->think(this, nullptr);
 
-	_timerMoreUnit->think(this, NULL);
-	_timerLessUnit->think(this, NULL);
+	_timerMoreUnit->think(this, nullptr);
+	_timerLessUnit->think(this, nullptr);
 }
 
 }

@@ -51,7 +51,7 @@ namespace Version
  */
 std::string timeStamp()
 {
-	time_t timeOut = std::time(NULL);
+	time_t timeOut = std::time(nullptr);
 	const struct tm* const timeInfo = std::localtime(&timeOut);
 
 	char verDate[7];

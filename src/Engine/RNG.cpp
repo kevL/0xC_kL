@@ -89,7 +89,7 @@ void setSeed(uint64_t seed)
 	//Log(LOG_INFO) << "rng:setSeed()";
 	if (seed == 0)
 	{
-		x = std::time(NULL);
+		x = std::time(nullptr);
 		//Log(LOG_INFO) << ". reseed = " << x;
 	}
 	else
