@@ -25,11 +25,10 @@
 #include <stdlib.h>
 
 #ifndef UINT64_MAX
-	#define UINT64_MAX 0xffffffffffffffffULL
+#	define UINT64_MAX 0xffffffffffffffffULL
 #endif */
 
 // Or:
-
 //#include <cmath>
 #include <ctime>
 

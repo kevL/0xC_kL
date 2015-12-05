@@ -514,7 +514,8 @@ void Ruleset::validateMissions() const
 				if (getAlienMission(*j) != nullptr
 					&& (getAlienMission(*j)->getObjective() == alm_SITE) != isSite)
 				{
-					throw Exception("Error with MissionScript: " + (*i).first + " cannot mix terror/non-terror missions in a single command, so sayeth the wise Alfonso.");
+					throw Exception("Error with MissionScript: " + (*i).first
+						+ " cannot mix terror/non-terror missions in a single command, so sayeth the wise Alfonso.");
 				}
 			}
 		}
@@ -539,7 +540,8 @@ void Ruleset::validateMissions() const
 		{
 			if (getAlienMission(*j)->getObjective() == alm_SITE)
 			{
-				throw Exception("Error with MissionWeights: Region: " + (*i).first + " has " + *j + " listed. Terror mission can only be invoked via missionScript, so sayeth Lolth.");
+				throw Exception("Error with MissionWeights: Region: " + (*i).first + " has " + *j
+					+ " listed. Terror mission can only be invoked via missionScript, so sayeth Lolth.");
 			}
 		}
 	}

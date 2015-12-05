@@ -20,11 +20,13 @@
 #include "Game.h"
 
 // kL_begin: Old
-/* #ifdef _WIN32
-	#define WIN32_LEAN_AND_MEAN
-	#include <windows.h>
-	#include <SDL_syswm.h>
-#endif */ // kL_end.
+/*
+#ifdef _WIN32
+#	define WIN32_LEAN_AND_MEAN
+#	include <windows.h>
+#	include <SDL_syswm.h>
+#endif
+*/ // kL_end.
 
 //#include <cmath>
 #include <cstddef> // nullptr (for NB code-assistant only)
@@ -677,24 +679,30 @@ void Game::loadLanguage(const std::string& file)
 	std::ostringstream oststr;
 	oststr << "Language/" << file << ".yml";
 
-	ExtraStrings* strings = nullptr;
+	ExtraStrings* extras = nullptr;
 
 	std::map<std::string, ExtraStrings*> extraStrings = _rules->getExtraStrings();
 	if (extraStrings.empty() == false)
 	{
 		if (extraStrings.find(file) != extraStrings.end())
-			strings = extraStrings[file];
+			extras = extraStrings[file];
 		else if (extraStrings.find("en-US") != extraStrings.end()) // fallbacks ->
-			strings = extraStrings["en-US"];
+			extras = extraStrings["en-US"];
 		else if (extraStrings.find("en-GB") != extraStrings.end())
-			strings = extraStrings["en-GB"];
+			extras = extraStrings["en-GB"];
 		else
-			strings = extraStrings.begin()->second;
+			extras = extraStrings.begin()->second;
 	}
 
-	_lang->load(
-			CrossPlatform::getDataFile(oststr.str()),
-			strings);
+	std::string path = CrossPlatform::getDataFile(oststr.str());
+	try
+	{
+		_lang->load(path, extras);
+	}
+	catch (YAML::Exception &e)
+	{
+		throw Exception(path + ": " + std::string(e.what()));
+	}
 
 	Options::language = file;
 }

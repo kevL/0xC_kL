@@ -39,40 +39,40 @@
 #include "Options.h"
 
 #ifdef _WIN32 // see also: pch.h ... & Engine/Language.cpp & Engine/Logger.h
-	#ifndef NOMINMAX
-		#define NOMINMAX
-	#endif
+#	ifndef NOMINMAX
+#		define NOMINMAX
+#	endif
 
-	#ifndef WIN32_LEAN_AND_MEAN
-		#define WIN32_LEAN_AND_MEAN
-	#endif
+#	ifndef WIN32_LEAN_AND_MEAN
+#		define WIN32_LEAN_AND_MEAN
+#	endif
 
-//	#include <direct.h>
-	#include <shlobj.h>
-	#include <shlwapi.h>
-//	#include <windows.h>
+//#	include <direct.h>
+#	include <shlobj.h>
+#	include <shlwapi.h>
+//#	include <windows.h>
 
-	#ifndef SHGFP_TYPE_CURRENT
-		#define SHGFP_TYPE_CURRENT 0
-	#endif
+#	ifndef SHGFP_TYPE_CURRENT
+#		define SHGFP_TYPE_CURRENT 0
+#	endif
 
-	#ifndef __GNUC__
-		#pragma comment(lib, "advapi32.lib")
-		#pragma comment(lib, "shell32.lib")
-		#pragma comment(lib, "shlwapi.lib")
-	#endif
+#	ifndef __GNUC__
+#		pragma comment(lib, "advapi32.lib")
+#		pragma comment(lib, "shell32.lib")
+#		pragma comment(lib, "shlwapi.lib")
+#	endif
 #else
-//	#include "Language.h"
-//	#include <iostream>
-//	#include <SDL_image.h>
-	#include <cstdio>
-	#include <cstdlib>
-	#include <cstring>
-	#include <pwd.h>
-	#include <unistd.h>
+//#	include "Language.h"
+//#	include <iostream>
+//#	include <SDL_image.h>
+#	include <cstdio>
+#	include <cstdlib>
+#	include <cstring>
+#	include <pwd.h>
+#	include <unistd.h>
 
-	#include <sys/param.h>
-	#include <sys/types.h>
+#	include <sys/param.h>
+#	include <sys/types.h>
 #endif
 
 //#include <SDL.h>

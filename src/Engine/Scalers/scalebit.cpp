@@ -24,14 +24,14 @@
  */
 
 #if HAVE_CONFIG_H
-	#include <config.h>
+#	include <config.h>
 #endif
 
 #include "scale2x.h"
 #include "scale3x.h"
 
 #if HAVE_ALLOCA_H
-	#include <alloca.h>
+#	include <alloca.h>
 #endif
 
 #include <assert.h>

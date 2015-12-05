@@ -37,16 +37,16 @@
 #include "ShaderMove.h"
 
 #ifdef _WIN32
-	#include <malloc.h>
+#	include <malloc.h>
 #endif
 
 #if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
-	#define _aligned_malloc __mingw_aligned_malloc
-	#define _aligned_free   __mingw_aligned_free
+#	define _aligned_malloc __mingw_aligned_malloc
+#	define _aligned_free   __mingw_aligned_free
 #endif
 
 #ifdef __MORPHOS__
-	#include <ppcinline/exec.h>
+#	include <ppcinline/exec.h>
 #endif
 
 
