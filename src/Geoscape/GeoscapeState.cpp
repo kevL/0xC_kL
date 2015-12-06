@@ -356,7 +356,8 @@ GeoscapeState::GeoscapeState()
 		_year(-1),
 		_windowPops(0),
 		_delayMusicDfCheck(0),
-		_timeCache(0)
+		_timeCache(0),
+		_score(0)
 {
 	const int
 		screenWidth		= Options::baseXGeoscape,
@@ -1312,7 +1313,30 @@ void GeoscapeState::updateTimeDisplay()
 		{
 			score += (*i)->getActivityXCom().at(id) - (*i)->getActivityAlien().at(id);
 		}
-		_txtScore->setText(Text::formatNumber(score));
+
+		if (_score == 0 || _score != score)
+		{
+			std::wstring wst;
+			if (_score != 0)
+			{
+				const int delta = score - _score;
+				if (delta == 0)
+					wst = L"";
+				else if (delta > 0)
+					wst = L" +" + Text::intWide(delta);
+				else //if (delta < 0)
+					wst = L" " + Text::intWide(delta);
+			}
+
+			std::wostringstream woststr;
+			woststr << Text::formatNumber(score)
+					<< wst;
+
+			_wstScore = woststr.str();
+		}
+
+		_txtScore->setText(_wstScore);
+		_score = score;
 	}
 	else
 		_txtScore->setText(Text::intWide(0));

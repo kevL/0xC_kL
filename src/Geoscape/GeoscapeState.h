@@ -93,7 +93,8 @@ private:
 		_day,
 		_month,
 		_year,
-		_timeCache;
+		_timeCache,
+		_score;
 	int64_t _windowPops;
 	size_t _dfMinimized;
 	double
@@ -101,6 +102,7 @@ private:
 		_dfCCC_lat;
 
 	std::string _debug;
+	std::wstring _wstScore;
 
 	Globe* _globe;
 	ImageButton
