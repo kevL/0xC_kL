@@ -457,13 +457,13 @@ void SavedGame::load(
 	_graphRegionToggles		= doc["graphRegionToggles"]	.as<std::string>(_graphRegionToggles);
 	_graphCountryToggles	= doc["graphCountryToggles"].as<std::string>(_graphCountryToggles);
 	_graphFinanceToggles	= doc["graphFinanceToggles"].as<std::string>(_graphFinanceToggles);
-	_funds					= doc["funds"]				.as<std::vector<int64_t> >(_funds);
-	_maintenance			= doc["maintenance"]		.as<std::vector<int64_t> >(_maintenance);
+	_funds					= doc["funds"]				.as<std::vector<int64_t>>(_funds);
+	_maintenance			= doc["maintenance"]		.as<std::vector<int64_t>>(_maintenance);
 	_researchScores			= doc["researchScores"]		.as<std::vector<int> >(_researchScores);
-	_income					= doc["income"]				.as<std::vector<int64_t> >(_income);
-	_expenditure			= doc["expenditure"]		.as<std::vector<int64_t> >(_expenditure);
+	_income					= doc["income"]				.as<std::vector<int64_t>>(_income);
+	_expenditure			= doc["expenditure"]		.as<std::vector<int64_t>>(_expenditure);
 	_warned					= doc["warned"]				.as<bool>(_warned);
-	_ids					= doc["ids"]				.as<std::map<std::string, int> >(_ids);
+	_ids					= doc["ids"]				.as<std::map<std::string, int>>(_ids);
 //	_radarLines				= doc["radarLines"]			.as<bool>(_radarLines);
 //	_detail					= doc["detail"]				.as<bool>(_detail);
 
@@ -653,7 +653,7 @@ void SavedGame::load(
 void SavedGame::save(const std::string& file) const
 {
 	const std::string st (Options::getUserFolder() + file);
-	std::ofstream ofstr (st.c_str()); // init.
+	std::ofstream ofstr (st.c_str());
 	if (ofstr.fail() == true)
 	{
 		throw Exception("Failed to save " + file);

@@ -47,14 +47,6 @@ class AlienBAIState
 {
 
 protected:
-	static const int
-		BASE_SUCCESS_SYSTEMATIC	= 100,
-		BASE_SUCCESS_DESPERATE	= BASE_SUCCESS_SYSTEMATIC + 10,
-		EXPOSURE_PENALTY		= 10,
-		FIRE_PENALTY			= 40,
-		CUR_TILE_PREF			= 15,
-		COVER_BONUS				= 25;
-
 	bool
 		_blaster,
 		_didPsi,

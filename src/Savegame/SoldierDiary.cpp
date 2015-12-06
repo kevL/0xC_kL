@@ -572,7 +572,8 @@ void SoldierDiary::updateDiary(
 
 			if ((*i)->hostileTurn() == true)
 			{
-				if (rules->getItem((*i)->_weapon)->isGrenade() == true)
+				const RuleItem* const itRule (rules->getItem((*i)->_weapon));
+				if (itRule == NULL || itRule->isGrenade() == true)
 					++_trapKillTotal;
 				else
 					++_reactionFireTotal;

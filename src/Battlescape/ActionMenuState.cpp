@@ -113,35 +113,35 @@ ActionMenuState::ActionMenuState(
 
 	if (_game->getSavedGame()->isResearched(itRule->getRequirements()) == true)
 	{
-		if (itRule->getMeleeTu() != 0) // TODO: remove 'HIT' action-items if no target in range.
+		if (itRule->getMeleeTu() != 0
+			&& hasHands == true && injured == false)
 		{
-			if (_action->actor->getUnitRules() != nullptr
-				&& _action->actor->getUnitRules()->isDog() == true)
+			if (itRule->getBattleType() == BT_MELEE
+				&& itRule->getDamageType() == DT_STUN)
 			{
-				addItem( // doggie bite
+				addItem( // stun rod
 						BA_HIT,
-						"STR_DOGE_BITE",
-						&id);
-				addItem( // doggie bark
-						BA_NONE,
-						"STR_DOGE_BARK",
+						"STR_STUN",
 						&id);
 			}
-			else if (injured == false
-				&& hasHands == true)
+			else
 			{
-				if (itRule->getBattleType() == BT_MELEE
-					&& itRule->getDamageType() == DT_STUN)
-				{
-					addItem( // stun rod
-							BA_HIT,
-							"STR_STUN",
-							&id);
-				}
+				const RuleUnit* const unitRule = _action->actor->getUnitRules();
+				std::string st;
+				if (unitRule != nullptr && unitRule->isDog() == true)
+					st = "STR_DOGE_BITE";
 				else
-					addItem( // melee weapon
-							BA_HIT,
-							"STR_HIT_MELEE",
+					st = "STR_HIT_MELEE";
+
+				addItem( // melee weapon
+						BA_HIT,
+						st,
+						&id);
+
+				if (unitRule != nullptr && unitRule->isMechanical() == false)
+					addItem( // melee bark
+							BA_NONE,
+							"STR_DOGE_BARK",
 							&id);
 			}
 		}

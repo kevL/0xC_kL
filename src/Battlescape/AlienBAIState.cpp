@@ -211,9 +211,7 @@ void AlienBAIState::think(BattleAction* action)
 
 	Pathfinding* const pf = _battleSave->getPathfinding();
 	pf->setPathingUnit(_unit);
-	_reachable = pf->findReachable(
-								_unit,
-								_unit->getTimeUnits());
+	_reachable = pf->findReachable(_unit, _unit->getTimeUnits());
 //	_wasHitBy.clear();
 
 	if (_unit->getChargeTarget() != nullptr
@@ -257,9 +255,7 @@ void AlienBAIState::think(BattleAction* action)
 				const int tuPreshot = _unit->getTimeUnits() - _unit->getActionTu(
 																			BA_LAUNCH,
 																			action->weapon);
-				_reachableAttack = pf->findReachable(
-												_unit,
-												tuPreshot);
+				_reachableAttack = pf->findReachable(_unit, tuPreshot);
 			}
 			else
 			{
@@ -268,9 +264,7 @@ void AlienBAIState::think(BattleAction* action)
 				const int tuPreshot = _unit->getTimeUnits() - _unit->getActionTu( // kL_note: this needs selectFireMethod() ...
 																			itRule->getDefaultAction(), // BA_SNAPSHOT
 																			action->weapon);
-				_reachableAttack = pf->findReachable(
-												_unit,
-												tuPreshot);
+				_reachableAttack = pf->findReachable(_unit, tuPreshot);
 			}
 		}
 		else if (itRule->getBattleType() == BT_MELEE)
@@ -280,9 +274,7 @@ void AlienBAIState::think(BattleAction* action)
 			const int tuPreshot = _unit->getTimeUnits() - _unit->getActionTu(
 																		BA_HIT,
 																		action->weapon);
-			_reachableAttack = pf->findReachable(
-											_unit,
-											tuPreshot);
+			_reachableAttack = pf->findReachable(_unit, tuPreshot);
 		}
 		else if (itRule->getBattleType() == BT_GRENADE)	// kL
 		{
@@ -478,11 +470,7 @@ void AlienBAIState::think(BattleAction* action)
 				int costTU = rule->getCost(_battleSave->getBattleGame()->getRuleset()->getInventory("STR_RIGHT_HAND"));
 
 				if (action->weapon->getFuse() == -1)
-				{
-					costTU += _unit->getActionTu(
-												BA_PRIME,
-												action->weapon);
-				}
+					costTU += _unit->getActionTu(BA_PRIME, action->weapon);
 
 				_unit->spendTimeUnits(costTU); // cf. grenadeAction() -- actually priming the fuse is done in ProjectileFlyBState.
 				//Log(LOG_INFO) << "AlienBAIState::think() Move & Prime GRENADE, costTU = " << costTU;
@@ -788,9 +776,7 @@ void AlienBAIState::setupAmbush() // private.
 						score -= tuAmbush;
 
 						pf->setPathingUnit(_aggroTarget);
-						pf->calculate( // make sure Unit's target can reach here too.
-									_aggroTarget,
-									pos);
+						pf->calculate(_aggroTarget, pos); // make sure Unit's target can reach here too.
 
 						if (pf->getStartDirection() != -1)
 						{
@@ -808,8 +794,7 @@ void AlienBAIState::setupAmbush() // private.
 									_tuAmbush = tuAmbush;
 
 								bestScore = score;
-								static const int FAST_PASS_THRESHOLD = 80;
-								if (bestScore > FAST_PASS_THRESHOLD)
+								if (bestScore > FAST_PASS_THRESHOLD - 20)
 									break;
 							}
 						}
@@ -960,8 +945,7 @@ void AlienBAIState::setupAttack() // private.
 	}
 	else if (_xcomSpotters != 0
 //		|| _unit->getAggression() < RNG::generate(0,3))
-		|| _unit->getAggression() > RNG::generate( // kL, opposite to previously.
-												0,
+		|| _unit->getAggression() > RNG::generate(0, // kL, opposite to previously.
 												_unit->getAggression()))
 	{
 		if (findFirePoint() == true) // if enemies can see us, or if we're feeling lucky, we can try to spot the enemy.
@@ -1012,8 +996,7 @@ void AlienBAIState::setupEscape() // private.
 	Pathfinding* const pf = _battleSave->getPathfinding();
 	pf->setPathingUnit(_unit);
 
-	while (tries < 150
-		&& coverFound == false)
+	while (tries < 150 && coverFound == false)
 	{
 		_escapeAction->target = _unit->getPosition();		// start looking in a direction away from the enemy
 		if (_battleSave->getTile(_escapeAction->target) == nullptr)
@@ -1123,9 +1106,7 @@ void AlienBAIState::setupEscape() // private.
 			// calculate TUs to tile
 			// this could be gotten w/ findReachable() somehow but that would break something for sure
 			// kL_note: But maybe not after my adulterations to Pathfinding/this/etc.
-			pf->calculate(
-						_unit,
-						_escapeAction->target);
+			pf->calculate(_unit, _escapeAction->target);
 
 			if (_escapeAction->target == _unit->getPosition()
 				|| pf->getStartDirection() != -1)
@@ -1146,7 +1127,6 @@ void AlienBAIState::setupEscape() // private.
 			}
 			pf->abortPath();
 
-			static const int FAST_PASS_THRESHOLD = 100;
 			if (bestTileScore > FAST_PASS_THRESHOLD)
 				coverFound = true; // good enough, gogo-agogo!!
 		}
@@ -1261,12 +1241,8 @@ int AlienBAIState::selectNearestTarget() // private.
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		if (validTarget(
-					*i,
-					true,true) == true
-			&& te->visible(
-						_unit,
-						(*i)->getTile()) == true)
+		if (validTarget(*i, true, true) == true
+			&& te->visible(_unit, (*i)->getTile()) == true)
 		{
 			++ret;
 			distTest = TileEngine::distance(
@@ -1648,7 +1624,10 @@ void AlienBAIState::evaluateAIMode() // private.
 		// AI_ESCAPE	// 3
 		const float decision = static_cast<float>(RNG::generate(1,
 															std::max(1,
-																static_cast<int>(std::floor(patrolOdds + ambushOdds + combatOdds + escapeOdds)))));
+																static_cast<int>(std::floor(patrolOdds
+																							+ ambushOdds
+																							+ combatOdds
+																							+ escapeOdds)))));
 		//Log(LOG_INFO) << "decision = " << decision;
 		if (decision <= patrolOdds)
 		{
@@ -1822,8 +1801,7 @@ bool AlienBAIState::findFirePoint() // private.
 																							pos,
 																							_aggroTarget->getPosition());
 
-					static const int FAST_PASS_THRESHOLD = 125;
-					if (tileScore > FAST_PASS_THRESHOLD)
+					if (tileScore > FAST_PASS_THRESHOLD + 25)
 						break;
 				}
 			}
@@ -2116,9 +2094,7 @@ void AlienBAIState::wayPointAction() // private.
 		if (targets.empty() == false)
 		{
 			//Log(LOG_INFO) << ". targets available";
-			size_t target = RNG::generate(
-										0,
-										targets.size() - 1);
+			size_t target = RNG::pick(targets.size());
 			_aggroTarget = targets.at(target);
 			//Log(LOG_INFO) << ". . total = " << targets.size() << " pick = " << target << "; Target ID " << _aggroTarget->getId();
 			if (pathWaypoints() == true) // vs. _aggroTarget, should be true
@@ -2707,48 +2683,42 @@ void AlienBAIState::selectMeleeOrRanged() // private.
 	}
 
 	const RuleItem* const meleeWeapon = _battleSave->getBattleGame()->getRuleset()->getItem(_unit->getMeleeWeapon());
-	if (meleeWeapon == nullptr)
+	if (meleeWeapon != nullptr)
 	{
-		// no idea how we got here, but melee is definitely out of the question.
-		_melee = false;
-		return;
-	}
+		int meleeOdds = 10;
 
-	int meleeOdds = 10;
+		int power = meleeWeapon->getPower();
+		if (meleeWeapon->isStrengthApplied() == true)
+			power += _unit->getStrength();
 
-	int power = meleeWeapon->getPower();
-	if (meleeWeapon->isStrengthApplied() == true)
-		power += _unit->getStrength();
+		power = static_cast<int>(Round(
+				static_cast<float>(power) * _aggroTarget->getArmor()->getDamageModifier(meleeWeapon->getDamageType())));
 
-	power = static_cast<int>(Round(
-			static_cast<float>(power) * _aggroTarget->getArmor()->getDamageModifier(meleeWeapon->getDamageType())));
+		if (power > 50)
+			meleeOdds += (power - 50) / 2;
 
-	if (power > 50)
-		meleeOdds += (power - 50) / 2;
+		if (_targetsVisible > 1)
+			meleeOdds -= 15 * (_targetsVisible - 1);
 
-	if (_targetsVisible > 1)
-		meleeOdds -= 15 * (_targetsVisible - 1);
-
-	if (meleeOdds > 0
-		&& _unit->getHealth() > _unit->getBaseStats()->health * 2 / 3)
-	{
-		if (_unit->getAggression() == 0)
-			meleeOdds -= 20;
-		else if (_unit->getAggression() > 1)
-			meleeOdds += 10 * _unit->getAggression();
-
-		if (RNG::percent(meleeOdds) == true)
+		if (meleeOdds > 0
+			&& _unit->getHealth() > _unit->getBaseStats()->health * 2 / 3)
 		{
-			_rifle = false;
-			const int tuPreshot = _unit->getTimeUnits() - _unit->getActionTu(
-																		BA_HIT,
-																		meleeWeapon);
-			Pathfinding* const pf = _battleSave->getPathfinding();
-			pf->setPathingUnit(_unit);
-			_reachableAttack = pf->findReachable(
-											_unit,
-											tuPreshot);
-			return;
+			if (_unit->getAggression() == 0)
+				meleeOdds -= 20;
+			else if (_unit->getAggression() > 1)
+				meleeOdds += 10 * _unit->getAggression();
+
+			if (RNG::percent(meleeOdds) == true)
+			{
+				_rifle = false;
+				const int tuPreshot = _unit->getTimeUnits() - _unit->getActionTu(
+																			BA_HIT,
+																			meleeWeapon);
+				Pathfinding* const pf = _battleSave->getPathfinding();
+				pf->setPathingUnit(_unit);
+				_reachableAttack = pf->findReachable(_unit, tuPreshot);
+				return;
+			}
 		}
 	}
 

@@ -30,9 +30,14 @@
 
 // Or:
 //#include <cmath>
-#include <ctime>
+//#include <limits>
+#include <chrono>
+//#include <ctime>
+#include <random>
 
 #include "../fmath.h"
+
+//#include "Logger.h"
 
 
 namespace OpenXcom
@@ -56,6 +61,9 @@ See <http://creativecommons.org/publicdomain/zero/1.0/>. */
 
 //uint64_t x = std::time(0); // The state must be seeded with a nonzero value.
 uint64_t x;
+
+uint64_t crapShot;
+std::mt19937 crapShooter;
 
 
 uint64_t next()
@@ -86,10 +94,15 @@ uint64_t getSeed()
 void setSeed(uint64_t seed)
 {
 	//Log(LOG_INFO) << "rng:setSeed()";
+	crapShot = static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count());
+	crapShooter.seed (static_cast<uint32_t>(crapShot));
+
 	if (seed == 0)
 	{
-		x = std::time(nullptr);
-		//Log(LOG_INFO) << ". reseed = " << x;
+//		x = std::time(nullptr);
+		x = crapShot;
+		//Log(LOG_INFO) << ". reseed w/ <chrono> = " << x;
+		//Log(LOG_INFO) << ". reseed w/ time() = " << std::time(nullptr);
 	}
 	else
 	{
@@ -158,7 +171,8 @@ int seedless(
 	if (valMin > valMax)
 		std::swap(valMin, valMax);
 
-	return (std::rand() % (valMax - valMin + 1) + valMin);
+//	return (std::rand() % (valMax - valMin + 1) + valMin);
+	return (crapShooter() % (valMax - valMin + 1) + valMin);
 }
 
 /*
@@ -229,11 +243,11 @@ bool percent(int valPct)
 	return (generate(0,99) < valPct);
 }
 
-/**
+/*
  * Generates a random positive integer up to a number.
  * @param valMax - maximum number exclusive
  * @return, generated number
- */
+ *
 int generateExclusive(int valMax)
 {
 	//Log(LOG_INFO) << "rng:generateExclusive()";
@@ -241,6 +255,15 @@ int generateExclusive(int valMax)
 		return 0;
 
 	return static_cast<int>(next() % valMax);
+} */
+
+/**
+ * Gets the external RNG.
+ * @return, reference to the mersenne-twister generator
+ */
+std::mt19937& getCrapShooter()
+{
+	return crapShooter;
 }
 
 /**

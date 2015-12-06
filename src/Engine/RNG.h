@@ -32,7 +32,7 @@ namespace OpenXcom
 
 /**
  * Random Number Generator used throughout the game for all your random needs.
- @note Uses a 64-bit xorshift pseudorandom number generator.
+ @note Uses a 64-bit xorshift pseudo-random number generator.
  */
 namespace RNG
 {
@@ -65,7 +65,10 @@ double boxMuller(
 bool percent(int valPct);
 
 /// Generates a random integer number, exclusive.
-int generateExclusive(int valMax);
+//int generateExclusive(int valMax);
+
+/// Gets the external RNG.
+std::mt19937& getCrapShooter();
 
 /// Picks an entry from a vector.
 size_t pick(size_t valSize);
@@ -83,10 +86,12 @@ size_t pick(
 template<typename T>
 void shuffle(T& container)
 {
-	std::random_shuffle(
-					container.begin(),
-					container.end(),
-					generateExclusive);
+//	std::random_shuffle(
+	std::shuffle(
+			container.begin(),
+			container.end(),
+			RNG::getCrapShooter());
+//			generateExclusive);
 }
 
 }

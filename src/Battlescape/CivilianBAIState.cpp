@@ -316,16 +316,6 @@ int CivilianBAIState::countSpottingUnits(Position pos) const
  */
 void CivilianBAIState::setupEscape()
 {
-	// weights for various factors when choosing a tile to withdraw to;
-	// they're subjective, should be hand-tuned, may need tweaking.
-	const int
-		EXPOSURE_PENALTY		= 10,
-		FIRE_PENALTY			= 40,
-		BASE_SUCCESS_SYSTEMATIC	= 100,
-		BASE_SUCCESS_DESPERATE	= 110,
-		FAST_PASS_THRESHOLD		= 100, // a score that's good enough to quit the while-loop early
-		CUR_TILE_PREF			= 15;
-
 	int
 		bestTileScore = -100000,
 		tileScore,
@@ -346,8 +336,8 @@ void CivilianBAIState::setupEscape()
 	pf->setPathingUnit(_unit);
 	std::vector<int> reachable = pf->findReachable(_unit, tu);
 
-	std::vector<Position> randTileSearch = _battleSave->getTileSearch();
-	RNG::shuffle(randTileSearch);
+	std::vector<Position> tileSearch = _battleSave->getTileSearch();
+	RNG::shuffle(tileSearch);
 
 	bool coverFound = false;
 	size_t tries = 0;
@@ -360,8 +350,8 @@ void CivilianBAIState::setupEscape()
 		if (tries < _battleSave->SEARCH_SIZE) //121 // looking for cover
 		{
 			// looking for cover
-			_escapeAction->target.x += randTileSearch[tries].x;
-			_escapeAction->target.y += randTileSearch[tries].y;
+			_escapeAction->target.x += tileSearch[tries].x;
+			_escapeAction->target.y += tileSearch[tries].y;
 
 			tileScore = BASE_SUCCESS_SYSTEMATIC;
 

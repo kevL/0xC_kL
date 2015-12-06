@@ -524,7 +524,6 @@ BattlescapeState::BattlescapeState()
 			if ((*i)->isInBattlescape() == true)
 			{
 				target = dynamic_cast<Target*>(*i);
-
 				woststr << tr("STR_TERROR_MISSION") << L"> " << (*i)->getName(_game->getLanguage()); // <- not necessarily a Terror Mission ...
 			}
 		}
@@ -538,7 +537,6 @@ BattlescapeState::BattlescapeState()
 			if ((*i)->isInBattlescape() == true)
 			{
 				target = dynamic_cast<Target*>(*i);
-
 				woststr << tr("STR_ALIEN_BASE_ASSAULT") << L"> " << (*i)->getName(_game->getLanguage());
 			}
 		}
@@ -566,9 +564,7 @@ BattlescapeState::BattlescapeState()
 				i != _game->getSavedGame()->getRegions()->end();
 				++i)
 		{
-			if ((*i)->getRules()->insideRegion(
-											lon,
-											lat) == true)
+			if ((*i)->getRules()->insideRegion(lon,lat) == true)
 			{
 				woststr << tr((*i)->getRules()->getType());
 				break;
@@ -580,9 +576,7 @@ BattlescapeState::BattlescapeState()
 				i != _game->getSavedGame()->getCountries()->end();
 				++i)
 		{
-			if ((*i)->getRules()->insideCountry(
-											lon,
-											lat) == true)
+			if ((*i)->getRules()->insideCountry(lon,lat) == true)
 			{
 				woststr << L"> " << tr((*i)->getRules()->getType());
 				break;
@@ -604,6 +598,7 @@ BattlescapeState::BattlescapeState()
 
 	_lstTileInfo->setColumns(2, 11, 7);
 	_lstTileInfo->setHighContrast();
+	_lstTileInfo->setMargin(0);
 
 	_txtConsole1->setHighContrast();
 	_txtConsole1->setVisible(_showConsole > 0);
@@ -3778,8 +3773,7 @@ void BattlescapeState::updateTileInfo(const Tile* const tile)
 {
 	_lstTileInfo->clearList();
 
-	if (tile != nullptr
-		&& tile->isDiscovered(2) == true)
+	if (tile != nullptr && tile->isDiscovered(2) == true)
 	{
 		size_t rows = 3;
 		int tuCost = 0;
