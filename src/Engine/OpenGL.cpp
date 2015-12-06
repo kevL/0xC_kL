@@ -368,24 +368,31 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 	if (source_yaml_filename
 		&& strlen(source_yaml_filename))
 	{
-		YAML::Node document = YAML::LoadFile(source_yaml_filename);
-
-		bool is_glsl;
-		std::string language = document["language"].as<std::string>();
-		is_glsl = (language == "GLSL");
-
-
-		linear = document["linear"].as<bool>(false); // some shaders want texture linear interpolation and some don't
-		std::string fragment_source = document["fragment"].as<std::string>("");
-		std::string vertex_source = document["vertex"].as<std::string>("");
-
-		if (is_glsl)
+		try
 		{
-			if (fragment_source.empty() == false)
-				set_fragment_shader(fragment_source.c_str());
+			YAML::Node document = YAML::LoadFile(source_yaml_filename);
 
-			if (vertex_source.empty() == false)
-				set_vertex_shader(vertex_source.c_str());
+			bool is_glsl;
+			std::string language = document["language"].as<std::string>();
+			is_glsl = (language == "GLSL");
+
+
+			linear = document["linear"].as<bool>(false); // some shaders want texture linear interpolation and some don't
+			std::string fragment_source	= document["fragment"]	.as<std::string>("");
+			std::string vertex_source	= document["vertex"]	.as<std::string>("");
+
+			if (is_glsl)
+			{
+				if (fragment_source.empty() == false)
+					set_fragment_shader(fragment_source.c_str());
+
+				if (vertex_source.empty() == false)
+					set_vertex_shader(vertex_source.c_str());
+			}
+		}
+		catch (YAML::Exception &e)
+		{
+			Log(LOG_ERROR) << source_yaml_filename << ": " << e.what();
 		}
 	}
 
@@ -493,7 +500,7 @@ void OpenGL::init(
  */
 void OpenGL::setVSync(bool sync)
 {
-	const int interval = sync? 1: 0;
+	const int interval = sync ? 1 : 0;
 
 	if (glXGetCurrentDisplay
 		&& glXGetCurrentDrawable
@@ -525,10 +532,7 @@ void OpenGL::term()
 {
 	if (gltexture)
 	{
-		glDeleteTextures(
-						1,
-						&gltexture);
-
+		glDeleteTextures(1, &gltexture);
 		gltexture = 0;
 	}
 
@@ -558,8 +562,7 @@ OpenGL::OpenGL()
 		iheight(0),
 		iformat(GL_UNSIGNED_INT_8_8_8_8_REV),	// this didn't seem to be set anywhere before...
 		ibpp(32)								// ...nor this
-{
-}
+{}
 
 /**
  * dTor

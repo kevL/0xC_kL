@@ -100,8 +100,8 @@ ActionMenuState::ActionMenuState(
 				"STR_DROP",
 				&id);
 
-		if (injured == false
-			&& hasHands == true
+		if (hasHands == true
+			&& injured == false
 			&& _action->actor->getBaseStats()->throwing != 0)
 		{
 			addItem(
@@ -126,10 +126,16 @@ ActionMenuState::ActionMenuState(
 			}
 			else
 			{
-				const RuleUnit* const unitRule = _action->actor->getUnitRules();
 				std::string st;
-				if (unitRule != nullptr && unitRule->isDog() == true)
+				if (_action->actor->getUnitRules() != nullptr
+					&& _action->actor->getUnitRules()->isDog() == true)
+				{
+					addItem( // melee bark
+							BA_NONE,
+							"STR_DOGE_BARK",
+							&id);
 					st = "STR_DOGE_BITE";
+				}
 				else
 					st = "STR_HIT_MELEE";
 
@@ -137,12 +143,6 @@ ActionMenuState::ActionMenuState(
 						BA_HIT,
 						st,
 						&id);
-
-				if (unitRule != nullptr && unitRule->isMechanical() == false)
-					addItem( // melee bark
-							BA_NONE,
-							"STR_DOGE_BARK",
-							&id);
 			}
 		}
 
@@ -164,46 +164,42 @@ ActionMenuState::ActionMenuState(
 			else if (injured == false) // special items
 			{
 				if (itRule->getBattleType() == BT_MEDIKIT)
-				{
 					addItem(
 							BA_USE,
 							"STR_USE_MEDI_KIT",
 							&id);
-				}
 				else if (itRule->getBattleType() == BT_SCANNER)
-				{
 					addItem(
 							BA_USE,
 							"STR_USE_SCANNER",
 							&id);
-				}
-				else if (itRule->getBattleType() == BT_PSIAMP
-					&& _action->actor->getBaseStats()->psiSkill != 0)
+				else if (itRule->getBattleType() == BT_PSIAMP)
 				{
-					addItem(
-							BA_PSICONTROL,
-							"STR_MIND_CONTROL",
-							&id);
-					addItem(
-							BA_PSIPANIC,
-							"STR_PANIC_UNIT",
-							&id);
-					addItem(
-							BA_PSICONFUSE,
-							"STR_CONFUSE_UNIT",
-							&id);
-					addItem(
-							BA_PSICOURAGE,
-							"STR_ENCOURAGE_UNIT",
-							&id);
+					if (_action->actor->getBaseStats()->psiSkill != 0)
+					{
+						addItem(
+								BA_PSICONTROL,
+								"STR_MIND_CONTROL",
+								&id);
+						addItem(
+								BA_PSIPANIC,
+								"STR_PANIC_UNIT",
+								&id);
+						addItem(
+								BA_PSICONFUSE,
+								"STR_CONFUSE_UNIT",
+								&id);
+						addItem(
+								BA_PSICOURAGE,
+								"STR_ENCOURAGE_UNIT",
+								&id);
+					}
 				}
 				else if (itRule->getBattleType() == BT_MINDPROBE)
-				{
 					addItem(
 							BA_USE,
 							"STR_USE_MIND_PROBE",
 							&id);
-				}
 				else if (itRule->getBattleType() == BT_FIREARM)
 				{
 					if (_action->weapon->getAmmoItem() != nullptr)
