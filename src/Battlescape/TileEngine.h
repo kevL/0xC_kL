@@ -54,17 +54,19 @@ private:
 	static const int
 		MAX_VIEW_DISTANCE		= 20,
 		MAX_VIEW_DISTANCE_SQR	= MAX_VIEW_DISTANCE * MAX_VIEW_DISTANCE,
-		MAX_VOXEL_VIEW_DISTANCE	= 20 * 16,
+		MAX_VOXEL_VIEW_DISTANCE	= MAX_VIEW_DISTANCE * 16,
 		MAX_VOXEL_VIEW_DIST_SQR	= MAX_VOXEL_VIEW_DISTANCE * MAX_VOXEL_VIEW_DISTANCE,
 		MAX_SHADE_TO_SEE_UNITS	= 8,
 
 		heightFromCenter[11];
 
 	bool
+//		_debug,
 		_spotSound,
 		_unitLighting;
 	int
 //		_missileDirection,
+		_dirRay,
 		_powerE, // effective power that actually explodes on a tile that's hit by HE.
 		_powerT; // test power that checks if _powerE even makes it to the next tile.
 
@@ -85,11 +87,11 @@ private:
 	/// Calculates blockage of various persuasions.
 	int blockage(
 			const Tile* const tile,
-			const MapDataType part,
+			const MapDataType tPart,
 			const DamageType dType,
 			const int dir = -1,
-			const bool originTest = false,
-			const bool trueDir = false) const;
+			const bool isStartTile = false,
+			const bool dirTrue = false) const;
 
 	/// Opens any doors this door is connected to.
 	void openAdjacentDoors(

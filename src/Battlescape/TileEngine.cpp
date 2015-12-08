@@ -44,7 +44,7 @@
 
 #include "../Engine/Game.h"
 #include "../Engine/Language.h"
-//#include "../Engine/Logger.h"
+#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -90,7 +90,9 @@ TileEngine::TileEngine(
 		_powerE(-1),
 		_powerT(-1),
 		_spotSound(true),
-		_trueTile(nullptr)
+		_trueTile(nullptr),
+		_dirRay(-1)
+//		_debug(false)
 //		_missileDirection(-1)
 {
 	_rfAction = new BattleAction();
@@ -2257,6 +2259,8 @@ void TileEngine::explode(
 	}
 	Log(LOG_INFO) << "RNG:TEST = " << iFalse; */
 
+//	_debug = true;
+
 	//Log(LOG_INFO) << "TileEngine::explode() power = " << power << ", dType = " << (int)dType << ", radius = " << radius;
 	if (dType == DT_IN)
 	{
@@ -2336,11 +2340,17 @@ void TileEngine::explode(
 //		for (int te = 90; te < 360; te += 180)	// E & W
 //		for (int te = 45; te < 360; te += 180)	// SE & NW
 //		for (int te = 225; te < 420; te += 180)	// NW & SE
+//		for (int te = 135; te == 135; ++te)		// NE
+//		for (int te = 315; te == 315; ++te)		// SW
+//		for (int te = 135; te < 360; te += 180)	// NE & SW
 		for (int
 				te = 0;
-				te < 361;
+				te < 360;
 				te += 3) // ray-tracing every 3 degrees makes sure all tiles are covered within a circle.
 		{
+			_dirRay = te;
+
+			//Log(LOG_INFO) << "te = " << te << " fi = " << fi;
 			sin_te = std::sin(static_cast<double>(te) * M_PI / 180.);
 			cos_te = std::cos(static_cast<double>(te) * M_PI / 180.);
 			sin_fi = std::sin(static_cast<double>(fi) * M_PI / 180.);
@@ -2377,6 +2387,17 @@ void TileEngine::explode(
 														tileY,
 														tileZ));
 				//Log(LOG_INFO) << ". . test : tileStart " << tileStart->getPosition() << " tileStop " << tileStop->getPosition();
+
+
+/*				if (te > 45 && te < 135
+					&& tileStart->getPosition().x == tileStop->getPosition().x)
+				{
+					r += 1.;
+					continue;
+				} */
+
+
+
 
 				if (tileStop == nullptr) // out of map!
 				{
@@ -2600,7 +2621,7 @@ void TileEngine::explode(
 								}
 							}
 
-							//Log(LOG_INFO) << "\n";
+							//Log(LOG_INFO) << " ";
 							BattleUnit* bu;
 							bool done = false;
 
@@ -2928,7 +2949,9 @@ void TileEngine::explode(
 	}
 
 	_powerE =
-	_powerT = -1;
+	_powerT =
+	_dirRay = -1;
+//	_debug = false;
 
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _battleSave->getUnits()->begin();
@@ -3025,10 +3048,10 @@ int TileEngine::horizontalBlockage(
 
 
 	static const Position
-		tileNorth	= Position( 0,-1, 0),
-		tileEast	= Position( 1, 0, 0),
-		tileSouth	= Position( 0, 1, 0),
-		tileWest	= Position(-1, 0, 0);
+		posNorth	= Position( 0,-1, 0),
+		posEast		= Position( 1, 0, 0),
+		posSouth	= Position( 0, 1, 0),
+		posWest		= Position(-1, 0, 0);
 
 	int block = 0;
 //	Tile *tmpTile; // new.
@@ -3067,7 +3090,7 @@ int TileEngine::horizontalBlockage(
 								O_WESTWALL,
 								dType)
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileNorth),
+								_battleSave->getTile(tileStart->getPosition() + posNorth),
 								O_OBJECT,
 								dType,
 								3); // checks Content/bigWalls
@@ -3081,15 +3104,15 @@ int TileEngine::horizontalBlockage(
 
 				block = blockage( // right+up
 //				block += blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileEast),
+								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_NORTHWALL,
 								dType)
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileEast),
+								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_WESTWALL,
 								dType)
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileEast),
+								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_OBJECT,
 								dType,
 								7); // checks Content/bigWalls
@@ -3112,11 +3135,11 @@ int TileEngine::horizontalBlockage(
 								O_WESTWALL,
 								dType) / 2
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileEast),
+								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_NORTHWALL,
 								dType) / 2
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileEast),
+								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_WESTWALL,
 								dType) / 2
 
@@ -3134,23 +3157,23 @@ int TileEngine::horizontalBlockage(
 								true) / 2
 
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileNorth),
+								_battleSave->getTile(tileStart->getPosition() + posNorth),
 								O_OBJECT,
 								dType,
 								2) / 2 // checks Content/bigWalls
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileNorth),
+								_battleSave->getTile(tileStart->getPosition() + posNorth),
 								O_OBJECT,
 								dType,
 								4) / 2 // checks Content/bigWalls
 
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileEast),
+								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_OBJECT,
 								dType,
 								0) / 2 // checks Content/bigWalls
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileEast),
+								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_OBJECT,
 								dType,
 								6) / 2 // checks Content/bigWalls
@@ -3191,7 +3214,7 @@ int TileEngine::horizontalBlockage(
 			if (visLike)
 			{
 				block = blockage( // down+right
-								_battleSave->getTile(tileStart->getPosition() + tileSouth),
+								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_NORTHWALL,
 								dType)
 						+ blockage(
@@ -3199,7 +3222,7 @@ int TileEngine::horizontalBlockage(
 								O_WESTWALL,
 								dType)
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileSouth),
+								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_OBJECT,
 								dType,
 								1); // checks Content/bigWalls
@@ -3208,7 +3231,7 @@ int TileEngine::horizontalBlockage(
 
 				block = blockage( // right+down
 //				block += blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileEast),
+								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_WESTWALL,
 								dType)
 						+ blockage(
@@ -3216,7 +3239,7 @@ int TileEngine::horizontalBlockage(
 								O_NORTHWALL,
 								dType)
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileEast),
+								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_OBJECT,
 								dType,
 								5); // checks Content/bigWalls
@@ -3232,11 +3255,11 @@ int TileEngine::horizontalBlockage(
 								O_NORTHWALL,
 								dType) / 2
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileEast),
+								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_WESTWALL,
 								dType) / 2
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileSouth),
+								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_NORTHWALL,
 								dType) / 2
 
@@ -3254,23 +3277,23 @@ int TileEngine::horizontalBlockage(
 								true) / 2 // checks Content/bigWalls
 
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileSouth),
+								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_OBJECT,
 								dType,
 								0) / 2 // checks Content/bigWalls
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileSouth),
+								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_OBJECT,
 								dType,
 								2) / 2 // checks Content/bigWalls
 
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileEast),
+								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_OBJECT,
 								dType,
 								4) / 2 // checks Content/bigWalls
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileEast),
+								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_OBJECT,
 								dType,
 								6) / 2 // checks Content/bigWalls
@@ -3311,15 +3334,15 @@ int TileEngine::horizontalBlockage(
 			if (visLike)
 			{
 				block = blockage( // down+left
-								_battleSave->getTile(tileStart->getPosition() + tileSouth),
+								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_NORTHWALL,
 								dType)
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileSouth),
+								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_WESTWALL,
 								dType)
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileSouth),
+								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_OBJECT,
 								dType,
 								7); // checks Content/bigWalls
@@ -3336,7 +3359,7 @@ int TileEngine::horizontalBlockage(
 								O_NORTHWALL,
 								dType)
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileWest),
+								_battleSave->getTile(tileStart->getPosition() + posWest),
 								O_OBJECT,
 								dType,
 								3);
@@ -3352,11 +3375,11 @@ int TileEngine::horizontalBlockage(
 								O_WESTWALL,
 								dType) / 2
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileSouth),
+								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_WESTWALL,
 								dType) / 2
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileSouth),
+								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_NORTHWALL,
 								dType) / 2
 
@@ -3374,23 +3397,23 @@ int TileEngine::horizontalBlockage(
 								true) / 2 // checks Content/bigWalls
 
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileSouth),
+								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_OBJECT,
 								dType,
 								0) / 2 // checks Content/bigWalls
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileSouth),
+								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_OBJECT,
 								dType,
 								6) / 2 // checks Content/bigWalls
 
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileWest),
+								_battleSave->getTile(tileStart->getPosition() + posWest),
 								O_OBJECT,
 								dType,
 								2) / 2 // checks Content/bigWalls
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileWest),
+								_battleSave->getTile(tileStart->getPosition() + posWest),
 								O_OBJECT,
 								dType,
 								4) / 2 // checks Content/bigWalls
@@ -3437,11 +3460,11 @@ int TileEngine::horizontalBlockage(
 								O_NORTHWALL,
 								dType)
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileNorth),
+								_battleSave->getTile(tileStart->getPosition() + posNorth),
 								O_WESTWALL,
 								dType)
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileNorth),
+								_battleSave->getTile(tileStart->getPosition() + posNorth),
 								O_OBJECT,
 								dType,
 								5);
@@ -3454,11 +3477,11 @@ int TileEngine::horizontalBlockage(
 								O_WESTWALL,
 								dType)
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileWest),
+								_battleSave->getTile(tileStart->getPosition() + posWest),
 								O_NORTHWALL,
 								dType)
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileWest),
+								_battleSave->getTile(tileStart->getPosition() + posWest),
 								O_OBJECT,
 								dType,
 								1);
@@ -3474,11 +3497,11 @@ int TileEngine::horizontalBlockage(
 								O_NORTHWALL,
 								dType) / 2
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileNorth),
+								_battleSave->getTile(tileStart->getPosition() + posNorth),
 								O_WESTWALL,
 								dType) / 2
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileWest),
+								_battleSave->getTile(tileStart->getPosition() + posWest),
 								O_NORTHWALL,
 								dType) / 2
 
@@ -3496,23 +3519,23 @@ int TileEngine::horizontalBlockage(
 								true) / 2
 
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileNorth),
+								_battleSave->getTile(tileStart->getPosition() + posNorth),
 								O_OBJECT,
 								dType,
 								4) / 2
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileNorth),
+								_battleSave->getTile(tileStart->getPosition() + posNorth),
 								O_OBJECT,
 								dType,
 								6) / 2
 
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileWest),
+								_battleSave->getTile(tileStart->getPosition() + posWest),
 								O_OBJECT,
 								dType,
 								0) / 2
 						+ blockage(
-								_battleSave->getTile(tileStart->getPosition() + tileWest),
+								_battleSave->getTile(tileStart->getPosition() + posWest),
 								O_OBJECT,
 								dType,
 								2) / 2
@@ -3546,8 +3569,8 @@ int TileEngine::horizontalBlockage(
 					tileStop,
 					O_OBJECT,
 					dType,
-					(dir + 4) % 8) // opposite direction
-				!= 0) // should always be, < 1; ie. this conditions checks [if -1]
+					(dir + 4) % 8)	// opposite direction
+				!= 0)				// should always be, < 1; ie. this conditions checks [if -1]
 		{
 			if (dType == DT_NONE)
 				return -1;
@@ -3770,15 +3793,17 @@ int TileEngine::verticalBlockage(
  * Calculates the amount of power or LoS/FoV/LoF that various types of
  * walls/bigwalls or floors or object parts of a tile blocks.
  * @param startTile		- pointer to tile where the power starts
- * @param part			- the part of the tile that the power tries to go through (MapData.h)
+ * @param tPart			- the part of the tile that the power tries to go through (MapData.h)
  * @param dType			- the type of power (RuleItem.h) DT_NONE if line-of-vision
  * @param dir			- direction the power travels	-1	walls & floors (default)
  *														 0+	big-walls & content
- * @param originTest	- true if the origin tile is being examined for bigWalls;
- *							used only when dir is specified (default: false)
- * @param trueDir		- for checking if dir is *really* from the direction of sight (true)
- *							or, in the case of some bigWall determinations, perpendicular to it (false);
- *							used only when dir is specified (default: false)
+ *						  Note: Think of 'dir' as the edge or side of the current Tile
+ *						  (not as a direction of travel).
+ * @param isStartTile	- true if the start tile is being examined for bigWalls;
+ *						  used only when dir is specified (default: false)
+ * @param dirTrue		- for checking if dir is *really* from the direction of sight (true)
+ *						  or, in the case of some bigWall determinations, perpendicular to it (false);
+ *						  used only when dir is specified (default: false)
  * @return, (int)block	-99 special case for invalid tiles
  *						-1 hardblock power / vision
  *						 0 no block
@@ -3786,58 +3811,110 @@ int TileEngine::verticalBlockage(
  */
 int TileEngine::blockage(
 		const Tile* const tile,
-		const MapDataType part,
+		const MapDataType tPart,
 		const DamageType dType,
 		const int dir,
-		const bool originTest,
-		const bool trueDir) const
+		const bool isStartTile,
+		const bool dirTrue) const
 {
-	//Log(LOG_INFO) << "TileEngine::blockage() dir " << dir;
+	//if (_debug) Log(LOG_INFO) << " "; // lag to file
+	//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() dir " << dir; // lag to file
 	const bool visLike = dType == DT_NONE
 					  || dType == DT_SMOKE
 					  || dType == DT_STUN
 					  || dType == DT_IN;
 
-	if (tile == nullptr || tile->isUfoDoorOpen(part) == true)	// probably outside the map here
+	if (tile == nullptr || tile->isUfoDoorOpen(tPart) == true)	// probably outside the map here
 	{															// open ufo doors are actually still closed behind the scenes
-		//Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret ( no tile OR ufo-door open )";
+		//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret ( no tile OR ufo-door open )"; // lag to file
 		return 0;
 	}
 
-	if (tile->getMapData(part) != nullptr)
+	if (tile->getMapData(tPart) != nullptr)
 	{
-		//Log(LOG_INFO) << ". getMapData(part) stopLOS() = " << tile->getMapData(part)->stopLOS();
+		bool diagBigwallPass = false; // spaghetti strand #397
+
+
+		//if (_debug) Log(LOG_INFO) << ". dir = " << dir << " getMapData(tPart) stopLOS() = " << tile->getMapData(tPart)->stopLOS();
 		if (dir == -1) // regular north/west wall (not BigWall), or it's a floor, or a Content-object (incl. BigWall) vs upward-diagonal.
 		{
 			if (visLike == true)
 			{
-				if ((tile->getMapData(part)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
-							|| (dType == DT_SMOKE && tile->getMapData(part)->getBlock(DT_SMOKE) == 1)
-							|| (dType == DT_IN && tile->getMapData(part)->blockFire() == true))
-						&& (tile->getMapData(part)->getPartType() == O_OBJECT // this one is for verticalBlockage() only.
-							|| tile->getMapData(part)->getPartType() == O_NORTHWALL
-							|| tile->getMapData(part)->getPartType() == O_WESTWALL)
-					|| tile->getMapData(part)->getPartType() == O_FLOOR)	// all floors that block LoS should have their stopLOS flag set true if not gravLift floor.
+				if ((tile->getMapData(tPart)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
+							|| (dType == DT_SMOKE && tile->getMapData(tPart)->getBlock(DT_SMOKE) == 1)
+							|| (dType == DT_IN && tile->getMapData(tPart)->blockFire() == true))
+						&& (tile->getMapData(tPart)->getPartType() == O_OBJECT // this one is for verticalBlockage() only.
+							|| tile->getMapData(tPart)->getPartType() == O_NORTHWALL
+							|| tile->getMapData(tPart)->getPartType() == O_WESTWALL)
+					|| tile->getMapData(tPart)->getPartType() == O_FLOOR)	// all floors that block LoS should have their stopLOS flag set true if not gravLift floor.
 																			// Might want to check hasNoFloor() flag.
 				{
-					//Log(LOG_INFO) << ". . . . Ret 1000[0] part = " << part << " " << tile->getPosition();
+					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[0] tPart = " << tPart << " " << tile->getPosition();
 					return 1000;
 				}
 			}
-			else if (tile->getMapData(part)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
+			else if (tile->getMapData(tPart)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
 				&& _powerE > -1
-				&& _powerE < tile->getMapData(part)->getArmor() * 2) // terrain absorbs 200% damage from DT_HE!
+				&& _powerE < tile->getMapData(tPart)->getArmor() * 2) // terrain absorbs 200% damage from DT_HE!
 			{
-				//Log(LOG_INFO) << ". . . . Ret 1000[1] part = " << part << " " << tile->getPosition();
+				//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[1] tPart = " << tPart << " " << tile->getPosition();
 				return 1000; // this is a hardblock for HE; hence it has to be higher than the highest HE power in the Rulesets.
 			}
 		}
-		else // dir > -1 -> OBJECT part. ( BigWalls & content ) *always* an OBJECT-part gets passed in through here, and *with* a direction.
+		else // dir > -1 -> OBJECT tPart. ( BigWalls & content ) *always* an OBJECT-tPart gets passed in through here, and *with* a direction.
 		{
-			const int bigWall = tile->getMapData(O_OBJECT)->getBigwall(); // 0..9 or, per MCD.
-			//Log(LOG_INFO) << ". bigWall = " << bigWall;
+			const BigwallTypes bigWall = static_cast<BigwallTypes>(tile->getMapData(O_OBJECT)->getBigwall()); // 0..9 or, per MCD.
+			//if (_debug) Log(LOG_INFO) << ". dir = " << dir << " bigWall = " << bigWall;
 
-			if (originTest == true)	// the ContentOBJECT already got hit as the previous endTile... but can still block LoS when looking down ...
+//			diagBigwallPass = _powerE != -1 && bigWall == BIGWALL_NESW && _dirRay < 136;
+			if (_powerE != -1)
+			{
+				switch (dir)
+				{
+				case 0:
+					if ((_dirRay > 134 && _dirRay < 316
+							&& bigWall == BIGWALL_NESW)
+						|| (_dirRay > 44 && _dirRay < 226
+							&& bigWall == BIGWALL_NWSE))
+					{
+						diagBigwallPass = true;
+					}
+					break;
+				case 2:
+					if ((((_dirRay > -1 && _dirRay < 136)
+								|| (_dirRay > 314 && _dirRay < 361))
+							&& bigWall == BIGWALL_NESW)
+						|| (_dirRay > 44 && _dirRay < 226
+							&& bigWall == BIGWALL_NWSE))
+					{
+						diagBigwallPass = true;
+					}
+					break;
+				case 4:
+					if ((((_dirRay > -1 && _dirRay < 136)
+								|| (_dirRay > 314 && _dirRay < 361))
+							&& bigWall == BIGWALL_NESW)
+						|| (((_dirRay > 224 && _dirRay < 361)
+								|| (_dirRay > -1 && _dirRay < 46))
+							&& bigWall == BIGWALL_NWSE))
+					{
+						diagBigwallPass = true;
+					}
+					break;
+				case 6:
+					if ((_dirRay > 134 && _dirRay < 316
+							&& bigWall == BIGWALL_NESW)
+						|| (((_dirRay > 224 && _dirRay < 361)
+								|| (_dirRay > -1 && _dirRay < 46))
+							&& bigWall == BIGWALL_NWSE))
+					{
+						diagBigwallPass = true;
+					}
+				}
+			}
+
+
+			if (isStartTile == true) // the ContentOBJECT already got hit as the previous endTile... but can still block LoS when looking down ...
 			{
 /*				bool diagStop = true; // <- superceded by ProjectileFlyBState::_prjVector ->
 				if (dType == DT_HE && _missileDirection != -1)
@@ -3849,7 +3926,7 @@ int TileEngine::blockage(
 
 				// this needs to check which side the *missile* is coming from,
 				// although grenades that land on a diagonal bigWall are exempt regardless!!!
-				if (bigWall == BIGWALL_NONE // !visLike, if (only Content-part == true) -> all DamageTypes ok here (because, origin).
+				if (bigWall == BIGWALL_NONE // !visLike, if (only Content-tPart == true) -> all DamageTypes ok here (because, origin).
 /*					|| (diagStop == false
 						&& (bigWall == BIGWALL_NESW || bigWall == BIGWALL_NWSE)) */
 					|| (dir == Pathfinding::DIR_DOWN
@@ -3861,11 +3938,14 @@ int TileEngine::blockage(
 				}
 				else if (visLike == false // diagonal BigWall blockage ...
 					&& (bigWall == BIGWALL_NESW || bigWall == BIGWALL_NWSE)
+
+					&& diagBigwallPass == false
+
 					&& tile->getMapData(O_OBJECT)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
 					&& _powerE > -1
 					&& _powerE < tile->getMapData(O_OBJECT)->getArmor() * 2)
 				{
-					//Log(LOG_INFO) << ". . . . Ret 1000[2] part = " << part << " " << tile->getPosition();
+					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[2] tPart = " << tPart << " " << tile->getPosition();
 					return 1000;
 				}
 			}
@@ -3876,30 +3956,32 @@ int TileEngine::blockage(
 					|| (dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
 					|| (dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true)))
 			{
-				//Log(LOG_INFO) << ". . . . Ret 1000[3] part = " << part << " " << tile->getPosition();
+				//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[3] tPart = " << tPart << " " << tile->getPosition();
 				return 1000;
 			}
 
 
-			switch (dir) // -> OBJECT part. ( BigWalls & content )
+			switch (dir) // -> OBJECT tPart. ( BigWalls & content )
 			{
 				case 0: // north
 					if (bigWall == BIGWALL_WEST
 						|| bigWall == BIGWALL_EAST
 						|| bigWall == BIGWALL_SOUTH
-						|| bigWall == BIGWALL_E_S)
+						|| bigWall == BIGWALL_E_S
+
+						|| diagBigwallPass == true)
 					{
-						//Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 0 north )";
-						return 0; // part By-passed.
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 0 north )";
+						return 0; // tPart By-passed.
 					}
 				break;
 
 				case 1: // north east
 					if (bigWall == BIGWALL_WEST
 						|| bigWall == BIGWALL_SOUTH
-						|| (bigWall == BIGWALL_NWSE && trueDir == false))
+						|| (bigWall == BIGWALL_NWSE && dirTrue == false))
 					{
-						//Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 1 northeast )";
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 1 northeast )";
 						return 0;
 					}
 				break;
@@ -3908,9 +3990,11 @@ int TileEngine::blockage(
 					if (bigWall == BIGWALL_NORTH
 						|| bigWall == BIGWALL_SOUTH
 						|| bigWall == BIGWALL_WEST
-						|| bigWall == BIGWALL_W_N)
+						|| bigWall == BIGWALL_W_N
+
+						|| diagBigwallPass == true)
 					{
-						//Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 2 east )";
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 2 east )";
 						return 0;
 					}
 				break;
@@ -3918,10 +4002,10 @@ int TileEngine::blockage(
 				case 3: // south east
 					if (bigWall == BIGWALL_NORTH
 						|| bigWall == BIGWALL_WEST
-						|| (bigWall == BIGWALL_NESW && trueDir == false)
+						|| (bigWall == BIGWALL_NESW && dirTrue == false)
 						|| bigWall == BIGWALL_W_N)
 					{
-						//Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 3 southeast )";
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 3 southeast )";
 						return 0;
 					}
 				break;
@@ -3930,9 +4014,11 @@ int TileEngine::blockage(
 					if (bigWall == BIGWALL_WEST
 						|| bigWall == BIGWALL_EAST
 						|| bigWall == BIGWALL_NORTH
-						|| bigWall == BIGWALL_W_N)
+						|| bigWall == BIGWALL_W_N
+
+						|| diagBigwallPass == true)
 					{
-						//Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 4 south )";
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 4 south )";
 						return 0;
 					}
 				break;
@@ -3940,9 +4026,9 @@ int TileEngine::blockage(
 				case 5: // south west
 					if (bigWall == BIGWALL_NORTH
 						|| bigWall == BIGWALL_EAST
-						|| (bigWall == BIGWALL_NWSE && trueDir == false))
+						|| (bigWall == BIGWALL_NWSE && dirTrue == false))
 					{
-						//Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 5 southwest )";
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 5 southwest )";
 						return 0;
 					}
 				break;
@@ -3951,9 +4037,11 @@ int TileEngine::blockage(
 					if (bigWall == BIGWALL_NORTH
 						|| bigWall == BIGWALL_SOUTH
 						|| bigWall == BIGWALL_EAST
-						|| bigWall == BIGWALL_E_S)
+						|| bigWall == BIGWALL_E_S
+
+						|| diagBigwallPass == true)
 					{
-						//Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 6 west )";
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 6 west )";
 						return 0;
 					}
 				break;
@@ -3962,9 +4050,9 @@ int TileEngine::blockage(
 					if (bigWall == BIGWALL_SOUTH
 						|| bigWall == BIGWALL_EAST
 						|| bigWall == BIGWALL_E_S
-						|| (bigWall == BIGWALL_NESW && trueDir == false))
+						|| (bigWall == BIGWALL_NESW && dirTrue == false))
 					{
-						//Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 7 northwest )";
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 7 northwest )";
 						return 0;
 					}
 				break;
@@ -3978,7 +4066,7 @@ int TileEngine::blockage(
 							&& !(dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
 							&& !(dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true)))
 					{
-						//Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 8,9 up,down )";
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 8,9 up,down )";
 						return 0;
 					}
 				break;
@@ -3988,30 +4076,34 @@ int TileEngine::blockage(
 			}
 
 
-			// might be Content-part or remaining-bigWalls block here
+			// might be Content-tPart or remaining-bigWalls block here
 			if (tile->getMapData(O_OBJECT)->stopLOS() == true // use stopLOS to hinder explosions from propagating through bigWalls freely. // stopLOS() should join w/ DT_NONE ...
 				|| (dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
 				|| (dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true))
 			{
 				if (visLike == true
 					|| (_powerE > -1
+
+						&& diagBigwallPass == false
+
 						&& _powerE < tile->getMapData(O_OBJECT)->getArmor() * 2)) // terrain absorbs 200% damage from DT_HE!
 				{
-					//Log(LOG_INFO) << ". . . . Ret 1000[4] part = " << part << " " << tile->getPosition();
+					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " dirTrue = " << dirTrue << " Ret 1000[4] tPart = " << tPart << " " << tile->getPosition();
 					return 1000; // this is a hardblock for HE; hence it has to be higher than the highest HE power in the Rulesets.
 				}
 			}
 		}
 
-		if (visLike == false) // only non-visLike can get partly blocked; other damage-types are either completely blocked above or get a pass here
+		if (visLike == false // only non-visLike can get partly blocked; other damage-types are either completely blocked above or get a pass here
+			&& diagBigwallPass == false)
 		{
-			//Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret = " << tile->getMapData(part)->getBlock(dType);
-			return tile->getMapData(part)->getBlock(dType);
+			//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret = " << tile->getMapData(tPart)->getBlock(dType);
+			return tile->getMapData(tPart)->getBlock(dType);
 		}
 	}
 
-	//Log(LOG_INFO) << "TileEngine::blockage() EXIT, (no valid part) ret 0";
-	return 0; // no Valid [part].
+	//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, (no valid tPart) ret 0"; // lag to file
+	return 0; // no Valid [tPart].
 }
 
 /**

@@ -293,8 +293,7 @@ SellState::SellState(Base* const base)
 			const std::vector<std::string>& cwList = rules->getCraftWeaponsList();
 			for (std::vector<std::string>::const_iterator
 					j = cwList.begin();
-					j != cwList.end()
-						&& craftOrdnance == false;
+					j != cwList.end() && craftOrdnance == false;
 					++j)
 			{
 				// Special handling for treating craft weapons as items

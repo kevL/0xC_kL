@@ -898,8 +898,8 @@ void ProjectileFlyBState::think()
 						Tile* const tileTrue = _parent->getBattlescapeState()->getSavedBattleGame()->getTile(pos);
 						_parent->getTileEngine()->setTrueTile(tileTrue);
 
-						explVoxel.x -= _prjVector.x * 16; // note there is no safety on these for OoB.
-						explVoxel.y -= _prjVector.y * 16;
+						explVoxel.x -= _prjVector.x << 4; // note there is no safety on these for OoB.
+						explVoxel.y -= _prjVector.y << 4;
 					}
 					else _parent->getTileEngine()->setTrueTile();
 
