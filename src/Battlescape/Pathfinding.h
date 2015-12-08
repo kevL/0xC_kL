@@ -60,8 +60,8 @@ class Pathfinding
 
 private:
 	bool
-		_Alt,
-		_Ctrl,
+		_alt,
+		_ctrl,
 		_previewed,
 		_strafe;
 	int
@@ -138,7 +138,7 @@ private:
 		/// Calculates the shortest path.
 		void calculate(
 				const BattleUnit* const unit,
-				Position posDest,
+				Position posStop,
 				const BattleUnit* const missileTarget = nullptr,
 				int maxTuCost = 1000,
 				bool strafeRejected = false);
@@ -170,9 +170,10 @@ private:
 		int getTuCostPf(
 				const Position& posStart,
 				int dir,
-				Position* const posDest,
+				Position* const posStop,
 				const BattleUnit* const missileTarget = nullptr,
-				bool missile = false);
+				bool missile = false,
+				bool bresenh = true);
 		/// Gets _tuCostTotal; finds out whether we can hike somewhere in this turn or not.
 		int getTotalTUCost() const
 		{ return _tuCostTotal; }
