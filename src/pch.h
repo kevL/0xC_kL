@@ -44,7 +44,7 @@
 #include <vector>		// vectors
 
 #if HAVE_ALLOCA_H
-#	include <alloca.h>		// scalers ->
+#	include <alloca.h>	// scalers ->
 #endif
 #include <assert.h>		// <cassert>
 #if HAVE_CONFIG_H

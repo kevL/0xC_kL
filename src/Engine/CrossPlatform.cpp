@@ -1076,54 +1076,43 @@ void flashWindow()
 std::string getDosPath()
 {
 #ifdef _WIN32
-	std::string
+	char path[MAX_PATH];
+	if (GetModuleFileNameA(0, path, MAX_PATH) != 0)
+		return path;
+
+	return "oh boy you're fucked now Lulzorcopter.";
+
+	// Some people just love to code ... suggest: dog, walk.
+/*	std::string
 		path,
 		bufstr;
 	char buf[MAX_PATH];
 
-	if (GetModuleFileNameA(
-						0,
-						buf,
-						MAX_PATH) != 0)
+	if (GetModuleFileNameA(0, buf, MAX_PATH) != 0)
 	{
 		bufstr = buf;
 		size_t c1 = bufstr.find_first_of('\\');
-		path += bufstr.substr(
-							0,
-							c1 + 1);
-		size_t c2 = bufstr.find_first_of(
-									'\\',
-									c1 + 1);
+		path += bufstr.substr(0, c1 + 1);
+		size_t c2 = bufstr.find_first_of('\\', c1 + 1);
 		while (c2 != std::string::npos)
 		{
-			std::string dirname = bufstr.substr(
-											c1 + 1,
-											c2 - c1 - 1);
-			if (dirname == "..")
+			std::string dir = bufstr.substr(c1 + 1, c2 - c1 - 1);
+			if (dir == "..")
 			{
-				path = path.substr(
-								0,
-								path.find_last_of(
-											'\\',
-											path.length() - 2));
+				path = path.substr(0, path.find_last_of('\\', path.length() - 2));
 			}
 			else
 			{
-				if (dirname.length() > 8)
-					dirname = dirname.substr(0,6) + "~1";
-				std::transform(
-							dirname.begin(),
-							dirname.end(),
-							dirname.begin(),
-							toupper);
-				path += dirname;
+				if (dir.length() > 8)
+					dir = dir.substr(0,6) + "~1";
+
+//				std::transform(dir.begin(), dir.end(), dir.begin(), ::toupper);
+				path += dir;
 			}
 
 			c1 = c2;
 
-			c2 = bufstr.find_first_of(
-								'\\',
-								c1 + 1);
+			c2 = bufstr.find_first_of('\\', c1 + 1);
 			if (c2 != std::string::npos)
 				path += '\\';
 		}
@@ -1131,7 +1120,7 @@ std::string getDosPath()
 	else
 		path = "C:\\GAMES\\OPENXCOM";
 
-	return path;
+	return path; */
 #else
 	return "C:\\GAMES\\OPENXCOM";
 #endif

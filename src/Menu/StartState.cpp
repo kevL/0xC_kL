@@ -161,7 +161,8 @@ StartState::StartState()
 		addLine(L"");
 	}
 	else
-		addLine(Language::utf8ToWstr(CrossPlatform::getDosPath()) + L">openxcom");
+		addLine(Language::utf8ToWstr(CrossPlatform::getDosPath()));
+//		addLine(Language::utf8ToWstr(CrossPlatform::getDosPath()) + L">openxcom");
 }
 
 /**
