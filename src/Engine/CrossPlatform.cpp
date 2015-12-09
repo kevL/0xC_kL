@@ -526,7 +526,7 @@ bool createFolder(const std::string& path)
 #ifdef _WIN32
 	const int result = CreateDirectoryA(
 									path.c_str(),
-									0);
+									nullptr);
 	if (result == 0)
 		return false;
 
@@ -577,7 +577,7 @@ std::vector<std::string> getFolderContents(
 				::tolower);
 
 	DIR* dp = opendir(path.c_str());
-	if (dp == 0)
+	if (dp == nullptr)
 	{
 	#ifdef __MORPHOS__
 		return files;
@@ -588,7 +588,7 @@ std::vector<std::string> getFolderContents(
 	}
 
 	struct dirent* dirp;
-	while ((dirp = readdir(dp)) != 0)
+	while ((dirp = readdir(dp)) != nullptr)
 	{
 		const std::string file = dirp->d_name;
 
@@ -742,7 +742,7 @@ bool deleteFile(const std::string& path)
 /**
  * Gets the base filename of a path.
  * @param path		- reference to the full path of file
- * @param transform	- optional function to transform the filename
+ * @param transform	- optional function to transform the filename (default nullptr)
  * @return, base filename
  */
 std::string baseFilename(
@@ -759,7 +759,7 @@ std::string baseFilename(
 							0,
 							sep + 1);
 
-	if (transform != 0)
+	if (transform != nullptr)
 	{
 		std::transform(
 					filename.begin(),
@@ -1077,7 +1077,7 @@ std::string getDosPath()
 {
 #ifdef _WIN32
 	char path[MAX_PATH];
-	if (GetModuleFileNameA(0, path, MAX_PATH) != 0)
+	if (GetModuleFileNameA(nullptr, path, MAX_PATH) != 0)
 		return path;
 
 	return "oh boy you're fucked now Lulzorcopter.";
@@ -1141,13 +1141,13 @@ void setWindowIcon(int winResource)
 	SDL_SysWMinfo wminfo;
 	SDL_VERSION(&wminfo.version)
 
-	if (SDL_GetWMInfo(&wminfo))
+	if (SDL_GetWMInfo(&wminfo) != 0)
 	{
 		const HWND hwnd = wminfo.window;
 		SetClassLongPtr(
 					hwnd,
 					GCLP_HICON,
-					(LONG_PTR)icon);
+					reinterpret_cast<LONG_PTR>(icon));
 	}
 }
 #else

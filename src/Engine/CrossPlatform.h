@@ -74,7 +74,7 @@ namespace CrossPlatform
 	/// Gets the basename of a file.
 	std::string baseFilename(
 			const std::string& path,
-			int(*transform)(int) = 0);
+			int(*transform)(int) = nullptr);
 
 	/// Sanitizes the characters in a filename.
 	std::string sanitizeFilename(const std::string& file);

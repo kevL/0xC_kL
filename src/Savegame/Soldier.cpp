@@ -248,7 +248,7 @@ YAML::Node Soldier::save() const
  * Gets this Soldier's rules.
  * @return, pointer to RuleSoldier
  */
-const RuleSoldier* const Soldier::getRules() const
+const RuleSoldier* Soldier::getRules() const
 {
 	return _solRule;
 }

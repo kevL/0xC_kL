@@ -416,7 +416,7 @@ protected:
 		const std::string& getFinalResearch() const;
 
 		/// Gets the current Game.
-		const Game* const getGame() const;
+		const Game* getGame() const;
 };
 
 }

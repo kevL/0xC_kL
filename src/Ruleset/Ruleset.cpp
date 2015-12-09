@@ -2421,7 +2421,7 @@ const std::string& Ruleset::getFinalResearch() const
  * Gets the current Game.
  * @return, pointer to GAME
  */
-const Game* const Ruleset::getGame() const
+const Game* Ruleset::getGame() const
 {
 	return _game;
 }

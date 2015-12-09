@@ -63,7 +63,7 @@ private:
 		void load(const YAML::Node& node);
 
 		/// Gets an element.
-		const Element* const getElement(const std::string& id) const;
+		const Element* getElement(const std::string& id) const;
 
 		/// Gets palette.
 		const std::string& getPalette() const;

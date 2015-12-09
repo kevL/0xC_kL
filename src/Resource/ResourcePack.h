@@ -170,7 +170,7 @@ private:
 					int ncolors = 256);
 
 			/// Gets list of voxel data.
-			const std::vector<Uint16>* const getVoxelData() const;
+			const std::vector<Uint16>* getVoxelData() const;
 
 			/// Gets a random background.
 			const std::string& getRandomBackground() const;

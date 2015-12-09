@@ -202,7 +202,7 @@ inline std::string now()
 
 	if (GetDateFormatA(
 					LOCALE_INVARIANT,
-					0,0,
+					0, nullptr,
 					"dd'-'MM'-'yyyy",
 					date,
 					MAX_LEN) == 0)
@@ -213,7 +213,7 @@ inline std::string now()
 	if (GetTimeFormatA(
 					LOCALE_INVARIANT,
 					TIME_FORCE24HOURFORMAT,
-					0,
+					nullptr,
 					"HH':'mm':'ss",
 					tyme,
 					MAX_LEN) == 0)
