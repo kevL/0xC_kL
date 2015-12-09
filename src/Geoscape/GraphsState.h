@@ -146,17 +146,7 @@ private:
 	void scrollButtons(
 			int dirVal,
 			bool init = false);
-/*	void scrollButtons(
-			std::vector<GraphBtnInfo*>& toggles,
-			std::vector<ToggleTextButton*>& buttons,
-			std::vector<Text*>& actA_vect,
-			std::vector<Text*>& actX_vect,
-			std::vector<bool>& blinkA,
-			std::vector<bool>& blinkX,
-			size_t& btnOffset,
-			int dir,
-			bool init = false); */
-	///
+	/// Updates button appearances when scrolling the lists.
 	void updateButton(
 			GraphBtnInfo* info,
 			ToggleTextButton* btn,
