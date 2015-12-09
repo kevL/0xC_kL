@@ -1727,6 +1727,9 @@ void BattlescapeGame::checkForCasualties(
 				BattleUnit* const defender = *i; // kL
 
 				// Awards: decide victim race and rank
+				// TODO: if a unit was stunned but gets up and is re-stunned or killed,
+				// erase it from the previous attacker's BattleUnitKill vector and add
+				// it to the subsequent attacker.
 				if (attacker != nullptr
 					&& attacker->getGeoscapeSoldier() != nullptr)
 				{
@@ -1743,7 +1746,7 @@ void BattlescapeGame::checkForCasualties(
 						}
 						else												// Support unit
 						{
-							killStatRace = "STR_HEAVY_WEAPONS_PLATFORM";
+							killStatRace = defender->getUnitRules()->getRace();
 							killStatRank = "STR_SUPPORT";
 						}
 					}
@@ -1968,7 +1971,7 @@ void BattlescapeGame::checkForCasualties(
 					&& defender->getUnitStatus() != STATUS_DEAD
 					&& defender->getUnitStatus() != STATUS_UNCONSCIOUS
 					&& defender->getUnitStatus() != STATUS_COLLAPSING	// kL_note: is this really needed ....
-					&& defender->getUnitStatus() != STATUS_TURNING	// kL_note: may be set by UnitDieBState cTor
+					&& defender->getUnitStatus() != STATUS_TURNING		// kL_note: may be set by UnitDieBState cTor
 					&& defender->getUnitStatus() != STATUS_DISABLED)	// kL
 				{
 					(*i)->setUnitStatus(STATUS_DISABLED); // kL
