@@ -37,7 +37,7 @@ class Window;
 /**
  * Equip Craft screen that lets the player manage all the crafts in a base.
  */
-class CraftsState
+class CraftsState final
 	:
 		public State
 {
@@ -79,7 +79,7 @@ private:
 		~CraftsState();
 
 		/// Updates the craft info.
-		void init();
+		void init() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

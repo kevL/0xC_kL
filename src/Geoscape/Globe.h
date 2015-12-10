@@ -49,7 +49,7 @@ class Timer;
  * and renders it as a 3D-looking globe with cartesian coordinates that the
  * player can interact with.
  */
-class Globe
+class Globe final
 	:
 		public InteractiveSurface
 {
@@ -313,10 +313,10 @@ private:
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor = 0,
-				int ncolors = 256);
+				int ncolors = 256) override;
 
 		/// Handles the timers.
-		void think();
+		void think() override;
 		/// Blinks the markers.
 		void blink();
 		/// Toggles the blinking.
@@ -325,7 +325,7 @@ private:
 		void rotate();
 
 		/// Draws the whole globe.
-		void draw();
+		void draw() override;
 		/// Draws the ocean of the globe.
 		void drawOcean();
 		/// Draws the land of the globe.
@@ -343,18 +343,18 @@ private:
 		/// Draws all the markers over the globe.
 		void drawMarkers();
 		/// Blits the globe onto another surface.
-		void blit(Surface* surface);
+		void blit(Surface* surface) override;
 
 		/// Special handling for mouse hover.
-		void mouseOver(Action* action, State* state);
+		void mouseOver(Action* action, State* state) override;
 		/// Special handling for mouse presses.
-		void mousePress(Action* action, State* state);
+		void mousePress(Action* action, State* state) override;
 		/// Special handling for mouse releases.
-		void mouseRelease(Action* action, State* state);
+		void mouseRelease(Action* action, State* state) override;
 		/// Special handling for mouse clicks.
-		void mouseClick(Action* action, State* state);
+		void mouseClick(Action* action, State* state) override;
 		/// Special handling for key presses.
-		void keyboardPress(Action* action, State* state);
+		void keyboardPress(Action* action, State* state) override;
 
 		/// Moves the mouse back to where it started after drag scrolling ends.
 //		void stopScrolling(Action* action);

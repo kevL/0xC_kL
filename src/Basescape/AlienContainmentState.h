@@ -97,7 +97,7 @@ private:
 		~AlienContainmentState();
 
 		/// Runs the timers.
-		void think();
+		void think() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

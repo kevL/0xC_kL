@@ -74,7 +74,7 @@ private:
 		~NewManufactureListState();
 
 		/// Initializes state.
-		void init();
+		void init() override;
 
 		/// Fills the list of possible productions.
 		void fillProductionList();

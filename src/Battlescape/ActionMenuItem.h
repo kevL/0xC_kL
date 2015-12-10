@@ -39,7 +39,7 @@ class Text;
  * accuracy. Mouse over highlights the action and when clicked the action is
  * sent to the parent state.
  */
-class ActionMenuItem
+class ActionMenuItem final
 	:
 		public InteractiveSurface
 {
@@ -84,14 +84,14 @@ private:
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor,
-				int ncolors);
+				int ncolors) override;
 		/// Redraws it.
-		void draw();
+		void draw() override;
 
 		/// Processes a mouse hover in event.
-		void mouseIn(Action* action, State* state);
+		void mouseIn(Action* action, State* state) override;
 		/// Processes a mouse hover out event.
-		void mouseOut(Action* action, State* state);
+		void mouseOut(Action* action, State* state) override;
 };
 
 }

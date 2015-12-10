@@ -38,7 +38,7 @@ class TextButton;
 /**
  * Soldier Dead Info screen that shows all the info of a specific dead soldier.
  */
-class SoldierInfoDeadState
+class SoldierInfoDeadState final
 	:
 		public State
 {
@@ -111,7 +111,7 @@ private:
 		~SoldierInfoDeadState();
 
 		/// Updates the dead soldier info.
-		void init();
+		void init() override;
 
 		/// Sets the soldier ID.
 		void setSoldierId(size_t soldierId);

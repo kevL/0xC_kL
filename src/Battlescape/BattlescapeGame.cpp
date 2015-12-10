@@ -3070,7 +3070,7 @@ ResourcePack* BattlescapeGame::getResourcePack() const
  * Gets the ruleset.
  * @return, pointer to Ruleset
  */
-const Ruleset* const BattlescapeGame::getRuleset() const
+const Ruleset* BattlescapeGame::getRuleset() const
 {
 	return _parentState->getGame()->getRuleset();
 }

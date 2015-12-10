@@ -267,7 +267,7 @@ void CraftSoldiersState::btnUnloadClick(Action*)
 }
 
 /**
- * LMB assigns and de-assigns soldiers from a craft. RMB shows soldier info.
+ * LMB assigns and de-assigns soldiers from a Craft. RMB shows soldier info.
  * @param action - pointer to an Action
  */
 void CraftSoldiersState::lstSoldiersPress(Action* action)
@@ -281,7 +281,7 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 
 	const size_t row = _lstSoldiers->getSelectedRow();
 
-	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
+	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		Soldier* const sol = _base->getSoldiers()->at(_lstSoldiers->getSelectedRow());
 
@@ -329,7 +329,7 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 		displayExtraButtons();
 		calculateTacticalCost();
 	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
 	{
 		_base->setRecallRow(
 						REC_SOLDIER,

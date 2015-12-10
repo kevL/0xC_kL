@@ -31,7 +31,7 @@ namespace OpenXcom
  * @note Drawn with a colored border and partly filled content to contrast two
  * values, typically used for showing base and soldier stats.
  */
-class Bar
+class Bar final
 	:
 		public Surface
 {
@@ -63,11 +63,11 @@ private:
 		~Bar();
 
 		/// Sets the bar's color.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Gets the bar's color.
 		Uint8 getColor() const;
 		/// Sets the bar's second color.
-		void setSecondaryColor(Uint8 color);
+		void setSecondaryColor(Uint8 color) override;
 		/// Gets the bar's second color.
 		Uint8 getSecondaryColor() const;
 
@@ -99,10 +99,10 @@ private:
 		void setInvert(bool invert = true);
 
 		/// Draws the bar.
-		void draw();
+		void draw() override;
 
 		/// set the outline color for the bar.
-		void setBorderColor(Uint8 color);
+		void setBorderColor(Uint8 color) override;
 };
 
 }

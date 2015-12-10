@@ -74,7 +74,7 @@ protected:
 		virtual ~UfopaediaSelectState();
 
 		///
-		void init();
+		void init() override;
 };
 
 }

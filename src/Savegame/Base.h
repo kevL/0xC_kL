@@ -66,7 +66,7 @@ class Vehicle;
  * Represents a player base on the globe.
  * @note Bases can contain facilities, personnel, crafts and equipment.
  */
-class Base
+class Base final
 	:
 		public Target
 {
@@ -130,16 +130,16 @@ private:
 				bool firstBase = false,
 				bool skirmish = false);
 		/// Saves this Base to YAML.
-		YAML::Node save() const;
+		YAML::Node save() const override;
 		/// Saves this Base's ID to YAML.
-		YAML::Node saveId() const;
+		YAML::Node saveId() const override;
 
 		/// Gets this Base's name.
-		std::wstring getName(const Language* const lang = nullptr) const;
+		std::wstring getName(const Language* const lang = nullptr) const override;
 		/// Sets this Base's name.
 		void setName(const std::wstring& name);
 		/// Gets this Base's marker.
-		int getMarker() const;
+		int getMarker() const override;
 
 		/// Gets this Base's facilities.
 		std::vector<BaseFacility*>* getFacilities();

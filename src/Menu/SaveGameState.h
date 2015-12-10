@@ -74,7 +74,7 @@ private:
 				bool dropText = false);
 
 		/// Saves the game.
-		void think();
+		void think() override;
 };
 
 }

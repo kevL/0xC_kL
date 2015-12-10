@@ -59,11 +59,11 @@ private:
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor = 0,
-				int ncolors = 256);
+				int ncolors = 256) override;
 		/// Sets the TurnCounter's color.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Draws the Turn counter.
-		void draw();
+		void draw() override;
 };
 
 }

@@ -34,7 +34,7 @@ class Action;
  * @note Drawn as a shaded triangle-like shape that automatically matches the
  * SDL Mouse coordinates.
  */
-class Cursor
+class Cursor final
 	:
 		public Surface
 {
@@ -57,12 +57,12 @@ private:
 		void handle(Action* action);
 
 		/// Sets the cursor's color.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Gets the cursor's color.
 		Uint8 getColor() const;
 
 		/// Draws the cursor.
-		void draw();
+		void draw() override;
 };
 
 }

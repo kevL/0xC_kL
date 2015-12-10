@@ -65,7 +65,7 @@ private:
 		~OptionsAdvancedState();
 
 		/// Fills settings list.
-		void init();
+		void init() override;
 
 		/// Handler for clicking a setting on the list.
 		void lstOptionsClick(Action* action);

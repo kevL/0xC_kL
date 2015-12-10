@@ -71,7 +71,7 @@ private:
 		~MediTargetState();
 
 		/// Resets the palette and adds targets to the TextList.
-		void init();
+		void init() override;
 
 		/// Chooses a unit to apply Medikit to.
 		void lstTargetPress(Action* action);

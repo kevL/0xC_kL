@@ -35,7 +35,7 @@ class Timer;
  * Coloured box with text inside that fades out after it is displayed.
  * @note Used to display warning/error messages on the Battlescape.
  */
-class WarningMessage
+class WarningMessage final
 	:
 		public Surface
 {
@@ -60,7 +60,7 @@ private:
 		~WarningMessage();
 
 		/// Sets the color for the warning message.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Sets the text color for the warning message.
 		void setTextColor(Uint8 color);
 
@@ -68,22 +68,22 @@ private:
 		void initText(
 				Font* big,
 				Font* small,
-				Language* lang);
+				Language* lang) override;
 		/// Sets the warning message's palette.
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor = 0,
-				int ncolors = 256);
+				int ncolors = 256) override;
 
 		/// Shows the warning message.
 		void showMessage(const std::wstring& msg);
 
 		/// Handles the timers.
-		void think();
+		void think() override;
 		/// Fades the message.
 		void fade();
 		/// Draws the message.
-		void draw();
+		void draw() override;
 };
 
 }

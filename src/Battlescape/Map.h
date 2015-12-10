@@ -60,7 +60,7 @@ enum CursorType
 /**
  * Interactive map of the battlescape.
  */
-class Map
+class Map final
 	:
 		public InteractiveSurface
 {
@@ -182,30 +182,30 @@ private:
 		/// Initializes the map.
 		void init();
 		/// Handles timers.
-		void think();
+		void think() override;
 		/// Draws the surface.
-		void draw();
+		void draw() override;
 
 		/// Sets the palette.
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor = 0,
-				int ncolors = 256);
+				int ncolors = 256) override;
 
 		/// Special handling for mouse press.
-		void mousePress(Action* action, State* state);
+		void mousePress(Action* action, State* state) override;
 		/// Special handling for mouse release.
-		void mouseRelease(Action* action, State* state);
+		void mouseRelease(Action* action, State* state) override;
 		/// Special handling for mouse over
-		void mouseOver(Action* action, State* state);
+		void mouseOver(Action* action, State* state) override;
 
 		/// Finds the current mouse position XY on this Map.
 		void findMousePosition(Position& mousePos);
 
 		/// Special handling for key presses.
-		void keyboardPress(Action* action, State* state);
+		void keyboardPress(Action* action, State* state) override;
 		/// Special handling for key releases.
-		void keyboardRelease(Action* action, State* state);
+		void keyboardRelease(Action* action, State* state) override;
 
 		/// Cycles the frames for all tiles.
 		void animateMap(bool redraw = true);
@@ -258,9 +258,9 @@ private:
 		void setUnitDying(bool flag = true);
 
 		/// Special handling for updating map height.
-		void setHeight(int height);
+		void setHeight(int height) override;
 		/// Special handling for updating map width.
-		void setWidth(int width);
+		void setWidth(int width) override;
 
 		/// Gets the vertical position of the hidden movement screen.
 		int getMessageY() const;

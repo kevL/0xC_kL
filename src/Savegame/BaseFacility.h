@@ -90,7 +90,7 @@ private:
 		bool inUse() const;
 
 		/// Gets craft, used for drawing facility.
-		const Craft* const getCraft() const;
+		const Craft* getCraft() const;
 		/// Sets craft, used for drawing facility.
 		void setCraft(const Craft* const craft);
 };

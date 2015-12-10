@@ -63,12 +63,12 @@ private:
 		~SelectDestinationState();
 
 		/// Resets globe.
-		void init();
+		void init() override;
 		/// Runs the timer.
 //		void think();
 
 		/// Handles actions.
-		void handle(Action* action);
+		void handle(Action* action) override;
 		/// Handler for clicking the globe.
 		void globeClick(Action* action);
 		/// Handler for clicking the Cancel button.
@@ -79,7 +79,7 @@ private:
 		/// Let the state know the window has been resized.
 		void resize(
 				int& dX,
-				int& dY);
+				int& dY) override;
 
 /*		/// Handler for pressing the Rotate Left arrow.
 		void btnRotateLeftPress(Action* action);

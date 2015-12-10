@@ -69,7 +69,7 @@ protected:
 		virtual void PopulateBuildList();
 
 		/// Updates the base stats.
-		void init();
+		void init() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

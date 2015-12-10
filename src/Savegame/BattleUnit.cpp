@@ -1920,7 +1920,7 @@ bool BattleUnit::isOut(
  *				4 health or stun
  * @return, true if unit is incapacitated
  */
-const bool BattleUnit::isOut_t(const OutCheck test) const
+bool BattleUnit::isOut_t(OutCheck test) const
 {
 	switch (test)
 	{

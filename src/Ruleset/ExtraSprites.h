@@ -29,7 +29,7 @@ namespace OpenXcom
 /**
  * For adding a set of extra sprite data to the game.
  */
-class ExtraSprites
+class ExtraSprites final
 {
 
 private:

@@ -47,7 +47,7 @@ class Timer;
  * @note Can be used for scrolling lists, spinners, etc. Contains various
  * arrow shapes.
  */
-class ArrowButton
+class ArrowButton final
 	:
 		public ImageButton
 {
@@ -59,7 +59,7 @@ private:
 
 
 protected:
-	bool isButtonHandled(Uint8 btn = 0);
+	bool isButtonHandled(Uint8 btn = 0) override;
 
 
 	public:
@@ -74,7 +74,7 @@ protected:
 		~ArrowButton();
 
 		/// Sets the arrow button's color.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Sets the arrow button's shape.
 		void setShape(ArrowShape shape);
 
@@ -82,18 +82,18 @@ protected:
 		void setTextList(TextList* textList);
 
 		/// Handles the timers.
-		void think();
+		void think() override;
 		/// Scrolls the list.
 		void scroll();
 		/// Draws the arrow button.
-		void draw();
+		void draw() override;
 
 		/// Special handling for mouse presses.
-		void mousePress(Action* action, State* state);
+		void mousePress(Action* action, State* state) override;
 		/// Special handling for mouse releases.
-		void mouseRelease(Action* action, State* state);
+		void mouseRelease(Action* action, State* state) override;
 		/// Special handling for mouse clicks.
-		void mouseClick(Action* action, State* state);
+		void mouseClick(Action* action, State* state) override;
 };
 
 }

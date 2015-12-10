@@ -39,7 +39,7 @@ class Window;
  * Text button with a list dropdown when pressed.
  * @note Allows selection from multiple available options.
  */
-class ComboBox
+class ComboBox final
 	:
 		public InteractiveSurface
 {
@@ -84,21 +84,21 @@ private:
 		~ComboBox();
 
 		/// Sets the X position of the surface.
-		void setX(int x);
+		void setX(int x) override;
 		/// Sets the Y position of the surface.
-		void setY(int y);
+		void setY(int y) override;
 
 		/// Sets the palette of the text list.
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor = 0,
-				int ncolors = 256);
+				int ncolors = 256) override;
 
 		/// Initializes the resources for the text list.
 		void initText(
 				Font* big,
 				Font* small,
-				Language* lang);
+				Language* lang) override;
 
 		/// Sets the background surface.
 		void setBackground(Surface* bg);
@@ -106,7 +106,7 @@ private:
 		void setBackgroundFill(Uint8 color);
 
 		/// Sets the border color.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Gets the border color.
 		Uint8 getColor() const;
 
@@ -127,13 +127,13 @@ private:
 		void setOptions(const std::vector<std::wstring>& options);
 
 		/// Blits the combo box onto another surface.
-		void blit(Surface* surface);
+		void blit(Surface* surface) override;
 
 		/// Thinks arrow buttons.
-		void think();
+		void think() override;
 
 		/// Handle arrow buttons.
-		void handle(Action* action, State* state);
+		void handle(Action* action, State* state) override;
 
 		/// Toggles the combo box state.
 		void toggle(bool init = false);

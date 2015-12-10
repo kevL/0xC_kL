@@ -152,14 +152,14 @@ protected:
 		/// Loads the AI state from YAML.
 		void load(const YAML::Node& node);
 		/// Saves the AI state to YAML.
-		YAML::Node save() const;
+		YAML::Node save() const override;
 
 		/// Enters the state.
 //		void enter();
 		/// Exits the state.
 //		void exit();
 		/// Runs state functionality every AI cycle.
-		void think(BattleAction* action);
+		void think(BattleAction* action) override;
 
 		/// Sets the "unit was hit" flag true.
 //		void setWasHitBy(BattleUnit *attacker);

@@ -33,7 +33,7 @@ class Language;
 
 
 /**
- * Base class for targets on the globe with a set of radian coordinates.
+ * Parent class for targets on the globe with a set of radian coordinates.
  */
 class Target
 {
@@ -53,7 +53,7 @@ protected:
 		/// Cleans up the target.
 		virtual ~Target();
 
-		/// Loads the moving target from YAML.
+		/// Loads the target from YAML.
 		virtual void load(const YAML::Node& node);
 		/// Saves the target to YAML.
 		virtual YAML::Node save() const;

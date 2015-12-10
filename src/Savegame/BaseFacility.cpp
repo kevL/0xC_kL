@@ -200,7 +200,7 @@ bool BaseFacility::inUse() const
  * Gets craft used for drawing in facility.
  * @return, pointer to the Craft
  */
-const Craft* const BaseFacility::getCraft() const
+const Craft* BaseFacility::getCraft() const
 {
 	return _craft;
 }

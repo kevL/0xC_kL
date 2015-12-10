@@ -276,7 +276,7 @@ YAML::Node Ufo::saveId() const
  * Returns the ruleset for the UFO's type.
  * @return, pointer to RuleUfo
  */
-const RuleUfo* const Ufo::getRules() const
+const RuleUfo* Ufo::getRules() const
 {
 	return _ufoRule;
 }

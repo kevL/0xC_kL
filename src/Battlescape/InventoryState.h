@@ -41,7 +41,7 @@ class Text;
 /**
  * Screen that displays a Battleunit's inventory.
  */
-class InventoryState
+class InventoryState final
 	:
 		public State
 {
@@ -139,7 +139,7 @@ private:
 		~InventoryState();
 
 		/// Updates all soldier info.
-		void init();
+		void init() override;
 		/// Runs the timer.
 //		void think();
 
@@ -173,7 +173,7 @@ private:
 		void invMouseOut(Action* action);
 
 		/// Handles keypresses.
-		void handle(Action* action);
+		void handle(Action* action) override;
 
 /*		/// Handler for showing tooltip.
 		void txtTooltipIn(Action* action);

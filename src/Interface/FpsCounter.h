@@ -34,7 +34,7 @@ class Action;
 /**
  * Counts the amount of frames each second and displays them in a NumberText surface.
  */
-class FpsCounter
+class FpsCounter final
 	:
 		public Surface
 {
@@ -60,17 +60,17 @@ private:
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor = 0,
-				int ncolors = 256);
+				int ncolors = 256) override;
 		/// Sets the FpsCounter's color.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Handles keyboard events.
 		void handle(Action* action);
 		/// Advances frame counter.
-		void think();
+		void think() override;
 		/// Updates FPS counter.
 		void update();
 		/// Draws the FPS counter.
-		void draw();
+		void draw() override;
 		///
 		void addFrame();
 };

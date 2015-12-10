@@ -34,7 +34,7 @@ class Text;
 /**
  * Game Over Screens.
  */
-class DefeatState
+class DefeatState final
 	:
 		public State
 {

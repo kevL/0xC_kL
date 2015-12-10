@@ -39,7 +39,7 @@ class TextButton;
 /**
  * Unit Info screen that shows all the info of a specific unit.
  */
-class UnitInfoState
+class UnitInfoState final
 	:
 		public State
 {
@@ -145,12 +145,12 @@ private:
 		~UnitInfoState();
 
 		/// Updates the unit info.
-		void init();
+		void init() override;
 		/// Runs the timer.
 //		void think();
 
 		/// Handler for clicking the button.
-		void handle(Action* action);
+		void handle(Action* action) override;
 
 		/// Handler for clicking the Previous button.
 		void btnPrevClick(Action* action);

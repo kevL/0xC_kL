@@ -94,7 +94,7 @@ private:
 		void initText(
 				Font* big,
 				Font* small,
-				Language* lang);
+				Language* lang) override;
 
 		/// Sets the base to display.
 		void setBase(Base* base);
@@ -125,23 +125,23 @@ private:
 		void reCalcQueuedBuildings();
 
 		/// Handles the timers.
-		void think();
+		void think() override;
 		/// Blinks the selector.
 		void blink();
 		/// Draws the base view.
-		void draw();
+		void draw() override;
 		/// Blits the base view onto another surface.
-		void blit(Surface* surface);
+		void blit(Surface* surface) override;
 
 		/// Special handling for mouse hovers.
-		void mouseOver(Action* action, State* state);
+		void mouseOver(Action* action, State* state) override;
 		/// Special handling for mouse hovering out.
-		void mouseOut(Action* action, State* state);
+		void mouseOut(Action* action, State* state) override;
 
 		/// Sets the primary color.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Sets the secondary color.
-		void setSecondaryColor(Uint8 color);
+		void setSecondaryColor(Uint8 color) override;
 };
 
 }

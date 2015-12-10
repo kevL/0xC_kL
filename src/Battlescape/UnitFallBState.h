@@ -56,9 +56,9 @@ private:
 		~UnitFallBState();
 
 		/// Initializes the state.
-		void init();
+		void init() override;
 		/// Runs state functionality every cycle. Returns when finished.
-		void think();
+		void think() override;
 };
 
 }

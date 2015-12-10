@@ -32,7 +32,7 @@ namespace OpenXcom
 /**
  * For adding a set of extra strings to the game.
  */
-class ExtraStrings
+class ExtraStrings final
 {
 
 private:

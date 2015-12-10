@@ -73,9 +73,9 @@ private:
 		~TestState();
 
 		///
-		void think();
+		void think() override;
 		///
-		void blit();
+		void blit() override;
 };
 
 }

@@ -81,7 +81,7 @@ protected:
 		static void restart(OptionsOrigin origin);
 
 		/// Initializes palettes.
-		void init();
+		void init() override;
 
 		/// Presses a certain category button.
 		void setCategory(TextButton* button);
@@ -103,7 +103,7 @@ protected:
 		/// Update the resolution settings, we just resized the window.
 		void resize(
 				int& dX,
-				int& dY);
+				int& dY) override;
 };
 
 }

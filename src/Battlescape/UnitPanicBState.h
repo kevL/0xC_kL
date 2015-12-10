@@ -53,7 +53,7 @@ private:
 		/// Initializes the state.
 //		void init();
 		/// Runs state functionality every cycle.
-		void think();
+		void think() override;
 		/// Handles a cancel request.
 //		void cancel();
 };

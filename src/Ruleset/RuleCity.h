@@ -35,7 +35,7 @@ class Language;
  * Represents a city of the world.
  * @note Aliens target cities for certain missions.
  */
-class RuleCity
+class RuleCity final
 	:
 		public Target
 {
@@ -60,10 +60,10 @@ private:
 		~RuleCity();
 
 		/// Loads the City from YAML.
-		void load(const YAML::Node& node);
+		void load(const YAML::Node& node) override;
 
 		/// Gets the city's name.
-		std::wstring getName(const Language* const lang) const;
+		std::wstring getName(const Language* const lang) const override;
 		/// Gets the city's name as a raw string.
 		const std::string& getName() const;
 
@@ -73,7 +73,7 @@ private:
 		double getLongitude() const;
 
 		/// Gets the city's marker.
-		int getMarker() const;
+		int getMarker() const override;
 
 		/// Gets the level of zoom that shows City's name.
 		size_t getZoomLevel() const;

@@ -132,10 +132,10 @@ private:
 		/// Update the resolution settings, we just resized the window.
 		void resize(
 				int&,
-				int&);
+				int&) override;
 
 		/// Handles keypresses.
-		void handle(Action* action);
+		void handle(Action* action) override;
 };
 
 }

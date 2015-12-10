@@ -26,7 +26,7 @@
 namespace OpenXcom
 {
 
-class RuleMusic
+class RuleMusic final
 {
 
 private:

@@ -52,7 +52,7 @@ private:
 		* _txtWound;
 
 	/// Handles clicking on the body view.
-	void mouseClick(Action* action, State* state);
+	void mouseClick(Action* action, State* state) override;
 
 
 	public:
@@ -68,7 +68,7 @@ private:
 				Text* const wound);
 
 		/// Draws the body view.
-		void draw();
+		void draw() override;
 
 		/// Gets the selected body part.
 		UnitBodyPart getSelectedPart() const;

@@ -305,7 +305,7 @@ private:
 		/// Gets the resourcepack.
 		ResourcePack* getResourcePack() const;
 		/// Gets the ruleset.
-		const Ruleset* const getRuleset() const;
+		const Ruleset* getRuleset() const;
 
 		/// Returns whether player panic has been handled.
 		bool getPanicHandled() const

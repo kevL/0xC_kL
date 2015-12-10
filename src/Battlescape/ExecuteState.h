@@ -63,7 +63,7 @@ private:
 		~ExecuteState();
 
 		/// Resets the palette and adds targets to the TextList.
-		void init();
+		void init() override;
 
 		/// Chooses a unit to apply execution to.
 		void lstTargetPress(Action* action);

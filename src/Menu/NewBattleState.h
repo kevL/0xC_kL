@@ -94,7 +94,7 @@ private:
 		~NewBattleState();
 
 		/// Resets state.
-		void init();
+		void init() override;
 		/// Loads New Battle settings.
 		void load(const std::string& file = "battle");
 		/// Saves New Battle settings.

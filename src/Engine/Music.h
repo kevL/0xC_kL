@@ -32,7 +32,7 @@ namespace OpenXcom
  * Container for music tracks.
  * @note Handles loading and playing various formats through SDL_mixer.
  */
-class Music
+class Music final
 {
 
 private:

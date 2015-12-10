@@ -66,7 +66,7 @@ private:
 		~ActionMenuState();
 
 		/// Handler for right-clicking anything.
-		void handle(Action* action);
+		void handle(Action* action) override;
 
 		/// Handler for clicking an action menu item.
 		void btnActionMenuClick(Action* action);
@@ -74,7 +74,7 @@ private:
 		/// Updates the resolution settings - just resized the window.
 		void resize(
 				int& dX,
-				int& dY);
+				int& dY) override;
 };
 
 }

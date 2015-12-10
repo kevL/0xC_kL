@@ -42,7 +42,7 @@ class Window;
 /**
  * Medals screen that lets the player see all the medals a soldier has.
  */
-class SoldierDiaryOverviewState
+class SoldierDiaryOverviewState final
 	:
 		public State
 {
@@ -93,7 +93,7 @@ private:
 		~SoldierDiaryOverviewState();
 
 		/// Updates the list info.
-		void init();
+		void init() override;
 
 		/// Sets the soldier's ID.
 		void setSoldierId(size_t soldierId);

@@ -77,7 +77,7 @@ YAML::Node Vehicle::save() const
  * Returns the ruleset for the vehicle's type.
  * @return, pointer to RuleItem
  */
-const RuleItem* const Vehicle::getRules() const
+const RuleItem* Vehicle::getRules() const
 {
 	return _itRule;
 }

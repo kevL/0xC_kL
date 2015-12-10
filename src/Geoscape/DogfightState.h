@@ -61,7 +61,7 @@ class Ufo;
 /**
  * Shows a dogfight (interception) between a player's Craft and a UFO.
  */
-class DogfightState
+class DogfightState final
 	:
 		public State
 {
@@ -170,7 +170,7 @@ private:
 		~DogfightState();
 
 		/// Runs the timers.
-		void think();
+		void think() override;
 		/// Animates the window.
 		void animate();
 		/// Updates the craft.

@@ -208,7 +208,7 @@ const std::string& RuleSoldier::getArmor() const
  * Gets the gender ratio struct.
  * @return, pointer to the RuleGender struct
  */
-const RuleGender* const RuleSoldier::getGenderRatio() const
+const RuleGender* RuleSoldier::getGenderRatio() const
 {
 	return &_genderRatio;
 }

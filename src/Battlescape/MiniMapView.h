@@ -37,7 +37,7 @@ class SurfaceSet;
 /**
  * MiniMapView is the class used to display the map in the MiniMapState.
  */
-class MiniMapView
+class MiniMapView final
 	:
 		public InteractiveSurface
 {
@@ -69,13 +69,13 @@ private:
 
 
 	/// Handles pressing on the MiniMap.
-	void mousePress(Action* action, State* state);
+	void mousePress(Action* action, State* state) override;
 	/// Handles clicking on the MiniMap.
-	void mouseClick(Action* action, State* state);
+	void mouseClick(Action* action, State* state) override;
 	/// Handles moving mouse over the MiniMap.
-	void mouseOver(Action* action, State* state);
+	void mouseOver(Action* action, State* state) override;
 	/// Handles moving the mouse into the MiniMap surface.
-	void mouseIn(Action* action, State* state);
+	void mouseIn(Action* action, State* state) override;
 	///
 //	void stopScrolling(Action* action);
 
@@ -92,7 +92,7 @@ private:
 				const SavedBattleGame* const battleSave);
 
 		/// Draws the minimap.
-		void draw();
+		void draw() override;
 
 		/// Changes the displayed minimap level.
 		int up();

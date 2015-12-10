@@ -454,7 +454,7 @@ private:
 		bool isOut(
 				bool checkHealth = false,
 				bool checkStun = false) const;
-		const bool isOut_t(const OutCheck test = OUT_ALL) const;
+		bool isOut_t(OutCheck test = OUT_ALL) const;
 
 		/// Gets the number of time units a certain action takes.
 		int getActionTu(

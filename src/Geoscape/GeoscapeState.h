@@ -61,7 +61,7 @@ class Ufo;
 /**
  * Geoscape screen shows an overview of the world.
  */
-class GeoscapeState
+class GeoscapeState final
 	:
 		public State
 {
@@ -197,12 +197,12 @@ private:
 		~GeoscapeState();
 
 		/// Handle keypresses.
-		void handle(Action* action);
+		void handle(Action* action) override;
 
 		/// Updates the palette and timer.
-		void init();
+		void init() override;
 		/// Runs the timer.
-		void think();
+		void think() override;
 
 		/// Draws the UFO indicators for known UFOs.
 		void drawUfoBlobs();
@@ -290,7 +290,7 @@ private:
 //		void btnZoomOutRightClick(Action* action);
 
 		/// Blit method - renders the state and dogfights.
-		void blit(); // OoO
+		void blit() override; // OoO
 
 		/// Gets the Timer for dogfight zoom-ins.
 		Timer* getDfZoomInTimer() const;
@@ -331,7 +331,7 @@ private:
 		/// Update the resolution settings - the window was resized.
 		void resize(
 				int& dX,
-				int& dY);
+				int& dY) override;
 
 		/// Examines the quantity of remaining UFO-detected popups.
 		void assessUfoPopups();

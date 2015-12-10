@@ -96,7 +96,7 @@ private:
 		explicit MedikitState(BattleAction* action);
 
 		/// Handler for right-clicking anything.
-		void handle(Action* action);
+		void handle(Action* action) override;
 };
 
 }

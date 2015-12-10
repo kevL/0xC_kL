@@ -88,7 +88,7 @@ private:
 		~UfoDetectedState();
 
 		/// Initializes the state.
-		void init();
+		void init() override;
 
 		/// Handler for clicking the Intercept button.
 		void btnInterceptClick(Action* action);

@@ -55,7 +55,7 @@ class WarningMessage;
 /**
  * Battlescape screen which shows the tactical battle.
  */
-class BattlescapeState
+class BattlescapeState final
 	:
 		public State
 {
@@ -254,9 +254,9 @@ private:
 				bool checkInventory = false);
 
 		/// Initializes this BattlescapeState.
-		void init();
+		void init() override;
 		/// Runs the timers and handles popups.
-		void think();
+		void think() override;
 
 		/// Handler for moving mouse over the map.
 		void mapOver(Action* action);
@@ -271,7 +271,7 @@ private:
 //		void stopScrolling(Action* action);
 
 		/// Handles keypresses.
-		void handle(Action* action);
+		void handle(Action* action) override;
 
 		/// Handler for clicking the Unit Up button.
 		void btnUnitUpClick(Action* action);
@@ -419,7 +419,7 @@ private:
 		/// Updates the resolution settings, the window was just resized.
 		void resize(
 				int& dX,
-				int& dY);
+				int& dY) override;
 
 		/// Gets the TurnCounter.
 //		TurnCounter* getTurnCounter() const;

@@ -42,7 +42,7 @@ class WarningMessage;
  * Interactive view of an inventory.
  * @note Lets the player view and manage a soldier's equipment.
  */
-class Inventory
+class Inventory final
 	:
 		public InteractiveSurface
 {
@@ -103,7 +103,7 @@ private:
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor = 0,
-				int ncolors = 256);
+				int ncolors = 256) override;
 
 		/// Sets the inventory's Time Unit mode.
 		void setTuMode(bool tu);
@@ -112,7 +112,7 @@ private:
 		void setSelectedUnit(BattleUnit* unit);
 
 		/// Draws the inventory.
-		void draw();
+		void draw() override;
 		/// Draws the inventory grid.
 		void drawGrid();
 		/// Draws the inventory items.
@@ -137,15 +137,15 @@ private:
 		void setMouseOverItem(BattleItem* const item);
 
 		/// Handles timers.
-		void think();
+		void think() override;
 
 		/// Blits the inventory onto another surface.
-		void blit(Surface* surface);
+		void blit(Surface* surface) override;
 
 		/// Special handling for mouse hovers.
-		void mouseOver(Action* action, State* state);
+		void mouseOver(Action* action, State* state) override;
 		/// Special handling for mouse clicks.
-		void mouseClick(Action* action, State* state);
+		void mouseClick(Action* action, State* state) override;
 
 		/// Unloads the selected weapon.
 		bool unload();

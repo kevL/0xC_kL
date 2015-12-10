@@ -161,7 +161,7 @@ private:
 		~GraphsState();
 
 		/// Handles state thinking.
-		void think();
+		void think() override;
 
 		/// Handler for clicking the Geoscape icon.
 		void btnGeoscapeClick(Action* action);

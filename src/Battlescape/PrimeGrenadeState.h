@@ -78,7 +78,7 @@ private:
 		~PrimeGrenadeState();
 
 		/// Handler for right-clicking anything.
-		void handle(Action* action);
+		void handle(Action* action) override;
 		/// Handler for clicking a button.
 		void btnClick(Action* action);
 };

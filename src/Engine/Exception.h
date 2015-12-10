@@ -30,7 +30,7 @@ namespace OpenXcom
 /**
  * Basic exception class to distinguish OpenXcom exceptions from the rest.
  */
-class Exception
+class Exception final
 	:
 		public std::exception
 {
@@ -46,7 +46,7 @@ private:
 		~Exception() throw();
 
 		/// Returns the exception message.
-		const char* what() const throw();
+		const char* what() const throw() override;
 };
 
 }

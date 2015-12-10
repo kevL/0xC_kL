@@ -89,9 +89,9 @@ protected:
 		virtual ~ListGamesState();
 
 		/// Sets up the saves list.
-		void init();
+		void init() override;
 		/// Checks when popup is done.
-		void think();
+		void think() override;
 
 		/// Sorts the savegame list.
 		void sortList(SaveSort order);

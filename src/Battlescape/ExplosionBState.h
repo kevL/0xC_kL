@@ -83,9 +83,9 @@ private:
 		~ExplosionBState();
 
 		/// Initializes the state.
-		void init();
+		void init() override;
 		/// Runs state functionality every cycle.
-		void think();
+		void think() override;
 		/// Handles a cancel request.
 //		void cancel();
 };

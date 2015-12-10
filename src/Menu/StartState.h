@@ -78,12 +78,12 @@ private:
 		~StartState();
 
 		/// Reset everything.
-		void init();
+		void init() override;
 		/// Displays messages.
-		void think();
+		void think() override;
 
 		/// Handles key clicks.
-		void handle(Action* action);
+		void handle(Action* action) override;
 
 		/// Animates the terminal.
 		void animate();

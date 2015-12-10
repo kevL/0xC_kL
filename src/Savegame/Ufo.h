@@ -41,7 +41,7 @@ class UfoTrajectory;
  * @note Contains variable info about a UFO.
  * @sa RuleUfo
  */
-class Ufo
+class Ufo final
 	:
 		public MovingTarget
 {
@@ -90,7 +90,7 @@ private:
 	UfoStatus _status;
 
 	/// Calculates a new speed vector to the destination.
-	void calculateSpeed();
+	void calculateSpeed() override;
 
 
 	public:
@@ -107,10 +107,10 @@ private:
 		/// Saves the UFO to YAML.
 		YAML::Node save(bool skirmish) const;
 		/// Saves the UFO's ID to YAML.
-		YAML::Node saveId() const;
+		YAML::Node saveId() const override;
 
 		/// Gets the UFO's ruleset.
-		const RuleUfo* const getRules() const;
+		const RuleUfo* getRules() const;
 		/// Sets the UFO's ruleset.
 		void changeRules(const RuleUfo* const ufoRule);
 
@@ -122,10 +122,10 @@ private:
 		/// Gets the UFO's ID.
 		int getId() const;
 		/// Gets the UFO's name.
-		std::wstring getName(const Language* const lang) const;
+		std::wstring getName(const Language* const lang) const override;
 
 		/// Gets the UFO's marker.
-		int getMarker() const;
+		int getMarker() const override;
 
 		/// Sets the UFO's amount of damage.
 		void setUfoDamage(int damage);
@@ -209,7 +209,7 @@ private:
 		{ return *_trajectory; }
 
 		/// Sets the UFO's destination.
-		void setDestination(Target* const dest);
+		void setDestination(Target* const dest) override;
 
 		/// Sets the interceptor engaging this Ufo.
 		void setShootingAt(const size_t target);

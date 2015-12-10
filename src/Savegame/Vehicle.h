@@ -61,7 +61,7 @@ private:
 		YAML::Node save() const;
 
 		/// Gets the vehicle's ruleset.
-		const RuleItem* const getRules() const;
+		const RuleItem* getRules() const;
 
 		/// Gets the vehicle's ammo.
 		int getAmmo() const;

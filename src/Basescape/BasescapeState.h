@@ -38,7 +38,7 @@ class TextEdit;
 /**
  * Basescape screen that shows a base's layout and lets the player manage bases.
  */
-class BasescapeState
+class BasescapeState final
 	:
 		public State
 {
@@ -84,7 +84,7 @@ private:
 		~BasescapeState();
 
 		/// Updates the base stats.
-		void init();
+		void init() override;
 		/// Sets a new base to display.
 		void setBase(Base* const base);
 

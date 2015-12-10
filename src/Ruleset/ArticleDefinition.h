@@ -130,7 +130,7 @@ class ArticleDefinitionCraft
 		/// Loads the article from YAML.
 		void load(
 				const YAML::Node& node,
-				int listOrder);
+				int listOrder) override;
 
 };
 
@@ -153,7 +153,7 @@ class ArticleDefinitionCraftWeapon
 		/// Loads the article from YAML.
 		void load(
 				const YAML::Node& node,
-				int listOrder);
+				int listOrder) override;
 };
 
 
@@ -172,7 +172,7 @@ class ArticleDefinitionText
 		/// Loads the article from YAML.
 		void load(
 				const YAML::Node& node,
-				int listOrder);
+				int listOrder) override;
 };
 
 
@@ -195,7 +195,7 @@ class ArticleDefinitionTextImage
 		/// Loads the article from YAML.
 		void load(
 				const YAML::Node& node,
-				int listOrder);
+				int listOrder) override;
 };
 
 
@@ -215,7 +215,7 @@ class ArticleDefinitionBaseFacility
 		/// Loads the article from YAML.
 		void load(
 				const YAML::Node& node,
-				int listOrder);
+				int listOrder) override;
 };
 
 
@@ -235,7 +235,7 @@ class ArticleDefinitionItem
 		/// Loads the article from YAML.
 		void load(
 				const YAML::Node& node,
-				int listOrder);
+				int listOrder) override;
 };
 
 
@@ -255,7 +255,7 @@ class ArticleDefinitionUfo
 		/// Loads the article from YAML.
 		void load(
 				const YAML::Node& node,
-				int listOrder);
+				int listOrder) override;
 };
 
 
@@ -275,7 +275,7 @@ class ArticleDefinitionArmor
 		/// Loads the article from YAML.
 		void load(
 				const YAML::Node& node,
-				int listOrder);
+				int listOrder) override;
 };
 
 
@@ -297,7 +297,7 @@ class ArticleDefinitionVehicle
 		/// Loads the article from YAML.
 		void load(
 				const YAML::Node& node,
-				int listOrder);
+				int listOrder) override;
 };
 
 /**
@@ -319,7 +319,7 @@ class ArticleDefinitionAward
 		/// Loads the article from YAML.
 		void load(
 				const YAML::Node& node,
-				int listOrder);
+				int listOrder) override;
 };
 
 

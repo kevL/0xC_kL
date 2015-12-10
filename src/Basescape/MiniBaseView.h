@@ -47,7 +47,7 @@ enum MiniBaseViewType
  * @note Takes all the bases and displays their layouts and allows the player to
  * switch between them.
  */
-class MiniBaseView
+class MiniBaseView final
 	:
 		public InteractiveSurface
 {
@@ -105,15 +105,15 @@ private:
 		void setSelectedBase(size_t baseId);
 
 		/// Draws the mini base view.
-		void draw();
+		void draw() override;
 
 		/// Special handling for mouse hovers.
-		void mouseOver(Action* action, State* state);
+		void mouseOver(Action* action, State* state) override;
 		/// Special handling for mouse hovering out.
-		void mouseOut(Action* action, State* state);
+		void mouseOut(Action* action, State* state) override;
 
 		/// Handles timer.
-		void think();
+		void think() override;
 		/// Blinks the craft status indicators.
 		void blink();
 };

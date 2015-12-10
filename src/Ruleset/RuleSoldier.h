@@ -105,7 +105,7 @@ private:
 		const std::string& getArmor() const;
 
 		/// Gets the gender ratio struct.
-		const RuleGender* const getGenderRatio() const;
+		const RuleGender* getGenderRatio() const;
 		/// Gets the female appearance ratio.
 //		int getFemaleFrequency() const;
 };

@@ -37,7 +37,7 @@ class Window;
 /**
  * Select Squad screen that lets the player pick the soldiers to assign to a Craft.
  */
-class CraftSoldiersState
+class CraftSoldiersState final
 	:
 		public State
 {
@@ -81,7 +81,7 @@ private:
 		~CraftSoldiersState();
 
 		/// Updates the soldiers list.
-		void init();
+		void init() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

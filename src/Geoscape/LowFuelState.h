@@ -68,7 +68,7 @@ private:
 		/// Initializes the state.
 //		void init();
 		/// Runs the blink timer.
-		void think();
+		void think() override;
 		/// Blinks the message text.
 		void blink();
 

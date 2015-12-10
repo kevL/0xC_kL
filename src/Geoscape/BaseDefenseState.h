@@ -103,7 +103,7 @@ private:
 		~BaseDefenseState();
 
 		/// Handle the Timer.
-		void think();
+		void think() override;
 		/// Does the next step.
 		void nextStep();
 

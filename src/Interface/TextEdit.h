@@ -35,7 +35,7 @@ class Timer;
  * Editable version of Text.
  * @note Receives keyboard input to allow the player to change the text.
  */
-class TextEdit
+class TextEdit final
 	:
 		public InteractiveSurface
 {
@@ -75,7 +75,7 @@ private:
 		~TextEdit();
 
 		/// Handle focus.
-		void handle(Action* action, State* state);
+		void handle(Action* action, State* state) override;
 		/// Sets focus on this text edit.
 		void setFocus(
 				bool focus,
@@ -92,7 +92,7 @@ private:
 		void initText(
 				Font* big,
 				Font* small,
-				Language* lang);
+				Language* lang) override;
 
 		/// Sets the text's string.
 		void setText(const std::wstring& text);
@@ -120,30 +120,30 @@ private:
 		void setNumerical(bool numerical = true);
 
 		/// Sets the color.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Gets the color.
 		Uint8 getColor() const;
 		/// Sets the secondary color.
-		void setSecondaryColor(Uint8 color);
+		void setSecondaryColor(Uint8 color) override;
 		/// Gets the secondary color.
 		Uint8 getSecondaryColor() const;
 		/// Sets the palette.
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor = 0,
-				int ncolors = 256);
+				int ncolors = 256) override;
 
 		/// Handles the timers.
-		void think();
+		void think() override;
 		/// Plays the blinking caret.
 		void blink();
 		/// Draws the text.
-		void draw();
+		void draw() override;
 
 		/// Handling for mouse-presses.
-		void mousePress(Action* action, State* state);
+		void mousePress(Action* action, State* state) override;
 		/// Handling for keyboard-presses.
-		void keyboardPress(Action* action, State* state);
+		void keyboardPress(Action* action, State* state) override;
 		/// Hooks an ActionHandler to the editing.
 		void onChange(ActionHandler handler);
 };

@@ -69,7 +69,7 @@ private:
 		~MultipleTargetsState();
 
 		/// Updates the window.
-		void init();
+		void init() override;
 
 		/// Popup for a target.
 		void popupTarget(Target* const target);

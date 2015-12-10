@@ -32,7 +32,7 @@ class Globe;
 /**
  * Window shown with all the facilities available to build.
  */
-class SelectStartFacilityState
+class SelectStartFacilityState final
 	:
 		public BuildFacilitiesState
 {
@@ -56,7 +56,7 @@ private:
 		/// Handler for clicking the Reset button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Facilities list.
-		void lstFacilitiesClick(Action* action);
+		void lstFacilitiesClick(Action* action) override;
 
 		/// Handler for when the facility is actually built.
 		void facilityBuilt();

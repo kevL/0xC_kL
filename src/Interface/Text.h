@@ -127,7 +127,7 @@ private:
 		void initText(
 				Font* big,
 				Font* small,
-				Language* lang);
+				Language* lang) override;
 
 		/// Sets the text's string.
 		void setText(const std::wstring& text);
@@ -155,11 +155,11 @@ private:
 		void setVerticalAlign(TextVAlign valign);
 
 		/// Sets the text's color.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Gets the text's color.
 		Uint8 getColor() const;
 		/// Sets the text's secondary color.
-		void setSecondaryColor(Uint8 color);
+		void setSecondaryColor(Uint8 color) override;
 		/// Gets the text's secondary color.
 		Uint8 getSecondaryColor() const;
 
@@ -174,7 +174,7 @@ private:
 		void addTextHeight(int pad = 1);
 
 		/// Draws the text.
-		void draw();
+		void draw() override;
 };
 
 }

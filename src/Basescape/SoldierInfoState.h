@@ -41,7 +41,7 @@ class TextEdit;
 /**
  * Soldier Info screen that shows all the info of a specific soldier.
  */
-class SoldierInfoState
+class SoldierInfoState final
 	:
 		public State
 {
@@ -140,7 +140,7 @@ private:
 		~SoldierInfoState();
 
 		/// Updates the soldier info.
-		void init();
+		void init() override;
 
 		/// Sets the soldier ID.
 		void setSoldierId(size_t soldierId);

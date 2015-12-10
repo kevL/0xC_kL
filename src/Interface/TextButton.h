@@ -56,7 +56,7 @@ private:
 
 
 protected:
-	bool isButtonHandled(Uint8 btn = 0);
+	bool isButtonHandled(Uint8 btn = 0) override;
 
 
 	public:
@@ -72,11 +72,11 @@ protected:
 		~TextButton();
 
 		/// Sets the text button's color.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Gets the text button's color.
 		Uint8 getColor() const;
 		/// Sets the secondary color of this TextButton.
-		void setSecondaryColor(Uint8 color);
+		void setSecondaryColor(Uint8 color) override;
 		/// Sets the text button's text color.
 		void setTextColor(Uint8 color);
 
@@ -90,7 +90,7 @@ protected:
 		void initText(
 				Font* big,
 				Font* small,
-				Language* lang);
+				Language* lang) override;
 
 		/// Sets the text button's high contrast color setting.
 		void setHighContrast(bool contrast = true);
@@ -109,23 +109,23 @@ protected:
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor = 0,
-				int ncolors = 256);
+				int ncolors = 256) override;
 
 		/// Draws the text button.
-		void draw();
+		void draw() override;
 
 		/// Special handling for mouse presses.
-		void mousePress(Action* action, State* state);
+		void mousePress(Action* action, State* state) override;
 		/// Special handling for mouse releases.
-		void mouseRelease(Action* action, State* state);
+		void mouseRelease(Action* action, State* state) override;
 
 		/// Attaches this button to a combobox.
 		void setComboBox(ComboBox* comboBox);
 
 		/// Sets the width of this TextButton.
-		void setWidth(int width);
+		void setWidth(int width) override;
 		/// Sets the height of this TextButton.
-		void setHeight(int height);
+		void setHeight(int height) override;
 
 		void setGeoscapeButton(bool geo);
 };

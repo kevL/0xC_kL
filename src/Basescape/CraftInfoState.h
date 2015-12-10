@@ -103,9 +103,9 @@ private:
 		~CraftInfoState();
 
 		/// Updates the craft info.
-		void init();
+		void init() override;
 		/// Runs the blink timer.
-		void think();
+		void think() override;
 		/// Blinks the status text.
 		void blink();
 

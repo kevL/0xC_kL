@@ -33,7 +33,7 @@ class OneSingular
 		public LanguagePlurality
 {
 public:
-	virtual const char* getSuffix(unsigned n) const;
+	virtual const char* getSuffix(unsigned n) const override;
 
 	static LanguagePlurality* create()
 	{
@@ -60,7 +60,7 @@ class ZeroOneSingular
 		public LanguagePlurality
 {
 public:
-	virtual const char* getSuffix(unsigned n) const;
+	virtual const char* getSuffix(unsigned n) const override;
 
 	static LanguagePlurality* create()
 	{
@@ -87,7 +87,7 @@ class NoSingular
 		public LanguagePlurality
 {
 public:
-	virtual const char* getSuffix(unsigned n) const;
+	virtual const char* getSuffix(unsigned n) const override;
 
 	static LanguagePlurality* create()
 	{
@@ -110,7 +110,7 @@ class CyrillicPlurality
 		public LanguagePlurality
 {
 public:
-	virtual const char* getSuffix(unsigned n) const;
+	virtual const char* getSuffix(unsigned n) const override;
 
 	static LanguagePlurality* create()
 	{
@@ -146,7 +146,7 @@ class CzechPlurality
 		public LanguagePlurality
 {
 public:
-	virtual const char* getSuffix(unsigned n) const;
+	virtual const char* getSuffix(unsigned n) const override;
 
 	static LanguagePlurality* create()
 	{
@@ -174,7 +174,7 @@ class PolishPlurality
 		public LanguagePlurality
 {
 public:
-	virtual const char* getSuffix(unsigned n) const;
+	virtual const char* getSuffix(unsigned n) const override;
 
 	static LanguagePlurality* create()
 	{
@@ -211,7 +211,7 @@ class RomanianPlurality
 		public LanguagePlurality
 {
 public:
-	virtual const char* getSuffix(unsigned n) const;
+	virtual const char* getSuffix(unsigned n) const override;
 
 	static LanguagePlurality* create()
 	{
@@ -241,7 +241,7 @@ class CroatianPlurality
 		public LanguagePlurality
 {
 public:
-	virtual const char* getSuffix(unsigned n) const;
+	virtual const char* getSuffix(unsigned n) const override;
 
 	static LanguagePlurality* create()
 	{

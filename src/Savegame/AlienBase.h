@@ -32,7 +32,7 @@ namespace OpenXcom
 /**
  * Represents an alien base on the world.
  */
-class AlienBase
+class AlienBase final
 	:
 		public Target
 {
@@ -55,11 +55,11 @@ private:
 		~AlienBase();
 
 		/// Loads the alien base from YAML.
-		void load(const YAML::Node& node);
+		void load(const YAML::Node& node) override;
 		/// Saves the alien base to YAML.
-		YAML::Node save() const;
+		YAML::Node save() const override;
 		/// Saves the alien base's ID to YAML.
-		YAML::Node saveId() const;
+		YAML::Node saveId() const override;
 
 		/// Gets the alien base's ID.
 		int getId() const;
@@ -67,9 +67,9 @@ private:
 		void setId(int id);
 
 		/// Gets the alien base's name.
-		std::wstring getName(const Language* const lang) const;
+		std::wstring getName(const Language* const lang) const override;
 		/// Gets the alien base's marker.
-		int getMarker() const;
+		int getMarker() const override;
 
 		/// Gets the alien base's alien race.
 		std::string getAlienRace() const;

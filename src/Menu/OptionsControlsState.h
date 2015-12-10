@@ -71,7 +71,7 @@ private:
 		~OptionsControlsState();
 
 		/// Fills controls list.
-		void init();
+		void init() override;
 
 		/// Handler for clicking the Controls list.
 		void lstControlsClick(Action* action);

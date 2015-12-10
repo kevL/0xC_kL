@@ -36,7 +36,7 @@ class RuleAlienMission;
 /**
  * Represents an alien MissionSite in the world.
  */
-class MissionSite
+class MissionSite final
 	:
 		public Target
 {
@@ -67,11 +67,11 @@ private:
 		~MissionSite();
 
 		/// Loads this MissionSite from YAML.
-		void load(const YAML::Node& node);
+		void load(const YAML::Node& node) override;
 		/// Saves this MissionSite to YAML.
-		YAML::Node save() const;
+		YAML::Node save() const override;
 		/// Saves this MissionSite's ID to YAML.
-		YAML::Node saveId() const;
+		YAML::Node saveId() const override;
 
 		/// Gets this MissionSite's ruleset.
 		const RuleAlienMission* getRules() const;
@@ -84,10 +84,10 @@ private:
 		void setId(const int id);
 
 		/// Gets this MissionSite's name.
-		std::wstring getName(const Language* const lang) const;
+		std::wstring getName(const Language* const lang) const override;
 
 		/// Gets this MissionSite site's marker.
-		int getMarker() const;
+		int getMarker() const override;
 
 		/// Gets the seconds until this MissionSite expires.
 		int getSecondsLeft() const;

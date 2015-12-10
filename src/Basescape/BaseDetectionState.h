@@ -72,7 +72,7 @@ private:
 		~BaseDetectionState();
 
 		/// Runs the blink timer.
-		void think();
+		void think() override;
 		/// Blinks the message text.
 		void blink();
 

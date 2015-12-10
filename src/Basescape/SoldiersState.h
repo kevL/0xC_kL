@@ -36,7 +36,7 @@ class Window;
 /**
  * Soldiers screen that lets the player manage all the soldiers in a base.
  */
-class SoldiersState
+class SoldiersState final
 	:
 		public State
 {
@@ -72,7 +72,7 @@ private:
 		~SoldiersState();
 
 		/// Updates the soldier names.
-		void init();
+		void init() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

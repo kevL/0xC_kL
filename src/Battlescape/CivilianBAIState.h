@@ -78,7 +78,7 @@ private:
 			/// Loads the AI state from YAML.
 			void load(const YAML::Node& node);
 			/// Saves the AI state to YAML.
-			YAML::Node save() const;
+			YAML::Node save() const override;
 
 			/// Enters the state.
 //			void enter();
@@ -86,7 +86,7 @@ private:
 //			void exit();
 
 			/// Runs state functionality every AI cycle.
-			void think(BattleAction* action);
+			void think(BattleAction* action) override;
 
 			///
 			int countSpottingUnits(Position pos) const;

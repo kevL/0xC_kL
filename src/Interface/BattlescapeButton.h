@@ -39,7 +39,7 @@ enum InversionType
  * takes an existing graphic and treats it as a button and inverts colors when
  * necessary. This is necessary for special buttons like in the Geoscape.
  */
-class BattlescapeButton
+class BattlescapeButton final
 	:
 		public InteractiveSurface
 {
@@ -65,16 +65,16 @@ protected:
 		virtual ~BattlescapeButton();
 
 		/// Sets the image button's color.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Gets the image button's color.
 		Uint8 getColor() const;
 
 		/// Sets the image button's group.
 		void setGroup(BattlescapeButton** group);
 		/// Special handling for mouse presses.
-		void mousePress(Action* action, State* state);
+		void mousePress(Action* action, State* state) override;
 		/// Special handling for mouse releases.
-		void mouseRelease(Action* action, State* state);
+		void mouseRelease(Action* action, State* state) override;
 
 		/// Invert a button explicitly either ON or OFF.
 		void toggle(bool invert);
@@ -86,12 +86,12 @@ protected:
 		/// Sets up the "pressed" surface.
 		void initSurfaces();
 		/// Blits this surface onto another one.
-		void blit(Surface* surface);
+		void blit(Surface* surface) override;
 
 		/// Alters both versions of the button's X pos.
-		void setX(int x);
+		void setX(int x) override;
 		/// Alters both versions of the button's Y pos.
-		void setY(int y);
+		void setY(int y) override;
 };
 
 }

@@ -50,7 +50,7 @@ enum PopupType
  * ... a box.
  * But box sounds lame. Think window.
  */
-class Window
+class Window final
 	:
 		public Surface
 {
@@ -102,15 +102,15 @@ private:
 		~Window();
 
 		/// Handles the timers.
-		void think();
+		void think() override;
 		/// Gets if this window has finished popping up.
 		bool isPopupDone() const;
 
 		/// Draws the window.
-		void draw();
+		void draw() override;
 
 		/// Sets the border color.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Gets the border color.
 		Uint8 getColor() const;
 

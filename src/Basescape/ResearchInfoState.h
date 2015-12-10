@@ -108,7 +108,7 @@ private:
 	int getQty() const;
 
 	/// Runs state functionality every cycle(used to update the timer).
-	void think();
+	void think() override;
 
 
 	public:

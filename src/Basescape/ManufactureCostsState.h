@@ -65,7 +65,7 @@ private:
 		~ManufactureCostsState();
 
 		/// Populates the table with manufacture information.
-		void init();
+		void init() override;
 
 		/// Handler for the Cancel button.
 		void btnCancelClick(Action* action);

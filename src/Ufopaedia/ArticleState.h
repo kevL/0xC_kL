@@ -91,7 +91,7 @@ protected:
 
 	public:
 		/// Runs the timer.
-		void think();
+		void think() override;
 
 		/// converts damage type to string
 		static std::string getDamageTypeText(DamageType dType);

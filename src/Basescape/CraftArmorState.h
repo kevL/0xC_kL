@@ -36,7 +36,7 @@ class Window;
 /**
  * Select Armor screen that lets the player pick armor for the soldiers on the craft.
  */
-class CraftArmorState
+class CraftArmorState final
 	:
 		public State
 {
@@ -70,7 +70,7 @@ private:
 		~CraftArmorState();
 
 		/// Updates the soldier armors.
-		void init();
+		void init() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

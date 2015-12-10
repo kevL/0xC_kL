@@ -63,7 +63,7 @@ private:
 		~OptionsConfirmState();
 
 		/// Handle timers.
-		void think();
+		void think() override;
 
 		/// Countdown for reverting options.
 		void countdown();

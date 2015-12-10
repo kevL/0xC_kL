@@ -35,7 +35,7 @@ class SurfaceSet;
  * A class that renders a specific unit given its render rules combining the
  * right frames from the SurfaceSet.
  */
-class UnitSprite
+class UnitSprite final
 	:
 		public Surface
 {
@@ -111,7 +111,7 @@ private:
 		void setAnimationFrame(int frame);
 
 		/// Draws the unit.
-		void draw();
+		void draw() override;
 };
 
 }

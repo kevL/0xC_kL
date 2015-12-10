@@ -71,7 +71,7 @@ private:
 		~NewResearchListState();
 
 		/// Initializes the state.
-		void init();
+		void init() override;
 
 		/// Handler for clicking the OK button.
 		void btnCancelClick(Action* action);

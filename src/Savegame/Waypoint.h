@@ -32,7 +32,7 @@ namespace OpenXcom
 /**
  * Represents a fixed waypoint on the world.
  */
-class Waypoint
+class Waypoint final
 	:
 		public Target
 {
@@ -48,11 +48,11 @@ private:
 		~Waypoint();
 
 		/// Loads the waypoint from YAML.
-		void load(const YAML::Node& node);
+		void load(const YAML::Node& node) override;
 		/// Saves the waypoint to YAML.
-		YAML::Node save() const;
+		YAML::Node save() const override;
 		/// Saves the waypoint's ID to YAML.
-		YAML::Node saveId() const;
+		YAML::Node saveId() const override;
 
 		/// Gets the waypoint's ID.
 		int getId() const;
@@ -60,10 +60,10 @@ private:
 		void setId(int id);
 
 		/// Gets the waypoint's name.
-		std::wstring getName(const Language* const lang) const;
+		std::wstring getName(const Language* const lang) const override;
 
 		/// Gets the waypoint's marker.
-		int getMarker() const;
+		int getMarker() const override;
 };
 
 }

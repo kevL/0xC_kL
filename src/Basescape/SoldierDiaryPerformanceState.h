@@ -53,7 +53,7 @@ class Window;
 /**
  * Diary screens that list Kills/ Missions/ Awards totals.
  */
-class SoldierDiaryPerformanceState
+class SoldierDiaryPerformanceState final
 	:
 		public State
 {
@@ -145,7 +145,7 @@ private:
 		~SoldierDiaryPerformanceState();
 
 		/// Updates the info.
-		void init();
+		void init() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
@@ -165,7 +165,7 @@ private:
 		void lstInfoMouseOut(Action* action);
 
 		/// Runs state functionality every cycle.
-		void think();
+		void think() override;
 };
 
 }

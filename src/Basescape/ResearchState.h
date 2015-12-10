@@ -38,7 +38,7 @@ class Window;
 /**
  * Research screen that lets the player manage the research operations of a Base.
  */
-class ResearchState
+class ResearchState final
 	:
 		public State
 {
@@ -78,7 +78,7 @@ private:
 		~ResearchState();
 
 		/// Updates the research list.
-		void init();
+		void init() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

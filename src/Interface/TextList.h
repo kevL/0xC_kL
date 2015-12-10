@@ -48,7 +48,7 @@ class ScrollBar;
  * @note Contains a set of Text's that are automatically lined up by rows and
  * columns like a big table making it easy to manage them together.
  */
-class TextList
+class TextList final
 	:
 		public InteractiveSurface
 {
@@ -124,9 +124,9 @@ private:
 		~TextList();
 
 		/// Sets the X position of the surface.
-		void setX(int x);
+		void setX(int x) override;
 		/// Sets the Y position of the surface.
-		void setY(int y);
+		void setY(int y) override;
 
 		/// Gets the arrowsLeftEdge.
 		int getArrowsLeftEdge();
@@ -134,7 +134,7 @@ private:
 		int getArrowsRightEdge();
 
 		/// Unpresses the surface.
-		void unpress(State* state);
+		void unpress(State* state) override;
 
 		/// Sets the text color of a certain cell.
 		void setCellColor(
@@ -188,22 +188,22 @@ private:
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor = 0,
-				int ncolors = 256);
+				int ncolors = 256) override;
 		/// Initializes the resources for the text list.
 		void initText(
 				Font* big,
 				Font* small,
-				Language* lang);
+				Language* lang) override;
 
 		/// Sets the height of the surface.
-		void setHeight(int height);
+		void setHeight(int height) override;
 
 		/// Sets the text color of the text list.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Gets the text color of the text list.
 		Uint8 getColor() const;
 		/// Sets the secondary color of the text list.
-		void setSecondaryColor(Uint8 color);
+		void setSecondaryColor(Uint8 color) override;
 		/// Gets the secondary color of the text list.
 		Uint8 getSecondaryColor() const;
 
@@ -279,24 +279,24 @@ private:
 				int scrollPos = 0);
 
 		/// Draws the text onto the text list.
-		void draw();
+		void draw() override;
 		/// Blits the text list onto another surface.
-		void blit(Surface* surface);
+		void blit(Surface* surface) override;
 		/// Thinks arrow buttons.
-		void think();
+		void think() override;
 
 		/// Handles arrow buttons.
-		void handle(Action* action, State* state);
+		void handle(Action* action, State* state) override;
 		/// Special handling for mouse presses.
-		void mousePress(Action* action, State* state);
+		void mousePress(Action* action, State* state) override;
 		/// Special handling for mouse releases.
-		void mouseRelease(Action* action, State* state);
+		void mouseRelease(Action* action, State* state) override;
 		/// Special handling for mouse clicks.
-		void mouseClick(Action* action, State* state);
+		void mouseClick(Action* action, State* state) override;
 		/// Special handling for mouse hovering.
-		void mouseOver(Action* action, State* state);
+		void mouseOver(Action* action, State* state) override;
 		/// Special handling for mouse hovering out.
-		void mouseOut(Action* action, State* state);
+		void mouseOut(Action* action, State* state) override;
 
 		/// get the scroll depth
 		size_t getScroll();
@@ -309,7 +309,7 @@ private:
 		ComboBox* getComboBox() const;
 
 		///
-		void setBorderColor(Uint8 color);
+		void setBorderColor(Uint8 color) override;
 		///
 		Uint8 getScrollbarColor() const;
 };

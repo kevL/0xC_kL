@@ -70,7 +70,7 @@ private:
 		~NextTurnState();
 
 		/// Handler for clicking anything.
-		void handle(Action* action);
+		void handle(Action* action) override;
 
 		/// Handles the timer.
 //		void think();

@@ -46,7 +46,7 @@ private:
 	const Game* _game;
 
 	///
-	void mouseClick(Action* action, State* state);
+	void mouseClick(Action* action, State* state) override;
 
 
 	public:
@@ -60,7 +60,7 @@ private:
 				const BattleUnit* const unit);
 
 		/// Draw the scanner.
-		void draw();
+		void draw() override;
 		/// Animate the blobs.
 		void animate();
 };

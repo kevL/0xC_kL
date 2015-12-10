@@ -38,7 +38,7 @@ class Window;
 /**
  * Manufacture screen that lets the player manage the production operations of a Base.
  */
-class ManufactureState
+class ManufactureState final
 	:
 		public State
 {
@@ -83,7 +83,7 @@ private:
 		~ManufactureState();
 
 		/// Updates the production list.
-		void init();
+		void init() override;
 
 		/// Fills the list of base productions.
 		void fillProductionList();

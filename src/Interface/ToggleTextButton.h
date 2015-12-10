@@ -28,7 +28,7 @@
 namespace OpenXcom
 {
 
-class ToggleTextButton
+class ToggleTextButton final
 	:
 		public TextButton
 {
@@ -53,15 +53,15 @@ private:
 		~ToggleTextButton(void);
 
 		///
-		void draw();
+		void draw() override;
 
 		///
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		///
 		void setInvertColor(Uint8 color);
 
 		///
-		void mousePress(Action* action, State* state);
+		void mousePress(Action* action, State* state) override;
 		///
 		void setPressed(bool pressed);
 		///

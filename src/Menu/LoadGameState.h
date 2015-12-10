@@ -73,9 +73,9 @@ private:
 				bool dropText = false);
 
 		/// Validates the game.
-		void init();
+		void init() override;
 		/// Loads the game.
-		void think();
+		void think() override;
 };
 
 }

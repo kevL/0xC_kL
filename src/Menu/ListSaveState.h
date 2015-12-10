@@ -59,14 +59,14 @@ private:
 		~ListSaveState();
 
 		/// Updates the savegame list.
-		void updateList();
+		void updateList() override;
 
 		/// Handler for pressing a key on the Save edit.
 		void keySavePress(Action* action);
 		/// Handler for clicking on the Save button.
 		void btnSaveClick(Action *action);
 		/// Handler for clicking the Saves list.
-		void lstSavesPress(Action* action);
+		void lstSavesPress(Action* action) override;
 
 		/// Save game.
 		void saveGame();

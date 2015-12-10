@@ -57,7 +57,7 @@ private:
 		~IntroState();
 
 		/// Starts the intro.
-		void init();
+		void init() override;
 		/// The ends.
 		void endVideo();
 };

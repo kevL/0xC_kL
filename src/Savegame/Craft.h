@@ -53,7 +53,7 @@ enum CraftWarning
  * @note Contains variable info about a Craft like position, fuel, damage, etc.
  * @sa RuleCraft
  */
-class Craft
+class Craft final
 	:
 		public MovingTarget
 {
@@ -98,7 +98,7 @@ private:
 				Base* const base,
 				int id = 0);
 		/// Cleans up the Craft.
-		~Craft();
+		~Craft() final;
 
 		/// Loads the Craft from YAML.
 		void load(
@@ -106,9 +106,9 @@ private:
 				const Ruleset* const rules,
 				SavedGame* const gameSave);
 		/// Saves the Craft to YAML.
-		YAML::Node save() const;
+		YAML::Node save() const override;
 		/// Saves the Craft's ID to YAML.
-		YAML::Node saveId() const;
+		YAML::Node saveId() const override;
 		/// Loads a Craft ID from YAML.
 		static CraftId loadId(const YAML::Node& node);
 
@@ -120,12 +120,12 @@ private:
 		/// Gets the Craft's ID.
 		int getId() const;
 		/// Gets the Craft's name.
-		std::wstring getName(const Language* const lang) const;
+		std::wstring getName(const Language* const lang) const override;
 		/// Sets the Craft's name.
 		void setName(const std::wstring& newName);
 
 		/// Gets the Craft's marker.
-		int getMarker() const;
+		int getMarker() const override;
 
 		/// Gets the Craft's base.
 		Base* getBase() const;
@@ -143,7 +143,7 @@ private:
 		std::string getAltitude() const;
 
 		/// Sets the Craft's destination.
-		void setDestination(Target* const dest);
+		void setDestination(Target* const dest) override;
 
 		/// Gets the Craft's amount of weapons.
 		int getNumWeapons() const;

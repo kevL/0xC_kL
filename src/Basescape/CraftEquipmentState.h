@@ -92,9 +92,9 @@ private:
 		~CraftEquipmentState();
 
 		/// Resets state.
-		void init();
+		void init() override;
 		/// Runs the timers.
-		void think();
+		void think() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

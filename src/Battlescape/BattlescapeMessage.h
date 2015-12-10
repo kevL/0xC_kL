@@ -36,7 +36,7 @@ class Window;
 /**
  * Generic window used to display messages over the Battlescape map.
  */
-class BattlescapeMessage
+class BattlescapeMessage final
 	:
 		public Surface
 {
@@ -57,9 +57,9 @@ private:
 		~BattlescapeMessage();
 
 		/// Sets the X position of the surface.
-		void setX(int x);
+		void setX(int x) override;
 		/// Sets the Y position of the surface.
-		void setY(int y);
+		void setY(int y) override;
 
 		/// Sets the Battlescape message's background.
 		void setBackground(Surface* background);
@@ -69,17 +69,17 @@ private:
 		void initText(
 				Font* big,
 				Font* small,
-				Language* lang);
+				Language* lang) override;
 		/// Sets the Battlescape message's palette.
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor = 0,
-				int ncolors = 256);
+				int ncolors = 256) override;
 		/// Blits the warning message.
-		void blit(Surface* surface);
+		void blit(Surface* surface) override;
 
 		/// Special handling for setting the height of the battlescape message.
-		void setHeight(int height);
+		void setHeight(int height) override;
 
 		/// Sets the text color of the battlescape message.
 		void setTextColor(Uint8 color);

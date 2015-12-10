@@ -33,7 +33,7 @@ class Timer;
 /**
  * Vertical scrollbar control to select from a range of values.
  */
-class ScrollBar
+class ScrollBar final
 	:
 		public InteractiveSurface
 {
@@ -71,14 +71,14 @@ private:
 		~ScrollBar();
 
 		/// Sets the X position of the surface.
-		void setX(int x);
+		void setX(int x) override;
 		/// Sets the Y position of the surface.
-		void setY(int y);
+		void setY(int y) override;
 		/// Sets the height of the surface.
-		void setHeight(int height);
+		void setHeight(int height) override;
 
 		/// Sets the scrollbar's color.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Gets the scrollbar's color.
 		Uint8 getColor() const;
 		/// Sets the scrollbar's high contrast color setting.
@@ -93,29 +93,29 @@ private:
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor = 0,
-				int ncolors = 256);
+				int ncolors = 256) override;
 
 		/// Blits the scrollbar onto another surface.
-		void blit(Surface* surface);
+		void blit(Surface* surface) override;
 
 		/// Moves the scrollbar.
-		void handle(Action* action, State* state);
+		void handle(Action* action, State* state) override;
 		/// Special handling for mouse presses.
-		void mousePress(Action* action, State* state);
+		void mousePress(Action* action, State* state) override;
 		/// Special handling for mouse releases.
-		void mouseRelease(Action* action, State* state);
+		void mouseRelease(Action* action, State* state) override;
 
 		/// Gives ticks to keyboard press.
-		void think();
+		void think() override;
 		/// Scrolls the list.
 		void scroll();
 		/// Handles keyboard presses.
-		void keyboardPress(Action* action, State* state);
+		void keyboardPress(Action* action, State* state) override;
 		/// Handles keyboard releases.
-		void keyboardRelease(Action* action, State* state);
+		void keyboardRelease(Action* action, State* state) override;
 
 		/// Draws the scrollbar contents.
-		void draw();
+		void draw() override;
 };
 
 }

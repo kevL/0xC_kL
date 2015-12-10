@@ -37,7 +37,7 @@ class Window;
 /**
  * Screen that allocates soldiers to psionic training.
  */
-class PsiTrainingState
+class PsiTrainingState final
 	:
 		public State
 {
@@ -69,7 +69,7 @@ private:
 		~PsiTrainingState();
 
 		/// Refreshes the soldier-list.
-		void init();
+		void init() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

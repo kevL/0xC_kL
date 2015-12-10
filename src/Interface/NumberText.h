@@ -30,7 +30,7 @@ namespace OpenXcom
  * Number digits displayed on the screen.
  * @note Takes a number and displays it using a simple hard-coded font.
  */
-class NumberText
+class NumberText final
 	:
 		public Surface
 {
@@ -64,7 +64,7 @@ private:
 		void setBordered(bool bordered = true);
 
 		/// Sets the number text's color.
-		void setColor(Uint8 color);
+		void setColor(Uint8 color) override;
 		/// Gets the number text's color.
 		Uint8 getColor() const;
 
@@ -72,10 +72,10 @@ private:
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor = 0,
-				int ncolors = 256);
+				int ncolors = 256) override;
 
 		/// Draws the number text.
-		void draw();
+		void draw() override;
 };
 
 }
