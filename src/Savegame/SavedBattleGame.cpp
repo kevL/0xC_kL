@@ -286,7 +286,7 @@ void SavedBattleGame::load(
 		const YAML::Binary binTiles (node["binTiles"].as<YAML::Binary>());
 
 		Uint8
-			* readBuffer ((Uint8*)binTiles.data()), // <- static_cast prob. here
+			* readBuffer (const_cast<Uint8*>(binTiles.data())),
 			* const dataEnd (readBuffer + totalTiles * serKey.totalBytes);
 
 		while (readBuffer < dataEnd)
@@ -301,15 +301,11 @@ void SavedBattleGame::load(
 		}
 	}
 
-	if (_tacticalType == "STR_BASE_DEFENSE")
+	if (_tacType == TCT_BASEDEFENSE)
 	{
 		Log(LOG_INFO) << ". load xcom base";
 		if (node["moduleMap"])
-			_baseModules = node["moduleMap"].as<std::vector<std::vector<std::pair<int, int> > > >();
-//		else
-			// backwards compatibility: imperfect solution, modules that were completely destroyed
-			// prior to saving and updating builds will be counted as indestructible.
-//			calculateModuleMap();
+			_baseModules = node["moduleMap"].as<std::vector<std::vector<std::pair<int, int>>>>();
 	}
 
 	Log(LOG_INFO) << ". load nodes";
@@ -2430,12 +2426,12 @@ bool SavedBattleGame::getUnitsFalling() const
 /**
  * Gets the highest ranked, living, non Mc'd unit of faction.
  * @param qtyAllies	- reference the number of allied units that are conscious and not MC'd
- * @param isXCOM	- true if examining Faction_Player, false for Faction_Hostile (default true)
+ * @param isXcom	- true if examining Faction_Player, false for Faction_Hostile (default true)
  * @return, pointer to highest ranked BattleUnit of faction
  */
 BattleUnit* SavedBattleGame::getHighestRanked(
 		int& qtyAllies,
-		bool isXCOM) const
+		bool isXcom) const
 {
 	//Log(LOG_INFO) << "SavedBattleGame::getHighestRanked() xcom = " << xcom;
 	BattleUnit* leader = nullptr;
@@ -2448,7 +2444,7 @@ BattleUnit* SavedBattleGame::getHighestRanked(
 	{
 		if ((*i)->isOut(true, true) == false)
 		{
-			if (isXCOM == true)
+			if (isXcom == true)
 			{
 				//Log(LOG_INFO) << "SavedBattleGame::getHighestRanked(), side is Xcom";
 				if ((*i)->getOriginalFaction() == FACTION_PLAYER
@@ -2488,12 +2484,12 @@ BattleUnit* SavedBattleGame::getHighestRanked(
  * Either a bonus/penalty for faction based on the highest ranked living unit
  * of the faction or a penalty for a single deceased BattleUnit.
  * @param unit		- pointer to BattleUnit deceased; higher rank is higher penalty (default nullptr)
- * @param isXCOM	- if no unit is passed in this determines whether penalty applies to xCom or aLiens (default true)
+ * @param isXcom	- if no unit is passed in this determines whether penalty applies to xCom or aLiens (default true)
  * @return, morale modifier
  */
 int SavedBattleGame::getMoraleModifier( // note: Add bonus to aLiens for Cydonia & Final Assault.
 		const BattleUnit* const unit,
-		bool isXCOM) const
+		bool isXcom) const
 {
 	//Log(LOG_INFO) << "SavedBattleGame::getMoraleModifier()";
 	if (unit != nullptr
@@ -2554,7 +2550,7 @@ int SavedBattleGame::getMoraleModifier( // note: Add bonus to aLiens for Cydonia
 		const BattleUnit* leader;
 		int qtyAllies;
 
-		if (isXCOM == true)
+		if (isXcom == true)
 		{
 			leader = getHighestRanked(qtyAllies);
 
@@ -2711,7 +2707,7 @@ void SavedBattleGame::setKneelReserved(bool reserved)
  * left.
  * @return, reference to a vector of vectors containing pairs of ints that make up base module damage maps
  */
-std::vector<std::vector<std::pair<int, int> > >& SavedBattleGame::getModuleMap()
+std::vector<std::vector<std::pair<int, int>>>& SavedBattleGame::getModuleMap()
 {
 	return _baseModules;
 }
@@ -2726,7 +2722,7 @@ void SavedBattleGame::calculateModuleMap()
 {
 	_baseModules.resize(
 					_mapsize_x / 10,
-					std::vector<std::pair<int, int> >(
+					std::vector<std::pair<int, int>>(
 												_mapsize_y / 10,
 												std::make_pair(-1,-1)));
 
@@ -2984,11 +2980,11 @@ const Position& SavedBattleGame::getRfTriggerPosition() const
  * Gets a ref to the scanner dots vector.
  * @return, reference to a vector of pairs of ints which are positions of current Turn's scanner dots.
  */
-std::vector<std::pair<int, int> >& SavedBattleGame::scannerDots()
+std::vector<std::pair<int, int>>& SavedBattleGame::scannerDots()
 {
 	return _scanDots;
 }
-const std::vector<std::pair<int, int> >& SavedBattleGame::scannerDots() const
+const std::vector<std::pair<int, int>>& SavedBattleGame::scannerDots() const
 {
 	return _scanDots;
 }

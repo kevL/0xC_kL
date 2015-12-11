@@ -51,8 +51,8 @@ private:
 		_mX,
 		_mY;
 	double
-		_latOld,
-		_lonOld;
+		_latPre,
+		_lonPre;
 
 	Base* _base;
 	Globe* _globe;

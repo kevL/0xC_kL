@@ -86,7 +86,7 @@ private:
 		 * @return, color position
 		 */
 		static inline Uint8 blockOffset(Uint8 block)
-		{ return block << 4; }
+		{ return (static_cast<Uint8>(block << 4)); }
 };
 
 }

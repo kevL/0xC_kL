@@ -90,9 +90,9 @@ void Palette::loadDat(
 				&& palFile.read((char*)value, 3);
 			++i)
 	{
-		_colors[i].r = value[0] * 4;
-		_colors[i].g = value[1] * 4;
-		_colors[i].b = value[2] * 4;
+		_colors[i].r = static_cast<Uint8>(value[0] * 4);
+		_colors[i].g = static_cast<Uint8>(value[1] * 4);
+		_colors[i].b = static_cast<Uint8>(value[2] * 4);
 		_colors[i].unused = 255;
 	}
 	_colors[0].unused = 0;

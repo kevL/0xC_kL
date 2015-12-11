@@ -207,32 +207,32 @@ void MainMenuState::btnQuitClick(Action*)
 	_game->quit();
 }
 
-/**
+/*
  * Updates the scale.
  * @param dX - reference the delta of X
  * @param dY - reference the delta of Y
- */
-void MainMenuState::resize(/*int& dX, int& dY*/)
+ *
+void MainMenuState::resize(int& dX, int& dY)
 {
-/*	dX = Options::baseXResolution;
-	dY = Options::baseYResolution; */
+	dX = Options::baseXResolution;
+	dY = Options::baseYResolution;
 
 	// This uses baseX/Y options for Geoscape & Basescape:
 //	Options::baseXResolution = Options::baseXGeoscape; // kL
 //	Options::baseYResolution = Options::baseYGeoscape; // kL
 	// This sets Geoscape and Basescape to default (320x200) IG and the config.
-/*	Screen::updateScale(
+	Screen::updateScale(
 					Options::geoscapeScale,
 					Options::geoscapeScale,
 					Options::baseXGeoscape,
 					Options::baseYGeoscape,
-					true); */
+					true);
 //	_game->getScreen()->resetDisplay(false); // kL: this resets options.cfg!
 
-/*	dX = Options::baseXResolution - dX;
+	dX = Options::baseXResolution - dX;
 	dY = Options::baseYResolution - dY;
 
-	State::resize(dX, dY); */
-}
+	State::resize(dX, dY);
+} */
 
 }

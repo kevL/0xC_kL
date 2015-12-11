@@ -183,39 +183,6 @@ void BattlescapeButton::initSurfaces()
 	_altSurface->setPalette(getPalette());
 
 	_altSurface->lock();
-/*	if (_tftdMode == true) // TFTD mode: use a color lookup table instead of simple palette inversion for the "pressed" state
-	{
-		// this is the color lookup table
-		const Uint8
-			colorFrom[]	= {1, 2, 3, 4,  7,  8, 31, 47, 153, 156, 159},
-			colorTo[]	= {2, 3, 4, 5, 11, 10,  2,  2,  96,   9,  97};
-
-		for (int
-				x = 0,
-					y = 0;
-				x < getWidth()
-					&& y < getHeight();
-				)
-		{
-			Uint8 pixel = getPixelColor(x,y);
-			for (size_t
-					i = 0;
-					i != sizeof(colorFrom) / sizeof(colorFrom[0]);
-					++i)
-			{
-				if (pixel == colorFrom[i])
-				{
-					pixel = colorTo[i];
-					break;
-				}
-			}
-			_altSurface->setPixelIterative(
-										&x,&y,
-										pixel);
-		}
-	}
-	else // UFO mode.
-	{ */
 	for (int
 			x = 0,
 				y = 0;
@@ -233,7 +200,6 @@ void BattlescapeButton::initSurfaces()
 										&x,&y,
 										0);
 	}
-//	}
 	_altSurface->unlock();
 }
 

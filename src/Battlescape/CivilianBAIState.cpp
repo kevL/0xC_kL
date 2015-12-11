@@ -603,7 +603,7 @@ void CivilianBAIState::evaluateAIMode()
 		if (_spottingEnemies != 0)
 			escape = 10.f * escape * static_cast<float>(_spottingEnemies + 10) / 100.f;
 		else
-			escape /= 2.;
+			escape /= 2.f;
 
 		if (RNG::generate(1, static_cast<int>(patrol) + static_cast<int>(escape)) <= static_cast<int>(patrol))
 		{

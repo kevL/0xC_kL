@@ -106,7 +106,7 @@ private:
 		 * @return, the speed as a percentage
 		 */
 		float getSpeedPct(size_t pt) const
-		{ return _waypoints[pt].speed / 100.f; }
+		{ return static_cast<float>(_waypoints[pt].speed) / 100.f; }
 
 		/**
 		 * Gets the number of seconds UFOs should spend on the ground.

@@ -58,7 +58,10 @@ protected:
 
 		BASESCAPE_VIOLET	= 64,
 		BASESCAPE_BLUE		= 218,
-		BASESCAPE_WHITE		= 208;
+		BASESCAPE_WHITE		= 208,
+
+		tac_RED				=  37,
+		tac_YELLOW			= 144;
 
 
 	std::string _id;

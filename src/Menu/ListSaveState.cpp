@@ -146,7 +146,7 @@ void ListSaveState::lstSavesPress(Action* action)
 			_edtSave->setX(_lstSaves->getColumnX(0));
 			_edtSave->setY(_lstSaves->getRowY(_selected));
 			_edtSave->setVisible();
-			_edtSave->setFocus(true,false);
+			_edtSave->setFocus(true, false);
 
 			ListGamesState::disableSort();
 		}

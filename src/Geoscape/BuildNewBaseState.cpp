@@ -67,8 +67,8 @@ BuildNewBaseState::BuildNewBaseState(
 		_base(base),
 		_globe(globe),
 		_firstBase(firstBase),
-		_latOld(0.),
-		_lonOld(0.),
+		_latPre(0.),
+		_lonPre(0.),
 		_mX(0),
 		_mY(0)
 {
@@ -228,17 +228,17 @@ void BuildNewBaseState::hoverRedraw()
 					static_cast<Sint16>(_mY),
 					&lon, &lat);
 
-	if (lon == lon && lat == lat)
+	if (isNaNorInf(lon,lat) == false)
 	{
 		_globe->setNewBaseHoverPos(lon,lat);
 		_globe->setNewBaseHover();
 	}
 
 	if (Options::globeRadarLines == true
-		&& !(AreSame(_latOld, lat) && AreSame(_lonOld, lon)))
+		&& !(AreSame(_latPre, lat) && AreSame(_lonPre, lon)))
 	{
-		_latOld = lat;
-		_lonOld = lon;
+		_latPre = lat;
+		_lonPre = lon;
 		_globe->invalidate();
 	}
 }

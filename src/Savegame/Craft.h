@@ -101,6 +101,7 @@ private:
 		~Craft() final;
 
 		/// Loads the Craft from YAML.
+		using MovingTarget::load;
 		void load(
 				const YAML::Node& node,
 				const Ruleset* const rules,

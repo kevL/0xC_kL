@@ -550,7 +550,8 @@ void Surface::invert(Uint8 mid)
 	{
 		Uint8 color = getPixelColor(x,y);
 		if (color != 0)
-			color += static_cast<Uint8>((static_cast<int>(mid) - static_cast<int>(color))) * 2;
+			color = static_cast<Uint8>(color + (mid - color) * 2);
+//			color += static_cast<Uint8>((static_cast<int>(mid) - static_cast<int>(color))) * 2;
 
 		setPixelIterative(&x,&y, color);
 	}

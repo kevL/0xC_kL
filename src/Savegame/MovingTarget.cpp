@@ -182,8 +182,7 @@ void MovingTarget::calculateSpeed()
 		_speedLon = dLon / dist * _speedRadian / std::cos(_lat + _speedLat);
 
 		// Check for invalid speeds when a division by zero occurs due to near-zero values
-		if (_speedLon != _speedLon
-			|| _speedLat != _speedLat)
+		if (isNaNorInf(_speedLon, _speedLat) == true)
 		{
 			_speedLon =
 			_speedLat = 0.;

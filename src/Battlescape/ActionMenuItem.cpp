@@ -178,12 +178,12 @@ void ActionMenuItem::draw()
 /**
  * Processes a mouse hover in event.
  * @param action	- pointer to an Action
- * @param state		- pointer to a state
+ * @param state		- pointer to a State
  */
 void ActionMenuItem::mouseIn(Action* action, State* state)
 {
 	_highlighted = true;
-	_frame->setSecondaryColor(_frame->getSecondaryColor() - _highlightModifier);
+	_frame->setSecondaryColor(static_cast<Uint8>(_frame->getSecondaryColor() - _highlightModifier));
 
 	draw();
 	InteractiveSurface::mouseIn(action, state);
@@ -193,12 +193,12 @@ void ActionMenuItem::mouseIn(Action* action, State* state)
 /**
  * Processes a mouse hover out event.
  * @param action	- pointer to an Action
- * @param state		- pointer to a state
+ * @param state		- pointer to a State
  */
 void ActionMenuItem::mouseOut(Action* action, State* state)
 {
 	_highlighted = false;
-	_frame->setSecondaryColor(_frame->getSecondaryColor() + _highlightModifier);
+	_frame->setSecondaryColor(static_cast<Uint8>(_frame->getSecondaryColor() + _highlightModifier));
 
 	draw();
 	InteractiveSurface::mouseOut(action, state);

@@ -336,9 +336,9 @@ private:
 //				const Position& pos2) const;
 
 		/// Gets direction to a target-point.
-		int getDirectionTo(
+		static int getDirectionTo(
 				const Position& posOrigin,
-				const Position& posTarget) const;
+				const Position& posTarget);
 
 		/// Sets a tile with a diagonal bigwall as the true epicenter of an explosion.
 		void setTrueTile(Tile* const tile = nullptr);

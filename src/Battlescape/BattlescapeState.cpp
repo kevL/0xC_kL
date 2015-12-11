@@ -341,7 +341,7 @@ BattlescapeState::BattlescapeState()
 	// image is 320x200 while we only need the bottom of it.
 	SDL_Rect* const rect = icons->getCrop();
 	rect->x = 0;
-	rect->y = 200 - static_cast<Sint16>(iconsHeight);
+	rect->y = static_cast<Sint16>(200 - iconsHeight);
 	rect->w = static_cast<Uint16>(iconsWidth);
 	rect->h = static_cast<Uint16>(iconsHeight);
 	icons->blit(_icons);
@@ -3105,7 +3105,7 @@ void BattlescapeState::flashMedic() // private.
 					3); // red
 	_btnWounds->unlock();
 
-	_numWounds->setColor(YELLOW + static_cast<Uint8>(phase));
+	_numWounds->setColor(static_cast<Uint8>(YELLOW + phase));
 
 
 	phase += 2;
@@ -4421,9 +4421,9 @@ void BattlescapeState::saveVoxelMap()
 //				image.push_back(static_cast<int>(static_cast<float>(pal[voxelTest * 3 + 0]) * dist));
 //				image.push_back(static_cast<int>(static_cast<float>(pal[voxelTest * 3 + 1]) * dist));
 //				image.push_back(static_cast<int>(static_cast<float>(pal[voxelTest * 3 + 2]) * dist));
-				image.push_back(static_cast<unsigned char>(static_cast<double>(pal[voxelTest * 3 + 0]) * dist));
-				image.push_back(static_cast<unsigned char>(static_cast<double>(pal[voxelTest * 3 + 1]) * dist));
-				image.push_back(static_cast<unsigned char>(static_cast<double>(pal[voxelTest * 3 + 2]) * dist));
+				image.push_back(static_cast<unsigned char>(static_cast<float>(pal[voxelTest * 3 + 0]) * dist));
+				image.push_back(static_cast<unsigned char>(static_cast<float>(pal[voxelTest * 3 + 1]) * dist));
+				image.push_back(static_cast<unsigned char>(static_cast<float>(pal[voxelTest * 3 + 2]) * dist));
 			}
 		}
 

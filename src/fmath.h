@@ -56,4 +56,22 @@ inline _Tx Sqr(const _Tx& x)
 	return x * x;
 }
 
+
+/**
+ * Returns true if x or y (lon,lat) is NaN or Inf.
+ */
+template<class _Tx>
+inline bool isNaNorInf(
+		const _Tx& x,
+		const _Tx& y)
+{
+	if (std::isnan(x) || std::isnan(y)
+		|| std::isinf(x) || std::isinf(y))
+	{
+		return true;
+	}
+
+	return false;
+}
+
 #endif

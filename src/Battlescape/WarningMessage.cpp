@@ -167,9 +167,9 @@ void WarningMessage::draw()
 {
 	Surface::draw();
 
-	Uint8 color = _color + 1 + _fade;
+	Uint8 color = static_cast<Uint8>(_color + 1 + _fade);
 	if (_fade == 15)
-		color -= 1;
+		color = static_cast<Uint8>(color - 1);
 
 	drawRect(
 			0,0,
@@ -178,18 +178,18 @@ void WarningMessage::draw()
 			6);
 	drawRect(
 			1,1,
-			static_cast<Sint16>(getWidth()) - 2,
-			static_cast<Sint16>(getHeight()) - 2,
+			static_cast<Sint16>(getWidth() - 2),
+			static_cast<Sint16>(getHeight() - 2),
 			10);
 	drawRect(
 			2,2,
-			static_cast<Sint16>(getWidth()) - 3,
-			static_cast<Sint16>(getHeight()) - 3,
+			static_cast<Sint16>(getWidth() - 3),
+			static_cast<Sint16>(getHeight() - 3),
 			15);
 	drawRect(
 			2,2,
-			static_cast<Sint16>(getWidth()) - 4,
-			static_cast<Sint16>(getHeight()) - 4,
+			static_cast<Sint16>(getWidth() - 4),
+			static_cast<Sint16>(getHeight() - 4),
 			color);
 
 	_text->blit(this);

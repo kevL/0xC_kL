@@ -90,7 +90,7 @@ BaseNameState::BaseNameState(
 	_txtTitle->setBig();
 
 	_edtName->setBig();
-	_edtName->setFocus(true,false);
+	_edtName->setFocus(true, false);
 	_edtName->onChange((ActionHandler)& BaseNameState::edtNameChange);
 }
 

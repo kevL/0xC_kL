@@ -77,9 +77,10 @@ private:
 		/// Handle focus.
 		void handle(Action* action, State* state) override;
 		/// Sets focus on this text edit.
+		using InteractiveSurface::setFocus;
 		void setFocus(
 				bool focus,
-				bool modal = true);
+				bool modal);
 		/// kL. Check if the player is currently typing in this box.
 //		bool isFocused(); // kL, is this still needed.
 

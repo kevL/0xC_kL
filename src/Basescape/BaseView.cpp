@@ -254,6 +254,7 @@ void BaseView::setSelectable(size_t facSize)
 
 		++rect.x;
 		++rect.y;
+//		rect.w = static_cast<Uint16>(static_cast<int>(rect.w) - 2); // Holy F*cking shoot-me-in-the-head-to-avoid-a-Wconversion-warning, batman!
 		rect.w -= 2;
 		rect.h -= 2;
 

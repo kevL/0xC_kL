@@ -96,14 +96,14 @@ void TextEdit::handle(Action* action, State* state)
 			|| action->getAbsoluteYMouse() <  getY()
 			|| action->getAbsoluteYMouse() >= getY() + getHeight()))
 	{
-		setFocus(false);
+		setFocus(false, true);
 	}
 }
 
 /**
  * Controls the blinking animation when this TextEdit is focused.
  * @param focus - true if focused
- * @param modal - true to lock input to this control (default true)
+ * @param modal - true to lock input to this control
  */
 void TextEdit::setFocus(
 		bool focus,

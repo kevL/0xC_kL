@@ -61,9 +61,9 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 
 	_game->getResourcePack()->getSurface("BACK08.SCR")->blit(_bg);
 
-	_btnOk->setColor(Palette::blockOffset(9));
-	_btnPrev->setColor(Palette::blockOffset(9));
-	_btnNext->setColor(Palette::blockOffset(9));
+	_btnOk->setColor(tac_YELLOW);
+	_btnPrev->setColor(tac_YELLOW);
+	_btnNext->setColor(tac_YELLOW);
 
 	_txtTitle->setText(tr(defs->title));
 	_txtTitle->setColor(uPed_BLUE_SLATE);
@@ -205,7 +205,7 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 
 		_txtAmmoDamage[i] = new Text(90, 16, 190, 40 + (static_cast<int>(i) * 49));
 		add(_txtAmmoDamage[i]);
-		_txtAmmoDamage[i]->setColor(Palette::blockOffset(2)+5);
+		_txtAmmoDamage[i]->setColor(tac_RED);
 		_txtAmmoDamage[i]->setAlign(ALIGN_CENTER);
 		_txtAmmoDamage[i]->setBig();
 

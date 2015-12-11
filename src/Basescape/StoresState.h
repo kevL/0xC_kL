@@ -42,6 +42,11 @@ class StoresState
 {
 
 private:
+	static const Uint8
+		YELLOW	= 213,
+		BLUE	= 218,
+		PURPLE	= 246;
+
 	Base* _base;
 	Text
 		* _txtBaseLabel,

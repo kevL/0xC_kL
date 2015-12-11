@@ -124,6 +124,7 @@ private:
 		~Base();
 
 		/// Loads a Base from YAML.
+		using Target::load;
 		void load(
 				const YAML::Node& node,
 				SavedGame* const gameSave,

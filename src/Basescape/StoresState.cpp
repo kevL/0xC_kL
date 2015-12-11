@@ -27,7 +27,6 @@
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
 #include "../Engine/Options.h"
-#include "../Engine/Palette.h"
 
 #include "../Interface/Text.h"
 #include "../Interface/TextButton.h"
@@ -155,7 +154,7 @@ StoresState::StoresState(Base* base)
 			qty = _base->getStorageItems()->getItemQty(*i);
 			if (qty != 0)
 			{
-				color = Palette::blockOffset(13)+10; // blue
+				color = BLUE;
 				itRule = rules->getItem(*i);
 
 				std::wstring item = tr(*i);
@@ -213,7 +212,7 @@ StoresState::StoresState(Base* base)
 					}
 					item.insert(0, L"  ");
 
-					color = Palette::blockOffset(15)+6; // purple
+					color = PURPLE;
 				}
 
 				if (gameSave->isResearched(itRule->getType()) == false				// not researched or is research exempt
@@ -224,7 +223,7 @@ StoresState::StoresState(Base* base)
 					&& craftOrdnance == false)										// and is not craft ordnance
 				{
 					// well, that was !NOT! easy.
-					color = Palette::blockOffset(13)+5; // yellow
+					color = YELLOW;
 				}
 
 				std::wostringstream

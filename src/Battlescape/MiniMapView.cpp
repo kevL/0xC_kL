@@ -287,12 +287,12 @@ void MiniMapView::draw()
 
 	// looks like the crosshairs for the MiniMap
 	const Sint16
-		centerX = static_cast<Sint16>(width / 2) - 1,
-		centerY = static_cast<Sint16>(height / 2) - 1,
+		centerX = static_cast<Sint16>(width / 2 - 1),
+		centerY = static_cast<Sint16>(height / 2 - 1),
 		xOffset = static_cast<Sint16>(CELL_WIDTH / 2),
 		yOffset = static_cast<Sint16>(CELL_HEIGHT / 2);
 
-	const Uint8 color = static_cast<Uint8>(_frame) * 3 + 1;
+	const Uint8 color = static_cast<Uint8>(_frame * 3 + 1);
 
 	drawLine( // top left
 			centerX - static_cast<Sint16>(CELL_WIDTH),

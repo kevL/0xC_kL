@@ -291,9 +291,9 @@ SDL_Rect Font::getCharSize(wchar_t fontChar)
 		if (_monospace == true)
 			charSize.w = static_cast<Uint16>(_width + _spacing);
 		else if (isNonBreakableSpace(fontChar) == true)
-			charSize.w = static_cast<Uint16>(_width) / 4;
+			charSize.w = static_cast<Uint16>(_width / 4);
 		else
-			charSize.w = static_cast<Uint16>(_width) / 2;
+			charSize.w = static_cast<Uint16>(_width / 2);
 
 		charSize.h = static_cast<Uint16>(_height + _spacing);
 	}

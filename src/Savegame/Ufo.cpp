@@ -540,7 +540,7 @@ void Ufo::calculateSpeed() // private.
 		return;
 	}
 
-	double theta = std::atan2(y, x); // theta is radians.
+	double theta = std::atan2(y,x); // theta is radians.
 	// Convert radians to degrees so i don't go bonkers;
 	// ie. KILL IT WITH FIRE!!1@!
 	// note that this is between +/- 180 deg.
@@ -583,8 +583,8 @@ void Ufo::think()
 		break;
 
 		case CRASHED:
-			if (_detected == false)
-				_detected = true;
+//			if (_detected == false)
+			_detected = true;
 	}
 }
 
@@ -594,10 +594,8 @@ void Ufo::think()
  */
 void Ufo::setInBattlescape(bool tactical)
 {
-	if (tactical == true)
+	if ((_tactical = tactical) == true)
 		setSpeed(0);
-
-	_tactical = tactical;
 }
 
 /**

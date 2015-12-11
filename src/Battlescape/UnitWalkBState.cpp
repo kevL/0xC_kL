@@ -955,7 +955,7 @@ void UnitWalkBState::postPathProcedures() // private.
 		{
 			//Log(LOG_INFO) << ". . charging = TRUE";
 			const Position posTarget = _unit->getChargeTarget()->getPosition();
-			dir = _parent->getTileEngine()->getDirectionTo(_unit->getPosition(), posTarget);
+			dir = TileEngine::getDirectionTo(_unit->getPosition(), posTarget);
 			// kL_notes (pre-above):
 			// put an appropriate facing direction here
 			// don't stare at a wall. Get if aggro, face closest xCom op <- might be done somewhere already.

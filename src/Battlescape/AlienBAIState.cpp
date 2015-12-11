@@ -834,7 +834,7 @@ void AlienBAIState::setupAmbush() // private.
 									_aggroTarget) == true)
 				{
 					// if unit can virtually fire at the hypothetical target it knows which way to face.
-					_ambushAction->finalFacing = te->getDirectionTo(_ambushAction->target, pos);
+					_ambushAction->finalFacing = TileEngine::getDirectionTo(_ambushAction->target, pos);
 					break;
 				}
 			}
@@ -1267,9 +1267,9 @@ int AlienBAIState::selectNearestTarget() // private.
 											*i,
 											_unit->getTimeUnits()) == true)
 				{
-					dir = te->getDirectionTo(
-										_attackAction->target,
-										(*i)->getPosition());
+					dir = TileEngine::getDirectionTo(
+												_attackAction->target,
+												(*i)->getPosition());
 					valid = te->validMeleeRange(
 											_attackAction->target,
 											dir,
@@ -1409,7 +1409,7 @@ bool AlienBAIState::selectPositionNearTarget( // private.
 								_reachable.end(),
 								_battleSave->getTileIndex(pos)) != _reachable.end())
 					{
-						dir = te->getDirectionTo(pos, targetUnit->getPosition());
+						dir = TileEngine::getDirectionTo(pos, targetUnit->getPosition());
 						valid = te->validMeleeRange(pos, dir, _unit, targetUnit);
 						fit = _battleSave->setUnitPosition(_unit, pos, true);
 						if (valid == true && fit == true
@@ -1797,9 +1797,9 @@ bool AlienBAIState::findFirePoint() // private.
 					bestTileScore = tileScore;
 
 					_attackAction->target = pos;
-					_attackAction->finalFacing = _battleSave->getTileEngine()->getDirectionTo(
-																							pos,
-																							_aggroTarget->getPosition());
+					_attackAction->finalFacing = TileEngine::getDirectionTo(
+																		pos,
+																		_aggroTarget->getPosition());
 
 					if (tileScore > FAST_PASS_THRESHOLD + 25)
 						break;
@@ -1952,6 +1952,10 @@ bool AlienBAIState::explosiveEfficacy(
  */
 void AlienBAIState::meleeAction() // private.
 {
+//	int attackCost = _unit->getActionTu(BA_HIT, _unit->getMeleeWeapon());
+//	if (_unit->getTimeUnits() < attackCost)	// cannot make a melee attack - consider some other behaviour, like running away, or standing motionless.
+//		return;								// ... nah, CHAAAARGEE!!!
+
 	const TileEngine* const te = _battleSave->getTileEngine();
 	int dir;
 
@@ -1959,9 +1963,9 @@ void AlienBAIState::meleeAction() // private.
 		&& _aggroTarget->isOut_t(OUT_STAT) == false)
 //		&& _aggroTarget->isOut() == false) // (true, true)
 	{
-		dir = te->getDirectionTo(
-							_unit->getPosition(),
-							_aggroTarget->getPosition());
+		dir = TileEngine::getDirectionTo(
+									_unit->getPosition(),
+									_aggroTarget->getPosition());
 		if (te->validMeleeRange(_unit, dir, _aggroTarget) == true)
 		{
 			meleeAttack();
@@ -1972,8 +1976,7 @@ void AlienBAIState::meleeAction() // private.
 	const int tuPreMelee = _unit->getTimeUnits()
 						 - _unit->getActionTu(
 											BA_HIT,
-											_attackAction->weapon);
-//											_unit->getMainHandWeapon());
+											_attackAction->weapon); //_unit->getMainHandWeapon());
 	int
 		dist = (tuPreMelee / 4) + 1,
 		distTest;
@@ -2006,9 +2009,9 @@ void AlienBAIState::meleeAction() // private.
 
 	if (_aggroTarget != nullptr)
 	{
-		dir = te->getDirectionTo(
-							_unit->getPosition(),
-							_aggroTarget->getPosition());
+		dir = TileEngine::getDirectionTo(
+									_unit->getPosition(),
+									_aggroTarget->getPosition());
 		if (te->validMeleeRange(_unit, dir, _aggroTarget) == true)
 			meleeAttack();
 	}
@@ -2048,11 +2051,11 @@ void AlienBAIState::wayPointAction() // private.
 	//Log(LOG_INFO) << "AlienBAIState::wayPointAction() w/ " << _attackAction->weapon->getRules()->getType();
 	_attackAction->TU = _unit->getActionTu(
 										BA_LAUNCH,
-										_attackAction->weapon);
+										_attackAction->weapon); //_unit->getMainHandWeapon());
 	//Log(LOG_INFO) << ". actionTU = " << _attackAction->TU;
 	//Log(LOG_INFO) << ". unit TU = " << _unit->getTimeUnits();
 
-	if (_unit->getTimeUnits() >= _attackAction->TU)
+	if (_attackAction->TU <= _unit->getTimeUnits())
 	{
 		Pathfinding* const pf = _battleSave->getPathfinding();
 		pf->setPathingUnit(_unit); // jic.
@@ -2067,10 +2070,7 @@ void AlienBAIState::wayPointAction() // private.
 				++i)
 		{
 			//Log(LOG_INFO) << ". . test Vs unit ID " << (*i)->getId() << " pos " << (*i)->getPosition();
-			if (validTarget(
-						*i,
-						true,
-						true) == true)
+			if (validTarget(*i, true, true) == true)
 			{
 				//Log(LOG_INFO) << ". . . unit VALID";
 				if (explosiveEfficacy(
@@ -2115,7 +2115,7 @@ void AlienBAIState::wayPointAction() // private.
 
 /**
  * Constructs a waypoint path for weapons like Blaster Launcher.
- * @note helper for wayPointAction()
+ * @note Helper for wayPointAction().
  * @return, true if waypoints get positioned
  */
 bool AlienBAIState::pathWaypoints() // private.
@@ -2171,74 +2171,6 @@ bool AlienBAIState::pathWaypoints() // private.
 	//Log(LOG_INFO) << ". path or WP's invalid, ret FALSE";
 	return false;
 }
-/*		_attackAction->waypoints.clear();
-
-		pf->calculate(
-					_unit,
-					_aggroTarget->getPosition(),
-					_aggroTarget,
-					-1);
-
-		Position
-			posEnd = _unit->getPosition(),
-			posLast = _unit->getPosition(),
-			posCur = _unit->getPosition(),
-			dirVect;
-
-		int
-			collision,
-			dirPath = pf->dequeuePath();
-
-		while (dirPath != -1)
-		{
-			posLast = posCur;
-
-			pf->directionToVector(
-								dirPath,
-								&dirVect);
-			posCur += dirVect;
-
-			const Position
-				voxelPosA(
-						(posCur.x * 16) + 8,
-						(posCur.y * 16) + 8,
-						(posCur.z * 24) + 16),
-				voxelPosB(
-						(posEnd.x * 16) + 8,
-						(posEnd.y * 16) + 8,
-						(posEnd.z * 24) + 16);
-
-			collision = _battleSave->getTileEngine()->plotLine(
-															voxelPosA,
-															voxelPosB,
-															false,
-															nullptr,
-															_unit);
-
-			if (VOXEL_EMPTY < collision && collision < VOXEL_UNIT)
-			{
-				_attackAction->waypoints.push_back(posLast);
-				posEnd = posLast;
-			}
-			else if (collision == VOXEL_UNIT)
-			{
-				if (_battleSave->getTile(posCur)->getUnit() == _aggroTarget)
-				{
-					_attackAction->waypoints.push_back(posCur);
-					posEnd = posCur;
-				}
-			}
-
-			dirPath = pf->dequeuePath();
-		}
-
-		_attackAction->target = _attackAction->waypoints.front();
-
-		if (static_cast<int>(_attackAction->waypoints.size()) > (_attackAction->diff * 2) + 6
-			|| posEnd != _aggroTarget->getPosition())
-		{
-			_attackAction->type = BA_RETHINK;
-		} */
 
 /**
  * Attempts to fire at an enemy we can see.

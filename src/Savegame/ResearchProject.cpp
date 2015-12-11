@@ -205,7 +205,7 @@ std::string ResearchProject::getResearchProgress() const
 		return "STR_UNKNOWN";
 
 	float rating = static_cast<float>(_assigned);
-	rating /= getRules()->getCost();
+	rating /= static_cast<float>(getRules()->getCost());
 
 	if (rating < PROGRESS_LIMIT_POOR)
 		return "STR_POOR";

@@ -66,8 +66,8 @@ private:
 	SDL_Surface* _screen;
 	Surface* _surface;
 
-	OpenGL glOutput;
-	SDL_Color deferredPalette[256];
+	OpenGL _glOutput;
+	SDL_Color _deferredPalette[256];
 
 	/// Sets the '_flags' and '_bpp' variables based on game options.
 	void makeVideoFlags();

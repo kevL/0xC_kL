@@ -6429,9 +6429,9 @@ int TileEngine::distanceSqr( // static.
  * @param posTarget - reference to the target point of the action
  * @return, direction
  */
-int TileEngine::getDirectionTo(
+int TileEngine::getDirectionTo( // static.
 		const Position& posOrigin,
-		const Position& posTarget) const
+		const Position& posTarget)
 {
 	if (posOrigin == posTarget) // safety.
 		return 0;

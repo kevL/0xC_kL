@@ -125,9 +125,9 @@ private:
 	std::vector<Position>
 		_storageSpace,
 		_tileSearch;
-	std::vector<std::vector<std::pair<int, int> > > _baseModules;
+	std::vector<std::vector<std::pair<int, int>>> _baseModules;
 
-	std::vector<std::pair<int, int> > _scanDots;
+	std::vector<std::pair<int, int>> _scanDots;
 
 //	Uint8 _dragButton;			// this is a cache for Options::getString("battleScrollDragButton")
 //	bool _dragInvert;			// this is a cache for Options::getString("battleScrollDragInvert")
@@ -371,11 +371,11 @@ private:
 		/// Gets the highest ranked, living unit of faction.
 		BattleUnit* getHighestRanked(
 				int& qtyAllies,
-				bool isXCOM = true) const;
+				bool isXcom = true) const;
 		/// Gets the morale modifier based on the highest ranked, living xcom/alien unit, or for a unit passed into this function.
 		int getMoraleModifier(
 				const BattleUnit* const unit = nullptr,
-				bool isXCOM = true) const;
+				bool isXcom = true) const;
 
 		/// Checks whether a particular faction has eyes on *unit (whether any unit on that faction sees *unit).
 //		bool eyesOnTarget(UnitFaction faction, BattleUnit* unit);
@@ -406,7 +406,7 @@ private:
 		void randomizeItemLocations(Tile* const tile);
 
 		/// Gets a reference to the baseModules map.
-		std::vector<std::vector<std::pair<int, int> > >& getModuleMap();
+		std::vector<std::vector<std::pair<int, int>>>& getModuleMap();
 		/// Calculates the number of map modules remaining
 		void calculateModuleMap();
 
@@ -461,8 +461,8 @@ private:
 		const Position& getRfTriggerPosition() const;
 
 		/// Gets a ref to the scanner dots vector.
-		std::vector<std::pair<int, int> >& scannerDots();
-		const std::vector<std::pair<int, int> >& scannerDots() const;
+		std::vector<std::pair<int, int>>& scannerDots();
+		const std::vector<std::pair<int, int>>& scannerDots() const;
 };
 
 }

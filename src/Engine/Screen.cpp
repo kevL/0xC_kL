@@ -124,7 +124,7 @@ Screen::Screen()
 {
 	resetDisplay();
 	std::memset(
-			deferredPalette,
+			_deferredPalette,
 			0,
 			256 * sizeof(SDL_Color));
 }
@@ -228,7 +228,7 @@ void Screen::flip()
 					_bottomBlackBand,
 					_leftBlackBand,
 					_rightBlackBand,
-					&glOutput);
+					&_glOutput);
 	}
 	else
 		SDL_BlitSurface(
@@ -245,7 +245,7 @@ void Screen::flip()
 		if (_screen->format->BitsPerPixel == 8
 			&& SDL_SetColors(
 						_screen,
-						&(deferredPalette[_firstColor]),
+						&(_deferredPalette[_firstColor]),
 						_firstColor,
 						_numColors) == 0)
 		{
@@ -301,7 +301,7 @@ void Screen::setPalette(
 		// an initial palette setup has not been committed to the screen yet
 		// just update it with whatever colors are being sent now
 		std::memmove(
-				&(deferredPalette[firstcolor]),
+				&(_deferredPalette[firstcolor]),
 				colors,
 				sizeof(SDL_Color) * ncolors);
 		_numColors = 256; // all the use cases are just a full palette with 16-color follow-ups
@@ -310,7 +310,7 @@ void Screen::setPalette(
 	else
 	{
 		std::memmove(
-				&(deferredPalette[firstcolor]),
+				&(_deferredPalette[firstcolor]),
 				colors,
 				sizeof(SDL_Color) * ncolors);
 		_numColors = ncolors;
@@ -356,7 +356,7 @@ void Screen::setPalette(
  */
 SDL_Color* Screen::getPalette() const
 {
-	return (SDL_Color*)deferredPalette;
+	return const_cast<SDL_Color*>(_deferredPalette);
 }
 
 /**
@@ -409,7 +409,7 @@ void Screen::resetDisplay(bool resetVideo)
 							Screen::is32bitEnabled() ? 32 : 8);
 
 		if (_surface->getSurface()->format->BitsPerPixel == 8)
-			_surface->setPalette(deferredPalette);
+			_surface->setPalette(_deferredPalette);
 	}
 
 	SDL_SetColorKey( // turn off color key!
@@ -543,18 +543,18 @@ void Screen::resetDisplay(bool resetVideo)
 	if (isOpenGLEnabled() == true)
 	{
 #ifndef __NO_OPENGL
-		glOutput.init(
+		_glOutput.init(
 				_baseWidth,
 				_baseHeight);
-		glOutput.linear = Options::useOpenGLSmoothing; // setting from shader file will override this, though
+		_glOutput.linear = Options::useOpenGLSmoothing; // setting from shader file will override this, though
 
 #ifdef _DEBUG
-		glOutput.set_shader(CrossPlatform::getDataFile("Shaders/Raw.OpenGL.shader").c_str());
+		_glOutput.set_shader(CrossPlatform::getDataFile("Shaders/Raw.OpenGL.shader").c_str());
 #else
-		glOutput.set_shader(CrossPlatform::getDataFile(Options::useOpenGLShader).c_str());
+		_glOutput.set_shader(CrossPlatform::getDataFile(Options::useOpenGLShader).c_str());
 #endif
 
-		glOutput.setVSync(Options::vSyncForOpenGL);
+		_glOutput.setVSync(Options::vSyncForOpenGL);
 
 		OpenGL::checkErrors = Options::checkOpenGLErrors;
 #endif

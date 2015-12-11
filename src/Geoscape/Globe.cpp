@@ -2275,7 +2275,7 @@ void Globe::drawPath( // private.
 	dist = b.norm();
 	dist *= dist * 15;
 
-	qty = static_cast<Sint16>(dist) + 1;
+	qty = static_cast<Sint16>(static_cast<int>(dist) + 1);
 	b /= qty;
 
 	p1 = CordPolar(a);
@@ -2549,11 +2549,8 @@ void Globe::mouseOver(Action* action, State* state)
 		action->getDetails()->motion.y = static_cast<Uint16>(_yBeforeMouseScrolling);
 	} */
 
-	if (lat == lat // Check for errors
-		&& lon == lon)
-	{
+	if (isNaNorInf(lon,lat) == false)
 		InteractiveSurface::mouseOver(action, state);
-	}
 }
 
 /**
@@ -2587,7 +2584,7 @@ void Globe::mousePress(Action* action, State* state)
 		_mouseScrollStartTime = SDL_GetTicks();
 	}
 
-	if (lat == lat && lon == lon) // Check for errors
+	if (isNaNorInf(lon,lat) == false)
 		InteractiveSurface::mousePress(action, state);
 }
 
@@ -2608,7 +2605,7 @@ void Globe::mouseRelease(Action* action, State* state)
 //	if (action->getDetails()->button.button == Options::geoDragScrollButton)
 //		stopScrolling(action);
 
-	if (lat == lat && lon == lon) // Check for errors
+	if (isNaNorInf(lon,lat) == false)
 		InteractiveSurface::mouseRelease(action, state);
 }
 
@@ -2681,13 +2678,12 @@ void Globe::mouseClick(Action* action, State* state)
 			return;
 	}
 
-	if (lat == lat // Check for errors
-		&& lon == lon)
+	if (isNaNorInf(lon,lat) == false)
 	{
 		InteractiveSurface::mouseClick(action, state);
 
 		if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-			center(lon, lat);
+			center(lon,lat);
 	}
 }
 

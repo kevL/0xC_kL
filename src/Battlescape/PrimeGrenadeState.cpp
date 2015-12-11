@@ -118,8 +118,8 @@ PrimeGrenadeState::PrimeGrenadeState(
 					BLACK);
 	_isfBtn0->drawRect(
 					1,1,
-					static_cast<Sint16>(_isfBtn0->getWidth()) - 2,
-					static_cast<Sint16>(_isfBtn0->getHeight()) - 2,
+					static_cast<Sint16>(_isfBtn0->getWidth() - 2),
+					static_cast<Sint16>(_isfBtn0->getHeight() - 2),
 					ORANGE);
 
 	if (Options::battleInstantGrenade == true)
