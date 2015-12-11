@@ -212,9 +212,12 @@ void ComboBox::drawArrow() // private.
 	_arrow->clear();
 
 	SDL_Rect square;
-	Uint8 color = _color + 1;
-	if (color == 256)
-		++color;
+
+	Uint8 color;
+	if (_color == 255)
+		color = 1;
+	else
+		color = _color + 1;
 
 	// Draw arrow triangle 1
 	square.x = 1;
@@ -234,7 +237,7 @@ void ComboBox::drawArrow() // private.
 	_arrow->drawRect(&square, color + 2);
 
 	// Draw arrow triangle 2
-	square.x = 2;
+	square.x =
 	square.y = 2;
 	square.w = 7;
 	square.h = 1;

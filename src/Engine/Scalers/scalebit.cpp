@@ -23,6 +23,8 @@
  * http://scale2x.sourceforge.net/
  */
 
+#include "scalebit.h"
+
 #if HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -431,14 +433,15 @@ static void scale4x(void* void_dst, unsigned dst_slice, const void* void_src, un
  * \param height Vertical size in pixels of the source bitmap.
  * \return
  *   - -1 on precondition violated.
- *   - 0 on success.
+ *   -  0 on success.
  */
 int scale_precondition(unsigned scale, unsigned pixel, unsigned width, unsigned height)
 {
 	if (pixel != 1 && pixel != 2 && pixel != 4)
 		return -1;
 
-	switch (scale) {
+	switch (scale)
+	{
 	case 202 :
 	case 203 :
 	case 204 :
@@ -477,7 +480,8 @@ int scale_precondition(unsigned scale, unsigned pixel, unsigned width, unsigned 
  */
 void scale(unsigned scale, void* void_dst, unsigned dst_slice, const void* void_src, unsigned src_slice, unsigned pixel, unsigned width, unsigned height)
 {
-	switch (scale) {
+	switch (scale)
+	{
 	case 202 :
 	case 2 :
 		scale2x(void_dst, dst_slice, void_src, src_slice, pixel, width, height);

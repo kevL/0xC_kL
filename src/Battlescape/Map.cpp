@@ -1851,7 +1851,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 							if (_previewSetting & PATH_ARROWS)
 							{
-								const Tile* const tileBelow = _battleSave->getTile(posField + Position(0,0,-1));
+								tileBelow = _battleSave->getTile(posField + Position(0,0,-1));
 
 								if (itZ > 0 && _tile->hasNoFloor(tileBelow) == true)
 								{

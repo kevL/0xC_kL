@@ -133,37 +133,37 @@ SoldierDiary::SoldierDiary(const SoldierDiary& copyThis)
 		_missionIdList.push_back(copyThis._missionIdList.at(i));
 	}
 
-	std::map<std::string, int>::const_iterator i;
+	std::map<std::string, int>::const_iterator pCopy;
 	for (
-			i = copyThis._regionTotal.begin();
-			i != copyThis._regionTotal.end();
-			++i)
+			pCopy = copyThis._regionTotal.begin();
+			pCopy != copyThis._regionTotal.end();
+			++pCopy)
 	{
-		_regionTotal[(*i).first] = (*i).second;
+		_regionTotal[(*pCopy).first] = (*pCopy).second;
 	}
 
 	for (
-			i = copyThis._countryTotal.begin();
-			i != copyThis._countryTotal.end();
-			++i)
+			pCopy = copyThis._countryTotal.begin();
+			pCopy != copyThis._countryTotal.end();
+			++pCopy)
 	{
-		_countryTotal[(*i).first] = (*i).second;
+		_countryTotal[(*pCopy).first] = (*pCopy).second;
 	}
 
 	for (
-			i = copyThis._typeTotal.begin();
-			i != copyThis._typeTotal.end();
-			++i)
+			pCopy = copyThis._typeTotal.begin();
+			pCopy != copyThis._typeTotal.end();
+			++pCopy)
 	{
-		_typeTotal[(*i).first] = (*i).second;
+		_typeTotal[(*pCopy).first] = (*pCopy).second;
 	}
 
 	for (
-			i = copyThis._ufoTotal.begin();
-			i != copyThis._ufoTotal.end();
-			++i)
+			pCopy = copyThis._ufoTotal.begin();
+			pCopy != copyThis._ufoTotal.end();
+			++pCopy)
 	{
-		_ufoTotal[(*i).first] = (*i).second;
+		_ufoTotal[(*pCopy).first] = (*pCopy).second;
 	}
 
 
@@ -294,40 +294,40 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThis)
 		}
 
 		_regionTotal.clear();
-		std::map<std::string, int>::const_iterator i;
+		std::map<std::string, int>::const_iterator pCopy;
 		for (
-				i = assignThis._regionTotal.begin();
-				i != assignThis._regionTotal.end();
-				++i)
+				pCopy = assignThis._regionTotal.begin();
+				pCopy != assignThis._regionTotal.end();
+				++pCopy)
 		{
-			_regionTotal[(*i).first] = (*i).second;
+			_regionTotal[(*pCopy).first] = (*pCopy).second;
 		}
 
 		_countryTotal.clear();
 		for (
-				i = assignThis._countryTotal.begin();
-				i != assignThis._countryTotal.end();
-				++i)
+				pCopy = assignThis._countryTotal.begin();
+				pCopy != assignThis._countryTotal.end();
+				++pCopy)
 		{
-			_countryTotal[(*i).first] = (*i).second;
+			_countryTotal[(*pCopy).first] = (*pCopy).second;
 		}
 
 		_typeTotal.clear();
 		for (
-				i = assignThis._typeTotal.begin();
-				i != assignThis._typeTotal.end();
-				++i)
+				pCopy = assignThis._typeTotal.begin();
+				pCopy != assignThis._typeTotal.end();
+				++pCopy)
 		{
-			_typeTotal[(*i).first] = (*i).second;
+			_typeTotal[(*pCopy).first] = (*pCopy).second;
 		}
 
 		_ufoTotal.clear();
 		for (
-				i = assignThis._ufoTotal.begin();
-				i != assignThis._ufoTotal.end();
-				++i)
+				pCopy = assignThis._ufoTotal.begin();
+				pCopy != assignThis._ufoTotal.end();
+				++pCopy)
 		{
-			_ufoTotal[(*i).first] = (*i).second;
+			_ufoTotal[(*pCopy).first] = (*pCopy).second;
 		}
 
 

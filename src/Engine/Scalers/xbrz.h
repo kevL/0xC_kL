@@ -85,6 +85,7 @@ void nearestNeighborScale(const uint32_t* src, int srcWidth, int srcHeight,
                          trg, trgWidth, trgHeight, trgWidth * sizeof(uint32_t),
                          NN_SCALE_SLICE_TARGET, 0, trgHeight);
 }
+
 }
 
 #endif

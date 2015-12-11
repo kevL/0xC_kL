@@ -671,7 +671,7 @@ void TransferItemsState::completeTransfer()
 							}
 							else
 							{ */
-							Transfer* const transfer = new Transfer(eta);
+							transfer = new Transfer(eta);
 							transfer->setCraft(*j);
 							_baseTarget->getTransfers()->push_back(transfer);
 /*							} */

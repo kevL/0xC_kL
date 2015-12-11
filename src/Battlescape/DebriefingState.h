@@ -33,7 +33,7 @@ namespace OpenXcom
 {
 
 /**
- *
+ * Container for tracking loot after tactical.
  */
 struct DebriefingStat
 {
@@ -46,17 +46,17 @@ struct DebriefingStat
 	/// cTor.
 	DebriefingStat(
 			const std::string& type,
-			bool recover = false)
+			bool rec = false)
 		:
 			item(type),
 			score(0),
 			qty(0),
-			recover(recover)
+			recover(rec)
 	{};
 };
 
 /**
- *
+ * Container for tracking non-replaced items on Craft after tactical.
  */
 struct ReequipStat
 {
@@ -66,7 +66,7 @@ struct ReequipStat
 };
 
 /**
- *
+ * Container for tracking tile-part types after tactical.
  */
 struct SpecialType
 {

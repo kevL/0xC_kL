@@ -109,18 +109,18 @@ BaseDestroyedState::BaseDestroyedState(
 		lon = base->getLongitude(),
 		lat = base->getLatitude();
 	const std::vector<Region*>* regionList = _game->getSavedGame()->getRegions();
-	std::vector<Region*>::const_iterator i = regionList->begin();
+	std::vector<Region*>::const_iterator pRegion = regionList->begin();
 	for (
 			;
-			i != regionList->end();
-			++i)
+			pRegion != regionList->end();
+			++pRegion)
 	{
-		if ((*i)->getRules()->insideRegion(lon,lat))
+		if ((*pRegion)->getRules()->insideRegion(lon,lat))
 			break;
 	}
 
 	const AlienMission* const mission = _game->getSavedGame()->findAlienMission(
-																			(*i)->getRules()->getType(),
+																			(*pRegion)->getRules()->getType(),
 																			alm_RETAL);
 
 	for (std::vector<Ufo*>::const_iterator

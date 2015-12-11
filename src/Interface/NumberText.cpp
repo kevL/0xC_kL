@@ -201,16 +201,16 @@ NumberText::NumberText(
 		_borderedChars[i] = new Surface(4,6);
 
 		for (int
-				y = 0;
-				y != 6;
-				++y)
+				y1 = 0;
+				y1 != 6;
+				++y1)
 		{
 			for (int
-					x = 0;
-					x != 4;
-					++x)
+					x1 = 0;
+					x1 != 4;
+					++x1)
 			{
-				_borderedChars[i]->setPixelColor(x,y,8);
+				_borderedChars[i]->setPixelColor(x1,y1,8);
 			}
 		}
 

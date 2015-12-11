@@ -2705,6 +2705,7 @@ void TileEngine::explode(
 						break;
 
 						case DT_SMOKE:
+						{
 							if (tileStop->getTerrainLevel() > -24)
 							{
 								const int smokePow = static_cast<int>(std::ceil(
@@ -2741,6 +2742,7 @@ void TileEngine::explode(
 									bu->damage(Position(0,0,0), powerUnit, DT_SMOKE, true);
 								}
 							}
+						}
 						break;
 
 						case DT_IN:

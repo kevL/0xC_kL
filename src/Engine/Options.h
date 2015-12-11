@@ -123,14 +123,26 @@ namespace Options
 	void create();
 	/// Restores default options.
 	void resetDefault();
+
+	/// Loads arguments from the commandline.
+	void loadArgs(
+			int argc,
+			char* argv[]);
+	/// Shows help from the commandline.
+	bool showHelp(
+			int argc,
+			char* argv[]);
+
 	/// Initializes the options settings.
 	bool init(
 			int argc,
 			char* argv[]);
+
 	/// Loads options from YAML.
 	void load(const std::string& file = "options");
 	/// Saves options to YAML.
 	void save(const std::string& file = "options");
+
 	/// Gets the game's data folder.
 	std::string getDataFolder();
 	/// Sets the game's data folder.
@@ -143,12 +155,16 @@ namespace Options
 	std::string getPictureFolder();
 	/// Gets the game's config folder.
 	std::string getConfigFolder();
+
 	/// Gets the game's options.
 	const std::vector<OptionInfo>& getOptionInfo();
+
 	/// Sets the game's data, user and config folders.
 	void setFolders();
+
 	/// Update game options from config file and command line.
 	void updateOptions();
+
 	/// Backup display options.
 	void backupDisplay();
 	/// Switches display options.

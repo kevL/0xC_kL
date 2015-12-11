@@ -824,9 +824,9 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		else if ((*i)["delete"])
 		{
 			const std::string type = (*i)["delete"].as<std::string>();
-			const std::map<std::string, ArticleDefinition*>::const_iterator i = _ufopaediaArticles.find(type);
-			if (i != _ufopaediaArticles.end())
-				_ufopaediaArticles.erase(i);
+			const std::map<std::string, ArticleDefinition*>::const_iterator pArticle = _ufopaediaArticles.find(type);
+			if (pArticle != _ufopaediaArticles.end())
+				_ufopaediaArticles.erase(pArticle);
 
 			const std::vector<std::string>::const_iterator j = std::find(
 																	_ufopaediaIndex.begin(),

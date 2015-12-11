@@ -34,6 +34,7 @@
 #define PIXEL00_70    *dp = Interp7(w[5], w[4], w[2]);
 #define PIXEL00_90    *dp = Interp9(w[5], w[4], w[2]);
 #define PIXEL00_100   *dp = Interp10(w[5], w[4], w[2]);
+
 #define PIXEL01_0     *(dp+1) = w[5];
 #define PIXEL01_10    *(dp+1) = Interp1(w[5], w[3]);
 #define PIXEL01_11    *(dp+1) = Interp1(w[5], w[2]);
@@ -46,6 +47,7 @@
 #define PIXEL01_70    *(dp+1) = Interp7(w[5], w[2], w[6]);
 #define PIXEL01_90    *(dp+1) = Interp9(w[5], w[2], w[6]);
 #define PIXEL01_100   *(dp+1) = Interp10(w[5], w[2], w[6]);
+
 #define PIXEL10_0     *(dp+dpL) = w[5];
 #define PIXEL10_10    *(dp+dpL) = Interp1(w[5], w[7]);
 #define PIXEL10_11    *(dp+dpL) = Interp1(w[5], w[8]);
@@ -58,6 +60,7 @@
 #define PIXEL10_70    *(dp+dpL) = Interp7(w[5], w[8], w[4]);
 #define PIXEL10_90    *(dp+dpL) = Interp9(w[5], w[8], w[4]);
 #define PIXEL10_100   *(dp+dpL) = Interp10(w[5], w[8], w[4]);
+
 #define PIXEL11_0     *(dp+dpL+1) = w[5];
 #define PIXEL11_10    *(dp+dpL+1) = Interp1(w[5], w[9]);
 #define PIXEL11_11    *(dp+dpL+1) = Interp1(w[5], w[6]);
@@ -71,6 +74,10 @@
 #define PIXEL11_90    *(dp+dpL+1) = Interp9(w[5], w[6], w[8]);
 #define PIXEL11_100   *(dp+dpL+1) = Interp10(w[5], w[6], w[8]);
 
+
+/**
+ *
+ */
 HQX_API void HQX_CALLCONV hq2x_32_rb(const uint32_t* sp, uint32_t srb, uint32_t* dp, uint32_t drb, int Xres, int Yres )
 {
     int  i, j, k;
@@ -2800,10 +2807,13 @@ HQX_API void HQX_CALLCONV hq2x_32_rb(const uint32_t* sp, uint32_t srb, uint32_t*
         sp = (const uint32_t*) sRowP;
 
         dRowP += drb * 2;
-        dp = (uint32_t*) dRowP;
+        dp = reinterpret_cast<uint32_t*>(const_cast<uint8_t*>(dRowP));
     }
 }
 
+/**
+ *
+ */
 HQX_API void HQX_CALLCONV hq2x_32(const uint32_t* sp, uint32_t* dp, int Xres, int Yres )
 {
     uint32_t rowBytesL = Xres * 4;

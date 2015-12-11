@@ -76,6 +76,10 @@
 #define PIXEL22_5   *(dp+dpL+dpL+2) = Interp5(w[6], w[8]);
 #define PIXEL22_C   *(dp+dpL+dpL+2) = w[5];
 
+
+/**
+ *
+ */
 HQX_API void HQX_CALLCONV hq3x_32_rb(const uint32_t* sp, uint32_t srb, uint32_t* dp, uint32_t drb, int Xres, int Yres )
 {
     int  i, j, k;
@@ -3778,10 +3782,13 @@ HQX_API void HQX_CALLCONV hq3x_32_rb(const uint32_t* sp, uint32_t srb, uint32_t*
         sp = (const uint32_t*) sRowP;
 
         dRowP += drb * 3;
-        dp = (uint32_t*) dRowP;
+        dp = reinterpret_cast<uint32_t*>(const_cast<uint8_t*>(dRowP));
     }
 }
 
+/**
+ *
+ */
 HQX_API void HQX_CALLCONV hq3x_32(const uint32_t* sp, uint32_t* dp, int Xres, int Yres )
 {
     uint32_t rowBytesL = Xres * 4;

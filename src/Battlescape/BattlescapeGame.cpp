@@ -939,20 +939,18 @@ void BattlescapeGame::handleAI(BattleUnit* const unit)
 			//Log(LOG_INFO) << ". . . success = " << success;
 			if (_battleSave->getTileEngine()->psiAttack(&action) == true)
 			{
-				const BattleUnit* const unit = _battleSave->getTile(action.target)->getUnit();
-				Game* const game = _parentState->getGame();
+				const BattleUnit* const psiVictim = _battleSave->getTile(action.target)->getUnit();
+				Language* const lang = _parentState->getGame()->getLanguage();
 				std::wstring wst;
 				if (action.type == BA_PSICONTROL)
-					wst = game->getLanguage()->getString(
-													"STR_IS_UNDER_ALIEN_CONTROL",
-													unit->getGender())
-												.arg(unit->getName(game->getLanguage()))
-												.arg(action.value);
+					wst = lang->getString("STR_IS_UNDER_ALIEN_CONTROL", psiVictim->getGender())
+											.arg(psiVictim->getName(lang))
+											.arg(action.value);
 				else // Panic Atk
-					wst = game->getLanguage()->getString("STR_PSI_PANIC_SUCCESS")
-												.arg(action.value);
+					wst = lang->getString("STR_PSI_PANIC_SUCCESS")
+											.arg(action.value);
 
-				game->pushState(new InfoboxState(wst));
+				_parentState->getGame()->pushState(new InfoboxState(wst));
 			}
 			//Log(LOG_INFO) << ". . . done Psi.";
 		}

@@ -43,6 +43,16 @@ namespace CrossPlatform
 	std::vector<std::string> findUserFolders();
 	/// Finds the game's config folder in the system.
 	std::string findConfigFolder();
+
+	/// Tries to find a file.
+	std::string caseInsensitive(
+			const std::string& base,
+			const std::string& path);
+	/// Tries to find a folder.
+	std::string caseInsensitiveFolder(
+			const std::string& base,
+			const std::string& path);
+
 	/// Gets the path for a data file.
 	std::string getDataFile(const std::string& file);
 	/// Gets the path for a data folder

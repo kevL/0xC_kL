@@ -1364,9 +1364,8 @@ void TextList::mouseOver(Action* action, State* state)
 																// is added, but there are no soldiers nor awards for it.
 			//Log(LOG_INFO) << ". text at [" << _selRow << "] = " << Language::wstrToCp(_texts[_selRow][0]->getText());
 			const Text* const selText = _texts[_rows[_selRow]].front();
-			int
-				y = getY() + selText->getY(),
-				h = selText->getHeight() + _font->getSpacing();
+			int y = getY() + selText->getY();
+			h = selText->getHeight() + _font->getSpacing();
 
 			if (y < getY() || y + h > getY() + getHeight())
 				h /= 2;

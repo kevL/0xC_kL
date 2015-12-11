@@ -454,7 +454,7 @@ void SavedBattleGame::load(
 				const int
 					owner		((*i)["owner"]			.as<int>()),
 					prevOwner	((*i)["previousOwner"]	.as<int>(-1)),
-					unit		((*i)["unit"]			.as<int>());
+					unitId		((*i)["unit"]			.as<int>());
 
 				for (std::vector<BattleUnit*>::const_iterator // match up items and units
 						bu = _units.begin();
@@ -464,7 +464,7 @@ void SavedBattleGame::load(
 					if ((*bu)->getId() == owner)
 						item->moveToOwner(*bu);
 
-					if ((*bu)->getId() == unit)
+					if ((*bu)->getId() == unitId)
 						item->setUnit(*bu);
 				}
 

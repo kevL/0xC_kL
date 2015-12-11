@@ -252,9 +252,9 @@ ConfirmLandingState::ConfirmLandingState(
 					// so treat them both the same -> texture(INT) #10
 					// INDUSTRIALUFO, MADURBANUFO, NATIVEUFO
 					const RuleGlobe* const globeRule = _game->getRuleset()->getGlobe();
-					const RuleTexture* const texRule = globeRule->getTextureRule(OpenXcom::TT_URBAN);
+					const RuleTexture* const cityTextureRule = globeRule->getTextureRule(OpenXcom::TT_URBAN);
 
-					terrainType = texRule->getTextureTerrain(ufo);
+					terrainType = cityTextureRule->getTextureTerrain(ufo);
 					// NOTE that inputting coordinates can screw getTextureTerrain() if & when 'target'
 					// is not contained within any of the Texture's Terrain's TextureDetail coordinates.
 					// I don't believe the function has a viable fallback mechanism

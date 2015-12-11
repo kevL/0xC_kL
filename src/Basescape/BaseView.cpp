@@ -73,16 +73,16 @@ BaseView::BaseView(
 		_blink(true)
 {
 	for (size_t
-			x = 0;
-			x != Base::BASE_SIZE;
-			++x)
+			x1 = 0;
+			x1 != Base::BASE_SIZE;
+			++x1)
 	{
 		for (size_t
-				y = 0;
-				y != Base::BASE_SIZE;
-				++y)
+				y1 = 0;
+				y1 != Base::BASE_SIZE;
+				++y1)
 		{
-			_facilities[x][y] = nullptr;
+			_facilities[x1][y1] = nullptr;
 		}
 	}
 
@@ -632,16 +632,16 @@ void BaseView::draw()
 			if (x < Base::BASE_SIZE)
 			{
 				for (size_t
-						y = facY;
-						y != facY + facSize;
-						++y)
+						y1 = facY;
+						y1 != facY + facSize;
+						++y1)
 				{
-					if (_facilities[x][y] != nullptr
-						&& _facilities[x][y]->buildFinished() == true)
+					if (_facilities[x][y1] != nullptr
+						&& _facilities[x][y1]->buildFinished() == true)
 					{
 						srfTunnel = _texture->getFrame(7);
 						srfTunnel->setX(static_cast<int>(x) * GRID_SIZE - GRID_SIZE / 2);
-						srfTunnel->setY(static_cast<int>(y) * GRID_SIZE);
+						srfTunnel->setY(static_cast<int>(y1) * GRID_SIZE);
 						srfTunnel->blit(this);
 					}
 				}
@@ -650,15 +650,15 @@ void BaseView::draw()
 			if (y < Base::BASE_SIZE)
 			{
 				for (size_t
-						x = facX;
-						x != facX + facSize;
-						++x)
+						x1 = facX;
+						x1 != facX + facSize;
+						++x1)
 				{
-					if (_facilities[x][y] != nullptr
-						&& _facilities[x][y]->buildFinished() == true)
+					if (_facilities[x1][y] != nullptr
+						&& _facilities[x1][y]->buildFinished() == true)
 					{
 						srfTunnel = _texture->getFrame(8);
-						srfTunnel->setX(static_cast<int>(x) * GRID_SIZE);
+						srfTunnel->setX(static_cast<int>(x1) * GRID_SIZE);
 						srfTunnel->setY(static_cast<int>(y) * GRID_SIZE - GRID_SIZE / 2);
 						srfTunnel->blit(this);
 					}
@@ -730,10 +730,10 @@ void BaseView::draw()
 	}
 
 	// draw crafts left to right, top row to bottom.
-	std::vector<Craft*>::const_iterator i = _base->getCrafts()->begin();
+	std::vector<Craft*>::const_iterator pCraft = _base->getCrafts()->begin();
 	BaseFacility* fac;
 	bool hasDog = (_base->getStorageItems()->getItemQty("STR_DOGE") != 0);
-	std::vector<std::pair<int, int> > dogPosition;
+	std::vector<std::pair<int, int>> dogPosition;
 	int
 		posDog_x,
 		posDog_y;
@@ -751,23 +751,23 @@ void BaseView::draw()
 			fac = _facilities[x][y];
 			if (fac != nullptr)
 			{
-				if (i != _base->getCrafts()->end()
+				if (pCraft != _base->getCrafts()->end()
 					&& fac->buildFinished() == true
 					&& fac->getRules()->getCrafts() != 0
 					&& fac->getCraft() == nullptr)
 				{
-					if ((*i)->getCraftStatus() != "STR_OUT")
+					if ((*pCraft)->getCraftStatus() != "STR_OUT")
 					{
 						const int facSize = static_cast<int>(fac->getRules()->getSize());
 
-						Surface* const srfCraft = _texture->getFrame((*i)->getRules()->getSprite() + 33);
+						Surface* const srfCraft = _texture->getFrame((*pCraft)->getRules()->getSprite() + 33);
 						srfCraft->setX(fac->getX() * GRID_SIZE + (facSize - 1) * GRID_SIZE / 2 + 2);
 						srfCraft->setY(fac->getY() * GRID_SIZE + (facSize - 1) * GRID_SIZE / 2 - 4);
 						srfCraft->blit(this);
 					}
 
-					fac->setCraft(*i);
-					++i;
+					fac->setCraft(*pCraft);
+					++pCraft;
 				}
 
 				if (hasDog == true
@@ -776,11 +776,9 @@ void BaseView::draw()
 				{
 					const int facSize = static_cast<int>(fac->getRules()->getSize());
 
-					posDog_x = fac->getX() * GRID_SIZE + facSize * RNG::generate(2,11);
-					posDog_y = fac->getY() * GRID_SIZE + facSize * RNG::generate(2,17);
-					std::pair<int, int> posDog = std::make_pair(
-															posDog_x,
-															posDog_y);
+					posDog_x = fac->getX() * GRID_SIZE + facSize * RNG::seedless(2,11);
+					posDog_y = fac->getY() * GRID_SIZE + facSize * RNG::seedless(2,17);
+					std::pair<int, int> posDog (std::make_pair(posDog_x, posDog_y));
 					dogPosition.push_back(posDog);
 				}
 			}
@@ -790,8 +788,7 @@ void BaseView::draw()
 	// draw dog
 	if (dogPosition.empty() == false)
 	{
-		const size_t i = RNG::generate(0,
-									dogPosition.size() - 1);
+		const size_t i = RNG::pick(dogPosition.size(), true);
 		_srfDog->setX(dogPosition[i].first);
 		_srfDog->setY(dogPosition[i].second);
 		_srfDog->blit(this);

@@ -416,8 +416,8 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 			type,
 			mode;
 
-		const std::vector<std::pair<std::string, RuleMusic*> > musicRules = rules->getMusicTracks();
-		for (std::vector<std::pair<std::string, RuleMusic*> >::const_iterator
+		const std::vector<std::pair<std::string, RuleMusic*>> musicRules = rules->getMusicTracks();
+		for (std::vector<std::pair<std::string, RuleMusic*>>::const_iterator
 				i = musicRules.begin();
 				i != musicRules.end();
 				++i)
@@ -458,7 +458,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 		};
 
 		std::map<std::string, std::vector<std::pair<std::string, int>>> assignment;
-		std::vector<std::pair<std::string, int> > files;
+		std::vector<std::pair<std::string, int>> musicList;
 
 		bool loaded;
 
@@ -473,10 +473,10 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 					j != assignment.end();
 					++j)
 			{
-				files = j->second;
+				musicList = j->second;
 				for (std::vector<std::pair<std::string, int>>::const_iterator
-						k = files.begin();
-						k != files.end();
+						k = musicList.begin();
+						k != musicList.end();
 						++k)
 				{
 					loaded = false;
@@ -960,8 +960,8 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 
 	ExtraSounds* soundPack;
 
-	const std::vector<std::pair<std::string, ExtraSounds*> > extraSounds = rules->getExtraSounds();
-	for (std::vector<std::pair<std::string, ExtraSounds*> >::const_iterator
+	const std::vector<std::pair<std::string, ExtraSounds*>> extraSounds = rules->getExtraSounds();
+	for (std::vector<std::pair<std::string, ExtraSounds*>>::const_iterator
 			i = extraSounds.begin();
 			i != extraSounds.end();
 			++i)
