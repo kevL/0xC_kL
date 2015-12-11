@@ -57,7 +57,7 @@ BattlescapeMessage::BattlescapeMessage(
 
 	_text = new Text( // "Hidden Movement" text
 					width - 26,
-					height - 14,
+					height - 12,
 					x, y + 14);
 	_text->setAlign(ALIGN_CENTER);
 	_text->setVerticalAlign(ALIGN_MIDDLE);

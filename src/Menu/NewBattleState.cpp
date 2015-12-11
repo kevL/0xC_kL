@@ -302,13 +302,13 @@ void NewBattleState::load(const std::string& file)
 
 			if (doc["base"])
 			{
-				SavedGame* const savedGame = new SavedGame(_rules);
+				SavedGame* const gameSave = new SavedGame(_rules);
 
 				Base* const base = new Base(_rules);
 				base->load(
 						doc["base"],
-						savedGame); // note: considered as neither a 'firstBase' nor a 'skirmish' ...
-				savedGame->getBases()->push_back(base);
+						gameSave); // note: considered as neither a 'firstBase' nor a 'skirmish' ...
+				gameSave->getBases()->push_back(base);
 
 				// Add research
 				const std::vector<std::string>& research = _rules->getResearchList();
@@ -317,7 +317,7 @@ void NewBattleState::load(const std::string& file)
 						i != research.end();
 						++i)
 				{
-					savedGame->addFinishedResearch(_rules->getResearch(*i), false);
+					gameSave->addFinishedResearch(_rules->getResearch(*i), false);
 				}
 
 				// Generate items
@@ -344,7 +344,7 @@ void NewBattleState::load(const std::string& file)
 					_craft = new Craft(
 									_rules->getCraft(craftType),
 									base,
-									savedGame->getCanonicalId(craftType));
+									gameSave->getCanonicalId(craftType));
 					base->getCrafts()->push_back(_craft);
 				}
 				else
@@ -360,7 +360,7 @@ void NewBattleState::load(const std::string& file)
 					}
 				}
 
-				_game->setSavedGame(savedGame);
+				_game->setSavedGame(gameSave);
 			}
 			else
 				initPlay();
@@ -422,6 +422,7 @@ void NewBattleState::initPlay()
 			true,
 			true);
 	gameSave->getBases()->push_back(base);
+	base->setName(L"tactical");
 
 	// delete Soldiers & Craft in this base
 	for (std::vector<Soldier*>::const_iterator
