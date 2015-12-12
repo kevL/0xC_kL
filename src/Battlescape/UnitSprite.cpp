@@ -249,7 +249,6 @@ void UnitSprite::draw()
 void UnitSprite::drawRoutine0()
 {
 	//Log(LOG_INFO) << "** UnitSprite::drawRoutine0()";
-//	if (_unit->isOut() == true)
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
 
@@ -676,7 +675,6 @@ void UnitSprite::drawRoutine0()
  */
 void UnitSprite::drawRoutine1()
 {
-//	if (_unit->isOut() == true)
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
 
@@ -902,10 +900,8 @@ void UnitSprite::drawRoutine2()
 		return;
 
 	const int
-		offX[8] = {-2,-7,-5, 0, 5, 7, 2, 0}, // hovertank offsets
-		offY[8] = {-1,-3,-4,-5,-4,-3,-1,-1},
-		hoverTank	= _unit->getMoveTypeUnit() == MT_FLY ? 32 : 0,
-		turret		= _unit->getTurretType();
+		hoverTank = _unit->getMoveTypeUnit() == MT_FLY ? 32 : 0,
+		turret = _unit->getTurretType();
 
 	Surface* srf = nullptr;
 
@@ -921,18 +917,18 @@ void UnitSprite::drawRoutine2()
 	// and forth ... in reverse gears. That is, _direction should remain constant
 	// throughout a single-tile strafe move with tanks. At least _faceDirection
 	// seems constant during these sprite-frames.
-	int dirFace;
+	int dir;
 	if (_unit->getFaceDirection() != -1)
-		dirFace = _unit->getFaceDirection();
+		dir = _unit->getFaceDirection();
 	else
-		dirFace = _unit->getUnitDirection();
+		dir = _unit->getUnitDirection();
 
 	// draw the tank itself
-	srf = _unitSurface->getFrame(hoverTank + (_part * 8) + dirFace);
+	srf = _unitSurface->getFrame(hoverTank + (_part * 8) + dir);
 	drawRecolored(srf);
 
 	// draw the turret together with the last part
-	if (_part == 3 && turret != -1)
+/*	if (_part == 3 && turret != -1)
 	{
 		srf = _unitSurface->getFrame(64 + (turret * 8) + _unit->getTurretDirection());
 		int
@@ -940,17 +936,18 @@ void UnitSprite::drawRoutine2()
 			turretOffsetY = -4;
 		if (hoverTank != 0)
 		{
-			turretOffsetX += offX[dirFace];
-			turretOffsetY += offY[dirFace];
+			turretOffsetX += offX[dir];
+			turretOffsetY += offY[dir];
 		}
 
 		srf->setX(turretOffsetX);
 		srf->setY(turretOffsetY);
 		drawRecolored(srf);
-	}
+	} */
 	// or draw it w/ each part. ->
-/*	if (turret != -1)
+	if (turret != -1)
 	{
+		srf = _unitSurface->getFrame(64 + (turret * 8) + _unit->getTurretDirection());
 		int
 			turretOffsetX,
 			turretOffsetY;
@@ -978,14 +975,18 @@ void UnitSprite::drawRoutine2()
 
 		if (hoverTank != 0)
 		{
-			turretOffsetX += offX[dirFace];
-			turretOffsetY += offY[dirFace];
+			const int
+				offX[8] = {-2,-7,-5, 0, 5, 7, 2, 0}, // hovertank offsets
+				offY[8] = {-1,-3,-4,-5,-4,-3,-1,-1};
+
+			turretOffsetX += offX[dir];
+			turretOffsetY += offY[dir];
 		}
 
 		srf->setX(turretOffsetX);
 		srf->setY(turretOffsetY);
 		drawRecolored(srf);
-	} */
+	}
 }
 
 /**
@@ -993,7 +994,6 @@ void UnitSprite::drawRoutine2()
  */
 void UnitSprite::drawRoutine3()
 {
-//	if (_unit->isOut() == true)
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
 
@@ -1015,7 +1015,6 @@ void UnitSprite::drawRoutine3()
  */
 void UnitSprite::drawRoutine4()
 {
-//	if (_unit->isOut() == true)
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
 
@@ -1165,7 +1164,6 @@ void UnitSprite::drawRoutine4()
  */
 void UnitSprite::drawRoutine5()
 {
-//	if (_unit->isOut() == true)
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
 
@@ -1184,7 +1182,6 @@ void UnitSprite::drawRoutine5()
  */
 void UnitSprite::drawRoutine6()
 {
-//	if (_unit->isOut() == true)
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
 
@@ -1448,7 +1445,6 @@ void UnitSprite::drawRoutine6()
  */
 void UnitSprite::drawRoutine7()
 {
-//	if (_unit->isOut() == true)
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
 
@@ -1546,7 +1542,6 @@ void UnitSprite::drawRoutine7()
  */
 void UnitSprite::drawRoutine8()
 {
-//	if (_unit->isOut() == true)
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
 
@@ -1576,7 +1571,6 @@ void UnitSprite::drawRoutine8()
  */
 void UnitSprite::drawRoutine9()
 {
-//	if (_unit->isOut() == true)
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
 
