@@ -146,8 +146,6 @@ private:
 		void setSoldierId(size_t soldierId);
 		/// Handler for changing text on the Name edit.
 		void edtSoldierChange(Action* action);
-		/// Handler for pressing on the Name edit (disables editing).
-//		void edtSoldierPress(Action* action);
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

@@ -722,17 +722,6 @@ void SoldierInfoState::edtSoldierChange(Action*)
 }
 
 /**
- * Disables the soldier input.
- * @param action - pointer to an Action
- */
-/* void SoldierInfoState::edtSoldierPress(Action*)
-{
-	// kL_note: This should never happen, because (base=nullptr) is handled by SoldierInfoDeadState.
-	if (_base == nullptr)
-		_edtSoldier->setFocus(false);
-} */
-
-/**
  * Handles right-click exit.
  * @param action - pointer to an Action
  */
@@ -753,10 +742,6 @@ void SoldierInfoState::exitClick(Action*)
  */
 void SoldierInfoState::btnOkClick(Action*)
 {
-//	_edtSoldier->deFocus();
-//	_base->getSoldiers()->at(_soldierId)->setName(_edtSoldier->getText());
-//	_edtSoldier->setFocus(false);
-
 	_game->popState();
 }
 
@@ -766,10 +751,6 @@ void SoldierInfoState::btnOkClick(Action*)
  */
 void SoldierInfoState::btnPrevClick(Action*)
 {
-//	_edtSoldier->deFocus();
-//	_base->getSoldiers()->at(_soldierId)->setName(_edtSoldier->getText());
-//	_edtSoldier->setFocus(false);
-
 	if (_soldierId == 0)
 		_soldierId = _list->size() - 1;
 	else
@@ -784,10 +765,6 @@ void SoldierInfoState::btnPrevClick(Action*)
  */
 void SoldierInfoState::btnNextClick(Action*)
 {
-//	_edtSoldier->deFocus();
-//	_base->getSoldiers()->at(_soldierId)->setName(_edtSoldier->getText());
-//	_edtSoldier->setFocus(false);
-
 	++_soldierId;
 
 	if (_soldierId >= _list->size())
@@ -805,9 +782,7 @@ void SoldierInfoState::btnArmorClick(Action*)
 	if (_soldier->getCraft() == nullptr
 		|| _soldier->getCraft()->getCraftStatus() != "STR_OUT")
 	{
-		_game->pushState(new SoldierArmorState(
-											_base,
-											_soldierId));
+		_game->pushState(new SoldierArmorState(_base, _soldierId));
 	}
 }
 
@@ -817,9 +792,7 @@ void SoldierInfoState::btnArmorClick(Action*)
  */
 void SoldierInfoState::btnSackClick(Action*)
 {
-	_game->pushState(new SackSoldierState(
-										_base,
-										_soldierId));
+	_game->pushState(new SackSoldierState(_base, _soldierId));
 }
 
 /**

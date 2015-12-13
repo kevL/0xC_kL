@@ -622,11 +622,6 @@ void CraftInfoState::btnInventoryClick(Action*)
 void CraftInfoState::edtCraftChange(Action*)
 {
 	_craft->setName(_edtCraft->getText());
-/*	if (action->getDetails()->key.keysym.sym == Options::keyOk
-		|| action->getDetails()->key.keysym.sym == Options::keyOkKeypad)
-	{
-		_edtCraft->setText(_craft->getName(_game->getLanguage()));
-	} */
 }
 
 /**
