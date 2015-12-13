@@ -150,8 +150,8 @@ TransferItemsState::TransferItemsState(
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setText(tr("STR_TRANSFER"));
 
-	_txtBaseSource->setText(_baseSource->getName());
-	_txtBaseTarget->setText(_baseTarget->getName());
+	_txtBaseSource->setText(_baseSource->getName(nullptr));
+	_txtBaseTarget->setText(_baseTarget->getName(nullptr));
 	_txtBaseTarget->setAlign(ALIGN_RIGHT);
 
 	_txtSpaceSource->setAlign(ALIGN_RIGHT);

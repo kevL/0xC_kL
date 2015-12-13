@@ -152,7 +152,7 @@ InterceptState::InterceptState(
 					j != (*i)->getCrafts()->end();
 					++j)
 			{
-				_bases.push_back((*i)->getName().c_str());
+				_bases.push_back((*i)->getName(nullptr).c_str());
 				_crafts.push_back(*j);
 
 				std::wostringstream
@@ -191,7 +191,7 @@ InterceptState::InterceptState(
 	}
 
 	if (_base != nullptr)
-		_txtBase->setText(_base->getName());
+		_txtBase->setText(_base->getName(nullptr));
 }
 
 /**

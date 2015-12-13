@@ -76,12 +76,12 @@ TextList::TextList(
 		_arrowPos(-1),
 		_scrollPos(0),
 		_arrowType(ARROW_VERTICAL),
-		_leftClick(0),
-		_leftPress(0),
-		_leftRelease(0),
-		_rightClick(0),
-		_rightPress(0),
-		_rightRelease(0),
+		_leftClick(nullptr),
+		_leftPress(nullptr),
+		_leftRelease(nullptr),
+		_rightClick(nullptr),
+		_rightPress(nullptr),
+		_rightRelease(nullptr),
 		_arrowsLeftEdge(0),
 		_arrowsRightEdge(0),
 		_comboBox(nullptr)
@@ -932,7 +932,6 @@ void TextList::onRightArrowClick(ActionHandler handler)
 void TextList::onRightArrowPress(ActionHandler handler)
 {
 	_rightPress = handler;
-
 	for (std::vector<ArrowButton*>::const_iterator
 			i = _arrowRight.begin();
 			i != _arrowRight.end();
@@ -947,7 +946,6 @@ void TextList::onRightArrowPress(ActionHandler handler)
 void TextList::onRightArrowRelease(ActionHandler handler)
 {
 	_rightRelease = handler;
-
 	for (std::vector<ArrowButton*>::const_iterator
 			i = _arrowRight.begin();
 			i != _arrowRight.end();

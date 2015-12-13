@@ -217,7 +217,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	}
 	_txtStatus->setText(tr("STR_STATUS_").arg(status));
 
-	_txtBase->setText(tr("STR_BASE_UC").arg(_craft->getBase()->getName()));
+	_txtBase->setText(tr("STR_BASE_UC").arg(_craft->getBase()->getName(nullptr)));
 
 	_txtSpeed->setText(tr("STR_SPEED_").arg(Text::formatNumber(speed)));
 	_txtMaxSpeed->setText(tr("STR_MAXIMUM_SPEED_UC")

@@ -74,9 +74,10 @@ protected:
 
 	std::vector<SaveInfo> _saves;
 
-
 	/// Updates the list-order arrows.
 	void updateArrows();
+	/// Disables the sort buttons.
+	void disableSort();
 
 
 	public:
@@ -115,9 +116,6 @@ protected:
 		void sortNameClick(Action* action);
 		/// Handler for clicking the Date arrow.
 		void sortDateClick(Action* action);
-
-		/// disables the sort buttons.
-		void disableSort();
 };
 
 }

@@ -156,7 +156,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 			qtyScientist[i] = base->getTotalScientists();
 			qtyEngineer[i] = base->getTotalEngineers();
 
-			wst = base->getName().substr(0,4);
+			wst = base->getName(nullptr).substr(0,4);
 			freeSpace = static_cast<int>(static_cast<double>(base->getAvailableStores()) - base->getUsedStores() + 0.5);
 
 			std::wostringstream woststr;

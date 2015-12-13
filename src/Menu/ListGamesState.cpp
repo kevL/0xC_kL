@@ -247,7 +247,7 @@ void ListGamesState::think()
 /**
  * Updates the sorting arrows based on the current setting.
  */
-void ListGamesState::updateArrows() // private.
+void ListGamesState::updateArrows() // protected.
 {
 	_sortName->setShape(ARROW_NONE);
 	_sortDate->setShape(ARROW_NONE);
@@ -387,7 +387,8 @@ void ListGamesState::lstSavesMouseOut(Action*)
  */
 void ListGamesState::lstSavesPress(Action* action) // virtual.
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT
+	if (_editMode == false
+		&& action->getDetails()->button.button == SDL_BUTTON_RIGHT
 		&& _lstSaves->getSelectedRow() >= _firstValid)
 	{
 		_game->pushState(new DeleteGameState(
@@ -439,7 +440,7 @@ void ListGamesState::sortDateClick(Action*)
 /**
  * Disables sorting.
  */
-void ListGamesState::disableSort()
+void ListGamesState::disableSort() // protected.
 {
 	_sortable = false;
 }

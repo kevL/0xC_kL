@@ -85,7 +85,11 @@ Game::Game(const std::string& title)
 		_debugCycle_b(-1)
 {
 	Options::reload = false;
+#ifdef _DEBUG
+	Options::mute = true;
+#else
 	Options::mute = false;
+#endif
 
 	// Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)

@@ -71,7 +71,7 @@ OptionsControlsState::OptionsControlsState(OptionsOrigin origin)
 	_colorSel = _lstControls->getScrollbarColor();
 	_colorNormal = _lstControls->getColor();
 
-	const std::vector<OptionInfo> &options = Options::getOptionInfo();
+	const std::vector<OptionInfo>& options = Options::getOptionInfo();
 	for (std::vector<OptionInfo>::const_iterator
 			i = options.begin();
 			i != options.end();

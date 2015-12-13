@@ -153,10 +153,10 @@ void InteractiveSurface::handle( // virtual
 
 		if (action->isMouseAction() == true)
 		{
-			if (action->getAbsoluteXMouse() >= getX()
-				&& action->getAbsoluteXMouse() < getX() + getWidth()
+			if (   action->getAbsoluteXMouse() >= getX()
+				&& action->getAbsoluteXMouse() <  getX() + getWidth()
 				&& action->getAbsoluteYMouse() >= getY()
-				&& action->getAbsoluteYMouse() < getY() + getHeight())
+				&& action->getAbsoluteYMouse() <  getY() + getHeight())
 			{
 				if (_isHovered == false)
 				{
@@ -242,7 +242,7 @@ void InteractiveSurface::handle( // virtual
 /**
  * Changes the surface's focus.
  * @note Surfaces will only receive keyboard events if focused.
- * @param focus - true if focused
+ * @param focus - true if focused (default true)
  */
 void InteractiveSurface::setFocus(bool focus) // virtual
 {

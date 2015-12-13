@@ -121,7 +121,7 @@ OptionsAudioState::OptionsAudioState(OptionsOrigin origin)
 
 	_slrMusicVolume->setRange(0, SDL_MIX_MAXVOLUME);
 	_slrMusicVolume->setValue(Options::musicVolume);
-	_slrMusicVolume->onChange((ActionHandler)& OptionsAudioState::slrMusicVolumeChange);
+	_slrMusicVolume->onSliderChange((ActionHandler)& OptionsAudioState::slrMusicVolumeChange);
 //	_slrMusicVolume->setTooltip("STR_MUSIC_VOLUME_DESC");
 //	_slrMusicVolume->onMouseIn((ActionHandler)& OptionsAudioState::txtTooltipIn);
 //	_slrMusicVolume->onMouseOut((ActionHandler)& OptionsAudioState::txtTooltipOut);
@@ -130,7 +130,7 @@ OptionsAudioState::OptionsAudioState(OptionsOrigin origin)
 
 	_slrSoundVolume->setRange(0, SDL_MIX_MAXVOLUME);
 	_slrSoundVolume->setValue(Options::soundVolume);
-	_slrSoundVolume->onChange((ActionHandler)& OptionsAudioState::slrSoundVolumeChange);
+	_slrSoundVolume->onSliderChange((ActionHandler)& OptionsAudioState::slrSoundVolumeChange);
 	_slrSoundVolume->onMouseRelease((ActionHandler)& OptionsAudioState::slrSoundVolumeRelease);
 //	_slrSoundVolume->setTooltip("STR_SFX_VOLUME_DESC");
 //	_slrSoundVolume->onMouseIn((ActionHandler)& OptionsAudioState::txtTooltipIn);
@@ -140,7 +140,7 @@ OptionsAudioState::OptionsAudioState(OptionsOrigin origin)
 
 	_slrUiVolume->setRange(0, SDL_MIX_MAXVOLUME);
 	_slrUiVolume->setValue(Options::uiVolume);
-	_slrUiVolume->onChange((ActionHandler)& OptionsAudioState::slrUiVolumeChange);
+	_slrUiVolume->onSliderChange((ActionHandler)& OptionsAudioState::slrUiVolumeChange);
 	_slrUiVolume->onMouseRelease((ActionHandler)& OptionsAudioState::slrUiVolumeRelease);
 //	_slrUiVolume->setTooltip("STR_UI_VOLUME_DESC");
 //	_slrUiVolume->onMouseIn((ActionHandler)& OptionsAudioState::txtTooltipIn);
@@ -177,7 +177,7 @@ OptionsAudioState::OptionsAudioState(OptionsOrigin origin)
 	_txtSampleRate->setText(tr("STR_AUDIO_SAMPLE_RATE"));
 
 	_cbxSampleRate->setOptions(samplesText);
-	_cbxSampleRate->onChange((ActionHandler)& OptionsAudioState::cbxSampleRateChange);
+	_cbxSampleRate->onComboChange((ActionHandler)& OptionsAudioState::cbxSampleRateChange);
 //	_cbxSampleRate->setTooltip("STR_AUDIO_SAMPLE_RATE_DESC");
 //	_cbxSampleRate->onMouseIn((ActionHandler)& OptionsAudioState::txtTooltipIn);
 //	_cbxSampleRate->onMouseOut((ActionHandler)& OptionsAudioState::txtTooltipOut);
@@ -204,7 +204,7 @@ OptionsAudioState::OptionsAudioState(OptionsOrigin origin)
 
 	_cbxMusicFormat->setOptions(musicText);
 	_cbxMusicFormat->setSelected(Options::preferredMusic);
-	_cbxMusicFormat->onChange((ActionHandler)& OptionsAudioState::cbxMusicFormatChange);
+	_cbxMusicFormat->onComboChange((ActionHandler)& OptionsAudioState::cbxMusicFormatChange);
 //	_cbxMusicFormat->setTooltip("STR_PREFERRED_MUSIC_FORMAT_DESC");
 //	_cbxMusicFormat->onMouseIn((ActionHandler)& OptionsAudioState::txtTooltipIn);
 //	_cbxMusicFormat->onMouseOut((ActionHandler)& OptionsAudioState::txtTooltipOut);
@@ -216,7 +216,7 @@ OptionsAudioState::OptionsAudioState(OptionsOrigin origin)
 
 	_cbxSoundFormat->setOptions(soundText);
 	_cbxSoundFormat->setSelected(Options::preferredSound);
-	_cbxSoundFormat->onChange((ActionHandler)& OptionsAudioState::cbxSoundFormatChange);
+	_cbxSoundFormat->onComboChange((ActionHandler)& OptionsAudioState::cbxSoundFormatChange);
 //	_cbxSoundFormat->setTooltip("STR_PREFERRED_SFX_FORMAT_DESC");
 //	_cbxSoundFormat->onMouseIn((ActionHandler)& OptionsAudioState::txtTooltipIn);
 //	_cbxSoundFormat->onMouseOut((ActionHandler)& OptionsAudioState::txtTooltipOut);

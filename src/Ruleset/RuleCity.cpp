@@ -45,8 +45,7 @@ RuleCity::RuleCity()
 		_labelTop(false),
 		_texture(-1)
 {
-	_lon =
-	_lat = 0.;
+//	_lon = _lat = 0.;
 }
 
 /*
@@ -113,23 +112,23 @@ const std::string& RuleCity::getName() const
 	return _name;
 }
 
-/**
+/*
  * Returns the latitude coordinate of this City.
  * @return, the city's latitude in radians
- */
+ *
 double RuleCity::getLatitude() const
 {
 	return _lat;
-}
+} */
 
-/**
+/*
  * Returns the longitude coordinate of this City.
  * @return, the city's longitude in radians
- */
+ *
 double RuleCity::getLongitude() const
 {
 	return _lon;
-}
+} */
 
 /**
  * Returns the globe marker for this City.

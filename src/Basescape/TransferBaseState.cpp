@@ -150,7 +150,7 @@ TransferBaseState::TransferBaseState(Base* base)
 			woststr << L'\x01' << area;
 			_lstBases->addRow(
 							2,
-							(*i)->getName().c_str(),
+							(*i)->getName(nullptr).c_str(),
 							woststr.str().c_str());
 			_bases.push_back(*i);
 		}

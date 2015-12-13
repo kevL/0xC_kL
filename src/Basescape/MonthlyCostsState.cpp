@@ -93,7 +93,7 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
-	_txtTitle->setText(tr("STR_MONTHLY_COSTS_").arg(base->getName()));
+	_txtTitle->setText(tr("STR_MONTHLY_COSTS_").arg(base->getName(nullptr)));
 	_txtTitle->setBig();
 
 	_txtUnitCost->setText(tr("STR_COST_PER_UNIT"));
@@ -107,13 +107,13 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 	_lstCrafts->setColumns(4, 124,62,43,56);
 	_lstCrafts->setMargin();
 	_lstCrafts->setDot();
-	const std::vector<std::string>& craftList = _game->getRuleset()->getCraftsList();
+	const std::vector<std::string>& craftList (_game->getRuleset()->getCraftsList());
 	for (std::vector<std::string>::const_iterator
 			i = craftList.begin();
 			i != craftList.end();
 			++i)
 	{
-		const RuleCraft* const crRule = _game->getRuleset()->getCraft(*i);
+		const RuleCraft* const crRule (_game->getRuleset()->getCraft(*i));
 		if (_game->getSavedGame()->isResearched(crRule->getRequirements()) == true)
 		{
 			cost = crRule->getRentCost();
@@ -133,26 +133,31 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 	_lstSalaries->setColumns(4, 124,62,43,56);
 	_lstSalaries->setMargin();
 	_lstSalaries->setDot();
-	const std::vector<std::string>& soldierList = _game->getRuleset()->getSoldiersList();
+	const std::vector<std::string>& soldierList (_game->getRuleset()->getSoldiersList());
 	for (std::vector<std::string>::const_iterator
 			i = soldierList.begin();
 			i != soldierList.end();
 			++i)
 	{
-		std::string type;
-		if (i == soldierList.begin())
-			type = "STR_SOLDIERS";
-		else
-			type = *i;
+		const RuleSoldier* const sol (_game->getRuleset()->getSoldier(*i));
+		if (sol->getBuyCost() != 0
+			&& _game->getSavedGame()->isResearched(sol->getRequirements()))
+		{
+			std::string type;
+			if (i == soldierList.begin())
+				type = "STR_SOLDIERS";
+			else
+				type = *i;
 
-		cost = _game->getRuleset()->getSoldier(*i)->getSalaryCost();
-		qty = base->getSoldierCount(*i);
-		_lstSalaries->addRow(
-						4,
-						tr(type).c_str(),
-						Text::formatFunding(cost).c_str(),
-						Text::intWide(qty).c_str(),
-						Text::formatFunding(qty * cost).c_str());
+			cost = _game->getRuleset()->getSoldier(*i)->getSalaryCost();
+			qty = base->getSoldierCount(*i);
+			_lstSalaries->addRow(
+							4,
+							tr(type).c_str(),
+							Text::formatFunding(cost).c_str(),
+							Text::intWide(qty).c_str(),
+							Text::formatFunding(qty * cost).c_str());
+		}
 	}
 
 	cost = _game->getRuleset()->getEngineerCost();

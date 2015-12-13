@@ -146,7 +146,7 @@ void ListSaveState::lstSavesPress(Action* action)
 			_edtSave->setX(_lstSaves->getColumnX(0));
 			_edtSave->setY(_lstSaves->getRowY(_selected));
 			_edtSave->setVisible();
-			_edtSave->setFocus(true, false);
+			_edtSave->setFocus(true, false); // note: modal=false allows keypress Enter to save.
 
 			ListGamesState::disableSort();
 		}
@@ -236,7 +236,7 @@ void ListSaveState::saveGame()
 }
 
 /**
- * Hides textlike elements of this state.
+ * Hides textual elements of this state.
  */
 void ListSaveState::hideElements() // private.
 {

@@ -414,7 +414,7 @@ YAML::Node Base::saveId() const
 
 /**
  * Returns the custom name for this Base.
- * @param lang - pointer to Language to get strings from (default nullptr)
+ * @param lang - pointer to Language to get strings from
  * @return, name string
  */
 std::wstring Base::getName(const Language* const) const
@@ -426,9 +426,9 @@ std::wstring Base::getName(const Language* const) const
  * Changes the custom name for this Base.
  * @param name - reference a name string
  */
-void Base::setName(const std::wstring& name)
+void Base::setName(const std::wstring& wst)
 {
-	_name = name;
+	_name = wst;
 }
 
 /**

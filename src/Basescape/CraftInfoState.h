@@ -107,7 +107,7 @@ private:
 		/// Runs the blink timer.
 		void think() override;
 		/// Blinks the status text.
-		void blink();
+		void blinkStatus();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
@@ -123,6 +123,7 @@ private:
 		void btnArmorClick(Action* action);
 		/// Handler for clicking the Inventory button.
 		void btnInventoryClick(Action* action);
+
 		/// Handler for changing the text on the Name edit.
 		void edtCraftChange(Action* action);
 };

@@ -48,7 +48,7 @@ private:
 	TextButton* _btnSaveGame;
 	TextEdit* _edtSave;
 
-	/// Hides textlike elements of this state.
+	/// Hides textual elements of this state.
 	void hideElements();
 
 

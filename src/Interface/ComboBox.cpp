@@ -454,7 +454,7 @@ void ComboBox::toggle(bool init)
  * Sets a function to be called every time the box's content changes.
  * @param handler - ActionHandler
  */
-void ComboBox::onChange(ActionHandler handler)
+void ComboBox::onComboChange(ActionHandler handler)
 {
 	_change = handler;
 }

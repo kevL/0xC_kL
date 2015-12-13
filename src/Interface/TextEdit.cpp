@@ -102,14 +102,14 @@ void TextEdit::handle(Action* action, State* state)
 
 /**
  * Controls the blinking animation when this TextEdit is focused.
- * @param focus - true if focused
- * @param modal - true to lock input to this control
+ * @param focus		- true if focused
+ * @param pokeModal	- true to lock input to this control
  */
 void TextEdit::setFocus(
 		bool focus,
-		bool modal)
+		bool pokeModal)
 {
-	_modal = modal;
+	_modal = pokeModal;
 
 	if (focus != _isFocused)
 	{
@@ -141,15 +141,6 @@ void TextEdit::setFocus(
 		}
 	}
 }
-
-/** kL_note: Is this still needed....
- * Check if the player is currently typing in this box.
- * @return, true if the player is typing in this box
- */
-/* bool TextEdit::isFocused()
-{
-	return _isFocused;
-} */
 
 /**
  * Changes this TextEdit to use the big-size font.
@@ -213,7 +204,7 @@ std::wstring TextEdit::getText() const
  */
 void TextEdit::storeText(const std::wstring& text)
 {
-	_editStored = text;
+	_editCache = text;
 }
 
 /**
@@ -223,7 +214,7 @@ void TextEdit::storeText(const std::wstring& text)
  */
 std::wstring TextEdit::getStoredText() const
 {
-	return _editStored;
+	return _editCache;
 }
 
 /**
@@ -286,15 +277,15 @@ void TextEdit::setNumerical(bool numerical)
 }
 
 /**
- * Changes the color used to render the text. Unlike regular graphics,
- * fonts are greyscale so they need to be assigned a specific position
- * in the palette to be displayed.
+ * Changes the color used to render the text.
+ * @note Unlike regular graphics, fonts are greyscale so they need to be
+ * assigned a specific position in the palette to be displayed.
  * @param color - color value
  */
 void TextEdit::setColor(Uint8 color)
 {
 	_text->setColor(color);
-	_caret->setColor(color);
+	_caret->setColor(2);
 }
 
 /**
@@ -307,9 +298,9 @@ Uint8 TextEdit::getColor() const
 }
 
 /**
- * Changes the secondary color used to render the text. The text
- * switches between the primary and secondary color whenever there's
- * a 0x01 in the string.
+ * Changes the secondary color used to render the text.
+ * @note The text switches between the primary and secondary color whenever
+ * there's a 0x01 in the string.
  * @param color - color value
  */
 void TextEdit::setSecondaryColor(Uint8 color)
@@ -361,8 +352,8 @@ void TextEdit::blink()
 }
 
 /**
- * Adds a blinking '|' caret to the text to show when this TextEdit is focused and
- * editable.
+ * Adds a blinking '|' caret to the text to show when this TextEdit is focused
+ * and editable.
  */
 void TextEdit::draw()
 {
@@ -444,30 +435,31 @@ void TextEdit::mousePress(Action* action, State* state)
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		if (_isFocused == false)
-			setFocus(true);
+			setFocus(true, true);
 		else
 		{
-			const double mX = action->getRelativeXMouse();
-			double pixelPlace = 0.;
-			if (mX > pixelPlace)
+			const double
+				mX (action->getRelativeXMouse()),
+				scale (action->getXScale());
+			double pX (static_cast<double>(_text->getLineX(0) * scale));
+			if (mX > pX)
 			{
 				size_t caret = 0;
-				const double scale (action->getXScale());
-
 				for (std::wstring::const_iterator
 						i = _edit.begin();
 						i != _edit.end();
 						++i)
 				{
-					pixelPlace += static_cast<double>(_text->getFont()->getCharSize(*i).w) * scale;
-					if (mX < pixelPlace)
+					pX += static_cast<double>(_text->getFont()->getCharSize(*i).w) * scale;
+					if (mX < pX)
 						break;
 
 					++caret;
 				}
-
 				_caretPlace = caret;
 			}
+			else
+				_caretPlace = 0;
 		}
 	}
 
@@ -490,16 +482,16 @@ void TextEdit::keyboardPress(Action* action, State* state)
 				++_ascii;
 				if (_ascii > L'~')
 					_ascii = L' ';
-			break;
+				break;
 			case SDLK_DOWN:
 				--_ascii;
 				if (_ascii < L' ')
 					_ascii = L'~';
-			break;
+				break;
 			case SDLK_LEFT:
 				if (_edit.length() > 0)
 					_edit.resize(_edit.length() - 1);
-			break;
+				break;
 			case SDLK_RIGHT:
 				if (exceedsMaxWidth(_ascii) == false)
 					_edit += _ascii;
@@ -512,33 +504,33 @@ void TextEdit::keyboardPress(Action* action, State* state)
 			case SDLK_LEFT:
 				if (_caretPlace > 0)
 					--_caretPlace;
-			break;
+				break;
 			case SDLK_RIGHT:
 				if (_caretPlace < _edit.length())
 					++_caretPlace;
-			break;
+				break;
 			case SDLK_HOME:
 				_caretPlace = 0;
-			break;
+				break;
 			case SDLK_END:
 				_caretPlace = _edit.length();
-			break;
+				break;
 			case SDLK_BACKSPACE:
 				if (_caretPlace > 0)
 				{
 					_edit.erase(_caretPlace - 1, 1);
 					--_caretPlace;
 				}
-			break;
+				break;
 			case SDLK_DELETE:
 				if (_caretPlace < _edit.length())
 					_edit.erase(_caretPlace, 1);
-			break;
+				break;
 			case SDLK_RETURN:
 			case SDLK_KP_ENTER:
 				if (_edit.empty() == false)
-					setFocus(false);
-			break;
+					setFocus(false, true);
+				break;
 
 			default:
 				const Uint16 keyId = action->getDetails()->key.keysym.unicode;
@@ -570,7 +562,7 @@ void TextEdit::keyboardPress(Action* action, State* state)
  * Sets a function to be called every time the text changes.
  * @param handler - ActionHandler
  */
-void TextEdit::onChange(ActionHandler handler)
+void TextEdit::onTextChange(ActionHandler handler)
 {
 	_change = handler;
 }

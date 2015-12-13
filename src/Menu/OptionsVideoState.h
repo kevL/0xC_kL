@@ -87,8 +87,8 @@ private:
 //		* _btnFullscreen,
 //		* _btnBorderless;
 	TextEdit
-		* _txtDisplayWidth,
-		* _txtDisplayHeight;
+		* _edtDisplayWidth,
+		* _edtDisplayHeight;
 	ToggleTextButton
 		* _btnLetterbox,
 		* _btnLockMouse;

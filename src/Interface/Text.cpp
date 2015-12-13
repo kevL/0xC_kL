@@ -470,7 +470,7 @@ void Text::processText() // private.
 				_lineWidth.push_back(width);
 				_lineHeight.push_back(font->getCharSize(L'\n').h);
 
-				width = 0;
+				width =
 				word = 0;
 				start = true;
 
@@ -563,7 +563,7 @@ void Text::processText() // private.
  * @param line - the line number (0 = first, etc)
  * @return, the X position in pixels
  */
-int Text::getLineX(int line) const // private.
+int Text::getLineX(int line) const
 {
 	int x = 0;
 
@@ -572,32 +572,30 @@ int Text::getLineX(int line) const // private.
 		case DIRECTION_LTR:
 			switch (_align)
 			{
-				case ALIGN_LEFT:
-				break;
+//				case ALIGN_LEFT:
+//					break;
 				case ALIGN_CENTER:
 					x = static_cast<int>(std::ceil(
 						static_cast<double>(getWidth() + _font->getSpacing() - _lineWidth[line]) / 2.));
-				break;
+					break;
 				case ALIGN_RIGHT:
 					x = getWidth() - 1 - _lineWidth[line];
-				break;
+					break;
 			}
-		break;
+			break;
 		case DIRECTION_RTL:
 			switch (_align)
 			{
 				case ALIGN_LEFT:
 					x = getWidth() - 1;
-				break;
+					break;
 				case ALIGN_CENTER:
 					x = getWidth() - static_cast<int>(std::ceil(
 									 static_cast<double>(getWidth() + _font->getSpacing() - _lineWidth[line]) / 2.));
-				break;
+					break;
 				case ALIGN_RIGHT:
 					x = _lineWidth[line];
-				break;
 			}
-		break;
 	}
 
 	return x;

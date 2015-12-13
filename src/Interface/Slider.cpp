@@ -353,7 +353,7 @@ void Slider::mouseRelease(Action* action, State* state)
  * Sets a function to be called every time the slider's value changes.
  * @param handler - ActionHandler
  */
-void Slider::onChange(ActionHandler handler)
+void Slider::onSliderChange(ActionHandler handler)
 {
 	_change = handler;
 }

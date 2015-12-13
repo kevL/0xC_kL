@@ -89,8 +89,6 @@ private:
 
 	/// Processes the contained text.
 	void processText();
-	/// Gets the X position of a text line.
-	int getLineX(int line) const;
 
 
 	public:
@@ -172,6 +170,9 @@ private:
 		int getTextHeight(int line = -1) const;
 		/// Adds to the text's height.
 		void addTextHeight(int pad = 1);
+
+		/// Gets the X position of a text line.
+		int getLineX(int line) const;
 
 		/// Draws the text.
 		void draw() override;

@@ -144,7 +144,7 @@ CraftInfoState::CraftInfoState(
 
 	_edtCraft->setBig();
 	_edtCraft->setAlign(ALIGN_CENTER);
-	_edtCraft->onChange((ActionHandler)& CraftInfoState::edtCraftChange);
+	_edtCraft->onTextChange((ActionHandler)& CraftInfoState::edtCraftChange);
 
 	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
 	_txtStatus->setAlign(ALIGN_RIGHT);
@@ -199,17 +199,17 @@ CraftInfoState::CraftInfoState(
 	_btnOk->onMouseClick((ActionHandler)& CraftInfoState::btnOkClick);
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& CraftInfoState::btnOkClick,
-					Options::keyCancel);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftInfoState::btnOkClick,
 					Options::keyOk);
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& CraftInfoState::btnOkClick,
 					Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(
+					(ActionHandler)& CraftInfoState::btnOkClick,
+					Options::keyCancel);
 
 
 	_blinkTimer = new Timer(325);
-	_blinkTimer->onTimer((StateHandler)& CraftInfoState::blink);
+	_blinkTimer->onTimer((StateHandler)& CraftInfoState::blinkStatus);
 }
 
 /**
@@ -241,6 +241,7 @@ void CraftInfoState::init()
 							&& skirmish == false);
 
 	_edtCraft->setText(_craft->getName(_game->getLanguage()));
+
 	if (skirmish == true)
 		_txtStatus->setText(L"");
 	else
@@ -249,11 +250,7 @@ void CraftInfoState::init()
 
 		Uint8 color;
 		if (status == "STR_READY")
-		{
 			color = GREEN;
-//			if (_blinkTimer->isRunning() == true)
-//				_blinkTimer->stop();
-		}
 		else
 		{
 			if (_blinkTimer->isRunning() == false)
@@ -273,7 +270,7 @@ void CraftInfoState::init()
 	}
 
 
-	const RuleCraft* const crRule = _craft->getRules();
+	const RuleCraft* const crRule (_craft->getRules());
 
 	int hours;
 	std::wostringstream
@@ -522,14 +519,19 @@ void CraftInfoState::think()
 {
 	if (_window->isPopupDone() == false)
 		_window->think();
-	else if (_blinkTimer->isRunning() == true)
-		_blinkTimer->think(this, nullptr);
+	else
+	{
+		_edtCraft->think();
+
+		if (_blinkTimer->isRunning() == true)
+			_blinkTimer->think(this, nullptr);
+	}
 }
 
 /**
  * Blinks the status text.
  */
-void CraftInfoState::blink()
+void CraftInfoState::blinkStatus()
 {
 	_txtStatus->setVisible(!_txtStatus->getVisible());
 }
@@ -540,7 +542,8 @@ void CraftInfoState::blink()
  */
 void CraftInfoState::btnOkClick(Action*)
 {
-	_game->popState();
+	if (_edtCraft->isFocused() == false)
+		_game->popState();
 }
 
 /**
@@ -549,7 +552,8 @@ void CraftInfoState::btnOkClick(Action*)
  */
 void CraftInfoState::btnW1Click(Action*)
 {
-	_game->pushState(new CraftWeaponsState(_base, _craftId, 0));
+	if (_edtCraft->isFocused() == false)
+		_game->pushState(new CraftWeaponsState(_base, _craftId, 0));
 }
 
 /**
@@ -558,7 +562,8 @@ void CraftInfoState::btnW1Click(Action*)
  */
 void CraftInfoState::btnW2Click(Action*)
 {
-	_game->pushState(new CraftWeaponsState(_base, _craftId, 1));
+	if (_edtCraft->isFocused() == false)
+		_game->pushState(new CraftWeaponsState(_base, _craftId, 1));
 }
 
 /**
@@ -567,7 +572,8 @@ void CraftInfoState::btnW2Click(Action*)
  */
 void CraftInfoState::btnCrewClick(Action*)
 {
-	_game->pushState(new CraftSoldiersState(_base, _craftId));
+	if (_edtCraft->isFocused() == false)
+		_game->pushState(new CraftSoldiersState(_base, _craftId));
 }
 
 /**
@@ -576,7 +582,8 @@ void CraftInfoState::btnCrewClick(Action*)
  */
 void CraftInfoState::btnEquipClick(Action*)
 {
-	_game->pushState(new CraftEquipmentState(_base, _craftId));
+	if (_edtCraft->isFocused() == false)
+		_game->pushState(new CraftEquipmentState(_base, _craftId));
 }
 
 /**
@@ -585,7 +592,8 @@ void CraftInfoState::btnEquipClick(Action*)
  */
 void CraftInfoState::btnArmorClick(Action*)
 {
-	_game->pushState(new CraftArmorState(_base, _craftId));
+	if (_edtCraft->isFocused() == false)
+		_game->pushState(new CraftArmorState(_base, _craftId));
 }
 
 /**
@@ -594,29 +602,31 @@ void CraftInfoState::btnArmorClick(Action*)
  */
 void CraftInfoState::btnInventoryClick(Action*)
 {
-	SavedBattleGame* const battle = new SavedBattleGame();
-	_game->getSavedGame()->setBattleSave(battle);
-	BattlescapeGenerator bgen = BattlescapeGenerator(_game);
+	if (_edtCraft->isFocused() == false)
+	{
+		SavedBattleGame* const battle = new SavedBattleGame();
+		_game->getSavedGame()->setBattleSave(battle);
+		BattlescapeGenerator bgen = BattlescapeGenerator(_game);
 
-	bgen.runInventory(_craft);
+		bgen.runInventory(_craft);
 
-	_game->getScreen()->clear();
-	_game->pushState(new InventoryState());
+		_game->getScreen()->clear();
+		_game->pushState(new InventoryState());
+	}
 }
 
 /**
  * Changes the Craft name.
  * @param action - pointer to an Action
  */
-void CraftInfoState::edtCraftChange(Action* action)
+void CraftInfoState::edtCraftChange(Action*)
 {
 	_craft->setName(_edtCraft->getText());
-
-	if (action->getDetails()->key.keysym.sym == SDLK_RETURN
-		|| action->getDetails()->key.keysym.sym == SDLK_KP_ENTER)
+/*	if (action->getDetails()->key.keysym.sym == Options::keyOk
+		|| action->getDetails()->key.keysym.sym == Options::keyOkKeypad)
 	{
 		_edtCraft->setText(_craft->getName(_game->getLanguage()));
-	}
+	} */
 }
 
 /**

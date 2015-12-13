@@ -68,9 +68,9 @@ private:
 		const std::string& getName() const;
 
 		/// Gets the City's latitude.
-		double getLatitude() const;
+//		double getLatitude() const;
 		/// Gets the City's longitude.
-		double getLongitude() const;
+//		double getLongitude() const;
 
 		/// Gets the city's marker.
 		int getMarker() const override;

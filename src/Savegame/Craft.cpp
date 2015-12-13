@@ -398,7 +398,7 @@ int Craft::getId() const
 /**
  * Gets this Craft's unique identifying name.
  * @note If there's no custom name the language default is used.
- * @param lang - pointer to a Language to get strings from
+ * @param lang - pointer to a Language to get strings from (default nullptr)
  * @return, full name of craft
  */
 std::wstring Craft::getName(const Language* const lang) const
@@ -411,11 +411,11 @@ std::wstring Craft::getName(const Language* const lang) const
 
 /**
  * Sets this Craft's custom name.
- * @param newName -  reference a new custom name; if blank, the language default is used
+ * @param newName - reference a new custom name; if blank, the language default is used
  */
-void Craft::setName(const std::wstring& newName)
+void Craft::setName(const std::wstring& wst)
 {
-	_name = newName;
+	_name = wst;
 }
 
 /**

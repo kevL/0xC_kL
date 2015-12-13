@@ -219,7 +219,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 									3,
 									(*j)->getName(_game->getLanguage()).c_str(),
 									woststr.str().c_str(),
-									(*i)->getName().c_str());
+									(*i)->getName(nullptr).c_str());
 
 				delete *j; // remove transfer
 				j = (*i)->getTransfers()->erase(j);

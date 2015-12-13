@@ -175,7 +175,7 @@ NewBattleState::NewBattleState()
 	_missionTypes = _rules->getDeploymentsList();
 	_cbxMission->setOptions(_missionTypes);
 	_cbxMission->setBackgroundFill(58); // dk.brown <- TODO: put this in Interfaces.rul
-	_cbxMission->onChange((ActionHandler)& NewBattleState::cbxMissionChange);
+	_cbxMission->onComboChange((ActionHandler)& NewBattleState::cbxMissionChange);
 
 	const std::vector<std::string>& craftsList = _rules->getCraftsList();
 	for (std::vector<std::string>::const_iterator
@@ -188,13 +188,13 @@ NewBattleState::NewBattleState()
 	}
 	_cbxCraft->setOptions(_crafts);
 	_cbxCraft->setBackgroundFill(58); // dk.brown <- TODO: put this in Interfaces.rul
-	_cbxCraft->onChange((ActionHandler)& NewBattleState::cbxCraftChange);
+	_cbxCraft->onComboChange((ActionHandler)& NewBattleState::cbxCraftChange);
 
 	_slrDarkness->setRange(0,15);
 
 //	_slrDepth->setRange(1,3);
 
-//	_cbxTerrain->onChange((ActionHandler)& NewBattleState::cbxTerrainChange);
+//	_cbxTerrain->onComboChange((ActionHandler)& NewBattleState::cbxTerrainChange);
 
 	std::vector<std::string> difficulty;
 	difficulty.push_back("STR_1_BEGINNER");

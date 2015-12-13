@@ -121,9 +121,9 @@ private:
 		/// Gets the Craft's ID.
 		int getId() const;
 		/// Gets the Craft's name.
-		std::wstring getName(const Language* const lang) const override;
+		std::wstring getName(const Language* const lang = nullptr) const override;
 		/// Sets the Craft's name.
-		void setName(const std::wstring& newName);
+		void setName(const std::wstring& wst);
 
 		/// Gets the Craft's marker.
 		int getMarker() const override;

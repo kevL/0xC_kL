@@ -44,7 +44,7 @@ class ScrollBar;
 
 
 /**
- * List of Text's split into columns.
+ * List of Text's split into rows & columns.
  * @note Contains a set of Text's that are automatically lined up by rows and
  * columns like a big table making it easy to manage them together.
  */
@@ -102,7 +102,7 @@ private:
 	std::vector<size_t>
 		_columns,
 		_rows;
-	std::vector<std::vector<Text*> > _texts;
+	std::vector<std::vector<Text*>> _texts;
 	std::vector<ArrowButton*>
 		_arrowLeft,
 		_arrowRight;

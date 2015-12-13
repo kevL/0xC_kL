@@ -46,7 +46,9 @@ class BasescapeState final
 private:
 	bool _allowStoresWarning;
 
+	Base* _base;
 	BaseView* _view;
+	Globe* _globe;
 	MiniBaseView* _mini;
 	Text
 		* _txtFacility,
@@ -69,8 +71,6 @@ private:
 		* _btnSoldiers,
 		* _btnTransfer;
 //		* _btnNewBase,
-	Base* _base;
-	Globe* _globe;
 
 	std::vector<Base*>* _baseList;
 

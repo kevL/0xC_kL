@@ -91,7 +91,7 @@ BaseNameState::BaseNameState(
 
 	_edtName->setBig();
 	_edtName->setFocus(true, false);
-	_edtName->onChange((ActionHandler)& BaseNameState::edtNameChange);
+	_edtName->onTextChange((ActionHandler)& BaseNameState::edtLabelChange);
 }
 
 /**
@@ -104,18 +104,21 @@ BaseNameState::~BaseNameState()
  * Updates the base name and disables the OK button if no name is entered.
  * @param action - pointer to an Action
  */
-void BaseNameState::edtNameChange(Action* action)
+void BaseNameState::edtLabelChange(Action* action)
 {
 	_base->setName(_edtName->getText());
 
-	if (action->getDetails()->key.keysym.sym == SDLK_RETURN
-		|| action->getDetails()->key.keysym.sym == SDLK_KP_ENTER)
-	{
-		if (_edtName->getText().empty() == false)
-			btnOkClick(action);
-	}
+	if (_edtName->getText().empty() == true)
+		_btnOk->setVisible(false);
 	else
-		_btnOk->setVisible(_edtName->getText().empty() == false);
+	{
+		_btnOk->setVisible();
+		if (action->getDetails()->key.keysym.sym == Options::keyOk
+			|| action->getDetails()->key.keysym.sym == Options::keyOkKeypad)
+		{
+			btnOkClick(action);
+		}
+	}
 }
 
 /**

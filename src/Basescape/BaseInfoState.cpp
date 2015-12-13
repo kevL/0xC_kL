@@ -242,7 +242,7 @@ BaseInfoState::BaseInfoState(
 	_mini->onMouseOut((ActionHandler)& BaseInfoState::viewMouseOut);
 
 	_edtBase->setBig();
-	_edtBase->onChange((ActionHandler)& BaseInfoState::edtLabelChange);
+	_edtBase->onTextChange((ActionHandler)& BaseInfoState::edtLabelChange);
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick((ActionHandler)& BaseInfoState::btnOkClick);
@@ -334,7 +334,7 @@ void BaseInfoState::init()
 {
 	State::init();
 
-	_edtBase->setText(_base->getName());
+	_edtBase->setText(_base->getName(nullptr));
 
 	for (std::vector<Region*>::const_iterator
 			i = _game->getSavedGame()->getRegions()->begin();

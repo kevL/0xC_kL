@@ -604,7 +604,7 @@ void load(const std::string& file)
 		{
 			i->load(doc["options"]);
 		}
-		rulesets = doc["rulesets"].as<std::vector<std::string> >(rulesets);
+		rulesets = doc["rulesets"].as<std::vector<std::string>>(rulesets);
 	}
 	catch (YAML::Exception& e)
 	{

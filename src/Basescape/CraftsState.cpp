@@ -104,7 +104,7 @@ CraftsState::CraftsState(Base* base)
 	_txtTitle->setText(tr("STR_INTERCEPTION_CRAFT"));
 
 	_txtBase->setBig();
-	_txtBase->setText(tr("STR_BASE_").arg(_base->getName()));
+	_txtBase->setText(tr("STR_BASE_").arg(_base->getName(nullptr)));
 //	_txtBase->setText(_base->getName(_game->getLanguage()));
 
 	_txtName->setText(tr("STR_NAME_UC"));

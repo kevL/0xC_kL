@@ -107,7 +107,7 @@ OptionsBattlescapeState::OptionsBattlescapeState(OptionsOrigin origin)
 
 	_cbxEdgeScroll->setOptions(edgeScrolls);
 	_cbxEdgeScroll->setSelected(Options::battleEdgeScroll);
-	_cbxEdgeScroll->onChange((ActionHandler)& OptionsBattlescapeState::cbxEdgeScrollChange);
+	_cbxEdgeScroll->onComboChange((ActionHandler)& OptionsBattlescapeState::cbxEdgeScrollChange);
 //	_cbxEdgeScroll->setTooltip("STR_EDGE_SCROLL_DESC");
 //	_cbxEdgeScroll->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
 //	_cbxEdgeScroll->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
@@ -122,7 +122,7 @@ OptionsBattlescapeState::OptionsBattlescapeState(OptionsOrigin origin)
 
 	_cbxDragScroll->setOptions(dragScrolls);
 	_cbxDragScroll->setSelected(Options::battleDragScrollButton);
-	_cbxDragScroll->onChange((ActionHandler)& OptionsBattlescapeState::cbxDragScrollChange);
+	_cbxDragScroll->onComboChange((ActionHandler)& OptionsBattlescapeState::cbxDragScrollChange);
 //	_cbxDragScroll->setTooltip("STR_DRAG_SCROLL_DESC");
 //	_cbxDragScroll->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
 //	_cbxDragScroll->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
@@ -131,7 +131,7 @@ OptionsBattlescapeState::OptionsBattlescapeState(OptionsOrigin origin)
 
 	_slrScrollSpeed->setRange(2, 20);
 	_slrScrollSpeed->setValue(Options::battleScrollSpeed);
-	_slrScrollSpeed->onChange((ActionHandler)& OptionsBattlescapeState::slrScrollSpeedChange);
+	_slrScrollSpeed->onSliderChange((ActionHandler)& OptionsBattlescapeState::slrScrollSpeedChange);
 //	_slrScrollSpeed->setTooltip("STR_SCROLL_SPEED_BATTLE_DESC");
 //	_slrScrollSpeed->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
 //	_slrScrollSpeed->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
@@ -140,7 +140,7 @@ OptionsBattlescapeState::OptionsBattlescapeState(OptionsOrigin origin)
 
 	_slrFireSpeed->setRange(1, 20);
 	_slrFireSpeed->setValue(Options::battleFireSpeed);
-	_slrFireSpeed->onChange((ActionHandler)& OptionsBattlescapeState::slrFireSpeedChange);
+	_slrFireSpeed->onSliderChange((ActionHandler)& OptionsBattlescapeState::slrFireSpeedChange);
 //	_slrFireSpeed->setTooltip("STR_FIRE_SPEED_DESC");
 //	_slrFireSpeed->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
 //	_slrFireSpeed->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
@@ -149,7 +149,7 @@ OptionsBattlescapeState::OptionsBattlescapeState(OptionsOrigin origin)
 
 	_slrXcomSpeed->setRange(80, 1); // was 40
 	_slrXcomSpeed->setValue(Options::battleXcomSpeed);
-	_slrXcomSpeed->onChange((ActionHandler)& OptionsBattlescapeState::slrXcomSpeedChange);
+	_slrXcomSpeed->onSliderChange((ActionHandler)& OptionsBattlescapeState::slrXcomSpeedChange);
 //	_slrXcomSpeed->setTooltip("STR_PLAYER_MOVEMENT_SPEED_DESC");
 //	_slrXcomSpeed->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
 //	_slrXcomSpeed->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
@@ -158,7 +158,7 @@ OptionsBattlescapeState::OptionsBattlescapeState(OptionsOrigin origin)
 
 	_slrAlienSpeed->setRange(40, 1);
 	_slrAlienSpeed->setValue(Options::battleAlienSpeed);
-	_slrAlienSpeed->onChange((ActionHandler)& OptionsBattlescapeState::slrAlienSpeedChange);
+	_slrAlienSpeed->onSliderChange((ActionHandler)& OptionsBattlescapeState::slrAlienSpeedChange);
 //	_slrAlienSpeed->setTooltip("STR_COMPUTER_MOVEMENT_SPEED_DESC");
 //	_slrAlienSpeed->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
 //	_slrAlienSpeed->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);

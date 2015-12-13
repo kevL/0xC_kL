@@ -100,7 +100,7 @@ private:
 					State* state);
 
 			/// Sets the focus of this surface.
-			virtual void setFocus(bool focus);
+			virtual void setFocus(bool focus = true);
 			/// Gets the focus of this surface.
 			bool isFocused() const;
 

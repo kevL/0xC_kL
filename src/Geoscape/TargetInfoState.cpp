@@ -110,7 +110,7 @@ TargetInfoState::TargetInfoState(
 
 			const std::wstring edit = Language::utf8ToWstr((*i)->getLabel());
 			_edtTarget->setText(edit);
-			_edtTarget->onChange((ActionHandler)& TargetInfoState::edtTargetChange);
+			_edtTarget->onTextChange((ActionHandler)& TargetInfoState::edtTargetChange);
 			_edtTarget->setVisible();
 
 			break;

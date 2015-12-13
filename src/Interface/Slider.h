@@ -112,7 +112,7 @@ private:
 		/// Special handling for mouse releases.
 		void mouseRelease(Action* action, State* state) override;
 		/// Hooks an action handler to when the slider changes.
-		void onChange(ActionHandler handler);
+		void onSliderChange(ActionHandler handler);
 };
 
 }

@@ -50,14 +50,14 @@ private:
 
 	std::wstring
 		_edit,
-		_editStored;
+		_editCache;
 
 	ActionHandler _change;
 	State* _state;
 	Text
 		* _caret,
 		* _text;
-	Timer * _timer;
+	Timer* _timer;
 
 	/// Checks if a character will exceed the maximum width.
 	bool exceedsMaxWidth(wchar_t fontChar);
@@ -76,13 +76,12 @@ private:
 
 		/// Handle focus.
 		void handle(Action* action, State* state) override;
+
 		/// Sets focus on this text edit.
 		using InteractiveSurface::setFocus;
 		void setFocus(
 				bool focus,
-				bool modal);
-		/// kL. Check if the player is currently typing in this box.
-//		bool isFocused(); // kL, is this still needed.
+				bool pokeModal);
 
 		/// Sets the text size to big.
 		void setBig();
@@ -145,8 +144,8 @@ private:
 		void mousePress(Action* action, State* state) override;
 		/// Handling for keyboard-presses.
 		void keyboardPress(Action* action, State* state) override;
-		/// Hooks an ActionHandler to the editing.
-		void onChange(ActionHandler handler);
+		/// Hooks an ActionHandler to the edit-field.
+		void onTextChange(ActionHandler handler);
 };
 
 }

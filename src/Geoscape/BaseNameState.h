@@ -67,7 +67,7 @@ private:
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
 		/// Handler for changing text on the Name edit.
-		void edtNameChange(Action* action);
+		void edtLabelChange(Action* action);
 };
 
 }

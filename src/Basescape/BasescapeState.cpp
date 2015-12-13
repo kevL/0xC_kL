@@ -98,7 +98,7 @@ BasescapeState::BasescapeState(
 
 	_txtFacility	= new Text(192, 9);
 
-	_edtBase		= new TextEdit(this, 126, 17, 194, 0);
+	_edtBase		= new TextEdit(this, 126, 16, 194, 0);
 	_txtRegion		= new Text(126, 9, 194, 15);
 	_txtFunds		= new Text(126, 9, 194, 24);
 
@@ -172,7 +172,7 @@ BasescapeState::BasescapeState(
 	_mini->onMouseOut((ActionHandler)& BasescapeState::viewMouseOut);
 
 	_edtBase->setBig();
-	_edtBase->onChange((ActionHandler)& BasescapeState::edtLabelChange);
+	_edtBase->onTextChange((ActionHandler)& BasescapeState::edtLabelChange);
 
 	_txtRegion->setAlign(ALIGN_RIGHT);
 
@@ -220,6 +220,12 @@ BasescapeState::BasescapeState(
 	_btnGeoscape->onMouseClick((ActionHandler)& BasescapeState::btnGeoscapeClick);
 	_btnGeoscape->onKeyboardPress(
 					(ActionHandler)& BasescapeState::btnGeoscapeClick,
+					Options::keyOk);
+	_btnGeoscape->onKeyboardPress(
+					(ActionHandler)& BasescapeState::btnGeoscapeClick,
+					Options::keyOkKeypad);
+	_btnGeoscape->onKeyboardPress(
+					(ActionHandler)& BasescapeState::btnGeoscapeClick,
 					Options::keyCancel);
 
 //	_btnNewBase->setText(tr("STR_BUILD_NEW_BASE_UC"));
@@ -254,7 +260,7 @@ void BasescapeState::init()
 
 	_view->setBase(_base);
 	_mini->draw();
-	_edtBase->setText(_base->getName());
+	_edtBase->setText(_base->getName(nullptr));
 
 	for (std::vector<Region*>::const_iterator
 			i = _game->getSavedGame()->getRegions()->begin();
@@ -364,7 +370,7 @@ void BasescapeState::init()
 		_allowStoresWarning = false;
 //		_game->pushState(new SellState(_base));
 		_game->pushState(new ErrorMessageState(
-										tr("STR_STORAGE_EXCEEDED").arg(_base->getName()).c_str(),
+										tr("STR_STORAGE_EXCEEDED").arg(_base->getName(nullptr)).c_str(),
 										_palette,
 										_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
 										_game->getResourcePack()->getRandomBackground(),
@@ -378,38 +384,22 @@ void BasescapeState::init()
  */
 void BasescapeState::setBase(Base* const base)
 {
-/*	if (_baseList->empty() == false)
-	{ */
-	bool exists = false; // check if base still exists
 	for (size_t
 			i = 0;
 			i != _baseList->size();
 			++i)
 	{
-		if (base == _baseList->at(i))
+		if (_baseList->at(i) == base)
 		{
 			_base = base;
 			_mini->setSelectedBase(i);
-//			_game->getSavedGame()->setRecallBase(i);
 
-			exists = true;
-			break;
+			return;
 		}
 	}
 
-	if (exists == false)
-	{
-		_base = _baseList->front();
-		_mini->setSelectedBase(0);
-//		_game->getSavedGame()->setRecallBase(0);
-	}
-/*	}
-	else // WARNING: if player can delete and rebuilt his/her only base this could be needed again: (unchecked/untested)
-	{
-		_base = new Base(_game->getRuleset());
-		_mini->setSelectedBase(0);
-//		_game->getSavedGame()->setRecallBase(0);
-	} */
+	_base = _baseList->front();
+	_mini->setSelectedBase(0);
 }
 
 /*
@@ -429,7 +419,8 @@ void BasescapeState::btnNewBaseClick(Action*)
  */
 void BasescapeState::btnBaseInfoClick(Action*)
 {
-	_game->pushState(new BaseInfoState(_base, this));
+	if (_edtBase->isFocused() == false)
+		_game->pushState(new BaseInfoState(_base, this));
 }
 
 /**
@@ -438,7 +429,8 @@ void BasescapeState::btnBaseInfoClick(Action*)
  */
 void BasescapeState::btnSoldiersClick(Action*)
 {
-	_game->pushState(new SoldiersState(_base));
+	if (_edtBase->isFocused() == false)
+		_game->pushState(new SoldiersState(_base));
 }
 
 /**
@@ -447,8 +439,11 @@ void BasescapeState::btnSoldiersClick(Action*)
  */
 void BasescapeState::btnMemorialClick(Action*)
 {
-	_game->getResourcePack()->fadeMusic(_game, 863);
-	_game->pushState(new SoldierMemorialState());
+	if (_edtBase->isFocused() == false)
+	{
+		_game->getResourcePack()->fadeMusic(_game, 863);
+		_game->pushState(new SoldierMemorialState());
+	}
 }
 
 /**
@@ -457,7 +452,8 @@ void BasescapeState::btnMemorialClick(Action*)
  */
 void BasescapeState::btnCraftsClick(Action*)
 {
-	_game->pushState(new CraftsState(_base));
+	if (_edtBase->isFocused() == false)
+		_game->pushState(new CraftsState(_base));
 }
 
 /**
@@ -466,7 +462,8 @@ void BasescapeState::btnCraftsClick(Action*)
  */
 void BasescapeState::btnAliens(Action*)
 {
-	_game->pushState(new AlienContainmentState(_base, OPT_GEOSCAPE));
+	if (_edtBase->isFocused() == false)
+		_game->pushState(new AlienContainmentState(_base, OPT_GEOSCAPE));
 }
 
 /**
@@ -475,7 +472,8 @@ void BasescapeState::btnAliens(Action*)
  */
 void BasescapeState::btnResearchClick(Action*)
 {
-	_game->pushState(new ResearchState(_base, this));
+	if (_edtBase->isFocused() == false)
+		_game->pushState(new ResearchState(_base, this));
 }
 
 /**
@@ -484,7 +482,8 @@ void BasescapeState::btnResearchClick(Action*)
  */
 void BasescapeState::btnManufactureClick(Action*)
 {
-	_game->pushState(new ManufactureState(_base, this));
+	if (_edtBase->isFocused() == false)
+		_game->pushState(new ManufactureState(_base, this));
 }
 
 /**
@@ -493,7 +492,8 @@ void BasescapeState::btnManufactureClick(Action*)
  */
 void BasescapeState::btnPurchaseClick(Action*)
 {
-	_game->pushState(new PurchaseState(_base));
+	if (_edtBase->isFocused() == false)
+		_game->pushState(new PurchaseState(_base));
 }
 
 /**
@@ -502,7 +502,8 @@ void BasescapeState::btnPurchaseClick(Action*)
  */
 void BasescapeState::btnSellClick(Action*)
 {
-	_game->pushState(new SellState(_base));
+	if (_edtBase->isFocused() == false)
+		_game->pushState(new SellState(_base));
 }
 
 /**
@@ -511,7 +512,8 @@ void BasescapeState::btnSellClick(Action*)
  */
 void BasescapeState::btnMatrixClick(Action*)
 {
-	_game->pushState(new StoresMatrixState(_base));
+	if (_edtBase->isFocused() == false)
+		_game->pushState(new StoresMatrixState(_base));
 }
 
 /**
@@ -520,7 +522,8 @@ void BasescapeState::btnMatrixClick(Action*)
  */
 void BasescapeState::btnTransferClick(Action*)
 {
-	_game->pushState(new TransferBaseState(_base));
+	if (_edtBase->isFocused() == false)
+		_game->pushState(new TransferBaseState(_base));
 }
 
 /**
@@ -529,7 +532,8 @@ void BasescapeState::btnTransferClick(Action*)
  */
 void BasescapeState::btnIncTransClick(Action*)
 {
-	_game->pushState(new TransfersState(_base));
+	if (_edtBase->isFocused() == false)
+		_game->pushState(new TransfersState(_base));
 }
 
 /**
@@ -538,7 +542,8 @@ void BasescapeState::btnIncTransClick(Action*)
  */
 void BasescapeState::btnFacilitiesClick(Action*)
 {
-	_game->pushState(new BuildFacilitiesState(_base, this));
+	if (_edtBase->isFocused() == false)
+		_game->pushState(new BuildFacilitiesState(_base, this));
 }
 
 /**
@@ -547,10 +552,13 @@ void BasescapeState::btnFacilitiesClick(Action*)
  */
 void BasescapeState::btnGeoscapeClick(Action*)
 {
-	kL_geoMusicPlaying = false;
-	kL_geoMusicReturnState = true;
+	if (_edtBase->isFocused() == false)
+	{
+		kL_geoMusicPlaying = false;
+		kL_geoMusicReturnState = true;
 
-	_game->popState();
+		_game->popState();
+	}
 }
 
 /**
@@ -559,93 +567,96 @@ void BasescapeState::btnGeoscapeClick(Action*)
  */
 void BasescapeState::viewLeftClick(Action*)
 {
-	const BaseFacility* const fac = _view->getSelectedFacility();
-	bool bPop = false;
+	if (_edtBase->isFocused() == false)
+	{
+		const BaseFacility* const fac = _view->getSelectedFacility();
+		bool bPop = false;
 
-	if (fac == nullptr) // dirt.
-	{
-		_game->pushState(new MonthlyCostsState(_base));
-		bPop = true;
-	}
-	else if (fac->buildFinished() == true)
-	{
-		if (fac->getRules()->getCrafts() != 0)
+		if (fac == nullptr) // dirt.
 		{
-			for (size_t
-					i = 0;
-					i != _base->getCrafts()->size();
-					++i)
+			_game->pushState(new MonthlyCostsState(_base));
+			bPop = true;
+		}
+		else if (fac->buildFinished() == true)
+		{
+			if (fac->getRules()->getCrafts() != 0)
 			{
-				if (fac->getCraft() == nullptr
-					|| fac->getCraft()->getCraftStatus() == "STR_OUT")
+				for (size_t
+						i = 0;
+						i != _base->getCrafts()->size();
+						++i)
 				{
-					_game->pushState(new CraftsState(_base));
+					if (fac->getCraft() == nullptr
+						|| fac->getCraft()->getCraftStatus() == "STR_OUT")
+					{
+						_game->pushState(new CraftsState(_base));
+						bPop = true;
+						break;
+					}
+					else if (fac->getCraft() == _base->getCrafts()->at(i))
+					{
+						_game->pushState(new CraftInfoState(_base, i));
+						return;
+					}
+				}
+			}
+			else if (fac->getRules()->getStorage() != 0)
+			{
+				if (_base->getStorageItems()->getTotalQuantity() != 0)
+				{
+					_game->pushState(new StoresState(_base));
 					bPop = true;
-					break;
 				}
-				else if (fac->getCraft() == _base->getCrafts()->at(i))
+			}
+			else if (fac->getRules()->getPersonnel() != 0)
+			{
+				if (_base->getSoldiers()->empty() == false)
 				{
-					_game->pushState(new CraftInfoState(_base, i));
-					return;
+					_game->pushState(new SoldiersState(_base));
+					bPop = true;
 				}
 			}
-		}
-		else if (fac->getRules()->getStorage() != 0)
-		{
-			if (_base->getStorageItems()->getTotalQuantity() != 0)
+			else if (fac->getRules()->getPsiLaboratories() != 0)
 			{
-				_game->pushState(new StoresState(_base));
+				_game->pushState(new PsiTrainingState(_base));
 				bPop = true;
 			}
-		}
-		else if (fac->getRules()->getPersonnel() != 0)
-		{
-			if (_base->getSoldiers()->empty() == false)
+			else if (fac->getRules()->getLaboratories() != 0)
 			{
-				_game->pushState(new SoldiersState(_base));
+				_game->pushState(new ResearchState(_base, this));
 				bPop = true;
 			}
+			else if (fac->getRules()->getWorkshops() != 0)
+			{
+				_game->pushState(new ManufactureState(_base, this));
+				bPop = true;
+			}
+			else if (fac->getRules()->getAliens() != 0)
+			{
+				_game->pushState(new AlienContainmentState(_base, OPT_GEOSCAPE));
+				bPop = true;
+			}
+			else if (fac->getRules()->isLift() == true) // Lift has radar range (cf. next)
+			{
+				_game->pushState(new BaseDetectionState(_base));
+				return;
+			}
+			else if (fac->getRules()->getRadarRange() != 0
+				|| fac->getRules()->isMindShield() == true
+				|| fac->getRules()->isHyperwave() == true)
+			{
+				_game->pushState(new BaseInfoState(_base, this));
+				bPop = true;
+/*				_game->getSavedGame()->setGlobeLongitude(_base->getLongitude());
+				_game->getSavedGame()->setGlobeLatitude(_base->getLatitude());
+				kL_reCenter = true;
+				_game->popState(); */
+			}
 		}
-		else if (fac->getRules()->getPsiLaboratories() != 0)
-		{
-			_game->pushState(new PsiTrainingState(_base));
-			bPop = true;
-		}
-		else if (fac->getRules()->getLaboratories() != 0)
-		{
-			_game->pushState(new ResearchState(_base, this));
-			bPop = true;
-		}
-		else if (fac->getRules()->getWorkshops() != 0)
-		{
-			_game->pushState(new ManufactureState(_base, this));
-			bPop = true;
-		}
-		else if (fac->getRules()->getAliens() != 0)
-		{
-			_game->pushState(new AlienContainmentState(_base, OPT_GEOSCAPE));
-			bPop = true;
-		}
-		else if (fac->getRules()->isLift() == true) // Lift has radar range (cf. next)
-		{
-			_game->pushState(new BaseDetectionState(_base));
-			return;
-		}
-		else if (fac->getRules()->getRadarRange() != 0
-			|| fac->getRules()->isMindShield() == true
-			|| fac->getRules()->isHyperwave() == true)
-		{
-			_game->pushState(new BaseInfoState(_base, this));
-			bPop = true;
-/*			_game->getSavedGame()->setGlobeLongitude(_base->getLongitude());
-			_game->getSavedGame()->setGlobeLatitude(_base->getLatitude());
-			kL_reCenter = true;
-			_game->popState(); */
-		}
-	}
 
-	if (bPop == true)
-		kL_soundPop->play(Mix_GroupAvailable(0)); // play "wha-wha" sound
+		if (bPop == true)
+			kL_soundPop->play(Mix_GroupAvailable(0)); // play "wha-wha" sound
+	}
 }
 
 /**
@@ -654,25 +665,28 @@ void BasescapeState::viewLeftClick(Action*)
  */
 void BasescapeState::viewRightClick(Action*)
 {
-	BaseFacility* const fac = _view->getSelectedFacility();
-	if (fac != nullptr)
+	if (_edtBase->isFocused() == false)
 	{
-		if (fac->inUse() == true)
-			_game->pushState(new ErrorMessageState(
-											tr("STR_FACILITY_IN_USE"),
-											_palette,
-											_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
-											_game->getResourcePack()->getRandomBackground(),
-											_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
-		else if (_base->getDisconnectedFacilities(fac).empty() == false)
-			_game->pushState(new ErrorMessageState(
-											tr("STR_CANNOT_DISMANTLE_FACILITY"),
-											_palette,
-											_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
-											_game->getResourcePack()->getRandomBackground(),
-											_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
-		else
-			_game->pushState(new DismantleFacilityState(_base, _view, fac));
+		BaseFacility* const fac = _view->getSelectedFacility();
+		if (fac != nullptr)
+		{
+			if (fac->inUse() == true)
+				_game->pushState(new ErrorMessageState(
+												tr("STR_FACILITY_IN_USE"),
+												_palette,
+												_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
+												_game->getResourcePack()->getRandomBackground(),
+												_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
+			else if (_base->getDisconnectedFacilities(fac).empty() == false)
+				_game->pushState(new ErrorMessageState(
+												tr("STR_CANNOT_DISMANTLE_FACILITY"),
+												_palette,
+												_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
+												_game->getResourcePack()->getRandomBackground(),
+												_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
+			else
+				_game->pushState(new DismantleFacilityState(_base, _view, fac));
+		}
 	}
 }
 
@@ -683,30 +697,33 @@ void BasescapeState::viewRightClick(Action*)
  */
 void BasescapeState::viewMouseOver(Action*)
 {
-	std::wostringstream woststr;
-
-	const BaseFacility* const fac = _view->getSelectedFacility();
-	if (fac != nullptr)
+	if (_edtBase->isFocused() == false)
 	{
-		_txtFacility->setAlign(ALIGN_LEFT);
-		woststr << tr(fac->getRules()->getType());
+		std::wostringstream woststr;
 
-		if (fac->getCraft() != nullptr)
-			woststr << L" " << tr("STR_CRAFT_")
-								.arg(fac->getCraft()->getName(_game->getLanguage()));
-	}
-	else
-	{
-		const size_t baseId = _mini->getHoveredBase();
-		if (baseId < _baseList->size()
-			&& _base != _baseList->at(baseId))
+		const BaseFacility* const fac = _view->getSelectedFacility();
+		if (fac != nullptr)
 		{
-			_txtFacility->setAlign(ALIGN_RIGHT);
-			woststr << _baseList->at(baseId)->getName(_game->getLanguage()).c_str();
-		}
-	}
+			_txtFacility->setAlign(ALIGN_LEFT);
+			woststr << tr(fac->getRules()->getType());
 
-	_txtFacility->setText(woststr.str());
+			if (fac->getCraft() != nullptr)
+				woststr << L" " << tr("STR_CRAFT_")
+									.arg(fac->getCraft()->getName(_game->getLanguage()));
+		}
+		else
+		{
+			const size_t baseId = _mini->getHoveredBase();
+			if (baseId < _baseList->size()
+				&& _base != _baseList->at(baseId))
+			{
+				_txtFacility->setAlign(ALIGN_RIGHT);
+				woststr << _baseList->at(baseId)->getName(_game->getLanguage()).c_str();
+			}
+		}
+
+		_txtFacility->setText(woststr.str());
+	}
 }
 
 /**
@@ -724,25 +741,28 @@ void BasescapeState::viewMouseOut(Action*)
  */
 void BasescapeState::miniLeftClick(Action*)
 {
-	const size_t baseId = _mini->getHoveredBase();
-	if (baseId < _baseList->size()
-		&& _base != _baseList->at(baseId))
+	if (_edtBase->isFocused() == false)
 	{
-		_allowStoresWarning = true;
-		_txtFacility->setText(L"");
-		_base = _baseList->at(baseId);
-		init();
-	}
-	else if (baseId == _baseList->size()
-		&& baseId < Base::MAX_BASES - 1)
-	{
-		kL_geoMusicPlaying = false;
-		kL_geoMusicReturnState = true;
+		const size_t baseId = _mini->getHoveredBase();
+		if (baseId < _baseList->size()
+			&& _base != _baseList->at(baseId))
+		{
+			_allowStoresWarning = true;
+			_txtFacility->setText(L"");
+			_base = _baseList->at(baseId);
+			init();
+		}
+		else if (baseId == _baseList->size()
+			&& baseId < Base::MAX_BASES - 1)
+		{
+			kL_geoMusicPlaying = false;
+			kL_geoMusicReturnState = true;
 
-		Base* const base (new Base(_game->getRuleset()));
+			Base* const base (new Base(_game->getRuleset()));
 
-		_game->popState();
-		_game->pushState(new BuildNewBaseState(base, _globe));
+			_game->popState();
+			_game->pushState(new BuildNewBaseState(base, _globe));
+		}
 	}
 }
 
@@ -752,19 +772,22 @@ void BasescapeState::miniLeftClick(Action*)
  */
 void BasescapeState::miniRightClick(Action*)
 {
-	const size_t baseId = _mini->getHoveredBase();
-	if (baseId < _baseList->size())
+	if (_edtBase->isFocused() == false)
 	{
-		const Base* const base (_baseList->at(baseId));
-		_game->getSavedGame()->setGlobeLongitude(base->getLongitude());
-		_game->getSavedGame()->setGlobeLatitude(base->getLatitude());
+		const size_t baseId = _mini->getHoveredBase();
+		if (baseId < _baseList->size())
+		{
+			const Base* const base (_baseList->at(baseId));
+			_game->getSavedGame()->setGlobeLongitude(base->getLongitude());
+			_game->getSavedGame()->setGlobeLatitude(base->getLatitude());
 
-		kL_geoMusicPlaying = false;
-		kL_geoMusicReturnState =
-		kL_reCenter = true;
+			kL_geoMusicPlaying = false;
+			kL_geoMusicReturnState =
+			kL_reCenter = true;
 
-		_game->popState();
-		kL_soundPop->play(Mix_GroupAvailable(0));
+			_game->popState();
+			kL_soundPop->play(Mix_GroupAvailable(0));
+		}
 	}
 }
 
@@ -774,7 +797,8 @@ void BasescapeState::miniRightClick(Action*)
  */
 void BasescapeState::handleKeyPress(Action* action)
 {
-	if (action->getDetails()->type == SDL_KEYDOWN)
+	if (_edtBase->isFocused() == false
+		&& action->getDetails()->type == SDL_KEYDOWN)
 	{
 		const size_t baseId = getKeyedBaseId(action->getDetails()->key.keysym.sym);
 		if (baseId != Base::MAX_BASES)

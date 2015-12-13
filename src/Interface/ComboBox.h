@@ -139,7 +139,7 @@ private:
 		void toggle(bool init = false);
 
 		/// Hook to an action handler when the content changes.
-		void onChange(ActionHandler handler);
+		void onComboChange(ActionHandler handler);
 };
 
 }

@@ -142,7 +142,7 @@ NewManufactureListState::NewManufactureListState(
 
 	_cbxCategory->setOptions(_catStrings);
 	_cbxCategory->setBackgroundFill(58); // green <- TODO: put this in Interfaces.rul
-	_cbxCategory->onChange((ActionHandler)& NewManufactureListState::cbxCategoryChange);
+	_cbxCategory->onComboChange((ActionHandler)& NewManufactureListState::cbxCategoryChange);
 }
 
 /**

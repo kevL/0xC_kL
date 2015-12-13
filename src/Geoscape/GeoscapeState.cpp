@@ -2401,7 +2401,7 @@ void GeoscapeState::time30Minutes()
 						const std::wstring msg = tr("STR_NOT_ENOUGH_ITEM_TO_REARM_CRAFT_AT_BASE")
 												.arg(tr(rearmClip))
 												.arg((*j)->getName(_game->getLanguage()))
-												.arg((*i)->getName());
+												.arg((*i)->getName(nullptr));
 						popup(new CraftErrorState(this, msg));
 					}
 				}
@@ -2427,7 +2427,7 @@ void GeoscapeState::time30Minutes()
 							const std::wstring msg = tr("STR_NOT_ENOUGH_ITEM_TO_REFUEL_CRAFT_AT_BASE")
 													.arg(tr(refuelItem))
 													.arg((*j)->getName(_game->getLanguage()))
-													.arg((*i)->getName());
+													.arg((*i)->getName(nullptr));
 							popup(new CraftErrorState(this, msg));
 						}
 					}
@@ -2649,7 +2649,7 @@ void GeoscapeState::time1Hour()
 		{
 			resetTimer();
 			popup(new ErrorMessageState(
-								tr("STR_STORAGE_EXCEEDED").arg((*i)->getName()),
+								tr("STR_STORAGE_EXCEEDED").arg((*i)->getName(nullptr)),
 								_palette,
 								_rules->getInterface("geoscape")->getElement("errorMessage")->color,
 								"BACK12.SCR", // "BACK13.SCR"
@@ -2802,7 +2802,7 @@ void GeoscapeState::time1Day()
 
 							popup(new SoldierDiedState(
 													(*j)->getName(),
-													(*i)->getName()));
+													(*i)->getName(nullptr)));
 
 							(*j)->die(_gameSave); // holy * This copies the Diary-object
 							// so to delete Soldier-instance I need to use a CopyConstructor

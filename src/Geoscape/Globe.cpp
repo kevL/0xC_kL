@@ -2028,7 +2028,7 @@ void Globe::drawDetail()
 
 					label->setX(x - 3);
 					label->setY(y - 10);
-					label->setText((*i)->getName());
+					label->setText((*i)->getName(nullptr));
 
 					label->blit(_countries);
 				}

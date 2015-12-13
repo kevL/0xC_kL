@@ -263,7 +263,7 @@ SoldierInfoState::SoldierInfoState(
 	_btnArmor->onMouseClick((ActionHandler)& SoldierInfoState::btnArmorClick);
 
 	_edtSoldier->setBig();
-	_edtSoldier->onChange((ActionHandler)& SoldierInfoState::edtSoldierChange);
+	_edtSoldier->onTextChange((ActionHandler)& SoldierInfoState::edtSoldierChange);
 
 	_btnSack->setText(tr("STR_SACK"));
 	_btnSack->onMouseClick((ActionHandler)& SoldierInfoState::btnSackClick);
