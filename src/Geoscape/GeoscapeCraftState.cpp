@@ -145,21 +145,45 @@ GeoscapeCraftState::GeoscapeCraftState(
 
 	_btnCenter->setText(tr("STR_CENTER"));
 	_btnCenter->onMouseClick((ActionHandler)& GeoscapeCraftState::btnCenterClick);
+	_btnCenter->onKeyboardPress(
+					(ActionHandler)& GeoscapeCraftState::btnCenterClick,
+					SDLK_c);
 
 	_btnBase->setText(tr("STR_RETURN_TO_BASE"));
 	_btnBase->onMouseClick((ActionHandler)& GeoscapeCraftState::btnBaseClick);
+	_btnBase->onKeyboardPress(
+					(ActionHandler)& GeoscapeCraftState::btnBaseClick,
+					SDLK_b);
 
 	_btnTarget->setText(tr("STR_SELECT_NEW_TARGET"));
 	_btnTarget->onMouseClick((ActionHandler)& GeoscapeCraftState::btnTargetClick);
+	_btnTarget->onKeyboardPress(
+					(ActionHandler)& GeoscapeCraftState::btnTargetClick,
+					SDLK_t);
 
 	_btnPatrol->setText(tr("STR_PATROL"));
 	_btnPatrol->onMouseClick((ActionHandler)& GeoscapeCraftState::btnPatrolClick);
+	_btnPatrol->onKeyboardPress(
+					(ActionHandler)& GeoscapeCraftState::btnPatrolClick,
+					SDLK_p);
 
-	_btnCancel->onMouseClick((ActionHandler)& GeoscapeCraftState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& GeoscapeCraftState::btnCancelClick,
-					Options::keyCancel);
-	_btnCancel->onKeyboardPress(
+	_btnCancel->onMouseClick((ActionHandler)& GeoscapeCraftState::btnCancelClick); // Note this doubles as the Redirect btn.
+	if (_waypoint != nullptr) // can Redirect
+	{
+		_btnPatrol->onKeyboardPress(
+						(ActionHandler)& GeoscapeCraftState::btnPatrolClick,
+						Options::keyCancel);
+		_btnCancel->onKeyboardPress(
+						(ActionHandler)& GeoscapeCraftState::btnCancelClick,
+						SDLK_r);
+	}
+	else
+	{
+		_btnCancel->onKeyboardPress(
+						(ActionHandler)& GeoscapeCraftState::btnCancelClick,
+						Options::keyCancel);
+	}
+	_btnCancel->onKeyboardPress( // if (can Redirect) redirect; else Cancel.
 					(ActionHandler)& GeoscapeCraftState::btnCancelClick,
 					Options::keyOk);
 	_btnCancel->onKeyboardPress(
