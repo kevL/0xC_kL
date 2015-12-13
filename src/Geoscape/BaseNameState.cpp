@@ -78,12 +78,14 @@ BaseNameState::BaseNameState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->setVisible(false); // something must be in the name before it is acceptable
+	_btnOk->setVisible(false); // something must be in the name before it's acceptable
 	_btnOk->onMouseClick((ActionHandler)& BaseNameState::btnOkClick);
-//	_btnOk->onKeyboardPress((ActionHandler)& BaseNameState::btnOkClick, Options::keyOk);
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& BaseNameState::btnOkClick,
-					Options::keyCancel);
+					Options::keyOk);
+	_btnOk->onKeyboardPress(
+					(ActionHandler)& BaseNameState::btnOkClick,
+					Options::keyOkKeypad);
 
 	_txtTitle->setText(tr("STR_BASE_NAME"));
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -112,12 +114,13 @@ void BaseNameState::edtLabelChange(Action* action)
 		_btnOk->setVisible(false);
 	else
 	{
-		_btnOk->setVisible();
-		if (action->getDetails()->key.keysym.sym == Options::keyOk
-			|| action->getDetails()->key.keysym.sym == Options::keyOkKeypad)
+		if (action->getDetails()->key.keysym.sym == Options::keyCancel)
 		{
-			btnOkClick(action);
+			_btnOk->setVisible(false);
+			_edtName->setText(L"");
 		}
+		else
+			_btnOk->setVisible();
 	}
 }
 
