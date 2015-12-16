@@ -1103,7 +1103,7 @@ int UnitWalkBState::getFinalDirection() const // private.
 		}
 
 		if (facedUnit != nullptr)
-			return _unit->directionTo(facedUnit->getPosition());
+			return TileEngine::getDirectionTo(_unit->getPosition(), facedUnit->getPosition());
 	}
 
 	return -1;

@@ -75,10 +75,7 @@ ActionMenuState::ActionMenuState(
 			i != MENU_ITEMS;
 			++i)
 	{
-		_menuSelect[i] = new ActionMenuItem(
-										i,
-										_game,
-										x,y);
+		_menuSelect[i] = new ActionMenuItem(i, _game, x,y);
 		add(_menuSelect[i]);
 
 		_menuSelect[i]->setVisible(false);
@@ -271,7 +268,7 @@ void ActionMenuState::addItem( // private.
 		wst1, // acu
 		wst2; // tu
 
-	if (bat == BA_THROW
+	if (   bat == BA_THROW
 		|| bat == BA_AIMEDSHOT
 		|| bat == BA_SNAPSHOT
 		|| bat == BA_AUTOSHOT

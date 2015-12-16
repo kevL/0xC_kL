@@ -285,7 +285,7 @@ void TextEdit::setNumerical(bool numerical)
 void TextEdit::setColor(Uint8 color)
 {
 	_text->setColor(color);
-	_caret->setColor(2);
+	_caret->setColor(color);
 }
 
 /**

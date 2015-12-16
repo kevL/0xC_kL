@@ -40,6 +40,7 @@
 #include "../Battlescape/BattlescapeState.h"
 #include "../Battlescape/Map.h"
 #include "../Battlescape/Pathfinding.h"
+#include "../Battlescape/TileEngine.h"
 
 #include "../Engine/Language.h"
 //#include "../Engine/Options.h"
@@ -834,7 +835,7 @@ void BattleUnit::setDirectionTo(
 		const Position& pos,
 		bool turret)
 {
-	const int dir = directionTo(pos);
+	const int dir = TileEngine::getDirectionTo(_pos, pos);
 	if (turret == true)
 	{
 		if (dir != _dirTurret)
@@ -1345,50 +1346,6 @@ void BattleUnit::aim(bool aim)
 
 	if (_visible == true)
 		_cacheInvalid = true;
-}
-
-/**
- * Returns the direction from this unit to a given point.
- * @note This function is almost identical to TileEngine::getDirectionTo().
- * @param pos - reference to a given position
- * @return, direction from here to there
- */
-int BattleUnit::directionTo(const Position& pos) const
-{
-	if (pos == _pos) // safety.
-		return 0;
-
-	const double
-		theta = std::atan2( // radians: + = y > 0; - = y < 0;
-						static_cast<double>(_pos.y - pos.y),
-						static_cast<double>(pos.x - _pos.x)),
-
-		// divide the pie in 4 thetas each at 1/8th before each quarter
-		pi_8 = M_PI / 8.,				// a circle divided into 16 sections (rads) -> 22.5 deg
-		d = 0.1,						// a bias toward cardinal directions. (0.1..0.12)
-		pie[4] =
-		{
-			M_PI - pi_8 - d,			// 2.7488935718910690836548129603696	-> 157.5 deg
-			M_PI * 3. / 4. - pi_8 + d,	// 1.9634954084936207740391521145497	-> 112.5 deg
-			M_PI_2 - pi_8 - d,			// 1.1780972450961724644234912687298	-> 67.5 deg
-			pi_8 + d					// 0.39269908169872415480783042290994	-> 22.5 deg
-		};
-
-	if (theta > pie[0] || theta < -pie[0])
-		return 6;
-	if (theta > pie[1])
-		return 7;
-	if (theta > pie[2])
-		return 0;
-	if (theta > pie[3])
-		return 1;
-	if (theta < -pie[1])
-		return 5;
-	if (theta < -pie[2])
-		return 4;
-	if (theta < -pie[3])
-		return 3;
-	return 2;
 }
 
 /**

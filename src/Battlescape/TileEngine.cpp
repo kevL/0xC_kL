@@ -715,7 +715,7 @@ void TileEngine::calculateFOV(
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		if (distanceSqr(pos, (*i)->getPosition(), false) <= MAX_VIEW_DISTANCE_SQR)
+		if (distanceSqr(pos, (*i)->getPosition(), false) <= MAX_VIEW_DISTANCE_SQR + 1) // +1 for ...
 			calculateFOV(*i);
 	}
 	_spotSound = true;
@@ -2049,27 +2049,23 @@ BattleUnit* TileEngine::hit(
 			{
 				case DT_AP:
 					power = ((power * 3) + 19) / 20;	// 15%
-				break;
-
+					break;
 				case DT_LASER:
 					if (tile->getMapData(partType)->getSpecialType() != ALIEN_ALLOYS)
 						power = (power + 4) / 5;		// 20% // problem: Fusion Torch; fixed, heh.
-				break;
-
+					break;
 				case DT_IN:
 					power = (power + 3) / 4;			// 25%
-				break;
-
+					break;
 				case DT_PLASMA:
 					power = (power + 2) / 3;			// 33%
-				break;
-
+					break;
 				case DT_MELEE:							// TODO: define 2 terrain types, Soft & Hard; so that edged weapons do good vs. Soft, blunt weapons do good vs. Hard
 					power = (power + 1) / 2;			// 50% TODO: allow melee attacks vs. objects.
-				break;
-
+					break;
 				case DT_HE:								// question: do HE & IN ever get in here - hit() or explode() below
 					power += power / 10;				// 110%
+
 //				break;
 //				case DT_ACID: // 100% damage
 //				default: // [DT_NONE],[DT_STUN,DT_SMOKE]
@@ -6426,7 +6422,6 @@ int TileEngine::distanceSqr( // static.
 
 /**
  * Returns the direction from origin to target.
- * @note This function is almost identical to BattleUnit::directionTo().
  * @param posOrigin - reference to the origin point of the action
  * @param posTarget - reference to the target point of the action
  * @return, direction
@@ -6445,7 +6440,7 @@ int TileEngine::getDirectionTo( // static.
 
 		// divide the pie in 4 thetas each at 1/8th before each quarter
 		pi_8 = M_PI / 8.,				// a circle divided into 16 sections (rads) -> 22.5 deg
-		d = 0.1,						// a bias toward cardinal directions. (0.1..0.12)
+		d = 0.,							// a bias toward cardinal directions. (0.1..0.12)
 		pie[4] =
 		{
 			M_PI - pi_8 - d,			// 2.7488935718910690836548129603696	-> 157.5 deg

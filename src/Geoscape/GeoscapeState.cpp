@@ -2791,9 +2791,9 @@ void GeoscapeState::time1Day()
 						chanceDeath = static_cast<int>(std::ceil(
 									  static_cast<float>(chanceDeath) * healthFactor));
 
-						const int roll (RNG::generate(1,1000));
+//						const int roll (RNG::generate(1,1000));
 						//Log(LOG_INFO) << ". . chance to Die = " << chanceDeath << " roll = " << roll;
-						if (roll <= chanceDeath)
+						if (RNG::generate(1,1000) <= chanceDeath)
 						{
 							//Log(LOG_INFO) << "he's dead, Jim!!";
 							resetTimer();
@@ -2830,8 +2830,7 @@ void GeoscapeState::time1Day()
 
 		if ((*i)->getAvailablePsiLabs() != 0) // handle psi-training and AutoStat.
 		{
-			bool sortSoldiers = false;
-
+//			bool sortSoldiers = false;
 			for (std::vector<Soldier*>::const_iterator
 					j = (*i)->getSoldiers()->begin();
 					j != (*i)->getSoldiers()->end();
@@ -2840,13 +2839,12 @@ void GeoscapeState::time1Day()
 				if ((*j)->trainPsiDay() == true)
 				{
 					(*j)->autoStat();
-					sortSoldiers = true;
+//					sortSoldiers = true;
 				}
 //				(*j)->calcStatString(_rules->getStatStrings(), Options::psiStrengthEval && _gameSave->isResearched(_rules->getPsiRequirements()));
 			}
-
-			if (sortSoldiers == true)
-				(*i)->sortSoldiers();
+//			if (sortSoldiers == true)
+//				(*i)->sortSoldiers();
 		}
 
 

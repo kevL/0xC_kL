@@ -1882,7 +1882,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 								node->getPosition(),
 								posCraft) < 25)
 		{
-			dir = unit->directionTo(posCraft);
+			dir = TileEngine::getDirectionTo(unit->getPosition(), posCraft);
 		}
 		else
 			dir = _battleSave->getTileEngine()->faceWindow(node->getPosition());

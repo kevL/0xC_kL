@@ -109,7 +109,6 @@ private:
 		_skillApplied,
 		_strengthApplied,
 		_twoHanded;
-//		_underwaterOnly;
 	int
 		_armor,
 		_attraction,

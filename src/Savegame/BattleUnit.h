@@ -392,9 +392,6 @@ private:
 		/// Aims this unit's weapon.
 		void aim(bool aim = true);
 
-		/// Gets direction to a certain point.
-		int directionTo(const Position& pos) const;
-
 		/// Gets this unit's time units.
 		int getTimeUnits() const;
 		/// Gets this unit's stamina.

@@ -3091,16 +3091,19 @@ void Base::sortSoldiers()
 			   + stats->stamina		*  5
 			   + stats->health		*  7
 			   + stats->bravery		*  3
-			   + stats->reactions	* 21
+			   + stats->reactions	* 16
 			   + stats->firing		* 19
 			   + stats->throwing	*  1
-			   + stats->strength	* 24
-			   + stats->melee		*  2;
+			   + stats->strength	* 23
+			   + stats->melee		*  6;
 		// also: rank, missions, kills
 
-		if (stats->psiSkill != 0) // don't include Psi unless revealed.
-			weight += stats->psiStrength * 22
-					+ stats->psiSkill	 * 11;
+		if (stats->psiSkill != 0 // don't include Psi unless revealed.
+			&& stats->psiStrength > 45)
+		{
+			weight += stats->psiStrength * 27
+					+ stats->psiSkill	 * 99;
+		}
 
 		soldiersOrdered.insert(std::pair<int, Soldier*>(weight, *i));
 		// NOTE: unsure if multimap loses a player-preferred

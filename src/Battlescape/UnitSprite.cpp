@@ -1195,7 +1195,7 @@ void UnitSprite::drawRoutine6()
 
 	// magic numbers
 	const int
-		Torso		= 24,
+		torso1		= 24,
 		legsStand	= 16,
 		die			= 96,
 
@@ -1235,7 +1235,7 @@ void UnitSprite::drawRoutine6()
 		unitDir		= _unit->getUnitDirection(),
 		walkPhase	= _unit->getWalkPhase();
 
-	torso = _unitSurface->getFrame(Torso + _unit->getUnitDirection());
+	torso = _unitSurface->getFrame(torso1 + _unit->getUnitDirection());
 	leftArm = _unitSurface->getFrame(larmStand + _unit->getUnitDirection());
 	rightArm = _unitSurface->getFrame(rarmStand + _unit->getUnitDirection());
 
