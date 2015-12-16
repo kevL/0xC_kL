@@ -332,12 +332,12 @@ void CivilianBAIState::setupEscape()
 	const Tile* tile;
 	Position posBest (0,0,0);
 
-	Pathfinding* const pf = _battleSave->getPathfinding();
+	Pathfinding* const pf (_battleSave->getPathfinding());
 	pf->setPathingUnit(_unit);
-	std::vector<int> reachable = pf->findReachable(_unit, tu);
+	std::vector<int> reachable (pf->findReachable(_unit, tu));
 
-	std::vector<Position> tileSearch = _battleSave->getTileSearch();
-	RNG::shuffle(tileSearch);
+	std::vector<Position> tileSearch (_battleSave->getTileSearch());
+	RNG::shuffle(tileSearch.begin(), tileSearch.end());
 
 	bool coverFound = false;
 	size_t tries = 0;

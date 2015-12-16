@@ -985,15 +985,15 @@ void AlienBAIState::setupEscape() // private.
 		dist = 0;
 
 	// weights of various factors in choosing a tile to which to withdraw
-	const int unitsSpotting = countSpottingUnits(_unit->getPosition());
+	const int unitsSpotting (countSpottingUnits(_unit->getPosition()));
 
 	Position bestTile (0,0,0);
 	const Tile* tile;
 
-	std::vector<Position> tileSearch = _battleSave->getTileSearch();
-	RNG::shuffle(tileSearch);
+	std::vector<Position> tileSearch (_battleSave->getTileSearch());
+	RNG::shuffle(tileSearch.begin(), tileSearch.end());
 
-	Pathfinding* const pf = _battleSave->getPathfinding();
+	Pathfinding* const pf (_battleSave->getPathfinding());
 	pf->setPathingUnit(_unit);
 
 	while (tries < 150 && coverFound == false)
@@ -1728,8 +1728,8 @@ bool AlienBAIState::findFirePoint() // private.
 	if (selectClosestKnownEnemy() == false)
 		return false;
 
-	std::vector<Position> tileSearch = _battleSave->getTileSearch();
-	RNG::shuffle(tileSearch);
+	std::vector<Position> tileSearch (_battleSave->getTileSearch());
+	RNG::shuffle(tileSearch.begin(), tileSearch.end());
 
 	_attackAction->type = BA_RETHINK;
 
@@ -1742,7 +1742,7 @@ bool AlienBAIState::findFirePoint() // private.
 	int
 		bestTileScore = 0,
 		tileScore;
-	Pathfinding* const pf = _battleSave->getPathfinding();
+	Pathfinding* const pf (_battleSave->getPathfinding());
 	pf->setPathingUnit(_unit);
 
 	for (std::vector<Position>::const_iterator

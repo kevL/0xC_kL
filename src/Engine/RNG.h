@@ -23,55 +23,51 @@
 #include <algorithm>
 #include <cstdint>
 
-//#define __STDC_LIMIT_MACROS
-//#include <stdint.h>
-
 
 namespace OpenXcom
 {
 
 /**
- * Random Number Generator used throughout the game for all your random needs.
- @note Uses a 64-bit xorshift pseudo-random number generator.
+ * Random Number Generator(s) used throughout the game for all your random needs.
+ @note Uses a 64-bit xorshift* pseudo-random number generator.
  */
 namespace RNG
 {
 
 /// Advances the internal RNG.
-uint64_t next();
+uint64_t next_x();
+/// Advances the external RNG.
+uint64_t next_y();
 
-/// Gets the seed in use.
+/// Gets the internal seed in use.
 uint64_t getSeed();
-/// Sets the seed in use.
+/// Sets the internal/external seed(s) in use.
 void setSeed(uint64_t seed = 0);
 
-/// Generates a random integer number, inclusive.
+/// Generates an integer, inclusive.
 int generate(
 		int valMin,
 		int valMax);
-/// Generates a random floating-point number.
+/// Generates a floating-point value, inclusive.
 double generate(
 		double valMin,
 		double valMax);
 
-/// Generates a random integer number inclusive (non-seed version).
+/// Generates an integer, inclusive (external version).
 int seedless(
 		int valMin,
 		int valMax);
 
-/// Get normally distributed value.
+/// Gets a normally distributed value.
 double boxMuller(
 		double mean = 0.,
 		double deviation = 1.);
 
-/// Generates a percentage chance.
+/// Decides if a percentage chance succeeds.
 bool percent(int valPct);
 
-/// Generates a random integer number, exclusive.
-//int generateExclusive(int valMax);
-
 /// Gets the external RNG.
-std::mt19937& getCrapShooter();
+//std::mt19937& getCrapShooter();
 
 /// Picks an entry from a vector.
 size_t pick(size_t valSize);
@@ -81,20 +77,31 @@ size_t pick(
 		bool);
 
 
-/// Shuffles a list randomly.
 /**
- * Randomly changes the orders of the elements in a list.
- * @param container - the container to randomize
+ * Shuffles elements in an STL container.
+ * @note Based on std::random_shuffle() using the internal RNG.
+ * @param first	- first element
+ * @param last	- last element
  */
-template<typename T>
-void shuffle(T& container)
+template<class itRand>
+void shuffle(
+		itRand first,
+		itRand last)
 {
-//	std::random_shuffle(
-	std::shuffle(
-			container.begin(),
-			container.end(),
-			RNG::getCrapShooter());
-//			generateExclusive);
+    typename std::iterator_traits<itRand>::difference_type
+		delta,
+		i;
+
+    delta = last - first;
+    for (
+			i = delta - 1;
+			i > 0;
+			--i)
+	{
+		std::swap(
+				first[i],
+				first[next_x() % (i + 1)]);
+	}
 }
 
 }

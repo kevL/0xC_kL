@@ -19,25 +19,10 @@
 
 #include "RNG.h"
 
-/*
-#include <math.h>
-#include <time.h>
-#include <stdlib.h>
-
-#ifndef UINT64_MAX
-#	define UINT64_MAX 0xffffffffffffffffULL
-#endif */
-
-// Or:
-//#include <cmath>
-//#include <limits>
 #include <chrono>
-//#include <ctime>
 #include <random>
 
 #include "../fmath.h"
-
-//#include "Logger.h"
 
 
 namespace OpenXcom
@@ -59,89 +44,96 @@ See <http://creativecommons.org/publicdomain/zero/1.0/>. */
 	xorshift1024* (for speed and very long period) generator. */
 
 
-//uint64_t x = std::time(0); // The state must be seeded with a nonzero value.
-uint64_t x;
+uint64_t
+	x, // internal RNG
+	y; // external RNG
+// Note: 'internal' means the state is saved to file. 'external' will be used
+// for throwaway values such as animation states. The idea is to preserve the
+// internal RNG so that it will reproduce predictable results for testing or
+// debugging and so it cannot be subject to user-induced temporal anomalies
+// (such as the duration between mouse-clicks). Be aware that this is
+// problematic on the Geoscape, since events there will access the internal RNG.
 
-uint64_t crapShot;
-std::mt19937 crapShooter;
 
-
-uint64_t next()
+/**
+ * Advances the internal RNG.
+ * @return, next integer
+ */
+uint64_t next_x()
 {
 	x ^= x >> 12; // a
 	x ^= x << 25; // b
 	x ^= x >> 27; // c
 
-	//Log(LOG_INFO) << "rng:next(x) " << x;
-	//Log(LOG_INFO) << "rng:next(ret) " << (x * 2685821657736338717ULL);
-	return x * 2685821657736338717ULL;
+	return x * 2685821657736338717uLL;
 }
 
 /**
- * Returns the current seed in use by the generator.
+ * Advances the external RNG.
+ * @return, next integer
+ */
+uint64_t next_y()
+{
+	y ^= y >> 12; // a
+	y ^= y << 25; // b
+	y ^= y >> 27; // c
+
+	return y * 2685821657736338717uLL;
+}
+
+/**
+ * Returns the current state-value of the internal generator.
  * @return, the SAVE seed
  */
 uint64_t getSeed()
 {
-	//Log(LOG_INFO) << "rng:getSeed() " << x;
 	return x;
 }
 
 /**
- * Changes the current seed in use by the generator.
+ * Seeds both the internal and external generators.
  * @param seed - the LOAD seed (default 0 reset)
  */
 void setSeed(uint64_t seed)
 {
-	//Log(LOG_INFO) << "rng:setSeed()";
-	crapShot = static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count());
-	crapShooter.seed (static_cast<uint32_t>(crapShot));
+	y = static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count());
 
 	if (seed == 0)
-	{
-//		x = std::time(nullptr);
-		x = crapShot;
-		//Log(LOG_INFO) << ". reseed w/ <chrono> = " << x;
-		//Log(LOG_INFO) << ". reseed w/ time() = " << std::time(nullptr);
-	}
+		x = y + 1uLL;
 	else
-	{
 		x = seed;
-		//Log(LOG_INFO) << ". seed = " << x;
-	}
 }
 
 /**
- * Generates a random integer number within a certain range.
+ * Generates a uniformly distributed random integer within the specified range.
  * @param valMin - minimum number, inclusive
  * @param valMax - maximum number, inclusive
- * @return, generated number
+ * @return, generated value
  */
 int generate(
 		int valMin,
 		int valMax)
 {
-	//Log(LOG_INFO) << "rng:generate(int)";
 	if (valMin == valMax)
 		return valMin;
 
 	if (valMin > valMax)
 		std::swap(valMin, valMax);
 
-	return static_cast<int>(next() % (valMax - valMin + 1)) + valMin;
+	return static_cast<int>(next_x() % (valMax - valMin + 1)) + valMin;
 }
 
 /**
- * Generates a random decimal number within a certain range.
- * @param valMin - minimum number
- * @param valMax - maximum number
- * @return, generated number
+ * Generates a uniformly distributed random floating-point value within the
+ * specified range.
+ * @param valMin - minimum number, inclusive
+ * @param valMax - maximum number, inclusive
+ * @return, generated value
  */
 double generate(
 		double valMin,
 		double valMax)
 {
-	//Log(LOG_INFO) << "rng:generate(double)";
 	double delta (valMax - valMin);
 	if (AreSame(delta, 0.))
 		return valMin;
@@ -150,29 +142,27 @@ double generate(
 	if (AreSame(delta, 0.))
 		return valMin;
 
-	return (static_cast<double>(next()) / delta) + valMin;
+	return (static_cast<double>(next_x()) / delta) + valMin;
 }
 
 /**
- * Generates a random integer number within a certain range.
- * @note Distinct from "generate" in that it doesn't touch the seed.
- * @param min - minimum number inclusive
- * @param max - maximum number inclusive
- * @return, generated number
+ * Generates a uniformly distributed random integer within the specified range.
+ * @note Distinct from "generate" in that it uses the external generator.
+ * @param min - minimum number, inclusive
+ * @param max - maximum number, inclusive
+ * @return, generated value
  */
 int seedless(
 		int valMin,
 		int valMax)
 {
-	//Log(LOG_INFO) << "rng:generate(int)";
 	if (valMin == valMax)
 		return valMin;
 
 	if (valMin > valMax)
 		std::swap(valMin, valMax);
 
-//	return (std::rand() % (valMax - valMin + 1) + valMin);
-	return (crapShooter() % (valMax - valMin + 1) + valMin);
+	return (next_y() % (valMax - valMin + 1) + valMin);
 }
 
 /*
@@ -193,13 +183,12 @@ double boxMuller(
 		double mean,
 		double deviation)
 {
-	//Log(LOG_INFO) << "rng:boxMuller()";
 	static bool use_last;
 
 	static double y2;
 	double y1;
 
-	if (use_last) // use value from previous call
+	if (use_last) // use value from the previous call
 	{
 		use_last = false;
 		y1 = y2;
@@ -227,13 +216,12 @@ double boxMuller(
 }
 
 /**
- * Generates a random percent chance of an event occurring and returns the result.
- * @param valPct - value percentage (0-100%)
- * @return, true if the chance succeeded
+ * Decides whether a percentage chance happens successfully.
+ * @param valPct - value as a percentage (accepts values less than 0 or greater than 100)
+ * @return, true if succeeded
  */
 bool percent(int valPct)
 {
-	//Log(LOG_INFO) << "rng:percent()";
 	if (valPct < 1)
 		return false;
 
@@ -241,29 +229,6 @@ bool percent(int valPct)
 		return true;
 
 	return (generate(0,99) < valPct);
-}
-
-/*
- * Generates a random positive integer up to a number.
- * @param valMax - maximum number exclusive
- * @return, generated number
- *
-int generateExclusive(int valMax)
-{
-	//Log(LOG_INFO) << "rng:generateExclusive()";
-	if (valMax < 2)
-		return 0;
-
-	return static_cast<int>(next() % valMax);
-} */
-
-/**
- * Gets the external RNG.
- * @return, reference to the mersenne-twister generator
- */
-std::mt19937& getCrapShooter()
-{
-	return crapShooter;
 }
 
 /**

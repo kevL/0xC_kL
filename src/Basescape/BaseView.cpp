@@ -430,18 +430,18 @@ void BaseView::reCalcQueuedBuildings()
 
 	while (facilities.empty() == false) // applying a simple Dijkstra Algorithm
 	{
-		std::vector<BaseFacility*>::const_iterator fac = facilities.begin();
+		std::vector<BaseFacility*>::const_iterator pFac = facilities.begin();
 		for (std::vector<BaseFacility*>::iterator
 				i = facilities.begin();
 				i != facilities.end();
 				++i)
 		{
-			if ((*i)->getBuildTime() < (*fac)->getBuildTime())
-				fac = i;
+			if ((*i)->getBuildTime() < (*pFac)->getBuildTime())
+				pFac = i;
 		}
 
-		BaseFacility* const facility = *fac;
-		facilities.erase(fac);
+		BaseFacility* const facility = *pFac;
+		facilities.erase(pFac);
 
 		const RuleBaseFacility* const facRule = facility->getRules();
 		const size_t
