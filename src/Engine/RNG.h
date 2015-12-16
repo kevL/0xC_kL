@@ -66,9 +66,6 @@ double boxMuller(
 /// Decides if a percentage chance succeeds.
 bool percent(int valPct);
 
-/// Gets the external RNG.
-//std::mt19937& getCrapShooter();
-
 /// Picks an entry from a vector.
 size_t pick(size_t valSize);
 /// Picks an entry from a vector using the external generator.
