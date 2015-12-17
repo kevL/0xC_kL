@@ -9,9 +9,9 @@
 
 // not work: _DEBUG .... always uses the '_r' string
 //#ifdef _DEBUG
-//#	define RC_FILE "0xC_kL_d.exe\0"
+#	define RC_FILE "0xC_kL_d.exe\0"
 //#else
-#	define RC_FILE "0xC_kL_r.exe\0"
+//#	define RC_FILE "0xC_kL_r.exe\0"
 //#endif
 
 #define RC_DESC "0xC_kL\0"

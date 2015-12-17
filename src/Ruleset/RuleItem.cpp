@@ -55,7 +55,7 @@ RuleItem::RuleItem(const std::string& type)
 		_aimRange(20),
 		_snapRange(10),
 		_autoRange(5),
-		_minRange(0), // should be -1 so unit can shoot it's own tile (don't ask why .. just for logical consistency)
+		_minRange(0), // should be -1 so unit can shoot its own tile (don't ask why .. just for logical consistency)
 		_dropoff(1),
 		_accuracyAimed(0),
 		_accuracySnap(0),

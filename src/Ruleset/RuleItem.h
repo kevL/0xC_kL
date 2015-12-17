@@ -88,7 +88,7 @@ class SurfaceSet;
 
 /**
  * Represents a specific type of item.
- * Contains constant info about an item like storage size, sell price, etc.
+ * @note Contains constant info about an item like storage size, sell price, etc.
  * @sa Item
  */
 class RuleItem
