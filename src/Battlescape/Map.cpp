@@ -595,7 +595,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 			} */
 		}
 	}
-	else _smoothingEngaged = false; // no projectile OR explosions-waiting
+	else
+		_smoothingEngaged = false; // no projectile OR explosions-waiting
 
 	const bool pathPreviewed = _battleSave->getPathfinding()->isPathPreviewed();
 	NumberText* numWp = nullptr;
@@ -1719,11 +1720,12 @@ void Map::drawTerrain(Surface* const surface) // private.
 					}
 					// end waypoints.
 
-// Draw Map's border-sprite only on ground tiles
-					if (itZ == _battleSave->getGroundLevel()
-						|| (itZ == 0 && _battleSave->getGroundLevel() == -1))
+// Draw battlefield border-marks only on ground-level tiles
+					if ((itZ == _battleSave->getGroundLevel()
+							|| (itZ == 0 && _battleSave->getGroundLevel() == -1))
+						&& _tile->getUnit() == nullptr)
 					{
-						if (itX == 0
+						if (   itX == 0
 							|| itX == _battleSave->getMapSizeX() - 1
 							|| itY == 0
 							|| itY == _battleSave->getMapSizeY() - 1)
