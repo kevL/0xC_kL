@@ -50,6 +50,7 @@ class GraphsState
 
 private:
 	static const size_t GRAPH_BUTTONS = 19; // # visible btns. Does not include TOTAL btn.
+	static const int GRIDCELLS = 9;
 
 	bool
 		_alien,

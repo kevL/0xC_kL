@@ -1304,9 +1304,8 @@ void GraphsState::updateScale( // private.
 		float valLow,
 		float valHigh)
 {
-	float delta = std::max(
-						10.f,
-						(valHigh - valLow) / 9.f);
+	const float delta = std::max(10.f,
+								(valHigh - valLow) / static_cast<float>(GRIDCELLS));
 	for (size_t
 			i = 0;
 			i != 10;
@@ -1384,33 +1383,27 @@ void GraphsState::drawRegionLines() // private.
 		}
 	}
 
-	// adjust the scale to fit the upward maximum
-	const float low = static_cast<float>(scaleLow);
-	float delta = static_cast<float>(scaleHigh - scaleLow);
 
-	int
-		test = 10,
-		grid = 9; // cells in grid
+	const int // adjust the scale to fit the upward maximum
+		low = scaleLow,
+		delta = scaleHigh - scaleLow;
 
-	while (delta > static_cast<float>(test * grid))
+	int test = 2; // was, 10
+	while (delta > GRIDCELLS * test)
 		test *= 2;
 
 	scaleLow = 0;
-	scaleHigh = test * grid;
+	scaleHigh = GRIDCELLS * test;
 
-	if (low < 0.f)
+	while (low < scaleLow)
 	{
-		while (low < static_cast<float>(scaleLow))
-		{
-			scaleLow -= test;
-			scaleHigh -= test;
-		}
+		scaleLow -= test;
+		scaleHigh -= test;
 	}
 
 	// Figure out how many units to the pixel then plot the points for the graph
 	// and connect the dots.
-	delta = static_cast<float>(scaleHigh - scaleLow);
-	const float pixelUnits = delta / 126.f;
+	const float pixelUnits = static_cast<float>(scaleHigh - scaleLow) / 126.f;
 
 	Uint8 color = 0;
 	int reduction;
@@ -1419,8 +1412,7 @@ void GraphsState::drawRegionLines() // private.
 	std::vector<Sint16> lineVector;
 	Region* region;
 
-	// draw region lines
-	for (size_t
+	for (size_t // draw region lines
 			i = 0;
 			i != _game->getSavedGame()->getRegions()->size();
 			++i, ++color)
@@ -1596,33 +1588,27 @@ void GraphsState::drawCountryLines() // private.
 		}
 	}
 
-	// adjust the scale to fit the upward maximum
-	const float low = static_cast<float>(scaleLow);
-	float delta = static_cast<float>(scaleHigh - scaleLow);
 
-	int
-		test = 10,
-		grid = 9; // cells in grid
+	const int // adjust the scale to fit the upward maximum
+		low = scaleLow,
+		delta = scaleHigh - scaleLow;
 
-	while (delta > static_cast<float>(test * grid))
+	int test = 2; // was, 10
+	while (delta > GRIDCELLS * test)
 		test *= 2;
 
 	scaleLow = 0;
-	scaleHigh = test * grid;
+	scaleHigh = GRIDCELLS * test;
 
-	if (low < 0.f)
+	while (low < scaleLow)
 	{
-		while (low < static_cast<float>(scaleLow))
-		{
-			scaleLow -= test;
-			scaleHigh -= test;
-		}
+		scaleLow -= test;
+		scaleHigh -= test;
 	}
 
 	// Figure out how many units to the pixel then plot the points for the graph
 	// and connect the dots.
-	delta = static_cast<float>(scaleHigh - scaleLow);
-	const float pixelUnits = delta / 126.f;
+	const float pixelUnits = static_cast<float>(scaleHigh - scaleLow) / 126.f;
 
 	Uint8 color = 0;
 	int reduction;
@@ -1631,8 +1617,7 @@ void GraphsState::drawCountryLines() // private.
 	std::vector<Sint16> lineVector;
 	Country* country;
 
-	// draw country lines
-	for (size_t
+	for (size_t // draw country lines
 			i = 0;
 			i != _game->getSavedGame()->getCountries()->size();
 			++i, ++color)
@@ -1893,29 +1878,6 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 		}
 	}
 
-
-	const float low = static_cast<float>(scaleLow);
-	float delta = static_cast<float>(scaleHigh - scaleLow);
-
-	int
-		test = 100,
-		grid = 9; // cells in grid
-
-	while (delta > static_cast<float>(test * grid))
-		test *= 2;
-
-	scaleLow = 0;
-	scaleHigh = test * grid;
-
-	if (low < 0.f)
-	{
-		while (low < static_cast<float>(scaleLow))
-		{
-			scaleLow -= test;
-			scaleHigh -= test;
-		}
-	}
-
 	for (size_t // toggle screens
 			i = 0;
 			i != 5;
@@ -1925,10 +1887,27 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 		_financeLines.at(i)->clear();
 	}
 
+
+	const int // adjust the scale to fit the upward maximum
+		low = scaleLow,
+		delta = scaleHigh - scaleLow;
+
+	int test = 20; // was, 100
+	while (delta > GRIDCELLS * test)
+		test *= 2;
+
+	scaleLow = 0;
+	scaleHigh = GRIDCELLS * test;
+
+	while (low < scaleLow)
+	{
+		scaleLow -= test;
+		scaleHigh -= test;
+	}
+
 	// Figure out how many units to the pixel then plot the points for the graph
 	// and connect the dots.
-	delta = static_cast<float>(scaleHigh - scaleLow);
-	const float pixelUnits = delta / 126.f;
+	const float pixelUnits = static_cast<float>(scaleHigh - scaleLow) / 126.f;
 
 	Uint8 color;
 	Sint16
