@@ -421,8 +421,8 @@ void Projectile::applyAccuracy( // private.
 				//Log(LOG_INFO) << ". deviation = " << deviation;
 
 				// The angle deviations are spread using a normal distribution:
-				deltaHori = RNG::boxMuller(0., deviation / div_HORI);	// horizontal miss in radians
-				deltaVert = RNG::boxMuller(0., deviation / div_VERT);	// vertical miss in radians
+				deltaHori = RNG::boxMuller(0., deviation / div_HORI); // horizontal miss in radians
+				deltaVert = RNG::boxMuller(0., deviation / div_VERT); // vertical miss in radians
 			}
 			else
 			{
@@ -434,9 +434,11 @@ void Projectile::applyAccuracy( // private.
 		else // 2nd+ shot of burst.
 		{
 			// The angle deviations are spread using a normal distribution:
-			const double kick = static_cast<double>(itRule->getAutoKick()) * PCT;
-			deltaHori = RNG::boxMuller(0., kick / div_HORI);	// horizontal miss in radians
-			deltaVert = RNG::boxMuller(0., kick / div_VERT);	// vertical miss in radians
+			double kick = (static_cast<double>(itRule->getAutoKick()) * PCT)
+						- (static_cast<double>(_action.actor->getStrength()) / 1000.);
+			kick = std::max(kick, ACU_MIN);
+			deltaHori = RNG::boxMuller(0., kick / div_HORI); // horizontal miss in radians
+			deltaVert = RNG::boxMuller(0., kick / div_VERT); // vertical miss in radians
 		}
 		//Log(LOG_INFO) << "deltaHori = " << deltaHori;
 		//Log(LOG_INFO) << "deltaVert = " << deltaVert;
@@ -480,11 +482,14 @@ void Projectile::applyAccuracy( // private.
 		static const double OUTER_LIMIT = 3200.;
 		if (calcHori == true)
 		{
-			targetVoxel->x = static_cast<int>(Round(static_cast<double>(originVoxel.x) + OUTER_LIMIT * std::cos(te) * cos_fi));
-			targetVoxel->y = static_cast<int>(Round(static_cast<double>(originVoxel.y) + OUTER_LIMIT * std::sin(te) * cos_fi));
+			targetVoxel->x = static_cast<int>(Round(static_cast<double>(originVoxel.x)
+						   + OUTER_LIMIT * std::cos(te) * cos_fi));
+			targetVoxel->y = static_cast<int>(Round(static_cast<double>(originVoxel.y)
+						   + OUTER_LIMIT * std::sin(te) * cos_fi));
 		}
 		if (calcVert == true)
-			targetVoxel->z = static_cast<int>(Round(static_cast<double>(originVoxel.z) + OUTER_LIMIT * std::sin(fi)));
+			targetVoxel->z = static_cast<int>(Round(static_cast<double>(originVoxel.z)
+						   + OUTER_LIMIT * std::sin(fi)));
 	}
 	else // *** This is for Throwing /*and AcidSpitt*/ only ***
 	{
@@ -534,13 +539,13 @@ void Projectile::applyAccuracy( // private.
 
 		targetVoxel->x = std::max(0,
 							std::min((_battleSave->getMapSizeX() << 4) + 15,
-								targetVoxel->x));
+									  targetVoxel->x));
 		targetVoxel->y = std::max(0,
 							std::min((_battleSave->getMapSizeY() << 4) + 15,
-								targetVoxel->y));
+									  targetVoxel->y));
 		targetVoxel->z = std::max(0,
 							std::min(_battleSave->getMapSizeZ() * 24 + 23,
-								targetVoxel->z));
+									  targetVoxel->z));
 
 		if (_action.type == BA_THROW)
 		{
