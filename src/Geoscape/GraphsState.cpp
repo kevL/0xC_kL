@@ -1301,17 +1301,17 @@ void GraphsState::resetScreen() // private.
  * @param valHigh	- maximum value
  */
 void GraphsState::updateScale( // private.
-		float valLow,
-		float valHigh)
+		int valLow,
+		int valHigh)
 {
-	const float delta = std::max(10.f,
-								(valHigh - valLow) / static_cast<float>(GRIDCELLS));
+	const int delta = std::max(10,
+							  (valHigh - valLow) / GRIDCELLS);
 	for (size_t
 			i = 0;
 			i != 10;
 			++i)
 	{
-		_txtScale.at(i)->setText(Text::formatNumber(static_cast<int>(valLow)));
+		_txtScale.at(i)->setText(Text::formatNumber(valLow));
 		valLow += delta;
 	}
 }
@@ -1525,10 +1525,7 @@ void GraphsState::drawRegionLines() // private.
 	else
 		_xcomRegionLines.back()->setVisible(_regionToggles.back()->_pushed);
 
-	updateScale(
-			static_cast<float>(scaleLow),
-			static_cast<float>(scaleHigh));
-
+	updateScale(scaleLow, scaleHigh);
 	_txtFactor->setVisible(false);
 }
 
@@ -1759,10 +1756,7 @@ void GraphsState::drawCountryLines() // private.
 	else
 		_xcomCountryLines.back()->setVisible(_countryToggles.back()->_pushed);
 
-	updateScale(
-			static_cast<float>(scaleLow),
-			static_cast<float>(scaleHigh));
-
+	updateScale(scaleLow, scaleHigh);
 	_txtFactor->setVisible(_income);
 }
 
@@ -1980,10 +1974,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 		}
 	}
 
-	updateScale(
-			static_cast<float>(scaleLow),
-			static_cast<float>(scaleHigh));
-
+	updateScale(scaleLow, scaleHigh);
 	_txtFactor->setVisible();
 }
 

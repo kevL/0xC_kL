@@ -129,8 +129,8 @@ private:
 	void resetScreen();
 	/// Updates the scale.
 	void updateScale(
-			float valLow,
-			float valHigh);
+			int valLow,
+			int valHigh);
 
 	/// Decides which line-drawing-routine to call.
 	void drawLines();
