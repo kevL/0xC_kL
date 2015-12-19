@@ -49,8 +49,15 @@ class GraphsState
 {
 
 private:
-	static const size_t GRAPH_BUTTONS = 19; // # visible btns. Does not include TOTAL btn.
-	static const int GRIDCELLS = 9;
+	static const size_t
+		GRAPH_BUTTONS	= 19, // # visible btns. Does not include TOTAL btn.
+		TEXTS_y			= 10,
+		MONTHS_u			= 12;
+	static const int
+		MONTHS		= 12,
+		YEARS		= 6,
+		GRIDCELLS_y	= 9;
+	static const float PIXELS_y;
 
 	bool
 		_alien,

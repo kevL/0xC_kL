@@ -45,8 +45,8 @@ namespace Version
 
 /**
  * Gets a date/time in a human-readable string using the ISO 8601 standard.
- * @note This uses current runtime and is therefore apropos only as
- * a timestamp for a saved file eg.
+ * @note This uses current runtime and is therefore apropos only as a timestamp
+ * for a saved file eg.
  * @return, string of local time useful for saved files
  */
 std::string timeStamp()

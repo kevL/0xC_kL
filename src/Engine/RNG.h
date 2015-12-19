@@ -77,8 +77,8 @@ size_t pick(
 /**
  * Shuffles elements in an STL container.
  * @note Based on std::random_shuffle() using the internal RNG.
- * @param first	- first element
- * @param last	- last element
+ * @param first	- RAI to first element (random access iterator)
+ * @param last	- RAI to last element (random access iterator)
  */
 template<class itRand>
 void shuffle(

@@ -62,6 +62,8 @@ namespace OpenXcom
 static size_t recallRow = 0;
 static int currentPage = -1;
 
+const float GraphsState::PIXELS_y = 126.f;
+
 
 /**
  * Helper struct for scrolling past GRAPH_BUTTONS.
@@ -199,7 +201,7 @@ GraphsState::GraphsState()
 
 	for (size_t
 			i = 0;
-			i != 10;
+			i != TEXTS_y;
 			++i)
 	{
 		_txtScale.push_back(new Text(
@@ -597,12 +599,12 @@ GraphsState::GraphsState()
 
 	// i know using textlist for this is ugly and brutal, but YOU try getting this damn text to line up.
 	// also, there's nothing wrong with being ugly or brutal, you should learn tolerance. kL_note: and C++
-	_lstMonths->setColumns(12, 17,17,17,17,17,17,17,17,17,17,17,17); // 204 total
-	_lstMonths->addRow(12, L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ");
+	_lstMonths->setColumns(MONTHS, 17,17,17,17,17,17,17,17,17,17,17,17); // 204 total
+	_lstMonths->addRow(MONTHS, L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ");
 	_lstMonths->setMargin();
 
-	_lstYears->setColumns(6, 34,34,34,34,34,34); // 204 total
-	_lstYears->addRow(6, L" ",L" ",L" ",L" ",L" ",L" ");
+	_lstYears->setColumns(YEARS, 34,34,34,34,34,34); // 204 total
+	_lstYears->addRow(YEARS, L" ",L" ",L" ",L" ",L" ",L" ");
 	_lstYears->setMargin();
 
 
@@ -612,7 +614,7 @@ GraphsState::GraphsState()
 
 	for (size_t
 			i = 0;
-			i != 12;
+			i != MONTHS_u;
 			++i)
 	{
 		if (month > 11)
@@ -717,7 +719,7 @@ GraphsState::~GraphsState()
 			i != _regionToggles.size();
 			++i)
 	{
-		toggles.push_back(_regionToggles[i]->_pushed? '1': '0');
+		toggles.push_back(_regionToggles[i]->_pushed ? '1' : '0');
 		delete _regionToggles[i];
 	}
 	_game->getSavedGame()->setGraphRegionToggles(toggles);
@@ -728,7 +730,7 @@ GraphsState::~GraphsState()
 			i != _countryToggles.size();
 			++i)
 	{
-		toggles.push_back(_countryToggles[i]->_pushed? '1': '0');
+		toggles.push_back(_countryToggles[i]->_pushed ? '1' : '0');
 		delete _countryToggles[i];
 	}
 	_game->getSavedGame()->setGraphCountryToggles(toggles);
@@ -739,7 +741,7 @@ GraphsState::~GraphsState()
 			i != _financeToggles.size();
 			++i)
 	{
-		toggles.push_back(_financeToggles[i]? '1': '0');
+		toggles.push_back(_financeToggles[i] ? '1' : '0');
 	}
 	_game->getSavedGame()->setGraphFinanceToggles(toggles);
 }
@@ -1305,10 +1307,10 @@ void GraphsState::updateScale( // private.
 		int valHigh)
 {
 	const int delta = std::max(10,
-							  (valHigh - valLow) / GRIDCELLS);
+							  (valHigh - valLow) / GRIDCELLS_y);
 	for (size_t
 			i = 0;
-			i != 10;
+			i != TEXTS_y;
 			++i)
 	{
 		_txtScale.at(i)->setText(Text::formatNumber(valLow));
@@ -1341,7 +1343,7 @@ void GraphsState::drawRegionLines() // private.
 		total,
 		act,
 
-		totals[] = {0,0,0,0,0,0,0,0,0,0,0,0};
+		totals[MONTHS_u] = {0,0,0,0,0,0,0,0,0,0,0,0};
 
 	for (size_t
 			i = 0;
@@ -1389,11 +1391,11 @@ void GraphsState::drawRegionLines() // private.
 		delta = scaleHigh - scaleLow;
 
 	int test = 2; // was, 10
-	while (delta > GRIDCELLS * test)
+	while (delta > GRIDCELLS_y * test)
 		test *= 2;
 
 	scaleLow = 0;
-	scaleHigh = GRIDCELLS * test;
+	scaleHigh = GRIDCELLS_y * test;
 
 	while (low < scaleLow)
 	{
@@ -1403,7 +1405,7 @@ void GraphsState::drawRegionLines() // private.
 
 	// Figure out how many units to the pixel then plot the points for the graph
 	// and connect the dots.
-	const float pixelUnits = static_cast<float>(scaleHigh - scaleLow) / 126.f;
+	const float pixelUnits = static_cast<float>(scaleHigh - scaleLow) / PIXELS_y;
 
 	Uint8 color = 0;
 	int reduction;
@@ -1427,7 +1429,7 @@ void GraphsState::drawRegionLines() // private.
 
 		for (size_t
 				j = 0;
-				j != 12;
+				j != MONTHS_u;
 				++j)
 		{
 			y = 175 + static_cast<Sint16>(Round(static_cast<float>(scaleLow) / pixelUnits));
@@ -1491,7 +1493,7 @@ void GraphsState::drawRegionLines() // private.
 
 	for (size_t
 			i = 0;
-			i != 12;
+			i != MONTHS_u;
 			++i)
 	{
 		y = 175 + static_cast<Sint16>(Round(static_cast<float>(scaleLow) / pixelUnits));
@@ -1541,7 +1543,7 @@ void GraphsState::drawCountryLines() // private.
 		total,
 		act,
 
-		totals[] = {0,0,0,0,0,0,0,0,0,0,0,0};
+		totals[MONTHS_u] = {0,0,0,0,0,0,0,0,0,0,0,0};
 
 	for (size_t
 			i = 0;
@@ -1591,11 +1593,11 @@ void GraphsState::drawCountryLines() // private.
 		delta = scaleHigh - scaleLow;
 
 	int test = 2; // was, 10
-	while (delta > GRIDCELLS * test)
+	while (delta > GRIDCELLS_y * test)
 		test *= 2;
 
 	scaleLow = 0;
-	scaleHigh = GRIDCELLS * test;
+	scaleHigh = GRIDCELLS_y * test;
 
 	while (low < scaleLow)
 	{
@@ -1605,7 +1607,7 @@ void GraphsState::drawCountryLines() // private.
 
 	// Figure out how many units to the pixel then plot the points for the graph
 	// and connect the dots.
-	const float pixelUnits = static_cast<float>(scaleHigh - scaleLow) / 126.f;
+	const float pixelUnits = static_cast<float>(scaleHigh - scaleLow) / PIXELS_y;
 
 	Uint8 color = 0;
 	int reduction;
@@ -1630,7 +1632,7 @@ void GraphsState::drawCountryLines() // private.
 
 		for (size_t
 				j = 0;
-				j != 12;
+				j != MONTHS_u;
 				++j)
 		{
 			y = 175 + static_cast<Sint16>(Round(static_cast<float>(scaleLow) / pixelUnits));
@@ -1714,7 +1716,7 @@ void GraphsState::drawCountryLines() // private.
 
 	for (size_t
 			i = 0;
-			i != 12;
+			i != MONTHS_u;
 			++i)
 	{
 		y = 175 + static_cast<Sint16>(Round(static_cast<float>(scaleLow) / pixelUnits));
@@ -1769,11 +1771,11 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 		scaleHigh = 0,
 		scaleLow = 0,
 
-		income[]		= {0,0,0,0,0,0,0,0,0,0,0,0},
-		expenditure[]	= {0,0,0,0,0,0,0,0,0,0,0,0},
-		maintenance[]	= {0,0,0,0,0,0,0,0,0,0,0,0},
-		balance[]		= {0,0,0,0,0,0,0,0,0,0,0,0},
-		score[]			= {0,0,0,0,0,0,0,0,0,0,0,0},
+		income[MONTHS_u]			= {0,0,0,0,0,0,0,0,0,0,0,0},
+		expenditure[MONTHS_u]	= {0,0,0,0,0,0,0,0,0,0,0,0},
+		maintenance[MONTHS_u]	= {0,0,0,0,0,0,0,0,0,0,0,0},
+		balance[MONTHS_u]		= {0,0,0,0,0,0,0,0,0,0,0,0},
+		score[MONTHS_u]			= {0,0,0,0,0,0,0,0,0,0,0,0},
 
 		baseIncomes = 0,
 		baseExpenses = 0;
@@ -1887,11 +1889,11 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 		delta = scaleHigh - scaleLow;
 
 	int test = 20; // was, 100
-	while (delta > GRIDCELLS * test)
+	while (delta > GRIDCELLS_y * test)
 		test *= 2;
 
 	scaleLow = 0;
-	scaleHigh = GRIDCELLS * test;
+	scaleHigh = GRIDCELLS_y * test;
 
 	while (low < scaleLow)
 	{
@@ -1901,7 +1903,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 
 	// Figure out how many units to the pixel then plot the points for the graph
 	// and connect the dots.
-	const float pixelUnits = static_cast<float>(scaleHigh - scaleLow) / 126.f;
+	const float pixelUnits = static_cast<float>(scaleHigh - scaleLow) / PIXELS_y;
 
 	Uint8 color;
 	Sint16
@@ -1919,7 +1921,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 
 		for (size_t
 				j = 0;
-				j != 12;
+				j != MONTHS_u;
 				++j)
 		{
 			y = 175 + static_cast<Sint16>(Round(static_cast<float>(scaleLow) / pixelUnits));
