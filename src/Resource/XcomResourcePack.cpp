@@ -730,11 +730,11 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 											spritePack->getWidth(),
 											spritePack->getHeight());
 			}
-			else
-			{
+			//else
+			//{
 				//Log(LOG_VERBOSE) << "Adding/Replacing items in surface set: " << st;
 				//Log(LOG_INFO) << "Adding/Replacing items in surface set: " << st;
-			}
+			//}
 
 			//if (subdivision == true)
 			//{

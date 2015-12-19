@@ -1,0 +1,301 @@
+# -------- GEODATA -------- #
+extraSprites:
+  - type: SCANG.DAT
+    files:
+      454: Resources/Sprites/geodata/greenshore/
+  - type: INTERWIN #interception window
+    width: 160
+    height: 96
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/interwin.png
+  - type: INTERWIN_ #border UFO preview
+    width: 160
+    height: 96
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/interwin_.png
+  - type: INTERWIN_0 #small scout
+    width: 160
+    height: 52
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/interwin_0.png
+  - type: INTERWIN_1 #medium scout
+    width: 160
+    height: 52
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/interwin_1.png
+  - type: INTERWIN_2 #large scout
+    width: 160
+    height: 52
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/interwin_2.png
+  - type: INTERWIN_3 #harvester
+    width: 160
+    height: 52
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/interwin_3.png
+  - type: INTERWIN_4 #abductor
+    width: 160
+    height: 52
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/interwin_4.png
+  - type: INTERWIN_5 #terror ship
+    width: 160
+    height: 52
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/interwin_5.png
+  - type: INTERWIN_6 #battle ship
+    width: 160
+    height: 52
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/interwin_6.png
+  - type: INTERWIN_7 #supply ship
+    width: 160
+    height: 52
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/interwin_7.png
+  - type: WATER
+    width: 9
+    height: 9
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/textures/tex_water.png
+  - type: CULTA
+    width: 9
+    height: 9
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/textures/tex_culta.png
+  - type: DESERT
+    width: 9
+    height: 9
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/textures/tex_desert.png
+  - type: FOREST
+    width: 9
+    height: 9
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/textures/tex_forest.png
+  - type: MOUNT
+    width: 9
+    height: 9
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/textures/tex_mount.png
+  - type: POLAR
+    width: 9
+    height: 9
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/textures/tex_polar.png
+  - type: URBAN
+    width: 9
+    height: 9
+    singleImage: true
+    files:
+      0: Resources/Sprites/geodata/interwin/textures/tex_urban.png
+# -------- GEOGRAPH -------- #
+  - type: TARGET_UFO
+    width: 29
+    height: 29
+    singleImage: true
+    files:
+      0: Resources/Sprites/geograph/target.png
+  - type: BACK07.SCR #-> ALTBACK07.SCR (see XcomResourcePack.cpp)
+    width: 320
+    height: 200
+    singleImage: true
+    files:
+      0: Resources/Sprites/geograph/back/back07.png
+  - type: BASEBITS.PCK
+    files:
+      0: Resources/Sprites/geograph/basebits/
+  - type: GRAPHS.SPK
+    width: 320
+    height: 200
+    singleImage: true
+    files:
+      0: Resources/Sprites/geograph/graphs/graphs.png
+  - type: INTICON.PCK
+    files:
+      0: Resources/Sprites/geograph/inticon/
+  - type: TEXTURE.DAT
+    width: 416
+    height: 96
+    subX: 32
+    subY: 32
+    files:
+      0: Resources/Sprites/geograph/textures/textures.png
+# -------- UFOGRAPH -------- #
+  - type: ICONS.PCK
+    width: 320
+    height: 200
+    singleImage: true
+    files:
+      0: Resources/Sprites/ufograph/icons.png
+  - type: ICONS_LAYER
+    width: 32
+    height: 16
+    singleImage: true
+    files:
+      0: Resources/Sprites/ufograph/icons_layer.png
+  - type: SCANBORD
+    width: 320
+    height: 200
+    singleImage: true
+    files:
+      0: Resources/Sprites/ufograph/scanbord.png
+  - type: TAC00.SCR
+    width: 320
+    height: 200
+    singleImage: true
+    files:
+      0: Resources/Sprites/ufograph/tac00.png
+  - type: CURSOR.PCK
+    files:
+      0: Resources/Sprites/ufograph/cursor/
+  - type: HIT.PCK
+    files:
+      0: Resources/Sprites/ufograph/hit/
+  - type: MEDIBITS.DAT
+    width: 312
+    height: 58
+    subX: 52
+    subY: 58
+    files:
+      0: Resources/Sprites/ufograph/medibits/medibits.png
+  - type: DOLPHINS
+    width: 26
+    height: 23
+    singleImage: true
+    files:
+      0: Resources/Sprites/ufograph/misc/rank5alter.png
+  - type: DETBORD.PCK
+    width: 320
+    height: 200
+    singleImage: true
+    files:
+      0: Resources/Sprites/ufograph/scanner/detbord.png
+  - type: DETBORD2.PCK
+    width: 320
+    height: 200
+    singleImage: true
+    files:
+      0: Resources/Sprites/ufograph/scanner/detbord2.png
+  - type: DETBLOB.DAT
+    width: 320
+    height: 200
+    subX: 16
+    subY: 16
+    files:
+      0: Resources/Sprites/ufograph/scanner/detblob.png
+  - type: SMOKE.PCK
+    width: 256
+    height: 280
+    subX: 32
+    subY: 40
+    files:
+      0: Resources/Sprites/ufograph/smoke/smoke.png
+  - type: SMOKE.PCK
+    height: 40
+    width: 384
+    subX: 32
+    subY: 40
+    files:
+      8: Resources/Sprites/ufograph/smoke/smoke_cloud_kL.png
+  - type: RANK_ROOKIE
+    width: 9
+    height: 7
+    singleImage: true
+    files:
+      0: Resources/Sprites/ufograph/smoke/ranks/rank_rookie.png
+  - type: RANK_SQUADDIE
+    width: 9
+    height: 7
+    singleImage: true
+    files:
+      0: Resources/Sprites/ufograph/smoke/ranks/rank_squaddie.png
+  - type: RANK_SERGEANT
+    width: 9
+    height: 7
+    singleImage: true
+    files:
+      0: Resources/Sprites/ufograph/smoke/ranks/rank_sergeant.png
+  - type: RANK_CAPTAIN
+    width: 9
+    height: 7
+    singleImage: true
+    files:
+      0: Resources/Sprites/ufograph/smoke/ranks/rank_captain.png
+  - type: RANK_COLONEL
+    width: 9
+    height: 7
+    singleImage: true
+    files:
+      0: Resources/Sprites/ufograph/smoke/ranks/rank_colonel.png
+  - type: RANK_COMMANDER
+    width: 9
+    height: 7
+    singleImage: true
+    files:
+      0: Resources/Sprites/ufograph/smoke/ranks/rank_commander.png
+  - type: SPICONS.DAT
+    width: 64
+    height: 24
+    subX: 32
+    subY: 24
+    files:
+      0: Resources/Sprites/ufograph/spicons/spicons.png
+  - type: TARGET.PCK
+    files:
+      0: Resources/Sprites/ufograph/target/
+  - type: X1.PCK
+    width: 1024
+    height: 256
+    subX: 128
+    subY: 64
+    files:
+      0: Resources/Sprites/ufograph/x1/x1.png
+# -------- GENDER -------- #
+  - type: ALIENINSIGNIA
+    width: 9
+    height: 11
+    singleImage: true
+    files:
+      0: Resources/Sprites/gender/alien.png
+  - type: DIGITS
+    width: 30
+    height: 5
+    subX: 3
+    subY: 5
+    files:
+      0: Resources/Sprites/gender/digits.png
+  - type: BASEDOG
+    width: 16
+    height: 10
+    singleImage: true
+    files:
+      0: Resources/Sprites/gender/dogbase2.png
+  - type: GENDER_F
+    width: 7
+    height: 7
+    singleImage: true
+    files:
+      0: Resources/Sprites/gender/gender_f.png
+  - type: GENDER_M
+    width: 7
+    height: 7
+    singleImage: true
+    files:
+      0: Resources/Sprites/gender/gender_m.png

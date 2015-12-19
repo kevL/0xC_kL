@@ -1,0 +1,102 @@
+extraSprites:
+  - type: Pathfinding
+    files:
+      0: Resources/UI/Pathfinding.png
+    width: 384
+    height: 80
+    subX: 32
+    subY: 40
+  - type: Projectiles
+    width: 105
+    height: 48
+    subX: 3
+    subY: 3
+    files:
+      0: Resources/BulletSprites/BulletSprites.png
+  - type: TFTDReserve
+    width: 59
+    height: 24
+    singleImage: true
+    files:
+      0: Resources/UI/reserve.png
+#  - type: InvCopy
+#    width: 16
+#    height: 16
+#    singleImage: true
+#    files:
+#      0: Resources/UI/invcopy.png
+#  - type: InvCopyActive
+#    width: 16
+#    height: 16
+#    singleImage: true
+#    files:
+#      0: Resources/UI/invcopy_active.png
+#  - type: InvPaste
+#    width: 16
+#    height: 16
+#    singleImage: true
+#    files:
+#      0: Resources/UI/invpaste.png
+#  - type: InvPasteEmpty
+#    width: 16
+#    height: 16
+#    singleImage: true
+#    files:
+#      0: Resources/UI/invpaste_empty.png
+#  - type: InvClear
+#    width: 16
+#    height: 16
+#    singleImage: true
+#    files:
+#      0: Resources/UI/invclear.png
+  - type: BIGOBS.PCK
+    width: 64
+    height: 96
+    subX: 32
+    subY: 48
+    files:
+      -4: Resources/Weapons/Terror.png
+  - type: BIGOBS.PCK
+    width: 32
+    height: 48
+    files:
+      -5: Resources/Weapons/Zombie.png
+  - type: GlobeMarkers
+    width: 27
+    height: 3
+    subX: 3
+    subY: 3
+    files:
+      0: Resources/UI/globe_ufo.png
+  - type: StatusIcons
+    width: 294
+    height: 14
+    subX: 14
+    subY: 14
+    files:
+      0: Resources/Sprites/ufograph/statusbar/statusbar.png
+  - type: Cygnus_BG
+    singleImage: true
+    width: 640
+    height: 360
+    files:
+      0: Resources/Sprites/ig271_cygnus_02_640px.png
+#    width: 480
+#    height: 270
+#    files:
+#      0: Resources/Sprites/ig271_cygnus_02_480px.png
+#
+#  - type: Antares_BG
+#    width: 480
+#    height: 270
+#    singleImage: true
+#    files:
+#      0: Resources/Sprites/050624_iod_antares_04.png
+#New spritesheet Example:
+#  - type: GIANTBUNNY.PCK
+#    width: 32
+#    height: 40
+#    files:
+#      0: Resources/Bunny/Bunny00.png
+#      1: Resources/Bunny/Bunny01.bmp
+#      2: Resources/Bunny/Bunny02.gif

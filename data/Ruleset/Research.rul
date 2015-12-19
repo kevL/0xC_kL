@@ -1,0 +1,1280 @@
+# 'Research.rul'
+research:
+  - type: STR_MEDI_KIT
+    cost: 2100
+    points: 20
+  - type: STR_MOTION_SCANNER
+    cost: 9000
+    points: 20
+  - type: STR_PSI_AMP
+    cost: 50000
+    points: 20
+    dependencies:
+      - STR_MIND_PROBE
+      - STR_PSI_LAB
+#---- Laser Weapons -----------------------------------------------------------#
+  - type: STR_LASER_WEAPONS
+    cost: 500
+    points: 10
+    dependencies:
+      - STR_ELERIUM_115
+  - type: STR_LASER_PISTOL
+    cost: 1000
+    points: 10
+    dependencies:
+      - STR_LASER_WEAPONS
+  - type: STR_LASER_RIFLE
+    cost: 3000
+    points: 10
+    dependencies:
+      - STR_LASER_PISTOL
+  - type: STR_HEAVY_LASER
+    cost: 4600
+    points: 10
+    dependencies:
+      - STR_ALIEN_ALLOYS
+      - STR_LASER_RIFLE
+  - type: STR_LASER_CANNON
+    cost: 4200
+    points: 15
+    dependencies:
+      - STR_HEAVY_LASER
+  - type: STR_LASER_DEFENSE
+    cost: 5100
+    points: 15
+    dependencies:
+      - STR_LASER_CANNON
+  - type: STR_FUSION_TORCH
+    cost: 4800
+    points: 20
+    dependencies:
+      - STR_HEAVY_LASER
+  - type: STR_FUSION_TORCH_POWER_CELL
+    cost: 1200
+    points: 10
+    dependencies:
+      - STR_FUSION_TORCH
+#---- Alloys & Elerium --------------------------------------------------------#
+  - type: STR_ALIEN_ALLOYS
+    cost: 40000
+    points: 30
+    needsItem: true
+  - type: STR_ELERIUM_115
+    cost: 45000
+    points: 60
+    needsItem: true
+#---- Plasma Weapons ----------------------------------------------------------#
+  - type: STR_PLASMA_PISTOL
+    cost: 60000
+    points: 20
+    needsItem: true
+    dependencies:
+      - STR_ALIEN_ALLOYS
+  - type: STR_PLASMA_PISTOL_CLIP
+    cost: 40000
+    points: 5
+    needsItem: true
+    dependencies:
+      - STR_ELERIUM_115
+      - STR_PLASMA_PISTOL
+  - type: STR_PLASMA_RIFLE
+    cost: 70000
+    points: 25
+    needsItem: true
+    dependencies:
+      - STR_PLASMA_PISTOL_CLIP
+  - type: STR_PLASMA_RIFLE_CLIP
+    cost: 40000
+    points: 6
+    needsItem: true
+    dependencies:
+      - STR_PLASMA_RIFLE
+  - type: STR_HEAVY_PLASMA
+    cost: 80000
+    points: 30
+    needsItem: true
+    dependencies:
+      - STR_PLASMA_RIFLE_CLIP
+  - type: STR_HEAVY_PLASMA_CLIP
+    cost: 40000
+    points: 7
+    needsItem: true
+    dependencies:
+      - STR_HEAVY_PLASMA
+  - type: STR_PLASMA_CANNON
+    cost: 66000
+    points: 25
+    dependencies:
+      - STR_HEAVY_PLASMA_CLIP
+  - type: STR_PLASMA_DEFENSE
+    cost: 62000
+    points: 25
+    dependencies:
+      - STR_PLASMA_CANNON
+#---- Fusion Weapons ----------------------------------------------------------#
+  - type: STR_BLASTER_LAUNCHER
+    cost: 90000
+    points: 10
+    needsItem: true
+    dependencies:
+      - STR_ALIEN_ALLOYS
+  - type: STR_BLASTER_BOMB
+    cost: 30000
+    points: 10
+    needsItem: true
+    dependencies:
+      - STR_ELERIUM_115
+  - type: STR_FUSION_MISSILE
+    cost: 88000
+    points: 25
+    dependencies:
+      - STR_BLASTER_LAUNCHER
+      - STR_BLASTER_BOMB
+  - type: STR_FUSION_DEFENSE
+    cost: 80000
+    points: 25
+    dependencies:
+      - STR_FUSION_MISSILE
+#---- aLien Artefacts ---------------------------------------------------------#
+  - type: STR_SMALL_LAUNCHER
+    cost: 55000
+    points: 30
+    needsItem: true
+    dependencies:
+      - STR_ALIEN_ALLOYS
+  - type: STR_STUN_BOMB
+    cost: 18000
+    points: 10
+    needsItem: true
+    dependencies:
+      - STR_ELERIUM_115
+  - type: STR_ALIEN_GRENADE
+    cost: 20000
+    points: 20
+    needsItem: true
+    dependencies:
+      - STR_ALIEN_ALLOYS
+      - STR_ELERIUM_115
+  - type: STR_MIND_PROBE
+    cost: 60000
+    points: 25
+    needsItem: true
+#---- XCom Armors -------------------------------------------------------------#
+  - type: STR_PERSONAL_ARMOR
+    cost: 9000
+    points: 15
+    dependencies:
+      - STR_ALIEN_ALLOYS
+  - type: STR_POWER_SUIT
+    cost: 20500
+    points: 20
+    dependencies:
+      - STR_PERSONAL_ARMOR
+      - STR_UFO_POWER_SOURCE
+  - type: STR_FLYING_SUIT
+    cost: 33000
+    points: 25
+    dependencies:
+      - STR_POWER_SUIT
+      - STR_UFO_NAVIGATION
+  - type: STR_ALLOY_TANK_ARMOR
+    cost: 4200
+    points: 20
+    dependencies:
+      - STR_ALIEN_ALLOYS
+#---- XCom Facilities ---------------------------------------------------------#
+  - type: STR_ALIEN_CONTAINMENT
+    cost: 1500
+    points: 15
+    requires:
+      - STR_ALIEN_FOOD
+      - STR_ALIEN_HABITAT
+    dependencies:
+      - STR_ZOMBIE_CORPSE
+      - STR_CELATID_CORPSE
+      - STR_ETHEREAL_CORPSE
+      - STR_SILACOID_CORPSE
+      - STR_REAPER_CORPSE
+      - STR_SNAKEMAN_CORPSE
+      - STR_SECTOID_CORPSE
+      - STR_SECTOPOD_CORPSE
+      - STR_MUTON_CORPSE
+      - STR_FLOATER_CORPSE
+      - STR_CYBERDISC_CORPSE
+      - STR_CHRYSSALID_CORPSE
+      - STR_WASPITE_CORPSE
+      - STR_CYBERMITE_CORPSE
+  - type: STR_PSI_LAB
+    cost: 42000
+    points: 25
+    requires:
+      - STR_ALIEN_ENTERTAINMENT
+    dependencies:
+      - STR_ETHEREAL_COMMANDER
+      - STR_ETHEREAL_LEADER
+      - STR_ETHEREAL_SOLDIER
+      - STR_SECTOID_LEADER
+      - STR_SECTOID_COMMANDER
+  - type: STR_MIND_SHIELD
+    cost: 36000
+    points: 25
+    dependencies:
+      - STR_PSI_LAB
+  - type: STR_GRAV_SHIELD
+    cost: 93000
+    points: 25
+    dependencies:
+      - STR_ULTIMATE_CRAFT
+  - type: STR_HYPER_WAVE_DECODER
+    cost: 67000
+    points: 25
+    requires:
+      - STR_UFO_NAVIGATION
+    dependencies:
+      - STR_FLOATER_NAVIGATOR
+      - STR_SNAKEMAN_NAVIGATOR
+      - STR_MUTON_NAVIGATOR
+      - STR_SECTOID_NAVIGATOR
+      - STR_WASPITE_NAVIGATOR
+#---- aLien Origins -----------------------------------------------------------#
+  - type: STR_ALIEN_ORIGINS
+    cost: 30000
+    points: 60
+    dependencies:
+      - STR_SECTOID_COMMANDER
+      - STR_SECTOID_LEADER
+      - STR_SECTOID_ENGINEER
+      - STR_SECTOID_MEDIC
+      - STR_SECTOID_NAVIGATOR
+      - STR_SECTOID_SOLDIER
+#      - STR_CYBERDISC_TERRORIST
+      - STR_SNAKEMAN_COMMANDER
+      - STR_SNAKEMAN_LEADER
+      - STR_SNAKEMAN_ENGINEER
+      - STR_SNAKEMAN_NAVIGATOR
+      - STR_SNAKEMAN_SOLDIER
+#      - STR_CHRYSSALID_TERRORIST
+      - STR_ETHEREAL_COMMANDER
+      - STR_ETHEREAL_LEADER
+      - STR_ETHEREAL_SOLDIER
+#      - STR_SECTOPOD_TERRORIST
+      - STR_MUTON_ENGINEER
+      - STR_MUTON_NAVIGATOR
+      - STR_MUTON_SOLDIER
+#      - STR_SILACOID_TERRORIST
+#      - STR_CELATID_TERRORIST
+      - STR_FLOATER_COMMANDER
+      - STR_FLOATER_LEADER
+      - STR_FLOATER_ENGINEER
+      - STR_FLOATER_MEDIC
+      - STR_FLOATER_NAVIGATOR
+      - STR_FLOATER_SOLDIER
+#      - STR_REAPER_TERRORIST
+      - STR_WASPITE_COMMANDER
+      - STR_WASPITE_LEADER
+      - STR_WASPITE_ENGINEER
+      - STR_WASPITE_MEDIC
+      - STR_WASPITE_NAVIGATOR
+      - STR_WASPITE_SOLDIER
+#      - STR_CYBERMITE_TERRORIST
+  - type: STR_LEADER_PLUS #why are these PLUS-things even used
+    requires:
+      - STR_ALIEN_ORIGINS
+    dependencies:
+      - STR_SECTOID_COMMANDER
+      - STR_SECTOID_LEADER
+      - STR_SNAKEMAN_COMMANDER
+      - STR_SNAKEMAN_LEADER
+      - STR_ETHEREAL_COMMANDER
+      - STR_ETHEREAL_LEADER
+      - STR_FLOATER_COMMANDER
+      - STR_FLOATER_LEADER
+      - STR_WASPITE_COMMANDER
+      - STR_WASPITE_LEADER
+  - type: STR_THE_MARTIAN_SOLUTION
+    cost: 50000
+    points: 60
+    dependencies:
+#      - STR_ALIEN_ORIGINS # note LeaderPlus already REQUIRES origins
+      - STR_LEADER_PLUS
+  - type: STR_COMMANDER_PLUS #why are these PLUS-things even used
+#    unlocks:
+#      - STR_CYDONIA_OR_BUST
+    requires:
+      - STR_THE_MARTIAN_SOLUTION
+    dependencies:
+      - STR_SECTOID_COMMANDER
+      - STR_SNAKEMAN_COMMANDER
+      - STR_ETHEREAL_COMMANDER
+      - STR_FLOATER_COMMANDER
+      - STR_WASPITE_COMMANDER
+#      - STR_MUTON_COMMANDER # not in stock game
+  - type: STR_CYDONIA_OR_BUST
+    cost: 60000
+    points: 60
+    unlockFinalMission: true
+    dependencies:
+      - STR_COMMANDER_PLUS
+#---- aLien UFO Components ----------------------------------------------------#
+  - type: STR_UFO_NAVIGATION
+    cost: 45000
+    points: 30
+    needsItem: true
+    requires:
+      - STR_ALIEN_ALLOYS
+    dependencies:
+      - STR_FLOATER_NAVIGATOR
+      - STR_SECTOID_NAVIGATOR
+      - STR_SNAKEMAN_NAVIGATOR
+      - STR_MUTON_NAVIGATOR
+      - STR_ETHEREAL_NAVIGATOR
+      - STR_WASPITE_NAVIGATOR
+  - type: STR_UFO_POWER_SOURCE
+    cost: 45000
+    points: 30
+    needsItem: true
+    requires:
+      - STR_ALIEN_ALLOYS
+      - STR_ELERIUM_115
+    dependencies:
+      - STR_FLOATER_ENGINEER
+      - STR_SNAKEMAN_ENGINEER
+      - STR_MUTON_ENGINEER
+      - STR_SECTOID_ENGINEER
+      - STR_WASPITE_ENGINEER
+  - type: STR_UFO_CONSTRUCTION
+    cost: 45000
+    points: 30
+    dependencies:
+      - STR_UFO_POWER_SOURCE
+      - STR_UFO_NAVIGATION
+#---- XCom Craft --------------------------------------------------------------#
+  - type: STR_IMPROVED_INTERCEPTOR
+    cost: 12000
+    points: 25
+    dependencies:
+      - STR_ALIEN_ALLOYS
+  - type: STR_UNMANNED_AIRCRAFT
+    cost: 6000
+    points: 20
+    dependencies:
+      - STR_UFO_CONSTRUCTION
+  - type: STR_NEW_FIGHTER_CRAFT
+    cost: 60000
+    points: 30
+    dependencies:
+      - STR_UFO_CONSTRUCTION
+  - type: STR_NEW_FIGHTER_TRANSPORTER
+    cost: 70000
+    points: 30
+    dependencies:
+      - STR_NEW_FIGHTER_CRAFT
+  - type: STR_ULTIMATE_CRAFT
+    cost: 90000
+    points: 30
+    dependencies:
+      - STR_NEW_FIGHTER_TRANSPORTER
+#---- aLien UFO Facilities ----------------------------------------------------#
+  - type: STR_ALIEN_ENTERTAINMENT
+    cost: 15000
+    points: 30
+    needsItem: true
+  - type: STR_ALIEN_FOOD
+    cost: 1500
+    points: 30
+    needsItem: true
+  - type: STR_ALIEN_REPRODUCTION
+    cost: 1500
+    points: 30
+    needsItem: true
+  - type: STR_ALIEN_SURGERY
+    cost: 1500
+    points: 30
+    needsItem: true
+  - type: STR_EXAMINATION_ROOM
+    cost: 1500
+    points: 30
+    needsItem: true
+  - type: STR_ALIEN_HABITAT
+    cost: 1500
+    points: 30
+    needsItem: true
+#---- aLien Autopsies ---------------------------------------------------------#
+  - type: STR_FLOATER_CORPSE
+    cost: 1800
+    points: 50
+    lookup: STR_FLOATER_AUTOPSY
+    needsItem: true
+    requires:
+      - STR_ALIEN_SURGERY
+#      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_CONTAINMENT
+  - type: STR_SECTOID_CORPSE
+    cost: 1800
+    points: 50
+    lookup: STR_SECTOID_AUTOPSY
+    needsItem: true
+    requires:
+      - STR_ALIEN_SURGERY
+#      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_CONTAINMENT
+  - type: STR_SNAKEMAN_CORPSE
+    cost: 1800
+    points: 50
+    lookup: STR_SNAKEMAN_AUTOPSY
+    needsItem: true
+    requires:
+      - STR_ALIEN_SURGERY
+#      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_CONTAINMENT
+  - type: STR_MUTON_CORPSE
+    cost: 1800
+    points: 50
+    lookup: STR_MUTON_AUTOPSY
+    needsItem: true
+    requires:
+      - STR_ALIEN_SURGERY
+#      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_CONTAINMENT
+  - type: STR_ETHEREAL_CORPSE
+    cost: 1800
+    points: 50
+    lookup: STR_ETHEREAL_AUTOPSY
+    needsItem: true
+    requires:
+      - STR_ALIEN_SURGERY
+#      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_CONTAINMENT
+  - type: STR_WASPITE_CORPSE
+    cost: 1800
+    points: 50
+    lookup: STR_WASPITE_AUTOPSY
+    needsItem: true
+    requires:
+      - STR_ALIEN_SURGERY
+#      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_CONTAINMENT
+  - type: STR_ZOMBIE_CORPSE #note Can't get one of these
+    cost: 1800
+    points: 50
+    lookup: STR_ZOMBIE_AUTOPSY
+    needsItem: true
+    requires:
+      - STR_ALIEN_SURGERY
+#      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_CONTAINMENT
+#-------- Terrorist autopsies -------------------------------------------------#
+  - type: STR_REAPER_CORPSE
+    cost: 1800
+    points: 50
+    lookup: STR_REAPER_AUTOPSY
+    needsItem: true
+    requires:
+      - STR_ALIEN_SURGERY
+#      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_CONTAINMENT
+  - type: STR_CYBERDISC_CORPSE
+    cost: 1800
+    points: 50
+    lookup: STR_CYBERDISC_AUTOPSY
+    needsItem: true
+    requires:
+      - STR_ALIEN_SURGERY
+#      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_CONTAINMENT
+  - type: STR_CHRYSSALID_CORPSE
+    cost: 1800
+    points: 50
+    lookup: STR_CHRYSSALID_AUTOPSY
+    needsItem: true
+    requires:
+      - STR_ALIEN_SURGERY
+#      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_CONTAINMENT
+  - type: STR_SILACOID_CORPSE
+    cost: 1800
+    points: 50
+    lookup: STR_SILACOID_AUTOPSY
+    needsItem: true
+    requires:
+      - STR_ALIEN_SURGERY
+#      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_CONTAINMENT
+  - type: STR_CELATID_CORPSE
+    cost: 1800
+    points: 50
+    lookup: STR_CELATID_AUTOPSY
+    needsItem: true
+    requires:
+      - STR_ALIEN_SURGERY
+#      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_CONTAINMENT
+  - type: STR_SECTOPOD_CORPSE
+    cost: 1800
+    points: 50
+    lookup: STR_SECTOPOD_AUTOPSY
+    needsItem: true
+    requires:
+      - STR_ALIEN_SURGERY
+#      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_CONTAINMENT
+  - type: STR_CYBERMITE_CORPSE
+    cost: 1800
+    points: 50
+    lookup: STR_CYBERMITE_AUTOPSY
+    needsItem: true
+    requires:
+      - STR_ALIEN_SURGERY
+#      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_CONTAINMENT
+#---- aLien Interrogations ----------------------------------------------------#
+#-------- Floaters ------------------------------------------------------------#
+  - type: STR_FLOATER_SOLDIER
+    cost: 192
+    points: 50
+    lookup: STR_FLOATER
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION #redundant; to interrogate needs Containment, which needs corpse, which needs Reproduction. Solution, remove Reproduction from autopsy requirement
+    unlocks:
+      - STR_ALIEN_ORIGINS
+  - type: STR_FLOATER_NAVIGATOR
+    cost: 192
+    points: 50
+    lookup: STR_FLOATER
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+      - STR_HYPER_WAVE_DECODER
+      - STR_UFO_NAVIGATION
+    getOneFree:
+      - STR_ALIEN_RESEARCH
+      - STR_ALIEN_HARVEST
+      - STR_ALIEN_ABDUCTION
+      - STR_ALIEN_INFILTRATION
+      - STR_ALIEN_BASE
+      - STR_ALIEN_TERROR
+      - STR_ALIEN_RETALIATION
+      - STR_ALIEN_SUPPLY
+  - type: STR_FLOATER_MEDIC
+    cost: 192
+    points: 50
+    lookup: STR_FLOATER
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+    getOneFree:
+      - STR_SECTOID
+      - STR_SNAKEMAN
+      - STR_MUTON
+      - STR_ETHEREAL
+      - STR_CHRYSSALID
+      - STR_SECTOPOD
+      - STR_CYBERDISC
+      - STR_SILACOID
+      - STR_CELATID
+      - STR_REAPER
+      - STR_WASPITE
+      - STR_CYBERMITE
+      - STR_SECTOID_CORPSE
+      - STR_SNAKEMAN_CORPSE
+      - STR_MUTON_CORPSE
+      - STR_ETHEREAL_CORPSE
+      - STR_FLOATER_CORPSE
+      - STR_CHRYSSALID_CORPSE
+      - STR_SECTOPOD_CORPSE
+      - STR_CYBERDISC_CORPSE
+      - STR_SILACOID_CORPSE
+      - STR_CELATID_CORPSE
+      - STR_REAPER_CORPSE
+      - STR_WASPITE_CORPSE
+      - STR_CYBERMITE_CORPSE
+  - type: STR_FLOATER_ENGINEER
+    cost: 192
+    points: 50
+    lookup: STR_FLOATER
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+      - STR_UFO_POWER_SOURCE
+    getOneFree:
+      - STR_SMALL_SCOUT
+      - STR_MEDIUM_SCOUT
+      - STR_LARGE_SCOUT
+      - STR_HARVESTER
+      - STR_ABDUCTOR
+      - STR_TERROR_SHIP
+      - STR_BATTLESHIP
+      - STR_SUPPLY_SHIP
+  - type: STR_FLOATER_LEADER
+    cost: 192
+    points: 50
+    lookup: STR_FLOATER
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_LEADER_PLUS
+      - STR_ALIEN_ORIGINS
+  - type: STR_FLOATER_COMMANDER
+    cost: 192
+    points: 50
+    lookup: STR_FLOATER
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_LEADER_PLUS
+      - STR_COMMANDER_PLUS
+      - STR_ALIEN_ORIGINS
+#-------- Sectoids ------------------------------------------------------------#
+  - type: STR_SECTOID_SOLDIER
+    cost: 192
+    points: 50
+    lookup: STR_SECTOID
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+  - type: STR_SECTOID_NAVIGATOR
+    cost: 192
+    points: 50
+    lookup: STR_SECTOID
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+      - STR_HYPER_WAVE_DECODER
+      - STR_UFO_NAVIGATION
+    getOneFree:
+      - STR_ALIEN_RESEARCH
+      - STR_ALIEN_HARVEST
+      - STR_ALIEN_ABDUCTION
+      - STR_ALIEN_INFILTRATION
+      - STR_ALIEN_BASE
+      - STR_ALIEN_TERROR
+      - STR_ALIEN_RETALIATION
+      - STR_ALIEN_SUPPLY
+  - type: STR_SECTOID_MEDIC
+    cost: 192
+    points: 50
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+    lookup: STR_SECTOID
+    getOneFree:
+      - STR_SNAKEMAN
+      - STR_MUTON
+      - STR_ETHEREAL
+      - STR_FLOATER
+      - STR_CHRYSSALID
+      - STR_SECTOPOD
+      - STR_CYBERDISC
+      - STR_SILACOID
+      - STR_CELATID
+      - STR_REAPER
+      - STR_WASPITE
+      - STR_CYBERMITE
+      - STR_SECTOID_CORPSE
+      - STR_SNAKEMAN_CORPSE
+      - STR_MUTON_CORPSE
+      - STR_ETHEREAL_CORPSE
+      - STR_FLOATER_CORPSE
+      - STR_CHRYSSALID_CORPSE
+      - STR_SECTOPOD_CORPSE
+      - STR_CYBERDISC_CORPSE
+      - STR_SILACOID_CORPSE
+      - STR_CELATID_CORPSE
+      - STR_REAPER_CORPSE
+      - STR_WASPITE_CORPSE
+      - STR_CYBERMITE_CORPSE
+  - type: STR_SECTOID_ENGINEER
+    cost: 192
+    points: 50
+    lookup: STR_SECTOID
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+      - STR_UFO_POWER_SOURCE
+    getOneFree:
+      - STR_SMALL_SCOUT
+      - STR_MEDIUM_SCOUT
+      - STR_LARGE_SCOUT
+      - STR_HARVESTER
+      - STR_ABDUCTOR
+      - STR_TERROR_SHIP
+      - STR_BATTLESHIP
+      - STR_SUPPLY_SHIP
+  - type: STR_SECTOID_LEADER
+    cost: 192
+    points: 50
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_LEADER_PLUS
+      - STR_PSI_LAB
+      - STR_ALIEN_ORIGINS
+    lookup: STR_SECTOID
+  - type: STR_SECTOID_COMMANDER
+    cost: 192
+    points: 50
+    lookup: STR_SECTOID
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_LEADER_PLUS
+      - STR_COMMANDER_PLUS
+      - STR_ALIEN_ORIGINS
+      - STR_PSI_LAB
+#-------- Snakemen ------------------------------------------------------------#
+  - type: STR_SNAKEMAN_SOLDIER
+    cost: 192
+    points: 50
+    lookup: STR_SNAKEMAN
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+  - type: STR_SNAKEMAN_NAVIGATOR
+    cost: 192
+    points: 50
+    lookup: STR_SNAKEMAN
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+      - STR_HYPER_WAVE_DECODER
+      - STR_UFO_NAVIGATION
+    getOneFree:
+      - STR_ALIEN_RESEARCH
+      - STR_ALIEN_HARVEST
+      - STR_ALIEN_ABDUCTION
+      - STR_ALIEN_INFILTRATION
+      - STR_ALIEN_BASE
+      - STR_ALIEN_TERROR
+      - STR_ALIEN_RETALIATION
+      - STR_ALIEN_SUPPLY
+  - type: STR_SNAKEMAN_MEDIC # These don't exist in stock.
+    cost: 192
+    points: 50
+    lookup: STR_SNAKEMAN
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+    getOneFree:
+      - STR_SECTOID
+      - STR_MUTON
+      - STR_ETHEREAL
+      - STR_FLOATER
+      - STR_CHRYSSALID
+      - STR_SECTOPOD
+      - STR_CYBERDISC
+      - STR_SILACOID
+      - STR_CELATID
+      - STR_REAPER
+      - STR_WASPITE
+      - STR_CYBERMITE
+      - STR_SECTOID_CORPSE
+      - STR_SNAKEMAN_CORPSE
+      - STR_MUTON_CORPSE
+      - STR_ETHEREAL_CORPSE
+      - STR_FLOATER_CORPSE
+      - STR_CHRYSSALID_CORPSE
+      - STR_SECTOPOD_CORPSE
+      - STR_CYBERDISC_CORPSE
+      - STR_SILACOID_CORPSE
+      - STR_CELATID_CORPSE
+      - STR_REAPER_CORPSE
+      - STR_WASPITE_CORPSE
+      - STR_CYBERMITE_CORPSE
+  - type: STR_SNAKEMAN_ENGINEER
+    cost: 192
+    points: 50
+    lookup: STR_SNAKEMAN
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+      - STR_UFO_POWER_SOURCE
+    getOneFree:
+      - STR_SMALL_SCOUT
+      - STR_MEDIUM_SCOUT
+      - STR_LARGE_SCOUT
+      - STR_HARVESTER
+      - STR_ABDUCTOR
+      - STR_TERROR_SHIP
+      - STR_BATTLESHIP
+      - STR_SUPPLY_SHIP
+  - type: STR_SNAKEMAN_LEADER
+    cost: 192
+    points: 50
+    lookup: STR_SNAKEMAN
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_LEADER_PLUS
+      - STR_ALIEN_ORIGINS
+  - type: STR_SNAKEMAN_COMMANDER
+    cost: 192
+    points: 50
+    lookup: STR_SNAKEMAN
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_LEADER_PLUS
+      - STR_COMMANDER_PLUS
+      - STR_ALIEN_ORIGINS
+#-------- Mutons --------------------------------------------------------------#
+  - type: STR_MUTON_SOLDIER
+    cost: 192
+    points: 50
+    lookup: STR_MUTON
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+  - type: STR_MUTON_NAVIGATOR
+    cost: 192
+    points: 50
+    lookup: STR_MUTON
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+      - STR_HYPER_WAVE_DECODER
+      - STR_UFO_NAVIGATION
+    getOneFree:
+      - STR_ALIEN_RESEARCH
+      - STR_ALIEN_HARVEST
+      - STR_ALIEN_ABDUCTION
+      - STR_ALIEN_INFILTRATION
+      - STR_ALIEN_BASE
+      - STR_ALIEN_TERROR
+      - STR_ALIEN_RETALIATION
+      - STR_ALIEN_SUPPLY
+  - type: STR_MUTON_ENGINEER
+    cost: 192
+    points: 50
+    lookup: STR_MUTON
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+      - STR_UFO_POWER_SOURCE
+    getOneFree:
+      - STR_SMALL_SCOUT
+      - STR_MEDIUM_SCOUT
+      - STR_LARGE_SCOUT
+      - STR_HARVESTER
+      - STR_ABDUCTOR
+      - STR_TERROR_SHIP
+      - STR_BATTLESHIP
+      - STR_SUPPLY_SHIP
+#-------- Ethereals -----------------------------------------------------------#
+  - type: STR_ETHEREAL_SOLDIER
+    cost: 192
+    points: 50
+    lookup: STR_ETHEREAL
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+      - STR_PSI_LAB
+  - type: STR_ETHEREAL_LEADER
+    cost: 192
+    points: 50
+    lookup: STR_ETHEREAL
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_LEADER_PLUS
+      - STR_ALIEN_ORIGINS
+      - STR_PSI_LAB
+  - type: STR_ETHEREAL_COMMANDER
+    cost: 192
+    points: 50
+    lookup: STR_ETHEREAL
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_LEADER_PLUS
+      - STR_COMMANDER_PLUS
+      - STR_ALIEN_ORIGINS
+      - STR_PSI_LAB
+#-------- Waspites ------------------------------------------------------------#
+  - type: STR_WASPITE_SOLDIER
+    cost: 192
+    points: 50
+    lookup: STR_WASPITE
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+  - type: STR_WASPITE_NAVIGATOR
+    cost: 192
+    points: 50
+    lookup: STR_WASPITE
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+      - STR_HYPER_WAVE_DECODER
+      - STR_UFO_NAVIGATION
+    getOneFree:
+      - STR_ALIEN_RESEARCH
+      - STR_ALIEN_HARVEST
+      - STR_ALIEN_ABDUCTION
+      - STR_ALIEN_INFILTRATION
+      - STR_ALIEN_BASE
+      - STR_ALIEN_TERROR
+      - STR_ALIEN_RETALIATION
+      - STR_ALIEN_SUPPLY
+  - type: STR_WASPITE_MEDIC
+    cost: 192
+    points: 50
+    lookup: STR_WASPITE
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+    getOneFree:
+      - STR_SECTOID
+      - STR_FLOATER
+      - STR_SNAKEMAN
+      - STR_MUTON
+      - STR_ETHEREAL
+      - STR_CHRYSSALID
+      - STR_SECTOPOD
+      - STR_CYBERDISC
+      - STR_SILACOID
+      - STR_CELATID
+      - STR_REAPER
+      - STR_CYBERMITE
+      - STR_SECTOID_CORPSE
+      - STR_SNAKEMAN_CORPSE
+      - STR_MUTON_CORPSE
+      - STR_ETHEREAL_CORPSE
+      - STR_FLOATER_CORPSE
+      - STR_CHRYSSALID_CORPSE
+      - STR_SECTOPOD_CORPSE
+      - STR_CYBERDISC_CORPSE
+      - STR_SILACOID_CORPSE
+      - STR_CELATID_CORPSE
+      - STR_REAPER_CORPSE
+      - STR_WASPITE_CORPSE
+      - STR_CYBERMITE_CORPSE
+  - type: STR_WASPITE_ENGINEER
+    cost: 192
+    points: 50
+    lookup: STR_WASPITE
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+      - STR_UFO_POWER_SOURCE
+    getOneFree:
+      - STR_SMALL_SCOUT
+      - STR_MEDIUM_SCOUT
+      - STR_LARGE_SCOUT
+      - STR_HARVESTER
+      - STR_ABDUCTOR
+      - STR_TERROR_SHIP
+      - STR_BATTLESHIP
+      - STR_SUPPLY_SHIP
+  - type: STR_WASPITE_LEADER
+    cost: 192
+    points: 50
+    lookup: STR_WASPITE
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_LEADER_PLUS
+      - STR_ALIEN_ORIGINS
+  - type: STR_WASPITE_COMMANDER
+    cost: 192
+    points: 50
+    lookup: STR_WASPITE
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_LEADER_PLUS
+      - STR_COMMANDER_PLUS
+      - STR_ALIEN_ORIGINS
+#---- aLien Interrogations - terrorists ---------------------------------------#
+  - type: STR_REAPER_TERRORIST
+    cost: 170
+    points: 50
+    lookup: STR_REAPER
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+  - type: STR_CYBERDISC_TERRORIST
+    cost: 170
+    points: 50
+    lookup: STR_CYBERDISC
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+  - type: STR_CHRYSSALID_TERRORIST
+    cost: 170
+    points: 50
+    lookup: STR_CHRYSSALID
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+  - type: STR_SILACOID_TERRORIST
+    cost: 170
+    points: 50
+    lookup: STR_SILACOID
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+  - type: STR_CELATID_TERRORIST
+    cost: 170
+    points: 50
+    lookup: STR_CELATID
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+  - type: STR_SECTOPOD_TERRORIST
+    cost: 170
+    points: 50
+    lookup: STR_SECTOPOD
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+  - type: STR_CYBERMITE_TERRORIST
+    cost: 170
+    points: 50
+    lookup: STR_CYBERMITE
+    needsItem: true
+    requires:
+      - STR_EXAMINATION_ROOM
+      - STR_ALIEN_REPRODUCTION
+    unlocks:
+      - STR_ALIEN_ORIGINS
+#---- aLien Race lookups ------------------------------------------------------#
+  - type: STR_FLOATER
+    points: 50
+    needsItem: true
+  - type: STR_SECTOID
+    points: 50
+    needsItem: true
+  - type: STR_SNAKEMAN
+    points: 50
+    needsItem: true
+  - type: STR_MUTON
+    points: 50
+    needsItem: true
+  - type: STR_ETHEREAL
+    points: 50
+    needsItem: true
+  - type: STR_WASPITE
+    points: 50
+    needsItem: true
+  - type: STR_REAPER
+    points: 50
+    needsItem: true
+  - type: STR_CYBERDISC
+    points: 50
+    needsItem: true
+  - type: STR_CHRYSSALID
+    points: 50
+    needsItem: true
+  - type: STR_SILACOID
+    points: 50
+    needsItem: true
+  - type: STR_CELATID
+    points: 50
+    needsItem: true
+  - type: STR_SECTOPOD
+    points: 50
+    needsItem: true
+  - type: STR_CYBERMITE
+    points: 50
+    needsItem: true
+#---- aLien Autopsy lookups ---------------------------------------------------#
+  - type: STR_FLOATER_AUTOPSY
+    points: 50
+    needsItem: true
+  - type: STR_SECTOID_AUTOPSY
+    points: 50
+    needsItem: true
+  - type: STR_SNAKEMAN_AUTOPSY
+    points: 50
+    needsItem: true
+  - type: STR_MUTON_AUTOPSY
+    points: 50
+    needsItem: true
+  - type: STR_ETHEREAL_AUTOPSY
+    points: 50
+    needsItem: true
+  - type: STR_WASPITE_AUTOPSY
+    points: 50
+    needsItem: true
+  - type: STR_REAPER_AUTOPSY
+    points: 50
+    needsItem: true
+  - type: STR_CYBERDISC_AUTOPSY
+    points: 50
+    needsItem: true
+  - type: STR_CHRYSSALID_AUTOPSY
+    points: 50
+    needsItem: true
+  - type: STR_CELATID_AUTOPSY
+    points: 50
+    needsItem: true
+  - type: STR_SILACOID_AUTOPSY
+    points: 50
+    needsItem: true
+  - type: STR_SECTOPOD_AUTOPSY
+    points: 50
+    needsItem: true
+  - type: STR_CYBERMITE_AUTOPSY
+    points: 50
+    needsItem: true
+#---- aLien Missions ----------------------------------------------------------#
+  - type: STR_ALIEN_RESEARCH
+    points: 50
+    needsItem: true
+  - type: STR_ALIEN_HARVEST
+    points: 50
+    needsItem: true
+  - type: STR_ALIEN_ABDUCTION
+    points: 50
+    needsItem: true
+  - type: STR_ALIEN_INFILTRATION
+    points: 50
+    needsItem: true
+  - type: STR_ALIEN_BASE
+    points: 50
+    needsItem: true
+  - type: STR_ALIEN_TERROR
+    points: 50
+    needsItem: true
+  - type: STR_ALIEN_RETALIATION
+    points: 50
+    needsItem: true
+  - type: STR_ALIEN_SUPPLY
+    points: 50
+    needsItem: true
+#---- aLien UFOs --------------------------------------------------------------#
+  - type: STR_SMALL_SCOUT
+    points: 50
+    needsItem: true
+  - type: STR_MEDIUM_SCOUT
+    points: 50
+    needsItem: true
+  - type: STR_LARGE_SCOUT
+    points: 50
+    needsItem: true
+  - type: STR_HARVESTER
+    points: 50
+    needsItem: true
+  - type: STR_ABDUCTOR
+    points: 50
+    needsItem: true
+  - type: STR_TERROR_SHIP
+    points: 50
+    needsItem: true
+  - type: STR_BATTLESHIP
+    points: 50
+    needsItem: true
+  - type: STR_SUPPLY_SHIP
+    points: 50
+    needsItem: true

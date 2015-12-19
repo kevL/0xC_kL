@@ -1,0 +1,1053 @@
+# 'Xcom1Ruleset.rul'
+# X-COM 1 (UFO: Enemy Unknown) ruleset
+# For documentation on these values, see http://ufopaedia.org/index.php?title=Rulesets_(OpenXcom)
+soldiers:
+  - type: STR_SOLDIER
+    costBuy: 50000
+    costSalary: 25000
+    minStats:
+      tu: 45
+      stamina: 35
+      health: 25
+      bravery: 10
+      reactions: 35
+      firing: 55
+      throwing: 55
+      strength: 20
+      psiStrength: 1
+      psiSkill: 15
+      melee: 45
+    maxStats:
+      tu: 60
+      stamina: 60
+      health: 35
+      bravery: 50
+      reactions: 55
+      firing: 70
+      throwing: 75
+      strength: 35
+      psiStrength: 100
+      psiSkill: 25
+      melee: 55
+    statCaps:
+      tu: 86
+      stamina: 113
+      health: 83
+      bravery: 100
+      reactions: 103
+      firing: 132
+      throwing: 126
+      strength: 72
+      psiStrength: 100
+      psiSkill: 120
+      melee: 123
+    armor: STR_ARMOR_NONE_UC
+    standHeight: 22
+    kneelHeight: 16 #14 note 16 gets over stone fence but wood-slatted fence blocks when kneeling (at 14 stone fence blocks but can look/shoot through wood-slatted fence)
+    genderRatio: [3,1]
+units:
+  - type: STR_TANK_CANNON
+    race: STR_TANK_CANNON
+    stats:
+      tu: 70
+      stamina: 100
+      health: 90
+      bravery: 110
+      reactions: 20
+      firing: 60
+      throwing: 0
+      strength: 60
+      psiStrength: 200
+      psiSkill: 0
+      melee: 0
+    armor: TANK_ARMOR
+    standHeight: 16
+    kneelHeight: 16
+    value: 35
+    deathSound: 23
+    moveSound: 14
+    energyRecovery: 75
+    mechanical: true
+    psiImmune: true
+    hasHands: false
+  - type: STR_TANK_ROCKET_LAUNCHER
+    race: STR_TANK_ROCKET_LAUNCHER
+    stats:
+      tu: 70
+      stamina: 100
+      health: 90
+      bravery: 110
+      reactions: 20
+      firing: 60
+      throwing: 0
+      strength: 60
+      psiStrength: 200
+      psiSkill: 0
+      melee: 0
+    armor: TANK_ARMOR
+    standHeight: 16
+    kneelHeight: 16
+    value: 40
+    deathSound: 23
+    moveSound: 14
+    energyRecovery: 75
+    mechanical: true
+    psiImmune: true
+    hasHands: false
+  - type: STR_TANK_LASER_CANNON
+    race: STR_TANK_LASER_CANNON
+    stats:
+      tu: 70
+      stamina: 100
+      health: 90
+      bravery: 110
+      reactions: 20
+      firing: 60
+      throwing: 0
+      strength: 60
+      psiStrength: 200
+      psiSkill: 0
+      melee: 0
+    armor: TANK_ARMOR
+    standHeight: 16
+    kneelHeight: 16
+    value: 45
+    deathSound: 23
+    moveSound: 14
+    energyRecovery: 75
+    mechanical: true
+    psiImmune: true
+    hasHands: false
+  - type: STR_HOVERTANK_PLASMA
+    race: STR_HOVERTANK_PLASMA
+    stats:
+      tu: 100
+      stamina: 100
+      health: 90
+      bravery: 110
+      reactions: 30
+      firing: 60
+      throwing: 0
+      strength: 60
+      psiStrength: 200
+      psiSkill: 0
+      melee: 0
+    armor: HOVERTANK_ARMOR
+    standHeight: 12
+    kneelHeight: 12
+    floatHeight: 6
+    value: 50
+    deathSound: 23
+    moveSound: 40
+    energyRecovery: 85
+    mechanical: true
+    psiImmune: true
+    hasHands: false
+  - type: STR_HOVERTANK_LAUNCHER
+    race: STR_HOVERTANK_LAUNCHER
+    stats:
+      tu: 100
+      stamina: 100
+      health: 90
+      bravery: 110
+      reactions: 30
+      firing: 60
+      throwing: 0
+      strength: 60
+      psiStrength: 200
+      psiSkill: 0
+      melee: 0
+    armor: HOVERTANK_ARMOR
+    standHeight: 12
+    kneelHeight: 12
+    floatHeight: 6
+    value: 55
+    deathSound: 23
+    moveSound: 40
+    energyRecovery: 85
+    mechanical: true
+    psiImmune: true
+    hasHands: false
+  - type: MALE_CIVILIAN
+    race: STR_CIVILIAN
+    stats:
+      tu: 35
+      stamina: 65
+      health: 30
+      bravery: 80
+      reactions: 30
+      firing: 30
+      throwing: 50
+      strength: 30
+      psiStrength: 5
+      psiSkill: 0
+      melee: 15
+    armor: CIVM_ARMOR
+    standHeight: 21
+    kneelHeight: 14
+    value: 33
+    intelligence: 4
+    energyRecovery: 50
+  - type: FEMALE_CIVILIAN
+    race: STR_CIVILIAN
+    stats:
+      tu: 35
+      stamina: 65
+      health: 30
+      bravery: 80
+      reactions: 30
+      firing: 30
+      throwing: 50
+      strength: 30
+      psiStrength: 5
+      psiSkill: 0
+      melee: 15
+    armor: CIVF_ARMOR
+    standHeight: 21
+    kneelHeight: 14
+    value: 33
+    intelligence: 4
+    energyRecovery: 50
+    female: true
+  - type: STR_SECTOID_SOLDIER
+    race: STR_SECTOID
+    rank: STR_LIVE_SOLDIER
+    stats:
+      tu: 54
+      stamina: 90
+      health: 32
+      bravery: 60
+      reactions: 63
+      firing: 52
+      throwing: 58
+      strength: 40
+      psiStrength: 57
+      psiSkill: 0
+      melee: 15
+    armor: SECTOID_ARMOR0
+    standHeight: 16
+    kneelHeight: 12
+    value: 8
+    deathSound: 10
+    intelligence: 3
+    aggression: 1
+    energyRecovery: 60
+  - type: STR_SECTOID_NAVIGATOR
+    race: STR_SECTOID
+    rank: STR_LIVE_NAVIGATOR
+    stats:
+      tu: 54
+      stamina: 90
+      health: 36
+      bravery: 70
+      reactions: 63
+      firing: 52
+      throwing: 58
+      strength: 40
+      psiStrength: 67
+      psiSkill: 0
+      melee: 12
+    armor: SECTOID_ARMOR0
+    standHeight: 16
+    kneelHeight: 12
+    value: 10
+    deathSound: 10
+    intelligence: 4
+    aggression: 1
+    energyRecovery: 60
+  - type: STR_SECTOID_MEDIC
+    race: STR_SECTOID
+    rank: STR_LIVE_MEDIC
+    stats:
+      tu: 54
+      stamina: 90
+      health: 41
+      bravery: 80
+      reactions: 63
+      firing: 52
+      throwing: 58
+      strength: 40
+      psiStrength: 77
+      psiSkill: 0
+      melee: 10
+    armor: SECTOID_ARMOR0
+    standHeight: 16
+    kneelHeight: 12
+    value: 12
+    deathSound: 10
+    intelligence: 5
+    aggression: 0
+    energyRecovery: 60
+  - type: STR_SECTOID_ENGINEER
+    race: STR_SECTOID
+    rank: STR_LIVE_ENGINEER
+    stats:
+      tu: 54
+      stamina: 90
+      health: 46
+      bravery: 90
+      reactions: 63
+      firing: 52
+      throwing: 58
+      strength: 40
+      psiStrength: 87
+      psiSkill: 0
+      melee: 15
+    armor: SECTOID_ARMOR0
+    standHeight: 16
+    kneelHeight: 12
+    value: 14
+    deathSound: 10
+    intelligence: 6
+    aggression: 2
+    energyRecovery: 60
+  - type: STR_SECTOID_LEADER
+    race: STR_SECTOID
+    rank: STR_LIVE_LEADER
+    stats:
+      tu: 54
+      stamina: 90
+      health: 53
+      bravery: 90
+      reactions: 63
+      firing: 52
+      throwing: 58
+      strength: 45
+      psiStrength: 89
+      psiSkill: 41
+      melee: 18
+    armor: SECTOID_ARMOR1
+    standHeight: 16
+    kneelHeight: 12
+    value: 16
+    deathSound: 10
+    intelligence: 7
+    aggression: 1
+    energyRecovery: 60
+  - type: STR_SECTOID_COMMANDER
+    race: STR_SECTOID
+    rank: STR_LIVE_COMMANDER
+    stats:
+      tu: 54
+      stamina: 90
+      health: 57
+      bravery: 100
+      reactions: 63
+      firing: 52
+      throwing: 58
+      strength: 50
+      psiStrength: 109
+      psiSkill: 42
+      melee: 23
+    armor: SECTOID_ARMOR2
+    standHeight: 16
+    kneelHeight: 12
+    value: 22
+    deathSound: 10
+    intelligence: 8
+    aggression: 0
+    energyRecovery: 60
+  - type: STR_CYBERDISC_TERRORIST
+    race: STR_CYBERDISC
+    rank: STR_LIVE_TERRORIST
+    stats:
+      tu: 62
+      stamina: 90
+      health: 124
+      bravery: 110
+      reactions: 64
+      firing: 60
+      throwing: 0
+      strength: 90
+      psiStrength: 200
+      psiSkill: 0
+      melee: 0
+    armor: CYBERDISC_ARMOR
+    standHeight: 15
+    kneelHeight: 15
+    floatHeight: 2
+    value: 20
+    deathSound: 23
+    moveSound: 40
+    intelligence: 4
+    aggression: 1
+    energyRecovery: 100
+    specab: 1
+    livingWeapon: true
+    mechanical: true
+    psiImmune: true
+    hasHands: false
+  - type: STR_FLOATER_SOLDIER
+    race: STR_FLOATER
+    rank: STR_LIVE_SOLDIER
+    stats:
+      tu: 50
+      stamina: 90
+      health: 35
+      bravery: 40
+      reactions: 50
+      firing: 50
+      throwing: 58
+      strength: 40
+      psiStrength: 36
+      psiSkill: 0
+      melee: 39
+    armor: FLOATER_ARMOR0
+    standHeight: 21
+    kneelHeight: 16
+    floatHeight: 2
+    value: 10
+    deathSound: 255
+    moveSound: 15
+    intelligence: 4
+    aggression: 2
+    energyRecovery: 60
+  - type: STR_FLOATER_NAVIGATOR
+    race: STR_FLOATER
+    rank: STR_LIVE_NAVIGATOR
+    stats:
+      tu: 50
+      stamina: 90
+      health: 40
+      bravery: 50
+      reactions: 50
+      firing: 50
+      throwing: 58
+      strength: 40
+      psiStrength: 46
+      psiSkill: 0
+      melee: 37
+    armor: FLOATER_ARMOR0
+    standHeight: 21
+    kneelHeight: 16
+    floatHeight: 2
+    value: 12
+    deathSound: 255
+    moveSound: 15
+    intelligence: 5
+    aggression: 2
+    energyRecovery: 60
+  - type: STR_FLOATER_MEDIC
+    race: STR_FLOATER
+    rank: STR_LIVE_MEDIC
+    stats:
+      tu: 50
+      stamina: 90
+      health: 45
+      bravery: 60
+      reactions: 50
+      firing: 50
+      throwing: 58
+      strength: 40
+      psiStrength: 56
+      psiSkill: 0
+      melee: 35
+    armor: FLOATER_ARMOR0
+    standHeight: 21
+    kneelHeight: 16
+    floatHeight: 2
+    value: 14
+    deathSound: 255
+    moveSound: 15
+    intelligence: 6
+    aggression: 1
+    energyRecovery: 60
+  - type: STR_FLOATER_ENGINEER
+    race: STR_FLOATER
+    rank: STR_LIVE_ENGINEER
+    stats:
+      tu: 50
+      stamina: 90
+      health: 50
+      bravery: 70
+      reactions: 50
+      firing: 50
+      throwing: 58
+      strength: 40
+      psiStrength: 66
+      psiSkill: 0
+      melee: 70
+    armor: FLOATER_ARMOR0
+    standHeight: 21
+    kneelHeight: 16
+    floatHeight: 2
+    value: 16
+    deathSound: 255
+    moveSound: 15
+    intelligence: 7
+    aggression: 2
+    energyRecovery: 42
+  - type: STR_FLOATER_LEADER
+    race: STR_FLOATER
+    rank: STR_LIVE_LEADER
+    stats:
+      tu: 55
+      stamina: 95
+      health: 55
+      bravery: 80
+      reactions: 60
+      firing: 60
+      throwing: 58
+      strength: 45
+      psiStrength: 76
+      psiSkill: 0
+      melee: 70
+    armor: FLOATER_ARMOR1
+    standHeight: 21
+    kneelHeight: 16
+    floatHeight: 2
+    value: 22
+    deathSound: 255
+    moveSound: 15
+    intelligence: 8
+    aggression: 0
+    energyRecovery: 47
+  - type: STR_FLOATER_COMMANDER
+    race: STR_FLOATER
+    rank: STR_LIVE_COMMANDER
+    stats:
+      tu: 60
+      stamina: 100
+      health: 60
+      bravery: 90
+      reactions: 66
+      firing: 63
+      throwing: 65
+      strength: 50
+      psiStrength: 86
+      psiSkill: 0
+      melee: 52
+    armor: FLOATER_ARMOR2
+    standHeight: 21
+    kneelHeight: 16
+    floatHeight: 2
+    value: 30
+    deathSound: 255
+    moveSound: 15
+    intelligence: 8
+    aggression: 0
+    energyRecovery: 60
+  - type: STR_REAPER_TERRORIST
+    race: STR_REAPER
+    rank: STR_LIVE_TERRORIST
+    stats:
+      tu: 62
+      stamina: 90
+      health: 154
+      bravery: 90
+      reactions: 64
+      firing: 0
+      throwing: 0
+      strength: 90
+      psiStrength: 49
+      psiSkill: 0
+      melee: 75
+    armor: REAPER_ARMOR
+    standHeight: 23
+    kneelHeight: 16
+    value: 20
+    deathSound: 48
+    intelligence: 2
+    aggression: 2
+    energyRecovery: 80
+    livingWeapon: true
+    hasHands: false
+    dog: true
+  - type: STR_SNAKEMAN_SOLDIER
+    race: STR_SNAKEMAN
+    rank: STR_LIVE_SOLDIER
+    stats:
+      tu: 40
+      stamina: 80
+      health: 49
+      bravery: 80
+      reactions: 45
+      firing: 58
+      throwing: 65
+      strength: 47
+      psiStrength: 65
+      psiSkill: 0
+      melee: 48
+    armor: SNAKEMAN_ARMOR0
+    standHeight: 18
+    kneelHeight: 18
+    value: 13
+    deathSound: 8
+    moveSound: 0
+    intelligence: 2
+    aggression: 1
+    energyRecovery: 80
+    meleeWeapon: STR_FIST
+  - type: STR_SNAKEMAN_NAVIGATOR
+    race: STR_SNAKEMAN
+    rank: STR_LIVE_NAVIGATOR
+    stats:
+      tu: 40
+      stamina: 80
+      health: 55
+      bravery: 70
+      reactions: 45
+      firing: 58
+      throwing: 65
+      strength: 47
+      psiStrength: 75
+      psiSkill: 0
+      melee: 45
+    armor: SNAKEMAN_ARMOR1
+    standHeight: 18
+    kneelHeight: 18
+    value: 15
+    deathSound: 8
+    moveSound: 0
+    intelligence: 3
+    aggression: 1
+    energyRecovery: 80
+    meleeWeapon: STR_FIST
+  - type: STR_SNAKEMAN_ENGINEER
+    race: STR_SNAKEMAN
+    rank: STR_LIVE_ENGINEER
+    stats:
+      tu: 40
+      stamina: 80
+      health: 63
+      bravery: 90
+      reactions: 45
+      firing: 58
+      throwing: 65
+      strength: 47
+      psiStrength: 85
+      psiSkill: 0
+      melee: 48
+    armor: SNAKEMAN_ARMOR2
+    standHeight: 18
+    kneelHeight: 18
+    value: 18
+    deathSound: 8
+    moveSound: 0
+    intelligence: 4
+    aggression: 2
+    energyRecovery: 80
+    meleeWeapon: STR_FIST
+  - type: STR_SNAKEMAN_LEADER
+    race: STR_SNAKEMAN
+    rank: STR_LIVE_LEADER
+    stats:
+      tu: 40
+      stamina: 80
+      health: 72
+      bravery: 100
+      reactions: 55
+      firing: 65
+      throwing: 65
+      strength: 52
+      psiStrength: 95
+      psiSkill: 0
+      melee: 53
+    armor: SNAKEMAN_ARMOR3
+    standHeight: 18
+    kneelHeight: 18
+    value: 24
+    deathSound: 8
+    moveSound: 0
+    intelligence: 5
+    aggression: 2
+    energyRecovery: 80
+    meleeWeapon: STR_FIST
+  - type: STR_SNAKEMAN_COMMANDER
+    race: STR_SNAKEMAN
+    rank: STR_LIVE_COMMANDER
+    stats:
+      tu: 45
+      stamina: 84
+      health: 81
+      bravery: 100
+      reactions: 65
+      firing: 58
+      throwing: 65
+      strength: 57
+      psiStrength: 105
+      psiSkill: 0
+      melee: 58
+    armor: SNAKEMAN_ARMOR4
+    standHeight: 18
+    kneelHeight: 18
+    value: 32
+    deathSound: 8
+    moveSound: 0
+    intelligence: 6
+    aggression: 2
+    energyRecovery: 80
+    meleeWeapon: STR_FIST
+  - type: STR_CHRYSSALID_TERRORIST
+    race: STR_CHRYSSALID
+    rank: STR_LIVE_TERRORIST
+    stats:
+      tu: 110
+      stamina: 140
+      health: 99
+      bravery: 100
+      reactions: 70
+      firing: 0
+      throwing: 0
+      strength: 110
+      psiStrength: 114
+      psiSkill: 0
+      melee: 82
+    armor: CHRYSSALID_ARMOR
+    standHeight: 21
+    kneelHeight: 16
+    value: 22
+    deathSound: 49
+    aggroSound: 49
+    intelligence: 2
+    aggression: 2
+    energyRecovery: 80
+    livingWeapon: true
+    hasHands: false
+    dog: true
+  - type: STR_MUTON_SOLDIER
+    race: STR_MUTON
+    rank: STR_LIVE_SOLDIER
+    stats:
+      tu: 55
+      stamina: 90
+      health: 129
+      bravery: 100
+      reactions: 42
+      firing: 54
+      throwing: 62
+      strength: 70
+      psiStrength: 37
+      psiSkill: 0
+      melee: 69
+    armor: MUTON_ARMOR0
+    standHeight: 21
+    kneelHeight: 16
+    value: 13
+    deathSound: 6
+    intelligence: 2
+    aggression: 2
+    energyRecovery: 90
+    meleeWeapon: STR_FIST
+  - type: STR_MUTON_NAVIGATOR
+    race: STR_MUTON
+    rank: STR_LIVE_NAVIGATOR
+    stats:
+      tu: 58
+      stamina: 90
+      health: 134
+      bravery: 100
+      reactions: 47
+      firing: 54
+      throwing: 62
+      strength: 75
+      psiStrength: 47
+      psiSkill: 0
+      melee: 65
+    armor: MUTON_ARMOR1
+    standHeight: 21
+    kneelHeight: 16
+    value: 15
+    deathSound: 6
+    intelligence: 3
+    aggression: 2
+    energyRecovery: 90
+    meleeWeapon: STR_FIST
+  - type: STR_MUTON_ENGINEER
+    race: STR_MUTON
+    rank: STR_LIVE_ENGINEER
+    stats:
+      tu: 60
+      stamina: 90
+      health: 139
+      bravery: 100
+      reactions: 51
+      firing: 54
+      throwing: 62
+      strength: 80
+      psiStrength: 57
+      psiSkill: 0
+      melee: 75
+    armor: MUTON_ARMOR2
+    standHeight: 21
+    kneelHeight: 16
+    value: 17
+    deathSound: 6
+    intelligence: 4
+    aggression: 2
+    energyRecovery: 90
+    meleeWeapon: STR_FIST
+  - type: STR_SILACOID_TERRORIST
+    race: STR_SILACOID
+    rank: STR_LIVE_TERRORIST
+    stats:
+      tu: 40
+      stamina: 80
+      health: 122
+      bravery: 100
+      reactions: 40
+      firing: 0
+      throwing: 0
+      strength: 70
+      psiStrength: 153
+      psiSkill: 0
+      melee: 79
+    armor: SILACOID_ARMOR
+    standHeight: 10
+    kneelHeight: 10
+    value: 18
+    deathSound: 7
+    moveSound: 47
+    intelligence: 1
+    aggression: 2
+    energyRecovery: 80
+    specab: 2
+    livingWeapon: true
+    hasHands: false
+    dog: true
+  - type: STR_CELATID_TERRORIST
+    race: STR_CELATID
+    rank: STR_LIVE_TERRORIST
+    stats:
+      tu: 70
+      stamina: 90
+      health: 73
+      bravery: 80
+      reactions: 45
+      firing: 100
+      throwing: 0
+      strength: 40
+      psiStrength: 82
+      psiSkill: 0
+      melee: 0
+    armor: CELATID_ARMOR
+    standHeight: 10
+    kneelHeight: 10
+    floatHeight: 6
+    value: 16
+    deathSound: 7
+    moveSound: 16
+    intelligence: 3
+    aggression: 2
+    energyRecovery: 70
+    livingWeapon: true
+    hasHands: false
+    dog: true
+  - type: STR_ETHEREAL_SOLDIER
+    race: STR_ETHEREAL
+    rank: STR_LIVE_SOLDIER
+    stats:
+      tu: 68
+      stamina: 96
+      health: 61
+      bravery: 90
+      reactions: 75
+      firing: 74
+      throwing: 80
+      strength: 48
+      psiStrength: 99
+      psiSkill: 35
+      melee: 56
+    armor: ETHEREAL_ARMOR0
+    standHeight: 20
+    kneelHeight: 15
+    value: 18
+    deathSound: 9
+    moveSound: 15
+    intelligence: 4
+    aggression: 1
+    energyRecovery: 100
+  - type: STR_ETHEREAL_LEADER
+    race: STR_ETHEREAL
+    rank: STR_LIVE_LEADER
+    stats:
+      tu: 68
+      stamina: 96
+      health: 68
+      bravery: 100
+      reactions: 75
+      firing: 74
+      throwing: 80
+      strength: 48
+      psiStrength: 114
+      psiSkill: 36
+      melee: 66
+    armor: ETHEREAL_ARMOR1
+    standHeight: 20
+    kneelHeight: 15
+    value: 27
+    deathSound: 9
+    moveSound: 15
+    intelligence: 6
+    aggression: 1
+    energyRecovery: 100
+  - type: STR_ETHEREAL_COMMANDER
+    race: STR_ETHEREAL
+    rank: STR_LIVE_COMMANDER
+    stats:
+      tu: 68
+      stamina: 96
+      health: 75
+      bravery: 110
+      reactions: 75
+      firing: 74
+      throwing: 80
+      strength: 48
+      psiStrength: 133
+      psiSkill: 37
+      melee: 78
+    armor: ETHEREAL_ARMOR2
+    standHeight: 20
+    kneelHeight: 15
+    value: 35
+    deathSound: 9
+    moveSound: 15
+    intelligence: 8
+    aggression: 0
+    energyRecovery: 100
+  - type: STR_SECTOPOD_TERRORIST
+    race: STR_SECTOPOD
+    rank: STR_LIVE_TERRORIST
+    stats:
+      tu: 62
+      stamina: 90
+      health: 105
+      bravery: 110
+      reactions: 64
+      firing: 60
+      throwing: 0
+      strength: 90
+      psiStrength: 200
+      psiSkill: 0
+      melee: 0
+    armor: SECTOPOD_ARMOR
+    standHeight: 23
+    kneelHeight: 16
+    value: 27
+    deathSound: 23
+    intelligence: 5
+    aggression: 2
+    energyRecovery: 100
+    livingWeapon: true
+    mechanical: true
+    psiImmune: true
+  - type: STR_ZOMBIE
+    race: STR_ZOMBIE
+    rank: STR_LIVE_TERRORIST
+    stats:
+      tu: 40
+      stamina: 110
+      health: 88
+      bravery: 110
+      reactions: 40
+      firing: 0
+      throwing: 0
+      strength: 84
+      psiStrength: 200
+      psiSkill: 0
+      melee: 51
+    armor: ZOMBIE_ARMOR
+    standHeight: 18
+    kneelHeight: 18
+    value: 15
+    deathSound: 71
+    intelligence: 0
+    aggression: 2
+    energyRecovery: 40
+    spawnUnit: STR_CHRYSSALID_TERRORIST
+    livingWeapon: true
+    psiImmune: true
+    hasHands: false
+    dog: true
+startingBase:
+    facilities:
+      - type: STR_ACCESS_LIFT
+        x: 2
+        y: 2
+      - type: STR_HANGAR
+        x: 2
+        y: 0
+      - type: STR_HANGAR
+        x: 0
+        y: 4
+      - type: STR_HANGAR
+        x: 4
+        y: 4
+      - type: STR_LIVING_QUARTERS
+        x: 3
+        y: 2
+      - type: STR_GENERAL_STORES
+        x: 2
+        y: 3
+      - type: STR_LABORATORY
+        x: 3
+        y: 3
+      - type: STR_WORKSHOP
+        x: 4
+        y: 3
+      - type: STR_SMALL_RADAR_SYSTEM
+        x: 1
+        y: 3
+    randomSoldiers: 8
+    crafts:
+      - type: STR_SKYRANGER
+        id: 1
+        fuel: 0
+        damage: 0
+        status: STR_REFUELLING
+      - type: STR_INTERCEPTOR
+        id: 1
+        fuel: 0
+        damage: 0
+        status: STR_REFUELLING
+      - type: STR_INTERCEPTOR
+        id: 2
+        fuel: 0
+        damage: 0
+        status: STR_REFUELLING
+    items:
+      STR_AVALANCHE_LAUNCHER: 1
+      STR_AVALANCHE_MISSILES: 9
+      STR_STINGRAY_LAUNCHER: 2
+      STR_STINGRAY_MISSILES: 18
+      STR_CANNON: 1
+      STR_CANNON_ROUNDS_50: 5
+      STR_PISTOL: 2
+      STR_PISTOL_CLIP: 6
+      STR_RIFLE: 8
+      STR_RIFLE_CLIP: 20
+      STR_AUTO_CANNON: 1
+      STR_AC_AP_AMMO: 4
+      STR_AC_HE_AMMO: 4
+      STR_HEAVY_CANNON: 1
+      STR_HC_AP_AMMO: 4
+      STR_HC_HE_AMMO: 4
+      STR_ROCKET_LAUNCHER: 1
+      STR_SMALL_ROCKET: 4
+      STR_LARGE_ROCKET: 2
+      STR_GRENADE: 15
+      STR_SMOKE_GRENADE: 5
+      STR_ELECTRO_FLARE: 10
+    scientists: 10
+    engineers: 10
+startingTime:
+  second: 0
+  minute: 0
+  hour: 12
+#  weekday: 6
+  day: 1
+  month: 1
+  year: 1999
+costEngineer: 40000
+costScientist: 50000
+timePersonnel: 72
+#initialFunding: 6000 # not used
+alienFuel: [STR_ELERIUM_115,50]
+radarCutoffRange: 1500
+firstGrenade: 0
+retalCoef: 3
+font: Font.dat
+cutscenes:
+  - type: intro
+    videos:
+      - UFOINTRO/UFOINT.FLI

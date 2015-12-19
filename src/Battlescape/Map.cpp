@@ -1362,9 +1362,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 												posScreen.y);
 							int color;
 							if (hurt == 2)
-								color = RED;	// red, wounded unconscious soldier
+								color = RED;	// wounded unconscious soldier
 							else
-								color = WHITE;	// white, unconscious soldier here
+								color = WHITE;	// unconscious soldier here
 
 							srfCross1->blitNShade( // small gray cross
 											surface,

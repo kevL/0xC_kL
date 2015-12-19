@@ -1,5 +1,15 @@
 /build/
-/data/
+/data/*.png
+/data/_config/
+/data/GEODATA/
+/data/GEOGRAPH/
+/data/MAPS/
+/data/Resources/
+/data/ROUTES/
+/data/TERRAIN/
+/data/UFOGRAPH/
+/data/UFOINTRO/
+/data/UNITS/
 /deps/
 /nbproject/
 /res/

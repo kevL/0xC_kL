@@ -1,0 +1,130 @@
+#kL, my Sound customizations:
+#kL, the numbering is representative of their order in SAMPLE*.CAT;
+#kL, the "hitSound" etc. under items etc. above correspond to these below.
+extraSounds:
+  - type: BATTLE.CAT
+    files:
+      0: Resources/Sounds/00_snakeslither.WAV
+      2: Resources/Sounds/02_biggunshot.WAV
+      3: Resources/Sounds/03_wooddoor.WAV
+      4: Resources/Sounds/04_rifleshot.WAV
+      5: Resources/Sounds/05_largeexplosion.WAV
+      6: Resources/Sounds/06_groandeath.WAV
+      7: Resources/Sounds/07_flutterdeath.WAV
+      8: Resources/Sounds/08_gagdeath.WAV
+      9: Resources/Sounds/09_squealdeath.WAV
+      10: Resources/Sounds/10_screamdeath.WAV
+      11: Resources/Sounds/11_lasershot.WAV
+      12: Resources/Sounds/12_smallexplosion.WAV
+      13: Resources/Sounds/13_hitmetal.WAV
+      14: Resources/Sounds/14_tankmove.WAV
+      15: Resources/Sounds/15_flightwarble.WAV
+      16: Resources/Sounds/16_snakeslither.WAV
+      17: Resources/Sounds/17_reload.WAV
+      18: Resources/Sounds/18_plasmashot.WAV
+      19: Resources/Sounds/19_plasmahit.WAV
+      20: Resources/Sounds/20_ufodoor1.WAV
+      21: Resources/Sounds/21_ufodoor2.WAV
+      22: Resources/Sounds/22_ricochet.WAV
+      23: Resources/Sounds/23_machinedeath.WAV
+      24: Resources/Sounds/24_footstepmetal1.WAV
+      25: Resources/Sounds/25_footstepmetal2.WAV
+      26: Resources/Sounds/26_footstepground1.WAV
+      27: Resources/Sounds/27_footstepground2.WAV
+      28: Resources/Sounds/28_footstepmars1.WAV
+      29: Resources/Sounds/29_footstepmars2.WAV
+      30: Resources/Sounds/30_footstepmud1.WAV
+      31: Resources/Sounds/31_footstepmud2.WAV
+      32: Resources/Sounds/32_footstepsand1.WAV
+      33: Resources/Sounds/33_footstepsand2.WAV
+      34: Resources/Sounds/34_footstepsnow1.WAV
+      35: Resources/Sounds/35_footstepsnow2.WAV
+      36: Resources/Sounds/36_mindcontrolzing.WAV
+      37: Resources/Sounds/37_mindprobehum.WAV
+      38: Resources/Sounds/38_itemdropthunk.WAV
+      39: Resources/Sounds/39_itemthrowswish.WAV
+      40: Resources/Sounds/40_hovermove.WAV
+      41: Resources/Sounds/41_maledeath1.WAV
+      42: Resources/Sounds/42_maledeath2.WAV
+      43: Resources/Sounds/43_maledeath3.WAV
+      44: Resources/Sounds/44_femaledeath1.WAV
+      45: Resources/Sounds/45_femaledeath2.WAV
+      46: Resources/Sounds/46_femaledeath3.WAV
+      47: Resources/Sounds/47_silicoidmove.WAV
+      48: Resources/Sounds/48_reaperattack.WAV
+      49: Resources/Sounds/49_chrysallidattack.WAV
+      50: Resources/Sounds/50_silicoidattack.WAV
+      51: Resources/Sounds/51_celatidattack.WAV
+      52: Resources/Sounds/52_rocketshot.WAV
+      53: Resources/Sounds/53_blasterlaunch.WAV
+      54: Resources/Sounds/54_stunrod.WAV
+      70: Resources/Sounds/extra/move_hover.ogg
+      71: Resources/Sounds/extra/death_sectoid.ogg
+      72: Resources/Sounds/extra/death_snakeman.ogg
+      73: Resources/Sounds/extra/b_cannon_hit.ogg
+      74: Resources/Sounds/extra/place.ogg
+      101: Resources/Sounds/Tactical/sFx_voice/death/f/vs_fx0huskf_hit2.wav
+      102: Resources/Sounds/Tactical/sFx_voice/death/f/vs_nnwgrdf2_hit1.wav
+      103: Resources/Sounds/Tactical/sFx_voice/death/f/vs_nprostf2_hit2.wav
+      111: Resources/Sounds/Tactical/sFx_voice/death/m/vs_fx0dumbm_hit1.wav
+      112: Resources/Sounds/Tactical/sFx_voice/death/m/vs_fx0powrm_hit1.wav
+      113: Resources/Sounds/Tactical/sFx_voice/death/m/vs_fx0powrm_hit3.wav
+      114: Resources/Sounds/Tactical/sFx_voice/death/m/vs_fx0subtm_hit2.wav
+      115: Resources/Sounds/Tactical/sFx_voice/death/m/vs_fx0subtm_hit3.wav
+      116: Resources/Sounds/Tactical/sFx_voice/death/m/vs_nthugxm1_hit3.wav
+      121: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_co_belueth_hit3.wav
+      122: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_co_inshula_hit2.wav
+      123: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_co_inshula_hit3.wav
+      124: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_co_soraevora_hit3.wav
+      125: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_fx0feisf_hit3.wav
+      126: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_lastri_atk1.wav
+      127: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_lastri_hit2.wav
+      128: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_lastri_hit3.wav
+      129: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_ncomolf1_hit1.wav
+      130: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_ncomolf1_hit2.wav
+      131: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_nnwgrdf2_hit3.wav
+      132: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_nprostf2_hit3.wav
+      133: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_nsuccf_hit1.wav
+      134: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_nwizarf1_hit2.wav
+      135: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_nwncomf4_hit1.wav
+#      129: Resources/Sounds/Tactical/sFx_voice/hit/f/vs_nchildf1_hit2.wav
+      141: Resources/Sounds/Tactical/sFx_voice/hit/m/vs_co_grykk_hit3.wav
+      142: Resources/Sounds/Tactical/sFx_voice/hit/m/vs_co_quarrel_hit3.wav
+      143: Resources/Sounds/Tactical/sFx_voice/hit/m/vs_co_ribsmasher_hit2.wav
+      144: Resources/Sounds/Tactical/sFx_voice/hit/m/vs_co_septimund_hit1.wav
+      145: Resources/Sounds/Tactical/sFx_voice/hit/m/vs_co_septimund_hit3.wav
+      146: Resources/Sounds/Tactical/sFx_voice/hit/m/vs_co_umoja_hit1.wav
+      147: Resources/Sounds/Tactical/sFx_voice/hit/m/vs_nclerim1_hit1.wav
+      148: Resources/Sounds/Tactical/sFx_voice/hit/m/vs_nclerim1_hit3.wav
+      149: Resources/Sounds/Tactical/sFx_voice/hit/m/vs_nintdevm_hit1.wav
+      150: Resources/Sounds/Tactical/sFx_voice/hit/m/vs_NRANGEM1_hit1.wav
+      151: Resources/Sounds/Tactical/sFx_voice/hit/m/vs_nwizarm1_hit2.wav
+      255: Resources/Sounds/extra/255_silence.wav
+  - type: GEO.CAT
+    files:
+      0: Resources/Sounds/Geo/00_btn1.WAV
+      1: Resources/Sounds/Geo/01_windowclose.WAV
+      2: Resources/Sounds/Geo/02_windowopen1.WAV
+      3: Resources/Sounds/Geo/03_windowopen2.WAV
+      4: Resources/Sounds/Geo/04_cannon.WAV
+      5: Resources/Sounds/Geo/05_missile.WAV
+      6: Resources/Sounds/Geo/06_btn2.WAV
+      7: Resources/Sounds/Geo/07_fblaunch.WAV
+      8: Resources/Sounds/Geo/08_laser.WAV
+      9: Resources/Sounds/Geo/09_plasma.WAV
+      10: Resources/Sounds/Geo/10_ufohit.WAV
+      11: Resources/Sounds/Geo/11_ufocrash.WAV
+      12: Resources/Sounds/Geo/12_crafthit.WAV
+      13: Resources/Sounds/Geo/13_craftcrash.WAV
+#Extra Sounds:
+# type should correspond to one of the following:
+#   - BATTLE.CAT     - battlescape noises, original cat file has 55 entries (0-54)
+#                      see http://www.ufopaedia.org/index.php?title=SOUND#SAMPLE2.CAT
+#   - GMINTRO.CAT    - some intro sounds, probably best not to mess with these.
+#   - SAMPLE3.CAT    - some more intro sounds, probably best not to mess with these.
+#   - GEO.CAT        - geoscape/UI noises, original cat file has 14 entries (0-13)
+#                      see http://www.ufopaedia.org/index.php?title=SOUND#SAMPLE.CAT
+#extraSounds:
+#  - type: BATTLE.CAT
+#    files:
+#      55: Resources/Sounds/sample.wav

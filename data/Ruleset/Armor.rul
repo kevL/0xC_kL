@@ -1,0 +1,204 @@
+armors:
+  - type: STR_ARMOR_NONE_UC
+    spriteSheet: XCOM_0.PCK
+    spriteInv: MAN_0
+    spriteFaceGroup: 6
+    spriteFaceColor: [ 96, 96, 96, 96,160,160,163,163] #M0 F0 M1 F1 M2 F2 M3 F3
+    spriteHairGroup: 9
+    spriteHairColor: [144,144,164,164,245,245,166,166] #M0 F0 M1 F1 M2 F2 M3 F3
+    storeItem: STR_NONE
+    corpseBattle:
+      - STR_CORPSE
+    isBasic: true
+    frontArmor: 12
+    sideArmor: 9
+    rearArmor: 6
+    underArmor: 2
+    damageModifier:
+      - 1.0 #none
+      - 1.13 #ap
+      - 1.07 #in
+      - 1.1 #he
+      - 1.11 #laser
+      - 1.17 #plasma
+      - 1.19 #stun
+      - 1.2 #melee
+      - 1.5 #acid
+      - 1.12 #smoke
+    loftSet: [3]
+    agility: 1
+  - type: STR_PERSONAL_ARMOR_UC
+    spriteSheet: XCOM_1.PCK
+    spriteInv: MAN_1
+    spriteFaceGroup: 6
+    spriteFaceColor: [ 96, 96, 96, 96,160,160,163,163] #M0 F0 M1 F1 M2 F2 M3 F3
+    spriteHairGroup: 9
+    spriteHairColor: [144,144,164,164,245,245,166,166] #M0 F0 M1 F1 M2 F2 M3 F3
+    corpseBattle:
+      - STR_CORPSE_ARMOR
+    storeItem: STR_PERSONAL_ARMOR
+    frontArmor: 52
+    sideArmor: 42
+    rearArmor: 36
+    underArmor: 30
+    damageModifier:
+      - 1.0 #none
+      - 1.05 #ap
+      - 0.86 #in
+      - 1.0 #he
+      - 1.0 #laser
+      - 1.06 #plasma
+      - 0.89 #stun
+      - 1.05 #melee
+      - 1.15 #acid
+      - 1.12 #smoke
+    loftSet: [3]
+  - type: STR_POWER_SUIT_UC
+    spriteSheet: XCOM_2.PCK
+    spriteInv: MAN_2
+    corpseBattle:
+      - STR_CORPSE_SUIT
+    storeItem: STR_POWER_SUIT
+    frontArmor: 96
+    sideArmor: 82
+    rearArmor: 74
+    underArmor: 62
+    damageModifier:
+      - 1.0 #none
+      - 0.93 #ap
+      - 0.07 #in
+      - 0.96 #he
+      - 0.96 #laser
+      - 0.97 #plasma
+      - 0.76 #stun
+      - 0.9 #melee
+      - 0.95 #acid
+      - 0.0 #smoke
+    loftSet: [3]
+    isSpacesuit: true
+    agility: 2
+    forcedTorso: 1
+  - type: STR_FLYING_SUIT_UC
+    spriteSheet: XCOM_2.PCK
+    spriteInv: MAN_3
+    corpseBattle:
+      - STR_CORPSE_SUIT
+    storeItem: STR_FLYING_SUIT
+    frontArmor: 116
+    sideArmor: 96
+    rearArmor: 84
+    underArmor: 74
+    movementType: 1
+    damageModifier:
+      - 1.0 #none
+      - 0.93 #ap
+      - 0.07 #in
+      - 0.96 #he
+      - 0.96 #laser
+      - 0.97 #plasma
+      - 0.76 #stun
+      - 0.9 #melee
+      - 0.95 #acid
+      - 0.0 #smoke
+    loftSet: [3]
+    isSpacesuit: true
+    agility: 2
+    forcedTorso: 2
+  - type: TANK_ARMOR
+    spriteSheet: TANKS.PCK
+    allowInv: false
+    corpseBattle:
+      - TANK_CORPSE_1
+      - TANK_CORPSE_2
+      - TANK_CORPSE_3
+      - TANK_CORPSE_4
+    frontArmor: 95
+    sideArmor: 80
+    rearArmor: 70
+    underArmor: 65
+    drawRoutine: 2
+    size: 2
+    damageModifier:
+      - 1.0 #none
+      - 1.06 #ap
+      - 0.37 #in
+      - 0.73 #he
+      - 0.99 #laser
+      - 0.97 #plasma
+      - 0.0 #stun
+      - 0.77 #melee
+      - 0.43 #acid
+      - 0.0 #smoke
+    loftSet: [92,89,90,91]
+  - type: HOVERTANK_ARMOR
+    spriteSheet: TANKS.PCK
+    allowInv: false
+    corpseBattle:
+      - HOVERTANK_CORPSE_1
+      - HOVERTANK_CORPSE_2
+      - HOVERTANK_CORPSE_3
+      - HOVERTANK_CORPSE_4
+    frontArmor: 138
+    sideArmor: 132
+    rearArmor: 126
+    underArmor: 108
+    drawRoutine: 2
+    constantAnimation: true
+    movementType: 1
+    size: 2
+    damageModifier:
+      - 1.0 #none
+      - 1.06 #ap
+      - 0.37 #in
+      - 0.73 #he
+      - 0.99 #laser
+      - 0.97 #plasma
+      - 0.0 #stun
+      - 0.77 #melee
+      - 0.43 #acid
+      - 0.0 #smoke
+    loftSet: [92,89,90,91]
+  - type: CIVM_ARMOR
+    spriteSheet: CIVM.PCK
+    corpseBattle:
+      - CIVM_CORPSE
+    frontArmor: 12
+    sideArmor: 8
+    rearArmor: 5
+    underArmor: 2
+    drawRoutine: 4
+    damageModifier:
+      - 1.0
+      - 1.13
+      - 1.07
+      - 1.1
+      - 1.11
+      - 1.17
+      - 1.19
+      - 1.2
+      - 1.5
+      - 1.12
+    loftSet: [3]
+    agility: 1
+  - type: CIVF_ARMOR
+    spriteSheet: CIVF.PCK
+    corpseBattle:
+      - CIVF_CORPSE
+    frontArmor: 12
+    sideArmor: 8
+    rearArmor: 5
+    underArmor: 2
+    drawRoutine: 4
+    damageModifier:
+      - 1.0
+      - 1.13
+      - 1.07
+      - 1.1
+      - 1.11
+      - 1.17
+      - 1.19
+      - 1.2
+      - 1.5
+      - 1.12
+    loftSet: [3]
+    agility: 1

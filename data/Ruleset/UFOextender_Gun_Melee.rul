@@ -1,0 +1,135 @@
+# Based on UFOextender by Seb76 and Tycho
+# kL_modified: apply Strength; change code to +1/2 Str. for pistolWhips.
+items:
+  - type: STR_PISTOL
+    meleePower: 15
+    tuMelee: 15
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_RIFLE
+    meleePower: 30
+    tuMelee: 35
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_HEAVY_CANNON
+    meleePower: 40
+    tuMelee: 45
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_AUTO_CANNON
+    meleePower: 40
+    tuMelee: 45
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_ROCKET_LAUNCHER
+    meleePower: 50
+    tuMelee: 75
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_LASER_PISTOL
+    meleePower: 15
+    tuMelee: 15
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_LASER_RIFLE
+    meleePower: 30
+    tuMelee: 35
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_HEAVY_LASER
+    meleePower: 40
+    tuMelee: 45
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_PLASMA_PISTOL
+    meleePower: 15
+    tuMelee: 15
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_PLASMA_RIFLE
+    meleePower: 30
+    tuMelee: 35
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_HEAVY_PLASMA
+    meleePower: 40
+    tuMelee: 45
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_BLASTER_LAUNCHER
+    meleePower: 50
+    tuMelee: 75
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_SMALL_LAUNCHER
+    meleePower: 25
+    tuMelee: 35
+    accuracyMelee: 100
+    strengthApplied: true
+#EqualTerms:
+  - type: STR_MACHINE_PISTOL
+    meleePower: 20
+    tuMelee: 20
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_MAGNUM
+    meleePower: 20
+    tuMelee: 20
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_SMG
+    meleePower: 25
+    tuMelee: 35
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_ASSAULT_RIFLE
+    meleePower: 30
+    tuMelee: 35
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_MARKSMANS_RIFLE
+    meleePower: 30
+    tuMelee: 35
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_SNIPER_RIFLE
+    meleePower: 30
+    tuMelee: 35
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_SAW
+    meleePower: 50
+    tuMelee: 75
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_SHOTGUN
+    meleePower: 30
+    tuMelee: 35
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_REINFORCED_SHOTGUN
+    meleePower: 30
+    tuMelee: 35
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_SSRL
+    meleePower: 25
+    tuMelee: 35
+    accuracyMelee: 100
+    strengthApplied: true
+#note: could include Rockets etc.
+  - type: STR_FUSION_TORCH
+    meleePower: 50
+    tuMelee: 75
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_GRENADE_LAUNCHER
+    meleePower: 40
+    tuMelee: 45
+    accuracyMelee: 100
+    strengthApplied: true
+  - type: STR_LMG
+    meleePower: 35
+    tuMelee: 40
+    accuracyMelee: 100
+    strengthApplied: true

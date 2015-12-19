@@ -1,0 +1,3084 @@
+# 'Geography.rul'
+countries:
+  - type: STR_ALGERIA
+    fundingBase: 100
+    fundingCap: 1000
+    labelLon: 2.3
+    labelLat: -27.8
+    areas:
+      - [353, 9.5, -31.3, -21.8]
+      - [358.4, 8.3, -37.2, -31.3]
+      - [359.8, 9, -21.8, -19]
+  - type: STR_ANGOLA
+    fundingBase: 100
+    fundingCap: 1000
+    labelLon: 16.8
+    labelLat: 12.8
+    areas:
+      - [11.8, 22.5, 6.9, 18]
+  - type: STR_ARGENTINA
+    fundingBase: 100
+    fundingCap: 1000
+    labelLon: 295.2
+    labelLat: 32.3
+    areas:
+      - [288, 299, 37, 52.2]
+      - [299, 303.6, 34, 39.1]
+      - [290, 299, 30, 37]
+      - [292, 302, 22, 30]
+      - [299, 302, 30, 34]
+      - [302, 304.4, 27, 30]
+      - [299, 302.7, 50.8, 52.6]
+  - type: STR_AUSTRALIA
+    fundingBase: 205
+    fundingCap: 2050
+    labelLon: 132.6
+    labelLat: 23.6
+    areas:
+      - [110, 156, 10, 40]
+      - [144, 149, 40, 44.3]
+  - type: STR_AUSTRIA
+    fundingBase: 130
+    fundingCap: 1300
+    labelLon: 13.8
+    labelLat: -46.99
+    areas:
+      - [10.7, 17.2, -47.5, -46.5]
+      - [13.3, 17.2, -48.9, -47.5]
+  - type: STR_BELARUS
+    fundingBase: 130
+    fundingCap: 1300
+    labelLon: 26.0
+    labelLat: -52.9
+    areas:
+      - [24, 31.4, -55, -51.5]
+  - type: STR_BELGIUM
+    fundingBase: 180
+    fundingCap: 1800
+    labelLon: 3.734
+    labelLat: -51.0
+    areas:
+      - [2, 6, -51.9, -50]
+  - type: STR_BRAZIL
+    fundingBase: 165
+    fundingCap: 1650
+    labelLon: 307.9
+    labelLat: 7.3
+    areas:
+      - [297.2, 302, 11.5, 14.1]
+      - [299.7, 302, 14.1, 16.2]
+      - [290.2, 302, -1.8, 4.6]
+      - [288.9, 302, 4.6, 11.5]
+      - [286.3, 288.9, 4.6, 9.3]
+      - [296, 300.8, -4.8, -1.8]
+      - [302, 316, -2.5, 24]
+      - [316, 325, 1.4, 24]
+      - [304.9, 314.7, 24, 26]
+      - [304.4, 310.1, 26, 31.2]
+      - [305.3, 309.3, 31.2, 33]
+      - [330.3, 330.7, 20.3, 20.7]
+  - type: STR_BULGARIA
+    fundingBase: 85
+    fundingCap: 850
+    labelLon: 26.0
+    labelLat: -43.2
+    areas:
+      - [22.6, 29, -44, -41.5]
+  - type: STR_CANADA
+    fundingBase: 225
+    fundingCap: 2250
+    labelLon: 249.1
+    labelLat: -58.8
+    areas:
+      - [224, 230, -60.4, -58.5]
+      - [219, 230, -80, -60.4]
+      - [230, 271, -80, -49]
+      - [271, 277.5, -80, -47.2]
+      - [277.5, 285, -80, -44.5]
+      - [285, 305, -80, -45]
+      - [226.1, 230, -54.7, -52.1]
+      - [277.5, 280.4, -44.5, -42.8]
+      - [293.5, 298, -45, -43.2]
+      - [305, 307.9, -49.4, -46.7]
+  - type: STR_CHILE
+    fundingBase: 75
+    fundingCap: 750
+    labelLon: 289.093
+    labelLat: 22.686
+    areas:
+      - [287, 292, 17.7, 30]
+      - [285, 290, 30, 37]
+      - [283, 288, 37, 55]
+      - [288, 295, 52.2, 55.5]
+  - type: STR_CHINA
+    fundingBase: 335
+    fundingCap: 3350
+    labelLon: 100.573
+    labelLat: -36.291
+    areas:
+      - [75, 79, -41, -35]
+      - [79, 98, -50.5, -30]
+      - [98, 119.5, -50.5, -22]
+      - [119.5, 124, -50.5, -25.3]
+      - [124, 133, -50.5, -40]
+      - [108, 113, -22, -17.9]
+  - type: STR_COLOMBIA
+    fundingBase: 155
+    fundingCap: 1550
+    labelLon: 285.5
+    labelLat: -6.6
+    areas:
+      - [281.4, 288.7, -12.8, -0.5]
+      - [288.7, 292.4, -6.8, -1.8]
+      - [286.3, 290.2, -0.5, 2.4]
+      - [288.7, 290.2, -1.8, -0.5]
+  - type: STR_CONGO
+    fundingBase: 100
+    fundingCap: 1000
+    labelLon: 23.0
+    labelLat: 1.3
+    areas:
+      - [18.4, 29.8, -4.7, 6.9]
+      - [22.5, 29, 6.9, 12.3]
+      - [12.7, 18.4, 2, 6]
+  - type: STR_CUBA
+    fundingBase: 75
+    fundingCap: 750
+    labelLon: 282.0
+    labelLat: -21.8
+    areas:
+      - [275, 283.4, -23.5, -21]
+      - [281.8, 285.8, -21, -19.6]
+  - type: STR_CZECH
+    fundingBase: 125
+    fundingCap: 1250
+    labelLon: 16.1
+    labelLat: -50.9
+    areas:
+      - [12.2, 18.5, -50.9, -48.9]
+  - type: STR_DENMARK
+    fundingBase: 185
+    fundingCap: 1850
+    labelLon: 9.0
+    labelLat: -56.2
+    areas:
+      - [7.3, 11.5, -58, -54.8]
+  - type: STR_EGYPT
+    fundingBase: 125
+    fundingCap: 1250
+    labelLon: 29.73
+    labelLat: -27.369
+    areas:
+      - [25, 34, -31.9, -22]
+      - [34, 35.2, -26.61, -22.296]
+  - type: STR_ETHIOPIA
+    fundingBase: 100
+    fundingCap: 1000
+    labelLon: 38.1
+    labelLat: -11.0
+    areas:
+      - [33.7, 43.1, -14, -4]
+      - [43.1, 47.5, -9.5, -5]
+  - type: STR_FINLAND
+    fundingBase: 190
+    fundingCap: 1900
+    labelLon: 25.649
+    labelLat: -62.582
+    areas:
+      - [22.7, 29.7, -69.2, -59.6]
+      - [20.6, 22.7, -64, -59.6]
+      - [29.7, 31.4, -69.4, -62.3]
+  - type: STR_FRANCE
+    fundingBase: 255
+    fundingCap: 2550
+    labelLon: 0.5
+    labelLat: -46.7
+    areas:
+      - [355, 359.2, -50, -43.5]
+      - [359.2, 6, -50, -47.5]
+      - [359.2, 7, -47.5, -42.7]
+      - [8.2, 9.88, -43, -41.3]
+      - [163.6, 167.2, 19.9, 22.7]
+      - [304, 308, -6.8, -2.6]
+  - type: STR_GERMANY
+    fundingBase: 205
+    fundingCap: 2050
+    labelLon: 9.3
+    labelLat: -51.9
+    areas:
+      - [6, 15, -54.8, -50.9]
+      - [6, 12.2, -50.9, -47.5]
+      - [12.2, 13.3, -48.9, -47.5]
+  - type: STR_GREECE
+    fundingBase: 205
+    fundingCap: 2050
+    labelLon: 22.1
+    labelLat: -39.3
+    areas:
+      - [19.1, 25.7, -41.5, -36.3]
+      - [23, 26.7, -36, -34.7]
+  - type: STR_HUNGARY
+    fundingBase: 105
+    fundingCap: 1050
+    labelLon: 20.1
+    labelLat: -47.887
+    areas:
+      - [17.2, 21.8, -48, -45.9]
+  - type: STR_INDIA
+    fundingBase: 115
+    fundingCap: 1150
+    labelLon: 78.957
+    labelLat: -22.24
+    areas:
+      - [70, 85, -30, -8]
+      - [74, 79, -35, -30]
+      - [85, 89, -27, -18]
+      - [68, 70, -23.7, -21.2]
+  - type: STR_INDONESIA
+    fundingBase: 125
+    fundingCap: 1250
+    labelLon: 119.953
+    labelLat: 4.792
+    areas:
+      - [107, 141, -1.85, 10]
+      - [98.6, 107, -0.57, 10]
+      - [95, 100, -5.9, -0.57]
+      - [100, 101, -3.54, -0.57]
+      - [101, 102, -2.17, -0.57]
+      - [102, 103, -1.54, -0.57]
+  - type: STR_IRAN
+    fundingBase: 160
+    fundingCap: 1600
+    labelLon: 54.0
+    labelLat: -32.6
+    areas:
+      - [47, 61, -38.3, -29]
+      - [50, 61, -29, -26.3]
+      - [57.5, 61, -26.3, -24.7]
+  - type: STR_IRAQ
+    fundingBase: 275
+    fundingCap: 2750
+    labelLon: 43.2
+    labelLat: -34.7
+    areas:
+      - [40.6, 47, -36, -29]
+  - type: STR_IRELAND
+    fundingBase: 180
+    fundingCap: 1800
+    labelLon: 350.868
+    labelLat: -53.3
+    areas:
+      - [348.4, 353.9, -53.9, -51.1]
+      - [348.8, 352, -55.4, -53.9]
+  - type: STR_ISRAEL
+    fundingBase: 175
+    fundingCap: 1750
+    labelLon: 34.95
+    labelLat: -30.0
+    areas:
+      - [34, 36.1, -34.8, -29.4]
+  - type: STR_ITALY
+    fundingBase: 145
+    fundingCap: 1450
+    labelLon: 11.883
+    labelLat: -43.345
+    areas:
+      - [7, 14, -46.5, -43]
+      - [10.3, 16.5, -43, -41.4]
+      - [12, 18.6, -41.4, -36.5]
+      - [7.7, 10.3, -41.3, -38.4]
+  - type: STR_IVORY
+    fundingBase: 100
+    fundingCap: 1000
+    labelLon: 353.9
+    labelLat: -8.5
+    areas:
+      - [351.4, 357.4, -10.5, -4.4]
+  - type: STR_JAPAN
+    fundingBase: 385
+    fundingCap: 3850
+    labelLon: 138.6
+    labelLat: -38.3
+    areas:
+      - [130, 143, -40, -30]
+      - [137.8, 147, -45.6, -40]
+      - [129, 130, -33.8, -31.95]
+  - type: STR_KENYA
+    fundingBase: 100
+    fundingCap: 1000
+    labelLon: 37.6
+    labelLat: -0.9
+    areas:
+      - [34, 41.5, -4, 4.3]
+  - type: STR_KOREA
+    fundingBase: 150
+    fundingCap: 1500
+    labelLon: 126.888
+    labelLat: -35.288
+    areas:
+      - [124, 130, -40, -33.8]
+  - type: STR_LIBYA
+    fundingBase: 110
+    fundingCap: 1100
+    labelLon: 17.3
+    labelLat: -28.2
+    areas:
+      - [9.5, 25, -33.7, -23.5]
+      - [17, 25, -23.5, -20]
+  - type: STR_MEXICO
+    fundingBase: 150
+    fundingCap: 1500
+    labelLon: 257.2
+    labelLat: -24.5
+    areas:
+      - [241, 255, -32, -28]
+      - [244, 255, -28, -22]
+      - [255, 260, -29, -22]
+      - [260, 265, -26, -22]
+      - [253, 265, -22, -15.4]
+      - [265, 272.5, -19, -16]
+      - [268.9, 273.6, -22, -19]
+  - type: STR_MOZAMBIQUE
+    fundingBase: 100
+    fundingCap: 1000
+    labelLon: 35.2
+    labelLat: 17.7
+    areas:
+      - [31.8, 35.6, 14, 26.6]
+      - [35.6, 40.7, 9.9, 20]
+  - type: STR_NETHERLANDS
+    fundingBase: 185
+    fundingCap: 1850
+    labelLon: 3.0
+    labelLat: -52.9
+    areas:
+      - [2, 6, -53.8, -51.9]
+  - type: STR_NEWZEALAND
+    fundingBase: 100
+    fundingCap: 1000
+    labelLon: 175.11
+    labelLat: 39.234
+    areas:
+      - [164, 177.2, 40, 47]
+      - [172, 179, 33.5, 40]
+  - type: STR_NIGERIA
+    fundingBase: 165
+    fundingCap: 1650
+    labelLon: 7.5
+    labelLat: -10.0
+    areas:
+      - [2.5, 15, -14.2, -4]
+  - type: STR_NORWAY
+    fundingBase: 225
+    fundingCap: 2250
+    labelLon: 7.91
+    labelLat: -60.978
+    areas:
+      - [3.8, 11.5, -62.7, -58]
+      - [5.7, 12.4, -66, -62.7]
+      - [12.4, 15.5, -70, -64]
+      - [15.5, 29.5, -71.6, -69.2]
+      - [15.5, 19, -69.2, -67.3]
+  - type: STR_PAKISTAN
+    fundingBase: 135
+    fundingCap: 1350
+    labelLon: 66.5
+    labelLat: -28.7
+    areas:
+      - [61, 70, -31.6, -23.7]
+      - [70, 74, -35, -30]
+  - type: STR_PERU
+    fundingBase: 70
+    fundingCap: 700
+    labelLon: 282.4
+    labelLat: 5.3
+    areas:
+      - [278, 286.3, -0.5, 11.5]
+      - [286.3, 290.2, 2.4, 4.6]
+      - [282, 290.1, 11.5, 17.7]
+      - [286.3, 288.9, 9.3, 11.5]
+  - type: STR_PHILIPPINES
+    fundingBase: 105
+    fundingCap: 1050
+    labelLon: 120.685
+    labelLat: -16.697
+    areas:
+      - [117, 126, -19.5, -11.6]
+      - [121, 128, -11.6, -5]
+  - type: STR_POLAND
+    fundingBase: 150
+    fundingCap: 1500
+    labelLon: 17.382
+    labelLat: -53.38
+    areas:
+      - [15, 24, -54.5, -50.9]
+      - [18.5, 24, -50.9, -49.5]
+  - type: STR_PORTUGAL
+    fundingBase: 85
+    fundingCap: 850
+    labelLon: 350.5
+    labelLat: -40.3
+    areas:
+      - [350, 353.8, -41.6, -39.5]
+      - [350, 352.8, -39.5, -36.7]
+  - type: STR_QATAR
+    fundingBase: 160
+    fundingCap: 1600
+    labelLon: 51.2
+    labelLat: -26.4
+    areas:
+      - [50, 53.2, -26.3, -23]
+  - type: STR_ROMANIA
+    fundingBase: 175
+    fundingCap: 1750
+    labelLon: 24.6
+    labelLat: -46.1
+    areas:
+      - [21.8, 30.2, -47.5, -44]
+  - type: STR_RUSSIA
+    fundingBase: 535
+    fundingCap: 5350
+    labelLon: 69.0
+    labelLat: -64.0
+    areas:
+      - [31.4, 50, -80, -52.1]
+      - [34.1, 50, -52.1, -50.3]
+      - [38.3, 48, -50.3, -42]
+      - [50, 190.5, -80, -50.5]
+      - [133, 146.1, -50.5, -45.6]
+      - [133, 137.8, -45.6, -42.3]
+      - [19, 22.8, -55.5, -54.5]
+      - [115.5, 117.8, 74.9, 75.6]
+  - type: STR_SAUDI
+    fundingBase: 255
+    fundingCap: 2550
+    labelLon: 45.9
+    labelLat: -22.7
+    areas:
+      - [37.8, 50, -29, -21]
+      - [39.3, 50, -21, -17]
+      - [50, 55, -23, -18.6]
+      - [35.2, 37.8, -29, -24.1]
+      - [37, 40.6, -32, -29]
+  - type: STR_SOUTH_AFRICA
+    fundingBase: 305
+    fundingCap: 3050
+    labelLon: 25.0
+    labelLat: 30.0
+    areas:
+      - [15, 25, 26, 35]
+      - [25, 31.8, 22, 35]
+  - type: STR_SPAIN
+    fundingBase: 95
+    fundingCap: 950
+    labelLon: 356.3
+    labelLat: -39.2
+    areas:
+      - [350, 355, -44.3, -41.6]
+      - [355, 359.2, -43.5, -41.6]
+      - [359.2, 3.6, -42.7, -41.6]
+      - [353.8, 4.7, -41.6, -37.2]
+      - [352.8, 358.4, -37.2, -36.1]
+      - [352.8, 353.8, -39.5, -37.2]
+  - type: STR_SWEDEN
+    fundingBase: 205
+    fundingCap: 2050
+    labelLon: 14.723
+    labelLat: -59.879
+    areas:
+      - [11.5, 19, -62.7, -55.2]
+      - [12.4, 20.6, -64, -62.7]
+      - [15.5, 22.7, -67.3, -64]
+      - [19, 22.7, -69.2, -67.3]
+  - type: STR_SYRIA
+    fundingBase: 125
+    fundingCap: 1250
+    labelLon: 38.1
+    labelLat: -35.6
+    areas:
+      - [36.1, 40.6, -36, -32.6]
+  - type: STR_TAIWAN
+    fundingBase: 120
+    fundingCap: 1200
+    labelLon: 120.77
+    labelLat: -22.51
+    areas:
+      - [119.5, 122.8, -25.3, -21.5]
+  - type: STR_THAILAND
+    fundingBase: 195
+    fundingCap: 1950
+    labelLon: 102.0
+    labelLat: -17.4
+    areas:
+      - [97.2, 103.3, -22, -6.6]
+      - [103.3, 105.8, -17.5, -10.5]
+      - [105.8, 107.4, -16.2, -12.4]
+  - type: STR_TURKEY
+    fundingBase: 155
+    fundingCap: 1550
+    labelLon: 35.3
+    labelLat: -38.7
+    areas:
+      - [29, 46, -42, -36]
+      - [25.7, 29, -41.5, -36]
+  - type: STR_UAE
+    fundingBase: 140
+    fundingCap: 1400
+    labelLon: 55.3
+    labelLat: -23.5
+    areas:
+      - [53.2, 57.5, -26.3, -23]
+  - type: STR_UK
+    fundingBase: 235
+    fundingCap: 2350
+    labelLon: 357.845
+    labelLat: -54.24
+    areas:
+      - [352, 2, -60, -53.9]
+      - [353.9, 2, -53.9, -50]
+      - [345.388, 346.048, 7.8, 8.3]
+      - [321.4, 324.9, 53.5, 54.9]
+  - type: STR_UKRAINE
+    fundingBase: 195
+    fundingCap: 1950
+    labelLon: 31.1
+    labelLat: -48.9
+    areas:
+      - [24, 34.1, -51.5, -47.5]
+      - [34.1, 38.3, -50.3, -44.2]
+      - [30.2, 34.1, -47.5, -44.2]
+  - type: STR_USA
+    fundingBase: 675
+    fundingCap: 6750
+    labelLon: 260.0
+    labelLat: -40.0
+    areas:
+      - [235, 255, -49, -32]
+      - [255, 271, -49, -29]
+      - [271, 277.5, -47.2, -29]
+      - [260, 265, -29, -26]
+      - [277.5, 280.4, -42.8, -29]
+      - [276.19, 281, -29, -24.8]
+      - [280.4, 285, -44.5, -32.7]
+      - [285, 292.5, -45, -38]
+      - [197.3, 207.9, -25.2, -16.3]
+      - [190.5, 219, -80, -52.6]
+      - [219, 224, -60.4, -57]
+      - [224, 230, -58.5, -54.7]
+      - [170, 172.4, 78.9, 79.2]
+      - [0, 360, 89.7, 90]
+      - [181.7, 182.3, -28.2, -27.7]
+  - type: STR_VENEZULA
+    fundingBase: 190
+    fundingCap: 1900
+    labelLon: 294.0
+    labelLat: -8.4
+    areas:
+      - [288.7, 300, -12.7, -6.8]
+      - [292.4, 296, -6.8, -1.8]
+      - [296, 299.581, -6.8, -4.8]
+  - type: STR_VIETNAM
+    fundingBase: 125
+    fundingCap: 1250
+    labelLon: 108.246
+    labelLat: -14.0
+    areas:
+      - [103.3, 108, -22, -17.5]
+      - [105.8, 107.4, -17.5, -16.2]
+      - [107.4, 109.5, -17.5, -10.2]
+      - [104.1, 107.4, -10.5, -8]
+      - [105.8, 107.404, -12.4, -10.5]
+regions:
+  - type: STR_ANTARCTICA
+    buildCost: 1350000
+    areas:
+      - [0, 360, 60, 90]
+    cities:
+      - name: STR_AMUNDSENSCOTTSTATION
+        lon: 0
+        lat: 90
+      - name: STR_MCMURDOSTATION
+        lon: 171.575
+        lat: 79.0707
+      - name: STR_VOSTOKSTATION
+        lon: 116.782
+        lat: 75.2393
+    regionWeight: 4
+    missionWeights:
+      STR_ALIEN_BASE: 35
+      STR_ALIEN_RESEARCH: 25
+    missionZones:
+      -
+        - [77, 108.125, 62.125, 76.125]
+        - [340.75, 48.5, 57.25, 72.75]
+        - [104.375, 148.875, 49.625, 66.25]
+        - [175.75, 257.125, 55.625, 73.625]
+        - [0, 360, 85, 90]
+      -
+        - [291.125, 296.25, 68.25, 70.5]
+        - [129.625, 152.75, 69.75, 73.625]
+        - [6.625, 35.125, 72.875, 77]
+        - [148.125, 154.75, 70, 72.75]
+        - [0, 360, 87.5, 90]
+      -
+        - [291.125, 296.25, 68.25, 70.5]
+        - [129.625, 152.75, 69.75, 73.625]
+        - [6.625, 35.125, 72.875, 77]
+        - [148.125, 154.75, 70, 72.75]
+        - [0, 360, 87.5, 90]
+      -
+        - [291.125, 296.25, 68.25, 70.5]
+        - [129.625, 152.75, 69.75, 73.625]
+      -
+        - [291.125, 296.25, 68.25, 70.5]
+        - [129.625, 152.75, 69.75, 73.625]
+        - [6.625, 35.125, 72.875, 77]
+        - [148.125, 154.75, 70, 72.75]
+        - [0, 360, 87.5, 90]
+      -
+        - [121.625, 176.125, -46.25, -21.75]
+        - [195.75, 238, -29, 2]
+        - [180, 200, 0, 10]
+        - [355, 5, -5, 5]
+        - [170, 190, -60, -40]
+        - [305, 325, -60, -30]
+        - [280, 300, 16.125, 36.125]
+        - [4.75, 27.625, -52, -44.375]
+        - [75, 89, -39, -34.375]
+        - [115, 132.5, 21, 25.5]
+  - type: STR_ARCTIC
+    buildCost: 1350000
+    areas:
+      - [0, 360, -90, -70]
+    cities:
+      - name: STR_ALERT
+        lon: 292.778
+        lat: -81.3
+      - name: STR_BARROW
+        lon: 201.948
+        lat: -70.574
+        texture: -2
+      - name: STR_HAMMERFEST
+        lon: 23.75
+        lat: -70.625
+      - name: STR_KAUJUITOQ
+        lon: 273.713
+        lat: -70.694
+      - name: STR_TIKSI
+        lon: 128.75
+        lat: -71.75
+    regionWeight: 4
+    missionWeights:
+      STR_ALIEN_BASE: 35
+      STR_ALIEN_RESEARCH: 25
+    missionZones:
+      -
+        - [305.25, 333.125, -79.25, -75.25]
+        - [273.25, 282.125, -73.375, -71.625]
+        - [159.375, 205.75, -78.625, -75]
+        - [8.5, 72.75, -80.375, -74.125]
+        - [74.875, 165.875, -79.75, -74]
+        - [0, 360, -90, -85]
+      -
+        - [302.25, 323.625, -80.75, -78.625]
+        - [62, 66, -76.125, -75.25]
+        - [13.625, 20.875, -79.25, -78.5]
+        - [168.5, 184.625, -83.375, -82.25]
+        - [268.625, 280.75, -78.875, -76.75]
+        - [0, 360, -90, -88.125]
+      -
+        - [302.25, 323.625, -80.75, -78.625]
+        - [62, 66, -76.125, -75.25]
+        - [13.625, 20.875, -79.25, -78.5]
+        - [168.5, 184.625, -83.375, -82.25]
+        - [268.625, 280.75, -78.875, -76.75]
+        - [0, 360, -90, -88.125]
+      -
+        - [302.25, 323.625, -80.75, -78.625]
+        - [62, 66, -76.125, -75.25]
+      -
+        - [302.25, 323.625, -80.75, -78.625]
+        - [62, 66, -76.125, -75.25]
+        - [13.625, 20.875, -79.25, -78.5]
+        - [168.5, 184.625, -83.375, -82.25]
+        - [268.625, 280.75, -78.875, -76.75]
+        - [0, 360, -90, -88.125]
+      -
+        - [121.625, 176.125, -46.25, -21.75]
+        - [0, 360, 80, 90]
+        - [180, 200, 0, 10]
+        - [355, 5, -5, 5]
+        - [170, 190, -60, -40]
+        - [305, 325, -60, -30]
+        - [280, 300, 16.125, 36.125]
+        - [4.75, 27.625, -52, -44.375]
+        - [75, 89, -39, -34.375]
+        - [115, 132.5, 21, 25.5]
+  - type: STR_AUSTRALASIA
+    buildCost: 800000
+    areas:
+      - [105, 180, -5, 60]
+    cities:
+      - name: STR_ADELAIDE
+        lon: 137.46
+        lat: 35.34
+      - name: STR_AUCKLAND
+        lon: 173.68
+        lat: 35.61
+      - name: STR_BRISBANE
+        lon: 152.99
+        lat: 26.8513
+        texture: -2
+      - name: STR_CANBERRA
+        lon: 149.125
+        lat: 35.375
+      - name: STR_CHRISTCHURCH
+        lon: 172.59
+        lat: 43.36
+      - name: STR_DARWIN
+        lon: 131.008
+        lat: 12.2741
+        texture: -2
+#      - name: STR_FIJI # this is a non-playable Country, see Suva for City
+#        lon: 178.5
+#        lat: 18.125
+#        texture: -2
+      - name: STR_JAKARTA
+        lon: 106.624
+        lat: 6.324
+        texture: -2
+      - name: STR_MELBOURNE
+        lon: 145
+        lat: 37.875
+        texture: -2
+      - name: STR_NOUMEA
+        lon: 166.5
+        lat: 22.25
+        texture: -2
+      - name: STR_PERTH
+        lon: 115.75
+        lat: 32
+        texture: -2
+      - name: STR_PORTMORESBY
+        lon: 147.25
+        lat: 9.5
+        texture: -2
+      - name: STR_SAMARINDA
+        lon: 117.324
+        lat: 0.925
+      - name: STR_SOLOMON_ISLAND
+        lon: 161.25
+        lat: 9
+        texture: -2
+      - name: STR_SURABAYA
+        lon: 112.75
+        lat: 7.375
+      - name: STR_SUVA #see also Fiji
+        lon: 178.5
+        lat: 18.125
+        texture: -2
+      - name: STR_TASMANIA
+        lon: 147.36
+        lat: 42.78
+        texture: -2
+      - name: STR_TOWNSVILLE
+        lon: 147.58
+        lat: 19.86
+      - name: STR_WELLINGTON
+        lon: 175.125
+        lat: 41.25
+        texture: -2
+    regionWeight: 10
+    missionWeights: #no Terror yet
+      STR_ALIEN_ABDUCTION: 4
+      STR_ALIEN_BASE: 16
+      STR_ALIEN_HARVEST: 11
+      STR_ALIEN_INFILTRATION: 8
+      STR_ALIEN_RESEARCH: 15
+    missionZones:
+      -
+        - [129.625, 155.375, -1.875, 9.75]
+        - [165.75, 179.5, 33.125, 47.125]
+        - [136.125, 153.25, 11.5, 46]
+        - [109, 134.75, 13.375, 35.125]
+      -
+        - [115.75, 123.125, 30.375, 33.125]
+        - [129.875, 134.25, 14, 16.5]
+        - [141.125, 147, 29.875, 32.75]
+        - [175, 177, 37.875, 39.375]
+      -
+        - [138.125, 144.125, 2.5, 5]
+        - [145.625, 147.625, 41, 41.75]
+        - [168.5, 170.375, 44.25, 45.25]
+        - [141.375, 150.125, 32.875, 36.375]
+      -
+        - [0,0,0,0]
+      -
+        - [122.25, 135.375, 21, 27.5]
+        - [147.5, 148.8, 9, 9.66]
+        - [140.751, 143.432, 8.046, 8.773]
+        - [145.57, 147.61, 41.29, 42.43]
+      -
+        - [0, 360, -90, -80]
+        - [0, 360, 80, 90]
+        - [180, 200, 0, 10]
+        - [282.25, 322.875, 9.375, 38.375]
+        - [53.125, 89.125, 4.5, 41.25]
+        - [354.5, 33.375, -56.625, -46.375]
+        - [238.625, 258.625, -53.375, -33.375]
+        - [7.5, 38.625, 4.125, 18.625]
+        - [91.875, 124.25, -30.75, -17.5]
+        - [62.125, 101.375, -66.625, -57.125]
+  - type: STR_CENTRAL_ASIA
+    buildCost: 530000
+    areas:
+      - [40, 70, -35, -15]
+      - [60, 90, -50, -35]
+      - [70, 90, -35, -5]
+    cities:
+      - name: STR_ALMATY
+        lon: 76.77
+        lat: -43.1
+      - name: STR_ANKARA
+        lon: 32.75
+        lat: -39.875
+      - name: STR_ASHGABAT
+        lon: 58.56
+        lat: -38.99
+      - name: STR_ASTANA
+        lon: 71.61
+        lat: -50.78
+      - name: STR_BAGHDAD
+        lon: 44.5
+        lat: -33.25
+      - name: STR_BANGALORE
+        lon: 77.5
+        lat: -13
+      - name: STR_BISHKEK
+        lon: 73.56
+        lat: -41.73
+      - name: STR_BOMBAY
+        lon: 73.125
+        lat: -18.875
+        texture: -2
+      - name: STR_CALCUTTA
+        lon: 88.375
+        lat: -22.625
+      - name: STR_CHENNAI
+        lon: 80.056
+        lat: -13.619
+        labelTop: true
+      - name: STR_DELHI
+        lon: 77.25
+        lat: -28.625
+      - name: STR_DHAKA
+        lon: 90.375
+        lat: -23.75
+      - name: STR_DOHA
+        lon: 51.4081
+        lat: -25.0363
+      - name: STR_DUBAI
+        lon: 55.3655
+        lat: -25.1684
+        texture: -2
+      - name: STR_DUSHAMBE
+        lon: 66.86
+        lat: -37.83
+      - name: STR_ISLAMABAD
+        lon: 72.35
+        lat: -32.58
+      - name: STR_ISTANBUL
+        lon: 28.808
+        lat: -41.149
+      - name: STR_KABUL
+        lon: 66.60
+        lat: -34.31
+      - name: STR_KARACHI
+        lon: 67.12
+        lat: -24.989
+      - name: STR_KUWAITCITY
+        lon: 47.88
+        lat: -29
+        texture: -2
+      - name: STR_LAHORE
+        lon: 74.25
+        lat: -31.5
+      - name: STR_MASHHAD
+        lon: 58.55
+        lat: -36.71
+      - name: STR_MECCA
+        lon: 39.91
+        lat: -20.73
+      - name: STR_MUSCAT
+        lon: 58.55
+        lat: -23.37
+      - name: STR_RIYADH
+        lon: 47
+        lat: -23.95
+      - name: STR_SANAA
+        lon: 44.14
+        lat: -15
+      - name: STR_SRI_LANKA
+        lon: 79.88
+        lat: -7.37
+        texture: -2
+      - name: STR_TASHKENT
+        lon: 67.66
+        lat: -40.40
+      - name: STR_TBILISI
+        lon: 43.96
+        lat: -41.86
+      - name: STR_TEHRAN
+        lon: 51.5
+        lat: -35.625
+      - name: STR_YEREVAN
+        lon: 44.35
+        lat: -40.1
+    regionWeight: 12
+    missionWeights: #no Terror yet
+      STR_ALIEN_ABDUCTION: 6
+      STR_ALIEN_BASE: 8
+      STR_ALIEN_HARVEST: 5
+      STR_ALIEN_INFILTRATION: 10
+      STR_ALIEN_RESEARCH: 5
+    missionZones:
+      -
+        - [39.5, 53.125, -27.625, -16.125]
+        - [46.75, 65.25, -36.75, -29.75]
+        - [69.75, 86.625, -24.125, -5.25]
+        - [27.875, 49.25, -40.375, -35.625]
+        - [67.25, 86, -45.875, -31.5]
+      -
+        - [38.25, 47, -38.625, -35]
+        - [74.25, 79.75, -20.125, -15.375]
+        - [65.5, 70.25, -36.375, -31.875]
+        - [62.25, 80.625, -49.25, -46]
+      -
+        - [33.625, 47, -39.5, -37.875]
+        - [79.875, 81.125, -8.25, -6.875]
+        - [66.75, 81.5, -46.125, -43.5]
+        - [77.875, 89.375, -27, -23.375]
+      -
+        - [0,0,0,0]
+      -
+        - [42.375, 52.125, -23.5, -18.375]
+        - [77.75, 84.875, -36, -32.75]
+        - [80.75, 84.875, -22.875, -20.625]
+        - [80.125, 81.625, -7.375, -6.75]
+      -
+        - [0, 360, -90, -80]
+        - [0, 360, 80, 90]
+        - [180, 200, 0, 10]
+        - [282.25, 322.875, 9.375, 38.375]
+        - [66, 102, 2.625, 39.375]
+        - [354.5, 33.375, -56.625, -46.375]
+        - [238.625, 258.625, -53.375, -33.375]
+        - [7.5, 38.625, 4.125, 18.625]
+        - [137.125, 169.5, -54, -40.75]
+        - [115, 132.5, 21, 25.5]
+  - type: STR_EUROPE
+    buildCost: 1200000
+    areas:
+      - [335, 60, -70, -35]
+    cities:
+      - name: STR_ABERDEEN
+        lon: 357.58
+        lat: -57.18
+        texture: -2
+      - name: STR_ALEPPO
+        lon: 37.13
+        lat: -36.18
+        labelTop: true
+      - name: STR_ALGIERS
+        lon: 3.08
+        lat: -36.561
+      - name: STR_AMSTERDAM
+        lon: 4.86
+        lat: -52.76
+      - name: STR_ANTALYA
+        lon: 30.843
+        lat: -36.909
+      - name: STR_ARCHANGEL
+        lon: 40.8787
+        lat: -64.4464
+        texture: -2
+      - name: STR_ASTRAKHAN
+        lon: 48.273
+        lat: -46.023
+      - name: STR_ATHENS
+        lon: 23.5792
+        lat: -38.0
+        texture: -2
+      - name: STR_BAKU
+        lon: 49.875
+        lat: -40.387
+      - name: STR_BARCELONA
+        lon: 1.59451
+        lat: -41.3466
+      - name: STR_BELGRADE
+        lon: 20.5
+        lat: -44.5
+      - name: STR_BELFAST
+        lon: 353.836
+        lat: -55.14
+      - name: STR_BERLIN
+        lon: 13.375
+        lat: -52.5
+      - name: STR_BIRMINGHAM
+        lon: 357.54
+        lat: -52.45
+      - name: STR_BORDEAUX
+        lon: 359.47
+        lat: -44.85
+      - name: STR_BREST
+        lon: 356.076
+        lat: -47.853
+      - name: STR_BRUSSELS
+        lon: 4.65
+        lat: -50.74
+      - name: STR_BRYANSK
+        lon: 34.41
+        lat: -52.6
+      - name: STR_BUCHAREST
+        lon: 26.125
+        lat: -44.375
+      - name: STR_BUDAPEST
+        lon: 19.125
+        lat: -47.5
+      - name: STR_CARDIFF
+        lon: 356.39
+        lat: -51.33
+      - name: STR_COLOGNE
+        lon: 7.07
+        lat: -51.29
+      - name: STR_COPENHAGEN
+        lon: 10.3
+        lat: -56.23
+        labelTop: true
+      - name: STR_CORK
+        lon: 351.426
+        lat: -51.8672
+      - name: STR_CRETE
+        lon: 25
+        lat: -35.36
+        texture: -2
+      - name: STR_DUBLIN
+        lon: 353.589
+        lat: -53.2906
+        texture: -2
+      - name: STR_FAROE_ISLAND
+        lon: 353.03
+        lat: -61.9
+        texture: -2
+      - name: STR_FLORENCE
+        lon: 11.18
+        lat: -43
+      - name: STR_GENEVA
+        lon: 6.27
+        lat: -46.27
+      - name: STR_GLASGOW
+        lon: 355.827
+        lat: -55.8861
+      - name: STR_HAMBURG
+        lon: 10
+        lat: -53.5
+      - name: STR_IZMIR
+        lon: 26.4
+        lat: -38.13
+      - name: STR_KALININGRAD
+        lon: 19.81
+        lat: -54.88
+      - name: STR_KAZAN
+        lon: 49.36
+        lat: -57.27
+      - name: STR_KHARKOV
+        lon: 34.4776
+        lat: -50.6673
+      - name: STR_KIEV
+        lon: 30.0658
+        lat: -49.834
+      - name: STR_KRAKOW
+        lon: 19.83
+        lat: -50.13
+      - name: STR_LENINGRAD
+        lon: 29.8012
+        lat: -60.2338
+      - name: STR_LISBON
+        lon: 350.776
+        lat: -38.6697
+        texture: -2
+      - name: STR_LONDON
+        lon: 359.875
+        lat: -51.5
+        texture: -2
+      - name: STR_LULEA
+        lon: 22.21
+        lat: -65.66
+      - name: STR_LVIV
+        lon: 24.08
+        lat: -50
+      - name: STR_LYON
+        lon: 4.09847
+        lat: -45
+      - name: STR_MADRID
+        lon: 356.25
+        lat: -40.375
+      - name: STR_MANCHESTER
+        lon: 357.64
+        lat: -53.59
+      - name: STR_MARSEILLE
+        lon: 5.30046
+        lat: -43.2996
+        texture: -2
+      - name: STR_MILAN
+        lon: 9.125
+        lat: -45
+      - name: STR_MINSK
+        lon: 27.5
+        lat: -53.875
+      - name: STR_MOSCOW
+        lon: 37.625
+        lat: -55.75
+      - name: STR_MUNICH
+        lon: 11.414
+        lat: -48.661
+      - name: STR_MURMANSK
+        lon: 34.79
+        lat: -69
+      - name: STR_NAPLES
+        lon: 15.0214
+        lat: -40.236
+      - name: STR_NOVGOROD
+        lon: 34.14
+        lat: -57.88
+      - name: STR_ODESSA
+        lon: 29.951
+        lat: -45.777
+      - name: STR_OSLO
+        lon: 10.1726
+        lat: -59.5036
+        texture: -2
+      - name: STR_PARIS
+        lon: 2.375
+        lat: -48.75
+      - name: STR_PRAGUE
+        lon: 13.82
+        lat: -50.11
+      - name: STR_REYKJAVIK
+        lon: 338.284
+        lat: -64.496
+        texture: -2
+      - name: STR_RIGA
+        lon: 24.19
+        lat: -57.27
+      - name: STR_ROME
+        lon: 12.5
+        lat: -41.875
+      - name: STR_ROSTOV
+        lon: 38.054
+        lat: -47.257
+      - name: STR_SARAJEVO
+        lon: 17.94
+        lat: -43.93
+      - name: STR_SARATOV
+        lon: 46.65
+        lat: -52.23
+      - name: STR_SEVASTOPOL
+        lon: 33.632
+        lat: -44.805
+        texture: -2
+      - name: STR_SEVILLE
+        lon: 354.42
+        lat: -37.6
+      - name: STR_SMOLENSK
+        lon: 30.69
+        lat: -55.23
+      - name: STR_SOFIA
+        lon: 24.7072
+        lat: -42.9134
+      - name: STR_STALINGRAD
+        lon: 44.8376
+        lat: -47.8135
+      - name: STR_STOCKHOLM
+        lon: 17.3259
+        lat: -58.9438
+      - name: STR_STUTTGART
+        lon: 8.65
+        lat: -49.63
+      - name: STR_TIRANA
+        lon: 19.7
+        lat: -40.93
+      - name: STR_TRONDHEIM
+        lon: 11.8662
+        lat: -65.3174
+      - name: STR_TUNIS
+        lon: 10.21
+        lat: -36.65
+      - name: STR_TURKU
+        lon: 22.1694
+        lat: -60.3752
+      - name: STR_VENICE
+        lon: 12.45
+        lat: -45.59
+      - name: STR_VIENNA
+        lon: 16.375
+        lat: -48.25
+      - name: STR_WARSAW
+        lon: 21.08
+        lat: -53.103
+      - name: STR_ZAGREB
+        lon: 16.34
+        lat: -45.7
+    regionWeight: 16
+    missionWeights: #no Terror yet
+      STR_ALIEN_ABDUCTION: 15
+      STR_ALIEN_BASE: 6
+      STR_ALIEN_HARVEST: 10
+      STR_ALIEN_INFILTRATION: 20
+      STR_ALIEN_RESEARCH: 10
+    missionZones:
+      -
+        - [334, 36.125, -66.125, -58.125]
+        - [348, 1.875, -59.375, -49.375]
+        - [9.125, 27.75, -43.875, -37.875]
+        - [17.125, 50.25, -53.75, -48]
+        - [346.875, 3.5, -45.125, -38.5]
+      -
+        - [356.5, 0.25, -53, -51.875]
+        - [352.75, 357.5, -41.625, -39.125]
+        - [3.625, 12.5, -49.625, -48.25]
+        - [19.125, 24.75, -47.875, -45.5]
+      -
+        - [338.5, 341.5, -65.25, -64]
+        - [354.25, 355.75, -57.5, -56.625]
+        - [8.625, 10.375, -57, -56]
+        - [17.125, 27.875, -45.75, -43.125]
+        - [352.625, 358.875, -39.375, -37.75]
+      -
+        - [0,0,0,0]
+      -
+        - [355.875, 357.25, -57.625, -57]
+        - [17.5, 29, -69.375, -67.625]
+        - [351.625, 353.25, -40.125, -38]
+        - [45.625, 51.5, -49.5, -47]
+        - [13.625, 26.625, -52.375, -47.625]
+      -
+        - [0, 360, -90, -80]
+        - [0, 360, 80, 90]
+        - [180, 200, 0, 10]
+        - [282.25, 322.875, 9.375, 38.375]
+        - [9.375, 45.375, -1, 35.75]
+        - [21.5, 51.75, -31.875, -15.875]
+        - [238.625, 258.625, -53.375, -33.375]
+        - [64.5, 125.5, -55.5, -44]
+        - [72.875, 105.25, -25, -11.75]
+        - [115, 132.5, 21, 25.5]
+  - type: STR_INDIAN_OCEAN
+    buildCost: 450000
+    areas:
+      - [55, 70, -15, 10]
+      - [70, 90, -5, 10]
+      - [55, 105, 10, 60]
+    cities:
+      - name: STR_MALDIVE_ISLAND
+        lon: 73
+        lat: -4.9
+        texture: -2
+      - name: STR_MAURITIUS
+        lon: 57.6
+        lat: 20.16
+        texture: -2
+      - name: STR_SEYCHELLES_ISLAND
+        lon: 55.52
+        lat: 4.54
+        texture: -2
+#    missionRegion: STR_SOUTHERN_AFRICA
+    regionWeight: 5
+    missionWeights:
+      STR_ALIEN_RESEARCH: 15
+#      STR_ALIEN_TERROR: 15
+    missionZones:
+      -
+        - [56, 57.25, -16, -14.25]
+        - [72, 74.5, 21, 23.375]
+        - [64, 65.625, 1, 2.625]
+        - [93, 94.5, 23, 26.875]
+        - [80, 81.125, 0, 1.5]
+        - [89, 90.75, -11, -9]
+      -
+        - [43.98, 47.1, 22.11, 24.86]
+        - [114.34, 117.09, 23.06, 26.31]
+        - [46.11, 47.74, -9.5, -6.38]
+        - [52.6, 54.6, -19.68, -17.68]
+        - [80.14, 81.26, -8.35, -6.23]
+        - [103.91, 105.29, 1.96, 4.83]
+        - [76.69, 78.19, -12.91, -11.03]
+      -
+        - [34.32, 38.19, 3.52, 6.02]
+        - [44.67, 46.39, 21.98, 23.39]
+        - [113.92, 117.17, 23.29, 26.92]
+        - [102.9, 105.4, 1.71, 4.21]
+        - [71.05, 71.43, -23.82, -22.07]
+      -
+        - [0,0,0,0]
+      -
+        - [43.76, 46.13, -16.95, -13.82]
+        - [116.44, 118.82, 31.71, 33.73]
+        - [30.96, 34.84, 17.56, 20.06]
+        - [95.21, 96.21, -17.83, -16.33]
+      -
+        - [72, 74.5, 50, 52.875]
+        - [100, 101.625, 40, 41.75]
+        - [70, 73.125, 60, 61.75]
+        - [0, 6.875, 60, 65.25]
+        - [132, 134.625, 5, 7.375]
+        - [124.25, 125.875, -24, -21.625]
+        - [79.5, 81.5, -16, -13.625]
+        - [330, 336, 33, 35.25]
+  - type: STR_NORTH_AFRICA
+    buildCost: 670000
+    areas:
+      - [335, 40, -35, -15]
+      - [335, 55, -15, 0]
+    cities:
+      - name: STR_ABIDJAN
+        lon: 356
+        lat: -5.375
+      - name: STR_ABUJA
+        lon: 6.95
+        lat: -7.9
+      - name: STR_ACCRA
+        lon: 359.75
+        lat: -5.75
+        texture: -2
+      - name: STR_ADDISABABA
+        lon: 38.75
+        lat: -9
+      - name: STR_ALEXANDRIA
+        lon: 29.74
+        lat: -31.31
+        labelTop: true
+      - name: STR_ASWAN
+        lon: 32.9
+        lat: -24.36
+      - name: STR_BAMAKO
+        lon: 352
+        lat: -12.625
+      - name: STR_BEIRUT
+        lon: 35.7
+        lat: -34.19
+        labelTop: true
+      - name: STR_BENGHAZI
+        lon: 19.9549
+        lat: -31.9422
+      - name: STR_BENGUI
+        lon: 19.06
+        lat: -5.24
+      - name: STR_BISSAU
+        lon: 343.563
+        lat: -12.371
+      - name: STR_CAIRO
+        lon: 31.09
+        lat: -30.95
+      - name: STR_CANARY_ISLANDS
+        lon: 344.6
+        lat: -28.1
+        texture: -2
+      - name: STR_CASABLANCA
+        lon: 352.375
+        lat: -33.5
+      - name: STR_DAKAR
+        lon: 342.634
+        lat: -14.789
+        texture: -2
+      - name: STR_DAMASCUS
+        lon: 36.6815
+        lat: -33.5637
+      - name: STR_DJIBOUTI
+        lon: 43.38
+        lat: -11.2
+      - name: STR_FREETOWN
+        lon: 346.424
+        lat: -9.246
+      - name: STR_JERUSALEM
+        lon: 34.872
+        lat: -31.858
+        labelTop: true
+      - name: STR_KAMPALA
+        lon: 32.625
+        lat: -0.375
+      - name: STR_KANO
+        lon: 8.5
+        lat: -12
+      - name: STR_KHARTOUM
+        lon: 32.5
+        lat: -15.625
+      - name: STR_KISANGANI
+        lon: 26.35
+        lat: -1.81
+      - name: STR_LAGOS
+        lon: 3.125
+        lat: -6.5
+      - name: STR_LIBREVILLE
+        lon: 9.35
+        lat: -0.23
+      - name: STR_MOGADISHU
+        lon: 45
+        lat: -2
+        texture: -2
+      - name: STR_MONROVIA
+        lon: 350.31
+        lat: -5.744
+      - name: STR_NDJAMENA
+        lon: 15.5
+        lat: -12
+      - name: STR_NIAMEY
+        lon: 1.99
+        lat: -14.89
+      - name: STR_NOUAKCHOTT
+        lon: 344.41
+        lat: -17.69
+      - name: STR_OUAGADOUGOU
+        lon: 358.35
+        lat: -12.17
+      - name: STR_PORT_SAID
+        lon: 33.036
+        lat: -31.09
+        labelTop: true
+        texture: -2
+      - name: STR_TRIPOLI
+        lon: 13.125
+        lat: -32.917
+        texture: -2
+      - name: STR_YAOUNDE
+        lon: 11.13
+        lat: -4.46
+    regionWeight: 12
+    missionWeights: #no Terror yet
+      STR_ALIEN_ABDUCTION: 8
+      STR_ALIEN_BASE: 19
+      STR_ALIEN_HARVEST: 8
+      STR_ALIEN_INFILTRATION: 8
+      STR_ALIEN_RESEARCH: 8
+    missionZones:
+      -
+        - [348.5, 24.5, -34.5, -25]
+        - [339.625, 5.75, -18.375, -4.75]
+        - [13, 48.5, -14.625, -7.25]
+        - [29.625, 50.125, -30.75, -17.25]
+      -
+        - [354.25, 5.125, -34.5, -32.875]
+        - [345.625, 0.25, -13.875, -11.25]
+        - [29.5, 41.25, -13.25, -5.25]
+        - [20.625, 24.625, -32.125, -31.125]
+      -
+        - [348.625, 358.75, -27.125, -20.125]
+        - [23.375, 40.125, -13.75, -3.875]
+        - [348, 357.125, -10.75, -7.5]
+        - [2.25, 8.5, -35.875, -34.625]
+      -
+        - [0,0,0,0]
+      -
+        - [5.625, 9, -6.125, -5]
+        - [15.75, 31.75, -26.125, -18.75]
+        - [350.375, 355.625, -8.375, -6.125]
+        - [348.125, 357.375, -26, -19]
+      -
+        - [0, 360, -90, -80]
+        - [0, 360, 80, 90]
+        - [180, 200, 0, 10]
+        - [282.25, 322.875, 9.375, 38.375]
+        - [66, 102, 2.625, 39.375]
+        - [354.5, 33.375, -56.625, -46.375]
+        - [238.625, 258.625, -53.375, -33.375]
+        - [64.5, 125.5, -55.5, -44]
+        - [72.875, 105.25, -25, -11.75]
+        - [115, 132.5, 21, 25.5]
+  - type: STR_NORTH_AMERICA
+    buildCost: 900000
+    areas:
+      - [195, 305, -70, -55]
+      - [230, 305, -55, -30]
+      - [240, 300, -30, -10]
+    cities:
+      - name: STR_ANCHORAGE
+        lon: 209.259
+        lat: -60.7251
+        texture: -2
+      - name: STR_ATLANTA
+        lon: 275.625
+        lat: -33.75
+      - name: STR_BERMUDA
+        lon: 295.125
+        lat: -32.5
+        texture: -2
+      - name: STR_BOSTON
+        lon: 289.069
+        lat: -42.4427
+        labelTop: true
+        texture: -2
+      - name: STR_CANCUN
+        lon: 271.9
+        lat: -20.6
+      - name: STR_CHARLESTON
+        lon: 280.632
+        lat: -33.2811
+      - name: STR_CHICAGO
+        lon: 272.375
+        lat: -41.875
+      - name: STR_CHIHUAHUA
+        lon: 255.23
+        lat: -29.0404
+      - name: STR_CORPUSCHRISTI
+        lon: 263.422
+        lat: -28.379
+      - name: STR_DALLAS
+        lon: 263.375
+        lat: -32.75
+      - name: STR_DENVER
+        lon: 252.85
+        lat: -40
+      - name: STR_DETROIT
+        lon: 276.478
+        lat: -41.8107
+      - name: STR_EDMONTON
+        lon: 245.67
+        lat: -55.76
+      - name: STR_ELPASO
+        lon: 253.54
+        lat: -31.89
+      - name: STR_FORTSEVERN
+        lon: 272.56
+        lat: -56
+        texture: -2
+      - name: STR_GOOSEBAY
+        lon: 298.46
+        lat: -55.34
+      - name: STR_GUADALAJARA
+        lon: 256.625
+        lat: -20.75
+      - name: STR_GUATEMALA
+        lon: 269.5
+        lat: -14.625
+      - name: STR_HALIFAX
+        lon: 296
+        lat: -44.63
+        texture: -2
+      - name: STR_HAVANA
+        lon: 277.655
+        lat: -23.155
+      - name: STR_HOUSTON
+        lon: 264.625
+        lat: -29.75
+      - name: STR_INDIANAPOLIS
+        lon: 273.272
+        lat: -38.83
+      - name: STR_INUVIK
+        lon: 224.18
+        lat: -68.74
+      - name: STR_JAMAICA
+        lon: 282.7
+        lat: -18.05
+        texture: -2
+      - name: STR_JUNEAU
+        lon: 223.247
+        lat: -58.2465
+      - name: STR_KANSASCITY
+        lon: 261.89
+        lat: -38.22
+      - name: STR_LASVEGAS
+        lon: 243.11
+        lat: -37.05
+      - name: STR_LOS_ANGELES
+        lon: 241.294
+        lat: -33.816
+        labelTop: true
+      - name: STR_MANAGUA
+        lon: 273.441
+        lat: -11.585
+      - name: STR_MEMPHIS
+        lon: 268.69
+        lat: -36.22
+      - name: STR_MEXICO_CITY
+        lon: 260.875
+        lat: -19.375
+      - name: STR_MIAMI
+        lon: 279.733
+        lat: -26.0843
+      - name: STR_MINNEAPOLIS
+        lon: 265.90
+        lat: -44.43
+      - name: STR_MONTERREY
+        lon: 262.282
+        lat: -25.786
+      - name: STR_MONTREAL
+        lon: 284.25
+        lat: -45.5
+      - name: STR_NEWORLEANS
+        lon: 269.92
+        lat: -29.6422
+      - name: STR_NEW_YORK
+        lon: 286.125
+        lat: -40.75
+        labelTop: true
+        texture: -2
+      - name: STR_NORFOLK
+        lon: 283.585
+        lat: -35.358
+      - name: STR_ORLANDO
+        lon: 278.381
+        lat: -28.9759
+      - name: STR_PHILADELPHIA
+        lon: 284.75
+        lat: -40
+      - name: STR_PHOENIX
+        lon: 248
+        lat: -33.5
+      - name: STR_PORTLAND
+        lon: 235.608
+        lat: -43.128
+      - name: STR_QUEBECCITY
+        lon: 290.217
+        lat: -48.183
+      - name: STR_SALTLAKECITY
+        lon: 244.36
+        lat: -42
+      - name: STR_SANDIEGO
+        lon: 242.657
+        lat: -32.804
+        labelTop: true
+      - name: STR_SANFRANCISCO
+        lon: 236.819
+        lat: -38.744
+        texture: -2
+      - name: STR_SANTODOMINGO
+        lon: 290.0
+        lat: -18.5
+        texture: -2
+      - name: STR_SASKATOON
+        lon: 253.46
+        lat: -52.23
+      - name: STR_SEATTLE
+        lon: 236.876
+        lat: -48.124
+        texture: -2
+      - name: STR_TIJUANA
+        lon: 242.873
+        lat: -32.415
+        texture: -2
+      - name: STR_TORONTO
+        lon: 279.454
+        lat: -43.1442
+      - name: STR_VANCOUVER
+        lon: 236.936
+        lat: -49.388
+        labelTop: true
+        texture: -2
+      - name: STR_WASHINGTON
+        lon: 282.875
+        lat: -38.75
+      - name: STR_WINNIPEG
+        lon: 262.37
+        lat: -50.44
+      - name: STR_YELLOWKNIFE
+        lon: 242.19
+        lat: -65.52
+    regionWeight: 18
+    missionWeights: #no Terror yet
+      STR_ALIEN_ABDUCTION: 20
+      STR_ALIEN_BASE: 20
+      STR_ALIEN_HARVEST: 17
+      STR_ALIEN_INFILTRATION: 20
+      STR_ALIEN_RESEARCH: 14
+    missionZones:
+      -
+        - [200, 220, -65, -60]
+        - [230, 260, -65, -55]
+        - [280, 290, -50, -40]
+        - [230, 250, -50, -40]
+        - [260, 280, -50, -40]
+        - [230, 250, -40, -30]
+        - [250, 272, -40, -28]
+        - [270, 290, -42, -25]
+        - [275, 295, -35, -10]
+        - [240, 280, -30, -10]
+      -
+        - [200, 225, -63.75, -60.75]
+        - [245, 260, -54, -50]
+        - [250, 260, -50, -40]
+        - [270, 280, -37, -34]
+        - [255, 260, -40, -30]
+        - [255, 260, -25, -20]
+        - [258.75, 263.75, -19, -17.5]
+        - [286.5, 289.5, -19.375, -18.625]
+        - [240, 242, -45, -44]
+        - [260, 270, -44, -34]
+      -
+        - [236, 240, -50, -45]
+        - [260, 262, -50, -45]
+        - [265, 270, -18, -17]
+        - [273.125, 275.75, -13.25, -12.25]
+        - [241.875, 245.875, -36.5, -34.625]
+        - [286.375, 291, -46.625, -45]
+        - [252.75, 263.125, -42.25, -39]
+        - [286.875, 289, -19, -18.5]
+        - [274.5, 276.25, -44.375, -43.375]
+        - [200.625, 216.75, -64.75, -62.25]
+      -
+        - [0,0,0,0]
+      -
+        - [250, 270, -66, -64]
+        - [280, 292.5, -51, -46]
+        - [267.5, 269.5, -30, -29.5]
+        - [240, 246, -45, -38]
+        - [277.5, 278.5, -31, -28]
+        - [286.875, 288.75, -19.5, -18.75]
+        - [273.25, 275.75, -13.125, -11.875]
+        - [247, 247.5, -27.25, -26.75]
+        - [222.875, 239.25, -63.625, -59.875]
+        - [258.125, 267.125, -40.75, -36.875]
+      -
+        - [0, 360, -90, -80]
+        - [0, 360, 80, 90]
+        - [180, 200, 0, 10]
+        - [355, 5, -5, 5]
+        - [170, 190, -60, -40]
+        - [305, 325, -60, -30]
+        - [280, 300, 16.125, 36.125]
+        - [4.75, 27.625, -52, -44.375]
+        - [75, 89, -39, -34.375]
+        - [115, 132.5, 21, 25.5]
+  - type: STR_NORTH_ATLANTIC
+    buildCost: 630000
+    areas:
+      - [305, 335, -70, -30]
+      - [300, 335, -30, -10]
+      - [315, 335, -10, 0]
+    cities:
+      - name: STR_AZORES
+        lon: 334.16
+        lat: -37
+        texture: -2
+      - name: STR_NUUK
+        lon: 308.54
+        lat: -64
+        texture: -2
+      - name: STR_STJOHN
+        lon: 306.71
+        lat: -47.45
+        texture: -2
+#    missionRegion: STR_NORTH_AMERICA
+    regionWeight: 45
+    missionWeights:
+      STR_ALIEN_RESEARCH: 15
+#      STR_ALIEN_TERROR: 15
+    missionZones:
+      -
+        - [300, 301, -58, -57]
+        - [306, 307, -53, -52]
+        - [320, 321, -58, -57]
+        - [347, 347.5, -40, -39]
+        - [347, 348, -59, -58]
+        - [318, 318.5, -45, -43.25]
+        - [347, 349.75, -30, -28.875]
+        - [305, 306.25, -32, -31.125]
+        - [325, 326.75, -25, -23.625]
+        - [340, 340.875, -55, -53.75]
+      -
+        - [265.75, 266.25, -62, -61.5]
+        - [306.2, 308, -72.42, -71.67]
+        - [292, 293.5, -64.8, -63.05]
+        - [304.6, 305.17, -48.9, -47.7]
+        - [351.34, 352.8, -43, -40.5]
+        - [339.8, 341.34, -65.56,-63.7]
+        - [310.5, 312, -66.9, -64.42]
+        - [351.9, 353.5, -31.7, -29.8]
+        - [297., 298.7, -54.11, -51.11]
+        - [351.4, 352.7, -54, -52.6]
+      -
+        - [293.4, 296.5, -57.7, -54.264]
+        - [282.47, 282.7, -20.67, -20.05]
+        - [346.25, 347.25, -24.52, -22.64]
+        - [311.19, 316.44, -69.09, -62.09]
+        - [351.09, 353.84, -43.28, -40.65]
+        - [341.36, 343.95, -66.64, -64.09]
+        - [280.89, 283.64, -72.49, -70.86]
+        - [351.34, 352.84, -53.53, -52.78]
+      -
+        - [0,0,0,0]
+      -
+        - [278.18, 279.05, -28.81, -26.94]
+        - [287.38, 290.61, -69.21, -63.81]
+        - [282, 283.5, -63, -61.25]
+        - [357.8, 359.3, -48.51, -47.38]
+        - [334.23, 335.86, -72.68, -70.18]
+        - [287.13, 288.63, -43.21, -41.33]
+        - [287.242, 288.99, -19.75, -18.37]
+        - [356.57, 359.32, -42.98, -41.85]
+      -
+        - [303, 304, -66, -65]
+        - [347, 348, 53.5, 54.5]
+        - [354, 355.5, -64, -59.625]
+        - [79.5, 81.5, -16, -13.625]
+        - [330, 333.5, 33, 35.25]
+        - [350, 352.375, -70, -68.5]
+        - [70, 71.125, -70, -68.125]
+        - [4, 5.5, -38, -35.5]
+        - [273, 274.5, -23, -21.25]
+  - type: STR_PACIFIC
+    buildCost: 600000
+    areas:
+      - [180, 195, -70, -55]
+      - [180, 230, -55, -30]
+      - [180, 240, -30, -10]
+      - [180, 270, -10, 0]
+      - [180, 275, 0, 60]
+      - [150, 180, -50, -5]
+    cities:
+      - name: STR_COLDBAY
+        lon: 196.19
+        lat: -54.86
+      - name: STR_EASTER_ISLAND
+        lon: 250.2
+        lat: 27
+        texture: -2
+      - name: STR_GALAPAGOS_ISLAND
+        lon: 268.771
+        lat: 0.667
+        texture: -2
+      - name: STR_HONOLULU
+        lon: 202.221
+        lat: -21.365
+        texture: -2
+      - name: STR_MIDWAY_ISLAND
+        lon: 182
+        lat: -28
+        texture: -2
+      - name: STR_NOME
+        lon: 193.747
+        lat: -64.625
+      - name: STR_STLAWRENCE_ISLAND
+        lon: 192.66
+        lat: -60.042
+        texture: -2
+      - name: STR_TONGA
+        lon: 185
+        lat: 21
+        texture: -2
+    regionWeight: 5
+    missionWeights:
+      STR_ALIEN_BASE: 27
+      STR_ALIEN_RESEARCH: 15
+#    missionWeights:
+#      STR_ALIEN_RESEARCH: 15
+#      STR_ALIEN_TERROR: 15
+    missionZones:
+      -
+        - [189.5, 220.625, -29.25, -15.25]
+        - [172.5, 186.875, 10.875, 26.375]
+        - [158.375, 171.375, 12.25, 27.75]
+        - [202.625, 245.625, -2.25, 18.375]
+      -
+        - [204.125, 204.625, -19.875, -19.375] #triplicate
+        - [202, 202.125, -21.625, -21.5]
+        - [177.75, 178.25, 17.5, 17.875]
+        - [164.625, 164.75, 20.5, 20.75]
+      -
+        - [204.125, 204.625, -19.875, -19.375] #triplicate
+        - [202, 202.125, -21.625, -21.5]
+        - [177.75, 178.25, 17.5, 17.875]
+        - [164.625, 164.75, 20.5, 20.75]
+      -
+        - [204.125, 204.625, -19.875, -19.375]
+        - [202, 202.125, -21.625, -21.5]
+      -
+        - [204.125, 204.625, -19.875, -19.375] #triplicate
+        - [202, 202.125, -21.625, -21.5]
+        - [177.75, 178.25, 17.5, 17.875]
+        - [164.625, 164.75, 20.5, 20.75]
+      -
+        - [0, 360, -90, -80]
+        - [0, 360, 80, 90]
+        - [119.625, 139.625, 19.25, 29.25]
+        - [282.25, 322.875, 9.375, 38.375]
+        - [53.125, 89.125, 4.5, 41.25]
+        - [354.5, 33.375, -56.625, -46.375]
+        - [238.625, 258.625, -53.375, -33.375]
+        - [7.5, 38.625, 4.125, 18.625]
+        - [91.875, 124.25, -30.75, -17.5]
+        - [62.125, 101.375, -66.625, -57.125]
+  - type: STR_SIBERIA
+    buildCost: 860000
+    areas:
+      - [60, 180, -70, -50]
+    cities:
+      - name: STR_ANADYR
+        lon: 179.439
+        lat: -63.919
+        texture: -2
+      - name: STR_CHELYABINSK
+        lon: 61.845
+        lat: -57.48
+      - name: STR_IRKUTSK
+        lon: 105.11
+        lat: -52.40
+      - name: STR_KRASNOYARSK
+        lon: 93
+        lat: -56
+      - name: STR_NOVOSIBIRSK
+        lon: 82.75
+        lat: -55
+      - name: STR_OMSK
+        lon: 73.325
+        lat: -55
+      - name: STR_PETROPAVLOVSK
+        lon: 158.625
+        lat: -53
+      - name: STR_YAKUTSK
+        lon: 125.75
+        lat: -64.92
+      - name: STR_YEKATERINBURG
+        lon: 63.653
+        lat: -60.54
+    regionWeight: 10
+    missionWeights: #no Terror yet
+      STR_ALIEN_ABDUCTION: 4
+      STR_ALIEN_BASE: 9
+      STR_ALIEN_RESEARCH: 6
+    missionZones:
+      -
+        - [49.875, 80.125, -66.75, -46.5]
+        - [67.25, 188.75, -72.5, -57.75]
+        - [86.25, 164.25, -61.75, -52.875]
+        - [65, 85.125, -52.25, -49.25]
+      -
+        - [63.125, 78.375, -66.5, -62]
+        - [157.75, 162.5, -57.25, -55.625]
+        - [166.125, 181.25, -68.625, -66]
+        - [99.625, 139.125, -66.125, -58.125]
+      -
+        - [53.25, 66.625, -64.875, -61]
+        - [86, 97.75, -73.25, -68.875]
+        - [125.875, 141.5, -64.25, -59.5]
+        - [91.375, 108.875, -61.375, -57.375]
+      -
+        - [0,0,0,0]
+      -
+        - [63.125, 78.375, -66.5, -62]
+        - [157.75, 162.5, -57.25, -55.625]
+        - [166.125, 181.25, -68.625, -66]
+        - [99.625, 139.125, -66.125, -58.125]
+      -
+        - [0, 360, -90, -80]
+        - [0, 360, 80, 90]
+        - [180, 200, 0, 10]
+        - [282.25, 322.875, 9.375, 38.375]
+        - [53.125, 89.125, 4.5, 41.25]
+        - [354.5, 33.375, -56.625, -46.375]
+        - [238.625, 258.625, -53.375, -33.375]
+        - [7.5, 38.625, 4.125, 18.625]
+        - [91.875, 124.25, -30.75, -17.5]
+        - [115, 132.5, 21, 25.5]
+  - type: STR_SOUTH_AMERICA
+    buildCost: 590000
+    areas:
+      - [270, 315, -10, 0]
+      - [275, 330, 0, 15]
+      - [275, 325, 15, 60]
+    cities:
+      - name: STR_ASUNCION
+        lon: 302.71
+        lat: 26.41
+      - name: STR_BELEM
+        lon: 310.56
+        lat: 0
+      - name: STR_BELOHORIZONTE
+        lon: 316
+        lat: 19.875
+      - name: STR_BOGOTA
+        lon: 285.875
+        lat: -4.5
+      - name: STR_BRASILIA
+        lon: 312.125
+        lat: 15.75
+      - name: STR_BUENOS_AIRES
+        lon: 301.69
+        lat: 34.566
+      - name: STR_CARACAS
+        lon: 293.125
+        lat: -10.5
+      - name: STR_CARTAGENA
+        lon: 284.825
+        lat: -10.692
+      - name: STR_CAYENNE
+        lon: 306.30
+        lat: -5.66
+        texture: -2
+      - name: STR_FALKLAND_ISLAND
+        lon: 301.79
+        lat: 51.77
+        texture: -2
+      - name: STR_FORTALEZA
+        lon: 321.5
+        lat: 3.75
+        texture: -2
+      - name: STR_GEORGETOWN
+        lon: 299.41
+        lat: -9.23
+      - name: STR_GUAYAQUIL
+        lon: 280
+        lat: 2.125
+      - name: STR_LAPAZ
+        lon: 292.28
+        lat: 16.93
+      - name: STR_LIMA
+        lon: 283
+        lat: 12
+      - name: STR_MANAUS
+        lon: 301.19
+        lat: 3.2
+      - name: STR_MARACAIBO
+        lon: 288
+        lat: -11.2
+        labelTop: true
+        texture: -2
+      - name: STR_PANAMA
+        lon: 280.62
+        lat: -9.43
+        texture: -2
+      - name: STR_PORTOALEGRE
+        lon: 308.91
+        lat: 31.10
+      - name: STR_RECIFE
+        lon: 324.875
+        lat: 8
+        texture: -2
+      - name: STR_RIO_DE_JANEIRO
+        lon: 316.875
+        lat: 22.875
+        labelTop: true
+        texture: -2
+      - name: STR_SALVADOR
+        lon: 321.25
+        lat: 13
+      - name: STR_SANTIAGO
+        lon: 289.375
+        lat: 33.375
+      - name: STR_SAOPAULO
+        lon: 313.325
+        lat: 23.5
+    regionWeight: 10
+    missionWeights: #no Terror yet
+      STR_ALIEN_ABDUCTION: 12
+      STR_ALIEN_BASE: 22
+      STR_ALIEN_HARVEST: 24
+      STR_ALIEN_INFILTRATION: 18
+      STR_ALIEN_RESEARCH: 10
+    missionZones:
+      -
+        - [280.375, 297.625, -11.875, -4.125]
+        - [279.125, 301.375, -1, 7.75]
+        - [305.5, 323.75, 0.875, 11]
+        - [281.625, 292.25, 10.75, 26.625]
+        - [302, 314.375, 22.75, 31.875]
+        - [289.125, 297.75, 38.5, 49.5]
+        - [281.375, 303.75, 48, 56.125]
+      -
+        - [312.875, 320.25, 6.25, 11.5]
+        - [290.75, 293.75, -8.625, -6.125]
+        - [290.5, 294.375, 28.875, 31.5]
+        - [303, 312.75, 21.75, 24.5]
+      -
+        - [284.25, 289.75, -8.375, -6.5]
+        - [305.375, 312, 13.25, 16.125]
+        - [289.875, 294.625, 34.625, 37.625]
+        - [287.875, 292.25, 47.25, 49.25]
+        - [299.5, 301.125, 51.375, 51.875]
+      -
+        - [0,0,0,0]
+      -
+        - [290.125, 305.5, 1.5, 7.625]
+        - [285.875, 289.5, 13.625, 15.625]
+        - [290, 294.125, 41.25, 44.875]
+        - [289.375, 294.125, 22.875, 27.125]
+      -
+        - [0, 360, -90, -80]
+        - [0, 360, 80, 90]
+        - [180, 200, 0, 10]
+        - [355, 5, -5, 5]
+        - [170, 190, -60, -40]
+        - [21.5, 51.75, -31.875, -15.875]
+        - [238.625, 258.625, -53.375, -33.375]
+        - [4.75, 27.625, -52, -44.375]
+        - [75, 89, -39, -34.375]
+        - [115, 132.5, 21, 25.5]
+  - type: STR_SOUTH_ATLANTIC
+    buildCost: 540000
+    areas:
+      - [330, 5, 0, 15]
+      - [325, 5, 15, 60]
+      - [5, 55, 40, 60]
+#    missionRegion: STR_ANTARCTICA
+    regionWeight: 5
+    missionWeights:
+      STR_ALIEN_RESEARCH: 15
+#      STR_ALIEN_TERROR: 15
+    cities:
+      - name: STR_ASCENSION_ISLAND
+        lon: 345.7
+        lat: 8
+        texture: -2
+      - name: STR_TRINDADE_ISLAND
+        lon: 330.5
+        lat: 20.6
+        texture: -2
+    missionZones:
+      -
+        - [303, 305.75, 51, 55]
+        - [325, 330, 6, 13.125]
+        - [328, 330.75, -22, -17.625]
+        - [351, 352.5, 28, 34.25]
+        - [9, 10.5, 35, 40.75]
+        - [325, 326.75, 11, 11.625]
+        - [5, 5.625, 11, 12.125]
+        - [343, 344.875, 35, 37.625]
+        - [330, 331.375, 0, 1]
+        - [318, 319.25, 30, 30.625]
+      -
+        - [299.98, 300.85, 51.32, 52.2]
+        - [301.7, 305.7, 31.45, 33.58]
+        - [10.96, 11.58, 1.44, 2.19]
+        - [291.6, 293.1, 53.75, 55]
+        - [323.76, 324.92, 59.03, 60.16]
+        - [319, 320.25, 16.22, 18.72]
+        - [359.82, 0.95, 60.21, 61.71]
+        - [325.74, 328.18, -71.26, -69.39]
+        - [15.76, 17.51, 25.02, 27.9]
+        - [321.59, 324.09, 5.7, 8.2]
+      -
+        - [15.17, 16.04, 20.91, 23.04]
+        - [315.75, 317.63, 4.15, 7.27]
+        - [293.11, 294.11, 43.45, 44.2]
+        - [310.99, 311.99, 22.6, 24.6]
+        - [10.18, 11.43, -0.56, 1.93]
+        - [99.77, 301.71, 36.15, 36.57]
+        - [2.46, 4.5, -8.51, -6.99]
+        - [345.16, 346.41, -12.39, -11.14]
+        - [305.53, 308.03, -3.62, -1.12]
+      -
+        - [0,0,0,0]
+      -
+        - [344.52, 346.64, -13.87, -11.74]
+        - [18.54, 22.54, 27.84, 33.71]
+        - [15.19, 15.81, 13.03, 14.16]
+        - [308.33, 310.21, 25.11, 27.74]
+        - [10.93, 12.31, -5.02, -4.01]
+        - [299.49, 300.74, 37.21, 37.83]
+        - [295.32, 297.19, -9.01, -5.89]
+        - [290.74, 292, 47.56, 49.02]
+      -
+        - [79.5, 81.5, -16, -13.625]
+        - [330, 333.5, 33, 35.25]
+        - [273, 274.5, -23, -21.25]
+        - [350, 352.375, -70, -68.5]
+        - [303.125, 304.125, -66, -65]
+        - [347, 348, 53.5, 54.5]
+        - [70, 71.125, -70, -68.125]
+        - [70, 73.125, 60, 61.75]
+        - [0, 6.875, 60, 65.25]
+  - type: STR_SOUTH_EAST_ASIA
+    buildCost: 780000
+    areas:
+      - [90, 105, -50, 10]
+      - [105, 150, -50, -5]
+    cities:
+      - name: STR_BANGKOK
+        lon: 100.625
+        lat: -13.625
+        texture: -2
+      - name: STR_BEIJING
+        lon: 116.375
+        lat: -39.875
+      - name: STR_CHENGDU
+        lon: 102.678
+        lat: -32.7376
+      - name: STR_CHONGQING
+        lon: 107.25
+        lat: -30.55
+      - name: STR_DAVAO
+        lon: 125.442
+        lat: -6.962
+      - name: STR_HAIKOU
+        lon: 110.775
+        lat: -19.92
+      - name: STR_HANOI
+        lon: 105.74
+        lat: -20.87
+      - name: STR_HARBIN
+        lon: 126.49
+        lat: -45.47
+      - name: STR_HIROSHIMA
+        lon: 132.1
+        lat: -34.15
+        texture: -2
+      - name: STR_HONG_KONG
+        lon: 114.125
+        lat: -22.25
+        texture: -2
+      - name: STR_KAGOSHIMA
+        lon: 130.86
+        lat: -30.79
+      - name: STR_KHABAROVSK
+        lon: 134.59
+        lat: -48.28
+      - name: STR_KUALA
+        lon: 101.75
+        lat: -3.125
+      - name: STR_LASSA
+        lon: 89.93
+        lat: -29
+      - name: STR_MANILA
+        lon: 121
+        lat: -14.625
+        texture: -2
+      - name: STR_NAGASAKI
+        lon: 129.88
+        lat: -33.02
+      - name: STR_NAGOYA
+        lon: 136.76
+        lat: -34.17
+      - name: STR_OSAKA
+        lon: 134.59
+        lat: -34.49
+        labelTop: true
+      - name: STR_RANGOON
+        lon: 96.33
+        lat: -16.56
+        texture: -2
+      - name: STR_SENDAI
+        lon: 141.28
+        lat: -37.94
+      - name: STR_SEOUL
+        lon: 127
+        lat: -37.5
+        texture: -2
+      - name: STR_SHANGHAI
+        lon: 121.5
+        lat: -31.25
+        texture: -2
+      - name: STR_SAIGON
+        lon: 108.1
+        lat: -11.17
+        texture: -2
+      - name: STR_SAPPORO
+        lon: 141.27
+        lat: -43.66
+      - name: STR_SHENYANG
+        lon: 122.8
+        lat: -41.46
+      - name: STR_SINGAPORE
+        lon: 103.875
+        lat: -1.375
+        texture: -2
+      - name: STR_TAPEI
+        lon: 121.712
+        lat: -24.99
+      - name: STR_TIANJIN
+        lon: 119.20
+        lat: -33.89
+      - name: STR_TOKYO
+        lon: 139.75
+        lat: -35.625
+        texture: -2
+      - name: STR_ULANBATOR
+        lon: 105.81
+        lat: -47
+      - name: STR_URUMQI
+        lon: 86.1
+        lat: -44.14
+      - name: STR_VLADIVOSTOK
+        lon: 133.016
+        lat: -42.8694
+      - name: STR_WUHAN
+        lon: 112.95
+        lat: -30.9466
+      - name: STR_XIAN
+        lon: 109
+        lat: -34.63
+    regionWeight: 15
+    missionWeights: #no Terror yet
+      STR_ALIEN_ABDUCTION: 21
+      STR_ALIEN_BASE: 8
+      STR_ALIEN_HARVEST: 13
+      STR_ALIEN_INFILTRATION: 13
+      STR_ALIEN_RESEARCH: 8
+    missionZones:
+      -
+        - [90.125, 108.25, -36.625, -22.625]
+        - [93.125, 124.75, -16.375, 6.75]
+        - [113.75, 143, -40, -20.75]
+        - [115.125, 148, -54.5, -39.625]
+      -
+        - [92.875, 102.5, -36.5, -31.125]
+        - [100.625, 106.375, -16.75, -13.625]
+        - [113.75, 129.375, -46.625, -41.375]
+        - [91.625, 104.75, -49.5, -46.875]
+      -
+        - [111.125, 117.5, -2, -0.375]
+        - [141, 143.75, -44.125, -42.625]
+        - [127, 137, -48.5, -45]
+        - [101.25, 111.875, -43.875, -37.875]
+      -
+        - [0,0,0,0]
+      -
+        - [100.625, 103.125, -0.375, 0.75]
+        - [96.125, 104.75, -42.625, -39]
+        - [142.125, 143.875, -51.25, -49.125]
+        - [122.875, 123.625, -8.375, -7.875]
+      -
+        - [0, 360, -90, -80]
+        - [0, 360, 80, 90]
+        - [180, 200, 0, 10]
+        - [282.25, 322.875, 9.375, 38.375]
+        - [53.125, 89.125, 4.5, 41.25]
+        - [354.5, 33.375, -56.625, -46.375]
+        - [238.625, 258.625, -53.375, -33.375]
+        - [7.5, 38.625, 4.125, 18.625]
+        - [50.5, 82.875, -64.5, -51.25]
+        - [115, 132.5, 21, 25.5]
+  - type: STR_SOUTHERN_AFRICA
+    buildCost: 630000
+    areas:
+      - [5, 55, 0, 40]
+    cities:
+      - name: STR_ANTANANARIVO
+        lon: 47.5
+        lat: 18.875
+      - name: STR_BENGUELA
+        lon: 14.049
+        lat: 11.984
+      - name: STR_CAPE_TOWN
+        lon: 18.5
+        lat: 34
+        texture: -2
+      - name: STR_DARESSALAAM
+        lon: 39.051
+        lat: 6.757
+      - name: STR_DURBAN
+        lon: 31
+        lat: 29.875
+      - name: STR_GABORONE
+        lon: 25.92
+        lat: 24.41
+      - name: STR_HARARE
+        lon: 31.0
+        lat: 17.875
+      - name: STR_KIGALI
+        lon: 28.38
+        lat: 2.42
+      - name: STR_KINSHASA
+        lon: 15.375
+        lat: 4.375
+      - name: STR_LILONGWE
+        lon: 33.21
+        lat: 14.76
+      - name: STR_LUANDA
+        lon: 13.25
+        lat: 8.875
+        texture: -2
+      - name: STR_LUSAKA
+        lon: 28.25
+        lat: 15.375
+      - name: STR_MAPUTO
+        lon: 32.625
+        lat: 26
+      - name: STR_MOMBASSA
+        lon: 39.66
+        lat: 3.592
+      - name: STR_NACALA
+        lon: 40.4
+        lat: 15.213
+      - name: STR_NAIROBI
+        lon: 36.75
+        lat: 1.25
+      - name: STR_PRETORIA
+        lon: 28.125
+        lat: 26.25
+      - name: STR_WINDHOEK
+        lon: 16.74
+        lat: 22.23
+        texture: -2
+    regionWeight: 8
+    missionWeights: #no Terror yet
+      STR_ALIEN_ABDUCTION: 8
+      STR_ALIEN_BASE: 9
+      STR_ALIEN_HARVEST: 8
+      STR_ALIEN_INFILTRATION: 8
+      STR_ALIEN_RESEARCH: 7
+    missionZones:
+      -
+        - [7.125, 27, -0.375, 7.625]
+        - [40.875, 56.625, 12, 30.625]
+        - [11.25, 37, 21.75, 35.875]
+        - [27, 45.375, -3.875, 11]
+      -
+        - [19.875, 24.25, 28.5, 31.25]
+        - [44.75, 48.75, 16.875, 21.375]
+        - [14.125, 20.625, 6.125, 10.875]
+        - [13.375, 21.375, 16.625, 20.5]
+      -
+        - [12.375, 23.25, -1.5, 4.625]
+        - [30.5, 38.375, 11.625, 16.75]
+        - [17.75, 29.75, 26.25, 29.875]
+        - [45, 48.75, 16.25, 18.75]
+      -
+        - [0,0,0,0]
+      -
+        - [17.125, 23.25, 22.75, 27.125]
+        - [12, 26.875, -2.625, 4]
+        - [48.5, 49.875, 15.25, 17]
+        - [31.25, 36.75, 12.25, 15.625]
+      -
+        - [0, 360, -90, -80]
+        - [0, 360, 80, 90]
+        - [180, 200, 0, 10]
+        - [282.25, 322.875, 9.375, 38.375]
+        - [66, 102, 2.625, 39.375]
+        - [354.5, 33.375, -56.625, -46.375]
+        - [238.625, 258.625, -53.375, -33.375]
+        - [64.5, 125.5, -55.5, -44]
+        - [72.875, 105.25, -25, -11.75]
+        - [115, 132.5, 21, 25.5]
+extraStrings:
+  - type: en-US
+    strings:
+      STR_ABERDEEN: Aberdeen
+      STR_ABIDJAN: Abidjan
+      STR_ABUJA: Abuja
+      STR_ACCRA: Accra
+      STR_ADDISABABA: Addis Ababa
+      STR_ADELAIDE: Adelaide
+      STR_ALEPPO: Aleppo
+      STR_ALERT: Alert
+      STR_ALEXANDRIA: Alexandria
+      STR_ALGERIA: algeria
+      STR_ALGIERS: Algiers
+      STR_ALMATY: Almaty
+      STR_AMSTERDAM: Amsterdam
+      STR_AMUNDSENSCOTTSTATION: Southpole station
+      STR_ANADYR: Anadyr
+      STR_ANCHORAGE: Anchorage
+      STR_ANGOLA: angola
+      STR_ANKARA: Ankara
+      STR_ANTALYA: Antalya
+      STR_ANTANANARIVO: Antananarivo
+      STR_ARCHANGEL: Archangel
+      STR_ARGENTINA: argentina
+      STR_ASCENSION_ISLAND: Ascension Isle
+      STR_ASHGABAT: Ashgabat
+      STR_ASTANA: Astana
+      STR_ASTRAKHAN: Astrakhan
+      STR_ASUNCION: Asuncion
+      STR_ASWAN: Aswan
+      STR_ATHENS: Athens
+      STR_ATLANTA: Atlanta
+      STR_AUCKLAND: Auckland
+      STR_AUSTRALIA: australia
+      STR_AUSTRIA: austria
+      STR_AZORES: Azores
+      STR_BAGHDAD: Baghdad
+      STR_BAKU: Baku
+      STR_BAMAKO: Bamako
+      STR_BANGALORE: Bangalore
+      STR_BANGKOK: Bangkok
+      STR_BARCELONA: Barcelona
+      STR_BARROW: Barrow
+      STR_BEIJING: Beijing
+      STR_BEIRUT: Beirut
+      STR_BELARUS: belarus
+      STR_BELEM: Belem
+      STR_BELFAST: Belfast
+      STR_BELGIUM: belgium
+      STR_BELGRADE: Belgrade
+      STR_BELOHORIZONTE: Belo Horizonte
+      STR_BENGHAZI: ben Ghazi
+      STR_BENGUELA: Benguela
+      STR_BENGUI: Bengui
+      STR_BERLIN: Berlin
+      STR_BERMUDA: Bermuda
+      STR_BIRMINGHAM: Birmingham
+      STR_BISHKEK: Bishkek
+      STR_BISSAU: Bissau
+      STR_BOGOTA: Bogota
+      STR_BOMBAY: Bombay
+      STR_BORDEAUX: Bordeaux
+      STR_BOSTON: Boston
+      STR_BRASILIA: Brasilia
+      STR_BRAZIL: brazil
+      STR_BREST: Brest
+      STR_BRISBANE: Brisbane
+      STR_BRUSSELS: Brussels
+      STR_BRYANSK: Bryansk
+      STR_BUCHAREST: Bucharest
+      STR_BUDAPEST: Budapest
+      STR_BUENOS_AIRES: Buenos Aires
+      STR_BULGARIA: bulgaria
+      STR_CAIRO: Cairo
+      STR_CALCUTTA: Calcutta
+      STR_CANADA: canada
+      STR_CANARY_ISLANDS: Canary Isle
+      STR_CANBERRA: Canberra
+      STR_CANCUN: Cancun
+      STR_CAPE_TOWN: Cape Town
+      STR_CARACAS: Caracas
+      STR_CARDIFF: Cardiff
+      STR_CARTAGENA: Cartagena
+      STR_CASABLANCA: Casablanca
+      STR_CAYENNE: Cayenne
+      STR_CHARLESTON: Charleston
+      STR_CHENGDU: Chengdu
+      STR_CHENNAI: Chennai
+      STR_CHELYABINSK: Chelyabinsk
+      STR_CHICAGO: Chicago
+      STR_CHIHUAHUA: Chihuahua
+      STR_CHILE: chile
+      STR_CHINA: china
+      STR_CHONGQING: Chongqing
+      STR_CHRISTCHURCH: Christchurch
+      STR_COLDBAY: Cold Bay
+      STR_COLOGNE: Cologne
+      STR_COLOMBIA: columbia
+      STR_CONGO: congo
+      STR_COPENHAGEN: Copenhagen
+      STR_CORK: Cork
+      STR_CORPUSCHRISTI: Corpus Christi
+      STR_CRETE: Crete
+      STR_CUBA: cuba
+      STR_CZECH: czechoslova
+      STR_DAKAR: Dakar
+      STR_DALLAS: Dallas
+      STR_DAMASCUS: Damascus
+      STR_DARESSALAAM: Dar es Salaam
+      STR_DARWIN: Darwin
+      STR_DAVAO: Davao
+      STR_DELHI: Delhi
+      STR_DENMARK: denmark
+      STR_DENVER: Denver
+      STR_DETROIT: Detroit
+      STR_DHAKA: Dhaka
+      STR_DJIBOUTI: Djibouti
+      STR_DOHA: Doha
+      STR_DUBAI: Dubai
+      STR_DUBLIN: Dublin
+      STR_DURBAN: Durban
+      STR_DUSHAMBE: Dushambe
+      STR_EASTER_ISLAND: Easter Isle
+      STR_EDMONTON: Edmonton
+      STR_EGYPT: egypt
+      STR_ELPASO: El Paso
+      STR_ETHIOPIA: ethiopia
+      STR_FALKLAND_ISLAND: Falkland Isle
+      STR_FAROE_ISLAND: Faroe Isle
+#      STR_FIJI: Fiji # see Suva, city
+      STR_FINLAND: finland
+      STR_FLORENCE: Florence
+      STR_FORTALEZA: Fortaleza
+      STR_FORTSEVERN: Fort Severn
+      STR_FRANCE: france
+      STR_FREETOWN: Freetown
+      STR_GABORONE: Gaborone
+      STR_GALAPAGOS_ISLAND: Galapagos Isle
+      STR_GENEVA: Geneva
+      STR_GEORGETOWN: Georgetown
+      STR_GERMANY: germany
+      STR_GLASGOW: Glasgow
+      STR_GOOSEBAY: CFB Goose Bay
+      STR_GREECE: greece
+      STR_GUADALAJARA: Guadalajara
+      STR_GUATEMALA: Guatemala
+      STR_GUAYAQUIL: Guayaquil
+      STR_HAIKOU: Haikou
+      STR_HALIFAX: Halifax
+      STR_HAMBURG: Hamburg
+      STR_HAMMERFEST: Hammerfest
+      STR_HANOI: Hanoi
+      STR_HARARE: Harare
+      STR_HARBIN: Harbin
+      STR_HAVANA: Havana
+      STR_HIROSHIMA: Hiroshima
+      STR_HONG_KONG: Hong Kong
+      STR_HONOLULU: Honolulu
+      STR_HOUSTON: Houston
+      STR_HUNGARY: hungary
+      STR_INDIA: india
+      STR_INDIANAPOLIS: Indianapolis
+      STR_INDONESIA: indonesia
+      STR_INUVIK: Inuvik
+      STR_IRAN: iran
+      STR_IRAQ: iraq
+      STR_IRELAND: ireland
+      STR_IRKUTSK: Irkutsk
+      STR_ISLAMABAD: Islamabad
+      STR_ISRAEL: israel
+      STR_ISTANBUL: Constantinople
+      STR_ITALY: italy
+      STR_IVORY: ivory coast
+      STR_IZMIR: Izmir
+      STR_JAKARTA: Jakarta
+      STR_JAMAICA: Jamaica
+      STR_JAPAN: japan
+      STR_JERUSALEM: Jerusalem
+      STR_JUNEAU: Juneau
+      STR_KABUL: Kabul
+      STR_KAGOSHIMA: Kagoshima
+      STR_KALININGRAD: Kaliningrad
+      STR_KAMPALA: Kampala
+      STR_KANO: Kano
+      STR_KANSASCITY: Kansas City
+      STR_KARACHI: Karachi
+      STR_KAUJUITOQ: Kaujuitoq
+      STR_KAZAN: Kazan
+      STR_KENYA: kenya
+      STR_KHABAROVSK: Khabarovsk
+      STR_KHARKOV: Kharkov
+      STR_KHARTOUM: Khartoum
+      STR_KIEV: Kiev
+      STR_KIGALI: Kigali
+      STR_KINSHASA: Kinshasa
+      STR_KISANGANI: Kisangani
+      STR_KOREA: korea
+      STR_KRAKOW: Krakow
+      STR_KRASNOYARSK: Krasnoyarsk
+      STR_KUALA: Kuala Lumpur
+      STR_KUWAITCITY: Kuwait
+      STR_LAGOS: Lagos
+      STR_LAHORE: Lahore
+      STR_LAPAZ: La Paz
+      STR_LASSA: Lassa
+      STR_LASVEGAS: Las Vegas
+      STR_LENINGRAD: Petersburg
+      STR_LIBREVILLE: Libreville
+      STR_LIBYA: libya
+      STR_LILONGWE: Lilongwe
+      STR_LIMA: Lima
+      STR_LISBON: Lisbon
+      STR_LONDON: London
+      STR_LOS_ANGELES: Los Angeles
+      STR_LUANDA: Luanda
+      STR_LULEA: Lulea
+      STR_LUSAKA: Lusaka
+      STR_LVIV: L'viv
+      STR_LYON: Lyon
+      STR_MADRID: Madrid
+      STR_MALDIVE_ISLAND: Maldive Isle
+      STR_MANAGUA: Managua
+      STR_MANAUS: Manaus
+      STR_MANCHESTER: Manchester
+      STR_MANILA: Manila
+      STR_MAPUTO: Maputo
+      STR_MARACAIBO: Maracaibo
+      STR_MARSEILLE: Marseille
+      STR_MASHHAD: Mashhad
+      STR_MAURITIUS: Mauritius
+      STR_MCMURDOSTATION: McMurdo station
+      STR_MECCA: Mecca
+      STR_MELBOURNE: Melbourne
+      STR_MEMPHIS: Memphis
+      STR_MEXICO: mexico
+      STR_MEXICO_CITY: Mexico
+      STR_MIAMI: Miami
+      STR_MIDWAY_ISLAND: Midway Isle
+      STR_MILAN: Milan
+      STR_MINNEAPOLIS: Minneapolis
+      STR_MINSK: Minsk
+      STR_MOGADISHU: Mogadishu
+      STR_MOMBASSA: Mombassa
+      STR_MONROVIA: Monrovia
+      STR_MONTERREY: Monterrey
+      STR_MONTREAL: Montreal
+      STR_MOSCOW: Moskow
+      STR_MOZAMBIQUE: mozambique
+      STR_MUNICH: Munich
+      STR_MURMANSK: Murmansk
+      STR_MUSCAT: Muscat
+      STR_NACALA: Nacala
+      STR_NAGASAKI: Nagasaki
+      STR_NAGOYA: Nagoya
+      STR_NAIROBI: Nairobi
+      STR_NAPLES: Naples
+      STR_NDJAMENA: n'Djamena
+      STR_NETHERLANDS: netherlands
+      STR_NEWORLEANS: New Orleans
+      STR_NEWZEALAND: new zealand
+      STR_NEW_YORK: New York
+      STR_NIAMEY: Niamey
+      STR_NIGERIA: nigeria
+      STR_NOME: Nome
+      STR_NORFOLK: Norfolk
+      STR_NORWAY: norway
+      STR_NOUAKCHOTT: Nouakchott
+      STR_NOUMEA: Noumea
+      STR_NOVGOROD: Novgorod
+      STR_NOVOSIBIRSK: Novosibirsk
+      STR_NUUK: Nuuk
+      STR_ODESSA: Odessa
+      STR_OMSK: Omsk
+      STR_ORLANDO: Orlando
+      STR_OSAKA: Osaka
+      STR_OSLO: Oslo
+      STR_OUAGADOUGOU: Ouagadougou
+      STR_PAKISTAN: pakistan
+      STR_PANAMA: Panama
+      STR_PARIS: Paris
+      STR_PERTH: Perth
+      STR_PERU: peru
+      STR_PETROPAVLOVSK: Petropavlovsk
+      STR_PHILADELPHIA: Philadelphia
+      STR_PHILIPPINES: philippines
+      STR_PHOENIX: Phoenix
+      STR_POLAND: poland
+      STR_PORT_SAID: Port Said
+      STR_PORTLAND: Portland
+      STR_PORTMORESBY: Port Moresby
+      STR_PORTOALEGRE: Porto Alegre
+      STR_PORTUGAL: portugal
+      STR_PRAGUE: Prague
+      STR_PRETORIA: Pretoria
+      STR_QATAR: qatar
+      STR_QUEBECCITY: Quebec City
+      STR_RANGOON: Rangoon
+      STR_REYKJAVIK: Reykjavik
+      STR_RECIFE: Recife
+      STR_RIGA: Riga
+      STR_RIO_DE_JANEIRO: Rio de Janeiro
+      STR_RIYADH: Riyadh
+      STR_ROMANIA: romania
+      STR_ROME: Rome
+      STR_ROSTOV: Rostov
+      STR_RUSSIA: russia
+      STR_SAIGON: Saigon
+      STR_SALTLAKECITY: Salt Lake City
+      STR_SALVADOR: Salvador
+      STR_SAMARINDA: Samarinda
+      STR_SANAA: Sana'a
+      STR_SANDIEGO: San Diego
+      STR_SANFRANCISCO: San Francisco
+      STR_SANTIAGO: Santiago
+      STR_SANTODOMINGO: Santo Domingo
+      STR_SAOPAULO: Sao Paulo
+      STR_SAPPORO: Sapporo
+      STR_SARAJEVO: Sarajevo
+      STR_SARATOV: Saratov
+      STR_SASKATOON: Saskatoon
+      STR_SAUDI: saudi arabia
+      STR_SEATTLE: Seattle
+      STR_SENDAI: Sendai
+      STR_SEOUL: Seoul
+      STR_SEVASTOPOL: Sebastapol
+      STR_SEVILLE: Seville
+      STR_SEYCHELLES_ISLAND: Seychelles Isle
+      STR_SHANGHAI: Shanghai
+      STR_SHENYANG: Shenyang
+      STR_SINGAPORE: Singapore
+      STR_SMOLENSK: Smolensk
+      STR_SOFIA: Sofia
+      STR_SOLOMON_ISLAND: Solomon Isle
+      STR_SOUTH_AFRICA: south africa
+      STR_SPAIN: spain
+      STR_SRI_LANKA: Sri Lanka
+      STR_STALINGRAD: Volgograd
+      STR_STJOHN: St John
+      STR_STLAWRENCE_ISLAND: St Lawrence
+      STR_STOCKHOLM: Stockholm
+      STR_STUTTGART: Stuttgart
+      STR_SURABAYA: Surabaya
+      STR_SUVA: Suva
+      STR_SWEDEN: sweden
+      STR_SYRIA: syria
+      STR_TAIWAN: taiwan
+      STR_TAPEI: Tapei
+      STR_TASHKENT: Tashkent
+      STR_TASMANIA: Tasmania
+      STR_TBILISI: Tbilisi
+      STR_TEHRAN: Tehran
+      STR_THAILAND: thailand
+      STR_TIANJIN: Tianjin
+      STR_TIJUANA: Tijuana
+      STR_TIKSI: Tiksi
+      STR_TIRANA: Tirana
+      STR_TOKYO: Tokyo
+      STR_TONGA: Tonga
+      STR_TORONTO: Toronto
+      STR_TOWNSVILLE: Townsville
+      STR_TRINDADE_ISLAND: Trindade Isle
+      STR_TRIPOLI: Tripoli
+      STR_TRONDHEIM: Trondheim
+      STR_TUNIS: Tunis
+      STR_TURKEY: turkey
+      STR_TURKU: Turku
+      STR_UAE: united arab
+      STR_UK: england
+      STR_UKRAINE: ukraine
+      STR_ULANBATOR: Ulan Bator
+      STR_URUMQI: Urumqi
+      STR_USA: states
+      STR_VANCOUVER: Vancouver
+      STR_VENEZULA: venezuela
+      STR_VENICE: Venice
+      STR_VIENNA: Vienna
+      STR_VIETNAM: vietnam
+      STR_VLADIVOSTOK: Vladivostok
+      STR_VOSTOKSTATION: Vostok station
+      STR_WARSAW: Warswaza
+      STR_WASHINGTON: Washington
+      STR_WELLINGTON: Wellington
+      STR_WINDHOEK: Windhoek
+      STR_WINNIPEG: Winnipeg
+      STR_WUHAN: Wuhan
+      STR_XIAN: Xian
+      STR_YAKUTSK: Yakutsk
+      STR_YAOUNDE: Yaounde
+      STR_YEKATERINBURG: Yekaterinburg
+      STR_YELLOWKNIFE: Yellowknife
+      STR_YEREVAN: Yerevan
+      STR_ZAGREB: Zagreb
+globe:
+  data: GEODATA/WORLD.DAT
+  baseColor: 100    # 133
+  cityColor: 167    # 138
+  countryColor: 227 # 239
+  lineColor: 162
+#  radarColor1:
+  radarColor2: 150
+  flightColor: 166
+  oceanPalette: 192
+  polylines: #REGEX -> (?<=\.\d\d\d\d)\d+(?=[],]) <- to exclusively match digits between ".xxxx" and "," or "]"
+    - [68.125, -23.625, 71, -24.375, 69.5, -27, 70.375, -28.125, 70.75, -27.625, 74.625, -31, 74.125, -34.875, 77.875, -35.375, 79.125, -30.875, 80.875, -30.375, 80, -28.875, 87.75, -26.375, 88.25, -28, 88.875, -28.125, 89, -26.75, 91.875, -26.875, 91.625, -28, 96, -29.625, 97.125, -27.25, 92.625, -22.125, 92.375, -25, 89.875, -25.25, 89.625, -26.375, 88.375, -26.5, 88, -25.75, 89.1, -21.5713]
+    - [351.25, -41.625, 353.875, -41.625, 352.311, -37.09]
+    - [358.25, -43.5, 0.625, -42.125, 3.144, -42.52]
+    - [7.375, -43.625, 7, -45.875, 5.875, -46.25, 7.5, -47.5, 8.25, -48.875, 6.375, -49.5, 4.125, -49.875, 2.875, -50.75]
+    - [7, -45.875, 8.5, -46.5, 9.125, -45.875, 12.125, -47, 13.75, -46.5, 13.6, -45.6272]
+    - [6.375, -49.5, 5.875, -52, 6.75, -51.875, 6.985, -53.66]
+    - [8.1265, -55, 10.375, -54.625]
+    - [14.328, -53.916, 15, -50.875, 12.25, -50.25, 13.875, -48.875, 13.125, -47.5, 7.5, -47.5]
+    - [2.625, -6.25, 2.75, -8.5, 3.75, -10.625, 4, -13.625, 5.625, -14, 7, -12.875, 9.75, -12.75, 13.25, -13.5, 14.75, -12.125, 11.25, -6.5, 10.125, -7.25, 8.5, -4.375]
+    - [25.05, -31.99, 25, -22, 34.125, -22, 36.165, -23.73]
+    - [33.875, -31.36, 35.326, -28]
+    - [15.76, 28.6, 20, 28.375, 20, 24.875, 20.75, 26.875, 23.375, 25.25, 25.625, 25.75, 29.25, 22.125, 31.25, 22.375, 32, 26.875, 32.9774, 26.5714]
+    - [306.944, 33.0934, 302.5, 30, 306, 25.75, 302, 22.125, 301.75, 16.25, 294.75, 10, 289.625, 11.125, 286.25, 8.25, 287.375, 5, 290.125, 4.375, 290.25, -1.75, 296.875, -2.125, 295.375, -4, 299.25, -5.375, 301.25, -1.125, 307, -1.875, 308.625, -4.25]
+    - [235, -48.875, 255, -48.875, 265, -49, 270.115, -48.1]
+    - [293, -44.784, 291.375, -47.25, 288.375, -45, 285, -45, 283.475, -44.0577]
+    - [218.95, -69.588, 219, -60.375, 230, -56, 227.245, -54.643]
+    - [242.875, -32.625, 253.625, -31.75, 256.75, -28.875, 258.625, -29.75, 261, -26.375, 262.555, -26.2]
+    - [276.2, -41.456, 277.578, -43.081]
+    - [275.335, -46.5823, 276.625, -45.875]
+    - [31.25, -69.875, 31.5, -62.875, 28.125, -60.25]
+    - [28, -59.75, 28.125, -56.25, 32.625, -53.5, 31.75, -52.125, 40, -49.5, 38.1649, -47.084]
+    - [39.445, -43.78, 49.242, -41.895]
+    - [49.4463, -46.015, 47.625, -50.375, 60, -50.75, 61.375, -54.125, 68.875, -55.375, 76.875, -54.5, 80, -50.75, 88, -49.125, 98, -50, 98.875, -52.125, 110, -49.25, 116.75, -49.875, 119.25, -50, 120.125, -52.875, 125.875, -53, 127.875, -49.625, 134.5, -48.25, 133, -45, 131, -44.875, 130.625, -42.125, 124.243, -39.8407]
+    - [107.947, -21.2791, 105.625, -23.375, 101.75, -21.25, 99.125, -22.125, 98.875, -24.25, 97.5, -24, 98.875, -27.375, 97.125, -27.25]
+    - [91.625, -28, 88.875, -28.125]
+    - [88.25, -28, 80.875, -30.375]
+    - [77.875, -35.375, 73.375, -39.375, 80.5, -42.25, 80, -45, 82.5, -45.125, 82.875, -47.25, 85.75, -47.125, 86.375, -49.125, 88, -49.125, 90.625, -45.25, 96.25, -42.75, 105, -41.5, 112, -43.625, 112.125, -45, 119.875, -46.75, 115.75, -47.75, 116.75, -49.875]
+    - [353.7555, -53.8803, 352.9754, -54.3802, 352.4646, -54.1495, 351.8878, -54.3747, 352.7447, -55.1712]
+    - [6.0217, -51.2271, 3.5718, -51.4469]
+    - [13.7671, -48.6563, 14.7998, -48.6673, 15.2392, -48.9310, 16.8982, -48.7003, 17.0520, -47.7115, 16.2500, -46.8326, 13.7671, -46.4481]
+    - [15.0195, -50.8866, 16.3489, -50.6119, 16.7004, -50.0626, 17.2387, -50.2713, 18.9966, -49.5133, 16.8982, -48.6673]
+    - [19.0075, -49.5023, 22.7649, -49.0299, 22.6880, -49.5792, 24.1052, -50.6888, 23.2922, -52.3148, 23.9514, -52.7323, 23.4900, -54.1056, 22.7209, -54.4242, 22.7099, -54.9625, 21.3476, -55.2481]
+    - [23.5559, -53.8858, 25.4895, -54.3473, 28.1701, -56.1820]
+    - [16.2719, -46.8051, 17.7881, -45.8274, 21.1828, -46.2558, 22.9846, -48.0686, 22.1936, -48.4751, 20.5896, -48.5190, 18.8428, -47.8379, 17.1399, -47.9587]
+    - [22.9736, -48.0576, 24.8962, -47.8269, 26.8628, -48.3652, 28.3240, -46.6074, 28.1701, -45.4428, 28.1701, -45.4319, 28.9502, -46.4316, 30.0598, -46.3547]
+    - [20.2600, -46.0581, 21.3916, -44.8166, 23.0285, -44.0695, 25.4785, -43.6081, 27.2253, -44.1355, 28.4448, -43.7619]
+    - [28.0053, -41.9821, 26.5991, -41.9602, 26.1377, -40.7077]
+    - [20.0183, -39.4773, 21.0071, -40.7846, 22.9187, -41.3340, 24.4348, -41.4987, 25.2807, -41.1801, 26.4892, -41.6635]
+    - [22.6550, -44.2124, 22.4353, -43.5752, 23.0066, -43.0808, 22.3254, -42.2678, 23.0615, -41.4109]
+    - [35.9045, -35.7090, 36.7395, -36.6538, 39.8376, -36.7856, 42.3645, -37.2470, 44.7815, -37.1152, 44.1223, -39.3784, 44.6936, -39.7299, 43.5510, -40.1474, 43.5290, -40.8725, 42.8039, -41.4438, 41.5075, -41.4218]
+    - [42.5622, -37.1591, 41.3318, -36.3681, 41.1560, -34.3466, 36.9153, -32.3252, 35.9704, -32.6108, 35.9265, -33.3579, 36.6516, -34.1049, 36.2616, -34.6543, 35.4156, -34.6543]
+    - [34.9597, -29.4358, 35.6408, -32.6548, 35.9594, -32.7317]
+    - [35.9210, -33.3139, 34.8334, -33.1052]
+    - [34.0973, -30.9299, 34.4159, -31.5396, 34.3280, -31.8088]
+    - [35.5694, -32.3966, 35.1300, -32.4900, 35.0751, -31.6715, 34.9103, -31.3254, 35.3387, -31.1606]
+    - [34.9432, -29.2874, 36.0638, -29.1556, 37.8436, -30.4080, 37.0965, -31.4627, 39.2718, -32.0780, 40.4584, -31.9242, 44.8089, -29.1556, 47.5116, -29.0238, 47.7313, -28.4964, 48.4784, -28.5623]
+    - [44.8529, -37.0218, 45.4901, -35.9452, 46.2811, -35.5936, 45.4461, -34.0116, 47.8631, -31.8582, 47.8412, -31.0672, 48.4784, -30.0785]
+    - [46.6327, -29.0238, 47.4457, -30.1444, 48.0389, -29.9906]
+    - [44.6332, -39.6366, 45.5780, -38.9334, 46.5887, -38.8895, 47.9071, -39.6805, 48.2806, -39.2850, 48.2586, -38.6478, 48.9837, -38.4281]
+    - [54.0155, -37.1976, 54.8065, -37.4173, 55.1361, -37.9666, 57.0477, -38.1644, 60.3436, -36.7801]
+    - [60.2777, -36.7581, 61.1126, -36.6263, 61.3763, -35.5277, 60.3876, -33.6380, 60.9588, -31.4408, 61.8597, -31.0233, 61.0907, -29.7708, 62.8705, -27.7494, 63.2001, -26.7386, 62.0575, -26.1893, 61.7279, -24.9808]
+    - [61.3983, -29.7049, 65.1117, -29.5072, 66.5619, -29.8587, 66.6717, -31.1112, 68.9349, -31.7704, 70.2752, -33.2865, 70.0335, -33.7479, 71.5936, -35.0443, 71.4398, -35.9891, 74.6917, -37.0438, 75.2191, -37.5492]
+    - [98.6200, -9.9515, 99.4769, -11.8192, 98.2464, -15.0052, 98.8836, -16.4994, 97.4554, -18.3231, 98.0047, -19.7953, 100.2240, -20.4984, 101.0589, -21.4212]
+    - [102.6849, -21.7069, 103.6517, -20.5863, 104.3329, -20.8060, 104.8602, -19.6414, 103.9813, -19.1580, 107.3871, -15.9940, 107.4530, -14.4559, 107.3651, -12.3465, 105.8709, -11.4676, 106.0248, -10.7205, 104.5526, -10.4569]
+    - [109.9359, -1.4261, 110.6830, -0.7669, 114.3524, -1.4920, 115.9784, -4.2826, 117.5165, -4.1507]
+    - [140.9503, 2.0894, 140.9723, 9.0987]
+    - [126.6791, -37.8073, 127.1625, -38.3457, 128.0853, -38.3567, 128.2391, -38.5434, 128.2501, -38.5324]
+    - [50.9063, -24.7336, 51.7303, -24.4040]
+    - [51.7413, -24.3601, 51.7633, -23.9646, 52.6642, -23.0417, 55.3229, -22.6902, 55.5646, -23.9206, 56.0699, -24.8654, 56.7950, -25.1731]
+    - [55.2130, -22.6902, 55.6964, -21.9870, 54.9273, -20.0315, 48.7970, -18.2077, 46.2591, -15.5820, 46.2921, -16.6147, 44.3585, -17.3947, 43.4686, -17.4607, 41.9085, -15.6699]
+    - [25.0226, -22.0090, 24.8468, -19.9875, 23.5724, -19.7238, 16.3214, -23.3274, 12.3663, -23.4592, 10.3448, -24.5139, 9.4659, -26.1838, 9.5538, -30.3586, 11.9269, -33.1272]
+    - [8.5870, -36.7307, 7.7081, -33.6545, 9.6417, -30.2707]
+    - [357.9742, -34.8410, 358.8751, -32.2043, 351.1407, -28.5349, 351.4044, -27.3264, 1.1493, -21.1631, 3.3246, -19.0757, 5.7855, -19.3833, 12.0147, -23.4922]
+    - [352.5360, -4.6176, 352.9754, -5.9360, 351.3495, -6.5073, 352.0526, -8.6167, 352.0965, -10.1548, 354.9090, -10.3745, 355.5682, -9.4956, 357.3260, -9.7592, 357.0624, -4.9692]
+    - [43.1170, -11.2973, 42.7655, -10.3965, 44.1278, -8.9243, 47.8412, -7.8696, 45.1825, -5.0132, 41.9964, -3.9145, 39.5794, -3.6069, 36.2396, -4.4419, 32.9876, -7.9135, 34.2181, -9.0122, 34.5257, -10.9018, 36.7450, -13.9121, 37.9974, -14.6372, 40.2826, -14.2856, 42.3919, -12.4839, 41.8207, -11.5610, 41.8866, -10.8579, 42.9413, -10.9897]
+    - [35.8441, -4.6176, 34.3280, -4.5957, 33.9325, -4.0683, 35.1190, -1.8930, 33.9325, 0.9413, 37.6898, 3.0068, 37.5140, 3.7099, 39.2718, 4.5668]
+    - [41.4911, 1.6664, 41.0736, 0.7436, 41.0077, -2.7280, 41.9305, -3.9365]
+    - [12.2015, 5.2040, 12.8167, 4.3691, 14.6625, 5.0283, 16.1566, 3.7978, 16.2005, 1.9960, 17.6068, 1.0732, 18.8812, -4.4199, 19.9798, -4.9472, 22.2210, -4.1123, 25.6048, -5.1230, 27.3187, -4.9472, 29.2523, -4.2881, 30.8783, -3.6289, 31.2298, -2.1347, 29.7357, 1.2050, 28.9007, 3.0947, 30.5707, 8.1484, 28.9886, 8.8954, 28.1097, 11.7519, 29.6478, 13.2021, 25.7806, 11.8837, 22.4408, 11.0927, 21.8695, 7.7089, 19.8041, 7.5771, 17.6507, 8.3242, 16.6400, 6.1269, 12.2894, 6.1708]
+    - [24.045, 11.5, 23.7591, 13.1581, 22.1771, 13.1142, 22.0892, 16.0585, 23.2318, 17.9921, 19.1449, 17.7724, 18.0462, 17.4208, 14.1791, 17.4208, 13.1244, 17.0253, 12.2015, 17.3329]
+    - [40.0628, 10.7411, 35.0091, 11.7079, 35.8441, 14.8720, 35.2289, 17.0693, 33.5150, 14.2128, 29.9994, 15.0917, 30.6146, 16.2783, 32.8558, 16.6738, 32.7240, 20.1894, 31.3177, 22.4745]
+    - [11.2787, -58.9780, 12.2235, -60.0766, 12.8387, -61.1753, 12.0917, -62.5595, 12.5970, -63.8999, 14.2230, -63.9878, 14.3988, -65.2841, 16.5960, -67.6132, 19.0130, -68.4922, 21.0565, -69.0195, 23.5174, -68.0088, 23.9569, -65.9214]
+    - [21.0565, -69.0195, 21.6717, -69.3271, 23.4295, -68.7119, 25.6708, -68.8657, 27.7582, -70.0302, 29.2303, -69.5249, 29.0545, -69.0415, 31.1639, -69.4809]
+    - [267.7875, -14.5493, 268.4247, -16.0434, 269.5892, -16.0215, 269.1058, -17.7573, 270.8856, -17.8891, 271.6327, -18.4604]
+    - [288.8153, -11.8357, 287.4530, -11.0227, 286.6400, -9.1989, 288.0023, -7.0236, 289.7381, -6.8479, 290.7709, -6.1447, 292.5506, -6.1887, 292.2870, -4.9143, 292.6605, -1.8381]
+    - [280.9051, -1.6403, 282.7289, -0.3000, 285.2997, 0.3810, 287.1893, 2.4025, 289.1668, 2.3366, 289.9139, 2.5344, 289.4085, 3.8088, 290.1117, 4.2482]
+    - [290.4193, 11.0158, 291.3641, 12.5099, 290.6830, 15.4982, 291.1444, 16.5309, 289.6502, 18.4645]
+    - [299.2743, -5.2658, 298.7469, -5.9030, 299.8016, -7.0896, 299.4720, -7.7268, 300.3509, -8.2761]
+    - [305.2728, -1.7722, 306.1078, -3.5080, 305.5804, -4.7605, 306.1957, -5.7053]
+    - [290.4632, 17.4758, 292.2870, 22.9030, 292.9681, 22.9470, 292.7264, 24.3532, 291.4959, 24.8146, 291.4520, 27.2096, 290.3534, 28.8576, 289.6502, 31.6262, 290.2215, 33.8234, 288.8153, 37.2072, 289.2547, 38.4816, 288.4198, 40.0197, 288.1561, 42.9640, 288.2440, 47.2267, 286.6620, 49.9953, 287.9364, 51.9289, 290.8807, 52.3683]
+    - [292.5946, 22.9689, 294.0887, 21.8703, 297.2528, 22.3537, 302.2626, 25.2541, 301.4276, 27.1877, 304.4598, 27.4513]
+    - [301.5594, 34.3068, 302.5702, 30.1760]
+  textures:
+    - id: 0 #forest
+      details:
+        - type: FOREST
+        - type: FORESTPOLAR
+        - type: STEPPEFOREST #south
+          area: [0,360,0,90]
+        - type: TAIGAFOREST #north
+          area: [0,360,-90,0]
+    - id: 1 #savannah/steppe/plains
+      details:
+        - type: CULTA
+        - type: CULTAFARMA
+        - type: CULTAFARMB
+        - type: SAVANNADESERT #south
+          area: [0,360,0,90]
+        - type: SAVANNAFOREST #south
+          area: [0,360,0,90]
+        - type: STEPPEDESERT #north
+          area: [0,360,-90,0]
+    - id: 2 #farmland/cultivated/suburban
+      details:
+        - type: CULTA
+        - type: CULTAFARMA
+        - type: CULTAFARMB
+        - type: GRASSLANDDESERT #north
+          area: [0,360,-90,0]
+        - type: GRASSLANDFOREST
+        - type: MADURBANUFO #city <---
+        - type: NATIVEUFO #south #city <---
+          area: [0,360,0,90]
+    - id: 3 #forested mountains
+      details:
+        - type: FOREST
+        - type: FORESTMOUNT
+        - type: GRASSLANDFORESTMOUNT
+        - type: SAVANNAFORESTMOUNT #north
+          area: [0,360,-90,0]
+        - type: STEPPEFORESTMOUNT #south
+          area: [0,360,0,90]
+        - type: TAIGAFORESTMOUNT #south
+          area: [0,360,0,90]
+    - id: 4 #tundra/taiga
+      details:
+        - type: TAIGADESERT #north
+          area: [0,360,-90,0]
+        - type: TUNDRADESERT #north
+          area: [0,360,-90,0]
+    - id: 5 #barren mountains
+      details:
+        - type: FORESTMOUNT
+        - type: MOUNT
+        - type: TUNDRAMOUNT #south
+          area: [0,360,0,90]
+        - type: TUNDRADESERTMOUNT #north
+          area: [0,360,-90,0]
+    - id: 6 #jungle
+      details:
+        - type: JUNGLE
+        - type: JUNGLEPOLAR
+        - type: JUNGLETEMPLE
+    - id: 7 #desert
+      details:
+        - type: DESERT
+        - type: DESERTTEMPLE
+    - id: 8 #desert mountains
+      details:
+        - type: DESERTMOUNT
+        - type: DESERTTEMPLE
+    - id: 9 #polar
+      details:
+        - type: POLAR
+        - type: POLARDESERT #north
+          area: [0,360,-90,0]
+    - id: 10 #urban
+      details:
+        - type: INDUSTRIALUFO #north #city <---
+          area: [0,360,-90,0]
+        - type: MADURBANUFO #city <---
+        - type: NATIVEUFO #south #city <---
+          area: [0,360,0,90]
+    - id: 11 #polar mountains
+      details:
+        - type: POLARMOUNT
+    - id: 12 #icepack
+      details:
+        - type: POLAR
+    - id: -1 #inland
+      deployTypes:
+        STR_TERROR_MISSION: 100
+    - id: -2 #coastal
+      deployTypes:
+        STR_PORT_ATTACK: 100
+###--- Original Textures ---###
+#  textures:
+#    - id: 0
+#      details:
+#        - type: FOREST
+#          area: [0, 360, -90, 0]
+#        - type: JUNGLE
+#          area: [0, 360, 0, 90]
+#    - id: 1
+#      details:
+#        - type: CULTA
+#    - id: 2
+#      details:
+#        - type: CULTA
+#    - id: 3
+#      details:
+#        - type: CULTA
+#    - id: 4
+#      details:
+#        - type: CULTA
+#    - id: 5
+#      details:
+#        - type: MOUNT
+#    - id: 6
+#      details:
+#        - type: FOREST
+#          area: [0, 360, -90, 0]
+#        - type: JUNGLE
+#          area: [0, 360, 0, 90]
+#    - id: 7
+#      details:
+#        - type: DESERT
+#    - id: 8
+#      details:
+#        - type: DESERT
+#    - id: 9
+#      details:
+#        - type: POLAR
+#    - id: 10
+#      details:
+#        - type: FOREST
+#          area: [0, 360, -90, 0]
+#        - type: JUNGLE
+#          area: [0, 360, 0, 90]
+#    - id: 11
+#      details:
+#        - type: FOREST
+#          area: [0, 360, -90, 0]
+#        - type: JUNGLE
+#          area: [0, 360, 0, 90]
+#    - id: 12
+#      details:
+#        - type: POLAR
+#    - id: -1
+#      deployType: STR_TERROR_MISSION

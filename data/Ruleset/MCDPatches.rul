@@ -1,0 +1,149 @@
+MCDPatches:
+# pathFinding Hacks.
+# bigWall 1 = regular bigwall, no movement allowed.
+# bigWall 2 = can walk by north-east/south-west
+# bigWall 3 = can walk by north-west/south-east
+# bigWall 4 = acts as west wall
+# bigWall 5 = acts as north wall
+# bigWall 6 = acts as east wall
+# bigWall 7 = acts as south wall
+# bigWall 8 = acts as east and south wall
+  - type: XBASE1
+    data:
+      - MCDIndex: 2
+        bigWall: 2
+      - MCDIndex: 3
+        bigWall: 2
+      - MCDIndex: 4
+        bigWall: 3
+      - MCDIndex: 5
+        bigWall: 3
+      - MCDIndex: 19
+        bigWall: 2
+  - type: AVENGER
+    data:
+      - MCDIndex: 12
+        bigWall: 2
+      - MCDIndex: 14
+        bigWall: 3
+      - MCDIndex: 16
+        bigWall: 3
+      - MCDIndex: 26
+        bigWall: 4
+      - MCDIndex: 30
+        bigWall: 4
+      - MCDIndex: 31
+        bigWall: 4
+      - MCDIndex: 32
+        bigWall: 4
+      - MCDIndex: 33
+        bigWall: 4
+      - MCDIndex: 43
+        bigWall: 6
+      - MCDIndex: 44
+        bigWall: 6
+      - MCDIndex: 45
+        bigWall: 6
+      - MCDIndex: 46
+        bigWall: 6
+      - MCDIndex: 48
+        bigWall: 2
+  - type: LIGHTNIN
+    data:
+      - MCDIndex: 0
+        bigWall: 6
+      - MCDIndex: 1
+        bigWall: 6
+      - MCDIndex: 2
+        bigWall: 2
+      - MCDIndex: 3
+        bigWall: 7
+      - MCDIndex: 4
+        bigWall: 3
+      - MCDIndex: 5
+        bigWall: 5
+      - MCDIndex: 6
+        bigWall: 5
+      - MCDIndex: 7
+        bigWall: 2
+      - MCDIndex: 8
+        bigWall: 2
+      - MCDIndex: 9
+        bigWall: 4
+      - MCDIndex: 10
+        bigWall: 4
+      - MCDIndex: 11
+        bigWall: 3
+      - MCDIndex: 12
+        bigWall: 2
+      - MCDIndex: 13
+        bigWall: 7
+  - type: PLANE
+    data:
+      - MCDIndex: 13
+        bigWall: 6
+      - MCDIndex: 14
+        bigWall: 6
+      - MCDIndex: 59
+        bigWall: 6
+  - type: U_EXT02
+    data:
+      - MCDIndex: 2
+        bigWall: 6
+      - MCDIndex: 3
+        bigWall: 7
+      - MCDIndex: 4
+        bigWall: 2
+      - MCDIndex: 5
+        bigWall: 2
+      - MCDIndex: 6
+        bigWall: 3
+      - MCDIndex: 7
+        bigWall: 3
+      - MCDIndex: 8
+        bigWall: 8
+      - MCDIndex: 13
+        bigWall: 2
+      - MCDIndex: 14
+        bigWall: 2
+      - MCDIndex: 15
+        bigWall: 2
+# --- kL ScanG additions (subtract 35 from the SCANG.DAT id) ----------------- #
+  - type: JUNGLEPOLAR
+    data:
+      - MCDIndex: 63
+        scanG: 419 #454
+      - MCDIndex: 64
+        scanG: 420 #455
+      - MCDIndex: 65
+        scanG: 421 #456
+      - MCDIndex: 66
+        scanG: 419 #454
+      - MCDIndex: 67
+        scanG: 420 #455
+#      - MCDIndex: 68
+#        scanG: 433 #468 #water only
+      - MCDIndex: 69
+        scanG: 422 #457
+      - MCDIndex: 70
+        scanG: 423 #458
+      - MCDIndex: 71
+        scanG: 424 #459
+      - MCDIndex: 72
+        scanG: 425 #460
+      - MCDIndex: 73
+        scanG: 428 #463
+      - MCDIndex: 74
+        scanG: 429 #464
+      - MCDIndex: 75
+        scanG: 428 #463
+      - MCDIndex: 76
+        scanG: 426 #461
+      - MCDIndex: 77
+        scanG: 427 #462
+#      - MCDIndex: 78
+#        scanG: 
+#      - MCDIndex: 79
+#        scanG:
+#      - MCDIndex: 80
+#        scanG:
