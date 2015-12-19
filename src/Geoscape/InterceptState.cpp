@@ -114,6 +114,12 @@ InterceptState::InterceptState(
 						Options::keyCancel);
 	_btnCancel->onKeyboardPress(
 						(ActionHandler)& InterceptState::btnCancelClick,
+						Options::keyOk);
+	_btnCancel->onKeyboardPress(
+						(ActionHandler)& InterceptState::btnCancelClick,
+						Options::keyOkKeypad);
+	_btnCancel->onKeyboardPress(
+						(ActionHandler)& InterceptState::btnCancelClick,
 						Options::keyGeoIntercept);
 
 	_txtCraft->setText(tr("STR_CRAFT"));
@@ -144,8 +150,7 @@ InterceptState::InterceptState(
 			i != _game->getSavedGame()->getBases()->end();
 			++i)
 	{
-		if (_base == nullptr
-			|| *i == _base)
+		if (*i == _base || _base == nullptr)
 		{
 			for (std::vector<Craft*>::const_iterator
 					j = (*i)->getCrafts()->begin();
