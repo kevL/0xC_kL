@@ -38,7 +38,7 @@ class MCDPatch
 {
 
 private:
-	std::vector<std::pair<size_t, int> >
+	std::vector<std::pair<size_t, int>>
 		_armors,
 		_bigWalls,
 		_deathTiles,
@@ -47,17 +47,18 @@ private:
 		_footstepSounds,
 		_fuels,
 		_HEBlocks,
+		_scanG,
 		_terrainHeight,
 		_TUWalks,
 		_TUFlys,
 		_TUSlides;
-	std::vector<std::pair<size_t, bool> >
+	std::vector<std::pair<size_t, bool>>
 		_noFloors,
 		_stopLOSses;
-	std::vector<std::pair<size_t, std::vector<size_t> > > _LOFTS;
+	std::vector<std::pair<size_t, std::vector<size_t>>> _LOFTS;
 
-	std::vector<std::pair<size_t, MapDataType> > _objectTypes;
-	std::vector<std::pair<size_t, SpecialTileType> > _specialTypes;
+	std::vector<std::pair<size_t, MapDataType>> _objectTypes;
+	std::vector<std::pair<size_t, SpecialTileType>> _specialTypes;
 
 
 	public:

@@ -21,8 +21,9 @@
 
 #include <fstream>
 
-#include "Surface.h"
 #include "Exception.h"
+//#include "Logger.h"
+#include "Surface.h"
 
 
 namespace OpenXcom
@@ -86,7 +87,7 @@ void SurfaceSet::loadPck(
 		const std::string& tab)
 {
 	//Log(LOG_INFO) << "SurfaceSet::loadPck() " << pck;
-	size_t nframes = 0;
+	size_t qtyFrames;
 
 	// Load TAB and get image offsets
 	if (tab.empty() == false)
@@ -107,41 +108,35 @@ void SurfaceSet::loadPck(
 		offsetFile.read(
 					(char*)&offset,
 					sizeof(offset));
-		offsetFile.seekg(
-					0,
-					std::ios::end);
+		offsetFile.seekg(0, std::ios::end);
 
 		stop = offsetFile.tellg();
 
 		const size_t tabSize = static_cast<size_t>(stop - start);
 
 		if (offset != 0)
-			nframes = tabSize / 2; // 16-bit offsets
+			qtyFrames = tabSize / 2; // 16-bit offsets
 		else
-			nframes = tabSize / 4; // 32-bit offsets
+			qtyFrames = tabSize / 4; // 32-bit offsets
 
 		offsetFile.close();
 
 		for (size_t
-				frame = 0;
-				frame != nframes;
-				++frame)
+				i = 0;
+				i != qtyFrames;
+				++i)
 		{
-			_frames[frame] = new Surface(
-									_width,
-									_height);
+			_frames[i] = new Surface(_width, _height);
 		}
 	}
 	else
 	{
-		nframes = 1;
-		_frames[0] = new Surface(
-							_width,
-							_height);
+		qtyFrames = 1;
+		_frames[0] = new Surface(_width, _height);
 	}
 
 	// Load PCK and put pixels in surfaces
-	std::ifstream imgFile (pck.c_str(), std::ios::in | std::ios::binary); // init.
+	std::ifstream imgFile (pck.c_str(), std::ios::in | std::ios::binary);
 	if (imgFile.fail() == true)
 	{
 		throw Exception(pck + " not found");
@@ -152,53 +147,47 @@ void SurfaceSet::loadPck(
 		x,y;
 
 	for (size_t
-			frame = 0;
-			frame != nframes;
-			++frame)
+			i = 0;
+			i != qtyFrames;
+			++i)
 	{
 		x =
 		y = 0;
 
-		_frames[frame]->lock();
-		imgFile.read(
-				(char*)&value,
-				1);
+		_frames[i]->lock();
+		imgFile.read((char*)&value, 1);
 		for (Uint8
-				i = 0;
-				i != value;
-				++i)
+				j = 0;
+				j != value;
+				++j)
 		{
 			for (int
-					j = 0;
-					j != _width;
-					++j)
+					k = 0;
+					k != _width;
+					++k)
 			{
-				_frames[frame]->setPixelIterative(&x,&y, 0);
+				_frames[i]->setPixelIterative(&x,&y, 0);
 			}
 		}
 
-		while (imgFile.read(
-						(char*)&value,
-						1)
+		while (imgFile.read((char*)&value, 1)
 			&& value != 255)
 		{
 			if (value == 254)
 			{
-				imgFile.read(
-						(char*)&value,
-						1);
+				imgFile.read((char*)&value, 1);
 				for (Uint8
-						i = 0;
-						i != value;
-						++i)
+						j = 0;
+						j != value;
+						++j)
 				{
-					_frames[frame]->setPixelIterative(&x,&y, 0);
+					_frames[i]->setPixelIterative(&x,&y, 0);
 				}
 			}
 			else
-				_frames[frame]->setPixelIterative(&x,&y, value);
+				_frames[i]->setPixelIterative(&x,&y, value);
 		}
-		_frames[frame]->unlock();
+		_frames[i]->unlock();
 	}
 
 	imgFile.close();
@@ -209,66 +198,55 @@ void SurfaceSet::loadPck(
  * Unlike the PCK, a DAT file is an uncompressed image with no
  * offsets so these have to be figured out manually, usually
  * by splitting the image into equal portions.
- * @param filename - reference the filename of the DAT image
+ * @param file - reference the filename of the DAT image
  * @sa http://www.ufopaedia.org/index.php?title=Image_Formats#SCR_.26_DAT
  */
-void SurfaceSet::loadDat(const std::string& filename)
+void SurfaceSet::loadDat(const std::string& file)
 {
-	size_t nframes = 0;
-
 	// Load file and put pixels in surface
-	std::ifstream imgFile (filename.c_str(), std::ios::in | std::ios::binary); // init.
+	std::ifstream imgFile (file.c_str(), std::ios::in | std::ios::binary);
 	if (imgFile.fail() == true)
 	{
-		throw Exception(filename + " not found");
+		throw Exception(file + " not found");
 	}
 
-	imgFile.seekg(
-				0,
-				std::ios::end);
+	imgFile.seekg(0, std::ios::end);
 	std::streamoff datSize = imgFile.tellg();
-	imgFile.seekg(
-				0,
-				std::ios::beg);
+	imgFile.seekg(0, std::ios::beg);
 
-	nframes = static_cast<size_t>(static_cast<int>(datSize) / (_width * _height));
+	size_t qtyFrames = static_cast<size_t>(static_cast<int>(datSize) / (_width * _height));
+	//Log(LOG_INFO) << "loadDat total = " << qtyFrames;
 
 	for (size_t
 			i = 0;
-			i != nframes;
+			i != qtyFrames;
 			++i)
 	{
-		Surface* surface = new Surface(
-									_width,
-									_height);
-		_frames[i] = surface;
+		_frames[i] = new Surface(_width, _height);
 	}
 
 	Uint8 value;
 	int
 		x = 0,
 		y = 0;
-	size_t frame = 0;
+	size_t i = 0;
 
-	_frames[frame]->lock();
-	while (imgFile.read(
-					(char*)&value,
-					1))
+	_frames[i]->lock();
+	while (imgFile.read((char*)&value, 1))
 	{
-		_frames[frame]->setPixelIterative(&x,&y, value);
+		_frames[i]->setPixelIterative(&x,&y, value);
 
 		if (y >= _height)
 		{
-			_frames[frame]->unlock();
+			_frames[i]->unlock();
 
-			++frame;
-			x =
-			y = 0;
+			++i;
+			x = y = 0;
 
-			if (frame >= nframes)
+			if (i >= qtyFrames)
 				break;
 			else
-				_frames[frame]->lock();
+				_frames[i]->lock();
 		}
 	}
 

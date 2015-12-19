@@ -653,6 +653,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 	if (beginY < 0) beginY = 0;
 
 
+	static Surface
+		* const srfRookiBadge = _res->getSurface("RANK_ROOKIE"),
+		* const srfCross1 = _res->getSurfaceSet("SCANG.DAT")->getFrame(11),
+		* const srfCross2 = _res->getSurfaceSet("SCANG.DAT")->getFrame(330);
 	Surface* sprite;
 	const Tile* tileBelow;
 
@@ -661,6 +665,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 		posScreen,
 		walkOffset;
 
+	static const int
+		WHITE = 1,
+		RED   = 3;
 	int
 		frame,
 		tileShade,
@@ -764,21 +771,17 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 									if (unitEastBelow->getFatalWounds() != 0)
 									{
-										sprite = _res->getSurface("RANK_ROOKIE"); // background panel for red cross icon.
-										if (sprite != nullptr)
-											sprite->blitNShade(
-													surface,
-													posScreen.x + 2 + 16,
-													posScreen.y + 3 + 32 + tLevel);
+										srfRookiBadge->blitNShade( // background panel for red cross icon.
+															surface,
+															posScreen.x + 2 + 16,
+															posScreen.y + 3 + 32 + tLevel);
 
-										sprite = _res->getSurfaceSet("SCANG.DAT")->getFrame(11); // small gray cross
-										if (sprite != nullptr)
-											sprite->blitNShade(
-													surface,
-													posScreen.x + 4 + 16,
-													posScreen.y + 4 + 32 + tLevel,
-													_animFrame * 2,
-													false, 3); // red
+										srfCross1->blitNShade( // small gray cross
+														surface,
+														posScreen.x + 4 + 16,
+														posScreen.y + 4 + 32 + tLevel,
+														_animFrame * 2,
+														false, RED);
 									}
 									else
 									{
@@ -1042,21 +1045,17 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 								if (unitBelow->getFatalWounds() != 0)
 								{
-									sprite = _res->getSurface("RANK_ROOKIE"); // background panel for red cross icon.
-									if (sprite)
-										sprite->blitNShade(
-												surface,
-												posScreen.x + 2,
-												posScreen.y + 3 + 24 + tLevel);
+									srfRookiBadge->blitNShade( // background panel for red cross icon.
+														surface,
+														posScreen.x + 2,
+														posScreen.y + 3 + 24 + tLevel);
 
-									sprite = _res->getSurfaceSet("SCANG.DAT")->getFrame(11); // small gray cross
-									if (sprite)
-										sprite->blitNShade(
-												surface,
-												posScreen.x + 4,
-												posScreen.y + 4 + 24 + tLevel,
-												_animFrame * 2,
-												false, 3); // red
+									srfCross1->blitNShade( // small gray cross
+													surface,
+													posScreen.x + 4,
+													posScreen.y + 4 + 24 + tLevel,
+													_animFrame * 2,
+													false, RED);
 								}
 								else
 								{
@@ -1286,21 +1285,17 @@ void Map::drawTerrain(Surface* const surface) // private.
 									{
 										if (_unit->getFatalWounds() != 0)
 										{
-											sprite = _res->getSurface("RANK_ROOKIE"); // background panel for red cross icon.
-											if (sprite)
-												sprite->blitNShade(
-														surface,
-														posScreen.x + walkOffset.x + 2,
-														posScreen.y + walkOffset.y + 3);
+											srfRookiBadge->blitNShade( // background panel for red cross icon.
+																surface,
+																posScreen.x + walkOffset.x + 2,
+																posScreen.y + walkOffset.y + 3);
 
-											sprite = _res->getSurfaceSet("SCANG.DAT")->getFrame(11); // small gray cross
-											if (sprite)
-												sprite->blitNShade(
-														surface,
-														posScreen.x + walkOffset.x + 4,
-														posScreen.y + walkOffset.y + 4,
-														_animFrame * 2,
-														false, 3); // red
+											srfCross1->blitNShade( // small gray cross
+															surface,
+															posScreen.x + walkOffset.x + 4,
+															posScreen.y + walkOffset.y + 4,
+															_animFrame * 2,
+															false, RED);
 										}
 										else
 										{
@@ -1361,27 +1356,22 @@ void Map::drawTerrain(Surface* const surface) // private.
 						const int hurt = _tile->hasUnconsciousUnit();
 						if (hurt != 0)
 						{
-							sprite = _res->getSurface("RANK_ROOKIE"); // background panel for red cross icon.
-							if (sprite != nullptr)
-								sprite->blitNShade(
-										surface,
-										posScreen.x,
-										posScreen.y);
-
-							Uint8 color;
+							srfRookiBadge->blitNShade( // background panel for red cross icon.
+												surface,
+												posScreen.x,
+												posScreen.y);
+							int color;
 							if (hurt == 2)
-								color = 3; // red, wounded unconscious soldier
+								color = RED;	// red, wounded unconscious soldier
 							else
-								color = 1; // white, unconscious soldier here
+								color = WHITE;	// white, unconscious soldier here
 
-							sprite = _res->getSurfaceSet("SCANG.DAT")->getFrame(11); // small gray cross
-							if (sprite)
-								sprite->blitNShade(
-										surface,
-										posScreen.x + 2,
-										posScreen.y + 1,
-										_animFrame * 2,
-										false, color);
+							srfCross1->blitNShade( // small gray cross
+											surface,
+											posScreen.x + 2,
+											posScreen.y + 1,
+											_animFrame * 2,
+											false, color);
 						}
 					}
 					// end unconscious soldier icon.
@@ -1730,11 +1720,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 							|| itY == 0
 							|| itY == _battleSave->getMapSizeY() - 1)
 						{
-							sprite = _res->getSurfaceSet("SCANG.DAT")->getFrame(330); // gray square cross
-							sprite->blitNShade(
-									surface,
-									posScreen.x + 14,
-									posScreen.y + 31);
+							srfCross2->blitNShade(
+											surface,
+											posScreen.x + 14,
+											posScreen.y + 31);
 						}
 					}
 					// end border icon.
@@ -1751,12 +1740,11 @@ void Map::drawTerrain(Surface* const surface) // private.
 								_battleSave->scannerDots().end(),
 								dotTest) != _battleSave->scannerDots().end())
 						{
-							sprite = _res->getSurfaceSet("SCANG.DAT")->getFrame(330); // gray square cross
-							sprite->blitNShade(
-									surface,
-									posScreen.x + 14,
-									posScreen.y + 30,
-									0, false, 3); // red
+							srfCross2->blitNShade(
+											surface,
+											posScreen.x + 14,
+											posScreen.y + 30,
+											0, false, 3); // red
 						}
 					}
 					// end scanner dots.

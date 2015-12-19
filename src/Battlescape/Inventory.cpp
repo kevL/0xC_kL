@@ -1355,14 +1355,13 @@ void Inventory::showWarning(const std::wstring& msg)
  */
 void Inventory::drawPrimers()
 {
-	const int pulse[22] = { 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,
-						   13,12,11,10, 9, 8, 7, 6, 5, 4, 3 };
+	static const int pulse[22] = { 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,
+								  13,12,11,10, 9, 8, 7, 6, 5, 4, 3};
 
-	if (_fuseFrame == 22)
-		_fuseFrame = 0;
+	if (_fuseFrame == 22) _fuseFrame = 0;
 
-	Surface* const srf = _game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(9);
-	for (std::vector<std::pair<int, int> >::const_iterator
+	static Surface* const srf = _game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(9);
+	for (std::vector<std::pair<int,int>>::const_iterator
 			i = _grenadeFuses.begin();
 			i != _grenadeFuses.end();
 			++i)

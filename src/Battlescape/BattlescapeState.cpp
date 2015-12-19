@@ -3091,26 +3091,20 @@ void BattlescapeState::cycleHostileHotcons() // private.
  */
 void BattlescapeState::flashMedic() // private.
 {
-	static int phase; // init's only once, to 0
-
-	Surface* const srfCross = _game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(11); // gray cross
+	static int phase;
+	static Surface* const srf = _game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(11); // gray cross
 
 	_btnWounds->lock();
-	srfCross->blitNShade(
-					_btnWounds,
-					_btnWounds->getX() + 2,
-					_btnWounds->getY() + 1,
-					phase,
-					false,
-					3); // red
+	srf->blitNShade(
+				_btnWounds,
+				_btnWounds->getX() + 2,
+				_btnWounds->getY() + 1,
+				phase, false, 3); // red
 	_btnWounds->unlock();
 
 	_numWounds->setColor(static_cast<Uint8>(YELLOW + phase));
 
-
-	phase += 2;
-	if (phase == 16)
-		phase = 0;
+	if ((phase += 2) == 16) phase = 0;
 }
 
 /**

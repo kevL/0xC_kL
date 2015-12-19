@@ -20,8 +20,8 @@
 #ifndef OPENXCOM_GRAPHSUBSET_H
 #define	OPENXCOM_GRAPHSUBSET_H
 
-#include <utility>
 #include <algorithm>
+#include <utility>
 
 
 namespace OpenXcom
@@ -29,10 +29,9 @@ namespace OpenXcom
 
 struct GraphSubset
 {
-
-	//define part of surface
-	int beg_x, end_x;
-	int beg_y, end_y;
+	int // define part of surface
+		beg_x, end_x,
+		beg_y, end_y;
 
 	GraphSubset(
 			int max_x,
@@ -44,8 +43,8 @@ struct GraphSubset
 
 
 	GraphSubset(
-			std::pair<int, int> range_x,
-			std::pair<int, int> range_y)
+			std::pair<int,int> range_x,
+			std::pair<int,int> range_y)
 		:
 			beg_x(range_x.first), end_x(range_x.second),
 			beg_y(range_y.first), end_y(range_y.second)
@@ -59,7 +58,9 @@ struct GraphSubset
 			end_y(r.end_y)
 	{}
 
-	inline GraphSubset offset(int x, int y) const
+	inline GraphSubset offset(
+			int x,
+			int y) const
 	{
 		GraphSubset ret = *this;
 		ret.beg_x += x;

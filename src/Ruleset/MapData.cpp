@@ -619,19 +619,19 @@ void MapData::setExplosiveType(int value)
 }
 
 /**
- * Sets the SCANG.DAT index for minimap.
+ * Sets the SCANG.DAT index for the minimap.
  * @param i - the minimap index
  */
-void MapData::setMiniMapIndex(unsigned short i)
+void MapData::setMiniMapIndex(unsigned short id)
 {
-	_miniMapIndex = i;
+	_miniMapIndex = static_cast<int>(id);
 }
 
 /**
- * Gets the SCANG.DAT index for minimap.
+ * Gets the SCANG.DAT index for the minimap.
  * @return, the minimap index
  */
-unsigned short MapData::getMiniMapIndex() const
+int MapData::getMiniMapIndex() const
 {
 	return _miniMapIndex;
 }

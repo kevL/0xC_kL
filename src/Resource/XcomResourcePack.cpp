@@ -398,7 +398,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 
 	_sets["SCANG.DAT"] = new SurfaceSet(4,4);
 	oststr.str("");
-	oststr << "GEODATA/" << "SCANG.DAT";
+	oststr << "GEODATA/SCANG.DAT";
 	_sets["SCANG.DAT"]->loadDat(CrossPlatform::getDataFile(oststr.str()));
 
 
@@ -730,11 +730,11 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 											spritePack->getWidth(),
 											spritePack->getHeight());
 			}
-			//else
-			//{
+			else
+			{
 				//Log(LOG_VERBOSE) << "Adding/Replacing items in surface set: " << st;
 				//Log(LOG_INFO) << "Adding/Replacing items in surface set: " << st;
-			//}
+			}
 
 			//if (subdivision == true)
 			//{
@@ -751,7 +751,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 				start = j->first;
 
 				st2 = j->second;
-				if (st2.substr(st2.length() - 1, 1) == "/")
+				if (st2.substr(st2.length() - 1, 1) == "/") // is Folder
 				{
 					//Log(LOG_VERBOSE) << "Loading surface set from folder: " << st2 << " starting at frame: " << start;
 					//Log(LOG_INFO) << "Loading surface set from folder: " << st2 << " starting at frame: " << start;
@@ -774,7 +774,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 								oststr.str("");
 								oststr << oststr2.str() << CrossPlatform::getDataFile(*k);
 
-								if (_sets[st]->getFrame(offset))
+								if (_sets[st]->getFrame(offset) != nullptr)
 								{
 									//Log(LOG_VERBOSE) << "Replacing frame: " << offset;
 									//Log(LOG_INFO) << "Replacing frame: " << offset;
@@ -782,7 +782,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 								}
 								else
 								{
-									if (adding == true)
+									if (adding == true) // create Set.
 										_sets[st]->addFrame(offset)->loadImage(oststr.str());
 									else
 									{
@@ -801,7 +801,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 						}
 					}
 				}
-				else
+				else // is *not* Folder
 				{
 					oststr.str("");
 

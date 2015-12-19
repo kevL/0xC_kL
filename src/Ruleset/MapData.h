@@ -99,6 +99,7 @@ private:
 		_fuel,
 		_isPsychedelic,
 		_lightSource,
+		_miniMapIndex,
 		_sprite[8],
 		_terrainLevel,
 		_TUWalk,
@@ -107,8 +108,6 @@ private:
 		_yOffset;
 
 	size_t _loftId[12];
-
-	unsigned short _miniMapIndex;
 
 	MapDataSet* _dataset;
 
@@ -263,9 +262,9 @@ private:
 		void setExplosiveType(int value);
 
 		/// Sets the MiniMap index
-		void setMiniMapIndex(unsigned short i);
+		void setMiniMapIndex(unsigned short id);
 		/// Gets the MiniMap index
-		unsigned short getMiniMapIndex() const;
+		int getMiniMapIndex() const;
 
 		/// Sets the bigwall value.
 		void setBigWall(const int bigWall);

@@ -63,7 +63,7 @@ private:
 				const std::string& pck,
 				const std::string& tab = "");
 		/// Loads an X-Com DAT image file.
-		void loadDat(const std::string& filename);
+		void loadDat(const std::string& file);
 
 		/// Gets a particular frame from the set.
 		Surface* getFrame(const int i);

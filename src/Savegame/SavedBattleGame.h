@@ -125,9 +125,9 @@ private:
 	std::vector<Position>
 		_storageSpace,
 		_tileSearch;
-	std::vector<std::vector<std::pair<int, int>>> _baseModules;
+	std::vector<std::vector<std::pair<int,int>>> _baseModules;
 
-	std::vector<std::pair<int, int>> _scanDots;
+	std::vector<std::pair<int,int>> _scanDots;
 
 //	Uint8 _dragButton;			// this is a cache for Options::getString("battleScrollDragButton")
 //	bool _dragInvert;			// this is a cache for Options::getString("battleScrollDragInvert")

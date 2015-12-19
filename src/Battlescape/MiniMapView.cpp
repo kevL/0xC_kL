@@ -202,10 +202,9 @@ void MiniMapView::draw()
 												colorOffset,
 												false,
 												colorGroup);
-								else
-									Log(LOG_WARNING) << "MiniMapView::draw() no data for Tile["
-													 << i << "] pos " << tile->getPosition()
-													 << " frame = " << data->getMiniMapIndex() + 35;
+								else Log(LOG_WARNING) << "MiniMapView::draw() no data for Tile["
+													  << i << "] pos " << tile->getPosition()
+													  << " frame = " << data->getMiniMapIndex() + 35;
 							}
 						}
 					}

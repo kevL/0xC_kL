@@ -28,7 +28,6 @@
 #include "../Engine/CrossPlatform.h"
 #include "../Engine/Exception.h"
 #include "../Engine/Game.h"
-//#include "../Engine/Logger.h"
 #include "../Engine/SurfaceSet.h"
 
 #include "../Resource/ResourcePack.h"
