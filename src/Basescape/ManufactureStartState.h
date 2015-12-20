@@ -43,8 +43,10 @@ class ManufactureStartState
 {
 
 private:
+	bool _init;
+
 	Base* _base;
-	const RuleManufacture* const _manufRule;
+	const RuleManufacture* const _manfRule;
 	Text
 		* _txtCost,
 		* _txtItemRequired,
@@ -66,7 +68,12 @@ private:
 		/// Creates the State.
 		ManufactureStartState(
 				Base* const base,
-				const RuleManufacture* const manufRule);
+				const RuleManufacture* const manfRule);
+		/// dTor.
+		~ManufactureStartState();
+
+		/// Initializes state.
+		void init() override;
 
 		/// Handler for the Costs button.
 		void btnCostsClick(Action* action);

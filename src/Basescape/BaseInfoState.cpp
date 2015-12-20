@@ -409,7 +409,7 @@ void BaseInfoState::init()
 	_barEngineers->setVisible(vis);
 
 
-	var = _base->getAvailableStores();
+	var = _base->getTotalStores();
 	if (var != 0)
 	{
 		var2 = static_cast<int>(std::floor(_base->getUsedStores() + 0.05));
@@ -425,7 +425,7 @@ void BaseInfoState::init()
 	_numStores->setVisible(vis);
 	_barStores->setVisible(vis);
 
-	var = _base->getAvailableQuarters();
+	var = _base->getTotalQuarters();
 	if (var != 0)
 	{
 		var2 = _base->getUsedQuarters();
@@ -441,7 +441,7 @@ void BaseInfoState::init()
 	_numQuarters->setVisible(vis);
 	_barQuarters->setVisible(vis);
 
-	var = _base->getAvailableLaboratories();
+	var = _base->getTotalLaboratories();
 	if (var != 0)
 	{
 		var2 = _base->getUsedLaboratories();
@@ -457,7 +457,7 @@ void BaseInfoState::init()
 	_numLaboratories->setVisible(vis);
 	_barLaboratories->setVisible(vis);
 
-	var = _base->getAvailableWorkshops();
+	var = _base->getTotalWorkshops();
 	if (var != 0)
 	{
 		var2 = _base->getUsedWorkshops();
@@ -473,7 +473,7 @@ void BaseInfoState::init()
 	_numWorkshops->setVisible(vis);
 	_barWorkshops->setVisible(vis);
 
-	var = _base->getAvailableHangars();
+	var = _base->getTotalHangars();
 	if (var != 0)
 	{
 		var2 = _base->getUsedHangars();
@@ -491,7 +491,7 @@ void BaseInfoState::init()
 
 	if (Options::storageLimitsEnforced == true)
 	{
-		var = _base->getAvailableContainment();
+		var = _base->getTotalContainment();
 		if (var != 0)
 		{
 			var2 = _base->getUsedContainment();
@@ -561,7 +561,7 @@ void BaseInfoState::init()
 
 	if (_psiResearched == true)
 	{
-		var = _base->getAvailablePsiLabs();
+		var = _base->getTotalPsiLabs();
 		if (var != 0)
 		{
 			var2 = _base->getUsedPsiLabs();

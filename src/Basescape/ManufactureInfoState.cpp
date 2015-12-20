@@ -53,15 +53,15 @@ namespace OpenXcom
 
 /**
  * Initializes all elements in the Production settings screen (new Production).
- * @param base - pointer to the Base to get info from
- * @param manufRule - pointer to the RuleManufacture to produce
+ * @param base		- pointer to the Base to get info from
+ * @param manfRule	- pointer to the RuleManufacture to produce
  */
 ManufactureInfoState::ManufactureInfoState(
 		Base* const base,
-		const RuleManufacture* const manufRule)
+		const RuleManufacture* const manfRule)
 	:
 		_base(base),
-		_manufRule(manufRule),
+		_manfRule(manfRule),
 		_production(nullptr),
 		_producedItemsValue(0)
 {
@@ -78,7 +78,7 @@ ManufactureInfoState::ManufactureInfoState(
 		Production* const production)
 	:
 		_base(base),
-		_manufRule(nullptr),
+		_manfRule(nullptr),
 		_production(production),
 		_producedItemsValue(0)
 {
@@ -176,7 +176,7 @@ void ManufactureInfoState::buildUi() // private.
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));
 
-	_txtTitle->setText(tr(_manufRule != nullptr ? _manufRule->getType() : _production->getRules()->getType()));
+	_txtTitle->setText(tr(_manfRule != nullptr ? _manfRule->getType() : _production->getRules()->getType()));
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 
@@ -236,7 +236,7 @@ void ManufactureInfoState::buildUi() // private.
 	if (_production == nullptr)
 	{
 		_btnOk->setVisible(false);
-		_production = new Production(_manufRule, 0);
+		_production = new Production(_manfRule, 0);
 		_base->addProduction(_production);
 	}
 
@@ -263,16 +263,16 @@ void ManufactureInfoState::buildUi() // private.
 void ManufactureInfoState::initProfit() // private.
 {
 	const Ruleset* const rules = _game->getRuleset();
-	const RuleManufacture* const manufRule = _production->getRules();
+	const RuleManufacture* const manfRule = _production->getRules();
 
 	int sellValue;
 
 	for (std::map<std::string, int>::const_iterator
-			i = manufRule->getProducedItems().begin();
-			i != manufRule->getProducedItems().end();
+			i = manfRule->getProducedItems().begin();
+			i != manfRule->getProducedItems().end();
 			++i)
 	{
-		if (manufRule->getCategory() == "STR_CRAFT")
+		if (manfRule->getCategory() == "STR_CRAFT")
 			sellValue = rules->getCraft(i->first)->getSellCost();
 		else
 			sellValue = rules->getItem(i->first)->getSellCost();
@@ -308,7 +308,7 @@ int ManufactureInfoState::calcProfit() // private.
 /*	// does not take into account leap years
 	static const int AVG_HOURS_PER_MONTH = (365 * 24) / 12;
 
-	const RuleManufacture* const manufRule = _production->getRules();
+	const RuleManufacture* const manfRule = _production->getRules();
 	int
 		sellValue = _btnSell->getPressed() ? _producedItemsValue : 0,
 		numEngineers = _production->getAssignedEngineers(),
@@ -317,7 +317,7 @@ int ManufactureInfoState::calcProfit() // private.
 	if (_production->getInfiniteAmount() == false)
 	{
 		// scale down to actual number of man hours required if the job takes less than one month
-		const int manHoursRemaining = manufRule->getManufactureTime()
+		const int manHoursRemaining = manfRule->getManufactureTime()
 									* (_production->getAmountTotal() - _production->getAmountProduced());
 		manHoursPerMonth = std::min(
 								manHoursPerMonth,
@@ -325,8 +325,8 @@ int ManufactureInfoState::calcProfit() // private.
 	}
 
 	const int itemsPerMonth = static_cast<int>(static_cast<float>(manHoursPerMonth)
-							/ static_cast<float>(manufRule->getManufactureTime()));
-	return itemsPerMonth * (sellValue - manufRule->getManufactureCost()); */
+							/ static_cast<float>(manfRule->getManufactureTime()));
+	return itemsPerMonth * (sellValue - manfRule->getManufactureCost()); */
 
 /**
 * Refreshes profit values.
@@ -368,7 +368,7 @@ void ManufactureInfoState::btnStopClick(Action*) // private.
  */
 void ManufactureInfoState::btnOkClick(Action*) // private.
 {
-	if (_manufRule != nullptr)
+	if (_manfRule != nullptr)
 		_production->startProduction(
 								_base,
 								_game->getSavedGame());
@@ -383,7 +383,7 @@ void ManufactureInfoState::exitState() // private.
 {
 	_game->popState();
 
-	if (_manufRule != nullptr)
+	if (_manfRule != nullptr)
 		_game->popState();
 }
 
@@ -645,7 +645,7 @@ void ManufactureInfoState::moreUnit(int change) // private.
 	if (change > 0)
 	{
 		if (_production->getRules()->getCategory() == "STR_CRAFT"
-			&& _base->getAvailableHangars() - _base->getUsedHangars() < 1)
+			&& _base->getFreeHangars() < 1)
 		{
 			_timerMoreUnit->stop();
 			_game->pushState(new ErrorMessageState(
@@ -665,7 +665,7 @@ void ManufactureInfoState::moreUnit(int change) // private.
 			if (_production->getRules()->getCategory() == "STR_CRAFT")
 				change = std::min(
 								change,
-								_base->getAvailableHangars() - _base->getUsedHangars());
+								_base->getFreeHangars());
 			_production->setAmountTotal(units + change);
 
 			setAssignedEngineer();

@@ -89,7 +89,7 @@ NewPossibleManufactureState::NewPossibleManufactureState(
 	_btnManufacture->onKeyboardPress(
 					(ActionHandler)& NewPossibleManufactureState::btnManufactureClick,
 					Options::keyOkKeypad);
-	_btnManufacture->setVisible(showManufactureButton && (base->getAvailableWorkshops() != 0));
+	_btnManufacture->setVisible(showManufactureButton && (base->hasProduction() == true));
 
 	_txtTitle->setText(tr("STR_WE_CAN_NOW_PRODUCE"));
 	_txtTitle->setAlign(ALIGN_CENTER);

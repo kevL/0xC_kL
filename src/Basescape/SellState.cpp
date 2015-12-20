@@ -151,7 +151,7 @@ SellState::SellState(Base* const base)
 	_txtStorage->setAlign(ALIGN_RIGHT);
 	_txtStorage->setColor(WHITE);
 	std::wostringstream woststr;
-	woststr << _base->getAvailableStores() << L":" << std::fixed << std::setprecision(1) << _base->getUsedStores();
+	woststr << _base->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _base->getUsedStores();
 	_txtStorage->setText(woststr.str());
 
 	_txtQuantity->setText(tr("STR_QUANTITY_UC"));
@@ -942,7 +942,7 @@ void SellState::updateItemStrings() // private.
 	}
 
 	std::wostringstream woststr;
-	woststr << _base->getAvailableStores() << L":" << std::fixed << std::setprecision(1) << _base->getUsedStores();
+	woststr << _base->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _base->getUsedStores();
 	if (std::abs(_storeSize) > 0.05)
 	{
 		woststr << L" ";

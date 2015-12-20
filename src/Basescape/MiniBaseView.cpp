@@ -360,9 +360,9 @@ void MiniBaseView::blink()
 
 		x = i * (MINI_SIZE + 2);
 
-		if (base->getScientists() > 0 // unused Scientists &/or Engineers &/or PsiLab space
-			|| base->getEngineers() > 0
-			|| (base->getUsedPsiLabs() != base->getAvailablePsiLabs()
+		if (base->getScientists() != 0 // unused Scientists &/or Engineers &/or PsiLab space
+			|| base->getEngineers() != 0
+			|| (base->getUsedPsiLabs() != base->getTotalPsiLabs()
 				&& base->getUsedPsiLabs() < static_cast<int>(base->getSoldiers()->size())))
 		{
 			if (_blink == true)

@@ -41,14 +41,14 @@ namespace OpenXcom
 
 /**
  * cTor.
- * @param manufRule	- pointer to RuleManufacture
+ * @param manfRule	- pointer to RuleManufacture
  * @param amount	- quantity to produce
  */
 Production::Production(
-		const RuleManufacture* const manufRule,
+		const RuleManufacture* const manfRule,
 		int amount)
 	:
-		_manufRule(manufRule),
+		_manfRule(manfRule),
 		_amount(amount),
 		_infinite(false),
 		_timeSpent(0),
@@ -81,7 +81,7 @@ YAML::Node Production::save() const
 {
 	YAML::Node node;
 
-	node["item"]		= _manufRule->getType();
+	node["item"]		= _manfRule->getType();
 	node["assigned"]	= _engineers;
 	node["spent"]		= _timeSpent;
 	node["amount"]		= _amount;
@@ -177,7 +177,7 @@ void Production::setSellItems(bool sell)
  */
 bool Production::enoughMoney(const SavedGame* const gameSave) const // private.
 {
-	return (gameSave->getFunds() >= _manufRule->getManufactureCost());
+	return (gameSave->getFunds() >= _manfRule->getManufactureCost());
 }
 
 /**
@@ -186,8 +186,8 @@ bool Production::enoughMoney(const SavedGame* const gameSave) const // private.
 bool Production::enoughMaterials(Base* const base) const // private.
 {
 	for (std::map<std::string,int>::const_iterator
-			i = _manufRule->getRequiredItems().begin();
-			i != _manufRule->getRequiredItems().end();
+			i = _manfRule->getRequiredItems().begin();
+			i != _manfRule->getRequiredItems().end();
 			++i)
 	{
 		if (base->getStorageItems()->getItemQty(i->first) < i->second)
@@ -212,7 +212,7 @@ ProductionProgress Production::step(
 		&& qtyDone < getAmountProduced())
 	{
 		// enforce pre-TFTD manufacturing rules: extra hours are wasted
-		_timeSpent = (qtyDone + 1) * _manufRule->getManufactureTime();
+		_timeSpent = (qtyDone + 1) * _manfRule->getManufactureTime();
 	}
 
 	if (qtyDone < getAmountProduced())
@@ -230,11 +230,11 @@ ProductionProgress Production::step(
 		do
 		{
 			for (std::map<std::string, int>::const_iterator
-					i = _manufRule->getProducedItems().begin();
-					i != _manufRule->getProducedItems().end();
+					i = _manfRule->getProducedItems().begin();
+					i != _manfRule->getProducedItems().end();
 					++i)
 			{
-				if (_manufRule->getCategory() == "STR_CRAFT")
+				if (_manfRule->getCategory() == "STR_CRAFT")
 				{
 					Craft* const craft = new Craft(
 												rules->getCraft(i->first),
@@ -367,7 +367,7 @@ ProductionProgress Production::step(
  */
 int Production::getAmountProduced() const
 {
-	return _timeSpent / _manufRule->getManufactureTime();
+	return _timeSpent / _manfRule->getManufactureTime();
 }
 
 /**
@@ -375,7 +375,7 @@ int Production::getAmountProduced() const
  */
 const RuleManufacture* Production::getRules() const
 {
-	return _manufRule;
+	return _manfRule;
 }
 
 /**
@@ -385,13 +385,13 @@ void Production::startProduction(
 		Base* const base,
 		SavedGame* const gameSave) const
 {
-	const int cost = _manufRule->getManufactureCost();
+	const int cost = _manfRule->getManufactureCost();
 	gameSave->setFunds(gameSave->getFunds() - cost);
 	base->setCashSpent(cost);
 
 	for (std::map<std::string,int>::const_iterator
-			i = _manufRule->getRequiredItems().begin();
-			i != _manufRule->getRequiredItems().end();
+			i = _manfRule->getRequiredItems().begin();
+			i != _manfRule->getRequiredItems().end();
 			++i)
 	{
 		base->getStorageItems()->removeItem(i->first, i->second);

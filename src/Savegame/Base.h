@@ -163,83 +163,83 @@ private:
 		/// Sets this Base's engineers.
 		void setEngineers(int engineers);
 
-		/// Checks if a target is detected by this Base's radar.
-		int detect(Target* const target) const;
-		/// Checks if a target is inside this Base's radar range.
-		double insideRadarRange(const Target* const target) const;
-
 		/// Gets this Base's available soldiers.
 		int getAvailableSoldiers(const bool combatReady = false) const;
 		/// Gets this Base's total soldiers.
 		int getTotalSoldiers() const;
+
 		/// Gets this Base's total scientists.
 		int getTotalScientists() const;
+		/// Gets the number of scientists at work.
+		int getAllocatedScientists() const;
 		/// Gets this Base's total engineers.
 		int getTotalEngineers() const;
+		/// Gets the number of engineers at work.
+		int getAllocatedEngineers() const;
 
 		/// Gets this Base's used living quarters.
 		int getUsedQuarters() const;
 		/// Gets this Base's available living quarters.
-		int getAvailableQuarters() const;
+		int getTotalQuarters() const;
+		/// Gets this Base's total free personel space.
+		int getFreeQuarters() const;
 
 		/// Gets this Base's used storage space.
 		double getUsedStores() const;
+		/// Gets this Base's available storage space.
+		int getTotalStores() const;
 		/// Checks if this Base's stores are overfull.
 		bool storesOverfull(double offset = 0.) const;
-
-		/// Gets this Base's available storage space.
-		int getAvailableStores() const;
 
 		/// Gets this Base's used laboratory space.
 		int getUsedLaboratories() const;
 		/// Gets this Base's available laboratory space.
-		int getAvailableLaboratories() const;
+		int getTotalLaboratories() const;
+		/// Gets the number of available space lab (not used by a ResearchProject).
+		int getFreeLaboratories() const;
+		/// Checks if this Base has research facilities.
+		bool hasResearch() const;
 
 		/// Gets this Base's used workshop space.
 		int getUsedWorkshops() const;
 		/// Gets this Base's available workshop space.
-		int getAvailableWorkshops() const;
+		int getTotalWorkshops() const;
+		/// Gets the number of available space lab (not used by a Production).
+		int getFreeWorkshops() const;
+		/// Checks if this Base has production facilities.
+		bool hasProduction() const;
+
+		/// Gets this Base's used psi lab space.
+		int getUsedPsiLabs() const;
+		/// Gets this Base's total available psi lab space.
+		int getTotalPsiLabs() const;
+		/// Gets this Base's total free psi lab space.
+		int getFreePsiLabs() const;
+		/// Checks if this Base has psi labs.
+		bool hasPsiLabs() const;
+
+		/// Gets the total amount of used containment space.
+		int getUsedContainment() const;
+		/// Gets the total amount of containment space.
+		int getTotalContainment() const;
+		/// Gets this Base's total free containment space.
+		int getFreeContainment() const;
+		/// Checks if this Base has alien containment.
+		bool hasContainment() const;
+		/// Gets the quantity of aLiens currently under interrogation.
+		int getInterrogatedAliens() const;
 
 		/// Gets this Base's used hangars.
 		int getUsedHangars() const;
 		/// Gets this Base's available hangars.
-		int getAvailableHangars() const;
-
-		/// Gets the number of available space lab (not used by a ResearchProject).
-		int getFreeLaboratories() const;
-		/// Gets the number of available space lab (not used by a Production).
-		int getFreeWorkshops() const;
-
-		///
-		int getAllocatedScientists() const;
-		///
-		int getAllocatedEngineers() const;
-
-		/// Gets this Base's defense value.
-		int getDefenseTotal() const;
-
-		/// Gets this Base's short range detection.
-//		int getShortRangeDetection() const;
-		/// Gets this Base's short range detection value.
-		int getShortRangeTotal() const;
-		/// Gets this Base's long range detection.
-//		int getLongRangeDetection() const;
-		/// Gets this Base's long range detection.
-		int getLongRangeTotal() const;
+		int getTotalHangars() const;
+		/// Gets this Base's total free hangar space.
+		int getFreeHangars() const;
 
 		/// Gets this Base's soldiers of a certain type.
 		int getSoldierCount(const std::string &soldier) const;
 		/// Gets this Base's crafts of a certain type.
 		int getCraftCount(const std::string& craft) const;
-
-		/// Gets this Base's craft maintenance.
-		int getCraftMaintenance() const;
-		/// Gets this Base's personnel maintenance.
-		int getPersonnelMaintenance() const;
-		/// Gets this Base's facility maintenance.
-		int getFacilityMaintenance() const;
-		/// Gets this Base's total monthly maintenance.
-		int getMonthlyMaintenace() const;
 
 		/// Gets the list of this Base's ResearchProject.
 		const std::vector<ResearchProject*>& getResearch() const;
@@ -272,27 +272,6 @@ private:
 		/// Gets a list of this Base's Production.
 		const std::vector<Production*>& getProductions() const;
 
-		/// Checks if this Base is hyper-wave equipped.
-		bool getHyperDetection() const;
-		/// Checks if this Base has research facilities.
-		bool hasResearch() const;
-		/// Checks if this Base has production facilities.
-		bool hasProduction() const;
-
-		/// Gets this Base's used psi lab space.
-		int getUsedPsiLabs() const;
-		/// Gets this Base's total available psi lab space.
-		int getAvailablePsiLabs() const;
-		/// Gets this Base's total free psi lab space.
-		int getFreePsiLabs() const;
-
-		/// Gets the total amount of Containment Space.
-		int getAvailableContainment() const;
-		/// Gets the total amount of used Containment Space.
-		int getUsedContainment() const;
-		/// Gets the quantity of aLiens currently under interrogation.
-		int getInterrogatedAliens() const;
-
 		/// Sets the Base's battlescape status.
 		void setInBattlescape(bool tactical = true);
 		/// Gets if the Base is in the battlescape.
@@ -308,6 +287,22 @@ private:
 		/// Gets if this Base has been placed on the Globe.
 		bool getBasePlaced() const;
 
+		/// Checks if this Base is hyper-wave equipped.
+		bool getHyperDetection() const;
+		/// Gets this Base's short range detection.
+//		int getShortRangeDetection() const;
+		/// Gets this Base's short range detection value.
+		int getShortRangeTotal() const;
+		/// Gets this Base's long range detection.
+//		int getLongRangeDetection() const;
+		/// Gets this Base's long range detection.
+		int getLongRangeTotal() const;
+
+		/// Checks if a target is detected by this Base's radar.
+		int detect(Target* const target) const;
+		/// Checks if a target is inside this Base's radar range.
+		double insideRadarRange(const Target* const target) const;
+
 		/// Gets the detection chance for this Base.
 		int getDetectionChance(
 				int diff,
@@ -317,6 +312,8 @@ private:
 		/// Gets how many Grav Shields this Base has.
 		size_t getGravShields() const;
 
+		/// Gets this Base's defense value.
+		int getDefenseTotal() const;
 		/// Sets up this Base defenses.
 		void setupDefenses();
 		/// Cleans up this Base's defenses vector after a Ufo attack and optionally reclaims the tanks and their ammo.
@@ -339,6 +336,15 @@ private:
 		std::list<std::vector<BaseFacility*>::const_iterator> getDisconnectedFacilities(BaseFacility* ignoreFac);
 		/// Destroys a facility and deals with the side effects.
 		void destroyFacility(std::vector<BaseFacility*>::const_iterator fac);
+
+		/// Gets this Base's craft maintenance.
+		int getCraftMaintenance() const;
+		/// Gets this Base's personnel maintenance.
+		int getPersonnelMaintenance() const;
+		/// Gets this Base's facility maintenance.
+		int getFacilityMaintenance() const;
+		/// Gets this Base's total monthly maintenance.
+		int getMonthlyMaintenace() const;
 
 		/// Increases (or decreases) this Base's total income amount.
 		void setCashIncome(int cash);

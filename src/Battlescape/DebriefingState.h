@@ -110,7 +110,6 @@ private:
 		_aliensKilled,
 		_aliensStunned,
 		_diff,
-		_limitsEnforced,
 		_missionCost;
 
 	std::string _music;

@@ -2828,7 +2828,7 @@ void GeoscapeState::time1Day()
 				++j;
 		}
 
-		if ((*i)->getAvailablePsiLabs() != 0) // handle psi-training and AutoStat.
+		if ((*i)->hasPsiLabs() == true) // handle psi-training and AutoStat.
 		{
 //			bool sortSoldiers = false;
 			for (std::vector<Soldier*>::const_iterator
@@ -2996,18 +2996,18 @@ void GeoscapeState::time1Day()
 					&& itRule->getBattleType() == BT_FIREARM
 					&& itRule->getCompatibleAmmo()->empty() == false)
 				{
-					const RuleManufacture* const manufRule (_rules->getManufacture(itRule->getType()));
-					if (manufRule != nullptr
-						&& manufRule->getRequirements().empty() == false)
+					const RuleManufacture* const manfRule (_rules->getManufacture(itRule->getType()));
+					if (manfRule != nullptr
+						&& manfRule->getRequirements().empty() == false)
 					{
-						const std::vector<std::string>& prereqs (manufRule->getRequirements());
+						const std::vector<std::string>& prereqs (manfRule->getRequirements());
 						const RuleItem* const aRule (_rules->getItem(itRule->getCompatibleAmmo()->front()));
 						if (aRule != nullptr
 							&& std::find(
 									prereqs.begin(),
 									prereqs.end(),
 									aRule->getType()) != prereqs.end()
-							&& _gameSave->isResearched(manufRule->getRequirements()) == false)
+							&& _gameSave->isResearched(manfRule->getRequirements()) == false)
 						{
 							resEvents.push_back(new ResearchRequiredState(itRule));
 						}

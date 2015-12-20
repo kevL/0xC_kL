@@ -208,7 +208,7 @@ void TransferItemsState::init()
 		_resetAll = true;
 
 		std::wostringstream woststr;
-		woststr << _baseSource->getAvailableStores() << L":" << std::fixed << std::setprecision(1) << _baseSource->getUsedStores();
+		woststr << _baseSource->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _baseSource->getUsedStores();
 		if (std::abs(_storeSize) > 0.05)
 		{
 			woststr << L" ";
@@ -218,7 +218,7 @@ void TransferItemsState::init()
 		_txtSpaceSource->setText(woststr.str());
 
 		woststr.str(L"");
-		woststr << _baseTarget->getAvailableStores() << L":" << std::fixed << std::setprecision(1) << _baseTarget->getUsedStores();
+		woststr << _baseTarget->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _baseTarget->getUsedStores();
 		if (std::abs(_storeSize) > 0.05)
 		{
 			woststr << L" ";
@@ -497,11 +497,11 @@ void TransferItemsState::init()
 
 
 	std::wostringstream woststr;
-	woststr << _baseSource->getAvailableStores() << L":" << std::fixed << std::setprecision(1) << _baseSource->getUsedStores();
+	woststr << _baseSource->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _baseSource->getUsedStores();
 	_txtSpaceSource->setText(woststr.str());
 
 	woststr.str(L"");
-	woststr << _baseTarget->getAvailableStores() << L":" << std::fixed << std::setprecision(1) << _baseTarget->getUsedStores();
+	woststr << _baseTarget->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _baseTarget->getUsedStores();
 	_txtSpaceTarget->setText(woststr.str());
 }
 
@@ -903,8 +903,8 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 				wstError = tr("STR_NOT_ENOUGH_STORE_SPACE");
 			}
 			else if (itRule->isAlien() == true
-				&& (_baseTarget->getAvailableContainment() == 0
-					|| (_qtyAlien + 1 > _baseTarget->getAvailableContainment() - _baseTarget->getUsedContainment()
+				&& (_baseTarget->hasContainment() == false
+					|| (_qtyAlien + 1 > _baseTarget->getFreeContainment()
 						&& Options::storageLimitsEnforced == true)))
 			{
 				wstError = tr("STR_NO_ALIEN_CONTAINMENT_FOR_TRANSFER");
@@ -915,7 +915,7 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 				double qtyAllowed;
 
 				if (AreSame(storesPerItem, 0.) == false)
-					qtyAllowed = (static_cast<double>(_baseTarget->getAvailableStores()) - _baseTarget->getUsedStores() - _storeSize + 0.05)
+					qtyAllowed = (static_cast<double>(_baseTarget->getTotalStores()) - _baseTarget->getUsedStores() - _storeSize + 0.05)
 								/ storesPerItem;
 				else
 					qtyAllowed = std::numeric_limits<double>::max();
@@ -935,7 +935,7 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 			{
 				int freeContainment;
 				if (Options::storageLimitsEnforced == true)
-					freeContainment = _baseTarget->getAvailableContainment() - _baseTarget->getUsedContainment() - _qtyAlien;
+					freeContainment = _baseTarget->getFreeContainment() - _qtyAlien;
 				else
 					freeContainment = std::numeric_limits<int>::max();
 
@@ -953,7 +953,7 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 		break;
 
 		case PST_CRAFT:
-			if (_qtyCraft + 1 > _baseTarget->getAvailableHangars() - _baseTarget->getUsedHangars())
+			if (_qtyCraft + 1 > _baseTarget->getFreeHangars())
 				wstError = tr("STR_NO_FREE_HANGARS_FOR_TRANSFER");
 			else
 			{
@@ -971,14 +971,14 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 		break;
 
 		default: // soldier, scientist, engineer
-			if (_qtyPersonnel + 1 > _baseTarget->getAvailableQuarters() - _baseTarget->getUsedQuarters())
+			if (_qtyPersonnel + 1 > _baseTarget->getFreeQuarters())
 				wstError = tr("STR_NO_FREE_ACCOMMODATION");
 			else
 			{
 				qtyDelta = std::min(
 								qtyDelta,
 								std::min(
-										_baseTarget->getAvailableQuarters() - _baseTarget->getUsedQuarters() - _qtyPersonnel,
+										_baseTarget->getFreeQuarters() - _qtyPersonnel,
 										getSourceQuantity() - _transferQty[_sel]));
 				_qtyPersonnel += qtyDelta;
 				_baseQty[_sel] -= qtyDelta;
@@ -1120,7 +1120,7 @@ void TransferItemsState::updateItemStrings() // private.
 	_lstItems->setRowColor(_sel, color);
 
 	std::wostringstream woststr;
-	woststr << _baseSource->getAvailableStores() << L":" << std::fixed << std::setprecision(1) << _baseSource->getUsedStores();
+	woststr << _baseSource->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _baseSource->getUsedStores();
 	if (std::abs(_storeSize) > 0.05)
 	{
 		woststr << L" ";
@@ -1130,7 +1130,7 @@ void TransferItemsState::updateItemStrings() // private.
 	_txtSpaceSource->setText(woststr.str());
 
 	woststr.str(L"");
-	woststr << _baseTarget->getAvailableStores() << L":" << std::fixed << std::setprecision(1) << _baseTarget->getUsedStores();
+	woststr << _baseTarget->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _baseTarget->getUsedStores();
 	if (std::abs(_storeSize) > 0.05)
 	{
 		woststr << L" ";

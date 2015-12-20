@@ -123,11 +123,6 @@ DebriefingState::DebriefingState()
 
 	_missionStatistics = new MissionStatistics();
 
-	if (Options::storageLimitsEnforced == true)
-		_limitsEnforced = 1;
-	else
-		_limitsEnforced = 0;
-
 	_window			= new Window(this, 320, 200);
 
 	_txtTitle		= new Text(280, 17,  16, 8);
@@ -1970,7 +1965,7 @@ void DebriefingState::recoverLiveAlien(BattleUnit* const unit) // private.
 		BattleUnit* const conUnit = _gameSave->getBattleSave()->getBattleGame()->convertUnit(unit); // TODO: use a sparsed down version of convertUnit() here.
 		conUnit->setFaction(FACTION_PLAYER);
 	}
-	else if (_base->getAvailableContainment() != 0)
+	else if (_base->hasContainment() == true)
 	{
 		//Log(LOG_INFO) << ". . . alienLive = " << unit->getType() << " id-" << unit->getId();
 		const std::string type = unit->getType();
@@ -1987,8 +1982,10 @@ void DebriefingState::recoverLiveAlien(BattleUnit* const unit) // private.
 
 		_base->getStorageItems()->addItem(type);
 
-		_manageContainment = _base->getAvailableContainment()
-						   - (_base->getUsedContainment() * _limitsEnforced) < 0;
+		if (Options::storageLimitsEnforced == true)
+			_manageContainment = _base->getFreeContainment() < 0;
+		else
+			_manageContainment = false;
 	}
 	else
 	{

@@ -221,7 +221,7 @@ void ResearchState::init()
 	_txtSpace->setText(tr("STR_LABORATORY_SPACE_AVAILABLE_")
 							.arg(_base->getFreeLaboratories()));
 
-	_btnAliens->setVisible(_base->getAvailableContainment() != 0);
+	_btnAliens->setVisible(_base->hasContainment() == true);
 }
 
 /**

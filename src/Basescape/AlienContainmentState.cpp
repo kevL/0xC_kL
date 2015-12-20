@@ -65,7 +65,7 @@ AlienContainmentState::AlienContainmentState(
 		_origin(origin),
 		_sel(0),
 		_fishFood(0),
-		_totalSpace(base->getAvailableContainment()),
+		_totalSpace(base->getTotalContainment()),
 		_usedSpace(base->getUsedContainment())
 {
 	_window			= new Window(this, 320, 200);

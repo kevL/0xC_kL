@@ -33,9 +33,13 @@
 #include "../Interface/TextList.h"
 #include "../Interface/Window.h"
 
+#include "../Menu/ErrorMessageState.h"
+
 #include "../Resource/ResourcePack.h"
 
+#include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/RuleManufacture.h"
+#include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/Base.h"
 #include "../Savegame/ItemContainer.h"
@@ -48,14 +52,15 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the productions start screen.
  * @param base		- pointer to the Base to get info from
- * @param manufRule	- pointer to RuleManufacture to produce
+ * @param manfRule	- pointer to RuleManufacture to produce
  */
 ManufactureStartState::ManufactureStartState(
 		Base* const base,
-		const RuleManufacture* const manufRule)
+		const RuleManufacture* const manfRule)
 	:
 		_base(base),
-		_manufRule(manufRule)
+		_manfRule(manfRule),
+		_init(true)
 {
 	_screen = false;
 
@@ -103,16 +108,16 @@ ManufactureStartState::ManufactureStartState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));
 
-	_txtTitle->setText(tr(_manufRule->getType()));
+	_txtTitle->setText(tr(_manfRule->getType()));
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 
 	_txtManHour->setText(tr("STR_ENGINEER_HOURS_TO_PRODUCE_ONE_UNIT_")
-							.arg(_manufRule->getManufactureTime()));
+							.arg(_manfRule->getManufactureTime()));
 	_txtCost->setText(tr("STR_COST_PER_UNIT_")
-							.arg(Text::formatFunding(_manufRule->getManufactureCost())));
+							.arg(Text::formatFunding(_manfRule->getManufactureCost())));
 	_txtWorkSpace->setText(tr("STR_WORK_SPACE_REQUIRED_")
-							.arg(_manufRule->getRequiredSpace()));
+							.arg(_manfRule->getRequiredSpace()));
 
 	_txtRequiredItems->setText(tr("STR_SPECIAL_MATERIALS_REQUIRED"));
 
@@ -122,34 +127,42 @@ ManufactureStartState::ManufactureStartState(
 
 	_lstRequiredItems->setColumns(3, 140,60,40);
 
-	const ItemContainer* const storage = base->getStorageItems();
-	bool showStart = _game->getSavedGame()->getFunds() >= _manufRule->getManufactureCost()
-				  && _base->getFreeWorkshops() != 0;
-	const std::map<std::string, int>& requiredItems = _manufRule->getRequiredItems();
-	for (std::map<std::string, int>::const_iterator
-			i = requiredItems.begin();
-			i != requiredItems.end();
-			++i)
-	{
-		std::wostringstream
-			woststr1,
-			woststr2;
-		woststr1 << L'\x01' << i->second;
-		woststr2 << L'\x01' << storage->getItemQty(i->first);
-		showStart = showStart && (storage->getItemQty(i->first) >= i->second);
-		_lstRequiredItems->addRow(
-								3,
-								tr(i->first).c_str(),
-								woststr1.str().c_str(),
-								woststr2.str().c_str());
-	}
+	bool
+		showStart = _base->getFreeWorkshops() != 0
+				 && _game->getSavedGame()->getFunds() >= _manfRule->getManufactureCost(),
+		showReqs;
 
-	const bool vis = (requiredItems.empty() == false);
-	_txtRequiredItems->setVisible(vis);
-	_txtItemRequired->setVisible(vis);
-	_txtUnitsRequired->setVisible(vis);
-	_txtUnitsAvailable->setVisible(vis);
-	_lstRequiredItems->setVisible(vis);
+	const std::map<std::string, int>& requiredItems (_manfRule->getRequiredItems());
+	if (requiredItems.empty() == false)
+	{
+		showReqs = true;
+		const ItemContainer* const storage (base->getStorageItems());
+		for (std::map<std::string, int>::const_iterator
+				i = requiredItems.begin();
+				i != requiredItems.end();
+				++i)
+		{
+			std::wostringstream
+				woststr1,
+				woststr2;
+			woststr1 << L'\x01' << i->second;
+			woststr2 << L'\x01' << storage->getItemQty(i->first);
+			showStart = showStart && (storage->getItemQty(i->first) >= i->second);
+			_lstRequiredItems->addRow(
+									3,
+									tr(i->first).c_str(),
+									woststr1.str().c_str(),
+									woststr2.str().c_str());
+		}
+	}
+	else
+		showReqs = false;
+
+	_txtRequiredItems->setVisible(showReqs);
+	_txtItemRequired->setVisible(showReqs);
+	_txtUnitsRequired->setVisible(showReqs);
+	_txtUnitsAvailable->setVisible(showReqs);
+	_lstRequiredItems->setVisible(showReqs);
 
 
 	_btnCostTable->setText(tr("STR_PRODUCTION_COSTS"));
@@ -170,6 +183,44 @@ ManufactureStartState::ManufactureStartState(
 					(ActionHandler)& ManufactureStartState::btnStartClick,
 					Options::keyOkKeypad);
 	_btnStart->setVisible(showStart);
+}
+
+/**
+ * dTor.
+ */
+ManufactureStartState::~ManufactureStartState()
+{}
+
+/**
+ * Initializes state.
+ */
+void ManufactureStartState::init()
+{
+	if (_init == true)
+	{
+		_init = false;
+//		State::init();
+		if (_manfRule->getCategory() == "STR_CRAFT" && _base->getFreeHangars() < 1)
+		{
+			_btnStart->setVisible(false);
+			_game->pushState(new ErrorMessageState(
+											tr("STR_NO_FREE_HANGARS_FOR_CRAFT_PRODUCTION"),
+											_palette,
+											_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
+											"BACK17.SCR",
+											_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
+		}
+		else if (_manfRule->getRequiredSpace() > _base->getFreeWorkshops())
+		{
+			_btnStart->setVisible(false);
+			_game->pushState(new ErrorMessageState(
+											tr("STR_NOT_ENOUGH_WORK_SPACE"),
+											_palette,
+											_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
+											"BACK17.SCR",
+											_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
+		}
+	}
 }
 
 /**
@@ -196,7 +247,7 @@ void ManufactureStartState::btnCancelClick(Action*)
  */
 void ManufactureStartState::btnStartClick(Action*)
 {
-	_game->pushState(new ManufactureInfoState(_base, _manufRule));
+	_game->pushState(new ManufactureInfoState(_base, _manfRule));
 }
 
 }

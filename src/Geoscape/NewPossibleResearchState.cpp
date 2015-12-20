@@ -85,7 +85,6 @@ NewPossibleResearchState::NewPossibleResearchState(
 					Options::keyCancel);
 
 	_btnResearch->setText(tr("STR_ALLOCATE_RESEARCH"));
-	_btnResearch->setVisible(showBtn);
 	_btnResearch->onMouseClick((ActionHandler)& NewPossibleResearchState::btnResearchClick);
 	_btnResearch->onKeyboardPress(
 					(ActionHandler)& NewPossibleResearchState::btnResearchClick,
@@ -93,6 +92,7 @@ NewPossibleResearchState::NewPossibleResearchState(
 	_btnResearch->onKeyboardPress(
 					(ActionHandler)& NewPossibleResearchState::btnResearchClick,
 					Options::keyOkKeypad);
+	_btnResearch->setVisible(showBtn);
 
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();

@@ -157,7 +157,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 			qtyEngineer[i] = base->getTotalEngineers();
 
 			wst = base->getName(nullptr).substr(0,4);
-			freeSpace = static_cast<int>(static_cast<double>(base->getAvailableStores()) - base->getUsedStores() + 0.5);
+			freeSpace = static_cast<int>(static_cast<double>(base->getTotalStores()) - base->getUsedStores() + 0.5);
 
 			std::wostringstream woststr;
 			woststr	<< wst
@@ -165,7 +165,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 					<< freeSpace;
 //					<< std::fixed
 //					<< std::setprecision(1)
-//					<< static_cast<double>(base->getAvailableStores()) - base->getUsedStores() + 0.05;
+//					<< static_cast<double>(base->getTotalStores()) - base->getUsedStores() + 0.05;
 
 			switch (i)
 			{

@@ -109,7 +109,7 @@ PsiTrainingState::PsiTrainingState(Base* base)
 	_txtBaseLabel->setText(base->getName(_game->getLanguage()));
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
 
-	_labSpace = base->getAvailablePsiLabs() - base->getUsedPsiLabs();
+	_labSpace = base->getFreePsiLabs();
 	_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(_labSpace));
 	_txtSpaceFree->setSecondaryColor(Palette::blockOffset(13));
 
@@ -225,7 +225,7 @@ void PsiTrainingState::lstSoldiersPress(Action* action)
 	{
 		if (_base->getSoldiers()->at(_sel)->inPsiTraining() == false)
 		{
-			if (_base->getUsedPsiLabs() < _base->getAvailablePsiLabs())
+			if (_base->getUsedPsiLabs() < _base->getTotalPsiLabs())
 			{
 				_lstSoldiers->setCellText(
 										_sel,
@@ -235,8 +235,7 @@ void PsiTrainingState::lstSoldiersPress(Action* action)
 										_sel,
 										_lstSoldiers->getSecondaryColor());
 
-				--_labSpace;
-				_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(_labSpace));
+				_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(--_labSpace));
 
 				_base->getSoldiers()->at(_sel)->togglePsiTraining();
 			}
@@ -250,8 +249,7 @@ void PsiTrainingState::lstSoldiersPress(Action* action)
 			_lstSoldiers->setRowColor(
 									_sel,
 									_lstSoldiers->getColor());
-			++_labSpace;
-			_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(_labSpace));
+			_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(++_labSpace));
 			_base->getSoldiers()->at(_sel)->togglePsiTraining();
 		}
 	}

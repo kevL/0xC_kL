@@ -155,7 +155,7 @@ PurchaseState::PurchaseState(Base* const base)
 	_txtStorage->setAlign(ALIGN_RIGHT);
 	_txtStorage->setColor(WHITE);
 	std::wostringstream woststr;
-	woststr << _base->getAvailableStores() << L":" << std::fixed << std::setprecision(1) << _base->getUsedStores();
+	woststr << _base->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _base->getUsedStores();
 	_txtStorage->setText(woststr.str());
 
 	_txtCost->setText(tr("STR_COST_PER_UNIT_UC"));
@@ -744,18 +744,18 @@ void PurchaseState::increaseByValue(int qtyDelta)
 			case PST_SOLDIER:
 			case PST_SCIENTIST:
 			case PST_ENGINEER:
-				if (_qtyPersonnel + 1 > _base->getAvailableQuarters() - _base->getUsedQuarters())
+				if (_qtyPersonnel + 1 > _base->getFreeQuarters())
 					error = tr("STR_NOT_ENOUGH_LIVING_SPACE");
 			break;
 
 			case PST_CRAFT:
-				if (_qtyCraft + 1 > _base->getAvailableHangars() - _base->getUsedHangars())
+				if (_qtyCraft + 1 > _base->getFreeHangars())
 					error = tr("STR_NO_FREE_HANGARS_FOR_PURCHASE");
 			break;
 
 			case PST_ITEM:
 				if (_storeSize + _game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getSize()
-					> static_cast<double>(_base->getAvailableStores()) - _base->getUsedStores() + 0.05)
+					> static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() + 0.05)
 				{
 					error = tr("STR_NOT_ENOUGH_STORE_SPACE");
 				}
@@ -786,14 +786,14 @@ void PurchaseState::increaseByValue(int qtyDelta)
 			case PST_ENGINEER:
 				qtyDelta = std::min(
 								qtyDelta,
-								_base->getAvailableQuarters() - _base->getUsedQuarters() - _qtyPersonnel);
+								_base->getFreeQuarters() - _qtyPersonnel);
 				_qtyPersonnel += qtyDelta;
 			break;
 
 			case PST_CRAFT:
 				qtyDelta = std::min(
 								qtyDelta,
-								_base->getAvailableHangars() - _base->getUsedHangars() - _qtyCraft);
+								_base->getFreeHangars() - _qtyCraft);
 				_qtyCraft += qtyDelta;
 			break;
 
@@ -803,7 +803,7 @@ void PurchaseState::increaseByValue(int qtyDelta)
 				double qtyAllowed;
 
 				if (AreSame(storesPerItem, 0.) == false)
-					qtyAllowed = (static_cast<double>(_base->getAvailableStores()) - _base->getUsedStores() - _storeSize + 0.05) / storesPerItem;
+					qtyAllowed = (static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() - _storeSize + 0.05) / storesPerItem;
 				else
 					qtyAllowed = std::numeric_limits<double>::max();
 
@@ -897,7 +897,7 @@ void PurchaseState::updateItemStrings() // private.
 	}
 
 	std::wostringstream woststr;
-	woststr << _base->getAvailableStores() << L":" << std::fixed << std::setprecision(1) << _base->getUsedStores();
+	woststr << _base->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _base->getUsedStores();
 	if (std::abs(_storeSize) > 0.05)
 	{
 		woststr << L" ";

@@ -102,20 +102,20 @@ struct equalProduction
 	:
 		public std::unary_function<Production*, bool>
 {
-	const RuleManufacture* _manufRule;
-	explicit equalProduction(const RuleManufacture* const manufRule);
+	const RuleManufacture* _manfRule;
+	explicit equalProduction(const RuleManufacture* const manfRule);
 
 	bool operator() (const Production* const p) const;
 };
 ///
-equalProduction::equalProduction(const RuleManufacture* const manufRule)
+equalProduction::equalProduction(const RuleManufacture* const manfRule)
 	:
-		_manufRule(manufRule)
+		_manfRule(manfRule)
 {}
 ///
 bool equalProduction::operator() (const Production* const p) const
 {
-	return (p->getRules() == _manufRule);
+	return (p->getRules() == _manfRule);
 }
 
 
@@ -1538,7 +1538,7 @@ void SavedGame::getAvailableProductions(
 		std::vector<const RuleManufacture*>& availableProductions,
 		const Base* const base) const
 {
-	const RuleManufacture* manufRule;
+	const RuleManufacture* manfRule;
 	const std::vector<Production*> baseProductions (base->getProductions());
 	const std::vector<std::string> manufList (_rules->getManufactureList());
 	for (std::vector<std::string>::const_iterator
@@ -1546,14 +1546,14 @@ void SavedGame::getAvailableProductions(
 			i != manufList.end();
 			++i)
 	{
-		manufRule = _rules->getManufacture(*i);
-		if (isResearched(manufRule->getRequirements()) == true
+		manfRule = _rules->getManufacture(*i);
+		if (isResearched(manfRule->getRequirements()) == true
 			&& std::find_if(
 					baseProductions.begin(),
 					baseProductions.end(),
-					equalProduction(manufRule)) == baseProductions.end())
+					equalProduction(manfRule)) == baseProductions.end())
 		{
-			availableProductions.push_back(manufRule);
+			availableProductions.push_back(manfRule);
 		}
 	}
 }
@@ -1642,22 +1642,22 @@ void SavedGame::getDependentManufacture(
 		std::vector<const RuleManufacture*>& dependents,
 		const RuleResearch* const resRule) const
 {
-	const RuleManufacture* manufRule;
+	const RuleManufacture* manfRule;
 	const std::vector<std::string>& manufList (_rules->getManufactureList());
 	for (std::vector<std::string>::const_iterator
 			i = manufList.begin();
 			i != manufList.end();
 			++i)
 	{
-		manufRule = _rules->getManufacture(*i);
-		const std::vector<std::string>& reqs (manufRule->getRequirements());
-		if (isResearched(manufRule->getRequirements()) == true
+		manfRule = _rules->getManufacture(*i);
+		const std::vector<std::string>& reqs (manfRule->getRequirements());
+		if (isResearched(manfRule->getRequirements()) == true
 			&& std::find(
 					reqs.begin(),
 					reqs.end(),
 					resRule->getType()) != reqs.end())
 		{
-			dependents.push_back(manufRule);
+			dependents.push_back(manfRule);
 		}
 	}
 }

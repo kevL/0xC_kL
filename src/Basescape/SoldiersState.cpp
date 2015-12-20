@@ -121,7 +121,7 @@ SoldiersState::SoldiersState(Base* base)
 
 	_btnPsi->setText(tr("STR_PSIONIC_TRAINING"));
 	_btnPsi->onMouseClick((ActionHandler)& SoldiersState::btnPsiTrainingClick);
-	_btnPsi->setVisible(_base->getAvailablePsiLabs() != 0);
+	_btnPsi->setVisible(_base->hasPsiLabs() == true);
 
 	_btnArmor->setText(tr("STR_ARMOR"));
 	_btnArmor->onMouseClick((ActionHandler)& SoldiersState::btnArmorClick);

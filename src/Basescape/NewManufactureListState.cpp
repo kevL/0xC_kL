@@ -32,13 +32,9 @@
 #include "../Interface/TextList.h"
 #include "../Interface/Window.h"
 
-#include "../Menu/ErrorMessageState.h"
-
 #include "../Resource/ResourcePack.h"
 
-#include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/RuleManufacture.h"
-#include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/Base.h"
 #include "../Savegame/SavedGame.h"
@@ -109,13 +105,13 @@ NewManufactureListState::NewManufactureListState(
 	_btnCancel->onMouseClick((ActionHandler)& NewManufactureListState::btnCancelClick);
 	_btnCancel->onKeyboardPress(
 					(ActionHandler)& NewManufactureListState::btnCancelClick,
-					Options::keyCancel);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& NewManufactureListState::btnCancelClick,
 					Options::keyOk);
 	_btnCancel->onKeyboardPress(
 					(ActionHandler)& NewManufactureListState::btnCancelClick,
 					Options::keyOkKeypad);
+	_btnCancel->onKeyboardPress(
+					(ActionHandler)& NewManufactureListState::btnCancelClick,
+					Options::keyCancel);
 
 
 	_game->getSavedGame()->getAvailableProductions(
@@ -124,13 +120,12 @@ NewManufactureListState::NewManufactureListState(
 	_catStrings.push_back("STR_ALL_ITEMS");
 
 	std::string cat;
-	for (std::vector<const RuleManufacture*>::iterator
+	for (std::vector<const RuleManufacture*>::const_iterator
 			i = _possibleProductions.begin();
 			i != _possibleProductions.end();
 			++i)
 	{
 		cat = (*i)->getCategory();
-
 		if (std::find(
 				_catStrings.begin(),
 				_catStrings.end(),
@@ -188,7 +183,7 @@ void NewManufactureListState::lstProdClick(Action*)
 {
 	_scroll = _lstManufacture->getScroll();
 
-	const RuleManufacture* manufRule = nullptr;
+	const RuleManufacture* manfRule = nullptr;
 	for (std::vector<const RuleManufacture*>::iterator
 			i = _possibleProductions.begin();
 			i != _possibleProductions.end();
@@ -196,30 +191,12 @@ void NewManufactureListState::lstProdClick(Action*)
 	{
 		if ((*i)->getType() == _displayedStrings[_lstManufacture->getSelectedRow()])
 		{
-			manufRule = *i;
+			manfRule = *i;
 			break;
 		}
 	}
 
-	if (manufRule->getCategory() == "STR_CRAFT"
-		&& _base->getAvailableHangars() - _base->getUsedHangars() < 1)
-	{
-		_game->pushState(new ErrorMessageState(
-										tr("STR_NO_FREE_HANGARS_FOR_CRAFT_PRODUCTION"),
-										_palette,
-										_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
-										"BACK17.SCR",
-										_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
-	}
-	else if (manufRule->getRequiredSpace() > _base->getFreeWorkshops())
-		_game->pushState(new ErrorMessageState(
-										tr("STR_NOT_ENOUGH_WORK_SPACE"),
-										_palette,
-										_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
-										"BACK17.SCR",
-										_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
-	else
-		_game->pushState(new ManufactureStartState(_base, manufRule));
+	_game->pushState(new ManufactureStartState(_base, manfRule));
 }
 
 /**

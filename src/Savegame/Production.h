@@ -47,7 +47,7 @@ class Production
 {
 
 private:
-	const RuleManufacture* _manufRule;
+	const RuleManufacture* _manfRule;
 
 	bool
 		_infinite,
@@ -66,7 +66,7 @@ private:
 	public:
 		///
 		Production(
-				const RuleManufacture* const manufRule,
+				const RuleManufacture* const manfRule,
 				int amount);
 		///
 		~Production();

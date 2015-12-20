@@ -57,7 +57,7 @@ private:
 //		* _surfaceEngineers,
 //		* _surfaceUnits;
 	Production* _production;
-	const RuleManufacture* _manufRule;
+	const RuleManufacture* _manfRule;
 	Text
 		* _txtAllocated,
 		* _txtAllocatedEngineer,
@@ -172,7 +172,7 @@ private:
 		/// Creates the State (new production).
 		ManufactureInfoState(
 				Base* const base,
-				const RuleManufacture* const _manufRule);
+				const RuleManufacture* const _manfRule);
 		/// Creates the State (modify production).
 		ManufactureInfoState(
 				Base* const base,

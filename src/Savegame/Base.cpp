@@ -445,7 +445,7 @@ int Base::getMarker() const
 
 /**
  * Returns the list of facilities in this Base.
- * @return, pointer to a vector of pointers to BaseFacility
+ * @return, pointer to a vector of pointers to BaseFacilities at this base
  */
 std::vector<BaseFacility*>* Base::getFacilities()
 {
@@ -454,7 +454,7 @@ std::vector<BaseFacility*>* Base::getFacilities()
 
 /**
  * Returns the list of soldiers in this Base.
- * @return, pointer to a vector of pointers to Soldier
+ * @return, pointer to a vector of pointers to Soldiers at this base
  */
 std::vector<Soldier*>* Base::getSoldiers()
 {
@@ -463,7 +463,7 @@ std::vector<Soldier*>* Base::getSoldiers()
 
 /**
  * Returns the list of crafts in this Base.
- * @return, pointer to a vector of pointers to Craft
+ * @return, pointer to a vector of pointers to Crafts at this base
  */
 std::vector<Craft*>* Base::getCrafts()
 {
@@ -472,7 +472,7 @@ std::vector<Craft*>* Base::getCrafts()
 
 /**
  * Returns the list of transfers destined to this Base.
- * @return, pointer to a vector of pointers to Transfer
+ * @return, pointer to a vector of pointers to Transfers to this base
  */
 std::vector<Transfer*>* Base::getTransfers()
 {
@@ -481,7 +481,7 @@ std::vector<Transfer*>* Base::getTransfers()
 
 /**
  * Returns the list of items in this Base.
- * @return, pointer to ItemContainer
+ * @return, pointer to the ItemContainer for this base
  */
 ItemContainer* Base::getStorageItems()
 {
@@ -490,7 +490,7 @@ ItemContainer* Base::getStorageItems()
 
 /**
  * Returns the amount of scientists currently in this Base.
- * @return, number of scientists
+ * @return, scientists not at work
  */
 int Base::getScientists() const
 {
@@ -499,7 +499,7 @@ int Base::getScientists() const
 
 /**
  * Changes the amount of scientists currently in this Base.
- * @param scientists - number of scientists
+ * @param scientists - scientists
  */
 void Base::setScientists(int scientists)
 {
@@ -508,7 +508,7 @@ void Base::setScientists(int scientists)
 
 /**
  * Returns the amount of engineers currently in this Base.
- * @return, number of engineers
+ * @return, engineers not at work
  */
 int Base::getEngineers() const
 {
@@ -517,7 +517,7 @@ int Base::getEngineers() const
 
 /**
  * Changes the amount of engineers currently in this Base.
- * @param engineers - number of engineers
+ * @param engineers - engineers
  */
 void Base::setEngineers(int engineers)
 {
@@ -525,99 +525,10 @@ void Base::setEngineers(int engineers)
 }
 
 /**
- * Returns if a certain Target is covered by this Base's radar range taking into
- * account the range and chance.
- * @param target - pointer to a UFO to attempt detection against
- * @return,	0 undetected
- *			1 hyperdetected only
- *			2 detected
- *			3 detected & hyperdetected
- */
-int Base::detect(Target* const target) const
-{
-	double targetDist (insideRadarRange(target));
-
-	if (AreSame(targetDist, 0.))
-		return 0;
-
-	int ret = 0;
-
-	if (targetDist < 0.)
-	{
-		++ret;
-		targetDist = -targetDist;
-	}
-
-	int pct (0);
-
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end();
-			++i)
-	{
-		if ((*i)->buildFinished() == true)
-		{
-			const double radarRange = static_cast<double>((*i)->getRules()->getRadarRange()) * greatCircleConversionFactor;
-			if (radarRange > targetDist)
-				pct += (*i)->getRules()->getRadarChance();
-		}
-	}
-
-	const Ufo* const ufo = dynamic_cast<Ufo*>(target);
-	if (ufo != nullptr)
-	{
-		pct += ufo->getVisibility();
-		pct = static_cast<int>(Round(static_cast<double>(pct) / 3.)); // per 10-min.
-
-		if (RNG::percent(pct) == true)
-			ret += 2;
-	}
-
-	return ret;
-}
-
-/**
- * Returns if a certain target is inside this Base's radar range taking in
- * account the global positions of both.
- * @param target - pointer to UFO
- * @return, great circle distance to UFO (negative if hyperdetected)
- */
-double Base::insideRadarRange(const Target* const target) const
-{
-	const double targetDist = getDistance(target) * earthRadius;
-	if (targetDist > static_cast<double>(_rules->getMaxRadarRange()) * greatCircleConversionFactor)
-		return 0.;
-
-
-	double ret = 0.; // lets hope UFO is not *right on top of Base* Lol
-	bool hyperDet = false;
-
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end() && hyperDet == false;
-			++i)
-	{
-		if ((*i)->buildFinished() == true)
-		{
-			const double radarRange = static_cast<double>((*i)->getRules()->getRadarRange()) * greatCircleConversionFactor;
-			if (targetDist < radarRange)
-			{
-				ret = targetDist; // identical value for every i; looking only for hyperDet after 1st successful iteration.
-				if ((*i)->getRules()->isHyperwave() == true)
-					hyperDet = true;
-			}
-		}
-	}
-
-	if (hyperDet == true) ret = -ret;
-	return ret;
-}
-
-/**
  * Returns the amount of soldiers with neither a Craft assignment nor wounds at
  * this Base.
  * @param combatReady - does what it says on the tin. [ bull..] (default false)
- * @return, number of soldiers
+ * @return, free soldiers
  */
 int Base::getAvailableSoldiers(const bool combatReady) const
 {
@@ -647,7 +558,7 @@ int Base::getAvailableSoldiers(const bool combatReady) const
 
 /**
  * Returns the total amount of soldiers contained in this Base.
- * @return, number of soldiers
+ * @return, total soldiers incl. transfers
  */
 int Base::getTotalSoldiers() const
 {
@@ -658,7 +569,7 @@ int Base::getTotalSoldiers() const
 			++i)
 	{
 		if ((*i)->getTransferType() == PST_SOLDIER)
-			total += (*i)->getQuantity();
+			++total; //+= (*i)->getQuantity();
 	}
 
 	return total;
@@ -666,7 +577,7 @@ int Base::getTotalSoldiers() const
 
 /**
  * Returns the total amount of scientists contained in this Base.
- * @return, number of scientists
+ * @return, total scientists incl. transfers & at work
  */
 int Base::getTotalScientists() const
 {
@@ -693,8 +604,27 @@ int Base::getTotalScientists() const
 }
 
 /**
+ * Returns the amount of scientists currently in use.
+ * @return, amount of scientists
+ */
+int Base::getAllocatedScientists() const
+{
+	int total = 0;
+	const std::vector<ResearchProject*>& research(getResearch());
+	for (std::vector<ResearchProject*>::const_iterator
+			i = research.begin();
+			i != research.end();
+			++i)
+	{
+		total += (*i)->getAssignedScientists();
+	}
+
+	return total;
+}
+
+/**
  * Returns the total amount of engineers contained in this Base.
- * @return, number of engineers
+ * @return, total engineers incl. transfers & at work
  */
 int Base::getTotalEngineers() const
 {
@@ -720,8 +650,26 @@ int Base::getTotalEngineers() const
 }
 
 /**
+ * Returns the amount of engineers currently in use.
+ * @return, amount of engineers
+ */
+int Base::getAllocatedEngineers() const
+{
+	int total = 0;
+	for (std::vector<Production*>::const_iterator
+			i = _productions.begin();
+			i != _productions.end();
+			++i)
+	{
+		total += (*i)->getAssignedEngineers();
+	}
+
+	return total;
+}
+
+/**
  * Returns the amount of living quarters used up by personnel in this Base.
- * @return, personnel space
+ * @return, occupied personel space
  */
 int Base::getUsedQuarters() const
 {
@@ -730,9 +678,9 @@ int Base::getUsedQuarters() const
 
 /**
  * Returns the total amount of living quarters available in this Base.
- * @return, personnel space
+ * @return, total personel space
  */
-int Base::getAvailableQuarters() const
+int Base::getTotalQuarters() const
 {
 	int total = 0;
 	for (std::vector<BaseFacility*>::const_iterator
@@ -748,10 +696,19 @@ int Base::getAvailableQuarters() const
 }
 
 /**
+ * Returns personel space not used.
+ * @return, free space
+*/
+int Base::getFreeQuarters() const
+{
+	return getTotalQuarters() - getUsedQuarters();
+}
+
+/**
  * Returns the amount of storage space used by equipment in this Base.
  * @note This includes equipment on Craft and about to arrive in Transfers as
  * well as any armor that this Base's Soldiers are currently wearing.
- * @return, storage space
+ * @return, used storage space
  */
 double Base::getUsedStores() const
 {
@@ -830,31 +787,10 @@ double Base::getUsedStores() const
 }
 
 /**
- * Checks if this Base's stores are over their limit.
- * @note Supplying an offset will add/subtract to the used capacity before
- * performing the check. A positive offset simulates adding items to the stores
- * whereas a negative offset can be used to check whether sufficient items have
- * been removed to stop stores from overflowing.
- * @param offset - adjusts used capacity (default 0.)
- * @return, true if overfull
- */
-bool Base::storesOverfull(double offset) const
-{
-	const double
-		total (static_cast<double>(getAvailableStores())),
-		used (getUsedStores() + offset);
-
-	return (used > total + 0.05);
-}
-/*	int total = getAvailableStores() * 100;
-	double used = (getUsedStores() + offset) * 100;
-	return (int)used > total; */
-
-/**
  * Returns the total amount of stores available in this Base.
- * @return, storage space
+ * @return, total storage space
  */
-int Base::getAvailableStores() const
+int Base::getTotalStores() const
 {
 	int total = 0;
 	for (std::vector<BaseFacility*>::const_iterator
@@ -867,6 +803,24 @@ int Base::getAvailableStores() const
 	}
 
 	return total;
+}
+
+/**
+ * Checks if this Base's stores are over their limit.
+ * @note Supplying an offset will add/subtract to the used capacity before
+ * performing the check. A positive offset simulates adding items to the stores
+ * whereas a negative offset can be used to check whether sufficient items have
+ * been removed to stop stores from overflowing.
+ * @param offset - adjusts used capacity (default 0.)
+ * @return, true if overfull
+ */
+bool Base::storesOverfull(double offset) const
+{
+	const double
+		total (static_cast<double>(getTotalStores())),
+		used (getUsedStores() + offset);
+
+	return (used > total + 0.05);
 }
 
 /**
@@ -904,9 +858,7 @@ int Base::getAvailableStores() const
 												   static_cast<double>((*w)->getRules()->getAmmoMax() - (*w)->getAmmo())
 														/ static_cast<double>(clipSize)));
 
-								space += static_cast<double>(std::min(
-																	baseQty,
-																	toLoad))
+								space += static_cast<double>(std::min(baseQty, toLoad))
 										* static_cast<double>(_rules->getItem(clip)->getSize());
 							}
 						}
@@ -915,13 +867,12 @@ int Base::getAvailableStores() const
 			}
 		}
 	}
-
 	return space;
 } */
 
 /**
  * Returns the amount of laboratories used up by research projects in this Base.
- * @return, laboratory space
+ * @return, used laboratory space
  */
 int Base::getUsedLaboratories() const
 {
@@ -940,9 +891,9 @@ int Base::getUsedLaboratories() const
 
 /**
  * Returns the total amount of laboratories available in this Base.
- * @return, laboratory space
+ * @return, total laboratory space
  */
-int Base::getAvailableLaboratories() const
+int Base::getTotalLaboratories() const
 {
 	int total = 0;
 	for (std::vector<BaseFacility*>::const_iterator
@@ -958,8 +909,38 @@ int Base::getAvailableLaboratories() const
 }
 
 /**
+ * Returns laboratory space not used by ResearchProjects.
+ * @return, free space
+*/
+int Base::getFreeLaboratories() const
+{
+	return getTotalLaboratories() - getUsedLaboratories();
+}
+
+/**
+ * Returns whether or not this Base is equipped with research facilities.
+ * @return, true if capable of research
+ */
+bool Base::hasResearch() const
+{
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true
+			&& (*i)->getRules()->getLaboratories() != 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
  * Returns the amount of workshops used up by manufacturing projects in this Base.
- * @return, workshop space
+ * @return, used workshop space
  */
 int Base::getUsedWorkshops() const
 {
@@ -977,9 +958,9 @@ int Base::getUsedWorkshops() const
 
 /**
  * Returns the total amount of workshops available in this Base.
- * @return, workshop space
+ * @return, total workshop space
  */
-int Base::getAvailableWorkshops() const
+int Base::getTotalWorkshops() const
 {
 	int total = 0;
 	for (std::vector<BaseFacility*>::const_iterator
@@ -995,8 +976,213 @@ int Base::getAvailableWorkshops() const
 }
 
 /**
- * Returns the amount of hangars used up by crafts in this Base.
- * @return, hangars
+ * Returns workshop space not used by Productions.
+ * @return, free space
+ */
+int Base::getFreeWorkshops() const
+{
+	return getTotalWorkshops() - getUsedWorkshops();
+}
+
+/**
+ * Returns whether or not this Base is equipped with production facilities.
+ * @return, true if capable of production
+ */
+bool Base::hasProduction() const
+{
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true
+			&& (*i)->getRules()->getWorkshops() != 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Returns the total amount of used PsiLab Space in this Base.
+ * @return, used psilab space
+ */
+int Base::getUsedPsiLabs() const
+{
+	int total = 0;
+	for (std::vector<Soldier*>::const_iterator
+			i = _soldiers.begin();
+			i != _soldiers.end();
+			++i)
+	{
+		if ((*i)->inPsiTraining() == true)
+			++total;
+	}
+
+	return total;
+}
+
+/**
+ * Returns the total amount of PsiLab Space available in this Base.
+ * @return, total psilab space
+ */
+int Base::getTotalPsiLabs() const
+{
+	int total = 0;
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true)
+			total += (*i)->getRules()->getPsiLaboratories();
+	}
+
+	return total;
+}
+
+/**
+ * Returns psilab space not in use.
+ * @return, free space
+ */
+int Base::getFreePsiLabs() const
+{
+	return getTotalPsiLabs() - getUsedPsiLabs();
+}
+
+/**
+ * Returns whether or not this Base has Psi Laboratories.
+ * @return, true if psiLabs exist
+ */
+bool Base::hasPsiLabs() const
+{
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true
+			&& (*i)->getRules()->getPsiLaboratories() != 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Returns the total amount of used containment space in this Base.
+ * @return, used containment space incl. transfers & interrogations
+ */
+int Base::getUsedContainment() const
+{
+	int total = 0;
+	for (std::map<std::string, int>::const_iterator
+			i = _items->getContents()->begin();
+			i != _items->getContents()->end();
+			++i)
+	{
+		if (_rules->getItem(i->first)->isAlien() == true)
+			total += i->second;
+	}
+
+	for (std::vector<Transfer*>::const_iterator
+			i = _transfers.begin();
+			i != _transfers.end();
+			++i)
+	{
+		if ((*i)->getTransferType() == PST_ITEM
+			&& _rules->getItem((*i)->getTransferItems())->isAlien() == true)
+		{
+			total += (*i)->getQuantity();
+		}
+	}
+
+	if (Options::storageLimitsEnforced == true)
+		total += getInterrogatedAliens();
+
+	return total;
+}
+
+/**
+ * Returns the total amount of containment space available in this Base.
+ * @return, total containment space
+ */
+int Base::getTotalContainment() const
+{
+	int total = 0;
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true)
+			total += (*i)->getRules()->getAliens();
+	}
+
+	return total;
+}
+
+/**
+ * Returns alien containment space not in use.
+ * @return, free space
+ */
+int Base::getFreeContainment() const
+{
+	return getTotalContainment() - getUsedContainment();
+}
+
+/**
+ * Returns whether or not this Base has alien containment.
+ * @return, true if containment exists
+ */
+bool Base::hasContainment() const
+{
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true
+			&& (*i)->getRules()->getAliens() != 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Gets the quantity of aLiens currently under interrogation.
+ * @return, aliens ...
+ */
+int Base::getInterrogatedAliens() const
+{
+	int total = 0;
+	const RuleResearch* resRule;
+	for (std::vector<ResearchProject*>::const_iterator
+			i = _research.begin();
+			i != _research.end();
+			++i)
+	{
+		resRule = (*i)->getRules();
+		if (resRule->needsItem() == true
+			&& _rules->getUnit(resRule->getType()) != nullptr)
+		{
+			++total;
+		}
+	}
+
+	return total;
+}
+
+/**
+ * Returns the amount of hangars used up by Craft at this Base.
+ * @return, used hangars incl. transfers & production
  */
 int Base::getUsedHangars() const
 {
@@ -1026,9 +1212,9 @@ int Base::getUsedHangars() const
 
 /**
  * Returns the total amount of hangars available in this Base.
- * @return, hangars
+ * @return, total hangars
  */
-int Base::getAvailableHangars() const
+int Base::getTotalHangars() const
 {
 	int total = 0;
 	for (std::vector<BaseFacility*>::const_iterator
@@ -1044,200 +1230,12 @@ int Base::getAvailableHangars() const
 }
 
 /**
- * Returns laboratories space not used by a ResearchProject.
- * @return, lab space not used by a ResearchProject
-*/
-int Base::getFreeLaboratories() const
-{
-	return getAvailableLaboratories() - getUsedLaboratories();
-}
-
-/**
- * Returns workshop space not used by a Production.
- * @return, workshop space not used by a Production
-*/
-int Base::getFreeWorkshops() const
-{
-	return getAvailableWorkshops() - getUsedWorkshops();
-}
-
-/**
- * Returns psilab space not in use.
- * @return, psilab space not in use
-*/
-int Base::getFreePsiLabs() const
-{
-	return getAvailablePsiLabs() - getUsedPsiLabs();
-}
-
-/**
- * Returns the amount of scientists currently in use.
- * @return, amount of scientists
-*/
-int Base::getAllocatedScientists() const
-{
-	int total = 0;
-	const std::vector<ResearchProject*>& research(getResearch());
-	for (std::vector<ResearchProject*>::const_iterator
-			i = research.begin();
-			i != research.end();
-			++i)
-	{
-		total += (*i)->getAssignedScientists();
-	}
-
-	return total;
-}
-
-/**
- * Returns the amount of engineers currently in use.
- * @return, amount of engineers
-*/
-int Base::getAllocatedEngineers() const
-{
-	int total = 0;
-	for (std::vector<Production*>::const_iterator
-			i = _productions.begin();
-			i != _productions.end();
-			++i)
-	{
-		total += (*i)->getAssignedEngineers();
-	}
-
-	return total;
-}
-
-/**
- * Returns the total defense value of all the facilities in this Base.
- * @note Used for BaseInfoState bar.
- * @return, defense value
+ * Returns hangar space not in use.
+ * @return, free space
  */
-int Base::getDefenseTotal() const
+int Base::getFreeHangars() const
 {
-	int total = 0;
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end();
-			++i)
-	{
-		if ((*i)->buildFinished() == true)
-			total += (*i)->getRules()->getDefenseValue();
-	}
-
-	return total;
-}
-
-/**
- * Returns the total amount of short range detection facilities in this Base.
- * @return, quantity of shortrange detection facilities
- */
-/* int Base::getShortRangeDetection() const
-{
-	int
-		total = 0,
-		range = 0;
-	int minRadarRange = _rules->getMinRadarRange();
-	if (minRadarRange == 0)
-		return 0;
-
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end();
-			++i)
-	{
-		if ((*i)->buildFinished() == true
-			&& (*i)->getRules()->getRadarRange() > 0)
-		{
-			range = (*i)->getRules()->getRadarRange();
-			// kL_note: that should be based off a string or Ruleset value.
-
-			if ((*i)->getRules()->getRadarRange() <= minRadarRange)
-//			if (range < 1501) // was changed to 1701
-			{
-				total++;
-			}
-		}
-	}
-	return total;
-} */
-
-/**
- * Returns the total value of short range detection facilities at this base.
- * @note Used for BaseInfoState bar.
- * @return, shortrange detection value as percent
- */
-int Base::getShortRangeTotal() const
-{
-	int
-		total = 0,
-		range;
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end();
-			++i)
-	{
-		if ((*i)->buildFinished() == true)
-		{
-			range = (*i)->getRules()->getRadarRange();
-			if (range != 0 && range <= _rules->getRadarCutoffRange())
-			{
-				total += (*i)->getRules()->getRadarChance();
-				if (total > 100)
-					return 100;
-			}
-		}
-	}
-
-	return total;
-}
-
-/**
- * Returns the total amount of long range detection facilities in this Base.
- * @return, quantity of longrange detection facilities
- */
-/* int Base::getLongRangeDetection() const
-{
-	int total = 0;
-	int minRadarRange = _rules->getMinRadarRange();
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end();
-			++i)
-	{
-		if ((*i)->getRules()->getRadarRange() > minRadarRange
-			&& (*i)->buildFinished() == true)
-//			&& (*i)->getRules()->getRadarRange() > 1500) // was changed to 1700
-		{
-			total++;
-		}
-	}
-
-	return total;
-} */
-
-/**
- * Returns the total value of long range detection facilities at this base.
- * @note Used for BaseInfoState bar.
- * @return, longrange detection value as percent
- */
-int Base::getLongRangeTotal() const
-{
-	int total = 0;
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end();
-			++i)
-	{
-		if ((*i)->buildFinished() == true
-			&& (*i)->getRules()->getRadarRange() > _rules->getRadarCutoffRange())
-		{
-			total += (*i)->getRules()->getRadarChance();
-			if (total > 100)
-				return 100;
-		}
-	}
-
-	return total;
+	return getTotalHangars() - getUsedHangars();
 }
 
 /**
@@ -1304,96 +1302,6 @@ int Base::getCraftCount(const std::string& craft) const
 	}
 
 	return total;
-}
-
-/**
- * Returns the total amount of monthly costs for maintaining the craft in this Base.
- * @note Used for monthly maintenance expenditure.
- * @return, maintenance costs
- */
-int Base::getCraftMaintenance() const
-{
-	int total = 0;
-	for (std::vector<Transfer*>::const_iterator
-			i = _transfers.begin();
-			i != _transfers.end();
-			++i)
-	{
-		if ((*i)->getTransferType() == PST_CRAFT)
-			total += (*i)->getQuantity() * (*i)->getCraft()->getRules()->getRentCost();
-	}
-
-	for (std::vector<Craft*>::const_iterator
-			i = _crafts.begin();
-			i != _crafts.end();
-			++i)
-	{
-		total += (*i)->getRules()->getRentCost();
-	}
-
-	return total;
-}
-
-/**
- * Returns the total amount of monthly costs for maintaining the personnel in this Base.
- * @note Used for monthly maintenance expenditure.
- * @return, maintenance costs
- */
-int Base::getPersonnelMaintenance() const
-{
-	int total = 0;
-	for (std::vector<Transfer*>::const_iterator
-			i = _transfers.begin();
-			i != _transfers.end();
-			++i)
-	{
-		if ((*i)->getTransferType() == PST_SOLDIER)
-			total += (*i)->getSoldier()->getRules()->getSalaryCost();
-	}
-
-	for (std::vector<Soldier*>::const_iterator
-			i = _soldiers.begin();
-			i != _soldiers.end();
-			++i)
-	{
-		total += (*i)->getRules()->getSalaryCost();
-	}
-
-	total += getTotalEngineers() * _rules->getEngineerCost();
-	total += getTotalScientists() * _rules->getScientistCost();
-	total += calcSoldierBonuses();
-
-	return total;
-}
-
-/**
- * Returns the total amount of monthly costs for maintaining the facilities in this Base.
- * @note Used for monthly maintenance expenditure.
- * @return, maintenance costs
- */
-int Base::getFacilityMaintenance() const
-{
-	int total = 0;
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end();
-			++i)
-	{
-		if ((*i)->buildFinished() == true)
-			total += (*i)->getRules()->getMonthlyCost();
-	}
-
-	return total;
-}
-
-/**
- * Returns the total amount of all the maintenance monthly costs in this Base.
- * @note Used for monthly maintenance expenditure.
- * @return, maintenance costs
- */
-int Base::getMonthlyMaintenace() const
-{
-	return getCraftMaintenance() + getPersonnelMaintenance() + getFacilityMaintenance();
 }
 
 /**
@@ -1846,184 +1754,6 @@ double Base::getCommanderHelp(const std::string& resType)
 }
 
 /**
- * Returns whether or not this Base is equipped with hyper-wave detection facilities.
- * @return, true if hyper-wave detection
- */
-bool Base::getHyperDetection() const
-{
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end();
-			++i)
-	{
-		if ((*i)->buildFinished() == true
-			&& (*i)->getRules()->isHyperwave() == true)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
- * Returns whether or not this Base is equipped with research facilities.
- * @return, true if capable of research
- */
-bool Base::hasResearch() const
-{
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end();
-			++i)
-	{
-		if ((*i)->buildFinished() == true
-			&& (*i)->getRules()->getLaboratories() != 0)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
- * Returns whether or not this Base is equipped with production facilities.
- * @return, true if capable of production
- */
-bool Base::hasProduction() const
-{
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end();
-			++i)
-	{
-		if ((*i)->buildFinished() == true
-			&& (*i)->getRules()->getWorkshops() != 0)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
- * Returns the total amount of PsiLab Space available in this Base.
- * @return, psilab space
- */
-int Base::getAvailablePsiLabs() const
-{
-	int total = 0;
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end();
-			++i)
-	{
-		if ((*i)->buildFinished() == true)
-			total += (*i)->getRules()->getPsiLaboratories();
-	}
-
-	return total;
-}
-
-/**
- * Returns the total amount of used PsiLab Space in this Base.
- * @return, used psilab space
- */
-int Base::getUsedPsiLabs() const
-{
-	int total = 0;
-	for (std::vector<Soldier*>::const_iterator
-			i = _soldiers.begin();
-			i != _soldiers.end();
-			++i)
-	{
-		if ((*i)->inPsiTraining() == true)
-			++total;
-	}
-
-	return total;
-}
-
-/**
- * Returns the total amount of containment space available in this Base.
- * @return, containment space
- */
-int Base::getAvailableContainment() const
-{
-	int total = 0;
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end();
-			++i)
-	{
-		if ((*i)->buildFinished() == true)
-			total += (*i)->getRules()->getAliens();
-	}
-
-	return total;
-}
-
-/**
- * Returns the total amount of used containment space in this Base.
- * @return, containment space
- */
-int Base::getUsedContainment() const
-{
-	int total = 0;
-	for (std::map<std::string, int>::const_iterator
-			i = _items->getContents()->begin();
-			i != _items->getContents()->end();
-			++i)
-	{
-		if (_rules->getItem(i->first)->isAlien() == true)
-			total += i->second;
-	}
-
-	for (std::vector<Transfer*>::const_iterator
-			i = _transfers.begin();
-			i != _transfers.end();
-			++i)
-	{
-		if ((*i)->getTransferType() == PST_ITEM
-			&& _rules->getItem((*i)->getTransferItems())->isAlien() == true)
-		{
-			total += (*i)->getQuantity();
-		}
-	}
-
-	if (Options::storageLimitsEnforced == true)
-		total += getInterrogatedAliens();
-
-	return total;
-}
-
-/**
- * Gets the quantity of aLiens currently under interrogation.
- * @return, quantity of aliens
- */
-int Base::getInterrogatedAliens() const
-{
-	int total = 0;
-	const RuleResearch* resRule;
-	for (std::vector<ResearchProject*>::const_iterator
-			i = _research.begin();
-			i != _research.end();
-			++i)
-	{
-		resRule = (*i)->getRules();
-		if (resRule->needsItem() == true
-			&& _rules->getUnit(resRule->getType()) != nullptr)
-		{
-			++total;
-		}
-	}
-
-	return total;
-}
-
-/**
  * Returns this Base's battlescape status.
  * @return, true if Base is the battlescape
  */
@@ -2076,6 +1806,228 @@ bool Base::getBasePlaced() const
 	return _placed;
 }
 
+/**
+ * Returns whether or not this Base is equipped with hyper-wave detection facilities.
+ * @return, true if hyper-wave detection
+ */
+bool Base::getHyperDetection() const
+{
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true
+			&& (*i)->getRules()->isHyperwave() == true)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Returns the total amount of short range detection facilities in this Base.
+ * @return, quantity of shortrange detection facilities
+ */
+/* int Base::getShortRangeDetection() const
+{
+	int
+		total = 0,
+		range = 0;
+	int minRadarRange = _rules->getMinRadarRange();
+	if (minRadarRange == 0)
+		return 0;
+
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true
+			&& (*i)->getRules()->getRadarRange() > 0)
+		{
+			range = (*i)->getRules()->getRadarRange();
+			// kL_note: that should be based off a string or Ruleset value.
+
+			if ((*i)->getRules()->getRadarRange() <= minRadarRange)
+//			if (range < 1501) // was changed to 1701
+			{
+				total++;
+			}
+		}
+	}
+	return total;
+} */
+
+/**
+ * Returns the total value of short range detection facilities at this base.
+ * @note Used for BaseInfoState bar.
+ * @return, shortrange detection value as percent
+ */
+int Base::getShortRangeTotal() const
+{
+	int
+		total = 0,
+		range;
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true)
+		{
+			range = (*i)->getRules()->getRadarRange();
+			if (range != 0 && range <= _rules->getRadarCutoffRange())
+			{
+				total += (*i)->getRules()->getRadarChance();
+				if (total > 100)
+					return 100;
+			}
+		}
+	}
+
+	return total;
+}
+
+/**
+ * Returns the total amount of long range detection facilities in this Base.
+ * @return, quantity of longrange detection facilities
+ */
+/* int Base::getLongRangeDetection() const
+{
+	int total = 0;
+	int minRadarRange = _rules->getMinRadarRange();
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->getRules()->getRadarRange() > minRadarRange
+			&& (*i)->buildFinished() == true)
+//			&& (*i)->getRules()->getRadarRange() > 1500) // was changed to 1700
+		{
+			total++;
+		}
+	}
+
+	return total;
+} */
+
+/**
+ * Returns the total value of long range detection facilities at this base.
+ * @note Used for BaseInfoState bar.
+ * @return, longrange detection value as percent
+ */
+int Base::getLongRangeTotal() const
+{
+	int total = 0;
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true
+			&& (*i)->getRules()->getRadarRange() > _rules->getRadarCutoffRange())
+		{
+			total += (*i)->getRules()->getRadarChance();
+			if (total > 100)
+				return 100;
+		}
+	}
+
+	return total;
+}
+
+/**
+ * Returns if a certain Target is covered by this Base's radar range taking into
+ * account the range and chance.
+ * @param target - pointer to a UFO to attempt detection against
+ * @return,	0 undetected
+ *			1 hyperdetected only
+ *			2 detected
+ *			3 detected & hyperdetected
+ */
+int Base::detect(Target* const target) const
+{
+	double targetDist (insideRadarRange(target));
+
+	if (AreSame(targetDist, 0.))
+		return 0;
+
+	int ret = 0;
+
+	if (targetDist < 0.)
+	{
+		++ret;
+		targetDist = -targetDist;
+	}
+
+	int pct (0);
+
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true)
+		{
+			const double radarRange = static_cast<double>((*i)->getRules()->getRadarRange()) * greatCircleConversionFactor;
+			if (radarRange > targetDist)
+				pct += (*i)->getRules()->getRadarChance();
+		}
+	}
+
+	const Ufo* const ufo = dynamic_cast<Ufo*>(target);
+	if (ufo != nullptr)
+	{
+		pct += ufo->getVisibility();
+		pct = static_cast<int>(Round(static_cast<double>(pct) / 3.)); // per 10-min.
+
+		if (RNG::percent(pct) == true)
+			ret += 2;
+	}
+
+	return ret;
+}
+
+/**
+ * Returns if a certain target is inside this Base's radar range taking in
+ * account the global positions of both.
+ * @param target - pointer to UFO
+ * @return, great circle distance to UFO (negative if hyperdetected)
+ */
+double Base::insideRadarRange(const Target* const target) const
+{
+	const double targetDist = getDistance(target) * earthRadius;
+	if (targetDist > static_cast<double>(_rules->getMaxRadarRange()) * greatCircleConversionFactor)
+		return 0.;
+
+
+	double ret = 0.; // lets hope UFO is not *right on top of Base* Lol
+	bool hyperDet = false;
+
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end() && hyperDet == false;
+			++i)
+	{
+		if ((*i)->buildFinished() == true)
+		{
+			const double radarRange = static_cast<double>((*i)->getRules()->getRadarRange()) * greatCircleConversionFactor;
+			if (targetDist < radarRange)
+			{
+				ret = targetDist; // identical value for every i; looking only for hyperDet after 1st successful iteration.
+				if ((*i)->getRules()->isHyperwave() == true)
+					hyperDet = true;
+			}
+		}
+	}
+
+	if (hyperDet == true) ret = -ret;
+	return ret;
+}
 
 /**
  * Functor to check for mind shield capability.
@@ -2209,6 +2161,26 @@ size_t Base::getGravShields() const
 		{
 			++total;
 		}
+	}
+
+	return total;
+}
+
+/**
+ * Returns the total defense value of all the facilities in this Base.
+ * @note Used for BaseInfoState bar.
+ * @return, defense value
+ */
+int Base::getDefenseTotal() const
+{
+	int total = 0;
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true)
+			total += (*i)->getRules()->getDefenseValue();
 	}
 
 	return total;
@@ -2359,7 +2331,8 @@ void Base::setupDefenses()
 
 			i = _items->getContents()->begin(); // start over because iterator is broken due to removeItem()
 		}
-		else ++i;
+		else
+			++i;
 	}
 }
 
@@ -2740,7 +2713,7 @@ void Base::destroyFacility(std::vector<BaseFacility*>::const_iterator pFac)
 					)
 			{
 				if ((*i)->getRules()->getCategory() == "STR_CRAFT"
-					&& getAvailableHangars() - getUsedHangars() - (*pFac)->getRules()->getCrafts() < 0)
+					&& getFreeHangars() - (*pFac)->getRules()->getCrafts() < 0)
 				{
 					destroyCraft = false;
 					_engineers += (*i)->getAssignedEngineers();
@@ -2820,7 +2793,7 @@ void Base::destroyFacility(std::vector<BaseFacility*>::const_iterator pFac)
 		// workshop destruction: similar to lab destruction, but lay off engineers instead. kL_note: huh!!!!
 		// in this case production *is* cancelled since it takes up space in the workshop.
 		int qty = (*pFac)->getRules()->getWorkshops() - getFreeWorkshops();
-//		int qty = getUsedWorkshops() - (getAvailableWorkshops() - (*pFac)->getRules()->getWorkshops());
+//		int qty = getUsedWorkshops() - (getTotalWorkshops() - (*pFac)->getRules()->getWorkshops());
 		for (std::vector<Production*>::const_iterator
 				i = _productions.begin();
 				i != _productions.end()
@@ -2859,7 +2832,8 @@ void Base::destroyFacility(std::vector<BaseFacility*>::const_iterator pFac)
 					delete *i;
 					i = _transfers.erase(i);
 				}
-				else ++i;
+				else
+					++i;
 			}
 		}
 	}
@@ -2867,7 +2841,7 @@ void Base::destroyFacility(std::vector<BaseFacility*>::const_iterator pFac)
 	{
 		// as above don't actually fire people but block personnel arrivals.
 		if (_transfers.empty() == false
-			&& getAvailableQuarters() - getUsedQuarters() - (*pFac)->getRules()->getPersonnel() < 0)
+			&& getFreeQuarters() - (*pFac)->getRules()->getPersonnel() < 0)
 		{
 			for (std::vector<Transfer*>::const_iterator
 					i = _transfers.begin();
@@ -2895,13 +2869,104 @@ void Base::destroyFacility(std::vector<BaseFacility*>::const_iterator pFac)
 					delete *i;
 					i = _transfers.erase(i);
 				}
-				else ++i;
+				else
+					++i;
 			}
 		}
 	}
 
 	delete *pFac;
 	_facilities.erase(pFac);
+}
+
+/**
+ * Returns the total amount of monthly costs for maintaining the craft in this Base.
+ * @note Used for monthly maintenance expenditure.
+ * @return, maintenance costs
+ */
+int Base::getCraftMaintenance() const
+{
+	int total = 0;
+	for (std::vector<Transfer*>::const_iterator
+			i = _transfers.begin();
+			i != _transfers.end();
+			++i)
+	{
+		if ((*i)->getTransferType() == PST_CRAFT)
+			total += (*i)->getQuantity() * (*i)->getCraft()->getRules()->getRentCost();
+	}
+
+	for (std::vector<Craft*>::const_iterator
+			i = _crafts.begin();
+			i != _crafts.end();
+			++i)
+	{
+		total += (*i)->getRules()->getRentCost();
+	}
+
+	return total;
+}
+
+/**
+ * Returns the total amount of monthly costs for maintaining the personnel in this Base.
+ * @note Used for monthly maintenance expenditure.
+ * @return, maintenance costs
+ */
+int Base::getPersonnelMaintenance() const
+{
+	int total = 0;
+	for (std::vector<Transfer*>::const_iterator
+			i = _transfers.begin();
+			i != _transfers.end();
+			++i)
+	{
+		if ((*i)->getTransferType() == PST_SOLDIER)
+			total += (*i)->getSoldier()->getRules()->getSalaryCost();
+	}
+
+	for (std::vector<Soldier*>::const_iterator
+			i = _soldiers.begin();
+			i != _soldiers.end();
+			++i)
+	{
+		total += (*i)->getRules()->getSalaryCost();
+	}
+
+	total += getTotalEngineers() * _rules->getEngineerCost();
+	total += getTotalScientists() * _rules->getScientistCost();
+	total += calcSoldierBonuses();
+
+	return total;
+}
+
+/**
+ * Returns the total amount of monthly costs for maintaining the facilities in this Base.
+ * @note Used for monthly maintenance expenditure.
+ * @return, maintenance costs
+ */
+int Base::getFacilityMaintenance() const
+{
+	int total = 0;
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true)
+			total += (*i)->getRules()->getMonthlyCost();
+	}
+
+	return total;
+}
+
+/**
+ * Returns the total amount of all the maintenance monthly costs in this Base.
+ * @note Used for monthly maintenance expenditure.
+ * @return, maintenance costs
+ */
+int Base::getMonthlyMaintenace() const
+{
+	return getCraftMaintenance() + getPersonnelMaintenance() + getFacilityMaintenance();
 }
 
 /**

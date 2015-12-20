@@ -178,19 +178,19 @@ bool BaseFacility::inUse() const
 	if (_buildTime == 0)
 	{
 		return (_facRule->getPersonnel() != 0
-				&& _base->getAvailableQuarters() - _facRule->getPersonnel() < _base->getUsedQuarters())
+				&& _base->getTotalQuarters() - _facRule->getPersonnel() < _base->getUsedQuarters())
 			|| (_facRule->getStorage() != 0
-				&& _base->getAvailableStores() - _facRule->getStorage() < _base->getUsedStores())
+				&& _base->getTotalStores() - _facRule->getStorage() < _base->getUsedStores())
 			|| (_facRule->getLaboratories() != 0
-				&& _base->getAvailableLaboratories() - _facRule->getLaboratories() < _base->getUsedLaboratories())
+				&& _base->getTotalLaboratories() - _facRule->getLaboratories() < _base->getUsedLaboratories())
 			|| (_facRule->getWorkshops() != 0
-				&& _base->getAvailableWorkshops() - _facRule->getWorkshops() < _base->getUsedWorkshops())
+				&& _base->getTotalWorkshops() - _facRule->getWorkshops() < _base->getUsedWorkshops())
 			|| (_facRule->getCrafts() != 0
-				&& _base->getAvailableHangars() - _facRule->getCrafts() < _base->getUsedHangars())
+				&& _base->getTotalHangars() - _facRule->getCrafts() < _base->getUsedHangars())
 			|| (_facRule->getPsiLaboratories() != 0
-				&& _base->getAvailablePsiLabs() - _facRule->getPsiLaboratories() < _base->getUsedPsiLabs())
+				&& _base->getTotalPsiLabs() - _facRule->getPsiLaboratories() < _base->getUsedPsiLabs())
 			|| (_facRule->getAliens() != 0
-				&& _base->getAvailableContainment() - _facRule->getAliens() < _base->getUsedContainment());
+				&& _base->getTotalContainment() - _facRule->getAliens() < _base->getUsedContainment());
 	}
 
 	return false;
