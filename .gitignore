@@ -20,7 +20,6 @@ Makefile
 .dep.inc
 README.md
 README.txt
-LICENSE.txt
 CHANGELOG.txt
 
 *.o
