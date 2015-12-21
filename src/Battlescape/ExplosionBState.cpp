@@ -458,6 +458,7 @@ void ExplosionBState::explode() // private.
 		if (_areaOfEffect == true)
 		{
 			//Log(LOG_INFO) << "ExplosionBState::explode() AoE te::explode";
+//			te->setProjectileDirection(-1);
 			te->explode(
 					_center,
 					_power,
@@ -466,7 +467,6 @@ void ExplosionBState::explode() // private.
 					_unit,
 					itRule->isGrenade() == true,
 					itRule->defusePulse() == true);
-//			te->setProjectileDirection(-1);
 		}
 		else
 		{

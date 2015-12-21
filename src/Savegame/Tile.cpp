@@ -605,9 +605,7 @@ int Tile::getShade() const
 			light = _light[layer];
 	}
 
-	return std::max(
-				0,
-				15 - light);
+	return std::max(0, 15 - light);
 }
 
 /**
@@ -623,7 +621,7 @@ void Tile::destroyTilepart(
 		MapDataType partType,
 		SavedBattleGame* const battleSave)
 {
-	int tLevel = 0;
+	int tLevel (0);
 
 	if (_objects[partType] != nullptr)
 	{
@@ -639,25 +637,25 @@ void Tile::destroyTilepart(
 		if (_objects[partType]->getSpecialType() == battleSave->getObjectiveType())
 			battleSave->addDestroyedObjective();
 
-		const MapData* const origData = _objects[partType];
-		const int origDataSetId = _mapDataSetId[partType];
+		const MapData* const data (_objects[partType]);
+		const int dataSetId (_mapDataSetId[partType]);
 
 		setMapData(nullptr,-1,-1, partType);
 
-		if (origData->getDieMCD() != 0)
+		if (data->getDieMCD() != 0)
 		{
-			MapData* const dead = origData->getDataset()->getObjects()->at(origData->getDieMCD());
+			MapData* const dataDead (data->getDataset()->getObjects()->at(data->getDieMCD()));
 			setMapData(
-					dead,
-					origData->getDieMCD(),
-					origDataSetId,
-					dead->getPartType());
+					dataDead,
+					data->getDieMCD(),
+					dataSetId,
+					dataDead->getPartType());
 		}
 
-		if (origData->getExplosive() != 0)
+		if (data->getExplosive() != 0)
 			setExplosive(
-					origData->getExplosive(),
-					origData->getExplosiveType());
+					data->getExplosive(),
+					data->getExplosiveType());
 	}
 
 	if (partType == O_FLOOR) // check if the floor on the lowest level is gone.
@@ -677,7 +675,7 @@ void Tile::destroyTilepart(
 
 	if (tLevel == -24) // destroy the object-above if its support is gone.
 	{
-		Tile* const tileAbove = battleSave->getTile(_pos + Position(0,0,1));
+		const Tile* const tileAbove (battleSave->getTile(_pos + Position(0,0,1)));
 		if (tileAbove != nullptr
 			&& tileAbove->getMapData(O_FLOOR) == nullptr
 			&& tileAbove->getMapData(O_OBJECT) != nullptr

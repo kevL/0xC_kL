@@ -2278,7 +2278,7 @@ void TileEngine::explode(
 	BattleUnit* targetUnit = nullptr;
 
 	std::set<Tile*> tilesAffected;
-	std::pair<std::set<Tile*>::iterator, bool> tilePair;
+	std::pair<std::set<Tile*>::const_iterator, bool> tilePair;
 
 	int z_Dec; // = 1000; // default flat explosion
 
@@ -2485,8 +2485,8 @@ void TileEngine::explode(
 				if (dType == DT_HE) // explosions do 50% damage to terrain and 50% to 150% damage to units
 				{
 					//Log(LOG_INFO) << ". setExplosive() _powerE = " << _powerE;
-					tileStop->setExplosive(_powerE, DT_NONE);	// try powerT to prevent smoke/fire appearing behind intact walls etc.
-																// although that might gimp true damage vs parts calculations .... NOPE.
+					tileStop->setExplosive(_powerE, DT_HE);	// try powerT to prevent smoke/fire appearing behind intact walls etc.
+															// although that might gimp true damage vs parts calculations .... NOPE.
 				}
 
 				_powerE = _powerT; // note: These two are becoming increasingly redundant !!!
@@ -2962,7 +2962,7 @@ void TileEngine::explode(
 	{
 		if (_trueTile != nullptr)	// special case for when a diagonal bigwall is directly targetted.
 		{							// The explosion is moved out a tile so give a full-power hit to the true target-tile.
-			_trueTile->setExplosive(power, DT_NONE);
+			_trueTile->setExplosive(power, DT_HE);
 			detonate(_trueTile);	// I doubt this needs any *further* consideration ...
 		}							// although it would be nice to have the explosion 'kick in' a bit.
 
@@ -2976,7 +2976,7 @@ void TileEngine::explode(
 			{
 				detonate(*i);
 				applyGravity(*i);
-				Tile* const tileAbove = _battleSave->getTile((*i)->getPosition() + Position(0,0,1));
+				Tile* const tileAbove (_battleSave->getTile((*i)->getPosition() + Position(0,0,1)));
 				if (tileAbove != nullptr)
 					applyGravity(tileAbove);
 			}
@@ -4114,8 +4114,7 @@ int TileEngine::blockage(
 void TileEngine::detonate(Tile* const tile) const
 {
 	int power = tile->getExplosive(); // <- power that hit the Tile.
-	if (power == 0) // no explosive applied to the Tile
-		return;
+	if (power == 0) return; // no explosive applied to the Tile
 
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "TileEngine::detonate() " << tile->getPosition() << " power = " << power;
