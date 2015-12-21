@@ -183,13 +183,13 @@ void MediTargetState::init()
 
 				woststr1 << _targetUnits.back()->getHealth()
 						 << L"|"
-						 << _targetUnits.back()->getBaseStats()->health
+						 << _targetUnits.back()->getBattleStats()->health
 						 << L"|"
 						 << _targetUnits.back()->getStun();
 
 				woststr2 << _targetUnits.back()->getEnergy()
 						 << L"|"
-						 << _targetUnits.back()->getBaseStats()->stamina;
+						 << _targetUnits.back()->getBattleStats()->stamina;
 
 				_lstTarget->addRow(
 								5,

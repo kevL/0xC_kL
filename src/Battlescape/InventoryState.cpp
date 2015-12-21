@@ -624,11 +624,11 @@ void InventoryState::updateStats() // private.
 			_txtWeight->setSecondaryColor(static_cast<Uint8>(
 							_game->getRuleset()->getInterface("inventory")->getElement("weight")->color));
 
-		const int psiSkill = unit->getBaseStats()->psiSkill;
+		const int psiSkill = unit->getBattleStats()->psiSkill;
 
 		if (_tuMode == true)
 		{
-			if (unit->getBaseStats()->throwing != 0)
+			if (unit->getBattleStats()->throwing != 0)
 				_txtThrowTU->setText(tr("STR_THROW_").arg(unit->getActionTu(BA_THROW)));
 			else
 				_txtThrowTU->setVisible(false);
@@ -647,14 +647,14 @@ void InventoryState::updateStats() // private.
 		}
 		else
 		{
-			_txtFAcc->setText(tr("STR_ACCURACY_SHORT").arg(unit->getBaseStats()->firing));
-			_txtReact->setText(tr("STR_REACTIONS_SHORT").arg(unit->getBaseStats()->reactions));
-			_txtThrow->setText(tr("STR_THROWACC_SHORT").arg(unit->getBaseStats()->throwing));
-			_txtMelee->setText(tr("STR_MELEEACC_SHORT").arg(unit->getBaseStats()->melee));
+			_txtFAcc->setText(tr("STR_ACCURACY_SHORT").arg(unit->getBattleStats()->firing));
+			_txtReact->setText(tr("STR_REACTIONS_SHORT").arg(unit->getBattleStats()->reactions));
+			_txtThrow->setText(tr("STR_THROWACC_SHORT").arg(unit->getBattleStats()->throwing));
+			_txtMelee->setText(tr("STR_MELEEACC_SHORT").arg(unit->getBattleStats()->melee));
 
 			if (psiSkill != 0)
 			{
-				_txtPStr->setText(tr("STR_PSIONIC_STRENGTH_SHORT").arg(unit->getBaseStats()->psiStrength));
+				_txtPStr->setText(tr("STR_PSIONIC_STRENGTH_SHORT").arg(unit->getBattleStats()->psiStrength));
 				_txtPSkill->setText(tr("STR_PSIONIC_SKILL_SHORT").arg(psiSkill));
 			}
 			else
@@ -677,7 +677,7 @@ void InventoryState::updateStats() // private.
 //				|| (Options::psiStrengthEval == true
 //					&& _game->getSavedGame()->isResearched(_game->getRuleset()->getPsiRequirements())))
 			{
-				_txtPStr->setText(tr("STR_PSIONIC_STRENGTH_SHORT").arg(unit->getBaseStats()->psiStrength));
+				_txtPStr->setText(tr("STR_PSIONIC_STRENGTH_SHORT").arg(unit->getBattleStats()->psiStrength));
 			}
 			else
 				_txtPStr->setText(L""); */

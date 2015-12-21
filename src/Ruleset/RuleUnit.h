@@ -240,6 +240,7 @@ private:
 		_energyRecovery,
 		_intelligence,
 		_moveSound,
+		_specabPower,
 		_value;
 
 	std::string
@@ -303,6 +304,8 @@ private:
 		int getAggression() const;
 		/// Gets the alien's special ability if any.
 		SpecialAbility getSpecialAbility() const;
+		/// Gets the unit's special ability power (fire or explode).
+		int getSpecabPower() const;
 		/// Gets the unit's spawn unit.
 		const std::string& getSpawnUnit() const;
 

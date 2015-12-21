@@ -55,7 +55,7 @@ MapData::MapData(MapDataSet* const dataSet)
 		_flammable(0),
 		_fuel(0),
 		_explosive(0),
-		_explosiveType(0),
+		_explosiveType(DT_NONE),
 		_bigWall(0),
 		_miniMapIndex(0),
 		_isPsychedelic(0)
@@ -604,7 +604,7 @@ void MapData::setExplosive(int value)
  * Gets the type of explosive.
  * @return, the amount of explosive
  */
-int MapData::getExplosiveType() const
+DamageType MapData::getExplosiveType() const
 {
 	return _explosiveType;
 }
@@ -615,7 +615,14 @@ int MapData::getExplosiveType() const
  */
 void MapData::setExplosiveType(int value)
 {
-	_explosiveType = value;
+	switch (value) // account for (HE_Type)MCD vs. (RuleItem.h enum)DamageType mismatch
+	{
+		case 0: _explosiveType = DT_HE;		return;
+		default:
+		case 1: _explosiveType = DT_SMOKE;	return;
+		case 5: _explosiveType = DT_IN;		return;
+		case 6: _explosiveType = DT_STUN;
+	}
 }
 
 /**

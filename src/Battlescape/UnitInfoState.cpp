@@ -587,12 +587,12 @@ void UnitInfoState::init()
 	// TU, Health, & Bravery ->
 	int stat = _unit->getTimeUnits();
 	_numTimeUnits->setText(Text::intWide(stat));
-	_barTimeUnits->setMaxValue(static_cast<double>(_unit->getBaseStats()->tu));
+	_barTimeUnits->setMaxValue(static_cast<double>(_unit->getBattleStats()->tu));
 	_barTimeUnits->setValue(static_cast<double>(stat));
 
 	stat = _unit->getEnergy();
 	_numEnergy->setText(Text::intWide(stat));
-	_barEnergy->setMaxValue(static_cast<double>(_unit->getBaseStats()->stamina));
+	_barEnergy->setMaxValue(static_cast<double>(_unit->getBattleStats()->stamina));
 	_barEnergy->setValue(static_cast<double>(stat));
 
 	stat = _unit->getHealth();
@@ -605,7 +605,7 @@ void UnitInfoState::init()
 	}
 	else
 		_numStun->setVisible(false);
-	_barHealth->setMaxValue(static_cast<double>(_unit->getBaseStats()->health));
+	_barHealth->setMaxValue(static_cast<double>(_unit->getBattleStats()->health));
 	_barHealth->setValue(static_cast<double>(stat));
 	_barHealth->setValue2(static_cast<double>(stat2));
 
@@ -628,7 +628,7 @@ void UnitInfoState::init()
 
 	woststr.str(L"");
 //	std::wostringstream woststr1;
-	stat = _unit->getBaseStats()->bravery;
+	stat = _unit->getBattleStats()->bravery;
 	if (stat != 110)
 	{
 		woststr << stat;
@@ -659,35 +659,35 @@ void UnitInfoState::init()
 	// Primary Abilities ->
 	const double acuModi = _unit->getAccuracyModifier();
 
-	double arbitraryVariable = static_cast<double>(_unit->getBaseStats()->reactions);
+	double arbitraryVariable = static_cast<double>(_unit->getBattleStats()->reactions);
 	_barReactions->setMaxValue(arbitraryVariable);
 	arbitraryVariable *= acuModi;
 	_barReactions->setValue(arbitraryVariable);
 	stat = static_cast<int>(Round(arbitraryVariable));
 	_numReactions->setText(Text::intWide(stat));
 
-	arbitraryVariable = static_cast<double>(_unit->getBaseStats()->firing);
+	arbitraryVariable = static_cast<double>(_unit->getBattleStats()->firing);
 	_barFiring->setMaxValue(arbitraryVariable);
 	arbitraryVariable *= acuModi;
 	_barFiring->setValue(arbitraryVariable);
 	stat = static_cast<int>(Round(arbitraryVariable));
 	_numFiring->setText(Text::intWide(stat));
 
-	arbitraryVariable = static_cast<double>(_unit->getBaseStats()->throwing);
+	arbitraryVariable = static_cast<double>(_unit->getBattleStats()->throwing);
 	_barThrowing->setMaxValue(arbitraryVariable);
 	arbitraryVariable *= acuModi;
 	_barThrowing->setValue(arbitraryVariable);
 	stat = static_cast<int>(Round(arbitraryVariable));
 	_numThrowing->setText(Text::intWide(stat));
 
-	arbitraryVariable = static_cast<double>(_unit->getBaseStats()->melee);
+	arbitraryVariable = static_cast<double>(_unit->getBattleStats()->melee);
 	_barMelee->setMaxValue(arbitraryVariable);
 	arbitraryVariable *= acuModi;
 	_barMelee->setValue(arbitraryVariable);
 	stat = static_cast<int>(Round(arbitraryVariable));
 	_numMelee->setText(Text::intWide(stat));
 
-	arbitraryVariable = static_cast<double>(_unit->getBaseStats()->strength);
+	arbitraryVariable = static_cast<double>(_unit->getBattleStats()->strength);
 	_barStrength->setMaxValue(arbitraryVariable);
 	arbitraryVariable *= acuModi / 2. + 0.5;
 	_barStrength->setValue(arbitraryVariable);
@@ -695,13 +695,13 @@ void UnitInfoState::init()
 	_numStrength->setText(Text::intWide(stat));
 
 	// Psionics ->
-	const int psiSkill = _unit->getBaseStats()->psiSkill;
+	const int psiSkill = _unit->getBattleStats()->psiSkill;
 	if (psiSkill != 0 || sol == nullptr)
 	{
 		woststr.str(L"");
 		if (_unit->isFearable() == true)
 		{
-			stat = _unit->getBaseStats()->psiStrength;
+			stat = _unit->getBattleStats()->psiStrength;
 			woststr << stat;
 			_barPsiStrength->setMaxValue(static_cast<double>(stat));
 			_barPsiStrength->setValue(static_cast<double>(stat));

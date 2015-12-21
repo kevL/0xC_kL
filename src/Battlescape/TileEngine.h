@@ -194,13 +194,14 @@ private:
 		std::map<int, Position>* getReactionPositions();
 
 		/// Handles bullet/weapon hits.
-		BattleUnit* hit(
-				const Position& targetPos_voxel,
+		void hit(
+				const Position& targetVoxel,
 				int power,
 				DamageType dType,
 				BattleUnit* const attacker,
 				bool melee = false,
-				bool shotgun = false);
+				bool shotgun = false,
+				const std::string& infection = "");
 		/// Handles explosions.
 		void explode(
 				const Position& targetVoxel,

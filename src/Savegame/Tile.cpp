@@ -64,7 +64,7 @@ Tile::Tile(const Position& pos)
 		_smoke(0),
 		_fire(0),
 		_explosive(0),
-		_explosiveType(0),
+		_explosiveType(DT_NONE),
 		_unit(nullptr),
 		_animOffset(0),
 		_markerColor(0),
@@ -711,12 +711,12 @@ void Tile::hitTile(
  * on a tile is that of the most powerful ray that passes through it -- see
  * TileEngine::explode().
  * @param power		- how big the BOOM will be / how much tile-destruction
- * @param explType	- the type of this Tile's explosion (set in MCD)
+ * @param explType	- the type of this Tile's explosion (set in MCD) (RuleItem.h)
  * @param force		- forces value even if lower (default false)
  */
 void Tile::setExplosive(
 		int power,
-		int explType,
+		DamageType explType,
 		bool force)
 {
 	if (force == true || _explosive < power)
@@ -741,7 +741,7 @@ int Tile::getExplosive() const
  * Gets explosive type of this tile.
  * @return, explosive type
  */
-int Tile::getExplosiveType() const
+DamageType Tile::getExplosiveType() const
 {
 	return _explosiveType;
 }

@@ -2043,7 +2043,7 @@ int BattleUnit::getActionTu(
 	{
 		cost = std::max(
 					1,
-					static_cast<int>(std::floor(static_cast<double>(getBaseStats()->tu * cost) / 100.)));
+					static_cast<int>(std::floor(static_cast<double>(getBattleStats()->tu * cost) / 100.)));
 	}
 
 	return cost;
@@ -2104,8 +2104,8 @@ void BattleUnit::setEnergy(int energy)
 	else
 		_energy = energy;
 
-	if (_energy > getBaseStats()->stamina)
-		_energy = getBaseStats()->stamina;
+	if (_energy > getBattleStats()->stamina)
+		_energy = getBattleStats()->stamina;
 }
 
 /**
@@ -2386,8 +2386,8 @@ int BattleUnit::getFatalWounds() const
 int BattleUnit::getInitiative(const int tuSpent) const
 {
 	double ret = static_cast<double>(
-				 getBaseStats()->reactions * (getTimeUnits() - tuSpent))
-				 / static_cast<double>(getBaseStats()->tu);
+				 getBattleStats()->reactions * (getTimeUnits() - tuSpent))
+				 / static_cast<double>(getBattleStats()->tu);
 
 	ret *= getAccuracyModifier();
 
@@ -3457,8 +3457,8 @@ void BattleUnit::heal(
 		_fatalWounds[part] -= wounds;
 
 		_health += health;
-		if (_health > getBaseStats()->health)
-			_health = getBaseStats()->health;
+		if (_health > getBattleStats()->health)
+			_health = getBattleStats()->health;
 
 		moraleChange(health);
 	}
@@ -3469,7 +3469,7 @@ void BattleUnit::heal(
  */
 void BattleUnit::morphine()
 {
-	const int lostHealth = getBaseStats()->health - _health;
+	const int lostHealth = getBattleStats()->health - _health;
 	if (lostHealth > _moraleRestored)
 	{
 		_morale = std::min(
@@ -3505,8 +3505,8 @@ bool BattleUnit::amphetamine(
 		int stun)
 {
 	_energy += energy;
-	if (_energy > getBaseStats()->stamina)
-		_energy = getBaseStats()->stamina;
+	if (_energy > getBattleStats()->stamina)
+		_energy = getBattleStats()->stamina;
 
 	return healStun(stun);
 }
@@ -3626,7 +3626,7 @@ std::wstring BattleUnit::getName(
  * rule statistics.
  * @return, pointer to UnitStats
  */
-const UnitStats* BattleUnit::getBaseStats() const
+const UnitStats* BattleUnit::getBattleStats() const
 {
 	return &_stats;
 }
@@ -4504,7 +4504,7 @@ MovementType BattleUnit::getMoveTypeUnit() const
 	item = rule->getItem(getArmor()->getSpecialWeapon());
 	if (item)
 		_specWeapon[i++] = createItem(save, this, item);
-	if (getBaseStats()->psiSkill > 0 && getOriginalFaction() == FACTION_HOSTILE)
+	if (getBattleStats()->psiSkill > 0 && getOriginalFaction() == FACTION_HOSTILE)
 	{
 		item = rule->getItem("ALIEN_PSI_WEAPON");
 		if (item)
@@ -4686,6 +4686,22 @@ void BattleUnit::hostileMcValues(
 bool BattleUnit::isZombie() const
 {
 	return _isZombie;
+}
+
+/**
+ * Gets if this unit avoids fire-tiles.
+ * @return, true if unit avoids fire
+ */
+bool BattleUnit::avoidsFire() const
+{
+	if (_faction != FACTION_PLAYER // used by the AI only.
+		&& (_armor->getDamageModifier(DT_IN) > 0.f
+			|| _isZombie == false))
+	{
+		return true;
+	}
+
+	return false;
 }
 
 }

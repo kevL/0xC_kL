@@ -43,6 +43,7 @@ RuleUnit::RuleUnit(const std::string& type)
 		_aggression(0),
 		_energyRecovery(30),
 		_specab(SPECAB_NONE),
+		_specabPower(0),
 		_livingWeapon(false),
 		_female(false),
 		_dog(false),
@@ -93,6 +94,7 @@ void RuleUnit::load(
 	_psiImmune		= node["psiImmune"]		.as<bool>(_psiImmune);
 	_hasHands		= node["hasHands"]		.as<bool>(_hasHands);
 	_spawnUnit		= node["spawnUnit"]		.as<std::string>(_spawnUnit);
+	_specabPower	= node["specabPower"]	.as<int>(_specabPower);
 	_specab			= static_cast<SpecialAbility>(node["specab"].as<int>(_specab));
 
 	if (node["deathSound"])
@@ -251,6 +253,15 @@ int RuleUnit::getAggression() const
 SpecialAbility RuleUnit::getSpecialAbility() const
 {
 	return _specab;
+}
+
+/**
+ * Gets the unit's special ability power (fire or explode).
+ * @return, specab power
+ */
+int RuleUnit::getSpecabPower() const
+{
+	return _specabPower;
 }
 
 /**

@@ -1085,23 +1085,6 @@ void ProjectileFlyBState::cancel()
 	}
 }
 
-/*
- * Sets the origin voxel.
- * @note Used for the blaster launcher.
- * @param pos - reference the origin voxel
- *
-void ProjectileFlyBState::setOriginVoxel(const Position& pos) // private.
-{
-	_originVoxel = pos;
-} */
-/*
- * Sets the boolean flag to angle a blaster bomb towards the floor.
- *
-void ProjectileFlyBState::targetFloor() // private.
-{
-	_targetFloor = true;
-} */
-
 /**
  * Peforms a melee attack.
  * @note Removed after cosmetic surgery.
@@ -1161,7 +1144,7 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 	}
 
 	if (_unit->getSpecialAbility() == SPECAB_BURN)
-		_battleSave->getTile(_action.target)->ignite(15);
+		_battleSave->getTile(_action.target)->ignite(_unit->getUnitRules()->getSpecabPower() / 10);
 
 	_parent->getMap()->setCursorType(CT_NONE); // might be already done in primaryAction()
 

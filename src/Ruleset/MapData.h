@@ -93,7 +93,6 @@ private:
 		_block[6],
 		_dieMCD,
 		_explosive,
-		_explosiveType,
 		_flammable,
 		_footstepSound,
 		_fuel,
@@ -111,6 +110,7 @@ private:
 
 	MapDataSet* _dataset;
 
+	DamageType _explosiveType;
 	MapDataType _objectType;
 	SpecialTileType _specialType;
 
@@ -257,7 +257,7 @@ private:
 		/// Sets the amount of explosive.
 		void setExplosive(int value);
 		/// Gets the type of explosive.
-		int getExplosiveType() const;
+		DamageType getExplosiveType() const;
 		/// Sets the type of explosive.
 		void setExplosiveType(int value);
 

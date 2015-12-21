@@ -410,8 +410,6 @@ void ExplosionBState::explode() // private.
 
 	// Note: melee Hit success/failure, and hit/miss sound-FX, are determined in ProjectileFlyBState.
 
-	TileEngine* const tileEngine = _battleSave->getTileEngine();
-
 	if (_hit == true)
 	{
 		_battleSave->getBattleGame()->getCurrentAction()->type = BA_NONE;
@@ -450,6 +448,8 @@ void ExplosionBState::explode() // private.
 		}
 	}
 
+	TileEngine* const te = _battleSave->getTileEngine();
+
 	if (itRule != nullptr)
 	{
 		if (_unit == nullptr && _item->getPreviousOwner() != nullptr)
@@ -458,40 +458,33 @@ void ExplosionBState::explode() // private.
 		if (_areaOfEffect == true)
 		{
 			//Log(LOG_INFO) << "ExplosionBState::explode() AoE te::explode";
-			tileEngine->explode(
-							_center,
-							_power,
-							itRule->getDamageType(),
-							itRule->getExplosionRadius(),
-							_unit,
-							itRule->isGrenade() == true,
-							itRule->defusePulse() == true);
-//			tileEngine->setProjectileDirection(-1);
+			te->explode(
+					_center,
+					_power,
+					itRule->getDamageType(),
+					itRule->getExplosionRadius(),
+					_unit,
+					itRule->isGrenade() == true,
+					itRule->defusePulse() == true);
+//			te->setProjectileDirection(-1);
 		}
 		else
 		{
 			//Log(LOG_INFO) << "ExplosionBState::explode() point te::hit";
-			DamageType dType = itRule->getDamageType();
+			DamageType dType;
 			if (_pistolWhip == true)
 				dType = DT_STUN;
+			else
+				dType = itRule->getDamageType();
 
-			BattleUnit* const victim = tileEngine->hit(
-													_center,
-													_power,
-													dType,
-													_unit,
-													_hit,
-													itRule->getShotgunPellets() != 0);
-
-			if (itRule->getZombieUnit().empty() == false
-				&& victim != nullptr
-				&& (victim->getGeoscapeSoldier() != nullptr
-					|| victim->getUnitRules()->getRace() == "STR_CIVILIAN")
-				&& victim->getSpawnUnit().empty() == true)
-			{
-				//Log(LOG_INFO) << victim->getId() << " murderer has zombieUnit string";
-				victim->setSpawnUnit(itRule->getZombieUnit());
-			}
+			te->hit(
+					_center,
+					_power,
+					dType,
+					_unit,
+					_hit,
+					itRule->getShotgunPellets() != 0,
+					itRule->getZombieUnit());
 		}
 	}
 
@@ -500,30 +493,20 @@ void ExplosionBState::explode() // private.
 
 	if (_tile != nullptr)
 	{
-		DamageType dType;
-
-		switch (_tile->getExplosiveType())
-		{
-			case 0: dType = DT_HE;		break;
-			case 5: dType = DT_IN;		break;
-			case 6: dType = DT_STUN;	break;
-
-			default:
-				dType = DT_SMOKE;
-		}
-
-		if (dType != DT_HE)
-			_tile->setExplosive(0,0, true);
-
-		tileEngine->explode(
-						_center,
-						_power,
-						dType,
-						_power / 10);
 		terrain = true;
+		const DamageType dType (_tile->getExplosiveType());
+		if (dType != DT_HE)
+			_tile->setExplosive(0, DT_NONE, true);
+
+		te->explode(
+				_center,
+				_power,
+				dType,
+				_power / 10);
 	}
 	else if (itRule == nullptr) // explosion not caused by terrain or an item - must be a cyberdisc
 	{
+		terrain = true;
 		int radius;
 		if (_unit != nullptr
 			&& _unit->getSpecialAbility() == SPECAB_EXPLODE)
@@ -533,12 +516,11 @@ void ExplosionBState::explode() // private.
 		else
 			radius = 6;
 
-		tileEngine->explode(
-						_center,
-						_power,
-						DT_HE,
-						radius);
-		terrain = true;
+		te->explode(
+				_center,
+				_power,
+				DT_HE,
+				radius);
 	}
 
 
@@ -591,7 +573,7 @@ void ExplosionBState::explode() // private.
 	}
 
 
-	Tile* const tile = tileEngine->checkForTerrainExplosions(); // check for more exploding tiles
+	Tile* const tile = te->checkForTerrainExplosions(); // check for more exploding tiles
 	if (tile != nullptr)
 	{
 		const Position explVoxel = Position::toVoxelSpaceCentered(tile->getPosition(), 10);

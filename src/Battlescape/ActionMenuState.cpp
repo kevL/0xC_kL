@@ -99,7 +99,7 @@ ActionMenuState::ActionMenuState(
 
 		if (hasHands == true
 			&& injured == false
-			&& _action->actor->getBaseStats()->throwing != 0)
+			&& _action->actor->getBattleStats()->throwing != 0)
 		{
 			addItem(
 					BA_THROW,
@@ -172,7 +172,7 @@ ActionMenuState::ActionMenuState(
 							&id);
 				else if (itRule->getBattleType() == BT_PSIAMP)
 				{
-					if (_action->actor->getBaseStats()->psiSkill != 0)
+					if (_action->actor->getBattleStats()->psiSkill != 0)
 					{
 						addItem(
 								BA_PSICONTROL,

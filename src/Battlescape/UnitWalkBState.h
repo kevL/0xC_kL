@@ -84,7 +84,7 @@ private:
 	void setWalkSpeed(bool gravLift) const;
 
 	/// Handles the stepping sounds.
-	void playMovementSound();
+	void playMoveSound();
 
 	/// For determining if a flying unit turns flight off at start of movement.
 	void doFallCheck();

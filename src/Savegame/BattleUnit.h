@@ -655,7 +655,7 @@ private:
 				bool debugId = false) const;
 
 		/// Gets this unit's stats.
-		const UnitStats* getBaseStats() const;
+		const UnitStats* getBattleStats() const;
 
 		/// Gets this unit's stand height.
 		int getStandHeight() const;
@@ -865,6 +865,9 @@ private:
 
 		/// Gets if this unit is a Zombie.
 		bool isZombie() const;
+
+		/// Gets if this unit avoids fire-tiles.
+		bool avoidsFire() const;
 };
 
 }

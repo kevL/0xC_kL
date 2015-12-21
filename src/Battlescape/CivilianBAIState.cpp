@@ -172,7 +172,7 @@ void CivilianBAIState::think(BattleAction* action)
 	}
 
 	if (_spottingEnemies > 2
-		|| _unit->getHealth() < 2 * _unit->getBaseStats()->health / 3)
+		|| _unit->getHealth() < 2 * _unit->getBattleStats()->health / 3)
 	{
 		evaluate = true;
 	}
@@ -586,7 +586,7 @@ void CivilianBAIState::evaluateAIMode()
 		}
 
 		const float healthRatio = static_cast<float>(_unit->getHealth())
-								/ static_cast<float>(_unit->getBaseStats()->health);
+								/ static_cast<float>(_unit->getBattleStats()->health);
 		if (healthRatio < 0.33f)
 			escape *= 1.7f;
 		else if (healthRatio < 0.67f)

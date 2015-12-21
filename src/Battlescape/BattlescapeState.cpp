@@ -2703,19 +2703,19 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 		}
 
 
-		double stat = static_cast<double>(selUnit->getBaseStats()->tu);
+		double stat = static_cast<double>(selUnit->getBattleStats()->tu);
 		const int tu = selUnit->getTimeUnits();
 		_numTimeUnits->setValue(static_cast<unsigned>(tu));
 		_barTimeUnits->setValue(std::ceil(
 								static_cast<double>(tu) / stat * 100.));
 
-		stat = static_cast<double>(selUnit->getBaseStats()->stamina);
+		stat = static_cast<double>(selUnit->getBattleStats()->stamina);
 		const int energy = selUnit->getEnergy();
 		_numEnergy->setValue(static_cast<unsigned>(energy));
 		_barEnergy->setValue(std::ceil(
 								static_cast<double>(energy) / stat * 100.));
 
-		stat = static_cast<double>(selUnit->getBaseStats()->health);
+		stat = static_cast<double>(selUnit->getBattleStats()->health);
 		const int health = selUnit->getHealth();
 		_numHealth->setValue(static_cast<unsigned>(health));
 		_barHealth->setValue(std::ceil(
@@ -2878,7 +2878,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 		showPsiButton( // getSpecialWeapon() != nullptr
 					selUnit->getOriginalFaction() == FACTION_HOSTILE
-					&& selUnit->getBaseStats()->psiSkill != 0);
+					&& selUnit->getBattleStats()->psiSkill != 0);
 	}
 }
 

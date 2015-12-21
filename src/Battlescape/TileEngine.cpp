@@ -1997,95 +1997,101 @@ std::map<int, Position>* TileEngine::getReactionPositions()
  * @param attacker		- pointer to BattleUnit that caused the hit
  * @param melee			- true if no projectile, trajectory, etc. is needed (default false)
  * @param shotgun		- true if hit by shotgun pellet(s) (default false)
- * @return, pointer to the BattleUnit that got hit else nullptr
+ * @param infection		- reference to a spawn-unit (default "")
  */
-BattleUnit* TileEngine::hit(
+void TileEngine::hit(
 		const Position& targetVoxel,
 		int power,
 		DamageType dType,
 		BattleUnit* const attacker,
 		bool melee,
-		bool shotgun)
+		bool shotgun,
+		const std::string& infection)
 {
-	if (dType != DT_NONE) // bypass Psi-attacks. Psi-attacks don't get this far anymore .... But leave it in for safety.
+	if (dType == DT_NONE) return; // bypass Psi-attacks. Psi-attacks don't get this far anymore ... but safety.
+
+	const Position posTarget = Position::toTileSpace(targetVoxel);
+	Tile* const tile = _battleSave->getTile(posTarget);
+	if (tile == nullptr) return;
+
+	BattleUnit* targetUnit = tile->getUnit();
+
+	VoxelType voxelType;
+	if (melee == true)
+		voxelType = VOXEL_UNIT;
+	else
+		voxelType = voxelCheck(
+							targetVoxel,
+							attacker,
+							false, false, nullptr);
+
+	switch (voxelType)
 	{
-		const Position posTarget = Position::toTileSpace(targetVoxel);
-		Tile* const tile = _battleSave->getTile(posTarget);
-		if (tile == nullptr)
-			return nullptr;
-
-		BattleUnit* targetUnit = tile->getUnit();
-
-		VoxelType voxelType;
-		if (melee == true)
-			voxelType = VOXEL_UNIT;
-		else
-			voxelType = voxelCheck(
-								targetVoxel,
-								attacker,
-								false, false, nullptr);
-
-		if (voxelType > VOXEL_EMPTY && voxelType < VOXEL_UNIT	// 4 terrain parts (0..3)
-			&& dType != DT_STUN									// workaround for Stunrod. (might include DT_SMOKE & DT_IN)
-			&& dType != DT_SMOKE)
-		{
-			power = RNG::generate( // 25% to 75% linear.
-								power / 4,
-								power * 3 / 4);
-			// kL_note: This is where to adjust damage based on effectiveness of weapon vs Terrain!
-			// DT_NONE,		// 0
-			// DT_AP,		// 1
-			// DT_IN,		// 2
-			// DT_HE,		// 3
-			// DT_LASER,	// 4
-			// DT_PLASMA,	// 5
-			// DT_STUN,		// 6
-			// DT_MELEE,	// 7
-			// DT_ACID,		// 8
-			// DT_SMOKE		// 9
-			MapDataType partType = static_cast<MapDataType>(voxelType); // Note that MapDataType & VoxelType correspond.
-
-			switch (dType) // round up.
+		case VOXEL_FLOOR:
+		case VOXEL_WESTWALL:
+		case VOXEL_NORTHWALL:
+		case VOXEL_OBJECT:
 			{
-				case DT_AP:
-					power = ((power * 3) + 19) / 20;	// 15%
-					break;
-				case DT_LASER:
-					if (tile->getMapData(partType)->getSpecialType() != ALIEN_ALLOYS)
-						power = (power + 4) / 5;		// 20% // problem: Fusion Torch; fixed, heh.
-					break;
-				case DT_IN:
-					power = (power + 3) / 4;			// 25%
-					break;
-				case DT_PLASMA:
-					power = (power + 2) / 3;			// 33%
-					break;
-				case DT_MELEE:							// TODO: define 2 terrain types, Soft & Hard; so that edged weapons do good vs. Soft, blunt weapons do good vs. Hard
-					power = (power + 1) / 2;			// 50% TODO: allow melee attacks vs. objects.
-					break;
-				case DT_HE:								// question: do HE & IN ever get in here - hit() or explode() below
-					power += power / 10;				// 110%
+				if (dType == DT_STUN || dType == DT_SMOKE) return; // workaround for Stunrod.
 
-//				break;
-//				case DT_ACID: // 100% damage
-//				default: // [DT_NONE],[DT_STUN,DT_SMOKE]
-//					return nullptr;
-			}
+				power = RNG::generate( // 25% to 75% linear.
+									power / 4,
+									power * 3 / 4);
+				// This is where to adjust damage based on effectiveness of weapon vs Terrain!
+				// DT_NONE,		// 0
+				// DT_AP,		// 1
+				// DT_IN,		// 2
+				// DT_HE,		// 3
+				// DT_LASER,	// 4
+				// DT_PLASMA,	// 5
+				// DT_STUN,		// 6
+				// DT_MELEE,	// 7
+				// DT_ACID,		// 8
+				// DT_SMOKE		// 9
+				const MapDataType partType = static_cast<MapDataType>(voxelType); // Note that MapDataType & VoxelType correspond.
 
-			if (power > 0)
-			{
-				if (partType == O_OBJECT
-					&& _battleSave->getTacType() == TCT_BASEDEFENSE
-					&& tile->getMapData(O_OBJECT)->isBaseModule() == true
-					&& tile->getMapData(O_OBJECT)->getArmor() <= power)
+				switch (dType) // round up.
 				{
-					_battleSave->getModuleMap()[(targetVoxel.x / 16) / 10]
-											   [(targetVoxel.y / 16) / 10].second--;
+					case DT_AP:
+						power = ((power * 3) + 19) / 20;	// 15%
+						break;
+					case DT_LASER:
+						if (tile->getMapData(partType)->getSpecialType() != ALIEN_ALLOYS)
+							power = (power + 4) / 5;		// 20% // problem: Fusion Torch; fixed, heh.
+						break;
+					case DT_IN:
+						power = (power + 3) / 4;			// 25%
+						break;
+					case DT_PLASMA:
+						power = (power + 2) / 3;			// 33%
+						break;
+					case DT_MELEE:							// TODO: define 2 terrain types, Soft & Hard; so that edged weapons do good vs. Soft, blunt weapons do good vs. Hard
+						power = (power + 1) / 2;			// 50% TODO: allow melee attacks vs. objects.
+						break;
+					case DT_HE:								// question: do HE & IN ever get in here - hit() or explode() below
+						power += power / 10;				// 110%
+//						break;
+//					case DT_ACID: // 100% damage
+//					default: // [DT_NONE],[DT_STUN,DT_SMOKE]
+//						return nullptr;
 				}
-				tile->hitTile(partType, power, _battleSave);
+
+				if (power > 0)
+				{
+					if (partType == O_OBJECT
+						&& _battleSave->getTacType() == TCT_BASEDEFENSE
+						&& tile->getMapData(O_OBJECT)->isBaseModule() == true
+						&& tile->getMapData(O_OBJECT)->getArmor() <= power)
+					{
+						_battleSave->getModuleMap()[(targetVoxel.x / 16) / 10]
+												   [(targetVoxel.y / 16) / 10].second--;
+					}
+					tile->hitTile(partType, power, _battleSave);
+				}
 			}
-		}
-		else if (voxelType == VOXEL_UNIT) // battleunit voxelType HIT SUCCESS.
+			break;
+
+		case VOXEL_UNIT: // battleunit voxelType HIT SUCCESS.
 		{
 			if (targetUnit == nullptr
 				&& _battleSave->getTile(posTarget)->hasNoFloor() == true)
@@ -2099,19 +2105,17 @@ BattleUnit* TileEngine::hit(
 			{
 				const int antecedentWounds = targetUnit->getFatalWounds();
 
-				// kL_begin: TileEngine::hit(), Silacoids can set targets on fire!!
 				if (attacker != nullptr
-					&& attacker->getSpecialAbility() == SPECAB_BURN)
+					&& attacker->getSpecialAbility() == SPECAB_BURN) // Silacoids can set targets on fire!!
 				{
-					const float vulnerable = targetUnit->getArmor()->getDamageModifier(DT_IN);
-					if (vulnerable > 0.f)
+					const float vulnr = targetUnit->getArmor()->getDamageModifier(DT_IN);
+					if (vulnr > 0.f)
 					{
-						const int
-							fire = RNG::generate( // 25% - 75% / 2
-											power / 8,
-											power * 3 / 8),
-							burn = RNG::generate(0,
-											static_cast<int>(Round(vulnerable * 5.f)));
+						int fire (attacker->getUnitRules()->getSpecabPower());
+						fire = RNG::generate(
+										fire / 8,
+										fire * 3 / 8);
+						const int burn = RNG::generate(0, static_cast<int>(Round(vulnr * 5.f)));
 
 						targetUnit->damage(
 										Position(0,0,0),
@@ -2132,7 +2136,8 @@ BattleUnit* TileEngine::hit(
 				double delta;
 				if (dType == DT_HE || Options::battleTFTDDamage == true)
 					delta = 50.;
-				else delta = 100.;
+				else
+					delta = 100.;
 
 				const int
 					power1 = static_cast<int>(std::floor(static_cast<double>(power) * (100. - delta) / 100.)) + 1,
@@ -2141,15 +2146,15 @@ BattleUnit* TileEngine::hit(
 				int extraPower = 0;
 				if (attacker != nullptr) // bonus to damage per Accuracy (TODO: use ranks also for xCom or aLien)
 				{
-					if (dType == DT_AP
+					if (   dType == DT_AP
 						|| dType == DT_LASER
 						|| dType == DT_PLASMA
 						|| dType == DT_ACID)
 					{
-						extraPower = attacker->getBaseStats()->firing;
+						extraPower = attacker->getBattleStats()->firing;
 					}
 					else if (dType == DT_MELEE)
-						extraPower = attacker->getBaseStats()->melee;
+						extraPower = attacker->getBattleStats()->melee;
 
 					extraPower = static_cast<int>(Round(static_cast<double>(power * extraPower) / 1000.));
 				}
@@ -2194,6 +2199,13 @@ BattleUnit* TileEngine::hit(
 					}
 				}
 
+				if (infection.empty() == false
+					&& (targetUnit->getGeoscapeSoldier() != nullptr
+						|| targetUnit->getUnitRules()->getRace() == "STR_CIVILIAN")
+					&& targetUnit->getSpawnUnit().empty() == true)
+				{
+					targetUnit->setSpawnUnit(infection);
+				}
 
 				if (melee == false
 					&& _battleSave->getBattleGame()->getCurrentAction()->takenXp == false
@@ -2208,17 +2220,13 @@ BattleUnit* TileEngine::hit(
 				}
 			}
 		}
-
-		applyGravity(tile);
-		calculateSunShading();		// roofs could have been destroyed
-		calculateTerrainLighting();	// fires could have been started
-//		calculateUnitLighting();	// units could have collapsed <- done in UnitDieBState
-		calculateFOV(posTarget, true);
-
-		return targetUnit;
 	}
 
-	return nullptr;
+	applyGravity(tile);
+	calculateSunShading();		// roofs could have been destroyed
+	calculateTerrainLighting();	// fires could have been started
+//	calculateUnitLighting();	// units could have collapsed <- done in UnitDieBState
+	calculateFOV(posTarget, true);
 }
 
 /**
@@ -2477,8 +2485,8 @@ void TileEngine::explode(
 				if (dType == DT_HE) // explosions do 50% damage to terrain and 50% to 150% damage to units
 				{
 					//Log(LOG_INFO) << ". setExplosive() _powerE = " << _powerE;
-					tileStop->setExplosive(_powerE, 0);	// try powerT to prevent smoke/fire appearing behind intact walls etc.
-														// although that might gimp true damage vs parts calculations .... NOPE.
+					tileStop->setExplosive(_powerE, DT_NONE);	// try powerT to prevent smoke/fire appearing behind intact walls etc.
+																// although that might gimp true damage vs parts calculations .... NOPE.
 				}
 
 				_powerE = _powerT; // note: These two are becoming increasingly redundant !!!
@@ -2954,7 +2962,7 @@ void TileEngine::explode(
 	{
 		if (_trueTile != nullptr)	// special case for when a diagonal bigwall is directly targetted.
 		{							// The explosion is moved out a tile so give a full-power hit to the true target-tile.
-			_trueTile->setExplosive(power, 0);
+			_trueTile->setExplosive(power, DT_NONE);
 			detonate(_trueTile);	// I doubt this needs any *further* consideration ...
 		}							// although it would be nice to have the explosion 'kick in' a bit.
 
@@ -4111,7 +4119,7 @@ void TileEngine::detonate(Tile* const tile) const
 
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "TileEngine::detonate() " << tile->getPosition() << " power = " << power;
-	tile->setExplosive(0,0, true); // reset Tile's '_explosive' value to 0
+	tile->setExplosive(0, DT_NONE, true); // reset Tile's '_explosive' value to 0
 
 
 	const Position pos = tile->getPosition();
@@ -5837,7 +5845,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 	{
 		if (action->type == BA_PSICOURAGE)
 		{
-			const int moraleGain = 10 + RNG::generate(0,20) + (action->actor->getBaseStats()->psiSkill / 10);
+			const int moraleGain = 10 + RNG::generate(0,20) + (action->actor->getBattleStats()->psiSkill / 10);
 			action->value = moraleGain;
 			victim->moraleChange(moraleGain);
 
@@ -5853,8 +5861,8 @@ bool TileEngine::psiAttack(BattleAction* const action)
 		}
 
 		const UnitStats
-			* const statsActor = action->actor->getBaseStats(),
-			* const statsVictim = victim->getBaseStats();
+			* const statsActor = action->actor->getBattleStats(),
+			* const statsVictim = victim->getBattleStats();
 
 		int
 			psiStrength,

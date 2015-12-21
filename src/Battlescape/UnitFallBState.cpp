@@ -400,13 +400,14 @@ void UnitFallBState::think()
 				if ((*i)->getSpecialAbility() == SPECAB_BURN) // if the unit burns floortiles, burn floortiles
 				{
 					// kL_add: Put burnedBySilacoid() here! etc
-					(*i)->getTile()->ignite(1);
-					const Position pos = Position::toVoxelSpaceCentered(
-																	(*i)->getPosition(),
-																	-(*i)->getTile()->getTerrainLevel());
+					const int power ((*i)->getUnitRules()->getSpecabPower());
+					(*i)->getTile()->ignite(power / 10);
+					const Position targetVoxel = Position::toVoxelSpaceCentered(
+																		(*i)->getPosition(),
+																		-(*i)->getTile()->getTerrainLevel());
 					_parent->getTileEngine()->hit(
-												pos,
-												(*i)->getBaseStats()->strength, // * (*i)->getAccuracyModifier(),
+												targetVoxel,
+												power,
 												DT_IN,
 												*i);
 				}

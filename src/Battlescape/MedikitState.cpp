@@ -215,7 +215,7 @@ MedikitState::MedikitState(BattleAction* action)
 
 	_numHealth->setColor(RED);
 	_numTotalHP->setColor(RED);
-	_numTotalHP->setValue(static_cast<unsigned>(_action->targetUnit->getBaseStats()->health));
+	_numTotalHP->setValue(static_cast<unsigned>(_action->targetUnit->getBattleStats()->health));
 
 //	_barHealth->setScale();
 //	_barEnergy->setScale();
@@ -455,7 +455,7 @@ void MedikitState::update()
 	_txtHeal->setText(toString(_action->weapon->getHealQuantity()));
 
 	// Health/ Stamina/ Morale of the recipient
-	double stat = static_cast<double>(_action->targetUnit->getBaseStats()->health);
+	double stat = static_cast<double>(_action->targetUnit->getBattleStats()->health);
 	const int health = _action->targetUnit->getHealth();
 	_numHealth->setValue(static_cast<unsigned>(health));
 	_numStun->setValue(static_cast<unsigned>(_action->targetUnit->getStun()));
@@ -464,7 +464,7 @@ void MedikitState::update()
 	_barHealth->setValue2(std::ceil(
 							static_cast<double>(_action->targetUnit->getStun()) / stat * 100.));
 
-	stat = static_cast<double>(_action->targetUnit->getBaseStats()->stamina);
+	stat = static_cast<double>(_action->targetUnit->getBattleStats()->stamina);
 	const int energy = _action->targetUnit->getEnergy();
 	_numEnergy->setValue(static_cast<unsigned>(energy));
 	_barEnergy->setValue(std::ceil(
@@ -475,7 +475,7 @@ void MedikitState::update()
 	_barMorale->setValue(static_cast<double>(morale));
 
 	// TU of the MedKit user
-	stat = static_cast<double>(_action->actor->getBaseStats()->tu);
+	stat = static_cast<double>(_action->actor->getBattleStats()->tu);
 	const int tu = _action->actor->getTimeUnits();
 	_numTimeUnits->setValue(static_cast<unsigned>(tu));
 	_barTimeUnits->setValue(std::ceil(

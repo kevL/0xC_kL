@@ -802,6 +802,7 @@ units:
     aggression: 2
     energyRecovery: 80
     specab: 2
+    specabPower: 40
     livingWeapon: true
     hasHands: false
     dog: true

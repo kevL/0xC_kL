@@ -374,7 +374,7 @@ void AlienBAIState::think(BattleAction* action)
 	}
 
 	if (_xcomSpotters > 2
-		|| _unit->getHealth() < _unit->getBaseStats()->health * 2 / 3
+		|| _unit->getHealth() < _unit->getBattleStats()->health * 2 / 3
 		|| (_aggroTarget != nullptr
 			&& _aggroTarget->getExposed() != -1
 			&& _aggroTarget->getExposed() > _intelligence))
@@ -1462,7 +1462,7 @@ void AlienBAIState::evaluateAIMode() // private.
 			combatOdds = 23.f, // was 20
 			escapeOdds = 13.f; // was 15
 
-		if (_unit->getTimeUnits() > _unit->getBaseStats()->tu / 2
+		if (_unit->getTimeUnits() > _unit->getBattleStats()->tu / 2
 			|| _unit->getChargeTarget() != nullptr)
 		{
 			escapeOdds = 5.f;
@@ -1536,19 +1536,19 @@ void AlienBAIState::evaluateAIMode() // private.
 		}
 
 		// take our overall health into consideration
-		if (_unit->getHealth() < _unit->getBaseStats()->health / 3)
+		if (_unit->getHealth() < _unit->getBattleStats()->health / 3)
 		{
 			escapeOdds *= 1.8f; // was 1.7
 			combatOdds *= 0.6f; // was 0.6
 			ambushOdds *= 0.7f; // was 0.75
 		}
-		else if (_unit->getHealth() < _unit->getBaseStats()->health * 2 / 3)
+		else if (_unit->getHealth() < _unit->getBattleStats()->health * 2 / 3)
 		{
 			escapeOdds *= 1.5f; // was 1.4
 			combatOdds *= 0.8f; // was 0.8
 			ambushOdds *= 0.9f; // was 0.8
 		}
-		else if (_unit->getHealth() < _unit->getBaseStats()->health)
+		else if (_unit->getHealth() < _unit->getBattleStats()->health)
 			escapeOdds *= 1.2f; // was 1.1
 
 		switch (_unit->getAggression()) // take aggression into consideration
@@ -1849,7 +1849,7 @@ bool AlienBAIState::explosiveEfficacy(
 	{
 		pct = (100 - attacker->getMorale()) / 3;
 		pct += 2 * (10 - static_cast<int>(
-						 static_cast<float>(attacker->getHealth()) / static_cast<float>(attacker->getBaseStats()->health)
+						 static_cast<float>(attacker->getHealth()) / static_cast<float>(attacker->getBattleStats()->health)
 						 * 10.f));
 		pct += attacker->getAggression() * 10;
 
@@ -2376,7 +2376,7 @@ bool AlienBAIState::psiAction() // private.
 {
 	//Log(LOG_INFO) << "AlienBAIState::psiAction() ID = " << _unit->getId();
 	if (_didPsi == false									// didn't already do a psi action this round
-		&& _unit->getBaseStats()->psiSkill != 0				// has psiSkill
+		&& _unit->getBattleStats()->psiSkill != 0				// has psiSkill
 		&& _unit->getOriginalFaction() == FACTION_HOSTILE)	// don't let any faction but HOSTILE mind-control others.
 	{
 		const RuleItem* const itRule = _battleSave->getBattleGame()->getRuleset()->getItem("ALIEN_PSI_WEAPON");
@@ -2384,7 +2384,7 @@ bool AlienBAIState::psiAction() // private.
 		int tuCost = itRule->getUseTu();
 		if (itRule->getFlatRate() == false)
 			tuCost = static_cast<int>(std::floor(
-					 static_cast<float>(_unit->getBaseStats()->tu * tuCost) / 100.f));
+					 static_cast<float>(_unit->getBattleStats()->tu * tuCost) / 100.f));
 		//Log(LOG_INFO) << "AlienBAIState::psiAction() tuCost = " << tuCost;
 
 		if (_unit->getTimeUnits() < tuCost + _tuEscape) // check if aLien has the required TUs and can still make it to cover
@@ -2397,7 +2397,7 @@ bool AlienBAIState::psiAction() // private.
 			const int
 				losFactor = 50, // increase chance of attack against a unit that is currently in LoS.
 				attackStr = static_cast<int>(std::floor(
-							static_cast<double>(_unit->getBaseStats()->psiStrength * _unit->getBaseStats()->psiSkill) / 50.));
+							static_cast<double>(_unit->getBattleStats()->psiStrength * _unit->getBattleStats()->psiSkill) / 50.));
 			//Log(LOG_INFO) << ". . attackStr = " << attackStr;
 
 			bool losTrue = false;
@@ -2434,7 +2434,7 @@ bool AlienBAIState::psiAction() // private.
 																							_unit)) * losFactor,
 						// stupid aLiens don't know soldier's psiSkill tho..
 						// psiSkill would typically factor in at only a fifth of psiStrength.
-						defense = (*i)->getBaseStats()->psiStrength,
+						defense = (*i)->getBattleStats()->psiStrength,
 						dist = TileEngine::distance(
 												(*i)->getPosition(),
 												_unit->getPosition()) * 2,
@@ -2505,7 +2505,7 @@ bool AlienBAIState::psiAction() // private.
 //				&& chance < 30)	// esp. when aLien atkStr is low
 			{
 				//Log(LOG_INFO) << ". . test if MC or Panic";
-				const int bravery = _aggroTarget->getBaseStats()->bravery;
+				const int bravery = _aggroTarget->getBattleStats()->bravery;
 				int panicOdds = 110 - bravery; // ie, moraleHit
 				const int moraleResult = morale - panicOdds;
 				//Log(LOG_INFO) << ". . panicOdds_1 = " << panicOdds;
@@ -2633,7 +2633,7 @@ void AlienBAIState::selectMeleeOrRanged() // private.
 			meleeOdds -= 15 * (_targetsVisible - 1);
 
 		if (meleeOdds > 0
-			&& _unit->getHealth() > _unit->getBaseStats()->health * 2 / 3)
+			&& _unit->getHealth() > _unit->getBattleStats()->health * 2 / 3)
 		{
 			if (_unit->getAggression() == 0)
 				meleeOdds -= 20;

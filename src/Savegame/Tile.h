@@ -29,6 +29,7 @@
 #include "../Battlescape/Position.h"
 
 #include "../Ruleset/MapData.h"
+//#include "../Ruleset/RuleItem.h" // DamageType enum, already in MapData.h
 
 
 namespace OpenXcom
@@ -62,7 +63,6 @@ protected:
 		_animOffset,
 		_curFrame[4],
 		_explosive,
-		_explosiveType,
 		_fire,
 		_light[LIGHTLAYERS],
 		_mapDataId[4],
@@ -71,6 +71,8 @@ protected:
 		_smoke,
 		_tuMarker;
 	Uint8 _markerColor;
+
+	DamageType _explosiveType;
 
 	BattleUnit* _unit;
 	MapData* _objects[4];
@@ -225,12 +227,12 @@ protected:
 		/// Sets a virtual explosive on this tile to detonate later.
 		void setExplosive(
 				int power,
-				int explType,
+				DamageType explType,
 				bool force = false);
 		/// Gets explosive power of this tile.
 		int getExplosive() const;
 		/// Gets explosive type of this tile.
-		int getExplosiveType() const;
+		DamageType getExplosiveType() const;
 
 		/// Gets flammability.
 		int getFlammability() const;

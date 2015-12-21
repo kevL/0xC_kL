@@ -1596,8 +1596,7 @@ void BattlescapeGame::checkForCasualties(
 	{
 		if (attacker->getUnitStatus() == STATUS_DEAD
 			&& attacker->getMurdererId() != 0
-			&& attacker->getUnitRules() != nullptr
-			&& attacker->getUnitRules()->getSpecialAbility() == SPECAB_EXPLODE)
+			&& attacker->getSpecialAbility() == SPECAB_EXPLODE)
 		{
 			for (std::vector<BattleUnit*>::const_iterator
 					i = _battleSave->getUnits()->begin();
@@ -1887,7 +1886,7 @@ void BattlescapeGame::checkForCasualties(
 							{
 								// losing team(s) all get a morale loss
 								// based on their individual Bravery & rank of unit that was killed
-								int moraleLoss = (110 - (*j)->getBaseStats()->bravery) / 10;
+								int moraleLoss = (110 - (*j)->getBattleStats()->bravery) / 10;
 								if (moraleLoss > 0) // pure safety, ain't gonna happen really.
 								{
 									moraleLoss = moraleLoss * loss * 2 / bTeam;
@@ -2013,7 +2012,7 @@ void BattlescapeGame::checkForCasualties(
 			const BattleUnit* const unit = _battleSave->getSelectedUnit();
 			_parentState->showPsiButton(unit != nullptr
 									 && unit->getOriginalFaction() == FACTION_HOSTILE
-									 && unit->getBaseStats()->psiSkill != 0
+									 && unit->getBattleStats()->psiSkill != 0
 									 && unit->isOut_t() == false);
 		}
 
@@ -2093,13 +2092,13 @@ bool BattlescapeGame::checkReservedTu(
 		switch (batReserved) // aLiens reserve TUs as a percentage rather than just enough for a single action.
 		{
 			case BA_SNAPSHOT:
-			return (tu + extraReserve + (unit->getBaseStats()->tu / 3) <= unit->getTimeUnits());		// 33%
+			return (tu + extraReserve + (unit->getBattleStats()->tu / 3) <= unit->getTimeUnits());		// 33%
 
 			case BA_AUTOSHOT:
-			return (tu + extraReserve + (unit->getBaseStats()->tu * 2 / 5) <= unit->getTimeUnits());	// 40%
+			return (tu + extraReserve + (unit->getBattleStats()->tu * 2 / 5) <= unit->getTimeUnits());	// 40%
 
 			case BA_AIMEDSHOT:
-			return (tu + extraReserve + (unit->getBaseStats()->tu / 2) <= unit->getTimeUnits());		// 50%
+			return (tu + extraReserve + (unit->getBattleStats()->tu / 2) <= unit->getTimeUnits());		// 50%
 
 			default:
 			return (tu <= unit->getTimeUnits()); // + extraReserve
