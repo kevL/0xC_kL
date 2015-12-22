@@ -353,7 +353,7 @@ items:
     bigSprite: 515
     floorSprite: 515
     handSprite: 560
-    fireSound: 166
+    fireSound: 165
     compatibleAmmo:
       - STR_SHOTGUN_SHELLS
       - STR_ALLOY_SHOTGUN_SHELLS
@@ -1835,7 +1835,7 @@ extraSounds:
       163: Resources/EqualTerms1/SniperRifle/Sounds/fire.wav
       164: Resources/EqualTerms1/SAW/Sounds/fire.wav
       165: Resources/EqualTerms1/Shotgun/Sounds/Fire.wav
-      166: Resources/EqualTerms1/Shotgun/Sounds/Fire2.wav
+#      166: Resources/EqualTerms1/Shotgun/Sounds/Fire2.wav
       167: Resources/EqualTerms1/SSRL/Sounds/fire.wav
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------

@@ -1586,7 +1586,7 @@ inline void BattlescapeState::handle(Action* action)
 									{
 										checkCasualties = true;
 										(*i)->setHealth(0);
-//										(*i)->damage(Position(0,0,0), 1000, DT_AP, true);
+//										(*i)->takeDamage(Position(0,0,0), 1000, DT_AP, true);
 									}
 								}
 							}
@@ -1604,7 +1604,7 @@ inline void BattlescapeState::handle(Action* action)
 									{
 										checkCasualties = true;
 										(*i)->setStun((*i)->getHealth() + 100);
-//										(*i)->damage(Position(0,0,0), 1000, DT_STUN, true);
+//										(*i)->takeDamage(Position(0,0,0), 1000, DT_STUN, true);
 									}
 								}
 							}
@@ -2541,17 +2541,7 @@ bool BattlescapeState::playableUnitSelected()
  */
 void BattlescapeState::updateSoldierInfo(bool calcFoV)
 {
-	for (size_t // remove target indicators
-			i = 0;
-			i != HOTSQRS;
-			++i)
-	{
-		_btnHostileUnit[i]->setVisible(false);
-		_numHostileUnit[i]->setVisible(false);
-
-		_hostileUnit[i] = nullptr;
-	}
-
+	hotSqrsClear();
 	_rank->clear();
 
 	_btnRightHandItem->clear();
@@ -2635,24 +2625,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 		if (calcFoV == true)
 			_battleSave->getTileEngine()->calculateFOV(selUnit);
 
-		size_t j = 0;
-		for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
-			i != _battleSave->getUnits()->end()
-				&& j != HOTSQRS;
-			++i)
-		{
-			if ((*i)->isOut() == false
-				&& (*i)->getUnitVisible() == true
-				&& (*i)->getFaction() == FACTION_HOSTILE)
-			{
-				_btnHostileUnit[j]->setVisible();
-				_numHostileUnit[j]->setVisible();
-
-				_hostileUnit[j++] = *i;
-			}
-		}
-
+		hotSqrsUpdate();
 
 		_txtName->setText(selUnit->getName(
 										_game->getLanguage(),
@@ -2883,40 +2856,40 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 }
 
 /**
- * Refreshes the visUnits indicators for UnitWalk/TurnBStates.
- * @note Should not run when player's units are panicking.
+ * Clears the hostile unit indicator squares.
  */
-void BattlescapeState::updateHostileHotcons()
+void BattlescapeState::hotSqrsClear()
 {
-	if (playableUnitSelected() == true)
-	{
-		for (size_t // hide target indicators & clear targets
-				i = 0;
-				i != HOTSQRS;
-				++i)
-		{
-			_btnHostileUnit[i]->setVisible(false);
-			_numHostileUnit[i]->setVisible(false);
-
-			_hostileUnit[i] = nullptr;
-		}
-
-		size_t j = 0;
-		for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
-			i != _battleSave->getUnits()->end()
-				&& j != HOTSQRS;
+	for (size_t // hide target indicators & clear targets
+			i = 0;
+			i != HOTSQRS;
 			++i)
-		{
-			if ((*i)->isOut_t(OUT_STAT) == false
-				&& (*i)->getUnitVisible() == true
-				&& (*i)->getFaction() == FACTION_HOSTILE)
-			{
-				_btnHostileUnit[j]->setVisible();
-				_numHostileUnit[j]->setVisible();
+	{
+		_btnHostileUnit[i]->setVisible(false);
+		_numHostileUnit[i]->setVisible(false);
+		_hostileUnit[i] = nullptr;
+	}
+}
 
-				_hostileUnit[j++] = *i;
-			}
+/**
+ * Updates the hostile unit indicator squares.
+ */
+void BattlescapeState::hotSqrsUpdate()
+{
+	size_t j = 0;
+	for (std::vector<BattleUnit*>::const_iterator
+		i = _battleSave->getUnits()->begin();
+		i != _battleSave->getUnits()->end() && j != HOTSQRS;
+		++i)
+	{
+		if ((*i)->isOut_t(OUT_STAT) == false
+			&& (*i)->getUnitVisible() == true
+			&& (*i)->getFaction() == FACTION_HOSTILE)
+		{
+			_btnHostileUnit[j]->setVisible();
+			_numHostileUnit[j]->setVisible();
+
+			_hostileUnit[j++] = *i;
 		}
 	}
 }

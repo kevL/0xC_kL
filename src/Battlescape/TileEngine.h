@@ -87,7 +87,7 @@ private:
 	/// Calculates blockage of various persuasions.
 	int blockage(
 			const Tile* const tile,
-			const MapDataType tPart,
+			const MapDataType partType,
 			const DamageType dType,
 			const int dir = -1,
 			const bool isStartTile = false,

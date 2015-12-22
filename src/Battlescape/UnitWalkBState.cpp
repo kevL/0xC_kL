@@ -198,7 +198,12 @@ void UnitWalkBState::think()
 			if (_unit->getFaction() == FACTION_PLAYER
 				&& _parent->getPanicHandled() == true)
 			{
-				_parent->getBattlescapeState()->updateHostileHotcons();
+				BattlescapeState* const battleState (_parent->getBattlescapeState());
+				if (battleState->playableUnitSelected() == true)
+				{
+					battleState->hotSqrsClear();
+					battleState->hotSqrsUpdate();
+				}
 			}
 		}
 		else if (_isVisible == true) // keep walking ... make sure the unit sprites are up to date
@@ -924,7 +929,12 @@ void UnitWalkBState::doStatusTurn() // private.
 	else if (_unit->getFaction() == FACTION_PLAYER
 		&& _parent->getPanicHandled() == true)
 	{
-		_parent->getBattlescapeState()->updateHostileHotcons();
+		BattlescapeState* const battleState (_parent->getBattlescapeState());
+		if (battleState->playableUnitSelected() == true)
+		{
+			battleState->hotSqrsClear();
+			battleState->hotSqrsUpdate();
+		}
 	}
 }
 

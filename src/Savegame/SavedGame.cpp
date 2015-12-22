@@ -665,6 +665,12 @@ void SavedGame::save(const std::string& file) const
 	brief["name"]		= Language::wstrToUtf8(_name);
 	brief["edition"]	= OPENXCOM_VERSION_GIT;
 //	brief["version"]	= OPENXCOM_VERSION_SHORT;
+
+//	std::string git_sha = OPENXCOM_VERSION_GIT;
+//	if (git_sha[0] ==  '.')
+//		git_sha.erase(0,1);
+//	brief["build"] = git_sha;
+
 	brief["build"]		= Version::getBuildDate(false);
 	brief["savedate"]	= Version::timeStamp();
 	brief["time"]		= _time->save();

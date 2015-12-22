@@ -1580,7 +1580,7 @@ bool TileEngine::checkReactionFire(
 	if (_battleSave->getSide() == FACTION_NEUTRAL						// no reaction on civilian turn.
 		|| triggerUnit->getFaction() != _battleSave->getSide()			// spotted unit must be current side's faction
 		|| triggerUnit->getTile() == nullptr								// and must be on map
-		|| triggerUnit->isOut(true, true) == true)						// and must be conscious
+		|| triggerUnit->isOut_t(OUT_HLTH_STUN) == true)					// and must be conscious
 //		|| _battleSave->getBattleGame()->getPanicHandled() == false)	// and ... nahhh. Note that doesn't affect aLien RF anyway.
 	{
 		return false;
@@ -2117,9 +2117,9 @@ void TileEngine::hit(
 										fire * 3 / 8);
 						const int burn = RNG::generate(0, static_cast<int>(Round(vulnr * 5.f)));
 
-						targetUnit->damage(
-										Position(0,0,0),
-										fire, DT_IN, true);
+						targetUnit->takeDamage(
+											Position(0,0,0),
+											fire, DT_IN, true);
 
 						if (targetUnit->getFireUnit() < burn)
 							targetUnit->setFireUnit(burn); // catch fire and burn
@@ -2164,10 +2164,10 @@ void TileEngine::hit(
 				power /= 2;
 				power += extraPower;
 
-				power = targetUnit->damage(
-										relationalVoxel,
-										power, dType,
-										dType == DT_STUN || dType == DT_SMOKE);	// stun ignores armor... does now! UHM.... note it still gets Vuln.modifier, but not armorReduction.
+				power = targetUnit->takeDamage(
+											relationalVoxel,
+											power, dType,
+											dType == DT_STUN || dType == DT_SMOKE);	// stun ignores armor... does now! UHM.... note it still gets Vuln.modifier, but not armorReduction.
 
 				if (shotgun == true) targetUnit->hasCried(true);
 
@@ -2525,11 +2525,7 @@ void TileEngine::explode(
 										  + RNG::generate(1, _powerE * 2);
 								powerUnit /= 2;
 								//Log(LOG_INFO) << ". . . powerUnit = " << powerUnit << " DT_STUN";
-								targetUnit->damage(
-												Position(0,0,0),
-												powerUnit,
-												DT_STUN,
-												true);
+								targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_STUN, true);
 							}
 
 							BattleUnit* bu;
@@ -2550,7 +2546,7 @@ void TileEngine::explode(
 											  + RNG::generate(1, _powerE * 2);
 									powerUnit /= 2;
 									//Log(LOG_INFO) << ". . . . powerUnit (corpse) = " << powerUnit << " DT_STUN";
-									bu->damage(Position(0,0,0), powerUnit, DT_STUN, true);
+									bu->takeDamage(Position(0,0,0), powerUnit, DT_STUN, true);
 								}
 							}
 						}
@@ -2608,7 +2604,7 @@ void TileEngine::explode(
 
 									if (powerUnit > 0)
 									{
-										targetUnit->damage(pos, powerUnit, DT_HE);
+										targetUnit->takeDamage(pos, powerUnit, DT_HE);
 										//Log(LOG_INFO) << ". . . realDamage = " << damage << " DT_HE";
 									}
 								}
@@ -2646,7 +2642,7 @@ void TileEngine::explode(
 												  + static_cast<int>(RNG::generate(power1, power2));
 										powerUnit /= 2;
 										//Log(LOG_INFO) << ". . . INVENTORY: power = " << powerUnit;
-										bu->damage(Position(0,0,0), powerUnit, DT_HE);
+										bu->takeDamage(Position(0,0,0), powerUnit, DT_HE);
 										//Log(LOG_INFO) << ". . . INVENTORY: damage = " << dam;
 
 //										if (bu->getHealth() == 0)
@@ -2722,7 +2718,7 @@ void TileEngine::explode(
 								powerUnit = RNG::generate( // 10% to 20%
 														_powerE / 10,
 														_powerE / 5);
-								targetUnit->damage(Position(0,0,0), powerUnit, DT_SMOKE, true);
+								targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_SMOKE, true);
 								//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
 							}
 
@@ -2743,7 +2739,7 @@ void TileEngine::explode(
 									powerUnit = RNG::generate( // 10% to 20%
 															_powerE / 10,
 															_powerE / 5);
-									bu->damage(Position(0,0,0), powerUnit, DT_SMOKE, true);
+									bu->takeDamage(Position(0,0,0), powerUnit, DT_SMOKE, true);
 								}
 							}
 						}
@@ -2758,7 +2754,7 @@ void TileEngine::explode(
 								powerUnit = RNG::generate( // 25% - 75%
 														_powerE / 4,
 														_powerE * 3 / 4);
-								targetUnit->damage(Position(0,0,0), powerUnit, DT_IN, true);
+								targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_IN, true);
 								//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
 
 								const float vulnr = targetUnit->getArmor()->getDamageModifier(DT_IN);
@@ -2812,7 +2808,7 @@ void TileEngine::explode(
 								powerUnit = RNG::generate( // 25% - 75%
 														_powerE / 4,
 														_powerE * 3 / 4);
-								targetUnit->damage(Position(0,0,0), powerUnit, DT_IN, true);
+								targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_IN, true);
 								//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
 
 								const float vulnr = targetUnit->getArmor()->getDamageModifier(DT_IN);
@@ -2847,7 +2843,7 @@ void TileEngine::explode(
 										powerUnit = RNG::generate( // 25% - 75%
 																_powerE / 4,
 																_powerE * 3 / 4);
-										bu->damage(Position(0,0,0), powerUnit, DT_IN, true);
+										bu->takeDamage(Position(0,0,0), powerUnit, DT_IN, true);
 
 //										if (bu->getHealth() == 0)
 										if (bu->isOut_t(OUT_HLTH) == true)
@@ -3788,7 +3784,7 @@ int TileEngine::verticalBlockage(
  * Calculates the amount of power or LoS/FoV/LoF that various types of
  * walls/bigwalls or floors or object parts of a tile blocks.
  * @param startTile		- pointer to tile where the power starts
- * @param tPart			- the part of the tile that the power tries to go through (MapData.h)
+ * @param partType		- the part of the tile that the power tries to go through (MapData.h)
  * @param dType			- the type of power (RuleItem.h) DT_NONE if line-of-vision
  * @param dir			- direction the power travels	-1	walls & floors (default)
  *														 0+	big-walls & content
@@ -3806,7 +3802,7 @@ int TileEngine::verticalBlockage(
  */
 int TileEngine::blockage(
 		const Tile* const tile,
-		const MapDataType tPart,
+		const MapDataType partType,
 		const DamageType dType,
 		const int dir,
 		const bool isStartTile,
@@ -3819,45 +3815,44 @@ int TileEngine::blockage(
 					  || dType == DT_STUN
 					  || dType == DT_IN;
 
-	if (tile == nullptr || tile->isUfoDoorOpen(tPart) == true)	// probably outside the map here
-	{															// open ufo doors are actually still closed behind the scenes
+	if (tile == nullptr || tile->isUfoDoorOpen(partType) == true)	// probably outside the map here
+	{																// open ufo doors are actually still closed behind the scenes
 		//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret ( no tile OR ufo-door open )"; // lag to file
 		return 0;
 	}
 
-	if (tile->getMapData(tPart) != nullptr)
+	if (tile->getMapData(partType) != nullptr)
 	{
 		bool diagBigwallPass = false; // spaghetti strand #397
 
-		//if (_debug) Log(LOG_INFO) << ". dir = " << dir << " getMapData(tPart) stopLOS() = " << tile->getMapData(tPart)->stopLOS();
+		//if (_debug) Log(LOG_INFO) << ". dir = " << dir << " getMapData(partType) stopLOS() = " << tile->getMapData(partType)->stopLOS();
 		if (dir == -1) // regular north/west wall (not BigWall), or it's a floor, or a Content-object (incl. BigWall) vs upward-diagonal.
 		{
 			if (visLike == true)
 			{
-				if ((tile->getMapData(tPart)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
-							|| (dType == DT_SMOKE && tile->getMapData(tPart)->getBlock(DT_SMOKE) == 1)
-							|| (dType == DT_IN && tile->getMapData(tPart)->blockFire() == true))
-						&& (tile->getMapData(tPart)->getPartType() == O_OBJECT // this one is for verticalBlockage() only.
-							|| tile->getMapData(tPart)->getPartType() == O_NORTHWALL
-							|| tile->getMapData(tPart)->getPartType() == O_WESTWALL)
-					|| tile->getMapData(tPart)->getPartType() == O_FLOOR)	// all floors that block LoS should have their stopLOS flag set true if not gravLift floor.
-																			// Might want to check hasNoFloor() flag.
-				{
-					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[0] tPart = " << tPart << " " << tile->getPosition();
+				if ((tile->getMapData(partType)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
+							|| (dType == DT_SMOKE && tile->getMapData(partType)->getBlock(DT_SMOKE) == 1)
+							|| (dType == DT_IN && tile->getMapData(partType)->blockFire() == true))
+						&& (tile->getMapData(partType)->getPartType() == O_OBJECT // this one is for verticalBlockage() only.
+							|| tile->getMapData(partType)->getPartType() == O_NORTHWALL
+							|| tile->getMapData(partType)->getPartType() == O_WESTWALL)
+					|| tile->getMapData(partType)->getPartType() == O_FLOOR)	// all floors that block LoS should have their stopLOS flag set true if not gravLift floor.
+				{																// Might want to check hasNoFloor() flag.
+					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[0] partType = " << partType << " " << tile->getPosition();
 					return 1000;
 				}
 			}
-			else if (tile->getMapData(tPart)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
+			else if (tile->getMapData(partType)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
 				&& _powerE > -1
-				&& _powerE < tile->getMapData(tPart)->getArmor() * 2) // terrain absorbs 200% damage from DT_HE!
+				&& _powerE < tile->getMapData(partType)->getArmor() * 2) // terrain absorbs 200% damage from DT_HE!
 			{
-				//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[1] tPart = " << tPart << " " << tile->getPosition();
+				//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[1] partType = " << partType << " " << tile->getPosition();
 				return 1000; // this is a hardblock for HE; hence it has to be higher than the highest HE power in the Rulesets.
 			}
 		}
-		else // dir > -1 -> OBJECT tPart. ( BigWalls & content ) *always* an OBJECT-tPart gets passed in through here, and *with* a direction.
+		else // dir > -1 -> OBJECT partType. (BigWalls & content) *always* an OBJECT-partType gets passed in through here, and *with* a direction.
 		{
-			const BigwallTypes bigWall = static_cast<BigwallTypes>(tile->getMapData(O_OBJECT)->getBigwall()); // 0..9 or, per MCD.
+			const BigwallType bigWall = static_cast<BigwallType>(tile->getMapData(O_OBJECT)->getBigwall()); // 0..9 or, per MCD.
 			//if (_debug) Log(LOG_INFO) << ". dir = " << dir << " bigWall = " << bigWall;
 
 			if (_powerE != -1)
@@ -3906,7 +3901,7 @@ int TileEngine::blockage(
 				}
 			}
 
-			if (isStartTile == true) // the ContentOBJECT already got hit as the previous endTile... but can still block LoS when looking down ...
+			if (isStartTile == true) // the ContentOBJECT already got hit as the previous endTile ... but can still block LoS when looking down ...
 			{
 /*				bool diagStop = true; // <- superceded by ProjectileFlyBState::_prjVector ->
 				if (dType == DT_HE && _missileDirection != -1)
@@ -3918,7 +3913,7 @@ int TileEngine::blockage(
 
 				// this needs to check which side the *missile* is coming from,
 				// although grenades that land on a diagonal bigWall are exempt regardless!!!
-				if (bigWall == BIGWALL_NONE // !visLike, if (only Content-tPart == true) -> all DamageTypes ok here (because, origin).
+				if (bigWall == BIGWALL_NONE // !visLike, if (only Content-partType == true) -> all DamageTypes ok here (because, origin).
 /*					|| (diagStop == false
 						&& (bigWall == BIGWALL_NESW || bigWall == BIGWALL_NWSE)) */
 					|| (dir == Pathfinding::DIR_DOWN
@@ -3935,7 +3930,7 @@ int TileEngine::blockage(
 					&& _powerE > -1
 					&& _powerE < tile->getMapData(O_OBJECT)->getArmor() * 2)
 				{
-					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[2] tPart = " << tPart << " " << tile->getPosition();
+					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[2] partType = " << partType << " " << tile->getPosition();
 					return 1000;
 				}
 			}
@@ -3946,12 +3941,12 @@ int TileEngine::blockage(
 					|| (dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
 					|| (dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true)))
 			{
-				//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[3] tPart = " << tPart << " " << tile->getPosition();
+				//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[3] partType = " << partType << " " << tile->getPosition();
 				return 1000;
 			}
 
 
-			switch (dir) // -> OBJECT tPart. ( BigWalls & content )
+			switch (dir) // -> OBJECT partType. ( BigWalls & content )
 			{
 				case 0: // north
 					if (diagBigwallPass == true
@@ -3961,7 +3956,7 @@ int TileEngine::blockage(
 						|| bigWall == BIGWALL_E_S)
 					{
 						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 0 north )";
-						return 0; // tPart By-passed.
+						return 0; // partType By-passed.
 					}
 				break;
 
@@ -4062,7 +4057,7 @@ int TileEngine::blockage(
 			}
 
 
-			// might be Content-tPart or remaining-bigWalls block here
+			// might be Content-partType or remaining-bigWalls block here
 			if (tile->getMapData(O_OBJECT)->stopLOS() == true // use stopLOS to hinder explosions from propagating through bigWalls freely. // stopLOS() should join w/ DT_NONE ...
 				|| (dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
 				|| (dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true))
@@ -4072,7 +4067,7 @@ int TileEngine::blockage(
 						&& _powerE > -1
 						&& _powerE < tile->getMapData(O_OBJECT)->getArmor() * 2)) // terrain absorbs 200% damage from DT_HE!
 				{
-					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " isTrueDir = " << isTrueDir << " Ret 1000[4] tPart = " << tPart << " " << tile->getPosition();
+					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " isTrueDir = " << isTrueDir << " Ret 1000[4] partType = " << partType << " " << tile->getPosition();
 					return 1000; // this is a hardblock for HE; hence it has to be higher than the highest HE power in the Rulesets.
 				}
 			}
@@ -4080,13 +4075,13 @@ int TileEngine::blockage(
 
 		if (visLike == false && diagBigwallPass == false)	// only non-visLike can get partly blocked; other damage-types
 		{													// are either completely blocked above or get a pass here
-			//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret = " << tile->getMapData(tPart)->getBlock(dType);
-			return tile->getMapData(tPart)->getBlock(dType);
+			//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret = " << tile->getMapData(partType)->getBlock(dType);
+			return tile->getMapData(partType)->getBlock(dType);
 		}
 	}
 
-	//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, (no valid tPart) ret 0"; // lag to file
-	return 0; // no Valid [tPart].
+	//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, (no valid partType) ret 0"; // lag to file
+	return 0; // no Valid [partType].
 }
 
 /**
@@ -6078,7 +6073,7 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 	if (tile == nullptr)
 		return nullptr;
 
-	Position pos = tile->getPosition();
+	const Position pos = tile->getPosition();
 	if (pos.z == 0)
 		return tile;
 
@@ -6099,7 +6094,7 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 
 	if (unit != nullptr)
 	{
-		const int unitSize = unit->getArmor()->getSize();
+		const int armorSize = unit->getArmor()->getSize();
 
 		while (posBelow.z > 0)
 		{
@@ -6107,14 +6102,12 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 
 			for (int
 					y = 0;
-					y != unitSize
-						&& canFall == true;
+					y != armorSize && canFall == true;
 					++y)
 			{
 				for (int
 						x = 0;
-						x != unitSize
-							&& canFall == true;
+						x != armorSize && canFall == true;
 						++x)
 				{
 					dt = _battleSave->getTile(Position(
@@ -6138,15 +6131,15 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 
 		if (posBelow != pos)
 		{
-			if (unit->isOut() == true)
+			if (unit->isOut_t(OUT_STAT) == true)
 			{
 				for (int
-						y = unitSize - 1;
+						y = armorSize - 1;
 						y != -1;
 						--y)
 				{
 					for (int
-							x = unitSize - 1;
+							x = armorSize - 1;
 							x != -1;
 							--x)
 					{
@@ -6212,17 +6205,15 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 					i != tile->getInventory()->end();
 					++i)
 			{
-				if ((*i)->getUnit() != nullptr // corpse
+				if ((*i)->getUnit() != nullptr
 					&& tile->getPosition() == (*i)->getUnit()->getPosition())
 				{
 					(*i)->getUnit()->setPosition(dt->getPosition());
 				}
 
-//				if (dt != tile)
 				dt->addItem(*i, (*i)->getSlot());
 			}
 
-//			if (tile != dt) // clear tile
 			tile->getInventory()->clear();
 		}
 	}

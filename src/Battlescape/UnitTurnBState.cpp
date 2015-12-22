@@ -191,7 +191,14 @@ void UnitTurnBState::think()
 			_parent->popState();
 		}
 		else if (_chargeTu == true)
-			_parent->getBattlescapeState()->updateHostileHotcons();
+		{
+			BattlescapeState* const battleState (_parent->getBattlescapeState());
+			if (battleState->playableUnitSelected() == true)
+			{
+				battleState->hotSqrsClear();
+				battleState->hotSqrsUpdate();
+			}
+		}
 	}
 	else
 	{

@@ -49,12 +49,11 @@ enum VoxelType
 
 enum MapDataType
 {
-	O_BIGWALL = -1,	// -1
+	O_NULPART = -1,	// -1
 	O_FLOOR,		//  0
 	O_WESTWALL,		//  1
 	O_NORTHWALL,	//  2
 	O_OBJECT,		//  3
-	O_NULTYPE		//  4
 };
 
 /* enum TerrainHeight

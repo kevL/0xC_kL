@@ -641,7 +641,7 @@ void BattlescapeGenerator::nextStage()
 			++i)
 	{
 		if ((*i)->getOriginalFaction() == FACTION_PLAYER
-			&& (*i)->isOut(OUT_STAT) == false)
+			&& (*i)->isOut_t(OUT_STAT) == false)
 		{
 			(*i)->setFaction(FACTION_PLAYER);
 			(*i)->setExposed(-1);
@@ -2100,32 +2100,29 @@ int BattlescapeGenerator::loadMAP( // private.
 		throw Exception("Something is wrong in the map definitions, craft/ufo map is too tall.");
 	}
 
-
-	unsigned int partId;
-	bool revealDone;
-
 	unsigned char array_Parts[Tile::PARTS_TILE];
-	const int parts = static_cast<int>(Tile::PARTS_TILE);
+	unsigned partId;
 
+	bool revealDone;
 	while (mapFile.read(
 					(char*)&array_Parts,
 					sizeof(array_Parts)))
 	{
 		revealDone = false;
 
-		for (int
-				part = 0;
-				part != parts;
-				++part)
+		for (size_t
+				partType = 0;
+				partType != Tile::PARTS_TILE;
+				++partType)
 		{
-			partId = static_cast<unsigned int>(array_Parts[static_cast<size_t>(part)]);
+			partId = static_cast<unsigned>(array_Parts[partType]);
 
 			// Remove natural terrain that is inside Craft or Ufo.
-			if (part != 0				// not if it's a floor since Craft/Ufo part will overwrite it anyway
+			if (partType != 0				// not if it's a floor since Craft/Ufo part will overwrite it anyway
 				&& partId == 0			// and only if no Craft/Ufo part would overwrite the part
 				&& array_Parts[0] != 0)	// but only if there *is* a floor-part to the Craft/Ufo so it would (have) be(en) inside the Craft/Ufo
 			{
-				_battleSave->getTile(Position(x,y,z))->setMapData(nullptr,-1,-1, static_cast<MapDataType>(part));
+				_battleSave->getTile(Position(x,y,z))->setMapData(nullptr,-1,-1, static_cast<MapDataType>(partType));
 			}
 
 			// Then overwrite previous terrain with Craft or Ufo terrain.
@@ -2143,7 +2140,7 @@ int BattlescapeGenerator::loadMAP( // private.
 																data,
 																static_cast<int>(dataId),
 																dataSetId,
-																static_cast<MapDataType>(part));
+																static_cast<MapDataType>(partType));
 			}
 
 /*			// If the part is not a floor and is empty, remove it; this prevents growing grass in UFOs.
@@ -3186,8 +3183,6 @@ void BattlescapeGenerator::clearModule( // private.
 		int sizeX,
 		int sizeY)
 {
-	const int parts = static_cast<int>(Tile::PARTS_TILE);
-
 	for (int
 			z = 0;
 			z != _mapsize_z;
@@ -3204,12 +3199,12 @@ void BattlescapeGenerator::clearModule( // private.
 					++dy)
 			{
 				Tile* const tile = _battleSave->getTile(Position(dx,dy,z));
-				for (int
-						i = 0;
-						i != parts;
-						++i)
+				for (size_t
+						partType = 0;
+						partType != Tile::PARTS_TILE;
+						++partType)
 				{
-					tile->setMapData(nullptr,-1,-1, static_cast<MapDataType>(i));
+					tile->setMapData(nullptr,-1,-1, static_cast<MapDataType>(partType));
 				}
 			}
 		}
@@ -3221,26 +3216,28 @@ void BattlescapeGenerator::clearModule( // private.
  */
 void BattlescapeGenerator::loadNodes() // private.
 {
-	int segment = 0;
+	int segment (0);
+
+	const size_t
+		blocks_x (static_cast<size_t>(_mapsize_x / 10)),
+		blocks_y (static_cast<size_t>(_mapsize_y / 10));
 
 	for (size_t
 			y = 0;
-			y != static_cast<size_t>(_mapsize_y / 10);
+			y != blocks_y;
 			++y)
 	{
 		for (size_t
 				x = 0;
-				x != static_cast<size_t>(_mapsize_x / 10);
+				x != blocks_x;
 				++x)
 		{
 			_segments[x][y] = segment;
 
-			if (_blocks[x][y] != nullptr
-				&& _blocks[x][y] != _testBlock)
+			if (_blocks[x][y] != nullptr && _blocks[x][y] != _testBlock)
 			{
-				if (!(
-					_blocks[x][y]->isInGroup(MBT_LANDPAD)
-						&& _landingzone[x][y]))
+				if (_blocks[x][y]->isInGroup(MBT_LANDPAD) == false
+					|| _landingzone[x][y] == false) // TODO: look closer at this.
 				{
 					loadRMP(
 						_blocks[x][y],

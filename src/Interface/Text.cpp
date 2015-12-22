@@ -529,7 +529,7 @@ void Text::processText() // private.
 						width -= charWidth;
 					}
 
-					if (textIndentation > 0) // keep initial indentation of text
+					if (textIndentation != 0) // keep initial indentation of text
 					{
 						wst->insert(indentLocation + 1, L" \xA0", textIndentation);
 						indentLocation += textIndentation;

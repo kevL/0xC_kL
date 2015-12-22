@@ -43,6 +43,7 @@
 #include "../Battlescape/TileEngine.h"
 
 #include "../Engine/Language.h"
+//#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -113,7 +114,6 @@ BattleUnit::BattleUnit(
 		_charging(nullptr),
 		_turnsExposed(-1),
 		_hidingForTurn(false),
-//		_respawn(false),
 		_battleOrder(0),
 		_revived(false),
 		_stopShot(false),
@@ -136,7 +136,7 @@ BattleUnit::BattleUnit(
 		_specab(SPECAB_NONE),
 		_morale(100),
 		_stunLevel(0),
-		_aboutToDie(false),
+		_aboutToFall(false),
 		_type("SOLDIER"),
 //		_race("STR_HUMAN"), // not used.
 		_activeHand("STR_RIGHT_HAND"),
@@ -282,7 +282,6 @@ BattleUnit::BattleUnit(
 		_coverReserve(0),
 		_charging(nullptr),
 		_hidingForTurn(false),
-//		_respawn(false),
 		_stopShot(false),
 		_dashing(false),
 		_takenExpl(false),
@@ -293,7 +292,7 @@ BattleUnit::BattleUnit(
 
 		_morale(100),
 		_stunLevel(0),
-		_aboutToDie(false),
+		_aboutToFall(false),
 		_activeHand("STR_RIGHT_HAND"),
 		_diedByFire(false),
 		_dirTurn(0),
@@ -472,10 +471,8 @@ void BattleUnit::load(const YAML::Node& node)
 	_kills				= node["kills"]					.as<int>(_kills);
 	_dontReselect		= node["dontReselect"]			.as<bool>(_dontReselect);
 	_charging			= nullptr;
-	_motionPoints		= node["motionPoints"]			.as<int>(_motionPoints); // was 0
+	_motionPoints		= node["motionPoints"]			.as<int>(_motionPoints);
 	_spawnUnit			= node["spawnUnit"]				.as<std::string>(_spawnUnit);
-//	_specab				= (SpecialAbility)node["specab"].as<int>(_specab);
-//	_respawn			= node["respawn"]				.as<bool>(_respawn);
 	_activeHand			= node["activeHand"]			.as<std::string>(_activeHand);
 	_mcStrength			= node["mcStrength"]			.as<int>(_mcStrength);
 	_mcSkill			= node["mcSkill"]				.as<int>(_mcSkill);
@@ -617,8 +614,6 @@ YAML::Node BattleUnit::save() const
 
 	node["activeHand"] = _activeHand;
 
-//	node["specab"]			= (int)_specab;
-//	node["respawn"]			= _respawn;
 	// could put (if not tank) here:
 
 	if (getCurrentAIState() != nullptr)
@@ -1404,13 +1399,13 @@ int BattleUnit::getStrength() const
  *						  although vulnerability is still factored in
  * @return, damage done to this BattleUnit after adjustments
  */
-int BattleUnit::damage(
+int BattleUnit::takeDamage(
 		const Position& voxelRel,
 		int power,
 		DamageType dType,
 		const bool ignoreArmor)
 {
-	//Log(LOG_INFO) << "BattleUnit::damage() " << getId() << " power[0] = " << power;
+	//Log(LOG_INFO) << "BattleUnit::takeDamage() " << getId() << " power[0] = " << power;
 	power = static_cast<int>(Round(
 			static_cast<float>(power) * _armor->getDamageModifier(dType)));
 	//Log(LOG_INFO) << ". dType = " << (int)dType << " power[1] = " << power;
@@ -1462,7 +1457,7 @@ int BattleUnit::damage(
 				}
 			}
 
-			//Log(LOG_INFO) << "BattleUnit::damage() Target was hit from DIR = " << ((dirRel - _dir) % 8);
+			//Log(LOG_INFO) << "BattleUnit::takeDamage() Target was hit from DIR = " << ((dirRel - _dir) % 8);
 			switch ((dirRel - _dir) % 8)
 			{
 				case 0:	side = SIDE_FRONT;						break;
@@ -1588,19 +1583,15 @@ int BattleUnit::damage(
 		}
 
 		if (isOut_t(OUT_HLTH_STUN) == true)
-			_aboutToDie = true;
+			_aboutToFall = true;
 	}
 
 	// TODO: give a short "ugh" if hit causes no damage or perhaps stuns ( power must be > 0 though );
 	// a longer "uuuhghghgh" if hit causes damage ... and let DieBState handle deathscreams.
-	if (_visible == true
-		&& _aboutToDie == false
+	if (_aboutToFall == false //&& _visible == true && _health > 0 && _health > _stunLevel
 		&& _hasCried == false
-//		&& _health > 0
-//		&& _health > _stunLevel
 		&& _status != STATUS_UNCONSCIOUS
 		&& dType != DT_STUN
-//		&& _drugDose < 3
 		&& (_geoscapeSoldier != nullptr
 			|| _unitRule->isMechanical() == false))
 	{
@@ -1608,7 +1599,7 @@ int BattleUnit::damage(
 	}
 
 	if (power < 0) power = 0;
-	//Log(LOG_INFO) << "BattleUnit::damage() ret Penetrating Power " << power;
+	//Log(LOG_INFO) << "BattleUnit::takeDamage() ret Penetrating Power " << power;
 
 	return power;
 }
@@ -1833,48 +1824,15 @@ void BattleUnit::setAimingPhase(int phase)
 }
 
 /**
- * Returns whether the unit is out of combat - ie dead or unconscious.
- * @note A unit that is Out cannot perform any actions and cannot be selected
- * but it's still a unit.
- * @note checkHealth and checkStun are early returns and therefore
- * should generally not be used to test a negation: eg, !isOut()
- * @param checkHealth	- check if unit still has health (default false)
- * @param checkStun		- check if unit is stunned (default false)
- * @return, true if this BattleUnit is unable to function on the battlefield
- */
-bool BattleUnit::isOut(
-		bool checkHealth,
-		bool checkStun) const
-{
-	if (checkHealth == true
-		&& _health == 0)
-	{
-		return true;
-	}
-
-	if (checkStun == true
-		&& _stunLevel >= _health)
-	{
-		return true;
-	}
-
-	if (_status == STATUS_DEAD
-		|| _status == STATUS_UNCONSCIOUS
-		|| _status == STATUS_LIMBO)
-	{
-		return true;
-	}
-
-	return false;
-}
-/**
- *
- * @param test - what to check for (default OUT_ALL)
- *				0 everything
- *				1 status dead or unconscious or limbo'd
- *				2 health
- *				3 stun
- *				4 health or stun
+ * Returns whether this BattleUnit is out of combat - eg, dead or unconscious.
+ * @note A unit that is 'out' cannot perform any actions and cannot be selected
+ * but it's still a valid unit.
+ * @param test - what to check for (default OUT_ALL) (BattleUnit.h)
+ *				 OUT_ALL		- everything
+ *				 OUT_STAT		- status dead or unconscious or limbo'd
+ *				 OUT_HLTH		- health
+ *				 OUT_STUN		- stun only
+ *				 OUT_HLTH_STUN	- health or stun
  * @return, true if unit is incapacitated
  */
 bool BattleUnit::isOut_t(OutCheck test) const
@@ -1883,7 +1841,7 @@ bool BattleUnit::isOut_t(OutCheck test) const
 	{
 		default:
 		case OUT_ALL:
-			if (_status == STATUS_DEAD
+			if (   _status == STATUS_DEAD
 				|| _status == STATUS_UNCONSCIOUS
 				|| _status == STATUS_LIMBO
 				|| _health == 0
@@ -1891,33 +1849,32 @@ bool BattleUnit::isOut_t(OutCheck test) const
 			{
 				return true;
 			}
-		break;
+			return false;
 
 		case OUT_STAT:
-			if (_status == STATUS_DEAD
+			if (   _status == STATUS_DEAD
 				|| _status == STATUS_UNCONSCIOUS
 				|| _status == STATUS_LIMBO)
 			{
 				return true;
 			}
-		break;
+			return false;
 
 		case OUT_HLTH:
 			if (_health == 0)
 				return true;
-		break;
+
+			return false;
 
 		case OUT_STUN:
-			if (_health <= _stunLevel)
+			if (_health != 0 && _health <= _stunLevel)
 				return true;
-		break;
+
+			return false;
 
 		case OUT_HLTH_STUN:
-			if (_health == 0
-				|| _health <= _stunLevel)
-			{
+			if (_health == 0 || _health <= _stunLevel)
 				return true;
-			}
 	}
 
 	return false;
@@ -2599,19 +2556,19 @@ void BattleUnit::takeFire()
 	{
 		float vulnr = _armor->getDamageModifier(DT_SMOKE);
 		if (vulnr > 0.f) // try to knock _unit out.
-			damage(
-				Position(0,0,0),
-				static_cast<int>(3.f * vulnr),
-				DT_SMOKE, // -> DT_STUN
-				true);
+			takeDamage(
+					Position(0,0,0),
+					static_cast<int>(3.f * vulnr),
+					DT_SMOKE, // -> DT_STUN
+					true);
 
 		vulnr = _armor->getDamageModifier(DT_IN);
 		if (vulnr > 0.f)
-			damage(
-				Position(0,0,0),
-				static_cast<int>(static_cast<float>(RNG::generate(2.,6.)) * vulnr),
-				DT_IN,
-				true);
+			takeDamage(
+					Position(0,0,0),
+					static_cast<int>(static_cast<float>(RNG::generate(2.,6.)) * vulnr),
+					DT_IN,
+					true);
 	}
 }
 
@@ -4584,9 +4541,9 @@ void BattleUnit::setBattleForUnit(BattlescapeGame* const battleGame)
  * the end of its collapse sequence.
  * @return, true if about to die
  */
-bool BattleUnit::getAboutToDie() const
+bool BattleUnit::getAboutToFall() const
 {
-	return _aboutToDie;
+	return _aboutToFall;
 }
 
 /**
@@ -4594,7 +4551,7 @@ bool BattleUnit::getAboutToDie() const
  */
 void BattleUnit::putDown()
 {
-	_aboutToDie = false;
+	_aboutToFall = false;
 
 	_faction = _originalFaction;
 	_kneeled = false;	// don't get hunkerdown bonus against HE detonations

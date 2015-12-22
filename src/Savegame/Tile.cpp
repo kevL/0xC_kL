@@ -366,7 +366,7 @@ bool Tile::hasNoFloor(const Tile* const tileBelow) const
 
 /**
  * Gets whether this tile has a bigwall.
- * @return, true if the content-object in this tile has a bigwall (see BigwallTypes in Pathfinding.h)
+ * @return, true if the content-object in this tile is a bigwall (BigwallType in Pathfinding.h)
  */
 bool Tile::isBigWall() const
 {
@@ -802,14 +802,14 @@ int Tile::convertBurnToPct(int burn) const // private.
 
 /**
  * Gets the fuel of a tile-part.
- * @note Fuel of a tile is the highest fuel of its parts/objects.
- * @note This is NOT the sum of the fuel of the objects!
- * @param partType - the part to check or O_NULTYPE to check all parts (default O_NULTYPE) (MapData.h)
+ * @note Fuel of a tile is the highest fuel of its parts/objects. This is NOT
+ * the sum of the fuel of the objects!
+ * @param partType - the part to check or O_NULPART to check all parts (default O_NULPART) (MapData.h)
  * @return, turns to burn
  */
 int Tile::getFuel(MapDataType partType) const
 {
-	if (partType == O_NULTYPE)
+	if (partType == O_NULPART)
 	{
 		int fuel = 0;
 
@@ -1022,11 +1022,11 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 			vulnr = _unit->getArmor()->getDamageModifier(DT_SMOKE);
 			if (vulnr > 0.f) // try to knock _unit out.
 			{
-				_unit->damage(
-							Position(0,0,0),
-							static_cast<int>(Round(static_cast<float>(pSmoke) * vulnr)),
-							DT_SMOKE, // -> DT_STUN
-							true);
+				_unit->takeDamage(
+								Position(0,0,0),
+								static_cast<int>(Round(static_cast<float>(pSmoke) * vulnr)),
+								DT_SMOKE, // -> DT_STUN
+								true);
 				//Log(LOG_INFO) << ". . . . smoke Dam = " << d;
 			}
 		}
@@ -1036,11 +1036,11 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 			vulnr = _unit->getArmor()->getDamageModifier(DT_IN);
 			if (vulnr > 0.f)
 			{
-				_unit->damage(
-							Position(0,0,0),
-							static_cast<int>(Round(static_cast<float>(pFire) * vulnr)),
-							DT_IN,
-							true);
+				_unit->takeDamage(
+								Position(0,0,0),
+								static_cast<int>(Round(static_cast<float>(pFire) * vulnr)),
+								DT_IN,
+								true);
 
 				if (RNG::percent(static_cast<int>(Round(40.f * vulnr))) == true) // try to set _unit on fire. Do damage from fire here, too.
 				{
@@ -1075,11 +1075,11 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 
 					vulnr = unit->getArmor()->getDamageModifier(DT_SMOKE);
 					if (vulnr > 0.f)
-						unit->damage(
-								Position(0,0,0),
-								static_cast<int>(Round(static_cast<float>(pSmoke) * vulnr)),
-								DT_SMOKE,
-								true);
+						unit->takeDamage(
+									Position(0,0,0),
+									static_cast<int>(Round(static_cast<float>(pSmoke) * vulnr)),
+									DT_SMOKE,
+									true);
 				}
 			}
 		}
@@ -1110,11 +1110,11 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 						vulnr = unit->getArmor()->getDamageModifier(DT_IN);
 						if (vulnr > 0.f)
 						{
-							unit->damage(
-									Position(0,0,0),
-									static_cast<int>(static_cast<float>(pFire) * vulnr),
-									DT_IN,
-									true);
+							unit->takeDamage(
+										Position(0,0,0),
+										static_cast<int>(static_cast<float>(pFire) * vulnr),
+										DT_IN,
+										true);
 
 							if (unit->getHealth() == 0)
 							{

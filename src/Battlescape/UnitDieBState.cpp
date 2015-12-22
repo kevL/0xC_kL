@@ -27,6 +27,7 @@
 
 #include "../Engine/Game.h"
 #include "../Engine/Language.h"
+//#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -136,12 +137,15 @@ UnitDieBState::~UnitDieBState()
 void UnitDieBState::think()
 {
 // #0
-	if (_noSound == false && _doneScream == false)
+	if (_doneScream == false && _noSound == false)
 	{
 		_doneScream = true;
 
-		if (_unit->getOverDose() == false)
+		if (_unit->isOut_t(OUT_STUN) == false && _unit->getOverDose() == false)
+//			&& _unit->hasCried() == false)
+		{
 			_unit->playDeathSound();
+		}
 
 		if (_unit->getUnitVisible() == true)
 		{
@@ -194,7 +198,7 @@ void UnitDieBState::think()
 				i != _battleSave->getUnits()->end();
 				++i)
 		{
-			if ((*i)->getAboutToDie() == true)
+			if ((*i)->getAboutToFall() == true)
 			{
 				moreDead = true;
 				break;

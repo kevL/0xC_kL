@@ -57,7 +57,7 @@ private:
 
 
 	public:
-		/// Creates a new UnitDieBState class
+		/// Creates a UnitDieBState object.
 		UnitDieBState(
 				BattlescapeGame* const parent,
 				BattleUnit* const unit,

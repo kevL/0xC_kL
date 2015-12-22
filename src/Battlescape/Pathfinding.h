@@ -36,7 +36,7 @@ class SavedBattleGame;
 class Tile;
 
 
-enum BigwallTypes
+enum BigwallType
 {
 	BIGWALL_NONE,	// 0
 	BIGWALL_BLOCK,	// 1
@@ -86,9 +86,9 @@ private:
 	/// Determines whether a tile blocks a movementType.
 	bool isBlocked(
 			const Tile* const tile,
-			const MapDataType part,
+			const MapDataType partType,
 			const BattleUnit* const missileTarget = nullptr,
-			const int bigWallExclusion = -1) const;
+			const BigwallType diagExclusion = BIGWALL_NONE) const;
 	/// Tries to find a straight line path between two positions.
 	bool bresenhamPath(
 			const Position& origin,

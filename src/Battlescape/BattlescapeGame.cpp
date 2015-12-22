@@ -1930,7 +1930,7 @@ void BattlescapeGame::checkForCasualties(
 						DamageType dType;
 						bool noSound;
 
-						if (weapon != nullptr) // This is where units get sent to DEATH!
+						if (weapon != nullptr)
 						{
 							dType = weapon->getRules()->getDamageType();
 							noSound = false;
@@ -1939,25 +1939,21 @@ void BattlescapeGame::checkForCasualties(
 						{
 							if (hiddenExpl == true) // this is instant death from UFO powersources without screaming sounds
 							{
-								dType = DT_HE;
 								noSound = true;
+								dType = DT_HE;
 							}
 							else
 							{
+								noSound = false;
+
 								if (terrainExpl == true)
-								{
 									dType = DT_HE;
-									noSound = false;
-								}
 								else // no attacker and no terrain explosion - must be fatal wounds
-								{
 									dType = DT_NONE; // -> STR_HAS_DIED_FROM_A_FATAL_WOUND
-									noSound = false;
-								}
 							}
 						}
 
-						statePushNext(new UnitDieBState(
+						statePushNext(new UnitDieBState( // This is where units get sent to DEATH!
 													this,
 													*i,
 													dType,

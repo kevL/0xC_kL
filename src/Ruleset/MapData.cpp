@@ -346,7 +346,7 @@ void MapData::setObjectType(MapDataType type)
 
 	if (_dataset->getName() == "U_PODS") // kL-> should put this in MCDPatch
 	{
-		if (_sprite[0] == 7			// disco walls, yellow northWall
+		if (   _sprite[0] == 7		// disco walls, yellow northWall
 			|| _sprite[0] == 8		//  "     "       "    westWall
 			|| _sprite[0] == 17		// disco walls, blue northWall
 			|| _sprite[0] == 18)	//  "     "       "  westWall

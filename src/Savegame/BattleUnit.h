@@ -128,7 +128,7 @@ private:
 //	static const int SPEC_WEAPON_MAX = 3;
 
 	bool
-		_aboutToDie,
+		_aboutToFall,
 		_cacheInvalid,
 		_dashing,
 		_diedByFire,
@@ -404,7 +404,7 @@ private:
 		int getStrength() const;
 
 		/// Do damage to this unit.
-		int damage(
+		int takeDamage(
 				const Position& voxelRel,
 				int power,
 				DamageType dType,
@@ -448,9 +448,6 @@ private:
 		void setAimingPhase(int phase);
 
 		/// Gets if this unit is out - either dead or unconscious.
-		bool isOut(
-				bool checkHealth = false,
-				bool checkStun = false) const;
 		bool isOut_t(OutCheck test = OUT_ALL) const;
 
 		/// Gets the number of time units a certain action takes.
@@ -843,7 +840,7 @@ private:
 		void setBattleForUnit(BattlescapeGame* const battleGame);
 
 		/// Gets if this unit is about to die.
-		bool getAboutToDie() const;
+		bool getAboutToFall() const;
 		/// Sets this unit's parameters as down (collapsed/ unconscious/ dead).
 		void putDown();
 

@@ -1892,7 +1892,7 @@ bool AlienBAIState::explosiveEfficacy(
 			//Log(LOG_INFO) << ". isNOTtargetUnit = " << (*i != targetUnit);
 			//Log(LOG_INFO) << ". vertCheck = " << (std::abs((*i)->getPosition().z - posTarget.z) < Options::battleExplosionHeight + 1);
 			//Log(LOG_INFO) << ". inDist = " << (_battleSave->getTileEngine()->distance(posTarget, (*i)->getPosition()) < explRadius + 1);
-			if ((*i)->isOut(true) == false
+			if ((*i)->isOut_t(OUT_HLTH) == false
 				&& *i != attacker
 				&& *i != targetUnit
 				&& std::abs((*i)->getPosition().z - posTarget.z) < Options::battleExplosionHeight + 1

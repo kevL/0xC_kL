@@ -79,13 +79,17 @@ ExplosionBState::ExplosionBState(
 		_pistolWhip(false),
 		_hit(false)
 //		_extend(3) // extra think-cycles before this state is allowed to Pop.
-{}
+{
+	//Log(LOG_INFO) << "cTor ExplBState";
+}
 
 /**
  * Deletes the ExplosionBState.
  */
 ExplosionBState::~ExplosionBState()
-{}
+{
+	//Log(LOG_INFO) << "dTor ExplBState";
+}
 
 /**
  * Initializes the explosion.
@@ -94,6 +98,7 @@ ExplosionBState::~ExplosionBState()
  */
 void ExplosionBState::init()
 {
+	//Log(LOG_INFO) << ". init()";
 	if (_item != nullptr)
 	{
 		if (_item->getRules()->getBattleType() == BT_PSIAMP) // pass by. Let cTor initialization handle it. Except '_areaOfEffect' value
@@ -350,24 +355,30 @@ void ExplosionBState::think()
 	if (_extend < 1)
 		explode(); */
 
-	//Log(LOG_INFO) << "explB think()";
+	//Log(LOG_INFO) << ". think()";
 	if (_parent->getMap()->getBlastFlash() == false)
 	{
 		if (_parent->getMap()->getExplosions()->empty() == true)
+		{
+			//Log(LOG_INFO) << ". . empty";
 			explode();
+		}
 
 		for (std::list<Explosion*>::const_iterator
 				i = _parent->getMap()->getExplosions()->begin();
 				i != _parent->getMap()->getExplosions()->end();
 				)
 		{
+			//Log(LOG_INFO) << ". . iterate";
 			if ((*i)->animate() == false) // done.
 			{
+				//Log(LOG_INFO) << ". . . done";
 				delete *i;
 				i = _parent->getMap()->getExplosions()->erase(i);
 
 				if (_parent->getMap()->getExplosions()->empty() == true)
 				{
+					//Log(LOG_INFO) << ". . . . final empty";
 					explode();
 					return;
 				}
@@ -394,6 +405,7 @@ void ExplosionBState::think()
  */
 void ExplosionBState::explode() // private.
 {
+	//Log(LOG_INFO) << ". explode()";
 	const RuleItem* itRule;
 	if (_item != nullptr)
 	{
@@ -538,14 +550,13 @@ void ExplosionBState::explode() // private.
 				i != _battleSave->getUnits()->end();
 				++i)
 		{
-			if ((*i)->hasCried() == true)
+			if ((*i)->isOut_t(OUT_HLTH) == false)
 				(*i)->hasCried(false);
 		}
 	}
 
 
 	if (_unit != nullptr // if this hit/explosion was caused by a unit put the weapon down
-//		&& _unit->isOut() == false
 		&& _unit->isOut_t(OUT_STAT) == false
 		&& _lowerWeapon == true)
 	{
@@ -555,6 +566,7 @@ void ExplosionBState::explode() // private.
 
 	_parent->getMap()->cacheUnits();
 	_parent->popState();
+	//Log(LOG_INFO) << ". . pop";
 
 
 	if (itRule != nullptr && itRule->isGrenade() == true)

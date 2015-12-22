@@ -240,7 +240,7 @@ protected:
 		int getFlammability(MapDataType partType) const;
 
 		/// Gets turns to burn of part.
-		int getFuel(MapDataType partType = O_NULTYPE) const;
+		int getFuel(MapDataType partType = O_NULPART) const;
 
 		/// Tries to start fire on this Tile.
 		bool ignite(int power);

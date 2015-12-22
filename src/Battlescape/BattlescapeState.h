@@ -358,10 +358,12 @@ private:
 		/// Determines whether a playable unit is selected.
 		bool playableUnitSelected();
 
-		/// Updates soldier name/rank/tu/energy/health/morale.
+		/// Updates soldier stat display and other stuff.
 		void updateSoldierInfo(bool calcFoV = true);
-		/// Refreshes the visUnits' surfaces' visibility for UnitWalk/TurnBStates.
-		void updateHostileHotcons();
+		/// Clears the hostile unit indicator squares.
+		void hotSqrsClear();
+		/// Updates the hostile unit indicator squares.
+		void hotSqrsUpdate();
 
 		/// Animates map objects on the map, also smoke,fire, ...
 		void animate();

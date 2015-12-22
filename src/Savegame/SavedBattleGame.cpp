@@ -2442,7 +2442,7 @@ BattleUnit* SavedBattleGame::getHighestRanked(
 			i != _units.end();
 			++i)
 	{
-		if ((*i)->isOut(true, true) == false)
+		if ((*i)->isOut_t(OUT_STAT) == false)
 		{
 			if (isXcom == true)
 			{
