@@ -869,8 +869,9 @@ bool UnitWalkBState::doStatusStand_end() // private.
 	{
 		//if (_unit->getFaction() == FACTION_PLAYER) Log(LOG_INFO) << ". . _newVis TRUE, Abort path";
 		//else if (_unit->getFaction() != FACTION_PLAYER) Log(LOG_INFO) << ". . _newUnitSpotted TRUE, Abort path";
-//		_unit->clearCache();
-//		_parent->getMap()->cacheUnit(_unit);
+		_unit->clearCache();
+		_parent->getMap()->cacheUnit(_unit);
+
 		_pf->abortPath();
 		_parent->popState();
 		return false;
@@ -882,8 +883,9 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		if (_te->checkReactionFire(_unit) == true) // unit got fired upon - stop walking
 		{
 			//Log(LOG_INFO) << ". . . RF triggered - cacheUnit/pop state";
-//			_unit->clearCache();
-//			_parent->getMap()->cacheUnit(_unit);
+			_unit->clearCache();
+			_parent->getMap()->cacheUnit(_unit);
+
 			_pf->abortPath();
 			_parent->popState();
 			return false;
@@ -905,6 +907,7 @@ void UnitWalkBState::doStatusTurn() // private.
 		++_preStepCost;			// except before the first step.
 
 	_unit->turn();
+
 	_unit->clearCache();
 	_parent->getMap()->cacheUnit(_unit);
 

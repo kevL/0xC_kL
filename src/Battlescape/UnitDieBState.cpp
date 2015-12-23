@@ -141,8 +141,9 @@ void UnitDieBState::think()
 	{
 		_doneScream = true;
 
-		if (_unit->isOut_t(OUT_STUN) == false && _unit->getOverDose() == false)
-//			&& _unit->hasCried() == false)
+		if (_unit->isOut_t(OUT_STUN) == false
+			&& _unit->hasCried() == false
+			&& _unit->getOverDose() == false)
 		{
 			_unit->playDeathSound();
 		}

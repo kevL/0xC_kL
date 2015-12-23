@@ -374,7 +374,7 @@ void Map::draw()
 			_explosionInFOV = _battleSave->getDebugMode(); // reveals map in debugmode; hides battlefield if no explosions waiting.
 
 
-		static bool delayHiddenScreen;
+		static bool delayHide;
 
 		if (_battleSave->getSelectedUnit() == nullptr
 			|| _battleSave->getSelectedUnit()->getUnitVisible() == true
@@ -385,16 +385,16 @@ void Map::draw()
 			|| _battleSave->getDebugMode() == true)
 		{
 			// REVEAL //
-			delayHiddenScreen = true;
+			delayHide = true;
 			_mapIsHidden = false;
 			drawTerrain(this);
 		}
 		else
 		{
 			// HIDE //
-			if (delayHiddenScreen == true)
+			if (delayHide == true)
 			{
-				delayHiddenScreen = false;
+				delayHide = false;
 				SDL_Delay(369);
 			}
 
