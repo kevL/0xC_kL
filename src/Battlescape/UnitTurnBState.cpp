@@ -91,21 +91,22 @@ void UnitTurnBState::init()
 		if (_chargeTu == true && _action.type == BA_NONE)
 		{
 			int soundId;
-			switch (_parent->getTileEngine()->unitOpensDoor(_unit, true))
+			switch (_parent->getTileEngine()->unitOpensDoor(_unit))
 			{
-				case 0: soundId = ResourcePack::DOOR_OPEN;
-				break;
-				case 1: soundId = ResourcePack::SLIDING_DOOR_OPEN;
-				break;
-				case 4:
-					soundId = -1;
+				case 0: // wooden door
+					soundId = ResourcePack::DOOR_OPEN;
+					break;
+				case 1: // ufo door
+					soundId = ResourcePack::SLIDING_DOOR_OPEN;
+					break;
+				case 3:
 					_action.result = "STR_NOT_ENOUGH_TIME_UNITS";
-				break;
-				case 5:
 					soundId = -1;
-					_action.result = "STR_TUS_RESERVED";
-				break;
-				default: soundId = -1;
+					break;
+				case 4:
+					_action.result = "STR_TUS_RESERVED"; // no break.
+				default:
+					soundId = -1;
 			}
 
 			if (soundId != -1)

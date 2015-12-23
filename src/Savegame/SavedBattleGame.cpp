@@ -2218,13 +2218,21 @@ bool SavedBattleGame::setUnitPosition(
 						|| tile->getTuCostTile(
 											O_OBJECT,
 											unit->getMoveTypeUnit()) == 255
-						|| (unit->getMoveTypeUnit() != MT_FLY
-							&& tile->hasNoFloor(getTile(posTest + Position(x,y,-1))) == true) // <- so just use the unit's moveType.
-						|| (tile->getMapData(O_OBJECT) != nullptr
-							&& tile->getMapData(O_OBJECT)->getBigwall() > BIGWALL_NONE
-							&& tile->getMapData(O_OBJECT)->getBigwall() < BIGWALL_WEST))
+						|| (unit->getMoveTypeUnit() != MT_FLY // <- so just use the unit's moveType.
+							&& tile->hasNoFloor(getTile(posTest + Position(x,y,-1))) == true))
 					{
 						return false;
+					}
+
+					if (tile->getMapData(O_OBJECT) != nullptr)
+					{
+						switch (tile->getMapData(O_OBJECT)->getBigwall())
+						{
+							case BIGWALL_BLOCK:
+							case BIGWALL_NESW:
+							case BIGWALL_NWSE:
+								return false;
+						}
 					}
 
 					// TODO: check for ceiling also.
@@ -2250,12 +2258,8 @@ bool SavedBattleGame::setUnitPosition(
 					dir != 5;
 					++dir)
 			{
-				if (_pf->isBlockedPath(
-									getTile(posTest),
-									dir) == true)
-				{
+				if (_pf->isBlockedPath(getTile(posTest), dir) == true)
 					return false;
-				}
 			}
 		}
 

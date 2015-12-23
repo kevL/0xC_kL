@@ -29,6 +29,8 @@
 #include "../Ruleset/MapData.h"
 #include "../Ruleset/RuleItem.h"
 
+#include "../Savegame/Tile.h"
+
 
 namespace OpenXcom
 {
@@ -96,7 +98,7 @@ private:
 	/// Opens any doors this door is connected to.
 	void openAdjacentDoors(
 			const Position& pos,
-			MapDataType part) const;
+			MapDataType partType) const;
 
 	/// Calculates the maximum throwing range.
 	static int getThrowDistance(
@@ -229,17 +231,17 @@ private:
 		Tile* checkForTerrainExplosions() const;
 
 		/// Tries to open a door.
-		int unitOpensDoor(
+		DoorResult unitOpensDoor(
 				BattleUnit* const unit,
-				const bool rtClick = false,
+				const bool rtClick = true,
 				int dir = -1);
-		/// kL. Checks for a door connected to this wall at this position.
-/*		bool TileEngine::testAdjacentDoor( // kL
+		/// Checks for a door connected to this wall at this position.
+/*		bool TileEngine::testAdjacentDoor(
 				Position pos,
 				int part,
 				int dir); */
 		/// Closes ufo doors.
-		int closeUfoDoors() const;
+		bool closeUfoDoors() const;
 
 		/// Calculates a line trajectory.
 		VoxelType plotLine(

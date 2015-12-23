@@ -210,7 +210,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _bigWalls.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setBigWall(i->second);
+		dataSet->getObjects()->at(i->first)->setBigWall(static_cast<BigwallType>(i->second));
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator

@@ -63,7 +63,7 @@ UnitWalkBState::UnitWalkBState(
 		BattleState(parent, action),
 		_unit(action.actor),
 		_pf(parent->getPathfinding()),
-		_terrain(parent->getTileEngine()),
+		_te(parent->getTileEngine()),
 		_battleSave(parent->getBattleSave()),
 		_falling(false),
 		_preStepTurn(false),
@@ -340,7 +340,7 @@ bool UnitWalkBState::doStatusStand() // private.
 			_unit->clearCache();
 			_parent->getMap()->cacheUnit(_unit);
 
-			if (_terrain->checkReactionFire(_unit) == true) // unit got fired upon - stop.
+			if (_te->checkReactionFire(_unit) == true) // unit got fired upon - stop.
 			{
 				//Log(LOG_INFO) << ". . . RF triggered";
 				_pf->abortPath();
@@ -534,23 +534,31 @@ bool UnitWalkBState::doStatusStand() // private.
 		return false;
 	}
 
-	if (dir < _pf->DIR_UP) // now open doors (if any)
+	if (dir < _pf->DIR_UP) // now open doors if any
 	{
-		int soundId;
+		bool wait = false;
 
-		const int door = _terrain->unitOpensDoor(_unit, false, dir);
-		if (door == 0) // normal door
-			soundId = ResourcePack::DOOR_OPEN;
-		else if (door == 1) // ufo door
-			soundId = ResourcePack::SLIDING_DOOR_OPEN;
-		else soundId = -1;
+		int soundId;
+		switch (_te->unitOpensDoor(_unit, false, dir))
+		{
+			case 0: // wooden door
+				soundId = ResourcePack::DOOR_OPEN;
+				break;
+			case 1: // ufo door open
+				wait = true;
+				soundId = ResourcePack::SLIDING_DOOR_OPEN;
+				break;
+			case 2:	// ufo door still opening ...
+				wait = true; // no break.
+			default:
+				soundId = -1;
+		}
 
 		if (soundId != -1)
 			_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
 										->play(-1, _parent->getMap()->getSoundAngle(pos));
 
-		if (door == 1 || door == 3) // ufo door still opening ...
-			return false; // don't start walking yet, wait for the ufo door to open
+		if (wait == true) return false; // wait for the ufo door to open
 	}
 
 	// proxy blows up in face after door opens - copied doStatusStand_end()
@@ -825,7 +833,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		}
 	}
 
-	_terrain->calculateUnitLighting();
+	_te->calculateUnitLighting();
 
 	_walkCam->setViewLevel(pos.z);
 
@@ -849,7 +857,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 
 	// This calculates or 'refreshes' the Field of View of all units within
 	// maximum distance (20 tiles) of current unit.
-	_terrain->calculateFOV(pos, true);
+	_te->calculateFOV(pos, true);
 
 	if (_parent->checkProxyGrenades(_unit) == true) // Put checkForSilacoid() here!
 	{
@@ -871,7 +879,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 	if (_falling == false) // check for reaction fire
 	{
 		//Log(LOG_INFO) << ". . WalkBState: NOT falling, checkReactionFire()";
-		if (_terrain->checkReactionFire(_unit) == true) // unit got fired upon - stop walking
+		if (_te->checkReactionFire(_unit) == true) // unit got fired upon - stop walking
 		{
 			//Log(LOG_INFO) << ". . . RF triggered - cacheUnit/pop state";
 //			_unit->clearCache();
@@ -1057,8 +1065,8 @@ void UnitWalkBState::postPathProcedures() // private.
 		_unit->setTimeUnits(0);
 
 
-	_terrain->calculateUnitLighting();
-	_terrain->calculateFOV(_unit->getPosition(), true); // in case unit opened a door and stopped without doing Status_WALKING
+	_te->calculateUnitLighting();
+	_te->calculateFOV(_unit->getPosition(), true); // in case unit opened a door and stopped without doing Status_WALKING
 
 	_unit->clearCache();
 	_parent->getMap()->cacheUnit(_unit);
@@ -1118,11 +1126,11 @@ bool UnitWalkBState::visForUnits() const // private.
 {
 	if (_falling == true
 		|| _parent->getPanicHandled() == false)	// note: _playerPanicHandled can be false only on Player's turn
-	{											// so if that expression== TRUE then it's a player's turn.
+	{											// so if expression== TRUE then it's a player's turn.
 		return false;
 	}
 
-	bool ret = _terrain->calculateFOV(_unit);
+	bool ret = _te->calculateFOV(_unit);
 
 	if (_unit->getFaction() != FACTION_PLAYER)
 	{

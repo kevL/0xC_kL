@@ -961,16 +961,24 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 // Draw Object in Background & Center
 						sprite = _tile->getSprite(O_OBJECT);
-						if (sprite
-							&& (_tile->getMapData(O_OBJECT)->getBigwall() < BIGWALL_EAST // do none,Block,diagonals,West,North,West&North
-								|| _tile->getMapData(O_OBJECT)->getBigwall() == BIGWALL_W_N))
+						if (sprite)
 						{
-							hasObject = true;
-							sprite->blitNShade(
-									surface,
-									posScreen.x,
-									posScreen.y - _tile->getMapData(O_OBJECT)->getYOffset(),
-									tileShade);
+							switch (_tile->getMapData(O_OBJECT)->getBigwall())
+							{
+								case BIGWALL_NONE:
+								case BIGWALL_BLOCK:
+								case BIGWALL_NESW:
+								case BIGWALL_NWSE:
+								case BIGWALL_WEST:
+								case BIGWALL_NORTH:
+								case BIGWALL_W_N:
+									hasObject = true;
+									sprite->blitNShade(
+											surface,
+											posScreen.x,
+											posScreen.y - _tile->getMapData(O_OBJECT)->getYOffset(),
+											tileShade);
+							}
 						}
 
 // Draw Corpse + Item on Floor if any
@@ -1474,15 +1482,19 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 // Draw Front Object
 					sprite = _tile->getSprite(O_OBJECT);
-					if (sprite
-						&& _tile->getMapData(O_OBJECT)->getBigwall() > BIGWALL_NORTH // do East,South,East&South
-						&& _tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_W_N)
+					if (sprite)
 					{
-						sprite->blitNShade(
-								surface,
-								posScreen.x,
-								posScreen.y - _tile->getMapData(O_OBJECT)->getYOffset(),
-								tileShade);
+						switch (_tile->getMapData(O_OBJECT)->getBigwall())
+						{
+							case BIGWALL_EAST:
+							case BIGWALL_SOUTH:
+							case BIGWALL_E_S:
+								sprite->blitNShade(
+										surface,
+										posScreen.x,
+										posScreen.y - _tile->getMapData(O_OBJECT)->getYOffset(),
+										tileShade);
+						}
 					}
 
 // Draw Cursor Front

@@ -321,21 +321,41 @@ bool Tile::isVoid(
 
 /**
  * Gets the TU cost to move over a certain part of the tile.
- * @param partType	- the part type (MapData.h)
- * @param moveType	- the movement type
+ * @param partType - the part type (MapData.h)
+ * @param moveType - the movement type (MapData.h)
  * @return, TU cost
  */
 int Tile::getTuCostTile(
 		MapDataType partType,
 		MovementType moveType) const
 {
-	if (_objects[partType] != nullptr
+/*	if (_objects[partType] != nullptr
 		&& !(_objects[partType]->isUfoDoor() == true
 			&& _curFrame[partType] > 1)
 		&& !(partType == O_OBJECT
 			&& _objects[partType]->getBigwall() > BIGWALL_NWSE)) // ie. side-walls
 	{
 		return _objects[partType]->getTuCostPart(moveType);
+	} */
+	if (_objects[partType] != nullptr
+		&& (_objects[partType]->isUfoDoor() == false
+			|| _curFrame[partType] < 1)) // was <2
+	{
+		switch (partType)
+		{
+			case O_OBJECT:
+				switch (_objects[O_OBJECT]->getBigwall())
+				{
+					case BIGWALL_NONE:
+					case BIGWALL_BLOCK:
+					case BIGWALL_NESW:
+					case BIGWALL_NWSE:
+						return _objects[partType]->getTuCostPart(moveType);
+						// question: Why do side-bigwalls return 0.
+				}
+			default:
+				return _objects[partType]->getTuCostPart(moveType);
+		}
 	}
 
 	return 0;
@@ -410,23 +430,28 @@ int Tile::getTerrainLevel() const
  */
 int Tile::getFootstepSound(const Tile* const tileBelow) const
 {
-	int sound = -1;
-	if (_objects[static_cast<size_t>(O_OBJECT)] != nullptr
-		&& _objects[static_cast<size_t>(O_OBJECT)]->getBigwall() < BIGWALL_NESW // ie. None or Block
-		&& _objects[static_cast<size_t>(O_OBJECT)]->getFootstepSound() > 0) // > -1
+	if (_objects[O_OBJECT] != nullptr
+		&& _objects[O_OBJECT]->getFootstepSound() > 0)
 	{
-		sound = _objects[static_cast<size_t>(O_OBJECT)]->getFootstepSound();
+		switch (_objects[O_OBJECT]->getBigwall())
+		{
+			case BIGWALL_NONE:
+			case BIGWALL_BLOCK:
+				return _objects[O_OBJECT]->getFootstepSound();
+		}
 	}
-	else if (_objects[static_cast<size_t>(O_FLOOR)] != nullptr)
-		sound = _objects[static_cast<size_t>(O_FLOOR)]->getFootstepSound();
-	else if (_objects[static_cast<size_t>(O_OBJECT)] == nullptr
+
+	if (_objects[O_FLOOR] != nullptr)
+		return _objects[O_FLOOR]->getFootstepSound();
+
+	if (_objects[O_OBJECT] == nullptr
 		&& tileBelow != nullptr
 		&& tileBelow->getTerrainLevel() == -24)
 	{
-		sound = tileBelow->getMapData(O_OBJECT)->getFootstepSound();
+		return tileBelow->getMapData(O_OBJECT)->getFootstepSound();
 	}
 
-	return sound;
+	return -1;
 }
 
 /**
@@ -434,13 +459,14 @@ int Tile::getFootstepSound(const Tile* const tileBelow) const
  * @param partType		- a tile part type (MapData.h)
  * @param unit			- pointer to a BattleUnit (default nullptr)
 // * @param reserved	- BattleActionType (BattlescapeGame.h) (default BA_NONE)
- * @return, -1 no door opened
+ * @return, DoorResult (Tile.h)
+ *			-1 no door opened
  *			 0 normal door
  *			 1 ufo door
- *			 3 ufo door is still opening (animated)
- *			 4 not enough TUs
+ *			 2 ufo door is still opening (animation playing)
+ *			 3 not enough TUs
  */
-int Tile::openDoor(
+DoorResult Tile::openDoor(
 		const MapDataType partType,
 		const BattleUnit* const unit)
 //		const BattleActionType reserved)
@@ -471,7 +497,7 @@ int Tile::openDoor(
 
 			setMapData(nullptr,-1,-1, partType);
 
-			return DR_OPEN_WOOD;
+			return DR_WOOD_OPEN;
 		}
 
 		if (_objects[partType]->isUfoDoor() == true)
@@ -486,11 +512,11 @@ int Tile::openDoor(
 				}
 
 				_curFrame[partType] = 1; // start opening door
-				return DR_OPEN_METAL;
+				return DR_UFO_OPEN;
 			}
 
 			if (_curFrame[partType] != 7) // ufo door != part 7 -> door is still opening
-				return DR_WAIT_METAL;
+				return DR_UFO_WAIT;
 		}
 	}
 
@@ -498,12 +524,32 @@ int Tile::openDoor(
 }
 
 /**
- * Closes a ufoDoor on this Tile.
- * @return, 1 if door got closed
+ * Opens a door without checks.
+ * @param partType - a tile part type (MapData.h)
  */
-int Tile::closeUfoDoor()
+void Tile::openDoorAuto(const MapDataType partType)
 {
-	int ret = 0;
+/*	if (_objects[partType]->isDoor() == true)
+	{
+		setMapData(
+				_objects[partType]->getDataset()->getObjects()->at(_objects[partType]->getAltMCD()),
+				_objects[partType]->getAltMCD(),
+				_mapDataSetId[partType],
+				_objects[partType]->getDataset()->getObjects()->at(_objects[partType]->getAltMCD())->getPartType());
+
+		setMapData(nullptr,-1,-1, partType);
+	}
+	else if (_objects[partType]->isUfoDoor() == true) */
+	_curFrame[partType] = 1; // start opening door
+}
+
+/**
+ * Closes a ufoDoor on this Tile.
+ * @return, true if a door closed
+ */
+bool Tile::closeUfoDoor()
+{
+	int ret = false;
 	for (size_t
 			i = 0;
 			i != PARTS_TILE;
@@ -512,7 +558,7 @@ int Tile::closeUfoDoor()
 		if (isUfoDoorOpen(static_cast<MapDataType>(i)) == true)
 		{
 			_curFrame[i] = 0;
-			ret = 1;
+			ret = true;
 		}
 	}
 
@@ -1211,18 +1257,16 @@ int Tile::getAnimationOffset() const
 
 /**
  * Get the sprite of a certain part of this Tile.
- * @param part - tile part to get a sprite for
+ * @param partType - tile part to get a sprite for
  * @return, pointer to the sprite
  */
-Surface* Tile::getSprite(int part) const
+Surface* Tile::getSprite(MapDataType partType) const
 {
-	const size_t i = static_cast<size_t>(part);
+	const MapData* const data = _objects[partType];
+	if (data != nullptr)
+		return data->getDataset()->getSurfaceset()->getFrame(data->getSprite(_curFrame[partType]));
 
-	const MapData* const data = _objects[i];
-	if (data == nullptr)
-		return nullptr;
-
-	return data->getDataset()->getSurfaceset()->getFrame(data->getSprite(_curFrame[i]));
+	return nullptr;
 }
 
 /**

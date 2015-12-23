@@ -35,6 +35,17 @@
 namespace OpenXcom
 {
 
+enum DoorResult
+{
+	DR_NONE = -1,	// -1
+	DR_WOOD_OPEN,	//  0
+	DR_UFO_OPEN,	//  1
+	DR_UFO_WAIT,	//  2
+	DR_ERR_TU,		//  3
+	DR_ERR_RESERVE	//  4
+};
+
+
 class BattleItem;
 class BattleUnit;
 class MapData;
@@ -92,13 +103,6 @@ protected:
 
 	public:
 		static const size_t PARTS_TILE = 4;
-		static const int
-			DR_NONE			= -1,
-			DR_OPEN_WOOD	=  0,
-			DR_OPEN_METAL	=  1,
-			DR_WAIT_METAL	=  3,
-			DR_ERR_TU		=  4,
-			DR_ERR_RESERVE	=  5;
 
 		static struct SerializationKey
 		{
@@ -179,14 +183,16 @@ protected:
 		int getFootstepSound(const Tile* const tileBelow) const;
 
 		/// Opens a door.
-		int openDoor(
+		DoorResult openDoor(
 				const MapDataType partType,
 				const BattleUnit* const unit = nullptr);
 //				const BattleActionType reserved = BA_NONE);
+		/// Opens a door without checks.
+		void openDoorAuto(const MapDataType partType);
 		/**
 		 * Checks if the ufo door is open or opening.
 		 * @note Used for visibility/light blocking checks. This function
-		 * assumes that there never are 2 doors on 1 tile or a door and another
+		 * assumes that there are never 2 doors on 1 tile or a door and another
 		 * wall on 1 tile.
 		 * @param partType - the tile part to consider
 		 * @return, true if ufo-door is valid and not closed
@@ -196,7 +202,7 @@ protected:
 				&& _objects[partType]->isUfoDoor() == true
 				&& _curFrame[partType] != 0; }
 		/// Closes ufo door.
-		int closeUfoDoor();
+		bool closeUfoDoor();
 
 		/// Sets the black fog of war status of this tile.
 		void setDiscovered(
@@ -270,7 +276,7 @@ protected:
 		int getAnimationOffset() const;
 
 		/// Gets object sprites.
-		Surface* getSprite(int part) const;
+		Surface* getSprite(MapDataType partType) const;
 
 		/// Sets a unit on this tile.
 		void setUnit(

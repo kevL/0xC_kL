@@ -1574,7 +1574,7 @@ bool Pathfinding::isBlocked( // private.
 		case O_OBJECT:
 			//Log(LOG_INFO) << ". part is Bigwall/object";
 			if (tile->getMapData(O_OBJECT) != nullptr
-				&& tile->getMapData(O_OBJECT)->getBigwall() != static_cast<int>(diagExclusion))
+				&& tile->getMapData(O_OBJECT)->getBigwall() != diagExclusion)
 			{
 				switch (tile->getMapData(O_OBJECT)->getBigwall())
 				{

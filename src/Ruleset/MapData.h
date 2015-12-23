@@ -56,6 +56,20 @@ enum MapDataType
 	O_OBJECT,		//  3
 };
 
+enum BigwallType
+{
+	BIGWALL_NONE,	// 0
+	BIGWALL_BLOCK,	// 1
+	BIGWALL_NESW,	// 2
+	BIGWALL_NWSE,	// 3
+	BIGWALL_WEST,	// 4
+	BIGWALL_NORTH,	// 5
+	BIGWALL_EAST,	// 6
+	BIGWALL_SOUTH,	// 7
+	BIGWALL_E_S,	// 8
+	BIGWALL_W_N		// 9 NOT USED in stock UFO.
+};
+
 /* enum TerrainHeight
 {
 	TH_FLOOR,
@@ -88,7 +102,6 @@ private:
 	int
 		_armor,
 		_altMCD,
-		_bigWall,
 		_block[6],
 		_dieMCD,
 		_explosive,
@@ -109,6 +122,7 @@ private:
 
 	MapDataSet* _dataset;
 
+	BigwallType _bigWall;
 	DamageType _explosiveType;
 	MapDataType _objectType;
 	SpecialTileType _specialType;
@@ -145,7 +159,7 @@ private:
 		/// Gets whether this is a floor.
 		bool isNoFloor() const;
 		/// Gets whether this is a big wall.
-		int getBigwall() const;
+		BigwallType getBigwall() const;
 		/// Gets whether this is a normal door.
 		bool isDoor() const;
 		/// Gets whether this is a grav lift.
@@ -266,7 +280,7 @@ private:
 		int getMiniMapIndex() const;
 
 		/// Sets the bigwall value.
-		void setBigWall(const int bigWall);
+		void setBigWall(const BigwallType bigWall);
 
 		/// Sets the TUWalk value.
 		void setTUWalk(const int TUWalk);

@@ -61,7 +61,7 @@ private:
 	Camera* _walkCam;
 	Pathfinding* _pf;
 	SavedBattleGame* _battleSave;
-	TileEngine* _terrain;
+	TileEngine* _te;
 
 	/// This function begins unit movement.
 	bool doStatusStand();

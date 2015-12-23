@@ -56,7 +56,7 @@ MapData::MapData(MapDataSet* const dataSet)
 		_fuel(0),
 		_explosive(0),
 		_explosiveType(DT_NONE),
-		_bigWall(0),
+		_bigWall(BIGWALL_NONE),
 		_miniMapIndex(0),
 		_isPsychedelic(0)
 {
@@ -130,9 +130,7 @@ bool MapData::isNoFloor() const
 }
 
 /**
- * Gets whether this is a big wall that blocks all surrounding diagonal paths
- * (Pathfinding.h).
- *
+ * Gets whether this is a big wall that blocks all surrounding diagonal paths.
  * @note Return value key:
  * 0: not a bigWall
  * 1: regular bigWall
@@ -144,9 +142,9 @@ bool MapData::isNoFloor() const
  * 7: acts as a south wall
  * 8: acts as a south and east wall
  * 9: acts as a north and west wall
- * @return, an integer representing what kind of bigwall this is
+ * @return, BigwallType (MapData.h)
  */
-int MapData::getBigwall() const
+BigwallType MapData::getBigwall() const
 {
 	return _bigWall;
 }
@@ -223,7 +221,7 @@ void MapData::setFlags(
 	_isUfoDoor = isUfoDoor;
 	_stopLOS = stopLOS;
 	_isNoFloor = isNoFloor;
-	_bigWall = bigWall;
+	_bigWall = static_cast<BigwallType>(bigWall);
 	_isGravLift = isGravLift;
 	_isDoor = isDoor;
 	_blockFire = blockFire;
@@ -645,9 +643,9 @@ int MapData::getMiniMapIndex() const
 
 /**
  * Sets the bigWall value.
- * @param bigWall - the new bigWall value
+ * @param bigWall - the new bigWall value (MapData.h)
  */
-void MapData::setBigWall(const int bigWall)
+void MapData::setBigWall(const BigwallType bigWall)
 {
 	_bigWall = bigWall;
 }

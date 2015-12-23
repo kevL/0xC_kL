@@ -1387,7 +1387,7 @@ void BattlescapeGame::endTurnPhase() // private.
 		}
 	}
 
-	if (_battleSave->getTileEngine()->closeUfoDoors() != 0) // close doors between grenade & terrain explosions
+	if (_battleSave->getTileEngine()->closeUfoDoors() == true) // close doors between grenade & terrain explosions
 		getResourcePack()->getSound("BATTLE.CAT", ResourcePack::SLIDING_DOOR_CLOSE)->play();
 //	}
 
