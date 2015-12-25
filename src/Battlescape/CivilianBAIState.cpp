@@ -30,7 +30,7 @@ namespace OpenXcom
  * Sets up a CivilianBAIState.
  * @param battleSave	- pointer to the SavedBattleGame
  * @param unit			- pointer to the BattleUnit
- * @param node			- pointer to the Node the unit originates from
+ * @param node			- pointer to the Node the unit originates from (default nullptr)
  */
 CivilianBAIState::CivilianBAIState(
 		SavedBattleGame* const battleSave,

@@ -127,6 +127,7 @@ BattleUnit::BattleUnit(
 		_drugDose(0),
 		_isZombie(false),
 		_hasCried(false),
+		_psiBlock(false),
 
 		_deathSound(-1),
 		_aggroSound(-1),
@@ -317,6 +318,7 @@ BattleUnit::BattleUnit(
 		_aggression(unitRule->getAggression()),
 		_spawnUnit(unitRule->getSpawnUnit()),
 		_value(unitRule->getValue()),
+		_psiBlock(unitRule->getPsiBlock()),
 		_specab(unitRule->getSpecialAbility()),
 
 		_stats(*unitRule->getStats())
@@ -2372,8 +2374,12 @@ void BattleUnit::prepUnit(bool full)
 	bool reverted = false;
 	if (_faction != _originalFaction) // reverting from Mind Control at start of MC-ing faction's next turn
 	{
-		_faction = _originalFaction;
 		reverted = true;
+		if ((_faction = _originalFaction) == FACTION_PLAYER
+			&& _unitAIState != nullptr)
+		{
+			setAIState();
+		}
 	}
 
 	bool hasPanicked = false;
@@ -4714,6 +4720,15 @@ bool BattleUnit::avoidsFire() const
 	}
 
 	return false;
+}
+
+/**
+ * Gets if this Unit is immune to psionic attacks.
+ * @return, true if unit is immune to Psi
+ */
+bool BattleUnit::psiBlock() const
+{
+	return _psiBlock;
 }
 
 }

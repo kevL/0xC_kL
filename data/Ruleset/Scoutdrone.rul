@@ -92,7 +92,7 @@ units:
     aggroSound: 86
     energyRecovery: 100
     mechanical: true
-    psiImmune: true
+    psiBlock: true
     hasHands: false
 ufopaedia:
   - id: STR_SCOUT_DRONE

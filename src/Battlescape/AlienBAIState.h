@@ -131,7 +131,7 @@ private:
 		AlienBAIState(
 				SavedBattleGame* const battleSave,
 				BattleUnit* const unit,
-				Node* const node);
+				Node* const node = nullptr);
 		/// Cleans up the AlienBAIState.
 		~AlienBAIState();
 

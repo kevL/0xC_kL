@@ -48,7 +48,7 @@ RuleUnit::RuleUnit(const std::string& type)
 		_female(false),
 		_dog(false),
 		_mechanical(false), // kL: these two should perhaps go to Armor class.
-		_psiImmune(false),
+		_psiBlock(false),
 		_hasHands(true)
 {}
 
@@ -91,7 +91,7 @@ void RuleUnit::load(
 	_female			= node["female"]		.as<bool>(_female);
 	_dog			= node["dog"]			.as<bool>(_dog);
 	_mechanical		= node["mechanical"]	.as<bool>(_mechanical);
-	_psiImmune		= node["psiImmune"]		.as<bool>(_psiImmune);
+	_psiBlock		= node["psiBlock"]		.as<bool>(_psiBlock);
 	_hasHands		= node["hasHands"]		.as<bool>(_hasHands);
 	_spawnUnit		= node["spawnUnit"]		.as<std::string>(_spawnUnit);
 	_specabPower	= node["specabPower"]	.as<int>(_specabPower);
@@ -355,9 +355,9 @@ bool RuleUnit::isMechanical() const
  * Gets if this Unit is immune to psionic attacks.
  * @return, true if unit is immune to Psi
  */
-bool RuleUnit::isPsiImmune() const
+bool RuleUnit::getPsiBlock() const
 {
-	return _psiImmune;
+	return _psiBlock;
 }
 
 /**

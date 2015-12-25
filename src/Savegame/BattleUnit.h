@@ -137,6 +137,7 @@ private:
 		_hasCried,
 		_hidingForTurn,
 		_kneeled,
+		_psiBlock,
 		_revived,
 		_stopShot, // to stop a unit from firing/throwing if it spots a new opponent during turning
 		_takenExpl, // used to stop large units from taking damage for each part.
@@ -866,6 +867,9 @@ private:
 
 		/// Gets if this unit avoids fire-tiles.
 		bool avoidsFire() const;
+
+		/// Gets if this RuleUnit is immune to psionic attacks.
+		bool psiBlock() const;
 };
 
 }

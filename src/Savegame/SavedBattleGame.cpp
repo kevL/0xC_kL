@@ -383,9 +383,9 @@ void SavedBattleGame::load(
 					BattleAIState* aiState;
 
 					if (faction == FACTION_HOSTILE)
-						aiState = new AlienBAIState(this, unit, nullptr);
+						aiState = new AlienBAIState(this, unit);
 					else
-						aiState = new CivilianBAIState(this, unit, nullptr);
+						aiState = new CivilianBAIState(this, unit);
 
 					aiState->load(ai);
 					unit->setAIState(aiState);

@@ -68,7 +68,7 @@ units:
     moveSound: 14
     energyRecovery: 75
     mechanical: true
-    psiImmune: true
+    psiBlock: true
     hasHands: false
   - type: STR_TANK_ROCKET_LAUNCHER
     race: STR_TANK_ROCKET_LAUNCHER
@@ -92,7 +92,7 @@ units:
     moveSound: 14
     energyRecovery: 75
     mechanical: true
-    psiImmune: true
+    psiBlock: true
     hasHands: false
   - type: STR_TANK_LASER_CANNON
     race: STR_TANK_LASER_CANNON
@@ -116,7 +116,7 @@ units:
     moveSound: 14
     energyRecovery: 75
     mechanical: true
-    psiImmune: true
+    psiBlock: true
     hasHands: false
   - type: STR_HOVERTANK_PLASMA
     race: STR_HOVERTANK_PLASMA
@@ -141,7 +141,7 @@ units:
     moveSound: 40
     energyRecovery: 85
     mechanical: true
-    psiImmune: true
+    psiBlock: true
     hasHands: false
   - type: STR_HOVERTANK_LAUNCHER
     race: STR_HOVERTANK_LAUNCHER
@@ -166,7 +166,7 @@ units:
     moveSound: 40
     energyRecovery: 85
     mechanical: true
-    psiImmune: true
+    psiBlock: true
     hasHands: false
   - type: MALE_CIVILIAN
     race: STR_CIVILIAN
@@ -375,7 +375,7 @@ units:
     specab: 1
     livingWeapon: true
     mechanical: true
-    psiImmune: true
+    psiBlock: true
     hasHands: false
   - type: STR_FLOATER_SOLDIER
     race: STR_FLOATER
@@ -931,7 +931,7 @@ units:
     energyRecovery: 100
     livingWeapon: true
     mechanical: true
-    psiImmune: true
+    psiBlock: true
   - type: STR_ZOMBIE
     race: STR_ZOMBIE
     rank: STR_LIVE_TERRORIST
@@ -957,7 +957,7 @@ units:
     energyRecovery: 40
     spawnUnit: STR_CHRYSSALID_TERRORIST
     livingWeapon: true
-    psiImmune: true
+    psiBlock: true
     hasHands: false
     dog: true
 startingBase:

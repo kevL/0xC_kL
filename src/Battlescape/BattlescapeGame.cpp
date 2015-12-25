@@ -771,7 +771,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	// this cast only works when ai was already AlienBAIState at heart
 //	AlienBAIState* aggro = dynamic_cast<AlienBAIState*>(ai);
 
-	//Log(LOG_INFO) << ". Declare action - define .actor & .number";
+	//Log(LOG_INFO) << ". Declare action - define .actor & .AIcount";
 	BattleAction action;
 	action.actor = unit;
 	action.AIcount = _AIActionCounter;
@@ -2256,6 +2256,14 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 																.arg(unit->getName(game->getLanguage()))));
 		}
 
+		if (unit->getAIState() != nullptr)
+		{
+			if (unit->getOriginalFaction() == FACTION_PLAYER)
+				unit->setAIState();
+			else
+				unit->getAIState()->resetAI();
+		}
+
 		unit->setUnitStatus(STATUS_STANDING);
 		BattleAction ba;
 		ba.actor = unit;
@@ -2989,7 +2997,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 
 	_battleSave->getUnits()->push_back(conUnit);
 
-	conUnit->setAIState(new AlienBAIState(_battleSave, conUnit, nullptr));
+	conUnit->setAIState(new AlienBAIState(_battleSave, conUnit));
 
 	st = unitRule->getRace().substr(4) + "_WEAPON";
 	BattleItem* const item = new BattleItem(

@@ -347,7 +347,7 @@ units:
     specab: 1
     livingWeapon: true
     mechanical: true
-    psiImmune: true
+    psiBlock: true
     hasHands: false
 ufopaedia:
   - id: STR_WASPITE

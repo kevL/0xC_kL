@@ -49,7 +49,7 @@ namespace OpenXcom
  * Sets up an AlienBAIState w/ BattleAIState.
  * @param battleSave	- pointer to SavedBattleGame
  * @param unit			- pointer to the BattleUnit
- * @param node			- pointer to the Node the unit originates from
+ * @param node			- pointer to the Node the unit originates from (default nullptr)
  */
 AlienBAIState::AlienBAIState(
 		SavedBattleGame* const battleSave,
@@ -2402,7 +2402,7 @@ bool AlienBAIState::psiAction() // private.
 					++i)
 			{
 				if ((*i)->getGeoscapeSoldier() != nullptr	// what about doggies .... Should use isFearable() for doggies ....
-					&& validTarget(*i, true) == true	// will check for Mc, Exposed, etc.
+					&& validTarget(*i, true) == true		// will check for Mc, Exposed, etc.
 					&& (itRule->isLosRequired() == false
 						|| std::find(
 								_unit->getHostileUnits().begin(),

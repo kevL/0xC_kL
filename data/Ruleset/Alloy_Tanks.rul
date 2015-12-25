@@ -117,7 +117,7 @@ units:
     deathSound: 23
     moveSound: 14
     mechanical: true
-    psiImmune: true
+    psiBlock: true
   - type: STR_TANK_ROCKET_LAUNCHER_ALLOY
     race: STR_TANK_ROCKET_LAUNCHER_ALLOY
     stats:
@@ -140,7 +140,7 @@ units:
     deathSound: 23
     moveSound: 14
     mechanical: true
-    psiImmune: true
+    psiBlock: true
   - type: STR_TANK_LASER_CANNON_ALLOY
     race: STR_TANK_LASER_CANNON_ALLOY
     stats:
@@ -163,7 +163,7 @@ units:
     deathSound: 23
     moveSound: 14
     mechanical: true
-    psiImmune: true
+    psiBlock: true
 manufacture:
   - type: STR_TANK_CANNON_ALLOY
     category: STR_HEAVY_WEAPONS_PLATFORM

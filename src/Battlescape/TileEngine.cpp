@@ -1835,7 +1835,7 @@ bool TileEngine::reactionShot(
 		AlienBAIState* ai = dynamic_cast<AlienBAIState*>(unit->getAIState());
 		if (ai == nullptr)
 		{
-			ai = new AlienBAIState(_battleSave, unit, nullptr);
+			ai = new AlienBAIState(_battleSave, unit);
 			unit->setAIState(ai);
 		}
 
@@ -5813,9 +5813,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 	if (victim == nullptr) return false;
 	//Log(LOG_INFO) << "psiAttack: vs ID " << victim->getId();
 
-	const bool psiImmune = victim->getUnitRules() != nullptr
-						&& victim->getUnitRules()->isPsiImmune() == true;
-	if (psiImmune == false)
+	if (victim->psiBlock() == false)
 	{
 		if (action->type == BA_PSICOURAGE)
 		{
@@ -5908,7 +5906,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 					break;
 					case BA_PSIPANIC:
 						xp = 1;
-					break;
+//					break;
 //					case BA_PSICONFUSE:
 //					default: xp = 0;
 				}
@@ -5964,22 +5962,30 @@ bool TileEngine::psiAttack(BattleAction* const action)
 										strength,
 										skill);
 
-					courage = std::min(0, // xCom Morale loss for getting Mc'd.
+					courage = std::min(0, // Morale loss for getting Mc'd.
 									  (_battleSave->getMoraleModifier() / 10) + (courage / 2) - 110);
 				}
-				else //if (action->actor->getFaction() == FACTION_PLAYER)
+				else // actor->faction Player
 				{
-					if (victim->getOriginalFaction() == FACTION_HOSTILE)
+					if (victim->getOriginalFaction() != FACTION_HOSTILE) // xCom and civies
+					{
+						victim->setExposed(-1);	// remove Exposure.
+						courage /= 2;			// xCom Morale gain for getting Mc'd back to xCom.
+					}
+					else // victim aLien
 						courage = std::min(0, // aLien Morale loss for getting Mc'd.
 										  (_battleSave->getMoraleModifier(nullptr, false) / 10) + (courage * 3 / 4) - 110);
-					else
-					{
-						courage /= 2;			// xCom Morale gain for getting Mc'd back to xCom.
-						victim->setExposed(-1);	// remove Exposure.
-					}
 				}
 				victim->moraleChange(courage);
 				//Log(LOG_INFO) << ". . . victim morale[2] = " << victim->getMorale();
+
+				if (victim->getAIState() != nullptr)
+				{
+					if (victim->getOriginalFaction() == FACTION_PLAYER)
+						victim->setAIState();
+					else
+						victim->getAIState()->resetAI();
+				}
 
 				victim->setFaction(action->actor->getFaction());
 				victim->initTu();

@@ -228,7 +228,7 @@ private:
 		_female,
 		_livingWeapon,
 		_mechanical,
-		_psiImmune;
+		_psiBlock;
 	int
 		_floatHeight,
 		_kneelHeight,
@@ -328,7 +328,7 @@ private:
 		/// Gets if this RuleUnit is a mechanical apparatus.
 		bool isMechanical() const;
 		/// Gets if this RuleUnit is immune to psionic attacks.
-		bool isPsiImmune() const;
+		bool getPsiBlock() const;
 
 		/// Gets if the unit can open doors and prime grenades.
 		bool hasHands() const;
