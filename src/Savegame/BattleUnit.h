@@ -123,8 +123,8 @@ class BattleUnit // no copy cTor.
 		static const size_t PARTS_BODY = 6;
 
 private:
-	static const size_t PARTS_ARMOR	= 5; // doubles as both armorValues and sprites' cache
-	static const int DOSE_LETHAL	= 3;
+	static const size_t PARTS_ARMOR = 5; // doubles as both armorValues and sprites' cache
+	static const int DOSE_LETHAL = 3;
 //	static const int SPEC_WEAPON_MAX = 3;
 
 	bool
@@ -180,7 +180,7 @@ private:
 		_mcSkill;
 	size_t _battleOrder;
 
-	BattleAIState* _currentAIState;
+	BattleAIState* _unitAIState;
 //	BattleItem* _specWeapon[SPEC_WEAPON_MAX];
 	BattlescapeGame* _battleGame;
 	BattleUnit* _charging;
@@ -199,7 +199,7 @@ private:
 
 	std::list<BattleUnit*> _rfSpotters;
 
-	std::vector<int> _spottedId; // for saving/loading '_hostileUnitsThisTurn'
+	std::vector<int> _spotted; // for saving/loading '_hostileUnitsThisTurn'
 
 	std::vector<BattleItem*> _inventory;
 	std::vector<BattleUnit*>
@@ -237,7 +237,7 @@ private:
 	std::wstring _name;
 
 	std::vector<size_t> _loftSet;
-	std::vector<std::pair<Uint8, Uint8> > _recolor;
+	std::vector<std::pair<Uint8, Uint8>> _recolor;
 
 	const RuleArmor* _armor;
 	Soldier* _geoscapeSoldier;
@@ -471,14 +471,16 @@ private:
 		void setUnitVisible(bool flag = true);
 		/// Gets whether this unit is visible.
 		bool getUnitVisible() const;
-		/// Adds unit to visible units.
+		/// Adds a unit to the BattleUnit's visible and/or recently spotted hostile units.
 		void addToHostileUnits(BattleUnit* const unit);
-		/// Gets the list of visible units.
-		std::vector<BattleUnit*>* getHostileUnits();
-		/// Clears visible units.
+		/// Gets the BattleUnit's list of visible hostile units.
+		std::vector<BattleUnit*>& getHostileUnits();
+		/// Clears visible hostile units.
 		void clearHostileUnits();
-		/// Gets the vector of BattleUnits that this unit has seen this turn.
+		/// Gets the BattleUnit's list of hostile units that have been spotted during the current turn.
 		std::vector<BattleUnit*>& getHostileUnitsThisTurn();
+		/// Clears hostile units spotted during the current turn.
+//		void clearHostileUnitsThisTurn();
 
 		/// Adds tile to visible tiles.
 //		bool addToVisibleTiles(Tile* const tile);
@@ -544,9 +546,9 @@ private:
 		/// Lets AI do its thing.
 		void think(BattleAction* const action);
 		/// Gets current AI state.
-		BattleAIState* getCurrentAIState() const;
+		BattleAIState* getAIState() const;
 		/// Sets next AI State.
-		void setAIState(BattleAIState* const aiState);
+		void setAIState(BattleAIState* const aiState = nullptr);
 
 		/// Sets the Tile this unit is standing on.
 		void setTile(
@@ -717,6 +719,10 @@ private:
 
 		/// Sets this unit's health to 0 and status to dead.
 		void instaKill();
+		/// Gets if this unit is about to die.
+		bool getAboutToFall() const;
+		/// Sets this unit's parameters as down (collapsed/ unconscious/ dead).
+		void putDown();
 
 		/// Gets this unit's spawn unit.
 		std::string getSpawnUnit() const;
@@ -838,11 +844,6 @@ private:
 
 		/// Sets the BattleGame for this unit.
 		void setBattleForUnit(BattlescapeGame* const battleGame);
-
-		/// Gets if this unit is about to die.
-		bool getAboutToFall() const;
-		/// Sets this unit's parameters as down (collapsed/ unconscious/ dead).
-		void putDown();
 
 		/// Sets this BattleUnit's turn direction when spinning 180 degrees.
 		void setTurnDirection(int dir);

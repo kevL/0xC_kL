@@ -2238,9 +2238,9 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 				if ((*j)->getFaction() == FACTION_PLAYER
 					&& (*j)->isOut_t(OUT_STAT) == false
 					&& std::find(
-							(*j)->getHostileUnits()->begin(),
-							(*j)->getHostileUnits()->end(),
-							_hostileUnit[i]) != (*j)->getHostileUnits()->end())
+							(*j)->getHostileUnits().begin(),
+							(*j)->getHostileUnits().end(),
+							_hostileUnit[i]) != (*j)->getHostileUnits().end())
 				{
 					nextSpotter = *j;
 					break;
@@ -2257,9 +2257,9 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 					if ((*j)->getFaction() == FACTION_PLAYER
 						&& (*j)->isOut_t(OUT_STAT) == false
 						&& std::find(
-								(*j)->getHostileUnits()->begin(),
-								(*j)->getHostileUnits()->end(),
-								_hostileUnit[i]) != (*j)->getHostileUnits()->end())
+								(*j)->getHostileUnits().begin(),
+								(*j)->getHostileUnits().end(),
+								_hostileUnit[i]) != (*j)->getHostileUnits().end())
 					{
 						nextSpotter = *j;
 						break;
@@ -3019,9 +3019,9 @@ void BattlescapeState::cycleHostileHotcons() // private.
 //						&& (*j)->isOut() == false)
 				{
 					if (std::find(
-								(*j)->getHostileUnits()->begin(),
-								(*j)->getHostileUnits()->end(),
-								_hostileUnit[i]) != (*j)->getHostileUnits()->end())
+								(*j)->getHostileUnits().begin(),
+								(*j)->getHostileUnits().end(),
+								_hostileUnit[i]) != (*j)->getHostileUnits().end())
 					{
 						isSpotted = true;
 						break;
@@ -3032,9 +3032,9 @@ void BattlescapeState::cycleHostileHotcons() // private.
 			if (isSpotted == true)
 			{
 				if (std::find(
-							selUnit->getHostileUnits()->begin(),
-							selUnit->getHostileUnits()->end(),
-							_hostileUnit[i]) != selUnit->getHostileUnits()->end())
+							selUnit->getHostileUnits().begin(),
+							selUnit->getHostileUnits().end(),
+							_hostileUnit[i]) != selUnit->getHostileUnits().end())
 				{
 					color = static_cast<Uint8>(colorRed);
 				}

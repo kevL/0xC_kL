@@ -23,20 +23,12 @@
 //#include <vector>
 
 #include "BattleAIState.h"
-#include "Position.h"
 
 #include "../Battlescape/BattlescapeGame.h"
 
 
 namespace OpenXcom
 {
-
-class BattleUnit;
-class Node;
-class SavedBattleGame;
-
-//struct BattleAction;
-
 
 /**
  * This class is used by the BattleUnit AI.
@@ -46,21 +38,19 @@ class AlienBAIState
 		public BattleAIState
 {
 
-protected:
+private:
 	bool
 		_blaster,
 		_didPsi,
 		_grenade, // kL
 		_melee,
 		_rifle;
-//		_traceAI;
 	int
-		_AIMode,
 		_closestDist,
 		_intelligence,
-		_targetsKnown,
+		_targetsExposed,
 		_targetsVisible,
-		_xcomSpotters,
+		_spottersHostile,
 		_tuAmbush,
 		_tuEscape;
 //kL	_reserveTUs;
@@ -70,32 +60,28 @@ protected:
 		_reachableAttack;
 //		_wasHitBy;
 
-	BattleUnit* _aggroTarget;
 	BattleAction
 		* _ambushAction,
 		* _attackAction,
 		* _escapeAction,
 		* _patrolAction,
 		* _psiAction;
-	Node
-		* _startNode,
-		* _toNode;
 
 	BattleActionType _reserve;
 
-	/// setup a patrol objective.
+	/// Sets up a patrol objective.
 	void setupPatrol();
-	/// setup an ambush objective.
+	/// Sets up an ambush objective.
 	void setupAmbush();
-	/// setup a combat objective.
+	/// Sets up a combat objective.
 	void setupAttack();
-	/// setup an escape objective.
+	/// Sets up an escape objective.
 	void setupEscape();
 
-	/// count how many xcom/civilian units are known to this unit.
-	int countKnownTargets() const;
-	/// count how many known XCom units are able to see this unit.
-	int countSpottingUnits(const Position& pos) const;
+	/// Counts how many xcom/civilian units are known to this unit.
+	int countExposedTargets() const;
+	/// Counts how many known XCom units are able to see this unit.
+	int countSpotters(const Position& pos) const;
 
 	/// Selects the nearest target we can see, and return the number of viable targets.
 	int selectNearestTarget();
@@ -108,7 +94,7 @@ protected:
 			const BattleUnit* const targetUnit,
 			int tuMax) const;
 
-	/// re-evaluate the situation and make a decision from available options.
+	/// Re-evaluates the situation and makes a decision from available options.
 	void evaluateAIMode();
 	/// Selects a suitable position from which to attack.
 	bool findFirePoint();
@@ -136,16 +122,16 @@ protected:
 			bool assessDanger = false,
 			bool includeCivs = false) const;
 
-	/// Assuming the aLien has both a ranged and a melee weapon, select one.
+	/// Assumes the aLien has both a ranged and a melee weapon, and selects one.
 	void selectMeleeOrRanged();
 
 
 	public:
 		/// Creates a new AlienBAIState linked to the game and a certain unit.
 		AlienBAIState(
-				SavedBattleGame* battleSave,
-				BattleUnit* unit,
-				Node* node);
+				SavedBattleGame* const battleSave,
+				BattleUnit* const unit,
+				Node* const node);
 		/// Cleans up the AlienBAIState.
 		~AlienBAIState();
 
@@ -159,7 +145,7 @@ protected:
 		/// Exits the state.
 //		void exit();
 		/// Runs state functionality every AI cycle.
-		void think(BattleAction* action) override;
+		void think(BattleAction* const action) override;
 
 		/// Sets the "unit was hit" flag true.
 //		void setWasHitBy(BattleUnit *attacker);

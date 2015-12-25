@@ -2,9 +2,9 @@
 #define __OXC_PCH_H
 
 // kL: heads up!
-#pragma message("kL: Compiling PCH.H")
+//#pragma message("kL: Compiling PCH.H")
 //#pragma message("...")
-//#pragma message("... jerking off ... please wait")
+#pragma message("... jerking off ... please wait")
 
 // c++ headers
 //

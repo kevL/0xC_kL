@@ -59,7 +59,6 @@ void UnitPanicBState::think()
 {
 	if (_unit != nullptr)
 	{
-//		if (_unit->isOut() == false)
 		if (_unit->isOut_t(OUT_STAT) == false)
 		{
 			_unit->setUnitStatus(STATUS_STANDING);

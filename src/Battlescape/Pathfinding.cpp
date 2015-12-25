@@ -2060,7 +2060,7 @@ std::vector<int> Pathfinding::findReachable(
 		i->reset();
 	}
 
-//	setPathingUnit(unit); // <- done in BattlescapeGame::handleAI() as well as the AI states themselves.
+//	setPathingUnit(unit); // <- done in BattlescapeGame::handleUnitAI() as well as the AI states themselves.
 
 	PathfindingNode
 		* const startNode = getNode(unit->getPosition()),

@@ -22,17 +22,6 @@
 //#define _USE_MATH_DEFINES
 //#include <cmath>
 
-#include "Pathfinding.h"
-#include "TileEngine.h"
-
-//#include "../Engine/Options.h"
-#include "../Engine/RNG.h"
-
-#include "../Savegame/BattleUnit.h"
-#include "../Savegame/Node.h"
-#include "../Savegame/SavedBattleGame.h"
-#include "../Savegame/Tile.h"
-
 
 namespace OpenXcom
 {
@@ -51,16 +40,12 @@ CivilianBAIState::CivilianBAIState(
 		BattleAIState(
 			battleSave,
 			unit),
-		_aggroTarget(nullptr),
-		_escapeTUs(0),
-		_AIMode(AI_PATROL),
-		_visibleEnemies(0),
-		_spottingEnemies(0),
-		_startNode(node),
-		_toNode(nullptr)
-//		_traceAI(false)
+		_tuEscape(0),
+		_targetsHostile(0),
+		_spottersHostile(0)
 {
-//	_traceAI = Options::traceAI;
+	_startNode = node;
+
 	_escapeAction = new BattleAction();
 	_patrolAction = new BattleAction();
 }
@@ -83,11 +68,11 @@ void CivilianBAIState::load(const YAML::Node& node)
 	_AIMode = static_cast<AIMode>(node["AIMode"].as<int>(0));
 
 	const int
-		fromNodeId	= node["fromNode"]	.as<int>(-1),
+		startNodeId	= node["startNode"]	.as<int>(-1),
 		toNodeId	= node["toNode"]	.as<int>(-1);
 
-	if (fromNodeId != -1)
-		_startNode = _battleSave->getNodes()->at(static_cast<size_t>(fromNodeId));
+	if (startNodeId != -1)
+		_startNode = _battleSave->getNodes()->at(static_cast<size_t>(startNodeId));
 
 	if (toNodeId != -1)
 		_toNode = _battleSave->getNodes()->at(static_cast<size_t>(toNodeId));
@@ -100,15 +85,15 @@ void CivilianBAIState::load(const YAML::Node& node)
 YAML::Node CivilianBAIState::save() const
 {
 	int
-		fromNodeId = -1,
+		startNodeId = -1,
 		toNodeId = -1;
 
-	if (_startNode != nullptr)	fromNodeId	= _startNode->getId();
-	if (_toNode != nullptr)	toNodeId		= _toNode->getId();
+	if (_startNode != nullptr)	startNodeId	= _startNode->getId();
+	if (_toNode != nullptr)		toNodeId	= _toNode->getId();
 
 	YAML::Node node;
 
-	node["fromNode"]	= fromNodeId;
+	node["startNode"]	= startNodeId;
 	node["toNode"]		= toNodeId;
 	node["AIMode"]		= static_cast<int>(_AIMode);
 
@@ -129,20 +114,20 @@ YAML::Node CivilianBAIState::save() const
  * Runs any code the state needs to keep updating every AI cycle.
  * @param action (possible) AI action to execute after thinking is done.
  */
-void CivilianBAIState::think(BattleAction* action)
+void CivilianBAIState::think(BattleAction* const action)
 {
 	//Log(LOG_INFO) << "CivilianBAIState::think()";
  	action->type = BA_RETHINK;
 	action->actor = _unit;
 
-	_escapeAction->number = action->number;
+	_escapeAction->AIcount = action->AIcount;
 
-	_visibleEnemies = countHostiles();
-	_spottingEnemies = countSpottingUnits(_unit->getPosition());
+	_targetsHostile = countHostiles();
+	_spottersHostile = countSpotters(_unit->getPosition());
 
 //	if (_traceAI)
 //	{
-//		Log(LOG_INFO) << "Civilian Unit has " << _visibleEnemies << " enemies visible, " << _spottingEnemies << " of whom are spotting him. ";
+//		Log(LOG_INFO) << "Civilian Unit has " << _targetsHostile << " enemies visible, " << _spottersHostile << " of whom are spotting him. ";
 //		std::string AIMode;
 //		switch (_AIMode)
 //		{
@@ -152,7 +137,7 @@ void CivilianBAIState::think(BattleAction* action)
 //		Log(LOG_INFO) << "Currently using " << AIMode << " behaviour";
 //	}
 
-	if (_spottingEnemies != 0 && _escapeTUs == 0)
+	if (_spottersHostile != 0 && _tuEscape == 0)
 		setupEscape();
 
 	setupPatrol();
@@ -161,17 +146,17 @@ void CivilianBAIState::think(BattleAction* action)
 	switch (_AIMode)
 	{
 		case AI_ESCAPE:
-			if (_spottingEnemies == 0) evaluate = true;
-		break;
+			if (_spottersHostile == 0) evaluate = true;
+			break;
 		case AI_PATROL:
-			if (_spottingEnemies != 0 || _visibleEnemies != 0
+			if (_spottersHostile != 0 || _targetsHostile != 0
 				|| RNG::percent(10) == true)
 			{
 				evaluate = true;
 			}
 	}
 
-	if (_spottingEnemies > 2
+	if (_spottersHostile > 2
 		|| _unit->getHealth() < 2 * _unit->getBattleStats()->health / 3)
 	{
 		evaluate = true;
@@ -197,12 +182,12 @@ void CivilianBAIState::think(BattleAction* action)
 		case AI_ESCAPE:
 			action->type = _escapeAction->type;
 			action->target = _escapeAction->target;
-			action->number = 3;
+			action->AIcount = 3;
 			action->desperate = true;
 
 			_unit->dontReselect();
 //			_battleSave->getBattleGame()->setReservedAction(BA_NONE, false);
-		break;
+			break;
 		case AI_PATROL:
 			action->type = _patrolAction->type;
 			action->target = _patrolAction->target;
@@ -211,7 +196,7 @@ void CivilianBAIState::think(BattleAction* action)
 	if (action->type == BA_MOVE
 		&& action->target != _unit->getPosition())
 	{
-		_escapeTUs = 0;
+		_tuEscape = 0;
 	}
 }
 
@@ -221,7 +206,7 @@ void CivilianBAIState::think(BattleAction* action)
  * @note If none of the hostiles can target the civilian this returns 0.
  * @return, quantity of potential perps
  */
-int CivilianBAIState::countHostiles()
+int CivilianBAIState::countHostiles() // private.
 {
 	int
 		tally = 0,
@@ -268,9 +253,11 @@ int CivilianBAIState::countHostiles()
 }
 
 /**
- *
+ * Counts how many aLiens spot this unit.
+ * @param pos - reference the position of unit getting spotted
+ * @return, qty of spotters
  */
-int CivilianBAIState::countSpottingUnits(Position pos) const
+int CivilianBAIState::countSpotters(const Position& pos) const // private.
 {
 	bool checking = (pos != _unit->getPosition());
 	int tally = 0;
@@ -312,15 +299,15 @@ int CivilianBAIState::countSpottingUnits(Position pos) const
 }
 
 /**
- *
+ * Sets up an escape objective.
  */
-void CivilianBAIState::setupEscape()
+void CivilianBAIState::setupEscape() // private.
 {
 	int
 		bestTileScore = -100000,
 		tileScore,
 		tu = _unit->getTimeUnits() / 2,
-		unitsSpotting = countSpottingUnits(_unit->getPosition()),
+		unitsSpotting = countSpotters(_unit->getPosition()),
 		dist = 0;
 
 	countHostiles(); // sets an _aggroTarget
@@ -405,7 +392,7 @@ void CivilianBAIState::setupEscape()
 			tileScore = -100001;
 		else
 		{
-			const int spotters = countSpottingUnits(_escapeAction->target);
+			const int spotters = countSpotters(_escapeAction->target);
 
 			// just ignore unreachable tiles
 			if (std::find(
@@ -416,12 +403,12 @@ void CivilianBAIState::setupEscape()
 				continue;
 			}
 
-			if (_spottingEnemies != 0 || spotters != 0)
+			if (_spottersHostile != 0 || spotters != 0)
 			{
-				if (_spottingEnemies <= spotters) // that's for giving away our position
-					tileScore -= (1 + spotters - _spottingEnemies) * EXPOSURE_PENALTY;
+				if (_spottersHostile <= spotters) // that's for giving away our position
+					tileScore -= (1 + spotters - _spottersHostile) * EXPOSURE_PENALTY;
 				else
-					tileScore += (_spottingEnemies - spotters) * EXPOSURE_PENALTY;
+					tileScore += (_spottersHostile - spotters) * EXPOSURE_PENALTY;
 			}
 
 			if (tile->getFire() != 0)
@@ -450,10 +437,10 @@ void CivilianBAIState::setupEscape()
 			{
 				bestTileScore = tileScore;
 				posBest = _escapeAction->target;
-				_escapeTUs = pf->getTotalTUCost();
+				_tuEscape = pf->getTotalTUCost();
 
 				if (_escapeAction->target == _unit->getPosition())
-					_escapeTUs = 1;
+					_tuEscape = 1;
 
 //				if (_traceAI)
 //				{
@@ -487,9 +474,9 @@ void CivilianBAIState::setupEscape()
 }
 
 /**
- *
+ * Sets up a patrol objective.
  */
-void CivilianBAIState::setupPatrol()
+void CivilianBAIState::setupPatrol() // private.
 {
 	if (_toNode != nullptr
 		&& _unit->getPosition() == _toNode->getPosition())
@@ -557,9 +544,9 @@ void CivilianBAIState::setupPatrol()
 }
 
 /**
- *
+ * Re-evaluates the situation and makes a decision from available options.
  */
-void CivilianBAIState::evaluateAIMode()
+void CivilianBAIState::evaluateAIMode() // private.
 {
 	if (_toNode != nullptr)
 	{
@@ -567,16 +554,16 @@ void CivilianBAIState::evaluateAIMode()
 			escape = 0.f,
 			patrol = 30.f;
 
-		if (_visibleEnemies > 0)
+		if (_targetsHostile != 0)
 		{
 			escape = 15.f;
 			patrol = 15.f;
 		}
 
-		if (_spottingEnemies)
+		if (_spottersHostile != 0)
 		{
 			patrol = 0.f;
-			if (_escapeTUs == 0) setupEscape();
+			if (_tuEscape == 0) setupEscape();
 		}
 
 		switch (_AIMode)
@@ -600,8 +587,8 @@ void CivilianBAIState::evaluateAIMode()
 			case 2: escape *= 0.7f;
 		}
 
-		if (_spottingEnemies != 0)
-			escape = 10.f * escape * static_cast<float>(_spottingEnemies + 10) / 100.f;
+		if (_spottersHostile != 0)
+			escape = 10.f * escape * static_cast<float>(_spottersHostile + 10) / 100.f;
 		else
 			escape /= 2.f;
 

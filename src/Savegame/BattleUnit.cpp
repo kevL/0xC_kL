@@ -97,7 +97,7 @@ BattleUnit::BattleUnit(
 		_floating(false),
 		_dontReselect(false),
 		_fire(0),
-		_currentAIState(nullptr),
+		_unitAIState(nullptr),
 		_visible(false),
 		_cacheInvalid(true),
 		_expBravery(0),
@@ -266,7 +266,7 @@ BattleUnit::BattleUnit(
 		_floating(false),
 		_dontReselect(false),
 		_fire(0),
-		_currentAIState(nullptr),
+		_unitAIState(nullptr),
 		_visible(false),
 		_cacheInvalid(true),
 		_expBravery(0),
@@ -433,7 +433,7 @@ BattleUnit::~BattleUnit()
 //	if (_geoscapeSoldier != nullptr) // ... delete it anyway:
 	delete _statistics;
 
-	delete _currentAIState;
+	delete _unitAIState;
 }
 
 /**
@@ -514,15 +514,16 @@ void BattleUnit::load(const YAML::Node& node)
 		_expMelee		= node["expMelee"]		.as<int>(_expMelee);
 	}
 
-
-	std::vector<int> spottedId;
-	spottedId = node["spottedUnitsId"].as<std::vector<int>>(spottedId);
-	for (size_t
-			i = 0;
-			i != spottedId.size();
-			++i)
+	if (node["spottedUnits"])
 	{
-		_spottedId.push_back(spottedId.at(i));
+		const std::vector<int> spotted (node["spottedUnits"].as<std::vector<int>>());
+		for (size_t
+				i = 0;
+				i != spotted.size();
+				++i)
+		{
+			_spotted.push_back(spotted.at(i));
+		}
 	}
 	// Convert those (int)id's into pointers to BattleUnits during
 	// SavedBattleGame loading *after* all BattleUnits have loaded.
@@ -543,7 +544,7 @@ void BattleUnit::loadSpotted(SavedBattleGame* const battleSave)
 {
 	for (size_t
 			i = 0;
-			i != _spottedId.size();
+			i != _spotted.size();
 			++i)
 	{
 		for (std::vector<BattleUnit*>::const_iterator
@@ -551,7 +552,7 @@ void BattleUnit::loadSpotted(SavedBattleGame* const battleSave)
 				j != battleSave->getUnits()->end();
 				++j)
 		{
-			if ((*j)->getId() == _spottedId.at(i))
+			if ((*j)->getId() == _spotted.at(i))
 			{
 				_hostileUnitsThisTurn.push_back(*j);
 				break;
@@ -559,7 +560,7 @@ void BattleUnit::loadSpotted(SavedBattleGame* const battleSave)
 		}
 	}
 
-	_spottedId.clear();
+	_spotted.clear();
 }
 
 /**
@@ -616,8 +617,8 @@ YAML::Node BattleUnit::save() const
 
 	// could put (if not tank) here:
 
-	if (getCurrentAIState() != nullptr)
-		node["AI"] = getCurrentAIState()->save();
+	if (_unitAIState != nullptr)
+		node["AI"] = _unitAIState->save();
 
 	if (_faction == FACTION_PLAYER
 		&& _dontReselect == true)
@@ -676,16 +677,15 @@ YAML::Node BattleUnit::save() const
 	} */
 
 	if (_faction == FACTION_PLAYER
-		&& _originalFaction == FACTION_PLAYER)
+		&& _originalFaction == FACTION_PLAYER
+		&& isOut_t(OUT_STAT) == false)
 	{
-		int spottedId;
 		for (size_t
 				i = 0;
 				i != _hostileUnitsThisTurn.size();
 				++i)
 		{
-			spottedId = _hostileUnitsThisTurn.at(i)->getId();
-			node["spottedUnitsId"].push_back(spottedId);
+			node["spottedUnits"].push_back(_hostileUnitsThisTurn.at(i)->getId());
 		}
 	}
 
@@ -1638,7 +1638,7 @@ void BattleUnit::playDeathSound(bool fleshWound) const
 	else
 		soundId = _deathSound;
 
-	if (soundId != -1)
+	if (soundId != -1 && _battleGame != nullptr) // check if hit by prebattle hidden/power-source explosion.
 		_battleGame->getResourcePack()->getSound("BATTLE.CAT", soundId)
 										->play(-1, _battleGame->getMap()->getSoundAngle(_pos));
 }
@@ -2084,10 +2084,9 @@ bool BattleUnit::getUnitVisible() const
 }
 
 /**
- * Adds an enemy unit to this BattleUnit's vector(s) of spotted and/or visible
- * units.
+ * Adds a unit to this BattleUnit's visible and/or recently spotted hostile units.
  * @note For aliens these are xCom and civies; for xCom these are aliens only.
- * @note Visible units are currently seen - unitsSpottedThisTurn are just that.
+ * @note _hostileUnits are currently seen - _hostileUnitsThisTurn are just that.
  * Don't confuse either of these with the '_visible' to Player flag.
  * @note Called from TileEngine::calculateFOV().
  * @param unit - pointer to a seen BattleUnit
@@ -2127,16 +2126,16 @@ void BattleUnit::addToHostileUnits(BattleUnit* const unit)
 }
 
 /**
- * Gets the pointer to a vector of visible units.
- * @return, pointer to a vector of pointers to visible units
+ * Gets this BattleUnit's list of visible hostile units.
+ * @return, pointer to a vector of pointers to visible hostile BattleUnits
  */
-std::vector<BattleUnit*>* BattleUnit::getHostileUnits()
+std::vector<BattleUnit*>& BattleUnit::getHostileUnits()
 {
-	return &_hostileUnits;
+	return _hostileUnits;
 }
 
 /**
- * Clears visible units.
+ * Clears visible hostile units.
  */
 void BattleUnit::clearHostileUnits()
 {
@@ -2144,13 +2143,20 @@ void BattleUnit::clearHostileUnits()
 }
 
 /**
- * Gets the other units spotted this turn by this unit.
- * @return, reference to a vector of pointers to BattleUnits
+ * Gets this BattleUnit's list of hostile units that have been spotted during
+ * the current turn.
+ * @return, reference to a vector of pointers to known hostile BattleUnits
  */
 std::vector<BattleUnit*>& BattleUnit::getHostileUnitsThisTurn()
 {
 	return _hostileUnitsThisTurn;
 }
+
+/// Clears hostile units spotted during the current turn.
+/*void BattleUnit::clearHostileUnitsThisTurn()
+{
+	_hostileUnitsThisTurn.clear();
+} */
 
 /*
  * Adds a tile to the list of visible tiles.
@@ -2380,12 +2386,7 @@ void BattleUnit::prepUnit(bool full)
 		if (_health < 1)
 		{
 			_health = 0;
-			if (_currentAIState != nullptr) // if unit is dead AI state disappears
-			{
-//				_currentAIState->exit(); // does nothing.
-				delete _currentAIState;
-				_currentAIState = nullptr;
-			}
+			setAIState(); // if unit is dead AI state disappears
 			return;
 		}
 
@@ -2574,7 +2575,7 @@ void BattleUnit::takeFire()
 
 /**
  * Gets the pointer to the vector of inventory items.
- * @return, pointer to a vector of pointers to this BattleUnit's BattleItems
+ * @return, pointer to a vector of pointers to this BattleUnit's battle items
  */
 std::vector<BattleItem*>* BattleUnit::getInventory()
 {
@@ -2590,34 +2591,34 @@ void BattleUnit::think(BattleAction* const action)
 	//Log(LOG_INFO) << "BattleUnit::think()";
 	//Log(LOG_INFO) << ". checkAmmo()";
 	checkAmmo();
-	//Log(LOG_INFO) << ". _currentAIState->think()";
-	_currentAIState->think(action);
+	//Log(LOG_INFO) << ". _unitAIState->think()";
+	_unitAIState->think(action);
 	//Log(LOG_INFO) << "BattleUnit::think() EXIT";
 }
 
 /**
  * Sets this BattleUnit's current AI state.
- * @param aiState - pointer to AI state
+ * @param aiState - pointer to AI state (default nullptr)
  */
 void BattleUnit::setAIState(BattleAIState* const aiState)
 {
-	if (_currentAIState != nullptr)
+	if (_unitAIState != nullptr)
 	{
-//		_currentAIState->exit();
-		delete _currentAIState;
+//		_unitAIState->exit();
+		delete _unitAIState;
 	}
 
-	_currentAIState = aiState;
-//	_currentAIState->enter();
+	_unitAIState = aiState;
+//	_unitAIState->enter();
 }
 
 /**
  * Returns the current AI state.
  * @return, pointer to this BattleUnit's AI state
  */
-BattleAIState* BattleUnit::getCurrentAIState() const
+BattleAIState* BattleUnit::getAIState() const
 {
-	return _currentAIState;
+	return _unitAIState;
 }
 
 /**
@@ -3844,12 +3845,105 @@ void BattleUnit::setFaction(UnitFaction faction)
 }
 
 /**
- * Sets health to 0 and set status dead - used when getting zombified, etc.
+ * Sets health to 0 and status dead.
+ * @note Used when getting zombified, etc.
  */
 void BattleUnit::instaKill()
 {
 	_health = 0;
 	_status = STATUS_DEAD;
+
+	putDown();
+}
+
+/**
+ * Gets if this unit is in the limbo phase between getting killed or stunned and
+ * the end of its collapse sequence.
+ * @return, true if about to die
+ */
+bool BattleUnit::getAboutToFall() const
+{
+	return _aboutToFall;
+}
+
+/**
+ * Sets this BattleUnit's parameters as down - collapsed/ unconscious/ dead.
+ */
+void BattleUnit::putDown()
+{
+	if (_unitAIState != nullptr)
+	{
+		switch (_status)
+		{
+			case STATUS_DEAD:
+				setAIState();
+				break;
+			default: // unconscious
+				_unitAIState->resetAI();
+		}
+	}
+
+	_aboutToFall = false;
+	_hasCried = false;
+
+	_hostileUnits.clear();
+	_hostileUnitsThisTurn.clear();
+
+	// clear this unit from all other BattleUnit's '_hostileUnits' & '_hostileUnitsThisTurn' vectors
+	if (_battleGame != nullptr) // check if death by prebattle hidden/power-source explosion.
+	{
+		for (std::vector<BattleUnit*>::const_iterator
+				i = _battleGame->getBattleSave()->getUnits()->begin();
+				i != _battleGame->getBattleSave()->getUnits()->end();
+				++i)
+		{
+			for (std::vector<BattleUnit*>::const_iterator
+					j = (*i)->getHostileUnits().begin();
+					j != (*i)->getHostileUnits().end();
+					++j)
+			{
+				if (*j == this)
+				{
+					(*i)->getHostileUnits().erase(j);
+					break;
+				}
+			}
+
+			for (std::vector<BattleUnit*>::const_iterator
+					j = (*i)->getHostileUnitsThisTurn().begin();
+					j != (*i)->getHostileUnitsThisTurn().end();
+					++j)
+			{
+				if (*j == this)
+				{
+					(*i)->getHostileUnitsThisTurn().erase(j);
+					break;
+				}
+			}
+		}
+	}
+
+
+	_faction = _originalFaction;
+	_kneeled = false;	// don't get hunkerdown bonus against HE detonations
+//	_visible = false;	// don't do this: it mucks up convertUnit() respawning;
+						// ie, '_visible' flag is not transferred properly.
+
+	_turnsExposed = -1;	// don't risk aggro per the AI
+/*	// taken care of in SavedBattleGame::endBattlePhase()
+	if (_faction != FACTION_HOSTILE)
+		_turnsExposed = 255;	// don't risk aggro per the AI
+	else
+		_turnsExposed = 0;		// aLiens always exposed. */
+
+	// These don't seem to affect anything:
+//	_floating = false;
+//	_dashing = false;
+//	_stopShot = false;
+//	_takenExpl = false;
+//	_takenFire = false;
+//	_diedByFire = false;
+	// etc.
 }
 
 /**
@@ -4534,45 +4628,6 @@ size_t BattleUnit::getBattleOrder() const
 void BattleUnit::setBattleForUnit(BattlescapeGame* const battleGame)
 {
 	_battleGame = battleGame;
-}
-
-/**
- * Gets if this unit is in the limbo phase between getting killed or stunned and
- * the end of its collapse sequence.
- * @return, true if about to die
- */
-bool BattleUnit::getAboutToFall() const
-{
-	return _aboutToFall;
-}
-
-/**
- * Sets this BattleUnit's parameters as down - collapsed/ unconscious/ dead.
- */
-void BattleUnit::putDown()
-{
-	_aboutToFall = false;
-
-	_faction = _originalFaction;
-	_kneeled = false;	// don't get hunkerdown bonus against HE detonations
-//	_visible = false;	// don't do this: it mucks up convertUnit() respawning;
-						// ie, '_visible' flag is not transferred properly.
-
-	_turnsExposed = -1;	// don't risk aggro per the AI
-/*	// taken care of in SavedBattleGame::endBattlePhase()
-	if (_faction != FACTION_HOSTILE)
-		_turnsExposed = 255;	// don't risk aggro per the AI
-	else
-		_turnsExposed = 0;		// aLiens always exposed. */
-
-	// These don't seem to affect anything:
-//	_floating = false;
-//	_dashing = false;
-//	_stopShot = false;
-//	_takenExpl = false;
-//	_takenFire = false;
-//	_diedByFire = false;
-	// etc.
 }
 
 /**

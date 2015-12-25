@@ -22,11 +22,23 @@
 
 #include <yaml-cpp/yaml.h>
 
+#include "Pathfinding.h"
+#include "Position.h"
+#include "TileEngine.h"
+
+#include "../Engine/RNG.h"
+
+#include "../Savegame/BattleUnit.h"
+#include "../Savegame/Node.h"
+#include "../Savegame/SavedBattleGame.h"
+#include "../Savegame/Tile.h"
+
 
 namespace OpenXcom
 {
 
 class BattleUnit;
+class Node;
 class SavedBattleGame;
 
 struct BattleAction;
@@ -57,15 +69,24 @@ protected:
 		CUR_TILE_PREF			= 15,
 		COVER_BONUS				= 25;
 
+//	bool _traceAI;
+
+	BattleUnit
+		* _unit,
+		* _aggroTarget;
+	Node
+		* _startNode,
+		* _toNode;
 	SavedBattleGame* _battleSave;
-	BattleUnit* _unit;
+
+	AIMode _AIMode;
 
 
 	public:
 		/// Creates a new BattleAIState linked to the SavedBattleGame and a certain BattleUnit.
 		BattleAIState(
-				SavedBattleGame* battleSave,
-				BattleUnit* unit);
+				SavedBattleGame* const battleSave,
+				BattleUnit* const unit);
 		/// Cleans up the BattleAIState.
 		virtual ~BattleAIState();
 
@@ -79,7 +100,10 @@ protected:
 		/// Exits the state.
 //		virtual void exit();
 		/// Runs state functionality every AI cycle.
-		virtual void think(BattleAction* action);
+		virtual void think(BattleAction* const action);
+
+		/// Resets the unit's saved parameters.
+		void resetAI();
 };
 
 }

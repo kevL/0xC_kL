@@ -181,15 +181,13 @@ void BattlescapeGame::think()
 				{
 					if (handlePanickingUnit(_battleSave->getSelectedUnit()) == false)
 					{
-						//Log(LOG_INFO) << "BattlescapeGame::think() call handleAI() " << _battleSave->getSelectedUnit()->getId();
-						handleAI(_battleSave->getSelectedUnit());
+						//Log(LOG_INFO) << "BattlescapeGame::think() call handleUnitAI() " << _battleSave->getSelectedUnit()->getId();
+						handleUnitAI(_battleSave->getSelectedUnit());
 					}
 				}
 				else
 				{
-					if (_battleSave->selectNextFactionUnit(
-														true,
-														_AISecondMove) == nullptr)
+					if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr)
 					{
 						if (_battleSave->getDebugMode() == false)
 						{
@@ -690,15 +688,15 @@ void BattlescapeGame::centerOnUnit(const BattleUnit* const unit) const // privat
  * Handles the processing of the AI states of a unit.
  * @param unit - pointer to a BattleUnit
  */
-void BattlescapeGame::handleAI(BattleUnit* const unit)
+void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 {
-	//Log(LOG_INFO) << "BattlescapeGame::handleAI() " << unit->getId();
+	//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() " << unit->getId();
 	centerOnUnit(unit); // if you're going to reveal the map at least show the aLien.
 
 	if (unit->getTimeUnits() == 0) // was <6
 		unit->dontReselect();
 
-	if (_AIActionCounter > 1
+	if (_AIActionCounter > 1 // unit-AI done.
 		|| unit->reselectAllowed() == false)
 	{
 		if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr)
@@ -706,7 +704,7 @@ void BattlescapeGame::handleAI(BattleUnit* const unit)
 			if (_battleSave->getDebugMode() == false)
 			{
 				_endTurnRequested = true;
-				//Log(LOG_INFO) << "BattlescapeGame::handleAI() statePushBack(end AI turn)";
+				//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() statePushBack(end AI turn)";
 				statePushBack(nullptr); // end AI turn
 			}
 			else
@@ -732,7 +730,7 @@ void BattlescapeGame::handleAI(BattleUnit* const unit)
 
 		_AIActionCounter = 0;
 
-		//Log(LOG_INFO) << "BattlescapeGame::handleAI() Pre-EXIT";
+		//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() Pre-EXIT";
 		return;
 	}
 
@@ -740,18 +738,18 @@ void BattlescapeGame::handleAI(BattleUnit* const unit)
 	unit->setUnitVisible(false);
 
 	// might need this: populate _hostileUnit for a newly-created alien
-	//Log(LOG_INFO) << "BattlescapeGame::handleAI(), calculateFOV() call";
+	//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI(), calculateFOV() call";
 	_battleSave->getTileEngine()->calculateFOV(unit->getPosition());
 	// it might also help chryssalids realize they've zombified someone and need to move on;
 	// it should also hide units when they've killed the guy spotting them;
 	// it's also for good luck and prosperity.
 
-//	BattleAIState* ai = unit->getCurrentAIState();
-//	const BattleAIState* const ai = unit->getCurrentAIState();
-	if (unit->getCurrentAIState() == nullptr)
+//	BattleAIState* ai = unit->getAIState();
+//	const BattleAIState* const ai = unit->getAIState();
+	if (unit->getAIState() == nullptr)
 	{
 		// for some reason the unit had no AI routine assigned..
-		//Log(LOG_INFO) << "BattlescapeGame::handleAI() !ai, assign AI";
+		//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() !ai, assign AI";
 		if (unit->getFaction() == FACTION_HOSTILE)
 			unit->setAIState(new AlienBAIState(_battleSave, unit, nullptr));
 		else
@@ -773,12 +771,10 @@ void BattlescapeGame::handleAI(BattleUnit* const unit)
 	// this cast only works when ai was already AlienBAIState at heart
 //	AlienBAIState* aggro = dynamic_cast<AlienBAIState*>(ai);
 
-	//Log(LOG_INFO) << ". Declare action";
+	//Log(LOG_INFO) << ". Declare action - define .actor & .number";
 	BattleAction action;
-	//Log(LOG_INFO) << ". Define action.actor";
 	action.actor = unit;
-	//Log(LOG_INFO) << ". Define action.number";
-	action.number = _AIActionCounter;
+	action.AIcount = _AIActionCounter;
 	//Log(LOG_INFO) << ". unit->think(&action)";
 	unit->think(&action);
 	//Log(LOG_INFO) << ". _unit->think() DONE";
@@ -791,12 +787,12 @@ void BattlescapeGame::handleAI(BattleUnit* const unit)
 	//Log(LOG_INFO) << ". BA_RETHINK DONE";
 
 
-	_AIActionCounter = action.number;
+	_AIActionCounter = action.AIcount;
 
 	//Log(LOG_INFO) << ". pre hunt for weapon";
 	if (unit->getOriginalFaction() == FACTION_HOSTILE
 		&& unit->getMainHandWeapon() == nullptr)
-//		&& unit->getHostileUnits()->size() == 0)
+//		&& unit->getHostileUnits().size() == 0)
 	// TODO: and, if either no innate meleeWeapon, or a visible hostile is not within say 5 tiles.
 	{
 		//Log(LOG_INFO) << ". . no mainhand weapon or no ammo";
@@ -837,7 +833,7 @@ void BattlescapeGame::handleAI(BattleUnit* const unit)
 	//Log(LOG_INFO) << ". BA_MOVE DONE";
 
 
-	if (action.type == BA_SNAPSHOT
+	if (   action.type == BA_SNAPSHOT
 		|| action.type == BA_AUTOSHOT
 		|| action.type == BA_AIMEDSHOT
 		|| action.type == BA_THROW
@@ -968,7 +964,7 @@ void BattlescapeGame::handleAI(BattleUnit* const unit)
 			if (_battleSave->getDebugMode() == false)
 			{
 				_endTurnRequested = true;
-				//Log(LOG_INFO) << "BattlescapeGame::handleAI() statePushBack(end AI turn) 2";
+				//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() statePushBack(end AI turn) 2";
 				statePushBack(nullptr); // end AI turn
 			}
 			else
@@ -987,7 +983,7 @@ void BattlescapeGame::handleAI(BattleUnit* const unit)
 				_AISecondMove = true;
 		}
 	}
-	//Log(LOG_INFO) << "BattlescapeGame::handleAI() EXIT";
+	//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() EXIT";
 }
 
 /**
@@ -2076,15 +2072,15 @@ bool BattlescapeGame::checkReservedTu(
 	if (_battleSave->getSide() == FACTION_HOSTILE
 		&& _debugPlay == false)
 	{
-		const AlienBAIState* const ai = dynamic_cast<AlienBAIState*>(unit->getCurrentAIState());
+		const AlienBAIState* const ai (dynamic_cast<AlienBAIState*>(unit->getAIState()));
 		if (ai != nullptr)
 			batReserved = ai->getReservedAIAction();
 		else
-			batReserved = BA_NONE; // something went ... wrong. Should always be an AI for non-player units.
-
+			batReserved = BA_NONE;	// something went ... wrong. Should always be an AI for non-player units (although i
+									// guess it could-maybe-but-unlikely be a CivilianBAIState here in checkReservedTu()).
 		const int extraReserve = RNG::generate(0,13); // added in below ->
 
-		// kL_note: This could use some tweaking, for the poor aLiens:
+		// This could use some tweaking, for the poor aLiens:
 		switch (batReserved) // aLiens reserve TUs as a percentage rather than just enough for a single action.
 		{
 			case BA_SNAPSHOT:
@@ -2534,9 +2530,9 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			{
 				if (_currentAction.weapon->getRules()->isLosRequired() == false
 					|| std::find(
-							_currentAction.actor->getHostileUnits()->begin(),
-							_currentAction.actor->getHostileUnits()->end(),
-							targetUnit) != _currentAction.actor->getHostileUnits()->end())
+							_currentAction.actor->getHostileUnits().begin(),
+							_currentAction.actor->getHostileUnits().end(),
+							targetUnit) != _currentAction.actor->getHostileUnits().end())
 				{
 					if (TileEngine::distance( // in Range
 										_currentAction.actor->getPosition(),
@@ -2591,9 +2587,9 @@ void BattlescapeGame::primaryAction(const Position& pos)
 
 				if (_currentAction.weapon->getRules()->isLosRequired() == false
 					|| std::find(
-							_currentAction.actor->getHostileUnits()->begin(),
-							_currentAction.actor->getHostileUnits()->end(),
-							targetUnit) != _currentAction.actor->getHostileUnits()->end())
+							_currentAction.actor->getHostileUnits().begin(),
+							_currentAction.actor->getHostileUnits().end(),
+							targetUnit) != _currentAction.actor->getHostileUnits().end())
 				{
 					if (TileEngine::distance( // in Range
 										_currentAction.actor->getPosition(),
@@ -2935,7 +2931,7 @@ void BattlescapeGame::dropItem(
 
 /**
  * Converts a unit into a unit of another type.
- * @param unit		- pointer to a unit to convert
+ * @param unit - pointer to a unit to convert
  * @return, pointer to the new unit
  */
 BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)

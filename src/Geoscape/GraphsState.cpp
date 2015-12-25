@@ -1771,7 +1771,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 		scaleHigh = 0,
 		scaleLow = 0,
 
-		income[MONTHS_u]			= {0,0,0,0,0,0,0,0,0,0,0,0},
+		income[MONTHS_u]		= {0,0,0,0,0,0,0,0,0,0,0,0},
 		expenditure[MONTHS_u]	= {0,0,0,0,0,0,0,0,0,0,0,0},
 		maintenance[MONTHS_u]	= {0,0,0,0,0,0,0,0,0,0,0,0},
 		balance[MONTHS_u]		= {0,0,0,0,0,0,0,0,0,0,0,0},
@@ -1828,7 +1828,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 			_txtScore->setText(Text::formatNumber(score[i]));
 
 
-		if (_financeToggles.at(0) == true)	// INCOME
+		if (_financeToggles.at(0) == true) // INCOME
 		{
 			if (income[i] > scaleHigh)
 				scaleHigh = income[i];
@@ -1837,7 +1837,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 				scaleLow = income[i];
 		}
 
-		if (_financeToggles.at(1) == true)	// EXPENDITURE
+		if (_financeToggles.at(1) == true) // EXPENDITURE
 		{
 			if (expenditure[i] > scaleHigh)
 				scaleHigh = expenditure[i];
@@ -1846,7 +1846,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 				scaleLow = expenditure[i];
 		}
 
-		if (_financeToggles.at(2) == true)	// MAINTENANCE
+		if (_financeToggles.at(2) == true) // MAINTENANCE
 		{
 			if (maintenance[i] > scaleHigh)
 				scaleHigh = maintenance[i];
@@ -1855,7 +1855,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 				scaleLow = maintenance[i];
 		}
 
-		if (_financeToggles.at(3) == true)	// BALANCE
+		if (_financeToggles.at(3) == true) // BALANCE
 		{
 			if (balance[i] > scaleHigh)
 				scaleHigh = balance[i];
@@ -1864,7 +1864,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 				scaleLow = balance[i];
 		}
 
-		if (_financeToggles.at(4) == true)	// SCORE
+		if (_financeToggles.at(4) == true) // SCORE
 		{
 			if (score[i] > scaleHigh)
 				scaleHigh = score[i];
@@ -1876,7 +1876,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 
 	for (size_t // toggle screens
 			i = 0;
-			i != 5;
+			i != 5u;
 			++i)
 	{
 		_financeLines.at(i)->setVisible(_financeToggles.at(i));
@@ -1914,7 +1914,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 
 	for (size_t
 			i = 0;
-			i != 5;
+			i != 5u;
 			++i)
 	{
 		lineVector.clear();

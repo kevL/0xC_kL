@@ -688,7 +688,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 		return ret;
 
 	if (unit->getFaction() != FACTION_PLAYER
-		&& unit->getHostileUnits()->empty() == false
+		&& unit->getHostileUnits().empty() == false
 		&& unit->getHostileUnitsThisTurn().size() > antecedentOpponents)
 	{
 		return true;
@@ -884,20 +884,6 @@ Position TileEngine::getOriginVoxel(
 	}
 
 	return getSightOriginVoxel(action.actor);
-/*	Position originVoxel = Position::toVoxelSpaceCentered(
-													pos,
-													action.actor->getHeight(true) - 4
-														- _battleSave->getTile(pos)->getTerrainLevel(), // TODO: this is quadrant #1, will not be accurate in all cases.
-													action.actor->getArmor()->getSize());
-	const int ceilingZ = pos.z * 24 + 23;
-	if (ceilingZ < originVoxel.z)
-	{
-		const Tile* const tileAbove = _battleSave->getTile(pos + Position(0,0,1));
-		if (tileAbove == nullptr || tileAbove->hasNoFloor() == false)
-			originVoxel.z = ceilingZ; // careful with that ceiling, Eugene.
-	}
-
-	return originVoxel; */
 }
 /*	const int dirYshift[8] = {1, 1, 8,15,15,15, 8, 1};
 	const int dirXshift[8] = {8,14,15,15, 8, 1, 1, 1};
@@ -1846,15 +1832,15 @@ bool TileEngine::reactionShot(
 
 	if (unit->getFaction() == FACTION_HOSTILE)
 	{
-		AlienBAIState* aggro_AI = dynamic_cast<AlienBAIState*>(unit->getCurrentAIState());
-		if (aggro_AI == nullptr)
+		AlienBAIState* ai = dynamic_cast<AlienBAIState*>(unit->getAIState());
+		if (ai == nullptr)
 		{
-			aggro_AI = new AlienBAIState(_battleSave, unit, nullptr);
-			unit->setAIState(aggro_AI);
+			ai = new AlienBAIState(_battleSave, unit, nullptr);
+			unit->setAIState(ai);
 		}
 
 		if (_rfAction->weapon->getAmmoItem()->getRules()->getExplosionRadius() > 0
-			&& aggro_AI->explosiveEfficacy(
+			&& ai->explosiveEfficacy(
 									_rfAction->target,
 									unit,
 									_rfAction->weapon->getAmmoItem()->getRules()->getExplosionRadius(),
@@ -4479,7 +4465,9 @@ DoorResult TileEngine::unitOpensDoor(
 
 					// look from the other side, may need to check reaction fire
 					// This seems redundant but hey maybe it removes now-unseen units from a unit's visible-units vector ....
-					const std::vector<BattleUnit*>* const hostileUnits = unit->getHostileUnits();
+					//
+					// It is redundant. And instead of calcFoV for position it should be calcFoV for all.
+/*					const std::vector<BattleUnit*>* const hostileUnits = unit->getHostileUnits();
 					for (size_t
 							i = 0;
 							i != hostileUnits->size();
@@ -4487,7 +4475,7 @@ DoorResult TileEngine::unitOpensDoor(
 					{
 						//Log(LOG_INFO) << "calcFoV hostile";
 						calculateFOV(hostileUnits->at(i)); // calculate FoV for all hostile units that are visible to this unit.
-					}
+					} */
 				}
 			}
 			else // not enough TU
@@ -5818,13 +5806,11 @@ bool TileEngine::psiAttack(BattleAction* const action)
 {
 	//Log(LOG_INFO) << "\nTileEngine::psiAttack() attackerID " << action->actor->getId();
 	const Tile* const tile = _battleSave->getTile(action->target);
-	if (tile == nullptr)
-		return false;
+	if (tile == nullptr) return false;
 	//Log(LOG_INFO) << ". . target(pos) " << action->target;
 
 	BattleUnit* const victim = tile->getUnit();
-	if (victim == nullptr)
-		return false;
+	if (victim == nullptr) return false;
 	//Log(LOG_INFO) << "psiAttack: vs ID " << victim->getId();
 
 	const bool psiImmune = victim->getUnitRules() != nullptr
@@ -5979,13 +5965,13 @@ bool TileEngine::psiAttack(BattleAction* const action)
 										skill);
 
 					courage = std::min(0, // xCom Morale loss for getting Mc'd.
-									(_battleSave->getMoraleModifier() / 10) + (courage / 2) - 110);
+									  (_battleSave->getMoraleModifier() / 10) + (courage / 2) - 110);
 				}
 				else //if (action->actor->getFaction() == FACTION_PLAYER)
 				{
 					if (victim->getOriginalFaction() == FACTION_HOSTILE)
 						courage = std::min(0, // aLien Morale loss for getting Mc'd.
-										(_battleSave->getMoraleModifier(nullptr, false) / 10) + (courage * 3 / 4) - 110);
+										  (_battleSave->getMoraleModifier(nullptr, false) / 10) + (courage * 3 / 4) - 110);
 					else
 					{
 						courage /= 2;			// xCom Morale gain for getting Mc'd back to xCom.

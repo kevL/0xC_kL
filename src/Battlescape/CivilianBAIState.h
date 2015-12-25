@@ -23,18 +23,10 @@
 //#include <yaml-cpp/yaml.h>
 
 #include "BattleAIState.h"
-#include "Position.h"
 
 
 namespace OpenXcom
 {
-
-class BattleUnit;
-class Node;
-class SavedBattleGame;
-
-//struct BattleAction;
-
 
 /**
  * This is the initial AI state of civilian BattleUnits walking around and
@@ -46,58 +38,50 @@ class CivilianBAIState
 {
 
 private:
-//	bool _traceAI;
 	int
-//		_AIMode,
-		_escapeTUs,
-		_spottingEnemies,
-		_visibleEnemies;
+		_tuEscape,
+		_spottersHostile,
+		_targetsHostile;
 
 	BattleAction
 		* _escapeAction,
 		* _patrolAction;
-	BattleUnit* _aggroTarget;
 
-	AIMode _AIMode;
+	/// Counts how many aLiens spot this unit.
+	int countSpotters(const Position& pos) const;
+	/// Counts the quantity of Hostiles that the civilian sees.
+	int countHostiles();
 
-	protected:
-		Node
-			* _startNode,
-			* _toNode;
+	/// Sets up an escape objective.
+	void setupEscape();
+	/// Sets up a patrol objective.
+	void setupPatrol();
+
+	/// Re-evaluates the situation and makes a decision from available options.
+	void evaluateAIMode();
 
 
-		public:
-			/// Creates a new BattleAIState linked to the game and a certain unit.
-			CivilianBAIState(
-					SavedBattleGame* const battleSave,
-					BattleUnit* const unit,
-					Node* const node);
-			/// Cleans up the BattleAIState.
-			~CivilianBAIState();
+	public:
+		/// Creates a new BattleAIState linked to the game and a specific unit.
+		CivilianBAIState(
+				SavedBattleGame* const battleSave,
+				BattleUnit* const unit,
+				Node* const node);
+		/// Cleans up the BattleAIState.
+		~CivilianBAIState();
 
-			/// Loads the AI state from YAML.
-			void load(const YAML::Node& node);
-			/// Saves the AI state to YAML.
-			YAML::Node save() const override;
+		/// Loads the AI state from YAML.
+		void load(const YAML::Node& node);
+		/// Saves the AI state to YAML.
+		YAML::Node save() const override;
 
-			/// Enters the state.
-//			void enter();
-			/// Exits the state.
-//			void exit();
+		/// Enters the state.
+//		void enter();
+		/// Exits the state.
+//		void exit();
 
-			/// Runs state functionality every AI cycle.
-			void think(BattleAction* action) override;
-
-			///
-			int countSpottingUnits(Position pos) const;
-			///
-			int countHostiles();
-			///
-			void setupEscape();
-			///
-			void setupPatrol();
-			///
-			void evaluateAIMode();
+		/// Runs state functionality every AI cycle.
+		void think(BattleAction* const action) override;
 };
 
 }

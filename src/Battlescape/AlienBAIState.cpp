@@ -26,13 +26,10 @@
 
 #include "BattlescapeState.h"
 #include "Map.h"
-#include "Pathfinding.h"
-#include "TileEngine.h"
 
 #include "../fmath.h"
 
 #include "../Engine/Game.h"
-#include "../Engine/RNG.h"
 
 #include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleItem.h"
@@ -40,11 +37,7 @@
 #include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/BattleItem.h"
-#include "../Savegame/BattleUnit.h"
-#include "../Savegame/Node.h"
-#include "../Savegame/SavedBattleGame.h"
 #include "../Savegame/SavedGame.h"
-#include "../Savegame/Tile.h"
 
 
 namespace OpenXcom
@@ -59,17 +52,16 @@ namespace OpenXcom
  * @param node			- pointer to the Node the unit originates from
  */
 AlienBAIState::AlienBAIState(
-		SavedBattleGame* battleSave,
-		BattleUnit* unit,
-		Node* node)
+		SavedBattleGame* const battleSave,
+		BattleUnit* const unit,
+		Node* const node)
 	:
 		BattleAIState(
 			battleSave,
 			unit),
-		_aggroTarget(nullptr),
-		_targetsKnown(0),
+		_targetsExposed(0),
 		_targetsVisible(0),
-		_xcomSpotters(0),
+		_spottersHostile(0),
 		_tuEscape(0),
 		_tuAmbush(0),
 //kL	_reserveTUs(0),
@@ -78,15 +70,12 @@ AlienBAIState::AlienBAIState(
 		_blaster(false),
 		_grenade(false), // kL
 		_didPsi(false),
-		_AIMode(AI_PATROL),
 		_closestDist(100),
-		_startNode(node),
-		_toNode(nullptr),
 		_reserve(BA_NONE),
 		_intelligence(unit->getIntelligence())
 {
 	//Log(LOG_INFO) << "Create AlienBAIState";
-//	_traceAI = Options::traceAI; // kL_note: Can take this out of options & configs.
+	_startNode = node;
 
 	_escapeAction	= new BattleAction();
 	_ambushAction	= new BattleAction();
@@ -116,19 +105,20 @@ AlienBAIState::~AlienBAIState()
 void AlienBAIState::load(const YAML::Node& node)
 {
 	int
-		fromNodeID,
-		toNodeID;
+		startNodeId,
+		toNodeId;
 
-	fromNodeID	= node["fromNode"]	.as<int>(-1);
-	toNodeID	= node["toNode"]	.as<int>(-1);
-	_AIMode		= node["AIMode"]	.as<int>(0);
+	startNodeId	= node["startNode"]	.as<int>(-1);
+	toNodeId	= node["toNode"]	.as<int>(-1);
+
+	_AIMode = static_cast<AIMode>(node["AIMode"].as<int>(0));
 //	_wasHitBy	= node["wasHitBy"].as<std::vector<int> >(_wasHitBy);
 
-	if (fromNodeID != -1)
-		_startNode = _battleSave->getNodes()->at(fromNodeID);
+	if (startNodeId != -1)
+		_startNode = _battleSave->getNodes()->at(startNodeId);
 
-	if (toNodeID != -1)
-		_toNode = _battleSave->getNodes()->at(toNodeID);
+	if (toNodeId != -1)
+		_toNode = _battleSave->getNodes()->at(toNodeId);
 }
 
 /**
@@ -138,17 +128,17 @@ void AlienBAIState::load(const YAML::Node& node)
 YAML::Node AlienBAIState::save() const
 {
 	int
-		fromNodeID	= -1,
-		toNodeID	= -1;
+		startNodeId	= -1,
+		toNodeId	= -1;
 
-	if (_startNode != nullptr)	fromNodeID	= _startNode->getId();
-	if (_toNode != nullptr)	toNodeID	= _toNode->getId();
+	if (_startNode != nullptr)	startNodeId	= _startNode->getId();
+	if (_toNode != nullptr)		toNodeId	= _toNode->getId();
 
 	YAML::Node node;
 
-	node["fromNode"]	= fromNodeID;
-	node["toNode"]		= toNodeID;
-	node["AIMode"]		= _AIMode;
+	node["startNode"]	= startNodeId;
+	node["toNode"]		= toNodeId;
+	node["AIMode"]		= static_cast<int>(_AIMode);
 //	node["wasHitBy"]	= _wasHitBy;
 
 	return node;
@@ -174,7 +164,7 @@ YAML::Node AlienBAIState::save() const
  * Runs any code the state needs to keep updating every AI cycle.
  * @param action - pointer to AI BattleAction to execute
  */
-void AlienBAIState::think(BattleAction* action)
+void AlienBAIState::think(BattleAction* const action)
 {
 	//Log(LOG_INFO) << "\n";
 	//Log(LOG_INFO) << "AlienBAIState::think(), unitID = " << _unit->getId() << " pos " << _unit->getPosition();
@@ -195,12 +185,12 @@ void AlienBAIState::think(BattleAction* action)
 	_attackAction->diff = static_cast<int>(_battleSave->getBattleState()->getGame()->getSavedGame()->getDifficulty());
 	_attackAction->actor = _unit;
 	_attackAction->weapon = action->weapon;
-	_attackAction->number = action->number;
+	_attackAction->AIcount = action->AIcount;
 
-	_escapeAction->number = action->number;
+	_escapeAction->AIcount = action->AIcount;
 
-	_xcomSpotters = countSpottingUnits(_unit->getPosition());
-	_targetsKnown = countKnownTargets();
+	_spottersHostile = countSpotters(_unit->getPosition());
+	_targetsExposed = countExposedTargets();
 	_targetsVisible = selectNearestTarget();
 
 //	_melee = _unit->getMeleeWeapon() != nullptr;
@@ -222,8 +212,8 @@ void AlienBAIState::think(BattleAction* action)
 	}
 
 	// debug:
-	//Log(LOG_INFO) << "_xcomSpotters = " << _xcomSpotters;
-	//Log(LOG_INFO) << "_targetsKnown = " << _targetsKnown;
+	//Log(LOG_INFO) << "_spottersHostile = " << _spottersHostile;
+	//Log(LOG_INFO) << "_targetsExposed = " << _targetsExposed;
 	//Log(LOG_INFO) << "_targetsVisible = " << _targetsVisible;
 /*	std::string AIMode;
 	switch (_AIMode)
@@ -248,7 +238,7 @@ void AlienBAIState::think(BattleAction* action)
 		{
 			//Log(LOG_INFO) << ". . weapon is Firearm";
 			if (itRule->isWaypoints() != 0
-				&& _targetsKnown > _targetsVisible) // else let BL fallback to aimed shot
+				&& _targetsExposed > _targetsVisible) // else let BL fallback to aimed shot
 			{
 				//Log(LOG_INFO) << ". . . blaster TRUE";
 				_blaster = true;
@@ -295,14 +285,14 @@ void AlienBAIState::think(BattleAction* action)
 
 
 	//Log(LOG_INFO) << ". . pos 2";
-	if (_xcomSpotters > 0
+	if (_spottersHostile != 0
 		&& _tuEscape == 0)
 	{
 		setupEscape();
 	}
 
 	//Log(LOG_INFO) << ". . pos 3";
-	if (_targetsKnown != 0
+	if (_targetsExposed != 0
 		&& _melee == false
 		&& _tuAmbush == 0)
 	{
@@ -327,7 +317,7 @@ void AlienBAIState::think(BattleAction* action)
 		action->type = _psiAction->type;
 		action->target = _psiAction->target;
 
-		action->number -= 1;
+		action->AIcount -= 1;
 
 		//Log(LOG_INFO) << "AlienBAIState::think() EXIT, Psi";
 		return;
@@ -340,17 +330,17 @@ void AlienBAIState::think(BattleAction* action)
 	//Log(LOG_INFO) << ". . pos 5";
 	if (_AIMode == AI_ESCAPE)
 	{
-		if (_xcomSpotters == 0
-			|| _targetsKnown == 0)
+		if (_spottersHostile == 0
+			|| _targetsExposed == 0)
 		{
 			evaluate = true;
 		}
 	}
 	else if (_AIMode == AI_PATROL)
 	{
-		if (_xcomSpotters > 0
-			|| _targetsVisible > 0
-			|| _targetsKnown > 0
+		if (_spottersHostile != 0
+			|| _targetsVisible != 0
+			|| _targetsExposed != 0
 			|| RNG::percent(10) == true)
 		{
 			evaluate = true;
@@ -373,7 +363,7 @@ void AlienBAIState::think(BattleAction* action)
 			evaluate = true;
 	}
 
-	if (_xcomSpotters > 2
+	if (_spottersHostile > 2
 		|| _unit->getHealth() < _unit->getBattleStats()->health * 2 / 3
 		|| (_aggroTarget != nullptr
 			&& _aggroTarget->getExposed() != -1
@@ -489,7 +479,7 @@ void AlienBAIState::think(BattleAction* action)
 															BA_SNAPSHOT,
 															action->weapon))	// so long as we can take a shot afterwards.
 			{
-				action->number -= 1;
+				action->AIcount -= 1;
 			}
 			else if (action->type == BA_LAUNCH)
 				action->waypoints = _attackAction->waypoints;
@@ -756,7 +746,7 @@ void AlienBAIState::setupAmbush() // private.
 					tile->setPreviewColor(13);
 				} */
 
-				if (countSpottingUnits(pos) == 0
+				if (countSpotters(pos) == 0
 					&& te->canTargetUnit( // make sure Unit can't be seen here.
 									&originVoxel,
 									tile,
@@ -859,7 +849,7 @@ void AlienBAIState::setupAttack() // private.
 	_psiAction->type = BA_NONE;
 
 	// if enemies are known to us but not necessarily visible, we can attack them with a blaster launcher or psi.
-	if (_targetsKnown != 0)
+	if (_targetsExposed != 0)
 	{
 		//Log(LOG_INFO) << ". enemies known";
 		if (psiAction() == true)
@@ -943,7 +933,7 @@ void AlienBAIState::setupAttack() // private.
 
 		return;
 	}
-	else if (_xcomSpotters != 0
+	else if (_spottersHostile != 0
 //		|| _unit->getAggression() < RNG::generate(0,3))
 		|| _unit->getAggression() > RNG::generate(0, // kL, opposite to previously.
 												_unit->getAggression()))
@@ -985,7 +975,7 @@ void AlienBAIState::setupEscape() // private.
 		dist = 0;
 
 	// weights of various factors in choosing a tile to which to withdraw
-	const int unitsSpotting (countSpottingUnits(_unit->getPosition()));
+	const int unitsSpotting (countSpotters(_unit->getPosition()));
 
 	Position bestTile (0,0,0);
 	const Tile* tile;
@@ -1075,14 +1065,14 @@ void AlienBAIState::setupEscape() // private.
 				continue; // just ignore unreachable tiles
 			}
 
-			const int spotters = countSpottingUnits(_escapeAction->target);
+			const int spotters = countSpotters(_escapeAction->target);
 			if (spotters != 0
-				|| _xcomSpotters != 0)
+				|| _spottersHostile != 0)
 			{
-				if (_xcomSpotters <= spotters)
-					tileScore -= (1 + spotters - _xcomSpotters) * EXPOSURE_PENALTY; // that's for giving away our position, schmuckhead.
+				if (_spottersHostile <= spotters)
+					tileScore -= (1 + spotters - _spottersHostile) * EXPOSURE_PENALTY; // that's for giving away our position, schmuckhead.
 				else
-					tileScore += (_xcomSpotters - spotters) * EXPOSURE_PENALTY;
+					tileScore += (_spottersHostile - spotters) * EXPOSURE_PENALTY;
 			}
 
 			if (tile->getFire() != 0)
@@ -1152,7 +1142,7 @@ void AlienBAIState::setupEscape() // private.
  * Counts how many targets, both xcom and civilian are known to the unit.
  * @return, how many targets are known to it
  */
-int AlienBAIState::countKnownTargets() const // private.
+int AlienBAIState::countExposedTargets() const // private.
 {
 	int ret = 0;
 	for (std::vector<BattleUnit*>::const_iterator
@@ -1172,7 +1162,7 @@ int AlienBAIState::countKnownTargets() const // private.
  * @param pos - reference the Position to check for spotters
  * @return, spotters
  */
-int AlienBAIState::countSpottingUnits(const Position& pos) const // private.
+int AlienBAIState::countSpotters(const Position& pos) const // private.
 {
 	int ret = 0;
 
@@ -1475,7 +1465,7 @@ void AlienBAIState::evaluateAIMode() // private.
 			patrolOdds = 8.f; // was 15
 
 		// the enemy sees us, we should take retreat into consideration and forget about patrolling for now
-		if (_xcomSpotters != 0)
+		if (_spottersHostile != 0)
 		{
 			patrolOdds = 0.f;
 
@@ -1497,9 +1487,9 @@ void AlienBAIState::evaluateAIMode() // private.
 		}
 
 		// if we KNOW there are targets around...
-		if (_targetsKnown != 0)
+		if (_targetsExposed != 0)
 		{
-			if (_targetsKnown == 1)
+			if (_targetsExposed == 1)
 				combatOdds *= 1.9f; // was 1.2
 
 			if (_tuEscape == 0)
@@ -1583,10 +1573,10 @@ void AlienBAIState::evaluateAIMode() // private.
 		if (_AIMode == AI_COMBAT)
 			ambushOdds *= 1.5f;
 
-		if (_xcomSpotters) // factor in the spotters.
+		if (_spottersHostile) // factor in the spotters.
 		{
-			escapeOdds *= (10.f * static_cast<float>(_xcomSpotters + 10) / 100.f);
-			combatOdds *= (5.f * static_cast<float>(_xcomSpotters + 20) / 100.f);
+			escapeOdds *= (10.f * static_cast<float>(_spottersHostile + 10) / 100.f);
+			combatOdds *= (5.f * static_cast<float>(_spottersHostile + 20) / 100.f);
 		}
 		else
 			escapeOdds /= 2.f;
@@ -1649,7 +1639,7 @@ void AlienBAIState::evaluateAIMode() // private.
 			//Log(LOG_INFO) << ". do Escape";
 			_AIMode = AI_ESCAPE;
 		}
-	/*	else if (static_cast<float>(decision) > escapeOdds)
+/*		else if (static_cast<float>(decision) > escapeOdds)
 		{
 			if (static_cast<float>(decision) > escapeOdds + ambushOdds)
 			{
@@ -1673,13 +1663,13 @@ void AlienBAIState::evaluateAIMode() // private.
 	if (_AIMode == AI_COMBAT)
 	{
 		//Log(LOG_INFO) << ". AI_COMBAT";
-//		if (_aggroTarget) // kL
+//		if (_aggroTarget)		// kL
 		if (_blaster == true	// kL, && (if aggroTarget=TRUE) perhaps.
 								// Or simply (if bat=BA_LAUNCH) because '_attackAction->target'
 								// is the first wp, which will likely (now certainly) be nullptr for a unit.
-								// ( Blaster-wielding units should go for an AimedShot ... costs less TU.)
-								// Likely the check should be for BA_LAUNCH 'cause I'm doing funny things w/ _blaster var at present ...
-								// WOW that work'd !!1!1
+								// (Blaster-wielding units should go for an AimedShot ... costs less TU.)
+								// Likely the check should be for BA_LAUNCH 'cause I'm doing funny things w/ '_blaster' at present ...
+								// WoW that work'd !!1!1
 								// TODO: find a way stop my squads getting utterly obliterated, fairly.
 			|| (_battleSave->getTile(_attackAction->target) != nullptr
 				&& _battleSave->getTile(_attackAction->target)->getUnit() != nullptr))
@@ -1786,7 +1776,7 @@ bool AlienBAIState::findFirePoint() // private.
 			if (pf->getStartDirection() != -1)						// can move here
 //				&& pf->getTotalTUCost() <= _unit->getTimeUnits())	// can still shoot
 			{
-				tileScore = BASE_SUCCESS_SYSTEMATIC - countSpottingUnits(pos) * 10;
+				tileScore = BASE_SUCCESS_SYSTEMATIC - countSpotters(pos) * 10;
 				tileScore += _unit->getTimeUnits() - pf->getTotalTUCost();
 
 				if (_aggroTarget->checkViewSector(pos) == false)
@@ -1961,7 +1951,6 @@ void AlienBAIState::meleeAction() // private.
 
 	if (_aggroTarget != nullptr
 		&& _aggroTarget->isOut_t(OUT_STAT) == false)
-//		&& _aggroTarget->isOut() == false) // (true, true)
 	{
 		dir = TileEngine::getDirectionTo(
 									_unit->getPosition(),
@@ -2094,7 +2083,7 @@ void AlienBAIState::wayPointAction() // private.
 		if (targets.empty() == false)
 		{
 			//Log(LOG_INFO) << ". targets available";
-			size_t target = RNG::pick(targets.size());
+			const size_t target = RNG::pick(targets.size());
 			_aggroTarget = targets.at(target);
 			//Log(LOG_INFO) << ". . total = " << targets.size() << " pick = " << target << "; Target ID " << _aggroTarget->getId();
 			if (pathWaypoints() == true) // vs. _aggroTarget, should be true
@@ -2173,8 +2162,8 @@ bool AlienBAIState::pathWaypoints() // private.
 }
 
 /**
- * Attempts to fire at an enemy we can see.
- * @note Regular targeting: can see an enemy, have a gun, let's try to shoot it.
+ * Attempts to fire at an enemy that can be seen.
+ * @note Regular targeting: can see an enemy, have a gun, let's try to shoot at it.
  */
 void AlienBAIState::projectileAction() // private.
 {
@@ -2416,9 +2405,9 @@ bool AlienBAIState::psiAction() // private.
 					&& validTarget(*i, true) == true	// will check for Mc, Exposed, etc.
 					&& (itRule->isLosRequired() == false
 						|| std::find(
-								_unit->getHostileUnits()->begin(),
-								_unit->getHostileUnits()->end(),
-								*i) != _unit->getHostileUnits()->end()))
+								_unit->getHostileUnits().begin(),
+								_unit->getHostileUnits().end(),
+								*i) != _unit->getHostileUnits().end()))
 				{
 					losTrue = false;
 
@@ -2555,18 +2544,6 @@ bool AlienBAIState::validTarget( // private.
 		bool includeCivs) const
 {
 	//Log(LOG_INFO) << "AlienBAIState::validTarget() ID " << unit->getId();
-/*	if (unit->getFaction() == FACTION_HOSTILE				// target must not be on aLien side
-		|| unit->isOut_t(OUT_STAT) == true					// ignore targets that are dead/unconscious
-//		|| unit->isOut(true, true) == true
-		|| unit->getExposed() == -1
-		|| unit->getExposed() > _intelligence				// target must be a unit that this aLien 'knows about'
-		|| (assessDanger == true
-//			&& unit->getTile() != nullptr						// safety. Should not be needed if isOut()=true
-			&& unit->getTile()->getDangerous() == true))	// target has not been grenaded
-	{
-		return false;
-	} */
-
 	if ((unit->getFaction() == FACTION_PLAYER				// target must not be on aLien side
 			|| (unit->getFaction() == FACTION_NEUTRAL
 				&& includeCivs == true))
@@ -2580,6 +2557,7 @@ bool AlienBAIState::validTarget( // private.
 		return true;
 	}
 
+	//Log(LOG_INFO) << ". . ret FALSE";
 	return false;
 }
 
@@ -2655,6 +2633,8 @@ void AlienBAIState::selectMeleeOrRanged() // private.
 	}
 
 	_melee = false;
+}
+
 }
 
 /**
@@ -2734,6 +2714,7 @@ bool AlienBAIState::getNodeOfBestEfficacy(BattleAction* action)
 
 	return (bestScore > 2);
 } */
+
 /**
  * Gets the currently targeted unit.
  * @return, pointer to a BattleUnit
@@ -2742,5 +2723,3 @@ bool AlienBAIState::getNodeOfBestEfficacy(BattleAction* action)
 {
 	return _aggroTarget;
 }*/
-
-}

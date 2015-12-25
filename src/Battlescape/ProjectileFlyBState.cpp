@@ -940,7 +940,7 @@ void ProjectileFlyBState::think()
 							&& !victim->isOut(true, true)
 							&& victim->getFaction() == FACTION_HOSTILE)
 						{
-							AlienBAIState* aggro = dynamic_cast<AlienBAIState*>(victim->getCurrentAIState());
+							AlienBAIState* aggro = dynamic_cast<AlienBAIState*>(victim->getAIState());
 							if (aggro != 0)
 							{
 								aggro->setWasHitBy(_unit);	// is used only for spotting on RA.

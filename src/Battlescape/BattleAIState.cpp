@@ -19,6 +19,8 @@
 
 #include "BattleAIState.h"
 
+//#include "../Engine/Options.h"
+
 
 namespace OpenXcom
 {
@@ -29,12 +31,18 @@ namespace OpenXcom
  * @param unit			- pointer to a BattleUnit
  */
 BattleAIState::BattleAIState(
-		SavedBattleGame* battleSave,
-		BattleUnit* unit)
+		SavedBattleGame* const battleSave,
+		BattleUnit* const unit)
 	:
 		_battleSave(battleSave),
-		_unit(unit)
-{}
+		_unit(unit),
+		_aggroTarget(nullptr),
+		_AIMode(AI_PATROL),
+		_startNode(nullptr),
+		_toNode(nullptr)
+{
+//	_traceAI = Options::traceAI;
+}
 
 /**
  * Deletes the BattleAIState.
@@ -72,7 +80,17 @@ YAML::Node BattleAIState::save() const // virtual.
  * Runs any code the state needs to keep updating every AI cycle.
  * @param action - (possible) AI BattleAction to execute after thinking is done.
  */
-void BattleAIState::think(BattleAction*) // virtual.
+void BattleAIState::think(BattleAction* const) // virtual.
 {}
+
+/**
+ * Resets the unit's saved parameters.
+ */
+void BattleAIState::resetAI()
+{
+	_AIMode = AI_PATROL;
+	_startNode = nullptr;
+	_toNode = nullptr;
+}
 
 }

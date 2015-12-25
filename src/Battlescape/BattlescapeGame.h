@@ -86,7 +86,7 @@ struct BattleAction
 		autoShotCount,
 		diff,
 		finalFacing,
-		number, // first action of turn, second, etc.?
+		AIcount, // first action of turn, second, etc.
 		TU,
 		value;
 
@@ -121,7 +121,7 @@ struct BattleAction
 			desperate(false),
 			finalFacing(-1),
 			finalAction(false),
-			number(0),
+			AIcount(0),
 			takenXp(false)
 //			pauseAfterShot(false)
 	{}
@@ -147,7 +147,7 @@ struct BattleAction
 			desperate = false;
 			finalFacing = -1;
 			finalAction = false;
-			number = 0;
+			AIcount = 0;
 			takenXp = false;
 //			pauseAfterShot = false;
 			waypoints.clear();
@@ -233,7 +233,7 @@ private:
 		void setStateInterval(Uint32 interval);
 
 		/// Handles unit AI.
-		void handleAI(BattleUnit* const unit);
+		void handleUnitAI(BattleUnit* const unit);
 
 		/// Handles the result of non target actions, like priming a grenade.
 		void handleNonTargetAction();

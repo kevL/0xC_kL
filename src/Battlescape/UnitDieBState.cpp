@@ -69,7 +69,7 @@ UnitDieBState::UnitDieBState(
 		_extraTicks(0)
 {
 //	_unit->clearVisibleTiles();
-	_unit->clearHostileUnits();
+//	_unit->clearHostileUnits();
 
 	if (_noSound == false)			// pre-battle hidden explosion death; needed here to stop Camera CTD.
 		_unit->setUnitVisible();	// Has side-effect of keeping stunned victims non-revealed if not already visible.
@@ -98,7 +98,7 @@ UnitDieBState::UnitDieBState(
 
 	if (_unit->getFaction() == FACTION_HOSTILE)
 	{
-		const std::vector<Node*>* const nodeList = _battleSave->getNodes();
+		const std::vector<Node*>* const nodeList (_battleSave->getNodes());
 		if (nodeList != nullptr) // this better happen.
 		{
 			for (std::vector<Node*>::const_iterator

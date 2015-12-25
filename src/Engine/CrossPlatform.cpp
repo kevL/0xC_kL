@@ -1129,7 +1129,8 @@ std::string getDosPath()
 #ifdef _WIN32
 /**
  * Sets the window icon for _WIN32 build configuration.
- * @param winResource -
+ * @note Uses the embedded resource icon.
+ * @param winResource - ID for Windows icon
  */
 void setWindowIcon(int winResource)
 {
@@ -1153,7 +1154,7 @@ void setWindowIcon(int winResource)
 #else
 /**
  * Sets the window icon if not _WIN32 build.
- * @param unixPath -
+ * @param unixPath - path to PNG icon for Unix
  */
 void setWindowIcon(const std::string& unixPath)
 {

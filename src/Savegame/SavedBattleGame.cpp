@@ -228,8 +228,6 @@ void SavedBattleGame::load(
 
 	setTacType(_tacticalType);
 
-	const int selectedUnit (node["selectedUnit"].as<int>());
-
 	Log(LOG_INFO) << ". load mapdatasets";
 	for (YAML::const_iterator
 			i = node["mapdatasets"].begin();
@@ -305,7 +303,7 @@ void SavedBattleGame::load(
 	{
 		Log(LOG_INFO) << ". load xcom base";
 		if (node["moduleMap"])
-			_baseModules = node["moduleMap"].as<std::vector<std::vector<std::pair<int, int>>>>();
+			_baseModules = node["moduleMap"].as<std::vector<std::vector<std::pair<int,int>>>>();
 	}
 
 	Log(LOG_INFO) << ". load nodes";
@@ -314,11 +312,13 @@ void SavedBattleGame::load(
 			i != node["nodes"].end();
 			++i)
 	{
-		Node* const nod (new Node());
-		nod->load(*i);
-		_nodes.push_back(nod);
+		Node* const pfNode (new Node());
+		pfNode->load(*i);
+		_nodes.push_back(pfNode);
 	}
 
+
+	const int selectedUnit (node["selectedUnit"].as<int>());
 
 	int id;
 
@@ -376,9 +376,7 @@ void SavedBattleGame::load(
 					_selectedUnit = unit;
 				}
 			}
-
-			if (faction != FACTION_PLAYER
-				&& unit->getUnitStatus() != STATUS_DEAD)
+			else if (unit->getUnitStatus() != STATUS_DEAD)
 			{
 				if (const YAML::Node& ai = (*i)["AI"])
 				{
@@ -396,14 +394,13 @@ void SavedBattleGame::load(
 		}
 	}
 
-	// load _hostileUnitsThisTurn here:
-	// convert unitID's into pointers to BattleUnit
-	for (size_t
+	for (size_t // load _hostileUnitsThisTurn here
 			i = 0;
 			i != _units.size();
 			++i)
 	{
-		_units.at(i)->loadSpotted(this);
+		if (_units.at(i)->isOut_t(OUT_STAT) == false)
+			_units.at(i)->loadSpotted(this); // convert unitID's into pointers to BattleUnits
 	}
 
 
@@ -427,61 +424,61 @@ void SavedBattleGame::load(
 	};
 
 	for (size_t
-			pass = 0;
-			pass != CONTAINERS;
-			++pass)
+			i = 0;
+			i != CONTAINERS;
+			++i)
 	{
 		for (YAML::const_iterator
-				i = node[fromContainer[pass]].begin();
-				i != node[fromContainer[pass]].end();
-				++i)
+				j = node[fromContainer[i]].begin();
+				j != node[fromContainer[i]].end();
+				++j)
 		{
-			std::string type = (*i)["type"].as<std::string>();
+			std::string type = (*j)["type"].as<std::string>();
 			if (rules->getItem(type) != nullptr)
 			{
-				id = (*i)["id"].as<int>(-1);
+				id = (*j)["id"].as<int>(-1);
 				BattleItem* const item (new BattleItem(
 													rules->getItem(type),
 													nullptr,
 													id));
 
-				item->load(*i);
-				type = (*i)["inventoryslot"].as<std::string>();
+				item->load(*j);
+				type = (*j)["inventoryslot"].as<std::string>();
 
 				if (type != "nullptr")
 					item->setSlot(rules->getInventory(type));
 
 				const int
-					owner		((*i)["owner"]			.as<int>()),
-					prevOwner	((*i)["previousOwner"]	.as<int>(-1)),
-					unitId		((*i)["unit"]			.as<int>());
+					owner		((*j)["owner"]			.as<int>()),
+					prevOwner	((*j)["previousOwner"]	.as<int>(-1)),
+					unitId		((*j)["unit"]			.as<int>());
 
 				for (std::vector<BattleUnit*>::const_iterator // match up items and units
-						bu = _units.begin();
-						bu != _units.end();
-						++bu)
+						k = _units.begin();
+						k != _units.end();
+						++k)
 				{
-					if ((*bu)->getId() == owner)
-						item->moveToOwner(*bu);
+					if ((*k)->getId() == owner)
+						item->moveToOwner(*k);
 
-					if ((*bu)->getId() == unitId)
-						item->setUnit(*bu);
+					if ((*k)->getId() == unitId)
+						item->setUnit(*k);
 				}
 
 				for (std::vector<BattleUnit*>::const_iterator
-						bu = _units.begin();
-						bu != _units.end();
-						++bu)
+						k = _units.begin();
+						k != _units.end();
+						++k)
 				{
-					if ((*bu)->getId() == prevOwner)
-						item->setPreviousOwner(*bu);
+					if ((*k)->getId() == prevOwner)
+						item->setPreviousOwner(*k);
 				}
 
 
 				if (item->getSlot() != nullptr // match up items and tiles
 					&& item->getSlot()->getType() == INV_GROUND)
 				{
-					const Position pos ((*i)["position"].as<Position>());
+					const Position pos ((*j)["position"].as<Position>());
 
 					if (pos.x != -1)
 						getTile(pos)->addItem(
@@ -489,7 +486,7 @@ void SavedBattleGame::load(
 											rules->getInventory("STR_GROUND"));
 				}
 
-				toContainer[pass]->push_back(item);
+				toContainer[i]->push_back(item);
 			}
 		}
 	}
