@@ -43,13 +43,18 @@ class MiniMapView final
 {
 
 private:
+	static const int
+		CELL_WIDTH	= 4,
+		CELL_HEIGHT	= 4,
+		MAX_FRAME	= 2;
+
 	bool
 		_isMouseScrolled,
 		_isMouseScrolling,
 		_mouseOverThreshold;
 
 	int
-		_frame,
+		_cycle,
 		_mouseScrollX,
 		_mouseScrollY,
 		_totalMouseMoveX,

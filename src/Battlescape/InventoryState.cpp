@@ -1271,8 +1271,8 @@ void InventoryState::setExtraInfo( // private.
 			&& (_game->getSavedGame()->isResearched("STR_FLOATER") == false
 				|| _game->getSavedGame()->isResearched("STR_FLOATER_AUTOPSY") == false))
 		{
-			label << tr("STR_FLOATER") // STR_FLOATER_CORPSE
-				  << L" (status doubtful)";
+			label << tr("STR_FLOATER"); // STR_FLOATER_CORPSE
+//				  << L" (status doubtful)";
 		}
 		else if (item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
 			label << item->getUnit()->getName(_game->getLanguage());

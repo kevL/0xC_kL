@@ -1217,7 +1217,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 					if (item->getUnit()->getType().compare(0,11, "STR_FLOATER") == 0) // See medikit w/ Autopsy OR inventory w/ Autopsy+Race research.
 					{
 						wst1 += tr("STR_FLOATER");
-						wst1 += L" (status doubtful)";
+//						wst1 += L" (status doubtful)";
 					}
 					else if (item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
 					{

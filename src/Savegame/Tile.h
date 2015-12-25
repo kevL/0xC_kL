@@ -92,9 +92,9 @@ protected:
 
 	std::vector<BattleItem*> _inventory;
 
-	/// Checks if this Tile can have smoke.
+	/// Checks if the Tile can have smoke.
 	bool isSmokable() const;
-	/// Checks if this Tile can have fire.
+	/// Checks if the Tile can have fire.
 	bool isFirable() const;
 
 	/// Converts obscure inverse MCD notation to understandable percentages.
@@ -153,7 +153,7 @@ protected:
 				int* dataSetID,
 				MapDataType partType) const;
 
-		/// Gets whether this tile has no objects
+		/// Gets whether the Tile has no objects
 		bool isVoid(
 				const bool testInventory = true,
 				const bool testVolatiles = true) const;
@@ -163,7 +163,7 @@ protected:
 				MapDataType partType,
 				MovementType moveType) const;
 
-		/// Checks if this tile has a floor.
+		/// Checks if the Tile has a floor.
 		bool hasNoFloor(const Tile* const tileBelow = nullptr) const;
 
 		/// Checks if the Tile is a big wall.
@@ -204,16 +204,16 @@ protected:
 		/// Closes ufo door.
 		bool closeUfoDoor();
 
-		/// Sets the black fog of war status of this tile.
+		/// Sets the black fog of war status of the Tile.
 		void setDiscovered(
 				bool visible,
 				int section);
-		/// Gets the black fog of war status of this tile.
+		/// Gets the black fog of war status of the Tile.
 		bool isDiscovered(int section) const;
 
-		/// Resets light to zero for this tile.
+		/// Resets light to zero for the Tile.
 		void resetLight(size_t layer);
-		/// Adds light to this tile.
+		/// Adds light to the Tile.
 		void addLight(
 				int light,
 				size_t layer);
@@ -230,14 +230,14 @@ protected:
 				int power,
 				SavedBattleGame* const battleSave);
 
-		/// Sets a virtual explosive on this tile to detonate later.
+		/// Sets a virtual explosive on the Tile to detonate later.
 		void setExplosive(
 				int power,
 				DamageType explType,
 				bool force = false);
-		/// Gets explosive power of this tile.
+		/// Gets explosive power of the Tile.
 		int getExplosive() const;
-		/// Gets explosive type of this tile.
+		/// Gets explosive type of the Tile.
 		DamageType getExplosiveType() const;
 
 		/// Gets flammability.
@@ -248,26 +248,26 @@ protected:
 		/// Gets turns to burn of part.
 		int getFuel(MapDataType partType = O_NULPART) const;
 
-		/// Tries to start fire on this Tile.
+		/// Tries to start fire on the Tile.
 		bool ignite(int power);
-		/// Adds fire to this Tile.
+		/// Adds fire to the Tile.
 		void addFire(int turns);
-		/// Reduces the number of turns this Tile will burn.
+		/// Reduces the number of turns the Tile will burn.
 		void decreaseFire();
 		/// Gets fire.
 		int getFire() const;	// kL_note: Made this inline, but may result in UB if say BattleUnit->getFire() conflicts.
 //		{ return _fire; }		// So ... don't. ie: change function names, THANKS c++
 								// ps. I changed the BattleUnit class function identifier to "getFireUnit" .....
 
-		/// Adds smoke to this Tile.
+		/// Adds smoke to the Tile.
 		void addSmoke(int turns);
-		/// Reduces the number of turns this Tile will smoke.
+		/// Reduces the number of turns the Tile will smoke.
 		void decreaseSmoke();
 		/// Gets smoke.
 		int getSmoke() const; // kL_note: Made this inline, but may result in UB if say BattleUnit->getFire() conflicts. So ... don't.
 //		{ return _smoke; }
 
-		/// Ends this tile's turn. Units catch on fire.
+		/// Ends the Tile's turn. Units catch on fire.
 		void hitStuff(SavedBattleGame* const battleSave = nullptr);
 
 		/// Animates the tile parts.
@@ -278,14 +278,14 @@ protected:
 		/// Gets object sprites.
 		Surface* getSprite(MapDataType partType) const;
 
-		/// Sets a unit on this tile.
+		/// Sets a unit on the Tile.
 		void setUnit(
 				BattleUnit* const unit,
 				const Tile* const tileBelow = nullptr);
-		/// Sets a unit transitorily on this Tile.
+		/// Sets a unit transitorily on the Tile.
 		void setTransitUnit(BattleUnit* const unit);
 		/**
-		 * Gets the (alive) unit on this tile.
+		 * Gets the (alive) unit on the Tile.
 		 * @return, pointer to a BattleUnit
 		 */
 		BattleUnit* getUnit() const
@@ -305,7 +305,7 @@ protected:
 		/// Gets if the tile has an unconscious unit in its inventory.
 		int hasUnconsciousUnit(bool playerOnly = true) const;
 
-		/// Gets inventory on this tile.
+		/// Gets inventory on the Tile.
 		std::vector<BattleItem*>* getInventory();
 
 		/// Sets the tile visible flag.
@@ -326,9 +326,9 @@ protected:
 		/// Gets the preview tile marker color.
 		int getPreviewColor() const;
 
-		/// Sets the danger flag on this tile so the AI may avoid it.
+		/// Sets the danger flag on the Tile so the AI may avoid it.
 		void setDangerous(bool danger = true);
-		/// Checks the danger flag on this tile.
+		/// Checks the danger flag on the Tile.
 		bool getDangerous() const;
 };
 

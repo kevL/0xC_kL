@@ -110,22 +110,26 @@ TileEngine::~TileEngine()
  */
 void TileEngine::calculateSunShading() const
 {
-	const int layer = 0; // Ambient lighting layer.
+	Tile* tile;
 
+	const int layer = 0; // Ambient lighting layer.
 	for (size_t
 			i = 0;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
-		_battleSave->getTiles()[i]->resetLight(layer);
-		calculateSunShading(_battleSave->getTiles()[i]);
+		tile = _battleSave->getTiles()[i];
+		tile->resetLight(layer);
+		calculateSunShading(tile);
 	}
 }
 
 /**
- * Calculates sun shading for 1 tile. Sun comes from above and is blocked by floors or objects.
- * TODO: angle the shadow according to the time - link to Options::globeSeasons (or whatever the realistic lighting thing is)
- * @param tile - a tile to calculate sun shading for
+ * Calculates sun shading for 1 tile.
+ * @note Sun comes from above and is blocked by floors and/or objects.
+ * TODO: angle the shadow according to the time - link to Options::globeSeasons
+ * (or whatever the realistic lighting thing is).
+ * @param tile - pointer to a tile to calculate the sun shading for
  */
 void TileEngine::calculateSunShading(Tile* const tile) const
 {
@@ -183,9 +187,7 @@ void TileEngine::calculateSunShading(Tile* const tile) const
  */
 void TileEngine::calculateTerrainLighting() const
 {
-	const size_t layer = 1;		// static lighting layer
-	const int fireLight = 15;	// amount of light a fire generates
-
+	const size_t layer = 1; // static lighting layer
 	for (size_t // reset all light to 0 first
 			i = 0;
 			i != _battleSave->getMapSizeXYZ();
@@ -194,44 +196,52 @@ void TileEngine::calculateTerrainLighting() const
 		_battleSave->getTiles()[i]->resetLight(layer);
 	}
 
+
+	Tile* tile;
+	Position pos;
+
+	const int fireLight = 15; // amount of light a fire generates
 	for (size_t // add lighting of terrain
 			i = 0;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
+		tile = _battleSave->getTiles()[i];
+		pos = tile->getPosition();
+
 		// only floors and objects can light up
-		if (_battleSave->getTiles()[i]->getMapData(O_FLOOR) != nullptr
-			&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->getLightSource() != 0)
+		if (tile->getMapData(O_FLOOR) != nullptr
+			&& tile->getMapData(O_FLOOR)->getLightSource() != 0)
 		{
 			addLight(
-				_battleSave->getTiles()[i]->getPosition(),
-				_battleSave->getTiles()[i]->getMapData(O_FLOOR)->getLightSource(),
+				pos,
+				tile->getMapData(O_FLOOR)->getLightSource(),
 				layer);
 		}
 
-		if (_battleSave->getTiles()[i]->getMapData(O_OBJECT) != nullptr
-			&& _battleSave->getTiles()[i]->getMapData(O_OBJECT)->getLightSource() != 0)
+		if (tile->getMapData(O_OBJECT) != nullptr
+			&& tile->getMapData(O_OBJECT)->getLightSource() != 0)
 		{
 			addLight(
-				_battleSave->getTiles()[i]->getPosition(),
-				_battleSave->getTiles()[i]->getMapData(O_OBJECT)->getLightSource(),
+				pos,
+				tile->getMapData(O_OBJECT)->getLightSource(),
 				layer);
 		}
 
-		if (_battleSave->getTiles()[i]->getFire() != 0)
+		if (tile->getFire() != 0)
 			addLight(
-				_battleSave->getTiles()[i]->getPosition(),
+				pos,
 				fireLight,
 				layer);
 
 		for (std::vector<BattleItem*>::const_iterator
-				j = _battleSave->getTiles()[i]->getInventory()->begin();
-				j != _battleSave->getTiles()[i]->getInventory()->end();
+				j = tile->getInventory()->begin();
+				j != tile->getInventory()->end();
 				++j)
 		{
 			if ((*j)->getRules()->getBattleType() == BT_FLARE)
 				addLight(
-					_battleSave->getTiles()[i]->getPosition(),
+					pos,
 					(*j)->getRules()->getPower(),
 					layer);
 		}

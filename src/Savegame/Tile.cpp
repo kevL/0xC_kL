@@ -596,7 +596,7 @@ void Tile::setDiscovered(
 }
 
 /**
- * Get the black fog of war state of this Tile.
+ * Gets the black fog of war state of this Tile.
  * @param section - 0 westwall
  *					1 northwall
  *					2 object+floor
@@ -608,7 +608,7 @@ bool Tile::isDiscovered(int section) const
 }
 
 /**
- * Reset the light amount on the tile.
+ * Sets the light on this Tile to zero.
  * @note This is done before a light level recalculation.
  * @param layer - light is separated in 3 layers: Ambient, Static and Dynamic
  */
@@ -618,7 +618,7 @@ void Tile::resetLight(size_t layer)
 }
 
 /**
- * Add the light amount on the tile.
+ * Adds light on this Tile.
  * @note Only add light if the current light is lower.
  * @param light - amount of light to add
  * @param layer - light is separated in 3 layers: Ambient, Static and Dynamic
@@ -632,8 +632,8 @@ void Tile::addLight(
 }
 
 /**
- * Gets the tile's shade amount 0-15.
- * @note It returns the brightest of all light layers.
+ * Gets this Tile's shade: 0-15.
+ * @note Returns the brightest of all light layers.
  * @note Shade is the inverse of light level so a maximum amount of light (15)
  * returns shade level 0.
  * @return, shade
@@ -641,7 +641,6 @@ void Tile::addLight(
 int Tile::getShade() const
 {
 	int light = 0;
-
 	for (size_t
 			layer = 0;
 			layer != LIGHTLAYERS;
@@ -655,7 +654,7 @@ int Tile::getShade() const
 }
 
 /**
- * Destroy a part on this tile.
+ * Destroys a part on this Tile.
  * @note First remove the old object then replace it with the destroyed one
  * because the object type of the old and new are not necessarily the same. If
  * the destroyed part is an explosive set the tile's explosive value which will

@@ -45,12 +45,6 @@
 namespace OpenXcom
 {
 
-const int
-	CELL_WIDTH	= 4,
-	CELL_HEIGHT	= 4,
-	MAX_FRAME	= 2;
-
-
 /**
  * Initializes all the elements in the MiniMapView.
  * @param w				- the width
@@ -76,7 +70,7 @@ MiniMapView::MiniMapView(
 		_game(game),
 		_camera(camera),
 		_battleSave(battleSave),
-		_frame(0),
+		_cycle(0),
 		_isMouseScrolling(false),
 		_isMouseScrolled(false),
 //		_xBeforeMouseScrolling(0),
@@ -207,6 +201,13 @@ void MiniMapView::draw()
 													  << " frame = " << data->getMiniMapIndex() + 35;
 							}
 						}
+
+						// draw fire
+						if (tile->getFire() != 0)
+						{
+							srf = _set->getFrame(97); // gravLift = FIRE also.
+							srf->blitNShade(this, x,y, _cycle * 2);
+						}
 					}
 
 					unit = tile->getUnit();
@@ -217,7 +218,7 @@ void MiniMapView::draw()
 							frame = unit->getMiniMapSpriteIndex()
 								  + tile->getPosition().x - unit->getPosition().x
 								  + (tile->getPosition().y - unit->getPosition().y) * unitSize
-								  + _frame * unitSize * unitSize;
+								  + _cycle * unitSize * unitSize;
 
 						srf = _set->getFrame(frame);
 
@@ -255,20 +256,20 @@ void MiniMapView::draw()
 					if (tile->isDiscovered(2) == true
 						&& tile->getInventory()->empty() == false) // at least one item on this tile
 					{
-						srf = _set->getFrame(_frame + 9); // white cross
+						srf = _set->getFrame(_cycle + 9); // white cross
 						srf->blitNShade(this, x,y, 0);
 					}
 
-					if (_frame == 0
+					if (_cycle == 0
 						&& _battleSave->scannerDots().empty() == false)
 					{
-						std::pair<int,int> dotTest = std::make_pair(px,py);
+						std::pair<int,int> dotTest (std::make_pair(px,py));
 						if (std::find(
 								_battleSave->scannerDots().begin(),
 								_battleSave->scannerDots().end(),
 								dotTest) != _battleSave->scannerDots().end())
 						{
-							srf = _set->getFrame(_frame + 9);			// white cross
+							srf = _set->getFrame(_cycle + 9);			// white cross
 							srf->blitNShade(this, x,y, 0, false, 3);	// red
 						}
 					}
@@ -291,7 +292,7 @@ void MiniMapView::draw()
 		xOffset = static_cast<Sint16>(CELL_WIDTH / 2),
 		yOffset = static_cast<Sint16>(CELL_HEIGHT / 2);
 
-	const Uint8 color = static_cast<Uint8>(_frame * 3 + 1);
+	const Uint8 color = static_cast<Uint8>(_cycle * 3 + 1);
 
 	drawLine( // top left
 			centerX - static_cast<Sint16>(CELL_WIDTH),
@@ -642,8 +643,8 @@ void MiniMapView::stopScrolling(Action* action)
  */
 void MiniMapView::animate()
 {
-	if (++_frame > MAX_FRAME)
-		_frame = 0;
+	if (++_cycle > MAX_FRAME)
+		_cycle = 0;
 
 	_redraw = true;
 }
