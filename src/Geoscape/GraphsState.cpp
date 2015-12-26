@@ -59,8 +59,9 @@
 namespace OpenXcom
 {
 
-static size_t recallRow = 0;
-static int currentPage = -1;
+static size_t recallCountry = 0;
+static int recallPage = -1;
+static GraphUserFactor recallFactor = GUF_DEFAULT;
 
 const float GraphsState::PIXELS_y = 126.f;
 
@@ -158,22 +159,42 @@ GraphsState::GraphsState()
 	_bg->onKeyboardPress(
 				(ActionHandler)& GraphsState::shiftButtons,
 				SDLK_KP1);
+	_bg->onMousePress(
+				(ActionHandler)& GraphsState::btnGeoscapeClick,
+				SDL_BUTTON_RIGHT);
 
 	SDL_EnableKeyRepeat(
 					180, //SDL_DEFAULT_REPEAT_DELAY,
 					60); //SDL_DEFAULT_REPEAT_INTERVAL);
 
-	_btnUfoRegion	= new InteractiveSurface(31, 24,  97);
-	_btnXcomRegion	= new InteractiveSurface(31, 24, 129);
-	_btnUfoCountry	= new InteractiveSurface(31, 24, 161);
-	_btnXcomCountry	= new InteractiveSurface(31, 24, 193);
-	_btnIncome		= new InteractiveSurface(31, 24, 225);
-	_btnFinance		= new InteractiveSurface(31, 24, 257);
-	_btnGeoscape	= new InteractiveSurface(31, 24, 289);
+	_isfUfoRegion	= new InteractiveSurface(31, 24,  97);
+	_isfXcomRegion	= new InteractiveSurface(31, 24, 129);
+	_isfUfoCountry	= new InteractiveSurface(31, 24, 161);
+	_isfXcomCountry	= new InteractiveSurface(31, 24, 193);
+	_isfIncome		= new InteractiveSurface(31, 24, 225);
+	_isfFinance		= new InteractiveSurface(31, 24, 257);
+	_isfGeoscape	= new InteractiveSurface(31, 24, 289);
 
 	_btnReset		= new TextButton(40, 16, 96, 26);
 
-	_txtTitle		= new Text(220, 17, 100, 28);
+	_btnFactor1		= new TextButton(16, 16, 272, 26);
+	_btnFactor2		= new TextButton(16, 16, 288, 26);
+	_btnFactor4		= new TextButton(16, 16, 304, 26);
+
+	switch (recallFactor)
+	{
+		default:
+		case GUF_DEFAULT:
+			_userFactor = _btnFactor1;
+			break;
+		case GUF_HALF:
+			_userFactor = _btnFactor2;
+			break;
+		case GUF_QUARTER:
+			_userFactor = _btnFactor4;
+	}
+
+	_txtTitle		= new Text(220, 16, 100, 28);
 	_txtFactor		= new Text( 35,  9,  96, 28);
 
 	_lstMonths		= new TextList(215, 9, 117, 182); // note These go beyond 320px.
@@ -185,18 +206,21 @@ GraphsState::GraphsState()
 	setInterface("graphs");
 
 	add(_bg);
-	add(_btnUfoRegion);
-	add(_btnUfoCountry);
-	add(_btnXcomRegion);
-	add(_btnXcomCountry);
-	add(_btnIncome);
-	add(_btnFinance);
-	add(_btnGeoscape);
-	add(_btnReset,	"button",	"graphs");
-	add(_lstMonths,	"scale",	"graphs");
-	add(_lstYears,	"scale",	"graphs");
-	add(_txtTitle,	"text",		"graphs");
-	add(_txtFactor,	"text",		"graphs");
+	add(_isfUfoRegion);
+	add(_isfUfoCountry);
+	add(_isfXcomRegion);
+	add(_isfXcomCountry);
+	add(_isfIncome);
+	add(_isfFinance);
+	add(_isfGeoscape);
+	add(_btnReset,		"button",	"graphs");
+	add(_btnFactor1,	"button",	"graphs");
+	add(_btnFactor2,	"button",	"graphs");
+	add(_btnFactor4,	"button",	"graphs");
+	add(_lstMonths,		"scale",	"graphs");
+	add(_lstYears,		"scale",	"graphs");
+	add(_txtTitle,		"text",		"graphs");
+	add(_txtFactor,		"text",		"graphs");
 	add(_txtScore);
 
 	for (size_t
@@ -283,7 +307,11 @@ GraphsState::GraphsState()
 			_blinkRegionXCom.push_back(blinkX);
 		}
 
-		_alienRegionLines.push_back(new Surface(320,200));
+		Surface* const srfRegionLine = new Surface(320,200);
+		srfRegionLine->drawRect(0,0, 320,200, 15);
+		_alienRegionLines.push_back(srfRegionLine);
+
+//		_alienRegionLines.push_back(new Surface(320,200));
 		add(_alienRegionLines.at(btnOffset));
 
 		_xcomRegionLines.push_back(new Surface(320,200));
@@ -542,6 +570,32 @@ GraphsState::GraphsState()
 					(ActionHandler)& GraphsState::btnResetPress,
 					SDL_BUTTON_LEFT);
 
+	_btnFactor1->setText(L"1");
+	_btnFactor1->setGroup(&_userFactor);
+	_btnFactor1->onMousePress(
+					(ActionHandler)& GraphsState::btnFactorPress,
+					SDL_BUTTON_LEFT);
+	_btnFactor1->onKeyboardPress(
+					(ActionHandler)& GraphsState::keyFactor,
+					SDLK_1);
+
+	_btnFactor2->setText(L"2");
+	_btnFactor2->setGroup(&_userFactor);
+	_btnFactor2->onMousePress(
+					(ActionHandler)& GraphsState::btnFactorPress,
+					SDL_BUTTON_LEFT);
+	_btnFactor1->onKeyboardPress(
+					(ActionHandler)& GraphsState::keyFactor,
+					SDLK_2);
+
+	_btnFactor4->setText(L"3");
+	_btnFactor4->setGroup(&_userFactor);
+	_btnFactor4->onMousePress(
+					(ActionHandler)& GraphsState::btnFactorPress,
+					SDL_BUTTON_LEFT);
+	_btnFactor1->onKeyboardPress(
+					(ActionHandler)& GraphsState::keyFactor,
+					SDLK_3);
 
 	Uint8 color;
 	const Uint8 gridColor = static_cast<Uint8>(
@@ -639,9 +693,7 @@ GraphsState::GraphsState()
 	}
 
 
-	Surface* srf = _game->getResourcePack()->getSurface("GRAPH.BDY");
-	if (srf == nullptr)
-		srf = _game->getResourcePack()->getSurface("GRAPHS.SPK");
+	Surface* const srf = _game->getResourcePack()->getSurface("GRAPHS.SPK");
 	srf->blit(_bg);
 
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -650,39 +702,39 @@ GraphsState::GraphsState()
 	_txtFactor->setText(L"$1000");
 
 
-	_btnUfoRegion->onMousePress(
+	_isfUfoRegion->onMousePress(
 					(ActionHandler)& GraphsState::btnUfoRegionClick,
 					SDL_BUTTON_LEFT);
-	_btnXcomRegion->onMousePress(
+	_isfXcomRegion->onMousePress(
 					(ActionHandler)& GraphsState::btnXcomRegionClick,
 					SDL_BUTTON_LEFT);
-	_btnUfoCountry->onMousePress(
+	_isfUfoCountry->onMousePress(
 					(ActionHandler)& GraphsState::btnUfoCountryClick,
 					SDL_BUTTON_LEFT);
-	_btnXcomCountry->onMousePress(
+	_isfXcomCountry->onMousePress(
 					(ActionHandler)& GraphsState::btnXcomCountryClick,
 					SDL_BUTTON_LEFT);
 
-	_btnIncome->onMousePress(
+	_isfIncome->onMousePress(
 					(ActionHandler)& GraphsState::btnIncomeClick,
 					SDL_BUTTON_LEFT);
-	_btnFinance->onMousePress(
+	_isfFinance->onMousePress(
 					(ActionHandler)& GraphsState::btnFinanceClick,
 					SDL_BUTTON_LEFT);
 
-	_btnGeoscape->onMousePress(
+	_isfGeoscape->onMousePress(
 					(ActionHandler)& GraphsState::btnGeoscapeClick,
 					SDL_BUTTON_LEFT);
-	_btnGeoscape->onKeyboardPress(
+	_isfGeoscape->onKeyboardPress(
 					(ActionHandler)& GraphsState::btnGeoscapeClick,
 					Options::keyCancel);
-	_btnGeoscape->onKeyboardPress(
+	_isfGeoscape->onKeyboardPress(
 					(ActionHandler)& GraphsState::btnGeoscapeClick,
 					Options::keyOk);
-	_btnGeoscape->onKeyboardPress(
+	_isfGeoscape->onKeyboardPress(
 					(ActionHandler)& GraphsState::btnGeoscapeClick,
 					Options::keyOkKeypad);
-	_btnGeoscape->onKeyboardPress(
+	_isfGeoscape->onKeyboardPress(
 					(ActionHandler)& GraphsState::btnGeoscapeClick,
 					Options::keyGeoGraphs);
 
@@ -694,7 +746,7 @@ GraphsState::GraphsState()
 
 	initButtons();
 
-	switch (currentPage)
+	switch (recallPage)
 	{
 		default:
 		case 0: btnUfoRegionClick(nullptr);		break;
@@ -753,7 +805,7 @@ GraphsState::~GraphsState()
 void GraphsState::initButtons() // private.
 {
 //	if (_countryToggles.size() > GRAPH_BUTTONS)
-	scrollButtons(static_cast<int>(recallRow), true);
+	scrollButtons(static_cast<int>(recallCountry), true);
 
 	for (std::vector<GraphBtnInfo*>::const_iterator
 			i = _regionToggles.begin();
@@ -893,10 +945,10 @@ void GraphsState::btnGeoscapeClick(Action*)
  */
 void GraphsState::btnUfoRegionClick(Action*)
 {
-	if (currentPage != 0 || _init == true)
+	if (recallPage != 0 || _init == true)
 	{
 		_init = false;
-		currentPage = 0;
+		recallPage = 0;
 
 		_forceVis =
 
@@ -906,7 +958,6 @@ void GraphsState::btnUfoRegionClick(Action*)
 		_finance = false;
 
 		_btnReset->setVisible(_blinkTimer->isRunning() == true);
-		resetScreen();
 		drawLines();
 
 		_txtTitle->setText(tr("STR_UFO_ACTIVITY_IN_AREAS"));
@@ -932,10 +983,10 @@ void GraphsState::btnUfoRegionClick(Action*)
  */
 void GraphsState::btnXcomRegionClick(Action*)
 {
-	if (currentPage != 1 || _init == true)
+	if (recallPage != 1 || _init == true)
 	{
 		_init = false;
-		currentPage = 1;
+		recallPage = 1;
 
 		_forceVis = true;
 
@@ -945,7 +996,6 @@ void GraphsState::btnXcomRegionClick(Action*)
 		_finance = false;
 
 		_btnReset->setVisible(_blinkTimer->isRunning() == true);
-		resetScreen();
 		drawLines();
 
 		_txtTitle->setText(tr("STR_XCOM_ACTIVITY_IN_AREAS"));
@@ -971,10 +1021,10 @@ void GraphsState::btnXcomRegionClick(Action*)
  */
 void GraphsState::btnUfoCountryClick(Action*)
 {
-	if (currentPage != 2 || _init == true)
+	if (recallPage != 2 || _init == true)
 	{
 		_init = false;
-		currentPage = 2;
+		recallPage = 2;
 
 		_forceVis =
 
@@ -984,7 +1034,6 @@ void GraphsState::btnUfoCountryClick(Action*)
 		_finance = false;
 
 		_btnReset->setVisible(_blinkTimer->isRunning() == true);
-		resetScreen();
 		drawLines();
 
 		_txtTitle->setText(tr("STR_UFO_ACTIVITY_IN_COUNTRIES"));
@@ -1010,10 +1059,10 @@ void GraphsState::btnUfoCountryClick(Action*)
  */
 void GraphsState::btnXcomCountryClick(Action*)
 {
-	if (currentPage != 3 || _init == true)
+	if (recallPage != 3 || _init == true)
 	{
 		_init = false;
-		currentPage = 3;
+		recallPage = 3;
 
 		_forceVis =
 
@@ -1023,7 +1072,6 @@ void GraphsState::btnXcomCountryClick(Action*)
 		_finance = false;
 
 		_btnReset->setVisible(_blinkTimer->isRunning() == true);
-		resetScreen();
 		drawLines();
 
 		_txtTitle->setText(tr("STR_XCOM_ACTIVITY_IN_COUNTRIES"));
@@ -1049,10 +1097,10 @@ void GraphsState::btnXcomCountryClick(Action*)
  */
 void GraphsState::btnIncomeClick(Action*)
 {
-	if (currentPage != 4 || _init == true)
+	if (recallPage != 4 || _init == true)
 	{
 		_init = false;
-		currentPage = 4;
+		recallPage = 4;
 
 		_income =
 		_country = true;
@@ -1060,7 +1108,6 @@ void GraphsState::btnIncomeClick(Action*)
 		_finance = false;
 
 		_btnReset->setVisible(false);
-		resetScreen();
 		drawLines();
 
 		_txtFactor->setVisible();
@@ -1082,10 +1129,10 @@ void GraphsState::btnIncomeClick(Action*)
  */
 void GraphsState::btnFinanceClick(Action*)
 {
-	if (currentPage != 5 || _init == true)
+	if (recallPage != 5 || _init == true)
 	{
 		_init = false;
-		currentPage = 5;
+		recallPage = 5;
 
 		_finance = true;
 		_alien =
@@ -1093,7 +1140,6 @@ void GraphsState::btnFinanceClick(Action*)
 		_country = false;
 
 		_btnReset->setVisible(false);
-		resetScreen();
 		drawLines();
 
 		_txtTitle->setText(tr("STR_FINANCE"));
@@ -1130,7 +1176,7 @@ void GraphsState::btnRegionListClick(Action* action)
 		}
 	}
 	_regionToggles.at(btnId)->_pushed = btn->getPressed();
-	drawLines();
+	drawLines(false);
 }
 
 /**
@@ -1159,7 +1205,7 @@ void GraphsState::btnCountryListClick(Action* action)
 		}
 	}
 	_countryToggles.at(btnId)->_pushed = btn->getPressed();
-	drawLines();
+	drawLines(false);
 }
 
 /**
@@ -1181,11 +1227,12 @@ void GraphsState::btnFinanceListClick(Action* action)
 	}
 	_financeLines.at(btnId)->setVisible(_financeToggles.at(btnId) == false);
 	_financeToggles.at(btnId) = btn->getPressed();
-	drawLines();
+	drawLines(false);
 }
 
 /**
  * Resets aLien/xCom activity and the blink indicators.
+ * @param action - pointer to an Action
  */
 void GraphsState::btnResetPress(Action*) // private.
 {
@@ -1203,6 +1250,53 @@ void GraphsState::btnResetPress(Action*) // private.
 			i != _game->getSavedGame()->getCountries()->end();
 			++i)
 		(*i)->resetActivity();
+}
+
+/**
+ * Sets the graphs to a user expansion.
+ * @param action - pointer to an Action
+ */
+void GraphsState::btnFactorPress(Action* action) // private.
+{
+	if (action->getSender() == _btnFactor1)
+		recallFactor = GUF_DEFAULT;
+	else if (action->getSender() == _btnFactor2)
+		recallFactor = GUF_HALF;
+	else if (action->getSender() == _btnFactor4)
+		recallFactor = GUF_QUARTER;
+
+	drawLines(false);
+}
+
+/**
+ * Sets the graphs to a user expansion by hot-key.
+ * @param action - pointer to an Action
+ */
+void GraphsState::keyFactor(Action* action)
+{
+	SDL_Event ev; // need to fake a mouse-click for the group to toggle
+	ev.type = SDL_MOUSEBUTTONDOWN;
+	ev.button.button = SDL_BUTTON_LEFT;
+
+	Action act = Action(&ev, 0.,0., 0,0);
+
+	if (action->getDetails()->key.keysym.sym == SDLK_1)
+	{
+		recallFactor = GUF_DEFAULT;
+		_btnFactor1->mousePress(&act, this);
+	}
+	else if (action->getDetails()->key.keysym.sym == SDLK_2)
+	{
+		recallFactor = GUF_HALF;
+		_btnFactor2->mousePress(&act, this);
+	}
+	else if (action->getDetails()->key.keysym.sym == SDLK_3)
+	{
+		recallFactor = GUF_QUARTER;
+		_btnFactor4->mousePress(&act, this);
+	}
+
+	drawLines(false);
 }
 
 /**
@@ -1321,15 +1415,40 @@ void GraphsState::updateScale( // private.
 /**
  * Instead of having all the line drawing in one giant ridiculous routine only
  * call the required routine.
+ * @param reset - true if lines needs to be cleared first (default true)
  */
-void GraphsState::drawLines() // private.
+void GraphsState::drawLines(bool reset) // private.
 {
+	if (reset == true)
+		resetScreen();
+
 	if (_country == false && _finance == false)
 		drawRegionLines();
 	else if (_finance == false)
 		drawCountryLines();
 	else
 		drawFinanceLines();
+}
+
+/**
+ * Clears pixels of lines that would otherwise draw overtop the title area.
+ * @param srf - pointer to a Surface w/ lines to box in
+ */
+void GraphsState::boxLines(Surface* const srf) // private.
+{
+	for (int
+			y = 0;		// top of screen
+			y != 45;	// bottom of title text
+			++y)
+	{
+		for (int
+				x = 125;	// grid left edge
+				x != 313;	// grid right edge
+				++x)
+		{
+			srf->setPixelColor(x,y, 0);
+		}
+	}
 }
 
 /**
@@ -1386,13 +1505,21 @@ void GraphsState::drawRegionLines() // private.
 	}
 
 
-	const int // adjust the scale to fit the upward maximum
-		low = scaleLow,
-		delta = scaleHigh - scaleLow;
+	const int low = scaleLow; // adjust the scale to fit the upward maximum
+	int delta = scaleHigh - scaleLow;
 
-	int test = 2; // was, 10
+	switch (recallFactor)
+	{
+		case GUF_HALF:
+			delta /= 2;
+			break;
+		case GUF_QUARTER:
+			delta /= 4;
+	}
+
+	int test = 10;
 	while (delta > GRIDCELLS_y * test)
-		test *= 2;
+		test += 10;
 
 	scaleLow = 0;
 	scaleHigh = GRIDCELLS_y * test;
@@ -1462,17 +1589,35 @@ void GraphsState::drawRegionLines() // private.
 				x = 312 - static_cast<Sint16>(j) * 17;
 
 				if (_alien == true)
+				{
 					_alienRegionLines.at(i)->drawLine(
 							x,y,
 							x + 17,
 							lineVector.at(lineVector.size() - 2),
 							color * 8 + 16);
+
+					switch (recallFactor)
+					{
+						case GUF_HALF:
+						case GUF_QUARTER:
+							boxLines(_alienRegionLines.at(i));
+					}
+				}
 				else
+				{
 					_xcomRegionLines.at(i)->drawLine(
 							x,y,
 							x + 17,
 							lineVector.at(lineVector.size() - 2),
 							color * 8 + 16);
+
+					switch (recallFactor)
+					{
+						case GUF_HALF:
+						case GUF_QUARTER:
+							boxLines(_xcomRegionLines.at(i));
+					}
+				}
 			}
 		}
 
@@ -1508,17 +1653,35 @@ void GraphsState::drawRegionLines() // private.
 			x = 312 - static_cast<Sint16>(i) * 17;
 
 			if (_alien == true)
+			{
 				_alienRegionLines.back()->drawLine(
 						x,y,
 						x + 17,
 						lineVector.at(lineVector.size() - 2),
 						color);
+
+				switch (recallFactor)
+				{
+					case GUF_HALF:
+					case GUF_QUARTER:
+						boxLines(_alienRegionLines.back());
+				}
+			}
 			else
+			{
 				_xcomRegionLines.back()->drawLine(
 						x,y,
 						x + 17,
 						lineVector.at(lineVector.size() - 2),
 						color);
+
+				switch (recallFactor)
+				{
+					case GUF_HALF:
+					case GUF_QUARTER:
+						boxLines(_xcomRegionLines.back());
+				}
+			}
 		}
 	}
 
@@ -1588,13 +1751,21 @@ void GraphsState::drawCountryLines() // private.
 	}
 
 
-	const int // adjust the scale to fit the upward maximum
-		low = scaleLow,
-		delta = scaleHigh - scaleLow;
+	const int low = scaleLow; // adjust the scale to fit the upward maximum
+	int delta = scaleHigh - scaleLow;
 
-	int test = 2; // was, 10
+	switch (recallFactor)
+	{
+		case GUF_HALF:
+			delta /= 2;
+			break;
+		case GUF_QUARTER:
+			delta /= 4;
+	}
+
+	int test = 10;
 	while (delta > GRIDCELLS_y * test)
-		test *= 2;
+		test += 10;
 
 	scaleLow = 0;
 	scaleHigh = GRIDCELLS_y * test;
@@ -1674,23 +1845,50 @@ void GraphsState::drawCountryLines() // private.
 				x = 312 - static_cast<Sint16>(j) * 17;
 
 				if (_alien == true)
+				{
 					_alienCountryLines.at(i)->drawLine(
 							x,y,
 							x + 17,
 							lineVector.at(lineVector.size() - 2),
 							color * 8 + 16);
+
+					switch (recallFactor)
+					{
+						case GUF_HALF:
+						case GUF_QUARTER:
+							boxLines(_alienCountryLines.at(i));
+					}
+				}
 				else if (_income == true)
+				{
 					_incomeLines.at(i)->drawLine(
 							x,y,
 							x + 17,
 							lineVector.at(lineVector.size() - 2),
 							color * 8 + 16);
+
+					switch (recallFactor)
+					{
+						case GUF_HALF:
+						case GUF_QUARTER:
+							boxLines(_incomeLines.at(i));
+					}
+				}
 				else
+				{
 					_xcomCountryLines.at(i)->drawLine(
 							x,y,
 							x + 17,
 							lineVector.at(lineVector.size() - 2),
 							color * 8 + 16);
+
+					switch (recallFactor)
+					{
+						case GUF_HALF:
+						case GUF_QUARTER:
+							boxLines(_xcomCountryLines.at(i));
+					}
+				}
 			}
 		}
 
@@ -1731,23 +1929,50 @@ void GraphsState::drawCountryLines() // private.
 			x = 312 - static_cast<Sint16>(i) * 17;
 
 			if (_alien == true)
+			{
 				_alienCountryLines.back()->drawLine(
 						x,y,
 						x + 17,
 						lineVector.at(lineVector.size() - 2),
 						color);
+
+				switch (recallFactor)
+				{
+					case GUF_HALF:
+					case GUF_QUARTER:
+						boxLines(_alienCountryLines.back());
+				}
+			}
 			else if (_income == true)
+			{
 				_incomeLines.back()->drawLine(
 						x,y,
 						x + 17,
 						lineVector.at(lineVector.size() - 2),
 						color);
+
+				switch (recallFactor)
+				{
+					case GUF_HALF:
+					case GUF_QUARTER:
+						boxLines(_incomeLines.back());
+				}
+			}
 			else
+			{
 				_xcomCountryLines.back()->drawLine(
 						x,y,
 						x + 17,
 						lineVector.at(lineVector.size() - 2),
 						color);
+
+				switch (recallFactor)
+				{
+					case GUF_HALF:
+					case GUF_QUARTER:
+						boxLines(_xcomCountryLines.back());
+				}
+			}
 		}
 	}
 
@@ -1884,13 +2109,21 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 	}
 
 
-	const int // adjust the scale to fit the upward maximum
-		low = scaleLow,
-		delta = scaleHigh - scaleLow;
+	const int low = scaleLow; // adjust the scale to fit the upward maximum
+	int delta = scaleHigh - scaleLow;
 
-	int test = 20; // was, 100
+	switch (recallFactor)
+	{
+		case GUF_HALF:
+			delta /= 2;
+			break;
+		case GUF_QUARTER:
+			delta /= 4;
+	}
+
+	int test = 100;
 	while (delta > GRIDCELLS_y * test)
-		test *= 2;
+		test += 100;
 
 	scaleLow = 0;
 	scaleHigh = GRIDCELLS_y * test;
@@ -1972,6 +2205,13 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 											x + 17,
 											lineVector.at(lineVector.size() - 2),
 											color);
+
+				switch (recallFactor)
+				{
+					case GUF_HALF:
+					case GUF_QUARTER:
+						boxLines(_financeLines.at(i));
+				}
 			}
 		}
 	}
@@ -2075,9 +2315,9 @@ void GraphsState::scrollButtons( // private.
 		blink();
 
 		if (init == true)
-			_btnCountryOffset = recallRow;
+			_btnCountryOffset = recallCountry;
 		else
-			recallRow =
+			recallCountry =
 			_btnCountryOffset = static_cast<size_t>(static_cast<int>(_btnCountryOffset) + dirVal);
 
 		std::vector<ToggleTextButton*>::const_iterator pBtn = _btnCountries.begin();

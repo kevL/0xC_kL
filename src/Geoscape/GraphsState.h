@@ -26,6 +26,13 @@
 namespace OpenXcom
 {
 
+enum GraphUserFactor
+{
+	GUF_DEFAULT,	// 0
+	GUF_HALF,		// 1
+	GUF_QUARTER		// 2
+};
+
 class InteractiveSurface;
 class Region;
 class Sound;
@@ -52,7 +59,7 @@ private:
 	static const size_t
 		GRAPH_BUTTONS	= 19, // # visible btns. Does not include TOTAL btn.
 		TEXTS_y			= 10,
-		MONTHS_u			= 12;
+		MONTHS_u		= 12;
 	static const int
 		MONTHS		= 12,
 		YEARS		= 6,
@@ -68,24 +75,28 @@ private:
 		_forceVis,	// true to ensure values are displayed when scrolling buttons
 		_reset;		// true to stop buttons blinking & reset activity
 
-	size_t
-		_btnCountryOffset;
+	size_t _btnCountryOffset;
 //		_btnRegionOffset;
 
 	InteractiveSurface
 		* _bg,
-		* _btnFinance,
-		* _btnGeoscape,
-		* _btnIncome,
-		* _btnUfoCountry,
-		* _btnUfoRegion,
-		* _btnXcomCountry,
-		* _btnXcomRegion;
+		* _isfFinance,
+		* _isfGeoscape,
+		* _isfIncome,
+		* _isfUfoCountry,
+		* _isfUfoRegion,
+		* _isfXcomCountry,
+		* _isfXcomRegion;
 	Text
 		* _txtScore,
 		* _txtFactor,
 		* _txtTitle;
-	TextButton* _btnReset;
+	TextButton
+		* _btnReset,
+		* _btnFactor1,
+		* _btnFactor2,
+		* _btnFactor4,
+		* _userFactor;
 	TextList
 		* _lstMonths,
 		* _lstYears;
@@ -131,6 +142,10 @@ private:
 
 	/// Resets aLien/xCom activity and the blink indicators.
 	void btnResetPress(Action* action);
+	/// Sets the graphs to a user expansion by mouse-click.
+	void btnFactorPress(Action* action);
+	/// Sets the graphs to a user expansion by hot-key.
+	void keyFactor(Action* action);
 
 	/// Resets all the elements on screen.
 	void resetScreen();
@@ -140,7 +155,9 @@ private:
 			int valHigh);
 
 	/// Decides which line-drawing-routine to call.
-	void drawLines();
+	void drawLines(bool reset = true);
+	/// Clears pixels of lines that would otherwise draw overtop the title area.
+	void boxLines(Surface* const srf);
 	/// Draws Region lines.
 	void drawRegionLines();
 	/// Draws Country lines.

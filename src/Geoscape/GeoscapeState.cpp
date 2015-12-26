@@ -603,7 +603,7 @@ GeoscapeState::GeoscapeState()
 //	_btn5Secs->setTextColor(Palette::blockOffset(15)+5);
 	_btn5Secs->setText(tr("STR_5_SECONDS"));
 	_btn5Secs->setGroup(&_timeComp);
-	_btn5Secs->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompressionPress, Options::keyGeoSpeed1);
+	_btn5Secs->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompression, Options::keyGeoSpeed1);
 	_btn5Secs->setGeoscapeButton(true);
 
 	_btn1Min->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
@@ -612,7 +612,7 @@ GeoscapeState::GeoscapeState()
 //	_btn1Min->setTextColor(Palette::blockOffset(15)+5);
 	_btn1Min->setText(tr("STR_1_MINUTE"));
 	_btn1Min->setGroup(&_timeComp);
-	_btn1Min->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompressionPress, Options::keyGeoSpeed2);
+	_btn1Min->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompression, Options::keyGeoSpeed2);
 	_btn1Min->setGeoscapeButton(true);
 
 	_btn5Mins->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
@@ -621,7 +621,7 @@ GeoscapeState::GeoscapeState()
 //	_btn5Mins->setTextColor(Palette::blockOffset(15)+5);
 	_btn5Mins->setText(tr("STR_5_MINUTES"));
 	_btn5Mins->setGroup(&_timeComp);
-	_btn5Mins->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompressionPress, Options::keyGeoSpeed3);
+	_btn5Mins->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompression, Options::keyGeoSpeed3);
 	_btn5Mins->setGeoscapeButton(true);
 
 	_btn30Mins->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
@@ -630,7 +630,7 @@ GeoscapeState::GeoscapeState()
 //	_btn30Mins->setTextColor(Palette::blockOffset(15)+5);
 	_btn30Mins->setText(tr("STR_30_MINUTES"));
 	_btn30Mins->setGroup(&_timeComp);
-	_btn30Mins->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompressionPress, Options::keyGeoSpeed4);
+	_btn30Mins->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompression, Options::keyGeoSpeed4);
 	_btn30Mins->setGeoscapeButton(true);
 
 	_btn1Hour->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
@@ -639,7 +639,7 @@ GeoscapeState::GeoscapeState()
 //	_btn1Hour->setTextColor(Palette::blockOffset(15)+5);
 	_btn1Hour->setText(tr("STR_1_HOUR"));
 	_btn1Hour->setGroup(&_timeComp);
-	_btn1Hour->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompressionPress, Options::keyGeoSpeed5);
+	_btn1Hour->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompression, Options::keyGeoSpeed5);
 	_btn1Hour->setGeoscapeButton(true);
 
 	_btn1Day->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
@@ -648,7 +648,7 @@ GeoscapeState::GeoscapeState()
 //	_btn1Day->setTextColor(Palette::blockOffset(15)+5);
 	_btn1Day->setText(tr("STR_1_DAY"));
 	_btn1Day->setGroup(&_timeComp);
-	_btn1Day->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompressionPress, Options::keyGeoSpeed6);
+	_btn1Day->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompression, Options::keyGeoSpeed6);
 	_btn1Day->setGeoscapeButton(true); */
 
 	// revert to ImageButtons.
@@ -713,42 +713,42 @@ GeoscapeState::GeoscapeState()
 	_btn5Secs->copy(geobord);
 	_btn5Secs->setGroup(&_timeComp);
 	_btn5Secs->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::keyTimeCompressionPress,
+					(ActionHandler)& GeoscapeState::keyTimeCompression,
 					Options::keyGeoSpeed1);
 	_btn5Secs->onMouseClick((ActionHandler)& GeoscapeState::resetTimeCacheClick);
 
 	_btn1Min->copy(geobord);
 	_btn1Min->setGroup(&_timeComp);
 	_btn1Min->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::keyTimeCompressionPress,
+					(ActionHandler)& GeoscapeState::keyTimeCompression,
 					Options::keyGeoSpeed2);
 	_btn1Min->onMouseClick((ActionHandler)& GeoscapeState::resetTimeCacheClick);
 
 	_btn5Mins->copy(geobord);
 	_btn5Mins->setGroup(&_timeComp);
 	_btn5Mins->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::keyTimeCompressionPress,
+					(ActionHandler)& GeoscapeState::keyTimeCompression,
 					Options::keyGeoSpeed3);
 	_btn5Mins->onMouseClick((ActionHandler)& GeoscapeState::resetTimeCacheClick);
 
 	_btn30Mins->copy(geobord);
 	_btn30Mins->setGroup(&_timeComp);
 	_btn30Mins->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::keyTimeCompressionPress,
+					(ActionHandler)& GeoscapeState::keyTimeCompression,
 					Options::keyGeoSpeed4);
 	_btn30Mins->onMouseClick((ActionHandler)& GeoscapeState::resetTimeCacheClick);
 
 	_btn1Hour->copy(geobord);
 	_btn1Hour->setGroup(&_timeComp);
 	_btn1Hour->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::keyTimeCompressionPress,
+					(ActionHandler)& GeoscapeState::keyTimeCompression,
 					Options::keyGeoSpeed5);
 	_btn1Hour->onMouseClick((ActionHandler)& GeoscapeState::resetTimeCacheClick);
 
 	_btn1Day->copy(geobord);
 	_btn1Day->setGroup(&_timeComp);
 	_btn1Day->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::keyTimeCompressionPress,
+					(ActionHandler)& GeoscapeState::keyTimeCompression,
 					Options::keyGeoSpeed6);
 	_btn1Day->onMouseClick((ActionHandler)& GeoscapeState::resetTimeCacheClick);
 
@@ -4498,17 +4498,15 @@ void GeoscapeState::setupLandMission() // private.
 } */
 
 /**
- * Handler for hot-keying a time-compression key.
+ * Handler for hot-keying time-compression.
  * @note The 0xC_kL build does not accept mouse-clicks here; now that I look at
  * it neither does the vanilla code.
  * @param action - pointer to the hot-key Action
  */
-void GeoscapeState::keyTimeCompressionPress(Action* action) // private.
+void GeoscapeState::keyTimeCompression(Action* action) // private.
 {
-	//Log(LOG_INFO) << "reset time cache KEY";
 	if (action->getSender() != _timeComp)
 	{
-		//Log(LOG_INFO) << ". accepted";
 		_timeCache = 0;
 
 		SDL_Event ev; // so let's fake a mouse-click
@@ -4524,14 +4522,9 @@ void GeoscapeState::keyTimeCompressionPress(Action* action) // private.
  * Handler for clicking a time-compression button.
  * @param action - pointer to an Action
  */
-void GeoscapeState::resetTimeCacheClick(Action* /* action */) // private.
+void GeoscapeState::resetTimeCacheClick(Action*) // private.
 {
-	//Log(LOG_INFO) << "reset time cache BTN";
-//	if (action->getSender() != _timeComp) //action->getDetails()->button.button == SDL_BUTTON_LEFT
-//	{
-		//Log(LOG_INFO) << ". accepted";
 	_timeCache = 0;
-//	}
 }
 
 /**

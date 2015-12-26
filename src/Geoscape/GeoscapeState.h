@@ -38,7 +38,6 @@ extern const double
 	unitToRads,
 	greatCircleConversionFactor;
 
-
 class Base;
 class Craft;
 class DogfightState;
@@ -178,8 +177,8 @@ private:
 	/// Process each individual mission script command.
 	bool processDirective(RuleMissionScript* const directive);
 
-	/// Handler for hot-keying a time-compression key.
-	void keyTimeCompressionPress(Action* action);
+	/// Handler for hot-keying time-compression.
+	void keyTimeCompression(Action* action);
 	/// Handler for clicking a time-compression button.
 	void resetTimeCacheClick(Action* action);
 	/// Handler for clicking pause.
