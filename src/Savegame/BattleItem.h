@@ -40,9 +40,8 @@ class BattleItem
 {
 
 private:
-	bool
-		_isLoad,
-		_XCOMProperty;
+	bool _isLoad;
+//		_xcomProperty;
 	int
 		_ammoQty,
 		_fuse,
@@ -160,9 +159,9 @@ private:
 		int getStimulantQuantity() const;
 
 		/// Sets xcom property flag
-		void setXCOMProperty(bool flag = true);
+//		void setXcomProperty(bool flag = true);
 		/// Gets xcom property flag
-		bool getXCOMProperty() const;
+//		bool getXcomProperty() const;
 
 		/// Sets the item's ruleset.
 		void convertToCorpse(RuleItem* const itRule);

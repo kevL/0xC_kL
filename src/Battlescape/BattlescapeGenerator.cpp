@@ -1036,7 +1036,7 @@ void BattlescapeGenerator::deployXCOM() // private.
 	{
 		if ((*i)->getSlot() == grndRule)
 		{
-			(*i)->setXCOMProperty();
+//			(*i)->setXcomProperty();
 			_battleSave->getItems()->push_back(*i);
 
 			++i;
@@ -1312,7 +1312,7 @@ void BattlescapeGenerator::loadGroundWeapon(BattleItem* const item) // private.
 		if ((*i)->getSlot() == ground
 			&& item->setAmmoItem(*i) == 0)
 		{
-			(*i)->setXCOMProperty();
+//			(*i)->setXcomProperty();
 			(*i)->setSlot(righthand); // trick to remove ammo from ground-slot
 			_battleSave->getItems()->push_back(*i);
 		}
@@ -1368,7 +1368,7 @@ bool BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
 																		// WHAT OTHER _tileEquipt IS THERE BUT THE GROUND TILE!!??!!!1
 									&& item->setAmmoItem(*k) == 0)		// okay, so load the damn item.
 								{
-									(*k)->setXCOMProperty();
+//									(*k)->setXcomProperty();
 									(*k)->setSlot(righthand);			// why are you putting ammo in his right hand.....
 																		// maybe just to get it off the ground so it doesn't get loaded into another weapon later.
 									_battleSave->getItems()->push_back(*k);
@@ -1382,7 +1382,7 @@ bool BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
 
 						if (loaded == true)	// only place the item onto the soldier when it's loaded with its layout-ammo if any
 						{
-							item->setXCOMProperty();
+//							item->setXcomProperty();
 
 							item->moveToOwner(*i);
 
@@ -1480,13 +1480,13 @@ void BattlescapeGenerator::setTacticalSprites() const // private.
 /**
  * Adds an item to an XCom soldier (auto-equip ONLY). kL_note: I don't use that part.
  * Or to an XCom tank, also adds items & terrorWeapons to aLiens, deployAliens()!
- * @param item				- pointer to the BattleItem
- * @param unit				- pointer to the BattleUnit
+ * @param item - pointer to the BattleItem
+ * @param unit - pointer to the BattleUnit
  * @return, true if item was placed
  */
 bool BattlescapeGenerator::addItem( // private.
 		BattleItem* const item,
-		BattleUnit* const unit)
+		BattleUnit* const unit) const
 {
 	RuleInventory
 		* const rightHand = _rules->getInventory("STR_RIGHT_HAND"),
@@ -1495,144 +1495,139 @@ bool BattlescapeGenerator::addItem( // private.
 		* const rhWeapon = unit->getItem("STR_RIGHT_HAND"),
 		* const lhWeapon = unit->getItem("STR_LEFT_HAND");
 
-	bool placed = false;
+	RuleItem* const itRule = item->getRules();
 
-	switch (item->getRules()->getBattleType())
+	int placed = 0;
+
+	if (itRule->isFixed() == true)
 	{
-		case BT_FIREARM:	// kL_note: These are also terrorist weapons:
-		case BT_MELEE:		// chryssalids, cyberdiscs, zombies, sectopods, reapers, celatids, silacoids
-			if (rhWeapon == nullptr)
-			{
-				item->moveToOwner(unit);
-				item->setSlot(rightHand);
-
-				placed = true;
-			}
-
-			// kL_note: only for plasma pistol + Blaster (see itemSets in Ruleset)
-			// Also now for advanced fixed/innate weapon rules.
-			if (placed == false
-				&& lhWeapon == nullptr)
-//				&& (item->getRules()->isFixed()
-//					|| unit->getFaction() != FACTION_PLAYER))
-			{
-				item->moveToOwner(unit);
-				item->setSlot(leftHand);
-
-				placed = true;
-			}
-		break;
-
-		case BT_AMMO:
+		if (rhWeapon == nullptr)
 		{
-			// find handheld weapons that can be loaded with this ammo
-			if (rhWeapon != nullptr
-				&& (rhWeapon->getRules()->isFixed() == true
-					|| unit->getFaction() != FACTION_PLAYER)
-				&& rhWeapon->getAmmoItem() == nullptr
-				&& rhWeapon->setAmmoItem(item) == 0)
-			{
-				item->setSlot(rightHand);
-
-				placed = true;
-				break;
-			}
-
-			// kL_note: only for plasma pistol + Blaster (see itemSets in Ruleset)
-			// Also now for advanced fixed/innate weapon rules.
-			if (lhWeapon != nullptr
-				&& (lhWeapon->getRules()->isFixed() == true
-					|| unit->getFaction() != FACTION_PLAYER)
-				&& lhWeapon->getAmmoItem() == nullptr
-				&& lhWeapon->setAmmoItem(item) == 0)
-			{
-				item->setSlot(leftHand);
-
-				placed = true;
-				break;
-			}
-
-			// else put the clip in Belt or Backpack
-			RuleItem* const itemRule = item->getRules();
-
-			for (int
-					i = 0;
-					i != 4;
-					++i)
-			{
-				if (unit->getItem("STR_BELT", i) == false
-					&& _rules->getInventory("STR_BELT")->fitItemInSlot(itemRule, i, 0))
+			item->setSlot(rightHand);
+			placed = 1;
+		}
+		else if (lhWeapon == nullptr)
+		{
+			item->setSlot(leftHand);
+			placed = 1;
+		}
+	}
+	else
+	{
+		switch (itRule->getBattleType())
+		{
+			case BT_FIREARM:
+			case BT_MELEE:
+				if (rhWeapon == nullptr)
 				{
-					item->moveToOwner(unit);
-					item->setSlot(_rules->getInventory("STR_BELT"));
-					item->setSlotX(i);
+					item->setSlot(rightHand);
+					placed = 1;
+				}
+				else if (lhWeapon == nullptr)
+				{
+					item->setSlot(leftHand);
+					placed = 1;
+				}
+			break;
 
-					placed = true;
+			case BT_AMMO:
+			{
+				if (rhWeapon != nullptr
+					&& (rhWeapon->getRules()->isFixed() == true
+						|| unit->getFaction() != FACTION_PLAYER)
+					&& rhWeapon->getAmmoItem() == nullptr
+					&& rhWeapon->setAmmoItem(item) == 0)
+				{
+					item->setSlot(rightHand);
+					placed = 2;
 					break;
 				}
-			}
 
-			if (placed == false)
-			{
-				for (int
+				if (lhWeapon != nullptr
+					&& (lhWeapon->getRules()->isFixed() == true
+						|| unit->getFaction() != FACTION_PLAYER)
+					&& lhWeapon->getAmmoItem() == nullptr
+					&& lhWeapon->setAmmoItem(item) == 0)
+				{
+					item->setSlot(leftHand);
+					placed = 2;
+					break;
+				}
+
+				for (int // else put the clip in Belt or Backpack
 						i = 0;
-						i != 3;
+						i != 4;
 						++i)
 				{
-					if (unit->getItem("STR_BACK_PACK", i) == false
-						&& _rules->getInventory("STR_BACK_PACK")->fitItemInSlot(itemRule, i, 0))
+					if (unit->getItem("STR_BELT", i) == false
+						&& _rules->getInventory("STR_BELT")->fitItemInSlot(itRule, i, 0))
 					{
-						item->moveToOwner(unit);
-						item->setSlot(_rules->getInventory("STR_BACK_PACK"));
+						item->setSlot(_rules->getInventory("STR_BELT"));
 						item->setSlotX(i);
-
-						placed = true;
+						placed = 1;
 						break;
 					}
 				}
-			}
-		}
-		break;
 
-		case BT_GRENADE: // includes AlienGrenades & SmokeGrenades & HE-Packs.
-		case BT_PROXYGRENADE:
-			for (int
-					i = 0;
-					i != 4;
-					++i)
-			{
-				if (unit->getItem("STR_BELT", i) == false)
+				if (placed == 0)
 				{
-					item->moveToOwner(unit);
-					item->setSlot(_rules->getInventory("STR_BELT"));
-					item->setSlotX(i);
-
-					placed = true;
-					break;
+					for (int
+							i = 0;
+							i != 3;
+							++i)
+					{
+						if (unit->getItem("STR_BACK_PACK", i) == false
+							&& _rules->getInventory("STR_BACK_PACK")->fitItemInSlot(itRule, i, 0))
+						{
+							item->setSlot(_rules->getInventory("STR_BACK_PACK"));
+							item->setSlotX(i);
+							placed = 1;
+							break;
+						}
+					}
 				}
 			}
-		break;
+			break;
 
-		case BT_MINDPROBE:
-		case BT_MEDIKIT:
-		case BT_SCANNER:
-			if (unit->getItem("STR_BACK_PACK") == false)
-			{
-				item->moveToOwner(unit);
-				item->setSlot(_rules->getInventory("STR_BACK_PACK"));
+			case BT_GRENADE: // includes AlienGrenades & SmokeGrenades & HE-Packs.
+			case BT_PROXYGRENADE:
+				for (int
+						i = 0;
+						i != 4;
+						++i)
+				{
+					if (unit->getItem("STR_BELT", i) == false)
+					{
+						item->setSlot(_rules->getInventory("STR_BELT"));
+						item->setSlotX(i);
+						placed = 1;
+						break;
+					}
+				}
+			break;
 
-				placed = true;
-			}
+			case BT_MINDPROBE:
+			case BT_MEDIKIT:
+			case BT_SCANNER:
+				if (unit->getItem("STR_BACK_PACK") == false)
+				{
+					item->setSlot(_rules->getInventory("STR_BACK_PACK"));
+					placed = 1;
+				}
+		}
 	}
 
-	if (placed == true)
+	switch (placed)
 	{
-		item->setXCOMProperty(unit->getFaction() == FACTION_PLAYER);
-		_battleSave->getItems()->push_back(item);
+		case 1:
+			item->moveToOwner(unit); // no break.
+		case 2:
+//			item->setXcomProperty(unit->getFaction() == FACTION_PLAYER);
+			_battleSave->getItems()->push_back(item);
+			return true;
 	}
 
-	// If not placed the item is deleted from wherever this function was called.
-	return placed;
+	return false; // If not placed the item will be deleted.
 }
 
 /**

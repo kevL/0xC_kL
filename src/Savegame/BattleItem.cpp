@@ -56,7 +56,7 @@ BattleItem::BattleItem(
 		_painKiller(0),
 		_heal(0),
 		_stimulant(0),
-		_XCOMProperty(false),
+//		_xcomProperty(false),
 		_isLoad(false)
 {
 	if (pId != nullptr)	// <- this is for SavedBattleGame only to keep
@@ -554,11 +554,11 @@ int BattleItem::getStimulantQuantity() const
  * fundamentally useless ... well it may bear only on artefacts for a Base
  * Defense mission ....
  * @param flag - true if xCom property
- */
-void BattleItem::setXCOMProperty(bool flag)
+ *
+void BattleItem::setXcomProperty(bool flag)
 {
-	_XCOMProperty = flag;
-}
+	_xcomProperty = flag;
+} */
 
 /**
  * Gets the XCom property flag.
@@ -566,11 +566,11 @@ void BattleItem::setXCOMProperty(bool flag)
  * kL_note: no, actually it's not: In its current implementation it is
  * fundamentally useless.
  * @return, true if xCom property
- */
-bool BattleItem::getXCOMProperty() const
+ *
+bool BattleItem::getXcomProperty() const
 {
-	return _XCOMProperty;
-}
+	return _xcomProperty;
+} */
 
 /**
  * Converts a carried unconscious body into a battlefield corpse-item.

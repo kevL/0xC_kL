@@ -1948,8 +1948,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 					sprite = _res->getSurfaceSet("X1.PCK")->getFrame((*i)->getCurrentFrame());
 					sprite->blitNShade(
 							surface,
-							bullet.x - 64,
-							bullet.y - 64);
+							bullet.x - (sprite->getWidth() / 2), //64,
+							bullet.y - (sprite->getHeight() / 2)); //64);
 				}
 				else if ((*i)->isHit() == 0) // bullet, http://ufopaedia.org/index.php?title=SMOKE.PCK
 				{

@@ -479,6 +479,7 @@ void BattleUnit::load(const YAML::Node& node)
 	_mcStrength			= node["mcStrength"]			.as<int>(_mcStrength);
 	_mcSkill			= node["mcSkill"]				.as<int>(_mcSkill);
 	_drugDose			= node["drugDose"]				.as<int>(_drugDose);
+	_murdererId			= node["murdererId"]			.as<int>(_murdererId);
 
 	for (size_t
 			i = 0;
@@ -614,6 +615,7 @@ YAML::Node BattleUnit::save() const
 	if (_motionPoints != 0)			node["motionPoints"]	= _motionPoints;
 	if (_kills != 0)				node["kills"]			= _kills;
 	if (_drugDose != 0)				node["drugDose"]		= _drugDose;
+	if (_murdererId != 0)			node["murdererId"]		= _murdererId;
 
 	node["activeHand"] = _activeHand;
 

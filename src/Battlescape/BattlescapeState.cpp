@@ -140,7 +140,7 @@ BattlescapeState::BattlescapeState()
 {
 	//Log(LOG_INFO) << "Create BattlescapeState";
 	STATE_INTERVAL_XCOM		= static_cast<Uint32>(Options::battleXcomSpeed);
-	STATE_INTERVAL_XCOMDASH	= BattlescapeState::STATE_INTERVAL_XCOM * 2 / 3;
+	STATE_INTERVAL_XCOMDASH	= BattlescapeState::STATE_INTERVAL_XCOM * 2u / 3u;
 	STATE_INTERVAL_ALIEN	= static_cast<Uint32>(Options::battleAlienSpeed);
 
 	const int
@@ -857,6 +857,9 @@ BattlescapeState::BattlescapeState()
 	_btnLogo->onMouseClick(
 					(ActionHandler)& BattlescapeState::btnUfoPaediaClick,
 					SDL_BUTTON_RIGHT);
+	_btnLogo->onKeyboardPress(
+					(ActionHandler)& BattlescapeState::btnUfoPaediaClick,
+					Options::keyGeoUfopedia);
 //	_btnZeroTUs->setTooltip("STR_EXPEND_ALL_TIME_UNITS");
 //	_btnZeroTUs->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
 //	_btnZeroTUs->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);

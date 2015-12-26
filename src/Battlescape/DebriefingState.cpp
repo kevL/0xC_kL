@@ -1870,7 +1870,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 						100,
 						_rules->getAlienFuelQuantity());
 			}
-			else //if (*i)->getXCOMProperty() == false
+			else //if (*i)->getXcomProperty() == false
 			{
 				if (itRule->isRecoverable() == true
 					&& itRule->getRecoveryPoints() != 0

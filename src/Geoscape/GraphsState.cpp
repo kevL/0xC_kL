@@ -817,7 +817,7 @@ void GraphsState::initButtons() // private.
 	}
 /*	for (std::vector<GraphBtnInfo*>::const_iterator	// not needed because Country-areas are all subsumed within Regions;
 			i = _countryToggles.begin();			// that is, if a country is blinking its region will already be blinking.
-			i != _countryToggles.end();
+			i != _countryToggles.end();				// So just start the gosh-darned timer.
 			++i)
 	{
 		if ((*i)->_blinkA == true || (*i)->_blinkX == true)

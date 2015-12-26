@@ -122,7 +122,7 @@ private:
 	/// Adds an item to a unit and the game.
 	bool addItem(
 			BattleItem* const item,
-			BattleUnit* const unit);
+			BattleUnit* const unit) const;
 
 	/// Deploys the aliens according to the AlienDeployment rule.
 	void deployAliens(AlienDeployment* const deployRule);
