@@ -26,7 +26,7 @@
 namespace OpenXcom
 {
 
-enum GraphUserFactor
+enum GraphsUserFactor
 {
 	GUF_DEFAULT,	// 0
 	GUF_HALF,		// 1

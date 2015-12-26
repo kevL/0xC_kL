@@ -59,9 +59,9 @@
 namespace OpenXcom
 {
 
-static size_t recallCountry = 0;
 static int recallPage = -1;
-static GraphUserFactor recallFactor = GUF_DEFAULT;
+static size_t recallCountry = 0;
+static GraphsUserFactor recallFactor = GUF_DEFAULT;
 
 const float GraphsState::PIXELS_y = 126.f;
 
@@ -307,11 +307,8 @@ GraphsState::GraphsState()
 			_blinkRegionXCom.push_back(blinkX);
 		}
 
-		Surface* const srfRegionLine = new Surface(320,200);
-		srfRegionLine->drawRect(0,0, 320,200, 15);
-		_alienRegionLines.push_back(srfRegionLine);
 
-//		_alienRegionLines.push_back(new Surface(320,200));
+		_alienRegionLines.push_back(new Surface(320,200));
 		add(_alienRegionLines.at(btnOffset));
 
 		_xcomRegionLines.push_back(new Surface(320,200));
@@ -1510,11 +1507,10 @@ void GraphsState::drawRegionLines() // private.
 
 	switch (recallFactor)
 	{
-		case GUF_HALF:
-			delta /= 2;
-			break;
 		case GUF_QUARTER:
-			delta /= 4;
+			delta >>= 1; // no break.
+		case GUF_HALF:
+			delta >>= 1;
 	}
 
 	int test = 10;
@@ -1756,11 +1752,10 @@ void GraphsState::drawCountryLines() // private.
 
 	switch (recallFactor)
 	{
-		case GUF_HALF:
-			delta /= 2;
-			break;
 		case GUF_QUARTER:
-			delta /= 4;
+			delta >>= 1; // no break.
+		case GUF_HALF:
+			delta >>= 1;
 	}
 
 	int test = 10;
@@ -2114,11 +2109,10 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 
 	switch (recallFactor)
 	{
-		case GUF_HALF:
-			delta /= 2;
-			break;
 		case GUF_QUARTER:
-			delta /= 4;
+			delta >>= 1; // no break.
+		case GUF_HALF:
+			delta >>= 1;
 	}
 
 	int test = 100;
