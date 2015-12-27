@@ -294,7 +294,7 @@ protected:
 		/// Adds item
 		void addItem(
 				BattleItem* const item,
-				RuleInventory* const ground);
+				const RuleInventory* const ground);
 		/// Removes item
 		void removeItem(BattleItem* const item);
 

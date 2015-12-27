@@ -2465,7 +2465,8 @@ void BattleUnit::initTu(
 		}					// the beginning of opponent's turn) it simply loses its TU.
 
 		if (hasPanicked == false || reverted == false)
-			_tu = std::max(12, _tu);
+			_tu = std::max(_tu,
+						   _battleGame->getBattleSave()->getInitTu());
 
 
 		if (preBattle == false)				// no energy recovery needed at battle start
@@ -2685,7 +2686,7 @@ BattleItem* BattleUnit::getItem(
 		int x,
 		int y) const
 {
-	if (slot->getType() != INV_GROUND) // Soldier items
+	if (slot->getCategory() != INV_GROUND) // Soldier items
 	{
 		for (std::vector<BattleItem*>::const_iterator
 				i = _inventory.begin();
@@ -2693,7 +2694,7 @@ BattleItem* BattleUnit::getItem(
 				++i)
 		{
 			if ((*i)->getSlot() == slot
-				&& (*i)->occupiesSlot(x,y))
+				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
 			}
@@ -2706,10 +2707,8 @@ BattleItem* BattleUnit::getItem(
 				i != _tile->getInventory()->end();
 				++i)
 		{
-			if ((*i)->occupiesSlot(x,y))
-			{
+			if ((*i)->occupiesSlot(x,y) == true)
 				return *i;
-			}
 		}
 	}
 
@@ -2736,8 +2735,8 @@ BattleItem* BattleUnit::getItem(
 				++i)
 		{
 			if ((*i)->getSlot() != nullptr
-				&& (*i)->getSlot()->getId() == slot
-				&& (*i)->occupiesSlot(x,y))
+				&& (*i)->getSlot()->getInventoryType() == slot
+				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
 			}
@@ -2751,7 +2750,7 @@ BattleItem* BattleUnit::getItem(
 				++i)
 		{
 			if ((*i)->getSlot() != nullptr
-				&& (*i)->occupiesSlot(x,y))
+				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
 			}

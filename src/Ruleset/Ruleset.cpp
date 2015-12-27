@@ -1667,6 +1667,48 @@ const std::vector<std::string>& Ruleset::getInvsList() const
 }
 
 /**
+ * Determines the highest TU-value used to move an item from a player-section to
+ * the ground-section.
+ * @note This is the lowest value a unit will get at the start of its turn
+ * unless it has just panicked or revived etc.
+ * @return, high TU value
+ */
+int Ruleset::detHighTuInventoryCost() const
+{
+	int
+		cost,
+		costHigh = 0;
+
+	RuleInventory* grdRule = getInventory("STR_GROUND");
+	for (std::map<std::string, RuleInventory*>::const_iterator
+			i = _invs.begin();
+			i != _invs.end();
+			++i)
+	{
+		cost = (*i).second->getCost(grdRule);
+		if (cost > costHigh)
+			costHigh = cost;
+	}
+
+	return costHigh;
+}
+/*	for (std::map<std::string, RuleInventory*>::const_iterator
+			i = _invs.begin();
+			i != _invs.end();
+			++i)
+	{
+		for (std::map<std::string, RuleInventory*>::const_iterator
+				j = _invs.begin();
+				j != _invs.end();
+				++j)
+		{
+			cost = (*i).second->getCost((*j).second);
+			if (cost > costHigh)
+				costHigh = cost;
+		}
+	} */
+
+/**
  * Returns the rules for the specified research project.
  * @param id - reference a research project type
  * @return, pointer to RuleResearch

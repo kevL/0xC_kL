@@ -3120,7 +3120,7 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 			++i)
 	{
 		if ((*i)->getSlot() != nullptr
-			&& (*i)->getSlot()->getId() == "STR_GROUND"
+			&& (*i)->getSlot()->getInventoryType() == "STR_GROUND"
 			&& (*i)->getRules()->getAttraction() != 0)
 		{
 			tile = (*i)->getTile();

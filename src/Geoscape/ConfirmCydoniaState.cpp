@@ -109,7 +109,9 @@ void ConfirmCydoniaState::btnYesClick(Action*)
 	_game->popState();
 	_game->popState();
 
-	SavedBattleGame* const battle = new SavedBattleGame(&_game->getRuleset()->getOperations());
+	SavedBattleGame* const battle = new SavedBattleGame(
+													&_game->getRuleset()->getOperations(),
+													_game->getRuleset());
 	_game->getSavedGame()->setBattleSave(battle);
 
 	BattlescapeGenerator bGen = BattlescapeGenerator(_game);

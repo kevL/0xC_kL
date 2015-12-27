@@ -124,10 +124,10 @@ void UnitSprite::setBattleItem(BattleItem* const item)
 {
 	if (item != nullptr)
 	{
-		if (item->getSlot()->getId() == "STR_RIGHT_HAND")
+		if (item->getSlot()->getInventoryType() == "STR_RIGHT_HAND")
 			_itemA = item;
 
-		if (item->getSlot()->getId() == "STR_LEFT_HAND")
+		if (item->getSlot()->getInventoryType() == "STR_LEFT_HAND")
 			_itemB = item;
 	}
 
@@ -1069,7 +1069,7 @@ void UnitSprite::drawRoutine4()
 		}
 		else
 		{
-			if (_itemA->getSlot()->getId() == "STR_RIGHT_HAND")
+			if (_itemA->getSlot()->getInventoryType() == "STR_RIGHT_HAND")
 			{
 				itemA = _itemSurfaceA->getFrame(_itemA->getRules()->getHandSprite() + dir);
 				itemA->setX(0);

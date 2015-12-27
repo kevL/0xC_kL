@@ -293,6 +293,13 @@ protected:
 		/// Gets the available armors.
 		const std::vector<std::string>& getArmorsList() const;
 
+		/// Gets the cost of an engineer.
+		int getEngineerCost() const;
+		/// Gets the cost of a scientist.
+		int getScientistCost() const;
+		/// Gets the transfer time of personnel.
+		int getPersonnelTime() const;
+
 		/// Gets Ufopaedia ArticleDefinition.
 		ArticleDefinition* getUfopaediaArticle(const std::string& name) const;
 		/// Gets the available articles.
@@ -302,13 +309,10 @@ protected:
 		std::map<std::string, RuleInventory*>* getInventories();
 		/// Gets the ruleset for a specific inventory.
 		RuleInventory* getInventory(const std::string& id) const;
-
-		/// Gets the cost of an engineer.
-		int getEngineerCost() const;
-		/// Gets the cost of a scientist.
-		int getScientistCost() const;
-		/// Gets the transfer time of personnel.
-		int getPersonnelTime() const;
+		/// Returns the sorted list of inventories.
+		const std::vector<std::string>& getInvsList() const;
+		/// Determines the highest TU-value used.
+		int detHighTuInventoryCost() const;
 
 		/// Gets the ruleset for a specific research project.
 		RuleResearch* getResearch(const std::string& id) const;
@@ -362,9 +366,6 @@ protected:
 
 		/// Gets the research-requirements for Psi-Lab (it's a cache for psiStrengthEval)
 //		std::vector<std::string> getPsiRequirements() const;
-
-		/// Returns the sorted list of inventories.
-		const std::vector<std::string>& getInvsList() const;
 
 		/// Generates a new soldier.
 		Soldier* genSoldier(

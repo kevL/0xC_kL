@@ -80,6 +80,7 @@ private:
 	int
 		_tacticalShade,
 		_groundLevel,
+		_initTu,
 		_itemId,
 		_mapsize_x,
 		_mapsize_y,
@@ -150,7 +151,9 @@ private:
 		static const size_t SEARCH_SIZE = SEARCH_DIST * SEARCH_DIST;
 
 		/// Creates a new battle save based on the current generic save.
-		explicit SavedBattleGame(const std::vector<OperationPool*>* const titles = nullptr);
+		explicit SavedBattleGame(
+				const std::vector<OperationPool*>* const titles = nullptr,
+				const Ruleset* const rules = nullptr);
 		/// Cleans up the saved game.
 		~SavedBattleGame();
 
@@ -159,8 +162,13 @@ private:
 				const YAML::Node& node,
 				Ruleset* const rules,
 				const SavedGame* const savedGame);
+		/// Load map resources.
+		void loadMapResources(const Game* const game);
 		/// Saves a saved battle game to YAML.
 		YAML::Node save() const;
+
+		/// Gets a pointer to the tiles.
+		Tile** getTiles() const;
 
 		/// Sets the dimensions of the map and initializes it.
 		void initMap(
@@ -169,9 +177,6 @@ private:
 				const int mapsize_z);
 		/// Initialises the Pathfinding and TileEngine.
 		void initUtilities(const ResourcePack* const res);
-
-		/// Gets the game's mapdatafiles.
-		std::vector<MapDataSet*>* getMapDataSets();
 
 		/// Gets the TacticalType of this battle.
 		TacticalType getTacType() const;
@@ -184,16 +189,6 @@ private:
 		void setTacticalShade(int shade);
 		/// Gets the global shade.
 		int getTacticalShade() const;
-
-		/// Gets a pointer to the tiles.
-		Tile** getTiles() const;
-
-		/// Gets a pointer to the list of nodes.
-		std::vector<Node*>* getNodes();
-		/// Gets a pointer to the list of units.
-		std::vector<BattleUnit*>* getUnits();
-		/// Gets a pointer to the list of items.
-		std::vector<BattleItem*>* getItems();
 
 		/// Gets terrain size x.
 		int getMapSizeX() const;
@@ -265,10 +260,20 @@ private:
 		/// Selects the unit with position on map.
 		BattleUnit* selectUnit(const Position& pos);
 
+		/// Gets a pointer to the list of nodes.
+		std::vector<Node*>* getNodes();
+		/// Gets a pointer to the list of units.
+		std::vector<BattleUnit*>* getUnits();
+		/// Gets a pointer to the list of items.
+		std::vector<BattleItem*>* getItems();
+
 		/// Gets the pathfinding object.
 		Pathfinding* getPathfinding() const;
 		/// Gets a pointer to the tileengine.
 		TileEngine* getTileEngine() const;
+
+		/// Gets the game's mapdatafiles.
+		std::vector<MapDataSet*>* getMapDataSets();
 
 		/// Gets the playing side.
 		UnitFaction getSide() const;
@@ -284,10 +289,20 @@ private:
 		/// Gets debug mode.
 		bool getDebugMode() const;
 
-		/// Load map resources.
-		void loadMapResources(const Game* const game);
+		/// Gets a pointer to the BattlescapeGame.
+		BattlescapeGame* getBattleGame() const;
+		/// Gets a pointer to the BattlescapeState.
+		BattlescapeState* getBattleState() const;
+		/// Sets the pointer to the BattlescapeState.
+		void setBattleState(BattlescapeState* bs);
+
 		/// Resets tiles units are standing on
 		void resetUnitsOnTiles();
+
+		/// Gives access to the storage tiles vector.
+		std::vector<Position>& getStorageSpace();
+		/// Moves all the leftover items to random locations in the storage tiles vector.
+		void randomizeItemLocations(Tile* const tile);
 
 		/// Removes an item from the game.
 		void removeItem(BattleItem* const item);
@@ -361,24 +376,14 @@ private:
 		/// Checks the status of the flag that says "there are units falling".
 		bool getUnitsFalling() const;
 
-		/// Gets a pointer to the BattlescapeGame.
-		BattlescapeGame* getBattleGame() const;
-		/// Gets a pointer to the BattlescapeState.
-		BattlescapeState* getBattleState() const;
-		/// Sets the pointer to the BattlescapeState.
-		void setBattleState(BattlescapeState* bs);
-
 		/// Gets the highest ranked, living unit of faction.
-		BattleUnit* getHighestRanked(
+		const BattleUnit* getHighestRanked(
 				int& qtyAllies,
 				bool isXcom = true) const;
 		/// Gets the morale modifier based on the highest ranked, living xcom/alien unit, or for a unit passed into this function.
 		int getMoraleModifier(
 				const BattleUnit* const unit = nullptr,
 				bool isXcom = true) const;
-
-		/// Checks whether a particular faction has eyes on *unit (whether any unit on that faction sees *unit).
-//		bool eyesOnTarget(UnitFaction faction, BattleUnit* unit);
 
 		/// Resets the turn counter.
 		void resetTurnCounter();
@@ -390,20 +395,6 @@ private:
 
 		/// Checks if the AI has engaged cheat mode.
 		bool isCheating();
-
-		/// Gets the reserved fire mode.
-//		BattleActionType getBatReserved() const;
-		/// Sets the reserved fire mode.
-//		void setBatReserved(BattleActionType reserved);
-		/// Gets whether we are reserving TUs to kneel.
-//		bool getKneelReserved() const;
-		/// Sets whether we are reserving TUs to kneel.
-//		void setKneelReserved(bool reserved);
-
-		/// Gives me access to the storage tiles vector.
-		std::vector<Position>& getStorageSpace();
-		/// Moves all the leftover items to random locations in the storage tiles vector.
-		void randomizeItemLocations(Tile* const tile);
 
 		/// Gets a reference to the baseModules map.
 		std::vector<std::vector<std::pair<int, int>>>& getModuleMap();
@@ -461,8 +452,23 @@ private:
 		const Position& getRfTriggerPosition() const;
 
 		/// Gets a ref to the scanner dots vector.
-		std::vector<std::pair<int, int>>& scannerDots();
-		const std::vector<std::pair<int, int>>& scannerDots() const;
+		std::vector<std::pair<int,int>>& scannerDots();
+		const std::vector<std::pair<int,int>>& scannerDots() const;
+
+		/// Gets the minimum TU that a unit has at start of its turn.
+		int getInitTu() const;
+
+		/// Gets the reserved fire mode.
+//		BattleActionType getBatReserved() const;
+		/// Sets the reserved fire mode.
+//		void setBatReserved(BattleActionType reserved);
+		/// Gets whether we are reserving TUs to kneel.
+//		bool getKneelReserved() const;
+		/// Sets whether we are reserving TUs to kneel.
+//		void setKneelReserved(bool reserved);
+
+		/// Checks whether a particular faction has eyes on *unit (whether any unit on that faction sees *unit).
+//		bool eyesOnTarget(UnitFaction faction, BattleUnit* unit);
 };
 
 }

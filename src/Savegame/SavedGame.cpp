@@ -632,17 +632,17 @@ void SavedGame::load(
 			i != doc["missionStatistics"].end();
 			++i)
 	{
-		MissionStatistics* const ms (new MissionStatistics());
-		ms->load(*i);
-		_missionStatistics.push_back(ms);
+		MissionStatistics* const missionStats (new MissionStatistics());
+		missionStats->load(*i);
+		_missionStatistics.push_back(missionStats);
 	}
 
 	if (const YAML::Node& battle = doc["battleGame"])
 	{
-		Log(LOG_INFO) << "SavedGame: loading battlegame";
-		_battleSave = new SavedBattleGame();
+		Log(LOG_INFO) << "SavedGame: loading tactical";
+		_battleSave = new SavedBattleGame(nullptr, _rules);
 		_battleSave->load(battle, rules, this);
-		Log(LOG_INFO) << "SavedGame: loading battlegame DONE";
+		Log(LOG_INFO) << "SavedGame: loading tactical DONE";
 	}
 }
 
@@ -1250,7 +1250,7 @@ SavedBattleGame* SavedGame::getBattleSave()
 
 /**
  * Set SavedBattleGame object.
- * @param battleSave - pointer to a new SavedBattleGame object
+ * @param battleSave - pointer to a SavedBattleGame object
  */
 void SavedGame::setBattleSave(SavedBattleGame* const battleSave)
 {

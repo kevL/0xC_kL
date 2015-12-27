@@ -1299,7 +1299,7 @@ void Tile::setTransitUnit(BattleUnit* const unit)
  */
 void Tile::addItem(
 		BattleItem* const item,
-		RuleInventory* const ground)
+		const RuleInventory* const ground)
 {
 	item->setSlot(ground);
 	_inventory.push_back(item);

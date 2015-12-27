@@ -1,21 +1,22 @@
 invs:
-  - id: STR_GROUND
+  - type: STR_GROUND
     x: 0
     y: 152
-    type: 2
+    category: 2
     costs:
       STR_BACK_PACK: 18
       STR_BELT: 10
       STR_LEFT_HAND: 6
-      STR_LEFT_LEG: 10
+      STR_LEFT_LEG: 8
       STR_LEFT_SHOULDER: 12
       STR_RIGHT_HAND: 6
-      STR_RIGHT_LEG: 10
+      STR_RIGHT_LEG: 8
       STR_RIGHT_SHOULDER: 12
-  - id: STR_RIGHT_HAND
+      STR_QD: 9
+  - type: STR_RIGHT_HAND
     x: 0
     y: 63
-    type: 1
+    category: 1
     costs:
       STR_BACK_PACK: 14
       STR_BELT: 8
@@ -23,31 +24,32 @@ invs:
       STR_LEFT_HAND: 3
       STR_LEFT_LEG: 10
       STR_LEFT_SHOULDER: 10
-      STR_RIGHT_LEG: 8
+      STR_RIGHT_LEG: 9
       STR_RIGHT_SHOULDER: 12
-  - id: STR_LEFT_HAND
+      STR_QD: 7
+  - type: STR_LEFT_HAND
     x: 128
     y: 63
-    type: 1
+    category: 1
     costs:
       STR_BACK_PACK: 14
       STR_BELT: 8
       STR_GROUND: 2
-      STR_LEFT_LEG: 8
+      STR_LEFT_LEG: 9
       STR_LEFT_SHOULDER: 12
       STR_RIGHT_HAND: 3
       STR_RIGHT_LEG: 10
       STR_RIGHT_SHOULDER: 10
-  - id: STR_BELT
+      STR_QD: 7
+  - type: STR_BELT
+#    x: 208
     x: 192
     y: 104
     slots:
       - [0, 0]
       - [1, 0]
       - [2, 0]
-      - [3, 0]
-      - [0, 1]
-      - [3, 1]
+      - [2, 1]
     costs:
       STR_BACK_PACK: 16
       STR_GROUND: 6
@@ -57,7 +59,8 @@ invs:
       STR_RIGHT_HAND: 5
       STR_RIGHT_LEG: 10
       STR_RIGHT_SHOULDER: 12
-  - id: STR_RIGHT_LEG
+      STR_QD: 8
+  - type: STR_RIGHT_LEG
     x: 0
     y: 120
     slots:
@@ -72,7 +75,8 @@ invs:
       STR_LEFT_SHOULDER: 10
       STR_RIGHT_HAND: 4
       STR_RIGHT_SHOULDER: 12
-  - id: STR_LEFT_LEG
+      STR_QD: 9
+  - type: STR_LEFT_LEG
     x: 128
     y: 120
     slots:
@@ -87,7 +91,8 @@ invs:
       STR_RIGHT_HAND: 6
       STR_RIGHT_LEG: 10
       STR_RIGHT_SHOULDER: 10
-  - id: STR_RIGHT_SHOULDER
+      STR_QD: 9
+  - type: STR_RIGHT_SHOULDER
     x: 16
     y: 37
     slots:
@@ -96,13 +101,14 @@ invs:
     costs:
       STR_BACK_PACK: 16
       STR_BELT: 10
-      STR_GROUND: 4
+      STR_GROUND: 5
       STR_LEFT_HAND: 3
       STR_LEFT_LEG: 12
       STR_LEFT_SHOULDER: 8
       STR_RIGHT_HAND: 4
       STR_RIGHT_LEG: 12
-  - id: STR_LEFT_SHOULDER
+      STR_QD: 9
+  - type: STR_LEFT_SHOULDER
     x: 112
     y: 37
     slots:
@@ -111,14 +117,16 @@ invs:
     costs:
       STR_BACK_PACK: 16
       STR_BELT: 10
-      STR_GROUND: 4
+      STR_GROUND: 5
       STR_LEFT_HAND: 4
       STR_LEFT_LEG: 12
       STR_RIGHT_HAND: 3
       STR_RIGHT_LEG: 12
       STR_RIGHT_SHOULDER: 8
-  - id: STR_BACK_PACK
-    x: 192
+      STR_QD: 9
+  - type: STR_BACK_PACK
+#    x: 192
+    x: 176
     y: 37
     slots:
       - [0, 0]
@@ -131,11 +139,33 @@ invs:
       - [1, 2]
       - [2, 2]
     costs:
-      STR_BELT: 12
-      STR_GROUND: 10
-      STR_LEFT_HAND: 8
-      STR_LEFT_LEG: 16
-      STR_LEFT_SHOULDER: 14
-      STR_RIGHT_HAND: 8
-      STR_RIGHT_LEG: 16
-      STR_RIGHT_SHOULDER: 14
+      STR_BELT: 14
+      STR_GROUND: 12
+      STR_LEFT_HAND: 10
+      STR_LEFT_LEG: 18
+      STR_LEFT_SHOULDER: 16
+      STR_RIGHT_HAND: 10
+      STR_RIGHT_LEG: 18
+      STR_RIGHT_SHOULDER: 16
+      STR_QD: 11
+  - type: STR_QD
+#    x: 192
+    x: 172
+    y: 104
+    slots:
+      - [0, 0]
+      - [0, 1]
+    costs:
+      STR_BACK_PACK: 14
+      STR_BELT: 8
+      STR_GROUND: 4
+      STR_LEFT_HAND: 2
+      STR_LEFT_LEG: 12
+      STR_LEFT_SHOULDER: 10
+      STR_RIGHT_HAND: 2
+      STR_RIGHT_LEG: 12
+      STR_RIGHT_SHOULDER: 10
+extraStrings:
+  - type: en-US
+    strings:
+      STR_QD: QD

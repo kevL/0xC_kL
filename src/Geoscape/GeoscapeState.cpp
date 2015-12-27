@@ -3946,7 +3946,7 @@ void GeoscapeState::handleBaseDefense(
 
 	if (base->getAvailableSoldiers(true) != 0)
 	{
-		SavedBattleGame* const battle = new SavedBattleGame(&_rules->getOperations());
+		SavedBattleGame* const battle = new SavedBattleGame(&_rules->getOperations(), _rules);
 		_gameSave->setBattleSave(battle);
 		battle->setTacticalType("STR_BASE_DEFENSE");
 

@@ -64,15 +64,15 @@ namespace OpenXcom
 {
 
 /**
- * Creates a blank ruleset for a certain type of inventory section.
+ * Creates a blank ruleset for a certain type of Inventory section.
  * @param id - string defining the id
  */
-RuleInventory::RuleInventory(const std::string& id)
+RuleInventory::RuleInventory(const std::string& type)
 	:
-		_id(id),
+		_type(type),
 		_x(0),
 		_y(0),
-		_type(INV_SLOT),
+		_cat(INV_SLOT),
 		_listOrder(0)
 {}
 
@@ -83,7 +83,7 @@ RuleInventory::~RuleInventory()
 {}
 
 /**
- * Loads the inventory from a YAML file.
+ * Loads this Inventory section's rules from a YAML file.
  * @param node - reference a YAML node
  * @param listOrder - the list weight for this inventory
  */
@@ -91,27 +91,27 @@ void RuleInventory::load(
 		const YAML::Node &node,
 		int listOrder)
 {
-	_id			= node["id"]		.as<std::string>(_id);
+	_type		= node["type"]		.as<std::string>(_type);
 	_x			= node["x"]			.as<int>(_x);
 	_y			= node["y"]			.as<int>(_y);
-	_slots		= node["slots"]		.as<std::vector<RuleSlot> >(_slots);
-	_costs		= node["costs"]		.as<std::map<std::string, int> >(_costs);
+	_slots		= node["slots"]		.as<std::vector<RuleSlot>>(_slots);
+	_costs		= node["costs"]		.as<std::map<std::string, int>>(_costs);
 	_listOrder	= node["listOrder"]	.as<int>(listOrder);
 
-	_type = static_cast<InventoryType>(node["type"].as<int>(_type));
+	_cat = static_cast<InventoryCategory>(node["category"].as<int>(_cat));
 }
 
 /**
- * Gets the language string that names this inventory section.
- * @return, section name
+ * Gets the string that identifies this Inventory section.
+ * @return, section string
  */
-std::string RuleInventory::getId() const
+std::string RuleInventory::getInventoryType() const
 {
-	return _id;
+	return _type;
 }
 
 /**
- * Gets the X position of the inventory section on the screen.
+ * Gets the X position of this Inventory section on the screen.
  * @return, X position in pixels
  */
 int RuleInventory::getX() const
@@ -120,7 +120,7 @@ int RuleInventory::getX() const
 }
 
 /**
- * Gets the Y position of the inventory section on the screen.
+ * Gets the Y position of this Inventory section on the screen.
  * @return, Y position in pixels
  */
 int RuleInventory::getY() const
@@ -129,28 +129,48 @@ int RuleInventory::getY() const
 }
 
 /**
- * Gets the type of the inventory section.
+ * Gets the category of this Inventory section.
  * @note Slot-based contain a limited number of slots. Hands only contain one
  * slot but can hold any item. Ground can hold infinite items but it doesn't
  * attach to soldiers.
- * @return, InventoryType (RuleInventory.h)
+ * @return, InventoryCategory (RuleInventory.h)
  */
-InventoryType RuleInventory::getType() const
+InventoryCategory RuleInventory::getCategory() const
 {
-	return _type;
+	return _cat;
 }
 
 /**
- * Gets all the slots in the inventory section.
+ * Gets all the Slots in this Inventory section.
  * @return, pointer to a vector of RuleSlot-structs
  */
-std::vector<struct RuleSlot>* RuleInventory::getSlots()
+const std::vector<struct RuleSlot>* RuleInventory::getSlots()
 {
 	return &_slots;
 }
 
 /**
- * Gets the slot located in the specified mouse position.
+ * Gets the number of Slots along the top row of this Inventory.
+ * @note Used to auto-equip items in BattlescapeGenerator.
+ * @return, qty of x-slots
+ */
+int RuleInventory::getSlotsX() const
+{
+	int ret = 0;
+	for (std::vector<RuleSlot>::const_iterator
+			i = _slots.begin();
+			i != _slots.end();
+			++i)
+	{
+		if ((*i).y == 0)
+			++ret;
+	}
+
+	return ret;
+}
+
+/**
+ * Gets the Slot located in the specified mouse position.
  * @param x - mouse X position; returns the slot's X position
  * @param y - mouse Y position; returns the slot's Y position
  * @return, true if there's a slot here
@@ -163,23 +183,23 @@ bool RuleInventory::checkSlotInPosition(
 		mouseX = *x,
 		mouseY = *y;
 
-	switch (_type)
+	switch (_cat)
 	{
 		case INV_HAND:
 			for (int
-					xx = 0;
-					xx != HAND_W;
-					++xx)
+					x1 = 0;
+					x1 != HAND_W;
+					++x1)
 			{
 				for (int
-						yy = 0;
-						yy != HAND_H;
-						++yy)
+						y1 = 0;
+						y1 != HAND_H;
+						++y1)
 				{
-					if (mouseX >= _x + xx * SLOT_W
-						&& mouseX < _x + (xx + 1) * SLOT_W
-						&& mouseY >= _y + yy * SLOT_H
-						&& mouseY < _y + (yy + 1) * SLOT_H)
+					if (   mouseX >= _x +  x1 * SLOT_W
+						&& mouseX <  _x + (x1 + 1) * SLOT_W
+						&& mouseY >= _y +  y1 * SLOT_H
+						&& mouseY <  _y + (y1 + 1) * SLOT_H)
 					{
 						*x =
 						*y = 0;
@@ -190,7 +210,7 @@ bool RuleInventory::checkSlotInPosition(
 		break;
 
 		case INV_GROUND:
-			if (mouseX >= _x
+			if (   mouseX >= _x
 				&& mouseX < 320
 				&& mouseY >= _y
 				&& mouseY < 200)
@@ -210,10 +230,10 @@ bool RuleInventory::checkSlotInPosition(
 					i != _slots.end();
 					++i)
 			{
-				if (mouseX >= _x + i->x * SLOT_W
-					&& mouseX < _x + (i->x + 1) * SLOT_W
-					&& mouseY >= _y + i->y * SLOT_H
-					&& mouseY < _y + (i->y + 1) * SLOT_H)
+				if (   mouseX >= _x +  i->x * SLOT_W
+					&& mouseX <  _x + (i->x + 1) * SLOT_W
+					&& mouseY >= _y +  i->y * SLOT_H
+					&& mouseY <  _y + (i->y + 1) * SLOT_H)
 				{
 					*x = i->x;
 					*y = i->y;
@@ -227,18 +247,18 @@ bool RuleInventory::checkSlotInPosition(
 }
 
 /**
- * Checks if an item completely fits in a certain slot.
- * @param item	- pointer to item ruleset
+ * Checks if an item completely fits into a certain Slot-position.
+ * @param item	- pointer to RuleItem
  * @param x		- slot X position
  * @param y		- slot Y position
  * @return, true if there's room there
  */
 bool RuleInventory::fitItemInSlot(
-		RuleItem* item,
+		const RuleItem* const item,
 		int x,
 		int y) const
 {
-	switch (_type)
+	switch (_cat)
 	{
 		case INV_GROUND:
 		{
@@ -261,8 +281,8 @@ bool RuleInventory::fitItemInSlot(
 						++find_y)
 				{
 					if (!
-							(find_x >= xOffset
-							&& find_x < xOffset + width
+							(  find_x >= xOffset
+							&& find_x <  xOffset + width
 							&& find_y > -1
 							&& find_y < height))
 					{
@@ -272,7 +292,7 @@ bool RuleInventory::fitItemInSlot(
 			}
 		}
 		case INV_HAND:
-		return true;
+			return true;
 
 		default:
 		{
@@ -281,14 +301,13 @@ bool RuleInventory::fitItemInSlot(
 
 			for (std::vector<RuleSlot>::const_iterator
 					i = _slots.begin();
-					i != _slots.end()
-						&& slotsFound < slotsTotal;
+					i != _slots.end() && slotsFound < slotsTotal;
 					++i)
 			{
-				if (i->x >= x
-					&& i->x < x + item->getInventoryWidth()
+				if (   i->x >= x
+					&& i->x <  x + item->getInventoryWidth()
 					&& i->y >= y
-					&& i->y < y + item->getInventoryHeight())
+					&& i->y <  y + item->getInventoryHeight())
 				{
 					++slotsFound;
 				}
@@ -300,20 +319,21 @@ bool RuleInventory::fitItemInSlot(
 }
 
 /**
- * Gets the time unit cost to place an item in this slot to another.
- * @param slot - the new slot id
- * @return, tu cost
+ * Gets the time unit cost to move an item from this Inventory section to another.
+ * @param slot - pointer to the slot to move the item to
+ * @return, TU cost
  */
-int RuleInventory::getCost(const RuleInventory* const slot) const
+int RuleInventory::getCost(const RuleInventory* const section) const
 {
-	if (slot == this)
-		return 0;
+	if (section != this)
+		return _costs.find(section->getInventoryType())->second;
 
-	return _costs.find(slot->getId())->second;
+	return 0;
 }
 
 /**
  * Gets the list order.
+ * @return, list order
  */
 int RuleInventory::getListOrder() const
 {

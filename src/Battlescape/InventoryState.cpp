@@ -960,7 +960,7 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 
 			layoutItems->push_back(new EquipmentLayoutItem(
 													(*i)->getRules()->getType(),
-													(*i)->getSlot()->getId(),
+													(*i)->getSlot()->getInventoryType(),
 													(*i)->getSlotX(),
 													(*i)->getSlotY(),
 													ammo,

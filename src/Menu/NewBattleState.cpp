@@ -578,7 +578,7 @@ void NewBattleState::btnOkClick(Action*)
 		return;
 	}
 
-	SavedBattleGame* const battle (new SavedBattleGame(&_rules->getOperations()));
+	SavedBattleGame* const battle (new SavedBattleGame(&_rules->getOperations(), _rules));
 	_game->getSavedGame()->setBattleSave(battle);
 	battle->setTacticalType(_missionTypes[_cbxMission->getSelected()]);
 	BattlescapeGenerator bGen = BattlescapeGenerator(_game);

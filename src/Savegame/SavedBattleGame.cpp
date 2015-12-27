@@ -58,10 +58,13 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a brand new SavedBattleGame.
- * @param titles - pointer to a vector of pointers to OperationPool (default nullptr)
+ * Creates and initializes a SavedBattleGame.
+ * @param titles	- pointer to a vector of pointers to OperationPool (default nullptr)
+ * @param rules		- pointer to the Ruleset (default nullptr)
  */
-SavedBattleGame::SavedBattleGame(const std::vector<OperationPool*>* const titles)
+SavedBattleGame::SavedBattleGame(
+		const std::vector<OperationPool*>* const titles,
+		const Ruleset* const rules)
 	:
 		_battleState(nullptr),
 		_mapsize_x(0),
@@ -91,15 +94,16 @@ SavedBattleGame::SavedBattleGame(const std::vector<OperationPool*>* const titles
 		_controlDestroyed(false),
 		_tiles(nullptr),
 		_pacified(false),
-		_rfTriggerPosition(0,0,-1)
+		_rfTriggerPosition(0,0,-1),
+		_initTu(12)
 //		_dragInvert(false),
 //		_dragTimeTolerance(0),
 //		_dragPixelTolerance(0)
 {
 	//Log(LOG_INFO) << "\nCreate SavedBattleGame";
-//	static const size_t&
-//		SEARCH_DIST = 11,
-//		SEARCH_SIZE = SEARCH_DIST * SEARCH_DIST; // wtfn. It's c++!
+	if (rules != nullptr)
+		_initTu = rules->detHighTuInventoryCost();
+
 	_tileSearch.resize(SEARCH_SIZE);
 	for (size_t
 			i = 0;
@@ -476,7 +480,7 @@ void SavedBattleGame::load(
 
 
 				if (item->getSlot() != nullptr // match up items and tiles
-					&& item->getSlot()->getType() == INV_GROUND)
+					&& item->getSlot()->getCategory() == INV_GROUND)
 				{
 					const Position pos ((*j)["position"].as<Position>());
 
@@ -1544,7 +1548,7 @@ std::vector<Position>& SavedBattleGame::getStorageSpace()
 /**
  * Move all the leftover items in base defense missions to random locations in
  * the storage facilities.
- * @param tile - pointer to a tile where all the goodies are initially stored
+ * @param tile - pointer to a tile where all the goodies are placed
  */
 void SavedBattleGame::randomizeItemLocations(Tile* const tile)
 {
@@ -1555,12 +1559,13 @@ void SavedBattleGame::randomizeItemLocations(Tile* const tile)
 				i != tile->getInventory()->end();
 				)
 		{
-			if ((*i)->getSlot()->getId() == "STR_GROUND")
+			if ((*i)->getSlot()->getInventoryType() == "STR_GROUND")
 			{
 				getTile(_storageSpace.at(RNG::pick(_storageSpace.size())))->addItem(*i, (*i)->getSlot());
 				i = tile->getInventory()->erase(i);
 			}
-			else ++i;
+			else
+				++i;
 		}
 	}
 }
@@ -2353,29 +2358,6 @@ bool SavedBattleGame::placeUnitNearPosition(
 }
 
 /**
- * @brief Checks whether anyone on a particular faction is looking at the unit.
- * Similar to getSpottingUnits() but returns a bool and stops searching if one positive hit is found.
- * @param faction Faction to check through.
- * @param unit Whom to spot.
- * @return True when the unit can be seen
- */
-/*kL bool SavedBattleGame::eyesOnTarget(UnitFaction faction, BattleUnit* unit)
-{
-	for (std::vector<BattleUnit*>::const_iterator i = getUnits()->begin(); i != getUnits()->end(); ++i)
-	{
-		if ((*i)->getFaction() != faction) continue;
-		std::vector<BattleUnit*>* vis = (*i)->getHostileUnits();
-		if (std::find(vis->begin(), vis->end(), unit) != vis->end())
-		{
-			return true;
-			// aliens know the location of all XCom agents sighted by all other
-			// aliens due to sharing locations over their space-walkie-talkies
-		}
-	}
-	return false;
-} */
-
-/**
  * Adds this unit to the vector of falling units if it doesn't already exist there.
  * @param unit - the unit to add
  * @return, true if the unit was added
@@ -2426,16 +2408,16 @@ bool SavedBattleGame::getUnitsFalling() const
 
 /**
  * Gets the highest ranked, living, non Mc'd unit of faction.
- * @param qtyAllies	- reference the number of allied units that are conscious and not MC'd
+ * @param qtyAllies	- reference to the number of allied units that will be conscious and not MC'd
  * @param isXcom	- true if examining Faction_Player, false for Faction_Hostile (default true)
  * @return, pointer to highest ranked BattleUnit of faction
  */
-BattleUnit* SavedBattleGame::getHighestRanked(
+const BattleUnit* SavedBattleGame::getHighestRanked(
 		int& qtyAllies,
 		bool isXcom) const
 {
 	//Log(LOG_INFO) << "SavedBattleGame::getHighestRanked() xcom = " << xcom;
-	BattleUnit* leader = nullptr;
+	const BattleUnit* leader = nullptr;
 	qtyAllies = 0;
 
 	for (std::vector<BattleUnit*>::const_iterator
@@ -2577,9 +2559,7 @@ int SavedBattleGame::getMoraleModifier( // note: Add bonus to aLiens for Cydonia
 		}
 		else // aLien
 		{
-			leader = getHighestRanked(
-									qtyAllies,
-									false);
+			leader = getHighestRanked(qtyAllies, false);
 			if (leader != nullptr)
 			{
 				switch (leader->getRankInt()) // terrorists are ranks #6 and #7
@@ -2663,42 +2643,6 @@ bool SavedBattleGame::isCheating()
 {
 	return _cheatAI;
 }
-
-/*
- * Gets the TU reserved type.
- * @return, a BattleActionType
- *
-BattleActionType SavedBattleGame::getBatReserved() const
-{
-	return _batReserved;
-} */
-
-/*
- * Sets the TU reserved type.
- * @param reserved - a BattleActionType
- *
-void SavedBattleGame::setBatReserved(BattleActionType reserved)
-{
-	_batReserved = reserved;
-} */
-
-/*
- * Gets the kneel reservation setting.
- * @return, true if an extra 4 TUs should be reserved to kneel
- *
-bool SavedBattleGame::getKneelReserved() const
-{
-	return _kneelReserved;
-} */
-
-/*
- * Sets the kneel reservation setting.
- * @param reserved - true if an extra 4 TUs should be reserved to kneel
- *
-void SavedBattleGame::setKneelReserved(bool reserved)
-{
-	_kneelReserved = reserved;
-} */
 
 /**
  * Gets a reference to the base module destruction map.
@@ -2851,8 +2795,8 @@ const std::wstring& SavedBattleGame::getOperation() const
 
 /**
  * Tells player that an aLienBase control has been destroyed.
- */
-/* void SavedBattleGame::setControlDestroyed()
+ *
+void SavedBattleGame::setControlDestroyed()
 {
 	_controlDestroyed = true;
 } */
@@ -2869,8 +2813,8 @@ bool SavedBattleGame::getControlDestroyed() const
 /**
  * Gets the music track for the current battle.
  * @return, address of the title of the music track
- */
-/*std::string& SavedBattleGame::getMusic()
+ *
+std::string& SavedBattleGame::getMusic()
 {
 	return _music;
 } */
@@ -2905,32 +2849,26 @@ void SavedBattleGame::calibrateMusic(
 			case TCT_UFOCRASHED:	// 0 - STR_UFO_CRASH_RECOVERY
 				music = OpenXcom::res_MUSIC_TAC_BATTLE_UFOCRASHED;
 				terrain = _terrain;
-			break;
-
+				break;
 			case TCT_UFOLANDED:		// 1 - STR_UFO_GROUND_ASSAULT
 				music = OpenXcom::res_MUSIC_TAC_BATTLE_UFOLANDED;
 				terrain = _terrain;
-			break;
-
+				break;
 			case TCT_BASEASSAULT:	// 2 - STR_ALIEN_BASE_ASSAULT
 				music = OpenXcom::res_MUSIC_TAC_BATTLE_BASEASSAULT;
-			break;
-
+				break;
 			case TCT_BASEDEFENSE:	// 3 - STR_BASE_DEFENSE
 				music = OpenXcom::res_MUSIC_TAC_BATTLE_BASEDEFENSE;
-			break;
-
+				break;
 			case TCT_MISSIONSITE:	// 4 - STR_TERROR_MISSION and STR_PORT_ATTACK, see setTacType()
 				music = OpenXcom::res_MUSIC_TAC_BATTLE_TERRORSITE;
-			break;
-
+				break;
 			case TCT_MARS1:			// 5 - STR_MARS_CYDONIA_LANDING
 				music = OpenXcom::res_MUSIC_TAC_BATTLE_MARS1;
-			break;
-
+				break;
 			case TCT_MARS2:			// 6 - STR_MARS_THE_FINAL_ASSAULT
 				music = OpenXcom::res_MUSIC_TAC_BATTLE_MARS2;
-			break;
+				break;
 
 			default:
 				music = OpenXcom::res_MUSIC_TAC_BATTLE; // safety.
@@ -2981,13 +2919,81 @@ const Position& SavedBattleGame::getRfTriggerPosition() const
  * Gets a ref to the scanner dots vector.
  * @return, reference to a vector of pairs of ints which are positions of current Turn's scanner dots.
  */
-std::vector<std::pair<int, int>>& SavedBattleGame::scannerDots()
+std::vector<std::pair<int,int>>& SavedBattleGame::scannerDots()
 {
 	return _scanDots;
 }
-const std::vector<std::pair<int, int>>& SavedBattleGame::scannerDots() const
+const std::vector<std::pair<int,int>>& SavedBattleGame::scannerDots() const
 {
 	return _scanDots;
 }
 
+/**
+ * Gets the minimum TU that a unit has at start of its turn.
+ * @return, min TU value
+ */
+int SavedBattleGame::getInitTu() const
+{
+	return _initTu;
 }
+
+}
+
+/**
+ * Gets the TU reserved type.
+ * @return, a BattleActionType
+ *
+BattleActionType SavedBattleGame::getBatReserved() const
+{
+	return _batReserved;
+} */
+
+/**
+ * Sets the TU reserved type.
+ * @param reserved - a BattleActionType
+ *
+void SavedBattleGame::setBatReserved(BattleActionType reserved)
+{
+	_batReserved = reserved;
+} */
+
+/**
+ * Gets the kneel reservation setting.
+ * @return, true if an extra 4 TUs should be reserved to kneel
+ *
+bool SavedBattleGame::getKneelReserved() const
+{
+	return _kneelReserved;
+} */
+
+/**
+ * Sets the kneel reservation setting.
+ * @param reserved - true if an extra 4 TUs should be reserved to kneel
+ *
+void SavedBattleGame::setKneelReserved(bool reserved)
+{
+	_kneelReserved = reserved;
+} */
+
+/**
+ * @brief Checks whether anyone on a particular faction is looking at the unit.
+ * Similar to getSpottingUnits() but returns a bool and stops searching if one positive hit is found.
+ * @param faction Faction to check through.
+ * @param unit Whom to spot.
+ * @return True when the unit can be seen
+ *
+bool SavedBattleGame::eyesOnTarget(UnitFaction faction, BattleUnit* unit)
+{
+	for (std::vector<BattleUnit*>::const_iterator i = getUnits()->begin(); i != getUnits()->end(); ++i)
+	{
+		if ((*i)->getFaction() != faction) continue;
+		std::vector<BattleUnit*>* vis = (*i)->getHostileUnits();
+		if (std::find(vis->begin(), vis->end(), unit) != vis->end())
+		{
+			return true;
+			// aliens know the location of all XCom agents sighted by all other
+			// aliens due to sharing locations over their space-walkie-talkies
+		}
+	}
+	return false;
+} */

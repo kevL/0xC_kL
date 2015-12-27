@@ -1554,15 +1554,18 @@ bool BattlescapeGenerator::addItem( // private.
 					break;
 				}
 
+
+				const RuleInventory* inRule = _rules->getInventory("STR_BELT");
+				int slots = inRule->getSlotsX();
 				for (int // else put the clip in Belt or Backpack
 						i = 0;
-						i != 4;
+						i != slots;
 						++i)
 				{
-					if (unit->getItem("STR_BELT", i) == false
-						&& _rules->getInventory("STR_BELT")->fitItemInSlot(itRule, i, 0))
+					if (unit->getItem(inRule, i) == nullptr
+						&& inRule->fitItemInSlot(itRule, i, 0))
 					{
-						item->setSlot(_rules->getInventory("STR_BELT"));
+						item->setSlot(inRule);
 						item->setSlotX(i);
 						placed = 1;
 						break;
@@ -1571,15 +1574,17 @@ bool BattlescapeGenerator::addItem( // private.
 
 				if (placed == 0)
 				{
+					inRule = _rules->getInventory("STR_BACK_PACK");
+					slots = inRule->getSlotsX();
 					for (int
 							i = 0;
-							i != 3;
+							i != slots;
 							++i)
 					{
-						if (unit->getItem("STR_BACK_PACK", i) == false
-							&& _rules->getInventory("STR_BACK_PACK")->fitItemInSlot(itRule, i, 0))
+						if (unit->getItem(inRule, i) == nullptr
+							&& inRule->fitItemInSlot(itRule, i, 0))
 						{
-							item->setSlot(_rules->getInventory("STR_BACK_PACK"));
+							item->setSlot(inRule);
 							item->setSlotX(i);
 							placed = 1;
 							break;
@@ -1591,29 +1596,36 @@ bool BattlescapeGenerator::addItem( // private.
 
 			case BT_GRENADE: // includes AlienGrenades & SmokeGrenades & HE-Packs.
 			case BT_PROXYGRENADE:
+			{
+				const RuleInventory* const inRule = _rules->getInventory("STR_BELT");
+				const int slots = inRule->getSlotsX();
 				for (int
 						i = 0;
-						i != 4;
+						i != slots;
 						++i)
 				{
-					if (unit->getItem("STR_BELT", i) == false)
+					if (unit->getItem(inRule, i) == nullptr)
 					{
-						item->setSlot(_rules->getInventory("STR_BELT"));
+						item->setSlot(inRule);
 						item->setSlotX(i);
 						placed = 1;
 						break;
 					}
 				}
+			}
 			break;
 
 			case BT_MINDPROBE:
 			case BT_MEDIKIT:
 			case BT_SCANNER:
-				if (unit->getItem("STR_BACK_PACK") == false)
+			{
+				const RuleInventory* const inRule = _rules->getInventory("STR_BELT");
+				if (unit->getItem(inRule) == nullptr)
 				{
-					item->setSlot(_rules->getInventory("STR_BACK_PACK"));
+					item->setSlot(inRule);
 					placed = 1;
 				}
+			}
 		}
 	}
 

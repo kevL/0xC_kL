@@ -58,7 +58,7 @@ private:
 		* _owner,
 		* _previousOwner,
 		* _unit;
-	RuleInventory* _inventorySlot;
+	const RuleInventory* _inventorySlot;
 	RuleItem* _itRule;
 	Tile* _tile;
 
@@ -115,9 +115,9 @@ private:
 		void moveToOwner(BattleUnit* const owner = nullptr);
 
 		/// Gets the item's inventory slot.
-		RuleInventory* getSlot() const;
+		const RuleInventory* getSlot() const;
 		/// Sets the item's inventory slot.
-		void setSlot(RuleInventory* const slot);
+		void setSlot(const RuleInventory* const slot);
 		/// Gets the item's inventory X position.
 		int getSlotX() const;
 		/// Sets the item's inventory X position.

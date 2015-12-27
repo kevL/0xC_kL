@@ -37,7 +37,7 @@ struct RuleSlot
 };
 
 
-enum InventoryType
+enum InventoryCategory
 {
 	INV_SLOT,	// 0
 	INV_HAND,	// 1
@@ -49,8 +49,8 @@ class RuleItem;
 
 
 /**
- * Represents a specific section of the inventory.
- * @note This contains information like available slots and screen position.
+ * Represents a specific section of the Inventory.
+ * @note This contains information like Slots and screen position.
  */
 class RuleInventory
 {
@@ -60,9 +60,9 @@ private:
 		_listOrder,
 		_x,
 		_y;
-	std::string _id;
+	std::string _type;
 
-	InventoryType _type;
+	InventoryCategory _cat;
 
 	std::map<std::string, int> _costs;
 	std::vector<RuleSlot> _slots;
@@ -75,41 +75,44 @@ private:
 			HAND_W = 2,
 			HAND_H = 3;
 
-		/// Creates a blank inventory ruleset.
-		explicit RuleInventory(const std::string& id);
-		/// Cleans up the inventory ruleset.
+		/// Creates a blank Inventory ruleset.
+		explicit RuleInventory(const std::string& type);
+		/// Cleans up the Inventory ruleset.
 		~RuleInventory();
 
-		/// Loads inventory data from YAML.
+		/// Loads the Inventory data from YAML.
 		void load(
 				const YAML::Node& node,
 				int listOrder);
 
-		/// Gets the inventory's id.
-		std::string getId() const;
+		/// Gets the Inventory's type.
+		std::string getInventoryType() const;
 
-		/// Gets the X position of the inventory.
+		/// Gets the X position of the Inventory.
 		int getX() const;
-		/// Gets the Y position of the inventory.
+		/// Gets the Y position of the Inventory.
 		int getY() const;
 
-		/// Gets the inventory type.
-		InventoryType getType() const;
+		/// Gets the Inventory category.
+		InventoryCategory getCategory() const;
 
-		/// Gets all the slots in the inventory.
-		std::vector<struct RuleSlot>* getSlots();
-		/// Checks for a slot in a certain position.
+		/// Gets all the Slots in the Inventory.
+		const std::vector<struct RuleSlot>* getSlots();
+		/// Gets the number of Slots along the top row of this Inventory.
+		int getSlotsX() const;
+
+		/// Checks for a Slot in a mouse position.
 		bool checkSlotInPosition(
 				int* x,
 				int* y) const;
-		/// Checks if an item fits in a slot.
+		/// Checks if an item fits into a Slot-position.
 		bool fitItemInSlot(
-				RuleItem* item,
+				const RuleItem* const item,
 				int x,
 				int y) const;
 
-		/// Gets a certain cost in the inventory.
-		int getCost(const RuleInventory* const slot) const;
+		/// Gets the TU cost to move an item in the Inventory.
+		int getCost(const RuleInventory* const section) const;
 
 		/// Gets the list order.
 		int getListOrder() const;

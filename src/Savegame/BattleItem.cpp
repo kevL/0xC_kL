@@ -134,7 +134,7 @@ YAML::Node BattleItem::save() const
 	if (_unit != nullptr)			node["unit"] = _unit->getId();
 	else							node["unit"] = -1;
 
-	if (_inventorySlot != nullptr)	node["inventoryslot"] = _inventorySlot->getId();
+	if (_inventorySlot != nullptr)	node["inventoryslot"] = _inventorySlot->getInventoryType();
 	else							node["inventoryslot"] = "nullptr";
 
 	if (_tile != nullptr)			node["position"] = _tile->getPosition();
@@ -367,7 +367,7 @@ void BattleItem::moveToOwner(BattleUnit* const owner)
  * Gets the item's inventory slot.
  * @return, the slot id
  */
-RuleInventory* BattleItem::getSlot() const
+const RuleInventory* BattleItem::getSlot() const
 {
 	return _inventorySlot;
 }
@@ -376,7 +376,7 @@ RuleInventory* BattleItem::getSlot() const
  * Sets the item's inventory slot.
  * @param slot - the slot id
  */
-void BattleItem::setSlot(RuleInventory* const slot)
+void BattleItem::setSlot(const RuleInventory* const slot)
 {
 	_inventorySlot = slot;
 }
@@ -432,7 +432,7 @@ bool BattleItem::occupiesSlot(
 	if (item == this)
 		return false;
 
-	if (_inventorySlot->getType() == INV_HAND)
+	if (_inventorySlot->getCategory() == INV_HAND)
 		return true;
 
 	if (item == nullptr)
