@@ -6207,7 +6207,7 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 					(*i)->getUnit()->setPosition(dt->getPosition());
 				}
 
-				dt->addItem(*i, (*i)->getSlot());
+				dt->addItem(*i, (*i)->getSection());
 			}
 
 			tile->getInventory()->clear();

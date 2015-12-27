@@ -181,7 +181,7 @@ void Soldier::load(
 				++i)
 		{
 			EquipmentLayoutItem* const layoutItem = new EquipmentLayoutItem(*i);
-			if (rules->getInventory(layoutItem->getSlot()) != nullptr)
+			if (rules->getInventory(layoutItem->getSection()) != nullptr)
 				_equipmentLayout.push_back(layoutItem);
 			else
 				delete layoutItem;

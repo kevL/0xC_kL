@@ -1034,7 +1034,7 @@ void BattlescapeGenerator::deployXCOM() // private.
 			i != _tileEquipt->getInventory()->end();
 			)
 	{
-		if ((*i)->getSlot() == grndRule)
+		if ((*i)->getSection() == grndRule)
 		{
 //			(*i)->setXcomProperty();
 			_battleSave->getItems()->push_back(*i);
@@ -1309,11 +1309,11 @@ void BattlescapeGenerator::loadGroundWeapon(BattleItem* const item) // private.
 			i != _tileEquipt->getInventory()->end();
 			++i)
 	{
-		if ((*i)->getSlot() == ground
+		if ((*i)->getSection() == ground
 			&& item->setAmmoItem(*i) == 0)
 		{
 //			(*i)->setXcomProperty();
-			(*i)->setSlot(righthand); // trick to remove ammo from ground-slot
+			(*i)->setSection(righthand); // trick to remove ammo from ground-slot
 			_battleSave->getItems()->push_back(*i);
 		}
 	}
@@ -1327,7 +1327,7 @@ void BattlescapeGenerator::loadGroundWeapon(BattleItem* const item) // private.
 bool BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
 {
 	const RuleInventory* const ground = _rules->getInventory("STR_GROUND");
-	if (item->getSlot() == ground)
+	if (item->getSection() == ground)
 	{
 		RuleInventory* const righthand = _rules->getInventory("STR_RIGHT_HAND");
 		bool loaded = false;
@@ -1348,7 +1348,7 @@ bool BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
 				{
 					if ((*j)->getItemType() == item->getRules()->getType() // find the first matching layout-slot which is not already occupied
 						&& (*i)->getItem(
-									(*j)->getSlot(),
+									(*j)->getSection(),
 									(*j)->getSlotX(),
 									(*j)->getSlotY()) == nullptr)
 					{
@@ -1364,12 +1364,12 @@ bool BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
 									++k)
 							{
 								if ((*k)->getRules()->getType() == (*j)->getAmmoItem()
-									&& (*k)->getSlot() == ground		// why the redundancy?
+									&& (*k)->getSection() == ground		// why the redundancy?
 																		// WHAT OTHER _tileEquipt IS THERE BUT THE GROUND TILE!!??!!!1
 									&& item->setAmmoItem(*k) == 0)		// okay, so load the damn item.
 								{
 //									(*k)->setXcomProperty();
-									(*k)->setSlot(righthand);			// why are you putting ammo in his right hand.....
+									(*k)->setSection(righthand);			// why are you putting ammo in his right hand.....
 																		// maybe just to get it off the ground so it doesn't get loaded into another weapon later.
 									_battleSave->getItems()->push_back(*k);
 
@@ -1386,7 +1386,7 @@ bool BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
 
 							item->moveToOwner(*i);
 
-							item->setSlot(_rules->getInventory((*j)->getSlot()));
+							item->setSection(_rules->getInventory((*j)->getSection()));
 							item->setSlotX((*j)->getSlotX());
 							item->setSlotY((*j)->getSlotY());
 
@@ -1503,12 +1503,12 @@ bool BattlescapeGenerator::addItem( // private.
 	{
 		if (rhWeapon == nullptr)
 		{
-			item->setSlot(rightHand);
+			item->setSection(rightHand);
 			placed = 1;
 		}
 		else if (lhWeapon == nullptr)
 		{
-			item->setSlot(leftHand);
+			item->setSection(leftHand);
 			placed = 1;
 		}
 	}
@@ -1520,110 +1520,63 @@ bool BattlescapeGenerator::addItem( // private.
 			case BT_MELEE:
 				if (rhWeapon == nullptr)
 				{
-					item->setSlot(rightHand);
+					item->setSection(rightHand);
 					placed = 1;
+					break;
 				}
-				else if (lhWeapon == nullptr)
-				{
-					item->setSlot(leftHand);
-					placed = 1;
-				}
-			break;
 
+				if (lhWeapon == nullptr)
+				{
+					item->setSection(leftHand);
+					placed = 1;
+					break;
+				} // no break.
 			case BT_AMMO:
-			{
 				if (rhWeapon != nullptr
-					&& (rhWeapon->getRules()->isFixed() == true
-						|| unit->getFaction() != FACTION_PLAYER)
 					&& rhWeapon->getAmmoItem() == nullptr
 					&& rhWeapon->setAmmoItem(item) == 0)
 				{
-					item->setSlot(rightHand);
+					item->setSection(rightHand);
 					placed = 2;
 					break;
 				}
 
 				if (lhWeapon != nullptr
-					&& (lhWeapon->getRules()->isFixed() == true
-						|| unit->getFaction() != FACTION_PLAYER)
 					&& lhWeapon->getAmmoItem() == nullptr
 					&& lhWeapon->setAmmoItem(item) == 0)
 				{
-					item->setSlot(leftHand);
+					item->setSection(leftHand);
 					placed = 2;
 					break;
-				}
+				} // no break.
 
+			default:
+			{
+				std::vector<RuleInventory*> inTypes;
+				inTypes.push_back(_rules->getInventory("STR_BELT"));
+				inTypes.push_back(_rules->getInventory("STR_BACK_PACK"));
 
-				const RuleInventory* inRule = _rules->getInventory("STR_BELT");
-				int slots = inRule->getSlotsX();
-				for (int // else put the clip in Belt or Backpack
-						i = 0;
-						i != slots;
+				for (std::vector<RuleInventory*>::const_iterator
+						i = inTypes.begin();
+						i != inTypes.end() && placed == 0;
 						++i)
 				{
-					if (unit->getItem(inRule, i) == nullptr
-						&& inRule->fitItemInSlot(itRule, i, 0))
+					for (std::vector<RuleSlot>::const_iterator
+							j = (*i)->getSlots()->begin();
+							j != (*i)->getSlots()->end() && placed == 0;
+							++j)
 					{
-						item->setSlot(inRule);
-						item->setSlotX(i);
-						placed = 1;
-						break;
-					}
-				}
-
-				if (placed == 0)
-				{
-					inRule = _rules->getInventory("STR_BACK_PACK");
-					slots = inRule->getSlotsX();
-					for (int
-							i = 0;
-							i != slots;
-							++i)
-					{
-						if (unit->getItem(inRule, i) == nullptr
-							&& inRule->fitItemInSlot(itRule, i, 0))
+						if (Inventory::overlapItems(
+												unit, item, *i,
+												j->x, j->y) == false
+							&& (*i)->fitItemInSlot(itRule, j->x, j->y) == true)
 						{
-							item->setSlot(inRule);
-							item->setSlotX(i);
+							item->setSection(*i);
+							item->setSlotX(j->x);
+							item->setSlotY(j->y);
 							placed = 1;
-							break;
 						}
 					}
-				}
-			}
-			break;
-
-			case BT_GRENADE: // includes AlienGrenades & SmokeGrenades & HE-Packs.
-			case BT_PROXYGRENADE:
-			{
-				const RuleInventory* const inRule = _rules->getInventory("STR_BELT");
-				const int slots = inRule->getSlotsX();
-				for (int
-						i = 0;
-						i != slots;
-						++i)
-				{
-					if (unit->getItem(inRule, i) == nullptr)
-					{
-						item->setSlot(inRule);
-						item->setSlotX(i);
-						placed = 1;
-						break;
-					}
-				}
-			}
-			break;
-
-			case BT_MINDPROBE:
-			case BT_MEDIKIT:
-			case BT_SCANNER:
-			{
-				const RuleInventory* const inRule = _rules->getInventory("STR_BELT");
-				if (unit->getItem(inRule) == nullptr)
-				{
-					item->setSlot(inRule);
-					placed = 1;
 				}
 			}
 		}

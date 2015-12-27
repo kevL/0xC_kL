@@ -1301,7 +1301,7 @@ void Tile::addItem(
 		BattleItem* const item,
 		const RuleInventory* const ground)
 {
-	item->setSlot(ground);
+	item->setSection(ground);
 	_inventory.push_back(item);
 
 	item->setTile(this);

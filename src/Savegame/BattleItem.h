@@ -58,7 +58,7 @@ private:
 		* _owner,
 		* _previousOwner,
 		* _unit;
-	const RuleInventory* _inventorySlot;
+	const RuleInventory* _section;
 	RuleItem* _itRule;
 	Tile* _tile;
 
@@ -105,19 +105,19 @@ private:
 
 		/// Gets the item's owner.
 		BattleUnit* getOwner() const;
-		/// Gets the item's previous owner.
-		BattleUnit* getPreviousOwner() const;
 		/// Sets the owner.
 		void setOwner(BattleUnit* const owner = nullptr);
+		/// Gets the item's previous owner.
+		BattleUnit* getPreviousOwner() const;
 		/// Sets the item's previous owner.
 		void setPreviousOwner(BattleUnit* const owner);
 		/// Removes the item from previous owner and moves to new owner.
 		void moveToOwner(BattleUnit* const owner = nullptr);
 
-		/// Gets the item's inventory slot.
-		const RuleInventory* getSlot() const;
-		/// Sets the item's inventory slot.
-		void setSlot(const RuleInventory* const slot);
+		/// Gets the item's inventory section.
+		const RuleInventory* getSection() const;
+		/// Sets the item's inventory section.
+		void setSection(const RuleInventory* const inRule);
 		/// Gets the item's inventory X position.
 		int getSlotX() const;
 		/// Sets the item's inventory X position.

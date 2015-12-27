@@ -2693,7 +2693,7 @@ BattleItem* BattleUnit::getItem(
 				i != _inventory.end();
 				++i)
 		{
-			if ((*i)->getSlot() == slot
+			if ((*i)->getSection() == slot
 				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
@@ -2734,8 +2734,8 @@ BattleItem* BattleUnit::getItem(
 				i != _inventory.end();
 				++i)
 		{
-			if ((*i)->getSlot() != nullptr
-				&& (*i)->getSlot()->getInventoryType() == slot
+			if ((*i)->getSection() != nullptr
+				&& (*i)->getSection()->getInventoryType() == slot
 				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
@@ -2749,7 +2749,7 @@ BattleItem* BattleUnit::getItem(
 				i != _tile->getInventory()->end();
 				++i)
 		{
-			if ((*i)->getSlot() != nullptr
+			if ((*i)->getSection() != nullptr
 				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;

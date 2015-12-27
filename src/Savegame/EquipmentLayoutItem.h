@@ -69,7 +69,7 @@ private:
 		/// Gets the item's type which has to be in a slot.
 		std::string getItemType() const;
 		/// Gets the slot to be occupied.
-		std::string getSlot() const;
+		std::string getSection() const;
 		/// Gets the slotX to be occupied.
 		int getSlotX() const;
 		/// Gets the slotY to be occupied.

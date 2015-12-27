@@ -47,7 +47,7 @@ BattleItem::BattleItem(
 		_previousOwner(nullptr),
 		_unit(nullptr),
 		_tile(nullptr),
-		_inventorySlot(nullptr),
+		_section(nullptr),
 		_inventoryX(0),
 		_inventoryY(0),
 		_ammoItem(nullptr),
@@ -131,17 +131,17 @@ YAML::Node BattleItem::save() const
 
 	if (_previousOwner != nullptr) node["previousOwner"] = _previousOwner->getId();
 
-	if (_unit != nullptr)			node["unit"] = _unit->getId();
-	else							node["unit"] = -1;
+	if (_unit != nullptr)		node["unit"] = _unit->getId();
+	else						node["unit"] = -1;
 
-	if (_inventorySlot != nullptr)	node["inventoryslot"] = _inventorySlot->getInventoryType();
-	else							node["inventoryslot"] = "nullptr";
+	if (_section != nullptr)	node["inventoryslot"] = _section->getInventoryType();
+	else						node["inventoryslot"] = "nullptr";
 
-	if (_tile != nullptr)			node["position"] = _tile->getPosition();
-	else							node["position"] = Position(-1,-1,-1);
+	if (_tile != nullptr)		node["position"] = _tile->getPosition();
+	else						node["position"] = Position(-1,-1,-1);
 
-	if (_ammoItem != nullptr)		node["ammoItem"] = _ammoItem->getId();
-	else							node["ammoItem"] = -1;
+	if (_ammoItem != nullptr)	node["ammoItem"] = _ammoItem->getId();
+	else						node["ammoItem"] = -1;
 
 	return node;
 }
@@ -282,17 +282,6 @@ void BattleItem::spendBullet(
 		battleSave.removeItem(this); // <- could be dangerous.
 	}
 }
-/*	if (_ammoQty == -1)		// the ammo should have gotten deleted if/when it reaches 0;
-		return true;		// less than 0 denotes self-powered weapons. But ...
-							// let ==0 be a fudge-factor.
-	if (--_ammoQty == 0)	// TODO: See about removing the '_ammoItem' from the game here
-		return false;		// so there is *never* a clip w/ 0 qty IG. */
-/*	if (_ammoQty != -1
-		&& --_ammoQty == 0)
-	{
-		return false;
-	}
-	return true; */
 
 /**
  * Gets the item's owner.
@@ -304,15 +293,6 @@ BattleUnit* BattleItem::getOwner() const
 }
 
 /**
- * Gets the item's previous owner.
- * @return, pointer to BattleUnit
- */
-BattleUnit* BattleItem::getPreviousOwner() const
-{
-	return _previousOwner;
-}
-
-/**
  * Sets the item's owner.
  * @param owner - pointer to BattleUnit (default nullptr)
  */
@@ -320,6 +300,15 @@ void BattleItem::setOwner(BattleUnit* const owner)
 {
 	_previousOwner = _owner;
 	_owner = owner;
+}
+
+/**
+ * Gets the item's previous owner.
+ * @return, pointer to BattleUnit
+ */
+BattleUnit* BattleItem::getPreviousOwner() const
+{
+	return _previousOwner;
 }
 
 /**
@@ -364,21 +353,21 @@ void BattleItem::moveToOwner(BattleUnit* const owner)
 }
 
 /**
- * Gets the item's inventory slot.
- * @return, the slot id
+ * Gets the item's inventory section.
+ * @return, the section rule
  */
-const RuleInventory* BattleItem::getSlot() const
+const RuleInventory* BattleItem::getSection() const
 {
-	return _inventorySlot;
+	return _section;
 }
 
 /**
- * Sets the item's inventory slot.
- * @param slot - the slot id
+ * Sets the item's inventory section.
+ * @param slot - the section rule
  */
-void BattleItem::setSlot(const RuleInventory* const slot)
+void BattleItem::setSection(const RuleInventory* const inRule)
 {
-	_inventorySlot = slot;
+	_section = inRule;
 }
 
 /**
@@ -432,7 +421,7 @@ bool BattleItem::occupiesSlot(
 	if (item == this)
 		return false;
 
-	if (_inventorySlot->getCategory() == INV_HAND)
+	if (_section->getCategory() == INV_HAND)
 		return true;
 
 	if (item == nullptr)

@@ -3004,7 +3004,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 										getRuleset()->getItem(st),
 										_battleSave->getNextItemId());
 	item->moveToOwner(conUnit);
-	item->setSlot(getRuleset()->getInventory("STR_RIGHT_HAND"));
+	item->setSection(getRuleset()->getInventory("STR_RIGHT_HAND"));
 	_battleSave->getItems()->push_back(item);
 
 	getMap()->cacheUnit(conUnit);
@@ -3119,8 +3119,8 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 			i != _battleSave->getItems()->end();
 			++i)
 	{
-		if ((*i)->getSlot() != nullptr
-			&& (*i)->getSlot()->getInventoryType() == "STR_GROUND"
+		if ((*i)->getSection() != nullptr
+			&& (*i)->getSection()->getInventoryType() == "STR_GROUND"
 			&& (*i)->getRules()->getAttraction() != 0)
 		{
 			tile = (*i)->getTile();
@@ -3340,7 +3340,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 					if (unit->getItem("STR_BELT", i) == nullptr)
 					{
 						item->moveToOwner(unit);
-						item->setSlot(getRuleset()->getInventory("STR_BELT"));
+						item->setSection(getRuleset()->getInventory("STR_BELT"));
 						item->setSlotX(i);
 
 						placed = true;
@@ -3360,7 +3360,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 				if (unit->getItem("STR_BELT", i) == nullptr)
 				{
 					item->moveToOwner(unit);
-					item->setSlot(getRuleset()->getInventory("STR_BELT"));
+					item->setSection(getRuleset()->getInventory("STR_BELT"));
 					item->setSlotX(i);
 
 					placed = true;
@@ -3374,7 +3374,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 			if (unit->getItem("STR_RIGHT_HAND") == nullptr)
 			{
 				item->moveToOwner(unit);
-				item->setSlot(getRuleset()->getInventory("STR_RIGHT_HAND"));
+				item->setSection(getRuleset()->getInventory("STR_RIGHT_HAND"));
 
 				placed = true;
 			}
@@ -3385,7 +3385,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 			if (unit->getItem("STR_BACK_PACK") == nullptr)
 			{
 				item->moveToOwner(unit);
-				item->setSlot(getRuleset()->getInventory("STR_BACK_PACK"));
+				item->setSection(getRuleset()->getInventory("STR_BACK_PACK"));
 
 				placed = true;
 			}
@@ -3395,7 +3395,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 			if (unit->getItem("STR_LEFT_HAND") == nullptr)
 			{
 				item->moveToOwner(unit);
-				item->setSlot(getRuleset()->getInventory("STR_LEFT_HAND"));
+				item->setSection(getRuleset()->getInventory("STR_LEFT_HAND"));
 
 				placed = true;
 			}

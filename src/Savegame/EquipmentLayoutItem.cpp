@@ -110,7 +110,7 @@ std::string EquipmentLayoutItem::getItemType() const
  * Returns the slot to be occupied.
  * @return, slot name
  */
-std::string EquipmentLayoutItem::getSlot() const
+std::string EquipmentLayoutItem::getSection() const
 {
 	return _slot;
 }

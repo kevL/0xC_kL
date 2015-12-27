@@ -450,7 +450,7 @@ void SavedBattleGame::load(
 				type = (*j)["inventoryslot"].as<std::string>();
 
 				if (type != "nullptr")
-					item->setSlot(rules->getInventory(type));
+					item->setSection(rules->getInventory(type));
 
 				const int
 					owner		((*j)["owner"]			.as<int>()),
@@ -479,8 +479,8 @@ void SavedBattleGame::load(
 				}
 
 
-				if (item->getSlot() != nullptr // match up items and tiles
-					&& item->getSlot()->getCategory() == INV_GROUND)
+				if (item->getSection() != nullptr // match up items and tiles
+					&& item->getSection()->getCategory() == INV_GROUND)
 				{
 					const Position pos ((*j)["position"].as<Position>());
 
@@ -1559,9 +1559,9 @@ void SavedBattleGame::randomizeItemLocations(Tile* const tile)
 				i != tile->getInventory()->end();
 				)
 		{
-			if ((*i)->getSlot()->getInventoryType() == "STR_GROUND")
+			if ((*i)->getSection()->getInventoryType() == "STR_GROUND")
 			{
-				getTile(_storageSpace.at(RNG::pick(_storageSpace.size())))->addItem(*i, (*i)->getSlot());
+				getTile(_storageSpace.at(RNG::pick(_storageSpace.size())))->addItem(*i, (*i)->getSection());
 				i = tile->getInventory()->erase(i);
 			}
 			else

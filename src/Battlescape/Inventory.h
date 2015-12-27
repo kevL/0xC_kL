@@ -70,18 +70,18 @@ private:
 	Timer* _animTimer;
 	WarningMessage* _warning;
 
-	std::map<int, std::map<int, int> > _stackLevel;
-	std::vector<std::pair<int, int> > _grenadeFuses;
+	std::map<int, std::map<int, int>> _stackLevel;
+	std::vector<std::pair<int, int>> _grenadeFuses;
 
 
-	/// Moves an item to a specified slot.
+	/// Moves an item to a specified section.
 	void moveItem(
 			BattleItem* const item,
-			RuleInventory* const slot,
+			const RuleInventory* const inRule,
 			int x = 0,
 			int y = 0);
 
-	/// Gets the slot in the specified position.
+	/// Gets the section in the specified mouse-position.
 	RuleInventory* getSlotInPosition(
 			int* x,
 			int* y) const;
@@ -109,7 +109,7 @@ private:
 		void setTuMode(bool tu);
 
 		/// Sets the inventory's selected unit.
-		void setSelectedUnit(BattleUnit* unit);
+		void setSelectedUnit(BattleUnit* const unit);
 
 		/// Draws the inventory.
 		void draw() override;
@@ -120,9 +120,9 @@ private:
 
 		/// Checks for item overlap.
 		static bool overlapItems(
-				BattleUnit* unit,
-				BattleItem* item,
-				RuleInventory* slot,
+				BattleUnit* const unit,
+				const BattleItem* const item,
+				const RuleInventory* const inRule,
 				int x = 0,
 				int y = 0);
 
@@ -152,10 +152,10 @@ private:
 
 		/// Arranges items on the ground.
 		void arrangeGround(bool alterOffset = true);
-		/// Attempts to place an item in an inventory slot.
+		/// Attempts to place an item in an inventory section.
 		bool fitItem(
-				RuleInventory* slot,
-				BattleItem* item,
+				const RuleInventory* const inRule,
+				BattleItem* const item,
 				bool test = false);
 		/// Checks if two items can be stacked on one another.
 		bool canBeStacked(

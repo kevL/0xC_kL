@@ -124,7 +124,7 @@ private:
 	/// Sets the extra-info fields on mouseover and mouseclicks.
 	void setExtraInfo(
 			const BattleItem* const item,
-			const RuleItem* const itemRule,
+			const RuleItem* const itRule,
 			const BattleItem* const ammo);
 	/// Update the visibility and icons for the template buttons.
 /*	void _updateTemplateButtons(bool isVisible); */

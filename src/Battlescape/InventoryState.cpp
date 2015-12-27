@@ -960,7 +960,7 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 
 			layoutItems->push_back(new EquipmentLayoutItem(
 													(*i)->getRules()->getType(),
-													(*i)->getSlot()->getInventoryType(),
+													(*i)->getSection()->getInventoryType(),
 													(*i)->getSlotX(),
 													(*i)->getSlotY(),
 													ammo,
@@ -1435,7 +1435,7 @@ void InventoryState::txtTooltipOut(Action* action)
 
 		_curInventoryTemplate.push_back(new EquipmentLayoutItem(
 															(*j)->getRules()->getType(),
-															(*j)->getSlot()->getId(),
+															(*j)->getSection()->getId(),
 															(*j)->getSlotX(),
 															(*j)->getSlotY(),
 															ammo,
@@ -1536,7 +1536,7 @@ void InventoryState::txtTooltipOut(Action* action)
 
 					// move matched item from ground to the appropriate inv slot
 					(*groundItem)->setOwner(unit);
-					(*groundItem)->setSlot(_game->getRuleset()->getInventory((*templateIt)->getSlot()));
+					(*groundItem)->setSection(_game->getRuleset()->getInventory((*templateIt)->getSection()));
 					(*groundItem)->setSlotX((*templateIt)->getSlotX());
 					(*groundItem)->setSlotY((*templateIt)->getSlotY());
 					(*groundItem)->setFuse((*templateIt)->getFuse());
