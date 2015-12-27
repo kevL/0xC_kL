@@ -447,7 +447,7 @@ void SavedBattleGame::load(
 													id));
 
 				item->load(*j);
-				type = (*j)["inventoryslot"].as<std::string>();
+				type = (*j)["section"].as<std::string>();
 
 				if (type != "nullptr")
 					item->setSection(rules->getInventory(type));

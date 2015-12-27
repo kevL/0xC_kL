@@ -134,8 +134,8 @@ YAML::Node BattleItem::save() const
 	if (_unit != nullptr)		node["unit"] = _unit->getId();
 	else						node["unit"] = -1;
 
-	if (_section != nullptr)	node["inventoryslot"] = _section->getInventoryType();
-	else						node["inventoryslot"] = "nullptr";
+	if (_section != nullptr)	node["section"] = _section->getInventoryType();
+	else						node["section"] = "nullptr";
 
 	if (_tile != nullptr)		node["position"] = _tile->getPosition();
 	else						node["position"] = Position(-1,-1,-1);

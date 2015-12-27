@@ -153,7 +153,7 @@ const std::vector<struct RuleSlot>* RuleInventory::getSlots()
  * Gets the number of Slots along the top row of this Inventory.
  * @note Used to auto-equip items in BattlescapeGenerator.
  * @return, qty of x-slots
- */
+ *
 int RuleInventory::getSlotsX() const
 {
 	int ret = 0;
@@ -167,7 +167,7 @@ int RuleInventory::getSlotsX() const
 	}
 
 	return ret;
-}
+} */
 
 /**
  * Gets the Slot located in the specified mouse position.
@@ -320,7 +320,7 @@ bool RuleInventory::fitItemInSlot(
 
 /**
  * Gets the time unit cost to move an item from this Inventory section to another.
- * @param slot - pointer to the slot to move the item to
+ * @param slot - pointer to the section to move the item to
  * @return, TU cost
  */
 int RuleInventory::getCost(const RuleInventory* const section) const

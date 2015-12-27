@@ -120,7 +120,7 @@ private:
 	void setTacticalSprites() const;
 
 	/// Adds an item to a unit and the game.
-	bool addItem(
+	bool placeItem(
 			BattleItem* const item,
 			BattleUnit* const unit) const;
 

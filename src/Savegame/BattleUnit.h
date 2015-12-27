@@ -560,12 +560,12 @@ private:
 
 		/// Gets the item in the specified slot of this unit's inventory.
 		BattleItem* getItem(
-				const RuleInventory* const slot,
+				const RuleInventory* const inRule,
 				int x = 0,
 				int y = 0) const;
 		/// Gets the item in the specified slot of this unit's inventory.
 		BattleItem* getItem(
-				const std::string& slot,
+				const std::string& sectionType,
 				int x = 0,
 				int y = 0) const;
 

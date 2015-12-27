@@ -2676,24 +2676,24 @@ Tile* BattleUnit::getTile() const
 
 /**
  * Checks if there's an inventory item in the specified inventory position.
- * @param slot	- pointer to RuleInventory slot
- * @param x		- X position in slot (default 0)
- * @param y		- Y position in slot (default 0)
- * @return, pointer to BattleItem in slot or nullptr if none
+ * @param inRule	- pointer to RuleInventory
+ * @param x			- X position in section (default 0)
+ * @param y			- Y position in section (default 0)
+ * @return, pointer to BattleItem or nullptr if none
  */
 BattleItem* BattleUnit::getItem(
-		const RuleInventory* const slot,
+		const RuleInventory* const inRule,
 		int x,
 		int y) const
 {
-	if (slot->getCategory() != INV_GROUND) // Soldier items
+	if (inRule->getCategory() != INV_GROUND) // Soldier items
 	{
 		for (std::vector<BattleItem*>::const_iterator
 				i = _inventory.begin();
 				i != _inventory.end();
 				++i)
 		{
-			if ((*i)->getSection() == slot
+			if ((*i)->getSection() == inRule
 				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
@@ -2717,17 +2717,17 @@ BattleItem* BattleUnit::getItem(
 
 /**
  * Checks if there's an inventory item in the specified inventory position.
- * @param slot	- reference an inventory slot
- * @param x		- X position in slot (default 0)
- * @param y		- Y position in slot (default 0)
- * @return, pointer to BattleItem in slot or nullptr if none
+ * @param sectionType	- reference to an inventory type
+ * @param x				- X position in section (default 0)
+ * @param y				- Y position in section (default 0)
+ * @return, pointer to BattleItem or nullptr if none
  */
 BattleItem* BattleUnit::getItem(
-		const std::string& slot,
+		const std::string& sectionType,
 		int x,
 		int y) const
 {
-	if (slot != "STR_GROUND") // Soldier items
+	if (sectionType != "STR_GROUND") // Soldier items
 	{
 		for (std::vector<BattleItem*>::const_iterator
 				i = _inventory.begin();
@@ -2735,7 +2735,7 @@ BattleItem* BattleUnit::getItem(
 				++i)
 		{
 			if ((*i)->getSection() != nullptr
-				&& (*i)->getSection()->getInventoryType() == slot
+				&& (*i)->getSection()->getInventoryType() == sectionType
 				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;

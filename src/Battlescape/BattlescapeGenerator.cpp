@@ -1072,9 +1072,7 @@ BattleUnit* BattlescapeGenerator::addXCOMVehicle(Vehicle* const vehicle) // priv
 		BattleItem* item = new BattleItem( // add Vehicle as an item and assign the unit as its owner.
 									_rules->getItem(vhclType),
 									_battleSave->getNextItemId());
-		if (addItem(
-				item,
-				supportUnit) == false)
+		if (placeItem(item, supportUnit) == false)
 		{
 			Log(LOG_WARNING) << "BattlescapeGenerator could not add: " << vhclType;
 			--_unitSequence;
@@ -1091,9 +1089,7 @@ BattleUnit* BattlescapeGenerator::addXCOMVehicle(Vehicle* const vehicle) // priv
 			BattleItem* const ammoItem = new BattleItem(
 													_rules->getItem(ammoType),
 													_battleSave->getNextItemId());
-			if (addItem( // add 'ammoItem' and assign the Vehicle-ITEM as its owner.
-					ammoItem,
-					supportUnit) == false)
+			if (placeItem(ammoItem, supportUnit) == false) // add 'ammoItem' and assign the Vehicle-ITEM as its owner.
 			{
 				Log(LOG_WARNING) << "BattlescapeGenerator could not add [" << ammoType << "] to " << vhclType;
 				--_unitSequence;
@@ -1120,7 +1116,7 @@ BattleUnit* BattlescapeGenerator::addXCOMVehicle(Vehicle* const vehicle) // priv
 				if (itRule != nullptr)
 				{
 					item = new BattleItem(itRule, _battleSave->getNextItemId());
-					if (addItem(item, supportUnit) == false)
+					if (placeItem(item, supportUnit) == false)
 					{
 						Log(LOG_WARNING) << "BattlescapeGenerator could not add [" << itRule->getType() << "] to " << vhclType;
 						delete item;
@@ -1484,7 +1480,7 @@ void BattlescapeGenerator::setTacticalSprites() const // private.
  * @param unit - pointer to the BattleUnit
  * @return, true if item was placed
  */
-bool BattlescapeGenerator::addItem( // private.
+bool BattlescapeGenerator::placeItem( // private.
 		BattleItem* const item,
 		BattleUnit* const unit) const
 {
@@ -1692,7 +1688,7 @@ void BattlescapeGenerator::deployAliens(AlienDeployment* const deployRule) // pr
 							item = new BattleItem(
 												itRule,
 												_battleSave->getNextItemId());
-							if (addItem(item, unit) == false)
+							if (placeItem(item, unit) == false)
 							{
 								Log(LOG_WARNING) << "BattlescapeGenerator could not add ["
 												 << itRule->getType() << "] to " << unit->getType();
@@ -1715,7 +1711,7 @@ void BattlescapeGenerator::deployAliens(AlienDeployment* const deployRule) // pr
 						item = new BattleItem( // terror aLiens add their weapons
 											itRule,
 											_battleSave->getNextItemId());
-						if (addItem(item, unit) == false)
+						if (placeItem(item, unit) == false)
 						{
 							Log(LOG_WARNING) << "BattlescapeGenerator could not add ["
 											 << itRule->getType() << "] to " << unit->getType();
@@ -1756,7 +1752,7 @@ void BattlescapeGenerator::deployAliens(AlienDeployment* const deployRule) // pr
 							item = new BattleItem( // aLiens add items
 												itRule,
 												_battleSave->getNextItemId());
-							if (addItem(item, unit) == false)
+							if (placeItem(item, unit) == false)
 							{
 								Log(LOG_WARNING) << "BattlescapeGenerator could not add ["
 												 << itRule->getType() << "] to " << unit->getType();
