@@ -159,7 +159,14 @@ private:
 		* _numDir,
 		* _numDirTur,
 		* _numLayers,
-		* _numWounds;
+		* _numWounds,
+
+		* _numMediL1,
+		* _numMediL2,
+		* _numMediL3,
+		* _numMediR1,
+		* _numMediR2,
+		* _numMediR3;
 	Ruleset* _rules;
 	SavedBattleGame* _battleSave;
 	SavedGame* _gameSave;

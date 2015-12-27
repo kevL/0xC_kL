@@ -670,7 +670,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["invs"].end();
 			++i)
 	{
-		RuleInventory* const rule = loadRule(*i, &_invs, &_invsIndex, "id");
+		RuleInventory* const rule = loadRule(*i, &_invs, &_invsIndex);
 		if (rule != nullptr)
 		{
 			_invListOrder += 10;

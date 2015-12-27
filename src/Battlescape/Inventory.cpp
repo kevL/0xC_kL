@@ -1153,12 +1153,12 @@ bool Inventory::unload()
  */
 void Inventory::arrangeGround(bool alterOffset)
 {
-	RuleInventory* const ground = _game->getRuleset()->getInventory("STR_GROUND");
+	RuleInventory* const grdRule = _game->getRuleset()->getInventory("STR_GROUND");
 
 	bool fit;
 	const int
-		slotsX = (320 - ground->getX()) / RuleInventory::SLOT_W,
-		slotsY = (200 - ground->getY()) / RuleInventory::SLOT_H;
+		slotsX = (320 - grdRule->getX()) / RuleInventory::SLOT_W,
+		slotsY = (200 - grdRule->getY()) / RuleInventory::SLOT_H;
 	int
 		x,y,
 		xMax = 0;
@@ -1173,7 +1173,7 @@ void Inventory::arrangeGround(bool alterOffset)
 				i != _selUnit->getTile()->getInventory()->end();
 				++i)
 		{
-			(*i)->setSection(ground);
+			(*i)->setSection(grdRule);
 			(*i)->setSlotX(100000);
 			(*i)->setSlotY(0);
 		}
@@ -1208,7 +1208,7 @@ void Inventory::arrangeGround(bool alterOffset)
 								++yd)
 						{
 							BattleItem* const item = _selUnit->getItem(
-																	ground,
+																	grdRule,
 																	x + xd,
 																	y + yd);
 							fit = (item == nullptr);

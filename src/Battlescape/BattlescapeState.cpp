@@ -215,6 +215,12 @@ BattlescapeState::BattlescapeState()
 	_numAmmoLeft		= new NumberText(30, 5, x +   8, y + 4);
 	_numAmmoRight		= new NumberText(30, 5, x + 280, y + 4);
 
+	_numMediL1			= new NumberText(7, 5, x +   9, y + 32);
+	_numMediL2			= new NumberText(7, 5, x +   9, y + 39);
+	_numMediL3			= new NumberText(7, 5, x +   9, y + 46);
+	_numMediR1			= new NumberText(7, 5, x + 281, y + 32);
+	_numMediR2			= new NumberText(7, 5, x + 281, y + 39);
+	_numMediR3			= new NumberText(7, 5, x + 281, y + 46);
 //	const int
 //		visibleUnitX = _rules->getInterface("battlescape")->getElement("visibleUnits")->x,
 //		visibleUnitY = _rules->getInterface("battlescape")->getElement("visibleUnits")->y;
@@ -393,6 +399,12 @@ BattlescapeState::BattlescapeState()
 	add(_btnRightHandItem,	"buttonRightHand",		"battlescape", _icons);
 	add(_numAmmoLeft,		"numAmmoLeft",			"battlescape", _icons);
 	add(_numAmmoRight,		"numAmmoRight",			"battlescape", _icons);
+	add(_numMediL1,			"numAmmoLeft",			"battlescape", _icons);
+	add(_numMediL2,			"numAmmoLeft",			"battlescape", _icons);
+	add(_numMediL3,			"numAmmoLeft",			"battlescape", _icons);
+	add(_numMediR1,			"numAmmoRight",			"battlescape", _icons);
+	add(_numMediR2,			"numAmmoRight",			"battlescape", _icons);
+	add(_numMediR3,			"numAmmoRight",			"battlescape", _icons);
 	add(_hostileTargeter);
 
 	_hostileTargeter->setVisible(false);
@@ -2550,10 +2562,17 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	_btnRightHandItem->clear();
 	_btnLeftHandItem->clear();
 
-	_btnRightHandItem	->setVisible(false);
 	_btnLeftHandItem	->setVisible(false);
-	_numAmmoRight		->setVisible(false);
+	_btnRightHandItem	->setVisible(false);
 	_numAmmoLeft		->setVisible(false);
+	_numAmmoRight		->setVisible(false);
+
+	_numMediL1			->setVisible(false);
+	_numMediL2			->setVisible(false);
+	_numMediL3			->setVisible(false);
+	_numMediR1			->setVisible(false);
+	_numMediR2			->setVisible(false);
+	_numMediR3			->setVisible(false);
 
 	_isKneeled =
 	_isOverweight = false;
@@ -2705,8 +2724,8 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 
 		const BattleItem
-			* const rtItem = selUnit->getItem("STR_RIGHT_HAND"),
-			* const ltItem = selUnit->getItem("STR_LEFT_HAND");
+			* const rtItem (selUnit->getItem("STR_RIGHT_HAND")),
+			* const ltItem (selUnit->getItem("STR_LEFT_HAND"));
 		const RuleItem* itRule;
 
 		const std::string activeHand = selUnit->getActiveHand();
@@ -2801,12 +2820,12 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 						else
 							_numAmmoRight->setValue();
 					}
-				break;
+					break;
 
 				case BT_AMMO:
 					_numAmmoRight->setVisible();
 					_numAmmoRight->setValue(static_cast<unsigned>(rtItem->getAmmoQuantity()));
-				break;
+					break;
 
 				case BT_GRENADE:
 					if (rtItem->getFuse() > 0)
@@ -2814,6 +2833,15 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 						_numAmmoRight->setVisible();
 						_numAmmoRight->setValue(static_cast<unsigned>(rtItem->getFuse()));
 					}
+					break;
+
+				case BT_MEDIKIT:
+					_numMediR2->setVisible();
+					_numMediR1->setVisible();
+					_numMediR3->setVisible();
+					_numMediR1->setValue(static_cast<unsigned>(rtItem->getPainKillerQuantity()));
+					_numMediR2->setValue(static_cast<unsigned>(rtItem->getStimulantQuantity()));
+					_numMediR3->setValue(static_cast<unsigned>(rtItem->getHealQuantity()));
 			}
 		}
 
@@ -2836,12 +2864,12 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 						else
 							_numAmmoLeft->setValue();
 					}
-				break;
+					break;
 
 				case BT_AMMO:
 					_numAmmoLeft->setVisible();
 					_numAmmoLeft->setValue(static_cast<unsigned>(ltItem->getAmmoQuantity()));
-				break;
+					break;
 
 				case BT_GRENADE:
 					if (ltItem->getFuse() > 0)
@@ -2849,6 +2877,15 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 						_numAmmoLeft->setVisible();
 						_numAmmoLeft->setValue(static_cast<unsigned>(ltItem->getFuse()));
 					}
+					break;
+
+				case BT_MEDIKIT:
+					_numMediL2->setVisible();
+					_numMediL1->setVisible();
+					_numMediL3->setVisible();
+					_numMediL1->setValue(static_cast<unsigned>(ltItem->getPainKillerQuantity()));
+					_numMediL2->setValue(static_cast<unsigned>(ltItem->getStimulantQuantity()));
+					_numMediL3->setValue(static_cast<unsigned>(ltItem->getHealQuantity()));
 			}
 		}
 
