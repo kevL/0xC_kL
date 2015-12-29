@@ -249,17 +249,6 @@ private:
 		/// Cleans up the BattlescapeState.
 		~BattlescapeState();
 
-		/// Selects the next soldier.
-		void selectNextFactionUnit(
-				bool checkReselect = false,
-				bool dontReselect = false,
-				bool checkInventory = false);
-		/// Selects the previous soldier.
-		void selectPreviousFactionUnit(
-				bool checkReselect = false,
-				bool dontReselect = false,
-				bool checkInventory = false);
-
 		/// Initializes this BattlescapeState.
 		void init() override;
 		/// Runs the timers and handles popups.
@@ -296,20 +285,32 @@ private:
 		void btnKneelClick(Action* action);
 		/// Handler for clicking the Soldier button.
 		void btnInventoryClick(Action* action);
-		/// Handler for clicking the Center button.
-		void btnCenterClick(Action* action);
 
 		/// Forces a transparent SDL mouse-motion event.
 		void refreshMousePosition() const;
 
+		/// Handler for clicking the Center button.
+		void btnCenterClick(Action* action);
 		/// Handler for clicking the Next Soldier button.
-		void btnNextSoldierClick(Action* action);
+		void btnNextUnitClick(Action* action);
 		/// Handler for clicking the Next Stop button.
 		void btnNextStopClick(Action* action);
 		/// Handler for clicking the Previous Soldier button.
-		void btnPrevSoldierClick(Action* action);
+		void btnPrevUnitClick(Action* action);
 		/// Handler for clicking the Previous Stop button.
 		void btnPrevStopClick(Action* action);
+
+		/// Selects the next BattleUnit.
+		void selectNextFactionUnit(
+				bool checkReselect = false,
+				bool dontReselect = false,
+				bool checkInventory = false);
+		/// Selects the previous BattleUnit.
+		void selectPreviousFactionUnit(
+				bool checkReselect = false,
+				bool dontReselect = false,
+				bool checkInventory = false);
+
 		/// Handler for clicking the Show Layers button.
 		void btnShowLayersClick(Action* action);
 		/// Handler for clicking the Help button.
@@ -365,7 +366,7 @@ private:
 		/// Determines whether a playable unit is selected.
 		bool playableUnitSelected();
 
-		/// Updates soldier stat display and other stuff.
+		/// Updates unit stat display and other stuff.
 		void updateSoldierInfo(bool calcFoV = true);
 		/// Clears the hostile unit indicator squares.
 		void hotSqrsClear();

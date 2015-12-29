@@ -167,13 +167,12 @@ void BattlescapeGame::init()
 void BattlescapeGame::think()
 {
 	//Log(LOG_INFO) << "BattlescapeGame::think()";
-	// nothing is happening - see if they need some alien AI or units panicking or what have you
-	if (_states.empty() == true)
+	if (_states.empty() == true) // nothing is happening - see if they need some alien AI or units panicking or what have you
 	{
 		//Log(LOG_INFO) << "BattlescapeGame::think() - _states is Empty. Clear rfShotList";
 		_battleSave->getTileEngine()->getReactionPositions()->clear(); // TODO: move that to end of popState()
 
-		if (_battleSave->getSide() != FACTION_PLAYER) // it's a non player side (ALIENS or CIVILIANS)
+		if (_battleSave->getSide() != FACTION_PLAYER) // it's a non-player turn (ALIENS or CIVILIANS)
 		{
 			if (_debugPlay == false)
 			{
@@ -203,7 +202,7 @@ void BattlescapeGame::think()
 				}
 			}
 		}
-		else // it's a player side
+		else // it's a player turn
 		{
 			if (_playerPanicHandled == false) // not all panicking units have been handled
 			{
@@ -500,7 +499,7 @@ void BattlescapeGame::popState()
 			else // action.actor is not FACTION_PLAYER
 			{
 				//Log(LOG_INFO) << ". action -> NOT Faction_Player";
-				action.actor->spendTimeUnits(action.TU); // spend TUs
+				action.actor->spendTimeUnits(action.TU);
 
 				if (_battleSave->getSide() != FACTION_PLAYER
 					&& _debugPlay == false)
@@ -511,13 +510,13 @@ void BattlescapeGame::popState()
 						|| selUnit == nullptr
 						|| selUnit->isOut_t() == true)
 					{
+						_AIActionCounter = 0;
+
 						if (selUnit != nullptr)
 						{
 							selUnit->clearCache();
 							getMap()->cacheUnit(selUnit);
 						}
-
-						_AIActionCounter = 0;
 
 						if (_states.empty() == true
 							&& _battleSave->selectNextFactionUnit(true) == nullptr)
@@ -553,7 +552,7 @@ void BattlescapeGame::popState()
 		if (_states.empty() == false)
 		{
 			//Log(LOG_INFO) << ". states NOT Empty [1]";
-			if (_states.front() == nullptr) // end turn request?
+			if (_states.front() == nullptr) // end turn request
 			{
 				//Log(LOG_INFO) << ". states.front() == nullptr";
 				while (_states.empty() == false)
@@ -699,6 +698,8 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	if (_AIActionCounter > 1 // unit-AI done.
 		|| unit->reselectAllowed() == false)
 	{
+		_AIActionCounter = 0;
+
 		if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr)
 		{
 			if (_battleSave->getDebugMode() == false)
@@ -724,11 +725,25 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 			_parentState->updateSoldierInfo();
 
-			if (_battleSave->getSelectedUnit()->getId() <= unit->getId())
-				_AISecondMove = true;
+//			if (_battleSave->getSelectedUnit()->getId() <= unit->getId())
+//			if (_battleSave->getSelectedUnit()->shuffleOrder() <= unit->shuffleOrder())
+			if (_AISecondMove == false)
+			{
+				if (std::find(
+						_battleSave->getShuffleUnits()->begin(),
+						_battleSave->getShuffleUnits()->end(),
+						_battleSave->getSelectedUnit())
+							 -
+					std::find(
+						_battleSave->getShuffleUnits()->begin(),
+						_battleSave->getShuffleUnits()->end(),
+						unit) <= 0)
+				{
+					_AISecondMove = true;
+				}
+			}
+			//Log(LOG_INFO) << "[1]bsg secondMove = " << (int)_AISecondMove;
 		}
-
-		_AIActionCounter = 0;
 
 		//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() Pre-EXIT";
 		return;
@@ -759,8 +774,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 															// things might be changing the pathing
 															// unit or Pathfinding relevance .....
 
-	++_AIActionCounter;
-	if (_AIActionCounter == 1)
+	if (++_AIActionCounter == 1)
 	{
 		_playedAggroSound = false;
 		unit->setHiding(false);
@@ -786,23 +800,23 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	}
 	//Log(LOG_INFO) << ". BA_RETHINK DONE";
 
-
 	_AIActionCounter = action.AIcount;
 
 	//Log(LOG_INFO) << ". pre hunt for weapon";
-	if (unit->getOriginalFaction() == FACTION_HOSTILE
+//	if (unit->getOriginalFaction() == FACTION_HOSTILE
+	if (unit->getFaction() == FACTION_HOSTILE
 		&& unit->getMainHandWeapon() == nullptr)
 //		&& unit->getHostileUnits().size() == 0)
 	// TODO: and, if either no innate meleeWeapon, or a visible hostile is not within say 5 tiles.
 	{
 		//Log(LOG_INFO) << ". . no mainhand weapon or no ammo";
-		//Log(LOG_INFO) << ". . . call findItem()";
-		findItem(&action);
+		//Log(LOG_INFO) << ". . . call pickupItem()";
+		pickupItem(&action);
 	}
 	//Log(LOG_INFO) << ". findItem DONE";
 
-	if (unit->getChargeTarget() != nullptr
-		&& _playedAggroSound == false)
+	if (_playedAggroSound == false
+		&& unit->getChargeTarget() != nullptr)
 	{
 		_playedAggroSound = true;
 
@@ -816,7 +830,206 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 //	std::wostringstream ss; // debug.
 
-	if (action.type == BA_MOVE)
+	switch (action.type)
+	{
+		case BA_MOVE:
+		{
+//			ss << L"Walking to " << action.target;
+//			_parentState->debug(ss.str());
+
+			Pathfinding* const pf = _battleSave->getPathfinding();
+			pf->setPathingUnit(action.actor);
+
+			if (_battleSave->getTile(action.target) != nullptr)
+				pf->calculate(action.actor, action.target);
+
+			if (pf->getStartDirection() != -1)
+				statePushBack(new UnitWalkBState(this, action));
+
+			//Log(LOG_INFO) << ". BA_MOVE DONE";
+			break;
+		}
+
+		case BA_SNAPSHOT:
+		case BA_AUTOSHOT:
+		case BA_AIMEDSHOT:
+		case BA_THROW:
+		case BA_HIT:
+		case BA_PSICONTROL:
+		case BA_PSIPANIC:
+		case BA_LAUNCH:
+		{
+//			ss.clear();
+//			ss << L"Attack type = " << action.type
+//					<< ", target = " << action.target
+//					<< ", weapon = " << Language::utf8ToWstr(action.weapon->getRules()->getName());
+//			_parentState->debug(ss.str());
+
+			//Log(LOG_INFO) << ". . in action.type";
+			switch (action.type)
+			{
+				case BA_PSICONTROL:
+				case BA_PSIPANIC:
+				{
+//					statePushBack(new PsiAttackBState(this, action)); // post-cosmetic
+					//Log(LOG_INFO) << ". . do Psi";
+					action.weapon = _alienPsi;
+					action.TU = unit->getActionTu(action.type, action.weapon);
+					break;
+				}
+
+				default:
+				{
+					statePushBack(new UnitTurnBState(this, action));
+
+					switch (action.type)
+					{
+						case BA_HIT:
+						{
+							const std::string meleeWeapon = unit->getMeleeWeapon();
+//							statePushBack(new MeleeAttackBState(this, action));
+							bool instaWeapon = false;
+
+							if (action.weapon != _universalFist
+								&& meleeWeapon.empty() == false)
+							{
+								bool found = false;
+								for (std::vector<BattleItem*>::const_iterator
+										i = unit->getInventory()->begin();
+										i != unit->getInventory()->end();
+										++i)
+								{
+									if ((*i)->getRules()->getType() == meleeWeapon)
+									{
+										// note this ought be conformed w/ bgen.addAlien equipped items to
+										// ensure radical (or standard) BT_MELEE weapons get equipped in hand;
+										// but for now just grab the meleeItem wherever it was equipped ...
+										found = true;
+										action.weapon = *i;
+
+										break;
+									}
+								}
+
+								if (found == false)
+								{
+									instaWeapon = true;
+									action.weapon = new BattleItem(
+																getRuleset()->getItem(meleeWeapon),
+																_battleSave->getNextItemId());
+									action.weapon->setOwner(unit);
+								}
+							}
+							else if (action.weapon != nullptr
+								&& action.weapon->getRules()->getBattleType() != BT_MELEE
+								&& action.weapon->getRules()->getBattleType() != BT_FIREARM)
+							{
+								action.weapon = nullptr;
+							}
+
+							if (action.weapon != nullptr) // also checked in getActionTu() & ProjectileFlyBState::init()
+							{
+								action.TU = unit->getActionTu(action.type, action.weapon);
+
+								statePushBack(new ProjectileFlyBState(this, action));
+
+								if (instaWeapon == true)
+									_battleSave->removeItem(action.weapon);
+							}
+
+							return;
+						}
+					}
+				}
+			}
+
+			//Log(LOG_INFO) << ". attack action.Type = " << action.type
+			//				<< ", action.Target = " << action.target
+			//				<< " action.Weapon = " << action.weapon->getRules()->getName().c_str();
+
+
+			//Log(LOG_INFO) << ". . call ProjectileFlyBState()";
+			statePushBack(new ProjectileFlyBState(this, action));
+			//Log(LOG_INFO) << ". . ProjectileFlyBState DONE";
+
+			switch (action.type)
+			{
+				case BA_PSIPANIC:
+				case BA_PSICONTROL:
+				{
+					//Log(LOG_INFO) << ". . . in action.type Psi";
+					//const bool success = _battleSave->getTileEngine()->psiAttack(&action);
+					//Log(LOG_INFO) << ". . . success = " << success;
+					if (_battleSave->getTileEngine()->psiAttack(&action) == true)
+					{
+						const BattleUnit* const psiVictim = _battleSave->getTile(action.target)->getUnit();
+						Language* const lang = _parentState->getGame()->getLanguage();
+						std::wstring wst;
+						if (action.type == BA_PSICONTROL)
+							wst = lang->getString("STR_IS_UNDER_ALIEN_CONTROL", psiVictim->getGender())
+													.arg(psiVictim->getName(lang))
+													.arg(action.value);
+						else // Panic Atk
+							wst = lang->getString("STR_PSI_PANIC_SUCCESS")
+													.arg(action.value);
+
+						_parentState->getGame()->pushState(new InfoboxState(wst));
+					}
+					//Log(LOG_INFO) << ". . . done Psi.";
+				}
+			}
+		}
+		//Log(LOG_INFO) << ". . action.type DONE";
+		break;
+
+		case BA_NONE:
+		{
+			//Log(LOG_INFO) << ". . in action.type None";
+//			_parentState->debug(L"Idle");
+			_AIActionCounter = 0;
+
+			if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr)
+			{
+				if (_battleSave->getDebugMode() == false)
+				{
+					_endTurnRequested = true;
+					//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() statePushBack(end AI turn) 2";
+					statePushBack(nullptr); // end AI turn
+				}
+				else
+				{
+					_battleSave->selectNextFactionUnit();
+					_debugPlay = true;
+				}
+			}
+
+			if (_battleSave->getSelectedUnit() != nullptr)
+			{
+				_parentState->updateSoldierInfo();
+				getMap()->getCamera()->centerOnPosition(_battleSave->getSelectedUnit()->getPosition());
+
+				if (_AISecondMove == false)
+				{
+					if (std::find(
+							_battleSave->getShuffleUnits()->begin(),
+							_battleSave->getShuffleUnits()->end(),
+							_battleSave->getSelectedUnit())
+								 -
+						std::find(
+							_battleSave->getShuffleUnits()->begin(),
+							_battleSave->getShuffleUnits()->end(),
+							unit) <= 0)
+					{
+						_AISecondMove = true;
+					}
+				}
+				//Log(LOG_INFO) << "[2]bsg secondMove = " << (int)_AISecondMove;
+			}
+		}
+	}
+	//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() EXIT";
+}
+/*	if (action.type == BA_MOVE)
 	{
 //		ss << L"Walking to " << action.target;
 //		_parentState->debug(ss.str());
@@ -854,7 +1067,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 		{
 //			statePushBack(new PsiAttackBState(this, action)); // post-cosmetic
 			//Log(LOG_INFO) << ". . do Psi";
-			action.weapon = _alienPsi; // kL
+			action.weapon = _alienPsi;
 			action.TU = unit->getActionTu(action.type, action.weapon);
 		}
 		else
@@ -984,7 +1197,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 		}
 	}
 	//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() EXIT";
-}
+} */
 
 /**
  * Handles the result of non target actions like priming a grenade or performing
@@ -3076,7 +3289,7 @@ const Ruleset* BattlescapeGame::getRuleset() const
  * Tries to find an item and pick it up if possible.
  * @param action - pointer to the current BattleAction struct
  */
-void BattlescapeGame::findItem(BattleAction* const action) const
+void BattlescapeGame::pickupItem(BattleAction* const action) const
 {
 	//Log(LOG_INFO) << "BattlescapeGame::findItem()";
 	if (action->actor->getRankString() != "STR_LIVE_TERRORIST")

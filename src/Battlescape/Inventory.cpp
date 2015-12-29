@@ -161,11 +161,10 @@ void Inventory::setTuMode(bool tu)
  * Changes the unit to display the inventory of.
  * @param unit - pointer to a BattleUnit
  */
-void Inventory::setSelectedUnit(BattleUnit* const unit)
+void Inventory::setSelectedUnitInventory(BattleUnit* const unit)
 {
 	_selUnit = unit;
 	_groundOffset = 999;
-
 	arrangeGround();
 }
 
@@ -1326,14 +1325,14 @@ bool Inventory::canBeStacked(
 		const BattleItem* const itemA,
 		const BattleItem* const itemB)
 {
-	return (itemA != nullptr && itemB != nullptr																// both items actually exist
+	return (itemA != nullptr && itemB != nullptr														// both items actually exist
 		&& itemA->getRules() == itemB->getRules()														// both items have the same ruleset
-		&& ((itemA->getAmmoItem() == nullptr && itemB->getAmmoItem() == nullptr)								// either they both have no ammo
-			|| (itemA->getAmmoItem() && itemB->getAmmoItem()											// or they both have ammo
-				&& itemA->getAmmoItem()->getRules() == itemB->getAmmoItem()->getRules()					// and the same ammo type
-				&& itemA->getAmmoItem()->getAmmoQuantity() == itemB->getAmmoItem()->getAmmoQuantity()))	// and the same ammo quantity
+		&& ((itemA->getAmmoItem() == nullptr && itemB->getAmmoItem() == nullptr)						// either they both have no ammo
+			|| (itemA->getAmmoItem() && itemB->getAmmoItem()												// or they both have ammo
+				&& itemA->getAmmoItem()->getRules() == itemB->getAmmoItem()->getRules()						// and the same ammo type
+				&& itemA->getAmmoItem()->getAmmoQuantity() == itemB->getAmmoItem()->getAmmoQuantity()))		// and the same ammo quantity
 		&& itemA->getFuse() == -1 && itemB->getFuse() == -1												// and neither is set to explode
-		&& itemA->getUnit() == nullptr && itemB->getUnit() == nullptr											// and neither is a corpse or unconscious unit
+		&& itemA->getUnit() == nullptr && itemB->getUnit() == nullptr									// and neither is a corpse or unconscious unit
 		&& itemA->getPainKillerQuantity() == itemB->getPainKillerQuantity()								// and if it's a medkit, it has the same number of charges
 		&& itemA->getHealQuantity() == itemB->getHealQuantity()
 		&& itemA->getStimulantQuantity() == itemB->getStimulantQuantity());

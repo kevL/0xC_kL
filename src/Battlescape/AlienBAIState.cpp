@@ -30,6 +30,7 @@
 #include "../fmath.h"
 
 #include "../Engine/Game.h"
+//#include "../Engine/Logger.h"
 
 #include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleItem.h"

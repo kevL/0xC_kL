@@ -726,16 +726,16 @@ BattlescapeState::BattlescapeState()
 //	_btnCenter->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
 	_btnNextSoldier->onMouseClick(
-					(ActionHandler)& BattlescapeState::btnNextSoldierClick,
+					(ActionHandler)& BattlescapeState::btnNextUnitClick,
 					SDL_BUTTON_LEFT);
 	_btnNextSoldier->onMouseClick(
-					(ActionHandler)& BattlescapeState::btnPrevSoldierClick,
+					(ActionHandler)& BattlescapeState::btnPrevUnitClick,
 					SDL_BUTTON_RIGHT);
 	_btnNextSoldier->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnNextSoldierClick,
+					(ActionHandler)& BattlescapeState::btnNextUnitClick,
 					Options::keyBattleNextUnit);
 	_btnNextSoldier->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnPrevSoldierClick,
+					(ActionHandler)& BattlescapeState::btnPrevUnitClick,
 					Options::keyBattlePrevUnit);
 //	_btnNextSoldier->setTooltip("STR_NEXT_UNIT");
 //	_btnNextSoldier->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
@@ -1556,9 +1556,9 @@ inline void BattlescapeState::handle(Action* action)
 		if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
 		{
 			if (action->getDetails()->button.button == SDL_BUTTON_X1)
-				btnNextSoldierClick(action);
+				btnNextUnitClick(action);
 			else if (action->getDetails()->button.button == SDL_BUTTON_X2)
-				btnPrevSoldierClick(action);
+				btnPrevUnitClick(action);
 		}
 
 		if (action->getDetails()->type == SDL_KEYDOWN)
@@ -1880,7 +1880,34 @@ void BattlescapeState::btnInventoryClick(Action*)
 }
 
 /**
- * Centers on the currently selected soldier.
+ * Forces a transparent SDL mouse-motion event.
+ * @note This is required to create an arbitrary mouseOver event for when the
+ * Map is repositioned under the cursor but the cursor itself doesn't
+ * necessarily move on the screen.
+ */
+void BattlescapeState::refreshMousePosition() const
+{
+	int // doesn't do shit. FIXED.
+		x,y,
+		dir;
+	SDL_GetMouseState(&x,&y);
+
+	if (x == 0)
+		dir = +1;
+	else
+		dir = -1; // note: SDL might still limit X internally to screenwidth-1.
+
+	SDL_WarpMouse(
+			static_cast<Uint16>(x + dir),
+			static_cast<Uint16>(y));
+	SDL_GetMouseState(&x,&y);
+	SDL_WarpMouse(
+			static_cast<Uint16>(x - dir),
+			static_cast<Uint16>(y));
+}
+
+/**
+ * Centers on the currently selected BattleUnit.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnCenterClick(Action*)
@@ -1893,30 +1920,10 @@ void BattlescapeState::btnCenterClick(Action*)
 }
 
 /**
- * Forces a transparent SDL mouse-motion event.
- * @note This is required to create an arbitrary mouseOver event for when the
- * Map is repositioned under the cursor but the cursor itself doesn't
- * necessarily move on the screen.
- */
-void BattlescapeState::refreshMousePosition() const
-{
-	int // doesn't do shit. FIXED.
-		x,y;
-	SDL_GetMouseState(&x,&y);
-	SDL_WarpMouse(
-			static_cast<Uint16>(x + 1),
-			static_cast<Uint16>(y));
-	SDL_GetMouseState(&x,&y);
-	SDL_WarpMouse(
-			static_cast<Uint16>(x - 1),
-			static_cast<Uint16>(y));
-}
-
-/**
- * Selects the next soldier.
+ * Selects the next BattleUnit.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnNextSoldierClick(Action*)
+void BattlescapeState::btnNextUnitClick(Action*)
 {
 	if (allowButtons() == true)
 	{
@@ -1926,7 +1933,7 @@ void BattlescapeState::btnNextSoldierClick(Action*)
 }
 
 /**
- * Disables reselection of the current soldier and selects the next soldier.
+ * Disables reselection of the current BattleUnit and selects the next BattleUnit.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnNextStopClick(Action*)
@@ -1939,10 +1946,10 @@ void BattlescapeState::btnNextStopClick(Action*)
 }
 
 /**
- * Selects next soldier.
+ * Selects next BattleUnit.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnPrevSoldierClick(Action*)
+void BattlescapeState::btnPrevUnitClick(Action*)
 {
 	if (allowButtons() == true)
 	{
@@ -1952,7 +1959,7 @@ void BattlescapeState::btnPrevSoldierClick(Action*)
 }
 
 /**
- * Disables reselection of the current soldier and selects the next soldier.
+ * Disables reselection of the current BattleUnit and selects the next BattleUnit.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnPrevStopClick(Action*)
@@ -1965,7 +1972,7 @@ void BattlescapeState::btnPrevStopClick(Action*)
 }
 
 /**
- * Selects the next soldier.
+ * Selects the next BattleUnit.
  * @param checkReselect		- don't select a unit that has been previously flagged
  * @param dontReselect		- flag the current unit first
  * @param checkInventory	- don't select a unit that has no inventory
@@ -1993,7 +2000,7 @@ void BattlescapeState::selectNextFactionUnit(
 }
 
 /**
- * Selects the previous soldier.
+ * Selects the previous BattleUnit.
  * @param checkReselect		- don't select a unit that has been previously flagged
  * @param dontReselect		- flag the current unit first
  * @param checkInventory	- don't select a unit that has no inventory
@@ -2075,7 +2082,7 @@ void BattlescapeState::btnAbortClick(Action*)
 }
 
 /**
- * Shows the selected soldier's info.
+ * Shows the selected BattleUnit's info.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnStatsClick(Action* action)

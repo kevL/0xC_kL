@@ -2531,7 +2531,7 @@ void BattleUnit::allowReselect()
 
 /**
  * Checks whether reselecting this unit is allowed.
- * @return, reselect allowed
+ * @return, true if reselect allowed
  */
 bool BattleUnit::reselectAllowed() const
 {

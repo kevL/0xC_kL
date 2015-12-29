@@ -23,6 +23,8 @@
 
 #include "../fmath.h"
 
+//#include "Logger.h"
+
 
 namespace OpenXcom
 {
@@ -64,6 +66,7 @@ uint64_t next_x()
 	x ^= x << 25; // b
 	x ^= x >> 27; // c
 
+	//Log(LOG_INFO) << "RNG x = " << x;
 	return x * 2685821657736338717uLL;
 }
 
@@ -77,6 +80,7 @@ uint64_t next_y()
 	y ^= y << 25; // b
 	y ^= y >> 27; // c
 
+	//Log(LOG_INFO) << "RNG y = " << y;
 	return y * 2685821657736338717uLL;
 }
 

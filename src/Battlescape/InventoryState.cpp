@@ -348,7 +348,7 @@ InventoryState::InventoryState(
 
 	_inv->draw();
 	_inv->setTuMode(_tuMode);
-	_inv->setSelectedUnit(_game->getSavedGame()->getBattleSave()->getSelectedUnit());
+	_inv->setSelectedUnitInventory(_game->getSavedGame()->getBattleSave()->getSelectedUnit());
 	_inv->onMouseClick((ActionHandler)& InventoryState::invClick, 0);
 	_inv->onMouseOver((ActionHandler)& InventoryState::invMouseOver);
 	_inv->onMouseOut((ActionHandler)& InventoryState::invMouseOut);
@@ -475,7 +475,7 @@ void InventoryState::keyRepeat() // private.
 
 /**
  * Updates all soldier stats when the soldier changes.
- @note parent BattlescapeState is invalid @ BaseEquip screen
+ * @note parent BattlescapeState is invalid @ BaseEquip screen
  */
 void InventoryState::init()
 {
@@ -490,9 +490,9 @@ void InventoryState::init()
 	else if (unit->hasInventory() == false) // skip to the first unit with inventory
 	{
 		if (_parent != nullptr)
-			_parent->selectNextFactionUnit(false, false, true);
+			_parent->selectNextFactionUnit(false,false,true);
 		else
-			_battleSave->selectNextFactionUnit(false, false, true);
+			_battleSave->selectNextFactionUnit(false,false,true);
 
 		if (_battleSave->getSelectedUnit() == nullptr
 			 || _battleSave->getSelectedUnit()->hasInventory() == false)
@@ -514,7 +514,7 @@ void InventoryState::init()
 
 	_txtName->setText(unit->getName(_game->getLanguage()));
 
-	_inv->setSelectedUnit(unit);
+	_inv->setSelectedUnitInventory(unit);
 
 	_flarePower = 0;
 	for (std::vector<BattleItem*>::const_iterator
@@ -529,8 +529,6 @@ void InventoryState::init()
 		}
 	}
 
-
-//	SurfaceSet* const srtRank = _game->getResourcePack()->getSurfaceSet("SMOKE.PCK");
 
 	const Soldier* const sol = unit->getGeoscapeSoldier();
 	if (sol != nullptr)
@@ -834,9 +832,9 @@ void InventoryState::btnPrevClick(Action*)
 	if (_inv->getSelectedItem() == nullptr)
 	{
 		if (_parent != nullptr)
-			_parent->selectPreviousFactionUnit(false, false, true);
+			_parent->selectPreviousFactionUnit(false,false,true);
 		else
-			_battleSave->selectPreviousFactionUnit(false, false, true);
+			_battleSave->selectPreviousFactionUnit(false,false,true);
 
 		init();
 	}
@@ -851,9 +849,9 @@ void InventoryState::btnNextClick(Action*)
 	if (_inv->getSelectedItem() == nullptr)
 	{
 		if (_parent != nullptr)
-			_parent->selectNextFactionUnit(false, false, true);
+			_parent->selectNextFactionUnit(false,false,true);
 		else
-			_battleSave->selectNextFactionUnit(false, false, true);
+			_battleSave->selectNextFactionUnit(false,false,true);
 
 		init();
 	}

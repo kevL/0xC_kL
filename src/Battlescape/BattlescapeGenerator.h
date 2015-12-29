@@ -78,11 +78,11 @@ private:
 	SDL_Rect _craftPos;
 	std::vector<SDL_Rect> _ufoPos;
 
-	std::vector<std::vector<bool> > _landingzone;
-	std::vector<std::vector<int> >
+	std::vector<std::vector<bool>> _landingzone;
+	std::vector<std::vector<int>>
 		_drillMap,
 		_segments;
-	std::vector<std::vector<MapBlock*> > _blocks;
+	std::vector<std::vector<MapBlock*>> _blocks;
 
 	AlienBase* _alienBase;
 	Base* _base;

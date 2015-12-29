@@ -314,7 +314,7 @@ private:
 		void setPlayerPanic() { _playerPanicHandled = false; }
 
 		/// Tries to find an item and pick it up if possible.
-		void findItem(BattleAction* const action) const;
+		void pickupItem(BattleAction* const action) const;
 		/// Checks through all the items on the ground and picks one.
 		BattleItem* surveyItems(BattleUnit* const unit) const;
 		/// Evaluates if it's worthwhile to take this item.

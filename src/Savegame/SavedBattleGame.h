@@ -22,7 +22,7 @@
 
 //#include <string>
 //#include <vector>
-//#include <yaml-cpp/yaml.h>
+#include <yaml-cpp/yaml.h>
 
 #include "BattleUnit.h" // UnitFaction
 //#include "../Battlescape/BattlescapeGame.h" // BattleActionType (included in BattleUnit.h)
@@ -120,7 +120,9 @@ private:
 		_items,
 		_recoverConditional,
 		_recoverGuaranteed;
-	std::vector<BattleUnit*> _units;
+	std::vector<BattleUnit*>
+		_units,
+		_shuffleUnits;
 	std::vector<MapDataSet*> _mapDataSets;
 	std::vector<Node*> _nodes;
 	std::vector<Position>
@@ -135,6 +137,9 @@ private:
 //	int
 //		_dragTimeTolerance,		// this is a cache for Options::getInt("battleScrollDragTimeTolerance")
 //		_dragPixelTolerance;	// this is a cache for Options::getInt("battleScrollDragPixelTolerance")
+
+	/// Finishes up Alien or Civilian turns and prepares the Player turn.
+	void prepPlayerTurn();
 
 	/// Selects a soldier.
 	BattleUnit* selectFactionUnit(
@@ -264,6 +269,8 @@ private:
 		std::vector<Node*>* getNodes();
 		/// Gets a pointer to the list of units.
 		std::vector<BattleUnit*>* getUnits();
+		/// Gets a pointer to the list of shuffled units.
+		std::vector<BattleUnit*>* getShuffleUnits();
 		/// Gets a pointer to the list of items.
 		std::vector<BattleItem*>* getItems();
 

@@ -109,7 +109,7 @@ private:
 		void setTuMode(bool tu);
 
 		/// Sets the inventory's selected unit.
-		void setSelectedUnit(BattleUnit* const unit);
+		void setSelectedUnitInventory(BattleUnit* const unit);
 
 		/// Draws the inventory.
 		void draw() override;

@@ -174,6 +174,14 @@ SavedBattleGame::~SavedBattleGame()
 		delete *i;
 	}
 
+/*	for (std::vector<BattleUnit*>::const_iterator	// note: Don't double-delete these
+			i = _shuffleUnits.begin();				// they are actually _units in disguise.
+			i != _shuffleUnits.end();
+			++i)
+	{
+		delete *i;
+	} */
+
 	for (std::vector<BattleItem*>::const_iterator
 			i = _items.begin();
 			i != _items.end();
@@ -182,7 +190,7 @@ SavedBattleGame::~SavedBattleGame()
 		delete *i;
 	}
 
-	for (std::vector<BattleItem*>::iterator
+	for (std::vector<BattleItem*>::const_iterator
 			i = _recoverGuaranteed.begin();
 			i != _recoverGuaranteed.end();
 			++i)
@@ -190,7 +198,7 @@ SavedBattleGame::~SavedBattleGame()
 		delete *i;
 	}
 
-	for (std::vector<BattleItem*>::iterator
+	for (std::vector<BattleItem*>::const_iterator
 			i = _recoverConditional.begin();
 			i != _recoverConditional.end();
 			++i)
@@ -406,6 +414,10 @@ void SavedBattleGame::load(
 		if (_units.at(i)->isOut_t(OUT_STAT) == false)
 			_units.at(i)->loadSpotted(this); // convert unitID's into pointers to BattleUnits
 	}
+
+	_shuffleUnits.assign(
+					_units.size(),
+					nullptr);
 
 
 	// matches up tiles and units
@@ -1025,7 +1037,9 @@ BattleUnit* SavedBattleGame::selectPreviousFactionUnit(
 }
 
 /**
- * Selects the next player unit.
+ * Selects the next unit.
+ * @note Also used for/by the AI in BattlescapeGame::think(), popState(),
+ * handleUnitAI(), and in SavedBattleGame::endBattlePhase().
  * @param checkReselect		- true to check the reselectable flag (default false)
  * @param dontReselect		- true to set the reselectable flag FALSE (default false)
  * @param checkInventory	- true to check if the unit has an inventory (default false)
@@ -1060,9 +1074,8 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
 {
 	if (_units.empty() == true)
 	{
-		_selectedUnit = nullptr;
+		_selectedUnit =
 		_lastSelectedUnit = nullptr;
-
 		return nullptr;
 	}
 
@@ -1074,38 +1087,45 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
 
 
 	std::vector<BattleUnit*>::const_iterator
-		firstUnit,
-		lastUnit;
+		iterFirst,
+		iterLast,
+		iterUnit;
+
+	std::vector<BattleUnit*>* units;
+	if (_shuffleUnits[0] == nullptr)
+		units = &_units;
+	else // non-player turn Use shuffledUnits. See endBattlePhase() ....
+		units = &_shuffleUnits;
 
 	if (dir > 0)
 	{
-		firstUnit = _units.begin();
-		lastUnit = _units.end() - 1;
+		iterFirst = units->begin();
+		iterLast = units->end() - 1;
 	}
 	else
 	{
-		firstUnit = _units.end() - 1;
-		lastUnit = _units.begin();
+		iterFirst = units->end() - 1;
+		iterLast = units->begin();
 	}
 
-	std::vector<BattleUnit*>::const_iterator i = std::find(
-														_units.begin(),
-														_units.end(),
-														_selectedUnit);
-	do
+	iterUnit = std::find(
+					units->begin(),
+					units->end(),
+					_selectedUnit);
+	do // find the next unit
 	{
-		if (i == _units.end()) // no unit selected
+		if (iterUnit == units->end()) // no unit selected
 		{
-			i = firstUnit;
+			iterUnit = iterFirst;
 			continue;
 		}
 
-		if (i != lastUnit)
-			i += dir;
+		if (iterUnit != iterLast)
+			iterUnit += dir;
 		else // reached the end, wrap-around
-			i = firstUnit;
+			iterUnit = iterFirst;
 
-		if (*i == _selectedUnit) // back to start ... no more units found
+		if (*iterUnit == _selectedUnit) // back to start ... no more units found
 		{
 			if (checkReselect == true
 				&& _selectedUnit->reselectAllowed() == false)
@@ -1116,18 +1136,17 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
 			return _selectedUnit;
 		}
 		else if (_selectedUnit == nullptr
-			&& i == firstUnit)
+			&& iterUnit == iterFirst)
 		{
 			return nullptr;
 		}
 	}
-	while ((*i)->isSelectable(
-						_side,
-						checkReselect,
-						checkInventory) == false);
+	while ((*iterUnit)->isSelectable(
+								_side,
+								checkReselect,
+								checkInventory) == false);
 
-	_selectedUnit = *i;
-	return _selectedUnit;
+	return (_selectedUnit = *iterUnit);
 }
 
 /**
@@ -1137,16 +1156,11 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
  */
 BattleUnit* SavedBattleGame::selectUnit(const Position& pos)
 {
-	BattleUnit* const bu = getTile(pos)->getUnit();
+	BattleUnit* const unit = getTile(pos)->getUnit();
+	if (unit != nullptr && unit->isOut_t(OUT_STAT) == false)
+		return unit;
 
-	if (bu == nullptr
-		|| bu->isOut_t(OUT_STAT) == true)
-//		|| bu->isOut(true, true) == true)
-	{
-		return nullptr;
-	}
-
-	return bu;
+	return nullptr;
 }
 
 /**
@@ -1165,6 +1179,15 @@ std::vector<Node*>* SavedBattleGame::getNodes()
 std::vector<BattleUnit*>* SavedBattleGame::getUnits()
 {
 	return &_units;
+}
+
+/**
+ * Gets the list of shuffled units.
+ * @return, pointer to a vector of pointers to the BattleUnits
+ */
+std::vector<BattleUnit*>* SavedBattleGame::getShuffleUnits()
+{
+	return &_shuffleUnits;
 }
 
 /**
@@ -1222,6 +1245,44 @@ int SavedBattleGame::getTurn() const
 }
 
 /**
+ * Finishes up Alien or Civilian turns and prepares the Player turn.
+ */
+void SavedBattleGame::prepPlayerTurn() // private.
+{
+	std::fill(
+			_shuffleUnits.begin(),
+			_shuffleUnits.end(),
+			nullptr);
+
+	tileVolatiles(); // do Tile stuff
+	++_turn;
+
+	_side = FACTION_PLAYER;
+
+	if (_lastSelectedUnit != nullptr
+		&& _lastSelectedUnit->isSelectable(FACTION_PLAYER) == true)
+	{
+		//Log(LOG_INFO) << ". . last Selected = " << _lastSelectedUnit->getId();
+		_selectedUnit = _lastSelectedUnit;
+	}
+	else
+	{
+		//Log(LOG_INFO) << ". . select next";
+		selectNextFactionUnit();
+	}
+
+	while (_selectedUnit != nullptr
+		&& _selectedUnit->getFaction() != FACTION_PLAYER)
+	{
+		//Log(LOG_INFO) << ". . select next loop";
+		selectNextFactionUnit(true);
+	}
+
+	//if (_selectedUnit != nullptr) Log(LOG_INFO) << ". -> selected Unit = " << _selectedUnit->getId();
+	//else Log(LOG_INFO) << ". -> NO UNIT TO SELECT FOUND";
+}
+
+/**
  * Ends the current faction-turn and progresses to the next one.
  * @note Called from BattlescapeGame::endTurnPhase()
  * @return, true if the turn rolls-over back to faction Player
@@ -1248,7 +1309,6 @@ bool SavedBattleGame::endBattlePhase()
 	if (_side == FACTION_PLAYER) // end of Player turn.
 	{
 		_scanDots.clear();
-
 		if (_selectedUnit != nullptr
 			&& _selectedUnit->getOriginalFaction() == FACTION_PLAYER)
 		{
@@ -1257,6 +1317,9 @@ bool SavedBattleGame::endBattlePhase()
 
 		_side = FACTION_HOSTILE;
 		_selectedUnit = nullptr;
+
+		_shuffleUnits = _units;
+		RNG::shuffle(_shuffleUnits.begin(), _shuffleUnits.end());
 	}
 	else if (_side == FACTION_HOSTILE) // end of Alien turn.
 	{
@@ -1268,60 +1331,17 @@ bool SavedBattleGame::endBattlePhase()
 		if (selectNextFactionUnit() == nullptr) // else this will cycle through NEUTRAL units
 		{
 			//Log(LOG_INFO) << ". no neutral units to select ... -> PLAYER";
-			tileVolatiles(); // do Tile stuff
-			++_turn;
 			ret = true;
-
-			_side = FACTION_PLAYER;
-
-			if (_lastSelectedUnit != nullptr
-				&& _lastSelectedUnit->isSelectable(FACTION_PLAYER) == true)
-			{
-				//Log(LOG_INFO) << ". . last Selected = " << _lastSelectedUnit->getId();
-				_selectedUnit = _lastSelectedUnit;
-			}
-			else
-			{
-				//Log(LOG_INFO) << ". . select next";
-				selectNextFactionUnit();
-			}
-
-			while (_selectedUnit != nullptr
-				&& _selectedUnit->getFaction() != FACTION_PLAYER)
-			{
-				//Log(LOG_INFO) << ". . select next loop";
-				selectNextFactionUnit(true);
-			}
-
-			//if (_selectedUnit != nullptr) Log(LOG_INFO) << ". -> selected Unit = " << _selectedUnit->getId();
-			//else Log(LOG_INFO) << ". -> NO UNIT TO SELECT FOUND";
 		}
 	}
 	else if (_side == FACTION_NEUTRAL) // end of Civilian turn.
 	{
 		//Log(LOG_INFO) << ". end Neutral phase -> PLAYER";
-		tileVolatiles(); // do Tile stuff
-		++_turn;
 		ret = true;
-
-		_side = FACTION_PLAYER;
-
-		if (_lastSelectedUnit != nullptr
-			&& _lastSelectedUnit->isSelectable(FACTION_PLAYER) == true)
-		{
-			_selectedUnit = _lastSelectedUnit;
-		}
-		else
-			selectNextFactionUnit();
-
-		while (_selectedUnit != nullptr
-			&& _selectedUnit->getFaction() != FACTION_PLAYER)
-		{
-			selectNextFactionUnit(true);
-		}
 	}
 
-
+	if (ret == true)
+		prepPlayerTurn();
 
 	// ** _side HAS ADVANCED to next faction after here!!! ** //
 
@@ -1413,8 +1433,8 @@ bool SavedBattleGame::endBattlePhase()
 	_te->calculateTerrainLighting();
 	_te->calculateUnitLighting(); // turn off MCed alien lighting.
 
-	// redo calculateFOV() *after* aliens & civies have been set
-	// notVisible -> AND *only* after a calcLighting has been done !
+	// redo calculateFOV() *after* aliens & civies have been set notVisible
+	// -> AND *only after* a calcLighting has been done!
 	_te->recalculateFOV();
 
 	if (_side != FACTION_PLAYER)

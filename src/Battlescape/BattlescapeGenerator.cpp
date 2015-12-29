@@ -366,11 +366,11 @@ void BattlescapeGenerator::run()
 
 	deployXCOM(); // <-- XCOM DEPLOYMENT.
 
-	const size_t unitCount = _battleSave->getUnits()->size();
+	const size_t qtyUnits_pre = _battleSave->getUnits()->size();
 
 	deployAliens(deployRule); // <-- ALIEN DEPLOYMENT.
 
-	if (unitCount == _battleSave->getUnits()->size())
+	if (qtyUnits_pre == _battleSave->getUnits()->size())
 	{
 		throw Exception("Map generator encountered an error: no alien units could be placed on the map.");
 	}
@@ -434,6 +434,10 @@ void BattlescapeGenerator::run()
 	_battleSave->getTileEngine()->calculateUnitLighting();
 
 	_battleSave->getTileEngine()->recalculateFOV();
+
+	_battleSave->getShuffleUnits()->assign(
+										_battleSave->getUnits()->size(),
+										nullptr);
 }
 
 /**
@@ -736,11 +740,11 @@ void BattlescapeGenerator::nextStage()
 
 	_unitSequence = _battleSave->getUnits()->back()->getId() + 1;
 
-	const size_t unitCount = _battleSave->getUnits()->size();
+	const size_t qtyUnits_pre = _battleSave->getUnits()->size();
 
 	deployAliens(deployRule); // <-- ALIEN DEPLOYMENT.
 
-	if (unitCount == _battleSave->getUnits()->size())
+	if (qtyUnits_pre == _battleSave->getUnits()->size())
 	{
 		throw Exception("Map generator encountered an error: no alien units could be placed on the map.");
 	}
@@ -765,6 +769,10 @@ void BattlescapeGenerator::nextStage()
 	_battleSave->getTileEngine()->calculateUnitLighting();
 
 	_battleSave->getTileEngine()->recalculateFOV();
+
+	_battleSave->getShuffleUnits()->assign(
+										_battleSave->getUnits()->size(),
+										nullptr);
 }
 
 /**
