@@ -21,17 +21,20 @@
 
 #include "MapDataSet.h"
 
+//#include "../Engine/Logger.h"
+
 
 namespace OpenXcom
 {
 
 /**
  * Creates a new Map Data Object.
+ * @note This is a tile-part.
  * @param dataSet - pointer to the MapDataSet this object belongs to
  */
 MapData::MapData(MapDataSet* const dataSet)
 	:
-		_dataset(dataSet),
+		_dataSet(dataSet),
 		_specialType(TILE),
 		_isUfoDoor(false),
 		_stopLOS(false),
@@ -42,9 +45,9 @@ MapData::MapData(MapDataSet* const dataSet)
 		_blockSmoke(false),
 		_baseModule(false),
 		_yOffset(0),
-		_TUWalk(0),
-		_TUSlide(0),
-		_TUFly(0),
+		_tuWalk(0),
+		_tuSlide(0),
+		_tuFly(0),
 		_terrainLevel(0),
 		_footstepSound(0),
 		_dieMCD(0),
@@ -60,6 +63,7 @@ MapData::MapData(MapDataSet* const dataSet)
 		_miniMapIndex(0),
 		_isPsychedelic(0)
 {
+	//Log(LOG_INFO) << "MapData cTor dataSet = " << _dataSet->getType();
 	std::fill_n(_sprite, 8,0);
 	std::fill_n(_block, 6,0);
 	std::fill_n(_loftId, 12,0);
@@ -69,7 +73,9 @@ MapData::MapData(MapDataSet* const dataSet)
  * Destroys the object.
  */
 MapData::~MapData()
-{}
+{
+	//Log(LOG_INFO) << "MapData dTor dataSet = " << _dataSet->getType();
+}
 
 /**
  * Gets the dataset this object belongs to.
@@ -77,7 +83,7 @@ MapData::~MapData()
  */
 MapDataSet* MapData::getDataset() const
 {
-	return _dataset;
+	return _dataSet;
 }
 
 /**
@@ -258,7 +264,7 @@ int MapData::getBlock(DamageType dType) const
  * Sets the amount of blockage for all types.
  * @param lightBlock	- light blockage			- Light_Block
  * @param visionBlock	- vision blockage			- Stop_LOS
- * @param HEBlock		- high explosive blockage	- HE_Block
+ * @param heBlock		- high explosive blockage	- HE_Block
  * @param smokeBlock	- smoke blockage			- Block_Smoke
  * @param fireBlock		- fire blockage				- Flammable (lower = more flammable)
  * @param gasBlock		- gas blockage				- HE_Block
@@ -266,14 +272,14 @@ int MapData::getBlock(DamageType dType) const
 void MapData::setBlock(
 		int lightBlock,
 		int visionBlock,
-		int HEBlock,
+		int heBlock,
 		int smokeBlock,
 		int fireBlock,
 		int gasBlock)
 {
 /*	_block[0] = lightBlock; // not used...
 	_block[1] = visionBlock == 1? 255: 0;
-	_block[2] = HEBlock;
+	_block[2] = heBlock;
 	_block[3] = smokeBlock == 1? 255: 0;
 	_block[4] = fireBlock == 1? 255: 0;
 	_block[5] = gasBlock == 1? 255: 0; */
@@ -290,7 +296,7 @@ void MapData::setBlock(
 		// It would be unnecessary to use that jigger-pokery if TileEngine::
 		// horizontalBlockage() & blockage() were coded differently [verticalBlockage()
 		// too, perhaps]
-	_block[2] = HEBlock;
+	_block[2] = heBlock;
 //	_block[3] = smokeBlock == 1? 256: 0; // <- why? kL_note. I basically use visionBlock for smoke ....
 	_block[3] = smokeBlock;
 	_block[4] = fireBlock; // this is Flammable, NOT Block_Fire.
@@ -299,11 +305,11 @@ void MapData::setBlock(
 
 /**
  * Sets the amount of HE blockage.
- * @param HEBlock - the high explosive blockage
+ * @param heBlock - the high explosive blockage
  */
-void MapData::setHEBlock(int HEBlock)
+void MapData::setHEBlock(int heBlock)
 {
-	_block[2] = HEBlock;
+	_block[2] = heBlock;
 }
 
 /**
@@ -342,7 +348,7 @@ void MapData::setObjectType(MapDataType type)
 {
 	_objectType = type;
 
-	if (_dataset->getName() == "U_PODS") // kL-> should put this in MCDPatch
+	if (_dataSet->getType() == "U_PODS") // kL-> should put this in MCDPatch
 	{
 		if (   _sprite[0] == 7		// disco walls, yellow northWall
 			|| _sprite[0] == 8		//  "     "       "    westWall
@@ -387,9 +393,9 @@ int MapData::getTuCostPart(MovementType moveType) const
 {
 	switch (moveType)
 	{
-		case MT_WALK:	return _TUWalk;
-		case MT_SLIDE:	return _TUSlide;
-		case MT_FLY:	return _TUFly;
+		case MT_WALK:	return _tuWalk;
+		case MT_SLIDE:	return _tuSlide;
+		case MT_FLY:	return _tuFly;
 	}
 
 	return 0;
@@ -406,9 +412,9 @@ void MapData::setTUCosts(
 		int fly,
 		int slide)
 {
-	_TUWalk = walk;
-	_TUFly = fly;
-	_TUSlide = slide;
+	_tuWalk = walk;
+	_tuFly = fly;
+	_tuSlide = slide;
 }
 
 /**
@@ -645,9 +651,9 @@ int MapData::getMiniMapIndex() const
  * Sets the bigWall value.
  * @param bigWall - the new bigWall value (MapData.h)
  */
-void MapData::setBigWall(const BigwallType bigWall)
+void MapData::setBigWall(int bigWall)
 {
-	_bigWall = bigWall;
+	_bigWall = static_cast<BigwallType>(bigWall);
 }
 
 /**
@@ -656,7 +662,7 @@ void MapData::setBigWall(const BigwallType bigWall)
  */
 void MapData::setTUWalk(const int TUWalk)
 {
-	_TUWalk = TUWalk;
+	_tuWalk = TUWalk;
 }
 
 /**
@@ -665,7 +671,7 @@ void MapData::setTUWalk(const int TUWalk)
  */
 void MapData::setTUFly(const int TUFly)
 {
-	_TUFly = TUFly;
+	_tuFly = TUFly;
 }
 
 /**
@@ -674,7 +680,7 @@ void MapData::setTUFly(const int TUFly)
  */
 void MapData::setTUSlide(const int TUSlide)
 {
-	_TUSlide = TUSlide;
+	_tuSlide = TUSlide;
 }
 
 /**

@@ -226,7 +226,7 @@ Ruleset::~Ruleset()
 		delete i->second;
 	}
 
-	for (std::vector<std::pair<std::string, RuleMusic*> >::const_iterator // sza_MusicRules
+	for (std::vector<std::pair<std::string, RuleMusic*>>::const_iterator // sza_MusicRules
 			i = _music.begin();
 			i != _music.end();
 			++i)
@@ -338,7 +338,7 @@ Ruleset::~Ruleset()
 		delete i->second;
 	}
 
-	for (std::vector<std::pair<std::string, ExtraSprites*> >::const_iterator
+	for (std::vector<std::pair<std::string, ExtraSprites*>>::const_iterator
 			i = _extraSprites.begin();
 			i != _extraSprites.end();
 			++i)
@@ -346,7 +346,7 @@ Ruleset::~Ruleset()
 		delete i->second;
 	}
 
-	for (std::vector<std::pair<std::string, ExtraSounds*> >::const_iterator
+	for (std::vector<std::pair<std::string, ExtraSounds*>>::const_iterator
 			i = _extraSounds.begin();
 			i != _extraSounds.end();
 			++i)
@@ -354,7 +354,7 @@ Ruleset::~Ruleset()
 		delete i->second;
 	}
 
-/*	for (std::vector<std::pair<std::string, ExtraMusic*> >::const_iterator // sza_ExtraMusic
+/*	for (std::vector<std::pair<std::string, ExtraMusic*>>::const_iterator // sza_ExtraMusic
 			i = _extraMusic.begin();
 			i != _extraMusic.end();
 			++i)
@@ -386,7 +386,7 @@ Ruleset::~Ruleset()
 		delete i->second;
 	}
 
-	for (std::map<std::string, std::vector<MapScript*> >::const_iterator
+	for (std::map<std::string, std::vector<MapScript*>>::const_iterator
 			i = _mapScripts.begin();
 			i != _mapScripts.end();
 			++i)
@@ -461,7 +461,7 @@ void Ruleset::reloadCountryLines() const
 		const std::string type = (*i)["type"].as<std::string>();
 		RuleCountry* const j = getCountry(type);
 
-		const std::vector<std::vector<double> > areas = (*i)["areas"].as<std::vector<std::vector<double> > >();
+		const std::vector<std::vector<double>> areas = (*i)["areas"].as<std::vector<std::vector<double>>>();
 		for (size_t
 				k = 0;
 				k != areas.size();
@@ -857,7 +857,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 	_costScientist	= doc["costScientist"]	.as<int>(_costScientist);
 	_timePersonnel	= doc["timePersonnel"]	.as<int>(_timePersonnel);
 //	_initialFunding	= doc["initialFunding"]	.as<int>(_initialFunding);
-	_alienFuel		= doc["alienFuel"]		.as<std::pair<std::string, int> >(_alienFuel);
+	_alienFuel		= doc["alienFuel"]		.as<std::pair<std::string, int>>(_alienFuel);
 	_font			= doc["font"]			.as<std::string>(_font);
 	_radarCutoff	= doc["radarCutoff"]	.as<int>(_radarCutoff);
 	_firstGrenade	= doc["firstGrenade"]	.as<int>(_firstGrenade);
@@ -881,7 +881,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		if (rule != nullptr) rule->load(*i);
 	}
 
-	_alienItemLevels = doc["alienItemLevels"].as<std::vector< std::vector<int> > >(_alienItemLevels);
+	_alienItemLevels = doc["alienItemLevels"].as<std::vector< std::vector<int>>>(_alienItemLevels);
 
 	for (YAML::const_iterator
 			i = doc["MCDPatches"].begin();
@@ -889,11 +889,16 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		const std::string type = (*i)["type"].as<std::string>();
+		//Log(LOG_INFO) << "Ruleset: loadFile() MCDPatches type = " << type;
 
 		if (_MCDPatches.find(type) != _MCDPatches.end())
+		{
+			//Log(LOG_INFO) << ". found, load it";
 			_MCDPatches[type]->load(*i);
+		}
 		else
 		{
+			//Log(LOG_INFO) << ". not found, create it";
 			std::auto_ptr<MCDPatch> patch (new MCDPatch());
 			patch->load(*i);
 			_MCDPatches[type] = patch.release();
@@ -1861,7 +1866,7 @@ const std::vector<std::string>& Ruleset::getAlienMissionList() const
  * Gets the alien item level table - a two dimensional array.
  * @return, reference to a vector of vectors containing the alien item levels
  */
-const std::vector<std::vector<int> >& Ruleset::getAlienItemLevels() const
+const std::vector<std::vector<int>>& Ruleset::getAlienItemLevels() const
 {
 	return _alienItemLevels;
 }
@@ -1902,7 +1907,7 @@ MCDPatch* Ruleset::getMCDPatch(const std::string& id) const
  * Gets the list of external music rules.
  * @return, vector of pairs of strings & pointers to RuleMusic
  */
-std::vector<std::pair<std::string, RuleMusic*> > Ruleset::getMusicTracks() const
+std::vector<std::pair<std::string, RuleMusic*>> Ruleset::getMusicTracks() const
 {
 	return _music;
 }
@@ -1911,7 +1916,7 @@ std::vector<std::pair<std::string, RuleMusic*> > Ruleset::getMusicTracks() const
  * Gets the list of external sprites.
  * @return, vector of pairs of strings & pointers to ExtraSprites
  */
-std::vector<std::pair<std::string, ExtraSprites*> > Ruleset::getExtraSprites() const
+std::vector<std::pair<std::string, ExtraSprites*>> Ruleset::getExtraSprites() const
 {
 	return _extraSprites;
 }
@@ -1920,7 +1925,7 @@ std::vector<std::pair<std::string, ExtraSprites*> > Ruleset::getExtraSprites() c
  * Gets the list of external sounds.
  * @return, vector of pairs of strings & pointers to ExtraSounds
  */
-std::vector<std::pair<std::string, ExtraSounds*> > Ruleset::getExtraSounds() const
+std::vector<std::pair<std::string, ExtraSounds*>> Ruleset::getExtraSounds() const
 {
 	return _extraSounds;
 }
@@ -1928,7 +1933,7 @@ std::vector<std::pair<std::string, ExtraSounds*> > Ruleset::getExtraSounds() con
  * Gets the list of external music.
  * @return, vector of pairs of strings & pointers to ExtraMusic
  */
-/* std::vector<std::pair<std::string, ExtraMusic*> > Ruleset::getExtraMusic() const // sza_ExtraMusic
+/* std::vector<std::pair<std::string, ExtraMusic*>> Ruleset::getExtraMusic() const // sza_ExtraMusic
 {
 	return _extraMusic;
 } */
@@ -2395,11 +2400,11 @@ RuleGlobe* Ruleset::getGlobe() const
 /**
  * Gets the sound definition rules.
  * @return, map of strings & pointers to SoundDefinition
- */
+ *
 const std::map<std::string, SoundDefinition*>* Ruleset::getSoundDefinitions() const
 {
 	return &_soundDefs;
-}
+} */
 
 /**
  * Gets the list of videos.
@@ -2440,7 +2445,7 @@ RuleMissionScript* Ruleset::getMissionScript(const std::string& id) const
  */
 const std::vector<MapScript*>* Ruleset::getMapScript(const std::string& id) const
 {
-	std::map<std::string, std::vector<MapScript*> >::const_iterator i = _mapScripts.find(id);
+	std::map<std::string, std::vector<MapScript*>>::const_iterator i = _mapScripts.find(id);
 	if (i != _mapScripts.end())
 	{
 		//Log(LOG_INFO) << "rules: i->first = " << i->first;

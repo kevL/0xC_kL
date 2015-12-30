@@ -38,6 +38,7 @@ class SurfaceSet;
 
 /**
  * Represents a Terrain Map Datafile that corresponds to an XCom MCD & PCK file.
+ * Popularly known as a tileset.
  * @note The list of map datafiles is stored in RuleSet but referenced in RuleTerrain.
  * @sa http://www.ufopaedia.org/index.php?title=MCD
  */
@@ -47,7 +48,7 @@ class MapDataSet
 private:
 	bool _loaded;
 
-	std::string _name;
+	std::string _type;
 
 	static MapData
 		* _blankTile,
@@ -56,13 +57,13 @@ private:
 	const Game* _game;
 	SurfaceSet* _surfaceSet;
 
-	std::vector<MapData*> _objects;
+	std::vector<MapData*> _records;
 
 
 	public:
 		/// Constructs a MapDataSet.
 		MapDataSet(
-				const std::string& name,
+				const std::string& type,
 				const Game* const game);
 		/// Destructs a MapDataSet.
 		~MapDataSet();
@@ -70,14 +71,14 @@ private:
 		/// Loads the map data set from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets the dataset name (used for MAP generation).
-		std::string getName() const;
+		/// Gets the dataset type (used for MAP generation).
+		std::string getType() const;
 
 		/// Gets the dataset size.
 		size_t getSize() const;
 
 		/// Gets the objects in this dataset.
-		std::vector<MapData*>* getObjects();
+		std::vector<MapData*>* getRecords();
 
 		/// Gets the surfaces in this dataset.
 		SurfaceSet* getSurfaceset() const;

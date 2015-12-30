@@ -576,16 +576,20 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 			i != _mapDataSets.end();
 			++i)
 	{
+		//Log(LOG_INFO) << "sbg: loadMapResources() " << (*i)->getType();
 		(*i)->loadData();
 
-		if (game->getRuleset()->getMCDPatch((*i)->getName()) != nullptr)
-			game->getRuleset()->getMCDPatch((*i)->getName())->modifyData(*i);
+		if (game->getRuleset()->getMCDPatch((*i)->getType()) != nullptr)
+		{
+			//Log(LOG_INFO) << ". modify";
+			game->getRuleset()->getMCDPatch((*i)->getType())->modifyData(*i);
+		}
 	}
 
 	int
 		mapDataId,
-		mapDataSetId,
-		parts = static_cast<int>(Tile::PARTS_TILE);
+		mapDataSetId;
+	const int parts = static_cast<int>(Tile::PARTS_TILE);
 	MapDataType partType;
 
 	for (size_t
@@ -594,11 +598,11 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 			++i)
 	{
 		for (int
-				part = 0;
-				part != parts;
-				++part)
+				j = 0;
+				j != parts;
+				++j)
 		{
-			partType = static_cast<MapDataType>(part);
+			partType = static_cast<MapDataType>(j);
 			_tiles[i]->getMapData(
 								&mapDataId,
 								&mapDataSetId,
@@ -608,7 +612,7 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 				&& mapDataSetId != -1)
 			{
 				_tiles[i]->setMapData(
-								_mapDataSets[static_cast<size_t>(mapDataSetId)]->getObjects()->at(static_cast<size_t>(mapDataId)),
+								_mapDataSets[static_cast<size_t>(mapDataSetId)]->getRecords()->at(static_cast<size_t>(mapDataId)),
 								mapDataId,
 								mapDataSetId,
 								partType);
@@ -653,7 +657,7 @@ YAML::Node SavedBattleGame::save() const
 			i != _mapDataSets.end();
 			++i)
 	{
-		node["mapdatasets"].push_back((*i)->getName());
+		node["mapdatasets"].push_back((*i)->getType());
 	}
 
 #if 0

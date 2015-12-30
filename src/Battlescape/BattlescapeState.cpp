@@ -1475,6 +1475,9 @@ void BattlescapeState::mapClick(Action* action)
 //		if (_battleSave->getDebugMode() == true)
 //		{
 		std::wostringstream woststr;
+//		if (_battleSave->getTile(pos)->getMapData(O_OBJECT) != nullptr)
+//			woststr << (int)(_battleSave->getTile(pos)->getMapData(O_OBJECT)->getBigwall()) << L" ";
+
 		if (_battleSave->getTile(pos)->getUnit() != nullptr)
 			woststr	<< L"unit "
 					<< _battleSave->getTile(pos)->getUnit()->getId()

@@ -353,6 +353,8 @@ int Tile::getTuCostTile(
 						return _objects[partType]->getTuCostPart(moveType);
 						// question: Why do side-bigwalls return 0.
 				}
+				break;
+
 			default:
 				return _objects[partType]->getTuCostPart(moveType);
 		}
@@ -490,10 +492,10 @@ DoorResult Tile::openDoor(
 			}
 
 			setMapData(
-					_objects[partType]->getDataset()->getObjects()->at(_objects[partType]->getAltMCD()),
+					_objects[partType]->getDataset()->getRecords()->at(_objects[partType]->getAltMCD()),
 					_objects[partType]->getAltMCD(),
 					_mapDataSetId[partType],
-					_objects[partType]->getDataset()->getObjects()->at(_objects[partType]->getAltMCD())->getPartType());
+					_objects[partType]->getDataset()->getRecords()->at(_objects[partType]->getAltMCD())->getPartType());
 
 			setMapData(nullptr,-1,-1, partType);
 
@@ -532,10 +534,10 @@ void Tile::openDoorAuto(const MapDataType partType)
 /*	if (_objects[partType]->isDoor() == true)
 	{
 		setMapData(
-				_objects[partType]->getDataset()->getObjects()->at(_objects[partType]->getAltMCD()),
+				_objects[partType]->getDataset()->getRecords()->at(_objects[partType]->getAltMCD()),
 				_objects[partType]->getAltMCD(),
 				_mapDataSetId[partType],
-				_objects[partType]->getDataset()->getObjects()->at(_objects[partType]->getAltMCD())->getPartType());
+				_objects[partType]->getDataset()->getRecords()->at(_objects[partType]->getAltMCD())->getPartType());
 
 		setMapData(nullptr,-1,-1, partType);
 	}
@@ -689,7 +691,7 @@ void Tile::destroyTilepart(
 
 		if (data->getDieMCD() != 0)
 		{
-			MapData* const dataDead (data->getDataset()->getObjects()->at(data->getDieMCD()));
+			MapData* const dataDead (data->getDataset()->getRecords()->at(data->getDieMCD()));
 			setMapData(
 					dataDead,
 					data->getDieMCD(),

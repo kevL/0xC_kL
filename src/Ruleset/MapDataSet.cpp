@@ -28,6 +28,7 @@
 #include "../Engine/CrossPlatform.h"
 #include "../Engine/Exception.h"
 #include "../Engine/Game.h"
+//#include "../Engine/Logger.h"
 #include "../Engine/SurfaceSet.h"
 
 #include "../Resource/ResourcePack.h"
@@ -43,29 +44,33 @@ MapData
 
 /**
  * MapDataSet construction.
- * @param name - reference the name of the data
+ * @note This is a tileset.
+ * @param type - reference the type of the data
  * @param game - pointer to Game
  */
 MapDataSet::MapDataSet(
-		const std::string& name,
+		const std::string& type,
 		const Game* const game)
 	:
-		_name(name),
+		_type(type),
 		_game(game),
 		_surfaceSet(nullptr),
 		_loaded(false)
-{}
+{
+	//Log(LOG_INFO) << "MapDataSet cTor " << _type;
+}
 
 /**
  * MapDataSet destruction.
  */
 MapDataSet::~MapDataSet()
 {
+	//Log(LOG_INFO) << "MapDataSet dTor " << _type;
 	unloadData();
 }
 
 /**
- * Loads the map data set from a YAML file.
+ * Loads the MapDataSet from a YAML file.
  * @param node - reference a YAML node
  */
 void MapDataSet::load(const YAML::Node& node)
@@ -75,17 +80,18 @@ void MapDataSet::load(const YAML::Node& node)
 			i != node.end();
 			++i)
 	{
-		_name = i->as<std::string>(_name);
+		_type = i->as<std::string>(_type);
+		//Log(LOG_INFO) << "MapDataSet: load() " << _type;
 	}
 }
 
 /**
- * Gets the MapDataSet name string - eg. "AVENGER"
- * @return, the MapDataSet name
+ * Gets the MapDataSet type string - eg. "AVENGER"
+ * @return, the MapDataSet type
  */
-std::string MapDataSet::getName() const
+std::string MapDataSet::getType() const
 {
-	return _name;
+	return _type;
 }
 
 /**
@@ -94,16 +100,16 @@ std::string MapDataSet::getName() const
  */
 size_t MapDataSet::getSize() const
 {
-	return _objects.size();
+	return _records.size();
 }
 
 /**
  * Gets the objects in this dataset.
  * @return, pointer to a vector of pointers to MapData objects
  */
-std::vector<MapData*>* MapDataSet::getObjects()
+std::vector<MapData*>* MapDataSet::getRecords()
 {
-	return &_objects;
+	return &_records;
 }
 
 /**
@@ -179,7 +185,7 @@ void MapDataSet::loadData()
 
 	// Load Terrain Data from MCD file
 	std::ostringstream oststr;
-	oststr << "TERRAIN/" << _name << ".MCD";
+	oststr << "TERRAIN/" << _type << ".MCD";
 
 	// Load file
 	std::ifstream mapFile ( // init.
@@ -197,7 +203,7 @@ void MapDataSet::loadData()
 					sizeof(MCD)))
 	{
 		MapData* to = new MapData(this);
-		_objects.push_back(to);
+		_records.push_back(to);
 
 		// set all the terrain-object properties:
 		for (size_t
@@ -257,7 +263,7 @@ void MapDataSet::loadData()
 		}
 
 		// store the 2 tiles of blanks in a static - so they are accessible everywhere
-		if (_name.compare("BLANKS") == 0)
+		if (_type.compare("BLANKS") == 0)
 		{
 			if (objNumber == 0)
 				MapDataSet::_blankTile = to;
@@ -277,8 +283,8 @@ void MapDataSet::loadData()
 
 	// process the MapDataSet to put 'block' values on floortiles (as they don't exist in UFO::Orig)
 	for (std::vector<MapData*>::const_iterator
-			i = _objects.begin();
-			i != _objects.end();
+			i = _records.begin();
+			i != _records.end();
 			++i)
 	{
 		if ((*i)->getPartType() == O_FLOOR
@@ -295,7 +301,7 @@ void MapDataSet::loadData()
 //						armor);	// gas
 
 			if ((*i)->getDieMCD() != 0)
-				_objects.at(static_cast<size_t>((*i)->getDieMCD()))
+				_records.at(static_cast<size_t>((*i)->getDieMCD()))
 												->setBlock(
 														1,
 														1,
@@ -313,7 +319,7 @@ void MapDataSet::loadData()
 	// Load terrain sprites/surfaces/PCK files into a SurfaceSet.
 	// Let extraSprites override terrain sprites.
 	std::ostringstream test;
-	test << _name << ".PCK";
+	test << _type << ".PCK";
 	SurfaceSet* const srt = _game->getResourcePack()->getSurfaceSet(test.str());
 	if (srt != nullptr)
 		_surfaceSet = srt;
@@ -322,8 +328,8 @@ void MapDataSet::loadData()
 		std::ostringstream
 			oststr1,
 			oststr2;
-		oststr1 << "TERRAIN/" << _name << ".PCK";
-		oststr2 << "TERRAIN/" << _name << ".TAB";
+		oststr1 << "TERRAIN/" << _type << ".PCK";
+		oststr2 << "TERRAIN/" << _type << ".TAB";
 
 		_surfaceSet = new SurfaceSet(32,40);
 		_surfaceSet->loadPck(
@@ -340,17 +346,17 @@ void MapDataSet::unloadData()
 	if (_loaded == true)
 	{
 		for (std::vector<MapData*>::const_iterator
-				i = _objects.begin();
-				i != _objects.end();
+				i = _records.begin();
+				i != _records.end();
 				)
 		{
 			delete *i;
-			i = _objects.erase(i);
+			i = _records.erase(i);
 		}
 
 		// but don't delete the extraSprites for terrain!!!
 		std::ostringstream test;
-		test << _name << ".PCK";
+		test << _type << ".PCK";
 		const SurfaceSet* const srt = _game->getResourcePack()->getSurfaceSet(test.str());
 		if (srt == nullptr)
 			delete _surfaceSet;

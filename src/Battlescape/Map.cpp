@@ -1325,41 +1325,45 @@ void Map::drawTerrain(Surface* const surface) // private.
 // Draw unitBelow if it is on raised ground & there is no Floor above.
 					if (itZ > 0 && _tile->hasNoFloor(tileBelow) == true)
 					{
-						const BattleUnit* const unitBelow (tileBelow->getUnit());
-						if (unitBelow != nullptr
-							&& unitBelow->getUnitVisible() == true // don't bother checking DebugMode
-							&& unitBelow->getHeight(true) - tileBelow->getTerrainLevel() > 25) // head sticks up (should be able to set "25" higher than 25)
+						const int tLevel = tileBelow->getTerrainLevel();
+						if (tLevel < 0) // probly more like -4 or -8
 						{
-							trueLoc = isTrueLoc(unitBelow, tileBelow);
-							quadrant = getQuadrant(unitBelow, tileBelow, trueLoc);
-							sprite = unitBelow->getCache(quadrant);
-							if (sprite != nullptr)
+							const BattleUnit* const unitBelow (tileBelow->getUnit());
+							if (unitBelow != nullptr
+								&& unitBelow->getUnitVisible() == true // don't bother checking DebugMode
+								&& unitBelow->getHeight(true) - tLevel > 23) // head sticks up, probly more like 26 or 28 before clipping background walls above occurs
 							{
-								if (tileBelow->isDiscovered(2) == true)
-									shade = tileBelow->getShade();
-								else
-									shade = SHADE_BLACK;
-
-								calculateWalkingOffset(unitBelow, &walkOffset, trueLoc);
-								sprite->blitNShade(
-										surface,
-										posScreen.x + walkOffset.x,
-										posScreen.y + walkOffset.y + 24,
-										shade);
-
-								if (unitBelow->getFireUnit() != 0)
+								trueLoc = isTrueLoc(unitBelow, tileBelow);
+								quadrant = getQuadrant(unitBelow, tileBelow, trueLoc);
+								sprite = unitBelow->getCache(quadrant);
+								if (sprite != nullptr)
 								{
-									frame = 4 + (_animFrame / 2);
-									sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
-									if (sprite != nullptr)
-										sprite->blitNShade(
-												surface,
-												posScreen.x + walkOffset.x,
-												posScreen.y + walkOffset.y + 24);
+									if (tileBelow->isDiscovered(2) == true)
+										shade = tileBelow->getShade();
+									else
+										shade = SHADE_BLACK;
+
+									calculateWalkingOffset(unitBelow, &walkOffset, trueLoc);
+									sprite->blitNShade(
+											surface,
+											posScreen.x + walkOffset.x,
+											posScreen.y + walkOffset.y + 24,
+											shade);
+
+									if (unitBelow->getFireUnit() != 0)
+									{
+										frame = 4 + (_animFrame / 2);
+										sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
+										if (sprite != nullptr)
+											sprite->blitNShade(
+													surface,
+													posScreen.x + walkOffset.x,
+													posScreen.y + walkOffset.y + 24);
+									}
 								}
 							}
+//							else unitBelow = nullptr; // for use below when deciding whether to redraw cursorFront.
 						}
-//						else unitBelow = nullptr; // for use below when deciding whether to redraw cursorFront.
 					}
 
 // Draw SMOKE & FIRE

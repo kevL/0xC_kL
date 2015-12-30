@@ -2503,8 +2503,8 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const scri
 	{
 		(*i)->loadData();
 
-		if (_rules->getMCDPatch((*i)->getName()) != nullptr)
-			_rules->getMCDPatch((*i)->getName())->modifyData(*i);
+		if (_rules->getMCDPatch((*i)->getType()) != nullptr)
+			_rules->getMCDPatch((*i)->getType())->modifyData(*i);
 
 		_battleSave->getMapDataSets()->push_back(*i);
 		++blockDataSetIdOffset;
@@ -2826,8 +2826,8 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const scri
 		{
 			(*i)->loadData();
 
-			if (_rules->getMCDPatch((*i)->getName()))
-				_rules->getMCDPatch((*i)->getName())->modifyData(*i);
+			if (_rules->getMCDPatch((*i)->getType()) != nullptr)
+				_rules->getMCDPatch((*i)->getType())->modifyData(*i);
 
 			_battleSave->getMapDataSets()->push_back(*i);
 			++craftDataSetIdOffset;
@@ -2874,8 +2874,8 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const scri
 		{
 			(*i)->loadData();
 
-			if (_rules->getMCDPatch((*i)->getName()))
-				_rules->getMCDPatch((*i)->getName())->modifyData(*i);
+			if (_rules->getMCDPatch((*i)->getType()) != nullptr)
+				_rules->getMCDPatch((*i)->getType())->modifyData(*i);
 
 			_battleSave->getMapDataSets()->push_back(*i);
 		}
@@ -3743,7 +3743,7 @@ void BattlescapeGenerator::drillModules( // private.
 
 								if (floorMcd != nullptr)
 								{
-									data = _terrainRule->getMapDataSets()->at(floorMcd->dataSet)->getObjects()->at(floorMcd->entry);
+									data = _terrainRule->getMapDataSets()->at(floorMcd->dataSet)->getRecords()->at(floorMcd->entry);
 									tile->setMapData(
 												data,
 												floorMcd->entry,
@@ -3768,7 +3768,7 @@ void BattlescapeGenerator::drillModules( // private.
 
 						if (northMcd != nullptr)
 						{
-							data = _terrainRule->getMapDataSets()->at(northMcd->dataSet)->getObjects()->at(northMcd->entry);
+							data = _terrainRule->getMapDataSets()->at(northMcd->dataSet)->getRecords()->at(northMcd->entry);
 							tile = _battleSave->getTile(Position(
 															(i * 10) + 9,
 															(j * 10) + rect.y,
@@ -3791,7 +3791,7 @@ void BattlescapeGenerator::drillModules( // private.
 
 						if (cornerMcd != nullptr)
 						{
-							data = _terrainRule->getMapDataSets()->at(cornerMcd->dataSet)->getObjects()->at(cornerMcd->entry);
+							data = _terrainRule->getMapDataSets()->at(cornerMcd->dataSet)->getRecords()->at(cornerMcd->entry);
 							tile = _battleSave->getTile(Position(
 															(i + 1) * 10,
 															(j * 10) + rect.y,
@@ -3830,7 +3830,7 @@ void BattlescapeGenerator::drillModules( // private.
 
 								if (floorMcd != nullptr)
 								{
-									data = _terrainRule->getMapDataSets()->at(floorMcd->dataSet)->getObjects()->at(floorMcd->entry);
+									data = _terrainRule->getMapDataSets()->at(floorMcd->dataSet)->getRecords()->at(floorMcd->entry);
 									tile->setMapData(
 												data,
 												floorMcd->entry,
@@ -3855,7 +3855,7 @@ void BattlescapeGenerator::drillModules( // private.
 
 						if (westMcd != nullptr)
 						{
-							data = _terrainRule->getMapDataSets()->at(westMcd->dataSet)->getObjects()->at(westMcd->entry);
+							data = _terrainRule->getMapDataSets()->at(westMcd->dataSet)->getRecords()->at(westMcd->entry);
 							tile = _battleSave->getTile(Position(
 															(i * 10) + rect.x,
 															(j * 10) + 9,
@@ -3878,7 +3878,7 @@ void BattlescapeGenerator::drillModules( // private.
 
 						if (cornerMcd != nullptr)
 						{
-							data = _terrainRule->getMapDataSets()->at(cornerMcd->dataSet)->getObjects()->at(cornerMcd->entry);
+							data = _terrainRule->getMapDataSets()->at(cornerMcd->dataSet)->getRecords()->at(cornerMcd->entry);
 							tile = _battleSave->getTile(Position(
 															(i * 10) + rect.x,
 															(j + 1) * 10,

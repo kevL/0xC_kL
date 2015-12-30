@@ -21,7 +21,7 @@
 #define OPENXCOM_MCDPATCH_H
 
 //#include <string>
-//#include <yaml-cpp/yaml.h>
+#include <yaml-cpp/yaml.h>
 
 #include "MapData.h"
 
@@ -46,16 +46,16 @@ private:
 		_flammabilities,
 		_footstepSounds,
 		_fuels,
-		_HEBlocks,
+		_heBlocks,
 		_scanG,
 		_terrainHeight,
-		_TUWalks,
-		_TUFlys,
-		_TUSlides;
+		_tuWalks,
+		_tuFlys,
+		_tuSlides;
 	std::vector<std::pair<size_t, bool>>
 		_noFloors,
-		_stopLOSses;
-	std::vector<std::pair<size_t, std::vector<size_t>>> _LOFTS;
+		_stopLOSes;
+	std::vector<std::pair<size_t, std::vector<size_t>>> _lofts;
 
 	std::vector<std::pair<size_t, MapDataType>> _objectTypes;
 	std::vector<std::pair<size_t, SpecialTileType>> _specialTypes;
@@ -70,7 +70,7 @@ private:
 		/// Loads the MCD Patch from YAML.
 		void load(const YAML::Node& node);
 
-		/// Applies an MCD patch to a mapDataSet
+		/// Applies an MCD patch to a MapDataSet/Tileset.
 		void modifyData(MapDataSet* const dataSet) const;
 };
 

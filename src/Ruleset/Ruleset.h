@@ -78,7 +78,7 @@ class RuleVideo;
 class SavedGame;
 class Soldier;
 class SoldierNamePool;
-class SoundDefinition;
+//class SoundDefinition;
 //class StatString;
 class UfoTrajectory;
 
@@ -149,7 +149,7 @@ protected:
 		_ufosIndex;
 //		_psiRequirements; // it's a cache for psiStrengthEval
 
-	std::vector<std::vector<int> > _alienItemLevels;
+	std::vector<std::vector<int>> _alienItemLevels;
 
 	std::vector<OperationPool*> _operationTitles;
 	std::vector<SoldierNamePool*> _names;
@@ -179,7 +179,7 @@ protected:
 	std::map<std::string, RuleTerrain*>			_terrains;
 	std::map<std::string, RuleUfo*>				_ufos;
 	std::map<std::string, RuleVideo*>			_videos;
-	std::map<std::string, SoundDefinition*>		_soundDefs;
+//	std::map<std::string, SoundDefinition*>		_soundDefs;
 	std::map<std::string, UfoTrajectory*>		_ufoTrajectories;
 	std::map<std::string, RuleUnit*>			_units;
 
@@ -187,7 +187,7 @@ protected:
 
 	std::vector<std::pair<std::string, ExtraSounds*>>	_extraSounds;
 	std::vector<std::pair<std::string, ExtraSprites*>>	_extraSprites;
-	std::vector<std::pair<std::string, RuleMusic*>>	_music;
+	std::vector<std::pair<std::string, RuleMusic*>>		_music;
 
 	std::pair<std::string, int> _alienFuel;
 
@@ -338,7 +338,7 @@ protected:
 		const std::vector<std::string>& getAlienMissionList() const;
 
 		/// Gets the alien item level table.
-		const std::vector<std::vector<int> >& getAlienItemLevels() const;
+		const std::vector<std::vector<int>>& getAlienItemLevels() const;
 
 		/// Gets the pre-defined starting base.
 		const YAML::Node& getStartingBase() const;
@@ -349,12 +349,12 @@ protected:
 		MCDPatch* getMCDPatch(const std::string& name) const;
 
 		/// Gets the music rules
-		std::vector<std::pair<std::string, RuleMusic*> > getMusicTracks() const;
+		std::vector<std::pair<std::string, RuleMusic*>> getMusicTracks() const;
 
 		/// Gets the list of external Sprites.
-		std::vector<std::pair<std::string, ExtraSprites*> > getExtraSprites() const;
+		std::vector<std::pair<std::string, ExtraSprites*>> getExtraSprites() const;
 		/// Gets the list of external Sounds.
-		std::vector<std::pair<std::string, ExtraSounds*> > getExtraSounds() const;
+		std::vector<std::pair<std::string, ExtraSounds*>> getExtraSounds() const;
 		/// Gets the list of external Strings.
 		std::map<std::string, ExtraStrings*> getExtraStrings() const;
 
@@ -400,7 +400,7 @@ protected:
 		RuleGlobe* getGlobe() const;
 
 		/// Gets the list of selective files for insertion into internal Cat files.
-		const std::map<std::string, SoundDefinition*>* getSoundDefinitions() const;
+//		const std::map<std::string, SoundDefinition*>* getSoundDefinitions() const;
 
 		/// Gets the list of videos for intro/outro etc.
 		const std::map<std::string, RuleVideo*>* getVideos() const;

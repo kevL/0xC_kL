@@ -21,6 +21,8 @@
 
 #include "MapDataSet.h"
 
+//#include "../Engine/Logger.h"
+
 
 namespace OpenXcom
 {
@@ -29,21 +31,26 @@ namespace OpenXcom
  * Initializes an MCD Patch.
  */
 MCDPatch::MCDPatch()
-{}
+{
+	//Log(LOG_INFO) << "MCDPatch cTor";
+}
 
 /**
  * dTor.
  */
 MCDPatch::~MCDPatch()
-{}
+{
+	//Log(LOG_INFO) << "MCDPatch dTor";
+}
 
 /**
- * Loads the MCD Patch from a YAML file.
+ * Loads an MCD Patch from a YAML file.
  * TODO: fill this out with more data.
  * @param node - YAML node
  */
 void MCDPatch::load(const YAML::Node& node)
 {
+	//Log(LOG_INFO) << "MCDPatch: load()";
 	YAML::Node data = node["data"];
 
 	for (YAML::const_iterator
@@ -51,45 +58,47 @@ void MCDPatch::load(const YAML::Node& node)
 			i != data.end();
 			++i)
 	{
-		const size_t MCDIndex = (*i)["MCDIndex"].as<size_t>();
+		const size_t mcdIndex = (*i)["MCDIndex"].as<size_t>();
+		//Log(LOG_INFO) << ". index = " << mcdIndex;
 
 		if ((*i)["bigWall"])
 		{
 			const int bigWall = (*i)["bigWall"].as<int>();
+			//Log(LOG_INFO) << ". . bigWall = " << bigWall;
 			_bigWalls.push_back(std::make_pair(
-											MCDIndex,
+											mcdIndex,
 											bigWall));
 		}
 
 		if ((*i)["TUWalk"])
 		{
-			const int TUWalk = (*i)["TUWalk"].as<int>();
-			_TUWalks.push_back(std::make_pair(
-											MCDIndex,
-											TUWalk));
+			const int tuWalk = (*i)["TUWalk"].as<int>();
+			_tuWalks.push_back(std::make_pair(
+											mcdIndex,
+											tuWalk));
 		}
 
 		if ((*i)["TUFly"])
 		{
-			const int TUFly = (*i)["TUFly"].as<int>();
-			_TUFlys.push_back(std::make_pair(
-										MCDIndex,
-										TUFly));
+			const int tuFly = (*i)["TUFly"].as<int>();
+			_tuFlys.push_back(std::make_pair(
+										mcdIndex,
+										tuFly));
 		}
 
 		if ((*i)["TUSlide"])
 		{
-			const int TUSlide = (*i)["TUSlide"].as<int>();
-			_TUSlides.push_back(std::make_pair(
-											MCDIndex,
-											TUSlide));
+			const int tuSlide = (*i)["TUSlide"].as<int>();
+			_tuSlides.push_back(std::make_pair(
+											mcdIndex,
+											tuSlide));
 		}
 
 		if ((*i)["deathTile"])
 		{
 			const int deathTile = (*i)["deathTile"].as<int>();
 			_deathTiles.push_back(std::make_pair(
-											MCDIndex,
+											mcdIndex,
 											deathTile));
 		}
 
@@ -97,7 +106,7 @@ void MCDPatch::load(const YAML::Node& node)
 		{
 			const int terrainHeight = (*i)["terrainHeight"].as<int>();
 			_terrainHeight.push_back(std::make_pair(
-												MCDIndex,
+												mcdIndex,
 												terrainHeight));
 		}
 
@@ -105,7 +114,7 @@ void MCDPatch::load(const YAML::Node& node)
 		{
 			const int explosive = (*i)["explosive"].as<int>();
 			_explosives.push_back(std::make_pair(
-											MCDIndex,
+											mcdIndex,
 											explosive));
 		}
 
@@ -113,7 +122,7 @@ void MCDPatch::load(const YAML::Node& node)
 		{
 			const int armor = (*i)["armor"].as<int>();
 			_armors.push_back(std::make_pair(
-										MCDIndex,
+										mcdIndex,
 										armor));
 		}
 
@@ -121,7 +130,7 @@ void MCDPatch::load(const YAML::Node& node)
 		{
 			const int flammability = (*i)["flammability"].as<int>();
 			_flammabilities.push_back(std::make_pair(
-												MCDIndex,
+												mcdIndex,
 												flammability));
 		}
 
@@ -129,7 +138,7 @@ void MCDPatch::load(const YAML::Node& node)
 		{
 			const int fuel = (*i)["fuel"].as<int>();
 			_fuels.push_back(std::make_pair(
-										MCDIndex,
+										mcdIndex,
 										fuel));
 		}
 
@@ -137,15 +146,15 @@ void MCDPatch::load(const YAML::Node& node)
 		{
 			const int footstepSound = (*i)["footstepSound"].as<int>();
 			_footstepSounds.push_back(std::make_pair(
-												MCDIndex,
+												mcdIndex,
 												footstepSound));
 		}
 
 		if ((*i)["HEBlock"])
 		{
 			const int HEBlock = (*i)["HEBlock"].as<int>();
-			_HEBlocks.push_back(std::make_pair(
-											MCDIndex,
+			_heBlocks.push_back(std::make_pair(
+											mcdIndex,
 											HEBlock));
 		}
 
@@ -153,23 +162,23 @@ void MCDPatch::load(const YAML::Node& node)
 		{
 			const bool noFloor = (*i)["noFloor"].as<bool>();
 			_noFloors.push_back(std::make_pair(
-											MCDIndex,
+											mcdIndex,
 											noFloor));
 		}
 
 		if ((*i)["stopLOS"])
 		{
 			const bool stopLOS = (*i)["stopLOS"].as<bool>();
-			_stopLOSses.push_back(std::make_pair(
-											MCDIndex,
+			_stopLOSes.push_back(std::make_pair(
+											mcdIndex,
 											stopLOS));
 		}
 
 		if ((*i)["LOFTS"])
 		{
 			const std::vector<size_t> lofts = (*i)["LOFTS"].as<std::vector<size_t>>();
-			_LOFTS.push_back(std::make_pair(
-										MCDIndex,
+			_lofts.push_back(std::make_pair(
+										mcdIndex,
 										lofts));
 		}
 
@@ -177,7 +186,7 @@ void MCDPatch::load(const YAML::Node& node)
 		{
 			const MapDataType objectType = static_cast<MapDataType>((*i)["objectType"].as<int>());
 			_objectTypes.push_back(std::make_pair(
-												MCDIndex,
+												mcdIndex,
 												objectType));
 		}
 
@@ -185,7 +194,7 @@ void MCDPatch::load(const YAML::Node& node)
 		{
 			const SpecialTileType specialType = static_cast<SpecialTileType>((*i)["specialType"].as<int>());
 			_specialTypes.push_back(std::make_pair(
-												MCDIndex,
+												mcdIndex,
 												specialType));
 		}
 
@@ -193,48 +202,50 @@ void MCDPatch::load(const YAML::Node& node)
 		{
 			const int scanG = (*i)["scanG"].as<int>();
 			_scanG.push_back(std::make_pair(
-										MCDIndex,
+										mcdIndex,
 										scanG));
 		}
 	}
 }
 
 /**
- * Applies an MCD patch to a mapDataSet.
- * @param dataSet The MapDataSet we want to modify.
+ * Applies an MCD patch to a MapDataSet/Tileset.
+ * @param dataSet - pointer to the MapDataSet to modify
  */
 void MCDPatch::modifyData(MapDataSet* const dataSet) const
 {
+	//Log(LOG_INFO) << "MCDPatch: modifyData() dataSet = " << dataSet->getType();
 	for (std::vector<std::pair<size_t, int>>::const_iterator
 			i = _bigWalls.begin();
 			i != _bigWalls.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setBigWall(static_cast<BigwallType>(i->second));
+		//Log(LOG_INFO) << ". index = " << (i->first) << " bigWall = " << (i->second);
+		dataSet->getRecords()->at(i->first)->setBigWall(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _TUWalks.begin();
-			i != _TUWalks.end();
+			i = _tuWalks.begin();
+			i != _tuWalks.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setTUWalk(i->second);
+		dataSet->getRecords()->at(i->first)->setTUWalk(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _TUFlys.begin();
-			i != _TUFlys.end();
+			i = _tuFlys.begin();
+			i != _tuFlys.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setTUFly(i->second);
+		dataSet->getRecords()->at(i->first)->setTUFly(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _TUSlides.begin();
-			i != _TUSlides.end();
+			i = _tuSlides.begin();
+			i != _tuSlides.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setTUSlide(i->second);
+		dataSet->getRecords()->at(i->first)->setTUSlide(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
@@ -242,7 +253,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _deathTiles.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setDieMCD(i->second);
+		dataSet->getRecords()->at(i->first)->setDieMCD(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
@@ -250,7 +261,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _terrainHeight.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setTerrainLevel(i->second);
+		dataSet->getRecords()->at(i->first)->setTerrainLevel(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
@@ -258,7 +269,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _explosives.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setExplosive(i->second);
+		dataSet->getRecords()->at(i->first)->setExplosive(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
@@ -266,7 +277,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _armors.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setArmor(i->second);
+		dataSet->getRecords()->at(i->first)->setArmor(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
@@ -274,7 +285,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _flammabilities.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setFlammable(i->second);
+		dataSet->getRecords()->at(i->first)->setFlammable(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
@@ -282,7 +293,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _fuels.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setFuel(i->second);
+		dataSet->getRecords()->at(i->first)->setFuel(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
@@ -290,15 +301,15 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _footstepSounds.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setFootstepSound(i->second);
+		dataSet->getRecords()->at(i->first)->setFootstepSound(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _HEBlocks.begin();
-			i != _HEBlocks.end();
+			i = _heBlocks.begin();
+			i != _heBlocks.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setHEBlock(i->second);
+		dataSet->getRecords()->at(i->first)->setHEBlock(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, bool>>::const_iterator
@@ -306,20 +317,20 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _noFloors.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setNoFloor(i->second);
+		dataSet->getRecords()->at(i->first)->setNoFloor(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, bool>>::const_iterator
-			i = _stopLOSses.begin();
-			i != _stopLOSses.end();
+			i = _stopLOSes.begin();
+			i != _stopLOSes.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setStopLOS(i->second);
+		dataSet->getRecords()->at(i->first)->setStopLOS(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, std::vector<size_t>>>::const_iterator
-			i = _LOFTS.begin();
-			i != _LOFTS.end();
+			i = _lofts.begin();
+			i != _lofts.end();
 			++i)
 	{
 		size_t layer = 0;
@@ -328,7 +339,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 				j != i->second.end();
 				++j)
 		{
-			dataSet->getObjects()->at(i->first)->setLoftId(*j, layer++);
+			dataSet->getRecords()->at(i->first)->setLoftId(*j, layer++);
 		}
 	}
 
@@ -337,7 +348,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _objectTypes.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setObjectType(static_cast<MapDataType>(i->second));
+		dataSet->getRecords()->at(i->first)->setObjectType(static_cast<MapDataType>(i->second));
 	}
 
 	for (std::vector<std::pair<size_t, SpecialTileType>>::const_iterator
@@ -345,7 +356,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _specialTypes.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setSpecialType(static_cast<SpecialTileType>(i->second));
+		dataSet->getRecords()->at(i->first)->setSpecialType(static_cast<SpecialTileType>(i->second));
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
@@ -353,7 +364,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _scanG.end();
 			++i)
 	{
-		dataSet->getObjects()->at(i->first)->setMiniMapIndex(static_cast<unsigned short>(i->second));
+		dataSet->getRecords()->at(i->first)->setMiniMapIndex(static_cast<unsigned short>(i->second));
 	}
 }
 

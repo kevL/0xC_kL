@@ -238,7 +238,7 @@ MapData* RuleTerrain::getMapData(
 		*mapDataSetId = 0;
 	}
 
-	return dataSet->getObjects()->at(*id);
+	return dataSet->getRecords()->at(*id);
 }
 
 /**

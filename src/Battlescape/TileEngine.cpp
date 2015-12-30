@@ -4245,7 +4245,7 @@ void TileEngine::detonate(Tile* const tile) const
 			// this follows transformed object parts (object can become a ground - unless your MCDs are correct)
 			dieMCD = tiles[i]->getMapData(partType)->getDieMCD();
 			if (dieMCD != 0)
-				partT = tiles[i]->getMapData(partType)->getDataset()->getObjects()->at(static_cast<size_t>(dieMCD))->getPartType();
+				partT = tiles[i]->getMapData(partType)->getDataset()->getRecords()->at(static_cast<size_t>(dieMCD))->getPartType();
 			else
 				partT = partType;
 

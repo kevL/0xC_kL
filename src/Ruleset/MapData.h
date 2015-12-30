@@ -82,7 +82,7 @@ enum BigwallType
 
 /**
  * MapData is the smallest piece of a Battlescape terrain, holding info about a
- * certain object, wall, floor, etc.
+ * certain object, wall, floor, etc. THIS IS A TILEPART.
  * @note A better ident for this class would be 'TileData' or even 'PartData'.
  * @sa MapDataSet.
  */
@@ -113,14 +113,14 @@ private:
 		_miniMapIndex,
 		_sprite[8],
 		_terrainLevel,
-		_TUWalk,
-		_TUFly,
-		_TUSlide,
+		_tuWalk,
+		_tuFly,
+		_tuSlide,
 		_yOffset;
 
 	size_t _loftId[12];
 
-	MapDataSet* _dataset;
+	MapDataSet* _dataSet;
 
 	BigwallType _bigWall;
 	DamageType _explosiveType;
@@ -190,12 +190,12 @@ private:
 		void setBlock(
 				int lightBlock,
 				int visionBlock,
-				int HEBlock,
+				int heBlock,
 				int smokeBlock,
 				int fireBlock,
 				int gasBlock);
 		/// Sets the amount of HE blockage.
-		void setHEBlock(int HEBlock);
+		void setHEBlock(int heBlock);
 
 		/// Gets the offset on the Y axis when drawing this object.
 		int getYOffset() const;
@@ -280,7 +280,7 @@ private:
 		int getMiniMapIndex() const;
 
 		/// Sets the bigwall value.
-		void setBigWall(const BigwallType bigWall);
+		void setBigWall(int bigWall);
 
 		/// Sets the TUWalk value.
 		void setTUWalk(const int TUWalk);
