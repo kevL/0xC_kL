@@ -70,8 +70,8 @@ private:
 	Timer* _animTimer;
 	WarningMessage* _warning;
 
-	std::map<int, std::map<int, int>> _stackLevel;
-	std::vector<std::pair<int, int>> _grenadeFuses;
+	std::map<int, std::map<int,int>> _stackLevel;
+	std::vector<std::pair<int,int>> _grenadeFuses;
 
 
 	/// Moves an item to a specified section.

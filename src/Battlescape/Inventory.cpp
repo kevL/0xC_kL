@@ -336,17 +336,17 @@ void Inventory::drawItems()
 		Surface* const stackLayer = new Surface(getWidth(), getHeight());
 		stackLayer->setPalette(getPalette());
 
-		const Uint8 color = static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")->getElement("numStack")->color);
+		static const Uint8
+			colorQty (static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")->getElement("numStack")->color)),
+			RED (37);
 
 		for (std::vector<BattleItem*>::const_iterator // Ground items
 				i = _selUnit->getTile()->getInventory()->begin();
 				i != _selUnit->getTile()->getInventory()->end();
 				++i)
 		{
-			// Note that items can be made invisible by setting their
-			// width or height to 0 - eg. used with tank corpse items.
-			if (*i != _selItem
-				&& (*i)->getSlotX() >= _groundOffset
+			if (*i != _selItem									// Note that items can be made invisible by setting their
+				&& (*i)->getSlotX() >= _groundOffset			// width or height to 0 - eg. used with tank corpse items.
 				&& (*i)->getRules()->getInventoryHeight() != 0
 				&& (*i)->getRules()->getInventoryWidth() != 0)
 			{
@@ -366,24 +366,29 @@ void Inventory::drawItems()
 				}
 				else Log(LOG_INFO) << "ERROR: bigob not found [2] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
 
-				if (_stackLevel[(*i)->getSlotX()]
-							   [(*i)->getSlotY()] > 1) // item stacking
+				const int qty (_stackLevel[(*i)->getSlotX()] // item stacking
+										  [(*i)->getSlotY()]);
+				int fatals;
+				if ((*i)->getUnit() != nullptr)
+					fatals = (*i)->getUnit()->getFatalWounds();
+				else
+					fatals = 0;
+
+				if (qty > 1 || fatals != 0)
 				{
 					_stackNumber->setX(((*i)->getSection()->getX()
 										+ (((*i)->getSlotX() + (*i)->getRules()->getInventoryWidth()) - _groundOffset)
 											* RuleInventory::SLOT_W) - 4);
 
-					if (_stackLevel[(*i)->getSlotX()]
-								   [(*i)->getSlotY()] > 9)
+					if (qty > 9 || fatals > 9)
 						_stackNumber->setX(_stackNumber->getX() - 4);
 
 					_stackNumber->setY(((*i)->getSection()->getY()
 										+ ((*i)->getSlotY() + (*i)->getRules()->getInventoryHeight())
 											* RuleInventory::SLOT_H) - 6);
-					_stackNumber->setValue(_stackLevel[(*i)->getSlotX()]
-													  [(*i)->getSlotY()]);
+					_stackNumber->setValue(fatals ? fatals : qty);
 					_stackNumber->draw();
-					_stackNumber->setColor(color);
+					_stackNumber->setColor(fatals ? RED : colorQty);
 					_stackNumber->blit(stackLayer);
 				}
 			}
