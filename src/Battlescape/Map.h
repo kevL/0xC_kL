@@ -58,7 +58,7 @@ enum CursorType
 
 
 /**
- * Interactive map of the battlescape.
+ * Interactive Map of the battlescape.
  */
 class Map final
 	:
@@ -70,15 +70,18 @@ private:
 		SCROLL_INTERVAL	= 15,
 		BULLET_SPRITES	= 35,
 		SHADE_BLACK		= 16,
-		DIST_ARC_SMOOTH	=  8;
+		DIST_ARC_SMOOTH	=  8,
+
+		WHITE = 1,
+		RED   = 3;
 
 	static const Uint8
 		ACU_ORANGE	= 18,
 		ACU_RED		= 35,
 		ACU_GREEN	= 51;
 	static const Uint32
-		SCREEN_WHITE	=  1,
-		SCREEN_BLACK	= 15;
+		SCREEN_WHITE =  1,
+		SCREEN_BLACK = 15;
 
 	CursorType _cursorType;
 
@@ -123,7 +126,9 @@ private:
 	SavedBattleGame* _battleSave;
 	Surface
 		* _arrow,
-		* _arrow_kneel;
+		* _arrow_kneel,
+		* _srfRookiBadge,
+		* _srfCross;
 	SurfaceSet* _projectileSet;
 	Tile* _tile;
 	Timer
@@ -133,8 +138,14 @@ private:
 	std::list<Explosion*> _explosions;
 	std::vector<Position> _waypoints;
 
-	/// Draw the battlefield.
+	/// Draws the battlefield.
 	void drawTerrain(Surface* const surface);
+	/// Draws a Soldier's rank icon above its sprite on the Map.
+	void drawRankIcon(
+			const BattleUnit* const unit,
+			int offset_x,
+			int offset_y,
+			bool tLevel = true);
 	/// Checks if a southwesterly wall should suppress unit-sprite drawing.
 	bool checkWest(
 			const Tile* const tile6,
@@ -168,7 +179,7 @@ private:
 
 
 	public:
-		/// Creates a new map at the specified position and size.
+		/// Creates a new Map at the specified position and size.
 		Map(
 				Game* game,
 				int width,
@@ -176,10 +187,10 @@ private:
 				int x,
 				int y,
 				int playableHeight);
-		/// Cleans up the map.
+		/// Cleans up the Map.
 		~Map();
 
-		/// Initializes the map.
+		/// Initializes the Map.
 		void init();
 		/// Handles timers.
 		void think() override;
@@ -257,9 +268,9 @@ private:
 		/// Sets the unitDying flag.
 		void setUnitDying(bool flag = true);
 
-		/// Special handling for updating map height.
+		/// Special handling for updating Map height.
 		void setHeight(int height) override;
-		/// Special handling for updating map width.
+		/// Special handling for updating Map width.
 		void setWidth(int width) override;
 
 		/// Gets the vertical position of the hidden movement screen.
@@ -270,7 +281,7 @@ private:
 		/// Gets the icon width.
 		int getIconWidth() const;
 
-		/// Converts a map position to a sound angle.
+		/// Converts a Map position to a sound angle.
 		int getSoundAngle(const Position& pos) const;
 
 		/// Resets the camera smoothing bool.
@@ -289,7 +300,7 @@ private:
 		/// Gets the SavedBattleGame.
 		SavedBattleGame* getBattleSave() const;
 
-		/// Tells the map to reveal because there's a waypoint action going down.
+		/// Tells the Map to reveal because there's a waypoint action going down.
 		void setWaypointAction(bool wp = true);
 
 		/// Sets whether to draw the projectile on the Map.
