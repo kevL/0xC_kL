@@ -681,7 +681,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 
 	surface->lock();
-	for (int
+/*	for (int
 			itZ = beginZ; // 3. finally lap the levels bottom to top
 			itZ <= endZ;
 			++itZ)
@@ -695,6 +695,21 @@ void Map::drawTerrain(Surface* const surface) // private.
 					itY = beginY; // 1. first draw terrain in columns north to south
 					itY <= endY;
 					++itY)
+			{ */
+	for (int
+			itX = beginX; // 3. finally draw it all eastward
+			itX <= endX;
+			++itX)
+	{
+		for (int
+				itY = beginY; // 2. next draw those columns north to south
+				itY <= endY;
+				++itY)
+		{
+			for (int
+					itZ = beginZ; // 1. first draw vertically upward columns
+					itZ <= endZ;
+					++itZ)
 			{
 				posField = Position(itX,itY,itZ);
 				_camera->convertMapToScreen(posField, &posScreen);
@@ -731,7 +746,6 @@ void Map::drawTerrain(Surface* const surface) // private.
 					if (sprite != nullptr)
 					{
 						hasFloor = true;
-
 						sprite->blitNShade(
 								surface,
 								posScreen.x,
@@ -743,7 +757,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 						// west-north also hide rankIcon if curTerrainLevel < 0) ... unless there's also a floor directly above soldier.
 						// Special case: crazy battleship tile+half floors; so check for content object diagonal wall directly above soldier also.
 						// Also, make sure the rankIcon isn't half-hidden by a westwall directly above the soldier.
-						if (itZ > 0 && itX < endX)
+						//
+						// bleh. stupid Map ... FIXED.
+/*						if (itZ > 0 && itX < endX)
 						{
 							const Tile* const tileEast (_battleSave->getTile(posField + Position(1,0,0)));
 							if (tileEast != nullptr // why.
@@ -765,7 +781,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 											posScreen.y + 32);
 								}
 							}
-						} // kL_end.
+						} */ // kL_end.
 					} // end draw floor
 
 // Redraw unitNorth moving NE/SW to stop current-Floor from clipping feet.
@@ -1224,54 +1240,54 @@ void Map::drawTerrain(Surface* const surface) // private.
 								}
 
 								// kL_begin #3 of 3:
-								const Tile* const tileAbove (_battleSave->getTile(posField + Position(0,0,1)));
-
-								if ((viewLevel == itZ
-										&& (_camera->getShowLayers() == false || itZ == endZ))
-									|| (tileAbove != nullptr && tileAbove->getSprite(O_FLOOR) == nullptr))
+								if (_unit->getFaction() == FACTION_PLAYER)
 								{
-									if (_unit != _battleSave->getSelectedUnit()
-										&& _unit->getGeoscapeSoldier() != nullptr
-										&& _unit->getFaction() == _unit->getOriginalFaction())
+									const Tile* const tileAbove (_battleSave->getTile(posField + Position(0,0,1)));
+									if ((viewLevel == itZ
+											&& (_camera->getShowLayers() == false || itZ == endZ))
+										|| (tileAbove != nullptr && tileAbove->getSprite(O_FLOOR) == nullptr))
 									{
-										drawRankIcon(
-												_unit,
-												posScreen.x + walkOffset.x,
-												posScreen.y + walkOffset.y,
-												false);
-									}
-
-									// Draw Exposed mark
-									if (_unit->getFaction() == FACTION_PLAYER
-										&& _unit->getFaction() == _unit->getOriginalFaction()
-										&& (_unit->getArmor()->getSize() == 1 || quadrant == 1))
-									{
-										const int exposure = _unit->getExposed();
-										if (exposure != -1)
+										if (_unit->getGeoscapeSoldier() != nullptr
+											&& _unit != _battleSave->getSelectedUnit())
 										{
-											int
-												colorGroup,
-												colorOffset;
-											if (_animFrame < 4)
-											{
-												colorGroup = 0; // white
-												colorOffset = 2;
-											}
-											else
-											{
-												colorGroup = 10; // yellow
-												colorOffset = 3;
-											}
+											drawRankIcon(
+													_unit,
+													posScreen.x + walkOffset.x,
+													posScreen.y + walkOffset.y,
+													false);
+										}
 
-											_numExposed->setValue(static_cast<unsigned>(exposure));
-											_numExposed->draw();
-											_numExposed->blitNShade(
-																surface,
-																posScreen.x + walkOffset.x + 21,
-																posScreen.y + walkOffset.y + 6,
-																colorOffset,
-																false,
-																colorGroup);
+										// Draw Exposed mark
+										if (_unit->getOriginalFaction() == FACTION_PLAYER
+											&& (_unit->getArmor()->getSize() == 1 || quadrant == 1))
+										{
+											const int exposure = _unit->getExposed();
+											if (exposure != -1)
+											{
+												int
+													colorGroup,
+													colorOffset;
+												if (_animFrame < 4)
+												{
+													colorGroup = 0; // white
+													colorOffset = 2;
+												}
+												else
+												{
+													colorGroup = 10; // yellow
+													colorOffset = 3;
+												}
+
+												_numExposed->setValue(static_cast<unsigned>(exposure));
+												_numExposed->draw();
+												_numExposed->blitNShade(
+																	surface,
+																	posScreen.x + walkOffset.x + 21,
+																	posScreen.y + walkOffset.y + 6,
+																	colorOffset,
+																	false,
+																	colorGroup);
+											}
 										}
 									}
 								} // kL_end.
@@ -1306,7 +1322,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 					}
 					// end unconscious soldier icon.
 
-// Draw unitBelow if it is on raised ground & there is no Floor.
+// Draw unitBelow if it is on raised ground & there is no Floor above.
 					if (itZ > 0 && _tile->hasNoFloor(tileBelow) == true)
 					{
 						const BattleUnit* const unitBelow (tileBelow->getUnit());
@@ -1411,11 +1427,11 @@ void Map::drawTerrain(Surface* const surface) // private.
 							case BIGWALL_EAST:
 							case BIGWALL_SOUTH:
 							case BIGWALL_E_S:
-								sprite->blitNShade(
-										surface,
-										posScreen.x,
-										posScreen.y - _tile->getMapData(O_OBJECT)->getYOffset(),
-										tileShade);
+									sprite->blitNShade(
+											surface,
+											posScreen.x,
+											posScreen.y - _tile->getMapData(O_OBJECT)->getYOffset(),
+											tileShade);
 						}
 					}
 
@@ -1689,11 +1705,11 @@ void Map::drawTerrain(Surface* const surface) // private.
 				}
 				// is inside the Surface
 			}
-			// end Tiles_y looping.
+			// end Tiles_y looping. -> Tiles_z
 		}
-		// end Tiles_x looping.
+		// end Tiles_x looping. -> Tiles_y
 	}
-	// end Tiles_z looping.
+	// end Tiles_z looping. -> Tiles_x
 
 	// Draw Bouncing Arrow over selected unit.
 	if (_cursorType != CT_NONE
