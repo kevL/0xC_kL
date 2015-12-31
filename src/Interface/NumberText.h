@@ -48,10 +48,12 @@ private:
 		HEIGHT_B = 6;
 
 	static Surface
-		* _chars[DIGITS],
+		* _chars[DIGITS + 1u],
 		* _charsBorder[DIGITS];
 
-	bool _bordered;
+	bool
+		_append,
+		_bordered;
 	unsigned _value;
 	Uint8 _color;
 
@@ -65,7 +67,8 @@ private:
 				int width,
 				int height,
 				int x = 0,
-				int y = 0);
+				int y = 0,
+				bool append = false);
 		/// Cleans up the NumberText.
 		~NumberText();
 

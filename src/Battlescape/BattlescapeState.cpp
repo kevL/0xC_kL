@@ -222,8 +222,8 @@ BattlescapeState::BattlescapeState()
 	_numMediR2			= new NumberText(7, 5, x + 281, y + 39);
 	_numMediR3			= new NumberText(7, 5, x + 281, y + 46);
 
-	_numTwohandL		= new NumberText(7, 5, x +  36, y + 46);
-	_numTwohandR		= new NumberText(7, 5, x + 308, y + 46);
+	_numTwohandL		= new NumberText(7, 5, x +  33, y + 46, true);
+	_numTwohandR		= new NumberText(7, 5, x + 305, y + 46, true);
 //	const int
 //		visibleUnitX = _rules->getInterface("battlescape")->getElement("visibleUnits")->x,
 //		visibleUnitY = _rules->getInterface("battlescape")->getElement("visibleUnits")->y;

@@ -28,7 +28,7 @@ namespace OpenXcom
 bool NumberText::init = true;
 
 Surface
-	* NumberText::_chars[DIGITS] = {},
+	* NumberText::_chars[DIGITS + 1u] = {},
 	* NumberText::_charsBorder[DIGITS] = {};
 
 
@@ -38,17 +38,20 @@ Surface
  * @param height	- height in pixels
  * @param x			- X position in pixels (default 0)
  * @param y			- Y position in pixels (default 0)
+ * @param append	- true to append an 'h' (default false)
  */
 NumberText::NumberText(
 		int width,
 		int height,
 		int x,
-		int y)
+		int y,
+		bool append)
 	:
 		Surface(
 			width,
 			height,
 			x,y),
+		_append(append),
 		_value(0),
 		_color(0),
 		_bordered(false)
@@ -78,6 +81,7 @@ void NumberText::deleteStaticSurfaces() // static.
 			delete _chars[i];
 			delete _charsBorder[i];
 		}
+		delete _chars[10];
 	}
 }
 
@@ -259,6 +263,19 @@ void NumberText::createStaticSurfaces() // private & static.
 						_charsBorder[i],
 						0,0,0);
 	}
+
+	_chars[10] = new Surface(WIDTH, HEIGHT); // letter 'h'
+	_chars[10]->lock();
+	_chars[10]->setPixelColor(0,0, WHITE);
+	_chars[10]->setPixelColor(0,1, WHITE);
+	_chars[10]->setPixelColor(0,2, WHITE);
+	_chars[10]->setPixelColor(0,3, WHITE);
+	_chars[10]->setPixelColor(0,4, WHITE);
+	_chars[10]->setPixelColor(1,2, WHITE);
+	_chars[10]->setPixelColor(2,2, WHITE);
+	_chars[10]->setPixelColor(2,3, WHITE);
+	_chars[10]->setPixelColor(2,4, WHITE);
+	_chars[10]->unlock();
 }
 
 /**
@@ -329,6 +346,7 @@ void NumberText::setPalette(
 		_chars[i]->setPalette(colors, firstcolor, ncolors);
 		_charsBorder[i]->setPalette(colors, firstcolor, ncolors);
 	}
+	_chars[10]->setPalette(colors, firstcolor, ncolors);
 }
 
 /**
@@ -343,7 +361,6 @@ void NumberText::draw()
 	const std::string st (oststr.str());
 
 	int x = 0;
-
 	if (_bordered == false)
 	{
 		for (std::string::const_iterator
@@ -355,6 +372,13 @@ void NumberText::draw()
 			_chars[*i - '0']->setY(0);
 			_chars[*i - '0']->blit(this);
 			x += _chars[*i - '0']->getWidth() + 1;
+		}
+
+		if (_append == true)
+		{
+			_chars[10]->setX(x);
+			_chars[10]->setY(0);
+			_chars[10]->blit(this);
 		}
 	}
 	else
