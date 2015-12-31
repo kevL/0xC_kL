@@ -198,8 +198,7 @@ void StartState::init()
 
 /*	std::wostringstream ss;
 	ss << L"Loading OpenXcom " << Language::utf8ToWstr(OPENXCOM_VERSION_SHORT) << Language::utf8ToWstr(OPENXCOM_VERSION_GIT) << "...";
-	addLine(ss.str());
-*/ // kL
+	addLine(ss.str()); */
 
 	_thread = SDL_CreateThread( // load the game data in a separate thread
 							load,
@@ -234,7 +233,7 @@ void StartState::think()
 		case LOADING_SUCCESSFUL:
 			CrossPlatform::flashWindow();
 
-			Log(LOG_INFO) << "OpenXcom started!";
+			Log(LOG_INFO) << "0xC_kL started!";
 			if (Options::reload == false
 				&& Options::playIntro == true)
 			{
@@ -296,17 +295,19 @@ void StartState::think()
 }
 
 /**
- * The game quits if the player presses any key when an error message is on display.
+ * The game quits if the player presses the cancel-key [Esc] when an error
+ * message is on display.
  * @param action - pointer to an Action
  */
 void StartState::handle(Action* action)
 {
 	State::handle(action);
 
-	if (loading == LOADING_DONE)
+	if (loading == LOADING_DONE
+		&& action->getDetails()->type == SDL_KEYDOWN
+		&& action->getDetails()->key.keysym.sym == Options::keyCancel)
 	{
-		if (action->getDetails()->type == SDL_KEYDOWN)
-			_game->quit();
+		_game->quit();
 	}
 }
 
@@ -317,14 +318,14 @@ void StartState::animate()
 {
 	++_anim;
 
-	if (_anim % 15 == 0) // kL
+	if (_anim % 15 == 0)
 		_cursor->setVisible(!_cursor->getVisible());
 
 	if (loading == LOADING_STARTED)
 	{
 		std::wostringstream woststr;
 		woststr << L"Loading " << Language::utf8ToWstr(OPENXCOM_VERSION_GIT); // kL
-//kL	woststr << L"Loading OpenXcom " << Language::utf8ToWstr(OPENXCOM_VERSION_SHORT) << Language::utf8ToWstr(OPENXCOM_VERSION_GIT) << "...";
+//		woststr << L"Loading OpenXcom " << Language::utf8ToWstr(OPENXCOM_VERSION_SHORT) << Language::utf8ToWstr(OPENXCOM_VERSION_GIT) << "...";
 		if (Options::reload == true)
 		{
 			if (_anim == 2)
@@ -393,7 +394,7 @@ void StartState::animate()
 
 			else if (_anim < 115) // 92..114
 			{
-				_dosart = L"OpenXcom initialisation"; // 23 chars <-
+				_dosart = L"_0xC_kL_ initialization"; // 23 chars <-
 				addChar_kL(_anim - 92);
 			}
 			else if (_anim == 115)
@@ -442,7 +443,7 @@ void StartState::animate()
 			else if (_anim < 240) // 188..239
 			{
 //				_dosart = L"Loading oXc_kL ..."; // 18 chars
-				_dosart = L"Loading oXc_kL ... .. ..... . ... ..... ... ... . .."; // 52 chars
+				_dosart = L"Loading 0xC_kL ... .. ..... . ... ..... ... ... . .."; // 52 chars
 				addChar_kL(_anim - 188);
 			}
 //			else if (_anim == 206)
@@ -451,7 +452,6 @@ void StartState::animate()
 			else if (_anim == 240)
 			{
 				addCursor_kL();
-
 				if (kL_ready == true)
 				{
 					kL_ready = false;
@@ -484,17 +484,17 @@ void StartState::addLine(const std::wstring& line)
 }
 
 /**
- * kL.
+ *
  */
-void StartState::addLine_kL() // kL
+void StartState::addLine_kL()
 {
 	_output << L"\n";
 }
 
 /**
- * kL.
+ *
  */
-void StartState::addChar_kL(const size_t nextChar) // kL
+void StartState::addChar_kL(const size_t nextChar)
 {
 //	substr(size_type pos = 0, size_type len = npos) const;
 /*	for (size_t
@@ -507,16 +507,12 @@ void StartState::addChar_kL(const size_t nextChar) // kL
 }
 
 /**
- * kL.
+ *
  */
-void StartState::addCursor_kL() // kL
+void StartState::addCursor_kL()
 {
-	const int
-		x = _text->getTextWidth((_text->getTextHeight() - _font->getHeight()) / _font->getHeight()) + 20,
-		y = _text->getTextHeight() - _font->getHeight() + 20;
-
-	_cursor->setX(x);
-	_cursor->setY(y);
+	_cursor->setX(_text->getTextWidth((_text->getTextHeight() - _font->getHeight()) / _font->getHeight()) + 20);
+	_cursor->setY(_text->getTextHeight() - _font->getHeight() + 20);
 }
 
 /**
@@ -541,13 +537,13 @@ int StartState::load(void* game_ptr)
 		game->defaultLanguage();
 		Log(LOG_INFO) << "Language loaded.";
 
-		if (kL_ready == true)				// kL
+		if (kL_ready == true)
 		{
-			kL_ready = false;				// kL
+			kL_ready = false;
 			loading = LOADING_SUCCESSFUL;
 		}
-		else								// kL
-			kL_ready = true;				// kL
+		else
+			kL_ready = true;
 	}
 	catch (Exception& e)
 	{

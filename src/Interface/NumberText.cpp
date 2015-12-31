@@ -20,14 +20,13 @@
 #include "NumberText.h"
 
 #include <sstream>
-//#include <string>
 
 
 namespace OpenXcom
 {
 
 /**
- * Sets up a blank number text.
+ * Sets up a blank NumberText.
  * @param width		- width in pixels
  * @param height	- height in pixels
  * @param x			- X position in pixels (default 0)
@@ -283,7 +282,7 @@ Uint8 NumberText::getColor() const
 }
 
 /**
- * Replaces a certain amount of colors in the number text palette.
+ * Replaces a certain amount of colors in the NumberText palette.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- amount of colors to replace (default 256)
@@ -314,7 +313,7 @@ void NumberText::draw()
 
 	std::ostringstream oststr;
 	oststr << _value;
-	std::string st = oststr.str();
+	const std::string st (oststr.str());
 
 	int x = 0;
 

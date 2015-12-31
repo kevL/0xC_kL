@@ -158,15 +158,15 @@ MCDPatches:
     data:
       - MCDIndex: 0 #red round energy supply
         psycho: 2
-#      - MCDIndex: 2 #red oblong energy supply
+#      - MCDIndex: 1 #red oblong energy supply
 #        psycho: 2
-#      - MCDIndex: 4 #disco ball
+#      - MCDIndex: 2 #disco ball
 #        psycho: 1
-      - MCDIndex: 7 #disco walls, yellow northWall
+      - MCDIndex: 3 #disco walls, yellow northWall
         psycho: 1
-      - MCDIndex: 8 #  "     "      "    westWall
+      - MCDIndex: 4 #  "     "      "    westWall
         psycho: 1
-      - MCDIndex: 17 # disco walls, blue northWall
+      - MCDIndex: 7 # disco walls, blue northWall
         psycho: 1
-      - MCDIndex: 18 #   "     "     "   westWall
+      - MCDIndex: 8 #   "     "     "   westWall
         psycho: 1

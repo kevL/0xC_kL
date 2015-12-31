@@ -214,7 +214,7 @@ void MapDataSet::loadData()
 			to->setSprite(i, (int)mcd.Frame[i]);
 		}
 
-		to->setObjectType(static_cast<MapDataType>(mcd.Tile_Type)); // must come after setSprite() above to set '_isPsychedelic' correctly.
+		to->setPartType(static_cast<MapDataType>(mcd.Tile_Type));
 		to->setSpecialType(static_cast<SpecialTileType>(mcd.Target_Type));
 		to->setYOffset((int)mcd.P_Level);
 		to->setTUCosts(

@@ -27,7 +27,7 @@ namespace OpenXcom
 {
 
 /**
- * Number digits displayed on the screen.
+ * Numeric digits displayed on the screen.
  * @note Takes a number and displays it using a simple hard-coded font.
  */
 class NumberText final
@@ -46,35 +46,35 @@ private:
 
 
 	public:
-		/// Creates a new number text with the specified size and position.
+		/// Creates a new NumberText with the specified size and position.
 		NumberText(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the number text.
+		/// Cleans up the NumberText.
 		~NumberText();
 
-		/// Sets the number text's value.
+		/// Sets the NumberText's value.
 		void setValue(unsigned value = 0);
-		/// Gets the number text's value.
+		/// Gets the NumberText's value.
 		unsigned getValue() const;
 
 		/// Sets the number to have a border or not.
 		void setBordered(bool bordered = true);
 
-		/// Sets the number text's color.
+		/// Sets the NumberText's color.
 		void setColor(Uint8 color) override;
-		/// Gets the number text's color.
+		/// Gets the NumberText's color.
 		Uint8 getColor() const;
 
-		/// Sets the number text's palette.
+		/// Sets the NumberText's palette.
 		void setPalette(
 				SDL_Color* colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
 
-		/// Draws the number text.
+		/// Draws the NumberText.
 		void draw() override;
 };
 

@@ -96,7 +96,7 @@ private:
 //		_yBeforeMouseScrolling;
 	size_t
 		_fuseFrame,
-		_hostileTargeterFrame;
+		_targeterFrame;
 
 	Uint32 _mouseScrollStartTime;
 
@@ -166,7 +166,10 @@ private:
 		* _numMediL3,
 		* _numMediR1,
 		* _numMediR2,
-		* _numMediR3;
+		* _numMediR3,
+
+		* _numTwohandL,
+		* _numTwohandR;
 	Ruleset* _rules;
 	SavedBattleGame* _battleSave;
 	SavedGame* _gameSave;
@@ -175,9 +178,9 @@ private:
 		* _bigBtnBorder,
 		* _iconsLayer,
 		* _kneel,
-		* _rank,
 		* _overWeight,
-		* _hostileTargeter;
+		* _rank,
+		* _targeter;
 	Text
 		* _txtBaseLabel,
 		* _txtConsole1,

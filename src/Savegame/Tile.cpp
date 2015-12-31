@@ -1197,9 +1197,10 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 
 /**
  * Animate the tile.
- * @note This means to advance the current frame for every part. Ufo doors are a
- * bit special - they animate only when triggered. When ufo doors are on frame 0
- * (closed) or frame 7 (open) they are not animated further.
+ * @note This means to advance the current frame for every part. Ufo-doors are a
+ * bit special - they animate only when triggered; when ufo-doors are on frame 0
+ * (closed) or frame 7 (open) they are not animated further. A ufo-door on an
+ * XCOM craft has only 4 frames; when it hits frame 3 it jumps to frame 7 (open).
  */
 void Tile::animateTile()
 {
@@ -1212,12 +1213,12 @@ void Tile::animateTile()
 	{
 		if (_objects[i] != nullptr)
 		{
-			const int isPsycho = _objects[i]->getPsychedelic();
+			const int isPsycho (_objects[i]->getPsychedelic());
 			if (isPsycho == 0)
 			{
 				if (_objects[i]->isUfoDoor() == false
 					|| (_curFrame[i] != 0
-						&& _curFrame[i] != 7)) // ufo door is currently static
+						&& _curFrame[i] != 7)) // ufo-door is currently static
 				{
 					nextFrame = _curFrame[i] + 1;
 

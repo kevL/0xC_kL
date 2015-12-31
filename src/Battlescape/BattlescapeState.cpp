@@ -132,7 +132,7 @@ BattlescapeState::BattlescapeState()
 		_mouseScrollStartTime(0),
 		_fuseFrame(0),
 		_showConsole(2),
-		_hostileTargeterFrame(0),
+		_targeterFrame(0),
 		_showSoldierData(false),
 		_iconsHidden(false),
 		_isOverweight(false),
@@ -221,14 +221,17 @@ BattlescapeState::BattlescapeState()
 	_numMediR1			= new NumberText(7, 5, x + 281, y + 32);
 	_numMediR2			= new NumberText(7, 5, x + 281, y + 39);
 	_numMediR3			= new NumberText(7, 5, x + 281, y + 46);
+
+	_numTwohandL		= new NumberText(7, 5, x +  36, y + 46);
+	_numTwohandR		= new NumberText(7, 5, x + 308, y + 46);
 //	const int
 //		visibleUnitX = _rules->getInterface("battlescape")->getElement("visibleUnits")->x,
 //		visibleUnitY = _rules->getInterface("battlescape")->getElement("visibleUnits")->y;
 
-	_hostileTargeter = new Surface(
-								32,40,
-								screenWidth / 2 - 16,
-								playableHeight / 2);
+	_targeter = new Surface(
+						32,40,
+						screenWidth / 2 - 16,
+						playableHeight / 2);
 
 	std::fill_n(
 			_hostileUnit,
@@ -405,9 +408,11 @@ BattlescapeState::BattlescapeState()
 	add(_numMediR1,			"numAmmoRight",			"battlescape", _icons);
 	add(_numMediR2,			"numAmmoRight",			"battlescape", _icons);
 	add(_numMediR3,			"numAmmoRight",			"battlescape", _icons);
-	add(_hostileTargeter);
+	add(_numTwohandL,		"numAmmoLeft",			"battlescape", _icons);
+	add(_numTwohandR,		"numAmmoRight",			"battlescape", _icons);
+	add(_targeter);
 
-	_hostileTargeter->setVisible(false);
+	_targeter->setVisible(false);
 
 	for (size_t
 			i = 0;
@@ -2237,8 +2242,8 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 			_map->getCamera()->centerOnPosition(_hostileUnit[i]->getPosition());
 			// (but note that it makes no such burp against _hostileUnit[] below_)
 
-			_hostileTargeter->setVisible();
-			_hostileTargeterFrame = 0;
+			_targeter->setVisible();
+			_targeterFrame = 0;
 		}
 		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
 		{
@@ -2577,12 +2582,15 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	_numAmmoLeft		->setVisible(false);
 	_numAmmoRight		->setVisible(false);
 
-	_numMediL1			->setVisible(false);
-	_numMediL2			->setVisible(false);
-	_numMediL3			->setVisible(false);
-	_numMediR1			->setVisible(false);
-	_numMediR2			->setVisible(false);
-	_numMediR3			->setVisible(false);
+	_numMediL1 ->setVisible(false);
+	_numMediL2 ->setVisible(false);
+	_numMediL3 ->setVisible(false);
+	_numMediR1 ->setVisible(false);
+	_numMediR2 ->setVisible(false);
+	_numMediR3 ->setVisible(false);
+
+	_numTwohandL ->setVisible(false);
+	_numTwohandR ->setVisible(false);
 
 	_isKneeled =
 	_isOverweight = false;
@@ -2651,7 +2659,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	}
 
 
-	BattleUnit* const selUnit = _battleSave->getSelectedUnit(); // <- not sure if this is FACTION_PLAYER only.
+	BattleUnit* const selUnit = _battleSave->getSelectedUnit();
 	if (selUnit != nullptr)
 	{
 		if (calcFoV == true)
@@ -2663,11 +2671,11 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 										_game->getLanguage(),
 										false));
 
-		const Soldier* const soldier = selUnit->getGeoscapeSoldier();
-		if (soldier != nullptr)
+		const Soldier* const sol = selUnit->getGeoscapeSoldier();
+		if (sol != nullptr)
 		{
 			SurfaceSet* const texture = _game->getResourcePack()->getSurfaceSet("SMOKE.PCK");
-			texture->getFrame(20 + soldier->getRank())->blit(_rank);
+			texture->getFrame(20 + sol->getRank())->blit(_rank);
 
 			if (selUnit->isKneeled() == true)
 			{
@@ -2691,8 +2699,8 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 			_numDirTur->setVisible();
 		}
 
-		const int wounds = selUnit->getFatalWounds();
-		if (wounds != 0)
+		const int fatals = selUnit->getFatalWounds();
+		if (fatals != 0)
 		{
 			Surface* srfStatus = _game->getResourcePack()->getSurface("RANK_ROOKIE");
 			if (srfStatus != nullptr)
@@ -2703,7 +2711,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 			_numWounds->setX(_btnWounds->getX() + 7);
 
-			_numWounds->setValue(static_cast<unsigned>(wounds));
+			_numWounds->setValue(static_cast<unsigned>(fatals));
 			_numWounds->setVisible();
 		}
 
@@ -2819,9 +2827,16 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 								_btnRightHandItem);
 			_btnRightHandItem->setVisible();
 
+			_numTwohandR->setVisible();
+			if (itRule->isTwoHanded() == true)
+				_numTwohandR->setValue(2u);
+			else
+				_numTwohandR->setValue(1u);
+
 			switch (itRule->getBattleType())
 			{
 				case BT_FIREARM:
+//				case BT_MELEE:
 					if (rtItem->selfPowered() == false || itRule->getClipSize() > 0)
 					{
 						_numAmmoRight->setVisible();
@@ -2863,9 +2878,16 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 								_btnLeftHandItem);
 			_btnLeftHandItem->setVisible();
 
+			_numTwohandL->setVisible();
+			if (itRule->isTwoHanded() == true)
+				_numTwohandL->setValue(2u);
+			else
+				_numTwohandL->setValue(1u);
+
 			switch (itRule->getBattleType())
 			{
 				case BT_FIREARM:
+//				case BT_MELEE:
 					if (ltItem->selfPowered() == false || itRule->getClipSize() > 0)
 					{
 						_numAmmoLeft->setVisible();
@@ -2962,7 +2984,7 @@ void BattlescapeState::animate()
 			if (selUnit->getFatalWounds() != 0)
 				flashMedic();
 
-			if (_hostileTargeter->getVisible() == true)
+			if (_targeter->getVisible() == true)
 				hostileTargeter();
 
 			if (_battleGame->getExecution() == true)
@@ -3137,13 +3159,11 @@ void BattlescapeState::hostileTargeter() // private.
 {
 	static const int cursorFrames[TARGET_FRAMES] = {0,1,2,3,4,0}; // note: does not show the last frame.
 
-	Surface* const targetCursor = _game->getResourcePack()->getSurfaceSet("TARGET.PCK")->getFrame(cursorFrames[_hostileTargeterFrame]);
-	targetCursor->blit(_hostileTargeter);
+	Surface* const targetCursor = _game->getResourcePack()->getSurfaceSet("TARGET.PCK")->getFrame(cursorFrames[_targeterFrame]);
+	targetCursor->blit(_targeter);
 
-	++_hostileTargeterFrame;
-
-	if (_hostileTargeterFrame == TARGET_FRAMES)
-		_hostileTargeter->setVisible(false);
+	if (++_targeterFrame == TARGET_FRAMES)
+		_targeter->setVisible(false);
 }
 
 /**

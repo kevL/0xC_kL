@@ -28,9 +28,9 @@ namespace OpenXcom
 {
 
 /**
- * Creates a new Map Data Object.
- * @note This is a tile-part.
- * @param dataSet - pointer to the MapDataSet this object belongs to
+ * Creates a new MapData tile-part.
+ * @note yes, This is a tile-part.
+ * @param dataSet - pointer to the MapDataSet this tile-part belongs to
  */
 MapData::MapData(MapDataSet* const dataSet)
 	:
@@ -52,7 +52,7 @@ MapData::MapData(MapDataSet* const dataSet)
 		_footstepSound(0),
 		_dieMCD(0),
 		_altMCD(0),
-		_objectType(O_FLOOR),
+		_partType(O_FLOOR),
 		_lightSource(0),
 		_armor(0),
 		_flammable(0),
@@ -70,7 +70,7 @@ MapData::MapData(MapDataSet* const dataSet)
 }
 
 /**
- * Destroys the object.
+ * Destroys the MapData.
  */
 MapData::~MapData()
 {
@@ -78,7 +78,7 @@ MapData::~MapData()
 }
 
 /**
- * Gets the dataset this object belongs to.
+ * Gets the MapDataSet/tileset this tile-part belongs to.
  * @return, pointer to MapDataSet
  */
 MapDataSet* MapData::getDataset() const
@@ -322,7 +322,7 @@ int MapData::getYOffset() const
 }
 
 /**
- * Sets the offset on the Y axis for drawing this object.
+ * Sets the offset on the Y axis for drawing this tile-part.
  * @param value - the offset
  */
 void MapData::setYOffset(int value)
@@ -331,44 +331,26 @@ void MapData::setYOffset(int value)
 }
 
 /**
- * Gets the type of object.
- * @return, the object type (0-3)
+ * Gets the MapDataType/part-type of this tile-part.
+ * @return, the tile-part type (0-3)
  */
 MapDataType MapData::getPartType() const
 {
-	return _objectType;
+	return _partType;
 }
 
 /**
- * Sets the type of object.
- * @note Sets '_isPsychedelic' also.
- * @param type - the object type (0-3)
+ * Sets the MapDataType/part-type of this tile-part.
+ * @param type - the tile-part type (0-3)
  */
-void MapData::setObjectType(MapDataType type)
+void MapData::setPartType(MapDataType type)
 {
-	_objectType = type;
-
-	if (_dataSet->getType() == "U_PODS") // kL-> should put this in MCDPatch
-	{
-		if (   _sprite[0] == 7		// disco walls, yellow northWall
-			|| _sprite[0] == 8		//  "     "       "    westWall
-			|| _sprite[0] == 17		// disco walls, blue northWall
-			|| _sprite[0] == 18)	//  "     "       "  westWall
-//			|| _sprite[0] == 4)		// disco ball
-		{
-			_isPsychedelic = 1;
-		}
-		else if (_sprite[0] == 0)	// red round energy supply
-//			||   _sprite[0] == 2)	// red oblong  "      "
-		{
-			_isPsychedelic = 2;
-		}
-	}
+	_partType = type;
 }
 
 /**
- * Gets info about special tile types.
- * @return, the special tile type
+ * Gets the SpecialTileType.
+ * @return, the SpecialTileType
  */
 SpecialTileType MapData::getSpecialType() const
 {
@@ -376,8 +358,8 @@ SpecialTileType MapData::getSpecialType() const
 }
 
 /**
- * Sets a special tile type and object type.
- * @param value	- special tile type (MapData.h)
+ * Sets the SpecialTileType.
+ * @param value	- SpecialTileType (MapData.h)
  */
 void MapData::setSpecialType(SpecialTileType type)
 {
@@ -385,7 +367,7 @@ void MapData::setSpecialType(SpecialTileType type)
 }
 
 /**
- * Gets the TU cost to move over the object/wall/floor.
+ * Gets the TU cost to move over/through the tile-part.
  * @param moveType - the movement type
  * @return, the TU cost
  */
@@ -402,7 +384,7 @@ int MapData::getTuCostPart(MovementType moveType) const
 }
 
 /**
- * Sets the TU cost to move over the object.
+ * Sets the TU cost to move over the tile-part.
  * @param walk	- the walking TU cost
  * @param fly	- the flying TU cost
  * @param slide	- the sliding TU cost
@@ -418,7 +400,7 @@ void MapData::setTUCosts(
 }
 
 /**
- * Adds this to the graphical Y offset of units or objects on this tile.
+ * Adds to the graphical Y-offset of units or objects on this tile-part.
  * @return, Y offset
  */
 int MapData::getTerrainLevel() const
@@ -427,7 +409,7 @@ int MapData::getTerrainLevel() const
 }
 
 /**
- * Sets the Y offset for units/objects on this tile.
+ * Sets the Y-offset for units or objects on this tile-part.
  * @param value - Y offset
  */
 void MapData::setTerrainLevel(int value)
@@ -436,7 +418,7 @@ void MapData::setTerrainLevel(int value)
 }
 
 /**
- * Gets the index to the footstep sound.
+ * Gets the index to this tile-part's footstep sound.
  * @return, the sound ID
  */
 int MapData::getFootstepSound() const
@@ -445,7 +427,7 @@ int MapData::getFootstepSound() const
 }
 
 /**
- * Sets the index to the footstep sound.
+ * Sets the index to this tile-part's footstep sound.
  * @param value - the sound ID
  */
 void MapData::setFootstepSound(int value)
@@ -454,8 +436,8 @@ void MapData::setFootstepSound(int value)
 }
 
 /**
- * Gets the alternative object ID.
- * @return, the alternative object ID
+ * Gets the alternate tile-part ID.
+ * @return, the alternate tile-part ID
  */
 int MapData::getAltMCD() const
 {
@@ -463,8 +445,8 @@ int MapData::getAltMCD() const
 }
 
 /**
- * Sets the alternative object ID.
- * @param value - The alternative object ID
+ * Sets the alternate tile-part ID.
+ * @param value - the alternate tile-part ID
  */
 void MapData::setAltMCD(int value)
 {
@@ -472,8 +454,8 @@ void MapData::setAltMCD(int value)
 }
 
 /**
- * Gets the dead object ID.
- * @return, the dead object ID
+ * Gets the dead tile-part ID.
+ * @return, the dead tile-part ID
  */
 int MapData::getDieMCD() const
 {
@@ -481,8 +463,8 @@ int MapData::getDieMCD() const
 }
 
 /**
- * Sets the dead object ID.
- * @param value - the dead object ID
+ * Sets the dead tile-part ID.
+ * @param value - the dead tile-part ID
  */
 void MapData::setDieMCD(int value)
 {
@@ -490,8 +472,8 @@ void MapData::setDieMCD(int value)
 }
 
 /**
- * Gets the amount of light the object is emitting.
- * @return, the amount of light emitted
+ * Gets the amount of light this tile-part emits.
+ * @return, the amount of light
  */
 int MapData::getLightSource() const
 {
@@ -502,8 +484,8 @@ int MapData::getLightSource() const
 }
 
 /**
- * Sets the amount of light the object is emitting.
- * @param value - the amount of light emitted
+ * Sets the amount of light this tile-part emits.
+ * @param value - the amount of light
  */
 void MapData::setLightSource(int value)
 {
@@ -511,7 +493,8 @@ void MapData::setLightSource(int value)
 }
 
 /**
- * Gets the amount of armor. Total hitpoints of a tile before destroyed.
+ * Gets the amount of armor.
+ * @note Total hitpoints of the tile-part before destroyed.
  * @return, the amount of armor
  */
 int MapData::getArmor() const
@@ -520,7 +503,8 @@ int MapData::getArmor() const
 }
 
 /**
- * Sets the amount of armor. Total hitpoints of a tile before destroyed.
+ * Sets the amount of armor.
+ * @note Total hitpoints of the tile-part before destroyed.
  * @param value - the amount of armor
  */
 void MapData::setArmor(int value)
@@ -529,7 +513,7 @@ void MapData::setArmor(int value)
 }
 
 /**
- * Gets the amount of flammable (how flammable this object is).
+ * Gets the amount of flammable (how flammable this tile-part is).
  * @return, the amount of flammable
  */
 int MapData::getFlammable() const
@@ -538,7 +522,7 @@ int MapData::getFlammable() const
 }
 
 /**
- * Sets the amount of flammable (how flammable this object is).
+ * Sets the amount of flammable (how flammable this tile-part is).
  * @param value - the amount of flammable
  */
 void MapData::setFlammable(int value)
@@ -693,8 +677,8 @@ void MapData::setNoFloor(bool isNoFloor)
 }
 
 /**
- * Check if this is an xcom base object.
- * @return, true if it is a base object
+ * Check if this is an xcom base tile-part.
+ * @return, true if it is a base tile-part
  */
 bool MapData::isBaseModule() const
 {

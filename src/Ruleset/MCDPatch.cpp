@@ -356,7 +356,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _objectTypes.end();
 			++i)
 	{
-		dataSet->getRecords()->at(i->first)->setObjectType(static_cast<MapDataType>(i->second));
+		dataSet->getRecords()->at(i->first)->setPartType(static_cast<MapDataType>(i->second));
 	}
 
 	for (std::vector<std::pair<size_t, SpecialTileType>>::const_iterator

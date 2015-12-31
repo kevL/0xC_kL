@@ -124,7 +124,7 @@ private:
 
 	BigwallType _bigWall;
 	DamageType _explosiveType;
-	MapDataType _objectType;
+	MapDataType _partType;
 	SpecialTileType _specialType;
 
 
@@ -205,7 +205,7 @@ private:
 		/// Gets the type of tile.
 		MapDataType getPartType() const;
 		/// Sets the type of tile.
-		void setObjectType(MapDataType type);
+		void setPartType(MapDataType type);
 
 		/// Gets info about special tile types
 		SpecialTileType getSpecialType() const;
