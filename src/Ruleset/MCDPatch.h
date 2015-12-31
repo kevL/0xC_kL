@@ -47,6 +47,7 @@ private:
 		_footstepSounds,
 		_fuels,
 		_heBlocks,
+		_psychedelic,
 		_scanG,
 		_terrainHeight,
 		_tuWalks,

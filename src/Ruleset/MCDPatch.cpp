@@ -205,6 +205,14 @@ void MCDPatch::load(const YAML::Node& node)
 										mcdIndex,
 										scanG));
 		}
+
+		if ((*i)["psycho"])
+		{
+			const int psychedelic = (*i)["psycho"].as<int>();
+			_psychedelic.push_back(std::make_pair(
+												mcdIndex,
+												psychedelic));
+		}
 	}
 }
 
@@ -365,6 +373,14 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			++i)
 	{
 		dataSet->getRecords()->at(i->first)->setMiniMapIndex(static_cast<unsigned short>(i->second));
+	}
+
+	for (std::vector<std::pair<size_t, int>>::const_iterator
+			i = _psychedelic.begin();
+			i != _psychedelic.end();
+			++i)
+	{
+		dataSet->getRecords()->at(i->first)->setPsychedelic(i->second);
 	}
 }
 

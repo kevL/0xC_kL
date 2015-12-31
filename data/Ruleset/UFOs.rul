@@ -339,10 +339,3 @@ ufos:
 # For reference - ufo7a and ufo7b are vanilla ships w/o the loading door, 7c and 7d have it. :p
 # Put a hash at the beginning of any line to be ignored.
 # All three lines of any particular ship must be hashed for there not to be problems with ignoring it.
-MCDPatches:
-  - type: UFOL83
-    data:
-      - MCDIndex: 23
-        bigWall: 2
-      - MCDIndex: 25
-        bigWall: 3

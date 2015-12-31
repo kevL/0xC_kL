@@ -108,6 +108,12 @@ MCDPatches:
         bigWall: 2
       - MCDIndex: 15
         bigWall: 2
+  - type: UFOL83
+    data:
+      - MCDIndex: 23
+        bigWall: 2
+      - MCDIndex: 25
+        bigWall: 3
 # --- kL ScanG additions (subtract 35 from the SCANG.DAT id) ----------------- #
   - type: JUNGLEPOLAR
     data:
@@ -147,3 +153,20 @@ MCDPatches:
 #        scanG:
 #      - MCDIndex: 80
 #        scanG:
+# --- kL Psycho additions ---------------------------------------------------- #
+  - type: U_PODS
+    data:
+      - MCDIndex: 0 #red round energy supply
+        psycho: 2
+#      - MCDIndex: 2 #red oblong energy supply
+#        psycho: 2
+#      - MCDIndex: 4 #disco ball
+#        psycho: 1
+      - MCDIndex: 7 #disco walls, yellow northWall
+        psycho: 1
+      - MCDIndex: 8 #  "     "      "    westWall
+        psycho: 1
+      - MCDIndex: 17 # disco walls, blue northWall
+        psycho: 1
+      - MCDIndex: 18 #   "     "     "   westWall
+        psycho: 1

@@ -26,8 +26,6 @@
 namespace OpenXcom
 {
 
-class MapDataSet;
-
 enum MovementType
 {
 	MT_WALK,	// 0
@@ -78,6 +76,8 @@ enum BigwallType
 	TH_TWOTHIRD,
 	TH_CEIL
 } */
+
+class MapDataSet;
 
 
 /**
@@ -295,8 +295,10 @@ private:
 		/// Check if this is an xcom base object.
 		bool isBaseModule() const;
 
+		/// Sets if this tilepart is psychedelic.
+		void setPsychedelic(int psycho);
 		/// Gets if this tilepart is psychedelic.
-		int isPsychedelic() const;
+		int getPsychedelic() const;
 };
 
 }

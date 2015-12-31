@@ -702,10 +702,19 @@ bool MapData::isBaseModule() const
 }
 
 /**
+ * Sets if this tilepart is psychedelic.
+ * @param psycho - true if psycho
+ */
+void MapData::setPsychedelic(int psycho)
+{
+	_isPsychedelic = psycho;
+}
+
+/**
  * Gets if this tilepart is psychedelic.
  * @return, true if psycho
  */
-int MapData::isPsychedelic() const
+int MapData::getPsychedelic() const
 {
 	return _isPsychedelic;
 }

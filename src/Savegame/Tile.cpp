@@ -1212,7 +1212,7 @@ void Tile::animateTile()
 	{
 		if (_objects[i] != nullptr)
 		{
-			const int isPsycho = _objects[i]->isPsychedelic();
+			const int isPsycho = _objects[i]->getPsychedelic();
 			if (isPsycho == 0)
 			{
 				if (_objects[i]->isUfoDoor() == false
