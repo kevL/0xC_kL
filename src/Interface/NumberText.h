@@ -36,13 +36,27 @@ class NumberText final
 {
 
 private:
+	static bool init;
+	static const size_t DIGITS = 10;
+	static const Uint8
+		WHITE = 1,
+		GRAY  = 8;
+	static const int
+		WIDTH    = 3,
+		HEIGHT   = 5,
+		WIDTH_B  = 4,
+		HEIGHT_B = 6;
+
+	static Surface
+		* _chars[DIGITS],
+		* _charsBorder[DIGITS];
+
 	bool _bordered;
 	unsigned _value;
 	Uint8 _color;
 
-	Surface
-		* _borderedChars[10],
-		* _chars[10];
+	/// Creates digits as Surfaces.
+	static void createStaticSurfaces();
 
 
 	public:
@@ -54,6 +68,9 @@ private:
 				int y = 0);
 		/// Cleans up the NumberText.
 		~NumberText();
+
+		/// Deletes all static Surfaces.
+		static void deleteStaticSurfaces();
 
 		/// Sets the NumberText's value.
 		void setValue(unsigned value = 0);

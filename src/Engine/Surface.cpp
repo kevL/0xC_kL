@@ -79,8 +79,8 @@ inline void* NewAligned(
 		int width,
 		int height)
 {	const int
-		pitche = GetPitch(bpp, width),
-		total = pitche * height;
+		pitch = GetPitch(bpp, width),
+		total = pitch * height;
 	void* buffer = nullptr;
 
 #ifndef _WIN32
@@ -919,7 +919,7 @@ void Surface::unlock()
 
 
 /**
- * helper class used for Surface::blitNShade
+ * Helper struct used for Surface::blitNShade().
  */
 struct ColorReplace
 {
@@ -954,7 +954,7 @@ static inline void func(
 
 
 /**
- * helper class used for Surface::blitNShade
+ * Helper struct used for Surface::blitNShade().
  */
 struct StandardShade
 {

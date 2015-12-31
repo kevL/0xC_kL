@@ -34,8 +34,7 @@ class Window;
 
 
 /**
- * Abandon Game window shown before
- * quitting the game from the Geoscape.
+ * Abandon Game window shown before quitting the game from Geoscape.
  */
 class AbandonGameState
 	:

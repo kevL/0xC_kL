@@ -193,7 +193,7 @@ void AdlibMusic::player(
 		int i = std::min(delay, len);
 		if (i)
 		{
-			float volume = static_cast<float>(Game::volumeExponent(Options::musicVolume));
+			float volume = static_cast<float>(Game::volExp(Options::musicVolume));
 			YM3812UpdateOne(
 						opl[0],
 						(INT16*)stream,

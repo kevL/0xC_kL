@@ -94,7 +94,7 @@ private:
 				int music,
 				int ui);
 		/// Adjusts a linear volume level to an exponential one.
-		static double volumeExponent(int volume);
+		static double volExp(int vol);
 
 		/// Gets the game's display screen.
 		Screen* getScreen() const;

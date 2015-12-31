@@ -47,6 +47,7 @@
 
 #include "../Interface/Cursor.h"
 #include "../Interface/FpsCounter.h"
+#include "../Interface/NumberText.h"
 
 #include "../Menu/TestState.h"
 
@@ -157,7 +158,8 @@ Game::Game(const std::string& title)
 }
 
 /**
- * Deletes the display screen, cursor, states and shuts down all the SDL subsystems.
+ * Deletes the display screen, cursor, states, etc etc etc, and shuts down all
+ * the SDL subsystems.
  */
 Game::~Game()
 {
@@ -181,6 +183,8 @@ Game::~Game()
 	delete _rules;
 	delete _screen;
 	delete _fpsCounter;
+
+	NumberText::deleteStaticSurfaces();
 
 	Mix_CloseAudio();
 
@@ -511,14 +515,14 @@ void Game::setVolume(
 	{
 		if (music > -1)
 		{
-			music = static_cast<int>(volumeExponent(music) * static_cast<double>(SDL_MIX_MAXVOLUME));
+			music = static_cast<int>(volExp(music) * static_cast<double>(SDL_MIX_MAXVOLUME));
 			Mix_VolumeMusic(music);
 //			func_set_music_volume(music);
 		}
 
 		if (sound > -1)
 		{
-			sound = static_cast<int>(volumeExponent(sound) * static_cast<double>(SDL_MIX_MAXVOLUME));
+			sound = static_cast<int>(volExp(sound) * static_cast<double>(SDL_MIX_MAXVOLUME));
 			Mix_Volume(-1, sound); // kL_note: this, supposedly, sets volume on *all channels*
 
 			// channel 3: reserved for ambient sound effect.
@@ -527,7 +531,7 @@ void Game::setVolume(
 
 		if (ui > -1)
 		{
-			ui = static_cast<int>(volumeExponent(ui) * static_cast<double>(SDL_MIX_MAXVOLUME));
+			ui = static_cast<int>(volExp(ui) * static_cast<double>(SDL_MIX_MAXVOLUME));
 			// ... they use channels #1 & #2 btw. and group them accordingly in initAudio() below_
 			Mix_Volume(0, ui); // kL_note: then this sets channel-0 to ui-Volume
 			Mix_Volume(1, ui); // and this sets channel-1 to ui-Volume!
@@ -537,12 +541,14 @@ void Game::setVolume(
 }
 
 /**
- *
+ * Adjusts a linear volume level to an exponential one.
+ * @param vol - volume to adjust
+ * @return, adjusted volume
  */
-double Game::volumeExponent(int volume)
+double Game::volExp(int vol)
 {
-	return (std::exp(std::log(Game::VOLUME_GRADIENT + 1.) * static_cast<double>(volume) / static_cast<double>(SDL_MIX_MAXVOLUME)) - 1.)
-			/ Game::VOLUME_GRADIENT;
+	return (std::exp(std::log(Game::VOLUME_GRADIENT + 1.) * static_cast<double>(vol) / static_cast<double>(SDL_MIX_MAXVOLUME)) - 1.)
+		  / Game::VOLUME_GRADIENT;
 }
 // VOLUME_GRADIENT   = 10.
 // SDL_MIX_MAXVOLUME = 128

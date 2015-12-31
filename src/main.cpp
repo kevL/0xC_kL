@@ -49,7 +49,7 @@
 
 using namespace OpenXcom;
 
-Game* game = nullptr;
+Game* ptrGame = nullptr;
 
 // If you can't tell what the main() is for you
 // should have your programming license revoked ...
@@ -82,12 +82,12 @@ int main(
 		std::ostringstream title;
 		title << OPENXCOM_VERSION_GIT << " " << Version::getBuildDate();
 
-		game = new Game(title.str());
+		ptrGame = new Game(title.str());
 
-		State::setGamePtr(game);
+		State::setGamePtr(ptrGame);
 
-		game->setState(new StartState());
-		game->run();
+		ptrGame->setState(new StartState());
+		ptrGame->run();
 
 #ifndef _DEBUG
 	}
@@ -104,7 +104,7 @@ int main(
 						// ... now they both fuck up. BYE!
 
 	// Comment this for faster exit.
-	delete game;
+	delete ptrGame;
 
 	Log(LOG_INFO) << "0xC_kL is shutting down.";
 	return EXIT_SUCCESS;

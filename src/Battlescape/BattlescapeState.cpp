@@ -2572,41 +2572,41 @@ bool BattlescapeState::playableUnitSelected()
 void BattlescapeState::updateSoldierInfo(bool calcFoV)
 {
 	hotSqrsClear();
-	_rank->clear();
 
-	_btnRightHandItem->clear();
-	_btnLeftHandItem->clear();
+	_rank				->clear();
+	_btnRightHandItem	->clear();
+	_btnLeftHandItem	->clear();
 
 	_btnLeftHandItem	->setVisible(false);
 	_btnRightHandItem	->setVisible(false);
 	_numAmmoLeft		->setVisible(false);
 	_numAmmoRight		->setVisible(false);
 
-	_numMediL1 ->setVisible(false);
-	_numMediL2 ->setVisible(false);
-	_numMediL3 ->setVisible(false);
-	_numMediR1 ->setVisible(false);
-	_numMediR2 ->setVisible(false);
-	_numMediR3 ->setVisible(false);
+	_numMediL1			->setVisible(false);
+	_numMediL2			->setVisible(false);
+	_numMediL3			->setVisible(false);
+	_numMediR1			->setVisible(false);
+	_numMediR2			->setVisible(false);
+	_numMediR3			->setVisible(false);
 
-	_numTwohandL ->setVisible(false);
-	_numTwohandR ->setVisible(false);
+	_numTwohandL		->setVisible(false);
+	_numTwohandR		->setVisible(false);
+
+	_kneel				->setVisible(false);
+	_overWeight			->setVisible(false);
+	_numDir				->setVisible(false);
+	_numDirTur			->setVisible(false);
+
+	_numTULaunch		->setVisible(false);
+	_numTUAim			->setVisible(false);
+	_numTUAuto			->setVisible(false);
+	_numTUSnap			->setVisible(false);
+
+	_numWounds			->setVisible(false);
+	_btnWounds			->setVisible(false);
 
 	_isKneeled =
 	_isOverweight = false;
-
-	_kneel		->setVisible(false);
-	_overWeight	->setVisible(false);
-	_numDir		->setVisible(false);
-	_numDirTur	->setVisible(false);
-
-	_numTULaunch->setVisible(false);
-	_numTUAim	->setVisible(false);
-	_numTUAuto	->setVisible(false);
-	_numTUSnap	->setVisible(false);
-
-	_numWounds	->setVisible(false);
-	_btnWounds	->setVisible(false);
 
 	_txtOrder->setText(L"");
 
