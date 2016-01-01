@@ -1442,8 +1442,8 @@ void SavedGame::addFinishedResearch(const RuleResearch* const resRule)
  * Gets a list of RuleResearch's that can be started at a particular Base.
  * @note Used in Basescape's 'start project' as well as (indirectly) in
  * Geoscape's 'we can now research'.
- * @param availableProjects	- reference to a vector of pointers to RuleResearch
- * in which to put the projects that are currently available
+ * @param availableProjects	- reference to a vector of pointers to RuleResearch in
+ *							  which to put the projects that are currently available
  * @param base				- pointer to a Base
  */
 void SavedGame::getAvailableResearchProjects(
@@ -1490,7 +1490,7 @@ void SavedGame::getAvailableResearchProjects(
 
 		if (isProjectAvailable(resRule) == true)												// <- resRule is tested there first.
 		{
-			if (searchResearch(resRule) == true)											// if resRule is already discovered ->
+			if (searchResearch(resRule) == true)												// if resRule is already discovered
 			{
 				cullProject = true;
 				for (std::vector<std::string>::const_iterator
@@ -1505,16 +1505,16 @@ void SavedGame::getAvailableResearchProjects(
 					}
 				}
 
-				if ((searchResearch(_rules->getResearch("STR_LEADER_PLUS")) == false				// player still needs LeaderPlus
+				if ((searchResearch(_rules->getResearch("STR_LEADER_PLUS")) == false			// player still needs LeaderPlus
 						&& std::find(
 								resRule->getForcedResearch().begin(),
 								resRule->getForcedResearch().end(),
-								"STR_LEADER_PLUS") != resRule->getForcedResearch().end())		// and the resRule can unlock LeaderPlus
+								"STR_LEADER_PLUS") != resRule->getForcedResearch().end())		// and the resRule can force LeaderPlus
 					|| (searchResearch(_rules->getResearch("STR_COMMANDER_PLUS")) == false		// player still needs CommanderPlus
 						&& std::find(
 								resRule->getForcedResearch().begin(),
 								resRule->getForcedResearch().end(),
-								"STR_COMMANDER_PLUS") != resRule->getForcedResearch().end()))	// and the resRule can unlock CommanderPlus
+								"STR_COMMANDER_PLUS") != resRule->getForcedResearch().end()))	// and the resRule can force CommanderPlus
 				{
 					cullProject = false;														// do NOT cull
 				}
@@ -1534,8 +1534,6 @@ void SavedGame::getAvailableResearchProjects(
  */
 void SavedGame::tabulateForced(std::vector<const RuleResearch*>& list) const // private.
 {
-	std::vector<std::string> forcedTypes;
-
 	for (std::vector<ResearchGeneral*>::const_iterator
 			i = _research.begin();
 			i != _research.end();
@@ -1543,10 +1541,9 @@ void SavedGame::tabulateForced(std::vector<const RuleResearch*>& list) const // 
 	{
 		if ((*i)->getStatus() == RS_COMPLETED)
 		{
-			forcedTypes = (*i)->getRules()->getForcedResearch();
 			for (std::vector<std::string>::const_iterator
-					j = forcedTypes.begin();
-					j != forcedTypes.end();
+					j = (*i)->getRules()->getForcedResearch().begin();
+					j != (*i)->getRules()->getForcedResearch().end();
 					++j)
 			{
 				list.push_back(_rules->getResearch(*j)); // load up forced-research from completed-research.

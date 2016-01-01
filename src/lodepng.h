@@ -973,7 +973,7 @@ examples from the LodePNG website to see how to use it in code, or check the
 smaller examples in chapter 13 here.
 
 LodePNG is simple but only supports the basic requirements. To achieve
-simplicity, the following design choices were made: There are no prerequisites
+simplicity, the following design choices were made: There are no dependencies
 on any external library. There are functions to decode and encode a PNG with
 a single function call, and extended versions of these functions taking a
 LodePNGState struct allowing to specify or get more information. By default
