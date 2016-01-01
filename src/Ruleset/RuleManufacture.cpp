@@ -61,7 +61,7 @@ void RuleManufacture::load(
 	} // end_why. Perhaps to overwrite a previous entry with a subsequently loaded ID-string, perhaps.
 
 	_category		= node["category"]		.as<std::string>(_category);
-	_requires		= node["requires"]		.as< std::vector<std::string> >(_requires);
+	_required		= node["required"]		.as< std::vector<std::string> >(_required);
 	_space			= node["space"]			.as<int>(_space);
 	_time			= node["time"]			.as<int>(_time);
 	_cost			= node["cost"]			.as<int>(_cost);
@@ -97,7 +97,7 @@ std::string RuleManufacture::getCategory() const
  */
 const std::vector<std::string>& RuleManufacture::getRequirements() const
 {
-	return _requires;
+	return _required;
 }
 
 /**

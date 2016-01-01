@@ -19,8 +19,6 @@
 
 #include "ResearchProject.h"
 
-#include "../Interface/Text.h"
-
 #include "../Ruleset/RuleResearch.h"
 
 
@@ -151,7 +149,7 @@ bool ResearchProject::getOffline() const
 }
 
 /**
- * Loads the ResearchProject from a YAML file.
+ * Loads this ResearchProject from a YAML file.
  * @param node - reference a YAML node
  */
 void ResearchProject::load(const YAML::Node& node)
@@ -180,8 +178,8 @@ YAML::Node ResearchProject::save() const
 }
 
 /**
- * Returns a string describing Research progress.
- * @return, description of research progress
+ * Returns a string describing lab-progress.
+ * @return, progress-string
 */
 std::string ResearchProject::getResearchProgress() const
 {
@@ -204,8 +202,8 @@ std::string ResearchProject::getResearchProgress() const
 	if (static_cast<float>(_spent) / static_cast<float>(_cost) < PROGRESS_LIMIT_UNKNOWN)
 		return "STR_UNKNOWN";
 
-	float rating = static_cast<float>(_assigned);
-	rating /= static_cast<float>(getRules()->getCost());
+	const float rating = static_cast<float>(_assigned)
+					   / static_cast<float>(_resRule->getCost());
 
 	if (rating < PROGRESS_LIMIT_POOR)
 		return "STR_POOR";

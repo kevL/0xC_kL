@@ -27,14 +27,13 @@ namespace OpenXcom
 {
 
 class RuleResearch;
-class Ruleset;
 
 
 /**
  * Represents a ResearchProject.
  * @note Contains information about assigned scientists, time already spent and
  * cost of the project.
-*/
+ */
 class ResearchProject
 {
 

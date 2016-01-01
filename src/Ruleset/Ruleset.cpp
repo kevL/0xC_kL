@@ -74,6 +74,7 @@
 #include "../Savegame/Transfer.h"
 #include "../Savegame/GameTime.h"
 #include "../Savegame/Region.h"
+#include "../Savegame/ResearchGeneral.h"
 #include "../Savegame/SavedGame.h"
 #include "../Savegame/Soldier.h"
 #include "../Savegame/SoldierDiary.h"
@@ -1169,8 +1170,8 @@ T* Ruleset::loadRule(
 }
 
 /**
- * Generates a brand new saved game with starting data.
- * @return, pointer to a new SavedGame
+ * Generates a brand new SavedGame with starting data.
+ * @return, pointer to the SavedGame
  */
 SavedGame* Ruleset::newSave() const
 {
@@ -1178,7 +1179,16 @@ SavedGame* Ruleset::newSave() const
 
 	SavedGame* const gameSave = new SavedGame(this);
 
-	// Add countries
+	// Setup research generals.
+	for (std::vector<std::string>::const_iterator
+			i = _researchIndex.begin();
+			i != _researchIndex.end();
+			++i)
+	{
+		gameSave->getResearchGenerals().push_back(new ResearchGeneral(getResearch(*i)));
+	}
+
+	// Add countries.
 	for (std::vector<std::string>::const_iterator
 			i = _countriesIndex.begin();
 			i != _countriesIndex.end();
@@ -1189,7 +1199,7 @@ SavedGame* Ruleset::newSave() const
 			gameSave->getCountries()->push_back(new Country(country, true));
 	}
 
-	// Adjust funding to total $6M
+	// Adjust funding to total $6M.
 //	int missing = ((_initialFunding - gameSave->getCountryFunding() / 1000) / (int)gameSave->getCountries()->size()) * 1000;
 	for (std::vector<Country*>::const_iterator
 			i = gameSave->getCountries()->begin();
@@ -1208,7 +1218,7 @@ SavedGame* Ruleset::newSave() const
 
 	gameSave->setFunds(gameSave->getCountryFunding());
 
-	// Add regions
+	// Add regions.
 	for (std::vector<std::string>::const_iterator
 			i = _regionsIndex.begin();
 			i != _regionsIndex.end();
@@ -1219,11 +1229,11 @@ SavedGame* Ruleset::newSave() const
 			gameSave->getRegions()->push_back(new Region(region));
 	}
 
-	// Set up starting base
+	// Set up starting base.
 	Base* const base = new Base(this);
 	base->load(_startingBase, gameSave, true);
 
-	// Correct IDs
+	// Correct IDs.
 	for (std::vector<Craft*>::const_iterator
 			i = base->getCrafts()->begin();
 			i != base->getCrafts()->end();
@@ -1232,7 +1242,7 @@ SavedGame* Ruleset::newSave() const
 		gameSave->getCanonicalId((*i)->getRules()->getType());
 	}
 
-	// Generate soldiers
+	// Generate soldiers.
 	Soldier* sol;
 	const int solQty = _startingBase["randomSoldiers"].as<int>(0);
 	for (int

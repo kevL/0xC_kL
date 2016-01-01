@@ -83,7 +83,7 @@ struct findRuleResearch
 	const RuleResearch* _resRule;
 	explicit findRuleResearch(const RuleResearch* const resRule);
 
-	bool operator() (const ResearchProject* const r) const;
+	bool operator() (const ResearchProject* const rp) const;
 };
 ///
 findRuleResearch::findRuleResearch(const RuleResearch* const resRule)
@@ -91,9 +91,9 @@ findRuleResearch::findRuleResearch(const RuleResearch* const resRule)
 		_resRule(resRule)
 {}
 ///
-bool findRuleResearch::operator() (const ResearchProject* const r) const
+bool findRuleResearch::operator() (const ResearchProject* const rp) const
 {
-	return (_resRule == r->getRules());
+	return (_resRule == rp->getRules());
 }
 
 
@@ -120,7 +120,7 @@ bool equalProduction::operator() (const Production* const p) const
 
 
 /**
- * Initializes a brand new saved game according to the specified difficulty.
+ * Initializes the player's SavedGame when starting or re-loading.
  * @param rules - pointer to the Ruleset
  */
 SavedGame::SavedGame(const Ruleset* const rules)
@@ -157,7 +157,7 @@ SavedGame::SavedGame(const Ruleset* const rules)
 }
 
 /**
- * Deletes the game content from memory.
+ * Deletes this object from memory.
  */
 SavedGame::~SavedGame()
 {
@@ -240,6 +240,14 @@ SavedGame::~SavedGame()
 	for (std::vector<MissionStatistics*>::const_iterator
 			i = _missionStatistics.begin();
 			i != _missionStatistics.end();
+			++i)
+	{
+		delete *i;
+	}
+
+	for (std::vector<ResearchGeneral*>::const_iterator
+			i = _research.begin();
+			i != _research.end();
 			++i)
 	{
 		delete *i;
@@ -398,13 +406,13 @@ SaveInfo SavedGame::getSaveInfo( // private/static.
 	if (doc["rulesets"])
 		save.rulesets = doc["rulesets"].as<std::vector<std::string> >();
 
-	save.mode = static_cast<GameMode>(doc["mode"].as<int>());
+	save.mode = static_cast<SaveMode>(doc["mode"].as<int>());
 
 	return save;
 }
 
 /**
- * Loads a saved game's contents from a YAML file.
+ * Loads a SavedGame's contents from a YAML file.
  * @note Assumes the saved game is blank.
  * @param file	- reference a YAML file
  * @param rules	- pointer to Ruleset
@@ -481,9 +489,9 @@ void SavedGame::load(
 		const std::string type ((*i)["type"].as<std::string>());
 		if (_rules->getCountry(type))
 		{
-			Country* const c (new Country(_rules->getCountry(type)));
-			c->load(*i);
-			_countries.push_back(c);
+			Country* const country (new Country(_rules->getCountry(type)));
+			country->load(*i);
+			_countries.push_back(country);
 		}
 	}
 
@@ -496,9 +504,9 @@ void SavedGame::load(
 		const std::string type ((*i)["type"].as<std::string>());
 		if (_rules->getRegion(type))
 		{
-			Region* const r (new Region(_rules->getRegion(type)));
-			r->load(*i);
-			_regions.push_back(r);
+			Region* const region (new Region(_rules->getRegion(type)));
+			region->load(*i);
+			_regions.push_back(region);
 		}
 	}
 
@@ -509,9 +517,9 @@ void SavedGame::load(
 			i != doc["alienBases"].end();
 			++i)
 	{
-		AlienBase* const b (new AlienBase());
-		b->load(*i);
-		_alienBases.push_back(b);
+		AlienBase* const aBase (new AlienBase());
+		aBase->load(*i);
+		_alienBases.push_back(aBase);
 	}
 
 	Log(LOG_INFO) << ". load missions";
@@ -538,9 +546,9 @@ void SavedGame::load(
 		const std::string type ((*i)["type"].as<std::string>());
 		if (_rules->getUfo(type))
 		{
-			Ufo* const u (new Ufo(_rules->getUfo(type)));
-			u->load(*i, *_rules, *this);
-			_ufos.push_back(u);
+			Ufo* const ufo (new Ufo(_rules->getUfo(type)));
+			ufo->load(*i, *_rules, *this);
+			_ufos.push_back(ufo);
 		}
 	}
 
@@ -550,9 +558,9 @@ void SavedGame::load(
 			i != doc["waypoints"].end();
 			++i)
 	{
-		Waypoint* const w (new Waypoint());
-		w->load(*i);
-		_waypoints.push_back(w);
+		Waypoint* const wp (new Waypoint());
+		wp->load(*i);
+		_waypoints.push_back(wp);
 	}
 
 	Log(LOG_INFO) << ". load mission sites";
@@ -564,24 +572,43 @@ void SavedGame::load(
 		const std::string
 			type ((*i)["type"].as<std::string>()),
 			deployment ((*i)["deployment"].as<std::string>("STR_TERROR_MISSION"));
-		MissionSite* const ms (new MissionSite(
+		MissionSite* const site (new MissionSite(
 											_rules->getAlienMission(type),
 											_rules->getDeployment(deployment)));
-		ms->load(*i);
-		_missionSites.push_back(ms);
+		site->load(*i);
+		_missionSites.push_back(site);
 	}
 
-	Log(LOG_INFO) << ". load discovered research";
+	Log(LOG_INFO) << ". load research generals";
 	// Discovered Techs should be loaded before Bases (e.g. for PSI evaluation)
 	for (YAML::const_iterator
-			i = doc["discovered"].begin();
-			i != doc["discovered"].end();
+			i = doc["research"].begin();
+			i != doc["research"].end();
 			++i)
 	{
-		const std::string research (i->as<std::string>());
-		if (_rules->getResearch(research) != nullptr)
-			_discovered.push_back(_rules->getResearch(research));
+		const std::string type ((*i)["type"].as<std::string>());
+		if (_rules->getResearch(type) != nullptr)
+		{
+			ResearchGeneral* const resGen (new ResearchGeneral(_rules->getResearch(type)));
+			resGen->load(*i);
+			_research.push_back(resGen);
+		}
+
+//		const std::string type (i->as<std::string>());
+//		if (_rules->getResearch(type) != nullptr)
+//			_discovered.push_back(_rules->getResearch(type));
 	}
+
+/*	Log(LOG_INFO) << ". load popped research";
+	for (YAML::const_iterator
+			i = doc["poppedResearch"].begin();
+			i != doc["poppedResearch"].end();
+			++i)
+	{
+		const std::string type (i->as<std::string>());
+		if (_rules->getResearch(type) != nullptr)
+			_poppedResearch.push_back(_rules->getResearch(type));
+	} */
 
 	Log(LOG_INFO) << ". load xcom bases";
 	for (YAML::const_iterator
@@ -589,20 +616,9 @@ void SavedGame::load(
 			i != doc["bases"].end();
 			++i)
 	{
-		Base* const b (new Base(_rules));
-		b->load(*i, this);
-		_bases.push_back(b);
-	}
-
-	Log(LOG_INFO) << ". load popped research";
-	for (YAML::const_iterator
-			i = doc["poppedResearch"].begin();
-			i != doc["poppedResearch"].end();
-			++i)
-	{
-		const std::string research (i->as<std::string>());
-		if (_rules->getResearch(research) != nullptr)
-			_poppedResearch.push_back(_rules->getResearch(research));
+		Base* const base (new Base(_rules));
+		base->load(*i, this);
+		_bases.push_back(base);
 	}
 
 	Log(LOG_INFO) << ". load alien strategy";
@@ -647,7 +663,7 @@ void SavedGame::load(
 }
 
 /**
- * Saves a saved game's contents to a YAML file.
+ * Saves a SavedGame's contents to a YAML file.
  * @param file - reference to a YAML file
  */
 void SavedGame::save(const std::string& file) const
@@ -682,10 +698,10 @@ void SavedGame::save(const std::string& file) const
 	{
 		brief["mission"]	= _battleSave->getTacticalType();
 		brief["turn"]		= _battleSave->getTurn();
-		brief["mode"]		= static_cast<int>(MODE_BATTLESCAPE);
+		brief["mode"]		= static_cast<int>(SM_BATTLESCAPE);
 	}
 	else
-		brief["mode"]		= static_cast<int>(MODE_GEOSCAPE);
+		brief["mode"]		= static_cast<int>(SM_GEOSCAPE);
 
 	brief["rulesets"] = Options::rulesets;
 
@@ -782,21 +798,21 @@ void SavedGame::save(const std::string& file) const
 		node["ufos"].push_back((*i)->save(getMonthsPassed() == -1));
 	}
 
-	for (std::vector<const RuleResearch*>::const_iterator
-			i = _discovered.begin();
-			i != _discovered.end();
+	for (std::vector<ResearchGeneral*>::const_iterator
+			i = _research.begin();
+			i != _research.end();
 			++i)
 	{
-		node["discovered"].push_back((*i)->getType());
+		node["research"].push_back((*i)->save());
 	}
 
-	for (std::vector<const RuleResearch*>::const_iterator
+/*	for (std::vector<const RuleResearch*>::const_iterator
 			i = _poppedResearch.begin();
 			i != _poppedResearch.end();
 			++i)
 	{
 		node["poppedResearch"].push_back((*i)->getType());
-	}
+	} */
 
 	node["alienStrategy"] = _alienStrategy->save();
 
@@ -1259,47 +1275,142 @@ void SavedGame::setBattleSave(SavedBattleGame* const battleSave)
 }
 
 /**
- * Gets the list of already discovered RuleResearch's.
- * @return, reference to the vector of pointers listing discovered RuleResearch's
+ * Gets the ResearchGenerals.
+ * @return, reference to a vector of pointers to the ResearchGenerals
  */
-const std::vector<const RuleResearch*>& SavedGame::getDiscoveredResearch() const
+std::vector<ResearchGeneral*>& SavedGame::getResearchGenerals()
 {
-	return _discovered;
+	return _research;
+}
+
+/**
+ * Searches through ResearchGenerals for specified research-type & status.
+ * @param type		- reference to a research-type
+ * @param status	- ResearchStatus (default RS_COMPLETED) (ResearchGeneral.h)
+ * @return, true if found
+ */
+bool SavedGame::searchResearch(
+		const std::string& type,
+		const ResearchStatus status) const
+{
+	for (std::vector<ResearchGeneral*>::const_iterator
+			i = _research.begin();
+			i != _research.end();
+			++i)
+	{
+		if ((*i)->getType() == type)
+		{
+			if ((*i)->getStatus() == status)
+				return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Searches through ResearchGenerals for specified research-rule & status.
+ * @param resRule	- pointer to a RuleResearch
+ * @param status	- ResearchStatus (default RS_COMPLETED) (ResearchGeneral.h)
+ * @return, true if status changed
+ */
+bool SavedGame::searchResearch(
+		const RuleResearch* resRule,
+		const ResearchStatus status) const
+{
+	for (std::vector<ResearchGeneral*>::const_iterator
+			i = _research.begin();
+			i != _research.end();
+			++i)
+	{
+		if ((*i)->getRules() == resRule)
+		{
+			if ((*i)->getStatus() == status)
+				return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Sets the status of a ResearchGeneral by research-type.
+ * @param type		- reference to a research-type
+ * @param status	- ResearchStatus (default RS_COMPLETED) (ResearchGeneral.h)
+ * @return, true if status changed
+ */
+bool SavedGame::setResearchStatus(
+		const std::string& type,
+		const ResearchStatus status)
+{
+	bool ret = false;
+	for (std::vector<ResearchGeneral*>::const_iterator
+			i = _research.begin();
+			i != _research.end();
+			++i)
+	{
+		if ((*i)->getType() == type)
+		{
+			if ((*i)->getStatus() != status)
+				ret = true;
+
+			(*i)->setStatus(status);
+			return ret;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Sets the status of a ResearchGeneral by research-rule.
+ * @param resRule	- pointer to a RuleResearch
+ * @param status	- ResearchStatus (default RS_COMPLETED) (ResearchGeneral.h)
+ * @return, true if status changed
+ */
+bool SavedGame::setResearchStatus(
+		const RuleResearch* resRule,
+		const ResearchStatus status)
+{
+	bool ret = false;
+	for (std::vector<ResearchGeneral*>::const_iterator
+			i = _research.begin();
+			i != _research.end();
+			++i)
+	{
+		if ((*i)->getRules() == resRule)
+		{
+			if ((*i)->getStatus() != status)
+				ret = true;
+
+			(*i)->setStatus(status);
+			return ret;
+		}
+	}
+
+	return false;
 }
 
 /**
  * Adds a RuleResearch to the list of already discovered RuleResearch's.
- * @param resRule	- the newly found RuleResearch
- * @param score		- true to score points and add dependents for research done;
- *					  false for skirmish battles (default true)
+ * @param resRule	- pointer to the newly found RuleResearch
  */
-void SavedGame::addFinishedResearch(
-		const RuleResearch* const resRule,
-		bool score)
+void SavedGame::addFinishedResearch(const RuleResearch* const resRule)
 {
-	if (std::find(
-			_discovered.begin(),
-			_discovered.end(),
-			resRule) == _discovered.end())
+	if (setResearchStatus(resRule) == true)
 	{
-		_discovered.push_back(resRule);
-		removePoppedResearch(resRule);
+		_researchScores.back() += resRule->getPoints();
 
-		if (score == true) addResearchScore(resRule->getPoints());
-	}
-
-	if (score == true)
-	{
 		std::vector<const RuleResearch*> dependents;
 		for (std::vector<Base*>::const_iterator
 				i = _bases.begin();
 				i != _bases.end();
 				++i)
 		{
-			getDependentResearchBasic(dependents, resRule, *i);
+			getDependentResearchBasic(dependents, resRule, *i); // fills 'dependents' vector
 		}
 
-		const std::vector<std::string>* prereqs;
+		const std::vector<std::string>* required;
 		for (std::vector<const RuleResearch*>::const_iterator
 				i = dependents.begin();
 				i != dependents.end();
@@ -1307,18 +1418,18 @@ void SavedGame::addFinishedResearch(
 		{
 			if ((*i)->getCost() == 0) // fake project.
 			{
-				prereqs = &((*i)->getPrerequisites()); // gawd i hate c++
-				if (prereqs->empty() == true)
+				required = &((*i)->getRequiredResearch()); // gawd i hate c++
+				if (required->empty() == true)
 					addFinishedResearch(*i);
 				else
 				{
 					size_t id (0);
 					for (std::vector<std::string>::const_iterator
-							j = prereqs->begin();
-							j != prereqs->end();
+							j = required->begin();
+							j != required->end();
 							++j, ++id)
 					{
-						if (prereqs->at(id) == *j) // wtf this.
+						if (required->at(id) == *j) // wtf this.
 							addFinishedResearch(*i);
 					}
 				}
@@ -1329,8 +1440,8 @@ void SavedGame::addFinishedResearch(
 
 /**
  * Gets a list of RuleResearch's that can be started at a particular Base.
- * @note Used in basescape's 'start project' as well as (indirectly) in
- * geoscape's 'we can now research'.
+ * @note Used in Basescape's 'start project' as well as (indirectly) in
+ * Geoscape's 'we can now research'.
  * @param availableProjects	- reference to a vector of pointers to RuleResearch
  * in which to put the projects that are currently available
  * @param base				- pointer to a Base
@@ -1349,13 +1460,37 @@ void SavedGame::getAvailableResearchProjects(
 			++i)
 	{
 		resRule = _rules->getResearch(*i);
-		if (isResearchAvailable(resRule) == true)											// <- resRule is tested there first.
+
+		if (_debug == true)
 		{
-			if (_rules->getUnitRule(resRule->getType()) == nullptr							// kL_add. Always allow aLiens to be researched & re-researched.
-				&& std::find(
-						_discovered.begin(),
-						_discovered.end(),
-						resRule) != _discovered.end())										// if resRule is already discovered ->
+			availableProjects.push_back(resRule);
+			continue;
+		}
+
+		if (resRule->needsItem() == true
+			&& base->getStorageItems()->getItemQty(resRule->getType()) == 0)
+		{
+			continue;
+		}
+
+		if (_rules->getUnitRule(resRule->getType()) != nullptr)
+		{
+			availableProjects.push_back(resRule);
+			continue;
+		}
+
+		if (std::find_if(
+					base->getResearch().begin(),
+					base->getResearch().end(),
+					findRuleResearch(resRule)) != base->getResearch().end())
+		{
+			continue;
+		}
+
+
+		if (isProjectAvailable(resRule) == true)												// <- resRule is tested there first.
+		{
+			if (searchResearch(resRule) == true)											// if resRule is already discovered ->
 			{
 				cullProject = true;
 				for (std::vector<std::string>::const_iterator
@@ -1363,174 +1498,166 @@ void SavedGame::getAvailableResearchProjects(
 						j != resRule->getGetOneFree().end();
 						++j)
 				{
-					if (std::find(
-							_discovered.begin(),
-							_discovered.end(),
-							_rules->getResearch(*j)) == _discovered.end())
+					if (searchResearch(_rules->getResearch(*j)) == false)
 					{
-						cullProject = false;												// resRule's getOneFree still undiscovered.
+						cullProject = false;													// resRule's getOneFree still undiscovered.
 						break;
 					}
 				}
 
-				if ((std::find(
-							_discovered.begin(),
-							_discovered.end(),
-							_rules->getResearch("STR_LEADER_PLUS")) == _discovered.end()	// player still needs LeaderPlus
+				if ((searchResearch(_rules->getResearch("STR_LEADER_PLUS")) == false				// player still needs LeaderPlus
 						&& std::find(
-								resRule->getUnlocks().begin(),
-								resRule->getUnlocks().end(),
-								"STR_LEADER_PLUS") != resRule->getUnlocks().end())			// and the resRule can unlock LeaderPlus
-					|| (std::find(
-							_discovered.begin(),
-							_discovered.end(),
-							_rules->getResearch("STR_COMMANDER_PLUS")) == _discovered.end()	// player still needs CommanderPlus
+								resRule->getForcedResearch().begin(),
+								resRule->getForcedResearch().end(),
+								"STR_LEADER_PLUS") != resRule->getForcedResearch().end())		// and the resRule can unlock LeaderPlus
+					|| (searchResearch(_rules->getResearch("STR_COMMANDER_PLUS")) == false		// player still needs CommanderPlus
 						&& std::find(
-								resRule->getUnlocks().begin(),
-								resRule->getUnlocks().end(),
-								"STR_COMMANDER_PLUS") != resRule->getUnlocks().end()))		// and the resRule can unlock CommanderPlus
+								resRule->getForcedResearch().begin(),
+								resRule->getForcedResearch().end(),
+								"STR_COMMANDER_PLUS") != resRule->getForcedResearch().end()))	// and the resRule can unlock CommanderPlus
 				{
-					cullProject = false;													// do NOT cull
+					cullProject = false;														// do NOT cull
 				}
 
 				if (cullProject == true) continue;
 			}
 
-			if (std::find_if(
-						base->getResearch().begin(),
-						base->getResearch().end(),
-						findRuleResearch(resRule)) == base->getResearch().end() // if not already a ResearchProject @ Base ->
-				&& (resRule->needsItem() == false
-					|| base->getStorageItems()->getItemQty(resRule->getType()) != 0))
-			{
-				const std::vector<std::string>* const prereqs (&(resRule->getPrerequisites()));
-				size_t
-					tally (0),
-					reqSize (prereqs->size());
-				for (size_t
-						j = 0;
-						j != reqSize;
-						++j)
-				{
-					if (std::find(
-							_discovered.begin(),
-							_discovered.end(),
-							_rules->getResearch(prereqs->at(j))) != _discovered.end())
-					{
-						++tally;
-					}
-				}
+			if (hasRequiredResearch(resRule) == true)
+				availableProjects.push_back(resRule);
+		}
+	}
+}
 
-				if (tally == reqSize)
-					availableProjects.push_back(resRule);
+/**
+ * Fills a vector with the forced-types of completed ResearchProjects.
+ * @param list - reference to a vector to fill with pointers to RuleResearch
+ */
+void SavedGame::tabulateForced(std::vector<const RuleResearch*>& list) const // private.
+{
+	std::vector<std::string> forcedTypes;
+
+	for (std::vector<ResearchGeneral*>::const_iterator
+			i = _research.begin();
+			i != _research.end();
+			++i)
+	{
+		if ((*i)->getStatus() == RS_COMPLETED)
+		{
+			forcedTypes = (*i)->getRules()->getForcedResearch();
+			for (std::vector<std::string>::const_iterator
+					j = forcedTypes.begin();
+					j != forcedTypes.end();
+					++j)
+			{
+				list.push_back(_rules->getResearch(*j)); // load up forced-research from completed-research.
 			}
 		}
 	}
 }
 
 /**
- * Checks whether a RuleResearch can be started as a project.
- * @note If it's unlocked it can be started. If it's not unlocked but has a
- * getOneFree it's also considered available; if it's not unlocked and does not
- * have a getOneFree and its dependencies are as yet undiscovered it cannot be
- * started.
- * @param resRule - pointer to a RuleResearch to test
- * @return, true if @a resRule can be researched
+ * Checks whether a RuleResearch has had all its prerequisites met.
+ * @param resRule - pointer to RuleResearch
+ * @return, true if good to go
  */
-bool SavedGame::isResearchAvailable(const RuleResearch* const resRule) const // private.
+bool SavedGame::checkPrerequisites(const RuleResearch* const resRule) const
+{
+	for (std::vector<std::string>::const_iterator
+			i = resRule->getPrerequisites().begin();
+			i != resRule->getPrerequisites().end();
+			++i)
+	{
+		for (std::vector<ResearchGeneral*>::const_iterator
+				j = _research.begin();
+				j != _research.end();
+				++j)
+		{
+			if ((*j)->getStatus() != RS_COMPLETED
+				&& (*j)->getType() == *i)
+			{
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+/**
+ * Checks whether or not required research has been met.
+ * @param resRule - pointer to RuleResearch
+ * @return, true if good to go
+ */
+bool SavedGame::hasRequiredResearch(const RuleResearch* const resRule) const
+{
+	for (std::vector<std::string>::const_iterator
+			i = resRule->getRequiredResearch().begin();
+			i != resRule->getRequiredResearch().end();
+			++i)
+	{
+		for (std::vector<ResearchGeneral*>::const_iterator
+				j = _research.begin();
+				j != _research.end();
+				++j)
+		{
+			if ((*j)->getStatus() != RS_COMPLETED
+				&& (*j)->getType() == *i)
+			{
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+/**
+ * Checks whether a RuleResearch can be started as a project.
+ * @note If it's forced it is available. If it's not forced and has a getOneFree
+ * it's also considered available. But if it's not forced and does not have a
+ * getOneFree and its prerequisites are as yet undiscovered it is not available.
+ * @param resRule - pointer to a RuleResearch
+ * @return, true if available
+ */
+bool SavedGame::isProjectAvailable(const RuleResearch* const resRule) const // private.
 {
 	if (resRule != nullptr)
 	{
-		if (_rules->getUnitRule(resRule->getType()) != nullptr // kL_add. Always allow aLiens to be researched & re-researched.
-			|| _debug == true)
+		std::vector<const RuleResearch*> forcedList;
+		tabulateForced(forcedList);
+
+		if (std::find(
+				forcedList.begin(),
+				forcedList.end(),
+				resRule) != forcedList.end())
 		{
 			return true;
 		}
 
-		std::vector<const RuleResearch*> unlocksList;
-		std::vector<std::string> unlockedTypes;
-		for (std::vector<const RuleResearch*>::const_iterator
-				i = _discovered.begin();
-				i != _discovered.end();
+		const RuleResearch* gofRule;
+		std::vector<std::string> gofTypes (resRule->getGetOneFree());
+		for (std::vector<std::string>::const_iterator
+				i = gofTypes.begin();
+				i != gofTypes.end();
 				++i)
 		{
-			unlockedTypes = (*i)->getUnlocks();
-			for (std::vector<std::string>::const_iterator
-					j = unlockedTypes.begin();
-					j != unlockedTypes.end();
-					++j)
+			gofRule = _rules->getResearch(*i);
+			if (std::find(
+					forcedList.begin(),
+					forcedList.end(),
+					gofRule) == forcedList.end())
 			{
-				unlocksList.push_back(_rules->getResearch(*j)); // load up *all* unlocks.
+				return true;
 			}
 		}
 
-		if (std::find(
-				unlocksList.begin(),
-				unlocksList.end(),
-				resRule) == unlocksList.end()) // if resRule has NOT been revealed by any prior project yet ->
-		{
-/*			if (_rules->getUnit(resRule->getType()) != nullptr								// if it's an aLien
-				&& resRule->getGetOneFree().empty() == false								// and it grants a getOneFree
-				&& ((std::find(																// and ...
-							_discovered.begin(),
-							_discovered.end(),
-							_rules->getResearch("STR_LEADER_PLUS")) == _discovered.end()	// player still needs LeaderPlus
-						&& std::find(
-								resRule->getUnlocks().begin(),
-								resRule->getUnlocks().end(),
-								"STR_LEADER_PLUS") != resRule->getUnlocks().end())			// and the resRule can grant LeaderPlus
-					|| (std::find(
-							_discovered.begin(),
-							_discovered.end(),
-							_rules->getResearch("STR_COMMANDER_PLUS")) == _discovered.end()	// player still needs CommanderPlus
-						&& std::find(
-								resRule->getUnlocks().begin(),
-								resRule->getUnlocks().end(),
-								"STR_COMMANDER_PLUS") != resRule->getUnlocks().end())))		// and the resRule can grant CommanderPlus
-			{
-				return true; // that makes no sense; aLiens that grant LeaderPlus and/or CommanderPlus do not have a getOneFree entry.
-			} */// It only makes sense (kind of) if a non-alien project has Leader/Commander-Plus as a getOneFree AND as an 'unlocks' value ....
-				// Anyway, I'm doing my own thing because it's become obvious how sloppily the research was coded.
+		if (checkPrerequisites(resRule) == false)
+			return false;
 
-
-			const RuleResearch* ruleTest;
-			std::vector<std::string> test (resRule->getGetOneFree());
-			for (std::vector<std::string>::const_iterator
-					i = test.begin();
-					i != test.end();
-					++i)
-			{
-				ruleTest = _rules->getResearch(*i);
-				if (std::find(
-						unlocksList.begin(),
-						unlocksList.end(),
-						ruleTest) == unlocksList.end())
-				{
-					return true; // resRule's getOneFree is not yet unlocked by any project. (so what)
-				}
-			}
-
-			test = resRule->getDependencies();
-			for (std::vector<std::string>::const_iterator
-					i = test.begin();
-					i != test.end();
-					++i)
-			{
-				ruleTest = _rules->getResearch(*i);
-				if (std::find(
-						_discovered.begin(),
-						_discovered.end(),
-						ruleTest) == _discovered.end())
-				{
-					return false; // a dependency has not been discovered yet.
-				}
-			}
-		}
-
-		return true; // debug=true or resRule is unlocked already.
+		return true;
 	}
 
-	return false; // resRule = nullptr.
+	return false;
 }
 
 /**
@@ -1565,73 +1692,76 @@ void SavedGame::getAvailableProductions(
 }
 
 /**
- * Assigns a list of newly available ResearchProjects that appear when a research
- * is completed.
- * @note This function checks for fake research and adds fake-research's dependents.
+ * Tabulates a list of newly available ResearchProjects that appear when a
+ * ResearchProject is completed.
+ * @note This function checks for completed no-cost research and adds its
+ * prerequisites. wtf.
  * @note Called from GeoscapeState::time1Day() for NewPossibleResearchInfo screen.
- * @param dependents	- reference to a vector of pointers to the RuleResearch's
- * that are now available
+ * @param nowAvailable	- reference to a vector of pointers to the RuleResearch's
+ *						  that are now available
  * @param resRule		- pointer to the RuleResearch that has just been discovered
  * @param base			- pointer to a Base
  */
-void SavedGame::getDependentResearch(
-		std::vector<const RuleResearch*>& dependents,
+void SavedGame::getPopupResearch(
+		std::vector<const RuleResearch*>& nowAvailable,
 		const RuleResearch* const resRule,
 		Base* const base) const
 {
-	getDependentResearchBasic(dependents, resRule, base);
+	getDependentResearchBasic(nowAvailable, resRule, base);
 
-	for (std::vector<const RuleResearch*>::const_iterator
-			i = _discovered.begin();
-			i != _discovered.end();
+	for (std::vector<ResearchGeneral*>::const_iterator
+			i = _research.begin();
+			i != _research.end();
 			++i)
 	{
-		if ((*i)->getCost() == 0 // discovered fake project.
+		if ((*i)->getStatus() == RS_COMPLETED
+			&& (*i)->getRules()->getCost() == 0
 			&& std::find(
-					(*i)->getDependencies().begin(), // if resRule is found as a dependency of a discovered fake research ->
-					(*i)->getDependencies().end(),
-					resRule->getType()) != (*i)->getDependencies().end())
+					(*i)->getRules()->getPrerequisites().begin(),
+					(*i)->getRules()->getPrerequisites().end(),
+					resRule->getType()) != (*i)->getRules()->getPrerequisites().end())
 		{
-			getDependentResearchBasic(dependents, *i, base);
+			getDependentResearchBasic(nowAvailable, (*i)->getRules(), base);
 		}
 	}
 }
 
 /**
- * Assigns a list of newly available ResearchProjects that appear when a research
- * is completed.
- * @note This function doesn't check for fake research.
- * @note Called from addFinishedResearch(), getDependentResearch(), and itself.
- * @param dependents	- reference to a vector of pointers to the RuleResearch's
- * that are now available
+ * Tabulats a list of newly available ResearchProjects that appear when a
+ * ResearchProject is completed.
+ * @note This function does not check for no-cost research.
+ * @note Called from addFinishedResearch(), getPopupResearch(), and itself.
+ * @param nowAvailable	- reference to a vector of pointers to the RuleResearch's
+ *						  that are now available
  * @param resRule		- pointer to the RuleResearch that has just been discovered
  * @param base			- pointer to a Base
  */
 void SavedGame::getDependentResearchBasic( // private.
-		std::vector<const RuleResearch*>& dependents,
+		std::vector<const RuleResearch*>& nowAvailable,
 		const RuleResearch* const resRule,
 		Base* const base) const
 {
 	std::vector<const RuleResearch*> availableProjects;
 	getAvailableResearchProjects(availableProjects, base); // <---|			should be: any research that
-	for (std::vector<const RuleResearch*>::const_iterator					//	(1) has all its dependencies discovered
-			i = availableProjects.begin();									//	(2) or has been unlocked,
+
+	for (std::vector<const RuleResearch*>::const_iterator					//	(1) has all its prerequisites discovered
+			i = availableProjects.begin();									//	(2) or has been forced,
 			i != availableProjects.end();									//	(3) and has all its requirements discovered -
 			++i)															//	(4) but has *not* been discovered itself.
 	{
 		if (std::find(
-					(*i)->getDependencies().begin(),
-					(*i)->getDependencies().end(),
-					resRule->getType()) != (*i)->getDependencies().end()	// if an availableProject has resRule as a dependent
+					(*i)->getPrerequisites().begin(),
+					(*i)->getPrerequisites().end(),
+					resRule->getType()) != (*i)->getPrerequisites().end()	// if an availableProject has resRule as a prerequisite
 			|| std::find(
-					(*i)->getUnlocks().begin(),
-					(*i)->getUnlocks().end(),
-					resRule->getType()) != (*i)->getUnlocks().end())		// or an availableProject unlocks resRule
+					(*i)->getForcedResearch().begin(),
+					(*i)->getForcedResearch().end(),
+					resRule->getType()) != (*i)->getForcedResearch().end())	// or an availableProject forces resRule
 		{
-			dependents.push_back(*i);										// push_back the availableProject as a dependent.
+			nowAvailable.push_back(*i);										// push_back the availableProject as a prerequisite
 
 			if ((*i)->getCost() == 0)										// and if that's a fake project -> repeat
-				getDependentResearchBasic(dependents, *i, base);
+				getDependentResearchBasic(nowAvailable, *i, base);
 		}
 	}
 }
@@ -1649,10 +1779,10 @@ void SavedGame::getDependentManufacture(
 		const RuleResearch* const resRule) const
 {
 	const RuleManufacture* manfRule;
-	const std::vector<std::string>& manufList (_rules->getManufactureList());
+	const std::vector<std::string>& manfList (_rules->getManufactureList());
 	for (std::vector<std::string>::const_iterator
-			i = manufList.begin();
-			i != manufList.end();
+			i = manfList.begin();
+			i != manfList.end();
 			++i)
 	{
 		manfRule = _rules->getManufacture(*i);
@@ -1683,16 +1813,7 @@ bool SavedGame::isResearched(const std::string& resType) const
 		return true;
 	}
 
-	for (std::vector<const RuleResearch*>::const_iterator
-			i = _discovered.begin();
-			i != _discovered.end();
-			++i)
-	{
-		if ((*i)->getType() == resType)
-			return true;
-	}
-
-	return false;
+	return searchResearch(resType);
 }
 
 /**
@@ -2013,15 +2134,6 @@ AlienMission* SavedGame::findAlienMission(
 }
 
 /**
- * Adds to this month's research score
- * @param score - the amount to add
- */
-void SavedGame::addResearchScore(int score)
-{
-	_researchScores.back() += score;
-}
-
-/**
  * Returns the list of research scores
  * @return, list of research scores
  */
@@ -2205,51 +2317,6 @@ bool SavedGame::getDetail()
 {
 	return _detail;
 } */
-
-/**
- * Marks a ResearchProject as having popped up -> "we can now research".
- * @note Used by NewPossibleResearchState.
- * @param research - pointer to the RuleResearch
- */
-void SavedGame::addPoppedResearch(const RuleResearch* const resRule)
-{
-	if (wasResearchPopped(resRule) == false)
-		_poppedResearch.push_back(resRule);
-}
-
-/**
- * Checks if a ResearchProject has previously popped up.
- * @note Used by NewPossibleResearchState.
- * @param resRule - pointer to the RuleResearch
- * @return, true if popped
- */
-bool SavedGame::wasResearchPopped(const RuleResearch* const resRule)
-{
-	return std::find(
-				_poppedResearch.begin(),
-				_poppedResearch.end(),
-				resRule) != _poppedResearch.end();
-}
-
-/**
- * Checks for and removes a ResearchProject from the popped-up list.
- * @note Called from addFinishedResearch().
- * @param resRule - pointer to the RuleResearch
- */
-void SavedGame::removePoppedResearch(const RuleResearch* const resRule) // private.
-{
-	for (std::vector<const RuleResearch*>::const_iterator
-			i = _poppedResearch.begin();
-			i != _poppedResearch.end();
-			++i)
-	{
-		if (*i == resRule)
-		{
-			_poppedResearch.erase(i);
-			return;
-		}
-	}
-}
 
 /**
  * Returns the list of dead soldiers.

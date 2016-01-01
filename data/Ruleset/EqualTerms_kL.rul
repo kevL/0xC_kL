@@ -369,7 +369,7 @@ items:
 #    aimRange: 25
 #    snapRange: 9
 #    dropoff: 5
-    requires:
+    required:
       - STR_REINFORCED_SHOTGUN
 #------------------------------------------------------------------------------
   - type: STR_SHOTGUN_SHELLS
@@ -406,7 +406,7 @@ items:
     battleType: 2
     shotgunPellets: 6
     shotgunPattern: 6
-    requires:
+    required:
       - STR_ALLOY_SHOTGUN_SHELLS
 #------------------------------------------------------------------------------
   - type: STR_ELERIUM_SHOTGUN_SHELLS
@@ -425,7 +425,7 @@ items:
     battleType: 2
     shotgunPellets: 5
     shotgunPattern: 4
-    requires:
+    required:
       - STR_ELERIUM_SHOTGUN_SHELLS
 #------------------------------------------------------------------------------
   - type: STR_INCENDIARY_GRENADE
@@ -1225,7 +1225,7 @@ ufopaedia:
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_REINFORCED_SHOTGUN_UFOPEDIA
     listOrder: 2102
-    requires:
+    required:
       - STR_REINFORCED_SHOTGUN
   - id: STR_INCENDIARY_GRENADE
     listOrder: 3911
@@ -1262,12 +1262,12 @@ ufopaedia:
   - id: STR_ALLOY_SHOTGUN_SHELLS
     type_id: 4
     section: STR_NOT_AVAILABLE
-    requires:
+    required:
       - STR_ALLOY_SHOTGUN_SHELLS
   - id: STR_ELERIUM_SHOTGUN_SHELLS
     type_id: 4
     section: STR_NOT_AVAILABLE
-    requires:
+    required:
       - STR_ELERIUM_SHOTGUN_SHELLS
 #------------------------------------------------------------------------------
 # ARMORs
@@ -1331,21 +1331,21 @@ research:
     listOrder: 901
     cost: 800
     points: 10
-    dependencies:
+    prerequisites:
       - STR_ALIEN_ALLOYS
 #------------------------------------------------------------------------------
   - type: STR_ALLOY_SHOTGUN_SHELLS
     listOrder: 902
     cost: 400
     points: 10
-    dependencies:
+    prerequisites:
       - STR_REINFORCED_SHOTGUN
 #------------------------------------------------------------------------------
   - type: STR_ELERIUM_SHOTGUN_SHELLS
     listOrder: 903
     cost: 500
     points: 10
-    dependencies:
+    prerequisites:
       - STR_ALLOY_SHOTGUN_SHELLS
       - STR_ELERIUM_115
 #------------------------------------------------------------------------------
@@ -1355,7 +1355,7 @@ manufacture:
   - type: STR_REINFORCED_SHOTGUN
     listOrder: 1101
     category: STR_WEAPON
-    requires:
+    required:
       - STR_REINFORCED_SHOTGUN
     space: 4
     time: 820
@@ -1366,7 +1366,7 @@ manufacture:
   - type: STR_ALLOY_SHOTGUN_SHELLS
     listOrder: 1102
     category: STR_AMMUNITION
-    requires:
+    required:
       - STR_ALLOY_SHOTGUN_SHELLS
     space: 4
     time: 80
@@ -1377,7 +1377,7 @@ manufacture:
   - type: STR_ELERIUM_SHOTGUN_SHELLS
     listOrder: 1103
     category: STR_AMMUNITION
-    requires:
+    required:
       - STR_ELERIUM_SHOTGUN_SHELLS
     space: 4
     time: 90

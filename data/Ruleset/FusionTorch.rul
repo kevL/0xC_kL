@@ -1,6 +1,6 @@
 items:
   - type: STR_FUSION_TORCH
-    requires:
+    required:
       - STR_FUSION_TORCH
     size: 1.0
     costSell: 250000
@@ -22,7 +22,7 @@ items:
     compatibleAmmo:
       - STR_FUSION_TORCH_POWER_CELL
   - type: STR_FUSION_TORCH_POWER_CELL
-    requires:
+    required:
       - STR_FUSION_TORCH_POWER_CELL
     power: 1000
     size: 0.3
@@ -42,7 +42,7 @@ items:
 manufacture:
   - type: STR_FUSION_TORCH
     category: STR_WEAPON
-    requires:
+    required:
       - STR_FUSION_TORCH
     space: 6
     time: 750
@@ -51,7 +51,7 @@ manufacture:
       STR_ALIEN_ALLOYS: 8
   - type: STR_FUSION_TORCH_POWER_CELL
     category: STR_AMMUNITION
-    requires:
+    required:
       - STR_FUSION_TORCH_POWER_CELL
     space: 2
     time: 150
@@ -65,14 +65,14 @@ ufopaedia:
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_FUSION_TORCH_UFOPEDIA
-    requires:
+    required:
       - STR_FUSION_TORCH
   - id: STR_FUSION_TORCH_POWER_CELL
     listOrder: 3904
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_FUSION_TORCH_POWER_CELL_UFOPEDIA
-    requires:
+    required:
       - STR_FUSION_TORCH_POWER_CELL
 extraSprites:
   - type: BIGOBS.PCK

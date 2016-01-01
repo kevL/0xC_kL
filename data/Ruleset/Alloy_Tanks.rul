@@ -167,7 +167,7 @@ units:
 manufacture:
   - type: STR_TANK_CANNON_ALLOY
     category: STR_HEAVY_WEAPONS_PLATFORM
-    requires:
+    required:
       - STR_ALLOY_TANK_ARMOR
     space: 23
     time: 1200
@@ -177,7 +177,7 @@ manufacture:
     listOrder: 425
   - type: STR_TANK_ROCKET_LAUNCHER_ALLOY
     category: STR_HEAVY_WEAPONS_PLATFORM
-    requires:
+    required:
       - STR_ALLOY_TANK_ARMOR
     space: 23
     time: 1200
@@ -187,7 +187,7 @@ manufacture:
     listOrder: 475
   - type: STR_TANK_LASER_CANNON_ALLOY
     category: STR_HEAVY_WEAPONS_PLATFORM
-    requires:
+    required:
       - STR_LASER_CANNON
       - STR_ALLOY_TANK_ARMOR
     space: 23
@@ -200,7 +200,7 @@ ufopaedia:
   - id: STR_TANK_CANNON_ALLOY
     type_id: 3
     section: STR_HEAVY_WEAPONS_PLATFORMS
-    requires:
+    required:
       - STR_ALLOY_TANK_ARMOR
     text: STR_TANK_CANNON_ALLOY_UFOPEDIA
     weapon: STR_CANNON
@@ -208,7 +208,7 @@ ufopaedia:
   - id: STR_TANK_ROCKET_LAUNCHER_ALLOY
     type_id: 3
     section: STR_HEAVY_WEAPONS_PLATFORMS
-    requires:
+    required:
       - STR_ALLOY_TANK_ARMOR
     text: STR_TANK_ROCKET_LAUNCHER_ALLOY_UFOPEDIA
     weapon: STR_ROCKET_LAUNCHER
@@ -216,7 +216,7 @@ ufopaedia:
   - id: STR_TANK_LASER_CANNON_ALLOY
     type_id: 3
     section: STR_HEAVY_WEAPONS_PLATFORMS
-    requires:
+    required:
       - STR_LASER_CANNON
       - STR_ALLOY_TANK_ARMOR
     text: STR_TANK_LASER_CANNON_ALLOY_UFOPEDIA

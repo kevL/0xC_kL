@@ -65,7 +65,7 @@ private:
 		_statCaps;
 	RuleGender _genderRatio;
 
-	std::vector<std::string> _requires;
+	std::vector<std::string> _required;
 
 
 	public:

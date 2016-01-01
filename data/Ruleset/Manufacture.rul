@@ -1,7 +1,7 @@
 manufacture:
   - type: STR_FUSION_BALL_LAUNCHER
     category: STR_CRAFT_WEAPON
-    requires:
+    required:
       - STR_FUSION_MISSILE
       - STR_ALIEN_ALLOYS
       - STR_ELERIUM_115
@@ -12,7 +12,7 @@ manufacture:
       STR_ALIEN_ALLOYS: 15
   - type: STR_LASER_CANNON
     category: STR_CRAFT_WEAPON
-    requires:
+    required:
       - STR_LASER_CANNON
       - STR_ALIEN_ALLOYS
       - STR_ELERIUM_115
@@ -24,7 +24,7 @@ manufacture:
      STR_ELERIUM_115: 6
   - type: STR_PLASMA_BEAM
     category: STR_CRAFT_WEAPON
-    requires:
+    required:
       - STR_PLASMA_CANNON
       - STR_ALIEN_ALLOYS
       - STR_ELERIUM_115
@@ -36,7 +36,7 @@ manufacture:
       STR_ELERIUM_115: 16
   - type: STR_FUSION_BALL
     category: STR_CRAFT_AMMUNITION
-    requires:
+    required:
       - STR_FUSION_MISSILE
       - STR_ALIEN_ALLOYS
       - STR_ELERIUM_115
@@ -48,7 +48,7 @@ manufacture:
       STR_ELERIUM_115: 7
   - type: STR_TANK_LASER_CANNON
     category: STR_HEAVY_WEAPONS_PLATFORM
-    requires:
+    required:
       - STR_LASER_CANNON
       - STR_ALIEN_ALLOYS
       - STR_ELERIUM_115
@@ -60,7 +60,7 @@ manufacture:
       STR_ELERIUM_115: 10
   - type: STR_HOVERTANK_PLASMA
     category: STR_HEAVY_WEAPONS_PLATFORM
-    requires:
+    required:
       - STR_PLASMA_CANNON
       - STR_NEW_FIGHTER_CRAFT
       - STR_ALIEN_ALLOYS
@@ -73,7 +73,7 @@ manufacture:
       STR_ELERIUM_115: 20
   - type: STR_HOVERTANK_LAUNCHER
     category: STR_HEAVY_WEAPONS_PLATFORM
-    requires:
+    required:
       - STR_FUSION_MISSILE
       - STR_NEW_FIGHTER_CRAFT
       - STR_ALIEN_ALLOYS
@@ -86,7 +86,7 @@ manufacture:
       STR_ELERIUM_115: 16
   - type: STR_HWP_FUSION_BOMB
     category: STR_HWP_AMMUNITION
-    requires:
+    required:
       - STR_FUSION_MISSILE
       - STR_NEW_FIGHTER_CRAFT
       - STR_ALIEN_ALLOYS
@@ -99,7 +99,7 @@ manufacture:
       STR_ELERIUM_115: 6
   - type: STR_LASER_PISTOL
     category: STR_WEAPON
-    requires:
+    required:
       - STR_LASER_PISTOL
     space: 4
     time: 300
@@ -108,7 +108,7 @@ manufacture:
       STR_ELERIUM_115: 1
   - type: STR_LASER_RIFLE
     category: STR_WEAPON
-    requires:
+    required:
       - STR_LASER_RIFLE
     space: 6
     time: 400
@@ -117,7 +117,7 @@ manufacture:
       STR_ELERIUM_115: 2
   - type: STR_HEAVY_LASER
     category: STR_WEAPON
-    requires:
+    required:
       - STR_HEAVY_LASER
     space: 7
     time: 700
@@ -127,21 +127,21 @@ manufacture:
       STR_ELERIUM_115: 3
   - type: STR_MOTION_SCANNER
     category: STR_EQUIPMENT
-    requires:
+    required:
       - STR_MOTION_SCANNER
     space: 5
     time: 320
     cost: 32000
   - type: STR_MEDI_KIT
     category: STR_EQUIPMENT
-    requires:
+    required:
       - STR_MEDI_KIT
     space: 5
     time: 250
     cost: 25000
   - type: STR_PSI_AMP
     category: STR_EQUIPMENT
-    requires:
+    required:
       - STR_PSI_AMP
       - STR_ELERIUM_115
     space: 6
@@ -152,7 +152,7 @@ manufacture:
       STR_ELERIUM_115: 1
   - type: STR_HEAVY_PLASMA
     category: STR_WEAPON
-    requires:
+    required:
       - STR_HEAVY_PLASMA
       - STR_HEAVY_PLASMA_CLIP
       - STR_ALIEN_ALLOYS
@@ -163,7 +163,7 @@ manufacture:
       STR_ALIEN_ALLOYS: 6
   - type: STR_HEAVY_PLASMA_CLIP
     category: STR_AMMUNITION
-    requires:
+    required:
       - STR_HEAVY_PLASMA
       - STR_HEAVY_PLASMA_CLIP
       - STR_ELERIUM_115
@@ -174,7 +174,7 @@ manufacture:
       STR_ELERIUM_115: 1
   - type: STR_PLASMA_RIFLE
     category: STR_WEAPON
-    requires:
+    required:
       - STR_PLASMA_RIFLE
       - STR_PLASMA_RIFLE_CLIP
       - STR_ALIEN_ALLOYS
@@ -185,7 +185,7 @@ manufacture:
       STR_ALIEN_ALLOYS: 4
   - type: STR_PLASMA_RIFLE_CLIP
     category: STR_AMMUNITION
-    requires:
+    required:
       - STR_PLASMA_RIFLE
       - STR_PLASMA_RIFLE_CLIP
       - STR_ELERIUM_115
@@ -196,7 +196,7 @@ manufacture:
       STR_ELERIUM_115: 1
   - type: STR_PLASMA_PISTOL
     category: STR_WEAPON
-    requires:
+    required:
       - STR_PLASMA_PISTOL
       - STR_PLASMA_PISTOL_CLIP
       - STR_ALIEN_ALLOYS
@@ -207,7 +207,7 @@ manufacture:
       STR_ALIEN_ALLOYS: 2
   - type: STR_PLASMA_PISTOL_CLIP
     category: STR_AMMUNITION
-    requires:
+    required:
       - STR_PLASMA_PISTOL
       - STR_PLASMA_PISTOL_CLIP
       - STR_ELERIUM_115
@@ -218,7 +218,7 @@ manufacture:
       STR_ELERIUM_115: 1
   - type: STR_BLASTER_LAUNCHER
     category: STR_WEAPON
-    requires:
+    required:
       - STR_BLASTER_LAUNCHER
       - STR_BLASTER_BOMB
       - STR_ALIEN_ALLOYS
@@ -229,7 +229,7 @@ manufacture:
       STR_ALIEN_ALLOYS: 5
   - type: STR_BLASTER_BOMB
     category: STR_AMMUNITION
-    requires:
+    required:
       - STR_BLASTER_LAUNCHER
       - STR_BLASTER_BOMB
       - STR_ELERIUM_115
@@ -240,7 +240,7 @@ manufacture:
       STR_ELERIUM_115: 4
   - type: STR_SMALL_LAUNCHER
     category: STR_WEAPON
-    requires:
+    required:
       - STR_SMALL_LAUNCHER
       - STR_STUN_BOMB
       - STR_ALIEN_ALLOYS
@@ -251,7 +251,7 @@ manufacture:
       STR_ALIEN_ALLOYS: 3
   - type: STR_STUN_BOMB
     category: STR_AMMUNITION
-    requires:
+    required:
       - STR_SMALL_LAUNCHER
       - STR_STUN_BOMB
       - STR_ELERIUM_115
@@ -262,7 +262,7 @@ manufacture:
       STR_ELERIUM_115: 2
   - type: STR_ALIEN_GRENADE
     category: STR_WEAPON
-    requires:
+    required:
       - STR_ALIEN_GRENADE
       - STR_ALIEN_ALLOYS
       - STR_ELERIUM_115
@@ -274,7 +274,7 @@ manufacture:
       STR_ELERIUM_115: 2
   - type: STR_MIND_PROBE
     category: STR_EQUIPMENT
-    requires:
+    required:
       - STR_MIND_PROBE
       - STR_ELERIUM_115
     space: 3
@@ -284,7 +284,7 @@ manufacture:
       STR_ELERIUM_115: 1
   - type: STR_PERSONAL_ARMOR
     category: STR_PERSONAL_ARMOR_BA
-    requires:
+    required:
       - STR_PERSONAL_ARMOR
       - STR_ALIEN_ALLOYS
     space: 10
@@ -294,7 +294,7 @@ manufacture:
       STR_ALIEN_ALLOYS: 10
   - type: STR_POWER_SUIT
     category: STR_PERSONAL_ARMOR_BA
-    requires:
+    required:
       - STR_POWER_SUIT
       - STR_ALIEN_ALLOYS
       - STR_ELERIUM_115
@@ -306,7 +306,7 @@ manufacture:
       STR_ELERIUM_115: 3
   - type: STR_FLYING_SUIT
     category: STR_PERSONAL_ARMOR_BA
-    requires:
+    required:
       - STR_FLYING_SUIT
       - STR_ALIEN_ALLOYS
       - STR_ELERIUM_115
@@ -318,14 +318,14 @@ manufacture:
       STR_ELERIUM_115: 9
   - type: STR_ALIEN_ALLOYS
     category: STR_UFO_COMPONENT
-    requires:
+    required:
       - STR_ALIEN_ALLOYS
     space: 10
     time: 50
     cost: 5000
   - type: STR_UFO_POWER_SOURCE
     category: STR_UFO_COMPONENT
-    requires:
+    required:
       - STR_UFO_POWER_SOURCE
       - STR_ALIEN_ALLOYS
       - STR_ELERIUM_115
@@ -337,7 +337,7 @@ manufacture:
       STR_ELERIUM_115: 25
   - type: STR_UFO_NAVIGATION
     category: STR_UFO_COMPONENT
-    requires:
+    required:
       - STR_UFO_NAVIGATION
       - STR_ALIEN_ALLOYS
     space: 16
@@ -347,7 +347,7 @@ manufacture:
       STR_ALIEN_ALLOYS: 5
   - type: STR_FIRESTORM
     category: STR_CRAFT
-    requires:
+    required:
       - STR_NEW_FIGHTER_CRAFT
     space: 32
     time: 28000
@@ -358,7 +358,7 @@ manufacture:
       STR_UFO_NAVIGATION: 1
   - type: STR_LIGHTNING
     category: STR_CRAFT
-    requires:
+    required:
       - STR_NEW_FIGHTER_TRANSPORTER
     space: 48
     time: 36000
@@ -369,7 +369,7 @@ manufacture:
       STR_UFO_NAVIGATION: 2
   - type: STR_AVENGER
     category: STR_CRAFT
-    requires:
+    required:
       - STR_ULTIMATE_CRAFT
     space: 64
     time: 68000

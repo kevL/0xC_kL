@@ -69,7 +69,7 @@ private:
 		_mapName,
 		_type;
 
-	std::vector<std::string> _requires;
+	std::vector<std::string> _required;
 
 
 	public:

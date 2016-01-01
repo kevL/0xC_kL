@@ -106,27 +106,10 @@ NewPossibleResearchState::NewPossibleResearchState(
 			i != resRules.end();
 			++i)
 	{
-		_game->getSavedGame()->addPoppedResearch(*i);
+		_game->getSavedGame()->setResearchStatus(*i, RS_AVAILABLE);
 		_lstPossibilities->addRow(1, tr((*i)->getType ()).c_str());
 	}
-/*	bool go (false);
-	for (std::vector<const RuleResearch*>::const_iterator // -> moved to GeoscapeState::time1Day()
-			i = resRules.begin();
-			i != resRules.end();
-			++i)
-	{
-		// TODO: Should this have been done before here.
-		if (_game->getSavedGame()->wasResearchPopped(*i) == false			// do not show twice.
-			&& (*i)->getCost() != 0											// no fake projects pls.
-			&& _game->getRuleset()->getUnit((*i)->getType()) == nullptr)	// and no aLiens ->
-		{
-			go = true;
-			_game->getSavedGame()->addPoppedResearch(*i);
-			_lstPossibilities->addRow(1, tr((*i)->getType ()).c_str());
-		}
-	}
 
-	if (go == true) */
 	_txtTitle->setText(tr("STR_WE_CAN_NOW_RESEARCH"));
 }
 

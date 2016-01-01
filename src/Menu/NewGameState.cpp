@@ -62,8 +62,6 @@ NewGameState::NewGameState()
 	_btnCancel		= new TextButton(78, 16,  80, 164);
 	_btnOk			= new TextButton(78, 16, 162, 164);
 
-	_difficulty = _btnBeginner;
-
 	setInterface("newGameMenu");
 
 	add(_window,			"window",	"newGameMenu");
@@ -86,6 +84,8 @@ NewGameState::NewGameState()
 	_txtTitle->setText(tr("STR_SELECT_DIFFICULTY_LEVEL"));
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
+
+	_difficulty = _btnBeginner;
 
 	_btnBeginner->setText(tr("STR_1_BEGINNER"));
 	_btnBeginner->setGroup(&_difficulty);
@@ -112,6 +112,9 @@ NewGameState::NewGameState()
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& NewGameState::btnOkClick,
 					Options::keyOk);
+	_btnOk->onKeyboardPress(
+					(ActionHandler)& NewGameState::btnOkClick,
+					Options::keyOkKeypad);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
 	_btnCancel->onMouseClick((ActionHandler)& NewGameState::btnCancelClick);
@@ -127,7 +130,7 @@ NewGameState::~NewGameState()
 {}
 
 /**
- * Sets up a new saved game and jumps to the Geoscape.
+ * Sets up a new SavedGame and jumps to the Geoscape.
  * @param action - pointer to an Action
  */
 void NewGameState::btnOkClick(Action*)

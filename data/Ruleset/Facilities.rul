@@ -71,7 +71,7 @@ facilities:
     storage: 75
     mapName: XBASE_07
   - type: STR_ALIEN_CONTAINMENT
-    requires:
+    required:
       - STR_ALIEN_CONTAINMENT
     spriteShape: 1
     spriteFacility: 25
@@ -81,7 +81,7 @@ facilities:
     aliens: 10
     mapName: XBASE_08
   - type: STR_LASER_DEFENSES
-    requires:
+    required:
       - STR_LASER_DEFENSE
     spriteShape: 3
     spriteFacility: 26
@@ -94,7 +94,7 @@ facilities:
     hitSound: 10
     mapName: XBASE_09
   - type: STR_PLASMA_DEFENSES
-    requires:
+    required:
       - STR_PLASMA_DEFENSE
     spriteShape: 3
     spriteFacility: 27
@@ -107,7 +107,7 @@ facilities:
     hitSound: 10
     mapName: XBASE_10
   - type: STR_FUSION_BALL_DEFENSES
-    requires:
+    required:
       - STR_FUSION_DEFENSE
     spriteShape: 3
     spriteFacility: 28
@@ -120,7 +120,7 @@ facilities:
     hitSound: 10
     mapName: XBASE_11
   - type: STR_GRAV_SHIELD
-    requires:
+    required:
       - STR_GRAV_SHIELD
     grav: true
     spriteShape: 2
@@ -130,7 +130,7 @@ facilities:
     monthlyCost: 67500
     mapName: XBASE_12
   - type: STR_MIND_SHIELD
-    requires:
+    required:
       - STR_MIND_SHIELD
     mind: true
     spriteShape: 2
@@ -140,7 +140,7 @@ facilities:
     monthlyCost: 67500
     mapName: XBASE_13
   - type: STR_PSIONIC_LABORATORY
-    requires:
+    required:
       - STR_PSI_LAB
     spriteShape: 1
     spriteFacility: 31
@@ -150,7 +150,7 @@ facilities:
     psiLabs: 10
     mapName: XBASE_14
   - type: STR_HYPER_WAVE_DECODER
-    requires:
+    required:
       - STR_HYPER_WAVE_DECODER
     hyper: true
     spriteShape: 2

@@ -9,50 +9,50 @@ research:
   - type: STR_PSI_AMP
     cost: 50000
     points: 20
-    dependencies:
+    prerequisites:
       - STR_MIND_PROBE
       - STR_PSI_LAB
 #---- Laser Weapons -----------------------------------------------------------#
   - type: STR_LASER_WEAPONS
     cost: 500
     points: 10
-    dependencies:
+    prerequisites:
       - STR_ELERIUM_115
   - type: STR_LASER_PISTOL
     cost: 1000
     points: 10
-    dependencies:
+    prerequisites:
       - STR_LASER_WEAPONS
   - type: STR_LASER_RIFLE
     cost: 3000
     points: 10
-    dependencies:
+    prerequisites:
       - STR_LASER_PISTOL
   - type: STR_HEAVY_LASER
     cost: 4600
     points: 10
-    dependencies:
+    prerequisites:
       - STR_ALIEN_ALLOYS
       - STR_LASER_RIFLE
   - type: STR_LASER_CANNON
     cost: 4200
     points: 15
-    dependencies:
+    prerequisites:
       - STR_HEAVY_LASER
   - type: STR_LASER_DEFENSE
     cost: 5100
     points: 15
-    dependencies:
+    prerequisites:
       - STR_LASER_CANNON
   - type: STR_FUSION_TORCH
     cost: 4800
     points: 20
-    dependencies:
+    prerequisites:
       - STR_HEAVY_LASER
   - type: STR_FUSION_TORCH_POWER_CELL
     cost: 1200
     points: 10
-    dependencies:
+    prerequisites:
       - STR_FUSION_TORCH
 #---- Alloys & Elerium --------------------------------------------------------#
   - type: STR_ALIEN_ALLOYS
@@ -68,91 +68,91 @@ research:
     cost: 60000
     points: 20
     needsItem: true
-    dependencies:
+    prerequisites:
       - STR_ALIEN_ALLOYS
   - type: STR_PLASMA_PISTOL_CLIP
     cost: 40000
     points: 5
     needsItem: true
-    dependencies:
+    prerequisites:
       - STR_ELERIUM_115
       - STR_PLASMA_PISTOL
   - type: STR_PLASMA_RIFLE
     cost: 70000
     points: 25
     needsItem: true
-    dependencies:
+    prerequisites:
       - STR_PLASMA_PISTOL_CLIP
   - type: STR_PLASMA_RIFLE_CLIP
     cost: 40000
     points: 6
     needsItem: true
-    dependencies:
+    prerequisites:
       - STR_PLASMA_RIFLE
   - type: STR_HEAVY_PLASMA
     cost: 80000
     points: 30
     needsItem: true
-    dependencies:
+    prerequisites:
       - STR_PLASMA_RIFLE_CLIP
   - type: STR_HEAVY_PLASMA_CLIP
     cost: 40000
     points: 7
     needsItem: true
-    dependencies:
+    prerequisites:
       - STR_HEAVY_PLASMA
   - type: STR_PLASMA_CANNON
     cost: 66000
     points: 25
-    dependencies:
+    prerequisites:
       - STR_HEAVY_PLASMA_CLIP
   - type: STR_PLASMA_DEFENSE
     cost: 62000
     points: 25
-    dependencies:
+    prerequisites:
       - STR_PLASMA_CANNON
 #---- Fusion Weapons ----------------------------------------------------------#
   - type: STR_BLASTER_LAUNCHER
     cost: 90000
     points: 10
     needsItem: true
-    dependencies:
+    prerequisites:
       - STR_ALIEN_ALLOYS
   - type: STR_BLASTER_BOMB
     cost: 30000
     points: 10
     needsItem: true
-    dependencies:
+    prerequisites:
       - STR_ELERIUM_115
   - type: STR_FUSION_MISSILE
     cost: 88000
     points: 25
-    dependencies:
+    prerequisites:
       - STR_BLASTER_LAUNCHER
       - STR_BLASTER_BOMB
   - type: STR_FUSION_DEFENSE
     cost: 80000
     points: 25
-    dependencies:
+    prerequisites:
       - STR_FUSION_MISSILE
 #---- aLien Artefacts ---------------------------------------------------------#
   - type: STR_SMALL_LAUNCHER
     cost: 55000
     points: 30
     needsItem: true
-    dependencies:
+    prerequisites:
       - STR_ALIEN_ALLOYS
   - type: STR_STUN_BOMB
     cost: 18000
     points: 10
     needsItem: true
-    dependencies:
+    prerequisites:
       - STR_ELERIUM_115
   - type: STR_ALIEN_GRENADE
     cost: 20000
     points: 20
     needsItem: true
-    dependencies:
+    prerequisites:
       - STR_ALIEN_ALLOYS
       - STR_ELERIUM_115
   - type: STR_MIND_PROBE
@@ -163,33 +163,33 @@ research:
   - type: STR_PERSONAL_ARMOR
     cost: 9000
     points: 15
-    dependencies:
+    prerequisites:
       - STR_ALIEN_ALLOYS
   - type: STR_POWER_SUIT
     cost: 20500
     points: 20
-    dependencies:
+    prerequisites:
       - STR_PERSONAL_ARMOR
       - STR_UFO_POWER_SOURCE
   - type: STR_FLYING_SUIT
     cost: 33000
     points: 25
-    dependencies:
+    prerequisites:
       - STR_POWER_SUIT
       - STR_UFO_NAVIGATION
   - type: STR_ALLOY_TANK_ARMOR
     cost: 4200
     points: 20
-    dependencies:
+    prerequisites:
       - STR_ALIEN_ALLOYS
 #---- XCom Facilities ---------------------------------------------------------#
   - type: STR_ALIEN_CONTAINMENT
     cost: 1500
     points: 15
-    requires:
+    required:
       - STR_ALIEN_FOOD
       - STR_ALIEN_HABITAT
-    dependencies:
+    prerequisites:
       - STR_ZOMBIE_CORPSE
       - STR_CELATID_CORPSE
       - STR_ETHEREAL_CORPSE
@@ -207,9 +207,9 @@ research:
   - type: STR_PSI_LAB
     cost: 42000
     points: 25
-    requires:
+    required:
       - STR_ALIEN_ENTERTAINMENT
-    dependencies:
+    prerequisites:
       - STR_ETHEREAL_COMMANDER
       - STR_ETHEREAL_LEADER
       - STR_ETHEREAL_SOLDIER
@@ -218,19 +218,19 @@ research:
   - type: STR_MIND_SHIELD
     cost: 36000
     points: 25
-    dependencies:
+    prerequisites:
       - STR_PSI_LAB
   - type: STR_GRAV_SHIELD
     cost: 93000
     points: 25
-    dependencies:
+    prerequisites:
       - STR_ULTIMATE_CRAFT
   - type: STR_HYPER_WAVE_DECODER
     cost: 67000
     points: 25
-    requires:
+    required:
       - STR_UFO_NAVIGATION
-    dependencies:
+    prerequisites:
       - STR_FLOATER_NAVIGATOR
       - STR_SNAKEMAN_NAVIGATOR
       - STR_MUTON_NAVIGATOR
@@ -240,7 +240,7 @@ research:
   - type: STR_ALIEN_ORIGINS
     cost: 30000
     points: 60
-    dependencies:
+    prerequisites:
       - STR_SECTOID_COMMANDER
       - STR_SECTOID_LEADER
       - STR_SECTOID_ENGINEER
@@ -278,9 +278,9 @@ research:
       - STR_WASPITE_SOLDIER
 #      - STR_CYBERMITE_TERRORIST
   - type: STR_LEADER_PLUS #why are these PLUS-things even used
-    requires:
+    required:
       - STR_ALIEN_ORIGINS
-    dependencies:
+    prerequisites:
       - STR_SECTOID_COMMANDER
       - STR_SECTOID_LEADER
       - STR_SNAKEMAN_COMMANDER
@@ -294,15 +294,15 @@ research:
   - type: STR_THE_MARTIAN_SOLUTION
     cost: 50000
     points: 60
-    dependencies:
+    prerequisites:
 #      - STR_ALIEN_ORIGINS # note LeaderPlus already REQUIRES origins
       - STR_LEADER_PLUS
   - type: STR_COMMANDER_PLUS #why are these PLUS-things even used
 #    unlocks:
 #      - STR_CYDONIA_OR_BUST
-    requires:
+    required:
       - STR_THE_MARTIAN_SOLUTION
-    dependencies:
+    prerequisites:
       - STR_SECTOID_COMMANDER
       - STR_SNAKEMAN_COMMANDER
       - STR_ETHEREAL_COMMANDER
@@ -313,16 +313,16 @@ research:
     cost: 60000
     points: 60
     unlockFinalMission: true
-    dependencies:
+    prerequisites:
       - STR_COMMANDER_PLUS
 #---- aLien UFO Components ----------------------------------------------------#
   - type: STR_UFO_NAVIGATION
     cost: 45000
     points: 30
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_ALLOYS
-    dependencies:
+    prerequisites:
       - STR_FLOATER_NAVIGATOR
       - STR_SECTOID_NAVIGATOR
       - STR_SNAKEMAN_NAVIGATOR
@@ -333,10 +333,10 @@ research:
     cost: 45000
     points: 30
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_ALLOYS
       - STR_ELERIUM_115
-    dependencies:
+    prerequisites:
       - STR_FLOATER_ENGINEER
       - STR_SNAKEMAN_ENGINEER
       - STR_MUTON_ENGINEER
@@ -345,34 +345,34 @@ research:
   - type: STR_UFO_CONSTRUCTION
     cost: 45000
     points: 30
-    dependencies:
+    prerequisites:
       - STR_UFO_POWER_SOURCE
       - STR_UFO_NAVIGATION
 #---- XCom Craft --------------------------------------------------------------#
   - type: STR_IMPROVED_INTERCEPTOR
     cost: 12000
     points: 25
-    dependencies:
+    prerequisites:
       - STR_ALIEN_ALLOYS
   - type: STR_UNMANNED_AIRCRAFT
     cost: 6000
     points: 20
-    dependencies:
+    prerequisites:
       - STR_UFO_CONSTRUCTION
   - type: STR_NEW_FIGHTER_CRAFT
     cost: 60000
     points: 30
-    dependencies:
+    prerequisites:
       - STR_UFO_CONSTRUCTION
   - type: STR_NEW_FIGHTER_TRANSPORTER
     cost: 70000
     points: 30
-    dependencies:
+    prerequisites:
       - STR_NEW_FIGHTER_CRAFT
   - type: STR_ULTIMATE_CRAFT
     cost: 90000
     points: 30
-    dependencies:
+    prerequisites:
       - STR_NEW_FIGHTER_TRANSPORTER
 #---- aLien UFO Facilities ----------------------------------------------------#
   - type: STR_ALIEN_ENTERTAINMENT
@@ -405,7 +405,7 @@ research:
     points: 50
     lookup: STR_FLOATER_AUTOPSY
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -415,7 +415,7 @@ research:
     points: 50
     lookup: STR_SECTOID_AUTOPSY
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -425,7 +425,7 @@ research:
     points: 50
     lookup: STR_SNAKEMAN_AUTOPSY
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -435,7 +435,7 @@ research:
     points: 50
     lookup: STR_MUTON_AUTOPSY
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -445,7 +445,7 @@ research:
     points: 50
     lookup: STR_ETHEREAL_AUTOPSY
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -455,7 +455,7 @@ research:
     points: 50
     lookup: STR_WASPITE_AUTOPSY
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -465,7 +465,7 @@ research:
     points: 50
     lookup: STR_ZOMBIE_AUTOPSY
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -476,7 +476,7 @@ research:
     points: 50
     lookup: STR_REAPER_AUTOPSY
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -486,7 +486,7 @@ research:
     points: 50
     lookup: STR_CYBERDISC_AUTOPSY
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -496,7 +496,7 @@ research:
     points: 50
     lookup: STR_CHRYSSALID_AUTOPSY
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -506,7 +506,7 @@ research:
     points: 50
     lookup: STR_SILACOID_AUTOPSY
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -516,7 +516,7 @@ research:
     points: 50
     lookup: STR_CELATID_AUTOPSY
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -526,7 +526,7 @@ research:
     points: 50
     lookup: STR_SECTOPOD_AUTOPSY
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -536,7 +536,7 @@ research:
     points: 50
     lookup: STR_CYBERMITE_AUTOPSY
     needsItem: true
-    requires:
+    required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -548,7 +548,7 @@ research:
     points: 50
     lookup: STR_FLOATER
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION #redundant; to interrogate needs Containment, which needs corpse, which needs Reproduction. Solution, remove Reproduction from autopsy requirement
     unlocks:
@@ -558,7 +558,7 @@ research:
     points: 50
     lookup: STR_FLOATER
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -579,7 +579,7 @@ research:
     points: 50
     lookup: STR_FLOATER
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -615,7 +615,7 @@ research:
     points: 50
     lookup: STR_FLOATER
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -635,7 +635,7 @@ research:
     points: 50
     lookup: STR_FLOATER
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -646,7 +646,7 @@ research:
     points: 50
     lookup: STR_FLOATER
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -659,7 +659,7 @@ research:
     points: 50
     lookup: STR_SECTOID
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -669,7 +669,7 @@ research:
     points: 50
     lookup: STR_SECTOID
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -689,7 +689,7 @@ research:
     cost: 192
     points: 50
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -726,7 +726,7 @@ research:
     points: 50
     lookup: STR_SECTOID
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -745,7 +745,7 @@ research:
     cost: 192
     points: 50
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -758,7 +758,7 @@ research:
     points: 50
     lookup: STR_SECTOID
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -772,7 +772,7 @@ research:
     points: 50
     lookup: STR_SNAKEMAN
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -782,7 +782,7 @@ research:
     points: 50
     lookup: STR_SNAKEMAN
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -803,7 +803,7 @@ research:
     points: 50
     lookup: STR_SNAKEMAN
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -839,7 +839,7 @@ research:
     points: 50
     lookup: STR_SNAKEMAN
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -859,7 +859,7 @@ research:
     points: 50
     lookup: STR_SNAKEMAN
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -870,7 +870,7 @@ research:
     points: 50
     lookup: STR_SNAKEMAN
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -883,7 +883,7 @@ research:
     points: 50
     lookup: STR_MUTON
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -893,7 +893,7 @@ research:
     points: 50
     lookup: STR_MUTON
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -914,7 +914,7 @@ research:
     points: 50
     lookup: STR_MUTON
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -935,7 +935,7 @@ research:
     points: 50
     lookup: STR_ETHEREAL
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -946,7 +946,7 @@ research:
     points: 50
     lookup: STR_ETHEREAL
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -958,7 +958,7 @@ research:
     points: 50
     lookup: STR_ETHEREAL
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -972,7 +972,7 @@ research:
     points: 50
     lookup: STR_WASPITE
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -982,7 +982,7 @@ research:
     points: 50
     lookup: STR_WASPITE
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -1003,7 +1003,7 @@ research:
     points: 50
     lookup: STR_WASPITE
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -1039,7 +1039,7 @@ research:
     points: 50
     lookup: STR_WASPITE
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -1059,7 +1059,7 @@ research:
     points: 50
     lookup: STR_WASPITE
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -1070,7 +1070,7 @@ research:
     points: 50
     lookup: STR_WASPITE
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -1083,7 +1083,7 @@ research:
     points: 50
     lookup: STR_REAPER
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -1093,7 +1093,7 @@ research:
     points: 50
     lookup: STR_CYBERDISC
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -1103,7 +1103,7 @@ research:
     points: 50
     lookup: STR_CHRYSSALID
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -1113,7 +1113,7 @@ research:
     points: 50
     lookup: STR_SILACOID
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -1123,7 +1123,7 @@ research:
     points: 50
     lookup: STR_CELATID
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -1133,7 +1133,7 @@ research:
     points: 50
     lookup: STR_SECTOPOD
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:
@@ -1143,7 +1143,7 @@ research:
     points: 50
     lookup: STR_CYBERMITE
     needsItem: true
-    requires:
+    required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     unlocks:

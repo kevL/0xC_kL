@@ -188,7 +188,7 @@ private:
 
 	std::vector<std::string>
 		_compatibleAmmo,
-		_requires;
+		_required;
 
 
 	public:

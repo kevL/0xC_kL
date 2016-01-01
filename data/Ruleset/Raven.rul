@@ -1,7 +1,7 @@
 #Raven XCom fighter craft. by Mick the Mage
 crafts:
   - type: STR_RAVEN
-    requires:
+    required:
       - STR_IMPROVED_INTERCEPTOR
     listOrder: 204
     sprite: 23
@@ -21,7 +21,7 @@ crafts:
 manufacture:
   - type: STR_RAVEN
     category: STR_CRAFT
-    requires:
+    required:
       - STR_IMPROVED_INTERCEPTOR
     listOrder: 3249
     space: 32
@@ -33,7 +33,7 @@ ufopaedia:
   - id: STR_RAVEN
     type_id: 1
     section: STR_XCOM_CRAFT_ARMAMENT
-    requires:
+    required:
       - STR_IMPROVED_INTERCEPTOR
     listOrder: 401
     image_id: Raven

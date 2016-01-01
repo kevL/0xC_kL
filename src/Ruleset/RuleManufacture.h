@@ -45,7 +45,7 @@ private:
 		_space,
 		_time;
 
-	std::vector<std::string> _requires;
+	std::vector<std::string> _required;
 
 	std::map<std::string, int>
 		_producedItems,

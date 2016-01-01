@@ -310,23 +310,25 @@ void NewBattleState::load(const std::string& file)
 						gameSave); // note: considered as neither a 'firstBase' nor a 'skirmish' ...
 				gameSave->getBases()->push_back(base);
 
-				// Add research
-				const std::vector<std::string>& research = _rules->getResearchList();
+				// Add research - setup research generals.
+				const std::vector<std::string>& resList = _rules->getResearchList();
 				for (std::vector<std::string>::const_iterator
-						i = research.begin();
-						i != research.end();
+						i = resList.begin();
+						i != resList.end();
 						++i)
 				{
-					gameSave->addFinishedResearch(_rules->getResearch(*i), false);
+					gameSave->getResearchGenerals().push_back(new ResearchGeneral(
+																			_rules->getResearch(*i),
+																			true));
 				}
 
 				// Generate items
 				base->getStorageItems()->getContents()->clear();
 				const RuleItem* itRule;
-				const std::vector<std::string>& items = _rules->getItemsList();
+				const std::vector<std::string>& itemList = _rules->getItemsList();
 				for (std::vector<std::string>::const_iterator
-						i = items.begin();
-						i != items.end();
+						i = itemList.begin();
+						i != itemList.end();
 						++i)
 				{
 					itRule = _rules->getItem(*i);
@@ -549,14 +551,16 @@ void NewBattleState::initPlay()
 		}
 	}
 
-	// Add research
-	const std::vector<std::string>& research = _rules->getResearchList();
+	// Add research - setup research generals.
+	const std::vector<std::string>& resList = _rules->getResearchList();
 	for (std::vector<std::string>::const_iterator
-			i = research.begin();
-			i != research.end();
+			i = resList.begin();
+			i != resList.end();
 			++i)
 	{
-		gameSave->addFinishedResearch(_rules->getResearch(*i), false);
+		gameSave->getResearchGenerals().push_back(new ResearchGeneral(
+																_rules->getResearch(*i),
+																true));
 	}
 
 	_game->setSavedGame(gameSave);

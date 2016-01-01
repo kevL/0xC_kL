@@ -165,7 +165,7 @@ private:
 	void getAlienCracks(
 				const std::string& alienType,
 				bool& gof,
-				bool& unlocks) const;
+				bool& forces) const;
 	/// Starts a new dogfight.
 	void startDogfight();
 

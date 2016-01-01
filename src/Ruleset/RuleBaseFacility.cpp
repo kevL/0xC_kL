@@ -74,7 +74,7 @@ void RuleBaseFacility::load(
 		int listOrder)
 {
 	_type		= node["type"]		.as<std::string>(_type);
-	_requires	= node["requires"]	.as<std::vector<std::string> >(_requires);
+	_required	= node["required"]	.as<std::vector<std::string> >(_required);
 
 	if (node["spriteShape"])
 	{
@@ -146,7 +146,7 @@ std::string RuleBaseFacility::getType() const
  */
 const std::vector<std::string>& RuleBaseFacility::getRequirements() const
 {
-	return _requires;
+	return _required;
 }
 
 /**

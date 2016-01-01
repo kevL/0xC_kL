@@ -26,6 +26,7 @@
 //#include <time.h>
 //#include <stdint.h>
 
+#include "ResearchGeneral.h"
 #include "Soldier.h"
 
 #include "../Ruleset/RuleAlienMission.h"
@@ -44,6 +45,7 @@ class GameTime;
 class Language;
 class MissionSite;
 class Region;
+class ResearchGeneral;
 class ResearchProject;
 class RuleManufacture;
 class RuleResearch;
@@ -85,12 +87,12 @@ enum SaveType
 };
 
 /**
- * Enumerator for the game mode.
+ * Enumerator for the save mode.
  */
-enum GameMode
+enum SaveMode
 {
-	MODE_GEOSCAPE,		// 0
-	MODE_BATTLESCAPE	// 1
+	SM_GEOSCAPE,	// 0
+	SM_BATTLESCAPE	// 1
 };
 
 
@@ -189,22 +191,24 @@ private:
 	std::vector<MissionSite*> _missionSites;
 	std::vector<MissionStatistics*> _missionStatistics;
 	std::vector<Region*> _regions;
-	std::vector<const RuleResearch*>
-		_discovered,
-		_poppedResearch;
+	std::vector<ResearchGeneral*> _research;
 	std::vector<SoldierDead*> _deadSoldiers;
 	std::vector<Ufo*> _ufos;
 	std::vector<Waypoint*> _waypoints;
 
+	/// Fills a vector with the forced-types of completed ResearchProjects.
+	void tabulateForced(std::vector<const RuleResearch*>& list) const;
+	/// Checks whether a RuleResearch has all its prerequisites met.
+	bool checkPrerequisites(const RuleResearch* const resRule) const;
+	/// Checks whether or not required research has been met.
+	bool hasRequiredResearch(const RuleResearch* const resRule) const;
 	/// Checks whether a ResearchProject can be started.
-	bool isResearchAvailable(const RuleResearch* const resRule) const;
+	bool isProjectAvailable(const RuleResearch* const resRule) const;
 	/// Gets the list of newly available ResearchProjects that appear when a project is completed.
 	void getDependentResearchBasic(
 			std::vector<const RuleResearch*>& dependents,
 			const RuleResearch* const resRule,
 			Base* const base) const;
-	/// Removes a research from the "popped up" array.
-	void removePoppedResearch(const RuleResearch* const resRule);
 	///
 	static SaveInfo getSaveInfo(
 			const std::string& file,
@@ -327,12 +331,28 @@ private:
 		/// Sets the current battle save.
 		void setBattleSave(SavedBattleGame* const battleSave);
 
-		/// Gets a list of already discovered ResearchProjects.
-		const std::vector<const RuleResearch*>& getDiscoveredResearch() const;
+
+		/// Gets the ResearchGenerals.
+		std::vector<ResearchGeneral*>& getResearchGenerals();
+		/// Searches through ResearchGenerals for specified research-type & status.
+		bool searchResearch(
+				const std::string& type,
+				const ResearchStatus status = RS_COMPLETED) const;
+		/// Searches through ResearchGenerals for specified research-rule & status.
+		bool searchResearch(
+				const RuleResearch* resRule,
+				const ResearchStatus status = RS_COMPLETED) const;
+		/// Sets the status of a ResearchGeneral by research-type.
+		bool setResearchStatus(
+				const std::string& type,
+				const ResearchStatus status = RS_COMPLETED);
+		/// Sets the status of a ResearchGeneral by research-rule.
+		bool setResearchStatus(
+				const RuleResearch* resRule,
+				const ResearchStatus status = RS_COMPLETED);
+
 		/// Adds a finished ResearchProject.
-		void addFinishedResearch(
-				const RuleResearch* const resRule,
-				bool score = true);
+		void addFinishedResearch(const RuleResearch* const resRule);
 		/// Gets a list of ResearchProjects that can be started at a particular Base.
 		void getAvailableResearchProjects(
 				std::vector<const RuleResearch*>& availableProjects,
@@ -342,7 +362,7 @@ private:
 				std::vector<const RuleManufacture*>& availableProductions,
 				const Base* const base) const;
 		/// Gets the list of newly available ResearchProjects that appear when a project is completed.
-		void getDependentResearch(
+		void getPopupResearch(
 				std::vector<const RuleResearch*>& dependents,
 				const RuleResearch* const resRule,
 				Base* const base) const;
@@ -377,8 +397,6 @@ private:
 		/// Gets debug mode.
 		bool getDebugMode() const;
 
-		/// Sets the research score for the month.
-		void addResearchScore(int score);
 		/// Gets the list of research scores.
 		std::vector<int>& getResearchScores();
 
@@ -438,11 +456,6 @@ private:
 		void toggleDetail();
 		/// check the current state of the detail drawing
 		bool getDetail(); */
-
-		/// Adds a research to the "popped up" array.
-		void addPoppedResearch(const RuleResearch* const resRule);
-		/// Checks if a research is on the "popped up" array.
-		bool wasResearchPopped(const RuleResearch* const resRule);
 
 		/// Gets the list of dead soldiers.
 		std::vector<SoldierDead*>* getDeadSoldiers();

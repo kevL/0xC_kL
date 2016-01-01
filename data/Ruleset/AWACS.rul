@@ -31,7 +31,7 @@ crafts:
     transferTime: 96
     score: 225
   - type: STR_DARKSTAR
-    requires:
+    required:
       - STR_UNMANNED_AIRCRAFT
     listOrder: 209
     sprite: 28
@@ -53,14 +53,14 @@ crafts:
 #    listOrder: 3107
 #    cost: 300
 #    points: 20
-#    dependencies:
+#    prerequisites:
 #      - STR_UFO_CONSTRUCTION
 #-----------------------------------
 manufacture:
   - type: STR_DARKSTAR
     category: STR_CRAFT
     listOrder: 3507
-    requires:
+    required:
       - STR_UNMANNED_AIRCRAFT
     space: 27
     time: 15000
@@ -108,7 +108,7 @@ ufopaedia:
     image_id: DARKSTAR_BIG
     text: STR_DARKSTAR_UFOPEDIA
     listOrder: 509
-    requires:
+    required:
       - STR_UNMANNED_AIRCRAFT
     rect_stats:
       x: 5

@@ -34,7 +34,7 @@ namespace OpenXcom
  * @note Dependency is the list of RuleResearch's which must be discovered before
  * a RuleResearch becomes available.
  * @note Unlocks are used to immediately unlock a RuleResearch even if not all
- * its dependencies have been researched.
+ * its prerequisites have been researched.
  * @note Fake ResearchProjects: A RuleResearch is fake one if its cost is 0.
  * They are used to to create check points in the dependency tree. For example
  * if there is a Research E which needs either A & B or C & D two fake research
@@ -50,17 +50,19 @@ private:
 	std::string
 		_lookup,
 		_type;
-	bool _needsItem;
+	bool
+		_markSeen,
+		_needsItem;
 	int
 		_cost,
 		_listOrder,
 		_points;
 
 	std::vector<std::string>
-		_dependencies,
-		_unlocks,
+		_forces,
 		_getOneFree,
-		_requires;
+		_prerequisites,
+		_required;
 
 
 	public:
@@ -74,32 +76,35 @@ private:
 				const YAML::Node& node,
 				int listOrder);
 
-		/// Gets time needed to discover this RuleResearch.
-		int getCost() const;
-
 		/// Gets the research type.
 		const std::string& getType() const;
 
-		/// Gets the research dependencies.
-		const std::vector<std::string>& getDependencies() const;
-
-		/// Checks if this RuleResearch needs a corresponding Item for research.
-		bool needsItem() const;
-
-		/// Gets the list of RuleResearch's unlocked by this research.
-		const std::vector<std::string>& getUnlocks() const;
+		/// Gets time needed to discover this RuleResearch.
+		int getCost() const;
 
 		/// Gets the points earned for discovering this RuleResearch.
 		int getPoints() const;
 
-		/// Gets the list of research types granted at random for free by this one.
+		/// Gets the prerequisites for this RuleResearch.
+		const std::vector<std::string>& getPrerequisites() const;
+
+		/// Gets the absolute requirements for this RuleResearch.
+		const std::vector<std::string>& getRequiredResearch() const;
+
+		/// Gets the list of RuleResearch's unlocked by this RuleResearch.
+		const std::vector<std::string>& getForcedResearch() const;
+
+		/// Gets the list of research-types granted randomly for free by this one.
 		const std::vector<std::string>& getGetOneFree() const;
 
-		/// Gets what to look up in the Ufopedia.
+		/// Gets an alternate look-up for the Ufopaedia.
 		const std::string& getLookup() const;
 
-		/// Gets the requirements for this RuleResearch.
-		const std::vector<std::string>& getPrerequisites() const;
+		/// Checks if this RuleResearch needs a corresponding Item for research.
+		bool needsItem() const;
+
+		/// Gets if this RuleResearch should be flagged as seen by default.
+		bool getMarkSeen() const;
 
 		/// Gets the list priority for this RuleResearch.
 		int getListOrder() const;

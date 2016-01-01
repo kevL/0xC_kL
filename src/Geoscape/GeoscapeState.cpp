@@ -2902,17 +2902,17 @@ void GeoscapeState::time1Day()
 
 			bool
 				gofCrack,
-				unlocksCrack;	// TODO: that. The issue is that the 'unlocks' are not an independent vector, but instead are
+				forcesCrack;	// TODO: that. The issue is that the 'forces' are not an independent vector, but instead are
 								// redetermined on-the-fly from the player's 'discovered' vector every time they're examined.
 			if (liveAlien == true)
 				getAlienCracks(
 							resType,
 							gofCrack,
-							unlocksCrack);
+							forcesCrack);
 			else
 			{
 				gofCrack = true;
-				unlocksCrack = true;
+				forcesCrack = true;
 			}
 
 			const RuleResearch* gofRule (nullptr);
@@ -2925,10 +2925,11 @@ void GeoscapeState::time1Day()
 						k != resRule->getGetOneFree().end();
 						++k)
 				{
-					if (std::find(
-							_gameSave->getDiscoveredResearch().begin(),
-							_gameSave->getDiscoveredResearch().end(),
-							_rules->getResearch(*k)) == _gameSave->getDiscoveredResearch().end())
+//					if (std::find(
+//							_gameSave->getDiscoveredResearch().begin(),
+//							_gameSave->getDiscoveredResearch().end(),
+//							_rules->getResearch(*k)) == _gameSave->getDiscoveredResearch().end())
+					if (_gameSave->searchResearch(*k) == false)
 					{
 						gofChoices.push_back(*k);
 					}
@@ -2937,10 +2938,12 @@ void GeoscapeState::time1Day()
 				if (gofChoices.empty() == false)
 				{
 					gofRule = _rules->getResearch(gofChoices.at(RNG::pick(gofChoices.size())));
-					_gameSave->addFinishedResearch(gofRule);
+					_gameSave->setResearchStatus(gofRule);
+//					_gameSave->addFinishedResearch(gofRule);
 
 					if (gofRule->getLookup().empty() == false)
-						_gameSave->addFinishedResearch(_rules->getResearch(gofRule->getLookup()));
+						_gameSave->setResearchStatus(_rules->getResearch(gofRule->getLookup()));
+//						_gameSave->addFinishedResearch(_rules->getResearch(gofRule->getLookup()));
 				}
 			}
 
@@ -2956,30 +2959,32 @@ void GeoscapeState::time1Day()
 				resRule0 = nullptr;
 
 
-			_gameSave->addFinishedResearch(resRule); // this adds the research project to _discovered vector.
+			_gameSave->setResearchStatus(resRule);
+//			_gameSave->addFinishedResearch(resRule); // this adds the research project to _discovered vector.
 
 			if (resRule->getLookup().empty() == false)
-				_gameSave->addFinishedResearch(_rules->getResearch(resRule->getLookup()));
+				_gameSave->setResearchStatus(_rules->getResearch(resRule->getLookup()));
+//				_gameSave->addFinishedResearch(_rules->getResearch(resRule->getLookup()));
 
 			resEvents.push_back(new ResearchCompleteState(resRule0, gofRule));
 
 
-			std::vector<const RuleResearch*> newResearchPossible;
-			_gameSave->getDependentResearch(
-										newResearchPossible,
-										resRule,
-										*i);
+			std::vector<const RuleResearch*> nowAvailable;
+			_gameSave->getPopupResearch(
+									nowAvailable,
+									resRule,
+									*i);
 
-			for (std::vector<const RuleResearch*>::const_iterator // -> moved here from NewPossibleResearchState cTor.
-					k = newResearchPossible.begin();
-					k != newResearchPossible.end();
+			for (std::vector<const RuleResearch*>::const_iterator
+					k = nowAvailable.begin();
+					k != nowAvailable.end();
 					)
 			{
 				if ((*k)->getCost() == 0								// no fake projects pls.
-					|| _gameSave->wasResearchPopped(*k) == true			// do not show twice.
+					|| _gameSave->searchResearch(*k, RS_HIDDEN) == true	// do not show twice.
 					|| _rules->getUnitRule((*k)->getType()) != nullptr)	// and no aLiens ->
 				{
-					k = newResearchPossible.erase(k);
+					k = nowAvailable.erase(k);
 				}
 				else
 					++k;
@@ -3016,14 +3021,14 @@ void GeoscapeState::time1Day()
 				}
 			}
 
-			if (newResearchPossible.empty() == false)
+			if (nowAvailable.empty() == false)
 			{
 				if (newResEvents.empty() == false) // only show the "allocate research" button for the last notification
 					newResEvents.back().showResearchButton = false;
 
 				newResEvents.push_back(NewPossibleResearchInfo(
 															*i,
-															newResearchPossible,
+															nowAvailable,
 															true));
 			}
 
@@ -3156,57 +3161,57 @@ void GeoscapeState::time1Day()
 
 /**
  * Assigns whether an aLien cracked under pressure.
- * @param alienType		-
- * @param gofCrack		-
- * @param unlockCrack	-
+ * @param alienType	-
+ * @param gof		-
+ * @param forces	-
  */
 void GeoscapeState::getAlienCracks( // private.
 			const std::string& alienType,
 			bool& gof,
-			bool& unlocks) const
+			bool& forces) const
 {
 	int
 		gofPct (100),
-		unlocksPct (100); // defaults.
+		forcesPct (100); // defaults.
 
 	if (alienType.find("_TERRORIST") != std::string::npos)
 	{
 		gofPct = 10;
-		unlocksPct = 50;
+		forcesPct = 50;
 	}
 	else if (alienType.find("_FLOATER") != std::string::npos)
 	{
 		gofPct = 80;
-		unlocksPct = 30;
+		forcesPct = 30;
 	}
 	else if (alienType.find("_SECTOID") != std::string::npos)
 	{
 		gofPct = 70;
-		unlocksPct = 40;
+		forcesPct = 40;
 	}
 	else if (alienType.find("_SNAKEMAN") != std::string::npos)
 	{
 		gofPct = 60;
-		unlocksPct = 50;
+		forcesPct = 50;
 	}
 	else if (alienType.find("_MUTON") != std::string::npos)
 	{
 		gofPct = 50;
-		unlocksPct = 60;
+		forcesPct = 60;
 	}
 	else if (alienType.find("_ETHEREAL") != std::string::npos)
 	{
 		gofPct = 40;
-		unlocksPct = 70;
+		forcesPct = 70;
 	}
 	else if (alienType.find("_WASPITE") != std::string::npos)
 	{
 		gofPct = 30;
-		unlocksPct = 80;
+		forcesPct = 80;
 	}
 
 	gof = RNG::percent(gofPct);
-	unlocks = RNG::percent(unlocksPct);
+	forces = RNG::percent(forcesPct);
 }
 
 /**

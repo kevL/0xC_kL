@@ -89,7 +89,7 @@ RuleSoldier::~RuleSoldier()
 void RuleSoldier::load(const YAML::Node& node)
 {
 	_type			= node["type"]			.as<std::string>(_type);
-	_requires		= node["requires"]		.as<std::vector<std::string>>(_requires);
+	_required		= node["required"]		.as<std::vector<std::string>>(_required);
 	_armor			= node["armor"]			.as<std::string>(_armor);
 	_costBuy		= node["costBuy"]		.as<int>(_costBuy);
 	_costSalary		= node["costSalary"]	.as<int>(_costSalary);
@@ -120,7 +120,7 @@ const std::string& RuleSoldier::getType() const
  */
 const std::vector<std::string>& RuleSoldier::getRequirements() const
 {
-	return _requires;
+	return _required;
 }
 
 /**

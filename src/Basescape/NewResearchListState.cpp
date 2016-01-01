@@ -178,7 +178,7 @@ void NewResearchListState::fillProjectList() // private.
 		}
 	}
 
-	_game->getSavedGame()->getAvailableResearchProjects(_resRules, _base);
+	_game->getSavedGame()->getAvailableResearchProjects(_resRules, _base); // fills '_resRules'
 	std::vector<const RuleResearch*>::const_iterator i (_resRules.begin());
 	while (i != _resRules.end())
 	{
@@ -187,7 +187,7 @@ void NewResearchListState::fillProjectList() // private.
 			_lstResearch->addRow(1, tr((*i)->getType()).c_str());
 			++i;
 		}
-		else						// fake project.
+		else						// no-cost project.
 			i = _resRules.erase(i);	// erase it so it doesn't show up in ResearchInfoState list either.
 	}
 }

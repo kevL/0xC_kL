@@ -25,7 +25,7 @@ namespace OpenXcom
 
 /**
  * Creates a new RuleResearch.
- * @param type - reference to the type string of this RuleResearch
+ * @param type - reference to the type-string of this RuleResearch
  */
 RuleResearch::RuleResearch(const std::string& type)
 	:
@@ -33,6 +33,7 @@ RuleResearch::RuleResearch(const std::string& type)
 		_cost(0),
 		_points(0),
 		_needsItem(false),
+		_markSeen(false),
 		_listOrder(0)
 {}
 
@@ -55,24 +56,16 @@ void RuleResearch::load(
 	_lookup			= node["lookup"]		.as<std::string>(_lookup);
 	_cost			= node["cost"]			.as<int>(_cost);
 	_points			= node["points"]		.as<int>(_points);
-	_dependencies	= node["dependencies"]	.as<std::vector<std::string>>(_dependencies);
-	_unlocks		= node["unlocks"]		.as<std::vector<std::string>>(_unlocks);
+	_prerequisites	= node["prerequisites"]	.as<std::vector<std::string>>(_prerequisites);
+	_forces			= node["forces"]		.as<std::vector<std::string>>(_forces);
 	_getOneFree		= node["getOneFree"]	.as<std::vector<std::string>>(_getOneFree);
-	_requires		= node["requires"]		.as<std::vector<std::string>>(_requires);
+	_required		= node["required"]		.as<std::vector<std::string>>(_required);
 	_needsItem		= node["needsItem"]		.as<bool>(_needsItem);
+	_markSeen		= node["markSeen"]		.as<bool>(_markSeen);
 	_listOrder		= node["listOrder"]		.as<int>(_listOrder);
 
 	if (_listOrder == 0)
 		_listOrder = listOrder;
-}
-
-/**
- * Gets the cost of this RuleResearch.
- * @return, cost in man/days
- */
-int RuleResearch::getCost() const
-{
-	return _cost;
 }
 
 /**
@@ -85,31 +78,12 @@ const std::string& RuleResearch::getType() const
 }
 
 /**
- * Gets the list of dependencies - ie. research types - that must be
- * discovered before this one.
- * @return, reference to a vector of type strings
+ * Gets the cost of this RuleResearch.
+ * @return, cost in man/days
  */
-const std::vector<std::string>& RuleResearch::getDependencies() const
+int RuleResearch::getCost() const
 {
-	return _dependencies;
-}
-
-/**
- * Checks if this RuleResearch needs a corresponding Item to be researched.
- * @return, true if item is required
- */
-bool RuleResearch::needsItem() const
-{
-	return _needsItem;
-}
-
-/**
- * Gets the list of research types unlocked by this RuleResearch.
- * @return, reference to a vector of type strings
- */
-const std::vector<std::string>& RuleResearch::getUnlocks() const
-{
-	return _unlocks;
+	return _cost;
 }
 
 /**
@@ -119,6 +93,33 @@ const std::vector<std::string>& RuleResearch::getUnlocks() const
 int RuleResearch::getPoints() const
 {
 	return _points;
+}
+
+/**
+ * Gets the prerequisites for this RuleResearch.
+ * @return, reference to a vector of type strings
+ */
+const std::vector<std::string>& RuleResearch::getPrerequisites() const
+{
+	return _prerequisites;
+}
+
+/**
+ * Gets the absolute requirements for this RuleResearch.
+ * @return, reference to a vector of type strings
+ */
+const std::vector<std::string>& RuleResearch::getRequiredResearch() const
+{
+	return _required;
+}
+
+/**
+ * Gets the list of research types forced by this RuleResearch.
+ * @return, reference to a vector of type strings
+ */
+const std::vector<std::string>& RuleResearch::getForcedResearch() const
+{
+	return _forces;
 }
 
 /**
@@ -140,12 +141,21 @@ const std::string& RuleResearch::getLookup() const
 }
 
 /**
- * Gets the requirements for this RuleResearch.
- * @return, reference to a vector of type strings
+ * Checks if this RuleResearch needs a corresponding Item to be researched.
+ * @return, true if item is required
  */
-const std::vector<std::string>& RuleResearch::getPrerequisites() const
+bool RuleResearch::needsItem() const
 {
-	return _requires;
+	return _needsItem;
+}
+
+/**
+ * Gets if this RuleResearch should be flagged as seen by default.
+ * @return, true if flagged seen
+ */
+bool RuleResearch::getMarkSeen() const
+{
+	return _markSeen;
 }
 
 /**

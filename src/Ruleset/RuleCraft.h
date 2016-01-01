@@ -74,7 +74,7 @@ private:
 	RuleTerrain* _tacticalTerrainData;
 
 	std::vector<std::vector<int> > _deployment;
-	std::vector<std::string> _requires;
+	std::vector<std::string> _required;
 
 
 	public:

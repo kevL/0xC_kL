@@ -353,7 +353,7 @@ ufopaedia:
   - id: STR_WASPITE
     type_id: 7
     section: STR_ALIEN_LIFE_FORMS
-    requires:
+    required:
       - STR_WASPITE
     image_id: UFOPAEDIA_IMG_WASPITE
     text: STR_WASPITE_UFOPAEDIA
@@ -362,7 +362,7 @@ ufopaedia:
   - id: STR_WASPITE_AUTOPSY
     type_id: 7
     section: STR_ALIEN_LIFE_FORMS
-    requires:
+    required:
       - STR_WASPITE_CORPSE
     image_id: UFOPAEDIA_IMG_WASPITE_AUTOPSY
     text: STR_WASPITE_AUTOPSY_UFOPAEDIA
@@ -371,7 +371,7 @@ ufopaedia:
   - id: STR_CYBERMITE
     type_id: 7
     section: STR_ALIEN_LIFE_FORMS
-    requires:
+    required:
       - STR_CYBERMITE
     image_id: UFOPAEDIA_IMG_CYBERMITE
     text: STR_CYBERMITE_UFOPAEDIA
@@ -380,7 +380,7 @@ ufopaedia:
   - id: STR_CYBERMITE_AUTOPSY
     type_id: 7
     section: STR_ALIEN_LIFE_FORMS
-    requires:
+    required:
       - STR_CYBERMITE_CORPSE
     image_id: UFOPAEDIA_IMG_CYBERMITE_AUTOPSY
     text: STR_CYBERMITE_AUTOPSY_UFOPAEDIA

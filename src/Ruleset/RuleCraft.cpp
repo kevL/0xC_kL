@@ -78,7 +78,7 @@ void RuleCraft::load(
 		int listOrder)
 {
 	_type		= node["type"]		.as<std::string>(_type);
-	_requires	= node["requires"]	.as<std::vector<std::string> >(_requires);
+	_required	= node["required"]	.as<std::vector<std::string> >(_required);
 
 	if (node["sprite"])
 	{
@@ -142,7 +142,7 @@ std::string RuleCraft::getType() const
  */
 const std::vector<std::string>& RuleCraft::getRequirements() const
 {
-	return _requires;
+	return _required;
 }
 
 /**

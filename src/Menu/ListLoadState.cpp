@@ -72,9 +72,9 @@ void ListLoadState::lstSavesPress(Action* action)
 
 		if (_origin == OPT_MENU
 			|| (_origin == OPT_GEOSCAPE
-				&& _saves[_lstSaves->getSelectedRow()].mode == MODE_BATTLESCAPE)
+				&& _saves[_lstSaves->getSelectedRow()].mode == SM_BATTLESCAPE)
 			|| (_origin == OPT_BATTLESCAPE
-				&& _saves[_lstSaves->getSelectedRow()].mode == MODE_GEOSCAPE))
+				&& _saves[_lstSaves->getSelectedRow()].mode == SM_GEOSCAPE))
 		{
 			_game->getResourcePack()->fadeMusic(_game, 1123);
 		}
