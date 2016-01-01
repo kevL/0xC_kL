@@ -110,7 +110,7 @@ Tile::~Tile()
 }
 
 /**
- * Load the tile from a YAML node.
+ * Load this Tile from a YAML node.
  * @param node - reference a YAML node
  */
 void Tile::load(const YAML::Node& node)
@@ -155,15 +155,15 @@ void Tile::loadBinary(
 		Uint8* buffer,
 		Tile::SerializationKey& serKey)
 {
-	_mapDataId[0] = unserializeInt(&buffer, serKey._mapDataId);
-	_mapDataId[1] = unserializeInt(&buffer, serKey._mapDataId);
-	_mapDataId[2] = unserializeInt(&buffer, serKey._mapDataId);
-	_mapDataId[3] = unserializeInt(&buffer, serKey._mapDataId);
+	_mapDataId[O_FLOOR]		= unserializeInt(&buffer, serKey._mapDataId);
+	_mapDataId[O_WESTWALL]	= unserializeInt(&buffer, serKey._mapDataId);
+	_mapDataId[O_NORTHWALL]	= unserializeInt(&buffer, serKey._mapDataId);
+	_mapDataId[O_OBJECT]	= unserializeInt(&buffer, serKey._mapDataId);
 
-	_mapDataSetId[0] = unserializeInt(&buffer, serKey._mapDataSetId);
-	_mapDataSetId[1] = unserializeInt(&buffer, serKey._mapDataSetId);
-	_mapDataSetId[2] = unserializeInt(&buffer, serKey._mapDataSetId);
-	_mapDataSetId[3] = unserializeInt(&buffer, serKey._mapDataSetId);
+	_mapDataSetId[O_FLOOR]		= unserializeInt(&buffer, serKey._mapDataSetId);
+	_mapDataSetId[O_WESTWALL]	= unserializeInt(&buffer, serKey._mapDataSetId);
+	_mapDataSetId[O_NORTHWALL]	= unserializeInt(&buffer, serKey._mapDataSetId);
+	_mapDataSetId[O_OBJECT]		= unserializeInt(&buffer, serKey._mapDataSetId);
 
 	_smoke		= unserializeInt(&buffer, serKey._smoke);
 	_fire		= unserializeInt(&buffer, serKey._fire);
@@ -173,12 +173,12 @@ void Tile::loadBinary(
 										&buffer,
 										serKey.boolFields);
 
-	_revealed[0] = (boolFields & 0x01) ? true : false;
-	_revealed[1] = (boolFields & 0x02) ? true : false;
-	_revealed[2] = (boolFields & 0x04) ? true : false;
+	_revealed[ST_WEST]		= (boolFields & 0x01) ? true : false;
+	_revealed[ST_NORTH]		= (boolFields & 0x02) ? true : false;
+	_revealed[ST_CONTENT]	= (boolFields & 0x04) ? true : false;
 
-	_curFrame[1] = (boolFields & 0x08) ? 7 : 0;
-	_curFrame[2] = (boolFields & 0x10) ? 7 : 0;
+	_curFrame[O_WESTWALL]	= (boolFields & 0x08) ? 7 : 0;
+	_curFrame[O_NORTHWALL]	= (boolFields & 0x10) ? 7 : 0;
 
 //	if (_fire || _smoke)
 //		_animationOffset = std::rand() %4;
@@ -207,9 +207,9 @@ YAML::Node Tile::save() const
 	if (_fire != 0)			node["fire"]		= _fire;
 	if (_animOffset != 0)	node["animOffset"]	= _animOffset;
 
-	if (   _revealed[0] == true
-		|| _revealed[1] == true
-		|| _revealed[2] == true)
+	if (   _revealed[ST_WEST]		== true
+		|| _revealed[ST_NORTH]		== true
+		|| _revealed[ST_CONTENT]	== true)
 	{
 		for (size_t
 				i = 0;
@@ -234,24 +234,24 @@ YAML::Node Tile::save() const
  */
 void Tile::saveBinary(Uint8** buffer) const
 {
-	serializeInt(buffer, serializationKey._mapDataId, _mapDataId[0]);
-	serializeInt(buffer, serializationKey._mapDataId, _mapDataId[1]);
-	serializeInt(buffer, serializationKey._mapDataId, _mapDataId[2]);
-	serializeInt(buffer, serializationKey._mapDataId, _mapDataId[3]);
+	serializeInt(buffer, serializationKey._mapDataId, _mapDataId[O_FLOOR]);
+	serializeInt(buffer, serializationKey._mapDataId, _mapDataId[O_WESTWALL]);
+	serializeInt(buffer, serializationKey._mapDataId, _mapDataId[O_NORTHWALL]);
+	serializeInt(buffer, serializationKey._mapDataId, _mapDataId[O_OBJECT]);
 
-	serializeInt(buffer, serializationKey._mapDataSetId, _mapDataSetId[0]);
-	serializeInt(buffer, serializationKey._mapDataSetId, _mapDataSetId[1]);
-	serializeInt(buffer, serializationKey._mapDataSetId, _mapDataSetId[2]);
-	serializeInt(buffer, serializationKey._mapDataSetId, _mapDataSetId[3]);
+	serializeInt(buffer, serializationKey._mapDataSetId, _mapDataSetId[O_FLOOR]);
+	serializeInt(buffer, serializationKey._mapDataSetId, _mapDataSetId[O_WESTWALL]);
+	serializeInt(buffer, serializationKey._mapDataSetId, _mapDataSetId[O_NORTHWALL]);
+	serializeInt(buffer, serializationKey._mapDataSetId, _mapDataSetId[O_OBJECT]);
 
 	serializeInt(buffer, serializationKey._smoke,		_smoke);
 	serializeInt(buffer, serializationKey._fire,		_fire);
 	serializeInt(buffer, serializationKey._animOffset,	_animOffset);
 
-	int boolFields = (_revealed[0] ? 0x01 : 0) + (_revealed[1] ? 0x02 : 0) + (_revealed[2] ? 0x04 : 0);
+	int boolFields = (_revealed[ST_WEST] ? 0x01 : 0x0) + (_revealed[ST_NORTH] ? 0x02 : 0x0) + (_revealed[ST_CONTENT] ? 0x04 : 0x0);
 
-	boolFields |= isUfoDoorOpen(O_WESTWALL) ? 0x08 : 0;
-	boolFields |= isUfoDoorOpen(O_NORTHWALL) ? 0x10 : 0;
+	boolFields |= isUfoDoorOpen(O_WESTWALL)  ? 0x08 : 0x0;
+	boolFields |= isUfoDoorOpen(O_NORTHWALL) ? 0x10 : 0x0;
 
 	serializeInt(
 				buffer,
@@ -570,25 +570,24 @@ bool Tile::closeUfoDoor()
 /**
  * Sets this Tile's sections' revealed flags.
  * @note Also re-caches the sprites for any unit on this Tile if the value changes.
- * @param revealed - true if revealed
- * @param section - 0 westwall
+ * @param section - the SectionType (Tile.h)
+ *					0 westwall
  *					1 northwall
  *					2 object+floor
+ * @param revealed - true if revealed (default true)
  */
 void Tile::setRevealed(
-		bool revealed,
-		int section)
+		SectionType section,
+		bool revealed)
 {
-	const size_t i = static_cast<size_t>(section);
-
-	if (_revealed[i] != revealed)
+	if (_revealed[section] != revealed)
 	{
-		_revealed[i] = revealed;
+		_revealed[section] = revealed;
 
-		if (revealed == true && section == 2)
+		if (revealed == true && section == ST_CONTENT)
 		{
-			_revealed[0] = // if object+floor is revealed set west & north walls revealed also.
-			_revealed[1] = true;
+			_revealed[ST_WEST] = // if object+floor is revealed set west & north walls revealed also.
+			_revealed[ST_NORTH] = true;
 		}
 
 		if (_unit != nullptr) _unit->clearCache();
@@ -602,9 +601,9 @@ void Tile::setRevealed(
  *					2 object+floor
  * @return, true if revealed
  */
-bool Tile::isRevealed(int section) const
+bool Tile::isRevealed(SectionType section) const
 {
-	return _revealed[static_cast<size_t>(section)];
+	return _revealed[section];
 }
 
 /**

@@ -590,16 +590,16 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 										// mark every tile of line as visible (this is needed because of bresenham narrow stroke).
 										tile = _battleSave->getTile(posTrj);
 										tile->setTileVisible();			// Used only by sneakyAI.
-										tile->setRevealed(true, 2);	// sprite caching for floor+content, ergo + west & north walls.
+										tile->setRevealed(ST_CONTENT);	// sprite caching for floor+content, ergo + west & north walls.
 
 										// walls to the east or south of a visible tile, reveal that too
 										// note: Yeh, IF there's walls or an appropriate BigWall object!
-										/* parts:
+										/* tile-parts:
 											#0 - floor
 											#1 - westwall
 											#2 - northwall
 											#3 - object */
-										/* discovered:
+										/* revealed:
 											#0 - westwall
 											#1 - northwall
 											#2 - floor + content (reveals both walls also) */
@@ -618,10 +618,10 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 													&& (tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_BLOCK
 														|| tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_WEST))
 												{
-													tileEdge->setRevealed(true, 2); // reveal entire TileEast
+													tileEdge->setRevealed(ST_CONTENT); // reveal entire TileEast
 												}
 												else if (tileEdge->getMapData(O_WESTWALL) != nullptr)
-													tileEdge->setRevealed(true, 0); // reveal only westwall
+													tileEdge->setRevealed(ST_WEST); // reveal only westwall
 											}
 										}
 
@@ -640,10 +640,10 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 													&& (tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_BLOCK
 														|| tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NORTH))
 												{
-													tileEdge->setRevealed(true, 2); // reveal entire TileSouth
+													tileEdge->setRevealed(ST_CONTENT); // reveal entire TileSouth
 												}
 												else if (tileEdge->getMapData(O_NORTHWALL) != nullptr)
-													tileEdge->setRevealed(true, 1); // reveal only northwall
+													tileEdge->setRevealed(ST_NORTH); // reveal only northwall
 											}
 										}
 
@@ -662,7 +662,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 													|| tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_EAST
 													|| tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_E_S))
 											{
-												tileEdge->setRevealed(true, 2); // reveal entire TileWest
+												tileEdge->setRevealed(ST_CONTENT); // reveal entire TileWest
 											}
 										}
 
@@ -681,7 +681,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 													|| tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_SOUTH
 													|| tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_E_S))
 											{
-												tileEdge->setRevealed(true, 2); // reveal entire TileNorth
+												tileEdge->setRevealed(ST_CONTENT); // reveal entire TileNorth
 											}
 										}
 									}

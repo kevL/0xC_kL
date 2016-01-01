@@ -345,7 +345,7 @@ void ProjectileFlyBState::init()
 				|| Options::battleForceFire == false))
 		{
 			//Log(LOG_INFO) << ". tileTarget has content-object";
-			if (tileTarget->isRevealed(2) == false
+			if (tileTarget->isRevealed(ST_CONTENT) == false
 				|| _parent->getTileEngine()->canTargetTilepart(
 														&originVoxel,
 														tileTarget,
@@ -365,7 +365,7 @@ void ProjectileFlyBState::init()
 				|| Options::battleForceFire == false))
 		{
 			//Log(LOG_INFO) << ". tileTarget has northwall";
-			if (tileTarget->isRevealed(1) == false
+			if (tileTarget->isRevealed(ST_NORTH) == false
 				|| _parent->getTileEngine()->canTargetTilepart(
 														&originVoxel,
 														tileTarget,
@@ -382,7 +382,7 @@ void ProjectileFlyBState::init()
 		else if (tileTarget->getMapData(O_WESTWALL) != nullptr) // force Westwall by pressing [CTRL+SHIFT]
 		{
 			//Log(LOG_INFO) << ". tileTarget has westwall";
-			if (tileTarget->isRevealed(0) == false
+			if (tileTarget->isRevealed(ST_WEST) == false
 				|| _parent->getTileEngine()->canTargetTilepart(
 														&originVoxel,
 														tileTarget,
@@ -399,7 +399,7 @@ void ProjectileFlyBState::init()
 		else if (tileTarget->getMapData(O_FLOOR) != nullptr) // forced-shot at Floor is handled above^ [CTRL+ALT]
 		{
 			//Log(LOG_INFO) << ". tileTarget has floor";
-			if (tileTarget->isRevealed(2) == false
+			if (tileTarget->isRevealed(ST_CONTENT) == false
 				|| _parent->getTileEngine()->canTargetTilepart(
 														&originVoxel,
 														tileTarget,

@@ -45,6 +45,13 @@ enum DoorResult
 	DR_ERR_RESERVE	//  4
 };
 
+enum SectionType
+{
+	ST_WEST,	// 0
+	ST_NORTH,	// 1
+	ST_CONTENT	// 2
+};
+
 
 class BattleItem;
 class BattleUnit;
@@ -61,23 +68,26 @@ class Surface;
 class Tile
 {
 
-protected:
+	public:
+		static const size_t PARTS_TILE = 4;
+
+private:
 	static const size_t
 		LIGHTLAYERS	= 3,
 		SECTIONS	= 3;
 
 	bool
 		_danger,
-		_revealed[3],
+		_revealed[SECTIONS],
 		_visible;
 	int
 		_animOffset,
-		_curFrame[4],
+		_curFrame[PARTS_TILE],
 		_explosive,
 		_fire,
 		_light[LIGHTLAYERS],
-		_mapDataId[4],
-		_mapDataSetId[4],
+		_mapDataId[PARTS_TILE],
+		_mapDataSetId[PARTS_TILE],
 		_preview,
 		_smoke,
 		_tuMarker;
@@ -86,7 +96,7 @@ protected:
 	DamageType _explosiveType;
 
 	BattleUnit* _unit;
-	MapData* _objects[4];
+	MapData* _objects[PARTS_TILE];
 
 	Position _pos;
 
@@ -102,8 +112,6 @@ protected:
 
 
 	public:
-		static const size_t PARTS_TILE = 4;
-
 		static struct SerializationKey
 		{
 			// how many bytes to store for each variable or each member of array of the same name
@@ -206,10 +214,10 @@ protected:
 
 		/// Sets the black fog-of-war status of a Tile-section.
 		void setRevealed(
-				bool revealed,
-				int section);
+				SectionType section,
+				bool revealed = true);
 		/// Gets the black fog-of-war status of a Tile-section.
-		bool isRevealed(int section) const;
+		bool isRevealed(SectionType section) const;
 
 		/// Resets light to zero for the Tile.
 		void resetLight(size_t layer);

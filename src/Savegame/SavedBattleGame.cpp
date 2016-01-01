@@ -1458,7 +1458,7 @@ void SavedBattleGame::setDebugMode()
 			i != _mapSize;
 			++i)
 	{
-		_tiles[i]->setRevealed(true, 2);
+		_tiles[i]->setRevealed(ST_CONTENT);
 	}
 }
 
@@ -2643,9 +2643,9 @@ void SavedBattleGame::resetTiles()
 			i != _mapSize;
 			++i)
 	{
-		_tiles[i]->setRevealed(false, 0);
-		_tiles[i]->setRevealed(false, 1);
-		_tiles[i]->setRevealed(false, 2);
+		_tiles[i]->setRevealed(ST_WEST, false);
+		_tiles[i]->setRevealed(ST_NORTH, false);
+		_tiles[i]->setRevealed(ST_CONTENT, false);
 	}
 }
 

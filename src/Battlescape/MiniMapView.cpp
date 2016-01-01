@@ -155,7 +155,7 @@ void MiniMapView::draw()
 						colorGroup = 1; // greyscale
 						colorOffset = 5;
 					}
-					else if (tile->isRevealed(2) == true)
+					else if (tile->isRevealed(ST_CONTENT) == true)
 					{
 						colorGroup = 0;
 						colorOffset = tile->getShade();
@@ -253,7 +253,7 @@ void MiniMapView::draw()
 									colorGroup);
 					}
 
-					if (tile->isRevealed(2) == true
+					if (tile->isRevealed(ST_CONTENT) == true
 						&& tile->getInventory()->empty() == false) // at least one item on this tile
 					{
 						srf = _set->getFrame(_cycle + 9); // white cross

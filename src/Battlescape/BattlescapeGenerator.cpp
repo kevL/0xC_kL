@@ -1985,7 +1985,7 @@ void BattlescapeGenerator::addCivilian(RuleUnit* const unitRule) // private.
  * @param offset_y			- Mapblock offset in Y direction
  * @param terraRule			- pointer to RuleTerrain
  * @param dataSetIdOffset	- (default 0)
- * @param discovered		- true if this MapBlock is discovered (eg. landingsite of the Skyranger) (default false)
+ * @param revealed			- true if this MapBlock is revealed (eg. landingsite of the Skyranger) (default false)
  * @param craft				- true if xCom Craft has landed on the MAP (default false)
  * @return, height of the loaded Mapblock (needed for spawnpoint calculation)
  * @sa http://www.ufopaedia.org/index.php?title=MAPS
@@ -1997,7 +1997,7 @@ int BattlescapeGenerator::loadMAP( // private.
 		int offset_y,
 		const RuleTerrain* const terraRule,
 		int dataSetIdOffset,
-		bool discovered,
+		bool revealed,
 		bool craft)
 {
 	std::ostringstream file;
@@ -2048,13 +2048,11 @@ int BattlescapeGenerator::loadMAP( // private.
 		if (_battleSave->getTile(Position(x,y,i))->getMapData(O_FLOOR) != nullptr)
 		{
 			z += i;
-
 			if (craft == true)
 			{
 				_craftZ = i;
 				_battleSave->setGroundLevel(i);
 			}
-
 			break;
 		}
 	}
@@ -2119,7 +2117,7 @@ int BattlescapeGenerator::loadMAP( // private.
 				&& z != _craftZ)
 			{
 				revealDone = true;
-				_battleSave->getTile(Position(x,y,z))->setRevealed(true, 2);
+				_battleSave->getTile(Position(x,y,z))->setRevealed(ST_CONTENT);
 			}
 		}
 
@@ -2131,8 +2129,8 @@ int BattlescapeGenerator::loadMAP( // private.
 
 		if (revealDone == false)
 			_battleSave->getTile(Position(x,y,z))->setRevealed(
-															discovered == true || block->isFloorRevealed(z) == true,
-															2);
+															ST_CONTENT,
+															revealed == true || block->isFloorRevealed(z) == true);
 		++x;
 
 		if (x == size_x + offset_x)

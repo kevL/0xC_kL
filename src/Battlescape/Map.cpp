@@ -729,7 +729,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 					else
 						tileBelow = nullptr;
 
-					if (_tile->isRevealed(2) == true)
+					if (_tile->isRevealed(ST_CONTENT) == true)
 						tileShade = _tile->getShade();
 					else
 						tileShade = SHADE_BLACK;
@@ -909,7 +909,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						sprite = _tile->getSprite(O_WESTWALL);
 						if (sprite != nullptr)
 						{
-							if (_tile->isRevealed(0) == true
+							if (_tile->isRevealed(ST_WEST) == true
 								&& (_tile->getMapData(O_WESTWALL)->isDoor() == true
 									|| _tile->getMapData(O_WESTWALL)->isUfoDoor() == true))
 							{
@@ -929,7 +929,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						sprite = _tile->getSprite(O_NORTHWALL);
 						if (sprite != nullptr)
 						{
-							if (_tile->isRevealed(1) == true
+							if (_tile->isRevealed(ST_NORTH) == true
 								&& (_tile->getMapData(O_NORTHWALL)->isDoor() == true
 									|| _tile->getMapData(O_NORTHWALL)->isUfoDoor() == true))
 							{
@@ -981,7 +981,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										posScreen.y + _tile->getTerrainLevel(),
 										tileShade);
 
-							if (var == true && _tile->isRevealed(2) == true)
+							if (var == true && _tile->isRevealed(ST_CONTENT) == true)
 							{
 								frame = 4 + (_animFrame / 2);
 								sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
@@ -1005,7 +1005,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										posScreen.y + _tile->getTerrainLevel(),
 										tileShade);
 
-								if (var == true && _tile->isRevealed(2) == true)
+								if (var == true && _tile->isRevealed(ST_CONTENT) == true)
 								{
 									for (int
 											x = 0;
@@ -1338,7 +1338,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								sprite = unitBelow->getCache(quadrant);
 								if (sprite != nullptr)
 								{
-									if (tileBelow->isRevealed(2) == true)
+									if (tileBelow->isRevealed(ST_CONTENT) == true)
 										shade = tileBelow->getShade();
 									else
 										shade = SHADE_BLACK;
@@ -1367,7 +1367,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 					}
 
 // Draw SMOKE & FIRE
-					if (_tile->isRevealed(2) == true
+					if (_tile->isRevealed(ST_CONTENT) == true
 						&& (_tile->getSmoke() != 0 || _tile->getFire() != 0))
 					{
 						if (_tile->getFire() == 0)
@@ -1398,7 +1398,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 // Draw pathPreview
 					if (_tile->getPreviewDir() != -1
 						&& (_previewSetting & PATH_ARROWS)
-						&& _tile->isRevealed(0) == true)
+						&& _tile->isRevealed(ST_WEST) == true)
 					{
 						if (itZ > 0 && _tile->hasNoFloor(tileBelow) == true)
 						{
@@ -1498,7 +1498,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							if (_cursorType == CT_AIM) // indicator for Firing.
 							{
 								// draw targetUnit over cursor's front if tile is blacked-out.
-								if (hasUnit == true && _tile->isRevealed(2) == false)
+								if (hasUnit == true && _tile->isRevealed(ST_CONTENT) == false)
 								{
 									trueLoc = isTrueLoc(_unit, _tile);
 									quadrant = getQuadrant(_unit, _tile, trueLoc);
@@ -1792,7 +1792,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						_tile = _battleSave->getTile(posField);
 
 						if (_tile != nullptr
-							&& _tile->isRevealed(2) == true
+							&& _tile->isRevealed(ST_CONTENT) == true
 							&& _tile->getPreviewDir() != -1)
 						{
 							int offset_y = -_tile->getTerrainLevel();

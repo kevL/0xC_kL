@@ -146,7 +146,7 @@ private:
 			int offset_y,
 			const RuleTerrain* const terraRule,
 			int dataSetIdOffset = 0,
-			bool discovered = false,
+			bool revealed = false,
 			bool craft = false);
 	/// Loads an XCom RMP file.
 	void loadRMP(
