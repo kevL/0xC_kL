@@ -256,9 +256,9 @@ void Pathfinding::calculate(
 						{
 							return;
 						}
-						else if (tileTest->getUnit() != nullptr)
+						else if (tileTest->getTileUnit() != nullptr)
 						{
-							unitTest = tileTest->getUnit();
+							unitTest = tileTest->getTileUnit();
 							if (unitTest != unit
 								&& unitTest != missileTarget
 								&& unitTest->getUnitVisible() == true)
@@ -868,11 +868,11 @@ int Pathfinding::getTuCostPf(
 			}
 			else if (_mType == MT_FLY
 				&& tileStopBelow != nullptr
-				&& tileStopBelow->getUnit() != nullptr
-				&& tileStopBelow->getUnit() != _unit)
+				&& tileStopBelow->getTileUnit() != nullptr
+				&& tileStopBelow->getTileUnit() != _unit)
 			{
 				// 2 or more voxels poking into this tile -> no go
-				if (tileStopBelow->getUnit()->getHeight(true) - tileStopBelow->getTerrainLevel() > 26)
+				if (tileStopBelow->getTileUnit()->getHeight(true) - tileStopBelow->getTerrainLevel() > 26)
 				{
 					//if (debug) Log(LOG_INFO) << "head too large";
 					return 255;
@@ -1665,7 +1665,7 @@ bool Pathfinding::isBlocked( // private.
 		case O_FLOOR:
 			{
 				//Log(LOG_INFO) << ". part is Floor";
-				const BattleUnit* targetUnit = tile->getUnit();
+				const BattleUnit* targetUnit = tile->getTileUnit();
 
 				if (targetUnit != nullptr)
 				{
@@ -1706,7 +1706,7 @@ bool Pathfinding::isBlocked( // private.
 					while (pos.z > -1)
 					{
 						const Tile* const testTile = _battleSave->getTile(pos);
-						targetUnit = testTile->getUnit();
+						targetUnit = testTile->getTileUnit();
 
 						if (targetUnit != nullptr
 							&& targetUnit != _unit)

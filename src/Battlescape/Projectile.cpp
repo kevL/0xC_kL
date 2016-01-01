@@ -383,7 +383,7 @@ void Projectile::applyAccuracy( // private.
 
 //			if (Options::battleRangeBasedAccuracy == true)
 			accuracy += targetAccuracy(
-								tileTarget->getUnit(), //_battleSave->getTileEngine()->getTargetUnit(tileTarget),
+								tileTarget->getTileUnit(), //_battleSave->getTileEngine()->getTargetUnit(tileTarget),
 								targetVoxel->z - originVoxel.z,
 								tileTarget);
 
@@ -501,7 +501,7 @@ void Projectile::applyAccuracy( // private.
 									itRule,
 									static_cast<int>(Round(targetDist / 16.)));
 			accuracy += targetAccuracy(
-									tileTarget->getUnit(), //_battleSave->getTileEngine()->getTargetUnit(tileTarget),
+									tileTarget->getTileUnit(), //_battleSave->getTileEngine()->getTargetUnit(tileTarget),
 									targetVoxel->z - originVoxel.z,
 									tileTarget);
 			accuracy = std::max(ACU_MIN, accuracy);
@@ -707,7 +707,7 @@ bool Projectile::verifyTarget(
 		if (voxelType == VOXEL_UNIT)
 		{
 			const Tile* const tileTest = _battleSave->getTile(posTest);
-			if (tileTest != nullptr && tileTest->getUnit() == nullptr) // must be poking head up from tileBelow
+			if (tileTest != nullptr && tileTest->getTileUnit() == nullptr) // must be poking head up from tileBelow
 				posTest += Position(0,0,-1);
 		}
 
@@ -729,8 +729,8 @@ bool Projectile::verifyTarget(
 				case VOXEL_UNIT:
 				{
 					const BattleUnit
-						* const targetUnit = _battleSave->getTile(_action.target)->getUnit(),
-						* const testUnit = _battleSave->getTile(posTest)->getUnit();
+						* const targetUnit = _battleSave->getTile(_action.target)->getTileUnit(),
+						* const testUnit = _battleSave->getTile(posTest)->getTileUnit();
 					if (testUnit != targetUnit && testUnit->getUnitVisible() == true)
 						return false;
 				}

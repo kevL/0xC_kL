@@ -362,8 +362,8 @@ void Map::draw()
 				tile = _battleSave->getTile(Position::toTileSpace((*i)->getPosition()));
 				if (tile != nullptr
 					&& (tile->getTileVisible() == true
-						|| (tile->getUnit() != nullptr
-							&& tile->getUnit()->getUnitVisible() == true)
+						|| (tile->getTileUnit() != nullptr
+							&& tile->getTileUnit()->getUnitVisible() == true)
 						|| (*i)->isBig() == true
 						|| (*i)->isTorch() == true
 						|| _battleSave->getSide() != FACTION_PLAYER)) // shows hit-explosion during aLien berserk
@@ -729,12 +729,12 @@ void Map::drawTerrain(Surface* const surface) // private.
 					else
 						tileBelow = nullptr;
 
-					if (_tile->isDiscovered(2) == true)
+					if (_tile->isRevealed(2) == true)
 						tileShade = _tile->getShade();
 					else
 						tileShade = SHADE_BLACK;
 
-					_unit = _tile->getUnit();
+					_unit = _tile->getTileUnit();
 
 					hasUnit = _unit != nullptr
 						  && (_unit->getUnitVisible() == true || _battleSave->getDebugMode() == true);
@@ -768,7 +768,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									|| tileEast->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NWSE))
 							{
 								const Tile* const tileEastBelow (_battleSave->getTile(posField + Position(1,0,-1)));
-								const BattleUnit* const unitEastBelow (tileEastBelow->getUnit());
+								const BattleUnit* const unitEastBelow (tileEastBelow->getTileUnit());
 
 								if (unitEastBelow != nullptr
 									&& unitEastBelow != _battleSave->getSelectedUnit()
@@ -789,7 +789,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						&& hasFloor == true)
 					{
 						const Tile* const tileWest (_battleSave->getTile(posField + Position(-1,0,0)));
-						const BattleUnit* const unitWest (tileWest->getUnit());
+						const BattleUnit* const unitWest (tileWest->getTileUnit());
 						if (unitWest != nullptr
 							&& unitWest->getUnitVisible() == true // don't bother checking DebugMode.
 							&& (unitWest->getUnitStatus() == STATUS_WALKING
@@ -798,12 +798,12 @@ void Map::drawTerrain(Surface* const surface) // private.
 								|| unitWest->getUnitDirection() == 5)) // && vertical dir == 0
 						{
 							const Tile* tileNorth (_battleSave->getTile(posField + Position(0,-1,0)));
-							const BattleUnit* unitNorth (tileNorth->getUnit());
+							const BattleUnit* unitNorth (tileNorth->getTileUnit());
 							int offsetZ_y;
 							if (unitNorth == nullptr && itZ != 0)
 							{
 								tileNorth = _battleSave->getTile(posField + Position(0,-1,-1));
-								unitNorth = tileNorth->getUnit();
+								unitNorth = tileNorth->getTileUnit();
 								offsetZ_y = 24;
 							}
 							else
@@ -909,7 +909,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						sprite = _tile->getSprite(O_WESTWALL);
 						if (sprite != nullptr)
 						{
-							if (_tile->isDiscovered(0) == true
+							if (_tile->isRevealed(0) == true
 								&& (_tile->getMapData(O_WESTWALL)->isDoor() == true
 									|| _tile->getMapData(O_WESTWALL)->isUfoDoor() == true))
 							{
@@ -929,7 +929,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						sprite = _tile->getSprite(O_NORTHWALL);
 						if (sprite != nullptr)
 						{
-							if (_tile->isDiscovered(1) == true
+							if (_tile->isRevealed(1) == true
 								&& (_tile->getMapData(O_NORTHWALL)->isDoor() == true
 									|| _tile->getMapData(O_NORTHWALL)->isUfoDoor() == true))
 							{
@@ -981,7 +981,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										posScreen.y + _tile->getTerrainLevel(),
 										tileShade);
 
-							if (var == true && _tile->isDiscovered(2) == true)
+							if (var == true && _tile->isRevealed(2) == true)
 							{
 								frame = 4 + (_animFrame / 2);
 								sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
@@ -1005,7 +1005,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										posScreen.y + _tile->getTerrainLevel(),
 										tileShade);
 
-								if (var == true && _tile->isDiscovered(2) == true)
+								if (var == true && _tile->isRevealed(2) == true)
 								{
 									for (int
 											x = 0;
@@ -1027,7 +1027,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							&& hasFloor == false
 							&& hasObject == false)
 						{
-							const BattleUnit* const unitBelow (tileBelow->getUnit());
+							const BattleUnit* const unitBelow (tileBelow->getTileUnit());
 							if (unitBelow != nullptr
 								&& unitBelow != _battleSave->getSelectedUnit()
 								&& unitBelow->getGeoscapeSoldier() != nullptr
@@ -1141,7 +1141,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							|| hasFloor == true					// if draw-on-tileBelow then unit-sprite's upper body gets overdrawn by background floors & walls on higher level;
 																// if draw-on-tileAbove then unit-sprite's lower body gets drawn overtop of foreground walls on lower level.
 //							|| tileBelow == nullptr // if (hasFloor=false) then tile-below *should be* valid.
-							|| _unit != tileBelow->getUnit())) // draw unit on belowTile only.
+							|| _unit != tileBelow->getTileUnit())) // draw unit on belowTile only.
 //							|| tileBelow->getMapData(O_FLOOR)->isGravLift() == true */
 					{
 						bool
@@ -1328,7 +1328,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						const int tLevel = tileBelow->getTerrainLevel();
 						if (tLevel < 0) // probly more like -4 or -8
 						{
-							const BattleUnit* const unitBelow (tileBelow->getUnit());
+							const BattleUnit* const unitBelow (tileBelow->getTileUnit());
 							if (unitBelow != nullptr
 								&& unitBelow->getUnitVisible() == true // don't bother checking DebugMode
 								&& unitBelow->getHeight(true) - tLevel > 23) // head sticks up, probly more like 26 or 28 before clipping background walls above occurs
@@ -1338,7 +1338,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								sprite = unitBelow->getCache(quadrant);
 								if (sprite != nullptr)
 								{
-									if (tileBelow->isDiscovered(2) == true)
+									if (tileBelow->isRevealed(2) == true)
 										shade = tileBelow->getShade();
 									else
 										shade = SHADE_BLACK;
@@ -1367,7 +1367,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 					}
 
 // Draw SMOKE & FIRE
-					if (_tile->isDiscovered(2) == true
+					if (_tile->isRevealed(2) == true
 						&& (_tile->getSmoke() != 0 || _tile->getFire() != 0))
 					{
 						if (_tile->getFire() == 0)
@@ -1398,7 +1398,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 // Draw pathPreview
 					if (_tile->getPreviewDir() != -1
 						&& (_previewSetting & PATH_ARROWS)
-						&& _tile->isDiscovered(0) == true)
+						&& _tile->isRevealed(0) == true)
 					{
 						if (itZ > 0 && _tile->hasNoFloor(tileBelow) == true)
 						{
@@ -1498,7 +1498,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							if (_cursorType == CT_AIM) // indicator for Firing.
 							{
 								// draw targetUnit over cursor's front if tile is blacked-out.
-								if (hasUnit == true && _tile->isDiscovered(2) == false)
+								if (hasUnit == true && _tile->isRevealed(2) == false)
 								{
 									trueLoc = isTrueLoc(_unit, _tile);
 									quadrant = getQuadrant(_unit, _tile, trueLoc);
@@ -1671,7 +1671,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 // Draw battlefield border-marks only on ground-level tiles
 					if ((itZ == _battleSave->getGroundLevel()
 							|| (itZ == 0 && _battleSave->getGroundLevel() == -1))
-						&& _tile->getUnit() == nullptr)
+						&& _tile->getTileUnit() == nullptr)
 					{
 						if (   itX == 0
 							|| itX == _battleSave->getMapSizeX() - 1
@@ -1792,7 +1792,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						_tile = _battleSave->getTile(posField);
 
 						if (_tile != nullptr
-							&& _tile->isDiscovered(2) == true
+							&& _tile->isRevealed(2) == true
 							&& _tile->getPreviewDir() != -1)
 						{
 							int offset_y = -_tile->getTerrainLevel();
@@ -1996,7 +1996,7 @@ bool Map::checkWest( // private.
 	if (unit == nullptr) // '_unit' is Valid.
 	{
 		ret = tile6 == nullptr
-		   || tile6->getUnit() != _unit;
+		   || tile6->getTileUnit() != _unit;
 	}
 	else
 		ret = false; // '_unit' is NOT Valid.
@@ -2076,7 +2076,7 @@ bool Map::checkNorth( // private.
 	if (unit == nullptr) // '_unit' is Valid.
 	{
 		ret = tile0 == nullptr
-		   || tile0->getUnit() != _unit;
+		   || tile0->getTileUnit() != _unit;
 	}
 	else
 		ret = false; // '_unit' is NOT Valid.

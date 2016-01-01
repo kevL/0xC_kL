@@ -2013,7 +2013,7 @@ void GeoscapeState::time10Minutes()
 						k != _gameSave->getAlienBases()->end();
 						++k)
 				{
-					if ((*k)->isDiscovered() == false)
+					if ((*k)->isDetected() == false)
 					{
 						const double
 							craftRadar = static_cast<double>((*j)->getRules()->getReconRange()) * greatCircleConversionFactor,
@@ -2029,7 +2029,7 @@ void GeoscapeState::time10Minutes()
 							if (RNG::percent(chance) == true)
 							{
 								//Log(LOG_INFO) << ". . . . aLienBase discovered";
-								(*k)->setDiscovered(true);
+								(*k)->setDetected();
 							}
 						}
 					}
@@ -2889,14 +2889,14 @@ void GeoscapeState::time1Day()
 			const RuleResearch* const resRule ((*j)->getRules());
 			const std::string& resType (resRule->getType());
 
-			const bool liveAlien (_rules->getUnit(resType) != nullptr);
+			const bool liveAlien (_rules->getUnitRule(resType) != nullptr);
 			(*i)->removeResearch(*j, liveAlien == true); // interrogation of aLien Unit complete.
 
 			if (liveAlien == true // if the live alien is "researched" its corpse is sent to stores.
 				&& resRule->needsItem() == true
 				&& Options::spendResearchedItems == true)
 			{
-				(*i)->getStorageItems()->addItem(_rules->getArmor(_rules->getUnit(resType)->getArmor())->getCorpseGeoscape());
+				(*i)->getStorageItems()->addItem(_rules->getArmor(_rules->getUnitRule(resType)->getArmor())->getCorpseGeoscape());
 				// ;) <- kL_note: heh i noticed that.
 			}
 
@@ -2970,18 +2970,19 @@ void GeoscapeState::time1Day()
 										resRule,
 										*i);
 
-			for (std::vector<const RuleResearch*>::const_iterator	// -> moved here from NewPossibleResearchState cTor.
+			for (std::vector<const RuleResearch*>::const_iterator // -> moved here from NewPossibleResearchState cTor.
 					k = newResearchPossible.begin();
 					k != newResearchPossible.end();
 					)
 			{
-				if ((*k)->getCost() == 0							// no fake projects pls.
-					|| _gameSave->wasResearchPopped(*k) == true		// do not show twice.
-					|| _rules->getUnit((*k)->getType()) != nullptr)	// and no aLiens ->
+				if ((*k)->getCost() == 0								// no fake projects pls.
+					|| _gameSave->wasResearchPopped(*k) == true			// do not show twice.
+					|| _rules->getUnitRule((*k)->getType()) != nullptr)	// and no aLiens ->
 				{
 					k = newResearchPossible.erase(k);
 				}
-				else ++k;
+				else
+					++k;
 			}
 
 			std::vector<const RuleManufacture*> newManufacturePossible;
@@ -3048,7 +3049,7 @@ void GeoscapeState::time1Day()
 						++l)
 				{
 					if (resType == (*l)->getRules()->getType()
-						&& _rules->getUnit((*l)->getRules()->getType()) == nullptr)
+						&& _rules->getUnitRule((*l)->getRules()->getType()) == nullptr)
 					{
 						(*k)->removeResearch(*l, false);
 						break;
@@ -3320,10 +3321,10 @@ void GeoscapeState::time1Month()
 					i != _gameSave->getAlienBases()->end();
 					++i)
 			{
-				if ((*i)->isDiscovered() == false
+				if ((*i)->isDetected() == false
 					&& RNG::percent(pct + 5) == true)
 				{
-					(*i)->setDiscovered(true);
+					(*i)->setDetected();
 					popup(new AlienBaseState(*i, this)); // NOTE: multiple popups may glitch.
 				}
 			}

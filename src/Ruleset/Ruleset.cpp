@@ -1511,7 +1511,7 @@ const std::vector<std::string>& Ruleset::getSoldiersList() const
  * @param type - reference a Unit type
  * @return, pointer to the Unit rules
  */
-RuleUnit* Ruleset::getUnit(const std::string& type) const
+RuleUnit* Ruleset::getUnitRule(const std::string& type) const
 {
 	std::map<std::string, RuleUnit*>::const_iterator i = _units.find(type);
 	if (i != _units.end())

@@ -68,7 +68,7 @@ protected:
 
 	bool
 		_danger,
-		_discovered[3],
+		_revealed[3],
 		_visible;
 	int
 		_animOffset,
@@ -204,12 +204,12 @@ protected:
 		/// Closes ufo door.
 		bool closeUfoDoor();
 
-		/// Sets the black fog of war status of the Tile.
-		void setDiscovered(
-				bool visible,
+		/// Sets the black fog-of-war status of a Tile-section.
+		void setRevealed(
+				bool revealed,
 				int section);
-		/// Gets the black fog of war status of the Tile.
-		bool isDiscovered(int section) const;
+		/// Gets the black fog-of-war status of a Tile-section.
+		bool isRevealed(int section) const;
 
 		/// Resets light to zero for the Tile.
 		void resetLight(size_t layer);
@@ -288,7 +288,7 @@ protected:
 		 * Gets the (alive) unit on the Tile.
 		 * @return, pointer to a BattleUnit
 		 */
-		BattleUnit* getUnit() const
+		BattleUnit* getTileUnit() const
 		{ return _unit; }
 
 		/// Adds item
@@ -302,15 +302,15 @@ protected:
 		int getCorpseSprite(bool* fired) const;
 		/// Gets top-most item-sprite.
 		int getTopSprite(bool* primed) const;
-		/// Gets if the tile has an unconscious unit in its inventory.
+		/// Gets if the Tile has an unconscious unit in its inventory.
 		int hasUnconsciousUnit(bool playerOnly = true) const;
 
 		/// Gets inventory on the Tile.
 		std::vector<BattleItem*>* getInventory();
 
-		/// Sets the tile visible flag.
+		/// Sets the Tile visible flag.
 		void setTileVisible(bool vis = true);
-		/// Gets the tile visible flag.
+		/// Gets the Tile visible flag.
 		bool getTileVisible() const;
 
 		/// Sets the direction of path preview arrows.
@@ -321,9 +321,9 @@ protected:
 		void setPreviewTu(int tu);
 		/// Gets the number to be displayed for path preview.
 		int getPreviewTu() const;
-		/// Sets the preview tile marker color.
+		/// Sets the preview Tile marker color.
 		void setPreviewColor(Uint8 color);
-		/// Gets the preview tile marker color.
+		/// Gets the preview Tile marker color.
 		int getPreviewColor() const;
 
 		/// Sets the danger flag on the Tile so the AI may avoid it.

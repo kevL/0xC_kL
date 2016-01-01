@@ -437,7 +437,7 @@ void ExplosionBState::explode() // private.
 			if (_unit->getGeoscapeSoldier() != nullptr
 				&& _unit->getFaction() == _unit->getOriginalFaction())
 			{
-				const BattleUnit* const targetUnit = _battleSave->getTile(Position::toTileSpace(_center))->getUnit();
+				const BattleUnit* const targetUnit = _battleSave->getTile(Position::toTileSpace(_center))->getTileUnit();
 				if (targetUnit != nullptr && targetUnit->getFaction() != FACTION_PLAYER)
 				{
 					int xpMelee;

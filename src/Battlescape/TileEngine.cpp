@@ -477,7 +477,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 						if (preBattle == true
 							|| _battleSave->getBattleGame()->getPanicHandled() == true) // spot units ->>
 						{
-							spottedUnit = _battleSave->getTile(posTest)->getUnit();
+							spottedUnit = _battleSave->getTile(posTest)->getTileUnit();
 /*							if (spottedUnit != nullptr)
 								Log(LOG_INFO) << "CalcFoV for " << unit->getId()
 											  << " - unit on Tile id-" << spottedUnit->getId()
@@ -496,7 +496,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 								if (unit->getFaction() == FACTION_PLAYER)
 								{
 									spottedUnit->setUnitVisible();
-									spottedUnit->getTile()->setTileVisible();
+									spottedUnit->getTile()->setTileVisible(); // Used only by sneakyAI.
 
 									if (preBattle == false
 										&& _spotSound == true
@@ -589,16 +589,16 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 
 										// mark every tile of line as visible (this is needed because of bresenham narrow stroke).
 										tile = _battleSave->getTile(posTrj);
-										tile->setTileVisible();
-										tile->setDiscovered(true, 2); // sprite caching for floor+content, ergo + west & north walls.
+										tile->setTileVisible();			// Used only by sneakyAI.
+										tile->setRevealed(true, 2);	// sprite caching for floor+content, ergo + west & north walls.
 
-										// walls to the east or south of a visible tile, we see that too
+										// walls to the east or south of a visible tile, reveal that too
 										// note: Yeh, IF there's walls or an appropriate BigWall object!
 										/* parts:
 											#0 - floor
 											#1 - westwall
 											#2 - northwall
-											#3 - object (content) */
+											#3 - object */
 										/* discovered:
 											#0 - westwall
 											#1 - northwall
@@ -618,10 +618,10 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 													&& (tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_BLOCK
 														|| tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_WEST))
 												{
-													tileEdge->setDiscovered(true, 2); // reveal entire TileEast
+													tileEdge->setRevealed(true, 2); // reveal entire TileEast
 												}
 												else if (tileEdge->getMapData(O_WESTWALL) != nullptr)
-													tileEdge->setDiscovered(true, 0); // reveal only westwall
+													tileEdge->setRevealed(true, 0); // reveal only westwall
 											}
 										}
 
@@ -640,10 +640,10 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 													&& (tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_BLOCK
 														|| tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NORTH))
 												{
-													tileEdge->setDiscovered(true, 2); // reveal entire TileSouth
+													tileEdge->setRevealed(true, 2); // reveal entire TileSouth
 												}
 												else if (tileEdge->getMapData(O_NORTHWALL) != nullptr)
-													tileEdge->setDiscovered(true, 1); // reveal only northwall
+													tileEdge->setRevealed(true, 1); // reveal only northwall
 											}
 										}
 
@@ -662,7 +662,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 													|| tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_EAST
 													|| tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_E_S))
 											{
-												tileEdge->setDiscovered(true, 2); // reveal entire TileWest
+												tileEdge->setRevealed(true, 2); // reveal entire TileWest
 											}
 										}
 
@@ -681,7 +681,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 													|| tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_SOUTH
 													|| tileEdge->getMapData(O_OBJECT)->getBigwall() == BIGWALL_E_S))
 											{
-												tileEdge->setDiscovered(true, 2); // reveal entire TileNorth
+												tileEdge->setRevealed(true, 2); // reveal entire TileNorth
 											}
 										}
 									}
@@ -761,7 +761,7 @@ bool TileEngine::visible(
 	if (tile == nullptr)
 		return false;
 
-	const BattleUnit* const targetUnit = tile->getUnit();
+	const BattleUnit* const targetUnit = tile->getTileUnit();
 	if (targetUnit == nullptr || targetUnit->isOut_t() == true)
 		return false;
 
@@ -815,7 +815,7 @@ bool TileEngine::visible(
 				return false;
 		}
 
-		if (scanTile->getUnit() == getTargetUnit(tile))
+		if (scanTile->getTileUnit() == getTargetUnit(tile))
 			return true;
 	}
 
@@ -831,14 +831,14 @@ BattleUnit* TileEngine::getTargetUnit(const Tile* const tile) const
 {
 	if (tile != nullptr)
 	{
-		if (tile->getUnit() != nullptr) // warning: Careful not to use this when UnitWalkBState has transient units placed.
-			return tile->getUnit();
+		if (tile->getTileUnit() != nullptr) // warning: Careful not to use this when UnitWalkBState has transient units placed.
+			return tile->getTileUnit();
 
 		if (tile->getPosition().z > 0 && tile->hasNoFloor() == true)
 		{
 			const Tile* const tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1));
-			if (tileBelow->getUnit() != nullptr)
-				return tileBelow->getUnit();
+			if (tileBelow->getTileUnit() != nullptr)
+				return tileBelow->getTileUnit();
 		}
 	}
 
@@ -924,7 +924,7 @@ bool TileEngine::canTargetUnit(
 	{
 		hypothetical = false;
 
-		targetUnit = tileTarget->getUnit();
+		targetUnit = tileTarget->getTileUnit();
 		if (targetUnit == nullptr)
 		{
 			//Log(LOG_INFO) << ". no Unit, ret FALSE";
@@ -1112,7 +1112,7 @@ bool TileEngine::canTargetUnit(
 
 	if (targetUnit == nullptr)
 	{
-		targetUnit = tileTarget->getUnit();
+		targetUnit = tileTarget->getTileUnit();
 		if (targetUnit == nullptr)
 		{
 			//Log(LOG_INFO) << ". no Unit, ret FALSE";
@@ -1466,7 +1466,7 @@ bool TileEngine::canTargetTilepart(
 	Position scanVoxel;
 	std::vector<Position> _trajectory;
 
-	BattleUnit* otherUnit = tile->getUnit();
+	BattleUnit* otherUnit = tile->getTileUnit();
 
 	if (otherUnit == 0)
 		return 0; // no unit in this tile, even if it elevated and appearing in it.
@@ -2009,7 +2009,7 @@ void TileEngine::hit(
 	Tile* const tile = _battleSave->getTile(posTarget);
 	if (tile == nullptr) return;
 
-	BattleUnit* targetUnit = tile->getUnit();
+	BattleUnit* targetUnit = tile->getTileUnit();
 
 	VoxelType voxelType;
 	if (melee == true)
@@ -2092,8 +2092,8 @@ void TileEngine::hit(
 				&& _battleSave->getTile(posTarget)->hasNoFloor() == true)
 			{
 				const Tile* const tileBelow = _battleSave->getTile(posTarget + Position(0,0,-1));
-				if (tileBelow != nullptr && tileBelow->getUnit() != nullptr)
-					targetUnit = tileBelow->getUnit();
+				if (tileBelow != nullptr && tileBelow->getTileUnit() != nullptr)
+					targetUnit = tileBelow->getTileUnit();
 			}
 
 			if (targetUnit != nullptr)
@@ -2495,7 +2495,7 @@ void TileEngine::explode(
 					//Log(LOG_INFO) << ". > tile TRUE : tileStart " << tileStart->getPosition() << " tileStop " << tileStop->getPosition() << " _powerE = " << _powerE << " r = " << r;
 					//Log(LOG_INFO) << ". > _powerE = " << _powerE;
 
-					targetUnit = tileStop->getUnit();
+					targetUnit = tileStop->getTileUnit();
 					if (targetUnit != nullptr
 						&& targetUnit->getTakenExpl() == true) // hit large units only once ... stop experience exploitation near the end of this loop, also. Lulz
 					{
@@ -2796,7 +2796,7 @@ void TileEngine::explode(
 							}
 //							}
 
-							targetUnit = fireTile->getUnit();
+							targetUnit = fireTile->getTileUnit();
 							if (targetUnit != nullptr
 								&& targetUnit->getTakenExpl() == false)
 							{
@@ -4700,10 +4700,10 @@ bool TileEngine::closeUfoDoors() const
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
-		if (_battleSave->getTiles()[i]->getUnit()
-			&& _battleSave->getTiles()[i]->getUnit()->getArmor()->getSize() > 1)
+		if (_battleSave->getTiles()[i]->getTileUnit()
+			&& _battleSave->getTiles()[i]->getTileUnit()->getArmor()->getSize() > 1)
 		{
-			const BattleUnit* const unit = _battleSave->getTiles()[i]->getUnit();
+			const BattleUnit* const unit = _battleSave->getTiles()[i]->getTileUnit();
 
 			const Tile
 				* const tile = _battleSave->getTiles()[i],
@@ -4711,12 +4711,12 @@ bool TileEngine::closeUfoDoors() const
 				* const tileWest  = _battleSave->getTile(tile->getPosition() + Position(-1, 0,0));
 			if ((tile->isUfoDoorOpen(O_NORTHWALL) == true
 					&& tileNorth != nullptr
-					&& tileNorth->getUnit() != nullptr // probly not needed.
-					&& tileNorth->getUnit() == unit)
+					&& tileNorth->getTileUnit() != nullptr // probly not needed.
+					&& tileNorth->getTileUnit() == unit)
 				|| (tile->isUfoDoorOpen(O_WESTWALL) == true
 					&& tileWest != nullptr
-					&& tileWest->getUnit() != nullptr // probly not needed.
-					&& tileWest->getUnit() == unit))
+					&& tileWest->getTileUnit() != nullptr // probly not needed.
+					&& tileWest->getTileUnit() == unit))
 			{
 				continue;
 			}
@@ -5367,13 +5367,13 @@ bool TileEngine::validMeleeRange(
 
 			if (tileOrigin != nullptr && tileTarget != nullptr)
 			{
-				if (tileTarget->getUnit() == nullptr)
+				if (tileTarget->getTileUnit() == nullptr)
 					tileTarget = getVerticalTile(posOrigin, posTarget);
 
 				if (tileTarget != nullptr
-					&& tileTarget->getUnit() != nullptr
+					&& tileTarget->getTileUnit() != nullptr
 					&& (targetUnit == nullptr
-						|| targetUnit == tileTarget->getUnit()))
+						|| targetUnit == tileTarget->getTileUnit()))
 				{
 					voxelOrigin = Position::toVoxelSpaceCentered( // note this is not center of large unit, rather the center of each quadrant.
 															posOrigin,
@@ -5436,15 +5436,15 @@ Position TileEngine::getMeleePosition(const BattleUnit* const actor) const
 
 			if (tileOrigin != nullptr && tileTarget != nullptr)
 			{
-				if (tileTarget->getUnit() == nullptr
-					|| tileTarget->getUnit() == actor)
+				if (tileTarget->getTileUnit() == nullptr
+					|| tileTarget->getTileUnit() == actor)
 				{
 					tileTarget = getVerticalTile(posOrigin, posTarget);
 				}
 
 				if (tileTarget != nullptr
-					&& tileTarget->getUnit() != nullptr
-					&& tileTarget->getUnit() != actor)
+					&& tileTarget->getTileUnit() != nullptr
+					&& tileTarget->getTileUnit() != actor)
 				{
 					voxelOrigin = Position::toVoxelSpaceCentered( // note this is not center of large unit, rather the center of each quadrant.
 															posOrigin,
@@ -5580,7 +5580,7 @@ int TileEngine::castShadow(const Position& voxel) const
 	const Tile* tile = _battleSave->getTile(posTile);
 	while (tile != nullptr
 		&& tile->isVoid(false, false) == true
-		&& tile->getUnit() == nullptr)
+		&& tile->getTileUnit() == nullptr)
 	{
 //		startZ = posTile.z * 24;
 		startZ = (posTile.z + 1) * 24; // kL
@@ -5688,10 +5688,10 @@ VoxelType TileEngine::voxelCheck(
 	}
 
 	if (tile->isVoid(false, false) == true
-		&& tile->getUnit() == nullptr) // TODO: tie this into the boolean-input parameters
+		&& tile->getTileUnit() == nullptr) // TODO: tie this into the boolean-input parameters
 	{
 		tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1));
-		if (tileBelow == nullptr || tileBelow->getUnit() == nullptr)
+		if (tileBelow == nullptr || tileBelow->getTileUnit() == nullptr)
 		{
 			//Log(LOG_INFO) << ". vC() ret VOXEL_EMPTY";
 			return VOXEL_EMPTY;
@@ -5752,13 +5752,13 @@ VoxelType TileEngine::voxelCheck(
 
 	if (excludeAllUnits == false)
 	{
-		const BattleUnit* targetUnit = tile->getUnit();
+		const BattleUnit* targetUnit (tile->getTileUnit());
 		if (targetUnit == nullptr
 			&& tile->hasNoFloor() == true)
 		{
 			tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1));
 			if (tileBelow != nullptr)
-				targetUnit = tileBelow->getUnit();
+				targetUnit = tileBelow->getTileUnit();
 		}
 
 		if (targetUnit != nullptr
@@ -5819,7 +5819,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 	if (tile == nullptr) return false;
 	//Log(LOG_INFO) << ". . target(pos) " << action->target;
 
-	BattleUnit* const victim = tile->getUnit();
+	BattleUnit* const victim = tile->getTileUnit();
 	if (victim == nullptr) return false;
 	//Log(LOG_INFO) << "psiAttack: vs ID " << victim->getId();
 
@@ -6075,7 +6075,7 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 
 
 	const bool hasNoItems = tile->getInventory()->empty();
-	BattleUnit* const unit = tile->getUnit();
+	BattleUnit* const unit = tile->getTileUnit();
 
 	if (unit == nullptr
 		&& hasNoItems == true)

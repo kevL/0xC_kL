@@ -43,7 +43,7 @@
 namespace OpenXcom
 {
 /**
- * Initializes all the elements in the EndResearch screen.
+ * Initializes all the elements in the NewPossibleResearchState screen.
  * @param base		- pointer to the Base to get info from
  * @param resRules	- reference the vector of pointers to RuleResearch projects
  * @param showBtn	- true to show new research button
@@ -129,6 +129,12 @@ NewPossibleResearchState::NewPossibleResearchState(
 	if (go == true) */
 	_txtTitle->setText(tr("STR_WE_CAN_NOW_RESEARCH"));
 }
+
+/**
+ * dTor.
+ */
+NewPossibleResearchState::~NewPossibleResearchState()
+{}
 
 /**
  * Returns to the previous screen.

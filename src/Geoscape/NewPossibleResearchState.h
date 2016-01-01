@@ -59,6 +59,8 @@ private:
 				Base* const base,
 				const std::vector<const RuleResearch*>& resRules,
 				bool showBtn);
+		// Deconstructs the NewPossibleResearchState.
+		~NewPossibleResearchState();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

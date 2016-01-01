@@ -59,6 +59,8 @@ private:
 				Base* const base,
 				const std::vector<const RuleManufacture*>& possibilities,
 				bool showManufactureButton);
+		// Deconstructs the NewPossibleManufactureState.
+		~NewPossibleManufactureState();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

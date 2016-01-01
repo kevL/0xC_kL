@@ -1065,7 +1065,7 @@ void BattlescapeGenerator::deployXCOM() // private.
 BattleUnit* BattlescapeGenerator::addXCOMVehicle(Vehicle* const vehicle) // private.
 {
 	const std::string vhclType = vehicle->getRules()->getType();
-	RuleUnit* const unitRule = _rules->getUnit(vhclType);
+	RuleUnit* const unitRule = _rules->getUnitRule(vhclType);
 
 	BattleUnit* const supportUnit = addXCOMUnit(new BattleUnit( // add Vehicle as a unit.
 															unitRule,
@@ -1284,7 +1284,7 @@ bool BattlescapeGenerator::canPlaceXComUnit(Tile* const tile) // private.
 		&& tile->getMapData(O_FLOOR)->getSpecialType() == START_POINT	// is a 'start point', ie. cargo tile
 		&& tile->getMapData(O_OBJECT) == nullptr						// no object content
 		&& tile->getMapData(O_FLOOR)->getTuCostPart(MT_WALK) < 255		// is walkable.
-		&& tile->getUnit() == nullptr)									// and no unit on Tile.
+		&& tile->getTileUnit() == nullptr)								// and no unit on Tile.
 	{
 		// ground inventory goes where the first xCom unit spawns
 		if (_tileEquipt == nullptr)
@@ -1674,7 +1674,7 @@ void BattlescapeGenerator::deployAliens(AlienDeployment* const deployRule) // pr
 			else
 				outside = false;
 
-			unitRule = _rules->getUnit(aLien);
+			unitRule = _rules->getUnitRule(aLien);
 			unit = addAlien(
 						unitRule,
 						(*data).alienRank,
@@ -1942,7 +1942,7 @@ void BattlescapeGenerator::deployCivilians(int civilians) // private.
 				i != qty;
 				++i)
 		{
-			addCivilian(_rules->getUnit(_terrainRule->getCivilianTypes().at(RNG::pick(_terrainRule->getCivilianTypes().size()))));
+			addCivilian(_rules->getUnitRule(_terrainRule->getCivilianTypes().at(RNG::pick(_terrainRule->getCivilianTypes().size()))));
 		}
 	}
 }
@@ -2119,7 +2119,7 @@ int BattlescapeGenerator::loadMAP( // private.
 				&& z != _craftZ)
 			{
 				revealDone = true;
-				_battleSave->getTile(Position(x,y,z))->setDiscovered(true, 2);
+				_battleSave->getTile(Position(x,y,z))->setRevealed(true, 2);
 			}
 		}
 
@@ -2130,7 +2130,7 @@ int BattlescapeGenerator::loadMAP( // private.
 		} */
 
 		if (revealDone == false)
-			_battleSave->getTile(Position(x,y,z))->setDiscovered(
+			_battleSave->getTile(Position(x,y,z))->setRevealed(
 															discovered == true || block->isFloorRevealed(z) == true,
 															2);
 		++x;

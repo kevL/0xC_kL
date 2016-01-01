@@ -575,7 +575,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 			RuleItem* const itRule = _game->getRuleset()->getItem(_items[_sel]);
 			if (itRule->isFixed() == true) // load vehicle, convert item to a vehicle
 			{
-				int tankSize = _game->getRuleset()->getArmor(_game->getRuleset()->getUnit(itRule->getType())->getArmor())->getSize();
+				int tankSize = _game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(itRule->getType())->getArmor())->getSize();
 				tankSize *= tankSize;
 
 				const int spaceAvailable = std::min(

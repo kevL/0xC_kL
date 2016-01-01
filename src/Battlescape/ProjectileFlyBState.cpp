@@ -128,7 +128,7 @@ void ProjectileFlyBState::init()
 			bool fireValid;
 			if (_unit->getFaction() != _battleSave->getSide()) // reaction fire
 			{
-				const BattleUnit* const targetUnit = _battleSave->getTile(_action.target)->getUnit();
+				const BattleUnit* const targetUnit = _battleSave->getTile(_action.target)->getTileUnit();
 				fireValid = targetUnit != nullptr
 						 && targetUnit->isOut_t() == false
 						 && targetUnit == _battleSave->getSelectedUnit()
@@ -316,7 +316,7 @@ void ProjectileFlyBState::init()
 		const Position originVoxel = _parent->getTileEngine()->getOriginVoxel(
 																		_action,
 																		_battleSave->getTile(_posOrigin));
-		if (tileTarget->getUnit() != nullptr
+		if (tileTarget->getTileUnit() != nullptr
 			&& (_unit->getFaction() != FACTION_PLAYER
 				|| (((SDL_GetModState() & KMOD_SHIFT) == 0
 						&& (SDL_GetModState() & KMOD_CTRL) == 0)
@@ -324,7 +324,7 @@ void ProjectileFlyBState::init()
 		{
 			//Log(LOG_INFO) << ". tileTarget has unit";
 			if (_action.target == _posOrigin
-				|| tileTarget->getUnit() == _unit)
+				|| tileTarget->getTileUnit() == _unit)
 			{
 				//Log(LOG_INFO) << "projFlyB targetPos[2] = " << _action.target;
 				_targetVoxel.x += 8; // don't shoot yourself but shoot at the floor
@@ -345,7 +345,7 @@ void ProjectileFlyBState::init()
 				|| Options::battleForceFire == false))
 		{
 			//Log(LOG_INFO) << ". tileTarget has content-object";
-			if (tileTarget->isDiscovered(2) == false
+			if (tileTarget->isRevealed(2) == false
 				|| _parent->getTileEngine()->canTargetTilepart(
 														&originVoxel,
 														tileTarget,
@@ -365,7 +365,7 @@ void ProjectileFlyBState::init()
 				|| Options::battleForceFire == false))
 		{
 			//Log(LOG_INFO) << ". tileTarget has northwall";
-			if (tileTarget->isDiscovered(1) == false
+			if (tileTarget->isRevealed(1) == false
 				|| _parent->getTileEngine()->canTargetTilepart(
 														&originVoxel,
 														tileTarget,
@@ -382,7 +382,7 @@ void ProjectileFlyBState::init()
 		else if (tileTarget->getMapData(O_WESTWALL) != nullptr) // force Westwall by pressing [CTRL+SHIFT]
 		{
 			//Log(LOG_INFO) << ". tileTarget has westwall";
-			if (tileTarget->isDiscovered(0) == false
+			if (tileTarget->isRevealed(0) == false
 				|| _parent->getTileEngine()->canTargetTilepart(
 														&originVoxel,
 														tileTarget,
@@ -399,7 +399,7 @@ void ProjectileFlyBState::init()
 		else if (tileTarget->getMapData(O_FLOOR) != nullptr) // forced-shot at Floor is handled above^ [CTRL+ALT]
 		{
 			//Log(LOG_INFO) << ". tileTarget has floor";
-			if (tileTarget->isDiscovered(2) == false
+			if (tileTarget->isRevealed(2) == false
 				|| _parent->getTileEngine()->canTargetTilepart(
 														&originVoxel,
 														tileTarget,
@@ -862,7 +862,7 @@ void ProjectileFlyBState::think()
 //				if (_action.type != BA_LAUNCH) // only counts for guns, not throws or launches
 				if (_action.type == BA_SNAPSHOT || _action.type == BA_AUTOSHOT || _action.type == BA_AIMEDSHOT)
 				{
-					BattleUnit* const shotAt = _battleSave->getTile(_action.target)->getUnit();
+					BattleUnit* const shotAt = _battleSave->getTile(_action.target)->getTileUnit();
 					if (shotAt != nullptr
 						&& shotAt->getGeoscapeSoldier() != nullptr)
 					{
@@ -928,7 +928,7 @@ void ProjectileFlyBState::think()
 					// ... Let's try something
 /*					if (_prjImpact == VOXEL_UNIT)
 					{
-						BattleUnit* victim = _battleSave->getTile(Position::toTileSpace(_parent->getMap()->getProjectile()->getPosition(trjOffset))->getUnit();
+						BattleUnit* victim = _battleSave->getTile(Position::toTileSpace(_parent->getMap()->getProjectile()->getPosition(trjOffset))->getTileUnit();
 						if (victim
 							&& !victim->isOut(true, true)
 							&& victim->getOriginalFaction() == FACTION_PLAYER
@@ -1020,7 +1020,7 @@ void ProjectileFlyBState::think()
 						i != posContacts.end();
 						++i)
 				{
-					BattleUnit* const victim = _battleSave->getTile(*i)->getUnit();
+					BattleUnit* const victim = _battleSave->getTile(*i)->getTileUnit();
 					if (victim != nullptr	// position of impact has a victim; actually every entry in posContacts ought have a victim per above^.
 						&& std::find(		// this needs to ID the unit itself because large units occupy more than one position.
 								doneUnits.begin(),
@@ -1037,7 +1037,7 @@ void ProjectileFlyBState::think()
 							if (victim->getOriginalFaction() == FACTION_PLAYER)
 								++statsActor->shotFriendlyCounter;
 
-							const BattleUnit* const target = _battleSave->getTile(_action.target)->getUnit(); // target (not necessarily who was hit)
+							const BattleUnit* const target = _battleSave->getTile(_action.target)->getTileUnit(); // target (not necessarily who was hit)
 							if (target == victim) // hit intended target
 							{
 								++statsActor->shotsLandedCounter;
@@ -1149,7 +1149,7 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 	_parent->getMap()->setCursorType(CT_NONE); // might be already done in primaryAction()
 
 
-	const BattleUnit* const targetUnit = _battleSave->getTile(_action.target)->getUnit();
+	const BattleUnit* const targetUnit = _battleSave->getTile(_action.target)->getTileUnit();
 	const int height = targetUnit->getHeight() / 2
 					 + targetUnit->getFloatHeight()
 					 - _battleSave->getTile(_action.target)->getTerrainLevel();

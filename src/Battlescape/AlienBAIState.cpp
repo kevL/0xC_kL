@@ -1673,7 +1673,7 @@ void AlienBAIState::evaluateAIMode() // private.
 								// WoW that work'd !!1!1
 								// TODO: find a way stop my squads getting utterly obliterated, fairly.
 			|| (_battleSave->getTile(_attackAction->target) != nullptr
-				&& _battleSave->getTile(_attackAction->target)->getUnit() != nullptr))
+				&& _battleSave->getTile(_attackAction->target)->getTileUnit() != nullptr))
 		{
 			//Log(LOG_INFO) << ". . targetUnit Valid";
 			if (_attackAction->type != BA_RETHINK
@@ -1867,7 +1867,7 @@ bool AlienBAIState::explosiveEfficacy(
 
 		pct += diff * 2;
 
-		const BattleUnit* const targetUnit = _battleSave->getTile(posTarget)->getUnit();
+		const BattleUnit* const targetUnit = _battleSave->getTile(posTarget)->getTileUnit();
 
 		//Log(LOG_INFO) << "attacker = " << attacker->getId();
 		//Log(LOG_INFO) << "posTarget = " << posTarget;

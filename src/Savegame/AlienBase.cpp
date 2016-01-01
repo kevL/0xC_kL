@@ -28,14 +28,14 @@ namespace OpenXcom
 {
 
 /**
- * Initializes an alien base
+ * Initializes an AlienBase.
  */
 AlienBase::AlienBase()
 	:
 		Target(),
 		_id(0),
 		_tactical(false),
-		_discovered(false)
+		_detected(false)
 {}
 
 /**
@@ -45,7 +45,7 @@ AlienBase::~AlienBase()
 {}
 
 /**
- * Loads the alien base from a YAML file.
+ * Loads this AlienBase from a YAML file.
  * @param node - reference a YAML node
  */
 void AlienBase::load(const YAML::Node& node)
@@ -56,11 +56,11 @@ void AlienBase::load(const YAML::Node& node)
 	_race		= node["race"]		.as<std::string>(_race);
 	_edit		= node["edit"]		.as<std::string>(_edit);
 	_tactical	= node["tactical"]	.as<bool>(_tactical);
-	_discovered	= node["discovered"].as<bool>(_discovered);
+	_detected	= node["detected"]	.as<bool>(_detected);
 }
 
 /**
- * Saves the alien base to a YAML file.
+ * Saves this AlienBase to a YAML file.
  * @return, YAML node
  */
 YAML::Node AlienBase::save() const
@@ -71,14 +71,14 @@ YAML::Node AlienBase::save() const
 	node["race"]	= _race;
 	node["edit"]	= _edit;
 
-	if (_tactical == true)		node["tactical"]	= _tactical;
-	if (_discovered == true)	node["discovered"]	= _discovered;
+	if (_tactical == true) node["tactical"] = _tactical;
+	if (_detected == true) node["detected"] = _detected;
 
 	return node;
 }
 
 /**
- * Saves the alien base's unique identifiers to a YAML file.
+ * Saves this AlienBase's unique identifiers to a YAML file.
  * @return, YAML node
  */
 YAML::Node AlienBase::saveId() const
@@ -92,7 +92,7 @@ YAML::Node AlienBase::saveId() const
 }
 
 /**
- * Returns the alien base's unique ID.
+ * Returns this AlienBase's unique ID.
  * @return, unique ID
  */
 int AlienBase::getId() const
@@ -101,7 +101,7 @@ int AlienBase::getId() const
 }
 
 /**
- * Changes the alien base's unique ID.
+ * Changes this AlienBase's unique ID.
  * @param id - unique ID
  */
 void AlienBase::setId(int id)
@@ -110,7 +110,7 @@ void AlienBase::setId(int id)
 }
 
 /**
- * Returns the alien base's unique identifying name.
+ * Returns this AlienBase's uniquely identifying name.
  * @param lang - pointer to Language to get strings from
  * @return, full name
  */
@@ -120,19 +120,19 @@ std::wstring AlienBase::getName(const Language* const lang) const
 }
 
 /**
- * Returns the globe marker for the alien base.
+ * Returns the globe marker for this AlienBase.
  * @return, marker sprite #7 (-1 if none)
  */
 int AlienBase::getMarker() const
 {
-	if (_discovered == false)
+	if (_detected == false)
 		return -1;
 
 	return Globe::GLM_ALIENBASE;
 }
 
 /**
- * Returns the alien race currently residing in the alien base.
+ * Returns the alien race currently residing in this AlienBase.
  * @return, alien race string
  */
 std::string AlienBase::getAlienRace() const
@@ -141,7 +141,7 @@ std::string AlienBase::getAlienRace() const
 }
 
 /**
- * Changes the alien race currently residing in the alien base.
+ * Changes the alien race currently residing in this AlienBase.
  * @param race - reference to alien race string
  */
 void AlienBase::setAlienRace(const std::string& race)
@@ -150,7 +150,7 @@ void AlienBase::setAlienRace(const std::string& race)
 }
 
 /**
- * Returns textedit that the player has entered.
+ * Returns any textedit that the player has entered.
  * @return, user text
  */
 std::string AlienBase::getLabel() const
@@ -159,7 +159,7 @@ std::string AlienBase::getLabel() const
 }
 
 /**
- * Changes textedit that the player has entered.
+ * Changes the textedit field.
  * @param edit - user text
  */
 void AlienBase::setLabel(const std::string& edit)
@@ -168,7 +168,7 @@ void AlienBase::setLabel(const std::string& edit)
 }
 
 /**
- * Gets an alien base's battlescape status.
+ * Gets this AlienBase's battlescape status.
  * @return, true if this base is in the battlescape
  */
 bool AlienBase::isInBattlescape() const
@@ -177,7 +177,7 @@ bool AlienBase::isInBattlescape() const
 }
 
 /**
- * Sets an alien base's battlescape status.
+ * Sets this AlienBase's battlescape status.
  * @param tactical - true if this base is in battle (default true)
  */
 void AlienBase::setInBattlescape(bool tactical)
@@ -186,21 +186,21 @@ void AlienBase::setInBattlescape(bool tactical)
 }
 
 /**
- * Gets an alien base's geoscape status.
- * @return, true if this base has been discovered
+ * Gets this AlienBase's detected status.
+ * @return, true if this base has been detected
  */
-bool AlienBase::isDiscovered() const
+bool AlienBase::isDetected() const
 {
-	return _discovered;
+	return _detected;
 }
 
 /**
- * Sets an alien base's discovered status.
- * @param discovered - true if this base has been discovered
+ * Sets this AlienBase's detected status.
+ * @param detected - true if this base has been detected (default true)
  */
-void AlienBase::setDiscovered(bool discovered)
+void AlienBase::setDetected(bool detected)
 {
-	_discovered = discovered;
+	_detected = detected;
 }
 
 }

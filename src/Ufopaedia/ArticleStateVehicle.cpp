@@ -50,7 +50,7 @@ ArticleStateVehicle::ArticleStateVehicle(const ArticleDefinitionVehicle* const d
 	:
 		ArticleState(defs->id)
 {
-	RuleUnit* const unit = _game->getRuleset()->getUnit(defs->id);
+	RuleUnit* const unit = _game->getRuleset()->getUnitRule(defs->id);
 	const RuleArmor* const armorRule = _game->getRuleset()->getArmor(unit->getArmor());
 	const RuleItem* const itRule = _game->getRuleset()->getItem(defs->id);
 

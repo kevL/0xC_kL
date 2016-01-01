@@ -155,7 +155,7 @@ void MiniMapView::draw()
 						colorGroup = 1; // greyscale
 						colorOffset = 5;
 					}
-					else if (tile->isDiscovered(2) == true)
+					else if (tile->isRevealed(2) == true)
 					{
 						colorGroup = 0;
 						colorOffset = tile->getShade();
@@ -210,7 +210,7 @@ void MiniMapView::draw()
 						}
 					}
 
-					unit = tile->getUnit();
+					unit = tile->getTileUnit();
 					if (unit != nullptr && unit->getUnitVisible() == true) // alive visible units
 					{
 						const int
@@ -253,7 +253,7 @@ void MiniMapView::draw()
 									colorGroup);
 					}
 
-					if (tile->isDiscovered(2) == true
+					if (tile->isRevealed(2) == true
 						&& tile->getInventory()->empty() == false) // at least one item on this tile
 					{
 						srf = _set->getFrame(_cycle + 9); // white cross

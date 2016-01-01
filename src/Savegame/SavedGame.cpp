@@ -1271,7 +1271,7 @@ const std::vector<const RuleResearch*>& SavedGame::getDiscoveredResearch() const
  * Adds a RuleResearch to the list of already discovered RuleResearch's.
  * @param resRule	- the newly found RuleResearch
  * @param score		- true to score points and add dependents for research done;
- * false for skirmish battles (default true)
+ *					  false for skirmish battles (default true)
  */
 void SavedGame::addFinishedResearch(
 		const RuleResearch* const resRule,
@@ -1351,7 +1351,7 @@ void SavedGame::getAvailableResearchProjects(
 		resRule = _rules->getResearch(*i);
 		if (isResearchAvailable(resRule) == true)											// <- resRule is tested there first.
 		{
-			if (_rules->getUnit(resRule->getType()) == nullptr								// kL_add. Always allow aLiens to be researched & re-researched.
+			if (_rules->getUnitRule(resRule->getType()) == nullptr							// kL_add. Always allow aLiens to be researched & re-researched.
 				&& std::find(
 						_discovered.begin(),
 						_discovered.end(),
@@ -1441,7 +1441,7 @@ bool SavedGame::isResearchAvailable(const RuleResearch* const resRule) const // 
 {
 	if (resRule != nullptr)
 	{
-		if (_rules->getUnit(resRule->getType()) != nullptr // kL_add. Always allow aLiens to be researched & re-researched.
+		if (_rules->getUnitRule(resRule->getType()) != nullptr // kL_add. Always allow aLiens to be researched & re-researched.
 			|| _debug == true)
 		{
 			return true;

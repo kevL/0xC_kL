@@ -101,8 +101,8 @@ void ScannerView::draw()
 
 				tile = battleSave->getTile(Position(xPos,yPos,z));
 				if (tile != nullptr
-					&& tile->getUnit() != nullptr
-					&& tile->getUnit()->getMotionPoints() != 0)
+					&& tile->getTileUnit() != nullptr
+					&& tile->getTileUnit()->getMotionPoints() != 0)
 				{
 					if (_dotsDone == false)
 					{
@@ -116,7 +116,7 @@ void ScannerView::draw()
 						}
 					}
 
-					int frame = (tile->getUnit()->getMotionPoints() / 5);
+					int frame = (tile->getTileUnit()->getMotionPoints() / 5);
 					if (frame > -1)
 					{
 						if (frame > 5) frame = 5;

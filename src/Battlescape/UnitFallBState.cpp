@@ -162,7 +162,7 @@ void UnitFallBState::think()
 					j != _tilesToFallInto.end();
 					++j)
 			{
-				unitBelow = (*j)->getUnit();
+				unitBelow = (*j)->getTileUnit();
 				if (unitBelow != nullptr
 					&& *i != unitBelow	// falling units do not fall on themselves
 					&& std::find(
@@ -209,7 +209,7 @@ void UnitFallBState::think()
 						--y)
 				{
 					// Another falling unit might have already taken up this position so check that that unit is still there.
-					if (*i == _battleSave->getTile((*i)->getStartPosition() + Position(x,y,0))->getUnit())
+					if (*i == _battleSave->getTile((*i)->getStartPosition() + Position(x,y,0))->getTileUnit())
 					{
 						//Log(LOG_INFO) << ". Tile is not occupied";
 						_battleSave->getTile((*i)->getStartPosition() + Position(x,y,0))->setUnit(nullptr);
@@ -302,8 +302,8 @@ void UnitFallBState::think()
 													escapeTiles.end(),
 													tile) != escapeTiles.end(),
 								alreadyOccupied = tile != nullptr
-											   && tile->getUnit() != nullptr
-											   && tile->getUnit() != unitBelow,
+											   && tile->getTileUnit() != nullptr
+											   && tile->getTileUnit() != unitBelow,
 								hasFloor = tile != nullptr
 										&& tile->hasNoFloor(tileBelow) == false,
 								blocked = _battleSave->getPathfinding()->isBlockedPath(

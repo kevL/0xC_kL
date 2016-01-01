@@ -1171,7 +1171,7 @@ int Base::getInterrogatedAliens() const
 	{
 		resRule = (*i)->getRules();
 		if (resRule->needsItem() == true
-			&& _rules->getUnit(resRule->getType()) != nullptr)
+			&& _rules->getUnitRule(resRule->getType()) != nullptr)
 		{
 			++total;
 		}
@@ -2267,8 +2267,8 @@ void Base::setupDefenses()
 		if (itRule->isFixed() == true)
 		{
 			int tankSize;
-			if (_rules->getUnit(itemId) != nullptr)
-				tankSize = _rules->getArmor(_rules->getUnit(itemId)->getArmor())->getSize();
+			if (_rules->getUnitRule(itemId) != nullptr)
+				tankSize = _rules->getArmor(_rules->getUnitRule(itemId)->getArmor())->getSize();
 			else
 				tankSize = 4;
 

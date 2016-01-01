@@ -109,6 +109,12 @@ NewPossibleManufactureState::NewPossibleManufactureState(
 }
 
 /**
+ * dTor.
+ */
+NewPossibleManufactureState::~NewPossibleManufactureState()
+{}
+
+/**
  * Returns to the previous screen.
  * @param action - pointer to an Action
  */

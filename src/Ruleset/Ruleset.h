@@ -277,7 +277,7 @@ protected:
 		/// Returns the list of all soldiers provided by this Ruleset.
 		const std::vector<std::string>& getSoldiersList() const;
 		/// Gets non-soldier unit rules.
-		RuleUnit* getUnit(const std::string& type) const;
+		RuleUnit* getUnitRule(const std::string& type) const;
 
 		/// Gets alien race rules.
 		AlienRace* getAlienRace(const std::string& type) const;

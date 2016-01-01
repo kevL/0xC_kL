@@ -583,12 +583,12 @@ bool UnitWalkBState::doStatusStand() // private.
 		{
 			//Log(LOG_INFO) << ". . check obstacle(unit)";
 			const BattleUnit
-				* const unitInMyWay = _battleSave->getTile(posStop + Position(x,y,0))->getUnit(),
+				* const unitInMyWay = _battleSave->getTile(posStop + Position(x,y,0))->getTileUnit(),
 				* unitBelowMyWay = nullptr;
 
 			const Tile* const belowDest = _battleSave->getTile(posStop + Position(x,y,-1));
 			if (belowDest != nullptr)
-				unitBelowMyWay = belowDest->getUnit();
+				unitBelowMyWay = belowDest->getTileUnit();
 
 			// can't walk into units in this tile, or on top of other units sticking their head into this tile
 			if (_falling == false
@@ -655,12 +655,12 @@ bool UnitWalkBState::doStatusStand() // private.
 bool UnitWalkBState::doStatusWalk() // private.
 {
 	//Log(LOG_INFO) << "***** UnitWalkBState::doStatusWalk() : " << _unit->getId();
-	if (_battleSave->getTile(_unit->getStopPosition())->getUnit() == nullptr // next tile must be not occupied
+	if (_battleSave->getTile(_unit->getStopPosition())->getTileUnit() == nullptr // next tile must be not occupied
 		// And, if not flying, the position directly below the tile must not be
 		// occupied ... had that happen with a sectoid left standing in the air
 		// because a cyberdisc was 2 levels below it.
 		// btw, these have probably been already checked...
-		|| _battleSave->getTile(_unit->getStopPosition())->getUnit() == _unit)
+		|| _battleSave->getTile(_unit->getStopPosition())->getTileUnit() == _unit)
 	{
 		//Log(LOG_INFO) << ". WalkBState, keepWalking()";
 		playMoveSound();
@@ -755,7 +755,7 @@ bool UnitWalkBState::doStatusWalk() // private.
 					tileBelow = _battleSave->getTile(_unit->getPosition() + Position(x,y,-1));
 					//if (tileBelow) Log(LOG_INFO) << ". . otherTileBelow exists";
 					if (tileBelow != nullptr
-						&& tileBelow->getUnit() != nullptr)
+						&& tileBelow->getTileUnit() != nullptr)
 					{
 						//Log(LOG_INFO) << ". . . another unit already occupies lower tile";
 						clearTilesLink(true);

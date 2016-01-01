@@ -804,10 +804,10 @@ void InventoryState::btnOkClick(Action*)
 			{
 				//Log(LOG_INFO) << ". turn = 1";
 				_battleSave->randomizeItemLocations(invTile);
-				if (invTile->getUnit())
+				if (invTile->getTileUnit())
 				{
 					// make sure the unit closest to the ramp is selected.
-					_battleSave->setSelectedUnit(invTile->getUnit());
+					_battleSave->setSelectedUnit(invTile->getTileUnit());
 				}
 			} */
 

@@ -30,7 +30,7 @@ namespace OpenXcom
 {
 
 /**
- * Represents an alien base on the world.
+ * Represents an AlienBase on the globe.
  */
 class AlienBase final
 	:
@@ -39,7 +39,7 @@ class AlienBase final
 
 private:
 	bool
-		_discovered,
+		_detected,
 		_tactical;
 	int _id;
 
@@ -49,31 +49,31 @@ private:
 
 
 	public:
-		/// Creates an alien base.
+		/// Creates an AlienBase.
 		AlienBase();
-		/// Cleans up the alien base.
+		/// Cleans up the AlienBase.
 		~AlienBase();
 
-		/// Loads the alien base from YAML.
+		/// Loads the AlienBase from YAML.
 		void load(const YAML::Node& node) override;
-		/// Saves the alien base to YAML.
+		/// Saves the AlienBase to YAML.
 		YAML::Node save() const override;
-		/// Saves the alien base's ID to YAML.
+		/// Saves the AlienBase's ID to YAML.
 		YAML::Node saveId() const override;
 
-		/// Gets the alien base's ID.
+		/// Gets the AlienBase's ID.
 		int getId() const;
-		/// Sets the alien base's ID.
+		/// Sets the AlienBase's ID.
 		void setId(int id);
 
-		/// Gets the alien base's name.
+		/// Gets the AlienBase's name.
 		std::wstring getName(const Language* const lang) const override;
-		/// Gets the alien base's marker.
+		/// Gets the AlienBase's marker.
 		int getMarker() const override;
 
-		/// Gets the alien base's alien race.
+		/// Gets the AlienBase's alien race.
 		std::string getAlienRace() const;
-		/// Sets the alien base's alien race.
+		/// Sets the AlienBase's alien race.
 		void setAlienRace(const std::string& race);
 
 		/// Returns textedit that the player has entered.
@@ -81,15 +81,15 @@ private:
 		/// Changes textedit that the player has entered.
 		void setLabel(const std::string& edit);
 
-		/// Sets the alien base's battlescape status.
+		/// Sets the AlienBase's battlescape status.
 		void setInBattlescape(bool tactical = true);
-		/// Gets the alien base's battlescape status.
+		/// Gets the AlienBase's battlescape status.
 		bool isInBattlescape() const;
 
-		/// Gets the alien base's discovered status.
-		bool isDiscovered() const;
-		/// Sets the alien base's discovered status.
-		void setDiscovered(bool discovered);
+		/// Gets the AlienBase's detected status.
+		bool isDetected() const;
+		/// Sets the AlienBase's detected status.
+		void setDetected(bool detected = true);
 };
 
 }

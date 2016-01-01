@@ -1094,7 +1094,7 @@ std::vector<Target*> Globe::getTargets(
 			i != _game->getSavedGame()->getAlienBases()->end();
 			++i)
 	{
-		if ((*i)->isDiscovered() == true
+		if ((*i)->isDetected() == true
 			&& targetNear(*i, x,y) == true)
 		{
 			targets.push_back(*i);

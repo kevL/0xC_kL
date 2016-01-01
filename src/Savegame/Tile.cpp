@@ -89,7 +89,7 @@ Tile::Tile(const Position& pos)
 			i != SECTIONS;
 			++i)
 	{
-		_discovered[i] = false;
+		_revealed[i] = false;
 	}
 
 	for (size_t
@@ -135,7 +135,7 @@ void Tile::load(const YAML::Node& node)
 				i != SECTIONS;
 				++i)
 		{
-			_discovered[i] = node["discovered"][i].as<bool>();
+			_revealed[i] = node["discovered"][i].as<bool>();
 		}
 	}
 
@@ -173,9 +173,9 @@ void Tile::loadBinary(
 										&buffer,
 										serKey.boolFields);
 
-	_discovered[0] = (boolFields & 0x01) ? true : false;
-	_discovered[1] = (boolFields & 0x02) ? true : false;
-	_discovered[2] = (boolFields & 0x04) ? true : false;
+	_revealed[0] = (boolFields & 0x01) ? true : false;
+	_revealed[1] = (boolFields & 0x02) ? true : false;
+	_revealed[2] = (boolFields & 0x04) ? true : false;
 
 	_curFrame[1] = (boolFields & 0x08) ? 7 : 0;
 	_curFrame[2] = (boolFields & 0x10) ? 7 : 0;
@@ -207,16 +207,16 @@ YAML::Node Tile::save() const
 	if (_fire != 0)			node["fire"]		= _fire;
 	if (_animOffset != 0)	node["animOffset"]	= _animOffset;
 
-	if (   _discovered[0] == true
-		|| _discovered[1] == true
-		|| _discovered[2] == true)
+	if (   _revealed[0] == true
+		|| _revealed[1] == true
+		|| _revealed[2] == true)
 	{
 		for (size_t
 				i = 0;
 				i != SECTIONS;
 				++i)
 		{
-			node["discovered"].push_back(_discovered[i]);
+			node["discovered"].push_back(_revealed[i]);
 		}
 	}
 
@@ -248,7 +248,7 @@ void Tile::saveBinary(Uint8** buffer) const
 	serializeInt(buffer, serializationKey._fire,		_fire);
 	serializeInt(buffer, serializationKey._animOffset,	_animOffset);
 
-	int boolFields = (_discovered[0] ? 0x01 : 0) + (_discovered[1] ? 0x02 : 0) + (_discovered[2] ? 0x04 : 0);
+	int boolFields = (_revealed[0] ? 0x01 : 0) + (_revealed[1] ? 0x02 : 0) + (_revealed[2] ? 0x04 : 0);
 
 	boolFields |= isUfoDoorOpen(O_WESTWALL) ? 0x08 : 0;
 	boolFields |= isUfoDoorOpen(O_NORTHWALL) ? 0x10 : 0;
@@ -568,45 +568,43 @@ bool Tile::closeUfoDoor()
 }
 
 /**
- * Sets this Tile's sections' visible flag.
- * @note Also re-caches the sprites for any unit on this Tile if the visibility
- * of the tile changes.
- * @param visible - true if discovered
+ * Sets this Tile's sections' revealed flags.
+ * @note Also re-caches the sprites for any unit on this Tile if the value changes.
+ * @param revealed - true if revealed
  * @param section - 0 westwall
  *					1 northwall
  *					2 object+floor
  */
-void Tile::setDiscovered(
-		bool visible,
+void Tile::setRevealed(
+		bool revealed,
 		int section)
 {
 	const size_t i = static_cast<size_t>(section);
 
-	if (_discovered[i] != visible)
+	if (_revealed[i] != revealed)
 	{
-		_discovered[i] = visible;
+		_revealed[i] = revealed;
 
-		if (visible == true && section == 2)
+		if (revealed == true && section == 2)
 		{
-			_discovered[0] = // if object+floor is discovered set west & north walls discovered also.
-			_discovered[1] = true;
+			_revealed[0] = // if object+floor is revealed set west & north walls revealed also.
+			_revealed[1] = true;
 		}
 
-		if (_unit != nullptr)
-			_unit->clearCache();
+		if (_unit != nullptr) _unit->clearCache();
 	}
 }
 
 /**
- * Gets the black fog of war state of this Tile.
+ * Gets the black fog-of-war/revealed status of this Tile.
  * @param section - 0 westwall
  *					1 northwall
  *					2 object+floor
- * @return, true if discovered
+ * @return, true if revealed
  */
-bool Tile::isDiscovered(int section) const
+bool Tile::isRevealed(int section) const
 {
-	return _discovered[static_cast<size_t>(section)];
+	return _revealed[static_cast<size_t>(section)];
 }
 
 /**
@@ -1518,6 +1516,7 @@ std::vector<BattleItem*>* Tile::getInventory()
 
 /**
  * Sets the tile visible flag.
+ * @note Used only by sneakyAI.
  * @param vis - true if visible (default true)
  */
 void Tile::setTileVisible(bool vis)
@@ -1527,6 +1526,7 @@ void Tile::setTileVisible(bool vis)
 
 /**
  * Gets the tile visible flag.
+ * @note Used only by sneakyAI.
  * @return, true if visible
  */
 bool Tile::getTileVisible() const

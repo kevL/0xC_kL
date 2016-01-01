@@ -1203,7 +1203,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 	bool showInfo;
 
 	if (tile != nullptr
-		&& tile->isDiscovered(2) == true
+		&& tile->isRevealed(2) == true
 		&& tile->getInventory()->empty() == false)
 	{
 		showInfo = false;
@@ -1483,9 +1483,9 @@ void BattlescapeState::mapClick(Action* action)
 //		if (_battleSave->getTile(pos)->getMapData(O_OBJECT) != nullptr)
 //			woststr << (int)(_battleSave->getTile(pos)->getMapData(O_OBJECT)->getBigwall()) << L" ";
 
-		if (_battleSave->getTile(pos)->getUnit() != nullptr)
+		if (_battleSave->getTile(pos)->getTileUnit() != nullptr)
 			woststr	<< L"unit "
-					<< _battleSave->getTile(pos)->getUnit()->getId()
+					<< _battleSave->getTile(pos)->getTileUnit()->getId()
 					<< L" ";
 
 		woststr << L"pos " << pos;
@@ -3810,7 +3810,7 @@ void BattlescapeState::updateTileInfo(const Tile* const tile)
 {
 	_lstTileInfo->clearList();
 
-	if (tile != nullptr && tile->isDiscovered(2) == true)
+	if (tile != nullptr && tile->isRevealed(2) == true)
 	{
 		size_t rows = 3;
 		int tuCost = 0;
@@ -3990,7 +3990,7 @@ void BattlescapeState::saveAIMap()
 			posTile.x = x;
 			tile = _battleSave->getTile(posTile);
 
-			if (tile == nullptr || tile->isDiscovered(2) == false)
+			if (tile == nullptr || tile->isRevealed(2) == false)
 				continue;
 
 			rect.x = static_cast<Sint16>(x) * static_cast<Sint16>(rect.w);
@@ -4019,7 +4019,7 @@ void BattlescapeState::saveAIMap()
 			}
 			else
 			{
-				if (tile->getUnit() == nullptr)
+				if (tile->getTileUnit() == nullptr)
 					SDL_FillRect(
 							img,
 							&rect,
@@ -4041,7 +4041,7 @@ void BattlescapeState::saveAIMap()
 							z);
 
 				tile = _battleSave->getTile(pos);
-				unit = tile->getUnit();
+				unit = tile->getTileUnit();
 				if (unit != nullptr)
 				{
 					switch (unit->getFaction())
@@ -4240,18 +4240,18 @@ void BattlescapeState::saveVoxelView()
 												trj.at(0).y / 16,
 												trj.at(0).z / 24));
 				if (debug == true
-					|| (tile->isDiscovered(0) && voxelTest == 2)
-					|| (tile->isDiscovered(1) && voxelTest == 3)
-					|| (tile->isDiscovered(2) && (voxelTest == 1 || voxelTest == 4))
+					|| (tile->isRevealed(0) && voxelTest == 2)
+					|| (tile->isRevealed(1) && voxelTest == 3)
+					|| (tile->isRevealed(2) && (voxelTest == 1 || voxelTest == 4))
 					|| voxelTest == 5)
 				{
 					if (voxelTest == 5)
 					{
-						if (tile->getUnit() != nullptr)
+						if (tile->getTileUnit() != nullptr)
 						{
-							if (tile->getUnit()->getFaction() == FACTION_NEUTRAL)
+							if (tile->getTileUnit()->getFaction() == FACTION_NEUTRAL)
 								voxelTest = 9;
-							else if (tile->getUnit()->getFaction() == FACTION_PLAYER)
+							else if (tile->getTileUnit()->getFaction() == FACTION_PLAYER)
 								voxelTest = 8;
 						}
 						else
@@ -4260,11 +4260,11 @@ void BattlescapeState::saveVoxelView()
 															trj.at(0).x / 16,
 															trj.at(0).y / 16,
 															trj.at(0).z / 24 - 1));
-							if (tile != nullptr && tile->getUnit() != nullptr)
+							if (tile != nullptr && tile->getTileUnit() != nullptr)
 							{
-								if (tile->getUnit()->getFaction() == FACTION_NEUTRAL)
+								if (tile->getTileUnit()->getFaction() == FACTION_NEUTRAL)
 									voxelTest = 9;
-								else if (tile->getUnit()->getFaction() == FACTION_PLAYER)
+								else if (tile->getTileUnit()->getFaction() == FACTION_PLAYER)
 									voxelTest = 8;
 							}
 						}
@@ -4432,11 +4432,11 @@ void BattlescapeState::saveVoxelMap()
 														x / 16,
 														y / 16,
 														z / 12));
-					if (tile->getUnit() != nullptr)
+					if (tile->getTileUnit() != nullptr)
 					{
-						if (tile->getUnit()->getFaction() == FACTION_NEUTRAL)
+						if (tile->getTileUnit()->getFaction() == FACTION_NEUTRAL)
 							voxelTest = 9;
-						else if (tile->getUnit()->getFaction() == FACTION_PLAYER)
+						else if (tile->getTileUnit()->getFaction() == FACTION_PLAYER)
 							voxelTest = 8;
 					}
 					else
@@ -4445,11 +4445,11 @@ void BattlescapeState::saveVoxelMap()
 															x / 16,
 															y / 16,
 															z / 12 - 1));
-						if (tile != nullptr && tile->getUnit() != nullptr)
+						if (tile != nullptr && tile->getTileUnit() != nullptr)
 						{
-							if (tile->getUnit()->getFaction() == FACTION_NEUTRAL)
+							if (tile->getTileUnit()->getFaction() == FACTION_NEUTRAL)
 								voxelTest = 9;
-							else if (tile->getUnit()->getFaction() == FACTION_PLAYER)
+							else if (tile->getTileUnit()->getFaction() == FACTION_PLAYER)
 								voxelTest = 8;
 						}
 					}

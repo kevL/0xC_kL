@@ -960,7 +960,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 					//Log(LOG_INFO) << ". . . success = " << success;
 					if (_battleSave->getTileEngine()->psiAttack(&action) == true)
 					{
-						const BattleUnit* const psiVictim = _battleSave->getTile(action.target)->getUnit();
+						const BattleUnit* const psiVictim = _battleSave->getTile(action.target)->getTileUnit();
 						Language* const lang = _parentState->getGame()->getLanguage();
 						std::wstring wst;
 						if (action.type == BA_PSICONTROL)
@@ -3011,7 +3011,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 
 
 	std::string st = unit->getSpawnUnit();
-	RuleUnit* const unitRule = getRuleset()->getUnit(st);
+	RuleUnit* const unitRule = getRuleset()->getUnitRule(st);
 	st = unitRule->getArmor();
 
 	BattleUnit* const conUnit = new BattleUnit(
@@ -3167,8 +3167,8 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 		{
 			tile = (*i)->getTile();
 			if (tile != nullptr
-				&& (tile->getUnit() == nullptr
-					|| tile->getUnit() == unit)
+				&& (tile->getTileUnit() == nullptr
+					|| tile->getTileUnit() == unit)
 				&& tile->getTuCostTile(O_FLOOR, MT_WALK) != 255 // TODO:: pathfind.
 				&& tile->getTuCostTile(O_OBJECT, MT_WALK) != 255
 				&& worthTaking(

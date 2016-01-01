@@ -255,10 +255,9 @@ void SavedBattleGame::load(
 		_mapsize_y,
 		_mapsize_z);
 
-	if (!node["tileTotalBytesPer"])
+	if (!node["tileTotalBytesPer"]) // binary tile data not found, load old-style text tiles :(
 	{
 		Log(LOG_INFO) << ". load tiles [1]";
-		// binary tile data not found, load old-style text tiles :(
 		for (YAML::const_iterator
 				i = node["tiles"].begin();
 				i != node["tiles"].end();
@@ -268,7 +267,7 @@ void SavedBattleGame::load(
 			getTile(pos)->load((*i));
 		}
 	}
-	else
+	else // load binary Tiles.
 	{
 		Log(LOG_INFO) << ". load tiles [2]";
 		// load key to how the tile data was saved
@@ -301,7 +300,7 @@ void SavedBattleGame::load(
 
 		while (readBuffer < dataEnd)
 		{
-			int index (unserializeInt(&readBuffer, serKey.index));
+			const int index (unserializeInt(&readBuffer, serKey.index));
 			assert(
 				index > -1
 				&& index < static_cast<int>(_mapSize));
@@ -362,9 +361,9 @@ void SavedBattleGame::load(
 				type	((*i)["genUnitType"]	.as<std::string>()),
 				armor	((*i)["genUnitArmor"]	.as<std::string>());
 
-			if (rules->getUnit(type) != nullptr && rules->getArmor(armor) != nullptr) // safeties.
+			if (rules->getUnitRule(type) != nullptr && rules->getArmor(armor) != nullptr) // safeties.
 				unit = new BattleUnit(
-									rules->getUnit(type),
+									rules->getUnitRule(type),
 									originalFaction,
 									id,
 									rules->getArmor(armor),
@@ -660,7 +659,7 @@ YAML::Node SavedBattleGame::save() const
 		node["mapdatasets"].push_back((*i)->getType());
 	}
 
-#if 0
+#if 0 // <- change to '1' to save Tiles in a human-readable non-binary format.
 	for (size_t
 			i = 0;
 			i != _mapSize;
@@ -1160,7 +1159,7 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
  */
 BattleUnit* SavedBattleGame::selectUnit(const Position& pos)
 {
-	BattleUnit* const unit = getTile(pos)->getUnit();
+	BattleUnit* const unit = getTile(pos)->getTileUnit();
 	if (unit != nullptr && unit->isOut_t(OUT_STAT) == false)
 		return unit;
 
@@ -1459,7 +1458,7 @@ void SavedBattleGame::setDebugMode()
 			i != _mapSize;
 			++i)
 	{
-		_tiles[i]->setDiscovered(true, 2);
+		_tiles[i]->setRevealed(true, 2);
 	}
 }
 
@@ -1519,7 +1518,7 @@ void SavedBattleGame::resetUnitsOnTiles()
 			const int armorSize = (*i)->getArmor()->getSize() - 1;
 
 			if ((*i)->getTile() != nullptr // remove unit from its current tile
-				&& (*i)->getTile()->getUnit() == *i) // wtf, is this super-safety ......
+				&& (*i)->getTile()->getTileUnit() == *i) // wtf, is this super-safety ......
 			{
 				for (int
 						x = armorSize;
@@ -2150,9 +2149,9 @@ void SavedBattleGame::reviveUnit(
 
 		const Tile* const tileCorpse = getTile(posCorpse);
 		bool largeUnit = tileCorpse != nullptr
-					  && tileCorpse->getUnit() != nullptr
-					  && tileCorpse->getUnit() != unit
-					  && tileCorpse->getUnit()->getArmor()->getSize() == 2;
+					  && tileCorpse->getTileUnit() != nullptr
+					  && tileCorpse->getTileUnit() != unit
+					  && tileCorpse->getTileUnit()->getArmor()->getSize() == 2;
 
 		if (placeUnitNearPosition(unit, posCorpse, largeUnit) == true)
 		{
@@ -2239,8 +2238,8 @@ bool SavedBattleGame::setUnitPosition(
 						break;
 					}
 
-					if ((tile->getUnit() != nullptr
-							&& tile->getUnit() != unit)
+					if ((tile->getTileUnit() != nullptr
+							&& tile->getTileUnit() != unit)
 						|| tile->getTuCostTile(
 											O_OBJECT,
 											unit->getMoveTypeUnit()) == 255
@@ -2264,8 +2263,8 @@ bool SavedBattleGame::setUnitPosition(
 					// TODO: check for ceiling also.
 					const Tile* const tileAbove = getTile(posTest + Position(x,y,1));
 					if (tileAbove != nullptr
-						&& tileAbove->getUnit() != nullptr
-						&& tileAbove->getUnit() != unit
+						&& tileAbove->getTileUnit() != nullptr
+						&& tileAbove->getTileUnit() != unit
 						&& unit->getHeight(true) - tile->getTerrainLevel() > 26) // don't stuck yer head up someone's flying arse.
 					{
 						return false;
@@ -2644,9 +2643,9 @@ void SavedBattleGame::resetTiles()
 			i != _mapSize;
 			++i)
 	{
-		_tiles[i]->setDiscovered(false, 0);
-		_tiles[i]->setDiscovered(false, 1);
-		_tiles[i]->setDiscovered(false, 2);
+		_tiles[i]->setRevealed(false, 0);
+		_tiles[i]->setRevealed(false, 1);
+		_tiles[i]->setRevealed(false, 2);
 	}
 }
 

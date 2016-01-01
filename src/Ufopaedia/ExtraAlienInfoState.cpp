@@ -101,10 +101,10 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 		alienId = defs->id;
 
 	const RuleUnit* unitRule;
-	if (_game->getRuleset()->getUnit(alienId + "_SOLDIER") != nullptr)
-		unitRule = _game->getRuleset()->getUnit(alienId + "_SOLDIER");
-	else if (_game->getRuleset()->getUnit(alienId + "_TERRORIST") != nullptr)
-		unitRule = _game->getRuleset()->getUnit(alienId + "_TERRORIST");
+	if (_game->getRuleset()->getUnitRule(alienId + "_SOLDIER") != nullptr)
+		unitRule = _game->getRuleset()->getUnitRule(alienId + "_SOLDIER");
+	else if (_game->getRuleset()->getUnitRule(alienId + "_TERRORIST") != nullptr)
+		unitRule = _game->getRuleset()->getUnitRule(alienId + "_TERRORIST");
 	else
 	{
 		unitRule = nullptr;
