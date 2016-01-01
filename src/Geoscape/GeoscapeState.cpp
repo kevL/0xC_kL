@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 OpenXcom Developers.
+ * Copyright 2010-2016 OpenXcom Developers.
  *
  * This file is part of OpenXcom.
  *
@@ -2925,25 +2925,17 @@ void GeoscapeState::time1Day()
 						k != resRule->getGetOneFree().end();
 						++k)
 				{
-//					if (std::find(
-//							_gameSave->getDiscoveredResearch().begin(),
-//							_gameSave->getDiscoveredResearch().end(),
-//							_rules->getResearch(*k)) == _gameSave->getDiscoveredResearch().end())
 					if (_gameSave->searchResearch(*k) == false)
-					{
 						gofChoices.push_back(*k);
-					}
 				}
 
 				if (gofChoices.empty() == false)
 				{
 					gofRule = _rules->getResearch(gofChoices.at(RNG::pick(gofChoices.size())));
 					_gameSave->setResearchStatus(gofRule);
-//					_gameSave->addFinishedResearch(gofRule);
 
 					if (gofRule->getLookup().empty() == false)
 						_gameSave->setResearchStatus(_rules->getResearch(gofRule->getLookup()));
-//						_gameSave->addFinishedResearch(_rules->getResearch(gofRule->getLookup()));
 				}
 			}
 
