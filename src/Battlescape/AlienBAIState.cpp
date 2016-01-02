@@ -113,7 +113,7 @@ void AlienBAIState::load(const YAML::Node& node)
 	toNodeId	= node["toNode"]	.as<int>(-1);
 
 	_AIMode = static_cast<AIMode>(node["AIMode"].as<int>(0));
-//	_wasHitBy	= node["wasHitBy"].as<std::vector<int> >(_wasHitBy);
+//	_wasHitBy	= node["wasHitBy"].as<std::vector<int>>(_wasHitBy);
 
 	if (startNodeId != -1)
 		_startNode = _battleSave->getNodes()->at(startNodeId);

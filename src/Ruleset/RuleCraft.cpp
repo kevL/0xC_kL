@@ -78,7 +78,7 @@ void RuleCraft::load(
 		int listOrder)
 {
 	_type		= node["type"]		.as<std::string>(_type);
-	_required	= node["required"]	.as<std::vector<std::string> >(_required);
+	_required	= node["required"]	.as<std::vector<std::string>>(_required);
 
 	if (node["sprite"])
 	{
@@ -118,7 +118,7 @@ void RuleCraft::load(
 		_tacticalTerrainData = terrainRule;
 
 		if (const YAML::Node& deployment = node["deployment"])
-			_deployment = deployment.as<std::vector<std::vector<int> > >(_deployment);
+			_deployment = deployment.as<std::vector<std::vector<int>>>(_deployment);
 	}
 
 	_listOrder = node["listOrder"].as<int>(_listOrder);
@@ -348,7 +348,7 @@ int RuleCraft::getListOrder() const
  * Gets the deployment layout for the craft.
  * @return, reference to a vector of vectors representing the deployment layout
  */
-std::vector<std::vector<int> >& RuleCraft::getCraftDeployment()
+std::vector<std::vector<int>>& RuleCraft::getCraftDeployment()
 {
 	return _deployment;
 }

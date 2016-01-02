@@ -103,7 +103,7 @@ void Polygon::load(const YAML::Node& node)
 	delete[] _x;
 	delete[] _y;
 
-	std::vector<double> coords = node.as<std::vector<double> >();
+	std::vector<double> coords = node.as<std::vector<double>>();
 	_points = (coords.size() - 1) / 2;
 
 	_lat = new double[_points];

@@ -380,7 +380,7 @@ private:
 		bool getCacheInvalid() const;
 
 		/// Gets unit sprite recolor values.
-		const std::vector<std::pair<Uint8, Uint8> >& getRecolor() const;
+		const std::vector<std::pair<Uint8, Uint8>>& getRecolor() const;
 
 		/// Kneels or stands this unit.
 		void kneel(bool kneel);

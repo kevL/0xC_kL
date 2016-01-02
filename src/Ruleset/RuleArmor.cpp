@@ -101,7 +101,7 @@ void RuleArmor::load(const YAML::Node& node)
 
 	if (node["corpseBattle"])
 	{
-		_corpseBattle	= node["corpseBattle"]	.as<std::vector<std::string> >();
+		_corpseBattle	= node["corpseBattle"]	.as<std::vector<std::string>>();
 		_corpseGeo		= _corpseBattle[0];
 	}
 	_corpseGeo		= node["corpseGeo"]			.as<std::string>(_corpseGeo);
@@ -133,7 +133,7 @@ void RuleArmor::load(const YAML::Node& node)
 		}
 	}
 
-	_loftSet			= node["loftSet"]			.as<std::vector<size_t> >(_loftSet);
+	_loftSet			= node["loftSet"]			.as<std::vector<size_t>>(_loftSet);
 	_deathFrames		= node["deathFrames"]		.as<int>(_deathFrames);
 	_shootFrames		= node["shootFrames"]		.as<int>(_shootFrames);
 	_firePhase			= node["firePhase"]			.as<int>(_firePhase);
@@ -154,12 +154,12 @@ void RuleArmor::load(const YAML::Node& node)
 	_hairColorGroup		= node["spriteHairGroup"]	.as<int>(_hairColorGroup);
 	_rankColorGroup		= node["spriteRankGroup"]	.as<int>(_rankColorGroup);
 	_utileColorGroup	= node["spriteUtileGroup"]	.as<int>(_utileColorGroup);
-	_faceColor			= node["spriteFaceColor"]	.as<std::vector<int> >(_faceColor);
-	_hairColor			= node["spriteHairColor"]	.as<std::vector<int> >(_hairColor);
-	_rankColor			= node["spriteRankColor"]	.as<std::vector<int> >(_rankColor);
-	_utileColor			= node["spriteUtileColor"]	.as<std::vector<int> >(_utileColor);
+	_faceColor			= node["spriteFaceColor"]	.as<std::vector<int>>(_faceColor);
+	_hairColor			= node["spriteHairColor"]	.as<std::vector<int>>(_hairColor);
+	_rankColor			= node["spriteRankColor"]	.as<std::vector<int>>(_rankColor);
+	_utileColor			= node["spriteUtileColor"]	.as<std::vector<int>>(_utileColor);
 
-	_units = node["units"].as<std::vector<std::string> >(_units);
+	_units = node["units"].as<std::vector<std::string>>(_units);
 }
 
 /**

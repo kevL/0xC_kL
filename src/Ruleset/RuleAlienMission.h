@@ -81,7 +81,7 @@ private:
 		_type;				// The mission's type ID.
 
 	std::vector<MissionWave> _waves;										// The mission's waves.
-	std::vector<std::pair<size_t, WeightedOptions*> > _raceDistribution;	// The race distribution over game time.
+	std::vector<std::pair<size_t, WeightedOptions*>> _raceDistribution;	// The race distribution over game time.
 	std::map<size_t, int> _weights;											// The mission's weights.
 
 	MissionObjective _objective; // The mission's objective type.

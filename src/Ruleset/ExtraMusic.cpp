@@ -49,7 +49,7 @@ void ExtraMusic::load(
 	_modIndex = modIndex;
 
 	_media		= node["media"]		.as<std::string>(_media);
-	_terrains	= node["terrain"]	.as<std::vector<std::string> >(_terrains);
+	_terrains	= node["terrain"]	.as<std::vector<std::string>>(_terrains);
 
 	if (node["overrides"])
 		_overrides = node["overrides"].as<std::string>(_overrides);

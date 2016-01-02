@@ -69,7 +69,7 @@ private:
 
 	std::vector<int> _conditions;
 
-	std::vector<std::pair<size_t, WeightedOptions*> >
+	std::vector<std::pair<size_t, WeightedOptions*>>
 		_missionWeights,
 		_raceWeights,
 		_regionWeights;

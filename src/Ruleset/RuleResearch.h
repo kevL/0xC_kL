@@ -48,7 +48,7 @@ class RuleResearch
 
 private:
 	std::string
-		_lookup,
+		_uPed,
 		_type;
 	bool
 		_markSeen,
@@ -98,7 +98,7 @@ private:
 		const std::vector<std::string>& getGetOneFree() const;
 
 		/// Gets an alternate look-up for the Ufopaedia.
-		const std::string& getLookup() const;
+		const std::string& getUfopaediaEntry() const;
 
 		/// Checks if this RuleResearch needs a corresponding Item for research.
 		bool needsItem() const;

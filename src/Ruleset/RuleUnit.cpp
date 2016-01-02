@@ -87,7 +87,7 @@ void RuleUnit::load(
 	_energyRecovery	= node["energyRecovery"].as<int>(_energyRecovery);
 	_livingWeapon	= node["livingWeapon"]	.as<bool>(_livingWeapon);
 	_meleeWeapon	= node["meleeWeapon"]	.as<std::string>(_meleeWeapon);
-	_builtInWeapons	= node["builtInWeapons"].as<std::vector<std::string> >(_builtInWeapons);
+	_builtInWeapons	= node["builtInWeapons"].as<std::vector<std::string>>(_builtInWeapons);
 	_female			= node["female"]		.as<bool>(_female);
 	_dog			= node["dog"]			.as<bool>(_dog);
 	_mechanical		= node["mechanical"]	.as<bool>(_mechanical);

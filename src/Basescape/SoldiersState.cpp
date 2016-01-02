@@ -165,15 +165,15 @@ SoldiersState::SoldiersState(Base* base)
 		Log(LOG_INFO) << (*i).first;
 		int iter = 0;
 
-		const std::vector<std::map<int, std::vector<std::string> > >* killCriteriaList = (*i).second->getKillCriteria(); // fetch the killCriteria list.
-		for (std::vector<std::map<int, std::vector<std::string> > >::const_iterator // loop over the OR vectors.
+		const std::vector<std::map<int, std::vector<std::string>>>* killCriteriaList = (*i).second->getKillCriteria(); // fetch the killCriteria list.
+		for (std::vector<std::map<int, std::vector<std::string>>>::const_iterator // loop over the OR vectors.
 				orCriteria = killCriteriaList->begin();
 				orCriteria != killCriteriaList->end();
 				++orCriteria)
 		{
 			Log(LOG_INFO) << "iter = " << iter++;
 
-			for (std::map<int, std::vector<std::string> >::const_iterator // loop over the AND vectors.
+			for (std::map<int, std::vector<std::string>>::const_iterator // loop over the AND vectors.
 					andCriteria = orCriteria->begin();
 					andCriteria != orCriteria->end();
 					++andCriteria)

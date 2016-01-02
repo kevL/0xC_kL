@@ -53,7 +53,7 @@ RuleMissionScript::RuleMissionScript(const std::string& type)
  */
 RuleMissionScript::~RuleMissionScript()
 {
-	for (std::vector<std::pair<size_t, WeightedOptions*> >::const_iterator
+	for (std::vector<std::pair<size_t, WeightedOptions*>>::const_iterator
 			i = _missionWeights.begin();
 			i != _missionWeights.end();
 			++i)
@@ -61,7 +61,7 @@ RuleMissionScript::~RuleMissionScript()
 		delete i->second;
 	}
 
-	for (std::vector<std::pair<size_t, WeightedOptions*> >::const_iterator
+	for (std::vector<std::pair<size_t, WeightedOptions*>>::const_iterator
 			i = _raceWeights.begin();
 			i != _raceWeights.end();
 			++i)
@@ -69,7 +69,7 @@ RuleMissionScript::~RuleMissionScript()
 		delete i->second;
 	}
 
-	for (std::vector<std::pair<size_t, WeightedOptions*> >::const_iterator
+	for (std::vector<std::pair<size_t, WeightedOptions*>>::const_iterator
 			i = _regionWeights.begin();
 			i != _regionWeights.end();
 			++i)
@@ -93,7 +93,7 @@ void RuleMissionScript::load(const YAML::Node& node)
 	_maxRuns		= node["maxRuns"]		.as<int>(_maxRuns);
 	_avoidRepeats	= node["avoidRepeats"]	.as<int>(_avoidRepeats);
 	_delay			= node["startDelay"]	.as<int>(_delay);
-	_conditions		= node["conditions"]	.as<std::vector<int> >(_conditions);
+	_conditions		= node["conditions"]	.as<std::vector<int>>(_conditions);
 
 	_minDifficulty = static_cast<GameDifficulty>(node["minDifficulty"].as<int>(_minDifficulty));
 
@@ -144,7 +144,7 @@ void RuleMissionScript::load(const YAML::Node& node)
 		}
 	}
 
-	_researchTriggers = node["researchTriggers"].as<std::map<std::string, bool> >(_researchTriggers);
+	_researchTriggers = node["researchTriggers"].as<std::map<std::string, bool>>(_researchTriggers);
 	_useTable = node["useTable"].as<bool>(_useTable);
 
 	if (_varName.empty() == true
@@ -321,7 +321,7 @@ const std::set<std::string> RuleMissionScript::getAllMissionTypes() const
 {
 	std::set<std::string> types;
 
-	for (std::vector<std::pair<size_t, WeightedOptions*> >::const_iterator
+	for (std::vector<std::pair<size_t, WeightedOptions*>>::const_iterator
 			i = _missionWeights.begin();
 			i != _missionWeights.end();
 			++i)
@@ -348,7 +348,7 @@ const std::vector<std::string> RuleMissionScript::getMissionTypes(const size_t m
 {
 	std::vector<std::string> missions;
 
-	std::vector<std::pair<size_t, WeightedOptions*> >::const_reverse_iterator rweight (_missionWeights.rbegin());
+	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator rweight (_missionWeights.rbegin());
 	while (month < rweight->first)
 	{
 		++rweight;
@@ -380,7 +380,7 @@ const std::vector<std::string> RuleMissionScript::getRegions(const size_t month)
 {
 	std::vector<std::string> regions;
 
-	std::vector<std::pair<size_t, WeightedOptions*> >::const_reverse_iterator rweight (_regionWeights.rbegin());
+	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator rweight (_regionWeights.rbegin());
 	while (month < rweight->first)
 	{
 		++rweight;
@@ -413,7 +413,7 @@ std::string RuleMissionScript::genMissionDatum(
 		const size_t monthsPassed,
 		const GenerationType type) const
 {
-	std::vector<std::pair<size_t, WeightedOptions*> >::const_reverse_iterator rweight;
+	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator rweight;
 
 	switch (type)
 	{

@@ -40,7 +40,15 @@ ResearchGeneral::ResearchGeneral(
 		_beenSeen(resRule->getMarkSeen())
 {
 	if (done == true) _status = RS_COMPLETED;
+//	init();
 }
+
+/**
+ *
+ *
+void ResearchGeneral::init()
+{
+} */
 
 /**
  * dTor.

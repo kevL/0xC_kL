@@ -41,7 +41,7 @@ struct convert<OpenXcom::ItemSet>
 		if (node.IsSequence() == false)
 			return false;
 
-		rhs.items = node.as<std::vector<std::string> >(rhs.items);
+		rhs.items = node.as<std::vector<std::string>>(rhs.items);
 
 		return true;
 	}
@@ -80,7 +80,7 @@ struct convert<OpenXcom::DeploymentData>
 		rhs.dQty			= node["dQty"]			.as<int>(rhs.dQty);
 		rhs.extraQty		= node["extraQty"]		.as<int>(0); // give this a default, as it's not 100% needed, unlike the others.
 		rhs.pctOutsideUfo	= node["pctOutsideUfo"]	.as<int>(rhs.pctOutsideUfo);
-		rhs.itemSets		= node["itemSets"]		.as<std::vector<OpenXcom::ItemSet> >(rhs.itemSets);
+		rhs.itemSets		= node["itemSets"]		.as<std::vector<OpenXcom::ItemSet>>(rhs.itemSets);
 
 		return true;
 	}
@@ -173,12 +173,12 @@ AlienDeployment::~AlienDeployment()
 void AlienDeployment::load(const YAML::Node& node)
 {
 	_type				= node["type"]				.as<std::string>(_type);
-	_data				= node["data"]				.as<std::vector<DeploymentData> >(_data);
+	_data				= node["data"]				.as<std::vector<DeploymentData>>(_data);
 	_width				= node["width"]				.as<int>(_width);
 	_length				= node["length"]			.as<int>(_length);
 	_height				= node["height"]			.as<int>(_height);
 	_civilians			= node["civilians"]			.as<int>(_civilians);
-	_terrains			= node["terrains"]			.as<std::vector<std::string> >(_terrains);
+	_terrains			= node["terrains"]			.as<std::vector<std::string>>(_terrains);
 	_shade				= node["shade"]				.as<int>(_shade);
 	_nextStage			= node["nextStage"]			.as<std::string>(_nextStage);
 	_race				= node["race"]				.as<std::string>(_race);

@@ -152,7 +152,7 @@ void MapScript::load(const YAML::Node& node)
 	if (const YAML::Node& mapNode = node["conditions"])
 	{
 		if (mapNode.Type() == YAML::NodeType::Sequence)
-			_conditions = mapNode.as<std::vector<int> >(_conditions);
+			_conditions = mapNode.as<std::vector<int>>(_conditions);
 		else
 			_conditions.push_back(mapNode.as<int>(0));
 	}

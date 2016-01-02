@@ -298,7 +298,7 @@ research:
 #      - STR_ALIEN_ORIGINS # note LeaderPlus already REQUIRES origins
       - STR_LEADER_PLUS
   - type: STR_COMMANDER_PLUS #why are these PLUS-things even used
-#    unlocks:
+#    forces:
 #      - STR_CYDONIA_OR_BUST
     required:
       - STR_THE_MARTIAN_SOLUTION
@@ -403,165 +403,165 @@ research:
   - type: STR_FLOATER_CORPSE
     cost: 1800
     points: 50
-    lookup: STR_FLOATER_AUTOPSY
+    uPed: STR_FLOATER_AUTOPSY
     needsItem: true
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_CONTAINMENT
   - type: STR_SECTOID_CORPSE
     cost: 1800
     points: 50
-    lookup: STR_SECTOID_AUTOPSY
+    uPed: STR_SECTOID_AUTOPSY
     needsItem: true
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_CONTAINMENT
   - type: STR_SNAKEMAN_CORPSE
     cost: 1800
     points: 50
-    lookup: STR_SNAKEMAN_AUTOPSY
+    uPed: STR_SNAKEMAN_AUTOPSY
     needsItem: true
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_CONTAINMENT
   - type: STR_MUTON_CORPSE
     cost: 1800
     points: 50
-    lookup: STR_MUTON_AUTOPSY
+    uPed: STR_MUTON_AUTOPSY
     needsItem: true
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_CONTAINMENT
   - type: STR_ETHEREAL_CORPSE
     cost: 1800
     points: 50
-    lookup: STR_ETHEREAL_AUTOPSY
+    uPed: STR_ETHEREAL_AUTOPSY
     needsItem: true
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_CONTAINMENT
   - type: STR_WASPITE_CORPSE
     cost: 1800
     points: 50
-    lookup: STR_WASPITE_AUTOPSY
+    uPed: STR_WASPITE_AUTOPSY
     needsItem: true
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_CONTAINMENT
   - type: STR_ZOMBIE_CORPSE #note Can't get one of these
     cost: 1800
     points: 50
-    lookup: STR_ZOMBIE_AUTOPSY
+    uPed: STR_ZOMBIE_AUTOPSY
     needsItem: true
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_CONTAINMENT
 #-------- Terrorist autopsies -------------------------------------------------#
   - type: STR_REAPER_CORPSE
     cost: 1800
     points: 50
-    lookup: STR_REAPER_AUTOPSY
+    uPed: STR_REAPER_AUTOPSY
     needsItem: true
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_CONTAINMENT
   - type: STR_CYBERDISC_CORPSE
     cost: 1800
     points: 50
-    lookup: STR_CYBERDISC_AUTOPSY
+    uPed: STR_CYBERDISC_AUTOPSY
     needsItem: true
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_CONTAINMENT
   - type: STR_CHRYSSALID_CORPSE
     cost: 1800
     points: 50
-    lookup: STR_CHRYSSALID_AUTOPSY
+    uPed: STR_CHRYSSALID_AUTOPSY
     needsItem: true
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_CONTAINMENT
   - type: STR_SILACOID_CORPSE
     cost: 1800
     points: 50
-    lookup: STR_SILACOID_AUTOPSY
+    uPed: STR_SILACOID_AUTOPSY
     needsItem: true
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_CONTAINMENT
   - type: STR_CELATID_CORPSE
     cost: 1800
     points: 50
-    lookup: STR_CELATID_AUTOPSY
+    uPed: STR_CELATID_AUTOPSY
     needsItem: true
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_CONTAINMENT
   - type: STR_SECTOPOD_CORPSE
     cost: 1800
     points: 50
-    lookup: STR_SECTOPOD_AUTOPSY
+    uPed: STR_SECTOPOD_AUTOPSY
     needsItem: true
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_CONTAINMENT
   - type: STR_CYBERMITE_CORPSE
     cost: 1800
     points: 50
-    lookup: STR_CYBERMITE_AUTOPSY
+    uPed: STR_CYBERMITE_AUTOPSY
     needsItem: true
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_CONTAINMENT
 #---- aLien Interrogations ----------------------------------------------------#
 #-------- Floaters ------------------------------------------------------------#
   - type: STR_FLOATER_SOLDIER
     cost: 192
     points: 50
-    lookup: STR_FLOATER
+    uPed: STR_FLOATER
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION #redundant; to interrogate needs Containment, which needs corpse, which needs Reproduction. Solution, remove Reproduction from autopsy requirement
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
   - type: STR_FLOATER_NAVIGATOR
     cost: 192
     points: 50
-    lookup: STR_FLOATER
+    uPed: STR_FLOATER
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
       - STR_HYPER_WAVE_DECODER
       - STR_UFO_NAVIGATION
@@ -577,12 +577,12 @@ research:
   - type: STR_FLOATER_MEDIC
     cost: 192
     points: 50
-    lookup: STR_FLOATER
+    uPed: STR_FLOATER
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
     getOneFree:
       - STR_SECTOID
@@ -613,12 +613,12 @@ research:
   - type: STR_FLOATER_ENGINEER
     cost: 192
     points: 50
-    lookup: STR_FLOATER
+    uPed: STR_FLOATER
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
     getOneFree:
@@ -633,23 +633,23 @@ research:
   - type: STR_FLOATER_LEADER
     cost: 192
     points: 50
-    lookup: STR_FLOATER
+    uPed: STR_FLOATER
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_LEADER_PLUS
       - STR_ALIEN_ORIGINS
   - type: STR_FLOATER_COMMANDER
     cost: 192
     points: 50
-    lookup: STR_FLOATER
+    uPed: STR_FLOATER
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_LEADER_PLUS
       - STR_COMMANDER_PLUS
       - STR_ALIEN_ORIGINS
@@ -657,22 +657,22 @@ research:
   - type: STR_SECTOID_SOLDIER
     cost: 192
     points: 50
-    lookup: STR_SECTOID
+    uPed: STR_SECTOID
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
   - type: STR_SECTOID_NAVIGATOR
     cost: 192
     points: 50
-    lookup: STR_SECTOID
+    uPed: STR_SECTOID
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
       - STR_HYPER_WAVE_DECODER
       - STR_UFO_NAVIGATION
@@ -692,9 +692,9 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
-    lookup: STR_SECTOID
+    uPed: STR_SECTOID
     getOneFree:
       - STR_SNAKEMAN
       - STR_MUTON
@@ -724,12 +724,12 @@ research:
   - type: STR_SECTOID_ENGINEER
     cost: 192
     points: 50
-    lookup: STR_SECTOID
+    uPed: STR_SECTOID
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
     getOneFree:
@@ -748,44 +748,44 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
+      - STR_ALIEN_ORIGINS
       - STR_LEADER_PLUS
       - STR_PSI_LAB
-      - STR_ALIEN_ORIGINS
-    lookup: STR_SECTOID
+    uPed: STR_SECTOID
   - type: STR_SECTOID_COMMANDER
     cost: 192
     points: 50
-    lookup: STR_SECTOID
+    uPed: STR_SECTOID
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
+      - STR_ALIEN_ORIGINS
       - STR_LEADER_PLUS
       - STR_COMMANDER_PLUS
-      - STR_ALIEN_ORIGINS
       - STR_PSI_LAB
 #-------- Snakemen ------------------------------------------------------------#
   - type: STR_SNAKEMAN_SOLDIER
     cost: 192
     points: 50
-    lookup: STR_SNAKEMAN
+    uPed: STR_SNAKEMAN
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
   - type: STR_SNAKEMAN_NAVIGATOR
     cost: 192
     points: 50
-    lookup: STR_SNAKEMAN
+    uPed: STR_SNAKEMAN
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
       - STR_HYPER_WAVE_DECODER
       - STR_UFO_NAVIGATION
@@ -801,12 +801,12 @@ research:
   - type: STR_SNAKEMAN_MEDIC # These don't exist in stock.
     cost: 192
     points: 50
-    lookup: STR_SNAKEMAN
+    uPed: STR_SNAKEMAN
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
     getOneFree:
       - STR_SECTOID
@@ -837,12 +837,12 @@ research:
   - type: STR_SNAKEMAN_ENGINEER
     cost: 192
     points: 50
-    lookup: STR_SNAKEMAN
+    uPed: STR_SNAKEMAN
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
     getOneFree:
@@ -857,46 +857,46 @@ research:
   - type: STR_SNAKEMAN_LEADER
     cost: 192
     points: 50
-    lookup: STR_SNAKEMAN
+    uPed: STR_SNAKEMAN
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
-      - STR_LEADER_PLUS
+    forces:
       - STR_ALIEN_ORIGINS
+      - STR_LEADER_PLUS
   - type: STR_SNAKEMAN_COMMANDER
     cost: 192
     points: 50
-    lookup: STR_SNAKEMAN
+    uPed: STR_SNAKEMAN
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
+      - STR_ALIEN_ORIGINS
       - STR_LEADER_PLUS
       - STR_COMMANDER_PLUS
-      - STR_ALIEN_ORIGINS
 #-------- Mutons --------------------------------------------------------------#
   - type: STR_MUTON_SOLDIER
     cost: 192
     points: 50
-    lookup: STR_MUTON
+    uPed: STR_MUTON
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
   - type: STR_MUTON_NAVIGATOR
     cost: 192
     points: 50
-    lookup: STR_MUTON
+    uPed: STR_MUTON
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
       - STR_HYPER_WAVE_DECODER
       - STR_UFO_NAVIGATION
@@ -912,12 +912,12 @@ research:
   - type: STR_MUTON_ENGINEER
     cost: 192
     points: 50
-    lookup: STR_MUTON
+    uPed: STR_MUTON
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
     getOneFree:
@@ -933,59 +933,59 @@ research:
   - type: STR_ETHEREAL_SOLDIER
     cost: 192
     points: 50
-    lookup: STR_ETHEREAL
+    uPed: STR_ETHEREAL
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
       - STR_PSI_LAB
   - type: STR_ETHEREAL_LEADER
     cost: 192
     points: 50
-    lookup: STR_ETHEREAL
+    uPed: STR_ETHEREAL
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
-      - STR_LEADER_PLUS
+    forces:
       - STR_ALIEN_ORIGINS
+      - STR_LEADER_PLUS
       - STR_PSI_LAB
   - type: STR_ETHEREAL_COMMANDER
     cost: 192
     points: 50
-    lookup: STR_ETHEREAL
+    uPed: STR_ETHEREAL
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
+      - STR_ALIEN_ORIGINS
       - STR_LEADER_PLUS
       - STR_COMMANDER_PLUS
-      - STR_ALIEN_ORIGINS
       - STR_PSI_LAB
 #-------- Waspites ------------------------------------------------------------#
   - type: STR_WASPITE_SOLDIER
     cost: 192
     points: 50
-    lookup: STR_WASPITE
+    uPed: STR_WASPITE
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
   - type: STR_WASPITE_NAVIGATOR
     cost: 192
     points: 50
-    lookup: STR_WASPITE
+    uPed: STR_WASPITE
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
       - STR_HYPER_WAVE_DECODER
       - STR_UFO_NAVIGATION
@@ -1001,12 +1001,12 @@ research:
   - type: STR_WASPITE_MEDIC
     cost: 192
     points: 50
-    lookup: STR_WASPITE
+    uPed: STR_WASPITE
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
     getOneFree:
       - STR_SECTOID
@@ -1037,12 +1037,12 @@ research:
   - type: STR_WASPITE_ENGINEER
     cost: 192
     points: 50
-    lookup: STR_WASPITE
+    uPed: STR_WASPITE
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
     getOneFree:
@@ -1057,96 +1057,96 @@ research:
   - type: STR_WASPITE_LEADER
     cost: 192
     points: 50
-    lookup: STR_WASPITE
+    uPed: STR_WASPITE
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
-      - STR_LEADER_PLUS
+    forces:
       - STR_ALIEN_ORIGINS
+      - STR_LEADER_PLUS
   - type: STR_WASPITE_COMMANDER
     cost: 192
     points: 50
-    lookup: STR_WASPITE
+    uPed: STR_WASPITE
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
+      - STR_ALIEN_ORIGINS
       - STR_LEADER_PLUS
       - STR_COMMANDER_PLUS
-      - STR_ALIEN_ORIGINS
 #---- aLien Interrogations - terrorists ---------------------------------------#
   - type: STR_REAPER_TERRORIST
     cost: 170
     points: 50
-    lookup: STR_REAPER
+    uPed: STR_REAPER
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
   - type: STR_CYBERDISC_TERRORIST
     cost: 170
     points: 50
-    lookup: STR_CYBERDISC
+    uPed: STR_CYBERDISC
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
   - type: STR_CHRYSSALID_TERRORIST
     cost: 170
     points: 50
-    lookup: STR_CHRYSSALID
+    uPed: STR_CHRYSSALID
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
   - type: STR_SILACOID_TERRORIST
     cost: 170
     points: 50
-    lookup: STR_SILACOID
+    uPed: STR_SILACOID
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
   - type: STR_CELATID_TERRORIST
     cost: 170
     points: 50
-    lookup: STR_CELATID
+    uPed: STR_CELATID
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
   - type: STR_SECTOPOD_TERRORIST
     cost: 170
     points: 50
-    lookup: STR_SECTOPOD
+    uPed: STR_SECTOPOD
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
   - type: STR_CYBERMITE_TERRORIST
     cost: 170
     points: 50
-    lookup: STR_CYBERMITE
+    uPed: STR_CYBERMITE
     needsItem: true
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    unlocks:
+    forces:
       - STR_ALIEN_ORIGINS
 #---- aLien Race lookups ------------------------------------------------------#
   - type: STR_FLOATER

@@ -39,7 +39,7 @@ private:
 
 	public:
 		typedef helper::ShaderBase<Pixel> _base;
-		friend struct helper::controler<ShaderMove<Pixel> >;
+		friend struct helper::controler<ShaderMove<Pixel>>;
 
 		inline ShaderMove(Surface* s)
 			:
@@ -116,7 +116,7 @@ namespace helper
 {
 
 template<typename Pixel>
-struct controler<ShaderMove<Pixel> >
+struct controler<ShaderMove<Pixel>>
 	:
 		public
 			controler_base<

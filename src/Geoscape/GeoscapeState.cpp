@@ -2933,30 +2933,18 @@ void GeoscapeState::time1Day()
 				{
 					gofRule = _rules->getResearch(gofChoices.at(RNG::pick(gofChoices.size())));
 					_gameSave->setResearchStatus(gofRule);
-
-					if (gofRule->getLookup().empty() == false)
-						_gameSave->setResearchStatus(_rules->getResearch(gofRule->getLookup()));
 				}
 			}
 
 
-			std::string lookUp = resRule->getLookup(); // UfoPaedia article.
-			if (lookUp.empty() == true)
-				lookUp = resType;
-
 			const RuleResearch* resRule0;
-			if (_gameSave->isResearched(lookUp) == false)
+			if (_gameSave->isResearched(resRule->getUfopaediaEntry()) == false)
 				resRule0 = resRule;
 			else
 				resRule0 = nullptr;
 
 
 			_gameSave->setResearchStatus(resRule);
-//			_gameSave->addFinishedResearch(resRule); // this adds the research project to _discovered vector.
-
-			if (resRule->getLookup().empty() == false)
-				_gameSave->setResearchStatus(_rules->getResearch(resRule->getLookup()));
-//				_gameSave->addFinishedResearch(_rules->getResearch(resRule->getLookup()));
 
 			resEvents.push_back(new ResearchCompleteState(resRule0, gofRule));
 
@@ -3036,7 +3024,7 @@ void GeoscapeState::time1Day()
 			}
 
 			for (std::vector<Base*>::const_iterator // iterate through all the bases and remove this completed project from their labs
-					k = _gameSave->getBases()->begin();
+					k = _gameSave->getBases()->begin(); // TODO: remove gof's too
 					k != _gameSave->getBases()->end();
 					++k)
 			{
@@ -3054,8 +3042,8 @@ void GeoscapeState::time1Day()
 				}
 			}
 
-			delete *j; // DONE Research.
-		}
+			delete *j;
+		} // DONE Research.
 	}
 
 	// if research has been completed but no new research events are triggered show an empty
@@ -4094,7 +4082,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 				break;
 		}
 
-		std::vector<std::pair<std::string, size_t> > validAreas;
+		std::vector<std::pair<std::string, size_t>> validAreas;
 
 		for (size_t
 				i = 0;
@@ -4188,7 +4176,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 				high (-1), // avoid vc++ linker warning.
 				testArea (0);
 
-			for (std::vector<std::pair<std::string, size_t> >::const_iterator
+			for (std::vector<std::pair<std::string, size_t>>::const_iterator
 					i = validAreas.begin();
 					i != validAreas.end();
 					++i)

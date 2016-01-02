@@ -53,7 +53,7 @@ void RuleResearch::load(
 		int listOrder)
 {
 	_type			= node["type"]			.as<std::string>(_type);
-	_lookup			= node["lookup"]		.as<std::string>(_lookup);
+	_uPed			= node["uPed"]			.as<std::string>(_uPed);
 	_cost			= node["cost"]			.as<int>(_cost);
 	_points			= node["points"]		.as<int>(_points);
 	_prerequisites	= node["prerequisites"]	.as<std::vector<std::string>>(_prerequisites);
@@ -135,9 +135,12 @@ const std::vector<std::string>& RuleResearch::getGetOneFree() const
  * Gets what article to look up in the Ufopedia.
  * @return, article to look up
  */
-const std::string& RuleResearch::getLookup() const
+const std::string& RuleResearch::getUfopaediaEntry() const
 {
-	return _lookup;
+	if (_uPed.empty() == false)
+		return _uPed;
+
+	return _type;
 }
 
 /**

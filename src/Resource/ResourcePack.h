@@ -71,7 +71,7 @@ private:
 		std::map<std::string, SoundSet*> _sounds;
 
 		std::map<std::string, Music*> _musicFile;
-		std::map<std::string, std::map<std::string, std::vector<std::pair<std::string, int> > > > _musicAssignment;
+		std::map<std::string, std::map<std::string, std::vector<std::pair<std::string, int>>>> _musicAssignment;
 
 		std::vector<Uint16> _voxelData;
 

@@ -133,7 +133,7 @@ void RuleItem::load(
 {
 	_type			= node["type"]			.as<std::string>(_type);
 	_name			= node["name"]			.as<std::string>(_name);
-	_required		= node["required"]		.as<std::vector<std::string> >(_required);
+	_required		= node["required"]		.as<std::vector<std::string>>(_required);
 	_size			= node["size"]			.as<double>(_size);
 	_costBuy		= node["costBuy"]		.as<int>(_costBuy);
 	_costSell		= node["costSell"]		.as<int>(_costSell);
@@ -217,7 +217,7 @@ void RuleItem::load(
 
 	_power				= node["power"]				.as<int>(_power);
 	_clipSize			= node["clipSize"]			.as<int>(_clipSize);
-	_compatibleAmmo		= node["compatibleAmmo"]	.as< std::vector<std::string> >(_compatibleAmmo);
+	_compatibleAmmo		= node["compatibleAmmo"]	.as< std::vector<std::string>>(_compatibleAmmo);
 	_accuracyAuto		= node["accuracyAuto"]		.as<int>(_accuracyAuto);
 	_accuracySnap		= node["accuracySnap"]		.as<int>(_accuracySnap);
 	_accuracyAimed		= node["accuracyAimed"]		.as<int>(_accuracyAimed);

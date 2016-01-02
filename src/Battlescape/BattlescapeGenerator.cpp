@@ -1187,7 +1187,7 @@ BattleUnit* BattlescapeGenerator::addXCOMUnit(BattleUnit* const unit) // private
 		&& _baseEquipScreen == false)
 	{
 		//Log(LOG_INFO) << ". Craft valid - use Deployment";
-		for (std::vector<std::vector<int> >::const_iterator
+		for (std::vector<std::vector<int>>::const_iterator
 				i = _craft->getRules()->getCraftDeployment().begin();
 				i != _craft->getRules()->getCraftDeployment().end();
 				++i)
@@ -2156,7 +2156,7 @@ int BattlescapeGenerator::loadMAP( // private.
 	if (_generateFuel == true) // if one of the mapBlocks has an items array defined, don't deploy fuel algorithmically
 		_generateFuel = (block->getItems()->empty() == true);
 
-	for (std::map<std::string, std::vector<Position> >::const_iterator
+	for (std::map<std::string, std::vector<Position>>::const_iterator
 			i = block->getItems()->begin();
 			i != block->getItems()->end();
 			++i)
@@ -3325,7 +3325,7 @@ bool BattlescapeGenerator::selectPosition( // private.
 	size_y /= 10;
 
 	std::pair<int, int> select;
-	std::vector<std::pair<int, int> > validPairs;
+	std::vector<std::pair<int, int>> validPairs;
 	bool add;
 
 	for (std::vector<SDL_Rect*>::const_iterator
@@ -3905,7 +3905,7 @@ void BattlescapeGenerator::drillModules( // private.
  */
 bool BattlescapeGenerator::removeBlocks(MapScript* const directive) // private.
 {
-	std::vector<std::pair<int, int> > deleted;
+	std::vector<std::pair<int, int>> deleted;
 	bool success = false;
 
 	for (std::vector<SDL_Rect*>::const_iterator
@@ -3992,7 +3992,7 @@ bool BattlescapeGenerator::removeBlocks(MapScript* const directive) // private.
 		}
 	}
 
-	for (std::vector<std::pair<int, int> >::const_iterator
+	for (std::vector<std::pair<int, int>>::const_iterator
 			i = deleted.begin();
 			i != deleted.end();
 			++i)

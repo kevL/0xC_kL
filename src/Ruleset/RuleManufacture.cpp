@@ -61,12 +61,12 @@ void RuleManufacture::load(
 	} // end_why. Perhaps to overwrite a previous entry with a subsequently loaded ID-string, perhaps.
 
 	_category		= node["category"]		.as<std::string>(_category);
-	_required		= node["required"]		.as< std::vector<std::string> >(_required);
+	_required		= node["required"]		.as< std::vector<std::string>>(_required);
 	_space			= node["space"]			.as<int>(_space);
 	_time			= node["time"]			.as<int>(_time);
 	_cost			= node["cost"]			.as<int>(_cost);
-	_requiredItems	= node["requiredItems"]	.as<std::map<std::string, int> >(_requiredItems);
-	_producedItems	= node["producedItems"]	.as<std::map<std::string, int> >(_producedItems);
+	_requiredItems	= node["requiredItems"]	.as<std::map<std::string, int>>(_requiredItems);
+	_producedItems	= node["producedItems"]	.as<std::map<std::string, int>>(_producedItems);
 
 	_listOrder		= node["listOrder"]		.as<int>(_listOrder);
 	if (_listOrder == 0)

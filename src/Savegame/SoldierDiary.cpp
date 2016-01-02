@@ -714,8 +714,8 @@ bool SoldierDiary::manageAwards(const Ruleset* const rules)
 		// ie, as soon as an award criteria that *fails to be achieved* is found, then no award.
 		grantAward = true;
 
-		const std::map<std::string, std::vector<int> >* criteriaList = (*i).second->getCriteria();
-		for (std::map<std::string, std::vector<int> >::const_iterator
+		const std::map<std::string, std::vector<int>>* criteriaList = (*i).second->getCriteria();
+		for (std::map<std::string, std::vector<int>>::const_iterator
 				j = criteriaList->begin();
 				j != criteriaList->end();
 				++j)
@@ -826,14 +826,14 @@ bool SoldierDiary::manageAwards(const Ruleset* const rules)
 				|| criteriaType == "killsWithCriteriaTurn")
 			{
 				//Log(LOG_INFO) << ". . . try Award w/ career,mission,turn";
-				const std::vector<std::map<int, std::vector<std::string> > >* killCriteriaList = (*i).second->getKillCriteria(); // fetch the killCriteria list.
-				for (std::vector<std::map<int, std::vector<std::string> > >::const_iterator // loop over the OR vectors.
+				const std::vector<std::map<int, std::vector<std::string>>>* killCriteriaList = (*i).second->getKillCriteria(); // fetch the killCriteria list.
+				for (std::vector<std::map<int, std::vector<std::string>>>::const_iterator // loop over the OR vectors.
 						orCriteria = killCriteriaList->begin();
 						orCriteria != killCriteriaList->end();
 						++orCriteria)
 				{
 					//Log(LOG_INFO) << ". . . . [3] iter killCriteria OR list";// << (*orCriteria)->;
-					for (std::map<int, std::vector<std::string> >::const_iterator // loop over the AND vectors.
+					for (std::map<int, std::vector<std::string>>::const_iterator // loop over the AND vectors.
 							andCriteria = orCriteria->begin();
 							andCriteria != orCriteria->end();
 							++andCriteria)

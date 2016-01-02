@@ -249,7 +249,7 @@ struct convert<OpenXcom::MissionZone>
 		if (node.IsSequence() == false)
 			return false;
 
-		rhs.areas = node.as<std::vector<OpenXcom::MissionArea> >(rhs.areas);
+		rhs.areas = node.as<std::vector<OpenXcom::MissionArea>>(rhs.areas);
 
 		return true;
 	}

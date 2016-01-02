@@ -1298,7 +1298,7 @@ bool BattleUnit::getCacheInvalid() const
  * @return, pairs of values where first is the colorgroup to replace and the
  * second is the new colorgroup with a shade
  */
-const std::vector<std::pair<Uint8, Uint8> >& BattleUnit::getRecolor() const
+const std::vector<std::pair<Uint8, Uint8>>& BattleUnit::getRecolor() const
 {
 	return _recolor;
 }

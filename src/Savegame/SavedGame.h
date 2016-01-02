@@ -196,14 +196,14 @@ private:
 	std::vector<Ufo*> _ufos;
 	std::vector<Waypoint*> _waypoints;
 
-	/// Fills a vector with the forced-types of completed ResearchProjects.
-	void tabulateForced(std::vector<const RuleResearch*>& list) const;
+	/// Checks whether a ResearchProject can be started.
+	bool isProjectAvailable(const RuleResearch* const resRule) const;
 	/// Checks whether a RuleResearch has all its prerequisites met.
 	bool checkPrerequisites(const RuleResearch* const resRule) const;
 	/// Checks whether or not required research has been met.
 	bool hasRequiredResearch(const RuleResearch* const resRule) const;
-	/// Checks whether a ResearchProject can be started.
-	bool isProjectAvailable(const RuleResearch* const resRule) const;
+	/// Fills a vector with the forced-types of completed ResearchProjects.
+	void tabulateForced(std::vector<const RuleResearch*>& forced) const;
 	/// Gets the list of newly available ResearchProjects that appear when a project is completed.
 	void getDependentResearchBasic(
 			std::vector<const RuleResearch*>& dependents,

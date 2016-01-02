@@ -30,9 +30,9 @@ enum ResearchStatus
 {
 	RS_HIDDEN,		// 0
 	RS_AVAILABLE,	// 1
-	RS_PROJECT,		// 2
-	RS_OFFLINE,		// 3
-	RS_COMPLETED	// 4
+	RS_COMPLETED	// 3
+//	RS_PROJECT,		// 4
+//	RS_OFFLINE,		// 5
 };
 
 class RuleResearch;
@@ -59,6 +59,7 @@ private:
 		ResearchGeneral(
 				const RuleResearch* resRule,
 				bool done = false);
+//		void init();
 		/// dTor.
 		~ResearchGeneral();
 

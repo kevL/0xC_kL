@@ -488,7 +488,7 @@ struct controler
 
 /// implementation for scalars types aka `int`, `double`, `float`
 template<typename T>
-struct controler<Scalar<T> >
+struct controler<Scalar<T>>
 {
 	T& ref;
 
@@ -653,7 +653,7 @@ struct controler_base
 
 
 template<typename Pixel>
-struct controler<ShaderBase<Pixel> >
+struct controler<ShaderBase<Pixel>>
 	:
 		public controler_base<typename ShaderBase<Pixel>::PixelPtr, typename ShaderBase<Pixel>::PixelRef>
 {

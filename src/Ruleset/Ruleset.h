@@ -301,7 +301,7 @@ protected:
 		int getPersonnelTime() const;
 
 		/// Gets Ufopaedia ArticleDefinition.
-		ArticleDefinition* getUfopaediaArticle(const std::string& name) const;
+		ArticleDefinition* getUfopaediaArticle(const std::string& article_id) const;
 		/// Gets the available articles.
 		const std::vector<std::string>& getUfopaediaList() const;
 

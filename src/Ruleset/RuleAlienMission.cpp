@@ -84,7 +84,7 @@ RuleAlienMission::RuleAlienMission(const std::string& type)
  */
 RuleAlienMission::~RuleAlienMission()
 {
-	for (std::vector<std::pair<size_t, WeightedOptions*> >::const_iterator
+	for (std::vector<std::pair<size_t, WeightedOptions*>>::const_iterator
 			i = _raceDistribution.begin();
 			i != _raceDistribution.end();
 			++i)
@@ -101,10 +101,10 @@ void RuleAlienMission::load(const YAML::Node& node)
 {
 	_type			= node["type"]			.as<std::string>(_type);
 	_points			= node["points"]		.as<int>(_points);
-	_waves			= node["waves"]			.as<std::vector<MissionWave> >(_waves);
+	_waves			= node["waves"]			.as<std::vector<MissionWave>>(_waves);
 	_specialUfo		= node["specialUfo"]	.as<std::string>(_specialUfo);
 	_specialZone	= node["specialZone"]	.as<size_t>(_specialZone);
-	_weights		= node["missionWeights"].as<std::map<size_t, int> >(_weights);
+	_weights		= node["missionWeights"].as<std::map<size_t, int>>(_weights);
 	_retalCoef		= node["retalCoef"]		.as<int>(_retalCoef);
 
 	_objective = static_cast<MissionObjective>(node["objective"].as<int>(_objective));
@@ -113,7 +113,7 @@ void RuleAlienMission::load(const YAML::Node& node)
 	if (const YAML::Node& weights = node["raceWeights"]) // allow only full replacement of mission racial distribution.
 	{
 		typedef std::map<size_t, WeightedOptions*> Associative;
-		typedef std::vector<std::pair<size_t, WeightedOptions*> > Linear;
+		typedef std::vector<std::pair<size_t, WeightedOptions*>> Linear;
 
 		Associative assoc;
 
@@ -170,7 +170,7 @@ void RuleAlienMission::load(const YAML::Node& node)
  */
 std::string RuleAlienMission::generateRace(size_t monthsPassed) const
 {
-	std::vector<std::pair<size_t, WeightedOptions*> >::const_reverse_iterator i (_raceDistribution.rbegin());
+	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator i (_raceDistribution.rbegin());
 	while (monthsPassed < i->first)
 		++i;
 
@@ -185,12 +185,12 @@ std::string RuleAlienMission::generateRace(size_t monthsPassed) const
  *
 std::string RuleAlienMission::getTopRace(const size_t monthsPassed) const
 {
-	std::vector<std::pair<size_t, WeightedOptions*> >::const_reverse_iterator race = _raceDistribution.rbegin();
+	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator race = _raceDistribution.rbegin();
 	while (monthsPassed < race->first)
 		++race;
 
 	return race->second->topChoice();
-//	std::vector<std::pair<size_t, WeightedOptions*> >::const_iterator race = _raceDistribution.begin();
+//	std::vector<std::pair<size_t, WeightedOptions*>>::const_iterator race = _raceDistribution.begin();
 //	return race->second->topChoice();
 } */
 

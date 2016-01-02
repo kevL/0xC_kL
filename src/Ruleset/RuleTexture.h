@@ -133,7 +133,7 @@ struct convert<OpenXcom::TextureDetail>
 
 		if (node["area"])
 		{
-			std::vector<double> area = node["area"].as<std::vector<double> >();
+			std::vector<double> area = node["area"].as<std::vector<double>>();
 			rhs.lonMin = area[0] * M_PI / 180.;
 			rhs.lonMax = area[1] * M_PI / 180.;
 			rhs.latMin = area[2] * M_PI / 180.;

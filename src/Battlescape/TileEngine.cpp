@@ -4359,7 +4359,7 @@ DoorResult TileEngine::unitOpensDoor(
 
 			if (tile != nullptr)
 			{
-				std::vector<std::pair<Position, MapDataType> > checkPair;
+				std::vector<std::pair<Position, MapDataType>> checkPair;
 				switch (dir)
 				{
 					case 0: // north

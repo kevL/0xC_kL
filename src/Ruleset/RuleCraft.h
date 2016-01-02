@@ -73,7 +73,7 @@ private:
 
 	RuleTerrain* _tacticalTerrainData;
 
-	std::vector<std::vector<int> > _deployment;
+	std::vector<std::vector<int>> _deployment;
 	std::vector<std::string> _required;
 
 
@@ -151,7 +151,7 @@ private:
 		int getListOrder() const;
 
 		/// Gets the deployment priority for the craft.
-		std::vector<std::vector<int> >& getCraftDeployment();
+		std::vector<std::vector<int>>& getCraftDeployment();
 
 		/// Gets the item limit for this type of craft.
 		int getMaxItems() const;

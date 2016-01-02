@@ -40,8 +40,8 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the ResearchComplete screen.
  * @param game		- pointer to the core game
- * @param resRule	- pointer to the completed research
- * @param gofRule	- pointer to bonus unlocked research
+ * @param resRule	- pointer to the completed RuleResearch
+ * @param gofRule	- pointer to bonus completed RuleResearch
  */
 ResearchCompleteState::ResearchCompleteState(
 		const RuleResearch* const resRule,
@@ -125,24 +125,14 @@ void ResearchCompleteState::btnReportClick(Action*)
 
 	if (_gofRule != nullptr)
 	{
-		std::string type;
-		if (_gofRule->getLookup().empty() == true)
-			type = _gofRule->getType();
-		else
-			type = _gofRule->getLookup();
-
-		Ufopaedia::openArticle(_game, type);
+		std::string gofType (_gofRule->getUfopaediaEntry()); // strip const.
+		Ufopaedia::openArticle(_game, gofType);
 	}
 
 	if (_resRule != nullptr)
 	{
-		std::string type;
-		if (_resRule->getLookup().empty() == true)
-			type = _resRule->getType();
-		else
-			type = _resRule->getLookup();
-
-		Ufopaedia::openArticle(_game, type);
+		std::string resType (_resRule->getUfopaediaEntry()); // strip const.
+		Ufopaedia::openArticle(_game, resType);
 	}
 }
 

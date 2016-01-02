@@ -42,7 +42,7 @@ private:
 	std::map<std::string, WeightedOptions*> _regionMissions; // The chances of each mission type for each region.
 
 	std::map<std::string, int> _missionRuns;
-	std::map<std::string, std::vector<std::pair<std::string, size_t> > > _missionLocations;
+	std::map<std::string, std::vector<std::pair<std::string, size_t>>> _missionLocations;
 
 	/// Disable copy and assignments.
 	AlienStrategy(const AlienStrategy&);

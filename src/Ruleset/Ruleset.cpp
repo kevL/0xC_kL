@@ -1631,9 +1631,9 @@ int Ruleset::getPersonnelTime() const
  * @param name - article name
  * @return, pointer to ArticleDefinition
  */
-ArticleDefinition* Ruleset::getUfopaediaArticle(const std::string& name) const
+ArticleDefinition* Ruleset::getUfopaediaArticle(const std::string& article_id) const
 {
-	std::map<std::string, ArticleDefinition*>::const_iterator i = _ufopaediaArticles.find(name);
+	std::map<std::string, ArticleDefinition*>::const_iterator i = _ufopaediaArticles.find(article_id);
 	if (i != _ufopaediaArticles.end())
 		return i->second;
 

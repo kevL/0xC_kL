@@ -143,7 +143,7 @@ void Node::load(const YAML::Node& node)
 	_destruct	= node["destruct"]	.as<int>(_destruct);
 	_priority	= node["priority"]	.as<int>(_priority);
 	_allocated	= node["allocated"]	.as<bool>(_allocated);
-	_nodeLinks	= node["links"]		.as<std::vector<int> >(_nodeLinks);
+	_nodeLinks	= node["links"]		.as<std::vector<int>>(_nodeLinks);
 //	_segment	= node["segment"]	.as<int>(_segment);
 }
 

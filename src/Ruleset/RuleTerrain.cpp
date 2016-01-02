@@ -96,7 +96,7 @@ void RuleTerrain::load(
 	}
 
 	if (const YAML::Node& civs = node["civilianTypes"])
-		_civilianTypes = civs.as<std::vector<std::string> >(_civilianTypes);
+		_civilianTypes = civs.as<std::vector<std::string>>(_civilianTypes);
 	else
 	{
 		_civilianTypes.push_back("MALE_CIVILIAN");
