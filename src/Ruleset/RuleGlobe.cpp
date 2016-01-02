@@ -34,7 +34,6 @@
 
 #include "../Engine/CrossPlatform.h"
 #include "../Engine/Exception.h"
-//#include "../Engine/Palette.h"
 
 #include "../Geoscape/Globe.h"
 
@@ -114,7 +113,7 @@ void RuleGlobe::load(const YAML::Node& node)
 				i != node["polygons"].end();
 				++i)
 		{
-			Polygon* polygon = new Polygon(3);
+			Polygon* const polygon = new Polygon(3);
 			polygon->load(*i);
 			_polygons.push_back(polygon);
 		}
@@ -136,13 +135,41 @@ void RuleGlobe::load(const YAML::Node& node)
 				i != node["polylines"].end();
 				++i)
 		{
-			Polyline* polyline = new Polyline(3);
+			Polyline* const polyline = new Polyline(3);
 			polyline->load(*i);
 			_polylines.push_back(polyline);
 		}
 	}
 
-	if (node["textures"])
+	for (YAML::const_iterator
+			i = node["textures"].begin();
+			i != node["textures"].end();
+			++i)
+	{
+		if ((*i)["id"])
+		{
+			const int id = (*i)["id"].as<int>();
+			RuleTexture* texture;
+
+			std::map<int, RuleTexture*>::const_iterator j = _textures.find(id);
+			if (j != _textures.end())
+				texture = j->second;
+			else
+			{
+				texture = new RuleTexture(id);
+				_textures[id] = texture;
+			}
+			texture->load(*i);
+		}
+		else if ((*i)["delete"])
+		{
+			const int id = (*i)["delete"].as<int>();
+			std::map<int, RuleTexture*>::const_iterator j = _textures.find(id);
+			if (j != _textures.end())
+				_textures.erase(j);
+		}
+	}
+/*	if (node["textures"])
 	{
 		for (std::map<int, RuleTexture*>::const_iterator
 				i = _textures.begin();
@@ -164,7 +191,7 @@ void RuleGlobe::load(const YAML::Node& node)
 			texture->load(*i);
 			_textures[id] = texture;
 		}
-	}
+	} */
 
 	Globe::C_LBLBASE	= static_cast<Uint8>(node["baseColor"]		.as<int>(Globe::C_LBLBASE));
 	Globe::C_LBLCITY	= static_cast<Uint8>(node["cityColor"]		.as<int>(Globe::C_LBLCITY));

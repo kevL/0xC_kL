@@ -2949,31 +2949,31 @@ void GeoscapeState::time1Day()
 			resEvents.push_back(new ResearchCompleteState(resRule0, gofRule));
 
 
-			std::vector<const RuleResearch*> nowAvailable;
+			std::vector<const RuleResearch*> popupResearch;
 			_gameSave->getPopupResearch(
-									nowAvailable,
+									popupResearch,
 									resRule,
 									*i);
 
 			for (std::vector<const RuleResearch*>::const_iterator
-					k = nowAvailable.begin();
-					k != nowAvailable.end();
+					k = popupResearch.begin();
+					k != popupResearch.end();
 					)
 			{
-				if ((*k)->getCost() == 0								// no fake projects pls.
-					|| _gameSave->searchResearch(*k, RS_HIDDEN) == true	// do not show twice.
-					|| _rules->getUnitRule((*k)->getType()) != nullptr)	// and no aLiens ->
+				if ((*k)->getCost() == 0
+					|| _rules->getUnitRule((*k)->getType()) != nullptr
+					|| _gameSave->searchResearch(*k, RS_HIDDEN) == false)
 				{
-					k = nowAvailable.erase(k);
+					k = popupResearch.erase(k); // do NOT show (1)no-cost (2)liveAliens (3)twice.
 				}
 				else
 					++k;
 			}
 
-			std::vector<const RuleManufacture*> newManufacturePossible;
-			_gameSave->getDependentManufacture(
-											newManufacturePossible,
-											resRule);
+			std::vector<const RuleManufacture*> popupManufacture;
+			_gameSave->getPopupManufacture(
+										popupManufacture,
+										resRule);
 
 			if (resRule0 != nullptr) // check for need to research the clip before the weapon itself is allowed to be manufactured.
 			{
@@ -2986,13 +2986,13 @@ void GeoscapeState::time1Day()
 					if (manfRule != nullptr
 						&& manfRule->getRequirements().empty() == false)
 					{
-						const std::vector<std::string>& prereqs (manfRule->getRequirements());
+						const std::vector<std::string>& required (manfRule->getRequirements());
 						const RuleItem* const aRule (_rules->getItem(itRule->getCompatibleAmmo()->front()));
 						if (aRule != nullptr
 							&& std::find(
-									prereqs.begin(),
-									prereqs.end(),
-									aRule->getType()) != prereqs.end()
+									required.begin(),
+									required.end(),
+									aRule->getType()) != required.end()
 							&& _gameSave->isResearched(manfRule->getRequirements()) == false)
 						{
 							resEvents.push_back(new ResearchRequiredState(itRule));
@@ -3001,31 +3001,31 @@ void GeoscapeState::time1Day()
 				}
 			}
 
-			if (nowAvailable.empty() == false)
+			if (popupResearch.empty() == false)
 			{
 				if (newResEvents.empty() == false) // only show the "allocate research" button for the last notification
 					newResEvents.back().showResearchButton = false;
 
 				newResEvents.push_back(NewPossibleResearchInfo(
 															*i,
-															nowAvailable,
+															popupResearch,
 															true));
 			}
 
-			if (newManufacturePossible.empty() == false)
+			if (popupManufacture.empty() == false)
 			{
 				if (newProdEvents.empty() == false) // only show the "allocate production" button for the last notification
 					newProdEvents.back().showManufactureButton = false;
 
 				newProdEvents.push_back(NewPossibleManufactureInfo(
 															*i,
-															newManufacturePossible,
+															popupManufacture,
 															true));
 			}
 
-			for (std::vector<Base*>::const_iterator // iterate through all the bases and remove this completed project from their labs
-					k = _gameSave->getBases()->begin(); // TODO: remove gof's too
-					k != _gameSave->getBases()->end();
+			for (std::vector<Base*>::const_iterator		// iterate through all the bases and remove this completed project from their labs
+					k = _gameSave->getBases()->begin();	// unless it's an alien interrogation ...
+					k != _gameSave->getBases()->end();	// TODO: remove gof's too
 					++k)
 			{
 				for (std::vector<ResearchProject*>::const_iterator
@@ -3033,7 +3033,7 @@ void GeoscapeState::time1Day()
 						l != (*k)->getResearch().end();
 						++l)
 				{
-					if (resType == (*l)->getRules()->getType()
+					if ((*l)->getRules()->getType() == resType
 						&& _rules->getUnitRule((*l)->getRules()->getType()) == nullptr)
 					{
 						(*k)->removeResearch(*l, false);

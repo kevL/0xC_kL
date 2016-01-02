@@ -1395,48 +1395,47 @@ bool TileEngine::canTargetTilepart(
 			}
 		}
 	}
+
 	//Log(LOG_INFO) << "canTargetTilepart maxZ = " << zMax;
-	if (foundMaxZ == false)
-		return false; // it's impossible to get there
-
-
-	if (zMin > zMax)
-		zMin = zMax;
-
-	const size_t
-		zRange = static_cast<size_t>(std::min(11, zMax - zMin + 1)); // >10 is out of bounds in heightFromCenter array.
-	const int
-		zCenter = (zMax + zMin) / 2;
-
-	for (size_t
-			j = 0;
-			j != zRange;
-			++j)
+	if (foundMaxZ == true)
 	{
-		scanVoxel->z = targetVoxel.z + zCenter + heightFromCenter[j];
-		//Log(LOG_INFO) << "j=" << j << " targetVoxel.z = " << targetVoxel.z << " zCenter = " << zCenter << " heightCenter = " << heightFromCenter[j];
-		//Log(LOG_INFO) << "scanVoxel.z = " << scanVoxel->z;
+		if (zMin > zMax) zMin = zMax;
+
+		const size_t
+			zRange = static_cast<size_t>(std::min(11, zMax - zMin + 1)); // stay within bounds of heightFromCenter[].
+		const int
+			zCenter = (zMax + zMin) / 2;
 
 		for (size_t
-				i = 0;
-				i != spiralCount;
-				++i)
+				j = 0;
+				j != zRange;
+				++j)
 		{
-			scanVoxel->x = targetVoxel.x + spiralArray[i * 2];
-			scanVoxel->y = targetVoxel.y + spiralArray[i * 2 + 1];
+			scanVoxel->z = targetVoxel.z + zCenter + heightFromCenter[j];
+			//Log(LOG_INFO) << "j=" << j << " targetVoxel.z = " << targetVoxel.z << " zCenter = " << zCenter << " heightCenter = " << heightFromCenter[j];
+			//Log(LOG_INFO) << "scanVoxel.z = " << scanVoxel->z;
 
-			trj.clear();
-			const VoxelType voxelTest = plotLine(
-											*originVoxel,
-											*scanVoxel,
-											false,
-											&trj,
-											excludeUnit);
-			if (voxelTest == static_cast<VoxelType>(tilePart)								// bingo. MapDataType & VoxelType correspond
-				&& Position::toTileSpace(trj.at(0)) == Position::toTileSpace(*scanVoxel))	// so do Tiles.
+			for (size_t
+					i = 0;
+					i != spiralCount;
+					++i)
 			{
-				//Log(LOG_INFO) << "ret TRUE";
-				return true;
+				scanVoxel->x = targetVoxel.x + spiralArray[i * 2];
+				scanVoxel->y = targetVoxel.y + spiralArray[i * 2 + 1];
+
+				trj.clear();
+				const VoxelType voxelTest = plotLine(
+												*originVoxel,
+												*scanVoxel,
+												false,
+												&trj,
+												excludeUnit);
+				if (voxelTest == static_cast<VoxelType>(tilePart)								// bingo. MapDataType & VoxelType correspond
+					&& Position::toTileSpace(trj.at(0)) == Position::toTileSpace(*scanVoxel))	// so do Tiles.
+				{
+					//Log(LOG_INFO) << "ret TRUE";
+					return true;
+				}
 			}
 		}
 	}
@@ -1493,7 +1492,7 @@ bool TileEngine::canTargetTilepart(
 	int relX = static_cast<int>(floor(static_cast<float>(relPos.y) * normal + 0.5f));
 	int relY = static_cast<int>(floor(static_cast<float>(-relPos.x) * normal + 0.5f));
 
-	int targetSlices[10] = // looks like [6] to me..
+	int targetSlices[10] = // looks like [6] to me.. it is 6. so what this function isn't used.
 	{
 		0,		0,
 		relX,	relY,
@@ -1527,7 +1526,7 @@ bool TileEngine::canTargetTilepart(
 		++total;
 
 		scanVoxel.z = targetMinHeight + i;
-		for (int j = 0; j < 2; ++j)
+		for (int j = 0; j != 3; ++j)
 		{
 			scanVoxel.x = targetVoxel.x + targetSlices[j * 2];
 			scanVoxel.y = targetVoxel.y + targetSlices[j * 2 + 1];

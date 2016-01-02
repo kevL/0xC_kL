@@ -367,7 +367,7 @@ private:
 				const RuleResearch* const resRule,
 				Base* const base) const;
 		/// Gets the list of newly available Productions that appear when a ResearchProject is completed.
-		void getDependentManufacture(
+		void getPopupManufacture(
 				std::vector<const RuleManufacture*>& dependents,
 				const RuleResearch* const resRule) const;
 		/// Checks if a ResearchProject is discovered.
@@ -375,7 +375,7 @@ private:
 		/// Checks if a list of ResearchProjects is discovered.
 		bool isResearched(const std::vector<std::string>& resTypes) const;
 
-		/// Gets the soldier matching an ID.
+		/// Gets the Soldier matching an ID.
 		Soldier* getSoldier(int id) const;
 		/// Handles the higher promotions.
 		bool handlePromotions(std::vector<Soldier*>& participants);
@@ -383,7 +383,7 @@ private:
 		void processSoldier(
 				const Soldier* const soldier,
 				PromotionInfo& promoData);
-		/// Checks how many soldiers of a rank exist and which one has the highest score.
+		/// Checks how many Soldiers of a rank exist and which one has the highest score for promotion.
 		Soldier* inspectSoldiers(
 				const std::vector<Soldier*>& soldiers,
 				const std::vector<Soldier*>& participants,

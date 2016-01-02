@@ -1776,7 +1776,7 @@ void SavedGame::getDependentResearchBasic( // private.
  * that are now available
  * @param resRule		- pointer to the RuleResearch that has just been discovered
  */
-void SavedGame::getDependentManufacture(
+void SavedGame::getPopupManufacture(
 		std::vector<const RuleManufacture*>& dependents,
 		const RuleResearch* const resRule) const
 {
