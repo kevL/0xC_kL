@@ -1661,8 +1661,10 @@ void GeoscapeState::time5Seconds()
 								(*j)->setDestination(nullptr);
 
 								Waypoint* const wp = new Waypoint();
-								wp->setLongitude(ufo->getLongitude());
-								wp->setLatitude(ufo->getLatitude());
+//								wp->setLongitude(ufo->getLongitude());
+//								wp->setLatitude(ufo->getLatitude());
+								wp->setLongitude(ufo->getMeetLongitude());
+								wp->setLatitude(ufo->getMeetLatitude());
 								wp->setId(ufo->getId());
 
 								resetTimer();

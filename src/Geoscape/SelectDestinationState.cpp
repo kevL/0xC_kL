@@ -211,7 +211,7 @@ void SelectDestinationState::init()
 	State::init();
 }
 
-/*
+/**
  * Runs the globe rotation timer.
  *
 void SelectDestinationState::think()

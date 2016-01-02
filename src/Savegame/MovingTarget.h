@@ -44,6 +44,8 @@ protected:
 
 	int _speed;
 	double
+		_meetPointLon,
+		_meetPointLat,
 		_speedLat,
 		_speedLon,
 		_speedRadian;
@@ -75,11 +77,20 @@ protected:
 		int getSpeed() const;
 		/// Sets the moving target's speed.
 		void setSpeed(const int speed);
+		/// Gets the moving target's radial speed.
+//		double getSpeedRadian() const;
 
 		/// Has the moving target reached its destination?
 		bool reachedDestination() const;
 		/// Move towards the destination.
 		void moveTarget();
+
+		/// Calculate meeting point with the target.
+		void calculateMeetPoint();
+		/// Returns the latitude of the meeting point.
+		double getMeetLatitude() const;
+		/// Returns the longitude of the meeting point.
+		double getMeetLongitude() const;
 };
 
 }
