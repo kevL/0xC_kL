@@ -44,6 +44,7 @@
 
 #include "../Resource/ResourcePack.h"
 
+#include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleCraftWeapon.h"
 
@@ -319,19 +320,34 @@ void CraftInfoState::init()
 	Surface* bit;
 	const int icon_width = 10;
 
-	if (crRule->getSoldiers() > 0)
+	if (crRule->getSoldiers() != 0)
 	{
 		int x = 0;
 
-		bit = baseBits->getFrame(38); // soldier graphic
-		for (int
-				i = 0;
-				i != _craft->getNumSoldiers();
-				++i,
-					x += icon_width)
+//		bit = baseBits->getFrame(38); // soldier graphic
+//		for (int
+//				i = 0;
+//				i != _craft->getNumSoldiers();
+//				++i, x += icon_width)
+		for (std::vector<Soldier*>::const_iterator
+				i = _base->getSoldiers()->begin();
+				i != _base->getSoldiers()->end();
+				++i, x += icon_width)
 		{
-			bit->setX(x);
-			bit->blit(_crew);
+			if ((*i)->getCraft() == _craft)
+			{
+				if ((*i)->getArmor()->isBasic() == true)
+					bit = baseBits->getFrame(70);
+				else if ((*i)->getArmor()->getType() == "STR_PERSONAL_ARMOR_UC")
+					bit = baseBits->getFrame(71);
+				else if ((*i)->getArmor()->getMoveTypeArmor() != MT_FLY)
+					bit = baseBits->getFrame(72);
+				else //if ((*i)->getArmor()->getMoveTypeArmor() == MT_FLY)
+					bit = baseBits->getFrame(73);
+
+				bit->setX(x);
+				bit->blit(_crew);
+			}
 		}
 
 		bit = baseBits->getFrame(40); // vehicle graphic
