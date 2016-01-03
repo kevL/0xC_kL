@@ -76,6 +76,9 @@ private:
 		RED   = 3;
 
 	static const Uint8
+		WHITE_u		=  1,
+		BLACK		= 14,
+		ORANGE		= 16,
 		ACU_ORANGE	= 18,
 		ACU_RED		= 35,
 		ACU_GREEN	= 51;
@@ -119,8 +122,9 @@ private:
 	Camera* _camera;
 	Game* _game;
 	NumberText
+		* _numAccuracy,
 		* _numExposed,
-		* _numAccuracy;
+		* _numWaypoint;
 	Projectile* _projectile;
 	ResourcePack* _res;
 	SavedBattleGame* _battleSave;

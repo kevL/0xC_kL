@@ -93,6 +93,9 @@ AbandonGameState::AbandonGameState(OptionsOrigin origin)
 	_btnYes->onKeyboardPress(
 					(ActionHandler)& AbandonGameState::btnYesClick,
 					Options::keyOk);
+	_btnYes->onKeyboardPress(
+					(ActionHandler)& AbandonGameState::btnYesClick,
+					Options::keyOkKeypad);
 
 	if (_origin == OPT_BATTLESCAPE)
 		applyBattlescapeTheme();

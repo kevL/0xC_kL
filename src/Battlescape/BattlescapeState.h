@@ -341,7 +341,7 @@ private:
 		void btnWoundedPress(Action* action);
 
 		/// Handler for clicking the launch rocket button.
-		void btnLaunchClick(Action* action);
+		void btnLaunchPress(Action* action);
 		/// Handler for clicking the use psi button.
 		void btnPsiClick(Action* action);
 

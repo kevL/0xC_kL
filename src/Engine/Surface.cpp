@@ -1022,7 +1022,7 @@ static inline void func(
 /**
  * Helper struct used for Surface::blitNShade().
  */
-struct StandardShade
+struct StandartShade
 {
 
 /**
@@ -1063,7 +1063,7 @@ static inline void func(
  * @param x				- X position of Surface blitted to
  * @param y				- Y position of Surface blitted to
  * @param colorOffset	- color offset (generally 0-16) (default 0 = no offset)
- * @param halfRight		- some tiles blit only the right half (default false)
+ * @param halfRight		- blit only the right half (default false)
  * @param colorGroup	- the actual colorblock + 1 because 0 is no new base color (default 0)
  * @param halfLeft		- kL_add: blits only the left half - NOTE This conflicts w/ 'halfRight' (default false)
  *						  but i am far too lazy to refactor a gajillion blitNShade calls!
@@ -1094,8 +1094,7 @@ void Surface::blitNShade(
 
 	if (colorGroup != 0)
 	{
-		--colorGroup;
-		colorGroup <<= 4;
+		(--colorGroup) <<= 4;
 		ShaderDraw<ColorReplace>(
 							ShaderSurface(surface),
 							src,
@@ -1103,7 +1102,7 @@ void Surface::blitNShade(
 							ShaderScalar(colorGroup));
 	}
 	else
-		ShaderDraw<StandardShade>(
+		ShaderDraw<StandartShade>(
 							ShaderSurface(surface),
 							src,
 							ShaderScalar(colorOffset));

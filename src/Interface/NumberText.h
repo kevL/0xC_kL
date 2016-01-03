@@ -39,8 +39,8 @@ private:
 	static bool init;
 	static const size_t DIGITS = 10;
 	static const Uint8
-		WHITE = 1,
-		GRAY  = 8;
+		FG =  1,
+		BG = 14;
 	static const int
 		WIDTH    = 3,
 		HEIGHT   = 5,

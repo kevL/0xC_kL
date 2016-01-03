@@ -94,12 +94,21 @@ PauseState::PauseState(OptionsOrigin origin)
 
 	_btnLoad->setText(tr("STR_LOAD_GAME"));
 	_btnLoad->onMouseClick((ActionHandler)& PauseState::btnLoadClick);
+	_btnLoad->onKeyboardPress(
+					(ActionHandler)& PauseState::btnLoadClick,
+					SDLK_l);
 
 	_btnSave->setText(tr("STR_SAVE_GAME"));
 	_btnSave->onMouseClick((ActionHandler)& PauseState::btnSaveClick);
+	_btnSave->onKeyboardPress(
+					(ActionHandler)& PauseState::btnSaveClick,
+					SDLK_s);
 
 	_btnAbandon->setText(tr("STR_ABANDON_GAME"));
 	_btnAbandon->onMouseClick((ActionHandler)& PauseState::btnAbandonClick);
+	_btnAbandon->onKeyboardPress(
+					(ActionHandler)& PauseState::btnAbandonClick,
+					SDLK_a);
 
 //	_btnOptions->setText(tr("STR_GAME_OPTIONS"));
 //	_btnOptions->onMouseClick((ActionHandler)& PauseState::btnOptionsClick);
@@ -110,6 +119,12 @@ PauseState::PauseState(OptionsOrigin origin)
 	_btnCancel->onKeyboardPress(
 					(ActionHandler)& PauseState::btnCancelClick,
 					Options::keyCancel);
+	_btnCancel->onKeyboardPress(
+					(ActionHandler)& PauseState::btnCancelClick,
+					Options::keyOk);
+	_btnCancel->onKeyboardPress(
+					(ActionHandler)& PauseState::btnCancelClick,
+					Options::keyOkKeypad);
 	if (origin == OPT_GEOSCAPE)
 		_btnCancel->onKeyboardPress(
 						(ActionHandler)& PauseState::btnCancelClick,

@@ -157,7 +157,6 @@ Map::Map(
 	_hiddenScreen = new BattlescapeMessage(320, hiddenHeight); // "Hidden Movement..." screen
 	_hiddenScreen->setX(_game->getScreen()->getDX());
 	_hiddenScreen->setY(_game->getScreen()->getDY());
-//	_hiddenScreen->setY((playableHeight - _hiddenScreen->getHeight()) / 2);
 	_hiddenScreen->setTextColor(static_cast<Uint8>(_game->getRuleset()->getInterface("battlescape")->getElement("messageWindows")->color));
 
 	_scrollMouseTimer = new Timer(SCROLL_INTERVAL);
@@ -170,16 +169,13 @@ Map::Map(
 						_scrollMouseTimer,
 						_scrollKeyTimer);
 
-/*	_txtAccuracy = new Text(24,9);
-	_txtAccuracy->setSmall();
-	_txtAccuracy->setPalette(_game->getScreen()->getPalette());
-	_txtAccuracy->setHighContrast();
-	_txtAccuracy->initText(_res->getFont("FONT_BIG"), _res->getFont("FONT_SMALL"), _game->getLanguage()); */
-	_numAccuracy = new NumberText(24,9);
-	_numAccuracy->setPalette(_game->getScreen()->getPalette());
+	_numAccuracy = new NumberText(12,5);
+	_numAccuracy->setBordered();
 
-	_numExposed = new NumberText(24,9);
-	_numExposed->setPalette(_game->getScreen()->getPalette());
+	_numExposed = new NumberText(12,5);
+
+	_numWaypoint = new NumberText(12,6);
+	_numWaypoint->setColor(WHITE_u);
 
 	_srfRookiBadge = _res->getSurface("RANK_ROOKIE");
 	_srfCross = _res->getSurfaceSet("SCANG.DAT")->getFrame(11);
@@ -198,6 +194,7 @@ Map::~Map()
 	delete _camera;
 	delete _numAccuracy;
 	delete _numExposed;
+	delete _numWaypoint;
 }
 
 /**
@@ -205,9 +202,13 @@ Map::~Map()
  */
 void Map::init()
 {
+	_numAccuracy->setPalette(getPalette());
+	_numExposed->setPalette(getPalette());
+	_numWaypoint->setPalette(getPalette());
+
 	const Uint8
-		f = 16, // yellow Fill
-		b = 14; // black Border
+		f = ORANGE,	// Fill
+		b = BLACK;	// Border
 	const Uint8 pixels_stand[81] = { 0, 0, b, b, b, b, b, 0, 0,
 									 0, 0, b, f, f, f, b, 0, 0,
 									 0, 0, b, f, f, f, b, 0, 0,
@@ -219,7 +220,7 @@ void Map::init()
 									 0, 0, 0, 0, b, 0, 0, 0, 0 };
 
 	_arrow = new Surface(9,9);
-	_arrow->setPalette(this->getPalette());
+	_arrow->setPalette(getPalette());
 
 	_arrow->lock();
 	for (size_t
@@ -251,7 +252,7 @@ void Map::init()
 									 0, 0, b, b, b, b, b, 0, 0 };
 
 	_arrow_kneel = new Surface(9,9);
-	_arrow_kneel->setPalette(this->getPalette());
+	_arrow_kneel->setPalette(getPalette());
 
 	_arrow_kneel->lock();
 	for (size_t
@@ -600,20 +601,6 @@ void Map::drawTerrain(Surface* const surface) // private.
 	}
 	else
 		_smoothingEngaged = false; // no projectile OR explosions-waiting
-
-	const bool pathPreviewed (_battleSave->getPathfinding()->isPathPreviewed());
-	NumberText* numWp (nullptr);
-
-	if (_waypoints.empty() == false
-		|| (pathPreviewed == true && (_previewSetting & PATH_TU_COST)))
-	{
-		// note: numWp is used for both pathPreview and BL-waypoints.
-		// Leave them the same color.
-		numWp = new NumberText(15, 15, 20, 30);
-		numWp->setPalette(getPalette());
-		numWp->setColor(SCREEN_WHITE);
-	}
-
 
 	int // get Map's corner-coordinates for rough boundaries in which to draw tiles.
 		beginX,
@@ -1264,29 +1251,19 @@ void Map::drawTerrain(Surface* const surface) // private.
 											const int exposure = _unit->getExposed();
 											if (exposure != -1)
 											{
-												int
-													colorGroup,
-													colorOffset;
+												Uint8 color;
 												if (_animFrame < 4)
-												{
-													colorGroup = 0; // white
-													colorOffset = 2;
-												}
+													color = WHITE_u;
 												else
-												{
-													colorGroup = 10; // yellow
-													colorOffset = 3;
-												}
+													color = BLACK;
 
 												_numExposed->setValue(static_cast<unsigned>(exposure));
+												_numExposed->setColor(color);
 												_numExposed->draw();
 												_numExposed->blitNShade(
-																	surface,
-																	posScreen.x + walkOffset.x + 21,
-																	posScreen.y + walkOffset.y + 6,
-																	colorOffset,
-																	false,
-																	colorGroup);
+														surface,
+														posScreen.x + walkOffset.x + 21,
+														posScreen.y + walkOffset.y + 5);
 											}
 										}
 									}
@@ -1571,9 +1548,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 								_numAccuracy->setColor(color);
 								_numAccuracy->draw();
 								_numAccuracy->blitNShade(
-													surface,
-													posScreen.x,
-													posScreen.y);// + vertOffset);
+										surface,
+										posScreen.x,
+										posScreen.y);
 							}
 							else if (_cursorType == CT_THROW) // indicator for Throwing.
 							{
@@ -1606,9 +1583,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 								_numAccuracy->setColor(color);
 								_numAccuracy->draw();
 								_numAccuracy->blitNShade(
-													surface,
-													posScreen.x,
-													posScreen.y);// + vertOffset);
+										surface,
+										posScreen.x,
+										posScreen.y);
 							}
 						}
 
@@ -1627,9 +1604,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 // Draw WayPoints if any on current Tile
 					int
-						wpVal (1),
 						offset_x (2),
 						offset_y (2);
+					unsigned wpVal (1);
 
 					for (std::vector<Position>::const_iterator
 							i = _waypoints.begin();
@@ -1647,9 +1624,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 										posScreen.y);
 							}
 
-							numWp->setValue(static_cast<unsigned>(wpVal));
-							numWp->draw();
-							numWp->blitNShade(
+							_numWaypoint->setValue(wpVal);
+							_numWaypoint->draw();
+							_numWaypoint->blitNShade(
 									surface,
 									posScreen.x + offset_x,
 									posScreen.y + offset_y);
@@ -1679,9 +1656,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 							|| itY == _battleSave->getMapSizeY() - 1)
 						{
 							srfMark->blitNShade(
-											surface,
-											posScreen.x + 14,
-											posScreen.y + 31);
+									surface,
+									posScreen.x + 14,
+									posScreen.y + 31);
 						}
 					}
 					// end border icon.
@@ -1699,10 +1676,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 								dotTest) != _battleSave->scannerDots().end())
 						{
 							srfMark->blitNShade(
-											surface,
-											posScreen.x + 14,
-											posScreen.y + 30,
-											0, false, RED);
+									surface,
+									posScreen.x + 14,
+									posScreen.y + 30,
+									0, false, RED);
 						}
 					}
 					// end scanner dots.
@@ -1749,21 +1726,21 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 			if (_unit->isKneeled() == true)
 				_arrow_kneel->blitNShade(
-								surface,
-								posScreen.x - (_arrow_kneel->getWidth() / 2),
-								posScreen.y - _arrow_kneel->getHeight() - 4 - phaseCycle);
+						surface,
+						posScreen.x - (_arrow_kneel->getWidth() / 2),
+						posScreen.y - _arrow_kneel->getHeight() - 4 - phaseCycle);
 			else
 				_arrow->blitNShade(
-								surface,
-								posScreen.x - _arrow->getWidth() / 2,
-								posScreen.y - _arrow->getHeight() + phaseCycle);
+						surface,
+						posScreen.x - _arrow->getWidth() / 2,
+						posScreen.y - _arrow->getHeight() + phaseCycle);
 		}
 	}
 	// end arrow.
 
-	if (pathPreviewed == true)
+	if (_battleSave->getPathfinding()->isPathPreviewed() == true)
 	{
-		if (numWp != nullptr) numWp->setBordered(); // make a border for the pathPreview display
+		_numWaypoint->setBordered(); // make a border for the pathPreview display
 
 		for (int
 				itZ = beginZ;
@@ -1784,10 +1761,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 					_camera->convertMapToScreen(posField, &posScreen);
 					posScreen += _camera->getMapOffset();
 
-					if (posScreen.x > -_spriteWidth // only render pathPreview inside the surface
-						&& posScreen.x < surface->getWidth() + _spriteWidth
+					if (   posScreen.x > -_spriteWidth // only render pathPreview inside the surface
+						&& posScreen.x <  _spriteWidth + surface->getWidth()
 						&& posScreen.y > -_spriteHeight
-						&& posScreen.y < surface->getHeight() + _spriteHeight)
+						&& posScreen.y <  _spriteHeight + surface->getHeight())
 					{
 						_tile = _battleSave->getTile(posField);
 
@@ -1837,18 +1814,18 @@ void Map::drawTerrain(Surface* const surface) // private.
 										offset_y += 7;
 								}
 
-								numWp->setValue(static_cast<unsigned>(_tile->getPreviewTu()));
-								numWp->draw();
+								_numWaypoint->setValue(static_cast<unsigned>(_tile->getPreviewTu()));
+								_numWaypoint->draw();
 
 								if (!(_previewSetting & PATH_ARROWS))
-									numWp->blitNShade(
+									_numWaypoint->blitNShade(
 												surface,
 												posScreen.x + 16 - offset_x,
 												posScreen.y + 37 - offset_y,
 												0, false,
 												_tile->getPreviewColor());
 								else
-									numWp->blitNShade(
+									_numWaypoint->blitNShade(
 												surface,
 												posScreen.x + 16 - offset_x,
 												posScreen.y + 30 - offset_y);
@@ -1858,9 +1835,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 				}
 			}
 		}
-	}
 
-	delete numWp;
+		_numWaypoint->setBordered(false); // remove border for BL-wp's
+	}
 	// end Path Preview.
 
 	if (_explosionInFOV == true) // check if hit or explosion animations

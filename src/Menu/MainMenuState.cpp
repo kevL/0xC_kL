@@ -103,6 +103,12 @@ MainMenuState::MainMenuState()
 
 	_btnLoad->setText(tr("STR_LOAD_SAVED_GAME"));
 	_btnLoad->onMouseClick((ActionHandler)& MainMenuState::btnLoadClick);
+	_btnLoad->onKeyboardPress(
+					(ActionHandler)& MainMenuState::btnLoadClick,
+					Options::keyOk);
+	_btnLoad->onKeyboardPress(
+					(ActionHandler)& MainMenuState::btnLoadClick,
+					Options::keyOkKeypad);
 
 //	_btnOptions->setText(tr("STR_OPTIONS"));
 //	_btnOptions->onMouseClick((ActionHandler)& MainMenuState::btnOptionsClick);

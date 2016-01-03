@@ -47,7 +47,7 @@ namespace OpenXcom
 /**
  * Sets up an ExplosionBState.
  * @param parent		- pointer to the BattlescapeGame
- * @param center		- center position in voxelspace
+ * @param centerVoxel	- center position in voxel-space
  * @param item			- pointer to item involved in the explosion (eg grenade)
  * @param unit			- pointer to unit involved in the explosion (eg unit throwing the grenade, cyberdisc, etc)
  * @param tile			- pointer to tile the explosion is on (default nullptr)
@@ -57,7 +57,7 @@ namespace OpenXcom
  */
 ExplosionBState::ExplosionBState(
 		BattlescapeGame* const parent,
-		const Position center,
+		const Position centerVoxel,
 		BattleItem* const item,
 		BattleUnit* const unit,
 		Tile* const tile,
@@ -66,7 +66,7 @@ ExplosionBState::ExplosionBState(
 		bool forceCamera)
 	:
 		BattleState(parent),
-		_center(center),
+		_centerVoxel(centerVoxel),
 		_item(item),
 		_unit(unit),
 		_tile(tile),
@@ -163,7 +163,7 @@ void ExplosionBState::init()
 	}
 
 
-	const Position posTarget = Position::toTileSpace(_center);
+	const Position posTarget = Position::toTileSpace(_centerVoxel);
 
 	if (_areaOfEffect == true)
 	{
@@ -207,7 +207,7 @@ void ExplosionBState::init()
 			if (qty < 1 || offset == 0)
 				qty = 1;
 
-			Position explVoxel = _center;
+			Position explVoxel = _centerVoxel;
 			for (int
 					i = 0;
 					i != qty;
@@ -217,15 +217,15 @@ void ExplosionBState::init()
 				{
 //					explVoxel.x += RNG::generate(-offset, offset); // these cause anims to sweep across the battlefield. Pretty cool.
 //					explVoxel.y += RNG::generate(-offset, offset);
-					explVoxel.x = _center.x + RNG::generate(-offset, offset);
-					explVoxel.y = _center.y + RNG::generate(-offset, offset);
+					explVoxel.x = _centerVoxel.x + RNG::generate(-offset, offset);
+					explVoxel.y = _centerVoxel.y + RNG::generate(-offset, offset);
 
 					if (RNG::percent(60) == true)
 						++delay;
 				}
 
 				Explosion* const explosion = new Explosion( // animation
-														explVoxel + Position(20,20,0), // jogg the anim down a few pixels. Tks.
+														explVoxel - Position(16,16,0),
 														start,
 														delay,
 														true, 0);
@@ -296,7 +296,7 @@ void ExplosionBState::init()
 		if (start != -1)
 		{
 			Explosion* const explosion = new Explosion(
-													_center,
+													_centerVoxel,
 													start,
 													0, false,
 													result,
@@ -437,7 +437,7 @@ void ExplosionBState::explode() // private.
 			if (_unit->getGeoscapeSoldier() != nullptr
 				&& _unit->getFaction() == _unit->getOriginalFaction())
 			{
-				const BattleUnit* const targetUnit = _battleSave->getTile(Position::toTileSpace(_center))->getTileUnit();
+				const BattleUnit* const targetUnit = _battleSave->getTile(Position::toTileSpace(_centerVoxel))->getTileUnit();
 				if (targetUnit != nullptr && targetUnit->getFaction() != FACTION_PLAYER)
 				{
 					int xpMelee;
@@ -472,7 +472,7 @@ void ExplosionBState::explode() // private.
 			//Log(LOG_INFO) << "ExplosionBState::explode() AoE te::explode";
 //			te->setProjectileDirection(-1);
 			te->explode(
-					_center,
+					_centerVoxel,
 					_power,
 					itRule->getDamageType(),
 					itRule->getExplosionRadius(),
@@ -490,7 +490,7 @@ void ExplosionBState::explode() // private.
 				dType = itRule->getDamageType();
 
 			te->hit(
-					_center,
+					_centerVoxel,
 					_power,
 					dType,
 					_unit,
@@ -511,7 +511,7 @@ void ExplosionBState::explode() // private.
 			_tile->setExplosive(0, DT_NONE, true);
 
 		te->explode(
-				_center,
+				_centerVoxel,
 				_power,
 				dType,
 				_power / 10);
@@ -529,7 +529,7 @@ void ExplosionBState::explode() // private.
 			radius = 6;
 
 		te->explode(
-				_center,
+				_centerVoxel,
 				_power,
 				DT_HE,
 				radius);

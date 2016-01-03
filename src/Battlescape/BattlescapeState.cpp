@@ -428,7 +428,7 @@ BattlescapeState::BattlescapeState()
 	add(_btnPsi);
 
 	_game->getResourcePack()->getSurfaceSet("SPICONS.DAT")->getFrame(0)->blit(_btnLaunch);
-	_btnLaunch->onMouseClick((ActionHandler)& BattlescapeState::btnLaunchClick);
+	_btnLaunch->onMousePress((ActionHandler)& BattlescapeState::btnLaunchPress);
 	_btnLaunch->setVisible(false);
 
 	_game->getResourcePack()->getSurfaceSet("SPICONS.DAT")->getFrame(1)->blit(_btnPsi);
@@ -1033,7 +1033,7 @@ void BattlescapeState::think()
 	//Log(LOG_INFO) << "BattlescapeState::think()";
 	if (_tacticalTimer->isRunning() == true)
 	{
-		static bool popped; // inits to false.
+		static bool popped;
 
 		if (_popups.empty() == true)
 		{
@@ -2345,12 +2345,25 @@ void BattlescapeState::btnWoundedPress(Action* action)
  * Launches the blaster bomb.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnLaunchClick(Action* action)
+void BattlescapeState::btnLaunchPress(Action* action)
 {
-	_bigBtnBorder->setY(20);
-	_bigBtnBorder->setVisible();
+	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	{
+		_bigBtnBorder->setY(20);
+		_bigBtnBorder->setVisible();
 
-	_battleGame->launchAction();
+		_battleGame->launchAction();
+	}
+	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
+	{
+		_battleGame->getCurrentAction()->waypoints.clear();
+		_map->getWaypoints()->clear();
+		_btnLaunch->setVisible(false);
+
+		_battleGame->cancelCurrentAction(true);
+		_battleGame->setupCursor();
+	}
+
 	action->getDetails()->type = SDL_NOEVENT; // consume the event
 }
 
