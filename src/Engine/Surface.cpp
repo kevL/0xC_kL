@@ -29,6 +29,8 @@
 #include <SDL_gfxPrimitives.h>
 #include <SDL_image.h>
 
+#include "../lodepng.h"
+
 #include "Exception.h"
 #include "Language.h"
 #include "Logger.h"
@@ -314,19 +316,83 @@ void Surface::loadImage(const std::string& file)
 	DeleteAligned(_alignedBuffer); // Destroy current surface (will be replaced)
 
 	SDL_FreeSurface(_surface);
-	_alignedBuffer = nullptr;
 	_surface = nullptr;
+	_alignedBuffer = nullptr;
 
-	// SDL only takes UTF-8 filenames
-	// so here's an ugly hack to match this ugly reasoning
-	const std::string utf8 = Language::wstrToUtf8(Language::fsToWstr(file)); // Load file
-	Log(LOG_VERBOSE) << "Loading image: " << utf8;
-	_surface = IMG_Load(utf8.c_str());
+	Log(LOG_VERBOSE) << "Loading image w/ LodePNG: " << file;
+
+	std::vector<unsigned char> png; // Try loading with LodePNG first
+	unsigned error = lodepng::load_file(png, file);
+	if (error == 0)
+	{
+		std::vector<unsigned char> image;
+		unsigned
+			width,
+			height;
+
+		lodepng::State state;
+		state.decoder.color_convert = 0u;
+
+		error = lodepng::decode(
+							image,
+							width,
+							height,
+							state,
+							png);
+		if (error == 0)
+		{
+			LodePNGColorMode* color = &state.info_png.color;
+
+			unsigned bpp = lodepng_get_bpp(color);
+			if (bpp == 8)
+			{
+				_alignedBuffer = NewAligned(bpp, width, height);
+				_surface = SDL_CreateRGBSurfaceFrom(
+												_alignedBuffer,
+												width,
+												height,
+												bpp,
+												GetPitch(bpp, width),
+												0,0,0,0);
+				if (_surface != nullptr)
+				{
+					int
+						x = 0,
+						y = 0;
+
+					for (std::vector<unsigned char>::const_iterator
+							i = image.begin();
+							i != image.end();
+							++i)
+					{
+						setPixelIterative(&x,&y, *i);
+					}
+
+					setPalette(
+							(SDL_Color*)color->palette,
+							0,
+							color->palettesize);
+				}
+			}
+		}
+	}
+
+	if (_surface == nullptr) // Otherwise default to SDL_Image
+	{
+		// SDL only takes UTF-8 filenames
+		// so here's an ugly hack to match this ugly reasoning
+		const std::string utf8 = Language::wstrToUtf8(Language::fsToWstr(file));
+		Log(LOG_VERBOSE) << "LodePNG failed - loading image w/ SDL: " << utf8;
+		_surface = IMG_Load(utf8.c_str());
+	}
+
 	if (_surface == nullptr)
 	{
 		const std::string err = file + ":" + IMG_GetError();
 		throw Exception(err);
 	}
+
+	SDL_SetColorKey(_surface, SDL_SRCCOLORKEY, 0u);
 }
 
 /**
