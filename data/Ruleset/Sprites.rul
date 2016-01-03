@@ -121,15 +121,7 @@ extraSprites:
   - type: BASEBITS.PCK
     files:
       0: Resources/Sprites/geograph/basebits/
-  - type: BASEBITS.PCK
-    width: 11
-    height: 18
-    singleImage: true
-    files:
-      70: Resources/Sprites/geograph/basebits/CraftSoldierIcons/01_Craft_Unarmored_PalB.png
-      71: Resources/Sprites/geograph/basebits/CraftSoldierIcons/02_Craft_PersonalArmor_PalB.png
-      72: Resources/Sprites/geograph/basebits/CraftSoldierIcons/03_Craft_PowerArmor_PalB.png
-      73: Resources/Sprites/geograph/basebits/CraftSoldierIcons/04_Craft_FlyingSuit_PalB.png
+      70: Resources/Sprites/geograph/basebits/CraftSoldierIcons/
   - type: GRAPHS.SPK
     width: 320
     height: 200
