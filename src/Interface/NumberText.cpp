@@ -82,7 +82,7 @@ void NumberText::deleteStaticSurfaces() // static.
 			delete _chars[i];
 			delete _charsBorder[i];
 		}
-		delete _chars[10];
+		delete _chars[10u]; // 'h'
 	}
 }
 
@@ -309,7 +309,8 @@ void NumberText::setBordered(bool bordered)
 }
 
 /**
- * Changes the color used to render the digits.
+ * Sets the color used to render digits.
+ * @note Set color to 0 to draw w/ the init color (FG).
  * @param color - color value
  */
 void NumberText::setColor(Uint8 color)
@@ -319,7 +320,8 @@ void NumberText::setColor(Uint8 color)
 }
 
 /**
- * Returns the color used to render the digits.
+ * Gets the color used to render digits.
+ * @note Returns 0 (not the init color) if no color was specified.
  * @return, color value
  */
 Uint8 NumberText::getColor() const
@@ -328,7 +330,8 @@ Uint8 NumberText::getColor() const
 }
 
 /**
- * Changes the color used to render the border.
+ * Sets the color used to render the border.
+ * @note Set color to 0 to draw w/ the init color (BG).
  * @param color - color value
  */
 void NumberText::setColorBorder(Uint8 color)
@@ -338,7 +341,8 @@ void NumberText::setColorBorder(Uint8 color)
 }
 
 /**
- * Returns the color used to render the border.
+ * Gets the color used to render the border.
+ * @note Returns 0 (not the init color) if no border-color was specified.
  * @return, color value
  */
 Uint8 NumberText::getColorBorder() const

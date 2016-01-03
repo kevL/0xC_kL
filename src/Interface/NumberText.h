@@ -59,7 +59,7 @@ private:
 		_color,
 		_colorBorder;
 
-	/// Creates digits as Surfaces.
+	/// Creates digits as static Surfaces.
 	static void createStaticSurfaces();
 
 
