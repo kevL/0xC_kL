@@ -169,13 +169,12 @@ Map::Map(
 						_scrollMouseTimer,
 						_scrollKeyTimer);
 
-	_numAccuracy = new NumberText(12,5);
+	_numAccuracy = new NumberText(12,6);
 	_numAccuracy->setBordered();
 
-	_numExposed = new NumberText(12,5);
+	_numExposed = new NumberText(12,6);
 
 	_numWaypoint = new NumberText(12,6);
-	_numWaypoint->setColor(WHITE_u);
 
 	_srfRookiBadge = _res->getSurface("RANK_ROOKIE");
 	_srfCross = _res->getSurfaceSet("SCANG.DAT")->getFrame(11);

@@ -54,6 +54,7 @@ NumberText::NumberText(
 		_append(append),
 		_value(0u),
 		_color(0u),
+		_colorBorder(0u),
 		_bordered(false)
 {
 	if (init == true)
@@ -244,24 +245,25 @@ void NumberText::createStaticSurfaces() // private/static.
 			++i)
 	{
 		_charsBorder[i] = new Surface(WIDTH_B, HEIGHT_B);
-
+		_charsBorder[i]->lock();
 		for (int
-				y1 = 0;
-				y1 != HEIGHT_B;
-				++y1)
+				y = 0;
+				y != HEIGHT_B;
+				++y)
 		{
 			for (int
-					x1 = 0;
-					x1 != WIDTH_B;
-					++x1)
+					x = 0;
+					x != WIDTH_B;
+					++x)
 			{
-				_charsBorder[i]->setPixelColor(x1,y1, BG);
+				_charsBorder[i]->setPixelColor(x,y, BG);
 			}
 		}
-
 		_chars[i]->blitNShade(
 						_charsBorder[i],
 						0,0,0);
+		_charsBorder[i]->unlock();
+
 	}
 
 	_chars[10] = new Surface(WIDTH, HEIGHT); // letter 'h'
@@ -279,8 +281,8 @@ void NumberText::createStaticSurfaces() // private/static.
 }
 
 /**
- * Changes the value used to render the number.
- * @param value - number value (default 0)
+ * Changes the value used to render the digits.
+ * @param value - digits value (default 0)
  */
 void NumberText::setValue(unsigned value)
 {
@@ -289,8 +291,8 @@ void NumberText::setValue(unsigned value)
 }
 
 /**
- * Returns the value used to render the number.
- * @return, number value
+ * Returns the value used to render the digits.
+ * @return, digits value
  */
 unsigned NumberText::getValue() const
 {
@@ -298,7 +300,7 @@ unsigned NumberText::getValue() const
 }
 
 /**
- * Sets whether or not to draw a border around the number.
+ * Sets whether or not to draw a border around the digits.
  * @param bordered - true to border (default true)
  */
 void NumberText::setBordered(bool bordered)
@@ -307,7 +309,7 @@ void NumberText::setBordered(bool bordered)
 }
 
 /**
- * Changes the color used to render the number.
+ * Changes the color used to render the digits.
  * @param color - color value
  */
 void NumberText::setColor(Uint8 color)
@@ -317,7 +319,7 @@ void NumberText::setColor(Uint8 color)
 }
 
 /**
- * Returns the color used to render the number.
+ * Returns the color used to render the digits.
  * @return, color value
  */
 Uint8 NumberText::getColor() const
@@ -326,7 +328,26 @@ Uint8 NumberText::getColor() const
 }
 
 /**
- * Replaces a certain amount of colors in the NumberText palette.
+ * Changes the color used to render the border.
+ * @param color - color value
+ */
+void NumberText::setColorBorder(Uint8 color)
+{
+	_colorBorder = color;
+	_redraw = true;
+}
+
+/**
+ * Returns the color used to render the border.
+ * @return, color value
+ */
+Uint8 NumberText::getColorBorder() const
+{
+	return _colorBorder;
+}
+
+/**
+ * Replaces a certain amount of colors in this NumberText palette.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- amount of colors to replace (default 256)
@@ -350,7 +371,7 @@ void NumberText::setPalette(
 }
 
 /**
- * Draws all the digits in the number.
+ * Draws all the digits in the digits.
  */
 void NumberText::draw()
 {
@@ -393,9 +414,68 @@ void NumberText::draw()
 			_charsBorder[*i - '0']->blit(this);
 			x += _chars[*i - '0']->getWidth() + 1;
 		}
+
+		if (_colorBorder != 0u)
+		{
+			const int pixels (_surface->w * _surface->h);
+			int
+				x = 0,
+				y = 0;
+			Uint8 color;
+			for (int
+					i = 0;
+					i != pixels;
+					++i)
+			{
+				switch (getPixelColor(x,y))
+				{
+					case 0:
+						color = 0u;
+						break;
+					case BG:
+						color = _colorBorder;
+						break;
+
+					default:
+						color = FG;
+				}
+
+				setPixelIterative(&x,&y, color);
+			}
+		}
 	}
 
-	offset(_color);
+	if (_color != 0u)
+	{
+		const int pixels (_surface->w * _surface->h);
+		int
+			x = 0,
+			y = 0;
+		Uint8 color;
+		for (int
+				i = 0;
+				i != pixels;
+				++i)
+		{
+			switch (getPixelColor(x,y))
+			{
+				case  0:
+					color = 0u;
+					break;
+				case FG:
+					color = _color;
+					break;
+
+				default:
+					if (_colorBorder == 0u)
+						color = BG;
+					else
+						color = _colorBorder;
+			}
+
+			setPixelIterative(&x,&y, color);
+		}
+	}
 }
 
 }

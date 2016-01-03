@@ -18,12 +18,11 @@
  */
 
 #ifndef _USE_MATH_DEFINES
-	#define _USE_MATH_DEFINES
+#	define _USE_MATH_DEFINES
 #endif
 
 #include "BattlescapeState.h"
 
-//#define _USE_MATH_DEFINES
 //#include <cmath>
 #include <cstddef> // nullptr (for NB code-assistant only)
 #include <cstring>

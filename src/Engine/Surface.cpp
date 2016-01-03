@@ -554,46 +554,46 @@ void Surface::clear(Uint32 color)
 /**
  * Shifts all the colors in the surface by a set amount.
  * @note This is a common method in 8bpp games to simulate color effects for cheap.
- * @param delta		- amount to shift
- * @param minColor	- minimum color to shift to (default -1)
- * @param maxColor	- maximum color to shift to (default -1)
- * @param multi		- shift multiplier (default 1)
+ * @param shift		- amount to shift
+ * @param colorLow	- minimum color to shift to (default -1)
+ * @param colorHigh	- maximum color to shift to (default -1)
+ * @param multer	- shift multiplier (default 1)
  */
 void Surface::offset(
-		int delta,
-		int minColor,
-		int maxColor,
-		int multi)
+		int shift,
+		int colorLow,
+		int colorHigh,
+		int multer)
 {
-	if (delta != 0)
+	if (shift != 0)
 	{
 		lock();
 		for (int
 				x = 0, y = 0;
-				x < getWidth() && y < getHeight();
+				x < _surface->w && y < _surface->h;
 				)
 		{
-			const int pixel = static_cast<int>(getPixelColor(x,y));	// the old color
-			int p;													// the new color
+			const int colorPre = static_cast<int>(getPixelColor(x,y));
+			int colorPost;
 
-			if (delta > 0)
-				p = (pixel * multi) + delta;
+			if (shift > 0)
+				colorPost = (colorPre * multer) + shift;
 			else
-				p = (pixel + delta) / multi;
+				colorPost = (colorPre + shift) / multer;
 
-			if (minColor != -1
-				&& p < minColor)
+			if (colorLow != -1
+				&& colorPost < colorLow)
 			{
-				p = minColor;
+				colorPost = colorLow;
 			}
-			else if (maxColor != -1
-				&& p > maxColor)
+			else if (colorHigh != -1
+				&& colorPost > colorHigh)
 			{
-				p = maxColor;
+				colorPost = colorHigh;
 			}
 
-			if (pixel > 0)
-				setPixelIterative(&x,&y, static_cast<Uint8>(p));
+			if (colorPre > 0)
+				setPixelIterative(&x,&y, static_cast<Uint8>(colorPost));
 			else
 				setPixelIterative(&x,&y, 0);
 		}
@@ -611,7 +611,7 @@ void Surface::invert(Uint8 mid)
 	lock();
 	for (int
 			x = 0, y = 0;
-			x < getWidth() && y < getHeight();
+			x < _surface->w && y < _surface->h;
 			)
 	{
 		Uint8 color = getPixelColor(x,y);
@@ -700,13 +700,13 @@ void Surface::copy(Surface* surface)
 				_surface,
 				nullptr); */
 	const int
-		from_x = getX() - surface->getX(),
-		from_y = getY() - surface->getY();
+		from_x = _x - surface->getX(),
+		from_y = _y - surface->getY();
 
 	lock();
 	for (int
 			x = 0, y = 0;
-			x < getWidth() && y < getHeight();
+			x < _surface->w && y < _surface->h;
 			)
 	{
 		const Uint8 pixel = surface->getPixelColor(
@@ -1200,7 +1200,7 @@ void Surface::setWidth(int width) // virtual.
 {
 	resize(
 		width,
-		getHeight());
+		_surface->h);
 
 	_redraw = true;
 }
@@ -1214,7 +1214,7 @@ void Surface::setWidth(int width) // virtual.
 void Surface::setHeight(int height) // virtual.
 {
 	resize(
-		getWidth(),
+		_surface->w,
 		height);
 
 	_redraw = true;

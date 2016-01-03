@@ -91,10 +91,10 @@ protected:
 		void clear(Uint32 color = 0);
 		/// Offsets the surface's colors by a set amount.
 		void offset(
-				int delta,
-				int minColor = -1,
-				int maxColor = -1,
-				int mult = 1);
+				int shift,
+				int colorLow = -1,
+				int colorHigh = -1,
+				int multer = 1);
 		/// Inverts the surface's colors.
 		void invert(Uint8 mid);
 
@@ -211,15 +211,16 @@ protected:
 				int x,
 				int y,
 				Uint8 color)
-		{	if (x < 0 || x >= getWidth()
-				|| y < 0 || y >= getHeight())
+		{
+			if (   x > -1 && x < _surface->w
+				&& y > -1 && y < _surface->h)
 			{
-				return;
+				static_cast<Uint8*>(_surface->pixels)
+						 [y * static_cast<int>(_surface->pitch)
+						+ x * static_cast<int>(_surface->format->BytesPerPixel)] = color;
 			}
+		}
 
-			static_cast<Uint8*>(_surface->pixels)
-					 [y * static_cast<int>(_surface->pitch)
-					+ x * static_cast<int>(_surface->format->BytesPerPixel)] = color; }
 
 		/**
 		 * Changes the color of a pixel in the surface and returns the next
@@ -234,14 +235,16 @@ protected:
 				int* x,
 				int* y,
 				Uint8 color)
-		{	setPixelColor(*x,*y, color);
+		{
+			setPixelColor(*x,*y, color);
 
 			++(*x);
-			if (*x == getWidth())
+			if (*x == _surface->w)
 			{
 				++(*y);
 				*x = 0;
-			} }
+			}
+		}
 
 		/**
 		 * Returns the color of a specified pixel in the surface.
@@ -252,14 +255,16 @@ protected:
 		Uint8 getPixelColor(
 				int x,
 				int y) const
-		{	if (x < 0 || x >= getWidth()
-				|| y < 0 || y >= getHeight())
+		{
+			if (   x > -1 && x < _surface->w
+				&& y > -1 && y < _surface->h)
 			{
-				return 0;
+				return static_cast<Uint8*>(_surface->pixels)
+							 [y * static_cast<int>(_surface->pitch)
+							+ x * static_cast<int>(_surface->format->BytesPerPixel)];
 			}
-
-			return static_cast<Uint8*>(_surface->pixels)[(y * static_cast<int>(_surface->pitch))
-													   + (x * static_cast<int>(_surface->format->BytesPerPixel))]; }
+			return 0;
+		}
 
 		/**
 		 * Returns the internal SDL_Surface for SDL calls.

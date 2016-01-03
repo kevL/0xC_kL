@@ -23,7 +23,6 @@
 
 #include "TileEngine.h"
 
-//#define _USE_MATH_DEFINES
 //#include <climits>
 //#include <cmath>
 //#include <set>

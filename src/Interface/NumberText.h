@@ -39,8 +39,8 @@ private:
 	static bool init;
 	static const size_t DIGITS = 10;
 	static const Uint8
-		FG =  1,
-		BG = 14;
+		FG =  1, // foreground color / digit
+		BG = 14; // background color / border
 	static const int
 		WIDTH    = 3,
 		HEIGHT   = 5,
@@ -55,7 +55,9 @@ private:
 		_append,
 		_bordered;
 	unsigned _value;
-	Uint8 _color;
+	Uint8
+		_color,
+		_colorBorder;
 
 	/// Creates digits as Surfaces.
 	static void createStaticSurfaces();
@@ -83,10 +85,14 @@ private:
 		/// Sets the number to have a border or not.
 		void setBordered(bool bordered = true);
 
-		/// Sets the NumberText's color.
+		/// Sets the NumberText's foreground color.
 		void setColor(Uint8 color) override;
-		/// Gets the NumberText's color.
+		/// Gets the NumberText's foreground color.
 		Uint8 getColor() const;
+		/// Sets the NumberText's background color.
+		void setColorBorder(Uint8 color);
+		/// Gets the NumberText's background color.
+		Uint8 getColorBorder() const;
 
 		/// Sets the NumberText's palette.
 		void setPalette(
