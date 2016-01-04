@@ -271,23 +271,13 @@ void Camera::mouseOver(Action* action, State*)
 
 /**
  * Handles camera keyboard shortcuts.
- * @param action - pointer to an Action
- * @param state - State that the action handlers belong to
+ * @param action	- pointer to an Action
+ * @param state		- State that the ActionHandlers belong to
  */
 void Camera::keyboardPress(Action* action, State*)
 {
 	if (_map->getCursorType() != CT_NONE)
 	{
-/*		const int keyB = action->getDetails()->key.keysym.sym;
-		if (keyB == Options::keyBattleLeft || keyB == SDLK_KP4)
-			_scrollKeyX = scrollSpeed;
-		else if (keyB == Options::keyBattleRight || keyB == SDLK_KP6)
-			_scrollKeyX = -scrollSpeed;
-		else if (keyB == Options::keyBattleUp || keyB == SDLK_KP8)
-			_scrollKeyY = scrollSpeed;
-		else if (keyB == Options::keyBattleDown || keyB == SDLK_KP2)
-			_scrollKeyY = -scrollSpeed; */
-
 		const int scrollSpeed = Options::battleScrollSpeed;
 		switch (action->getDetails()->key.keysym.sym)
 		{
@@ -349,23 +339,13 @@ void Camera::keyboardPress(Action* action, State*)
 
 /**
  * Handles camera keyboard shortcuts.
- * @param action - pointer to an Action
- * @param state - State that the action handlers belong to
+ * @param action	- pointer to an Action
+ * @param state		- State that the ActionHandlers belong to
  */
 void Camera::keyboardRelease(Action* action, State*)
 {
 	if (_map->getCursorType() != CT_NONE)
 	{
-/*		const int keyB = action->getDetails()->key.keysym.sym;
-		if (keyB == Options::keyBattleLeft || keyB == SDLK_KP4)
-			_scrollKeyX = 0;
-		else if (keyB == Options::keyBattleRight || keyB == SDLK_KP6)
-			_scrollKeyX = 0;
-		else if (keyB == Options::keyBattleUp || keyB == SDLK_KP8)
-			_scrollKeyY = 0;
-		else if (keyB == Options::keyBattleDown || keyB == SDLK_KP2)
-			_scrollKeyY = 0; */
-
 		switch (action->getDetails()->key.keysym.sym)
 		{
 			case SDLK_LEFT: // hardcoding these ... ->
@@ -485,7 +465,7 @@ void Camera::scrollXY(
 	_map->refreshSelectorPosition();
 
 	if (redraw == true)
-		_map->draw(); // kL, old code.
+		_map->draw(); // old code.
 //		_map->invalidate();
 }
 
@@ -561,14 +541,14 @@ void Camera::setViewLevel(int viewLevel)	// The call from Map::drawTerrain() cau
 
 /**
  * Centers map on a certain position.
- * @param posMap - reference the Position to center on
- * @param redraw - true to redraw map (default true)
+ * @param posField	- reference the Position to center on
+ * @param redraw	- true to redraw map (default true)
  */
 void Camera::centerOnPosition(
-		const Position& posMap,
+		const Position& posField,
 		bool redraw)
 {
-	_center = posMap;
+	_center = posField;
 
 	intMinMax(
 			&_center.x,
@@ -641,15 +621,15 @@ void Camera::convertScreenToMap(
 
 /**
  * Converts map coordinates XYZ to screen positions XY.
- * @param posMap	- reference the XYZ coordinates on the map (tilespace)
+ * @param posField	- reference the XYZ coordinates on the map (tilespace)
  * @param posScreen	- pointer to the screen Position pixel (upper left corner of sprite-rectangle)
  */
 void Camera::convertMapToScreen(
-		const Position& posMap,
+		const Position& posField,
 		Position* const posScreen) const
 {
-	posScreen->x = posMap.x * (_spriteWidth / 2) - posMap.y * (_spriteWidth / 2);
-	posScreen->y = posMap.x * (_spriteWidth / 4) + posMap.y * (_spriteWidth / 4) - posMap.z * ((_spriteHeight + _spriteWidth / 4) / 2);
+	posScreen->x = posField.x * (_spriteWidth / 2) - posField.y * (_spriteWidth / 2);
+	posScreen->y = posField.x * (_spriteWidth / 4) + posField.y * (_spriteWidth / 4) - posField.z * ((_spriteHeight + _spriteWidth / 4) / 2);
 	posScreen->z = 0; // not used
 }
 
@@ -737,15 +717,15 @@ bool Camera::getShowLayers() const
 
 /**
  * Checks if map coordinates XYZ are on screen.
- * @note This does not care about Map's Z-level; only whether @a posMap is on screen.
- * @param posMap - reference the coordinates to check
+ * @note This does not care about Map's Z-level; only whether @a posField is on screen.
+ * @param posField - reference the coordinates to check
  * @return, true if the map coordinates are on screen
  */
-bool Camera::isOnScreen(const Position& posMap) const
+bool Camera::isOnScreen(const Position& posField) const
 {
 	Position posScreen;
 	convertMapToScreen(
-					posMap,			// tile Position
+					posField,		// tile Position
 					&posScreen);	// pixel Position
 	posScreen.x += _mapOffset.x;
 	posScreen.y += _mapOffset.y;
@@ -759,16 +739,16 @@ bool Camera::isOnScreen(const Position& posMap) const
 }
 /*
  * Checks if map coordinates X,Y,Z are on screen.
- * @param posMap Coordinates to check.
+ * @param posField Coordinates to check.
  * @param unitWalking True to offset coordinates for a unit walking.
  * @param unitSize size of unit (0 - single, 1 - 2x2, etc, used for walking only
  * @param boundary True if it's for caching calculation
  * @return True if the map coordinates are on screen.
  */
-/* bool Camera::isOnScreen(const Position &posMap, const bool unitWalking, const int unitSize, const bool boundary) const
+/* bool Camera::isOnScreen(const Position &posField, const bool unitWalking, const int unitSize, const bool boundary) const
 {
 	Position posScreen;
-	convertMapToScreen(posMap, &posScreen);
+	convertMapToScreen(posField, &posScreen);
 	int posx = _spriteWidth/2, posy = _spriteHeight - _spriteWidth/4;
 	int sizex = _spriteWidth/2, sizey = _spriteHeight/2;
 	if (unitSize > 0)

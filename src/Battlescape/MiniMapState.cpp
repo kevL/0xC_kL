@@ -72,7 +72,7 @@ MiniMapState::MiniMapState(
 								battleSave);
 
 	_btnLvlUp	= new BattlescapeButton(18, 20,  24,  62);
-	_btnLvlDwn	= new BattlescapeButton(18, 20,  24,  88);
+	_btnLvlDown	= new BattlescapeButton(18, 20,  24,  88);
 	_btnOk		= new BattlescapeButton(32, 32, 275, 145);
 
 	_txtLevel	= new Text(28, 16, 281, 73);
@@ -83,10 +83,10 @@ MiniMapState::MiniMapState(
 	add(_bg);
 	_game->getResourcePack()->getSurface("SCANBORD")->blit(_bg); //"SCANBORD.PCK"
 
-	add(_btnLvlUp,	"buttonUp",		"minimap", _bg);
-	add(_btnLvlDwn,	"buttonDown",	"minimap", _bg);
-	add(_btnOk,		"buttonOK",		"minimap", _bg);
-	add(_txtLevel,	"textLevel",	"minimap", _bg);
+	add(_btnLvlUp,		"buttonUp",		"minimap", _bg);
+	add(_btnLvlDown,	"buttonDown",	"minimap", _bg);
+	add(_btnOk,			"buttonOK",		"minimap", _bg);
+	add(_txtLevel,		"textLevel",	"minimap", _bg);
 
 	centerAllSurfaces();
 
@@ -116,7 +116,13 @@ MiniMapState::MiniMapState(
 //					SDL_BUTTON_RIGHT);
 
 	_btnLvlUp->onMouseClick((ActionHandler)& MiniMapState::btnLevelUpClick);
-	_btnLvlDwn->onMouseClick((ActionHandler)& MiniMapState::btnLevelDownClick);
+	_btnLvlUp->onKeyboardPress(
+					(ActionHandler)& MiniMapState::btnLevelUpClick,
+					Options::keyBattleLevelUp);
+	_btnLvlDown->onMouseClick((ActionHandler)& MiniMapState::btnLevelDownClick);
+	_btnLvlDown->onKeyboardPress(
+					(ActionHandler)& MiniMapState::btnLevelDownClick,
+					Options::keyBattleLevelDown);
 
 	_btnOk->onMouseClick((ActionHandler)& MiniMapState::btnOkClick);
 	_btnOk->onKeyboardPress(

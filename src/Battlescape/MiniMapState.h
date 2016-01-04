@@ -45,7 +45,7 @@ class MiniMapState
 
 private:
 	BattlescapeButton
-		* _btnLvlDwn,
+		* _btnLvlDown,
 		* _btnLvlUp,
 		* _btnOk;
 	MiniMapView* _miniView;

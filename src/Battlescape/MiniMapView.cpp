@@ -31,6 +31,7 @@
 #include "../Engine/Options.h"
 //#include "../Engine/Screen.h"
 #include "../Engine/SurfaceSet.h"
+#include "../Engine/Timer.h"
 
 #include "../Interface/Cursor.h"
 
@@ -77,15 +78,28 @@ MiniMapView::MiniMapView(
 //		_yBeforeMouseScrolling(0),
 		_mouseScrollX(0),
 		_mouseScrollY(0),
+		_scrollKeyX(0),
+		_scrollKeyY(0),
 		_totalMouseMoveX(0),
 		_totalMouseMoveY(0),
 		_mouseOverThreshold(false)
 {
 	_set = game->getResourcePack()->getSurfaceSet("SCANG.DAT");
+
+	_timerScroll = new Timer(SCROLL_INTERVAL);
+	_timerScroll->onTimer((SurfaceHandler)& MiniMapView::keyScroll);
 }
 
 /**
- * Draws the minimap.
+ * dTor.
+ */
+MiniMapView::~MiniMapView()
+{
+	delete _timerScroll;
+}
+
+/**
+ * Draws the MiniMap.
  */
 void MiniMapView::draw()
 {
@@ -321,6 +335,14 @@ void MiniMapView::draw()
 }
 
 /**
+ * Scrolls the MiniMap w/ keyboard handlers.
+ */
+void MiniMapView::think()
+{
+	_timerScroll->think(nullptr, this);
+}
+
+/**
  * Increments the displayed level.
  * @return, new display level
  */
@@ -345,9 +367,10 @@ int MiniMapView::down()
 }
 
 /**
- * Handles mouse presses on the minimap. Enters mouse-moving mode when the drag-scroll button is used.
+ * Handles mouse presses on the MiniMap.
+ * @note Enters mouse-moving mode when the drag-scroll button is used.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void MiniMapView::mousePress(Action* action, State* state) // private.
 {
@@ -381,9 +404,10 @@ void MiniMapView::mousePress(Action* action, State* state) // private.
 }
 
 /**
- * Handles mouse clicks on the minimap. Will change the camera center to the clicked point.
+ * Handles mouse clicks on the MiniMap.
+ * @note Will change the camera center to the clicked point.
  * @param action	- pointer to an Action
- * @param state		- state that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void MiniMapView::mouseClick(Action* action, State* state) // private.
 {
@@ -441,30 +465,30 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		const int
-			origX = static_cast<int>(action->getRelativeXMouse() / action->getXScale()),
-			origY = static_cast<int>(action->getRelativeYMouse() / action->getYScale()),
+			startX = static_cast<int>(action->getRelativeXMouse() / action->getXScale()),
+			startY = static_cast<int>(action->getRelativeYMouse() / action->getYScale()),
 			// get offset (in cells) of the click relative to center of screen
-			xOff = (origX / CELL_WIDTH)  - (getWidth()  / 2 / CELL_WIDTH),
-			yOff = (origY / CELL_HEIGHT) - (getHeight() / 2 / CELL_HEIGHT),
+			offsetX = (startX / CELL_WIDTH)  - (_surface->w  / 2 / CELL_WIDTH),
+			offsetY = (startY / CELL_HEIGHT) - (_surface->h / 2 / CELL_HEIGHT),
 			// center the camera on this new position
-			newX = _camera->getCenterPosition().x + xOff,
-			newY = _camera->getCenterPosition().y + yOff;
+			stopX = _camera->getCenterPosition().x + offsetX,
+			stopY = _camera->getCenterPosition().y + offsetY;
 
 		_camera->centerOnPosition(Position(
-										newX, newY,
+										stopX, stopY,
 										_camera->getViewLevel()));
 		_redraw = true;
 	}
 	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		dynamic_cast<MiniMapState*>(state)->btnOkClick(action); // kL_note: Close the state.
-//		_game->popState(); // Closes the window on right-click. // kL
+		dynamic_cast<MiniMapState*>(state)->btnOkClick(action); // Close the state.
+//		_game->popState(); // Closes the window on right-click.
 }
 
 /**
- * Handles moving over the minimap.
- * Will change the camera center when the mouse is moved in mouse-moving mode.
+ * Handles moving over the MiniMap.
+ * @note Will change the camera center when the mouse is moved in mouse-moving mode.
  * @param action	- pointer to an Action
- * @param state		- state that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void MiniMapView::mouseOver(Action* action, State* state) // private.
 {
@@ -606,10 +630,10 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 }
 
 /**
- * Handles moving into the minimap.
- * Stops the mouse-scrolling mode if it's left on.
+ * Handles moving into the MiniMap.
+ * @note Stops the mouse-scrolling mode if it was left on.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void MiniMapView::mouseIn(Action* action, State* state) // private.
 {
@@ -619,7 +643,7 @@ void MiniMapView::mouseIn(Action* action, State* state) // private.
 	setButtonPressed(SDL_BUTTON_RIGHT, false);
 }
 
-/*
+/**
  *
  *
 void MiniMapView::stopScrolling(Action* action)
@@ -639,7 +663,129 @@ void MiniMapView::stopScrolling(Action* action)
 } */
 
 /**
- * Animates the minimap.
+ * Scrolls the MiniMap by keyboard & Timer.
+ */
+void MiniMapView::keyScroll() // private.
+{
+	_camera->centerOnPosition(Position(
+									_camera->getCenterPosition().x - _scrollKeyX,
+									_camera->getCenterPosition().y - _scrollKeyY,
+									_camera->getViewLevel()));
+	_redraw = true;
+}
+
+/**
+ * Handles keyboard presses for the MiniMap.
+ * @param action	- pointer to an Action
+ * @param state		- State that the ActionHandlers belong to
+ */
+void MiniMapView::keyboardPress(Action* action, State* state) // private.
+{
+	InteractiveSurface::keyboardPress(action, state);
+
+	static const int scrollSpeed = 1;
+	switch (action->getDetails()->key.keysym.sym)
+	{
+		case SDLK_LEFT: // hardcoding these ... ->
+		case SDLK_KP4:
+			_scrollKeyX = scrollSpeed;
+		break;
+
+		case SDLK_RIGHT:
+		case SDLK_KP6:
+			_scrollKeyX = -scrollSpeed;
+		break;
+
+		case SDLK_UP:
+		case SDLK_KP8:
+			_scrollKeyY = scrollSpeed;
+		break;
+
+		case SDLK_DOWN:
+		case SDLK_KP2:
+			_scrollKeyY = -scrollSpeed;
+		break;
+
+		case SDLK_KP7:
+			_scrollKeyX =
+			_scrollKeyY = scrollSpeed;
+		break;
+
+		case SDLK_KP9:
+			_scrollKeyX = -scrollSpeed;
+			_scrollKeyY =  scrollSpeed;
+		break;
+
+		case SDLK_KP1:
+			_scrollKeyX =  scrollSpeed;
+			_scrollKeyY = -scrollSpeed;
+		break;
+
+		case SDLK_KP3:
+			_scrollKeyX =
+			_scrollKeyY = -scrollSpeed;
+	}
+
+	if ((_scrollKeyX != 0 || _scrollKeyY != 0)
+		&& _timerScroll->isRunning() == false
+		&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
+	{
+		_timerScroll->start();
+	}
+	else if (_timerScroll->isRunning() == true
+		&& _scrollKeyX == 0
+		&& _scrollKeyY == 0)
+	{
+		_timerScroll->stop();
+	}
+}
+
+/**
+ * Handles keyboard releases for the MiniMap.
+ * @param action	- pointer to an Action
+ * @param state		- State that the ActionHandlers belong to
+ */
+void MiniMapView::keyboardRelease(Action* action, State* state) // private.
+{
+	InteractiveSurface::keyboardRelease(action, state);
+
+	switch (action->getDetails()->key.keysym.sym)
+	{
+		case SDLK_LEFT: // hardcoding these ... ->
+		case SDLK_KP4:
+		case SDLK_RIGHT:
+		case SDLK_KP6:
+			_scrollKeyX = 0;
+		break;
+
+		case SDLK_UP:
+		case SDLK_KP8:
+		case SDLK_DOWN:
+		case SDLK_KP2:
+			_scrollKeyY = 0;
+		break;
+
+		default:
+			_scrollKeyX =
+			_scrollKeyY = 0;
+	}
+
+	if ((_scrollKeyX != 0 || _scrollKeyY != 0)
+		&& _timerScroll->isRunning() == false
+		&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
+	{
+		_timerScroll->start();
+	}
+	else if (_timerScroll->isRunning() == true
+		&& _scrollKeyX == 0
+		&& _scrollKeyY == 0)
+	{
+		_timerScroll->stop();
+	}
+}
+
+/**
+ * Animates the MiniMap.
  */
 void MiniMapView::animate()
 {

@@ -67,7 +67,6 @@ class Map final
 
 private:
 	static const int
-		SCROLL_INTERVAL	= 15,
 		BULLET_SPRITES	= 35,
 		SHADE_BLACK		= 16,
 		DIST_ARC_SMOOTH	=  8,
@@ -83,6 +82,8 @@ private:
 		ACU_RED		= 35,
 		ACU_GREEN	= 51;
 	static const Uint32
+		SCROLL_INTERVAL	= 15,
+
 		SCREEN_WHITE =  1,
 		SCREEN_BLACK = 15;
 

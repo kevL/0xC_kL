@@ -58,7 +58,7 @@ class Ufo;
 
 
 /**
- * Geoscape screen shows an overview of the world.
+ * Geoscape screen shows an overview of the planet.
  */
 class GeoscapeState final
 	:
@@ -68,8 +68,8 @@ class GeoscapeState final
 private:
 	static const int FAST_GEO_INTERVAL = 20;
 	static const size_t
-		UFO_HOTBLOBS	= 16,
-		BLOBSIZE		= 13;
+		UFO_HOTBLOBS = 16,
+		BLOBSIZE	 = 13;
 
 	static const Uint8
 		BROWN		=  53,

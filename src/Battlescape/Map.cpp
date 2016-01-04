@@ -806,7 +806,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										trueLoc = isTrueLoc(unitNorth, tileNorth);
 										quadrant = getQuadrant(unitNorth, tileNorth, trueLoc);
 										sprite = unitNorth->getCache(quadrant);
-										if (sprite != nullptr)
+										//if (sprite != nullptr)
 										{
 											if (unitNorth->isOut_t(OUT_HLTH_STUN) == true)
 												shade = std::min(5, tileShade);
@@ -824,7 +824,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 											{
 												frame = 4 + (_animFrame / 2);
 												sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
-												if (sprite != nullptr)
+												//if (sprite != nullptr)
 													sprite->blitNShade(
 															surface,
 															posScreen.x + walkOffset.x + 16,
@@ -870,7 +870,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							}
 
 							sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(frame);
-							if (sprite != nullptr)
+							//if (sprite != nullptr)
 								sprite->blitNShade(
 										surface,
 										posScreen.x,
@@ -879,7 +879,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						else if (viewLevel > itZ)
 						{
 							sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(2); // blue static box
-							if (sprite != nullptr)
+							//if (sprite != nullptr)
 								sprite->blitNShade(
 										surface,
 										posScreen.x,
@@ -960,7 +960,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						if (spriteId != -1)
 						{
 							sprite = _res->getSurfaceSet("FLOOROB.PCK")->getFrame(spriteId);
-							if (sprite != nullptr)
+							//if (sprite != nullptr)
 								sprite->blitNShade(
 										surface,
 										posScreen.x,
@@ -971,7 +971,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							{
 								frame = 4 + (_animFrame / 2);
 								sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
-								if (sprite != nullptr)
+								//if (sprite != nullptr)
 									sprite->blitNShade(
 											surface,
 											posScreen.x,
@@ -983,7 +983,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						if (spriteId != -1)
 						{
 							sprite = _res->getSurfaceSet("FLOOROB.PCK")->getFrame(spriteId);
-							if (sprite != nullptr)
+							//if (sprite != nullptr)
 							{
 								sprite->blitNShade(
 										surface,
@@ -1035,7 +1035,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						if (_projectile->getThrowItem() != nullptr)
 						{
 							sprite = _projectile->getThrowSprite();
-							if (sprite != nullptr)
+							//if (sprite != nullptr)
 							{
 								voxel = _projectile->getPosition(); // draw shadow on the floor
 								voxel.z = _battleSave->getTileEngine()->castShadow(voxel);
@@ -1081,7 +1081,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										++id)
 								{
 									sprite = _projectileSet->getFrame(_projectile->getBulletSprite(id));
-									if (sprite != nullptr)
+									//if (sprite != nullptr)
 									{
 										voxel = _projectile->getPosition(1 - id); // draw shadow on the floor
 										voxel.z = _battleSave->getTileEngine()->castShadow(voxel);
@@ -1197,7 +1197,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							trueLoc = isTrueLoc(_unit, _tile);
 							quadrant = getQuadrant(_unit, _tile, trueLoc);
 							sprite = _unit->getCache(quadrant);
-							if (sprite != nullptr)
+							//if (sprite != nullptr)
 							{
 								if (_unit->isOut_t(OUT_HLTH_STUN) == true)
 									shade = std::min(5, tileShade);
@@ -1217,7 +1217,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								if (_unit->getFireUnit() != 0)
 								{
 									sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_animFrame / 2));
-									if (sprite != nullptr)
+									//if (sprite != nullptr)
 										sprite->blitNShade(
 												surface,
 												posScreen.x + walkOffset.x,
@@ -1312,7 +1312,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								trueLoc = isTrueLoc(unitBelow, tileBelow);
 								quadrant = getQuadrant(unitBelow, tileBelow, trueLoc);
 								sprite = unitBelow->getCache(quadrant);
-								if (sprite != nullptr)
+								//if (sprite != nullptr)
 								{
 									if (tileBelow->isRevealed(ST_CONTENT) == true)
 										shade = tileBelow->getShade();
@@ -1330,7 +1330,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									{
 										frame = 4 + (_animFrame / 2);
 										sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
-										if (sprite != nullptr)
+										//if (sprite != nullptr)
 											sprite->blitNShade(
 													surface,
 													posScreen.x + walkOffset.x,
@@ -1363,7 +1363,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						frame += animOffset;
 
 						sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
-						if (sprite != nullptr)
+						//if (sprite != nullptr)
 							sprite->blitNShade(
 									surface,
 									posScreen.x,
@@ -1379,7 +1379,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						if (itZ > 0 && _tile->hasNoFloor(tileBelow) == true)
 						{
 							sprite = _res->getSurfaceSet("Pathfinding")->getFrame(11);
-							if (sprite != nullptr)
+							//if (sprite != nullptr)
 								sprite->blitNShade(
 										surface,
 										posScreen.x,
@@ -1389,7 +1389,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						}
 
 						sprite = _res->getSurfaceSet("Pathfinding")->getFrame(_tile->getPreviewDir());
-						if (sprite != nullptr)
+						//if (sprite != nullptr)
 							sprite->blitNShade(
 									surface,
 									posScreen.x,
@@ -1479,7 +1479,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									trueLoc = isTrueLoc(_unit, _tile);
 									quadrant = getQuadrant(_unit, _tile, trueLoc);
 									sprite = _unit->getCache(quadrant);
-									if (sprite != nullptr)
+									//if (sprite != nullptr)
 									{
 										calculateWalkingOffset(_unit, &walkOffset, trueLoc);
 										sprite->blitNShade(
@@ -1780,7 +1780,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								if (itZ > 0 && _tile->hasNoFloor(tileBelow) == true)
 								{
 									sprite = _res->getSurfaceSet("Pathfinding")->getFrame(23);
-									if (sprite != nullptr)
+									//if (sprite != nullptr)
 										sprite->blitNShade(
 												surface,
 												posScreen.x,
@@ -1790,7 +1790,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								}
 
 								sprite = _res->getSurfaceSet("Pathfinding")->getFrame(_tile->getPreviewDir() + 12);
-								if (sprite != nullptr)
+								//if (sprite != nullptr)
 									sprite->blitNShade(
 											surface,
 											posScreen.x,

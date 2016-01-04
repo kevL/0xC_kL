@@ -303,10 +303,10 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 	std::string stTest;
 	Uint8 color;
 
-	const std::vector<std::string>& itemList = rules->getItemsList();
+	const std::vector<std::string>& itList = rules->getItemsList();
 	for (std::vector<std::string>::const_iterator
-			i = itemList.begin();
-			i != itemList.end();
+			i = itList.begin();
+			i != itList.end();
 			++i)
 	{
 		itRule = rules->getItem(*i);
@@ -326,8 +326,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 		for (std::vector<Base*>::const_iterator
 				j = gameSave->getBases()->begin();
 				j != gameSave->getBases()->end();
-				++j,
-					++baseId)
+				++j, ++baseId)
 		{
 			qty[baseId] = (*j)->getStorageItems()->getItemQty(*i);
 
@@ -347,7 +346,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 			{
 				if ((*k)->getRules()->getSoldiers() != 0) // is transport craft
 				{
-					for (std::map<std::string, int>::iterator
+					for (std::map<std::string, int>::const_iterator
 							l = (*k)->getCraftItems()->getContents()->begin();
 							l != (*k)->getCraftItems()->getContents()->end();
 							++l)
@@ -476,7 +475,6 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 							woststr5.str().c_str(),
 							woststr6.str().c_str(),
 							woststr7.str().c_str());
-
 			_lstMatrix->setRowColor(row++, color);
 		}
 	}

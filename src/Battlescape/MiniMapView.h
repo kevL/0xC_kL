@@ -32,6 +32,7 @@ class Camera;
 class Game;
 class SavedBattleGame;
 class SurfaceSet;
+class Timer;
 
 
 /**
@@ -48,6 +49,8 @@ private:
 		CELL_HEIGHT	= 4,
 		MAX_FRAME	= 2;
 
+	static const Uint32 SCROLL_INTERVAL	= 63;
+
 	bool
 		_isMouseScrolled,
 		_isMouseScrolling,
@@ -57,6 +60,8 @@ private:
 		_cycle,
 		_mouseScrollX,
 		_mouseScrollY,
+		_scrollKeyX,
+		_scrollKeyY,
 		_totalMouseMoveX,
 		_totalMouseMoveY;
 //		_xBeforeMouseScrolling,
@@ -66,6 +71,7 @@ private:
 	const Game* _game;
 	const SavedBattleGame* _battleSave;
 	SurfaceSet* _set;
+	Timer* _timerScroll;
 
 	Position _posPreDragScroll;
 //		_cursorPosition;
@@ -83,6 +89,12 @@ private:
 	void mouseIn(Action* action, State* state) override;
 	///
 //	void stopScrolling(Action* action);
+	/// Scrolls the MiniMap by keyboard.
+	void keyScroll();
+	/// Handling for keyboard presses.
+	void keyboardPress(Action* action, State* state) override;
+	/// Handling for keyboard releases.
+	void keyboardRelease(Action* action, State* state) override;
 
 
 	public:
@@ -95,16 +107,20 @@ private:
 				const Game* const game,
 				Camera* const camera,
 				const SavedBattleGame* const battleSave);
+		/// dTor.
+		~MiniMapView();
 
-		/// Draws the minimap.
+		/// Draws the MiniMap.
 		void draw() override;
+		/// Thinks the MiniMap.
+		void think() override;
 
-		/// Changes the displayed minimap level.
+		/// Changes the displayed MiniMap level.
 		int up();
-		/// Changes the displayed minimap level.
+		/// Changes the displayed MiniMap level.
 		int down();
 
-		/// Animates the minimap.
+		/// Animates the MiniMap.
 		void animate();
 };
 
