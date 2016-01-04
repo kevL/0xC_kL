@@ -86,7 +86,7 @@ private:
 				int mapsize_x,
 				int mapsize_y,
 				int mapsize_z,
-				Map* battleMap,
+				Map* battleField,
 				int playableHeight);
 		/// Cleans up the camera.
 		~Camera();

@@ -96,19 +96,23 @@ PauseState::PauseState(OptionsOrigin origin)
 	_btnLoad->onMouseClick((ActionHandler)& PauseState::btnLoadClick);
 	_btnLoad->onKeyboardPress(
 					(ActionHandler)& PauseState::btnLoadClick,
-					SDLK_l);
+					SDLK_l); // load
 
 	_btnSave->setText(tr("STR_SAVE_GAME"));
 	_btnSave->onMouseClick((ActionHandler)& PauseState::btnSaveClick);
 	_btnSave->onKeyboardPress(
 					(ActionHandler)& PauseState::btnSaveClick,
-					SDLK_s);
+					SDLK_s); // save
 
 	_btnAbandon->setText(tr("STR_ABANDON_GAME"));
 	_btnAbandon->onMouseClick((ActionHandler)& PauseState::btnAbandonClick);
 	_btnAbandon->onKeyboardPress(
 					(ActionHandler)& PauseState::btnAbandonClick,
-					SDLK_a);
+					SDLK_a); // abandon
+	_btnAbandon->onMouseClick((ActionHandler)& PauseState::btnAbandonClick);
+	_btnAbandon->onKeyboardPress(
+					(ActionHandler)& PauseState::btnAbandonClick,
+					SDLK_q); // quit
 
 //	_btnOptions->setText(tr("STR_GAME_OPTIONS"));
 //	_btnOptions->onMouseClick((ActionHandler)& PauseState::btnOptionsClick);

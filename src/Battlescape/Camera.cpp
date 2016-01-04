@@ -43,7 +43,7 @@ namespace OpenXcom
  * @param mapsize_x			- current map size in X axis
  * @param mapsize_y			- current map size in Y axis
  * @param mapsize_z			- current map size in Z axis
- * @param battleMap			- pointer to Map
+ * @param battleField		- pointer to Map
  * @param playableHeight	- height of Map surface minus icons-height
  */
 Camera::Camera(
@@ -52,7 +52,7 @@ Camera::Camera(
 		int mapsize_x,
 		int mapsize_y,
 		int mapsize_z,
-		Map* battleMap,
+		Map* battleField,
 		int playableHeight)
 	:
 		_spriteWidth(spriteWidth),
@@ -60,10 +60,10 @@ Camera::Camera(
 		_mapsize_x(mapsize_x),
 		_mapsize_y(mapsize_y),
 		_mapsize_z(mapsize_z),
-		_map(battleMap),
+		_map(battleField),
 		_playableHeight(playableHeight),
-		_screenWidth(battleMap->getWidth()),
-		_screenHeight(battleMap->getHeight()),
+		_screenWidth(battleField->getWidth()),
+		_screenHeight(battleField->getHeight()),
 		_mapOffset(-250,250,0),
 		_scrollMouseTimer(0),
 		_scrollKeyTimer(0),
@@ -406,9 +406,9 @@ void Camera::scrollKey()
 }
 
 /**
- * Handles scrolling with given deviation.
- * @param x			- X deviation
- * @param y			- Y deviation
+ * Handles scrolling with given delta.
+ * @param x			- X delta
+ * @param y			- Y delta
  * @param redraw	- true to redraw map
  */
 void Camera::scrollXY(
@@ -419,10 +419,36 @@ void Camera::scrollXY(
 	_mapOffset.x += x;
 	_mapOffset.y += y;
 
+/*	convertScreenToMap( // convert center of screen to center of map
+				_screenWidth / 2,
+				_playableHeight / 2,
+				&_center.x,
+				&_center.y);
+
+	if (_center.x < 0)
+	{
+		_mapOffset.x += _center.x;
+		_mapOffset.y += _center.x;
+	}
+	else if (_center.x > _mapsize_x - 1)
+	{
+		_mapOffset.x -= _center.x;
+		_mapOffset.y -= _center.x;
+	}
+	else if (_center.y < 0)
+	{
+		_mapOffset.x -= _center.y;
+		_mapOffset.y += _center.y;
+	}
+	else if (_center.y > _mapsize_y - 1)
+	{
+		_mapOffset.x += _center.y;
+		_mapOffset.y -= _center.y;
+	} */
 	bool stop = false;
 	do
 	{
-		convertScreenToMap(
+		convertScreenToMap( // convert center of screen to center of map
 					_screenWidth / 2,
 					_playableHeight / 2,
 					&_center.x,
@@ -597,16 +623,18 @@ void Camera::convertScreenToMap(
 		int* mapX,
 		int* mapY) const
 {
-	// add half a tileheight to the mouseposition per layer above the floor
-	screenY += (-_spriteWidth / 2) + (_mapOffset.z) * ((_spriteHeight + _spriteWidth / 4) / 2);
+	const int width_4 = _spriteWidth / 4;
 
-	// calculate the actual x/y pixelposition on a diamond shaped map
-	// taking the view offset into account
-	*mapY = -screenX + _mapOffset.x + 2 * screenY - 2 * _mapOffset.y;
-	*mapX =  screenY - _mapOffset.y - (*mapY) / 4 - (_spriteWidth / 4);
+	// add half a tile-height to the screen-position per layer above floor-level
+	screenY += -_spriteWidth / 2 + _mapOffset.z * ((_spriteHeight + width_4) / 2);
 
-	// to get the row&col itself, divide by the size of a tile
-	*mapX /= (_spriteWidth / 4);
+	// calculate the actual x/y pixel-position on a diamond shaped map
+	// taking the viewport-offset into account
+	*mapY = -screenX + _mapOffset.x + screenY * 2 - _mapOffset.y * 2;
+	*mapX =  screenY - _mapOffset.y - *mapY / 4 - width_4;
+
+	// to get the row&col itself divide by the size of a tile
+	*mapX /= width_4;
 	*mapY /= _spriteWidth;
 
 	intMinMax(
@@ -628,8 +656,12 @@ void Camera::convertMapToScreen(
 		const Position& posField,
 		Position* const posScreen) const
 {
-	posScreen->x = posField.x * (_spriteWidth / 2) - posField.y * (_spriteWidth / 2);
-	posScreen->y = posField.x * (_spriteWidth / 4) + posField.y * (_spriteWidth / 4) - posField.z * ((_spriteHeight + _spriteWidth / 4) / 2);
+	const int
+		width_2 = _spriteWidth / 2,
+		width_4 = _spriteWidth / 4;
+
+	posScreen->x = posField.x * width_2 - posField.y * width_2;
+	posScreen->y = posField.x * width_4 + posField.y * width_4 - posField.z * ((_spriteHeight + width_4) / 2);
 	posScreen->z = 0; // not used
 }
 
