@@ -101,7 +101,7 @@ private:
 		_unitDying,
 		_waypointAction;
 	int
-		_animFrame,
+		_aniFrame,
 		_cursorSize,
 		_iconHeight,
 		_iconWidth,

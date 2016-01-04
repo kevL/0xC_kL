@@ -462,15 +462,15 @@ bool ActionMenuState::canExecuteTarget() // private.
 	const Position pos = _action->actor->getPosition();
 	const Tile* tile = battleSave->getTile(pos);
 
-	const int actorSize = _action->actor->getArmor()->getSize();
+	const int armorSize = _action->actor->getArmor()->getSize();
 	for (int
 			x = 0;
-			x != actorSize;
+			x != armorSize;
 			++x)
 	{
 		for (int
 				y = 0;
-				y != actorSize;
+				y != armorSize;
 				++y)
 		{
 			tile = battleSave->getTile(pos + Position(x,y,0));

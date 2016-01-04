@@ -45,21 +45,21 @@ private:
 		_aniFrame,
 		_colorSize,
 		_drawRoutine,
-		_part;
+		_quad;
 
 	BattleItem
-		* _itemA,
-		* _itemB;
+		* _itRT,
+		* _itLT;
 	BattleUnit* _unit;
 	SurfaceSet
-		* _itemSurfaceA,
-		* _itemSurfaceB,
-		* _unitSurface;
+		* _itSetRT,
+		* _itSetLT,
+		* _unitSet;
 
 	const std::pair<Uint8, Uint8>* _color;
 
-	/// Drawing routine for XCom soldiers in overalls, sectoids (routine 0),
-	/// mutons (routine 10).
+	/// Drawing routine for xCom soldiers in overalls, sectoids (routine 0),
+	/// or mutons (routine 10).
 	void drawRoutine0();
 	/// Drawing routine for floaters.
 	void drawRoutine1();
@@ -67,11 +67,11 @@ private:
 	void drawRoutine2();
 	/// Drawing routine for cyberdiscs.
 	void drawRoutine3();
-	/// Drawing routine for civilians, ethereals, zombies (routine 4).
+	/// Drawing routine for civilians, ethereals, zombies.
 	void drawRoutine4();
 	/// Drawing routine for sectopods and reapers.
 	void drawRoutine5();
-	/// Drawing routine for snakemen.
+	/// Drawing routine for snakemans.
 	void drawRoutine6();
 	/// Drawing routine for chryssalid.
 	void drawRoutine7();
@@ -96,17 +96,19 @@ private:
 		/// Cleans up the UnitSprite.
 		~UnitSprite();
 
-		/// Sets surfacesets for rendering.
+		/// Sets the SurfaceSets for rendering.
 		void setSurfaces(
-				SurfaceSet* const unitSurface,
-				SurfaceSet* const itemSurfaceA,
-				SurfaceSet* const itemSurfaceB);
+				SurfaceSet* const unitSet,
+				SurfaceSet* const itSetRT,
+				SurfaceSet* const itSetLT);
 		/// Sets the battleunit to be rendered.
 		void setBattleUnit(
 				BattleUnit* const unit,
 				int part = 0);
-		/// Sets the battleitem to be rendered.
-		void setBattleItem(BattleItem* const item);
+		/// Sets the right-hand BattleItem to be rendered.
+		void setBattleItRH(BattleItem* const item = nullptr);
+		/// Sets the left-hand BattleItem to be rendered.
+		void setBattleItLH(BattleItem* const item = nullptr);
 		/// Sets the animation frame.
 		void setAnimationFrame(int frame);
 

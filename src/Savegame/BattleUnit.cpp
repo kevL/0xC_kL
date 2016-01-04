@@ -1254,7 +1254,7 @@ UnitFaction BattleUnit::getFaction() const
 /**
  * Check if the unit is still cached in the Map cache.
  * @note When the unit needs to animate it needs to be re-cached.
- * @param quadrant	- quadrant to check (default 0)
+ * @param quadrant - quadrant to check (default 0)
  * @return, pointer to the cache Surface used
  */
 Surface* BattleUnit::getCache(int quadrant) const

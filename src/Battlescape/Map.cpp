@@ -110,7 +110,7 @@ Map::Map(
 		_mY(0),
 		_cursorType(CT_NORMAL),
 		_cursorSize(1),
-		_animFrame(0),
+		_aniFrame(0),
 		_projectile(nullptr),
 		_projectileSet(nullptr),
 		_projectileInFOV(false),
@@ -822,7 +822,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 											if (unitNorth->getFireUnit() != 0)
 											{
-												frame = 4 + (_animFrame / 2);
+												frame = 4 + (_aniFrame / 2);
 												sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
 												//if (sprite != nullptr)
 													sprite->blitNShade(
@@ -856,15 +856,15 @@ void Map::drawTerrain(Surface* const surface) // private.
 											|| (_battleSave->getBattleGame()->getCurrentAction()->type != BA_PSICOURAGE
 												&& _unit->getFaction() != FACTION_PLAYER))))
 								{
-									frame = (_animFrame % 2);		// yellow flashing box
+									frame = (_aniFrame % 2);	// yellow flashing box
 								}
 								else
-									frame = 0;						// red static box
+									frame = 0;					// red static box
 							}
 							else // CT_AIM ->
 							{
 								if (hasUnit == true)
-									frame = 7 + (_animFrame / 2);	// yellow animated crosshairs
+									frame = 7 + (_aniFrame / 2);	// yellow animated crosshairs
 								else
 									frame = 6;						// red static crosshairs
 							}
@@ -969,7 +969,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 							if (var == true && _tile->isRevealed(ST_CONTENT) == true)
 							{
-								frame = 4 + (_animFrame / 2);
+								frame = 4 + (_aniFrame / 2);
 								sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
 								//if (sprite != nullptr)
 									sprite->blitNShade(
@@ -1216,7 +1216,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 								if (_unit->getFireUnit() != 0)
 								{
-									sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_animFrame / 2));
+									sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniFrame / 2));
 									//if (sprite != nullptr)
 										sprite->blitNShade(
 												surface,
@@ -1251,7 +1251,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 											if (exposure != -1)
 											{
 												Uint8 color;
-												if (_animFrame < 4)
+												if (_aniFrame < 4)
 													color = WHITE_u;
 												else
 													color = BLACK;
@@ -1292,7 +1292,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 											surface,
 											posScreen.x + 2,
 											posScreen.y + 1,
-											_animFrame * 2,
+											_aniFrame * 2,
 											false, color);
 						}
 					}
@@ -1328,7 +1328,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 									if (unitBelow->getFireUnit() != 0)
 									{
-										frame = 4 + (_animFrame / 2);
+										frame = 4 + (_aniFrame / 2);
 										sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
 										//if (sprite != nullptr)
 											sprite->blitNShade(
@@ -1358,7 +1358,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							shade = 0;
 						}
 
-						animOffset = _animFrame / 2 + _tile->getAnimationOffset();
+						animOffset = _aniFrame / 2 + _tile->getAnimationOffset();
 						if (animOffset > 3) animOffset -= 4;
 						frame += animOffset;
 
@@ -1449,7 +1449,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 											|| (_battleSave->getBattleGame()->getCurrentAction()->type != BA_PSICOURAGE
 												&& _unit->getFaction() != FACTION_PLAYER))))
 								{
-									frame = 3 + (_animFrame % 2);	// yellow flashing box
+									frame = 3 + (_aniFrame % 2);	// yellow flashing box
 								}
 								else
 									frame = 3;						// red static box
@@ -1457,7 +1457,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							else // CT_AIM ->
 							{
 								if (hasUnit == true) //|| unitBelow != nullptr)
-									frame = 7 + (_animFrame / 2);	// yellow animated crosshairs
+									frame = 7 + (_aniFrame / 2);	// yellow animated crosshairs
 								else
 									frame = 6;						// red static crosshairs
 							}
@@ -1592,7 +1592,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							&& viewLevel == itZ)// || unitBelow != nullptr)) // BattleUnit was redrawn below curTile.
 						{
 							static const int cursorSprites[6] = {0,0,0,11,13,15};
-							sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(cursorSprites[_cursorType] + (_animFrame / 4));
+							sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(cursorSprites[_cursorType] + (_aniFrame / 4));
 							sprite->blitNShade(
 									surface,
 									posScreen.x,
@@ -1721,7 +1721,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 			posScreen.x += _spriteWidth / 2;
 
-			const int phaseCycle (static_cast<int>(4. * std::sin(22.5 / static_cast<double>(_animFrame + 1))));
+			const int phaseCycle (static_cast<int>(4. * std::sin(22.5 / static_cast<double>(_aniFrame + 1))));
 
 			if (_unit->isKneeled() == true)
 				_arrow_kneel->blitNShade(
@@ -1935,7 +1935,7 @@ void Map::drawRankIcon( // private.
 							this,
 							offset_x + 4,
 							offset_y + 4,
-							_animFrame * 2,
+							_aniFrame * 2,
 							false, RED);
 	}
 	else
@@ -2159,7 +2159,7 @@ void Map::findMousePosition(Position& mousePos)
  */
 void Map::animateMap(bool redraw)
 {
- 	if (++_animFrame == 8) _animFrame = 0;
+ 	if (++_aniFrame == 8) _aniFrame = 0;
 
 	for (size_t // animate tiles
 			i = 0;
@@ -2559,22 +2559,22 @@ void Map::cacheUnit(BattleUnit* const unit)
 			BattleItem
 				* const rtItem = unit->getItem("STR_RIGHT_HAND"),
 				* const ltItem = unit->getItem("STR_LEFT_HAND");
-			if ((rtItem == nullptr || rtItem->getRules()->isFixed() == true)
-				&& (ltItem == nullptr || ltItem->getRules()->isFixed() == true))
-			{
-				sprite->setBattleItem(nullptr);
-			}
+			if (rtItem != nullptr && rtItem->getRules()->isFixed() == false)
+				sprite->setBattleItRH(rtItem);
 			else
-			{
-				if (rtItem != nullptr) sprite->setBattleItem(rtItem);
-				if (ltItem != nullptr) sprite->setBattleItem(ltItem);
-			}
+				sprite->setBattleItRH();
+
+			if (ltItem != nullptr && ltItem->getRules()->isFixed() == false)
+				sprite->setBattleItLH(ltItem);
+			else
+				sprite->setBattleItLH();
+
 
 			sprite->setSurfaces(
 							_res->getSurfaceSet(unit->getArmor()->getSpriteSheet()),
 							_res->getSurfaceSet("HANDOB.PCK"),
 							_res->getSurfaceSet("HANDOB2.PCK"));
-			sprite->setAnimationFrame(_animFrame);
+			sprite->setAnimationFrame(_aniFrame);
 			cache->clear();
 			sprite->blit(cache);
 
