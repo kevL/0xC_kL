@@ -457,28 +457,28 @@ void AlienBAIState::think(BattleAction* const action)
 				&& action->weapon->getRules()->getBattleType() == BT_GRENADE
 				&& action->type == BA_THROW)
 			{
-				const RuleInventory* const inRule = action->weapon->getSection();
-				int costTU = inRule->getCost(_battleSave->getBattleGame()->getRuleset()->getInventory("STR_RIGHT_HAND"));
+				int costTu = action->weapon->getInventorySection()->
+								getCost(_battleSave->getBattleGame()->getRuleset()->getInventory("STR_RIGHT_HAND"));
 
 				if (action->weapon->getFuse() == -1)
-					costTU += _unit->getActionTu(BA_PRIME, action->weapon);
+					costTu += _unit->getActionTu(BA_PRIME, action->weapon);
 
-				_unit->spendTimeUnits(costTU); // cf. grenadeAction() -- actually priming the fuse is done in ProjectileFlyBState.
+				_unit->spendTimeUnits(costTu); // cf. grenadeAction() -- actually priming the fuse is done in ProjectileFlyBState.
 				//Log(LOG_INFO) << "AlienBAIState::think() Move & Prime GRENADE, costTU = " << costTU;
 			}
 
-			action->finalFacing = _attackAction->finalFacing;					// if this is a firepoint action, set our facing.
+			action->finalFacing = _attackAction->finalFacing;					// if this is a firepoint action, set facing.
 			action->TU = _unit->getActionTu(
 										_attackAction->type,
 										_attackAction->weapon);
 
-//			_battleSave->getBattleGame()->setReservedAction(BA_NONE, false);	// don't worry about reserving TUs, we've factored that in already.
+//			_battleSave->getBattleGame()->setReservedAction(BA_NONE, false);	// don't worry about reserving TUs, factored that in already.
 
 			if (action->type == BA_MOVE											// if this is a "find fire point" action, don't increment the AI counter.
 				&& _rifle == true
 				&& _unit->getTimeUnits() > _unit->getActionTu(
 															BA_SNAPSHOT,
-															action->weapon))	// so long as we can take a shot afterwards.
+															action->weapon))	// so long as it can take a shot afterwards.
 			{
 				action->AIcount -= 1;
 			}
@@ -2287,8 +2287,8 @@ void AlienBAIState::grenadeAction() // private.
 						grenade->getRules()->getExplosionRadius(),
 						_attackAction->diff) == true)
 		{
-			const RuleInventory* const invRule = grenade->getSection();
-			int tuCost = invRule->getCost(_battleSave->getBattleGame()->getRuleset()->getInventory("STR_RIGHT_HAND"));
+			int tuCost = grenade->getInventorySection()->
+							getCost(_battleSave->getBattleGame()->getRuleset()->getInventory("STR_RIGHT_HAND"));
 
 			if (grenade->getFuse() == -1)
 				tuCost += _unit->getActionTu(BA_PRIME, grenade);

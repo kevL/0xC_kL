@@ -1042,7 +1042,7 @@ void BattlescapeGenerator::deployXCOM() // private.
 			i != _tileEquipt->getInventory()->end();
 			)
 	{
-		if ((*i)->getSection() == grndRule)
+		if ((*i)->getInventorySection() == grndRule)
 		{
 //			(*i)->setXcomProperty();
 			_battleSave->getItems()->push_back(*i);
@@ -1313,7 +1313,7 @@ void BattlescapeGenerator::loadGroundWeapon(BattleItem* const item) // private.
 			i != _tileEquipt->getInventory()->end();
 			++i)
 	{
-		if ((*i)->getSection() == ground
+		if ((*i)->getInventorySection() == ground
 			&& item->setAmmoItem(*i) == 0)
 		{
 //			(*i)->setXcomProperty();
@@ -1331,7 +1331,7 @@ void BattlescapeGenerator::loadGroundWeapon(BattleItem* const item) // private.
 bool BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
 {
 	const RuleInventory* const ground = _rules->getInventory("STR_GROUND");
-	if (item->getSection() == ground)
+	if (item->getInventorySection() == ground)
 	{
 		RuleInventory* const righthand = _rules->getInventory("STR_RIGHT_HAND");
 		bool loaded = false;
@@ -1352,7 +1352,7 @@ bool BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
 				{
 					if ((*j)->getItemType() == item->getRules()->getType() // find the first matching layout-slot which is not already occupied
 						&& (*i)->getItem(
-									(*j)->getSection(),
+									(*j)->getLayoutSection(),
 									(*j)->getSlotX(),
 									(*j)->getSlotY()) == nullptr)
 					{
@@ -1368,7 +1368,7 @@ bool BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
 									++k)
 							{
 								if ((*k)->getRules()->getType() == (*j)->getAmmoItem()
-									&& (*k)->getSection() == ground		// why the redundancy?
+									&& (*k)->getInventorySection() == ground		// why the redundancy?
 																		// WHAT OTHER _tileEquipt IS THERE BUT THE GROUND TILE!!??!!!1
 									&& item->setAmmoItem(*k) == 0)		// okay, so load the damn item.
 								{
@@ -1390,7 +1390,7 @@ bool BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
 
 							item->moveToOwner(*i);
 
-							item->setSection(_rules->getInventory((*j)->getSection()));
+							item->setSection(_rules->getInventory((*j)->getLayoutSection()));
 							item->setSlotX((*j)->getSlotX());
 							item->setSlotY((*j)->getSlotY());
 
@@ -1496,8 +1496,8 @@ bool BattlescapeGenerator::placeItem( // private.
 		* const rightHand = _rules->getInventory("STR_RIGHT_HAND"),
 		* const leftHand = _rules->getInventory("STR_LEFT_HAND");
 	BattleItem
-		* const rhWeapon = unit->getItem("STR_RIGHT_HAND"),
-		* const lhWeapon = unit->getItem("STR_LEFT_HAND");
+		* const rhWeapon = unit->getItem(ST_RIGHTHAND),
+		* const lhWeapon = unit->getItem(ST_LEFTHAND);
 
 	RuleItem* const itRule = item->getRules();
 

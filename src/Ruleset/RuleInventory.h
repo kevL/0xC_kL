@@ -37,6 +37,21 @@ struct RuleSlot
 };
 
 
+enum InventorySection
+{
+ 	ST_NONE,			//  0
+	ST_GROUND,			//  1
+	ST_RIGHTHAND,		//  2
+	ST_LEFTHAND,		//  3
+	ST_BELT,			//  4
+	ST_RIGHTLEG,		//  5
+	ST_LEFTLEG,			//  6
+	ST_RIGHTSHOULDER,	//  7
+	ST_LEFTSHOULDER,	//  8
+	ST_BACKPACK,		//  9
+	ST_QUICKDRAW		// 10
+};
+
 enum InventoryCategory
 {
 	INV_SLOT,	// 0
@@ -63,9 +78,15 @@ private:
 	std::string _type;
 
 	InventoryCategory _cat;
+	InventorySection _section;
 
-	std::map<std::string, int> _costs;
+	std::map<InventorySection, int> _costs;
 	std::vector<RuleSlot> _slots;
+
+	/// Sets the rule's InventorySection based on the typeId.
+	static InventorySection assignSectionType(const std::string& type);
+	/// Sets the rule's costs based on typeIds.
+	static std::map<InventorySection, int> assignCosts(std::map<std::string, int>& costs);
 
 
 	public:
@@ -87,6 +108,8 @@ private:
 
 		/// Gets the Inventory's type.
 		std::string getInventoryType() const;
+		/// Gets the Inventory's section.
+		InventorySection getSectionType() const;
 
 		/// Gets the X position of the Inventory.
 		int getX() const;
@@ -112,7 +135,7 @@ private:
 				int y) const;
 
 		/// Gets the TU cost to move an item in the Inventory.
-		int getCost(const RuleInventory* const section) const;
+		int getCost(const RuleInventory* const inRule) const;
 
 		/// Gets the list order.
 		int getListOrder() const;

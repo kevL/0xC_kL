@@ -308,17 +308,17 @@ void Inventory::drawItems()
 				srf = srt->getFrame((*i)->getRules()->getBigSprite());
 				if (srf != nullptr) // safety.
 				{
-					if ((*i)->getSection()->getCategory() == INV_SLOT)
+					if ((*i)->getInventorySection()->getCategory() == INV_SLOT)
 					{
-						srf->setX((*i)->getSection()->getX() + (*i)->getSlotX() * RuleInventory::SLOT_W);
-						srf->setY((*i)->getSection()->getY() + (*i)->getSlotY() * RuleInventory::SLOT_H);
+						srf->setX((*i)->getInventorySection()->getX() + (*i)->getSlotX() * RuleInventory::SLOT_W);
+						srf->setY((*i)->getInventorySection()->getY() + (*i)->getSlotY() * RuleInventory::SLOT_H);
 					}
-					else if ((*i)->getSection()->getCategory() == INV_HAND)
+					else if ((*i)->getInventorySection()->getCategory() == INV_HAND)
 					{
-						srf->setX((*i)->getSection()->getX()
+						srf->setX((*i)->getInventorySection()->getX()
 								+ (RuleInventory::HAND_W - (*i)->getRules()->getInventoryWidth())
 									* RuleInventory::SLOT_W / 2);
-						srf->setY((*i)->getSection()->getY()
+						srf->setY((*i)->getInventorySection()->getY()
 								+ (RuleInventory::HAND_H - (*i)->getRules()->getInventoryHeight())
 									* RuleInventory::SLOT_H / 2);
 					}
@@ -353,9 +353,9 @@ void Inventory::drawItems()
 				srf = srt->getFrame((*i)->getRules()->getBigSprite());
 				if (srf != nullptr) // safety.
 				{
-					srf->setX((*i)->getSection()->getX()
+					srf->setX((*i)->getInventorySection()->getX()
 							+ ((*i)->getSlotX() - _groundOffset) * RuleInventory::SLOT_W);
-					srf->setY((*i)->getSection()->getY()
+					srf->setY((*i)->getInventorySection()->getY()
 							+ ((*i)->getSlotY() * RuleInventory::SLOT_H));
 
 //					srt->getFrame((*i)->getRules()->getBigSprite())->blit(_items);
@@ -376,14 +376,14 @@ void Inventory::drawItems()
 
 				if (qty > 1 || fatals != 0)
 				{
-					_stackNumber->setX(((*i)->getSection()->getX()
+					_stackNumber->setX(((*i)->getInventorySection()->getX()
 										+ (((*i)->getSlotX() + (*i)->getRules()->getInventoryWidth()) - _groundOffset)
 											* RuleInventory::SLOT_W) - 4);
 
 					if (qty > 9 || fatals > 9)
 						_stackNumber->setX(_stackNumber->getX() - 4);
 
-					_stackNumber->setY(((*i)->getSection()->getY()
+					_stackNumber->setY(((*i)->getInventorySection()->getY()
 										+ ((*i)->getSlotY() + (*i)->getRules()->getInventoryHeight())
 											* RuleInventory::SLOT_H) - 6);
 					_stackNumber->setValue(fatals ? fatals : qty);
@@ -414,7 +414,7 @@ void Inventory::moveItem( // private.
 {
 	if (inRule == nullptr) // Make items vanish (eg. ammo in weapons)
 	{
-		if (item->getSection()->getCategory() == INV_GROUND)
+		if (item->getInventorySection()->getCategory() == INV_GROUND)
 			_selUnit->getTile()->removeItem(item);
 		else
 			item->moveToOwner();
@@ -423,12 +423,12 @@ void Inventory::moveItem( // private.
 	}
 	else
 	{
-		if (inRule != item->getSection()) // Handle dropping from/to ground.
+		if (inRule != item->getInventorySection()) // Handle dropping from/to ground.
 		{
 			if (inRule->getCategory() == INV_GROUND) // set to Ground
 			{
 				item->moveToOwner();
-				_selUnit->getTile()->addItem(item, item->getSection());
+				_selUnit->getTile()->addItem(item, item->getInventorySection());
 
 				if (item->getUnit() != nullptr
 					&& item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
@@ -436,11 +436,11 @@ void Inventory::moveItem( // private.
 					item->getUnit()->setPosition(_selUnit->getPosition());
 				}
 			}
-			else if (item->getSection() == nullptr						// unload a weapon clip to left hand
-				|| item->getSection()->getCategory() == INV_GROUND)	// or pick up item.
+			else if (item->getInventorySection() == nullptr						// unload a weapon clip to left hand
+				|| item->getInventorySection()->getCategory() == INV_GROUND)	// or pick up item.
 			{
 				if (_tuMode == true										// To prevents units from picking up large objects and running around with
-					&& item->getSection()->getCategory() == INV_GROUND)	// nearly full TU on the same turn its weight becomes an extra tu-burden
+					&& item->getInventorySection()->getCategory() == INV_GROUND)	// nearly full TU on the same turn its weight becomes an extra tu-burden
 				{
 					_selUnit->setTimeUnits(std::max(0,
 												_selUnit->getTimeUnits() - item->getRules()->getWeight()));
@@ -487,7 +487,7 @@ bool Inventory::overlapItems( // static.
 				i != unit->getInventory()->end();
 				++i)
 		{
-			if ((*i)->getSection() == inRule
+			if ((*i)->getInventorySection() == inRule
 				&& (*i)->occupiesSlot(x,y, item) == true)
 			{
 				return true;
@@ -550,7 +550,7 @@ void Inventory::setSelectedItem(BattleItem* const item)
 	{
 		_selItem = item;
 
-		if (_selItem->getSection()->getCategory() == INV_GROUND)
+		if (_selItem->getInventorySection()->getCategory() == INV_GROUND)
 			_stackLevel[static_cast<size_t>(_selItem->getSlotX())]
 					   [static_cast<size_t>(_selItem->getSlotY())] -= 1;
 
@@ -660,7 +660,7 @@ void Inventory::mouseOver(Action* action, State* state)
 				&& _selItem != nullptr
 				&& fitItem(inRule, _selItem, true) == true)
 			{
-				_tuCost = _selItem->getSection()->getCost(inRule);
+				_tuCost = _selItem->getInventorySection()->getCost(inRule);
 			}
 			else
 			{
@@ -723,40 +723,40 @@ void Inventory::mouseClick(Action* action, State* state)
 							placed = false,
 							toGround = true;
 
-						RuleInventory* slotTarget = nullptr;
+						RuleInventory* targetSection = nullptr;
 
 						if (inRule->getCategory() == INV_HAND
 							|| (inRule->getCategory() != INV_GROUND
 								&& (_tuMode == false
 									|| _selUnit->getOriginalFaction() != FACTION_PLAYER))) // aLien units drop-to-ground on Ctrl+LMB
 						{
-							slotTarget = _game->getRuleset()->getInventory("STR_GROUND");
+							targetSection = _game->getRuleset()->getInventory("STR_GROUND");
 						}
 						else
 						{
 							if (_selUnit->getItem("STR_RIGHT_HAND") == nullptr)
 							{
 								toGround = false;
-								slotTarget = _game->getRuleset()->getInventory("STR_RIGHT_HAND");
+								targetSection = _game->getRuleset()->getInventory("STR_RIGHT_HAND");
 							}
 							else if (_selUnit->getItem("STR_LEFT_HAND") == nullptr)
 							{
 								toGround = false;
-								slotTarget = _game->getRuleset()->getInventory("STR_LEFT_HAND");
+								targetSection = _game->getRuleset()->getInventory("STR_LEFT_HAND");
 							}
 							else if (inRule->getCategory() != INV_GROUND)
-								slotTarget = _game->getRuleset()->getInventory("STR_GROUND");
+								targetSection = _game->getRuleset()->getInventory("STR_GROUND");
 						}
 
-						if (slotTarget != nullptr)
+						if (targetSection != nullptr)
 						{
 							if (toGround == true)
 							{
 								if (_tuMode == false
-									|| _selUnit->spendTimeUnits(item->getSection()->getCost(slotTarget)) == true)
+									|| _selUnit->spendTimeUnits(item->getInventorySection()->getCost(targetSection)) == true)
 								{
 									placed = true;
-									moveItem(item, slotTarget);
+									moveItem(item, targetSection);
 									arrangeGround(false);
 
 									soundId = ResourcePack::ITEM_DROP;
@@ -769,7 +769,7 @@ void Inventory::mouseClick(Action* action, State* state)
 								_stackLevel[static_cast<size_t>(item->getSlotX())]
 										   [static_cast<size_t>(item->getSlotY())] -= 1;
 
-								if (fitItem(slotTarget, item) == true)
+								if (fitItem(targetSection, item) == true)
 									placed = true;
 								else
 									_stackLevel[static_cast<size_t>(item->getSlotX())]
@@ -842,7 +842,7 @@ void Inventory::mouseClick(Action* action, State* state)
 						&& inRule->fitItemInSlot(_selItem->getRules(), x,y) == true)
 					{
 						if (_tuMode == false
-							|| _selUnit->spendTimeUnits(_selItem->getSection()->getCost(inRule)) == true)
+							|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
 						{
 							_tuCost = -1;
 
@@ -861,7 +861,7 @@ void Inventory::mouseClick(Action* action, State* state)
 					else if (canStack == true)
 					{
 						if (_tuMode == false
-							|| _selUnit->spendTimeUnits(_selItem->getSection()->getCost(inRule)) == true)
+							|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
 						{
 							_tuCost = -1;
 
@@ -914,7 +914,7 @@ void Inventory::mouseClick(Action* action, State* state)
 
 							soundId = ResourcePack::ITEM_RELOAD;
 
-							if (item->getSection()->getCategory() == INV_GROUND)
+							if (item->getInventorySection()->getCategory() == INV_GROUND)
 								arrangeGround(false);
 						}
 						else
@@ -939,7 +939,7 @@ void Inventory::mouseClick(Action* action, State* state)
 					if (canBeStacked(item, _selItem) == true)
 					{
 						if (_tuMode == false
-							|| _selUnit->spendTimeUnits(_selItem->getSection()->getCost(inRule)) == true)
+							|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
 						{
 							moveItem(
 									_selItem,
@@ -1050,7 +1050,7 @@ void Inventory::mouseClick(Action* action, State* state)
 		}
 		else // RMB w/ item on cursor
 		{
-			if (_selItem->getSection()->getCategory() == INV_GROUND)
+			if (_selItem->getInventorySection()->getCategory() == INV_GROUND)
 				_stackLevel[static_cast<size_t>(_selItem->getSlotX())]
 						   [static_cast<size_t>(_selItem->getSlotY())] += 1;
 
@@ -1098,7 +1098,7 @@ bool Inventory::unload()
 			i != _selUnit->getInventory()->end();
 			++i)
 	{
-		if ((*i)->getSection()->getCategory() == INV_HAND
+		if ((*i)->getInventorySection()->getCategory() == INV_HAND
 			&& *i != _selItem)
 		{
 			_warning->showMessage(_game->getLanguage()->getString("STR_BOTH_HANDS_MUST_BE_EMPTY"));
@@ -1302,7 +1302,7 @@ bool Inventory::fitItem(
 								x2,y2) == false)
 				{
 					if (_tuMode == false
-						|| _selUnit->spendTimeUnits(item->getSection()->getCost(inRule)) == true)
+						|| _selUnit->spendTimeUnits(item->getInventorySection()->getCost(inRule)) == true)
 					{
 						placed = true;
 						moveItem(item, inRule, x2,y2);
@@ -1395,7 +1395,7 @@ void Inventory::setPrimeGrenade(int turn)
 int Inventory::getTuCostInventory() const
 {
 /*	int wt;
-	if (_tuCost > 0 && _selItem->getSection()->getId() == "STR_GROUND")
+	if (_tuCost > 0 && _selItem->getInventorySection()->getId() == "STR_GROUND")
 		wt = _selItem->getRules()->getWeight();
 	else wt = 0;
 	return (_tuCost + wt); */

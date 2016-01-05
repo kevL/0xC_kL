@@ -135,7 +135,7 @@ YAML::Node BattleItem::save() const
 	else						node["unit"] = -1;
 
 	if (_section != nullptr)	node["section"] = _section->getInventoryType();
-	else						node["section"] = "nullptr";
+	else						node["section"] = "NONE";
 
 	if (_tile != nullptr)		node["position"] = _tile->getPosition();
 	else						node["position"] = Position(-1,-1,-1);
@@ -177,6 +177,7 @@ void BattleItem::setFuse(int turn)
  * Gets the '_ammoQty' of this BattleItem.
  * @return, ammo quantity
  *			0		- item is not ammo
+ *			<#>		- ammo qty.
  *			INT_MAX	- item is its own ammo
  */
 int BattleItem::getAmmoQuantity() const
@@ -206,10 +207,10 @@ bool BattleItem::isLoadedAmmo() const
 }
 
 /**
- * Gets an item's currently loaded ammo item.
- * @return, pointer to BattleItem
- *			- nullptr if this BattleItem is ammo or this BattleItem has no ammo loaded
- *			- the weapon itself if weapon is its own ammo
+ * Gets this BattleItem's currently loaded ammo-item.
+ * @return, pointer to BattleItem or nullptr
+ *			- nullptr if this BattleItem has no ammo loaded OR is a clip on its own
+ *			- the loaded ammo-item OR the weapon itself if weapon is its own ammo
  */
 BattleItem* BattleItem::getAmmoItem() const
 {
@@ -356,7 +357,7 @@ void BattleItem::moveToOwner(BattleUnit* const owner)
  * Gets the item's inventory section.
  * @return, the section rule
  */
-const RuleInventory* BattleItem::getSection() const
+const RuleInventory* BattleItem::getInventorySection() const
 {
 	return _section;
 }

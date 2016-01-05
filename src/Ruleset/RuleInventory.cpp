@@ -65,7 +65,7 @@ namespace OpenXcom
 
 /**
  * Creates a blank ruleset for a certain type of Inventory section.
- * @param id - string defining the id
+ * @param id - string defining the type
  */
 RuleInventory::RuleInventory(const std::string& type)
 	:
@@ -73,6 +73,7 @@ RuleInventory::RuleInventory(const std::string& type)
 		_x(0),
 		_y(0),
 		_cat(INV_SLOT),
+		_section(ST_NONE),
 		_listOrder(0)
 {}
 
@@ -95,19 +96,114 @@ void RuleInventory::load(
 	_x			= node["x"]			.as<int>(_x);
 	_y			= node["y"]			.as<int>(_y);
 	_slots		= node["slots"]		.as<std::vector<RuleSlot>>(_slots);
-	_costs		= node["costs"]		.as<std::map<std::string, int>>(_costs);
 	_listOrder	= node["listOrder"]	.as<int>(listOrder);
 
 	_cat = static_cast<InventoryCategory>(node["category"].as<int>(_cat));
+
+	// convert crappy strings into speedy Enums:
+	std::map<std::string, int> costs = node["costs"].as<std::map<std::string, int>>();
+	_costs = assignCosts(costs);
+	_section = assignSectionType(_type);
 }
 
 /**
- * Gets the string that identifies this Inventory section.
+ * Gets the string that identifies this RuleInventory section.
  * @return, section string
  */
 std::string RuleInventory::getInventoryType() const
 {
 	return _type;
+}
+
+/**
+ * Gets the InventorySection that identifies this RuleInventory section.
+ * @return, InventorySection (RuleInventory.h)
+ */
+InventorySection RuleInventory::getSectionType() const
+{
+	return _section;
+}
+
+/**
+ * Sets this rule's InventorySection based on the typeId.
+ * @param type - type-string of this RuleInventory
+ * @return, the corresponding InventorySection (RuleInventory.h)
+ */
+InventorySection RuleInventory::assignSectionType(const std::string& type) // private/static.
+{
+	if (type == "STR_GROUND")
+		return ST_GROUND;
+
+	if (type == "STR_RIGHT_HAND")
+		return ST_RIGHTHAND;
+
+	if (type == "STR_LEFT_HAND")
+		return ST_LEFTHAND;
+
+	if (type == "STR_BELT")
+		return ST_BELT;
+
+	if (type == "STR_RIGHT_LEG")
+		return ST_RIGHTLEG;
+
+	if (type == "STR_LEFT_LEG")
+		return ST_LEFTLEG;
+
+	if (type == "STR_RIGHT_SHOULDER")
+		return ST_RIGHTSHOULDER;
+
+	if (type == "STR_LEFT_SHOULDER")
+		return ST_LEFTSHOULDER;
+
+	if (type == "STR_BACK_PACK")
+		return ST_BACKPACK;
+
+	if (type == "STR_QUICK_DRAW")
+		return ST_QUICKDRAW;
+
+	return ST_NONE; // better not happen.
+}
+
+/**
+ * Sets the rule's costs based on typeIds.
+ * @param costs - reference to a map of strings & ints of the costs
+ * @return, a map of InventorySections & ints (RuleInventory.h)
+ */
+std::map<InventorySection, int> RuleInventory::assignCosts(std::map<std::string, int>& costs) // private/static.
+{
+	std::map<InventorySection, int> ret;
+
+	if (costs["STR_GROUND"] != 0)
+		ret[ST_GROUND] = costs["STR_GROUND"];
+
+	if (costs["STR_RIGHT_HAND"] != 0)
+		ret[ST_RIGHTHAND] = costs["STR_RIGHT_HAND"];
+
+	if (costs["STR_LEFT_HAND"] != 0)
+		ret[ST_LEFTHAND] = costs["STR_LEFT_HAND"];
+
+	if (costs["STR_BELT"] != 0)
+		ret[ST_BELT] = costs["STR_BELT"];
+
+	if (costs["STR_RIGHT_LEG"] != 0)
+		ret[ST_RIGHTLEG] = costs["STR_RIGHT_LEG"];
+
+	if (costs["STR_LEFT_LEG"] != 0)
+		ret[ST_LEFTLEG] = costs["STR_LEFT_LEG"];
+
+	if (costs["STR_RIGHT_SHOULDER"] != 0)
+		ret[ST_RIGHTSHOULDER] = costs["STR_RIGHT_SHOULDER"];
+
+	if (costs["STR_LEFT_SHOULDER"] != 0)
+		ret[ST_LEFTSHOULDER] = costs["STR_LEFT_SHOULDER"];
+
+	if (costs["STR_BACK_PACK"] != 0)
+		ret[ST_BACKPACK] = costs["STR_BACK_PACK"];
+
+	if (costs["STR_QUICK_DRAW"] != 0)
+		ret[ST_QUICKDRAW] = costs["STR_QUICK_DRAW"];
+
+	return ret;
 }
 
 /**
@@ -323,10 +419,10 @@ bool RuleInventory::fitItemInSlot(
  * @param slot - pointer to the section to move the item to
  * @return, TU cost
  */
-int RuleInventory::getCost(const RuleInventory* const section) const
+int RuleInventory::getCost(const RuleInventory* const inRule) const
 {
-	if (section != this)
-		return _costs.find(section->getInventoryType())->second;
+	if (inRule != this)
+		return _costs.find(inRule->getSectionType())->second;
 
 	return 0;
 }

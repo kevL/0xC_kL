@@ -140,7 +140,7 @@ BattleUnit::BattleUnit(
 		_aboutToFall(false),
 		_type("SOLDIER"),
 //		_race("STR_HUMAN"), // not used.
-		_activeHand("STR_RIGHT_HAND"),
+		_activeHand(AH_NONE),
 
 		_name(soldier->getName()),
 		_id(soldier->getId()),
@@ -294,7 +294,7 @@ BattleUnit::BattleUnit(
 		_morale(100),
 		_stunLevel(0),
 		_aboutToFall(false),
-		_activeHand("STR_RIGHT_HAND"),
+		_activeHand(AH_NONE),
 		_diedByFire(false),
 		_dirTurn(0),
 		_mcStrength(0),
@@ -475,11 +475,12 @@ void BattleUnit::load(const YAML::Node& node)
 	_charging			= nullptr;
 	_motionPoints		= node["motionPoints"]			.as<int>(_motionPoints);
 	_spawnUnit			= node["spawnUnit"]				.as<std::string>(_spawnUnit);
-	_activeHand			= node["activeHand"]			.as<std::string>(_activeHand);
 	_mcStrength			= node["mcStrength"]			.as<int>(_mcStrength);
 	_mcSkill			= node["mcSkill"]				.as<int>(_mcSkill);
 	_drugDose			= node["drugDose"]				.as<int>(_drugDose);
 	_murdererId			= node["murdererId"]			.as<int>(_murdererId);
+
+	_activeHand = static_cast<ActiveHand>(node["activeHand"].as<int>(_activeHand));
 
 	for (size_t
 			i = 0;
@@ -617,7 +618,7 @@ YAML::Node BattleUnit::save() const
 	if (_drugDose != 0)				node["drugDose"]		= _drugDose;
 	if (_murdererId != 0)			node["murdererId"]		= _murdererId;
 
-	node["activeHand"] = _activeHand;
+	node["activeHand"] = static_cast<int>(_activeHand);
 
 	// could put (if not tank) here:
 
@@ -1922,8 +1923,8 @@ int BattleUnit::getActionTu(
 		{
 			const RuleInventory
 				* const handRule = _battleGame->getRuleset()->getInventory("STR_RIGHT_HAND"), // might be leftHand Lol ...
-				* const groundRule = _battleGame->getRuleset()->getInventory("STR_GROUND");
-			cost = handRule->getCost(groundRule); // flat rate.
+				* const grdRule = _battleGame->getRuleset()->getInventory("STR_GROUND");
+			cost = handRule->getCost(grdRule); // flat rate.
 		}
 		break;
 
@@ -2209,6 +2210,7 @@ double BattleUnit::getAccuracy(
 		const BattleAction& action,
 		const BattleActionType bat) const
 {
+	static const double PCT = 0.01;
 	double ret;
 
 	BattleActionType baType;
@@ -2223,14 +2225,14 @@ double BattleUnit::getAccuracy(
 		return 1.;
 
 		case BA_HIT:
-			ret = static_cast<double>(action.weapon->getRules()->getAccuracyMelee()) * 0.01;
+			ret = static_cast<double>(action.weapon->getRules()->getAccuracyMelee()) * PCT;
 
 			if (action.weapon->getRules()->isSkillApplied() == true)
-				ret *= static_cast<double>(_stats.melee) * 0.01;
+				ret *= static_cast<double>(_stats.melee) * PCT;
 		break;
 
 		case BA_THROW:
-			ret = static_cast<double>(_stats.throwing) * 0.01;
+			ret = static_cast<double>(_stats.throwing) * PCT;
 			if (_kneeled == true)
 				ret *= 0.86;
 		break;
@@ -2239,18 +2241,18 @@ double BattleUnit::getAccuracy(
 			switch (baType)
 			{
 				case BA_AIMEDSHOT:
-					ret = static_cast<double>(action.weapon->getRules()->getAccuracyAimed()) * 0.01;
+					ret = static_cast<double>(action.weapon->getRules()->getAccuracyAimed()) * PCT;
 				break;
 
 				case BA_AUTOSHOT:
-					ret = static_cast<double>(action.weapon->getRules()->getAccuracyAuto()) * 0.01;
+					ret = static_cast<double>(action.weapon->getRules()->getAccuracyAuto()) * PCT;
 				break;
 
 				default:
-					ret = static_cast<double>(action.weapon->getRules()->getAccuracySnap()) * 0.01;
+					ret = static_cast<double>(action.weapon->getRules()->getAccuracySnap()) * PCT;
 			}
 
-			ret *= static_cast<double>(_stats.firing) * 0.01;
+			ret *= static_cast<double>(_stats.firing) * PCT;
 			if (_kneeled == true)
 				ret *= 1.16;
 	}
@@ -2258,8 +2260,8 @@ double BattleUnit::getAccuracy(
 	ret *= getAccuracyModifier(action.weapon);
 
 	if (action.weapon->getRules()->isTwoHanded() == true
-		&& getItem("STR_RIGHT_HAND") != nullptr
-		&& getItem("STR_LEFT_HAND") != nullptr)
+		&& getItem(ST_RIGHTHAND) != nullptr
+		&& getItem(ST_LEFTHAND) != nullptr)
 	{
 		ret *= 0.79;
 	}
@@ -2289,7 +2291,7 @@ double BattleUnit::getAccuracyModifier(const BattleItem* const item) const
 			wounds += _fatalWounds[BODYPART_RIGHTARM] + _fatalWounds[BODYPART_LEFTARM];
 		else
 		{
-			if (item == getItem("STR_RIGHT_HAND"))
+			if (item == getItem(ST_RIGHTHAND))
 				wounds += _fatalWounds[BODYPART_RIGHTARM];
 			else
 				wounds += _fatalWounds[BODYPART_LEFTARM];
@@ -2693,7 +2695,7 @@ BattleItem* BattleUnit::getItem(
 				i != _inventory.end();
 				++i)
 		{
-			if ((*i)->getSection() == inRule
+			if ((*i)->getInventorySection() == inRule
 				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
@@ -2717,25 +2719,26 @@ BattleItem* BattleUnit::getItem(
 
 /**
  * Checks if there's an inventory item in the specified inventory position.
- * @param sectionType	- reference to an inventory type
- * @param x				- X position in section (default 0)
- * @param y				- Y position in section (default 0)
+ * @note Used only in BattlescapeGenerator::placeItemByLayout()
+ * @param type	- reference to an inventory type
+ * @param x		- X position in section (default 0)
+ * @param y		- Y position in section (default 0)
  * @return, pointer to BattleItem or nullptr if none
  */
 BattleItem* BattleUnit::getItem(
-		const std::string& sectionType,
+		const std::string& type,
 		int x,
 		int y) const
 {
-	if (sectionType != "STR_GROUND") // Soldier items
+	if (type != "STR_GROUND") // Soldier items
 	{
 		for (std::vector<BattleItem*>::const_iterator
 				i = _inventory.begin();
 				i != _inventory.end();
 				++i)
 		{
-			if ((*i)->getSection() != nullptr
-				&& (*i)->getSection()->getInventoryType() == sectionType
+			if ((*i)->getInventorySection() != nullptr
+				&& (*i)->getInventorySection()->getInventoryType() == type
 				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
@@ -2749,7 +2752,52 @@ BattleItem* BattleUnit::getItem(
 				i != _tile->getInventory()->end();
 				++i)
 		{
-			if ((*i)->getSection() != nullptr
+			if ((*i)->getInventorySection() != nullptr
+				&& (*i)->occupiesSlot(x,y) == true)
+			{
+				return *i;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+/**
+ * Checks if there's an inventory item in the specified inventory position.
+ * @param section	- a InventorySection (RuleInventory.h)
+ * @param x			- X position in section (default 0)
+ * @param y			- Y position in section (default 0)
+ * @return, pointer to BattleItem or nullptr if none
+ */
+BattleItem* BattleUnit::getItem(
+		InventorySection section,
+		int x,
+		int y) const
+{
+	if (section != ST_GROUND)
+	{
+		for (std::vector<BattleItem*>::const_iterator
+				i = _inventory.begin();
+				i != _inventory.end();
+				++i)
+		{
+			if ((*i)->getInventorySection() != nullptr
+				&& (*i)->getInventorySection()->getSectionType() == section
+				&& (*i)->occupiesSlot(x,y) == true)
+			{
+				return *i;
+			}
+		}
+	}
+	else if (_tile != nullptr) // Ground items
+	{
+		for (std::vector<BattleItem*>::const_iterator
+				i = _tile->getInventory()->begin();
+				i != _tile->getInventory()->end();
+				++i)
+		{
+			if ((*i)->getInventorySection() != nullptr
 				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
@@ -2766,139 +2814,117 @@ BattleItem* BattleUnit::getItem(
  * @param quickest - true to choose the quickest weapon (default true)
  * @return, pointer to a BattleItem or nullptr
  */
-BattleItem* BattleUnit::getMainHandWeapon(bool quickest) const
+BattleItem* BattleUnit::getMainHandWeapon(bool quickest)
 {
 	// kL_note: This gets called way too much, from somewhere, when just walking around.
 	// probably AI patrol state
 
 	//Log(LOG_INFO) << "BattleUnit::getMainHandWeapon()";
 	BattleItem
-		* const rhtWeapon = getItem("STR_RIGHT_HAND"),
-		* const lftWeapon = getItem("STR_LEFT_HAND");
-	//if (rhtWeapon != nullptr) Log(LOG_INFO) << "right weapon " << rhtWeapon->getRules()->getType();
-	//if (lftWeapon != nullptr) Log(LOG_INFO) << "left weapon " << lftWeapon->getRules()->getType();
+		* const rtWeapon = getItem(ST_RIGHTHAND),
+		* const ltWeapon = getItem(ST_LEFTHAND);
+	//if (rtWeapon != nullptr) Log(LOG_INFO) << "right weapon " << rtWeapon->getRules()->getType();
+	//if (ltWeapon != nullptr) Log(LOG_INFO) << "left weapon " << ltWeapon->getRules()->getType();
 
 	const bool
-		hasRht = rhtWeapon != nullptr
-				&& (rhtWeapon->getRules()->getBattleType() == BT_MELEE
-					|| (rhtWeapon->getRules()->getBattleType() == BT_FIREARM
-						&& rhtWeapon->getAmmoItem() != nullptr
-						&& rhtWeapon->getAmmoItem()->getAmmoQuantity() > 0)),
-		hasLft = lftWeapon != nullptr
-				&& (lftWeapon->getRules()->getBattleType() == BT_MELEE
-					|| (lftWeapon->getRules()->getBattleType() == BT_FIREARM
-						&& lftWeapon->getAmmoItem() != nullptr
-						&& lftWeapon->getAmmoItem()->getAmmoQuantity() > 0));
-	//Log(LOG_INFO) << ". hasRht = " << hasRht;
-	//Log(LOG_INFO) << ". hasLft = " << hasLft;
+		hasRT = rtWeapon != nullptr
+				&& (rtWeapon->getRules()->getBattleType() == BT_MELEE
+					|| (rtWeapon->getRules()->getBattleType() == BT_FIREARM
+						&& rtWeapon->getAmmoItem() != nullptr)),
+//						&& rtWeapon->getAmmoItem()->getAmmoQuantity() > 0)),
+		hasLT = ltWeapon != nullptr
+				&& (ltWeapon->getRules()->getBattleType() == BT_MELEE
+					|| (ltWeapon->getRules()->getBattleType() == BT_FIREARM
+						&& ltWeapon->getAmmoItem() != nullptr));
+//						&& ltWeapon->getAmmoItem()->getAmmoQuantity() > 0));
+	//Log(LOG_INFO) << ". hasRT = " << hasRT;
+	//Log(LOG_INFO) << ". hasLT = " << hasLT;
 
-	if (!hasRht && !hasLft)
+	if (!hasRT && !hasLT)
+	{
+		_activeHand = AH_NONE;
 		return nullptr;
+	}
 
-	if (hasRht && !hasLft)
-		return rhtWeapon;
+	if (hasRT && !hasLT)
+	{
+		_activeHand = AH_RIGHT;
+		return rtWeapon;
+	}
 
-	if (!hasRht && hasLft)
-		return lftWeapon;
+	if (!hasRT && hasLT)
+	{
+		_activeHand = AH_LEFT;
+		return ltWeapon;
+	}
 
-	//Log(LOG_INFO) << ". . hasRht & hasLft VALID";
+	//Log(LOG_INFO) << ". . hasRT & hasLT VALID";
 
-	const RuleItem* itRule = rhtWeapon->getRules();
-	int rhtTU = itRule->getSnapTu();
-	if (rhtTU == 0)
-		if ((rhtTU = itRule->getAutoTu()) == 0)
-			if ((rhtTU = itRule->getAimedTu()) == 0)
-				if ((rhtTU = itRule->getLaunchTu()) == 0)
-					rhtTU = itRule->getMeleeTu();
+	const RuleItem* itRule = rtWeapon->getRules();
+	int rtTU = itRule->getSnapTu();
+	if (rtTU == 0)
+		if ((rtTU = itRule->getAutoTu()) == 0)
+			if ((rtTU = itRule->getAimedTu()) == 0)
+				if ((rtTU = itRule->getLaunchTu()) == 0)
+					rtTU = itRule->getMeleeTu();
 
-	itRule = lftWeapon->getRules();
-	int lftTU = itRule->getSnapTu();
-	if (lftTU == 0)
-		if ((lftTU = itRule->getAutoTu()) == 0)
-			if ((lftTU = itRule->getAimedTu()) == 0)
-				if ((lftTU = itRule->getLaunchTu()) == 0)
-					lftTU = itRule->getMeleeTu();
+	itRule = ltWeapon->getRules();
+	int ltTU = itRule->getSnapTu();
+	if (ltTU == 0)
+		if ((ltTU = itRule->getAutoTu()) == 0)
+			if ((ltTU = itRule->getAimedTu()) == 0)
+				if ((ltTU = itRule->getLaunchTu()) == 0)
+					ltTU = itRule->getMeleeTu();
 	// note: Should probly account for 'noReaction' weapons ...
 
-	//Log(LOG_INFO) << ". . rhtTU = " << rhtTU;
-	//Log(LOG_INFO) << ". . lftTU = " << lftTU;
+	//Log(LOG_INFO) << ". . rtTU = " << rtTU;
+	//Log(LOG_INFO) << ". . ltTU = " << ltTU;
 
-	if (!rhtTU && !lftTU)
-		return nullptr;
-
-	if (rhtTU && !lftTU)
-		return rhtWeapon;
-
-	if (!rhtTU && lftTU)
-		return lftWeapon;
-
-	if (quickest == true) // rhtTU && lftTU
+	if (!rtTU && !ltTU)
 	{
-		if (rhtTU <= lftTU)
-			return rhtWeapon;
+		_activeHand = AH_NONE;
+		return nullptr;
+	}
 
-		return lftWeapon;
+	if (rtTU && !ltTU)
+	{
+		_activeHand = AH_RIGHT;
+		return rtWeapon;
+	}
+
+	if (!rtTU && ltTU)
+	{
+		_activeHand = AH_LEFT;
+		return ltWeapon;
+	}
+
+	if (quickest == true) // rtTU && ltTU
+	{
+		if (rtTU <= ltTU)
+		{
+			_activeHand = AH_RIGHT;
+			return rtWeapon;
+		}
+
+		_activeHand = AH_LEFT;
+		return ltWeapon;
 	}
 	else
 	{
-		if (rhtTU >= lftTU)
-			return rhtWeapon;
+		if (rtTU >= ltTU)
+		{
+			_activeHand = AH_RIGHT;
+			return rtWeapon;
+		}
 
-		return lftWeapon;
+		_activeHand = AH_LEFT;
+		return ltWeapon;
 	}
 
-	// kL_note: should exit this by setting ActiveHand.
 	//Log(LOG_INFO) << "BattleUnit::getMainHandWeapon() EXIT 0, no weapon";
+	_activeHand = AH_NONE;
 	return nullptr;
 }
-/*	BattleItem *weaponRightHand = getItem("STR_RIGHT_HAND");
-	BattleItem *weaponLeftHand = getItem("STR_LEFT_HAND");
-
-	// ignore weapons without ammo (rules out grenades)
-	if (!weaponRightHand || !weaponRightHand->getAmmoItem() || !weaponRightHand->getAmmoItem()->getAmmoQuantity())
-		weaponRightHand = 0;
-	if (!weaponLeftHand || !weaponLeftHand->getAmmoItem() || !weaponLeftHand->getAmmoItem()->getAmmoQuantity())
-		weaponLeftHand = 0;
-
-	// if there is only one weapon, it's easy:
-	if (weaponRightHand && !weaponLeftHand)
-		return weaponRightHand;
-	else if (!weaponRightHand && weaponLeftHand)
-		return weaponLeftHand;
-	else if (!weaponRightHand && !weaponLeftHand)
-		return 0;
-
-	// otherwise pick the one with the least snapshot TUs
-	int tuRightHand = weaponRightHand->getRules()->getSnapTu();
-	int tuLeftHand = weaponLeftHand->getRules()->getSnapTu();
-	BattleItem *weaponCurrentHand = getItem(getActiveHand());
-	// if only one weapon has snapshot, pick that one
-	if (tuLeftHand <= 0 && tuRightHand > 0)
-		return weaponRightHand;
-	else if (tuRightHand <= 0 && tuLeftHand > 0)
-		return weaponLeftHand;
-	// else pick the better one
-	else
-	{
-		if (tuLeftHand >= tuRightHand)
-		{
-			if (quickest)
-				return weaponRightHand;
-			else if (_faction == FACTION_PLAYER)
-				return weaponCurrentHand;
-			else
-				return weaponLeftHand;
-		}
-		else
-		{
-			if (quickest)
-				return weaponLeftHand;
-			else if (_faction == FACTION_PLAYER)
-				return weaponCurrentHand;
-			else
-				return weaponRightHand;
-		}
-	} */
 
 /**
  * Get a grenade from hand or belt.
@@ -2907,12 +2933,12 @@ BattleItem* BattleUnit::getMainHandWeapon(bool quickest) const
  */
 BattleItem* BattleUnit::getGrenade() const
 {
-	BattleItem* grenade = getItem("STR_RIGHT_HAND");
+	BattleItem* grenade = getItem(ST_RIGHTHAND);
 	if (grenade == nullptr
 		|| grenade->getRules()->getBattleType() != BT_GRENADE
 		|| isGrenadeSuitable(grenade) == false)
 	{
-		grenade = getItem("STR_LEFT_HAND");
+		grenade = getItem(ST_LEFTHAND);
 	}
 
 	if (grenade != nullptr
@@ -2957,21 +2983,21 @@ bool BattleUnit::isGrenadeSuitable(const BattleItem* const grenade) const // pri
 }
 
 /**
- * Gets the name of any melee weapon this BattleUnit may be carrying, or a built in one.
+ * Gets the type of any melee weapon this BattleUnit may be carrying, or a built in one.
  * @return, the name of a melee weapon
  */
 std::string BattleUnit::getMeleeWeapon() const
 {
-	if (getItem("STR_RIGHT_HAND")
-		&& getItem("STR_RIGHT_HAND")->getRules()->getBattleType() == BT_MELEE)
+	if (getItem(ST_RIGHTHAND) != nullptr
+		&& getItem(ST_RIGHTHAND)->getRules()->getBattleType() == BT_MELEE)
 	{
-		return getItem("STR_RIGHT_HAND")->getRules()->getType();
+		return getItem(ST_RIGHTHAND)->getRules()->getType();
 	}
 
-	if (getItem("STR_LEFT_HAND")
-		&& getItem("STR_LEFT_HAND")->getRules()->getBattleType() == BT_MELEE)
+	if (getItem(ST_LEFTHAND) != nullptr
+		&& getItem(ST_LEFTHAND)->getRules()->getBattleType() == BT_MELEE)
 	{
-		return getItem("STR_LEFT_HAND")->getRules()->getType();
+		return getItem(ST_LEFTHAND)->getRules()->getType();
 	}
 
 	if (_unitRule != nullptr) // -> do not CTD for Mc'd xCom agents.
@@ -2979,24 +3005,22 @@ std::string BattleUnit::getMeleeWeapon() const
 
 	return "";
 }
-/* BattleItem *BattleUnit::getMeleeWeapon()
+/* BattleItem* BattleUnit::getMeleeWeapon()
 {
-	BattleItem *melee = getItem("STR_RIGHT_HAND");
+	BattleItem* melee = getItem("STR_RIGHT_HAND");
+
 	if (melee && melee->getRules()->getBattleType() == BT_MELEE)
-	{
 		return melee;
-	}
+
 	melee = getItem("STR_LEFT_HAND");
 	if (melee && melee->getRules()->getBattleType() == BT_MELEE)
-	{
 		return melee;
-	}
+
 	melee = getSpecialWeapon(BT_MELEE);
 	if (melee)
-	{
 		return melee;
-	}
-	return 0;
+
+	return nullptr;
 } */
 
 /**
@@ -3006,12 +3030,12 @@ std::string BattleUnit::getMeleeWeapon() const
  */
 bool BattleUnit::checkAmmo()
 {
-	BattleItem* weapon = getItem("STR_RIGHT_HAND");
+	BattleItem* weapon = getItem(ST_RIGHTHAND);
 	if (weapon == nullptr
 		|| weapon->getAmmoItem() != nullptr
 		|| weapon->getRules()->getBattleType() == BT_MELEE)
 	{
-		weapon = getItem("STR_LEFT_HAND");
+		weapon = getItem(ST_LEFTHAND);
 		if (weapon == nullptr
 			|| weapon->getAmmoItem() != nullptr
 			|| weapon->getRules()->getBattleType() == BT_MELEE)
@@ -3811,35 +3835,44 @@ std::string BattleUnit::getType() const
 }
 
 /**
- * Sets unit's active hand.
- * @param slot - reference a handslot
+ * Sets this BattleUnit's active hand and re-caches sprites.
+ * @param hand - the ActiveHand (BattleUnit.h)
  */
-void BattleUnit::setActiveHand(const std::string& slot)
+void BattleUnit::setActiveHand(ActiveHand hand)
 {
-	if (_activeHand != slot)
+	if (_activeHand != hand)
+	{
+		_activeHand = hand;
 		_cacheInvalid = true;
-
-	_activeHand = slot;
+	}
 }
 
 /**
- * Gets unit's active hand.
- @note Must have an item in that hand else switch to other hand or use righthand
- * as default.
- * @return, the active hand
+ * Gets this BattleUnit's active hand.
+ * @note Must have an item in that hand else switch to other hand or use
+ * righthand by default.
+ * @return, the ActiveHand (BattleUnit.h)
  */
-std::string BattleUnit::getActiveHand() const
+ActiveHand BattleUnit::getActiveHand()
 {
-	if (getItem(_activeHand) != nullptr) // has an item in the already active Hand.
-		return _activeHand;
+	switch (_activeHand)
+	{
+		case AH_RIGHT:
+			if (getItem(ST_RIGHTHAND) != nullptr)
+				return AH_RIGHT;
 
-	if (getItem("STR_RIGHT_HAND") != nullptr)
-		return "STR_RIGHT_HAND";
+		case AH_LEFT:
+			if (getItem(ST_LEFTHAND) != nullptr)
+				return AH_LEFT;
+	}
 
-	if (getItem("STR_LEFT_HAND") != nullptr)
-		return "STR_LEFT_HAND";
+	if (getItem(ST_RIGHTHAND) != nullptr)
+		return (_activeHand = AH_RIGHT);
 
-	return "";
+	if (getItem(ST_LEFTHAND) != nullptr)
+		return (_activeHand = AH_LEFT);
+
+	return AH_NONE;
 }
 
 /**

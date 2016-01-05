@@ -1773,9 +1773,21 @@ bool TileEngine::reactionShot(
 	if (unit->getFaction() == FACTION_PLAYER
 		&& unit->getOriginalFaction() == FACTION_PLAYER)
 	{
-		_rfAction->weapon = unit->getItem(unit->getActiveHand());
+		switch (unit->getActiveHand())
+		{
+			case AH_RIGHT:
+				_rfAction->weapon = unit->getItem(ST_RIGHTHAND);
+				break;
+			case AH_LEFT:
+				_rfAction->weapon = unit->getItem(ST_LEFTHAND);
+				break;
+
+			default:
+			case AH_NONE:
+				_rfAction->weapon = unit->getMainHandWeapon();
+		}
 	}
-	else
+	else // aLien .....
 	{
 		_rfAction->weapon = unit->getMainHandWeapon();
 
@@ -1790,7 +1802,7 @@ bool TileEngine::reactionShot(
 	if (_rfAction->weapon == nullptr
 		|| _rfAction->weapon->getRules()->canReactionFire() == false
 		|| _rfAction->weapon->getAmmoItem() == nullptr					// lasers & melee are their own ammo-items
-		|| _rfAction->weapon->getAmmoItem()->getAmmoQuantity() == 0		// lasers & melee return INT_MAX
+//		|| _rfAction->weapon->getAmmoItem()->getAmmoQuantity() == 0		// lasers & melee return INT_MAX
 		|| (_rfAction->actor->getFaction() != FACTION_HOSTILE			// is not an aLien and has unresearched weapon.
 			&& _battleSave->getGeoscapeSave()->isResearched(_rfAction->weapon->getRules()->getRequirements()) == false))
 	{
@@ -6205,7 +6217,7 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 					(*i)->getUnit()->setPosition(dt->getPosition());
 				}
 
-				dt->addItem(*i, (*i)->getSection());
+				dt->addItem(*i, (*i)->getInventorySection());
 			}
 
 			tile->getInventory()->clear();

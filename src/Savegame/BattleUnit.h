@@ -32,6 +32,7 @@
 #include "../Battlescape/Position.h"
 
 #include "../Ruleset/MapData.h"
+#include "../Ruleset/RuleInventory.h"
 #include "../Ruleset/RuleItem.h"
 #include "../Ruleset/RuleUnit.h"
 
@@ -109,6 +110,13 @@ enum OutCheck
 	OUT_HLTH,		// 2
 	OUT_STUN,		// 3
 	OUT_HLTH_STUN	// 4
+};
+
+enum ActiveHand
+{
+	AH_NONE,	// 0
+	AH_RIGHT,	// 1
+	AH_LEFT		// 2
 };
 
 
@@ -197,6 +205,7 @@ private:
 		_originalFaction,
 		_killedBy;
 	UnitStatus _status;
+	ActiveHand _activeHand;
 
 	std::list<BattleUnit*> _rfSpotters;
 
@@ -208,9 +217,7 @@ private:
 		_hostileUnitsThisTurn;
 //	std::vector<Tile*> _visibleTiles;
 
-	std::string
-		_activeHand,
-		_spawnUnit;
+	std::string _spawnUnit;
 
 	// static data
 	UnitStats _stats;
@@ -565,15 +572,20 @@ private:
 				int y = 0) const;
 		/// Gets the item in the specified slot of this unit's inventory.
 		BattleItem* getItem(
-				const std::string& sectionType,
+				const std::string& type,
+				int x = 0,
+				int y = 0) const;
+		/// Gets the item in the specified slot of this unit's inventory.
+		BattleItem* getItem(
+				InventorySection section,
 				int x = 0,
 				int y = 0) const;
 
 		/// Gets the item in this unit's main hand.
-		BattleItem* getMainHandWeapon(bool quickest = true) const;
+		BattleItem* getMainHandWeapon(bool quickest = true);
 		/// Gets a grenade from this unit's belt if possible.
 		BattleItem* getGrenade() const;
-		/// Gets the name of a melee weapon this unit may be carrying or that's innate.
+		/// Gets this unit's melee weapon as a string.
 		std::string getMeleeWeapon() const;
 //		BattleItem* getMeleeWeapon(); // kL_note: changed.
 
@@ -708,10 +720,10 @@ private:
 		/// Gets this unit's type as a string.
 		std::string getType() const;
 
-		/// Sets the hand this unit is using.
-		void setActiveHand(const std::string& slot);
+		/// Sets the hand this unit has active.
+		void setActiveHand(ActiveHand hand);
 		/// Gets this unit's active hand.
-		std::string getActiveHand() const;
+		ActiveHand getActiveHand();
 
 		/// Gets this unit's original faction
 		UnitFaction getOriginalFaction() const;

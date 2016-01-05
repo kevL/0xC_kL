@@ -2140,14 +2140,14 @@ void BattlescapeState::btnLeftHandLeftClick(Action*)
 	if (playableUnitSelected() == true)
 	{
 		_battleGame->cancelCurrentAction();
-		_battleSave->getSelectedUnit()->setActiveHand("STR_LEFT_HAND");
+		_battleSave->getSelectedUnit()->setActiveHand(AH_LEFT);
 
 		_map->cacheUnits();
 		_map->draw();
 
 		const BattleUnit* const unit = _battleSave->getSelectedUnit();
 		handAction(
-				unit->getItem("STR_LEFT_HAND"),
+				unit->getItem(ST_LEFTHAND),
 				unit->getFatalWound(BODYPART_LEFTARM) != 0);
 	}
 }
@@ -2162,7 +2162,7 @@ void BattlescapeState::btnLeftHandRightClick(Action*)
 	{
 		_battleGame->cancelCurrentAction(); // was, force= true
 
-		_battleSave->getSelectedUnit()->setActiveHand("STR_LEFT_HAND");
+		_battleSave->getSelectedUnit()->setActiveHand(AH_LEFT);
 		updateSoldierInfo(false);
 
 		_map->cacheUnits();
@@ -2179,14 +2179,14 @@ void BattlescapeState::btnRightHandLeftClick(Action*)
 	if (playableUnitSelected() == true)
 	{
 		_battleGame->cancelCurrentAction();
-		_battleSave->getSelectedUnit()->setActiveHand("STR_RIGHT_HAND");
+		_battleSave->getSelectedUnit()->setActiveHand(AH_RIGHT);
 
 		_map->cacheUnits();
 		_map->draw();
 
 		const BattleUnit* const unit = _battleSave->getSelectedUnit();
 		handAction(
-				unit->getItem("STR_RIGHT_HAND"),
+				unit->getItem(ST_RIGHTHAND),
 				unit->getFatalWound(BODYPART_LEFTARM) != 0);
 	}
 }
@@ -2201,7 +2201,7 @@ void BattlescapeState::btnRightHandRightClick(Action*)
 	{
 		_battleGame->cancelCurrentAction(); // was, force= true
 
-		_battleSave->getSelectedUnit()->setActiveHand("STR_RIGHT_HAND");
+		_battleSave->getSelectedUnit()->setActiveHand(AH_RIGHT);
 		updateSoldierInfo(false);
 
 		_map->cacheUnits();
@@ -2754,56 +2754,56 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 
 		const BattleItem
-			* const rtItem (selUnit->getItem("STR_RIGHT_HAND")),
-			* const ltItem (selUnit->getItem("STR_LEFT_HAND"));
+			* const rtItem (selUnit->getItem(ST_RIGHTHAND)),
+			* const ltItem (selUnit->getItem(ST_LEFTHAND));
 		const RuleItem* itRule;
 
-		const std::string activeHand = selUnit->getActiveHand();
-		if (activeHand.empty() == false)
+		ActiveHand ah = selUnit->getActiveHand();
+		if (ah != AH_NONE)
 		{
 			int
 				tuLaunch = 0,
-				tuAim = 0,
-				tuAuto = 0,
-				tuSnap = 0;
+				tuAim    = 0,
+				tuAuto   = 0,
+				tuSnap   = 0;
 
-			if (activeHand == "STR_RIGHT_HAND")
+			switch (ah)
 			{
-				itRule = rtItem->getRules();
-				if (itRule->getBattleType() == BT_FIREARM
-					|| itRule->getBattleType() == BT_MELEE)
-				{
-					tuLaunch = selUnit->getActionTu(BA_LAUNCH, rtItem);
-					tuAim = selUnit->getActionTu(BA_AIMEDSHOT, rtItem);
-					tuAuto = selUnit->getActionTu(BA_AUTOSHOT, rtItem);
-					tuSnap = selUnit->getActionTu(BA_SNAPSHOT, rtItem);
-					if (tuLaunch == 0
-						&& tuAim == 0
-						&& tuAuto == 0
-						&& tuSnap == 0)
+				case AH_RIGHT:
+					itRule = rtItem->getRules();
+					if (itRule->getBattleType() == BT_FIREARM
+						|| itRule->getBattleType() == BT_MELEE)
 					{
-						tuSnap = selUnit->getActionTu(BA_HIT, rtItem);
-					}
-				}
-			}
-			else if (activeHand == "STR_LEFT_HAND")
-			{
-				itRule = ltItem->getRules();
-				if (itRule->getBattleType() == BT_FIREARM
-					|| itRule->getBattleType() == BT_MELEE)
-				{
-					tuLaunch = selUnit->getActionTu(BA_LAUNCH, ltItem);
-					tuAim = selUnit->getActionTu(BA_AIMEDSHOT, ltItem);
-					tuAuto = selUnit->getActionTu(BA_AUTOSHOT, ltItem);
-					tuSnap = selUnit->getActionTu(BA_SNAPSHOT, ltItem);
-					if (tuLaunch == 0
-						&& tuAim == 0
-						&& tuAuto == 0
-						&& tuSnap == 0)
+						tuLaunch = selUnit->getActionTu(BA_LAUNCH, rtItem);
+						tuAim = selUnit->getActionTu(BA_AIMEDSHOT, rtItem);
+						tuAuto = selUnit->getActionTu(BA_AUTOSHOT, rtItem);
+						tuSnap = selUnit->getActionTu(BA_SNAPSHOT, rtItem);
+						if (tuLaunch == 0
+							&& tuAim == 0
+							&& tuAuto == 0
+							&& tuSnap == 0)
+						{
+							tuSnap = selUnit->getActionTu(BA_HIT, rtItem);
+						}
+					} break;
+
+				case AH_LEFT:
+					itRule = ltItem->getRules();
+					if (itRule->getBattleType() == BT_FIREARM
+						|| itRule->getBattleType() == BT_MELEE)
 					{
-						tuSnap = selUnit->getActionTu(BA_HIT, ltItem);
+						tuLaunch = selUnit->getActionTu(BA_LAUNCH, ltItem);
+						tuAim = selUnit->getActionTu(BA_AIMEDSHOT, ltItem);
+						tuAuto = selUnit->getActionTu(BA_AUTOSHOT, ltItem);
+						tuSnap = selUnit->getActionTu(BA_SNAPSHOT, ltItem);
+						if (tuLaunch == 0
+							&& tuAim == 0
+							&& tuAuto == 0
+							&& tuSnap == 0)
+						{
+							tuSnap = selUnit->getActionTu(BA_HIT, ltItem);
+						}
 					}
-				}
 			}
 
 			if (tuLaunch != 0)
@@ -3035,7 +3035,7 @@ void BattlescapeState::drawFuse() // private.
 		_fuseFrame = 0;
 
 	const BattleUnit* const selUnit = _battleSave->getSelectedUnit();
-	const BattleItem* item = selUnit->getItem("STR_LEFT_HAND");
+	const BattleItem* item = selUnit->getItem(ST_LEFTHAND);
 	if (item != nullptr
 		&& item->getRules()->isGrenade() == true
 		&& item->getFuse() != -1)
@@ -3050,7 +3050,7 @@ void BattlescapeState::drawFuse() // private.
 		_btnLeftHandItem->unlock();
 	}
 
-	item = selUnit->getItem("STR_RIGHT_HAND");
+	item = selUnit->getItem(ST_RIGHTHAND);
 	if (item != nullptr
 		&& item->getRules()->isGrenade() == true
 		&& item->getFuse() != -1)

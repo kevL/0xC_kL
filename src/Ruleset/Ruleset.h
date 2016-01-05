@@ -308,7 +308,7 @@ protected:
 		/// Gets the inventory list.
 		std::map<std::string, RuleInventory*>* getInventories();
 		/// Gets the ruleset for a specific inventory.
-		RuleInventory* getInventory(const std::string& id) const;
+		RuleInventory* getInventory(const std::string& type) const;
 		/// Returns the sorted list of inventories.
 		const std::vector<std::string>& getInvsList() const;
 		/// Determines the highest TU-value used.

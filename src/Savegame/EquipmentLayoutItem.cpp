@@ -24,9 +24,9 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a new soldier-equipment layout item.
+ * Initializes a Soldier's EquipmentLayoutItem.
  * @param itemType	- reference to the item's type
- * @param slot		- reference to the occupied slot's id
+ * @param slot		- reference to the occupied section type
  * @param slotX		- position-X in the occupied slot
  * @param slotY		- position-Y in the occupied slot
  * @param ammoItem	- reference to the ammo that has to be loaded into the item (its type)
@@ -34,14 +34,14 @@ namespace OpenXcom
  */
 EquipmentLayoutItem::EquipmentLayoutItem(
 		const std::string& itemType,
-		const std::string& slot,
+		const std::string& section,
 		int slotX,
 		int slotY,
 		const std::string& ammoItem,
 		int fuse)
 	:
 		_itemType(itemType),
-		_slot(slot),
+		_section(section),
 		_slotX(slotX),
 		_slotY(slotY),
 		_ammoItem(ammoItem),
@@ -49,7 +49,7 @@ EquipmentLayoutItem::EquipmentLayoutItem(
 {}
 
 /**
- * Initializes a new soldier-equipment layout item from YAML.
+ * Initializes a Soldier's EquipmentLayoutItem from YAML.
  * @param node, YAML node.
  */
 EquipmentLayoutItem::EquipmentLayoutItem(const YAML::Node& node)
@@ -64,13 +64,13 @@ EquipmentLayoutItem::~EquipmentLayoutItem()
 {}
 
 /**
- * Loads the soldier-equipment layout item from a YAML file.
+ * Loads the Soldier's EquipmentLayoutItem from a YAML file.
  * @param node - reference a YAML node
  */
 void EquipmentLayoutItem::load(const YAML::Node& node)
 {
 	_itemType	= node["itemType"]	.as<std::string>(_itemType);
-	_slot		= node["slot"]		.as<std::string>(_slot);
+	_section	= node["section"]	.as<std::string>(_section);
 	_slotX		= node["slotX"]		.as<int>(0);
 	_slotY		= node["slotY"]		.as<int>(0);
 	_ammoItem	= node["ammoItem"]	.as<std::string>("NONE");
@@ -78,7 +78,7 @@ void EquipmentLayoutItem::load(const YAML::Node& node)
 }
 
 /**
- * Saves the soldier-equipment layout item to a YAML file.
+ * Saves the Soldier's EquipmentLayoutItem to a YAML file.
  * @return, YAML node
  */
 YAML::Node EquipmentLayoutItem::save() const
@@ -86,9 +86,8 @@ YAML::Node EquipmentLayoutItem::save() const
 	YAML::Node node;
 
 	node["itemType"]	= _itemType;
-	node["slot"]		= _slot;
+	node["section"]		= _section;
 
-	// only save this info if it's needed, reduce clutter in saves
 	if (_slotX != 0)			node["slotX"]		= _slotX;
 	if (_slotY != 0)			node["slotY"]		= _slotY;
 	if (_ammoItem != "NONE")	node["ammoItem"]	= _ammoItem;
@@ -98,7 +97,7 @@ YAML::Node EquipmentLayoutItem::save() const
 }
 
 /**
- * Returns the item's type which has to be in a slot.
+ * Returns the item's type which has to be in an Inventory section.
  * @return, item type
  */
 std::string EquipmentLayoutItem::getItemType() const
@@ -107,16 +106,16 @@ std::string EquipmentLayoutItem::getItemType() const
 }
 
 /**
- * Returns the slot to be occupied.
- * @return, slot name
+ * Returns the Inventory section to be occupied.
+ * @return, section type
  */
-std::string EquipmentLayoutItem::getSection() const
+std::string EquipmentLayoutItem::getLayoutSection() const
 {
-	return _slot;
+	return _section;
 }
 
 /**
- * Returns the position-X in the slot to be occupied.
+ * Returns the position-X in the Inventory section to be occupied.
  * @return, slot-X
  */
 int EquipmentLayoutItem::getSlotX() const
@@ -125,7 +124,7 @@ int EquipmentLayoutItem::getSlotX() const
 }
 
 /**
- * Returns the position-Y in the slot to be occupied.
+ * Returns the position-Y in the Inventory section to be occupied.
  * @return, slot-Y
  */
 int EquipmentLayoutItem::getSlotY() const

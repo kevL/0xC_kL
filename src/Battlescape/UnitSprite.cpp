@@ -296,7 +296,9 @@ void UnitSprite::drawRoutine0()
 		offY7[8]		= {-4, -6, -1,  0,  3,  0,  1,  0}, // for the left handed rifles (muton)
 
 		offYKneel  =  4,
-		offXAiming = 16;
+		offXAiming = 16,
+
+		expectedUnitHeight = 22;
 
 	const int
 		unitDir		= _unit->getUnitDirection(),
@@ -308,7 +310,6 @@ void UnitSprite::drawRoutine0()
 	{
 		torso = _unitSet->getFrame(die + _unit->getFallingPhase());
 		drawRecolored(torso);
-
 		return;
 	}
 
@@ -374,7 +375,7 @@ void UnitSprite::drawRoutine0()
 		leftArm		= _unitSet->getFrame(unitDir + larmStand);
 	}
 
-	sortRifles();
+	sortHandObjects();
 
 	if (_itRT != nullptr)
 	{
@@ -508,8 +509,8 @@ void UnitSprite::drawRoutine0()
 		leftArm->	setY(0);
 	}
 
-	if (itRT) itRT->setY(itRT->getY() + (22 - _unit->getStandHeight()));
-	if (itLT) itLT->setY(itLT->getY() + (22 - _unit->getStandHeight()));
+	if (itRT) itRT->setY(itRT->getY() + (expectedUnitHeight - _unit->getStandHeight()));
+	if (itLT) itLT->setY(itLT->getY() + (expectedUnitHeight - _unit->getStandHeight()));
 
 	if (_unit->getUnitStatus() == STATUS_AIMING)
 	{
@@ -694,17 +695,17 @@ void UnitSprite::drawRoutine1()
 
 	if (_unit->getUnitStatus() == STATUS_WALKING)
 	{
+		torso->setY(yoffWalk[walkPhase]);
 		torso = _unitSet->getFrame(
 								  unitDir * 5
 								+ static_cast<int>(
 								  static_cast<float>(walkPhase) / 1.6f)
 								+ walk);
-		torso->setY(yoffWalk[walkPhase]);
 	}
 	else
 		torso = _unitSet->getFrame(unitDir + stand);
 
-	sortRifles();
+	sortHandObjects();
 
 	if (_itRT != nullptr)
 	{
@@ -784,7 +785,6 @@ void UnitSprite::drawRoutine1()
 		if (itLT) itLT->setX(itLT->getX() + offXAiming);
 	}
 
-	// blit order depends on unit direction.
 	switch (unitDir)
 	{
 		case 0:
@@ -854,7 +854,7 @@ void UnitSprite::drawRoutine2()
 	Surface* quad;
 
 	const int
-		turret	= _unit->getTurretType(),
+		turret 	= _unit->getTurretType(),
 		hover	= (_unit->getMoveTypeUnit() == MT_FLY) ? 32 : 0;
 
 	if (_quad != 0 && hover != 0)
@@ -866,7 +866,7 @@ void UnitSprite::drawRoutine2()
 	// This is a fix, more of a workaround for tank's reverse strafing move.
 	// There's a problem somewhere that keeps switching BattleUnit::_direction
 	// back and forth ... in reverse gears. That is, _direction should remain
-	// constant throughout a single-tile strafe move with tanks. At least
+	// constant throughout a single-tile strafe move with tanks. But at least
 	// '_faceDirection' seems constant during these sprite-frames.
 	int unitDir;
 	if (_unit->getFaceDirection() != -1)
@@ -950,7 +950,7 @@ void UnitSprite::drawRoutine3()
 	static const int walk = 32; // magic static number
 
 	Surface* quad;
-	if (_quad != 0) // draw the animated propulsion below the disc
+	if (_quad != 0)
 	{
 		quad = _unitSet->getFrame((_quad - 1) * 8 + _aniFrame + walk);
 		drawRecolored(quad);
@@ -1007,7 +1007,7 @@ void UnitSprite::drawRoutine4()
 	else
 		sprite = _unitSet->getFrame(stand + unitDir);
 
-	sortRifles();
+	sortHandObjects();
 
 	if (_itRT != nullptr && _itRT->getRules()->isFixed() == false)
 	{
@@ -1020,7 +1020,7 @@ void UnitSprite::drawRoutine4()
 		}
 		else
 		{
-			if (_itRT->getSection()->getInventoryType() == "STR_RIGHT_HAND") // wtf. how could right-item not be in right-hand.
+			if (_itRT->getInventorySection()->getSectionType() == ST_RIGHTHAND) // wtf. how could right-item not be in right-hand.
 			{
 				itRT = _itSetRT->getFrame(unitDir + _itRT->getRules()->getHandSprite());
 				itRT->setX(0);
@@ -1130,7 +1130,7 @@ void UnitSprite::drawRoutine5()
 }
 
 /**
- * Drawing routine for snakemen.
+ * Drawing routine for snakemans.
  */
 void UnitSprite::drawRoutine6()
 {
@@ -1209,7 +1209,7 @@ void UnitSprite::drawRoutine6()
 	else
 		legs = _unitSet->getFrame(unitDir + legsStand);
 
-	sortRifles();
+	sortHandObjects();
 
 	if (_itRT != nullptr)
 	{
@@ -1304,8 +1304,8 @@ void UnitSprite::drawRoutine6()
 		rightArm->	setX(offXAiming);
 		leftArm->	setX(offXAiming);
 		legs->		setX(offXAiming);
-		if (itRT != nullptr) itRT->setX(itRT->getX() + offXAiming); // wtf.
-		if (itLT != nullptr) itLT->setX(itLT->getX() + offXAiming); // wtf.
+		if (itRT) itRT->setX(itRT->getX() + offXAiming);
+		if (itLT) itLT->setX(itLT->getX() + offXAiming);
 	}
 
 	switch (unitDir)
@@ -1368,12 +1368,12 @@ void UnitSprite::drawRoutine6()
 			drawRecolored(torso);
 	}
 
-	torso->setX(0);
-	rightArm->setX(0);
-	leftArm->setX(0);
-	legs->setX(0);
-	if (itRT) itRT->setX(0);
-	if (itLT) itLT->setX(0);
+	torso->		setX(0);
+	rightArm->	setX(0);
+	leftArm->	setX(0);
+	legs->		setX(0);
+	if (itRT) itRT->setX(0); // was getX
+	if (itLT) itLT->setX(0); // was getX
 }
 
 /**
@@ -1399,37 +1399,38 @@ void UnitSprite::drawRoutine7()
 		rarmWalk[8] = { 40, 40+24, 40+24*2, 40+24*3, 40+24*4, 40+24*5, 40+24*6, 40+24*7 },
 		yoffWalk[8] = {  1,     0,      -1,       0,       1,       0,      -1,       0 }; // bobbing up and down
 
+	Surface* torso;
+
+	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
+	{
+		torso = _unitSet->getFrame(_unit->getFallingPhase() + die);
+		drawRecolored(torso);
+		return;
+	}
+
 	const int unitDir = _unit->getUnitDirection();
 
+	torso = _unitSet->getFrame(unitDir + body);
+
 	Surface
-		* torso,
-		* legs,
+		* rightArm,
 		* leftArm,
-		* rightArm;
+		* legs;
 
-	switch (_unit->getUnitStatus())
+	if (_unit->getUnitStatus() == STATUS_WALKING)
 	{
-		case STATUS_COLLAPSING:
-			torso		= _unitSet->getFrame(_unit->getFallingPhase() + die);
-			drawRecolored(torso);
-			return;
-		case STATUS_WALKING:
-		{
-			const int walkPhase	= _unit->getWalkPhase();
-			torso->setY(yoffWalk[walkPhase]);
-			legs		= _unitSet->getFrame(walkPhase + legsWalk[unitDir]);
-			rightArm	= _unitSet->getFrame(walkPhase + rarmWalk[unitDir]);
-			leftArm		= _unitSet->getFrame(walkPhase + larmWalk[unitDir]);
-		} break;
-
-		default:
-		{
-			torso->setY(0);
-			torso		= _unitSet->getFrame(unitDir + body);
-			legs		= _unitSet->getFrame(unitDir + legsStand);
-			leftArm		= _unitSet->getFrame(unitDir + larmStand);
-			rightArm	= _unitSet->getFrame(unitDir + rarmStand);
-		}
+		const int walkPhase	= _unit->getWalkPhase();
+		torso->setY(yoffWalk[walkPhase]);
+		rightArm	= _unitSet->getFrame(walkPhase + rarmWalk[unitDir]);
+		leftArm		= _unitSet->getFrame(walkPhase + larmWalk[unitDir]);
+		legs		= _unitSet->getFrame(walkPhase + legsWalk[unitDir]);
+	}
+	else
+	{
+		torso->setY(0);
+		rightArm	= _unitSet->getFrame(unitDir + rarmStand);
+		leftArm		= _unitSet->getFrame(unitDir + larmStand);
+		legs		= _unitSet->getFrame(unitDir + legsStand);
 	}
 
 	switch (unitDir)
@@ -1481,21 +1482,21 @@ void UnitSprite::drawRoutine8()
 
 		pulsate[8] = {0,1,2,3,4,3,2,1};
 
-	Surface* legs;
+	Surface* sprite;
 	switch (_unit->getUnitStatus())
 	{
 		case STATUS_COLLAPSING:
-			legs = _unitSet->getFrame(die + _unit->getFallingPhase());
+			sprite = _unitSet->getFrame(_unit->getFallingPhase() + die);
 			break;
 		case STATUS_AIMING:
-			legs = _unitSet->getFrame(aim);
+			sprite = _unitSet->getFrame(aim);
 			break;
 
 		default:
-			legs = _unitSet->getFrame(body + pulsate[_aniFrame]);
+			sprite = _unitSet->getFrame(body + pulsate[_aniFrame]);
 	}
 
-	drawRecolored(legs);
+	drawRecolored(sprite);
 }
 
 /**
@@ -1513,11 +1514,11 @@ void UnitSprite::drawRoutine9()
 		die   = 25,
 		shoot =  8; // frames 8..23 or ..24 (24 is merely a green ball sprite)
 
-	Surface* torso;
+	Surface* sprite;
 	switch (_unit->getUnitStatus())
 	{
 		case STATUS_COLLAPSING:
-			torso = _unitSet->getFrame(die + _unit->getFallingPhase());
+			sprite = _unitSet->getFrame(die + _unit->getFallingPhase());
 			break;
 		case STATUS_AIMING:
 		{
@@ -1531,86 +1532,59 @@ void UnitSprite::drawRoutine9()
 			else
 				extra = 0;
 
-			torso = _unitSet->getFrame(std::min(
+			sprite = _unitSet->getFrame(std::min(
 											shoot + phase - extra,
 											shoot + framesTotal - 1));
-			// Clamp that, because slow (read, long) think()-draw intervals cause it
-			// to exceed the upper bound of total shootFrames.
+			// Clamp that because slow (read, long) think()->draw intervals
+			// cause it to exceed the upper bound of total shootFrames.
 			_unit->setAimingPhase(++phase);
-			// - let BattleUnit::keepAiming() iterate the final aimPhase. nix that;
-			// super-slow animation speed doesn't even let keepAiming() to get called.
-			// ... not sure how the animation is ended in that case, but something does
+			// -> let BattleUnit::keepAiming() iterate the final aimPhase. nix
+			// that; super-slow animation speed doesn't even let keepAiming()
+			// get called. ... not sure how the animation is ended in that case
+			// but something does it.
 		} break;
 
 		default:
-			torso = _unitSet->getFrame(body + _aniFrame);
+			sprite = _unitSet->getFrame(body + _aniFrame);
 	}
 
-	drawRecolored(torso);
+	drawRecolored(sprite);
 }
 
 /**
- * Determines which weapons to display in the case of two-handed weapons.
+ * Determines which hand-objects to display.
  */
-void UnitSprite::sortRifles()
+void UnitSprite::sortHandObjects()
 {
 	// this is the draw active-hand code:
 	if (_itRT != nullptr)
 	{
 		if (_itLT != nullptr)
 		{
-			if (_unit->getActiveHand() == "STR_LEFT_HAND")
+			if (_unit->getActiveHand() == AH_LEFT)
 				_itRT = _itLT;
 
 			_itLT = nullptr;
 		}
-//		else if (_unit->getUnitStatus() != STATUS_AIMING)
-//			_itLT = nullptr;
 	}
-//	else if (_itLT != nullptr)
-//	{
-//		if (_unit->getUnitStatus() != STATUS_AIMING)
-//			_itRT = nullptr;
-//	}
+	// this is the draw dual-wield code:
+/*	if (_itRT && _itRT->getRules()->isTwoHanded() == true)
+	{
+		if (_itLT && _itLT->getRules()->isTwoHanded() == true)
+		{
+			if (_unit->getActiveHand() == AH_LEFT)
+				_itRT = _itLT;
+
+			_itLT = nullptr;
+		}
+		else if (_unit->getUnitStatus() != STATUS_AIMING)
+			_itLT = nullptr;
+	}
+	else if (_itLT && _itLT->getRules()->isTwoHanded() == true)
+	{
+		if (_unit->getUnitStatus() != STATUS_AIMING)
+			_itRT = nullptr;
+	} */
 }
-	// this is the draw active-hand code OLD:
-/*	if (_itRT != nullptr)
-	{
-		if (_itLT != nullptr)
-		{
-			if (_unit->getActiveHand() == "STR_LEFT_HAND")
-				_itRT = _itLT;
-
-			_itLT = nullptr;
-		}
-		else if (_unit->getUnitStatus() != STATUS_AIMING)
-			_itLT = nullptr;
-	}
-	else if (_itLT != nullptr)
-	{
-		if (_unit->getUnitStatus() != STATUS_AIMING)
-			_itRT = nullptr;
-	} */
-/*	// this is the draw dual-weapon code:
-	if (_itRT != nullptr
-		&& _itRT->getRules()->isTwoHanded())
-	{
-		if (_itLT != nullptr
-			&& _itLT->getRules()->isTwoHanded())
-		{
-			if (_unit->getActiveHand() == "STR_LEFT_HAND")
-				_itRT = _itLT;
-
-			_itLT = nullptr;
-		}
-		else if (_unit->getUnitStatus() != STATUS_AIMING)
-			_itLT = nullptr;
-	}
-	else if (_itLT != nullptr
-		&& _itLT->getRules()->isTwoHanded())
-	{
-		if (_unit->getUnitStatus() != STATUS_AIMING)
-			_itRT = nullptr;
-	} */
 
 }

@@ -256,7 +256,7 @@ private:
 				bool execution = false);
 		/// Checks reserved tu.
 		bool checkReservedTu(
-				const BattleUnit* const unit,
+				BattleUnit* const unit,
 				int tu);
 
 		/// Cancels the current action.

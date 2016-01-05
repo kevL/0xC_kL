@@ -29,9 +29,10 @@
 #include "Camera.h"
 #include "CivilianBAIState.h"
 #include "ExplosionBState.h"
-#include "Explosion.h" // Execute.
+#include "Explosion.h"
 #include "InfoboxOKState.h"
 #include "InfoboxState.h"
+#include "Inventory.h"
 #include "Map.h"
 #include "NextTurnState.h"
 #include "Pathfinding.h"
@@ -1697,7 +1698,7 @@ void BattlescapeGame::checkForCasualties(
 		}
 
 		const RuleItem* itRule;
-		const BattleItem* item = attacker->getItem("STR_RIGHT_HAND");
+		const BattleItem* item = attacker->getItem(ST_RIGHTHAND);
 		if (item != nullptr)
 		{
 			itRule = item->getRules();
@@ -1711,7 +1712,7 @@ void BattlescapeGame::checkForCasualties(
 			}
 		}
 
-		item = attacker->getItem("STR_LEFT_HAND");
+		item = attacker->getItem(ST_LEFTHAND);
 		if (item != nullptr)
 		{
 			itRule = item->getRules();
@@ -2099,7 +2100,7 @@ void BattlescapeGame::showInfoBoxQueue() // private.
  * @return, true if unit has enough time units - go!
  */
 bool BattlescapeGame::checkReservedTu(
-		const BattleUnit* const unit,
+		BattleUnit* const unit,
 		int tu)
 {
 	if (unit->getFaction() != _battleSave->getSide()	// is RF.
@@ -2144,16 +2145,25 @@ bool BattlescapeGame::checkReservedTu(
 //	batReserved = _battleSave->getBatReserved();
 	batReserved = BA_NONE;	// <- default for player's units
 							// <- for use when called by Pathfinding::previewPath() only.
-	// check TUs against slowest weapon if unit has two weapons
-//	const BattleItem* const weapon = unit->getMainHandWeapon(false);
-	// Use getActiveHand() instead, if xCom wants to reserve TU & for pathPreview.
-	const BattleItem* const weapon = unit->getItem(unit->getActiveHand());
+	const BattleItem* weapon;
+	switch (unit->getActiveHand())
+	{
+		case AH_RIGHT:
+			weapon = unit->getItem(ST_RIGHTHAND);
+			break;
+		case AH_LEFT:
+			weapon = unit->getItem(ST_LEFTHAND);
+			break;
+
+		default:
+		case AH_NONE:
+			weapon = unit->getMainHandWeapon(false);
+	}
+
 	if (weapon != nullptr)
 	{
 		if (weapon->getRules()->getBattleType() == BT_MELEE)
-		{
 			batReserved = BA_HIT;
-		}
 		else if (weapon->getRules()->getBattleType() == BT_FIREARM)
 		{
 			if (unit->getActionTu(batReserved = BA_SNAPSHOT, weapon) == 0)
@@ -2319,7 +2329,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 				BattleItem* item;
 				if (RNG::percent(75) == true)
 				{
-					item = unit->getItem("STR_RIGHT_HAND");
+					item = unit->getItem(ST_RIGHTHAND);
 					if (item != nullptr)
 						dropItem(
 								unit->getPosition(),
@@ -2330,7 +2340,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 
 				if (RNG::percent(75) == true)
 				{
-					item = unit->getItem("STR_LEFT_HAND");
+					item = unit->getItem(ST_LEFTHAND);
 					if (item != nullptr)
 						dropItem(
 								unit->getPosition(),
@@ -3161,8 +3171,8 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 			i != _battleSave->getItems()->end();
 			++i)
 	{
-		if ((*i)->getSection() != nullptr
-			&& (*i)->getSection()->getInventoryType() == "STR_GROUND"
+		if ((*i)->getInventorySection() != nullptr
+			&& (*i)->getInventorySection()->getSectionType() == ST_GROUND
 			&& (*i)->getRules()->getAttraction() != 0)
 		{
 			tile = (*i)->getTile();
@@ -3171,9 +3181,7 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 					|| tile->getTileUnit() == unit)
 				&& tile->getTuCostTile(O_FLOOR, MT_WALK) != 255 // TODO:: pathfind.
 				&& tile->getTuCostTile(O_OBJECT, MT_WALK) != 255
-				&& worthTaking(
-							*i,
-							unit) == true)
+				&& worthTaking(*i, unit) == true)
 			{
 				groundItems.push_back(*i);
 			}
@@ -3361,89 +3369,93 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 		BattleUnit* const unit) const
 {
 	//Log(LOG_INFO) << "BattlescapeGame::takeItem()";
-	bool placed = false;
+	RuleInventory
+		* const rightHand = getRuleset()->getInventory("STR_RIGHT_HAND"),
+		* const leftHand = getRuleset()->getInventory("STR_LEFT_HAND");
+	BattleItem
+		* const rhWeapon = unit->getItem(ST_RIGHTHAND),
+		* const lhWeapon = unit->getItem(ST_LEFTHAND);
 
-	switch (item->getRules()->getBattleType())
+	RuleItem* const itRule = item->getRules();
+
+	int placed = 0;
+
+	switch (itRule->getBattleType())
 	{
-		case BT_AMMO:
-			if (unit->getItem("STR_RIGHT_HAND")
-				&& unit->getItem("STR_RIGHT_HAND")->getAmmoItem() == nullptr)
+		case BT_FIREARM:
+		case BT_MELEE:
+			if (rhWeapon == nullptr)
 			{
-				if (unit->getItem("STR_RIGHT_HAND")->setAmmoItem(item) == 0)
-					placed = true;
+				item->setSection(rightHand);
+				placed = 1;
+				break;
 			}
-			else
-			{
-				for (int
-						i = 0;
-						i != 4; // uhh, my Belts have only 3 x-positions
-						++i)
-				{
-					if (unit->getItem("STR_BELT", i) == nullptr)
-					{
-						item->moveToOwner(unit);
-						item->setSection(getRuleset()->getInventory("STR_BELT"));
-						item->setSlotX(i);
 
-						placed = true;
-						break;
+			if (lhWeapon == nullptr)
+			{
+				item->setSection(leftHand);
+				placed = 1;
+				break;
+			} // no break.
+		case BT_AMMO:
+			if (rhWeapon != nullptr
+				&& rhWeapon->getAmmoItem() == nullptr
+				&& rhWeapon->setAmmoItem(item) == 0)
+			{
+				item->setSection(rightHand);
+				placed = 2;
+				break;
+			}
+
+			if (lhWeapon != nullptr
+				&& lhWeapon->getAmmoItem() == nullptr
+				&& lhWeapon->setAmmoItem(item) == 0)
+			{
+				item->setSection(leftHand);
+				placed = 2;
+				break;
+			} // no break.
+
+		default:
+		{
+			std::vector<RuleInventory*> inTypes;
+			inTypes.push_back(getRuleset()->getInventory("STR_BELT"));
+			inTypes.push_back(getRuleset()->getInventory("STR_BACK_PACK"));
+
+			for (std::vector<RuleInventory*>::const_iterator
+					i = inTypes.begin();
+					i != inTypes.end() && placed == 0;
+					++i)
+			{
+				for (std::vector<RuleSlot>::const_iterator
+						j = (*i)->getSlots()->begin();
+						j != (*i)->getSlots()->end() && placed == 0;
+						++j)
+				{
+					if (Inventory::overlapItems(
+											unit, item, *i,
+											j->x, j->y) == false
+						&& (*i)->fitItemInSlot(itRule, j->x, j->y) == true)
+					{
+						item->setSection(*i);
+						item->setSlotX(j->x);
+						item->setSlotY(j->y);
+						placed = 1;
 					}
 				}
 			}
-		break;
-
-		case BT_GRENADE:
-		case BT_PROXYGRENADE:
-			for (int
-					i = 0;
-					i != 4; // uhh, my Belts have only 3 x-positions
-					++i)
-			{
-				if (unit->getItem("STR_BELT", i) == nullptr)
-				{
-					item->moveToOwner(unit);
-					item->setSection(getRuleset()->getInventory("STR_BELT"));
-					item->setSlotX(i);
-
-					placed = true;
-					break;
-				}
-			}
-		break;
-
-		case BT_FIREARM:
-		case BT_MELEE:
-			if (unit->getItem("STR_RIGHT_HAND") == nullptr)
-			{
-				item->moveToOwner(unit);
-				item->setSection(getRuleset()->getInventory("STR_RIGHT_HAND"));
-
-				placed = true;
-			}
-		break;
-
-		case BT_MEDIKIT:
-		case BT_SCANNER:
-			if (unit->getItem("STR_BACK_PACK") == nullptr)
-			{
-				item->moveToOwner(unit);
-				item->setSection(getRuleset()->getInventory("STR_BACK_PACK"));
-
-				placed = true;
-			}
-		break;
-
-		case BT_MINDPROBE:
-			if (unit->getItem("STR_LEFT_HAND") == nullptr)
-			{
-				item->moveToOwner(unit);
-				item->setSection(getRuleset()->getInventory("STR_LEFT_HAND"));
-
-				placed = true;
-			}
+		}
 	}
 
-	return placed;
+	switch (placed)
+	{
+		case 1:
+			item->moveToOwner(unit); // no break.
+		case 2:
+			return true;
+	}
+
+	return false;
 }
 
 /**

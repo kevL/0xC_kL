@@ -33,7 +33,7 @@ class SurfaceSet;
 
 /**
  * A class that renders a specific unit given its render rules combining the
- * right frames from the SurfaceSet.
+ * right frames from its SurfaceSet.
  */
 class UnitSprite final
 	:
@@ -63,7 +63,7 @@ private:
 	void drawRoutine0();
 	/// Drawing routine for floaters.
 	void drawRoutine1();
-	/// Drawing routine for XCom tanks.
+	/// Drawing routine for xCom tanks.
 	void drawRoutine2();
 	/// Drawing routine for cyberdiscs.
 	void drawRoutine3();
@@ -80,9 +80,9 @@ private:
 	/// Drawing routine for celatids.
 	void drawRoutine9();
 
-	/// sort two handed sprites out.
-	void sortRifles();
-	/// Draw surface with changed colors.
+	/// Sorts two-handed sprites out.
+	void sortHandObjects();
+	/// Draws surface with changed colors.
 	void drawRecolored(Surface* src);
 
 

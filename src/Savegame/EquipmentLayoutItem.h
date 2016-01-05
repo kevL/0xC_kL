@@ -29,8 +29,8 @@ namespace OpenXcom
 {
 
 /**
- * Represents a soldier-equipment layout item which is used to equip a Soldier
- * for tactical.
+ * Represents a Soldier's EquipmentLayoutItem which is used to equip a Soldier
+ * for tactical battles.
  */
 class EquipmentLayoutItem
 {
@@ -44,38 +44,38 @@ private:
 	std::string
 		_ammoItem,
 		_itemType,
-		_slot;
+		_section;
 
 
 	public:
-		/// Creates a new soldier-equipment layout item.
+		/// Creates a Soldier's EquipmentLayoutItem.
 		EquipmentLayoutItem(
 				const std::string& itemType,
-				const std::string& slot,
+				const std::string& section,
 				int slotX,
 				int slotY,
 				const std::string& ammoItem,
 				int fuse);
-		/// Creates a new soldier-equipment layout item and loads its contents from YAML.
+		/// Creates a Soldier's EquipmentLayoutItem and loads its contents from YAML.
 		explicit EquipmentLayoutItem(const YAML::Node& node);
-		/// Cleans up the soldier-equipment layout item.
+		/// Cleans up the Soldier's EquipmentLayoutItem.
 		~EquipmentLayoutItem();
 
-		/// Loads the soldier-equipment layout item from YAML.
+		/// Loads the Soldier's EquipmentLayoutItem from YAML.
 		void load(const YAML::Node& node);
-		/// Saves the soldier-equipment layout item to YAML.
+		/// Saves the Soldier's EquipmentLayoutItem to YAML.
 		YAML::Node save() const;
 
-		/// Gets the item's type which has to be in a slot.
+		/// Gets the item's type which has to be in an Inventory section.
 		std::string getItemType() const;
-		/// Gets the slot to be occupied.
-		std::string getSection() const;
+		/// Gets the Inventory section to be occupied.
+		std::string getLayoutSection() const;
 		/// Gets the slotX to be occupied.
 		int getSlotX() const;
 		/// Gets the slotY to be occupied.
 		int getSlotY() const;
 
-		/// Gets the ammo item.
+		/// Gets the item's ammo-item.
 		std::string getAmmoItem() const;
 
 		/// Gets the turn until explosion.

@@ -1202,12 +1202,12 @@ void DebriefingState::prepareDebriefing() // private.
 						const RuleItem* hwpRule;
 						const BattleItem* aItem;
 
-						if ((*i)->getItem("STR_RIGHT_HAND") != nullptr)
+						if ((*i)->getItem(ST_RIGHTHAND) != nullptr)
 						{
 							hwpRule = _rules->getItem((*i)->getType()); // note this is generally the tank/item itself. -> (*i)->getItem("STR_RIGHT_HAND")->getRules()
 							if (hwpRule->getCompatibleAmmo()->empty() == false)
 							{
-								aItem = (*i)->getItem("STR_RIGHT_HAND")->getAmmoItem();
+								aItem = (*i)->getItem(ST_RIGHTHAND)->getAmmoItem();
 								if (aItem != nullptr && aItem->getAmmoQuantity() > 0)
 								{
 									int total = aItem->getAmmoQuantity();
@@ -1221,12 +1221,12 @@ void DebriefingState::prepareDebriefing() // private.
 							}
 						}
 
-						if ((*i)->getItem("STR_LEFT_HAND") != nullptr)
+						if ((*i)->getItem(ST_LEFTHAND) != nullptr)
 						{
-							hwpRule = (*i)->getItem("STR_LEFT_HAND")->getRules();
+							hwpRule = (*i)->getItem(ST_LEFTHAND)->getRules();
 							if (hwpRule->getCompatibleAmmo()->empty() == false)
 							{
-								aItem = (*i)->getItem("STR_LEFT_HAND")->getAmmoItem();
+								aItem = (*i)->getItem(ST_LEFTHAND)->getAmmoItem();
 								if (aItem != nullptr && aItem->getAmmoQuantity() > 0)
 								{
 									int total = aItem->getAmmoQuantity();

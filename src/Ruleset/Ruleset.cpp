@@ -1660,12 +1660,12 @@ std::map<std::string, RuleInventory*>* Ruleset::getInventories()
 
 /**
  * Returns the rules for a specific inventory.
- * @param id - reference the inventory type
+ * @param type - reference the inventory type
  * @return, pointer to RuleInventory
  */
-RuleInventory* Ruleset::getInventory(const std::string& id) const
+RuleInventory* Ruleset::getInventory(const std::string& type) const
 {
-	std::map<std::string, RuleInventory*>::const_iterator i = _invs.find(id);
+	std::map<std::string, RuleInventory*>::const_iterator i = _invs.find(type);
 	if (i != _invs.end())
 		return i->second;
 

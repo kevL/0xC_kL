@@ -490,8 +490,8 @@ void SavedBattleGame::load(
 				}
 
 
-				if (item->getSection() != nullptr // match up items and tiles
-					&& item->getSection()->getCategory() == INV_GROUND)
+				if (item->getInventorySection() != nullptr // match up items and tiles
+					&& item->getInventorySection()->getCategory() == INV_GROUND)
 				{
 					const Position pos ((*j)["position"].as<Position>());
 
@@ -1582,9 +1582,9 @@ void SavedBattleGame::randomizeItemLocations(Tile* const tile)
 				i != tile->getInventory()->end();
 				)
 		{
-			if ((*i)->getSection()->getInventoryType() == "STR_GROUND")
+			if ((*i)->getInventorySection()->getSectionType() == ST_GROUND)
 			{
-				getTile(_storageSpace.at(RNG::pick(_storageSpace.size())))->addItem(*i, (*i)->getSection());
+				getTile(_storageSpace.at(RNG::pick(_storageSpace.size())))->addItem(*i, (*i)->getInventorySection());
 				i = tile->getInventory()->erase(i);
 			}
 			else

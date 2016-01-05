@@ -115,7 +115,7 @@ private:
 		void moveToOwner(BattleUnit* const owner = nullptr);
 
 		/// Gets the item's inventory section.
-		const RuleInventory* getSection() const;
+		const RuleInventory* getInventorySection() const;
 		/// Sets the item's inventory section.
 		void setSection(const RuleInventory* const inRule);
 		/// Gets the item's inventory X position.
