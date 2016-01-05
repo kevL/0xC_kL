@@ -64,9 +64,9 @@ private:
 	Game* _game;
 	NumberText* _stackNumber;
 	Surface
-		* _grid,
-		* _items,
-		* _selection;
+		* _srfGrid,
+		* _srfItems,
+		* _srfGrab;
 	Timer* _animTimer;
 	WarningMessage* _warning;
 
@@ -74,6 +74,10 @@ private:
 	std::vector<std::pair<int,int>> _grenadeFuses;
 
 
+	/// Draws the inventory grids.
+	void drawGrids();
+	/// Draws the inventory items.
+	void drawItems();
 	/// Moves an item to a specified section.
 	void moveItem(
 			BattleItem* const item,
@@ -113,10 +117,6 @@ private:
 
 		/// Draws the inventory.
 		void draw() override;
-		/// Draws the inventory grid.
-		void drawGrid();
-		/// Draws the inventory items.
-		void drawItems();
 
 		/// Checks for item overlap.
 		static bool overlapItems(

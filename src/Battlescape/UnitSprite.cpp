@@ -854,8 +854,8 @@ void UnitSprite::drawRoutine2()
 	Surface* quad;
 
 	const int
-		turret 	= _unit->getTurretType(),
-		hover	= (_unit->getMoveTypeUnit() == MT_FLY) ? 32 : 0;
+		turret = _unit->getTurretType(),
+		hover  = (_unit->getMoveTypeUnit() == MT_FLY) ? 32 : 0;
 
 	if (_quad != 0 && hover != 0)
 	{

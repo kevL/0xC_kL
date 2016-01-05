@@ -71,7 +71,7 @@ const float GraphsState::PIXELS_y = 126.f;
  */
 struct GraphBtnInfo
 {
-	LocalizedText _name;
+	LocalizedText _label;
 	Uint8
 		_color,
 		_colorTxt;
@@ -85,7 +85,7 @@ struct GraphBtnInfo
 
 	/// Builds this struct.
 	GraphBtnInfo(
-			const LocalizedText& name,
+			const LocalizedText& label,
 			Uint8 color,
 			int actA,
 			int actX,
@@ -93,7 +93,7 @@ struct GraphBtnInfo
 			bool blinkA,
 			bool blinkX)
 		:
-			_name(name),
+			_label(label),
 			_color(color),
 			_actA(actA),
 			_actX(actX),
@@ -2358,7 +2358,7 @@ void GraphsState::updateButton( // private.
 		Text* aLiens,
 		Text* xCom)
 {
-	btn->setText(info->_name);
+	btn->setText(info->_label);
 	btn->setInvertColor(info->_color);
 	btn->setPressed(info->_pushed);
 

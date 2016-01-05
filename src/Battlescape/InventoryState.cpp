@@ -104,7 +104,7 @@ InventoryState::InventoryState(
 	_gender		= new Surface(7, 7, 28, 1);
 
 	_txtWeight	= new Text(70, 9, 237, 24);
-	_txtTUs		= new Text(40, 9, 237, 24);
+	_txtTUs		= new Text(40, 9, 237, 32);
 	_txtFAcc	= new Text(40, 9, 237, 32);
 	_txtReact	= new Text(40, 9, 237, 40);
 	_txtThrow	= new Text(40, 9, 237, 48);
@@ -198,10 +198,6 @@ InventoryState::InventoryState(
 
 	add(_srfAmmo);
 	add(_inv);
-
-	// move the TU display down to make room for the weight display
-	if (Options::showMoreStatsInInventoryView == true)
-		_txtTUs->setY(_txtTUs->getY() + 8);
 
 	centerAllSurfaces();
 
@@ -353,12 +349,10 @@ InventoryState::InventoryState(
 	_inv->onMouseOver((ActionHandler)& InventoryState::invMouseOver);
 	_inv->onMouseOut((ActionHandler)& InventoryState::invMouseOut);
 
-	_txtWeight->setVisible(Options::showMoreStatsInInventoryView);
 	_txtTUs->setVisible(_tuMode);
 	_txtUseTU->setVisible(_tuMode);
 
-	const bool vis = _tuMode == false
-				  && Options::showMoreStatsInInventoryView == true;
+	const bool vis = (_tuMode == false);
 	_txtFAcc->setVisible(vis);
 	_txtReact->setVisible(vis);
 	_txtThrow->setVisible(vis);
@@ -534,8 +528,6 @@ void InventoryState::init()
 	if (sol != nullptr)
 	{
 		SurfaceSet* const srtRank = _game->getResourcePack()->getSurfaceSet("SMOKE.PCK");
-//		srtRank->getFrame(20 + sol->getRank())->setX(0);
-//		srtRank->getFrame(20 + sol->getRank())->setY(0);
 		srtRank->getFrame(20 + sol->getRank())->blit(_btnRank);
 
 		Surface* gender = nullptr;
@@ -574,9 +566,6 @@ void InventoryState::init()
 	}
 	else
 	{
-//		srtRank->getFrame(26)->setX(0);
-//		srtRank->getFrame(26)->setY(0);
-//		srtRank->getFrame(26)->blit(_btnRank); // small blue expl.
 		Surface* const dolphins = _game->getResourcePack()->getSurface("DOLPHINS");
 		dolphins->blit(_btnRank);
 
@@ -608,77 +597,55 @@ void InventoryState::updateStats() // private.
 	if (_tuMode == true)
 		_txtTUs->setText(tr("STR_TIME_UNITS_SHORT").arg(unit->getTimeUnits()));
 
-	if (Options::showMoreStatsInInventoryView == true)
+	const int
+		weight = unit->getCarriedWeight(_inv->getSelectedItem()),
+		strength = unit->getStrength();
+
+	_txtWeight->setText(tr("STR_WEIGHT").arg(weight).arg(strength));
+	if (weight > strength)
+		_txtWeight->setSecondaryColor(static_cast<Uint8>(
+						_game->getRuleset()->getInterface("inventory")->getElement("weight")->color2));
+	else
+		_txtWeight->setSecondaryColor(static_cast<Uint8>(
+						_game->getRuleset()->getInterface("inventory")->getElement("weight")->color));
+
+	const int psiSkill = unit->getBattleStats()->psiSkill;
+
+	if (_tuMode == true)
 	{
-		const int
-			weight = unit->getCarriedWeight(_inv->getSelectedItem()),
-			strength = unit->getStrength();
-
-		_txtWeight->setText(tr("STR_WEIGHT").arg(weight).arg(strength));
-		if (weight > strength)
-			_txtWeight->setSecondaryColor(static_cast<Uint8>(
-							_game->getRuleset()->getInterface("inventory")->getElement("weight")->color2));
+		if (unit->getBattleStats()->throwing != 0)
+			_txtThrowTU->setText(tr("STR_THROW_").arg(unit->getActionTu(BA_THROW)));
 		else
-			_txtWeight->setSecondaryColor(static_cast<Uint8>(
-							_game->getRuleset()->getInterface("inventory")->getElement("weight")->color));
+			_txtThrowTU->setVisible(false);
 
-		const int psiSkill = unit->getBattleStats()->psiSkill;
-
-		if (_tuMode == true)
+		if (unit->getOriginalFaction() == FACTION_HOSTILE
+			&& psiSkill != 0)
 		{
-			if (unit->getBattleStats()->throwing != 0)
-				_txtThrowTU->setText(tr("STR_THROW_").arg(unit->getActionTu(BA_THROW)));
-			else
-				_txtThrowTU->setVisible(false);
+			_txtPsiTU->setVisible();
+			_txtPsiTU->setText(tr("STR_PSI_")
+						.arg(unit->getActionTu(
+											BA_PSIPANIC,
+											_parent->getBattleGame()->getAlienPsi())));
+		}
+		else
+			_txtPsiTU->setVisible(false);
+	}
+	else
+	{
+		_txtFAcc->setText(tr("STR_ACCURACY_SHORT").arg(unit->getBattleStats()->firing));
+		_txtReact->setText(tr("STR_REACTIONS_SHORT").arg(unit->getBattleStats()->reactions));
+		_txtThrow->setText(tr("STR_THROWACC_SHORT").arg(unit->getBattleStats()->throwing));
+		_txtMelee->setText(tr("STR_MELEEACC_SHORT").arg(unit->getBattleStats()->melee));
 
-			if (unit->getOriginalFaction() == FACTION_HOSTILE
-				&& psiSkill != 0)
-			{
-				_txtPsiTU->setVisible();
-				_txtPsiTU->setText(tr("STR_PSI_")
-							.arg(unit->getActionTu(
-												BA_PSIPANIC,
-												_parent->getBattleGame()->getAlienPsi())));
-			}
-			else
-				_txtPsiTU->setVisible(false);
+		if (psiSkill != 0)
+		{
+			_txtPStr->setText(tr("STR_PSIONIC_STRENGTH_SHORT").arg(unit->getBattleStats()->psiStrength));
+			_txtPSkill->setText(tr("STR_PSIONIC_SKILL_SHORT").arg(psiSkill));
 		}
 		else
 		{
-			_txtFAcc->setText(tr("STR_ACCURACY_SHORT").arg(unit->getBattleStats()->firing));
-			_txtReact->setText(tr("STR_REACTIONS_SHORT").arg(unit->getBattleStats()->reactions));
-			_txtThrow->setText(tr("STR_THROWACC_SHORT").arg(unit->getBattleStats()->throwing));
-			_txtMelee->setText(tr("STR_MELEEACC_SHORT").arg(unit->getBattleStats()->melee));
-
-			if (psiSkill != 0)
-			{
-				_txtPStr->setText(tr("STR_PSIONIC_STRENGTH_SHORT").arg(unit->getBattleStats()->psiStrength));
-				_txtPSkill->setText(tr("STR_PSIONIC_SKILL_SHORT").arg(psiSkill));
-			}
-			else
-			{
-				_txtPStr->setText(L"");
-				_txtPSkill->setText(L"");
-			}
-/*			int minPsi;
-			if (unit->getGeoscapeSoldier() != nullptr)
-				minPsi = unit->getGeoscapeSoldier()->getRules()->getMinStats().psiSkill;
-			else
-				minPsi = 0;
-
-			if (psiSkill >= minPsi)
-				_txtPSkill->setText(tr("STR_PSIONIC_SKILL_SHORT").arg(psiSkill));
-			else
-				_txtPSkill->setText(L"");
-
-			if (psiSkill >= minPsi
-//				|| (Options::psiStrengthEval == true
-//					&& _game->getSavedGame()->isResearched(_game->getRuleset()->getPsiRequirements())))
-			{
-				_txtPStr->setText(tr("STR_PSIONIC_STRENGTH_SHORT").arg(unit->getBattleStats()->psiStrength));
-			}
-			else
-				_txtPStr->setText(L""); */
+			_txtPStr->setText(L"");
+			_txtPSkill->setText(L"");
 		}
 	}
 }
@@ -791,8 +758,7 @@ void InventoryState::btnOkClick(Action*)
 	{
 		_game->popState();
 
-		if (_tuMode == false	// pre-Battle but
-			&& _parent != nullptr)	// going into Battlescape!
+		if (_tuMode == false && _parent != nullptr) // pre-Battle but going into Battlescape!
 		{
 			_battleSave->resetUnitsOnTiles();
 
@@ -800,7 +766,7 @@ void InventoryState::btnOkClick(Action*)
 			_battleSave->randomizeItemLocations(invTile);	// This doesn't seem to happen on second stage of Multi-State MISSIONS.
 															// In fact, none of this !_tuMode InventoryState appears to run for 2nd staged missions.
 															// and BattlescapeGenerator::nextStage() has its own bu->prepUnit() call ....
-/*			if (_battleSave->getTurn() == 1) // Leaving this out could be troublesome for Multi-Stage MISSIONS.
+/*			if (_battleSave->getTurn() == 1)				// but Leaving this out could be troublesome for Multi-Stage MISSIONS.
 			{
 				//Log(LOG_INFO) << ". turn = 1";
 				_battleSave->randomizeItemLocations(invTile);
@@ -1139,7 +1105,6 @@ void InventoryState::invMouseOver(Action*)
 		_tuCost->setValue(static_cast<unsigned>(_inv->getTuCostInventory()));
 		_tuCost->setVisible(_tuMode
 						 && _inv->getTuCostInventory() > 0);
-
 //		_updateTemplateButtons(false);
 	}
 	else // no item on cursor.
@@ -1149,7 +1114,6 @@ void InventoryState::invMouseOver(Action*)
 		{
 //			_updateTemplateButtons(false);
 //			_tuCost->setVisible(false);
-
 			const RuleItem* const itRule = item->getRules();
 			const BattleItem* const ammo = item->getAmmoItem();
 

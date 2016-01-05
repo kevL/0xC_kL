@@ -422,7 +422,7 @@ bool BattleItem::occupiesSlot(
 	if (item == this)
 		return false;
 
-	if (_section->getCategory() == INV_HAND)
+	if (_section->getCategory() == IC_HAND)
 		return true;
 
 	if (item == nullptr)

@@ -94,7 +94,7 @@ void ToggleTextButton::setPressed(bool pressed)
 	if (_isPressed != pressed)
 	{
 		_isPressed = pressed;
-		_fakeGroup = _isPressed ? this : nullptr;
+		_fakeGroup = (_isPressed == true) ? this : nullptr;
 
 		if (_isPressed == true
 			&& _invertedColor != std::numeric_limits<uint8_t>::max())

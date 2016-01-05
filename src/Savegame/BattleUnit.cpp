@@ -2688,7 +2688,7 @@ BattleItem* BattleUnit::getItem(
 		int x,
 		int y) const
 {
-	if (inRule->getCategory() != INV_GROUND) // Soldier items
+	if (inRule->getCategory() != IC_GROUND) // Soldier items
 	{
 		for (std::vector<BattleItem*>::const_iterator
 				i = _inventory.begin();
@@ -4101,7 +4101,6 @@ void BattleUnit::invalidateCache()
 	{
 		_cache[i] = nullptr;
 	}
-
 	_cacheInvalid = true;
 }
 

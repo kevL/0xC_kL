@@ -636,26 +636,26 @@ int RuleItem::getClipSize() const
 
 /**
  * Draws and centers the hand sprite on a surface according to its dimensions.
- * @param texture - pointer to the surface set to get the sprite from
- * @param surface - pointer to the surface to draw to
+ * @param set		- pointer to the SurfaceSet to get the sprite
+ * @param surface	- pointer to the Surface on which to draw
  */
 void RuleItem::drawHandSprite(
-		SurfaceSet* const texture,
+		SurfaceSet* const set,
 		Surface* const surface) const
 {
-	Surface* const frame = texture->getFrame(_bigSprite);
-	if (frame != nullptr) // safety.
+	Surface* const sprite = set->getFrame(_bigSprite);
+	if (sprite != nullptr) // safety.
 	{
-		frame->setX(
+		sprite->setX(
 				(RuleInventory::HAND_W - _invWidth)
 			   * RuleInventory::SLOT_W / 2);
-		frame->setY(
+		sprite->setY(
 				(RuleInventory::HAND_H - _invHeight)
 			   * RuleInventory::SLOT_H / 2);
 
-		texture->getFrame(_bigSprite)->blit(surface);
+		set->getFrame(_bigSprite)->blit(surface);
 	}
-	else Log(LOG_INFO) << "ERROR: bigob not found [3] #" << _bigSprite; // also in Inventory object.
+	else Log(LOG_INFO) << "ERROR: RuleItem::drawHandSprite() bigob not found #" << _bigSprite; // also in Inventory object.
 }
 
 /**

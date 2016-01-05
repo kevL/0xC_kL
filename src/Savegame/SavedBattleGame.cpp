@@ -491,7 +491,7 @@ void SavedBattleGame::load(
 
 
 				if (item->getInventorySection() != nullptr // match up items and tiles
-					&& item->getInventorySection()->getCategory() == INV_GROUND)
+					&& item->getInventorySection()->getCategory() == IC_GROUND)
 				{
 					const Position pos ((*j)["position"].as<Position>());
 

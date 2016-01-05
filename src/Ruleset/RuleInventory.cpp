@@ -23,6 +23,8 @@
 
 #include "RuleItem.h"
 
+#include "../Engine/Options.h"
+
 
 namespace YAML
 {
@@ -72,7 +74,7 @@ RuleInventory::RuleInventory(const std::string& type)
 		_type(type),
 		_x(0),
 		_y(0),
-		_cat(INV_SLOT),
+		_cat(IC_SLOT),
 		_section(ST_NONE),
 		_listOrder(0)
 {}
@@ -97,6 +99,9 @@ void RuleInventory::load(
 	_y			= node["y"]			.as<int>(_y);
 	_slots		= node["slots"]		.as<std::vector<RuleSlot>>(_slots);
 	_listOrder	= node["listOrder"]	.as<int>(listOrder);
+
+	_x += (Options::baseXResolution - 320) / 2;
+	_y += (Options::baseYResolution - 200) / 2 - 20; // See Inventory if you want to.
 
 	_cat = static_cast<InventoryCategory>(node["category"].as<int>(_cat));
 
@@ -266,12 +271,12 @@ int RuleInventory::getSlotsX() const
 } */
 
 /**
- * Gets the Slot located in the specified mouse position.
+ * Checks if there's a Slot located in the specified mouse-position.
  * @param x - mouse X position; returns the slot's X position
  * @param y - mouse Y position; returns the slot's Y position
  * @return, true if there's a slot here
  */
-bool RuleInventory::checkSlotInPosition(
+bool RuleInventory::checkSlotAtPosition(
 		int* x,
 		int* y) const
 {
@@ -281,7 +286,7 @@ bool RuleInventory::checkSlotInPosition(
 
 	switch (_cat)
 	{
-		case INV_HAND:
+		case IC_HAND:
 			for (int
 					x1 = 0;
 					x1 != HAND_W;
@@ -292,10 +297,10 @@ bool RuleInventory::checkSlotInPosition(
 						y1 != HAND_H;
 						++y1)
 				{
-					if (   mouseX >= _x +  x1 * SLOT_W
-						&& mouseX <  _x + (x1 + 1) * SLOT_W
-						&& mouseY >= _y +  y1 * SLOT_H
-						&& mouseY <  _y + (y1 + 1) * SLOT_H)
+					if (   mouseX >= _x + SLOT_W *  x1
+						&& mouseX <  _x + SLOT_W * (x1 + 1)
+						&& mouseY >= _y + SLOT_H *  y1
+						&& mouseY <  _y + SLOT_H * (y1 + 1))
 					{
 						*x =
 						*y = 0;
@@ -305,11 +310,11 @@ bool RuleInventory::checkSlotInPosition(
 			}
 		break;
 
-		case INV_GROUND:
+		case IC_GROUND:
 			if (   mouseX >= _x
-				&& mouseX < 320
+				&& mouseX <  _x + SLOT_W * GROUND_W
 				&& mouseY >= _y
-				&& mouseY < 200)
+				&& mouseY <  _y + SLOT_H * GROUND_H)
 			{
 				*x = static_cast<int>(std::floor(
 					 static_cast<double>(mouseX - _x) / static_cast<double>(SLOT_W)));
@@ -326,10 +331,10 @@ bool RuleInventory::checkSlotInPosition(
 					i != _slots.end();
 					++i)
 			{
-				if (   mouseX >= _x +  i->x * SLOT_W
-					&& mouseX <  _x + (i->x + 1) * SLOT_W
-					&& mouseY >= _y +  i->y * SLOT_H
-					&& mouseY <  _y + (i->y + 1) * SLOT_H)
+				if (   mouseX >= _x + SLOT_W *  i->x
+					&& mouseX <  _x + SLOT_W * (i->x + 1)
+					&& mouseY >= _y + SLOT_H *  i->y
+					&& mouseY <  _y + SLOT_H * (i->y + 1))
 				{
 					*x = i->x;
 					*y = i->y;
@@ -356,15 +361,15 @@ bool RuleInventory::fitItemInSlot(
 {
 	switch (_cat)
 	{
-		case INV_GROUND:
+		case IC_GROUND:
 		{
-			const int
-				width = (320 - _x) / SLOT_W,
-				height = (200 - _y) / SLOT_H;
+//			const int
+//				width = (320 - _x) / SLOT_W,	// -> GROUND_W
+//				height = (200 - _y) / SLOT_H;	// -> GROUND_H
 			int xOffset = 0;
 
-			while (x >= xOffset + width)
-				xOffset += width;
+			while (x >= xOffset + GROUND_W)
+				xOffset += GROUND_W;
 
 			for (int
 					find_x = x;
@@ -378,16 +383,16 @@ bool RuleInventory::fitItemInSlot(
 				{
 					if (!
 							(  find_x >= xOffset
-							&& find_x <  xOffset + width
+							&& find_x <  xOffset + GROUND_W
 							&& find_y > -1
-							&& find_y < height))
+							&& find_y < GROUND_H))
 					{
 						return false;
 					}
 				}
 			}
 		}
-		case INV_HAND:
+		case IC_HAND:
 			return true;
 
 		default:
@@ -422,7 +427,7 @@ bool RuleInventory::fitItemInSlot(
 int RuleInventory::getCost(const RuleInventory* const inRule) const
 {
 	if (inRule != this)
-		return _costs.find(inRule->getSectionType())->second;
+		return _costs.at(inRule->getSectionType());
 
 	return 0;
 }

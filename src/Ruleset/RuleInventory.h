@@ -54,9 +54,9 @@ enum InventorySection
 
 enum InventoryCategory
 {
-	INV_SLOT,	// 0
-	INV_HAND,	// 1
-	INV_GROUND	// 2
+	IC_SLOT,	// 0
+	IC_HAND,	// 1
+	IC_GROUND	// 2
 };
 
 
@@ -91,10 +91,12 @@ private:
 
 	public:
 		static const int
-			SLOT_W = 16,
-			SLOT_H = 16,
-			HAND_W = 2,
-			HAND_H = 3;
+			SLOT_W		= 16,
+			SLOT_H		= 16,
+			HAND_W		=  2,
+			HAND_H		=  3,
+			GROUND_W	= 20,
+			GROUND_H	=  3;
 
 		/// Creates a blank Inventory ruleset.
 		explicit RuleInventory(const std::string& type);
@@ -125,7 +127,7 @@ private:
 //		int getSlotsX() const;
 
 		/// Checks for a Slot in a mouse position.
-		bool checkSlotInPosition(
+		bool checkSlotAtPosition(
 				int* x,
 				int* y) const;
 		/// Checks if an item fits into a Slot-position.

@@ -296,7 +296,7 @@ private:
 
 		/// Draws the item's hand sprite onto a surface.
 		void drawHandSprite(
-				SurfaceSet* const texture,
+				SurfaceSet* const set,
 				Surface* const surface) const;
 
 		/// Gets the medikit heal quantity.

@@ -379,12 +379,6 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 													_game->getRuleset()->getInventory("STR_GROUND"));
 
 					_action->actor->setActiveHand(_action->actor->getActiveHand());
-//					if (_action->actor->getItem("STR_LEFT_HAND") == nullptr)
-//						_action->actor->setActiveHand("STR_RIGHT_HAND");
-//					else
-//						_action->actor->setActiveHand("STR_LEFT_HAND");
-
-					_action->actor->invalidateCache();
 				}
 				else
 					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";

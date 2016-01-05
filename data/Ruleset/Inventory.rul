@@ -12,7 +12,7 @@ invs:
       STR_RIGHT_HAND: 6
       STR_RIGHT_LEG: 8
       STR_RIGHT_SHOULDER: 12
-      STR_QD: 9
+      STR_QUICK_DRAW: 9
   - type: STR_RIGHT_HAND
     x: 0
     y: 63
@@ -21,12 +21,12 @@ invs:
       STR_BACK_PACK: 14
       STR_BELT: 8
       STR_GROUND: 2
-      STR_LEFT_HAND: 3
+      STR_LEFT_HAND: 1
       STR_LEFT_LEG: 10
       STR_LEFT_SHOULDER: 10
       STR_RIGHT_LEG: 9
       STR_RIGHT_SHOULDER: 12
-      STR_QD: 7
+      STR_QUICK_DRAW: 7
   - type: STR_LEFT_HAND
     x: 128
     y: 63
@@ -37,10 +37,10 @@ invs:
       STR_GROUND: 2
       STR_LEFT_LEG: 9
       STR_LEFT_SHOULDER: 12
-      STR_RIGHT_HAND: 3
+      STR_RIGHT_HAND: 1
       STR_RIGHT_LEG: 10
       STR_RIGHT_SHOULDER: 10
-      STR_QD: 7
+      STR_QUICK_DRAW: 7
   - type: STR_BELT
 #    x: 208
     x: 192
@@ -59,7 +59,7 @@ invs:
       STR_RIGHT_HAND: 5
       STR_RIGHT_LEG: 10
       STR_RIGHT_SHOULDER: 12
-      STR_QD: 8
+      STR_QUICK_DRAW: 8
   - type: STR_RIGHT_LEG
     x: 0
     y: 120
@@ -75,7 +75,7 @@ invs:
       STR_LEFT_SHOULDER: 10
       STR_RIGHT_HAND: 4
       STR_RIGHT_SHOULDER: 12
-      STR_QD: 9
+      STR_QUICK_DRAW: 9
   - type: STR_LEFT_LEG
     x: 128
     y: 120
@@ -91,7 +91,7 @@ invs:
       STR_RIGHT_HAND: 6
       STR_RIGHT_LEG: 10
       STR_RIGHT_SHOULDER: 10
-      STR_QD: 9
+      STR_QUICK_DRAW: 9
   - type: STR_RIGHT_SHOULDER
     x: 16
     y: 37
@@ -107,7 +107,7 @@ invs:
       STR_LEFT_SHOULDER: 8
       STR_RIGHT_HAND: 4
       STR_RIGHT_LEG: 12
-      STR_QD: 9
+      STR_QUICK_DRAW: 9
   - type: STR_LEFT_SHOULDER
     x: 112
     y: 37
@@ -123,7 +123,7 @@ invs:
       STR_RIGHT_HAND: 3
       STR_RIGHT_LEG: 12
       STR_RIGHT_SHOULDER: 8
-      STR_QD: 9
+      STR_QUICK_DRAW: 9
   - type: STR_BACK_PACK
 #    x: 192
     x: 176
@@ -147,8 +147,8 @@ invs:
       STR_RIGHT_HAND: 10
       STR_RIGHT_LEG: 18
       STR_RIGHT_SHOULDER: 16
-      STR_QD: 11
-  - type: STR_QD
+      STR_QUICK_DRAW: 11
+  - type: STR_QUICK_DRAW
 #    x: 192
     x: 172
     y: 104
@@ -168,4 +168,4 @@ invs:
 extraStrings:
   - type: en-US
     strings:
-      STR_QD: QD
+      STR_QUICK_DRAW: QD
