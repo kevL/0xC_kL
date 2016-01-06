@@ -342,9 +342,9 @@ InventoryState::InventoryState(
 	else
 		_updateTemplateButtons(true); */
 
-	_inv->draw();
+	_inv->setSelectedUnitInventory(_battleSave->getSelectedUnit());
 	_inv->setTuMode(_tuMode);
-	_inv->setSelectedUnitInventory(_game->getSavedGame()->getBattleSave()->getSelectedUnit());
+	_inv->draw();
 	_inv->onMouseClick((ActionHandler)& InventoryState::invClick, 0);
 	_inv->onMouseOver((ActionHandler)& InventoryState::invMouseOver);
 	_inv->onMouseOut((ActionHandler)& InventoryState::invMouseOut);

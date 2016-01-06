@@ -55,32 +55,30 @@ protected:
 	/// Calculates a new speed vector to the destination.
 	virtual void calculateSpeed();
 
-	/// Creates a moving target.
+	/// Creates a MovingTarget.
 	MovingTarget();
 
 
 	public:
-		/// Cleans up the moving target.
+		/// Cleans up the MovingTarget.
 		virtual ~MovingTarget();
 
-		/// Loads the moving target from YAML.
+		/// Loads the MovingTarget from YAML.
 		virtual void load(const YAML::Node& node) override;
-		/// Saves the moving target to YAML.
+		/// Saves the MovingTarget to YAML.
 		virtual YAML::Node save() const override;
 
-		/// Gets the moving target's destination.
+		/// Gets the MovingTarget's destination.
 		Target* getDestination() const;
-		/// Sets the moving target's destination.
+		/// Sets the MovingTarget's destination.
 		virtual void setDestination(Target* const dest);
 
-		/// Gets the moving target's speed.
+		/// Gets the MovingTarget's speed.
 		int getSpeed() const;
-		/// Sets the moving target's speed.
+		/// Sets the MovingTarget's speed.
 		void setSpeed(const int speed);
-		/// Gets the moving target's radial speed.
-//		double getSpeedRadian() const;
 
-		/// Has the moving target reached its destination?
+		/// Has the MovingTarget reached its destination?
 		bool reachedDestination() const;
 		/// Move towards the destination.
 		void moveTarget();

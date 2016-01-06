@@ -251,26 +251,6 @@ const std::vector<struct RuleSlot>* RuleInventory::getSlots()
 }
 
 /**
- * Gets the number of Slots along the top row of this Inventory.
- * @note Used to auto-equip items in BattlescapeGenerator.
- * @return, qty of x-slots
- *
-int RuleInventory::getSlotsX() const
-{
-	int ret = 0;
-	for (std::vector<RuleSlot>::const_iterator
-			i = _slots.begin();
-			i != _slots.end();
-			++i)
-	{
-		if ((*i).y == 0)
-			++ret;
-	}
-
-	return ret;
-} */
-
-/**
  * Checks if there's a Slot located in the specified mouse-position.
  * @param x - mouse X position; returns the slot's X position
  * @param y - mouse Y position; returns the slot's Y position
@@ -363,11 +343,7 @@ bool RuleInventory::fitItemInSlot(
 	{
 		case IC_GROUND:
 		{
-//			const int
-//				width = (320 - _x) / SLOT_W,	// -> GROUND_W
-//				height = (200 - _y) / SLOT_H;	// -> GROUND_H
 			int xOffset = 0;
-
 			while (x >= xOffset + GROUND_W)
 				xOffset += GROUND_W;
 

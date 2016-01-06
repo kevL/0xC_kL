@@ -36,7 +36,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a moving target with blank coordinates.
+ * Initializes a MovingTarget with blank coordinates.
  */
 MovingTarget::MovingTarget()
 	:
@@ -51,7 +51,8 @@ MovingTarget::MovingTarget()
 {}
 
 /**
- * Make sure to cleanup the target's destination followers.
+ * dTor.
+ * @note Make sure to cleanup the target's destination followers.
  */
 MovingTarget::~MovingTarget() // virtual.
 {
@@ -72,7 +73,7 @@ MovingTarget::~MovingTarget() // virtual.
 }
 
 /**
- * Loads the moving target from a YAML file.
+ * Loads the MovingTarget from a YAML file.
  * @param node - reference a YAML node
  */
 void MovingTarget::load(const YAML::Node& node) // virtual.
@@ -86,7 +87,7 @@ void MovingTarget::load(const YAML::Node& node) // virtual.
 }
 
 /**
- * Saves the moving target to a YAML file.
+ * Saves the MovingTarget to a YAML file.
  * @return, YAML node
  */
 YAML::Node MovingTarget::save() const // virtual.
@@ -105,7 +106,7 @@ YAML::Node MovingTarget::save() const // virtual.
 }
 
 /**
- * Returns the destination the moving target is heading to.
+ * Returns the destination the MovingTarget is heading to.
  * @return, pointer to Target destination
  */
 Target* MovingTarget::getDestination() const
@@ -114,7 +115,7 @@ Target* MovingTarget::getDestination() const
 }
 
 /**
- * Changes the destination the moving target is heading to.
+ * Changes the destination the MovingTarget is heading to.
  * @param dest - pointer to Target destination
  */
 void MovingTarget::setDestination(Target* const dest) // virtual.
@@ -143,7 +144,7 @@ void MovingTarget::setDestination(Target* const dest) // virtual.
 }
 
 /**
- * Returns the speed of the moving target.
+ * Returns the speed of the MovingTarget.
  * @return, speed in knots
  */
 int MovingTarget::getSpeed() const
@@ -152,16 +153,7 @@ int MovingTarget::getSpeed() const
 }
 
 /**
- * Returns the radial speed of the moving target.
- * @return, speed in 1/5 sec
- *
-double MovingTarget::getSpeedRadian() const
-{
-	return _speedRadian;
-} */
-
-/**
- * Changes the speed of the moving target and converts it from standard knots
+ * Changes the speed of the MovingTarget and converts it from standard knots
  * (nautical miles per hour) into radians per 5 IG seconds.
  * @param speed - speed in knots
  */
@@ -169,7 +161,7 @@ void MovingTarget::setSpeed(const int speed)
 {
 	_speed = speed;
 
-	// each nautical mile is 1/60th of a degree; each hour contains 720 5-seconds
+	// each nautical mile is 1/60th of a degree; each hour contains 720 5-second periods.
 	_speedRadian = static_cast<double>(_speed) * unitToRads / 720.;
 
 	calculateSpeed();
@@ -184,11 +176,6 @@ void MovingTarget::calculateSpeed()
 	if (_dest != nullptr)
 	{
 		calculateMeetPoint();
-//		else // stock.
-//		{
-//			_meetPointLon = _dest->getLongitude();
-//			_meetPointLat = _dest->getLatitude();
-//		}
 
 		const double
 			dLon = std::sin(_meetPointLon - _lon)
@@ -217,7 +204,7 @@ void MovingTarget::calculateSpeed()
 }
 
 /**
- * Checks if the moving target has reached its destination.
+ * Checks if the MovingTarget has reached its destination.
  * @return, true if it has
  */
 bool MovingTarget::reachedDestination() const
@@ -230,7 +217,7 @@ bool MovingTarget::reachedDestination() const
 }
 
 /**
- * Executes a movement cycle for the moving target.
+ * Executes a movement cycle for the MovingTarget.
  */
 void MovingTarget::moveTarget()
 {
@@ -273,7 +260,7 @@ void MovingTarget::calculateMeetPoint()
 				nz = std::cos(ufo->getLatitude()) * std::cos(ufo->getDestination()->getLatitude()) * std::sin(ufo->getDestination()->getLongitude()
 				   - ufo->getLongitude());
 
-			double nk = _speedRadian / std::sqrt(nx * nx + ny * ny + nz * nz);
+			const double nk = _speedRadian / std::sqrt(nx * nx + ny * ny + nz * nz);
 			nx *= nk;
 			ny *= nk;
 			nz *= nk;

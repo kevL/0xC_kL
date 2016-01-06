@@ -123,8 +123,6 @@ private:
 
 		/// Gets all the Slots in the Inventory.
 		const std::vector<struct RuleSlot>* getSlots();
-		/// Gets the number of Slots along the top row of this Inventory.
-//		int getSlotsX() const;
 
 		/// Checks for a Slot in a mouse position.
 		bool checkSlotAtPosition(
