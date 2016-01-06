@@ -183,7 +183,7 @@ private:
 		_zombieUnit;
 
 	BattleType _battleType;
-	DamageType _damageType;
+	DamageType _dType;
 	SpecialTileType _specialType;
 
 	std::vector<std::string>

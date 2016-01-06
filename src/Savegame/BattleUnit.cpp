@@ -3454,7 +3454,7 @@ void BattleUnit::heal(
 }
 
 /**
- * Restores soldier morale.
+ * Restores soldier morale. And kills unit w/ overdose.
  */
 void BattleUnit::morphine()
 {
@@ -3470,7 +3470,7 @@ void BattleUnit::morphine()
 	if (++_drugDose >= DOSE_LETHAL)
 		_health = 0;
 	else
-		_stunLevel += 8 + RNG::generate(0,6);
+		_stunLevel += 7 + RNG::generate(0,6);
 
 	if (isOut_t(OUT_STAT) == false
 		&& isOut_t(OUT_HLTH_STUN) == true)
@@ -3478,8 +3478,7 @@ void BattleUnit::morphine()
 		_battleGame->checkForCasualties(
 									_battleGame->getCurrentAction()->weapon,
 									_battleGame->getCurrentAction()->actor,
-									false,false,
-									isOut_t(OUT_HLTH));
+									false,false,false);
 	}
 }
 

@@ -50,7 +50,7 @@ RuleItem::RuleItem(const std::string& type)
 		_hitSound(-1),
 		_hitAnimation(-1),
 		_power(0),
-		_damageType(DT_NONE),
+		_dType(DT_NONE),
 		_maxRange(200), // could be -1 for infinite.
 		_aimRange(20),
 		_snapRange(10),
@@ -211,7 +211,7 @@ void RuleItem::load(
 			_meleeHitSound += modIndex;
 	}
 
-	_damageType		= static_cast<DamageType>(node["damageType"]		.as<int>(_damageType));
+	_dType			= static_cast<DamageType>(node["damageType"]		.as<int>(_dType));
 	_battleType		= static_cast<BattleType>(node["battleType"]		.as<int>(_battleType));
 	_specialType	= static_cast<SpecialTileType>(node["specialType"]	.as<int>(_specialType));
 
@@ -273,7 +273,7 @@ void RuleItem::load(
 	_meleePower			= node["meleePower"]		.as<int>(_meleePower);
 	_defusePulse		= node["defusePulse"]		.as<bool>(_defusePulse);
 
-	switch (_damageType)
+	switch (_dType)
 	{
 		case DT_AP:
 		case DT_LASER:
@@ -594,7 +594,7 @@ const std::vector<std::string>* RuleItem::getCompatibleAmmo() const
  */
 DamageType RuleItem::getDamageType() const
 {
-	return _damageType;
+	return _dType;
 }
 
 /**
@@ -731,15 +731,15 @@ int RuleItem::getStunRecovery() const
 int RuleItem::getExplosionRadius() const
 {
 	if (_blastRadius == -1
-		&& (_damageType == DT_HE
-			|| _damageType == DT_STUN
-			|| _damageType == DT_SMOKE
-			|| _damageType == DT_IN))
+		&& (_dType == DT_HE
+			|| _dType == DT_STUN
+			|| _dType == DT_SMOKE
+			|| _dType == DT_IN))
 	{
 		return _power / 20;
 	}
 
-//	if (_damageType == DT_IN)
+//	if (_dType == DT_IN)
 //		return _power / 30;
 
 	return _blastRadius;

@@ -1630,8 +1630,7 @@ void BattlescapeGame::checkForCasualties(
 
 	// If the victim was killed by the attacker's death explosion,
 	// fetch who killed the attacker and make THAT the attacker!
-	if (attacker != nullptr
-		&& execution == false)
+	if (attacker != nullptr && execution == false)
 	{
 		if (attacker->getUnitStatus() == STATUS_DEAD
 			&& attacker->getMurdererId() != 0
@@ -1961,10 +1960,7 @@ void BattlescapeGame::checkForCasualties(
 					}
 //					}
 
-					if (execution == true)
-						return;
-
-					if (converted == false)
+					if (execution == false && converted == false)
 					{
 						DamageType dType;
 						bool noSound;
