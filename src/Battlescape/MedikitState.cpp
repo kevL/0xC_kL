@@ -52,7 +52,8 @@ namespace OpenXcom
 {
 
 /**
- * Helper function that returns a string representation of a type (mainly used for numbers).
+ * Helper function that returns a string representation of a type.
+ * @note Used mostly for numbers.
  * @param val - the value to stringify
  * @return, a string representation of the value
  */
@@ -158,7 +159,9 @@ MedikitState::MedikitState(BattleAction* action)
 		_game->getScreen()->resetDisplay(false);
 	} */
 
-	_bg = new Surface(320, 200);
+	_bg = new Surface(
+				Options::baseXResolution,
+				Options::baseYResolution);
 
 	setPalette("PAL_BATTLESCAPE");
 

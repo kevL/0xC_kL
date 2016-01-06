@@ -38,7 +38,7 @@ namespace OpenXcom
 /**
  * A array of strings that define body parts.
  */
-const std::string MedikitView::BODY_PARTS[] =
+const std::string MedikitView::BODY_PARTS[BattleUnit::PARTS_BODY] =
 {
 	"STR_HEAD",			// 0
 	"STR_TORSO",		// 1
