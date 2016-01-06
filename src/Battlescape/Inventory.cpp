@@ -336,7 +336,7 @@ void Inventory::drawItems() // private.
 				if ((*i)->getFuse() > -1) // grenade primer indicators
 					_grenadeFuses.push_back(std::make_pair(srf->getX(), srf->getY()));
 			}
-			else Log(LOG_INFO) << "ERROR: bigob not found [1] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
+			else Log(LOG_INFO) << "ERROR: Inventory::drawItems() bigob not found[1] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
 		}
 	}
 
@@ -370,7 +370,7 @@ void Inventory::drawItems() // private.
 				if ((*i)->getFuse() > -1) // grenade primer indicators
 					_grenadeFuses.push_back(std::make_pair(srf->getX(), srf->getY()));
 			}
-			else Log(LOG_INFO) << "ERROR: bigob not found [2] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
+			else Log(LOG_INFO) << "ERROR: Inventory::drawItems() bigob not found[2] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
 
 			const int qty (_stackLevel[(*i)->getSlotX()] // item stacking
 									  [(*i)->getSlotY()]);
