@@ -223,7 +223,7 @@ void UnitDieBState::think()
 				if (_dType == DT_NONE
 					&& _unit->getSpawnUnit().empty() == true)
 				{
-					stInfo = "STR_HAS_DIED_FROM_A_FATAL_WOUND";
+					stInfo = "STR_HAS_DIED_FROM_A_FATAL_WOUND"; // ... or a Morphine overdose.
 				}
 				else if (Options::battleNotifyDeath == true)
 					stInfo = "STR_HAS_BEEN_KILLED";

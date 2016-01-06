@@ -177,7 +177,6 @@ private:
 		_id,
 		_kills,
 		_morale,
-		_moraleRestored,
 		_motionPoints,
 		_drugDose,
 		_spinPhase,

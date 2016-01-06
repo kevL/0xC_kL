@@ -109,7 +109,6 @@ BattleUnit::BattleUnit(
 		_expMelee(0),
 		_kills(0),
 		_motionPoints(0),
-		_moraleRestored(0),
 		_coverReserve(0),
 		_charging(nullptr),
 		_turnsExposed(-1),
@@ -279,7 +278,6 @@ BattleUnit::BattleUnit(
 		_expMelee(0),
 		_kills(0),
 		_motionPoints(0),
-		_moraleRestored(0),
 		_coverReserve(0),
 		_charging(nullptr),
 		_hidingForTurn(false),
@@ -468,7 +466,6 @@ void BattleUnit::load(const YAML::Node& node)
 	_turretType			= node["turretType"]			.as<int>(_turretType);
 	_visible			= node["visible"]				.as<bool>(_visible);
 	_turnsExposed		= node["turnsExposed"]			.as<int>(_turnsExposed);
-	_moraleRestored		= node["moraleRestored"]		.as<int>(_moraleRestored);
 	_rankInt			= node["rankInt"]				.as<int>(_rankInt);
 	_kills				= node["kills"]					.as<int>(_kills);
 	_dontReselect		= node["dontReselect"]			.as<bool>(_dontReselect);
@@ -611,7 +608,6 @@ YAML::Node BattleUnit::save() const
 	if (_fire != 0)					node["fire"]			= _fire;
 	if (_turretType != -1)			node["turretType"]		= _turretType; // TODO: use unitRule to get turretType.
 	if (_visible != false)			node["visible"]			= _visible;
-	if (_moraleRestored != 0)		node["moraleRestored"]	= _moraleRestored;
 	if (_killedBy != FACTION_NONE)	node["killedBy"]		= static_cast<int>(_killedBy);
 	if (_motionPoints != 0)			node["motionPoints"]	= _motionPoints;
 	if (_kills != 0)				node["kills"]			= _kills;
@@ -3458,27 +3454,25 @@ void BattleUnit::heal(
  */
 void BattleUnit::morphine()
 {
-	const int lostHealth = getBattleStats()->health - _health;
-	if (lostHealth > _moraleRestored)
-	{
-		_morale = std::min(
-						100,
-						lostHealth - _moraleRestored + _morale);
-		_moraleRestored = lostHealth;
-	}
-
 	if (++_drugDose >= DOSE_LETHAL)
 		_health = 0;
 	else
+	{
 		_stunLevel += 7 + RNG::generate(0,6);
+		const float healthPct = static_cast<float>(_health) / static_cast<float>(getBattleStats()->health);
+		_morale = std::min(100,
+						_morale + 50 - static_cast<int>(30.f * healthPct));
+	}
 
-	if (isOut_t(OUT_STAT) == false
-		&& isOut_t(OUT_HLTH_STUN) == true)
+	if (isOut_t(OUT_HLTH) == true			// just died. Use death animations.
+		|| (isOut_t(OUT_STUN) == true
+			&& isOut_t(OUT_STAT) == false))
 	{
 		_battleGame->checkForCasualties(
 									_battleGame->getCurrentAction()->weapon,
 									_battleGame->getCurrentAction()->actor,
-									false,false,false);
+									false,false,
+									isOut_t(OUT_STAT) == true); // 'execution' (no death animations) only if unit is unconscious already.
 	}
 }
 
