@@ -61,7 +61,7 @@
 #include "../Savegame/BattleItem.h"
 #include "../Savegame/BattleUnit.h"
 #include "../Savegame/Craft.h"
-#include "../Savegame/EquipmentLayoutItem.h"
+#include "../Savegame/SoldierLayout.h"
 #include "../Savegame/ItemContainer.h"
 #include "../Savegame/MissionSite.h"
 #include "../Savegame/Node.h"
@@ -1340,8 +1340,8 @@ bool BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
 			if ((*i)->getGeoscapeSoldier() != nullptr // handle only with xCom soldiers that have a layout
 				&& (*i)->getGeoscapeSoldier()->getEquipmentLayout()->empty() == false)
 			{
-				const std::vector<EquipmentLayoutItem*>* const layoutItems = (*i)->getGeoscapeSoldier()->getEquipmentLayout();
-				for (std::vector<EquipmentLayoutItem*>::const_iterator
+				const std::vector<SoldierLayout*>* const layoutItems = (*i)->getGeoscapeSoldier()->getEquipmentLayout();
+				for (std::vector<SoldierLayout*>::const_iterator
 						j = layoutItems->begin();
 						j != layoutItems->end();
 						++j)

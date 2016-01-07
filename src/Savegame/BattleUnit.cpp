@@ -2673,7 +2673,7 @@ Tile* BattleUnit::getTile() const
 }
 
 /**
- * Checks if there's an inventory item in the specified inventory position.
+ * Checks if there's an item in the specified inventory position.
  * @param inRule	- pointer to RuleInventory
  * @param x			- X position in section (default 0)
  * @param y			- Y position in section (default 0)
@@ -2714,7 +2714,7 @@ BattleItem* BattleUnit::getItem(
 }
 
 /**
- * Checks if there's an inventory item in the specified inventory position.
+ * Checks if there's an item in the specified inventory position.
  * @note Used only in BattlescapeGenerator::placeItemByLayout()
  * @param type	- reference to an inventory type
  * @param x		- X position in section (default 0)
@@ -2733,8 +2733,8 @@ BattleItem* BattleUnit::getItem(
 				i != _inventory.end();
 				++i)
 		{
-			if ((*i)->getInventorySection() != nullptr
-				&& (*i)->getInventorySection()->getInventoryType() == type
+			if (//(*i)->getInventorySection() != nullptr && // <- if section is NULL something went wrong upstream ->
+				(*i)->getInventorySection()->getInventoryType() == type
 				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
@@ -2748,8 +2748,8 @@ BattleItem* BattleUnit::getItem(
 				i != _tile->getInventory()->end();
 				++i)
 		{
-			if ((*i)->getInventorySection() != nullptr
-				&& (*i)->occupiesSlot(x,y) == true)
+			if (//(*i)->getInventorySection() != nullptr &&
+				(*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
 			}
@@ -2760,7 +2760,7 @@ BattleItem* BattleUnit::getItem(
 }
 
 /**
- * Checks if there's an inventory item in the specified inventory position.
+ * Checks if there's an item in the specified inventory position.
  * @param section	- a InventorySection (RuleInventory.h)
  * @param x			- X position in section (default 0)
  * @param y			- Y position in section (default 0)
@@ -2778,8 +2778,8 @@ BattleItem* BattleUnit::getItem(
 				i != _inventory.end();
 				++i)
 		{
-			if ((*i)->getInventorySection() != nullptr
-				&& (*i)->getInventorySection()->getSectionType() == section
+			if (//(*i)->getInventorySection() != nullptr &&
+				(*i)->getInventorySection()->getSectionType() == section
 				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
@@ -2793,8 +2793,8 @@ BattleItem* BattleUnit::getItem(
 				i != _tile->getInventory()->end();
 				++i)
 		{
-			if ((*i)->getInventorySection() != nullptr
-				&& (*i)->occupiesSlot(x,y) == true)
+			if (//(*i)->getInventorySection() != nullptr &&
+				(*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
 			}

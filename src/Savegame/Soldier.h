@@ -56,7 +56,7 @@ enum SoldierLook
 
 
 class Craft;
-class EquipmentLayoutItem;
+class SoldierLayout;
 class Language;
 class RuleArmor;
 class Ruleset;
@@ -100,7 +100,7 @@ private:
 		_initialStats,
 		_currentStats;
 
-	std::vector<EquipmentLayoutItem*> _equipmentLayout;
+	std::vector<SoldierLayout*> _layout;
 
 
 	public:
@@ -183,7 +183,7 @@ private:
 		void heal();
 
 		/// Gets the soldier's equipment-layout.
-		std::vector<EquipmentLayoutItem*>* getEquipmentLayout();
+		std::vector<SoldierLayout*>* getEquipmentLayout();
 
 		/// Trains a soldier's psionic abilities.
 		bool trainPsiDay();

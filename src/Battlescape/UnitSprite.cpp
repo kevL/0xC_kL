@@ -120,7 +120,7 @@ void UnitSprite::setBattleUnit(
  * Links this sprite's right-hand to a BattleItem to get the data for rendering.
  * @param item - pointer to a BattleItem (default nullptr)
  */
-void UnitSprite::setBattleItRH(BattleItem* const item)
+void UnitSprite::setBattleItRH(const BattleItem* const item)
 {
 	_itRT = item;
 	_redraw = true;
@@ -130,7 +130,7 @@ void UnitSprite::setBattleItRH(BattleItem* const item)
  * Links this sprite's left-hand to a BattleItem to get the data for rendering.
  * @param item - pointer to a BattleItem (default nullptr)
  */
-void UnitSprite::setBattleItLH(BattleItem* const item)
+void UnitSprite::setBattleItLH(const BattleItem* const item)
 {
 	_itLT = item;
 	_redraw = true;
@@ -1015,12 +1015,12 @@ void UnitSprite::drawRoutine4()
 			&& _itRT->getRules()->isTwoHanded() == true)
 		{
 			itRT = _itSetRT->getFrame((unitDir + 2) % 8 + _itRT->getRules()->getHandSprite());
-			itRT->setX(offX[static_cast<size_t>(unitDir)]);
-			itRT->setY(offY[static_cast<size_t>(unitDir)]);
+			itRT->setX(offX[unitDir]);
+			itRT->setY(offY[unitDir]);
 		}
 		else
 		{
-			if (_itRT->getInventorySection()->getSectionType() == ST_RIGHTHAND) // wtf. how could right-item not be in right-hand.
+			if (_itRT->getInventorySection()->getSectionType() == ST_RIGHTHAND) // wtf. how could right-item not be in right-hand: Dual-wield sorting hand-obs.
 			{
 				itRT = _itSetRT->getFrame(unitDir + _itRT->getRules()->getHandSprite());
 				itRT->setX(0);
@@ -1029,8 +1029,8 @@ void UnitSprite::drawRoutine4()
 			else
 			{
 				itRT = _itSetRT->getFrame(unitDir + _itRT->getRules()->getHandSprite());
-				itRT->setX(offX2[static_cast<size_t>(unitDir)]);
-				itRT->setY(offY2[static_cast<size_t>(unitDir)]);
+				itRT->setX(offX2[unitDir]);
+				itRT->setY(offY2[unitDir]);
 			}
 		}
 	}
@@ -1040,8 +1040,8 @@ void UnitSprite::drawRoutine4()
 		itLT = _itSetLT->getFrame(unitDir + _itLT->getRules()->getHandSprite());
 		if (_itLT->getRules()->isTwoHanded() == false)
 		{
-			itLT->setX(offX2[static_cast<size_t>(unitDir)]);
-			itLT->setY(offY2[static_cast<size_t>(unitDir)]);
+			itLT->setX(offX2[unitDir]);
+			itLT->setY(offY2[unitDir]);
 		}
 		else
 		{
@@ -1053,8 +1053,8 @@ void UnitSprite::drawRoutine4()
 			&& _itLT->getRules()->isTwoHanded() == true)
 		{
 			itLT = _itSetLT->getFrame((unitDir + 2) % 8 + _itLT->getRules()->getHandSprite());
-			itLT->setX(offX3[static_cast<size_t>(unitDir)]);
-			itLT->setY(offY3[static_cast<size_t>(unitDir)]);
+			itLT->setX(offX3[unitDir]);
+			itLT->setY(offY3[unitDir]);
 		}
 	}
 

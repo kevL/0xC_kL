@@ -17,14 +17,14 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "EquipmentLayoutItem.h"
+#include "SoldierLayout.h"
 
 
 namespace OpenXcom
 {
 
 /**
- * Initializes a Soldier's EquipmentLayoutItem.
+ * Initializes a Soldier's SoldierLayout.
  * @param itemType	- reference to the item's type
  * @param slot		- reference to the occupied section type
  * @param slotX		- position-X in the occupied slot
@@ -32,7 +32,7 @@ namespace OpenXcom
  * @param ammoItem	- reference to the ammo that has to be loaded into the item (its type)
  * @param fuse		- the turn until explosion of the item (if it's an activated grenade-type)
  */
-EquipmentLayoutItem::EquipmentLayoutItem(
+SoldierLayout::SoldierLayout(
 		const std::string& itemType,
 		const std::string& section,
 		int slotX,
@@ -49,10 +49,10 @@ EquipmentLayoutItem::EquipmentLayoutItem(
 {}
 
 /**
- * Initializes a Soldier's EquipmentLayoutItem from YAML.
+ * Initializes a Soldier's SoldierLayout from YAML.
  * @param node, YAML node.
  */
-EquipmentLayoutItem::EquipmentLayoutItem(const YAML::Node& node)
+SoldierLayout::SoldierLayout(const YAML::Node& node)
 {
 	load(node);
 }
@@ -60,14 +60,14 @@ EquipmentLayoutItem::EquipmentLayoutItem(const YAML::Node& node)
 /**
  * dTor.
  */
-EquipmentLayoutItem::~EquipmentLayoutItem()
+SoldierLayout::~SoldierLayout()
 {}
 
 /**
- * Loads the Soldier's EquipmentLayoutItem from a YAML file.
+ * Loads the Soldier's SoldierLayout from a YAML file.
  * @param node - reference a YAML node
  */
-void EquipmentLayoutItem::load(const YAML::Node& node)
+void SoldierLayout::load(const YAML::Node& node)
 {
 	_itemType	= node["itemType"]	.as<std::string>(_itemType);
 	_section	= node["section"]	.as<std::string>(_section);
@@ -78,10 +78,10 @@ void EquipmentLayoutItem::load(const YAML::Node& node)
 }
 
 /**
- * Saves the Soldier's EquipmentLayoutItem to a YAML file.
+ * Saves the Soldier's SoldierLayout to a YAML file.
  * @return, YAML node
  */
-YAML::Node EquipmentLayoutItem::save() const
+YAML::Node SoldierLayout::save() const
 {
 	YAML::Node node;
 
@@ -100,7 +100,7 @@ YAML::Node EquipmentLayoutItem::save() const
  * Returns the item's type which has to be in an Inventory section.
  * @return, item type
  */
-std::string EquipmentLayoutItem::getItemType() const
+std::string SoldierLayout::getItemType() const
 {
 	return _itemType;
 }
@@ -109,7 +109,7 @@ std::string EquipmentLayoutItem::getItemType() const
  * Returns the Inventory section to be occupied.
  * @return, section type
  */
-std::string EquipmentLayoutItem::getLayoutSection() const
+std::string SoldierLayout::getLayoutSection() const
 {
 	return _section;
 }
@@ -118,7 +118,7 @@ std::string EquipmentLayoutItem::getLayoutSection() const
  * Returns the position-X in the Inventory section to be occupied.
  * @return, slot-X
  */
-int EquipmentLayoutItem::getSlotX() const
+int SoldierLayout::getSlotX() const
 {
 	return _slotX;
 }
@@ -127,7 +127,7 @@ int EquipmentLayoutItem::getSlotX() const
  * Returns the position-Y in the Inventory section to be occupied.
  * @return, slot-Y
  */
-int EquipmentLayoutItem::getSlotY() const
+int SoldierLayout::getSlotY() const
 {
 	return _slotY;
 }
@@ -136,7 +136,7 @@ int EquipmentLayoutItem::getSlotY() const
  * Returns the ammo-type that has to be loaded into the item.
  * @return, the ammo-type
  */
-std::string EquipmentLayoutItem::getAmmoType() const
+std::string SoldierLayout::getAmmoType() const
 {
 	return _ammoItem;
 }
@@ -145,7 +145,7 @@ std::string EquipmentLayoutItem::getAmmoType() const
  * Returns the turn until explosion of the item (if it's an activated grenade-type).
  * @return, turn count
  */
-int EquipmentLayoutItem::getFuse() const
+int SoldierLayout::getFuse() const
 {
 	return _fuse;
 }

@@ -2556,7 +2556,7 @@ void Map::cacheUnit(BattleUnit* const unit)
 			cache->setWidth(sprite->getWidth());
 			sprite->setBattleUnit(unit, quadrant);
 
-			BattleItem
+			const BattleItem
 				* const rtItem = unit->getItem(ST_RIGHTHAND),
 				* const ltItem = unit->getItem(ST_LEFTHAND);
 			if (rtItem != nullptr && rtItem->getRules()->isFixed() == false)

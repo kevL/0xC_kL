@@ -64,7 +64,7 @@ Camera::Camera(
 		_playableHeight(playableHeight),
 		_screenWidth(battleField->getWidth()),
 		_screenHeight(battleField->getHeight()),
-		_mapOffset(-250,250,0),
+		_offsetField(-250,250,0),
 		_scrollMouseTimer(0),
 		_scrollKeyTimer(0),
 		_scrollMouseX(0),
@@ -416,71 +416,71 @@ void Camera::scrollXY(
 		int y,
 		bool redraw)
 {
-	_mapOffset.x += x;
-	_mapOffset.y += y;
+	_offsetField.x += x;
+	_offsetField.y += y;
 
-/*	convertScreenToMap( // convert center of screen to center of map
+/*	convertScreenToMap( // convert center of screen to center of battleField
 				_screenWidth / 2,
 				_playableHeight / 2,
-				&_center.x,
-				&_center.y);
+				&_centerField.x,
+				&_centerField.y);
 
-	if (_center.x < 0)
+	if (_centerField.x < 0)
 	{
-		_mapOffset.x += _center.x;
-		_mapOffset.y += _center.x;
+		_offsetField.x += _centerField.x;
+		_offsetField.y += _centerField.x;
 	}
-	else if (_center.x > _mapsize_x - 1)
+	else if (_centerField.x > _mapsize_x - 1)
 	{
-		_mapOffset.x -= _center.x;
-		_mapOffset.y -= _center.x;
+		_offsetField.x -= _centerField.x;
+		_offsetField.y -= _centerField.x;
 	}
-	else if (_center.y < 0)
+	else if (_centerField.y < 0)
 	{
-		_mapOffset.x -= _center.y;
-		_mapOffset.y += _center.y;
+		_offsetField.x -= _centerField.y;
+		_offsetField.y += _centerField.y;
 	}
-	else if (_center.y > _mapsize_y - 1)
+	else if (_centerField.y > _mapsize_y - 1)
 	{
-		_mapOffset.x += _center.y;
-		_mapOffset.y -= _center.y;
+		_offsetField.x += _centerField.y;
+		_offsetField.y -= _centerField.y;
 	} */
 	bool stop = false;
 	do
 	{
-		convertScreenToMap( // convert center of screen to center of map
+		convertScreenToMap( // convert center of screen to center of battleField
 					_screenWidth / 2,
 					_playableHeight / 2,
-					&_center.x,
-					&_center.y);
+					&_centerField.x,
+					&_centerField.y);
 		// Handling map bounds...
 		// Ok, this is a prototype, it should be optimized.
-		// Actually this should be calculated instead of slow-approximation.
-		if (_center.x < 0)
+		// Actually this should be calculated instead of a slow-approximation:
+		if (_centerField.x < 0)
 		{
-			_mapOffset.x -= 1;
-			_mapOffset.y -= 1;
+			_offsetField.x -= 1;
+			_offsetField.y -= 1;
 			continue;
 		}
 
-		if (_center.x > _mapsize_x - 1)
+		if (_centerField.x > _mapsize_x - 1)
 		{
-			_mapOffset.x += 1;
-			_mapOffset.y += 1;
+			_offsetField.x += 1;
+			_offsetField.y += 1;
 			continue;
 		}
 
-		if (_center.y < 0)
+		if (_centerField.y < 0)
 		{
-			_mapOffset.x += 1;
-			_mapOffset.y -= 1;
+			_offsetField.x += 1;
+			_offsetField.y -= 1;
 			continue;
 		}
 
-		if (_center.y > _mapsize_y - 1)
+		if (_centerField.y > _mapsize_y - 1)
 		{
-			_mapOffset.x -= 1;
-			_mapOffset.y += 1;
+			_offsetField.x -= 1;
+			_offsetField.y += 1;
 			continue;
 		}
 
@@ -504,14 +504,14 @@ void Camera::jumpXY(
 		int x,
 		int y)
 {
-	_mapOffset.x += x;
-	_mapOffset.y += y;
+	_offsetField.x += x;
+	_offsetField.y += y;
 
 	convertScreenToMap(
 				_screenWidth / 2,
 				_playableHeight / 2,
-				&_center.x,
-				&_center.y);
+				&_centerField.x,
+				&_centerField.y);
 }
 
 /**
@@ -519,10 +519,10 @@ void Camera::jumpXY(
  */
 void Camera::up()
 {
-	if (_mapOffset.z < _mapsize_z - 1)
+	if (_offsetField.z < _mapsize_z - 1)
 	{
-		_map->getBattleSave()->getBattleState()->setLayerValue(++_mapOffset.z);
-		_mapOffset.y += (_spriteHeight / 2) + 4;
+		_map->getBattleSave()->getBattleState()->setLayerValue(++_offsetField.z);
+		_offsetField.y += (_spriteHeight / 2) + 4;
 		_map->draw();
 	}
 }
@@ -532,10 +532,10 @@ void Camera::up()
  */
 void Camera::down()
 {
-	if (_mapOffset.z > 0)
+	if (_offsetField.z > 0)
 	{
-		_map->getBattleSave()->getBattleState()->setLayerValue(--_mapOffset.z);
-		_mapOffset.y -= (_spriteHeight / 2) + 4;
+		_map->getBattleSave()->getBattleState()->setLayerValue(--_offsetField.z);
+		_offsetField.y -= (_spriteHeight / 2) + 4;
 		_map->draw();
 	}
 }
@@ -546,7 +546,7 @@ void Camera::down()
  */
 int Camera::getViewLevel() const
 {
-	return _mapOffset.z;
+	return _offsetField.z;
 }
 
 /**
@@ -555,13 +555,13 @@ int Camera::getViewLevel() const
  */
 void Camera::setViewLevel(int viewLevel)	// The call from Map::drawTerrain() causes a stack overflow loop when projectile in FoV.
 {											// Solution: remove draw() call below_
-	_mapOffset.z = viewLevel;				// - might have to pass in a 'redraw' bool to compensate for other calls ...
+	_offsetField.z = viewLevel;				// - might have to pass in a 'redraw' bool to compensate for other calls ...
 	intMinMax(
-			&_mapOffset.z,
+			&_offsetField.z,
 			0,
 			_mapsize_z - 1);
 
-	_map->getBattleSave()->getBattleState()->setLayerValue(_mapOffset.z);
+	_map->getBattleSave()->getBattleState()->setLayerValue(_offsetField.z);
 //	_map->draw();
 }
 
@@ -574,27 +574,27 @@ void Camera::centerOnPosition(
 		const Position& posField,
 		bool redraw)
 {
-	_center = posField;
+	_centerField = posField;
 
 	intMinMax(
-			&_center.x,
+			&_centerField.x,
 			-1,
 			_mapsize_x);
 	intMinMax(
-			&_center.y,
+			&_centerField.y,
 			-1,
 			_mapsize_y);
 
 	Position posScreen;
 	convertMapToScreen(
-					_center,
+					_centerField,
 					&posScreen);
 
-	_mapOffset.x = -(posScreen.x - (_screenWidth / 2) + 16);
-	_mapOffset.y = -(posScreen.y - (_playableHeight / 2));
-	_mapOffset.z = _center.z;
+	_offsetField.x = -(posScreen.x - (_screenWidth / 2) + 16);
+	_offsetField.y = -(posScreen.y - (_playableHeight / 2));
+	_offsetField.z = _centerField.z;
 
-	_map->getBattleSave()->getBattleState()->setLayerValue(_mapOffset.z);
+	_map->getBattleSave()->getBattleState()->setLayerValue(_offsetField.z);
 
 	if (redraw == true)
 		_map->draw();
@@ -606,8 +606,8 @@ void Camera::centerOnPosition(
  */
 Position Camera::getCenterPosition()
 {
-	_center.z = _mapOffset.z;
-	return _center;
+	_centerField.z = _offsetField.z;
+	return _centerField;
 }
 
 /**
@@ -626,12 +626,12 @@ void Camera::convertScreenToMap(
 	const int width_4 = _spriteWidth / 4;
 
 	// add half a tile-height to the screen-position per layer above floor-level
-	screenY += -_spriteWidth / 2 + _mapOffset.z * ((_spriteHeight + width_4) / 2);
+	screenY += -_spriteWidth / 2 + _offsetField.z * ((_spriteHeight + width_4) / 2);
 
 	// calculate the actual x/y pixel-position on a diamond shaped map
 	// taking the viewport-offset into account
-	*mapY = -screenX + _mapOffset.x + screenY * 2 - _mapOffset.y * 2;
-	*mapX =  screenY - _mapOffset.y - *mapY / 4 - width_4;
+	*mapY = -screenX + _offsetField.x + screenY * 2 - _offsetField.y * 2;
+	*mapX =  screenY - _offsetField.y - *mapY / 4 - width_4;
 
 	// to get the row&col itself divide by the size of a tile
 	*mapX /= width_4;
@@ -689,8 +689,8 @@ void Camera::convertVoxelToScreen(
 
 	posScreen->x += static_cast<int>(dx - dy) + (_spriteWidth / 2);
 	posScreen->y += static_cast<int>(((static_cast<double>(_spriteHeight) / 2.)) + (dx / 2.) + (dy / 2.) - dz);
-	posScreen->x += _mapOffset.x;
-	posScreen->y += _mapOffset.y;
+	posScreen->x += _offsetField.x;
+	posScreen->y += _offsetField.y;
 }
 
 /**
@@ -717,7 +717,7 @@ int Camera::getMapSizeY() const
  */
 Position Camera::getMapOffset() const
 {
-	return _mapOffset;
+	return _offsetField;
 }
 
 /**
@@ -726,7 +726,7 @@ Position Camera::getMapOffset() const
  */
 void Camera::setMapOffset(const Position& pos)
 {
-	_mapOffset = pos;
+	_offsetField = pos;
 }
 
 /**
@@ -759,8 +759,8 @@ bool Camera::isOnScreen(const Position& posField) const
 	convertMapToScreen(
 					posField,		// tile Position
 					&posScreen);	// pixel Position
-	posScreen.x += _mapOffset.x;
-	posScreen.y += _mapOffset.y;
+	posScreen.x += _offsetField.x;
+	posScreen.y += _offsetField.y;
 
 	static const int border = 28; // buffer the edges a bit.
 
@@ -789,8 +789,8 @@ bool Camera::isOnScreen(const Position& posField) const
 		sizex = _spriteWidth*unitSize;
 		sizey = _spriteWidth*unitSize/2;
 	}
-	posScreen.x += _mapOffset.x + posx;
-	posScreen.y += _mapOffset.y + posy;
+	posScreen.x += _offsetField.x + posx;
+	posScreen.y += _offsetField.y + posy;
 	if (unitWalking)
 	{
 //pretty hardcoded hack to handle overlapping by icons

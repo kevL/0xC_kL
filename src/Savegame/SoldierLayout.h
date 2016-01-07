@@ -29,10 +29,10 @@ namespace OpenXcom
 {
 
 /**
- * Represents a Soldier's EquipmentLayoutItem which is used to equip a Soldier
+ * Represents a Soldier's SoldierLayout which is used to equip a Soldier
  * for tactical battles.
  */
-class EquipmentLayoutItem
+class SoldierLayout
 {
 
 private:
@@ -48,22 +48,22 @@ private:
 
 
 	public:
-		/// Creates a Soldier's EquipmentLayoutItem.
-		EquipmentLayoutItem(
+		/// Creates a Soldier's SoldierLayout.
+		SoldierLayout(
 				const std::string& itemType,
 				const std::string& section,
 				int slotX,
 				int slotY,
 				const std::string& ammoItem,
 				int fuse);
-		/// Creates a Soldier's EquipmentLayoutItem and loads its contents from YAML.
-		explicit EquipmentLayoutItem(const YAML::Node& node);
-		/// Cleans up the Soldier's EquipmentLayoutItem.
-		~EquipmentLayoutItem();
+		/// Creates a Soldier's SoldierLayout and loads its contents from YAML.
+		explicit SoldierLayout(const YAML::Node& node);
+		/// Cleans up the Soldier's SoldierLayout.
+		~SoldierLayout();
 
-		/// Loads the Soldier's EquipmentLayoutItem from YAML.
+		/// Loads the Soldier's SoldierLayout from YAML.
 		void load(const YAML::Node& node);
-		/// Saves the Soldier's EquipmentLayoutItem to YAML.
+		/// Saves the Soldier's SoldierLayout to YAML.
 		YAML::Node save() const;
 
 		/// Gets the item's type which has to be in an Inventory section.

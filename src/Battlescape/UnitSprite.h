@@ -47,7 +47,7 @@ private:
 		_drawRoutine,
 		_quad;
 
-	BattleItem
+	const BattleItem
 		* _itRT,
 		* _itLT;
 	BattleUnit* _unit;
@@ -106,9 +106,9 @@ private:
 				BattleUnit* const unit,
 				int part = 0);
 		/// Sets the right-hand BattleItem to be rendered.
-		void setBattleItRH(BattleItem* const item = nullptr);
+		void setBattleItRH(const BattleItem* const item = nullptr);
 		/// Sets the left-hand BattleItem to be rendered.
-		void setBattleItLH(BattleItem* const item = nullptr);
+		void setBattleItLH(const BattleItem* const item = nullptr);
 		/// Sets the animation frame.
 		void setAnimationFrame(int frame);
 

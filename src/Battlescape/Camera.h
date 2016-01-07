@@ -61,8 +61,8 @@ private:
 
 	Map* _map;
 	Position
-		_mapOffset,
-		_center;
+		_offsetField,
+		_centerField;
 	Timer
 		* _scrollMouseTimer,
 		* _scrollKeyTimer;

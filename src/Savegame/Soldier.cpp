@@ -20,7 +20,7 @@
 #include "Soldier.h"
 
 #include "Craft.h"
-#include "EquipmentLayoutItem.h"
+#include "SoldierLayout.h"
 #include "SavedGame.h"
 #include "SoldierDead.h"
 #include "SoldierDeath.h"
@@ -136,9 +136,9 @@ Soldier::Soldier(
  */
 Soldier::~Soldier()
 {
-	for (std::vector<EquipmentLayoutItem*>::const_iterator
-			i = _equipmentLayout.begin();
-			i != _equipmentLayout.end();
+	for (std::vector<SoldierLayout*>::const_iterator
+			i = _layout.begin();
+			i != _layout.end();
 			++i)
 	{
 		delete *i;
@@ -160,29 +160,30 @@ void Soldier::load(
 	_gender			= static_cast<SoldierGender>(node["gender"]	.as<int>());
 	_look			= static_cast<SoldierLook>(node["look"]		.as<int>());
 
-	_id				= node["id"]						.as<int>(_id);
-	_name			= Language::utf8ToWstr(node["name"]	.as<std::string>());
-	_initialStats	= node["initialStats"]				.as<UnitStats>(_initialStats);
-	_currentStats	= node["currentStats"]				.as<UnitStats>(_currentStats);
-	_missions		= node["missions"]					.as<int>(_missions);
-	_kills			= node["kills"]						.as<int>(_kills);
-	_recovery		= node["recovery"]					.as<int>(_recovery);
-	_psiTraining	= node["psiTraining"]				.as<bool>(_psiTraining);
+	_name = Language::utf8ToWstr(node["name"].as<std::string>());
+
+	_id				= node["id"]			.as<int>(_id);
+	_initialStats	= node["initialStats"]	.as<UnitStats>(_initialStats);
+	_currentStats	= node["currentStats"]	.as<UnitStats>(_currentStats);
+	_missions		= node["missions"]		.as<int>(_missions);
+	_kills			= node["kills"]			.as<int>(_kills);
+	_recovery		= node["recovery"]		.as<int>(_recovery);
+	_psiTraining	= node["psiTraining"]	.as<bool>(_psiTraining);
 
 	_armorRule = rules->getArmor(node["armor"].as<std::string>());
 	if (_armorRule == nullptr)
 		_armorRule = rules->getArmor(_solRule->getArmor());
 
-	if (const YAML::Node& layout = node["equipmentLayout"])
+	if (const YAML::Node& layout = node["layout"])
 	{
 		for (YAML::const_iterator
 				i = layout.begin();
 				i != layout.end();
 				++i)
 		{
-			EquipmentLayoutItem* const layoutItem = new EquipmentLayoutItem(*i);
+			SoldierLayout* const layoutItem = new SoldierLayout(*i);
 			if (rules->getInventory(layoutItem->getLayoutSection()) != nullptr)
-				_equipmentLayout.push_back(layoutItem);
+				_layout.push_back(layoutItem);
 			else
 				delete layoutItem;
 		}
@@ -224,14 +225,14 @@ YAML::Node Soldier::save() const
 	if (_psiTraining)
 		node["psiTraining"]	= _psiTraining;
 
-	if (_equipmentLayout.empty() == false)
+	if (_layout.empty() == false)
 	{
-		for (std::vector<EquipmentLayoutItem*>::const_iterator
-				i = _equipmentLayout.begin();
-				i != _equipmentLayout.end();
+		for (std::vector<SoldierLayout*>::const_iterator
+				i = _layout.begin();
+				i != _layout.end();
 				++i)
 		{
-			node["equipmentLayout"].push_back((*i)->save());
+			node["layout"].push_back((*i)->save());
 		}
 	}
 
@@ -515,11 +516,11 @@ void Soldier::heal()
 
 /**
  * Gets the list of EquipmentLayoutItems of this Soldier.
- * @return, pointer to a vector of pointers to EquipmentLayoutItem
+ * @return, pointer to a vector of pointers to SoldierLayout
  */
-std::vector<EquipmentLayoutItem*>* Soldier::getEquipmentLayout()
+std::vector<SoldierLayout*>* Soldier::getEquipmentLayout()
 {
-	return &_equipmentLayout;
+	return &_layout;
 }
 
 /**

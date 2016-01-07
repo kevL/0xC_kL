@@ -51,7 +51,7 @@
 
 #include "../Savegame/BattleItem.h"
 #include "../Savegame/BattleUnit.h"
-#include "../Savegame/EquipmentLayoutItem.h"
+#include "../Savegame/SoldierLayout.h"
 #include "../Savegame/SavedBattleGame.h"
 //#include "../Savegame/SavedGame.h"
 //#include "../Savegame/Soldier.h"
@@ -368,9 +368,9 @@ InventoryState::InventoryState(
 /*
  * Helper for the dTor.
  *
-static void _clearInventoryTemplate(std::vector<EquipmentLayoutItem*>& inventoryTemplate)
+static void _clearInventoryTemplate(std::vector<SoldierLayout*>& inventoryTemplate)
 {
-	for (std::vector<EquipmentLayoutItem*>::iterator i = inventoryTemplate.begin(); i != inventoryTemplate.end();)
+	for (std::vector<SoldierLayout*>::iterator i = inventoryTemplate.begin(); i != inventoryTemplate.end();)
 		delete *i;
 } */
 
@@ -891,11 +891,11 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 {
 	if (unit->getGeoscapeSoldier() != nullptr)
 	{
-		std::vector<EquipmentLayoutItem*>* const layoutItems = unit->getGeoscapeSoldier()->getEquipmentLayout();
+		std::vector<SoldierLayout*>* const layoutItems = unit->getGeoscapeSoldier()->getEquipmentLayout();
 
 		if (layoutItems->empty() == false) // clear Soldier's items
 		{
-			for (std::vector<EquipmentLayoutItem*>::const_iterator
+			for (std::vector<SoldierLayout*>::const_iterator
 					i = layoutItems->begin();
 					i != layoutItems->end();
 					++i)
@@ -922,7 +922,7 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 			else
 				ammo = "NONE";
 
-			layoutItems->push_back(new EquipmentLayoutItem(
+			layoutItems->push_back(new SoldierLayout(
 													(*i)->getRules()->getType(),
 													(*i)->getInventorySection()->getInventoryType(),
 													(*i)->getSlotX(),
@@ -1395,7 +1395,7 @@ void InventoryState::txtTooltipOut(Action* action)
 		else
 			ammo = "NONE";
 
-		_curInventoryTemplate.push_back(new EquipmentLayoutItem(
+		_curInventoryTemplate.push_back(new SoldierLayout(
 															(*j)->getRules()->getType(),
 															(*j)->getInventorySection()->getId(),
 															(*j)->getSlotX(),
@@ -1440,7 +1440,7 @@ void InventoryState::txtTooltipOut(Action* action)
 	// message, but continue attempting to fulfill the template as best we can
 	bool itemMissing = false;
 
-	std::vector<EquipmentLayoutItem*>::iterator templateIt;
+	std::vector<SoldierLayout*>::iterator templateIt;
 	for (
 			templateIt = _curInventoryTemplate.begin();
 			templateIt != _curInventoryTemplate.end();

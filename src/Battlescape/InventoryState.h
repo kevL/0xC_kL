@@ -100,7 +100,7 @@ private:
 		* _txtPsiTU;
 //	Timer* _timer;
 
-/*	std::vector<EquipmentLayoutItem*> _curInventoryTemplate; */
+/*	std::vector<SoldierLayout*> _curInventoryTemplate; */
 
 	/// Advances to the next/previous Unit when right/left key is depressed.
 //	void keyRepeat(); // <- too twitchy.
