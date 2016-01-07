@@ -255,7 +255,7 @@ int BattleItem::setAmmoItem(
 			{
 				_ammoItem = item;
 				_ammoItem->_isLoad = true;
-				if (loadSave == true)
+				if (loadSave == false)
 				{
 					_ammoItem->setInventorySection();
 					_ammoItem->changeOwner();

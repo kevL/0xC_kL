@@ -81,7 +81,7 @@ private:
 	/// Moves an item to a specified section.
 	void moveItem(
 			BattleItem* const item,
-			const RuleInventory* const inRule = nullptr,
+			const RuleInventory* const inRule,
 			int x = 0,
 			int y = 0);
 

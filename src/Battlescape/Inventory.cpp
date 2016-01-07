@@ -407,7 +407,7 @@ void Inventory::drawItems() // private.
 /**
  * Moves an item to a specified section in the selected unit's inventory.
  * @param item		- pointer to a BattleItem
- * @param inRule	- pointer to RuleInventory (default nullptr)
+ * @param inRule	- pointer to RuleInventory
  * @param x			- X position (default 0)
  * @param y			- Y position (default 0)
  */
@@ -423,8 +423,6 @@ void Inventory::moveItem( // private.
 			_selUnit->getTile()->removeItem(item);
 		else
 			item->changeOwner();
-
-//		item->setInventorySection(nullptr);
 	}
 	else
 	{ */

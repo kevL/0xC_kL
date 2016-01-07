@@ -464,7 +464,7 @@ void SavedBattleGame::load(
 				item->load(*j);
 
 //				st = "";
-//TEST				if ((*j)["section"])
+				if ((*j)["section"])
 				{
 					st = (*j)["section"].as<std::string>(); // note: the given 'section' should always be valid.
 					//Log(LOG_INFO) << ". . section = " << st;
