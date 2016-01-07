@@ -56,7 +56,7 @@ private:
 	BattleItem* _ammoItem;
 	BattleUnit
 		* _owner,
-		* _previousOwner,
+		* _ownerPre,
 		* _unit;
 	const RuleInventory* _section;
 	RuleItem* _itRule;
@@ -85,12 +85,14 @@ private:
 		/// Sets the item's ammo quantity.
 		void setAmmoQuantity(int qty);
 		/// Gets if the item is a clip in a weapon.
-		bool isLoadedAmmo() const;
+		bool isLoad() const;
 
 		/// Gets the item's ammo item.
 		BattleItem* getAmmoItem() const;
 		/// Sets the item's ammo item.
-		int setAmmoItem(BattleItem* const item = nullptr);
+		int setAmmoItem(
+				BattleItem* const item = nullptr,
+				bool loadSave = false);
 		/// Checks if this item uses ammo OR is self-powered.
 		bool selfPowered() const;
 		/// Spends a bullet from this BattleItem.
@@ -108,16 +110,16 @@ private:
 		/// Sets the owner.
 		void setOwner(BattleUnit* const owner = nullptr);
 		/// Gets the item's previous owner.
-		BattleUnit* getPreviousOwner() const;
+		BattleUnit* getPriorOwner() const;
 		/// Sets the item's previous owner.
-		void setPreviousOwner(BattleUnit* const owner);
+		void setPriorOwner(BattleUnit* const ownerPre);
 		/// Removes the item from previous owner and moves to new owner.
-		void moveToOwner(BattleUnit* const owner = nullptr);
+		void changeOwner(BattleUnit* const owner = nullptr);
 
 		/// Gets the item's inventory section.
 		const RuleInventory* getInventorySection() const;
 		/// Sets the item's inventory section.
-		void setSection(const RuleInventory* const inRule);
+		void setInventorySection(const RuleInventory* const inRule = nullptr);
 		/// Gets the item's inventory X position.
 		int getSlotX() const;
 		/// Sets the item's inventory X position.
@@ -135,7 +137,7 @@ private:
 		/// Gets the item's tile.
 		Tile* getTile() const;
 		/// Sets the tile.
-		void setTile(Tile* tile);
+		void setTile(Tile* const tile);
 
 		/// Gets it's unique id.
 		int getId() const;

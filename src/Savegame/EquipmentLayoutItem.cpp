@@ -133,10 +133,10 @@ int EquipmentLayoutItem::getSlotY() const
 }
 
 /**
- * Returns the ammo that has to be loaded into the item.
- * @return, the ammo type
+ * Returns the ammo-type that has to be loaded into the item.
+ * @return, the ammo-type
  */
-std::string EquipmentLayoutItem::getAmmoItem() const
+std::string EquipmentLayoutItem::getAmmoType() const
 {
 	return _ammoItem;
 }

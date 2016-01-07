@@ -491,7 +491,7 @@ bool ProjectileFlyBState::createNewProjectile() // private.
 				_prjItem->setFuse(0);
 			}
 
-			_prjItem->moveToOwner();
+			_prjItem->changeOwner();
 			_unit->clearCache();
 			_parent->getMap()->cacheUnit(_unit);
 

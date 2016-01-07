@@ -76,7 +76,7 @@ private:
 		int getSlotY() const;
 
 		/// Gets the item's ammo-item.
-		std::string getAmmoItem() const;
+		std::string getAmmoType() const;
 
 		/// Gets the turn until explosion.
 		int getFuse() const;

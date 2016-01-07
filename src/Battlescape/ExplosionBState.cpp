@@ -464,8 +464,8 @@ void ExplosionBState::explode() // private.
 
 	if (itRule != nullptr)
 	{
-		if (_unit == nullptr && _item->getPreviousOwner() != nullptr)
-			_unit = _item->getPreviousOwner();
+		if (_unit == nullptr && _item->getPriorOwner() != nullptr)
+			_unit = _item->getPriorOwner();
 
 		if (_areaOfEffect == true)
 		{

@@ -165,7 +165,7 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	_txtMissionType->setSecondaryColor(WHITE);
 	_txtMissionType->setText(tr("STR_MISSION_TYPE").arg(tr(stats->at(missionId)->type))); // 'type' was, getMissionTypeLowerCase()
 
-	if (stats->at(missionId)->ufo != "NUL_UFO")
+	if (stats->at(missionId)->ufo != "NO_UFO")
 	{
 		_txtUFO->setColor(YELLOW);
 		_txtUFO->setSecondaryColor(WHITE);

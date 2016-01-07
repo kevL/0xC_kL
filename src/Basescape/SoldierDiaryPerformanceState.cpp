@@ -562,7 +562,7 @@ void SoldierDiaryPerformanceState::init()
 				j != mapArray[i].end();
 				++j)
 		{
-			if ((*j).first != "NUL_UFO")
+			if ((*j).first != "NO_UFO")
 			{
 				std::wostringstream woststr;
 				woststr << (*j).second;

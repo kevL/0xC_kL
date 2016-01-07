@@ -86,7 +86,7 @@ private:
 		/// Starts the game's state machine.
 		void run();
 		/// Quits the game.
-		void quit();
+		void quit(bool force = false);
 
 		/// Sets the game's audio volume.
 		void setVolume(

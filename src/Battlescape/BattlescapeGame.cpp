@@ -1415,7 +1415,7 @@ void BattlescapeGame::endTurnPhase() // private.
 												2 - _battleSave->getTiles()[i]->getTerrainLevel());
 				statePushNext(new ExplosionBState(
 												this, pos, *j,
-												(*j)->getPreviousOwner()));
+												(*j)->getPriorOwner()));
 				_battleSave->removeItem(*j);
 
 				statePushBack(nullptr);
@@ -2971,7 +2971,7 @@ void BattlescapeGame::dropItem(
 			_battleSave->getItems()->push_back(item);
 
 		if (disown == true)
-			item->moveToOwner();
+			item->changeOwner();
 		else if (item->getRules()->isGrenade() == false)
 			item->setOwner();
 
@@ -3051,8 +3051,8 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 	BattleItem* const item = new BattleItem(
 										getRuleset()->getItem(st),
 										_battleSave->getNextItemId());
-	item->moveToOwner(conUnit);
-	item->setSection(getRuleset()->getInventory("STR_RIGHT_HAND"));
+	item->changeOwner(conUnit);
+	item->setInventorySection(getRuleset()->getInventory("STR_RIGHT_HAND"));
 	_battleSave->getItems()->push_back(item);
 
 	getMap()->cacheUnit(conUnit);
@@ -3382,14 +3382,14 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 		case BT_MELEE:
 			if (rhWeapon == nullptr)
 			{
-				item->setSection(rightHand);
+				item->setInventorySection(rightHand);
 				placed = 1;
 				break;
 			}
 
 			if (lhWeapon == nullptr)
 			{
-				item->setSection(leftHand);
+				item->setInventorySection(leftHand);
 				placed = 1;
 				break;
 			} // no break.
@@ -3398,7 +3398,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 				&& rhWeapon->getAmmoItem() == nullptr
 				&& rhWeapon->setAmmoItem(item) == 0)
 			{
-				item->setSection(rightHand);
+//				item->setInventorySection(rightHand);
 				placed = 2;
 				break;
 			}
@@ -3407,7 +3407,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 				&& lhWeapon->getAmmoItem() == nullptr
 				&& lhWeapon->setAmmoItem(item) == 0)
 			{
-				item->setSection(leftHand);
+//				item->setInventorySection(leftHand);
 				placed = 2;
 				break;
 			} // no break.
@@ -3428,12 +3428,12 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 						j != (*i)->getSlots()->end() && placed == 0;
 						++j)
 				{
-					if (Inventory::overlapItems(
+					if (Inventory::isOverlap(
 											unit, item, *i,
 											j->x, j->y) == false
 						&& (*i)->fitItemInSlot(itRule, j->x, j->y) == true)
 					{
-						item->setSection(*i);
+						item->setInventorySection(*i);
 						item->setSlotX(j->x);
 						item->setSlotY(j->y);
 						placed = 1;
@@ -3446,7 +3446,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 	switch (placed)
 	{
 		case 1:
-			item->moveToOwner(unit); // no break.
+			item->changeOwner(unit); // no break.
 		case 2:
 			return true;
 	}
@@ -3596,7 +3596,7 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 																					-(tile->getTerrainLevel()));
 									statePushNext(new ExplosionBState(
 																	this, pos, *i,
-																	(*i)->getPreviousOwner()));
+																	(*i)->getPriorOwner()));
 									_battleSave->removeItem(*i); // does/should this even be done (also done at end of ExplosionBState) -> causes a double-explosion if remarked here.
 
 									unit->clearCache();

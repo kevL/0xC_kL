@@ -1295,13 +1295,13 @@ void Tile::setTransitUnit(BattleUnit* const unit)
 /**
  * Add an item on this Tile.
  * @param item		- pointer to a BattleItem
- * @param ground	- pointer to RuleInventory ground-slot
+ * @param grdRule	- pointer to RuleInventory ground-slot
  */
 void Tile::addItem(
 		BattleItem* const item,
-		const RuleInventory* const ground)
+		const RuleInventory* const grdRule)
 {
-	item->setSection(ground);
+	item->setInventorySection(grdRule);
 	_inventory.push_back(item);
 
 	item->setTile(this);

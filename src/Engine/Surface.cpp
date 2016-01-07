@@ -372,6 +372,7 @@ void Surface::loadImage(const std::string& file)
 							(SDL_Color*)color->palette,
 							0,
 							color->palettesize);
+					SDL_SetColorKey(_surface, SDL_SRCCOLORKEY, 0u);
 				}
 			}
 		}
@@ -391,8 +392,6 @@ void Surface::loadImage(const std::string& file)
 		const std::string err = file + ":" + IMG_GetError();
 		throw Exception(err);
 	}
-
-	SDL_SetColorKey(_surface, SDL_SRCCOLORKEY, 0u);
 }
 
 /**

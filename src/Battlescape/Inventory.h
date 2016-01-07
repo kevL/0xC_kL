@@ -81,7 +81,7 @@ private:
 	/// Moves an item to a specified section.
 	void moveItem(
 			BattleItem* const item,
-			const RuleInventory* const inRule,
+			const RuleInventory* const inRule = nullptr,
 			int x = 0,
 			int y = 0);
 
@@ -119,7 +119,7 @@ private:
 		void draw() override;
 
 		/// Checks for item overlap.
-		static bool overlapItems(
+		static bool isOverlap(
 				BattleUnit* const unit,
 				const BattleItem* const item,
 				const RuleInventory* const inRule,

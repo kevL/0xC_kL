@@ -302,7 +302,7 @@ private:
 		/// Adds item
 		void addItem(
 				BattleItem* const item,
-				const RuleInventory* const ground);
+				const RuleInventory* const grdRule);
 		/// Removes item
 		void removeItem(BattleItem* const item);
 

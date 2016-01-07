@@ -168,6 +168,7 @@ void ErrorMessageState::create(
 void ErrorMessageState::btnOkClick(Action*)
 {
 	_game->popState();
+	_game->quit(true);
 }
 
 }

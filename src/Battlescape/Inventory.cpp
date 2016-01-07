@@ -407,7 +407,7 @@ void Inventory::drawItems() // private.
 /**
  * Moves an item to a specified section in the selected unit's inventory.
  * @param item		- pointer to a BattleItem
- * @param inRule	- pointer to RuleInventory or nullptr if none
+ * @param inRule	- pointer to RuleInventory (default nullptr)
  * @param x			- X position (default 0)
  * @param y			- Y position (default 0)
  */
@@ -417,68 +417,68 @@ void Inventory::moveItem( // private.
 		int x,
 		int y)
 {
-	if (inRule == nullptr) // Make items vanish (eg. ammo in weapons)
+/*	if (inRule == nullptr) // Make items vanish (ie. load ammo into weapon)
 	{
 		if (item->getInventorySection()->getCategory() == IC_GROUND)
 			_selUnit->getTile()->removeItem(item);
 		else
-			item->moveToOwner();
+			item->changeOwner();
 
-		item->setSection(nullptr);
+//		item->setInventorySection(nullptr);
 	}
 	else
+	{ */
+	if (inRule != item->getInventorySection()) // Handle dropping from/to ground.
 	{
-		if (inRule != item->getInventorySection()) // Handle dropping from/to ground.
+		if (inRule->getCategory() == IC_GROUND) // set to Ground
 		{
-			if (inRule->getCategory() == IC_GROUND) // set to Ground
+			item->changeOwner();
+			_selUnit->getTile()->addItem(item, item->getInventorySection());
+
+			if (item->getUnit() != nullptr
+				&& item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
 			{
-				item->moveToOwner();
-				_selUnit->getTile()->addItem(item, item->getInventorySection());
-
-				if (item->getUnit() != nullptr
-					&& item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
-				{
-					item->getUnit()->setPosition(_selUnit->getPosition());
-				}
-			}
-			else if (item->getInventorySection() == nullptr					// unload a weapon clip to left hand
-				|| item->getInventorySection()->getCategory() == IC_GROUND)	// or pick up item.
-			{
-				if (_tuMode == true												// To prevent units from picking up large objects and running around with
-					&& item->getInventorySection()->getCategory() == IC_GROUND)	// nearly full TU on the same turn its weight becomes an extra tu-burden
-				{
-					_selUnit->setTimeUnits(std::max(0,
-												_selUnit->getTimeUnits() - item->getRules()->getWeight()));
-				}
-
-				item->moveToOwner(_selUnit);
-				_selUnit->getTile()->removeItem(item);
-
-				if (item->getUnit() != nullptr
-					&& item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
-				{
-					item->getUnit()->setPosition(Position(-1,-1,-1));
-				}
+				item->getUnit()->setPosition(_selUnit->getPosition());
 			}
 		}
+		else if (item->getInventorySection() == nullptr					// unload a weapon clip to left hand
+			|| item->getInventorySection()->getCategory() == IC_GROUND)	// or pick up item.
+		{
+			if (_tuMode == true												// To prevent units from picking up large objects and running around with
+				&& item->getInventorySection()->getCategory() == IC_GROUND)	// nearly full TU on the same turn its weight becomes an extra tu-burden
+			{
+				_selUnit->setTimeUnits(std::max(0,
+											_selUnit->getTimeUnits() - item->getRules()->getWeight()));
+			}
 
-		item->setSection(inRule);
-		item->setSlotX(x);
-		item->setSlotY(y);
+			item->changeOwner(_selUnit);
+			_selUnit->getTile()->removeItem(item);
+
+			if (item->getUnit() != nullptr
+				&& item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
+			{
+				item->getUnit()->setPosition(Position(-1,-1,-1));
+			}
+		}
 	}
+
+	item->setInventorySection(inRule);
+	item->setSlotX(x);
+	item->setSlotY(y);
+//	}
 }
 
 /**
- * Checks if an item in a certain section position would overlap with any other
- * inventory item.
- * @param unit		- pointer to current unit
- * @param item		- pointer to battle item
- * @param inRule	- pointer to inventory section, nullptr if none
+ * Checks if an item to be placed in a certain section-slot would overlap
+ * another inventory item.
+ * @param unit		- pointer to BattleUnit w/ inventory
+ * @param item		- pointer to a BattleItem to be placed
+ * @param inRule	- pointer to a RuleInventory section
  * @param x			- X position in section (default 0)
  * @param y			- Y position in section (default 0)
  * @return, true if overlap
  */
-bool Inventory::overlapItems( // static.
+bool Inventory::isOverlap( // static.
 		BattleUnit* const unit,
 		const BattleItem* const item,
 		const RuleInventory* const inRule,
@@ -822,7 +822,7 @@ void Inventory::mouseClick(Action* action, State* state)
 					|| item == _selItem
 					|| canStack == true)
 				{
-					if (overlapItems(
+					if (isOverlap(
 								_selUnit,
 								_selItem,
 								inRule,
@@ -870,40 +870,44 @@ void Inventory::mouseClick(Action* action, State* state)
 				}
 				else if (item->getRules()->getCompatibleAmmo()->empty() == false) // Put item in weapon.
 				{
-					bool wrong = true;
-					for (std::vector<std::string>::const_iterator
-							i = item->getRules()->getCompatibleAmmo()->begin();
-							i != item->getRules()->getCompatibleAmmo()->end();
-							++i)
-					{
-						if (*i == _selItem->getRules()->getType())
-						{
-							wrong = false;
-							break;
-						}
-					}
-
-					if (wrong == true)
-						_warning->showMessage(_game->getLanguage()->getString("STR_WRONG_AMMUNITION_FOR_THIS_WEAPON"));
+					if (item->getAmmoItem() != nullptr)
+						_warning->showMessage(_game->getLanguage()->getString("STR_WEAPON_IS_ALREADY_LOADED"));
 					else
 					{
-						if (item->getAmmoItem() != nullptr)
-							_warning->showMessage(_game->getLanguage()->getString("STR_WEAPON_IS_ALREADY_LOADED"));
+						bool fail = true;
+						for (std::vector<std::string>::const_iterator
+								i = item->getRules()->getCompatibleAmmo()->begin();
+								i != item->getRules()->getCompatibleAmmo()->end();
+								++i)
+						{
+							if (*i == _selItem->getRules()->getType())
+							{
+								fail = false;
+								break;
+							}
+						}
+
+						if (fail == true)
+							_warning->showMessage(_game->getLanguage()->getString("STR_WRONG_AMMUNITION_FOR_THIS_WEAPON"));
 						else if (_tuMode == false
 							|| _selUnit->spendTimeUnits(item->getRules()->getReloadTu()) == true)
 						{
 							_tuCost = -1;
 
-							moveItem(_selItem, nullptr);
+							if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
+							{
+								_selUnit->getTile()->removeItem(item);
+								arrangeGround(false);
+							}
+//							moveItem(_selItem);
 
 							item->setAmmoItem(_selItem);
-							_selItem->moveToOwner();
+//							_selItem->changeOwner();
 							setSelectedItem();
 
 							soundId = ResourcePack::ITEM_RELOAD;
-
-							if (item->getInventorySection()->getCategory() == IC_GROUND)
-								arrangeGround(false);
+//							if (item->getInventorySection()->getCategory() == IC_GROUND)
+//								arrangeGround(false);
 						}
 						else
 							_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
@@ -1111,13 +1115,13 @@ bool Inventory::unload()
 		moveItem(
 				_selItem,
 				_game->getRuleset()->getInventory("STR_RIGHT_HAND"));
-		_selItem->moveToOwner(_selUnit);
+		_selItem->changeOwner(_selUnit);
 
 		_selItem->setAmmoItem();
 		setSelectedItem();
 
 		moveItem(ammo, inRule);
-		ammo->moveToOwner(owner);
+		ammo->changeOwner(owner);
 
 		if (owner == nullptr)
 			arrangeGround(false);
@@ -1151,7 +1155,7 @@ void Inventory::arrangeGround(bool alterOffset)
 			i != _selUnit->getTile()->getInventory()->end();
 			++i)
 	{
-		(*i)->setSection(grdRule);
+		(*i)->setInventorySection(grdRule);
 		(*i)->setSlotX(100000);
 		(*i)->setSlotY(0);
 	}
@@ -1269,7 +1273,7 @@ bool Inventory::fitItem(
 			{
 				if (_tuMode == true && test == true)
 					placed = true;
-				else if (overlapItems(
+				else if (isOverlap(
 								_selUnit,
 								item,
 								inRule,

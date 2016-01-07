@@ -152,14 +152,10 @@ void MediTargetState::init()
 		{
 			addToList = false;
 
-			if (actorFound == false
-				&& *i == _action->actor)
-			{
+			if (actorFound == false && *i == _action->actor)
 				addToList = true;
-			}
 
-			if (actorFound == true
-				&& *i != _action->actor)
+			if (actorFound == true && *i != _action->actor)
 			{
 				if (((*i)->getUnitStatus() == STATUS_UNCONSCIOUS
 						&& (*i)->getPosition() == _action->actor->getPosition())
@@ -204,13 +200,13 @@ void MediTargetState::init()
 			}
 		}
 
-		if (actorFound == false // in case medikit user is not 'Healable'
-			&& *i == targetUnits->back())
+		if (actorFound == false && *i == targetUnits->back()) // in case medikit user is not 'Healable'
 		{
 			actorFound = true;
 			i = targetUnits->begin();
 		}
-		else ++i;
+		else
+			++i;
 	}
 
 	if (_targetUnits.size() == 1)

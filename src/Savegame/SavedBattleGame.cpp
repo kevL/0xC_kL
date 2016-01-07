@@ -95,13 +95,13 @@ SavedBattleGame::SavedBattleGame(
 		_tiles(nullptr),
 		_pacified(false),
 		_rfTriggerPosition(0,0,-1),
-		_initTu(12)
+		_initTu(20)
 //		_dragInvert(false),
 //		_dragTimeTolerance(0),
 //		_dragPixelTolerance(0)
 {
 	//Log(LOG_INFO) << "\nCreate SavedBattleGame";
-	if (rules != nullptr)
+	if (rules != nullptr) // ie. not craft- or base-equip screen.
 		_initTu = rules->detHighTuInventoryCost();
 
 	_tileSearch.resize(SEARCH_SIZE);
@@ -173,14 +173,6 @@ SavedBattleGame::~SavedBattleGame()
 	{
 		delete *i;
 	}
-
-/*	for (std::vector<BattleUnit*>::const_iterator	// note: Don't double-delete these
-			i = _shuffleUnits.begin();				// they are actually _units in disguise.
-			i != _shuffleUnits.end();
-			++i)
-	{
-		delete *i;
-	} */
 
 	for (std::vector<BattleItem*>::const_iterator
 			i = _items.begin();
@@ -424,91 +416,124 @@ void SavedBattleGame::load(
 	resetUnitsOnTiles();
 
 	Log(LOG_INFO) << ". load items";
-	const size_t CONTAINERS = 3;
-	std::string fromContainer[CONTAINERS] =
+	static const size_t LIST_TYPE = 3;
+	std::string itLists_saved[LIST_TYPE] =
 	{
 		"items",
 		"recoverConditional",
 		"recoverGuaranteed"
 	};
-	std::vector<BattleItem*>* toContainer[CONTAINERS] =
+	std::vector<BattleItem*>* itLists_battle[LIST_TYPE] =
 	{
 		&_items,
 		&_recoverConditional,
 		&_recoverGuaranteed
 	};
+	std::string st;
+	int
+		owner,
+		ownerPre,
+		unitId;
+	Position pos;
+	BattleItem* item;
 
 	for (size_t
 			i = 0;
-			i != CONTAINERS;
+			i != LIST_TYPE;
 			++i)
 	{
+		//Log(LOG_INFO) << "";
+		//Log(LOG_INFO) << "listType = " << itLists_saved[i];
 		for (YAML::const_iterator
-				j = node[fromContainer[i]].begin();
-				j != node[fromContainer[i]].end();
+				j = node[itLists_saved[i]].begin();
+				j != node[itLists_saved[i]].end();
 				++j)
 		{
-			std::string type = (*j)["type"].as<std::string>();
-			if (rules->getItem(type) != nullptr)
+			//Log(LOG_INFO) << "";
+			st = (*j)["type"].as<std::string>();
+			//Log(LOG_INFO) << ". type = " << st;
+			if (rules->getItem(st) != nullptr)
 			{
-				id = (*j)["id"].as<int>(-1);
-				BattleItem* const item (new BattleItem(
-													rules->getItem(type),
-													nullptr,
-													id));
+				id = (*j)["id"].as<int>(-1); // note: 'id' should always be valid here.
+				//Log(LOG_INFO) << ". . id = " << id;
+				item = new BattleItem(
+									rules->getItem(st),
+									nullptr,
+									id);
 
 				item->load(*j);
-				type = (*j)["section"].as<std::string>();
 
-				if (type != "nullptr")
-					item->setSection(rules->getInventory(type));
+//				st = "";
+//TEST				if ((*j)["section"])
+				{
+					st = (*j)["section"].as<std::string>(); // note: the given 'section' should always be valid.
+					//Log(LOG_INFO) << ". . section = " << st;
+//					if (st.empty() == false) //!= "NONE") // cf. BattleItem::save()
+					item->setInventorySection(rules->getInventory(st));
+				}
 
-				const int
-					owner		((*j)["owner"]			.as<int>()),
-					prevOwner	((*j)["previousOwner"]	.as<int>(-1)),
-					unitId		((*j)["unit"]			.as<int>());
+				owner		= (*j)["owner"]		.as<int>(-1); // cf. BattleItem::save() ->
+				ownerPre	= (*j)["ownerPre"]	.as<int>(-1);
+				unitId		= (*j)["unit"]		.as<int>(-1);
+				//Log(LOG_INFO) << ". . owner = " << owner;
+				//Log(LOG_INFO) << ". . ownerPre = " << ownerPre;
+				//Log(LOG_INFO) << ". . unitCorpse = " << unitId;
+
+				if (ownerPre == -1 && owner != -1)
+				{
+					ownerPre = owner;
+					//Log(LOG_INFO) << ". . . ownerPre = " << ownerPre;
+				}
 
 				for (std::vector<BattleUnit*>::const_iterator // match up items and units
 						k = _units.begin();
 						k != _units.end();
 						++k)
 				{
+					//Log(LOG_INFO) << ". . . check pointer(s) to id-" << (*k)->getId();
 					if ((*k)->getId() == owner)
-						item->moveToOwner(*k);
+					{
+						//Log(LOG_INFO) << ". . . . set Owner";
+						item->changeOwner(*k);
+					}
+
+					if ((*k)->getId() == ownerPre)
+					{
+						//Log(LOG_INFO) << ". . . . set Owner_pre";
+						item->setPriorOwner(*k);
+					}
 
 					if ((*k)->getId() == unitId)
+					{
+						//Log(LOG_INFO) << ". . . . set corpseUnit";
 						item->setUnit(*k);
+					}
 				}
 
-				for (std::vector<BattleUnit*>::const_iterator
-						k = _units.begin();
-						k != _units.end();
-						++k)
-				{
-					if ((*k)->getId() == prevOwner)
-						item->setPreviousOwner(*k);
-				}
-
-
-				if (item->getInventorySection() != nullptr // match up items and tiles
+				if (item->getInventorySection() != nullptr // match up items and tiles // note: 'section' should always be valid.
 					&& item->getInventorySection()->getCategory() == IC_GROUND)
 				{
-					const Position pos ((*j)["position"].as<Position>());
-
-					if (pos.x != -1)
+					if ((*j)["position"])
+					{
+						pos = (*j)["position"].as<Position>();
+//						if (pos.z != -1)
 						getTile(pos)->addItem(
 											item,
 											rules->getInventory("STR_GROUND"));
+					}
+					else
+						pos = Position(0,0,-1); // cf. BattleItem::save()
+					//Log(LOG_INFO) << ". . . pos " << pos;
 				}
 
-				toContainer[i]->push_back(item);
+				itLists_battle[i]->push_back(item);
 			}
 		}
 	}
 
 	Log(LOG_INFO) << ". load weapons w/ ammo";
-	// tie ammo items to their weapons, running through the items again
-	std::vector<BattleItem*>::const_iterator weapon = _items.begin();
+	// iterate tyhrough the items again and tie ammo-items to their weapons
+	std::vector<BattleItem*>::const_iterator pWeapon = _items.begin();
 	for (YAML::const_iterator
 			i = node["items"].begin();
 			i != node["items"].end();
@@ -516,7 +541,7 @@ void SavedBattleGame::load(
 	{
 		if (rules->getItem((*i)["type"].as<std::string>()) != nullptr)
 		{
-			const int ammo ((*i)["ammoItem"].as<int>());
+			const int ammo ((*i)["ammoItem"].as<int>(-1)); // cf. BattleItem::save()
 			if (ammo != -1)
 			{
 				for (std::vector<BattleItem*>::const_iterator
@@ -526,13 +551,13 @@ void SavedBattleGame::load(
 				{
 					if ((*j)->getId() == ammo)
 					{
-						(*weapon)->setAmmoItem(*j);
+						(*pWeapon)->setAmmoItem(*j, true);
 						break;
 					}
 				}
 			}
 
-			++weapon;
+			++pWeapon;
 		}
 	}
 

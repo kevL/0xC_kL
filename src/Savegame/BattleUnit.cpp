@@ -3064,7 +3064,7 @@ bool BattleUnit::checkAmmo()
 		{
 			_tu -= reloadTu;
 			weapon->setAmmoItem(ammo);
-			ammo->moveToOwner();
+//			ammo->changeOwner();
 
 			return true;
 		}
@@ -3829,6 +3829,8 @@ std::string BattleUnit::getType() const
 
 /**
  * Sets this BattleUnit's active hand and re-caches sprites.
+ * @ note This is used for (a) sprite drawing when dual-wielding, and (b)
+ * choosing a weapon during faction-player RF, TileEngine::reactionShot().
  * @param hand - the ActiveHand (BattleUnit.h)
  */
 void BattleUnit::setActiveHand(ActiveHand hand)

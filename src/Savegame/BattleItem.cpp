@@ -22,6 +22,8 @@
 #include "BattleUnit.h"
 #include "Tile.h"
 
+//#include "../Engine/Logger.h"
+
 #include "../Ruleset/RuleInventory.h"
 #include "../Ruleset/RuleItem.h"
 
@@ -44,7 +46,7 @@ BattleItem::BattleItem(
 	:
 		_itRule(itRule),
 		_owner(nullptr),
-		_previousOwner(nullptr),
+		_ownerPre(nullptr),
 		_unit(nullptr),
 		_tile(nullptr),
 		_section(nullptr),
@@ -56,11 +58,11 @@ BattleItem::BattleItem(
 		_painKiller(0),
 		_heal(0),
 		_stimulant(0),
-//		_xcomProperty(false),
 		_isLoad(false)
+//		_xcomProperty(false)
 {
 	if (pId != nullptr)	// <- this is for SavedBattleGame only to keep
-	{					// track of brand new item on the battlefield
+	{					// track of a brand new item on the battlefield
 		_id = *pId;
 		++(*pId);
 	}
@@ -70,12 +72,12 @@ BattleItem::BattleItem(
 
 	if (_itRule->getBattleType() == BT_MEDIKIT)
 	{
-		_heal = _itRule->getHealQuantity();
-		_painKiller = _itRule->getPainKillerQuantity();
-		_stimulant = _itRule->getStimulantQuantity();
+		_heal		= _itRule->getHealQuantity();
+		_painKiller	= _itRule->getPainKillerQuantity();
+		_stimulant	= _itRule->getStimulantQuantity();
 	}
-	else if (_itRule->getCompatibleAmmo()->empty() == true
-		&& (_itRule->getBattleType() == BT_FIREARM // These weapons do not need ammo; '_ammoItem' points to the weapon itself.
+	else if (_itRule->getCompatibleAmmo()->empty() == true	// These weapons do not need ammo;
+		&& (_itRule->getBattleType() == BT_FIREARM			// '_ammoItem' points to the weapon itself.
 			|| _itRule->getBattleType() == BT_MELEE))
 	{
 		// lasers, melee, etc have "clipsize -1"
@@ -115,33 +117,33 @@ YAML::Node BattleItem::save() const
 {
 	YAML::Node node;
 
-	node["id"]			= _id;
-	node["type"]		= _itRule->getType();
-	node["inventoryX"]	= _inventoryX;
-	node["inventoryY"]	= _inventoryY;
+	node["id"]   = _id;
+	node["type"] = _itRule->getType();
 
-	if (_ammoQty != 0)		node["ammoQty"]		= _ammoQty;
+	if (_inventoryX != 0) node["inventoryX"]	= _inventoryX;
+	if (_inventoryY != 0) node["inventoryY"]	= _inventoryY;
+
+	if (_ammoQty > 0)		node["ammoQty"]		= _ammoQty;
 	if (_painKiller != 0)	node["painKiller"]	= _painKiller;
 	if (_heal != 0)			node["heal"]		= _heal;
 	if (_stimulant != 0)	node["stimulant"]	= _stimulant;
 	if (_fuse != -1)		node["fuse"]		= _fuse;
 
-	if (_owner != nullptr)	node["owner"] = _owner->getId();
-	else					node["owner"] = -1;
 
-	if (_previousOwner != nullptr) node["previousOwner"] = _previousOwner->getId();
+	if (_owner != nullptr)		node["owner"]		= _owner->getId();
+//	else					node["owner"] = -1; // cf. SavedBattleGame::load()
+	if (_ownerPre != nullptr
+		&& _ownerPre != _owner)	node["ownerPre"]	= _ownerPre->getId();
 
-	if (_unit != nullptr)		node["unit"] = _unit->getId();
-	else						node["unit"] = -1;
 
-	if (_section != nullptr)	node["section"] = _section->getInventoryType();
-	else						node["section"] = "NONE";
-
-	if (_tile != nullptr)		node["position"] = _tile->getPosition();
-	else						node["position"] = Position(-1,-1,-1);
-
-	if (_ammoItem != nullptr)	node["ammoItem"] = _ammoItem->getId();
-	else						node["ammoItem"] = -1;
+	if (_unit != nullptr)		node["unit"]		= _unit->getId();
+//	else						node["unit"] = -1; // cf. SavedBattleGame::load()
+	if (_section != nullptr)	node["section"]		= _section->getInventoryType(); // note: 'section' should always be valid.
+//	else						node["section"] = "NONE"; // cf. SavedBattleGame::load()
+	if (_tile != nullptr)		node["position"]	= _tile->getPosition();
+//	else						node["position"] = Position(-1,-1,-1); // cf. SavedBattleGame::load()
+	if (_ammoItem != nullptr)	node["ammoItem"]	= _ammoItem->getId();
+//	else						node["ammoItem"] = -1; // cf. SavedBattleGame::load()
 
 	return node;
 }
@@ -201,7 +203,7 @@ void BattleItem::setAmmoQuantity(int qty)
  * Gets if the item is loaded in a weapon.
  * @return, true if loaded
  */
-bool BattleItem::isLoadedAmmo() const
+bool BattleItem::isLoad() const
 {
 	return _isLoad;
 }
@@ -219,21 +221,25 @@ BattleItem* BattleItem::getAmmoItem() const
 
 /**
  * Sets an ammo item for this BattleItem.
- * @param item - the ammo item (default nullptr)
+ * @param item		- the ammo item (default nullptr)
+ * @param loadSave	- true if called from SavedBattleGame::load() (default false)
  * @return,	 0 = successful load or unload
  *			-1 = weapon already contains ammo
  *			-2 = item doesn't fit / weapon is self-powered
  */
-int BattleItem::setAmmoItem(BattleItem* const item)
+int BattleItem::setAmmoItem(
+		BattleItem* const item,
+		bool loadSave)
 {
 	if (_ammoItem != this)
 	{
 		if (item == nullptr) // unload weapon
 		{
 			if (_ammoItem != nullptr)
+			{
 				_ammoItem->_isLoad = false;
-
-			_ammoItem = nullptr;
+				_ammoItem = nullptr;
+			}
 			return 0;
 		}
 
@@ -245,10 +251,15 @@ int BattleItem::setAmmoItem(BattleItem* const item)
 				i != _itRule->getCompatibleAmmo()->end();
 				++i)
 		{
-			if (*i == item->getRules()->getType())
+			if (*i == item->getRules()->getType()) // load weapon
 			{
 				_ammoItem = item;
 				_ammoItem->_isLoad = true;
+				if (loadSave == true)
+				{
+					_ammoItem->setInventorySection();
+					_ammoItem->changeOwner();
+				}
 				return 0;
 			}
 		}
@@ -280,13 +291,13 @@ void BattleItem::spendBullet(
 		&& --_ammoQty == 0)
 	{
 		weapon.setAmmoItem();
-		battleSave.removeItem(this); // <- could be dangerous.
+		battleSave.removeItem(this);
 	}
 }
 
 /**
- * Gets the item's owner.
- * @return, pointer to BattleUnit
+ * Gets this BattleItem's owner.
+ * @return, pointer to a BattleUnit
  */
 BattleUnit* BattleItem::getOwner() const
 {
@@ -294,56 +305,57 @@ BattleUnit* BattleItem::getOwner() const
 }
 
 /**
- * Sets the item's owner.
+ * Sets this BattleItem's owner.
  * @param owner - pointer to BattleUnit (default nullptr)
  */
 void BattleItem::setOwner(BattleUnit* const owner)
 {
-	_previousOwner = _owner;
+	_ownerPre = _owner;
 	_owner = owner;
 }
 
 /**
- * Gets the item's previous owner.
- * @return, pointer to BattleUnit
+ * Gets this BattleItem's prior owner.
+ * @return, pointer to a BattleUnit
  */
-BattleUnit* BattleItem::getPreviousOwner() const
+BattleUnit* BattleItem::getPriorOwner() const
 {
-	return _previousOwner;
+	return _ownerPre;
 }
 
 /**
- * Sets the item's previous owner.
- * @param owner - pointer to a Battleunit
+ * Sets this BattleItem's prior owner.
+ * @param ownerPre - pointer to a BattleUnit
  */
-void BattleItem::setPreviousOwner(BattleUnit* const owner)
+void BattleItem::setPriorOwner(BattleUnit* const ownerPre)
 {
-	_previousOwner = owner;
+	_ownerPre = ownerPre;
 }
 
 /**
- * Removes the item from the previous owner and moves it to a new owner.
- * @param owner - pointer to BattleUnit (default nullptr)
+ * Moves this BattleItem from a previous owner if applicable and moves it to
+ * another owner if applicable.
+ * @param owner - pointer to a BattleUnit (default nullptr)
  */
-void BattleItem::moveToOwner(BattleUnit* const owner)
+void BattleItem::changeOwner(BattleUnit* const owner)
 {
 	if (_owner != nullptr)
-		_previousOwner = _owner;
+		_ownerPre = _owner;
 	else
-		_previousOwner = owner;
+		_ownerPre = owner;
 
 	_owner = owner;
 
-	if (_previousOwner != nullptr)
+	if (_ownerPre != nullptr)
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = _previousOwner->getInventory()->begin();
-				i != _previousOwner->getInventory()->end();
+				i = _ownerPre->getInventory()->begin();
+				i != _ownerPre->getInventory()->end();
 				++i)
 		{
 			if (*i == this)
 			{
-				_previousOwner->getInventory()->erase(i);
+				_ownerPre->getInventory()->erase(i);
 				break;
 			}
 		}
@@ -364,9 +376,9 @@ const RuleInventory* BattleItem::getInventorySection() const
 
 /**
  * Sets the item's inventory section.
- * @param slot - the section rule
+ * @param slot - the section rule (default nullptr)
  */
-void BattleItem::setSection(const RuleInventory* const inRule)
+void BattleItem::setInventorySection(const RuleInventory* const inRule)
 {
 	_section = inRule;
 }
@@ -408,11 +420,11 @@ void BattleItem::setSlotY(int y)
 }
 
 /**
- * Checks if the item is covering certain inventory slot(s).
+ * Checks if an item occupies x-y inventory slot(s).
  * @param x		- slot X position
  * @param y 	- slot Y position
- * @param item	- pointer to an item to check for overlap or default nullptr if none
- * @return, true if it is covering
+ * @param item	- pointer to an item to check to place (default nullptr)
+ * @return, true if item occupies x-y slot
  */
 bool BattleItem::occupiesSlot(
 		int x,
@@ -427,15 +439,19 @@ bool BattleItem::occupiesSlot(
 
 	if (item == nullptr)
 		return (   x >= _inventoryX
-				&& x < _inventoryX + _itRule->getInventoryWidth()
+				&& x <  _inventoryX + _itRule->getInventoryWidth()
 				&& y >= _inventoryY
-				&& y < _inventoryY + _itRule->getInventoryHeight());
-	else
-		return !(
-				   x >= _inventoryX + _itRule->getInventoryWidth()
-				|| x + item->getRules()->getInventoryWidth() <= _inventoryX
-				|| y >= _inventoryY + _itRule->getInventoryHeight()
-				|| y + item->getRules()->getInventoryHeight() <= _inventoryY);
+				&& y <  _inventoryY + _itRule->getInventoryHeight());
+
+	return (	x + item->getRules()->getInventoryWidth() > _inventoryX
+			 && x < _inventoryX + _itRule->getInventoryWidth()
+			 && y + item->getRules()->getInventoryHeight() > _inventoryY
+			 && y < _inventoryY + _itRule->getInventoryHeight());
+/*	return !(
+				x >= _inventoryX + _itRule->getInventoryWidth()
+			 || x + item->getRules()->getInventoryWidth() <= _inventoryX
+			 || y >= _inventoryY + _itRule->getInventoryHeight()
+			 || y + item->getRules()->getInventoryHeight() <= _inventoryY); */
 }
 
 /**
@@ -451,7 +467,7 @@ Tile* BattleItem::getTile() const
  * Sets the item's tile.
  * @param tile - pointer to a Tile
  */
-void BattleItem::setTile(Tile* tile)
+void BattleItem::setTile(Tile* const tile)
 {
 	_tile = tile;
 }

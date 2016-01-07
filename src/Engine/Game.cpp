@@ -486,10 +486,12 @@ void Game::run()
 
 /**
  * Stops the state machine and the game is shut down.
+ * @param force - true to force Quit after an error message (default false)
  */
-void Game::quit()
+void Game::quit(bool force)
 {
-	if (_gameSave != nullptr // Always save ironman
+	if (force == false
+		&& _gameSave != nullptr // Always save ironman
 		&& _gameSave->isIronman() == true
 		&& _gameSave->getName().empty() == false)
 	{

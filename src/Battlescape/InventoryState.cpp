@@ -1498,7 +1498,7 @@ void InventoryState::txtTooltipOut(Action* action)
 
 					// move matched item from ground to the appropriate inv slot
 					(*groundItem)->setOwner(unit);
-					(*groundItem)->setSection(_game->getRuleset()->getInventory((*templateIt)->getInventorySection()));
+					(*groundItem)->setInventorySection(_game->getRuleset()->getInventory((*templateIt)->getInventorySection()));
 					(*groundItem)->setSlotX((*templateIt)->getSlotX());
 					(*groundItem)->setSlotY((*templateIt)->getSlotY());
 					(*groundItem)->setFuse((*templateIt)->getFuse());
