@@ -1028,8 +1028,8 @@ void BattlescapeGenerator::deployXcom() // private.
 		//Log(LOG_INFO) << ". loading."; // from loadWeapons() ->
 /*		if ((*i)->getRules()->isFixed() == false
 			&& (*i)->getAmmoItem() == nullptr */
-		if ((*i)->selfPowered() == false
-			&& (*i)->getRules()->getCompatibleAmmo()->empty() == false)
+//		if ((*i)->selfPowered() == false
+		if ((*i)->getRules()->getCompatibleAmmo()->empty() == false)
 //			&& ((*i)->getRules()->getBattleType() == BT_FIREARM
 //				|| (*i)->getRules()->getBattleType() == BT_MELEE))
 		{
