@@ -247,7 +247,9 @@ void MovingTarget::calculateMeetPoint()
 	_meetPointLon = _dest->getLongitude();
 
 	MovingTarget* ufo = dynamic_cast<MovingTarget*>(_dest);
-	if (ufo != nullptr)
+	if (ufo != nullptr
+		&& ufo->getDestination() != nullptr
+		&& AreSame(ufo->_speedRadian, 0.) == false)
 	{
 		const double speedRatio = _speedRadian / ufo->_speedRadian;
 		if (speedRatio > 1.)
@@ -273,7 +275,7 @@ void MovingTarget::calculateMeetPoint()
 			{
 				_meetPointLat += nx * std::sin(_meetPointLon) - ny * std::cos(_meetPointLon);
 
-				if (std::fabs(_meetPointLat) < M_PI / 2)
+				if (std::fabs(_meetPointLat) < M_PI_2)
 					_meetPointLon += nz - (nx * std::cos(_meetPointLon) + ny * std::sin(_meetPointLon)) * std::tan(_meetPointLat);
 				else
 					_meetPointLon += M_PI;
@@ -288,7 +290,7 @@ void MovingTarget::calculateMeetPoint()
 			while (std::fabs(_meetPointLat) > M_PI)
 				_meetPointLat -= std::copysign(M_PI * 2, _meetPointLat);
 
-			if (std::fabs(_meetPointLat) > M_PI / 2)
+			if (std::fabs(_meetPointLat) > M_PI_2)
 			{
 				_meetPointLat  = std::copysign(M_PI * 2 - std::fabs(_meetPointLat), _meetPointLat);
 				_meetPointLon -= std::copysign(M_PI, _meetPointLon);
