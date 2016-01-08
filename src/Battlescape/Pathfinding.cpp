@@ -383,9 +383,32 @@ bool Pathfinding::bresenhamPath( // private.
 		int maxTuCost)
 {
 	//Log(LOG_INFO) << "Pathfinding::bresenhamPath()";
-	const int
-		xd[8] = { 0, 1, 1, 1, 0,-1,-1,-1},
-		yd[8] = {-1,-1, 0, 1, 1, 1, 0,-1};
+	static const int
+		FAIL = 255,
+		DIRZ = 8,
+		stock_xd[DIRZ]	= { 0, 1, 1, 1, 0,-1,-1,-1}, // stock values
+		stock_yd[DIRZ]	= {-1,-1, 0, 1, 1, 1, 0,-1},
+		alt_xd[DIRZ]	= { 0,-1,-1,-1, 0, 1, 1, 1}, // alt values
+		alt_yd[DIRZ]	= { 1, 1, 0,-1,-1,-1, 0, 1};
+
+	int
+		xd[DIRZ],
+		yd[DIRZ];
+	Uint8* keystate = SDL_GetKeyState(nullptr);
+
+	if (_battleSave->getSide() != FACTION_PLAYER
+		|| _battleSave->getBattleGame()->getPanicHandled() == false
+		|| keystate[SDLK_z] == 0)
+	{
+		//std::copy(std::begin(src), std::end(src), std::begin(dest));
+		std::copy(stock_xd, stock_xd + 8, xd);
+		std::copy(stock_yd, stock_yd + 8, yd);
+	}
+	else
+	{
+		std::copy(alt_xd, alt_xd + 8, xd);
+		std::copy(alt_yd, alt_yd + 8, yd);
+	}
 
 	int
 		x,x0,x1, delta_x, step_x,
@@ -448,7 +471,7 @@ bool Pathfinding::bresenhamPath( // private.
 	y = y0;
 	z = z0;
 
-	// step through longest delta (which we have swapped to x)
+	// step through longest delta that was swapped to x
 	for (
 			x = x0;
 			x != (x1 + step_x);
@@ -469,10 +492,10 @@ bool Pathfinding::bresenhamPath( // private.
 			// get direction
 			for (
 					dir = 0;
-					dir != 8;
+					dir != DIRZ;
 					++dir)
 			{
-				if (xd[dir] == cx - posLast.x
+				if (   xd[dir] == cx - posLast.x
 					&& yd[dir] == cy - posLast.y)
 				{
 					break;
@@ -500,7 +523,7 @@ bool Pathfinding::bresenhamPath( // private.
 				tuCostDiagonal = tuCost + tuCost / 2;
 
 			if (posNext == posNextReal
-				&& tuCost < 255
+				&& tuCost < FAIL
 				&& (tuCost == tuCostLast
 					|| (isDiagonal == true && tuCost == tuCostLastDiagonal)
 					|| (isDiagonal == false && tuCostDiagonal == tuCostLast)
@@ -516,7 +539,7 @@ bool Pathfinding::bresenhamPath( // private.
 				return false;
 
 			if (missileTarget == nullptr
-				&& tuCost != 255)
+				&& tuCost != FAIL)
 			{
 				tuCostLast = tuCost;
 				_tuCostTotal += tuCost;
@@ -698,6 +721,8 @@ int Pathfinding::getTuCostPf(
 		bool bresenh)
 {
 	//Log(LOG_INFO) << "Pathfinding::getTuCostPf() " << _unit->getId();
+	static const int FAIL = 255;
+
 	directionToVector(
 					dir,
 					posStop);
@@ -749,11 +774,11 @@ int Pathfinding::getTuCostPf(
 
 			tileStart = _battleSave->getTile(posStart + posOffset);
 			if (tileStart == nullptr)
-				return 255;
+				return FAIL;
 
 			tileStop = _battleSave->getTile(*posStop + posOffset);
 			if (tileStop == nullptr)
-				return 255;
+				return FAIL;
 
 /*			if (_mType != MT_FLY)
 			{
@@ -771,7 +796,7 @@ int Pathfinding::getTuCostPf(
 				{
 					++partsOnAir;
 					if (partsOnAir == (armorSize + 1) * (armorSize + 1))
-						return 255; // cannot walk on air
+						return FAIL; // cannot walk on air
 				}
 			} */
 /*			if (x == 0 && y == 0
@@ -781,7 +806,7 @@ int Pathfinding::getTuCostPf(
 							armorSize + 1)) // kL_note: keep at it!! You'll get that ego you've been striving so hard for. Try Masonry.
 			{
 				if (direction != DIR_DOWN)
-					return 255; // cannot walk on air
+					return FAIL; // cannot walk on air
 
 				fall = true;
 			} */ // end Take II ... i still don't trust that crap.
@@ -795,7 +820,7 @@ int Pathfinding::getTuCostPf(
 						&& tileStop->getMapData(O_WESTWALL)->isDoor() == true))
 				{
 					//if (debug) Log(LOG_INFO) << "door bisects";
-					return 255;
+					return FAIL;
 				}
 			}
 
@@ -809,13 +834,13 @@ int Pathfinding::getTuCostPf(
 							missileTarget) == true)
 				{
 					//if (debug) Log(LOG_INFO) << "too far up[1]";
-					return 255;
+					return FAIL;
 				}
 
 				if (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8) // greater than 1/3 step up.
 				{
 					//if (debug) Log(LOG_INFO) << "too far up[2]";
-					return 255;
+					return FAIL;
 				}
 			}
 
@@ -875,7 +900,7 @@ int Pathfinding::getTuCostPf(
 				if (tileStopBelow->getTileUnit()->getHeight(true) - tileStopBelow->getTerrainLevel() > 26)
 				{
 					//if (debug) Log(LOG_INFO) << "head too large";
-					return 255;
+					return FAIL;
 				}
 			}
 
@@ -883,7 +908,7 @@ int Pathfinding::getTuCostPf(
 			if (tileStop == nullptr)
 			{
 				//if (debug) Log(LOG_INFO) << "dest outside Map";
-				return 255;
+				return FAIL;
 			}
 
 			cost = 0;
@@ -898,13 +923,13 @@ int Pathfinding::getTuCostPf(
 								missileTarget) == true)
 					{
 						//Log(LOG_INFO) << "same Z, blocked, dir = " << dir;
-						return 255;
+						return FAIL;
 					}
 
 					if (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8) // greater than 1/3 step up.
 					{
 						//if (debug) Log(LOG_INFO) << "same Z too high";
-						return 255;
+						return FAIL;
 					}
 				}
 			}
@@ -914,7 +939,7 @@ int Pathfinding::getTuCostPf(
 								posStart + posOffset,
 								dir) < 1)
 				{
-					return 255;
+					return FAIL;
 				}
 
 				cost = 8; // vertical movement by flying suit or grav lift
@@ -931,7 +956,7 @@ int Pathfinding::getTuCostPf(
 					partsFalling == (armorSize + 1) * (armorSize + 1))
 				{
 //					return false; // <- fuck you.
-//					return 255;
+//					return FAIL;
 
 					fall = true;
 					*posStop = posStart + Position(0,0,-1);
@@ -952,13 +977,13 @@ int Pathfinding::getTuCostPf(
 							missileTarget) == true)
 				{
 					//if (debug) Log(LOG_INFO) << "partsUp blocked";
-					return 255;
+					return FAIL;
 				}
 
 				if (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8) // greater than 1/3 step up.
 				{
 					//if (debug) Log(LOG_INFO) << "partsUp blocked, too high";
-					return 255;
+					return FAIL;
 				}
 			}
 
@@ -972,7 +997,7 @@ int Pathfinding::getTuCostPf(
 							missileTarget) == true)
 			{
 				//if (debug) Log(LOG_INFO) << "just blocked";
-				return 255;
+				return FAIL;
 			}
 // CHECK FOR BLOCKAGE_end.
 
@@ -1193,7 +1218,7 @@ int Pathfinding::getTuCostPf(
 					missileTarget) == true)
 		{
 			//Log(LOG_INFO) << "blocked uL,lR " << (*posStop);
-			return 255;
+			return FAIL;
 		}
 
 		// - then check the path between part 1,0 and part 0,1 at destination position
@@ -1204,7 +1229,7 @@ int Pathfinding::getTuCostPf(
 					missileTarget) == true)
 		{
 			//Log(LOG_INFO) << "blocked uR,lL " << (*posStop);
-			return 255;
+			return FAIL;
 		}
 
 		if (fall == false)
@@ -1227,7 +1252,7 @@ int Pathfinding::getTuCostPf(
 			if (std::abs(maxLevel - minLevel) > 8)
 			{
 				//Log(LOG_INFO) << "blocked by levels " << (*posStop) << " " << std::abs(maxLevel - minLevel);
-				return 255;
+				return FAIL;
 			}
 		}
 
@@ -1236,7 +1261,7 @@ int Pathfinding::getTuCostPf(
 		if (partsChangingHeight == 1)
 		{
 			//Log(LOG_INFO) << "blocked - not enough parts changing level";
-			return 255;
+			return FAIL;
 		}
 
 		costTotal = static_cast<int>(Round(std::ceil( // ok, round those tanks up!
