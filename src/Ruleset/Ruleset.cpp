@@ -1712,7 +1712,7 @@ void Ruleset::convertInventories()
 		else if (i->first == "STR_QUICK_DRAW")
 			_inventories_ST.emplace(ST_QUICKDRAW, i->second);
 		else
-			Log(LOG_WARNING) << "Ruleset::ConvertInventories() unknown inventory-type detected [" << i->first << "]";
+			Log(LOG_WARNING) << "Ruleset::convertInventories() unknown inventory-type detected [" << i->first << "]";
 	}
 
 	_inventories_ST.emplace(ST_NONE, nullptr);

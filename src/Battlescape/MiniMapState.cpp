@@ -63,19 +63,29 @@ MiniMapState::MiniMapState(
 		Options::baseYResolution = Screen::ORIGINAL_HEIGHT;
 		_game->getScreen()->resetDisplay(false);
 	} */
+	static const int
+		scanbordOffsetX =  3,
+		scanbordOffsetY = 12;
 
-	_bg			= new InteractiveSurface(320, 200);
+	_bg			= new InteractiveSurface(
+									Options::baseXResolution,
+									Options::baseYResolution,
+									scanbordOffsetX, scanbordOffsetY);
 	_miniView	= new MiniMapView(
-								223, 150, 47, 15,
+//								223, 150, 47, 15,
+								Options::baseXResolution,
+								Options::baseYResolution,
+								-((Options::baseXResolution - 320) / 2),
+								-((Options::baseYResolution - 200) / 2),
 								_game,
 								camera,
 								battleSave);
 
-	_btnLvlUp	= new BattlescapeButton(18, 20,  24,  62);
-	_btnLvlDown	= new BattlescapeButton(18, 20,  24,  88);
-	_btnOk		= new BattlescapeButton(32, 32, 275, 145);
+	_btnLvlUp	= new BattlescapeButton(18, 20,  24 + scanbordOffsetX,  62 + scanbordOffsetY);
+	_btnLvlDown	= new BattlescapeButton(18, 20,  24 + scanbordOffsetX,  88 + scanbordOffsetY);
+	_btnOk		= new BattlescapeButton(32, 32, 275 + scanbordOffsetX, 145 + scanbordOffsetY);
 
-	_txtLevel	= new Text(28, 16, 281, 73);
+	_txtLevel	= new Text(28, 16, 281 + scanbordOffsetX, 73 + scanbordOffsetY);
 
 	setPalette("PAL_BATTLESCAPE");
 
@@ -90,30 +100,6 @@ MiniMapState::MiniMapState(
 
 	centerAllSurfaces();
 
-
-//	_screen = false;												// kL
-//	_bg->drawRect(48, 16, 221, 148, Palette::blockOffset(15)+15);	// kL
-
-/*	if (_game->getScreen()->getDY() > 50)
-	{
-		_screen = false;
-
-//		SDL_Rect current;
-//		current.w = 223;
-//		current.h = 151;
-//		current.x = 46;
-//		current.y = 14;
-//		_bg->drawRect(&current, Palette::blockOffset(15)+15);
-
-		_bg->drawRect(46, 14, 223, 151, Palette::blockOffset(15)+15);
-	} */
-
-//	_bg->onMouseClick(	// kL, have to change this to InteractiveSurface,
-						// and define a pixel area outside the actual MiniMapView
-						// window that is responsive to RMB - while still allowing
-						// RMB dragging within the MiniMapView window.
-//					(ActionHandler)& MiniMapState::btnOkClick,
-//					SDL_BUTTON_RIGHT);
 
 	_btnLvlUp->onMouseClick((ActionHandler)& MiniMapState::btnLevelUpClick);
 	_btnLvlUp->onKeyboardPress(
@@ -174,11 +160,6 @@ void MiniMapState::handle(Action* action)
 			btnLevelDownClick(action);
 		else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
 			btnLevelUpClick(action);
-//		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT) // kL->
-//		{
-//			_game->getSavedGame()->getBattleSave()->getBattleState()->getMap()->setNoDraw(false);
-//			_game->popState();
-//		}
 	}
 }
 
@@ -186,7 +167,7 @@ void MiniMapState::handle(Action* action)
  * Returns to the previous screen.
  * @param action - pointer to an Action
  */
-void MiniMapState::btnOkClick(Action*)
+void MiniMapState::btnOkClick(Action* action)
 {
 /*	if (Options::maximizeInfoScreens)
 	{
@@ -201,10 +182,12 @@ void MiniMapState::btnOkClick(Action*)
 
 	_game->getSavedGame()->getBattleSave()->getBattleState()->getMap()->setNoDraw(false);
 	_game->popState();
+
+	action->getDetails()->type = SDL_NOEVENT; // consume the event
 }
 
 /**
- * Changes the currently displayed minimap level.
+ * Changes the currently displayed MiniMap level.
  * @param action - pointer to an Action
  */
 void MiniMapState::btnLevelUpClick(Action*)
@@ -215,7 +198,7 @@ void MiniMapState::btnLevelUpClick(Action*)
 }
 
 /**
- * Changes the currently displayed minimap level.
+ * Changes the currently displayed MiniMap level.
  * @param action - pointer to an Action
  */
 void MiniMapState::btnLevelDownClick(Action*)
@@ -226,9 +209,9 @@ void MiniMapState::btnLevelDownClick(Action*)
 }
 
 /**
- * Animation handler. Updates the minimap view animation.
+ * Updates the MiniMapView animation.
  */
-void MiniMapState::animate()
+void MiniMapState::animate() // private.
 {
 	_miniView->animate();
 }

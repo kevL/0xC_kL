@@ -85,7 +85,13 @@ UnitInfoState::UnitInfoState(
 
 	_bg			= new Surface(320, 200);
 
-	_exit		= new InteractiveSurface(320, 180, 0, 20);
+//	_exit		= new InteractiveSurface(320, 180, 0, 20);
+	_exit		= new InteractiveSurface(
+//									320, 180, 0, 20);
+									Options::baseXResolution,
+									Options::baseYResolution,
+									-(Options::baseXResolution - 320) / 2,
+									-(Options::baseYResolution - 200) / 2);
 	_txtName	= new Text(288, 17, 16, 4);
 
 	_gender		= new Surface(7, 7, 22, 4);
@@ -284,19 +290,19 @@ UnitInfoState::UnitInfoState(
 
 	_game->getResourcePack()->getSurface("UNIBORD.PCK")->blit(_bg);
 
-	_exit->onMouseClick((ActionHandler)& UnitInfoState::exitClick,
+	_exit->onMouseClick((ActionHandler)& UnitInfoState::exitPress,
 					SDL_BUTTON_RIGHT);
 	_exit->onKeyboardPress(
-					(ActionHandler)& UnitInfoState::exitClick,
+					(ActionHandler)& UnitInfoState::exitPress,
 					Options::keyCancel);
 	_exit->onKeyboardPress(
-					(ActionHandler)& UnitInfoState::exitClick,
+					(ActionHandler)& UnitInfoState::exitPress,
 					Options::keyOk);
 	_exit->onKeyboardPress(
-					(ActionHandler)& UnitInfoState::exitClick,
+					(ActionHandler)& UnitInfoState::exitPress,
 					Options::keyOkKeypad);
 	_exit->onKeyboardPress(
-					(ActionHandler)& UnitInfoState::exitClick,
+					(ActionHandler)& UnitInfoState::exitPress,
 					Options::keyBattleStats);
 
 	Uint8
@@ -777,8 +783,6 @@ void UnitInfoState::handle(Action* action)
 
 	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
 	{
-//		if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-//			exitClick(); else
 		if (_mindProbe == false)
 		{
 			if (action->getDetails()->button.button == SDL_BUTTON_X1)
@@ -805,7 +809,7 @@ void UnitInfoState::btnPrevClick(Action*)
 	if (_unit != nullptr)
 		init();
 	else
-		exitClick(nullptr);
+		exitPress(nullptr);
 }
 
 /**
@@ -824,14 +828,14 @@ void UnitInfoState::btnNextClick(Action*)
 	if (_unit != nullptr)
 		init();
 	else
-		exitClick(nullptr);
+		exitPress(nullptr);
 }
 
 /**
  * Exits the screen.
  * @param action - pointer to an Action
  */
-void UnitInfoState::exitClick(Action*) const // private.
+void UnitInfoState::exitPress(Action*) const // private.
 {
 	if (_mindProbe == true)
 	{
