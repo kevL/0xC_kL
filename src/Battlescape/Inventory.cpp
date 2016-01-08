@@ -518,7 +518,7 @@ bool Inventory::isOverlap( // static.
  * @param y - pointer to mouse Y position; returns the slot's Y position
  * @return, pointer to section rules or nullptr if none
  */
-RuleInventory* Inventory::getSlotInPosition( // private.
+RuleInventory* Inventory::getSlotAtCursor( // private.
 		int* x,
 		int* y) const
 {
@@ -527,7 +527,7 @@ RuleInventory* Inventory::getSlotInPosition( // private.
 			i != _game->getRuleset()->getInventories()->end();
 			++i)
 	{
-		if (i->second->checkSlotAtPosition(x,y) == true)
+		if (i->second->detSlotAtCursor(x,y) == true)
 			return i->second;
 	}
 
@@ -643,7 +643,7 @@ void Inventory::mouseOver(Action* action, State* state)
 		x = static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX(),
 		y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
 
-	RuleInventory* const inRule = getSlotInPosition(&x,&y);
+	RuleInventory* const inRule = getSlotAtCursor(&x,&y);
 	if (inRule != nullptr)
 	{
 		if (_tuMode == true
@@ -694,7 +694,7 @@ void Inventory::mouseClick(Action* action, State* state)
 				x = static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX(),
 				y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
 
-			RuleInventory* const inRule = getSlotInPosition(&x,&y);
+			const RuleInventory* const inRule = getSlotAtCursor(&x,&y);
 			if (inRule != nullptr)
 			{
 				if (inRule->getCategory() == IC_GROUND)
@@ -709,29 +709,29 @@ void Inventory::mouseClick(Action* action, State* state)
 							placed = false,
 							toGround = true;
 
-						RuleInventory* targetSection = nullptr;
+						const RuleInventory* targetSection = nullptr;
 
 						if (inRule->getCategory() == IC_HAND
 							|| (inRule->getCategory() != IC_GROUND
 								&& (_tuMode == false
 									|| _selUnit->getOriginalFaction() != FACTION_PLAYER))) // aLien units drop-to-ground on Ctrl+LMB
 						{
-							targetSection = _game->getRuleset()->getInventory("STR_GROUND");
+							targetSection = _game->getRuleset()->getInventory_ST(ST_GROUND);
 						}
 						else
 						{
-							if (_selUnit->getItem("STR_RIGHT_HAND") == nullptr)
+							if (_selUnit->getItem(ST_RIGHTHAND) == nullptr)
 							{
 								toGround = false;
-								targetSection = _game->getRuleset()->getInventory("STR_RIGHT_HAND");
+								targetSection = _game->getRuleset()->getInventory_ST(ST_RIGHTHAND);
 							}
-							else if (_selUnit->getItem("STR_LEFT_HAND") == nullptr)
+							else if (_selUnit->getItem(ST_LEFTHAND) == nullptr)
 							{
 								toGround = false;
-								targetSection = _game->getRuleset()->getInventory("STR_LEFT_HAND");
+								targetSection = _game->getRuleset()->getInventory_ST(ST_LEFTHAND);
 							}
 							else if (inRule->getCategory() != IC_GROUND)
-								targetSection = _game->getRuleset()->getInventory("STR_GROUND");
+								targetSection = _game->getRuleset()->getInventory_ST(ST_GROUND);
 						}
 
 						if (targetSection != nullptr)
@@ -804,7 +804,7 @@ void Inventory::mouseClick(Action* action, State* state)
 							* RuleInventory::SLOT_H / 2
 						+ RuleInventory::SLOT_H / 2;
 
-			RuleInventory* inRule = getSlotInPosition(&x,&y);
+			RuleInventory* inRule = getSlotAtCursor(&x,&y);
 
 			if (inRule != nullptr)
 			{
@@ -919,7 +919,7 @@ void Inventory::mouseClick(Action* action, State* state)
 				x = static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX();
 				y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
 
-				inRule = getSlotInPosition(&x,&y);
+				inRule = getSlotAtCursor(&x,&y);
 				if (inRule != nullptr
 					&& inRule->getCategory() == IC_GROUND)
 				{
@@ -966,7 +966,7 @@ void Inventory::mouseClick(Action* action, State* state)
 							x = static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX(),
 							y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
 
-						const RuleInventory* const inRule = getSlotInPosition(&x,&y);
+						const RuleInventory* const inRule = getSlotAtCursor(&x,&y);
 						if (inRule != nullptr)
 						{
 							if (inRule->getCategory() == IC_GROUND)
@@ -1002,7 +1002,7 @@ void Inventory::mouseClick(Action* action, State* state)
 								{
 									moveItem(
 											item,
-											_game->getRuleset()->getInventory("STR_GROUND"));
+											_game->getRuleset()->getInventory_ST(ST_GROUND));
 
 									arrangeGround(false);
 									soundId = ResourcePack::ITEM_DROP;
@@ -1023,7 +1023,7 @@ void Inventory::mouseClick(Action* action, State* state)
 					x = static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX(),
 					y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
 
-				RuleInventory* const inRule = getSlotInPosition(&x,&y);
+				RuleInventory* const inRule = getSlotAtCursor(&x,&y);
 				if (inRule != nullptr)
 				{
 					if (inRule->getCategory() == IC_GROUND)
@@ -1096,23 +1096,23 @@ bool Inventory::unload()
 	if (_tuMode == false
 		|| _selUnit->spendTimeUnits(_selItem->getRules()->getUnloadTu()) == true)
 	{
-		RuleInventory* inRule;
+		const RuleInventory* inRule;
 		BattleUnit* owner;
 
 		if (_tuMode == false)
 		{
-			inRule = _game->getRuleset()->getInventory("STR_GROUND");
+			inRule = _game->getRuleset()->getInventory_ST(ST_GROUND);
 			owner = nullptr;
 		}
 		else
 		{
-			inRule = _game->getRuleset()->getInventory("STR_LEFT_HAND");
+			inRule = _game->getRuleset()->getInventory_ST(ST_LEFTHAND);
 			owner = _selUnit;;
 		}
 
 		moveItem(
 				_selItem,
-				_game->getRuleset()->getInventory("STR_RIGHT_HAND"));
+				_game->getRuleset()->getInventory_ST(ST_RIGHTHAND));
 		_selItem->changeOwner(_selUnit);
 
 		_selItem->setAmmoItem();
@@ -1145,7 +1145,7 @@ void Inventory::arrangeGround(bool alterOffset)
 {
 	_stackLevel.clear();
 
-	RuleInventory* const grdRule = _game->getRuleset()->getInventory("STR_GROUND");
+	const RuleInventory* const grdRule = _game->getRuleset()->getInventory_ST(ST_GROUND);
 
 	// first move all items out of the way -> a big number in X direction to right
 	for (std::vector<BattleItem*>::const_iterator

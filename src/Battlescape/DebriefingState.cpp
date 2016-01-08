@@ -1292,7 +1292,7 @@ void DebriefingState::prepareDebriefing() // private.
 					if ((*j)->getRules()->isFixed() == false)
 						(*i)->getTile()->addItem(
 											*j,
-											_rules->getInventory("STR_GROUND"));
+											_rules->getInventory_ST(ST_GROUND));
 				}
 
 				recoverLiveAlien(*i);

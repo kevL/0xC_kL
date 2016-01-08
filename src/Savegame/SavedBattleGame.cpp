@@ -519,7 +519,7 @@ void SavedBattleGame::load(
 //						if (pos.z != -1)
 						getTile(pos)->addItem(
 											item,
-											rules->getInventory("STR_GROUND"));
+											rules->getInventory_ST(ST_GROUND));
 					}
 					else
 						pos = Position(0,0,-1); // cf. BattleItem::save()

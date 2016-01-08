@@ -86,7 +86,7 @@ private:
 			int y = 0);
 
 	/// Gets the section in the specified mouse-position.
-	RuleInventory* getSlotInPosition(
+	RuleInventory* getSlotAtCursor(
 			int* x,
 			int* y) const;
 

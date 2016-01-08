@@ -20,11 +20,11 @@
 #include "Soldier.h"
 
 #include "Craft.h"
-#include "SoldierLayout.h"
 #include "SavedGame.h"
 #include "SoldierDead.h"
 #include "SoldierDeath.h"
 #include "SoldierDiary.h"
+#include "SoldierLayout.h"
 
 #include "../fmath.h"
 

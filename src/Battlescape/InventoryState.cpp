@@ -947,27 +947,28 @@ void InventoryState::btnGroundClick(Action*)
 }
 
 /**
- * Clears the current unit's inventory and moves all items to the ground.
+ * Clears the current unit's inventory and places all items on the ground.
  * @param action - pointer to an Action
  */
 void InventoryState::btnUnequipUnitClick(Action*)
 {
-	if (_tuMode == false					// don't accept clicks in battlescape because this doesn't cost TU.
-		&& _inv->getSelectedItem() == nullptr) // or when mouse is holding an item
+	if (_tuMode == false						// don't accept clicks in battlescape because this doesn't cost TU.
+		&& _inv->getSelectedItem() == nullptr)	// or when mouse is holding an item
 	{
-		BattleUnit* const unit = _battleSave->getSelectedUnit();
-		std::vector<BattleItem*>* const unitInvent = unit->getInventory();
-		Tile* const tile = unit->getTile();
-		RuleInventory* const slot = _game->getRuleset()->getInventory("STR_GROUND");
+		const RuleInventory* const grdRule = _game->getRuleset()->getInventory_ST(ST_GROUND);
 
+		BattleUnit* const unit = _battleSave->getSelectedUnit();
+		Tile* const tile = unit->getTile();
+
+		std::vector<BattleItem*>* const equipt = unit->getInventory();
 		for (std::vector<BattleItem*>::const_iterator
-				i = unitInvent->begin();
-				i != unitInvent->end();
+				i = equipt->begin();
+				i != equipt->end();
 				)
 		{
 			(*i)->setOwner();
-			tile->addItem(*i, slot);
-			i = unitInvent->erase(i);
+			tile->addItem(*i, grdRule);
+			i = equipt->erase(i);
 		}
 
 		_inv->arrangeGround(false);

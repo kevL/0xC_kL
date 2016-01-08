@@ -458,7 +458,7 @@ void AlienBAIState::think(BattleAction* const action)
 				&& action->type == BA_THROW)
 			{
 				int costTu = action->weapon->getInventorySection()->
-								getCost(_battleSave->getBattleGame()->getRuleset()->getInventory("STR_RIGHT_HAND"));
+								getCost(_battleSave->getBattleGame()->getRuleset()->getInventory_ST(ST_RIGHTHAND));
 
 				if (action->weapon->getFuse() == -1)
 					costTu += _unit->getActionTu(BA_PRIME, action->weapon);
@@ -2288,7 +2288,7 @@ void AlienBAIState::grenadeAction() // private.
 						_attackAction->diff) == true)
 		{
 			int tuCost = grenade->getInventorySection()->
-							getCost(_battleSave->getBattleGame()->getRuleset()->getInventory("STR_RIGHT_HAND"));
+							getCost(_battleSave->getBattleGame()->getRuleset()->getInventory_ST(ST_RIGHTHAND));
 
 			if (grenade->getFuse() == -1)
 				tuCost += _unit->getActionTu(BA_PRIME, grenade);

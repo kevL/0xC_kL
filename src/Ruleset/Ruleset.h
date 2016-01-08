@@ -33,7 +33,8 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include "../Ruleset/RuleAlienMission.h"
+#include "RuleAlienMission.h"
+#include "RuleInventory.h"
 
 #include "../Savegame/GameTime.h"
 
@@ -169,7 +170,7 @@ protected:
 	std::map<std::string, RuleCraft*>			_crafts;
 	std::map<std::string, RuleCraftWeapon*>		_craftWeapons;
 	std::map<std::string, RuleInterface*>		_interfaces;
-	std::map<std::string, RuleInventory*>		_invs;
+	std::map<std::string, RuleInventory*>		_inventories;
 	std::map<std::string, RuleItem*>			_items;
 	std::map<std::string, RuleManufacture*>		_manufacture;
 	std::map<std::string, RuleMissionScript*>	_missionScripts;
@@ -190,6 +191,8 @@ protected:
 	std::vector<std::pair<std::string, RuleMusic*>>		_music;
 
 	std::pair<std::string, int> _alienFuel;
+
+	std::map<InventorySection, RuleInventory*> _inventories_ST;
 
 	/// Loads all ruleset files from a directory.
 	void loadFiles(const std::string& dir);
@@ -305,12 +308,16 @@ protected:
 		/// Gets the available articles.
 		const std::vector<std::string>& getUfopaediaList() const;
 
-		/// Gets the inventory list.
+		/// Gets a map of the inventory list.
 		std::map<std::string, RuleInventory*>* getInventories();
 		/// Gets the ruleset for a specific inventory.
 		RuleInventory* getInventory(const std::string& type) const;
+		/// Gets the ruleset for a specific inventory.
+		const RuleInventory* getInventory_ST(const InventorySection sectionId) const;
+		/// Converts all inventory mappings from string-keys to enumerated-keys.
+		void convertInventories();
 		/// Returns the sorted list of inventories.
-		const std::vector<std::string>& getInvsList() const;
+//		const std::vector<std::string>& getInventoryList() const;
 		/// Determines the highest TU-value used.
 		int detHighTuInventoryCost() const;
 

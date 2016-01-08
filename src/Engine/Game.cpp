@@ -818,6 +818,8 @@ void Game::loadRuleset()
 	_rules->validateMissions();
 	_rules->sortLists();
 
+	_rules->convertInventories();
+
 	// Prints listOrder to LOG.
 /*	Log(LOG_INFO) << "\n";
 	std::vector<std::string> pedList = _rules->getUfopaediaList();

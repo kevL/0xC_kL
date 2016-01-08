@@ -56,13 +56,13 @@ enum SoldierLook
 
 
 class Craft;
-class SoldierLayout;
 class Language;
 class RuleArmor;
 class Ruleset;
 class RuleSoldier;
 class SavedGame;
 class SoldierDiary;
+class SoldierLayout;
 class SoldierNamePool;
 
 

@@ -1,4 +1,4 @@
-invs:
+inventories:
   - type: STR_GROUND
     x: 0
     y: 152

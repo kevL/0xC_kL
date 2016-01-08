@@ -690,7 +690,7 @@ void BattlescapeGenerator::nextStage()
 		_battleSave->selectNextFactionUnit();
 	}
 
-	const RuleInventory* const grdRule = _game->getRuleset()->getInventory("STR_GROUND");
+	const RuleInventory* const grdRule = _game->getRuleset()->getInventory_ST(ST_GROUND);
 	for (std::vector<BattleItem*>::const_iterator
 		i = takeToNextStage.begin();
 		i != takeToNextStage.end();
@@ -887,7 +887,7 @@ void BattlescapeGenerator::deployXcom() // private.
 	}
 	//Log(LOG_INFO) << ". setUnit(s) DONE";
 
-	RuleInventory* const grdRule = _rules->getInventory("STR_GROUND");
+	const RuleInventory* const grdRule = _rules->getInventory_ST(ST_GROUND);
 
 	if (_craft != nullptr) // add items that are in the Craft.
 	{
@@ -1326,7 +1326,7 @@ void BattlescapeGenerator::loadGroundWeapon(BattleItem* const item) // private.
  */
 bool BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
 {
-	const RuleInventory* const grdRule = _rules->getInventory("STR_GROUND");
+	const RuleInventory* const grdRule = _rules->getInventory_ST(ST_GROUND);
 	if (item->getInventorySection() == grdRule)
 	{
 //		RuleInventory* const rhRule = _rules->getInventory("STR_RIGHT_HAND");
@@ -1503,9 +1503,9 @@ bool BattlescapeGenerator::placeItem( // private.
 		BattleItem* const item,
 		BattleUnit* const unit) const
 {
-	RuleInventory
-		* const rhRule = _rules->getInventory("STR_RIGHT_HAND"),
-		* const lhRule = _rules->getInventory("STR_LEFT_HAND");
+	const RuleInventory
+		* const rhRule = _rules->getInventory_ST(ST_RIGHTHAND),
+		* const lhRule = _rules->getInventory_ST(ST_LEFTHAND);
 	BattleItem
 		* const rhWeapon = unit->getItem(ST_RIGHTHAND),
 		* const lhWeapon = unit->getItem(ST_LEFTHAND);
@@ -1567,11 +1567,11 @@ bool BattlescapeGenerator::placeItem( // private.
 
 			default:
 			{
-				std::vector<RuleInventory*> inTypes;
-				inTypes.push_back(_rules->getInventory("STR_BELT"));
-				inTypes.push_back(_rules->getInventory("STR_BACK_PACK"));
+				std::vector<const RuleInventory*> inTypes;
+				inTypes.push_back(_rules->getInventory_ST(ST_BELT));
+				inTypes.push_back(_rules->getInventory_ST(ST_BACKPACK));
 
-				for (std::vector<RuleInventory*>::const_iterator
+				for (std::vector<const RuleInventory*>::const_iterator
 						i = inTypes.begin();
 						i != inTypes.end() && placed == 0;
 						++i)
@@ -1582,8 +1582,8 @@ bool BattlescapeGenerator::placeItem( // private.
 							++j)
 					{
 						if (Inventory::isOverlap(
-												unit, item, *i,
-												j->x, j->y) == false
+											unit, item, *i,
+											j->x, j->y) == false
 							&& (*i)->fitItemInSlot(itRule, j->x, j->y) == true)
 						{
 							item->setInventorySection(*i);
@@ -2188,7 +2188,7 @@ int BattlescapeGenerator::loadMAP( // private.
 												0))
 											->addItem(
 													item,
-													_rules->getInventory("STR_GROUND"));
+													_rules->getInventory_ST(ST_GROUND));
 		}
 	}
 
@@ -2343,7 +2343,7 @@ void BattlescapeGenerator::fuelPowerSources() // private.
 			_battleSave->getItems()->push_back(alienFuel);
 			_battleSave->getTiles()[i]->addItem(
 											alienFuel,
-											_rules->getInventory("STR_GROUND"));
+											_rules->getInventory_ST(ST_GROUND));
 		}
 	}
 }

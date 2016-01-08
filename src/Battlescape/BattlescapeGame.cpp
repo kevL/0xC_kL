@@ -2962,7 +2962,7 @@ void BattlescapeGame::dropItem(
 	{
 		_battleSave->getTile(pos)->addItem(
 										item,
-										getRuleset()->getInventory("STR_GROUND"));
+										getRuleset()->getInventory_ST(ST_GROUND));
 
 		if (item->getUnit() != nullptr)
 			item->getUnit()->setPosition(pos);
@@ -3052,7 +3052,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 										getRuleset()->getItem(st),
 										_battleSave->getNextItemId());
 	item->changeOwner(conUnit);
-	item->setInventorySection(getRuleset()->getInventory("STR_RIGHT_HAND"));
+	item->setInventorySection(getRuleset()->getInventory_ST(ST_RIGHTHAND));
 	_battleSave->getItems()->push_back(item);
 
 	getMap()->cacheUnit(conUnit);
@@ -3365,9 +3365,9 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 		BattleUnit* const unit) const
 {
 	//Log(LOG_INFO) << "BattlescapeGame::takeItem()";
-	RuleInventory
-		* const rightHand = getRuleset()->getInventory("STR_RIGHT_HAND"),
-		* const leftHand = getRuleset()->getInventory("STR_LEFT_HAND");
+	const RuleInventory
+		* const rhRule = getRuleset()->getInventory_ST(ST_RIGHTHAND),
+		* const lhRule = getRuleset()->getInventory_ST(ST_LEFTHAND);
 	BattleItem
 		* const rhWeapon = unit->getItem(ST_RIGHTHAND),
 		* const lhWeapon = unit->getItem(ST_LEFTHAND);
@@ -3382,14 +3382,14 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 		case BT_MELEE:
 			if (rhWeapon == nullptr)
 			{
-				item->setInventorySection(rightHand);
+				item->setInventorySection(rhRule);
 				placed = 1;
 				break;
 			}
 
 			if (lhWeapon == nullptr)
 			{
-				item->setInventorySection(leftHand);
+				item->setInventorySection(lhRule);
 				placed = 1;
 				break;
 			} // no break.
@@ -3398,7 +3398,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 				&& rhWeapon->getAmmoItem() == nullptr
 				&& rhWeapon->setAmmoItem(item) == 0)
 			{
-//				item->setInventorySection(rightHand);
+//				item->setInventorySection(rhRule);
 				placed = 2;
 				break;
 			}
@@ -3407,18 +3407,18 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 				&& lhWeapon->getAmmoItem() == nullptr
 				&& lhWeapon->setAmmoItem(item) == 0)
 			{
-//				item->setInventorySection(leftHand);
+//				item->setInventorySection(lhRule);
 				placed = 2;
 				break;
 			} // no break.
 
 		default:
 		{
-			std::vector<RuleInventory*> inTypes;
-			inTypes.push_back(getRuleset()->getInventory("STR_BELT"));
-			inTypes.push_back(getRuleset()->getInventory("STR_BACK_PACK"));
+			std::vector<const RuleInventory*> inTypes;
+			inTypes.push_back(getRuleset()->getInventory_ST(ST_BELT));
+			inTypes.push_back(getRuleset()->getInventory_ST(ST_BACKPACK));
 
-			for (std::vector<RuleInventory*>::const_iterator
+			for (std::vector<const RuleInventory*>::const_iterator
 					i = inTypes.begin();
 					i != inTypes.end() && placed == 0;
 					++i)
@@ -3429,8 +3429,8 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 						++j)
 				{
 					if (Inventory::isOverlap(
-											unit, item, *i,
-											j->x, j->y) == false
+										unit, item, *i,
+										j->x, j->y) == false
 						&& (*i)->fitItemInSlot(itRule, j->x, j->y) == true)
 					{
 						item->setInventorySection(*i);

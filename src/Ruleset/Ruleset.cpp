@@ -42,7 +42,6 @@
 #include "RuleCraftWeapon.h"
 #include "RuleGlobe.h"
 #include "RuleInterface.h"
-#include "RuleInventory.h"
 #include "RuleItem.h"
 #include "RuleManufacture.h"
 #include "RuleMissionScript.h"
@@ -292,8 +291,8 @@ Ruleset::~Ruleset()
 	}
 
 	for (std::map<std::string, RuleInventory*>::const_iterator
-			i = _invs.begin();
-			i != _invs.end();
+			i = _inventories.begin();
+			i != _inventories.end();
 			++i)
 	{
 		delete i->second;
@@ -667,11 +666,11 @@ void Ruleset::loadFile(const std::string& file) // protected.
 	}
 
 	for (YAML::const_iterator
-			i = doc["invs"].begin();
-			i != doc["invs"].end();
+			i = doc["inventories"].begin();
+			i != doc["inventories"].end();
 			++i)
 	{
-		RuleInventory* const rule = loadRule(*i, &_invs, &_invsIndex);
+		RuleInventory* const rule = loadRule(*i, &_inventories, &_invsIndex);
 		if (rule != nullptr)
 		{
 			_invListOrder += 10;
@@ -1650,36 +1649,83 @@ const std::vector<std::string>& Ruleset::getUfopaediaList() const
 }
 
 /**
- * Returns the list of inventories.
+ * Returns a mapping of the inventories.
  * @return, pointer to a vector of maps of strings and pointers to RuleInventory
  */
 std::map<std::string, RuleInventory*>* Ruleset::getInventories()
 {
-	return &_invs;
+	return &_inventories;
 }
 
 /**
- * Returns the rules for a specific inventory.
+ * Returns the RuleInventory for a specific inventory-type (a 'section').
  * @param type - reference the inventory type
  * @return, pointer to RuleInventory
  */
 RuleInventory* Ruleset::getInventory(const std::string& type) const
 {
-	std::map<std::string, RuleInventory*>::const_iterator i = _invs.find(type);
-	if (i != _invs.end())
+	std::map<std::string, RuleInventory*>::const_iterator i = _inventories.find(type);
+	if (i != _inventories.end())
 		return i->second;
 
 	return nullptr;
 }
 
 /**
+ * Returns the RuleInventory for a specific inventory-section.
+ * @param sectionId - InventorySection (RuleInventory.h)
+ * @return, pointer to RuleInventory
+ */
+const RuleInventory* Ruleset::getInventory_ST(InventorySection sectionId) const
+{
+	return _inventories_ST.at(sectionId);
+}
+
+/**
+ * Converts all inventory mappings from string-keys to enumerated-keys.
+ */
+void Ruleset::convertInventories()
+{
+	for (std::map<std::string, RuleInventory*>::const_iterator
+			i = _inventories.begin();
+			i != _inventories.end();
+			++i)
+	{
+		if (i->first == "STR_GROUND")
+			_inventories_ST.emplace(ST_GROUND, i->second);
+		else if (i->first == "STR_RIGHT_HAND")
+			_inventories_ST.emplace(ST_RIGHTHAND, i->second);
+		else if (i->first == "STR_LEFT_HAND")
+			_inventories_ST.emplace(ST_LEFTHAND, i->second);
+		else if (i->first == "STR_BELT")
+			_inventories_ST.emplace(ST_BELT, i->second);
+		else if (i->first == "STR_RIGHT_LEG")
+			_inventories_ST.emplace(ST_RIGHTLEG, i->second);
+		else if (i->first == "STR_LEFT_LEG")
+			_inventories_ST.emplace(ST_LEFTLEG, i->second);
+		else if (i->first == "STR_RIGHT_SHOULDER")
+			_inventories_ST.emplace(ST_RIGHTSHOULDER, i->second);
+		else if (i->first == "STR_LEFT_SHOULDER")
+			_inventories_ST.emplace(ST_LEFTSHOULDER, i->second);
+		else if (i->first == "STR_BACK_PACK")
+			_inventories_ST.emplace(ST_BACKPACK, i->second);
+		else if (i->first == "STR_QUICK_DRAW")
+			_inventories_ST.emplace(ST_QUICKDRAW, i->second);
+		else
+			Log(LOG_WARNING) << "Ruleset::ConvertInventories() unknown inventory-type detected [" << i->first << "]";
+	}
+
+	_inventories_ST.emplace(ST_NONE, nullptr);
+}
+
+/**
  * Returns the list of inventories.
  * @return, reference to a vector of strings as the list of inventories
- */
-const std::vector<std::string>& Ruleset::getInvsList() const
+ *
+const std::vector<std::string>& Ruleset::getInventoryList() const
 {
 	return _invsIndex;
-}
+} */
 
 /**
  * Determines the highest TU-value used to move an item from a player-section to
@@ -1694,10 +1740,10 @@ int Ruleset::detHighTuInventoryCost() const
 		cost,
 		costHigh = 0;
 
-	RuleInventory* grdRule = getInventory("STR_GROUND");
+	const RuleInventory* const grdRule = getInventory_ST(ST_GROUND);
 	for (std::map<std::string, RuleInventory*>::const_iterator
-			i = _invs.begin();
-			i != _invs.end();
+			i = _inventories.begin();
+			i != _inventories.end();
 			++i)
 	{
 		cost = (*i).second->getCost(grdRule);
@@ -1708,13 +1754,13 @@ int Ruleset::detHighTuInventoryCost() const
 	return costHigh;
 }
 /*	for (std::map<std::string, RuleInventory*>::const_iterator
-			i = _invs.begin();
-			i != _invs.end();
+			i = _inventories.begin();
+			i != _inventories.end();
 			++i)
 	{
 		for (std::map<std::string, RuleInventory*>::const_iterator
-				j = _invs.begin();
-				j != _invs.end();
+				j = _inventories.begin();
+				j != _inventories.end();
 				++j)
 		{
 			cost = (*i).second->getCost((*j).second);

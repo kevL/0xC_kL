@@ -1234,10 +1234,10 @@ void XcomResourcePack::loadBattlescapeResources()
 	}
 
 	// Load Battlescape inventory
-	std::vector<std::string> invs = CrossPlatform::getFolderContents(ufograph, "SPK");
+	std::vector<std::string> inventories = CrossPlatform::getFolderContents(ufograph, "SPK");
 	for (std::vector<std::string>::iterator
-			i = invs.begin();
-			i != invs.end();
+			i = inventories.begin();
+			i != inventories.end();
 			++i)
 	{
 		std::string path = ufograph + *i;

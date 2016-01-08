@@ -245,7 +245,7 @@ InventoryCategory RuleInventory::getCategory() const
  * Gets all the Slots in this Inventory section.
  * @return, pointer to a vector of RuleSlot-structs
  */
-const std::vector<struct RuleSlot>* RuleInventory::getSlots()
+const std::vector<RuleSlot>* RuleInventory::getSlots() const
 {
 	return &_slots;
 }
@@ -256,7 +256,7 @@ const std::vector<struct RuleSlot>* RuleInventory::getSlots()
  * @param y - mouse Y position; returns the slot's Y position
  * @return, true if there's a slot here
  */
-bool RuleInventory::checkSlotAtPosition(
+bool RuleInventory::detSlotAtCursor(
 		int* x,
 		int* y) const
 {
