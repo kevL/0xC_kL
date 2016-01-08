@@ -2780,6 +2780,13 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				ctrl = (SDL_GetModState() & KMOD_CTRL) != 0,
 				alt = (SDL_GetModState() & KMOD_ALT) != 0;
 
+			bool zPath;
+			const Uint8* const keystate = SDL_GetKeyState(nullptr);
+			if (keystate[SDLK_z] != 0)
+				zPath = true;
+			else
+				zPath = false;
+
 			if (targetUnit != nullptr // spin 180 degrees
 				&& targetUnit == _currentAction.actor
 				&& _currentAction.actor->getArmor()->getSize() == 1) // reasons: let click on large unit fallthrough to Move below_
@@ -2816,15 +2823,16 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				if (allowPreview == true
 					&& (_currentAction.target != pos
 						|| pf->isModCtrl() != ctrl
-						|| pf->isModAlt() != alt))
+						|| pf->isModAlt() != alt
+						|| pf->isZPath() != zPath))
 				{
 					pf->removePreview();
 				}
 
 				_currentAction.target = pos;
 				pf->calculate(
-							_currentAction.actor,
-							_currentAction.target);
+						_currentAction.actor,
+						_currentAction.target);
 
 				if (pf->getStartDirection() != -1)
 				{

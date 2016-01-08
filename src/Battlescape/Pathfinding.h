@@ -48,7 +48,8 @@ private:
 		_alt,
 		_ctrl,
 		_previewed,
-		_strafe;
+		_strafe,
+		_zPath;
 	int
 		_openDoor, // to get an accurate preview when dashing through doors.
 		_tuCostTotal;
@@ -189,6 +190,8 @@ private:
 		bool isModCtrl() const;
 		/// Gets the ALT modifier setting.
 		bool isModAlt() const;
+		/// Gets the zPath modifier setting.
+		bool isZPath() const;
 
 		/// Gets the current movementType.
 		MovementType getMoveTypePf() const;

@@ -64,6 +64,7 @@ Pathfinding::Pathfinding(SavedBattleGame* const battleSave)
 		_tuCostTotal(0),
 		_ctrl(false),
 		_alt(false),
+		_zPath(false),
 		_mType(MT_WALK),
 		_openDoor(0)
 {
@@ -394,11 +395,12 @@ bool Pathfinding::bresenhamPath( // private.
 	int
 		xd[DIRZ],
 		yd[DIRZ];
-	Uint8* keystate = SDL_GetKeyState(nullptr);
 
-	if (_battleSave->getSide() != FACTION_PLAYER
-		|| _battleSave->getBattleGame()->getPanicHandled() == false
-		|| keystate[SDLK_z] == 0)
+//	Uint8* keystate = SDL_GetKeyState(nullptr);
+//	if (_battleSave->getSide() != FACTION_PLAYER
+//		|| _battleSave->getBattleGame()->getPanicHandled() == false
+//		|| keystate[SDLK_z] == 0)
+	if (_zPath == false)
 	{
 		//std::copy(std::begin(src), std::end(src), std::begin(dest));
 		std::copy(stock_xd, stock_xd + 8, xd);
@@ -2214,13 +2216,20 @@ void Pathfinding::setInputModifiers()
 	if (_battleSave->getSide() != FACTION_PLAYER
 		|| _battleSave->getBattleGame()->getPanicHandled() == false)
 	{
-		_ctrl = false;
-		_alt = false;
+		_ctrl =
+		_alt =
+		_zPath = false;
 	}
 	else
 	{
 		_ctrl = (SDL_GetModState() & KMOD_CTRL) != 0;
 		_alt = (SDL_GetModState() & KMOD_ALT) != 0;
+
+		const Uint8* const keystate = SDL_GetKeyState(nullptr);
+		if (keystate[SDLK_z] != 0)
+			_zPath = true;
+		else
+			_zPath = false;
 	}
 }
 
@@ -2243,8 +2252,17 @@ bool Pathfinding::isModAlt() const
 }
 
 /**
+ * Gets the zPath modifier setting.
+ * @return, true if modifier was used
+ */
+bool Pathfinding::isZPath() const
+{
+	return _zPath;
+}
+
+/**
  * Gets the current movementType.
- * @return, the currently pathing unit's movementType
+ * @return, the currently pathing unit's movementType (MapData.h)
  */
 MovementType Pathfinding::getMoveTypePf() const
 {
