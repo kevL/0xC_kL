@@ -84,8 +84,6 @@ UnitInfoState::UnitInfoState(
 	} */
 
 	_bg			= new Surface(320, 200);
-
-//	_exit		= new InteractiveSurface(320, 180, 0, 20);
 	_exit		= new InteractiveSurface(
 //									320, 180, 0, 20);
 									Options::baseXResolution,
@@ -490,18 +488,24 @@ UnitInfoState::UnitInfoState(
 		_btnPrev->onKeyboardPress(
 						(ActionHandler)& UnitInfoState::btnPrevClick,
 						Options::keyBattlePrevUnit);
-//		_btnPrev->onKeyboardPress(
-//						(ActionHandler)& UnitInfoState::btnPrevClick,
-//						SDLK_KP4);
+		_btnPrev->onKeyboardPress(
+						(ActionHandler)& UnitInfoState::btnPrevClick,
+						SDLK_LEFT);
+		_btnPrev->onKeyboardPress(
+						(ActionHandler)& UnitInfoState::btnPrevClick,
+						SDLK_KP4);
 
 		_btnNext->setText(L">");
 		_btnNext->onMouseClick((ActionHandler)& UnitInfoState::btnNextClick);
 		_btnNext->onKeyboardPress(
 						(ActionHandler)& UnitInfoState::btnNextClick,
 						Options::keyBattleNextUnit);
-//		_btnNext->onKeyboardPress(
-//						(ActionHandler)& UnitInfoState::btnNextClick,
-//						SDLK_KP6);
+		_btnNext->onKeyboardPress(
+						(ActionHandler)& UnitInfoState::btnNextClick,
+						SDLK_RIGHT);
+		_btnNext->onKeyboardPress(
+						(ActionHandler)& UnitInfoState::btnNextClick,
+						SDLK_KP6);
 
 //		_timer = new Timer(300);
 //		_timer->onTimer((StateHandler)& UnitInfoState::keyRepeat);
@@ -633,7 +637,6 @@ void UnitInfoState::init()
 	_numFatalWounds->setText(woststr.str());
 
 	woststr.str(L"");
-//	std::wostringstream woststr1;
 	stat = _unit->getBattleStats()->bravery;
 	if (stat != 110)
 	{
@@ -641,23 +644,15 @@ void UnitInfoState::init()
 		_barBravery->setMaxValue(static_cast<double>(stat));
 		_barBravery->setValue(static_cast<double>(stat));
 		_barBravery->setVisible();
-
-//		stat = _unit->getMorale();
-//		woststr1 << stat;
-//		_barMorale->setValue(static_cast<double>(stat));
-//		_barMorale->setVisible();
 	}
 	else
 	{
 		woststr << L"oo";
-//		woststr1 << L"-";
 		_barBravery->setVisible(false);
-//		_barMorale->setVisible(false);
 	}
 	_numBravery->setText(woststr.str());
-//	_numMorale->setText(woststr1.str());
-	// note Let Morale show until further tested to ensure it never goes down
-	// for units w/ 110 Bravery. (I think it might/should when they get damaged)
+	// note: Let Morale show until further tested to ensure it never goes down
+	// for units w/ 110 Bravery. (I think it might/should when they get damaged.)
 	stat = _unit->getMorale();
 	_barMorale->setValue(static_cast<double>(stat));
 	_numMorale->setText(Text::intWide(stat));

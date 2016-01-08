@@ -400,7 +400,7 @@ bool Pathfinding::bresenhamPath( // private.
 		dir,
 		tuCostLast = -1;
 
-	Position posLast(origin);
+	Position posLast (origin);
 	Position posNext;
 
 	_tuCostTotal = 0;

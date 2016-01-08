@@ -1338,9 +1338,9 @@ bool BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
 				++i)
 		{
 			if ((*i)->getGeoscapeSoldier() != nullptr // handle only with xCom soldiers that have a layout
-				&& (*i)->getGeoscapeSoldier()->getEquipmentLayout()->empty() == false)
+				&& (*i)->getGeoscapeSoldier()->getLayout()->empty() == false)
 			{
-				const std::vector<SoldierLayout*>* const layoutItems = (*i)->getGeoscapeSoldier()->getEquipmentLayout();
+				const std::vector<SoldierLayout*>* const layoutItems = (*i)->getGeoscapeSoldier()->getLayout();
 				for (std::vector<SoldierLayout*>::const_iterator
 						j = layoutItems->begin();
 						j != layoutItems->end();

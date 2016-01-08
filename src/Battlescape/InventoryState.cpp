@@ -262,9 +262,12 @@ InventoryState::InventoryState(
 	_btnPrev->onKeyboardPress(
 					(ActionHandler)& InventoryState::btnPrevClick,
 					Options::keyBattlePrevUnit);
-//	_btnPrev->onKeyboardPress(
-//					(ActionHandler)& InventoryState::btnPrevClick,
-//					SDLK_KP4);
+	_btnPrev->onKeyboardPress(
+					(ActionHandler)& InventoryState::btnPrevClick,
+					SDLK_LEFT);
+	_btnPrev->onKeyboardPress(
+					(ActionHandler)& InventoryState::btnPrevClick,
+					SDLK_KP4);
 //	_btnPrev->setTooltip("STR_PREVIOUS_UNIT");
 //	_btnPrev->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
 //	_btnPrev->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
@@ -273,9 +276,12 @@ InventoryState::InventoryState(
 	_btnNext->onKeyboardPress(
 					(ActionHandler)& InventoryState::btnNextClick,
 					Options::keyBattleNextUnit);
-//	_btnNext->onKeyboardPress(
-//					(ActionHandler)& InventoryState::btnNextClick,
-//					SDLK_KP6);
+	_btnNext->onKeyboardPress(
+					(ActionHandler)& InventoryState::btnNextClick,
+					SDLK_RIGHT);
+	_btnNext->onKeyboardPress(
+					(ActionHandler)& InventoryState::btnNextClick,
+					SDLK_KP6);
 //	_btnNext->setTooltip("STR_NEXT_UNIT");
 //	_btnNext->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
 //	_btnNext->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
@@ -440,7 +446,7 @@ InventoryState::~InventoryState()
 //		_game->getScreen()->resetDisplay(false);
 //	}
 
-/*
+/**
  * Hits the think timer.
  *
 void InventoryState::think()
@@ -449,7 +455,7 @@ void InventoryState::think()
 	_timer->think(this, nullptr);
 } */
 
-/*
+/**
  * Advances to the next/previous Unit when right/left key is depressed.
  *
 void InventoryState::keyRepeat() // private.
@@ -732,7 +738,7 @@ void InventoryState::updateWounds() // private.
 }
 
 /*
- * Jogs the mouse cursor to refresh appearances.
+ * Jogs the mouse cursor to refresh appearances. See: _game->getSavedGame()->getBattleSave()->getBattleState()->refreshMousePosition();
  *
 void InventoryState::refreshMouse() // private.
 {
@@ -891,7 +897,7 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 {
 	if (unit->getGeoscapeSoldier() != nullptr)
 	{
-		std::vector<SoldierLayout*>* const layoutItems = unit->getGeoscapeSoldier()->getEquipmentLayout();
+		std::vector<SoldierLayout*>* const layoutItems = unit->getGeoscapeSoldier()->getLayout();
 
 		if (layoutItems->empty() == false) // clear Soldier's items
 		{
@@ -923,12 +929,12 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 				ammo = "NONE";
 
 			layoutItems->push_back(new SoldierLayout(
-													(*i)->getRules()->getType(),
-													(*i)->getInventorySection()->getInventoryType(),
-													(*i)->getSlotX(),
-													(*i)->getSlotY(),
-													ammo,
-													(*i)->getFuse()));
+												(*i)->getRules()->getType(),
+												(*i)->getInventorySection()->getInventoryType(),
+												(*i)->getSlotX(),
+												(*i)->getSlotY(),
+												ammo,
+												(*i)->getFuse()));
 		}
 
 		return true;
@@ -1279,7 +1285,7 @@ void InventoryState::setExtraInfo( // private.
 		if (itRule->getBattleType() == BT_AMMO)
 		{
 			actionType = "STR_RELOAD_";
-			tu = 15; // TODO: put this in Ruleset.
+			tu = itRule->getReloadTu();
 		}
 		else
 		{

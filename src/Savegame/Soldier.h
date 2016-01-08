@@ -183,7 +183,7 @@ private:
 		void heal();
 
 		/// Gets the soldier's equipment-layout.
-		std::vector<SoldierLayout*>* getEquipmentLayout();
+		std::vector<SoldierLayout*>* getLayout();
 
 		/// Trains a soldier's psionic abilities.
 		bool trainPsiDay();

@@ -518,7 +518,7 @@ void Soldier::heal()
  * Gets the list of EquipmentLayoutItems of this Soldier.
  * @return, pointer to a vector of pointers to SoldierLayout
  */
-std::vector<SoldierLayout*>* Soldier::getEquipmentLayout()
+std::vector<SoldierLayout*>* Soldier::getLayout()
 {
 	return &_layout;
 }

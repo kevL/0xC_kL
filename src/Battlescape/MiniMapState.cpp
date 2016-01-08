@@ -75,8 +75,8 @@ MiniMapState::MiniMapState(
 //								223, 150, 47, 15,
 								Options::baseXResolution,
 								Options::baseYResolution,
-								-((Options::baseXResolution - 320) / 2),
-								-((Options::baseYResolution - 200) / 2),
+								-(Options::baseXResolution - 320) / 2,
+								-(Options::baseYResolution - 200) / 2,
 								_game,
 								camera,
 								battleSave);
