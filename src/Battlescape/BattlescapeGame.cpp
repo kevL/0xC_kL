@@ -1652,23 +1652,7 @@ void BattlescapeGame::checkForCasualties(
 		// attacker gets Exposed if a spotter is still conscious
 		// NOTE: Useful only after Melee attacks. Firearms & explosives handle
 		// things differently ... see note in TileEngine::checkReactionFire().
-		//Log(LOG_INFO) << ". check for spotters Qty = " << (int)attacker->getRfSpotters()->size();
-		if (attacker->getRfSpotters()->empty() == false)
-		{
-			for (std::list<BattleUnit*>::const_iterator // -> not sure what happens if RF-trigger kills Cyberdisc that kills aLien .....
-					i = attacker->getRfSpotters()->begin();
-					i != attacker->getRfSpotters()->end();
-					++i)
-			{
-				if ((*i)->isOut_t(OUT_HLTH_STUN) == false)
-				{
-					attacker->setExposed(); // defender has been spotted on Player turn.
-					break;
-				}
-			}
-
-			attacker->getRfSpotters()->clear();
-		}
+		checkExposedByMelee(attacker);
 	}
 	// kL_note: what about tile explosions
 
@@ -2074,6 +2058,32 @@ void BattlescapeGame::checkForCasualties(
 }
 
 /**
+ * Checks if a BattleUnit gets exposed after making a melee-attack.
+ * @param unit - the unit to check
+ */
+void BattlescapeGame::checkExposedByMelee(BattleUnit* const unit) const
+{
+	//Log(LOG_INFO) << ". Casualties: check for spotters Qty = " << (int)unit->getRfSpotters()->size();
+	if (unit->getRfSpotters()->empty() == false)
+	{
+		for (std::list<BattleUnit*>::const_iterator // -> not sure what happens if RF-trigger kills Cyberdisc that kills aLien .....
+				i = unit->getRfSpotters()->begin();
+				i != unit->getRfSpotters()->end();
+				++i)
+		{
+			if ((*i)->isOut_t(OUT_HLTH_STUN) == false)
+			{
+				//Log(LOG_INFO) << ". . melee attacker spotted id-" << unit->getId();
+				unit->setExposed(); // defender has been spotted on Player turn.
+				break;
+			}
+		}
+
+		unit->getRfSpotters()->clear();
+	}
+}
+
+/**
  * Shows the infoboxes in the queue if any.
  */
 void BattlescapeGame::showInfoBoxQueue() // private.
@@ -2097,7 +2107,7 @@ void BattlescapeGame::showInfoBoxQueue() // private.
  */
 bool BattlescapeGame::checkReservedTu(
 		BattleUnit* const unit,
-		int tu)
+		int tu) const
 {
 	if (unit->getFaction() != _battleSave->getSide()	// is RF.
 		|| _battleSave->getSide() == FACTION_NEUTRAL)	// or Civies

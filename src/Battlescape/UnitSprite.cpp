@@ -431,7 +431,7 @@ void UnitSprite::drawRoutine0()
 		{
 			rightArm->setY(torsoHandsWeaponY);
 			itRT->setY(itRT->getY() + torsoHandsWeaponY);
-			if (_itRT->getRules()->isTwoHanded()
+			if (_itRT->getRules()->isTwoHanded() == true
 				|| _itRT->getRules()->getBattleType() == BT_MELEE)
 			{
 				leftArm->setY(torsoHandsWeaponY);

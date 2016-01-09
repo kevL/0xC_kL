@@ -426,7 +426,7 @@ private:
 		/// Checks if the mouse is over the icons.
 		bool getMouseOverIcons() const;
 
-		/// Is the player allowed to press buttons?
+		/// Checks if the player is allowed to press buttons.
 		bool allowButtons(bool allowSaving = false) const;
 
 		/// Updates the resolution settings, the window was just resized.

@@ -254,10 +254,13 @@ private:
 				bool hiddenExpl = false,
 				bool terrainExpl = false,
 				bool execution = false);
+		/// Checks if a BattleUnit gets exposed after making a melee-attack.
+		void checkExposedByMelee(BattleUnit* const unit) const;
+
 		/// Checks reserved tu.
 		bool checkReservedTu(
 				BattleUnit* const unit,
-				int tu);
+				int tu) const;
 
 		/// Cancels the current action.
 		bool cancelCurrentAction(bool force = false);

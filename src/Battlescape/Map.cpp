@@ -1226,7 +1226,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 								}
 
 								// kL_begin #3 of 3:
-								if (_unit->getFaction() == FACTION_PLAYER)
+								if (_unit->getFaction() == FACTION_PLAYER
+									&& _unit->isMindControlled() == false)
 								{
 									const Tile* const tileAbove (_battleSave->getTile(posField + Position(0,0,1)));
 									if ((viewLevel == itZ
@@ -1244,8 +1245,15 @@ void Map::drawTerrain(Surface* const surface) // private.
 										}
 
 										// Draw Exposed mark
-										if (_unit->getOriginalFaction() == FACTION_PLAYER
-											&& (_unit->getArmor()->getSize() == 1 || quadrant == 1))
+										if ((_unit->getArmor()->getSize() == 1 || quadrant == 1)
+//											&& _projectileInFOV == false && _explosionInFOV == false)
+//											&& _battleSave->getBattleState()->allowButtons() == true
+											&& _battleSave->getBattleGame()->getCurrentAction()->type == BA_NONE)
+											// well that's quirky. The exposed value of actor gets drawn on the
+											// defender (at least when within one tile) for a brief flash, even
+											// before projectile and explosion is taken into account. If projectile
+											// and explosion are taken into consideration, the flash lasts several
+											// engine-ticks. But currentAction=NONE makes it all go away ofc.
 										{
 											const int exposure = _unit->getExposed();
 											if (exposure != -1)

@@ -453,9 +453,9 @@ void ExplosionBState::explode() // private.
 
 		if (_hitSuccess == false) // MISS.
 		{
+			_parent->checkExposedByMelee(_unit); // determine whether playerFaction-attacker gets exposed.
 			_parent->getMap()->cacheUnits();
 			_parent->popState();
-
 			return;
 		}
 	}

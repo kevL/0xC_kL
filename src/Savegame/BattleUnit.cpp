@@ -4761,6 +4761,15 @@ void BattleUnit::hostileMcValues(
 }
 
 /**
+ * Gets if the BattleUnit is mind-controlled.
+ * @return, true if Mc'd
+ */
+bool BattleUnit::isMindControlled() const
+{
+	return (_faction != _originalFaction);
+}
+
+/**
  * Gets if this unit is a Zombie.
  * @return, true if zombie
  */

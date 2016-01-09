@@ -394,7 +394,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 
 	const bool swapXY = (dir == 0 || dir == 4);
 
-	const int
+	static const int
 		sign_x[8] = { 1, 1, 1, 1,-1,-1,-1,-1},
 		sign_y[8] = {-1,-1, 1, 1, 1, 1,-1,-1};
 
@@ -462,12 +462,12 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 
 				if (x * x + y * y <= MAX_VIEW_DISTANCE_SQR)
 				{
-					const int
-						deltaPos_x = (sign_x[static_cast<size_t>(dir)] * (swapXY ? y : x)),
-						deltaPos_y = (sign_y[static_cast<size_t>(dir)] * (swapXY ? x : y));
+//					const int
+//						deltaPos_x = (sign_x[dir] * (swapXY ? y : x)),
+//						deltaPos_y = (sign_y[dir] * (swapXY ? x : y));
 
-					posTest.x = posUnit.x + deltaPos_x;
-					posTest.y = posUnit.y + deltaPos_y;
+					posTest.x = posUnit.x + (sign_x[dir] * (swapXY ? y : x)); //deltaPos_x;
+					posTest.y = posUnit.y + (sign_y[dir] * (swapXY ? x : y)); //deltaPos_y;
 
 					if (_battleSave->getTile(posTest) != nullptr)
 					{
@@ -477,11 +477,11 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 							|| _battleSave->getBattleGame()->getPanicHandled() == true) // spot units ->>
 						{
 							spottedUnit = _battleSave->getTile(posTest)->getTileUnit();
-/*							if (spottedUnit != nullptr)
-								Log(LOG_INFO) << "CalcFoV for " << unit->getId()
-											  << " - unit on Tile id-" << spottedUnit->getId()
-											  << " " << spottedUnit->getPosition()
-											  << " vis = " << visible(unit, _battleSave->getTile(posTest)); */
+//							if (spottedUnit != nullptr)
+//								Log(LOG_INFO) << "CalcFoV for " << unit->getId()
+//											  << " - unit on Tile id-" << spottedUnit->getId()
+//											  << " " << spottedUnit->getPosition()
+//											  << " vis = " << visible(unit, _battleSave->getTile(posTest));
 
 							if (spottedUnit != nullptr
 								&& spottedUnit->isOut_t(OUT_STAT) == false
@@ -1572,7 +1572,7 @@ bool TileEngine::checkReactionFire(
 	//Log(LOG_INFO) << ". tuSpent = " << tuSpent;
 	if (_battleSave->getSide() == FACTION_NEUTRAL						// no reaction on civilian turn.
 		|| triggerUnit->getFaction() != _battleSave->getSide()			// spotted unit must be current side's faction
-		|| triggerUnit->getTile() == nullptr								// and must be on map
+		|| triggerUnit->getTile() == nullptr							// and must be on map
 		|| triggerUnit->isOut_t(OUT_HLTH_STUN) == true)					// and must be conscious
 //		|| _battleSave->getBattleGame()->getPanicHandled() == false)	// and ... nahhh. Note that doesn't affect aLien RF anyway.
 	{
@@ -1668,7 +1668,6 @@ std::vector<BattleUnit*> TileEngine::getSpottingUnits(const BattleUnit* const un
 			&& (*i)->getFaction() != FACTION_NEUTRAL
 			&& (*i)->getTimeUnits() != 0
 			&& (*i)->isOut_t() == false)
-//			&& (*i)->isOut(true, true) == false)
 //			&& (*i)->getSpawnUnit().empty() == true)
 		{
 			if ((((*i)->getFaction() == FACTION_HOSTILE							// Mc'd xCom units will RF on loyal xCom units
@@ -1748,10 +1747,16 @@ BattleUnit* TileEngine::getReactor(
 	{
 		//Log(LOG_INFO) << "getReactor() id-" << nextReactor->getId() << " spots id-" << defender->getId();
 		if (autoSpot == true)
+		{
+			//Log(LOG_INFO) << ". after a trajectory-shot";
 			defender->setExposed();								// defender has been spotted on Player turn.
+		}
 		else
+		{
+			//Log(LOG_INFO) << ". after a melee-attack, wait for checkCasualties";
 			defender->getRfSpotters()->push_back(nextReactor);	// let BG::checkForCasualties() figure it out
-	}															// this is so that if an aLien in the spotters-vector gets put down by the trigger-shot it won't tell its buds.
+		}														// this is so that if an aLien in the spotters-vector gets put down by the trigger-shot it won't tell its buds.
+	}
 
 	//Log(LOG_INFO) << ". init = " << init;
 	return nextReactor;

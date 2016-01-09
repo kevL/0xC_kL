@@ -294,7 +294,7 @@ private:
 
 		/// Sets whether the screen should "flash" or not.
 		void setBlastFlash(bool flash);
-		/// Check if the screen is flashing this.
+		/// Checks if the screen is flashing this.
 		bool getBlastFlash() const;
 
 		/// Sets whether to draw or not.

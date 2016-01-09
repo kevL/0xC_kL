@@ -872,6 +872,8 @@ private:
 		void hostileMcValues(
 				int& strength,
 				int& skill);
+		/// Gets if the BattleUnit is mind-controlled.
+		bool isMindControlled() const;
 
 		/// Gets if this unit is a Zombie.
 		bool isZombie() const;

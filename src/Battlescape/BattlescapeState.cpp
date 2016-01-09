@@ -3550,7 +3550,7 @@ bool BattlescapeState::getMouseOverIcons() const
  * and while a player's units are panicking. The save button is an exception to
  * still be able to save if something goes wrong during the alien turn and
  * submit the save file for dissection.
- * @param allowSaving - true if the help button was clicked
+ * @param allowSaving - true if the help button was clicked (default false)
  * @return, true if the player can still press buttons
  */
 bool BattlescapeState::allowButtons(bool allowSaving) const
@@ -3561,7 +3561,8 @@ bool BattlescapeState::allowButtons(bool allowSaving) const
 					|| _battleSave->getDebugMode() == true)
 				&& (_battleGame->getPanicHandled() == true
 					|| _firstInit == true)
-				&& _map->getProjectile() == nullptr);
+				&& _map->getProjectile() == nullptr
+				&& _map->getExplosions()->empty() == true);
 }
 
 /**
