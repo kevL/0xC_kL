@@ -489,6 +489,7 @@ items:
     damageType: 1 #AP
     clipSize: 1
     battleType: 2
+    twoHanded: true
     invWidth: 1
     invHeight: 3
 #------------------------------------------------------------------------------
@@ -667,6 +668,8 @@ items:
     invWidth: 2
     invHeight: 3
     armor: 30
+    battleType: 11
+    twoHanded: true
     recover: false
 #------------------------------------------------------------------------------
 #  - type: STR_STREET_JUNGLE
@@ -683,6 +686,8 @@ items:
     invWidth: 2
     invHeight: 3
     armor: 30
+    battleType: 11
+    twoHanded: true
     recover: false
 #------------------------------------------------------------------------------
 #  - type: STR_STREET_URBAN
@@ -699,6 +704,8 @@ items:
     invWidth: 2
     invHeight: 3
     armor: 30
+    battleType: 11
+    twoHanded: true
     recover: false
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------

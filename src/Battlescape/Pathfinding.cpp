@@ -396,10 +396,6 @@ bool Pathfinding::bresenhamPath( // private.
 		xd[DIRZ],
 		yd[DIRZ];
 
-//	Uint8* keystate = SDL_GetKeyState(nullptr);
-//	if (_battleSave->getSide() != FACTION_PLAYER
-//		|| _battleSave->getBattleGame()->getPanicHandled() == false
-//		|| keystate[SDLK_z] == 0)
 	if (_zPath == false)
 	{
 		//std::copy(std::begin(src), std::end(src), std::begin(dest));

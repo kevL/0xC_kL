@@ -20,7 +20,6 @@ items:
     tuMelee: 12
     battleType: 3
     clipSize: -1
-    twoHanded: false
     invWidth: 1
     invHeight: 2
     armor: 12

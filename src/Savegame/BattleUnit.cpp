@@ -2153,13 +2153,15 @@ std::vector<BattleUnit*>& BattleUnit::getHostileUnitsThisTurn()
 	return _hostileUnitsThisTurn;
 }
 
-/// Clears hostile units spotted during the current turn.
-/*void BattleUnit::clearHostileUnitsThisTurn()
+/**
+ * Clears hostile units spotted during the current turn.
+ *
+void BattleUnit::clearHostileUnitsThisTurn()
 {
 	_hostileUnitsThisTurn.clear();
 } */
 
-/*
+/**
  * Adds a tile to the list of visible tiles.
  * @param tile - pointer to a tile to add
  * @return, true or CTD
@@ -2171,7 +2173,7 @@ bool BattleUnit::addToVisibleTiles(Tile* const tile)
 	return true;
 } */
 
-/*
+/**
  * Gets the pointer to the vector of visible tiles.
  * @return, pointer to a vector of pointers to visible tiles
  *
@@ -2180,7 +2182,7 @@ std::vector<Tile*>* BattleUnit::getVisibleTiles()
 	return &_visibleTiles;
 } */
 
-/*
+/**
  * Clears visible tiles.
  *
 void BattleUnit::clearVisibleTiles()
@@ -2197,7 +2199,7 @@ void BattleUnit::clearVisibleTiles()
 } */
 
 /**
- * Calculates firing or throwing accuracy.
+ * Calculates firing and/or throwing accuracy.
  * @param action	- reference the current BattleAction (BattlescapeGame.h)
  * @param bat		- BattleActionType (default BA_NONE) (BattlescapeGame.h)
  * @return, accuracy
@@ -2208,6 +2210,8 @@ double BattleUnit::getAccuracy(
 {
 	static const double PCT = 0.01;
 	double ret;
+
+	const RuleItem* const itRule = action.weapon->getRules();
 
 	BattleActionType baType;
 	if (bat == BA_NONE)
@@ -2221,9 +2225,9 @@ double BattleUnit::getAccuracy(
 		return 1.;
 
 		case BA_HIT:
-			ret = static_cast<double>(action.weapon->getRules()->getAccuracyMelee()) * PCT;
+			ret = static_cast<double>(itRule->getAccuracyMelee()) * PCT;
 
-			if (action.weapon->getRules()->isSkillApplied() == true)
+			if (itRule->isSkillApplied() == true)
 				ret *= static_cast<double>(_stats.melee) * PCT;
 		break;
 
@@ -2237,15 +2241,14 @@ double BattleUnit::getAccuracy(
 			switch (baType)
 			{
 				case BA_AIMEDSHOT:
-					ret = static_cast<double>(action.weapon->getRules()->getAccuracyAimed()) * PCT;
-				break;
-
+					ret = static_cast<double>(itRule->getAccuracyAimed()) * PCT;
+					break;
 				case BA_AUTOSHOT:
-					ret = static_cast<double>(action.weapon->getRules()->getAccuracyAuto()) * PCT;
-				break;
+					ret = static_cast<double>(itRule->getAccuracyAuto()) * PCT;
+					break;
 
 				default:
-					ret = static_cast<double>(action.weapon->getRules()->getAccuracySnap()) * PCT;
+					ret = static_cast<double>(itRule->getAccuracySnap()) * PCT;
 			}
 
 			ret *= static_cast<double>(_stats.firing) * PCT;
@@ -2255,12 +2258,44 @@ double BattleUnit::getAccuracy(
 
 	ret *= getAccuracyModifier(action.weapon);
 
-	if (action.weapon->getRules()->isTwoHanded() == true
-		&& getItem(ST_RIGHTHAND) != nullptr
-		&& getItem(ST_LEFTHAND) != nullptr)
+//	if (itRule->isTwoHanded() == true
+//		&& getItem(ST_RIGHTHAND) != nullptr
+//		&& getItem(ST_LEFTHAND) != nullptr)
+//	{
+//		ret *= 0.79;
+//	}
+	if (action.weapon == getItem(ST_RIGHTHAND))
 	{
-		ret *= 0.79;
+		const BattleItem* const itLeft (getItem(ST_LEFTHAND));
+		if (itLeft != nullptr)
+		{
+			if (action.weapon->getRules()->isTwoHanded() == true)
+			{
+				if (itLeft->getRules()->isTwoHanded() == true)
+					ret *= 0.51;	// big penalty for dual-wielding 2x2h weapons
+				else
+					ret *= 0.79;	// penalty for dual-wielding 2h w/ 1h offhand
+			}
+			else if (itLeft->getRules()->isTwoHanded() == true)
+				ret *= 0.93;		// modest penalty for dual-wielding 1h w/ 2h offhand
+		}
 	}
+	else if (action.weapon == getItem(ST_LEFTHAND))
+	{
+		const BattleItem* const itRight (getItem(ST_RIGHTHAND));
+		if (itRight != nullptr)
+		{
+			if (action.weapon->getRules()->isTwoHanded() == true)
+			{
+				if (itRight->getRules()->isTwoHanded() == true)
+					ret *= 0.51;	// big penalty for dual-wielding 2x2h weapons
+				else
+					ret *= 0.79;	// penalty for dual-wielding 2h w/ 1h offhand
+			}
+			else if (itRight->getRules()->isTwoHanded() == true)
+				ret *= 0.93;		// modest penalty for dual-wielding 1h w/ 2h offhand
+		}
+	} // no penalty for dual-wielding 2x1h weapons
 
 	if (_battleGame->getPanicHandled() == false) // berserk xCom agents get lowered accuracy.
 		ret *= 0.68;

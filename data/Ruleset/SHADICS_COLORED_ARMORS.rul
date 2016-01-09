@@ -8,6 +8,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 30
     recover: false
   - type: STR_BLACKSUIT_ARMOR
@@ -23,6 +24,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
   - type: STR_BLUESUIT_ARMOR
@@ -38,6 +40,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
   - type: STR_GREENSUIT_ARMOR
@@ -53,6 +56,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
   - type: STR_ORANGESUIT_ARMOR
@@ -68,6 +72,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
   - type: STR_PINKSUIT_ARMOR
@@ -83,6 +88,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
   - type: STR_PURPLESUIT_ARMOR
@@ -98,6 +104,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
   - type: STR_REDSUIT_ARMOR
@@ -113,6 +120,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
   - type: STR_BLACK_ARMOR
@@ -128,6 +136,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
   - type: STR_BLUE_ARMOR
@@ -143,6 +152,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
   - type: STR_GREEN_ARMOR
@@ -158,6 +168,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
   - type: STR_ORANGE_ARMOR
@@ -173,6 +184,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
   - type: STR_PINK_ARMOR
@@ -188,6 +200,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
   - type: STR_PURPLE_ARMOR
@@ -203,6 +216,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
   - type: STR_RED_ARMOR
@@ -218,6 +232,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
 armors:

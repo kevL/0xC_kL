@@ -10,6 +10,7 @@ items:
     invHeight: 3
     recoveryPoints: 5
     battleType: 11
+    twoHanded: true
     armor: 26
     listOrder: 7901
   - type: STR_CYBERMITE_CORPSE
@@ -23,6 +24,7 @@ items:
     invHeight: 2
     recoveryPoints: 5
     battleType: 11
+    twoHanded: true
     armor: 26
     blastRadius: 3
     listOrder: 7902

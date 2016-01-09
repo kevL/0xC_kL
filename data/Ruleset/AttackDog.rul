@@ -26,6 +26,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     recover: false
     armor: 35
 units:

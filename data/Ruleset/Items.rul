@@ -461,6 +461,7 @@ items:
 #    explosionSpeed:
     clipSize: 1
     battleType: 2
+    twoHanded: true
     invWidth: 1
     invHeight: 3
   - type: STR_LARGE_ROCKET
@@ -476,6 +477,7 @@ items:
 #    explosionSpeed:
     clipSize: 1
     battleType: 2
+    twoHanded: true
     invWidth: 1
     invHeight: 3
   - type: STR_INCENDIARY_ROCKET
@@ -492,6 +494,7 @@ items:
 #    explosionSpeed:
     clipSize: 1
     battleType: 2
+    twoHanded: true
     invWidth: 1
     invHeight: 3
   - type: STR_LASER_PISTOL
@@ -703,6 +706,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     recover: false
   - type: STR_CORPSE_ARMOR
     name: STR_CORPSE
@@ -712,6 +716,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 30
     recover: false
   - type: STR_CORPSE_SUIT
@@ -722,6 +727,7 @@ items:
     invWidth: 2
     invHeight: 3
     battleType: 11
+    twoHanded: true
     armor: 40
     recover: false
   - type: STR_HEAVY_PLASMA
@@ -1052,6 +1058,7 @@ items:
     invHeight: 3
     recoveryPoints: 5
     battleType: 11
+    twoHanded: true
     armor: 26
   - type: STR_SNAKEMAN_CORPSE
     size: 0.4
@@ -1063,6 +1070,7 @@ items:
     invHeight: 3
     recoveryPoints: 5
     battleType: 11
+    twoHanded: true
     armor: 26
   - type: STR_ETHEREAL_CORPSE
     size: 0.5
@@ -1074,6 +1082,7 @@ items:
     invHeight: 3
     recoveryPoints: 5
     battleType: 11
+    twoHanded: true
     armor: 26
   - type: STR_MUTON_CORPSE
     size: 0.5
@@ -1085,6 +1094,7 @@ items:
     invHeight: 3
     recoveryPoints: 5
     battleType: 11
+    twoHanded: true
     armor: 26
   - type: STR_FLOATER_CORPSE
     size: 0.5
@@ -1096,6 +1106,7 @@ items:
     invHeight: 3
     recoveryPoints: 5
     battleType: 11
+    twoHanded: true
     armor: 26
   - type: STR_CELATID_CORPSE
     size: 0.5
@@ -1107,6 +1118,7 @@ items:
     invHeight: 3
     recoveryPoints: 3
     battleType: 11
+    twoHanded: true
     armor: 26
   - type: STR_SILACOID_CORPSE
     size: 0.5
@@ -1118,6 +1130,7 @@ items:
     invHeight: 3
     recoveryPoints: 3
     battleType: 11
+    twoHanded: true
     armor: 26
   - type: STR_CHRYSSALID_CORPSE
     size: 0.5
@@ -1129,6 +1142,7 @@ items:
     invHeight: 3
     recoveryPoints: 3
     battleType: 11
+    twoHanded: true
     armor: 26
   - type: STR_ZOMBIE_CORPSE #kL_add!
     size: 0.5
@@ -1136,6 +1150,7 @@ items:
     weight: 40
     bigSprite: -1 #uh, that might be a terrorist weapon; but it's about to get blown up anyway.
     battleType: 11
+    twoHanded: true
     armor: 1 #blow this up easy.
     power: 54 #for Zombie explosions
     blastRadius: 0 #for Zombie explosions
@@ -1287,6 +1302,7 @@ items:
     armor: 12
     recover: false
     battleType: 11 #kL
+    twoHanded: true
   - type: CIVF_CORPSE
     name: STR_CORPSE
     weight: 28
@@ -1297,6 +1313,7 @@ items:
     armor: 12
     recover: false
     battleType: 11 #kL
+    twoHanded: true
   - type: CYBERDISC_WEAPON
     weight: 3
     bigSprite: -2

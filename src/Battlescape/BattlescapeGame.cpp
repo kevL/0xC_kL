@@ -2811,8 +2811,8 @@ void BattlescapeGame::primaryAction(const Position& pos)
 						_currentAction.actor->setTurnDirection(1);
 
 					Pathfinding::directionToVector(
-												(_currentAction.actor->getUnitDirection() + 4) % 8,
-												&_currentAction.target);
+											(_currentAction.actor->getUnitDirection() + 4) % 8,
+											&_currentAction.target);
 					_currentAction.target += pos;
 
 					statePushBack(new UnitTurnBState(this, _currentAction));

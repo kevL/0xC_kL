@@ -40,6 +40,7 @@ items:
     bigSprite: 64
     floorSprite: 77
     battleType: 11
+    twoHanded: true
     armor: 28
     invWidth: 2
     invHeight: 3
