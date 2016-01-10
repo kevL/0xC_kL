@@ -935,6 +935,9 @@ BattlescapeState::BattlescapeState()
 	_numTUAuto->setColor(GRAY);
 	_numTUSnap->setColor(GRAY);
 
+	_numTwohandR->setValue(2u);
+	_numTwohandL->setValue(2u);
+
 /*	_btnReserveNone->setGroup(&_reserve);
 	_btnReserveSnap->setGroup(&_reserve);
 	_btnReserveAimed->setGroup(&_reserve);
@@ -2842,10 +2845,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 			if (itRule->isFixed() == false)
 			{
 				if (itRule->isTwoHanded() == true)
-				{
-					_numTwohandR->setValue(2u);
 					_numTwohandR->setVisible();
-				}
 /*				_numTwohandR->setVisible();
 				if (itRule->isTwoHanded() == true)
 					_numTwohandR->setValue(2u);
@@ -2901,10 +2901,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 			if (itRule->isFixed() == false)
 			{
 				if (itRule->isTwoHanded() == true)
-				{
-					_numTwohandL->setValue(2u);
 					_numTwohandL->setVisible();
-				}
 /*				_numTwohandL->setVisible();
 				if (itRule->isTwoHanded() == true)
 					_numTwohandL->setValue(2u);
