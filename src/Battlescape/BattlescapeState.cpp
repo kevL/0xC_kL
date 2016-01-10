@@ -2841,11 +2841,16 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 			if (itRule->isFixed() == false)
 			{
-				_numTwohandR->setVisible();
+				if (itRule->isTwoHanded() == true)
+				{
+					_numTwohandR->setValue(2u);
+					_numTwohandR->setVisible();
+				}
+/*				_numTwohandR->setVisible();
 				if (itRule->isTwoHanded() == true)
 					_numTwohandR->setValue(2u);
 				else
-					_numTwohandR->setValue(1u);
+					_numTwohandR->setValue(1u); */
 			}
 
 			switch (itRule->getBattleType())
@@ -2895,11 +2900,16 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 			if (itRule->isFixed() == false)
 			{
-				_numTwohandL->setVisible();
+				if (itRule->isTwoHanded() == true)
+				{
+					_numTwohandL->setValue(2u);
+					_numTwohandL->setVisible();
+				}
+/*				_numTwohandL->setVisible();
 				if (itRule->isTwoHanded() == true)
 					_numTwohandL->setValue(2u);
 				else
-					_numTwohandL->setValue(1u);
+					_numTwohandL->setValue(1u); */
 			}
 
 			switch (itRule->getBattleType())

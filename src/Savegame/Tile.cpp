@@ -320,7 +320,7 @@ bool Tile::isVoid(
 }
 
 /**
- * Gets the TU cost to move over a certain part of the tile.
+ * Gets the TU cost to move over a partType of this Tile.
  * @param partType - the part type (MapData.h)
  * @param moveType - the movement type (MapData.h)
  * @return, TU cost
@@ -339,7 +339,7 @@ int Tile::getTuCostTile(
 	} */
 	if (_objects[partType] != nullptr
 		&& (_objects[partType]->isUfoDoor() == false
-			|| _curFrame[partType] < 1)) // was <2
+			|| _curFrame[partType] < 2))
 	{
 		switch (partType)
 		{
@@ -463,7 +463,7 @@ int Tile::getFootstepSound(const Tile* const tileBelow) const
 // * @param reserved	- BattleActionType (BattlescapeGame.h) (default BA_NONE)
  * @return, DoorResult (Tile.h)
  *			-1 no door opened
- *			 0 normal door
+ *			 0 wood door
  *			 1 ufo door
  *			 2 ufo door is still opening (animation playing)
  *			 3 not enough TUs

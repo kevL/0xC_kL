@@ -4303,11 +4303,11 @@ Tile* TileEngine::checkForTerrainExplosions() const
  * @param dir		- direction to check for a door (default -1)
  * @return, DoorResult (Tile.h)
  *			-1 there is no door or you're a tank and can't do sweet shit except blast the fuck out of it
- *			 0 normal door opened so make a squeaky sound and walk through
+ *			 0 wood door opened so make a squeaky sound and walk through
  *			 1 ufo door is starting to open so make a whoosh sound but don't walk through yet
- *			 2 ufo door is still opening so don't walk through it yet (have patience futuristic technology)
- *			 3 not enough TUs
- *			 4 would contravene fire reserve
+ *			 2 ufo door is still opening so don't walk through yet (have patience futuristic technology)
+ *			 3 not enough TU
+ *			 4 would contravene reserve TU
  */
 DoorResult TileEngine::unitOpensDoor(
 		BattleUnit* const unit,
@@ -4357,68 +4357,68 @@ DoorResult TileEngine::unitOpensDoor(
 		{
 			pos = unit->getPosition() + Position(x,y,z);
 			tile = _battleSave->getTile(pos);
-			//Log(LOG_INFO) << ". iter unitSize " << pos;
+			////Log(LOG_INFO) << ". iter unitSize " << pos;
 
 			if (tile != nullptr)
 			{
-				std::vector<std::pair<Position, MapDataType>> checkPair;
+				std::vector<std::pair<Position, MapDataType>> wallCheck;
 				switch (dir)
 				{
 					case 0: // north
-							checkPair.push_back(std::make_pair(Position(0, 0, 0), O_NORTHWALL));	// origin
+							wallCheck.push_back(std::make_pair(Position(0, 0, 0), O_NORTHWALL));	// origin
 						if (x != 0)
-							checkPair.push_back(std::make_pair(Position(0,-1, 0), O_WESTWALL));		// one tile north
+							wallCheck.push_back(std::make_pair(Position(0,-1, 0), O_WESTWALL));		// one tile north
 					break;
 
 					case 1: // north east
-							checkPair.push_back(std::make_pair(Position(0, 0, 0), O_NORTHWALL));	// origin
-							checkPair.push_back(std::make_pair(Position(1,-1, 0), O_WESTWALL));		// one tile north-east
+							wallCheck.push_back(std::make_pair(Position(0, 0, 0), O_NORTHWALL));	// origin
+							wallCheck.push_back(std::make_pair(Position(1,-1, 0), O_WESTWALL));		// one tile north-east
 					break;
 
 					case 2: // east
-							checkPair.push_back(std::make_pair(Position(1, 0, 0), O_WESTWALL));		// one tile east
+							wallCheck.push_back(std::make_pair(Position(1, 0, 0), O_WESTWALL));		// one tile east
 					break;
 
 					case 3: // south-east
 						if (y == 0)
-							checkPair.push_back(std::make_pair(Position(1, 1, 0), O_WESTWALL));		// one tile south-east
+							wallCheck.push_back(std::make_pair(Position(1, 1, 0), O_WESTWALL));		// one tile south-east
 						if (x == 0)
-							checkPair.push_back(std::make_pair(Position(1, 1, 0), O_NORTHWALL));	// one tile south-east
+							wallCheck.push_back(std::make_pair(Position(1, 1, 0), O_NORTHWALL));	// one tile south-east
 					break;
 
 					case 4: // south
-							checkPair.push_back(std::make_pair(Position(0, 1, 0), O_NORTHWALL));	// one tile south
+							wallCheck.push_back(std::make_pair(Position(0, 1, 0), O_NORTHWALL));	// one tile south
 					break;
 
 					case 5: // south-west
-							checkPair.push_back(std::make_pair(Position( 0, 0, 0), O_WESTWALL));	// origin
-							checkPair.push_back(std::make_pair(Position(-1, 1, 0), O_NORTHWALL));	// one tile south-west
+							wallCheck.push_back(std::make_pair(Position( 0, 0, 0), O_WESTWALL));	// origin
+							wallCheck.push_back(std::make_pair(Position(-1, 1, 0), O_NORTHWALL));	// one tile south-west
 					break;
 
 					case 6: // west
-							checkPair.push_back(std::make_pair(Position( 0, 0, 0), O_WESTWALL));	// origin
+							wallCheck.push_back(std::make_pair(Position( 0, 0, 0), O_WESTWALL));	// origin
 						if (y != 0)
-							checkPair.push_back(std::make_pair(Position(-1, 0, 0), O_NORTHWALL));	// one tile west
+							wallCheck.push_back(std::make_pair(Position(-1, 0, 0), O_NORTHWALL));	// one tile west
 					break;
 
 					case 7: // north-west
-							checkPair.push_back(std::make_pair(Position( 0, 0, 0), O_WESTWALL));	// origin
-							checkPair.push_back(std::make_pair(Position( 0, 0, 0), O_NORTHWALL));	// origin
+							wallCheck.push_back(std::make_pair(Position( 0, 0, 0), O_WESTWALL));	// origin
+							wallCheck.push_back(std::make_pair(Position( 0, 0, 0), O_NORTHWALL));	// origin
 						if (x != 0)
-							checkPair.push_back(std::make_pair(Position(-1,-1, 0), O_WESTWALL));	// one tile north
+							wallCheck.push_back(std::make_pair(Position(-1,-1, 0), O_WESTWALL));	// one tile north
 						if (y != 0)
-							checkPair.push_back(std::make_pair(Position(-1,-1, 0), O_NORTHWALL));	// one tile north
+							wallCheck.push_back(std::make_pair(Position(-1,-1, 0), O_NORTHWALL));	// one tile north
 				}
 
 				partType = O_FLOOR; // just a reset for 'partType'.
 
 				for (std::vector<std::pair<Position, MapDataType>>::const_iterator
-						i = checkPair.begin();
-						i != checkPair.end();
+						i = wallCheck.begin();
+						i != wallCheck.end();
 						++i)
 				{
 					tileDoor = _battleSave->getTile(posDoor = pos + i->first);
-					//Log(LOG_INFO) << ". . iter checkPair " << posDoor << " partType = " << i->second;
+					//Log(LOG_INFO) << ". . iter wallCheck " << posDoor << " partType = " << i->second;
 					if (tileDoor != nullptr)
 					{
 						partType = i->second;

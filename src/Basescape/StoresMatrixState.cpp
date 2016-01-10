@@ -139,9 +139,9 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 	const SavedGame* const gameSave = _game->getSavedGame();
 	std::wstring wst;
 	int
-		qty[MTX_BASES] = {0,0,0,0,0,0,0,0},
-		qtyScientist[MTX_BASES] = {0,0,0,0,0,0,0,0},
-		qtyEngineer[MTX_BASES] = {0,0,0,0,0,0,0,0},
+		qty[MTX_BASES]			= {0,0,0,0,0,0,0,0},
+		qtyScientist[MTX_BASES]	= {0,0,0,0,0,0,0,0},
+		qtyEngineer[MTX_BASES]	= {0,0,0,0,0,0,0,0},
 		freeSpace;
 
 	for (size_t
@@ -152,9 +152,9 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 		base = gameSave->getBases()->at(i);
 		if (base != nullptr) // safety.
 		{
-			qty[i] = base->getTotalSoldiers();
-			qtyScientist[i] = base->getTotalScientists();
-			qtyEngineer[i] = base->getTotalEngineers();
+			qty[i]			= base->getTotalSoldiers();
+			qtyScientist[i]	= base->getTotalScientists();
+			qtyEngineer[i]	= base->getTotalEngineers();
 
 			wst = base->getName(nullptr).substr(0,4);
 			freeSpace = static_cast<int>(static_cast<double>(base->getTotalStores()) - base->getUsedStores() + 0.5);

@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_EQUIPMENTLAYOUTITEM_H
-#define OPENXCOM_EQUIPMENTLAYOUTITEM_H
+#ifndef OPENXCOM_SOLDIERLAYOUT_H
+#define OPENXCOM_SOLDIERLAYOUT_H
 
 //#include <string>
 
