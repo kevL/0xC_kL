@@ -498,7 +498,7 @@ bool ProjectileFlyBState::createNewProjectile() // private.
 			soundId = ResourcePack::ITEM_THROW;
 
 			if (_unit->getGeoscapeSoldier() != nullptr
-				&& _unit->getFaction() == _unit->getOriginalFaction()
+				&& _unit->isMindControlled() == false
 				&& _parent->getPanicHandled() == true)
 			{
 				_unit->addThrowingExp();

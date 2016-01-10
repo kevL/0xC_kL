@@ -241,14 +241,14 @@ void MiniMapView::draw()
 							colorGroup = 4; // pale green
 							colorOffset = 0;
 						}
-						else if (unit->getFaction() == FACTION_PLAYER // Mc'd aLien
-							&& unit->getOriginalFaction() == FACTION_HOSTILE)
+						else if (unit->getFaction() == FACTION_PLAYER // Mc'd aLien or civie
+							&& unit->isMindControlled() == true)
 						{
 							colorGroup = 11; // brown
 							colorOffset = 1;
 						}
 						else if (unit->getFaction() == FACTION_HOSTILE // Mc'd xCom
-							&& unit->getOriginalFaction() == FACTION_PLAYER)
+							&& unit->isMindControlled() == true)
 						{
 							colorGroup = 8; // steel blue
 							colorOffset = 0;

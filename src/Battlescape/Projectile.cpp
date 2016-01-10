@@ -644,31 +644,31 @@ double Projectile::targetAccuracy( // private.
 		int elevation,
 		const Tile* tileTarget) const
 {
-	int retAccu = 0;
+	int ret = 0;
 
 	if (targetUnit != nullptr)
 	{
 		if (targetUnit->isKneeled() == true)
-			retAccu -= 7;
+			ret -= 7;
 
 		if (targetUnit->isDashing() == true)
-			retAccu -= 16;
+			ret -= 16;
 
 		if (tileTarget == nullptr) tileTarget = targetUnit->getTile();
 	}
 
 	if (tileTarget != nullptr)
 	{
-		retAccu -= tileTarget->getSmoke(); // TODO: add Smoke-values for tiles enroute [per TE::visible()].
-		retAccu -= tileTarget->getShade();
+		ret -= tileTarget->getSmoke(); // TODO: add Smoke-values for tiles enroute [per TE::visible()].
+		ret -= tileTarget->getShade();
 	}
 
-	if (_action.actor->getFaction() == _action.actor->getOriginalFaction()) // shooter not MC'd
-		retAccu -= 10 - ((_action.actor->getMorale() + 9) / 10);
+	if (_action.actor->isMindControlled() == false)
+		ret -= 10 - ((_action.actor->getMorale() + 9) / 10); // low morale decreases accuracy unless Mc'd
 
-	retAccu -= elevation / 6; // +/-1 per 6 delta.
+	ret -= elevation / 6; // +/-1 per 6 delta. // bonus for elevation advantage, penalty for disadvantage.
 
-	return static_cast<double>(retAccu) * PCT;
+	return static_cast<double>(ret) * PCT;
 }
 
 /**

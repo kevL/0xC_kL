@@ -2366,7 +2366,7 @@ bool AlienBAIState::psiAction() // private.
 {
 	//Log(LOG_INFO) << "AlienBAIState::psiAction() ID = " << _unit->getId();
 	if (_didPsi == false									// didn't already do a psi action this round
-		&& _unit->getBattleStats()->psiSkill != 0				// has psiSkill
+		&& _unit->getBattleStats()->psiSkill != 0			// has psiSkill
 		&& _unit->getOriginalFaction() == FACTION_HOSTILE)	// don't let any faction but HOSTILE mind-control others.
 	{
 		const RuleItem* const itRule = _battleSave->getBattleGame()->getRuleset()->getItem("ALIEN_PSI_WEAPON");

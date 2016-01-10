@@ -1296,78 +1296,80 @@ bool BattlescapeGame::playableUnitSelected()
 bool BattlescapeGame::kneel(BattleUnit* const unit)
 {
 	//Log(LOG_INFO) << "BattlescapeGame::kneel()";
-	if (unit->getGeoscapeSoldier() != nullptr
-		&& unit->getFaction() == unit->getOriginalFaction())
+	if (unit->getGeoscapeSoldier() != nullptr)
 	{
-		if (unit->isFloating() == false) // This prevents flying soldiers from 'kneeling' .....
+		if (unit->isMindControlled() == false)
 		{
-			int tu;
-			if (unit->isKneeled() == true)
-				tu = 10;
-			else
-				tu = 3;
-
-//			if (checkReservedTu(unit, tu) == true)
-//				|| (tu == 3 && _battleSave->getKneelReserved() == true))
-//			{
-			if (unit->getTimeUnits() >= tu)
+			if (unit->isFloating() == false) // This prevents flying soldiers from 'kneeling' .....
 			{
-				if (tu == 3
-					|| (tu == 10
-						&& unit->spendEnergy(std::max(0,
-												5 - unit->getArmor()->getAgility())) == true))
+				int tu;
+				if (unit->isKneeled() == true)
+					tu = 10;
+				else
+					tu = 3;
+
+//				if (checkReservedTu(unit, tu) == true)
+//					|| (tu == 3 && _battleSave->getKneelReserved() == true))
+//				{
+				if (unit->getTimeUnits() >= tu)
 				{
-					unit->spendTimeUnits(tu);
-					unit->kneel(!unit->isKneeled());
-					// kneeling or standing up can reveal new terrain or units. I guess. -> sure can!
-					// But updateSoldierInfo() also does does calculateFOV(), so ...
-//					getTileEngine()->calculateFOV(unit);
+					if (tu == 3
+						|| (tu == 10
+							&& unit->spendEnergy(std::max(0,
+													5 - unit->getArmor()->getAgility())) == true))
+					{
+						unit->spendTimeUnits(tu);
+						unit->kneel(!unit->isKneeled());
+						// kneeling or standing up can reveal new terrain or units. I guess. -> sure can!
+						// But updateSoldierInfo() also does does calculateFOV(), so ...
+//						getTileEngine()->calculateFOV(unit);
 
-					getMap()->cacheUnits();
+						getMap()->cacheUnits();
 
-//					_parentState->updateSoldierInfo(false); // <- also does calculateFOV() !
-					// wait... shouldn't one of those calcFoV's actually trigger!! ? !
-					// Hopefully it's done after returning, in another updateSoldierInfo... or newVis check.
-					// So.. I put this in BattlescapeState::btnKneelClick() instead; updates will
-					// otherwise be handled by walking or what have you. Doing it this way conforms
-					// updates/FoV checks with my newVis routines.
+//						_parentState->updateSoldierInfo(false); // <- also does calculateFOV() !
+						// wait... shouldn't one of those calcFoV's actually trigger!! ? !
+						// Hopefully it's done after returning, in another updateSoldierInfo... or newVis check.
+						// So.. I put this in BattlescapeState::btnKneelClick() instead; updates will
+						// otherwise be handled by walking or what have you. Doing it this way conforms
+						// updates/FoV checks with my newVis routines.
 
-//					getTileEngine()->checkReactionFire(unit);
-					// ditto..
+//						getTileEngine()->checkReactionFire(unit);
+						// ditto..
 
-					return true;
+						return true;
+					}
+					else
+						_parentState->warning("STR_NOT_ENOUGH_ENERGY");
 				}
 				else
-					_parentState->warning("STR_NOT_ENOUGH_ENERGY");
+					_parentState->warning("STR_NOT_ENOUGH_TIME_UNITS");
+//				}
+//				else // note that checkReservedTu() sends its own warnings ....
+//					_parentState->warning("STR_TIME_UNITS_RESERVED");
 			}
 			else
-				_parentState->warning("STR_NOT_ENOUGH_TIME_UNITS");
-//			}
-//			else // note that checkReservedTu() sends its own warnings ....
-//				_parentState->warning("STR_TIME_UNITS_RESERVED");
+				_parentState->warning("STR_ACTION_NOT_ALLOWED_FLOAT");
 		}
-		else
-			_parentState->warning("STR_ACTION_NOT_ALLOWED_FLOAT");
-	}
-	else if (unit->getGeoscapeSoldier() != nullptr) // MC'd xCom agent, trying to stand & walk by AI.
-	{
-		const int energyCost = std::max(0,
-									5 - unit->getArmor()->getAgility());
-
-		if (unit->getTimeUnits() > 9
-			&& unit->getEnergy() >= energyCost)
+		else //if (unit->getGeoscapeSoldier() != nullptr) // MC'd xCom agent, trying to stand & walk by AI.
 		{
-			unit->spendTimeUnits(10);
-			unit->spendEnergy(energyCost);
+			const int energyCost = std::max(0,
+										5 - unit->getArmor()->getAgility());
 
-			unit->kneel(false);
-			getMap()->cacheUnits();
+			if (unit->getTimeUnits() > 9
+				&& unit->getEnergy() >= energyCost)
+			{
+				unit->spendTimeUnits(10);
+				unit->spendEnergy(energyCost);
 
-			return true;
+				unit->kneel(false);
+				getMap()->cacheUnits();
+
+				return true;
+			}
 		}
 	}
-	else if (unit->getFaction() == FACTION_PLAYER
-		&& unit->getOriginalFaction() == FACTION_HOSTILE)
+	else if (unit->getOriginalFaction() == FACTION_HOSTILE
+		&& unit->isMindControlled() == true) //getFaction() == FACTION_PLAYER)
 //		&& unit->getUnitRules()->isMechanical() == false) // MOB has Unit-rules
 	{
 		_parentState->warning("STR_ACTION_NOT_ALLOWED_ALIEN");
@@ -2269,7 +2271,7 @@ bool BattlescapeGame::handlePanickingPlayer() // private.
 			++i)
 	{
 		if ((*i)->getFaction() == FACTION_PLAYER
-			&& (*i)->getOriginalFaction() == FACTION_PLAYER
+			&& (*i)->isMindControlled() == false
 			&& handlePanickingUnit(*i) == true)
 		{
 			//Log(LOG_INFO) << ". ret FALSE " << (*i)->getId();

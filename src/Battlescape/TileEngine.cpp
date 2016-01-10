@@ -1587,8 +1587,8 @@ bool TileEngine::checkReactionFire(
 
 	bool ret = false;
 
-	if (triggerUnit->getFaction() == triggerUnit->getOriginalFaction()	// not MC'd
-		|| triggerUnit->getFaction() == FACTION_PLAYER)					// or is xCom agent - MC'd aLiens do not RF.
+	if (triggerUnit->getFaction() == FACTION_PLAYER // note MC'd aLiens do not RF.
+		|| triggerUnit->isMindControlled() == false)
 	{
 		//Log(LOG_INFO) << ". Target = VALID";
 		std::vector<BattleUnit*> spotters = getSpottingUnits(triggerUnit);
@@ -1623,7 +1623,7 @@ bool TileEngine::checkReactionFire(
 			else
 			{
 				if (reactorUnit->getGeoscapeSoldier() != nullptr
-					&& reactorUnit->getFaction() == reactorUnit->getOriginalFaction())
+					&& reactorUnit->isMindControlled() == false)
 				{
 					//Log(LOG_INFO) << ". . reactionXP to " << reactorUnit->getId();
 					reactorUnit->addReactionExp();
@@ -1776,7 +1776,7 @@ bool TileEngine::reactionShot(
 	_rfAction->actor = unit;
 
 	if (unit->getFaction() == FACTION_PLAYER
-		&& unit->getOriginalFaction() == FACTION_PLAYER)
+		&& unit->isMindControlled() == false)
 	{
 		switch (unit->getActiveHand())
 		{
@@ -2222,7 +2222,7 @@ void TileEngine::hit(
 					&& targetUnit->getFaction() == FACTION_HOSTILE
 					&& attacker != nullptr
 					&& attacker->getGeoscapeSoldier() != nullptr
-					&& attacker->getFaction() == attacker->getOriginalFaction()
+					&& attacker->isMindControlled() == false
 					&& _battleSave->getBattleGame()->getPanicHandled() == true)
 				{
 					_battleSave->getBattleGame()->getCurrentAction()->takenXp = true;
@@ -2927,7 +2927,7 @@ void TileEngine::explode(
 							if (takenXp == false
 								&& targetUnit->getFaction() == FACTION_HOSTILE
 								&& attacker->getGeoscapeSoldier() != nullptr
-								&& attacker->getFaction() == attacker->getOriginalFaction()
+								&& attacker->isMindControlled() == false
 								&& dType != DT_SMOKE
 								&& _battleSave->getBattleGame()->getPanicHandled() == true)
 							{
@@ -5866,7 +5866,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 			psiSkill = 0;
 
 		if (victim->getFaction() == FACTION_HOSTILE
-			&& victim->getOriginalFaction() != FACTION_HOSTILE)
+			&& victim->isMindControlled() == true)
 		{
 			victim->hostileMcValues(psiStrength, psiSkill);
 		}
@@ -5884,11 +5884,12 @@ bool TileEngine::psiAttack(BattleAction* const action)
 
 		int bonusSkill; // add to psiSkill when using aLien to Panic another aLien ....
 		if (action->actor->getFaction() == FACTION_PLAYER
-			&& action->actor->getOriginalFaction() == FACTION_HOSTILE)
+			&& action->actor->isMindControlled() == true)
 		{
 			bonusSkill = 21; // ... arbitrary kL
 		}
-		else bonusSkill = 0;
+		else
+			bonusSkill = 0;
 
 		float attack = static_cast<float>(statsActor->psiStrength * (statsActor->psiSkill + bonusSkill)) / 50.f;
 		//Log(LOG_INFO) << ". . . defense = " << (int)defense;

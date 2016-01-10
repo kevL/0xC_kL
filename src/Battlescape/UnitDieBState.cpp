@@ -214,8 +214,7 @@ void UnitDieBState::think()
 		// need to freshen visUnit-indicators in case other units were hiding behind the one who just fell
 		_battleSave->getBattleState()->updateSoldierInfo(false);
 
-		if (_unit->getGeoscapeSoldier() != nullptr
-			&& _unit->getOriginalFaction() == FACTION_PLAYER)
+		if (_unit->getGeoscapeSoldier() != nullptr)
 		{
 			std::string stInfo;
 			if (_unit->getUnitStatus() == STATUS_DEAD)

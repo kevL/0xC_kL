@@ -1392,8 +1392,8 @@ bool SavedBattleGame::endBattlePhase()
 				++i)
 		{
 			if ((*i)->isOut_t(OUT_STAT) == false // a conscious non-MC'd aLien ...
-				&& (*i)->getOriginalFaction() == FACTION_HOSTILE
-				&& (*i)->getFaction() == FACTION_HOSTILE)
+				&& (*i)->getFaction() == FACTION_HOSTILE
+				&& (*i)->isMindControlled() == false)
 			{
 				const int delta = RNG::generate(0,5);
 				if (_turn > 17 + delta
@@ -1435,7 +1435,7 @@ bool SavedBattleGame::endBattlePhase()
 				// if newSide=Alien, xCom agents revert to xCom; MC'd aLiens DO NOT revert to aLien.
 
 				if ((*i)->getFaction() == FACTION_HOSTILE
-					|| (*i)->getOriginalFaction() == FACTION_HOSTILE
+					|| (*i)->isMindControlled() == false
 					|| _cheatAI == true) // aLiens know where xCom is when cheating ~turn20
 				{
 					(*i)->setExposed(); // aLiens always know where their buddies are, Mc'd or not.
@@ -2478,8 +2478,8 @@ const BattleUnit* SavedBattleGame::getHighestRanked(
 			if (isXcom == true)
 			{
 				//Log(LOG_INFO) << "SavedBattleGame::getHighestRanked(), side is Xcom";
-				if ((*i)->getOriginalFaction() == FACTION_PLAYER
-					&& (*i)->getFaction() == FACTION_PLAYER)
+				if ((*i)->getFaction() == FACTION_PLAYER
+					&& (*i)->isMindControlled() == false)
 				{
 					++qtyAllies;
 
@@ -2490,8 +2490,8 @@ const BattleUnit* SavedBattleGame::getHighestRanked(
 					}
 				}
 			}
-			else if ((*i)->getOriginalFaction() == FACTION_HOSTILE
-				&& (*i)->getFaction() == FACTION_HOSTILE)
+			else if ((*i)->getFaction() == FACTION_HOSTILE
+				&& (*i)->isMindControlled() == false)
 			{
 				//Log(LOG_INFO) << "SavedBattleGame::getHighestRanked(), side is aLien";
 				++qtyAllies;

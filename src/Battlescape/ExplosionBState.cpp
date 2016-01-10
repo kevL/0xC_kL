@@ -435,7 +435,7 @@ void ExplosionBState::explode() // private.
 			}
 
 			if (_unit->getGeoscapeSoldier() != nullptr
-				&& _unit->getFaction() == _unit->getOriginalFaction())
+				&& _unit->isMindControlled() == false)
 			{
 				const BattleUnit* const targetUnit = _battleSave->getTile(Position::toTileSpace(_centerVoxel))->getTileUnit();
 				if (targetUnit != nullptr && targetUnit->getFaction() != FACTION_PLAYER)
