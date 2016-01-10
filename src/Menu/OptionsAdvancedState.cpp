@@ -207,86 +207,88 @@ OptionInfo* OptionsAdvancedState::getSetting(size_t sel)
 void OptionsAdvancedState::lstOptionsClick(Action* action)
 {
 	Uint8 button = action->getDetails()->button.button;
-	if (button != SDL_BUTTON_LEFT
-		&& button != SDL_BUTTON_RIGHT)
+	if (button == SDL_BUTTON_LEFT
+		|| button == SDL_BUTTON_RIGHT)
 	{
-		return;
+		size_t sel = _lstOptions->getSelectedRow();
+		OptionInfo* setting = getSetting(sel);
+		if (!setting)
+			return;
+
+		std::wstring settingText;
+		if (setting->type() == OPTION_BOOL)
+		{
+			bool* b = setting->asBool();
+			*b = !*b;
+			settingText = *b ? tr("STR_YES") : tr("STR_NO");
+		}
+		else if (setting->type() == OPTION_INT) // integer variables will need special handling
+		{
+			int *i = setting->asInt();
+
+			int increment = (button == SDL_BUTTON_LEFT) ? 1 : -1; // left-click increases, right-click decreases
+			if (   i == &Options::changeValueByMouseWheel
+				|| i == &Options::FPS
+				|| i == &Options::FPSInactive)
+			{
+				increment *= 10;
+			}
+
+			*i += increment;
+
+			int
+				minVal,
+				maxVal;
+			if (i == &Options::battleExplosionHeight)
+			{
+				minVal = 0;
+				maxVal = 3;
+			}
+			else if (i == &Options::changeValueByMouseWheel)
+			{
+				minVal = 0;
+				maxVal = 50;
+			}
+			else if (i == &Options::FPS)
+			{
+				minVal = 0;
+				maxVal = 120;
+			}
+			else if (i == &Options::FPSInactive)
+			{
+				minVal = 10;
+				maxVal = 120;
+			}
+			else if (i == &Options::mousewheelSpeed)
+			{
+				minVal = 1;
+				maxVal = 7;
+			}
+			else if (i == &Options::autosaveFrequency)
+			{
+				minVal = 1;
+				maxVal = 5;
+			}
+			else
+			{
+				minVal = 0;
+				maxVal = 0;
+			}
+
+
+			if (*i < minVal) *i = maxVal;
+			else if (*i > maxVal) *i = minVal;
+
+			std::wostringstream woststr;
+			woststr << *i;
+			settingText = woststr.str();
+		}
+
+		_lstOptions->setCellText(
+							sel,
+							1,
+							settingText);
 	}
-
-	size_t sel = _lstOptions->getSelectedRow();
-	OptionInfo* setting = getSetting(sel);
-	if (!setting)
-		return;
-
-	std::wstring settingText;
-	if (setting->type() == OPTION_BOOL)
-	{
-		bool* b = setting->asBool();
-		*b = !*b;
-		settingText = *b ? tr("STR_YES") : tr("STR_NO");
-	}
-	else if (setting->type() == OPTION_INT) // integer variables will need special handling
-	{
-		int *i = setting->asInt();
-
-		int increment = (button == SDL_BUTTON_LEFT) ? 1 : -1; // left-click increases, right-click decreases
-		if (i == &Options::changeValueByMouseWheel
-			|| i == &Options::FPS
-			|| i == &Options::FPSInactive)
-		{
-			increment *= 10;
-		}
-
-		*i += increment;
-
-		int
-			minVal = 0,
-			maxVal = 0;
-		if (i == &Options::battleExplosionHeight)
-		{
-			minVal = 0;
-			maxVal = 3;
-		}
-		else if (i == &Options::changeValueByMouseWheel)
-		{
-			minVal = 0;
-			maxVal = 50;
-		}
-		else if (i == &Options::FPS)
-		{
-			minVal = 0;
-			maxVal = 120;
-		}
-		else if (i == &Options::FPSInactive)
-		{
-			minVal = 10;
-			maxVal = 120;
-		}
-		else if (i == &Options::mousewheelSpeed)
-		{
-			minVal = 1;
-			maxVal = 7;
-		}
-		else if (i == &Options::autosaveFrequency)
-		{
-			minVal = 1;
-			maxVal = 5;
-		}
-
-		if (*i < minVal)
-			*i = maxVal;
-		else if (*i > maxVal)
-			*i = minVal;
-
-		std::wostringstream ss;
-		ss << *i;
-		settingText = ss.str();
-	}
-
-	_lstOptions->setCellText(
-						sel,
-						1,
-						settingText);
 }
 
 void OptionsAdvancedState::lstOptionsMouseOver(Action*)

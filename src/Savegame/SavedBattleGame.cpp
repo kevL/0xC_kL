@@ -1326,7 +1326,6 @@ bool SavedBattleGame::endBattlePhase()
 		if ((*i)->getFaction() == _side)
 		{
 			(*i)->setRevived(false);
-
 			if (_side == FACTION_PLAYER)
 				(*i)->dontReselect();
 		}
@@ -1376,13 +1375,12 @@ bool SavedBattleGame::endBattlePhase()
 
 	int
 		liveAliens,
-		liveSoldiers;
+		livePlayer;
 	_battleState->getBattleGame()->tallyUnits(
 											liveAliens,
-											liveSoldiers);
+											livePlayer);
 
-	// pseudo the Turn-20 / less-than-3-aliens-left Reveal rule.
-	if (_cheatAI == false
+	if (_cheatAI == false // pseudo the Turn-20 / less-than-3-aliens-left Reveal rule.
 		&& _side == FACTION_HOSTILE
 		&& _turn > 5)
 	{
@@ -1434,11 +1432,11 @@ bool SavedBattleGame::endBattlePhase()
 				// if newSide=XCOM, xCom agents DO NOT revert to xCom; MC'd aLiens revert to aLien.
 				// if newSide=Alien, xCom agents revert to xCom; MC'd aLiens DO NOT revert to aLien.
 
-				if ((*i)->getFaction() == FACTION_HOSTILE
-					|| (*i)->isMindControlled() == false
-					|| _cheatAI == true) // aLiens know where xCom is when cheating ~turn20
+				if ((*i)->getFaction() == FACTION_HOSTILE				// aLiens always know where their buddies are,
+					|| (*i)->getOriginalFaction() == FACTION_HOSTILE	// Mc'd or not.
+					|| _cheatAI == true)								// aLiens know where xCom is when cheating ~turn20
 				{
-					(*i)->setExposed(); // aLiens always know where their buddies are, Mc'd or not.
+					(*i)->setExposed();
 				}
 				else if ((*i)->getExposed() != -1
 					&& _side == FACTION_PLAYER)

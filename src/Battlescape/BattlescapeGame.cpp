@@ -1319,7 +1319,7 @@ bool BattlescapeGame::kneel(BattleUnit* const unit)
 													5 - unit->getArmor()->getAgility())) == true))
 					{
 						unit->spendTimeUnits(tu);
-						unit->kneel(!unit->isKneeled());
+						unit->kneel(unit->isKneeled() == false);
 						// kneeling or standing up can reveal new terrain or units. I guess. -> sure can!
 						// But updateSoldierInfo() also does does calculateFOV(), so ...
 //						getTileEngine()->calculateFOV(unit);
@@ -1368,11 +1368,11 @@ bool BattlescapeGame::kneel(BattleUnit* const unit)
 			}
 		}
 	}
-	else if (unit->getOriginalFaction() == FACTION_HOSTILE
-		&& unit->isMindControlled() == true) //getFaction() == FACTION_PLAYER)
+	else //if (unit->getOriginalFaction() == FACTION_HOSTILE
+//		&& unit->isMindControlled() == true) //getFaction() == FACTION_PLAYER)
 //		&& unit->getUnitRules()->isMechanical() == false) // MOB has Unit-rules
 	{
-		_parentState->warning("STR_ACTION_NOT_ALLOWED_ALIEN");
+		_parentState->warning("STR_ACTION_NOT_ALLOWED_ALIEN"); // TODO: change to "not a Soldier, can't kneel".
 	}
 
 	return false;

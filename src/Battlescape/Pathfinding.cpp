@@ -1035,7 +1035,7 @@ int Pathfinding::getTuCostPf(
 				wallTu =	// differentiates wall-Total from wall-current and keeps the '_openDoor' value straight
 				edges = 0;	// quantity of walls crossed if moving diagonally
 
-				if (dir == 7
+				if (   dir == 7
 					|| dir == 0
 					|| dir == 1)
 				{
@@ -1059,7 +1059,7 @@ int Pathfinding::getTuCostPf(
 					}
 				}
 
-				if (dir == 1 // && !fall
+				if (   dir == 1 // && !fall
 					|| dir == 2
 					|| dir == 3)
 				{
@@ -1085,7 +1085,7 @@ int Pathfinding::getTuCostPf(
 					}
 				}
 
-				if (dir == 3 // && !fall
+				if (   dir == 3 // && !fall
 					|| dir == 4
 					|| dir == 5)
 				{
@@ -1112,7 +1112,7 @@ int Pathfinding::getTuCostPf(
 					}
 				}
 
-				if (dir == 5
+				if (   dir == 5
 					|| dir == 6
 					|| dir == 7)
 				{

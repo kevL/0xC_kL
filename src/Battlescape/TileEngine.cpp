@@ -2290,26 +2290,16 @@ void TileEngine::explode(
 	std::set<Tile*> tilesAffected;
 	std::pair<std::set<Tile*>::const_iterator, bool> tilePair;
 
-	int z_Dec; // = 1000; // default flat explosion
-
+	int z_Dec;
 	switch (Options::battleExplosionHeight)
 	{
-/*		case 1: z_Dec = 10; break;
-		case 2: z_Dec = 20; break;
-		case 3: z_Dec = 30; break;
-		case 4: z_Dec = 40; break;
-		case 5: z_Dec = 50; break;
-
-		case 0: // default flat explosion
-		default:
-			z_Dec = 1000;
-		break; */
 		case 3: z_Dec = 10; break; // makes things easy for AlienBAIState::explosiveEfficacy()
 		case 2: z_Dec = 20; break;
 		case 1: z_Dec = 30; break;
 
 		default:
-			z_Dec = 1000;
+		case 0:
+			z_Dec = 0; // default flat explosion
 	}
 
 	Tile
@@ -2438,14 +2428,11 @@ void TileEngine::explode(
 						break;
 					}
 
-					if (tileStart->getPosition().z != tileZ) // up/down explosion decrease
+					if (tileStart->getPosition().z != tileZ // up/down explosion decrease
+						&& (z_Dec == 0 || (_powerE -= z_Dec) < 1))
 					{
-						_powerE -= z_Dec;
-						if (_powerE < 1)
-						{
-							//Log(LOG_INFO) << ". _powerE < 1 BREAK[vert] " << Position(tileX, tileY, tileZ) << "\n";
-							break;
-						}
+						//Log(LOG_INFO) << ". _powerE < 1 BREAK[vert] " << Position(tileX, tileY, tileZ) << "\n";
+						break;
 					}
 
 					_powerT = _powerE;
@@ -3578,7 +3565,7 @@ int TileEngine::horizontalBlockage(
 			else
 			{
 				//Log(LOG_INFO) << "explode End: hardblock 1000";
-				return 1000; // this is a hardblock and should be greater than the most powerful explosions.
+				return 100000; // this is a hardblock and should be greater than the most powerful explosions.
 			}
 		}
 	}
@@ -3849,7 +3836,7 @@ int TileEngine::blockage(
 					|| tile->getMapData(partType)->getPartType() == O_FLOOR)	// all floors that block LoS should have their stopLOS flag set true if not gravLift floor.
 				{																// Might want to check hasNoFloor() flag.
 					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[0] partType = " << partType << " " << tile->getPosition();
-					return 1000;
+					return 100000;
 				}
 			}
 			else if (tile->getMapData(partType)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
@@ -3857,7 +3844,7 @@ int TileEngine::blockage(
 				&& _powerE < tile->getMapData(partType)->getArmor() * 2) // terrain absorbs 200% damage from DT_HE!
 			{
 				//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[1] partType = " << partType << " " << tile->getPosition();
-				return 1000; // this is a hardblock for HE; hence it has to be higher than the highest HE power in the Rulesets.
+				return 100000; // this is a hardblock for HE; hence it has to be higher than the highest HE power in the Rulesets.
 			}
 		}
 		else // dir > -1 -> OBJECT partType. (BigWalls & content) *always* an OBJECT-partType gets passed in through here, and *with* a direction.
@@ -3941,7 +3928,7 @@ int TileEngine::blockage(
 					&& _powerE < tile->getMapData(O_OBJECT)->getArmor() * 2)
 				{
 					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[2] partType = " << partType << " " << tile->getPosition();
-					return 1000;
+					return 100000;
 				}
 			}
 
@@ -3952,7 +3939,7 @@ int TileEngine::blockage(
 					|| (dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true)))
 			{
 				//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[3] partType = " << partType << " " << tile->getPosition();
-				return 1000;
+				return 100000;
 			}
 
 
@@ -4078,7 +4065,7 @@ int TileEngine::blockage(
 						&& _powerE < tile->getMapData(O_OBJECT)->getArmor() * 2)) // terrain absorbs 200% damage from DT_HE!
 				{
 					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " isTrueDir = " << isTrueDir << " Ret 1000[4] partType = " << partType << " " << tile->getPosition();
-					return 1000; // this is a hardblock for HE; hence it has to be higher than the highest HE power in the Rulesets.
+					return 100000; // this is a hardblock for HE; hence it has to be higher than the highest HE power in the Rulesets.
 				}
 			}
 		}

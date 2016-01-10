@@ -115,7 +115,7 @@ Uint8 TextButton::getColor() const
  */
 void TextButton::setSecondaryColor(Uint8 color)
 {
-	_text->setColor(color);
+	_text->setSecondaryColor(color);
 	_redraw = true;
 }
 
