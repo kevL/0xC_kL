@@ -493,8 +493,8 @@ bool UnitWalkBState::doStatusStand() // private.
 			_action.result = "STR_NOT_ENOUGH_TIME_UNITS";
 		}
 
-//		_unit->clearCache();
-//		_parent->getMap()->cacheUnit(_unit);
+		_unit->clearCache();
+		_parent->getMap()->cacheUnit(_unit);
 		_pf->abortPath();
 		_parent->popState();
 		return false;
@@ -509,8 +509,8 @@ bool UnitWalkBState::doStatusStand() // private.
 			_action.result = "STR_NOT_ENOUGH_ENERGY";
 		}
 
-//		_unit->clearCache();
-//		_parent->getMap()->cacheUnit(_unit);
+		_unit->clearCache();
+		_parent->getMap()->cacheUnit(_unit);
 		_pf->abortPath();
 		_parent->popState();
 		return false;
@@ -523,8 +523,8 @@ bool UnitWalkBState::doStatusStand() // private.
 																// That is to say this should kick in *only* when player has actively
 	{															// clicked to move but tries to go further than TUs allow; because
 		//Log(LOG_INFO) << ". . checkReservedTu(_unit, tuCost) == false";	// either the AI or the panic-code should not try to
-//		_unit->clearCache();												// move a unit farther than its [reserved] TUs would allow
-//		_parent->getMap()->cacheUnit(_unit);
+		_unit->clearCache();												// move a unit farther than its [reserved] TUs would allow
+		_parent->getMap()->cacheUnit(_unit);
 		_pf->abortPath();
 		return false;
 	}
@@ -535,8 +535,8 @@ bool UnitWalkBState::doStatusStand() // private.
 	{
 		//Log(LOG_INFO) << ". . dir != _unit->getUnitDirection() -> turn";
 		_unit->setDirectionTo(dir);
-//		_unit->clearCache();
-//		_parent->getMap()->cacheUnit(_unit);
+		_unit->clearCache();
+		_parent->getMap()->cacheUnit(_unit);
 		return false;
 	}
 
@@ -570,8 +570,10 @@ bool UnitWalkBState::doStatusStand() // private.
 	// proxy blows up in face after door opens - copied doStatusStand_end()
 	if (_parent->checkProxyGrenades(_unit) == true) // kL_add: Put checkForSilacoid() here!
 	{
+		_unit->clearCache();
+		_parent->getMap()->cacheUnit(_unit);
+		_pf->abortPath();
 		_parent->popState();
-//		postPathProcedures(); // .. one or the other i suppose.
 		return false;
 	}
 
@@ -609,8 +611,8 @@ bool UnitWalkBState::doStatusStand() // private.
 			{
 				//Log(LOG_INFO) << ". . . obstacle(unit) -> abortPath()";
 //				_action.TU = 0;
-//				_unit->clearCache();
-//				_parent->getMap()->cacheUnit(_unit);
+				_unit->clearCache();
+				_parent->getMap()->cacheUnit(_unit);
 				_pf->abortPath();
 				_parent->popState();
 				return false;
@@ -841,7 +843,9 @@ bool UnitWalkBState::doStatusStand_end() // private.
 
 	_te->calculateUnitLighting();
 
-	if (_unit->getTimeUnits() < 4)
+	if (_unit->getFaction() != FACTION_PLAYER
+		&& _unit->getTimeUnits() < 4)
+	{
 		_walkCam->centerOnPosition(_unit->getPosition()); // KLUDGE!
 		// Okay, better write something about this. When the last aLien unit to
 		// do its AI (or perhaps a Civie) is marked unselectable in handleUnitAI()
@@ -854,6 +858,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		//
 		// That works in conjunction with the extended-reveal granted by
 		// Game::delayBlit(), btw.
+	}
 	else
 		_walkCam->setViewLevel(pos.z);
 

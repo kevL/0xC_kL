@@ -770,13 +770,14 @@ void UnitInfoState::init()
 
 /**
  * Closes the window on right-click.
+ * @note OReally.
  * @param action - pointer to an Action
  */
 void UnitInfoState::handle(Action* action)
 {
 	State::handle(action);
 
-	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
+/*	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
 	{
 		if (_mindProbe == false)
 		{
@@ -785,7 +786,7 @@ void UnitInfoState::handle(Action* action)
 			else if (action->getDetails()->button.button == SDL_BUTTON_X2)
 				btnPrevClick(action);
 		}
-	}
+	} */
 }
 
 /**

@@ -381,7 +381,7 @@ void Map::draw()
 			|| _unitDying == true
 			|| _explosionInFOV == true
 			|| _projectileInFOV == true
-			|| _reveal == true // stop flashing the Hidden Movement screen between waypoints. TODO: autoshot action ....
+			|| _reveal == true // stop flashing the Hidden Movement screen between waypoints and/or autoshots.
 			|| _battleSave->getDebugMode() == true)
 		{
 			// REVEAL //

@@ -63,6 +63,7 @@ class BattlescapeState final
 private:
 	static const size_t
 		HOTSQRS			= 20,
+		WOUNDED			= 10,
 		TARGET_FRAMES	=  6,
 		PULSE_FRAMES	= 22;
 
@@ -136,13 +137,14 @@ private:
 		* _btnRightHandItem,
 		* _btnStats,
 		* _btnHostileUnit[HOTSQRS],
-		* _btnWounds,
+		* _btnWounded[WOUNDED],
 		* _btnLogo;
 //	ImageButton* _reserve;
 //	ImageButton* _btnReserveNone, * _btnReserveSnap, * _btnReserveAimed, * _btnReserveAuto, * _btnReserveKneel, * _btnZeroTUs;
 	Map* _map;
 	NumberText
 		* _numHostileUnit[HOTSQRS],
+		* _numWounded[WOUNDED],
 
 		* _numTUAim,
 		* _numTUAuto,
@@ -159,7 +161,6 @@ private:
 		* _numDir,
 		* _numDirTur,
 		* _numLayers,
-		* _numWounds,
 
 		* _numMediL1,
 		* _numMediL2,
@@ -181,6 +182,7 @@ private:
 		* _overWeight,
 		* _rank,
 		* _targeter;
+	Tile* _tileWounded[WOUNDED];
 	Text
 		* _txtBaseLabel,
 		* _txtConsole1,
@@ -214,12 +216,12 @@ private:
 	/// Prints contents of hovered Tile's inventory to screen.
 	void printTileInventory(Tile* const tile);
 
+	/// Animates a red cross icon when an injured soldier is selected.
+	void flashMedic();
 	/// Shows primer warnings on hand-held live grenades.
 	void drawFuse();
 	/// Shifts the colors of the visible unit buttons' backgrounds.
 	void cycleHostileHotcons();
-	/// Animates a red cross icon when an injured soldier is selected.
-	void flashMedic();
 	/// Animates a target cursor over hostile unit when hostileUnit indicator is clicked.
 	void hostileTargeter();
 	/// Draws an execution explosion on the Map.
@@ -375,6 +377,10 @@ private:
 		void hotSqrsClear();
 		/// Updates the hostile unit indicator squares.
 		void hotSqrsUpdate();
+		/// Clears the wounded units indicators.
+		void hotWoundsClear();
+		/// Updates the wounded units indicators.
+		void hotWoundsUpdate();
 
 		/// Animates map objects on the map, also smoke,fire, ...
 		void animate();

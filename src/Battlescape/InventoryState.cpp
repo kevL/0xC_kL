@@ -1206,6 +1206,7 @@ void InventoryState::handle(Action* action)
 {
 	State::handle(action);
 
+/*
 #ifndef __MORPHOS__
 	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
 	{
@@ -1215,6 +1216,7 @@ void InventoryState::handle(Action* action)
 			btnPrevClick(action);
 	}
 #endif
+*/
 }
 
 /**
