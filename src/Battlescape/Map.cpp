@@ -114,10 +114,9 @@ Map::Map(
 		_projectileSet(nullptr),
 		_projectileInFOV(false),
 		_explosionInFOV(false),
-		_waypointAction(false),
+		_reveal(false),
 		_bulletStart(false),
 		_unitDying(false),
-//		_reveal(0),
 		_smoothingEngaged(false),
 		_flashScreen(false),
 		_mapIsHidden(false),
@@ -382,7 +381,7 @@ void Map::draw()
 			|| _unitDying == true
 			|| _explosionInFOV == true
 			|| _projectileInFOV == true
-			|| _waypointAction == true // stop flashing the Hidden Movement screen between waypoints. TODO: autoshot action ....
+			|| _reveal == true // stop flashing the Hidden Movement screen between waypoints. TODO: autoshot action ....
 			|| _battleSave->getDebugMode() == true)
 		{
 			// REVEAL //
@@ -464,8 +463,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 		bulletHighY >>= 4;
 		bulletHighZ /= 24;
 
-		// if the projectile is outside the viewport - center back on it
-		if (_projectileInFOV == true)
+		if (_projectileInFOV == true) // deal with the Projectile.
 		{
 			_camera->convertVoxelToScreen(
 									_projectile->getPosition(),
@@ -474,7 +472,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 /*			if (Options::battleSmoothCamera == true)
 			{ */
 			const Position posFinal (_projectile->getFinalPosition());
-			BattleAction* const action (_projectile->getBattleAction());
+			const BattleAction* const action (_projectile->getBattleAction());
 
 			if (_bulletStart == true)
 			{
@@ -522,7 +520,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 							_playableHeight / 2 - bullet.y);
 
 			if (_smoothingEngaged == true
-				|| posFinal.z != action->actor->getPosition().z)
+				|| posFinal.z != action->actor->getPosition().z
+				|| _projectile->getThrowItem() != nullptr
+				|| action->weapon->getRules()->getArcingShot() == true)
 			{
 				const int posBullet_z ((_projectile->getPosition().z) / 24);
 				if (posBullet_z != viewLevel)
@@ -562,7 +562,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 											_projectile->getPosition(),
 											&bullet);
 				}
-				while (enough == false);
+				while (enough == false); // if the projectile is outside the viewport - center back on it
 			} */
 		}
 	}
@@ -2130,7 +2130,7 @@ void Map::mouseOver(Action* action, State* state)
  * Finds the current mouse position XY on this Map.
  * @param point - reference the mouse position
  */
-void Map::findMousePoint(Position& point)
+void Map::findMousePointer(Position& point)
 {
 	point.x = _mX;
 	point.y = _mY;
@@ -2790,12 +2790,12 @@ SavedBattleGame* Map::getBattleSave() const
 }
 
 /**
- * Tells the Map to reveal because there's a waypoint action going down.
- * @param wp - true if there is waypoint/missile action in progress (default true)
+ * Tells the Map to remain revealed because there's a duration-type action going down.
+ * @param reveal - true if there is waypoint/missile/autoshot action in progress (default true)
  */
-void Map::setWaypointAction(bool wp)
+void Map::setReveal(bool reveal)
 {
-	_waypointAction = wp;
+	_reveal = reveal;
 }
 
 /**

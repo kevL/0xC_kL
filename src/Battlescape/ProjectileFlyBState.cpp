@@ -606,11 +606,14 @@ bool ProjectileFlyBState::createNewProjectile() // private.
 			}
 
 			if (_action.type == BA_LAUNCH)
-				_parent->getMap()->setWaypointAction(); // reveal the Map until waypoint action completes.
+				_parent->getMap()->setReveal(); // reveal the Map until waypoint action completes.
 			else
 				_ammo->spendBullet(
 								*_battleSave,
 								*_action.weapon);
+
+			if (_action.type == BA_AUTOSHOT)
+				_parent->getMap()->setReveal(); // reveal the Map until autoshot action completes.
 
 			_unit->aim();
 			_unit->clearCache();
@@ -675,7 +678,6 @@ void ProjectileFlyBState::think()
 	}
 
 	_battleSave->getBattleState()->clearMouseScrollingState();
-	Camera* const camera = _parent->getMap()->getCamera();
 
 	// TODO: Store the projectile in this state instead of getting it from the map each time.
 	if (_parent->getMap()->getProjectile() == nullptr)
@@ -728,28 +730,34 @@ void ProjectileFlyBState::think()
 			if (_action.cameraPosition.z != -1) //&& _action.waypoints.size() < 2)
 			{
 				//Log(LOG_INFO) << "ProjectileFlyBState::think() FINISH: cameraPosition was Set";
-				if (_action.type == BA_THROW // jump screen back to pre-shot position
-					|| _action.type == BA_AUTOSHOT || _action.type == BA_SNAPSHOT || _action.type == BA_AIMEDSHOT)
+				switch (_action.type) // jump screen back to pre-shot position
 				{
-					//Log(LOG_INFO) << "ProjectileFlyBState::think() FINISH: resetting Camera to original pos";
-					if (camera->getPauseAfterShot() == true)	// TODO: move 'pauseAfterShot' to the BattleAction struct. done -> but it didn't work; i'm a numby.
-//					if (_action.pauseAfterShot == true)			// note that trying to store the camera position in the BattleAction didn't work either ... double numby.
+					case BA_THROW:
+					case BA_AUTOSHOT:
+					case BA_SNAPSHOT:
+					case BA_AIMEDSHOT:
 					{
-						camera->setPauseAfterShot(false);
-						if (_prjImpact != VOXEL_OUTOFBOUNDS)
+						//Log(LOG_INFO) << "ProjectileFlyBState::think() FINISH: resetting Camera to original pos";
+						Camera* const shotCam = _parent->getMap()->getCamera();
+						if (shotCam->getPauseAfterShot() == true)	// TODO: move 'pauseAfterShot' to the BattleAction struct. done -> but it didn't work; i'm a numby.
+//						if (_action.pauseAfterShot == true)			// note that trying to store the camera position in the BattleAction didn't work either ... double numby.
 						{
-							//Log(LOG_INFO) << ". . delay - inBounds";
-							SDL_Delay(331); // screen-pause when shot hits target before reverting camera to shooter.
+							shotCam->setPauseAfterShot(false);
+							if (_prjImpact != VOXEL_OUTOFBOUNDS)
+							{
+								//Log(LOG_INFO) << ". . delay - inBounds";
+								SDL_Delay(331); // screen-pause when shot hits target before reverting camera to shooter.
+							}
+							//else Log(LOG_INFO) << ". . final vox OutofBounds - do NOT pause";
 						}
-						//else Log(LOG_INFO) << ". . final vox OutofBounds - do NOT pause";
+
+						//Log(LOG_INFO) << ". . reset Camera Position " << _action.actor->getId();
+						shotCam->setMapOffset(_action.cameraPosition);
+//						_action.cameraPosition = Position(0,0,-1); // reset.
+
+//						_parent->getMap()->draw();
+//						_parent->getMap()->invalidate();
 					}
-
-					//Log(LOG_INFO) << ". . reset Camera Position " << _action.actor->getId();
-					camera->setMapOffset(_action.cameraPosition);
-//					_action.cameraPosition = Position(0,0,-1); // reset.
-
-//					_parent->getMap()->draw();
-//					_parent->getMap()->invalidate();
 				}
 			}
 
@@ -847,26 +855,29 @@ void ProjectileFlyBState::think()
 				blasterFlyB->_originVoxel = _parent->getMap()->getProjectile()->getPosition(); // was (offset= -1) -> tada, fixed.
 				if (_action.target == _posOrigin) blasterFlyB->_targetFloor = true;
 
-				camera->centerOnPosition(_posOrigin); // this follows BL as it hits through waypoints
+				_parent->getMap()->getCamera()->centerOnPosition(_posOrigin); // this follows BL as it hits through waypoints
 				_parent->statePushNext(blasterFlyB);
 			}
 			else // shoot -> impact.
 			{
 //				_parent->getMap()->resetCameraSmoothing();
-				if (_action.type == BA_LAUNCH) // Launches explode at final waypoint.
+				switch (_action.type)
 				{
-					_prjImpact = VOXEL_OBJECT;
-					_parent->getMap()->setWaypointAction(false); // reveal the Map until waypoint action completes.
-				}
+					case BA_LAUNCH:
+						_prjImpact = VOXEL_OBJECT;				// Launches explode at final waypoint.
+						_parent->getMap()->setReveal(false);	// reveal-action completed
+						break;
 
-//				if (_action.type != BA_LAUNCH) // only counts for guns, not throws or launches
-				if (_action.type == BA_SNAPSHOT || _action.type == BA_AUTOSHOT || _action.type == BA_AIMEDSHOT)
-				{
-					BattleUnit* const shotAt = _battleSave->getTile(_action.target)->getTileUnit();
-					if (shotAt != nullptr
-						&& shotAt->getGeoscapeSoldier() != nullptr)
+					case BA_SNAPSHOT:
+					case BA_AUTOSHOT:
+					case BA_AIMEDSHOT:
 					{
-						++shotAt->getStatistics()->shotAtCounter;
+						BattleUnit* const shotAt = _battleSave->getTile(_action.target)->getTileUnit();
+						if (shotAt != nullptr
+							&& shotAt->getGeoscapeSoldier() != nullptr)
+						{
+							++shotAt->getStatistics()->shotAtCounter; // only counts for guns, not throws or launches
+						}
 					}
 				}
 
@@ -901,7 +912,8 @@ void ProjectileFlyBState::think()
 						explVoxel.x -= _prjVector.x << 4; // note there is no safety on these for OoB.
 						explVoxel.y -= _prjVector.y << 4;
 					}
-					else _parent->getTileEngine()->setTrueTile();
+					else
+						_parent->getTileEngine()->setTrueTile();
 
 					//Log(LOG_INFO) << "projFlyB think() new ExplosionBState() explVoxel " << _parent->getMap()->getProjectile()->getPosition(trjOffset);
 					//Log(LOG_INFO) << "projFlyB think() trjOffset " << trjOffset;
@@ -919,10 +931,15 @@ void ProjectileFlyBState::think()
 																|| _action.autoShotCount == _action.weapon->getRules()->getAutoShots()
 																|| _action.weapon->getAmmoItem() == nullptr));
 
-					if (_prjImpact == VOXEL_UNIT // note that Diary Statistics require direct hit by an explosive projectile for it to be considered as a 'been hit' shot.
-						&& (_action.type == BA_SNAPSHOT || _action.type == BA_AUTOSHOT || _action.type == BA_AIMEDSHOT))
-					{
-						posContacts.push_back(pos);
+					if (_prjImpact == VOXEL_UNIT)	// note that Diary Statistics require direct hit by an explosive
+					{								// projectile for it to be considered as a 'been hit' shot.
+						switch (_action.type)
+						{
+							case BA_SNAPSHOT:
+							case BA_AUTOSHOT:
+							case BA_AIMEDSHOT:
+								posContacts.push_back(pos);
+						}
 					}
 
 					// ... Let's try something
@@ -957,6 +974,8 @@ void ProjectileFlyBState::think()
 					|| _action.autoShotCount == _action.weapon->getRules()->getAutoShots()
 					|| _action.weapon->getAmmoItem() == nullptr)
 				{
+					_parent->getMap()->setReveal(false);
+
 					_unit->aim(false);
 					_unit->clearCache();
 					_parent->getMap()->cacheUnits();

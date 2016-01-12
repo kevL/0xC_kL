@@ -27,8 +27,7 @@
 #include "UnitFallBState.h"
 #include "TileEngine.h"
 
-#include "../Engine/Game.h" // for final aLien move centering.
-#include "../Engine/Logger.h"
+//#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -97,12 +96,9 @@ void UnitWalkBState::init()
 	//Log(LOG_INFO) << ". walking from " << _unit->getPosition() << " to " << _action.target;
 	if (_unit->getFaction() != FACTION_PLAYER
 		&& _unit != _battleSave->getWalkUnit()) // See.
-//			|| _battleSave->getBattleState()->getGame()->delayBlit() == true))
-//		&& _walkCam->isOnScreen(_unit->getPosition()) == false)
 	{
 		//Log(LOG_INFO) << "walkB: init() center on unit id-" << _unit->getId();
 		_walkCam->centerOnPosition(_unit->getPosition());
-//		_walkCam->setViewLevel(_unit->getPosition().z);
 	}
 
 	// This is used only for aLiens:
@@ -856,7 +852,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		// "center on Position" to be done here. (A forced center otherwise
 		// would cause the camera to jolt along with each tile-step.)
 		//
-		// That works in conjuntion with the extended-reveal granted by
+		// That works in conjunction with the extended-reveal granted by
 		// Game::delayBlit(), btw.
 	else
 		_walkCam->setViewLevel(pos.z);

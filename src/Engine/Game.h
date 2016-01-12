@@ -155,9 +155,7 @@ private:
 		void setDebugCycle(const int cycle);
 
 		/// Causes the engine to delay blitting top state.
-		void delayBlit(bool delay);
-		/// Checks if the engine is set to delay blitting top state.
-		bool delayBlit() const;
+		void delayBlit();
 };
 
 }

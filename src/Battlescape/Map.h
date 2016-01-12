@@ -95,10 +95,10 @@ private:
 		_mapIsHidden,
 		_noDraw,
 		_projectileInFOV,
+		_reveal,
 		_showProjectile,
 		_smoothingEngaged,
-		_unitDying,
-		_waypointAction;
+		_unitDying;
 	int
 		_aniFrame,
 		_cursorSize,
@@ -106,7 +106,6 @@ private:
 		_iconWidth,
 		_mX,
 		_mY,
-//		_reveal,
 		_selectorX,
 		_selectorY,
 		_spriteWidth,
@@ -215,7 +214,7 @@ private:
 		void mouseOver(Action* action, State* state) override;
 
 		/// Finds the current mouse position XY on this Map.
-		void findMousePoint(Position& point);
+		void findMousePointer(Position& point);
 
 		/// Special handling for key presses.
 		void keyboardPress(Action* action, State* state) override;
@@ -300,8 +299,8 @@ private:
 		/// Gets the SavedBattleGame.
 		SavedBattleGame* getBattleSave() const;
 
-		/// Tells the Map to reveal because there's a waypoint action going down.
-		void setWaypointAction(bool wp = true);
+		/// Tells the Map to remain revealed because there's a duration-type action going down.
+		void setReveal(bool reveal = true);
 
 		/// Sets whether to draw the projectile on the Map.
 		void showProjectile(bool show = true);

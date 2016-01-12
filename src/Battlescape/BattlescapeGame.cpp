@@ -737,7 +737,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 		{
 			//Log(LOG_INFO) << ". . unit found id-" << _battleSave->getSelectedUnit()->getId();
 			centerOnUnit(_battleSave->getSelectedUnit());
-			_parentState->updateSoldierInfo(); // I doubt this is necessary, only for calculateFOV() - done below.
+			_parentState->updateSoldierInfo(false); // This is useful for player when AI-turn ends. CalcFoV is done below_
 
 			if (_AISecondMove == false)
 			{
@@ -1626,14 +1626,7 @@ void BattlescapeGame::endTurn() // private.
 		if (battleComplete == true
 			|| _battleSave->getSide() != FACTION_NEUTRAL)
 		{
-//			if (_battleSave->getSelectedUnit() != nullptr
-//				&& _battleSave->getSelectedUnit()->getUnitVisible() == true)
-//			{
-//				Log(LOG_INFO) << "endTurn() selUnit id-" << _battleSave->getSelectedUnit()->getId() << " " << _battleSave->getSelectedUnit()->getPosition();
-//				centerOnUnit(_battleSave->getSelectedUnit());
-//				_parentState->getGame()->delayBlit(true);
-//			}
-			_parentState->getGame()->delayBlit(true);
+			_parentState->getGame()->delayBlit();
 			_parentState->getGame()->pushState(new NextTurnState(
 															_battleSave,
 															_parentState,
@@ -2451,8 +2444,12 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 						{
 							statePushBack(new UnitTurnBState(this, action, false));
 
-							action.cameraPosition = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
 							action.type = BA_SNAPSHOT;
+							if (action.weapon->getAmmoItem()->getRules()->getShotgunPellets() != 0)
+								action.cameraPosition = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
+							else
+								action.cameraPosition = Position(0,0,-1);
+
 							const int actionTu (action.actor->getActionTu(action.type, action.weapon));
 							int shots; // tabulate how many shots can be fired before unit runs out of TUs
 							if (actionTu != 0)
@@ -2499,8 +2496,8 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 																			originVoxel,
 																			targetVoxel) == true)
 								{
-									action.cameraPosition = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
 									action.type = BA_THROW;
+									action.cameraPosition = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
 									statePushBack(new ProjectileFlyBState(this, action));
 									break;
 								}
@@ -2785,7 +2782,10 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			_parentState->getGame()->getCursor()->setHidden();
 
 			_currentAction.target = pos;
-			_currentAction.cameraPosition = getMap()->getCamera()->getMapOffset();
+			if (_currentAction.weapon->getAmmoItem()->getRules()->getShotgunPellets() != 0)
+				_currentAction.cameraPosition = getMap()->getCamera()->getMapOffset();
+			else
+				_currentAction.cameraPosition = Position(0,0,-1);
 
 			_states.push_back(new ProjectileFlyBState(this, _currentAction));	// TODO: should check for valid LoF/LoT *before* invoking this
 																				// instead of the (flakey) checks in that state. Then conform w/ AI ...
@@ -2846,7 +2846,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					screenPixel += getMap()->getCamera()->getMapOffset();
 
 					Position mousePixel;
-					getMap()->findMousePoint(mousePixel);
+					getMap()->findMousePointer(mousePixel);
 
 					if (mousePixel.x > screenPixel.x + 16)
 						_currentAction.actor->setTurnDirection(-1);

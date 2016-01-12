@@ -55,7 +55,6 @@
 
 #include "../Ruleset/Ruleset.h"
 
-#include "../Savegame/SavedBattleGame.h" // for path to _endTurnRequested
 #include "../Savegame/SavedGame.h"
 
 
@@ -949,20 +948,10 @@ void Game::setDebugCycle(const int cycle)
 
 /**
  * Causes the engine to delay blitting top state.
- * @param delay - true to delay
  */
-void Game::delayBlit(bool delay)
+void Game::delayBlit()
 {
-	_blitDelay = delay;
-}
-
-/**
- * Checks if the engine is set to delay blitting top state.
- * @return, true if delay
- */
-bool Game::delayBlit() const
-{
-	return _blitDelay;
+	_blitDelay = true;
 }
 
 }
