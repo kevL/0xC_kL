@@ -61,7 +61,7 @@ ProductionCompleteState::ProductionCompleteState(
 		_state(state),
 		_endType(endType)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 256, 160, 32, 20, POPUP_BOTH);
 

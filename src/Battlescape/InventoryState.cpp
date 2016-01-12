@@ -53,9 +53,6 @@
 #include "../Savegame/BattleUnit.h"
 #include "../Savegame/SoldierLayout.h"
 #include "../Savegame/SavedBattleGame.h"
-//#include "../Savegame/SavedGame.h"
-//#include "../Savegame/Soldier.h"
-#include "../Savegame/Tile.h"
 
 
 namespace OpenXcom
@@ -490,7 +487,7 @@ void InventoryState::init()
 	else if (unit->hasInventory() == false) // skip to the first unit with inventory
 	{
 		if (_parent != nullptr)
-			_parent->selectNextFactionUnit(false,false,true);
+			_parent->selectNextPlayerUnit(false,false,true);
 		else
 			_battleSave->selectNextFactionUnit(false,false,true);
 
@@ -804,7 +801,7 @@ void InventoryState::btnPrevClick(Action*)
 	if (_inv->getSelectedItem() == nullptr)
 	{
 		if (_parent != nullptr)
-			_parent->selectPreviousFactionUnit(false,false,true);
+			_parent->selectPreviousPlayerUnit(false,false,true);
 		else
 			_battleSave->selectPreviousFactionUnit(false,false,true);
 
@@ -821,7 +818,7 @@ void InventoryState::btnNextClick(Action*)
 	if (_inv->getSelectedItem() == nullptr)
 	{
 		if (_parent != nullptr)
-			_parent->selectNextFactionUnit(false,false,true);
+			_parent->selectNextPlayerUnit(false,false,true);
 		else
 			_battleSave->selectNextFactionUnit(false,false,true);
 

@@ -998,7 +998,8 @@ void BattlescapeState::init()
 	{
 		_firstInit = false;
 		_battleGame->setupCursor();
-		_map->getCamera()->centerOnPosition(_battleSave->getSelectedUnit()->getPosition());
+
+		_map->getCamera()->centerOnPosition(_battleSave->getSelectedUnit()->getPosition(), false);
 
 		std::string
 			track,
@@ -1937,7 +1938,7 @@ void BattlescapeState::btnNextUnitClick(Action*)
 {
 	if (allowButtons() == true)
 	{
-		selectNextFactionUnit(true);
+		selectNextPlayerUnit(true);
 		refreshMousePosition();
 	}
 }
@@ -1950,7 +1951,7 @@ void BattlescapeState::btnNextStopClick(Action*)
 {
 	if (allowButtons() == true)
 	{
-		selectNextFactionUnit(true, true);
+		selectNextPlayerUnit(true, true);
 		refreshMousePosition();
 	}
 }
@@ -1963,7 +1964,7 @@ void BattlescapeState::btnPrevUnitClick(Action*)
 {
 	if (allowButtons() == true)
 	{
-		selectPreviousFactionUnit(true);
+		selectPreviousPlayerUnit(true);
 		refreshMousePosition();
 	}
 }
@@ -1976,18 +1977,18 @@ void BattlescapeState::btnPrevStopClick(Action*)
 {
 	if (allowButtons() == true)
 	{
-		selectPreviousFactionUnit(true, true);
+		selectPreviousPlayerUnit(true, true);
 		refreshMousePosition();
 	}
 }
 
 /**
- * Selects the next BattleUnit.
+ * Selects the player's next BattleUnit.
  * @param checkReselect		- don't select a unit that has been previously flagged
  * @param dontReselect		- flag the current unit first
  * @param checkInventory	- don't select a unit that has no inventory
  */
-void BattlescapeState::selectNextFactionUnit(
+void BattlescapeState::selectNextPlayerUnit(
 		bool checkReselect,
 		bool dontReselect,
 		bool checkInventory)
@@ -2010,12 +2011,12 @@ void BattlescapeState::selectNextFactionUnit(
 }
 
 /**
- * Selects the previous BattleUnit.
+ * Selects the player's previous BattleUnit.
  * @param checkReselect		- don't select a unit that has been previously flagged
  * @param dontReselect		- flag the current unit first
  * @param checkInventory	- don't select a unit that has no inventory
  */
-void BattlescapeState::selectPreviousFactionUnit(
+void BattlescapeState::selectPreviousPlayerUnit(
 		bool checkReselect,
 		bool dontReselect,
 		bool checkInventory)
@@ -2086,9 +2087,7 @@ void BattlescapeState::btnEndTurnClick(Action*)
 void BattlescapeState::btnAbortClick(Action*)
 {
 	if (allowButtons() == true)
-		_game->pushState(new AbortMissionState(
-											_battleSave,
-											this));
+		_game->pushState(new AbortMissionState(_battleSave, this));
 }
 
 /**
@@ -3983,22 +3982,6 @@ void BattlescapeState::saveAIMap()
 	SDL_Rect rect;
 	rect.h =
 	rect.w = 8;
-
-/*	Tile* tile; // kL_note: Not used ->
-	for (int y = 0; y < h; ++y)
-	{
-		posTile.y = y;
-		for (int x = 0; x < w; ++x)
-		{
-			posTile.x = x;
-			tile = _battleSave->getTile(posTile);
-
-			if (tile == nullptr) continue;
-			if (tile->isDiscovered(2) == false) continue;
-		}
-	}
-	int expMax = 0;
-	if (expMax < 100) expMax = 100; */
 
 	const Tile* tile;
 	const BattleUnit* unit;

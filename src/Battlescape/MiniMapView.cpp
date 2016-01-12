@@ -427,7 +427,7 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 			if (_mouseOverThreshold == false
 				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
-				_camera->centerOnPosition(_posPreDragScroll);
+				_camera->centerOnPosition(_posPreDragScroll, false);
 				_redraw = true;
 			}
 
@@ -454,7 +454,7 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 			_isMouseScrolled = false;
 //			stopScrolling(action); // newScroll
 
-			_camera->centerOnPosition(_posPreDragScroll);
+			_camera->centerOnPosition(_posPreDragScroll, false);
 			_redraw = true;
 		}
 
@@ -465,18 +465,18 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		const int
-			startX = static_cast<int>(action->getRelativeXMouse() / action->getXScale()),
-			startY = static_cast<int>(action->getRelativeYMouse() / action->getYScale()),
+			mX = static_cast<int>(action->getRelativeXMouse() / action->getXScale()),
+			mY = static_cast<int>(action->getRelativeYMouse() / action->getYScale()),
 			// get offset (in cells) of the click relative to center of screen
-			offsetX = (startX / CELL_WIDTH)  - (_surface->w  / 2 / CELL_WIDTH),
-			offsetY = (startY / CELL_HEIGHT) - (_surface->h / 2 / CELL_HEIGHT),
-			// center the camera on this new position
-			stopX = _camera->getCenterPosition().x + offsetX,
-			stopY = _camera->getCenterPosition().y + offsetY;
+			offsetX = (mX / CELL_WIDTH)  - (_surface->w / 2 / CELL_WIDTH),
+			offsetY = (mY / CELL_HEIGHT) - (_surface->h / 2 / CELL_HEIGHT);
 
-		_camera->centerOnPosition(Position(
-										stopX, stopY,
-										_camera->getViewLevel()));
+		_camera->centerOnPosition(
+								Position(
+									_camera->getCenterPosition().x + offsetX,
+									_camera->getCenterPosition().y + offsetY,
+									_camera->getViewLevel()),
+								false);
 		_redraw = true;
 	}
 	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
@@ -508,7 +508,7 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 			if (_mouseOverThreshold == false
 				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
-					_camera->centerOnPosition(_posPreDragScroll);
+					_camera->centerOnPosition(_posPreDragScroll, false);
 					_redraw = true;
 			}
 
@@ -585,9 +585,9 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 		_mouseScrollX -= static_cast<int>(action->getDetails()->motion.xrel);
 		_mouseScrollY -= static_cast<int>(action->getDetails()->motion.yrel);
 
-		const int
-			newX = _posPreDragScroll.x + (_mouseScrollX / 11),
-			newY = _posPreDragScroll.y + (_mouseScrollY / 11);
+//		const int
+//			newX = _posPreDragScroll.x + (_mouseScrollX / 11),
+//			newY = _posPreDragScroll.y + (_mouseScrollY / 11);
 
 /*		// keep the limits...
 		if (newX < -1 || _camera->getMapSizeX() < newX)
@@ -601,9 +601,12 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 			newY = _posPreDragScroll.y + (_mouseScrollY / 4);
 		} */
 
-		_camera->centerOnPosition(Position( // scroll
-										newX, newY,
-										_camera->getViewLevel()));
+		_camera->centerOnPosition(
+								Position(
+									_posPreDragScroll.x + (_mouseScrollX / 11), //newX,
+									_posPreDragScroll.y + (_mouseScrollY / 11), //newY,
+									_camera->getViewLevel()),
+								false);
 		_redraw = true;
 
 /*		// We don't want to look the mouse-cursor jumping :)
@@ -667,10 +670,12 @@ void MiniMapView::stopScrolling(Action* action)
  */
 void MiniMapView::keyScroll() // private.
 {
-	_camera->centerOnPosition(Position(
-									_camera->getCenterPosition().x - _scrollKeyX,
-									_camera->getCenterPosition().y - _scrollKeyY,
-									_camera->getViewLevel()));
+	_camera->centerOnPosition(
+							Position(
+								_camera->getCenterPosition().x - _scrollKeyX,
+								_camera->getCenterPosition().y - _scrollKeyY,
+								_camera->getViewLevel()),
+							false);
 	_redraw = true;
 }
 

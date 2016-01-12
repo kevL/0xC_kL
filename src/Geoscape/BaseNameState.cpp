@@ -58,7 +58,7 @@ BaseNameState::BaseNameState(
 {
 	_globe->onMouseOver(nullptr);
 
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 192, 88, 32, 60, POPUP_BOTH);
 	_txtTitle	= new Text(182, 17, 37, 70);

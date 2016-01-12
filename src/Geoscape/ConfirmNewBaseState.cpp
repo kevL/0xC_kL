@@ -63,7 +63,7 @@ ConfirmNewBaseState::ConfirmNewBaseState(
 		_globe(globe),
 		_cost(0)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 224, 72, 16, 64);
 	_txtCost	= new Text(120, 9, 68, 80);

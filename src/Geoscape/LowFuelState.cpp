@@ -52,7 +52,7 @@ LowFuelState::LowFuelState(
 		_craft(craft),
 		_state(state)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 224, 120, 16, 40, POPUP_BOTH);
 

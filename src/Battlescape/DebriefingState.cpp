@@ -74,8 +74,6 @@
 #include "../Savegame/MissionStatistics.h"
 #include "../Savegame/Region.h"
 #include "../Savegame/SavedBattleGame.h"
-//#include "../Savegame/SavedGame.h"
-//#include "../Savegame/Soldier.h"
 #include "../Savegame/SoldierDead.h"
 #include "../Savegame/SoldierDiary.h"
 #include "../Savegame/Tile.h"

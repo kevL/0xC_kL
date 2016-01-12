@@ -52,7 +52,7 @@ class State
 protected:
 	static Game* _game;
 
-	bool _screen;
+	bool _fullScreen;
 	Uint8 _cursorColor;
 
 	InteractiveSurface* _modal;
@@ -86,7 +86,7 @@ protected:
 				const std::string& category,
 				Surface* parent = nullptr);
 		/// Gets whether the state is a full-screen.
-		bool isScreen() const;
+		bool isFullScreen() const;
 		/// Toggles whether the state is a full-screen.
 		void toggleScreen();
 

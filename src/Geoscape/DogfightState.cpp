@@ -157,7 +157,7 @@ DogfightState::DogfightState(
 		_w1FireInterval(0),
 		_w2FireInterval(0)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_craft->setInDogfight(true);
 

@@ -47,7 +47,7 @@ namespace OpenXcom
  */
 FundingState::FundingState()
 {
-	_screen = false;
+	_fullScreen = false;
 
 	int dX; // x - 32 to center on Globe
 	if (Options::baseXResolution > 320 + 32)

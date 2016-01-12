@@ -48,7 +48,7 @@ AbandonGameState::AbandonGameState(OptionsOrigin origin)
 	:
 		_origin(origin)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	int x;
 	if (_origin == OPT_GEOSCAPE)

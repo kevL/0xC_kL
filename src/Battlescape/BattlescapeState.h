@@ -303,13 +303,13 @@ private:
 		/// Handler for clicking the Previous Stop button.
 		void btnPrevStopClick(Action* action);
 
-		/// Selects the next BattleUnit.
-		void selectNextFactionUnit(
+		/// Selects the player's next BattleUnit.
+		void selectNextPlayerUnit(
 				bool checkReselect = false,
 				bool dontReselect = false,
 				bool checkInventory = false);
-		/// Selects the previous BattleUnit.
-		void selectPreviousFactionUnit(
+		/// Selects the player's previous BattleUnit.
+		void selectPreviousPlayerUnit(
 				bool checkReselect = false,
 				bool dontReselect = false,
 				bool checkInventory = false);

@@ -1033,33 +1033,33 @@ bool Tile::isFirable() const // private.
  * get off the tile during their turn.
  * @param battleSave - pointer to the current SavedBattleGame (default nullptr Vs. units)
  */
-void Tile::hitStuff(SavedBattleGame* const battleSave)
+void Tile::hitTileInventory(SavedBattleGame* const battleSave)
 {
-	//Log(LOG_INFO) << "Tile::hitStuff() " << _pos;
+	//Log(LOG_INFO) << "Tile::hitTileInventory() " << _pos;
 	//if (_unit) Log(LOG_INFO) << ". unitID " << _unit->getId();
 	int
-		pSmoke,
-		pFire;
+		powerSmoke,
+		powerFire;
 
 	if (_smoke != 0)
-		pSmoke = (_smoke + 3) / 4 + 1;
+		powerSmoke = (_smoke + 3) / 4 + 1;
 	else
-		pSmoke = 0;
+		powerSmoke = 0;
 
 	if (_fire != 0)
-		pFire = _fire + RNG::generate(3,9);
+		powerFire = _fire + RNG::generate(3,9);
 	else
-		pFire = 0;
-	//Log(LOG_INFO) << ". pSmoke = " << pSmoke;
-	//Log(LOG_INFO) << ". pFire = " << pFire;
+		powerFire = 0;
+	//Log(LOG_INFO) << ". powerSmoke = " << powerSmoke;
+	//Log(LOG_INFO) << ". powerFire = " << powerFire;
 
 	float vulnr;
 
 	if (battleSave == nullptr)	// damage standing units at end of faction's turn-phase. Notice this hits only the primary quadrant!
-//		&& _unit != nullptr)	// safety. call from BattlescapeGame::endTurnPhase() checks only Tiles w/ units, but that could change ....
+//		&& _unit != nullptr)	// safety. call from BattlescapeGame::endTurn() checks only Tiles w/ units, but that could change ....
 	{
 		//Log(LOG_INFO) << ". . hit Unit";
-		if (pSmoke != 0
+		if (powerSmoke != 0
 			&& _unit->isHealable() == true)
 		{
 			//Log(LOG_INFO) << ". . . healable TRUE";
@@ -1068,21 +1068,21 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 			{
 				_unit->takeDamage(
 								Position(0,0,0),
-								static_cast<int>(Round(static_cast<float>(pSmoke) * vulnr)),
+								static_cast<int>(Round(static_cast<float>(powerSmoke) * vulnr)),
 								DT_SMOKE, // -> DT_STUN
 								true);
 				//Log(LOG_INFO) << ". . . . smoke Dam = " << d;
 			}
 		}
 
-		if (pFire != 0)
+		if (powerFire != 0)
 		{
 			vulnr = _unit->getArmor()->getDamageModifier(DT_IN);
 			if (vulnr > 0.f)
 			{
 				_unit->takeDamage(
 								Position(0,0,0),
-								static_cast<int>(Round(static_cast<float>(pFire) * vulnr)),
+								static_cast<int>(Round(static_cast<float>(powerFire) * vulnr)),
 								DT_IN,
 								true);
 
@@ -1101,7 +1101,7 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 		//Log(LOG_INFO) << ". . hit Inventory's ground-items";
 		BattleUnit* unit;
 
-		if (pSmoke != 0)
+		if (powerSmoke != 0)
 		{
 			for (std::vector<BattleItem*>::const_iterator // handle unconscious units on this Tile vs. DT_SMOKE
 					i = _inventory.begin();
@@ -1121,14 +1121,14 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 					if (vulnr > 0.f)
 						unit->takeDamage(
 									Position(0,0,0),
-									static_cast<int>(Round(static_cast<float>(pSmoke) * vulnr)),
+									static_cast<int>(Round(static_cast<float>(powerSmoke) * vulnr)),
 									DT_SMOKE,
 									true);
 				}
 			}
 		}
 
-		if (pFire != 0)
+		if (powerFire != 0)
 		{
 			bool done = false;
 			while (done == false) // handle items including unconscious or dead units on this Tile vs. DT_IN
@@ -1156,7 +1156,7 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 						{
 							unit->takeDamage(
 										Position(0,0,0),
-										static_cast<int>(static_cast<float>(pFire) * vulnr),
+										static_cast<int>(static_cast<float>(powerFire) * vulnr),
 										DT_IN,
 										true);
 
@@ -1165,14 +1165,14 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 								//Log(LOG_INFO) << ". . . dead";
 								unit->instaKill();
 								unit->killedBy(unit->getFaction()); // killed by self ....
-								//Log(LOG_INFO) << "Tile::hitStuff() " << unit->getId() << " killedBy = " << (int)unit->getFaction();
+								//Log(LOG_INFO) << "Tile::hitTileInventory() " << unit->getId() << " killedBy = " << (int)unit->getFaction();
 							}
 						}
 
 						++i;
 						done = (i == _inventory.end());
 					}
-					else if (pFire > (*i)->getRules()->getArmor() // no modifier when destroying items, not even corpse in bodyarmor.
+					else if (powerFire > (*i)->getRules()->getArmor() // no modifier when destroying items, not even corpse in bodyarmor.
 						&& (unit == nullptr || unit->getUnitStatus() == STATUS_DEAD))
 					{
 						//Log(LOG_INFO) << ". . destroy item";
@@ -1189,7 +1189,7 @@ void Tile::hitStuff(SavedBattleGame* const battleSave)
 			}
 		}
 	}
-	//Log(LOG_INFO) << "Tile::hitStuff() EXIT";
+	//Log(LOG_INFO) << "Tile::hitTileInventory() EXIT";
 }
 
 /**

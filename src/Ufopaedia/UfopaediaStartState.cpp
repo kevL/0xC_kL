@@ -65,7 +65,7 @@ UfopaediaStartState::UfopaediaStartState(bool tactical)
 	int dX; // x - 32 to center on Globe
 	if (_tactical == false)
 	{
-		_screen = false;
+		_fullScreen = false;
 //		if (Options::baseXResolution > 320 + 32)
 		dX = -32;
 	}

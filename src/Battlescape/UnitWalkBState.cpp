@@ -27,7 +27,8 @@
 #include "UnitFallBState.h"
 #include "TileEngine.h"
 
-//#include "../Engine/Logger.h"
+#include "../Engine/Game.h" // for final aLien move centering.
+#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -75,25 +76,33 @@ UnitWalkBState::UnitWalkBState(
 		_dirStart(-1),
 		_kneelCheck(true),
 		_playFly(false)
-{}
+{
+	//Log(LOG_INFO) << "walkB: cTor id-" << _unit->getId();
+}
 
 /**
  * Deletes the UnitWalkBState.
  */
 UnitWalkBState::~UnitWalkBState()
-{}
+{
+	//Log(LOG_INFO) << "walkB: dTor" << _unit->getId();
+}
 
 /**
  * Initializes the state.
  */
 void UnitWalkBState::init()
 {
-	//Log(LOG_INFO) << "\nUnitWalkBState::init() unitID = " << _unit->getId();
+	//Log(LOG_INFO) << "UnitWalkBState::init() unitID = " << _unit->getId();
 	//Log(LOG_INFO) << ". walking from " << _unit->getPosition() << " to " << _action.target;
-	if (_unit->getFaction() != FACTION_PLAYER)
+	if (_unit->getFaction() != FACTION_PLAYER
+		&& _unit != _battleSave->getWalkUnit()) // See.
+//			|| _battleSave->getBattleState()->getGame()->delayBlit() == true))
+//		&& _walkCam->isOnScreen(_unit->getPosition()) == false)
 	{
+		//Log(LOG_INFO) << "walkB: init() center on unit id-" << _unit->getId();
 		_walkCam->centerOnPosition(_unit->getPosition());
-		_walkCam->setViewLevel(_unit->getPosition().z);
+//		_walkCam->setViewLevel(_unit->getPosition().z);
 	}
 
 	// This is used only for aLiens:
@@ -315,6 +324,7 @@ bool UnitWalkBState::doStatusStand() // private.
 	if (_unit->getFaction() != FACTION_PLAYER // && _isVisible == true
 		&& _walkCam->isOnScreen(_unit->getPosition()) == false)
 	{
+		//Log(LOG_INFO) << "walkB: statusStand() center on unit id-" << _unit->getId();
 		_walkCam->centerOnPosition(pos);
 //		_walkCam->setViewLevel(pos.z);
 	}
@@ -835,7 +845,21 @@ bool UnitWalkBState::doStatusStand_end() // private.
 
 	_te->calculateUnitLighting();
 
-	_walkCam->setViewLevel(pos.z);
+	if (_unit->getTimeUnits() < 4)
+		_walkCam->centerOnPosition(_unit->getPosition()); // KLUDGE!
+		// Okay, better write something about this. When the last aLien unit to
+		// do its AI (or perhaps a Civie) is marked unselectable in handleUnitAI()
+		// or thereabouts, but it moves into Player-unit's view when *entering
+		// its last tile* the Hidden Movement is revealed ... but it won't be
+		// centered because it didn't start its walk-step in Player view. This,
+		// simply by checking if the aLien is low on TU, allows a forced
+		// "center on Position" to be done here. (A forced center otherwise
+		// would cause the camera to jolt along with each tile-step.)
+		//
+		// That works in conjuntion with the extended-reveal granted by
+		// Game::delayBlit(), btw.
+	else
+		_walkCam->setViewLevel(pos.z);
 
 	// This needs to be done *before* the calculateFOV(pos) or else any newVis will
 	// be marked Visible before visForUnits() catches the new unit that is !Visible.

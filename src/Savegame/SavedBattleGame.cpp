@@ -95,7 +95,8 @@ SavedBattleGame::SavedBattleGame(
 		_tiles(nullptr),
 		_pacified(false),
 		_rfTriggerPosition(0,0,-1),
-		_initTu(20)
+		_initTu(20),
+		_walkUnit(nullptr)
 //		_dragInvert(false),
 //		_dragTimeTolerance(0),
 //		_dragPixelTolerance(0)
@@ -1027,8 +1028,8 @@ void SavedBattleGame::getTileCoords(
 }
 
 /**
- * Gets the currently selected unit.
- * @return, pointer to the BattleUnit
+ * Gets the currently selected BattleUnit.
+ * @return, pointer to a BattleUnit
  */
 BattleUnit* SavedBattleGame::getSelectedUnit() const
 {
@@ -1036,7 +1037,7 @@ BattleUnit* SavedBattleGame::getSelectedUnit() const
 }
 
 /**
- * Sets the currently selected unit.
+ * Sets the currently selected BattleUnit.
  * @param unit - pointer to a BattleUnit
  */
 void SavedBattleGame::setSelectedUnit(BattleUnit* const unit)
@@ -1045,29 +1046,9 @@ void SavedBattleGame::setSelectedUnit(BattleUnit* const unit)
 }
 
 /**
-* Selects the previous player unit.
- * @param checkReselect		- true to check the reselectable flag (default false)
- * @param dontReselect		- true to set the reselectable flag FALSE (default false)
- * @param checkInventory	- true to check if the unit has an inventory (default false)
- * @return, pointer to newly selected BattleUnit or nullptr if none can be selected
-* @sa selectFactionUnit
-*/
-BattleUnit* SavedBattleGame::selectPreviousFactionUnit(
-		bool checkReselect,
-		bool dontReselect,
-		bool checkInventory)
-{
-	return selectFactionUnit(
-						-1,
-						checkReselect,
-						dontReselect,
-						checkInventory);
-}
-
-/**
- * Selects the next unit.
+ * Selects the next BattleUnit.
  * @note Also used for/by the AI in BattlescapeGame::think(), popState(),
- * handleUnitAI(), and in SavedBattleGame::endBattlePhase().
+ * handleUnitAI(), and in SavedBattleGame::endFactionTurn().
  * @param checkReselect		- true to check the reselectable flag (default false)
  * @param dontReselect		- true to set the reselectable flag FALSE (default false)
  * @param checkInventory	- true to check if the unit has an inventory (default false)
@@ -1087,8 +1068,28 @@ BattleUnit* SavedBattleGame::selectNextFactionUnit(
 }
 
 /**
- * Selects the next player unit in a certain direction.
- * @param dir				- direction to select (1 for next and -1 for previous)
+ * Selects the previous BattleUnit.
+ * @param checkReselect		- true to check the reselectable flag (default false)
+ * @param dontReselect		- true to set the reselectable flag FALSE (default false)
+ * @param checkInventory	- true to check if the unit has an inventory (default false)
+ * @return, pointer to newly selected BattleUnit or nullptr if none can be selected
+* @sa selectFactionUnit
+*/
+BattleUnit* SavedBattleGame::selectPreviousFactionUnit(
+		bool checkReselect,
+		bool dontReselect,
+		bool checkInventory)
+{
+	return selectFactionUnit(
+						-1,
+						checkReselect,
+						dontReselect,
+						checkInventory);
+}
+
+/**
+ * Selects the next BattleUnit in a certain direction.
+ * @param dir				- direction to iterate (+1 for next and -1 for previous)
  * @param checkReselect		- true to check the reselectable flag (default false)
  * @param dontReselect		- true to set the reselectable flag FALSE (default false)
  * @param checkInventory	- true to check if the unit has an inventory (default false)
@@ -1101,17 +1102,10 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
 		bool checkInventory)
 {
 	if (_units.empty() == true)
-	{
-		_selectedUnit =
-		_lastSelectedUnit = nullptr;
-		return nullptr;
-	}
+		return (_selectedUnit = _lastSelectedUnit = nullptr);
 
-	if (dontReselect == true
-		&& _selectedUnit != nullptr)
-	{
+	if (_selectedUnit != nullptr && dontReselect == true)
 		_selectedUnit->dontReselect();
-	}
 
 
 	std::vector<BattleUnit*>::const_iterator
@@ -1122,7 +1116,7 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
 	std::vector<BattleUnit*>* units;
 	if (_shuffleUnits[0] == nullptr)
 		units = &_units;
-	else // non-player turn Use shuffledUnits. See endBattlePhase() ....
+	else // non-player turn Use shuffledUnits. See endFactionTurn() ....
 		units = &_shuffleUnits;
 
 	if (dir > 0)
@@ -1140,34 +1134,33 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
 					units->begin(),
 					units->end(),
 					_selectedUnit);
-	do // find the next unit
+	do
 	{
-		if (iterUnit == units->end()) // no unit selected
+		if (iterUnit != units->end())
 		{
-			iterUnit = iterFirst;
-			continue;
-		}
+			if (iterUnit != iterLast)
+				iterUnit += dir;
+			else
+				iterUnit = iterFirst;
 
-		if (iterUnit != iterLast)
-			iterUnit += dir;
-		else // reached the end, wrap-around
-			iterUnit = iterFirst;
-
-		if (*iterUnit == _selectedUnit) // back to start ... no more units found
-		{
-			if (checkReselect == true
-				&& _selectedUnit->reselectAllowed() == false)
+			if (*iterUnit == _selectedUnit)
 			{
-				_selectedUnit = nullptr;
-			}
+				if (checkReselect == true
+					&& _selectedUnit->reselectAllowed() == false)
+				{
+					_selectedUnit = nullptr;
+				}
 
-			return _selectedUnit;
+				return _selectedUnit;
+			}
+			else if (_selectedUnit == nullptr
+				&& iterUnit == iterFirst)
+			{
+				return nullptr;
+			}
 		}
-		else if (_selectedUnit == nullptr
-			&& iterUnit == iterFirst)
-		{
-			return nullptr;
-		}
+		else
+			iterUnit = iterFirst;
 	}
 	while ((*iterUnit)->isSelectable(
 								_side,
@@ -1312,12 +1305,12 @@ void SavedBattleGame::prepPlayerTurn() // private.
 
 /**
  * Ends the current faction-turn and progresses to the next one.
- * @note Called from BattlescapeGame::endTurnPhase()
+ * @note Called from BattlescapeGame::endTurn()
  * @return, true if the turn rolls-over back to faction Player
  */
-bool SavedBattleGame::endBattlePhase()
+bool SavedBattleGame::endFactionTurn()
 {
-	//Log(LOG_INFO) << "sbg:endBattlePhase()";
+	//Log(LOG_INFO) << "sbg:endFactionTurn()";
 	for (std::vector<BattleUnit*>::const_iterator // -> would it be safe to exclude Dead & Unconscious units
 			i = _units.begin();
 			i != _units.end();
@@ -1353,8 +1346,8 @@ bool SavedBattleGame::endBattlePhase()
 		//Log(LOG_INFO) << ". end Hostile phase -> NEUTRAL";
 		_side = FACTION_NEUTRAL;
 
-		// if there is no neutral team, skip this section
-		// and instantly prepare new turn for the player.
+		// If there is no neutral team, skip this section and instantly prepare
+		// new turn for the player.
 		if (selectNextFactionUnit() == nullptr) // else this will cycle through NEUTRAL units
 		{
 			//Log(LOG_INFO) << ". no neutral units to select ... -> PLAYER";
@@ -1502,10 +1495,10 @@ bool SavedBattleGame::getDebugMode() const
  */
 BattlescapeGame* SavedBattleGame::getBattleGame() const
 {
-	if (_battleState == nullptr)
-		return nullptr;
+	if (_battleState != nullptr)
+		return _battleState->getBattleGame();
 
-	return _battleState->getBattleGame();
+	return nullptr;
 }
 
 /**
@@ -2133,7 +2126,7 @@ void SavedBattleGame::tileVolatiles()
  * @note Revived units need a tile to stand on. If the unit's current position
  * is occupied then all directions around the tile are searched for a free tile
  * to place the unit on. If no free tile is found the unit stays unconscious.
- * @param atTurnOver - true if called from SavedBattleGame::endBattlePhase (default false)
+ * @param atTurnOver - true if called from SavedBattleGame::endFactionTurn (default false)
  */
 void SavedBattleGame::reviveUnit(
 		BattleUnit* const unit,
@@ -2981,6 +2974,30 @@ const std::vector<std::pair<int,int>>& SavedBattleGame::scannerDots() const
 int SavedBattleGame::getInitTu() const
 {
 	return _initTu;
+}
+
+/**
+ * Sets the previous walking unit.
+ * @note Used for controlling the Camera during aLien movement incl/ panic.
+ * Stops the Camera from recentering on a unit that just moved and so is already
+ * nearly centered but is getting another slice from the AI-engine.
+ * @param unit - pointer to a BattleUnit
+ */
+void SavedBattleGame::setWalkUnit(const BattleUnit* const unit)
+{
+	_walkUnit = unit;
+}
+
+/**
+ * Gets the previous walking unit.
+ * @note Used for controlling the Camera during aLien movement incl/ panic.
+ * Stops the Camera from recentering on a unit that just moved and so is already
+ * nearly centered but is getting another slice from the AI-engine.
+ * @return, pointer to a BattleUnit
+ */
+const BattleUnit* SavedBattleGame::getWalkUnit() const
+{
+	return _walkUnit;
 }
 
 }

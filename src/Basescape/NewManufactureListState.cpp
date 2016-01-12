@@ -54,7 +54,7 @@ NewManufactureListState::NewManufactureListState(
 		_base(base),
 		_scroll(0)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 320, 162, 0, 23, POPUP_BOTH);
 

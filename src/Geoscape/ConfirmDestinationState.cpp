@@ -53,7 +53,7 @@ ConfirmDestinationState::ConfirmDestinationState(
 {
 	const Waypoint* const wp = dynamic_cast<Waypoint*>(_target);
 
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 224, 72, 16, 64);
 	_txtTarget	= new Text(192, 32, 32, 75);

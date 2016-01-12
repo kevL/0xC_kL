@@ -45,7 +45,7 @@ OptionsDefaultsState::OptionsDefaultsState(
 		_origin(origin),
 		_state(state)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 256, 100, 32, 50, POPUP_BOTH);
 	_btnYes		= new TextButton(60, 18, 60, 122);

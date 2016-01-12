@@ -21,7 +21,6 @@
 
 //#include <list>
 
-#include "PathfindingNode.h"
 #include "PathfindingOpenSet.h"
 
 #include "../fmath.h"

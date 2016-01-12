@@ -55,7 +55,7 @@ NewPossibleResearchState::NewPossibleResearchState(
 	:
 		_base(base)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window				= new Window(this, 288, 180, 16, 10);
 	_txtTitle			= new Text(288, 17, 16, 20);

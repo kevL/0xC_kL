@@ -36,7 +36,7 @@ namespace OpenXcom
  */
 InfoboxState::InfoboxState(const std::wstring& msg)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_frame	= new Frame(260, 90, 30, 86);
 	_text	= new Text(250, 80, 35, 91);

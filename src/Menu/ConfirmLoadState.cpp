@@ -49,7 +49,7 @@ ConfirmLoadState::ConfirmLoadState(
 		_fileName(fileName),
 		_parent(parent)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 216, 100, 52, 50, POPUP_BOTH);
 	_txtText	= new Text(180, 60, 70, 60);

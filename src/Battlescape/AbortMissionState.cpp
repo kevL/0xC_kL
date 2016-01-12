@@ -58,7 +58,7 @@ AbortMissionState::AbortMissionState(
 		_insideExitArea(0),
 		_outsideExitArea(0)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 320, 144);
 

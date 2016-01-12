@@ -56,7 +56,7 @@ CraftPatrolState::CraftPatrolState(
 		_geo(geo),
 		_delayPop(true)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 224, 168, 16, 16, POPUP_BOTH);
 

@@ -276,7 +276,7 @@ private:
 //		{ return _smoke; }
 
 		/// Ends the Tile's turn. Units catch on fire.
-		void hitStuff(SavedBattleGame* const battleSave = nullptr);
+		void hitTileInventory(SavedBattleGame* const battleSave = nullptr);
 
 		/// Animates the tile parts.
 		void animateTile();

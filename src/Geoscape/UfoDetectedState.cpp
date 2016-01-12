@@ -90,7 +90,7 @@ UfoDetectedState::UfoDetectedState(
 		_ufo->setLandId(_game->getSavedGame()->getCanonicalId("STR_LANDING_SITE"));
 	}
 
-	_screen = false;
+	_fullScreen = false;
 
 	if (_hyperDetected == true)
 	{

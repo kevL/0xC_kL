@@ -72,7 +72,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 		_doublePop(doublePop),
 		_delayPop(true)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 224, 176, 16, 8, POPUP_BOTH);
 

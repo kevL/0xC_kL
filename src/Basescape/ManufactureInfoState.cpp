@@ -101,7 +101,7 @@ ManufactureInfoState::~ManufactureInfoState()
  */
 void ManufactureInfoState::buildUi() // private.
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window					= new Window(this, 320, 170, 0, 15, POPUP_BOTH);
 

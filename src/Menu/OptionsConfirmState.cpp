@@ -47,7 +47,7 @@ OptionsConfirmState::OptionsConfirmState(OptionsOrigin origin)
 		_origin(origin),
 		_countdown(15)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 216, 100, 52, 50, POPUP_BOTH);
 	_btnYes		= new TextButton(50, 20, 70, 120);

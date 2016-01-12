@@ -51,7 +51,7 @@ TransferConfirmState::TransferConfirmState(
 		_base(base),
 		_state(state)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 320, 80, 0, 60);
 

@@ -62,7 +62,7 @@ ManufactureStartState::ManufactureStartState(
 		_manfRule(manfRule),
 		_init(true)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window				= new Window(this, 320, 170, 0, 15);
 

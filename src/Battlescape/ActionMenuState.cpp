@@ -66,7 +66,7 @@ ActionMenuState::ActionMenuState(
 	:
 		_action(action)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	setPalette("PAL_BATTLESCAPE");
 

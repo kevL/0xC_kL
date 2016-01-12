@@ -862,23 +862,13 @@ bool SoldierDiary::manageAwards(const Ruleset* const rules)
 							{
 								thisIter = (*kill)->_mission;
 								if (kill != _killList.begin())
-								{
 									lastIter = (*(kill - 1))->_mission;
-//									--kill;
-//									lastIter = (*kill)->_mission;
-//									++kill;
-								}
 							}
 							else if (criteriaType == "killsWithCriteriaTurn")
 							{
 								thisIter = (*kill)->_turn;
 								if (kill != _killList.begin())
-								{
 									lastIter = (*(kill - 1))->_turn;
-//									--kill;
-//									lastIter = (*kill)->_turn;
-//									++kill;
-								}
 							}
 							//Log(LOG_INFO) << ". . . . . . " << criteriaType;
 							//Log(LOG_INFO) << ". . . . . . skip = " << skip;
@@ -954,16 +944,20 @@ bool SoldierDiary::manageAwards(const Ruleset* const rules)
 									}
 								}
 
-								if ((*kill)->_weapon == "STR_WEAPON_UNKNOWN" // if there are NO matches break and try the next Criteria.
-									|| (*kill)->_weaponAmmo == "STR_WEAPON_UNKNOWN"
-									|| ((*kill)->_rank != *detail
+								const RuleItem // if there are NO matches break and try the next Criteria.
+									* const weapon = rules->getItem((*kill)->_weapon),
+									* const weaponAmmo = rules->getItem((*kill)->_weaponAmmo);
+
+								if (   weapon == nullptr		//(*kill)->_weapon == "STR_WEAPON_UNKNOWN"
+									|| weaponAmmo == nullptr	//(*kill)->_weaponAmmo == "STR_WEAPON_UNKNOWN"
+									|| (   (*kill)->_rank != *detail
 										&& (*kill)->_race != *detail
 										&& (*kill)->_weapon != *detail
 										&& (*kill)->_weaponAmmo != *detail
 										&& (*kill)->getUnitStatusString() != *detail
 										&& (*kill)->getUnitFactionString() != *detail
-										&& rules->getItem((*kill)->_weapon)->getBattleType() != static_cast<BattleType>(bType)
-										&& rules->getItem((*kill)->_weaponAmmo)->getDamageType() != static_cast<DamageType>(dType)))
+										&& weapon->getBattleType() != static_cast<BattleType>(bType)
+										&& weaponAmmo->getDamageType() != static_cast<DamageType>(dType)))
 								{
 									//Log(LOG_INFO) << ". . . . . . . . no more Matching - break DETAIL";
 									found = false;

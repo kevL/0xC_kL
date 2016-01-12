@@ -49,7 +49,7 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 	:
 		ArticleState(defs->id)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 224, 168, 48, 16, POPUP_VERTICAL);
 	_btnExit	= new TextButton(62, 16, 129, 159);

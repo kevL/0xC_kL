@@ -58,7 +58,7 @@ SoldierArmorState::SoldierArmorState(
 		_base(base),
 		_soldier(base->getSoldiers()->at(soldierId))
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 192, 157, 64, 17, POPUP_BOTH);
 

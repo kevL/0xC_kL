@@ -41,7 +41,7 @@ UfoLostState::UfoLostState(const std::wstring& id)
 	:
 		_id(id)
 {
-	_screen = false;
+	_fullScreen = false;
 
 
 	_window		= new Window(this, 192, 104, 32, 48, POPUP_BOTH);

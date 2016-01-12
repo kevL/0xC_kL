@@ -55,7 +55,7 @@ TargetInfoState::TargetInfoState(
 		_state(state),
 		_aBase(nullptr)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 192, 120, 32, 40, POPUP_BOTH);
 	_txtTitle		= new Text(182, 17, 37, 54);

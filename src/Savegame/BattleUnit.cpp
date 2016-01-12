@@ -4000,7 +4000,7 @@ void BattleUnit::putDown()
 						// ie, '_visible' flag is not transferred properly.
 
 	_turnsExposed = -1;	// don't risk aggro per the AI
-/*	// taken care of in SavedBattleGame::endBattlePhase()
+/*	// taken care of in SavedBattleGame::endFactionTurn()
 	if (_faction != FACTION_HOSTILE)
 		_turnsExposed = 255;	// don't risk aggro per the AI
 	else
@@ -4385,7 +4385,7 @@ int BattleUnit::getSpinPhase() const
 }
 
 /**
- * Sets the spinphase of this unit.
+ * Sets the spinphase of this BattleUnit.
  * @param spinphase - the spinphase to set
  */
 void BattleUnit::setSpinPhase(int spinphase)
@@ -4394,7 +4394,7 @@ void BattleUnit::setSpinPhase(int spinphase)
 }
 
 /**
- * Stops a unit from shooting/throwing if it spots a new opponent while turning.
+ * Stops this BattleUnit from shooting/throwing if it spots a new opponent while turning.
  * @param stop - true to stop everything and refund TU (default true)
  */
 void BattleUnit::setStopShot(const bool stop)
@@ -4403,7 +4403,7 @@ void BattleUnit::setStopShot(const bool stop)
 }
 
 /**
- * Gets if this unit spotted a new opponent while turning + shooting/thowing.
+ * Gets if this BattleUnit spotted a new opponent while turning + shooting/thowing.
  * @return, true if a new hostile has been seen
  */
 bool BattleUnit::getStopShot() const
@@ -4412,7 +4412,7 @@ bool BattleUnit::getStopShot() const
 }
 
 /**
- * Sets this unit as dashing - reduces chance of getting hit.
+ * Sets this BattleUnit as dashing - reduces chance of getting hit.
  * @param dash - true to dash (default true)
  */
 void BattleUnit::setDashing(bool dash)
@@ -4421,7 +4421,7 @@ void BattleUnit::setDashing(bool dash)
 }
 
 /**
- * Gets if this unit is dashing.
+ * Gets if this BattleUnit is dashing.
  * @return, true if dashing
  */
 bool BattleUnit::isDashing() const
@@ -4430,7 +4430,7 @@ bool BattleUnit::isDashing() const
 }
 
 /**
- * Sets this unit as having been damaged in a single explosion.
+ * Sets this BattleUnit as having been damaged in a single explosion.
  * @param beenhit - true to not deliver any more damage from a single explosion (default true)
  */
 void BattleUnit::setTakenExpl(bool beenhit)
@@ -4439,7 +4439,7 @@ void BattleUnit::setTakenExpl(bool beenhit)
 }
 
 /**
- * Gets if this unit was aleady damaged in a single explosion.
+ * Gets if this BattleUnit was aleady damaged in a single explosion.
  * @return, true if this unit has already taken damage
  */
 bool BattleUnit::getTakenExpl() const
@@ -4448,7 +4448,7 @@ bool BattleUnit::getTakenExpl() const
 }
 
 /**
- * Sets this unit as having been damaged in a single fire.
+ * Sets this BattleUnit as having been damaged in a single fire.
  * @param beenhit - true to not deliver any more damage from a single fire (default true)
  */
 void BattleUnit::setTakenFire(bool beenhit)
@@ -4457,7 +4457,7 @@ void BattleUnit::setTakenFire(bool beenhit)
 }
 
 /**
- * Gets if this unit was aleady damaged in a single fire.
+ * Gets if this BattleUnit was aleady damaged in a single fire.
  * @return, true if this unit has already taken fire
  */
 bool BattleUnit::getTakenFire() const
@@ -4466,8 +4466,8 @@ bool BattleUnit::getTakenFire() const
 }
 
 /**
- * Checks if this unit can be selected.
- * Only alive units belonging to the specified faction can be selected.
+ * Checks if this BattleUnit can be selected.
+ * Only conscious units belonging to the specified faction can be selected.
  * @param faction			- the faction to compare
  * @param checkReselect		- check if the unit is reselectable
  * @param checkInventory	- check if the unit has an inventory
@@ -4488,7 +4488,7 @@ bool BattleUnit::isSelectable(
 }
 
 /**
- * Checks if this unit has an inventory.
+ * Checks if this BattleUnit has an inventory.
  * @note Large units and/or terror units shouldn't show inventories generally.
  * @return, true if an inventory is available
  */

@@ -120,7 +120,7 @@ void SaveGameState::buildUi(
 #ifdef _WIN32
 //	MessageBeep(MB_OK); // <- done in BattlescapeState::handle() for Fkeys
 #endif
-	_screen = false;
+	_fullScreen = false;
 
 	int y;
 	if (dropText == true)

@@ -55,6 +55,7 @@ private:
 	bool
 		_init,
 		_inputActive,
+		_blitDelay,
 		_quit;
 	int
 		_debugCycle,	// for debugging country areas.
@@ -152,6 +153,11 @@ private:
 		int getDebugCycle() const;
 		/// Sets the country cycle for debugging country regions.
 		void setDebugCycle(const int cycle);
+
+		/// Causes the engine to delay blitting top state.
+		void delayBlit(bool delay);
+		/// Checks if the engine is set to delay blitting top state.
+		bool delayBlit() const;
 };
 
 }

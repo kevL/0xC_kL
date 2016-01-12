@@ -46,7 +46,7 @@ InfoboxOKState::InfoboxOKState(const std::wstring& msg)
 		_cursorVisible(_game->getCursor()->getVisible()),
 		_cursorHidden(_game->getCursor()->getHidden())
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_frame		= new Frame(260, 90, 30, 86);
 	_txtTitle	= new Text(250, 58, 35, 93);

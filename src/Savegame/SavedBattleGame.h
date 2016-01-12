@@ -100,6 +100,7 @@ private:
 	BattleUnit
 		* _selectedUnit,
 		* _lastSelectedUnit;
+	const BattleUnit* _walkUnit;
 	Pathfinding* _pf;
 	Tile
 		* _invBattle,
@@ -141,7 +142,7 @@ private:
 	/// Finishes up Alien or Civilian turns and prepares the Player turn.
 	void prepPlayerTurn();
 
-	/// Selects a soldier.
+	/// Selects a BattleUnit.
 	BattleUnit* selectFactionUnit(
 			int dir,
 			bool checkReselect = false,
@@ -237,7 +238,8 @@ private:
 		 * @return, pointer to the tile at that position
 		 */
 		inline Tile* getTile(const Position& pos) const
-		{	if (pos.x < 0
+		{
+			if (   pos.x < 0
 				|| pos.y < 0
 				|| pos.z < 0
 				|| pos.x >= _mapsize_x
@@ -246,23 +248,24 @@ private:
 			{
 				return nullptr;
 			}
-			return _tiles[getTileIndex(pos)]; }
+			return _tiles[getTileIndex(pos)];
+		}
 
-		/// Gets the currently selected unit.
+		/// Gets the currently selected BattleUnit.
 		BattleUnit* getSelectedUnit() const;
-		/// Sets the currently selected unit.
+		/// Sets the currently selected BattleUnit.
 		void setSelectedUnit(BattleUnit* const unit);
-		/// Selects the previous soldier.
-		BattleUnit* selectPreviousFactionUnit(
-				bool checkReselect = false,
-				bool dontReselect = false,
-				bool checkInventory = false);
-		/// Selects the next soldier.
 		BattleUnit* selectNextFactionUnit(
 				bool checkReselect = false,
 				bool dontReselect = false,
 				bool checkInventory = false);
-		/// Selects the unit with position on map.
+		/// Selects the previous BattleUnit.
+		BattleUnit* selectPreviousFactionUnit(
+				bool checkReselect = false,
+				bool dontReselect = false,
+				bool checkInventory = false);
+		/// Selects the next BattleUnit.
+		/// Selects the BattleUnit at a Position.
 		BattleUnit* selectUnit(const Position& pos);
 
 		/// Gets a pointer to the list of nodes.
@@ -289,7 +292,7 @@ private:
 		int getTurn() const;
 
 		/// Ends the turn.
-		bool endBattlePhase();
+		bool endFactionTurn();
 
 		/// Sets debug mode.
 		void setDebugMode();
@@ -464,6 +467,11 @@ private:
 
 		/// Gets the minimum TU that a unit has at start of its turn.
 		int getInitTu() const;
+
+		/// Sets the previous walking unit.
+		void setWalkUnit(const BattleUnit* const unit);
+		/// Gets the previous walking unit.
+		const BattleUnit* getWalkUnit() const;
 
 		/// Gets the reserved fire mode.
 //		BattleActionType getBatReserved() const;

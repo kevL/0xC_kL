@@ -53,7 +53,7 @@ MissionDetectedState::MissionDetectedState(
 		_site(site),
 		_geo(geo)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 256, 200, 0, 0, POPUP_BOTH);
 	_txtTitle		= new Text(246, 32, 5, 48);

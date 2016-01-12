@@ -31,7 +31,6 @@
 #include "Camera.h"
 #include "Explosion.h"
 #include "Pathfinding.h"
-#include "Position.h"
 #include "Projectile.h"
 #include "ProjectileFlyBState.h"
 #include "TileEngine.h"
@@ -42,7 +41,6 @@
 #include "../Engine/Language.h"
 //#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
-//#include "../Engine/Palette.h"
 #include "../Engine/Screen.h"
 #include "../Engine/SurfaceSet.h"
 #include "../Engine/Timer.h"
@@ -90,7 +88,7 @@ namespace OpenXcom
  * @param playableHeight	- current visible Map height
  */
 Map::Map(
-		Game* game,
+		const Game* const game,
 		int width,
 		int height,
 		int x,
@@ -102,6 +100,7 @@ Map::Map(
 			height,
 			x,y),
 		_game(game),
+		_playableHeight(playableHeight),
 		_arrow(nullptr),
 		_arrow_kneel(nullptr),
 		_selectorX(0),
@@ -117,9 +116,8 @@ Map::Map(
 		_explosionInFOV(false),
 		_waypointAction(false),
 		_bulletStart(false),
-		_playableHeight(playableHeight),
 		_unitDying(false),
-		_reveal(0),
+//		_reveal(0),
 		_smoothingEngaged(false),
 		_flashScreen(false),
 		_mapIsHidden(false),
@@ -384,7 +382,7 @@ void Map::draw()
 			|| _unitDying == true
 			|| _explosionInFOV == true
 			|| _projectileInFOV == true
-			|| _waypointAction == true // stop flashing the Hidden Movement screen between waypoints.
+			|| _waypointAction == true // stop flashing the Hidden Movement screen between waypoints. TODO: autoshot action ....
 			|| _battleSave->getDebugMode() == true)
 		{
 			// REVEAL //
@@ -405,36 +403,6 @@ void Map::draw()
 			_hiddenScreen->blit(this);
 		}
 	}
-}
-
-/**
- * Replaces a certain amount of colors in the surface's palette.
- * @param colors		- pointer to the set of colors
- * @param firstcolor	- offset of the first color to replace
- * @param ncolors		- amount of colors to replace
- */
-void Map::setPalette(
-		SDL_Color* colors,
-		int firstcolor,
-		int ncolors)
-{
-	Surface::setPalette(colors, firstcolor, ncolors);
-
-	for (std::vector<MapDataSet*>::const_iterator
-			i = _battleSave->getMapDataSets()->begin();
-			i != _battleSave->getMapDataSets()->end();
-			++i)
-	{
-		(*i)->getSurfaceset()->setPalette(colors, firstcolor, ncolors);
-	}
-
-	_hiddenScreen->setPalette(colors, firstcolor, ncolors);
-	_hiddenScreen->setBackground(_res->getSurface("TAC00.SCR"));
-	_hiddenScreen->initText(
-					_res->getFont("FONT_BIG"),
-					_res->getFont("FONT_SMALL"),
-					_game->getLanguage());
-	_hiddenScreen->setText(_game->getLanguage()->getString("STR_HIDDEN_MOVEMENT"));
 }
 
 /**
@@ -2092,6 +2060,36 @@ bool Map::checkNorth( // private.
 }
 
 /**
+ * Replaces a certain amount of colors in the surface's palette.
+ * @param colors		- pointer to the set of colors
+ * @param firstcolor	- offset of the first color to replace
+ * @param ncolors		- amount of colors to replace
+ */
+void Map::setPalette(
+		SDL_Color* colors,
+		int firstcolor,
+		int ncolors)
+{
+	Surface::setPalette(colors, firstcolor, ncolors);
+
+	for (std::vector<MapDataSet*>::const_iterator
+			i = _battleSave->getMapDataSets()->begin();
+			i != _battleSave->getMapDataSets()->end();
+			++i)
+	{
+		(*i)->getSurfaceset()->setPalette(colors, firstcolor, ncolors);
+	}
+
+	_hiddenScreen->setPalette(colors, firstcolor, ncolors);
+	_hiddenScreen->setBackground(_res->getSurface("TAC00.SCR"));
+	_hiddenScreen->initText(
+					_res->getFont("FONT_BIG"),
+					_res->getFont("FONT_SMALL"),
+					_game->getLanguage());
+	_hiddenScreen->setText(_game->getLanguage()->getString("STR_HIDDEN_MOVEMENT"));
+}
+
+/**
  * Handles mouse presses on the Map.
  * @param action	- pointer to an Action
  * @param state		- State that the action handlers belong to
@@ -2114,6 +2112,32 @@ void Map::mouseRelease(Action* action, State* state)
 }
 
 /**
+ * Handles mouse over events on the Map.
+ * @param action	- pointer to an Action
+ * @param state		- State that the action handlers belong to
+ */
+void Map::mouseOver(Action* action, State* state)
+{
+	InteractiveSurface::mouseOver(action, state);
+	_camera->mouseOver(action, state);
+
+	_mX = static_cast<int>(action->getAbsoluteXMouse());
+	_mY = static_cast<int>(action->getAbsoluteYMouse());
+	refreshSelectorPosition();
+}
+
+/**
+ * Finds the current mouse position XY on this Map.
+ * @param point - reference the mouse position
+ */
+void Map::findMousePoint(Position& point)
+{
+	point.x = _mX;
+	point.y = _mY;
+	point.z = 0;
+}
+
+/**
  * Handles keyboard presses on the Map.
  * @param action	- pointer to an Action
  * @param state		- State that the action handlers belong to
@@ -2133,32 +2157,6 @@ void Map::keyboardRelease(Action* action, State* state)
 {
 	InteractiveSurface::keyboardRelease(action, state);
 	_camera->keyboardRelease(action, state);
-}
-
-/**
- * Handles mouse over events on the Map.
- * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
- */
-void Map::mouseOver(Action* action, State* state)
-{
-	InteractiveSurface::mouseOver(action, state);
-	_camera->mouseOver(action, state);
-
-	_mX = static_cast<int>(action->getAbsoluteXMouse());
-	_mY = static_cast<int>(action->getAbsoluteYMouse());
-	refreshSelectorPosition();
-}
-
-/**
- * Finds the current mouse position XY on this Map.
- * @param mousePos - reference the mouse position
- */
-void Map::findMousePosition(Position& mousePos)
-{
-	mousePos.x = _mX;
-	mousePos.y = _mY;
-	mousePos.z = 0;
 }
 
 /**
@@ -2194,31 +2192,6 @@ void Map::animateMap(bool redraw)
 	if (redraw == true) _redraw = true;
 }
 
-/*
- * Updates the selector to the last-known mouse position.
- *
-void Map::refreshSelectorPosition()
-{
-	setSelectorPosition(_mX,_mY);
-} */
-/*
- * Sets the rectangular selector to a certain tile.
- * @param x - mouse x position
- * @param y - mouse y position
- *
-void Map::setSelectorPosition(int x, int y)
-{
-	const int
-		pre_X = _selectorX,
-		pre_Y = _selectorY;
-	_camera->convertScreenToMap(
-							x,
-							y + _spriteHeight / 4,
-							&_selectorX,
-							&_selectorY);
-	if (pre_X != _selectorX || pre_Y != _selectorY)
-		_redraw = true;
-} */
 /**
  * Sets the rectangular selector to the current mouse-position.
  */

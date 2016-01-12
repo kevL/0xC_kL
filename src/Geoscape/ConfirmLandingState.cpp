@@ -84,7 +84,7 @@ ConfirmLandingState::ConfirmLandingState(
 	Log(LOG_INFO) << "Create ConfirmLandingState()";
 	// TODO: show Country & Region
 	// TODO: should do buttons: Patrol (isCancel already) or GeoscapeCraftState or Return to base.
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 230, 160, 13, 20, POPUP_BOTH);
 

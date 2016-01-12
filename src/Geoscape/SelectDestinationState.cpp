@@ -65,7 +65,7 @@ SelectDestinationState::SelectDestinationState(
 		_craft(craft),
 		_globe(globe)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	const int dX = _game->getScreen()->getDX();
 //		dy = _game->getScreen()->getDY();

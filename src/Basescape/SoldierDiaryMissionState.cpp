@@ -57,7 +57,7 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 		size_t soldierId,
 		size_t entry)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 252, 141, 34, 34, POPUP_BOTH);
 	_txtTitle		= new Text(242, 17, 39, 42);

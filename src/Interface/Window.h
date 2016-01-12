@@ -64,7 +64,7 @@ private:
 
 	bool
 		_contrast,
-		_screen,
+		_fullScreen,
 		_thinBorder,
 		_toggle;
 	int

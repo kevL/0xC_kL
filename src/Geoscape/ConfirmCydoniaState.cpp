@@ -52,7 +52,7 @@ ConfirmCydoniaState::ConfirmCydoniaState(Craft* craft)
 	:
 		_craft(craft)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 256, 160, 32, 20);
 	_txtMessage	= new Text(224, 48, 48, 76);

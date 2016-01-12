@@ -46,7 +46,7 @@ CraftErrorState::CraftErrorState(
 	:
 		_state(state)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 256, 160, 32, 20, POPUP_BOTH);
 	_txtMessage	= new Text(226, 118, 47, 30);

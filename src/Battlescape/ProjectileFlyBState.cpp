@@ -1078,10 +1078,9 @@ void ProjectileFlyBState::cancel()
 	{
 		prj->skipTrajectory();
 
-		Camera* const camera = _parent->getMap()->getCamera();
 		const Position pos = Position::toTileSpace(prj->getPosition());
-		if (camera->isOnScreen(pos) == false)
-			camera->centerOnPosition(pos);
+		if (_parent->getMap()->getCamera()->isOnScreen(pos) == false)
+			_parent->getMap()->getCamera()->centerOnPosition(pos);
 	}
 }
 

@@ -415,10 +415,10 @@ protected:
 		/// Gets the list of mission scripts.
 		const std::vector<std::string>* getMissionScriptList() const;
 		/// Gets a mission script.
-		RuleMissionScript* getMissionScript(const std::string& id) const;
+		RuleMissionScript* getMissionScript(const std::string& type) const;
 
 		/// Gets the list of MapScripts.
-		const std::vector<MapScript*>* getMapScript(const std::string& id) const;
+		const std::vector<MapScript*>* getMapScript(const std::string& type) const;
 
 		/// Gets the final research Id.
 		const std::string& getFinalResearch() const;

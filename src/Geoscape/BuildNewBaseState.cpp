@@ -72,7 +72,7 @@ BuildNewBaseState::BuildNewBaseState(
 		_mX(0),
 		_mY(0)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	const int dx = _game->getScreen()->getDX();
 //	int dy = _game->getScreen()->getDY();

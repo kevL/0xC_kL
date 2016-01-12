@@ -401,7 +401,7 @@ void ExplosionBState::think()
  * depending on if it came from a bullet/psi/melee/spit or an actual explosion;
  * that is "explode" here means "attack has happened". Typically called from
  * either ProjectileFlyBState::think() or
- * BattlescapeGame::endTurnPhase()/checkProxyGrenades()
+ * BattlescapeGame::endTurn()/checkProxyGrenades()
  */
 void ExplosionBState::explode() // private.
 {

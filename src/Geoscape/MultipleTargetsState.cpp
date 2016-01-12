@@ -60,7 +60,7 @@ MultipleTargetsState::MultipleTargetsState(
 		_craft(craft),
 		_state(state)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	if (_targets.size() > 1)
 	{

@@ -55,6 +55,7 @@
 
 #include "../Ruleset/Ruleset.h"
 
+#include "../Savegame/SavedBattleGame.h" // for path to _endTurnRequested
 #include "../Savegame/SavedGame.h"
 
 
@@ -83,7 +84,8 @@ Game::Game(const std::string& title)
 		_ticksTillNextSlice(0),
 		_tickOfLastSlice(0),
 		_debugCycle(-1),
-		_debugCycle_b(-1)
+		_debugCycle_b(-1),
+		_blitDelay(false)
 {
 	Options::reload = false;
 #ifdef _DEBUG
@@ -200,9 +202,9 @@ void Game::run()
 {
 	enum ApplicationState
 	{
-		RUNNING	= 0,
-		SLOWED	= 1,
-		PAUSED	= 2
+		RUNNING,	// 0
+		SLOWED,		// 1
+		PAUSED		// 2
 	} runningState = RUNNING;
 
 	static const ApplicationState kbFocusRun[4] =
@@ -221,7 +223,7 @@ void Game::run()
 		PAUSED		// 2
 	};
 
-	// this will avoid processing SDL's resize event on startup, workaround for the heap allocation error it causes.
+	// This will avoid processing SDL's resize event on startup, workaround for the heap allocation error it causes.
 	bool startupEvent = Options::allowResize;
 
 	while (_quit == false)
@@ -237,10 +239,9 @@ void Game::run()
 		{
 			_init = true;
 			_states.back()->init();
-
 			_states.back()->resetAll(); // Unpress buttons
 
-			SDL_Event ev; // Refresh mouse position
+			SDL_Event ev; // Update mouse position
 			int
 				x,y;
 			SDL_GetMouseState(&x,&y);
@@ -281,12 +282,12 @@ void Game::run()
 					{
 						case SDL_APPACTIVE:
 							runningState = reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain ? RUNNING : stateRun[Options::pauseMode];
-						break;
-						case SDL_APPMOUSEFOCUS: // Consciously ignore it.
-						break;
+							break;
 						case SDL_APPINPUTFOCUS:
 							runningState = reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain ? RUNNING : kbFocusRun[Options::pauseMode];
-						break;
+//							break;
+//						case SDL_APPMOUSEFOCUS: // sub-Consciously ignore it.
+//							break;
 					}
 				break;
 
@@ -376,9 +377,10 @@ void Game::run()
 						}
 						else if (Options::debug == true)
 						{
-							if (action.getDetails()->key.keysym.sym == SDLK_t)		// "ctrl-t" engage TestState
-								setState(new TestState());
-							else if (action.getDetails()->key.keysym.sym == SDLK_u)	// "ctrl-u" debug UI
+//							if (action.getDetails()->key.keysym.sym == SDLK_t)		// "ctrl-t" engage TestState
+//								setState(new TestState());
+//							else
+							if (action.getDetails()->key.keysym.sym == SDLK_u)		// "ctrl-u" debug UI
 							{
 								Options::debugUi = !Options::debugUi;
 								_states.back()->redrawText();
@@ -421,7 +423,6 @@ void Game::run()
 		if (runningState != PAUSED) // Process rendering
 		{
 			_states.back()->think(); // Process logic
-
 			_fpsCounter->think();
 
 			if (!(Options::useOpenGL && Options::vSyncForOpenGL)
@@ -444,12 +445,18 @@ void Game::run()
 
 				_screen->clear();
 
+				if (_blitDelay == true)
+				{
+					_blitDelay = false;
+					SDL_Delay(369);
+				}
+
 				std::list<State*>::const_iterator i = _states.end();
 				do
 				{
 					--i; // find top underlying fullscreen state,
 				}
-				while (i != _states.begin() && (*i)->isScreen() == false);
+				while (i != _states.begin() && (*i)->isFullScreen() == false);
 
 				for (
 						;
@@ -525,17 +532,15 @@ void Game::setVolume(
 		if (sound > -1)
 		{
 			sound = static_cast<int>(volExp(sound) * static_cast<double>(SDL_MIX_MAXVOLUME));
-			Mix_Volume(-1, sound); // kL_note: this, supposedly, sets volume on *all channels*
-
-			// channel 3: reserved for ambient sound effect.
-			Mix_Volume(3, sound / 2);
+			Mix_Volume(-1, sound);		// sets volume on *all channels*
+			Mix_Volume(3, sound / 2);	// channel 3: reserved for ambient sound effect.
 		}
 
 		if (ui > -1)
 		{
 			ui = static_cast<int>(volExp(ui) * static_cast<double>(SDL_MIX_MAXVOLUME));
 			// ... they use channels #1 & #2 btw. and group them accordingly in initAudio() below_
-			Mix_Volume(0, ui); // kL_note: then this sets channel-0 to ui-Volume
+			Mix_Volume(0, ui); // this sets channel-0 to ui-Volume
 			Mix_Volume(1, ui); // and this sets channel-1 to ui-Volume!
 			Mix_Volume(2, ui); // and this sets channel-2 to ui-Volume!
 		}
@@ -550,7 +555,7 @@ void Game::setVolume(
 double Game::volExp(int vol)
 {
 	return (std::exp(std::log(Game::VOLUME_GRADIENT + 1.) * static_cast<double>(vol) / static_cast<double>(SDL_MIX_MAXVOLUME)) - 1.)
-		  / Game::VOLUME_GRADIENT;
+		   / Game::VOLUME_GRADIENT;
 }
 // VOLUME_GRADIENT   = 10.
 // SDL_MIX_MAXVOLUME = 128
@@ -940,6 +945,24 @@ int Game::getDebugCycle() const
 void Game::setDebugCycle(const int cycle)
 {
 	_debugCycle = cycle;
+}
+
+/**
+ * Causes the engine to delay blitting top state.
+ * @param delay - true to delay
+ */
+void Game::delayBlit(bool delay)
+{
+	_blitDelay = delay;
+}
+
+/**
+ * Checks if the engine is set to delay blitting top state.
+ * @return, true if delay
+ */
+bool Game::delayBlit() const
+{
+	return _blitDelay;
 }
 
 }

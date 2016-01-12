@@ -56,7 +56,7 @@ DismantleFacilityState::DismantleFacilityState(
 		_view(view),
 		_fac(fac)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 152, 80, 20, 60);
 	_txtTitle		= new Text(142, 9, 25, 75);

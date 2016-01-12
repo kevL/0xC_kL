@@ -47,7 +47,7 @@ TransfersState::TransfersState(Base* base)
 	:
 		_base(base)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 320, 184, 0, 8, POPUP_BOTH);
 

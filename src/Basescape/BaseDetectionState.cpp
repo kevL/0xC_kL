@@ -50,7 +50,7 @@ BaseDetectionState::BaseDetectionState(const Base* const base)
 	:
 		_base(base)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 200, 100, 60, 50, POPUP_BOTH);
 	_txtTitle		= new Text(200, 17, 60, 60);

@@ -54,7 +54,7 @@ NewResearchListState::NewResearchListState(
 		_cutoff(-1),
 		_scroll(0)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 230, 160, 45, 25, POPUP_BOTH);
 	_txtTitle		= new Text(214, 16, 53, 33);

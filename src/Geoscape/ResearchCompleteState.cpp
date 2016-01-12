@@ -50,7 +50,7 @@ ResearchCompleteState::ResearchCompleteState(
 		_resRule(resRule),
 		_gofRule(gofRule)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 230, 140, 45, 30, POPUP_BOTH);
 

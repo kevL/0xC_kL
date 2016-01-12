@@ -56,7 +56,7 @@ ExecuteState::ExecuteState(BattleAction* const action)
 	:
 		_action(action)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 270, 96, 25, 50);
 	_txtTitle	= new Text(200, 17, 60, 58);

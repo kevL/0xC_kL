@@ -96,7 +96,7 @@ ResearchInfoState::~ResearchInfoState()
  */
 void ResearchInfoState::buildUi()
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window					= new Window(this, 240, 140, 40, 30);
 

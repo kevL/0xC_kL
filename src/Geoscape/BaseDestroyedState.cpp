@@ -61,7 +61,7 @@ BaseDestroyedState::BaseDestroyedState(
 		_base(base),
 		_globe(globe)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 246, 160, 35, 20); // note, these are offset a few px left.
 	_txtMessage	= new Text(224, 106, 46, 26);

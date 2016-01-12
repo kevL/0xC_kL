@@ -60,7 +60,7 @@ Game* State::_game = nullptr;
  */
 State::State()
 	:
-		_screen(true),
+		_fullScreen(true),
 		_modal(nullptr),
 		_ruleInterface(nullptr),
 		_ruleInterfaceParent(nullptr)
@@ -241,9 +241,9 @@ void State::add(
  * not) so states behind them can be safely ignored since they'd be covered up.
  * @return, true if full-screen
  */
-bool State::isScreen() const
+bool State::isFullScreen() const
 {
-	return _screen;
+	return _fullScreen;
 }
 
 /**
@@ -253,7 +253,7 @@ bool State::isScreen() const
  */
 void State::toggleScreen()
 {
-	_screen = !_screen;
+	_fullScreen = !_fullScreen;
 }
 
 /**

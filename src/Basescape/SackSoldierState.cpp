@@ -51,7 +51,7 @@ SackSoldierState::SackSoldierState(
 		_base(base),
 		_soldierId(soldierId)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 152, 80, 84, 60);
 	_txtTitle	= new Text(142, 9, 89, 75);

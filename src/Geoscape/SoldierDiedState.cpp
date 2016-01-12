@@ -42,7 +42,7 @@ SoldierDiedState::SoldierDiedState(
 		const std::wstring& name,
 		const std::wstring& base)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 192, 104, 32, 48, POPUP_BOTH);
 	_txtTitle	= new Text(160, 44, 48,  58);

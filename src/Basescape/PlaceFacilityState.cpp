@@ -59,7 +59,7 @@ PlaceFacilityState::PlaceFacilityState(
 		_base(base),
 		_facRule(facRule)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 128, 160, 192, 38);
 

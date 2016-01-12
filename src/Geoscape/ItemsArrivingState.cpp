@@ -63,7 +63,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 	:
 		_state(state)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 320, 184, 0, 8, POPUP_BOTH);
 	_txtTitle		= new Text(310, 17, 5, 17);

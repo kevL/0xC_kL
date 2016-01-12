@@ -107,6 +107,7 @@ BattlescapeGenerator::BattlescapeGenerator(Game* const game)
 		_battleOrder(0),
 		_blocksLeft(0),
 		_testBlock(nullptr)
+//		_error(false)
 {}
 
 /**
@@ -2236,6 +2237,7 @@ void BattlescapeGenerator::loadRMP( // private.
 		linkId;
 
 	const int nodeOffset = static_cast<int>(_battleSave->getNodes()->size());
+	int nodeVal = 0;
 	Node* node;
 	Position pos;
 
@@ -2247,7 +2249,7 @@ void BattlescapeGenerator::loadRMP( // private.
 		pos_y = static_cast<int>(dataArray[0]); // vis-a-vis values in .RMP files vs. loaded values.
 		pos_z = static_cast<int>(dataArray[2]);
 
-		if (pos_x < block->getSizeX()
+		if (   pos_x < block->getSizeX()
 			&& pos_y < block->getSizeY()
 			&& pos_z < _mapsize_z)
 		{
@@ -2313,11 +2315,20 @@ void BattlescapeGenerator::loadRMP( // private.
 
 			_battleSave->getNodes()->push_back(node);
 		}
+		else
+		{
+//			_error = true;
+			Log(LOG_WARNING) << "Error in RMP file: " << file.str()
+							 << " node #" << nodeVal << " is outside map boundaries at"
+							 << " x " << pos_x << " y " << pos_y << " z " << pos_z;
+		}
+
+		++nodeVal;
 	}
 
 	if (mapFile.eof() == false)
 	{
-		throw Exception("Invalid RMP file");
+		throw Exception("Invalid RMP file: " + file.str());
 	}
 
 	mapFile.close();
@@ -2491,6 +2502,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const scri
 {
 	//Log(LOG_INFO) << "generateMap, terraRule = " << _terrainRule->getType() << " script = " << _terrainRule->getScript();
 	// set up map generation vars
+//	_error = false;
 	_testBlock = new MapBlock("testBlock");
 
 	init();
@@ -2963,6 +2975,11 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const scri
 	}
 
 	attachNodeLinks();
+
+//	if (_error == true)
+//	{
+//		throw Exception("Map failed to fully generate, check Log.");
+//	}
 }
 
 /**

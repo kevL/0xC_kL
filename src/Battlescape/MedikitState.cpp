@@ -167,7 +167,7 @@ MedikitState::MedikitState(BattleAction* action)
 
 	if (_game->getScreen()->getDY() > 50)
 	{
-		_screen = false;
+		_fullScreen = false;
 		_bg->drawRect(67, 44, 190, 100, LIME);
 	}
 

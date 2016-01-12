@@ -189,7 +189,7 @@ void NextTurnState::handle(Action* action)
 	}
 }
 
-/*
+/**
  * Keeps the timer running.
  *
 void NextTurnState::think()
@@ -210,14 +210,14 @@ void NextTurnState::nextTurn()
 
 	int
 		liveAliens,
-		liveSoldiers;
-	_state->getBattleGame()->tallyUnits(liveAliens, liveSoldiers);
-	if (liveSoldiers == 0		// all xCom dead, or
+		livePlayer;
+	_state->getBattleGame()->tallyUnits(liveAliens, livePlayer);
+	if (livePlayer == 0		// all xCom dead, or
 		|| (liveAliens == 0		// not the final mission and all aLiens dead.
 			&& _battleSave->getObjectiveType() != MUST_DESTROY))
 	{
 		switchMusic = true;
-		_state->finishBattle(false, liveSoldiers);
+		_state->finishBattle(false, livePlayer);
 	}
 	else
 	{
@@ -257,10 +257,7 @@ void NextTurnState::nextTurn()
 			Tile* const tile = _battleSave->getTileEngine()->checkForTerrainExplosions();
 			if (tile != nullptr)
 			{
-				const Position pos = Position(
-										tile->getPosition().x * 16 + 8,
-										tile->getPosition().y * 16 + 8,
-										tile->getPosition().z * 24 + 10);
+				const Position pos = Position::toVoxelSpaceCentered(tile->getPosition(), 10);
 				_battleSave->getBattleGame()->statePushBack(new ExplosionBState(
 																			_battleSave->getBattleGame(),
 																			pos,
@@ -285,7 +282,7 @@ void NextTurnState::nextTurn()
 	}
 }
 
-/*
+/**
  *
  *
 void NextTurnState::resize(int& dX, int& dY)

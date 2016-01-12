@@ -2473,7 +2473,7 @@ const std::map<std::string, RuleVideo*>* Ruleset::getVideos() const
 
 /**
  * Gets the mission scripts.
- * @return, pointer to a vector of pairs of strings & pointers to RuleMissionScripts
+ * @return, pointer to a vector of strings of RuleMissionScript types
  */
 const std::vector<std::string>* Ruleset::getMissionScriptList() const
 {
@@ -2482,12 +2482,12 @@ const std::vector<std::string>* Ruleset::getMissionScriptList() const
 
 /**
  * Gets a specific mission script rule.
- * @param id - reference a mission script id
+ * @param type - reference a mission-script type
  * @return, pointer to the RuleMissionScript
  */
-RuleMissionScript* Ruleset::getMissionScript(const std::string& id) const
+RuleMissionScript* Ruleset::getMissionScript(const std::string& type) const
 {
-	std::map<std::string, RuleMissionScript*>::const_iterator i = _missionScripts.find(id);
+	std::map<std::string, RuleMissionScript*>::const_iterator i = _missionScripts.find(type);
 	if (i != _missionScripts.end())
 		return i->second;
 
@@ -2496,18 +2496,19 @@ RuleMissionScript* Ruleset::getMissionScript(const std::string& id) const
 
 /**
  * Gets the list of MapScripts.
- * @param id - reference the script type
+ * @param type - reference the map-script type
  * @return, pointer to a vector of pointers to MapScript
  */
-const std::vector<MapScript*>* Ruleset::getMapScript(const std::string& id) const
+const std::vector<MapScript*>* Ruleset::getMapScript(const std::string& type) const
 {
-	std::map<std::string, std::vector<MapScript*>>::const_iterator i = _mapScripts.find(id);
+	std::map<std::string, std::vector<MapScript*>>::const_iterator i = _mapScripts.find(type);
 	if (i != _mapScripts.end())
 	{
 		//Log(LOG_INFO) << "rules: i->first = " << i->first;
 		return &i->second;
 	}
 
+	//Log(LOG_ERROR) << "Map Script " << type << "not found";
 	return nullptr;
 }
 

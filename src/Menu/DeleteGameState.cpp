@@ -51,7 +51,7 @@ DeleteGameState::DeleteGameState(
 		_origin(origin),
 		_file(Options::getUserFolder() + file)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 256, 100, 32, 50, POPUP_BOTH);
 

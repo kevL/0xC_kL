@@ -41,7 +41,7 @@ namespace OpenXcom
  */
 ResearchRequiredState::ResearchRequiredState(const RuleItem* const itRule)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 288, 180, 16, 10);
 	_btnOk		= new TextButton(160, 18, 80, 150);

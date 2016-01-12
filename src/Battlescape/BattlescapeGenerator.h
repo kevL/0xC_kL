@@ -36,13 +36,10 @@ class BattleItem;
 class BattleUnit;
 class Craft;
 class Game;
-class MapBlock;
-class MapScript;
 class MissionSite;
 class ResourcePack;
 class RuleItem;
 class Ruleset;
-class RuleTerrain;
 class RuleUnit;
 class SavedBattleGame;
 class SavedGame;
@@ -64,6 +61,7 @@ private:
 		_baseEquipScreen,
 		_craftDeployed,
 		_generateFuel;
+//		_error;
 	int
 		_alienItemLevel,
 		_blocksLeft,

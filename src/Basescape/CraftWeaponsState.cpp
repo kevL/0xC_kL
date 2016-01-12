@@ -61,7 +61,7 @@ CraftWeaponsState::CraftWeaponsState(
 		_craft(base->getCrafts()->at(craftId)),
 		_pod(pod)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(this, 220, 160, 50, 20, POPUP_BOTH);
 

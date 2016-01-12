@@ -71,7 +71,7 @@ Window::Window(
 		_color(0),
 		_popStep(0.f),
 		_contrast(false),
-		_screen(false),
+		_fullScreen(false),
 		_thinBorder(false),
 		_bgX(0),
 		_bgY(0),
@@ -90,8 +90,8 @@ Window::Window(
 
 		if (_state != nullptr)
 		{
-			_screen = _state->isScreen();
-			if (_screen == true && _toggle == true) // <- for opening UfoPaedia in battlescape w/ black BG.
+			_fullScreen = _state->isFullScreen();
+			if (_fullScreen == true && _toggle == true) // <- for opening UfoPaedia in battlescape w/ black BG.
 				_state->toggleScreen();
 		}
 	}
@@ -138,7 +138,7 @@ void Window::popup() // private.
 
 	if (_popProgress == POP_HALT)
 	{
-		if (_screen == true && _toggle == true)
+		if (_fullScreen == true && _toggle == true)
 			_state->toggleScreen();
 
 		_state->showAll();

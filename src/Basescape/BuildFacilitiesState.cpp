@@ -53,7 +53,7 @@ BuildFacilitiesState::BuildFacilitiesState(
 		_base(base),
 		_state(state)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window			= new Window(
 								this,

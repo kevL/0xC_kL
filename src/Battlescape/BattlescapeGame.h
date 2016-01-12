@@ -190,11 +190,13 @@ private:
 	/// Determines whether there are any actions pending for the given unit.
 	bool noActionsPending(const BattleUnit* const unit) const;
 	/// Centers the battlefield camera on a BattleUnit.
-	void centerOnUnit(const BattleUnit* const unit) const;
+	void centerOnUnit(
+			const BattleUnit* const unit,
+			bool draw = false) const;
 	/// Summary execution.
 	void executeUnit();
 	/// Ends the turn.
-	void endTurnPhase();
+	void endTurn();
 	/// Picks the first soldier that is panicking.
 	bool handlePanickingPlayer();
 	/// Common function for hanlding panicking units.
@@ -284,8 +286,10 @@ private:
 				const BattleUnit* const unit,
 				int dir);
 
-		/// Requests the end of the turn (wait for explosions etc to really end the turn).
+		/// Requests the end of the turn.
 		void requestEndTurn();
+		/// Gets if an end-turn-request is waiting.
+//		bool getEndTurnRequested() const;
 
 		/// Drops an item and affects it with gravity.
 		void dropItem(

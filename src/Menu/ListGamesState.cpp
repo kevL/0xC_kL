@@ -117,7 +117,7 @@ ListGamesState::ListGamesState(
 		_editMode(false),
 		_refresh(true)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 320, 200, 0, 0, POPUP_BOTH);
 

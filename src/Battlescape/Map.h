@@ -40,7 +40,6 @@ class NumberText;
 class Projectile;
 class ResourcePack;
 class SavedBattleGame;
-class Surface;
 class SurfaceSet;
 class Tile;
 class Timer;
@@ -107,7 +106,7 @@ private:
 		_iconWidth,
 		_mX,
 		_mY,
-		_reveal,
+//		_reveal,
 		_selectorX,
 		_selectorY,
 		_spriteWidth,
@@ -121,7 +120,7 @@ private:
 	BattlescapeMessage* _hiddenScreen;
 	BattleUnit* _unit;
 	Camera* _camera;
-	Game* _game;
+	const Game* _game;
 	NumberText
 		* _numAccuracy,
 		* _numExposed,
@@ -186,7 +185,7 @@ private:
 	public:
 		/// Creates a new Map at the specified position and size.
 		Map(
-				Game* game,
+				const Game* const game,
 				int width,
 				int height,
 				int x,
@@ -216,7 +215,7 @@ private:
 		void mouseOver(Action* action, State* state) override;
 
 		/// Finds the current mouse position XY on this Map.
-		void findMousePosition(Position& mousePos);
+		void findMousePoint(Position& point);
 
 		/// Special handling for key presses.
 		void keyboardPress(Action* action, State* state) override;
@@ -226,10 +225,6 @@ private:
 		/// Cycles the frames for all tiles.
 		void animateMap(bool redraw = true);
 
-		/// Refreshes the battlescape selector after scrolling.
-//		void refreshSelectorPosition();
-		/// Sets the battlescape selector position relative to mouseposition.
-//		void setSelectorPosition(int x, int y);
 		/// Sets the battlescape selector position relative to current mouseposition.
 		void refreshSelectorPosition();
 		/// Gets the currently selected position.

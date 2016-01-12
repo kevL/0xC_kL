@@ -62,7 +62,7 @@ PrimeGrenadeState::PrimeGrenadeState(
 		_grenade(grenade),
 		_inventory(inventory)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_fraTop		= new Frame(192, 27, 65, 37);
 	_txtTitle	= new Text(192, 18, 65, 43);

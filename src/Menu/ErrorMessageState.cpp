@@ -105,7 +105,7 @@ void ErrorMessageState::create(
 		const std::string& bg,
 		int bgColor)
 {
-	_screen = false;
+	_fullScreen = false;
 
 	_window		= new Window(this, 256, 160, 32, 20, POPUP_BOTH);
 	_txtMessage	= new Text(200, 120, 60, 30);
