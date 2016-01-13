@@ -2044,8 +2044,8 @@ void BattlescapeGame::checkForCasualties(
 		}
 	}
 
-	_parentState->hotWoundsClear();
-	_parentState->hotWoundsUpdate();
+
+	_parentState->hotWoundsRefresh();
 
 	if (hiddenExpl == false)
 	{

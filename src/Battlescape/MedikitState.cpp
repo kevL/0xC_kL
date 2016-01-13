@@ -322,9 +322,7 @@ void MedikitState::closeClick(Action*)
 		_game->getScreen()->resetDisplay(false);
 	} */
 
-	_game->getSavedGame()->getBattleSave()->getBattleState()->hotWoundsClear();
-	_game->getSavedGame()->getBattleSave()->getBattleState()->hotWoundsUpdate();
-
+	_game->getSavedGame()->getBattleSave()->getBattleState()->hotWoundsRefresh();
 	_game->popState();
 }
 

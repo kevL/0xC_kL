@@ -247,7 +247,7 @@ BattlescapeState::BattlescapeState()
 												x + iconsWidth - 21 - offsetX,
 												y - 16 - (static_cast<int>(i) * 13));
 		_numHostileUnit[i] = new NumberText(
-										9,9,
+										8,6,
 										x + iconsWidth - 15 - offsetX,
 										y - 12 - (static_cast<int>(i) * 13));
 	}
@@ -2348,7 +2348,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 }
 
 /**
- * Centers on the currently wounded soldier.
+ * Centers on a wounded soldier.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnWoundedPress(Action* action)
@@ -2364,9 +2364,9 @@ void BattlescapeState::btnWoundedPress(Action* action)
 			break;
 
 		case SDL_BUTTON_LEFT:
-		case SDL_BUTTON_RIGHT: //playableUnitSelected() == true
+		case SDL_BUTTON_RIGHT:
 		{
-			for (size_t // find out which button was pressed
+			for (size_t
 					i = 0;
 					i != WOUNDED;
 					++i)
@@ -3012,11 +3012,13 @@ void BattlescapeState::hotSqrsUpdate()
 }
 
 /**
- * Clears the wounded units indicators.
+ * Refreshes the wounded units indicators.
  */
-void BattlescapeState::hotWoundsClear()
+void BattlescapeState::hotWoundsRefresh()
 {
-	for (size_t // hide target indicators & clear targets
+	static Surface* const srfBg (_game->getResourcePack()->getSurface("RANK_ROOKIE"));
+
+	for (size_t // hide target indicators & clear tiles
 			i = 0;
 			i != WOUNDED;
 			++i)
@@ -3026,14 +3028,6 @@ void BattlescapeState::hotWoundsClear()
 		_numWounded[i]->setVisible(false);
 		_tileWounded[i] = nullptr;
 	}
-}
-
-/**
- * Updates the wounded units indicators.
- */
-void BattlescapeState::hotWoundsUpdate()
-{
-	static Surface* const srfBg (_game->getResourcePack()->getSurface("RANK_ROOKIE"));
 
 	BattleUnit* unit;
 	for (size_t

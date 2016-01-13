@@ -377,10 +377,9 @@ private:
 		void hotSqrsClear();
 		/// Updates the hostile unit indicator squares.
 		void hotSqrsUpdate();
-		/// Clears the wounded units indicators.
-		void hotWoundsClear();
-		/// Updates the wounded units indicators.
-		void hotWoundsUpdate();
+
+		/// Refreshes the wounded units indicators.
+		void hotWoundsRefresh();
 
 		/// Animates map objects on the map, also smoke,fire, ...
 		void animate();
