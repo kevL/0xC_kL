@@ -190,22 +190,26 @@ void MiniMapState::btnOkClick(Action* action)
  * Changes the currently displayed MiniMap level.
  * @param action - pointer to an Action
  */
-void MiniMapState::btnLevelUpClick(Action*)
+void MiniMapState::btnLevelUpClick(Action* action)
 {
 	std::wostringstream level;
 	level << ((_miniView->up() + 1) % 10);
 	_txtLevel->setText(level.str());
+
+	action->getDetails()->type = SDL_NOEVENT; // consume the event
 }
 
 /**
  * Changes the currently displayed MiniMap level.
  * @param action - pointer to an Action
  */
-void MiniMapState::btnLevelDownClick(Action*)
+void MiniMapState::btnLevelDownClick(Action* action)
 {
 	std::wostringstream level;
 	level << ((_miniView->down() + 1) % 10);
 	_txtLevel->setText(level.str());
+
+	action->getDetails()->type = SDL_NOEVENT; // consume the event
 }
 
 /**
