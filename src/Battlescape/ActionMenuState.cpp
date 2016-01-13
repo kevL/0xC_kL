@@ -129,9 +129,9 @@ ActionMenuState::ActionMenuState(
 				{
 					addItem( // melee bark
 							BA_NONE,
-							"STR_DOGE_BARK",
+							"STR_DOG_BARK",
 							&id);
-					st = "STR_DOGE_BITE";
+					st = "STR_DOG_BITE";
 				}
 				else
 					st = "STR_HIT_MELEE";
