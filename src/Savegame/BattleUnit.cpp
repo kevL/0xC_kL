@@ -2230,7 +2230,7 @@ double BattleUnit::getAccuracy(
 			if (itRule->isSkillApplied() == true)
 				ret *= static_cast<double>(_stats.melee) * PCT;
 			if (_kneeled == true)
-				ret *= 0.86;
+				ret *= 0.83;
 			break;
 
 		case BA_THROW:

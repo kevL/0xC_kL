@@ -5246,13 +5246,15 @@ bool TileEngine::validThrowRange( // static.
 		weight += action->weapon->getAmmoItem()->getRules()->getWeight();
 	}
 
-	const int
-		delta_z = originVoxel.z // throw up is neg. / throw down is pos.
-				- (action->target.z * 24) + tile->getTerrainLevel(),
-		dist = (getThrowDistance(
+	const int deltaZ = originVoxel.z // throw up is neg./ throw down is pos.
+					 - (action->target.z * 24) + tile->getTerrainLevel();
+	int dist = (getThrowDistance(
 							weight,
 							action->actor->getStrength(),
-							delta_z) + 8) / 16; // round to tile-space.
+							deltaZ) + 8) >> 4; // center & convert to tile-space.
+	if (action->actor->isKneeled() == true)
+		dist = dist * 3 / 4;
+
 	return (distThrow <= dist);
 }
 
