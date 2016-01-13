@@ -516,9 +516,6 @@ private:
 		/// Checks if this unit is wearing a FlightSuit.
 //		bool hasFlightSuit() const;
 
-		/// Gets this unit's total number of fatal wounds.
-		int getFatalWounds() const;
-
 		/// Gets this unit's current reaction score.
 		int getInitiative(const int tuSpent = 0) const;
 
@@ -640,6 +637,8 @@ private:
 		/// Gets the turret type of this unit (-1 is no turret).
 		int getTurretType() const;
 
+		/// Gets this unit's total number of fatal wounds.
+		int getFatalWounds() const;
 		/// Gets fatal wound amount of a body part.
 		int getFatalWound(UnitBodyPart part) const;
 		/// Heals fatal wounds.
@@ -686,9 +685,9 @@ private:
 		/// Gets this unit's aggro sound.
 		int getAggroSound() const;
 
-		/// Gets whether this unit is affected by fatal wounds.
+		/// Gets whether this unit can be affected by fatal wounds.
 		bool isWoundable() const;
-		/// Gets whether this unit is affected by fear.
+		/// Gets whether this unit can be affected by fear.
 		bool isFearable() const;
 		/// Gets whether this unit can be accessed with the Medikit.
 		bool isHealable() const;

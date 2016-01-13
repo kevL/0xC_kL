@@ -300,8 +300,7 @@ void MedikitState::handle(Action* action)
 	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN
 		&& action->getDetails()->button.button == SDL_BUTTON_RIGHT)
 	{
-		_game->popState();
-//		closeClick(nullptr);
+		closeClick(nullptr);
 	}
 }
 
@@ -352,8 +351,7 @@ void MedikitState::healClick(Action*)
 				&& _action->targetUnit->getStun() < _action->targetUnit->getHealth())
 			{
 				_action->actor->getStatistics()->revivedSoldier += 2;
-				_game->popState();
-//				closeClick(nullptr);
+				closeClick(nullptr);
 			}
 			else
 				update();
@@ -389,8 +387,7 @@ void MedikitState::stimClick(Action*)
 				if (_action->targetUnit->getFatalWounds() != 0)
 					++_action->actor->getStatistics()->revivedSoldier;
 
-				_game->popState();
-//				closeClick(nullptr);
+				closeClick(nullptr);
 			}
 			else
 				update();
@@ -420,7 +417,7 @@ void MedikitState::painClick(Action*)
 			_action->targetUnit->morphine();
 
 			if (_action->targetUnit->getHealth() == 0) // overdose.
-				_game->popState();
+				closeClick(nullptr);
 			else if (_action->targetUnit->getFaction() == FACTION_NEUTRAL) // take control of Civies.
 			{
 				_action->targetUnit->setFaction(FACTION_PLAYER);
@@ -436,8 +433,7 @@ void MedikitState::painClick(Action*)
 
 				battleSave->getBattleGame()->getMap()->getCamera()->centerOnPosition(_action->targetUnit->getPosition());
 
-				_game->popState();
-//				closeClick(nullptr);
+				closeClick(nullptr);
 			}
 			else
 				update();

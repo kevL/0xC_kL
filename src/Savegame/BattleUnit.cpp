@@ -2359,25 +2359,6 @@ int BattleUnit::getArmor(UnitSide side) const
 }
 
 /**
- * Gets total amount of fatal wounds this BattleUnit has.
- * @return, number of fatal wounds
- */
-int BattleUnit::getFatalWounds() const
-{
-	int ret = 0;
-
-	for (size_t
-			i = 0;
-			i != PARTS_BODY;
-			++i)
-	{
-		ret += _fatalWounds[i];
-	}
-
-	return ret;
-}
-
-/**
  * Little formula that calculates initiative/reaction score.
  * @note Reactions Stat * Current Time Units / Max TUs
  * @param tuSpent - (default 0)
@@ -3452,6 +3433,25 @@ int BattleUnit::getTurretType() const
 }
 
 /**
+ * Gets total amount of fatal wounds this BattleUnit has.
+ * @return, number of fatal wounds
+ */
+int BattleUnit::getFatalWounds() const
+{
+	int ret = 0;
+
+	for (size_t
+			i = 0;
+			i != PARTS_BODY;
+			++i)
+	{
+		ret += _fatalWounds[i];
+	}
+
+	return ret;
+}
+
+/**
  * Gets the amount of fatal wounds for a body part.
  * @param part - the body part in the range 0-5 (BattleUnit.h)
  * @return, fatal wounds @a part has
@@ -3716,7 +3716,7 @@ int BattleUnit::getMoveSound() const
 }
 
 /**
- * Gets whether the unit is affected by fatal wounds.
+ * Gets whether the unit can be affected by fatal wounds.
  * @note Normally only soldiers are affected by fatal wounds.
  * @return, true if unit can be affected by fatal wounds
  */
@@ -3730,7 +3730,7 @@ bool BattleUnit::isWoundable() const
 }
 
 /**
- * Gets whether this unit is affected by morale loss.
+ * Gets whether this unit can be affected by morale loss.
  * @return, true if unit can be affected by morale changes
  */
 bool BattleUnit::isFearable() const

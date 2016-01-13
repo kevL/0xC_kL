@@ -24,7 +24,7 @@
 #include "BattlescapeState.h"
 
 //#include <cmath>
-#include <cstddef> // nullptr (for NB code-assistant only)
+//#include <cstddef> // nullptr (for NB code-assistant only)
 #include <cstring>
 #include <iomanip>
 //#include <sstream>
@@ -3087,6 +3087,19 @@ void BattlescapeState::flashMedic() // private.
 }
 
 /**
+ * Blinks the health bar when selected unit has fatal wounds.
+ */
+void BattlescapeState::blinkHealthBar() // private.
+{
+	static const int TICKS = 5;
+	static int vis;
+
+	_barHealth->setVisible(++vis > TICKS / 2);
+
+	if (vis == TICKS) vis = 0;
+}
+
+/**
  * Animates things on the map and in the HUD.
  */
 void BattlescapeState::animate()
@@ -3095,45 +3108,51 @@ void BattlescapeState::animate()
 														// doors (&tc) do not stall walking units (&tc)
 	if (_map->getMapHidden() == false)
 	{
-		const BattleUnit* const selUnit = _battleSave->getSelectedUnit();
-		if (selUnit != nullptr)
+		if (_battleGame->getShotgun() == true)
+			shotgunExplosion();
+
+		if (_battleSave->getSide() == FACTION_PLAYER)
 		{
-			cycleHostileHotcons();
-			drawFuse();
+			flashMedic();
 
-			if (_targeter->getVisible() == true)
-				hostileTargeter();
-
-			if (_battleGame->getExecution() == true)
-				executionExplosion();
-
-			if (_battleGame->getShotgun() == true)
-				shotgunExplosion();
-
-			if (_isOverweight == true && RNG::seedless(0,3) == 0)
-				_overWeight->setVisible(!_overWeight->getVisible());
-
-			static int stickyTiks; // inits to 0.
-			if (_bigBtnBorder->getVisible() == true)
+			BattleUnit* const selUnit = _battleSave->getSelectedUnit();
+			if (selUnit != nullptr)
 			{
-				++stickyTiks;
-				if (stickyTiks == 4)
+				hotSqrsCycle(selUnit);
+				cycleFuses(selUnit);
+
+				if (selUnit->getFatalWounds() != 0)
+					blinkHealthBar();
+
+				if (_targeter->getVisible() == true)
+					hostileTargeter();
+
+				if (_battleGame->getExecution() == true)
+					executionExplosion();
+
+				if (_isOverweight == true && RNG::seedless(0,3) == 0)
+					_overWeight->setVisible(!_overWeight->getVisible());
+
+				static int stickyTiks;
+				if (_bigBtnBorder->getVisible() == true)
 				{
-					stickyTiks = 0;
-					_bigBtnBorder->setVisible(false);
+					++stickyTiks;
+					if (stickyTiks == 3)
+					{
+						stickyTiks = 0;
+						_bigBtnBorder->setVisible(false);
+					}
 				}
 			}
 		}
-
-		if (_battleSave->getSide() == FACTION_PLAYER)
-			flashMedic();
 	}
 }
 
 /**
  * Animates primer warnings on hand-held live grenades.
+ * @param selUnit - the currently selected BattleUnit
  */
-void BattlescapeState::drawFuse() // private.
+void BattlescapeState::cycleFuses(BattleUnit* const selUnit) // private.
 {
 	static Surface* const srf = _game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(9); // plus sign
 	static const int pulse[PULSE_FRAMES] = { 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,
@@ -3142,7 +3161,6 @@ void BattlescapeState::drawFuse() // private.
 	if (_fuseFrame == PULSE_FRAMES)
 		_fuseFrame = 0;
 
-	const BattleUnit* const selUnit = _battleSave->getSelectedUnit();
 	const BattleItem* item = selUnit->getItem(ST_LEFTHAND);
 	if (item != nullptr
 		&& item->getRules()->isGrenade() == true
@@ -3178,11 +3196,10 @@ void BattlescapeState::drawFuse() // private.
 
 /**
  * Shifts the colors of the hostileUnit buttons' backgrounds.
+ * @param selUnit - the currently selected BattleUnit
  */
-void BattlescapeState::cycleHostileHotcons() // private.
+void BattlescapeState::hotSqrsCycle(BattleUnit* const selUnit) // private.
 {
-	BattleUnit* const selUnit = _battleSave->getSelectedUnit();
-
 	static int
 		delta = 1,
 		colorRed = 34,		// currently selected unit sees other unit
@@ -3208,7 +3225,6 @@ void BattlescapeState::cycleHostileHotcons() // private.
 			{
 				if ((*j)->getFaction() == FACTION_PLAYER
 					&& (*j)->isOut_t(OUT_STAT) == false)
-//						&& (*j)->isOut() == false)
 				{
 					if (std::find(
 								(*j)->getHostileUnits().begin(),

@@ -20,7 +20,7 @@
 #ifndef OPENXCOM_MAP_H
 #define OPENXCOM_MAP_H
 
-#include <cstddef> // nullptr (for NB code-assistant only)
+//#include <cstddef> // nullptr (for NB code-assistant only)
 //#include <vector>
 
 #include "Position.h"

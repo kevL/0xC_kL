@@ -19,7 +19,7 @@
 
 #include "SoldierDiaryMissionState.h"
 
-#include <cstddef> // nullptr (for NB code-assistant only)
+//#include <cstddef> // nullptr (for NB code-assistant only)
 //#include <sstream>
 //#include <vector>
 

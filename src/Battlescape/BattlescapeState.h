@@ -218,10 +218,12 @@ private:
 
 	/// Animates a red cross icon when an injured soldier is selected.
 	void flashMedic();
+	/// Blinks the health bar when selected unit has fatal wounds.
+	void blinkHealthBar();
 	/// Shows primer warnings on hand-held live grenades.
-	void drawFuse();
+	void cycleFuses(BattleUnit* const selUnit);
 	/// Shifts the colors of the visible unit buttons' backgrounds.
-	void cycleHostileHotcons();
+	void hotSqrsCycle(BattleUnit* const selUnit);
 	/// Animates a target cursor over hostile unit when hostileUnit indicator is clicked.
 	void hostileTargeter();
 	/// Draws an execution explosion on the Map.
