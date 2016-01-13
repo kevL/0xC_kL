@@ -1106,7 +1106,7 @@ BattleActionType RuleItem::getDefaultAction(bool isPrimed) const
 		return BA_PSIPANIC;
 
 	if (_tuMelee != 0)
-		return BA_HIT;
+		return BA_MELEE;
 
 	return BA_NONE;
 }

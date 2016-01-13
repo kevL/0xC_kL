@@ -871,7 +871,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 		case BA_AUTOSHOT:
 		case BA_AIMEDSHOT:
 		case BA_THROW:
-		case BA_HIT:
+		case BA_MELEE:
 		case BA_PSICONTROL:
 		case BA_PSIPANIC:
 		case BA_LAUNCH:
@@ -901,7 +901,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 					switch (action.type)
 					{
-						case BA_HIT:
+						case BA_MELEE:
 						{
 							const std::string meleeWeapon = unit->getMeleeWeapon();
 //							statePushBack(new MeleeAttackBState(this, action));
@@ -1109,7 +1109,7 @@ void BattlescapeGame::handleNonTargetAction()
 					showWarning = 1;
 			break;
 
-			case BA_HIT:
+			case BA_MELEE:
 				if (_currentAction.result.empty() == false)
 					showWarning = 1;
 				else if (_currentAction.actor->spendTimeUnits(_currentAction.TU) == false)
@@ -2196,7 +2196,7 @@ bool BattlescapeGame::checkReservedTu(
 	if (weapon != nullptr)
 	{
 		if (weapon->getRules()->getBattleType() == BT_MELEE)
-			batReserved = BA_HIT;
+			batReserved = BA_MELEE;
 		else if (weapon->getRules()->getBattleType() == BT_FIREARM)
 		{
 			if (unit->getActionTu(batReserved = BA_SNAPSHOT, weapon) == 0)

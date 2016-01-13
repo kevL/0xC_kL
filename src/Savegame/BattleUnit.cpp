@@ -1962,7 +1962,7 @@ int BattleUnit::getActionTu(
 			cost = itRule->getSnapTu();
 		break;
 
-		case BA_HIT:
+		case BA_MELEE:
 			if (itRule == nullptr)
 				return 0;
 			cost = itRule->getMeleeTu();
@@ -2224,7 +2224,7 @@ double BattleUnit::getAccuracy(
 		case BA_LAUNCH:
 		return 1.;
 
-		case BA_HIT:
+		case BA_MELEE:
 			ret = static_cast<double>(itRule->getAccuracyMelee()) * PCT;
 
 			if (itRule->isSkillApplied() == true)

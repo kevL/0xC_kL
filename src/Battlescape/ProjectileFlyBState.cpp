@@ -119,7 +119,7 @@ void ProjectileFlyBState::init()
 	else
 	{
 		if (_unit->getTimeUnits() >= _action.TU // go ->
-			|| _action.type == BA_HIT
+			|| _action.type == BA_MELEE
 			|| _parent->getPanicHandled() == false
 			|| _unit->getFaction() != FACTION_PLAYER)
 		{
@@ -175,8 +175,8 @@ void ProjectileFlyBState::init()
 			|| _action.type == BA_AUTOSHOT
 			|| _action.type == BA_AIMEDSHOT))
 	{
-		//Log(LOG_INFO) << ". convert shotType to BA_HIT";
-		_action.type = BA_HIT;
+		//Log(LOG_INFO) << ". convert shotType to BA_MELEE";
+		_action.type = BA_MELEE;
 	}
 
 	switch (_action.type)
@@ -233,9 +233,9 @@ void ProjectileFlyBState::init()
 		}
 		break;
 
-		case BA_HIT:
+		case BA_MELEE:
 			performMeleeAttack();
-			//Log(LOG_INFO) << ". . BA_HIT performMeleeAttack() DONE - EXIT flyBState::init()";
+			//Log(LOG_INFO) << ". . BA_MELEE performMeleeAttack() DONE - EXIT flyBState::init()";
 		return;
 
 		case BA_PSIPANIC:
@@ -775,10 +775,10 @@ void ProjectileFlyBState::think()
 				_parent->getTileEngine()->checkReactionFire(		// note: I don't believe that smoke obscuration gets accounted
 														_unit,		// for by this call if the current projectile caused cloud.
 														_action.TU,	// But that's kinda ok.
-														_action.type != BA_HIT);
+														_action.type != BA_MELEE);
 			}
 
-			if (_unit->isOut_t() == false && _action.type != BA_HIT)
+			if (_unit->isOut_t() == false && _action.type != BA_MELEE)
 				_unit->setUnitStatus(STATUS_STANDING);
 
 //			if (_battleSave->getSide() == FACTION_PLAYER || _battleSave->getDebugMode() == true)

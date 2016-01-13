@@ -1820,8 +1820,8 @@ bool TileEngine::reactionShot(
 
 	if (_rfAction->weapon->getRules()->getBattleType() == BT_MELEE)
 	{
-		_rfAction->type = BA_HIT;
-		_rfAction->TU = _rfAction->actor->getActionTu(BA_HIT, _rfAction->weapon);
+		_rfAction->type = BA_MELEE;
+		_rfAction->TU = _rfAction->actor->getActionTu(BA_MELEE, _rfAction->weapon);
 		if (_rfAction->TU == 0
 			|| _rfAction->TU > _rfAction->actor->getTimeUnits())
 		{
@@ -5790,7 +5790,7 @@ VoxelType TileEngine::voxelCheck(
 //				if (layer > -1)
 //				{
 				x = targetVoxel.x % 16;
-				// That should be (8,8,10) as per BattlescapeGame::handleNonTargetAction() if (_currentAction.type == BA_HIT)
+				// That should be (8,8,10) as per BattlescapeGame::handleNonTargetAction() if (_currentAction.type == BA_MELEE)
 
 				loftId = (targetUnit->getLoft(layer) << 4) + y;
 				//Log(LOG_INFO) << "loftId = " << loftId << " vD-size = " << (int)_voxelData->size();

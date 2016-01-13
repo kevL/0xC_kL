@@ -1009,7 +1009,7 @@ void UnitWalkBState::postPathProcedures() // private.
 				action.actor = _unit;
 				action.target = posTarget;
 				action.targeting = true;
-				action.type = BA_HIT;
+				action.type = BA_MELEE;
 				action.weapon = _unit->getMainHandWeapon();
 //				action.weapon = _unit->getMeleeWeapon();
 

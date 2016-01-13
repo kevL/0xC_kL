@@ -2807,7 +2807,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 							&& tuAuto == 0
 							&& tuSnap == 0)
 						{
-							tuSnap = selUnit->getActionTu(BA_HIT, rtItem);
+							tuSnap = selUnit->getActionTu(BA_MELEE, rtItem);
 						}
 					} break;
 
@@ -2825,7 +2825,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 							&& tuAuto == 0
 							&& tuSnap == 0)
 						{
-							tuSnap = selUnit->getActionTu(BA_HIT, ltItem);
+							tuSnap = selUnit->getActionTu(BA_MELEE, ltItem);
 						}
 					}
 			}

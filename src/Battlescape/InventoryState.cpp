@@ -1298,7 +1298,7 @@ void InventoryState::setExtraInfo( // private.
 				case BA_DEFUSE:		actionType = "STR_DEFUSE_";	break;
 				case BA_USE:		actionType = "STR_USE_";	break;
 				case BA_PSIPANIC:	actionType = "STR_PSI_";	break;
-				case BA_HIT:		actionType = "STR_ATTACK_";
+				case BA_MELEE:		actionType = "STR_ATTACK_";
 			}
 
 			tu = unit->getActionTu(bat, item);

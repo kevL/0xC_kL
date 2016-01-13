@@ -117,7 +117,7 @@ ActionMenuState::ActionMenuState(
 				&& itRule->getDamageType() == DT_STUN)
 			{
 				addItem( // stun rod
-						BA_HIT,
+						BA_MELEE,
 						"STR_STUN",
 						&id);
 			}
@@ -137,7 +137,7 @@ ActionMenuState::ActionMenuState(
 					st = "STR_HIT_MELEE";
 
 				addItem( // melee weapon
-						BA_HIT,
+						BA_MELEE,
 						st,
 						&id);
 			}
@@ -272,7 +272,7 @@ void ActionMenuState::addItem( // private.
 		|| bat == BA_AIMEDSHOT
 		|| bat == BA_SNAPSHOT
 		|| bat == BA_AUTOSHOT
-		|| bat == BA_HIT)
+		|| bat == BA_MELEE)
 	{
 		var = static_cast<int>(Round(_action->actor->getAccuracy(*_action, bat) * 100.));
 		wst1 = tr("STR_ACCURACY_SHORT_KL").arg(var);
@@ -423,7 +423,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 				_game->popState();
 			break;
 
-			case BA_HIT:
+			case BA_MELEE:
 				if (_action->TU > _action->actor->getTimeUnits())
 					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
 				else if (_game->getSavedGame()->getBattleSave()->getTileEngine()

@@ -109,7 +109,7 @@ void ExplosionBState::init()
 			_pistolWhip = _unit != nullptr
 					   && _unit->getFaction() == FACTION_PLAYER
 					   && _item->getRules()->getBattleType() != BT_MELEE
-					   && _parent->getCurrentAction()->type == BA_HIT;
+					   && _parent->getCurrentAction()->type == BA_MELEE;
 
 			if (_pistolWhip == true)
 				_power = _item->getRules()->getMeleePower();

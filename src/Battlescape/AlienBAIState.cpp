@@ -263,7 +263,7 @@ void AlienBAIState::think(BattleAction* const action)
 			//Log(LOG_INFO) << ". . weapon is Melee";
 			_melee = true;
 			const int tuPreshot = _unit->getTimeUnits() - _unit->getActionTu(
-																		BA_HIT,
+																		BA_MELEE,
 																		action->weapon);
 			_reachableAttack = pf->findReachable(_unit, tuPreshot);
 		}
@@ -914,7 +914,7 @@ void AlienBAIState::setupAttack() // private.
 		case  5: BA_AUTOSHOT,	st = "autoshot";	break;
 		case  6: BA_SNAPSHOT,	st = "snapshot";	break;
 		case  7: BA_AIMEDSHOT,	st = "aimedshot";	break;
-		case  8: BA_HIT,		st = "hit";			break;
+		case  8: BA_MELEE,		st = "hit";			break;
 		case  9: BA_USE,		st = "use";			break;
 		case 10: BA_LAUNCH,		st = "launch";		break;
 		case 11: BA_PSICONTROL,	st = "mindcontrol";	break;
@@ -1943,7 +1943,7 @@ bool AlienBAIState::explosiveEfficacy(
  */
 void AlienBAIState::meleeAction() // private.
 {
-//	int attackCost = _unit->getActionTu(BA_HIT, _unit->getMeleeWeapon());
+//	int attackCost = _unit->getActionTu(BA_MELEE, _unit->getMeleeWeapon());
 //	if (_unit->getTimeUnits() < attackCost)	// cannot make a melee attack - consider some other behaviour, like running away, or standing motionless.
 //		return;								// ... nah, CHAAAARGEE!!!
 
@@ -1965,7 +1965,7 @@ void AlienBAIState::meleeAction() // private.
 
 	const int tuPreMelee = _unit->getTimeUnits()
 						 - _unit->getActionTu(
-											BA_HIT,
+											BA_MELEE,
 											_attackAction->weapon); //_unit->getMainHandWeapon());
 	int
 		dist = (tuPreMelee / 4) + 1,
@@ -2030,7 +2030,7 @@ void AlienBAIState::meleeAttack() // private.
 
 	//if (_traceAI) Log(LOG_INFO) << "Attack unit: " << _aggroTarget->getId();
 	_attackAction->target = _aggroTarget->getPosition();
-	_attackAction->type = BA_HIT;
+	_attackAction->type = BA_MELEE;
 }
 
 /**
@@ -2623,7 +2623,7 @@ void AlienBAIState::selectMeleeOrRanged() // private.
 			{
 				_rifle = false;
 				const int tuPreshot = _unit->getTimeUnits() - _unit->getActionTu(
-																			BA_HIT,
+																			BA_MELEE,
 																			meleeWeapon);
 				Pathfinding* const pf = _battleSave->getPathfinding();
 				pf->setPathingUnit(_unit);

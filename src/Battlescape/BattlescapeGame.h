@@ -56,7 +56,7 @@ enum BattleActionType
 	BA_AUTOSHOT,	//  5
 	BA_SNAPSHOT,	//  6
 	BA_AIMEDSHOT,	//  7
-	BA_HIT,			//  8
+	BA_MELEE,		//  8
 	BA_USE,			//  9
 	BA_LAUNCH,		// 10
 	BA_PSICONTROL,	// 11
