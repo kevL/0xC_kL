@@ -2234,10 +2234,10 @@ void BattlescapeGenerator::loadRMP( // private.
 		aLienObject,
 		spPriority,
 
-		linkId;
+		linkId,
+		nodeVal = 0;
 
 	const int nodeOffset = static_cast<int>(_battleSave->getNodes()->size());
-	int nodeVal = 0;
 	Node* node;
 	Position pos;
 
@@ -2287,7 +2287,7 @@ void BattlescapeGenerator::loadRMP( // private.
 
 			for (size_t // create nodeLinks ->
 					j = 0;
-					j != 5;
+					j != 5; // Max links that a node can have.
 					++j)
 			{
 				linkId = static_cast<int>(dataArray[(j * 3) + 4]); // <- 4[5,6],7[8,9],10[11,12],13[14,15],16[17,18] -> [unitType & distance of linked nodes are not used]

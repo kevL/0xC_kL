@@ -2222,20 +2222,22 @@ double BattleUnit::getAccuracy(
 	switch (baType)
 	{
 		case BA_LAUNCH:
-		return 1.;
+			return 1.;
 
 		case BA_MELEE:
 			ret = static_cast<double>(itRule->getAccuracyMelee()) * PCT;
 
 			if (itRule->isSkillApplied() == true)
 				ret *= static_cast<double>(_stats.melee) * PCT;
-		break;
+			if (_kneeled == true)
+				ret *= 0.86;
+			break;
 
 		case BA_THROW:
 			ret = static_cast<double>(_stats.throwing) * PCT;
 			if (_kneeled == true)
 				ret *= 0.86;
-		break;
+			break;
 
 		default:
 			switch (baType)
