@@ -26,7 +26,7 @@ items:
     costSell: 40
     transferTime: 48
     bigSprite: -1
-    hitSound: 13
+    fireHitSound: 13
     hitAnimation: 8
     power: 42
     damageType: 9

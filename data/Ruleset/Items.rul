@@ -83,7 +83,7 @@ items:
     costSell: 1450
     transferTime: 48
     weight: 0
-    hitSound: 13
+    fireHitSound: 13
     hitAnimation: 26
     power: 92
     damageType: 1
@@ -117,7 +117,7 @@ items:
     costSell: 2400
     transferTime: 48
     weight: 0
-    hitSound: 5
+    fireHitSound: 5
     hitAnimation: 0
     power: 115
     damageType: 3
@@ -134,7 +134,7 @@ items:
 #    handSprite: 0
     bulletSprite: 5
     fireSound: 11
-    hitSound: 19
+    fireHitSound: 19
     hitAnimation: 36
     power: 186
     damageType: 4
@@ -158,7 +158,7 @@ items:
 #    handSprite: 0
     bulletSprite: 8
     fireSound: 18
-    hitSound: 19
+    fireHitSound: 19
     power: 127
     damageType: 5
     hitAnimation: 46
@@ -199,7 +199,7 @@ items:
     costSell: 216240 # 720800
     transferTime: 48
     weight: 0
-    hitSound: 5
+    fireHitSound: 5
     hitAnimation: 0
     power: 216
     damageType: 3
@@ -237,7 +237,7 @@ items:
     weight: 2
     bigSprite: 4
     floorSprite: 4
-    hitSound: 22
+    fireHitSound: 22
     hitAnimation: 26
     power: 25
     damageType: 1
@@ -274,7 +274,7 @@ items:
     weight: 3
     bigSprite: 2
     floorSprite: 2
-    hitSound: 22
+    fireHitSound: 22
     hitAnimation: 26
     power: 36
     damageType: 1
@@ -310,7 +310,7 @@ items:
     weight: 6
     bigSprite: 12
     floorSprite: 12
-    hitSound: 13
+    fireHitSound: 13
     hitAnimation: 26
     power: 73
     damageType: 1
@@ -325,7 +325,7 @@ items:
     weight: 6
     bigSprite: 13
     floorSprite: 13
-    hitSound: 12
+    fireHitSound: 12
 #    hitAnimation: 0
     power: 61
     damageType: 3
@@ -342,7 +342,7 @@ items:
     weight: 6
     bigSprite: 14
     floorSprite: 14
-    hitSound: 12
+    fireHitSound: 12
 #    hitAnimation: 0
     power: 62
     damageType: 2
@@ -384,7 +384,7 @@ items:
     weight: 7
     bigSprite: 8
     floorSprite: 8
-    hitSound: 13
+    fireHitSound: 13
     hitAnimation: 26
     power: 53
     damageType: 1
@@ -399,7 +399,7 @@ items:
     weight: 7
     bigSprite: 9
     floorSprite: 9
-    hitSound: 12
+    fireHitSound: 12
 #    hitAnimation: 0
     power: 49
     damageType: 3
@@ -416,7 +416,7 @@ items:
     weight: 7
     bigSprite: 10
     floorSprite: 10
-    hitSound: 12
+    fireHitSound: 12
 #    hitAnimation: 0
     power: 52
     damageType: 2
@@ -455,7 +455,7 @@ items:
     weight: 9
     bigSprite: 16
     floorSprite: 16
-    hitSound: 5
+    fireHitSound: 5
     power: 81
     damageType: 3
 #    explosionSpeed:
@@ -471,7 +471,7 @@ items:
     weight: 13
     bigSprite: 17
     floorSprite: 17
-    hitSound: 5
+    fireHitSound: 5
     power: 98
     damageType: 3
 #    explosionSpeed:
@@ -487,7 +487,7 @@ items:
     weight: 11
     bigSprite: 18
     floorSprite: 18
-    hitSound: 5
+    fireHitSound: 5
 #    hitAnimation: 0
     power: 92
     damageType: 2
@@ -506,7 +506,7 @@ items:
     handSprite: 112
     bulletSprite: 5
     fireSound: 11
-    hitSound: 19
+    fireHitSound: 19
     hitAnimation: 36
     power: 43
     damageType: 4
@@ -530,7 +530,7 @@ items:
     handSprite: 8
     bulletSprite: 6
     fireSound: 11
-    hitSound: 19
+    fireHitSound: 19
     hitAnimation: 36
     power: 62
     damageType: 4
@@ -555,7 +555,7 @@ items:
     handSprite: 16
     bulletSprite: 7
     fireSound: 11
-    hitSound: 19
+    fireHitSound: 19
     hitAnimation: 36
     power: 119
     damageType: 4
@@ -575,7 +575,7 @@ items:
     weight: 4
     bigSprite: 19
     floorSprite: 19
-    hitSound: 12
+    fireHitSound: 12
     power: 47
     damageType: 3
     battleType: 4
@@ -590,7 +590,7 @@ items:
     bigSprite: 519 #org 20
     floorSprite: 519 #org 20
     hitAnimation: 24
-    hitSound: 12
+    fireHitSound: 12
     power: 57
     damageType: 9
     battleType: 4
@@ -604,7 +604,7 @@ items:
     weight: 6
     bigSprite: 21
     floorSprite: 21
-    hitSound: 12
+    fireHitSound: 12
     power: 69
     damageType: 3
     battleType: 5
@@ -618,7 +618,7 @@ items:
     weight: 12
     bigSprite: 22
     floorSprite: 22
-    hitSound: 5
+    fireHitSound: 5
     power: 134
     damageType: 3
     battleType: 4
@@ -662,7 +662,7 @@ items:
     bigSprite: 33
     floorSprite: 32
     handSprite: 88
-    hitSound: 36
+    fireHitSound: 36
     battleType: 9
     twoHanded: true
     invWidth: 1
@@ -764,7 +764,7 @@ items:
     weight: 4
     bigSprite: 25
     floorSprite: 33
-    hitSound: 19
+    fireHitSound: 19
     hitAnimation: 46
     power: 109
     damageType: 5
@@ -807,7 +807,7 @@ items:
     weight: 3
     bigSprite: 41
     floorSprite: 33
-    hitSound: 19
+    fireHitSound: 19
     hitAnimation: 46
     power: 86
     damageType: 5
@@ -849,7 +849,7 @@ items:
     weight: 2
     bigSprite: 34
     floorSprite: 33
-    hitSound: 19
+    fireHitSound: 19
     hitAnimation: 46
     power: 57
     damageType: 5
@@ -890,7 +890,7 @@ items:
     weight: 5
     bigSprite: 36
     floorSprite: 35
-    hitSound: 5
+    fireHitSound: 5
 #    hitAnimation: 0
     power: 182
     damageType: 3
@@ -934,7 +934,7 @@ items:
     weight: 4
     bigSprite: 38
     floorSprite: 90 # was 37
-    hitSound: 12
+    fireHitSound: 12
     hitAnimation: 16
     power: 85
     damageType: 6
@@ -952,7 +952,7 @@ items:
     weight: 3
     bigSprite: 39
     floorSprite: 38
-    hitSound: 5
+    fireHitSound: 5
     power: 81
     damageType: 3
     battleType: 4
@@ -970,7 +970,7 @@ items:
     weight: 4
     bigSprite: 29
     floorSprite: 28
-    hitSound: 37
+    fireHitSound: 37
     battleType: 8
     invWidth: 2
     invHeight: 2
@@ -1321,7 +1321,7 @@ items:
     handSprite: 104
     bulletSprite: 8
     fireSound: 18
-    hitSound: 19
+    fireHitSound: 19
     hitAnimation: 46
     power: 147
     damageType: 5
@@ -1377,7 +1377,7 @@ items:
     handSprite: 104
     bulletSprite: 8
     fireSound: 51
-    hitSound: 19
+    fireHitSound: 19
     hitAnimation: 46
     power: 144
     damageType: 8
@@ -1415,7 +1415,7 @@ items:
     floorSprite: 31
     handSprite: 104
     fireSound: 18
-    hitSound: 19
+    fireHitSound: 19
     hitAnimation: 46
     power: 123
     damageType: 5
@@ -1595,7 +1595,7 @@ items:
 # Special Psi Weapon for Aliens. Usage of this is hard-coded.
 # DO NOT DELETE!
   - type: ALIEN_PSI_WEAPON
-    hitSound: 36
+    fireHitSound: 36
     battleType: 9
     tuUse: 35 # kL: was 25
     flatRate: false #kL: was true

@@ -47,7 +47,7 @@ RuleItem::RuleItem(const std::string& type)
 		_handSprite(120),
 		_bulletSprite(-1),
 		_fireSound(-1),
-		_hitSound(-1),
+		_fireHitSound(-1),
 		_hitAnimation(-1),
 		_power(0),
 		_dType(DT_NONE),
@@ -176,11 +176,11 @@ void RuleItem::load(
 			_fireSound += modIndex;
 	}
 
-	if (node["hitSound"])
+	if (node["fireHitSound"])
 	{
-		_hitSound = node["hitSound"].as<int>(_hitSound);
-		if (_hitSound > 54) // BATTLE.CAT: 55 entries
-			_hitSound += modIndex;
+		_fireHitSound = node["fireHitSound"].as<int>(_fireHitSound);
+		if (_fireHitSound > 54) // BATTLE.CAT: 55 entries
+			_fireHitSound += modIndex;
 	}
 
 	if (node["meleeSound"])
@@ -188,6 +188,13 @@ void RuleItem::load(
 		_meleeSound = node["meleeSound"].as<int>(_meleeSound);
 		if (_meleeSound > 54) // BATTLE.CAT: 55 entries
 			_meleeSound += modIndex;
+	}
+
+	if (node["meleeHitSound"])
+	{
+		_meleeHitSound = node["meleeHitSound"].as<int>(_meleeHitSound);
+		if (_meleeHitSound > 54) // BATTLE.CAT: 55 entries
+			_meleeHitSound += modIndex;
 	}
 
 	if (node["hitAnimation"])
@@ -204,20 +211,13 @@ void RuleItem::load(
 			_meleeAnimation += modIndex;
 	}
 
-	if (node["meleeHitSound"])
-	{
-		_meleeHitSound = node["meleeHitSound"].as<int>(_meleeHitSound);
-		if (_meleeHitSound > 54) // BATTLE.CAT: 55 entries
-			_meleeHitSound += modIndex;
-	}
-
 	_dType			= static_cast<DamageType>(node["damageType"]		.as<int>(_dType));
 	_battleType		= static_cast<BattleType>(node["battleType"]		.as<int>(_battleType));
 	_specialType	= static_cast<SpecialTileType>(node["specialType"]	.as<int>(_specialType));
 
 	_power				= node["power"]				.as<int>(_power);
 	_clipSize			= node["clipSize"]			.as<int>(_clipSize);
-	_compatibleAmmo		= node["compatibleAmmo"]	.as< std::vector<std::string>>(_compatibleAmmo);
+	_compatibleAmmo		= node["compatibleAmmo"]	.as<std::vector<std::string>>(_compatibleAmmo);
 	_accuracyAuto		= node["accuracyAuto"]		.as<int>(_accuracyAuto);
 	_accuracySnap		= node["accuracySnap"]		.as<int>(_accuracySnap);
 	_accuracyAimed		= node["accuracyAimed"]		.as<int>(_accuracyAimed);
@@ -441,7 +441,7 @@ int RuleItem::getFireSound() const
  */
 int RuleItem::getFireHitSound() const
 {
-	return _hitSound;
+	return _fireHitSound;
 }
 
 /**

@@ -126,15 +126,16 @@ private:
 		_heal,
 		_painKiller,
 		_stimulant,
+		_energyRecovery,
+		_healthRecovery,
+		_stunRecovery,
+		_woundRecovery,
 
-		_autoKick,
-		_autoShots,
-		_blastRadius,
 		_bulletSpeed,
-		_clipSize,
 		_explosionSpeed,
+
 		_fireSound,
-		_hitSound,
+		_fireHitSound,
 		_hitAnimation,
 		_meleeSound,
 		_meleePower,
@@ -143,6 +144,11 @@ private:
 		_power,
 		_shotgunPellets,
 		_shotgunPattern,
+		_autoKick,
+		_autoShots,
+
+		_blastRadius,
+		_clipSize,
 
 		_accuracyAimed,
 		_accuracyAuto,
@@ -164,11 +170,6 @@ private:
 		_autoRange,
 		_minRange,
 		_dropoff,
-
-		_woundRecovery,
-		_healthRecovery,
-		_stunRecovery,
-		_energyRecovery,
 
 		_bigSprite,
 		_floorSprite,

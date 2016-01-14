@@ -10,7 +10,7 @@ items:
   - type: STR_LASER_PISTOL_CLIP
     bigSprite: 651
     floorSprite: 651
-    hitSound: 654
+    fireHitSound: 654
     hitAnimation: 36
 # Laser Rifle
   - type: STR_LASER_RIFLE
@@ -21,7 +21,7 @@ items:
   - type: STR_LASER_RIFLE_CLIP
     bigSprite: 653
     floorSprite: 653
-    hitSound: 654
+    fireHitSound: 654
     hitAnimation: 36
 # Laser Sniper Rifle
   - type: STR_LASER_SNIPER_RIFLE
@@ -32,7 +32,7 @@ items:
   - type: STR_LASER_SNIPER_RIFLE_CLIP
     bigSprite: 655
     floorSprite: 655
-    hitSound: 654
+    fireHitSound: 654
     hitAnimation: 36
 # Heavy Laser
   - type: STR_HEAVY_LASER
@@ -43,7 +43,7 @@ items:
   - type: STR_HEAVY_LASER_CLIP
     bigSprite: 657
     floorSprite: 657
-    hitSound: 654
+    fireHitSound: 654
     hitAnimation: 36
 # Scatter Laser
   - type: STR_SCATTER_LASER
@@ -55,7 +55,7 @@ items:
   - type: STR_SCATTER_LASER_CLIP
     bigSprite: 659
     floorSprite: 659
-    hitSound: 654
+    fireHitSound: 654
     hitAnimation: 36
 # -------- EXTRASPRITES -------- #
 extraSprites:

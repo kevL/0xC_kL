@@ -33,7 +33,7 @@ items:
 #    bigSprite: -3
 #    floorSprite: 31
 #    handSprite: 104
-    hitSound: 54
+    fireHitSound: 54
     clipSize: -1
     power: 80
     damageType: 7

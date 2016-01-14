@@ -220,11 +220,11 @@ void ExplosionBState::init()
 					explVoxel.x = _centerVoxel.x + RNG::generate(-offset, offset);
 					explVoxel.y = _centerVoxel.y + RNG::generate(-offset, offset);
 
-					if (RNG::percent(60) == true)
+					if (RNG::percent(65) == true)
 						++delay;
 				}
 
-				Explosion* const explosion = new Explosion( // animation
+				Explosion* const explosion = new Explosion(
 														explVoxel - Position(16,16,0),
 														start,
 														delay,
@@ -236,7 +236,7 @@ void ExplosionBState::init()
 			}
 
 
-			int soundId = -1; // set item's hitSound to -1 for silent.
+			int soundId = -1;
 			if (_item != nullptr)
 				soundId = _item->getRules()->getFireHitSound();
 			else if (_power < 73)

@@ -1119,38 +1119,36 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 
 	// moved here from ExplosionBState to play a proper hit/miss sFx
 	bool success;
-	const int pct = static_cast<int>(Round(_unit->getAccuracy(_action) * 100.));
-	if (RNG::percent(pct) == true)
+	if (RNG::percent(static_cast<int>(Round(_unit->getAccuracy(_action) * 100.))) == true)
 		success = true;
 	else
 		success = false;
 
-	int sound = -1;
+	int soundId = -1;
 	if (success == false)
 	{
 		if (_ammo->getRules()->getBattleType() == BT_MELEE
-			&& _ammo->getRules()->getMeleeSound() != -1		// if there is a hitSound play attackSound, else ITEM_THROW;
-			&& _ammo->getRules()->getMeleeHitSound() != -1)	// the hitSound will be used for success.
+			&& _ammo->getRules()->getMeleeSound() != -1
+			&& _ammo->getRules()->getMeleeHitSound() != -1)
 		{
-			sound = _ammo->getRules()->getMeleeSound();
+			soundId = _ammo->getRules()->getMeleeSound();
 		}
 		else
-			sound = ResourcePack::ITEM_THROW;
+			soundId = ResourcePack::ITEM_THROW;
 	}
 	else
 	{
 		if (_ammo->getRules()->getBattleType() == BT_MELEE)
 		{
-			sound = _ammo->getRules()->getMeleeHitSound();
-			if (sound == -1)
-				sound = _ammo->getRules()->getMeleeSound();
+			if ((soundId = _ammo->getRules()->getMeleeHitSound()) == -1)
+				soundId = _ammo->getRules()->getMeleeSound();
 		}
 		else
-			sound = ResourcePack::ITEM_DROP;
+			soundId = ResourcePack::ITEM_DROP;
 	}
 
-	if (sound != -1)
-		_parent->getResourcePack()->getSound("BATTLE.CAT", sound)
+	if (soundId != -1)
+		_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
 									->play(-1, _parent->getMap()->getSoundAngle(_action.target));
 
 	if (_action.weapon->getRules()->getBattleType() == BT_MELEE

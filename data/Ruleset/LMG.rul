@@ -29,7 +29,7 @@ items:
     bigSprite: 108
     floorSprite: 88
     bulletSprite: 14
-    hitSound: 22
+    fireHitSound: 22
     hitAnimation: 26
     power: 26
     damageType: 1

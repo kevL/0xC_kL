@@ -1,6 +1,6 @@
 #kL, my Sound customizations:
 #kL, the numbering is representative of their order in SAMPLE*.CAT;
-#kL, the "hitSound" etc. under items etc. above correspond to these below.
+#kL, the "fireHitSound" etc. under items etc. above correspond to these below.
 extraSounds:
   - type: BATTLE.CAT
     files:
