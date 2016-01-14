@@ -91,21 +91,18 @@ void ToggleTextButton::mousePress(Action* action, State* state)
  */
 void ToggleTextButton::setPressed(bool pressed)
 {
-	if (_isPressed != pressed)
+	_isPressed = pressed;
+	_fakeGroup = (_isPressed == true) ? this : nullptr;
+
+	if (_isPressed == true
+		&& _invertedColor != std::numeric_limits<uint8_t>::max())
 	{
-		_isPressed = pressed;
-		_fakeGroup = (_isPressed == true) ? this : nullptr;
-
-		if (_isPressed == true
-			&& _invertedColor != std::numeric_limits<uint8_t>::max())
-		{
-			TextButton::setColor(_invertedColor);
-		}
-		else
-			TextButton::setColor(_originalColor);
-
-		_redraw = true;
+		TextButton::setColor(_invertedColor);
 	}
+	else
+		TextButton::setColor(_originalColor);
+
+	_redraw = true;
 }
 
 /**

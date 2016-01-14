@@ -124,10 +124,10 @@ private:
 		_xcomCountryLines,
 		_xcomRegionLines;
 	std::vector<Text*>
-		_txtCountryActivityAlien,
-		_txtCountryActivityXCom,
-		_txtRegionActivityAlien,
-		_txtRegionActivityXCom,
+		_txtCountryActA,
+		_txtCountryActX,
+		_txtRegionActA,
+		_txtRegionActX,
 		_txtScale;
 	std::vector<ToggleTextButton*>
 		_btnCountries,
