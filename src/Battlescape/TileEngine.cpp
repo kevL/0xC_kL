@@ -2642,7 +2642,6 @@ void TileEngine::explode(
 										bu->takeDamage(Position(0,0,0), powerUnit, DT_HE);
 										//Log(LOG_INFO) << ". . . INVENTORY: damage = " << dam;
 
-//										if (bu->getHealth() == 0)
 										if (bu->isOut_t(OUT_HLTH) == true)
 										{
 											//Log(LOG_INFO) << ". . . . INVENTORY: instaKill";
@@ -2931,7 +2930,7 @@ void TileEngine::explode(
 
 				tileStart = tileStop;
 				r += 1.;
-				//Log(LOG_INFO) << " ";
+				//Log(LOG_INFO) << "";
 			}
 		}
 	}

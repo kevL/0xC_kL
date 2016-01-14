@@ -3464,7 +3464,7 @@ int BattleUnit::getFatalWound(UnitBodyPart part) const
 }
 
 /**
- * Heals a fatal wound of the soldier.
+ * Heals a fatal wound of this BattleUnit.
  * @param part		- the body part to heal (BattleUnit.h)
  * @param wounds	- the amount of fatal wounds to heal
  * @param health	- the amount of health to add to soldier health
@@ -3487,7 +3487,7 @@ void BattleUnit::heal(
 }
 
 /**
- * Restores soldier morale. And kills unit w/ overdose.
+ * Restores soldier morale of this BattleUnit. And kills w/ overdose.
  */
 void BattleUnit::morphine()
 {
@@ -3514,7 +3514,7 @@ void BattleUnit::morphine()
 }
 
 /**
- * Restores soldier energy and reduces stun level.
+ * Restores this BattleUnit's energy and reduces its stun level.
  * @param energy	- the amount of energy to add
  * @param stun		- the amount of stun level to reduce
  * @return, true if unit regains consciousness
@@ -3531,7 +3531,7 @@ bool BattleUnit::amphetamine(
 }
 
 /**
- * Gets if the unit has overdosed on morphine.
+ * Gets if this BattleUnit has overdosed on morphine.
  * @return, true if overdosed
  */
 bool BattleUnit::getOverDose() const
@@ -3550,7 +3550,7 @@ int BattleUnit::getMotionPoints() const
 }
 
 /**
- * Gets the unit's armor.
+ * Gets this BattleUnit's armor.
  * @return, pointer to Armor
  */
 const RuleArmor* BattleUnit::getArmor() const
