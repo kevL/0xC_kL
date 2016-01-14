@@ -116,7 +116,11 @@ GraphsState::GraphsState()
 		_reset(false),
 		_forceVis(true)
 {
-	_bg = new InteractiveSurface(320, 200);
+	_bg = new InteractiveSurface(
+							Options::baseXResolution,
+							Options::baseYResolution,
+							-(Options::baseXResolution - 320) / 2,
+							-(Options::baseYResolution - 200) / 2);
 	_bg->onMousePress(
 				(ActionHandler)& GraphsState::shiftButtons,
 				SDL_BUTTON_WHEELUP);
@@ -686,8 +690,10 @@ GraphsState::GraphsState()
 	}
 
 
-	Surface* const srf = _game->getResourcePack()->getSurface("GRAPHS.SPK");
-	srf->blit(_bg);
+	Surface* const icons = _game->getResourcePack()->getSurface("GRAPHS.SPK");
+	icons->setX((Options::baseXResolution - 320) / 2);
+	icons->setY((Options::baseYResolution - 200) / 2);
+	icons->blit(_bg);
 
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
@@ -1224,25 +1230,34 @@ void GraphsState::btnFinanceListClick(Action* action)
 }
 
 /**
- * Resets aLien/xCom activity and the blink indicators.
+ * LMB Resets aLien/xCom activity and the blink indicators.
  * @param action - pointer to an Action
  */
-void GraphsState::btnResetPress(Action*) // private.
+void GraphsState::btnResetPress(Action* action) // private.
 {
-	_reset = true;
-	_btnReset->setVisible(false);
+	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	{
+		_reset = true;
+		_btnReset->setVisible(false);
 
-	for (std::vector<Region*>::const_iterator
-			i = _game->getSavedGame()->getRegions()->begin();
-			i != _game->getSavedGame()->getRegions()->end();
-			++i)
-		(*i)->resetActivity();
+		for (std::vector<Region*>::const_iterator
+				i = _game->getSavedGame()->getRegions()->begin();
+				i != _game->getSavedGame()->getRegions()->end();
+				++i)
+			(*i)->resetActivity();
 
-	for (std::vector<Country*>::const_iterator
-			i = _game->getSavedGame()->getCountries()->begin();
-			i != _game->getSavedGame()->getCountries()->end();
-			++i)
-		(*i)->resetActivity();
+		for (std::vector<Country*>::const_iterator
+				i = _game->getSavedGame()->getCountries()->begin();
+				i != _game->getSavedGame()->getCountries()->end();
+				++i)
+			(*i)->resetActivity();
+	}
+	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
+	{
+
+
+		action->getDetails()->type = SDL_NOEVENT; // consume the event
+	}
 }
 
 /**
