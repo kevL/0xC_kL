@@ -183,7 +183,7 @@ private:
 
 	std::list<BattleState*>
 		_deleted,
-		_states;
+		_battleStates;
 	std::vector<InfoboxOKState*> _infoboxQueue;
 
 
@@ -368,10 +368,10 @@ private:
 		/// Sets up a mission complete notification.
 		void objectiveDone();
 
-		/// Sets if an execution is underway.
-		void setExecution(bool execute = true);
 		/// Gets if an execution is underway.
 		bool getExecution() const;
+		/// Finishes an execution.
+		void endExecution();
 
 		/// Sets if a shotgun blast is underway.
 		void setShotgun(bool shotgun = true);

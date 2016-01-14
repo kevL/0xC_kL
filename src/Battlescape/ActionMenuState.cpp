@@ -160,75 +160,82 @@ ActionMenuState::ActionMenuState(
 			}
 			else if (injured == false) // special items
 			{
-				if (itRule->getBattleType() == BT_MEDIKIT)
-					addItem(
-							BA_USE,
-							"STR_USE_MEDI_KIT",
-							&id);
-				else if (itRule->getBattleType() == BT_SCANNER)
-					addItem(
-							BA_USE,
-							"STR_USE_SCANNER",
-							&id);
-				else if (itRule->getBattleType() == BT_PSIAMP)
+				switch (itRule->getBattleType())
 				{
-					if (_action->actor->getBattleStats()->psiSkill != 0)
-					{
+					case BT_MEDIKIT:
 						addItem(
-								BA_PSICONTROL,
-								"STR_MIND_CONTROL",
+								BA_USE,
+								"STR_USE_MEDI_KIT",
 								&id);
-						addItem(
-								BA_PSIPANIC,
-								"STR_PANIC_UNIT",
-								&id);
-						addItem(
-								BA_PSICONFUSE,
-								"STR_CONFUSE_UNIT",
-								&id);
-						addItem(
-								BA_PSICOURAGE,
-								"STR_ENCOURAGE_UNIT",
-								&id);
-					}
-				}
-				else if (itRule->getBattleType() == BT_MINDPROBE)
-					addItem(
-							BA_USE,
-							"STR_USE_MIND_PROBE",
-							&id);
-				else if (itRule->getBattleType() == BT_FIREARM)
-				{
-					if (_action->weapon->getAmmoItem() != nullptr)
-					{
-						if (itRule->getAccuracySnap() != 0)
-							addItem(
-									BA_SNAPSHOT,
-									"STR_SNAP_SHOT",
-									&id);
+						break;
 
-						if (itRule->getAccuracyAuto() != 0)
-							addItem(
-									BA_AUTOSHOT,
-									"STR_AUTO_SHOT",
-									&id);
-
-						if (itRule->getAccuracyAimed() != 0)
-							addItem(
-									BA_AIMEDSHOT,
-									"STR_AIMED_SHOT",
-									&id);
-					}
-
-					if (itRule->isWaypoints() != 0
-						|| (_action->weapon->getAmmoItem() != nullptr
-							&& _action->weapon->getAmmoItem()->getRules()->isWaypoints() != 0))
-					{
+					case BT_SCANNER:
 						addItem(
-								BA_LAUNCH,
-								"STR_LAUNCH_MISSILE",
+								BA_USE,
+								"STR_USE_SCANNER",
 								&id);
-					}
+						break;
+
+					case BT_PSIAMP:
+						if (_action->actor->getBattleStats()->psiSkill != 0)
+						{
+							addItem(
+									BA_PSICONTROL,
+									"STR_MIND_CONTROL",
+									&id);
+							addItem(
+									BA_PSIPANIC,
+									"STR_PANIC_UNIT",
+									&id);
+							addItem(
+									BA_PSICONFUSE,
+									"STR_CONFUSE_UNIT",
+									&id);
+							addItem(
+									BA_PSICOURAGE,
+									"STR_ENCOURAGE_UNIT",
+									&id);
+						}
+						break;
+
+					case BT_MINDPROBE:
+						addItem(
+								BA_USE,
+								"STR_USE_MIND_PROBE",
+								&id);
+						break;
+
+					case BT_FIREARM:
+						if (_action->weapon->getAmmoItem() != nullptr)
+						{
+							if (itRule->getAccuracySnap() != 0)
+								addItem(
+										BA_SNAPSHOT,
+										"STR_SNAP_SHOT",
+										&id);
+
+							if (itRule->getAccuracyAuto() != 0)
+								addItem(
+										BA_AUTOSHOT,
+										"STR_AUTO_SHOT",
+										&id);
+
+							if (itRule->getAccuracyAimed() != 0)
+								addItem(
+										BA_AIMEDSHOT,
+										"STR_AIMED_SHOT",
+										&id);
+						}
+
+						if (itRule->isWaypoints() != 0
+							|| (_action->weapon->getAmmoItem() != nullptr
+								&& _action->weapon->getAmmoItem()->getRules()->isWaypoints() != 0))
+						{
+							addItem(
+									BA_LAUNCH,
+									"STR_LAUNCH_MISSILE",
+									&id);
+						}
 				}
 			}
 		}

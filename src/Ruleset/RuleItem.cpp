@@ -439,7 +439,7 @@ int RuleItem::getFireSound() const
  * Gets the item's hit sound.
  * @return, the hit sound ID
  */
-int RuleItem::getHitSound() const
+int RuleItem::getFireHitSound() const
 {
 	return _hitSound;
 }

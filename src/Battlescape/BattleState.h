@@ -39,7 +39,7 @@ protected:
 
 
 	public:
-		/// Creates a new BattleState linked to the game.
+		/// Creates a new BattleState linked to the BattlescapeGame.
 		BattleState(
 				BattlescapeGame* parent,
 				BattleAction action);

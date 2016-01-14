@@ -71,13 +71,13 @@ ExplosionBState::ExplosionBState(
 		_unit(unit),
 		_tile(tile),
 		_lowerWeapon(lowerWeapon),
-		_hitSuccess(meleeSuccess),
+		_meleeSuccess(meleeSuccess),
 		_forceCamera(forceCamera),
 		_battleSave(parent->getBattleSave()),
 		_power(0),
 		_areaOfEffect(true),
 		_pistolWhip(false),
-		_hit(false)
+		_melee(false)
 //		_extend(3) // extra think-cycles before this state is allowed to Pop.
 {
 	//Log(LOG_INFO) << "cTor ExplBState";
@@ -238,7 +238,7 @@ void ExplosionBState::init()
 
 			int soundId = -1; // set item's hitSound to -1 for silent.
 			if (_item != nullptr)
-				soundId = _item->getRules()->getHitSound();
+				soundId = _item->getRules()->getFireHitSound();
 			else if (_power < 73)
 				soundId = ResourcePack::SMALL_EXPLOSION;
 			else
@@ -262,18 +262,18 @@ void ExplosionBState::init()
 	}
 	else // create a bullet hit, or melee hit, or psi-hit, or acid spit hit
 	{
-		_hit = _pistolWhip
-			|| _item->getRules()->getBattleType() == BT_MELEE
-			|| _item->getRules()->getBattleType() == BT_PSIAMP;
+		_melee = _pistolWhip
+			  || _item->getRules()->getBattleType() == BT_MELEE
+			  || _item->getRules()->getBattleType() == BT_PSIAMP;
 
 		int
 			result,
 			start,
-			soundId = _item->getRules()->getHitSound();
+			soundId = _item->getRules()->getFireHitSound();
 
-		if (_hit == true)
+		if (_melee == true)
 		{
-			if (_hitSuccess == true || _item->getRules()->getBattleType() == BT_PSIAMP)
+			if (_meleeSuccess == true || _item->getRules()->getBattleType() == BT_PSIAMP)
 				result = 1;
 			else
 				result = -1;
@@ -422,7 +422,7 @@ void ExplosionBState::explode() // private.
 
 	// Note: melee Hit success/failure, and hit/miss sound-FX, are determined in ProjectileFlyBState.
 
-	if (_hit == true)
+	if (_melee == true)
 	{
 		_battleSave->getBattleGame()->getCurrentAction()->type = BA_NONE;
 
@@ -441,7 +441,7 @@ void ExplosionBState::explode() // private.
 				if (targetUnit != nullptr && targetUnit->getFaction() != FACTION_PLAYER)
 				{
 					int xpMelee;
-					if (_hitSuccess == true)
+					if (_meleeSuccess == true)
 						xpMelee = 2;
 					else
 						xpMelee = 1;
@@ -451,7 +451,7 @@ void ExplosionBState::explode() // private.
 			}
 		}
 
-		if (_hitSuccess == false) // MISS.
+		if (_meleeSuccess == false) // MISS.
 		{
 			_parent->checkExposedByMelee(_unit); // determine whether playerFaction-attacker gets exposed.
 			_parent->getMap()->cacheUnits();
@@ -494,7 +494,7 @@ void ExplosionBState::explode() // private.
 					_power,
 					dType,
 					_unit,
-					_hit,
+					_melee,
 					itRule->getShotgunPellets() != 0,
 					itRule->getZombieUnit());
 		}

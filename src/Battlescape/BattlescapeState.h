@@ -216,6 +216,9 @@ private:
 	/// Prints contents of hovered Tile's inventory to screen.
 	void printTileInventory(Tile* const tile);
 
+	/// Checks if the player is allowed to press buttons.
+	bool allowButtons(bool allowSaving = false) const;
+
 	/// Animates a red cross icon when an injured soldier is selected.
 	void flashMedic();
 	/// Blinks the health bar when selected unit has fatal wounds.
@@ -432,9 +435,6 @@ private:
 		void mouseOutIcons(Action* action);
 		/// Checks if the mouse is over the icons.
 		bool getMouseOverIcons() const;
-
-		/// Checks if the player is allowed to press buttons.
-		bool allowButtons(bool allowSaving = false) const;
 
 		/// Updates the resolution settings, the window was just resized.
 		void resize(

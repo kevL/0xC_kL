@@ -138,8 +138,8 @@ BattlescapeGame::BattlescapeGame(
 BattlescapeGame::~BattlescapeGame()
 {
 	for (std::list<BattleState*>::const_iterator
-			i = _states.begin();
-			i != _states.end();
+			i = _battleStates.begin();
+			i != _battleStates.end();
 			++i)
 	{
 		delete *i;
@@ -168,9 +168,9 @@ void BattlescapeGame::init()
 void BattlescapeGame::think()
 {
 	//Log(LOG_INFO) << "BattlescapeGame::think()";
-	if (_states.empty() == true) // nothing is happening - see if they need some alien AI or units panicking or what have you
+	if (_battleStates.empty() == true) // nothing is happening - see if they need some alien AI or units panicking or what have you
 	{
-		//Log(LOG_INFO) << "BattlescapeGame::think() - _states is Empty. Clear rfShotList";
+		//Log(LOG_INFO) << "BattlescapeGame::think() - _battleStates is Empty. Clear rfShotList";
 		_battleSave->getTileEngine()->getReactionPositions()->clear(); // TODO: move that to end of popState()
 
 		if (_battleSave->getSide() != FACTION_PLAYER) // it's a non-player turn (ALIENS or CIVILIANS)
@@ -240,16 +240,16 @@ void BattlescapeGame::think()
  */
 void BattlescapeGame::handleState()
 {
-	if (_states.empty() == false)
+	if (_battleStates.empty() == false)
 	{
-		if (_states.front() == nullptr) // possible End Turn request
+		if (_battleStates.front() == nullptr) // possible End Turn request
 		{
-			_states.pop_front();
+			_battleStates.pop_front();
 			endTurn();
 		}
 		else
 		{
-			_states.front()->think();
+			_battleStates.front()->think();
 			getMap()->draw();		// old code!! Less clunky when scrolling the battlemap.
 //			getMap()->invalidate();	// redraw map
 		}
@@ -262,7 +262,7 @@ void BattlescapeGame::handleState()
  */
 void BattlescapeGame::statePushFront(BattleState* const battleState)
 {
-	_states.push_front(battleState);
+	_battleStates.push_front(battleState);
 	battleState->init();
 }
 
@@ -272,14 +272,14 @@ void BattlescapeGame::statePushFront(BattleState* const battleState)
  */
 void BattlescapeGame::statePushNext(BattleState* const battleState)
 {
-	if (_states.empty() == true)
+	if (_battleStates.empty() == true)
 	{
-		_states.push_front(battleState);
+		_battleStates.push_front(battleState);
 		battleState->init();
 	}
 	else
-		_states.insert(
-					++_states.begin(),
+		_battleStates.insert(
+					++_battleStates.begin(),
 					battleState);
 }
 
@@ -289,20 +289,20 @@ void BattlescapeGame::statePushNext(BattleState* const battleState)
  */
 void BattlescapeGame::statePushBack(BattleState* const battleState)
 {
-	if (_states.empty() == true)
+	if (_battleStates.empty() == true)
 	{
-		_states.push_front(battleState);
+		_battleStates.push_front(battleState);
 
-		if (_states.front() == nullptr) // possible End Turn request
+		if (_battleStates.front() == nullptr) // possible End Turn request
 		{
-			_states.pop_front();
+			_battleStates.pop_front();
 			endTurn();
 		}
 		else
 			battleState->init();
 	}
 	else
-		_states.push_back(battleState);
+		_battleStates.push_back(battleState);
 }
 
 /**
@@ -314,7 +314,7 @@ void BattlescapeGame::statePushBack(BattleState* const battleState)
  */
 void BattlescapeGame::popState()
 {
-	//Log(LOG_INFO) << "BattlescapeGame::popState() qtyStates = " << (int)_states.size();
+	//Log(LOG_INFO) << "BattlescapeGame::popState() qtyStates = " << (int)_battleStates.size();
 //	if (Options::traceAI)
 //	{
 //		Log(LOG_INFO) << "BattlescapeGame::popState() #" << _AIActionCounter << " with "
@@ -327,10 +327,10 @@ void BattlescapeGame::popState()
 		setStateInterval(BattlescapeState::STATE_INTERVAL_STANDARD);
 	}
 
-	if (_states.empty() == false)
+	if (_battleStates.empty() == false)
 	{
 		//Log(LOG_INFO) << ". states NOT Empty";
-		const BattleAction action = _states.front()->getAction();
+		const BattleAction action = _battleStates.front()->getAction();
 		bool actionFailed = false;
 
 		if ((_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
@@ -372,9 +372,9 @@ void BattlescapeGame::popState()
 		}
 
 		//Log(LOG_INFO) << ". move Front-state to _deleted.";
-		_deleted.push_back(_states.front());
+		_deleted.push_back(_battleStates.front());
 		//Log(LOG_INFO) << ". states.Popfront";
-		_states.pop_front();
+		_battleStates.pop_front();
 
 
 		if (action.actor != nullptr // handle the end of this unit's actions
@@ -519,7 +519,7 @@ void BattlescapeGame::popState()
 							getMap()->cacheUnit(selUnit);
 						}
 
-						if (_states.empty() == true
+						if (_battleStates.empty() == true
 							&& _battleSave->selectNextFactionUnit(true) == nullptr)
 						{
 							if (_battleSave->getDebugMode() == false)
@@ -550,25 +550,25 @@ void BattlescapeGame::popState()
 
 
 		//Log(LOG_INFO) << ". uh yeah";
-		if (_states.empty() == false)
+		if (_battleStates.empty() == false)
 		{
 			//Log(LOG_INFO) << ". states NOT Empty [1]";
-			if (_states.front() == nullptr) // end turn request
+			if (_battleStates.front() == nullptr) // end turn request
 			{
 				//Log(LOG_INFO) << ". states.front() == nullptr";
-				while (_states.empty() == false)
+				while (_battleStates.empty() == false)
 				{
 					//Log(LOG_INFO) << ". cycle through nullptr-states Front";
-					if (_states.front() == nullptr)
+					if (_battleStates.front() == nullptr)
 					{
 						//Log(LOG_INFO) << ". pop Front";
-						_states.pop_front();
+						_battleStates.pop_front();
 					}
 					else
 						break;
 				}
 
-				if (_states.empty() == true)
+				if (_battleStates.empty() == true)
 				{
 					//Log(LOG_INFO) << ". states Empty -> endTurn()";
 					endTurn();
@@ -578,12 +578,12 @@ void BattlescapeGame::popState()
 				else
 				{
 					//Log(LOG_INFO) << ". states NOT Empty -> prep back state w/ nullptr";
-					_states.push_back(nullptr);
+					_battleStates.push_back(nullptr);
 				}
 			}
 
 			//Log(LOG_INFO) << ". states.front()->init()";
-			_states.front()->init(); // init the next state in queue
+			_battleStates.front()->init(); // init the next state in queue
 		}
 
 		// The selected unit died or became unconscious or disappeared inexplicably.
@@ -615,7 +615,7 @@ void BattlescapeGame::popState()
 		}
 	}
 
-	if (_states.empty() == true) // note: endTurn() above^ might develop problems w/ cursor visibility ...
+	if (_battleStates.empty() == true) // note: endTurn() above^ might develop problems w/ cursor visibility ...
 	{
 		if (_battleSave->getRfTriggerPosition().z != -1) // this refocuses the Camera back onto RF trigger unit after a brief delay.
 		{
@@ -645,11 +645,11 @@ void BattlescapeGame::popState()
  */
 bool BattlescapeGame::noActionsPending(const BattleUnit* const unit) const // private
 {
-	if (_states.empty() == false)
+	if (_battleStates.empty() == false)
 	{
 		for (std::list<BattleState*>::const_iterator
-				i = _states.begin();
-				i != _states.end();
+				i = _battleStates.begin();
+				i != _battleStates.end();
 				++i)
 		{
 			if (*i != nullptr && (*i)->getAction().actor == unit)
@@ -1139,12 +1139,7 @@ void BattlescapeGame::handleNonTargetAction()
 				if (_currentAction.result.empty() == false)
 					showWarning = 1;
 				else if (_currentAction.targetUnit != nullptr)
-				{
 					executeUnit();
-					_currentAction.targetUnit = nullptr;
-				}
-
-			// switch_end.
 		}
 
 		if (showWarning != 0)
@@ -1180,40 +1175,30 @@ void BattlescapeGame::executeUnit() // private.
 	BattleItem* const ammo = _currentAction.weapon->getAmmoItem();
 	int
 		soundId = -1,
-		start = 0,		// void vc++ linker warning.
-		isMelee = 0;	// void vc++ linker warning.
+		aniStart = 0,	// avoid vc++ linker warning.
+		isMelee = 0;	// avoid vc++ linker warning.
 
-	if (itRule->getBattleType() == BT_MELEE)
+	switch (itRule->getBattleType()) // find hit-sound & ani.
 	{
-		start = itRule->getMeleeAnimation();
-		isMelee = 1;
+		case BT_MELEE:
+			isMelee = 1;
+			aniStart = itRule->getMeleeAnimation();
 
-		soundId = ammo->getRules()->getMeleeHitSound();
-		if (soundId == -1)
-		{
-			soundId = itRule->getMeleeHitSound();
-			if (soundId == -1)
-				soundId = ResourcePack::ITEM_DROP;
-		}
-	}
-	else if (itRule->getBattleType() == BT_FIREARM)
-	{
-		start = ammo->getRules()->getHitAnimation();
+			if ((soundId = ammo->getRules()->getMeleeHitSound()) == -1)
+				if ((soundId = itRule->getMeleeHitSound()) == -1)
+					soundId = ResourcePack::ITEM_DROP;
+			break;
+		case BT_FIREARM:
+			aniStart = ammo->getRules()->getHitAnimation();
 
-		soundId = ammo->getRules()->getHitSound();
-		if (soundId == -1)
-			soundId = itRule->getHitSound();
+			if ((soundId = ammo->getRules()->getFireHitSound()) == -1)
+				soundId = itRule->getFireHitSound();
 	}
 
 	if (soundId != -1)
 		getResourcePack()->getSound("BATTLE.CAT", soundId)
 							->play(-1, getMap()->getSoundAngle(_currentAction.actor->getPosition()));
 
-/*	if (ammo->spendBullet() == false)
-	{
-		_battleSave->removeItem(ammo);
-		_currentAction.weapon->setAmmoItem();
-	} */
 	ammo->spendBullet(
 				*_battleSave,
 				*_currentAction.weapon);
@@ -1221,28 +1206,24 @@ void BattlescapeGame::executeUnit() // private.
 	Position explVoxel = Position::toVoxelSpaceCentered(_currentAction.target, 2);
 	Explosion* const explosion = new Explosion(
 											explVoxel,
-											start,
+											aniStart,
 											0,
 											false,
 											isMelee);
 	getMap()->getExplosions()->push_back(explosion);
 	_executeProgress = true;
 
-//	Uint32 interval = BattlescapeState::STATE_INTERVAL_STANDARD * 5 / 7;
-/*	Uint32 interval = BattlescapeState::STATE_INTERVAL_STANDARD * 100; // test
-	interval -= static_cast<Uint32>(ammo->getRules()->getExplosionSpeed()) * 10;
-	if (interval < 1) interval = 1;
-	setStateInterval(interval); */
-
 	_currentAction.targetUnit->playDeathSound(); // scream little piggie
 
 	_currentAction.actor->spendTimeUnits(_currentAction.TU);
 
 	_currentAction.targetUnit->setHealth(0);
+	_currentAction.targetUnit = nullptr;
+
 	checkForCasualties(
-					_currentAction.weapon,
-					_currentAction.actor,
-					false,false,true);
+				_currentAction.weapon,
+				_currentAction.actor,
+				false, false, true);
 }
 
 /**
@@ -2531,7 +2512,7 @@ bool BattlescapeGame::cancelCurrentAction(bool force)
 	if (_battleSave->getPathfinding()->removePreview() == false
 		|| Options::battlePreviewPath == PATH_NONE)
 	{
-		if (_states.empty() == true || force == true)
+		if (_battleStates.empty() == true || force == true)
 		{
 			if (_currentAction.targeting == true)
 			{
@@ -2563,8 +2544,8 @@ bool BattlescapeGame::cancelCurrentAction(bool force)
 			else
 				return false;
 		}
-		else if (_states.empty() == false && _states.front() != nullptr)
-			_states.front()->cancel();
+		else if (_battleStates.empty() == false && _battleStates.front() != nullptr)
+			_battleStates.front()->cancel();
 		else
 			return false;
 	}
@@ -2588,7 +2569,7 @@ BattleAction* BattlescapeGame::getCurrentAction()
  */
 bool BattlescapeGame::isBusy() const
 {
-	return (_states.empty() == false);
+	return (_battleStates.empty() == false);
 }
 
 /**
@@ -2638,7 +2619,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					{
 						if (_currentAction.actor->spendTimeUnits(_currentAction.TU) == true)
 						{
-							const int soundId = _currentAction.weapon->getRules()->getHitSound();
+							const int soundId = _currentAction.weapon->getRules()->getFireHitSound();
 							if (soundId != -1)
 								getResourcePack()->getSound("BATTLE.CAT", soundId)
 													->play(-1, getMap()->getSoundAngle(pos));
@@ -2789,7 +2770,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			else
 				_currentAction.cameraPosition = Position(0,0,-1);
 
-			_states.push_back(new ProjectileFlyBState(this, _currentAction));	// TODO: should check for valid LoF/LoT *before* invoking this
+			_battleStates.push_back(new ProjectileFlyBState(this, _currentAction));	// TODO: should check for valid LoF/LoT *before* invoking this
 																				// instead of the (flakey) checks in that state. Then conform w/ AI ...
 
 			statePushFront(new UnitTurnBState(this, _currentAction));
@@ -2937,7 +2918,7 @@ void BattlescapeGame::launchAction()
 
 //	_currentAction.cameraPosition = getMap()->getCamera()->getMapOffset();
 
-	_states.push_back(new ProjectileFlyBState(this, _currentAction));
+	_battleStates.push_back(new ProjectileFlyBState(this, _currentAction));
 	statePushFront(new UnitTurnBState(this, _currentAction));
 }
 
@@ -3736,21 +3717,20 @@ void BattlescapeGame::objectiveDone()
 }
 
 /**
- * Sets if an execution is underway and needs animation.
- * @param execute - true to execute (default true)
- */
-void BattlescapeGame::setExecution(bool execute)
-{
-	_executeProgress = execute;
-}
-
-/**
  * Gets if an execution is underway and needs animation.
  * @return, true if execute
  */
 bool BattlescapeGame::getExecution() const
 {
 	return _executeProgress;
+}
+
+/**
+ * Finishes an execution.
+ */
+void BattlescapeGame::endExecution()
+{
+	_executeProgress = false;
 }
 
 /**

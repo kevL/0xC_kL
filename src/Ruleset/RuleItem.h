@@ -243,7 +243,7 @@ private:
 		/// Gets the item's fire sound.
 		int getFireSound() const;
 		/// Gets the item's hit sound.
-		int getHitSound() const;
+		int getFireHitSound() const;
 		/// Gets the item's hit animation.
 		int getHitAnimation() const;
 

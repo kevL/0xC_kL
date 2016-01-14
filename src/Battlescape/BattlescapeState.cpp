@@ -2608,6 +2608,26 @@ void BattlescapeState::txtTooltipOut(Action* action)
 } */
 
 /**
+ * Determines whether the player is allowed to press buttons.
+ * @note Buttons are disabled in the middle of a shot, during the alien turn,
+ * and while a player's units are panicking. The save button is an exception to
+ * still be able to save if something goes wrong during the alien turn and
+ * submit the save file for dissection.
+ * @param allowSaving - true if the help button was clicked (default false)
+ * @return, true if the player can still press buttons
+ */
+bool BattlescapeState::allowButtons(bool allowSaving) const // private
+{
+	return (
+			(allowSaving == true
+					|| _battleSave->getSide() == FACTION_PLAYER
+					|| _battleSave->getDebugMode() == true)
+				&& (_battleGame->getPanicHandled() == true
+					|| _firstInit == true)
+				&& _map->getProjectile() == nullptr);
+}
+
+/**
  * Determines whether a playable unit is selected.
  * @note Normally only player side units can be selected but in debug mode one
  * can play with aliens too :)
@@ -2689,288 +2709,274 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 		return;
 	}
-	else // not aLien or civilian; ie. a controlled unit
-	{
-		_rank			->setVisible();
+//	else not aLien nor civilian; ie. a controlled unit ->>
 
-		_numTimeUnits	->setVisible();
-		_barTimeUnits	->setVisible();
-		_barTimeUnits	->setVisible();
+	_rank			->setVisible();
 
-		_numEnergy		->setVisible();
-		_barEnergy		->setVisible();
-		_barEnergy		->setVisible();
+	_numTimeUnits	->setVisible();
+	_barTimeUnits	->setVisible();
+	_barTimeUnits	->setVisible();
 
-		_numHealth		->setVisible();
-		_barHealth		->setVisible();
-		_barHealth		->setVisible();
+	_numEnergy		->setVisible();
+	_barEnergy		->setVisible();
+	_barEnergy		->setVisible();
 
-		_numMorale		->setVisible();
-		_barMorale		->setVisible();
-		_barMorale		->setVisible();
-	}
+	_numHealth		->setVisible();
+	_barHealth		->setVisible();
+	_barHealth		->setVisible();
+
+	_numMorale		->setVisible();
+	_barMorale		->setVisible();
+	_barMorale		->setVisible();
 
 
 	BattleUnit* const selUnit = _battleSave->getSelectedUnit();
-	if (selUnit != nullptr)
+	if (calcFoV == true)
+		_battleSave->getTileEngine()->calculateFOV(selUnit);
+
+	hotSqrsUpdate();
+
+	_txtName->setText(selUnit->getName(
+									_game->getLanguage(),
+									false));
+
+	const Soldier* const sol = selUnit->getGeoscapeSoldier();
+	if (sol != nullptr)
 	{
-		if (calcFoV == true)
-			_battleSave->getTileEngine()->calculateFOV(selUnit);
+		SurfaceSet* const texture = _game->getResourcePack()->getSurfaceSet("SMOKE.PCK");
+		texture->getFrame(20 + sol->getRank())->blit(_rank);
 
-		hotSqrsUpdate();
-
-		_txtName->setText(selUnit->getName(
-										_game->getLanguage(),
-										false));
-
-		const Soldier* const sol = selUnit->getGeoscapeSoldier();
-		if (sol != nullptr)
+		if (selUnit->isKneeled() == true)
 		{
-			SurfaceSet* const texture = _game->getResourcePack()->getSurfaceSet("SMOKE.PCK");
-			texture->getFrame(20 + sol->getRank())->blit(_rank);
-
-			if (selUnit->isKneeled() == true)
-			{
-				_isKneeled = true;
-				_kneel->setVisible();
-			}
-
-			_txtOrder->setText(tr("STR_ORDER")
-								.arg(static_cast<int>(selUnit->getBattleOrder())));
+			_isKneeled = true;
+			_kneel->setVisible();
 		}
 
-		if (selUnit->getCarriedWeight() > selUnit->getStrength())
-			_isOverweight = true;
-
-		_numDir->setValue(selUnit->getUnitDirection());
-		_numDir->setVisible();
-
-		if (selUnit->getTurretType() != -1)
-		{
-			_numDirTur->setValue(selUnit->getTurretDirection());
-			_numDirTur->setVisible();
-		}
-
-
-		double stat = static_cast<double>(selUnit->getBattleStats()->tu);
-		const int tu = selUnit->getTimeUnits();
-		_numTimeUnits->setValue(static_cast<unsigned>(tu));
-		_barTimeUnits->setValue(std::ceil(
-								static_cast<double>(tu) / stat * 100.));
-
-		stat = static_cast<double>(selUnit->getBattleStats()->stamina);
-		const int energy = selUnit->getEnergy();
-		_numEnergy->setValue(static_cast<unsigned>(energy));
-		_barEnergy->setValue(std::ceil(
-								static_cast<double>(energy) / stat * 100.));
-
-		stat = static_cast<double>(selUnit->getBattleStats()->health);
-		const int health = selUnit->getHealth();
-		_numHealth->setValue(static_cast<unsigned>(health));
-		_barHealth->setValue(std::ceil(
-								static_cast<double>(health) / stat * 100.));
-		_barHealth->setValue2(std::ceil(
-								static_cast<double>(selUnit->getStun()) / stat * 100.));
-
-		const int morale = selUnit->getMorale();
-		_numMorale->setValue(static_cast<unsigned>(morale));
-		_barMorale->setValue(morale);
-
-
-		const BattleItem
-			* const rtItem (selUnit->getItem(ST_RIGHTHAND)),
-			* const ltItem (selUnit->getItem(ST_LEFTHAND));
-		const RuleItem* itRule;
-
-		ActiveHand ah = selUnit->getActiveHand();
-		if (ah != AH_NONE)
-		{
-			int
-				tuLaunch = 0,
-				tuAim    = 0,
-				tuAuto   = 0,
-				tuSnap   = 0;
-
-			switch (ah)
-			{
-				case AH_RIGHT:
-					itRule = rtItem->getRules();
-					if (itRule->getBattleType() == BT_FIREARM
-						|| itRule->getBattleType() == BT_MELEE)
-					{
-						tuLaunch = selUnit->getActionTu(BA_LAUNCH, rtItem);
-						tuAim = selUnit->getActionTu(BA_AIMEDSHOT, rtItem);
-						tuAuto = selUnit->getActionTu(BA_AUTOSHOT, rtItem);
-						tuSnap = selUnit->getActionTu(BA_SNAPSHOT, rtItem);
-						if (tuLaunch == 0
-							&& tuAim == 0
-							&& tuAuto == 0
-							&& tuSnap == 0)
-						{
-							tuSnap = selUnit->getActionTu(BA_MELEE, rtItem);
-						}
-					} break;
-
-				case AH_LEFT:
-					itRule = ltItem->getRules();
-					if (itRule->getBattleType() == BT_FIREARM
-						|| itRule->getBattleType() == BT_MELEE)
-					{
-						tuLaunch = selUnit->getActionTu(BA_LAUNCH, ltItem);
-						tuAim = selUnit->getActionTu(BA_AIMEDSHOT, ltItem);
-						tuAuto = selUnit->getActionTu(BA_AUTOSHOT, ltItem);
-						tuSnap = selUnit->getActionTu(BA_SNAPSHOT, ltItem);
-						if (tuLaunch == 0
-							&& tuAim == 0
-							&& tuAuto == 0
-							&& tuSnap == 0)
-						{
-							tuSnap = selUnit->getActionTu(BA_MELEE, ltItem);
-						}
-					}
-			}
-
-			if (tuLaunch != 0)
-			{
-				_numTULaunch->setValue(tuLaunch);
-				_numTULaunch->setVisible();
-			}
-
-			if (tuAim != 0)
-			{
-				_numTUAim->setValue(tuAim);
-				_numTUAim->setVisible();
-			}
-
-			if (tuAuto != 0)
-			{
-				_numTUAuto->setValue(tuAuto);
-				_numTUAuto->setVisible();
-			}
-
-			if (tuSnap != 0)
-			{
-				_numTUSnap->setValue(tuSnap);
-				_numTUSnap->setVisible();
-			}
-		}
-
-		if (rtItem != nullptr)
-		{
-			itRule = rtItem->getRules();
-			itRule->drawHandSprite(
-								_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
-								_btnRightHandItem);
-			_btnRightHandItem->setVisible();
-
-			if (itRule->isFixed() == false)
-			{
-				if (itRule->isTwoHanded() == true)
-					_numTwohandR->setVisible();
-/*				_numTwohandR->setVisible();
-				if (itRule->isTwoHanded() == true)
-					_numTwohandR->setValue(2u);
-				else
-					_numTwohandR->setValue(1u); */
-			}
-
-			switch (itRule->getBattleType())
-			{
-				case BT_FIREARM:
-//				case BT_MELEE:
-					if (rtItem->selfPowered() == false || itRule->getClipSize() > 0)
-					{
-						_numAmmoRight->setVisible();
-						if (rtItem->getAmmoItem() != nullptr)
-							_numAmmoRight->setValue(static_cast<unsigned>(rtItem->getAmmoItem()->getAmmoQuantity()));
-						else
-							_numAmmoRight->setValue();
-					}
-					break;
-
-				case BT_AMMO:
-					_numAmmoRight->setVisible();
-					_numAmmoRight->setValue(static_cast<unsigned>(rtItem->getAmmoQuantity()));
-					break;
-
-				case BT_GRENADE:
-					if (rtItem->getFuse() > 0)
-					{
-						_numAmmoRight->setVisible();
-						_numAmmoRight->setValue(static_cast<unsigned>(rtItem->getFuse()));
-					}
-					break;
-
-				case BT_MEDIKIT:
-					_numMediR2->setVisible();
-					_numMediR1->setVisible();
-					_numMediR3->setVisible();
-					_numMediR1->setValue(static_cast<unsigned>(rtItem->getPainKillerQuantity()));
-					_numMediR2->setValue(static_cast<unsigned>(rtItem->getStimulantQuantity()));
-					_numMediR3->setValue(static_cast<unsigned>(rtItem->getHealQuantity()));
-			}
-		}
-
-		if (ltItem != nullptr)
-		{
-			itRule = ltItem->getRules();
-			itRule->drawHandSprite(
-								_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
-								_btnLeftHandItem);
-			_btnLeftHandItem->setVisible();
-
-			if (itRule->isFixed() == false)
-			{
-				if (itRule->isTwoHanded() == true)
-					_numTwohandL->setVisible();
-/*				_numTwohandL->setVisible();
-				if (itRule->isTwoHanded() == true)
-					_numTwohandL->setValue(2u);
-				else
-					_numTwohandL->setValue(1u); */
-			}
-
-			switch (itRule->getBattleType())
-			{
-				case BT_FIREARM:
-//				case BT_MELEE:
-					if (ltItem->selfPowered() == false || itRule->getClipSize() > 0)
-					{
-						_numAmmoLeft->setVisible();
-						if (ltItem->getAmmoItem() != nullptr)
-							_numAmmoLeft->setValue(static_cast<unsigned>(ltItem->getAmmoItem()->getAmmoQuantity()));
-						else
-							_numAmmoLeft->setValue();
-					}
-					break;
-
-				case BT_AMMO:
-					_numAmmoLeft->setVisible();
-					_numAmmoLeft->setValue(static_cast<unsigned>(ltItem->getAmmoQuantity()));
-					break;
-
-				case BT_GRENADE:
-					if (ltItem->getFuse() > 0)
-					{
-						_numAmmoLeft->setVisible();
-						_numAmmoLeft->setValue(static_cast<unsigned>(ltItem->getFuse()));
-					}
-					break;
-
-				case BT_MEDIKIT:
-					_numMediL2->setVisible();
-					_numMediL1->setVisible();
-					_numMediL3->setVisible();
-					_numMediL1->setValue(static_cast<unsigned>(ltItem->getPainKillerQuantity()));
-					_numMediL2->setValue(static_cast<unsigned>(ltItem->getStimulantQuantity()));
-					_numMediL3->setValue(static_cast<unsigned>(ltItem->getHealQuantity()));
-			}
-		}
-
-		showPsiButton( // getSpecialWeapon() != nullptr
-					selUnit->getOriginalFaction() == FACTION_HOSTILE
-					&& selUnit->getBattleStats()->psiSkill != 0);
+		_txtOrder->setText(tr("STR_ORDER")
+							.arg(static_cast<int>(selUnit->getBattleOrder())));
 	}
+
+	if (selUnit->getCarriedWeight() > selUnit->getStrength())
+		_isOverweight = true;
+
+	_numDir->setValue(selUnit->getUnitDirection());
+	_numDir->setVisible();
+
+	if (selUnit->getTurretType() != -1)
+	{
+		_numDirTur->setValue(selUnit->getTurretDirection());
+		_numDirTur->setVisible();
+	}
+
+
+	double stat = static_cast<double>(selUnit->getBattleStats()->tu);
+	const int tu = selUnit->getTimeUnits();
+	_numTimeUnits->setValue(static_cast<unsigned>(tu));
+	_barTimeUnits->setValue(std::ceil(
+							static_cast<double>(tu) / stat * 100.));
+
+	stat = static_cast<double>(selUnit->getBattleStats()->stamina);
+	const int energy = selUnit->getEnergy();
+	_numEnergy->setValue(static_cast<unsigned>(energy));
+	_barEnergy->setValue(std::ceil(
+							static_cast<double>(energy) / stat * 100.));
+
+	stat = static_cast<double>(selUnit->getBattleStats()->health);
+	const int health = selUnit->getHealth();
+	_numHealth->setValue(static_cast<unsigned>(health));
+	_barHealth->setValue(std::ceil(
+							static_cast<double>(health) / stat * 100.));
+	_barHealth->setValue2(std::ceil(
+							static_cast<double>(selUnit->getStun()) / stat * 100.));
+
+	const int morale = selUnit->getMorale();
+	_numMorale->setValue(static_cast<unsigned>(morale));
+	_barMorale->setValue(morale);
+
+
+	const BattleItem
+		* const rtItem (selUnit->getItem(ST_RIGHTHAND)),
+		* const ltItem (selUnit->getItem(ST_LEFTHAND));
+	const RuleItem* itRule;
+
+	ActiveHand ah = selUnit->getActiveHand();
+	if (ah != AH_NONE)
+	{
+		int
+			tuLaunch = 0,
+			tuAim    = 0,
+			tuAuto   = 0,
+			tuSnap   = 0;
+
+		switch (ah)
+		{
+			case AH_RIGHT:
+				itRule = rtItem->getRules();
+				if (itRule->getBattleType() == BT_FIREARM
+					|| itRule->getBattleType() == BT_MELEE)
+				{
+					tuLaunch = selUnit->getActionTu(BA_LAUNCH, rtItem);
+					tuAim = selUnit->getActionTu(BA_AIMEDSHOT, rtItem);
+					tuAuto = selUnit->getActionTu(BA_AUTOSHOT, rtItem);
+					tuSnap = selUnit->getActionTu(BA_SNAPSHOT, rtItem);
+					if (tuLaunch == 0
+						&& tuAim == 0
+						&& tuAuto == 0
+						&& tuSnap == 0)
+					{
+						tuSnap = selUnit->getActionTu(BA_MELEE, rtItem);
+					}
+				} break;
+
+			case AH_LEFT:
+				itRule = ltItem->getRules();
+				if (itRule->getBattleType() == BT_FIREARM
+					|| itRule->getBattleType() == BT_MELEE)
+				{
+					tuLaunch = selUnit->getActionTu(BA_LAUNCH, ltItem);
+					tuAim = selUnit->getActionTu(BA_AIMEDSHOT, ltItem);
+					tuAuto = selUnit->getActionTu(BA_AUTOSHOT, ltItem);
+					tuSnap = selUnit->getActionTu(BA_SNAPSHOT, ltItem);
+					if (tuLaunch == 0
+						&& tuAim == 0
+						&& tuAuto == 0
+						&& tuSnap == 0)
+					{
+						tuSnap = selUnit->getActionTu(BA_MELEE, ltItem);
+					}
+				}
+		}
+
+		if (tuLaunch != 0)
+		{
+			_numTULaunch->setValue(tuLaunch);
+			_numTULaunch->setVisible();
+		}
+
+		if (tuAim != 0)
+		{
+			_numTUAim->setValue(tuAim);
+			_numTUAim->setVisible();
+		}
+
+		if (tuAuto != 0)
+		{
+			_numTUAuto->setValue(tuAuto);
+			_numTUAuto->setVisible();
+		}
+
+		if (tuSnap != 0)
+		{
+			_numTUSnap->setValue(tuSnap);
+			_numTUSnap->setVisible();
+		}
+	}
+
+	if (rtItem != nullptr)
+	{
+		itRule = rtItem->getRules();
+		itRule->drawHandSprite(
+							_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
+							_btnRightHandItem);
+		_btnRightHandItem->setVisible();
+
+		if (itRule->isFixed() == false
+			&& itRule->isTwoHanded() == true)
+		{
+			_numTwohandR->setVisible();
+		}
+
+		switch (itRule->getBattleType())
+		{
+			case BT_FIREARM:
+			case BT_MELEE:
+				if (rtItem->selfPowered() == false || itRule->getClipSize() > 0)
+				{
+					_numAmmoRight->setVisible();
+					if (rtItem->getAmmoItem() != nullptr)
+						_numAmmoRight->setValue(static_cast<unsigned>(rtItem->getAmmoItem()->getAmmoQuantity()));
+					else
+						_numAmmoRight->setValue();
+				}
+				break;
+
+			case BT_AMMO:
+				_numAmmoRight->setVisible();
+				_numAmmoRight->setValue(static_cast<unsigned>(rtItem->getAmmoQuantity()));
+				break;
+
+			case BT_GRENADE:
+				if (rtItem->getFuse() > 0)
+				{
+					_numAmmoRight->setVisible();
+					_numAmmoRight->setValue(static_cast<unsigned>(rtItem->getFuse()));
+				}
+				break;
+
+			case BT_MEDIKIT:
+				_numMediR2->setVisible();
+				_numMediR1->setVisible();
+				_numMediR3->setVisible();
+				_numMediR1->setValue(static_cast<unsigned>(rtItem->getPainKillerQuantity()));
+				_numMediR2->setValue(static_cast<unsigned>(rtItem->getStimulantQuantity()));
+				_numMediR3->setValue(static_cast<unsigned>(rtItem->getHealQuantity()));
+		}
+	}
+
+	if (ltItem != nullptr)
+	{
+		itRule = ltItem->getRules();
+		itRule->drawHandSprite(
+							_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
+							_btnLeftHandItem);
+		_btnLeftHandItem->setVisible();
+
+		if (itRule->isFixed() == false
+			&& itRule->isTwoHanded() == true)
+		{
+			_numTwohandL->setVisible();
+		}
+
+		switch (itRule->getBattleType())
+		{
+			case BT_FIREARM:
+			case BT_MELEE:
+				if (ltItem->selfPowered() == false || itRule->getClipSize() > 0)
+				{
+					_numAmmoLeft->setVisible();
+					if (ltItem->getAmmoItem() != nullptr)
+						_numAmmoLeft->setValue(static_cast<unsigned>(ltItem->getAmmoItem()->getAmmoQuantity()));
+					else
+						_numAmmoLeft->setValue();
+				}
+				break;
+
+			case BT_AMMO:
+				_numAmmoLeft->setVisible();
+				_numAmmoLeft->setValue(static_cast<unsigned>(ltItem->getAmmoQuantity()));
+				break;
+
+			case BT_GRENADE:
+				if (ltItem->getFuse() > 0)
+				{
+					_numAmmoLeft->setVisible();
+					_numAmmoLeft->setValue(static_cast<unsigned>(ltItem->getFuse()));
+				}
+				break;
+
+			case BT_MEDIKIT:
+				_numMediL2->setVisible();
+				_numMediL1->setVisible();
+				_numMediL3->setVisible();
+				_numMediL1->setValue(static_cast<unsigned>(ltItem->getPainKillerQuantity()));
+				_numMediL2->setValue(static_cast<unsigned>(ltItem->getStimulantQuantity()));
+				_numMediL3->setValue(static_cast<unsigned>(ltItem->getHealQuantity()));
+		}
+	}
+
+	showPsiButton( // getSpecialWeapon() != nullptr
+			selUnit->getOriginalFaction() == FACTION_HOSTILE
+			&& selUnit->getBattleStats()->psiSkill != 0);
 }
 
 /**
@@ -3298,7 +3304,7 @@ void BattlescapeState::executionExplosion() // private.
 
 			if (_battleGame->getMap()->getExplosions()->empty() == true)
 			{
-				_battleGame->setExecution(false);
+				_battleGame->endExecution();
 
 				BattleUnit* const selUnit = _battleSave->getSelectedUnit();
 				selUnit->aim(false);
@@ -3639,27 +3645,6 @@ void BattlescapeState::mouseOutIcons(Action*)
 bool BattlescapeState::getMouseOverIcons() const
 {
 	return _mouseOverIcons;
-}
-
-/**
- * Determines whether the player is allowed to press buttons.
- * @note Buttons are disabled in the middle of a shot, during the alien turn,
- * and while a player's units are panicking. The save button is an exception to
- * still be able to save if something goes wrong during the alien turn and
- * submit the save file for dissection.
- * @param allowSaving - true if the help button was clicked (default false)
- * @return, true if the player can still press buttons
- */
-bool BattlescapeState::allowButtons(bool allowSaving) const
-{
-	return (
-			(allowSaving == true
-					|| _battleSave->getSide() == FACTION_PLAYER
-					|| _battleSave->getDebugMode() == true)
-				&& (_battleGame->getPanicHandled() == true
-					|| _firstInit == true)
-				&& _map->getProjectile() == nullptr
-				&& _map->getExplosions()->empty() == true);
 }
 
 /**

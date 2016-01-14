@@ -96,6 +96,12 @@ ExecuteState::ExecuteState(BattleAction* const action)
 	_btnCancel->onKeyboardPress(
 					(ActionHandler)& ExecuteState::btnCancelClick,
 					Options::keyCancel);
+	_btnCancel->onKeyboardPress(
+					(ActionHandler)& ExecuteState::btnCancelClick,
+					Options::keyOk);
+	_btnCancel->onKeyboardPress(
+					(ActionHandler)& ExecuteState::btnCancelClick,
+					Options::keyOkKeypad);
 }
 
 /**
@@ -186,21 +192,16 @@ void ExecuteState::lstTargetPress(Action* action)
 				* const amRule = _action->weapon->getAmmoItem()->getRules();
 			int soundId = -1;
 
-			if (itRule->getBattleType() == BT_MELEE)
+			switch (itRule->getBattleType()) // find attack-sound.
 			{
-				soundId = amRule->getMeleeSound();
-				if (soundId == -1)
-				{
-					soundId = itRule->getMeleeSound();
-					if (soundId == -1)
-						soundId = ResourcePack::ITEM_THROW;
-				}
-			}
-			else
-			{
-				soundId = amRule->getFireSound();
-				if (soundId == -1)
-					soundId = itRule->getFireSound();
+				case BT_MELEE:
+					if ((soundId = amRule->getMeleeSound()) == -1)
+						if ((soundId = itRule->getMeleeSound()) == -1)
+							soundId = ResourcePack::ITEM_THROW;
+					break;
+				case BT_FIREARM:
+					if ((soundId = amRule->getFireSound()) == -1)
+						soundId = itRule->getFireSound();
 			}
 
 			if (soundId != -1)

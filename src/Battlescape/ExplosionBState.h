@@ -49,8 +49,8 @@ private:
 	bool
 		_areaOfEffect,
 		_forceCamera,
-		_hit,
-		_hitSuccess,
+		_melee,
+		_meleeSuccess,
 		_lowerWeapon,
 		_pistolWhip;
 	int _power;
