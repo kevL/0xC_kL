@@ -1639,7 +1639,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 					// end border icon.
 
 // Draw scanner dots
-					if (itZ == viewLevel
+/*					if (itZ == viewLevel
 						&& _battleSave->scannerDots().empty() == false)
 					{
 						const std::pair<int,int> dotTest (std::make_pair(
@@ -1656,7 +1656,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									posScreen.y + 30,
 									0, false, RED);
 						}
-					}
+					} */
 					// end scanner dots.
 				}
 				// is inside the Surface
