@@ -240,7 +240,9 @@ GraphsState::GraphsState()
 		COL_OFF_TXT = 16;
 
 	size_t btnOffset = 0;
-	Uint8 colorOffset = 0;
+	Uint8
+		color,
+		colorOffset = 0;
 	int
 		actA,
 		actX;
@@ -254,7 +256,8 @@ GraphsState::GraphsState()
 			i != _game->getSavedGame()->getRegions()->end();
 			++i, ++colorOffset, ++btnOffset)
 	{
-		if (colorOffset == 17) colorOffset = 0;
+//		if (colorOffset == 17) colorOffset = 0; // <- only 15 regions IG.
+		color = colorOffset * 8;
 
 		actA = (*i)->getActivityAlien().back();
 		actX = (*i)->getActivityXCom().back();
@@ -264,10 +267,10 @@ GraphsState::GraphsState()
 		// put all the regions into toggles
 		_regionToggles.push_back(new GraphBtnInfo(
 												tr((*i)->getRules()->getType()), // name of Region
-												colorOffset * 8 + COL_OFF_BTN,
+												color + COL_OFF_BTN,
 												actA,
 												actX,
-												colorOffset * 8 + COL_OFF_TXT,
+												color + COL_OFF_TXT,
 												blinkA,
 												blinkX));
 
@@ -279,31 +282,25 @@ GraphsState::GraphsState()
 													0,
 													static_cast<int>(btnOffset) * 10));
 			_btnRegions.at(btnOffset)->setText(tr((*i)->getRules()->getType())); // name of Region
-			_btnRegions.at(btnOffset)->setInvertColor(colorOffset * 8 + COL_OFF_BTN);
+			_btnRegions.at(btnOffset)->setInvertColor(color + COL_OFF_BTN);
 			_btnRegions.at(btnOffset)->onMousePress(
 							(ActionHandler)& GraphsState::btnRegionListClick,
 							SDL_BUTTON_LEFT);
-/*			_btnRegions.at(btnOffset)->onMousePress(
-							(ActionHandler)& GraphsState::shiftButtons,
-							SDL_BUTTON_WHEELUP);
-			_btnRegions.at(btnOffset)->onMousePress(
-							(ActionHandler)& GraphsState::shiftButtons,
-							SDL_BUTTON_WHEELDOWN); */
 			add(_btnRegions.at(btnOffset), "button", "graphs");
 
 			_txtRegionActA.push_back(new Text(
-													24,10,
-													66,
-													(static_cast<int>(btnOffset) * 10) + 1));
-			_txtRegionActA.at(btnOffset)->setColor(colorOffset * 8 + COL_OFF_TXT);
+											24,10,
+											66,
+											(static_cast<int>(btnOffset) * 10) + 1));
+			_txtRegionActA.at(btnOffset)->setColor(color + COL_OFF_TXT);
 			_txtRegionActA.at(btnOffset)->setText(Text::formatNumber(actA));
 			add(_txtRegionActA.at(btnOffset));
 
 			_txtRegionActX.push_back(new Text(
-													24,10,
-													66,
-													(static_cast<int>(btnOffset) * 10) + 1));
-			_txtRegionActX.at(btnOffset)->setColor(colorOffset * 8 + COL_OFF_TXT);
+											24,10,
+											66,
+											(static_cast<int>(btnOffset) * 10) + 1));
+			_txtRegionActX.at(btnOffset)->setColor(color + COL_OFF_TXT);
 			_txtRegionActX.at(btnOffset)->setText(Text::formatNumber(actX));
 			add(_txtRegionActX.at(btnOffset));
 
@@ -331,15 +328,15 @@ GraphsState::GraphsState()
 										0,
 										btnTotal_y * 10);
 
-	Uint8 totalColor = static_cast<Uint8>(
-					   _game->getRuleset()->getInterface("graphs")->getElement("regionTotal")->color);
+	color = static_cast<Uint8>(
+			_game->getRuleset()->getInterface("graphs")->getElement("regionTotal")->color);
 
 	_regionToggles.push_back(new GraphBtnInfo( // TOTAL btn is the last button in the vector.
 											tr("STR_TOTAL_UC"),
-											totalColor,
+											color,
 											0,0,0,
 											false,false));
-	_btnRegionTotal->setInvertColor(totalColor);
+	_btnRegionTotal->setInvertColor(color);
 	_btnRegionTotal->setText(tr("STR_TOTAL_UC"));
 	_btnRegionTotal->onMousePress(
 					(ActionHandler)& GraphsState::btnRegionListClick,
@@ -364,6 +361,7 @@ GraphsState::GraphsState()
 			++i, ++colorOffset, ++btnOffset)
 	{
 		if (colorOffset == 17) colorOffset = 0;
+		color = colorOffset * 8;
 
 		actA = (*i)->getActivityAlien().back();
 		actX = (*i)->getActivityXCom().back();
@@ -373,10 +371,10 @@ GraphsState::GraphsState()
 		// put all the countries into toggles
 		_countryToggles.push_back(new GraphBtnInfo(
 												tr((*i)->getRules()->getType()), // name of Country
-												colorOffset * 8 + COL_OFF_BTN,
+												color + COL_OFF_BTN,
 												actA,
 												actX,
-												colorOffset * 8 + COL_OFF_TXT,
+												color + COL_OFF_TXT,
 												blinkA,
 												blinkX));
 
@@ -388,31 +386,25 @@ GraphsState::GraphsState()
 													0,
 													static_cast<int>(btnOffset) * 10));
 			_btnCountries.at(btnOffset)->setText(tr((*i)->getRules()->getType())); // name of Country
-			_btnCountries.at(btnOffset)->setInvertColor(colorOffset * 8 + COL_OFF_BTN);
+			_btnCountries.at(btnOffset)->setInvertColor(color + COL_OFF_BTN);
 			_btnCountries.at(btnOffset)->onMousePress(
 							(ActionHandler)& GraphsState::btnCountryListClick,
 							SDL_BUTTON_LEFT);
-/*			_btnCountries.at(btnOffset)->onMousePress(
-							(ActionHandler)& GraphsState::shiftButtons,
-							SDL_BUTTON_WHEELUP);
-			_btnCountries.at(btnOffset)->onMousePress(
-							(ActionHandler)& GraphsState::shiftButtons,
-							SDL_BUTTON_WHEELDOWN); */
 			add(_btnCountries.at(btnOffset), "button", "graphs");
 
 			_txtCountryActA.push_back(new Text(
-													24,10,
-													66,
-													(static_cast<int>(btnOffset) * 10) + 1));
-			_txtCountryActA.at(btnOffset)->setColor(colorOffset * 8 + COL_OFF_TXT);
+											24,10,
+											66,
+											(static_cast<int>(btnOffset) * 10) + 1));
+			_txtCountryActA.at(btnOffset)->setColor(color + COL_OFF_TXT);
 			_txtCountryActA.at(btnOffset)->setText(Text::formatNumber(actA));
 			add(_txtCountryActA.at(btnOffset));
 
 			_txtCountryActX.push_back(new Text(
-													24,10,
-													66,
-													(static_cast<int>(btnOffset) * 10) + 1));
-			_txtCountryActX.at(btnOffset)->setColor(colorOffset * 8 + COL_OFF_TXT);
+											24,10,
+											66,
+											(static_cast<int>(btnOffset) * 10) + 1));
+			_txtCountryActX.at(btnOffset)->setColor(color + COL_OFF_TXT);
 			_txtCountryActX.at(btnOffset)->setText(Text::formatNumber(actX));
 			add(_txtCountryActX.at(btnOffset));
 
@@ -442,16 +434,16 @@ GraphsState::GraphsState()
 										0,
 										btnTotal_y * 10);
 
-	totalColor = static_cast<Uint8>(
-				 _game->getRuleset()->getInterface("graphs")->getElement("countryTotal")->color);
+	color = static_cast<Uint8>(
+			_game->getRuleset()->getInterface("graphs")->getElement("countryTotal")->color);
 
 	_countryToggles.push_back(new GraphBtnInfo( // TOTAL btn is the last button in the vector.
 											tr("STR_TOTAL_UC"),
-											totalColor,
+											color,
 											0,0,0,
 											false,false));
 
-	_btnCountryTotal->setInvertColor(totalColor);
+	_btnCountryTotal->setInvertColor(color);
 	_btnCountryTotal->setText(tr("STR_TOTAL_UC"));
 	_btnCountryTotal->onMousePress(
 					(ActionHandler)& GraphsState::btnCountryListClick,
@@ -472,7 +464,7 @@ GraphsState::GraphsState()
 	/* FINANCE */
 	for (size_t
 			i = 0;
-			i != 5;
+			i != 5u;
 			++i)
 	{
 		_btnFinances.push_back(new ToggleTextButton(
@@ -505,12 +497,12 @@ GraphsState::GraphsState()
 	_btnFinances.at(3)->setText(tr("STR_BALANCE"));
 	_btnFinances.at(4)->setText(tr("STR_SCORE"));
 
-
-	_txtScore->setColor(49); // Palette::blockOffset(3)+1
+	_txtScore->setColor(49);
 	_txtScore->setAlign(ALIGN_RIGHT);
 
 
 	// Load back all the buttons' toggled states from SavedGame!
+
 	/* REGION TOGGLES */
 	std::string graphRegionToggles = _game->getSavedGame()->getGraphRegionToggles();
 	while (graphRegionToggles.size() < _regionToggles.size())
@@ -599,7 +591,6 @@ GraphsState::GraphsState()
 					(ActionHandler)& GraphsState::keyFactor,
 					SDLK_3);
 
-	Uint8 color;
 	const Uint8 colorGrid = static_cast<Uint8>(
 						   _game->getRuleset()->getInterface("graphs")->getElement("graph")->color);
 
@@ -1440,7 +1431,7 @@ void GraphsState::boxLines(Surface* const srf) // private.
 {
 	for (int
 			y = 0;		// top of screen
-			y != 45;	// bottom of title text
+			y != 49;	// top of grid
 			++y)
 	{
 		for (int
@@ -1535,7 +1526,6 @@ void GraphsState::drawRegionLines() // private.
 	// and connect the dots.
 	const float pixelUnits = static_cast<float>(scaleHigh - scaleLow) / PIXELS_y;
 
-	Uint8 color = 0;
 	int reduction;
 	Sint16
 		x,y;
@@ -1545,7 +1535,7 @@ void GraphsState::drawRegionLines() // private.
 	for (size_t // draw region lines
 			i = 0;
 			i != _game->getSavedGame()->getRegions()->size();
-			++i, ++color)
+			++i)
 	{
 		region = _game->getSavedGame()->getRegions()->at(i);
 
@@ -1553,7 +1543,6 @@ void GraphsState::drawRegionLines() // private.
 		_xcomRegionLines.at(i)->clear();
 
 		lineVector.clear();
-		if (color == 17) color = 0;
 
 		for (size_t
 				j = 0;
@@ -1595,7 +1584,7 @@ void GraphsState::drawRegionLines() // private.
 							x,y,
 							x + 17,
 							lineVector.at(lineVector.size() - 2),
-							color * 8 + 16);
+							_regionToggles.at(i)->_colorPushed + 4);
 
 					switch (recallFactor)
 					{
@@ -1610,7 +1599,7 @@ void GraphsState::drawRegionLines() // private.
 							x,y,
 							x + 17,
 							lineVector.at(lineVector.size() - 2),
-							color * 8 + 16);
+							_regionToggles.at(i)->_colorPushed + 4);
 
 					switch (recallFactor)
 					{
@@ -1634,7 +1623,8 @@ void GraphsState::drawRegionLines() // private.
 	else
 		_xcomRegionLines.back()->clear();
 
-	color = static_cast<Uint8>(_game->getRuleset()->getInterface("graphs")->getElement("regionTotal")->color2);
+	Uint8 color = static_cast<Uint8>(
+				_game->getRuleset()->getInterface("graphs")->getElement("regionTotal")->color2);
 	lineVector.clear();
 
 	for (size_t
@@ -1780,7 +1770,6 @@ void GraphsState::drawCountryLines() // private.
 	// and connect the dots.
 	const float pixelUnits = static_cast<float>(scaleHigh - scaleLow) / PIXELS_y;
 
-	Uint8 color = 0;
 	int reduction;
 	Sint16
 		x,y;
@@ -1790,7 +1779,7 @@ void GraphsState::drawCountryLines() // private.
 	for (size_t // draw country lines
 			i = 0;
 			i != _game->getSavedGame()->getCountries()->size();
-			++i, ++color)
+			++i)
 	{
 		country = _game->getSavedGame()->getCountries()->at(i);
 
@@ -1799,7 +1788,6 @@ void GraphsState::drawCountryLines() // private.
 		_incomeLines.at(i)->clear();
 
 		lineVector.clear();
-		if (color == 17) color = 0;
 
 		for (size_t
 				j = 0;
@@ -1850,7 +1838,7 @@ void GraphsState::drawCountryLines() // private.
 							x,y,
 							x + 17,
 							lineVector.at(lineVector.size() - 2),
-							color * 8 + 16);
+							_countryToggles.at(i)->_colorPushed + 4);
 
 					switch (recallFactor)
 					{
@@ -1865,7 +1853,7 @@ void GraphsState::drawCountryLines() // private.
 							x,y,
 							x + 17,
 							lineVector.at(lineVector.size() - 2),
-							color * 8 + 16);
+							_countryToggles.at(i)->_colorPushed + 4);
 
 					switch (recallFactor)
 					{
@@ -1880,7 +1868,7 @@ void GraphsState::drawCountryLines() // private.
 							x,y,
 							x + 17,
 							lineVector.at(lineVector.size() - 2),
-							color * 8 + 16);
+							_countryToggles.at(i)->_colorPushed + 4);
 
 					switch (recallFactor)
 					{
@@ -1908,8 +1896,8 @@ void GraphsState::drawCountryLines() // private.
 	else
 		_xcomCountryLines.back()->clear();
 
-	color = static_cast<Uint8>(
-		   _game->getRuleset()->getInterface("graphs")->getElement("countryTotal")->color2);
+	Uint8 color = static_cast<Uint8>(
+				_game->getRuleset()->getInterface("graphs")->getElement("countryTotal")->color2);
 	lineVector.clear();
 
 	for (size_t
@@ -2188,15 +2176,16 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 				else
 					color = 0;
 
-				Uint8 multi; // switch colors for Income (was yellow) and Maintenance (was green)
-				if (i == 0)
-					multi = 2;
-				else if (i == 2)
-					multi = 0;
-				else
-					multi = static_cast<Uint8>(i);
+				Uint8 multer; // switch colors for Income (was yellow) and Maintenance (was green)
+				switch (i)
+				{
+					case 0: multer = 2; break;
+					case 2: multer = 0; break;
+					default:
+						multer = static_cast<Uint8>(i);
+				}
 
-				color = Palette::blockOffset((multi / 2) + 1) + color;
+				color = Palette::blockOffset((multer / 2) + 1) + color;
 
 				x = 312 - static_cast<Sint16>(j) * 17;
 				_financeLines.at(i)->drawLine(
@@ -2232,48 +2221,74 @@ void GraphsState::shiftButtons(Action* action) // private.
 			if (_countryToggles.size() > GRAPH_BUTTONS)
 			{
 				int dirVal;
-				if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP
-					|| action->getDetails()->key.keysym.sym == SDLK_UP
-					|| action->getDetails()->key.keysym.sym == SDLK_KP8)
+				if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
 				{
 					dirVal = -1;
 					if (static_cast<int>(_btnCountryOffset) + dirVal < 0)
 						return;
 				}
-				else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN
-					|| action->getDetails()->key.keysym.sym == SDLK_DOWN
-					|| action->getDetails()->key.keysym.sym == SDLK_KP2)
+				else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
 				{
 					dirVal = 1;
-					if (static_cast<int>(_btnCountryOffset + GRAPH_BUTTONS) + dirVal >= static_cast<int>(_countryToggles.size()))
+					if (static_cast<int>(_btnCountryOffset + GRAPH_BUTTONS)
+							+ dirVal >= static_cast<int>(_countryToggles.size()))
+					{
 						return;
-				}
-				else if (action->getDetails()->key.keysym.sym == SDLK_PAGEUP
-					|| action->getDetails()->key.keysym.sym == SDLK_KP9)
-				{
-					dirVal = std::max(
-								-(static_cast<int>(GRAPH_BUTTONS)),
-								-(static_cast<int>(_btnCountryOffset)));
-				}
-				else if (action->getDetails()->key.keysym.sym == SDLK_PAGEDOWN
-					|| action->getDetails()->key.keysym.sym == SDLK_KP3)
-				{
-					dirVal = std::min(
-								static_cast<int>(GRAPH_BUTTONS),
-								static_cast<int>(_countryToggles.size()) - static_cast<int>(GRAPH_BUTTONS) - static_cast<int>(_btnCountryOffset) - 1);
-				}
-				else if (action->getDetails()->key.keysym.sym == SDLK_HOME
-					|| action->getDetails()->key.keysym.sym == SDLK_KP7)
-				{
-					dirVal = -(static_cast<int>(_btnCountryOffset));
-				}
-				else if (action->getDetails()->key.keysym.sym == SDLK_END
-					|| action->getDetails()->key.keysym.sym == SDLK_KP1)
-				{
-					dirVal = static_cast<int>(_countryToggles.size()) - static_cast<int>(GRAPH_BUTTONS) - static_cast<int>(_btnCountryOffset) - 1;
+					}
 				}
 				else
-					dirVal = 0;
+				{
+					switch (action->getDetails()->key.keysym.sym)
+					{
+						case SDLK_UP:
+						case SDLK_KP8:
+							dirVal = -1;
+							if (static_cast<int>(_btnCountryOffset) + dirVal < 0)
+								return;
+							break;
+
+						case SDLK_DOWN:
+						case SDLK_KP2:
+							dirVal = 1;
+							if (static_cast<int>(_btnCountryOffset + GRAPH_BUTTONS)
+									+ dirVal >= static_cast<int>(_countryToggles.size()))
+							{
+								return;
+							}
+							break;
+
+						case SDLK_PAGEUP:
+						case SDLK_KP9:
+							dirVal = std::max(
+										-(static_cast<int>(GRAPH_BUTTONS)),
+										-(static_cast<int>(_btnCountryOffset)));
+							break;
+
+						case SDLK_PAGEDOWN:
+						case SDLK_KP3:
+							dirVal = std::min(
+										static_cast<int>(GRAPH_BUTTONS),
+										static_cast<int>(_countryToggles.size())
+											- static_cast<int>(GRAPH_BUTTONS)
+											- static_cast<int>(_btnCountryOffset) - 1);
+							break;
+
+						case SDLK_HOME:
+						case SDLK_KP7:
+							dirVal = -(static_cast<int>(_btnCountryOffset));
+							break;
+
+						case SDLK_END:
+						case SDLK_KP1:
+							dirVal = static_cast<int>(_countryToggles.size())
+										- static_cast<int>(GRAPH_BUTTONS)
+										- static_cast<int>(_btnCountryOffset) - 1;
+							break;
+
+						default:
+							dirVal = 0;
+					}
+				}
 
 				if (dirVal != 0)
 					scrollButtons(dirVal);
