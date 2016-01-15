@@ -116,11 +116,15 @@ GraphsState::GraphsState()
 		_reset(false),
 		_forceVis(true)
 {
+	const int
+		offsetX = (Options::baseXResolution - 320) / 2,
+		offsetY = (Options::baseYResolution - 200) / 2;
+
 	_bg = new InteractiveSurface(
 							Options::baseXResolution,
 							Options::baseYResolution,
-							-(Options::baseXResolution - 320) / 2,
-							-(Options::baseYResolution - 200) / 2);
+							-offsetX,
+							-offsetY);
 	_bg->onMousePress(
 				(ActionHandler)& GraphsState::shiftButtons,
 				SDL_BUTTON_WHEELUP);
@@ -595,11 +599,17 @@ GraphsState::GraphsState()
 					(ActionHandler)& GraphsState::keyFactor,
 					SDLK_3);
 
+	Surface* const icons = _game->getResourcePack()->getSurface("GRAPHS.SPK");
+	icons->setX(offsetX);
+	icons->setY(offsetY);
+	icons->blit(_bg);
+
 	const Uint8 colorGrid = static_cast<Uint8>(
 						   _game->getRuleset()->getInterface("graphs")->getElement("graph")->color);
 
 	_bg->drawRect( // set up the grid
-				125,49,
+				offsetX + 125,
+				offsetY + 49,
 				188,127,
 				colorGrid);
 
@@ -609,13 +619,13 @@ GraphsState::GraphsState()
 			++i)
 	{
 		for (Sint16
-				y = 50 + i;
-				y <= 163 + i;
+				y = offsetY + 50 + i;
+				y < offsetY + 164 + i;
 				y += 14)
 		{
 			for (Sint16
-					x = 126 + i;
-					x <= 297 + i;
+					x = offsetX + 126 + i;
+					x < offsetX + 298 + i;
 					x += 17)
 			{
 				if (i == 4)
@@ -632,53 +642,40 @@ GraphsState::GraphsState()
 		}
 	}
 
-	std::string months[] = // set up the horizontal measurement units
-	{
-		"STR_JAN",
-		"STR_FEB",
-		"STR_MAR",
-		"STR_APR",
-		"STR_MAY",
-		"STR_JUN",
-		"STR_JUL",
-		"STR_AUG",
-		"STR_SEP",
-		"STR_OCT",
-		"STR_NOV",
-		"STR_DEC"
-	};
-
-	// i know using textlist for this is ugly and brutal, but YOU try getting this damn text to line up.
-	// also, there's nothing wrong with being ugly or brutal, you should learn tolerance. kL_note: and C++
+	// i know using textlist for this is ugly and brutal, but YOU try getting
+	// this damn text to line up. Also, there's nothing wrong with being ugly or
+	// brutal, you should learn tolerance. kL_note: and C++
 	_lstMonths->setColumns(MONTHS, 17,17,17,17,17,17,17,17,17,17,17,17); // 204 total
 	_lstMonths->addRow(MONTHS, L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ",L" ");
 	_lstMonths->setMargin();
 
 	_lstYears->setColumns(YEARS, 34,34,34,34,34,34); // 204 total
-	_lstYears->addRow(YEARS, L" ",L" ",L" ",L" ",L" ",L" ");
+	_lstYears->addRow(YEARS, L".",L".",L".",L".",L".",L".");
 	_lstYears->setMargin();
 
 
 	const GameTime* const gt = _game->getSavedGame()->getTime();
-	const int year = gt->getYear();
-	size_t month = static_cast<size_t>(gt->getMonth());
+	const int yr = gt->getYear();
+	size_t th = static_cast<size_t>(gt->getMonth() - 1);
 
 	for (size_t
 			i = 0;
 			i != MONTHS_u;
 			++i)
 	{
-		if (month > 11)
+		if (i == 1)
 		{
-			month = 0;
-
-			if (i == 1)
-				_lstYears->setCellText(0, i / 2, Text::intWide(year));
+			if (th == 11)
+				_lstYears->setCellText(0,0, Text::intWide(yr));
 			else
-				_lstYears->setCellText(0, 0, Text::intWide(year - 1));
+				_lstYears->setCellText(0,0, Text::intWide(yr - 1));
 		}
+		else if (th == 0)
+			_lstYears->setCellText(0, i / 2, Text::intWide(yr));
 
-		_lstMonths->setCellText(0, i, tr(months[month++]));
+		if (++th == 12) th = 0;
+
+		_lstMonths->setCellText(0, i, tr(GameTime::GAME_MONTHS[th]));
 	}
 
 	for (std::vector<Text*>::const_iterator // set up the vertical measurement units
@@ -689,11 +686,6 @@ GraphsState::GraphsState()
 		(*i)->setAlign(ALIGN_RIGHT);
 	}
 
-
-	Surface* const icons = _game->getResourcePack()->getSurface("GRAPHS.SPK");
-	icons->setX((Options::baseXResolution - 320) / 2);
-	icons->setY((Options::baseYResolution - 200) / 2);
-	icons->blit(_bg);
 
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();

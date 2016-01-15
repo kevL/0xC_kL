@@ -28,9 +28,6 @@
 namespace OpenXcom
 {
 
-class Language;
-
-
 /**
  * Time periods.
  */
@@ -44,6 +41,8 @@ enum TimeTrigger
 	TIME_1DAY,	// 5
 	TIME_1MONTH	// 6
 };
+
+class Language;
 
 
 /**
@@ -66,6 +65,8 @@ private:
 
 
 	public:
+		static const std::string GAME_MONTHS[12u];
+
 		/// Creates a new IG time at a certain point.
 		GameTime(
 //				int weekday,

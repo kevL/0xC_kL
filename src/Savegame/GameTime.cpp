@@ -25,6 +25,23 @@
 namespace OpenXcom
 {
 
+const std::string GameTime::GAME_MONTHS[12u] =
+{
+	"STR_JAN",
+	"STR_FEB",
+	"STR_MAR",
+	"STR_APR",
+	"STR_MAY",
+	"STR_JUN",
+	"STR_JUL",
+	"STR_AUG",
+	"STR_SEP",
+	"STR_OCT",
+	"STR_NOV",
+	"STR_DEC"
+};
+
+
 /**
  * Initializes a new IG time with a certain starting point.
 // * @param weekday	- starting weekday
@@ -44,13 +61,13 @@ GameTime::GameTime(
 		int minute,
 		int sec)
 	:
-		_second(sec),
-		_minute(minute),
-		_hour(hour),
 //		_weekday(weekday),
 		_day(day),
 		_month(month),
-		_year(year)
+		_year(year),
+		_hour(hour),
+		_minute(minute),
+		_second(sec)
 {}
 
 /**
@@ -274,23 +291,7 @@ int GameTime::getMonth() const
  */
 std::string GameTime::getMonthString() const
 {
-	static const std::string months[12] =
-	{
-		"STR_JAN",
-		"STR_FEB",
-		"STR_MAR",
-		"STR_APR",
-		"STR_MAY",
-		"STR_JUN",
-		"STR_JUL",
-		"STR_AUG",
-		"STR_SEP",
-		"STR_OCT",
-		"STR_NOV",
-		"STR_DEC"
-	};
-
-	return months[static_cast<size_t>(_month) - 1];
+	return GAME_MONTHS[static_cast<size_t>(_month - 1)];
 }
 
 /**
@@ -312,7 +313,7 @@ double GameTime::getDaylight() const
 {
 	return static_cast<double>(
 					(((((_hour + 18) % 24) * 60) + _minute) * 60) + _second)
-				/ (60. * 60. * 24.); // kL: Take Two!!!
+						/ (60. * 60. * 24.); // kL: Take Two!!!
 }
 
 }
