@@ -57,13 +57,14 @@ class GraphsState
 
 private:
 	static const size_t
-		GRAPH_BUTTONS = 19, // # visible btns. Does not include TOTAL btn.
-		TEXTS_y       = 10,
-		MONTHS_u      = 12;
+		GRAPH_BUTTONS	= 19u, // # visible btns. Does not include TOTAL btn.
+		TEXTS_y			= 10u,
+		MONTHS_u		= 12u;
 	static const int
-		MONTHS		= 12,
-		YEARS		= 6,
-		GRIDCELLS_y	= 9;
+		MONTHS			= 12,
+		YEARS			= 6,
+		GRIDCELLS_y		= 9;
+
 	static const float PIXELS_y;
 
 	bool
@@ -102,7 +103,8 @@ private:
 		* _lstYears;
 	ToggleTextButton
 		* _btnCountryTotal,
-		* _btnRegionTotal;
+		* _btnRegionTotal,
+		* _btnToggleAll;
 
 	Timer* _blinkTimer;
 
@@ -142,6 +144,10 @@ private:
 
 	/// Resets aLien/xCom activity and the blink indicators.
 	void btnResetPress(Action* action);
+	/// Initializes the toggle-all stuff.
+	void initToggleAll();
+	/// Toggles all region/country buttons.
+	void btnTogglePress(Action* action);
 	/// Sets the graphs to a user expansion by mouse-click.
 	void btnFactorPress(Action* action);
 	/// Sets the graphs to a user expansion by hot-key.
@@ -149,15 +155,15 @@ private:
 
 	/// Resets all the elements on screen.
 	void resetScreen();
+
+	/// Clears pixels of lines that would otherwise draw overtop the title area.
+	void boxLines(Surface* const srf);
 	/// Updates the scale.
 	void updateScale(
 			int valLow,
 			int valHigh);
-
 	/// Decides which line-drawing-routine to call.
 	void drawLines(bool reset = true);
-	/// Clears pixels of lines that would otherwise draw overtop the title area.
-	void boxLines(Surface* const srf);
 	/// Draws Region lines.
 	void drawRegionLines();
 	/// Draws Country lines.

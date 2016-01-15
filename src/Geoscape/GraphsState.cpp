@@ -63,6 +63,11 @@ static int recallPage = -1;
 static size_t recallCountry = 0;
 static GraphsUserFactor recallFactor = GUF_DEFAULT;
 
+static int
+	SCREEN_OFFSET_y,
+	TOGGLEALL_yCnt,
+	TOGGLEALL_yReg;
+
 const float GraphsState::PIXELS_y = 126.f;
 
 
@@ -116,15 +121,14 @@ GraphsState::GraphsState()
 		_reset(false),
 		_forceVis(true)
 {
-	const int
-		offsetX = (Options::baseXResolution - 320) / 2,
-		offsetY = (Options::baseYResolution - 200) / 2;
+	const int offsetX	= (Options::baseXResolution - 320) / 2;
+	SCREEN_OFFSET_y		= (Options::baseYResolution - 200) / 2;
 
 	_bg = new InteractiveSurface(
 							Options::baseXResolution,
 							Options::baseYResolution,
 							-offsetX,
-							-offsetY);
+							-SCREEN_OFFSET_y);
 	_bg->onMousePress(
 				(ActionHandler)& GraphsState::shiftButtons,
 				SDL_BUTTON_WHEELUP);
@@ -184,6 +188,7 @@ GraphsState::GraphsState()
 	_isfGeoscape	= new InteractiveSurface(31, 24, 289);
 
 	_btnReset		= new TextButton(40, 16, 96, 26);
+	_btnToggleAll	= new ToggleTextButton(24, 10, 66, 0); // y is set according to page.
 
 	_btnFactor1		= new TextButton(16, 16, 272, 26);
 	_btnFactor2		= new TextButton(16, 16, 288, 26);
@@ -222,6 +227,7 @@ GraphsState::GraphsState()
 	add(_isfFinance);
 	add(_isfGeoscape);
 	add(_btnReset,		"button",	"graphs");
+	add(_btnToggleAll,	"button",	"graphs");
 	add(_btnFactor1,	"button",	"graphs");
 	add(_btnFactor2,	"button",	"graphs");
 	add(_btnFactor4,	"button",	"graphs");
@@ -572,6 +578,11 @@ GraphsState::GraphsState()
 					(ActionHandler)& GraphsState::btnResetPress,
 					SDL_BUTTON_LEFT);
 
+//	_btnToggleAll->setText(L"all"); // TODO: use tr("STR_GRAPHS_TOGGLE_ALL")
+	_btnToggleAll->onMousePress(
+					(ActionHandler)& GraphsState::btnTogglePress,
+					SDL_BUTTON_LEFT);
+
 	_btnFactor1->setText(L"1");
 	_btnFactor1->setGroup(&_userFactor);
 	_btnFactor1->onMousePress(
@@ -601,7 +612,7 @@ GraphsState::GraphsState()
 
 	Surface* const icons = _game->getResourcePack()->getSurface("GRAPHS.SPK");
 	icons->setX(offsetX);
-	icons->setY(offsetY);
+	icons->setY(SCREEN_OFFSET_y);
 	icons->blit(_bg);
 
 	const Uint8 colorGrid = static_cast<Uint8>(
@@ -609,7 +620,7 @@ GraphsState::GraphsState()
 
 	_bg->drawRect( // set up the grid
 				offsetX + 125,
-				offsetY + 49,
+				SCREEN_OFFSET_y + 49,
 				188,127,
 				colorGrid);
 
@@ -619,8 +630,8 @@ GraphsState::GraphsState()
 			++i)
 	{
 		for (Sint16
-				y = offsetY + 50 + i;
-				y < offsetY + 164 + i;
+				y = SCREEN_OFFSET_y + 50 + i;
+				y < SCREEN_OFFSET_y + 164 + i;
 				y += 14)
 		{
 			for (Sint16
@@ -736,6 +747,9 @@ GraphsState::GraphsState()
 	_blinkTimer->onTimer((StateHandler)& GraphsState::blink);
 
 	initButtons();
+
+	TOGGLEALL_yReg = static_cast<int>(_btnRegions.size()) * 10;
+	TOGGLEALL_yCnt = static_cast<int>(_btnCountries.size()) * 10;
 
 	switch (recallPage)
 	{
@@ -948,6 +962,10 @@ void GraphsState::btnUfoRegionClick(Action*)
 		_country =
 		_finance = false;
 
+		_btnToggleAll->setY(TOGGLEALL_yReg + SCREEN_OFFSET_y);
+		_btnToggleAll->setVisible();
+		initToggleAll();
+
 		_btnReset->setVisible(_blinkTimer->isRunning() == true);
 		drawLines();
 
@@ -985,6 +1003,10 @@ void GraphsState::btnXcomRegionClick(Action*)
 		_income =
 		_country =
 		_finance = false;
+
+		_btnToggleAll->setY(TOGGLEALL_yReg + SCREEN_OFFSET_y);
+		_btnToggleAll->setVisible();
+		initToggleAll();
 
 		_btnReset->setVisible(_blinkTimer->isRunning() == true);
 		drawLines();
@@ -1024,6 +1046,10 @@ void GraphsState::btnUfoCountryClick(Action*)
 		_income =
 		_finance = false;
 
+		_btnToggleAll->setY(TOGGLEALL_yCnt + SCREEN_OFFSET_y);
+		_btnToggleAll->setVisible();
+		initToggleAll();
+
 		_btnReset->setVisible(_blinkTimer->isRunning() == true);
 		drawLines();
 
@@ -1062,6 +1088,10 @@ void GraphsState::btnXcomCountryClick(Action*)
 		_income =
 		_finance = false;
 
+		_btnToggleAll->setY(TOGGLEALL_yCnt + SCREEN_OFFSET_y);
+		_btnToggleAll->setVisible();
+		initToggleAll();
+
 		_btnReset->setVisible(_blinkTimer->isRunning() == true);
 		drawLines();
 
@@ -1098,6 +1128,8 @@ void GraphsState::btnIncomeClick(Action*)
 		_alien =
 		_finance = false;
 
+		_btnToggleAll->setVisible(false);
+
 		_btnReset->setVisible(false);
 		drawLines();
 
@@ -1129,6 +1161,8 @@ void GraphsState::btnFinanceClick(Action*)
 		_alien =
 		_income =
 		_country = false;
+
+		_btnToggleAll->setVisible(false);
 
 		_btnReset->setVisible(false);
 		drawLines();
@@ -1167,6 +1201,7 @@ void GraphsState::btnRegionListClick(Action* action)
 		}
 	}
 	_regionToggles.at(btnId)->_pushed = btn->getPressed();
+	initToggleAll();
 	drawLines(false);
 }
 
@@ -1196,6 +1231,7 @@ void GraphsState::btnCountryListClick(Action* action)
 		}
 	}
 	_countryToggles.at(btnId)->_pushed = btn->getPressed();
+	initToggleAll();
 	drawLines(false);
 }
 
@@ -1222,34 +1258,107 @@ void GraphsState::btnFinanceListClick(Action* action)
 }
 
 /**
- * LMB Resets aLien/xCom activity and the blink indicators.
+ * Resets aLien/xCom activity and the blink indicators.
  * @param action - pointer to an Action
  */
-void GraphsState::btnResetPress(Action* action) // private.
+void GraphsState::btnResetPress(Action*) // private.
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	_reset = true;
+	_btnReset->setVisible(false);
+
+	for (std::vector<Region*>::const_iterator
+			i = _game->getSavedGame()->getRegions()->begin();
+			i != _game->getSavedGame()->getRegions()->end();
+			++i)
+		(*i)->resetActivity();
+
+	for (std::vector<Country*>::const_iterator
+			i = _game->getSavedGame()->getCountries()->begin();
+			i != _game->getSavedGame()->getCountries()->end();
+			++i)
+		(*i)->resetActivity();
+}
+
+/**
+ * Initializes the toggle-all stuff.
+ */
+void GraphsState::initToggleAll() // private.
+{
+	bool allPressed = true;
+	if (_country == true)
 	{
-		_reset = true;
-		_btnReset->setVisible(false);
-
-		for (std::vector<Region*>::const_iterator
-				i = _game->getSavedGame()->getRegions()->begin();
-				i != _game->getSavedGame()->getRegions()->end();
+		for (std::vector<GraphBtnInfo*>::const_iterator
+				i = _countryToggles.begin();
+				i != _countryToggles.end() - 1; // exclude Total btn.
 				++i)
-			(*i)->resetActivity();
-
-		for (std::vector<Country*>::const_iterator
-				i = _game->getSavedGame()->getCountries()->begin();
-				i != _game->getSavedGame()->getCountries()->end();
-				++i)
-			(*i)->resetActivity();
+		{
+			if ((*i)->_pushed == false)
+			{
+				allPressed = false;
+				break;
+			}
+		}
 	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
+	else
 	{
-
-
-		action->getDetails()->type = SDL_NOEVENT; // consume the event
+		for (std::vector<GraphBtnInfo*>::const_iterator
+				i = _regionToggles.begin();
+				i != _regionToggles.end() - 1; // exclude Total btn.
+				++i)
+		{
+			if ((*i)->_pushed == false)
+			{
+				allPressed = false;
+				break;
+			}
+		}
 	}
+
+	_btnToggleAll->setPressed(allPressed);
+}
+
+/**
+ * Toggles all region/country buttons.
+ * @param action - pointer to an Action
+ */
+void GraphsState::btnTogglePress(Action*) // private.
+{
+	bool vis;
+	if (_btnToggleAll->getPressed() == true)
+		vis = true;
+	else
+		vis = false;
+
+	if (_country == true)
+	{
+		for (size_t
+				i = 0;
+				i != _game->getSavedGame()->getCountries()->size();
+				++i)
+			_countryToggles.at(i)->_pushed = vis;
+
+		for (std::vector<ToggleTextButton*>::const_iterator
+				i = _btnCountries.begin();
+				i != _btnCountries.end();
+				++i)
+			(*i)->setPressed(vis);
+	}
+	else
+	{
+		for (size_t
+				i = 0;
+				i != _game->getSavedGame()->getRegions()->size();
+				++i)
+			_regionToggles.at(i)->_pushed = vis;
+
+		for (std::vector<ToggleTextButton*>::const_iterator
+				i = _btnRegions.begin();
+				i != _btnRegions.end();
+				++i)
+			(*i)->setPressed(vis);
+	}
+
+	drawLines(false);
 }
 
 /**
@@ -1392,6 +1501,27 @@ void GraphsState::resetScreen() // private.
 }
 
 /**
+ * Clears pixels of lines that would otherwise draw overtop the title area.
+ * @param srf - pointer to a Surface w/ lines to box in
+ */
+void GraphsState::boxLines(Surface* const srf) // private.
+{
+	for (int
+			y = 0;		// top of screen
+			y != 49;	// top of grid
+			++y)
+	{
+		for (int
+				x = 125;	// grid left edge
+				x != 313;	// grid right edge
+				++x)
+		{
+			srf->setPixelColor(x,y, 0);
+		}
+	}
+}
+
+/**
  * Updates the text on the vertical scale.
  * @param valLow	- minimum value
  * @param valHigh	- maximum value
@@ -1428,27 +1558,6 @@ void GraphsState::drawLines(bool reset) // private.
 		drawCountryLines();
 	else
 		drawFinanceLines();
-}
-
-/**
- * Clears pixels of lines that would otherwise draw overtop the title area.
- * @param srf - pointer to a Surface w/ lines to box in
- */
-void GraphsState::boxLines(Surface* const srf) // private.
-{
-	for (int
-			y = 0;		// top of screen
-			y != 49;	// top of grid
-			++y)
-	{
-		for (int
-				x = 125;	// grid left edge
-				x != 313;	// grid right edge
-				++x)
-		{
-			srf->setPixelColor(x,y, 0);
-		}
-	}
 }
 
 /**
