@@ -324,15 +324,15 @@ void CraftInfoState::init()
 	{
 		int x = 0;
 
-//		bit = baseBits->getFrame(38); // soldier graphic
+//		bit = baseBits->getFrame(38);
 //		for (int
 //				i = 0;
 //				i != _craft->getNumSoldiers();
 //				++i, x += icon_width)
-		for (std::vector<Soldier*>::const_iterator
+		for (std::vector<Soldier*>::const_iterator // soldier graphic
 				i = _base->getSoldiers()->begin();
 				i != _base->getSoldiers()->end();
-				++i, x += icon_width)
+				++i)
 		{
 			if ((*i)->getCraft() == _craft)
 			{
@@ -347,6 +347,8 @@ void CraftInfoState::init()
 
 				bit->setX(x);
 				bit->blit(_crew);
+
+				x += icon_width;
 			}
 		}
 
@@ -356,8 +358,7 @@ void CraftInfoState::init()
 		for (int
 				i = 0;
 				i != _craft->getNumVehicles();
-				++i,
-					x += icon_width)
+				++i, x += icon_width)
 		{
 			bit->setX(x);
 			bit->blit(_equip);
@@ -374,8 +375,7 @@ void CraftInfoState::init()
 		for (int
 				i = 0;
 				i != qtyIcons;
-				++i,
-					x += icon_width)
+				++i, x += icon_width)
 		{
 			bit->setX(x);
 			bit->blit(_equip);
