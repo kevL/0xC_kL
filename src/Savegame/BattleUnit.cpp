@@ -3334,26 +3334,22 @@ void BattleUnit::postMissionProcedures(
 			{
 				int delta = caps.tu - stats->tu;
 				if (delta > 0)
-					stats->tu += RNG::generate(
-											0,
+					stats->tu += RNG::generate(0,
 											(delta / 10) + 2) - 1;
 
 				delta = caps.health - stats->health;
 				if (delta > 0)
-					stats->health += RNG::generate(
-											0,
+					stats->health += RNG::generate(0,
 											(delta / 10) + 2) - 1;
 
 				delta = caps.strength - stats->strength;
 				if (delta > 0)
-					stats->strength += RNG::generate(
-											0,
+					stats->strength += RNG::generate(0,
 											(delta / 10) + 2) - 1;
 
 				delta = caps.stamina - stats->stamina;
 				if (delta > 0)
-					stats->stamina += RNG::generate(
-											0,
+					stats->stamina += RNG::generate(0,
 											(delta / 10) + 2) - 1;
 			}
 		}

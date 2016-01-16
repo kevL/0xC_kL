@@ -82,8 +82,8 @@ StartState::StartState()
 	const int
 //		dx = (Options::baseXResolution - 320) / 2,	// kL
 //		dy = (Options::baseYResolution - 200) / 2;	// kL
-		dx = 10,	// kL
-		dy = 20;	// kL
+		dx = 10, // kL
+		dy = 20; // kL
 //	_surface = new Surface(320, 200, dx, dy);		// kL
 
 	loading = LOADING_STARTED;

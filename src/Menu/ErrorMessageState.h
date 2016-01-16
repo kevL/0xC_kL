@@ -41,13 +41,15 @@ class ErrorMessageState
 		public State
 {
 private:
+	bool _quit;
+
 	TextButton* _btnOk;
 	Window* _window;
 	Text* _txtMessage;
 
 	void create(
-			const std::string& id,
-			const std::wstring& msg,
+			const std::string& st,
+			const std::wstring& wst,
 			SDL_Color* palette,
 			Uint8 color,
 			const std::string& bg,
@@ -56,18 +58,20 @@ private:
 	public:
 		/// Creates the Error state.
 		ErrorMessageState(
-				const std::string& id,
+				const std::string& st,
 				SDL_Color* palette,
 				int color,
 				const std::string& bg,
-				int bgColor);
+				int bgColor,
+				bool quit = false);
 		/// Creates the Error state.
 		ErrorMessageState(
-				const std::wstring& msg,
+				const std::wstring& wst,
 				SDL_Color* palette,
 				int color,
 				const std::string& bg,
-				int bgColor);
+				int bgColor,
+				bool quit = false);
 		/// Cleans up the Error state.
 		~ErrorMessageState();
 

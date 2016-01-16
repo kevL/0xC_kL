@@ -36,21 +36,25 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in an error window.
- * @param id		- reference the language ID for the message to display
+ * @param st		- reference the language ID for the message to display
  * @param palette	- pointer to the parent state palette
  * @param color		- color of the UI controls
  * @param bg		- reference the background image
  * @param bgColor	- background color (-1 for Battlescape)
+ * @param quit		- true to quit instantly (default false)
  */
 ErrorMessageState::ErrorMessageState(
-		const std::string& id,
+		const std::string& st,
 		SDL_Color* palette,
 		int color,
 		const std::string& bg,
-		int bgColor)
+		int bgColor,
+		bool quit)
+	:
+		_quit(quit)
 {
 	create(
-		id,
+		st,
 		L"",
 		palette,
 		static_cast<Uint8>(color),
@@ -60,22 +64,26 @@ ErrorMessageState::ErrorMessageState(
 
 /**
  * Initializes all the elements in an error window.
- * @param msg		- reference the text string for the message to display
+ * @param wst		- reference the text string for the message to display
  * @param palette	- pointer to the parent state palette
  * @param color		- color of the UI controls
  * @param bg		- reference the background image
  * @param bgColor	- background color (-1 for Battlescape)
+ * @param quit		- true to quit instantly (default false)
  */
 ErrorMessageState::ErrorMessageState(
-		const std::wstring& msg,
+		const std::wstring& wst,
 		SDL_Color* palette,
 		int color,
 		const std::string& bg,
-		int bgColor)
+		int bgColor,
+		bool quit)
+	:
+		_quit(quit)
 {
 	create(
 		"",
-		msg,
+		wst,
 		palette,
 		static_cast<Uint8>(color),
 		bg,
@@ -90,16 +98,16 @@ ErrorMessageState::~ErrorMessageState()
 
 /**
  * Creates the elements in an error window.
- * @param id		- reference the language ID for the message to display
- * @param msg		- reference the text string for the message to display
+ * @param st		- reference the language ID for the message to display
+ * @param wst		- reference the text string for the message to display
  * @param palette	- pointer to the parent state palette
  * @param color		- color of the UI controls
  * @param bg		- background image
  * @param bgColor	- background color (-1 for Battlescape)
  */
 void ErrorMessageState::create(
-		const std::string& id,
-		const std::wstring& msg,
+		const std::string& st,
+		const std::wstring& wst,
 		SDL_Color* palette,
 		Uint8 color,
 		const std::string& bg,
@@ -142,10 +150,10 @@ void ErrorMessageState::create(
 					(ActionHandler)& ErrorMessageState::btnOkClick,
 					Options::keyCancel);
 
-	if (id.empty() == true)
-		_txtMessage->setText(msg);
+	if (st.empty() == true)
+		_txtMessage->setText(wst);
 	else
-		_txtMessage->setText(tr(id));
+		_txtMessage->setText(tr(st));
 
 	_txtMessage->setColor(color);
 	_txtMessage->setAlign(ALIGN_CENTER);
@@ -168,7 +176,9 @@ void ErrorMessageState::create(
 void ErrorMessageState::btnOkClick(Action*)
 {
 	_game->popState();
-	_game->quit(true);
+
+	if (_quit == true)
+		_game->quit(true);
 }
 
 }
