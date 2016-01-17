@@ -19,7 +19,6 @@
 
 #include "PrimeGrenadeState.h"
 
-//#include <cmath>
 //#include <sstream>
 
 #include "Inventory.h"

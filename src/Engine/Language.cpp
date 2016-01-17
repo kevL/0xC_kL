@@ -19,18 +19,13 @@
 
 #include "Language.h"
 
-//#include <locale>
 #include <fstream>
 //#include <cassert>
-//#include <assert.h>
 
 #include "CrossPlatform.h"
-//#include "Exception.h"
 #include "LanguagePlurality.h"
 #include "Logger.h"
 #include "Options.h"
-
-#include "../Interface/TextList.h"
 
 #include "../Ruleset/ExtraStrings.h"
 

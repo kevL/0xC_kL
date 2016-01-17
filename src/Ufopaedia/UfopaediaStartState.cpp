@@ -19,7 +19,6 @@
 
 #include "UfopaediaStartState.h"
 
-#include "Ufopaedia.h"
 #include "UfopaediaSelectState.h"
 
 #include "../Engine/Action.h"

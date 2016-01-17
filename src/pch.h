@@ -132,7 +132,6 @@
 #	include <windows.h>
 //#	include <shlobj.h>	// No, causes conflict OR
 //#	include <shlwapi.h>	// this causes conflict ....
-#	include <direct.h>
 #	include <malloc.h>
 #else */
 /*

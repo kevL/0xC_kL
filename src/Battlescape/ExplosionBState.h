@@ -20,8 +20,6 @@
 #ifndef OPENXCOM_EXPLOSIONBSTATE_H
 #define OPENXCOM_EXPLOSIONBSTATE_H
 
-//#include <string>
-
 #include "BattleState.h"
 #include "Position.h"
 

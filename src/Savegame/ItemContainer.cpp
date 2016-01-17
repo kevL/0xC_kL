@@ -64,7 +64,7 @@ YAML::Node ItemContainer::save() const
  * @note Usage is intended to supercede add/removeItem() functions.
  * @param type	- reference to an item-type
  * @param qty	- modification (default +1)
- */
+ *
 void ItemContainer::modifyContents(
 		const std::string& type,
 		int qty)
@@ -78,7 +78,7 @@ void ItemContainer::modifyContents(
 	}
 	else if (qty > 0)
 		_contents[type] = qty;
-}
+} */
 
 /**
  * Adds an item amount to the container.

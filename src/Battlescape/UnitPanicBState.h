@@ -19,8 +19,6 @@
 #ifndef OPENXCOM_UNITPANICBSTATE_H
 #define OPENXCOM_UNITPANICBSTATE_H
 
-//#include <string>
-
 #include "BattleState.h"
 
 

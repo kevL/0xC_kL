@@ -845,7 +845,15 @@ std::string getLocale()
 
 	return Language::wstrToUtf8(local); */
 #else
-	std::locale l ("");
+	std::locale l;
+	try
+	{
+		l = std::locale("");
+	}
+	catch (std::runtime_error)
+	{
+		return "x-";
+	}
 	std::string name = l.name();
 	size_t
 		dash = name.find_first_of('_'),

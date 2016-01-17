@@ -187,13 +187,13 @@ private:
 		/// Get rank base color.
 		int getRankColorGroup() const;
 		/// Get face color.
-		int getFaceColor(int i) const;
+		int getFaceColor(int id) const;
 		/// Get hair color.
-		int getHairColor(int i) const;
+		int getHairColor(int id) const;
 		/// Get utile color.
-		int getUtileColor(int i) const;
+		int getUtileColor(int id) const;
 		/// Get rank color.
-		int getRankColor(int i) const;
+		int getRankColor(int id) const;
 
 		/// Checks if this Armor's inventory be accessed.
 		bool hasInventory() const;

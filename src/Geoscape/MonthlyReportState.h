@@ -21,6 +21,7 @@
 #define OPENXCOM_MONTHLYREPORTSTATE_H
 
 //#include <string>
+//#include <vector>
 
 #include "../Engine/State.h"
 

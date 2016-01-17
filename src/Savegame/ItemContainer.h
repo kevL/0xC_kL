@@ -55,9 +55,9 @@ private:
 		YAML::Node save() const;
 
 		/// Modifies an entry in the Container.
-		void modifyContents(
+/*		void modifyContents(
 				const std::string& type,
-				int qty = 1);
+				int qty = 1); */
 		/// Adds an item to the container.
 		void addItem(
 				const std::string& type,

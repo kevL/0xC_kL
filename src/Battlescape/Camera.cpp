@@ -121,19 +121,19 @@ void Camera::intMinMax( // private.
  */
 void Camera::mousePress(Action* action, State*)
 {
-	if (Options::battleDragScrollButton != SDL_BUTTON_MIDDLE
+	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
+		&& Options::battleEdgeScroll == SCROLL_TRIGGER)
+	{
+		_scrollTrigger = true;
+		mouseOver(action, nullptr);
+	}
+	else if (Options::battleDragScrollButton != SDL_BUTTON_MIDDLE
 		|| (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
 	{
 		if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
 			down();
 		else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
 			up();
-	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		&& Options::battleEdgeScroll == SCROLL_TRIGGER)
-	{
-		_scrollTrigger = true;
-		mouseOver(action, nullptr);
 	}
 }
 
@@ -177,11 +177,9 @@ void Camera::mouseRelease(Action* action, State*)
  */
 void Camera::mouseOver(Action* action, State*)
 {
-	if (_map->getCursorType() == CT_NONE)
-		return;
-
-	if (Options::battleEdgeScroll == SCROLL_AUTO
-		|| _scrollTrigger == true)
+	if (_map->getCursorType() != CT_NONE
+		&& (Options::battleEdgeScroll == SCROLL_AUTO
+			|| _scrollTrigger == true))
 	{
 		int
 			posX = action->getXMouse(),

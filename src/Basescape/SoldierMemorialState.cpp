@@ -19,7 +19,6 @@
 
 #include "SoldierMemorialState.h"
 
-//#include <iomanip>
 //#include <sstream>
 
 #include "SoldierInfoDeadState.h"

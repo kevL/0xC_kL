@@ -245,7 +245,7 @@ BattleUnit::BattleUnit(
 		_murdererId(0),
 		_armor(armor),
 		_battleGame(battleGame),
-		_rankInt(-1),
+		_rankInt(5), // aLien soldier, this includes Civies.
 		_turretType(-1),
 		_pos(Position()),
 		_posStart(Position()),
@@ -4156,15 +4156,22 @@ int BattleUnit::getRankInt() const
  */
 void BattleUnit::deriveRank()
 {
-//	if (_faction == FACTION_PLAYER) // <- called only by xCom Soldiers, in cTor.
-//	{
-	if		(_rank == "STR_COMMANDER")	_rankInt = 5;
+	switch (_geoscapeSoldier->getRank())
+	{
+		default:
+		case RANK_ROOKIE:		_rankInt = 0; break;
+		case RANK_SQUADDIE:		_rankInt = 1; break;
+		case RANK_SERGEANT:		_rankInt = 2; break;
+		case RANK_CAPTAIN:		_rankInt = 3; break;
+		case RANK_COLONEL:		_rankInt = 4; break;
+		case RANK_COMMANDER:	_rankInt = 5;
+	}
+/*	if		(_rank == "STR_COMMANDER")	_rankInt = 5;
 	else if (_rank == "STR_COLONEL")	_rankInt = 4;
 	else if (_rank == "STR_CAPTAIN")	_rankInt = 3;
 	else if (_rank == "STR_SERGEANT")	_rankInt = 2;
 	else if (_rank == "STR_SQUADDIE")	_rankInt = 1;
-	else if (_rank == "STR_ROOKIE")		_rankInt = 0;
-//	}
+	else if (_rank == "STR_ROOKIE")		_rankInt = 0; */
 }
 
 /**

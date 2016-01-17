@@ -422,11 +422,12 @@ int RuleArmor::getRankColorGroup() const
 
 /**
  * Gets new face colors for replacement (0 don't replace).
+ * @param id -
  * @return, colorindex or 0
  */
-int RuleArmor::getFaceColor(int i) const
+int RuleArmor::getFaceColor(int id) const
 {
-	const size_t foff = static_cast<size_t>(i);
+	const size_t foff = static_cast<size_t>(id);
 	if (foff < _faceColor.size())
 		return _faceColor[foff];
 
@@ -435,11 +436,12 @@ int RuleArmor::getFaceColor(int i) const
 
 /**
  * Gets new hair colors for replacement (0 don't replace).
+ * @param id -
  * @return, colorindex or 0
  */
-int RuleArmor::getHairColor(int i) const
+int RuleArmor::getHairColor(int id) const
 {
-	const size_t foff = static_cast<size_t>(i);
+	const size_t foff = static_cast<size_t>(id);
 	if (foff < _hairColor.size())
 		return _hairColor[foff];
 
@@ -448,11 +450,12 @@ int RuleArmor::getHairColor(int i) const
 
 /**
  * Gets new utile colors for replacement (0 don't replace).
+ * @param id -
  * @return, colorindex or 0
  */
-int RuleArmor::getUtileColor(int i) const
+int RuleArmor::getUtileColor(int id) const
 {
-	const size_t foff = static_cast<size_t>(i);
+	const size_t foff = static_cast<size_t>(id);
 	if (foff < _utileColor.size())
 		return _utileColor[foff];
 
@@ -461,11 +464,12 @@ int RuleArmor::getUtileColor(int i) const
 
 /**
  * Gets new rank colors for replacement (0 don't replace).
+ * @param id -
  * @return, colorindex or 0
  */
-int RuleArmor::getRankColor(int i) const
+int RuleArmor::getRankColor(int id) const
 {
-	const size_t foff = static_cast<size_t>(i);
+	const size_t foff = static_cast<size_t>(id);
 	if (foff < _rankColor.size())
 		return _rankColor[foff];
 

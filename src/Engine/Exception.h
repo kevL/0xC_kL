@@ -20,7 +20,7 @@
 #ifndef OPENXCOM_EXCEPTION_H
 #define OPENXCOM_EXCEPTION_H
 
-#include <exception>
+#include <stdexcept>
 #include <string>
 
 
@@ -32,21 +32,14 @@ namespace OpenXcom
  */
 class Exception final
 	:
-		public std::exception
+		public std::runtime_error
 {
 
-private:
-	std::string _msg;
-
-
 	public:
-		/// Creates an exception.
-		explicit Exception(const std::string& msg) throw();
-		/// Cleans up the exception.
-		~Exception() throw();
-
-		/// Returns the exception message.
-		const char* what() const throw() override;
+		Exception(const std::string& msg)
+			:
+				runtime_error(msg)
+		{}
 };
 
 }

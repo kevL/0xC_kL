@@ -1891,6 +1891,7 @@ Node* SavedBattleGame::getPatrolNode(
 						--j)
 				{
 					scoutNodes.push_back(node);
+
 					if (scout == false
 						&& node->getNodeRank() == Node::nodeRank[static_cast<size_t>(unit->getRankInt())]
 																[0]) // high-class node here.
@@ -1915,7 +1916,7 @@ Node* SavedBattleGame::getPatrolNode(
 
 	if (scout == true // picks a random destination
 		|| officerNodes.empty() == true
-		|| RNG::percent(19) == true) // officers can go for a stroll ...
+		|| RNG::percent(17) == true) // officers can go for a stroll ...
 	{
 		return scoutNodes[RNG::pick(scoutNodes.size())];
 	}
