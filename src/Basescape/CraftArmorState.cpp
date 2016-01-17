@@ -229,9 +229,7 @@ void CraftArmorState::lstSoldiersPress(Action* action)
 		if (soldier->getCraft() == nullptr
 			|| soldier->getCraft()->getCraftStatus() != "STR_OUT")
 		{
-			_game->pushState(new SoldierArmorState(
-												_base,
-												soldierId));
+			_game->pushState(new SoldierArmorState(_base, soldierId));
 		}
 		else
 			_game->pushState(new ErrorMessageState(
@@ -243,9 +241,7 @@ void CraftArmorState::lstSoldiersPress(Action* action)
 	}
 	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
 	{
-		_game->pushState(new SoldierInfoState(
-											_base,
-											soldierId));
+		_game->pushState(new SoldierInfoState(_base, soldierId));
 		kL_soundPop->play(Mix_GroupAvailable(0));
 	}
 }

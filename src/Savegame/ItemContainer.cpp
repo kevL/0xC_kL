@@ -60,6 +60,27 @@ YAML::Node ItemContainer::save() const
 }
 
 /**
+ * Modifies an entry in the Container.
+ * @note Usage is intended to supercede add/removeItem() functions.
+ * @param type	- reference to an item-type
+ * @param qty	- modification (default +1)
+ */
+void ItemContainer::modifyContents(
+		const std::string& type,
+		int qty)
+{
+	if (_contents.find(type) != _contents.end())
+	{
+		_contents[type] += qty;
+
+		if (_contents[type] < 1)
+			_contents.erase(type);
+	}
+	else if (qty > 0)
+		_contents[type] = qty;
+}
+
+/**
  * Adds an item amount to the container.
  * @param type	- reference an item type
  * @param qty	- item quantity (default 1)
@@ -68,12 +89,12 @@ void ItemContainer::addItem(
 		const std::string& type,
 		int qty)
 {
-	if (type.empty() == false)
+//	if (type.empty() == false)
 	{
-		if (_contents.find(type) == _contents.end())
-			_contents[type] = 0;
+		if (_contents.find(type) != _contents.end())
+			_contents[type] += qty;
 
-		_contents[type] += qty;
+		_contents[type] = 0;
 	}
 }
 
@@ -81,12 +102,13 @@ void ItemContainer::addItem(
  * Removes an item amount from the container.
  * @param type	- reference an item type
  * @param qty	- item quantity (default 1)
+// * @return, an iterator to the next position or end() if not found
  */
 void ItemContainer::removeItem(
 		const std::string& type,
 		int qty)
 {
-	if (type.empty() == false && _contents.find(type) != _contents.end())
+	if (/*type.empty() == false &&*/ _contents.find(type) != _contents.end())
 	{
 		if (qty < _contents[type])
 			_contents[type] -= qty;
@@ -94,6 +116,29 @@ void ItemContainer::removeItem(
 			_contents.erase(type);
 	}
 }
+/* std::map<std::string, int>::const_iterator ItemContainer::removeItem(
+		const std::string& type,
+		int qty)
+{
+	for (std::map<std::string, int>::const_iterator
+			i = _contents.begin();
+			i != _contents.end();
+			++i)
+	{
+		if (i->first == type)
+		{
+			if (qty < _contents[type])
+			{
+				_contents[type] -= qty;
+				return ++i;
+			}
+
+			return _contents.erase(i);
+		}
+	}
+
+	return _contents.end();
+} */
 
 /**
  * Returns the quantity of an item in the container.
@@ -102,7 +147,7 @@ void ItemContainer::removeItem(
  */
 int ItemContainer::getItemQty(const std::string& type) const
 {
-	if (type.empty() == false)
+//	if (type.empty() == false)
 	{
 		std::map<std::string, int>::const_iterator i = _contents.find(type);
 		if (i != _contents.end())
@@ -131,7 +176,7 @@ int ItemContainer::getTotalQuantity() const
 }
 
 /**
- * Returns the total size (storage units) of the items in the container.
+ * Returns the total size (in storage-units) of the items in the container.
  * @param rules - pointer to Ruleset
  * @return, total item size
  */

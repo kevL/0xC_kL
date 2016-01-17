@@ -141,7 +141,8 @@ SavedBattleGame::SavedBattleGame(
  */
 SavedBattleGame::~SavedBattleGame()
 {
-	//Log(LOG_INFO) << "Delete SavedBattleGame";
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << "Delete SavedBattleGame";
 	for (size_t
 			i = 0;
 			i != _mapSize;
@@ -180,6 +181,7 @@ SavedBattleGame::~SavedBattleGame()
 			i != _items.end();
 			++i)
 	{
+		Log(LOG_INFO) << "delete " << (*i)->getRules()->getType();
 		delete *i;
 	}
 
@@ -534,7 +536,7 @@ void SavedBattleGame::load(
 
 	Log(LOG_INFO) << ". load weapons w/ ammo";
 	// iterate tyhrough the items again and tie ammo-items to their weapons
-	std::vector<BattleItem*>::const_iterator pWeapon = _items.begin();
+	std::vector<BattleItem*>::const_iterator pWeapon (_items.begin());
 	for (YAML::const_iterator
 			i = node["items"].begin();
 			i != node["items"].end();
@@ -814,7 +816,7 @@ void SavedBattleGame::initMap(
 		const int mapsize_y,
 		const int mapsize_z)
 {
-	if (_nodes.empty() == false) // Delete old stuff
+	if (_nodes.empty() == false) // Delete old stuff,
 	{
 		_mapSize = static_cast<size_t>(_mapsize_x * _mapsize_y * _mapsize_z);
 		for (size_t
@@ -839,24 +841,24 @@ void SavedBattleGame::initMap(
 		_mapDataSets.clear();
 	}
 
-	_mapsize_x = mapsize_x; // Create tile objects
+	_mapsize_x = mapsize_x; // Create Tile objects.
 	_mapsize_y = mapsize_y;
 	_mapsize_z = mapsize_z;
 	_mapSize = static_cast<size_t>(mapsize_z * mapsize_y * mapsize_x);
 
 	_tiles = new Tile*[_mapSize];
 
+	Position pos;
 	for (size_t
 			i = 0;
 			i != _mapSize;
 			++i)
 	{
-		Position pos;
-		getTileCoords(
-					i,
-					&pos.x,
-					&pos.y,
-					&pos.z);
+		tileCoords(
+				i,
+				&pos.x,
+				&pos.y,
+				&pos.z);
 
 		_tiles[i] = new Tile(pos);
 	}
@@ -1014,17 +1016,19 @@ std::string SavedBattleGame::getBattleTerrain() const
  * @param y		- pointer to the Y coordinate
  * @param z		- pointer to the Z coordinate
  */
-void SavedBattleGame::getTileCoords(
+void SavedBattleGame::tileCoords(
 		size_t index,
 		int* x,
 		int* y,
 		int* z) const
 {
-	const int idx = static_cast<int>(index);
+	const int
+		i = static_cast<int>(index),
+		area = _mapsize_x * _mapsize_y;
 
-	*z =  idx / (_mapsize_y * _mapsize_x);
-	*y = (idx % (_mapsize_y * _mapsize_x)) / _mapsize_x;
-	*x = (idx % (_mapsize_y * _mapsize_x)) % _mapsize_x;
+	*z =  i / area;
+	*y = (i % area) / _mapsize_x;
+	*x = (i % area) % _mapsize_x;
 }
 
 /**
@@ -1114,8 +1118,11 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
 		iterUnit;
 
 	std::vector<BattleUnit*>* units;
-	if (_shuffleUnits[0] == nullptr)
+	if (_shuffleUnits.empty() == true // < needed for Base/craft Equip.
+		|| _shuffleUnits[0] == nullptr)
+	{
 		units = &_units;
+	}
 	else // non-player turn Use shuffledUnits. See endFactionTurn() ....
 		units = &_shuffleUnits;
 

@@ -294,8 +294,8 @@ void SoldiersState::btnEquipClick(Action*)
 
 	SavedBattleGame* const battle = new SavedBattleGame();
 	_game->getSavedGame()->setBattleSave(battle);
-	BattlescapeGenerator bGen = BattlescapeGenerator(_game);
 
+	BattlescapeGenerator bGen = BattlescapeGenerator(_game);
 	bGen.runInventory(nullptr, _base);
 
 	_game->getScreen()->clear();

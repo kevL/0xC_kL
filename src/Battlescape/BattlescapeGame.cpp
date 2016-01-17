@@ -2372,11 +2372,11 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 				const std::vector<int> reachable (pf->findReachable(unit, tu));
 				const size_t tileId (static_cast<size_t>(reachable[RNG::pick(reachable.size())])); // <-- WARNING: no Safety on size !
 
-				_battleSave->getTileCoords(
-										tileId,
-										&action.target.x,
-										&action.target.y,
-										&action.target.z);
+				_battleSave->tileCoords(
+									tileId,
+									&action.target.x,
+									&action.target.y,
+									&action.target.z);
 				pf->calculate(
 							action.actor,
 							action.target,

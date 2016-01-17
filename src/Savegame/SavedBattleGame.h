@@ -222,7 +222,7 @@ private:
 		{ return (pos.z * _mapsize_y * _mapsize_x) + (pos.y * _mapsize_x) + pos.x; }
 
 		/// Converts a tile index to its coordinates.
-		void getTileCoords(
+		void tileCoords(
 				size_t index,
 				int* x,
 				int* y,

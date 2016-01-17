@@ -103,7 +103,7 @@ BattlescapeGenerator::BattlescapeGenerator(Game* const game)
 		_generateFuel(true),
 		_craftDeployed(false),
 		_craftZ(0),
-		_baseEquipScreen(false),
+		_baseEquiptMode(false),
 		_battleOrder(0),
 		_blocksLeft(0),
 		_testBlock(nullptr)
@@ -655,8 +655,8 @@ void BattlescapeGenerator::nextStage()
 			if (selectDone == false
 				&& (*i)->getGeoscapeSoldier() != nullptr)
 			{
-				_battleSave->setSelectedUnit(*i);
 				selectDone = true;
+				_battleSave->setSelectedUnit(*i);
 			}
 
 			const Node* const node = _battleSave->getSpawnNode(NR_XCOM, *i);
@@ -672,8 +672,10 @@ void BattlescapeGenerator::nextStage()
 					_battleSave->setBattleInventory(_tileEquipt);
 				}
 
-				_tileEquipt->setUnit(*i);		// bogus Tile until resetUnitsOnTiles() runs
-				(*i)->setUnitVisible(false);	// when exiting preBattle's InventoryState.
+/* why. Tile holds exactly ONE BattleUnit */
+/* unit does lose its link to its previous Tile */
+				_tileEquipt->setUnit(*i); // bogus Tile until resetUnitsOnTiles() runs when exiting pre-battle InventoryState.
+				(*i)->setUnitVisible(false);
 				(*i)->prepUnit(false);
 			}
 			else
@@ -781,18 +783,18 @@ void BattlescapeGenerator::nextStage()
 */
 void BattlescapeGenerator::deployXcom() // private.
 {
-	//Log(LOG_INFO) << "BattlescapeGenerator::deployXcom()";
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << "BattlescapeGenerator::deployXcom()";
 	if (_craft != nullptr)
 	{
 		_base = _craft->getBase();
 
-		if (_baseEquipScreen == false)
+		if (_baseEquiptMode == false)
 		{
 			//Log(LOG_INFO) << ". craft VALID";
-			// add all vehicles that are in the craft - a vehicle is actually an item,
-			// which you will never see as it is converted to a unit;
-			// however the item itself becomes the weapon it equips.
-			for (std::vector<Vehicle*>::const_iterator
+			// A vehicle is actually an item that you will never see since it is
+			// converted to a unit, the item itself however becomes its weapon.
+			for (std::vector<Vehicle*>::const_iterator // Add all Vehicles that are in the Craft.
 					i = _craft->getVehicles()->begin();
 					i != _craft->getVehicles()->end();
 					++i)
@@ -804,10 +806,9 @@ void BattlescapeGenerator::deployXcom() // private.
 			}
 		}
 	}
-	else if (_base != nullptr && _baseEquipScreen == false)
+	else if (_base != nullptr && _baseEquiptMode == false)
 	{
-		// add vehicles that are in Base inventory.
-		for (std::vector<Vehicle*>::const_iterator
+		for (std::vector<Vehicle*>::const_iterator // Add Vehicles that are in Base inventory.
 				i = _base->getVehicles()->begin();
 				i != _base->getVehicles()->end();
 				++i)
@@ -818,13 +819,12 @@ void BattlescapeGenerator::deployXcom() // private.
 				_battleSave->setSelectedUnit(unit);
 		}
 
-		// Only add vehicles from the craft in new battle mode
-		// otherwise the base's vehicle vector will already contain these
-		// due to the geoscape calling base->setupDefenses().
+		// Only add vehicles from the craft in skirmish mode otherwise the
+		// base's vehicle-vector will already contain these due to the geoscape
+		// calling Base->setupDefenses().
 		if (_gameSave->getMonthsPassed() == -1)
 		{
-			// add vehicles from Crafts at Base.
-			for (std::vector<Craft*>::const_iterator
+			for (std::vector<Craft*>::const_iterator // Add Vehicles from Crafts at Base.
 				i = _base->getCrafts()->begin();
 				i != _base->getCrafts()->end();
 				++i)
@@ -842,8 +842,7 @@ void BattlescapeGenerator::deployXcom() // private.
 		}
 	}
 
-	// add soldiers that are in the Craft or Base.
-	for (std::vector<Soldier*>::const_iterator
+	for (std::vector<Soldier*>::const_iterator // Add Soldiers that are in the Craft or Base.
 			i = _base->getSoldiers()->begin();
 			i != _base->getSoldiers()->end();
 			++i)
@@ -875,14 +874,16 @@ void BattlescapeGenerator::deployXcom() // private.
 
 	//Log(LOG_INFO) << ". addXcomUnit(s) DONE";
 
-	for (std::vector<BattleUnit*>::const_iterator // pre-battle equip; give all xCom Soldiers access to the inventory tile.
+	for (std::vector<BattleUnit*>::const_iterator // pre-battle Equip; give all xCom Soldiers access to the inventory tile.
 			i = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
 		if ((*i)->getFaction() == FACTION_PLAYER) // not really necessary because only xCom is on the field atm. Could exclude tanks ....
 		{
-			_tileEquipt->setUnit(*i);
+/* why. Tile holds exactly ONE BattleUnit */
+/* unit does lose its link to its previous Tile */
+			_tileEquipt->setUnit(*i); // bogus Tile until resetUnitsOnTiles() runs when exiting pre-battle InventoryState.
 			(*i)->setUnitVisible(false);
 		}
 	}
@@ -890,45 +891,45 @@ void BattlescapeGenerator::deployXcom() // private.
 
 	const RuleInventory* const grdRule = _rules->getInventory_ST(ST_GROUND);
 
-	if (_craft != nullptr) // add items that are in the Craft.
+	if (_craft != nullptr) // UFO or Base Assault or Craft-equip.
 	{
-		//Log(LOG_INFO) << ". . addCraftItems";
-		for (std::map<std::string, int>::const_iterator
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << ". . addCraftItems";
+		for (std::map<std::string, int>::const_iterator // Add items that are in the Craft.
 				i = _craft->getCraftItems()->getContents()->begin();
 				i != _craft->getCraftItems()->getContents()->end();
 				++i)
 		{
-			//Log(LOG_INFO) << ". . . *i = _craft->getItems()->getContents()";
+			Log(LOG_INFO) << ". . . item = " << i->first << " (" << i->second << ")";
 			for (int
 					j = 0;
 					j != i->second;
 					++j)
 			{
-				//Log(LOG_INFO) << ". . . j+";
+				//Log(LOG_INFO) << ". . . . addItem() ToTile iter = " << (j + 1);
 				_tileEquipt->addItem(
 								new BattleItem(
 											_rules->getItem(i->first),
 											_battleSave->getNextItemId()),
 								grdRule);
-				//Log(LOG_INFO) << ". . . j cycle";
 			}
 		}
 		//Log(LOG_INFO) << ". . addCraftItems DONE";
 	}
-	else // add items that are in the Base.
+	else // Base Defense or Base-equip.
 	{
-		// add only items in Craft for skirmish mode;
-		// ie. Do NOT add items from Base in skirmish mode:
-		if (_gameSave->getMonthsPassed() != -1)
+		// Add only items in Craft that are at the Base for skirmish mode; ie.
+		// Do NOT add items from the Base itself in skirmish mode.
+		if (_gameSave->getMonthsPassed() != -1) // add items that are in the Base.
 		{
-			//Log(LOG_INFO) << ". . addBaseItems";
-			for (std::map<std::string, int>::const_iterator // add items from stores in base
+			Log(LOG_INFO) << "";
+			Log(LOG_INFO) << ". . addBaseItems";
+			for (std::map<std::string, int>::const_iterator // Add items from storage at the Base.
 					i = _base->getStorageItems()->getContents()->begin();
 					i != _base->getStorageItems()->getContents()->end();
 					)
 			{
-				// only add items to the battlescape that make sense;
-				// if item has a sprite it's probably ok
+				//Log(LOG_INFO) << ". . . item = " << i->first << " (" << i->second << ")";
 				const RuleItem* const itRule = _rules->getItem(i->first);
 				if (itRule->getBigSprite() != -1
 					&& itRule->getBattleType() != BT_NONE
@@ -936,11 +937,13 @@ void BattlescapeGenerator::deployXcom() // private.
 					&& itRule->isFixed() == false
 					&& _gameSave->isResearched(itRule->getRequirements()) == true)
 				{
+					Log(LOG_INFO) << ". . . item = " << i->first << " (" << i->second << ")";
 					for (int
 							j = 0;
 							j != i->second;
 							++j)
 					{
+						//Log(LOG_INFO) << ". . . . addItem() ToTile iter = " << (j + 1);
 						_tileEquipt->addItem(
 										new BattleItem(
 													_rules->getItem(i->first),
@@ -948,35 +951,42 @@ void BattlescapeGenerator::deployXcom() // private.
 										grdRule);
 					}
 
-					const std::map<std::string, int>::const_iterator baseItem = i++;
-					if (_baseEquipScreen == false)
-						_base->getStorageItems()->removeItem(
-														baseItem->first,
-														baseItem->second);
+					if (_baseEquiptMode == false)
+					{
+						Log(LOG_INFO) << ". . . . remove item from Stores";
+						i = _base->getStorageItems()->getContents()->erase(i);
+					}
+					else
+						++i;
 				}
 				else
 					++i;
 			}
 		}
-		//Log(LOG_INFO) << ". . addBaseBaseItems DONE, add BaseCraftItems";
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << ". . addBaseBaseItems DONE, add BaseCraftItems";
 
-		for (std::vector<Craft*>::const_iterator // add items from Crafts at Base.
+		for (std::vector<Craft*>::const_iterator // Add items from Crafts at the Base.
 				i = _base->getCrafts()->begin();
 				i != _base->getCrafts()->end();
 				++i)
 		{
+			//Log(LOG_INFO) << ". . . check if Craft at base";
 			if ((*i)->getCraftStatus() != "STR_OUT")
 			{
+				//Log(LOG_INFO) << ". . . Craft IS at base";
 				for (std::map<std::string, int>::const_iterator
 						j = (*i)->getCraftItems()->getContents()->begin();
 						j != (*i)->getCraftItems()->getContents()->end();
 						++j)
 				{
+					Log(LOG_INFO) << ". . . . item = " << j->first << " (" << j->second << ")";
 					for (int
 							k = 0;
 							k != j->second;
 							++k)
 					{
+						//Log(LOG_INFO) << ". . . . . addItem() ToTile iter = " << (k + 1);
 						_tileEquipt->addItem(
 										new BattleItem(
 													_rules->getItem(j->first),
@@ -986,75 +996,89 @@ void BattlescapeGenerator::deployXcom() // private.
 				}
 			}
 		}
-		//Log(LOG_INFO) << ". . addBaseCraftItems DONE";
+		Log(LOG_INFO) << ". . addBaseCraftItems DONE";
 	}
-	//Log(LOG_INFO) << ". addItem(s) DONE";
+	Log(LOG_INFO) << ". addItem(s) DONE";
 
 
-	// kL_note: ALL ITEMS SEEM TO STAY ON THE GROUNDTILE, _tileEquipt,
+	// kL_note: ALL ITEMS STAY ON THE GROUNDTILE, _tileEquipt,
 	// IN THAT INVENTORY(vector) UNTIL EVERYTHING IS EQUIPPED & LOADED. Then
 	// the inventory-tile is cleaned up at the end of this function....
-	//
-	// equip soldiers based on equipment-layout
-	//Log(LOG_INFO) << ". placeItemByLayout Start";
-	for (std::vector<BattleItem*>::const_iterator
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << ". placeItemByLayout Pt I";
+	for (std::vector<BattleItem*>::const_iterator // Equip soldiers based on equipment-layout Part I.
 			i = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
 			++i)
 	{
-		//Log(LOG_INFO) << ". placeItemByLayout() NOT ammo allocation";
-		// don't let the soldiers take extra ammo yet
-		if ((*i)->getRules()->getBattleType() != BT_AMMO)
+		//Log(LOG_INFO) << ". . try to place NON-AMMO tileItem = " << (*i)->getRules()->getType();
+		if ((*i)->getInventorySection() == grdRule
+			&& (*i)->getRules()->getBattleType() != BT_AMMO)
+		{
+			Log(LOG_INFO) << ". . place " << (*i)->getRules()->getType();
 			placeItemByLayout(*i);
+		}
 	}
 
-	for (std::vector<BattleItem*>::const_iterator
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << ". placeItemByLayout Pt II";
+	for (std::vector<BattleItem*>::const_iterator // Equip soldiers based on equipment-layout Part II.
 			i = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
 			++i)
 	{
-		//Log(LOG_INFO) << ". placeItemByLayout() DO ammo allocation";
-		// only need to distribute extra ammo at this point.
-		if ((*i)->getRules()->getBattleType() == BT_AMMO)
+		//Log(LOG_INFO) << ". . try to place AMMO tileItem = " << (*i)->getRules()->getType();
+		if ((*i)->getInventorySection() == grdRule
+			&& (*i)->getRules()->getBattleType() == BT_AMMO)
+		{
+			Log(LOG_INFO) << ". . . place " << (*i)->getRules()->getType();
 			placeItemByLayout(*i);
+		}
 	}
 	//Log(LOG_INFO) << ". placeItemByLayout all DONE";
 
-	//Log(LOG_INFO) << ". Load Weapons..."; -> Cf. loadWeapons()
-	for (std::vector<BattleItem*>::const_iterator
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << ". Load Ground Weapons...";
+	for (std::vector<BattleItem*>::const_iterator // Load ground weapons.
 			i = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
 			++i)
 	{
-		//Log(LOG_INFO) << ". loading."; // from loadWeapons() ->
-/*		if ((*i)->getRules()->isFixed() == false
-			&& (*i)->getAmmoItem() == nullptr */
-//		if ((*i)->selfPowered() == false
-		if ((*i)->getRules()->getCompatibleAmmo()->empty() == false)
-//			&& ((*i)->getRules()->getBattleType() == BT_FIREARM
-//				|| (*i)->getRules()->getBattleType() == BT_MELEE))
+//		(*i)->getRules()->isFixed() == false
+//		(*i)->getAmmoItem() == nullptr
+//		(*i)->selfPowered() == false
+//		(*i)->getRules()->getBattleType() == BT_FIREARM
+//		(*i)->getRules()->getBattleType() == BT_MELEE
+		if ((*i)->getInventorySection() == grdRule
+			&& (*i)->getRules()->getCompatibleAmmo()->empty() == false)
 		{
+			Log(LOG_INFO) << ". . load " << (*i)->getRules()->getType();
 			loadGroundWeapon(*i);
 		}
 	}
-	//Log(LOG_INFO) << ". loading DONE";
 
-	// clean up moved items
-	for (std::vector<BattleItem*>::const_iterator
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << ". Clean up";
+	for (std::vector<BattleItem*>::const_iterator // Clean up placed items.
 			i = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
-			++i)
+			)
 	{
-//		if ((*i)->getInventorySection() == grdRule)
-//		{
-//			(*i)->setXcomProperty();
 		_battleSave->getItems()->push_back(*i);
-//			++i;
-//		}
-//		else
-//			i = _tileEquipt->getInventory()->erase(i);
+//		(*i)->setXcomProperty();
+
+		if ((*i)->getInventorySection() == grdRule)
+		{
+			Log(LOG_INFO) << ". . add to battleSave : " << (*i)->getRules()->getType();
+			++i;
+		}
+		else
+		{
+			Log(LOG_INFO) << ". . erase tileItem : " << (*i)->getRules()->getType();
+			i = _tileEquipt->getInventory()->erase(i);
+		}
 	}
-	//Log(LOG_INFO) << "BattlescapeGenerator::deployXcom() EXIT";
+	Log(LOG_INFO) << "BattlescapeGenerator::deployXcom() EXIT";
 }
 
 /**
@@ -1150,7 +1174,7 @@ BattleUnit* BattlescapeGenerator::addXcomUnit(BattleUnit* const unit) // private
 {
 	//Log(LOG_INFO) << "bsg:addXcomUnit()";
 	if ((_craft == nullptr || _craftDeployed == false) // (_missionType == "STR_ALIEN_BASE_ASSAULT" || _missionType == "STR_MARS_THE_FINAL_ASSAULT") <- taken care of in MapScripting.
-		&& _baseEquipScreen == false)
+		&& _baseEquiptMode == false)
 	{
 		//Log(LOG_INFO) << ". no Craft";
 		const Node* const node = _battleSave->getSpawnNode(NR_XCOM, unit);
@@ -1186,7 +1210,7 @@ BattleUnit* BattlescapeGenerator::addXcomUnit(BattleUnit* const unit) // private
 	}
 	else if (_craft != nullptr // Transport craft deployments (Lightning & Avenger)
 		&& _craft->getRules()->getCraftDeployment().empty() == false
-		&& _baseEquipScreen == false)
+		&& _baseEquiptMode == false)
 	{
 		//Log(LOG_INFO) << ". Craft valid - use Deployment";
 		for (std::vector<std::vector<int>>::const_iterator
@@ -1202,14 +1226,12 @@ BattleUnit* BattlescapeGenerator::addXcomUnit(BattleUnit* const unit) // private
 			bool canPlace = true;
 			for (int
 					x = 0;
-					x != unit->getArmor()->getSize()
-						&& canPlace == true;
+					x != unit->getArmor()->getSize() && canPlace == true;
 					++x)
 			{
 				for (int
 						y = 0;
-						y != unit->getArmor()->getSize()
-							&& canPlace == true;
+						y != unit->getArmor()->getSize() && canPlace == true;
 						++y)
 				{
 					canPlace = canPlaceXcomUnit(_battleSave->getTile(pos + Position(x,y,0)));
@@ -1286,8 +1308,7 @@ bool BattlescapeGenerator::canPlaceXcomUnit(Tile* const tile) // private.
 		&& tile->getMapData(O_FLOOR)->getTuCostPart(MT_WALK) < 255		// is walkable.
 		&& tile->getTileUnit() == nullptr)								// and no unit on Tile.
 	{
-		// ground inventory goes where the first xCom unit spawns
-		if (_tileEquipt == nullptr)
+		if (_tileEquipt == nullptr)										// ground inventory goes where the first xCom unit spawns
 			_battleSave->setBattleInventory(_tileEquipt = tile);
 
 		return true;
@@ -1302,127 +1323,87 @@ bool BattlescapeGenerator::canPlaceXcomUnit(Tile* const tile) // private.
  */
 void BattlescapeGenerator::loadGroundWeapon(BattleItem* const item) // private.
 {
-//	const RuleInventory* const grdRule = _rules->getInventory("STR_GROUND");
-//	RuleInventory* const rhRule = _rules->getInventory("STR_RIGHT_HAND");
+	const RuleInventory* const grdRule = _rules->getInventory("STR_GROUND");
 	for (std::vector<BattleItem*>::const_iterator
 			i = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
 			++i)
 	{
-//		if ((*i)->getInventorySection() == grdRule
-		if (item->setAmmoItem(*i) == 0)
+		if ((*i)->getInventorySection() == grdRule
+			&& item->setAmmoItem(*i) == 0)
 		{
-			_tileEquipt->removeItem(*i);
-//			(*i)->setXcomProperty();
-//			(*i)->setInventorySection(rhRule); // trick to remove ammo from ground-slot
-			_battleSave->getItems()->push_back(*i);
+			Log(LOG_INFO) << ". . . " << item->getRules()->getType() << " loaded w/ " << (*i)->getRules()->getType();
+			return;
 		}
 	}
 }
 
 /**
- * Places an item on an xCom soldier based on its equipment layout.
+ * Places an item on an xCom Soldier based on his/her equipment layout.
  * @param item - pointer to a BattleItem
- * @return, true if item is placed
  */
-bool BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
+void BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
 {
 	const RuleInventory* const grdRule = _rules->getInventory_ST(ST_GROUND);
-	if (item->getInventorySection() == grdRule)
+	bool loaded;
+
+	for (std::vector<BattleUnit*>::const_iterator
+			i = _battleSave->getUnits()->begin();
+			i != _battleSave->getUnits()->end();
+			++i)
 	{
-//		RuleInventory* const rhRule = _rules->getInventory("STR_RIGHT_HAND");
-		bool loaded = false;
-
-		for (std::vector<BattleUnit*>::const_iterator // find the first soldier with a matching layout-slot
-				i = _battleSave->getUnits()->begin();
-				i != _battleSave->getUnits()->end();
-				++i)
+		if ((*i)->getGeoscapeSoldier() != nullptr)
 		{
-			if ((*i)->getGeoscapeSoldier() != nullptr // handle only with xCom soldiers that have a layout
-				&& (*i)->getGeoscapeSoldier()->getLayout()->empty() == false)
+			const std::vector<SoldierLayout*>* const layout ((*i)->getGeoscapeSoldier()->getLayout());
+			for (std::vector<SoldierLayout*>::const_iterator
+					j = layout->begin();
+					j != layout->end();
+					++j)
 			{
-				const std::vector<SoldierLayout*>* const layoutItems = (*i)->getGeoscapeSoldier()->getLayout();
-				for (std::vector<SoldierLayout*>::const_iterator
-						j = layoutItems->begin();
-						j != layoutItems->end();
-						++j)
+				if ((*j)->getItemType() == item->getRules()->getType()
+					&& (*i)->getItem(
+								(*j)->getLayoutSection(),
+								(*j)->getSlotX(),
+								(*j)->getSlotY()) == nullptr)
 				{
-					if ((*j)->getItemType() == item->getRules()->getType() // find the first matching layout-slot which is not already occupied
-						&& (*i)->getItem(
-									(*j)->getLayoutSection(),
-									(*j)->getSlotX(),
-									(*j)->getSlotY()) == nullptr)
+					if ((*j)->getAmmoType().empty() == true)
+						loaded = true;
+					else
 					{
-						if ((*j)->getAmmoType() == "NONE")
-							loaded = true;
-						else
+						loaded = false;
+						for (std::vector<BattleItem*>::const_iterator
+								k = _tileEquipt->getInventory()->begin();
+								k != _tileEquipt->getInventory()->end();
+								++k)
 						{
-							loaded = false;
-							for (std::vector<BattleItem*>::const_iterator
-									k = _tileEquipt->getInventory()->begin();
-									k != _tileEquipt->getInventory()->end();
-									++k)
+							if ((*k)->getInventorySection() == grdRule
+								&& (*k)->getRules()->getType() == (*j)->getAmmoType()
+								&& item->setAmmoItem(*k) == 0)
 							{
-								if ((*k)->getRules()->getType() == (*j)->getAmmoType()
-//									&& (*k)->isLoad() == false
-									&& item->setAmmoItem(*k) == 0)
-								{
-									_tileEquipt->removeItem(*k);
-//									(*k)->setInventorySection(nullptr);
-//									(*k)->setXcomProperty();
-									_battleSave->getItems()->push_back(*k);
-									loaded = true;
-									break;
-									// note: soldier is not owner of the ammo, this fact is relevant to the saved layouts
-								}
+								loaded = true;
+								break;
 							}
-/*							for (std::vector<BattleItem*>::const_iterator		// maybe we find the layout-ammo on the ground to load it with
-									k = _tileEquipt->getInventory()->begin();	// Yeh maybe: as in maybe this works maybe it doesn't
-									k != _tileEquipt->getInventory()->end();
-									++k)
-							{
-								if ((*k)->getRules()->getType() == (*j)->getAmmoItem()
-									&& (*k)->getInventorySection() == grdRule	// why the redundancy?
-																				// WHAT OTHER _tileEquipt IS THERE BUT THE GROUND TILE!!??!!!1
-									&& item->setAmmoItem(*k) == 0)				// okay, so load the damn item.
-								{
-//									(*k)->setXcomProperty();
-									(*k)->setInventorySection(rhRule);			// why are you putting ammo in his right hand.....
-																				// maybe just to get it off the ground so it doesn't get loaded into another weapon later.
-									_battleSave->getItems()->push_back(*k);
-
-									loaded = true;
-									break;
-									// note: soldier is not owner of the ammo, this fact is relevant to the saved layouts
-								}
-							} */
 						}
+					}
 
-						if (loaded == true)	// only place the item onto the soldier when it's loaded with its layout-ammo if any
+					if (loaded == true)
+					{
+						item->changeOwner(*i);
+
+						item->setInventorySection(_rules->getInventory((*j)->getLayoutSection()));
+						item->setSlotX((*j)->getSlotX());
+						item->setSlotY((*j)->getSlotY());
+
+						if (item->getRules()->isGrenade() == true
+							&& Options::includePrimeStateInSavedLayout == true)
 						{
-//							item->setXcomProperty();
-							item->changeOwner(*i);
-
-							item->setInventorySection(_rules->getInventory((*j)->getLayoutSection()));
-							item->setSlotX((*j)->getSlotX());
-							item->setSlotY((*j)->getSlotY());
-
-							if (item->getRules()->isGrenade() == true
-								&& Options::includePrimeStateInSavedLayout == true)
-							{
-								item->setFuse((*j)->getFuse());
-							}
-
-							_battleSave->getItems()->push_back(item);
-							return true;
+							item->setFuse((*j)->getFuse());
 						}
 					}
 				}
 			}
 		}
 	}
-
-	return false;
 }
 
 /**
@@ -2410,18 +2391,19 @@ void BattlescapeGenerator::explodePowerSources() // private.
 }
 
 /**
- * Creates a mini-battle-save for managing inventory from the Geoscape's CraftEquip or BaseEquip screen.
- * Kids, don't try this at home! yer tellin' me.
+ * Creates a mini-battle-save for managing inventory from the Geoscape's
+ * CraftEquip or BaseEquip screen.
+ * @note kids, don't try this at home! yer tellin' me.
  * @param craft		- pointer to Craft to handle
  * @param base		- pointer to Base to handle (default nullptr)
- * @param selUnit	- soldier to display in battle pre-equip inventory (default 0)
+ * @param selUnitId	- soldier to display in battle pre-equip inventory (default 0)
  */
 void BattlescapeGenerator::runInventory(
-		Craft* craft,
-		Base* base,
-		size_t selUnit)
+		Craft* const craft,
+		Base* const base,
+		size_t selUnitId)
 {
-	_baseEquipScreen = true;
+	_baseEquiptMode = true;
 
 	int qtySoldiers;
 	if (craft != nullptr)
@@ -2443,7 +2425,7 @@ void BattlescapeGenerator::runInventory(
 
 	for (size_t
 			i = 0;
-			i != static_cast<size_t>(qtySoldiers);
+			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
 		Tile* const tile = _battleSave->getTiles()[i];
@@ -2466,15 +2448,15 @@ void BattlescapeGenerator::runInventory(
 	}
 
 	if (craft != nullptr)
-		setCraft(craft); // generate the battleitems for inventory
+		setCraft(craft);
 	else
 		setBase(base);
 
-	deployXcom();
+	deployXcom(); // generate the battleitems for inventory
 
 	if (craft != nullptr
-		&& selUnit != 0
-		&& static_cast<int>(selUnit) <= qtySoldiers)
+		&& selUnitId != 0
+		&& static_cast<int>(selUnitId) <= qtySoldiers)
 	{
 		size_t j = 0;
 		for (std::vector<BattleUnit*>::const_iterator
@@ -2482,7 +2464,7 @@ void BattlescapeGenerator::runInventory(
 				i != _battleSave->getUnits()->end();
 				++i)
 		{
-			if (++j == selUnit)
+			if (++j == selUnitId)
 			{
 				_battleSave->setSelectedUnit(*i);
 				break;

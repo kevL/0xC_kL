@@ -58,7 +58,7 @@ class BattlescapeGenerator
 
 private:
 	bool
-		_baseEquipScreen,
+		_baseEquiptMode,
 		_craftDeployed,
 		_generateFuel;
 //		_error;
@@ -113,7 +113,7 @@ private:
 	/// Loads a weapon on the inventoryTile.
 	void loadGroundWeapon(BattleItem* const item);
 	/// Places an item on a soldier based on equipment layout.
-	bool placeItemByLayout(BattleItem* const item);
+	void placeItemByLayout(BattleItem* const item);
 	/// Sets xCom soldiers' combat clothing style - spritesheets & paperdolls.
 	void setTacticalSprites() const;
 
@@ -238,9 +238,9 @@ private:
 
 		/// Generates a fake battlescape for Craft & Base soldier-inventory.
 		void runInventory(
-				Craft* craft,
-				Base* base = nullptr,
-				size_t selUnit = 0);
+				Craft* const craft,
+				Base* const base = nullptr,
+				size_t selUnitId = 0);
 
 		/// Sets up the objectives for the map.
 		void setupObjectives(const AlienDeployment* const deployRule);

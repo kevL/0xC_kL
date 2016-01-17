@@ -77,11 +77,11 @@ Pathfinding::Pathfinding(SavedBattleGame* const battleSave)
 			++i)
 	{
 		//Log(LOG_INFO) << ". fill NodePosition #" << (int)i;
-		_battleSave->getTileCoords(
-								i,
-								&pos.x,
-								&pos.y,
-								&pos.z);
+		_battleSave->tileCoords(
+							i,
+							&pos.x,
+							&pos.y,
+							&pos.z);
 		_nodes.push_back(PathfindingNode(pos));
 	}
 	//Log(LOG_INFO) << "Create Pathfinding EXIT";

@@ -54,11 +54,16 @@ private:
 		/// Saves the item container to YAML.
 		YAML::Node save() const;
 
+		/// Modifies an entry in the Container.
+		void modifyContents(
+				const std::string& type,
+				int qty = 1);
 		/// Adds an item to the container.
 		void addItem(
 				const std::string& type,
 				int qty = 1);
 		/// Removes an item from the container.
+//		std::map<std::string, int>::const_iterator removeItem(
 		void removeItem(
 				const std::string& type,
 				int qty = 1);
