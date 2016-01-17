@@ -100,17 +100,18 @@ private:
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
+		/// Handler for clicking the Kills button.
+		void btnKillsClick(Action* action);
+		/// Handler for clicking the Missions button.
+		void btnMissionsClick(Action* action);
+		/// Handler for clicking the Awards button.
+		void btnMedalsClick(Action* action);
+
 		/// Handler for clicking the Previous button.
 		void btnPrevClick(Action* action);
 		/// Handler for clicking the Next button.
 		void btnNextClick(Action* action);
 
-		/// Handler for clicking the Kills button.
-		void btnKillsClick(Action* action);
-		/// Handler for clicking the Missions button.
-		void btnMissionsClick(Action* action);
-		/// Handler for clicking the Commendations button.
-		void btnMedalsClick(Action* action);
 		/// Handler for clicking on mission list.
 		void lstDiaryInfoClick(Action* action);
 };

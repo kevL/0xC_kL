@@ -328,7 +328,7 @@ void SoldierDiaryOverviewState::btnOkClick(Action*)
 }
 
 /**
- * Returns to the previous screen.
+ * Opens the soldier's Kills screen.
  * @param action - pointer to an Action
  */
 void SoldierDiaryOverviewState::btnKillsClick(Action*)
@@ -342,7 +342,7 @@ void SoldierDiaryOverviewState::btnKillsClick(Action*)
 }
 
 /**
- * Returns to the previous screen.
+ * Opens the soldier's Missions screen.
  * @param action - pointer to an Action
  */
 void SoldierDiaryOverviewState::btnMissionsClick(Action*)
@@ -356,7 +356,7 @@ void SoldierDiaryOverviewState::btnMissionsClick(Action*)
 }
 
 /**
- * Returns to the previous screen.
+ * Opens the soldier's Medals screen.
  * @param action - pointer to an Action
  */
 void SoldierDiaryOverviewState::btnMedalsClick(Action*)
@@ -412,7 +412,7 @@ void SoldierDiaryOverviewState::btnNextClick(Action*)
 }
 
 /**
- * Shows the selected soldier's info.
+ * Shows the selected soldier's Mission info.
  * @param action - pointer to an Action
  */
 void SoldierDiaryOverviewState::lstDiaryInfoClick(Action*)

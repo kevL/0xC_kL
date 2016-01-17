@@ -149,20 +149,23 @@ private:
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
-		/// Handler for clicking the Previous button.
-		void btnPrevClick(Action* action);
-		/// Handler for clicking the Next button.
-		void btnNextClick(Action* action);
+
 		/// Handler for clicking the Kills button.
 		void btnKillsToggle(Action* action);
 		/// Handler for clicking the Missions button.
 		void btnMissionsToggle(Action* action);
-		/// Handler for clicking the Missions button.
-		void btnCommendationsToggle(Action* action);
+		/// Handler for clicking the Awards button.
+		void btnMedalsToggle(Action* action);
+
 		/// Handler for moving the mouse over a medal.
 		void lstInfoMouseOver(Action* action);
 		/// Handler for moving the mouse outside the medals list.
 		void lstInfoMouseOut(Action* action);
+
+		/// Handler for clicking the Previous button.
+		void btnPrevClick(Action* action);
+		/// Handler for clicking the Next button.
+		void btnNextClick(Action* action);
 
 		/// Runs state functionality every cycle.
 		void think() override;

@@ -240,7 +240,7 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 
 	_btnAwards->setColor(BLUE);
 	_btnAwards->setText(tr("STR_AWARDS_UC"));
-	_btnAwards->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnCommendationsToggle);
+	_btnAwards->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnMedalsToggle);
 
 	_btnOk->setColor(BLUE);
 	_btnOk->setText(tr("STR_OK"));
@@ -248,6 +248,12 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& SoldierDiaryPerformanceState::btnOkClick,
 					Options::keyCancel);
+	_btnOk->onKeyboardPress(
+					(ActionHandler)& SoldierDiaryPerformanceState::btnOkClick,
+					Options::keyOk);
+	_btnOk->onKeyboardPress(
+					(ActionHandler)& SoldierDiaryPerformanceState::btnOkClick,
+					Options::keyOkKeypad);
 
 
 	// Mission stats ->
@@ -665,6 +671,72 @@ void SoldierDiaryPerformanceState::btnOkClick(Action*)
 }
 
 /**
+ * Display Kills totals.
+ */
+void SoldierDiaryPerformanceState::btnKillsToggle(Action*)
+{
+	if (_display != DIARY_KILLS)
+	{
+		_display = DIARY_KILLS;
+		init();
+	}
+	else
+		btnOkClick(nullptr);
+}
+
+/**
+ * Display Missions totals.
+ */
+void SoldierDiaryPerformanceState::btnMissionsToggle(Action*)
+{
+	if (_display != DIARY_MISSIONS)
+	{
+		_display = DIARY_MISSIONS;
+		init();
+	}
+	else
+		btnOkClick(nullptr);
+}
+
+/**
+ * Display Awards medals.
+ */
+void SoldierDiaryPerformanceState::btnMedalsToggle(Action*)
+{
+	if (_display != DIARY_MEDALS)
+	{
+		_display = DIARY_MEDALS;
+		init();
+	}
+	else
+		btnOkClick(nullptr);
+}
+
+/**
+ * Display a Medal's mouse-over info.
+ */
+void SoldierDiaryPerformanceState::lstInfoMouseOver(Action*)
+{
+	const size_t row = _lstAwards->getSelectedRow();
+
+	if (_awardsListEntry.empty() == true
+		|| row > _awardsListEntry.size() - 1)
+	{
+		_txtMedalInfo->setText(L"");
+	}
+	else
+		_txtMedalInfo->setText(_awardsListEntry[row]);
+}
+
+/**
+ * Clears the Medal information.
+ */
+void SoldierDiaryPerformanceState::lstInfoMouseOut(Action*)
+{
+	_txtMedalInfo->setText(L"");
+}
+
+/**
  * Goes to the previous soldier.
  * @param action - pointer to an Action
  */
@@ -703,59 +775,8 @@ void SoldierDiaryPerformanceState::btnNextClick(Action*)
 }
 
 /**
- * Display Kills totals.
- */
-void SoldierDiaryPerformanceState::btnKillsToggle(Action*)
-{
-	_display = DIARY_KILLS;
-	init();
-}
-
-/**
- * Display Missions totals.
- */
-void SoldierDiaryPerformanceState::btnMissionsToggle(Action*)
-{
-	_display = DIARY_MISSIONS;
-	init();
-}
-
-/**
- * Display Commendations.
- */
-void SoldierDiaryPerformanceState::btnCommendationsToggle(Action*)
-{
-	_display = DIARY_MEDALS;
-	init();
-}
-
-/**
- * Display a Medal's mouse-over info.
- */
-void SoldierDiaryPerformanceState::lstInfoMouseOver(Action*)
-{
-	const size_t row = _lstAwards->getSelectedRow();
-
-	if (_awardsListEntry.empty() == true
-		|| row > _awardsListEntry.size() - 1)
-	{
-		_txtMedalInfo->setText(L"");
-	}
-	else
-		_txtMedalInfo->setText(_awardsListEntry[row]);
-}
-
-/**
- * Clears the Medal information.
- */
-void SoldierDiaryPerformanceState::lstInfoMouseOut(Action*)
-{
-	_txtMedalInfo->setText(L"");
-}
-
-/**
  * Runs state functionality every cycle.
- * @note Used to update sprite vector.
+ * @note Used to update award-sprites vector.
  */
 void SoldierDiaryPerformanceState::think()
 {
