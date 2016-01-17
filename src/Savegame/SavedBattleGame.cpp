@@ -141,8 +141,8 @@ SavedBattleGame::SavedBattleGame(
  */
 SavedBattleGame::~SavedBattleGame()
 {
-	Log(LOG_INFO) << "";
-	Log(LOG_INFO) << "Delete SavedBattleGame";
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "Delete SavedBattleGame";
 	for (size_t
 			i = 0;
 			i != _mapSize;
@@ -181,7 +181,6 @@ SavedBattleGame::~SavedBattleGame()
 			i != _items.end();
 			++i)
 	{
-		Log(LOG_INFO) << "delete " << (*i)->getRules()->getType();
 		delete *i;
 	}
 
