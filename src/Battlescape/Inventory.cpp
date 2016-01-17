@@ -303,42 +303,43 @@ void Inventory::drawItems() // private.
 	_srfItems->clear();
 	_grenadeFuses.clear();
 
-	SurfaceSet* const srt = _game->getResourcePack()->getSurfaceSet("BIGOBS.PCK");
-	Surface* srf;
+	SurfaceSet* const bigobs = _game->getResourcePack()->getSurfaceSet("BIGOBS.PCK");
+	Surface* sprite;
 
-	for (std::vector<BattleItem*>::const_iterator // Soldier items
+	for (std::vector<BattleItem*>::const_iterator // Unit sections.
 			i = _selUnit->getInventory()->begin();
 			i != _selUnit->getInventory()->end();
 			++i)
 	{
 		if (*i != _selItem)
 		{
-			srf = srt->getFrame((*i)->getRules()->getBigSprite());
-			if (srf != nullptr) // safety.
+			sprite = bigobs->getFrame((*i)->getRules()->getBigSprite());
+			if (sprite != nullptr) // safety.
 			{
 				if ((*i)->getInventorySection()->getCategory() == IC_SLOT)
 				{
-					srf->setX((*i)->getInventorySection()->getX() + (*i)->getSlotX() * RuleInventory::SLOT_W);
-					srf->setY((*i)->getInventorySection()->getY() + (*i)->getSlotY() * RuleInventory::SLOT_H);
+					sprite->setX((*i)->getInventorySection()->getX() + (*i)->getSlotX() * RuleInventory::SLOT_W);
+					sprite->setY((*i)->getInventorySection()->getY() + (*i)->getSlotY() * RuleInventory::SLOT_H);
 				}
 				else if ((*i)->getInventorySection()->getCategory() == IC_HAND)
 				{
-					srf->setX((*i)->getInventorySection()->getX()
+					sprite->setX((*i)->getInventorySection()->getX()
 							+ (RuleInventory::HAND_W - (*i)->getRules()->getInventoryWidth())
 								* RuleInventory::SLOT_W / 2);
-					srf->setY((*i)->getInventorySection()->getY()
+					sprite->setY((*i)->getInventorySection()->getY()
 							+ (RuleInventory::HAND_H - (*i)->getRules()->getInventoryHeight())
 								* RuleInventory::SLOT_H / 2);
 				}
 
-				srf->blit(_srfItems);
+				sprite->blit(_srfItems);
 
 				if ((*i)->getFuse() > -1) // grenade primer indicators
-					_grenadeFuses.push_back(std::make_pair(srf->getX(), srf->getY()));
+					_grenadeFuses.push_back(std::make_pair(sprite->getX(), sprite->getY()));
 			}
 			else Log(LOG_INFO) << "ERROR: Inventory::drawItems() bigob not found[1] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
 		}
 	}
+
 
 	Surface* const stackLayer = new Surface(getWidth(), getHeight());
 	stackLayer->setPalette(getPalette());
@@ -347,28 +348,28 @@ void Inventory::drawItems() // private.
 		colorQty (static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")->getElement("numStack")->color)),
 		RED (37);
 
-	for (std::vector<BattleItem*>::const_iterator // Ground items
+	for (std::vector<BattleItem*>::const_iterator // Ground section.
 			i = _selUnit->getTile()->getInventory()->begin();
 			i != _selUnit->getTile()->getInventory()->end();
 			++i)
 	{
-		if (*i != _selItem									// Note that items can be made invisible by setting their
-			&& (*i)->getSlotX() >= _groundOffset			// width or height to 0 - eg. used with tank corpse items.
-			&& (*i)->getRules()->getInventoryHeight() != 0
-			&& (*i)->getRules()->getInventoryWidth() != 0)
+		if (*i != _selItem
+//			&& (*i)->getSlotX() >= _groundOffset
+			&& (*i)->getRules()->getInventoryHeight() != 0	// Items can be made invisible by setting their width or height to 0.
+			&& (*i)->getRules()->getInventoryWidth() != 0)	// Eg, used for large-unit corpses.
 		{
-			srf = srt->getFrame((*i)->getRules()->getBigSprite());
-			if (srf != nullptr) // safety.
+			sprite = bigobs->getFrame((*i)->getRules()->getBigSprite());
+			if (sprite != nullptr) // safety.
 			{
-				srf->setX((*i)->getInventorySection()->getX()
-						+ ((*i)->getSlotX() - _groundOffset) * RuleInventory::SLOT_W);
-				srf->setY((*i)->getInventorySection()->getY()
-						+ ((*i)->getSlotY() * RuleInventory::SLOT_H));
+				sprite->setX((*i)->getInventorySection()->getX()
+						  + ((*i)->getSlotX() - _groundOffset) * RuleInventory::SLOT_W);
+				sprite->setY((*i)->getInventorySection()->getY()
+						  + ((*i)->getSlotY() * RuleInventory::SLOT_H));
 
-				srf->blit(_srfItems);
+				sprite->blit(_srfItems);
 
 				if ((*i)->getFuse() > -1) // grenade primer indicators
-					_grenadeFuses.push_back(std::make_pair(srf->getX(), srf->getY()));
+					_grenadeFuses.push_back(std::make_pair(sprite->getX(), sprite->getY()));
 			}
 			else Log(LOG_INFO) << "ERROR: Inventory::drawItems() bigob not found[2] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
 
@@ -392,7 +393,7 @@ void Inventory::drawItems() // private.
 				_stackNumber->setY(((*i)->getInventorySection()->getY()
 									+ ((*i)->getSlotY() + (*i)->getRules()->getInventoryHeight())
 										* RuleInventory::SLOT_H) - 6);
-				_stackNumber->setValue(fatals ? fatals : qty);
+				_stackNumber->setValue(fatals ? static_cast<unsigned>(fatals) : static_cast<unsigned>(qty));
 				_stackNumber->draw();
 				_stackNumber->setColor(fatals ? RED : colorQty);
 				_stackNumber->blit(stackLayer);
@@ -958,7 +959,7 @@ void Inventory::mouseClick(Action* action, State* state)
 			if ((SDL_GetModState() & KMOD_CTRL) == 0)
 			{
 				if (Options::includePrimeStateInSavedLayout == true
-					|| _atBase == false) // Priming is allowed only on the field or in preBattle, or if fuse-state can save to Layouts.
+					|| _atBase == false) // Priming is allowed only on the field or in pre-battle, or if fuse-state can save to Layouts.
 				{
 					if (_tuMode == false)
 					{
@@ -1207,7 +1208,7 @@ void Inventory::arrangeGround(bool alterOffset)
 				(*i)->setSlotX(x);
 				(*i)->setSlotY(y);
 				// only increase the stack level if the item is actually visible.
-				if ((*i)->getRules()->getInventoryWidth())
+				if ((*i)->getRules()->getInventoryWidth() != 0)
 					_stackLevel[x][y] += 1;
 
 				xMax = std::max(
@@ -1216,8 +1217,7 @@ void Inventory::arrangeGround(bool alterOffset)
 			}
 			else
 			{
-				++y;
-				if (y > RuleInventory::GROUND_H - (*i)->getRules()->getInventoryHeight())
+				if (++y > RuleInventory::GROUND_H - (*i)->getRules()->getInventoryHeight())
 				{
 					y = 0;
 					++x;
