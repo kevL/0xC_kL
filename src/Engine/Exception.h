@@ -36,7 +36,7 @@ class Exception final
 {
 
 	public:
-		Exception(const std::string& msg)
+		explicit Exception(const std::string& msg)
 			:
 				runtime_error(msg)
 		{}

@@ -82,7 +82,6 @@ private:
 	bool
 		_firstInit,
 		_iconsHidden,
-		_isKneeled,
 		_isMouseScrolled,
 		_isMouseScrolling,
 		_isOverweight,
@@ -117,7 +116,7 @@ private:
 		* _btnKneel,
 		* _btnInventory,
 		* _btnCenter,
-		* _btnNextSoldier,
+		* _btnNextUnit,
 		* _btnNextStop,
 		* _btnShowLayers,
 		* _btnOptions,
@@ -177,8 +176,6 @@ private:
 	Surface
 		* _alienMark,
 		* _bigBtnBorder,
-		* _iconsLayer,
-		* _kneel,
 		* _overWeight,
 		* _rank,
 		* _targeter;
@@ -223,6 +220,8 @@ private:
 	void flashMedic();
 	/// Blinks the health bar when selected unit has fatal wounds.
 	void blinkHealthBar();
+	/// Shows the unit kneel state.
+	void toggleKneelButton(BattleUnit* unit);
 	/// Shows primer warnings on hand-held live grenades.
 	void cycleFuses(BattleUnit* const selUnit);
 	/// Shifts the colors of the visible unit buttons' backgrounds.

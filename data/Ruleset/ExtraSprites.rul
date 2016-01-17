@@ -14,11 +14,17 @@ extraSprites:
     files:
       0: Resources/BulletSprites/BulletSprites.png
   - type: TFTDReserve
+    singleImage: true
     width: 59
     height: 24
-    singleImage: true
     files:
       0: Resources/UI/reserve.png
+  - type: KneelButton
+    singleImage: true
+    width: 32
+    height: 16
+    files:
+      0: Resources/UI/kneelButton_kL.png
 #  - type: InvCopy
 #    width: 16
 #    height: 16

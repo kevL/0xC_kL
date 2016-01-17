@@ -133,8 +133,7 @@ BattlescapeState::BattlescapeState()
 		_targeterFrame(0),
 		_showSoldierData(false),
 		_iconsHidden(false),
-		_isOverweight(false),
-		_isKneeled(false)
+		_isOverweight(false)
 {
 	//Log(LOG_INFO) << "Create BattlescapeState";
 	STATE_INTERVAL_XCOM		= static_cast<Uint32>(Options::battleXcomSpeed);
@@ -158,11 +157,10 @@ BattlescapeState::BattlescapeState()
 	_txtOperationTitle		= new Text(screenWidth, 17, 0, 2);
 
 	// Create buttonbar - this should appear at the bottom-center of the screen
-	_icons		= new InteractiveSurface(
-									iconsWidth,
-									iconsHeight,
-									x,y);
-	_iconsLayer	= new Surface(32, 16, x + 208, y);
+	_icons = new InteractiveSurface(
+								iconsWidth,
+								iconsHeight,
+								x,y);
 
 	// Create the battlemap view
 	// The actual map height is the total height minus the height of the buttonbar
@@ -177,7 +175,6 @@ BattlescapeState::BattlescapeState()
 	_numDir		= new NumberText(3, 5, x + 150, y + 6);
 	_numDirTur	= new NumberText(3, 5, x + 167, y + 6);
 
-	_kneel		= new Surface( 2,  2, x + 115, y + 19);
 	_rank		= new Surface(26, 23, x + 107, y + 33);
 	_overWeight	= new Surface( 2,  2, x + 130, y + 34);
 
@@ -189,7 +186,7 @@ BattlescapeState::BattlescapeState()
 	_btnKneel			= new BattlescapeButton(32,  16, x + 112, y + 16);
 	_btnInventory		= new BattlescapeButton(32,  16, x + 144, y);
 	_btnCenter			= new BattlescapeButton(32,  16, x + 144, y + 16);
-	_btnNextSoldier		= new BattlescapeButton(32,  16, x + 176, y);
+	_btnNextUnit		= new BattlescapeButton(32,  16, x + 176, y);
 	_btnNextStop		= new BattlescapeButton(32,  16, x + 176, y + 16);
 	_btnShowLayers		= new BattlescapeButton(32,  16, x + 208, y);
 	_btnOptions			= new BattlescapeButton(32,  16, x + 208, y + 16);
@@ -338,9 +335,9 @@ BattlescapeState::BattlescapeState()
 	if (_rules->getInterface("battlescape")->getElement("pathfinding") != nullptr)
 	{
 		const Element* const path = _rules->getInterface("battlescape")->getElement("pathfinding");
-		Pathfinding::green = static_cast<Uint8>(path->color);
-		Pathfinding::yellow = static_cast<Uint8>(path->color2);
-		Pathfinding::red = static_cast<Uint8>(path->border);
+		Pathfinding::green	= static_cast<Uint8>(path->color);
+		Pathfinding::yellow	= static_cast<Uint8>(path->color2);
+		Pathfinding::red	= static_cast<Uint8>(path->border);
 	}
 
 	add(_map);
@@ -380,7 +377,7 @@ BattlescapeState::BattlescapeState()
 	add(_btnKneel,			"buttonKneel",			"battlescape", _icons);
 	add(_btnInventory,		"buttonInventory",		"battlescape", _icons);
 	add(_btnCenter,			"buttonCenter",			"battlescape", _icons);
-	add(_btnNextSoldier,	"buttonNextSoldier",	"battlescape", _icons);
+	add(_btnNextUnit,		"buttonNextUnit",		"battlescape", _icons);
 	add(_btnNextStop,		"buttonNextStop",		"battlescape", _icons);
 	add(_btnShowLayers,		"buttonShowLayers",		"battlescape", _icons);
 	add(_btnOptions,		"buttonHelp",			"battlescape", _icons);
@@ -389,9 +386,7 @@ BattlescapeState::BattlescapeState()
 	add(_btnStats,			"buttonStats",			"battlescape", _icons);
 	add(_numDir);
 	add(_numDirTur);
-	add(_iconsLayer);														// goes overtop _btns
-	add(_numLayers,			"numLayers",			"battlescape", _icons);	// goes overtop _iconsLayer
-	add(_kneel);															// goes overtop _btns
+	add(_numLayers,			"numLayers",			"battlescape", _icons);	// goes overtop _icons
 	add(_overWeight);														// goes overtop _rank
 	add(_txtName,			"textName",				"battlescape", _icons);
 	add(_numTULaunch);
@@ -677,9 +672,6 @@ BattlescapeState::BattlescapeState()
 
 	_rank->setVisible(false);
 
-	_kneel->drawRect(0,0,2,2, BROWN_D);
-	_kneel->setVisible(false);
-
 	_overWeight->drawRect(0,0,2,2, RED_D);
 	_overWeight->setVisible(false);
 
@@ -747,21 +739,21 @@ BattlescapeState::BattlescapeState()
 //	_btnCenter->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
 //	_btnCenter->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnNextSoldier->onMouseClick(
+	_btnNextUnit->onMouseClick(
 					(ActionHandler)& BattlescapeState::btnNextUnitClick,
 					SDL_BUTTON_LEFT);
-	_btnNextSoldier->onMouseClick(
+	_btnNextUnit->onMouseClick(
 					(ActionHandler)& BattlescapeState::btnPrevUnitClick,
 					SDL_BUTTON_RIGHT);
-	_btnNextSoldier->onKeyboardPress(
+	_btnNextUnit->onKeyboardPress(
 					(ActionHandler)& BattlescapeState::btnNextUnitClick,
 					Options::keyBattleNextUnit);
-	_btnNextSoldier->onKeyboardPress(
+	_btnNextUnit->onKeyboardPress(
 					(ActionHandler)& BattlescapeState::btnPrevUnitClick,
 					Options::keyBattlePrevUnit);
-//	_btnNextSoldier->setTooltip("STR_NEXT_UNIT");
-//	_btnNextSoldier->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnNextSoldier->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
+//	_btnNextUnit->setTooltip("STR_NEXT_UNIT");
+//	_btnNextUnit->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
+//	_btnNextUnit->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
 	_btnNextStop->onMouseClick(
 					(ActionHandler)& BattlescapeState::btnNextStopClick,
@@ -1866,6 +1858,8 @@ void BattlescapeState::btnKneelClick(Action*)
 					pf->previewPath();
 				}
 			}
+
+			toggleKneelButton(unit);
 		}
 	}
 }
@@ -2070,13 +2064,10 @@ void BattlescapeState::btnShowLayersClick(Action*)
 {
 	if (allowButtons() == true)
 	{
-		if (_map->getCamera()->toggleShowLayers() == false)
-			_iconsLayer->clear();
+		if (_map->getCamera()->toggleShowLayers() == true)
+			_game->getResourcePack()->getSurface("ICONS_LAYER")->blit(_btnShowLayers);
 		else
-		{
-			Surface* const allLayers = _game->getResourcePack()->getSurface("ICONS_LAYER");
-			allLayers->blit(_iconsLayer);
-		}
+			_btnShowLayers->clear();
 	}
 }
 
@@ -2651,6 +2642,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	_rank				->clear();
 	_btnRightHandItem	->clear();
 	_btnLeftHandItem	->clear();
+	_btnKneel			->clear();
 
 	_btnLeftHandItem	->setVisible(false);
 	_btnRightHandItem	->setVisible(false);
@@ -2667,7 +2659,6 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	_numTwohandL		->setVisible(false);
 	_numTwohandR		->setVisible(false);
 
-	_kneel				->setVisible(false);
 	_overWeight			->setVisible(false);
 	_numDir				->setVisible(false);
 	_numDirTur			->setVisible(false);
@@ -2677,7 +2668,6 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	_numTUAuto			->setVisible(false);
 	_numTUSnap			->setVisible(false);
 
-	_isKneeled =
 	_isOverweight = false;
 
 	_txtOrder->setText(L"");
@@ -2685,9 +2675,9 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 	if (playableUnitSelected() == false) // not a controlled unit; ie. aLien or civilian turn
 	{
-		_txtName->setText(L"");
-
 		showPsiButton(false);
+
+		_txtName->setText(L"");
 
 		_rank			->setVisible(false);
 
@@ -2747,10 +2737,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 		texture->getFrame(20 + sol->getRank())->blit(_rank);
 
 		if (selUnit->isKneeled() == true)
-		{
-			_isKneeled = true;
-			_kneel->setVisible();
-		}
+			_game->getResourcePack()->getSurface("KneelButton")->blit(_btnKneel);
 
 		_txtOrder->setText(tr("STR_ORDER")
 							.arg(static_cast<int>(selUnit->getBattleOrder())));
@@ -3103,6 +3090,18 @@ void BattlescapeState::blinkHealthBar() // private.
 	_barHealth->setVisible(++vis > TICKS / 2);
 
 	if (vis == TICKS) vis = 0;
+}
+
+/**
+ * Shows the unit kneel state.
+ * @param unit - pointer to a BattleUnit
+ */
+void BattlescapeState::toggleKneelButton(BattleUnit* unit) // private.
+{
+	if (unit != nullptr && unit->isKneeled() == true)
+		_game->getResourcePack()->getSurface("KneelButton")->blit(_btnKneel);
+	else
+		_btnKneel->clear();
 }
 
 /**
@@ -3760,7 +3759,7 @@ void BattlescapeState::toggleIcons(bool vis)
 	_iconsHidden = !vis;
 
 	_icons->setVisible(vis);
-	_iconsLayer->setVisible(vis);
+
 	_numLayers->setVisible(vis);
 
 	_btnUnitUp->setVisible(vis);
@@ -3771,7 +3770,7 @@ void BattlescapeState::toggleIcons(bool vis)
 	_btnKneel->setVisible(vis);
 	_btnInventory->setVisible(vis);
 	_btnCenter->setVisible(vis);
-	_btnNextSoldier->setVisible(vis);
+	_btnNextUnit->setVisible(vis);
 	_btnNextStop->setVisible(vis);
 	_btnShowLayers->setVisible(vis);
 	_btnOptions->setVisible(vis);
@@ -3787,10 +3786,7 @@ void BattlescapeState::toggleIcons(bool vis)
 	_txtMissionLabel->setVisible(vis);
 	_lstTileInfo->setVisible(vis);
 
-	// note: These two might not be necessary if selectedUnit is never aLien or Civie.
 	_overWeight->setVisible(vis && _isOverweight);
-	// no need for handling the kneel indicator i guess; do it anyway
-	_kneel->setVisible(vis && _isKneeled);
 }
 
 /**
