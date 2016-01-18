@@ -59,7 +59,8 @@ ArticleStateVehicle::ArticleStateVehicle(const ArticleDefinitionVehicle* const d
 
 	_lstStats	= new TextList(300, 89, 10, 48);
 
-	setPalette("PAL_UFOPAEDIA");
+//	setPalette("PAL_UFOPAEDIA");
+	setPalette(PAL_UFOPAEDIA);
 
 	ArticleState::initLayout();
 

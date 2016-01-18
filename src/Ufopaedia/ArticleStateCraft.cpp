@@ -49,7 +49,8 @@ ArticleStateCraft::ArticleStateCraft(const ArticleDefinitionCraft* const defs)
 {
 	_txtTitle = new Text(210, 32, 5, 24);
 
-	setPalette("PAL_UFOPAEDIA");
+//	setPalette("PAL_UFOPAEDIA");
+	setPalette(PAL_UFOPAEDIA);
 
 	ArticleState::initLayout(false);
 

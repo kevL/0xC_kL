@@ -52,7 +52,8 @@ ArticleStateCraftWeapon::ArticleStateCraftWeapon(const ArticleDefinitionCraftWea
 
 	_txtTitle = new Text(200, 32, 5, 24);
 
-	setPalette("PAL_BATTLEPEDIA");
+//	setPalette("PAL_BATTLEPEDIA");
+	setPalette(PAL_BATTLEPEDIA);
 
 	ArticleState::initLayout();
 

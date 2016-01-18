@@ -83,7 +83,8 @@ NextTurnState::NextTurnState(
 
 //	_bg = new Surface(_game->getScreen()->getWidth(), _game->getScreen()->getHeight());
 
-	setPalette("PAL_BATTLESCAPE");
+//	setPalette("PAL_BATTLESCAPE");
+	setPalette(PAL_BATTLESCAPE);
 
 	add(_window);
 	add(_txtMessage,	"messageWindows", "battlescape");

@@ -55,7 +55,8 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 	_txtMedalInfo	= new Text(280, 25, 20, 150);
 	_btnOk			= new TextButton(288, 16, 16, 177);
 
-	setPalette("PAL_GEOSCAPE", 0);
+//	setPalette("PAL_GEOSCAPE", 0);
+	setPalette(PAL_GEOSCAPE, 0);
 
 	add(_window);
 	add(_txtTitle);

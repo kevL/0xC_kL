@@ -77,7 +77,8 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 
 	_btnOk			= new TextButton(180, 16, 70, 152);
 
-	setPalette("PAL_BASESCAPE");
+//	setPalette("PAL_BASESCAPE");
+	setPalette(PAL_BASESCAPE);
 
 	add(_window);
 	add(_txtTitle);

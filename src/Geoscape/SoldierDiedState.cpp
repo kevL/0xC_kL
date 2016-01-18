@@ -49,7 +49,8 @@ SoldierDiedState::SoldierDiedState(
 	_txtBase	= new Text(160,  9, 48, 104);
 	_btnOk		= new TextButton(80, 16, 88, 126);
 
-	setPalette("PAL_GEOSCAPE", 7);
+//	setPalette("PAL_GEOSCAPE", 7);
+	setPalette(PAL_GEOSCAPE, 7);
 
 	add(_window);
 	add(_txtTitle);

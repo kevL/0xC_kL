@@ -130,7 +130,8 @@ SoldierInfoDeadState::SoldierInfoDeadState(size_t soldierId)
 	_numPsiSkill	= new Text(18, 9, 131, yPos);
 	_barPsiSkill	= new Bar(234, 7, 150, yPos + 1);
 
-	setPalette("PAL_BASESCAPE");
+//	setPalette("PAL_BASESCAPE");
+	setPalette(PAL_BASESCAPE);
 
 	add(_bg);
 	add(_rank);

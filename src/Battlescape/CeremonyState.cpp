@@ -53,7 +53,8 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 	_txtMedalInfo	= new Text(280, 25, 20, 150);
 	_btnOk			= new TextButton(288, 16, 16, 177);
 
-	setPalette("PAL_GEOSCAPE");
+//	setPalette("PAL_GEOSCAPE");
+	setPalette(PAL_GEOSCAPE);
 
 	add(_window);
 	add(_txtTitle);

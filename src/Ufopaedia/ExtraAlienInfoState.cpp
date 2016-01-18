@@ -56,7 +56,8 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 	_lstInfo	= new TextList(150, 73, 84,  28);
 	_lstWeapon	= new TextList(150,  9, 84, 110);
 
-	setPalette("PAL_UFOPAEDIA");
+//	setPalette("PAL_UFOPAEDIA");
+	setPalette(PAL_UFOPAEDIA);
 
 	add(_window);
 	add(_btnExit);

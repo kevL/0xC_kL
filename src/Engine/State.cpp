@@ -594,7 +594,7 @@ void State::setPalette(
  * Loads palettes from the game resources into the state.
  * @param palette - reference the string ID of the palette to load
  * @param backpal - BACKPALS.DAT offset to use (default -1)
- */
+ *
 void State::setPalette(
 		const std::string& palette,
 		int backpal)
@@ -624,7 +624,7 @@ void State::setPalette(
 				false);
 
 	setPalette(nullptr); // delay actual update to the end
-}
+} */
 
 /**
  * Loads palettes from the game resources into the state.

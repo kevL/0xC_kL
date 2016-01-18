@@ -52,7 +52,8 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 
 	_txtTitle = new Text(200, 17, 10, 24);
 
-	setPalette("PAL_BASESCAPE");
+//	setPalette("PAL_BASESCAPE");
+	setPalette(PAL_BASESCAPE);
 
 	ArticleState::initLayout();
 

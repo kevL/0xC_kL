@@ -131,7 +131,8 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 		_srfDecor.push_back(new Surface(31, 7, 16, LIST_SPRITES_y + (i * 8)));
 	}
 
-	setPalette("PAL_BASESCAPE");
+//	setPalette("PAL_BASESCAPE");
+	setPalette(PAL_BASESCAPE);
 
 	add(_window);
 	add(_txtTitle);

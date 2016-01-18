@@ -45,7 +45,8 @@ ArticleStateAward::ArticleStateAward(const ArticleDefinitionAward* const defs)
 {
 	_txtTitle = new Text(defs->text_width, 17, 5, 22);
 
-	setPalette("PAL_UFOPAEDIA");
+//	setPalette("PAL_UFOPAEDIA");
+	setPalette(PAL_UFOPAEDIA);
 
 	ArticleState::initLayout();
 

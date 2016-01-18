@@ -330,7 +330,8 @@ BattlescapeState::BattlescapeState()
 	_txtConsole1	= new Text(screenWidth / 2, y, 0, 0);
 	_txtConsole2	= new Text(screenWidth / 2, y, screenWidth / 2, 0);
 
-	setPalette("PAL_BATTLESCAPE");
+//	setPalette("PAL_BATTLESCAPE");
+	setPalette(PAL_BATTLESCAPE);
 
 	if (_rules->getInterface("battlescape")->getElement("pathfinding") != nullptr)
 	{

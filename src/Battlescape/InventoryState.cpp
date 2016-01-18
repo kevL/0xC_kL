@@ -148,7 +148,8 @@ InventoryState::InventoryState(
 							0,0,
 							_parent == nullptr);
 
-	setPalette("PAL_BATTLESCAPE");
+//	setPalette("PAL_BATTLESCAPE");
+	setPalette(PAL_BATTLESCAPE);
 
 	add(_bg);
 	_game->getResourcePack()->getSurface("TAC01.SCR")->blit(_bg);

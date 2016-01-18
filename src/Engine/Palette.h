@@ -68,12 +68,10 @@ private:
 				const std::string& file,
 				int qColors,
 				int offset = 0);
+
 		/// Gets a certain color from the palette.
 		SDL_Color* getColors(int offset = 0) const;
-		///
-		void setColors(
-				SDL_Color* pal,
-				int qColors);
+
 		/// Converts a given color into a RGBA color value.
 		static Uint32 getRGBA(
 				SDL_Color* pal,
@@ -99,6 +97,8 @@ private:
 		static inline Uint8 blockOffset(Uint8 block)
 		{ return (static_cast<Uint8>(block << 4)); }
 
+		///
+//		void setColors(SDL_Color* pal, int qColors);
 		///
 //		void savePal(const std::string& file) const;
 };

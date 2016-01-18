@@ -46,7 +46,8 @@ ArticleStateText::ArticleStateText(const ArticleDefinitionText* const defs)
 	_txtTitle	= new Text(296, 17, 5, 23);
 	_txtInfo	= new Text(296, 150, 10, 48);
 
-	setPalette("PAL_UFOPAEDIA");
+//	setPalette("PAL_UFOPAEDIA");
+	setPalette(PAL_UFOPAEDIA);
 
 	ArticleState::initLayout();
 

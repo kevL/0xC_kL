@@ -124,10 +124,10 @@ Uint32 Palette::getRGBA(
 }
 
 /**
- *
+ * About TFTD i'd guess.
  * @param pal		- pointer to SDL_Color
- * @param qColors	-
- */
+ * @param qColors	- quantity of colors
+ *
 void Palette::setColors(
 		SDL_Color* pal,
 		int qColors)
@@ -139,15 +139,9 @@ void Palette::setColors(
 
 	_count = static_cast<size_t>(qColors);
 	_colors = new SDL_Color[_count];
-	std::memset(
-			_colors,
-			0,
-			sizeof(SDL_Color) * _count);
+	std::memset(_colors, 0, sizeof(SDL_Color) * _count);
 
-	for (size_t // Correct X-Com colors to RGB colors
-			i = 0;
-			i < _count;
-			++i)
+	for (size_t i = 0; i < _count; ++i) // Correct X-Com colors to RGB colors
 	{
 		// TFTD's LBM colors are good the way they are - no need for adjustment here, except...
 		_colors[i].r = pal[i].r;
@@ -169,16 +163,13 @@ void Palette::setColors(
 			++_colors[i].b;
 		}
 	}
-
 	_colors[0].unused = 0;
-}
+} */
 
 /**
  * Writes a palette file from TestState.
- * @note Unused.
  * @param file - reference the file
- */
-/*
+ *
 void Palette::savePal(const std::string& file) const
 {
 	std::ofstream palFile (file.c_str(), std::ios::out | std::ios::binary); // init.
@@ -186,46 +177,26 @@ void Palette::savePal(const std::string& file) const
 
 	palFile << "RIFF"; // RIFF header
 	const int bytes = 4 + 4 + 4 + 4 + 2 + 2 + (static_cast<int>(qColors) * 4);
-	palFile.write(
-				(char*)&bytes,
-				sizeof(bytes));
+	palFile.write((char*)&bytes, sizeof(bytes));
 	palFile << "PAL ";
 
 	palFile << "data"; // Data chunk
 	const int data = (qColors * 4) + 4;
-	palFile.write(
-				(char*)&data,
-				sizeof(data));
+	palFile.write((char*)&data, sizeof(data));
 	const short version = 0x0300;
-	palFile.write(
-				(char*)&version,
-				sizeof(version));
-	palFile.write(
-				(char*)&qColors,
-				sizeof(qColors));
+	palFile.write((char*)&version, sizeof(version));
+	palFile.write((char*)&qColors, sizeof(qColors));
 
 	SDL_Color* color = getColors(); // Colors
-	for (short
-			i = 0;
-			i != qColors;
-			++i)
+	for (short i = 0; i != qColors; ++i)
 	{
 		char ch = 0;
-		palFile.write(
-					(char*)&color->r,
-					1);
-		palFile.write(
-					(char*)&color->g,
-					1);
-		palFile.write(
-					(char*)&color->b,
-					1);
-		palFile.write(
-					&ch,
-					1);
+		palFile.write((char*)&color->r, 1);
+		palFile.write((char*)&color->g, 1);
+		palFile.write((char*)&color->b, 1);
+		palFile.write(&ch, 1);
 		++color;
 	}
-
 	palFile.close();
 } */
 

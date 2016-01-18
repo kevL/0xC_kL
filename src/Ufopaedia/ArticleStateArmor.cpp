@@ -55,7 +55,8 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 
 	_txtTitle = new Text(300, 17, 5, 24);
 
-	setPalette("PAL_BATTLEPEDIA");
+//	setPalette("PAL_BATTLEPEDIA");
+	setPalette(PAL_BATTLEPEDIA);
 
 	ArticleState::initLayout();
 

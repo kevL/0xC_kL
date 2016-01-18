@@ -262,6 +262,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 	}
 
 	// kL. Convert palettes-by-string to palettes-by-enumerator ->
+	_palettesPt[PAL_NONE]			= nullptr;
 	_palettesPt[PAL_BACKPALS]		= _palettes.at("BACKPALS.DAT");
 	_palettesPt[PAL_BASESCAPE]		= _palettes.at("PAL_BASESCAPE");
 	_palettesPt[PAL_BATTLEPEDIA]	= _palettes.at("PAL_BATTLEPEDIA");

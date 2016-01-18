@@ -417,7 +417,7 @@ void ResourcePack::playSoundFX(
  * Returns a specific palette from the resource set.
  * @param name - reference the name of a Palette
  * @return, pointer to the Palette
- */
+ *
 Palette* ResourcePack::getPalette(const std::string& name) const
 {
 	const std::map<std::string, Palette*>::const_iterator i = _palettes.find(name);
@@ -425,7 +425,7 @@ Palette* ResourcePack::getPalette(const std::string& name) const
 		return i->second;
 
 	return nullptr;
-}
+} */
 
 /**
  * Returns a specific palette from the resource set by PaletteType.
@@ -434,11 +434,12 @@ Palette* ResourcePack::getPalette(const std::string& name) const
  */
 Palette* ResourcePack::getPalette(const PaletteType palType) const
 {
-	const std::map<PaletteType, Palette*>::const_iterator i = _palettesPt.find(palType);
+	return _palettesPt.at(palType);
+/*	const std::map<PaletteType, Palette*>::const_iterator i = _palettesPt.find(palType);
 	if (i != _palettesPt.end())
 		return i->second;
 
-	return nullptr;
+	return nullptr; */
 }
 
 /**

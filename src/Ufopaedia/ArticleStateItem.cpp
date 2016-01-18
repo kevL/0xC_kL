@@ -53,7 +53,8 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 {
 	_txtTitle = new Text(148, 32, 5, 24);
 
-	setPalette("PAL_BATTLEPEDIA");
+//	setPalette("PAL_BATTLEPEDIA");
+	setPalette(PAL_BATTLEPEDIA);
 
 	ArticleState::initLayout();
 

@@ -41,7 +41,8 @@ InfoboxState::InfoboxState(const std::wstring& msg)
 	_frame	= new Frame(260, 90, 30, 86);
 	_text	= new Text(250, 80, 35, 91);
 
-	setPalette("PAL_BATTLESCAPE");
+//	setPalette("PAL_BATTLESCAPE");
+	setPalette(PAL_BATTLESCAPE);
 
 	add(_frame,	"infoBox", "battlescape");
 	add(_text,	"infoBox", "battlescape");
