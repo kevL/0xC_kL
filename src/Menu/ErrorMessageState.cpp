@@ -122,7 +122,6 @@ void ErrorMessageState::create(
 	setPalette(palette);
 	if (bgColor != -1)
 		setPalette(
-//				_game->getResourcePack()->getPalette("BACKPALS.DAT")->getColors(
 				_game->getResourcePack()->getPalette(PAL_BACKPALS)
 					->getColors(static_cast<int>(Palette::blockOffset(static_cast<Uint8>(bgColor)))),
 				Palette::PAL_bgID,

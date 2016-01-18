@@ -195,7 +195,6 @@ UnitInfoState::UnitInfoState(
 		_btnNext	= new TextButton(18, 18, 300, 2);
 	}
 
-//	setPalette("PAL_BATTLESCAPE");
 	setPalette(PAL_BATTLESCAPE);
 
 	add(_bg);

@@ -51,7 +51,6 @@ ArticleStateTextImage::ArticleStateTextImage(const ArticleDefinitionTextImage* c
 {
 	_txtTitle = new Text(defs->text_width, 48, 5, 22);
 
-//	setPalette("PAL_UFOPAEDIA");
 	setPalette(PAL_UFOPAEDIA);
 
 	ArticleState::initLayout();

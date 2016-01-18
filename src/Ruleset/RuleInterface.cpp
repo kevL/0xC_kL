@@ -19,8 +19,6 @@
 
 #include "RuleInterface.h"
 
-//#include "../Engine/Logger.h"
-
 //#include <climits>
 
 
@@ -53,7 +51,6 @@ void RuleInterface::load(const YAML::Node& node)
 	_parent		= node["parent"]	.as<std::string>(_parent);
 	_palette	= node["palette"]	.as<std::string>(_palette);
 	_palettePt	= convertToPaletteType(_palette);
-//	if (_palettePt == PAL_NONE) Log(LOG_WARNING) << "RuleInteraface::load() " << _type << " has no PaletteType";
 
 	for (YAML::const_iterator
 			i = node["elements"].begin();
@@ -137,19 +134,10 @@ const Element* RuleInterface::getElement(const std::string& id) const // <- why 
 }
 
 /**
- * Gets this Interface's palette.
- * @return, reference to palette
- *
-const std::string& RuleInterface::getPalette() const
-{
-	return _palette;
-} */
-
-/**
  * Gets this Interface's PaletteType.
  * @return, the PaletteType (Palette.h)
  */
-PaletteType RuleInterface::getPalettePt() const
+PaletteType RuleInterface::getPalette() const
 {
 	return _palettePt;
 }

@@ -165,8 +165,6 @@ private:
 					const int sound,
 					const bool randAngle = false) const;
 
-			/// Gets a particular palette.
-//			Palette* getPalette(const std::string& name) const;
 			/// Gets a particular palette by PaletteType.
 			Palette* getPalette(const PaletteType palType) const;
 			/// Sets a new palette.

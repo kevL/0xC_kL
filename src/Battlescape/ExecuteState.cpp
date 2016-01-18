@@ -63,13 +63,11 @@ ExecuteState::ExecuteState(BattleAction* const action)
 	_lstTarget	= new TextList(234, 33, 42, 80);
 	_btnCancel	= new TextButton(120, 14, 100, 125);
 
-//	setPalette("PAL_BATTLESCAPE");
 	setPalette(PAL_BATTLESCAPE);
-//	_game->getRuleset()->getInterface("soldierList")->getElement("palette")->color);
 
 	add(_window,	"messageWindowBorder",	"battlescape");
 	add(_txtTitle,	"messageWindows",		"battlescape");
-	add(_lstTarget);//,	"messageWindows",	"battlescape");
+	add(_lstTarget);
 	add(_btnCancel,	"messageWindowButtons",	"battlescape");
 
 	centerAllSurfaces();

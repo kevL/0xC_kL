@@ -163,7 +163,6 @@ MedikitState::MedikitState(BattleAction* action)
 				Options::baseXResolution,
 				Options::baseYResolution);
 
-//	setPalette("PAL_BATTLESCAPE");
 	setPalette(PAL_BATTLESCAPE);
 
 	if (_game->getScreen()->getDY() > 50)

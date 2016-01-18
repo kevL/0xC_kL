@@ -65,9 +65,7 @@ MediTargetState::MediTargetState(BattleAction* const action)
 
 	_btnCancel	= new TextButton(120, 14, 100, 125);
 
-//	setPalette("PAL_BATTLESCAPE");
 	setPalette(PAL_BATTLESCAPE);
-//	_game->getRuleset()->getInterface("soldierList")->getElement("palette")->color);
 
 	add(_window,	"messageWindowBorder",	"battlescape");
 	add(_txtTitle,	"messageWindows",		"battlescape");
@@ -75,7 +73,7 @@ MediTargetState::MediTargetState(BattleAction* const action)
 	add(_txtHealth,	"messageWindows",		"battlescape");
 	add(_txtEnergy,	"messageWindows",		"battlescape");
 	add(_txtMorale,	"messageWindows",		"battlescape");
-	add(_lstTarget);//"messageWindows",		"battlescape");
+	add(_lstTarget);
 	add(_btnCancel,	"messageWindowButtons",	"battlescape");
 
 	centerAllSurfaces();

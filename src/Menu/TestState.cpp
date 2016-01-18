@@ -61,7 +61,6 @@ TestState::TestState()
 	_set = _game->getResourcePack()->getSurfaceSet("BASEBITS.PCK");
 	_set->getFrame(1);
 
-//	setPalette("PAL_BASESCAPE", 2);
 	setPalette(PAL_BASESCAPE, 2);
 
 	add(_window);

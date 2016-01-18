@@ -72,10 +72,8 @@ private:
 		/// Gets an element.
 		const Element* getElement(const std::string& id) const;
 
-		/// Gets the palette-string.
-//		const std::string& getPalette() const;
 		/// Gets the PaletteType.
-		PaletteType getPalettePt() const;
+		PaletteType getPalette() const;
 
 		/// Gets parent interface rule.
 		const std::string& getParent() const;

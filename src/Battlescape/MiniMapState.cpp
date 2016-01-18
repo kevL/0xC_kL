@@ -87,7 +87,6 @@ MiniMapState::MiniMapState(
 
 	_txtLevel	= new Text(28, 16, 281 + scanbordOffsetX, 73 + scanbordOffsetY);
 
-//	setPalette("PAL_BATTLESCAPE");
 	setPalette(PAL_BATTLESCAPE);
 
 	add(_miniView); // put miniView *under* the background.

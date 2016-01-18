@@ -78,7 +78,6 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 
 	_btnOk			= new TextButton(268, 16, 26, 177);
 
-//	setPalette("PAL_BASESCAPE", 0);
 	setPalette(PAL_BASESCAPE, 0);
 
 	add(_window);

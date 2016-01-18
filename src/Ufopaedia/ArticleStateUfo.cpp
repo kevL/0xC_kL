@@ -51,7 +51,6 @@ ArticleStateUfo::ArticleStateUfo(const ArticleDefinitionUfo* const defs)
 {
 	_txtTitle = new Text(155, 32, 5, 24);
 
-//	setPalette("PAL_GEOSCAPE");
 	setPalette(PAL_GEOSCAPE);
 
 	ArticleState::initLayout(false);

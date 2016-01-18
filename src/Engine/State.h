@@ -138,9 +138,6 @@ protected:
 				int ncolors = 256,
 				bool immediately = true);
 		/// Changes the state's 8bpp palette with certain resources.
-//		void setPalette(
-//				const std::string& palette,
-//				int backpal = -1);
 		void setPalette(
 				const PaletteType palette,
 				int backpal = -1);

@@ -127,7 +127,6 @@ BriefingState::BriefingState(
 	kL_geoMusicPlaying = false;	// otherwise the Briefing music switches back to Geoscape
 								// music when on high time-compression (eg, BaseDefense);
 								// although Geoscape::init() *should not even run* after this ......
-//	setPalette("PAL_GEOSCAPE", bgColor);
 	setPalette(PAL_GEOSCAPE, bgColor);
 	_window->setBackground(_game->getResourcePack()->getSurface(bg));
 

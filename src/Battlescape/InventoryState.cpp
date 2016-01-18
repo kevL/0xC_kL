@@ -148,7 +148,6 @@ InventoryState::InventoryState(
 							0,0,
 							_parent == nullptr);
 
-//	setPalette("PAL_BATTLESCAPE");
 	setPalette(PAL_BATTLESCAPE);
 
 	add(_bg);

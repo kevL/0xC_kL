@@ -64,7 +64,6 @@ ScannerState::ScannerState(const BattleAction* const action)
 	if (_game->getScreen()->getDY() > 50)
 		_fullScreen = false;
 
-//	setPalette("PAL_BATTLESCAPE");
 	setPalette(PAL_BATTLESCAPE);
 
 	add(_scan);

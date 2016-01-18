@@ -105,7 +105,6 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 //	setInterface("selectNewResearch");
 //	add(_window, "window", "selectNewResearch");
 
-//	setPalette("PAL_BASESCAPE");
 	setPalette(PAL_BASESCAPE);
 
 	add(_window);
