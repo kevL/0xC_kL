@@ -578,11 +578,6 @@ void Map::drawTerrain(Surface* const surface) // private.
 		endZ,
 		d;
 
-	if (_camera->getShowLayers() == true)
-		endZ = _battleSave->getMapSizeZ() - 1;
-	else
-		endZ = viewLevel;
-
 	_camera->convertScreenToMap(
 							0,
 							0,
@@ -603,6 +598,14 @@ void Map::drawTerrain(Surface* const surface) // private.
 							surface->getHeight() + _spriteHeight,
 							&d,
 							&endY);
+
+	if (_camera->getShowLayers() == true)
+	{
+		endZ = _battleSave->getMapSizeZ() - 1;
+		endY += endZ - viewLevel;
+	}
+	else
+		endZ = viewLevel;
 
 	beginY -= (viewLevel * 2);
 	beginX -= (viewLevel * 2);
