@@ -25,6 +25,8 @@
 
 #include <yaml-cpp/yaml.h>
 
+#include "../Engine/Palette.h"
+
 
 namespace OpenXcom
 {
@@ -52,6 +54,11 @@ private:
 		_type;
 	std::map<std::string, Element> _elements;
 
+	PaletteType _palettePt;
+
+	/// Converts the palette from a string to PaletteType.
+	static PaletteType convertToPaletteType(const std::string& palette);
+
 
 	public:
 		/// Consructor.
@@ -65,8 +72,11 @@ private:
 		/// Gets an element.
 		const Element* getElement(const std::string& id) const;
 
-		/// Gets palette.
+		/// Gets the palette-string.
 		const std::string& getPalette() const;
+		/// Gets the PaletteType.
+		PaletteType getPalettePt() const;
+
 		/// Gets parent interface rule.
 		const std::string& getParent() const;
 };

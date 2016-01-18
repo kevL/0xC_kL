@@ -26,6 +26,8 @@
 
 #include <SDL.h>
 
+#include "../Engine/Palette.h"
+
 
 namespace OpenXcom
 {
@@ -74,6 +76,8 @@ private:
 		std::map<std::string, std::map<std::string, std::vector<std::pair<std::string, int>>>> _musicAssignment;
 
 		std::vector<Uint16> _voxelData;
+
+		std::map<PaletteType, Palette*> _palettesPt;
 
 
 		public:
@@ -163,6 +167,8 @@ private:
 
 			/// Gets a particular palette.
 			Palette* getPalette(const std::string& name) const;
+			/// Gets a particular palette by PaletteType.
+			Palette* getPalette(const PaletteType palType) const;
 			/// Sets a new palette.
 			void setPalette(
 					SDL_Color* colors,

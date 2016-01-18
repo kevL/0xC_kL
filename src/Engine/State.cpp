@@ -26,7 +26,6 @@
 #include "InteractiveSurface.h"
 #include "Language.h"
 //#include "LocalizedText.h"
-#include "Palette.h"
 #include "Screen.h"
 #include "Surface.h"
 
@@ -99,12 +98,14 @@ void State::setInterface(
 		bool tactical)
 {
 	int backPal = -1;
-	std::string pal;
+//	std::string pal;
+	PaletteType pal = PAL_NONE;
 
 	_ruleInterface = _game->getRuleset()->getInterface(category);
 	if (_ruleInterface != nullptr)
 	{
-		pal = _ruleInterface->getPalette();
+//		pal = _ruleInterface->getPalette();
+		pal = _ruleInterface->getPalettePt();
 		const Element* element = _ruleInterface->getElement("palette");
 
 		_ruleInterfaceParent = _game->getRuleset()->getInterface(_ruleInterface->getParent());
@@ -113,8 +114,10 @@ void State::setInterface(
 			if (element == nullptr)
 				element = _ruleInterfaceParent->getElement("palette");
 
-			if (pal.empty() == true)
-				pal = _ruleInterfaceParent->getPalette();
+//			if (pal.empty() == true)
+//				pal = _ruleInterfaceParent->getPalette();
+			if (pal == PAL_NONE)
+				pal = _ruleInterfaceParent->getPalettePt();
 		}
 
 		if (element != nullptr
@@ -131,10 +134,14 @@ void State::setInterface(
 		}
 	}
 
+//	if (tactical == true)
+//		pal = "PAL_BATTLESCAPE";
+//	else if (pal.empty() == true)
+//		pal = "PAL_GEOSCAPE";
 	if (tactical == true)
-		pal = "PAL_BATTLESCAPE";
-	else if (pal.empty() == true)
-		pal = "PAL_GEOSCAPE";
+		pal = PAL_BATTLESCAPE;
+	else if (pal == PAL_NONE)
+		pal = PAL_GEOSCAPE;
 
 	setPalette(pal, backPal);
 }
@@ -201,10 +208,6 @@ void State::add(
 				}
 			}
 
-//			if (tacBtn != nullptr)
-//				tacBtn->setTftdMode(element->TFTDMode);
-//			surface->setTFTDMode(element->TFTDMode);
-
 			if (element->color != -1)
 				surface->setColor(static_cast<Uint8>(element->color));
 
@@ -222,7 +225,7 @@ void State::add(
 		tacBtn->initSurfaces();
 	}
 
-	if (   _game->getLanguage() != nullptr
+	if (_game->getLanguage() != nullptr
 		&& _game->getResourcePack() != nullptr)
 	{
 		surface->initText(
@@ -589,8 +592,8 @@ void State::setPalette(
 
 /**
  * Loads palettes from the game resources into the state.
- * @param palette	- reference the string ID of the palette to load
- * @param backpal	- BACKPALS.DAT offset to use (default -1)
+ * @param palette - reference the string ID of the palette to load
+ * @param backpal - BACKPALS.DAT offset to use (default -1)
  */
 void State::setPalette(
 		const std::string& palette,
@@ -616,6 +619,54 @@ void State::setPalette(
 	if (backpal != -1)
 		setPalette(
 				_game->getResourcePack()->getPalette("BACKPALS.DAT")->getColors(static_cast<int>(Palette::blockOffset(static_cast<Uint8>(backpal)))),
+				Palette::PAL_bgID,
+				16,
+				false);
+
+	setPalette(nullptr); // delay actual update to the end
+}
+
+/**
+ * Loads palettes from the game resources into the state.
+ * @param palette - reference the string ID of the palette to load
+ * @param backpal - BACKPALS.DAT offset to use (default -1)
+ */
+void State::setPalette(
+		const PaletteType palette,
+		int backpal)
+{
+	setPalette(
+			_game->getResourcePack()->getPalette(palette)->getColors(),
+			0,
+			256,
+			false);
+
+	switch (palette)
+	{
+		case PAL_BASESCAPE:
+			_cursorColor = static_cast<Uint8>(ResourcePack::BASESCAPE_CURSOR);
+			break;
+		case PAL_GEOSCAPE:
+			_cursorColor = static_cast<Uint8>(ResourcePack::GEOSCAPE_CURSOR);
+			break;
+		case PAL_GRAPHS:
+			_cursorColor = static_cast<Uint8>(ResourcePack::GRAPHS_CURSOR);
+			break;
+		case PAL_UFOPAEDIA:
+			_cursorColor = static_cast<Uint8>(ResourcePack::UFOPAEDIA_CURSOR);
+			break;
+
+		default:
+			_cursorColor = static_cast<Uint8>(ResourcePack::BATTLESCAPE_CURSOR);
+	}
+
+
+	if (backpal != -1)
+		setPalette(
+//				_game->getResourcePack()->getPalette("BACKPALS.DAT")
+//					->getColors(static_cast<int>(Palette::blockOffset(static_cast<Uint8>(backpal)))),
+				_game->getResourcePack()->getPalette(PAL_BACKPALS)
+					->getColors(static_cast<int>(Palette::blockOffset(static_cast<Uint8>(backpal)))),
 				Palette::PAL_bgID,
 				16,
 				false);

@@ -19,6 +19,8 @@
 
 #include "RuleInterface.h"
 
+#include "../Engine/Logger.h"
+
 //#include <climits>
 
 
@@ -32,7 +34,8 @@ namespace OpenXcom
  */
 RuleInterface::RuleInterface(const std::string& type)
 	:
-		_type(type)
+		_type(type),
+		_palettePt(PAL_NONE)
 {}
 
 /**
@@ -47,8 +50,12 @@ RuleInterface::~RuleInterface()
  */
 void RuleInterface::load(const YAML::Node& node)
 {
-	_palette	= node["palette"]	.as<std::string>(_palette);
 	_parent		= node["parent"]	.as<std::string>(_parent);
+	_palette	= node["palette"]	.as<std::string>(_palette);
+
+	if ((_palettePt = convertToPaletteType(_palette)) == PAL_NONE)
+		Log(LOG_WARNING) << "RuleInteraface::load() " << _type << " has no PaletteType";
+
 
 	for (YAML::const_iterator
 			i = node["elements"].begin();
@@ -59,7 +66,7 @@ void RuleInterface::load(const YAML::Node& node)
 
 		if ((*i)["pos"])
 		{
-			const std::pair<int, int> pos = (*i)["pos"].as<std::pair<int, int>>();
+			const std::pair<int,int> pos = (*i)["pos"].as<std::pair<int,int>>();
 			element.x = pos.first;
 			element.y = pos.second;
 		}
@@ -69,7 +76,7 @@ void RuleInterface::load(const YAML::Node& node)
 
 		if ((*i)["size"])
 		{
-			const std::pair<int, int> pos = (*i)["size"].as<std::pair<int, int>>();
+			const std::pair<int,int> pos = (*i)["size"].as<std::pair<int,int>>();
 			element.w = pos.first;
 			element.h = pos.second;
 		}
@@ -84,6 +91,37 @@ void RuleInterface::load(const YAML::Node& node)
 		std::string id = (*i)["id"].as<std::string>("");
 		_elements[id] = element;
 	}
+}
+
+/**
+ * Converts the palette from a string to PaletteType.
+ * @param palette - the palette string to convert
+ * @return, the corresponding PaletteType (Palette.h)
+ */
+PaletteType RuleInterface::convertToPaletteType(const std::string& palette) // private/static.
+{
+	if (palette == "BACKPALS.DAT")
+		return PAL_BACKPALS;
+
+	if (palette == "PAL_BASESCAPE")
+		return PAL_BASESCAPE;
+
+	if (palette == "PAL_BATTLEPEDIA")
+		return PAL_BATTLEPEDIA;
+
+	if (palette == "PAL_BATTLESCAPE")
+		return PAL_BATTLESCAPE;
+
+	if (palette == "PAL_GEOSCAPE")
+		return PAL_GEOSCAPE;
+
+	if (palette == "PAL_GRAPHS")
+		return PAL_GRAPHS;
+
+	if (palette == "PAL_UFOPAEDIA")
+		return PAL_UFOPAEDIA;
+
+	return PAL_NONE;
 }
 
 /**
@@ -107,6 +145,15 @@ const Element* RuleInterface::getElement(const std::string& id) const // <- why 
 const std::string& RuleInterface::getPalette() const
 {
 	return _palette;
+}
+
+/**
+ * Gets this Interface's PaletteType.
+ * @return, the PaletteType (Palette.h)
+ */
+PaletteType RuleInterface::getPalettePt() const
+{
+	return _palettePt;
 }
 
 /**

@@ -86,8 +86,7 @@ void Palette::loadDat(
 
 	for (size_t // Correct X-Com colors to RGB colors
 			i = 0;
-			i < _count
-				&& palFile.read((char*)value, 3);
+			i < _count && palFile.read((char*)value, 3);
 			++i)
 	{
 		_colors[i].r = static_cast<Uint8>(value[0] * 4);
@@ -122,6 +121,56 @@ Uint32 Palette::getRGBA(
 		Uint8 color)
 {
 	return ((Uint32)pal[color].r << 24) | ((Uint32)pal[color].g << 16) | ((Uint32)pal[color].b << 8) | (Uint32)0xFF;
+}
+
+/**
+ *
+ * @param pal		- pointer to SDL_Color
+ * @param qColors	-
+ */
+void Palette::setColors(
+		SDL_Color* pal,
+		int qColors)
+{
+	if (_colors != 0)
+	{
+		throw Exception("Palette::setColors can be run only once");
+	}
+
+	_count = static_cast<size_t>(qColors);
+	_colors = new SDL_Color[_count];
+	std::memset(
+			_colors,
+			0,
+			sizeof(SDL_Color) * _count);
+
+	for (size_t // Correct X-Com colors to RGB colors
+			i = 0;
+			i < _count;
+			++i)
+	{
+		// TFTD's LBM colors are good the way they are - no need for adjustment here, except...
+		_colors[i].r = pal[i].r;
+		_colors[i].g = pal[i].g;
+		_colors[i].b = pal[i].b;
+		_colors[i].unused = 255;
+
+		if (i > 15
+			&& _colors[i].r == _colors[0].r
+			&& _colors[i].g == _colors[0].g
+			&& _colors[i].b == _colors[0].b)
+		{
+			// SDL "optimizes" surfaces by using RGB colour matching to reassign pixels to an "earlier" matching colour in the palette,
+			// meaning any pixels in a surface that are meant to be black will be reassigned as colour 0, rendering them transparent.
+			// avoid this eventuality by altering the "later" colours just enough to disambiguate them without causing them to look significantly different.
+			// SDL 2.0 has some functionality that should render this hack unnecessary.
+			++_colors[i].r;
+			++_colors[i].g;
+			++_colors[i].b;
+		}
+	}
+
+	_colors[0].unused = 0;
 }
 
 /**
@@ -179,55 +228,5 @@ void Palette::savePal(const std::string& file) const
 
 	palFile.close();
 } */
-
-/**
- *
- * @param pal		- pointer to SDL_Color
- * @param qColors	-
- */
-void Palette::setColors(
-		SDL_Color* pal,
-		int qColors)
-{
-	if (_colors != 0)
-	{
-		throw Exception("Palette::setColors can be run only once");
-	}
-
-	_count = static_cast<size_t>(qColors);
-	_colors = new SDL_Color[_count];
-	std::memset(
-			_colors,
-			0,
-			sizeof(SDL_Color) * _count);
-
-	for (size_t // Correct X-Com colors to RGB colors
-			i = 0;
-			i < _count;
-			++i)
-	{
-		// TFTD's LBM colors are good the way they are - no need for adjustment here, except...
-		_colors[i].r = pal[i].r;
-		_colors[i].g = pal[i].g;
-		_colors[i].b = pal[i].b;
-		_colors[i].unused = 255;
-
-		if (i > 15
-			&& _colors[i].r == _colors[0].r
-			&& _colors[i].g == _colors[0].g
-			&& _colors[i].b == _colors[0].b)
-		{
-			// SDL "optimizes" surfaces by using RGB colour matching to reassign pixels to an "earlier" matching colour in the palette,
-			// meaning any pixels in a surface that are meant to be black will be reassigned as colour 0, rendering them transparent.
-			// avoid this eventuality by altering the "later" colours just enough to disambiguate them without causing them to look significantly different.
-			// SDL 2.0 has some functionality that should render this hack unnecessary.
-			++_colors[i].r;
-			++_colors[i].g;
-			++_colors[i].b;
-		}
-	}
-
-	_colors[0].unused = 0;
-}
 
 }

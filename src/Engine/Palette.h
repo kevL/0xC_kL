@@ -28,6 +28,19 @@
 namespace OpenXcom
 {
 
+enum PaletteType
+{
+	PAL_NONE = -1,		// -1
+	PAL_BACKPALS,		//  0
+	PAL_BASESCAPE,		//  1
+	PAL_BATTLEPEDIA,	//  2
+	PAL_BATTLESCAPE,	//  3
+	PAL_GEOSCAPE,		//  4
+	PAL_GRAPHS,			//  5
+	PAL_UFOPAEDIA		//  6
+};
+
+
 /**
  * Container for palettes (sets of 8bpp colors).
  * Works as an encapsulation for SDL's SDL_Color struct and
@@ -58,8 +71,6 @@ private:
 		/// Gets a certain color from the palette.
 		SDL_Color* getColors(int offset = 0) const;
 		///
-//		void savePal(const std::string& file) const;
-		///
 		void setColors(
 				SDL_Color* pal,
 				int qColors);
@@ -87,6 +98,9 @@ private:
 		 */
 		static inline Uint8 blockOffset(Uint8 block)
 		{ return (static_cast<Uint8>(block << 4)); }
+
+		///
+//		void savePal(const std::string& file) const;
 };
 
 }

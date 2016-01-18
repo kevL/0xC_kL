@@ -101,6 +101,10 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 	_btnAwards		= new TextButton(70, 16, 164, 177);
 	_btnOk			= new TextButton(70, 16, 242, 177);
 
+	// eg:
+//	setInterface("selectNewResearch");
+//	add(_window, "window", "selectNewResearch");
+
 	setPalette("PAL_BASESCAPE");
 
 	add(_window);

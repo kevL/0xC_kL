@@ -26,7 +26,6 @@
 #include "../Engine/Game.h"
 #include "../Engine/Music.h"
 #include "../Engine/Options.h"
-#include "../Engine/Palette.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
 #include "../Engine/SoundSet.h"
@@ -423,6 +422,20 @@ Palette* ResourcePack::getPalette(const std::string& name) const
 {
 	const std::map<std::string, Palette*>::const_iterator i = _palettes.find(name);
 	if (i != _palettes.end())
+		return i->second;
+
+	return nullptr;
+}
+
+/**
+ * Returns a specific palette from the resource set by PaletteType.
+ * @param palType - a PaletteType (Palettes.h)
+ * @return, pointer to the corresponding Palette
+ */
+Palette* ResourcePack::getPalette(const PaletteType palType) const
+{
+	const std::map<PaletteType, Palette*>::const_iterator i = _palettesPt.find(palType);
+	if (i != _palettesPt.end())
 		return i->second;
 
 	return nullptr;

@@ -25,6 +25,8 @@
 
 #include <SDL.h>
 
+#include "Palette.h"
+
 
 namespace OpenXcom
 {
@@ -138,6 +140,9 @@ protected:
 		/// Changes the state's 8bpp palette with certain resources.
 		void setPalette(
 				const std::string& palette,
+				int backpal = -1);
+		void setPalette(
+				const PaletteType palette,
 				int backpal = -1);
 		/// Gets the state's 8bpp palette.
 		SDL_Color* getPalette();
