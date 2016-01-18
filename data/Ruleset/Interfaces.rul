@@ -1299,3 +1299,45 @@ interfaces:
       - id: body
         color: 0
         color2: 3
+  - type: awards
+    palette: PAL_BASESCAPE
+    elements:
+      - id: palette
+        color: 0     # olive
+        color2: 4    # slate blue
+      - id: window
+        color: 241   # pink
+      - id: title
+        color: 218   # blue
+      - id: text
+        color: 241   # pink
+      - id: list
+        color: 208   # white
+        color2: 241  # pink
+      - id: list2
+        color: 213   # yellow
+        color2: 208  # white
+      - id: button
+        color: 246   # purple
+      - id: button2
+        color: 218   # blue
+        color2: 213  # yellow
+      - id: info
+        color: 160   # brown
+  - type: awardsMissionInfo
+    palette: PAL_BASESCAPE
+    elements:
+      - id: palette
+        color: 1     # brown
+      - id: window
+        color: 218   # blue
+      - id: title
+        color: 213   # yellow
+      - id: text
+        color: 213   # yellow
+        color2: 208  # white
+      - id: button
+        color: 213   # yellow
+      - id: list
+        color: 208   # white
+        color2: 213  # yellow

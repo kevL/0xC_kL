@@ -67,7 +67,7 @@ void RuleInterface::load(const YAML::Node& node)
 		}
 		else
 			element.x =
-			element.y = std::numeric_limits<int>::max(); // note, these could conceivably be "-1"
+			element.y = std::numeric_limits<int>::max();
 
 		if ((*i)["size"])
 		{
@@ -79,9 +79,9 @@ void RuleInterface::load(const YAML::Node& node)
 			element.w =
 			element.h = -1;
 
-		element.color	= (*i)["color"]	.as<int>(-1);
-		element.color2	= (*i)["color2"].as<int>(-1);
-		element.border	= (*i)["border"].as<int>(-1);
+		element.color  = (*i)["color"] .as<int>(-1);
+		element.color2 = (*i)["color2"].as<int>(-1);
+		element.border = (*i)["border"].as<int>(-1);
 
 		std::string id = (*i)["id"].as<std::string>("");
 		_elements[id] = element;

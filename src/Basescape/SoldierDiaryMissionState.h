@@ -43,10 +43,10 @@ class SoldierDiaryMissionState
 {
 
 private:
-	static const Uint8
-		WHITE	= 208,
-		YELLOW	= 213,
-		BLUE	= 218;
+//	static const Uint8
+//		WHITE	= 208,
+//		YELLOW	= 213,
+//		BLUE	= 218;
 
 	Surface* _srfLine;
 	Text

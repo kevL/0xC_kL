@@ -61,17 +61,21 @@ class SoldierDiaryPerformanceState final
 private:
 	static const int LIST_SPRITES_y = 49;
 	static const size_t LIST_ROWS = 12;
-	static const Uint8
-		BROWN	= 160,
-		WHITE	= 208,
-		YELLOW	= 213,
-		BLUE	= 218,
-		PINK	= 241,
-		PURPLE	= 246;
+//	static const Uint8
+//		BROWN	= 160,
+//		WHITE	= 208,
+//		YELLOW	= 213,
+//		BLUE	= 218,
+//		PINK	= 241,
+//		PURPLE	= 246;
 
 	size_t
 		_lastScrollPos,
 		_soldierId;
+	Uint8
+		_colorBtnDown,
+		_colorBtnUp,
+		_color1stCol;
 
 	SoldierDiaryDisplay _display;
 
@@ -81,7 +85,7 @@ private:
 	std::vector<SoldierDead*>* _listDead;
 	std::vector<Surface*>
 		_srfSprite,
-		_srfDecor;
+		_srfLevel;
 
 	Base* _base;
 	SoldierDiary* _diary;
@@ -158,9 +162,9 @@ private:
 		void btnMedalsToggle(Action* action);
 
 		/// Handler for moving the mouse over a medal.
-		void lstInfoMouseOver(Action* action);
+		void lstMouseOver(Action* action);
 		/// Handler for moving the mouse outside the medals list.
-		void lstInfoMouseOut(Action* action);
+		void lstMouseOut(Action* action);
 
 		/// Handler for clicking the Previous button.
 		void btnPrevClick(Action* action);

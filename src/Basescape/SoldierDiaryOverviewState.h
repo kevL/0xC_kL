@@ -48,11 +48,11 @@ class SoldierDiaryOverviewState final
 {
 
 private:
-	static const Uint8
-		WHITE	= 208,
-		BLUE	= 218,
-		PINK	= 241,
-		PURPLE	= 246;
+//	static const Uint8
+//		WHITE	= 208,
+//		BLUE	= 218,
+//		PINK	= 241,
+//		PURPLE	= 246;
 
 	size_t
 		_soldierId,
@@ -113,7 +113,7 @@ private:
 		void btnNextClick(Action* action);
 
 		/// Handler for clicking on mission list.
-		void lstDiaryInfoClick(Action* action);
+		void lstMissionInfoClick(Action* action);
 };
 
 }

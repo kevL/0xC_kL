@@ -34,6 +34,9 @@
 
 #include "../Resource/ResourcePack.h"
 
+#include "../Ruleset/RuleInterface.h"
+#include "../Ruleset/Ruleset.h"
+
 #include "../Savegame/Base.h"
 #include "../Savegame/BattleUnitStatistics.h"
 #include "../Savegame/MissionStatistics.h"
@@ -73,25 +76,27 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	_txtPoints		= new Text(80, 9, 188, 87);
 
 	_srfLine		= new Surface(120, 1, 100, 98);
+
 	_lstKills		= new TextList(217, 49, 50, 101);
 
 	_btnOk			= new TextButton(180, 16, 70, 152);
 
-	setPalette(PAL_BASESCAPE);
+//	setPalette(PAL_BASESCAPE);
+	setInterface("awardsMissionInfo");
 
-	add(_window);
-	add(_txtTitle);
-	add(_txtMissionType);
-	add(_txtUFO);
-	add(_txtScore);
-	add(_txtPoints);
-	add(_txtRace);
-	add(_txtDaylight);
-	add(_txtKills);
-	add(_txtDaysWounded);
+	add(_window,			"window",	"awardsMissionInfo");
+	add(_txtTitle,			"title",	"awardsMissionInfo");
+	add(_txtMissionType,	"text",		"awardsMissionInfo");
+	add(_txtUFO,			"text",		"awardsMissionInfo");
+	add(_txtScore,			"text",		"awardsMissionInfo");
+	add(_txtPoints,			"text",		"awardsMissionInfo");
+	add(_txtRace,			"text",		"awardsMissionInfo");
+	add(_txtDaylight,		"text",		"awardsMissionInfo");
+	add(_txtKills,			"text",		"awardsMissionInfo");
+	add(_txtDaysWounded,	"text",		"awardsMissionInfo");
 	add(_srfLine);
-	add(_lstKills);
-	add(_btnOk);
+	add(_lstKills,			"list",		"awardsMissionInfo");
+	add(_btnOk,				"button",	"awardsMissionInfo");
 
 	centerAllSurfaces();
 
@@ -136,10 +141,10 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	}
 
 
-	_window->setColor(BLUE);
+//	_window->setColor(BLUE);
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK16.SCR"));
 
-	_btnOk->setColor(YELLOW);
+//	_btnOk->setColor(YELLOW);
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick((ActionHandler)& SoldierDiaryMissionState::btnOkClick);
 	_btnOk->onKeyboardPress(
@@ -152,23 +157,23 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 			(ActionHandler)& SoldierDiaryMissionState::btnOkClick,
 			Options::keyCancel);
 
-	_txtTitle->setColor(YELLOW);
+//	_txtTitle->setColor(YELLOW);
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 	_txtTitle->setText(tr("STR_MISSION_DETAILS"));
 
-	_txtScore->setColor(YELLOW);
-	_txtScore->setSecondaryColor(WHITE);
+//	_txtScore->setColor(YELLOW);
+//	_txtScore->setSecondaryColor(WHITE);
 	_txtScore->setText(tr("STR_SCORE_VALUE").arg(stats->at(missionId)->score));
 
-	_txtMissionType->setColor(YELLOW);
-	_txtMissionType->setSecondaryColor(WHITE);
+//	_txtMissionType->setColor(YELLOW);
+//	_txtMissionType->setSecondaryColor(WHITE);
 	_txtMissionType->setText(tr("STR_MISSION_TYPE").arg(tr(stats->at(missionId)->type))); // 'type' was, getMissionTypeLowerCase()
 
 	if (stats->at(missionId)->ufo != "NO_UFO")
 	{
-		_txtUFO->setColor(YELLOW);
-		_txtUFO->setSecondaryColor(WHITE);
+//		_txtUFO->setColor(YELLOW);
+//		_txtUFO->setSecondaryColor(WHITE);
 		_txtUFO->setText(tr("STR_UFO_TYPE").arg(tr(stats->at(missionId)->ufo)));
 	}
 	else
@@ -176,8 +181,8 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 
 	if (stats->at(missionId)->alienRace != "STR_UNKNOWN")
 	{
-		_txtRace->setColor(YELLOW);
-		_txtRace->setSecondaryColor(WHITE);
+//		_txtRace->setColor(YELLOW);
+//		_txtRace->setSecondaryColor(WHITE);
 		_txtRace->setText(tr("STR_RACE_TYPE").arg(tr(stats->at(missionId)->alienRace)));
 	}
 	else
@@ -186,8 +191,8 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	if (stats->at(missionId)->type != "STR_BASE_DEFENSE"
 		&& stats->at(missionId)->type != "STR_ALIEN_BASE_ASSAULT")
 	{
-		_txtDaylight->setColor(YELLOW);
-		_txtDaylight->setSecondaryColor(WHITE);
+//		_txtDaylight->setColor(YELLOW);
+//		_txtDaylight->setSecondaryColor(WHITE);
 		if (stats->at(missionId)->shade < 9)
 			_txtDaylight->setText(tr("STR_DAYLIGHT_TYPE").arg(tr("STR_DAY")));
 		else
@@ -198,8 +203,8 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 
 	if (daysWounded != 0)
 	{
-		_txtDaysWounded->setColor(YELLOW);
-		_txtDaysWounded->setSecondaryColor(WHITE);
+//		_txtDaysWounded->setColor(YELLOW);
+//		_txtDaysWounded->setSecondaryColor(WHITE);
 		if (daysWounded == -1)
 			_txtDaysWounded->setText(tr("STR_DAYS_WOUNDED").arg(tr("STR_KIA")).arg(L""));
 		else if (daysWounded == -2)
@@ -210,10 +215,14 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	else
 		_txtDaysWounded->setVisible(false);
 
-	_srfLine->drawLine(0,0, 120,0, YELLOW + 1);
+	Uint8 color = _game->getRuleset()->getInterface("awardsMissionInfo")->getElement("list")->color2;
 
-	_lstKills->setColor(WHITE);
-	_lstKills->setArrowColor(YELLOW);
+//	_srfLine->drawLine(0,0, 120,0, YELLOW + 1);
+	_srfLine->drawLine(0,0, 120,0, color + 1u);
+
+//	_lstKills->setColor(WHITE);
+//	_lstKills->setArrowColor(YELLOW);
+	_lstKills->setArrowColor(color);
 	_lstKills->setColumns(3, 27,96,94);
 	_lstKills->setMargin();
 
@@ -248,14 +257,15 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 							status.str().c_str(),
 							unit.str().c_str(),
 							tr((*i)->_weapon).c_str());
-			_lstKills->setCellColor(row++, 0, YELLOW);
+//			_lstKills->setCellColor(row++, 0, YELLOW);
+			_lstKills->setCellColor(row++, 0, color);
 		}
 	}
 
 	if (killQty != 0)
 	{
-		_txtKills->setColor(YELLOW);
-		_txtKills->setSecondaryColor(WHITE);
+//		_txtKills->setColor(YELLOW);
+//		_txtKills->setSecondaryColor(WHITE);
 		_txtKills->setText(tr("STR_MARKS").arg(killQty));
 	}
 	else
@@ -263,8 +273,8 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 
 	if (points != 0)
 	{
-		_txtPoints->setColor(YELLOW);
-		_txtPoints->setSecondaryColor(WHITE);
+//		_txtPoints->setColor(YELLOW);
+//		_txtPoints->setSecondaryColor(WHITE);
 		_txtPoints->setText(tr("STR_POINTS_VALUE").arg(points));
 	}
 	else

@@ -39,6 +39,7 @@
 
 #include "../Resource/ResourcePack.h"
 
+#include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/Base.h"
@@ -101,53 +102,50 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 	_btnAwards		= new TextButton(70, 16, 164, 177);
 	_btnOk			= new TextButton(70, 16, 242, 177);
 
-	// eg:
-//	setInterface("selectNewResearch");
-//	add(_window, "window", "selectNewResearch");
+//	setPalette(PAL_BASESCAPE);
+	setInterface("awards");
 
-	setPalette(PAL_BASESCAPE);
+	add(_window,		"window",	"awards");
+	add(_txtTitle,		"title",	"awards");
+	add(_txtBaseLabel,	"title",	"awards");
 
-	add(_window);
-	add(_txtTitle);
-	add(_txtBaseLabel);
+	add(_btnPrev,		"button",	"awards");
+	add(_btnNext,		"button",	"awards");
 
-	add(_btnPrev);
-	add(_btnNext);
+	add(_txtLocation,	"window",	"awards");
+	add(_txtStatus,		"window",	"awards");
+	add(_txtDate,		"window",	"awards");
 
-	add(_txtLocation);
-	add(_txtStatus);
-	add(_txtDate);
+	add(_lstDiary,		"list",		"awards");
 
-	add(_lstDiary);
-
-	add(_btnMissions);
-	add(_btnKills);
-	add(_btnAwards);
-	add(_btnOk);
+	add(_btnMissions,	"button2",	"awards");
+	add(_btnKills,		"button2",	"awards");
+	add(_btnAwards,		"button2",	"awards");
+	add(_btnOk,			"button2",	"awards");
 
 	centerAllSurfaces();
 
 
-	_window->setColor(PINK);
+//	_window->setColor(PINK);
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK02.SCR"));
 
-	_txtTitle->setColor(BLUE);
+//	_txtTitle->setColor(BLUE);
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 
 	if (_base != nullptr)
 	{
-		_txtBaseLabel->setColor(BLUE);
+//		_txtBaseLabel->setColor(BLUE);
 		_txtBaseLabel->setAlign(ALIGN_CENTER);
 		_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
 	}
 	else
 		_txtBaseLabel->setVisible(false);
 
-	_btnPrev->setColor(PURPLE);
+//	_btnPrev->setColor(PURPLE);
 	_btnPrev->setText(L"<");
 
-	_btnNext->setColor(PURPLE);
+//	_btnNext->setColor(PURPLE);
 	_btnNext->setText(L">");
 
 	if (_base == nullptr)
@@ -174,38 +172,50 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 	}
 
 	_txtLocation->setText(tr("STR_LOCATION"));
-	_txtLocation->setColor(PINK);
+//	_txtLocation->setColor(PINK);
 
 	_txtStatus->setText(tr("STR_STATUS"));
-	_txtStatus->setColor(PINK);
+//	_txtStatus->setColor(PINK);
 
 	_txtDate->setText(tr("STR_DATE_MISSION"));
-	_txtDate->setColor(PINK);
+//	_txtDate->setColor(PINK);
+
+	Uint8 color = _game->getRuleset()->getInterface("awards")->getElement("list")->color2;
 
 	_lstDiary->setColumns(5, 94,108,25,22,30);
-	_lstDiary->setColor(WHITE);
-	_lstDiary->setArrowColor(PINK);
+//	_lstDiary->setColor(WHITE);
+	_lstDiary->setArrowColor(color);
+//	_lstDiary->setArrowColor(PINK);
 	_lstDiary->setBackground(_window);
 	_lstDiary->setSelectable();
 	_lstDiary->setMargin();
-	_lstDiary->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::lstDiaryInfoClick);
+	_lstDiary->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::lstMissionInfoClick);
 
 
 	_btnMissions->setText(tr("STR_MISSIONS_UC"));
-	_btnMissions->setColor(BLUE);
+//	_btnMissions->setColor(BLUE);
 	_btnMissions->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnMissionsClick);
+	_btnMissions->onKeyboardPress(
+					(ActionHandler)& SoldierDiaryOverviewState::btnMissionsClick,
+					SDLK_m);
 
 	_btnKills->setText(tr("STR_KILLS_UC"));
-	_btnKills->setColor(BLUE);
+//	_btnKills->setColor(BLUE);
 	_btnKills->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnKillsClick);
+	_btnKills->onKeyboardPress(
+					(ActionHandler)& SoldierDiaryOverviewState::btnKillsClick,
+					SDLK_k);
 
 	_btnAwards->setText(tr("STR_AWARDS_UC"));
-	_btnAwards->setColor(BLUE);
-	_btnAwards->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnMedalsClick);
+//	_btnAwards->setColor(BLUE);
 //	_btnAwards->setVisible(_game->getRuleset()->getAwardsList().empty() == false); // safety.
+	_btnAwards->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnMedalsClick);
+	_btnAwards->onKeyboardPress(
+					(ActionHandler)& SoldierDiaryOverviewState::btnMedalsClick,
+					SDLK_a);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->setColor(BLUE);
+//	_btnOk->setColor(BLUE);
 	_btnOk->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnOkClick);
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& SoldierDiaryOverviewState::btnOkClick,
@@ -419,7 +429,7 @@ void SoldierDiaryOverviewState::btnNextClick(Action*)
  * Shows the selected soldier's Mission info.
  * @param action - pointer to an Action
  */
-void SoldierDiaryOverviewState::lstDiaryInfoClick(Action*)
+void SoldierDiaryOverviewState::lstMissionInfoClick(Action*)
 {
 	_curRow = _lstDiary->getScroll();
 
