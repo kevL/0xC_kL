@@ -57,7 +57,8 @@ private:
 	int _flarePower;
 
 	BattlescapeButton
-		* _btnGround,
+		* _btnGroundL,
+		* _btnGroundR,
 		* _btnNext,
 		* _btnOk,
 		* _btnPrev,

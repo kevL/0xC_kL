@@ -151,7 +151,7 @@ private:
 		bool unload();
 
 		/// Arranges items on the ground.
-		void arrangeGround(bool alterOffset = true);
+		void arrangeGround(int dir = 0);
 		/// Attempts to place an item in an inventory section.
 		bool fitItem(
 				const RuleInventory* const inRule,

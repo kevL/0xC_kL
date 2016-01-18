@@ -131,7 +131,8 @@ InventoryState::InventoryState(
 
 	_btnRank	= new BattlescapeButton(26, 23,   0,   0);
 	_btnUnload	= new BattlescapeButton(32, 25, 288,  32);
-	_btnGround	= new BattlescapeButton(32, 15, 288, 137);
+	_btnGroundL	= new BattlescapeButton(32, 15,   0, 137);
+	_btnGroundR	= new BattlescapeButton(32, 15, 288, 137);
 
 /*	_btnCreateTemplate = new BattlescapeButton(32,22, _templateBtnX, _createTemplateBtnY);
 	_btnApplyTemplate = new BattlescapeButton(32,22, _templateBtnX, _applyTemplateBtnY);
@@ -175,7 +176,8 @@ InventoryState::InventoryState(
 	add(_btnPrev,		"buttonPrev",		"inventory", _bg);
 	add(_btnNext,		"buttonNext",		"inventory", _bg);
 	add(_btnUnload,		"buttonUnload",		"inventory", _bg);
-	add(_btnGround,		"buttonGround",		"inventory", _bg);
+	add(_btnGroundL,	"buttonGround",		"inventory", _bg);
+	add(_btnGroundR,	"buttonGround",		"inventory", _bg);
 	add(_btnRank,		"rank",				"inventory", _bg);
 
 //	add(_btnCreateTemplate,	"buttonCreate",	"inventory", _bg);
@@ -294,15 +296,22 @@ InventoryState::InventoryState(
 //	_btnUnload->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
 //	_btnUnload->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
-	_btnGround->onMouseClick(
+	_btnGroundL->onMouseClick(
 					(ActionHandler)& InventoryState::btnGroundClick,
 					SDL_BUTTON_LEFT);
-	_btnGround->onMouseClick(
+	_btnGroundL->onMouseClick(
 					(ActionHandler)& InventoryState::btnUnequipUnitClick,
 					SDL_BUTTON_RIGHT);
-//	_btnGround->setTooltip("STR_SCROLL_RIGHT");
-//	_btnGround->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
-//	_btnGround->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
+
+	_btnGroundR->onMouseClick(
+					(ActionHandler)& InventoryState::btnGroundClick,
+					SDL_BUTTON_LEFT);
+	_btnGroundR->onMouseClick(
+					(ActionHandler)& InventoryState::btnUnequipUnitClick,
+					SDL_BUTTON_RIGHT);
+//	_btnGroundR->setTooltip("STR_SCROLL_RIGHT");
+//	_btnGroundR->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
+//	_btnGroundR->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
 	_btnRank->onMouseClick((ActionHandler)& InventoryState::btnRankClick);
 //	_btnRank->setTooltip("STR_UNIT_STATS");
@@ -944,9 +953,12 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
  * Shows more ground items / rearranges them.
  * @param action - pointer to an Action
  */
-void InventoryState::btnGroundClick(Action*)
+void InventoryState::btnGroundClick(Action* action)
 {
-	_inv->arrangeGround();
+	if (action->getSender() == dynamic_cast<InteractiveSurface*>(_btnGroundR))
+		_inv->arrangeGround(+1);
+	else
+		_inv->arrangeGround(-1);
 }
 
 /**
@@ -974,7 +986,7 @@ void InventoryState::btnUnequipUnitClick(Action*)
 			i = equipt->erase(i);
 		}
 
-		_inv->arrangeGround(false);
+		_inv->arrangeGround();
 		updateStats();
 		_battleSave->getBattleState()->refreshMousePosition();
 
@@ -990,7 +1002,7 @@ void InventoryState::btnUnequipUnitClick(Action*)
 		std::vector<BattleItem*>* const unitInv = unit->getInventory();
 		Tile* const groundTile = unit->getTile();
 		clearInventory(_game, unitInv, groundTile);
-		_inv->arrangeGround(false); // refresh ui
+		_inv->arrangeGround(); // refresh ui
 		updateStats();
 		refreshMouse();
 
@@ -1552,7 +1564,7 @@ void InventoryState::txtTooltipOut(Action* action)
 		_inv->showWarning(tr("STR_NOT_ENOUGH_ITEMS_FOR_TEMPLATE"));
 
 
-	_inv->arrangeGround(false); // refresh ui
+	_inv->arrangeGround(); // refresh ui
 	updateStats();
 	refreshMouse();
 

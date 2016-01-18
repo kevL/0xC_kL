@@ -175,7 +175,7 @@ void Inventory::setSelectedUnitInventory(BattleUnit* const unit)
 {
 	_selUnit = unit;
 	_groundOffset = 999;
-	arrangeGround();
+	arrangeGround(+1);
 }
 
 /**
@@ -355,7 +355,7 @@ void Inventory::drawItems() // private.
 	{
 		if (*i != _selItem
 //			&& (*i)->getSlotX() >= _groundOffset
-			&& (*i)->getRules()->getInventoryHeight() != 0	// Items can be made invisible by setting their width or height to 0.
+//			&& (*i)->getRules()->getInventoryHeight() != 0	// Items can be made invisible by setting their width or height to 0.
 			&& (*i)->getRules()->getInventoryWidth() != 0)	// Eg, used for large-unit corpses.
 		{
 			sprite = bigobs->getFrame((*i)->getRules()->getBigSprite());
@@ -744,7 +744,7 @@ void Inventory::mouseClick(Action* action, State* state)
 								{
 									placed = true;
 									moveItem(item, targetSection);
-									arrangeGround(false);
+									arrangeGround();
 
 									soundId = ResourcePack::ITEM_DROP;
 								}
@@ -896,7 +896,7 @@ void Inventory::mouseClick(Action* action, State* state)
 							if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
 							{
 								_selUnit->getTile()->removeItem(item);
-								arrangeGround(false);
+								arrangeGround();
 							}
 //							moveItem(_selItem);
 
@@ -906,7 +906,7 @@ void Inventory::mouseClick(Action* action, State* state)
 
 							soundId = ResourcePack::ITEM_RELOAD;
 //							if (item->getInventorySection()->getCategory() == IC_GROUND)
-//								arrangeGround(false);
+//								arrangeGround();
 						}
 						else
 							_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
@@ -984,7 +984,7 @@ void Inventory::mouseClick(Action* action, State* state)
 										if (itRule->getBattleType() == BT_PROXYGRENADE)
 										{
 											item->setFuse(0);
-											arrangeGround(false);
+											arrangeGround();
 
 											const std::wstring activated = _game->getLanguage()->getString("STR_GRENADE_IS_ACTIVATED");
 											_warning->showMessage(activated);
@@ -996,7 +996,7 @@ void Inventory::mouseClick(Action* action, State* state)
 									{
 										_warning->showMessage(_game->getLanguage()->getString("STR_GRENADE_IS_DEACTIVATED"));
 										item->setFuse(-1);
-										arrangeGround(false);
+										arrangeGround();
 									}
 								}
 								else if (inRule->getCategory() != IC_GROUND) // move item to Ground
@@ -1005,7 +1005,7 @@ void Inventory::mouseClick(Action* action, State* state)
 											item,
 											_game->getRuleset()->getInventory_ST(ST_GROUND));
 
-									arrangeGround(false);
+									arrangeGround();
 									soundId = ResourcePack::ITEM_DROP;
 
 									_mouseOverItem = nullptr; // remove cursor info 'cause item is no longer under the cursor
@@ -1123,7 +1123,7 @@ bool Inventory::unload()
 		ammo->changeOwner(owner);
 
 		if (owner == nullptr)
-			arrangeGround(false);
+			arrangeGround();
 		else
 			drawItems();
 	}
@@ -1140,9 +1140,9 @@ bool Inventory::unload()
  * Arranges items on the ground for the inventory display.
  * @note Since items on the ground aren't assigned to anyone they don't actually
  * have permanent slot positions.
- * @param alterOffset - true to alter the ground offset (default true)
+ * @param dir - direction to shift ground-items: +1 right, -1 left (default 0)
  */
-void Inventory::arrangeGround(bool alterOffset)
+void Inventory::arrangeGround(int dir)
 {
 	_stackLevel.clear();
 
@@ -1162,9 +1162,10 @@ void Inventory::arrangeGround(bool alterOffset)
 	bool fit;
 	int
 		x,y,
-		xMax = 0;
+		width,
+		lastSlot = 0;
 
-	// for each item find the most topleft position that is not occupied and will fit
+	// for each item find the most top-left position that is not occupied and will fit
 	for (std::vector<BattleItem*>::const_iterator
 			i = _selUnit->getTile()->getInventory()->begin();
 			i != _selUnit->getTile()->getInventory()->end();
@@ -1172,6 +1173,7 @@ void Inventory::arrangeGround(bool alterOffset)
 	{
 		x =
 		y = 0;
+		width = (*i)->getRules()->getInventoryWidth();
 
 		fit = false;
 		while (fit == false)
@@ -1179,7 +1181,7 @@ void Inventory::arrangeGround(bool alterOffset)
 			fit = true; // assume the item can be put here, if one of the following checks fails it can't
 			for (int
 					xd = 0;
-					xd < (*i)->getRules()->getInventoryWidth() && fit == true;
+					xd < width && fit == true;
 					++xd)
 			{
 				if ((x + xd) % RuleInventory::GROUND_W < x % RuleInventory::GROUND_W)
@@ -1207,35 +1209,34 @@ void Inventory::arrangeGround(bool alterOffset)
 			{
 				(*i)->setSlotX(x);
 				(*i)->setSlotY(y);
-				// only increase the stack level if the item is actually visible.
-				if ((*i)->getRules()->getInventoryWidth() != 0)
+
+				if (*i != _selItem && width != 0) // only increase the stack level if the item is actually visible.
 					_stackLevel[x][y] += 1;
 
-				xMax = std::max(
-							xMax,
-							x + (*i)->getRules()->getInventoryWidth());
+				lastSlot = std::max(
+								lastSlot,
+								x + width);
 			}
-			else
+			else if (++y > RuleInventory::GROUND_H - (*i)->getRules()->getInventoryHeight())
 			{
-				if (++y > RuleInventory::GROUND_H - (*i)->getRules()->getInventoryHeight())
-				{
-					y = 0;
-					++x;
-				}
+				y = 0;
+				++x;
 			}
 		}
 	}
 
-	if (alterOffset == true)
+	if (dir != 0)
 	{
-		int itemWidth;
 		if (_selItem != nullptr)
-			itemWidth = _selItem->getRules()->getInventoryWidth();
+			width = _selItem->getRules()->getInventoryWidth();
 		else
-			itemWidth = 0;
+			width = 0;
 
-		if (xMax > _groundOffset + RuleInventory::GROUND_W - itemWidth)
-			_groundOffset += RuleInventory::GROUND_W;
+		if (lastSlot > _groundOffset + (RuleInventory::GROUND_W * dir) - width
+			&& (dir > 0 || _groundOffset > 0)) // don't let a shift-left go less than 0.
+		{
+			_groundOffset += (RuleInventory::GROUND_W * dir);
+		}
 		else
 			_groundOffset = 0;
 	}
