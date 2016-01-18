@@ -603,6 +603,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 	{
 		endZ = _battleSave->getMapSizeZ() - 1;
 		endY += endZ - viewLevel;
+		if (endY > _battleSave->getMapSizeY() - 1)
+			endY = _battleSave->getMapSizeY() - 1;
 	}
 	else
 		endZ = viewLevel;
