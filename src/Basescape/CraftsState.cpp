@@ -191,37 +191,30 @@ void CraftsState::init()
 
 /**
  * A more descriptive status of these Crafts.
+ * @note See also InterceptState::getAltStatus() & GeoscapeCraftState::cTor.
  * @param craft - pointer to Craft in question
  * @return, status string
  */
 std::wstring CraftsState::getAltStatus(Craft* const craft)
 {
-	std::string stat = craft->getCraftStatus();
-	if (stat != "STR_OUT")
+	const CraftStatus stat = craft->getCraftStatus();
+	if (stat != CS_OUT)
 	{
-		if (stat == "STR_READY")
+		if (stat == CS_READY)
 		{
 			_cellColor = GREEN;
-			return tr(stat);
+			return tr("STR_READY");
 		}
-
-/*		if (stat == "STR_REFUELLING")
-			stat = "STR_REFUELLING_";
-		else if (stat == "STR_REARMING")
-			stat = "STR_REARMING_";
-		else if (stat == "STR_REPAIRS")
-			stat = "STR_REPAIRS_"; */
 
 		_cellColor = LAVENDER;
 
-		stat.push_back('_');
+		std::string st (craft->getCraftStatusString());
+		st.push_back('_');
 
 		bool delayed;
 		const int hours = craft->getDowntime(delayed);
-		std::wstring wst = formatTime(
-									hours,
-									delayed);
-		return tr(stat).arg(wst);
+		const std::wstring wst = formatTime(hours, delayed);
+		return tr(st).arg(wst);
 	}
 
 	std::wstring status;
@@ -329,7 +322,7 @@ void CraftsState::lstCraftsPress(Action* action)
 
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
-		if (_base->getCrafts()->at(_lstCrafts->getSelectedRow())->getCraftStatus() != "STR_OUT")
+		if (_base->getCrafts()->at(_lstCrafts->getSelectedRow())->getCraftStatus() != CS_OUT)
 			_game->pushState(new CraftInfoState(
 											_base,
 											_lstCrafts->getSelectedRow()));

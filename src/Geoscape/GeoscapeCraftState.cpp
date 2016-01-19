@@ -200,7 +200,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	}
 
 
-	const std::string stat = _craft->getCraftStatus();
+	const CraftStatus stat = _craft->getCraftStatus();
 	std::wstring status;
 	const bool
 		lowFuel = _craft->getLowFuel(),
@@ -208,7 +208,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	int speed = _craft->getSpeed();
 
 	// note: Could add "DAMAGED - Return to Base" around here.
-	if (stat != "STR_OUT")
+	if (stat != CS_OUT)
 		status = tr("STR_BASED");
 	else if (lowFuel)
 		status = tr("STR_LOW_FUEL_RETURNING_TO_BASE");
@@ -248,13 +248,8 @@ GeoscapeCraftState::GeoscapeCraftState(
 							.arg(Text::formatNumber(_craft->getRules()->getMaxSpeed())));
 
 	std::string alt;
-	if (stat == "STR_READY"
-		|| stat == "STR_REPAIRS"
-		|| stat == "STR_REFUELLING"
-		|| stat == "STR_REARMING")
-	{
+	if (stat != CS_OUT)
 		alt = "STR_GROUND";
-	}
 	else
 		alt = _craft->getAltitude();
 
@@ -335,7 +330,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 
 	// set Base button visibility FALSE for already-Based crafts.
 	// note these could be set up there where status was set.....
-	if (stat != "STR_OUT"
+	if (stat != CS_OUT
 		|| lowFuel == true
 		|| missionComplete == true
 		|| _craft->getTakeoff() == false)
@@ -343,9 +338,9 @@ GeoscapeCraftState::GeoscapeCraftState(
 		_btnBase->setVisible(false);
 		_btnPatrol->setVisible(false);
 
-		if (stat == "STR_REPAIRS"
-			|| stat == "STR_REFUELLING"
-			|| stat == "STR_REARMING"
+		if (stat == CS_REPAIRS
+			|| stat == CS_REFUELLING
+			|| stat == CS_REARMING
 			|| lowFuel == true
 			|| missionComplete == true
 			|| _craft->getTakeoff() == false)

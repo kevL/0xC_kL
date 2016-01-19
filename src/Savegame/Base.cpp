@@ -545,7 +545,7 @@ int Base::getAvailableSoldiers(const bool combatReady) const
 		}
 		else if (combatReady == true
 			&& (((*i)->getCraft() != nullptr
-					&& (*i)->getCraft()->getCraftStatus() != "STR_OUT")
+					&& (*i)->getCraft()->getCraftStatus() != CS_OUT)
 				|| ((*i)->getCraft() == nullptr
 					&& (*i)->getRecovery() == 0)))
 		{
@@ -2243,7 +2243,7 @@ void Base::setupDefenses()
 			i != getCrafts()->end();
 			++i)
 	{
-		if ((*i)->getCraftStatus() != "STR_OUT")
+		if ((*i)->getCraftStatus() != CS_OUT)
 		{
 			for (std::vector<Vehicle*>::const_iterator
 					j = (*i)->getVehicles()->begin();

@@ -39,7 +39,6 @@
 
 #include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/AlienDeployment.h"
-#include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleCraftWeapon.h"
 #include "../Ruleset/RuleItem.h"
 #include "../Ruleset/Ruleset.h"
@@ -70,7 +69,7 @@ Craft::Craft(
 		_fuel(0),
 		_damage(0),
 		_takeOff(0),
-		_status("STR_READY"),
+		_status(CS_READY),
 		_lowFuel(false),
 		_tacticalDone(false),
 		_tactical(false),
@@ -197,7 +196,8 @@ void Craft::load(
 		}
 	}
 
-	_status			= node["status"]		.as<std::string>(_status);
+	_status = static_cast<CraftStatus>(node["status"].as<int>(_status));
+
 	_lowFuel		= node["lowFuel"]		.as<bool>(_lowFuel);
 	_tacticalDone	= node["tacticalDone"]	.as<bool>(_tacticalDone);
 	_kills			= node["kills"]			.as<int>(_kills);
@@ -314,7 +314,7 @@ YAML::Node Craft::save() const
 		node["vehicles"].push_back((*i)->save());
 	}
 
-	node["status"] = _status;
+	node["status"] = static_cast<int>(_status);
 
 	if (_fuel != 0)				node["fuel"]			= _fuel;
 	if (_damage != 0)			node["damage"]			= _damage;
@@ -424,7 +424,7 @@ void Craft::setName(const std::wstring& wst)
  */
 int Craft::getMarker() const
 {
-	if (_status != "STR_OUT")
+	if (_status != CS_OUT)
 		return -1;
 
 	if (_crRule->getMarker() == -1)
@@ -461,26 +461,47 @@ void Craft::setBase(
 }
 
 /**
- * Gets the current status of this Craft.
- *		STR_READY
- *		STR_REPAIRS
- *		STR_REARMING
- *		STR_REFUELLING
- *		STR_OUT
- * @return, status string
+ * Sets the current status of this Craft.
+ * @param status - CraftStatus (RuleCraft.h)
  */
-std::string Craft::getCraftStatus() const
+void Craft::setCraftStatus(const CraftStatus status)
+{
+	_status = status;
+}
+
+/**
+ * Gets the current status of this Craft.
+ * @return, CraftStatus (RuleCraft.h)
+ */
+CraftStatus Craft::getCraftStatus() const
 {
 	return _status;
 }
 
 /**
- * Sets the current status of this Craft.
- * @param status - reference a status string
+ * Gets the Craft's status-string.
+ * @return, status-string
  */
-void Craft::setCraftStatus(const std::string& status)
+std::string Craft::getCraftStatusString() const
 {
-	_status = status;
+	switch (_status)
+	{
+		default:
+		case CS_READY:
+			return "STR_READY";
+
+		case CS_REFUELLING:
+			return "STR_REFUELLING";
+
+		case CS_REARMING:
+			return "STR_REARMING";
+
+		case CS_REPAIRS:
+			return "STR_REPAIRS";
+
+		case CS_OUT:
+			return "STR_OUT";
+	}
 }
 
 /**
@@ -519,7 +540,7 @@ std::string Craft::getAltitude() const
  */
 void Craft::setDestination(Target* const dest)
 {
-	if (_status != "STR_OUT")
+	if (_status != CS_OUT)
 	{
 		_takeOff = 75;
 		setSpeed(_crRule->getMaxSpeed() / 10);
@@ -881,13 +902,13 @@ void Craft::checkup()
 	}
 
 	if (_damage > 0)
-		_status = "STR_REPAIRS";	// 1st stage
+		_status = CS_REPAIRS;		// 1st stage
 	else if (cw > loaded)
-		_status = "STR_REARMING";	// 2nd stage
+		_status = CS_REARMING;		// 2nd stage
 	else if (_fuel < _crRule->getMaxFuel())
-		_status = "STR_REFUELLING";	// 3rd stage
+		_status = CS_REFUELLING;	// 3rd stage
 	else
-		_status = "STR_READY";		// 4th Ready.
+		_status = CS_READY;			// 4th Ready.
 }
 
 /**

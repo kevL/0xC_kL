@@ -1548,7 +1548,7 @@ void DebriefingState::prepareDebriefing() // private.
 					i != _base->getCrafts()->end();
 					++i)
 			{
-				if ((*i)->getCraftStatus() != "STR_OUT")
+				if ((*i)->getCraftStatus() != CS_OUT)
 					reequipCraft(*i);
 			}
 

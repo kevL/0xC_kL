@@ -136,6 +136,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 	_lstTransfers->setSelectable();
 	_lstTransfers->onMousePress((ActionHandler)& ItemsArrivingState::lstGoToBasePress);
 
+	CraftStatus status;
 
 	for (std::vector<Base*>::const_iterator
 			i = _game->getSavedGame()->getBases()->begin();
@@ -160,28 +161,29 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 							k != (*i)->getCrafts()->end();
 							++k)
 					{
-						if ((*k)->getCraftStatus() != "STR_OUT")
+						status = (*k)->getCraftStatus();
+						if (status != CS_OUT)
 						{
 							if ((*k)->getWarned() == true)
 							{
-								if ((*k)->getCraftStatus() == "STR_REFUELING")
+								switch (status)
 								{
-									if ((*k)->getRules()->getRefuelItem() == itRule->getType())
-										(*k)->setWarned(false);
-								}
-								else if ((*k)->getCraftStatus() == "STR_REARMING")
-								{
-									for (std::vector<CraftWeapon*>::const_iterator
-											l = (*k)->getWeapons()->begin();
-											l != (*k)->getWeapons()->end();
-											++l)
-									{
-										if (*l != nullptr
-											&& (*l)->getRules()->getClipItem() == itRule->getType())
-										{
-											(*l)->setCantLoad(false);
+									case CS_REFUELLING:
+										if ((*k)->getRules()->getRefuelItem() == itRule->getType())
 											(*k)->setWarned(false);
-										}
+										break;
+									case CS_REARMING:
+										for (std::vector<CraftWeapon*>::const_iterator
+												l = (*k)->getWeapons()->begin();
+												l != (*k)->getWeapons()->end();
+												++l)
+										{
+											if (*l != nullptr
+												&& (*l)->getRules()->getClipItem() == itRule->getType())
+											{
+												(*l)->setCantLoad(false);
+												(*k)->setWarned(false);
+											}
 									}
 								}
 							}

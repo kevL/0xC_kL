@@ -25,9 +25,20 @@
 
 #include "MovingTarget.h"
 
+#include "../Ruleset/RuleCraft.h"
+
 
 namespace OpenXcom
 {
+
+enum CraftWarning
+{
+	CW_NONE,		// 0
+	CW_CANTREPAIR,	// 1
+	CW_CANTREARM,	// 2
+	CW_CANTREFUEL	// 3
+};
+
 
 class Base;
 class CraftWeapon;
@@ -37,15 +48,6 @@ class Ruleset;
 class SavedGame;
 class Soldier;
 class Vehicle;
-
-
-enum CraftWarning
-{
-	CW_NONE,		//  0
-	CW_CANTREPAIR,	//  1
-	CW_CANTREARM,	//  2
-	CW_CANTREFUEL	//  3
-};
 
 
 /**
@@ -75,9 +77,10 @@ private:
 
 		_kills;
 
-	std::string _status;
+//	std::string _status;
 	std::wstring _name;
 
+	CraftStatus _status;
 	CraftWarning _warning;
 
 	Base* _base;
@@ -135,10 +138,12 @@ private:
 				Base* const base,
 				bool transfer = true);
 
-		/// Gets the Craft's status.
-		std::string getCraftStatus() const;
 		/// Sets the Craft's status.
-		void setCraftStatus(const std::string& status);
+		void setCraftStatus(const CraftStatus status);
+		/// Gets the Craft's status.
+		CraftStatus getCraftStatus() const;
+		/// Gets the Craft's status-string.
+		std::string getCraftStatusString() const;
 
 		/// Gets the Craft's altitude.
 		std::string getAltitude() const;

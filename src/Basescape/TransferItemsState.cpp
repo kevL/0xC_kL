@@ -282,7 +282,7 @@ void TransferItemsState::init()
 			i != _baseSource->getCrafts()->end();
 			++i)
 	{
-		if ((*i)->getCraftStatus() != "STR_OUT")
+		if ((*i)->getCraftStatus() != CS_OUT)
 //			|| (Options::canTransferCraftsWhileAirborne == true			// TODO: Don't allow transfering airborne Craft until I rework
 //				&& (*i)->getFuel() >= (*i)->getFuelLimit(_baseTarget)))	// the auto-transfer of onboard Soldiers & Items & Vehicles.
 		{
@@ -595,7 +595,7 @@ void TransferItemsState::completeTransfer()
 							if ((*j)->inPsiTraining() == true)
 								(*j)->togglePsiTraining();
 
-							if (craft->getCraftStatus() == "STR_OUT")
+							if (craft->getCraftStatus() == CS_OUT)
 								_baseTarget->getSoldiers()->push_back(*j);
 							else
 							{
@@ -652,7 +652,7 @@ void TransferItemsState::completeTransfer()
 								}
 							}
 
-/*							if (craft->getCraftStatus() == "STR_OUT") // TODO: Disallowed Atm.
+/*							if (craft->getCraftStatus() == CS_OUT) // TODO: Disallowed Atm.
 							{
 								_baseTarget->getCrafts()->push_back(craft);
 								craft->setBase(_baseTarget, false);
@@ -962,7 +962,7 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 				++_destQty[_sel];
 				++_transferQty[_sel];
 
-				if (_crafts[_sel - _soldiers.size()]->getCraftStatus() != "STR_OUT"
+				if (_crafts[_sel - _soldiers.size()]->getCraftStatus() != CS_OUT
 					|| Options::canTransferCraftsWhileAirborne == false)
 				{
 					_costTotal += getCost();
@@ -1057,7 +1057,7 @@ void TransferItemsState::decreaseByValue(int qtyDelta)
 
 	if (Options::canTransferCraftsWhileAirborne == false
 		|| craft == nullptr
-		|| craft->getCraftStatus() != "STR_OUT")
+		|| craft->getCraftStatus() != CS_OUT)
 	{
 		_costTotal -= getCost() * qtyDelta;
 	}

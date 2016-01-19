@@ -1048,7 +1048,7 @@ std::vector<Target*> Globe::getTargets(
 						j != (*i)->getCrafts()->end();
 						++j)
 				{
-					if ((*j)->getCraftStatus() == "STR_OUT"
+					if ((*j)->getCraftStatus() == CS_OUT
 						&& targetNear(*j, x,y))
 					{
 						targets.push_back(*j);
@@ -1667,7 +1667,7 @@ void Globe::drawRadars()
 						j != (*i)->getCrafts()->end();
 						++j)
 				{
-					if ((*j)->getCraftStatus() == "STR_OUT"
+					if ((*j)->getCraftStatus() == CS_OUT
 						&& (*j)->getTakeoff() == true)
 					{
 						range = static_cast<double>((*j)->getRules()->getRadarRange());
@@ -2331,7 +2331,7 @@ void Globe::drawFlights()
 					j != (*i)->getCrafts()->end();
 					++j)
 			{
-				if ((*j)->getCraftStatus() == "STR_OUT"
+				if ((*j)->getCraftStatus() == CS_OUT
 					&& (*j)->getDestination() != nullptr)
 				{
 					const double

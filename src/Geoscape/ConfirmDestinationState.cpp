@@ -119,7 +119,7 @@ void ConfirmDestinationState::btnOkClick(Action*)
 	}
 
 	_craft->setDestination(_target);
-	_craft->setCraftStatus("STR_OUT");
+	_craft->setCraftStatus(CS_OUT);
 
 	_game->popState();
 	_game->popState();

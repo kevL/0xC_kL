@@ -852,7 +852,7 @@ void BattlescapeGenerator::deployXcom() // private.
 			|| (_craft == nullptr
 				&& (*i)->getRecovery() == 0
 				&& ((*i)->getCraft() == nullptr
-					|| (*i)->getCraft()->getCraftStatus() != "STR_OUT")))
+					|| (*i)->getCraft()->getCraftStatus() != CS_OUT)))
 		{
 			//Log(LOG_INFO) << ". . addXcomUnit " << (*i)->getId();
 			BattleUnit* const unit = addXcomUnit(new BattleUnit(*i, _gameSave->getDifficulty())); // for VictoryPts value per death.
@@ -972,7 +972,7 @@ void BattlescapeGenerator::deployXcom() // private.
 				++i)
 		{
 			//Log(LOG_INFO) << ". . . check if Craft at base";
-			if ((*i)->getCraftStatus() != "STR_OUT")
+			if ((*i)->getCraftStatus() != CS_OUT)
 			{
 				//Log(LOG_INFO) << ". . . Craft IS at base";
 				for (std::map<std::string, int>::const_iterator

@@ -240,9 +240,8 @@ ProductionProgress Production::step(
 												rules->getCraft(i->first),
 												base,
 												gameSave->getCanonicalId(i->first));
-					craft->setCraftStatus("STR_REFUELLING");
+					craft->setCraftStatus(CS_REFUELLING);
 					base->getCrafts()->push_back(craft);
-
 					break;
 				}
 				else
@@ -257,25 +256,25 @@ ProductionProgress Production::step(
 						{
 							if ((*j)->getWarned() == true)
 							{
-								if ((*j)->getCraftStatus() == "STR_REFUELING")
+								switch ((*j)->getCraftStatus())
 								{
-									if ((*j)->getRules()->getRefuelItem() == i->first)
-										(*j)->setWarned(false);
-								}
-								else if ((*j)->getCraftStatus() == "STR_REARMING")
-								{
-									for (std::vector<CraftWeapon*>::const_iterator
-											k = (*j)->getWeapons()->begin();
-											k != (*j)->getWeapons()->end();
-											++k)
-									{
-										if (*k != nullptr
-											&& (*k)->getRules()->getClipItem() == i->first)
-										{
-											(*k)->setCantLoad(false);
+									case CS_REFUELLING:
+										if ((*j)->getRules()->getRefuelItem() == i->first)
 											(*j)->setWarned(false);
+										break;
+									case CS_REARMING:
+										for (std::vector<CraftWeapon*>::const_iterator
+												k = (*j)->getWeapons()->begin();
+												k != (*j)->getWeapons()->end();
+												++k)
+										{
+											if (*k != nullptr
+												&& (*k)->getRules()->getClipItem() == i->first)
+											{
+												(*k)->setCantLoad(false);
+												(*j)->setWarned(false);
+											}
 										}
-									}
 								}
 							}
 						}

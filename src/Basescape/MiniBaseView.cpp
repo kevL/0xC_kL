@@ -254,7 +254,7 @@ void MiniBaseView::draw()
 										color);
 						}
 
-						if ((*j)->getCraftStatus() == "STR_READY")
+						if ((*j)->getCraftStatus() == CS_READY)
 							setPixelColor(
 										x + 14,
 										y,
@@ -346,7 +346,7 @@ void MiniBaseView::blink()
 	_blink = !_blink;
 
 	Base* base;
-	std::string stat;
+	CraftStatus stat;
 	int
 		x,y;
 	Uint8 color;
@@ -387,18 +387,25 @@ void MiniBaseView::blink()
 					++j)
 			{
 				stat = (*j)->getCraftStatus();
-				if (stat != "STR_READY")
+				if (stat != CS_READY)
 				{
 					if (_blink == true)
 					{
-						if (stat == "STR_OUT")
-							color = GREEN;
-						else if (stat == "STR_REFUELLING")
-							color = ORANGE_L;
-						else if (stat == "STR_REARMING")
-							color = ORANGE_D;
-						else //if (stat == "STR_REPAIRS")
-							color = RED_D;
+						switch (stat)
+						{
+							default:
+							case CS_OUT:
+								color = GREEN;
+								break;
+							case CS_REFUELLING:
+								color = ORANGE_L;
+								break;
+							case CS_REARMING:
+								color = ORANGE_D;
+								break;
+							case CS_REPAIRS:
+								color = RED_D;
+						}
 					}
 					else
 						color = 0;

@@ -756,7 +756,7 @@ void BaseView::draw()
 					&& fac->getRules()->getCrafts() != 0
 					&& fac->getCraft() == nullptr)
 				{
-					if ((*pCraft)->getCraftStatus() != "STR_OUT")
+					if ((*pCraft)->getCraftStatus() != CS_OUT)
 					{
 						const int facSize = static_cast<int>(fac->getRules()->getSize());
 
@@ -772,7 +772,7 @@ void BaseView::draw()
 
 				if (hasDog == true
 					&& (fac->getCraft() == nullptr
-						|| fac->getCraft()->getCraftStatus() == "STR_OUT"))
+						|| fac->getCraft()->getCraftStatus() == CS_OUT))
 				{
 					const int facSize = static_cast<int>(fac->getRules()->getSize());
 

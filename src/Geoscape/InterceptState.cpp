@@ -207,34 +207,30 @@ InterceptState::~InterceptState()
 
 /**
  * A more descriptive state of the Crafts.
+ * @note See also CraftsState::getAltStatus() & GeoscapeCraftState::cTor.
  * @param craft - pointer to Craft in question
  * @return, status string
  */
 std::wstring InterceptState::getAltStatus(Craft* const craft)
 {
-	std::string stat = craft->getCraftStatus();
-	if (stat != "STR_OUT")
+	const CraftStatus stat = craft->getCraftStatus();
+	if (stat != CS_OUT)
 	{
-		if (stat == "STR_READY")
+		if (stat == CS_READY)
 		{
 			_cellColor = GREEN;
-			return tr(stat);
+			return tr("STR_READY");
 		}
-/*		if (stat == "STR_REFUELLING")
-			stat = "STR_REFUELLING_";
-		else if (stat == "STR_REARMING")
-			stat = "STR_REARMING_";
-		else if (stat == "STR_REPAIRS")
-			stat = "STR_REPAIRS_"; */
 
 		_cellColor = SLATE;
 
-		stat.push_back('_');
+		std::string st (craft->getCraftStatusString());
+		st.push_back('_');
 
 		bool delayed;
 		const int hours = craft->getDowntime(delayed);
 		const std::wstring wst = formatTime(hours, delayed);
-		return tr(stat).arg(wst);
+		return tr(st).arg(wst);
 	}
 
 	std::wstring status;

@@ -1993,7 +1993,7 @@ void GeoscapeState::time10Minutes()
 				j != (*i)->getCrafts()->end();
 				++j)
 		{
-			if ((*j)->getCraftStatus() == "STR_OUT"
+			if ((*j)->getCraftStatus() == CS_OUT
 				&& (*j)->getTakeoff() == true)
 			{
 				(*j)->consumeFuel();
@@ -2129,7 +2129,7 @@ void GeoscapeState::time10Minutes()
 								&& contact == false;
 							++k)
 					{
-						if ((*k)->getCraftStatus() == "STR_OUT"
+						if ((*k)->getCraftStatus() == CS_OUT
 							&& (*k)->getTakeoff() == true
 							&& (*k)->detect(*i) == true)
 						{
@@ -2188,7 +2188,7 @@ void GeoscapeState::time10Minutes()
 								&& contact == false;
 							++k)
 					{
-						if ((*k)->getCraftStatus() == "STR_OUT"
+						if ((*k)->getCraftStatus() == CS_OUT
 							&& (*k)->getTakeoff() == true
 							&& (*k)->detect(*i) == true)
 						{
@@ -2388,26 +2388,9 @@ void GeoscapeState::time30Minutes()
 				j != (*i)->getCrafts()->end();
 				++j)
 		{
-			if ((*j)->getCraftStatus() != "STR_OUT")
+			switch ((*j)->getCraftStatus())
 			{
-				if ((*j)->getCraftStatus() == "STR_REPAIRS")
-					(*j)->repair();
-				else if ((*j)->getCraftStatus() == "STR_REARMING")
-				{
-					const std::string rearmClip = (*j)->rearm(_rules);
-
-					if (rearmClip.empty() == false
-						&& (*j)->getWarned() == false)
-					{
-						(*j)->setWarned();
-						const std::wstring msg = tr("STR_NOT_ENOUGH_ITEM_TO_REARM_CRAFT_AT_BASE")
-												.arg(tr(rearmClip))
-												.arg((*j)->getName(_game->getLanguage()))
-												.arg((*i)->getName(nullptr));
-						popup(new CraftErrorState(this, msg));
-					}
-				}
-				else if ((*j)->getCraftStatus() == "STR_REFUELLING")
+				case CS_REFUELLING:
 				{
 					const std::string refuelItem = (*j)->getRules()->getRefuelItem();
 
@@ -2433,7 +2416,26 @@ void GeoscapeState::time30Minutes()
 							popup(new CraftErrorState(this, msg));
 						}
 					}
+					break;
 				}
+				case CS_REARMING:
+				{
+					const std::string rearmClip = (*j)->rearm(_rules);
+
+					if (rearmClip.empty() == false
+						&& (*j)->getWarned() == false)
+					{
+						(*j)->setWarned();
+						const std::wstring msg = tr("STR_NOT_ENOUGH_ITEM_TO_REARM_CRAFT_AT_BASE")
+												.arg(tr(rearmClip))
+												.arg((*j)->getName(_game->getLanguage()))
+												.arg((*i)->getName(nullptr));
+						popup(new CraftErrorState(this, msg));
+					}
+					break;
+				}
+				case CS_REPAIRS:
+					(*j)->repair();
 			}
 		}
 	}

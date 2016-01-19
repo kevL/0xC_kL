@@ -29,6 +29,15 @@
 namespace OpenXcom
 {
 
+enum CraftStatus
+{
+	CS_READY,		// 0
+	CS_REFUELLING,	// 1
+	CS_REARMING,	// 2
+	CS_REPAIRS,		// 3
+	CS_OUT			// 4
+};
+
 class Ruleset;
 class RuleTerrain;
 

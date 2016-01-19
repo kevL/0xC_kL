@@ -222,7 +222,7 @@ CraftInfoState::~CraftInfoState()
 }
 
 /**
- * The craft's info can change after going into other screens.
+ * The Craft's info can change after going to other screens.
  */
 void CraftInfoState::init()
 {
@@ -235,11 +235,11 @@ void CraftInfoState::init()
 		_craft->setInBattlescape(false);
 	}
 
-	const bool skirmish = _game->getSavedGame()->getMonthsPassed() == -1;
+	const bool skirmish = (_game->getSavedGame()->getMonthsPassed() == -1);
 
 	_btnInventory->setVisible(_craft->getNumSoldiers() != 0
-							&& _craft->getCraftItems()->getTotalQuantity() != 0
-							&& skirmish == false);
+						   && _craft->getCraftItems()->getTotalQuantity() != 0
+						   && skirmish == false);
 
 	_edtCraft->setText(_craft->getName(_game->getLanguage()));
 
@@ -247,25 +247,36 @@ void CraftInfoState::init()
 		_txtStatus->setText(L"");
 	else
 	{
-		const std::string status = _craft->getCraftStatus();
-
 		Uint8 color;
-		if (status == "STR_READY")
-			color = GREEN;
-		else
-		{
-			if (_blinkTimer->isRunning() == false)
-				_blinkTimer->start();
 
-			if (status == "STR_REPAIRS")
-				color = RED;
-			else if (status == "STR_REARMING")
-				color = ORANGE;
-			else // STR_REFUELLING
-				color = YELLOW;
+		const CraftStatus status (_craft->getCraftStatus());
+		switch (status)
+		{
+			case CS_READY:
+				color = GREEN;
+				break;
+
+			default:
+			{
+				if (_blinkTimer->isRunning() == false)
+					_blinkTimer->start();
+
+				switch (status)
+				{
+					case CS_REFUELLING:
+						color = YELLOW;
+						break;
+					case CS_REARMING:
+						color = ORANGE;
+						break;
+					default: // shuttup, g++
+					case CS_REPAIRS:
+						color = RED;
+				}
+			}
 		}
 
-		_txtStatus->setText(tr(status));
+		_txtStatus->setText(tr(_craft->getCraftStatusString()));
 		_txtStatus->setColor(color);
 		_txtStatus->setHighContrast();
 	}

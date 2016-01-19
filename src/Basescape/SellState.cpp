@@ -195,7 +195,7 @@ SellState::SellState(Base* const base)
 			i != _base->getCrafts()->end();
 			++i)
 	{
-		if ((*i)->getCraftStatus() != "STR_OUT")
+		if ((*i)->getCraftStatus() != CS_OUT)
 		{
 			_sellQty.push_back(0);
 			_crafts.push_back(*i);
