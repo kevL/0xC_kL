@@ -117,7 +117,12 @@ SoldiersState::SoldiersState(Base* base)
 	_txtSoldiers->setAlign(ALIGN_RIGHT);
 
 	_btnSort->setText(tr("STR_SORT"));
-	_btnSort->onMouseClick((ActionHandler)& SoldiersState::btnSortClick);
+	_btnSort->onMouseClick(
+					(ActionHandler)& SoldiersState::btnSortClick,
+					SDL_BUTTON_LEFT);
+	_btnSort->onMouseClick(
+					(ActionHandler)& SoldiersState::btnAutoStatClick,
+					SDL_BUTTON_RIGHT);
 
 	_btnPsi->setText(tr("STR_PSIONIC_TRAINING"));
 	_btnPsi->onMouseClick((ActionHandler)& SoldiersState::btnPsiTrainingClick);
@@ -328,6 +333,7 @@ std::sort(vPair.begin(), vPair.end(), sort_second()); */
 
 /**
  * Sorts the soldiers list.
+ * @param action - pointer to an Action
  */
 void SoldiersState::btnSortClick(Action*)
 {
@@ -335,6 +341,28 @@ void SoldiersState::btnSortClick(Action*)
 					REC_SOLDIER,
 					_lstSoldiers->getScroll());
 	_base->sortSoldiers();
+
+	init();
+}
+
+/**
+ * Autostats the soldiers list.
+ * @note Right-click on the Sort button.
+ * @param action - pointer to an Action
+ */
+void SoldiersState::btnAutoStatClick(Action*)
+{
+	_base->setRecallRow(
+					REC_SOLDIER,
+					_lstSoldiers->getScroll());
+
+	for (std::vector<Soldier*>::const_iterator
+			i = _base->getSoldiers()->begin();
+			i != _base->getSoldiers()->end();
+			++i)
+	{
+		(*i)->autoStat();
+	}
 
 	init();
 }

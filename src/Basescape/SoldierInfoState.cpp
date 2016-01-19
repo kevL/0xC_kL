@@ -239,13 +239,13 @@ SoldierInfoState::SoldierInfoState(
 	_btnOk->onMouseClick((ActionHandler)& SoldierInfoState::btnOkClick);
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& SoldierInfoState::btnOkClick,
-					Options::keyCancel);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldierInfoState::btnOkClick,
 					Options::keyOk);
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& SoldierInfoState::btnOkClick,
 					Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(
+					(ActionHandler)& SoldierInfoState::btnOkClick,
+					Options::keyCancel);
 
 	_btnPrev->setText(L"<");
 	_btnPrev->onMouseClick((ActionHandler)& SoldierInfoState::btnPrevClick);

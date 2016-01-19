@@ -84,6 +84,8 @@ private:
 		void btnPsiTrainingClick(Action* action);
 		/// Sorts the soldiers list.
 		void btnSortClick(Action* action);
+		/// Autostats the soldiers list.
+		void btnAutoStatClick(Action* action);
 
 		/// Handler for clicking the Soldiers list.
 		void lstSoldiersPress(Action* action);
