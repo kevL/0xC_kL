@@ -2218,7 +2218,6 @@ void BattlescapeState::btnShowLayersClick(Action*)
 	{
 		if (_map->getCamera()->toggleShowLayers() == true)
 			_overlay->getFrame(5)->blit(_btnShowLayers);
-//			_game->getResourcePack()->getSurface("ICONS_LAYER")->blit(_btnShowLayers);
 		else
 			_btnShowLayers->clear();
 	}
@@ -2926,7 +2925,6 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 		if (selUnit->isKneeled() == true)
 			_overlay->getFrame(9)->blit(_btnKneel);
-//			_game->getResourcePack()->getSurface("KneelButton")->blit(_btnKneel);
 
 		_txtOrder->setText(tr("STR_ORDER")
 							.arg(static_cast<int>(selUnit->getBattleOrder())));

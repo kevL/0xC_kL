@@ -970,7 +970,7 @@ void InventoryState::btnUnequipUnitClick(Action*)
 	if (_tuMode == false						// don't accept clicks in battlescape because this doesn't cost TU.
 		&& _inv->getSelectedItem() == nullptr)	// or when mouse is holding an item
 	{
-		const RuleInventory* const grdRule = _game->getRuleset()->getInventory_ST(ST_GROUND);
+		const RuleInventory* const grdRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
 
 		BattleUnit* const unit = _battleSave->getSelectedUnit();
 		Tile* const tile = unit->getTile();

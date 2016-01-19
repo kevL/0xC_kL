@@ -717,22 +717,22 @@ void Inventory::mouseClick(Action* action, State* state)
 								&& (_tuMode == false
 									|| _selUnit->getOriginalFaction() != FACTION_PLAYER))) // aLien units drop-to-ground on Ctrl+LMB
 						{
-							targetSection = _game->getRuleset()->getInventory_ST(ST_GROUND);
+							targetSection = _game->getRuleset()->getInventoryRule(ST_GROUND);
 						}
 						else
 						{
 							if (_selUnit->getItem(ST_RIGHTHAND) == nullptr)
 							{
 								toGround = false;
-								targetSection = _game->getRuleset()->getInventory_ST(ST_RIGHTHAND);
+								targetSection = _game->getRuleset()->getInventoryRule(ST_RIGHTHAND);
 							}
 							else if (_selUnit->getItem(ST_LEFTHAND) == nullptr)
 							{
 								toGround = false;
-								targetSection = _game->getRuleset()->getInventory_ST(ST_LEFTHAND);
+								targetSection = _game->getRuleset()->getInventoryRule(ST_LEFTHAND);
 							}
 							else if (inRule->getCategory() != IC_GROUND)
-								targetSection = _game->getRuleset()->getInventory_ST(ST_GROUND);
+								targetSection = _game->getRuleset()->getInventoryRule(ST_GROUND);
 						}
 
 						if (targetSection != nullptr)
@@ -1003,7 +1003,7 @@ void Inventory::mouseClick(Action* action, State* state)
 								{
 									moveItem(
 											item,
-											_game->getRuleset()->getInventory_ST(ST_GROUND));
+											_game->getRuleset()->getInventoryRule(ST_GROUND));
 
 									arrangeGround();
 									soundId = ResourcePack::ITEM_DROP;
@@ -1102,18 +1102,18 @@ bool Inventory::unload()
 
 		if (_tuMode == false)
 		{
-			inRule = _game->getRuleset()->getInventory_ST(ST_GROUND);
+			inRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
 			owner = nullptr;
 		}
 		else
 		{
-			inRule = _game->getRuleset()->getInventory_ST(ST_LEFTHAND);
+			inRule = _game->getRuleset()->getInventoryRule(ST_LEFTHAND);
 			owner = _selUnit;;
 		}
 
 		moveItem(
 				_selItem,
-				_game->getRuleset()->getInventory_ST(ST_RIGHTHAND));
+				_game->getRuleset()->getInventoryRule(ST_RIGHTHAND));
 		_selItem->changeOwner(_selUnit);
 
 		_selItem->setAmmoItem();
@@ -1146,7 +1146,7 @@ void Inventory::arrangeGround(int dir)
 {
 	_stackLevel.clear();
 
-	const RuleInventory* const grdRule = _game->getRuleset()->getInventory_ST(ST_GROUND);
+	const RuleInventory* const grdRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
 
 	// first move all items out of the way -> a big number in X direction to right
 	for (std::vector<BattleItem*>::const_iterator

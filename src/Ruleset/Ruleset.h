@@ -313,7 +313,7 @@ protected:
 		/// Gets the ruleset for a specific inventory.
 		RuleInventory* getInventory(const std::string& type) const;
 		/// Gets the ruleset for a specific inventory.
-		const RuleInventory* getInventory_ST(const InventorySection sectionId) const;
+		const RuleInventory* getInventoryRule(const InventorySection sectionId) const;
 		/// Converts all inventory mappings from string-keys to enumerated-keys.
 		void convertInventories();
 		/// Returns the sorted list of inventories.

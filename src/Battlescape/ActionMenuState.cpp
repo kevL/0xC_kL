@@ -383,7 +383,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 					_action->weapon->changeOwner();
 					_action->actor->getTile()->addItem(
 													_action->weapon,
-													_game->getRuleset()->getInventory_ST(ST_GROUND));
+													_game->getRuleset()->getInventoryRule(ST_GROUND));
 
 					_action->actor->setActiveHand(_action->actor->getActiveHand());
 				}

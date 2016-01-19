@@ -1918,8 +1918,8 @@ int BattleUnit::getActionTu(
 		case BA_DROP:
 		{
 			const RuleInventory
-				* const handRule = _battleGame->getRuleset()->getInventory_ST(ST_RIGHTHAND), // might be leftHand Lol ...
-				* const grdRule = _battleGame->getRuleset()->getInventory_ST(ST_GROUND);
+				* const handRule = _battleGame->getRuleset()->getInventoryRule(ST_RIGHTHAND), // might be leftHand Lol ...
+				* const grdRule = _battleGame->getRuleset()->getInventoryRule(ST_GROUND);
 			cost = handRule->getCost(grdRule); // flat rate.
 		}
 		break;

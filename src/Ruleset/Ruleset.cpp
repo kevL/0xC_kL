@@ -1676,7 +1676,7 @@ RuleInventory* Ruleset::getInventory(const std::string& type) const
  * @param sectionId - InventorySection (RuleInventory.h)
  * @return, pointer to RuleInventory
  */
-const RuleInventory* Ruleset::getInventory_ST(InventorySection sectionId) const
+const RuleInventory* Ruleset::getInventoryRule(InventorySection sectionId) const
 {
 	return _inventories_ST.at(sectionId);
 }
@@ -1740,7 +1740,7 @@ int Ruleset::detHighTuInventoryCost() const
 		cost,
 		costHigh = 0;
 
-	const RuleInventory* const grdRule = getInventory_ST(ST_GROUND);
+	const RuleInventory* const grdRule = getInventoryRule(ST_GROUND);
 	for (std::map<std::string, RuleInventory*>::const_iterator
 			i = _inventories.begin();
 			i != _inventories.end();
