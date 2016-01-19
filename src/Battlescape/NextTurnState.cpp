@@ -117,7 +117,7 @@ NextTurnState::NextTurnState(
 	}
 	else _txtMessage->setY(msg_y); */
 
-	_window->setBackground(_game->getResourcePack()->getSurface("TAC00.SCR"));
+	_window->setBackground(_game->getResourcePack()->getSurface("Diehard"));
 	_window->setHighContrast();
 
 	if (aliensPacified == false)
@@ -221,7 +221,7 @@ void NextTurnState::nextTurn()
 	}
 	else
 	{
-		_state->btnCenterClick(nullptr);
+		_state->btnCenterPress(nullptr);
 
 		if (_battleSave->getSide() == FACTION_PLAYER)
 		{

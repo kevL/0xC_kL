@@ -230,7 +230,7 @@ void SaveGameState::think()
 													error.str(),
 													_palette,
 													_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapeColor")->color,
-													"TAC00.SCR",
+													"Diehard",
 													_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapePalette")->color));
 		}
 		catch (YAML::Exception& e)
@@ -250,7 +250,7 @@ void SaveGameState::think()
 													error.str(),
 													_palette,
 													_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapeColor")->color,
-													"TAC00.SCR",
+													"Diehard",
 													_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapePalette")->color));
 		}
 	}

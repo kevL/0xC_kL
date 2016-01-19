@@ -44,6 +44,7 @@ class Ruleset;
 class SavedBattleGame;
 class SavedGame;
 class Surface;
+class SurfaceSet;
 class Text;
 class TextList;
 class Tile;
@@ -71,10 +72,9 @@ private:
 		GRAY	=   7,
 		ORANGE	=  16,
 		RED		=  32,
-		RED_D	=  45,
+		RED_D	=  43,
 		GREEN	=  48,
 		BROWN_L	=  80,
-		BROWN_D	=  92,
 		BLUE	= 128,
 		YELLOW	= 144,
 		BROWN	= 160;
@@ -179,6 +179,7 @@ private:
 		* _overWeight,
 		* _rank,
 		* _targeter;
+	SurfaceSet* _overlay;
 	Tile* _tileWounded[WOUNDED];
 	Text
 		* _txtBaseLabel,
@@ -220,8 +221,6 @@ private:
 	void flashMedic();
 	/// Blinks the health bar when selected unit has fatal wounds.
 	void blinkHealthBar();
-	/// Shows the unit kneel state.
-	void toggleKneelButton(BattleUnit* unit);
 	/// Shows primer warnings on hand-held live grenades.
 	void cycleFuses(BattleUnit* const selUnit);
 	/// Shifts the colors of the visible unit buttons' backgrounds.
@@ -278,36 +277,57 @@ private:
 		/// Handles keypresses.
 		void handle(Action* action) override;
 
-		/// Handler for clicking the Unit Up button.
-		void btnUnitUpClick(Action* action);
-		/// Handler for clicking the Unit Down button.
-		void btnUnitDownClick(Action* action);
-		/// Handler for clicking the Map Up button.
-		void btnMapUpClick(Action* action);
-		/// Handler for clicking the Map Down button.
-		void btnMapDownClick(Action* action);
-		/// Sets the level on the icons' Layers button.
-		void setLayerValue(int level);
+		/// Handler for pressing the Unit Up button.
+		void btnUnitUpPress(Action* action);
+		/// Handler for releasing the Unit Up button.
+		void btnUnitUpRelease(Action* action);
+		/// Handler for pressing the Unit Down button.
+		void btnUnitDownPress(Action* action);
+		/// Handler for releasing the Unit Down button.
+		void btnUnitDownRelease(Action* action);
+		/// Handler for pressing the Map Up button.
+		void btnMapUpPress(Action* action);
+		/// Handler for releasing the Map Up button.
+		void btnMapUpRelease(Action* action);
+		/// Handler for pressing the Map Down button.
+		void btnMapDownPress(Action* action);
+		/// Handler for releasing the Map Down button.
+		void btnMapDownRelease(Action* action);
+
 		/// Handler for clicking the Show Map button.
 		void btnShowMapClick(Action* action);
+		/// Clears the ShowMap btn.
+//		void clearShowMapBtn();
+
 		/// Handler for clicking the Kneel button.
 		void btnKneelClick(Action* action);
+
 		/// Handler for clicking the Soldier button.
 		void btnInventoryClick(Action* action);
 
 		/// Forces a transparent SDL mouse-motion event.
 		void refreshMousePosition() const;
 
-		/// Handler for clicking the Center button.
-		void btnCenterClick(Action* action);
-		/// Handler for clicking the Next Soldier button.
-		void btnNextUnitClick(Action* action);
-		/// Handler for clicking the Next Stop button.
-		void btnNextStopClick(Action* action);
-		/// Handler for clicking the Previous Soldier button.
-		void btnPrevUnitClick(Action* action);
-		/// Handler for clicking the Previous Stop button.
-		void btnPrevStopClick(Action* action);
+		/// Handler for pressing the Center button.
+		void btnCenterPress(Action* action);
+		/// Handler for releasing the Center button.
+		void btnCenterRelease(Action* action);
+		/// Handler for pressing the Next Soldier button.
+		void btnNextUnitPress(Action* action);
+		/// Handler for releasing the Next Soldier button.
+		void btnNextUnitRelease(Action* action);
+		/// Handler for pressing the Next Stop button.
+		void btnNextStopPress(Action* action);
+		/// Handler for releasing the Next Stop button.
+		void btnNextStopRelease(Action* action);
+		/// Handler for pressing the Previous Soldier button.
+		void btnPrevUnitPress(Action* action);
+		/// Handler for releasing the Previous Soldier button.
+		void btnPrevUnitRelease(Action* action);
+		/// Handler for pressing the Previous Stop button.
+		void btnPrevStopPress(Action* action);
+		/// Handler for releasing the Previous Stop button.
+		void btnPrevStopRelease(Action* action);
 
 		/// Selects the player's next BattleUnit.
 		void selectNextPlayerUnit(
@@ -322,12 +342,20 @@ private:
 
 		/// Handler for clicking the Show Layers button.
 		void btnShowLayersClick(Action* action);
-		/// Handler for clicking the Help button.
-		void btnHelpClick(Action* action);
+		/// Sets the level on the icons' Layers button.
+		void setLayerValue(int level);
+
+		/// Handler for clicking the Options button.
+		void btnBattleOptionsClick(Action* action);
+		/// Clears the Options btn.
+		void clearOptionsBtn();
+
 		/// Handler for clicking the End Turn button.
 		void btnEndTurnClick(Action* action);
 		/// Handler for clicking the Abort button.
 		void btnAbortClick(Action* action);
+		/// Clears the Abort btn.
+		void clearAbortBtn();
 
 		/// Handler for clicking the stats.
 		void btnStatsClick(Action* action);
@@ -384,6 +412,9 @@ private:
 
 		/// Refreshes the wounded units indicators.
 		void hotWoundsRefresh();
+
+		/// Shows a selected unit's kneeled state.
+		void toggleKneelButton(BattleUnit* unit);
 
 		/// Animates map objects on the map, also smoke,fire, ...
 		void animate();

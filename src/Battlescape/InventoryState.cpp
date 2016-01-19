@@ -152,7 +152,7 @@ InventoryState::InventoryState(
 	setPalette(PAL_BATTLESCAPE);
 
 	add(_bg);
-	_game->getResourcePack()->getSurface("TAC01.SCR")->blit(_bg);
+	_game->getResourcePack()->getSurface("Inventory")->blit(_bg);
 
 	add(_gender);
 	add(_paper);

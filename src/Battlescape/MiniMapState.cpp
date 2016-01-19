@@ -91,7 +91,7 @@ MiniMapState::MiniMapState(
 
 	add(_miniView); // put miniView *under* the background.
 	add(_bg);
-	_game->getResourcePack()->getSurface("SCANBORD")->blit(_bg); //"SCANBORD.PCK"
+	_game->getResourcePack()->getSurface("Scanbord")->blit(_bg);
 
 	add(_btnLvlUp,		"buttonUp",		"minimap", _bg);
 	add(_btnLvlDown,	"buttonDown",	"minimap", _bg);
@@ -180,7 +180,10 @@ void MiniMapState::btnOkClick(Action* action)
 		_game->getScreen()->resetDisplay(false);
 	} */
 
-	_game->getSavedGame()->getBattleSave()->getBattleState()->getMap()->setNoDraw(false);
+	BattlescapeState* const battleState = _game->getSavedGame()->getBattleSave()->getBattleState();
+	battleState->getMap()->setNoDraw(false);
+//	battleState->clearShowMapBtn();
+
 	_game->popState();
 
 	action->getDetails()->type = SDL_NOEVENT; // consume the event

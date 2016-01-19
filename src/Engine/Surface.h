@@ -83,7 +83,7 @@ protected:
 		/// Loads an X-Com SPK graphic.
 		void loadSpk(const std::string& file);
 		/// Loads a TFTD BDY graphic.
-		void loadBdy(const std::string& file);
+//		void loadBdy(const std::string& file);
 		/// Loads a general image file.
 		void loadImage(const std::string& file);
 

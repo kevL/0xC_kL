@@ -445,7 +445,7 @@ void State::applyBattlescapeTheme()
 		{
 			window->setColor(static_cast<Uint8>(element->color));
 			window->setHighContrast();
-			window->setBackground(_game->getResourcePack()->getSurface("TAC00.SCR"));
+			window->setBackground(_game->getResourcePack()->getSurface("Diehard"));
 
 			continue;
 		}

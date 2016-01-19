@@ -146,7 +146,7 @@ BattlescapeState::BattlescapeState()
 		iconsWidth		= _rules->getInterface("battlescape")->getElement("icons")->w, // 320
 		iconsHeight		= _rules->getInterface("battlescape")->getElement("icons")->h, // 56
 		playableHeight	= screenHeight - iconsHeight,
-		x				= screenWidth / 2 - iconsWidth / 2,
+		x				= (screenWidth - iconsWidth) / 2,
 		y				= screenHeight - iconsHeight;
 
 	_txtBaseLabel			= new Text(120, 9, screenWidth - 121, 0);
@@ -347,26 +347,20 @@ BattlescapeState::BattlescapeState()
 	_map->onMouseClick((ActionHandler)& BattlescapeState::mapClick, 0);
 	_map->onMouseIn((ActionHandler)& BattlescapeState::mapIn);
 
+
 	add(_icons);
-	Surface* const icons = _game->getResourcePack()->getSurface("ICONS.PCK");
-
-	// Add in custom reserve buttons
-	if (_game->getResourcePack()->getSurface("TFTDReserve") != nullptr)
+	Surface* const icons = _game->getResourcePack()->getSurface("ICONS");
+	if (_game->getResourcePack()->getSurface("Logo") != nullptr)
 	{
-		Surface* const tftdIcons = _game->getResourcePack()->getSurface("TFTDReserve"); // 'Resources/UI/reserve.png'
-		tftdIcons->setX(48);
-		tftdIcons->setY(176);
-		tftdIcons->blit(icons);
+		Surface* const logo = _game->getResourcePack()->getSurface("Logo");
+		logo->setX(48);
+		logo->setY(32);
+		logo->blit(icons);
 	}
-
-	// there is some cropping going on here, because the icons
-	// image is 320x200 while we only need the bottom of it.
-	SDL_Rect* const rect = icons->getCrop();
-	rect->x = 0;
-	rect->y = static_cast<Sint16>(200 - iconsHeight);
-	rect->w = static_cast<Uint16>(iconsWidth);
-	rect->h = static_cast<Uint16>(iconsHeight);
 	icons->blit(_icons);
+
+	_overlay = _game->getResourcePack()->getSurfaceSet("ICONS_OVERLAY");
+
 
 	add(_rank,				"rank",					"battlescape", _icons);
 	add(_btnUnitUp,			"buttonUnitUp",			"battlescape", _icons); // note: these are not registered in Interfaces.rul
@@ -384,9 +378,9 @@ BattlescapeState::BattlescapeState()
 	add(_btnEndTurn,		"buttonEndTurn",		"battlescape", _icons);
 	add(_btnAbort,			"buttonAbort",			"battlescape", _icons);
 	add(_btnStats,			"buttonStats",			"battlescape", _icons);
-	add(_numDir);
-	add(_numDirTur);
-	add(_numLayers,			"numLayers",			"battlescape", _icons);	// goes overtop _icons
+	add(_numDir,			"numIcons",				"battlescape", _icons);
+	add(_numDirTur,			"numIcons",				"battlescape", _icons);
+	add(_numLayers,			"numIcons",				"battlescape", _icons);	// goes overtop _icons
 	add(_overWeight);														// goes overtop _rank
 	add(_txtName,			"textName",				"battlescape", _icons);
 	add(_numTULaunch);
@@ -667,9 +661,6 @@ BattlescapeState::BattlescapeState()
 	_alienMark->setVisible(false);
 
 
-	_numDir->setColor(BROWN_D);
-	_numDirTur->setColor(BROWN_D);
-
 	_rank->setVisible(false);
 
 	_overWeight->drawRect(0,0,2,2, RED_D);
@@ -678,27 +669,55 @@ BattlescapeState::BattlescapeState()
 	_icons->onMouseIn((ActionHandler)& BattlescapeState::mouseInIcons);
 	_icons->onMouseOut((ActionHandler)& BattlescapeState::mouseOutIcons);
 
-	_btnUnitUp->onMouseClick((ActionHandler)& BattlescapeState::btnUnitUpClick);
+	_btnUnitUp->onMousePress(
+					(ActionHandler)& BattlescapeState::btnUnitUpPress,
+					SDL_BUTTON_LEFT);
+	_btnUnitUp->onMouseRelease(
+					(ActionHandler)& BattlescapeState::btnUnitUpRelease,
+					SDL_BUTTON_LEFT);
 //	_btnUnitUp->setTooltip("STR_UNIT_LEVEL_ABOVE");
 //	_btnUnitUp->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
 //	_btnUnitUp->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnUnitDown->onMouseClick((ActionHandler)& BattlescapeState::btnUnitDownClick);
+	_btnUnitDown->onMousePress(
+					(ActionHandler)& BattlescapeState::btnUnitDownPress,
+					SDL_BUTTON_LEFT);
+	_btnUnitDown->onMouseRelease(
+					(ActionHandler)& BattlescapeState::btnUnitDownRelease,
+					SDL_BUTTON_LEFT);
 //	_btnUnitDown->setTooltip("STR_UNIT_LEVEL_BELOW");
 //	_btnUnitDown->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
 //	_btnUnitDown->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnMapUp->onMouseClick((ActionHandler)& BattlescapeState::btnMapUpClick);
+	_btnMapUp->onMousePress(
+					(ActionHandler)& BattlescapeState::btnMapUpPress,
+					SDL_BUTTON_LEFT);
 	_btnMapUp->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnMapUpClick,
+					(ActionHandler)& BattlescapeState::btnMapUpPress,
+					Options::keyBattleLevelUp);
+
+	_btnMapUp->onMouseRelease(
+					(ActionHandler)& BattlescapeState::btnMapUpRelease,
+					SDL_BUTTON_LEFT);
+	_btnMapUp->onKeyboardRelease(
+					(ActionHandler)& BattlescapeState::btnMapUpRelease,
 					Options::keyBattleLevelUp);
 //	_btnMapUp->setTooltip("STR_VIEW_LEVEL_ABOVE");
 //	_btnMapUp->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
 //	_btnMapUp->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnMapDown->onMouseClick((ActionHandler)& BattlescapeState::btnMapDownClick);
+	_btnMapDown->onMousePress(
+					(ActionHandler)& BattlescapeState::btnMapDownPress,
+					SDL_BUTTON_LEFT);
 	_btnMapDown->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnMapDownClick,
+					(ActionHandler)& BattlescapeState::btnMapDownPress,
+					Options::keyBattleLevelDown);
+
+	_btnMapDown->onMouseRelease(
+					(ActionHandler)& BattlescapeState::btnMapDownRelease,
+					SDL_BUTTON_LEFT);
+	_btnMapDown->onKeyboardRelease(
+					(ActionHandler)& BattlescapeState::btnMapDownRelease,
 					Options::keyBattleLevelDown);
 //	_btnMapDown->setTooltip("STR_VIEW_LEVEL_BELOW");
 //	_btnMapDown->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
@@ -728,42 +747,79 @@ BattlescapeState::BattlescapeState()
 //	_btnInventory->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
 //	_btnInventory->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnCenter->onMouseClick((ActionHandler)& BattlescapeState::btnCenterClick);
+	_btnCenter->onMousePress(
+					(ActionHandler)& BattlescapeState::btnCenterPress,
+					SDL_BUTTON_LEFT);
 	_btnCenter->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnCenterClick,
+					(ActionHandler)& BattlescapeState::btnCenterPress,
 					Options::keyBattleCenterUnit);
 	_btnCenter->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnCenterClick,
+					(ActionHandler)& BattlescapeState::btnCenterPress,
+					SDLK_KP5);
+
+	_btnCenter->onMouseRelease(
+					(ActionHandler)& BattlescapeState::btnCenterRelease,
+					SDL_BUTTON_LEFT);
+	_btnCenter->onKeyboardRelease(
+					(ActionHandler)& BattlescapeState::btnCenterRelease,
+					Options::keyBattleCenterUnit);
+	_btnCenter->onKeyboardRelease(
+					(ActionHandler)& BattlescapeState::btnCenterRelease,
 					SDLK_KP5);
 //	_btnCenter->setTooltip("STR_CENTER_SELECTED_UNIT");
 //	_btnCenter->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
 //	_btnCenter->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnNextUnit->onMouseClick(
-					(ActionHandler)& BattlescapeState::btnNextUnitClick,
+	_btnNextUnit->onMousePress(
+					(ActionHandler)& BattlescapeState::btnNextUnitPress,
 					SDL_BUTTON_LEFT);
-	_btnNextUnit->onMouseClick(
-					(ActionHandler)& BattlescapeState::btnPrevUnitClick,
+	_btnNextUnit->onKeyboardPress(
+					(ActionHandler)& BattlescapeState::btnNextUnitPress,
+					Options::keyBattleNextUnit);
+
+	_btnNextUnit->onMousePress(
+					(ActionHandler)& BattlescapeState::btnPrevUnitPress,
 					SDL_BUTTON_RIGHT);
 	_btnNextUnit->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnNextUnitClick,
+					(ActionHandler)& BattlescapeState::btnPrevUnitPress,
+					Options::keyBattlePrevUnit);
+
+	_btnNextUnit->onMouseRelease(
+					(ActionHandler)& BattlescapeState::btnNextUnitRelease,
+					SDL_BUTTON_LEFT);
+	_btnNextUnit->onKeyboardRelease(
+					(ActionHandler)& BattlescapeState::btnNextUnitRelease,
 					Options::keyBattleNextUnit);
-	_btnNextUnit->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnPrevUnitClick,
+
+	_btnNextUnit->onMouseRelease(
+					(ActionHandler)& BattlescapeState::btnPrevUnitRelease,
+					SDL_BUTTON_RIGHT);
+	_btnNextUnit->onKeyboardRelease(
+					(ActionHandler)& BattlescapeState::btnPrevUnitRelease,
 					Options::keyBattlePrevUnit);
 //	_btnNextUnit->setTooltip("STR_NEXT_UNIT");
 //	_btnNextUnit->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
 //	_btnNextUnit->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnNextStop->onMouseClick(
-					(ActionHandler)& BattlescapeState::btnNextStopClick,
+	_btnNextStop->onMousePress(
+					(ActionHandler)& BattlescapeState::btnNextStopPress,
 					SDL_BUTTON_LEFT);
-	_btnNextStop->onMouseClick(
-					(ActionHandler)& BattlescapeState::btnPrevStopClick,
-					SDL_BUTTON_RIGHT);
 	_btnNextStop->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnNextStopClick,
+					(ActionHandler)& BattlescapeState::btnNextStopPress,
 					Options::keyBattleDeselectUnit);
+	_btnNextStop->onMousePress(
+					(ActionHandler)& BattlescapeState::btnPrevStopPress,
+					SDL_BUTTON_RIGHT);
+
+	_btnNextStop->onMouseRelease(
+					(ActionHandler)& BattlescapeState::btnNextStopRelease,
+					SDL_BUTTON_LEFT);
+	_btnNextStop->onKeyboardRelease(
+					(ActionHandler)& BattlescapeState::btnNextStopRelease,
+					Options::keyBattleDeselectUnit);
+	_btnNextStop->onMouseRelease(
+					(ActionHandler)& BattlescapeState::btnPrevStopRelease,
+					SDL_BUTTON_RIGHT);
 //	_btnNextStop->setTooltip("STR_DESELECT_UNIT");
 //	_btnNextStop->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
 //	_btnNextStop->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
@@ -773,9 +829,9 @@ BattlescapeState::BattlescapeState()
 //	_btnShowLayers->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
 //	_btnShowLayers->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnOptions->onMouseClick((ActionHandler)& BattlescapeState::btnHelpClick);
+	_btnOptions->onMouseClick((ActionHandler)& BattlescapeState::btnBattleOptionsClick);
 	_btnOptions->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnHelpClick,
+					(ActionHandler)& BattlescapeState::btnBattleOptionsClick,
 					Options::keyBattleOptions);
 //	_btnOptions->setTooltip("STR_OPTIONS");
 //	_btnOptions->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
@@ -1699,9 +1755,9 @@ inline void BattlescapeState::handle(Action* action)
 /*		else if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
 		{
 			if (action->getDetails()->button.button == SDL_BUTTON_X1)
-				btnNextUnitClick(action);
+				btnNextUnitPress(action);
 			else if (action->getDetails()->button.button == SDL_BUTTON_X2)
-				btnPrevUnitClick(action);
+				btnPrevUnitPress(action);
 		} */
 	}
 }
@@ -1710,7 +1766,7 @@ inline void BattlescapeState::handle(Action* action)
  * Moves the selected unit up.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnUnitUpClick(Action*)
+void BattlescapeState::btnUnitUpPress(Action*)
 {
 	if (playableUnitSelected() == true)
 	{
@@ -1725,6 +1781,7 @@ void BattlescapeState::btnUnitUpClick(Action*)
 
 			if (valid > 0) // gravLift or flying
 			{
+				_overlay->getFrame(0)->blit(_btnUnitUp);
 				_battleGame->cancelCurrentAction();
 				_battleGame->moveUpDown(
 									_battleSave->getSelectedUnit(),
@@ -1741,10 +1798,19 @@ void BattlescapeState::btnUnitUpClick(Action*)
 }
 
 /**
+ * Releases the Unitup btn.
+ * @param action - pointer to an Action
+ */
+void BattlescapeState::btnUnitUpRelease(Action*)
+{
+	_btnUnitUp->clear();
+}
+
+/**
  * Moves the selected unit down.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnUnitDownClick(Action*)
+void BattlescapeState::btnUnitDownPress(Action*)
 {
 	if (playableUnitSelected() == true)
 	{
@@ -1756,6 +1822,7 @@ void BattlescapeState::btnUnitDownClick(Action*)
 							_battleSave->getSelectedUnit()->getPosition(),
 							Pathfinding::DIR_DOWN) > 0)
 		{
+			_overlay->getFrame(7)->blit(_btnUnitDown);
 			_battleGame->cancelCurrentAction();
 			_battleGame->moveUpDown(
 								_battleSave->getSelectedUnit(),
@@ -1767,43 +1834,66 @@ void BattlescapeState::btnUnitDownClick(Action*)
 }
 
 /**
- * Shows the next map layer.
+ * Releases the Unitdown btn.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnMapUpClick(Action*)
+void BattlescapeState::btnUnitDownRelease(Action*)
+{
+	_btnUnitDown->clear();
+}
+
+/**
+ * Shows the next upper map layer.
+ * @param action - pointer to an Action
+ */
+void BattlescapeState::btnMapUpPress(Action*)
 {
 /*	if (_battleSave->getSide() == FACTION_PLAYER
 		|| _battleSave->getDebugMode() == true)
 	{
 		_map->getCamera()->up();
 	} */
-	if (allowButtons() == true)
-		_map->getCamera()->up();
+	if (allowButtons() == true
+		&& _map->getCamera()->up() == true)
+	{
+		_overlay->getFrame(1)->blit(_btnMapUp);
+	}
 }
 
 /**
- * Shows the previous map layer.
+ * Releases the Mapup btn.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnMapDownClick(Action*)
+void BattlescapeState::btnMapUpRelease(Action*)
+{
+	_btnMapUp->clear();
+}
+
+/**
+ * Shows the next lower map layer.
+ * @param action - pointer to an Action
+ */
+void BattlescapeState::btnMapDownPress(Action*)
 {
 /*	if (_battleSave->getSide() == FACTION_PLAYER
 		|| _battleSave->getDebugMode() == true)
 	{
 		_map->getCamera()->down();
 	} */
-	if (allowButtons() == true)
-		_map->getCamera()->down();
+	if (allowButtons() == true
+		&& _map->getCamera()->down() == true)
+	{
+		_overlay->getFrame(8)->blit(_btnMapDown);
+	}
 }
 
 /**
- * Sets the level on the icons' Layers button.
- * @param level - Z level
+ * Releases the Mapdown btn.
+ * @param action - pointer to an Action
  */
-void BattlescapeState::setLayerValue(int level)
+void BattlescapeState::btnMapDownRelease(Action*)
 {
-//	if (level < 0) level = 0;
-	_numLayers->setValue(static_cast<unsigned>((level + 1) % 10));
+	_btnMapDown->clear();
 }
 
 /**
@@ -1813,10 +1903,22 @@ void BattlescapeState::setLayerValue(int level)
 void BattlescapeState::btnShowMapClick(Action*)
 {
 	if (allowButtons() == true)
+	{
+		_overlay->getFrame(2)->blit(_btnShowMap);
 		_game->pushState(new MiniMapState(
 										_map->getCamera(),
 										_battleSave));
+	}
 }
+
+/**
+ * Clears the ShowMap btn.
+ * @note To be called from MiniMapState::btnOkClick()
+ *
+void BattlescapeState::clearShowMapBtn()
+{
+	_btnShowMap->clear();
+} */
 
 /**
  * Toggles the current unit's kneel/standup status.
@@ -1858,8 +1960,7 @@ void BattlescapeState::btnKneelClick(Action*)
 					pf->previewPath();
 				}
 			}
-
-			toggleKneelButton(unit);
+//			toggleKneelButton(unit); // <- handled by BattlescapeGame::kneel()
 		}
 	}
 }
@@ -1871,7 +1972,7 @@ void BattlescapeState::btnKneelClick(Action*)
  */
 void BattlescapeState::btnInventoryClick(Action*)
 {
-	if (_battleSave->getDebugMode() == true)
+/*	if (_battleSave->getDebugMode() == true)
 	{
 		for (std::vector<BattleUnit*>::const_iterator
 				i = _battleSave->getUnits()->begin();
@@ -1883,7 +1984,7 @@ void BattlescapeState::btnInventoryClick(Action*)
 
 			updateSoldierInfo();
 		}
-	}
+	} */
 
 	if (playableUnitSelected() == true)
 	{
@@ -1902,6 +2003,7 @@ void BattlescapeState::btnInventoryClick(Action*)
 			}
 
 			_battleGame->cancelCurrentAction(true);
+//			_overlay->getFrame(3)->blit(_btnInventory); // clear() not implemented @ InventoryState.
 			_game->pushState(new InventoryState(
 											_battleSave->getDebugMode() == false,
 											this));
@@ -1940,65 +2042,115 @@ void BattlescapeState::refreshMousePosition() const
  * Centers on the currently selected BattleUnit.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnCenterClick(Action*)
+void BattlescapeState::btnCenterPress(Action*)
 {
 	if (playableUnitSelected() == true)
 	{
+		_overlay->getFrame(10)->blit(_btnCenter);
 		_map->getCamera()->centerOnPosition(_battleSave->getSelectedUnit()->getPosition());
 		refreshMousePosition();
 	}
 }
 
 /**
+ * Releases the Center btn.
+ * @param action - pointer to an Action
+ */
+void BattlescapeState::btnCenterRelease(Action*)
+{
+	_btnCenter->clear();
+}
+
+/**
  * Selects the next BattleUnit.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnNextUnitClick(Action*)
+void BattlescapeState::btnNextUnitPress(Action*)
 {
 	if (allowButtons() == true)
 	{
+		_overlay->getFrame(4)->blit(_btnNextUnit);
 		selectNextPlayerUnit(true);
 		refreshMousePosition();
 	}
 }
 
 /**
+ * Releases the Nextunit btn.
+ * @param action - pointer to an Action
+ */
+void BattlescapeState::btnNextUnitRelease(Action*)
+{
+	_btnNextUnit->clear();
+}
+
+/**
  * Disables reselection of the current BattleUnit and selects the next BattleUnit.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnNextStopClick(Action*)
+void BattlescapeState::btnNextStopPress(Action*)
 {
 	if (allowButtons() == true)
 	{
+		_overlay->getFrame(11)->blit(_btnNextStop);
 		selectNextPlayerUnit(true, true);
 		refreshMousePosition();
 	}
 }
 
 /**
+ * Releases the Nextstop btn.
+ * @param action - pointer to an Action
+ */
+void BattlescapeState::btnNextStopRelease(Action*)
+{
+	_btnNextStop->clear();
+}
+
+/**
  * Selects next BattleUnit.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnPrevUnitClick(Action*)
+void BattlescapeState::btnPrevUnitPress(Action*)
 {
 	if (allowButtons() == true)
 	{
+		_overlay->getFrame(4)->blit(_btnNextUnit);
 		selectPreviousPlayerUnit(true);
 		refreshMousePosition();
 	}
 }
 
 /**
+ * Releases the Prevunit btn.
+ * @param action - pointer to an Action
+ */
+void BattlescapeState::btnPrevUnitRelease(Action*)
+{
+	_btnNextUnit->clear();
+}
+
+/**
  * Disables reselection of the current BattleUnit and selects the next BattleUnit.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnPrevStopClick(Action*)
+void BattlescapeState::btnPrevStopPress(Action*)
 {
 	if (allowButtons() == true)
 	{
+		_overlay->getFrame(11)->blit(_btnNextStop);
 		selectPreviousPlayerUnit(true, true);
 		refreshMousePosition();
 	}
+}
+
+/**
+ * Releases the Prevstop btn.
+ * @param action - pointer to an Action
+ */
+void BattlescapeState::btnPrevStopRelease(Action*)
+{
+	_btnNextStop->clear();
 }
 
 /**
@@ -2065,20 +2217,43 @@ void BattlescapeState::btnShowLayersClick(Action*)
 	if (allowButtons() == true)
 	{
 		if (_map->getCamera()->toggleShowLayers() == true)
-			_game->getResourcePack()->getSurface("ICONS_LAYER")->blit(_btnShowLayers);
+			_overlay->getFrame(5)->blit(_btnShowLayers);
+//			_game->getResourcePack()->getSurface("ICONS_LAYER")->blit(_btnShowLayers);
 		else
 			_btnShowLayers->clear();
 	}
 }
 
 /**
- * Shows options.
+ * Sets the level on the icons' Layers button.
+ * @param level - Z level
+ */
+void BattlescapeState::setLayerValue(int level)
+{
+//	if (level < 0) level = 0;
+	_numLayers->setValue(static_cast<unsigned>((level + 1) % 10));
+}
+
+/**
+ * Shows Options.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnHelpClick(Action*)
+void BattlescapeState::btnBattleOptionsClick(Action*)
 {
 	if (allowButtons(true) == true)
+	{
+		_overlay->getFrame(12)->blit(_btnOptions);
 		_game->pushState(new PauseState(OPT_BATTLESCAPE));
+	}
+}
+
+/**
+ * Clears the Options btn.
+ * @note To be called from PauseState::btnOkClick()
+ */
+void BattlescapeState::clearOptionsBtn()
+{
+	_btnOptions->clear();
 }
 
 /**
@@ -2092,6 +2267,7 @@ void BattlescapeState::btnEndTurnClick(Action*)
 	if (allowButtons() == true)
 	{
 //		_txtTooltip->setText(L"");
+//		_overlay->getFrame(6)->blit(_btnEndTurn); // clear() not implemented.
 		_battleGame->requestEndTurn();
 	}
 }
@@ -2103,7 +2279,19 @@ void BattlescapeState::btnEndTurnClick(Action*)
 void BattlescapeState::btnAbortClick(Action*)
 {
 	if (allowButtons() == true)
+	{
+		_overlay->getFrame(13)->blit(_btnAbort);
 		_game->pushState(new AbortMissionState(_battleSave, this));
+	}
+}
+
+/**
+ * Clears the Abort btn.
+ * @note To be used in AbortMissionState::btnCancelClick().
+ */
+void BattlescapeState::clearAbortBtn()
+{
+	_btnAbort->clear();
 }
 
 /**
@@ -2235,9 +2423,9 @@ void BattlescapeState::btnRightHandRightClick(Action*)
 void BattlescapeState::btnHostileUnitPress(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-		btnMapDownClick(nullptr);
+		btnMapDownPress(nullptr);
 	else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-		btnMapUpClick(nullptr);
+		btnMapUpPress(nullptr);
 	else
 	{
 		size_t i; // find out which button was pressed
@@ -2347,11 +2535,11 @@ void BattlescapeState::btnWoundedPress(Action* action)
 	switch (action->getDetails()->button.button)
 	{
 		case SDL_BUTTON_WHEELUP:
-			btnMapDownClick(nullptr);
+			btnMapDownPress(nullptr);
 			break;
 
 		case SDL_BUTTON_WHEELDOWN:
-			btnMapUpClick(nullptr);
+			btnMapUpPress(nullptr);
 			break;
 
 		case SDL_BUTTON_LEFT:
@@ -2737,7 +2925,8 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 		texture->getFrame(20 + sol->getRank())->blit(_rank);
 
 		if (selUnit->isKneeled() == true)
-			_game->getResourcePack()->getSurface("KneelButton")->blit(_btnKneel);
+			_overlay->getFrame(9)->blit(_btnKneel);
+//			_game->getResourcePack()->getSurface("KneelButton")->blit(_btnKneel);
 
 		_txtOrder->setText(tr("STR_ORDER")
 							.arg(static_cast<int>(selUnit->getBattleOrder())));
@@ -3093,13 +3282,13 @@ void BattlescapeState::blinkHealthBar() // private.
 }
 
 /**
- * Shows the unit kneel state.
+ * Shows a selected unit's kneeled state.
  * @param unit - pointer to a BattleUnit
  */
-void BattlescapeState::toggleKneelButton(BattleUnit* unit) // private.
+void BattlescapeState::toggleKneelButton(BattleUnit* unit)
 {
 	if (unit != nullptr && unit->isKneeled() == true)
-		_game->getResourcePack()->getSurface("KneelButton")->blit(_btnKneel);
+		_overlay->getFrame(9)->blit(_btnKneel);
 	else
 		_btnKneel->clear();
 }

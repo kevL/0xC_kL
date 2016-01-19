@@ -343,8 +343,8 @@ bool UnitWalkBState::doStatusStand() // private.
 		if (_parent->kneel(_unit) == true)
 		{
 			//Log(LOG_INFO) << ". . Stand up";
-			_unit->clearCache();
-			_parent->getMap()->cacheUnit(_unit);
+//			_unit->clearCache();					// <- These are handled by BattleUnit::kneel() [invalidate cache]
+//			_parent->getMap()->cacheUnit(_unit);	// <- and BattlescapeGame::kneel() [cache units]
 
 			if (_te->checkReactionFire(_unit) == true) // unit got fired upon - stop.
 			{

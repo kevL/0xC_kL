@@ -110,7 +110,7 @@ AbortMissionState::AbortMissionState(
 	}
 
 
-	_window->setBackground(_game->getResourcePack()->getSurface("TAC00.SCR"));
+	_window->setBackground(_game->getResourcePack()->getSurface("Diehard"));
 	_window->setHighContrast();
 
 	_txtInExit->setText(tr("STR_UNITS_IN_EXIT_AREA", _insideExitArea));
@@ -179,6 +179,7 @@ void AbortMissionState::btnOkClick(Action*)
  */
 void AbortMissionState::btnCancelClick(Action*)
 {
+	_state->clearAbortBtn();
 	_game->popState();
 }
 

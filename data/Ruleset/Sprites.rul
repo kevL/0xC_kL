@@ -139,30 +139,43 @@ extraSprites:
     files:
       0: Resources/Sprites/geograph/textures/textures.png
 # -------- UFOGRAPH -------- #
-  - type: ICONS.PCK
+  - type: ICONS # ICONS.PCK
     width: 320
-    height: 200
+    height: 56
     singleImage: true
     files:
-      0: Resources/Sprites/ufograph/icons.png
-  - type: ICONS_LAYER
-    width: 32
-    height: 16
+      0: Resources/Sprites/ufograph/icons_kL.png
+  - type: ICONS_OVERLAY
+    width: 224
+    height: 32
+    subX: 32
+    subY: 16
+    files:
+      0: Resources/Sprites/ufograph/tac_icons_d3.png
+  - type: Logo
+    width: 59
+    height: 24
     singleImage: true
     files:
-      0: Resources/Sprites/ufograph/icons_layer.png
-  - type: SCANBORD
+      0: Resources/Sprites/ufograph/logo.png
+  - type: Scanbord # SCANBORD.PCK
     width: 320
     height: 200
     singleImage: true
     files:
       0: Resources/Sprites/ufograph/scanbord.png
-  - type: TAC00.SCR
+  - type: Diehard # TAC00.SCR
     width: 320
     height: 200
     singleImage: true
     files:
       0: Resources/Sprites/ufograph/tac00.png
+  - type: Inventory # TAC01.SCR
+    width: 320
+    height: 200
+    singleImage: true
+    files:
+      0: Resources/Sprites/ufograph/tac01.png
   - type: CURSOR.PCK
     files:
       0: Resources/Sprites/ufograph/cursor/

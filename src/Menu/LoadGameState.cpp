@@ -225,7 +225,7 @@ void LoadGameState::think()
 													error.str(),
 													_palette,
 													_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapeColor")->color,
-													"TAC00.SCR",
+													"Diehard",
 													_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapePalette")->color));
 
 			if (_game->getSavedGame() == gameSave)
@@ -251,7 +251,7 @@ void LoadGameState::think()
 													error.str(),
 													_palette,
 													_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapeColor")->color,
-													"TAC00.SCR",
+													"Diehard",
 													_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapePalette")->color));
 
 			if (_game->getSavedGame() == gameSave)

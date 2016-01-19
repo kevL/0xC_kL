@@ -468,7 +468,7 @@ void Surface::loadSpk(const std::string& file)
  * @note BDY files are compressed with a custom algorithm.
  * @param file - reference the filename of the BDY image
  * @sa http://www.ufopaedia.org/index.php?title=Image_Formats#BDY
- */
+ *
 void Surface::loadBdy(const std::string& file)
 {
 	std::ifstream imgFile( // Load file and put pixels in surface
@@ -529,7 +529,7 @@ void Surface::loadBdy(const std::string& file)
 	unlock();
 
 	imgFile.close();
-}
+} */
 
 /**
  * Clears the entire contents of the surface resulting in a blank image of the

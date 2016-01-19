@@ -1157,8 +1157,8 @@ interfaces:
         color: 16
       - id: icons
         size: [320, 56]
-      - id: numLayers
-        color: 92 #stock 15
+      - id: numIcons
+        color: 93
       - id: warning
         color: 16
         color2: 32

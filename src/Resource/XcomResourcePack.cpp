@@ -300,6 +300,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 
 	std::string folder = CrossPlatform::getDataFolder("GEOGRAPH/");
 	std::vector<std::string> files = CrossPlatform::getFolderContents(folder, "SCR");
+
 	for (std::vector<std::string>::iterator
 			i = files.begin();
 			i != files.end();
@@ -315,7 +316,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 		_surfaces[*i]->loadScr(st);
 	}
 
-	files = CrossPlatform::getFolderContents(folder, "BDY");
+/*	files = CrossPlatform::getFolderContents(folder, "BDY");
 	for (std::vector<std::string>::iterator
 			i = files.begin();
 			i != files.end();
@@ -329,7 +330,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 					::toupper);
 		_surfaces[*i] = new Surface(320, 200);
 		_surfaces[*i]->loadBdy(st);
-	}
+	} */
 
 	files = CrossPlatform::getFolderContents(folder, "SPK");
 	for (std::vector<std::string>::iterator
@@ -1173,9 +1174,9 @@ void XcomResourcePack::loadBattlescapeResources()
 					CrossPlatform::getDataFile(oststr1.str()),
 					&_voxelData);
 
-	const std::string scrs[] =
+/*	const std::string scrs[] =
 	{
-		"TAC00.SCR"
+		"TAC00.SCR" // -> "Diehard"
 	};
 
 	for (size_t
@@ -1188,16 +1189,16 @@ void XcomResourcePack::loadBattlescapeResources()
 
 		_surfaces[scrs[i]] = new Surface(320,200);
 		_surfaces[scrs[i]]->loadScr(CrossPlatform::getDataFile(oststr.str()));
-	}
+	} */
 
 	const std::string spks[] =
 	{
-		"TAC01.SCR",
+//		"TAC01.SCR",	// -> "Inventory"
 		"DETBORD.PCK",
 		"DETBORD2.PCK",
-		"ICONS.PCK",
+//		"ICONS.PCK",	// -> "ICONS"
 		"MEDIBORD.PCK",
-		"SCANBORD.PCK",
+//		"SCANBORD.PCK",	// -> "Scanbord"
 		"UNIBORD.PCK"
 	};
 
@@ -1218,7 +1219,7 @@ void XcomResourcePack::loadBattlescapeResources()
 
 	const std::string ufograph = CrossPlatform::getDataFolder("UFOGRAPH/");
 
-	std::vector<std::string> bdys = CrossPlatform::getFolderContents(ufograph, "BDY");
+/*	std::vector<std::string> bdys = CrossPlatform::getFolderContents(ufograph, "BDY");
 	for (std::vector<std::string>::iterator
 			i = bdys.begin();
 			i != bdys.end();
@@ -1240,13 +1241,13 @@ void XcomResourcePack::loadBattlescapeResources()
 
 		_surfaces[*i] = new Surface(320,200);
 		_surfaces[*i]->loadBdy(path);
-	}
+	} */
 
-	// Load Battlescape inventory
-	std::vector<std::string> inventories = CrossPlatform::getFolderContents(ufograph, "SPK");
+	// Load Battlescape paperdolls
+	std::vector<std::string> paperdolls = CrossPlatform::getFolderContents(ufograph, "SPK");
 	for (std::vector<std::string>::iterator
-			i = inventories.begin();
-			i != inventories.end();
+			i = paperdolls.begin();
+			i != paperdolls.end();
 			++i)
 	{
 		std::string path = ufograph + *i;
@@ -1262,7 +1263,7 @@ void XcomResourcePack::loadBattlescapeResources()
 
 	if (Options::battleHairBleach == true) // "fix" of color index in original soldier sprites
 	{
-		const std::string armorSheet ("XCOM_1.PCK"); // init. personal armor
+		const std::string armorSheet ("XCOM_1.PCK"); // personal armor
 
 		if (_sets.find(armorSheet) != _sets.end())
 		{

@@ -514,28 +514,34 @@ void Camera::jumpXY(
 
 /**
  * Goes one level up.
+ * @return, true if not already top-level
  */
-void Camera::up()
+bool Camera::up()
 {
 	if (_offsetField.z < _mapsize_z - 1)
 	{
 		_map->getBattleSave()->getBattleState()->setLayerValue(++_offsetField.z);
 		_offsetField.y += (_spriteHeight / 2) + 4;
 		_map->draw();
+		return true;
 	}
+	return false;
 }
 
 /**
  * Goes one level down.
+ * @return, true if not already lowest-level
  */
-void Camera::down()
+bool Camera::down()
 {
 	if (_offsetField.z > 0)
 	{
 		_map->getBattleSave()->getBattleState()->setLayerValue(--_offsetField.z);
 		_offsetField.y -= (_spriteHeight / 2) + 4;
 		_map->draw();
+		return true;
 	}
+	return false;
 }
 
 /**

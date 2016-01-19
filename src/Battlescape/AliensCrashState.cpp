@@ -53,7 +53,7 @@ AliensCrashState::AliensCrashState()
 	centerAllSurfaces();
 
 
-	_window->setBackground(_game->getResourcePack()->getSurface("TAC00.SCR"));
+	_window->setBackground(_game->getResourcePack()->getSurface("Diehard"));
 	_window->setHighContrast();
 
 	_btnOk->setText(tr("STR_OK"));

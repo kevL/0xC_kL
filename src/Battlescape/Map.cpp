@@ -2086,7 +2086,7 @@ void Map::setPalette(
 	}
 
 	_hiddenScreen->setPalette(colors, firstcolor, ncolors);
-	_hiddenScreen->setBackground(_res->getSurface("TAC00.SCR"));
+	_hiddenScreen->setBackground(_res->getSurface("Diehard"));
 	_hiddenScreen->initText(
 					_res->getFont("FONT_BIG"),
 					_res->getFont("FONT_SMALL"),

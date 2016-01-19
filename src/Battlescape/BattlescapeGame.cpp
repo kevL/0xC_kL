@@ -1335,6 +1335,7 @@ bool BattlescapeGame::kneel(BattleUnit* const unit)
 //						getTileEngine()->checkReactionFire(unit);
 						// ditto..
 
+						_parentState->toggleKneelButton(unit);
 						return true;
 					}
 					else

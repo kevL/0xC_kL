@@ -26,6 +26,8 @@
 #include "OptionsGeoscapeState.h"
 #include "OptionsVideoState.h"
 
+#include "../Battlescape/BattlescapeState.h"
+
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
 #include "../Engine/Options.h"
@@ -36,6 +38,7 @@
 
 #include "../Resource/ResourcePack.h"
 
+#include "../Savegame/SavedBattleGame.h"
 #include "../Savegame/SavedGame.h"
 
 
@@ -177,8 +180,8 @@ void PauseState::btnSaveClick(Action*)
 /**
 * Opens the Game Options screen.
 * @param action Pointer to an action.
-*/
-/*void PauseState::btnOptionsClick(Action*)
+*
+void PauseState::btnOptionsClick(Action*)
 {
 	Options::backupDisplay();
 
@@ -205,6 +208,9 @@ void PauseState::btnAbandonClick(Action*)
  */
 void PauseState::btnCancelClick(Action*)
 {
+	if (_origin == OPT_BATTLESCAPE)
+		_game->getSavedGame()->getBattleSave()->getBattleState()->clearOptionsBtn();
+
 	_game->popState();
 }
 

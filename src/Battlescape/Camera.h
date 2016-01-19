@@ -121,9 +121,9 @@ private:
 				int y);
 
 		/// Moves map layer up.
-		void up();
+		bool up();
 		/// Move map layer down.
-		void down();
+		bool down();
 
 		/// Gets the map displayed level.
 		int getViewLevel() const;
