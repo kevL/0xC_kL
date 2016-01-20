@@ -65,6 +65,7 @@ private:
 		_tactical,
 		_inDogfight,
 		_lowFuel,
+		_showReady,
 		_tacticalDone,
 		_warned;
 	int
@@ -203,6 +204,10 @@ private:
 
 		/// Does a Craft full checkup.
 		void checkup();
+		/// Sets whether to show a message to player that this Craft is ready.
+		void showReady(bool ready);
+		/// Gets whether to show a message to player that this Craft is ready.
+		bool showReady() const;
 
 		/// Checks if a target is detected by the Craft's radar.
 		bool detect(const Target* const target) const;

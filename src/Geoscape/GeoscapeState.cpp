@@ -38,6 +38,7 @@
 #include "ConfirmLandingState.h"
 #include "CraftErrorState.h"
 #include "CraftPatrolState.h"
+#include "CraftReadyState.h"
 #include "DefeatState.h"
 #include "DogfightState.h"
 #include "FundingState.h"
@@ -2378,7 +2379,7 @@ void GeoscapeState::time30Minutes()
 			expireCrashedUfo());
 
 
-	for (std::vector<Base*>::const_iterator // handle craft maintenance.
+	for (std::vector<Base*>::const_iterator // handle Craft maintenance.
 			i = _gameSave->getBases()->begin();
 			i != _gameSave->getBases()->end();
 			++i)
@@ -2392,7 +2393,7 @@ void GeoscapeState::time30Minutes()
 			{
 				case CS_REFUELLING:
 				{
-					const std::string refuelItem = (*j)->getRules()->getRefuelItem();
+					const std::string refuelItem ((*j)->getRules()->getRefuelItem());
 
 					if (refuelItem.empty() == true)
 						(*j)->refuel();
@@ -2409,33 +2410,42 @@ void GeoscapeState::time30Minutes()
 						{
 							(*j)->setWarned();
 							(*j)->setWarning(CW_CANTREFUEL);
-							const std::wstring msg = tr("STR_NOT_ENOUGH_ITEM_TO_REFUEL_CRAFT_AT_BASE")
-													.arg(tr(refuelItem))
-													.arg((*j)->getName(_game->getLanguage()))
-													.arg((*i)->getName(nullptr));
-							popup(new CraftErrorState(this, msg));
+							const std::wstring wst = tr("STR_NOT_ENOUGH_ITEM_TO_REFUEL_CRAFT_AT_BASE")
+														.arg(tr(refuelItem))
+														.arg((*j)->getName(_game->getLanguage()))
+														.arg((*i)->getName(nullptr));
+							popup(new CraftErrorState(this, wst));
 						}
 					}
 					break;
 				}
 				case CS_REARMING:
 				{
-					const std::string rearmClip = (*j)->rearm(_rules);
+					const std::string rearmClip ((*j)->rearm(_rules));
 
 					if (rearmClip.empty() == false
 						&& (*j)->getWarned() == false)
 					{
 						(*j)->setWarned();
-						const std::wstring msg = tr("STR_NOT_ENOUGH_ITEM_TO_REARM_CRAFT_AT_BASE")
-												.arg(tr(rearmClip))
-												.arg((*j)->getName(_game->getLanguage()))
-												.arg((*i)->getName(nullptr));
-						popup(new CraftErrorState(this, msg));
+						const std::wstring wst = tr("STR_NOT_ENOUGH_ITEM_TO_REARM_CRAFT_AT_BASE")
+													.arg(tr(rearmClip))
+													.arg((*j)->getName(_game->getLanguage()))
+													.arg((*i)->getName(nullptr));
+						popup(new CraftErrorState(this, wst));
 					}
 					break;
 				}
 				case CS_REPAIRS:
 					(*j)->repair();
+			}
+
+			if ((*j)->showReady() == true)
+			{
+				(*j)->showReady(false);
+				const std::wstring wst = tr("STR_CRAFT_READY")
+											.arg((*i)->getName(nullptr))
+											.arg((*j)->getName(_game->getLanguage()));
+				popup(new CraftReadyState(this, wst));
 			}
 		}
 	}

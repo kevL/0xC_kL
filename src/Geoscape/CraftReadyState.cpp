@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "CraftErrorState.h"
+#include "CraftReadyState.h"
 
 #include "GeoscapeState.h"
 
@@ -36,11 +36,11 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in a Cannot Refuel/Rearm window.
+ * Initializes all the elements in a CraftReady window.
  * @param state	- pointer to the GeoscapeState
- * @param wst	- reference to the error message
+ * @param wst	- reference to the message
  */
-CraftErrorState::CraftErrorState(
+CraftReadyState::CraftReadyState(
 		GeoscapeState* state,
 		const std::wstring& wst)
 	:
@@ -53,7 +53,7 @@ CraftErrorState::CraftErrorState(
 	_btnOk5Secs	= new TextButton(100, 18,  48, 150);
 	_btnOk		= new TextButton(100, 18, 172, 150);
 
-	setInterface("geoCraftScreens");
+	setInterface("geoCraftScreens", true);
 
 	add(_window,		"window",	"geoCraftScreens");
 	add(_txtMessage,	"text1",	"geoCraftScreens");
@@ -66,50 +66,49 @@ CraftErrorState::CraftErrorState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& CraftErrorState::btnOkClick);
+	_btnOk->onMouseClick((ActionHandler)& CraftReadyState::btnOkClick);
 	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftErrorState::btnOkClick,
+					(ActionHandler)& CraftReadyState::btnOkClick,
 					Options::keyCancel);
 
 	_btnOk5Secs->setText(tr("STR_OK_5_SECONDS"));
-	_btnOk5Secs->onMouseClick((ActionHandler)& CraftErrorState::btnOk5SecsClick);
+	_btnOk5Secs->onMouseClick((ActionHandler)& CraftReadyState::btnOk5SecsClick);
 
 	if (_state->is5Sec() == true)
 	{
 		_btnOk->onKeyboardPress(
-						(ActionHandler)& CraftErrorState::btnOkClick,
+						(ActionHandler)& CraftReadyState::btnOkClick,
 						Options::keyOk);
 		_btnOk->onKeyboardPress(
-						(ActionHandler)& CraftErrorState::btnOkClick,
+						(ActionHandler)& CraftReadyState::btnOkClick,
 						Options::keyOkKeypad);
 	}
 	else
 	{
 		_btnOk5Secs->onKeyboardPress(
-						(ActionHandler)& CraftErrorState::btnOk5SecsClick,
+						(ActionHandler)& CraftReadyState::btnOk5SecsClick,
 						Options::keyOk);
 		_btnOk5Secs->onKeyboardPress(
-						(ActionHandler)& CraftErrorState::btnOk5SecsClick,
+						(ActionHandler)& CraftReadyState::btnOk5SecsClick,
 						Options::keyOkKeypad);
 	}
 
 	_txtMessage->setAlign(ALIGN_CENTER);
 	_txtMessage->setVerticalAlign(ALIGN_MIDDLE);
 	_txtMessage->setBig();
-	_txtMessage->setWordWrap();
 	_txtMessage->setText(wst);
 }
 
 /**
  * dTor.
  */
-CraftErrorState::~CraftErrorState()
+CraftReadyState::~CraftReadyState()
 {}
 
 /**
  * Initializes the state.
  */
-void CraftErrorState::init()
+void CraftReadyState::init()
 {
 	State::init();
 	_btnOk5Secs->setVisible(_state->is5Sec() == false);
@@ -119,7 +118,7 @@ void CraftErrorState::init()
  * Closes the window.
  * @param action - pointer to an Action
  */
-void CraftErrorState::btnOkClick(Action*)
+void CraftReadyState::btnOkClick(Action*)
 {
 	_game->popState();
 }
@@ -128,7 +127,7 @@ void CraftErrorState::btnOkClick(Action*)
  * Closes the window.
  * @param action - pointer to an Action
  */
-void CraftErrorState::btnOk5SecsClick(Action*)
+void CraftReadyState::btnOk5SecsClick(Action*)
 {
 	_state->resetTimer();
 	_game->popState();

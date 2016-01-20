@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_CRAFTERRORSTATE_H
-#define OPENXCOM_CRAFTERRORSTATE_H
+#ifndef OPENXCOM_CRAFTREADYSTATE_H
+#define OPENXCOM_CRAFTREADYSTATE_H
 
 //#include <string>
 
@@ -29,15 +29,16 @@ namespace OpenXcom
 {
 
 class GeoscapeState;
+
 class Text;
 class TextButton;
 class Window;
 
 
 /**
- * Window used to notify the player when an error occurs with a craft procedure.
+ * Window used to notify the player when a Craft is ready for take-off.
  */
-class CraftErrorState
+class CraftReadyState
 	:
 		public State
 {
@@ -51,12 +52,12 @@ private:
 
 
 	public:
-		/// Creates the CraftError state.
-		CraftErrorState(
+		/// Creates the CraftReady state.
+		CraftReadyState(
 				GeoscapeState* state,
 				const std::wstring& wst);
-		/// Cleans up the CraftError state.
-		~CraftErrorState();
+		/// Cleans up the CraftReady state.
+		~CraftReadyState();
 
 		/// Initializes the state.
 		void init() override;
@@ -65,6 +66,8 @@ private:
 		void btnOkClick(Action* action);
 		/// Handler for clicking the OK 5 Secs button.
 		void btnOk5SecsClick(Action* action);
+		///
+		// TODO: btnBaseClick()
 };
 
 }

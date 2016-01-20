@@ -77,7 +77,8 @@ Craft::Craft(
 		_loadCur(0),
 		_warning(CW_NONE),
 		_warned(false), // do not save-to-file; ie, re-warn player if reloading
-		_kills(0)
+		_kills(0),
+		_showReady(false)
 {
 	_items = new ItemContainer();
 
@@ -881,9 +882,11 @@ void Craft::think()
  */
 void Craft::checkup()
 {
+	bool showReady (_status != CS_READY);
+
 	int
 		cw = 0,
-		loaded = 0;
+		armok = 0;
 
 	for (std::vector<CraftWeapon*>::const_iterator
 			i = _weapons.begin();
@@ -894,21 +897,42 @@ void Craft::checkup()
 		{
 			++cw;
 
-			if ((*i)->getAmmo() >= (*i)->getRules()->getAmmoMax())
-				++loaded;
-			else
+			if ((*i)->getAmmo() < (*i)->getRules()->getAmmoMax())
 				(*i)->setRearming();
+			else
+				++armok;
 		}
 	}
 
 	if (_damage > 0)
 		_status = CS_REPAIRS;		// 1st stage
-	else if (cw > loaded)
+	else if (cw > armok)
 		_status = CS_REARMING;		// 2nd stage
 	else if (_fuel < _crRule->getMaxFuel())
 		_status = CS_REFUELLING;	// 3rd stage
 	else
 		_status = CS_READY;			// 4th Ready.
+
+	if (showReady == true && _status == CS_READY)
+		_showReady = true;
+}
+
+/**
+ * Sets whether to show a message to player that this Craft is ready.
+ * @param ready - true to show a message
+ */
+void Craft::showReady(bool ready)
+{
+	_showReady = ready;
+}
+
+/**
+ * Gets whether to show a message to player that this Craft is ready.
+ * @return, true to show a message
+ */
+bool Craft::showReady() const
+{
+	return _showReady;
 }
 
 /**
