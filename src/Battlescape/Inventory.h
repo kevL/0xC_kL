@@ -165,7 +165,7 @@ private:
 		/// Sets grenade to show a warning in Inventory.
 		void setPrimeGrenade(int turn);
 		/// Shows a warning message.
-		void showWarning(const std::wstring& msg);
+		void showWarning(const std::wstring& wst);
 
 		/// Gets the TU cost for moving items around.
 		int getTuCostInventory() const;

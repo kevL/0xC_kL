@@ -318,7 +318,7 @@ void Inventory::drawItems() // private.
 				if ((*i)->getFuse() > -1) // grenade primer indicators
 					_grenadeFuses.push_back(std::make_pair(sprite->getX(), sprite->getY()));
 			}
-			else Log(LOG_INFO) << "ERROR: Inventory::drawItems() bigob not found[1] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
+			else Log(LOG_WARNING) << "Inventory::drawItems() bigob not found[1] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
 		}
 	}
 
@@ -327,7 +327,7 @@ void Inventory::drawItems() // private.
 	stackLayer->setPalette(getPalette());
 
 	static const Uint8
-		colorQty (static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")->getElement("numStack")->color)),
+		color (static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")->getElement("numStack")->color)),
 		RED (37);
 
 	inRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
@@ -355,7 +355,7 @@ void Inventory::drawItems() // private.
 				if ((*i)->getFuse() > -1) // grenade primer indicators
 					_grenadeFuses.push_back(std::make_pair(sprite->getX(), sprite->getY()));
 			}
-			else Log(LOG_INFO) << "ERROR: Inventory::drawItems() bigob not found[2] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
+			else Log(LOG_WARNING) << "Inventory::drawItems() bigob not found[2] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
 
 			const int qty (_stackLevel[(*i)->getSlotX()] // item stacking
 									  [(*i)->getSlotY()]);
@@ -379,7 +379,7 @@ void Inventory::drawItems() // private.
 										* RuleInventory::SLOT_H) - 6);
 				_stackNumber->setValue(fatals ? static_cast<unsigned>(fatals) : static_cast<unsigned>(qty));
 				_stackNumber->draw();
-				_stackNumber->setColor(fatals ? RED : colorQty);
+				_stackNumber->setColor(fatals ? RED : color);
 				_stackNumber->blit(stackLayer);
 			}
 		}
@@ -1362,9 +1362,9 @@ void Inventory::setPrimeGrenade(int turn)
  * Shows a warning message.
  * @param msg - reference a message to show
  */
-void Inventory::showWarning(const std::wstring& msg)
+void Inventory::showWarning(const std::wstring& wst)
 {
-	_warning->showMessage(msg);
+	_warning->showMessage(wst);
 }
 
 /**

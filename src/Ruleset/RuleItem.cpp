@@ -655,7 +655,7 @@ void RuleItem::drawHandSprite(
 
 		set->getFrame(_bigSprite)->blit(surface);
 	}
-	else Log(LOG_INFO) << "ERROR: RuleItem::drawHandSprite() bigob not found #" << _bigSprite; // also in Inventory object.
+	else Log(LOG_WARNING) << "RuleItem::drawHandSprite() bigob not found #" << _bigSprite; // also in Inventory object.
 }
 
 /**
