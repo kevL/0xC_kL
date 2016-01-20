@@ -157,28 +157,6 @@ void Inventory::setPalette(
 }
 
 /**
- * Changes the inventory's Time Units mode.
- * - when True inventory actions cost soldier time units (for battle);
- * - when False inventory actions don't cost anything (for pre-equip).
- * @param tu - true for Time Units mode; false for pre-battle equip
- */
-void Inventory::setTuMode(bool tu)
-{
-	_tuMode = tu;
-}
-
-/**
- * Changes the unit to display the inventory of.
- * @param unit - pointer to a BattleUnit
- */
-void Inventory::setSelectedUnitInventory(BattleUnit* const unit)
-{
-	_selUnit = unit;
-	_groundOffset = 999;
-	arrangeGround(+1);
-}
-
-/**
  * Draws the inventory elements.
  */
 void Inventory::draw()
@@ -305,10 +283,12 @@ void Inventory::drawItems() // private.
 
 	SurfaceSet* const bigobs = _game->getResourcePack()->getSurfaceSet("BIGOBS.PCK");
 	Surface* sprite;
+	const RuleInventory* inRule;
 
+	std::vector<BattleItem*>* list (_selUnit->getInventory());
 	for (std::vector<BattleItem*>::const_iterator // Unit sections.
-			i = _selUnit->getInventory()->begin();
-			i != _selUnit->getInventory()->end();
+			i = list->begin();
+			i != list->end();
 			++i)
 	{
 		if (*i != _selItem)
@@ -316,19 +296,21 @@ void Inventory::drawItems() // private.
 			sprite = bigobs->getFrame((*i)->getRules()->getBigSprite());
 			if (sprite != nullptr) // safety.
 			{
-				if ((*i)->getInventorySection()->getCategory() == IC_SLOT)
+				inRule = (*i)->getInventorySection();
+				switch (inRule->getCategory())
 				{
-					sprite->setX((*i)->getInventorySection()->getX() + (*i)->getSlotX() * RuleInventory::SLOT_W);
-					sprite->setY((*i)->getInventorySection()->getY() + (*i)->getSlotY() * RuleInventory::SLOT_H);
-				}
-				else if ((*i)->getInventorySection()->getCategory() == IC_HAND)
-				{
-					sprite->setX((*i)->getInventorySection()->getX()
-							+ (RuleInventory::HAND_W - (*i)->getRules()->getInventoryWidth())
-								* RuleInventory::SLOT_W / 2);
-					sprite->setY((*i)->getInventorySection()->getY()
-							+ (RuleInventory::HAND_H - (*i)->getRules()->getInventoryHeight())
-								* RuleInventory::SLOT_H / 2);
+					case IC_SLOT:
+						sprite->setX(inRule->getX() + (*i)->getSlotX() * RuleInventory::SLOT_W);
+						sprite->setY(inRule->getY() + (*i)->getSlotY() * RuleInventory::SLOT_H);
+						break;
+
+					case IC_HAND:
+						sprite->setX(inRule->getX()
+								+ (RuleInventory::HAND_W - (*i)->getRules()->getInventoryWidth())
+									* RuleInventory::SLOT_W / 2);
+						sprite->setY(inRule->getY()
+								+ (RuleInventory::HAND_H - (*i)->getRules()->getInventoryHeight())
+									* RuleInventory::SLOT_H / 2);
 				}
 
 				sprite->blit(_srfItems);
@@ -348,22 +330,24 @@ void Inventory::drawItems() // private.
 		colorQty (static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")->getElement("numStack")->color)),
 		RED (37);
 
+	inRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
+	list = _selUnit->getTile()->getInventory();
 	for (std::vector<BattleItem*>::const_iterator // Ground section.
-			i = _selUnit->getTile()->getInventory()->begin();
-			i != _selUnit->getTile()->getInventory()->end();
+			i = list->begin();
+			i != list->end();
 			++i)
 	{
-		if (*i != _selItem
-//			&& (*i)->getSlotX() >= _groundOffset
-//			&& (*i)->getRules()->getInventoryHeight() != 0	// Items can be made invisible by setting their width or height to 0.
-			&& (*i)->getRules()->getInventoryWidth() != 0)	// Eg, used for large-unit corpses.
+		if (*i != _selItem									// Items can be made invisible by setting their width to 0;
+			&& (*i)->getRules()->getInventoryWidth() != 0)	// eg, used for large-unit corpses.
+//			&& (*i)->getRules()->getInventoryHeight() != 0
+//			&& (*i)->getSlotX() >= _groundOffset			// && < _groundOffset + RuleInventory::GROUND_W ... or so.
 		{
 			sprite = bigobs->getFrame((*i)->getRules()->getBigSprite());
 			if (sprite != nullptr) // safety.
 			{
-				sprite->setX((*i)->getInventorySection()->getX()
+				sprite->setX(inRule->getX()
 						  + ((*i)->getSlotX() - _groundOffset) * RuleInventory::SLOT_W);
-				sprite->setY((*i)->getInventorySection()->getY()
+				sprite->setY(inRule->getY()
 						  + ((*i)->getSlotY() * RuleInventory::SLOT_H));
 
 				sprite->blit(_srfItems);
@@ -383,14 +367,14 @@ void Inventory::drawItems() // private.
 
 			if (qty > 1 || fatals != 0)
 			{
-				_stackNumber->setX(((*i)->getInventorySection()->getX()
+				_stackNumber->setX((inRule->getX()
 									+ (((*i)->getSlotX() + (*i)->getRules()->getInventoryWidth()) - _groundOffset)
 										* RuleInventory::SLOT_W) - 4);
 
 				if (qty > 9 || fatals > 9)
 					_stackNumber->setX(_stackNumber->getX() - 4);
 
-				_stackNumber->setY(((*i)->getInventorySection()->getY()
+				_stackNumber->setY((inRule->getY()
 									+ ((*i)->getSlotY() + (*i)->getRules()->getInventoryHeight())
 										* RuleInventory::SLOT_H) - 6);
 				_stackNumber->setValue(fatals ? static_cast<unsigned>(fatals) : static_cast<unsigned>(qty));
@@ -403,193 +387,6 @@ void Inventory::drawItems() // private.
 
 	stackLayer->blit(_srfItems);
 	delete stackLayer;
-}
-
-/**
- * Moves an item to a specified section in the selected unit's inventory.
- * @param item		- pointer to a BattleItem
- * @param inRule	- pointer to RuleInventory
- * @param x			- X position (default 0)
- * @param y			- Y position (default 0)
- */
-void Inventory::moveItem( // private.
-		BattleItem* const item,
-		const RuleInventory* const inRule,
-		int x,
-		int y)
-{
-/*	if (inRule == nullptr) // Make items vanish (ie. load ammo into weapon)
-	{
-		if (item->getInventorySection()->getCategory() == IC_GROUND)
-			_selUnit->getTile()->removeItem(item);
-		else
-			item->changeOwner();
-	}
-	else
-	{ */
-	if (inRule != item->getInventorySection()) // Handle dropping from/to ground.
-	{
-		if (inRule->getCategory() == IC_GROUND) // set to Ground
-		{
-			item->changeOwner();
-			_selUnit->getTile()->addItem(item, item->getInventorySection());
-
-			if (item->getUnit() != nullptr
-				&& item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
-			{
-				item->getUnit()->setPosition(_selUnit->getPosition());
-			}
-		}
-		else if (item->getInventorySection() == nullptr					// unload a weapon clip to left hand
-			|| item->getInventorySection()->getCategory() == IC_GROUND)	// or pick up item.
-		{
-			if (_tuMode == true												// To prevent units from picking up large objects and running around with
-				&& item->getInventorySection()->getCategory() == IC_GROUND)	// nearly full TU on the same turn its weight becomes an extra tu-burden
-			{
-				_selUnit->setTimeUnits(std::max(0,
-											_selUnit->getTimeUnits() - item->getRules()->getWeight()));
-			}
-
-			item->changeOwner(_selUnit);
-			_selUnit->getTile()->removeItem(item);
-
-			if (item->getUnit() != nullptr
-				&& item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
-			{
-				item->getUnit()->setPosition(Position(-1,-1,-1));
-			}
-		}
-	}
-
-	item->setInventorySection(inRule);
-	item->setSlotX(x);
-	item->setSlotY(y);
-//	}
-}
-
-/**
- * Checks if an item to be placed in a certain section-slot would overlap
- * another inventory item.
- * @param unit		- pointer to BattleUnit w/ inventory
- * @param item		- pointer to a BattleItem to be placed
- * @param inRule	- pointer to a RuleInventory section
- * @param x			- X position in section (default 0)
- * @param y			- Y position in section (default 0)
- * @return, true if overlap
- */
-bool Inventory::isOverlap( // static.
-		BattleUnit* const unit,
-		const BattleItem* const item,
-		const RuleInventory* const inRule,
-		int x,
-		int y)
-{
-	if (inRule->getCategory() != IC_GROUND)
-	{
-		for (std::vector<BattleItem*>::const_iterator
-				i = unit->getInventory()->begin();
-				i != unit->getInventory()->end();
-				++i)
-		{
-			if ((*i)->getInventorySection() == inRule
-				&& (*i)->occupiesSlot(x,y, item) == true)
-			{
-				return true;
-			}
-		}
-	}
-	else if (unit->getTile() != nullptr)
-	{
-		for (std::vector<BattleItem*>::const_iterator
-				i = unit->getTile()->getInventory()->begin();
-				i != unit->getTile()->getInventory()->end();
-				++i)
-		{
-			if ((*i)->occupiesSlot(x,y, item) == true)
-				return true;
-		}
-	}
-
-	return false;
-}
-
-/**
- * Gets the inventory section located in the specified mouse position.
- * @param x - pointer to mouse X position; returns the slot's X position
- * @param y - pointer to mouse Y position; returns the slot's Y position
- * @return, pointer to section rules or nullptr if none
- */
-RuleInventory* Inventory::getSlotAtCursor( // private.
-		int* x,
-		int* y) const
-{
-	for (std::map<std::string, RuleInventory*>::const_iterator
-			i = _game->getRuleset()->getInventories()->begin();
-			i != _game->getRuleset()->getInventories()->end();
-			++i)
-	{
-		if (i->second->detSlotAtCursor(x,y) == true)
-			return i->second;
-	}
-
-	return nullptr;
-}
-
-/**
- * Returns the item currently grabbed by the player.
- * @return, pointer to selected BattleItem or nullptr if none
- */
-BattleItem* Inventory::getSelectedItem() const
-{
-	return _selItem;
-}
-
-/**
- * Changes the item currently grabbed by the player.
- * @param item - pointer to selected BattleItem (default nullptr)
- */
-void Inventory::setSelectedItem(BattleItem* const item)
-{
-	if (item != nullptr && item->getRules()->isFixed() == false)
-	{
-		_selItem = item;
-
-		if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
-			_stackLevel[static_cast<size_t>(_selItem->getSlotX())]
-					   [static_cast<size_t>(_selItem->getSlotY())] -= 1;
-
-		_selItem->getRules()->drawHandSprite(
-										_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
-										_srfGrab);
-	}
-	else
-	{
-		_selItem = nullptr;
-		_srfGrab->clear();
-	}
-
-	drawItems();
-}
-
-/**
- * Returns the item currently under mouse cursor.
- * @return, pointer to a BattleItem or nullptr if none
- */
-BattleItem* Inventory::getMouseOverItem() const
-{
-	return _mouseOverItem;
-}
-
-/**
- * Changes the item currently under mouse cursor.
- * @param item - pointer to a BattleItem or nullptr if none
- */
-void Inventory::setMouseOverItem(BattleItem* const item)
-{
-	if (item != nullptr && item->getRules()->isFixed() == false)
-		_mouseOverItem = item;
-	else
-		_mouseOverItem = nullptr;
 }
 
 /**
@@ -615,6 +412,33 @@ void Inventory::think()
 
 	_warning->think();
 	_animTimer->think(nullptr, this);
+}
+
+/**
+ * Shows primer warnings on all live grenades.
+ */
+void Inventory::drawPrimers() // private.
+{
+	static const int pulse[22] = { 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,
+								  13,12,11,10, 9, 8, 7, 6, 5, 4, 3};
+
+	if (_fuseFrame == 22) _fuseFrame = 0;
+
+	static Surface* const srf = _game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(9);
+	for (std::vector<std::pair<int,int>>::const_iterator
+			i = _grenadeFuses.begin();
+			i != _grenadeFuses.end();
+			++i)
+	{
+		srf->blitNShade(
+					_srfItems,
+					(*i).first,
+					(*i).second,
+					pulse[_fuseFrame],
+					false, 3); // red
+	}
+
+	++_fuseFrame;
 }
 
 /**
@@ -814,12 +638,12 @@ void Inventory::mouseClick(Action* action, State* state)
 
 				BattleItem* const item = _selUnit->getItem(inRule, x,y);
 
-				const bool canStack = inRule->getCategory() == IC_GROUND
-								   && canBeStacked(item, _selItem) == true;
+				const bool stack = inRule->getCategory() == IC_GROUND
+								&& canStack(item, _selItem) == true;
 
 				if (item == nullptr // Put item in empty slot or stack it if possible.
 					|| item == _selItem
-					|| canStack == true)
+					|| stack == true)
 				{
 					if (isOverlap(
 								_selUnit,
@@ -845,7 +669,7 @@ void Inventory::mouseClick(Action* action, State* state)
 						else
 							_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
 					}
-					else if (canStack == true)
+					else if (stack == true)
 					{
 						if (_tuMode == false
 							|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
@@ -895,18 +719,14 @@ void Inventory::mouseClick(Action* action, State* state)
 
 							if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
 							{
-								_selUnit->getTile()->removeItem(item);
+								_selUnit->getTile()->removeItem(_selItem);
 								arrangeGround();
 							}
-//							moveItem(_selItem);
 
 							item->setAmmoItem(_selItem);
-//							_selItem->changeOwner();
 							setSelectedItem();
 
 							soundId = ResourcePack::ITEM_RELOAD;
-//							if (item->getInventorySection()->getCategory() == IC_GROUND)
-//								arrangeGround();
 						}
 						else
 							_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
@@ -927,7 +747,7 @@ void Inventory::mouseClick(Action* action, State* state)
 					x += _groundOffset;
 
 					BattleItem* const item = _selUnit->getItem(inRule, x,y);
-					if (canBeStacked(item, _selItem) == true)
+					if (canStack(item, _selItem) == true)
 					{
 						if (_tuMode == false
 							|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
@@ -1058,6 +878,399 @@ void Inventory::mouseClick(Action* action, State* state)
 }
 
 /**
+ * Gets the inventory section located in the specified mouse position.
+ * @param x - pointer to mouse X position; returns the slot's X position
+ * @param y - pointer to mouse Y position; returns the slot's Y position
+ * @return, pointer to section rules or nullptr if none
+ */
+RuleInventory* Inventory::getSlotAtCursor( // private.
+		int* x,
+		int* y) const
+{
+	for (std::map<std::string, RuleInventory*>::const_iterator
+			i = _game->getRuleset()->getInventories()->begin();
+			i != _game->getRuleset()->getInventories()->end();
+			++i)
+	{
+		if (i->second->detSlotAtCursor(x,y) == true)
+			return i->second;
+	}
+
+	return nullptr;
+}
+
+/**
+ * Moves an item to a specified section in the selected unit's inventory.
+ * @param item		- pointer to a BattleItem
+ * @param inRule	- pointer to RuleInventory
+ * @param x			- X position (default 0)
+ * @param y			- Y position (default 0)
+ */
+void Inventory::moveItem( // private.
+		BattleItem* const item,
+		const RuleInventory* const inRule,
+		int x,
+		int y)
+{
+/*	if (inRule == nullptr) // Make items vanish (ie. load ammo into weapon)
+	{
+		if (item->getInventorySection()->getCategory() == IC_GROUND)
+			_selUnit->getTile()->removeItem(item);
+		else
+			item->changeOwner();
+	}
+	else
+	{ */
+	if (inRule != item->getInventorySection()) // Handle dropping from/to ground.
+	{
+		if (inRule->getCategory() == IC_GROUND) // set to Ground
+		{
+			item->changeOwner();
+			_selUnit->getTile()->addItem(item, item->getInventorySection());
+
+			if (item->getUnit() != nullptr
+				&& item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
+			{
+				item->getUnit()->setPosition(_selUnit->getPosition());
+			}
+		}
+		else if (item->getInventorySection() == nullptr					// unload a weapon clip to left hand
+			|| item->getInventorySection()->getCategory() == IC_GROUND)	// or pick up item.
+		{
+			if (_tuMode == true												// To prevent units from picking up large objects and running around with
+				&& item->getInventorySection()->getCategory() == IC_GROUND)	// nearly full TU on the same turn its weight becomes an extra tu-burden
+			{
+				_selUnit->setTimeUnits(std::max(0,
+											_selUnit->getTimeUnits() - item->getRules()->getWeight()));
+			}
+
+			item->changeOwner(_selUnit);
+			_selUnit->getTile()->removeItem(item);
+
+			if (item->getUnit() != nullptr
+				&& item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
+			{
+				item->getUnit()->setPosition(Position(-1,-1,-1));
+			}
+		}
+	}
+
+	item->setInventorySection(inRule);
+	item->setSlotX(x);
+	item->setSlotY(y);
+//	}
+}
+
+/**
+ * Attempts to place the item in an inventory section.
+ * @param inRule	- pointer to where to place the item
+ * @param item		- pointer to item to be placed
+ * @param test		- true if only doing a test (no move happens) (default false)
+ * @return, true if the item was successfully placed in the inventory
+ */
+bool Inventory::fitItem( // private.
+		const RuleInventory* const inRule,
+		BattleItem* const item,
+		bool test)
+{
+	bool placed = false;
+
+	for (int
+			y = 0;
+			y <= inRule->getY() / RuleInventory::SLOT_H && placed == false;
+			++y)
+	{
+		for (int
+				x = 0;
+				x <= inRule->getX() / RuleInventory::SLOT_W && placed == false;
+				++x)
+		{
+			if (inRule->fitItemInSlot(item->getRules(), x,y))
+			{
+				if (_tuMode == true && test == true)
+					placed = true;
+				else if (isOverlap(
+								_selUnit,
+								item,
+								inRule,
+								x,y) == false)
+				{
+					if (_tuMode == false
+						|| _selUnit->spendTimeUnits(item->getInventorySection()->getCost(inRule)) == true)
+					{
+						placed = true;
+						moveItem(item, inRule, x,y);
+
+						_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)->play();
+						drawItems();
+					}
+					else if (test == false)
+						_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+				}
+			}
+		}
+	}
+
+	return placed;
+}
+
+/**
+ * Checks if two items can be stacked on one another.
+ * @param itemA - first item
+ * @param itemB - second item
+ * @return, true if the items can be stacked on one another
+ */
+bool Inventory::canStack( // private.
+		const BattleItem* const itemA,
+		const BattleItem* const itemB)
+{
+	return (itemA != nullptr && itemB != nullptr														// both items actually exist
+		&& itemA->getRules() == itemB->getRules()														// both items have the same ruleset
+		&& ((itemA->getAmmoItem() == nullptr && itemB->getAmmoItem() == nullptr)						// either they both have no ammo
+			|| (itemA->getAmmoItem() && itemB->getAmmoItem()												// or they both have ammo
+				&& itemA->getAmmoItem()->getRules() == itemB->getAmmoItem()->getRules()						// and the same ammo type
+				&& itemA->getAmmoItem()->getAmmoQuantity() == itemB->getAmmoItem()->getAmmoQuantity()))		// and the same ammo quantity
+		&& itemA->getFuse() == -1 && itemB->getFuse() == -1												// and neither is set to explode
+		&& itemA->getUnit() == nullptr && itemB->getUnit() == nullptr									// and neither is a corpse or unconscious unit
+		&& itemA->getPainKillerQuantity() == itemB->getPainKillerQuantity()								// and if it's a medkit, it has the same number of charges
+		&& itemA->getHealQuantity() == itemB->getHealQuantity()
+		&& itemA->getStimulantQuantity() == itemB->getStimulantQuantity());
+}
+
+/**
+ * Arranges items on the ground for the inventory display.
+ * @note Since items on the ground aren't assigned to anyone they don't actually
+ * have permanent slot positions.
+ * @param dir - direction to shift ground-items: +1 right, -1 left (default 0)
+ */
+void Inventory::arrangeGround(int dir)
+{
+	_stackLevel.clear();
+
+	const RuleInventory* const grdRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
+
+	// first move all items out of the way -> a big number in X direction to right
+	for (std::vector<BattleItem*>::const_iterator
+			i = _selUnit->getTile()->getInventory()->begin();
+			i != _selUnit->getTile()->getInventory()->end();
+			++i)
+	{
+		(*i)->setInventorySection(grdRule);
+		(*i)->setSlotX(100000);
+		(*i)->setSlotY(0);
+	}
+
+	bool fit;
+	int
+		x,y,
+		width,
+		lastSlot = 0;
+
+	// for each item find the most top-left position that is not occupied and will fit
+	for (std::vector<BattleItem*>::const_iterator
+			i = _selUnit->getTile()->getInventory()->begin();
+			i != _selUnit->getTile()->getInventory()->end();
+			++i)
+	{
+		x =
+		y = 0;
+		width = (*i)->getRules()->getInventoryWidth();
+
+		fit = false;
+		while (fit == false)
+		{
+			fit = true; // assume the item can be put here, if one of the following checks fails it can't
+			for (int
+					xd = 0;
+					xd < width && fit == true;
+					++xd)
+			{
+				if ((x + xd) % RuleInventory::GROUND_W < x % RuleInventory::GROUND_W)
+					fit = false;
+				else
+				{
+					for (int
+							yd = 0;
+							yd < (*i)->getRules()->getInventoryHeight() && fit == true;
+							++yd)
+					{
+						BattleItem* const item = _selUnit->getItem(
+																grdRule,
+																x + xd,
+																y + yd);
+						fit = (item == nullptr);
+
+						if (canStack(item, *i) == true)
+							fit = true;
+					}
+				}
+			}
+
+			if (fit == true)
+			{
+				(*i)->setSlotX(x);
+				(*i)->setSlotY(y);
+
+				if (*i != _selItem && width != 0) // only increase the stack level if the item is actually visible.
+					_stackLevel[x][y] += 1;
+
+				lastSlot = std::max(
+								lastSlot,
+								x + width);
+			}
+			else if (++y > RuleInventory::GROUND_H - (*i)->getRules()->getInventoryHeight())
+			{
+				y = 0;
+				++x;
+			}
+		}
+	}
+
+	if (dir != 0)
+	{
+		if (_selItem != nullptr)
+			width = _selItem->getRules()->getInventoryWidth();
+		else
+			width = 0;
+
+		if (lastSlot > _groundOffset + (RuleInventory::GROUND_W * dir) - width
+			&& (dir > 0 || _groundOffset > 0)) // don't let a shift-left go less than 0.
+		{
+			_groundOffset += (RuleInventory::GROUND_W * dir);
+		}
+		else
+			_groundOffset = 0;
+	}
+
+	drawItems();
+}
+
+/**
+ * Checks if an item to be placed in a certain section-slot would overlap
+ * another inventory item.
+ * @param unit		- pointer to BattleUnit w/ inventory
+ * @param item		- pointer to a BattleItem to be placed
+ * @param inRule	- pointer to a RuleInventory section
+ * @param x			- X position in section (default 0)
+ * @param y			- Y position in section (default 0)
+ * @return, true if overlap
+ */
+bool Inventory::isOverlap( // static.
+		BattleUnit* const unit,
+		const BattleItem* const item,
+		const RuleInventory* const inRule,
+		int x,
+		int y)
+{
+	if (inRule->getCategory() != IC_GROUND)
+	{
+		for (std::vector<BattleItem*>::const_iterator
+				i = unit->getInventory()->begin();
+				i != unit->getInventory()->end();
+				++i)
+		{
+			if ((*i)->getInventorySection() == inRule
+				&& (*i)->occupiesSlot(x,y, item) == true)
+			{
+				return true;
+			}
+		}
+	}
+	else if (unit->getTile() != nullptr)
+	{
+		for (std::vector<BattleItem*>::const_iterator
+				i = unit->getTile()->getInventory()->begin();
+				i != unit->getTile()->getInventory()->end();
+				++i)
+		{
+			if ((*i)->occupiesSlot(x,y, item) == true)
+				return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Changes the inventory's Time Units mode.
+ * - when TRUE inventory actions cost soldier time units (for battle);
+ * - when FALSE inventory actions don't cost anything (for pre-equip).
+ * @param tu - true for Time Units mode; false for pre-battle equip
+ */
+void Inventory::setTuMode(bool tu)
+{
+	_tuMode = tu;
+}
+
+/**
+ * Changes the unit to display the inventory of.
+ * @param unit - pointer to a BattleUnit
+ */
+void Inventory::setSelectedUnitInventory(BattleUnit* const unit)
+{
+	_selUnit = unit;
+	_groundOffset = 999;
+	arrangeGround(+1);
+}
+
+/**
+ * Changes the item currently grabbed by the player.
+ * @param item - pointer to selected BattleItem (default nullptr)
+ */
+void Inventory::setSelectedItem(BattleItem* const item)
+{
+	if (item != nullptr && item->getRules()->isFixed() == false)
+	{
+		_selItem = item;
+
+		if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
+			_stackLevel[static_cast<size_t>(_selItem->getSlotX())]
+					   [static_cast<size_t>(_selItem->getSlotY())] -= 1;
+
+		_selItem->getRules()->drawHandSprite(
+										_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
+										_srfGrab);
+	}
+	else
+	{
+		_selItem = nullptr;
+		_srfGrab->clear();
+	}
+
+	drawItems();
+}
+
+/**
+ * Returns the item currently grabbed by the player.
+ * @return, pointer to selected BattleItem or nullptr if none
+ */
+BattleItem* Inventory::getSelectedItem() const
+{
+	return _selItem;
+}
+
+/**
+ * Changes the item currently under mouse cursor.
+ * @param item - pointer to a BattleItem or nullptr if none
+ */
+void Inventory::setMouseOverItem(BattleItem* const item)
+{
+	if (item != nullptr && item->getRules()->isFixed() == false)
+		_mouseOverItem = item;
+	else
+		_mouseOverItem = nullptr;
+}
+
+/**
+ * Returns the item currently under mouse cursor.
+ * @return, pointer to a BattleItem or nullptr if none
+ */
+BattleItem* Inventory::getMouseOverItem() const
+{
+	return _mouseOverItem;
+}
+
+/**
  * Unloads the selected weapon placing the gun on the right hand and the ammo
  * on the left hand - unless tuMode is false then drop its ammo to the ground.
  * @return, true if a weapon is successfully unloaded
@@ -1137,187 +1350,12 @@ bool Inventory::unload()
 }
 
 /**
- * Arranges items on the ground for the inventory display.
- * @note Since items on the ground aren't assigned to anyone they don't actually
- * have permanent slot positions.
- * @param dir - direction to shift ground-items: +1 right, -1 left (default 0)
+ * Sets grenade to show a warning in Inventory.
+ * @param turn - turns until grenade is to explode
  */
-void Inventory::arrangeGround(int dir)
+void Inventory::setPrimeGrenade(int turn)
 {
-	_stackLevel.clear();
-
-	const RuleInventory* const grdRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
-
-	// first move all items out of the way -> a big number in X direction to right
-	for (std::vector<BattleItem*>::const_iterator
-			i = _selUnit->getTile()->getInventory()->begin();
-			i != _selUnit->getTile()->getInventory()->end();
-			++i)
-	{
-		(*i)->setInventorySection(grdRule);
-		(*i)->setSlotX(100000);
-		(*i)->setSlotY(0);
-	}
-
-	bool fit;
-	int
-		x,y,
-		width,
-		lastSlot = 0;
-
-	// for each item find the most top-left position that is not occupied and will fit
-	for (std::vector<BattleItem*>::const_iterator
-			i = _selUnit->getTile()->getInventory()->begin();
-			i != _selUnit->getTile()->getInventory()->end();
-			++i)
-	{
-		x =
-		y = 0;
-		width = (*i)->getRules()->getInventoryWidth();
-
-		fit = false;
-		while (fit == false)
-		{
-			fit = true; // assume the item can be put here, if one of the following checks fails it can't
-			for (int
-					xd = 0;
-					xd < width && fit == true;
-					++xd)
-			{
-				if ((x + xd) % RuleInventory::GROUND_W < x % RuleInventory::GROUND_W)
-					fit = false;
-				else
-				{
-					for (int
-							yd = 0;
-							yd < (*i)->getRules()->getInventoryHeight() && fit == true;
-							++yd)
-					{
-						BattleItem* const item = _selUnit->getItem(
-																grdRule,
-																x + xd,
-																y + yd);
-						fit = (item == nullptr);
-
-						if (canBeStacked(item, *i) == true)
-							fit = true;
-					}
-				}
-			}
-
-			if (fit == true)
-			{
-				(*i)->setSlotX(x);
-				(*i)->setSlotY(y);
-
-				if (*i != _selItem && width != 0) // only increase the stack level if the item is actually visible.
-					_stackLevel[x][y] += 1;
-
-				lastSlot = std::max(
-								lastSlot,
-								x + width);
-			}
-			else if (++y > RuleInventory::GROUND_H - (*i)->getRules()->getInventoryHeight())
-			{
-				y = 0;
-				++x;
-			}
-		}
-	}
-
-	if (dir != 0)
-	{
-		if (_selItem != nullptr)
-			width = _selItem->getRules()->getInventoryWidth();
-		else
-			width = 0;
-
-		if (lastSlot > _groundOffset + (RuleInventory::GROUND_W * dir) - width
-			&& (dir > 0 || _groundOffset > 0)) // don't let a shift-left go less than 0.
-		{
-			_groundOffset += (RuleInventory::GROUND_W * dir);
-		}
-		else
-			_groundOffset = 0;
-	}
-
-	drawItems();
-}
-
-/**
- * Attempts to place the item in an inventory section.
- * @param inRule	- pointer to where to place the item
- * @param item		- pointer to item to be placed
- * @param test		- true if only doing a test (no move happens) (default false)
- * @return, true if the item was successfully placed in the inventory
- */
-bool Inventory::fitItem(
-		const RuleInventory* const inRule,
-		BattleItem* const item,
-		bool test)
-{
-	bool placed = false;
-
-	for (int
-			y = 0;
-			y <= inRule->getY() / RuleInventory::SLOT_H && placed == false;
-			++y)
-	{
-		for (int
-				x = 0;
-				x <= inRule->getX() / RuleInventory::SLOT_W && placed == false;
-				++x)
-		{
-			if (inRule->fitItemInSlot(item->getRules(), x,y))
-			{
-				if (_tuMode == true && test == true)
-					placed = true;
-				else if (isOverlap(
-								_selUnit,
-								item,
-								inRule,
-								x,y) == false)
-				{
-					if (_tuMode == false
-						|| _selUnit->spendTimeUnits(item->getInventorySection()->getCost(inRule)) == true)
-					{
-						placed = true;
-						moveItem(item, inRule, x,y);
-
-						_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)->play();
-						drawItems();
-					}
-					else if (test == false)
-						_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
-				}
-			}
-		}
-	}
-
-	return placed;
-}
-
-/**
- * Checks if two items can be stacked on one another.
- * @param itemA - first item
- * @param itemB - second item
- * @return, true if the items can be stacked on one another
- */
-bool Inventory::canBeStacked(
-		const BattleItem* const itemA,
-		const BattleItem* const itemB)
-{
-	return (itemA != nullptr && itemB != nullptr														// both items actually exist
-		&& itemA->getRules() == itemB->getRules()														// both items have the same ruleset
-		&& ((itemA->getAmmoItem() == nullptr && itemB->getAmmoItem() == nullptr)						// either they both have no ammo
-			|| (itemA->getAmmoItem() && itemB->getAmmoItem()												// or they both have ammo
-				&& itemA->getAmmoItem()->getRules() == itemB->getAmmoItem()->getRules()						// and the same ammo type
-				&& itemA->getAmmoItem()->getAmmoQuantity() == itemB->getAmmoItem()->getAmmoQuantity()))		// and the same ammo quantity
-		&& itemA->getFuse() == -1 && itemB->getFuse() == -1												// and neither is set to explode
-		&& itemA->getUnit() == nullptr && itemB->getUnit() == nullptr									// and neither is a corpse or unconscious unit
-		&& itemA->getPainKillerQuantity() == itemB->getPainKillerQuantity()								// and if it's a medkit, it has the same number of charges
-		&& itemA->getHealQuantity() == itemB->getHealQuantity()
-		&& itemA->getStimulantQuantity() == itemB->getStimulantQuantity());
+	_prime = turn;
 }
 
 /**
@@ -1327,42 +1365,6 @@ bool Inventory::canBeStacked(
 void Inventory::showWarning(const std::wstring& msg)
 {
 	_warning->showMessage(msg);
-}
-
-/**
- * Shows primer warnings on all live grenades.
- */
-void Inventory::drawPrimers()
-{
-	static const int pulse[22] = { 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,
-								  13,12,11,10, 9, 8, 7, 6, 5, 4, 3};
-
-	if (_fuseFrame == 22) _fuseFrame = 0;
-
-	static Surface* const srf = _game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(9);
-	for (std::vector<std::pair<int,int>>::const_iterator
-			i = _grenadeFuses.begin();
-			i != _grenadeFuses.end();
-			++i)
-	{
-		srf->blitNShade(
-					_srfItems,
-					(*i).first,
-					(*i).second,
-					pulse[_fuseFrame],
-					false, 3); // red
-	}
-
-	++_fuseFrame;
-}
-
-/**
- * Sets grenade to show a warning in Inventory.
- * @param turn - turns until grenade is to explode
- */
-void Inventory::setPrimeGrenade(int turn)
-{
-	_prime = turn;
 }
 
 /**

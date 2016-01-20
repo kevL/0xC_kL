@@ -695,12 +695,12 @@ void UnitSprite::drawRoutine1()
 
 	if (_unit->getUnitStatus() == STATUS_WALKING)
 	{
-		torso->setY(yoffWalk[walkPhase]);
 		torso = _unitSet->getFrame(
 								  unitDir * 5
 								+ static_cast<int>(
 								  static_cast<float>(walkPhase) / 1.6f)
 								+ walk);
+		torso->setY(yoffWalk[walkPhase]);
 	}
 	else
 		torso = _unitSet->getFrame(unitDir + stand);

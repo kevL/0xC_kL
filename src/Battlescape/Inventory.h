@@ -78,17 +78,28 @@ private:
 	void drawGrids();
 	/// Draws the inventory items.
 	void drawItems();
+	/// Shows priming warnings on grenades.
+	void drawPrimers();
+
+	/// Gets the section in the specified mouse-position.
+	RuleInventory* getSlotAtCursor(
+			int* x,
+			int* y) const;
 	/// Moves an item to a specified section.
 	void moveItem(
 			BattleItem* const item,
 			const RuleInventory* const inRule,
 			int x = 0,
 			int y = 0);
-
-	/// Gets the section in the specified mouse-position.
-	RuleInventory* getSlotAtCursor(
-			int* x,
-			int* y) const;
+	/// Attempts to place an item in an inventory section.
+	bool fitItem(
+			const RuleInventory* const inRule,
+			BattleItem* const item,
+			bool test = false);
+	/// Checks if two items can be stacked on one another.
+	bool canStack(
+			const BattleItem* const itemA,
+			const BattleItem* const itemB);
 
 
 	public:
@@ -109,14 +120,36 @@ private:
 				int firstcolor = 0,
 				int ncolors = 256) override;
 
+		/// Draws the inventory.
+		void draw() override;
+		/// Handles timers.
+		void think() override;
+		/// Blits the inventory onto another surface.
+		void blit(Surface* surface) override;
+
+		/// Special handling for mouse hovers.
+		void mouseOver(Action* action, State* state) override;
+		/// Special handling for mouse clicks.
+		void mouseClick(Action* action, State* state) override;
+
 		/// Sets the inventory's Time Unit mode.
 		void setTuMode(bool tu);
 
 		/// Sets the inventory's selected unit.
 		void setSelectedUnitInventory(BattleUnit* const unit);
 
-		/// Draws the inventory.
-		void draw() override;
+		/// Sets the currently selected item.
+		void setSelectedItem(BattleItem* const item = nullptr);
+		/// Gets the currently selected item.
+		BattleItem* getSelectedItem() const;
+
+		/// Sets the mouse over item.
+		void setMouseOverItem(BattleItem* const item);
+		/// Gets the mouse over item.
+		BattleItem* getMouseOverItem() const;
+
+		/// Arranges items on the ground.
+		void arrangeGround(int dir = 0);
 
 		/// Checks for item overlap.
 		static bool isOverlap(
@@ -126,48 +159,13 @@ private:
 				int x = 0,
 				int y = 0);
 
-		/// Gets the currently selected item.
-		BattleItem* getSelectedItem() const;
-		/// Sets the currently selected item.
-		void setSelectedItem(BattleItem* const item = nullptr);
-
-		/// Gets the mouse over item.
-		BattleItem* getMouseOverItem() const;
-		/// Sets the mouse over item.
-		void setMouseOverItem(BattleItem* const item);
-
-		/// Handles timers.
-		void think() override;
-
-		/// Blits the inventory onto another surface.
-		void blit(Surface* surface) override;
-
-		/// Special handling for mouse hovers.
-		void mouseOver(Action* action, State* state) override;
-		/// Special handling for mouse clicks.
-		void mouseClick(Action* action, State* state) override;
-
 		/// Unloads the selected weapon.
 		bool unload();
 
-		/// Arranges items on the ground.
-		void arrangeGround(int dir = 0);
-		/// Attempts to place an item in an inventory section.
-		bool fitItem(
-				const RuleInventory* const inRule,
-				BattleItem* const item,
-				bool test = false);
-		/// Checks if two items can be stacked on one another.
-		bool canBeStacked(
-				const BattleItem* const itemA,
-				const BattleItem* const itemB);
-
-		/// Shows a warning message.
-		void showWarning(const std::wstring& msg);
-		/// Shows priming warnings on grenades.
-		void drawPrimers();
 		/// Sets grenade to show a warning in Inventory.
 		void setPrimeGrenade(int turn);
+		/// Shows a warning message.
+		void showWarning(const std::wstring& msg);
 
 		/// Gets the TU cost for moving items around.
 		int getTuCostInventory() const;
