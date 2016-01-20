@@ -918,28 +918,26 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 			layoutItems->clear();
 		}
 
-		// Note: when using getInventory() the loaded ammos are skipped because
+		// Note when using getInventory() the loaded ammos are skipped because
 		// they're not owned by the unit; ammo is handled separately by the weapon.
 		for (std::vector<BattleItem*>::const_iterator // save Soldier's items
 				i = unit->getInventory()->begin();
 				i != unit->getInventory()->end();
 				++i)
 		{
-			std::string ammo;
+			std::string st;
 			if ((*i)->selfPowered() == false
 				&& (*i)->getAmmoItem() != nullptr)
 			{
-				ammo = (*i)->getAmmoItem()->getRules()->getType();
+				st = (*i)->getAmmoItem()->getRules()->getType();
 			}
-			else
-				ammo = "NONE";
 
 			layoutItems->push_back(new SoldierLayout(
 												(*i)->getRules()->getType(),
 												(*i)->getInventorySection()->getInventoryType(),
 												(*i)->getSlotX(),
 												(*i)->getSlotY(),
-												ammo,
+												st,
 												(*i)->getFuse()));
 		}
 

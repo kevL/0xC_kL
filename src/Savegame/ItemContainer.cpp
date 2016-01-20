@@ -19,6 +19,8 @@
 
 #include "ItemContainer.h"
 
+#include "../Engine/Logger.h"
+
 #include "../Ruleset/RuleItem.h"
 #include "../Ruleset/Ruleset.h"
 
@@ -81,7 +83,7 @@ void ItemContainer::modifyContents(
 } */
 
 /**
- * Adds an item amount to the container.
+ * Adds an item amount to this Container.
  * @param type	- reference an item type
  * @param qty	- item quantity (default 1)
  */
@@ -89,17 +91,18 @@ void ItemContainer::addItem(
 		const std::string& type,
 		int qty)
 {
-//	if (type.empty() == false)
+	if (type.empty() == false)
 	{
-		if (_contents.find(type) != _contents.end())
-			_contents[type] += qty;
+		if (_contents.find(type) == _contents.end())
+			_contents[type] = 0; // prep <map>
 
-		_contents[type] = 0;
+		_contents[type] += qty;
 	}
+	else Log(LOG_WARNING) << "ItemContainer::addItem() failed ID " << type;
 }
 
 /**
- * Removes an item amount from the container.
+ * Removes an item amount from this Container.
  * @param type	- reference an item type
  * @param qty	- item quantity (default 1)
 // * @return, an iterator to the next position or end() if not found
@@ -108,13 +111,15 @@ void ItemContainer::removeItem(
 		const std::string& type,
 		int qty)
 {
-	if (/*type.empty() == false &&*/ _contents.find(type) != _contents.end())
+	if (type.empty() == false && _contents.find(type) != _contents.end())
 	{
 		if (qty < _contents[type])
 			_contents[type] -= qty;
 		else
 			_contents.erase(type);
 	}
+	else if (type.empty() == true) Log(LOG_WARNING) << "ItemContainer::removeItem() failed ID " << type;
+	else if (_contents.find(type) == _contents.end()) Log(LOG_WARNING) << "ItemContainer::removeItem() failed to find " << type;
 }
 /* std::map<std::string, int>::const_iterator ItemContainer::removeItem(
 		const std::string& type,

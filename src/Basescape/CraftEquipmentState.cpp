@@ -118,9 +118,9 @@ CraftEquipmentState::CraftEquipmentState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK04.SCR"));
 
 	_btnClear->setText(tr("STR_UNLOAD_CRAFT"));
-	_btnClear->onMouseClick((ActionHandler)& CraftEquipmentState::btnClearClick);
+	_btnClear->onMouseClick((ActionHandler)& CraftEquipmentState::btnUnloadCraftClick);
 	_btnClear->onKeyboardPress(
-					(ActionHandler)& CraftEquipmentState::btnClearClick,
+					(ActionHandler)& CraftEquipmentState::btnUnloadCraftClick,
 					SDLK_u);
 
 	_btnInventory->setText(tr("STR_LOADOUT"));
@@ -702,7 +702,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
  * Empties the contents of the Craft - moves all the items back to the Base.
 * @param action - pointer to an Action
  */
-void CraftEquipmentState::btnClearClick(Action*)
+void CraftEquipmentState::btnUnloadCraftClick(Action*)
 {
 	for (
 			_sel = 0;

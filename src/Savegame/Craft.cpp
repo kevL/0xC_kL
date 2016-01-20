@@ -932,26 +932,6 @@ bool Craft::showReady()
 }
 
 /**
- * Gets if a UFO is detected by the craft's radar.
- * @param target - pointer to target
- * @return, true if detected
- */
-bool Craft::detect(const Target* const target) const
-{
-	const int radarRange = _crRule->getRadarRange();
-	if (radarRange != 0)
-	{
-		const double
-			range = static_cast<double>(radarRange) * greatCircleConversionFactor,
-			dist = getDistance(target) * earthRadius;
-
-		if (range >= dist)
-			return true;
-	}
-	return false;
-}
-
-/**
  * Repairs the craft's damage every half-hour while it's docked at the base.
  */
 void Craft::repair()
@@ -1053,6 +1033,26 @@ void Craft::refuel()
 
 	if (_fuel == _crRule->getMaxFuel())
 		checkup();
+}
+
+/**
+ * Gets if a UFO is detected by the craft's radar.
+ * @param target - pointer to target
+ * @return, true if detected
+ */
+bool Craft::detect(const Target* const target) const
+{
+	const int radarRange = _crRule->getRadarRange();
+	if (radarRange != 0)
+	{
+		const double
+			range = static_cast<double>(radarRange) * greatCircleConversionFactor,
+			dist = getDistance(target) * earthRadius;
+
+		if (range >= dist)
+			return true;
+	}
+	return false;
 }
 
 /**

@@ -202,13 +202,10 @@ private:
 		/// Handles Craft logic.
 		void think();
 
-		/// Does a Craft full checkup.
+		/// Does a full Craft checkup.
 		void checkup();
-		/// Gets whether to show a message to player that this Craft is ready.
+		/// Flag to notify player that the Craft is ready.
 		bool showReady();
-
-		/// Checks if a target is detected by the Craft's radar.
-		bool detect(const Target* const target) const;
 
 		/// Repairs the Craft.
 		void repair();
@@ -216,6 +213,9 @@ private:
 		std::string rearm(const Ruleset* const rules);
 		/// Refuels the Craft.
 		void refuel();
+
+		/// Checks if a target is detected by the Craft's radar.
+		bool detect(const Target* const target) const;
 
 		/// Sets the Craft's battlescape status.
 		void setInBattlescape(bool tactical = true);
