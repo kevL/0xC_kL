@@ -2441,7 +2441,6 @@ void GeoscapeState::time30Minutes()
 
 			if ((*j)->showReady() == true)
 			{
-				(*j)->showReady(false);
 				const std::wstring wst = tr("STR_CRAFT_READY")
 											.arg((*i)->getName(nullptr))
 											.arg((*j)->getName(_game->getLanguage()));

@@ -918,21 +918,17 @@ void Craft::checkup()
 }
 
 /**
- * Sets whether to show a message to player that this Craft is ready.
- * @param ready - true to show a message
- */
-void Craft::showReady(bool ready)
-{
-	_showReady = ready;
-}
-
-/**
  * Gets whether to show a message to player that this Craft is ready.
- * @return, true to show a message
+ * @return, true to push a message
  */
-bool Craft::showReady() const
+bool Craft::showReady()
 {
-	return _showReady;
+	if (_showReady == true)
+	{
+		_showReady = false;
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -952,7 +948,6 @@ bool Craft::detect(const Target* const target) const
 		if (range >= dist)
 			return true;
 	}
-
 	return false;
 }
 

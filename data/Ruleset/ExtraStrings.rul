@@ -229,6 +229,7 @@ extraStrings:
       STR_VARIABLE: "str"
       STR_EXECUTE: "execute"
       STR_NA: "na."
+      STR_CRAFT_READY: "{0}{NEWLINE}{NEWLINE}{1}"
 #      STR_MORE_REPORTS: "> reports >"
 #      STR_PLASMA_BEAM_H: PB
 #Extra strings:
