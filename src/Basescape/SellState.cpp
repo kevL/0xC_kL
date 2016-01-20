@@ -38,7 +38,7 @@
 #include "../Resource/ResourcePack.h"
 
 #include "../Ruleset/RuleArmor.h"
-#include "../Ruleset/RuleCraft.h"
+//#include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleCraftWeapon.h"
 #include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/RuleItem.h"

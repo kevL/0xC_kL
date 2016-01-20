@@ -52,7 +52,7 @@
 #include "../Ruleset/RuleBaseFacility.h"
 #include "../Ruleset/RuleCity.h"
 #include "../Ruleset/RuleCountry.h"
-#include "../Ruleset/RuleCraft.h"
+//#include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleGlobe.h"
 #include "../Ruleset/RuleRegion.h"
 #include "../Ruleset/Ruleset.h"

@@ -32,7 +32,7 @@
 #include "../Interface/Text.h"
 
 #include "../Ruleset/RuleBaseFacility.h"
-#include "../Ruleset/RuleCraft.h"
+//#include "../Ruleset/RuleCraft.h"
 
 #include "../Savegame/BaseFacility.h"
 #include "../Savegame/Craft.h"

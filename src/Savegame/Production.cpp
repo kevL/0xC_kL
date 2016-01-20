@@ -29,7 +29,7 @@
 
 #include "../Engine/Options.h"
 
-#include "../Ruleset/RuleCraft.h"
+//#include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleCraftWeapon.h"
 #include "../Ruleset/RuleItem.h"
 #include "../Ruleset/RuleManufacture.h"

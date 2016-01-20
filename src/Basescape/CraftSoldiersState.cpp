@@ -41,7 +41,7 @@
 #include "../Interface/TextList.h"
 #include "../Interface/Window.h"
 
-#include "../Ruleset/RuleCraft.h"
+//#include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/Ruleset.h"
 

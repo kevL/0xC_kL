@@ -47,7 +47,7 @@
 #include "../Resource/ResourcePack.h"
 
 #include "../Ruleset/RuleCountry.h"
-#include "../Ruleset/RuleCraft.h"
+//#include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleCraftWeapon.h"
 #include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/RuleRegion.h"

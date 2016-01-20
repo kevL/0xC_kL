@@ -42,7 +42,7 @@
 #include "../Resource/XcomResourcePack.h"
 
 #include "../Ruleset/RuleArmor.h"
-#include "../Ruleset/RuleCraft.h"
+//#include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/Ruleset.h"
 

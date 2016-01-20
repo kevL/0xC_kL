@@ -38,7 +38,7 @@
 #include "RuleAward.h"
 #include "RuleBaseFacility.h"
 #include "RuleCountry.h"
-#include "RuleCraft.h"
+//#include "RuleCraft.h"
 #include "RuleCraftWeapon.h"
 #include "RuleGlobe.h"
 #include "RuleInterface.h"

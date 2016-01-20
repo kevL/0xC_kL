@@ -54,7 +54,7 @@
 #include "../Ruleset/AlienDeployment.h"
 #include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleCountry.h"
-#include "../Ruleset/RuleCraft.h"
+//#include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/RuleItem.h"
 #include "../Ruleset/RuleRegion.h"

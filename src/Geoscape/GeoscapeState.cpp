@@ -94,7 +94,7 @@
 #include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleBaseFacility.h"
 #include "../Ruleset/RuleCountry.h"
-#include "../Ruleset/RuleCraft.h"
+//#include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleGlobe.h"
 #include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/RuleManufacture.h"

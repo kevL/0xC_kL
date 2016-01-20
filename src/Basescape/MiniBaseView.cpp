@@ -28,7 +28,7 @@
 #include "../Geoscape/GeoscapeState.h"
 
 #include "../Ruleset/RuleBaseFacility.h"
-#include "../Ruleset/RuleCraft.h"
+//#include "../Ruleset/RuleCraft.h"
 
 #include "../Savegame/Base.h"
 #include "../Savegame/BaseFacility.h"

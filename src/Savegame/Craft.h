@@ -77,7 +77,6 @@ private:
 
 		_kills;
 
-//	std::string _status;
 	std::wstring _name;
 
 	CraftStatus _status;

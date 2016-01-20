@@ -47,7 +47,7 @@
 #include "../Ruleset/MCDPatch.h"
 #include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleBaseFacility.h"
-#include "../Ruleset/RuleCraft.h"
+//#include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleGlobe.h"
 #include "../Ruleset/RuleInventory.h"
 #include "../Ruleset/Ruleset.h"

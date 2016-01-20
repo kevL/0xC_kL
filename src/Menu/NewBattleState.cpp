@@ -49,7 +49,7 @@
 
 #include "../Ruleset/AlienDeployment.h"
 #include "../Ruleset/RuleAlienMission.h"
-#include "../Ruleset/RuleCraft.h"
+//#include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleGlobe.h"
 #include "../Ruleset/RuleItem.h"
 #include "../Ruleset/Ruleset.h"
