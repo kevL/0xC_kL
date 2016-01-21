@@ -2429,8 +2429,11 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 							statePushBack(new UnitTurnBState(this, action, false));
 
 							action.type = BA_SNAPSHOT;
-							if (action.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
+							if (action.weapon->getAmmoItem() == nullptr
+								|| action.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
+							{
 								action.cameraPosition = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
+							}
 							else
 								action.cameraPosition = Position(0,0,-1);
 
@@ -2766,8 +2769,11 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			_parentState->getGame()->getCursor()->setHidden();
 
 			_currentAction.target = pos;
-			if (_currentAction.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
+			if (_currentAction.weapon->getAmmoItem() == nullptr
+				|| _currentAction.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
+			{
 				_currentAction.cameraPosition = getMap()->getCamera()->getMapOffset();
+			}
 			else
 				_currentAction.cameraPosition = Position(0,0,-1);
 

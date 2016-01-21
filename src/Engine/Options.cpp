@@ -83,6 +83,7 @@ void create()
 	_info.push_back(OptionInfo("fullscreen", &fullscreen, false));
 	_info.push_back(OptionInfo("asyncBlit", &asyncBlit, true));
 	_info.push_back(OptionInfo("keyboardMode", (int*)&keyboardMode, KEYBOARD_ON));
+	_info.push_back(OptionInfo("audioBuffer1k", &audioBuffer1k, 2));
 #endif
 
 	_info.push_back(OptionInfo("traceAI", &traceAI, false));

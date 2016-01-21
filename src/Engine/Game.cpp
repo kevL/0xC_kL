@@ -903,13 +903,16 @@ void Game::initAudio()
 	else
 		audioFormat = AUDIO_S16SYS;
 
+	const int coefBuffer = std::max(1,
+									Options::audioBuffer1k);
 	if (Mix_OpenAudio(
 				Options::audioSampleRate,
 				audioFormat,
-				2,2048) != 0) // TODO: Options::audioBufferSize
+				2,
+				1024 * coefBuffer) != 0)
 	{
-		Log(LOG_ERROR) << Mix_GetError();
 		Log(LOG_WARNING) << "No sound device detected, audio disabled.";
+		Log(LOG_ERROR) << Mix_GetError();
 		Options::mute = true;
 	}
 	else
