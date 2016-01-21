@@ -1170,7 +1170,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							trueLoc = isTrueLoc(_unit, _tile);
 							quadrant = getQuadrant(_unit, _tile, trueLoc);
 							sprite = _unit->getCache(quadrant);
-							//if (sprite != nullptr)
+							if (sprite != nullptr) // <- check is needed at start of Tactical.
 							{
 								if (_unit->isOut_t(OUT_HLTH_STUN) == true)
 									shade = std::min(5, tileShade);
@@ -2309,7 +2309,6 @@ void Map::calculateWalkingOffset(
 {
 	*offset = Position(0,0,0);
 
-	//Log(LOG_INFO) << ". . Status = " << (int)unit->getUnitStatus();
 	if (unit->getUnitStatus() == STATUS_WALKING
 		|| unit->getUnitStatus() == STATUS_FLYING) // or STATUS_PANICKING
 	{
@@ -2331,15 +2330,6 @@ void Map::calculateWalkingOffset(
 		unit->walkPhaseCutoffs(
 							halfPhase,
 							fullPhase);
-
-		//Log(LOG_INFO) << unit->getId() << " " << unit->getPosition();
-		//if (unit->getId() == 477)
-		//{
-		//	Log(LOG_INFO) << ". dir = " << dir << " dirVert = " << dirVert;
-		//	Log(LOG_INFO) << ". trueLoc = " << (int)trueLoc;
-		//	Log(LOG_INFO) << ". walkPhase = " << walkPhase;
-			//Log(LOG_INFO) << ". halfPhase = " << halfPhase << " fullPhase = " << fullPhase;
-		//}
 
 		const bool start = (walkPhase < halfPhase);
 		if (dirVert == 0)

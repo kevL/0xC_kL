@@ -1904,7 +1904,7 @@ void BattlescapeState::btnShowMapClick(Action*)
 {
 	if (allowButtons() == true)
 	{
-		_overlay->getFrame(2)->blit(_btnShowMap);
+//		_overlay->getFrame(2)->blit(_btnShowMap); // -> hidden by MiniMap atm.
 		_game->pushState(new MiniMapState(
 										_map->getCamera(),
 										_battleSave));
@@ -2042,11 +2042,13 @@ void BattlescapeState::refreshMousePosition() const
  * Centers on the currently selected BattleUnit.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnCenterPress(Action*)
+void BattlescapeState::btnCenterPress(Action* action)
 {
 	if (playableUnitSelected() == true)
 	{
-		_overlay->getFrame(10)->blit(_btnCenter);
+		if (action != nullptr) // prevent NextTurnState from depressing btn.
+			_overlay->getFrame(10)->blit(_btnCenter);
+
 		_map->getCamera()->centerOnPosition(_battleSave->getSelectedUnit()->getPosition());
 		refreshMousePosition();
 	}

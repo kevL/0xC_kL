@@ -2301,7 +2301,7 @@ void BattlescapeGenerator::loadRMP( // private.
 //			_error = true;
 			Log(LOG_WARNING) << "Error in RMP file: " << file.str()
 							 << " node #" << nodeVal << " is outside map boundaries at"
-							 << " x " << pos_x << " y " << pos_y << " z " << pos_z;
+							 << " (" << pos_x << "," << pos_y << "," << pos_z << ")";
 		}
 
 		++nodeVal;

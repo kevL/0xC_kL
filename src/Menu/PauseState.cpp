@@ -174,6 +174,9 @@ void PauseState::btnLoadClick(Action*)
  */
 void PauseState::btnSaveClick(Action*)
 {
+	if (_origin == OPT_BATTLESCAPE)
+		_game->getSavedGame()->getBattleSave()->getBattleState()->clearOptionsBtn();
+
 	_game->pushState(new ListSaveState(_origin));
 }
 
