@@ -47,7 +47,9 @@ private:
 	static const int
 		CELL_WIDTH	= 4,
 		CELL_HEIGHT	= 4,
-		MAX_FRAME	= 2;
+		MAX_FRAME	= 2,
+
+		RED = 3;
 
 	static const Uint32 SCROLL_INTERVAL	= 63;
 

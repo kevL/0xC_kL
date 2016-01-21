@@ -120,12 +120,12 @@ void MiniMapView::draw()
 
 	if (_set != nullptr)
 	{
-		Position pos;
+		static const int parts (static_cast<int>(Tile::PARTS_TILE));
+
 		Tile* tile;
 		Surface* srf;
 		const MapData* data;
 		const BattleUnit* unit;
-		const int parts = static_cast<int>(Tile::PARTS_TILE);
 
 		this->lock();
 		for (int
@@ -134,163 +134,152 @@ void MiniMapView::draw()
 				++lvl)
 		{
 			int py = startY;
-
 			for (int
 					y = Surface::getY();
 					y < height + Surface::getY();
 					y += CELL_HEIGHT)
 			{
 				int px = startX;
-
 				for (int
 						x = Surface::getX();
 						x < width + Surface::getX();
 						x += CELL_WIDTH)
 				{
-					pos = Position(px, py, lvl);
-					tile = _battleSave->getTile(pos);
+					tile = _battleSave->getTile(Position(px, py, lvl));
 
-					if (tile == nullptr)
+					if (tile != nullptr)
 					{
-						++px;
-						continue;
-					}
+						int
+							colorGroup,
+							colorOffset;
 
-
-					int
-						colorGroup,
-						colorOffset;
-
-					if (   px == 0 // edge markers
-						|| px == _battleSave->getMapSizeX() - 1
-						|| py == 0
-						|| py == _battleSave->getMapSizeY() - 1)
-					{
-						colorGroup = 1; // greyscale
-						colorOffset = 5;
-					}
-					else if (tile->isRevealed(ST_CONTENT) == true)
-					{
-						colorGroup = 0;
-						colorOffset = tile->getShade();
-					}
-					else
-					{
-						colorGroup = 0;
-						colorOffset = 15; // paint it ... black !
-					}
-
-					if (colorGroup == 1								// is along the edge
-						&& lvl == 0									// is ground level
-						&& tile->getMapData(O_OBJECT) == nullptr)	// but has no content-object
-					{
-						srf = _set->getFrame(377); // edge marker
-						srf->blitNShade(
-									this,
-									x,y,
-									colorOffset,
-									false,
-									colorGroup);
-					}
-					else // draw tile parts
-					{
-						for (int
-								i = 0;
-								i != parts;
-								++i)
+						if (   px == 0 // edge markers
+							|| px == _battleSave->getMapSizeX() - 1
+							|| py == 0
+							|| py == _battleSave->getMapSizeY() - 1)
 						{
-							data = tile->getMapData(static_cast<MapDataType>(i));
-							if (data != nullptr && data->getMiniMapIndex() != 0)
+							colorGroup  = 1; // greyscale
+							colorOffset = 5;
+						}
+						else if (tile->isRevealed(ST_CONTENT) == true)
+						{
+							colorGroup  = 0;
+							colorOffset = tile->getShade();
+						}
+						else
+						{
+							colorGroup  = 0;
+							colorOffset = 15; // paint it ... black !
+						}
+
+						if (colorGroup == 1								// is along the edge
+							&& lvl == 0									// is ground level
+							&& tile->getMapData(O_OBJECT) == nullptr)	// but has no content-object
+						{
+							srf = _set->getFrame(377);					// draw edge marker
+							srf->blitNShade(
+										this,
+										x,y,
+										colorOffset,
+										false,
+										colorGroup);
+						}
+						else // draw tile parts
+						{
+							for (int
+									i = 0;
+									i != parts;
+									++i)
 							{
-								srf = _set->getFrame(data->getMiniMapIndex() + 35);
-								if (srf != nullptr)
-									srf->blitNShade(
-												this,
-												x,y,
-												colorOffset,
-												false,
-												colorGroup);
-								else Log(LOG_WARNING) << "MiniMapView::draw() no data for Tile["
-													  << i << "] pos " << tile->getPosition()
-													  << " frame = " << data->getMiniMapIndex() + 35;
+								data = tile->getMapData(static_cast<MapDataType>(i));
+								if (data != nullptr && data->getMiniMapIndex() != 0)
+								{
+									srf = _set->getFrame(data->getMiniMapIndex() + 35);
+									if (srf != nullptr)
+										srf->blitNShade(
+													this,
+													x,y,
+													colorOffset,
+													false,
+													colorGroup);
+									else Log(LOG_WARNING) << "MiniMapView::draw() no data for Tile["
+														  << i << "] pos " << tile->getPosition()
+														  << " frame = " << data->getMiniMapIndex() + 35;
+								}
+							}
+
+							if (tile->getFire() != 0 && tile->isRevealed(ST_CONTENT) == true) // draw fire
+							{
+								srf = _set->getFrame(97); // gravLift = FIRE also. TODO: custom ScanG.
+								srf->blitNShade(this, x,y, _cycle * 2);
 							}
 						}
 
-						// draw fire
-						if (tile->getFire() != 0)
+						unit = tile->getTileUnit();
+						if (unit != nullptr && unit->getUnitVisible() == true) // alive visible units
 						{
-							srf = _set->getFrame(97); // gravLift = FIRE also.
-							srf->blitNShade(this, x,y, _cycle * 2);
+							const int
+								armorSize = unit->getArmor()->getSize(),
+								frame = unit->getMiniMapSpriteIndex()
+									  + tile->getPosition().x - unit->getPosition().x
+									  + (tile->getPosition().y - unit->getPosition().y) * armorSize
+									  + _cycle * armorSize * armorSize;
+
+							srf = _set->getFrame(frame);
+
+							if (unit == _battleSave->getSelectedUnit())		// selected unit
+							{
+								colorGroup = 4;								// pale green palette-block
+								colorOffset = 0;
+							}
+							else if (unit->getFaction() == FACTION_PLAYER	// Mc'd aLien or civie
+								&& unit->isMindControlled() == true)
+							{
+								colorGroup = 11;							// brown palette-block
+								colorOffset = 1;
+							}
+							else if (unit->getFaction() == FACTION_HOSTILE	// Mc'd xCom
+								&& unit->isMindControlled() == true)
+							{
+								colorGroup = 8;								// steel blue palette-block
+								colorOffset = 0;
+							}
+							else											// else aLien.
+							{
+								colorGroup =
+								colorOffset = 0;
+							}
+
+							srf->blitNShade(
+										this,
+										x,y,
+										colorOffset,
+										false,
+										colorGroup);
+						}
+
+						if (tile->isRevealed(ST_CONTENT) == true
+							&& tile->getInventory()->empty() == false)		// at least one item on this tile
+						{
+							srf = _set->getFrame(_cycle + 9);				// white cross
+							srf->blitNShade(this, x,y, 0);
+						}
+
+						if (_cycle == 0 && _battleSave->scannerDots().empty() == false)
+						{
+							std::pair<int,int> dotTest (std::make_pair(px,py));
+							if (std::find(
+									_battleSave->scannerDots().begin(),
+									_battleSave->scannerDots().end(),
+									dotTest) != _battleSave->scannerDots().end())
+							{
+								srf = _set->getFrame(_cycle + 9);			// white cross
+								srf->blitNShade(this, x,y, 0, false, RED);
+							}
 						}
 					}
-
-					unit = tile->getTileUnit();
-					if (unit != nullptr && unit->getUnitVisible() == true) // alive visible units
-					{
-						const int
-							unitSize = unit->getArmor()->getSize(),
-							frame = unit->getMiniMapSpriteIndex()
-								  + tile->getPosition().x - unit->getPosition().x
-								  + (tile->getPosition().y - unit->getPosition().y) * unitSize
-								  + _cycle * unitSize * unitSize;
-
-						srf = _set->getFrame(frame);
-
-						if (unit == _battleSave->getSelectedUnit()) // selected unit
-						{
-							colorGroup = 4; // pale green
-							colorOffset = 0;
-						}
-						else if (unit->getFaction() == FACTION_PLAYER // Mc'd aLien or civie
-							&& unit->isMindControlled() == true)
-						{
-							colorGroup = 11; // brown
-							colorOffset = 1;
-						}
-						else if (unit->getFaction() == FACTION_HOSTILE // Mc'd xCom
-							&& unit->isMindControlled() == true)
-						{
-							colorGroup = 8; // steel blue
-							colorOffset = 0;
-						}
-						else // alien.
-						{
-							colorGroup =
-							colorOffset = 0;
-						}
-
-						srf->blitNShade(
-									this,
-									x,y,
-									colorOffset,
-									false,
-									colorGroup);
-					}
-
-					if (tile->isRevealed(ST_CONTENT) == true
-						&& tile->getInventory()->empty() == false) // at least one item on this tile
-					{
-						srf = _set->getFrame(_cycle + 9); // white cross
-						srf->blitNShade(this, x,y, 0);
-					}
-
-					if (_cycle == 0
-						&& _battleSave->scannerDots().empty() == false)
-					{
-						std::pair<int,int> dotTest (std::make_pair(px,py));
-						if (std::find(
-								_battleSave->scannerDots().begin(),
-								_battleSave->scannerDots().end(),
-								dotTest) != _battleSave->scannerDots().end())
-						{
-							srf = _set->getFrame(_cycle + 9);			// white cross
-							srf->blitNShade(this, x,y, 0, false, 3);	// red
-						}
-					}
-
 					++px;
 				}
-
 				++py;
 			}
 		}
