@@ -63,7 +63,7 @@ protected:
 	static const int
 		FAST_PASS_THRESHOLD		= 100,
 		BASE_SUCCESS_SYSTEMATIC	= 100,
-		BASE_SUCCESS_DESPERATE	= BASE_SUCCESS_SYSTEMATIC + 10,
+		BASE_SUCCESS_DESPERATE	= 10 + BASE_SUCCESS_SYSTEMATIC,
 		EXPOSURE_PENALTY		= 10,
 		FIRE_PENALTY			= 40,
 		CUR_TILE_PREF			= 15,
@@ -104,6 +104,9 @@ protected:
 
 		/// Resets the unit's saved parameters.
 		void resetAI();
+
+		/// Gets the AI Mode for debug-readout.
+		virtual std::string getAIMode() const;
 };
 
 }

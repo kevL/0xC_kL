@@ -89,8 +89,25 @@ void BattleAIState::think(BattleAction* const) // virtual.
 void BattleAIState::resetAI()
 {
 	_AIMode = AI_PATROL;
-	_startNode = nullptr;
+	_startNode =
 	_toNode = nullptr;
+}
+
+/**
+ * Gets the AI Mode for debug-readout.
+ * @return, AI Mode as a string
+ */
+std::string BattleAIState::getAIMode() const // virtual.
+{
+	switch (_AIMode)
+	{
+		case 0: return "Patrol";
+		case 1: return "Ambush";
+		case 2: return "Combat";
+		case 3: return "Escape";
+	}
+
+	return "error - no AI Mode";
 }
 
 }

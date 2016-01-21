@@ -1327,10 +1327,10 @@ void Pathfinding::vectorToDirection( // static.
  */
 int Pathfinding::getStartDirection()
 {
-	if (_path.empty() == true)
-		return -1;
+	if (_path.empty() == false)
+		return _path.back();
 
-	return _path.back();
+	return -1;
 }
 
 /**

@@ -132,6 +132,10 @@ PauseState::PauseState(OptionsOrigin origin)
 	_btnCancel->onKeyboardPress(
 					(ActionHandler)& PauseState::btnCancelClick,
 					Options::keyOkKeypad);
+	_btnCancel->onKeyboardPress(
+					(ActionHandler)& PauseState::btnCancelClick,
+					SDLK_c);
+
 	if (origin == OPT_GEOSCAPE)
 		_btnCancel->onKeyboardPress(
 						(ActionHandler)& PauseState::btnCancelClick,

@@ -97,9 +97,15 @@ MainMenuState::MainMenuState()
 
 	_btnStart->setText(tr("STR_NEW_GAME"));
 	_btnStart->onMouseClick((ActionHandler)& MainMenuState::btnNewGameClick);
+	_btnStart->onKeyboardPress(
+					(ActionHandler)& MainMenuState::btnNewGameClick,
+					SDLK_n);
 
 	_btnTactical->setText(tr("STR_NEW_BATTLE"));
 	_btnTactical->onMouseClick((ActionHandler)& MainMenuState::btnNewBattleClick);
+	_btnTactical->onKeyboardPress(
+					(ActionHandler)& MainMenuState::btnNewBattleClick,
+					SDLK_t);
 
 	_btnLoad->setText(tr("STR_LOAD_SAVED_GAME"));
 	_btnLoad->onMouseClick((ActionHandler)& MainMenuState::btnLoadClick);
@@ -109,6 +115,9 @@ MainMenuState::MainMenuState()
 	_btnLoad->onKeyboardPress(
 					(ActionHandler)& MainMenuState::btnLoadClick,
 					Options::keyOkKeypad);
+	_btnLoad->onKeyboardPress(
+					(ActionHandler)& MainMenuState::btnLoadClick,
+					SDLK_l);
 
 //	_btnOptions->setText(tr("STR_OPTIONS"));
 //	_btnOptions->onMouseClick((ActionHandler)& MainMenuState::btnOptionsClick);
@@ -116,12 +125,18 @@ MainMenuState::MainMenuState()
 
 	_btnIntro->setText(tr("STR_PLAYINTRO"));
 	_btnIntro->onMouseClick((ActionHandler)& MainMenuState::btnPlayIntroClick);
+	_btnIntro->onKeyboardPress(
+					(ActionHandler)& MainMenuState::btnPlayIntroClick,
+					SDLK_i);
 
 	_btnQuit->setText(tr("STR_QUIT"));
 	_btnQuit->onMouseClick((ActionHandler)& MainMenuState::btnQuitClick);
 	_btnQuit->onKeyboardPress(
 					(ActionHandler)& MainMenuState::btnQuitClick,
 					Options::keyCancel);
+	_btnQuit->onKeyboardPress(
+					(ActionHandler)& MainMenuState::btnQuitClick,
+					SDLK_q);
 
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();

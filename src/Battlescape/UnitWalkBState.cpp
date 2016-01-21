@@ -92,12 +92,15 @@ UnitWalkBState::~UnitWalkBState()
  */
 void UnitWalkBState::init()
 {
-	//Log(LOG_INFO) << "UnitWalkBState::init() unitID = " << _unit->getId();
+	//Log(LOG_INFO) << "UnitWalkBState::init() id-" << _unit->getId();
 	//Log(LOG_INFO) << ". walking from " << _unit->getPosition() << " to " << _action.target;
+	//if (_battleSave->getWalkUnit()) Log(LOG_INFO) << ". current walkUnit id-" << _battleSave->getWalkUnit()->getId();
+	//else Log(LOG_INFO) << ". current walkUnit NOT Valid";
+
 	if (_unit->getFaction() != FACTION_PLAYER
 		&& _unit != _battleSave->getWalkUnit()) // See.
 	{
-		//Log(LOG_INFO) << "walkB: init() center on unit id-" << _unit->getId();
+		//Log(LOG_INFO) << ". . init() Center on unit id-" << _unit->getId();
 		_walkCam->centerOnPosition(_unit->getPosition());
 	}
 
@@ -320,7 +323,7 @@ bool UnitWalkBState::doStatusStand() // private.
 	if (_unit->getFaction() != FACTION_PLAYER // && _isVisible == true
 		&& _walkCam->isOnScreen(_unit->getPosition()) == false)
 	{
-		//Log(LOG_INFO) << "walkB: statusStand() center on unit id-" << _unit->getId();
+		//Log(LOG_INFO) << ". statusStand() Center on unit id-" << _unit->getId();
 		_walkCam->centerOnPosition(pos);
 //		_walkCam->setViewLevel(pos.z);
 	}
@@ -844,17 +847,20 @@ bool UnitWalkBState::doStatusStand_end() // private.
 	_te->calculateUnitLighting();
 
 	if (_unit->getFaction() != FACTION_PLAYER
-		&& _unit->getTimeUnits() < 4)
+		&& _unit != _battleSave->getWalkUnit()
+		&& _pf->getStartDirection() == -1)
 	{
-		_walkCam->centerOnPosition(_unit->getPosition()); // KLUDGE!
+		//Log(LOG_INFO) << ". statusStand_end() Center on unit id-" << _unit->getId();
+		_walkCam->centerOnPosition(_unit->getPosition());
 		// Okay, better write something about this. When the last aLien unit to
 		// do its AI (or perhaps a Civie) is marked unselectable in handleUnitAI()
 		// or thereabouts, but it moves into Player-unit's view when *entering
 		// its last tile* the Hidden Movement is revealed ... but it won't be
 		// centered because it didn't start its walk-step in Player view. This,
-		// simply by checking if the aLien is low on TU, allows a forced
-		// "center on Position" to be done here. (A forced center otherwise
-		// would cause the camera to jolt along with each tile-step.)
+		// simply by checking if the aLien is low on TU -- change: has no start
+		// direction -- allows a forced "center on Position" to be done here.
+		// (An unconditionally forced center otherwise would cause the camera to
+		// jolt along with each tile-step.)
 		//
 		// That works in conjunction with the extended-reveal granted by
 		// Game::delayBlit(), btw.
@@ -881,7 +887,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 	} // debug_end. */
 
 	// This calculates or 'refreshes' the Field of View of all units within
-	// maximum distance (20 tiles) of current unit.
+	// maximum distance (~20 tiles) of current unit.
 	_te->calculateFOV(pos, true);
 
 	if (_parent->checkProxyGrenades(_unit) == true) // Put checkForSilacoid() here!

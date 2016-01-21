@@ -87,6 +87,9 @@ AbandonGameState::AbandonGameState(OptionsOrigin origin)
 	_btnNo->onKeyboardPress(
 					(ActionHandler)& AbandonGameState::btnNoClick,
 					Options::keyCancel);
+	_btnNo->onKeyboardPress(
+					(ActionHandler)& AbandonGameState::btnNoClick,
+					SDLK_n);
 
 	_btnYes->setText(tr("STR_YES"));
 	_btnYes->onMouseClick((ActionHandler)& AbandonGameState::btnYesClick);
@@ -96,6 +99,12 @@ AbandonGameState::AbandonGameState(OptionsOrigin origin)
 	_btnYes->onKeyboardPress(
 					(ActionHandler)& AbandonGameState::btnYesClick,
 					Options::keyOkKeypad);
+	_btnYes->onKeyboardPress(
+					(ActionHandler)& AbandonGameState::btnYesClick,
+					SDLK_y);
+	_btnYes->onKeyboardPress(
+					(ActionHandler)& AbandonGameState::btnYesClick,
+					SDLK_q);
 
 	if (_origin == OPT_BATTLESCAPE)
 		applyBattlescapeTheme();

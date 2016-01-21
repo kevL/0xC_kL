@@ -680,7 +680,11 @@ void BattlescapeGame::centerOnUnit( // private.
 {
 	if (unit != _battleSave->getWalkUnit())
 	{
-		_battleSave->setWalkUnit(unit);
+		if (unit->getUnitVisible() == true)
+			_battleSave->setWalkUnit(unit);
+		else
+			_battleSave->setWalkUnit(nullptr);
+
 		getMap()->getCamera()->centerOnPosition(unit->getPosition(), draw);
 	}
 }
@@ -691,6 +695,7 @@ void BattlescapeGame::centerOnUnit( // private.
  */
 void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 {
+	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() " << unit->getId();
 	centerOnUnit(unit); // if you're going to reveal the map at least show the first aLien.
 
@@ -808,7 +813,31 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	action.AIcount = _AIActionCounter;
 	//Log(LOG_INFO) << ". unit->think(&action)";
 	unit->think(&action);
-	//Log(LOG_INFO) << ". _unit->think() DONE";
+
+/*	Log(LOG_INFO) << ". _unit->think() DONE Mode = " << unit->getAIState()->getAIMode();
+	std::string st;
+	switch (action.type)
+	{
+		case  0: st = "none";			break;	// BA_NONE
+		case  1: st = "turn";			break;	// BA_TURN
+		case  2: st = "walk";			break;	// BA_MOVE
+		case  3: st = "prime";			break;	// BA_PRIME
+		case  4: st = "throw";			break;	// BA_THROW
+		case  5: st = "autoshot";		break;	// BA_AUTOSHOT
+		case  6: st = "snapshot";		break;	// BA_SNAPSHOT
+		case  7: st = "aimedshot";		break;	// BA_AIMEDSHOT
+		case  8: st = "hit";			break;	// BA_MELEE
+		case  9: st = "use";			break;	// BA_USE
+		case 10: st = "launch";			break;	// BA_LAUNCH
+		case 11: st = "mindcontrol";	break;	// BA_PSICONTROL
+		case 12: st = "panic";			break;	// BA_PSIPANIC
+		case 13: st = "rethink";		break;	// BA_RETHINK
+		case 14: st = "defuse";			break;	// BA_DEFUSE
+		case 15: st = "drop";			break;	// BA_DROP
+		case 16: st = "confuse";		break;	// BA_PSICONFUSE
+		case 17: st = "courage";				// BA_PSICOURAGE
+	}
+	Log(LOG_INFO) << ". _unit->think() DONE Action = " << st; */
 
 	if (action.type == BA_RETHINK)
 	{

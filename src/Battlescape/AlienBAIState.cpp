@@ -906,24 +906,24 @@ void AlienBAIState::setupAttack() // private.
 /*	std::string st;
 	switch (_attackAction->type)
 	{
-		case  0: BA_NONE;		st = "none";		break;
-		case  1: BA_TURN,		st = "turn";		break;
-		case  2: BA_MOVE,		st = "walk";		break;
-		case  3: BA_PRIME,		st = "prime";		break;
-		case  4: BA_THROW,		st = "throw";		break;
-		case  5: BA_AUTOSHOT,	st = "autoshot";	break;
-		case  6: BA_SNAPSHOT,	st = "snapshot";	break;
-		case  7: BA_AIMEDSHOT,	st = "aimedshot";	break;
-		case  8: BA_MELEE,		st = "hit";			break;
-		case  9: BA_USE,		st = "use";			break;
-		case 10: BA_LAUNCH,		st = "launch";		break;
-		case 11: BA_PSICONTROL,	st = "mindcontrol";	break;
-		case 12: BA_PSIPANIC,	st = "panic";		break;
-		case 13: BA_RETHINK,	st = "rethink";		break;
-		case 14: BA_DEFUSE,		st = "defuse";		break;
-		case 15: BA_DROP,		st = "drop";		break;
-		case 16: BA_PSICONFUSE,	st = "confuse";		break;
-		case 17: BA_PSICOURAGE, st = "courage";
+		case  0: st = "none";			break;	// BA_NONE
+		case  1: st = "turn";			break;	// BA_TURN
+		case  2: st = "walk";			break;	// BA_MOVE
+		case  3: st = "prime";			break;	// BA_PRIME
+		case  4: st = "throw";			break;	// BA_THROW
+		case  5: st = "autoshot";		break;	// BA_AUTOSHOT
+		case  6: st = "snapshot";		break;	// BA_SNAPSHOT
+		case  7: st = "aimedshot";		break;	// BA_AIMEDSHOT
+		case  8: st = "hit";			break;	// BA_MELEE
+		case  9: st = "use";			break;	// BA_USE
+		case 10: st = "launch";			break;	// BA_LAUNCH
+		case 11: st = "mindcontrol";	break;	// BA_PSICONTROL
+		case 12: st = "panic";			break;	// BA_PSIPANIC
+		case 13: st = "rethink";		break;	// BA_RETHINK
+		case 14: st = "defuse";			break;	// BA_DEFUSE
+		case 15: st = "drop";			break;	// BA_DROP
+		case 16: st = "confuse";		break;	// BA_PSICONFUSE
+		case 17: st = "courage";				// BA_PSICOURAGE
 	} */
 	//Log(LOG_INFO) << ". bat = " << st;
 
