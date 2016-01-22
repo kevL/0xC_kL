@@ -135,21 +135,24 @@ void InteractiveSurface::handle( // virtual
 	{
 		action->setSender(this);
 
-		if (action->getDetails()->type == SDL_MOUSEBUTTONUP
-			|| action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
+		switch (action->getDetails()->type)
 		{
-			action->setMouseAction(
-								action->getDetails()->button.x,
-								action->getDetails()->button.y,
-								getX(),
-								getY());
+			case SDL_MOUSEBUTTONUP:
+			case SDL_MOUSEBUTTONDOWN:
+				action->setMouseAction(
+									action->getDetails()->button.x,
+									action->getDetails()->button.y,
+									getX(),
+									getY());
+				break;
+
+			case SDL_MOUSEMOTION:
+				action->setMouseAction(
+									action->getDetails()->motion.x,
+									action->getDetails()->motion.y,
+									getX(),
+									getY());
 		}
-		else if (action->getDetails()->type == SDL_MOUSEMOTION)
-			action->setMouseAction(
-								action->getDetails()->motion.x,
-								action->getDetails()->motion.y,
-								getX(),
-								getY());
 
 		if (action->isMouseAction() == true)
 		{
@@ -209,32 +212,38 @@ void InteractiveSurface::handle( // virtual
 			}
 		}
 
-		if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
+		switch (action->getDetails()->type)
 		{
-			if (_isHovered == true
-				&& isButtonPressed(action->getDetails()->button.button) == false)
-			{
-				setButtonPressed(action->getDetails()->button.button, true);
-				mousePress(action, state);
-			}
-		}
-		else if (action->getDetails()->type == SDL_MOUSEBUTTONUP)
-		{
-			if (isButtonPressed(action->getDetails()->button.button) == true)
-			{
-				setButtonPressed(action->getDetails()->button.button, false);
-				mouseRelease(action, state);
-				if (_isHovered == true)
-					mouseClick(action, state);
-			}
+			case SDL_MOUSEBUTTONDOWN:
+				if (_isHovered == true
+					&& isButtonPressed(action->getDetails()->button.button) == false)
+				{
+					setButtonPressed(action->getDetails()->button.button, true);
+					mousePress(action, state);
+				}
+				break;
+
+			case SDL_MOUSEBUTTONUP:
+				if (isButtonPressed(action->getDetails()->button.button) == true)
+				{
+					setButtonPressed(action->getDetails()->button.button, false);
+					mouseRelease(action, state);
+					if (_isHovered == true)
+						mouseClick(action, state);
+				}
 		}
 
 		if (_isFocused == true)
 		{
-			if (action->getDetails()->type == SDL_KEYDOWN)
-				keyboardPress(action, state);
-			else if (action->getDetails()->type == SDL_KEYUP)
-				keyboardRelease(action, state);
+			switch (action->getDetails()->type)
+			{
+				case SDL_KEYDOWN:
+					keyboardPress(action, state);
+					break;
+
+				case SDL_KEYUP:
+					keyboardRelease(action, state);
+			}
 		}
 	}
 }
@@ -269,11 +278,12 @@ void InteractiveSurface::unpress(State* state) // virtual
 	if (isButtonPressed() == true)
 	{
 		_buttonsPressed = 0;
-		SDL_Event ev;
-		ev.type = SDL_MOUSEBUTTONUP;
-		ev.button.button = SDL_BUTTON_LEFT;
-		Action a = Action(&ev, 0.,0.,0,0);
-		mouseRelease(&a, state);
+
+		SDL_Event event;
+		event.type = SDL_MOUSEBUTTONUP;
+		event.button.button = SDL_BUTTON_LEFT;
+		Action action = Action(&event, 0.,0., 0,0);
+		mouseRelease(&action, state);
 	}
 }
 

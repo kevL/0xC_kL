@@ -104,8 +104,8 @@ private:
 
 		/// Sets the camera's scroll timers.
 		void setScrollTimers(
-				Timer* mouseTimer,
-				Timer* keyboardTimer);
+				Timer* const mouseTimer,
+				Timer* const keyboardTimer);
 		/// Scrolls the view for mouse-scrolling.
 		void scrollMouse();
 		/// Scrolls the view for keyboard-scrolling.

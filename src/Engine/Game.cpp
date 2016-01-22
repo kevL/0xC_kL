@@ -240,15 +240,15 @@ void Game::run()
 			_states.back()->init();
 			_states.back()->resetAll(); // Unpress buttons
 
-			SDL_Event ev; // Update mouse position
+			SDL_Event event; // Update mouse position
 			int
 				x,y;
 			SDL_GetMouseState(&x,&y);
-			ev.type = SDL_MOUSEMOTION;
-			ev.motion.x = static_cast<Uint16>(x);
-			ev.motion.y = static_cast<Uint16>(y);
+			event.type = SDL_MOUSEMOTION;
+			event.motion.x = static_cast<Uint16>(x);
+			event.motion.y = static_cast<Uint16>(y);
 			Action action = Action(
-								&ev,
+								&event,
 								_screen->getXScale(),
 								_screen->getYScale(),
 								_screen->getCursorTopBlackBand(),

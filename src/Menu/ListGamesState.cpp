@@ -29,6 +29,7 @@
 #include "../Engine/Logger.h"
 
 #include "../Interface/ArrowButton.h"
+#include "../Interface/Cursor.h"
 #include "../Interface/Text.h"
 #include "../Interface/TextButton.h"
 #include "../Interface/TextList.h"
@@ -221,6 +222,7 @@ void ListGamesState::init()
 
 /**
  * Checks when popup is done and gives the cursor a jog if so.
+ * @sa BattlescapeState::refreshMousePosition()
  */
 void ListGamesState::think()
 {
@@ -229,15 +231,22 @@ void ListGamesState::think()
 	else if (_refresh == true)
 	{
 		_refresh = false;
+		_game->getCursor()->fakeMotion();
+
 		int
-			x,y;
+			x,y,
+			dir;
 		SDL_GetMouseState(&x,&y);
+
+		if (x == 0)	dir = +1;
+		else		dir = -1;
+
 		SDL_WarpMouse(
-				static_cast<Uint16>(x + 1),
+				static_cast<Uint16>(x + dir),
 				static_cast<Uint16>(y));
 		SDL_GetMouseState(&x,&y);
 		SDL_WarpMouse(
-				static_cast<Uint16>(x - 1),
+				static_cast<Uint16>(x - dir),
 				static_cast<Uint16>(y));
 	}
 	else

@@ -56,7 +56,7 @@ private:
 	static const int
 		MAX_VIEW_DISTANCE		= 20,
 		MAX_VIEW_DISTANCE_SQR	= MAX_VIEW_DISTANCE * MAX_VIEW_DISTANCE,
-		MAX_VOXEL_VIEW_DISTANCE	= MAX_VIEW_DISTANCE * 16,
+		MAX_VOXEL_VIEW_DISTANCE	= 16 * MAX_VIEW_DISTANCE,
 		MAX_VOXEL_VIEW_DIST_SQR	= MAX_VOXEL_VIEW_DISTANCE * MAX_VOXEL_VIEW_DISTANCE,
 		MAX_SHADE_TO_SEE_UNITS	= 8,
 
@@ -129,7 +129,7 @@ private:
 		/// Recalculates lighting of the battlescape for units.
 		void calculateUnitLighting() const;
 
-		/// Turn XCom soldier's personal lighting on or off.
+		/// Turn xCom soldier's personal lighting on or off.
 		void togglePersonalLighting();
 
 		/// Calculates Field of Vision from a unit's view point.
@@ -141,7 +141,7 @@ private:
 		/// Recalculates Field of Vision of all units.
 		void recalculateFOV(bool spotSound = false);
 
-		/// Checks visibility of a unit to a tile.
+		/// Checks visibility of a BattleUnit to a Tile.
 		bool visible(
 				const BattleUnit* const unit,
 				const Tile* const tile) const;
@@ -154,14 +154,14 @@ private:
 		Position getOriginVoxel(
 				const BattleAction& action,
 				const Tile* tile = nullptr) const;
-		/// Checks validity for targetting a unit.
+		/// Checks validity for targetting a BattleUnit.
 		bool canTargetUnit(
 				const Position* const originVoxel,
 				const Tile* const tileTarget,
 				Position* const scanVoxel,
 				const BattleUnit* const excludeUnit,
 				const BattleUnit* targetUnit = nullptr) const;
-		/// Check validity for targetting a tile.
+		/// Check validity for targetting a Tile.
 		bool canTargetTilepart(
 				const Position* const originVoxel,
 				const Tile* const tileTarget,
@@ -225,9 +225,9 @@ private:
 				const DamageType dType) const;
 		/// Sets the final direction from which a missile or thrown-object came.
 		void setProjectileDirection(const int dir);
-		/// Blows this tile up.
+		/// Blows a Tile up.
 		void detonate(Tile* const tile) const;
-		/// Checks if a destroyed tile starts an explosion.
+		/// Checks if a destroyed Tile starts an explosion.
 		Tile* checkForTerrainExplosions() const;
 
 		/// Tries to open a door.
@@ -292,13 +292,13 @@ private:
 		/// Gets an adjacent Position that can be attacked with melee.
 		Position getMeleePosition(const BattleUnit* const actor) const;
 
-		/// Gets an adjacent tile with an unconscious unit if any.
+		/// Gets an adjacent Tile with an unconscious unit if any.
 		Tile* getExecutionTile(const BattleUnit* const actor) const;
 
 		/// Performs a psionic action.
 		bool psiAttack(BattleAction* const action);
 
-		/// Applies gravity to anything that occupies this tile.
+		/// Applies gravity to anything that occupies a Tile.
 		Tile* applyGravity(Tile* const tile) const;
 
 		/// Gets the AI to look through a window.
@@ -343,7 +343,7 @@ private:
 				const Position& posOrigin,
 				const Position& posTarget);
 
-		/// Sets a tile with a diagonal bigwall as the true epicenter of an explosion.
+		/// Sets a Tile with a diagonal bigwall as the true epicenter of an explosion.
 		void setTrueTile(Tile* const tile = nullptr);
 };
 

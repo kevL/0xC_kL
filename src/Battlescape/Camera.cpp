@@ -65,8 +65,8 @@ Camera::Camera(
 		_screenWidth(battleField->getWidth()),
 		_screenHeight(battleField->getHeight()),
 		_offsetField(-250,250,0),
-		_scrollMouseTimer(0),
-		_scrollKeyTimer(0),
+		_scrollMouseTimer(nullptr),
+		_scrollKeyTimer(nullptr),
 		_scrollMouseX(0),
 		_scrollMouseY(0),
 		_scrollKeyX(0),
@@ -90,8 +90,8 @@ Camera::~Camera()
  * @param keyboardTimer	- pointer to keyboard Timer
  */
 void Camera::setScrollTimers(
-		Timer* mouseTimer,
-		Timer* keyboardTimer)
+		Timer* const mouseTimer,
+		Timer* const keyboardTimer)
 {
 	_scrollMouseTimer = mouseTimer;
 	_scrollKeyTimer = keyboardTimer;
@@ -331,6 +331,7 @@ void Camera::keyboardPress(Action* action, State*)
 			&& _scrollKeyY == 0)
 		{
 			_scrollKeyTimer->stop();
+			_map->getBattleSave()->getBattleState()->refreshMousePosition();
 		}
 	}
 }
@@ -377,6 +378,7 @@ void Camera::keyboardRelease(Action* action, State*)
 			&& _scrollKeyY == 0)
 		{
 			_scrollKeyTimer->stop();
+			_map->getBattleSave()->getBattleState()->refreshMousePosition();
 		}
 	}
 }

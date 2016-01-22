@@ -25,20 +25,20 @@ namespace OpenXcom
 
 /**
  * Creates a new action.
- * @param ev			- pointer to an SDL_event
+ * @param event			- pointer to an SDL_Event
  * @param scaleX		- screen's X scaling factor
  * @param scaleY		- screen's Y scaling factor
  * @param topBlackBand	- screen's top black band height
  * @param leftBlackBand	- screen's left black band width
  */
 Action::Action(
-		SDL_Event* ev,
+		SDL_Event* const event,
 		double scaleX,
 		double scaleY,
 		int topBlackBand,
 		int leftBlackBand)
 	:
-		_ev(ev),
+		_event(event),
 		_scaleX(scaleX),
 		_scaleY(scaleY),
 		_topBlackBand(topBlackBand),
@@ -57,7 +57,7 @@ Action::~Action()
 {}
 
 /**
- * Returns the X scaling factor used by the Screen when this action was fired.
+ * Returns the X scaling factor used by the Screen when this Action was fired.
  * @note Used to correct mouse input.
  * @return, screen's X scaling factor
  */
@@ -67,7 +67,7 @@ double Action::getXScale() const
 }
 
 /**
- * Returns the Y scaling factor used by the Screen when this action was fired.
+ * Returns the Y scaling factor used by the Screen when this Action was fired.
  * @note Used to correct mouse input.
  * @return, screen's Y scaling factor
  */
@@ -77,7 +77,7 @@ double Action::getYScale() const
 }
 
 /**
- * Sets this action as a mouse action with the respective mouse properties.
+ * Sets this Action as a mouse action with the respective mouse properties.
  * @param mouseX	- mouse's X position
  * @param mouseY	- mouse's Y position
  * @param surfaceX	- Surface's X position
@@ -97,7 +97,7 @@ void Action::setMouseAction(
 }
 
 /**
- * Gets if this action is a valid mouse thing.
+ * Gets if this Action is a valid mouse thing.
  * @return, true if valid
  */
 bool Action::isMouseAction() const
@@ -106,7 +106,7 @@ bool Action::isMouseAction() const
 }
 
 /**
- * Returns the height in pixel of the top black band if any.
+ * Returns the height in pixels of the top black band if any.
  * @return, Screen's top black band
  */
 int Action::getTopBlackBand() const
@@ -115,7 +115,7 @@ int Action::getTopBlackBand() const
 }
 
 /**
- * Returns the width in pixel of the left black band if any.
+ * Returns the width in pixels of the left black band if any.
  * @return, Screen's left black band
  */
 int Action::getLeftBlackBand() const
@@ -196,7 +196,7 @@ double Action::getRelativeYMouse() const
 }
 
 /**
- * Returns the interactive surface that triggered this action (the sender).
+ * Returns the interactive surface that triggered this Action (the sender).
  * @return, pointer to InteractiveSurface
  */
 InteractiveSurface* Action::getSender() const
@@ -205,7 +205,7 @@ InteractiveSurface* Action::getSender() const
 }
 
 /**
- * Changes the interactive surface that triggered this action (the sender).
+ * Changes the interactive surface that triggered this Action (the sender).
  * @param sender - pointer to InteractiveSurface
  */
 void Action::setSender(InteractiveSurface* sender)
@@ -214,12 +214,12 @@ void Action::setSender(InteractiveSurface* sender)
 }
 
 /**
- * Returns details about this action.
+ * Returns details about this Action.
  * @return, pointer to SDL_event
  */
 SDL_Event* Action::getDetails() const
 {
-	return _ev;
+	return _event;
 }
 
 }

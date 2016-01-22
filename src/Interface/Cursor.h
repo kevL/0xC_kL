@@ -40,6 +40,7 @@ class Cursor final
 {
 
 private:
+	bool _fakeMotion;
 	Uint8 _color;
 
 
@@ -55,6 +56,8 @@ private:
 
 		/// Handles mouse events.
 		void handle(Action* action);
+		/// Informs the cursor not to bother.
+		void fakeMotion();
 
 		/// Sets the cursor's color.
 		void setColor(Uint8 color) override;

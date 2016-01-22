@@ -1415,11 +1415,11 @@ void Map::drawTerrain(Surface* const surface) // private.
 						else if (viewLevel == itZ)
 //							|| (unitBelow != nullptr && unitBelow->getPosition().z == viewLevel)) // BattleUnit was redrawn below curTile.
 						{
-/*							int vertOffset;
-							if (unitBelow != nullptr)
-								vertOffset = 24;
-							else
-								vertOffset = 0; */
+//							int vertOffset;
+//							if (unitBelow != nullptr)
+//								vertOffset = 24;
+//							else
+//								vertOffset = 0;
 
 							if (_cursorType != CT_AIM)
 							{
@@ -1454,7 +1454,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 //							if (Options::battleUFOExtenderAccuracy == true) // note: one less condition to check
 							if (_cursorType == CT_AIM) // indicator for Firing.
 							{
-								// draw targetUnit over cursor's front if tile is blacked-out.
+								// draw targetUnit overtop cursor's front if Tile is blacked-out.
 								if (hasUnit == true && _tile->isRevealed(ST_CONTENT) == false)
 								{
 									trueLoc = isTrueLoc(_unit, _tile);
@@ -1477,48 +1477,77 @@ void Map::drawTerrain(Surface* const surface) // private.
 								//
 								// TODO: use Projectile::rangeAccuracy() as a static function.
 								const BattleAction* const action (_battleSave->getBattleGame()->getCurrentAction());
-
-								int accuracy (static_cast<int>(Round(action->actor->getAccuracy(*action) * 100.)));
-
-								const RuleItem* const weaponRule (action->weapon->getRules());
-								const int
-									lowerLimit (weaponRule->getMinRange()),
-									distance (TileEngine::distance(
-																Position(itX,itY,itZ),
-																action->actor->getPosition()));
-								int upperLimit;
-								switch (action->type)
-								{
-									case BA_AIMEDSHOT:
-										upperLimit = weaponRule->getAimRange();
-									break;
-									case BA_SNAPSHOT:
-										upperLimit = weaponRule->getSnapRange();
-									break;
-									case BA_AUTOSHOT:
-										upperLimit = weaponRule->getAutoRange();
-									break;
-
-									default:
-										upperLimit = 200; // arbitrary.
-								}
-
+								int accuracy;
 								Uint8 color;
-								if (distance > upperLimit)
+
+								bool zero;
+								if (hasUnit == true)
 								{
-									accuracy -= (distance - upperLimit) * weaponRule->getDropoff();
-									color = ACU_ORANGE;
-								}
-								else if (distance < lowerLimit)
-								{
-									accuracy -= (lowerLimit - distance) * weaponRule->getDropoff();
-									color = ACU_ORANGE;
+									TileEngine* te (_battleSave->getTileEngine());
+
+									const Position originVoxel (te->getSightOriginVoxel(action->actor));
+									Position scanVoxel;
+									const BattleUnit* const excludeUnit (action->actor);
+									zero = te->canTargetUnit(
+														&originVoxel,
+														_tile,
+														&scanVoxel,
+														excludeUnit) == false;
 								}
 								else
-									color = ACU_GREEN;
+									zero = false;
 
-								if (accuracy < 1 // zero accuracy or out of range: set it red.
-									|| distance > weaponRule->getMaxRange())
+								if (zero == false)
+								{
+									const RuleItem* const weaponRule (action->weapon->getRules());
+									const int distance (TileEngine::distance(
+																		Position(itX,itY,itZ),
+																		action->actor->getPosition()));
+									if (distance <= weaponRule->getMaxRange())
+									{
+										const int lowerLimit (weaponRule->getMinRange());
+										int upperLimit;
+										switch (action->type)
+										{
+											case BA_AIMEDSHOT:
+												upperLimit = weaponRule->getAimRange();
+												break;
+											case BA_SNAPSHOT:
+												upperLimit = weaponRule->getSnapRange();
+												break;
+											case BA_AUTOSHOT:
+												upperLimit = weaponRule->getAutoRange();
+												break;
+
+											default:
+												upperLimit = 200; // arbitrary.
+										}
+
+										accuracy = static_cast<int>(Round(action->actor->getAccuracy(*action) * 100.));
+										if (distance > upperLimit)
+										{
+											accuracy -= (distance - upperLimit) * weaponRule->getDropoff();
+											if (accuracy > 0)
+												color = ACU_ORANGE;
+											else
+												zero = true;
+										}
+										else if (distance < lowerLimit)
+										{
+											accuracy -= (lowerLimit - distance) * weaponRule->getDropoff();
+											if (accuracy > 0)
+												color = ACU_ORANGE;
+											else
+												zero = true;
+										}
+										else
+											color = ACU_GREEN;
+									}
+									else
+										zero = true;
+								}
+
+								if (zero == true)
 								{
 									accuracy = 0;
 									color = ACU_RED;
@@ -1534,7 +1563,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							}
 							else if (_cursorType == CT_THROW) // indicator for Throwing.
 							{
-								BattleAction* const action = _battleSave->getBattleGame()->getCurrentAction();
+								BattleAction* const action (_battleSave->getBattleGame()->getCurrentAction());
 								action->target = Position(itX,itY,itZ);
 
 								unsigned accuracy;
@@ -1569,15 +1598,22 @@ void Map::drawTerrain(Surface* const surface) // private.
 							}
 						}
 
-						if (_cursorType > CT_AIM // Psi, Waypoint, Throw
-							&& viewLevel == itZ)// || unitBelow != nullptr)) // BattleUnit was redrawn below curTile.
+						if (viewLevel == itZ)// || unitBelow != nullptr // BattleUnit was redrawn below curTile.
 						{
-							static const int cursorSprites[6] = {0,0,0,11,13,15};
-							sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(cursorSprites[_cursorType] + (_aniFrame / 4));
-							sprite->blitNShade(
-									surface,
-									posScreen.x,
-									posScreen.y);
+							switch (_cursorType)
+							{
+								case CT_PSI:
+								case CT_WAYPOINT:
+								case CT_THROW:
+								{
+									static const int cursorSprites[6] = {0,0,0,11,13,15};
+									sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(cursorSprites[_cursorType] + (_aniFrame / 4));
+									sprite->blitNShade(
+											surface,
+											posScreen.x,
+											posScreen.y);
+								}
+							}
 						}
 					}
 					// end cursor front.
@@ -2604,7 +2640,7 @@ Camera* Map::getCamera()
 }
 
 /**
- * Timers only work on surfaces so you have to pass this to the Camera.
+ * Timers only work on Surfaces so this has to be passed to the Camera.
  */
 void Map::scrollMouse()
 {
@@ -2612,7 +2648,7 @@ void Map::scrollMouse()
 }
 
 /**
- * Timers only work on surfaces so you have to pass this to the Camera.
+ * Timers only work on Surfaces so this has to be passed to the Camera.
  */
 void Map::scrollKey()
 {

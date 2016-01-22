@@ -878,12 +878,14 @@ Position TileEngine::getOriginVoxel(
 		const BattleAction& action,
 		const Tile* tile) const
 {
-	if (tile == nullptr)
-		tile = action.actor->getTile();
-
 	if (action.type == BA_LAUNCH)
 	{
-		const Position pos = tile->getPosition();
+		Position pos;
+		if (tile != nullptr)
+			pos = tile->getPosition();
+		else
+			pos = action.actor->getTile()->getPosition();
+
 		if (action.actor->getPosition() != pos)
 		{
 			// don't take into account unit height or terrain level if the
@@ -901,7 +903,7 @@ Position TileEngine::getOriginVoxel(
 	originVoxel.y += dirYshift[dir] * action.actor->getArmor()->getSize(); */
 
 /**
- * Checks for another unit available for targeting and what particular voxel.
+ * Checks for another unit available for targetting and what particular voxel.
  * @param originVoxel	- pointer to voxel of trace origin (eg. gun's barrel)
  * @param tileTarget	- pointer to Tile to check against
  * @param scanVoxel		- pointer to voxel that is returned coordinate of hit
@@ -939,35 +941,35 @@ bool TileEngine::canTargetUnit(
 		return false;
 	}
 
-	const Position targetVoxel = Position::toVoxelSpaceCentered(tileTarget->getPosition());
+	const Position targetVoxel (Position::toVoxelSpaceCentered(tileTarget->getPosition()));
 	const int
-		targetMinHeight = targetVoxel.z
-						- tileTarget->getTerrainLevel()
-						+ targetUnit->getFloatHeight(),
+		targetMinHeight (targetVoxel.z
+					   - tileTarget->getTerrainLevel()
+					   + targetUnit->getFloatHeight()),
 		// if there is a unit on tileTarget, assume check against that unit's height
-		xOffset = targetUnit->getPosition().x - tileTarget->getPosition().x,
-		yOffset = targetUnit->getPosition().y - tileTarget->getPosition().y,
-		armorSize = targetUnit->getArmor()->getSize() - 1;
+		xOffset   (targetUnit->getPosition().x - tileTarget->getPosition().x),
+		yOffset   (targetUnit->getPosition().y - tileTarget->getPosition().y),
+		armorSize (targetUnit->getArmor()->getSize() - 1);
 	int
-		targetMaxHeight = targetMinHeight,
+		targetMaxHeight (targetMinHeight),
 		targetCenterHeight,
 		heightRange;
 
 	size_t unitRadius;
 	if (armorSize > 0)
-		unitRadius = 3; // width = LoFT in default LoFTemps set
+		unitRadius = 3; // width = LoFT in default LoFTemplates set
 	else
 		unitRadius = targetUnit->getLoft();
 
 	// origin-to-target vector manipulation to make scan work in voxelspace
-	const Position relVoxel = targetVoxel - *originVoxel;
-	const float unitCenter = static_cast<float>(unitRadius)
-						   / std::sqrt(static_cast<float>((relVoxel.x * relVoxel.x) + (relVoxel.y * relVoxel.y)));
+	const Position relVoxel (targetVoxel - *originVoxel);
+	const float unitCenter (static_cast<float>(unitRadius)
+						  / std::sqrt(static_cast<float>((relVoxel.x * relVoxel.x) + (relVoxel.y * relVoxel.y))));
 	const int
 //		relX = static_cast<int>(std::floor(static_cast<float>( relVoxel.y) * unitCenter + 0.5f)),
 //		relY = static_cast<int>(std::floor(static_cast<float>(-relVoxel.x) * unitCenter + 0.5f)),
-		relX = static_cast<int>(Round(std::floor(static_cast<float>( relVoxel.y) * unitCenter))),
-		relY = static_cast<int>(Round(std::floor(static_cast<float>(-relVoxel.x) * unitCenter))),
+		relX (static_cast<int>(Round(std::floor(static_cast<float>( relVoxel.y) * unitCenter)))),
+		relY (static_cast<int>(Round(std::floor(static_cast<float>(-relVoxel.x) * unitCenter)))),
 		targetSlices[10] =
 		{
 			 0,		 0,
@@ -977,7 +979,6 @@ bool TileEngine::canTargetUnit(
 			-relY,	 relX
 		};
 
-//	if (targetUnit->isOut() == false)
 	if (targetUnit->isOut_t(OUT_STAT) == false)
 		heightRange = targetUnit->getHeight();
 	else
@@ -987,7 +988,7 @@ bool TileEngine::canTargetUnit(
 	targetCenterHeight = (targetMaxHeight + targetMinHeight) / 2;
 	heightRange /= 2;
 	if (heightRange > 10) heightRange = 10;
-	if (heightRange < 0) heightRange = 0;
+	if (heightRange < 0)  heightRange = 0;
 
 	std::vector<Position> trj;
 	std::vector<int>
@@ -1069,27 +1070,22 @@ bool TileEngine::canTargetUnit(
 		}
 	}
 
-	if (targetable_x.empty() == false)
+	if (targetable_x.empty() == false) // find the voxel centered on targetable area
 	{
 		int
-			minVal = *std::min_element(targetable_x.begin(), targetable_x.end()),
-			maxVal = *std::max_element(targetable_x.begin(), targetable_x.end()),
-			target_x = (minVal + maxVal) / 2,
-			target_y,
-			target_z;
+			minVal (*std::min_element(targetable_x.begin(), targetable_x.end())),
+			maxVal (*std::max_element(targetable_x.begin(), targetable_x.end()));
+		const int target_x ((minVal + maxVal) / 2);
 
 		minVal = *std::min_element(targetable_y.begin(), targetable_y.end()),
 		maxVal = *std::max_element(targetable_y.begin(), targetable_y.end());
-		target_y = (minVal + maxVal) / 2;
+		const int target_y ((minVal + maxVal) / 2);
 
 		minVal = *std::min_element(targetable_z.begin(), targetable_z.end()),
 		maxVal = *std::max_element(targetable_z.begin(), targetable_z.end());
-		target_z = (minVal + maxVal) / 2;
+		const int target_z ((minVal + maxVal) / 2);
 
-		*scanVoxel = Position(
-							target_x,
-							target_y,
-							target_z);
+		*scanVoxel = Position(target_x, target_y, target_z);
 
 		//Log(LOG_INFO) << ". scanVoxel RET " << (*scanVoxel);
 		return true;

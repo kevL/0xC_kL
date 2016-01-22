@@ -153,7 +153,6 @@ void ProjectileFlyBState::init()
 	{
 		_unit->setStopShot(false);
 		_parent->popState();
-
 		return;
 	}
 
@@ -206,7 +205,7 @@ void ProjectileFlyBState::init()
 				_action.result = "STR_OUT_OF_RANGE";
 				popThis = true;
 			}
-		break;
+			break;
 
 		case BA_THROW:
 		{
@@ -230,13 +229,13 @@ void ProjectileFlyBState::init()
 				_action.result = "STR_OUT_OF_RANGE";
 				popThis = true;
 			}
+			break;
 		}
-		break;
 
 		case BA_MELEE:
 			performMeleeAttack();
 			//Log(LOG_INFO) << ". . BA_MELEE performMeleeAttack() DONE - EXIT flyBState::init()";
-		return;
+			return;
 
 		case BA_PSIPANIC:
 		case BA_PSICONTROL:
@@ -248,7 +247,7 @@ void ProjectileFlyBState::init()
 													Position::toVoxelSpaceCentered(_action.target, 10),
 													_action.weapon,
 													_unit));
-		return;
+			return;
 
 		default:
 			//Log(LOG_INFO) << ". . default, EXIT";

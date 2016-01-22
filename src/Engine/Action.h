@@ -30,9 +30,9 @@ class InteractiveSurface;
 
 
 /**
- * Container for all the information associated with a given user action like
+ * Container for all the information associated with a given user Action like
  * mouse-clicks, key-presses, etc.
- * @note Called action because event is reserved. And don't confuse this with a
+ * @note Called Action because Event is reserved. And don't confuse this with a
  * BattleAction either.
  */
 class Action
@@ -51,18 +51,18 @@ private:
 		_scaleY;
 
 	InteractiveSurface* _sender;
-	SDL_Event* _ev;
+	SDL_Event* _event;
 
 
 	public:
-		/// Creates an action with given event data.
+		/// Creates an Action with given event data.
 		Action(
-				SDL_Event* ev,
+				SDL_Event* const event,
 				double scaleX,
 				double scaleY,
 				int topBlackBand,
 				int leftBlackBand);
-		/// Cleans up the action.
+		/// Cleans up the Action.
 		~Action();
 
 		/// Gets the screen's X scale.
@@ -70,13 +70,13 @@ private:
 		/// Gets the screen's Y scale.
 		double getYScale() const;
 
-		/// Sets the action as a mouse action.
+		/// Sets the Action as a mouse action.
 		void setMouseAction(
 				int mouseX,
 				int mouseY,
 				int surfaceX,
 				int surfaceY);
-		/// Gets if the action is a mouse action.
+		/// Gets if the Action is a mouse action.
 		bool isMouseAction() const;
 
 		/// Gets the top black band height.
@@ -97,12 +97,12 @@ private:
 		/// Gets the mouse's relative Y position.
 		double getRelativeYMouse() const;
 
-		/// Gets the sender of the action.
+		/// Gets the sender of the Action.
 		InteractiveSurface* getSender() const;
-		/// Sets the sender of the action.
+		/// Sets the sender of the Action.
 		void setSender(InteractiveSurface* sender);
 
-		/// Gets the details of the action.
+		/// Gets the details of the Action.
 		SDL_Event* getDetails() const;
 };
 

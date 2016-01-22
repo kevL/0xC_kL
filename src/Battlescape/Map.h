@@ -213,7 +213,7 @@ private:
 		/// Special handling for mouse over
 		void mouseOver(Action* action, State* state) override;
 
-		/// Finds the current mouse position XY on this Map.
+		/// Finds the current mouse position XY on the Map.
 		void findMousePointer(Position& point);
 
 		/// Special handling for key presses.

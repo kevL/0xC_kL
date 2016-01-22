@@ -1857,6 +1857,7 @@ void BattlescapeState::btnMapUpPress(Action*)
 		&& _map->getCamera()->up() == true)
 	{
 		_overlay->getFrame(1)->blit(_btnMapUp);
+		refreshMousePosition();
 	}
 }
 
@@ -1884,6 +1885,7 @@ void BattlescapeState::btnMapDownPress(Action*)
 		&& _map->getCamera()->down() == true)
 	{
 		_overlay->getFrame(8)->blit(_btnMapDown);
+		refreshMousePosition();
 	}
 }
 
@@ -2016,18 +2018,19 @@ void BattlescapeState::btnInventoryClick(Action*)
  * @note This is required to create an arbitrary mouseOver event for when the
  * Map is repositioned under the cursor but the cursor itself doesn't
  * necessarily move on the screen.
+ * @sa ListGamesState::think()
  */
 void BattlescapeState::refreshMousePosition() const
 {
+	_game->getCursor()->fakeMotion();
+
 	int // doesn't do shit. FIXED.
 		x,y,
 		dir;
 	SDL_GetMouseState(&x,&y);
 
-	if (x == 0)
-		dir = +1;
-	else
-		dir = -1; // note: SDL might still limit X internally to screenwidth-1.
+	if (x == 0)	dir = +1;
+	else		dir = -1;
 
 	SDL_WarpMouse(
 			static_cast<Uint16>(x + dir),
@@ -2060,7 +2063,8 @@ void BattlescapeState::btnCenterPress(Action* action)
  */
 void BattlescapeState::btnCenterRelease(Action*)
 {
-	_btnCenter->clear();
+	_btnCenter->clear();	// omg. For most of these buttons, refreshMousePosition() is enough;
+	mapOver(nullptr);		// but for Center, it also wants mapOver() - here - to update Tile info.
 }
 
 /**
