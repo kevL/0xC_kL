@@ -966,8 +966,10 @@ bool TileEngine::canTargetUnit(
 	const float unitCenter (static_cast<float>(unitRadius)
 						  / std::sqrt(static_cast<float>((relVoxel.x * relVoxel.x) + (relVoxel.y * relVoxel.y))));
 	const int
-		relX (static_cast<int>(std::floor(static_cast<float>( relVoxel.y) * unitCenter + 0.5f))),
-		relY (static_cast<int>(std::floor(static_cast<float>(-relVoxel.x) * unitCenter + 0.5f))),
+//		relX (static_cast<int>(std::floor(static_cast<float>( relVoxel.y) * unitCenter + 0.5f))),
+//		relY (static_cast<int>(std::floor(static_cast<float>(-relVoxel.x) * unitCenter + 0.5f))),
+		relX (static_cast<int>(Round(static_cast<float>( relVoxel.y) * unitCenter))),
+		relY (static_cast<int>(Round(static_cast<float>(-relVoxel.x) * unitCenter))),
 		targetSlices[10] =
 		{
 			 0,		 0,

@@ -86,7 +86,7 @@ void Cursor::handle(Action* action)
  * Informs the cursor not to bother.
  * @note This is needed to prevent rounding errors in handle() when the Map is
  * scrolled or jumped by keyboard. The cursor tends to go off by a pixel on
- * every third call to Battlescape::refreshMousePosition() otherwise.
+ * every third call to BattlescapeState::refreshMousePosition() otherwise.
  */
 void Cursor::fakeMotion()
 {
