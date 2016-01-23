@@ -60,8 +60,7 @@ private:
 		MAX_VOXEL_VIEW_DIST_SQR	= MAX_VOXEL_VIEW_DISTANCE * MAX_VOXEL_VIEW_DISTANCE,
 		MAX_SHADE_TO_SEE_UNITS	= 8,
 
-		heightFromCenter[11],
-		vertTargetDelta[24];
+		heightFromCenter[11];
 
 	bool
 //		_debug,
