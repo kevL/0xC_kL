@@ -1921,52 +1921,52 @@ int BattleUnit::getActionTu(
 				* const handRule = _battleGame->getRuleset()->getInventoryRule(ST_RIGHTHAND), // might be leftHand Lol ...
 				* const grdRule = _battleGame->getRuleset()->getInventoryRule(ST_GROUND);
 			cost = handRule->getCost(grdRule); // flat rate.
+			break;
 		}
-		break;
 
 		case BA_DEFUSE:
 			cost = 15; // flat rate.
-		break;
+			break;
 
 		case BA_PRIME:
 			if (itRule == nullptr)
 				return 0;
 			cost = itRule->getPrimeTu();
-		break;
+			break;
 
-		case BA_THROW:
+		case BA_THROW: // Idea: use wt.
 			cost = 23; // fractional rate.
-		break;
+			break;
 
 		case BA_LAUNCH:
 			if (itRule == nullptr)
 				return 0;
 			cost = itRule->getLaunchTu();
-		break;
+			break;
 
 		case BA_AIMEDSHOT:
 			if (itRule == nullptr)
 				return 0;
 			cost = itRule->getAimedTu();
-		break;
+			break;
 
 		case BA_AUTOSHOT:
 			if (itRule == nullptr)
 				return 0;
 			cost = itRule->getAutoTu();
-		break;
+			break;
 
 		case BA_SNAPSHOT:
 			if (itRule == nullptr)
 				return 0;
 			cost = itRule->getSnapTu();
-		break;
+			break;
 
 		case BA_MELEE:
 			if (itRule == nullptr)
 				return 0;
 			cost = itRule->getMeleeTu();
-		break;
+			break;
 
 		case BA_EXECUTE:
 			cost = 19; // flat rate.
@@ -1980,10 +1980,10 @@ int BattleUnit::getActionTu(
 			if (itRule == nullptr)
 				return 0;
 			cost = itRule->getUseTu();
-		break;
+			break;
 
 		default:
-			cost = 0;	// problem: cost=0 can lead to infinite loop in reaction fire
+			return 0;	// problem: cost=0 can lead to infinite loop in reaction fire
 						// Presently, cost=0 means 'cannot do' but conceivably an action
 						// could be free, or cost=0; so really cost=-1 ought be
 						// implemented, to mean 'cannot do' ......
@@ -1999,9 +1999,8 @@ int BattleUnit::getActionTu(
 		&& bat != BA_DROP
 		&& bat != BA_EXECUTE)
 	{
-		cost = std::max(
-					1,
-					static_cast<int>(std::floor(static_cast<double>(getBattleStats()->tu * cost) / 100.)));
+		return std::max(1,
+						static_cast<int>(std::floor(static_cast<double>(getBattleStats()->tu * cost) / 100.)));
 	}
 
 	return cost;

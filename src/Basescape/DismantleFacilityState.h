@@ -35,8 +35,7 @@ class Text;
 
 
 /**
- * Window shown when the player tries to
- * dismantle a facility.
+ * Window shown when the player wants to dismantle a facility.
  */
 class DismantleFacilityState
 	:
@@ -44,25 +43,31 @@ class DismantleFacilityState
 {
 
 private:
+	int _refund;
+
 	Base* _base;
 	BaseFacility* _fac;
 	BaseView* _view;
 
 	Text
-		* _txtTitle,
-		* _txtFacility;
+		* _txtFacility,
+		* _txtRefund,
+		* _txtTitle;
 	TextButton
-		* _btnOk,
-		* _btnCancel;
+		* _btnCancel,
+		* _btnOk;
 	Window* _window;
+
+	/// Calculates the refund value.
+	void calcRefund();
 
 
 	public:
 		/// Creates the Dismantle Facility state.
 		DismantleFacilityState(
-				Base* base,
-				BaseView* view,
-				BaseFacility* fac);
+				Base* const base,
+				BaseView* const view,
+				BaseFacility* const fac);
 		/// Cleans up the Dismantle Facility state.
 		~DismantleFacilityState();
 

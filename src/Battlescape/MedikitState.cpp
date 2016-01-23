@@ -336,12 +336,12 @@ void MedikitState::healClick(Action*)
 	{
 		if (_action->targetUnit->getOriginalFaction() != FACTION_HOSTILE)
 		{
-			const RuleItem* const itRule = _action->weapon->getRules();
-			if (_action->actor->spendTimeUnits(itRule->getUseTu()) == true)
+			if (_action->actor->spendTimeUnits(_action->TU) == true)
 			{
 				++_action->actor->getStatistics()->medikitApplications;
 
 				_action->weapon->setHealQuantity(healQty - 1);
+				const RuleItem* const itRule = _action->weapon->getRules();
 				_action->targetUnit->heal(
 										_mediView->getSelectedPart(),
 										itRule->getWoundRecovery(),
@@ -384,13 +384,12 @@ void MedikitState::stimClick(Action*)
 	{
 		if (_action->targetUnit->getOriginalFaction() != FACTION_HOSTILE)
 		{
-			const RuleItem* const itRule = _action->weapon->getRules();
-			if (_action->actor->spendTimeUnits(itRule->getUseTu()) == true)
+			if (_action->actor->spendTimeUnits(_action->TU) == true)
 			{
 				++_action->actor->getStatistics()->medikitApplications;
 
 				_action->weapon->setStimulantQuantity(stimQty - 1);
-
+				const RuleItem* const itRule = _action->weapon->getRules();
 				if (_action->targetUnit->amphetamine( // if the unit has revived quit this screen automatically
 												itRule->getEnergyRecovery(),
 												itRule->getStunRecovery()) == true)
@@ -429,7 +428,7 @@ void MedikitState::painClick(Action*)
 	{
 		if (_action->targetUnit->getOriginalFaction() != FACTION_HOSTILE)
 		{
-			if (_action->actor->spendTimeUnits(_action->weapon->getRules()->getUseTu()) == true)
+			if (_action->actor->spendTimeUnits(_action->TU) == true)
 			{
 				++_action->actor->getStatistics()->medikitApplications;
 
@@ -473,7 +472,7 @@ void MedikitState::painClick(Action*)
 }
 
 /**
- * Updates the medikit state.
+ * Updates the Medikit state.
  */
 void MedikitState::update()
 {

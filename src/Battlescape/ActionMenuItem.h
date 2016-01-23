@@ -49,7 +49,8 @@ private:
 	int _tu;
 	Uint8 _highlightModifier;
 
-	BattleActionType _action;
+	BattleActionType _bat;
+
 	Frame* _frame;
 	Text
 		* _txtAcc,
@@ -69,16 +70,15 @@ private:
 
 		/// Assigns an action to the menu-item.
 		void setAction(
-				BattleActionType batType,
+				BattleActionType baType,
 				const std::wstring& desc,
 				const std::wstring& acu,
 				const std::wstring& tu,
 				int tuCost);
-		/// Gets the assigned action.
-		BattleActionType getAction() const;
-
+		/// Gets the assigned BattleActionType.
+		BattleActionType getMenuActionType() const;
 		/// Gets the assigned action TUs.
-		int getActionMenuTu() const;
+		int getMenuActionTu() const;
 
 		/// Sets the palettes.
 		void setPalette(

@@ -346,8 +346,8 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 	{
 		const RuleItem* const itRule = _action->weapon->getRules();
 
-		_action->TU = _menuSelect[btnId]->getActionMenuTu();
-		_action->type = _menuSelect[btnId]->getAction();
+		_action->TU = _menuSelect[btnId]->getMenuActionTu();
+		_action->type = _menuSelect[btnId]->getMenuActionType();
 
 		switch (_action->type)
 		{
@@ -359,8 +359,8 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 					_game->getResourcePack()->getSound("BATTLE.CAT", soundId)
 												->play(-1, _game->getSavedGame()->getBattleSave()->getBattleGame()->getMap()
 																->getSoundAngle(_action->actor->getPosition()));
+				break;
 			}
-			break;
 
 			case BA_PRIME:
 				if (itRule->getBattleType() == BT_PROXYGRENADE)
@@ -370,12 +370,12 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 				}
 				else
 					_game->pushState(new PrimeGrenadeState(_action, false, nullptr));
-			break;
+				break;
 
 			case BA_DEFUSE:
 				_action->value = -1;
 				_game->popState();
-			break;
+				break;
 
 			case BA_DROP:
 				if (_action->actor->spendTimeUnits(_action->TU) == true)
@@ -391,7 +391,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
 
 				_game->popState();
-			break;
+				break;
 
 			case BA_USE:
 				if (itRule->getBattleType() == BT_MEDIKIT)
@@ -417,7 +417,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 					_action->targeting = true;
 					_game->popState();
 				}
-			break;
+				break;
 
 			case BA_LAUNCH:
 				if (_action->TU > _action->actor->getTimeUnits())
@@ -428,7 +428,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 					_action->targeting = true;
 
 				_game->popState();
-			break;
+				break;
 
 			case BA_MELEE:
 				if (_action->TU > _action->actor->getTimeUnits())
@@ -440,12 +440,12 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 				}
 
 				_game->popState();
-			break;
+				break;
 
 			case BA_EXECUTE:
 				_game->popState();
 				_game->pushState(new ExecuteState(_action));
-			break;
+				break;
 
 			default: // shoot, throw, psi-attack
 				_action->targeting = true;

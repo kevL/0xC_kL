@@ -136,7 +136,7 @@ int BaseFacility::getBuildTime() const
 
 /**
  * Changes this BaseFacility's remaining time until it's finished building.
- * @param buildTime - time left in days
+ * @param buildTime - time left in days (0 = complete)
  */
 void BaseFacility::setBuildTime(int buildTime)
 {

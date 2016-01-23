@@ -48,9 +48,9 @@ namespace OpenXcom
  * @param fac	- pointer to the facility to dismantle
  */
 DismantleFacilityState::DismantleFacilityState(
-		Base* base,
-		BaseView* view,
-		BaseFacility* fac)
+		Base* const base,
+		BaseView* const view,
+		BaseFacility* const fac)
 	:
 		_base(base),
 		_view(view),
@@ -59,9 +59,12 @@ DismantleFacilityState::DismantleFacilityState(
 	_fullScreen = false;
 
 	_window			= new Window(this, 152, 80, 20, 60);
+
 	_txtTitle		= new Text(142, 9, 25, 75);
 	_txtFacility	= new Text(142, 9, 25, 85);
-	_btnCancel		= new TextButton(44, 16, 36, 115);
+	_txtRefund		= new Text(142, 9, 25, 98);
+
+	_btnCancel		= new TextButton(44, 16,  36, 115);
 	_btnOk			= new TextButton(44, 16, 112, 115);
 
 	setInterface("dismantleFacility");
@@ -69,6 +72,7 @@ DismantleFacilityState::DismantleFacilityState(
 	add(_window,		"window",	"dismantleFacility");
 	add(_txtTitle,		"text",		"dismantleFacility");
 	add(_txtFacility,	"text",		"dismantleFacility");
+	add(_txtRefund,		"text",		"dismantleFacility");
 	add(_btnCancel,		"button",	"dismantleFacility");
 	add(_btnOk,			"button",	"dismantleFacility");
 
@@ -82,18 +86,36 @@ DismantleFacilityState::DismantleFacilityState(
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& DismantleFacilityState::btnOkClick,
 					Options::keyOk);
+	_btnOk->onKeyboardPress(
+					(ActionHandler)& DismantleFacilityState::btnOkClick,
+					Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(
+					(ActionHandler)& DismantleFacilityState::btnOkClick,
+					SDLK_y);
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
 	_btnCancel->onMouseClick((ActionHandler)& DismantleFacilityState::btnCancelClick);
 	_btnCancel->onKeyboardPress(
 					(ActionHandler)& DismantleFacilityState::btnCancelClick,
 					Options::keyCancel);
+	_btnCancel->onKeyboardPress(
+					(ActionHandler)& DismantleFacilityState::btnCancelClick,
+					SDLK_c);
+	_btnCancel->onKeyboardPress(
+					(ActionHandler)& DismantleFacilityState::btnCancelClick,
+					SDLK_n);
 
 	_txtTitle->setText(tr("STR_DISMANTLE"));
 	_txtTitle->setAlign(ALIGN_CENTER);
 
 	_txtFacility->setText(tr(_fac->getRules()->getType()));
 	_txtFacility->setAlign(ALIGN_CENTER);
+
+	calcRefund();
+
+	_txtRefund->setText(tr("STR_REFUND_")
+						.arg(Text::formatFunding(_refund)));
+	_txtRefund->setAlign(ALIGN_CENTER);
 }
 
 /**
@@ -108,14 +130,12 @@ DismantleFacilityState::~DismantleFacilityState()
  */
 void DismantleFacilityState::btnOkClick(Action*)
 {
+	SavedGame* const gameSave (_game->getSavedGame());
+
 	if (_fac->getRules()->isLift() == false)
 	{
-		if (_fac->getBuildTime() > _fac->getRules()->getBuildTime()) // Give refund if this is an unfinished build.
-		{
-			const int refund = _fac->getRules()->getBuildCost();
-			_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() + static_cast<int64_t>(refund));
-			_base->setCashSpent(-refund); // NOTE ... monthly rollover could play tricks with this
-		}
+		gameSave->setFunds(gameSave->getFunds() + static_cast<int64_t>(_refund));
+		_base->setCashIncome(_refund);
 
 		for (std::vector<BaseFacility*>::const_iterator
 				i = _base->getFacilities()->begin();
@@ -135,16 +155,16 @@ void DismantleFacilityState::btnOkClick(Action*)
 			}
 		}
 	}
-	else // Remove whole base if it's the access lift
+	else // Remove whole base if it's the access lift. TODO: And there's not another 'connected' access lift.
 	{
 		for (std::vector<Base*>::const_iterator
-				i = _game->getSavedGame()->getBases()->begin();
-				i != _game->getSavedGame()->getBases()->end();
+				i = gameSave->getBases()->begin();
+				i != gameSave->getBases()->end();
 				++i)
 		{
 			if (*i == _base)
 			{
-				_game->getSavedGame()->getBases()->erase(i);
+				gameSave->getBases()->erase(i);
 				delete _base;
 
 				break;
@@ -162,6 +182,30 @@ void DismantleFacilityState::btnOkClick(Action*)
 void DismantleFacilityState::btnCancelClick(Action*)
 {
 	_game->popState();
+}
+
+/**
+ * Calculates the refund value.
+ */
+void DismantleFacilityState::calcRefund() // private.
+{
+	const int buildCost = _fac->getRules()->getBuildCost();
+	if (_fac->buildFinished() == false)
+	{
+		if (_fac->getBuildTime() > _fac->getRules()->getBuildTime())
+			_refund = buildCost;
+		else
+		{
+			const float factor = static_cast<float>(_fac->getBuildTime())
+							   / static_cast<float>(_fac->getRules()->getBuildTime());
+			_refund = static_cast<int>(ceil(
+					  static_cast<float>(buildCost) * factor));
+			if (_refund < buildCost * 10 / 100)
+				_refund = buildCost * 10 / 100;
+		}
+	}
+	else
+		_refund = buildCost * 10 / 100;
 }
 
 }

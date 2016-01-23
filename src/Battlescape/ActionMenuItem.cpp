@@ -53,7 +53,7 @@ ActionMenuItem::ActionMenuItem(
 			y - (static_cast<int>(id) * 40)),
 		_highlighted(false),
 		_highlightModifier(5),
-		_action(BA_NONE),
+		_bat(BA_NONE),
 		_tu(0)
 {
 	Font
@@ -111,36 +111,36 @@ ActionMenuItem::~ActionMenuItem()
  * @param tuCost	- the timeunits value that will get expended
  */
 void ActionMenuItem::setAction(
-		BattleActionType batType,
+		BattleActionType baType,
 		const std::wstring& desc,
 		const std::wstring& acu,
 		const std::wstring& tu,
 		int tuCost)
 {
-	_action = batType;
 	_txtDesc->setText(desc);
 	_txtAcc->setText(acu);
 	_txtTU->setText(tu);
 
+	_bat = baType;
 	_tu = tuCost;
 
 	_redraw = true;
 }
 
 /**
- * Gets the action that was linked to this menu item.
- * @return, the BattleActionType that is linked to this menu item
+ * Gets the BattleActionType that is linked to this MenuItem.
+ * @return, the BattleActionType (BattlescapeGame.h)
  */
-BattleActionType ActionMenuItem::getAction() const
+BattleActionType ActionMenuItem::getMenuActionType() const
 {
-	return _action;
+	return _bat;
 }
 
 /**
- * Gets the action TUs that were linked to this menu item.
- * @return, the timeunits that are linked to this menu item
+ * Gets the action TUs that were linked to this MenuItem.
+ * @return, the TU
  */
-int ActionMenuItem::getActionMenuTu() const
+int ActionMenuItem::getMenuActionTu() const
 {
 	return _tu;
 }
