@@ -1844,8 +1844,8 @@ void DebriefingState::reequipCraft(Craft* craft) // private.
 
 /**
  * Recovers items from the battlescape.
- * @note Converts the battlescape inventory into a geoscape itemcontainer.
- * @param battleItems - pointer to a vector of pointers to BattleItems on the battlescape
+ * @note Converts the battlescape inventory into a geoscape ItemContainer.
+ * @param battleItems - pointer to a vector of pointers to BattleItems on the battlefield
  */
 void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) // private.
 {
@@ -1868,15 +1868,15 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 						100,
 						_rules->getAlienFuelQuantity());
 			}
-			else //if (*i)->getXcomProperty() == false
+			else
 			{
-				if (itRule->isRecoverable() == true
+				if (itRule->isRecoverable() == true // add pts. for unresearched items only
 					&& itRule->getRecoveryPoints() != 0
 					&& itRule->getBattleType() != BT_CORPSE
 					&& _gameSave->isResearched(itRule->getType()) == false)
 				{
 					//Log(LOG_INFO) << ". . artefact = " << itRule->getType();
-					addStat( // add pts. for unresearched items only
+					addStat(
 						"STR_ALIEN_ARTIFACTS_RECOVERED",
 						itRule->getRecoveryPoints());
 				}

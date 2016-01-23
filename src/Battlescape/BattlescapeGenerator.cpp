@@ -1065,17 +1065,15 @@ void BattlescapeGenerator::deployXcom() // private.
 			)
 	{
 		_battleSave->getItems()->push_back(*i);
-//		(*i)->setXcomProperty();
-
-		if ((*i)->getInventorySection() == grdRule)
-		{
-			//Log(LOG_INFO) << ". . add to battleSave : " << (*i)->getRules()->getType();
-			++i;
-		}
-		else
+		if ((*i)->getInventorySection() != grdRule)
 		{
 			//Log(LOG_INFO) << ". . erase tileItem : " << (*i)->getRules()->getType();
 			i = _tileEquipt->getInventory()->erase(i);
+		}
+		else
+		{
+			//Log(LOG_INFO) << ". . add to battleSave : " << (*i)->getRules()->getType();
+			++i;
 		}
 	}
 	//Log(LOG_INFO) << "BattlescapeGenerator::deployXcom() EXIT";
@@ -1584,7 +1582,6 @@ bool BattlescapeGenerator::placeItem( // private.
 		case 1:
 			item->changeOwner(unit); // no break.
 		case 2:
-//			item->setXcomProperty(unit->getFaction() == FACTION_PLAYER);
 			_battleSave->getItems()->push_back(item);
 			return true;
 	}

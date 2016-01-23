@@ -59,7 +59,6 @@ BattleItem::BattleItem(
 		_heal(0),
 		_stimulant(0),
 		_isLoad(false)
-//		_xcomProperty(false)
 {
 	if (pId != nullptr)	// <- this is for SavedBattleGame only to keep
 	{					// track of a brand new item on the battlefield
@@ -552,31 +551,6 @@ int BattleItem::getStimulantQuantity() const
 {
 	return _stimulant;
 }
-
-/**
- * Sets the XCom property flag.
- * @note This is to determine at Debriefing what goes back into the base/craft.
- * kL_note: no, actually it's not: In its current implementation it is
- * fundamentally useless ... well it may bear only on artefacts for a Base
- * Defense mission ....
- * @param flag - true if xCom property
- *
-void BattleItem::setXcomProperty(bool flag)
-{
-	_xcomProperty = flag;
-} */
-
-/**
- * Gets the XCom property flag.
- * @note This is to determine at Debriefing what goes back into the base/craft.
- * kL_note: no, actually it's not: In its current implementation it is
- * fundamentally useless.
- * @return, true if xCom property
- *
-bool BattleItem::getXcomProperty() const
-{
-	return _xcomProperty;
-} */
 
 /**
  * Converts a carried unconscious body into a battlefield corpse-item.

@@ -41,7 +41,6 @@ class BattleItem
 
 private:
 	bool _isLoad;
-//		_xcomProperty;
 	int
 		_ammoQty,
 		_fuse,
@@ -159,11 +158,6 @@ private:
 		void setStimulantQuantity(int stimulant);
 		/// Gets medikit stimulant quantity
 		int getStimulantQuantity() const;
-
-		/// Sets xcom property flag
-//		void setXcomProperty(bool flag = true);
-		/// Gets xcom property flag
-//		bool getXcomProperty() const;
 
 		/// Sets the item's ruleset.
 		void convertToCorpse(RuleItem* const itRule);
