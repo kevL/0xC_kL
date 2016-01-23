@@ -1111,10 +1111,10 @@ interfaces:
         color2: 82
       - id: barMorale
         color: 192
-      - id: numAmmoLeft
+      - id: numLight
         color: 3
-      - id: numAmmoRight
-        color: 3
+      - id: numDark
+        color: 7
       - id: textTooltip
         color: -1
       - id: buttonReserveNone

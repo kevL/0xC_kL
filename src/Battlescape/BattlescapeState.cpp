@@ -383,10 +383,10 @@ BattlescapeState::BattlescapeState()
 	add(_numLayers,			"numIcons",				"battlescape", _icons);	// goes overtop _icons
 	add(_overWeight);														// goes overtop _rank
 	add(_txtName,			"textName",				"battlescape", _icons);
-	add(_numTULaunch);
-	add(_numTUAim);
-	add(_numTUAuto);
-	add(_numTUSnap);
+	add(_numTULaunch,		"numDark",				"battlescape", _icons);
+	add(_numTUAim,			"numDark",				"battlescape", _icons);
+	add(_numTUAuto,			"numDark",				"battlescape", _icons);
+	add(_numTUSnap,			"numDark",				"battlescape", _icons);
 	add(_numTimeUnits,		"numTUs",				"battlescape", _icons);
 	add(_numEnergy,			"numEnergy",			"battlescape", _icons);
 	add(_numHealth,			"numHealth",			"battlescape", _icons);
@@ -403,16 +403,16 @@ BattlescapeState::BattlescapeState()
 	add(_btnLogo,			"buttonZeroTUs",		"battlescape", _icons);
 	add(_btnLeftHandItem,	"buttonLeftHand",		"battlescape", _icons);
 	add(_btnRightHandItem,	"buttonRightHand",		"battlescape", _icons);
-	add(_numAmmoLeft,		"numAmmoLeft",			"battlescape", _icons);
-	add(_numAmmoRight,		"numAmmoRight",			"battlescape", _icons);
-	add(_numMediL1,			"numAmmoLeft",			"battlescape", _icons);
-	add(_numMediL2,			"numAmmoLeft",			"battlescape", _icons);
-	add(_numMediL3,			"numAmmoLeft",			"battlescape", _icons);
-	add(_numMediR1,			"numAmmoRight",			"battlescape", _icons);
-	add(_numMediR2,			"numAmmoRight",			"battlescape", _icons);
-	add(_numMediR3,			"numAmmoRight",			"battlescape", _icons);
-	add(_numTwohandL,		"numAmmoLeft",			"battlescape", _icons);
-	add(_numTwohandR,		"numAmmoRight",			"battlescape", _icons);
+	add(_numAmmoLeft,		"numLight",				"battlescape", _icons);
+	add(_numAmmoRight,		"numLight",				"battlescape", _icons);
+	add(_numMediL1,			"numDark",				"battlescape", _icons);
+	add(_numMediL2,			"numDark",				"battlescape", _icons);
+	add(_numMediL3,			"numDark",				"battlescape", _icons);
+	add(_numMediR1,			"numDark",				"battlescape", _icons);
+	add(_numMediR2,			"numDark",				"battlescape", _icons);
+	add(_numMediR3,			"numDark",				"battlescape", _icons);
+	add(_numTwohandL,		"numDark",				"battlescape", _icons);
+	add(_numTwohandR,		"numDark",				"battlescape", _icons);
 	add(_targeter);
 
 	_targeter->setVisible(false);
@@ -1003,11 +1003,6 @@ BattlescapeState::BattlescapeState()
 	}
 
 	_txtName->setHighContrast();
-
-	_numTULaunch->setColor(GRAY);
-	_numTUAim->setColor(GRAY);
-	_numTUAuto->setColor(GRAY);
-	_numTUSnap->setColor(GRAY);
 
 	_numTwohandR->setValue(2u);
 	_numTwohandL->setValue(2u);
