@@ -77,9 +77,7 @@ UnitDieBState::UnitDieBState(
 
 	if (_unit->getUnitVisible() == true)
 	{
-		Camera* const deathCam = _parent->getMap()->getCamera(); // <- added to think() also.
-		if (deathCam->isOnScreen(_unit->getPosition()) == false)
-			deathCam->centerOnPosition(_unit->getPosition());
+		centerOnUnitDeath();
 
 		if (_unit->getFaction() == FACTION_PLAYER)
 			_parent->getMap()->setUnitDying();
@@ -143,16 +141,7 @@ void UnitDieBState::think()
 		if (_init == true)
 		{
 			_init = false;
-//			if (_unit->getUnitVisible() == true) // <- equated w/ (_noScream== false) in cTor.
-//			{
-			// This was also done in cTor, but terrain Explosions can and do
-			// change camera-position before the turn/spin & collapse happen.
-			Camera* const deathCam = _parent->getMap()->getCamera();
-			if (deathCam->isOnScreen(_unit->getPosition()) == false)
-				deathCam->centerOnPosition(_unit->getPosition());
-			else if (_unit->getPosition().z != deathCam->getViewLevel())
-				deathCam->setViewLevel(_unit->getPosition().z);
-//			}
+			centerOnUnitDeath();
 		}
 
 		if (_doneScream == false
@@ -442,6 +431,18 @@ void UnitDieBState::convertToCorpse() // private.
 		// expose any units that were hiding behind dead unit
 		_parent->getTileEngine()->calculateFOV(pos, true);
 	}
+}
+
+/**
+ * Centers Camera on the collapsing BattleUnit.
+ */
+void UnitDieBState::centerOnUnitDeath() // private.
+{
+	Camera* const deathCam = _parent->getMap()->getCamera();
+	if (deathCam->isOnScreen(_unit->getPosition()) == false)
+		deathCam->centerOnPosition(_unit->getPosition());
+	else if (_unit->getPosition().z != deathCam->getViewLevel())
+		deathCam->setViewLevel(_unit->getPosition().z);
 }
 
 /**
