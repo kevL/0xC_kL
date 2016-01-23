@@ -1983,24 +1983,14 @@ void BattlescapeGame::checkForCasualties(
 					if (execution == false && converted == false)
 					{
 						DamageType dType;
-						bool noSound;
-
 						if (weapon != nullptr)
-						{
 							dType = weapon->getRules()->getDamageType();
-							noSound = false;
-						}
 						else // hidden or terrain explosion or death by fatal wounds
 						{
 							if (hiddenExpl == true) // this is instant death from UFO powersources without screaming sounds
-							{
-								noSound = true;
 								dType = DT_HE;
-							}
 							else
 							{
-								noSound = false;
-
 								if (terrainExpl == true)
 									dType = DT_HE;
 								else // no attacker and no terrain explosion - must be fatal wounds
@@ -2012,7 +2002,7 @@ void BattlescapeGame::checkForCasualties(
 													this,
 													*i,
 													dType,
-													noSound));
+													hiddenExpl));
 					}
 				}
 				else if (stunned == true
@@ -2798,7 +2788,8 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			_parentState->getGame()->getCursor()->setHidden();
 
 			_currentAction.target = pos;
-			if (_currentAction.weapon->getAmmoItem() == nullptr
+			if (_currentAction.type == BA_THROW
+				|| _currentAction.weapon->getAmmoItem() == nullptr
 				|| _currentAction.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
 			{
 				_currentAction.cameraPosition = getMap()->getCamera()->getMapOffset();

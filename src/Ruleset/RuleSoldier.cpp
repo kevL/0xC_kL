@@ -19,6 +19,8 @@
 
 #include "RuleSoldier.h"
 
+#include "../Engine/Exception.h"
+
 
 namespace YAML
 {
@@ -96,6 +98,14 @@ void RuleSoldier::load(const YAML::Node& node)
 	_standHeight	= node["standHeight"]	.as<int>(_standHeight);
 	_kneelHeight	= node["kneelHeight"]	.as<int>(_kneelHeight);
 	_floatHeight	= node["floatHeight"]	.as<int>(_floatHeight);
+
+//	if (_floatHeight + _standHeight > 24)
+	if (_standHeight > 24) // reasons. See TileEngine::canTargetUnit()
+	{
+//		throw Exception("Error with unit " + _type + ": Soldier height + float height may not exceed 24");
+		throw Exception("Error with Soldier " + _type + ": Soldier height shall not exceed 24");
+	}
+
 	_genderRatio	= node["genderRatio"]	.as<RuleGender>(_genderRatio);
 
 	_minStats.mergeStats(node["minStats"].as<UnitStats>(_minStats));

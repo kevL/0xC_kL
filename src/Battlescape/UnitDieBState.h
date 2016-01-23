@@ -43,8 +43,9 @@ class UnitDieBState
 
 private:
 	bool
-		_noSound,
-		_doneScream;
+		_init,
+		_doneScream,
+		_noScream;
 	int _extraTicks;
 
 	BattleUnit* _unit;
@@ -62,7 +63,7 @@ private:
 				BattlescapeGame* const parent,
 				BattleUnit* const unit,
 				const DamageType dType,
-				const bool noSound = false);
+				const bool noScream = false);
 		/// Cleans up the UnitDieBState.
 		~UnitDieBState();
 

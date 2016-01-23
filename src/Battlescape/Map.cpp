@@ -482,20 +482,23 @@ void Map::drawTerrain(Surface* const surface) // private.
 					|| bullet.y < 0
 					|| bullet.y >= _playableHeight)
 				{
-					_camera->centerOnPosition(
-											Position(
-												bulletLowX,
-												bulletLowY,
-												bulletHighZ),
-											false);
-					_camera->convertVoxelToScreen(
-											_projectile->getPosition(),
-											&bullet);
+					if (action->type == BA_THROW
+						|| action->weapon->getAmmoItem() == nullptr // unless its shotgun pellets.
+						|| action->weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
+					{
+						_camera->centerOnPosition(
+												Position(
+													bulletLowX,
+													bulletLowY,
+													bulletHighZ),
+												false);
+					}
+//					_camera->convertVoxelToScreen(_projectile->getPosition(), &bullet);
 				}
 
 				const bool offScreen_final (_camera->isOnScreen(posFinal) == false);
-				if (action->actor->getFaction() != _battleSave->getSide()	// moved here from TileEngine::reactionShot()
-					&& offScreen_final == true)								// because this is the (accurate) position of the bullet-shot-actor's Camera mapOffset.
+				if (offScreen_final == true										// moved here from TileEngine::reactionShot() because this is the
+					&& action->actor->getFaction() != _battleSave->getSide())	// accurate position of the bullet-shot-actor's Camera mapOffset.
 				{
 					std::map<int, Position>* const rfShotPos (_battleSave->getTileEngine()->getReactionPositions());
 					rfShotPos->insert(std::pair<int, Position>(

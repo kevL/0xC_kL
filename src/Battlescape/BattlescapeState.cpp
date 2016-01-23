@@ -2063,8 +2063,8 @@ void BattlescapeState::btnCenterPress(Action* action)
  */
 void BattlescapeState::btnCenterRelease(Action*)
 {
-	_btnCenter->clear();	// omg. For most of these buttons, refreshMousePosition() is enough;
-	mapOver(nullptr);		// but for Center, it also wants mapOver() - here - to update Tile info.
+	_btnCenter->clear();	// For most of these buttons, refreshMousePosition() is enough; but
+	mapOver(nullptr);		// for Center, it also wants mapOver() - here - to update Tile info.
 }
 
 /**

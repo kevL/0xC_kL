@@ -52,27 +52,28 @@ namespace OpenXcom
  * @param parent	- pointer to BattlescapeGame
  * @param unit		- pointer to a dying BattleUnit
  * @param dType		- type of damage that caused the death (RuleItem.h)
- * @param noSound	- true to disable the death sound for pre-battle powersource explosions as well as stun (default false)
+ * @param noScream	- true to disable the death sound for pre-battle powersource explosions as well as stun (default false)
  */
 UnitDieBState::UnitDieBState(
 		BattlescapeGame* const parent,
 		BattleUnit* const unit,
 		const DamageType dType,
-		const bool noSound)
+		const bool noScream)
 	:
 		BattleState(parent),
 		_unit(unit),
 		_dType(dType),
-		_noSound(noSound),
+		_noScream(noScream),
 		_battleSave(parent->getBattleSave()),
 		_doneScream(false),
-		_extraTicks(0)
+		_extraTicks(0),
+		_init(true)
 {
 //	_unit->clearVisibleTiles();
 //	_unit->clearHostileUnits();
 
-	if (_noSound == false)			// pre-battle hidden explosion death; needed here to stop Camera CTD.
-		_unit->setUnitVisible();	// Has side-effect of keeping stunned victims non-revealed if not already visible.
+	if (_noScream == false)			// pre-battle hidden explosion death; needed here to stop Camera CTD.
+		_unit->setUnitVisible();	// Has side-effect of keeping stunned victims non-revealed if not already visible. See think() also.
 
 	if (_unit->getUnitVisible() == true)
 	{
@@ -136,26 +137,31 @@ UnitDieBState::~UnitDieBState()
  */
 void UnitDieBState::think()
 {
-// #0
-	if (_doneScream == false && _noSound == false)
+// #0 TODO: Separate _noSound (ie. unconscious) from _hiddenExplosions.
+	if (_noScream == false)	// Has side-effect of not Centering on stunned victims. See cTor also.
 	{
-		_doneScream = true;
-
-		if (_unit->isOut_t(OUT_STUN) == false
-			&& _unit->hasCried() == false
-			&& _unit->getOverDose() == false)
+		if (_init == true)
 		{
-			_unit->playDeathSound();
-		}
-
-		if (_unit->getUnitVisible() == true)
-		{
-			// This was also done in cTor, but terrain Explosions can/do change camera before the turn/spin & collapse happen.
+			_init = false;
+//			if (_unit->getUnitVisible() == true) // <- equated w/ (_noScream== false) in cTor.
+//			{
+			// This was also done in cTor, but terrain Explosions can and do
+			// change camera-position before the turn/spin & collapse happen.
 			Camera* const deathCam = _parent->getMap()->getCamera();
 			if (deathCam->isOnScreen(_unit->getPosition()) == false)
 				deathCam->centerOnPosition(_unit->getPosition());
 			else if (_unit->getPosition().z != deathCam->getViewLevel())
 				deathCam->setViewLevel(_unit->getPosition().z);
+//			}
+		}
+
+		if (_doneScream == false
+			&& _unit->isOut_t(OUT_STUN) == false
+			&& _unit->hasCried() == false
+			&& _unit->getOverDose() == false)
+		{
+			_doneScream = true;
+			_unit->playDeathSound();
 		}
 	}
 

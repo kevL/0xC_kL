@@ -76,9 +76,11 @@ void RuleUnit::load(
 	_kneelHeight	= node["kneelHeight"]		.as<int>(_kneelHeight);
 	_floatHeight	= node["floatHeight"]		.as<int>(_floatHeight);
 
-	if (_floatHeight + _standHeight > 24)
+//	if (_floatHeight + _standHeight > 24)
+	if (_standHeight > 24) // reasons. See TileEngine::canTargetUnit()
 	{
-		throw Exception("Error with unit " + _type + ": Unit height + float height may not exceed 24");
+//		throw Exception("Error with unit " + _type + ": Unit height + float height may not exceed 24");
+		throw Exception("Error with Unit " + _type + ": Unit height shall not exceed 24");
 	}
 
 	_value			= node["value"]			.as<int>(_value);
