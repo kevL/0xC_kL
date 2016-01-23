@@ -3482,7 +3482,7 @@ void BattleUnit::heal(
 }
 
 /**
- * Restores soldier morale of this BattleUnit. And kills w/ overdose.
+ * Restores morale of this BattleUnit. And kills w/ overdose.
  */
 void BattleUnit::morphine()
 {

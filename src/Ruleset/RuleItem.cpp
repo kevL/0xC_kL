@@ -686,7 +686,7 @@ int RuleItem::getStimulantQuantity() const
 }
 
 /**
- * Gets the amount of fatal wound healed per usage.
+ * Gets the amount of fatal wounds healed per usage.
  * @return, the amount of fatal wounds healed
  */
 int RuleItem::getWoundRecovery() const

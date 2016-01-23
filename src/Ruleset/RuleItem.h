@@ -306,7 +306,7 @@ private:
 		int getPainKillerQuantity() const;
 		/// Gets the medikit stimulant quantity.
 		int getStimulantQuantity() const;
-		/// Gets the medikit wound healed per shot.
+		/// Gets the medikit wounds healed per shot.
 		int getWoundRecovery() const;
 		/// Gets the medikit health recovered per shot.
 		int getHealthRecovery() const;
