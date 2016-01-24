@@ -2257,8 +2257,8 @@ void BattlescapeState::clearOptionsBtn()
 
 /**
  * Requests the end of turn.
- * @note This will add a 0 to the end of the state queue so all ongoing actions
- * like explosions are finished first before really switching turn.
+ * @note This will add a NULL-state to the end of the state queue so all ongoing
+ * actions like explosions are finished first before really ending a turn.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnEndTurnClick(Action*)
@@ -2266,10 +2266,18 @@ void BattlescapeState::btnEndTurnClick(Action*)
 	if (allowButtons() == true)
 	{
 //		_txtTooltip->setText(L"");
-//		_overlay->getFrame(6)->blit(_btnEndTurn); // clear() not implemented.
+//		_overlay->getFrame(6)->blit(_btnEndTurn);
 		_battleGame->requestEndTurn();
 	}
 }
+
+/**
+ * Clears the EndTurn btn.
+ *
+void BattlescapeState::clearEndTurnBtn()
+{
+	_btnEndTurn->clear();
+} */
 
 /**
  * Aborts the mission.

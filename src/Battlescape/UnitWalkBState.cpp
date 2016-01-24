@@ -99,8 +99,12 @@ void UnitWalkBState::init()
 
 	if (_unit->getFaction() != FACTION_PLAYER
 		&& _unit != _battleSave->getWalkUnit()) // See.
+//		&& _unit->getUnitVisible() == false) // yeh FALSE -> works in conjunction w/ walkUnit. That is, BattlescapeGame::handleUnitAI() should catch it & do Centering.
 	{
-		//Log(LOG_INFO) << ". . init() Center on unit id-" << _unit->getId();
+		//if (_unit->getId() == 1000007) {
+			//Log(LOG_INFO) << ". . init() Center on unit id-" << _unit->getId();
+			//Log(LOG_INFO) << ". . SET walkUnit id-" << _unit->getId(); }
+		_battleSave->setWalkUnit(_unit);
 		_walkCam->centerOnPosition(_unit->getPosition());
 	}
 
@@ -321,11 +325,11 @@ bool UnitWalkBState::doStatusStand() // private.
 	const Position pos = _unit->getPosition();
 
 	if (_unit->getFaction() != FACTION_PLAYER // && _isVisible == true
+//		&& _unit != _battleSave->getWalkUnit()
 		&& _walkCam->isOnScreen(_unit->getPosition()) == false)
 	{
-		//Log(LOG_INFO) << ". statusStand() Center on unit id-" << _unit->getId();
+		//if (_unit->getId() == 1000007) Log(LOG_INFO) << ". statusStand() Center on unit id-" << _unit->getId();
 		_walkCam->centerOnPosition(pos);
-//		_walkCam->setViewLevel(pos.z);
 	}
 
 	const Tile* const tile = _battleSave->getTile(pos);
@@ -850,7 +854,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		&& _unit != _battleSave->getWalkUnit()
 		&& _pf->getStartDirection() == -1)
 	{
-		//Log(LOG_INFO) << ". statusStand_end() Center on unit id-" << _unit->getId();
+		//if (_unit->getId() == 1000007) Log(LOG_INFO) << ". statusStand_end() Center on unit id-" << _unit->getId();
 		_walkCam->centerOnPosition(_unit->getPosition());
 		// Okay, better write something about this. When the last aLien unit to
 		// do its AI (or perhaps a Civie) is marked unselectable in handleUnitAI()

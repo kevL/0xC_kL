@@ -678,15 +678,20 @@ void BattlescapeGame::centerOnUnit( // private.
 		const BattleUnit* const unit,
 		bool draw) const
 {
-	if (unit != _battleSave->getWalkUnit())
+	//Log(LOG_INFO) << "BattlescapeGame::centerOnUnit() id-" << unit->getId();
+	if (unit->getUnitVisible() == true)
 	{
-		if (unit->getUnitVisible() == true)
-			_battleSave->setWalkUnit(unit);
-		else
-			_battleSave->setWalkUnit(nullptr);
-
-		getMap()->getCamera()->centerOnPosition(unit->getPosition(), draw);
+		//Log(LOG_INFO) << ". . curUnit VISIBLE - walkUnit SET curUnit";
+		_battleSave->setWalkUnit(unit);
 	}
+	else
+	{
+		//Log(LOG_INFO) << ". . curUnit NOT Visible - walkUnit Set NULL";
+		_battleSave->setWalkUnit(nullptr);
+	}
+
+	//Log(LOG_INFO) << ". Center on id-" << unit->getId();
+	getMap()->getCamera()->centerOnPosition(unit->getPosition(), draw);
 }
 
 /**
@@ -697,7 +702,12 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 {
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() " << unit->getId();
-	centerOnUnit(unit); // if you're going to reveal the map at least show the first aLien.
+	if (unit != _battleSave->getWalkUnit())
+	{
+		//Log(LOG_INFO) << ". curUnit != walkUnit -> try Centering";
+		centerOnUnit(unit); // if you're going to reveal the map at least center the first aLien.
+	}
+	//else Log(LOG_INFO) << ". curUnit == walkUnit - No centering";
 
 	//Log(LOG_INFO) << ". TU = " << unit->getTimeUnits();
 	if (unit->getTimeUnits() == 0)

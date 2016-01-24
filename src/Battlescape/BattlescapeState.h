@@ -356,6 +356,9 @@ private:
 
 		/// Handler for clicking the End Turn button.
 		void btnEndTurnClick(Action* action);
+		/// Clears the EndTurn btn.
+//		void clearEndTurnBtn();
+
 		/// Handler for clicking the Abort button.
 		void btnAbortClick(Action* action);
 		/// Clears the Abort btn.
