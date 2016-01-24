@@ -69,14 +69,17 @@ private:
 		PULSE_FRAMES	= 22;
 
 	static const Uint8
-		ORANGE	=  16,
-		RED		=  32,
-		RED_D	=  43,
-		GREEN	=  48,
-		BROWN_L	=  80,
-		BLUE	= 128,
-		YELLOW	= 144,
-		BROWN	= 160;
+		ORANGE		=  16,
+		ORANGE_D	=  20,
+		RED			=  32,
+		RED_D		=  43,
+		GREEN		=  48,
+		GREEN_D		=  52,
+		BROWN_L		=  80,
+		BLUE		= 128,
+		YELLOW		= 144,
+		YELLOW_D	= 148,
+		BROWN		= 160;
 
 	bool
 		_firstInit,

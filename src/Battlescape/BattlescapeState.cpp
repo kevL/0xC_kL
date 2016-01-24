@@ -1841,17 +1841,14 @@ void BattlescapeState::btnUnitDownRelease(Action*)
  * Shows the next upper map layer.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnMapUpPress(Action*)
+void BattlescapeState::btnMapUpPress(Action* action)
 {
-/*	if (_battleSave->getSide() == FACTION_PLAYER
-		|| _battleSave->getDebugMode() == true)
-	{
-		_map->getCamera()->up();
-	} */
 	if (allowButtons() == true
 		&& _map->getCamera()->up() == true)
 	{
-		_overlay->getFrame(1)->blit(_btnMapUp);
+		if (action != nullptr) // prevent hotSqrs from depressing btn.
+			_overlay->getFrame(1)->blit(_btnMapUp);
+
 		refreshMousePosition();
 	}
 }
@@ -1869,17 +1866,14 @@ void BattlescapeState::btnMapUpRelease(Action*)
  * Shows the next lower map layer.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnMapDownPress(Action*)
+void BattlescapeState::btnMapDownPress(Action* action)
 {
-/*	if (_battleSave->getSide() == FACTION_PLAYER
-		|| _battleSave->getDebugMode() == true)
-	{
-		_map->getCamera()->down();
-	} */
 	if (allowButtons() == true
 		&& _map->getCamera()->down() == true)
 	{
-		_overlay->getFrame(8)->blit(_btnMapDown);
+		if (action != nullptr) // prevent hotSqrs from depressing btn.
+			_overlay->getFrame(8)->blit(_btnMapDown);
+
 		refreshMousePosition();
 	}
 }
@@ -3069,7 +3063,18 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 				{
 					_numAmmoRight->setVisible();
 					if (rtItem->getAmmoItem() != nullptr)
-						_numAmmoRight->setValue(static_cast<unsigned>(rtItem->getAmmoItem()->getAmmoQuantity()));
+					{
+						const int
+							qty = rtItem->getAmmoItem()->getAmmoQuantity(),
+							clipSize = rtItem->getAmmoItem()->getRules()->getClipSize();
+						_numAmmoRight->setValue(static_cast<unsigned>(qty));
+						if (qty == clipSize)
+							_numAmmoRight->setColor(GREEN_D);
+						else if (qty >= clipSize / 2)
+							_numAmmoRight->setColor(YELLOW_D);
+						else
+							_numAmmoRight->setColor(ORANGE_D);
+					}
 					else
 						_numAmmoRight->setValue();
 				}
@@ -3120,7 +3125,18 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 				{
 					_numAmmoLeft->setVisible();
 					if (ltItem->getAmmoItem() != nullptr)
-						_numAmmoLeft->setValue(static_cast<unsigned>(ltItem->getAmmoItem()->getAmmoQuantity()));
+					{
+						const int
+							qty = ltItem->getAmmoItem()->getAmmoQuantity(),
+							clipSize = ltItem->getAmmoItem()->getRules()->getClipSize();
+						_numAmmoLeft->setValue(static_cast<unsigned>(qty));
+						if (qty == clipSize)
+							_numAmmoLeft->setColor(GREEN_D);
+						else if (qty >= clipSize / 2)
+							_numAmmoLeft->setColor(YELLOW_D);
+						else
+							_numAmmoLeft->setColor(ORANGE_D);
+					}
 					else
 						_numAmmoLeft->setValue();
 				}
