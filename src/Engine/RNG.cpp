@@ -67,6 +67,8 @@ uint64_t next_x()
 	x ^= x >> 27; // c
 
 	//Log(LOG_INFO) << "RNG x = " << x;
+	//if (x == 10741543760283835424) Log(LOG_INFO) << "stop";
+
 	return x * 2685821657736338717uLL;
 }
 
@@ -105,6 +107,8 @@ void setSeed(uint64_t seed)
 		x = y + 1uLL;
 	else
 		x = seed;
+
+	//Log(LOG_INFO) << "SET x = " << x;
 }
 
 /**

@@ -927,7 +927,7 @@ void Tile::addFire(int turns)
 		if (_fire > 12) _fire = 12;
 
 		if (_smoke < _fire + 2)
-			_smoke = _fire + RNG::seedless(2,3);
+			_smoke = _fire + RNG::generate(2,3);
 	}
 }
 
@@ -977,7 +977,7 @@ void Tile::decreaseSmoke()
 	if (_fire != 0) // don't let smoke deplete faster than fire depletes.
 		--_smoke;
 	else
-		_smoke -= (RNG::seedless(1, _smoke) + 2) / 3;
+		_smoke -= (RNG::generate(1, _smoke) + 2) / 3;
 
 	if (_smoke < 1)
 	{

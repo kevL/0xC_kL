@@ -422,12 +422,12 @@ void BattlescapeGenerator::run()
 
 	std::vector<std::string> tracks (deployRule->getDeploymentMusics());
 	if (tracks.empty() == false)
-		_battleSave->setMusic(tracks.at(RNG::pick(tracks.size())));
+		_battleSave->setMusic(tracks.at(RNG::pick(tracks.size(), true)));
 	else
 	{
 		tracks = _terrainRule->getTerrainMusics();
 		if (tracks.empty() == false)
-			_battleSave->setMusic(tracks.at(RNG::pick(tracks.size())));
+			_battleSave->setMusic(tracks.at(RNG::pick(tracks.size(), true)));
 	}
 
 	_battleSave->getTileEngine()->calculateSunShading();

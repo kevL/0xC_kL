@@ -2364,7 +2364,7 @@ bool SavedBattleGame::placeUnitNearPosition(
 		yArray[8] = {size1, size1,     0, size2, size2, size2,     0, size1};
 
 	const Tile* tile;
-	const int dir = RNG::seedless(0,7);
+	const int dir = RNG::generate(0,7);
 	for (int
 			i = dir;
 			i != dir + 8;

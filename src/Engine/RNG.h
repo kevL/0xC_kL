@@ -29,7 +29,7 @@ namespace OpenXcom
 
 /**
  * Random Number Generator(s) used throughout the game for all your random needs.
- @note Uses a 64-bit xorshift* pseudo-random number generator.
+ * @note Uses a 64-bit xorshift* pseudo-random number generator.
  */
 namespace RNG
 {

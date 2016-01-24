@@ -156,12 +156,13 @@ private:
 		* _numEnergy,
 		* _numHealth,
 		* _numMorale,
-		* _numAmmoLeft,
-		* _numAmmoRight,
 
-		* _numDir,
-		* _numDirTur,
-		* _numLayers,
+		* _numAmmoL,
+		* _numAmmoR,
+		* _numFuseL,
+		* _numFuseR,
+		* _numTwohandL,
+		* _numTwohandR,
 
 		* _numMediL1,
 		* _numMediL2,
@@ -170,8 +171,9 @@ private:
 		* _numMediR2,
 		* _numMediR3,
 
-		* _numTwohandL,
-		* _numTwohandR;
+		* _numDir,
+		* _numDirTur,
+		* _numLayers;
 	Ruleset* _rules;
 	SavedBattleGame* _battleSave;
 	SavedGame* _gameSave;

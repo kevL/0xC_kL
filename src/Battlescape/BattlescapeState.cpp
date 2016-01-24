@@ -204,8 +204,14 @@ BattlescapeState::BattlescapeState()
 
 	_btnLeftHandItem	= new InteractiveSurface(32, 48, x +   8, y + 5);
 	_btnRightHandItem	= new InteractiveSurface(32, 48, x + 280, y + 5);
-	_numAmmoLeft		= new NumberText(30, 5, x +   8, y + 4);
-	_numAmmoRight		= new NumberText(30, 5, x + 280, y + 4);
+	_numAmmoL			= new NumberText(30, 5, x +  33, y + 4);
+	_numAmmoR			= new NumberText(30, 5, x + 305, y + 4);
+
+	_numFuseL			= new NumberText(30, 5, x +   8, y + 4);
+	_numFuseR			= new NumberText(30, 5, x + 280, y + 4);
+
+	_numTwohandL		= new NumberText(7, 5, x +  33, y + 46, true);
+	_numTwohandR		= new NumberText(7, 5, x + 305, y + 46, true);
 
 	_numMediL1			= new NumberText(7, 5, x +   9, y + 32);
 	_numMediL2			= new NumberText(7, 5, x +   9, y + 39);
@@ -213,9 +219,6 @@ BattlescapeState::BattlescapeState()
 	_numMediR1			= new NumberText(7, 5, x + 281, y + 32);
 	_numMediR2			= new NumberText(7, 5, x + 281, y + 39);
 	_numMediR3			= new NumberText(7, 5, x + 281, y + 46);
-
-	_numTwohandL		= new NumberText(7, 5, x +  33, y + 46, true);
-	_numTwohandR		= new NumberText(7, 5, x + 305, y + 46, true);
 //	const int
 //		visibleUnitX = _rules->getInterface("battlescape")->getElement("visibleUnits")->x,
 //		visibleUnitY = _rules->getInterface("battlescape")->getElement("visibleUnits")->y;
@@ -403,16 +406,18 @@ BattlescapeState::BattlescapeState()
 	add(_btnLogo,			"buttonZeroTUs",		"battlescape", _icons);
 	add(_btnLeftHandItem,	"buttonLeftHand",		"battlescape", _icons);
 	add(_btnRightHandItem,	"buttonRightHand",		"battlescape", _icons);
-	add(_numAmmoLeft,		"numLight",				"battlescape", _icons);
-	add(_numAmmoRight,		"numLight",				"battlescape", _icons);
+	add(_numAmmoL,			"numLight",				"battlescape", _icons);
+	add(_numAmmoR,			"numLight",				"battlescape", _icons);
+	add(_numFuseL,			"numLight",				"battlescape", _icons);
+	add(_numFuseR,			"numLight",				"battlescape", _icons);
+	add(_numTwohandL,		"numDark",				"battlescape", _icons);
+	add(_numTwohandR,		"numDark",				"battlescape", _icons);
 	add(_numMediL1,			"numDark",				"battlescape", _icons);
 	add(_numMediL2,			"numDark",				"battlescape", _icons);
 	add(_numMediL3,			"numDark",				"battlescape", _icons);
 	add(_numMediR1,			"numDark",				"battlescape", _icons);
 	add(_numMediR2,			"numDark",				"battlescape", _icons);
 	add(_numMediR3,			"numDark",				"battlescape", _icons);
-	add(_numTwohandL,		"numDark",				"battlescape", _icons);
-	add(_numTwohandR,		"numDark",				"battlescape", _icons);
 	add(_targeter);
 
 	_targeter->setVisible(false);
@@ -2828,8 +2833,13 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 	_btnLeftHandItem	->setVisible(false);
 	_btnRightHandItem	->setVisible(false);
-	_numAmmoLeft		->setVisible(false);
-	_numAmmoRight		->setVisible(false);
+	_numAmmoL			->setVisible(false);
+	_numAmmoR			->setVisible(false);
+	_numFuseL			->setVisible(false);
+	_numFuseR			->setVisible(false);
+
+	_numTwohandL		->setVisible(false);
+	_numTwohandR		->setVisible(false);
 
 	_numMediL1			->setVisible(false);
 	_numMediL2			->setVisible(false);
@@ -2837,9 +2847,6 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	_numMediR1			->setVisible(false);
 	_numMediR2			->setVisible(false);
 	_numMediR3			->setVisible(false);
-
-	_numTwohandL		->setVisible(false);
-	_numTwohandR		->setVisible(false);
 
 	_overWeight			->setVisible(false);
 	_numDir				->setVisible(false);
@@ -3061,35 +3068,38 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 			case BT_MELEE:
 				if (rtItem->selfPowered() == false || itRule->getClipSize() > 0)
 				{
-					_numAmmoRight->setVisible();
 					if (rtItem->getAmmoItem() != nullptr)
 					{
+						_numAmmoR->setVisible();
 						const int
 							qty = rtItem->getAmmoItem()->getAmmoQuantity(),
 							clipSize = rtItem->getAmmoItem()->getRules()->getClipSize();
-						_numAmmoRight->setValue(static_cast<unsigned>(qty));
+						_numAmmoR->setValue(static_cast<unsigned>(qty));
+
+						Uint8 color;
 						if (qty == clipSize)
-							_numAmmoRight->setColor(GREEN_D);
+							color = GREEN_D;
 						else if (qty >= clipSize / 2)
-							_numAmmoRight->setColor(YELLOW_D);
+							color = YELLOW_D;
 						else
-							_numAmmoRight->setColor(ORANGE_D);
+							color = ORANGE_D;
+
+						_numAmmoR->setColor(color);
 					}
-					else
-						_numAmmoRight->setValue();
+//					else _numAmmoR->setValue();
 				}
 				break;
 
 			case BT_AMMO:
-				_numAmmoRight->setVisible();
-				_numAmmoRight->setValue(static_cast<unsigned>(rtItem->getAmmoQuantity()));
+				_numAmmoR->setVisible();
+				_numAmmoR->setValue(static_cast<unsigned>(rtItem->getAmmoQuantity()));
 				break;
 
 			case BT_GRENADE:
 				if (rtItem->getFuse() > 0)
 				{
-					_numAmmoRight->setVisible();
-					_numAmmoRight->setValue(static_cast<unsigned>(rtItem->getFuse()));
+					_numFuseR->setVisible();
+					_numFuseR->setValue(static_cast<unsigned>(rtItem->getFuse()));
 				}
 				break;
 
@@ -3123,35 +3133,38 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 			case BT_MELEE:
 				if (ltItem->selfPowered() == false || itRule->getClipSize() > 0)
 				{
-					_numAmmoLeft->setVisible();
+					_numAmmoL->setVisible();
 					if (ltItem->getAmmoItem() != nullptr)
 					{
 						const int
 							qty = ltItem->getAmmoItem()->getAmmoQuantity(),
 							clipSize = ltItem->getAmmoItem()->getRules()->getClipSize();
-						_numAmmoLeft->setValue(static_cast<unsigned>(qty));
+						_numAmmoL->setValue(static_cast<unsigned>(qty));
+
+						Uint8 color;
 						if (qty == clipSize)
-							_numAmmoLeft->setColor(GREEN_D);
+							color = GREEN_D;
 						else if (qty >= clipSize / 2)
-							_numAmmoLeft->setColor(YELLOW_D);
+							color = YELLOW_D;
 						else
-							_numAmmoLeft->setColor(ORANGE_D);
+							color = ORANGE_D;
+
+						_numAmmoL->setColor(color);
 					}
-					else
-						_numAmmoLeft->setValue();
+//					else _numAmmoL->setValue();
 				}
 				break;
 
 			case BT_AMMO:
-				_numAmmoLeft->setVisible();
-				_numAmmoLeft->setValue(static_cast<unsigned>(ltItem->getAmmoQuantity()));
+				_numAmmoL->setVisible();
+				_numAmmoL->setValue(static_cast<unsigned>(ltItem->getAmmoQuantity()));
 				break;
 
 			case BT_GRENADE:
 				if (ltItem->getFuse() > 0)
 				{
-					_numAmmoLeft->setVisible();
-					_numAmmoLeft->setValue(static_cast<unsigned>(ltItem->getFuse()));
+					_numFuseL->setVisible();
+					_numFuseL->setValue(static_cast<unsigned>(ltItem->getFuse()));
 				}
 				break;
 
