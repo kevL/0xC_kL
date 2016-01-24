@@ -126,6 +126,7 @@ BattleUnit::BattleUnit(
 		_drugDose(0),
 		_isZombie(false),
 		_hasCried(false),
+		_hasBeenStunned(false),
 		_psiBlock(false),
 
 		_deathSound(-1),
@@ -288,6 +289,7 @@ BattleUnit::BattleUnit(
 		_battleOrder(0),
 		_revived(false),
 		_hasCried(false),
+		_hasBeenStunned(false),
 
 		_morale(100),
 		_stunLevel(0),
@@ -476,6 +478,7 @@ void BattleUnit::load(const YAML::Node& node)
 	_mcSkill			= node["mcSkill"]				.as<int>(_mcSkill);
 	_drugDose			= node["drugDose"]				.as<int>(_drugDose);
 	_murdererId			= node["murdererId"]			.as<int>(_murdererId);
+	_hasBeenStunned		= node["beenStunned"]			.as<bool>(_hasBeenStunned);
 
 	_activeHand = static_cast<ActiveHand>(node["activeHand"].as<int>(_activeHand));
 
@@ -613,6 +616,7 @@ YAML::Node BattleUnit::save() const
 	if (_kills != 0)				node["kills"]			= _kills;
 	if (_drugDose != 0)				node["drugDose"]		= _drugDose;
 	if (_murdererId != 0)			node["murdererId"]		= _murdererId;
+	if (_hasBeenStunned != false)	node["beenStunned"]		= _hasBeenStunned;
 
 	node["activeHand"] = static_cast<int>(_activeHand);
 
@@ -3950,6 +3954,8 @@ void BattleUnit::putDown()
 		}
 	}
 
+	_hasBeenStunned = true;
+
 	_aboutToFall = false;
 	_hasCried = false;
 
@@ -4805,6 +4811,15 @@ bool BattleUnit::avoidsFire() const
 bool BattleUnit::psiBlock() const
 {
 	return _psiBlock;
+}
+
+/**
+ * Gets if this BattleUnit has been stunned before.
+ * @return, true if was stunned
+ */
+bool BattleUnit::beenStunned() const
+{
+	return _hasBeenStunned;
 }
 
 }

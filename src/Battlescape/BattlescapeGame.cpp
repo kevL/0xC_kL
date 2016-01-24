@@ -2015,7 +2015,8 @@ void BattlescapeGame::checkForCasualties(
 					(*i)->setUnitStatus(STATUS_DISABLED); // kL
 
 					if (attacker != nullptr
-						&& attacker->getGeoscapeSoldier() != nullptr)
+						&& attacker->getGeoscapeSoldier() != nullptr
+						&& defender->beenStunned() == false) // credit first stunner only.
 					{
 						attacker->getStatistics()->kills.push_back(new BattleUnitKill(
 																					killStatRank,

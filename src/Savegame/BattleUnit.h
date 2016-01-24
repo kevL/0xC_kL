@@ -142,6 +142,7 @@ private:
 		_diedByFire,
 		_dontReselect,
 		_floating,
+		_hasBeenStunned,
 		_hasCried,
 		_hidingForTurn,
 		_kneeled,
@@ -882,6 +883,9 @@ private:
 
 		/// Gets if this RuleUnit is immune to psionic attacks.
 		bool psiBlock() const;
+
+		/// Gets if this BattleUnit has been stunned before.
+		bool beenStunned() const;
 };
 
 }

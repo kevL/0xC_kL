@@ -202,10 +202,10 @@ VoxelType Projectile::calculateShot(
 		&& _action.autoShotCount == 1
 		&& _action.type != BA_LAUNCH
 		&& _battleSave->getBattleGame()->getPanicHandled() == true
-		&& (((SDL_GetModState() & KMOD_CTRL) == 0
-			&& (SDL_GetModState() & KMOD_ALT) == 0
-			&& (SDL_GetModState() & KMOD_SHIFT) == 0)
-				|| Options::battleForceFire == false))
+		&& ((	   (SDL_GetModState() & KMOD_CTRL) == 0
+				&& (SDL_GetModState() & KMOD_ALT) == 0
+				&& (SDL_GetModState() & KMOD_SHIFT) == 0)
+			|| Options::battleForceFire == false))
 	{
 		//Log(LOG_INFO) << "originVoxel " << originVoxel << " useExclude = " << useExclude;
 		if (verifyTarget(originVoxel, useExclude) == false)
@@ -417,7 +417,7 @@ void Projectile::applyAccuracy( // private.
 				else
 					deviation = 0.21;	// for Player
 
-				deviation /= accuracy + 0.13;
+				deviation /= accuracy + 0.16;
 				deviation = std::max(ACU_MIN, deviation);
 				//Log(LOG_INFO) << ". deviation = " << deviation;
 
@@ -720,12 +720,12 @@ bool Projectile::verifyTarget(
 				case VOXEL_NORTHWALL:
 					if (posTest.y - 1 != _action.target.y)
 						return false;
-				break;
+					break;
 
 				case VOXEL_WESTWALL:
 					if (posTest.x - 1 != _action.target.x)
 						return false;
-				break;
+					break;
 
 				case VOXEL_UNIT:
 				{
@@ -734,8 +734,8 @@ bool Projectile::verifyTarget(
 						* const testUnit = _battleSave->getTile(posTest)->getTileUnit();
 					if (testUnit != targetUnit && testUnit->getUnitVisible() == true)
 						return false;
+					break;
 				}
-				break;
 
 				default:
 					return false;
