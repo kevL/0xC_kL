@@ -135,7 +135,7 @@ SavedGame::SavedGame(const Ruleset* const rules)
 		_dfLat(0.),
 		_dfZoom(0),
 		_battleSave(nullptr),
-		_debug(false),
+		_debugGeo(false),
 		_warned(false),
 		_monthsPassed(-1),
 		_debugArgDone(false)
@@ -1461,11 +1461,11 @@ void SavedGame::getAvailableResearchProjects(
 	{
 		resRule = _rules->getResearch(*i);
 
-/*		if (_debug == true)
+		if (_debugGeo == true)
 		{
 			availableProjects.push_back(resRule);
 			continue;
-		} */
+		}
 
 		if (std::find_if(
 					base->getResearch().begin(),
@@ -1807,7 +1807,7 @@ void SavedGame::getPopupManufacture(
  */
 bool SavedGame::isResearched(const std::string& resType) const
 {
-	if (_debug == true || resType.empty() == true
+	if (_debugGeo == true || resType.empty() == true
 		|| _rules->getResearch(resType) == nullptr
 		|| (_rules->getItem(resType) != nullptr
 			&& _rules->getItem(resType)->isResearchExempt() == true))
@@ -1825,7 +1825,7 @@ bool SavedGame::isResearched(const std::string& resType) const
  */
 bool SavedGame::isResearched(const std::vector<std::string>& resTypes) const
 {
-	if (_debug == true || resTypes.empty() == true)
+	if (_debugGeo == true || resTypes.empty() == true)
 		return true;
 
 	for (std::vector<std::string>::const_iterator
@@ -2067,20 +2067,21 @@ std::vector<AlienBase*>* SavedGame::getAlienBases()
 }
 
 /**
- * Toggles debug mode.
+ * Toggles and returns the debug flag.
+ * @return, true if debug active
  */
-void SavedGame::toggleDebugMode()
+bool SavedGame::toggleDebugActive()
 {
-	_debug = !_debug;
+	return (_debugGeo = !_debugGeo);
 }
 
 /**
- * Gets the current debug mode.
- * @return, true if debug mode
+ * Gets the current debug flag.
+ * @return, true if debug active
  */
-bool SavedGame::getDebugMode() const
+bool SavedGame::getDebugGeo() const
 {
-	return _debug;
+	return _debugGeo;
 }
 
 

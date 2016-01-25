@@ -1471,7 +1471,7 @@ bool SavedBattleGame::endFactionTurn()
 /**
  * Turns on debug mode.
  */
-void SavedBattleGame::setDebugMode()
+void SavedBattleGame::setDebugTac()
 {
 	_debugMode = true;
 
@@ -1488,7 +1488,7 @@ void SavedBattleGame::setDebugMode()
  * Gets the current debug mode.
  * @return, debug mode
  */
-bool SavedBattleGame::getDebugMode() const
+bool SavedBattleGame::getDebugTac() const
 {
 	return _debugMode;
 }

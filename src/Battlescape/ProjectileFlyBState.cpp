@@ -780,7 +780,7 @@ void ProjectileFlyBState::think()
 			if (_unit->isOut_t() == false && _action.type != BA_MELEE)
 				_unit->setUnitStatus(STATUS_STANDING);
 
-//			if (_battleSave->getSide() == FACTION_PLAYER || _battleSave->getDebugMode() == true)
+//			if (_battleSave->getSide() == FACTION_PLAYER || _battleSave->getDebugTac() == true)
 //				_parent->setupCursor(); // <- not yet! Do it in popState() when everything is finished.
 
 			_parent->popState();
@@ -880,7 +880,7 @@ void ProjectileFlyBState::think()
 					}
 				}
 
-				if (_action.type == BA_LAUNCH && _ammo != nullptr) //&& _battleSave->getDebugMode() == false
+				if (_action.type == BA_LAUNCH && _ammo != nullptr) //&& _battleSave->getDebugTac() == false
 					_ammo->spendBullet(
 									*_battleSave,
 									*_action.weapon);

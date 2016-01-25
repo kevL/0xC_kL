@@ -439,11 +439,11 @@ private:
 		/// Gets map.
 		Map* getMap() const;
 
-		/// Show debug message.
-		void debug(const std::wstring& message);
+		/// Show debug message onScreen.
+		void debugPrint(const std::wstring& wst);
 		/// Show warning message.
 		void warning(
-				const std::string& message,
+				const std::string& st,
 				bool useArg = false,
 				int arg = 0);
 

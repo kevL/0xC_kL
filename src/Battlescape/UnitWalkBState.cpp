@@ -146,7 +146,7 @@ void UnitWalkBState::think()
 	}
 
 	_isVisible = _unit->getUnitVisible() == true
-			  || _battleSave->getDebugMode() == true;
+			  || _battleSave->getDebugTac() == true;
 	//Log(LOG_INFO) << ". _isVisible = " << _isVisible;
 
 

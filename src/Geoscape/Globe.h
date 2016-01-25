@@ -34,6 +34,13 @@ namespace OpenXcom
 
 extern bool kL_reCenter;
 
+enum DebugTypeGlobe
+{
+	DTG_COUNTRY,	// 0
+	DTG_REGION,		// 1
+	DTG_ZONE		// 2
+};
+
 
 class Game;
 class Polygon;
@@ -69,7 +76,6 @@ private:
 		_blink;
 	int
 		_blinkVal,
-		_debugType,
 		_radarDetail,
 		_totalMouseMoveX,
 		_totalMouseMoveY;
@@ -124,6 +130,8 @@ private:
 	std::vector<Sint16> _terminatorFluxions;
 	/// list of dimension of earth on screen per zoom level
 	std::vector<double> _zoomRadii;
+
+	DebugTypeGlobe _debugType;
 
 
 	/// Sets up the viewport of earth and stuff.
@@ -340,6 +348,8 @@ private:
 		void drawFlights();
 		/// Draws the country details of the globe.
 		void drawDetail();
+		/// Gets the current debugType for Geoscape.
+		DebugTypeGlobe getDebugType() const;
 		/// Draws all the markers over the globe.
 		void drawMarkers();
 		/// Blits the globe onto another surface.
@@ -389,9 +399,6 @@ private:
 
 		/// Update the resolution settings, we just resized the window.
 		void resize();
-
-		/// Gets the current debugType for Geoscape message.
-		int getDebugType() const;
 };
 
 }

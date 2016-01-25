@@ -100,7 +100,7 @@ private:
 		_dfCCC_lon,
 		_dfCCC_lat;
 
-	std::string _debug;
+	std::string _stDebug;
 	std::wstring _wstScore;
 
 	Globe* _globe;
@@ -161,6 +161,9 @@ private:
 		_dogfights,
 		_dogfightsToStart;
 
+	/// Creates the prefix for a debugging message.
+	void fabricateDebugPrefix();
+
 	/// Assigns whether an aLien cracked under pressure.
 	void getAlienCracks(
 				const std::string& alienType,
@@ -195,7 +198,7 @@ private:
 		/// Cleans up the Geoscape state.
 		~GeoscapeState();
 
-		/// Handle keypresses.
+		/// Handles keypresses.
 		void handle(Action* action) override;
 
 		/// Updates the palette and timer.

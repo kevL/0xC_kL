@@ -346,7 +346,7 @@ void Map::draw()
 			} */
 		}
 		else
-			_projectileInFOV = false; //_battleSave->getDebugMode(); // reveals Map in debugmode; hides battlefield if no projectiles in flight.
+			_projectileInFOV = false; //_battleSave->getDebugTac(); // reveals Map in debugmode; hides battlefield if no projectiles in flight.
 
 		if (_explosions.empty() == false)
 		{
@@ -371,7 +371,7 @@ void Map::draw()
 			} */
 		}
 		else
-			_explosionInFOV = false; //_battleSave->getDebugMode(); // reveals Map in debugmode; hides battlefield if no explosions waiting.
+			_explosionInFOV = false; //_battleSave->getDebugTac(); // reveals Map in debugmode; hides battlefield if no explosions waiting.
 
 
 		static bool delayHide;
@@ -382,7 +382,7 @@ void Map::draw()
 			|| _explosionInFOV == true
 			|| _projectileInFOV == true
 			|| _reveal == true // stop flashing the Hidden Movement screen between waypoints and/or autoshots.
-			|| _battleSave->getDebugMode() == true)
+			|| _battleSave->getDebugTac() == true)
 		{
 			// REVEAL //
 			delayHide = true;
@@ -699,7 +699,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 					_unit = _tile->getTileUnit();
 
 					hasUnit = _unit != nullptr
-						  && (_unit->getUnitVisible() == true || _battleSave->getDebugMode() == true);
+						  && (_unit->getUnitVisible() == true || _battleSave->getDebugTac() == true);
 					hasFloor =
 					hasObject = false;
 
@@ -1714,7 +1714,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 	// Draw Bouncing Arrow over selected unit.
 	if (_cursorType != CT_NONE
 		&& (_battleSave->getSide() == FACTION_PLAYER
-			|| _battleSave->getDebugMode() == true))
+			|| _battleSave->getDebugTac() == true))
 	{
 		_unit = _battleSave->getSelectedUnit();
 		if (_unit != nullptr

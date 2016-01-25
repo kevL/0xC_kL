@@ -342,7 +342,7 @@ Globe::Globe(
 		_latPreMouseScroll(0.),
 		_radius(0.),
 		_radiusStep(0.),
-		_debugType(0),
+		_debugType(DTG_COUNTRY),
 		_radarDetail(2),
 		_blink(true),
 		_blinkVal(-1)
@@ -728,15 +728,15 @@ void Globe::rotateStopLat()
 
 /**
  * Sets up the radius of earth at various zoom levels.
- * @param width		- the new width of the globe
- * @param height	- the new height of the globe
+ * @param width		- the new width of the Globe
+ * @param height	- the new height of the Globe
  */
 void Globe::setupRadii( // private.
 		int width,
 		int height)
 {
 	_zoomRadii.clear();
-	const double height_d = static_cast<double>(height);
+	const double height_d (static_cast<double>(height));
 
 	// These are the globe-zoom magnifications stored as a <vector> of 6 (doubles).
 	_zoomRadii.push_back(0.47 * height_d); // 0 - Zoomed all out	// no detail
@@ -760,12 +760,10 @@ void Globe::setupRadii( // private.
 				j = 0;
 				j != static_cast<size_t>(height);
 				++j)
-		{
 			for (size_t
 					i = 0;
 					i != static_cast<size_t>(width);
 					++i)
-			{
 				_earthData[radiusId]
 						  [static_cast<size_t>(width) * j + i] = static_data.circle_norm(
 																					static_cast<double>(width) / 2.,
@@ -773,8 +771,6 @@ void Globe::setupRadii( // private.
 																					_zoomRadii[radiusId],
 																					static_cast<double>(i) + 0.5,
 																					static_cast<double>(j) + 0.5);
-			}
-		}
 	}
 }
 
@@ -2040,166 +2036,41 @@ void Globe::drawDetail()
 
 
 	// Debug stuff follows ...
-	static bool canSwitchDebugType = false;
+	static bool canSwitchDebugType;
 
-	if (_game->getSavedGame()->getDebugMode() == true)
+	if (_game->getSavedGame()->getDebugGeo() == true)
 	{
 		canSwitchDebugType = true;
-		int color = 0;
-
 		int
 			cycleCur = _game->getDebugCycle(),
-			area = 0;
+			area = 0,
+			color = 0;
 
-		if (_debugType == 0) // Country rects.
+		switch (_debugType)
 		{
-			if (cycleCur >= static_cast<int>(_game->getSavedGame()->getCountries()->size()))
+			case DTG_COUNTRY:
 			{
-				cycleCur = -1;
-				_game->setDebugCycle(-1);
-			}
+				if (cycleCur >= static_cast<int>(_game->getSavedGame()->getCountries()->size()))
+					_game->setDebugCycle(cycleCur = -1);
 
-			for (std::vector<Country*>::const_iterator
-					i = _game->getSavedGame()->getCountries()->begin();
-					i != _game->getSavedGame()->getCountries()->end();
-					++i,
-						++area)
-			{
-				if (area == cycleCur
-					|| cycleCur == -1)
+				for (std::vector<Country*>::const_iterator
+						i = _game->getSavedGame()->getCountries()->begin();
+						i != _game->getSavedGame()->getCountries()->end();
+						++i, ++area)
 				{
-					color += 10;
-
-					for (size_t
-							j = 0;
-							j != (*i)->getRules()->getLonMin().size();
-							++j)
+					if (cycleCur == area || cycleCur == -1)
 					{
-						const double
-							lon1 = (*i)->getRules()->getLonMin().at(j),
-							lon2 = (*i)->getRules()->getLonMax().at(j),
-							lat1 = (*i)->getRules()->getLatMin().at(j),
-							lat2 = (*i)->getRules()->getLatMax().at(j);
-
-						drawVHLine(_countries, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
-						drawVHLine(_countries, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
-						drawVHLine(_countries, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
-						drawVHLine(_countries, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
-					}
-				}
-
-				if (area == cycleCur)
-				{
-					if (_game->getSavedGame()->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
-						_game->getSavedGame()->setDebugArg((*i)->getType());
-
-					break;
-				}
-				else
-					_game->getSavedGame()->setDebugArg("");
-			}
-		}
-		else if (_debugType == 1) // Region rects.
-		{
-			if (cycleCur >= static_cast<int>(_game->getSavedGame()->getRegions()->size()))
-			{
-				cycleCur = -1;
-				_game->setDebugCycle(-1);
-			}
-
-			for (std::vector<Region*>::const_iterator
-					i = _game->getSavedGame()->getRegions()->begin();
-					i != _game->getSavedGame()->getRegions()->end();
-					++i,
-						++area)
-			{
-				if (area == cycleCur
-					|| cycleCur == -1)
-				{
-					color += 10;
-
-					for (size_t
-							j = 0;
-							j != (*i)->getRules()->getLatMax().size();
-							++j)
-					{
-						const double
-							lon1 = (*i)->getRules()->getLonMin().at(j),
-							lon2 = (*i)->getRules()->getLonMax().at(j),
-							lat1 = (*i)->getRules()->getLatMin().at(j),
-							lat2 = (*i)->getRules()->getLatMax().at(j);
-
-						drawVHLine(_countries, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
-						drawVHLine(_countries, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
-						drawVHLine(_countries, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
-						drawVHLine(_countries, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
-					}
-				}
-
-				if (area == cycleCur)
-				{
-					if (_game->getSavedGame()->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
-						_game->getSavedGame()->setDebugArg((*i)->getType());
-
-					break;
-				}
-				else
-					_game->getSavedGame()->setDebugArg("");
-			}
-		}
-		else if (_debugType == 2) // MissionZone rects.
-		{
-			int limit = 0;
-			for (std::vector<Region*>::const_iterator
-					i = _game->getSavedGame()->getRegions()->begin();
-					i != _game->getSavedGame()->getRegions()->end();
-					++i)
-			{
-				for (std::vector<MissionZone>::const_iterator
-						j = (*i)->getRules()->getMissionZones().begin();
-						j != (*i)->getRules()->getMissionZones().end();
-						++j)
-				{
-					++limit;
-				}
-			}
-
-			if (cycleCur >= limit)
-			{
-				cycleCur = -1;
-				_game->setDebugCycle(-1);
-			}
-
-			for (std::vector<Region*>::const_iterator
-					i = _game->getSavedGame()->getRegions()->begin();
-					i != _game->getSavedGame()->getRegions()->end();
-					++i)
-			{
-				color = -1;
-
-				int zoneType = 0;
-				for (std::vector<MissionZone>::const_iterator
-						j = (*i)->getRules()->getMissionZones().begin();
-						j != (*i)->getRules()->getMissionZones().end();
-						++j,
-							++area,
-							++zoneType)
-				{
-					if (area == cycleCur
-						|| cycleCur == -1)
-					{
-						color += 2;
-
-						for (std::vector<MissionArea>::const_iterator
-								k = (*j).areas.begin();
-								k != (*j).areas.end();
-								++k)
+						color += 10;
+						for (size_t
+								j = 0;
+								j != (*i)->getRules()->getLonMin().size();
+								++j)
 						{
 							const double
-								lon1 = (*k).lonMin, // * M_PI / 180.,
-								lon2 = (*k).lonMax, // * M_PI / 180.,
-								lat1 = (*k).latMin, // * M_PI / 180.,
-								lat2 = (*k).latMax; // * M_PI / 180.;
+								lon1 = (*i)->getRules()->getLonMin().at(j),
+								lon2 = (*i)->getRules()->getLonMax().at(j),
+								lat1 = (*i)->getRules()->getLatMin().at(j),
+								lat2 = (*i)->getRules()->getLatMax().at(j);
 
 							drawVHLine(_countries, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
 							drawVHLine(_countries, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
@@ -2211,33 +2082,157 @@ void Globe::drawDetail()
 					if (area == cycleCur)
 					{
 						if (_game->getSavedGame()->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
-						{
-							std::ostringstream oststr;
-							oststr << (*i)->getType() << " [" << zoneType << "]";
-							_game->getSavedGame()->setDebugArg(oststr.str());
-						}
+							_game->getSavedGame()->setDebugArg((*i)->getType());
 						break;
 					}
 					else
 						_game->getSavedGame()->setDebugArg("");
 				}
+				break;
+			}
 
-				if (area == cycleCur)
-					break;
+			case DTG_REGION:
+			{
+				if (cycleCur >= static_cast<int>(_game->getSavedGame()->getRegions()->size()))
+					_game->setDebugCycle(cycleCur = -1);
+
+				for (std::vector<Region*>::const_iterator
+						i = _game->getSavedGame()->getRegions()->begin();
+						i != _game->getSavedGame()->getRegions()->end();
+						++i, ++area)
+				{
+					if (cycleCur == area || cycleCur == -1)
+					{
+						color += 10;
+						for (size_t
+								j = 0;
+								j != (*i)->getRules()->getLatMax().size();
+								++j)
+						{
+							const double
+								lon1 = (*i)->getRules()->getLonMin().at(j),
+								lon2 = (*i)->getRules()->getLonMax().at(j),
+								lat1 = (*i)->getRules()->getLatMin().at(j),
+								lat2 = (*i)->getRules()->getLatMax().at(j);
+
+							drawVHLine(_countries, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
+							drawVHLine(_countries, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
+							drawVHLine(_countries, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
+							drawVHLine(_countries, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
+						}
+					}
+
+					if (area == cycleCur)
+					{
+						if (_game->getSavedGame()->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
+							_game->getSavedGame()->setDebugArg((*i)->getType());
+						break;
+					}
+					else
+						_game->getSavedGame()->setDebugArg("");
+				}
+			}
+
+			case DTG_ZONE:
+			{
+				int limit = 0;
+				for (std::vector<Region*>::const_iterator
+						i = _game->getSavedGame()->getRegions()->begin();
+						i != _game->getSavedGame()->getRegions()->end();
+						++i)
+				{
+					for (std::vector<MissionZone>::const_iterator
+							j = (*i)->getRules()->getMissionZones().begin();
+							j != (*i)->getRules()->getMissionZones().end();
+							++j)
+					{
+						++limit;
+					}
+				}
+
+				if (cycleCur >= limit)
+					_game->setDebugCycle(cycleCur = -1);
+
+				for (std::vector<Region*>::const_iterator
+						i = _game->getSavedGame()->getRegions()->begin();
+						i != _game->getSavedGame()->getRegions()->end();
+						++i)
+				{
+					color = -1;
+					int zoneType = 0;
+					for (std::vector<MissionZone>::const_iterator
+							j = (*i)->getRules()->getMissionZones().begin();
+							j != (*i)->getRules()->getMissionZones().end();
+							++j, ++area, ++zoneType)
+					{
+						if (cycleCur == area || cycleCur == -1)
+						{
+							color += 2;
+							for (std::vector<MissionArea>::const_iterator
+									k = (*j).areas.begin();
+									k != (*j).areas.end();
+									++k)
+							{
+								const double
+									lon1 = (*k).lonMin, // * M_PI / 180.,
+									lon2 = (*k).lonMax, // * M_PI / 180.,
+									lat1 = (*k).latMin, // * M_PI / 180.,
+									lat2 = (*k).latMax; // * M_PI / 180.;
+
+								drawVHLine(_countries, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
+								drawVHLine(_countries, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
+								drawVHLine(_countries, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
+								drawVHLine(_countries, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
+							}
+						}
+
+						if (area == cycleCur)
+						{
+							if (_game->getSavedGame()->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
+							{
+								std::ostringstream oststr;
+								oststr << (*i)->getType() << " [" << zoneType << "]";
+								_game->getSavedGame()->setDebugArg(oststr.str());
+							}
+							break;
+						}
+						else
+							_game->getSavedGame()->setDebugArg("");
+					}
+
+					if (area == cycleCur)
+						break;
+				}
 			}
 		}
 	}
-	else // toggles debugMode.
+	else if (canSwitchDebugType == true) // effectively toggles debugMode.
 	{
-		if (canSwitchDebugType == true)
+		canSwitchDebugType = false;
+		switch (_debugType)
 		{
-			++_debugType;
-			if (_debugType > 2)
-				_debugType = 0;
+			case DTG_COUNTRY:
+				_debugType = DTG_REGION;
+				break;
 
-			canSwitchDebugType = false;
+			case DTG_REGION:
+				_debugType = DTG_ZONE;
+				break;
+
+			case DTG_ZONE:
+				_debugType = DTG_COUNTRY;
+				break;
 		}
 	}
+}
+
+/**
+ * Gets the current debugType for Geoscape.
+ * @return, DebugTypeGlobe (Globe.h)
+ */
+DebugTypeGlobe Globe::getDebugType() const
+{
+	return _debugType;
 }
 
 /**
@@ -2798,7 +2793,8 @@ void Globe::getPolygonShade(
  */
 void Globe::resize()
 {
-	Surface* surfaces[4] =
+	static const size_t SRF = 4;
+	Surface* const surfaces[SRF] =
 	{
 		this,
 		_markers,
@@ -2806,13 +2802,13 @@ void Globe::resize()
 		_radars
 	};
 
-	int
-		width = Options::baseXGeoscape - 64,
+	const int
+		width = Options::baseXGeoscape - 64, // TODO: '64' should be a constant.
 		height = Options::baseYGeoscape;
 
 	for (size_t
 			i = 0;
-			i != 4;
+			i != SRF;
 			++i)
 	{
 		surfaces[i]->setWidth(width);
@@ -2820,23 +2816,13 @@ void Globe::resize()
 		surfaces[i]->invalidate();
 	}
 
-	_clipper->Wxrig = width;
-	_clipper->Wybot = height;
+	_clipper->Wxrig = static_cast<double>(width);
+	_clipper->Wybot = static_cast<double>(height);
 	_cenX = static_cast<Sint16>(width) / 2;
 	_cenY = static_cast<Sint16>(height / 2);
 
 	setupRadii(width, height);
-
-	invalidate();
-}
-
-/**
- * Gets the current debugType for Geoscape messages.
- * @return, the debug type
- */
-int Globe::getDebugType() const
-{
-	return _debugType;
+//	invalidate(); // <- done in for-loop above^
 }
 
 }

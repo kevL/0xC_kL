@@ -189,7 +189,7 @@ void BattlescapeGame::think()
 				{
 					if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr)
 					{
-						if (_battleSave->getDebugMode() == false)
+						if (_battleSave->getDebugTac() == false)
 						{
 							_endTurnRequested = true;
 							statePushBack(nullptr); // end AI turn
@@ -522,7 +522,7 @@ void BattlescapeGame::popState()
 						if (_battleStates.empty() == true
 							&& _battleSave->selectNextFactionUnit(true) == nullptr)
 						{
-							if (_battleSave->getDebugMode() == false)
+							if (_battleSave->getDebugTac() == false)
 							{
 								_endTurnRequested = true;
 								statePushBack(nullptr); // end AI turn
@@ -608,7 +608,7 @@ void BattlescapeGame::popState()
 			} */
 		}
 
-		if (_battleSave->getSide() == FACTION_PLAYER) //|| _debugPlay == true) // kL
+		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
 		{
 			//Log(LOG_INFO) << ". updateSoldierInfo()";
 			_parentState->updateSoldierInfo(); // calcFoV ought have been done by now ...
@@ -625,7 +625,7 @@ void BattlescapeGame::popState()
 			_battleSave->storeRfTriggerPosition(Position(0,0,-1));
 		}
 
-		if (_battleSave->getSide() == FACTION_PLAYER) //|| _debugPlay == true))
+		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
 		{
 			//Log(LOG_INFO) << ". states Empty, reable cursor";
 			setupCursor();
@@ -731,7 +731,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 			//if (_battleSave->getSelectedUnit() != nullptr) Log(LOG_INFO) << "selUnit[2] id-" << _battleSave->getSelectedUnit()->getId();
 			//else Log(LOG_INFO) << "selUnit[2] NULL";
 
-			if (_battleSave->getDebugMode() == false)
+			if (_battleSave->getDebugTac() == false)
 			{
 				//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() statePushBack(end AI turn)";
 				_endTurnRequested = true;
@@ -1046,7 +1046,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 			if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr) // AI-faction turn done ->
 			{
-				if (_battleSave->getDebugMode() == false)
+				if (_battleSave->getDebugTac() == false)
 				{
 					//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() statePushBack(end AI turn) 2";
 					_endTurnRequested = true;
@@ -1273,7 +1273,7 @@ void BattlescapeGame::setupCursor()
 	getMap()->refreshSelectorPosition();
 
 	CursorType cType;
-	int quadrants = 1;
+	int quads = 1;
 
 	if (_currentAction.targeting == true)
 	{
@@ -1305,10 +1305,10 @@ void BattlescapeGame::setupCursor()
 
 		_currentAction.actor = _battleSave->getSelectedUnit();
 		if (_currentAction.actor != nullptr)
-			quadrants = _currentAction.actor->getArmor()->getSize();
+			quads = _currentAction.actor->getArmor()->getSize();
 	}
 
-	getMap()->setCursorType(cType, quadrants);
+	getMap()->setCursorType(cType, quads);
 }
 
 /**
@@ -1322,7 +1322,7 @@ bool BattlescapeGame::playableUnitSelected()
 {
 	return _battleSave->getSelectedUnit() != nullptr
 		&& (_battleSave->getSide() == FACTION_PLAYER
-			|| _battleSave->getDebugMode() == true);
+			|| _battleSave->getDebugTac() == true);
 }
 
 /**
@@ -1424,7 +1424,7 @@ bool BattlescapeGame::kneel(BattleUnit* const unit)
 void BattlescapeGame::endTurn() // private.
 {
 	//Log(LOG_INFO) << "bg::endTurn()";
-	_debugPlay = false;
+	_debugPlay =
 	_AISecondMove = false;
 	_parentState->showLaunchButton(false);
 
@@ -1589,7 +1589,7 @@ void BattlescapeGame::endTurn() // private.
 //	}
 //	_endTurnProcessed = false;
 
-	if (_battleSave->getDebugMode() == false)
+	if (_battleSave->getDebugTac() == false)
 	{
 		if (_battleSave->getSide() == FACTION_PLAYER)
 		{
@@ -2157,8 +2157,7 @@ bool BattlescapeGame::checkReservedTu(
 
 	BattleActionType batReserved; // avoid changing _batReserved here.
 
-	if (_battleSave->getSide() == FACTION_HOSTILE
-		&& _debugPlay == false)
+	if (_battleSave->getSide() == FACTION_HOSTILE && _debugPlay == false)
 	{
 		const AlienBAIState* const ai (dynamic_cast<AlienBAIState*>(unit->getAIState()));
 		if (ai != nullptr)
@@ -2567,7 +2566,7 @@ bool BattlescapeGame::cancelCurrentAction(bool force)
 					_currentAction.type = BA_NONE;
 
 					if (force == false
-						&& _battleSave->getSide() == FACTION_PLAYER) //|| _debugPlay == true
+						&& (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true))
 					{
 						setupCursor();
 						_parentState->getGame()->getCursor()->setHidden(false);
@@ -2842,7 +2841,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 
 			const bool
 				ctrl = (SDL_GetModState() & KMOD_CTRL) != 0,
-				alt = (SDL_GetModState() & KMOD_ALT) != 0;
+				alt  = (SDL_GetModState() & KMOD_ALT)  != 0;
 
 			bool zPath;
 			const Uint8* const keystate = SDL_GetKeyState(nullptr);

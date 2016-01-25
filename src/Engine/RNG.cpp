@@ -45,7 +45,7 @@ See <http://creativecommons.org/publicdomain/zero/1.0/>. */
 	xorshift1024* (for speed and very long period) generator. */
 
 
-uint64_t
+static uint64_t
 	x, // internal RNG
 	y; // external RNG
 // Note: 'internal' means the state is saved to file. 'external' will be used

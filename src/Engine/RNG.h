@@ -34,9 +34,9 @@ namespace OpenXcom
 namespace RNG
 {
 
-/// Advances the internal RNG.
+/// Advances the internal pRNG.
 uint64_t next_x();
-/// Advances the external RNG.
+/// Advances the external pRNG.
 uint64_t next_y();
 
 /// Gets the internal seed in use.

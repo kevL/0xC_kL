@@ -1530,44 +1530,44 @@ void BattlescapeState::mapClick(Action* action)
 	}
 
 
-	if ((action->getDetails()->button.button == SDL_BUTTON_RIGHT	// right-click removes pathPreview or aborts walking state
-			&& _battleGame->cancelCurrentAction() == true)
-		|| _mouseOverIcons == true									// don't handle mouseclicks over the buttons
-		|| _map->getCursorType() == CT_NONE							// don't accept clicks if there is no cursor
-		|| _battleGame->isBusy() == true)							// or there is an action busy
+	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT // right-click removes pathPreview or aborts walking state
+		&& _battleGame->cancelCurrentAction() == true)
 	{
 		return;
 	}
 
-
-	Position pos;
-	_map->getSelectorPosition(&pos);
-
-	// don't allow to click into void
-	if (_battleSave->getTile(pos) != nullptr)
+	if (_mouseOverIcons == false
+		&& _map->getCursorType() != CT_NONE
+		&& _battleGame->isBusy() == false)
 	{
-		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-			_battleGame->primaryAction(pos);
-		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT
-			&& playableUnitSelected() == true)
+		Position pos;
+		_map->getSelectorPosition(&pos);
+
+		if (_battleSave->getTile(pos) != nullptr)
 		{
-			_battleGame->secondaryAction(pos);
+			if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+				_battleGame->primaryAction(pos);
+			else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT
+				&& playableUnitSelected() == true)
+			{
+				_battleGame->secondaryAction(pos);
+			}
+
+//			if (_battleSave->getDebugTac() == true)
+//			{
+			std::wostringstream woststr; // onScreen debug ->
+//			if (_battleSave->getTile(pos)->getMapData(O_OBJECT) != nullptr)
+//				woststr << (int)(_battleSave->getTile(pos)->getMapData(O_OBJECT)->getBigwall()) << L" ";
+
+			if (_battleSave->getTile(pos)->getTileUnit() != nullptr)
+				woststr	<< L"unit "
+						<< _battleSave->getTile(pos)->getTileUnit()->getId()
+						<< L" ";
+
+			woststr << L"pos " << pos;
+			debugPrint(woststr.str());
+//			}
 		}
-
-//		if (_battleSave->getDebugMode() == true)
-//		{
-		std::wostringstream woststr;
-//		if (_battleSave->getTile(pos)->getMapData(O_OBJECT) != nullptr)
-//			woststr << (int)(_battleSave->getTile(pos)->getMapData(O_OBJECT)->getBigwall()) << L" ";
-
-		if (_battleSave->getTile(pos)->getTileUnit() != nullptr)
-			woststr	<< L"unit "
-					<< _battleSave->getTile(pos)->getTileUnit()->getId()
-					<< L" ";
-
-		woststr << L"pos " << pos;
-		debug(woststr.str());
-//		}
 	}
 }
 
@@ -1592,7 +1592,7 @@ void BattlescapeState::stopScrolling(Action* action)
 		SDL_WarpMouse(static_cast<Uint16>(_xBeforeMouseScrolling), static_cast<Uint16>(_yBeforeMouseScrolling));
 		action->setMouseAction(_xBeforeMouseScrolling, _yBeforeMouseScrolling, _map->getX(), _map->getY());
 		_battleGame->setupCursor();
-		if (_battleGame->getCurrentAction()->actor == nullptr && (_save->getSide() == FACTION_PLAYER || _save->getDebugMode() == true))
+		if (_battleGame->getCurrentAction()->actor == nullptr && (_save->getSide() == FACTION_PLAYER || _save->getDebugTac() == true))
 			_map->setCursorType(CT_NORMAL);
 	}
 	else
@@ -1646,75 +1646,85 @@ inline void BattlescapeState::handle(Action* action)
 			{
 				if ((SDL_GetModState() & KMOD_CTRL) != 0)
 				{
-					if (action->getDetails()->key.keysym.sym == SDLK_d)				// "ctrl-d" - enable debug mode
+					if (_battleSave->getDebugTac() == false)
 					{
-						beep = true;
-						_battleSave->setDebugMode();
-						debug(L"Debug Mode");
-					}
-					else if (_battleSave->getDebugMode() == true)
-					{
-						if (action->getDetails()->key.keysym.sym == SDLK_v)			// "ctrl-v" - reset tile visibility
+						if (action->getDetails()->key.keysym.sym == SDLK_d)				// "ctrl-d" - enable debug mode.
 						{
 							beep = true;
-							debug(L"Resetting tile visibility");
-							_battleSave->resetTiles();
+							_battleSave->setDebugTac();
+							debugPrint(L"debug active");
 						}
-						else
+					}
+					else
+					{
+						switch (action->getDetails()->key.keysym.sym)
 						{
-							bool checkCasualties = false;
+							case SDLK_d:												// "ctrl-d" - debug already enabled.
+								debugPrint(L"debug already active");
+								break;
 
-							if (action->getDetails()->key.keysym.sym == SDLK_k)		// "ctrl-k" - kill all aliens
-							{
-								beep = true; //MB_ICONERROR
-								debug(L"Influenza bacterium dispersed");
-								for (std::vector<BattleUnit*>::const_iterator
-										i = _battleSave->getUnits()->begin();
-										i !=_battleSave->getUnits()->end();
-										++i)
-								{
-									if ((*i)->getOriginalFaction() == FACTION_HOSTILE
-										&& (*i)->isOut_t(OUT_HLTH) == false)
-									{
-										checkCasualties = true;
-										(*i)->setHealth(0);
-//										(*i)->takeDamage(Position(0,0,0), 1000, DT_AP, true);
-									}
-								}
-							}
-							else if (action->getDetails()->key.keysym.sym == SDLK_j)	// "ctrl-j" - stun all aliens
-							{
-								beep = true; //MB_ICONWARNING
-								debug(L"Deploying Celine Dione album");
-								for (std::vector<BattleUnit*>::const_iterator
-									i = _battleSave->getUnits()->begin();
-									i !=_battleSave->getUnits()->end();
-									++i)
-								{
-									if ((*i)->getOriginalFaction() == FACTION_HOSTILE
-										&& (*i)->isOut_t(OUT_HLTH) == false)
-									{
-										checkCasualties = true;
-										(*i)->setStun((*i)->getHealth() + 100);
-//										(*i)->takeDamage(Position(0,0,0), 1000, DT_STUN, true);
-									}
-								}
-							}
+							case SDLK_v:												// "ctrl-v" - reset tile visibility.
+								beep = true;
+								debugPrint(L"resetting tile visibility");
+								_battleSave->resetTiles();
+								break;
 
-							if (checkCasualties == true)
+							default:
 							{
-								_battleGame->checkForCasualties(nullptr, nullptr, true);
-								_battleGame->handleState();
+								bool checkCasualties = false;
+								switch (action->getDetails()->key.keysym.sym)
+								{
+									case SDLK_k:										// "ctrl-k" - kill all aliens.
+										beep = true; //MB_ICONERROR
+										debugPrint(L"influenza bacterium dispersed");
+										for (std::vector<BattleUnit*>::const_iterator
+												i = _battleSave->getUnits()->begin();
+												i !=_battleSave->getUnits()->end();
+												++i)
+										{
+											if ((*i)->getOriginalFaction() == FACTION_HOSTILE
+												&& (*i)->isOut_t(OUT_HLTH) == false)
+											{
+												checkCasualties = true;
+												(*i)->setHealth(0);
+//												(*i)->takeDamage(Position(0,0,0), 1000, DT_AP, true);
+											}
+										}
+										break;
+
+									case SDLK_j:										// "ctrl-j" - stun all aliens.
+										beep = true; //MB_ICONWARNING
+										debugPrint(L"deploying Celine Dione album");
+										for (std::vector<BattleUnit*>::const_iterator
+											i = _battleSave->getUnits()->begin();
+											i !=_battleSave->getUnits()->end();
+											++i)
+										{
+											if ((*i)->getOriginalFaction() == FACTION_HOSTILE
+												&& (*i)->isOut_t(OUT_HLTH) == false)
+											{
+												checkCasualties = true;
+												(*i)->setStun((*i)->getHealth() + 1000);
+//												(*i)->takeDamage(Position(0,0,0), 1000, DT_STUN, true);
+											}
+										}
+								}
+
+								if (checkCasualties == true)
+								{
+									_battleGame->checkForCasualties(nullptr, nullptr, true);
+									_battleGame->handleState();
+								}
 							}
 						}
 					}
 				}
-				else if (action->getDetails()->key.keysym.sym == SDLK_F10)				// f10 - voxel map dump
+				else if (action->getDetails()->key.keysym.sym == SDLK_F10)				// f10 - voxel map dump.
 				{
 					beep = true;
 					saveVoxelMap();
 				}
-				else if (action->getDetails()->key.keysym.sym == SDLK_F9)				// f9 - ai dump
+				else if (action->getDetails()->key.keysym.sym == SDLK_F9)				// f9 - ai dump.
 //					&& Options::traceAI == true)
 				{
 					beep = true;
@@ -1724,7 +1734,7 @@ inline void BattlescapeState::handle(Action* action)
 
 			if (_gameSave->isIronman() == false)
 			{
-				if (action->getDetails()->key.keysym.sym == Options::keyQuickSave)		// f6 - quickSave
+				if (action->getDetails()->key.keysym.sym == Options::keyQuickSave)		// f6 - quickSave.
 				{
 					beep = true;
 					_game->pushState(new SaveGameState(
@@ -1732,7 +1742,7 @@ inline void BattlescapeState::handle(Action* action)
 													SAVE_QUICK,
 													_palette));
 				}
-				else if (action->getDetails()->key.keysym.sym == Options::keyQuickLoad)	// f5 - quickLoad
+				else if (action->getDetails()->key.keysym.sym == Options::keyQuickLoad)	// f5 - quickLoad.
 				{
 					beep = true;
 					_game->pushState(new LoadGameState(
@@ -1742,7 +1752,7 @@ inline void BattlescapeState::handle(Action* action)
 				}
 			}
 
-			if (action->getDetails()->key.keysym.sym == Options::keyBattleVoxelView)	// f11 - voxel view pic
+			if (action->getDetails()->key.keysym.sym == Options::keyBattleVoxelView)	// f11 - voxel view pic.
 			{
 				beep = true;
 				saveVoxelView();
@@ -1968,7 +1978,7 @@ void BattlescapeState::btnKneelClick(Action*)
  */
 void BattlescapeState::btnInventoryClick(Action*)
 {
-/*	if (_battleSave->getDebugMode() == true)
+/*	if (_battleSave->getDebugTac() == true)
 	{
 		for (std::vector<BattleUnit*>::const_iterator
 				i = _battleSave->getUnits()->begin();
@@ -1989,7 +1999,7 @@ void BattlescapeState::btnInventoryClick(Action*)
 		if (unit->getGeoscapeSoldier() != nullptr
 			|| (unit->getUnitRules()->isMechanical() == false
 				&& unit->getRankString() != "STR_LIVE_TERRORIST")
-			|| _battleSave->getDebugMode() == true)
+			|| _battleSave->getDebugTac() == true)
 		{
 			if (_battleGame->getCurrentAction()->type == BA_LAUNCH) // clean up the waypoints
 			{
@@ -2001,7 +2011,7 @@ void BattlescapeState::btnInventoryClick(Action*)
 			_battleGame->cancelCurrentAction(true);
 //			_overlay->getFrame(3)->blit(_btnInventory); // clear() not implemented @ InventoryState.
 			_game->pushState(new InventoryState(
-											_battleSave->getDebugMode() == false,
+											_battleSave->getDebugTac() == false,
 											this));
 		}
 	}
@@ -2807,7 +2817,7 @@ bool BattlescapeState::allowButtons(bool allowSaving) const // private
 	return (
 			(allowSaving == true
 					|| _battleSave->getSide() == FACTION_PLAYER
-					|| _battleSave->getDebugMode() == true)
+					|| _battleSave->getDebugTac() == true)
 				&& (_battleGame->getPanicHandled() == true
 					|| _firstInit == true)
 				&& _map->getProjectile() == nullptr);
@@ -3655,30 +3665,30 @@ Map* BattlescapeState::getMap() const
 
 /**
  * Shows a debug message in the topleft corner.
- * @param message - reference a debug message
+ * @param wst - reference a debug message
  */
-void BattlescapeState::debug(const std::wstring& message)
+void BattlescapeState::debugPrint(const std::wstring& wst)
 {
-//	if (_battleSave->getDebugMode() == true)
-	_txtDebug->setText(message);
+//	if (_battleSave->getDebugTac() == true)
+	_txtDebug->setText(wst);
 }
 
 /**
  * Shows a warning message.
  * @note Currently uses 'arg' only to show Psi pct & Fuse timer.
- * @param message	- reference a message usually a warning
+ * @param st		- reference a message-string usually a warning
  * @param useArg	- true to show @a arg (default false)
  * @param arg		- the argument as an integer (default 0)
  */
 void BattlescapeState::warning(
-		const std::string& message,
+		const std::string& st,
 		bool useArg,
 		int arg)
 {
 	if (useArg == false)
-		_warning->showMessage(tr(message));
+		_warning->showMessage(tr(st));
 	else
-		_warning->showMessage(tr(message).arg(arg));
+		_warning->showMessage(tr(st).arg(arg));
 }
 
 /**
@@ -4488,7 +4498,7 @@ void BattlescapeState::saveVoxelView()
 		return;
 
 	bool
-		debug = _battleSave->getDebugMode(),
+		debug = _battleSave->getDebugTac(),
 		black = false;
 	int voxelTest;
 	double

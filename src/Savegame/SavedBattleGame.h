@@ -295,9 +295,9 @@ private:
 		bool endFactionTurn();
 
 		/// Sets debug mode.
-		void setDebugMode();
+		void setDebugTac();
 		/// Gets debug mode.
-		bool getDebugMode() const;
+		bool getDebugTac() const;
 
 		/// Gets a pointer to the BattlescapeGame.
 		BattlescapeGame* getBattleGame() const;

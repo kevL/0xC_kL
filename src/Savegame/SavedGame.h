@@ -145,7 +145,7 @@ class SavedGame // no copy cTor.
 
 private:
 	bool
-		_debug,
+		_debugGeo,
 		_debugArgDone,
 		_ironman,
 		_warned;
@@ -392,10 +392,10 @@ private:
 		///  Returns the list of alien bases.
 		std::vector<AlienBase*>* getAlienBases();
 
-		/// Sets debug mode.
-		void toggleDebugMode();
-		/// Gets debug mode.
-		bool getDebugMode() const;
+		/// Toggles and returns the debug flag.
+		bool toggleDebugActive();
+		/// Gets the debug flag.
+		bool getDebugGeo() const;
 
 		/// Gets the list of research scores.
 		std::vector<int>& getResearchScores();

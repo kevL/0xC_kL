@@ -276,7 +276,7 @@ void NextTurnState::nextTurn()
 			else
 				switchMusic = false;
 
-			if (_battleSave->getDebugMode() == false)
+			if (_battleSave->getDebugTac() == false)
 				_game->getCursor()->setVisible(false);
 		}
 	}

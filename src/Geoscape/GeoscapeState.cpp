@@ -984,7 +984,7 @@ void GeoscapeState::blit()
 }
 
 /**
- * Handle key shortcuts.
+ * Handles key shortcuts.
  * @param action - pointer to an Action
  */
 void GeoscapeState::handle(Action* action)
@@ -1003,38 +1003,21 @@ void GeoscapeState::handle(Action* action)
 				if (action->getDetails()->key.keysym.sym == SDLK_d)				// "ctrl-d" - enable debug mode
 				{
 					beep = true;
-					_gameSave->toggleDebugMode();
-					if (_gameSave->getDebugMode() == true)
-					{
-						_debug = "DEBUG MODE : ";
-
-						if (_globe->getDebugType() == 0)
-							_debug += "country : ";
-						else if (_globe->getDebugType() == 1)
-							_debug += "region : ";
-						else if (_globe->getDebugType() == 2)
-							_debug += "missionZones : ";
-					}
+					if (_gameSave->toggleDebugActive() == true)
+						fabricateDebugPrefix();
 					else
 					{
 						_txtDebug->setText(L"");
-						_debug = "";
+						_stDebug = "";
 					}
 				}
-				else if (_gameSave->getDebugMode() == true)
+				else if (_gameSave->getDebugGeo() == true)
 				{
 					if (action->getDetails()->key.keysym.sym == SDLK_c)			// "ctrl-c" - cycle areas
 					{															// note: also handled in Game::run() where the 'cycle' is determined.
 						beep = true;
 						_txtDebug->setText(L"");
-						_debug = "DEBUG MODE : ";
-
-						if (_globe->getDebugType() == 0)
-							_debug += "country : ";
-						else if (_globe->getDebugType() == 1)
-							_debug += "region : ";
-						else if (_globe->getDebugType() == 2)
-							_debug += "missionZones : ";
+						fabricateDebugPrefix();
 					}
 					else if (action->getDetails()->key.keysym.sym == SDLK_a)	// "ctrl-a" - delete soldier awards
 					{															// note: Clears awards of the living, not of the Memorial Dead.
@@ -1055,9 +1038,9 @@ void GeoscapeState::handle(Action* action)
 										k != (*j)->getDiary()->getSoldierAwards()->end();
 										++k)
 								{
-									delete *k;									// is this redundant
+									delete *k;
 								}
-								(*j)->getDiary()->getSoldierAwards()->clear();	// is this redundant
+								(*j)->getDiary()->getSoldierAwards()->clear();
 							}
 						}
 					}
@@ -1103,6 +1086,25 @@ void GeoscapeState::handle(Action* action)
 		}
 
 		_dfMinimized = getMinimizedDfCount();
+	}
+}
+
+/**
+ * Creates the prefix for a debugging message.
+ */
+void GeoscapeState::fabricateDebugPrefix() // private.
+{
+	_stDebug = "DEBUG MODE : ";
+	switch (_globe->getDebugType())
+	{
+		case DTG_COUNTRY:
+			_stDebug += "country : ";
+			break;
+		case DTG_REGION:
+			_stDebug += "region : ";
+			break;
+		case DTG_ZONE:
+			_stDebug += "missionZones : ";
 	}
 }
 
@@ -1174,9 +1176,9 @@ void GeoscapeState::think()
 
 	if (Options::debug == true
 		&& _game->getSavedGame()->getDebugArgDone() == true // ie. do not write info until Globe actually sets it.
-		&& _debug.compare(0,5, "DEBUG") == 0)
+		&& _stDebug.compare(0,5, "DEBUG") == 0)
 	{
-		const std::string stDebug = _debug + _game->getSavedGame()->getDebugArg();
+		const std::string stDebug = _stDebug + _game->getSavedGame()->getDebugArg();
 		_txtDebug->setText(Language::cpToWstr(stDebug));
 	}
 
@@ -3395,10 +3397,10 @@ void GeoscapeState::globeClick(Action* action)
 			_game->pushState(new MultipleTargetsState(targets, nullptr, this));
 	}
 
-	if (_gameSave->getDebugMode() == true)
+	if (_gameSave->getDebugGeo() == true)
 	{
 		_gameSave->setDebugArg("COORD");	// tells think() to stop writing area-info and display lon/lat instead.
-		_debug = "";						// ditto
+		_stDebug = "";						// ditto
 
 		double
 			lonRad,

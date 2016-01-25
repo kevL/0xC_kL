@@ -385,7 +385,8 @@ void Game::run()
 								_states.back()->redrawText();
 							}
 							else if (_gameSave != nullptr
-								&& _gameSave->getDebugMode() == true				// kL-> note: 'c' doubles as CreateInventoryTemplate (remarked @ InventoryState).
+								&& _gameSave->getBattleSave() == nullptr			// TODO: Merge w/ GeoscapeState::handle() in Geoscape.
+								&& _gameSave->getDebugGeo() == true					// kL-> note: 'c' doubles as CreateInventoryTemplate (remarked @ InventoryState).
 								&& action.getDetails()->key.keysym.sym == SDLK_c)	// ctrl+c is also handled in GeoscapeState::handle()
 							{														// where decisions are made about what info to show.
 								// "ctrl-c"			- increment to show next area's boundaries
@@ -404,7 +405,7 @@ void Game::run()
 									++_debugCycle;
 							}
 							else if (_gameSave != nullptr
-								&& _gameSave->getDebugMode() == true
+								&& _gameSave->getDebugGeo() == true
 								&& action.getDetails()->key.keysym.sym == SDLK_l	// "ctrl-l" reload country lines
 								&& _rules != nullptr)
 							{

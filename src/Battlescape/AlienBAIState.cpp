@@ -807,10 +807,10 @@ void AlienBAIState::setupAmbush() // private.
 			pf->setPathingUnit(_aggroTarget);
 			pos = _aggroTarget->getPosition();
 
-			size_t tries = targetPath.size();
-			while (tries != 0) // hypothetically walk the aggroTarget through the path.
+			size_t t = targetPath.size();
+			while (t != 0) // hypothetically walk the aggroTarget through the path.
 			{
-				--tries;
+				--t;
 
 				pf->getTuCostPf(pos, targetPath.back(), &posNext);
 				targetPath.pop_back();
@@ -965,7 +965,7 @@ void AlienBAIState::setupEscape() // private.
 	int
 		bestTileScore = -100000,
 		tileScore,
-		tries = -1,
+		t = -1,
 		dist;
 
 	if (_aggroTarget != nullptr)
@@ -987,7 +987,7 @@ void AlienBAIState::setupEscape() // private.
 	Pathfinding* const pf (_battleSave->getPathfinding());
 	pf->setPathingUnit(_unit);
 
-	while (tries < 150 && coverFound == false)
+	while (t < 150 && coverFound == false)
 	{
 		_escapeAction->target = _unit->getPosition();		// start looking in a direction away from the enemy
 		if (_battleSave->getTile(_escapeAction->target) == nullptr)
@@ -995,17 +995,17 @@ void AlienBAIState::setupEscape() // private.
 
 		tileScore = 0;
 
-		if (tries == -1)
+		if (t == -1)
 		{
 			// you know, maybe we should just stay where we are and not risk reaction fire...
 			// or maybe continue to wherever we were running to and not risk looking stupid
 			if (_battleSave->getTile(_unit->_lastCover) != nullptr)
 				_escapeAction->target = _unit->_lastCover;
 		}
-		else if (tries < static_cast<int>(_battleSave->SEARCH_SIZE)) //121 // looking for cover
+		else if (t < static_cast<int>(_battleSave->SEARCH_SIZE)) //121 // looking for cover
 		{
-			_escapeAction->target.x += tileSearch[tries].x;
-			_escapeAction->target.y += tileSearch[tries].y;
+			_escapeAction->target.x += tileSearch[t].x;
+			_escapeAction->target.y += tileSearch[t].y;
 
 			tileScore = BASE_SUCCESS_SYSTEMATIC;
 
@@ -1023,7 +1023,7 @@ void AlienBAIState::setupEscape() // private.
 		}
 		else
 		{
-			//if (tries == 121 && _traceAI) Log(LOG_INFO) << "best tileScore after systematic search was: " << bestTileScore;
+			//if (t == 121 && _traceAI) Log(LOG_INFO) << "best tileScore after systematic search was: " << bestTileScore;
 			tileScore = BASE_SUCCESS_DESPERATE; // ruuuuuuun!!1
 
 			_escapeAction->target = _unit->getPosition();
@@ -1037,7 +1037,7 @@ void AlienBAIState::setupEscape() // private.
 				_escapeAction->target.z = _unit->getPosition().z;
 		}
 
-		++tries;
+		++t;
 
 		// think, Dang NABBIT!!!
 		tile = _battleSave->getTile(_escapeAction->target);
@@ -1133,7 +1133,7 @@ void AlienBAIState::setupEscape() // private.
 	}
 	else
 	{
-		//if (_traceAI) Log(LOG_INFO) << "Escape estimation completed after " << tries << " tries, "
+		//if (_traceAI) Log(LOG_INFO) << "Escape estimation completed after " << t << " tries, "
 		//		<< _battleSave->getTileEngine()->distance(_unit->getPosition(), bestTile) << " squares or so away.";
 		_escapeAction->type = BA_MOVE;
 	}
@@ -1744,56 +1744,51 @@ bool AlienBAIState::findFirePoint() // private.
 		pos = _unit->getPosition() + *i;
 
 		tile = _battleSave->getTile(pos);
-		if (tile == nullptr
-			|| std::find(
+		if (tile != nullptr
+			&& std::find(
 					_reachableAttack.begin(),
 					_reachableAttack.end(),
-					_battleSave->getTileIndex(pos)) == _reachableAttack.end())
+					_battleSave->getTileIndex(pos)) != _reachableAttack.end())
 		{
-			continue;
-		}
+			tileScore = 0;
+			origin = Position::toVoxelSpaceCentered(
+												pos,
+												_unit->getHeight()
+													+ _unit->getFloatHeight()
+													- tile->getTerrainLevel()
+													- 4);
 
-		tileScore = 0;
-		// i should really make a function for this
-		origin = pos * Position(16,16,24)
-					 + Position(
-							8,8,
-							_unit->getHeight()
-								+ _unit->getFloatHeight()
-								- tile->getTerrainLevel()
-								- 4);
-			// 4 because -2 is eyes and 2 below that is the rifle (or at least that's my understanding)
-
-		if (_battleSave->getTileEngine()->canTargetUnit(
-													&origin,
-													_aggroTarget->getTile(),
-													&target,
-													_unit) == true)
-		{
-			pf->calculate(
-						_unit,
-						pos);
-
-			if (pf->getStartDirection() != -1)						// can move here
-//				&& pf->getTotalTUCost() <= _unit->getTimeUnits())	// can still shoot
+			if (_battleSave->getTileEngine()->canTargetUnit(
+														&origin,
+														_aggroTarget->getTile(),
+														&target,
+														_unit) == true)
 			{
-				tileScore = BASE_SUCCESS_SYSTEMATIC - countSpotters(pos) * 10;
-				tileScore += _unit->getTimeUnits() - pf->getTotalTUCost();
+				pf->calculate(
+							_unit,
+							pos);
 
-				if (_aggroTarget->checkViewSector(pos) == false)
-					tileScore += 10;
-
-				if (tileScore > bestTileScore)
+				if (pf->getStartDirection() != -1)						// can move here
+//					&& pf->getTotalTUCost() <= _unit->getTimeUnits())	// can still shoot
 				{
-					bestTileScore = tileScore;
+					tileScore = BASE_SUCCESS_SYSTEMATIC - countSpotters(pos) * 10;
+					tileScore += _unit->getTimeUnits() - pf->getTotalTUCost();
 
-					_attackAction->target = pos;
-					_attackAction->finalFacing = TileEngine::getDirectionTo(
-																		pos,
-																		_aggroTarget->getPosition());
+					if (_aggroTarget->checkViewSector(pos) == false)
+						tileScore += 10;
 
-					if (tileScore > FAST_PASS_THRESHOLD + 25)
-						break;
+					if (tileScore > bestTileScore)
+					{
+						bestTileScore = tileScore;
+
+						_attackAction->target = pos;
+						_attackAction->finalFacing = TileEngine::getDirectionTo(
+																			pos,
+																			_aggroTarget->getPosition());
+
+						if (tileScore > FAST_PASS_THRESHOLD + 25)
+							break;
+					}
 				}
 			}
 		}
@@ -2084,8 +2079,7 @@ void AlienBAIState::wayPointAction() // private.
 		if (targets.empty() == false)
 		{
 			//Log(LOG_INFO) << ". targets available";
-			const size_t target = RNG::pick(targets.size());
-			_aggroTarget = targets.at(target);
+			_aggroTarget = targets.at(RNG::pick(targets.size()));
 			//Log(LOG_INFO) << ". . total = " << targets.size() << " pick = " << target << "; Target ID " << _aggroTarget->getId();
 			if (pathWaypoints() == true) // vs. _aggroTarget, should be true
 			{

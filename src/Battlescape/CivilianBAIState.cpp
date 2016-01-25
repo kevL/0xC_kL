@@ -327,18 +327,18 @@ void CivilianBAIState::setupEscape() // private.
 	RNG::shuffle(tileSearch.begin(), tileSearch.end());
 
 	bool coverFound = false;
-	size_t tries = 0;
-	while (tries < 150 && coverFound == false)
+	size_t t = 0;
+	while (t < 150 && coverFound == false)
 	{
 		_escapeAction->target = _unit->getPosition();
 
 		tileScore = 0;
 
-		if (tries < _battleSave->SEARCH_SIZE) //121 // looking for cover
+		if (t < _battleSave->SEARCH_SIZE) //121 // looking for cover
 		{
 			// looking for cover
-			_escapeAction->target.x += tileSearch[tries].x;
-			_escapeAction->target.y += tileSearch[tries].y;
+			_escapeAction->target.x += tileSearch[t].x;
+			_escapeAction->target.y += tileSearch[t].y;
 
 			tileScore = BASE_SUCCESS_SYSTEMATIC;
 
@@ -356,7 +356,7 @@ void CivilianBAIState::setupEscape() // private.
 		}
 		else
 		{
-			//if (_traceAI && tries == 121) Log(LOG_INFO) << "best score after systematic search was: " << bestTileScore;
+			//if (_traceAI && t == 121) Log(LOG_INFO) << "best score after systematic search was: " << bestTileScore;
 
 			tileScore = BASE_SUCCESS_DESPERATE; // ruuuuuuun
 
@@ -372,7 +372,7 @@ void CivilianBAIState::setupEscape() // private.
 		}
 
 		// civilians shouldn't have any tactical sense anyway so save some CPU cycles here
-		tries += 10;
+		t += 10;
 
 		// THINK, DAMN YOU1
 		tile = _battleSave->getTile(_escapeAction->target);
@@ -469,7 +469,7 @@ void CivilianBAIState::setupEscape() // private.
 		return;
 	}
 
-	//if (_traceAI) Log(LOG_INFO) << "Escape estimation completed after " << tries << " tries, " << TileEngine::distance(_unit->getPosition(), posBest) << " squares or so away.";
+	//if (_traceAI) Log(LOG_INFO) << "Escape estimation completed after " << t << " tries, " << TileEngine::distance(_unit->getPosition(), posBest) << " squares or so away.";
 	_escapeAction->type = BA_MOVE;
 }
 
