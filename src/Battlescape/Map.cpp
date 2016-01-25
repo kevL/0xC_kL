@@ -346,7 +346,7 @@ void Map::draw()
 			} */
 		}
 		else
-			_projectileInFOV = _battleSave->getDebugMode(); // reveals Map in debugmode; hides battlefield if no projectiles in flight.
+			_projectileInFOV = false; //_battleSave->getDebugMode(); // reveals Map in debugmode; hides battlefield if no projectiles in flight.
 
 		if (_explosions.empty() == false)
 		{
@@ -371,7 +371,7 @@ void Map::draw()
 			} */
 		}
 		else
-			_explosionInFOV = _battleSave->getDebugMode(); // reveals Map in debugmode; hides battlefield if no explosions waiting.
+			_explosionInFOV = false; //_battleSave->getDebugMode(); // reveals Map in debugmode; hides battlefield if no explosions waiting.
 
 
 		static bool delayHide;

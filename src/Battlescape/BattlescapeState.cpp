@@ -1546,13 +1546,13 @@ void BattlescapeState::mapClick(Action* action)
 	// don't allow to click into void
 	if (_battleSave->getTile(pos) != nullptr)
 	{
-		if (action->getDetails()->button.button == SDL_BUTTON_RIGHT
+		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+			_battleGame->primaryAction(pos);
+		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT
 			&& playableUnitSelected() == true)
 		{
 			_battleGame->secondaryAction(pos);
 		}
-		else if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-			_battleGame->primaryAction(pos);
 
 //		if (_battleSave->getDebugMode() == true)
 //		{
@@ -1986,10 +1986,10 @@ void BattlescapeState::btnInventoryClick(Action*)
 	{
 		const BattleUnit* const unit = _battleSave->getSelectedUnit();
 
-		if (_battleSave->getDebugMode() == true
-			|| (unit->getGeoscapeSoldier() != nullptr
-				|| (unit->getUnitRules()->isMechanical() == false
-					&& unit->getRankString() != "STR_LIVE_TERRORIST")))
+		if (unit->getGeoscapeSoldier() != nullptr
+			|| (unit->getUnitRules()->isMechanical() == false
+				&& unit->getRankString() != "STR_LIVE_TERRORIST")
+			|| _battleSave->getDebugMode() == true)
 		{
 			if (_battleGame->getCurrentAction()->type == BA_LAUNCH) // clean up the waypoints
 			{

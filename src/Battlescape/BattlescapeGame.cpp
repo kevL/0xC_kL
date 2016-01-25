@@ -1048,8 +1048,8 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 			{
 				if (_battleSave->getDebugMode() == false)
 				{
-					_endTurnRequested = true;
 					//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() statePushBack(end AI turn) 2";
+					_endTurnRequested = true;
 					statePushBack(nullptr); // end AI turn
 				}
 				else
