@@ -237,11 +237,11 @@ private:
 		/// Handles unit AI.
 		void handleUnitAI(BattleUnit* const unit);
 
-		/// Handles the result of non target actions, like priming a grenade.
+		/// Handles the result of non target actions like priming a grenade.
 		void handleNonTargetAction();
 
-		/// Sets up the cursor taking into account the action.
-		void setupCursor();
+		/// Sets the selector according to the current action.
+		void setupSelector();
 
 		/// Determines whether a playable unit is selected.
 		bool playableUnitSelected();
@@ -315,7 +315,7 @@ private:
 		const Ruleset* getRuleset() const;
 
 		/// Returns whether player panic has been handled.
-		bool getPanicHandled() const
+		bool playerPanicHandled() const
 		{ return _playerPanicHandled; }
 		/// Sets var to start handling panic for Player.
 		void setPlayerPanic() { _playerPanicHandled = false; }
@@ -339,8 +339,8 @@ private:
 
 		/// Tallies the living units.
 		bool tallyUnits(
-				int& liveAliens,
-				int& liveSoldiers) const;
+				int& liveHostile,
+				int& livePlayer) const;
 
 		/// Sets the TU reserved type.
 //		void setReservedAction(BattleActionType bat);

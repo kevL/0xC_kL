@@ -107,8 +107,8 @@ Map::Map(
 		_selectorY(0),
 		_mX(0),
 		_mY(0),
-		_cursorType(CT_NORMAL),
-		_cursorSize(1),
+		_selectorType(CT_NORMAL),
+		_selectorSize(1),
 		_aniFrame(0),
 		_projectile(nullptr),
 		_projectileSet(nullptr),
@@ -500,7 +500,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 				if (offScreen_final == true										// moved here from TileEngine::reactionShot() because this is the
 					&& action->actor->getFaction() != _battleSave->getSide())	// accurate position of the bullet-shot-actor's Camera mapOffset.
 				{
-					std::map<int, Position>* const rfShotPos (_battleSave->getTileEngine()->getReactionPositions());
+					std::map<int, Position>* const rfShotPos (_battleSave->getTileEngine()->getRfShooterPositions());
 					rfShotPos->insert(std::pair<int, Position>(
 															action->actor->getId(),
 															_camera->getMapOffset()));
@@ -814,19 +814,19 @@ void Map::drawTerrain(Surface* const surface) // private.
 					}
 
 // Draw Cursor Background
-					if (_cursorType != CT_NONE
+					if (_selectorType != CT_NONE
 						&& _battleSave->getBattleState()->getMouseOverIcons() == false
-						&& _selectorX > itX - _cursorSize
-						&& _selectorY > itY - _cursorSize
+						&& _selectorX > itX - _selectorSize
+						&& _selectorY > itY - _selectorSize
 						&& _selectorX <= itX
 						&& _selectorY <= itY)
 					{
 						if (viewLevel == itZ)
 						{
-							if (_cursorType != CT_AIM)
+							if (_selectorType != CT_AIM)
 							{
 								if (hasUnit == true
-									&& (_cursorType != CT_PSI
+									&& (_selectorType != CT_PSI
 										|| ((_battleSave->getBattleGame()->getCurrentAction()->type == BA_PSICOURAGE
 												&& _unit->getFaction() != FACTION_HOSTILE)
 											|| (_battleSave->getBattleGame()->getCurrentAction()->type != BA_PSICOURAGE
@@ -1400,10 +1400,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 					}
 
 // Draw Cursor Front
-					if (_cursorType != CT_NONE
+					if (_selectorType != CT_NONE
 						&& _battleSave->getBattleState()->getMouseOverIcons() == false
-						&& _selectorX > itX - _cursorSize
-						&& _selectorY > itY - _cursorSize
+						&& _selectorX > itX - _selectorSize
+						&& _selectorY > itY - _selectorSize
 						&& _selectorX <= itX
 						&& _selectorY <= itY)
 					{
@@ -1424,10 +1424,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 //							else
 //								vertOffset = 0;
 
-							if (_cursorType != CT_AIM)
+							if (_selectorType != CT_AIM)
 							{
 								if (hasUnit == true //|| unitBelow != nullptr)
-									&& (_cursorType != CT_PSI
+									&& (_selectorType != CT_PSI
 										|| ((_battleSave->getBattleGame()->getCurrentAction()->type == BA_PSICOURAGE
 												&& _unit->getFaction() != FACTION_HOSTILE)
 											|| (_battleSave->getBattleGame()->getCurrentAction()->type != BA_PSICOURAGE
@@ -1455,7 +1455,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 // UFOExtender Accuracy
 							// display adjusted accuracy value on crosshair (and more).
 //							if (Options::battleUFOExtenderAccuracy == true) // note: one less condition to check
-							if (_cursorType == CT_AIM) // indicator for Firing.
+							if (_selectorType == CT_AIM) // indicator for Firing.
 							{
 								// draw targetUnit overtop cursor's front if Tile is blacked-out.
 								if (hasUnit == true && _tile->isRevealed(ST_CONTENT) == false)
@@ -1564,7 +1564,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										posScreen.x,
 										posScreen.y);
 							}
-							else if (_cursorType == CT_THROW) // indicator for Throwing.
+							else if (_selectorType == CT_THROW) // indicator for Throwing.
 							{
 								BattleAction* const action (_battleSave->getBattleGame()->getCurrentAction());
 								action->target = Position(itX,itY,itZ);
@@ -1603,14 +1603,14 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 						if (viewLevel == itZ)// || unitBelow != nullptr // BattleUnit was redrawn below curTile.
 						{
-							switch (_cursorType)
+							switch (_selectorType)
 							{
 								case CT_PSI:
 								case CT_WAYPOINT:
 								case CT_THROW:
 								{
 									static const int cursorSprites[6] = {0,0,0,11,13,15};
-									sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(cursorSprites[_cursorType] + (_aniFrame / 4));
+									sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(cursorSprites[_selectorType] + (_aniFrame / 4));
 									sprite->blitNShade(
 											surface,
 											posScreen.x,
@@ -1712,7 +1712,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 	// end Tiles_z looping. -> Tiles_x
 
 	// Draw Bouncing Arrow over selected unit.
-	if (_cursorType != CT_NONE
+	if (_selectorType != CT_NONE
 		&& (_battleSave->getSide() == FACTION_PLAYER
 			|| _battleSave->getDebugTac() == true))
 	{
@@ -2279,8 +2279,8 @@ bool Map::isTrueLoc(
 {
 	if (unit->getTile() == tile
 		|| (unit->getArmor()->getSize() == 2
-			&& (tile->getPosition() + Position(-1,0,0) == unit->getPosition()
-				|| tile->getPosition() + Position(0,-1,0) == unit->getPosition()
+			&& (   tile->getPosition() + Position(-1, 0,0) == unit->getPosition()
+				|| tile->getPosition() + Position( 0,-1,0) == unit->getPosition()
 				|| tile->getPosition() + Position(-1,-1,0) == unit->getPosition())))
 	{
 		return true;
@@ -2501,27 +2501,27 @@ int Map::getTerrainLevel( // private.
 }
 
 /**
- * Sets the 3D cursor to selection/aim mode.
- * @param type	- CursorType (Map.h)
+ * Sets the 3D selector type.
+ * @param type	- SelectorType (Map.h)
  * @param quads	- size of the cursor (default 1)
  */
-void Map::setCursorType(
-		CursorType type,
+void Map::setSelectorType(
+		SelectorType type,
 		int quads)
 {
-	if ((_cursorType = type) == CT_NORMAL)
-		_cursorSize = quads;
+	if ((_selectorType = type) == CT_NORMAL)
+		_selectorSize = quads;
 	else
-		_cursorSize = 1;
+		_selectorSize = 1;
 }
 
 /**
- * Gets the cursor type.
- * @return, CursorType
+ * Gets the 3D selector type.
+ * @return, SelectorType (Map.h)
  */
-CursorType Map::getCursorType() const
+SelectorType Map::getSelectorType() const
 {
-	return _cursorType;
+	return _selectorType;
 }
 
 /**

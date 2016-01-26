@@ -238,10 +238,10 @@ void UnitDieBState::think()
 /*		// if all units from either faction are killed - auto-end the mission.
 		if (Options::battleAutoEnd == true && _battleSave->getSide() == FACTION_PLAYER)
 		{
-			int liveAliens, liveSoldiers;
-			_parent->tallyUnits(liveAliens, liveSoldiers);
+			int liveHostile, livePlayer;
+			_parent->tallyUnits(liveHostile, livePlayer);
 
-			if (liveAliens == 0 || liveSoldiers == 0)
+			if (liveHostile == 0 || livePlayer == 0)
 			{
 				_battleSave->setSelectedUnit(nullptr);
 				_parent->cancelCurrentAction(true);

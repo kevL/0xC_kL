@@ -80,7 +80,7 @@ void UnitTurnBState::init()
 	_turret = _unit->getTurretType() != -1
 		   && (_action.strafe == true || _action.targeting == true);
 
-	if (_unit->getPosition().x != _action.target.x
+	if (   _unit->getPosition().x != _action.target.x
 		|| _unit->getPosition().y != _action.target.y)
 	{
 		_unit->setDirectionTo(_action.target, _turret); // -> STATUS_TURNING
@@ -93,18 +93,19 @@ void UnitTurnBState::init()
 			int soundId;
 			switch (_parent->getTileEngine()->unitOpensDoor(_unit))
 			{
-				case 0: // wooden door
+				case DR_WOOD_OPEN:
 					soundId = ResourcePack::DOOR_OPEN;
 					break;
-				case 1: // ufo door
+				case DR_UFO_OPEN:
 					soundId = ResourcePack::SLIDING_DOOR_OPEN;
 					break;
-				case 3:
+				case DR_ERR_TU:
 					_action.result = "STR_NOT_ENOUGH_TIME_UNITS";
 					soundId = -1;
 					break;
-				case 4:
-					_action.result = "STR_TUS_RESERVED"; // no break.
+				case DR_ERR_RESERVE:
+					_action.result = "STR_TUS_RESERVED"; // no break;
+
 				default:
 					soundId = -1;
 			}
@@ -191,14 +192,11 @@ void UnitTurnBState::think()
 			_unit->clearTurnDirection();
 			_parent->popState();
 		}
-		else if (_chargeTu == true)
+		else if (_chargeTu == true
+			&& _parent->getBattleSave()->getSide() == FACTION_PLAYER)
 		{
-			BattlescapeState* const battleState (_parent->getBattlescapeState());
-			if (battleState->playableUnitSelected() == true)
-			{
-				battleState->hotSqrsClear();
-				battleState->hotSqrsUpdate();
-			}
+			_parent->getBattlescapeState()->hotSqrsClear();
+			_parent->getBattlescapeState()->hotSqrsUpdate();
 		}
 	}
 	else

@@ -230,10 +230,11 @@ private:
 
 		/**
 		 * Gets the Tile at a given position on the map.
-		 * This method is called over 50mil+ times per turn so it seems useful to inline it.
+		 * @note This method is called over 50mil+ times per turn so it seems
+		 * useful to inline it.
 		 * @note Are not functions that are defined inside the class def'n here
 		 * supposedly assumed as 'inlined' ...... And the true result of keyword
-		 * "inline" is actually something quite different.
+		 * "inline" is actually something quite different. ah C++ clear as mud.
 		 * @param pos - reference a Map position
 		 * @return, pointer to the tile at that position
 		 */
@@ -255,6 +256,7 @@ private:
 		BattleUnit* getSelectedUnit() const;
 		/// Sets the currently selected BattleUnit.
 		void setSelectedUnit(BattleUnit* const unit);
+		/// Selects the next BattleUnit.
 		BattleUnit* selectNextFactionUnit(
 				bool checkReselect = false,
 				bool dontReselect = false,
@@ -264,7 +266,6 @@ private:
 				bool checkReselect = false,
 				bool dontReselect = false,
 				bool checkInventory = false);
-		/// Selects the next BattleUnit.
 		/// Selects the BattleUnit at a Position.
 		BattleUnit* selectUnit(const Position& pos);
 
@@ -457,7 +458,7 @@ private:
 		bool getPacified() const;
 
 		/// Stores the camera-position where the last RF-trigger happened.
-		void storeRfTriggerPosition(const Position& pos);
+		void cacheRfTriggerPosition(const Position& pos);
 		/// Gets the camera-position where the last RF-trigger happened.
 		const Position& getRfTriggerPosition() const;
 

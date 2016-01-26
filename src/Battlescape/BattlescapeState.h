@@ -219,7 +219,7 @@ private:
 	void printTileInventory(Tile* const tile);
 
 	/// Checks if the player is allowed to press buttons.
-	bool allowButtons(bool allowSaving = false) const;
+	bool allowButtons(bool allowSave = false) const;
 
 	/// Animates a red cross icon when an injured soldier is selected.
 	void flashMedic();

@@ -471,10 +471,10 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 
 					if (_battleSave->getTile(posTest) != nullptr)
 					{
-						const bool preBattle = _battleSave->getBattleGame() == nullptr;
+						const bool preBattle (_battleSave->getBattleGame() == nullptr);
 
 						if (preBattle == true
-							|| _battleSave->getBattleGame()->getPanicHandled() == true) // spot units ->>
+							|| _battleSave->getBattleGame()->playerPanicHandled() == true) // spot units ->>
 						{
 							spottedUnit = _battleSave->getTile(posTest)->getTileUnit();
 //							if (spottedUnit != nullptr)
@@ -1468,7 +1468,7 @@ bool TileEngine::checkReactionFire(
 		|| triggerUnit->getFaction() != _battleSave->getSide()			// spotted unit must be current side's faction
 		|| triggerUnit->getTile() == nullptr							// and must be on map
 		|| triggerUnit->isOut_t(OUT_HLTH_STUN) == true)					// and must be conscious
-//		|| _battleSave->getBattleGame()->getPanicHandled() == false)	// and ... nahhh. Note that doesn't affect aLien RF anyway.
+//		|| _battleSave->getBattleGame()->playerPanicHandled() == false)	// and ... nahhh. Note that doesn't affect aLien RF anyway.
 	{
 		return false;
 	}
@@ -1773,7 +1773,7 @@ bool TileEngine::reactionShot(
 		&& _rfAction->actor->spendTimeUnits(_rfAction->TU) == true)
 	{
 		//Log(LOG_INFO) << "rf by Actor " << _rfAction->actor->getId() << " RfTriggerPos " << _battleSave->getBattleGame()->getMap()->getCamera()->getMapOffset();
-		_battleSave->storeRfTriggerPosition(_battleSave->getBattleGame()->getMap()->getCamera()->getMapOffset());
+		_battleSave->cacheRfTriggerPosition(_battleSave->getBattleGame()->getMap()->getCamera()->getMapOffset());
 		_rfAction->TU = 0;
 
 		_battleSave->getBattleGame()->statePushBack(new UnitTurnBState(
@@ -1887,7 +1887,7 @@ void TileEngine::selectFireMethod(BattleAction& action) // <- TODO: this action 
  * Gets the reaction fire shot list.
  * @return, pointer to a map of unit-IDs & Positions
  */
-std::map<int, Position>* TileEngine::getReactionPositions()
+std::map<int, Position>* TileEngine::getRfShooterPositions()
 {
 	return &_rfShotPos;
 }
@@ -2117,7 +2117,7 @@ void TileEngine::hit(
 					&& attacker != nullptr
 					&& attacker->getGeoscapeSoldier() != nullptr
 					&& attacker->isMindControlled() == false
-					&& _battleSave->getBattleGame()->getPanicHandled() == true)
+					&& _battleSave->getBattleGame()->playerPanicHandled() == true)
 				{
 					_battleSave->getBattleGame()->getCurrentAction()->takenXp = true;
 					attacker->addFiringExp();
@@ -2809,7 +2809,7 @@ void TileEngine::explode(
 								&& attacker->getGeoscapeSoldier() != nullptr
 								&& attacker->isMindControlled() == false
 								&& dType != DT_SMOKE
-								&& _battleSave->getBattleGame()->getPanicHandled() == true)
+								&& _battleSave->getBattleGame()->playerPanicHandled() == true)
 							{
 								takenXp = true;
 
@@ -5909,10 +5909,10 @@ bool TileEngine::psiAttack(BattleAction* const action)
 				if (Options::battleAllowPsionicCapture == true && Options::battleAutoEnd == true && _battleSave->getSide() == FACTION_PLAYER)
 				{
 					//Log(LOG_INFO) << ". . . . inside tallyUnits";
-					int liveAliens, liveSoldiers;
-					_battleSave->getBattleGame()->tallyUnits(liveAliens, liveSoldiers);
+					int liveHostile, livePlayer;
+					_battleSave->getBattleGame()->tallyUnits(liveHostile, livePlayer);
 
-					if (liveAliens == 0 || liveSoldiers == 0)
+					if (liveHostile == 0 || livePlayer == 0)
 					{
 						_battleSave->setSelectedUnit(nullptr);
 						_battleSave->getBattleGame()->cancelCurrentAction(true);

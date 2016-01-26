@@ -220,12 +220,12 @@ void BriefingState::btnOkClick(Action*)
 	BattlescapeState* const battleState = new BattlescapeState(); // <- ah there it is!
 
 	int
-		liveAliens,
-		liveSoldiers;
+		liveHostile,
+		livePlayer;
 	battleState->getBattleGame()->tallyUnits(
-										liveAliens,
-										liveSoldiers);
-	if (liveAliens > 0)
+										liveHostile,
+										livePlayer);
+	if (liveHostile > 0)
 	{
 		_game->pushState(battleState);
 		_game->getSavedGame()->getBattleSave()->setBattleState(battleState);

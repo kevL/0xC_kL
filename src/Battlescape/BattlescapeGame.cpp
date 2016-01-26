@@ -171,13 +171,13 @@ void BattlescapeGame::think()
 	if (_battleStates.empty() == true) // nothing is happening - see if they need some alien AI or units panicking or what have you
 	{
 		//Log(LOG_INFO) << "BattlescapeGame::think() - _battleStates is Empty. Clear rfShotList";
-		_battleSave->getTileEngine()->getReactionPositions()->clear(); // TODO: move that to end of popState()
+//		_battleSave->getTileEngine()->getRfShooterPositions()->clear(); // TODO: move that to end of popState()
 
-		if (_battleSave->getSide() != FACTION_PLAYER) // it's a non-player turn (ALIENS or CIVILIANS)
+		if (_battleSave->getSide() != FACTION_PLAYER) // it's a non-player turn - ALIENS or CIVILIANS
 		{
 			if (_debugPlay == false)
 			{
-				if (_battleSave->getSelectedUnit() != nullptr)
+				if (_battleSave->getSelectedUnit() != nullptr) // next AI unit
 				{
 					if (handlePanickingUnit(_battleSave->getSelectedUnit()) == false)
 					{
@@ -185,20 +185,17 @@ void BattlescapeGame::think()
 						handleUnitAI(_battleSave->getSelectedUnit());
 					}
 				}
-				else
+				else if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr) // end AI turn
 				{
-					if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr)
+					if (_battleSave->getDebugTac() == false)
 					{
-						if (_battleSave->getDebugTac() == false)
-						{
-							_endTurnRequested = true;
-							statePushBack(nullptr); // end AI turn
-						}
-						else
-						{
-							_battleSave->selectNextFactionUnit();
-							_debugPlay = true;
-						}
+						_endTurnRequested = true;
+						statePushBack(nullptr);
+					}
+					else
+					{
+						_battleSave->selectNextFactionUnit();
+						_debugPlay = true;
 					}
 				}
 			}
@@ -308,18 +305,15 @@ void BattlescapeGame::statePushBack(BattleState* const battleState)
 /**
  * Removes the current state.
  * @note This is a very important function. It is called by a BattleState
- * (walking, projectile is flying, explosions, etc.) at the moment that state
+ * (WalkB, ProjectileFlyB, ExplosionB, etc.) at the moment that state
  * has finished the current BattleAction. Check the result of that BattleAction
  * here and do all the aftermath. The state is then popped off the list.
  */
 void BattlescapeGame::popState()
 {
 	//Log(LOG_INFO) << "BattlescapeGame::popState() qtyStates = " << (int)_battleStates.size();
-//	if (Options::traceAI)
-//	{
-//		Log(LOG_INFO) << "BattlescapeGame::popState() #" << _AIActionCounter << " with "
-//		<< (_battleSave->getSelectedUnit()? _battleSave->getSelectedUnit()->getTimeUnits(): -9999) << " TU";
-//	}
+	//if (Options::traceAI) Log(LOG_INFO) << "BattlescapeGame::popState() #" << _AIActionCounter
+	//<< " with " << (_battleSave->getSelectedUnit()? _battleSave->getSelectedUnit()->getTimeUnits(): -9999) << " TU";
 
 	if (getMap()->getExplosions()->empty() == true) // explosions need to run fast after popping ProjectileFlyBState etc etc.
 	{
@@ -330,20 +324,20 @@ void BattlescapeGame::popState()
 	if (_battleStates.empty() == false)
 	{
 		//Log(LOG_INFO) << ". states NOT Empty";
-		const BattleAction action = _battleStates.front()->getAction();
-		bool actionFailed = false;
+		const BattleAction action (_battleStates.front()->getAction());
 
-		if ((_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
+		bool actionFail;
+		if (action.result.empty() == false // query the warning string message
+			&& (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
 			&& action.actor != nullptr
 			&& action.actor->getFaction() == FACTION_PLAYER
-			&& action.result.empty() == false // This queries the warning string message.
 			&& _playerPanicHandled == true)
 		{
-			//Log(LOG_INFO) << ". actionFailed";
-			actionFailed = true;
+			//Log(LOG_INFO) << ". actionFail";
+			actionFail = true;
 			_parentState->warning(action.result);
 
-			// remove action.Cursor if error.Message (eg, not enough tu's)
+			// remove action.Cursor if error.Message (eg, not enough TUs)
 			if (action.result.compare("STR_NOT_ENOUGH_TIME_UNITS") == 0
 				|| action.result.compare("STR_NO_AMMUNITION_LOADED") == 0
 				|| action.result.compare("STR_NO_ROUNDS_LEFT") == 0)
@@ -351,7 +345,7 @@ void BattlescapeGame::popState()
 				switch (action.type)
 				{
 					case BA_LAUNCH:
-						_currentAction.waypoints.clear();
+						_currentAction.waypoints.clear(); // no break;
 					case BA_THROW:
 					case BA_SNAPSHOT:
 					case BA_AIMEDSHOT:
@@ -361,15 +355,17 @@ void BattlescapeGame::popState()
 					case BA_PSICOURAGE:
 					case BA_PSICONTROL:
 						cancelCurrentAction(true);
-					break;
+						break;
 
 					case BA_USE:
 						if (action.weapon->getRules()->getBattleType() == BT_MINDPROBE)
 							cancelCurrentAction(true);
-					break;
+						break;
 				}
 			}
 		}
+		else
+			actionFail = false;
 
 		//Log(LOG_INFO) << ". move Front-state to _deleted.";
 		_deleted.push_back(_battleStates.front());
@@ -377,174 +373,141 @@ void BattlescapeGame::popState()
 		_battleStates.pop_front();
 
 
-		if (action.actor != nullptr // handle the end of this unit's actions
+		if (action.actor != nullptr // handle the end of the acting unit's actions
 			&& noActionsPending(action.actor) == true)
 		{
 			//Log(LOG_INFO) << ". noActionsPending for state actor";
-			if (action.actor->getFaction() == FACTION_PLAYER)
+			switch (action.actor->getFaction())
 			{
-				//Log(LOG_INFO) << ". actor -> Faction_Player";
-				// spend TUs of "target triggered actions" (shooting, throwing) only;
-				// the other actions' TUs (healing, scanning, etc) are already take care of.
-				// kL_note: But let's do this **before** checkReactionFire(), so aLiens
-				// get a chance .....! Odd thing is, though, that throwing triggers
-				// RF properly while shooting doesn't .... So, I'm going to move this
-				// to primaryAction() anyways. see what happens and what don't
-				//
-				// Note: psi-attack, mind-probe uses this also, I think.
-				// BUT, in primaryAction() below, mind-probe expends TU there, while
-				// psi-attack merely checks for TU there, and shooting/throwing
-				// didn't even Care about TU there until I put it in there, and took
-				// it out here in order to get Reactions vs. shooting to work correctly
-				// (throwing already did work to trigger reactions, somehow).
-				if (action.targeting == true
-					&& _battleSave->getSelectedUnit() != nullptr
-					&& actionFailed == false)
-				{
-					//Log(LOG_INFO) << ". . ID " << action.actor->getId() << " currentTU = " << action.actor->getTimeUnits();
-					action.actor->spendTimeUnits(action.TU);
-					// kL_query: Does this happen **before** ReactionFire/getReactor()?
-					// no. not for shooting, but for throwing it does; actually no it doesn't.
+				case FACTION_PLAYER:
+					//Log(LOG_INFO) << ". actor -> Faction_Player";
+					// spend TUs of "target triggered actions" (shooting, throwing) only;
+					// the other actions' TUs (healing, scanning, etc) are already take care of.
+					// kL_note: But let's do this **before** checkReactionFire(), so aLiens
+					// get a chance .....! Odd thing is, though, that throwing triggers
+					// RF properly while shooting doesn't .... So, I'm going to move this
+					// to primaryAction() anyways. see what happens and what don't
 					//
-					// wtf, now RF works fine. NO IT DOES NOT.
-					//Log(LOG_INFO) << ". . ID " << action.actor->getId() << " currentTU = " << action.actor->getTimeUnits() << " spent TU = " << action.TU;
-				}
-
-				if (_battleSave->getSide() == FACTION_PLAYER)
-				{
-					//Log(LOG_INFO) << ". side -> Faction_Player";
-
-					// after throwing the cursor returns to default cursor;
-					// after shooting it stays in targeting mode and the player
-					// can shoot again in the same mode (autoshot/snap/aimed)
-					// unless he/she is out of tu's and/or ammo
-					if (actionFailed == false)
+					// Note: psi-attack, mind-probe uses this also, I think.
+					// BUT, in primaryAction() below, mind-probe expends TU there, while
+					// psi-attack merely checks for TU there, and shooting/throwing
+					// didn't even Care about TU there until I put it in there, and took
+					// it out here in order to get Reactions vs. shooting to work correctly
+					// (throwing already did work to trigger reactions, somehow).
+					if (actionFail == false
+						&& _battleSave->getSelectedUnit() != nullptr
+						&& action.targeting == true)
 					{
-						const int tuActor = action.actor->getTimeUnits();
+						//Log(LOG_INFO) << ". . ID " << action.actor->getId() << " currentTU = " << action.actor->getTimeUnits();
+						action.actor->spendTimeUnits(action.TU);
+						// kL_query: Does this happen **before** ReactionFire/getReactor()?
+						// no. not for shooting, but for throwing it does; actually no it doesn't.
+						//
+						// wtf, now RF works fine. NO IT DOES NOT.
+						//Log(LOG_INFO) << ". . ID " << action.actor->getId() << " currentTU = " << action.actor->getTimeUnits() << " spent TU = " << action.TU;
+					}
 
+					if (actionFail == false // is NOT reaction-fire
+						&& _battleSave->getSide() == FACTION_PLAYER)
+					{
+						//Log(LOG_INFO) << ". side -> Faction_Player";
+						// After throwing the cursor returns to default cursor;
+						// after shooting it stays in targeting mode and the player
+						// can shoot again in the same mode (autoshot/snap/aimed)
+						// unless he/she/it is out of ammo and/or TUs.
+						const int tuActor (action.actor->getTimeUnits());
 						switch (action.type)
 						{
 							case BA_LAUNCH:
-								_currentAction.waypoints.clear();
+								_currentAction.waypoints.clear(); // no break;
 							case BA_THROW:
 								cancelCurrentAction(true);
-							break;
+								break;
 
 							case BA_SNAPSHOT:
 								//Log(LOG_INFO) << ". SnapShot, TU percent = " << (float)action.weapon->getRules()->getSnapTu();
-								if (tuActor < action.actor->getActionTu(
+								if (action.weapon->getAmmoItem() == nullptr
+									|| tuActor < action.actor->getActionTu(
 																	BA_SNAPSHOT,
-																	action.weapon)
-									|| action.weapon->getAmmoItem() == nullptr)
-//									|| (action.weapon->selfPowered() == false
-//										&& (action.weapon->getAmmoItem() == nullptr
-//											|| action.weapon->getAmmoItem()->getAmmoQuantity() == 0)))
+																	action.weapon))
 								{
 									cancelCurrentAction(true);
 								}
-							break;
+								break;
 
 							case BA_AUTOSHOT:
 								//Log(LOG_INFO) << ". AutoShot, TU percent = " << (float)action.weapon->getRules()->getAutoTu();
-								if (tuActor < action.actor->getActionTu(
+								if (action.weapon->getAmmoItem() == nullptr
+									|| tuActor < action.actor->getActionTu(
 																	BA_AUTOSHOT,
-																	action.weapon)
-									|| action.weapon->getAmmoItem() == nullptr)
-//									|| (action.weapon->selfPowered() == false
-//										&& (action.weapon->getAmmoItem() == nullptr
-//											|| action.weapon->getAmmoItem()->getAmmoQuantity() == 0)))
+																	action.weapon))
 								{
 									cancelCurrentAction(true);
 								}
-							break;
+								break;
 
 							case BA_AIMEDSHOT:
 								//Log(LOG_INFO) << ". AimedShot, TU percent = " << (float)action.weapon->getRules()->getAimedTu();
-								if (tuActor < action.actor->getActionTu(
+								if (action.weapon->getAmmoItem() == nullptr
+									|| tuActor < action.actor->getActionTu(
 																	BA_AIMEDSHOT,
-																	action.weapon)
-									|| action.weapon->getAmmoItem() == nullptr)
-//									|| (action.weapon->selfPowered() == false
-//										&& (action.weapon->getAmmoItem() == nullptr
-//											|| action.weapon->getAmmoItem()->getAmmoQuantity() == 0)))
+																	action.weapon))
 								{
 									cancelCurrentAction(true);
 								}
-							break;
-
-/*							case BA_USE: // uh USE->UnitInfoState is not a true battle state.
-								if (action.weapon->getRules()->getBattleType() == BT_MINDPROBE
-									&& tuActor < action.actor->getActionTu(BA_USE, action.weapon))
-								{
-									cancelCurrentAction(true);
-								} */
-
-/*							case BA_PSIPANIC:
-								if (tuActor < action.actor->getActionTu(BA_PSIPANIC, action.weapon))
-									cancelCurrentAction(true);
-							break;
-							case BA_PSICONTROL:
-								if (tuActor < action.actor->getActionTu(BA_PSICONTROL, action.weapon))
-									cancelCurrentAction(true);
-							break; */
 						}
 					}
+					break;
 
-					// -> I moved this to the end of the function to prevent cursor showing during RF.
-//					setupCursor();
-//					_parentState->getGame()->getCursor()->setVisible(); // might not be needed here anymore. But safety.
-//					_parentState->getGame()->getCursor()->setHidden(false);
-					//Log(LOG_INFO) << ". end NOT actionFailed";
-				}
-			}
-			else // action.actor is not FACTION_PLAYER
-			{
-				//Log(LOG_INFO) << ". action -> NOT Faction_Player";
-				action.actor->spendTimeUnits(action.TU);
+				default: // action.actor is NOT Faction_Player
+				case FACTION_HOSTILE:
+				case FACTION_NEUTRAL:
+					//Log(LOG_INFO) << ". action -> NOT Faction_Player";
+					action.actor->spendTimeUnits(action.TU);
 
-				if (_battleSave->getSide() != FACTION_PLAYER
-					&& _debugPlay == false)
-				{
-					BattleUnit* selUnit = _battleSave->getSelectedUnit();
-					 // AI does three things per unit, before switching to the next, or it got killed before doing the second thing
-					if (_AIActionCounter > 2
-						|| selUnit == nullptr
-						|| selUnit->isOut_t() == true)
+					if (_battleSave->getSide() != FACTION_PLAYER && _debugPlay == false) // is NOT reaction-fire
 					{
-						_AIActionCounter = 0;
-
-						if (selUnit != nullptr)
+						BattleUnit* selUnit = _battleSave->getSelectedUnit();
+						if (_AIActionCounter > 2	// AI does three things per unit before switching to the
+							|| selUnit == nullptr	// next or it got killed before doing the second thing
+							|| selUnit->isOut_t() == true)
 						{
-							selUnit->clearCache();
-							getMap()->cacheUnit(selUnit);
-						}
+							_AIActionCounter = 0;
 
-						if (_battleStates.empty() == true
-							&& _battleSave->selectNextFactionUnit(true) == nullptr)
-						{
-							if (_battleSave->getDebugTac() == false)
+							if (selUnit != nullptr)
 							{
-								_endTurnRequested = true;
-								statePushBack(nullptr); // end AI turn
+								selUnit->clearCache();
+								getMap()->cacheUnit(selUnit);
 							}
-							else
+
+							if (_battleStates.empty() == true // ie. front has popped and there's nothing left
+								&& _battleSave->selectNextFactionUnit(true) == nullptr)
 							{
-								_battleSave->selectNextFactionUnit();
-								_debugPlay = true;
+								if (_battleSave->getDebugTac() == false)
+								{
+									_endTurnRequested = true;
+									statePushBack(nullptr); // end AI turn
+								}
+								else
+								{
+									_battleSave->selectNextFactionUnit();
+									_debugPlay = true;
+								}
+							}
+
+							if ((selUnit = _battleSave->getSelectedUnit()) != nullptr)
+							{
+								getMap()->getCamera()->centerOnPosition(selUnit->getPosition());
+								if (_battleSave->getDebugTac() == true)
+									_parentState->refreshMousePosition();
 							}
 						}
-
-						selUnit = _battleSave->getSelectedUnit();
-						if (selUnit != nullptr)
-							getMap()->getCamera()->centerOnPosition(selUnit->getPosition());
 					}
-				}
-				else if (_debugPlay == true)
-				{
-					setupCursor();
-					_parentState->getGame()->getCursor()->setHidden(false);	// don't know if this be needed here.
-//					_parentState->getGame()->getCursor()->setVisible();		// I seldom use debugPlay
-				}
+					else if (_debugPlay == true) // post-aLien-RF
+					{
+						setupSelector();
+						_parentState->getGame()->getCursor()->setHidden(false);
+					}
 			}
 		}
 
@@ -586,53 +549,40 @@ void BattlescapeGame::popState()
 			_battleStates.front()->init(); // init the next state in queue
 		}
 
-		// The selected unit died or became unconscious or disappeared inexplicably.
-		if (_battleSave->getSelectedUnit() == nullptr
+
+		if (_battleSave->getSelectedUnit() == nullptr // selected unit died or became unconscious or disappeared inexplicably
 			|| _battleSave->getSelectedUnit()->isOut_t() == true)
-//			|| _battleSave->getSelectedUnit()->isOut(true, true) == true)
 		{
 			//Log(LOG_INFO) << ". unit incapacitated: cancelAction & deSelect)";
-			cancelCurrentAction(); // note that this *will* setupCursor() under certain circumstances - ie, if current action was targetting.
-
+			cancelCurrentAction(); // note that this *will* setupSelector() under certain circumstances - eg, if current action was targetting.
 			_battleSave->setSelectedUnit(nullptr);
-			//if (_battleSave->getSelectedUnit() != nullptr) Log(LOG_INFO) << "selectUnit " << _battleSave->getSelectedUnit()->getId();
-			//else Log(LOG_INFO) << "NO UNIT SELECTED";
-
-/*			if (_battleSave->getSide() == FACTION_PLAYER) //|| _debugPlay == true) // kL <- let end of function set cursor.
-			{
-				//Log(LOG_INFO) << ". No selUnit, enable cursor";
-//				getMap()->setCursorType(CT_NORMAL);
-				setupCursor();
-				_parentState->getGame()->getCursor()->setHidden(false);
-//				_parentState->getGame()->getCursor()->setVisible();
-			} */
 		}
 
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
 		{
 			//Log(LOG_INFO) << ". updateSoldierInfo()";
-			_parentState->updateSoldierInfo(); // calcFoV ought have been done by now ...
+			_parentState->updateSoldierInfo(); // although calcFoV ought have been done by now ...
 		}
 	}
 
-	if (_battleStates.empty() == true) // note: endTurn() above^ might develop problems w/ cursor visibility ...
+	if (_battleStates.empty() == true)
 	{
-		if (_battleSave->getRfTriggerPosition().z != -1) // this refocuses the Camera back onto RF trigger unit after a brief delay.
+		_battleSave->getTileEngine()->getRfShooterPositions()->clear();
+
+		if (_battleSave->getRfTriggerPosition().z != -1) // refocus the Camera back onto RF trigger-unit after a brief delay
 		{
 			SDL_Delay(336);
 			//Log(LOG_INFO) << "popState - STATES EMPTY - set Camera to triggerPos & clear triggerPos";
 			getMap()->getCamera()->setMapOffset(_battleSave->getRfTriggerPosition());
-			_battleSave->storeRfTriggerPosition(Position(0,0,-1));
+			_battleSave->cacheRfTriggerPosition(Position(0,0,-1));
 		}
 
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
 		{
-			//Log(LOG_INFO) << ". states Empty, reable cursor";
-			setupCursor();
+			//Log(LOG_INFO) << ". states Empty, re-enable cursor";
+			setupSelector();
 			_parentState->getGame()->getCursor()->setHidden(false);
-//			_parentState->getGame()->getCursor()->setVisible(); // might not be needed here anymore. But safety.
-
-			_parentState->refreshMousePosition(); // update tile data on the HUD.
+			_parentState->refreshMousePosition(); // update tile data on the HUD
 		}
 	}
 	//Log(LOG_INFO) << "BattlescapeGame::popState() EXIT";
@@ -753,6 +703,9 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 			//Log(LOG_INFO) << ". . unit found id-" << _battleSave->getSelectedUnit()->getId();
 			centerOnUnit(_battleSave->getSelectedUnit());
 			_parentState->updateSoldierInfo(false); // This is useful for player when AI-turn ends. CalcFoV is done below_
+
+			if (_battleSave->getDebugTac() == true)
+				_parentState->refreshMousePosition();
 
 			if (_AISecondMove == false)
 			{
@@ -893,7 +846,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 //			ss << L"Walking to " << action.target;
 //			_parentState->debug(ss.str());
 
-			Pathfinding* const pf = _battleSave->getPathfinding();
+			Pathfinding* const pf (_battleSave->getPathfinding());
 			pf->setPathingUnit(action.actor);
 
 			if (_battleSave->getTile(action.target) != nullptr)
@@ -1034,9 +987,9 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 					//Log(LOG_INFO) << ". . . done Psi.";
 				}
 			}
+			break;
 		}
 		//Log(LOG_INFO) << ". . action.type DONE";
-		break;
 
 		case BA_NONE:
 		{
@@ -1198,7 +1151,7 @@ void BattlescapeGame::handleNonTargetAction()
 		_parentState->updateSoldierInfo();
 	}
 
-	setupCursor();
+	setupSelector();
 }
 
 /**
@@ -1266,13 +1219,13 @@ void BattlescapeGame::executeUnit() // private.
 }
 
 /**
- * Sets the cursor according to the selected action.
+ * Sets the selector according to the current action.
  */
-void BattlescapeGame::setupCursor()
+void BattlescapeGame::setupSelector()
 {
 	getMap()->refreshSelectorPosition();
 
-	CursorType cType;
+	SelectorType type;
 	int quads = 1;
 
 	if (_currentAction.targeting == true)
@@ -1280,35 +1233,34 @@ void BattlescapeGame::setupCursor()
 		switch (_currentAction.type)
 		{
 			case BA_THROW:
-				cType = CT_THROW;
-			break;
+				type = CT_THROW;
+				break;
 
 			case BA_PSICONTROL:
 			case BA_PSIPANIC:
 			case BA_PSICONFUSE:
 			case BA_PSICOURAGE:
 			case BA_USE:
-				cType = CT_PSI;
-			break;
+				type = CT_PSI;
+				break;
 
 			case BA_LAUNCH:
-				cType = CT_WAYPOINT;
-			break;
+				type = CT_WAYPOINT;
+				break;
 
 			default:
-				cType = CT_AIM;
+				type = CT_AIM;
 		}
 	}
 	else
 	{
-		cType = CT_NORMAL;
+		type = CT_NORMAL;
 
-		_currentAction.actor = _battleSave->getSelectedUnit();
-		if (_currentAction.actor != nullptr)
+		if ((_currentAction.actor = _battleSave->getSelectedUnit()) != nullptr)
 			quads = _currentAction.actor->getArmor()->getSize();
 	}
 
-	getMap()->setCursorType(cType, quads);
+	getMap()->setSelectorType(type, quads);
 }
 
 /**
@@ -1322,7 +1274,7 @@ bool BattlescapeGame::playableUnitSelected()
 {
 	return _battleSave->getSelectedUnit() != nullptr
 		&& (_battleSave->getSide() == FACTION_PLAYER
-			|| _battleSave->getDebugTac() == true);
+			|| _battleSave->getDebugTac() == true); // -> check out what '_debugPlay' really does and how it switches TRUE/FALSE
 }
 
 /**
@@ -1407,12 +1359,8 @@ bool BattlescapeGame::kneel(BattleUnit* const unit)
 			}
 		}
 	}
-	else //if (unit->getOriginalFaction() == FACTION_HOSTILE
-//		&& unit->isMindControlled() == true) //getFaction() == FACTION_PLAYER)
-//		&& unit->getUnitRules()->isMechanical() == false) // MOB has Unit-rules
-	{
+	else
 		_parentState->warning("STR_ACTION_NOT_ALLOWED_ALIEN"); // TODO: change to "not a Soldier, can't kneel".
-	}
 
 	return false;
 }
@@ -1589,52 +1537,66 @@ void BattlescapeGame::endTurn() // private.
 //	}
 //	_endTurnProcessed = false;
 
-	if (_battleSave->getDebugTac() == false)
-	{
-		if (_battleSave->getSide() == FACTION_PLAYER)
-		{
-			setupCursor();
-			_battleSave->getBattleState()->toggleIcons(true);
-		}
-		else
-		{
-			getMap()->setCursorType(CT_NONE);
-			_battleSave->getBattleState()->toggleIcons(false);
-		}
-	}
-
 
 	checkForCasualties();
 
 	int // if all units from either faction are killed - the mission is over.
-		liveAliens,
-		liveSoldiers;
+		liveHostile,
+		livePlayer;
 	const bool hostilesPacified = tallyUnits(
-										liveAliens,
-										liveSoldiers);
+										liveHostile,
+										livePlayer);
 
 	if (_battleSave->getObjectiveType() == MUST_DESTROY // brain death, end Final Mission.
 		&& _battleSave->allObjectivesDestroyed() == true)
 	{
 		_parentState->finishBattle(
 								false,
-								liveSoldiers);
+								livePlayer);
 		return;
 	}
 
-	const bool battleComplete = liveAliens == 0
-							 || liveSoldiers == 0;
+	const bool battleComplete = liveHostile == 0
+							 || livePlayer == 0;
 
 	if (battleComplete == false)
 	{
 		showInfoBoxQueue();
 		_parentState->updateSoldierInfo();
 
-		if (playableUnitSelected() == true) // <- only Faction_Player or Debug-mode
+		if (_battleSave->getSide() == FACTION_HOSTILE
+			&& _battleSave->getDebugTac() == false) // -> check out what '_debugPlay' really does and how it switches TRUE/FALSE
+		{
+			getMap()->setSelectorType(CT_NONE);
+			_battleSave->getBattleState()->toggleIcons(false);
+		}
+		else
+		{
+			setupSelector();
+			if (playableUnitSelected() == true)
+				centerOnUnit(_battleSave->getSelectedUnit()); // <- probly redudant w/ centerOnUnit() at start of handleUnitAI()
+
+			if (_battleSave->getDebugTac() == false)
+				_battleSave->getBattleState()->toggleIcons(true);
+		}
+/*		if (_battleSave->getDebugTac() == false)
+		{
+			if (_battleSave->getSide() == FACTION_PLAYER)
+			{
+				setupSelector();
+				_battleSave->getBattleState()->toggleIcons(true);
+			}
+			else
+			{
+				getMap()->setSelectorType(CT_NONE);
+				_battleSave->getBattleState()->toggleIcons(false);
+			}
+		}
+		if (playableUnitSelected() == true) // <- Faction_Player or debug-mode
 		{
 			centerOnUnit(_battleSave->getSelectedUnit());
-			setupCursor();
-		}
+			setupSelector();
+		} */
 
 		if (hostilesPacified == true)
 			_battleSave->setPacified();
@@ -1644,8 +1606,8 @@ void BattlescapeGame::endTurn() // private.
 	{
 		_endTurnRequested = false;
 
-		if (battleComplete == true
-			|| _battleSave->getSide() != FACTION_NEUTRAL)
+		if (_battleSave->getSide() != FACTION_NEUTRAL
+			|| battleComplete == true)
 		{
 			_parentState->getGame()->delayBlit();
 			_parentState->getGame()->pushState(new NextTurnState(
@@ -2327,12 +2289,11 @@ bool BattlescapeGame::handlePanickingPlayer() // private.
 bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 {
 	//Log(LOG_INFO) << "bg::handlePanickingUnit() - " << unit->getId();
-	const UnitStatus status = unit->getUnitStatus();
+	const UnitStatus status (unit->getUnitStatus());
 
-	if (status == STATUS_PANICKING
-		|| status == STATUS_BERSERK)
+	if (status == STATUS_PANICKING || status == STATUS_BERSERK)
 	{
-		_parentState->getMap()->setCursorType(CT_NONE);
+		_parentState->getMap()->setSelectorType(CT_NONE);
 		_battleSave->setSelectedUnit(unit);
 
 		if (Options::battleAlienPanicMessages == true
@@ -2341,7 +2302,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 			//Log(LOG_INFO) << "bg: panic id-" << unit->getId();
 			centerOnUnit(unit, true);
 
-			Game* const game = _parentState->getGame();
+			Game* const game (_parentState->getGame());
 			std::string st;
 			if (status == STATUS_PANICKING)
 				st = "STR_HAS_PANICKED";
@@ -2396,7 +2357,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 
 				unit->clearCache();
 
-				Pathfinding* const pf = _battleSave->getPathfinding();
+				Pathfinding* const pf (_battleSave->getPathfinding());
 				pf->setPathingUnit(unit);
 
 				const std::vector<int> reachable (pf->findReachable(unit, tu));
@@ -2449,76 +2410,76 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 
 				if (action.weapon != nullptr)
 				{
-					if (action.weapon->getRules()->getBattleType() == BT_FIREARM)
+					switch (action.weapon->getRules()->getBattleType())
 					{
-						Tile* const targetTile (_battleSave->getTiles()[RNG::pick(_battleSave->getMapSizeXYZ())]);
-						action.target = targetTile->getPosition();
-						if (_battleSave->getTile(action.target) != nullptr)
-						{
-							statePushBack(new UnitTurnBState(this, action, false));
-
-							action.type = BA_SNAPSHOT;
-							if (action.weapon->getAmmoItem() == nullptr
-								|| action.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
-							{
-								action.cameraPosition = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
-							}
-							else
-								action.cameraPosition = Position(0,0,-1);
-
-							const int actionTu (action.actor->getActionTu(action.type, action.weapon));
-							int shots; // tabulate how many shots can be fired before unit runs out of TUs
-							if (actionTu != 0)
-								shots = tu / actionTu;
-							else
-								shots = 0;
-
-							for (int
-									i = 0;
-									i != shots;
-									++i)
-							{
-								statePushBack(new ProjectileFlyBState(this, action));
-							}
-						}
-					}
-					else if (action.weapon->getRules()->getBattleType() == BT_GRENADE)
-					{
-						if (action.weapon->getFuse() == -1)
-							action.weapon->setFuse(0); // yeh set timer even if throw is invalid.
-
-						for (int // try a few times to get a tile to throw to.
-								i = 0;
-								i != 50;
-								++i)
-						{
-							action.target = Position(
-											unit->getPosition().x + RNG::generate(-20,20),
-											unit->getPosition().y + RNG::generate(-20,20),
-											unit->getPosition().z);
-
+						case BT_FIREARM:
+							action.target = _battleSave->getTiles()[RNG::pick(_battleSave->getMapSizeXYZ())]->getPosition();
 							if (_battleSave->getTile(action.target) != nullptr)
 							{
 								statePushBack(new UnitTurnBState(this, action, false));
 
-								const Position
-									originVoxel (_battleSave->getTileEngine()->getOriginVoxel(action)),
-									targetVoxel (Position::toVoxelSpaceCentered(
-																			action.target,
-																			2 - _battleSave->getTile(action.target)->getTerrainLevel())); // LoFT of floor is typically 2 voxels thick.
-
-								if (_battleSave->getTileEngine()->validateThrow(
-																			action,
-																			originVoxel,
-																			targetVoxel) == true)
+								action.type = BA_SNAPSHOT;
+								if (action.weapon->getAmmoItem() == nullptr
+									|| action.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
 								{
-									action.type = BA_THROW;
 									action.cameraPosition = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
+								}
+								else
+									action.cameraPosition = Position(0,0,-1);
+
+								const int actionTu (action.actor->getActionTu(action.type, action.weapon));
+								int shots; // tabulate how many shots can be fired before unit runs out of TUs
+								if (actionTu != 0)
+									shots = tu / actionTu;
+								else
+									shots = 0;
+
+								for (int
+										i = 0;
+										i != shots;
+										++i)
+								{
 									statePushBack(new ProjectileFlyBState(this, action));
-									break;
 								}
 							}
-						}
+							break;
+
+						case BT_GRENADE:
+							if (action.weapon->getFuse() == -1)
+								action.weapon->setFuse(0); // yeh set timer even if throw is invalid.
+
+							for (int // try a few times to get a tile to throw to.
+									i = 0;
+									i != 50;
+									++i)
+							{
+								action.target = Position(
+												unit->getPosition().x + RNG::generate(-20,20),
+												unit->getPosition().y + RNG::generate(-20,20),
+												unit->getPosition().z);
+
+								if (_battleSave->getTile(action.target) != nullptr)
+								{
+									statePushBack(new UnitTurnBState(this, action, false));
+
+									const Position
+										originVoxel (_battleSave->getTileEngine()->getOriginVoxel(action)),
+										targetVoxel (Position::toVoxelSpaceCentered(
+																				action.target,
+																				2 - _battleSave->getTile(action.target)->getTerrainLevel())); // LoFT of floor is typically 2 voxels thick.
+
+									if (_battleSave->getTileEngine()->validateThrow(
+																				action,
+																				originVoxel,
+																				targetVoxel) == true)
+									{
+										action.type = BA_THROW;
+										action.cameraPosition = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
+										statePushBack(new ProjectileFlyBState(this, action));
+										break;
+									}
+								}
+							}
 					}
 				}
 
@@ -2568,9 +2529,8 @@ bool BattlescapeGame::cancelCurrentAction(bool force)
 					if (force == false
 						&& (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true))
 					{
-						setupCursor();
+						setupSelector();
 						_parentState->getGame()->getCursor()->setHidden(false);
-//						_parentState->getGame()->getCursor()->setVisible();
 					}
 				}
 			}
@@ -2708,7 +2668,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 										_currentAction.target) <= _currentAction.weapon->getRules()->getMaxRange())
 					{
 						// get the sound/animation started
-//						getMap()->setCursorType(CT_NONE);
+//						getMap()->setSelectorType(CT_NONE);
 //						_parentState->getGame()->getCursor()->setVisible(false);
 //						_currentAction.cameraPosition = getMap()->getCamera()->getMapOffset();
 						_currentAction.cameraPosition = Position(0,0,-1); // don't adjust the camera when coming out of ProjectileFlyB/ExplosionB states
@@ -2764,9 +2724,9 @@ void BattlescapeGame::primaryAction(const Position& pos)
 //								_currentAction.targeting = false;
 //								_currentAction.type = BA_NONE;
 //								}
-//								setupCursor();
+//								setupSelector();
 
-//								getMap()->setCursorType(CT_NONE);							// kL
+//								getMap()->setSelectorType(CT_NONE);							// kL
 //								_parentState->getGame()->getCursor()->setVisible(false);	// kL
 //								_parentState->getMap()->refreshSelectorPosition();			// kL
 								// kL_end.
@@ -2794,7 +2754,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 		else
 		{
 			//Log(LOG_INFO) << ". . . . FIRING or THROWING";
-			getMap()->setCursorType(CT_NONE);
+			getMap()->setSelectorType(CT_NONE);
 			_parentState->getGame()->getCursor()->setHidden();
 
 			_currentAction.target = pos;
@@ -2829,7 +2789,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				_parentState->updateSoldierInfo();
 
 				cancelCurrentAction();
-				setupCursor();
+				setupSelector();
 
 				_currentAction.actor = targetUnit;
 			}
@@ -2908,7 +2868,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 
 					if (allowPreview == false)
 					{
-						getMap()->setCursorType(CT_NONE);
+						getMap()->setSelectorType(CT_NONE);
 						_parentState->getGame()->getCursor()->setHidden();
 
 						statePushBack(new UnitWalkBState(this, _currentAction));
@@ -2950,7 +2910,7 @@ void BattlescapeGame::launchAction()
 	getMap()->getWaypoints()->clear();
 	_currentAction.target = _currentAction.waypoints.front();
 
-	getMap()->setCursorType(CT_NONE);
+	getMap()->setSelectorType(CT_NONE);
 	_parentState->getGame()->getCursor()->setHidden();
 
 //	_currentAction.cameraPosition = getMap()->getCamera()->getMapOffset();
@@ -2969,7 +2929,7 @@ void BattlescapeGame::psiButtonAction()
 	_currentAction.targeting = true;
 	_currentAction.type = BA_PSIPANIC;
 
-	setupCursor();
+	setupSelector();
 }
 
 /**
@@ -2989,7 +2949,7 @@ void BattlescapeGame::moveUpDown(
 	else
 		--_currentAction.target.z;
 
-	getMap()->setCursorType(CT_NONE);
+	getMap()->setSelectorType(CT_NONE);
 	_parentState->getGame()->getCursor()->setHidden();
 
 	Pathfinding* const pf = _battleSave->getPathfinding();
@@ -3536,49 +3496,49 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 
 /**
  * Tallies the living units in the game.
- * @param liveAliens	- reference in which to store the live alien tally
- * @param liveSoldiers	- reference in which to store the live XCom tally
+ * @param liveHostile	- reference in which to store the live aLien tally
+ * @param livePlayer	- reference in which to store the live xCom tally
  * @return, true if all aliens are dead or pacified independent of battleAllowPsionicCapture option
  */
 bool BattlescapeGame::tallyUnits(
-		int& liveAliens,
-		int& liveSoldiers) const
+		int& liveHostile,
+		int& livePlayer) const
 {
 	bool ret = true;
 
-	liveSoldiers =
-	liveAliens = 0;
+	liveHostile =
+	livePlayer = 0;
 
 	for (std::vector<BattleUnit*>::const_iterator
 			j = _battleSave->getUnits()->begin();
 			j != _battleSave->getUnits()->end();
 			++j)
 	{
-//		if ((*j)->isOut() == false)
 		if ((*j)->isOut_t(OUT_STAT) == false)
 		{
-			if ((*j)->getOriginalFaction() == FACTION_HOSTILE)
+			switch ((*j)->getOriginalFaction())
 			{
-				if ((*j)->getFaction() != FACTION_PLAYER
-					|| Options::battleAllowPsionicCapture == false)
-				{
-					++liveAliens;
-				}
+				case FACTION_HOSTILE:
+					if ((*j)->getFaction() != FACTION_PLAYER
+						|| Options::battleAllowPsionicCapture == false)
+					{
+						++liveHostile;
+					}
 
-				if ((*j)->getFaction() == FACTION_HOSTILE)
-					ret = false;
-			}
-			else if ((*j)->getOriginalFaction() == FACTION_PLAYER)
-			{
-				if ((*j)->getFaction() == FACTION_PLAYER)
-					++liveSoldiers;
-				else
-					++liveAliens;
+					if ((*j)->getFaction() == FACTION_HOSTILE)
+						ret = false;
+					break;
+
+				case FACTION_PLAYER:
+					if ((*j)->getFaction() == FACTION_PLAYER)
+						++livePlayer;
+					else
+						++liveHostile;
 			}
 		}
 	}
 
-	//Log(LOG_INFO) << "bg:tallyUnits() ret = " << ret << "; Sol = " << liveSoldiers << "; aLi = " << liveAliens;
+	//Log(LOG_INFO) << "bg:tallyUnits() ret = " << ret << "; Sol = " << livePlayer << "; aLi = " << liveHostile;
 	return ret;
 }
 

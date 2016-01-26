@@ -2302,7 +2302,7 @@ double BattleUnit::getAccuracy(
 		}
 	} // no penalty for dual-wielding 2x1h weapons
 
-	if (_battleGame->getPanicHandled() == false) // berserk xCom agents get lowered accuracy.
+	if (_battleGame->playerPanicHandled() == false) // berserk xCom agents get lowered accuracy.
 		ret *= 0.68;
 
 	//Log(LOG_INFO) << "BattleUnit::getAccuracy() ret = " << ret;
@@ -2990,7 +2990,7 @@ BattleItem* BattleUnit::getGrenade() const
  */
 bool BattleUnit::isGrenadeSuitable(const BattleItem* const grenade) const // private.
 {
-	if (_battleGame->getPanicHandled() == true // -> is AI, only non-smoke grenades are usable.
+	if (_battleGame->playerPanicHandled() == true // -> is AI, only non-smoke grenades are usable.
 		&& grenade->getRules()->getDamageType() == DT_SMOKE)
 	{
 		return false;

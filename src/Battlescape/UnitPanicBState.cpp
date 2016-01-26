@@ -70,7 +70,7 @@ void UnitPanicBState::think()
 	}
 
 	_parent->popState();
-	_parent->setupCursor();
+	_parent->setupSelector();
 }
 
 /**

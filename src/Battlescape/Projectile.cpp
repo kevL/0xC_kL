@@ -201,7 +201,7 @@ VoxelType Projectile::calculateShot(
 	if (_action.actor->getFaction() == FACTION_PLAYER // aLiens don't even get in here!
 		&& _action.autoShotCount == 1
 		&& _action.type != BA_LAUNCH
-		&& _battleSave->getBattleGame()->getPanicHandled() == true
+		&& _battleSave->getBattleGame()->playerPanicHandled() == true
 		&& ((	   (SDL_GetModState() & KMOD_CTRL) == 0
 				&& (SDL_GetModState() & KMOD_ALT) == 0
 				&& (SDL_GetModState() & KMOD_SHIFT) == 0)

@@ -209,11 +209,11 @@ void NextTurnState::nextTurn()
 	_game->popState();
 
 	int
-		liveAliens,
+		liveHostile,
 		livePlayer;
-	_state->getBattleGame()->tallyUnits(liveAliens, livePlayer);
-	if (livePlayer == 0		// all xCom dead, or
-		|| (liveAliens == 0		// not the final mission and all aLiens dead.
+	_state->getBattleGame()->tallyUnits(liveHostile, livePlayer);
+	if (livePlayer == 0			// all xCom dead, or
+		|| (liveHostile == 0	// not the final mission and all aLiens dead.
 			&& _battleSave->getObjectiveType() != MUST_DESTROY))
 	{
 		switchMusic = true;
@@ -225,10 +225,10 @@ void NextTurnState::nextTurn()
 
 		if (_battleSave->getSide() == FACTION_PLAYER)
 		{
-			_state->getBattleGame()->setupCursor();
+			_state->getBattleGame()->setupSelector();
 			_game->getCursor()->setVisible();
 
-			const int turn = _battleSave->getTurn();
+			const int turn (_battleSave->getTurn());
 /*			if (turn == 1 || (turn % Options::autosaveFrequency) == 0)
 			{
 				if (_game->getSavedGame()->isIronman() == true)

@@ -1071,7 +1071,7 @@ void BattlescapeState::init()
 	if (_firstInit == true && playableUnitSelected() == true)
 	{
 		_firstInit = false;
-		_battleGame->setupCursor();
+		_battleGame->setupSelector();
 
 		_map->getCamera()->centerOnPosition(_battleSave->getSelectedUnit()->getPosition(), false);
 
@@ -1209,7 +1209,7 @@ void BattlescapeState::mapOver(Action* action)
 //			action->getDetails()->motion.x = static_cast<Uint16>(_xBeforeMouseScrolling);
 //			action->getDetails()->motion.y = static_cast<Uint16>(_yBeforeMouseScrolling);
 
-			_map->setCursorType(CT_NONE);
+			_map->setSelectorType(CT_NONE);
 		}
 		else
 		{
@@ -1537,7 +1537,7 @@ void BattlescapeState::mapClick(Action* action)
 	}
 
 	if (_mouseOverIcons == false
-		&& _map->getCursorType() != CT_NONE
+		&& _map->getSelectorType() != CT_NONE
 		&& _battleGame->isBusy() == false)
 	{
 		Position pos;
@@ -1591,9 +1591,9 @@ void BattlescapeState::stopScrolling(Action* action)
 	{
 		SDL_WarpMouse(static_cast<Uint16>(_xBeforeMouseScrolling), static_cast<Uint16>(_yBeforeMouseScrolling));
 		action->setMouseAction(_xBeforeMouseScrolling, _yBeforeMouseScrolling, _map->getX(), _map->getY());
-		_battleGame->setupCursor();
+		_battleGame->setupSelector();
 		if (_battleGame->getCurrentAction()->actor == nullptr && (_save->getSide() == FACTION_PLAYER || _save->getDebugTac() == true))
-			_map->setCursorType(CT_NORMAL);
+			_map->setSelectorType(CT_NORMAL);
 	}
 	else
 	{
@@ -1648,12 +1648,15 @@ inline void BattlescapeState::handle(Action* action)
 				{
 					if (_battleSave->getDebugTac() == false)
 					{
-						if (action->getDetails()->key.keysym.sym == SDLK_d)				// "ctrl-d" - enable debug mode.
-						{
+						if (action->getDetails()->key.keysym.sym == SDLK_d				// "ctrl-d" - enable debug mode.
+							&& allowButtons() == true)									// - disallow turning debug-mode on during a non-
+						{																//   player turn else the HUD won't show back up.
 							beep = true;
 							_battleSave->debugTac();
 							debugPrint(L"debug set active");
 						}
+						else
+							debugPrint(L"player turn only");
 					}
 					else
 					{
@@ -2189,7 +2192,7 @@ void BattlescapeState::selectNextPlayerUnit(
 			_map->getCamera()->centerOnPosition(unit->getPosition());
 
 		_battleGame->cancelCurrentAction();
-		_battleGame->setupCursor();
+		_battleGame->setupSelector();
 	}
 }
 
@@ -2217,7 +2220,7 @@ void BattlescapeState::selectPreviousPlayerUnit(
 			_map->getCamera()->centerOnPosition(unit->getPosition());
 
 		_battleGame->cancelCurrentAction();
-		_battleGame->setupCursor();
+		_battleGame->setupSelector();
 	}
 }
 /**
@@ -2385,7 +2388,7 @@ void BattlescapeState::btnLeftHandRightClick(Action*)
 {
 	if (playableUnitSelected() == true)
 	{
-		_battleGame->cancelCurrentAction(); // was, force= true
+		_battleGame->cancelCurrentAction();
 
 		_battleSave->getSelectedUnit()->setActiveHand(AH_LEFT);
 		updateSoldierInfo(false);
@@ -2424,7 +2427,7 @@ void BattlescapeState::btnRightHandRightClick(Action*)
 {
 	if (playableUnitSelected() == true)
 	{
-		_battleGame->cancelCurrentAction(); // was, force= true
+		_battleGame->cancelCurrentAction();
 
 		_battleSave->getSelectedUnit()->setActiveHand(AH_RIGHT);
 		updateSoldierInfo(false);
@@ -2529,7 +2532,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 					updateSoldierInfo();
 
 					_battleGame->cancelCurrentAction();
-					_battleGame->setupCursor();
+					_battleGame->setupSelector();
 				}
 
 				Camera* const camera = _map->getCamera();
@@ -2601,7 +2604,7 @@ void BattlescapeState::btnLaunchPress(Action* action)
 		_btnLaunch->setVisible(false);
 
 		_battleGame->cancelCurrentAction(true);
-		_battleGame->setupCursor();
+		_battleGame->setupSelector();
 	}
 
 	action->getDetails()->type = SDL_NOEVENT; // consume the event
@@ -2613,7 +2616,7 @@ void BattlescapeState::btnLaunchPress(Action* action)
  */
 void BattlescapeState::btnPsiClick(Action* action)
 {
-	if (_map->getCursorType() != CT_PSI
+	if (_map->getSelectorType() != CT_PSI
 		&& _battleGame->getCurrentAction()->waypoints.empty() == true)
 	{
 		_bigBtnBorder->setY(45);
@@ -2811,16 +2814,16 @@ void BattlescapeState::txtTooltipOut(Action* action)
  * and while a player's units are panicking. The save button is an exception to
  * still be able to save if something goes wrong during the alien turn and
  * submit the save file for dissection.
- * @param allowSaving - true if the help button was clicked (default false)
+ * @param allowSave - true if the Options button was clicked (default false)
  * @return, true if the player can still press buttons
  */
-bool BattlescapeState::allowButtons(bool allowSaving) const // private
+bool BattlescapeState::allowButtons(bool allowSave) const // private
 {
 	return (
-			(allowSaving == true
+			(allowSave == true
 					|| _battleSave->getSide() == FACTION_PLAYER
-					|| _battleSave->getDebugTac() == true)
-				&& (_battleGame->getPanicHandled() == true
+					|| _battleSave->getDebugTac() == true) // -> check out what '_debugPlay' really does and how it switches TRUE/FALSE
+				&& (_battleGame->playerPanicHandled() == true
 					|| _firstInit == true)
 				&& _map->getProjectile() == nullptr);
 }
@@ -2933,7 +2936,8 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	if (calcFoV == true)
 		_battleSave->getTileEngine()->calculateFOV(selUnit);
 
-	hotSqrsUpdate();
+	if (_battleSave->getSide() == FACTION_PLAYER)
+		hotSqrsUpdate();
 
 	_txtName->setText(selUnit->getName(
 									_game->getLanguage(),
@@ -3230,9 +3234,9 @@ void BattlescapeState::hotSqrsUpdate()
 		i != _battleSave->getUnits()->end() && j != HOTSQRS;
 		++i)
 	{
-		if ((*i)->isOut_t(OUT_STAT) == false
+		if ((*i)->getFaction() == FACTION_HOSTILE
 			&& (*i)->getUnitVisible() == true
-			&& (*i)->getFaction() == FACTION_HOSTILE)
+			&& (*i)->isOut_t(OUT_STAT) == false)
 		{
 			_btnHostileUnit[j]->setVisible();
 			_numHostileUnit[j]->setVisible();
@@ -3492,11 +3496,13 @@ void BattlescapeState::hotSqrsCycle(BattleUnit* const selUnit) // private.
 					color = static_cast<Uint8>(colorBlue);
 			}
 			else
-				color = 51; // green // 114; // lt.blue <- hostile unit is visible but not currently viewed by friendly units; ergo do not cycle colors.
+				color = GREEN_D; // hostile unit is visible but not currently viewed by friendly units; ergo do not cycle colors.
 
 			_btnHostileUnit[i]->drawRect(0,0, 15,13, static_cast<Uint8>(color_border));
 			_btnHostileUnit[i]->drawRect(1,1, 13,11, color);
 		}
+		else
+			break;
 	}
 
 	if (colorRed == 34)
@@ -3707,8 +3713,8 @@ void BattlescapeState::popup(State* state)
  * debriefing screen for the mission.
  * @param abort			- true if the mission was aborted
  * @param inExitArea	- number of soldiers in the exit area OR number of
- *							survivors when battle finished due to either all
- *							aliens or objective being destroyed
+ *						  survivors when battle finished due to either all
+ *						  aliens or objective being destroyed
  */
 void BattlescapeState::finishBattle(
 		const bool abort,

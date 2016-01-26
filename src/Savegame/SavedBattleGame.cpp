@@ -1330,40 +1330,38 @@ bool SavedBattleGame::endFactionTurn()
 		}
 	}
 
-	bool ret = false;
-
-	if (_side == FACTION_PLAYER) // end of Player turn.
+	bool ret;
+	switch (_side)
 	{
-		_scanDots.clear();
-		if (_selectedUnit != nullptr
-			&& _selectedUnit->getOriginalFaction() == FACTION_PLAYER)
-		{
-			_lastSelectedUnit = _selectedUnit;
-		}
+		case FACTION_PLAYER: // end of Player turn.
+			_side = FACTION_HOSTILE;
+			ret = false;
 
-		_side = FACTION_HOSTILE;
-		_selectedUnit = nullptr;
+			if (_selectedUnit != nullptr
+				&& _selectedUnit->isMindControlled() == false)
+			{
+				_lastSelectedUnit = _selectedUnit;
+			}
+			_selectedUnit = nullptr;
 
-		_shuffleUnits = _units;
-		RNG::shuffle(_shuffleUnits.begin(), _shuffleUnits.end());
-	}
-	else if (_side == FACTION_HOSTILE) // end of Alien turn.
-	{
-		//Log(LOG_INFO) << ". end Hostile phase -> NEUTRAL";
-		_side = FACTION_NEUTRAL;
+			_scanDots.clear();
 
-		// If there is no neutral team, skip this section and instantly prepare
-		// new turn for the player.
-		if (selectNextFactionUnit() == nullptr) // else this will cycle through NEUTRAL units
-		{
-			//Log(LOG_INFO) << ". no neutral units to select ... -> PLAYER";
+			_shuffleUnits = _units;
+			RNG::shuffle(_shuffleUnits.begin(), _shuffleUnits.end());
+			break;
+
+		case FACTION_HOSTILE: // end of Alien turn.
+			_side = FACTION_NEUTRAL;
+			if (selectNextFactionUnit() == nullptr)
+				ret = true;
+			else
+				ret = false;
+			break;
+
+		default:
+		case FACTION_NEUTRAL: // end of Civilian turn.
+			//Log(LOG_INFO) << ". end Neutral phase -> PLAYER";
 			ret = true;
-		}
-	}
-	else if (_side == FACTION_NEUTRAL) // end of Civilian turn.
-	{
-		//Log(LOG_INFO) << ". end Neutral phase -> PLAYER";
-		ret = true;
 	}
 
 	if (ret == true)
@@ -1373,10 +1371,10 @@ bool SavedBattleGame::endFactionTurn()
 
 
 	int
-		liveAliens,
+		liveHostile,
 		livePlayer;
 	_battleState->getBattleGame()->tallyUnits(
-											liveAliens,
+											liveHostile,
 											livePlayer);
 
 	if (_cheatAI == false // pseudo the Turn-20 / less-than-3-aliens-left Reveal rule.
@@ -1394,7 +1392,7 @@ bool SavedBattleGame::endFactionTurn()
 			{
 				const int delta = RNG::generate(0,5);
 				if (_turn > 17 + delta
-					|| (_turn > 5 && liveAliens < delta - 1))
+					|| (_turn > 5 && liveHostile < delta - 1))
 				{
 					_cheatAI = true;
 				}
@@ -2947,7 +2945,7 @@ bool SavedBattleGame::getPacified() const
  * Stores the camera-position where the last RF-trigger happened.
  * @param pos - position
  */
-void SavedBattleGame::storeRfTriggerPosition(const Position& pos)
+void SavedBattleGame::cacheRfTriggerPosition(const Position& pos)
 {
 	_rfTriggerPosition = pos;
 }

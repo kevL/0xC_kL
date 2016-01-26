@@ -208,15 +208,11 @@ void UnitWalkBState::think()
 				return;
 			}
 
-			if (_unit->getFaction() == FACTION_PLAYER
-				&& _parent->getPanicHandled() == true)
+			if (_parent->getBattleSave()->getSide() == FACTION_PLAYER
+				&& _parent->playerPanicHandled() == true)
 			{
-				BattlescapeState* const battleState (_parent->getBattlescapeState());
-				if (battleState->playableUnitSelected() == true)
-				{
-					battleState->hotSqrsClear();
-					battleState->hotSqrsUpdate();
-				}
+				_parent->getBattlescapeState()->hotSqrsClear();
+				_parent->getBattlescapeState()->hotSqrsUpdate();
 			}
 		}
 		else if (_isVisible == true) // keep walking ... make sure the unit sprites are up to date
@@ -298,7 +294,7 @@ void UnitWalkBState::think()
 void UnitWalkBState::cancel()
 {
 	if (_battleSave->getSide() == FACTION_PLAYER
-		&& _parent->getPanicHandled() == true)
+		&& _parent->playerPanicHandled() == true)
 	{
 		if (_preStepTurn == true)
 		{
@@ -494,7 +490,7 @@ bool UnitWalkBState::doStatusStand() // private.
 	{
 		//Log(LOG_INFO) << ". . tuCost > _unit->TU()";
 		if (_unit->getFaction() == FACTION_PLAYER
-			&& _parent->getPanicHandled() == true
+			&& _parent->playerPanicHandled() == true
 			&& tuTest < 255)
 		{
 			//Log(LOG_INFO) << ". send warning: not enough TU";
@@ -512,7 +508,7 @@ bool UnitWalkBState::doStatusStand() // private.
 	{
 		//Log(LOG_INFO) << ". . staCost > _unit->getEnergy()";
 		if (_unit->getFaction() == FACTION_PLAYER
-			&& _parent->getPanicHandled() == true)
+			&& _parent->playerPanicHandled() == true)
 		{
 			_action.result = "STR_NOT_ENOUGH_ENERGY";
 		}
@@ -524,10 +520,10 @@ bool UnitWalkBState::doStatusStand() // private.
 		return false;
 	}
 
-	if (_parent->getPanicHandled() == true						// note this operates differently for player-units and non-player units;
+	if (_parent->playerPanicHandled() == true					// note this operates differently for player-units and non-player units;
 		&& _unit->getFaction() != FACTION_PLAYER				// <- no Reserve tolerance.
 		&& _parent->checkReservedTu(_unit, tuCost) == false)	// Only player's units will *bypass* abortPath() due to panicking ....
-																// Tbh, other code should have rendered the getPanicHandled() redundant.
+																// Tbh, other code should have rendered the playerPanicHandled() redundant.
 																// That is to say this should kick in *only* when player has actively
 	{															// clicked to move but tries to go further than TUs allow; because
 		//Log(LOG_INFO) << ". . checkReservedTu(_unit, tuCost) == false";	// either the AI or the panic-code should not try to
@@ -555,15 +551,16 @@ bool UnitWalkBState::doStatusStand() // private.
 		int soundId;
 		switch (_te->unitOpensDoor(_unit, false, dir))
 		{
-			case 0: // wooden door
+			case DR_WOOD_OPEN:
 				soundId = ResourcePack::DOOR_OPEN;
 				break;
-			case 1: // ufo door open
+			case DR_UFO_OPEN:
 				wait = true;
 				soundId = ResourcePack::SLIDING_DOOR_OPEN;
 				break;
-			case 2:	// ufo door still opening ...
-				wait = true; // no break.
+			case DR_UFO_WAIT:
+				wait = true; // no break;
+
 			default:
 				soundId = -1;
 		}
@@ -975,15 +972,11 @@ void UnitWalkBState::doStatusTurn() // private.
 		_unit->setUnitStatus(STATUS_STANDING);
 		_parent->popState();
 	}
-	else if (_unit->getFaction() == FACTION_PLAYER
-		&& _parent->getPanicHandled() == true)
+	else if (_parent->getBattleSave()->getSide() == FACTION_PLAYER
+		&& _parent->playerPanicHandled() == true)
 	{
-		BattlescapeState* const battleState (_parent->getBattlescapeState());
-		if (battleState->playableUnitSelected() == true)
-		{
-			battleState->hotSqrsClear();
-			battleState->hotSqrsUpdate();
-		}
+		_parent->getBattlescapeState()->hotSqrsClear();
+		_parent->getBattlescapeState()->hotSqrsUpdate();
 	}
 }
 
@@ -1102,7 +1095,7 @@ void UnitWalkBState::postPathProcedures() // private.
 			}
 		}
 	}
-	else if (_parent->getPanicHandled() == false) // is Faction_Player
+	else if (_parent->playerPanicHandled() == false) // is Faction_Player
 		_unit->setTimeUnits(0);
 
 
@@ -1166,8 +1159,8 @@ int UnitWalkBState::getFinalDirection() const // private.
 bool UnitWalkBState::visForUnits() const // private.
 {
 	if (_falling == true
-		|| _parent->getPanicHandled() == false)	// note: _playerPanicHandled can be false only on Player's turn
-	{											// so if expression== TRUE then it's a player's turn.
+		|| _parent->playerPanicHandled() == false)	// note: _playerPanicHandled can be false only on Player's turn
+	{												// so if expression== TRUE then it's a player's turn.
 		return false;
 	}
 

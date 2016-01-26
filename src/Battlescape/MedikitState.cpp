@@ -448,7 +448,7 @@ void MedikitState::painClick(Action*)
 					battleSave->getBattleState()->updateSoldierInfo();
 
 					battleSave->getBattleGame()->cancelCurrentAction();
-					battleSave->getBattleGame()->setupCursor();
+					battleSave->getBattleGame()->setupSelector();
 
 					battleSave->getBattleGame()->getMap()->getCamera()->centerOnPosition(_action->targetUnit->getPosition());
 

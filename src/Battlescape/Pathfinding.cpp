@@ -2209,7 +2209,7 @@ void Pathfinding::setMoveType() // private.
 void Pathfinding::setInputModifiers()
 {
 	if (_battleSave->getSide() != FACTION_PLAYER
-		|| _battleSave->getBattleGame()->getPanicHandled() == false)
+		|| _battleSave->getBattleGame()->playerPanicHandled() == false)
 	{
 		_ctrl =
 		_alt =

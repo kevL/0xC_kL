@@ -177,7 +177,7 @@ void Camera::mouseRelease(Action* action, State*)
  */
 void Camera::mouseOver(Action* action, State*)
 {
-	if (_map->getCursorType() != CT_NONE
+	if (_map->getSelectorType() != CT_NONE
 		&& (Options::battleEdgeScroll == SCROLL_AUTO
 			|| _scrollTrigger == true))
 	{
@@ -274,7 +274,7 @@ void Camera::mouseOver(Action* action, State*)
  */
 void Camera::keyboardPress(Action* action, State*)
 {
-	if (_map->getCursorType() != CT_NONE)
+	if (_map->getSelectorType() != CT_NONE)
 	{
 		const int scrollSpeed = Options::battleScrollSpeed;
 		switch (action->getDetails()->key.keysym.sym)
@@ -343,7 +343,7 @@ void Camera::keyboardPress(Action* action, State*)
  */
 void Camera::keyboardRelease(Action* action, State*)
 {
-	if (_map->getCursorType() != CT_NONE)
+	if (_map->getSelectorType() != CT_NONE)
 	{
 		switch (action->getDetails()->key.keysym.sym)
 		{

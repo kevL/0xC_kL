@@ -120,7 +120,7 @@ void ProjectileFlyBState::init()
 	{
 		if (_unit->getTimeUnits() >= _action.TU // go ->
 			|| _action.type == BA_MELEE
-			|| _parent->getPanicHandled() == false
+			|| _parent->playerPanicHandled() == false
 			|| _unit->getFaction() != FACTION_PLAYER)
 		{
 			_ammo = _action.weapon->getAmmoItem();
@@ -209,7 +209,7 @@ void ProjectileFlyBState::init()
 
 		case BA_THROW:
 		{
-			//Log(LOG_INFO) << ". . BA_THROW panic = " << (int)(_parent->getPanicHandled() == false);
+			//Log(LOG_INFO) << ". . BA_THROW panic = " << (int)(_parent->playerPanicHandled() == false);
 			const Tile* const tileTarget = _battleSave->getTile(_action.target); // always Valid.
 			if (TileEngine::validThrowRange(
 										&_action,
@@ -281,14 +281,14 @@ void ProjectileFlyBState::init()
 			&& (SDL_GetModState() & KMOD_CTRL) != 0	// force fire at Floor w/ [CTRL+ALT]
 			&& (SDL_GetModState() & KMOD_SHIFT) == 0
 			&& Options::battleForceFire == true)
-		|| _parent->getPanicHandled() == false) // note that nonPlayer berserk bypasses this and targets according to targetUnit OR tileParts below_
+		|| _parent->playerPanicHandled() == false) // note that nonPlayer berserk bypasses this and targets according to targetUnit OR tileParts below_
 	{
 		//Log(LOG_INFO) << "projFlyB init() Player panic OR Ctrl [!Shift]";
 		_targetVoxel.x += 8; // force fire at floor w/ Alt
 		_targetVoxel.y += 8;
 
 		if ((SDL_GetModState() & KMOD_ALT) == 0
-			|| _parent->getPanicHandled() == false)
+			|| _parent->playerPanicHandled() == false)
 		{
 			_targetVoxel.z += 10;
 		}
@@ -428,7 +428,7 @@ void ProjectileFlyBState::init()
 
 	if (createNewProjectile() == true)
 	{
-		_parent->getMap()->setCursorType(CT_NONE); // might be already done in primaryAction()
+		_parent->getMap()->setSelectorType(CT_NONE); // might be already done in primaryAction()
 		_parent->getMap()->getCamera()->stopMouseScrolling();
 	}
 	//Log(LOG_INFO) << "ProjectileFlyBState::init() EXIT";
@@ -498,7 +498,7 @@ bool ProjectileFlyBState::createNewProjectile() // private.
 
 			if (_unit->getGeoscapeSoldier() != nullptr
 				&& _unit->isMindControlled() == false
-				&& _parent->getPanicHandled() == true)
+				&& _parent->playerPanicHandled() == true)
 			{
 				_unit->addThrowingExp();
 			}
@@ -706,7 +706,7 @@ void ProjectileFlyBState::think()
 				&& Options::battleSmoothCamera == true)					// but he/she will be on the same Side, doing a reaction shot.
 			{
 				//Log(LOG_INFO) << "reset Camera for " << _action.actor->getId();
-				const std::map<int, Position>* const rfShotPos (_battleSave->getTileEngine()->getReactionPositions());
+				const std::map<int, Position>* const rfShotPos (_battleSave->getTileEngine()->getRfShooterPositions());
 				std::map<int, Position>::const_iterator i = rfShotPos->find(_action.actor->getId());
 
 				//for (std::map<int, Position>::const_iterator j = rfShotPos->begin(); j != rfShotPos->end(); ++j)
@@ -781,7 +781,7 @@ void ProjectileFlyBState::think()
 				_unit->setUnitStatus(STATUS_STANDING);
 
 //			if (_battleSave->getSide() == FACTION_PLAYER || _battleSave->getDebugTac() == true)
-//				_parent->setupCursor(); // <- not yet! Do it in popState() when everything is finished.
+//				_parent->setupSelector(); // <- not yet! Do it in popState() when everything is finished.
 
 			_parent->popState();
 		}
@@ -1161,7 +1161,7 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 	if (_unit->getSpecialAbility() == SPECAB_BURN)
 		_battleSave->getTile(_action.target)->ignite(_unit->getUnitRules()->getSpecabPower() / 10);
 
-	_parent->getMap()->setCursorType(CT_NONE); // might be already done in primaryAction()
+	_parent->getMap()->setSelectorType(CT_NONE); // might be already done in primaryAction()
 
 
 	const BattleUnit* const targetUnit = _battleSave->getTile(_action.target)->getTileUnit();

@@ -45,7 +45,7 @@ class Tile;
 class Timer;
 
 
-enum CursorType
+enum SelectorType
 {
 	CT_NONE,		// 0
 	CT_NORMAL,		// 1
@@ -86,7 +86,7 @@ private:
 		SCREEN_WHITE =  1,
 		SCREEN_BLACK = 15;
 
-	CursorType _cursorType;
+	SelectorType _selectorType;
 
 	bool
 		_bulletStart,
@@ -101,7 +101,7 @@ private:
 		_unitDying;
 	int
 		_aniFrame,
-		_cursorSize,
+		_selectorSize,
 		_iconHeight,
 		_iconWidth,
 		_mX,
@@ -228,13 +228,12 @@ private:
 		void refreshSelectorPosition();
 		/// Gets the currently selected position.
 		void getSelectorPosition(Position* const pos) const;
-
-		/// Sets the 3D cursor type.
-		void setCursorType(
-				CursorType type,
+		/// Sets the 3D selector type.
+		void setSelectorType(
+				SelectorType type,
 				int quads = 1);
-		/// Gets the 3D cursor type.
-		CursorType getCursorType() const;
+		/// Gets the 3D selector type.
+		SelectorType getSelectorType() const;
 
 		/// Caches units.
 		void cacheUnits();

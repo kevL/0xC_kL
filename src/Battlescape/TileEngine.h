@@ -193,7 +193,7 @@ private:
 		/// Gets the unique reaction fire BattleAction struct.
 //		BattleAction* getRfAction();
 		/// Gets the reaction fire shot list.
-		std::map<int, Position>* getReactionPositions();
+		std::map<int, Position>* getRfShooterPositions();
 
 		/// Handles bullet/weapon hits.
 		void hit(
