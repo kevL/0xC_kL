@@ -386,38 +386,41 @@ void Game::run()
 							}
 							else if (_gameSave != nullptr
 								&& _gameSave->getBattleSave() == nullptr			// TODO: Merge w/ GeoscapeState::handle() in Geoscape.
-								&& _gameSave->getDebugGeo() == true					// kL-> note: 'c' doubles as CreateInventoryTemplate (remarked @ InventoryState).
-								&& action.getDetails()->key.keysym.sym == SDLK_c)	// ctrl+c is also handled in GeoscapeState::handle()
-							{														// where decisions are made about what info to show.
-								// "ctrl-c"			- increment to show next area's boundaries
-								// "ctrl-shift-c"	- decrement to show previous area's boundaries
-								// "ctrl-alt-c"		- toggles between show all areas' boundaries & show current area's boundaries (roughly)
-								if ((SDL_GetModState() & KMOD_ALT) != 0)
-									std::swap(_debugCycle, _debugCycle_b);
-								else if ((SDL_GetModState() & KMOD_SHIFT) != 0)
-								{
-									if (_debugCycle != -1)
-										--_debugCycle;
-									else
-										_debugCycle_b = -1; // semi-convenient reset for Cycle_b .... hey, at least there *is* one.
-								}
-								else
-									++_debugCycle;
-							}
-							else if (_gameSave != nullptr
-								&& _gameSave->getDebugGeo() == true
-								&& action.getDetails()->key.keysym.sym == SDLK_l	// "ctrl-l" reload country lines
-								&& _rules != nullptr)
+								&& _gameSave->getDebugGeo() == true)				// kL-> note: 'c' doubles as CreateInventoryTemplate (remarked @ InventoryState).
 							{
-								_rules->reloadCountryLines();
+								switch (action.getDetails()->key.keysym.sym)
+								{
+									case SDLK_c:									// ctrl+c is also handled in GeoscapeState::handle()
+									{												// where decisions are made about what info to show.
+										// "ctrl-c"									- increment to show next area's boundaries
+										// "ctrl-shift-c"							- decrement to show previous area's boundaries
+										// "ctrl-alt-c"								- toggles between show all areas' boundaries & show current area's boundaries (roughly)
+										if ((SDL_GetModState() & KMOD_ALT) != 0)
+											std::swap(_debugCycle, _debugCycle_b);
+										else if ((SDL_GetModState() & KMOD_SHIFT) != 0)
+										{
+											if (_debugCycle != -1)
+												--_debugCycle;
+											else
+												_debugCycle_b = -1;					// semi-convenient reset for Cycle_b .... hey, at least there *is* one.
+										}
+										else
+											++_debugCycle;
+
+										break;
+									}
+									case SDLK_l:									// "ctrl-l" reload country lines
+										if (_rules != nullptr)
+											_rules->reloadCountryLines();
+								}
 							}
 						}
 					}
 			}
 		}
 
-		if (_inputActive == false)	// kL->
-			_inputActive = true;
+//		if (_inputActive == false)	// kL->
+		_inputActive = true;
 
 
 		if (runningState != PAUSED) // Process rendering

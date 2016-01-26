@@ -1651,8 +1651,8 @@ inline void BattlescapeState::handle(Action* action)
 						if (action->getDetails()->key.keysym.sym == SDLK_d)				// "ctrl-d" - enable debug mode.
 						{
 							beep = true;
-							_battleSave->setDebugTac();
-							debugPrint(L"debug active");
+							_battleSave->debugTac();
+							debugPrint(L"debug set active");
 						}
 					}
 					else
@@ -1665,8 +1665,8 @@ inline void BattlescapeState::handle(Action* action)
 
 							case SDLK_v:												// "ctrl-v" - reset tile visibility.
 								beep = true;
-								debugPrint(L"resetting tile visibility");
-								_battleSave->resetTiles();
+								debugPrint(L"blacking all tiles");
+								_battleSave->blackTiles();
 								break;
 
 							default:
@@ -1676,7 +1676,7 @@ inline void BattlescapeState::handle(Action* action)
 								{
 									case SDLK_k:										// "ctrl-k" - kill all aliens.
 										beep = true; //MB_ICONERROR
-										debugPrint(L"influenza bacterium dispersed");
+										debugPrint(L"dispersing influenza");
 										for (std::vector<BattleUnit*>::const_iterator
 												i = _battleSave->getUnits()->begin();
 												i !=_battleSave->getUnits()->end();
@@ -1694,7 +1694,7 @@ inline void BattlescapeState::handle(Action* action)
 
 									case SDLK_j:										// "ctrl-j" - stun all aliens.
 										beep = true; //MB_ICONWARNING
-										debugPrint(L"deploying Celine Dione album");
+										debugPrint(L"deploying Celine Dione");
 										for (std::vector<BattleUnit*>::const_iterator
 											i = _battleSave->getUnits()->begin();
 											i !=_battleSave->getUnits()->end();
@@ -1719,20 +1719,28 @@ inline void BattlescapeState::handle(Action* action)
 						}
 					}
 				}
-				else if (action->getDetails()->key.keysym.sym == SDLK_F10)				// f10 - voxel map dump.
+				else
 				{
-					beep = true;
-					saveVoxelMap();
-				}
-				else if (action->getDetails()->key.keysym.sym == SDLK_F9)				// f9 - ai dump.
-//					&& Options::traceAI == true)
-				{
-					beep = true;
-					saveAIMap();
+					switch (action->getDetails()->key.keysym.sym)
+					{
+						case SDLK_F10:													// f10 - voxel map dump.
+							beep = true;
+							saveVoxelMap();
+							break;
+
+						case SDLK_F9:													// f9 - ai dump.
+							beep = true;
+							saveAIMap();
+					}
 				}
 			}
 
-			if (_gameSave->isIronman() == false)
+			if (action->getDetails()->key.keysym.sym == Options::keyBattleVoxelView)	// f11 - voxel view pic.
+			{
+				beep = true;
+				saveVoxelView();
+			}
+			else if (_gameSave->isIronman() == false)
 			{
 				if (action->getDetails()->key.keysym.sym == Options::keyQuickSave)		// f6 - quickSave.
 				{
@@ -1750,12 +1758,6 @@ inline void BattlescapeState::handle(Action* action)
 													SAVE_QUICK,
 													_palette));
 				}
-			}
-
-			if (action->getDetails()->key.keysym.sym == Options::keyBattleVoxelView)	// f11 - voxel view pic.
-			{
-				beep = true;
-				saveVoxelView();
 			}
 
 #ifdef _WIN32

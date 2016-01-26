@@ -2131,6 +2131,7 @@ void Globe::drawDetail()
 					else
 						_game->getSavedGame()->setDebugArg("");
 				}
+				break;
 			}
 
 			case DTG_ZONE:

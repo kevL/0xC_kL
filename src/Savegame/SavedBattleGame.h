@@ -73,7 +73,7 @@ private:
 		_aborted,
 		_cheatAI,
 		_controlDestroyed,
-		_debugMode,
+		_debugTac,
 //		_kneelReserved,
 		_pacified,
 		_unitsFalling;
@@ -295,7 +295,7 @@ private:
 		bool endFactionTurn();
 
 		/// Sets debug mode.
-		void setDebugTac();
+		void debugTac();
 		/// Gets debug mode.
 		bool getDebugTac() const;
 
@@ -398,7 +398,7 @@ private:
 		/// Resets the turn counter.
 		void resetTurnCounter();
 		/// Resets the visibility of all tiles on the map.
-		void resetTiles();
+		void blackTiles();
 
 		/// Gets an 11x11 grid of positions (-10 to +10) to check.
 		const std::vector<Position> getTileSearch();

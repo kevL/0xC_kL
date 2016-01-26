@@ -78,7 +78,7 @@ SavedBattleGame::SavedBattleGame(
 		_tacticalShade(0),
 		_side(FACTION_PLAYER),
 		_turn(1),
-		_debugMode(false),
+		_debugTac(false),
 		_aborted(false),
 		_itemId(0),
 		_objectiveType(STT_NONE), // -1
@@ -1471,9 +1471,9 @@ bool SavedBattleGame::endFactionTurn()
 /**
  * Turns on debug mode.
  */
-void SavedBattleGame::setDebugTac()
+void SavedBattleGame::debugTac()
 {
-	_debugMode = true;
+	_debugTac = true;
 
 	for (size_t // reveal tiles.
 			i = 0;
@@ -1490,7 +1490,7 @@ void SavedBattleGame::setDebugTac()
  */
 bool SavedBattleGame::getDebugTac() const
 {
-	return _debugMode;
+	return _debugTac;
 }
 
 /**
@@ -2659,7 +2659,7 @@ void SavedBattleGame::resetTurnCounter()
 /**
  * Resets visibility of all the tiles on the map.
  */
-void SavedBattleGame::resetTiles()
+void SavedBattleGame::blackTiles()
 {
 	for (size_t
 			i = 0;
