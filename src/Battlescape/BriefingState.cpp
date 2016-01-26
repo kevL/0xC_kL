@@ -225,7 +225,7 @@ void BriefingState::btnOkClick(Action*)
 	battleState->getBattleGame()->tallyUnits(
 										liveHostile,
 										livePlayer);
-	if (liveHostile > 0)
+	if (liveHostile != 0)
 	{
 		_game->pushState(battleState);
 		_game->getSavedGame()->getBattleSave()->setBattleState(battleState);

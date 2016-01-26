@@ -912,15 +912,6 @@ void Inventory::moveItem( // private.
 		int x,
 		int y)
 {
-/*	if (inRule == nullptr) // Make items vanish (ie. load ammo into weapon)
-	{
-		if (item->getInventorySection()->getCategory() == IC_GROUND)
-			_selUnit->getTile()->removeItem(item);
-		else
-			item->changeOwner();
-	}
-	else
-	{ */
 	if (inRule != item->getInventorySection()) // Handle dropping from/to ground.
 	{
 		if (inRule->getCategory() == IC_GROUND) // set to Ground
@@ -958,7 +949,6 @@ void Inventory::moveItem( // private.
 	item->setInventorySection(inRule);
 	item->setSlotX(x);
 	item->setSlotY(y);
-//	}
 }
 
 /**

@@ -1983,7 +1983,7 @@ void BattlescapeState::btnKneelClick(Action*)
  */
 void BattlescapeState::btnInventoryClick(Action*)
 {
-/*	if (_battleSave->getDebugTac() == true)
+/*	if (_battleSave->getDebugTac() == true) // CHEAT For debugging.
 	{
 		for (std::vector<BattleUnit*>::const_iterator
 				i = _battleSave->getUnits()->begin();
@@ -1991,8 +1991,7 @@ void BattlescapeState::btnInventoryClick(Action*)
 				++i)
 		{
 			if ((*i)->getFaction() == _battleSave->getSide())
-				(*i)->prepUnit(); // cheat for debugging.
-
+				(*i)->prepUnit();
 			updateSoldierInfo();
 		}
 	} */
@@ -2016,7 +2015,7 @@ void BattlescapeState::btnInventoryClick(Action*)
 			_battleGame->cancelCurrentAction(true);
 //			_overlay->getFrame(3)->blit(_btnInventory); // clear() not implemented @ InventoryState.
 			_game->pushState(new InventoryState(
-											_battleSave->getDebugTac() == false,
+											true, //_battleSave->getDebugTac() == false, // CHEAT For debugging.
 											this));
 		}
 	}

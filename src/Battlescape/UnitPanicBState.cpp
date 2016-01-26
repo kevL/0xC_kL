@@ -69,8 +69,8 @@ void UnitPanicBState::think()
 		_unit->setDashing(false);
 	}
 
-	_parent->popState();
 	_parent->setupSelector();
+	_parent->popState();
 }
 
 /**

@@ -493,7 +493,8 @@ void InventoryState::init()
 		btnOkClick(nullptr);
 		return;
 	}
-	else if (unit->hasInventory() == false) // skip to the first unit with inventory
+
+	if (unit->hasInventory() == false) // skip to the first unit with inventory
 	{
 		if (_parent != nullptr)
 			_parent->selectNextPlayerUnit(false,false,true);
@@ -506,8 +507,8 @@ void InventoryState::init()
 			btnOkClick(nullptr);
 			return; // starting a mission with just vehicles. kL_note: DISALLOWED!!!
 		}
-		else
-			unit = _battleSave->getSelectedUnit();
+
+		unit = _battleSave->getSelectedUnit();
 	}
 
 //	if (_parent) _parent->getMap()->getCamera()->centerOnPosition(unit->getPosition(), false);
@@ -742,23 +743,6 @@ void InventoryState::updateWounds() // private.
 		}
 	}
 }
-
-/*
- * Jogs the mouse cursor to refresh appearances. See: _game->getSavedGame()->getBattleSave()->getBattleState()->refreshMousePosition();
- *
-void InventoryState::refreshMouse() // private.
-{
-	int
-		x,y;
-	SDL_GetMouseState(&x,&y);
-	SDL_WarpMouse(
-			static_cast<Uint16>(x + 1),
-			static_cast<Uint16>(y));
-	SDL_GetMouseState(&x,&y);
-	SDL_WarpMouse(
-			static_cast<Uint16>(x - 1),
-			static_cast<Uint16>(y));
-} */
 
 /**
  * Returns to the previous screen.
@@ -1117,7 +1101,7 @@ void InventoryState::invMouseOver(Action*)
 	if (_inv->getSelectedItem() != nullptr)
 	{
 		_tuCost->setValue(static_cast<unsigned>(_inv->getTuCostInventory()));
-		_tuCost->setVisible(_tuMode
+		_tuCost->setVisible(_tuMode == true
 						 && _inv->getTuCostInventory() > 0);
 //		_updateTemplateButtons(false);
 	}
@@ -1127,7 +1111,6 @@ void InventoryState::invMouseOver(Action*)
 		if (item != nullptr)
 		{
 //			_updateTemplateButtons(false);
-//			_tuCost->setVisible(false);
 			const RuleItem* const itRule = item->getRules();
 			const BattleItem* const ammo = item->getAmmoItem();
 

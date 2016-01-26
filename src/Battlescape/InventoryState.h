@@ -111,9 +111,6 @@ private:
 	/// Shows woundage values.
 	void updateWounds();
 
-	/// Refresh the hover status of the mouse.
-//	void refreshMouse();
-
 	/// Saves all soldiers' equipment-layouts.
 	bool saveAllLayouts() const;
 	/// Saves a soldier's equipment-layout.

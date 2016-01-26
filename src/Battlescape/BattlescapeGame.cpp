@@ -465,7 +465,7 @@ void BattlescapeGame::popState()
 					//Log(LOG_INFO) << ". action -> NOT Faction_Player";
 					action.actor->spendTimeUnits(action.TU);
 
-					if (_battleSave->getSide() != FACTION_PLAYER && _debugPlay == false) // is NOT reaction-fire
+					if (_battleSave->getSide() != FACTION_PLAYER && _debugPlay == false)
 					{
 						BattleUnit* selUnit = _battleSave->getSelectedUnit();
 						if (_AIActionCounter > 2	// AI does three things per unit before switching to the
@@ -494,16 +494,18 @@ void BattlescapeGame::popState()
 									_debugPlay = true;
 								}
 							}
-
-							if ((selUnit = _battleSave->getSelectedUnit()) != nullptr)
+							else if (_battleSave->getSelectedUnit() != nullptr)
 							{
-								getMap()->getCamera()->centerOnPosition(selUnit->getPosition());
+								getMap()->getCamera()->centerOnPosition(_battleSave->getSelectedUnit()->getPosition());
 								if (_battleSave->getDebugTac() == true)
+								{
 									_parentState->refreshMousePosition();
+									setupSelector();
+								}
 							}
 						}
 					}
-					else if (_debugPlay == true) // post-aLien-RF
+					else if (_debugPlay == true)
 					{
 						setupSelector();
 						_parentState->getGame()->getCursor()->setHidden(false);
@@ -554,7 +556,8 @@ void BattlescapeGame::popState()
 			|| _battleSave->getSelectedUnit()->isOut_t() == true)
 		{
 			//Log(LOG_INFO) << ". unit incapacitated: cancelAction & deSelect)";
-			cancelCurrentAction(); // note that this *will* setupSelector() under certain circumstances - eg, if current action was targetting.
+			cancelCurrentAction();	// note that this *will* setupSelector() under certain
+			setupSelector();		// circumstances - eg, if current action was targetting.
 			_battleSave->setSelectedUnit(nullptr);
 		}
 
@@ -1550,9 +1553,7 @@ void BattlescapeGame::endTurn() // private.
 	if (_battleSave->getObjectiveType() == MUST_DESTROY // brain death, end Final Mission.
 		&& _battleSave->allObjectivesDestroyed() == true)
 	{
-		_parentState->finishBattle(
-								false,
-								livePlayer);
+		_parentState->finishBattle(false, livePlayer);
 		return;
 	}
 
@@ -1574,29 +1575,11 @@ void BattlescapeGame::endTurn() // private.
 		{
 			setupSelector();
 			if (playableUnitSelected() == true)
-				centerOnUnit(_battleSave->getSelectedUnit()); // <- probly redudant w/ centerOnUnit() at start of handleUnitAI()
+				centerOnUnit(_battleSave->getSelectedUnit()); // <- probly redundant w/ centerOnUnit() at start of handleUnitAI()
 
 			if (_battleSave->getDebugTac() == false)
 				_battleSave->getBattleState()->toggleIcons(true);
 		}
-/*		if (_battleSave->getDebugTac() == false)
-		{
-			if (_battleSave->getSide() == FACTION_PLAYER)
-			{
-				setupSelector();
-				_battleSave->getBattleState()->toggleIcons(true);
-			}
-			else
-			{
-				getMap()->setSelectorType(CT_NONE);
-				_battleSave->getBattleState()->toggleIcons(false);
-			}
-		}
-		if (playableUnitSelected() == true) // <- Faction_Player or debug-mode
-		{
-			centerOnUnit(_battleSave->getSelectedUnit());
-			setupSelector();
-		} */
 
 		if (hostilesPacified == true)
 			_battleSave->setPacified();
