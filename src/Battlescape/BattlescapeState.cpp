@@ -2821,7 +2821,7 @@ bool BattlescapeState::allowButtons(bool allowSave) const // private
 	return (
 			(allowSave == true
 					|| _battleSave->getSide() == FACTION_PLAYER
-					|| _battleSave->getDebugTac() == true) // -> check out what '_debugPlay' really does and how it switches TRUE/FALSE
+					|| _battleSave->getDebugTac() == true)
 				&& (_battleGame->playerPanicHandled() == true
 					|| _firstInit == true)
 				&& _map->getProjectile() == nullptr);

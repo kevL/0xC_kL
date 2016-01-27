@@ -193,6 +193,9 @@ private:
 	void centerOnUnit(
 			const BattleUnit* const unit,
 			bool draw = false) const;
+	/// Selects the next AI unit.
+	void selectNextAiUnit(const BattleUnit* const unit);
+
 	/// Summary execution.
 	void executeUnit();
 	/// Ends the turn.

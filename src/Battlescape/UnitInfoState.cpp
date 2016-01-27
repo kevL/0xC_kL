@@ -590,7 +590,9 @@ void UnitInfoState::init()
 		_numOrder->setVisible(false);
 
 	// NAME ->
-	woststr << _unit->getName(_game->getLanguage(), BattlescapeGame::_debugPlay == true);
+	woststr << _unit->getName(
+						_game->getLanguage(),
+						_battleSave->getDebugTac() == false); //BattlescapeGame::_debugPlay == true);
 	_txtName->setText(woststr.str());
 	_txtName->setBig();
 

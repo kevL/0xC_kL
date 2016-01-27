@@ -74,7 +74,7 @@ private:
 	const BattleUnit* _unit;
 	InteractiveSurface* _exit;
 	NumberText* _numOrder;
-	SavedBattleGame *_battleSave;
+	SavedBattleGame* _battleSave;
 	Surface
 		* _bg,
 		* _gender;

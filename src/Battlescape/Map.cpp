@@ -1221,7 +1221,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 										}
 
 										// Draw Exposed mark
-										if ((_unit->getArmor()->getSize() == 1 || quadrant == 1)
+										if (_battleSave->getSide() == FACTION_PLAYER
+											&& (_unit->getArmor()->getSize() == 1 || quadrant == 1)
 //											&& _projectileInFOV == false && _explosionInFOV == false)
 //											&& _battleSave->getBattleState()->allowButtons() == true
 											&& _battleSave->getBattleGame()->getCurrentAction()->type == BA_NONE)

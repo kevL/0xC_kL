@@ -53,6 +53,7 @@
 #include "../Engine/Sound.h"
 
 #include "../Interface/Cursor.h"
+#include "../Interface/Text.h"
 
 #include "../Resource/ResourcePack.h"
 
@@ -73,7 +74,7 @@
 namespace OpenXcom
 {
 
-bool BattlescapeGame::_debugPlay = false;
+bool BattlescapeGame::_debugPlay; // static.
 
 
 /**
@@ -177,17 +178,19 @@ void BattlescapeGame::think()
 		{
 			if (_debugPlay == false)
 			{
-				if (_battleSave->getSelectedUnit() != nullptr) // next AI unit
+				BattleUnit* const selUnit (_battleSave->getSelectedUnit());
+				if (selUnit != nullptr)
 				{
-					if (handlePanickingUnit(_battleSave->getSelectedUnit()) == false)
+					_parentState->debugPrint(Text::intWide(selUnit->getId()));
+					if (handlePanickingUnit(selUnit) == false)
 					{
-						//Log(LOG_INFO) << "BattlescapeGame::think() call handleUnitAI() " << _battleSave->getSelectedUnit()->getId();
-						handleUnitAI(_battleSave->getSelectedUnit());
+						//Log(LOG_INFO) << "BattlescapeGame::think() call handleUnitAI() " << selUnit->getId();
+						handleUnitAI(selUnit);
 					}
 				}
-				else if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr) // end AI turn
+				else if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr) // start AI turn
 				{
-					if (_battleSave->getDebugTac() == false)
+					if (_battleSave->getDebugTac() == false) // end AI turn. See popState() and handleUnitAI()
 					{
 						_endTurnRequested = true;
 						statePushBack(nullptr);
@@ -205,11 +208,9 @@ void BattlescapeGame::think()
 			if (_playerPanicHandled == false) // not all panicking units have been handled
 			{
 				//Log(LOG_INFO) << "bg:think() . panic Handled is FALSE";
-				_playerPanicHandled = handlePanickingPlayer();
-				//Log(LOG_INFO) << "bg:think() . panic Handled = " << _playerPanicHandled;
-
-				if (_playerPanicHandled == true)
+				if ((_playerPanicHandled = handlePanickingPlayer()) == true)
 				{
+					//Log(LOG_INFO) << "bg:think() . panic Handled TRUE";
 					_battleSave->getTileEngine()->recalculateFOV();
 					_battleSave->getBattleState()->updateSoldierInfo();
 				}
@@ -394,67 +395,68 @@ void BattlescapeGame::popState()
 					// didn't even Care about TU there until I put it in there, and took
 					// it out here in order to get Reactions vs. shooting to work correctly
 					// (throwing already did work to trigger reactions, somehow).
-					if (actionFail == false
-						&& _battleSave->getSelectedUnit() != nullptr
-						&& action.targeting == true)
+					if (actionFail == false)
 					{
-						//Log(LOG_INFO) << ". . ID " << action.actor->getId() << " currentTU = " << action.actor->getTimeUnits();
-						action.actor->spendTimeUnits(action.TU);
-						// kL_query: Does this happen **before** ReactionFire/getReactor()?
-						// no. not for shooting, but for throwing it does; actually no it doesn't.
-						//
-						// wtf, now RF works fine. NO IT DOES NOT.
-						//Log(LOG_INFO) << ". . ID " << action.actor->getId() << " currentTU = " << action.actor->getTimeUnits() << " spent TU = " << action.TU;
-					}
-
-					if (actionFail == false // is NOT reaction-fire
-						&& _battleSave->getSide() == FACTION_PLAYER)
-					{
-						//Log(LOG_INFO) << ". side -> Faction_Player";
-						// After throwing the cursor returns to default cursor;
-						// after shooting it stays in targeting mode and the player
-						// can shoot again in the same mode (autoshot/snap/aimed)
-						// unless he/she/it is out of ammo and/or TUs.
-						const int tuActor (action.actor->getTimeUnits());
-						switch (action.type)
+						if (action.targeting == true
+							&& _battleSave->getSelectedUnit() != nullptr)
 						{
-							case BA_LAUNCH:
-								_currentAction.waypoints.clear(); // no break;
-							case BA_THROW:
-								cancelCurrentAction(true);
-								break;
+							//Log(LOG_INFO) << ". . ID " << action.actor->getId() << " currentTU = " << action.actor->getTimeUnits();
+							action.actor->spendTimeUnits(action.TU);
+							// kL_query: Does this happen **before** ReactionFire/getReactor()?
+							// no. not for shooting, but for throwing it does; actually no it doesn't.
+							//
+							// wtf, now RF works fine. NO IT DOES NOT.
+							//Log(LOG_INFO) << ". . ID " << action.actor->getId() << " currentTU = " << action.actor->getTimeUnits() << " spent TU = " << action.TU;
+						}
 
-							case BA_SNAPSHOT:
-								//Log(LOG_INFO) << ". SnapShot, TU percent = " << (float)action.weapon->getRules()->getSnapTu();
-								if (action.weapon->getAmmoItem() == nullptr
-									|| tuActor < action.actor->getActionTu(
-																	BA_SNAPSHOT,
-																	action.weapon))
-								{
+						if (_battleSave->getSide() == FACTION_PLAYER) // is NOT reaction-fire
+						{
+							//Log(LOG_INFO) << ". side -> Faction_Player";
+							// After throwing the cursor returns to default cursor;
+							// after shooting it stays in targeting mode and the player
+							// can shoot again in the same mode (autoshot/snap/aimed)
+							// unless he/she/it is out of ammo and/or TUs.
+							const int tuActor (action.actor->getTimeUnits());
+							switch (action.type)
+							{
+								case BA_LAUNCH:
+									_currentAction.waypoints.clear(); // no break;
+								case BA_THROW:
 									cancelCurrentAction(true);
-								}
-								break;
+									break;
 
-							case BA_AUTOSHOT:
-								//Log(LOG_INFO) << ". AutoShot, TU percent = " << (float)action.weapon->getRules()->getAutoTu();
-								if (action.weapon->getAmmoItem() == nullptr
-									|| tuActor < action.actor->getActionTu(
-																	BA_AUTOSHOT,
-																	action.weapon))
-								{
-									cancelCurrentAction(true);
-								}
-								break;
+								case BA_SNAPSHOT:
+									//Log(LOG_INFO) << ". SnapShot, TU percent = " << (float)action.weapon->getRules()->getSnapTu();
+									if (action.weapon->getAmmoItem() == nullptr
+										|| tuActor < action.actor->getActionTu(
+																		BA_SNAPSHOT,
+																		action.weapon))
+									{
+										cancelCurrentAction(true);
+									}
+									break;
 
-							case BA_AIMEDSHOT:
-								//Log(LOG_INFO) << ". AimedShot, TU percent = " << (float)action.weapon->getRules()->getAimedTu();
-								if (action.weapon->getAmmoItem() == nullptr
-									|| tuActor < action.actor->getActionTu(
-																	BA_AIMEDSHOT,
-																	action.weapon))
-								{
-									cancelCurrentAction(true);
-								}
+								case BA_AUTOSHOT:
+									//Log(LOG_INFO) << ". AutoShot, TU percent = " << (float)action.weapon->getRules()->getAutoTu();
+									if (action.weapon->getAmmoItem() == nullptr
+										|| tuActor < action.actor->getActionTu(
+																		BA_AUTOSHOT,
+																		action.weapon))
+									{
+										cancelCurrentAction(true);
+									}
+									break;
+
+								case BA_AIMEDSHOT:
+									//Log(LOG_INFO) << ". AimedShot, TU percent = " << (float)action.weapon->getRules()->getAimedTu();
+									if (action.weapon->getAmmoItem() == nullptr
+										|| tuActor < action.actor->getActionTu(
+																		BA_AIMEDSHOT,
+																		action.weapon))
+									{
+										cancelCurrentAction(true);
+									}
+							}
 						}
 					}
 					break;
@@ -494,9 +496,10 @@ void BattlescapeGame::popState()
 									_debugPlay = true;
 								}
 							}
-							else if (_battleSave->getSelectedUnit() != nullptr)
+
+							if ((selUnit = _battleSave->getSelectedUnit()) != nullptr)
 							{
-								getMap()->getCamera()->centerOnPosition(_battleSave->getSelectedUnit()->getPosition());
+								getMap()->getCamera()->centerOnPosition(selUnit->getPosition());
 								if (_battleSave->getDebugTac() == true)
 								{
 									_parentState->refreshMousePosition();
@@ -653,131 +656,41 @@ void BattlescapeGame::centerOnUnit( // private.
  */
 void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 {
-	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() " << unit->getId();
 	if (unit != _battleSave->getWalkUnit())
-	{
-		//Log(LOG_INFO) << ". curUnit != walkUnit -> try Centering";
 		centerOnUnit(unit); // if you're going to reveal the map at least center the first aLien.
-	}
-	//else Log(LOG_INFO) << ". curUnit == walkUnit - No centering";
 
-	//Log(LOG_INFO) << ". TU = " << unit->getTimeUnits();
 	if (unit->getTimeUnits() == 0)
-	{
-		//Log(LOG_INFO) << ". set NOT reselect";
 		unit->dontReselect();
-	}
 
-	if (_AIActionCounter > 1 // unit-AI done.
+	if (_AIActionCounter > 1
 		|| unit->reselectAllowed() == false)
 	{
-		//Log(LOG_INFO) << ". find next unit";
-		_AIActionCounter = 0;
-
-		//if (_battleSave->getSelectedUnit() != nullptr) Log(LOG_INFO) << "selUnit[1] id-" << _battleSave->getSelectedUnit()->getId();
-		//else Log(LOG_INFO) << "selUnit[1] NULL";
-
-		if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr)
-		{
-			//Log(LOG_INFO) << ". . no unit found, request endTurn";
-			//if (_battleSave->getSelectedUnit() != nullptr) Log(LOG_INFO) << "selUnit[2] id-" << _battleSave->getSelectedUnit()->getId();
-			//else Log(LOG_INFO) << "selUnit[2] NULL";
-
-			if (_battleSave->getDebugTac() == false)
-			{
-				//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() statePushBack(end AI turn)";
-				_endTurnRequested = true;
-				statePushBack(nullptr); // end AI turn
-			}
-			else
-			{
-				//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() debugPlay";
-				_battleSave->selectNextFactionUnit();
-				_debugPlay = true;
-			}
-		}
-
-		//if (_battleSave->getSelectedUnit() != nullptr) Log(LOG_INFO) << "selUnit[3] id-" << _battleSave->getSelectedUnit()->getId();
-		//else Log(LOG_INFO) << "selUnit[3] NULL";
-
-		if (_battleSave->getSelectedUnit() != nullptr)
-		{
-			//Log(LOG_INFO) << ". . unit found id-" << _battleSave->getSelectedUnit()->getId();
-			centerOnUnit(_battleSave->getSelectedUnit());
-			_parentState->updateSoldierInfo(false); // This is useful for player when AI-turn ends. CalcFoV is done below_
-
-			if (_battleSave->getDebugTac() == true)
-				_parentState->refreshMousePosition();
-
-			if (_AISecondMove == false)
-			{
-				if (std::find(
-						_battleSave->getShuffleUnits()->begin(),
-						_battleSave->getShuffleUnits()->end(),
-						_battleSave->getSelectedUnit())			// next unit up
-							 -
-					std::find(
-						_battleSave->getShuffleUnits()->begin(),
-						_battleSave->getShuffleUnits()->end(),
-						unit) < 1)								// previous unit
-				{
-					//Log(LOG_INFO) << ". . . Second move";
-					_AISecondMove = true;
-				}
-			}
-			//else Log(LOG_INFO) << ". . . First move";
-
-			//Log(LOG_INFO) << "[1]bsg secondMove = " << (int)_AISecondMove;
-		}
-		//else Log(LOG_INFO) << ". . selUnit[4] NULL";
-
-		//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() early-EXIT id-" << unit->getId();
+		selectNextAiUnit(unit);
 		return;
 	}
 
-	//Log(LOG_INFO) << "CONTINUE ...";
 
 	unit->setUnitVisible(false);
 
-	// might need this: populate _hostileUnit for a newly-created alien
-	//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI(), calculateFOV() call";
 	_battleSave->getTileEngine()->calculateFOV(unit->getPosition());
-	// it might also help chryssalids realize they've zombified someone and need to move on;
-	// it should also hide units when they've killed the guy spotting them;
-	// it's also for good luck and prosperity.
 
-//	BattleAIState* ai = unit->getAIState();
-//	const BattleAIState* const ai = unit->getAIState();
 	if (unit->getAIState() == nullptr)
 	{
-		// for some reason the unit had no AI routine assigned..
-		//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() !ai, assign AI";
 		if (unit->getFaction() == FACTION_HOSTILE)
 			unit->setAIState(new AlienBAIState(_battleSave, unit, nullptr));
 		else
 			unit->setAIState(new CivilianBAIState(_battleSave, unit, nullptr));
 	}
-//	_battleSave->getPathfinding()->setPathingUnit(unit);	// decided to do this in AI states;
-															// things might be changing the pathing
-															// unit or Pathfinding relevance .....
 
 	if (++_AIActionCounter == 1)
 	{
 		_playedAggroSound = false;
 		unit->setHiding(false);
-		//if (Options::traceAI) Log(LOG_INFO) << "#" << unit->getId() << "--" << unit->getType();
 	}
-	//Log(LOG_INFO) << ". _AIActionCounter DONE";
 
-	// this cast only works when ai was already AlienBAIState at heart
-//	AlienBAIState* aggro = dynamic_cast<AlienBAIState*>(ai);
-
-	//Log(LOG_INFO) << ". Declare action - define .actor & .AIcount";
 	BattleAction action;
 	action.actor = unit;
 	action.AIcount = _AIActionCounter;
-	//Log(LOG_INFO) << ". unit->think(&action)";
 	unit->think(&action);
 
 /*	Log(LOG_INFO) << ". _unit->think() DONE Mode = " << unit->getAIState()->getAIMode();
@@ -806,26 +719,15 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	Log(LOG_INFO) << ". _unit->think() DONE Action = " << st; */
 
 	if (action.type == BA_RETHINK)
-	{
-//		_parentState->debug(L"Rethink");
 		unit->think(&action);
-	}
-	//Log(LOG_INFO) << ". BA_RETHINK DONE";
 
 	_AIActionCounter = action.AIcount;
 
-	//Log(LOG_INFO) << ". pre hunt for weapon";
-//	if (unit->getOriginalFaction() == FACTION_HOSTILE
 	if (unit->getFaction() == FACTION_HOSTILE
 		&& unit->getMainHandWeapon() == nullptr)
-//		&& unit->getHostileUnits().size() == 0)
-	// TODO: and, if either no innate meleeWeapon, or a visible hostile is not within say 5 tiles.
 	{
-		//Log(LOG_INFO) << ". . no mainhand weapon or no ammo";
-		//Log(LOG_INFO) << ". . . call pickupItem()";
 		pickupItem(&action);
 	}
-	//Log(LOG_INFO) << ". findItem DONE";
 
 	if (_playedAggroSound == false
 		&& unit->getChargeTarget() != nullptr)
@@ -837,18 +739,11 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 			getResourcePack()->getSound("BATTLE.CAT", soundId)
 								->play(-1, getMap()->getSoundAngle(unit->getPosition()));
 	}
-	//Log(LOG_INFO) << ". getChargeTarget DONE";
-
-
-//	std::wostringstream ss; // debug.
 
 	switch (action.type)
 	{
 		case BA_MOVE:
 		{
-//			ss << L"Walking to " << action.target;
-//			_parentState->debug(ss.str());
-
 			Pathfinding* const pf (_battleSave->getPathfinding());
 			pf->setPathingUnit(action.actor);
 
@@ -858,7 +753,6 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 			if (pf->getStartDirection() != -1)
 				statePushBack(new UnitWalkBState(this, action));
 
-			//Log(LOG_INFO) << ". BA_MOVE DONE";
 			break;
 		}
 
@@ -870,42 +764,27 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 		case BA_PSICONTROL:
 		case BA_PSIPANIC:
 		case BA_LAUNCH:
-		{
-//			ss.clear();
-//			ss << L"Attack type = " << action.type
-//					<< ", target = " << action.target
-//					<< ", weapon = " << Language::utf8ToWstr(action.weapon->getRules()->getName());
-//			_parentState->debug(ss.str());
-
-			//Log(LOG_INFO) << ". . in action.type";
 			switch (action.type)
 			{
-				case BA_PSICONTROL:
 				case BA_PSIPANIC:
-				{
-//					statePushBack(new PsiAttackBState(this, action)); // post-cosmetic
-					//Log(LOG_INFO) << ". . do Psi";
+				case BA_PSICONTROL:
 					action.weapon = _alienPsi;
 					action.TU = unit->getActionTu(action.type, action.weapon);
 					break;
-				}
 
 				default:
-				{
 					statePushBack(new UnitTurnBState(this, action));
-
 					switch (action.type)
 					{
 						case BA_MELEE:
 						{
-							const std::string meleeWeapon = unit->getMeleeWeapon();
-//							statePushBack(new MeleeAttackBState(this, action));
-							bool instaWeapon = false;
+							const std::string meleeWeapon (unit->getMeleeWeapon());
+							bool instaWeapon (false);
 
 							if (action.weapon != _universalFist
 								&& meleeWeapon.empty() == false)
 							{
-								bool found = false;
+								bool found (false);
 								for (std::vector<BattleItem*>::const_iterator
 										i = unit->getInventory()->begin();
 										i != unit->getInventory()->end();
@@ -918,7 +797,6 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 										// but for now just grab the meleeItem wherever it was equipped ...
 										found = true;
 										action.weapon = *i;
-
 										break;
 									}
 								}
@@ -948,98 +826,99 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 								if (instaWeapon == true)
 									_battleSave->removeItem(action.weapon);
 							}
-
 							return;
 						}
 					}
-				}
 			}
 
 			//Log(LOG_INFO) << ". attack action.Type = " << action.type
 			//				<< ", action.Target = " << action.target
 			//				<< " action.Weapon = " << action.weapon->getRules()->getName().c_str();
-
-
-			//Log(LOG_INFO) << ". . call ProjectileFlyBState()";
 			statePushBack(new ProjectileFlyBState(this, action));
-			//Log(LOG_INFO) << ". . ProjectileFlyBState DONE";
 
 			switch (action.type)
 			{
 				case BA_PSIPANIC:
 				case BA_PSICONTROL:
-				{
-					//Log(LOG_INFO) << ". . . in action.type Psi";
-					//const bool success = _battleSave->getTileEngine()->psiAttack(&action);
-					//Log(LOG_INFO) << ". . . success = " << success;
 					if (_battleSave->getTileEngine()->psiAttack(&action) == true)
 					{
 						const BattleUnit* const psiVictim = _battleSave->getTile(action.target)->getTileUnit();
 						Language* const lang = _parentState->getGame()->getLanguage();
 						std::wstring wst;
-						if (action.type == BA_PSICONTROL)
-							wst = lang->getString("STR_IS_UNDER_ALIEN_CONTROL", psiVictim->getGender())
-													.arg(psiVictim->getName(lang))
-													.arg(action.value);
-						else // Panic Atk
-							wst = lang->getString("STR_PSI_PANIC_SUCCESS")
-													.arg(action.value);
-
+						switch (action.type)
+						{
+							default:
+							case BA_PSIPANIC:
+								wst = lang->getString("STR_PSI_PANIC_SUCCESS")
+														.arg(action.value);
+								break;
+							case BA_PSICONTROL:
+								wst = lang->getString("STR_IS_UNDER_ALIEN_CONTROL", psiVictim->getGender())
+														.arg(psiVictim->getName(lang))
+														.arg(action.value);
+						}
 						_parentState->getGame()->pushState(new InfoboxState(wst));
 					}
-					//Log(LOG_INFO) << ". . . done Psi.";
-				}
 			}
 			break;
-		}
-		//Log(LOG_INFO) << ". . action.type DONE";
 
+		default:
 		case BA_NONE:
+			selectNextAiUnit(unit);
+	}
+}
+
+/**
+ * Selects the next AI unit.
+ * @note The current AI-turn ends when no unit is eligible to select.
+ * @param unit - the current unit
+ */
+void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
+{
+	_AIActionCounter = 0;
+
+	if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr)
+	{
+		if (_battleSave->getDebugTac() == false)
 		{
-			//Log(LOG_INFO) << ". . in action.type None";
-//			_parentState->debug(L"Idle");
-			_AIActionCounter = 0;
+			_endTurnRequested = true;
+			statePushBack(nullptr);
+		}
+		else
+		{
+			_battleSave->selectNextFactionUnit();
+			_debugPlay = true;
+		}
+	}
 
-			if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr) // AI-faction turn done ->
+	const BattleUnit* const nextUnit (_battleSave->getSelectedUnit());
+	if (nextUnit != nullptr)
+	{
+		centerOnUnit(nextUnit);
+		_parentState->updateSoldierInfo();
+
+		if (_battleSave->getDebugTac() == true)
+		{
+			_parentState->refreshMousePosition();
+			setupSelector();
+		}
+
+		if (_AISecondMove == false)
+		{
+			if (std::find(
+					_battleSave->getShuffleUnits()->begin(),
+					_battleSave->getShuffleUnits()->end(),
+					nextUnit)
+						 -
+				std::find(
+					_battleSave->getShuffleUnits()->begin(),
+					_battleSave->getShuffleUnits()->end(),
+					unit) < 1)
 			{
-				if (_battleSave->getDebugTac() == false)
-				{
-					//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() statePushBack(end AI turn) 2";
-					_endTurnRequested = true;
-					statePushBack(nullptr); // end AI turn
-				}
-				else
-				{
-					_battleSave->selectNextFactionUnit();
-					_debugPlay = true;
-				}
-			}
-
-			if (_battleSave->getSelectedUnit() != nullptr)
-			{
-				_parentState->updateSoldierInfo();
-				centerOnUnit(_battleSave->getSelectedUnit());
-
-				if (_AISecondMove == false)
-				{
-					if (std::find(
-							_battleSave->getShuffleUnits()->begin(),
-							_battleSave->getShuffleUnits()->end(),
-							_battleSave->getSelectedUnit())
-								 -
-						std::find(
-							_battleSave->getShuffleUnits()->begin(),
-							_battleSave->getShuffleUnits()->end(),
-							unit) < 1)
-					{
-						_AISecondMove = true;
-					}
-				}
-				//Log(LOG_INFO) << "[2]bsg secondMove = " << (int)_AISecondMove;
+				_AISecondMove = true;
 			}
 		}
 	}
-	//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() EXIT";
 }
 
 /**
@@ -1277,7 +1156,7 @@ bool BattlescapeGame::playableUnitSelected()
 {
 	return _battleSave->getSelectedUnit() != nullptr
 		&& (_battleSave->getSide() == FACTION_PLAYER
-			|| _battleSave->getDebugTac() == true); // -> check out what '_debugPlay' really does and how it switches TRUE/FALSE
+			|| _battleSave->getDebugTac() == true); // should be (_debugPlay=TRUE)
 }
 
 /**
@@ -1566,7 +1445,7 @@ void BattlescapeGame::endTurn() // private.
 		_parentState->updateSoldierInfo();
 
 		if (_battleSave->getSide() == FACTION_HOSTILE
-			&& _battleSave->getDebugTac() == false) // -> check out what '_debugPlay' really does and how it switches TRUE/FALSE
+			&& _battleSave->getDebugTac() == false)
 		{
 			getMap()->setSelectorType(CT_NONE);
 			_battleSave->getBattleState()->toggleIcons(false);
@@ -1575,7 +1454,7 @@ void BattlescapeGame::endTurn() // private.
 		{
 			setupSelector();
 			if (playableUnitSelected() == true)
-				centerOnUnit(_battleSave->getSelectedUnit()); // <- probly redundant w/ centerOnUnit() at start of handleUnitAI()
+				centerOnUnit(_battleSave->getSelectedUnit());
 
 			if (_battleSave->getDebugTac() == false)
 				_battleSave->getBattleState()->toggleIcons(true);
@@ -2554,215 +2433,175 @@ bool BattlescapeGame::isBusy() const
  */
 void BattlescapeGame::primaryAction(const Position& pos)
 {
-	//Log(LOG_INFO) << "BattlescapeGame::primaryAction()";
-	//if (_battleSave->getSelectedUnit()) Log(LOG_INFO) << ". ID " << _battleSave->getSelectedUnit()->getId();
 	_currentAction.actor = _battleSave->getSelectedUnit();
-	BattleUnit* const targetUnit = _battleSave->selectUnit(pos);
+	BattleUnit* const targetUnit (_battleSave->selectUnit(pos));
 
 	if (_currentAction.actor != nullptr
 		&& _currentAction.targeting == true)
 	{
-		//Log(LOG_INFO) << ". . _currentAction.targeting";
 		_currentAction.strafe = false;
 
-		if (_currentAction.type == BA_LAUNCH) // click to set BL waypoints.
+		switch (_currentAction.type)
 		{
-			if (static_cast<int>(_currentAction.waypoints.size()) < _currentAction.weapon->getRules()->isWaypoints())
-			{
-				//Log(LOG_INFO) << ". . . . BA_LAUNCH";
-				_parentState->showLaunchButton();
-				_currentAction.waypoints.push_back(pos);
-				getMap()->getWaypoints()->push_back(pos);
-			}
-		}
-		else if (_currentAction.type == BA_USE
-			&& _currentAction.weapon->getRules()->getBattleType() == BT_MINDPROBE)
-		{
-			//Log(LOG_INFO) << ". . . . BA_USE -> BT_MINDPROBE";
-			if (targetUnit != nullptr
-				&& targetUnit->getFaction() != _currentAction.actor->getFaction()
-				&& targetUnit->getUnitVisible() == true)
-			{
-				if (_currentAction.weapon->getRules()->isLosRequired() == false
-					|| std::find(
-							_currentAction.actor->getHostileUnits().begin(),
-							_currentAction.actor->getHostileUnits().end(),
-							targetUnit) != _currentAction.actor->getHostileUnits().end())
+			case BA_LAUNCH:
+				if (static_cast<int>(_currentAction.waypoints.size()) < _currentAction.weapon->getRules()->isWaypoints())
 				{
-					if (TileEngine::distance( // in Range
-										_currentAction.actor->getPosition(),
-										_currentAction.target) <= _currentAction.weapon->getRules()->getMaxRange())
-					{
-						if (_currentAction.actor->spendTimeUnits(_currentAction.TU) == true)
-						{
-							const int soundId = _currentAction.weapon->getRules()->getFireHitSound();
-							if (soundId != -1)
-								getResourcePack()->getSound("BATTLE.CAT", soundId)
-													->play(-1, getMap()->getSoundAngle(pos));
+					_parentState->showLaunchButton();
+					_currentAction.waypoints.push_back(pos);
+					getMap()->getWaypoints()->push_back(pos);
+				}
+				break;
 
-							_parentState->getGame()->pushState(new UnitInfoState(
-																			targetUnit,
-																			_parentState,
-																			false,true));
+			case BA_USE:
+				if (_currentAction.weapon->getRules()->getBattleType() == BT_MINDPROBE)
+				{
+					if (targetUnit != nullptr
+						&& targetUnit->getFaction() != _currentAction.actor->getFaction()
+						&& targetUnit->getUnitVisible() == true)
+					{
+						if (_currentAction.weapon->getRules()->isLosRequired() == false
+							|| std::find(
+									_currentAction.actor->getHostileUnits().begin(),
+									_currentAction.actor->getHostileUnits().end(),
+									targetUnit) != _currentAction.actor->getHostileUnits().end())
+						{
+							if (TileEngine::distance(
+												_currentAction.actor->getPosition(),
+												_currentAction.target) <= _currentAction.weapon->getRules()->getMaxRange())
+							{
+								if (_currentAction.actor->spendTimeUnits(_currentAction.TU) == true)
+								{
+									const int soundId = _currentAction.weapon->getRules()->getFireHitSound();
+									if (soundId != -1)
+										getResourcePack()->getSound("BATTLE.CAT", soundId)
+															->play(-1, getMap()->getSoundAngle(pos));
+
+									_parentState->getGame()->pushState(new UnitInfoState(
+																					targetUnit,
+																					_parentState,
+																					false,true));
+								}
+								else
+								{
+									cancelCurrentAction();
+									_parentState->warning("STR_NOT_ENOUGH_TIME_UNITS");
+								}
+							}
+							else
+								_parentState->warning("STR_OUT_OF_RANGE");
 						}
 						else
-						{
-							cancelCurrentAction();
-							_parentState->warning("STR_NOT_ENOUGH_TIME_UNITS");
-						}
+							_parentState->warning("STR_NO_LINE_OF_FIRE");
 					}
-					else
-						_parentState->warning("STR_OUT_OF_RANGE");
 				}
-				else
-					_parentState->warning("STR_NO_LINE_OF_FIRE");
-			}
-		}
-		else if (_currentAction.type == BA_PSIPANIC
-			|| _currentAction.type == BA_PSICONTROL
-			|| _currentAction.type == BA_PSICONFUSE
-			|| _currentAction.type == BA_PSICOURAGE)
-		{
-			//Log(LOG_INFO) << ". . . . BA_PSIPANIC or BA_PSICONTROL or BA_PSICONFUSE or BA_PSICOURAGE";
-			if (targetUnit != nullptr
-				&& targetUnit->getUnitVisible() == true
-				&& ((_currentAction.type != BA_PSICOURAGE
-						&& targetUnit->getFaction() != FACTION_PLAYER)
-					|| (_currentAction.type == BA_PSICOURAGE
-						&& targetUnit->getFaction() != FACTION_HOSTILE)))
-			{
-				bool aLienPsi = (_currentAction.weapon == nullptr);
-				if (aLienPsi == true)
-					_currentAction.weapon = _alienPsi;
+				break;
 
-				_currentAction.target = pos;
-				_currentAction.TU = _currentAction.actor->getActionTu(
-																	_currentAction.type,
-																	_currentAction.weapon);
-
-				if (_currentAction.weapon->getRules()->isLosRequired() == false
-					|| std::find(
-							_currentAction.actor->getHostileUnits().begin(),
-							_currentAction.actor->getHostileUnits().end(),
-							targetUnit) != _currentAction.actor->getHostileUnits().end())
+			case BA_PSIPANIC:
+			case BA_PSICONTROL:
+			case BA_PSICONFUSE:
+			case BA_PSICOURAGE:
+				if (targetUnit != nullptr
+					&& targetUnit->getUnitVisible() == true
+					&& ((_currentAction.type != BA_PSICOURAGE
+							&& targetUnit->getFaction() != FACTION_PLAYER)
+						|| (_currentAction.type == BA_PSICOURAGE
+							&& targetUnit->getFaction() != FACTION_HOSTILE)))
 				{
-					if (TileEngine::distance( // in Range
-										_currentAction.actor->getPosition(),
-										_currentAction.target) <= _currentAction.weapon->getRules()->getMaxRange())
+					bool aLienPsi = (_currentAction.weapon == nullptr);
+					if (aLienPsi == true)
+						_currentAction.weapon = _alienPsi;
+
+					_currentAction.target = pos;
+					_currentAction.TU = _currentAction.actor->getActionTu(
+																		_currentAction.type,
+																		_currentAction.weapon);
+
+					if (_currentAction.weapon->getRules()->isLosRequired() == false
+						|| std::find(
+								_currentAction.actor->getHostileUnits().begin(),
+								_currentAction.actor->getHostileUnits().end(),
+								targetUnit) != _currentAction.actor->getHostileUnits().end())
 					{
-						// get the sound/animation started
-//						getMap()->setSelectorType(CT_NONE);
-//						_parentState->getGame()->getCursor()->setVisible(false);
-//						_currentAction.cameraPosition = getMap()->getCamera()->getMapOffset();
-						_currentAction.cameraPosition = Position(0,0,-1); // don't adjust the camera when coming out of ProjectileFlyB/ExplosionB states
-
-
-//						statePushBack(new PsiAttackBState(this, _currentAction));
-						//Log(LOG_INFO) << ". . . . . . new ProjectileFlyBState";
-						statePushBack(new ProjectileFlyBState(this, _currentAction));
-
-						if (_currentAction.actor->getTimeUnits() >= _currentAction.TU) // WAIT, check this *before* all the stuff above!!!
+						if (TileEngine::distance(
+											_currentAction.actor->getPosition(),
+											_currentAction.target) <= _currentAction.weapon->getRules()->getMaxRange())
 						{
-							if (getTileEngine()->psiAttack(&_currentAction) == true)
+							_currentAction.cameraPosition = Position(0,0,-1);
+
+							statePushBack(new ProjectileFlyBState(this, _currentAction));
+
+							if (_currentAction.actor->getTimeUnits() >= _currentAction.TU) // WAIT, check this *before* all the stuff above!!!
 							{
-								//Log(LOG_INFO) << ". . . . . . Psi successful";
-								Game* const game = _parentState->getGame(); // show an infobox if successful
+								if (getTileEngine()->psiAttack(&_currentAction) == true)
+								{
+									Game* const game (_parentState->getGame());
+									std::wstring wst;
+									switch (_currentAction.type)
+									{
+										default:
+										case BA_PSIPANIC:
+											wst = game->getLanguage()->getString("STR_PSI_PANIC_SUCCESS")
+																			.arg(_currentAction.value);
+											break;
+										case BA_PSICONTROL:
+											wst = game->getLanguage()->getString("STR_PSI_CONTROL_SUCCESS")
+																			.arg(_currentAction.value);
+											break;
+										case BA_PSICONFUSE:
+											wst = game->getLanguage()->getString("STR_PSI_CONFUSE_SUCCESS")
+																			.arg(_currentAction.value);
+											break;
+										case BA_PSICOURAGE:
+											wst = game->getLanguage()->getString("STR_PSI_COURAGE_SUCCESS")
+																			.arg(_currentAction.value);
+									}
+									game->pushState(new InfoboxState(wst));
 
-								std::wstring wst;
-								if (_currentAction.type == BA_PSIPANIC)
-									wst = game->getLanguage()->getString("STR_PSI_PANIC_SUCCESS")
-																	.arg(_currentAction.value);
-								else if (_currentAction.type == BA_PSICONTROL)
-									wst = game->getLanguage()->getString("STR_PSI_CONTROL_SUCCESS")
-																	.arg(_currentAction.value);
-								else if (_currentAction.type == BA_PSICONFUSE)
-									wst = game->getLanguage()->getString("STR_PSI_CONFUSE_SUCCESS")
-																	.arg(_currentAction.value);
-								else if (_currentAction.type == BA_PSICOURAGE)
-									wst = game->getLanguage()->getString("STR_PSI_COURAGE_SUCCESS")
-																	.arg(_currentAction.value);
-
-								game->pushState(new InfoboxState(wst));
-
-
-								//Log(LOG_INFO) << ". . . . . . updateSoldierInfo()";
-								_parentState->updateSoldierInfo(false);
-								//Log(LOG_INFO) << ". . . . . . updateSoldierInfo() DONE";
-
-
-								// kL_begin: BattlescapeGame::primaryAction(), not sure where this bit came from.....
-								// it doesn't seem to be in the official oXc but it might
-								// stop some (psi-related) crashes i'm getting; (no, it was something else..),
-								// but then it probably never runs because I doubt that selectedUnit can be other than xCom.
-								// (yes, selectedUnit is currently operating unit of *any* faction)
-								// BUT -> primaryAction() here is never called by the AI; only by Faction_Player ...
-								// BUT <- it has to be, because this is how aLiens do their 'builtInPsi'
-								//
-								// ... it's for player using aLien to do Psi ...
-								//
-								// I could do a test Lol
-
-//								if (_battleSave->getSelectedUnit()->getFaction() != FACTION_PLAYER)
-//								{
-//								_currentAction.targeting = false;
-//								_currentAction.type = BA_NONE;
-//								}
-//								setupSelector();
-
-//								getMap()->setSelectorType(CT_NONE);							// kL
-//								_parentState->getGame()->getCursor()->setVisible(false);	// kL
-//								_parentState->getMap()->refreshSelectorPosition();			// kL
-								// kL_end.
-
-								//Log(LOG_INFO) << ". . . . . . inVisible cursor, DONE";
+									_parentState->updateSoldierInfo(false);
+								}
+							}
+							else
+							{
+								cancelCurrentAction();
+								_parentState->warning("STR_NOT_ENOUGH_TIME_UNITS");
 							}
 						}
 						else
-						{
-							cancelCurrentAction();
-							_parentState->warning("STR_NOT_ENOUGH_TIME_UNITS");
-						}
+							_parentState->warning("STR_OUT_OF_RANGE");
 					}
 					else
-						_parentState->warning("STR_OUT_OF_RANGE");
+						_parentState->warning("STR_NO_LINE_OF_FIRE");
+
+
+					if (aLienPsi == true)
+						_currentAction.weapon = nullptr;
+				}
+				break;
+
+			default:
+				getMap()->setSelectorType(CT_NONE);
+				_parentState->getGame()->getCursor()->setHidden();
+
+				_currentAction.target = pos;
+				if (_currentAction.type == BA_THROW
+					|| _currentAction.weapon->getAmmoItem() == nullptr
+					|| _currentAction.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
+				{
+					_currentAction.cameraPosition = getMap()->getCamera()->getMapOffset();
 				}
 				else
-					_parentState->warning("STR_NO_LINE_OF_FIRE");
+					_currentAction.cameraPosition = Position(0,0,-1);
 
-
-				if (aLienPsi == true)
-					_currentAction.weapon = nullptr;
-			}
-		}
-		else
-		{
-			//Log(LOG_INFO) << ". . . . FIRING or THROWING";
-			getMap()->setSelectorType(CT_NONE);
-			_parentState->getGame()->getCursor()->setHidden();
-
-			_currentAction.target = pos;
-			if (_currentAction.type == BA_THROW
-				|| _currentAction.weapon->getAmmoItem() == nullptr
-				|| _currentAction.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
-			{
-				_currentAction.cameraPosition = getMap()->getCamera()->getMapOffset();
-			}
-			else
-				_currentAction.cameraPosition = Position(0,0,-1);
-
-			_battleStates.push_back(new ProjectileFlyBState(this, _currentAction));	// TODO: should check for valid LoF/LoT *before* invoking this
-																				// instead of the (flakey) checks in that state. Then conform w/ AI ...
-
-			statePushFront(new UnitTurnBState(this, _currentAction));
-			//Log(LOG_INFO) << ". . . . FIRING or THROWING done";
+				_battleStates.push_back(new ProjectileFlyBState(this, _currentAction));	// TODO: should check for valid LoF/LoT *before* invoking this
+																						// instead of the (flakey) checks in that state. Then conform w/ AI ...
+				statePushFront(new UnitTurnBState(this, _currentAction));
 		}
 	}
-	else // select unit, or spin/ MOVE .......
+	else
 	{
-		//Log(LOG_INFO) << ". . NOT _currentAction.targeting";
 		bool allowPreview = (Options::battlePreviewPath != PATH_NONE);
 
-		if (targetUnit != nullptr // select unit
+		if (targetUnit != nullptr
 			&& targetUnit != _currentAction.actor
 			&& (targetUnit->getUnitVisible() == true || _debugPlay == true))
 		{
@@ -2777,25 +2616,25 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				_currentAction.actor = targetUnit;
 			}
 		}
-		else if (playableUnitSelected() == true) // spin or Move.
+		else if (playableUnitSelected() == true)
 		{
-			Pathfinding* const pf = _battleSave->getPathfinding();
+			Pathfinding* const pf (_battleSave->getPathfinding());
 			pf->setPathingUnit(_currentAction.actor);
 
 			const bool
-				ctrl = (SDL_GetModState() & KMOD_CTRL) != 0,
-				alt  = (SDL_GetModState() & KMOD_ALT)  != 0;
+				ctrl ((SDL_GetModState() & KMOD_CTRL) != 0),
+				alt  ((SDL_GetModState() & KMOD_ALT)  != 0);
 
 			bool zPath;
-			const Uint8* const keystate = SDL_GetKeyState(nullptr);
+			const Uint8* const keystate (SDL_GetKeyState(nullptr));
 			if (keystate[SDLK_z] != 0)
 				zPath = true;
 			else
 				zPath = false;
 
-			if (targetUnit != nullptr // spin 180 degrees
+			if (targetUnit != nullptr
 				&& targetUnit == _currentAction.actor
-				&& _currentAction.actor->getArmor()->getSize() == 1) // reasons: let click on large unit fallthrough to Move below_
+				&& _currentAction.actor->getArmor()->getSize() == 1)
 			{
 				if (ctrl == true
 					&& (_currentAction.actor->getGeoscapeSoldier() != nullptr
@@ -2824,7 +2663,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					statePushBack(new UnitTurnBState(this, _currentAction));
 				}
 			}
-			else // handle pathPreview and MOVE ->
+			else
 			{
 				if (allowPreview == true
 					&& (_currentAction.target != pos
@@ -2860,7 +2699,6 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			}
 		}
 	}
-	//Log(LOG_INFO) << "BattlescapeGame::primaryAction() EXIT";
 }
 
 /**
@@ -2935,7 +2773,7 @@ void BattlescapeGame::moveUpDown(
 	getMap()->setSelectorType(CT_NONE);
 	_parentState->getGame()->getCursor()->setHidden();
 
-	Pathfinding* const pf = _battleSave->getPathfinding();
+	Pathfinding* const pf (_battleSave->getPathfinding());
 	pf->calculate(
 				_currentAction.actor,
 				_currentAction.target);

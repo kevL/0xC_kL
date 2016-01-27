@@ -99,7 +99,6 @@ void UnitWalkBState::init()
 
 	if (_unit->getFaction() != FACTION_PLAYER
 		&& _unit != _battleSave->getWalkUnit()) // See.
-//		&& _unit->getUnitVisible() == false) // yeh FALSE -> works in conjunction w/ walkUnit. That is, BattlescapeGame::handleUnitAI() should catch it & do Centering.
 	{
 		//if (_unit->getId() == 1000007) {
 			//Log(LOG_INFO) << ". . init() Center on unit id-" << _unit->getId();

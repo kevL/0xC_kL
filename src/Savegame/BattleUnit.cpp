@@ -3619,7 +3619,6 @@ std::wstring BattleUnit::getName(
 		&& lang != nullptr)
 	{
 		std::wstring ret;
-
 		if (_type.find("STR_") != std::string::npos)
 			ret = lang->getString(_type);
 		else
@@ -3631,7 +3630,6 @@ std::wstring BattleUnit::getName(
 			woststr << ret << L" " << _id;
 			ret = woststr.str();
 		}
-
 		return ret;
 	}
 
