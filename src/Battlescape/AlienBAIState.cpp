@@ -347,26 +347,19 @@ void AlienBAIState::think(BattleAction* const action)
 				evaluate = false;
 	}
 
-	if (_spottersHostile > 2
+	if (_spottersHostile > 1
 		|| _unit->getHealth() < _unit->getBattleStats()->health * 2 / 3
 		|| (_aggroTarget != nullptr
-			&& _aggroTarget->getExposed() != -1
-			&& _aggroTarget->getExposed() > _intell))
+			&& _aggroTarget->getExposed() > _intell)
+		|| (_battleSave->isCheating() == true
+			&& _AIMode != AI_COMBAT))
 	{
 		evaluate = true;
 	}
 	else
 		evaluate = false;
 
-	if (_battleSave->isCheating() == true
-		&& _AIMode != AI_COMBAT)
-	{
-		evaluate = true;
-	}
-	else
-		evaluate = false;
 
-	//Log(LOG_INFO) << ". . pos 7";
 	if (evaluate == true)
 	{
 		// debug:
@@ -2326,11 +2319,7 @@ bool AlienBAIState::psiAction() // private.
 		&& _unit->getOriginalFaction() == FACTION_HOSTILE)	// don't let any faction but HOSTILE mind-control others.
 	{
 		const RuleItem* const itRule (_battleSave->getBattleGame()->getRuleset()->getItem("ALIEN_PSI_WEAPON"));
-
-		int tuCost (itRule->getUseTu());
-		if (itRule->getFlatRate() == false)
-			tuCost = static_cast<int>(static_cast<float>(
-					_unit->getBattleStats()->tu * tuCost) / 100.f);
+		const int tuCost (_unit->getActionTu(BA_PSIPANIC, itRule));
 		//Log(LOG_INFO) << "AlienBAIState::psiAction() tuCost = " << tuCost;
 
 		if (_unit->getTimeUnits() < tuCost + _tuEscape) // check if aLien has the required TUs and can still make it to cover

@@ -2013,8 +2013,8 @@ int BattleUnit::getActionTu(
 		break;
 
 		case BA_USE:
-		case BA_PSICONTROL:
 		case BA_PSIPANIC:
+		case BA_PSICONTROL:
 		case BA_PSICONFUSE:
 		case BA_PSICOURAGE:
 			if (itRule == nullptr)
