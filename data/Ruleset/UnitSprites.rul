@@ -42,6 +42,13 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/cybam/cybam.png
+  - type: FLOATER.PCK
+    width: 512
+    height: 280
+    subX: 32
+    subY: 40
+    files:
+      0: Resources/Sprites/Units/purplefloater/purplefloater.png
   - type: SECTOID.PCK
     width: 512
 #    width: 256

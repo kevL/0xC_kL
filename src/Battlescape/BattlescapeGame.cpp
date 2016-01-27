@@ -178,7 +178,7 @@ void BattlescapeGame::think()
 				BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 				if (selUnit != nullptr)
 				{
-					_parentState->debugPrint(Text::intWide(selUnit->getId()));
+					_parentState->debugPrint(L"ai " + Text::intWide(selUnit->getId()));
 					if (handlePanickingUnit(selUnit) == false)
 					{
 						//Log(LOG_INFO) << "BattlescapeGame::think() call handleUnitAI() " << selUnit->getId();

@@ -562,7 +562,7 @@ void UnitInfoState::init()
 	std::wostringstream woststr;
 
 	// Sprites & Order ->
-	const Soldier* const sol = _unit->getGeoscapeSoldier();
+	const Soldier* const sol (_unit->getGeoscapeSoldier());
 	if (sol != nullptr)
 	{
 		woststr << tr(_unit->getRankString())
@@ -592,7 +592,7 @@ void UnitInfoState::init()
 	// NAME ->
 	woststr << _unit->getName(
 						_game->getLanguage(),
-						_battleSave->getDebugTac() == false); //BattlescapeGame::_debugPlay == true);
+						_battleSave->getDebugTac() == true); //BattlescapeGame::_debugPlay == true);
 	_txtName->setText(woststr.str());
 	_txtName->setBig();
 
