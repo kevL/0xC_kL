@@ -171,9 +171,6 @@ void BattlescapeGame::think()
 	//Log(LOG_INFO) << "BattlescapeGame::think()";
 	if (_battleStates.empty() == true) // nothing is happening - see if they need some alien AI or units panicking or what have you
 	{
-		//Log(LOG_INFO) << "BattlescapeGame::think() - _battleStates is Empty. Clear rfShotList";
-//		_battleSave->getTileEngine()->getRfShooterPositions()->clear(); // TODO: move that to end of popState()
-
 		if (_battleSave->getSide() != FACTION_PLAYER) // it's a non-player turn - ALIENS or CIVILIANS
 		{
 			if (_debugPlay == false)
@@ -188,19 +185,8 @@ void BattlescapeGame::think()
 						handleUnitAI(selUnit);
 					}
 				}
-				else if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr) // start AI turn
-				{
-					if (_battleSave->getDebugTac() == false) // end AI turn. See popState() and handleUnitAI()
-					{
-						_endTurnRequested = true;
-						statePushBack(nullptr);
-					}
-					else
-					{
-						_battleSave->selectNextFactionUnit();
-						_debugPlay = true;
-					}
-				}
+				else if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr) // find 1st AI-unit else endTurn
+					endAiTurn();
 			}
 		}
 		else // it's a player turn
@@ -482,19 +468,10 @@ void BattlescapeGame::popState()
 								getMap()->cacheUnit(selUnit);
 							}
 
-							if (_battleStates.empty() == true // ie. front has popped and there's nothing left
+							if (_battleStates.empty() == true // nothing left for Actor to do
 								&& _battleSave->selectNextFactionUnit(true) == nullptr)
 							{
-								if (_battleSave->getDebugTac() == false)
-								{
-									_endTurnRequested = true;
-									statePushBack(nullptr); // end AI turn
-								}
-								else
-								{
-									_battleSave->selectNextFactionUnit();
-									_debugPlay = true;
-								}
+								endAiTurn();
 							}
 
 							if ((selUnit = _battleSave->getSelectedUnit()) != nullptr)
@@ -878,18 +855,7 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 	_AIActionCounter = 0;
 
 	if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr)
-	{
-		if (_battleSave->getDebugTac() == false)
-		{
-			_endTurnRequested = true;
-			statePushBack(nullptr);
-		}
-		else
-		{
-			_battleSave->selectNextFactionUnit();
-			_debugPlay = true;
-		}
-	}
+		endAiTurn();
 
 	const BattleUnit* const nextUnit (_battleSave->getSelectedUnit());
 	if (nextUnit != nullptr)
@@ -918,6 +884,23 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 				_AISecondMove = true;
 			}
 		}
+	}
+}
+
+/**
+ * Ends the AI turn.
+ */
+void BattlescapeGame::endAiTurn()
+{
+	if (_battleSave->getDebugTac() == false)
+	{
+		_endTurnRequested = true;
+		statePushBack(nullptr);
+	}
+	else
+	{
+		_battleSave->selectNextFactionUnit();
+		_debugPlay = true;
 	}
 }
 

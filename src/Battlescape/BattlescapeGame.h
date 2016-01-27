@@ -195,6 +195,8 @@ private:
 			bool draw = false) const;
 	/// Selects the next AI unit.
 	void selectNextAiUnit(const BattleUnit* const unit);
+	/// Ends the AI turn.
+	void endAiTurn();
 
 	/// Summary execution.
 	void executeUnit();
