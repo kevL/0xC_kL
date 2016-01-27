@@ -3247,7 +3247,7 @@ void BattlescapeState::hotSqrsUpdate()
  */
 void BattlescapeState::hotWoundsRefresh()
 {
-	static Surface* const srfBg (_game->getResourcePack()->getSurface("RANK_ROOKIE"));
+	static Surface* const srfBadge (_game->getResourcePack()->getSurface("RANK_ROOKIE"));
 
 	for (size_t // hide target indicators & clear tiles
 			i = 0;
@@ -3260,13 +3260,17 @@ void BattlescapeState::hotWoundsRefresh()
 		_tileWounded[i] = nullptr;
 	}
 
-	BattleUnit* unit;
+	const bool vis (_battleSave->getSide() == FACTION_PLAYER);
+	const BattleUnit* unit;
+	Tile* tile;
 	for (size_t
-			i = 0, j = 0;
-			i != _battleSave->getMapSizeXYZ() && j != WOUNDED;
+			i = 0, k = 0;
+			i != _battleSave->getMapSizeXYZ() && k != WOUNDED;
 			++i)
 	{
-		unit = _battleSave->getTiles()[i]->getTileUnit();
+		tile = _battleSave->getTiles()[i];
+
+		unit = tile->getTileUnit();
 		if (unit != nullptr
 			&& unit->getFatalWounds() != 0
 			&& unit->getFaction() == FACTION_PLAYER
@@ -3274,13 +3278,35 @@ void BattlescapeState::hotWoundsRefresh()
 			&& unit->getGeoscapeSoldier() != nullptr
 			&& unit->isOut_t(OUT_HLTH) == false)
 		{
-			srfBg->blit(_btnWounded[j]);
-			_btnWounded[j]->setVisible();
+			srfBadge->blit(_btnWounded[k]);
+			_btnWounded[k]->setVisible(vis);
 
-			_numWounded[j]->setValue(static_cast<int>(unit->getFatalWounds()));
-			_numWounded[j]->setVisible();
+			_numWounded[k]->setValue(static_cast<int>(unit->getFatalWounds()));
+			_numWounded[k]->setVisible(vis);
 
-			_tileWounded[j++] = _battleSave->getTiles()[i];
+			_tileWounded[k++] = tile;
+		}
+
+		for (std::vector<BattleItem*>::const_iterator
+				j = tile->getInventory()->begin();
+				j != tile->getInventory()->end();
+				++j)
+		{
+			unit = (*j)->getUnit();
+			if (unit != nullptr
+				&& unit->getUnitStatus() == STATUS_UNCONSCIOUS
+				&& unit->getFatalWounds() != 0
+				&& unit->getFaction() == FACTION_PLAYER
+				&& unit->getGeoscapeSoldier() != nullptr)
+			{
+				srfBadge->blit(_btnWounded[k]);
+				_btnWounded[k]->setVisible(vis);
+
+				_numWounded[k]->setValue(static_cast<int>(unit->getFatalWounds()));
+				_numWounded[k]->setVisible(vis);
+
+				_tileWounded[k++] = tile;
+			}
 		}
 	}
 }
@@ -3358,7 +3384,7 @@ void BattlescapeState::animate()
 		{
 			flashMedic();
 
-			BattleUnit* const selUnit = _battleSave->getSelectedUnit();
+			BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 			if (selUnit != nullptr)
 			{
 				hotSqrsCycle(selUnit);
@@ -3377,14 +3403,11 @@ void BattlescapeState::animate()
 					_overWeight->setVisible(!_overWeight->getVisible());
 
 				static int stickyTiks;
-				if (_bigBtnBorder->getVisible() == true)
+				if (_bigBtnBorder->getVisible() == true
+					&& ++stickyTiks == 3)
 				{
-					++stickyTiks;
-					if (stickyTiks == 3)
-					{
-						stickyTiks = 0;
-						_bigBtnBorder->setVisible(false);
-					}
+					stickyTiks = 0;
+					_bigBtnBorder->setVisible(false);
 				}
 			}
 		}
@@ -4027,6 +4050,20 @@ void BattlescapeState::toggleIcons(bool vis)
 	_lstTileInfo->setVisible(vis);
 
 	_overWeight->setVisible(vis && _isOverweight);
+
+	for (size_t
+			i = 0;
+			i != WOUNDED;
+			++i)
+	{
+		if (_tileWounded[i] != nullptr)
+		{
+			_btnWounded[i]->setVisible(vis);
+			_numWounded[i]->setVisible(vis);
+		}
+		else
+			break;
+	}
 }
 
 /**

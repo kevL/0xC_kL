@@ -2887,6 +2887,7 @@ ActiveHand BattleUnit::getActiveHand()
 		case AH_RIGHT:
 			if (getItem(ST_RIGHTHAND) != nullptr)
 				return AH_RIGHT;
+			break;
 
 		case AH_LEFT:
 			if (getItem(ST_LEFTHAND) != nullptr)
@@ -2915,20 +2916,20 @@ BattleItem* BattleUnit::getMainHandWeapon(bool quickest)
 
 	//Log(LOG_INFO) << "BattleUnit::getMainHandWeapon()";
 	BattleItem
-		* const rtWeapon = getItem(ST_RIGHTHAND),
-		* const ltWeapon = getItem(ST_LEFTHAND);
+		* const rtWeapon (getItem(ST_RIGHTHAND)),
+		* const ltWeapon (getItem(ST_LEFTHAND));
 	//if (rtWeapon != nullptr) Log(LOG_INFO) << "right weapon " << rtWeapon->getRules()->getType();
 	//if (ltWeapon != nullptr) Log(LOG_INFO) << "left weapon " << ltWeapon->getRules()->getType();
 
 	const bool
-		hasRT = rtWeapon != nullptr
+		hasRT (rtWeapon != nullptr
 				&& (rtWeapon->getRules()->getBattleType() == BT_MELEE
 					|| (rtWeapon->getRules()->getBattleType() == BT_FIREARM
-						&& rtWeapon->getAmmoItem() != nullptr)),
-		hasLT = ltWeapon != nullptr
+						&& rtWeapon->getAmmoItem() != nullptr))),
+		hasLT (ltWeapon != nullptr
 				&& (ltWeapon->getRules()->getBattleType() == BT_MELEE
 					|| (ltWeapon->getRules()->getBattleType() == BT_FIREARM
-						&& ltWeapon->getAmmoItem() != nullptr));
+						&& ltWeapon->getAmmoItem() != nullptr)));
 	//Log(LOG_INFO) << ". hasRT = " << hasRT;
 	//Log(LOG_INFO) << ". hasLT = " << hasLT;
 
@@ -2952,7 +2953,7 @@ BattleItem* BattleUnit::getMainHandWeapon(bool quickest)
 
 	//Log(LOG_INFO) << ". . hasRT & hasLT VALID";
 
-	const RuleItem* itRule = rtWeapon->getRules();
+	const RuleItem* itRule (rtWeapon->getRules());
 	int rtTU = itRule->getSnapTu();
 	if (rtTU == 0)
 		if ((rtTU = itRule->getAutoTu()) == 0)

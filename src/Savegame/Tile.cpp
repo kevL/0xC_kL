@@ -1487,14 +1487,14 @@ int Tile::hasUnconsciousUnit(bool playerOnly) const
 			i != _inventory.end();
 			++i)
 	{
-		const BattleUnit* const bu ((*i)->getUnit());
+		const BattleUnit* const unit ((*i)->getUnit());
 
-		if (bu != nullptr
-			&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
-			&& (bu->getOriginalFaction() == FACTION_PLAYER
+		if (unit != nullptr
+			&& unit->getUnitStatus() == STATUS_UNCONSCIOUS
+			&& (unit->getOriginalFaction() == FACTION_PLAYER
 				|| playerOnly == false))
 		{
-			if (playerOnly == true && bu->getFatalWounds() == 0)
+			if (playerOnly == true && unit->getFatalWounds() == 0)
 				ret = 1;
 			else
 				return 2;

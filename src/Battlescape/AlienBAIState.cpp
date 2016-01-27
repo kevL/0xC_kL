@@ -2570,14 +2570,14 @@ BattleActionType AlienBAIState::getReservedAIAction() const
  */
 void AlienBAIState::selectMeleeOrRanged() // private.
 {
-	const BattleItem* const mainWeapon = _unit->getMainHandWeapon();
+	const BattleItem* const mainWeapon (_unit->getMainHandWeapon());
 	if (mainWeapon == nullptr) // kL safety.
 	{
 		_rifle = false;
 		return;
 	}
 
-	const RuleItem* const rifleWeapon = mainWeapon->getRules();
+	const RuleItem* const rifleWeapon (mainWeapon->getRules());
 	if (rifleWeapon->getBattleType() != BT_FIREARM) // kL_add.
 //		|| rifleWeapon == nullptr)
 //		|| _unit->getMainHandWeapon()->getAmmoItem() == nullptr) // done in getMainHandWeapon()
@@ -2586,7 +2586,7 @@ void AlienBAIState::selectMeleeOrRanged() // private.
 		return;
 	}
 
-	const RuleItem* const meleeWeapon = _battleSave->getBattleGame()->getRuleset()->getItem(_unit->getMeleeWeapon());
+	const RuleItem* const meleeWeapon (_battleSave->getBattleGame()->getRuleset()->getItem(_unit->getMeleeWeapon()));
 	if (meleeWeapon != nullptr)
 	{
 		int meleeOdds = 10;
@@ -2615,9 +2615,8 @@ void AlienBAIState::selectMeleeOrRanged() // private.
 			if (RNG::percent(meleeOdds) == true)
 			{
 				_rifle = false;
-				const int tuPreshot = _unit->getTimeUnits() - _unit->getActionTu(
-																			BA_MELEE,
-																			meleeWeapon);
+				const int tuPreshot = _unit->getTimeUnits()
+									- _unit->getActionTu(BA_MELEE, meleeWeapon);
 				Pathfinding* const pf = _battleSave->getPathfinding();
 				pf->setPathingUnit(_unit);
 				_reachableAttack = pf->findReachable(_unit, tuPreshot);

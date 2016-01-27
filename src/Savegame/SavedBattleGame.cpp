@@ -2149,7 +2149,7 @@ void SavedBattleGame::reviveUnit(
 			unit->setExposed(-1);
 
 
-		Position posCorpse = unit->getPosition();
+		Position posCorpse (unit->getPosition());
 
 		if (posCorpse == Position(-1,-1,-1)) // if carried
 		{
@@ -2190,6 +2190,8 @@ void SavedBattleGame::reviveUnit(
 			_te->calculateUnitLighting();
 			_te->calculateFOV(unit->getPosition(), true);
 			removeCorpse(unit);
+
+			_battleState->hotWoundsRefresh();
 		}
 	}
 }
@@ -2200,7 +2202,7 @@ void SavedBattleGame::reviveUnit(
  */
 void SavedBattleGame::removeCorpse(const BattleUnit* const unit)
 {
-	int quad = unit->getArmor()->getSize() * unit->getArmor()->getSize();
+	int quad (unit->getArmor()->getSize() * unit->getArmor()->getSize());
 
 	for (std::vector<BattleItem*>::const_iterator
 			i = _items.begin();

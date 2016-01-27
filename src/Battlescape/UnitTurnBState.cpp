@@ -23,7 +23,6 @@
 #include "Map.h"
 #include "TileEngine.h"
 
-//#include "../Engine/Options.h"
 #include "../Engine/Sound.h"
 
 #include "../Resource/ResourcePack.h"
@@ -65,69 +64,69 @@ UnitTurnBState::~UnitTurnBState()
  */
 void UnitTurnBState::init()
 {
-	if (_unit->isOut_t(OUT_STAT) == true)
+	if (_unit->isOut_t(OUT_STAT) == false)
 	{
-		_unit->clearTurnDirection();
-		_parent->popState();
-		return;
-	}
+		_action.TU = 0;
+		_unit->setStopShot(false);
 
-	_action.TU = 0;
-	_unit->setStopShot(false);
+		// if unit has a turret and it's either strafing or turning during
+		// targeting then only the turret turns
+		_turret = _unit->getTurretType() != -1
+			   && (_action.strafe == true || _action.targeting == true);
 
-	// if unit has a turret and it's either strafing or turning during
-	// targeting then only the turret turns
-	_turret = _unit->getTurretType() != -1
-		   && (_action.strafe == true || _action.targeting == true);
-
-	if (   _unit->getPosition().x != _action.target.x
-		|| _unit->getPosition().y != _action.target.y)
-	{
-		_unit->setDirectionTo(_action.target, _turret); // -> STATUS_TURNING
-	}
-
-	if (_unit->getUnitStatus() != STATUS_TURNING) // try to open a door
-	{
-		if (_chargeTu == true && _action.type == BA_NONE)
+		if (   _unit->getPosition().x != _action.target.x
+			|| _unit->getPosition().y != _action.target.y)
 		{
-			int soundId;
-			switch (_parent->getTileEngine()->unitOpensDoor(_unit))
-			{
-				case DR_WOOD_OPEN:
-					soundId = ResourcePack::DOOR_OPEN;
-					break;
-				case DR_UFO_OPEN:
-					soundId = ResourcePack::SLIDING_DOOR_OPEN;
-					break;
-				case DR_ERR_TU:
-					_action.result = "STR_NOT_ENOUGH_TIME_UNITS";
-					soundId = -1;
-					break;
-				case DR_ERR_RESERVE:
-					_action.result = "STR_TUS_RESERVED"; // no break;
-
-				default:
-					soundId = -1;
-			}
-
-			if (soundId != -1)
-				_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
-											->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
+			_unit->setDirectionTo(_action.target, _turret); // -> STATUS_TURNING
 		}
 
-		_unit->clearTurnDirection();
-		_parent->popState();
+		if (_unit->getUnitStatus() != STATUS_TURNING) // try to open a door
+		{
+			if (_chargeTu == true && _action.type == BA_NONE)
+			{
+				int soundId;
+				switch (_parent->getTileEngine()->unitOpensDoor(_unit))
+				{
+					case DR_WOOD_OPEN:
+						soundId = ResourcePack::DOOR_OPEN;
+						break;
+					case DR_UFO_OPEN:
+						soundId = ResourcePack::SLIDING_DOOR_OPEN;
+						break;
+					case DR_ERR_TU:
+						_action.result = "STR_NOT_ENOUGH_TIME_UNITS";
+						soundId = -1;
+						break;
+					case DR_ERR_RESERVE:
+						_action.result = "STR_TUS_RESERVED"; // no break;
+
+					default:
+						soundId = -1;
+				}
+
+				if (soundId != -1)
+					_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
+												->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
+			}
+
+			_unit->clearTurnDirection();
+			_parent->popState();
+		}
+		else
+		{
+			Uint32 interval;
+			if (_unit->getFaction() == FACTION_PLAYER)
+				interval = _parent->getBattlescapeState()->STATE_INTERVAL_XCOM;
+			else
+				interval = _parent->getBattlescapeState()->STATE_INTERVAL_ALIEN;
+
+			_parent->setStateInterval(interval);
+		}
 	}
 	else
 	{
-		Uint32 interval;
-		if (_unit->getFaction() == FACTION_PLAYER)
-			interval = _parent->getBattlescapeState()->STATE_INTERVAL_XCOM;
-		else
-			interval = _parent->getBattlescapeState()->STATE_INTERVAL_ALIEN;
-
-		//Log(LOG_INFO) << "unitTurnB: init() set interval = " << interval;
-		_parent->setStateInterval(interval);
+		_unit->clearTurnDirection();
+		_parent->popState();
 	}
 }
 
@@ -166,8 +165,8 @@ void UnitTurnBState::think()
 		_unit->clearCache();
 		_parent->getMap()->cacheUnit(_unit);
 
-		const size_t antecedentOpponents = _unit->getHostileUnitsThisTurn().size();
-		const bool newVis = _parent->getTileEngine()->calculateFOV(_unit);
+		const size_t antecedentOpponents (_unit->getHostileUnitsThisTurn().size());
+		const bool newVis (_parent->getTileEngine()->calculateFOV(_unit));
 
 		if (_unit->getFaction() == FACTION_PLAYER)
 		{
