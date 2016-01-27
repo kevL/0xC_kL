@@ -326,18 +326,18 @@ private:
 		void setPlayerPanic() { _playerPanicHandled = false; }
 
 		/// Tries to find an item and pick it up if possible.
-		void pickupItem(BattleAction* const action) const;
-		/// Checks through all the items on the ground and picks one.
+		bool pickupItem(BattleAction* const action) const;
+		/// Checks through all items on the ground and picks one.
 		BattleItem* surveyItems(BattleUnit* const unit) const;
-		/// Evaluates if it's worthwhile to take this item.
+		/// Evaluates if it's worthwhile to take an item.
 		bool worthTaking(
 				BattleItem* const item,
 				BattleUnit* const unit) const;
-		/// Picks the item up from the ground.
-		int takeItemFromGround(
+		/// Picks an item up from the ground.
+		bool takeItemFromGround(
 				BattleItem* const item,
 				BattleUnit* const unit) const;
-		/// Assigns the item to a slot (stolen from battlescapeGenerator::addItem()).
+		/// Assigns an item to a slot (stolen from battlescapeGenerator::addItem()).
 		bool takeItem(
 				BattleItem* const item,
 				BattleUnit* const unit) const;

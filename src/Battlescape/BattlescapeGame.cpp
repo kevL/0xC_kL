@@ -701,9 +701,12 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	_AIActionCounter = action.AIcount;
 
 	if (unit->getFaction() == FACTION_HOSTILE
-		&& unit->getMainHandWeapon() == nullptr)
+		&& unit->getMainHandWeapon() == nullptr
+		&& unit->getRankString() != "STR_LIVE_TERRORIST"
+		&& pickupItem(&action) == true
+		&& _battleSave->getDebugTac() == true) // <- order matters.
 	{
-		pickupItem(&action);
+		_parentState->updateSoldierInfo();
 	}
 
 	if (_playedAggroSound == false
@@ -1530,7 +1533,7 @@ void BattlescapeGame::checkForCasualties(
 		if (weapon != nullptr)
 		{
 			killStatWeapon =
-			killStatWeaponAmmo = weapon->getRules()->getName();
+			killStatWeaponAmmo = weapon->getRules()->getType();
 		}
 
 		const RuleItem* itRule;
@@ -1544,7 +1547,7 @@ void BattlescapeGame::checkForCasualties(
 					++i)
 			{
 				if (*i == killStatWeaponAmmo)
-					killStatWeapon = itRule->getName();
+					killStatWeapon = itRule->getType();
 			}
 		}
 
@@ -1558,7 +1561,7 @@ void BattlescapeGame::checkForCasualties(
 					++i)
 			{
 				if (*i == killStatWeaponAmmo)
-					killStatWeapon = itRule->getName();
+					killStatWeapon = itRule->getType();
 			}
 		}
 	}
@@ -2967,32 +2970,35 @@ const Ruleset* BattlescapeGame::getRuleset() const
 /**
  * Tries to find an item and pick it up if possible.
  * @param action - pointer to the current BattleAction struct
+ * @return, true if an item was actually picked up
  */
-void BattlescapeGame::pickupItem(BattleAction* const action) const
+bool BattlescapeGame::pickupItem(BattleAction* const action) const
 {
 	//Log(LOG_INFO) << "BattlescapeGame::findItem()";
-	if (action->actor->getRankString() != "STR_LIVE_TERRORIST")
+	BattleItem* const targetItem (surveyItems(action->actor));
+	if (targetItem != nullptr)
 	{
-		BattleItem* const targetItem = surveyItems(action->actor);
-		if (targetItem != nullptr)
+		//Log(LOG_INFO) << ". found " << targetItem->getRules()->getType();
+//		if (targetItem->getTile()->getPosition() == action->actor->getPosition())
+		if (targetItem->getTile() == action->actor->getTile())
 		{
-			if (targetItem->getTile()->getPosition() == action->actor->getPosition())
+			//Log(LOG_INFO) << ". . pickup on spot";
+			if (takeItemFromGround(targetItem, action->actor) == true
+				&& targetItem->getAmmoItem() == nullptr)
 			{
-				if (takeItemFromGround(
-									targetItem,
-									action->actor) == 0
-					&& targetItem->getAmmoItem() == nullptr)
-				{
-					action->actor->checkAmmo();
-				}
+				//Log(LOG_INFO) << ". . . check Ammo.";
+				action->actor->checkAmmo();
 			}
-			else
-			{
-				action->target = targetItem->getTile()->getPosition();
-				action->type = BA_MOVE;
-			}
+			return true;
+		}
+		else
+		{
+			//Log(LOG_INFO) << ". . move to spot";
+			action->target = targetItem->getTile()->getPosition();
+			action->type = BA_MOVE;
 		}
 	}
+	return false;
 }
 
 /**
@@ -3005,7 +3011,7 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 {
 	//Log(LOG_INFO) << "BattlescapeGame::surveyItems()";
 	const Tile* tile;
-	std::vector<BattleItem*> groundItems;
+	std::vector<BattleItem*> grdItems;
 	for (std::vector<BattleItem*>::const_iterator
 			i = _battleSave->getItems()->begin();
 			i != _battleSave->getItems()->end();
@@ -3015,6 +3021,8 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 			&& (*i)->getInventorySection()->getSectionType() == ST_GROUND
 			&& (*i)->getRules()->getAttraction() != 0)
 		{
+			//Log(LOG_INFO) << ". " << (*i)->getRules()->getType();
+			//Log(LOG_INFO) << ". . grd attr = " << (*i)->getRules()->getAttraction();
 			tile = (*i)->getTile();
 			if (tile != nullptr
 				&& (tile->getTileUnit() == nullptr
@@ -3023,48 +3031,52 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 				&& tile->getTuCostTile(O_OBJECT, MT_WALK) != 255
 				&& worthTaking(*i, unit) == true)
 			{
-				groundItems.push_back(*i);
+				//Log(LOG_INFO) << ". . . eligible";
+				grdItems.push_back(*i);
 			}
 		}
 	}
 
-	BattleItem* ret = nullptr;
-
-	if (groundItems.empty() == false) // Select the most suitable candidate depending on attraction and distance.
+	if (grdItems.empty() == false) // Select the most suitable candidate depending on attraction and distance.
 	{
-		const Position posUnit = unit->getPosition();
+		const Position posUnit (unit->getPosition());
 		int
 			worth = 0,
-			worthTest,
-			dist;
+			testWorth;
 
 		std::vector<BattleItem*> choiceItems;
 		for (std::vector<BattleItem*>::const_iterator
-				i = groundItems.begin();
-				i != groundItems.end();
+				i = grdItems.begin();
+				i != grdItems.end();
 				++i)
 		{
-			dist = TileEngine::distance(
-									posUnit,
-									(*i)->getTile()->getPosition());
-			worthTest = (*i)->getRules()->getAttraction() / (dist + 1);
-			if (worthTest >= worth)
+			//Log(LOG_INFO) << ". . . grd " << (*i)->getRules()->getType();
+			testWorth = (*i)->getRules()->getAttraction()
+					  / (TileEngine::distance(
+											posUnit,
+											(*i)->getTile()->getPosition()) + 1);
+			if (testWorth >= worth)
 			{
-				if (worthTest > worth)
+				if (testWorth > worth)
 				{
-					worth = worthTest;
+					worth = testWorth;
 					choiceItems.clear();
 				}
-
 				choiceItems.push_back(*i);
 			}
 		}
 
 		if (choiceItems.empty() == false)
-			ret = choiceItems.at(RNG::pick(choiceItems.size()));
+		{
+			//BattleItem* ret = choiceItems.at(RNG::pick(choiceItems.size()));
+			//Log(LOG_INFO) << ". . ret = " << ret->getRules()->getType();
+			//return ret;
+			return choiceItems.at(RNG::pick(choiceItems.size()));
+		}
 	}
+	//else Log(LOG_INFO) << ". no elible items";
 
-	return ret;
+	return nullptr;
 }
 
 /**
@@ -3073,129 +3085,132 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
  * @param unit - pointer to the BattleUnit looking for an item
  * @return, true if the item is worth going for
  */
-bool BattlescapeGame::worthTaking( // TODO: rewrite & rework into rest of pickup code !
+bool BattlescapeGame::worthTaking(
 		BattleItem* const item,
 		BattleUnit* const unit) const
 {
 	//Log(LOG_INFO) << "BattlescapeGame::worthTaking()";
-	const int spaceReqd = item->getRules()->getInventoryHeight() * item->getRules()->getInventoryWidth();
-	int spaceFree = 25; // note that my compiler throws a hissy-fit every time it sees this chunk of code ...
-	for (std::vector<BattleItem*>::const_iterator
-			i = unit->getInventory()->begin();
-			i != unit->getInventory()->end();
+	std::vector<const RuleInventory*> inTypes;
+	inTypes.push_back(getRuleset()->getInventoryRule(ST_RIGHTHAND));
+	inTypes.push_back(getRuleset()->getInventoryRule(ST_LEFTHAND));
+	inTypes.push_back(getRuleset()->getInventoryRule(ST_BELT));
+	inTypes.push_back(getRuleset()->getInventoryRule(ST_BACKPACK));
+
+	bool fit = false;
+	for (std::vector<const RuleInventory*>::const_iterator
+			i = inTypes.begin();
+			i != inTypes.end() && fit == false;
 			++i)
 	{
-		spaceFree -= (*i)->getRules()->getInventoryHeight() * (*i)->getRules()->getInventoryWidth();
-		if (spaceFree < spaceReqd)
-			return false;
-	}
-
-
-	bool ret = false;
-
-	if (item->getRules()->getBattleType() == BT_AMMO)
-	{
-		for (std::vector<BattleItem*>::const_iterator
-				i = unit->getInventory()->begin();
-				i != unit->getInventory()->end()
-					&& ret == false;
-				++i)
+		for (std::vector<RuleSlot>::const_iterator
+				j = (*i)->getSlots()->begin();
+				j != (*i)->getSlots()->end() && fit == false;
+				++j)
 		{
-			if ((*i)->getRules()->getBattleType() == BT_FIREARM)
+			if (Inventory::isOverlap(
+								unit, item, *i,
+								j->x, j->y) == false
+				&& (*i)->fitItemInSlot(
+								item->getRules(),
+								j->x, j->y) == true)
 			{
-				for (std::vector<std::string>::const_iterator
-						j = (*i)->getRules()->getCompatibleAmmo()->begin();
-						j != (*i)->getRules()->getCompatibleAmmo()->end()
-							&& ret == false;
-						++j)
-				{
-					if (*j == (*i)->getRules()->getName())
-						ret = true;
-				}
-			}
-		}
-	}
-	else if (item->getAmmoItem() == nullptr) // not loaded
-	{
-		for (std::vector<BattleItem*>::const_iterator
-				i = unit->getInventory()->begin();
-				i != unit->getInventory()->end()
-					&& ret == false;
-				++i)
-		{
-			if ((*i)->getRules()->getBattleType() == BT_AMMO)
-			{
-				for (std::vector<std::string>::const_iterator
-						j = item->getRules()->getCompatibleAmmo()->begin();
-						j != item->getRules()->getCompatibleAmmo()->end()
-							&& ret == false;
-						++j)
-				{
-					if (*j == (*i)->getRules()->getName())
-						ret = true;
-				}
+				fit = true;
 			}
 		}
 	}
 
-	// The problem here, in addition to the quirky space-calculation, is that
-	// only weapons and ammo are considered worthwhile.
-	return ret;
+	if (fit == true)
+	{
+		switch (item->getRules()->getBattleType())
+		{
+			default:
+			case BT_FIREARM:
+				//Log(LOG_INFO) << ". Firearm ret TRUE";
+				return true;
+/*				if (item->getAmmoItem() == nullptr) // not loaded
+				{
+					for (std::vector<BattleItem*>::const_iterator
+							i = unit->getInventory()->begin();
+							i != unit->getInventory()->end();
+							++i)
+					{
+						if ((*i)->getRules()->getBattleType() == BT_AMMO)
+						{
+							for (std::vector<std::string>::const_iterator
+									j = item->getRules()->getCompatibleAmmo()->begin();
+									j != item->getRules()->getCompatibleAmmo()->end();
+									++j)
+							{
+								if (*j == (*i)->getRules()->getName())
+								{
+									//Log(LOG_INFO) << ". ret [2] TRUE";
+									return true;
+								}
+							}
+						}
+					}
+				} */
+
+			case BT_AMMO:
+				//Log(LOG_INFO) << ". ammo";
+				for (std::vector<BattleItem*>::const_iterator
+						i = unit->getInventory()->begin();
+						i != unit->getInventory()->end();
+						++i)
+				{
+					if ((*i)->getRules()->getBattleType() == BT_FIREARM)
+					{
+						//Log(LOG_INFO) << ". . has Firearm for it";
+						for (std::vector<std::string>::const_iterator
+								j = (*i)->getRules()->getCompatibleAmmo()->begin();
+								j != (*i)->getRules()->getCompatibleAmmo()->end();
+								++j)
+						{
+							//Log(LOG_INFO) << ". . . try matching " << (*j);
+							if (*j == (*i)->getRules()->getType())
+							{
+								//Log(LOG_INFO) << ". ret [1] TRUE";
+								return true;
+							}
+						}
+					}
+				}
+		}
+	}
+
+	// The problem here in addition to the quirky space-calculation is that only
+	// weapons and ammo are considered worthwhile.
+	//Log(LOG_INFO) << ". ret FALSE";
+	return false;
 }
 
 /**
  * Picks the item up from the ground.
- * @note At this point the unit has decided it's worthwhile to grab the item
- * so try to do just that. First check to make sure actor has time units then
- * that there is space (using horrifying logic!) attempt to actually recover
- * the item.
  * @param item - pointer to a BattleItem to go for
  * @param unit - pointer to the BattleUnit looking for an item
- * @return,	 0 - successful
- *			 1 - no-TUs
- *			 2 - not-enough-room
- *			 3 - won't-fit
- *			-1 - something-went-horribly-wrong
+ * @return, true if enough TU
  */
-int BattlescapeGame::takeItemFromGround(
+bool BattlescapeGame::takeItemFromGround(
 		BattleItem* const item,
 		BattleUnit* const unit) const
 {
 	//Log(LOG_INFO) << "BattlescapeGame::takeItemFromGround()";
-	const int
-		TAKE_SUCCESS	=  0,
-		TAKE_NO_TU		=  1,
-		TAKE_NO_SPACE	=  2,
-		TAKE_NO_FIT		=  3;
+	const RuleInventory
+		* const rhRule (getRuleset()->getInventoryRule(ST_RIGHTHAND)),
+		* const grdRule (getRuleset()->getInventoryRule(ST_GROUND));
+	const int cost = grdRule->getCost(rhRule);
 
-	if (unit->getTimeUnits() < 6) // should replace that w/ Ground-to-Hand TU rule.
-		return TAKE_NO_TU;
-	else
+	if (unit->getTimeUnits() >= cost
+		&& takeItem(item, unit) == true)
 	{
-		const int spaceReqd = item->getRules()->getInventoryHeight() * item->getRules()->getInventoryWidth();
-		int spaceFree = 25; // note that my compiler throws a hissy-fit every time it sees this chunk of code ...
-		for (std::vector<BattleItem*>::const_iterator
-				i = unit->getInventory()->begin();
-				i != unit->getInventory()->end();
-				++i)
-		{
-			spaceFree -= (*i)->getRules()->getInventoryHeight() * (*i)->getRules()->getInventoryWidth();
-			if (spaceFree < spaceReqd)
-				return TAKE_NO_SPACE;
-		}
-
-		if (takeItem(
-					item,
-					unit) == true)
-		{
-			unit->spendTimeUnits(6);
-			item->getTile()->removeItem(item);
-
-			return TAKE_SUCCESS;
-		}
-
-		return TAKE_NO_FIT;
+		unit->spendTimeUnits(cost);
+		item->getTile()->removeItem(item);
+		//Log(LOG_INFO) << ". ret TRUE";
+		return true;
 	}
+
+	//Log(LOG_INFO) << ". ret FALSE";
+	return false;
 }
 
 /**
@@ -3210,15 +3225,14 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 {
 	//Log(LOG_INFO) << "BattlescapeGame::takeItem()";
 	const RuleInventory
-		* const rhRule = getRuleset()->getInventoryRule(ST_RIGHTHAND),
-		* const lhRule = getRuleset()->getInventoryRule(ST_LEFTHAND);
+		* const rhRule (getRuleset()->getInventoryRule(ST_RIGHTHAND)),
+		* const lhRule (getRuleset()->getInventoryRule(ST_LEFTHAND));
 	BattleItem
-		* const rhWeapon = unit->getItem(ST_RIGHTHAND),
-		* const lhWeapon = unit->getItem(ST_LEFTHAND);
+		* const rhWeapon (unit->getItem(ST_RIGHTHAND)),
+		* const lhWeapon (unit->getItem(ST_LEFTHAND));
 
-	RuleItem* const itRule = item->getRules();
-
-	int placed = 0;
+	RuleItem* const itRule (item->getRules());
+	int placed (0);
 
 	switch (itRule->getBattleType())
 	{
@@ -3236,13 +3250,12 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 				item->setInventorySection(lhRule);
 				placed = 1;
 				break;
-			} // no break.
+			} // no break;
 		case BT_AMMO:
 			if (rhWeapon != nullptr
 				&& rhWeapon->getAmmoItem() == nullptr
 				&& rhWeapon->setAmmoItem(item) == 0)
 			{
-//				item->setInventorySection(rhRule);
 				placed = 2;
 				break;
 			}
@@ -3251,10 +3264,9 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 				&& lhWeapon->getAmmoItem() == nullptr
 				&& lhWeapon->setAmmoItem(item) == 0)
 			{
-//				item->setInventorySection(lhRule);
 				placed = 2;
 				break;
-			} // no break.
+			} // no break;
 
 		default:
 		{
@@ -3290,11 +3302,13 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 	switch (placed)
 	{
 		case 1:
-			item->changeOwner(unit); // no break.
+			item->changeOwner(unit); // no break;
 		case 2:
+			//Log(LOG_INFO) << ". ret TRUE";
 			return true;
 	}
 
+	//Log(LOG_INFO) << ". ret FALSE";
 	return false;
 }
 

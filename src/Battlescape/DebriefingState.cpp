@@ -1860,7 +1860,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 
 		if (itRule->isFixed() == false)
 		{
-			if (itRule->getName() == _rules->getAlienFuelType())
+			if (itRule->getType() == _rules->getAlienFuelType())
 			{
 				if (itRule->isRecoverable() == true)
 					addStat( // special case of an item counted as a stat

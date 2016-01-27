@@ -757,6 +757,42 @@ int BattleUnit::getId() const
 }
 
 /**
+ * Gets unit type.
+ * @return, unit type
+ */
+std::string BattleUnit::getType() const
+{
+	return _type;
+}
+
+/**
+ * Gets this unit's rank string.
+ * @return, rank
+ */
+std::string BattleUnit::getRankString() const
+{
+	return _rank;
+}
+
+/**
+ * Gets this unit's race string.
+ * @return, race
+ */
+std::string BattleUnit::getRaceString() const
+{
+	return _race;
+}
+
+/**
+ * Gets the geoscape-soldier object.
+ * @return, pointer to Soldier
+ */
+Soldier* BattleUnit::getGeoscapeSoldier() const
+{
+	return _geoscapeSoldier;
+}
+
+/**
  * Changes this BattleUnit's position.
  * @param pos			- reference to new position
  * @param updateLast	- true to update old position (default true)
@@ -2104,7 +2140,6 @@ void BattleUnit::addToHostileUnits(BattleUnit* const unit)
 			i != _hostileUnitsThisTurn.end();
 			++i)
 	{
-//		if (dynamic_cast<BattleUnit*>(*i) == unit)
 		if (*i == unit)
 		{
 			addUnit = false;
@@ -2121,7 +2156,6 @@ void BattleUnit::addToHostileUnits(BattleUnit* const unit)
 			i != _hostileUnits.end();
 			++i)
 	{
-//		if (dynamic_cast<BattleUnit*>(*i) == unit)
 		if (*i == unit)
 			return;
 	}
@@ -2826,6 +2860,49 @@ BattleItem* BattleUnit::getItem(
 }
 
 /**
+ * Sets this BattleUnit's active hand and re-caches sprites.
+ * @ note This is used for (a) sprite drawing when dual-wielding, and (b)
+ * choosing a weapon during faction-player RF, TileEngine::reactionShot().
+ * @param hand - the ActiveHand (BattleUnit.h)
+ */
+void BattleUnit::setActiveHand(ActiveHand hand)
+{
+	if (_activeHand != hand)
+	{
+		_activeHand = hand;
+		_cacheInvalid = true;
+	}
+}
+
+/**
+ * Gets this BattleUnit's active hand.
+ * @note Must have an item in that hand else switch to other hand or use
+ * righthand by default.
+ * @return, the ActiveHand (BattleUnit.h)
+ */
+ActiveHand BattleUnit::getActiveHand()
+{
+	switch (_activeHand)
+	{
+		case AH_RIGHT:
+			if (getItem(ST_RIGHTHAND) != nullptr)
+				return AH_RIGHT;
+
+		case AH_LEFT:
+			if (getItem(ST_LEFTHAND) != nullptr)
+				return AH_LEFT;
+	}
+
+	if (getItem(ST_RIGHTHAND) != nullptr)
+		return (_activeHand = AH_RIGHT);
+
+	if (getItem(ST_LEFTHAND) != nullptr)
+		return (_activeHand = AH_LEFT);
+
+	return AH_NONE;
+}
+
+/**
  * Gets the 'main hand weapon' of this BattleUnit.
  * TODO: Ought alter AI so this Returns firearms only.
  * @param quickest - true to choose the quickest weapon (default true)
@@ -2848,12 +2925,10 @@ BattleItem* BattleUnit::getMainHandWeapon(bool quickest)
 				&& (rtWeapon->getRules()->getBattleType() == BT_MELEE
 					|| (rtWeapon->getRules()->getBattleType() == BT_FIREARM
 						&& rtWeapon->getAmmoItem() != nullptr)),
-//						&& rtWeapon->getAmmoItem()->getAmmoQuantity() > 0)),
 		hasLT = ltWeapon != nullptr
 				&& (ltWeapon->getRules()->getBattleType() == BT_MELEE
 					|| (ltWeapon->getRules()->getBattleType() == BT_FIREARM
 						&& ltWeapon->getAmmoItem() != nullptr));
-//						&& ltWeapon->getAmmoItem()->getAmmoQuantity() > 0));
 	//Log(LOG_INFO) << ". hasRT = " << hasRT;
 	//Log(LOG_INFO) << ". hasLT = " << hasLT;
 
@@ -2897,23 +2972,21 @@ BattleItem* BattleUnit::getMainHandWeapon(bool quickest)
 	//Log(LOG_INFO) << ". . rtTU = " << rtTU;
 	//Log(LOG_INFO) << ". . ltTU = " << ltTU;
 
-	if (!rtTU && !ltTU)
+/*	if (!rtTU && !ltTU)
 	{
 		_activeHand = AH_NONE;
 		return nullptr;
 	}
-
 	if (rtTU && !ltTU)
 	{
 		_activeHand = AH_RIGHT;
 		return rtWeapon;
 	}
-
 	if (!rtTU && ltTU)
 	{
 		_activeHand = AH_LEFT;
 		return ltWeapon;
-	}
+	} */
 
 	if (quickest == true) // rtTU && ltTU
 	{
@@ -2926,21 +2999,15 @@ BattleItem* BattleUnit::getMainHandWeapon(bool quickest)
 		_activeHand = AH_LEFT;
 		return ltWeapon;
 	}
-	else
-	{
-		if (rtTU >= ltTU)
-		{
-			_activeHand = AH_RIGHT;
-			return rtWeapon;
-		}
 
-		_activeHand = AH_LEFT;
-		return ltWeapon;
+	if (rtTU >= ltTU)
+	{
+		_activeHand = AH_RIGHT;
+		return rtWeapon;
 	}
 
-	//Log(LOG_INFO) << "BattleUnit::getMainHandWeapon() EXIT 0, no weapon";
-	_activeHand = AH_NONE;
-	return nullptr;
+	_activeHand = AH_LEFT;
+	return ltWeapon;
 }
 
 /**
@@ -3047,7 +3114,7 @@ std::string BattleUnit::getMeleeWeapon() const
  */
 bool BattleUnit::checkAmmo()
 {
-	BattleItem* weapon = getItem(ST_RIGHTHAND);
+	BattleItem* weapon (getItem(ST_RIGHTHAND));
 	if (weapon == nullptr
 		|| weapon->getAmmoItem() != nullptr
 		|| weapon->getRules()->getBattleType() == BT_MELEE)
@@ -3061,7 +3128,7 @@ bool BattleUnit::checkAmmo()
 		}
 	}
 
-	const int reloadTu = weapon->getRules()->getReloadTu();
+	const int reloadTu (weapon->getRules()->getReloadTu());
 	if (_tu >= reloadTu)
 	{
 		// if it's a non-melee weapon with no ammo and 15 or more TUs might need to look for ammo ...
@@ -3085,8 +3152,6 @@ bool BattleUnit::checkAmmo()
 		{
 			_tu -= reloadTu;
 			weapon->setAmmoItem(ammo);
-//			ammo->changeOwner();
-
 			return true;
 		}
 	}
@@ -3808,33 +3873,6 @@ void BattleUnit::setSpawnUnit(const std::string& spawnUnit)
 }
 
 /**
- * Gets this unit's rank string.
- * @return, rank
- */
-std::string BattleUnit::getRankString() const
-{
-	return _rank;
-}
-
-/**
- * Gets this unit's race string.
- * @return, race
- */
-std::string BattleUnit::getRaceString() const
-{
-	return _race;
-}
-
-/**
- * Gets the geoscape-soldier object.
- * @return, pointer to Soldier
- */
-Soldier* BattleUnit::getGeoscapeSoldier() const
-{
-	return _geoscapeSoldier;
-}
-
-/**
  * Add a kill to the counter.
  */
 void BattleUnit::addKillCount()
@@ -3850,58 +3888,6 @@ bool BattleUnit::hasFirstKill() const
 {
 	return _rankInt == 0
 		&& _statistics->hasKillOrStun() == true; // || _kills > 0 // redundant, but faster
-}
-
-/**
- * Gets unit type.
- * @return, unit type
- */
-std::string BattleUnit::getType() const
-{
-	return _type;
-}
-
-/**
- * Sets this BattleUnit's active hand and re-caches sprites.
- * @ note This is used for (a) sprite drawing when dual-wielding, and (b)
- * choosing a weapon during faction-player RF, TileEngine::reactionShot().
- * @param hand - the ActiveHand (BattleUnit.h)
- */
-void BattleUnit::setActiveHand(ActiveHand hand)
-{
-	if (_activeHand != hand)
-	{
-		_activeHand = hand;
-		_cacheInvalid = true;
-	}
-}
-
-/**
- * Gets this BattleUnit's active hand.
- * @note Must have an item in that hand else switch to other hand or use
- * righthand by default.
- * @return, the ActiveHand (BattleUnit.h)
- */
-ActiveHand BattleUnit::getActiveHand()
-{
-	switch (_activeHand)
-	{
-		case AH_RIGHT:
-			if (getItem(ST_RIGHTHAND) != nullptr)
-				return AH_RIGHT;
-
-		case AH_LEFT:
-			if (getItem(ST_LEFTHAND) != nullptr)
-				return AH_LEFT;
-	}
-
-	if (getItem(ST_RIGHTHAND) != nullptr)
-		return (_activeHand = AH_RIGHT);
-
-	if (getItem(ST_LEFTHAND) != nullptr)
-		return (_activeHand = AH_LEFT);
-
-	return AH_NONE;
 }
 
 /**
@@ -4193,31 +4179,31 @@ bool BattleUnit::checkViewSector(const Position& pos) const
 		case 0:
 			if (dx + dy > -1 && dy - dx > -1)
 				return true;
-		break;
+			break;
 		case 1:
 			if (dx > -1 && dy > -1)
 				return true;
-		break;
+			break;
 		case 2:
 			if (dx + dy > -1 && dy - dx < 1)
 				return true;
-		break;
+			break;
 		case 3:
 			if (dy < 1 && dx > -1)
 				return true;
-		break;
+			break;
 		case 4:
 			if (dx + dy < 1 && dy - dx < 1)
 				return true;
-		break;
+			break;
 		case 5:
 			if (dx < 1 && dy < 1)
 				return true;
-		break;
+			break;
 		case 6:
 			if (dx + dy < 1 && dy - dx > -1)
 				return true;
-		break;
+			break;
 		case 7:
 			if (dy > -1 && dx < 1)
 				return true;

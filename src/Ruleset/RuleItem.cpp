@@ -300,7 +300,8 @@ const std::string& RuleItem::getType() const
 
 /**
  * Gets the language string that names this item.
- * @note This is not necessarily unique.
+ * @note This is not necessarily unique. Currently used only to differentiate
+ * corpses from their respective battlefield parts.
  * @return, the item's name
  */
 const std::string& RuleItem::getName() const

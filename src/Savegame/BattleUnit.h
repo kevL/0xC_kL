@@ -305,6 +305,15 @@ private:
 
 		/// Gets this BattleUnit's ID.
 		int getId() const;
+		/// Gets this unit's type as a string.
+		std::string getType() const;
+		/// Gets this unit's rank string.
+		std::string getRankString() const;
+		/// Gets this unit's race string.
+		std::string getRaceString() const;
+
+		/// Gets this unit's geoscape Soldier object.
+		Soldier* getGeoscapeSoldier() const;
 
 		/// Sets this unit's position.
 		void setPosition(
@@ -578,6 +587,11 @@ private:
 				int x = 0,
 				int y = 0) const;
 
+		/// Sets the hand this unit has active.
+		void setActiveHand(ActiveHand hand);
+		/// Gets this unit's active hand.
+		ActiveHand getActiveHand();
+
 		/// Gets the item in this unit's main hand.
 		BattleItem* getMainHandWeapon(bool quickest = true);
 		/// Gets a grenade from this unit's belt if possible.
@@ -703,26 +717,10 @@ private:
 		/// Sets this unit's special ability.
 		void setSpecialAbility(const SpecialAbility specab);
 
-		/// Gets this unit's rank string.
-		std::string getRankString() const;
-		/// Gets this unit's race string.
-		std::string getRaceString() const;
-
-		/// Gets this unit's geoscape Soldier object.
-		Soldier* getGeoscapeSoldier() const;
-
 		/// Adds a kill to this unit's kill-counter.
 		void addKillCount();
 		/// Gets if this is a Rookie and has made his/her first kill.
 		bool hasFirstKill() const;
-
-		/// Gets this unit's type as a string.
-		std::string getType() const;
-
-		/// Sets the hand this unit has active.
-		void setActiveHand(ActiveHand hand);
-		/// Gets this unit's active hand.
-		ActiveHand getActiveHand();
 
 		/// Gets this unit's original faction
 		UnitFaction getOriginalFaction() const;

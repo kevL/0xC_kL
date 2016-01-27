@@ -243,18 +243,18 @@ void AlienBAIState::think(BattleAction* const action)
 			{
 				//Log(LOG_INFO) << ". . . blaster TRUE";
 				_blaster = true;
-				const int tuPreshot = _unit->getTimeUnits() - _unit->getActionTu(
-																			BA_LAUNCH,
-																			action->weapon);
+				const int tuPreshot = _unit->getTimeUnits()
+									- _unit->getActionTu(BA_LAUNCH, action->weapon);
 				_reachableAttack = pf->findReachable(_unit, tuPreshot);
 			}
 			else
 			{
 				//Log(LOG_INFO) << ". . . rifle TRUE";
 				_rifle = true;
-				const int tuPreshot = _unit->getTimeUnits() - _unit->getActionTu( // kL_note: this needs selectFireMethod() ...
-																			itRule->getDefaultAction(), // BA_SNAPSHOT
-																			action->weapon);
+				const int tuPreshot = _unit->getTimeUnits()
+									- _unit->getActionTu(
+													itRule->getDefaultAction(), // BA_SNAPSHOT // kL_note: this needs selectFireMethod() ...
+													action->weapon);
 				_reachableAttack = pf->findReachable(_unit, tuPreshot);
 			}
 		}
@@ -262,9 +262,8 @@ void AlienBAIState::think(BattleAction* const action)
 		{
 			//Log(LOG_INFO) << ". . weapon is Melee";
 			_melee = true;
-			const int tuPreshot = _unit->getTimeUnits() - _unit->getActionTu(
-																		BA_MELEE,
-																		action->weapon);
+			const int tuPreshot = _unit->getTimeUnits()
+								- _unit->getActionTu(BA_MELEE, action->weapon);
 			_reachableAttack = pf->findReachable(_unit, tuPreshot);
 		}
 		else if (itRule->getBattleType() == BT_GRENADE)	// kL
@@ -426,7 +425,7 @@ void AlienBAIState::think(BattleAction* const action)
 
 			// forget about reserving TUs, we need to get out of here.
 //			_battleSave->getBattleGame()->setReservedAction(BA_NONE, false); // kL
-		break;
+			break;
 
 		case AI_PATROL:
 			//Log(LOG_INFO) << ". . . . AI_PATROL";
@@ -445,7 +444,7 @@ void AlienBAIState::think(BattleAction* const action)
 
 			action->type	= _patrolAction->type;
 			action->target	= _patrolAction->target;
-		break;
+			break;
 
 		case AI_COMBAT:
 			//Log(LOG_INFO) << ". . . . AI_COMBAT";
@@ -484,7 +483,7 @@ void AlienBAIState::think(BattleAction* const action)
 			}
 			else if (action->type == BA_LAUNCH)
 				action->waypoints = _attackAction->waypoints;
-		break;
+			break;
 
 		case AI_AMBUSH:
 			//Log(LOG_INFO) << ". . . . AI_AMBUSH";

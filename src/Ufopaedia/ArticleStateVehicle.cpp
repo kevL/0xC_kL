@@ -140,9 +140,9 @@ ArticleStateVehicle::ArticleStateVehicle(const ArticleDefinitionVehicle* const d
 	woststr.str(L"");
 	if (itRule->getCompatibleAmmo()->empty() == false)
 	{
-		const RuleItem* const amRule = _game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front());
+		const RuleItem* const aRule (_game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front()));
 
-		woststr << amRule->getPower();
+		woststr << aRule->getPower();
 		_lstStats->addRow(
 					2,
 					tr("STR_WEAPON_POWER").c_str(),
@@ -151,13 +151,13 @@ ArticleStateVehicle::ArticleStateVehicle(const ArticleDefinitionVehicle* const d
 		_lstStats->addRow(
 					2,
 					tr("STR_ORDNANCE_LC").c_str(),
-					tr(amRule->getName()).c_str());
+					tr(aRule->getType()).c_str());
 
 		woststr.str(L"");
 		if (itRule->getClipSize() > 0)
 			woststr << itRule->getClipSize();
 		else
-			woststr << amRule->getClipSize();
+			woststr << aRule->getClipSize();
 		_lstStats->addRow(
 					2,
 					tr("STR_ROUNDS").c_str(),

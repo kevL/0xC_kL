@@ -2931,7 +2931,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	_barMorale		->setVisible();
 
 
-	BattleUnit* const selUnit = _battleSave->getSelectedUnit();
+	BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 	if (calcFoV == true)
 		_battleSave->getTileEngine()->calculateFOV(selUnit);
 
@@ -2942,7 +2942,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 									_game->getLanguage(),
 									false));
 
-	const Soldier* const sol = selUnit->getGeoscapeSoldier();
+	const Soldier* const sol (selUnit->getGeoscapeSoldier());
 	if (sol != nullptr)
 	{
 		SurfaceSet* const texture = _game->getResourcePack()->getSurfaceSet("SMOKE.PCK");
@@ -2968,27 +2968,27 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	}
 
 
-	double stat = static_cast<double>(selUnit->getBattleStats()->tu);
-	const int tu = selUnit->getTimeUnits();
+	double stat (static_cast<double>(selUnit->getBattleStats()->tu));
+	const int tu (selUnit->getTimeUnits());
 	_numTimeUnits->setValue(static_cast<unsigned>(tu));
 	_barTimeUnits->setValue(std::ceil(
 							static_cast<double>(tu) / stat * 100.));
 
 	stat = static_cast<double>(selUnit->getBattleStats()->stamina);
-	const int energy = selUnit->getEnergy();
+	const int energy (selUnit->getEnergy());
 	_numEnergy->setValue(static_cast<unsigned>(energy));
 	_barEnergy->setValue(std::ceil(
 							static_cast<double>(energy) / stat * 100.));
 
 	stat = static_cast<double>(selUnit->getBattleStats()->health);
-	const int health = selUnit->getHealth();
+	const int health (selUnit->getHealth());
 	_numHealth->setValue(static_cast<unsigned>(health));
 	_barHealth->setValue(std::ceil(
 							static_cast<double>(health) / stat * 100.));
 	_barHealth->setValue2(std::ceil(
 							static_cast<double>(selUnit->getStun()) / stat * 100.));
 
-	const int morale = selUnit->getMorale();
+	const int morale (selUnit->getMorale());
 	_numMorale->setValue(static_cast<unsigned>(morale));
 	_barMorale->setValue(morale);
 
@@ -2998,7 +2998,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 		* const ltItem (selUnit->getItem(ST_LEFTHAND));
 	const RuleItem* itRule;
 
-	ActiveHand ah = selUnit->getActiveHand();
+	ActiveHand ah (selUnit->getActiveHand());
 	if (ah != AH_NONE)
 	{
 		int
@@ -3109,7 +3109,6 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 						_numAmmoR->setColor(color);
 					}
-//					else _numAmmoR->setValue();
 				}
 				break;
 
@@ -3174,7 +3173,6 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 						_numAmmoL->setColor(color);
 					}
-//					else _numAmmoL->setValue();
 				}
 				break;
 

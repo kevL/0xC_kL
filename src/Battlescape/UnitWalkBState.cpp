@@ -802,7 +802,9 @@ bool UnitWalkBState::doStatusStand_end() // private.
 	//Log(LOG_INFO) << "***** UnitWalkBState::doStatusStand_end() : " << _unit->getId();
 	if (_unit->getFaction() != FACTION_PLAYER)
 		_unit->setUnitVisible(false);
-	else
+
+	if (_unit->getFaction() == FACTION_PLAYER
+		|| _battleSave->getDebugTac() == true)
 	{
 		const BattlescapeState* const battleState = _battleSave->getBattleState();
 
