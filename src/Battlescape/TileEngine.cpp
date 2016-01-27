@@ -1683,12 +1683,12 @@ bool TileEngine::reactionShot(
 
 			default:
 			case AH_NONE:
-				_rfAction->weapon = unit->getMainHandWeapon();
+				_rfAction->weapon = unit->getMainHandWeapon(true);
 		}
 	}
 	else // aLien .....
 	{
-		_rfAction->weapon = unit->getMainHandWeapon();
+		_rfAction->weapon = unit->getMainHandWeapon(true);
 
 		if (_rfAction->weapon == nullptr
 			&& _rfAction->actor->getUnitRules() != nullptr

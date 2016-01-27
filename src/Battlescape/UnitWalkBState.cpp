@@ -1017,7 +1017,7 @@ void UnitWalkBState::postPathProcedures() // private.
 				action.target = posTarget;
 				action.targeting = true;
 				action.type = BA_MELEE;
-				action.weapon = _unit->getMainHandWeapon();
+				action.weapon = _unit->getMainHandWeapon(false);
 //				action.weapon = _unit->getMeleeWeapon();
 
 // if (action.weapon == nullptr)

@@ -42,18 +42,18 @@ private:
 	bool
 		_blaster,
 		_didPsi,
-		_grenade, // kL
+		_grenade,
 		_melee,
 		_rifle;
 	int
 		_closestDist,
-		_intelligence,
+		_intell,
 		_targetsExposed,
 		_targetsVisible,
 		_spottersHostile,
 		_tuAmbush,
 		_tuEscape;
-//kL	_reserveTUs;
+//		_reserveTUs;
 
 	std::vector<int>
 		_reachable,

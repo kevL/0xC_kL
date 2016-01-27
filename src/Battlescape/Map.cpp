@@ -2526,7 +2526,7 @@ SelectorType Map::getSelectorType() const
 }
 
 /**
- * Checks all units for need to be redrawn.
+ * Checks all units for need to be redrawn and if so updates sprite(s).
  */
 void Map::cacheUnits()
 {
@@ -2540,29 +2540,29 @@ void Map::cacheUnits()
 }
 
 /**
- * Check if a certain unit needs to be redrawn.
+ * Check if a certain unit needs to be redrawn and if so updates sprite(s).
  * @param unit - pointer to a BattleUnit
  */
 void Map::cacheUnit(BattleUnit* const unit)
 {
-	int width;
-	if (unit->getUnitStatus() == STATUS_AIMING)
-		width = _spriteWidth * 2;
-	else
-		width = _spriteWidth;
-
-	UnitSprite* const sprite = new UnitSprite(width, _spriteHeight);
-	sprite->setPalette(this->getPalette());
-
 	if (unit->getCacheInvalid() == true)
 	{
-		const int armorSize = unit->getArmor()->getSize() * unit->getArmor()->getSize();
+		int width;
+		if (unit->getUnitStatus() == STATUS_AIMING)
+			width = _spriteWidth * 2;
+		else
+			width = _spriteWidth;
+
+		UnitSprite* const sprite (new UnitSprite(width, _spriteHeight));
+		sprite->setPalette(this->getPalette());
+
+		const int armorSize (unit->getArmor()->getSize() * unit->getArmor()->getSize());
 		for (int
 				quadrant = 0;
 				quadrant != armorSize;
 				++quadrant)
 		{
-			Surface* cache = unit->getCache(quadrant);
+			Surface* cache (unit->getCache(quadrant));
 			if (cache == nullptr)
 			{
 				cache = new Surface(_spriteWidth, _spriteHeight);
@@ -2573,8 +2573,9 @@ void Map::cacheUnit(BattleUnit* const unit)
 			sprite->setBattleUnit(unit, quadrant);
 
 			const BattleItem
-				* const rtItem = unit->getItem(ST_RIGHTHAND),
-				* const ltItem = unit->getItem(ST_LEFTHAND);
+				* const rtItem (unit->getItem(ST_RIGHTHAND)),
+				* const ltItem (unit->getItem(ST_LEFTHAND));
+
 			if (rtItem != nullptr && rtItem->getRules()->isFixed() == false)
 				sprite->setBattleItRH(rtItem);
 			else
@@ -2596,9 +2597,9 @@ void Map::cacheUnit(BattleUnit* const unit)
 
 			unit->setCache(cache, quadrant);
 		}
-	}
 
-	delete sprite;
+		delete sprite;
+	}
 }
 
 /**

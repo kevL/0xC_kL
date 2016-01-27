@@ -235,9 +235,9 @@ private:
 		/// Gets the 3D selector type.
 		SelectorType getSelectorType() const;
 
-		/// Caches units.
+		/// Caches all unit-sprites.
 		void cacheUnits();
-		/// Caches the unit.
+		/// Caches a unit's sprite.
 		void cacheUnit(BattleUnit* const unit);
 
 		/// Sets projectile.
@@ -248,7 +248,7 @@ private:
 		/// Gets explosion set.
 		std::list<Explosion*>* getExplosions();
 
-		/// Gets the pointer to the camera.
+		/// Gets a pointer to the camera.
 		Camera* getCamera();
 		/// Mouse-scrolls the camera.
 		void scrollMouse();

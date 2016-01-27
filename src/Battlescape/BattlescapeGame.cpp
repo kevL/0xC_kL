@@ -701,7 +701,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	_AIActionCounter = action.AIcount;
 
 	if (unit->getFaction() == FACTION_HOSTILE
-		&& unit->getMainHandWeapon() == nullptr
+		&& unit->getMainHandWeapon(false) == nullptr
 		&& unit->getRankString() != "STR_LIVE_TERRORIST"
 		&& pickupItem(&action) == true
 		&& _battleSave->getDebugTac() == true) // <- order matters.
@@ -2249,7 +2249,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 					statePushBack(new UnitTurnBState(this, action, false));
 				}
 
-				action.weapon = unit->getMainHandWeapon();
+				action.weapon = unit->getMainHandWeapon(true);
 				if (action.weapon == nullptr)
 					action.weapon = unit->getGrenade();
 

@@ -593,7 +593,7 @@ private:
 		ActiveHand getActiveHand();
 
 		/// Gets the item in this unit's main hand.
-		BattleItem* getMainHandWeapon(bool quickest = true);
+		BattleItem* getMainHandWeapon(bool quickest);
 		/// Gets a grenade from this unit's belt if possible.
 		BattleItem* getGrenade() const;
 		/// Gets this unit's melee weapon as a string.

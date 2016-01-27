@@ -1557,15 +1557,12 @@ void UnitSprite::drawRoutine9()
 void UnitSprite::sortHandObjects()
 {
 	// this is the draw active-hand code:
-	if (_itRT != nullptr)
+	if (_itRT != nullptr && _itLT != nullptr)
 	{
-		if (_itLT != nullptr)
-		{
-			if (_unit->getActiveHand() == AH_LEFT)
-				_itRT = _itLT;
+		if (_unit->getActiveHand() == AH_LEFT)
+			_itRT = _itLT;
 
-			_itLT = nullptr;
-		}
+		_itLT = nullptr;
 	}
 	// this is the draw dual-wield code:
 /*	if (_itRT && _itRT->getRules()->isTwoHanded() == true)

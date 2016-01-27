@@ -2877,7 +2877,7 @@ void BattleUnit::setActiveHand(ActiveHand hand)
 /**
  * Gets this BattleUnit's active hand.
  * @note Must have an item in that hand else switch to other hand or use
- * righthand by default.
+ * righthand by default. Ergo this effectively sets Active-hand.
  * @return, the ActiveHand (BattleUnit.h)
  */
 ActiveHand BattleUnit::getActiveHand()
@@ -2895,18 +2895,24 @@ ActiveHand BattleUnit::getActiveHand()
 	}
 
 	if (getItem(ST_RIGHTHAND) != nullptr)
+	{
+		_cacheInvalid = true;
 		return (_activeHand = AH_RIGHT);
+	}
 
 	if (getItem(ST_LEFTHAND) != nullptr)
+	{
+		_cacheInvalid = true;
 		return (_activeHand = AH_LEFT);
+	}
 
 	return AH_NONE;
 }
 
 /**
  * Gets the 'main hand weapon' of this BattleUnit.
- * TODO: Ought alter AI so this Returns firearms only.
- * @param quickest - true to choose the quickest weapon (default true)
+ * @note A call to this function also sets the Active-hand.
+ * @param quickest - true to choose the quickest weapon
  * @return, pointer to a BattleItem or nullptr
  */
 BattleItem* BattleUnit::getMainHandWeapon(bool quickest)
@@ -2935,19 +2941,19 @@ BattleItem* BattleUnit::getMainHandWeapon(bool quickest)
 
 	if (!hasRT && !hasLT)
 	{
-		_activeHand = AH_NONE;
+		setActiveHand(AH_NONE);
 		return nullptr;
 	}
 
 	if (hasRT && !hasLT)
 	{
-		_activeHand = AH_RIGHT;
+		setActiveHand(AH_RIGHT);
 		return rtWeapon;
 	}
 
 	if (!hasRT && hasLT)
 	{
-		_activeHand = AH_LEFT;
+		setActiveHand(AH_LEFT);
 		return ltWeapon;
 	}
 
@@ -2993,21 +2999,21 @@ BattleItem* BattleUnit::getMainHandWeapon(bool quickest)
 	{
 		if (rtTU <= ltTU)
 		{
-			_activeHand = AH_RIGHT;
+			setActiveHand(AH_RIGHT);
 			return rtWeapon;
 		}
 
-		_activeHand = AH_LEFT;
+		setActiveHand(AH_LEFT);
 		return ltWeapon;
 	}
 
 	if (rtTU >= ltTU)
 	{
-		_activeHand = AH_RIGHT;
+		setActiveHand(AH_RIGHT);
 		return rtWeapon;
 	}
 
-	_activeHand = AH_LEFT;
+	setActiveHand(AH_LEFT);
 	return ltWeapon;
 }
 

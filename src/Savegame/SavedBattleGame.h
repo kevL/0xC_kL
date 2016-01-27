@@ -24,7 +24,7 @@
 //#include <vector>
 #include <yaml-cpp/yaml.h>
 
-#include "BattleUnit.h" // UnitFaction
+#include "BattleUnit.h"
 //#include "../Battlescape/BattlescapeGame.h" // BattleActionType (included in BattleUnit.h)
 
 
