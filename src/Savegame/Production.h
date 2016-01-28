@@ -77,6 +77,9 @@ private:
 		YAML::Node save() const;
 
 		///
+		const RuleManufacture* getRules() const;
+
+		///
 		int getAmountTotal() const;
 		///
 		void setAmountTotal(int amount);
@@ -111,12 +114,14 @@ private:
 				const Ruleset* const rules);
 
 		///
-		const RuleManufacture* getRules() const;
-
-		///
 		void startProduction(
 				Base* const base,
 				SavedGame* const gameSave) const;
+
+		///
+		bool tillFinish(
+				int& days,
+				int& hours) const;
 };
 
 }

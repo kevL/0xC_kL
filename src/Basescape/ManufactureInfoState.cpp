@@ -479,37 +479,11 @@ void ManufactureInfoState::setAssignedEngineer() // private.
 void ManufactureInfoState::updateTimeTotal() // private.
 {
 	std::wostringstream woststr;
-
-	if (_production->getAssignedEngineers() > 0)
-	{
-		int hoursLeft;
-
-		if (_production->getSellItems() == true
-			|| _production->getInfiniteAmount() == true)
-		{
-			hoursLeft = (_production->getAmountProduced() + 1) * _production->getRules()->getManufactureTime()
-						- _production->getTimeSpent();
-		}
-		else
-			hoursLeft = _production->getAmountTotal() * _production->getRules()->getManufactureTime()
-						- _production->getTimeSpent();
-
-
-		int engs = _production->getAssignedEngineers();
-		if (Options::canManufactureMoreItemsPerHour == false)
-			engs = std::min(
-						engs,
-						_production->getRules()->getManufactureTime());
-
-//		hoursLeft = static_cast<int>(ceil(
-//					static_cast<double>(hoursLeft) / static_cast<double>(_production->getAssignedEngineers())));
-		// Ensure this rounds up since it takes an entire hour to manufacture any part of that hour's capacity.
-		hoursLeft = (hoursLeft + engs - 1) / engs;
-
-		const int daysLeft = hoursLeft / 24;
-		hoursLeft %= 24;
-		woststr << daysLeft << L"\n" << hoursLeft;
-	}
+	int
+		days,
+		hours;
+	if (_production->tillFinish(days, hours) == true)
+		woststr << days << L"\n" << hours;
 	else
 		woststr << L"oo";
 

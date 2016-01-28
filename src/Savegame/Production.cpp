@@ -95,6 +95,14 @@ YAML::Node Production::save() const
 /**
  *
  */
+const RuleManufacture* Production::getRules() const
+{
+	return _manfRule;
+}
+
+/**
+ *
+ */
 int Production::getAmountTotal() const
 {
 	return _amount;
@@ -205,16 +213,9 @@ ProductionProgress Production::step(
 		SavedGame* const gameSave,
 		const Ruleset* const rules)
 {
-	const int qtyDone = getAmountProduced();
 	_timeSpent += _engineers;
 
-	if (Options::canManufactureMoreItemsPerHour == false
-		&& qtyDone < getAmountProduced())
-	{
-		// enforce pre-TFTD manufacturing rules: extra hours are wasted
-		_timeSpent = (qtyDone + 1) * _manfRule->getManufactureTime();
-	}
-
+	const int qtyDone (getAmountProduced());
 	if (qtyDone < getAmountProduced())
 	{
 
@@ -372,14 +373,6 @@ int Production::getAmountProduced() const
 /**
  *
  */
-const RuleManufacture* Production::getRules() const
-{
-	return _manfRule;
-}
-
-/**
- *
- */
 void Production::startProduction(
 		Base* const base,
 		SavedGame* const gameSave) const
@@ -395,6 +388,37 @@ void Production::startProduction(
 	{
 		base->getStorageItems()->removeItem(i->first, i->second);
 	}
+}
+
+/**
+ * Gets the time till this Production is completed.
+ * param days	- reference to store days remaining
+ * param hours	- reference to store hours remaining
+ * @return, true if work is progressing
+ */
+bool Production::tillFinish(
+		int& days,
+		int& hours) const
+{
+	if (_engineers != 0)
+	{
+		if (_sell == true || _infinite == true)
+		{
+			hours = (getAmountProduced() + 1) * getRules()->getManufactureTime()
+				  - _timeSpent;
+		}
+		else
+			hours = getAmountTotal() * _manfRule->getManufactureTime()
+				  - _timeSpent;
+
+		hours = (hours + _engineers - 1) / _engineers;
+
+		days = (hours / 24);
+		hours %= 24;
+
+		return true;
+	}
+	return false;
 }
 
 }

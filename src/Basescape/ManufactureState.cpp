@@ -230,7 +230,7 @@ void ManufactureState::fillProductionList()
 {
 	_lstManufacture->clearList();
 
-	const std::vector<Production*> baseProds = _base->getProductions();
+	const std::vector<Production*> baseProds (_base->getProductions());
 	for (std::vector<Production*>::const_iterator
 			i = baseProds.begin();
 			i != baseProds.end();
@@ -257,33 +257,11 @@ void ManufactureState::fillProductionList()
 		else
 			woststr2 << (*i)->getAmountTotal();
 
-		if ((*i)->getAssignedEngineers() != 0)
-		{
-			int hoursLeft;
-			if ((*i)->getSellItems() == true
-				|| (*i)->getInfiniteAmount() == true)
-			{
-				hoursLeft = ((*i)->getAmountProduced() + 1) * (*i)->getRules()->getManufactureTime()
-						  - (*i)->getTimeSpent();
-			}
-			else
-				hoursLeft = (*i)->getAmountTotal() * (*i)->getRules()->getManufactureTime()
-						  - (*i)->getTimeSpent();
-
-			int engineers = (*i)->getAssignedEngineers();
-			if (Options::canManufactureMoreItemsPerHour == false)
-				engineers = std::min(
-								engineers,
-								(*i)->getRules()->getManufactureTime());
-
-			// ensure this is rounded up
-			// since it takes an entire hour to manufacture any part of that hour's capacity
-			hoursLeft = (hoursLeft + engineers - 1) / engineers;
-
-			const int daysLeft = hoursLeft / 24;
-			hoursLeft %= 24;
-			woststr3 << daysLeft << L"/" << hoursLeft;
-		}
+		int
+			days,
+			hours;
+		if ((*i)->tillFinish(days, hours) == true)
+			woststr3 << days << L"/" << hours;
 		else
 			woststr3 << L"oo";
 
