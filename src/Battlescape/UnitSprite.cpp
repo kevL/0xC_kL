@@ -693,7 +693,8 @@ void UnitSprite::drawRoutine1()
 		* itRT		= nullptr,
 		* itLT		= nullptr;
 
-	if (_unit->getUnitStatus() == STATUS_WALKING)
+	if (_unit->getUnitStatus() == STATUS_WALKING
+		|| _unit->getUnitStatus() == STATUS_FLYING)
 	{
 		torso = _unitSet->getFrame(
 								  unitDir * 5
@@ -760,7 +761,8 @@ void UnitSprite::drawRoutine1()
 			rightArm = _unitSet->getFrame(unitDir + rarmShoot);
 		}
 
-		if (_unit->getUnitStatus() == STATUS_WALKING)
+		if (_unit->getUnitStatus() == STATUS_WALKING
+			|| _unit->getUnitStatus() == STATUS_FLYING)
 		{
 			leftArm->setY(yoffWalk[walkPhase]);
 			itLT->setY(itLT->getY() + yoffWalk[walkPhase]);
@@ -769,7 +771,8 @@ void UnitSprite::drawRoutine1()
 		}
 	}
 
-	if (_unit->getUnitStatus() != STATUS_WALKING)
+	if (_unit->getUnitStatus() != STATUS_WALKING
+		&& _unit->getUnitStatus() != STATUS_FLYING)
 	{
 		torso->		setY(0);
 		rightArm->	setY(0);

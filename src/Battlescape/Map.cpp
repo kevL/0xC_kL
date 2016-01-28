@@ -1286,7 +1286,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 // Draw unitBelow if it is on raised ground & there is no Floor above.
 					if (itZ > 0 && _tile->hasNoFloor(tileBelow) == true)
 					{
-						const int tLevel = tileBelow->getTerrainLevel();
+						const int tLevel (tileBelow->getTerrainLevel());
 						if (tLevel < 0) // probly more like -4 or -8
 						{
 							const BattleUnit* const unitBelow (tileBelow->getTileUnit());
