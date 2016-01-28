@@ -1505,6 +1505,23 @@ int Tile::hasUnconsciousUnit(bool playerOnly) const
 }
 
 /**
+ * Checks this Tile for a primed grenade.
+ * return, true if primed grendades lies here
+ */
+bool Tile::hasPrimedGrenade() const
+{
+	for (std::vector<BattleItem*>::const_iterator
+			i = _inventory.begin();
+			i != _inventory.end();
+			++i)
+	{
+		if ((*i)->getFuse() != -1)
+			return true;
+	}
+	return false;
+}
+
+/**
  * Gets the inventory on this tile.
  * @return, pointer to a vector of pointers to BattleItems
  */

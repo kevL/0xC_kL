@@ -313,6 +313,9 @@ private:
 		/// Gets if the Tile has an unconscious unit in its inventory.
 		int hasUnconsciousUnit(bool playerOnly = true) const;
 
+		/// Checks this Tile for a primed grenade.
+		bool hasPrimedGrenade() const;
+
 		/// Gets inventory on the Tile.
 		std::vector<BattleItem*>* getInventory();
 

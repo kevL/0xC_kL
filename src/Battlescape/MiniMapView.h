@@ -45,11 +45,12 @@ class MiniMapView final
 
 private:
 	static const int
-		CELL_WIDTH	= 4,
-		CELL_HEIGHT	= 4,
-		MAX_FRAME	= 2,
-
-		RED = 3;
+		CELL_WIDTH	=  4,
+		CELL_HEIGHT	=  4,
+		CYCLE		=  2,
+		RED			=  3,
+		YELLOW		= 10;
+	static const Uint8 WHITE = 1;
 
 	static const Uint32 SCROLL_INTERVAL	= 63;
 
@@ -97,6 +98,8 @@ private:
 	void keyboardPress(Action* action, State* state) override;
 	/// Handling for keyboard releases.
 	void keyboardRelease(Action* action, State* state) override;
+	/// Controls timer-start and timer-stop.
+	void handleTimer();
 
 
 	public:

@@ -261,8 +261,14 @@ void MiniMapView::draw()
 						if (tile->isRevealed(ST_CONTENT) == true
 							&& tile->getInventory()->empty() == false)		// at least one item on this tile
 						{
+							int color;
+							if (tile->hasPrimedGrenade() == true)
+								color = YELLOW;
+							else
+								color = 0;
+
 							srf = _set->getFrame(_cycle + 9);				// white cross
-							srf->blitNShade(this, x,y, 0);
+							srf->blitNShade(this, x,y, 0, false, color);
 						}
 
 						if (_cycle == 0 && _battleSave->scannerDots().empty() == false)
@@ -295,32 +301,31 @@ void MiniMapView::draw()
 		xOffset = static_cast<Sint16>(CELL_WIDTH / 2),
 		yOffset = static_cast<Sint16>(CELL_HEIGHT / 2);
 
-	const Uint8 color = static_cast<Uint8>(_cycle * 3 + 1);
-
+//	const Uint8 color = static_cast<Uint8>(WHITE + _cycle * 3);
 	drawLine( // top left
 			centerX - static_cast<Sint16>(CELL_WIDTH),
 			centerY - static_cast<Sint16>(CELL_HEIGHT),
 			centerX - xOffset,
 			centerY - yOffset,
-			color);
+			WHITE);
 	drawLine( // top right
 			centerX + xOffset,
 			centerY - yOffset,
 			centerX + static_cast<Sint16>(CELL_WIDTH),
 			centerY - static_cast<Sint16>(CELL_HEIGHT),
-			color);
+			WHITE);
 	drawLine( // bottom left
 			centerX - static_cast<Sint16>(CELL_WIDTH),
 			centerY + static_cast<Sint16>(CELL_HEIGHT),
 			centerX - xOffset,
 			centerY + yOffset,
-			color);
+			WHITE);
 	drawLine( // bottom right
 			centerX + static_cast<Sint16>(CELL_WIDTH),
 			centerY + static_cast<Sint16>(CELL_HEIGHT),
 			centerX + xOffset,
 			centerY + yOffset,
-			color);
+			WHITE);
 }
 
 /**
@@ -496,8 +501,8 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 			if (_mouseOverThreshold == false
 				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
-					_camera->centerOnPosition(_posPreDragScroll, false);
-					_redraw = true;
+				_camera->centerOnPosition(_posPreDragScroll, false);
+				_redraw = true;
 			}
 
 			_isMouseScrolled = _isMouseScrolling = false;
@@ -682,55 +687,43 @@ void MiniMapView::keyboardPress(Action* action, State* state) // private.
 		case SDLK_LEFT: // hardcoding these ... ->
 		case SDLK_KP4:
 			_scrollKeyX = scrollSpeed;
-		break;
+			break;
 
 		case SDLK_RIGHT:
 		case SDLK_KP6:
 			_scrollKeyX = -scrollSpeed;
-		break;
+			break;
 
 		case SDLK_UP:
 		case SDLK_KP8:
 			_scrollKeyY = scrollSpeed;
-		break;
+			break;
 
 		case SDLK_DOWN:
 		case SDLK_KP2:
 			_scrollKeyY = -scrollSpeed;
-		break;
+			break;
 
 		case SDLK_KP7:
 			_scrollKeyX =
 			_scrollKeyY = scrollSpeed;
-		break;
+			break;
 
 		case SDLK_KP9:
 			_scrollKeyX = -scrollSpeed;
 			_scrollKeyY =  scrollSpeed;
-		break;
+			break;
 
 		case SDLK_KP1:
 			_scrollKeyX =  scrollSpeed;
 			_scrollKeyY = -scrollSpeed;
-		break;
+			break;
 
 		case SDLK_KP3:
 			_scrollKeyX =
 			_scrollKeyY = -scrollSpeed;
 	}
-
-	if ((_scrollKeyX != 0 || _scrollKeyY != 0)
-		&& _timerScroll->isRunning() == false
-		&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
-	{
-		_timerScroll->start();
-	}
-	else if (_timerScroll->isRunning() == true
-		&& _scrollKeyX == 0
-		&& _scrollKeyY == 0)
-	{
-		_timerScroll->stop();
-	}
+	handleTimer();
 }
 
 /**
@@ -749,20 +742,27 @@ void MiniMapView::keyboardRelease(Action* action, State* state) // private.
 		case SDLK_RIGHT:
 		case SDLK_KP6:
 			_scrollKeyX = 0;
-		break;
+			break;
 
 		case SDLK_UP:
 		case SDLK_KP8:
 		case SDLK_DOWN:
 		case SDLK_KP2:
 			_scrollKeyY = 0;
-		break;
+			break;
 
 		default:
 			_scrollKeyX =
 			_scrollKeyY = 0;
 	}
+	handleTimer();
+}
 
+/**
+ * Controls timer-start and timer-stop.
+ */
+void MiniMapView::handleTimer() // private.
+{
 	if ((_scrollKeyX != 0 || _scrollKeyY != 0)
 		&& _timerScroll->isRunning() == false
 		&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
@@ -782,7 +782,7 @@ void MiniMapView::keyboardRelease(Action* action, State* state) // private.
  */
 void MiniMapView::animate()
 {
-	if (++_cycle > MAX_FRAME)
+	if (++_cycle == CYCLE)
 		_cycle = 0;
 
 	_redraw = true;
