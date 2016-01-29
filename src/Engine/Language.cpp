@@ -45,54 +45,53 @@
 namespace OpenXcom
 {
 
-std::map<std::string, std::wstring> Language::_names;
+std::map<std::string, std::wstring> Language::_langList;
 std::vector<std::string>
 	Language::_rtl,
 	Language::_cjk;
 
 
 /**
- * Initializes an empty language file.
+ * Initializes a Language.
  */
 Language::Language()
 	:
-		_handler(0),
+		_handler(nullptr),
 		_direction(DIRECTION_LTR),
 		_wrap(WRAP_WORDS)
 {
-	// maps don't have initializers :(
-	if (_names.empty() == true)
+	if (_langList.empty() == true) // maps don't have initializers :(
 	{
-		_names["en-US"]		= utf8ToWstr("English (US)");
-		_names["en-GB"]		= utf8ToWstr("English (UK)");
-		_names["bg"]		= utf8ToWstr("Български");
-		_names["cs"]		= utf8ToWstr("Česky");
-		_names["da"]		= utf8ToWstr("Dansk");
-		_names["de"]		= utf8ToWstr("Deutsch");
-		_names["el"]		= utf8ToWstr("Ελληνικά");
-		_names["es-ES"]		= utf8ToWstr("Español (ES)");
-		_names["es-419"]	= utf8ToWstr("Español (AL)");
-		_names["fr"]		= utf8ToWstr("Français");
-		_names["fi"]		= utf8ToWstr("Suomi");
-		_names["hr"]		= utf8ToWstr("Hrvatski");
-		_names["hu"]		= utf8ToWstr("Magyar");
-		_names["it"]		= utf8ToWstr("Italiano");
-		_names["ja"]		= utf8ToWstr("日本語");
-		_names["ko"]		= utf8ToWstr("한국어");
-		_names["nl"]		= utf8ToWstr("Nederlands");
-		_names["no"]		= utf8ToWstr("Norsk");
-		_names["pl"]		= utf8ToWstr("Polski");
-		_names["pt-BR"]		= utf8ToWstr("Português (BR)");
-		_names["pt-PT"]		= utf8ToWstr("Português (PT)");
-		_names["ro"]		= utf8ToWstr("Română");
-		_names["ru"]		= utf8ToWstr("Русский");
-		_names["sk"]		= utf8ToWstr("Slovenčina");
-		_names["sv"]		= utf8ToWstr("Svenska");
-		_names["th"]		= utf8ToWstr("ไทย");
-		_names["tr"]		= utf8ToWstr("Türkçe");
-		_names["uk"]		= utf8ToWstr("Українська");
-		_names["zh-CN"]		= utf8ToWstr("中文");
-		_names["zh-TW"]		= utf8ToWstr("文言");
+		_langList["en-US"]	= utf8ToWstr("English (US)");
+		_langList["en-GB"]	= utf8ToWstr("English (UK)");
+		_langList["bg"]		= utf8ToWstr("Български");
+		_langList["cs"]		= utf8ToWstr("Česky");
+		_langList["da"]		= utf8ToWstr("Dansk");
+		_langList["de"]		= utf8ToWstr("Deutsch");
+		_langList["el"]		= utf8ToWstr("Ελληνικά");
+		_langList["es-ES"]	= utf8ToWstr("Español (ES)");
+		_langList["es-419"]	= utf8ToWstr("Español (AL)");
+		_langList["fr"]		= utf8ToWstr("Français");
+		_langList["fi"]		= utf8ToWstr("Suomi");
+		_langList["hr"]		= utf8ToWstr("Hrvatski");
+		_langList["hu"]		= utf8ToWstr("Magyar");
+		_langList["it"]		= utf8ToWstr("Italiano");
+		_langList["ja"]		= utf8ToWstr("日本語");
+		_langList["ko"]		= utf8ToWstr("한국어");
+		_langList["nl"]		= utf8ToWstr("Nederlands");
+		_langList["no"]		= utf8ToWstr("Norsk");
+		_langList["pl"]		= utf8ToWstr("Polski");
+		_langList["pt-BR"]	= utf8ToWstr("Português (BR)");
+		_langList["pt-PT"]	= utf8ToWstr("Português (PT)");
+		_langList["ro"]		= utf8ToWstr("Română");
+		_langList["ru"]		= utf8ToWstr("Русский");
+		_langList["sk"]		= utf8ToWstr("Slovenčina");
+		_langList["sv"]		= utf8ToWstr("Svenska");
+		_langList["th"]		= utf8ToWstr("ไทย");
+		_langList["tr"]		= utf8ToWstr("Türkçe");
+		_langList["uk"]		= utf8ToWstr("Українська");
+		_langList["zh-CN"]	= utf8ToWstr("中文");
+		_langList["zh-TW"]	= utf8ToWstr("文言");
 	}
 
 	if (_rtl.empty() == true)
@@ -116,12 +115,14 @@ Language::~Language()
 }
 
 /**
- * Takes a wide-character string and converts it to a 8-bit string encoded in UTF-8.
- * @note Adapted from http://stackoverflow.com/questions/148403/utf8-to-from-wide-char-conversion-in-stl
- * @param src - wide-character string
+ * Takes a wide-character string and converts it to a 8-bit string encoded in
+ * UTF-8.
+ * @note Adapted from
+ * http://stackoverflow.com/questions/148403/utf8-to-from-wide-char-conversion-in-stl
+ * @param src - reference a wide-character string
  * @return, UTF-8 string
  */
-std::string Language::wstrToUtf8(const std::wstring& src)
+std::string Language::wstrToUtf8(const std::wstring& src) // static.
 {
 	if (src.empty() == true)
 		return "";
@@ -136,7 +137,7 @@ std::string Language::wstrToUtf8(const std::wstring& src)
 								0,
 								nullptr,
 								nullptr);
-	std::string st (bytes, 0); // init.
+	std::string st (bytes, 0);
 	WideCharToMultiByte(
 					CP_UTF8,
 					0,
@@ -203,11 +204,12 @@ std::string Language::wstrToUtf8(const std::wstring& src)
 }
 
 /**
- * Takes a wide-character string and converts it to an 8-bit string encoded in the current system codepage.
- * @param src - wide-character string
+ * Takes a wide-character string and converts it to an 8-bit string encoded in
+ * the current system codepage.
+ * @param src - reference a wide-character string
  * @return, codepage string
  */
-std::string Language::wstrToCp(const std::wstring& src)
+std::string Language::wstrToCp(const std::wstring& src) // static.
 {
 	if (src.empty() == true)
 		return "";
@@ -222,7 +224,7 @@ std::string Language::wstrToCp(const std::wstring& src)
 								0,
 								nullptr,
 								nullptr);
-	std::string st (bytes, 0); // init.
+	std::string st (bytes, 0);
 	WideCharToMultiByte(
 					CP_ACP,
 					0,
@@ -254,11 +256,12 @@ std::string Language::wstrToCp(const std::wstring& src)
 }
 
 /**
- * Takes a wide-character string and converts it to an 8-bit string with the filesystem encoding.
- * @param src - wide-character string
+ * Takes a wide-character string and converts it to an 8-bit string with the
+ * filesystem encoding.
+ * @param src - reference a wide-character string
  * @return, filesystem string
  */
-std::string Language::wstrToFs(const std::wstring& src)
+std::string Language::wstrToFs(const std::wstring& src) // static.
 {
 #ifdef _WIN32
 	return Language::wstrToCp(src);
@@ -268,12 +271,14 @@ std::string Language::wstrToFs(const std::wstring& src)
 }
 
 /**
- * Takes an 8-bit string encoded in UTF-8 and converts it to a wide-character string.
- * @note Adapted from http://stackoverflow.com/questions/148403/utf8-to-from-wide-char-conversion-in-stl
- * @param src - UTF-8 string
+ * Takes an 8-bit string encoded in UTF-8 and converts it to a wide-character
+ * string.
+ * @note Adapted from
+ * http://stackoverflow.com/questions/148403/utf8-to-from-wide-char-conversion-in-stl
+ * @param src - reference a UTF-8 string
  * @return, wide-character string
  */
-std::wstring Language::utf8ToWstr(const std::string& src)
+std::wstring Language::utf8ToWstr(const std::string& src) // static.
 {
 	if (src.empty() == true)
 		return L"";
@@ -286,7 +291,7 @@ std::wstring Language::utf8ToWstr(const std::string& src)
 								static_cast<int>(src.size()),
 								nullptr,
 								0);
-	std::wstring wst (bytes, 0); // init.
+	std::wstring wst (bytes, 0);
 	MultiByteToWideChar(
 					CP_UTF8,
 					0,
@@ -354,11 +359,12 @@ std::wstring Language::utf8ToWstr(const std::string& src)
 }
 
 /**
- * Takes an 8-bit string encoded in the current system codepage and converts it to a wide-character string.
- * @param src - codepage string
+ * Takes an 8-bit string encoded in the current system codepage and converts it
+ * to a wide-character string.
+ * @param src - reference a codepage string
  * @return, wide-character string
  */
-std::wstring Language::cpToWstr(const std::string& src)
+std::wstring Language::cpToWstr(const std::string& src) // static.
 {
 	if (src.empty() == true)
 		return L"";
@@ -371,7 +377,7 @@ std::wstring Language::cpToWstr(const std::string& src)
 								static_cast<int>(src.size()),
 								nullptr,
 								0);
-	std::wstring wst (bytes, 0); // init.
+	std::wstring wst (bytes, 0);
 	MultiByteToWideChar(
 					CP_ACP,
 					0,
@@ -403,11 +409,12 @@ std::wstring Language::cpToWstr(const std::string& src)
 }
 
 /**
- * Takes an 8-bit string with the filesystem encoding and converts it to a wide-character string.
- * @param src - filesystem string
+ * Takes an 8-bit string with the filesystem encoding and converts it to a
+ * wide-character string.
+ * @param src - reference a filesystem string
  * @return, wide-character string
  */
-std::wstring Language::fsToWstr(const std::string& src)
+std::wstring Language::fsToWstr(const std::string& src) // static.
 {
 #ifdef _WIN32
 	return Language::cpToWstr(src);
@@ -418,65 +425,66 @@ std::wstring Language::fsToWstr(const std::string& src)
 
 /**
  * Replaces every instance of a substring.
- * @param st	- the string to modify
- * @param get	- the substring to find
- * @param done	- the substring to replace it with
+ * @param st		- reference the string to modify
+ * @param stPre		- reference the substring to find
+ * @param stPost	- reference the substring to replace it with
  */
-void Language::replace(
+void Language::replace( // static.
 		std::string& st,
-		const std::string& get,
-		const std::string& done)
+		const std::string& stPre,
+		const std::string& stPost)
 {
 	for (size_t
-			i = st.find(get);
+			i = st.find(stPre);
 			i != std::string::npos;
 			i = st.find(
-						get,
-						i + done.length()))
+					stPre,
+					i + stPost.length()))
 	{
 		st.replace(
 				i,
-				get.length(),
-				done);
+				stPre.length(),
+				stPost);
 	}
 }
 
 /**
  * Replaces every instance of a substring.
- * @param wst	- the string to modify
- * @param get	- the substring to find
- * @param done	- the substring to replace it with
+ * @param wst		- reference the string to modify
+ * @param wstPre	- reference the substring to find
+ * @param wstPost	- reference the substring to replace it with
  */
-void Language::replace(
+void Language::replace( // static.
 		std::wstring& wst,
-		const std::wstring& get,
-		const std::wstring& done)
+		const std::wstring& wstPre,
+		const std::wstring& wstPost)
 {
 	for (size_t
-			i = wst.find(get);
+			i = wst.find(wstPre);
 			i != std::wstring::npos;
 			i = wst.find(
-						get,
-						i + done.length()))
+					wstPre,
+					i + wstPost.length()))
 	{
 		wst.replace(
 				i,
-				get.length(),
-				done);
+				wstPre.length(),
+				wstPost);
 	}
 }
 
 /**
  * Gets all the languages found in the Data folder and returns their properties.
- * @param files - list of language filenames
- * @param names - list of human-readable language names
+ * @note Used in OptionsVideoState cTor.
+ * @param files		- reference to a vector of language files
+ * @param languages	- reference to a vector of languages (translated)
  */
-void Language::getList(
+void Language::getList( // static.
 		std::vector<std::string>& files,
-		std::vector<std::wstring>& names)
+		std::vector<std::wstring>& languages)
 {
 	files = CrossPlatform::getFolderContents(CrossPlatform::getDataFolder("Language/"), "yml");
-	names.clear();
+	languages.clear();
 
 	for (std::vector<std::string>::iterator
 			i = files.begin();
@@ -484,15 +492,15 @@ void Language::getList(
 			++i)
 	{
 		*i = CrossPlatform::noExt(*i);
-		std::wstring name;
-		std::map<std::string, std::wstring>::const_iterator pLang = _names.find(*i);
+		std::map<std::string, std::wstring>::const_iterator pLang (_langList.find(*i));
 
-		if (pLang != _names.end())
-			name = pLang->second;
+		std::wstring wst;
+		if (pLang != _langList.end())
+			wst = pLang->second;
 		else
-			name = Language::fsToWstr(*i);
+			wst = Language::fsToWstr(*i);
 
-		names.push_back(name);
+		languages.push_back(wst);
 	}
 }
 
@@ -500,8 +508,8 @@ void Language::getList(
  * Loads a language file in Ruby-on-Rails YAML format.
  * @note Not that this has anything to do with Ruby but since it's a
  * widely-supported format and we already have YAML it was convenient.
- * @param file		- name of the YAML file
- * @param extras	- pointer to extra strings from ruleset
+ * @param file		- reference a YAML file
+ * @param extras	- pointer to extra strings from that ruleset
  */
 void Language::load(
 		const std::string& file,
@@ -509,9 +517,9 @@ void Language::load(
 {
 	_strings.clear();
 
-	YAML::Node doc = YAML::LoadFile(file);
+	YAML::Node doc (YAML::LoadFile(file));
 	_id = doc.begin()->first.as<std::string>();
-	YAML::Node lang = doc.begin()->second;
+	YAML::Node lang (doc.begin()->second);
 
 	for (YAML::const_iterator
 			i = lang.begin();
@@ -527,7 +535,7 @@ void Language::load(
 					j != i->second.end();
 					++j)
 			{
-				std::string st = i->first.as<std::string>() + "_" + j->first.as<std::string>();
+				std::string st (i->first.as<std::string>() + "_" + j->first.as<std::string>());
 				_strings[st] = loadString(j->second.as<std::string>());
 			}
 		}
@@ -571,12 +579,12 @@ void Language::load(
 /**
 * Replaces all special string markers with the appropriate characters and
 * converts the string encoding.
-* @param stIn - original UTF-8 string
+* @param stIn - reference the original UTF-8 string
 * @return, new widechar string
 */
 std::wstring Language::loadString(const std::string& stIn) const // private.
 {
-	std::string stOut = stIn;
+	std::string stOut (stIn);
 
 	replace(stOut, "{NEWLINE}",	  "\n");
 	replace(stOut, "{SMALLLINE}", "\x02");
@@ -586,7 +594,7 @@ std::wstring Language::loadString(const std::string& stIn) const // private.
 }
 
 /**
- * Returns the language's locale.
+ * Returns the Language's locale.
  * @return, IANA language tag
  */
 std::string Language::getId() const
@@ -595,44 +603,42 @@ std::string Language::getId() const
 }
 
 /**
- * Returns the language's name in its native language.
- * @return, Language name
+ * Returns the Language's name in its native language.
+ * @return, Language translation
  */
 std::wstring Language::getName() const
 {
-	return _names[_id];
+	return _langList[_id];
 }
 
 /**
- * Returns the localized text with the specified ID.
+ * Returns the LocalizedText of the specified ID.
  * @note If not found return the ID itself.
  * @param id - ID of the string
  * @return, reference to LocalizedText (widestring) of the requested ID
  */
 const LocalizedText& Language::getString(const std::string& id) const
 {
-	static LocalizedText hack (L""); // init.
+	static LocalizedText hack (L"");
 
 	if (id.empty() == true)
 	{
-		hack = LocalizedText(L""); // what, don't the static 'hack' above work
+		hack = LocalizedText(L"");
 		return hack;
 	}
 
-	const std::map<std::string, LocalizedText>::const_iterator pSt = _strings.find(id);
+	const std::map<std::string, LocalizedText>::const_iterator pSt (_strings.find(id));
 	if (pSt == _strings.end())
 	{
 		Log(LOG_WARNING) << id << " not found in " << Options::language;
 		hack = LocalizedText(utf8ToWstr(id));
-
 		return hack;
 	}
-
 	return pSt->second;
 }
 
 /**
- * Returns the localized text with the specified ID in the proper form for @a qty.
+ * Returns the LocalizedText with the specified ID in the proper form for @a qty.
  * @note The substitution of @a qty has already happened in the returned
  * LocalizedText. If not found return the ID itself.
  * @param id	- ID of the string
@@ -645,7 +651,7 @@ LocalizedText Language::getString(
 {
 	assert(id.empty() == false);
 
-	std::map<std::string, LocalizedText>::const_iterator pSt = _strings.end();
+	std::map<std::string, LocalizedText>::const_iterator pSt (_strings.end());
 	if (qty == 0) // Try specialized form.
 		pSt = _strings.find(id + "_zero");
 
@@ -657,9 +663,7 @@ LocalizedText Language::getString(
 
 	if (pSt == _strings.end()) // Give up
 	{
-//		Log(LOG_WARNING) << id << " not found in " << Options::language;
-		Log(LOG_INFO) << id << " not found in " << Options::language;
-
+		Log(LOG_WARNING) << id << " not found in " << Options::language;
 		return LocalizedText(utf8ToWstr(id));
 	}
 
@@ -667,9 +671,9 @@ LocalizedText Language::getString(
 	woststr << qty;
 
 	std::wstring
-		wst(pSt->second),
-		marker(L"{N}"),
-		val(woststr.str());
+		wst (pSt->second),
+		marker (L"{N}"),
+		val (woststr.str());
 	replace(
 		wst,
 		marker,
@@ -679,9 +683,10 @@ LocalizedText Language::getString(
 }
 
 /**
- * Returns the localized text with the specified ID in the proper form for the gender.
+ * Returns the LocalizedText with the specified ID in the proper form for the
+ * gender.
  * @note If not found return the ID itself.
- * @param id		- ID of the string
+ * @param id		- reference ID of the string
  * @param gender	- current soldier gender
  * @return, reference to LocalizedText (widestring) of the requested ID
  */
@@ -690,7 +695,6 @@ const LocalizedText& Language::getString(
 		SoldierGender gender) const
 {
 	std::string genderId;
-
 	if (gender == GENDER_MALE)
 		genderId = id + "_MALE";
 	else
@@ -702,10 +706,10 @@ const LocalizedText& Language::getString(
 /**
  * Outputs all the language IDs and strings to an HTML table.
  * @param file - reference to HTML file
- */
+ *
 void Language::toHtml(const std::string& file) const
 {
-	std::ofstream fileHtml (file.c_str(), std::ios::out); // init.
+	std::ofstream fileHtml (file.c_str(), std::ios::out);
 	fileHtml << "<table border=\"1\" width=\"100%\">" << std::endl;
 	fileHtml << "<tr><th>ID String</th><th>English String</th></tr>" << std::endl;
 
@@ -715,7 +719,6 @@ void Language::toHtml(const std::string& file) const
 			++i)
 	{
 		fileHtml << "<tr><td>" << i->first << "</td><td>";
-
 		const std::string st = wstrToUtf8(i->second);
 		for (std::string::const_iterator
 				j = st.begin();
@@ -723,22 +726,18 @@ void Language::toHtml(const std::string& file) const
 				++j)
 		{
 			if (*j == 2 || *j == '\n')
-			{
 				fileHtml << "<br />";
-			}
 			else
 				fileHtml << *j;
 		}
-
 		fileHtml << "</td></tr>" << std::endl;
 	}
-
 	fileHtml << "</table>" << std::endl;
 	fileHtml.close();
-}
+} */
 
 /**
- * Returns the direction to use for rendering text in this language.
+ * Returns the direction to use for rendering text in this Language.
  * @return, text direction
  */
 TextDirection Language::getTextDirection() const
@@ -747,7 +746,7 @@ TextDirection Language::getTextDirection() const
 }
 
 /**
- * Returns the wrapping rules to use for rendering text in this language.
+ * Returns the wrapping rules to use for rendering text in this Language.
  * @return, text wrapping
  */
 TextWrapping Language::getTextWrapping() const
@@ -757,7 +756,8 @@ TextWrapping Language::getTextWrapping() const
 
 }
 
-/** @page LanguageFiles Format of the language files.
+/**
+@page LanguageFiles Format of the language files.
 
 Language files are formatted as YAML (.yml) containing UTF-8 (no BOM) text.
 The first line in a language file is the language's identifier.
@@ -765,7 +765,7 @@ The rest of the file are key-value pairs. The key of each pair
 contains the ID string (dictionary key), and the value contains the localized
 text for the given key in quotes.
 
-The localized text may contain the following special markers:
+The LocalizedText may contain the following special markers:
 <table>
 <tr>
  <td><tt>{</tt><i>0, 1, 2, ...</i> <tt>}</tt></td>

@@ -218,9 +218,9 @@ DebriefingState::DebriefingState()
 				woststr1,
 				woststr2;
 
-			woststr1 << L'\x01' << (*i)->qty << L'\x01';	// quantity of recovered item Type
-			woststr2 << L'\x01' << (*i)->score;				// score for items of Type
-			total += (*i)->score;							// total score
+			woststr1 << L'\x01' << (*i)->qty;	// quantity of recovered item Type
+			woststr2 << L'\x01' << (*i)->score;	// score for items of Type
+			total += (*i)->score;				// total score
 
 			if ((*i)->recover == true)
 			{
@@ -337,8 +337,8 @@ DebriefingState::DebriefingState()
 
 	if (_skirmish == false && _missionCost != 0)
 	{
-//		_txtCost->setText(tr("STR_COST_").arg(Text::formatFunding(_missionCost)));
-		_txtCost->setText(Text::formatFunding(_missionCost));
+//		_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(_missionCost)));
+		_txtCost->setText(Text::formatCurrency(_missionCost));
 		_txtCost->setAlign(ALIGN_CENTER);
 	}
 	else

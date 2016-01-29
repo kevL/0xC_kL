@@ -142,9 +142,9 @@ SellState::SellState(Base* const base)
 
 	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
 	_txtSales->setText(tr("STR_VALUE_OF_SALES")
-						.arg(Text::formatFunding(_totalCost)));
+						.arg(Text::formatCurrency(_totalCost)));
 	_txtFunds->setText(tr("STR_FUNDS")
-						.arg(Text::formatFunding(_game->getSavedGame()->getFunds())));
+						.arg(Text::formatCurrency(_game->getSavedGame()->getFunds())));
 	_txtItem->setText(tr("STR_ITEM"));
 
 	_txtStorage->setVisible(Options::storageLimitsEnforced);
@@ -184,7 +184,7 @@ SellState::SellState(Base* const base)
 							4,
 							(*i)->getName().c_str(),
 							L"1",L"0",L"-");
-//							Text::formatFunding(0).c_str());
+//							Text::formatCurrency(0).c_str());
 		}
 	}
 
@@ -202,7 +202,7 @@ SellState::SellState(Base* const base)
 			std::wstring wst;
 			val = (*i)->getRules()->getSellCost();
 			if (val != 0)
-				wst = Text::formatFunding(val);
+				wst = Text::formatCurrency(val);
 			else
 				wst = L"-";
 			_lstItems->addRow(
@@ -223,7 +223,7 @@ SellState::SellState(Base* const base)
 						tr("STR_SCIENTIST").c_str(),
 						Text::intWide(val).c_str(),
 						L"0",L"-");
-//						Text::formatFunding(0).c_str());
+//						Text::formatCurrency(0).c_str());
 	}
 
 	val = _base->getEngineers();
@@ -236,7 +236,7 @@ SellState::SellState(Base* const base)
 						tr("STR_ENGINEER").c_str(),
 						Text::intWide(val).c_str(),
 						L"0",L"-");
-//						Text::formatFunding(0).c_str());
+//						Text::formatCurrency(0).c_str());
 	}
 
 
@@ -368,7 +368,7 @@ SellState::SellState(Base* const base)
 							item.c_str(),
 							Text::intWide(qty).c_str(),
 							L"0",
-							Text::formatFunding(itRule->getSellCost()).c_str());
+							Text::formatCurrency(itRule->getSellCost()).c_str());
 			_lstItems->setRowColor(_sellQty.size() - 1, color);
 		}
 	}
@@ -868,7 +868,7 @@ void SellState::updateItemStrings() // private.
 	_lstItems->setCellText(_sel, 1, Text::intWide(getBaseQuantity() - _sellQty[_sel]));
 	_lstItems->setCellText(_sel, 2, Text::intWide(_sellQty[_sel]));
 
-	_txtSales->setText(tr("STR_VALUE_OF_SALES").arg(Text::formatFunding(_totalCost)));
+	_txtSales->setText(tr("STR_VALUE_OF_SALES").arg(Text::formatCurrency(_totalCost)));
 
 	Uint8 color = _lstItems->getColor();
 

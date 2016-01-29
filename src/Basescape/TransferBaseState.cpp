@@ -110,7 +110,7 @@ TransferBaseState::TransferBaseState(Base* base)
 	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
 
 	_txtFunds->setText(tr("STR_CURRENT_FUNDS_")
-						.arg(Text::formatFunding(_game->getSavedGame()->getFunds())));
+						.arg(Text::formatCurrency(_game->getSavedGame()->getFunds())));
 
 	_txtName->setText(tr("STR_BASE_KL"));
 	_txtName->setBig();

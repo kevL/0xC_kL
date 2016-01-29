@@ -52,8 +52,8 @@ enum TextVAlign
 
 /**
  * Text string displayed on screen.
- * Takes the characters from a Font and puts them together on screen to display
- * a string of text, taking care of any required aligning or wrapping.
+ * @note Takes the characters from a Font and puts them together on screen to
+ * display a string of text taking care of any required aligning or wrapping.
  */
 class Text
 	:
@@ -102,16 +102,16 @@ private:
 		~Text();
 
 		/// Quickly converts an integer to a wide-string.
-		static std::wstring intWide(int value);
+		static std::wstring intWide(int val);
 		/// Formats an integer value as number with separators.
-		static std::wstring formatNumber(
-				int64_t value,
-				const bool useSpace = true,
-				const std::wstring& currency = L"");
+		static std::wstring formatInt(
+				int64_t val,
+				const bool spaced = true,
+				const std::wstring& glyf = L"");
 		/// Formats an integer value as currency.
-		static std::wstring formatFunding(int64_t value);
+		static std::wstring formatCurrency(int64_t val);
 		/// Formats an integer value as percentage.
-		static std::wstring formatPct(int value);
+		static std::wstring formatPercent(int val);
 
 		/// Sets the text size to big.
 		void setBig();

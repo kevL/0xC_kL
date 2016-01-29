@@ -94,7 +94,7 @@ ConfirmNewBaseState::ConfirmNewBaseState(
 										_base->getLatitude()))
 		{
 			_cost = (*i)->getRules()->getBaseCost();
-			_txtCost->setText(tr("STR_COST_").arg(Text::formatFunding(_cost)));
+			_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(_cost)));
 			_txtArea->setText(tr("STR_AREA_").arg(tr((*i)->getRules()->getType())));
 			break;
 		}

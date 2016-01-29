@@ -277,7 +277,7 @@ void BasescapeState::init()
 	}
 
 	_txtFunds->setText(tr("STR_FUNDS")
-						.arg(Text::formatFunding(_game->getSavedGame()->getFunds())));
+						.arg(Text::formatCurrency(_game->getSavedGame()->getFunds())));
 
 //	_btnNewBase->setVisible(_baseList->size() < Base::MAX_BASES);
 

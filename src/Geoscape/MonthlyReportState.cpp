@@ -168,28 +168,28 @@ MonthlyReportState::MonthlyReportState()
 		music = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
 	}
 
-	_txtRating->setText(tr("STR_MONTHLY_RATING").arg(Text::formatNumber(_ratingTotal)).arg(wst));
+	_txtRating->setText(tr("STR_MONTHLY_RATING").arg(_ratingTotal).arg(wst));
 
 /*	std::wostringstream ss; // ADD:
-	ss << tr("STR_INCOME") << L"> \x01" << Text::formatFunding(_game->getSavedGame()->getCountryFunding());
+	ss << tr("STR_INCOME") << L"> \x01" << Text::formatCurrency(_game->getSavedGame()->getCountryFunding());
 	ss << L" (";
 	if (_deltaFunds > 0)
 		ss << '+';
-	ss << Text::formatFunding(_deltaFunds) << L")";
+	ss << Text::formatCurrency(_deltaFunds) << L")";
 	_txtIncome->setText(ss.str());
 
 	std::wostringstream ss2;
-	ss2 << tr("STR_MAINTENANCE") << L"> \x01" << Text::formatFunding(_game->getSavedGame()->getBaseMaintenances());
+	ss2 << tr("STR_MAINTENANCE") << L"> \x01" << Text::formatCurrency(_game->getSavedGame()->getBaseMaintenances());
 	_txtMaintenance->setText(ss2.str());
 
 	std::wostringstream ss3;
-	ss3 << tr("STR_BALANCE") << L"> \x01" << Text::formatFunding(_game->getSavedGame()->getFunds());
+	ss3 << tr("STR_BALANCE") << L"> \x01" << Text::formatCurrency(_game->getSavedGame()->getFunds());
 	_txtBalance->setText(ss3.str());
 // end ADD. */
 
 	std::wostringstream woststr;
 	if (_deltaFunds > 0) woststr << '+';
-	woststr << Text::formatFunding(_deltaFunds);
+	woststr << Text::formatCurrency(_deltaFunds);
 	_txtChange->setText(tr("STR_FUNDING_CHANGE").arg(woststr.str()));
 
 

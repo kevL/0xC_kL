@@ -144,10 +144,10 @@ PurchaseState::PurchaseState(Base* const base)
 
 	_txtFunds->setSecondaryColor(Palette::blockOffset(13));
 	_txtFunds->setText(tr("STR_CURRENT_FUNDS_")
-						.arg(Text::formatFunding(_game->getSavedGame()->getFunds())));
+						.arg(Text::formatCurrency(_game->getSavedGame()->getFunds())));
 
 	_txtPurchases->setText(tr("STR_COST_OF_PURCHASES_")
-						.arg(Text::formatFunding(_costTotal)));
+						.arg(Text::formatCurrency(_costTotal)));
 
 	_txtItem->setText(tr("STR_ITEM"));
 
@@ -190,7 +190,7 @@ PurchaseState::PurchaseState(Base* const base)
 			_lstItems->addRow(
 						4,
 						tr(*i).c_str(),
-						Text::formatFunding(rules->getSoldier(*i)->getBuyCost()).c_str(),
+						Text::formatCurrency(rules->getSoldier(*i)->getBuyCost()).c_str(),
 						Text::intWide(_base->getSoldierCount(*i)).c_str(),
 						L"0");
 		}
@@ -200,7 +200,7 @@ PurchaseState::PurchaseState(Base* const base)
 	_lstItems->addRow(
 					4,
 					tr("STR_SCIENTIST").c_str(),
-					Text::formatFunding(rules->getScientistCost() * 2).c_str(),
+					Text::formatCurrency(rules->getScientistCost() * 2).c_str(),
 					Text::intWide(_base->getTotalScientists()).c_str(),
 					L"0");
 
@@ -208,7 +208,7 @@ PurchaseState::PurchaseState(Base* const base)
 	_lstItems->addRow(
 					4,
 					tr("STR_ENGINEER").c_str(),
-					Text::formatFunding(rules->getEngineerCost() * 2).c_str(),
+					Text::formatCurrency(rules->getEngineerCost() * 2).c_str(),
 					Text::intWide(_base->getTotalEngineers()).c_str(),
 					L"0");
 
@@ -230,7 +230,7 @@ PurchaseState::PurchaseState(Base* const base)
 			_lstItems->addRow(
 						4,
 						tr(*i).c_str(),
-						Text::formatFunding(crftRule->getBuyCost()).c_str(),
+						Text::formatCurrency(crftRule->getBuyCost()).c_str(),
 						Text::intWide(_base->getCraftCount(*i)).c_str(),
 						L"0");
 		}
@@ -288,7 +288,7 @@ PurchaseState::PurchaseState(Base* const base)
 			_lstItems->addRow(
 							4,
 							wst.c_str(),
-							Text::formatFunding(laRule->getBuyCost()).c_str(),
+							Text::formatCurrency(laRule->getBuyCost()).c_str(),
 							Text::intWide(qty).c_str(),
 							L"0");
 
@@ -337,7 +337,7 @@ PurchaseState::PurchaseState(Base* const base)
 			_lstItems->addRow(
 							4,
 							wst.c_str(),
-							Text::formatFunding(clRule->getBuyCost()).c_str(),
+							Text::formatCurrency(clRule->getBuyCost()).c_str(),
 							Text::intWide(qty).c_str(),
 							L"0");
 			_lstItems->setRowColor(_orderQty.size() - 1, _colorAmmo);
@@ -441,7 +441,7 @@ PurchaseState::PurchaseState(Base* const base)
 				_lstItems->addRow(
 								4,
 								wst.c_str(),
-								Text::formatFunding(itRule->getBuyCost()).c_str(),
+								Text::formatCurrency(itRule->getBuyCost()).c_str(),
 								Text::intWide(qty).c_str(),
 								L"0");
 				_lstItems->setRowColor(_orderQty.size() - 1, _colorAmmo);
@@ -460,7 +460,7 @@ PurchaseState::PurchaseState(Base* const base)
 				_lstItems->addRow(
 								4,
 								wst.c_str(),
-								Text::formatFunding(itRule->getBuyCost()).c_str(),
+								Text::formatCurrency(itRule->getBuyCost()).c_str(),
 								Text::intWide(qty).c_str(),
 								L"0");
 			}
@@ -874,7 +874,7 @@ void PurchaseState::decreaseByValue(int qtyDelta)
 void PurchaseState::updateItemStrings() // private.
 {
 	_txtPurchases->setText(tr("STR_COST_OF_PURCHASES_")
-							.arg(Text::formatFunding(_costTotal)));
+							.arg(Text::formatCurrency(_costTotal)));
 
 	_lstItems->setCellText(_sel, 3, Text::intWide(_orderQty[_sel]));
 

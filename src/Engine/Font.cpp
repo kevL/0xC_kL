@@ -231,15 +231,16 @@ void Font::init()
  */
 Surface* Font::getChar(wchar_t fontChar)
 {
-	if (_chars.find(fontChar) == _chars.end())
-		return nullptr;
+	if (_chars.find(fontChar) != _chars.end())
+	{
+		_surface->getCrop()->x = _chars[fontChar].x;
+		_surface->getCrop()->y = _chars[fontChar].y;
+		_surface->getCrop()->w = _chars[fontChar].w;
+		_surface->getCrop()->h = _chars[fontChar].h;
 
-	_surface->getCrop()->x = _chars[fontChar].x;
-	_surface->getCrop()->y = _chars[fontChar].y;
-	_surface->getCrop()->w = _chars[fontChar].w;
-	_surface->getCrop()->h = _chars[fontChar].h;
-
-	return _surface;
+		return _surface;
+	}
+	return nullptr;
 }
 /**
  * Returns the maximum width for any character in this Font.

@@ -24,6 +24,7 @@
 
 #include "../Engine/Font.h"
 #include "../Engine/Language.h"
+//#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 //#include "../Engine/ShaderDraw.h"
 #include "../Engine/ShaderMove.h"
@@ -70,62 +71,54 @@ Text::~Text()
 
 /**
  * Quickly converts an integer to a wide-string.
- * @param value - the value to convert
+ * @note See c++11 [std::wstring to_wstring()].
+ * @param val - the value to convert
  * @return, value as a wide-string
  */
-std::wstring Text::intWide(int value) // static.
+std::wstring Text::intWide(int val) // static.
 {
 	std::wostringstream woststr;
-	woststr << value;
+	woststr << val;
 	return woststr.str();
 }
 
 /**
  * Takes an integer value and formats it as number with separators spacing the
  * thousands.
- * @param value		- a value
- * @param useSpace		- true to insert a space every 3 digits (default true)
- * @param currency	- reference a currency symbol (default L"")
+ * @param val		- a value
+ * @param spaced	- true to insert a space every 3 digits (default true)
+ * @param glyf		- reference a currency symbol (default L"")
  * @return, formatted string
  */
-std::wstring Text::formatNumber( // static.
-		int64_t value,
-		const bool useSpace,
-		const std::wstring& currency)
+std::wstring Text::formatInt( // static.
+		int64_t val,
+		const bool spaced,
+		const std::wstring& glyf)
 {
-	// In the future, the whole setlocale thing should be removed from here.
-	// It is inconsistent with the in-game language selection: locale-specific
-	// symbols, such as thousands separators, should be determined by the game
-	// language, not by system locale.
-	//setlocale(LC_MONETARY, ""); // see http://www.cplusplus.com/reference/clocale/localeconv/
-	//setlocale(LC_CTYPE, ""); // this is necessary for mbstowcs to work correctly
-	//struct lconv* lc = localeconv();
-
 	std::wostringstream woststr;
 
-	const bool neg = (value < 0);
+	const bool neg = (val < 0);
 	if (neg == true)
-		woststr << -value;
+		woststr << -val;
 	else
-		woststr << value;
+		woststr << val;
 
-	std::wstring ret = woststr.str();
+	std::wstring ret (woststr.str());
 
-	if (useSpace == true)
+	if (spaced == true)
 	{
-//		const std::wstring thousands = L"\xA0"; // Language::cpToWstr(lc->mon_thousands_sep);
-		const std::wstring thousands = L"'";
+		const std::wstring thousands (L"'");
 
-		size_t place = ret.size() - 3;
+		size_t place (ret.size() - 3u);
 		while (place > 0 && place < ret.size())
 		{
 			ret.insert(place, thousands);
-			place -= 3;
+			place -= 3u;
 		}
 	}
 
-	if (currency.empty() == false)
-		ret.insert(0, currency);
+	if (glyf.empty() == false)
+		ret.insert(0, glyf);
 
 	if (neg == true)
 		ret.insert(0, L"-");
@@ -136,23 +129,23 @@ std::wstring Text::formatNumber( // static.
 /**
  * Takes an integer value and formats it as currency by spacing the thousands
  * and adding a $ sign to the front.
- * @param value - the funds value
+ * @param val - the funds value
  * @return, the formatted string
  */
-std::wstring Text::formatFunding(int64_t value) // static.
+std::wstring Text::formatCurrency(int64_t val) // static.
 {
-	return formatNumber(value, true, L"$");
+	return formatInt(val, true, L"$");
 }
 
 /**
  * Takes an integer value and formats it as percentage by adding a % sign.
- * @param value - the percentage value
+ * @param val - the percentage value
  * @return, the formatted string
  */
-std::wstring Text::formatPct(int value) // static.
+std::wstring Text::formatPercent(int val) // static.
 {
 	std::wostringstream woststr;
-	woststr << value << L"%";
+	woststr << val << L"%";
 	return woststr.str();
 }
 
@@ -214,8 +207,7 @@ void Text::setText(const std::wstring& text)
 
 	processText();
 
-	// if big text won't fit the space, try small text
-	if (_font == _big
+	if (_font == _big // if big text won't fit the space try small text
 		&& (getTextWidth() > getWidth() || getTextHeight() > getHeight())
 		&& _text[_text.size() - 1] != L'.')
 	{
@@ -271,7 +263,11 @@ void Text::setInvert(const bool invert)
  */
 void Text::setHighContrast(const bool contrast)
 {
-	_contrast = contrast ? 3 : 1;
+	if (contrast == true)
+		_contrast = 3;
+	else
+		_contrast = 1;
+
 	_redraw = true;
 }
 
@@ -436,13 +432,14 @@ void Text::processText() // private.
 {
 	if (_font != nullptr && _lang != nullptr)
 	{
-		std::wstring* wst = &_text;
-
-		if (_wrap == true) // use a separate string for wordwrapping text
+		std::wstring* wst;
+		if (_wrap == true)
 		{
-			_wrappedText = _text;
+			_wrappedText = _text; // use a separate string for wordwrapping text
 			wst = &_wrappedText;
 		}
+		else
+			wst = &_text;
 
 		_lineWidth.clear();
 		_lineHeight.clear();
@@ -455,8 +452,7 @@ void Text::processText() // private.
 			space = 0,
 			textIndentation = 0;
 
-		Font* font = _font;
-
+		Font* font (_font);
 
 		for (size_t // go through the text character by character
 			i = 0;
@@ -476,8 +472,7 @@ void Text::processText() // private.
 
 				if (i == wst->size())
 					break;
-
-				else if ((*wst)[i] == 2) // \x02 marks start of small text
+				else if ((*wst)[i] == 2) // \x02 marks start of small text - [handled by draw() below_]
 					font = _small;
 			}
 			else if (Font::isSpace((*wst)[i]) == true // keep track of spaces for word-wrapping
@@ -491,12 +486,12 @@ void Text::processText() // private.
 				word = 0;
 				start = false;
 			}
-			else if ((*wst)[i] != 1) // keep track of the width of the last line and word
+			else if ((*wst)[i] != 1) // \x01 marks a change of color [handled by draw() below_]
 			{
-				if (font->getChar((*wst)[i]) == 0)
-					(*wst)[i] = L'?';
+				if (font->getChar((*wst)[i]) == nullptr)
+					(*wst)[i] = L'.';
 
-				const int charWidth = font->getCharSize((*wst)[i]).w;
+				const int charWidth (font->getCharSize((*wst)[i]).w); // keep track of the width of the last line and word
 				width += charWidth;
 				word += charWidth;
 
@@ -504,7 +499,7 @@ void Text::processText() // private.
 					&& width >= getWidth()
 					&& start == false)
 				{
-					size_t indentLocation = i;
+					size_t indentLocation (i);
 
 					if (_lang->getTextWrapping() == WRAP_WORDS
 						|| Font::isSpace((*wst)[i]) == true)
@@ -544,10 +539,14 @@ void Text::processText() // private.
 					_lineWidth.push_back(width);
 					_lineHeight.push_back(font->getCharSize(L'\n').h);
 
-					if (_lang->getTextWrapping() == WRAP_WORDS)
-						width = word;
-					else if (_lang->getTextWrapping() == WRAP_LETTERS)
-						width = 0;
+					switch (_lang->getTextWrapping())
+					{
+						case WRAP_WORDS:
+							width = word;
+							break;
+						case WRAP_LETTERS:
+							width = 0;
+					}
 
 					start = true;
 				}
@@ -572,15 +571,12 @@ int Text::getLineX(int line) const
 		case DIRECTION_LTR:
 			switch (_align)
 			{
-//				case ALIGN_LEFT:
-//					break;
 				case ALIGN_CENTER:
 					x = static_cast<int>(std::ceil(
 						static_cast<double>(getWidth() + _font->getSpacing() - _lineWidth[line]) / 2.));
 					break;
 				case ALIGN_RIGHT:
 					x = getWidth() - 1 - _lineWidth[line];
-					break;
 			}
 			break;
 		case DIRECTION_RTL:
@@ -670,9 +666,11 @@ void Text::draw()
 		dir = 1,
 		mid = 0;
 
-	std::wstring* wst = &_text;
+	const std::wstring* wst;
 	if (_wrap == true)
 		wst = &_wrappedText;
+	else
+		wst = &_text;
 
 	for (std::vector<int>::const_iterator
 			i = _lineHeight.begin();
@@ -686,11 +684,11 @@ void Text::draw()
 	{
 		case ALIGN_TOP:
 			y = 0;
-		break;
+			break;
 		case ALIGN_MIDDLE:
 			y = static_cast<int>(std::ceil(
 				static_cast<double>(getHeight() - height) / 2.));
-		break;
+			break;
 		case ALIGN_BOTTOM:
 			y = getHeight() - height;
 	}
@@ -701,7 +699,7 @@ void Text::draw()
 	if (_invert == true) // invert text by inverting the font palette on index 3 (font palettes use indices 1..5)
 		mid = 3;
 
-	Font* font = _font;
+	Font* font (_font);
 
 
 	for (std::wstring::const_iterator // draw each letter one by one
@@ -718,10 +716,10 @@ void Text::draw()
 			y += font->getCharSize(*i).h;
 			x = getLineX(line);
 
-			if (*i == L'\x02')
+			if (*i == L'\x02') // switch to small font
 				font = _small;
 		}
-		else if (*i == L'\x01')
+		else if (*i == L'\x01') // switch to alternate color or back to original
 		{
 			if (color == _color)
 				color = _color2;
@@ -730,19 +728,6 @@ void Text::draw()
 		}
 		else
 		{
-/*			if (_contrast == true)
-			{
-				if		(color %16 < 2)	mult = 3;
-				else if (color %16 < 6) mult = 2;
-				else					mult = 1;
-			} */
-/*			int multer = 1;
-			if (color == 176 // why does this go borky-borky <- PURPLE GeoscapePalette, seethrough pixels on highContrast=3
-				&& _contrast != 1)
-			{
-				mult = 2;
-			} */
-
 			if (dir < 0)
 				x += dir * font->getCharSize(*i).w;
 
@@ -753,7 +738,7 @@ void Text::draw()
 								ShaderSurface(this, 0,0),
 								ShaderCrop(srfChar),
 								ShaderScalar(color),
-								ShaderScalar(_contrast), //multer),
+								ShaderScalar(_contrast),
 								ShaderScalar(mid));
 
 			if (dir > 0)

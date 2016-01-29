@@ -132,27 +132,27 @@ FundingState::FundingState()
 			actX = (*i)->getActivityXCom(),
 			actA = (*i)->getActivityAlien();
 
-		woststr1 << L'\x01' << Text::formatFunding(funds.at(funds.size() - 1)) << L'\x01';
+		woststr1 << L'\x01' << Text::formatCurrency(funds.at(funds.size() - 1));
 
 		if (funds.size() > 1)
 		{
 			int change = funds.back() - funds.at(funds.size() - 2);
 			if (change > 0)
-				woststr2 << L'\x01' << L'+' << L'\x01';
+				woststr2 << L'\x01' << L'+';
 			else if (change < 0)
 			{
-				woststr2 << L'\x01' << L'-' << L'\x01';
+				woststr2 << L'\x01' << L'-';
 				change = -change;
 			}
 			else
 				woststr2 << L' ' << L' ';
 
-			woststr3 << L'\x01' << Text::formatFunding(change) << L'\x01';
+			woststr3 << L'\x01' << Text::formatCurrency(change);
 		}
 		else
 		{
 			woststr2 << L' ' << L' ';
-			woststr3 << Text::formatFunding(0);
+			woststr3 << Text::formatCurrency(0);
 		}
 
 		int score = actX.at(actX.size() - 1) - actA.at(actA.size() - 1);
@@ -160,11 +160,11 @@ FundingState::FundingState()
 			woststr4 << L' ' << L' ';
 		else
 		{
-			woststr4 << L'\x01' << L'-' << L'\x01';
+			woststr4 << L'\x01' << L'-';
 			score = -score;
 		}
 
-		woststr5 << L'\x01' << score << L'\x01';
+		woststr5 << L'\x01' << score;
 
 		_lstCountries->addRow(
 							6,
@@ -209,13 +209,13 @@ FundingState::FundingState()
 					L"",
 					tr("STR_TOTAL_GROSS_UC").c_str(),
 					woststr1.str().c_str(),
-					Text::formatFunding(gross).c_str());
+					Text::formatCurrency(gross).c_str());
 	_lstTotal->addRow(
 					4,
 					L"",
 					tr("STR_TOTAL_NET_UC").c_str(),
 					woststr2.str().c_str(),
-					Text::formatFunding(net).c_str());
+					Text::formatCurrency(net).c_str());
 }
 
 /**

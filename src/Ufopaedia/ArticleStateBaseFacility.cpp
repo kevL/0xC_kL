@@ -147,7 +147,7 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 	_lstInfo->setCellColor(0,1, BASESCAPE_WHITE);
 
 	std::wostringstream woststr;
-	woststr << Text::formatFunding(facRule->getBuildCost());
+	woststr << Text::formatCurrency(facRule->getBuildCost());
 	_lstInfo->addRow(
 				2,
 				tr("STR_CONSTRUCTION_COST").c_str(),
@@ -156,7 +156,7 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 
 	woststr.str(L"");
 	woststr.clear();
-	woststr << Text::formatFunding(facRule->getMonthlyCost());
+	woststr << Text::formatCurrency(facRule->getMonthlyCost());
 	_lstInfo->addRow(
 				2,
 				tr("STR_MAINTENANCE_COST").c_str(),
@@ -176,7 +176,7 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 
 		woststr.str(L"");
 		woststr.clear();
-		woststr << Text::formatPct(facRule->getHitRatio());
+		woststr << Text::formatPercent(facRule->getHitRatio());
 		_lstInfo->addRow(
 					2,
 					tr("STR_HIT_RATIO").c_str(),

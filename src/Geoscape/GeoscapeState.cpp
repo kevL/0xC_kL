@@ -1302,7 +1302,7 @@ void GeoscapeState::drawUfoBlobs()
  */
 void GeoscapeState::updateTimeDisplay()
 {
-	_txtFunds->setText(Text::formatFunding(_gameSave->getFunds()));
+	_txtFunds->setText(Text::formatCurrency(_gameSave->getFunds()));
 
 	if (_gameSave->getMonthsPassed() != -1) // update Player's current score
 	{
@@ -1327,15 +1327,10 @@ void GeoscapeState::updateTimeDisplay()
 					wst = L"";
 				else if (delta > 0)
 					wst = L" +" + Text::intWide(delta);
-				else //if (delta < 0)
+				else
 					wst = L" " + Text::intWide(delta);
 			}
-
-			std::wostringstream woststr;
-			woststr << Text::formatNumber(score)
-					<< wst;
-
-			_wstScore = woststr.str();
+			_wstScore = Text::intWide(score) + wst;
 		}
 
 		_txtScore->setText(_wstScore);

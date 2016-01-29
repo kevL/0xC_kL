@@ -292,7 +292,7 @@ void CraftInfoState::init()
 	if (skirmish == true)
 		_craft->setFuel(crRule->getMaxFuel()); // top up Craft for insta-Battle mode.
 
-	woststr1 << tr("STR_FUEL").arg(Text::formatPct(_craft->getFuelPct()));
+	woststr1 << tr("STR_FUEL").arg(Text::formatPercent(_craft->getFuelPct()));
 	if (crRule->getMaxFuel() - _craft->getFuel() > 0)
 	{
 		hours = static_cast<int>(std::ceil(
@@ -303,9 +303,9 @@ void CraftInfoState::init()
 	_txtFuel->setText(woststr1.str());
 
 	_txtRadar->setText(tr("STR_RADAR_RANGE")
-						.arg(Text::formatNumber(crRule->getRadarRange())));
+						.arg(crRule->getRadarRange()));
 
-	woststr2 << tr("STR_HULL_").arg(Text::formatPct(100 - _craft->getCraftDamagePct()));
+	woststr2 << tr("STR_HULL_").arg(Text::formatPercent(100 - _craft->getCraftDamagePct()));
 	if (_craft->getCraftDamage() != 0)
 	{
 		hours = static_cast<int>(std::ceil(
@@ -429,9 +429,9 @@ void CraftInfoState::init()
 			_txtW1Name->setText(woststr.str());
 
 			woststr.str(L"");
-
-			woststr << tr("STR_AMMO_").arg(cw->getAmmo()) << L"\n\x01";
-			woststr << tr("STR_MAX").arg(cwRule->getAmmoMax());
+			woststr << tr("STR_AMMO_").arg(cw->getAmmo())
+					<< L"\n\x01"
+					<< tr("STR_MAX_").arg(cwRule->getAmmoMax());
 			if (cw->getAmmo() < cwRule->getAmmoMax())
 			{
 				hours = static_cast<int>(std::ceil( // rearm every half-hour.
@@ -475,8 +475,9 @@ void CraftInfoState::init()
 			_txtW2Name->setText(woststr.str());
 
 			woststr.str(L"");
-			woststr << tr("STR_AMMO_").arg(cw->getAmmo()) << L"\n\x01";
-			woststr << tr("STR_MAX").arg(cwRule->getAmmoMax());
+			woststr << tr("STR_AMMO_").arg(cw->getAmmo())
+					<< L"\n\x01"
+					<< tr("STR_MAX_").arg(cwRule->getAmmoMax());
 			if (cw->getAmmo() < cwRule->getAmmoMax())
 			{
 				hours = static_cast<int>(std::ceil( // rearm every half-hour.
@@ -658,7 +659,7 @@ void CraftInfoState::calculateTacticalCost() // private.
 {
 	const int cost = _base->calcSoldierBonuses(_craft)
 				   + _craft->getRules()->getSoldiers() * 1000;
-	_txtCost->setText(tr("STR_COST_").arg(Text::formatFunding(cost)));
+	_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(cost)));
 }
 
 }

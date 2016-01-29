@@ -86,8 +86,8 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 
 	// Get available fullscreen modes
 	_res = SDL_ListModes(nullptr, SDL_FULLSCREEN);
-	if (_res != (SDL_Rect**)-1
-		&& _res != (SDL_Rect**)0)
+	if (   _res != (SDL_Rect**)-1
+		&& _res != (SDL_Rect**) 0)
 	{
 		_resCurrent = -1;
 
@@ -168,11 +168,13 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 	_edtDisplayHeight->setNumerical(true);
 	_edtDisplayHeight->onTextChange((ActionHandler)& OptionsVideoState::txtDisplayHeightChange);
 
-	std::wostringstream ssW, ssH;
-	ssW << Options::displayWidth;
-	ssH << Options::displayHeight;
-	_edtDisplayWidth->setText(ssW.str());
-	_edtDisplayHeight->setText(ssH.str());
+	std::wostringstream
+		woststr1,
+		woststr2;
+	woststr1 << Options::displayWidth;
+	woststr2 << Options::displayHeight;
+	_edtDisplayWidth->setText(woststr1.str());
+	_edtDisplayHeight->setText(woststr2.str());
 
 	_btnDisplayResolutionUp->onMouseClick((ActionHandler)& OptionsVideoState::btnDisplayResolutionUpClick);
 	_btnDisplayResolutionDown->onMouseClick((ActionHandler)& OptionsVideoState::btnDisplayResolutionDownClick);
@@ -197,12 +199,12 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 
 	_txtLanguage->setText(tr("STR_DISPLAY_LANGUAGE"));
 
-	std::vector<std::wstring> names;
-	Language::getList(_langs, names);
-	_cbxLanguage->setOptions(names);
+	std::vector<std::wstring> languages;
+	Language::getList(_langs, languages);
+	_cbxLanguage->setOptions(languages);
 	for (size_t
 			i = 0;
-			i != names.size();
+			i != languages.size();
 			++i)
 	{
 		if (_langs[i] == Options::language)
@@ -227,16 +229,16 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 	_filters.push_back("");
 
 #ifndef __NO_OPENGL
-	const std::vector<std::string> filters = CrossPlatform::getFolderContents(CrossPlatform::getDataFolder(GL_FOLDER), GL_EXT);
+	const std::vector<std::string> filters (CrossPlatform::getFolderContents(CrossPlatform::getDataFolder(GL_FOLDER), GL_EXT));
 	for (std::vector<std::string>::const_iterator
 			i = filters.begin();
 			i != filters.end();
 			++i)
 	{
 		const std::string
-			file = *i,
-			path = GL_FOLDER + file,
-			name = file.substr(0, file.length() - GL_EXT.length() - 1) + GL_STRING;
+			file (*i),
+			path (GL_FOLDER + file),
+			name (file.substr(0, file.length() - GL_EXT.length() - 1) + GL_STRING);
 		filterNames.push_back(Language::fsToWstr(name));
 		_filters.push_back(path);
 	}
@@ -335,15 +337,15 @@ OptionsVideoState::~OptionsVideoState()
  */
 void OptionsVideoState::btnDisplayResolutionUpClick(Action*)
 {
-	if (_resAmount == 0)
-		return;
+	if (_resAmount != 0)
+	{
+		if (_resCurrent < 1)
+			_resCurrent = _resAmount - 1;
+		else
+			--_resCurrent;
 
-	if (_resCurrent <= 0)
-		_resCurrent = _resAmount - 1;
-	else
-		--_resCurrent;
-
-	updateDisplayResolution();
+		updateDisplayResolution();
+	}
 }
 
 /**
@@ -352,29 +354,29 @@ void OptionsVideoState::btnDisplayResolutionUpClick(Action*)
  */
 void OptionsVideoState::btnDisplayResolutionDownClick(Action*)
 {
-	if (_resAmount == 0)
-		return;
+	if (_resAmount != 0)
+	{
+		if (_resCurrent > _resAmount - 2)
+			_resCurrent = 0;
+		else
+			++_resCurrent;
 
-	if (_resCurrent >= _resAmount - 1)
-		_resCurrent = 0;
-	else
-		++_resCurrent;
-
-	updateDisplayResolution();
+		updateDisplayResolution();
+	}
 }
 
 /**
  * Updates the display resolution based on the selection.
  */
-void OptionsVideoState::updateDisplayResolution()
+void OptionsVideoState::updateDisplayResolution() // private.
 {
 	std::wostringstream
-		ssW,
-		ssH;
-	ssW << static_cast<int>(_res[_resCurrent]->w);
-	ssH << static_cast<int>(_res[_resCurrent]->h);
-	_edtDisplayWidth->setText(ssW.str());
-	_edtDisplayHeight->setText(ssH.str());
+		woststr1,
+		woststr2;
+	woststr1 << static_cast<int>(_res[_resCurrent]->w);
+	woststr2 << static_cast<int>(_res[_resCurrent]->h);
+	_edtDisplayWidth->setText(woststr1.str());
+	_edtDisplayHeight->setText(woststr2.str());
 
 	Options::newDisplayWidth = _res[_resCurrent]->w;
 	Options::newDisplayHeight = _res[_resCurrent]->h;
@@ -468,25 +470,25 @@ void OptionsVideoState::cbxFilterChange(Action*)
 			Options::newScaleFilter	= false;
 			Options::newHQXFilter	= false;
 			Options::newXBRZFilter	= false;
-		break;
+			break;
 		case 1:
 			Options::newOpenGL		= false;
 			Options::newScaleFilter	= true;
 			Options::newHQXFilter	= false;
 			Options::newXBRZFilter	= false;
-		break;
+			break;
 		case 2:
 			Options::newOpenGL		= false;
 			Options::newScaleFilter	= false;
 			Options::newHQXFilter	= true;
 			Options::newXBRZFilter	= false;
-		break;
+			break;
 		case 3:
 			Options::newOpenGL		= false;
 			Options::newScaleFilter	= false;
 			Options::newHQXFilter	= false;
 			Options::newXBRZFilter	= true;
-		break;
+			break;
 		default:
 			Options::newOpenGL		= true;
 			Options::newScaleFilter	= false;
@@ -509,17 +511,17 @@ void OptionsVideoState::updateDisplayMode(Action*)
 			Options::fullscreen		= false;
 			Options::borderless		= false;
 			Options::allowResize	= false;
-		break;
+			break;
 		case 1:
 			Options::fullscreen		= true;
 			Options::borderless		= false;
 			Options::allowResize	= false;
-		break;
+			break;
 		case 2:
 			Options::fullscreen		= false;
 			Options::borderless		= true;
 			Options::allowResize	= false;
-		break;
+			break;
 		case 3:
 			Options::fullscreen		= false;
 			Options::borderless		= false;

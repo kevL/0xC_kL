@@ -155,7 +155,7 @@ ManufactureState::ManufactureState(
 	_txtTitle->setText(tr("STR_CURRENT_PRODUCTION"));
 
 	_txtFunds->setText(tr("STR_CURRENT_FUNDS_")
-						.arg(Text::formatFunding(_game->getSavedGame()->getFunds())));
+						.arg(Text::formatCurrency(_game->getSavedGame()->getFunds())));
 
 	_txtItem->setText(tr("STR_ITEM"));
 	_txtEngineers->setText(tr("STR_ENGINEERS_ALLOCATED"));
@@ -270,7 +270,7 @@ void ManufactureState::fillProductionList()
 							woststr1.str().c_str(),
 							Text::intWide((*i)->getAssignedEngineers()).c_str(),
 							woststr2.str().c_str(),
-							Text::formatFunding((*i)->getRules()->getManufactureCost()).c_str(),
+							Text::formatCurrency((*i)->getRules()->getManufactureCost()).c_str(),
 							woststr3.str().c_str());
 	}
 

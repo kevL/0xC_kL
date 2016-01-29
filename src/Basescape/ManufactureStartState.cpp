@@ -115,7 +115,7 @@ ManufactureStartState::ManufactureStartState(
 	_txtManHour->setText(tr("STR_ENGINEER_HOURS_TO_PRODUCE_ONE_UNIT_")
 							.arg(_manfRule->getManufactureTime()));
 	_txtCost->setText(tr("STR_COST_PER_UNIT_")
-							.arg(Text::formatFunding(_manfRule->getManufactureCost())));
+							.arg(Text::formatCurrency(_manfRule->getManufactureCost())));
 	_txtWorkSpace->setText(tr("STR_WORK_SPACE_REQUIRED_")
 							.arg(_manfRule->getRequiredSpace()));
 

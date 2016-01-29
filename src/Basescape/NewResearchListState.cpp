@@ -168,7 +168,7 @@ void NewResearchListState::fillProjectList() // private.
 		{
 			std::wstring wst = tr((*i)->getRules()->getType());
 			if ((*i)->getSpent() != 0)
-				wst += L" (" + Text::formatNumber((*i)->getSpent()) + L")";
+				wst += L" (" + Text::intWide((*i)->getSpent()) + L")";
 
 			_lstResearch->addRow(1, wst.c_str());
 			_lstResearch->setRowColor(row++, color, true);

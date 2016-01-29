@@ -245,7 +245,7 @@ UfoDetectedState::UfoDetectedState(
 	_lstInfo->setCellColor(2,1, color2);
 
 	woststr.str(L"");
-	woststr << L'\x01' << Text::formatNumber(_ufo->getSpeed());
+	woststr << L'\x01' << _ufo->getSpeed();
 	_lstInfo->addRow(
 					2,
 					tr("STR_SPEED").c_str(),

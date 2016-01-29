@@ -121,9 +121,9 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 			_lstCrafts->addRow(
 							4,
 							tr(*i).c_str(),
-							Text::formatFunding(cost).c_str(),
+							Text::formatCurrency(cost).c_str(),
 							Text::intWide(qty).c_str(),
-							Text::formatFunding(qty * cost).c_str());
+							Text::formatCurrency(qty * cost).c_str());
 		}
 	}
 
@@ -154,9 +154,9 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 			_lstSalaries->addRow(
 							4,
 							tr(type).c_str(),
-							Text::formatFunding(cost).c_str(),
+							Text::formatCurrency(cost).c_str(),
 							Text::intWide(qty).c_str(),
-							Text::formatFunding(qty * cost).c_str());
+							Text::formatCurrency(qty * cost).c_str());
 		}
 	}
 
@@ -165,25 +165,25 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 	_lstSalaries->addRow(
 					4,
 					tr("STR_ENGINEERS").c_str(),
-					Text::formatFunding(cost).c_str(),
+					Text::formatCurrency(cost).c_str(),
 					Text::intWide(qty).c_str(),
-					Text::formatFunding(qty * cost).c_str());
+					Text::formatCurrency(qty * cost).c_str());
 
 	cost = _game->getRuleset()->getScientistCost();
 	qty = base->getTotalScientists();
 	_lstSalaries->addRow(
 					4,
 					tr("STR_SCIENTISTS").c_str(),
-					Text::formatFunding(cost).c_str(),
+					Text::formatCurrency(cost).c_str(),
 					Text::intWide(qty).c_str(),
-					Text::formatFunding(qty * cost).c_str());
+					Text::formatCurrency(qty * cost).c_str());
 
 	std::wostringstream woststr;
 
 	_lstMaintenance->setColumns(2, 229,56);
 	_lstMaintenance->setMargin();
 	_lstMaintenance->setDot();
-	woststr << L'\x01' << Text::formatFunding(base->getFacilityMaintenance()); // quah
+	woststr << L'\x01' << Text::formatCurrency(base->getFacilityMaintenance());
 	_lstMaintenance->addRow(
 						2,
 						tr("STR_BASE_MAINTENANCE").c_str(),
@@ -195,10 +195,10 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 	_lstBaseCost->addRow(
 					2,
 					tr("STR_BASE").c_str(),
-					Text::formatFunding(base->getMonthlyMaintenace()).c_str());
+					Text::formatCurrency(base->getMonthlyMaintenace()).c_str());
 
 	woststr.str(L"");
-	woststr << tr("STR_INCOME") << L" " << Text::formatFunding(_game->getSavedGame()->getCountryFunding());
+	woststr << tr("STR_INCOME") << L" " << Text::formatCurrency(_game->getSavedGame()->getCountryFunding());
 	_txtIncome->setText(woststr.str());
 
 	_lstTotal->setColumns(2, 47,56);
@@ -207,7 +207,7 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 	_lstTotal->addRow(
 					2,
 					tr("STR_TOTAL").c_str(),
-					Text::formatFunding(_game->getSavedGame()->getBaseMaintenances()).c_str());
+					Text::formatCurrency(_game->getSavedGame()->getBaseMaintenances()).c_str());
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick((ActionHandler)& MonthlyCostsState::btnOkClick);

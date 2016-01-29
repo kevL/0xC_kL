@@ -114,7 +114,7 @@ DismantleFacilityState::DismantleFacilityState(
 	calcRefund();
 
 	_txtRefund->setText(tr("STR_REFUND_")
-						.arg(Text::formatFunding(_refund)));
+						.arg(Text::formatCurrency(_refund)));
 	_txtRefund->setAlign(ALIGN_CENTER);
 }
 

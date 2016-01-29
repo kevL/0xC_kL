@@ -52,8 +52,8 @@ class TextList;
 
 
 /**
- * Contains strings used throughout the game for localization.
- * @note Languages are just a set of strings identified by an ID string.
+ * Contains strings used throughout the game for Language localization.
+ * @note Languages are a set of strings identified by an ID string.
  */
 class Language
 {
@@ -67,7 +67,7 @@ private:
 
 	std::map<std::string, LocalizedText> _strings;
 
-	static std::map<std::string, std::wstring> _names;
+	static std::map<std::string, std::wstring> _langList;
 	static std::vector<std::string>
 		_rtl,
 		_cjk;
@@ -98,18 +98,18 @@ private:
 		/// Replaces a substring.
 		static void replace(
 				std::string& st,
-				const std::string& get,
-				const std::string& done);
+				const std::string& stPre,
+				const std::string& stPost);
 		/// Replaces a substring.
 		static void replace(
 				std::wstring& wst,
-				const std::wstring& get,
-				const std::wstring& done);
+				const std::wstring& wstPre,
+				const std::wstring& wstPost);
 
 		/// Gets list of languages in the data directory.
 		static void getList(
 				std::vector<std::string>& files,
-				std::vector<std::wstring>& names);
+				std::vector<std::wstring>& languages);
 
 		/// Loads the language from a YAML file.
 		void load(
@@ -122,22 +122,22 @@ private:
 		std::wstring getName() const;
 
 		/// Outputs the language to a HTML file.
-		void toHtml(const std::string& file) const;
+//		void toHtml(const std::string& file) const;
 
-		/// Gets a localized text.
+		/// Gets a LocalizedText.
 		const LocalizedText& getString(const std::string& id) const;
-		/// Gets a quantity-dependent localized text.
+		/// Gets a quantity-dependent LocalizedText.
 		LocalizedText getString(
 				const std::string& id,
 				unsigned qty) const;
-		/// Gets a gender-dependent localized text.
+		/// Gets a gender-dependent LocalizedText.
 		const LocalizedText& getString(
 				const std::string& id,
 				SoldierGender gender) const;
 
-		/// Gets the direction of text in this language.
+		/// Gets the direction of text in the language.
 		TextDirection getTextDirection() const;
-		/// Gets the wrapping of text in this language.
+		/// Gets the wrapping of text in the language.
 		TextWrapping getTextWrapping() const;
 };
 

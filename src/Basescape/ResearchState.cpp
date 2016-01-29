@@ -201,7 +201,7 @@ void ResearchState::init()
 			const int days (static_cast<int>(std::ceil(
 						   (static_cast<double>((*i)->getCost() - (*i)->getSpent()))
 						  / static_cast<double>(assigned))));
-			daysLeft = Text::formatNumber(days);
+			daysLeft = Text::intWide(days);
 		}
 		else
 			daysLeft = L"-";

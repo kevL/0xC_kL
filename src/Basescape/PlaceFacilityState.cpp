@@ -110,7 +110,7 @@ PlaceFacilityState::PlaceFacilityState(
 	_txtCost->setText(tr("STR_COST_UC"));
 
 	_numCost->setBig();
-	_numCost->setText(Text::formatFunding(_facRule->getBuildCost()));
+	_numCost->setText(Text::formatCurrency(_facRule->getBuildCost()));
 
 	_txtTime->setText(tr("STR_CONSTRUCTION_TIME_UC"));
 
@@ -120,7 +120,7 @@ PlaceFacilityState::PlaceFacilityState(
 	_txtMaintenance->setText(tr("STR_MAINTENANCE_UC"));
 
 	_numMaintenance->setBig();
-	_numMaintenance->setText(Text::formatFunding(_facRule->getMonthlyCost()));
+	_numMaintenance->setText(Text::formatCurrency(_facRule->getMonthlyCost()));
 }
 
 /**

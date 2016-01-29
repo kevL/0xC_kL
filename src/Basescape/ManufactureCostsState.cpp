@@ -85,7 +85,7 @@ ManufactureCostsState::ManufactureCostsState()
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 
-	const Uint8 color = static_cast<Uint8>(_game->getRuleset()->getInterface("allocateManufacture")->getElement("text")->color2);
+	const Uint8 color (static_cast<Uint8>(_game->getRuleset()->getInterface("allocateManufacture")->getElement("text")->color2));
 
 	_txtItem->setText(tr("STR_LIST_ITEM"));
 	_txtItem->setColor(color);
@@ -131,10 +131,10 @@ ManufactureCostsState::~ManufactureCostsState()
  */
 void ManufactureCostsState::init()
 {
-	std::vector<RuleManufacture*> prodRules;
-	RuleManufacture* prodRule;
+	std::vector<const RuleManufacture*> prodRules;
+	const RuleManufacture* prodRule;
 
-	const std::vector<std::string>& prodList = _game->getRuleset()->getManufactureList();
+	const std::vector<std::string>& prodList (_game->getRuleset()->getManufactureList());
 	for (std::vector<std::string>::const_iterator
 			i = prodList.begin();
 			i != prodList.end();
@@ -154,7 +154,7 @@ void ManufactureCostsState::init()
 		salesCost;
 	float profitAspect;
 
-	for (std::vector<RuleManufacture*>::const_iterator
+	for (std::vector<const RuleManufacture*>::const_iterator
 			i = prodRules.begin();
 			i != prodRules.end();
 			++i, row += 3)
@@ -165,7 +165,7 @@ void ManufactureCostsState::init()
 		_lstProduction->addRow(
 							5,
 							woststr.str().c_str(),
-							Text::formatFunding((*i)->getManufactureCost()).c_str(),
+							Text::formatCurrency((*i)->getManufactureCost()).c_str(),
 							Text::intWide((*i)->getManufactureTime()).c_str(),
 							Text::intWide((*i)->getRequiredSpace()).c_str(),
 							L"");
@@ -173,7 +173,7 @@ void ManufactureCostsState::init()
 
 		requiredCosts = 0;
 
-		const std::map<std::string, int> required = (*i)->getRequiredItems();
+		const std::map<std::string, int> required ((*i)->getRequiredItems());
 		for (std::map<std::string, int>::const_iterator
 				j = required.begin();
 				j != required.end();
@@ -191,17 +191,16 @@ void ManufactureCostsState::init()
 				_lstProduction->addRow(
 									5,
 									L">",L"",L"",L"",
-									woststr.str());
+									woststr.str().c_str());
 				++row;
 			}
-
 			_lstProduction->setRowColor(row, YELLOW);
 		}
 		// note: Productions that require items show as yellow; those that don't show as blue.
 
 		profit = 0;
 
-		const std::map<std::string, int> producedItems = (*i)->getProducedItems();
+		const std::map<std::string, int> producedItems ((*i)->getProducedItems());
 		for (std::map<std::string, int>::const_iterator
 				j = producedItems.begin();
 				j != producedItems.end();
@@ -224,7 +223,7 @@ void ManufactureCostsState::init()
 			_lstProduction->addRow(
 								5,
 								woststr.str().c_str(),
-								Text::formatFunding(salesCost).c_str(),
+								Text::formatCurrency(salesCost).c_str(),
 								qty.str().c_str(),
 								L"",L"");
 			_lstProduction->setRowColor(++row, GREEN, true);
@@ -242,7 +241,7 @@ void ManufactureCostsState::init()
 							L"<",
 							woststr.str().c_str(),
 							L"",L"",
-							Text::formatFunding(profit).c_str());
+							Text::formatCurrency(profit).c_str());
 		_lstProduction->setRowColor(row + 1, BROWN, true);
 
 		_lstProduction->addRow(5, L"",L"",L"",L"",L""); // hori-spacer.

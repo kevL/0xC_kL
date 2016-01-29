@@ -86,7 +86,7 @@ ArticleStateCraft::ArticleStateCraft(const ArticleDefinitionCraft* const defs)
 	_txtStats->setColor(uPed_BLUE_SLATE);
 	_txtStats->setSecondaryColor(uPed_GREEN_SLATE);
 
-	const RuleCraft* const craftRule = _game->getRuleset()->getCraft(defs->id);
+	const RuleCraft* const craftRule (_game->getRuleset()->getCraft(defs->id));
 	int range = craftRule->getMaxFuel();
 	if (craftRule->getRefuelItem().empty() == false)
 		range *= craftRule->getMaxSpeed();
@@ -94,10 +94,10 @@ ArticleStateCraft::ArticleStateCraft(const ArticleDefinitionCraft* const defs)
 	range /= 6; // six doses per hour on Geoscape.
 
 	std::wostringstream woststr;
-	woststr << tr("STR_MAXIMUM_SPEED_UC")	.arg(Text::formatNumber(craftRule->getMaxSpeed())) << L'\n'
+	woststr << tr("STR_MAXIMUM_SPEED_UC")	.arg(craftRule->getMaxSpeed()) << L'\n'
 			<< tr("STR_ACCELERATION")		.arg(craftRule->getAcceleration()) << L'\n'
-			<< tr("STR_FUEL_CAPACITY")		.arg(Text::formatNumber(range)) << L'\n'
-			<< tr("STR_DAMAGE_CAPACITY_UC")	.arg(Text::formatNumber(craftRule->getMaxDamage()));
+			<< tr("STR_FUEL_CAPACITY")		.arg(range) << L'\n'
+			<< tr("STR_DAMAGE_CAPACITY_UC")	.arg(craftRule->getMaxDamage());
 
 	if (craftRule->getWeapons() != 0)
 		woststr << L'\n' << tr("STR_WEAPON_PODS").arg(craftRule->getWeapons());

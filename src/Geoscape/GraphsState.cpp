@@ -306,7 +306,7 @@ GraphsState::GraphsState()
 											66,
 											(static_cast<int>(btnOffset) * 10) + 1));
 			_txtRegionActA.at(btnOffset)->setColor(color + COL_OFF_TXT);
-			_txtRegionActA.at(btnOffset)->setText(Text::formatNumber(actA));
+			_txtRegionActA.at(btnOffset)->setText(Text::intWide(actA));
 			add(_txtRegionActA.at(btnOffset));
 
 			_txtRegionActX.push_back(new Text(
@@ -314,7 +314,7 @@ GraphsState::GraphsState()
 											66,
 											(static_cast<int>(btnOffset) * 10) + 1));
 			_txtRegionActX.at(btnOffset)->setColor(color + COL_OFF_TXT);
-			_txtRegionActX.at(btnOffset)->setText(Text::formatNumber(actX));
+			_txtRegionActX.at(btnOffset)->setText(Text::intWide(actX));
 			add(_txtRegionActX.at(btnOffset));
 
 			_blinkRegionAlien.push_back(blinkA);
@@ -410,7 +410,7 @@ GraphsState::GraphsState()
 											66,
 											(static_cast<int>(btnOffset) * 10) + 1));
 			_txtCountryActA.at(btnOffset)->setColor(color + COL_OFF_TXT);
-			_txtCountryActA.at(btnOffset)->setText(Text::formatNumber(actA));
+			_txtCountryActA.at(btnOffset)->setText(Text::intWide(actA));
 			add(_txtCountryActA.at(btnOffset));
 
 			_txtCountryActX.push_back(new Text(
@@ -418,7 +418,7 @@ GraphsState::GraphsState()
 											66,
 											(static_cast<int>(btnOffset) * 10) + 1));
 			_txtCountryActX.at(btnOffset)->setColor(color + COL_OFF_TXT);
-			_txtCountryActX.at(btnOffset)->setText(Text::formatNumber(actX));
+			_txtCountryActX.at(btnOffset)->setText(Text::intWide(actX));
 			add(_txtCountryActX.at(btnOffset));
 
 			_blinkCountryAlien.push_back(blinkA);
@@ -1536,7 +1536,7 @@ void GraphsState::updateScale( // private.
 			i != TEXTS_y;
 			++i)
 	{
-		_txtScale.at(i)->setText(Text::formatNumber(valLow));
+		_txtScale.at(i)->setText(Text::intWide(valLow));
 		valLow += delta;
 	}
 }
@@ -2153,7 +2153,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 		}
 
 		if (i == 0) // values are stored backwards. So take 1st value for last.
-			_txtScore->setText(Text::formatNumber(score[i]));
+			_txtScore->setText(Text::intWide(score[i]));
 
 
 		if (_financeToggles.at(0) == true) // INCOME
@@ -2497,10 +2497,10 @@ void GraphsState::updateButton( // private.
 	btn->setInvertColor(info->_colorPushed);
 	btn->setPressed(info->_pushed);
 
-	aLiens->setText(Text::formatNumber(info->_actA));
+	aLiens->setText(Text::intWide(info->_actA));
 	aLiens->setColor(info->_colorText);
 
-	xCom->setText(Text::formatNumber(info->_actX));
+	xCom->setText(Text::intWide(info->_actX));
 	xCom->setColor(info->_colorText);
 }
 
