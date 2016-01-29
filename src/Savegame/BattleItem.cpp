@@ -137,7 +137,7 @@ YAML::Node BattleItem::save() const
 
 	if (_unit != nullptr)		node["unit"]		= _unit->getId();
 //	else						node["unit"] = -1; // cf. SavedBattleGame::load()
-	if (_section != nullptr)	node["section"]		= _section->getInventoryType(); // note: 'section' should always be valid.
+	if (_section != nullptr)	node["section"]		= _section->getInventoryType(); // note: 'section' should always be valid. Unless it's a loaded Ammo-item.
 //	else						node["section"] = "NONE"; // cf. SavedBattleGame::load()
 	if (_tile != nullptr)		node["position"]	= _tile->getPosition();
 //	else						node["position"] = Position(-1,-1,-1); // cf. SavedBattleGame::load()

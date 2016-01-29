@@ -100,8 +100,8 @@ YAML::Node MissionSite::saveId() const
 {
 	YAML::Node node = Target::saveId();
 
-	node["type"]	= _deployRule->getMarkerType();
-	node["id"]		= _id;
+	node["type"] = _deployRule->getMarkerType();
+	node["id"]   = _id;
 
 	return node;
 }
@@ -158,13 +158,14 @@ std::wstring MissionSite::getName(const Language* const lang) const
  */
 int MissionSite::getMarker() const
 {
-	if (_detected == false)
-		return -1;
+	if (_detected == true)
+	{
+		const int ret (_deployRule->getMarkerIcon());
+		if (ret != -1) return ret; // for a custom marker.
 
-	if (_deployRule->getMarkerIcon() == -1)
 		return Globe::GLM_MISSIONSITE;
-
-	return _deployRule->getMarkerIcon();
+	}
+	return -1;
 }
 
 /**

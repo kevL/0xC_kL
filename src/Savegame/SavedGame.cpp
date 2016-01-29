@@ -167,57 +167,43 @@ SavedGame::~SavedGame()
 			i = _countries.begin();
 			i != _countries.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<Region*>::const_iterator
 			i = _regions.begin();
 			i != _regions.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<Base*>::const_iterator
 			i = _bases.begin();
 			i != _bases.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<Ufo*>::const_iterator
 			i = _ufos.begin();
 			i != _ufos.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<Waypoint*>::const_iterator
 			i = _waypoints.begin();
 			i != _waypoints.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<MissionSite*>::const_iterator
 			i = _missionSites.begin();
 			i != _missionSites.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<AlienBase*>::const_iterator
 			i = _alienBases.begin();
 			i != _alienBases.end();
 			++i)
- 	{
 		delete *i;
-	}
 
 	delete _alienStrategy;
 
@@ -225,33 +211,25 @@ SavedGame::~SavedGame()
 			i = _activeMissions.begin();
 			i != _activeMissions.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<SoldierDead*>::const_iterator
 			i = _deadSoldiers.begin();
 			i != _deadSoldiers.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<MissionStatistics*>::const_iterator
 			i = _missionStatistics.begin();
 			i != _missionStatistics.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<ResearchGeneral*>::const_iterator
 			i = _research.begin();
 			i != _research.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	delete _battleSave;
 }
@@ -422,8 +400,8 @@ void SavedGame::load(
 		Ruleset* const rules) // <- used only to obviate const if loading battleSave.
 {
 	//Log(LOG_INFO) << "SavedGame::load()";
-	const std::string st = Options::getUserFolder() + file;
-	const std::vector<YAML::Node> nodes = YAML::LoadAllFromFile(st);
+	const std::string st (Options::getUserFolder() + file);
+	const std::vector<YAML::Node> nodes (YAML::LoadAllFromFile(st));
 	if (nodes.empty() == true)
 	{
 		throw Exception(file + " is not a valid save file");
@@ -487,12 +465,13 @@ void SavedGame::load(
 			++i)
 	{
 		const std::string type ((*i)["type"].as<std::string>());
-		if (_rules->getCountry(type))
+		if (_rules->getCountry(type) != nullptr)
 		{
 			Country* const country (new Country(_rules->getCountry(type)));
 			country->load(*i);
 			_countries.push_back(country);
 		}
+		else Log(LOG_ERROR) << "Failed to load country " << type;
 	}
 
 	Log(LOG_INFO) << ". load regions";
@@ -502,16 +481,17 @@ void SavedGame::load(
 			++i)
 	{
 		const std::string type ((*i)["type"].as<std::string>());
-		if (_rules->getRegion(type))
+		if (_rules->getRegion(type) != nullptr)
 		{
 			Region* const region (new Region(_rules->getRegion(type)));
 			region->load(*i);
 			_regions.push_back(region);
 		}
+		else Log(LOG_ERROR) << "Failed to load region " << type;
 	}
 
-	Log(LOG_INFO) << ". load alien bases";
 	// Alien bases must be loaded before alien missions
+	Log(LOG_INFO) << ". load alien bases";
 	for (YAML::const_iterator
 			i = doc["alienBases"].begin();
 			i != doc["alienBases"].end();
@@ -531,10 +511,14 @@ void SavedGame::load(
 			++i)
 	{
 		const std::string missionType ((*i)["type"].as<std::string>());
-		const RuleAlienMission& missionRule (*_rules->getAlienMission(missionType));
-		std::auto_ptr<AlienMission> mission (new AlienMission(missionRule, *this));
-		mission->load(*i);
-		_activeMissions.push_back(mission.release());
+		if (_rules->getAlienMission(missionType) != nullptr)
+		{
+			const RuleAlienMission& missionRule (*_rules->getAlienMission(missionType));
+			std::auto_ptr<AlienMission> mission (new AlienMission(missionRule, *this));
+			mission->load(*i);
+			_activeMissions.push_back(mission.release());
+		}
+		else Log(LOG_ERROR) << "Failed to load mission " << missionType;
 	}
 
 	Log(LOG_INFO) << ". load ufos";
@@ -544,12 +528,13 @@ void SavedGame::load(
 			++i)
 	{
 		const std::string type ((*i)["type"].as<std::string>());
-		if (_rules->getUfo(type))
+		if (_rules->getUfo(type) != nullptr)
 		{
 			Ufo* const ufo (new Ufo(_rules->getUfo(type)));
 			ufo->load(*i, *_rules, *this);
 			_ufos.push_back(ufo);
 		}
+		else Log(LOG_ERROR) << "Failed to load UFO " << type;
 	}
 
 	Log(LOG_INFO) << ". load waypoints";
@@ -572,11 +557,15 @@ void SavedGame::load(
 		const std::string
 			type ((*i)["type"].as<std::string>()),
 			deployment ((*i)["deployment"].as<std::string>("STR_TERROR_MISSION"));
-		MissionSite* const site (new MissionSite(
+		if (_rules->getAlienMission(type) && _rules->getDeployment(deployment))
+		{
+			MissionSite* const site (new MissionSite(
 											_rules->getAlienMission(type),
 											_rules->getDeployment(deployment)));
-		site->load(*i);
-		_missionSites.push_back(site);
+			site->load(*i);
+			_missionSites.push_back(site);
+		}
+		else Log(LOG_ERROR) << "Failed to load mission " << type << " deployment " << deployment;
 	}
 
 	Log(LOG_INFO) << ". load research generals";
@@ -594,6 +583,7 @@ void SavedGame::load(
 			resGen->load(*i);
 			_research.push_back(resGen);
 		}
+		else Log(LOG_ERROR) << "Failed to load research " << type;
 	}
 
 	Log(LOG_INFO) << ". load xcom bases";
@@ -643,6 +633,7 @@ void SavedGame::load(
 	{
 		Log(LOG_INFO) << "SavedGame: loading tactical";
 		_battleSave = new SavedBattleGame(nullptr, _rules);
+//		Ruleset* const rules (const_cast<Ruleset*>(_rules)); // strip const.
 		_battleSave->load(battle, rules, this);
 		Log(LOG_INFO) << "SavedGame: loading tactical DONE";
 	}

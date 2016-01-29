@@ -51,7 +51,7 @@ Target::~Target() // virtual.
 			i != _followers.size();
 			++i)
 	{
-		Craft* const craft = dynamic_cast<Craft*>(_followers[i]);
+		Craft* const craft (dynamic_cast<Craft*>(_followers[i]));
 		if (craft != nullptr)
 			craft->returnToBase();
 	}
@@ -63,8 +63,8 @@ Target::~Target() // virtual.
  */
 void Target::load(const YAML::Node& node) // virtual.
 {
-	_lon	= node["lon"]	.as<double>(_lon);
-	_lat	= node["lat"]	.as<double>(_lat);
+	_lon = node["lon"].as<double>(_lon);
+	_lat = node["lat"].as<double>(_lat);
 }
 
 /**

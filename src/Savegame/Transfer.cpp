@@ -24,6 +24,7 @@
 #include "Soldier.h"
 
 #include "../Engine/Language.h"
+#include "../Engine/Logger.h"
 
 #include "../Ruleset/Ruleset.h"
 
@@ -74,7 +75,7 @@ bool Transfer::load(
 
 	if (const YAML::Node& sol = node["soldier"])
 	{
-		const std::string type = sol["type"].as<std::string>(rules->getSoldiersList().front());
+		const std::string type (sol["type"].as<std::string>(rules->getSoldiersList().front()));
 		if (rules->getSoldier(type) != nullptr)
 		{
 			_soldier = new Soldier(rules->getSoldier(type));
@@ -82,6 +83,7 @@ bool Transfer::load(
 		}
 		else
 		{
+			Log(LOG_ERROR) << "Failed to load soldier " << type;
 			delete this;
 			return false;
 		}
@@ -89,7 +91,7 @@ bool Transfer::load(
 
 	if (const YAML::Node& craft = node["craft"])
 	{
-		const std::string type = craft["type"].as<std::string>();
+		const std::string type (craft["type"].as<std::string>());
 		if (rules->getCraft(type) != nullptr)
 		{
 			_craft = new Craft(
@@ -99,6 +101,7 @@ bool Transfer::load(
 		}
 		else
 		{
+			Log(LOG_ERROR) << "Failed to load craft " << type;
 			delete this;
 			return false;
 		}
@@ -107,11 +110,12 @@ bool Transfer::load(
 	if (const YAML::Node& item = node["itemId"])
 	{
 		_itemId = item.as<std::string>(_itemId);
-/*		if (rules->getItem(_itemId) == nullptr)
+		if (rules->getItem(_itemId) == nullptr)
 		{
+			Log(LOG_ERROR) << "Failed to load item " << _itemId;
 			delete this;
 			return false;
-		} */
+		}
 	}
 
 	_itemQty	= node["itemQty"]	.as<int>(_itemQty);

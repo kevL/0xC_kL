@@ -266,8 +266,8 @@ YAML::Node Ufo::saveId() const
 {
 	YAML::Node node = MovingTarget::saveId();
 
-	node["type"]	= "STR_UFO";
-	node["id"]		= _id;
+	node["type"] = "STR_UFO";
+	node["id"]   = _id;
 
 	return node;
 }
@@ -341,8 +341,8 @@ int Ufo::getMarker() const
 {
 	if (_detected == true)
 	{
-		if (_ufoRule->getMarker() != -1) // for a custom marker.
-			return _ufoRule->getMarker();
+		const int ret (_ufoRule->getMarker());
+		if (ret != -1) return ret; // for a custom marker.
 
 		switch (_status)
 		{

@@ -147,66 +147,51 @@ SavedBattleGame::~SavedBattleGame()
 			i = 0;
 			i != _mapSize;
 			++i)
-	{
 		delete _tiles[i];
-	}
+
 	delete[] _tiles;
 
 	for (std::vector<MapDataSet*>::const_iterator
 			i = _mapDataSets.begin();
 			i != _mapDataSets.end();
 			++i)
-	{
 		(*i)->unloadData();
-	}
 
 	for (std::vector<Node*>::const_iterator
 			i = _nodes.begin();
 			i != _nodes.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _units.begin();
 			i != _units.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<BattleItem*>::const_iterator
 			i = _items.begin();
 			i != _items.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<BattleItem*>::const_iterator
 			i = _recoverGuaranteed.begin();
 			i != _recoverGuaranteed.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<BattleItem*>::const_iterator
 			i = _recoverConditional.begin();
 			i != _recoverConditional.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<BattleItem*>::const_iterator
 			i = _deleted.begin();
 			i != _deleted.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	delete _pf;
 	delete _te;
@@ -413,9 +398,9 @@ void SavedBattleGame::load(
 					nullptr);
 
 
-	// matches up tiles and units
+
 	Log(LOG_INFO) << ". reset tiles";
-	resetUnitsOnTiles();
+	resetUnitsOnTiles(); // matches up tiles and units
 
 	Log(LOG_INFO) << ". load items";
 	static const size_t LIST_TYPE = 3;
@@ -444,20 +429,15 @@ void SavedBattleGame::load(
 			i != LIST_TYPE;
 			++i)
 	{
-		//Log(LOG_INFO) << "";
-		//Log(LOG_INFO) << "listType = " << itLists_saved[i];
 		for (YAML::const_iterator
 				j = node[itLists_saved[i]].begin();
 				j != node[itLists_saved[i]].end();
 				++j)
 		{
-			//Log(LOG_INFO) << "";
 			st = (*j)["type"].as<std::string>();
-			//Log(LOG_INFO) << ". type = " << st;
 			if (rules->getItem(st) != nullptr)
 			{
 				id = (*j)["id"].as<int>(-1); // note: 'id' should always be valid here.
-				//Log(LOG_INFO) << ". . id = " << id;
 				item = new BattleItem(
 									rules->getItem(st),
 									nullptr,
@@ -465,11 +445,9 @@ void SavedBattleGame::load(
 
 				item->load(*j);
 
-//				st = "";
 				if ((*j)["section"])
 				{
-					st = (*j)["section"].as<std::string>(); // note: the given 'section' should always be valid.
-					//Log(LOG_INFO) << ". . section = " << st;
+					st = (*j)["section"].as<std::string>(); // note: the given 'section' should always be valid. Unless it's a loaded Ammo-item.
 //					if (st.empty() == false) //!= "NONE") // cf. BattleItem::save()
 					item->setInventorySection(rules->getInventory(st));
 				}
@@ -477,42 +455,26 @@ void SavedBattleGame::load(
 				owner		= (*j)["owner"]		.as<int>(-1); // cf. BattleItem::save() ->
 				ownerPre	= (*j)["ownerPre"]	.as<int>(-1);
 				unitId		= (*j)["unit"]		.as<int>(-1);
-				//Log(LOG_INFO) << ". . owner = " << owner;
-				//Log(LOG_INFO) << ". . ownerPre = " << ownerPre;
-				//Log(LOG_INFO) << ". . unitCorpse = " << unitId;
 
 				if (ownerPre == -1 && owner != -1)
-				{
 					ownerPre = owner;
-					//Log(LOG_INFO) << ". . . ownerPre = " << ownerPre;
-				}
 
 				for (std::vector<BattleUnit*>::const_iterator // match up items and units
 						k = _units.begin();
 						k != _units.end();
 						++k)
 				{
-					//Log(LOG_INFO) << ". . . check pointer(s) to id-" << (*k)->getId();
 					if ((*k)->getId() == owner)
-					{
-						//Log(LOG_INFO) << ". . . . set Owner";
 						item->changeOwner(*k);
-					}
 
 					if ((*k)->getId() == ownerPre)
-					{
-						//Log(LOG_INFO) << ". . . . set Owner_pre";
 						item->setPriorOwner(*k);
-					}
 
 					if ((*k)->getId() == unitId)
-					{
-						//Log(LOG_INFO) << ". . . . set corpseUnit";
 						item->setUnit(*k);
-					}
 				}
 
-				if (item->getInventorySection() != nullptr // match up items and tiles // note: 'section' should always be valid.
+				if (item->getInventorySection() != nullptr // match up items and tiles // note: 'section' should always be valid. Unless it's a loaded Ammo-item.
 					&& item->getInventorySection()->getCategory() == IC_GROUND)
 				{
 					if ((*j)["position"])
@@ -525,16 +487,16 @@ void SavedBattleGame::load(
 					}
 					else
 						pos = Position(0,0,-1); // cf. BattleItem::save()
-					//Log(LOG_INFO) << ". . . pos " << pos;
 				}
 
 				itLists_battle[i]->push_back(item);
 			}
+			else Log(LOG_ERROR) << "Failed to load item " << st;
 		}
 	}
 
 	Log(LOG_INFO) << ". load weapons w/ ammo";
-	// iterate tyhrough the items again and tie ammo-items to their weapons
+	// iterate through the items again and tie ammo-items to their weapons
 	std::vector<BattleItem*>::const_iterator pWeapon (_items.begin());
 	for (YAML::const_iterator
 			i = node["items"].begin();
@@ -602,14 +564,10 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 			i != _mapDataSets.end();
 			++i)
 	{
-		//Log(LOG_INFO) << "sbg: loadMapResources() " << (*i)->getType();
 		(*i)->loadData();
 
 		if (game->getRuleset()->getMCDPatch((*i)->getType()) != nullptr)
-		{
-			//Log(LOG_INFO) << ". modify";
 			game->getRuleset()->getMCDPatch((*i)->getType())->modifyData(*i);
-		}
 	}
 
 	int

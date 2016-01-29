@@ -85,8 +85,8 @@ YAML::Node AlienBase::saveId() const
 {
 	YAML::Node node = Target::saveId();
 
-	node["type"]	= "STR_ALIEN_BASE";
-	node["id"]		= _id;
+	node["type"] = "STR_ALIEN_BASE";
+	node["id"]   = _id;
 
 	return node;
 }
@@ -125,10 +125,10 @@ std::wstring AlienBase::getName(const Language* const lang) const
  */
 int AlienBase::getMarker() const
 {
-	if (_detected == false)
-		return -1;
+	if (_detected == true)
+		return Globe::GLM_ALIENBASE;
 
-	return Globe::GLM_ALIENBASE;
+	return -1;
 }
 
 /**

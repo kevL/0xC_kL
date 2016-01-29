@@ -33,6 +33,7 @@
 #include "Waypoint.h"
 
 #include "../Engine/Language.h"
+#include "../Engine/Logger.h"
 
 #include "../Geoscape/GeoscapeState.h"
 #include "../Geoscape/Globe.h" // Globe::GLM_CRAFT
@@ -86,9 +87,7 @@ Craft::Craft(
 			i = 0;
 			i != _crRule->getWeapons();
 			++i)
-	{
 		_weapons.push_back(nullptr);
-	}
 
 	if (_base != nullptr)
 		setBase(_base);
@@ -105,9 +104,7 @@ Craft::~Craft()
 			i = _weapons.begin();
 			i != _weapons.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	delete _items;
 
@@ -115,9 +112,7 @@ Craft::~Craft()
 			i = _vehicles.begin();
 			i != _vehicles.end();
 			++i)
-	{
 		delete *i;
-	}
 }
 
 /**
@@ -147,18 +142,22 @@ void Craft::load(
 	{
 		if (_crRule->getWeapons() > static_cast<int>(j))
 		{
-			const std::string type = (*i)["type"].as<std::string>();
+			const std::string type ((*i)["type"].as<std::string>());
 			if (type != "0"
 				&& rules->getCraftWeapon(type) != nullptr)
 			{
-				CraftWeapon* const cw = new CraftWeapon(
+				CraftWeapon* const cw (new CraftWeapon(
 													rules->getCraftWeapon(type),
-													0);
+													0));
 				cw->load(*i);
-				_weapons[j++] = cw;
+				_weapons[j] = cw;
 			}
 			else
-				_weapons[j++] = nullptr;
+			{
+				_weapons[j] = nullptr;
+				if (type != "0") Log(LOG_ERROR) << "Failed to load craft weapon " << type;
+			}
+			++j;
 		}
 	}
 
@@ -168,11 +167,9 @@ void Craft::load(
 			i != _items->getContents()->end();
 			)
 	{
-		if (std::find(
-					rules->getItemsList().begin(),
-					rules->getItemsList().end(),
-					i->first) == rules->getItemsList().end())
+		if (rules->getItem(i->first) == nullptr)
 		{
+			Log(LOG_ERROR) << "Failed to load item " << i->first;
 			i = _items->getContents()->erase(i);
 		}
 		else
@@ -184,17 +181,18 @@ void Craft::load(
 			i != node["vehicles"].end();
 			++i)
 	{
-		const std::string type = (*i)["type"].as<std::string>();
+		const std::string type ((*i)["type"].as<std::string>());
 		if (rules->getItem(type) != nullptr)
 		{
 			const int armorSize = rules->getArmor(rules->getUnitRule(type)->getArmor())->getSize();
-			Vehicle* const vhcl = new Vehicle(
+			Vehicle* const vhcl (new Vehicle(
 											rules->getItem(type),
 											0,
-											armorSize * armorSize);
+											armorSize * armorSize));
 			vhcl->load(*i);
 			_vehicles.push_back(vhcl);
 		}
+		else Log(LOG_ERROR) << "Failed to load item " << type;
 	}
 
 	_status = static_cast<CraftStatus>(node["status"].as<int>(_status));
@@ -203,15 +201,14 @@ void Craft::load(
 	_tacticalDone	= node["tacticalDone"]	.as<bool>(_tacticalDone);
 	_kills			= node["kills"]			.as<int>(_kills);
 
-	if (const YAML::Node name = node["name"])
+	if (const YAML::Node& name = node["name"])
 		_name = Language::utf8ToWstr(name.as<std::string>());
 
 	if (const YAML::Node& dest = node["dest"])
 	{
-		const std::string type = dest["type"].as<std::string>();
+		int id (dest["id"].as<int>());
 
-		int id = dest["id"].as<int>();
-
+		const std::string type (dest["type"].as<std::string>());
 		if (type == "STR_BASE")
 			returnToBase();
 		else if (type == "STR_UFO")
@@ -289,8 +286,8 @@ YAML::Node Craft::save() const
 {
 	YAML::Node node = MovingTarget::save();
 
-	node["type"]	= _crRule->getType();
-	node["id"]		= _id;
+	node["type"] = _crRule->getType();
+	node["id"]   = _id;
 
 	for (std::vector<CraftWeapon*>::const_iterator
 			i = _weapons.begin();
@@ -298,7 +295,7 @@ YAML::Node Craft::save() const
 			++i)
 	{
 		YAML::Node subnode;
-		if (*i != 0)
+		if (*i != nullptr)
 			subnode = (*i)->save();
 		else
 			subnode["type"] = "0";
@@ -350,10 +347,10 @@ YAML::Node Craft::saveId() const
 {
 	YAML::Node node = MovingTarget::saveId();
 
-	const CraftId uniqueId = getUniqueId();
+	const CraftId uniqueId (getUniqueId());
 
-	node["type"]	= uniqueId.first;
-	node["id"]		= uniqueId.second;
+	node["type"] = uniqueId.first;
+	node["id"]   = uniqueId.second;
 
 	return node;
 }
@@ -425,13 +422,14 @@ void Craft::setName(const std::wstring& wst)
  */
 int Craft::getMarker() const
 {
-	if (_status != CS_OUT)
-		return -1;
+	if (_status == CS_OUT)
+	{
+		const int ret (_crRule->getMarker());
+		if (ret != -1) return ret; // for a custom marker.
 
-	if (_crRule->getMarker() == -1)
 		return Globe::GLM_CRAFT;
-
-	return _crRule->getMarker();
+	}
+	return -1;
 }
 
 /**

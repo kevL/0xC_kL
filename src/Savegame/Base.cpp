@@ -41,7 +41,7 @@
 
 #include "../Engine/Game.h"
 #include "../Engine/Language.h"
-//#include "../Engine/Logger.h"
+#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 
@@ -97,17 +97,13 @@ Base::~Base()
 			i = _facilities.begin();
 			i != _facilities.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<Soldier*>::const_iterator
 			i = _soldiers.begin();
 			i != _soldiers.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<Craft*>::const_iterator
 			i = _crafts.begin();
@@ -118,19 +114,15 @@ Base::~Base()
 				j = (*i)->getVehicles()->begin();
 				j != (*i)->getVehicles()->end();
 				++j)
-		{
 			for (std::vector<Vehicle*>::const_iterator
 					k = _vehicles.begin();
 					k != _vehicles.end();
 					++k)
-			{
 				if (*k == *j) // to avoid calling a vehicle's destructor twice
 				{
 					_vehicles.erase(k);
 					break;
 				}
-			}
-		}
 
 		delete *i;
 	}
@@ -139,17 +131,13 @@ Base::~Base()
 			i = _transfers.begin();
 			i != _transfers.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<Production*>::const_iterator
 			i = _productions.begin();
 			i != _productions.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	delete _items;
 
@@ -157,17 +145,13 @@ Base::~Base()
 			i = _research.begin();
 			i != _research.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::vector<Vehicle*>::const_iterator
 			i = _vehicles.begin();
 			i != _vehicles.end();
 			++i)
-	{
 		delete *i;
-	}
 }
 
 /**
@@ -186,7 +170,7 @@ void Base::load(
 	//Log(LOG_INFO) << "Base load()";
 	Target::load(node);
 
-	_name = Language::utf8ToWstr(node["name"].as<std::string>(""));
+	_name = Language::utf8ToWstr(node["name"].as<std::string>());
 
 	if (firstBase == false || skirmish == true)
 //		|| Options::customInitialBase == false)
@@ -197,8 +181,8 @@ void Base::load(
 				i != node["facilities"].end();
 				++i)
 		{
-			const std::string type = (*i)["type"].as<std::string>();
-			if (_rules->getBaseFacility(type))
+			const std::string type ((*i)["type"].as<std::string>());
+			if (_rules->getBaseFacility(type) != nullptr)
 			{
 				BaseFacility* const facility = new BaseFacility(
 															_rules->getBaseFacility(type),
@@ -206,6 +190,7 @@ void Base::load(
 				facility->load(*i);
 				_facilities.push_back(facility);
 			}
+			else Log(LOG_ERROR) << "Failed to load facility " << type;
 		}
 	}
 
@@ -214,15 +199,16 @@ void Base::load(
 			i != node["crafts"].end();
 			++i)
 	{
-		std::string type = (*i)["type"].as<std::string>();
-		if (_rules->getCraft(type))
+		std::string type ((*i)["type"].as<std::string>());
+		if (_rules->getCraft(type) != nullptr)
 		{
-			Craft* const craft = new Craft(
+			Craft* const craft (new Craft(
 									_rules->getCraft(type),
-									this);
+									this));
 			craft->load(*i, _rules, gameSave);
 			_crafts.push_back(craft);
 		}
+		else Log(LOG_ERROR) << "Failed to load craft " << type;
 	}
 
 	for (YAML::const_iterator
@@ -230,16 +216,16 @@ void Base::load(
 			i != node["soldiers"].end();
 			++i)
 	{
-		const std::string type = (*i)["type"].as<std::string>(_rules->getSoldiersList().front());
+		const std::string type ((*i)["type"].as<std::string>(_rules->getSoldiersList().front()));
 		if (_rules->getSoldier(type) != nullptr)
 		{
-			Soldier* const sol = new Soldier(_rules->getSoldier(type));
+			Soldier* const sol (new Soldier(_rules->getSoldier(type)));
 			sol->load(*i, _rules);
 			sol->setCraft();
 
 			if (const YAML::Node& craft = (*i)["craft"])
 			{
-				const CraftId craftId = Craft::loadId(craft);
+				const CraftId craftId (Craft::loadId(craft));
 				for (std::vector<Craft*>::const_iterator
 						j = _crafts.begin();
 						j != _crafts.end();
@@ -255,35 +241,30 @@ void Base::load(
 
 			_soldiers.push_back(sol);
 		}
+		else Log(LOG_ERROR) << "Failed to load soldier " << type;
 	}
 
 	_items->load(node["items"]);
-	// old saves might have bad items, better get rid of them to avoid bugs
-	// TODO: for this to be effective it also has to be done to EquipmentLayouts and god knows what else ... Craft eqp ... etc.
-/*	for (std::map<std::string, int>::const_iterator
+	for (std::map<std::string, int>::const_iterator
 			i = _items->getContents()->begin();
 			i != _items->getContents()->end();)
 	{
-		if (std::find(
-					_rules->getItemsList().begin(),
-					_rules->getItemsList().end(),
-					i->first) == _rules->getItemsList().end())
+		if (_rules->getItem(i->first) == nullptr)
 		{
-			_items->getContents()->erase(i++);
+			Log(LOG_ERROR) << "Failed to load item " << i->first;
+			i = _items->getContents()->erase(i);
 		}
-		else ++i;
-	} */
-
-	_cashIncome	= node["cashIncome"].as<int>(_cashIncome);
-	_cashSpent	= node["cashSpent"]	.as<int>(_cashSpent);
+		else
+			++i;
+	}
 
 	for (YAML::const_iterator
 			i = node["transfers"].begin();
 			i != node["transfers"].end();
 			++i)
 	{
-		const int hours = (*i)["hours"].as<int>();
-		Transfer* const transfer = new Transfer(hours);
+		const int hours ((*i)["hours"].as<int>());
+		Transfer* const transfer (new Transfer(hours));
 		if (transfer->load(*i, this, _rules) == true)
 			_transfers.push_back(transfer);
 	}
@@ -293,15 +274,18 @@ void Base::load(
 			i != node["research"].end();
 			++i)
 	{
-		const std::string project = (*i)["project"].as<std::string>();
+		const std::string project ((*i)["project"].as<std::string>());
 		if (_rules->getResearch(project) != nullptr)
 		{
-			ResearchProject* const research = new ResearchProject(_rules->getResearch(project));
+			ResearchProject* const research (new ResearchProject(_rules->getResearch(project)));
 			research->load(*i);
 			_research.push_back(research);
 		}
 		else
+		{
+			Log(LOG_ERROR) << "Failed to load research " << project;
 			_scientists += (*i)["assigned"].as<int>(0);
+		}
 	}
 
 	for (YAML::const_iterator
@@ -309,23 +293,29 @@ void Base::load(
 			i != node["productions"].end();
 			++i)
 	{
-		const std::string item = (*i)["item"].as<std::string>();
-		if (_rules->getManufacture(item))
+		const std::string item ((*i)["item"].as<std::string>());
+		if (_rules->getManufacture(item) != nullptr)
 		{
-			Production* const production = new Production(
+			Production* const production (new Production(
 													_rules->getManufacture(item),
-													0);
+													0));
 			production->load(*i);
 			_productions.push_back(production);
 		}
 		else
+		{
+			Log(LOG_ERROR) << "Failed to load manufacture " << item;
 			_engineers += (*i)["assigned"].as<int>(0);
+		}
 	}
 
 	_tactical	= node["tactical"]	.as<bool>(_tactical);
 	_exposed	= node["exposed"]	.as<bool>(_exposed);
 	_scientists	= node["scientists"].as<int>(_scientists);
 	_engineers	= node["engineers"]	.as<int>(_engineers);
+
+	_cashIncome	= node["cashIncome"].as<int>(_cashIncome);
+	_cashSpent	= node["cashSpent"]	.as<int>(_cashSpent);
 }
 
 /**
@@ -342,25 +332,19 @@ YAML::Node Base::save() const
 			i = _facilities.begin();
 			i != _facilities.end();
 			++i)
-	{
 		node["facilities"].push_back((*i)->save());
-	}
 
 	for (std::vector<Soldier*>::const_iterator
 			i = _soldiers.begin();
 			i != _soldiers.end();
 			++i)
-	{
 		node["soldiers"].push_back((*i)->save());
-	}
 
 	for (std::vector<Craft*>::const_iterator
 			i = _crafts.begin();
 			i != _crafts.end();
 			++i)
-	{
 		node["crafts"].push_back((*i)->save());
-	}
 
 	node["items"]		= _items->save();
 	node["cashIncome"]	= _cashIncome;
@@ -370,25 +354,19 @@ YAML::Node Base::save() const
 			i = _transfers.begin();
 			i != _transfers.end();
 			++i)
-	{
 		node["transfers"].push_back((*i)->save());
-	}
 
 	for (std::vector<ResearchProject*>::const_iterator
 			i = _research.begin();
 			i != _research.end();
 			++i)
-	{
 		node["research"].push_back((*i)->save());
-	}
 
 	for (std::vector<Production*>::const_iterator
 			i = _productions.begin();
 			i != _productions.end();
 			++i)
-	{
 		node["productions"].push_back((*i)->save());
-	}
 
 	if (_tactical == true)	node["tactical"]	= _tactical;
 	if (_exposed == true)	node["exposed"]		= _exposed;
@@ -406,8 +384,8 @@ YAML::Node Base::saveId() const
 {
 	YAML::Node node = Target::saveId();
 
-	node["type"]	= "STR_BASE";
-	node["id"]		= 0;
+	node["type"] = "STR_BASE";
+	node["id"]   = 0;
 
 	return node;
 }
@@ -437,10 +415,10 @@ void Base::setName(const std::wstring& wst)
  */
 int Base::getMarker() const
 {
-	if (_placed == false)
-		return -1;
+	if (_placed == true)
+		return Globe::GLM_BASE;
 
-	return Globe::GLM_BASE;
+	return -1;
 }
 
 /**

@@ -72,8 +72,8 @@ YAML::Node Waypoint::saveId() const
 {
 	YAML::Node node = Target::saveId();
 
-	node["type"]	= "STR_WAYPOINT";
-	node["id"]		= _id;
+	node["type"] = "STR_WAYPOINT";
+	node["id"]   = _id;
 
 	return node;
 }
