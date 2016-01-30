@@ -148,8 +148,8 @@ int CraftWeapon::rearm(
 		int clipSize)
 {
 	const int
-		fullQty = _cwRule->getAmmoMax(),
-		rateQty = _cwRule->getRearmRate();
+		fullQty (_cwRule->getAmmoMax()),
+		rateQty (_cwRule->getRearmRate());
 
 	int
 		ret,
@@ -216,7 +216,7 @@ void CraftWeapon::setCantLoad(bool cantLoad)
  */
 CraftWeaponProjectile* CraftWeapon::fire() const
 {
-	CraftWeaponProjectile* const prj = new CraftWeaponProjectile();
+	CraftWeaponProjectile* const prj (new CraftWeaponProjectile());
 
 	prj->setType(_cwRule->getProjectileType());
 	prj->setSpeed(_cwRule->getProjectileSpeed());
@@ -234,16 +234,12 @@ CraftWeaponProjectile* CraftWeapon::fire() const
  */
 int CraftWeapon::getClipsLoaded(const Ruleset* const rules) const
 {
-	const RuleItem* const clip = rules->getItem(_cwRule->getClipItem());
-	if (clip != nullptr
-		&& clip->getClipSize() > 0)
-	{
-		return static_cast<int>(std::floor(
-			   static_cast<float>(_ammo) / static_cast<float>(clip->getClipSize())));
-	}
+	const RuleItem* const clip (rules->getItem(_cwRule->getClipItem()));
 
-	return static_cast<int>(std::floor(
-		   static_cast<float>(_ammo) / static_cast<float>(_cwRule->getRearmRate())));
+	if (clip == nullptr || clip->getClipSize() < 1)
+		return _ammo / _cwRule->getRearmRate(); // round down.
+
+	return _ammo / clip->getClipSize(); // round down.
 }
 
 }

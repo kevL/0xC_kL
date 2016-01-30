@@ -57,68 +57,67 @@ private:
 		_engineers,
 		_timeSpent;
 
-	///
+	/// Checks if there is enough funds to continue production.
 	bool enoughMoney(const SavedGame* const gameSave) const;
-	///
+	/// Checks if there is enough resource material to continue production.
 	bool enoughMaterials(Base* const base) const;
 
 
 	public:
-		///
+		/// Tracks a Base manufacturing project.
 		Production(
 				const RuleManufacture* const manfRule,
 				int amount);
-		///
+		/// Cleans the Base manufacturing project.
 		~Production();
 
-		///
+		/// Loads from YAML.
 		void load(const YAML::Node& node);
-		///
+		/// Saves to YAML.
 		YAML::Node save() const;
 
-		///
+		/// Gets the rules for the Production.
 		const RuleManufacture* getRules() const;
 
-		///
+		/// Gets the total quantity to produce.
 		int getAmountTotal() const;
-		///
+		/// Sets the total quantity to produce.
 		void setAmountTotal(int amount);
-
-		///
-		bool getInfiniteAmount() const;
-		///
-		void setInfiniteAmount(bool infinite);
-
-		///
-		int getTimeSpent() const;
-		///
-		void setTimeSpent(int spent);
-
-		///
+		/// Gets the quantity of produced items so far.
 		int getAmountProduced() const;
 
-		///
+		/// Gets if the Production is to produce an infinite quantity.
+		bool getInfiniteAmount() const;
+		/// Sets if the Production is to produce an infinite quantity.
+		void setInfiniteAmount(bool infinite);
+
+		/// Gets the time spent on the Production so far.
+		int getTimeSpent() const;
+		/// Sets the time spent on the Production so far.
+		void setTimeSpent(int spent);
+
+		/// Gets the quantity of assigned engineers to the Production.
 		int getAssignedEngineers() const;
-		///
+		/// Gets the quantity of assigned engineers to the Production.
 		void setAssignedEngineers(int engineers);
 
-		///
+		/// Gets if the produced items are to be sold immediately.
 		bool getSellItems() const;
-		///
+		/// Sets if the produced items are to be sold immediately.
 		void setSellItems(bool sell);
 
-		///
+		/// Advances the Production by a step.
 		ProductionProgress step(
 				Base* const base,
 				SavedGame* const gameSave,
 				const Ruleset* const rules);
 
-		///
+		/// Starts the Production.
 		void startProduction(
 				Base* const base,
 				SavedGame* const gameSave) const;
 
-		///
+		/// Gets the time till the Production is completed.
 		bool tillFinish(
 				int& days,
 				int& hours) const;

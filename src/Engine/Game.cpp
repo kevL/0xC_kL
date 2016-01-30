@@ -920,7 +920,6 @@ void Game::initAudio()
 	}
 	else
 	{
-		Log(LOG_INFO) << "SDL_mixer initialized.";
 		Mix_AllocateChannels(16);
 		Mix_ReserveChannels(4); // 4th channel (#3) is for ambient sFx
 		Mix_GroupChannels(0,2,0);
@@ -929,6 +928,7 @@ void Game::initAudio()
 				Options::soundVolume,
 				Options::musicVolume,
 				Options::uiVolume);
+		Log(LOG_INFO) << "SDL_mixer initialized.";
 	}
 }
 

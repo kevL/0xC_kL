@@ -1098,7 +1098,7 @@ SavedGame* Ruleset::newSave() const
 {
 	RNG::setSeed(0);
 
-	SavedGame* const gameSave = new SavedGame(this);
+	SavedGame* const gameSave (new SavedGame(this));
 
 	// Setup research generals.
 	for (std::vector<std::string>::const_iterator
@@ -1115,7 +1115,7 @@ SavedGame* Ruleset::newSave() const
 			i != _countriesIndex.end();
 			++i)
 	{
-		RuleCountry* const country = getCountry(*i);
+		RuleCountry* const country (getCountry(*i));
 		if (country->getLonMin().empty() == false) // safety.
 			gameSave->getCountries()->push_back(new Country(country, true));
 	}
@@ -1131,7 +1131,7 @@ SavedGame* Ruleset::newSave() const
 //		if (funding < 0)
 //			funding = (*i)->getFunding().back();
 
-		int funding = (*i)->getFunding().back();
+		int funding ((*i)->getFunding().back());
 		if (funding < 0) funding = 0; // safety, i guess.
 
 		(*i)->setFunding(funding);
@@ -1145,13 +1145,13 @@ SavedGame* Ruleset::newSave() const
 			i != _regionsIndex.end();
 			++i)
 	{
-		RuleRegion* const region = getRegion(*i);
+		RuleRegion* const region (getRegion(*i));
 		if (region->getLonMin().empty() == false) // safety.
 			gameSave->getRegions()->push_back(new Region(region));
 	}
 
 	// Set up starting base.
-	Base* const base = new Base(this);
+	Base* const base (new Base(this));
 	base->load(_startingBase, gameSave, true);
 
 	// Correct IDs.
@@ -1163,19 +1163,91 @@ SavedGame* Ruleset::newSave() const
 		gameSave->getCanonicalId((*i)->getRules()->getType());
 	}
 
-	// Generate soldiers.
-	Soldier* sol;
-	const int solQty = _startingBase["randomSoldiers"].as<int>(0);
-	for (int
-			i = 0;
-			i != solQty;
+	// Determine starting transport craft
+/*	Craft* transportCraft (nullptr);
+	for (std::vector<Craft*>::const_iterator
+			i = base->getCrafts()->begin();
+			i != base->getCrafts()->end();
 			++i)
 	{
-		sol = genSoldier(gameSave);
-//		sol->setCraft(base->getCrafts()->front());
-		base->getSoldiers()->push_back(sol);
+		if ((*i)->getRules()->getSoldiers() != 0)
+		{
+			transportCraft = *i;
+			break;
+		}
+	} */
 
-		sol->getDiary()->awardOriginalEight();
+	// Determine starting soldier types
+	std::vector<std::string> soldierTypes (_soldiersIndex);
+	for (std::vector<std::string>::const_iterator
+			i = soldierTypes.begin();
+			i != soldierTypes.end();
+			)
+	{
+		if (getSoldier(*i)->getRequirements().empty() == false)
+			i = soldierTypes.erase(i);
+		else
+			++i;
+	}
+
+	const YAML::Node& node (_startingBase["randomSoldiers"]);
+	std::vector<std::string> solTypes;
+	if (node)
+	{
+		if (node.IsMap() == true) // Starting soldiers specified by type
+		{
+			std::map<std::string, int> randSoldiers (node.as<std::map<std::string, int>>(std::map<std::string, int>()));
+			for (std::map<std::string, int>::const_iterator
+					i = randSoldiers.begin();
+					i != randSoldiers.end();
+					++i)
+			{
+				for (int
+						j = 0;
+						j != i->second;
+						++j)
+				{
+					solTypes.push_back(i->first);
+				}
+			}
+		}
+		else if (node.IsScalar() == true) // Starting soldiers specified by amount
+		{
+			const int randSoldiers (node.as<int>(0));
+			for (int
+					i = 0;
+					i != randSoldiers;
+					++i)
+			{
+				solTypes.push_back(soldierTypes[RNG::pick(soldierTypes.size())]);
+			}
+		}
+
+		// Generate soldiers
+		for (size_t
+				i = 0;
+				i != solTypes.size();
+				++i)
+		{
+			Soldier* const sol (genSoldier(gameSave, solTypes[i]));
+
+//			if (transportCraft != 0 && i < transportCraft->getRules()->getSoldiers())
+//				soldier->setCraft(transportCraft);
+
+			base->getSoldiers()->push_back(sol);
+
+			// Medal soldier a special Original Eight award.
+			SoldierDiary* const diary (sol->getDiary());
+			diary->awardOriginalEight();
+
+			for (std::vector<SoldierAward*>::const_iterator
+					j = diary->getSoldierAwards()->begin();
+					j != diary->getSoldierAwards()->end();
+					++j)
+			{
+				(*j)->setOld();
+			}
+		}
 	}
 
 	gameSave->getBases()->push_back(base);

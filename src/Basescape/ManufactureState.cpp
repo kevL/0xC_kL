@@ -170,14 +170,17 @@ ManufactureState::ManufactureState(
 
 	_lstResources->setColumns(4, 151,50,40,40);
 	_lstResources->setMargin(4);
-	std::string st = "STR_ALIEN_ALLOYS";
+	std::string st;
 	for (size_t
 			i = 0;
 			i != 2;
 			++i)
 	{
-		if (i == 1)
+		if (i == 0)
+			st = "STR_ALIEN_ALLOYS";
+		else
 			st = "STR_ELERIUM_115";
+
 		_lstResources->addRow(4,
 							tr(st).c_str(),
 							L"",
@@ -352,10 +355,10 @@ void ManufactureState::miniClick(Action*)
 {
 	if (_state != nullptr) // cannot switch bases if coming from geoscape.
 	{
-		const size_t baseId = _mini->getHoveredBase();
+		const size_t baseId (_mini->getHoveredBase());
 		if (baseId < _baseList->size())
 		{
-			Base* const base = _baseList->at(baseId);
+			Base* const base (_baseList->at(baseId));
 			if (base != _base && base->hasProduction() == true)
 			{
 				_txtHoverBase->setText(L"");
@@ -377,7 +380,7 @@ void ManufactureState::miniClick(Action*)
  */
 void ManufactureState::viewMouseOver(Action*)
 {
-	const size_t baseId = _mini->getHoveredBase();
+	const size_t baseId (_mini->getHoveredBase());
 	if (baseId < _baseList->size()
 		&& _base != _baseList->at(baseId)
 		&& _baseList->at(baseId)->hasProduction() == true)

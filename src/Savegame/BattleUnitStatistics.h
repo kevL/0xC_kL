@@ -263,7 +263,7 @@ struct BattleUnitStatistics
 			node["kills"].push_back((*i)->save());
 		}
 
-		if (wasUnconscious != false)		node["wasUnconscious"]			= wasUnconscious;
+		if (wasUnconscious == true)			node["wasUnconscious"]			= wasUnconscious;
 		if (shotAtCounter != 0)				node["shotAtCounter"]			= shotAtCounter;
 		if (hitCounter != 0)				node["hitCounter"]				= hitCounter;
 		if (shotByFriendlyCounter != 0)		node["shotByFriendlyCounter"]	= shotByFriendlyCounter;

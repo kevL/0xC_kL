@@ -92,11 +92,13 @@ private:
 	std::vector<Soldier*> _soldiers;
 
 	/// Gets selected price.
-	int getPrice();
+	int getPrice() const;
 	/// Gets selected quantity.
-	int getBaseQuantity();
+	int getBaseQuantity() const;
+
 	/// Gets the Type of the selected item.
 	PurchaseSellTransferType getSellType(size_t sel) const;
+
 	/// Gets the index of selected item.
 	size_t getItemIndex(size_t sel) const;
 	/// Gets the index of the selected craft.

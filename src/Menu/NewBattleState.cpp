@@ -414,8 +414,8 @@ void NewBattleState::initPlay()
 {
 	RNG::setSeed(0);
 
-	SavedGame* const gameSave = new SavedGame(_rules); // uh do these get deleted anywhere
-	Base* const base = new Base(_rules);
+	SavedGame* const gameSave (new SavedGame(_rules)); // uh do these get deleted anywhere
+	Base* const base (new Base(_rules));
 
 	const YAML::Node& node = _rules->getStartingBase();
 	base->load(
@@ -461,12 +461,15 @@ void NewBattleState::initPlay()
 	bool
 		hasCdr = false,
 		hasRookieStats;
+
 	for (int
 			i = 0;
 			i != 50; // qty Soldiers available
 			++i)
 	{
-		Soldier* const sol = _rules->genSoldier(gameSave);
+		Soldier* const sol (_rules->genSoldier(
+											gameSave,
+											_rules->getSoldiersList().at(RNG::pick(_rules->getSoldiersList().size()))));
 		stats = sol->getCurrentStats();
 
 		hasRookieStats = true;
@@ -531,7 +534,7 @@ void NewBattleState::initPlay()
 
 	// Generate items
 	const RuleItem* itRule;
-	const std::vector<std::string>& items = _rules->getItemsList();
+	const std::vector<std::string>& items (_rules->getItemsList());
 	for (std::vector<std::string>::const_iterator
 			i = items.begin();
 			i != items.end();
@@ -552,7 +555,7 @@ void NewBattleState::initPlay()
 	}
 
 	// Add research - setup research generals.
-	const std::vector<std::string>& resList = _rules->getResearchList();
+	const std::vector<std::string>& resList (_rules->getResearchList());
 	for (std::vector<std::string>::const_iterator
 			i = resList.begin();
 			i != resList.end();

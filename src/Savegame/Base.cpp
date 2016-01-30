@@ -2618,7 +2618,7 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
 			++i)
 	{
 		// not a connected fac -> push its iterator onto the list!
-		// and don't take duplicates of large-sized facilities.
+		// And don't take duplicates of large-sized facilities.
 		if (*((*i)->first) != preEntry
 			&& (*i)->second == false)
 		{
@@ -2757,6 +2757,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 		else
 		{
 			del = destroyed - getFreeLaboratories();
+			// TODO: Reverse iteration.
 			for (std::vector<ResearchProject*>::const_iterator
 					i = _research.begin();
 					i != _research.end() && del > 0;
@@ -2765,9 +2766,9 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 				personel = (*i)->getAssignedScientists();
 				if (personel < del)
 				{
+					del -= personel;
 					(*i)->setAssignedScientists(0);
 					_scientists += personel;
-					del -= personel;
 				}
 				else
 				{
@@ -2797,6 +2798,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 		else
 		{
 			del = destroyed - getFreeWorkshops();
+			// TODO: Reverse iteration.
 			for (std::vector<Production*>::const_iterator
 					i = _productions.begin();
 					i != _productions.end() && del > 0;
@@ -2805,9 +2807,9 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 				personel = (*i)->getAssignedEngineers();
 				if (personel < del)
 				{
+					del -= personel;
 					(*i)->setAssignedEngineers(0);
 					_engineers += personel;
-					del -= personel;
 				}
 				else
 				{
@@ -2817,6 +2819,8 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 				}
 			}
 		}
+		// TODO: Start removing _productions if their space-required still
+		// exceeds space-available.
 	}
 
 /*	// Let the Transfer-items arrive and then start issuing the Warnings. That
@@ -2850,6 +2854,8 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 	destroyed = (*pFac)->getRules()->getPersonnel();
 	if (destroyed != 0)
 	{
+		// Could get cramped in here; current personel are not removed.
+		// TODO: Issue a stream of warnings ala storesOverfull.
 		del = destroyed - getFreeQuarters();
 		for (std::vector<Transfer*>::const_reverse_iterator
 				rit = _transfers.rbegin();
@@ -2863,18 +2869,18 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 					--del;
 					delete (*rit)->getSoldier();
 					delete *rit;
-					std::vector<Transfer*>::const_iterator i (_transfers.erase((++rit).base()));
-					rit = std::vector<Transfer*>::const_reverse_iterator(i); // wtf if it works.
+					const std::vector<Transfer*>::const_iterator i (_transfers.erase((++rit).base()));
+					rit = std::vector<Transfer*>::const_reverse_iterator(i);
 					break;
 				}
-					break;
+
 				case PST_SCIENTIST:
 				case PST_ENGINEER:
 				{
 					del -= (*rit)->getQuantity();
 					delete *rit;
-					std::vector<Transfer*>::const_iterator i (_transfers.erase((++rit).base()));
-					rit = std::vector<Transfer*>::const_reverse_iterator(i); // wtf if it works.
+					const std::vector<Transfer*>::const_iterator i (_transfers.erase((++rit).base()));
+					rit = std::vector<Transfer*>::const_reverse_iterator(i);
 					break;
 				}
 

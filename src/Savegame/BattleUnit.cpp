@@ -607,16 +607,16 @@ YAML::Node BattleUnit::save() const
 	node["rankInt"]			= _rankInt;
 
 	if (_morale != 100)				node["morale"]			= _morale;
-	if (_floating != false)			node["floating"]		= _floating;
+	if (_floating == true)			node["floating"]		= _floating;
 	if (_fire != 0)					node["fire"]			= _fire;
 	if (_turretType != -1)			node["turretType"]		= _turretType; // TODO: use unitRule to get turretType.
-	if (_visible != false)			node["visible"]			= _visible;
+	if (_visible == true)			node["visible"]			= _visible;
 	if (_killedBy != FACTION_NONE)	node["killedBy"]		= static_cast<int>(_killedBy);
 	if (_motionPoints != 0)			node["motionPoints"]	= _motionPoints;
 	if (_kills != 0)				node["kills"]			= _kills;
 	if (_drugDose != 0)				node["drugDose"]		= _drugDose;
 	if (_murdererId != 0)			node["murdererId"]		= _murdererId;
-	if (_hasBeenStunned != false)	node["beenStunned"]		= _hasBeenStunned;
+	if (_hasBeenStunned == true)	node["beenStunned"]		= _hasBeenStunned;
 
 	node["activeHand"] = static_cast<int>(_activeHand);
 
@@ -657,7 +657,7 @@ YAML::Node BattleUnit::save() const
 
 		node["battleOrder"] = _battleOrder;
 
-		if (_kneeled != false) node["kneeled"] = _kneeled;
+		if (_kneeled == true) node["kneeled"] = _kneeled;
 
 		if (_expBravery != 0)		node["expBravery"]		= _expBravery;
 		if (_expReactions != 0)		node["expReactions"]	= _expReactions;

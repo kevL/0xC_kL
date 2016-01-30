@@ -31,8 +31,8 @@ namespace OpenXcom
 {
 
 /**
- * Represents a specific type of craft weapon.
- * @note Contains constant info about a craft weapon like damage, range,
+ * Represents a specific type of CraftWeapon.
+ * @note Contains constant info about a CraftWeapon like damage, range,
  * accuracy, items used, etc.
  * @sa CraftWeapon
  */
@@ -61,50 +61,50 @@ private:
 
 
 	public:
-		/// Creates a blank craft weapon ruleset.
+		/// Creates a blank CraftWeapon ruleset.
 		explicit RuleCraftWeapon(const std::string& type);
-		/// Cleans up the craft weapon ruleset.
+		/// Cleans up a CraftWeapon ruleset.
 		~RuleCraftWeapon();
 
-		/// Loads craft weapon data from YAML.
+		/// Loads CraftWeapon data from YAML.
 		void load(
 				const YAML::Node& node,
 				int modIndex);
 
-		/// Gets the craft weapon's type.
+		/// Gets a CraftWeapon's type.
 		std::string getType() const;
 
-		/// Gets the craft weapon's sprite.
+		/// Gets a CraftWeapon's sprite.
 		int getSprite() const;
-		/// Gets the craft weapon's sound.
+		/// Gets a CraftWeapon's sound.
 		int getSound() const;
-		/// Gets the craft weapon's damage.
+		/// Gets a CraftWeapon's damage.
 		int getPower() const;
-		/// Gets the craft weapon's range.
+		/// Gets a CraftWeapon's range.
 		int getRange() const;
-		/// Gets the craft weapon's accuracy.
+		/// Gets a CraftWeapon's accuracy.
 		int getAccuracy() const;
 
-		/// Gets the craft weapon's cautious reload time.
+		/// Gets a CraftWeapon's cautious reload time.
 		int getCautiousReload() const;
-		/// Gets the craft weapon's standard reload time.
+		/// Gets a CraftWeapon's standard reload time.
 		int getStandardReload() const;
-		/// Gets the craft weapon's aggressive reload time.
+		/// Gets a CraftWeapon's aggressive reload time.
 		int getAggressiveReload() const;
 
-		/// Gets the craft weapon's maximum ammo.
+		/// Gets a CraftWeapon's maximum ammo.
 		int getAmmoMax() const;
-		/// Gets the craft weapon's rearm rate.
+		/// Gets a CraftWeapon's rearm rate.
 		int getRearmRate() const;
 
-		/// Gets the craft weapon's launcher item.
+		/// Gets a CraftWeapon's launcher item.
 		std::string getLauncherItem() const;
-		/// Gets the craft weapon's clip item.
+		/// Gets a CraftWeapon's clip item.
 		std::string getClipItem() const;
 
-		/// Gets the craft weapon's projectile's type.
+		/// Gets a CraftWeapon's projectile's type.
 		CwpType getProjectileType() const;
-		/// Gets the craft weapon's projectile speed.
+		/// Gets a CraftWeapon's projectile speed.
 		int getProjectileSpeed() const;
 };
 

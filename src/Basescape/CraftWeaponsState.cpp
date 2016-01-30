@@ -178,9 +178,9 @@ void CraftWeaponsState::btnCancelClick(Action*)
  */
 void CraftWeaponsState::lstWeaponsClick(Action*)
 {
-	ItemContainer* const storage = _base->getStorageItems();
+	ItemContainer* const storage (_base->getStorageItems());
 
-	CraftWeapon* cw = _craft->getWeapons()->at(_pod);
+	CraftWeapon* cw (_craft->getWeapons()->at(_pod));
 	const RuleCraftWeapon* cwRule (_cwRules[_lstWeapons->getSelectedRow()]);
 
 	std::string launcherType;
