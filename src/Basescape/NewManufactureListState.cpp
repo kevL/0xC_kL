@@ -189,7 +189,7 @@ void NewManufactureListState::lstProdClick(Action*)
 			i != _possibleProductions.end();
 			++i)
 	{
-		if ((*i)->getType() == _displayedStrings[_lstManufacture->getSelectedRow()])
+		if ((*i)->getType() == _displayStrings[_lstManufacture->getSelectedRow()])
 		{
 			manfRule = *i;
 			break;
@@ -214,7 +214,7 @@ void NewManufactureListState::fillProductionList()
 {
 	_lstManufacture->clearList();
 	_possibleProductions.clear();
-	_displayedStrings.clear();
+	_displayStrings.clear();
 
 	_game->getSavedGame()->getAvailableProductions(
 											_possibleProductions,
@@ -232,7 +232,7 @@ void NewManufactureListState::fillProductionList()
 								2,
 								tr((*i)->getType()).c_str(),
 								tr((*i)->getCategory()).c_str());
-			_displayedStrings.push_back((*i)->getType());
+			_displayStrings.push_back((*i)->getType());
 		}
 	}
 }

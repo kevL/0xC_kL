@@ -64,7 +64,7 @@ private:
 	std::vector<const RuleManufacture*> _possibleProductions;
 	std::vector<std::string>
 		_catStrings,
-		_displayedStrings;
+		_displayStrings;
 
 
 	public:

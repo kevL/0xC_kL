@@ -172,6 +172,8 @@ void Base::load(
 
 	_name = Language::utf8ToWstr(node["name"].as<std::string>());
 
+	std::string type;
+
 	if (firstBase == false || skirmish == true)
 //		|| Options::customInitialBase == false)
 	{
@@ -181,7 +183,7 @@ void Base::load(
 				i != node["facilities"].end();
 				++i)
 		{
-			const std::string type ((*i)["type"].as<std::string>());
+			type = (*i)["type"].as<std::string>();
 			if (_rules->getBaseFacility(type) != nullptr)
 			{
 				BaseFacility* const facility = new BaseFacility(
@@ -199,7 +201,7 @@ void Base::load(
 			i != node["crafts"].end();
 			++i)
 	{
-		std::string type ((*i)["type"].as<std::string>());
+		type = (*i)["type"].as<std::string>();
 		if (_rules->getCraft(type) != nullptr)
 		{
 			Craft* const craft (new Craft(
@@ -216,7 +218,7 @@ void Base::load(
 			i != node["soldiers"].end();
 			++i)
 	{
-		const std::string type ((*i)["type"].as<std::string>(_rules->getSoldiersList().front()));
+		type = (*i)["type"].as<std::string>(_rules->getSoldiersList().front());
 		if (_rules->getSoldier(type) != nullptr)
 		{
 			Soldier* const sol (new Soldier(_rules->getSoldier(type)));
@@ -274,16 +276,16 @@ void Base::load(
 			i != node["research"].end();
 			++i)
 	{
-		const std::string project ((*i)["project"].as<std::string>());
-		if (_rules->getResearch(project) != nullptr)
+		type = (*i)["project"].as<std::string>();
+		if (_rules->getResearch(type) != nullptr)
 		{
-			ResearchProject* const research (new ResearchProject(_rules->getResearch(project)));
+			ResearchProject* const research (new ResearchProject(_rules->getResearch(type)));
 			research->load(*i);
 			_research.push_back(research);
 		}
 		else
 		{
-			Log(LOG_ERROR) << "Failed to load research " << project;
+			Log(LOG_ERROR) << "Failed to load research " << type;
 			_scientists += (*i)["assigned"].as<int>(0);
 		}
 	}
@@ -293,18 +295,18 @@ void Base::load(
 			i != node["productions"].end();
 			++i)
 	{
-		const std::string item ((*i)["item"].as<std::string>());
-		if (_rules->getManufacture(item) != nullptr)
+		type = (*i)["item"].as<std::string>();
+		if (_rules->getManufacture(type) != nullptr)
 		{
 			Production* const production (new Production(
-													_rules->getManufacture(item),
+													_rules->getManufacture(type),
 													0));
 			production->load(*i);
 			_productions.push_back(production);
 		}
 		else
 		{
-			Log(LOG_ERROR) << "Failed to load manufacture " << item;
+			Log(LOG_ERROR) << "Failed to load manufacture " << type;
 			_engineers += (*i)["assigned"].as<int>(0);
 		}
 	}
@@ -1159,7 +1161,7 @@ int Base::getInterrogatedAliens() const
 }
 
 /**
- * Returns the amount of hangars used up by Craft at this Base.
+ * Returns the amount of hangars used by Craft at this Base.
  * @return, used hangars incl. transfers & production
  */
 int Base::getUsedHangars() const
@@ -1180,9 +1182,9 @@ int Base::getUsedHangars() const
 			i != _productions.end();
 			++i)
 	{
-		if ((*i)->getRules()->getCategory() == "STR_CRAFT")
+		if ((*i)->getRules()->isCraft() == true)
 			total += ((*i)->getAmountTotal() - (*i)->getAmountProduced());
-			// TODO: This should be fixed on the case when (*i)->getInfiniteAmount() == TRUE
+			// TODO: This should account for the case when (*i)->getInfiniteAmount() == TRUE
 	}
 
 	return total;
@@ -2418,22 +2420,23 @@ std::vector<Vehicle*>* Base::getVehicles()
  */
 void Base::destroyDisconnectedFacilities()
 {
-	std::list<std::vector<BaseFacility*>::const_iterator> discoFacs (getDisconnectedFacilities(nullptr));
+	std::list<std::vector<BaseFacility*>::const_iterator> discoFacs (getDisconnectedFacilities());
+
 	for (std::list<std::vector<BaseFacility*>::const_iterator>::const_reverse_iterator
-			i = discoFacs.rbegin();
-			i != discoFacs.rend();
-			++i)
+			rit = discoFacs.rbegin();
+			rit != discoFacs.rend();
+			++rit)
 	{
-		destroyFacility(*i);
+		destroyFacility(*rit);
 	}
 }
 
 /**
  * Gets a sorted list of the facilities(=iterators) NOT connected to the Access Lift.
- * @param ignoreFac - BaseFacility to ignore (in case of purposeful dismantling)
+ * @param ignoreFac - BaseFacility to ignore in case of intentional dismantling (default nullptr)
  * @return, a sorted list of iterators pointing to elements in '_facilities'
  */
-std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacilities(BaseFacility* ignoreFac)
+std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacilities(const BaseFacility* const ignoreFac)
 {
 	std::list<std::vector<BaseFacility*>::const_iterator> ret;
 
@@ -2468,9 +2471,9 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
 		}
 	}
 
-	const BaseFacility* lift = nullptr;
+	const BaseFacility* lift (nullptr);
 
-	std::vector<std::pair<std::vector<BaseFacility*>::const_iterator, bool>* > facConnections;
+	std::vector<std::pair<std::vector<BaseFacility*>::const_iterator, bool>*> facConnections;
 	for (std::vector<BaseFacility*>::const_iterator // fill up the facBool_coord (+facConnections), and search for the Lift
 			i = _facilities.begin();
 			i != _facilities.end();
@@ -2526,8 +2529,8 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
 
 		stuff.pop();
 
-		if (//   x > -1			// -> hopefully x&y will never point outside the baseGrid ... looks atm like it does!! It does. FIX inc!!!!
-			//&& x < BASE_SIZE
+		if (//   x > -1			// -> hopefully x&y will never point outside the baseGrid
+			//&& x < BASE_SIZE	// ... looks atm like it does!! It does. FIX inc!!!!
 			//&& y > -1
 			//&& y < BASE_SIZE &&
 			   facBool_coord[x][y] != nullptr
@@ -2576,9 +2579,7 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
 						&& (borLeft == fac
 							|| borLeft->getBuildTime() > borLeft->getRules()->getBuildTime()))))
 			{
-				stuff.push(std::make_pair(
-										x - 1,
-										y));
+				stuff.push(std::make_pair(x - 1, y));
 			}
 
 			if (x < BASE_SIZE - 1
@@ -2587,9 +2588,7 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
 						&& (borRight == fac
 							|| borRight->getBuildTime() > borRight->getRules()->getBuildTime()))))
 			{
-				stuff.push(std::make_pair(
-										x + 1,
-										y));
+				stuff.push(std::make_pair(x + 1, y));
 			}
 
 			if (y > 0
@@ -2598,9 +2597,7 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
 						&& (borTop == fac
 							|| borTop->getBuildTime() > borTop->getRules()->getBuildTime()))))
 			{
-				stuff.push(std::make_pair(
-										x,
-										y - 1));
+				stuff.push(std::make_pair(x, y - 1));
 			}
 
 			if (y < BASE_SIZE - 1
@@ -2609,15 +2606,13 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
 						&& (borBottom == fac
 							|| borBottom->getBuildTime() > borBottom->getRules()->getBuildTime()))))
 			{
-				stuff.push(std::make_pair(
-										x,
-										y + 1));
+				stuff.push(std::make_pair(x, y + 1));
 			}
 		}
 	}
 
-	const BaseFacility* preEntry = nullptr;
-	for (std::vector<std::pair<std::vector<BaseFacility*>::const_iterator, bool>* >::const_iterator
+	const BaseFacility* preEntry (nullptr);
+	for (std::vector<std::pair<std::vector<BaseFacility*>::const_iterator, bool>*>::const_iterator
 			i = facConnections.begin();
 			i != facConnections.end();
 			++i)
@@ -2639,33 +2634,36 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
 
 /**
  * Removes a base module and deals with ramifications.
- * @param pFac - an iterator reference to the facility that's destoyed
+ * @param pFac - an iterator reference to the facility that's destroyed
+ * @return, const_iterator to the BaseFacility* that was occupied by @a pFac
  */
-void Base::destroyFacility(std::vector<BaseFacility*>::const_iterator pFac)
+std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<BaseFacility*>::const_iterator pFac)
 {
-	if ((*pFac)->getRules()->getCrafts() != 0) // hangar destruction
+	// TODO: Handle hangars that can hold more than one Craft.
+	if ((*pFac)->getRules()->getCrafts() != 0)
 	{
-		// destroy crafts and any production of crafts
-		// as this will mean there is no hangar to contain it
+		// Destroy Craft or production of Craft since there will no longer be a hangar for it.
 		if ((*pFac)->getCraft() != nullptr)
 		{
-			if ((*pFac)->getCraft()->getNumSoldiers() != 0) // remove all soldiers
+			if ((*pFac)->getCraft()->getNumSoldiers() != 0)
 			{
 				for (std::vector<Soldier*>::const_iterator
 						i = _soldiers.begin();
 						i != _soldiers.end();
 						++i)
 				{
-					if ((*i)->getCraft() == (*pFac)->getCraft())
+					if ((*i)->getCraft() == (*pFac)->getCraft()) // remove Soldiers
 						(*i)->setCraft();
 				}
 			}
 
-			while ((*pFac)->getCraft()->getCraftItems()->getContents()->empty() == false) // remove all items
+			const std::map<std::string, int>* const craftContents ((*pFac)->getCraft()->getCraftItems()->getContents());
+			for (std::map<std::string, int>::const_iterator
+					i = craftContents->begin();
+					i != craftContents->end();
+					++i)
 			{
-				const std::map<std::string, int>::const_iterator i = (*pFac)->getCraft()->getCraftItems()->getContents()->begin();
-				_items->addItem(i->first, i->second);
-				(*pFac)->getCraft()->getCraftItems()->removeItem(i->first, i->second);
+				_items->addItem(i->first, i->second); // transfer Craft-items to Base
 			}
 
 			for (std::vector<Craft*>::const_iterator
@@ -2675,186 +2673,219 @@ void Base::destroyFacility(std::vector<BaseFacility*>::const_iterator pFac)
 			{
 				if (*i == (*pFac)->getCraft())
 				{
-					delete (*i);
+					delete *i;
 					_crafts.erase(i);
 					break;
 				}
 			}
 		}
-		else // no craft
+		else if ((*pFac)->getRules()->getCrafts() - getFreeHangars() > 0)
 		{
-			bool destroyCraft = true;
+			bool checkTransfers = true;
 
-			for (std::vector<Production*>::const_iterator // check productions
-					i = _productions.begin();
-					i != _productions.end();
-					)
+			for (std::vector<Production*>::const_reverse_iterator // check Productions
+					rit = _productions.rbegin();
+					rit != _productions.rend();
+					++rit)
 			{
-				if ((*i)->getRules()->getCategory() == "STR_CRAFT"
-					&& getFreeHangars() - (*pFac)->getRules()->getCrafts() < 0)
+				if ((*rit)->getRules()->isCraft() == true)
 				{
-					destroyCraft = false;
-					_engineers += (*i)->getAssignedEngineers();
+					checkTransfers = false;
+					_engineers += (*rit)->getAssignedEngineers();
 
-					delete *i;
-					_productions.erase(i);
+					delete *rit;
+					_productions.erase((++rit).base());
 					break;
 				}
-				else ++i;
 			}
 
-			if (destroyCraft == true && _transfers.empty() == false) // check transfers
+			if (checkTransfers == true) // check Transfers
 			{
-				for (std::vector<Transfer*>::const_iterator
-						i = _transfers.begin();
-						i != _transfers.end();
-						)
+				for (std::vector<Transfer*>::const_reverse_iterator
+						rit = _transfers.rbegin();
+						rit != _transfers.rend();
+						++rit)
 				{
-					if ((*i)->getTransferType() == PST_CRAFT)
+					if ((*rit)->getTransferType() == PST_CRAFT)
 					{
-						delete (*i)->getCraft();
-						delete *i;
-						_transfers.erase(i);
+						delete (*rit)->getCraft();
+						delete *rit;
+						_transfers.erase((++rit).base());
 						break;
 					}
 				}
 			}
 		}
 	}
-	else if ((*pFac)->getRules()->getPsiLaboratories() != 0)
+
+
+	int
+		del,
+		personel,
+		destroyed ((*pFac)->getRules()->getPsiLaboratories());
+	if (destroyed != 0)
 	{
-		// psilab destruction: remove any soldiers over the maximum allowable from psi training.
-		int qty = (*pFac)->getRules()->getPsiLaboratories() - getFreePsiLabs();
+		del = destroyed - getFreePsiLabs();
 		for (std::vector<Soldier*>::const_iterator
 				i = _soldiers.begin();
-				i != _soldiers.end()
-					&& qty > 0;
+				i != _soldiers.end() && del > 0;
 				++i)
 		{
 			if ((*i)->inPsiTraining() == true)
 			{
 				(*i)->togglePsiTraining();
-				--qty;
+				--del;
 			}
 		}
 	}
-	else if ((*pFac)->getRules()->getLaboratories() != 0)
+
+	destroyed = (*pFac)->getRules()->getLaboratories();
+	if (destroyed != 0)
 	{
-		// lab destruction: enforce lab space limits.
-		// take scientists off projects; research is not cancelled.
-		int qty = (*pFac)->getRules()->getLaboratories() - getFreeLaboratories();
-		for (std::vector<ResearchProject*>::const_iterator
-				i = _research.begin();
-				i != _research.end()
-					&& qty > 0;
-				)
+		if (getTotalLaboratories() - destroyed == 0)
 		{
-			if ((*i)->getAssignedScientists() >= qty)
+			for (std::vector<ResearchProject*>::const_iterator
+					i = _research.begin();
+					i != _research.end();
+					++i)
 			{
-				(*i)->setAssignedScientists((*i)->getAssignedScientists() - qty);
-				_scientists += qty;
-				break;
-			}
-			else
-			{
-				qty -= (*i)->getAssignedScientists();
 				_scientists += (*i)->getAssignedScientists();
-				(*i)->setAssignedScientists(0);
-				++i;
-//				delete *i;
-//				i = _research.erase(i);
+				delete *i;
+			}
+			_research.clear();
+		}
+		else
+		{
+			del = destroyed - getFreeLaboratories();
+			for (std::vector<ResearchProject*>::const_iterator
+					i = _research.begin();
+					i != _research.end() && del > 0;
+					++i)
+			{
+				personel = (*i)->getAssignedScientists();
+				if (personel < del)
+				{
+					(*i)->setAssignedScientists(0);
+					_scientists += personel;
+					del -= personel;
+				}
+				else
+				{
+					(*i)->setAssignedScientists(personel - del);
+					_scientists += del;
+					break;
+				}
 			}
 		}
 	}
-	else if ((*pFac)->getRules()->getWorkshops() != 0)
+
+	destroyed = (*pFac)->getRules()->getWorkshops();
+	if (destroyed != 0)
 	{
-		// workshop destruction: similar to lab destruction, but lay off engineers instead. kL_note: huh!!!!
-		// in this case production *is* cancelled since it takes up space in the workshop.
-		int qty = (*pFac)->getRules()->getWorkshops() - getFreeWorkshops();
-//		int qty = getUsedWorkshops() - (getTotalWorkshops() - (*pFac)->getRules()->getWorkshops());
-		for (std::vector<Production*>::const_iterator
-				i = _productions.begin();
-				i != _productions.end()
-					&& qty > 0;
-				)
+		if (getTotalWorkshops() - destroyed == 0)
 		{
-			if ((*i)->getAssignedEngineers() > qty)
+			for (std::vector<Production*>::const_iterator
+					i = _productions.begin();
+					i != _productions.end();
+					++i)
 			{
-				(*i)->setAssignedEngineers((*i)->getAssignedEngineers() - qty);
-				_engineers += qty;
-				break;
-			}
-			else
-			{
-				qty -= (*i)->getAssignedEngineers();
 				_engineers += (*i)->getAssignedEngineers();
 				delete *i;
-				i = _productions.erase(i);
+			}
+			_productions.clear();
+		}
+		else
+		{
+			del = destroyed - getFreeWorkshops();
+			for (std::vector<Production*>::const_iterator
+					i = _productions.begin();
+					i != _productions.end() && del > 0;
+					++i)
+			{
+				personel = (*i)->getAssignedEngineers();
+				if (personel < del)
+				{
+					(*i)->setAssignedEngineers(0);
+					_engineers += personel;
+					del -= personel;
+				}
+				else
+				{
+					(*i)->setAssignedEngineers(personel - del);
+					_engineers += del;
+					break;
+				}
 			}
 		}
 	}
-	else if ((*pFac)->getRules()->getStorage() != 0)
+
+/*	// Let the Transfer-items arrive and then start issuing the Warnings. That
+	// is let DebriefingState::btnOkClick() handle it.
+	destroyed = (*pFac)->getRules()->getStorage();
+	if (destroyed != 0)
 	{
-		// don't destroy the items physically AT the base,
-		// but any items in transit will end up at the dead letter office.
-		if (_transfers.empty() == false
-			&& storesOverfull((*pFac)->getRules()->getStorage()) == true)
+		if (storesOverfull(static_cast<double>(destroyed)) == true)
 		{
-			for (std::vector<Transfer*>::const_iterator
-					i = _transfers.begin();
-					i != _transfers.end();
+			double del_d = static_cast<double>(destroyed - getTotalStores()) + getUsedStores();
+
+			for (std::vector<Transfer*>::const_reverse_iterator
+					i = _transfers.rbegin();
+					i != _transfers.rend();
 					)
 			{
-				if ((*i)->getTransferType() == PST_ITEM)
+				switch ((*i)->getTransferType())
 				{
-					delete *i;
-					i = _transfers.erase(i);
+					case PST_ITEM:
+						int qty = (*i)->getQuantity();
+						delete *i;
+						i = _transfers.erase(i);
+						break;
+					default:
+						++i;
 				}
-				else
-					++i;
 			}
 		}
-	}
-	else if ((*pFac)->getRules()->getPersonnel() != 0)
+	} */
+
+	destroyed = (*pFac)->getRules()->getPersonnel();
+	if (destroyed != 0)
 	{
-		// as above don't actually fire people but block personnel arrivals.
-		if (_transfers.empty() == false
-			&& getFreeQuarters() - (*pFac)->getRules()->getPersonnel() < 0)
+		del = destroyed - getFreeQuarters();
+		for (std::vector<Transfer*>::const_reverse_iterator
+				rit = _transfers.rbegin();
+				rit != _transfers.rend() && del > 0;
+				)
 		{
-			for (std::vector<Transfer*>::const_iterator
-					i = _transfers.begin();
-					i != _transfers.end();
-					)
+			switch ((*rit)->getTransferType())
 			{
-				// let soldiers arrive, but block workers.
-				if ((*i)->getTransferType() == PST_ENGINEER
-					|| (*i)->getTransferType() == PST_SCIENTIST)
-/*				bool del = false;
-				if ((*i)->getTransferType() == PST_ENGINEER)
+				case PST_SOLDIER:
 				{
-					del = true;
-					_engineers -= (*i)->getQuantity();
+					--del;
+					delete (*rit)->getSoldier();
+					delete *rit;
+					std::vector<Transfer*>::const_iterator i (_transfers.erase((++rit).base()));
+					rit = std::vector<Transfer*>::const_reverse_iterator(i); // wtf if it works.
+					break;
 				}
-				else if ((*i)->getTransferType() == PST_SCIENTIST)
+					break;
+				case PST_SCIENTIST:
+				case PST_ENGINEER:
 				{
-					del = true;
-					_scientists -= (*i)->getQuantity();
+					del -= (*rit)->getQuantity();
+					delete *rit;
+					std::vector<Transfer*>::const_iterator i (_transfers.erase((++rit).base()));
+					rit = std::vector<Transfer*>::const_reverse_iterator(i); // wtf if it works.
+					break;
 				}
-				else if ((*i)->getTransferType() == PST_SOLDIER)
-					del = true;
-				if (del) */
-				{
-					delete *i;
-					i = _transfers.erase(i);
-				}
-				else
-					++i;
+
+				default:
+					++rit;
 			}
 		}
 	}
 
 	delete *pFac;
-	_facilities.erase(pFac);
+	return _facilities.erase(pFac);
 }
 
 /**

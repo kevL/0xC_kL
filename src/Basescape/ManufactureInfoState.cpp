@@ -272,7 +272,7 @@ void ManufactureInfoState::initProfit() // private.
 			i != manfRule->getProducedItems().end();
 			++i)
 	{
-		if (manfRule->getCategory() == "STR_CRAFT")
+		if (manfRule->isCraft() == true)
 			sellValue = rules->getCraft(i->first)->getSellCost();
 		else
 			sellValue = rules->getItem(i->first)->getSellCost();
@@ -618,7 +618,7 @@ void ManufactureInfoState::moreUnit(int change) // private.
 {
 	if (change > 0)
 	{
-		if (_production->getRules()->getCategory() == "STR_CRAFT"
+		if (_production->getRules()->isCraft() == true
 			&& _base->getFreeHangars() < 1)
 		{
 			_timerMoreUnit->stop();
@@ -636,7 +636,7 @@ void ManufactureInfoState::moreUnit(int change) // private.
 							change,
 							std::numeric_limits<int>::max() - units);
 
-			if (_production->getRules()->getCategory() == "STR_CRAFT")
+			if (_production->getRules()->isCraft() == true)
 				change = std::min(
 								change,
 								_base->getFreeHangars());
@@ -683,7 +683,7 @@ void ManufactureInfoState::moreUnitClick(Action* action) // private.
 	{
 		if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
 		{
-			if (_production->getRules()->getCategory() == "STR_CRAFT")
+			if (_production->getRules()->isCraft() == true)
 			{
 				moreUnit(std::numeric_limits<int>::max()); // kL_note: RMB won't start the timer ....
 //				_game->pushState(new ErrorMessageState(

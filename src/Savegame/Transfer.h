@@ -73,15 +73,16 @@ private:
 		/// Saves the transfer to YAML.
 		YAML::Node save() const;
 
+		/// Gets the soldier being transfered.
+		Soldier* getSoldier() const;
+		/// Sets the soldier of the transfer.
+		void setSoldier(Soldier* const soldier);
 		/// Sets the scientists of the transfer.
 		void setScientists(int scientists);
 		/// Sets the engineers of the transfer.
 		void setEngineers(int engineers);
-		/// Sets the soldier of the transfer.
-		void setSoldier(Soldier* soldier);
-
 		/// Sets the craft of the transfer.
-		void setCraft(Craft* craft);
+		void setCraft(Craft* const craft);
 		/// Gets the craft of the transfer.
 		Craft* getCraft() const;
 
@@ -103,10 +104,7 @@ private:
 		PurchaseSellTransferType getTransferType() const;
 
 		/// Advances the transfer.
-		void advance(Base* base);
-
-		/// Gets the soldier being transfered.
-		Soldier* getSoldier() const;
+		void advance(Base* const base);
 };
 
 }

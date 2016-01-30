@@ -410,7 +410,7 @@ private:
 		/// Gets a reference to the baseModules map.
 		std::vector<std::vector<std::pair<int, int>>>& getModuleMap();
 		/// Calculates the number of map modules remaining
-		void calculateModuleMap();
+		void calcModuleMap();
 
 		/// Gets a pointer to the Geoscape save.
 		SavedGame* getGeoscapeSave() const;

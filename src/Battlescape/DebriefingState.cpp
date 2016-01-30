@@ -284,7 +284,7 @@ DebriefingState::DebriefingState()
 	}
 
 
-	const int aLienPts = (_diff + 1) * 235;
+	const int aLienPts ((_diff + 1) * 235);
 	if (_region != nullptr)
 	{
 		if (_destroyXComBase == true)
@@ -350,7 +350,7 @@ DebriefingState::DebriefingState()
 
 
 	// Soldier Diary ->
-	SavedBattleGame* const battleSave = _gameSave->getBattleSave();
+	SavedBattleGame* const battleSave (_gameSave->getBattleSave());
 
 	_missionStatistics->rating = rating;
 	_missionStatistics->id = _gameSave->getMissionStatistics()->size();
@@ -371,7 +371,7 @@ DebriefingState::DebriefingState()
 		if (sol != nullptr)
 		{
 			//Log(LOG_INFO) << ". . id = " << (*i)->getId();
-			BattleUnitStatistics* const statistics = (*i)->getStatistics();
+			BattleUnitStatistics* const statistics ((*i)->getStatistics());
 
 			int soldierAlienKills = 0;
 
@@ -407,7 +407,7 @@ DebriefingState::DebriefingState()
 								// This makes them ineligible for promotion.
 								// PS, there is no 'geoscape Soldiers list' really; it's
 								// just a variable stored in each xCom-agent/BattleUnit ....
-				SoldierDead* deadSoldier = nullptr; // avoid VC++ linker warning.
+				SoldierDead* deadSoldier (nullptr); // avoid vc++ linker warning.
 
 				for (std::vector<SoldierDead*>::const_iterator
 						j = _gameSave->getDeadSoldiers()->begin();
@@ -662,10 +662,10 @@ void DebriefingState::prepareDebriefing() // private.
 			i != _rules->getItemsList().end();
 			++i)
 	{
-		const SpecialTileType tileType = _rules->getItem(*i)->getSpecialType();
+		const SpecialTileType tileType (_rules->getItem(*i)->getSpecialType());
 		if (tileType > 1)
 		{
-			SpecialType* const specialType = new SpecialType();
+			SpecialType* const specialType (new SpecialType());
 			specialType->type = *i;
 			specialType->value = _rules->getItem(*i)->getRecoveryPoints();
 
@@ -680,11 +680,10 @@ void DebriefingState::prepareDebriefing() // private.
 		objectiveCompleteScore = 0,	// dang vc++ compiler warnings.
 		objectiveFailedScore = 0;	// dang vc++ compiler warnings.
 
-	SavedBattleGame* const battleSave = _gameSave->getBattleSave();
-	const AlienDeployment* const deployRule = _rules->getDeployment(battleSave->getTacticalType());
-	// kL_note: I have a strong suspicion that although checks are made for
-	// a valid deployRule below if there isn't one you're borked anyway.
-
+	SavedBattleGame* const battleSave (_gameSave->getBattleSave());
+	const AlienDeployment* const deployRule (_rules->getDeployment(battleSave->getTacticalType()));
+	// kL_note: I have a strong suspicion that although checks are made for a
+	// valid deployRule below if there isn't one you're borked anyway.
 	if (deployRule != nullptr)
 	{
 		if (deployRule->getObjectiveCompleteInfo(
@@ -723,7 +722,7 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		_stats.push_back(new DebriefingStat((*i).second->type, true));
 	}
-/*	_stats.push_back(new DebriefingStat("STR_UFO_POWER_SOURCE", true)); // ->> SpecialTileTypes <<-
+/*	_stats.push_back(new DebriefingStat("STR_UFO_POWER_SOURCE", true)); // ->> SpecialTileTypes <<-|
 	_stats.push_back(new DebriefingStat("STR_UFO_NAVIGATION", true));
 	_stats.push_back(new DebriefingStat("STR_UFO_CONSTRUCTION", true));
 	_stats.push_back(new DebriefingStat("STR_ALIEN_FOOD", true));
@@ -877,12 +876,12 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				if (soldierLive != 0 && aborted == false)
 				{
-					const Ufo* const ufo = dynamic_cast<Ufo*>((*j)->getDestination());
+					const Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getDestination()));
 					if (ufo != nullptr && ufo->isInBattlescape() == true)
 						(*j)->returnToBase();
 				}
 
-				const MissionSite* const site = dynamic_cast<MissionSite*>((*j)->getDestination());
+				const MissionSite* const site (dynamic_cast<MissionSite*>((*j)->getDestination()));
 				if (site != nullptr && site->isInBattlescape() == true)
 					(*j)->returnToBase();
 			}
@@ -904,7 +903,7 @@ void DebriefingState::prepareDebriefing() // private.
 				_base->setInBattlescape(false);
 				_base->cleanupDefenses(); // so ... does this mean that each tank's entire 'clip' gets wasted
 
-				bool facDestroyed = false; // not in stockcode
+				bool facDestroyed = false;
 				for (std::vector<BaseFacility*>::const_iterator
 						j = _base->getFacilities()->begin();
 						j != _base->getFacilities()->end();
@@ -913,14 +912,14 @@ void DebriefingState::prepareDebriefing() // private.
 					if (battleSave->getModuleMap()[(*j)->getX()]
 												  [(*j)->getY()].second == 0) // this facility was demolished
 					{
-						facDestroyed = true; // not in stockcode
-						_base->destroyFacility(j);
+						facDestroyed = true;
+						j = _base->destroyFacility(j);
 					}
 					else
 						++j;
 				}
 
-				if (facDestroyed == true) // kL_add <-
+				if (facDestroyed == true)
 					_base->destroyDisconnectedFacilities(); // this may cause the base to become disjointed; destroy the disconnected parts.
 			}
 		}
@@ -1036,7 +1035,7 @@ void DebriefingState::prepareDebriefing() // private.
 							j != (*i)->getFollowers()->end();
 							++j)
 					{
-						Craft* const craft = dynamic_cast<Craft*>(*j);
+						Craft* const craft (dynamic_cast<Craft*>(*j));
 						if (craft != nullptr)
 							craft->returnToBase();
 					}
@@ -1053,7 +1052,7 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 
-	const TacticalType tacType = battleSave->getTacType();
+	const TacticalType tacType (battleSave->getTacType());
 
 	// time to care about units.
 	for (std::vector<BattleUnit*>::const_iterator
@@ -1086,9 +1085,9 @@ void DebriefingState::prepareDebriefing() // private.
 		}
 
 
-		const int value = (*i)->getValue();
-		const UnitFaction orgFaction = (*i)->getOriginalFaction();
-		const UnitStatus status = (*i)->getUnitStatus();
+		const int value ((*i)->getValue());
+		const UnitFaction orgFaction ((*i)->getOriginalFaction());
+		const UnitStatus status ((*i)->getUnitStatus());
 
 		if (status == STATUS_DEAD) // so this is a dead unit
 		{
@@ -1103,7 +1102,7 @@ void DebriefingState::prepareDebriefing() // private.
 			}
 			else if (orgFaction == FACTION_PLAYER)
 			{
-				const Soldier* const sol = _gameSave->getSoldier((*i)->getId());
+				const Soldier* const sol (_gameSave->getSoldier((*i)->getId()));
 				if (sol != nullptr) // xCom soldier.
 				{
 					if (_skirmish == false)
@@ -1163,11 +1162,11 @@ void DebriefingState::prepareDebriefing() // private.
 //			else
 //				type = (*i)->getType(); // <- all moved to recoverLiveAlien() way below_
 
-			const UnitFaction faction = (*i)->getFaction();
+			const UnitFaction faction ((*i)->getFaction());
 
 			if (orgFaction == FACTION_PLAYER)
 			{
-				const Soldier* const sol = _gameSave->getSoldier((*i)->getId());
+				const Soldier* const sol (_gameSave->getSoldier((*i)->getId()));
 
 				if (aborted == false					// so game is not aborted
 					|| (((*i)->isInExitArea() == true	// or aborted and unit is on exit area
@@ -1208,7 +1207,7 @@ void DebriefingState::prepareDebriefing() // private.
 								aItem = (*i)->getItem(ST_RIGHTHAND)->getAmmoItem();
 								if (aItem != nullptr && aItem->getAmmoQuantity() > 0)
 								{
-									int total = aItem->getAmmoQuantity();
+									int total (aItem->getAmmoQuantity());
 									if (hwpRule->getClipSize() != 0) // meaning this tank can store multiple rounds
 										total /= aItem->getRules()->getClipSize();
 
@@ -1227,7 +1226,7 @@ void DebriefingState::prepareDebriefing() // private.
 								aItem = (*i)->getItem(ST_LEFTHAND)->getAmmoItem();
 								if (aItem != nullptr && aItem->getAmmoQuantity() > 0)
 								{
-									int total = aItem->getAmmoQuantity();
+									int total (aItem->getAmmoQuantity());
 									if (hwpRule->getClipSize() != 0) // meaning this tank can store multiple rounds
 										total /= aItem->getRules()->getClipSize();
 
@@ -1372,17 +1371,17 @@ void DebriefingState::prepareDebriefing() // private.
 		{
 			case TCT_BASEDEFENSE:
 				tacResult = "STR_BASE_IS_SAVED";
-			break;
+				break;
 
 			case TCT_MISSIONSITE:
 				tacResult = "STR_ALIENS_DEFEATED";
-			break;
+				break;
 
 			case TCT_BASEASSAULT:
 			case TCT_MARS1:
 			case TCT_MARS2:
 				tacResult = "STR_ALIEN_BASE_DESTROYED";
-			break;
+				break;
 
 			default:
 				tacResult = "STR_UFO_IS_RECOVERED";
@@ -1400,7 +1399,7 @@ void DebriefingState::prepareDebriefing() // private.
 			// recover items from the earlier stages as well
 			recoverItems(battleSave->getConditionalRecoveredItems());
 
-			const int parts = static_cast<int>(Tile::PARTS_TILE);
+			const int parts (static_cast<int>(Tile::PARTS_TILE));
 			MapDataType partType;
 
 			for (size_t // get recoverable map data objects from the battlescape map
@@ -1416,7 +1415,7 @@ void DebriefingState::prepareDebriefing() // private.
 					partType = static_cast<MapDataType>(j);
 					if (battleSave->getTiles()[i]->getMapData(partType) != nullptr)
 					{
-						const SpecialTileType tileType = battleSave->getTiles()[i]->getMapData(partType)->getSpecialType();
+						const SpecialTileType tileType (battleSave->getTiles()[i]->getMapData(partType)->getSpecialType());
 						if (_specialTypes.find(tileType) != _specialTypes.end())
 							addStat(
 								_specialTypes[tileType]->type,
@@ -1449,17 +1448,17 @@ void DebriefingState::prepareDebriefing() // private.
 			case TCT_BASEDEFENSE:
 				tacResult = "STR_BASE_IS_LOST";
 				_destroyXComBase = true;
-			break;
+				break;
 
 			case TCT_MISSIONSITE:
 				tacResult = "STR_TERROR_CONTINUES";
-			break;
+				break;
 
 			case TCT_BASEASSAULT:
 			case TCT_MARS1: // note these Mars tacticals are really Lose GAME.
 			case TCT_MARS2:
 				tacResult = "STR_ALIEN_BASE_STILL_INTACT";
-			break;
+				break;
 
 			default:
 				tacResult = "STR_UFO_IS_NOT_RECOVERED";
@@ -1495,7 +1494,7 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		if (i->first->getClipSize() != 0)
 		{
-			const int fullClips = i->second / i->first->getClipSize();
+			const int fullClips (i->second / i->first->getClipSize());
 			if (fullClips != 0)
 				_base->getStorageItems()->addItem(
 												i->first->getType(),
@@ -1581,9 +1580,9 @@ void DebriefingState::prepareDebriefing() // private.
 
 		if (_region != nullptr)
 		{
-			const AlienMission* const mission = _game->getSavedGame()->findAlienMission(
-																					_region->getRules()->getType(),
-																					alm_RETAL);
+			const AlienMission* const mission (_game->getSavedGame()->findAlienMission(
+																				_region->getRules()->getType(),
+																				alm_RETAL));
 			for (std::vector<Ufo*>::const_iterator
 					i = _gameSave->getUfos()->begin();
 					i != _gameSave->getUfos()->end();
@@ -1594,7 +1593,8 @@ void DebriefingState::prepareDebriefing() // private.
 					delete *i;
 					i = _gameSave->getUfos()->erase(i);
 				}
-				else ++i;
+				else
+					++i;
 			}
 
 			for (std::vector<AlienMission*>::const_iterator
@@ -1635,7 +1635,7 @@ void DebriefingState::reequipCraft(Craft* craft) // private.
 		qtyLost;
 //	int used; // kL
 
-	const std::map<std::string, int> craftItems = *craft->getCraftItems()->getContents();
+	const std::map<std::string, int> craftItems (*craft->getCraftItems()->getContents());
 	for (std::map<std::string, int>::const_iterator
 			i = craftItems.begin();
 			i != craftItems.end();
@@ -1744,9 +1744,9 @@ void DebriefingState::reequipCraft(Craft* craft) // private.
 		}
 
 
-		const RuleItem* const tankRule = _rules->getItem(i->first);
+		const RuleItem* const tankRule (_rules->getItem(i->first));
 
-		const RuleUnit* const tankUnit = _rules->getUnitRule(tankRule->getType());
+		const RuleUnit* const tankUnit (_rules->getUnitRule(tankRule->getType()));
 		int tankSize;
 		if (tankUnit != nullptr)
 		{
@@ -1773,7 +1773,7 @@ void DebriefingState::reequipCraft(Craft* craft) // private.
 		}
 		else // so this tank requires ammo
 		{
-			const RuleItem* const aRule = _rules->getItem(tankRule->getCompatibleAmmo()->front());
+			const RuleItem* const aRule (_rules->getItem(tankRule->getCompatibleAmmo()->front()));
 			int
 				tankClipSize,
 				requiredRounds;
@@ -1788,7 +1788,7 @@ void DebriefingState::reequipCraft(Craft* craft) // private.
 				tankClipSize = requiredRounds;
 			}
 
-			const int baseQty = _base->getStorageItems()->getItemQty(aRule->getType()); // Ammo Quantity for this vehicle-type on the base
+			const int baseQty (_base->getStorageItems()->getItemQty(aRule->getType())); // Ammo Quantity for this vehicle-type on the base
 
 			if (baseQty < i->second * tankClipSize)
 			{
@@ -1885,7 +1885,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 				{
 					case BT_CORPSE:
 					{
-						BattleUnit* const unit = (*i)->getUnit();
+						BattleUnit* const unit ((*i)->getUnit());
 						if (unit != nullptr)
 						{
 							if (itRule->isRecoverable() == true
@@ -1922,13 +1922,13 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 								}
 							}
 						}
+						break;
 					}
-					break;
 
 					case BT_AMMO: // item is a clip, count rounds left
 						if (itRule->isRecoverable() == true)
 							_rounds[itRule] += (*i)->getAmmoQuantity();
-					break;
+						break;
 
 					case BT_FIREARM:
 					case BT_MELEE: // item is a weapon, count rounds in clip
@@ -1960,13 +1960,13 @@ void DebriefingState::recoverLiveAlien(BattleUnit* const unit) // private.
 {
 	if (unit->getSpawnUnit().empty() == false)
 	{
-		BattleUnit* const conUnit = _gameSave->getBattleSave()->getBattleGame()->convertUnit(unit); // TODO: use a sparsed down version of convertUnit() here.
+		BattleUnit* const conUnit (_gameSave->getBattleSave()->getBattleGame()->convertUnit(unit)); // TODO: use a sparsed down version of convertUnit() here.
 		conUnit->setFaction(FACTION_PLAYER);
 	}
 	else if (_base->hasContainment() == true)
 	{
 		//Log(LOG_INFO) << ". . . alienLive = " << unit->getType() << " id-" << unit->getId();
-		const std::string type = unit->getType();
+		const std::string type (unit->getType());
 
 		int value;
 		if (_gameSave->isResearched(type) == false)
@@ -1998,7 +1998,7 @@ void DebriefingState::recoverLiveAlien(BattleUnit* const unit) // private.
 //			corpseItem = _rules->getArmor(_rules->getUnit(unit->getSpawnUnit())->getArmor())->getCorpseGeoscape();
 //		else
 //			corpseItem = unit->getArmor()->getCorpseGeoscape();
-		const std::string corpseItem = unit->getArmor()->getCorpseGeoscape();
+		const std::string corpseItem (unit->getArmor()->getCorpseGeoscape());
 
 		if (corpseItem.empty() == false) // safety.
 			_base->getStorageItems()->addItem(corpseItem);

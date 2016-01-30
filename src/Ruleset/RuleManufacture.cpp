@@ -33,6 +33,7 @@ RuleManufacture::RuleManufacture(const std::string& type)
 		_space(0),
 		_time(0),
 		_cost(0),
+		_isCraft(false),
 		_listOrder(0)
 {
 	_producedItems[type] = 1;
@@ -60,24 +61,27 @@ void RuleManufacture::load(
 		_producedItems[_type] = qty;
 	} // end_why. Perhaps to overwrite a previous entry with a subsequently loaded ID-string, perhaps.
 
-	_category		= node["category"]		.as<std::string>(_category);
-	_required		= node["required"]		.as< std::vector<std::string>>(_required);
+	_required		= node["required"]		.as<std::vector<std::string>>(_required);
 	_space			= node["space"]			.as<int>(_space);
 	_time			= node["time"]			.as<int>(_time);
 	_cost			= node["cost"]			.as<int>(_cost);
 	_requiredItems	= node["requiredItems"]	.as<std::map<std::string, int>>(_requiredItems);
 	_producedItems	= node["producedItems"]	.as<std::map<std::string, int>>(_producedItems);
-
+	_category		= node["category"]		.as<std::string>(_category);
 	_listOrder		= node["listOrder"]		.as<int>(_listOrder);
+
 	if (_listOrder == 0)
 		_listOrder = listOrder;
+
+	if (_category == "STR_CRAFT")
+		_isCraft = true;
 }
 
 /**
  * Gets the unique type of the manufacture.
- * @return, the type
+ * @return, reference to the type
  */
-std::string RuleManufacture::getType() const
+const std::string& RuleManufacture::getType() const
 {
 	return _type;
 }
@@ -86,9 +90,18 @@ std::string RuleManufacture::getType() const
  * Gets the category shown in the manufacture list.
  * @return, the category
  */
-std::string RuleManufacture::getCategory() const
+const std::string& RuleManufacture::getCategory() const
 {
 	return _category;
+}
+
+/**
+ * Gets if this is a Craft-type.
+ * @return, true if Craft
+ */
+bool RuleManufacture::isCraft() const
+{
+	return _isCraft;
 }
 
 /**

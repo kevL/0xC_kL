@@ -2667,7 +2667,7 @@ std::vector<std::vector<std::pair<int, int>>>& SavedBattleGame::getModuleMap()
  * grid as outlined in the comments above, in pairs representing initial and
  * current values.
  */
-void SavedBattleGame::calculateModuleMap()
+void SavedBattleGame::calcModuleMap()
 {
 	_baseModules.resize(
 					_mapsize_x / 10,
@@ -2690,16 +2690,18 @@ void SavedBattleGame::calculateModuleMap()
 					z != _mapsize_z;
 					++z)
 			{
-				const Tile* const tile = getTile(Position(x,y,z));
+				const Tile* const tile (getTile(Position(x,y,z)));
 
 				if (tile != nullptr
 					&& tile->getMapData(O_OBJECT) != nullptr
 					&& tile->getMapData(O_OBJECT)->isBaseModule() == true)
 				{
 					_baseModules[x / 10]
-								[y / 10].first += _baseModules[x / 10][y / 10].first > 0 ? 1 : 2;
+								[y / 10].first += _baseModules[x / 10]
+															  [y / 10].first > 0 ? 1 : 2;
 					_baseModules[x / 10]
-								[y / 10].second = _baseModules[x / 10][y / 10].first;
+								[y / 10].second = _baseModules[x / 10]
+															  [y / 10].first;
 				}
 			}
 		}
@@ -2708,7 +2710,7 @@ void SavedBattleGame::calculateModuleMap()
 
 /**
  * Gets a pointer to the geoscape save.
- * @return, pointer to the geoscape save
+ * @return, pointer to SavedGame
  */
 SavedGame* SavedBattleGame::getGeoscapeSave() const
 {

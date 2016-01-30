@@ -36,14 +36,16 @@ class RuleManufacture
 {
 
 private:
-	std::string
-		_category,
-		_type;
+	bool _isCraft;
 	int
 		_cost,
 		_listOrder,
 		_space,
 		_time;
+
+	std::string
+		_category,
+		_type;
 
 	std::vector<std::string> _required;
 
@@ -62,9 +64,12 @@ private:
 				int listOrder);
 
 		/// Gets the manufacture type.
-		std::string getType() const;
+		const std::string& getType() const;
 		/// Gets the manufacture category.
-		std::string getCategory() const;
+		const std::string& getCategory() const;
+
+		/// Gets if this is a Craft-type.
+		bool isCraft() const;
 
 		/// Gets the manufacture's requirements.
 		const std::vector<std::string>& getRequirements() const;

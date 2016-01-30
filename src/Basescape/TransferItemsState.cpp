@@ -897,60 +897,63 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 	{
 		case PST_ITEM:
 			itRule = _game->getRuleset()->getItem(_items[getItemIndex(_sel)]);
-			if (itRule->isAlien() == false
-				&& _baseTarget->storesOverfull(itRule->getSize() + _storeSize - 0.05))
+
+			if (itRule->isAlien() == false)
 			{
-				wstError = tr("STR_NOT_ENOUGH_STORE_SPACE");
+				if (_baseTarget->storesOverfull(itRule->getSize() + _storeSize - 0.05))
+					wstError = tr("STR_NOT_ENOUGH_STORE_SPACE");
+				else
+				{
+					const double storesPerItem (_game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getSize());
+					double qtyAllowed;
+
+					if (AreSame(storesPerItem, 0.) == false)
+						qtyAllowed = (static_cast<double>(_baseTarget->getTotalStores()) - _baseTarget->getUsedStores() - _storeSize + 0.05)
+									/ storesPerItem;
+					else
+						qtyAllowed = std::numeric_limits<double>::max();
+
+					qtyDelta = std::min(
+									qtyDelta,
+									std::min(
+											static_cast<int>(qtyAllowed),
+											getSourceQuantity() - _transferQty[_sel]));
+					_storeSize += static_cast<double>(qtyDelta) * storesPerItem;
+					_baseQty[_sel] -= qtyDelta;
+					_destQty[_sel] += qtyDelta;
+					_transferQty[_sel] += qtyDelta;
+					_costTotal += getCost() * qtyDelta;
+				}
 			}
-			else if (itRule->isAlien() == true
-				&& (_baseTarget->hasContainment() == false
+			else // aLien.
+			{
+				if (_baseTarget->hasContainment() == false
 					|| (_qtyAlien + 1 > _baseTarget->getFreeContainment()
-						&& Options::storageLimitsEnforced == true)))
-			{
-				wstError = tr("STR_NO_ALIEN_CONTAINMENT_FOR_TRANSFER");
-			}
-			else if (itRule->isAlien() == false)
-			{
-				const double storesPerItem = _game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getSize();
-				double qtyAllowed;
-
-				if (AreSame(storesPerItem, 0.) == false)
-					qtyAllowed = (static_cast<double>(_baseTarget->getTotalStores()) - _baseTarget->getUsedStores() - _storeSize + 0.05)
-								/ storesPerItem;
+						&& Options::storageLimitsEnforced == true))
+				{
+					wstError = tr("STR_NO_ALIEN_CONTAINMENT_FOR_TRANSFER");
+				}
 				else
-					qtyAllowed = std::numeric_limits<double>::max();
+				{
+					int freeContainment;
+					if (Options::storageLimitsEnforced == true)
+						freeContainment = _baseTarget->getFreeContainment() - _qtyAlien;
+					else
+						freeContainment = std::numeric_limits<int>::max();
 
-				qtyDelta = std::min(
-								qtyDelta,
-								std::min(
-										static_cast<int>(qtyAllowed),
-										getSourceQuantity() - _transferQty[_sel]));
-				_storeSize += static_cast<double>(qtyDelta) * storesPerItem;
-				_baseQty[_sel] -= qtyDelta;
-				_destQty[_sel] += qtyDelta;
-				_transferQty[_sel] += qtyDelta;
-				_costTotal += getCost() * qtyDelta;
+					qtyDelta = std::min(
+									qtyDelta,
+									std::min(
+											freeContainment,
+											getSourceQuantity() - _transferQty[_sel]));
+					_qtyAlien += qtyDelta;
+					_baseQty[_sel] -= qtyDelta;
+					_destQty[_sel] += qtyDelta;
+					_transferQty[_sel] += qtyDelta;
+					_costTotal += getCost() * qtyDelta;
+				}
 			}
-			else // aLien
-			{
-				int freeContainment;
-				if (Options::storageLimitsEnforced == true)
-					freeContainment = _baseTarget->getFreeContainment() - _qtyAlien;
-				else
-					freeContainment = std::numeric_limits<int>::max();
-
-				qtyDelta = std::min(
-								qtyDelta,
-								std::min(
-										freeContainment,
-										getSourceQuantity() - _transferQty[_sel]));
-				_qtyAlien += qtyDelta;
-				_baseQty[_sel] -= qtyDelta;
-				_destQty[_sel] += qtyDelta;
-				_transferQty[_sel] += qtyDelta;
-				_costTotal += getCost() * qtyDelta;
-			}
-		break;
+			break;
 
 		case PST_CRAFT:
 			if (_qtyCraft + 1 > _baseTarget->getFreeHangars())
@@ -968,7 +971,7 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 					_costTotal += getCost();
 				}
 			}
-		break;
+			break;
 
 		default: // soldier, scientist, engineer
 			if (_qtyPersonnel + 1 > _baseTarget->getFreeQuarters())
@@ -1028,24 +1031,24 @@ void TransferItemsState::decreaseByValue(int qtyDelta)
 
 	qtyDelta = std::min(qtyDelta, _transferQty[_sel]);
 
-	const Craft* craft = nullptr;
+	const Craft* craft (nullptr);
 
 	switch (getTransferType(_sel))
 	{
 		case PST_ITEM:
 		{
-			const RuleItem* const itRule = _game->getRuleset()->getItem(_items[getItemIndex(_sel)]);
+			const RuleItem* const itRule (_game->getRuleset()->getItem(_items[getItemIndex(_sel)]));
 			if (itRule->isAlien() == false)
 				_storeSize -= itRule->getSize() * static_cast<double>(qtyDelta);
 			else
 				_qtyAlien -= qtyDelta;
+			break;
 		}
-		break;
 
 		case PST_CRAFT:
 			craft = _crafts[_sel - _soldiers.size()];
 			--_qtyCraft;
-		break;
+			break;
 
 		default: // soldier, scientist, engineer
 			_qtyPersonnel -= qtyDelta;
@@ -1080,17 +1083,17 @@ void TransferItemsState::updateItemStrings() // private.
 		color = _lstItems->getSecondaryColor();
 	else if (getTransferType(_sel) == PST_ITEM)
 	{
-		const Ruleset* const rules = _game->getRuleset();
-		const RuleItem* const itRule = rules->getItem(_items[getItemIndex(_sel)]);
+		const Ruleset* const rules (_game->getRuleset());
+		const RuleItem* const itRule (rules->getItem(_items[getItemIndex(_sel)]));
 
 		bool craftOrdnance = false;
-		const std::vector<std::string>& cwList = rules->getCraftWeaponsList();
+		const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
 		for (std::vector<std::string>::const_iterator
 				i = cwList.begin();
 				i != cwList.end();
 				++i)
 		{
-			const RuleCraftWeapon* const cwRule = rules->getCraftWeapon(*i);
+			const RuleCraftWeapon* const cwRule (rules->getCraftWeapon(*i));
 			if (itRule == rules->getItem(cwRule->getLauncherItem())
 				|| itRule == rules->getItem(cwRule->getClipItem()))
 			{
@@ -1099,7 +1102,7 @@ void TransferItemsState::updateItemStrings() // private.
 			}
 		}
 
-		const SavedGame* const gameSave = _game->getSavedGame();
+		const SavedGame* const gameSave (_game->getSavedGame());
 		if (gameSave->isResearched(itRule->getType()) == false				// not researched or is research exempt
 			&& (gameSave->isResearched(itRule->getRequirements()) == false	// and has requirements to use but not been researched
 				|| rules->getItem(itRule->getType())->isAlien() == true			// or is an alien

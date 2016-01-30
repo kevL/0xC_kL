@@ -73,9 +73,11 @@ bool Transfer::load(
 {
 	_hours = node["hours"].as<int>(_hours);
 
+	std::string type;
+
 	if (const YAML::Node& sol = node["soldier"])
 	{
-		const std::string type (sol["type"].as<std::string>(rules->getSoldiersList().front()));
+		type = sol["type"].as<std::string>(rules->getSoldiersList().front());
 		if (rules->getSoldier(type) != nullptr)
 		{
 			_soldier = new Soldier(rules->getSoldier(type));
@@ -91,7 +93,7 @@ bool Transfer::load(
 
 	if (const YAML::Node& craft = node["craft"])
 	{
-		const std::string type (craft["type"].as<std::string>());
+		type = craft["type"].as<std::string>();
 		if (rules->getCraft(type) != nullptr)
 		{
 			_craft = new Craft(
@@ -155,9 +157,18 @@ YAML::Node Transfer::save() const
  * Changes the soldier being transfered.
  * @param soldier - pointer to a Soldier
  */
-void Transfer::setSoldier(Soldier* soldier)
+void Transfer::setSoldier(Soldier* const soldier)
 {
 	_soldier = soldier;
+}
+
+/**
+ * Gets the soldier being transfered.
+ * @return, pointer to Soldier
+ */
+Soldier* Transfer::getSoldier() const
+{
+	return _soldier;
 }
 
 /**
@@ -182,7 +193,7 @@ void Transfer::setEngineers(int engineers)
  * Changes the craft being transfered.
  * @param craft - pointer to a Craft
  */
-void Transfer::setCraft(Craft* craft)
+void Transfer::setCraft(Craft* const craft)
 {
 	_craft = craft;
 }
@@ -292,7 +303,7 @@ PurchaseSellTransferType Transfer::getTransferType() const
  * Advances the transfer and takes care of the delivery once it's arrived.
  * @param base - pointer to destination Base
  */
-void Transfer::advance(Base* base)
+void Transfer::advance(Base* const base)
 {
 	if (--_hours == 0)
 	{
@@ -315,15 +326,6 @@ void Transfer::advance(Base* base)
 		else if (_engineers != 0)
 			base->setEngineers(base->getEngineers() + _engineers);
 	}
-}
-
-/**
- * Gets the soldier being transfered.
- * @return, pointer to Soldier
- */
-Soldier* Transfer::getSoldier() const
-{
-	return _soldier;
 }
 
 }

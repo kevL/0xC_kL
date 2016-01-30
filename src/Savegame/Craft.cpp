@@ -134,6 +134,8 @@ void Craft::load(
 
 	_warning = static_cast<CraftWarning>(node["warning"].as<int>(_warning));
 
+	std::string type;
+
 	size_t j = 0;
 	for (YAML::const_iterator
 			i = node["weapons"].begin();
@@ -142,7 +144,7 @@ void Craft::load(
 	{
 		if (_crRule->getWeapons() > static_cast<int>(j))
 		{
-			const std::string type ((*i)["type"].as<std::string>());
+			type = (*i)["type"].as<std::string>();
 			if (type != "0"
 				&& rules->getCraftWeapon(type) != nullptr)
 			{
@@ -181,10 +183,10 @@ void Craft::load(
 			i != node["vehicles"].end();
 			++i)
 	{
-		const std::string type ((*i)["type"].as<std::string>());
+		type = (*i)["type"].as<std::string>();
 		if (rules->getItem(type) != nullptr)
 		{
-			const int armorSize = rules->getArmor(rules->getUnitRule(type)->getArmor())->getSize();
+			const int armorSize (rules->getArmor(rules->getUnitRule(type)->getArmor())->getSize());
 			Vehicle* const vhcl (new Vehicle(
 											rules->getItem(type),
 											0,
@@ -208,7 +210,7 @@ void Craft::load(
 	{
 		int id (dest["id"].as<int>());
 
-		const std::string type (dest["type"].as<std::string>());
+		type = dest["type"].as<std::string>();
 		if (type == "STR_BASE")
 			returnToBase();
 		else if (type == "STR_UFO")

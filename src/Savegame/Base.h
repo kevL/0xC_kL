@@ -333,9 +333,9 @@ private:
 		/// Destroys all disconnected facilities in this Base.
 		void destroyDisconnectedFacilities();
 		/// Gets a sorted list of the facilities(=iterators) NOT connected to the Access Lift.
-		std::list<std::vector<BaseFacility*>::const_iterator> getDisconnectedFacilities(BaseFacility* ignoreFac);
+		std::list<std::vector<BaseFacility*>::const_iterator> getDisconnectedFacilities(const BaseFacility* const ignoreFac = nullptr);
 		/// Destroys a facility and deals with the side effects.
-		void destroyFacility(std::vector<BaseFacility*>::const_iterator fac);
+		std::vector<BaseFacility*>::const_iterator destroyFacility(std::vector<BaseFacility*>::const_iterator pFac);
 
 		/// Gets this Base's craft maintenance.
 		int getCraftMaintenance() const;

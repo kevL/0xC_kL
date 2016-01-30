@@ -400,8 +400,8 @@ void SavedGame::load(
 		Ruleset* const rules) // <- used only to obviate const if loading battleSave.
 {
 	//Log(LOG_INFO) << "SavedGame::load()";
-	const std::string st (Options::getUserFolder() + file);
-	const std::vector<YAML::Node> nodes (YAML::LoadAllFromFile(st));
+	std::string type (Options::getUserFolder() + file);
+	const std::vector<YAML::Node> nodes (YAML::LoadAllFromFile(type));
 	if (nodes.empty() == true)
 	{
 		throw Exception(file + " is not a valid save file");
@@ -464,7 +464,7 @@ void SavedGame::load(
 			i != doc["countries"].end();
 			++i)
 	{
-		const std::string type ((*i)["type"].as<std::string>());
+		type = (*i)["type"].as<std::string>();
 		if (_rules->getCountry(type) != nullptr)
 		{
 			Country* const country (new Country(_rules->getCountry(type)));
@@ -480,7 +480,7 @@ void SavedGame::load(
 			i != doc["regions"].end();
 			++i)
 	{
-		const std::string type ((*i)["type"].as<std::string>());
+		type = (*i)["type"].as<std::string>();
 		if (_rules->getRegion(type) != nullptr)
 		{
 			Region* const region (new Region(_rules->getRegion(type)));
@@ -510,15 +510,15 @@ void SavedGame::load(
 			i != missions.end();
 			++i)
 	{
-		const std::string missionType ((*i)["type"].as<std::string>());
-		if (_rules->getAlienMission(missionType) != nullptr)
+		type = (*i)["type"].as<std::string>();
+		if (_rules->getAlienMission(type) != nullptr)
 		{
-			const RuleAlienMission& missionRule (*_rules->getAlienMission(missionType));
+			const RuleAlienMission& missionRule (*_rules->getAlienMission(type));
 			std::auto_ptr<AlienMission> mission (new AlienMission(missionRule, *this));
 			mission->load(*i);
 			_activeMissions.push_back(mission.release());
 		}
-		else Log(LOG_ERROR) << "Failed to load mission " << missionType;
+		else Log(LOG_ERROR) << "Failed to load mission " << type;
 	}
 
 	Log(LOG_INFO) << ". load ufos";
@@ -527,7 +527,7 @@ void SavedGame::load(
 			i != doc["ufos"].end();
 			++i)
 	{
-		const std::string type ((*i)["type"].as<std::string>());
+		type = (*i)["type"].as<std::string>();
 		if (_rules->getUfo(type) != nullptr)
 		{
 			Ufo* const ufo (new Ufo(_rules->getUfo(type)));
@@ -554,9 +554,8 @@ void SavedGame::load(
 			i != doc["missionSites"].end();
 			++i)
 	{
-		const std::string
-			type ((*i)["type"].as<std::string>()),
-			deployment ((*i)["deployment"].as<std::string>("STR_TERROR_MISSION"));
+		type = (*i)["type"].as<std::string>();
+		const std::string deployment ((*i)["deployment"].as<std::string>("STR_TERROR_MISSION"));
 		if (_rules->getAlienMission(type) && _rules->getDeployment(deployment))
 		{
 			MissionSite* const site (new MissionSite(
@@ -576,7 +575,7 @@ void SavedGame::load(
 			i != doc["research"].end();
 			++i)
 	{
-		const std::string type ((*i)["type"].as<std::string>());
+		type = (*i)["type"].as<std::string>();
 		if (_rules->getResearch(type) != nullptr)
 		{
 			ResearchGeneral* const resGen (new ResearchGeneral(_rules->getResearch(type)));

@@ -175,7 +175,7 @@ PurchaseState::PurchaseState(Base* const base)
 	_lstItems->onRightArrowRelease((ActionHandler)& PurchaseState::lstItemsRightArrowRelease);
 	_lstItems->onRightArrowClick((ActionHandler)& PurchaseState::lstItemsRightArrowClick);
 
-	const std::vector<std::string>& soldierList = rules->getSoldiersList();
+	const std::vector<std::string>& soldierList (rules->getSoldiersList());
 	for (std::vector<std::string>::const_iterator
 			i = soldierList.begin();
 			i != soldierList.end();
@@ -238,7 +238,7 @@ PurchaseState::PurchaseState(Base* const base)
 
 
 //	const std::vector<std::string>& itemList = rules->getItemsList();
-	std::vector<std::string> purchaseList = rules->getItemsList(); // Copy, need to remove entries; note that SellState has a more elegant way of handling this ->
+	std::vector<std::string> purchaseList (rules->getItemsList()); // Copy, need to remove entries; note that SellState has a more elegant way of handling this ->
 
 	const RuleCraftWeapon* cwRule;
 	const RuleItem
@@ -524,30 +524,30 @@ void PurchaseState::btnOkClick(Action*)
 			switch (getPurchaseType(sel))
 			{
 				case PST_SOLDIER:
-				for (int
-						i = 0;
-						i != _orderQty[sel];
-						++i)
-				{
-					transfer = new Transfer(rules->getPersonnelTime());
-					transfer->setSoldier(rules->genSoldier(
-														_game->getSavedGame(),
-														_soldiers[sel]));
-					_base->getTransfers()->push_back(transfer);
-				}
-				break;
+					for (int
+							i = 0;
+							i != _orderQty[sel];
+							++i)
+					{
+						transfer = new Transfer(rules->getPersonnelTime());
+						transfer->setSoldier(rules->genSoldier(
+															_game->getSavedGame(),
+															_soldiers[sel]));
+						_base->getTransfers()->push_back(transfer);
+					}
+					break;
 
 				case PST_SCIENTIST:
 					transfer = new Transfer(rules->getPersonnelTime());
 					transfer->setScientists(_orderQty[sel]);
 					_base->getTransfers()->push_back(transfer);
-				break;
+					break;
 
 				case PST_ENGINEER:
 					transfer = new Transfer(rules->getPersonnelTime());
 					transfer->setEngineers(_orderQty[sel]);
 					_base->getTransfers()->push_back(transfer);
-				break;
+					break;
 
 				case PST_CRAFT:
 					for (int
@@ -555,7 +555,7 @@ void PurchaseState::btnOkClick(Action*)
 							i != _orderQty[sel];
 							++i)
 					{
-						RuleCraft* const crftRule = rules->getCraft(_crafts[getCraftIndex(sel)]);
+						RuleCraft* const crftRule (rules->getCraft(_crafts[getCraftIndex(sel)]));
 						transfer = new Transfer(crftRule->getTransferTime());
 						Craft* const craft = new Craft(
 													crftRule,
@@ -565,11 +565,11 @@ void PurchaseState::btnOkClick(Action*)
 						transfer->setCraft(craft);
 						_base->getTransfers()->push_back(transfer);
 					}
-				break;
+					break;
 
 				case PST_ITEM:
 				{
-					const RuleItem* const itRule = rules->getItem(_items[getItemIndex(sel)]);
+					const RuleItem* const itRule (rules->getItem(_items[getItemIndex(sel)]));
 					transfer = new Transfer(itRule->getTransferTime());
 					transfer->setTransferItems(
 										_items[getItemIndex(sel)],
@@ -746,12 +746,12 @@ void PurchaseState::increaseByValue(int qtyDelta)
 			case PST_ENGINEER:
 				if (_qtyPersonnel + 1 > _base->getFreeQuarters())
 					error = tr("STR_NOT_ENOUGH_LIVING_SPACE");
-			break;
+				break;
 
 			case PST_CRAFT:
 				if (_qtyCraft + 1 > _base->getFreeHangars())
 					error = tr("STR_NO_FREE_HANGARS_FOR_PURCHASE");
-			break;
+				break;
 
 			case PST_ITEM:
 				if (_storeSize + _game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getSize()
@@ -788,18 +788,18 @@ void PurchaseState::increaseByValue(int qtyDelta)
 								qtyDelta,
 								_base->getFreeQuarters() - _qtyPersonnel);
 				_qtyPersonnel += qtyDelta;
-			break;
+				break;
 
 			case PST_CRAFT:
 				qtyDelta = std::min(
 								qtyDelta,
 								_base->getFreeHangars() - _qtyCraft);
 				_qtyCraft += qtyDelta;
-			break;
+				break;
 
 			case PST_ITEM:
 			{
-				const double storesPerItem = _game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getSize();
+				const double storesPerItem (_game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getSize());
 				double qtyAllowed;
 
 				if (AreSame(storesPerItem, 0.) == false)
@@ -852,11 +852,11 @@ void PurchaseState::decreaseByValue(int qtyDelta)
 		case PST_SCIENTIST:
 		case PST_ENGINEER:
 			_qtyPersonnel -= qtyDelta;
-		break;
+			break;
 
 		case PST_CRAFT:
 			_qtyCraft -= qtyDelta;
-		break;
+			break;
 
 		case PST_ITEM:
 			_storeSize -= _game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getSize() * static_cast<double>(qtyDelta);
@@ -886,7 +886,7 @@ void PurchaseState::updateItemStrings() // private.
 
 		if (getPurchaseType(_sel) == PST_ITEM)
 		{
-			const RuleItem* const itRule = _game->getRuleset()->getItem(_items[getItemIndex(_sel)]);
+			const RuleItem* const itRule (_game->getRuleset()->getItem(_items[getItemIndex(_sel)]));
 			if (itRule->getBattleType() == BT_AMMO		// ammo for weapon or hwp
 				|| (itRule->getBattleType() == BT_NONE	// ammo for craft armament
 					&& itRule->getClipSize() != 0))

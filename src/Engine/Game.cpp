@@ -636,12 +636,11 @@ void Game::popState()
 {
 	_deleted.push_back(_states.back());
 	_states.pop_back();
-
 	_init = false;
 }
 
 /**
- * kL. Gets the current (top) State.
+ * Gets the current (top) State.
  * @return, current state
  */
 /* State* Game::getState() const
@@ -699,9 +698,9 @@ void Game::loadLanguage(const std::string& file)
 	std::ostringstream oststr;
 	oststr << "Language/" << file << ".yml";
 
-	ExtraStrings* extras = nullptr;
+	ExtraStrings* extras (nullptr);
 
-	std::map<std::string, ExtraStrings*> extraStrings = _rules->getExtraStrings();
+	std::map<std::string, ExtraStrings*> extraStrings (_rules->getExtraStrings());
 	if (extraStrings.empty() == false)
 	{
 		if (extraStrings.find(file) != extraStrings.end())
@@ -714,7 +713,7 @@ void Game::loadLanguage(const std::string& file)
 			extras = extraStrings.begin()->second;
 	}
 
-	std::string path = CrossPlatform::getDataFile(oststr.str());
+	const std::string path (CrossPlatform::getDataFile(oststr.str()));
 	try
 	{
 		_lang->load(path, extras);
@@ -921,12 +920,10 @@ void Game::initAudio()
 	}
 	else
 	{
+		Log(LOG_INFO) << "SDL_mixer initialized.";
 		Mix_AllocateChannels(16);
-
-		// Set up UI channels
 		Mix_ReserveChannels(4); // 4th channel (#3) is for ambient sFx
 		Mix_GroupChannels(0,2,0);
-		Log(LOG_INFO) << "SDL_mixer initialized.";
 
 		setVolume(
 				Options::soundVolume,

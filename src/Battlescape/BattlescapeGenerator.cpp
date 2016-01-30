@@ -388,7 +388,7 @@ void BattlescapeGenerator::run()
 	{
 		for (int i = 0; i < _battleSave->getMapSizeXYZ(); ++i)
 			_battleSave->getTiles()[i]->setDiscovered(true, 2);
-		_battleSave->calculateModuleMap();
+		_battleSave->calcModuleMap();
 	}
 	if (_missionType == "STR_ALIEN_BASE_ASSAULT"
 		|| _missionType == "STR_MARS_THE_FINAL_ASSAULT")
@@ -3107,7 +3107,7 @@ void BattlescapeGenerator::generateBaseMap() // private.
 		}
 	}
 
-	_battleSave->calculateModuleMap();
+	_battleSave->calcModuleMap();
 }
 
 /**

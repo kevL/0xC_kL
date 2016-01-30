@@ -3326,20 +3326,20 @@ void BattleUnit::postMissionProcedures(
 		const SavedGame* const gameSave,
 		const bool dead)
 {
-	Soldier* const sol = gameSave->getSoldier(_id);
+	Soldier* const sol (gameSave->getSoldier(_id));
 	if (sol != nullptr)
 	{
 		sol->postTactical(_kills);
 
-		UnitStats* const stats = sol->getCurrentStats();
-		const UnitStats caps = sol->getRules()->getStatCaps();
+		UnitStats* const stats (sol->getCurrentStats());
+		const UnitStats caps (sol->getRules()->getStatCaps());
 
 		if (dead == false && stats->health > _health)
 		{
-			const int recovery = stats->health - _health;
+			const int recovery (stats->health - _health);
 			sol->setRecovery(RNG::generate(
 										(recovery + 1) / 2, // round up.
-										recovery));
+										 recovery));
 		}
 
 		if (_expBravery != 0
@@ -3407,7 +3407,7 @@ void BattleUnit::postMissionProcedures(
 
 			if (expPri == true)
 			{
-				int delta = caps.tu - stats->tu;
+				int delta (caps.tu - stats->tu);
 				if (delta > 0)
 					stats->tu += RNG::generate(0,
 											(delta / 10) + 2) - 1;

@@ -200,7 +200,7 @@ void ManufactureStartState::init()
 	{
 		_init = false;
 //		State::init();
-		if (_manfRule->getCategory() == "STR_CRAFT" && _base->getFreeHangars() < 1)
+		if (_manfRule->isCraft() == true && _base->getFreeHangars() < 1)
 		{
 			_btnStart->setVisible(false);
 			_game->pushState(new ErrorMessageState(

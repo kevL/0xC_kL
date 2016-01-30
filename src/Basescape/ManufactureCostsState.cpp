@@ -209,7 +209,7 @@ void ManufactureCostsState::init()
 			woststr.str(L"");
 			woststr << L"< " << tr((*j).first);
 
-			if ((*i)->getCategory() == "STR_CRAFT")
+			if ((*i)->isCraft() == true)
 				salesCost = _game->getRuleset()->getCraft((*j).first)->getSellCost();
 			else
 				salesCost = _game->getRuleset()->getItem((*j).first)->getSellCost();
