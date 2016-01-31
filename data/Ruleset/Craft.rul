@@ -7,7 +7,7 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     accel: 2
     soldiers: 14
     vehicles: 8
-    maxItems: 84 # 6 x soldier cap.
+    items: 84 # 6 x soldier cap.
     costBuy: 450000
     costRent: 295000
     refuelRate: 5000
@@ -67,7 +67,7 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     costRent: 100000
     costSell: 5400000
     soldiers: 12
-    maxItems: 72 # 6 x soldier cap.
+    items: 72 # 6 x soldier cap.
     refuelItem: STR_ELERIUM_115
     refuelRate: 5
     repairRate: 3
@@ -109,7 +109,7 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     costSell: 10200000
     soldiers: 26
     vehicles: 12
-    maxItems: 156 # 6 x soldier cap.
+    items: 156 # 6 x soldier cap.
     refuelItem: STR_ELERIUM_115
     refuelRate: 5
     repairRate: 5

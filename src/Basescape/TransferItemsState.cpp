@@ -343,7 +343,7 @@ void TransferItemsState::init()
 			i != itemList.end();
 			++i)
 	{
-		const int baseQty = _baseSource->getStorageItems()->getItemQty(*i);
+		const int baseQty = _baseSource->getStorageItems()->getItemQuantity(*i);
 		if (baseQty != 0)
 		{
 			_transferQty.push_back(0);
@@ -353,7 +353,7 @@ void TransferItemsState::init()
 			itRule = rules->getItem(*i);
 			const std::string itType = itRule->getType();
 
-			int destQty = _baseTarget->getStorageItems()->getItemQty(*i);
+			int destQty = _baseTarget->getStorageItems()->getItemQuantity(*i);
 
 			for (std::vector<Transfer*>::const_iterator // add transfers
 					j = _baseTarget->getTransfers()->begin();
@@ -546,7 +546,7 @@ void TransferItemsState::completeTransfer()
 {
 	_resetAll = true;
 
-	const int eta = static_cast<int>(std::floor(6. + _distance / 10.));
+	const int eta (static_cast<int>(std::floor(6. + _distance / 10.)));
 	_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() - _costTotal);
 	_baseSource->setCashSpent(_costTotal);
 
@@ -576,37 +576,15 @@ void TransferItemsState::completeTransfer()
 							transfer->setSoldier(*j);
 							_baseTarget->getTransfers()->push_back(transfer);
 							_baseSource->getSoldiers()->erase(j);
-
 							break;
 						}
 					}
-				break;
+					break;
 
 				case PST_CRAFT:
 				{
-					Craft* const craft = _crafts[getCraftIndex(sel)];
-/*					for (std::vector<Soldier*>::const_iterator // transfer soldiers inside craft - TODO: Disallowed Atm.
-							j = _baseSource->getSoldiers()->begin();
-							j != _baseSource->getSoldiers()->end();
-							)
-					{
-						if ((*j)->getCraft() == craft)
-						{
-							if ((*j)->inPsiTraining() == true)
-								(*j)->togglePsiTraining();
+					Craft* const craft (_crafts[getCraftIndex(sel)]);
 
-							if (craft->getCraftStatus() == CS_OUT)
-								_baseTarget->getSoldiers()->push_back(*j);
-							else
-							{
-								Transfer* const transfer = new Transfer(eta);
-								transfer->setSoldier(*j);
-								_baseTarget->getTransfers()->push_back(transfer);
-							}
-							j = _baseSource->getSoldiers()->erase(j);
-						}
-						else ++j;
-					} */
 					for (std::vector<Craft*>::const_iterator
 							j = _baseSource->getCrafts()->begin();
 							j != _baseSource->getCrafts()->end();
@@ -614,43 +592,7 @@ void TransferItemsState::completeTransfer()
 					{
 						if (*j == craft)
 						{
-							if (craft->getRules()->getSoldiers() != 0) // is transport
-							{
-								for (std::vector<Soldier*>::const_iterator // unload Soldiers
-										k = _baseSource->getSoldiers()->begin();
-										k != _baseSource->getSoldiers()->end();
-										++k)
-								{
-									if ((*k)->getCraft() == craft)
-										(*k)->setCraft(nullptr);
-								}
-
-								for (std::map<std::string, int>::const_iterator // remove items
-										k = craft->getCraftItems()->getContents()->begin();
-										k != craft->getCraftItems()->getContents()->end();
-										++k)
-								{
-									craft->getCraftItems()->removeItem(k->first, k->second);
-									_baseSource->getStorageItems()->addItem(k->first, k->second);
-								}
-
-								if (craft->getRules()->getVehicles() != 0) // remove vehicles & ammo
-								{
-									for (std::vector<Vehicle*>::const_iterator
-											k = craft->getVehicles()->begin();
-											k != craft->getVehicles()->end();
-											)
-									{
-										_baseSource->getStorageItems()->addItem((*k)->getRules()->getType());
-
-										const RuleItem* const aRule = _game->getRuleset()->getItem((*k)->getRules()->getCompatibleAmmo()->front());
-										_baseSource->getStorageItems()->addItem(aRule->getType(), (*k)->getAmmo());
-
-										delete *k;
-										k = craft->getVehicles()->erase(k);
-									}
-								}
-							}
+							craft->unloadCraft(_game->getRuleset());
 
 /*							if (craft->getCraftStatus() == CS_OUT) // TODO: Disallowed Atm.
 							{
@@ -676,38 +618,26 @@ void TransferItemsState::completeTransfer()
 							_baseTarget->getTransfers()->push_back(transfer);
 /*							} */
 
-							for (std::vector<BaseFacility*>::const_iterator // clear hangar
-									k = _baseSource->getFacilities()->begin();
-									k != _baseSource->getFacilities()->end();
-									++k)
-							{
-								if ((*k)->getCraft() == *j)
-								{
-									(*k)->setCraft(nullptr);
-									break;
-								}
-							}
-
 							_baseSource->getCrafts()->erase(j);
 							break;
 						}
 					}
+					break;
 				}
-				break;
 
 				case PST_SCIENTIST:
 					_baseSource->setScientists(_baseSource->getScientists() - _transferQty[sel]);
 					transfer = new Transfer(eta);
 					transfer->setScientists(_transferQty[sel]);
 					_baseTarget->getTransfers()->push_back(transfer);
-				break;
+					break;
 
 				case PST_ENGINEER:
 					_baseSource->setEngineers(_baseSource->getEngineers() - _transferQty[sel]);
 					transfer = new Transfer(eta);
 					transfer->setEngineers(_transferQty[sel]);
 					_baseTarget->getTransfers()->push_back(transfer);
-				break;
+					break;
 
 				case PST_ITEM:
 					_baseSource->getStorageItems()->removeItem(
@@ -859,7 +789,7 @@ int TransferItemsState::getSourceQuantity() const // private.
 {
 	switch (getTransferType(_sel))
 	{
-		case PST_ITEM:		return _baseSource->getStorageItems()->getItemQty(_items[getItemIndex(_sel)]);
+		case PST_ITEM:		return _baseSource->getStorageItems()->getItemQuantity(_items[getItemIndex(_sel)]);
 		case PST_SCIENTIST:	return _baseSource->getScientists();
 		case PST_ENGINEER:	return _baseSource->getEngineers();
 	}

@@ -152,8 +152,8 @@ CraftEquipmentState::CraftEquipmentState(
 	_txtCraft->setText(tr("STR_CRAFT"));
 
 	_txtSpace->setText(tr("STR_SPACE_CREW_HWP_FREE_")
-						.arg(_craft->getNumSoldiers())
-						.arg(_craft->getNumVehicles())
+						.arg(_craft->getQtySoldiers())
+						.arg(_craft->getQtyVehicles())
 						.arg(_craft->getSpaceAvailable()));
 
 	_txtLoad->setText(tr("STR_LOAD_CAPACITY_FREE_")
@@ -196,13 +196,13 @@ CraftEquipmentState::CraftEquipmentState(
 		if (itRule->isFixed() == true)
 			craftQty = _craft->getVehicleCount(*i);
 		else
-			craftQty = _craft->getCraftItems()->getItemQty(*i);
+			craftQty = _craft->getCraftItems()->getItemQuantity(*i);
 
 		if (itRule->getBigSprite() > -1
 			&& itRule->getBattleType() != BT_NONE
 			&& itRule->getBattleType() != BT_CORPSE
 			&& _game->getSavedGame()->isResearched(itRule->getRequirements()) == true
-			&& (_base->getStorageItems()->getItemQty(*i) != 0 || craftQty != 0))
+			&& (_base->getStorageItems()->getItemQuantity(*i) != 0 || craftQty != 0))
 		{
 			_items.push_back(*i);
 
@@ -210,7 +210,7 @@ CraftEquipmentState::CraftEquipmentState(
 			woststr2.str(L"");
 
 			if (_game->getSavedGame()->getMonthsPassed() != -1)
-				woststr1 << _base->getStorageItems()->getItemQty(*i);
+				woststr1 << _base->getStorageItems()->getItemQuantity(*i);
 			else
 				woststr1 << "-";
 
@@ -405,11 +405,11 @@ void CraftEquipmentState::updateQuantity()
 	if (itRule->isFixed() == true)
 		craftQty = _craft->getVehicleCount(_items[_sel]);
 	else
-		craftQty = _craft->getCraftItems()->getItemQty(_items[_sel]);
+		craftQty = _craft->getCraftItems()->getItemQuantity(_items[_sel]);
 
 	std::wostringstream woststr;
 	if (_game->getSavedGame()->getMonthsPassed() != -1)
-		woststr << _base->getStorageItems()->getItemQty(_items[_sel]);
+		woststr << _base->getStorageItems()->getItemQuantity(_items[_sel]);
 	else
 		woststr << L"-";
 
@@ -429,8 +429,8 @@ void CraftEquipmentState::updateQuantity()
 	_lstEquipment->setCellText(_sel, 2, Text::intWide(craftQty));
 
 	_txtSpace->setText(tr("STR_SPACE_CREW_HWP_FREE_")
-						.arg(_craft->getNumSoldiers())
-						.arg(_craft->getNumVehicles())
+						.arg(_craft->getQtySoldiers())
+						.arg(_craft->getQtyVehicles())
 						.arg(_craft->getSpaceAvailable()));
 	_txtLoad->setText(tr("STR_LOAD_CAPACITY_FREE_")
 						.arg(_craft->getLoadCapacity())
@@ -465,7 +465,7 @@ void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 		if (itRule->isFixed() == true)
 			craftQty = _craft->getVehicleCount(_items[_sel]);
 		else
-			craftQty = _craft->getCraftItems()->getItemQty(_items[_sel]);
+			craftQty = _craft->getCraftItems()->getItemQuantity(_items[_sel]);
 
 		if (craftQty != 0)
 		{
@@ -566,7 +566,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 			baseQty = qtyDelta;
 		}
 		else
-			baseQty = _base->getStorageItems()->getItemQty(_items[_sel]);
+			baseQty = _base->getStorageItems()->getItemQuantity(_items[_sel]);
 
 		if (baseQty != 0)
 		{
@@ -579,7 +579,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 				tankSize *= tankSize;
 
 				const int spaceAvailable = std::min(
-												_craft->getRules()->getVehicles() - _craft->getNumVehicles(true),
+												_craft->getRules()->getVehicles() - _craft->getQtyVehicles(true),
 												_craft->getSpaceAvailable())
 											/ tankSize;
 
@@ -611,7 +611,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 						if (_game->getSavedGame()->getMonthsPassed() == -1)
 							baseQty = 1;
 						else
-							baseQty = _base->getStorageItems()->getItemQty(aRule->getType()) / tankClipSize;
+							baseQty = _base->getStorageItems()->getItemQuantity(aRule->getType()) / tankClipSize;
 
 						qtyDelta = std::min(qtyDelta, baseQty); // maximum number of Vehicles w/ full Ammo.
 
@@ -664,7 +664,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 			}
 			else // load item
 			{
-				if (_craft->getRules()->getMaxItems() > 0
+				if (_craft->getRules()->getItems() != 0
 					&& _craft->calcLoadCurrent() + qtyDelta > _craft->getLoadCapacity())
 				{
 					_timerRight->stop();
@@ -672,7 +672,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 					LocalizedText msg(tr(
 									"STR_NO_MORE_EQUIPMENT_ALLOWED",
 									_craft->getLoadCapacity()));
-//									_craft->getRules()->getMaxItems()));
+//									_craft->getRules()->getItems()));
 
 					_game->pushState(new ErrorMessageState(
 														msg,
@@ -746,7 +746,7 @@ void CraftEquipmentState::displayExtraButtons() const // private.
 {
 	const bool hasItem = _craft->getCraftItems()->getTotalQuantity() != 0;
 	_btnClear->setVisible(hasItem);
-	_btnInventory->setVisible(hasItem && _craft->getNumSoldiers() != 0
+	_btnInventory->setVisible(hasItem && _craft->getQtySoldiers() != 0
 						   && _game->getSavedGame()->getMonthsPassed() != -1);
 }
 

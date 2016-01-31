@@ -136,13 +136,13 @@ CraftWeaponsState::CraftWeaponsState(
 				woststr1,
 				woststr2;
 
-			if (_base->getStorageItems()->getItemQty(cwRule->getLauncherItem()) != 0)
-				woststr1 << _base->getStorageItems()->getItemQty(cwRule->getLauncherItem());
+			if (_base->getStorageItems()->getItemQuantity(cwRule->getLauncherItem()) != 0)
+				woststr1 << _base->getStorageItems()->getItemQuantity(cwRule->getLauncherItem());
 			else
 				woststr1 << L"-";
 
 			if (cwRule->getClipItem().empty() == false)
-				woststr2 << _base->getStorageItems()->getItemQty(cwRule->getClipItem());
+				woststr2 << _base->getStorageItems()->getItemQuantity(cwRule->getClipItem());
 			else
 				woststr2 << tr("STR_NOT_AVAILABLE");
 
@@ -187,7 +187,7 @@ void CraftWeaponsState::lstWeaponsClick(Action*)
 	if (cwRule != nullptr)
 	{
 		launcherType = cwRule->getLauncherItem();
-		if (storage->getItemQty(launcherType) == 0
+		if (storage->getItemQuantity(launcherType) == 0
 			|| (cw != nullptr && cw->getRules() == cwRule))
 		{
 			launcherType.clear();

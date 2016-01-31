@@ -254,7 +254,7 @@ SellState::SellState(Base* const base)
 			i != itemList.end();
 			++i)
 	{
-		const int qty (_base->getStorageItems()->getItemQty(*i));
+		const int qty (_base->getStorageItems()->getItemQuantity(*i));
 
 /*		if (Options::storageLimitsEnforced == true
 			&& origin == OPT_BATTLESCAPE)
@@ -447,75 +447,20 @@ void SellState::btnOkClick(Action*)
 				case PST_CRAFT:
 				{
 					Craft* const craft (_crafts[getCraftIndex(sel)]);
+					craft->unloadCraft(_game->getRuleset(), false);
 
-					for (std::vector<CraftWeapon*>::const_iterator // remove weapons from craft
-							i = craft->getWeapons()->begin();
-							i != craft->getWeapons()->end();
-							++i)
-					{
-						if (*i != nullptr)
-						{
-							_base->getStorageItems()->addItem((*i)->getRules()->getLauncherItem());
-							_base->getStorageItems()->addItem(
-														(*i)->getRules()->getClipItem(),
-														(*i)->getClipsLoaded(_game->getRuleset()));
-						}
-					}
-
-					for (std::map<std::string, int>::const_iterator // remove items from craft
-							i = craft->getCraftItems()->getContents()->begin();
-							i != craft->getCraftItems()->getContents()->end();
-							++i)
-					{
-						_base->getStorageItems()->addItem(i->first, i->second);
-					}
-
-					for (std::vector<Vehicle*>::const_iterator // remove vehicles and their ammo from craft
-							i = craft->getVehicles()->begin();
-							i != craft->getVehicles()->end();
-							++i)
-					{
-						_base->getStorageItems()->addItem((*i)->getRules()->getType());
-
-						if ((*i)->getRules()->getCompatibleAmmo()->empty() == false)
-							_base->getStorageItems()->addItem(
-														(*i)->getRules()->getCompatibleAmmo()->front(),
-														(*i)->getAmmo());
-					}
-
-					for (std::vector<Soldier*>::const_iterator // remove soldiers from craft
-							i = _base->getSoldiers()->begin();
-							i != _base->getSoldiers()->end();
-							++i)
-					{
-						if ((*i)->getCraft() == craft)
-							(*i)->setCraft(nullptr);
-					}
-
-					for (std::vector<BaseFacility*>::const_iterator // clear craft from hangar
-							i = _base->getFacilities()->begin();
-							i != _base->getFacilities()->end();
-							++i)
-					{
-						if ((*i)->getCraft() == craft)
-						{
-							(*i)->setCraft(nullptr);
-							break;
-						}
-					}
-
-					for (std::vector<Craft*>::const_iterator // remove craft from the Base
+					for (std::vector<Craft*>::const_iterator
 							i = _base->getCrafts()->begin();
 							i != _base->getCrafts()->end();
 							++i)
 					{
 						if (*i == craft)
 						{
+							delete *i;
 							_base->getCrafts()->erase(i);
 							break;
 						}
 					}
-					delete craft;
 					break;
 				}
 
@@ -727,7 +672,7 @@ int SellState::getBaseQuantity() const // private.
 			return _base->getEngineers();
 
 		case PST_ITEM:
-//			qty = _base->getStorageItems()->getItemQty(_items[getItemIndex(_sel)]);
+//			qty = _base->getStorageItems()->getItemQuantity(_items[getItemIndex(_sel)]);
 /*			if (Options::storageLimitsEnforced == true
 				&& _origin == OPT_BATTLESCAPE)
 			{
@@ -745,11 +690,11 @@ int SellState::getBaseQuantity() const // private.
 						j != _base->getCrafts()->end();
 						++j)
 				{
-					qty += (*j)->getItems()->getItemQty(_items[getItemIndex(_sel)]);
+					qty += (*j)->getItems()->getItemQuantity(_items[getItemIndex(_sel)]);
 				}
 			} */
 //			return qty;
-			return _base->getStorageItems()->getItemQty(_items[getItemIndex(_sel)]);
+			return _base->getStorageItems()->getItemQuantity(_items[getItemIndex(_sel)]);
 	}
 
 	return 0;

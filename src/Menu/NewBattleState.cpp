@@ -579,8 +579,8 @@ void NewBattleState::btnOkClick(Action*)
 	save();
 
 	if (_missionTypes[_cbxMission->getSelected()] != "STR_BASE_DEFENSE"
-		&& _craft->getNumSoldiers() == 0
-		&& _craft->getNumVehicles() == 0)
+		&& _craft->getQtySoldiers() == 0
+		&& _craft->getQtyVehicles() == 0)
 	{
 		return;
 	}
@@ -819,7 +819,7 @@ void NewBattleState::cbxCraftChange(Action*)
 	_craft->changeRules(_rules->getCraft(_crafts[_cbxCraft->getSelected()]));
 
 	const int maxSoldiers = _craft->getRules()->getSoldiers();
-	int curSoldiers = _craft->getNumSoldiers();
+	int curSoldiers = _craft->getQtySoldiers();
 	if (curSoldiers > maxSoldiers)
 	{
 		for (std::vector<Soldier*>::const_reverse_iterator
@@ -829,7 +829,7 @@ void NewBattleState::cbxCraftChange(Action*)
 		{
 			if ((*i)->getCraft() == _craft)
 			{
-				(*i)->setCraft(nullptr);
+				(*i)->setCraft();
 				--curSoldiers;
 			}
 		}

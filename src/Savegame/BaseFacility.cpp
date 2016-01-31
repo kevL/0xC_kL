@@ -207,7 +207,7 @@ const Craft* BaseFacility::getCraft() const
 
 /**
  * Sets craft used for drawing facility.
- * @param craft - pointer to the craft
+ * @param craft - pointer to the craft (default nullptr)
  */
 void BaseFacility::setCraft(const Craft* const craft)
 {

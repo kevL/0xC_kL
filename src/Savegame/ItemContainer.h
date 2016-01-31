@@ -69,10 +69,10 @@ private:
 				int qty = 1);
 
 		/// Gets an item in the container.
-		int getItemQty(const std::string& type) const;
-
+		int getItemQuantity(const std::string& type) const;
 		/// Gets the total quantity of items in the container.
 		int getTotalQuantity() const;
+
 		/// Gets the total size of items in the container.
 		double getTotalSize(const Ruleset* const rule) const;
 

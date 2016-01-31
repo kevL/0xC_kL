@@ -1641,7 +1641,7 @@ void DebriefingState::reequipCraft(Craft* craft) // private.
 			i != craftItems.end();
 			++i)
 	{
-		qtyBase = _base->getStorageItems()->getItemQty(i->first);
+		qtyBase = _base->getStorageItems()->getItemQuantity(i->first);
 
 		if (qtyBase >= i->second)
 		{
@@ -1725,7 +1725,7 @@ void DebriefingState::reequipCraft(Craft* craft) // private.
 			i != craftVehicles.getContents()->end();
 			++i)
 	{
-		qtyBase = _base->getStorageItems()->getItemQty(i->first);
+		qtyBase = _base->getStorageItems()->getItemQuantity(i->first);
 		addTanks = std::min(
 						qtyBase,
 						i->second);
@@ -1788,7 +1788,7 @@ void DebriefingState::reequipCraft(Craft* craft) // private.
 				tankClipSize = requiredRounds;
 			}
 
-			const int baseQty (_base->getStorageItems()->getItemQty(aRule->getType())); // Ammo Quantity for this vehicle-type on the base
+			const int baseQty (_base->getStorageItems()->getItemQuantity(aRule->getType())); // Ammo Quantity for this vehicle-type on the base
 
 			if (baseQty < i->second * tankClipSize)
 			{

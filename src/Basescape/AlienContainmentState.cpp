@@ -196,7 +196,7 @@ AlienContainmentState::AlienContainmentState(
 	{
 		if (_game->getRuleset()->getItem(*i)->isAlien() == true)	// it's a live alien...
 		{
-			qtyAliens = _base->getStorageItems()->getItemQty(*i);	// get Qty of each aLien-type at this base
+			qtyAliens = _base->getStorageItems()->getItemQuantity(*i);	// get Qty of each aLien-type at this base
 			if (qtyAliens != 0)
 			{
 				_qty.push_back(0);		// put it in the _qty<vector> as (int)
@@ -403,7 +403,7 @@ void AlienContainmentState::lstItemsLeftArrowClick(Action* action)
  */
 int AlienContainmentState::getQuantity()
 {
-	return _base->getStorageItems()->getItemQty(_aliens[_sel]);
+	return _base->getStorageItems()->getItemQuantity(_aliens[_sel]);
 }
 
 /**

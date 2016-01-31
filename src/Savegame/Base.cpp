@@ -1288,7 +1288,7 @@ int Base::getCraftCount(const std::string& craft) const
  * Adds a new Production to this Base.
  * @param prod - pointer to a Production
  */
-void Base::addProduction(Production* prod)
+void Base::addProduction(Production* const prod)
 {
 	_productions.push_back(prod);
 }
@@ -1297,7 +1297,7 @@ void Base::addProduction(Production* prod)
  * Removes a Production from this Base.
  * @param prod - pointer to a Production
  */
-void Base::removeProduction(Production* prod)
+void Base::removeProduction(const Production* const prod)
 {
 	_engineers += prod->getAssignedEngineers();
 
@@ -1313,9 +1313,6 @@ void Base::removeProduction(Production* prod)
 		}
 	}
 }
-/*	std::vector<Production*>::const_iterator i (std::find(_productions.begin(), _productions.end(), prod));
-	if (i != _productions.end())
-		_productions.erase(i); */
 
 /**
  * Gets the list of this Base's Productions.
@@ -2283,7 +2280,7 @@ void Base::setupDefenses()
 					tankClipSize = requiredRounds;
 				}
 
-				const int baseQty (_items->getItemQty(aRule->getType()) / tankClipSize);
+				const int baseQty (_items->getItemQuantity(aRule->getType()) / tankClipSize);
 				if (baseQty != 0)
 				{
 					const int qty (std::min(itemQty, baseQty));
@@ -2645,7 +2642,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 		// Destroy Craft or production of Craft since there will no longer be a hangar for it.
 		if ((*pFac)->getCraft() != nullptr)
 		{
-			if ((*pFac)->getCraft()->getNumSoldiers() != 0)
+			if ((*pFac)->getCraft()->getQtySoldiers() != 0)
 			{
 				for (std::vector<Soldier*>::const_iterator
 						i = _soldiers.begin();
@@ -3077,7 +3074,7 @@ int Base::calcSoldierBonuses(const Craft* const craft) const
 	}
 
 	if (craft != nullptr)
-		total += craft->getNumVehicles(true) * 750;
+		total += craft->getQtyVehicles(true) * 750;
 
 	return total;
 }

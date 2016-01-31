@@ -328,7 +328,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 				j != gameSave->getBases()->end();
 				++j, ++baseId)
 		{
-			qty[baseId] = (*j)->getStorageItems()->getItemQty(*i);
+			qty[baseId] = (*j)->getStorageItems()->getItemQuantity(*i);
 
 			for (std::vector<Transfer*>::const_iterator // Add qty of items in transit to theMatrix.
 					k = (*j)->getTransfers()->begin();

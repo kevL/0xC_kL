@@ -266,9 +266,9 @@ private:
 		double getCommanderHelp(const std::string& rp);
 
 		/// Adds a Production to this Base.
-		void addProduction(Production* prod);
+		void addProduction(Production* const prod);
 		/// Removes a Production from this Base.
-		void removeProduction(Production* prod);
+		void removeProduction(const Production* const prod);
 		/// Gets a list of this Base's Production.
 		const std::vector<Production*>& getProductions() const;
 

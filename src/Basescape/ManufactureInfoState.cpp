@@ -262,9 +262,7 @@ void ManufactureInfoState::buildUi() // private.
  */
 void ManufactureInfoState::initProfit() // private.
 {
-	const Ruleset* const rules = _game->getRuleset();
-	const RuleManufacture* const manfRule = _production->getRules();
-
+	const RuleManufacture* const manfRule (_production->getRules());
 	int sellValue;
 
 	for (std::map<std::string, int>::const_iterator
@@ -273,9 +271,9 @@ void ManufactureInfoState::initProfit() // private.
 			++i)
 	{
 		if (manfRule->isCraft() == true)
-			sellValue = rules->getCraft(i->first)->getSellCost();
+			sellValue = _game->getRuleset()->getCraft(i->first)->getSellCost();
 		else
-			sellValue = rules->getItem(i->first)->getSellCost();
+			sellValue = _game->getRuleset()->getItem(i->first)->getSellCost();
 
 		_producedItemsValue += sellValue * i->second;
 	}
@@ -371,7 +369,8 @@ void ManufactureInfoState::btnOkClick(Action*) // private.
 	if (_manfRule != nullptr)
 		_production->startProduction(
 								_base,
-								_game->getSavedGame());
+								_game->getSavedGame(),
+								_game->getRuleset());
 
 	exitState();
 }
@@ -397,7 +396,7 @@ static bool _formatProfit( // static.
 		int profit,
 		std::wostringstream& woststr)
 {
-	float profit_f = static_cast<float>(profit);
+	float profit_f (static_cast<float>(profit));
 
 	bool ret;
 	if (profit_f < 0.f)

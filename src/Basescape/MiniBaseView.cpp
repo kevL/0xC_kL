@@ -274,7 +274,7 @@ void MiniBaseView::draw()
 									color);
 
 						if (craftRule->getWeapons() > 0
-							&& craftRule->getWeapons() == (*j)->getNumWeapons())
+							&& craftRule->getWeapons() == (*j)->getQtyWeapons())
 						{
 							setPixelColor(
 										x + 10,
@@ -418,7 +418,7 @@ void MiniBaseView::blink()
 
 				craftRule = (*j)->getRules();
 				if (craftRule->getWeapons() > 0 // craft needs Weapons mounted.
-					&& craftRule->getWeapons() != (*j)->getNumWeapons())
+					&& craftRule->getWeapons() != (*j)->getQtyWeapons())
 				{
 					if (_blink == true)
 						color = BLUE;

@@ -2404,7 +2404,7 @@ void BattlescapeGenerator::runInventory(
 
 	int qtySoldiers;
 	if (craft != nullptr)
-		qtySoldiers = craft->getNumSoldiers();
+		qtySoldiers = craft->getQtySoldiers();
 	else
 		qtySoldiers = base->getAvailableSoldiers(true);
 

@@ -92,7 +92,7 @@ private:
 		/// Gets craft, used for drawing facility.
 		const Craft* getCraft() const;
 		/// Sets craft, used for drawing facility.
-		void setCraft(const Craft* const craft);
+		void setCraft(const Craft* const craft = nullptr);
 };
 
 }

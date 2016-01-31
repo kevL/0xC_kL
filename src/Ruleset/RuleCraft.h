@@ -59,7 +59,6 @@ private:
 		_costSell,
 		_listOrder,
 		_marker,
-		_maxItems,
 		_radarRange,
 		_reconRange,
 		_refuelRate,
@@ -68,13 +67,15 @@ private:
 		_sprite,
 		_transferTime,
 
-		_fuelMax,
-		_damageMax,
-		_speedMax,
 		_accel,
-		_weapons,
+		_damageMax,
+		_fuelMax,
+		_speedMax,
+
+		_items,
 		_soldiers,
-		_vehicles;
+		_vehicles,
+		_weapons;
 
 	std::string
 		_refuelItem,
@@ -87,83 +88,82 @@ private:
 
 
 	public:
-		/// Creates a blank craft ruleset.
+		/// Creates a blank Craft ruleset.
 		explicit RuleCraft(const std::string& type);
-		/// Cleans up the craft ruleset.
+		/// Cleans up a Craft ruleset.
 		~RuleCraft();
 
-		/// Loads craft data from YAML.
+		/// Loads Craft data from YAML.
 		void load(
 				const YAML::Node& node,
 				Ruleset* const rules,
 				int modIndex,
 				int nextCraftIndex);
 
-		/// Gets the craft's type.
+		/// Gets a Craft's type.
 		std::string getType() const;
 
-		/// Gets the craft's requirements.
+		/// Gets a Craft's requirements.
 		const std::vector<std::string>& getRequirements() const;
 
-		/// Gets the craft's sprite.
+		/// Gets a Craft's sprite.
 		int getSprite() const;
-		/// Gets the craft's globe marker.
+		/// Gets a Craft's globe marker.
 		int getMarker() const;
 
-		/// Gets the craft's maximum fuel.
+		/// Gets a Craft's maximum fuel.
 		int getMaxFuel() const;
-		/// Gets the craft's maximum damage.
+		/// Gets a Craft's maximum damage.
 		int getMaxDamage() const;
-		/// Gets the craft's maximum speed.
+		/// Gets a Craft's maximum speed.
 		int getMaxSpeed() const;
-		/// Gets the craft's acceleration.
+		/// Gets a Craft's acceleration.
 		int getAcceleration() const;
 
-		/// Gets the craft's weapon capacity.
+		/// Gets a Craft's weapon capacity.
 		int getWeapons() const;
-		/// Gets the craft's soldier capacity.
+		/// Gets a Craft's soldier capacity.
 		int getSoldiers() const;
-		/// Gets the craft's vehicle capacity.
+		/// Gets a Craft's vehicle capacity.
 		int getVehicles() const;
+		/// Gets a Craft's item capacity.
+		int getItems() const;
 
-		/// Gets the craft's cost.
+		/// Gets a Craft's cost.
 		int getBuyCost() const;
-		/// Gets the craft's rent for a month.
+		/// Gets a Craft's rent for a month.
 		int getRentCost() const;
-		/// Gets the craft's value.
+		/// Gets a Craft's value.
 		int getSellCost() const;
 
-		/// Gets the craft's refuel item.
+		/// Gets a Craft's refuel item.
 		std::string getRefuelItem() const;
 
-		/// Gets the craft's repair rate.
+		/// Gets a Craft's repair rate.
 		int getRepairRate() const;
-		/// Gets the craft's refuel rate.
+		/// Gets a Craft's refuel rate.
 		int getRefuelRate() const;
-		/// Gets the craft's radar range.
+		/// Gets a Craft's radar range.
 		int getRadarRange() const;
-		/// Gets the craft's sight range.
+		/// Gets a Craft's sight range.
 		int getReconRange() const;
-		/// Gets the craft's transfer time.
+		/// Gets a Craft's transfer time.
 		int getTransferTime() const;
 
-		/// Gets the craft's score.
+		/// Gets a Craft's score.
 		int getScore() const;
 
-		/// Gets the craft's terrain data.
+		/// Gets a Craft's terrain data.
 		RuleTerrain* getBattlescapeTerrainData();
 
-		/// Checks if this craft is capable of travelling to Mars.
+		/// Checks if a Craft is capable of travelling to Mars.
 		bool getSpacecraft() const;
 
-		/// Gets the list weight for this craft.
+		/// Gets the list weight for a Craft.
 		int getListOrder() const;
 
-		/// Gets the deployment priority for the craft.
+		/// Gets the deployment priority for a Craft.
 		std::vector<std::vector<int>>& getCraftDeployment();
-
-		/// Gets the item limit for this type of craft.
-		int getMaxItems() const;
 };
 
 }

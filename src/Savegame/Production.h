@@ -60,7 +60,9 @@ private:
 	/// Checks if there is enough funds to continue production.
 	bool enoughMoney(const SavedGame* const gameSave) const;
 	/// Checks if there is enough resource material to continue production.
-	bool enoughMaterials(Base* const base) const;
+	bool enoughMaterials(
+			Base* const base,
+			const Ruleset* const rules) const;
 
 
 	public:
@@ -115,7 +117,8 @@ private:
 		/// Starts the Production.
 		void startProduction(
 				Base* const base,
-				SavedGame* const gameSave) const;
+				SavedGame* const gameSave,
+				const Ruleset* const rules) const;
 
 		/// Gets the time till the Production is completed.
 		bool tillFinish(

@@ -196,7 +196,8 @@ void NewManufactureListState::lstProdClick(Action*)
 		}
 	}
 
-	_game->pushState(new ManufactureStartState(_base, manfRule));
+	if (manfRule != nullptr) // safety.
+		_game->pushState(new ManufactureStartState(_base, manfRule));
 }
 
 /**

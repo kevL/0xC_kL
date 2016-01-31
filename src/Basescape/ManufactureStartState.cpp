@@ -136,7 +136,8 @@ ManufactureStartState::ManufactureStartState(
 	if (requiredItems.empty() == false)
 	{
 		showReqs = true;
-		const ItemContainer* const storage (base->getStorageItems());
+		const ItemContainer* const stores (_base->getStorageItems());
+
 		for (std::map<std::string, int>::const_iterator
 				i = requiredItems.begin();
 				i != requiredItems.end();
@@ -146,8 +147,17 @@ ManufactureStartState::ManufactureStartState(
 				woststr1,
 				woststr2;
 			woststr1 << L'\x01' << i->second;
-			woststr2 << L'\x01' << storage->getItemQty(i->first);
-			showStart = showStart && (storage->getItemQty(i->first) >= i->second);
+
+			if (_game->getRuleset()->getItem(i->first) != nullptr)
+			{
+				woststr2 << L'\x01' << stores->getItemQuantity(i->first);
+				showStart &= (stores->getItemQuantity(i->first) >= i->second);
+			}
+			else if (_game->getRuleset()->getCraft(i->first) != nullptr)
+			{
+				woststr2 << L'\x01' << _base->getCraftCount(i->first);
+				showStart &= (_base->getCraftCount(i->first) >= i->second);
+			}
 			_lstRequiredItems->addRow(
 									3,
 									tr(i->first).c_str(),

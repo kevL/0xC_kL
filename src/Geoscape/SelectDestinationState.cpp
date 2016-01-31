@@ -157,7 +157,7 @@ SelectDestinationState::SelectDestinationState(
 
 	if (_craft->getRules()->getSpacecraft() == true
 		&& _game->getSavedGame()->isResearched(_game->getRuleset()->getFinalResearch()) == true
-		&& _craft->getNumSoldiers() != 0)
+		&& _craft->getQtySoldiers() != 0)
 	{
 		for (std::vector<Soldier*>::const_iterator // if all Soldiers have Power or Flight suits .......
 			i = _craft->getBase()->getSoldiers()->begin();
@@ -306,7 +306,7 @@ void SelectDestinationState::btnCancelClick(Action*)
  */
 void SelectDestinationState::btnCydoniaClick(Action*)
 {
-	if (_craft->getNumSoldiers() > 0) //|| _craft->getNumVehicles() > 0)
+	if (_craft->getQtySoldiers() != 0) //|| _craft->getQtyVehicles() > 0)
 		_game->pushState(new ConfirmCydoniaState(_craft));
 }
 

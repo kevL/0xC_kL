@@ -45,6 +45,7 @@
 #include "../Ruleset/Ruleset.h"
 #include "../Ruleset/RuleUnit.h"
 
+#include "../Savegame/BaseFacility.h"
 #include "../Savegame/SavedGame.h"
 #include "../Savegame/Transfer.h"
 
@@ -92,7 +93,7 @@ Craft::Craft(
 	if (_base != nullptr)
 		setBase(_base);
 
-	_loadCap = _crRule->getMaxItems() + _crRule->getSoldiers() * 10;
+	_loadCap = _crRule->getItems() + _crRule->getSoldiers() * 10;
 }
 
 /**
@@ -100,13 +101,13 @@ Craft::Craft(
  */
 Craft::~Craft()
 {
+	delete _items;
+
 	for (std::vector<CraftWeapon*>::const_iterator
 			i = _weapons.begin();
 			i != _weapons.end();
 			++i)
 		delete *i;
-
-	delete _items;
 
 	for (std::vector<Vehicle*>::const_iterator
 			i = _vehicles.begin();
@@ -277,7 +278,7 @@ void Craft::load(
 	if (_tactical == true)
 		setSpeed(0);
 
-	_loadCur = getNumEquipment() + (getNumSoldiers() + getNumVehicles(true) * 10); // note: 10 is the 'load' that a single 'space' uses.
+	_loadCur = getQtyEquipment() + (getQtySoldiers() + getQtyVehicles(true) * 10); // note: 10 is the 'load' that a single 'space' uses.
 }
 
 /**
@@ -514,7 +515,7 @@ std::string Craft::getAltitude() const
 	if (_dest == nullptr)
 		return "STR_LOW_UC";
 
-	const Ufo* const ufo = dynamic_cast<Ufo*>(_dest);
+	const Ufo* const ufo (dynamic_cast<Ufo*>(_dest));
 	if (ufo != nullptr)
 	{
 		if (ufo->getAltitude() == "STR_GROUND")
@@ -558,11 +559,11 @@ void Craft::setDestination(Target* const dest)
  * Gets the amount of weapons currently equipped on this Craft.
  * @return, number of weapons
  */
-int Craft::getNumWeapons() const
+int Craft::getQtyWeapons() const
 {
-	int ret = 0;
 	if (_crRule->getWeapons() != 0)
 	{
+		int ret = 0;
 		for (std::vector<CraftWeapon*>::const_iterator
 				i = _weapons.begin();
 				i != _weapons.end();
@@ -571,64 +572,73 @@ int Craft::getNumWeapons() const
 			if (*i != nullptr)
 				++ret;
 		}
+		return ret;
 	}
 
-	return ret;
+	return 0;
 }
 
 /**
  * Gets the amount of soldiers from a list that are currently attached to this Craft.
  * @return, number of soldiers
  */
-int Craft::getNumSoldiers() const
+int Craft::getQtySoldiers() const
 {
-	if (_crRule->getSoldiers() == 0)
-		return 0;
-
-	int ret = 0;
-	for (std::vector<Soldier*>::const_iterator
-			i = _base->getSoldiers()->begin();
-			i != _base->getSoldiers()->end();
-			++i)
+	if (_crRule->getSoldiers() != 0)
 	{
-		if ((*i)->getCraft() == this)
-			++ret;
+		int ret = 0;
+		for (std::vector<Soldier*>::const_iterator
+				i = _base->getSoldiers()->begin();
+				i != _base->getSoldiers()->end();
+				++i)
+		{
+			if ((*i)->getCraft() == this)
+				++ret;
+		}
+		return ret;
 	}
 
-	return ret;
+	return 0;
 }
 
 /**
  * Gets the amount of equipment currently equipped on this Craft.
  * @return, number of items
  */
-int Craft::getNumEquipment() const
+int Craft::getQtyEquipment() const
 {
-	return _items->getTotalQuantity();
+	if (_crRule->getItems() != 0)
+		return _items->getTotalQuantity();
+
+	return 0;
 }
 
 /**
  * Gets the amount of vehicles currently contained in this Craft.
- * @param tiles - true to return tile-spaces used in a transport (default false)
+ * @param quadrants - true to return tile-spaces used in a transport (default false)
  * @return, either number of vehicles or tile-space used
  */
-int Craft::getNumVehicles(bool tiles) const
+int Craft::getQtyVehicles(bool quadrants) const
 {
-	if (tiles == true)
+	if (_crRule->getVehicles() != 0)
 	{
-		int ret = 0;
-		for (std::vector<Vehicle*>::const_iterator
-				i = _vehicles.begin();
-				i != _vehicles.end();
-				++i)
+		if (quadrants == true)
 		{
-			ret += (*i)->getSize();
+			int ret = 0;
+			for (std::vector<Vehicle*>::const_iterator
+					i = _vehicles.begin();
+					i != _vehicles.end();
+					++i)
+			{
+				ret += (*i)->getSize();
+			}
+			return ret;
 		}
 
-		return ret;
+		return static_cast<int>(_vehicles.size());
 	}
 
-	return static_cast<int>(_vehicles.size());
+	return 0;
 }
 
 /**
@@ -971,7 +981,7 @@ std::string Craft::rearm(const Ruleset* const rules)
 			test.clear();
 
 			const std::string clip = (*i)->getRules()->getClipItem();
-			const int baseClips = _base->getStorageItems()->getItemQty(clip);
+			const int baseClips = _base->getStorageItems()->getItemQuantity(clip);
 
 			if (clip.empty() == true)
 				(*i)->rearm();
@@ -1102,7 +1112,7 @@ int Craft::getSpaceAvailable() const
  */
 int Craft::getSpaceUsed() const
 {
-	int vehicleSpaceUsed = 0; // <- could use getNumVehicles(true)
+	int vehicleSpaceUsed = 0; // <- could use getQtyVehicles(true)
 
 	for (std::vector<Vehicle*>::const_iterator
 			i = _vehicles.begin();
@@ -1112,7 +1122,7 @@ int Craft::getSpaceUsed() const
 		vehicleSpaceUsed += (*i)->getSize();
 	}
 
-	return getNumSoldiers() + vehicleSpaceUsed;
+	return getQtySoldiers() + vehicleSpaceUsed;
 }
 
 /**
@@ -1199,7 +1209,7 @@ void Craft::setLoadCurrent(const int load)
  */
 int Craft::calcLoadCurrent()
 {
-	return (_loadCur = (getNumEquipment() + getSpaceUsed() * 10));
+	return (_loadCur = (getQtyEquipment() + getSpaceUsed() * 10));
 }
 
 /**
@@ -1277,7 +1287,7 @@ int Craft::getDowntime(bool& delayed)
 				const std::string clip = (*i)->getRules()->getClipItem();
 				if (clip.empty() == false)
 				{
-					int baseQty = _base->getStorageItems()->getItemQty(clip);
+					int baseQty = _base->getStorageItems()->getItemQuantity(clip);
 					if (baseQty < reqQty)
 					{
 						for (std::vector<Transfer*>::const_iterator // check Transfers
@@ -1317,7 +1327,7 @@ int Craft::getDowntime(bool& delayed)
 			const std::string fuel = _crRule->getRefuelItem();
 			if (fuel.empty() == false)
 			{
-				int baseQty = _base->getStorageItems()->getItemQty(fuel);
+				int baseQty = _base->getStorageItems()->getItemQuantity(fuel);
 				if (baseQty < reqQty) // check Transfers
 				{
 					for (std::vector<Transfer*>::const_iterator // check Transfers
@@ -1369,6 +1379,94 @@ int Craft::getKills() const
 bool Craft::getTakeoff() const
 {
 	return (_takeOff == 0);
+}
+
+/**
+ * Transfers soldiers, tanks, items, and weapons to its Base.
+ * NOTE: Do weapons & rounds use space at the Base ......
+ * @param rules			- pointer to the Ruleset
+ * @param updateCraft	- true to keep the Craft and update its contents and
+ *						  keep weapon hard-points intact (default true)
+ */
+void Craft::unloadCraft(
+		const Ruleset* const rules,
+		bool updateCraft)
+{
+	if (_crRule->getSoldiers() != 0)
+	{
+		for (std::vector<Soldier*>::const_iterator
+				i = _base->getSoldiers()->begin();
+				i != _base->getSoldiers()->end();
+				++i)
+		{
+			if ((*i)->getCraft() == this)
+				(*i)->setCraft();
+		}
+	}
+
+	if (_crRule->getVehicles() != 0)
+	{
+		for (std::vector<Vehicle*>::const_iterator
+				i = _vehicles.begin();
+				i != _vehicles.end();
+				++i)
+		{
+			_base->getStorageItems()->addItem((*i)->getRules()->getType());
+
+			if ((*i)->getRules()->getCompatibleAmmo()->empty() == false)
+				_base->getStorageItems()->addItem(
+											(*i)->getRules()->getCompatibleAmmo()->front(),
+											(*i)->getAmmo());
+
+		}
+
+		if (updateCraft == true)
+			_vehicles.clear();
+	}
+
+	if (_crRule->getItems() != 0)
+	{
+		for (std::map<std::string, int>::const_iterator
+				i = _items->getContents()->begin();
+				i != _items->getContents()->end();
+				++i)
+		{
+			_base->getStorageItems()->addItem(i->first, i->second);
+
+			if (updateCraft == true)
+				_items->removeItem(i->first, i->second);
+		}
+	}
+
+	if (updateCraft == false && _crRule->getWeapons() != 0)
+	{
+		for (std::vector<CraftWeapon*>::const_iterator
+				i = _weapons.begin();
+				i != _weapons.end();
+				++i)
+		{
+			if (*i != nullptr)
+			{
+				_base->getStorageItems()->addItem((*i)->getRules()->getLauncherItem());
+				_base->getStorageItems()->addItem(
+											(*i)->getRules()->getClipItem(),
+											(*i)->getClipsLoaded(rules));
+			}
+		}
+	}
+
+
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _base->getFacilities()->begin();
+			i != _base->getFacilities()->end();
+			++i)
+	{
+		if ((*i)->getCraft() == this)
+		{
+			(*i)->setCraft();
+			break;
+		}
+	}
 }
 
 }

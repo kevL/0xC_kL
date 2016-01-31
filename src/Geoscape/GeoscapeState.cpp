@@ -1671,8 +1671,8 @@ void GeoscapeState::time5Seconds()
 						}
 						else if (ufo->getUfoStatus() == Ufo::DESTROYED
 							|| (ufo->getUfoStatus() == Ufo::CRASHED	// http://openxcom.org/forum/index.php?topic=2406.0
-								&& (*j)->getNumSoldiers() == 0))	// Actually should set this on the UFO-crash event
-	//							&& (*j)->getNumVehicles() == 0))	// so that crashed-ufos can still be targeted for Patrols.
+								&& (*j)->getQtySoldiers() == 0))	// Actually should set this on the UFO-crash event
+	//							&& (*j)->getQtyVehicles() == 0))	// so that crashed-ufos can still be targeted for Patrols.
 						{
 							(*j)->returnToBase();
 						}
@@ -1733,7 +1733,7 @@ void GeoscapeState::time5Seconds()
 							case Ufo::LANDED:		// setSpeed 1/2 (need to speed up to full if UFO takes off)
 							case Ufo::CRASHED:		// setSpeed 1/2 (need to speed back up when setting a new destination)
 							case Ufo::DESTROYED:	// just before expiration
-								if ((*j)->getNumSoldiers() > 0)
+								if ((*j)->getQtySoldiers() != 0)
 								{
 									if ((*j)->isInDogfight() == false)
 									{
@@ -1760,7 +1760,7 @@ void GeoscapeState::time5Seconds()
 					}
 					else // wp, site, OR aBase
 					{
-						if (wp == nullptr && (*j)->getNumSoldiers() != 0)
+						if (wp == nullptr && (*j)->getQtySoldiers() != 0)
 						{
 							resetTimer();
 							if (site != nullptr)
@@ -2396,7 +2396,7 @@ void GeoscapeState::time30Minutes()
 						(*j)->refuel();
 					else
 					{
-						if ((*j)->getRules()->getRefuelRate() <= (*i)->getStorageItems()->getItemQty(refuelItem))
+						if ((*j)->getRules()->getRefuelRate() <= (*i)->getStorageItems()->getItemQuantity(refuelItem))
 						{
 							(*j)->refuel();
 							(*i)->getStorageItems()->removeItem(

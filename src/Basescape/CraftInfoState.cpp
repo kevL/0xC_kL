@@ -237,7 +237,7 @@ void CraftInfoState::init()
 
 	const bool skirmish = (_game->getSavedGame()->getMonthsPassed() == -1);
 
-	_btnInventory->setVisible(_craft->getNumSoldiers() != 0
+	_btnInventory->setVisible(_craft->getQtySoldiers() != 0
 						   && _craft->getCraftItems()->getTotalQuantity() != 0
 						   && skirmish == false);
 
@@ -338,7 +338,7 @@ void CraftInfoState::init()
 //		bit = baseBits->getFrame(38);
 //		for (int
 //				i = 0;
-//				i != _craft->getNumSoldiers();
+//				i != _craft->getQtySoldiers();
 //				++i, x += icon_width)
 		for (std::vector<Soldier*>::const_iterator // soldier graphic
 				i = _base->getSoldiers()->begin();
@@ -368,7 +368,7 @@ void CraftInfoState::init()
 		x = 0;
 		for (int
 				i = 0;
-				i != _craft->getNumVehicles();
+				i != _craft->getQtyVehicles();
 				++i, x += icon_width)
 		{
 			bit->setX(x);
@@ -381,7 +381,7 @@ void CraftInfoState::init()
 		const int
 			totalIcons = ((_equip->getWidth() - x) + (icon_width - 1)) / icon_width,
 			loadCap = _craft->getLoadCapacity() - (_craft->getSpaceUsed() * 10),
-			qtyIcons = ((totalIcons * _craft->getNumEquipment()) + (loadCap - 1)) / loadCap;
+			qtyIcons = ((totalIcons * _craft->getQtyEquipment()) + (loadCap - 1)) / loadCap;
 
 		for (int
 				i = 0;

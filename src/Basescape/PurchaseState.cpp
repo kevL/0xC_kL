@@ -266,7 +266,7 @@ PurchaseState::PurchaseState(Base* const base)
 			_orderQty.push_back(0);
 			_items.push_back(type);
 
-			int qty = _base->getStorageItems()->getItemQty(type);
+			int qty = _base->getStorageItems()->getItemQuantity(type);
 			for (std::vector<Transfer*>::const_iterator
 					j = _base->getTransfers()->begin();
 					j != _base->getTransfers()->end();
@@ -314,7 +314,7 @@ PurchaseState::PurchaseState(Base* const base)
 			_orderQty.push_back(0);
 			_items.push_back(type);
 
-			int qty = _base->getStorageItems()->getItemQty(type);
+			int qty = _base->getStorageItems()->getItemQuantity(type);
 			for (std::vector<Transfer*>::const_iterator
 					j = _base->getTransfers()->begin();
 					j != _base->getTransfers()->end();
@@ -371,7 +371,7 @@ PurchaseState::PurchaseState(Base* const base)
 			_orderQty.push_back(0);
 			_items.push_back(*i);
 
-			int qty = _base->getStorageItems()->getItemQty(*i);
+			int qty = _base->getStorageItems()->getItemQuantity(*i);
 			type = itRule->getType();
 
 			for (std::vector<Transfer*>::const_iterator // add transfer items

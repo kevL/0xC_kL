@@ -156,17 +156,17 @@ void CraftsState::init()
 		craftRule = (*i)->getRules();
 
 		if (craftRule->getWeapons() > 0)
-			woststr1 << (*i)->getNumWeapons() << L"/" << craftRule->getWeapons();
+			woststr1 << (*i)->getQtyWeapons() << L"/" << craftRule->getWeapons();
 		else
 			woststr1 << L"-";
 
 		if (craftRule->getSoldiers() > 0)
-			woststr2 << (*i)->getNumSoldiers();
+			woststr2 << (*i)->getQtySoldiers();
 		else
 			woststr2 << L"-";
 
 		if (craftRule->getVehicles() > 0)
-			woststr3 << (*i)->getNumVehicles();
+			woststr3 << (*i)->getQtyVehicles();
 		else
 			woststr3 << L"-";
 

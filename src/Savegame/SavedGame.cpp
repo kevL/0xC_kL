@@ -1466,7 +1466,7 @@ void SavedGame::getAvailableResearchProjects(
 		}
 
 		if (resRule->needsItem() == true
-			&& base->getStorageItems()->getItemQty(resRule->getType()) == 0)
+			&& base->getStorageItems()->getItemQuantity(resRule->getType()) == 0)
 		{
 			continue;
 		}

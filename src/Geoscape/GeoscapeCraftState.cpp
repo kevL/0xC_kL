@@ -262,7 +262,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 
 	if (_craft->getRules()->getSoldiers() != 0)
 	{
-		woststr << tr("STR_SOLDIERS") << L" " << L'\x01' << _craft->getNumSoldiers()
+		woststr << tr("STR_SOLDIERS") << L" " << L'\x01' << _craft->getQtySoldiers()
 				<< L" (" << _craft->getRules()->getSoldiers() << L")";
 		_txtSoldier->setText(woststr.str());
 	}
@@ -272,7 +272,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	if (_craft->getRules()->getVehicles() != 0)
 	{
 		woststr.str(L"");
-		woststr << tr("STR_HWPS") << L" " << L'\x01' << _craft->getNumVehicles()
+		woststr << tr("STR_HWPS") << L" " << L'\x01' << _craft->getQtyVehicles()
 				<< L" (" << _craft->getRules()->getVehicles() << L")";
 		_txtHWP->setText(woststr.str());
 	}

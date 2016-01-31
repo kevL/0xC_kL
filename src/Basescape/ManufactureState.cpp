@@ -296,8 +296,8 @@ void ManufactureState::fillProductionList()
 			i != _baseList->end();
 			++i)
 	{
-		ally = (*i)->getStorageItems()->getItemQty("STR_ALIEN_ALLOYS");
-		eler = (*i)->getStorageItems()->getItemQty("STR_ELERIUM_115");
+		ally = (*i)->getStorageItems()->getItemQuantity("STR_ALIEN_ALLOYS");
+		eler = (*i)->getStorageItems()->getItemQuantity("STR_ELERIUM_115");
 
 		totalA += ally;
 		totalE += eler;

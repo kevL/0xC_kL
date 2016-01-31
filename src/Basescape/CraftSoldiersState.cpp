@@ -219,8 +219,8 @@ void CraftSoldiersState::init()
 	}
 
 	_txtSpace->setText(tr("STR_SPACE_CREW_HWP_FREE_")
-					.arg(_craft->getNumSoldiers())
-					.arg(_craft->getNumVehicles())
+					.arg(_craft->getQtySoldiers())
+					.arg(_craft->getQtyVehicles())
 					.arg(_craft->getSpaceAvailable()));
 	_txtLoad->setText(tr("STR_LOAD_CAPACITY_FREE_")
 					.arg(_craft->getLoadCapacity())
@@ -257,7 +257,7 @@ void CraftSoldiersState::btnUnloadClick(Action*)
 			++i)
 	{
 		if ((*i)->getCraft() == _craft)
-			(*i)->setCraft(nullptr);
+			(*i)->setCraft();
 	}
 
 	_base->setRecallRow(
@@ -310,7 +310,7 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 			if (sol->getCraft() != nullptr
 				&& sol->getCraft()->getCraftStatus() != CS_OUT)
 			{
-				sol->setCraft(nullptr);
+				sol->setCraft();
 				_lstSoldiers->setCellText(
 										row, 2,
 										tr("STR_NONE_UC"));
@@ -319,8 +319,8 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 		_lstSoldiers->setRowColor(row, color);
 
 		_txtSpace->setText(tr("STR_SPACE_CREW_HWP_FREE_")
-						.arg(_craft->getNumSoldiers())
-						.arg(_craft->getNumVehicles())
+						.arg(_craft->getQtySoldiers())
+						.arg(_craft->getQtyVehicles())
 						.arg(_craft->getSpaceAvailable()));
 		_txtLoad->setText(tr("STR_LOAD_CAPACITY_FREE_")
 						.arg(_craft->getLoadCapacity())
@@ -478,7 +478,7 @@ void CraftSoldiersState::calculateTacticalCost() // private.
  */
 void CraftSoldiersState::displayExtraButtons() const // private.
 {
-	const bool hasSoldier = _craft->getNumSoldiers() != 0;
+	const bool hasSoldier = _craft->getQtySoldiers() != 0;
 	_btnUnload->setVisible(hasSoldier);
 	_btnInventory->setVisible(hasSoldier && _craft->getCraftItems()->getTotalQuantity() != 0
 						   && _game->getSavedGame()->getMonthsPassed() != -1);

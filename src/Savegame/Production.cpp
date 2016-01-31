@@ -22,6 +22,7 @@
 //#include <limits>
 
 #include "Base.h"
+#include "BaseFacility.h"
 #include "Craft.h"
 #include "CraftWeapon.h"
 #include "ItemContainer.h"
@@ -213,17 +214,24 @@ bool Production::enoughMoney(const SavedGame* const gameSave) const // private.
  * Checks if there is enough resource material to continue production.
  * @return, true if materials available
  */
-bool Production::enoughMaterials(Base* const base) const // private.
+bool Production::enoughMaterials( // private.
+		Base* const base,
+		const Ruleset* const rules) const
 {
-	for (std::map<std::string,int>::const_iterator
+	for (std::map<std::string, int>::const_iterator
 			i = _manfRule->getRequiredItems().begin();
 			i != _manfRule->getRequiredItems().end();
 			++i)
 	{
-		if (base->getStorageItems()->getItemQty(i->first) < i->second)
-			return false;
+		if ((rules->getItem(i->first) != nullptr
+				&& base->getStorageItems()->getItemQuantity(i->first) >= i->second)
+			|| (rules->getCraft(i->first) != nullptr
+				&& base->getCraftCount(i->first) >= i->second))
+		{
+			return true;
+		}
 	}
-	return true;
+	return false;
 }
 
 /**
@@ -357,10 +365,10 @@ ProductionProgress Production::step(
 				if (enoughMoney(gameSave) == false)
 					return PROGRESS_NOT_ENOUGH_MONEY;
 
-				if (enoughMaterials(base) == false)
+				if (enoughMaterials(base, rules) == false)
 					return PROGRESS_NOT_ENOUGH_MATERIALS;
 
-				startProduction(base, gameSave);
+				startProduction(base, gameSave, rules);
 			}
 		}
 		while (qty < produced);
@@ -377,10 +385,10 @@ ProductionProgress Production::step(
 		if (enoughMoney(gameSave) == false)
 			return PROGRESS_NOT_ENOUGH_MONEY;
 
-		if (enoughMaterials(base) == false)
+		if (enoughMaterials(base, rules) == false)
 			return PROGRESS_NOT_ENOUGH_MATERIALS;
 
-		startProduction(base, gameSave);
+		startProduction(base, gameSave, rules);
 	}
 
 	return PROGRESS_NOT_COMPLETE;
@@ -393,7 +401,8 @@ ProductionProgress Production::step(
  */
 void Production::startProduction(
 		Base* const base,
-		SavedGame* const gameSave) const
+		SavedGame* const gameSave,
+		const Ruleset* const rules) const
 {
 	const int cost (_manfRule->getManufactureCost());
 	gameSave->setFunds(gameSave->getFunds() - cost);
@@ -404,7 +413,25 @@ void Production::startProduction(
 			i != _manfRule->getRequiredItems().end();
 			++i)
 	{
-		base->getStorageItems()->removeItem(i->first, i->second);
+		if (rules->getItem(i->first) != nullptr)
+			base->getStorageItems()->removeItem(i->first, i->second);
+		else if (rules->getCraft(i->first) != nullptr)
+		{
+			for (std::vector<Craft*>::const_iterator
+					j = base->getCrafts()->begin();
+					j != base->getCrafts()->end();
+					++j)
+			{
+				if ((*j)->getRules()->getType() == i->first)
+				{
+					(*j)->unloadCraft(rules, false);
+
+					delete *j;
+					base->getCrafts()->erase(j);
+					break;
+				}
+			}
+		}
 	}
 }
 

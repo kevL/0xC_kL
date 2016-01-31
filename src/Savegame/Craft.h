@@ -152,13 +152,13 @@ private:
 		void setDestination(Target* const dest) override;
 
 		/// Gets the Craft's amount of weapons.
-		int getNumWeapons() const;
+		int getQtyWeapons() const;
 		/// Gets the Craft's amount of soldiers.
-		int getNumSoldiers() const;
+		int getQtySoldiers() const;
 		/// Gets the Craft's amount of equipment.
-		int getNumEquipment() const;
+		int getQtyEquipment() const;
 		/// Gets the Craft's amount of vehicles.
-		int getNumVehicles(bool tiles = false) const;
+		int getQtyVehicles(bool quadrants = false) const;
 
 		/// Gets the Craft's weapons.
 		std::vector<CraftWeapon*>* getWeapons();
@@ -268,6 +268,11 @@ private:
 
 		/// Gets if the Craft has left the ground.
 		bool getTakeoff() const;
+
+		/// Transfers soldiers, tanks, items, and weapons to its Base.
+		void unloadCraft(
+				const Ruleset* const rules,
+				bool updateCraft = true);
 };
 
 }
