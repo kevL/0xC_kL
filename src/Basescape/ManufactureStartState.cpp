@@ -117,7 +117,7 @@ ManufactureStartState::ManufactureStartState(
 	_txtCost->setText(tr("STR_COST_PER_UNIT_")
 							.arg(Text::formatCurrency(_manfRule->getManufactureCost())));
 	_txtWorkSpace->setText(tr("STR_WORK_SPACE_REQUIRED_")
-							.arg(_manfRule->getRequiredSpace()));
+							.arg(_manfRule->getSpaceRequired()));
 
 	_txtRequiredItems->setText(tr("STR_SPECIAL_MATERIALS_REQUIRED"));
 
@@ -206,29 +206,46 @@ ManufactureStartState::~ManufactureStartState()
  */
 void ManufactureStartState::init()
 {
+//	State::init();
+
 	if (_init == true)
 	{
 		_init = false;
-//		State::init();
-		if (_manfRule->isCraft() == true && _base->getFreeHangars() < 1)
+		const Ruleset* const rules (_game->getRuleset());
+
+		bool reqCraft = false;
+		for (std::map<std::string,int>::const_iterator
+				i = _manfRule->getRequiredItems().begin();
+				i != _manfRule->getRequiredItems().end();
+				++i)
 		{
-			_btnStart->setVisible(false);
-			_game->pushState(new ErrorMessageState(
-											tr("STR_NO_FREE_HANGARS_FOR_CRAFT_PRODUCTION"),
-											_palette,
-											_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
-											"BACK17.SCR",
-											_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
+			if (rules->getItem(i->first) == nullptr
+				&& rules->getCraft(i->first) != nullptr)
+			{
+				reqCraft = true;
+				break;
+			}
 		}
-		else if (_manfRule->getRequiredSpace() > _base->getFreeWorkshops())
+
+		std::string error;
+		if (_manfRule->getSpaceRequired() > _base->getFreeWorkshops())
+			error = "STR_NOT_ENOUGH_WORK_SPACE";
+		else if (reqCraft == false
+			&& _base->getFreeHangars() == 0
+			&& _manfRule->isCraft() == true)
+		{
+			error = "STR_NO_FREE_HANGARS_FOR_CRAFT_PRODUCTION";
+		}
+
+		if (error.empty() == false)
 		{
 			_btnStart->setVisible(false);
 			_game->pushState(new ErrorMessageState(
-											tr("STR_NOT_ENOUGH_WORK_SPACE"),
+											tr(error),
 											_palette,
-											_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
+											rules->getInterface("basescape")->getElement("errorMessage")->color,
 											"BACK17.SCR",
-											_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
+											rules->getInterface("basescape")->getElement("errorPalette")->color));
 		}
 	}
 }

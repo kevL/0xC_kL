@@ -61,7 +61,7 @@ private:
 	TextList* _lstManufacture;
 	Window* _window;
 
-	std::vector<const RuleManufacture*> _possibleProductions;
+	std::vector<const RuleManufacture*> _available;
 	std::vector<std::string>
 		_catStrings,
 		_displayStrings;

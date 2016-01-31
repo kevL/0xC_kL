@@ -75,7 +75,7 @@ private:
 		const std::vector<std::string>& getRequirements() const;
 
 		/// Gets the required workshop space.
-		int getRequiredSpace() const;
+		int getSpaceRequired() const;
 		/// Gets the time required to manufacture one object.
 		int getManufactureTime() const;
 		/// Gets the cost of manufacturing one object.

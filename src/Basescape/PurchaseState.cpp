@@ -175,13 +175,15 @@ PurchaseState::PurchaseState(Base* const base)
 	_lstItems->onRightArrowRelease((ActionHandler)& PurchaseState::lstItemsRightArrowRelease);
 	_lstItems->onRightArrowClick((ActionHandler)& PurchaseState::lstItemsRightArrowClick);
 
+
+	const RuleSoldier* solRule;
 	const std::vector<std::string>& soldierList (rules->getSoldiersList());
 	for (std::vector<std::string>::const_iterator
 			i = soldierList.begin();
 			i != soldierList.end();
 			++i)
 	{
-		const RuleSoldier* const solRule = rules->getSoldier(*i);
+		solRule = rules->getSoldier(*i);
 		if (solRule->getBuyCost() != 0
 			&& _game->getSavedGame()->isResearched(solRule->getRequirements()) == true)
 		{
@@ -198,24 +200,24 @@ PurchaseState::PurchaseState(Base* const base)
 
 	_orderQty.push_back(0);
 	_lstItems->addRow(
-					4,
-					tr("STR_SCIENTIST").c_str(),
-					Text::formatCurrency(rules->getScientistCost() * 2).c_str(),
-					Text::intWide(_base->getTotalScientists()).c_str(),
-					L"0");
+				4,
+				tr("STR_SCIENTIST").c_str(),
+				Text::formatCurrency(rules->getScientistCost() * 2).c_str(),
+				Text::intWide(_base->getTotalScientists()).c_str(),
+				L"0");
 
 	_orderQty.push_back(0);
 	_lstItems->addRow(
-					4,
-					tr("STR_ENGINEER").c_str(),
-					Text::formatCurrency(rules->getEngineerCost() * 2).c_str(),
-					Text::intWide(_base->getTotalEngineers()).c_str(),
-					L"0");
+				4,
+				tr("STR_ENGINEER").c_str(),
+				Text::formatCurrency(rules->getEngineerCost() * 2).c_str(),
+				Text::intWide(_base->getTotalEngineers()).c_str(),
+				L"0");
 
 
 	// Add craft-types to purchase list.
 	const RuleCraft* crftRule;
-	const std::vector<std::string>& craftList = rules->getCraftsList();
+	const std::vector<std::string>& craftList (rules->getCraftsList());
 	for (std::vector<std::string>::const_iterator
 			i = craftList.begin();
 			i != craftList.end();
@@ -251,7 +253,7 @@ PurchaseState::PurchaseState(Base* const base)
 	int clipSize;
 
 	// Add craft Weapon-types to purchase list.
-	const std::vector<std::string>& cwList = rules->getCraftWeaponsList();
+	const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
 	for (std::vector<std::string>::const_iterator
 			i = cwList.begin();
 			i != cwList.end();

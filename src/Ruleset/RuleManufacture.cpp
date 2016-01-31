@@ -49,17 +49,17 @@ void RuleManufacture::load(
 		int listOrder)
 {
 	// why ->
-	bool same = _producedItems.size() == 1
-			 && _type == _producedItems.begin()->first;
+	const bool inOut (_producedItems.size() == 1
+				   && _type == _producedItems.begin()->first);
 
 	_type = node["type"].as<std::string>(_type);
 
-	if (same == true)
+	if (inOut == true)
 	{
-		const int qty = _producedItems.begin()->second;
+		const int qtyOut (_producedItems.begin()->second);
 		_producedItems.clear();
-		_producedItems[_type] = qty;
-	} // end_why. Perhaps to overwrite a previous entry with a subsequently loaded ID-string, perhaps.
+		_producedItems[_type] = qtyOut;
+	} // End_why. Perhaps to overwrite a previous entry with a subsequently loaded ID-string, perhaps.
 
 	_required		= node["required"]		.as<std::vector<std::string>>(_required);
 	_space			= node["space"]			.as<int>(_space);
@@ -97,7 +97,7 @@ const std::string& RuleManufacture::getCategory() const
 
 /**
  * Gets if this is a Craft-type.
- * @return, true if Craft
+ * @return, true if Craft is produced
  */
 bool RuleManufacture::isCraft() const
 {
@@ -106,7 +106,7 @@ bool RuleManufacture::isCraft() const
 
 /**
  * Gets the list of research required to manufacture this object.
- * @return, reference to a list of research IDs
+ * @return, reference to a vector of research IDs
  */
 const std::vector<std::string>& RuleManufacture::getRequirements() const
 {
@@ -116,16 +116,16 @@ const std::vector<std::string>& RuleManufacture::getRequirements() const
 /**
  * Gets the required workspace to start production.
  * @return, the required workspace
-*/
-int RuleManufacture::getRequiredSpace() const
+ */
+int RuleManufacture::getSpaceRequired() const
 {
 	return _space;
 }
 
 /**
  * Gets the time needed to manufacture one object.
- * @return, the time needed to manufacture one object (in man/hour)
-*/
+ * @return, the time needed in man-hours
+ */
 int RuleManufacture::getManufactureTime() const
 {
 	return _time;
@@ -133,8 +133,8 @@ int RuleManufacture::getManufactureTime() const
 
 /**
  * Gets the cost of manufacturing one object.
- * @return, the cost of manufacturing one object
-*/
+ * @return, the cost
+ */
 int RuleManufacture::getManufactureCost() const
 {
 	return _cost;
@@ -142,8 +142,8 @@ int RuleManufacture::getManufactureCost() const
 
 /**
  * Gets the list of items required to manufacture one object.
- * @return, reference to the list of items required to manufacture one object
-*/
+ * @return, reference to the list of items required
+ */
 const std::map<std::string, int>& RuleManufacture::getRequiredItems() const
 {
 	return _requiredItems;
@@ -152,8 +152,8 @@ const std::map<std::string, int>& RuleManufacture::getRequiredItems() const
 /**
  * Gets the list of items produced by completing one object of this project.
  * @note By default it contains only the item's ID-string with a value of 1.
- * @return, reference to the list of items produced by completing one object of this project
-*/
+ * @return, reference to the list of items produced
+ */
 const std::map<std::string, int>& RuleManufacture::getProducedItems() const
 {
 	return _producedItems;
@@ -161,7 +161,7 @@ const std::map<std::string, int>& RuleManufacture::getProducedItems() const
 
 /**
  * Gets the list weight for this manufacture item.
- * @return, the list weight for this manufacture item
+ * @return, the list weight
  */
 int RuleManufacture::getListOrder() const
 {

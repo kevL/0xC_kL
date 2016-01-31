@@ -3016,10 +3016,7 @@ void GeoscapeState::time1Day()
 				if (newResEvents.empty() == false) // only show the "allocate research" button for the last notification
 					newResEvents.back().showResearchButton = false;
 
-				newResEvents.push_back(NewPossibleResearchInfo(
-															*i,
-															popupResearch,
-															true));
+				newResEvents.push_back(NewPossibleResearchInfo(*i, popupResearch, true));
 			}
 
 			if (popupManufacture.empty() == false)
@@ -3027,10 +3024,7 @@ void GeoscapeState::time1Day()
 				if (newProdEvents.empty() == false) // only show the "allocate production" button for the last notification
 					newProdEvents.back().showManufactureButton = false;
 
-				newProdEvents.push_back(NewPossibleManufactureInfo(
-															*i,
-															popupManufacture,
-															true));
+				newProdEvents.push_back(NewPossibleManufactureInfo(*i, popupManufacture, true));
 			}
 
 			for (std::vector<Base*>::const_iterator		// iterate through all the bases and remove this completed project from their labs

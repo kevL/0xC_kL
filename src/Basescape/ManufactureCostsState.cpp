@@ -167,7 +167,7 @@ void ManufactureCostsState::init()
 							woststr.str().c_str(),
 							Text::formatCurrency((*i)->getManufactureCost()).c_str(),
 							Text::intWide((*i)->getManufactureTime()).c_str(),
-							Text::intWide((*i)->getRequiredSpace()).c_str(),
+							Text::intWide((*i)->getSpaceRequired()).c_str(),
 							L"");
 //							tr((*i)->getCategory ()).c_str());
 

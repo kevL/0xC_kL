@@ -415,7 +415,7 @@ void Production::startProduction(
 	{
 		if (rules->getItem(i->first) != nullptr)
 			base->getStorageItems()->removeItem(i->first, i->second);
-		else if (rules->getCraft(i->first) != nullptr)
+		else if (rules->getCraft(i->first) != nullptr) // TODO: First send a warning that a/the Craft will be unloaded and deleted.
 		{
 			for (std::vector<Craft*>::const_iterator
 					j = base->getCrafts()->begin();

@@ -1419,7 +1419,7 @@ void SavedGame::addFinishedResearch(const RuleResearch* const resRule)
 							j != required->end();
 							++j, ++id)
 					{
-						if (required->at(id) == *j) // wtf this.
+						if (*j == required->at(id)) // wtf this.
 							addFinishedResearch(*i);
 					}
 				}

@@ -930,7 +930,7 @@ int Base::getUsedWorkshops() const
 			i != _productions.end();
 			++i)
 	{
-		total += (*i)->getAssignedEngineers() + (*i)->getRules()->getRequiredSpace();
+		total += (*i)->getAssignedEngineers() + (*i)->getRules()->getSpaceRequired();
 	}
 
 	return total;

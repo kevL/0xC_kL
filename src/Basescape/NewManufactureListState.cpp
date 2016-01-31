@@ -115,14 +115,14 @@ NewManufactureListState::NewManufactureListState(
 
 
 	_game->getSavedGame()->getAvailableProductions(
-											_possibleProductions,
+											_available,
 											_base);
 	_catStrings.push_back("STR_ALL_ITEMS");
 
 	std::string cat;
 	for (std::vector<const RuleManufacture*>::const_iterator
-			i = _possibleProductions.begin();
-			i != _possibleProductions.end();
+			i = _available.begin();
+			i != _available.end();
 			++i)
 	{
 		cat = (*i)->getCategory();
@@ -185,8 +185,8 @@ void NewManufactureListState::lstProdClick(Action*)
 
 	const RuleManufacture* manfRule = nullptr;
 	for (std::vector<const RuleManufacture*>::iterator
-			i = _possibleProductions.begin();
-			i != _possibleProductions.end();
+			i = _available.begin();
+			i != _available.end();
 			++i)
 	{
 		if ((*i)->getType() == _displayStrings[_lstManufacture->getSelectedRow()])
@@ -214,16 +214,16 @@ void NewManufactureListState::cbxCategoryChange(Action*)
 void NewManufactureListState::fillProductionList()
 {
 	_lstManufacture->clearList();
-	_possibleProductions.clear();
+	_available.clear();
 	_displayStrings.clear();
 
 	_game->getSavedGame()->getAvailableProductions(
-											_possibleProductions,
+											_available,
 											_base);
 
 	for (std::vector<const RuleManufacture*>::const_iterator
-			i = _possibleProductions.begin();
-			i != _possibleProductions.end();
+			i = _available.begin();
+			i != _available.end();
 			++i)
 	{
 		if (_catStrings[_cbxCategory->getSelected()] == "STR_ALL_ITEMS"

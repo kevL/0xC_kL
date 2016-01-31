@@ -218,7 +218,7 @@ void ManufactureState::btnOkClick(Action*)
 }
 
 /**
- * Opens the screen with the list of possible productions.
+ * Opens the screen with a list of available Productions.
  * @param action - pointer to an Action
  */
 void ManufactureState::btnNewProductionClick(Action*)
@@ -227,7 +227,7 @@ void ManufactureState::btnNewProductionClick(Action*)
 }
 
 /**
- * Fills the list of base productions.
+ * Fills the list with current Base Productions.
  */
 void ManufactureState::fillProductionList()
 {
