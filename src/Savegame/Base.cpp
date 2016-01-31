@@ -1081,10 +1081,7 @@ int Base::getUsedContainment() const
 		}
 	}
 
-	if (Options::storageLimitsEnforced == true)
-		total += getInterrogatedAliens();
-
-	return total;
+	return (total += getInterrogatedAliens());
 }
 
 /**

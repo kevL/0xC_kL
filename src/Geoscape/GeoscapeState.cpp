@@ -2654,8 +2654,7 @@ void GeoscapeState::time1Hour()
 			}
 		}
 
-		if (Options::storageLimitsEnforced == true
-			&& (*i)->storesOverfull() == true)
+		if ((*i)->storesOverfull() == true)
 		{
 			resetTimer();
 			popup(new ErrorMessageState(

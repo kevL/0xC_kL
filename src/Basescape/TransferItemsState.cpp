@@ -858,23 +858,16 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 			else // aLien.
 			{
 				if (_baseTarget->hasContainment() == false
-					|| (_qtyAlien + 1 > _baseTarget->getFreeContainment()
-						&& Options::storageLimitsEnforced == true))
+					|| _qtyAlien + 1 > _baseTarget->getFreeContainment())
 				{
 					wstError = tr("STR_NO_ALIEN_CONTAINMENT_FOR_TRANSFER");
 				}
 				else
 				{
-					int freeContainment;
-					if (Options::storageLimitsEnforced == true)
-						freeContainment = _baseTarget->getFreeContainment() - _qtyAlien;
-					else
-						freeContainment = std::numeric_limits<int>::max();
-
 					qtyDelta = std::min(
 									qtyDelta,
 									std::min(
-											freeContainment,
+											_baseTarget->getFreeContainment() - _qtyAlien,
 											getSourceQuantity() - _transferQty[_sel]));
 					_qtyAlien += qtyDelta;
 					_baseQty[_sel] -= qtyDelta;

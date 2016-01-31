@@ -364,7 +364,6 @@ void BasescapeState::init()
 
 	if (_allowStoresWarning == true
 		&& _base->storesOverfull() == true
-		&& Options::storageLimitsEnforced == true
 		&& _game->getSavedGame()->getMonthsPassed() != -1)
 	{
 		_allowStoresWarning = false;

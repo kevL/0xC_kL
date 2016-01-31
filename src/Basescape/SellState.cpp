@@ -73,9 +73,6 @@ SellState::SellState(Base* const base)
 		_hasEng(0),
 		_storeSize(0.)
 {
-//	bool overfull = Options::storageLimitsEnforced == true
-//				 && _base->storesOverfull() == true;
-
 	_window			= new Window(this, 320, 200);
 
 	_txtTitle		= new Text(310, 17,  5, 9);
@@ -116,6 +113,8 @@ SellState::SellState(Base* const base)
 	centerAllSurfaces();
 
 
+//	bool overfull = _base->storesOverfull() == true;
+
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
 	_btnOk->setText(tr("STR_SELL_SACK"));
@@ -136,9 +135,9 @@ SellState::SellState(Base* const base)
 //	if (overfull == true)
 //		_btnCancel->setVisible(false);
 
-	_txtTitle->setBig();
-	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setText(tr("STR_SELL_ITEMS_SACK_PERSONNEL"));
+	_txtTitle->setAlign(ALIGN_CENTER);
+	_txtTitle->setBig();
 
 	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
 	_txtSales->setText(tr("STR_VALUE_OF_SALES")
@@ -147,12 +146,11 @@ SellState::SellState(Base* const base)
 						.arg(Text::formatCurrency(_game->getSavedGame()->getFunds())));
 	_txtItem->setText(tr("STR_ITEM"));
 
-	_txtStorage->setVisible(Options::storageLimitsEnforced);
-	_txtStorage->setAlign(ALIGN_RIGHT);
-	_txtStorage->setColor(WHITE);
 	std::wostringstream woststr;
 	woststr << _base->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _base->getUsedStores();
 	_txtStorage->setText(woststr.str());
+	_txtStorage->setAlign(ALIGN_RIGHT);
+	_txtStorage->setColor(WHITE);
 
 	_txtQuantity->setText(tr("STR_QUANTITY_UC"));
 	_txtSell->setText(tr("STR_SELL_SACK"));
@@ -255,27 +253,6 @@ SellState::SellState(Base* const base)
 			++i)
 	{
 		const int qty (_base->getStorageItems()->getItemQuantity(*i));
-
-/*		if (Options::storageLimitsEnforced == true
-			&& origin == OPT_BATTLESCAPE)
-		{
-			for (std::vector<Transfer*>::const_iterator
-					j = _base->getTransfers()->begin();
-					j != _base->getTransfers()->end();
-					++j)
-			{
-				if ((*j)->getItems() == *i)
-					qty += (*j)->getQuantity();
-			}
-
-			for (std::vector<Craft*>::const_iterator
-					j = _base->getCrafts()->begin();
-					j != _base->getCrafts()->end();
-					++j)
-			{
-				qty += (*j)->getItems()->getItem(*i);
-			}
-		} */
 
 		if (qty != 0
 			&& (Options::canSellLiveAliens == true
@@ -473,57 +450,6 @@ void SellState::btnOkClick(Action*)
 					break;
 
 				case PST_ITEM:
-/*					if (_base->getItems()->getItem(_items[getItemIndex(sel)]) < _sellQty[sel])
-					{
-						const std::string item = _items[getItemIndex(sel)];
-						int toRemove = _sellQty[sel] - _base->getItems()->getItem(item);
-
-						_base->getItems()->removeItem(item, std::numeric_limits<int>::max()); // remove all of said items from base
-
-						// if you still need to remove any, remove them from the crafts first, and keep a running tally // just f'off.
-						for (std::vector<Craft*>::const_iterator
-								i = _base->getCrafts()->begin();
-								i != _base->getCrafts()->end()
-									&& toRemove != 0;
-								++i)
-						{
-							if ((*i)->getItems()->getItem(item) < toRemove)
-							{
-								toRemove -= (*i)->getItems()->getItem(item);
-								(*i)->getItems()->removeItem(item, std::numeric_limits<int>::max());
-							}
-							else
-							{
-								(*i)->getItems()->removeItem(item, toRemove);
-								toRemove = 0;
-							}
-						}
-
-						// if there are STILL any left to remove, take them from the transfers, and if necessary, delete it.
-						for (std::vector<Transfer*>::const_iterator
-								i = _base->getTransfers()->begin();
-								i != _base->getTransfers()->end()
-									&& toRemove != 0;
-								)
-						{
-							if ((*i)->getItems() == item)
-							{
-								if ((*i)->getQuantity() <= toRemove)
-								{
-									toRemove -= (*i)->getQuantity();
-									delete *i;
-									i = _base->getTransfers()->erase(i);
-								}
-								else
-								{
-									(*i)->setItems((*i)->getItems(), (*i)->getQuantity() - toRemove);
-									toRemove = 0;
-								}
-							}
-							else ++i;
-						}
-					}
-					else */
 					_base->getStorageItems()->removeItem(
 													_items[getItemIndex(sel)],
 													_sellQty[sel]);
@@ -658,7 +584,6 @@ int SellState::getPrice() const // private.
  */
 int SellState::getBaseQuantity() const // private.
 {
-//	int qty = 0;
 	switch (getSellType(_sel))
 	{
 		case PST_SOLDIER:
@@ -672,28 +597,6 @@ int SellState::getBaseQuantity() const // private.
 			return _base->getEngineers();
 
 		case PST_ITEM:
-//			qty = _base->getStorageItems()->getItemQuantity(_items[getItemIndex(_sel)]);
-/*			if (Options::storageLimitsEnforced == true
-				&& _origin == OPT_BATTLESCAPE)
-			{
-				for (std::vector<Transfer*>::const_iterator
-						j = _base->getTransfers()->begin();
-						j != _base->getTransfers()->end();
-						++j)
-				{
-					if ((*j)->getItems() == _items[getItemIndex(_sel)])
-						qty += (*j)->getQuantity();
-				}
-
-				for (std::vector<Craft*>::const_iterator
-						j = _base->getCrafts()->begin();
-						j != _base->getCrafts()->end();
-						++j)
-				{
-					qty += (*j)->getItems()->getItemQuantity(_items[getItemIndex(_sel)]);
-				}
-			} */
-//			return qty;
 			return _base->getStorageItems()->getItemQuantity(_items[getItemIndex(_sel)]);
 	}
 
@@ -895,8 +798,7 @@ void SellState::updateItemStrings() // private.
 	}
 	_txtStorage->setText(woststr.str());
 
-//	if (Options::storageLimitsEnforced == true)
-//		showOk = showOk && _base->storesOverfull(_storeSize) == false;
+//	showOk = showOk && _base->storesOverfull(_storeSize) == false;
 	_btnOk->setVisible(showOk == true);
 }
 

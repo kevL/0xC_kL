@@ -183,22 +183,19 @@ BaseInfoState::BaseInfoState(
 	add(_numHangars,		"numbers",			"baseInfo");
 	add(_barHangars,		"facilityBars",		"baseInfo");
 
-	if (Options::storageLimitsEnforced == true)
-	{
-		add(_txtContainment, "text2",			"baseInfo");
-		add(_numContainment, "numbers",			"baseInfo");
-		add(_barContainment, "facilityBars",	"baseInfo");
-	}
+	add(_txtContainment,	"text2",			"baseInfo");
+	add(_numContainment,	"numbers",			"baseInfo");
+	add(_barContainment,	"facilityBars",		"baseInfo");
 
-	add(_txtDefense,	"text2",				"baseInfo");
-	add(_numDefense,	"numbers",				"baseInfo");
-	add(_barDefense,	"defenceBar",			"baseInfo");
-	add(_txtShortRange,	"text2",				"baseInfo");
-	add(_numShortRange,	"numbers",				"baseInfo");
-	add(_barShortRange,	"detectionBars",		"baseInfo");
-	add(_txtLongRange,	"text2",				"baseInfo");
-	add(_numLongRange,	"numbers",				"baseInfo");
-	add(_barLongRange,	"detectionBars",		"baseInfo");
+	add(_txtDefense,		"text2",			"baseInfo");
+	add(_numDefense,		"numbers",			"baseInfo");
+	add(_barDefense,		"defenceBar",		"baseInfo");
+	add(_txtShortRange,		"text2",			"baseInfo");
+	add(_numShortRange,		"numbers",			"baseInfo");
+	add(_barShortRange,		"detectionBars",	"baseInfo");
+	add(_txtLongRange,		"text2",			"baseInfo");
+	add(_numLongRange,		"numbers",			"baseInfo");
+	add(_barLongRange,		"detectionBars",	"baseInfo");
 
 	if (_psiResearched == true)
 	{
@@ -217,11 +214,7 @@ BaseInfoState::BaseInfoState(
 	centerAllSurfaces();
 
 
-	std::ostringstream oststr;
-	if (Options::storageLimitsEnforced == true)
-		oststr << "ALT";
-	oststr << "BACK07.SCR";
-	_game->getResourcePack()->getSurface(oststr.str())->blit(_bg);
+	_game->getResourcePack()->getSurface("ALTBACK07.SCR")->blit(_bg);
 
 	_mini->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
 	_mini->setBases(_baseList);
@@ -304,12 +297,8 @@ BaseInfoState::BaseInfoState(
 	_txtHangars->setText(tr("STR_HANGARS"));
 	_barHangars->setScale(18.);
 
-	if (Options::storageLimitsEnforced == true)
-	{
-		_txtContainment->setText(tr("STR_ALIEN_CONTAINMENT"));
-//		_barContainment->setScale(); //0.5
-	}
-
+	_txtContainment->setText(tr("STR_ALIEN_CONTAINMENT"));
+//	_barContainment->setScale(); //0.5
 
 	_txtDefense->setText(tr("STR_DEFENSE_STRENGTH"));
 	_barDefense->setScale(0.018); // 0.125
@@ -489,25 +478,21 @@ void BaseInfoState::init()
 	_numHangars->setVisible(vis);
 	_barHangars->setVisible(vis);
 
-	if (Options::storageLimitsEnforced == true)
+	var = _base->getTotalContainment();
+	if (var != 0)
 	{
-		var = _base->getTotalContainment();
-		if (var != 0)
-		{
-			var2 = _base->getUsedContainment();
-			woststr.str(L"");
-			woststr << var2 << L":" << var;
-			_numContainment->setText(woststr.str());
-			_barContainment->setMaxValue(var);
-			_barContainment->setValue(var2);
-			vis = true;
-		}
-		else
-			vis = false;
-		_numContainment->setVisible(vis);
-		_barContainment->setVisible(vis);
+		var2 = _base->getUsedContainment();
+		woststr.str(L"");
+		woststr << var2 << L":" << var;
+		_numContainment->setText(woststr.str());
+		_barContainment->setMaxValue(var);
+		_barContainment->setValue(var2);
+		vis = true;
 	}
-
+	else
+		vis = false;
+	_numContainment->setVisible(vis);
+	_barContainment->setVisible(vis);
 
 	var = _base->getDefenseTotal();
 	if (var != 0)

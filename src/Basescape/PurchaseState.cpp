@@ -81,12 +81,6 @@ PurchaseState::PurchaseState(Base* const base)
 	_txtFunds		= new Text(140, 9,  16, 24);
 	_txtPurchases	= new Text(140, 9, 160, 24);
 
-/*	_txtStorage = new Text(150, 9, 160, 34);
-	_txtItem = new Text(140, 9, 10, Options::storageLimitsEnforced? 44:33);
-	_txtCost = new Text(102, 9, 152, Options::storageLimitsEnforced? 44:33);
-	_txtQuantity = new Text(60, 9, 256, Options::storageLimitsEnforced? 44:33);
-	_lstItems = new TextList(287, Options::storageLimitsEnforced? 112:120, 8, Options::storageLimitsEnforced? 55:44); */
-
 	_txtItem		= new Text( 30, 9,  16, 33);
 	_txtCost		= new Text(102, 9, 166, 33);
 	_txtQuantity	= new Text( 48, 9, 267, 33);
@@ -136,27 +130,26 @@ PurchaseState::PurchaseState(Base* const base)
 					(ActionHandler)& PurchaseState::btnCancelClick,
 					Options::keyCancel);
 
-	_txtTitle->setBig();
-	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setText(tr("STR_PURCHASE_HIRE_PERSONNEL"));
+	_txtTitle->setAlign(ALIGN_CENTER);
+	_txtTitle->setBig();
 
 	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
 
-	_txtFunds->setSecondaryColor(Palette::blockOffset(13));
 	_txtFunds->setText(tr("STR_CURRENT_FUNDS_")
 						.arg(Text::formatCurrency(_game->getSavedGame()->getFunds())));
+	_txtFunds->setSecondaryColor(Palette::blockOffset(13));
 
 	_txtPurchases->setText(tr("STR_COST_OF_PURCHASES_")
 						.arg(Text::formatCurrency(_costTotal)));
 
 	_txtItem->setText(tr("STR_ITEM"));
 
-	_txtStorage->setVisible(Options::storageLimitsEnforced);
-	_txtStorage->setAlign(ALIGN_RIGHT);
-	_txtStorage->setColor(WHITE);
 	std::wostringstream woststr;
 	woststr << _base->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _base->getUsedStores();
 	_txtStorage->setText(woststr.str());
+	_txtStorage->setAlign(ALIGN_RIGHT);
+	_txtStorage->setColor(WHITE);
 
 	_txtCost->setText(tr("STR_COST_PER_UNIT_UC"));
 

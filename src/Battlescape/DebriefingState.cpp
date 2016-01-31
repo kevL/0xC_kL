@@ -556,8 +556,7 @@ void DebriefingState::btnOkClick(Action*)
 												_rules->getInterface("debriefing")->getElement("errorPalette")->color));
 			}
 
-			if (_base->storesOverfull() == true //_manageContainment == false &&
-				&& Options::storageLimitsEnforced == true)
+			if (_base->storesOverfull() == true) //_manageContainment == false &&
 			{
 //				_game->pushState(new SellState(_base, OPT_BATTLESCAPE));
 				_game->pushState(new ErrorMessageState(
@@ -1979,11 +1978,7 @@ void DebriefingState::recoverLiveAlien(BattleUnit* const unit) // private.
 			value);
 
 		_base->getStorageItems()->addItem(type);
-
-		if (Options::storageLimitsEnforced == true)
-			_manageContainment = _base->getFreeContainment() < 0;
-		else
-			_manageContainment = false;
+		_manageContainment = _base->getFreeContainment() < 0;
 	}
 	else
 	{

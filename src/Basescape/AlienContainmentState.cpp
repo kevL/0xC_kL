@@ -104,9 +104,6 @@ AlienContainmentState::AlienContainmentState(
 	centerAllSurfaces();
 
 
-	_overCrowded = Options::storageLimitsEnforced
-				&& _totalSpace < _usedSpace;
-
 	std::string st;
 	if (_origin == OPT_BATTLESCAPE)
 	{
@@ -133,7 +130,7 @@ AlienContainmentState::AlienContainmentState(
 	_btnCancel->onKeyboardPress(
 					(ActionHandler)& AlienContainmentState::btnCancelClick,
 					Options::keyCancel);
-	if (_overCrowded == true)
+	if (_totalSpace < _usedSpace)
 		_btnCancel->setVisible(false);
 
 	_txtTitle->setText(tr("STR_MANAGE_CONTAINMENT"));
@@ -194,9 +191,9 @@ AlienContainmentState::AlienContainmentState(
 			i != itemList.end();
 			++i)
 	{
-		if (_game->getRuleset()->getItem(*i)->isAlien() == true)	// it's a live alien...
+		if (_game->getRuleset()->getItem(*i)->isAlien() == true) // it's a live alien...
 		{
-			qtyAliens = _base->getStorageItems()->getItemQuantity(*i);	// get Qty of each aLien-type at this base
+			qtyAliens = _base->getStorageItems()->getItemQuantity(*i); // get Qty of each aLien-type at this base
 			if (qtyAliens != 0)
 			{
 				_qty.push_back(0);		// put it in the _qty<vector> as (int)
@@ -500,9 +497,8 @@ void AlienContainmentState::update() // private.
 						.arg(_usedSpace - _fishFood)
 						.arg(freeSpace));
 
-	_btnCancel->setVisible(_overCrowded == false);
-	_btnOk->setVisible(_fishFood > 0
-					 && freeSpace > -1);
+	_btnCancel->setVisible(_totalSpace < _usedSpace);
+	_btnOk->setVisible(_fishFood > 0 && freeSpace > -1);
 }
 
 /**
