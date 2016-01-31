@@ -184,13 +184,17 @@ CraftEquipmentState::CraftEquipmentState(
 		clipSize;
 	Uint8 color;
 
-	const std::vector<std::string>& itemList = _game->getRuleset()->getItemsList();
+	const RuleItem
+		* itRule,
+		* aRule;
+
+	const std::vector<std::string>& itemList (_game->getRuleset()->getItemsList());
 	for (std::vector<std::string>::const_iterator
 			i = itemList.begin();
 			i != itemList.end();
 			++i)
 	{
-		const RuleItem* const itRule = _game->getRuleset()->getItem(*i);
+		itRule = _game->getRuleset()->getItem(*i);
 
 		craftQty = 0;
 		if (itRule->isFixed() == true)
@@ -228,7 +232,7 @@ CraftEquipmentState::CraftEquipmentState(
 			else if (itRule->isFixed() == true // tank w/ Ordnance.
 				&& itRule->getCompatibleAmmo()->empty() == false)
 			{
-				const RuleItem* const aRule = _game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front());
+				aRule = _game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front());
 				clipSize = aRule->getClipSize();
 				if (clipSize != 0)
 					wst += (L" (" + Text::intWide(clipSize) + L")");
@@ -278,7 +282,7 @@ void CraftEquipmentState::init()
 	State::init();
 
 	// Reset stuff when coming back from pre-battle Inventory.
-	const SavedBattleGame* const battleSave = _game->getSavedGame()->getBattleSave();
+	const SavedBattleGame* const battleSave (_game->getSavedGame()->getBattleSave());
 	if (battleSave != nullptr)
 	{
 		_selUnitId = battleSave->getSelectedUnit()->getBattleOrder();
@@ -399,7 +403,7 @@ void CraftEquipmentState::lstEquipmentRightArrowClick(Action* action)
  */
 void CraftEquipmentState::updateQuantity()
 {
-	const RuleItem* const itRule = _game->getRuleset()->getItem(_items[_sel]);
+	const RuleItem* const itRule (_game->getRuleset()->getItem(_items[_sel]));
 
 	int craftQty;
 	if (itRule->isFixed() == true)
@@ -459,7 +463,7 @@ void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 {
 	if (qtyDelta > 0)
 	{
-		const RuleItem* const itRule = _game->getRuleset()->getItem(_items[_sel]);
+		const RuleItem* const itRule (_game->getRuleset()->getItem(_items[_sel]));
 
 		int craftQty;
 		if (itRule->isFixed() == true)
@@ -476,7 +480,7 @@ void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 				if (itRule->getCompatibleAmmo()->empty() == false)
 				{
 					// first remove all vehicles to redistribute the ammo
-					const RuleItem* const aRule = _game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front());
+					const RuleItem* const aRule (_game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front()));
 
 					for (std::vector<Vehicle*>::const_iterator
 							i = _craft->getVehicles()->begin();
@@ -493,7 +497,8 @@ void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 							delete *i;
 							i = _craft->getVehicles()->erase(i);
 						}
-						else ++i;
+						else
+							++i;
 					}
 
 					if (_game->getSavedGame()->getMonthsPassed() != -1)
@@ -521,7 +526,8 @@ void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 							if (--qtyDelta < 1)
 								break;
 						}
-						else ++i;
+						else
+							++i;
 					}
 				}
 			}
@@ -572,16 +578,16 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 		{
 			qtyDelta = std::min(qtyDelta, baseQty);
 
-			RuleItem* const itRule = _game->getRuleset()->getItem(_items[_sel]);
+			RuleItem* const itRule (_game->getRuleset()->getItem(_items[_sel]));
 			if (itRule->isFixed() == true) // load vehicle, convert item to a vehicle
 			{
-				int tankSize = _game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(itRule->getType())->getArmor())->getSize();
+				int tankSize (_game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(itRule->getType())->getArmor())->getSize());
 				tankSize *= tankSize;
 
-				const int spaceAvailable = std::min(
+				const int spaceAvailable (std::min(
 												_craft->getRules()->getVehicles() - _craft->getQtyVehicles(true),
 												_craft->getSpaceAvailable())
-											/ tankSize;
+											/ tankSize);
 
 				if (spaceAvailable > 0
 					&& _craft->getLoadCapacity() - _craft->calcLoadCurrent() >= tankSize * 10) // note: 10 is the 'load' that a single 'space' uses.
@@ -593,7 +599,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 
 					if (itRule->getCompatibleAmmo()->empty() == false)
 					{
-						const RuleItem* const aRule = _game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front());
+						const RuleItem* const aRule (_game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front()));
 						int
 							tankClipSize,
 							requiredRounds;
@@ -719,8 +725,8 @@ void CraftEquipmentState::btnUnloadCraftClick(Action*)
 */
 void CraftEquipmentState::btnInventoryClick(Action*)
 {
-	SavedBattleGame* const battle = new SavedBattleGame();
-	_game->getSavedGame()->setBattleSave(battle);
+	SavedBattleGame* const battleSave (new SavedBattleGame());
+	_game->getSavedGame()->setBattleSave(battleSave);
 	BattlescapeGenerator bgen = BattlescapeGenerator(_game);
 
 	bgen.runInventory(_craft, nullptr, _selUnitId);

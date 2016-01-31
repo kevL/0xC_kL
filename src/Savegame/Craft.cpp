@@ -1409,7 +1409,7 @@ void Craft::unloadCraft(
 		for (std::vector<Vehicle*>::const_iterator
 				i = _vehicles.begin();
 				i != _vehicles.end();
-				++i)
+				)
 		{
 			_base->getStorageItems()->addItem((*i)->getRules()->getType());
 
@@ -1417,11 +1417,14 @@ void Craft::unloadCraft(
 				_base->getStorageItems()->addItem(
 											(*i)->getRules()->getCompatibleAmmo()->front(),
 											(*i)->getAmmo());
-
+			if (updateCraft == true)
+			{
+				delete *i;
+				i = _vehicles.erase(i);
+			}
+			else
+				++i;
 		}
-
-		if (updateCraft == true)
-			_vehicles.clear();
 	}
 
 	if (_crRule->getItems() != 0)
