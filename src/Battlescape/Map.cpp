@@ -1004,8 +1004,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 					} // Void <- end.
 
 // Draw Bullet if in Field Of View
-					if (_showProjectile == true // <- used to hide Celatid glob while its spitting animation plays.
-						&& _projectile != nullptr)
+					if (_projectile != nullptr && _showProjectile == true) // <- used to hide Celatid glob while its spitting animation plays.
 					{
 						Position voxel;
 						if (_projectile->getThrowItem() != nullptr)
@@ -1044,7 +1043,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								}
 							}
 						}
-						else // fired projectile (a bullet-sprite, not a thrown item)
+						else if (_projectile->getBulletSprite(0) != -1) // fired projectile (a bullet-sprite, not a thrown item)
 						{
 							if (   itX >= bulletLowX // draw bullet on the correct tile
 								&& itX <= bulletHighX
@@ -1057,7 +1056,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										++id)
 								{
 									sprite = _projectileSet->getFrame(_projectile->getBulletSprite(id));
-									//if (sprite != nullptr)
+									//if (sprite != nullptr) // fusion-torch has no bullet.
 									{
 										voxel = _projectile->getPosition(1 - id); // draw shadow on the floor
 										voxel.z = _battleSave->getTileEngine()->castShadow(voxel);
