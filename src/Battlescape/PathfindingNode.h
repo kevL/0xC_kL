@@ -58,30 +58,30 @@ private:
 		/// Cleans up the PathfindingNode.
 		~PathfindingNode();
 
-		/// Gets this Node's position.
+		/// Gets the Node's position.
 		const Position& getPosition() const;
 
-		/// Resets this Node.
+		/// Resets the Node.
 		void reset();
 
-		/// Gets if this Node has been checked.
+		/// Gets if the Node has been checked.
 		bool getChecked() const;
-		/// Marks this Node as checked.
+		/// Marks the Node as checked.
 		void setChecked()
 		{ _checked = true; }
 
-		/// Gets this Node's TU cost.
+		/// Gets the Node's TU cost.
 		int getTuCostNode(bool missile = false) const;
 		/// Gets the approximate cost to reach the target position.
-		int getTUGuess() const
+		int getTuGuess() const
 		{ return _tuGuess; }
 
-		/// Gets this Node's previous Node.
+		/// Gets the Node's previous Node.
 		PathfindingNode* getPrevNode() const;
 		/// Gets the previous walking direction.
 		int getPrevDir() const;
 
-		/// Gets if this Node is already in a PathfindingOpenSet.
+		/// Gets if the Node is already in a PathfindingOpenSet.
 		bool inOpenSet() const
 		{ return (_openSetEntry != nullptr); }
 
@@ -92,31 +92,29 @@ private:
 		/// Connects to previous Node along the path.
 		void linkNode(
 				int tuCost,
-				PathfindingNode* prevNode,
+				PathfindingNode* const prevNode,
 				int prevDir,
 				const Position& target);
 		/// Connects to previous Node along a visit.
 		void linkNode(
 				int tuCost,
-				PathfindingNode* prevNode,
+				PathfindingNode* const prevNode,
 				int prevDir);
 };
 
 
 /**
- * Compares PathfindingNode pointers based on TU cost.
+ * Helper struct to compare PathfindingNodes based on TU cost.
  */
-class MinNodeCosts
+struct MinNodeCosts
 {
-
-public:
 	/**
 	 * Compares nodes @a *a and @a *b.
 	 * @param a - pointer to first node
 	 * @param b - pointer to second node
 	 * @return, true if node @a *a must come before @a *b
 	 */
-	bool operator() (const PathfindingNode* a, const PathfindingNode* b) const
+	bool operator() (const PathfindingNode* const a, const PathfindingNode* const b) const
 	{
 		return (a->getTuCostNode() < b->getTuCostNode());
 	}

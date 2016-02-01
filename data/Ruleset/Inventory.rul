@@ -101,11 +101,11 @@ inventories:
     costs:
       STR_BACK_PACK: 16
       STR_BELT: 10
-      STR_GROUND: 5
+      STR_GROUND: 6
       STR_LEFT_HAND: 3
       STR_LEFT_LEG: 12
       STR_LEFT_SHOULDER: 8
-      STR_RIGHT_HAND: 4
+      STR_RIGHT_HAND: 5
       STR_RIGHT_LEG: 12
       STR_QUICK_DRAW: 9
   - type: STR_LEFT_SHOULDER
@@ -117,8 +117,8 @@ inventories:
     costs:
       STR_BACK_PACK: 16
       STR_BELT: 10
-      STR_GROUND: 5
-      STR_LEFT_HAND: 4
+      STR_GROUND: 6
+      STR_LEFT_HAND: 5
       STR_LEFT_LEG: 12
       STR_RIGHT_HAND: 3
       STR_RIGHT_LEG: 12

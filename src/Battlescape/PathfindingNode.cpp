@@ -96,7 +96,7 @@ PathfindingNode* PathfindingNode::getPrevNode() const
 }
 
 /**
- * Gets the previous walking direction for how a unit got on this Node.
+ * Gets the previous walking direction for how a unit got to this Node.
  * @return, previous dir
  */
 int PathfindingNode::getPrevDir() const
@@ -105,8 +105,8 @@ int PathfindingNode::getPrevDir() const
 }
 
 /**
- * Connects the node.
- * @note This will connect the node to the previous node along the path to its
+ * Connects this Node.
+ * @note This will connect the Node to the previous Node along the path to its
  * @a target and update Pathfinding information.
  * @param tuCost	- the total cost of the path so far
  * @param prevNode	- pointer to the previous node along the path
@@ -115,7 +115,7 @@ int PathfindingNode::getPrevDir() const
 */
 void PathfindingNode::linkNode(
 		int tuCost,
-		PathfindingNode* prevNode,
+		PathfindingNode* const prevNode,
 		int prevDir,
 		const Position& target)
 {
@@ -133,15 +133,15 @@ void PathfindingNode::linkNode(
 }
 
 /**
- * Connects the node.
- @note This will connect the node to the previous node along the path.
+ * Connects this Node.
+ * @note This will connect the Node to the previous Node along the path.
  * @param tuCost	- the total cost of the path so far
  * @param prevNode	- pointer to the previous node along the path
  * @param prevDir	- the direction FROM the previous node
 */
 void PathfindingNode::linkNode(
 		int tuCost,
-		PathfindingNode* prevNode,
+		PathfindingNode* const prevNode,
 		int prevDir)
 {
 	_tuCost = tuCost;

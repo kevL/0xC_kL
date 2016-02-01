@@ -34,7 +34,7 @@ PathfindingOpenSet::~PathfindingOpenSet()
 {
 	while (_queue.empty() == false)
 	{
-		const OpenSetEntry* const entry = _queue.top();
+		const OpenSetEntry* const entry (_queue.top());
 		_queue.pop();
 
 		delete entry;
@@ -49,7 +49,7 @@ void PathfindingOpenSet::removeDiscarded()
 	while (_queue.empty() == false
 		&& _queue.top()->_node == nullptr)
 	{
-		const OpenSetEntry* const entry = _queue.top();
+		const OpenSetEntry* const entry (_queue.top());
 		_queue.pop();
 
 		delete entry;
@@ -66,8 +66,8 @@ PathfindingNode* PathfindingOpenSet::getNode()
 {
 	assert(isNodeSetEmpty() == false);
 
-	const OpenSetEntry* const entry = _queue.top();
-	PathfindingNode* const node = entry->_node;
+	const OpenSetEntry* const entry (_queue.top());
+	PathfindingNode* const node (entry->_node);
 	_queue.pop();
 
 	delete entry;
@@ -84,11 +84,11 @@ PathfindingNode* PathfindingOpenSet::getNode()
  * @note It is the caller's responsibility to never re-add a node with a worse cost.
  * @param node - pointer to the node to add
  */
-void PathfindingOpenSet::addNode(PathfindingNode* node)
+void PathfindingOpenSet::addNode(PathfindingNode* const node)
 {
-	OpenSetEntry* const entry = new OpenSetEntry;
+	OpenSetEntry* const entry (new OpenSetEntry);
 	entry->_node = node;
-	entry->_cost = node->getTuCostNode() + node->getTUGuess();
+	entry->_cost = node->getTuCostNode() + node->getTuGuess();
 
 	if (node->_openSetEntry != nullptr)
 		node->_openSetEntry->_node = nullptr;

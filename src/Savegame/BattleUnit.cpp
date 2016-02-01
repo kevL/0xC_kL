@@ -454,10 +454,12 @@ void BattleUnit::load(const YAML::Node& node)
 
 	_id					= node["id"]					.as<int>(_id);
 	_pos				= node["position"]				.as<Position>(_pos);
+
 	_dir				=
 	_dirTo				= node["direction"]				.as<int>(_dir);
 	_dirTurret			=
 	_dirToTurret		= node["directionTurret"]		.as<int>(_dirTurret);
+
 	_tu					= node["tu"]					.as<int>(_tu);
 	_health				= node["health"]				.as<int>(_health);
 	_stunLevel			= node["stunLevel"]				.as<int>(_stunLevel);
@@ -471,7 +473,6 @@ void BattleUnit::load(const YAML::Node& node)
 	_rankInt			= node["rankInt"]				.as<int>(_rankInt);
 	_kills				= node["kills"]					.as<int>(_kills);
 	_dontReselect		= node["dontReselect"]			.as<bool>(_dontReselect);
-	_charging			= nullptr;
 	_motionPoints		= node["motionPoints"]			.as<int>(_motionPoints);
 	_spawnUnit			= node["spawnUnit"]				.as<std::string>(_spawnUnit);
 	_mcStrength			= node["mcStrength"]			.as<int>(_mcStrength);
@@ -479,6 +480,7 @@ void BattleUnit::load(const YAML::Node& node)
 	_drugDose			= node["drugDose"]				.as<int>(_drugDose);
 	_murdererId			= node["murdererId"]			.as<int>(_murdererId);
 	_hasBeenStunned		= node["beenStunned"]			.as<bool>(_hasBeenStunned);
+	_charging			= nullptr;
 
 	_activeHand = static_cast<ActiveHand>(node["activeHand"].as<int>(_activeHand));
 

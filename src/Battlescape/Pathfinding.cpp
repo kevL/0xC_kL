@@ -126,9 +126,11 @@ void Pathfinding::calculate(
 	_tuCostTotal = 0;
 
 	// i'm DONE with these out of bounds errors.
-	// kL_note: I really don't care what you're "DONE" with .....
-	int armorSize = unit->getArmor()->getSize();
-	if (posStop.x < 0
+	// kL_note: I really don't care what you're "DONE" with ..... if you're going
+	// to cry like a babby, at least make it humorous -- like
+	// GREAT FLAMING TOADS OF HOLY RABBIT SHIT i can't stand it anymore!!1! PS. fixing out of bounds checks
+	int armorSize (unit->getArmor()->getSize());
+	if (   posStop.x < 0
 		|| posStop.y < 0
 		|| posStop.x > _battleSave->getMapSizeX() - armorSize
 		|| posStop.y > _battleSave->getMapSizeY() - armorSize)
@@ -139,11 +141,14 @@ void Pathfinding::calculate(
 	setInputModifiers();
 	setMoveType(); // redundant in some cases ...
 
-	if (missileTarget != nullptr	// pathfinding for missile; not sure how 'missileTarget' affects initialization yet.
-		&& maxTuCost == -1)			// TODO: figure how 'missileTarget' and 'maxTuCost' work together or not. -> are they redudant, and if so how redundant.
-									// ... Completely redundant, it seems ... in fact it seems like one of those things that was never thoroughly thought
-									// through: bresenham always uses its own default of 1000, while aStar never sets its missile=true boolean because it
-									// needs -1 passed in ...... plus it does further checks directly against maxTuCost.
+	if (missileTarget != nullptr && maxTuCost == -1)
+		// pathfinding for missile; not sure how 'missileTarget' affects initialization yet.
+		// TODO: figure how 'missileTarget' and 'maxTuCost' work together or not.
+		// -> are they redudant, and if so how redundant. ... Completely redundant, it seems
+		// ... in fact it appears to be one of those things that was never thoroughly thought
+		// through: bresenham always uses its own default of 1000, while aStar never sets
+		// its missile=true boolean because it needs -1 passed in ...... plus it does
+		// further checks directly against maxTuCost.
 	{
 		_mType = MT_FLY;
 		maxTuCost = 1000;
@@ -169,20 +174,9 @@ void Pathfinding::calculate(
 	}
 
 
-	Position posStop2; // for keeping things straight if strafeRejected happens.
-	if (strafeRejected == false)
-		posStop2 = posStop;
+	static Position posStop_cache; // for keeping things straight if strafeRejected happens.
+	posStop_cache = posStop;
 
-	// The following check avoids causing the unit to walk behind the stairs if
-	// the player clicks behind the stairs to make it go up the stairs. It works
-	// only if the unit is on one of the 2 tiles on the stairs or on the tile
-	// right in front of the stairs.
-	// kL_note: I don't want this: (the function below can be removed too).
-/*	if (isOnStairs(posStart, posStop))
-	{
-		posStop.z++;
-		tileStop = _battleSave->getTile(posStop);
-	} */
 
 	while (tileStop->getTerrainLevel() == -24
 		&& posStop.z != _battleSave->getMapSizeZ())
@@ -214,16 +208,16 @@ void Pathfinding::calculate(
 				O_OBJECT,
 				missileTarget) == false)
 	{
-		if (armorSize != 1)
+		if (armorSize == 2)
 		{
 			--armorSize;
-
-			const int dir[3] = {4,2,3};
-			size_t i = 0;
 
 			const Tile* tileTest;
 			const BattleUnit* unitTest;
 
+			static const int dir[3] = {4,2,3};
+
+			size_t i = 0;
 			for (int
 					x = 0;
 					x <= armorSize;
@@ -245,7 +239,8 @@ void Pathfinding::calculate(
 						{
 							return;
 						}
-						else if (isBlockedPath(
+
+						if (isBlockedPath(
 										tileStop,
 										dir[i],
 										unit) == true
@@ -256,15 +251,14 @@ void Pathfinding::calculate(
 						{
 							return;
 						}
-						else if (tileTest->getTileUnit() != nullptr)
+
+						unitTest = tileTest->getTileUnit();
+						if (unitTest != nullptr
+							&& unitTest != unit
+							&& unitTest != missileTarget
+							&& unitTest->getUnitVisible() == true)
 						{
-							unitTest = tileTest->getTileUnit();
-							if (unitTest != unit
-								&& unitTest != missileTarget
-								&& unitTest->getUnitVisible() == true)
-							{
-								return;
-							}
+							return;
 						}
 
 						++i;
@@ -330,7 +324,7 @@ void Pathfinding::calculate(
 			{
 				calculate( // iterate this function ONCE ->
 						unit,
-						posStop2,
+						posStop_cache,
 						missileTarget,
 						maxTuCost,
 						true); // <- sets '_strafe' FALSE so loop never gets back in here.
@@ -809,16 +803,14 @@ int Pathfinding::getTuCostPf(
 			} */ // end Take II ... i still don't trust that crap.
 
 			// don't let tanks phase through doors
-			if (x != 0 && y != 0)
-			{
-				if ((tileStop->getMapData(O_NORTHWALL) != nullptr
+			if (x != 0 && y != 0
+				&& ((tileStop->getMapData(O_NORTHWALL) != nullptr
 						&& tileStop->getMapData(O_NORTHWALL)->isDoor() == true)
 					|| (tileStop->getMapData(O_WESTWALL) != nullptr
-						&& tileStop->getMapData(O_WESTWALL)->isDoor() == true))
-				{
-					//if (debug) Log(LOG_INFO) << "door bisects";
-					return FAIL;
-				}
+						&& tileStop->getMapData(O_WESTWALL)->isDoor() == true)))
+			{
+				//if (debug) Log(LOG_INFO) << "door bisects";
+				return FAIL;
 			}
 
 			// 'terrainLevel' starts at 0 (floor) and goes up to -24 *cuckoo**
@@ -843,7 +835,7 @@ int Pathfinding::getTuCostPf(
 
 
 			// this will later be used to re-init the start Tile
-			Position posOffsetVertical (0,0,0); // init.
+			Position posOffsetVertical (0,0,0);
 
 			tileStopBelow = _battleSave->getTile(*posStop + posOffset + Position(0,0,-1)),
 			tileStopAbove = _battleSave->getTile(*posStop + posOffset + Position(0,0, 1));
@@ -1175,7 +1167,7 @@ int Pathfinding::getTuCostPf(
 				// kL_begin: extra TU for strafe-moves ->	1 0 1
 				//											2 ^ 2
 				//											3 2 3
-				int delta = std::abs((dir + 4) % 8 - _unit->getUnitDirection());
+				int delta (std::abs((dir + 4) % 8 - _unit->getUnitDirection()));
 
 				if (delta > 1 && delta < 7
 					&& _unit->getUnitRules() != nullptr
@@ -1204,11 +1196,11 @@ int Pathfinding::getTuCostPf(
 		}
 	}
 
-	if (armorSize > 0) // only for Large units ->
+	if (armorSize != 0) // only for Large units ->
 	{
 		//Log(LOG_INFO) << "getTuCostPf() armorSize > 0 " << (*posStop);
 		// - check the path between part 0,0 and part 1,1 at destination position
-		const Tile* const ulTile = _battleSave->getTile(*posStop);
+		const Tile* const ulTile (_battleSave->getTile(*posStop));
 		if (isBlockedPath(
 					ulTile,
 					3,
@@ -1219,7 +1211,7 @@ int Pathfinding::getTuCostPf(
 		}
 
 		// - then check the path between part 1,0 and part 0,1 at destination position
-		const Tile* const urTile = _battleSave->getTile(*posStop + Position(1,0,0));
+		const Tile* const urTile (_battleSave->getTile(*posStop + Position(1,0,0)));
 		if (isBlockedPath(
 					urTile,
 					5,
@@ -1232,8 +1224,8 @@ int Pathfinding::getTuCostPf(
 		if (fall == false)
 		{
 			const Tile
-				* const lrTile = _battleSave->getTile(*posStop + Position(1,1,0)),
-				* const llTile = _battleSave->getTile(*posStop + Position(0,1,0));
+				* const lrTile (_battleSave->getTile(*posStop + Position(1,1,0))),
+				* const llTile (_battleSave->getTile(*posStop + Position(0,1,0)));
 			const int
 				levels[4] =
 				{
@@ -1378,13 +1370,13 @@ bool Pathfinding::isBlockedPath( // public
 	// stairs terrainlevel goes typically -8 -16 (2 steps) or -4 -12 -20 (3 steps)
 	// this "maximum jump height" is therefore set to 8
 
-	const Position pos = startTile->getPosition();
+	const Position pos (startTile->getPosition());
 
 	static const Position
-		posNorth	= Position( 0,-1, 0),
-		posEast		= Position( 1, 0, 0),
-		posSouth	= Position( 0, 1, 0),
-		posWest		= Position(-1, 0, 0);
+		posNorth	(Position( 0,-1, 0)),
+		posEast		(Position( 1, 0, 0)),
+		posSouth	(Position( 0, 1, 0)),
+		posWest		(Position(-1, 0, 0));
 
 
 	switch (dir)
@@ -1606,7 +1598,7 @@ bool Pathfinding::isBlocked( // private.
 						return true;
 				}
 			}
-			return false;
+			break;
 
 		case O_WESTWALL:
 			{
@@ -1630,7 +1622,7 @@ bool Pathfinding::isBlocked( // private.
 					}
 				}
 
-				const Tile* const tileWest = _battleSave->getTile(tile->getPosition() + Position(-1,0,0));
+				const Tile* const tileWest (_battleSave->getTile(tile->getPosition() + Position(-1,0,0)));
 				if (tileWest == nullptr)
 					return true;
 
@@ -1668,7 +1660,7 @@ bool Pathfinding::isBlocked( // private.
 					}
 				}
 
-				const Tile* const tileNorth = _battleSave->getTile(tile->getPosition() + Position(0,-1,0));
+				const Tile* const tileNorth (_battleSave->getTile(tile->getPosition() + Position(0,-1,0)));
 				if (tileNorth == nullptr)
 					return true;
 
@@ -1687,7 +1679,7 @@ bool Pathfinding::isBlocked( // private.
 		case O_FLOOR:
 			{
 				//Log(LOG_INFO) << ". part is Floor";
-				const BattleUnit* targetUnit = tile->getTileUnit();
+				const BattleUnit* targetUnit (tile->getTileUnit());
 
 				if (targetUnit != nullptr)
 				{
@@ -1710,6 +1702,7 @@ bool Pathfinding::isBlocked( // private.
 									return true;
 								break;
 
+							default:
 							case FACTION_HOSTILE:
 								if (std::find(
 									_unit->getHostileUnitsThisTurn().begin(),
@@ -1727,7 +1720,7 @@ bool Pathfinding::isBlocked( // private.
 					Position pos = tile->getPosition();
 					while (pos.z > -1)
 					{
-						const Tile* const testTile = _battleSave->getTile(pos);
+						const Tile* const testTile (_battleSave->getTile(pos));
 						targetUnit = testTile->getTileUnit();
 
 						if (targetUnit != nullptr
@@ -1756,7 +1749,12 @@ bool Pathfinding::isBlocked( // private.
 			}
 	}
 
-	if (tile->getTuCostTile(partType, _mType) == 255)
+	static const int TU_BLOCK_LARGEUNIT (6); // stop large units from going through hedges and over fences
+
+	if (tile->getTuCostTile(partType, _mType) == 255
+		|| (_unit != nullptr
+			&& _unit->getArmor()->getSize() == 2
+			&& tile->getTuCostTile(partType, _mType) > TU_BLOCK_LARGEUNIT))
 	{
 		//Log(LOG_INFO) << "isBlocked() EXIT true, partType = " << partType << " MT = " << (int)_mType;
 		return true;
@@ -2263,7 +2261,7 @@ MovementType Pathfinding::getMoveTypePf() const
 }
 
 /**
- * Gets TU cost for opening a door.
+ * Tracks TU cost if opening a door.
  * @note Used to conform TU costs in UnitWalkBState.
  * @return, TU cost for opening a specific door
  */
@@ -2289,169 +2287,5 @@ std::vector<int> Pathfinding::copyPath() const
 {
 	return _path;
 }
-
-/*
- * Checks if going one step from start to destination in the given direction
- * requires going through a closed UFO door.
- * @param direction The direction of travel.
- * @param start The starting position of the travel.
- * @param destination Where the travel ends.
- * @return The TU cost of opening the door. 0 if no UFO door opened.
- *
-int Pathfinding::getOpeningUfoDoorCost(int direction, Position start, Position destination) // private.
-{
-	Tile* s = _battleSave->getTile(start);
-	Tile* d = _battleSave->getTile(destination);
-
-	switch (direction)
-	{
-		case 0:
-			if (s->getMapData(O_NORTHWALL)
-				&& s->getMapData(O_NORTHWALL)->isUfoDoor()
-				&& !s->isUfoDoorOpen(O_NORTHWALL))
-			return s->getMapData(O_NORTHWALL)->getTuCost(_mType);
-		break;
-		case 1:
-			if (s->getMapData(O_NORTHWALL)
-				&& s->getMapData(O_NORTHWALL)->isUfoDoor()
-				&& !s->isUfoDoorOpen(O_NORTHWALL))
-			return s->getMapData(O_NORTHWALL)->getTuCost(_mType);
-			if (d->getMapData(O_WESTWALL)
-				&& d->getMapData(O_WESTWALL)->isUfoDoor()
-				&& !d->isUfoDoorOpen(O_WESTWALL))
-			return d->getMapData(O_WESTWALL)->getTuCost(_mType);
-		break;
-		case 2:
-			if (d->getMapData(O_WESTWALL)
-				&& d->getMapData(O_WESTWALL)->isUfoDoor()
-				&& !d->isUfoDoorOpen(O_WESTWALL))
-			return d->getMapData(O_WESTWALL)->getTuCost(_mType);
-		break;
-		case 3:
-			if (d->getMapData(O_NORTHWALL)
-				&& d->getMapData(O_NORTHWALL)->isUfoDoor()
-				&& !d->isUfoDoorOpen(O_NORTHWALL))
-			return d->getMapData(O_NORTHWALL)->getTuCost(_mType);
-			if (d->getMapData(O_WESTWALL)
-				&& d->getMapData(O_WESTWALL)->isUfoDoor()
-				&& !d->isUfoDoorOpen(O_WESTWALL))
-			return d->getMapData(O_WESTWALL)->getTuCost(_mType);
-		break;
-		case 4:
-			if (d->getMapData(O_NORTHWALL)
-				&& d->getMapData(O_NORTHWALL)->isUfoDoor()
-				&& !d->isUfoDoorOpen(O_NORTHWALL))
-			return d->getMapData(O_NORTHWALL)->getTuCost(_mType);
-		break;
-		case 5:
-			if (d->getMapData(O_NORTHWALL)
-				&& d->getMapData(O_NORTHWALL)->isUfoDoor()
-				&& !d->isUfoDoorOpen(O_NORTHWALL))
-			return d->getMapData(O_NORTHWALL)->getTuCost(_mType);
-			if (s->getMapData(O_WESTWALL)
-				&& s->getMapData(O_WESTWALL)->isUfoDoor()
-				&& !s->isUfoDoorOpen(O_WESTWALL))
-			return s->getMapData(O_WESTWALL)->getTuCost(_mType);
-		break;
-		case 6:
-			if (s->getMapData(O_WESTWALL)
-				&& s->getMapData(O_WESTWALL)->isUfoDoor()
-				&& !s->isUfoDoorOpen(O_WESTWALL))
-			return s->getMapData(O_WESTWALL)->getTuCost(_mType);
-		break;
-		case 7:
-			if (s->getMapData(O_NORTHWALL)
-				&& s->getMapData(O_NORTHWALL)->isUfoDoor()
-				&& !s->isUfoDoorOpen(O_NORTHWALL))
-			return s->getMapData(O_NORTHWALL)->getTuCost(_mType);
-			if (s->getMapData(O_WESTWALL)
-				&& s->getMapData(O_WESTWALL)->isUfoDoor()
-				&& !s->isUfoDoorOpen(O_WESTWALL))
-			return s->getMapData(O_WESTWALL)->getTuCost(_mType);
-		break;
-
-		default:
-			return 0;
-	}
-
-	return 0;
-} */
-
-/*
- * Determines whether the unit is going up a stairs.
- * @param startPosition The position to start from.
- * @param endPosition The position we wanna reach.
- * @return True if the unit is going up a stairs.
- *
-bool Pathfinding::isOnStairs(const Position& startPosition, const Position& endPosition)
-{
-	// condition 1 : endposition has to the south a terrainlevel -16 object (upper part of the stairs)
-	if (_battleSave->getTile(endPosition + Position(0, 1, 0))
-		&& _battleSave->getTile(endPosition + Position(0, 1, 0))->getTerrainLevel() == -16)
-	{
-		// condition 2 : one position further to the south there has to be a terrainlevel -8 object (lower part of the stairs)
-		if (_battleSave->getTile(endPosition + Position(0, 2, 0))
-			&& _battleSave->getTile(endPosition + Position(0, 2, 0))->getTerrainLevel() != -8)
-		{
-			return false;
-		}
-
-		// condition 3 : the start position has to be on either of the 3 tiles to the south of the endposition
-		if (startPosition == endPosition + Position(0, 1, 0)
-			|| startPosition == endPosition + Position(0, 2, 0)
-			|| startPosition == endPosition + Position(0, 3, 0))
-		{
-			return true;
-		}
-	}
-
-	// same for the east-west oriented stairs.
-	if (_battleSave->getTile(endPosition + Position(1, 0, 0))
-		&& _battleSave->getTile(endPosition + Position(1, 0, 0))->getTerrainLevel() == -16)
-	{
-		if (_battleSave->getTile(endPosition + Position(2, 0, 0))
-			&& _battleSave->getTile(endPosition + Position(2, 0, 0))->getTerrainLevel() != -8)
-		{
-			return false;
-		}
-
-		if (startPosition == endPosition + Position(1, 0, 0)
-			|| startPosition == endPosition + Position(2, 0, 0)
-			|| startPosition == endPosition + Position(3, 0, 0))
-		{
-			return true;
-		}
-	}
-
-	//TFTD stairs 1 : endposition has to the south a terrainlevel -18 object (upper part of the stairs)
-	if (_battleSave->getTile(endPosition + Position(0, 1, 0)) && _battleSave->getTile(endPosition + Position(0, 1, 0))->getTerrainLevel() == -18)
-	{
-		// condition 2 : one position further to the south there has to be a terrainlevel -8 object (lower part of the stairs)
-		if (_battleSave->getTile(endPosition + Position(0, 2, 0)) && _battleSave->getTile(endPosition + Position(0, 2, 0))->getTerrainLevel() != -12)
-		{
-			return false;
-		}
-
-		// condition 3 : the start position has to be on either of the 3 tiles to the south of the endposition
-		if (startPosition == endPosition + Position(0, 1, 0) || startPosition == endPosition + Position(0, 2, 0) || startPosition == endPosition + Position(0, 3, 0))
-		{
-			return true;
-		}
-	}
-
-	// same for the east-west oriented stairs.
-	if (_battleSave->getTile(endPosition + Position(1, 0, 0)) && _battleSave->getTile(endPosition + Position(1, 0, 0))->getTerrainLevel() == -18)
-	{
-		if (_battleSave->getTile(endPosition + Position(2, 0, 0)) && _battleSave->getTile(endPosition + Position(2, 0, 0))->getTerrainLevel() != -12)
-		{
-			return false;
-		}
-		if (startPosition == endPosition + Position(1, 0, 0) || startPosition == endPosition + Position(2, 0, 0) || startPosition == endPosition + Position(3, 0, 0))
-		{
-			return true;
-		}
-	}
-	return false;
-} */
 
 }

@@ -100,15 +100,11 @@ private:
 	/// Sets the movement type for the path.
 	void setMoveType();
 
-	/// Determines the additional TU cost of going one step from start to
-	/// destination if going through a closed UFO door.
-//	int getOpeningUfoDoorCost(int direction, Position start, Position destination);
-
 
 	public:
 		static const int
-			DIR_UP		= 8,
-			DIR_DOWN	= 9;
+			DIR_UP   = 8,
+			DIR_DOWN = 9;
 
 		static Uint8
 			red,
@@ -203,9 +199,6 @@ private:
 		const std::vector<int>& getPath();
 		/// Makes a copy to the path.
 		std::vector<int> copyPath() const;
-
-		/// Determines whether the unit is going up a stairs.
-//		bool isOnStairs(const Position& startPosition, const Position& endPosition);
 };
 
 }

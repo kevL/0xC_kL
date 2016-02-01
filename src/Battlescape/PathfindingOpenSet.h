@@ -37,18 +37,17 @@ struct OpenSetEntry
 
 
 /**
- * Helper class to compare entries using pointers.
+ * Helper struct to compare OpenSetEntrys based on tuCost.
  */
-class EntryCompare
+struct EntryCompare
 {
-	public:
 		/**
 		 * Compares entries @a *a and @a *b.
 		 * @param a - pointer to first entry
 		 * @param b - pointer to second entry
 		 * @return, true if entry @a *b must come before @a *a
 		 */
-		bool operator() (OpenSetEntry* a, OpenSetEntry* b) const
+		bool operator() (const OpenSetEntry* const a, const OpenSetEntry* const b) const
 		{
 			return b->_cost < a->_cost;
 		}
@@ -73,7 +72,7 @@ private:
 		~PathfindingOpenSet();
 
 		/// Adds a node to the set.
-		void addNode(PathfindingNode* node);
+		void addNode(PathfindingNode* const node);
 		/// Gets the next node to check.
 		PathfindingNode* getNode();
 
