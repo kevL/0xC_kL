@@ -62,7 +62,7 @@ private:
 		const Position& getPosition() const;
 
 		/// Resets the Node.
-		void reset();
+		void resetNode();
 
 		/// Gets if the Node has been checked.
 		bool getChecked() const;

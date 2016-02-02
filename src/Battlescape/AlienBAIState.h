@@ -50,12 +50,11 @@ private:
 		_intell,
 		_targetsExposed,
 		_targetsVisible,
-		_spottersHostile,
 		_tuAmbush,
 		_tuEscape;
 //		_reserveTUs;
 
-	std::vector<int>
+	std::vector<size_t>
 		_reachable,
 		_reachableAttack;
 //		_wasHitBy;
@@ -78,42 +77,42 @@ private:
 	/// Sets up an escape objective.
 	void setupEscape();
 
-	/// Counts how many xcom/civilian units are known to this unit.
-	int countExposedTargets() const;
-	/// Counts how many known XCom units are able to see this unit.
-	int countSpotters(const Position& pos) const;
+	/// Counts how many xCom and Civilian units are known to the unit.
+	int tallyTargets() const;
+	/// Counts how many known xCom units are able to see the unit.
+	int tallySpotters(const Position& pos) const;
 
-	/// Selects the nearest target we can see, and return the number of viable targets.
+	/// Selects the nearest target seen and returns the quantity of viable targets.
 	int selectNearestTarget();
-	/// Selects the closest known xcom unit for ambushing.
-	bool selectClosestKnownEnemy();
+	/// Selects the closest known xCom unit for ambushing.
+	bool selectPlayerTarget();
 	/// Selects a random known target.
-	bool selectRandomTarget();
+	bool selectTarget();
 	/// Selects the nearest reachable point relative to a target.
-	bool selectPositionNearTarget(
+	bool selectPosition(
 			const BattleUnit* const targetUnit,
-			int tuMax) const;
-
-	/// Re-evaluates the situation and makes a decision from available options.
-	void evaluateAIMode();
-	/// Selects a suitable position from which to attack.
+			int maxTuCost) const;
+	/// Selects a suitable position from which to shoot.
 	bool findFirePoint();
 
-	/// Attempts to take a melee attack/charge an enemy we can see.
+	/// Selects the AI Mode for BattlescapeGame::handleUnitAI().
+	void evaluateAIMode();
+
+	/// Tries to setup a melee attack/charge.
 	void meleeAction();
-	/// Performs a melee attack action.
-	void meleeAttack();
-	/// Attempts to fire a waypoint projectile at an enemy we, or one of our teammates sees.
+	/// Finishes setting up a melee attack/charge.
+	void faceMelee();
+	/// Tries to trace a waypoint projectile.
 	void wayPointAction();
-	/// Constructs a waypoint path for weapons like Blaster Launcher.
+	/// Constructs a waypoint path for a guided projectile.
 	bool pathWaypoints();
-	/// Attempts to fire at an enemy we can see.
+	/// Tries to setup a shot.
 	void projectileAction();
 	/// Selects a fire method.
 	void selectFireMethod();
-	/// Attempts to throw a grenade at an enemy (or group of enemies) we can see.
+	/// Tries to setup a grenade throw.
 	void grenadeAction();
-	/// Performs a psionic attack.
+	/// Tries to setup a psionic attack.
 	bool psiAction();
 
 	/// Checks to make sure a target is valid given the parameters.

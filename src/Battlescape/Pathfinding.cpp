@@ -102,22 +102,22 @@ Pathfinding::~Pathfinding()
  */
 PathfindingNode* Pathfinding::getNode(const Position& pos) // private.
 {
-	return &_nodes[static_cast<size_t>(_battleSave->getTileIndex(pos))];
+	return &_nodes[_battleSave->getTileIndex(pos)];
 }
 
 /**
  * Calculates the shortest path; tries bresenham then A* algorithms.
- * @note 'missileTarget' is required only when called by AlienBAIState::pathWaypoints().
+ * @note 'launchTarget' is required only when called by AlienBAIState::pathWaypoints().
  * @param unit				- pointer to a BattleUnit
  * @param posStop			- destination Position
- * @param missileTarget		- pointer to a targeted BattleUnit (default nullptr)
+ * @param launchTarget		- pointer to a targeted BattleUnit (default nullptr)
  * @param maxTuCost			- maximum time units this path can cost (default 1000)
  * @param strafeRejected	- true if path needs to be recalculated w/out strafe (default false)
  */
 void Pathfinding::calculate(
 		const BattleUnit* const unit, // -> should not need 'unit' here anymore; done in setPathingUnit() unless FACTION_PLAYER ...
 		Position posStop,
-		const BattleUnit* const missileTarget,
+		const BattleUnit* const launchTarget,
 		int maxTuCost,
 		bool strafeRejected)
 {
@@ -141,13 +141,13 @@ void Pathfinding::calculate(
 	setInputModifiers();
 	setMoveType(); // redundant in some cases ...
 
-	if (missileTarget != nullptr && maxTuCost == -1)
-		// pathfinding for missile; not sure how 'missileTarget' affects initialization yet.
-		// TODO: figure how 'missileTarget' and 'maxTuCost' work together or not.
+	if (launchTarget != nullptr && maxTuCost == -1)
+		// pathfinding for Launcher; not sure how 'launchTarget' affects initialization yet.
+		// TODO: figure how 'launchTarget' and 'maxTuCost' work together or not.
 		// -> are they redudant, and if so how redundant. ... Completely redundant, it seems
 		// ... in fact it appears to be one of those things that was never thoroughly thought
 		// through: bresenham always uses its own default of 1000, while aStar never sets
-		// its missile=true boolean because it needs -1 passed in ...... plus it does
+		// its launched=true boolean because it needs -1 passed in ...... plus it does
 		// further checks directly against maxTuCost.
 	{
 		_mType = MT_FLY;
@@ -161,14 +161,16 @@ void Pathfinding::calculate(
 
 	const Tile* tileStop = _battleSave->getTile(posStop);
 
+	// TODO: Check all quadrants.
+	// NOTE: Is this check even necessary since it's done again below.
 	if (isBlocked(			// check if destination is blocked.
 				tileStop,	// <- note these aren't the actual destTiles yet.
 				O_FLOOR,
-				missileTarget) == true
+				launchTarget) == true
 		|| isBlocked(
 				tileStop,
 				O_OBJECT,
-				missileTarget) == true)
+				launchTarget) == true)
 	{
 		return;
 	}
@@ -199,14 +201,15 @@ void Pathfinding::calculate(
 	}
 
 
+	// TODO: Check all quadrants.
 	if (isBlocked(		// recheck if destination is blocked.
 			tileStop,	// <- these are the actual destTiles.
 			O_FLOOR,
-			missileTarget) == false
+			launchTarget) == false
 		&& isBlocked(
 				tileStop,
 				O_OBJECT,
-				missileTarget) == false)
+				launchTarget) == false)
 	{
 		if (armorSize == 2)
 		{
@@ -247,7 +250,7 @@ void Pathfinding::calculate(
 							&& isBlockedPath(
 										tileStop,
 										dir[i],
-										missileTarget) == true)
+										launchTarget) == true)
 						{
 							return;
 						}
@@ -255,7 +258,7 @@ void Pathfinding::calculate(
 						unitTest = tileTest->getTileUnit();
 						if (unitTest != nullptr
 							&& unitTest != unit
-							&& unitTest != missileTarget
+							&& unitTest != launchTarget
 							&& unitTest->getUnitVisible() == true)
 						{
 							return;
@@ -294,7 +297,7 @@ void Pathfinding::calculate(
 			&& bresenhamPath(
 						posStart,
 						posStop,
-						missileTarget,
+						launchTarget,
 						sneak
 						/*maxTuCost*/) == true)
 		{
@@ -309,7 +312,7 @@ void Pathfinding::calculate(
 			if (aStarPath(
 						posStart,
 						posStop,
-						missileTarget,
+						launchTarget,
 						sneak,
 						maxTuCost) == false)
 			{
@@ -325,7 +328,7 @@ void Pathfinding::calculate(
 				calculate( // iterate this function ONCE ->
 						unit,
 						posStop_cache,
-						missileTarget,
+						launchTarget,
 						maxTuCost,
 						true); // <- sets '_strafe' FALSE so loop never gets back in here.
 			}
@@ -364,7 +367,7 @@ void Pathfinding::calculate(
  * @note This only works in the X/Y plane.
  * @param origin		- reference the Position to start from
  * @param target		- reference the Position to end at
- * @param missileTarget	- pointer to targeted BattleUnit
+ * @param launchTarget	- pointer to targeted BattleUnit
  * @param sneak			- true if unit is sneaking (default false)
  * @param maxTuCost		- maximum time units the path can cost (default 1000)
  * @return, true if a path is found
@@ -372,13 +375,12 @@ void Pathfinding::calculate(
 bool Pathfinding::bresenhamPath( // private.
 		const Position& origin,
 		const Position& target,
-		const BattleUnit* const missileTarget,
+		const BattleUnit* const launchTarget,
 		bool sneak,
 		int maxTuCost)
 {
 	//Log(LOG_INFO) << "Pathfinding::bresenhamPath()";
 	static const int
-		FAIL = 255,
 		DIRZ = 8,
 		stock_xd[DIRZ]	= { 0, 1, 1, 1, 0,-1,-1,-1}, // stock values
 		stock_yd[DIRZ]	= {-1,-1, 0, 1, 1, 1, 0,-1},
@@ -493,12 +495,12 @@ bool Pathfinding::bresenhamPath( // private.
 				}
 			}
 
-			const int tuCost = getTuCostPf(
+			const int tuCost (getTuCostPf(
 										posLast,
 										dir,
 										&posNext,
-										missileTarget,
-										missileTarget != nullptr && maxTuCost == 1000);
+										launchTarget,
+										launchTarget != nullptr && maxTuCost == 1000));
 			//Log(LOG_INFO) << ". TU Cost = " << tuCost;
 
 			if (sneak == true
@@ -508,10 +510,10 @@ bool Pathfinding::bresenhamPath( // private.
 			}
 
 			// delete the following
-			const bool isDiagonal = (dir & 1);
+			const bool isDiagonal (dir & 1);
 			const int
-				tuCostLastDiagonal = tuCostLast + tuCostLast / 2,
-				tuCostDiagonal = tuCost + tuCost / 2;
+				tuCostLastDiagonal (tuCostLast + tuCostLast / 2),
+				tuCostDiagonal (tuCost + tuCost / 2);
 
 			if (posNext == posNextReal
 				&& tuCost < FAIL
@@ -522,14 +524,14 @@ bool Pathfinding::bresenhamPath( // private.
 				&& isBlockedPath(
 							_battleSave->getTile(posLast),
 							dir,
-							missileTarget) == false)
+							launchTarget) == false)
 			{
 				_path.push_back(dir);
 			}
 			else
 				return false;
 
-			if (missileTarget == nullptr
+			if (launchTarget == nullptr
 				&& tuCost != FAIL)
 			{
 				tuCostLast = tuCost;
@@ -564,131 +566,216 @@ bool Pathfinding::bresenhamPath( // private.
 /**
  * Calculates the shortest path using a simple A-Star algorithm.
  * @note The unit information and movement type must have already been set. The
- * path information is set only if a valid path is found.
- * @param origin		- reference the position to start from
- * @param target		- reference the position to end at
- * @param missileTarget	- pointer to targeted BattleUnit
+ * path information is set only if a valid path is found. See also findReachable().
+ * @param posOrigin		- reference the position to start from
+ * @param posTarget		- reference the position to end at
+ * @param launchTarget	- pointer to targeted BattleUnit
  * @param sneak			- true if the unit is sneaking (default false)
  * @param maxTuCost		- maximum time units this path can cost (default 1000)
  * @return, true if a path is found
  */
 bool Pathfinding::aStarPath( // private.
-		const Position& origin,
-		const Position& target,
-		const BattleUnit* const missileTarget,
+		const Position& posOrigin,
+		const Position& posTarget,
+		const BattleUnit* const launchTarget,
 		bool sneak,
 		int maxTuCost)
 {
-	//Log(LOG_INFO) << "Pathfinding::aStarPath()";
-
-	for (std::vector<PathfindingNode>::iterator // reset every node, so have to check them all
+	for (std::vector<PathfindingNode>::iterator
 			i = _nodes.begin();
 			i != _nodes.end();
 			++i)
 	{
-		i->reset();
+		i->resetNode();
 	}
 
 	PathfindingNode
-		* const nodeStart = getNode(origin), // start position is the first Node in the OpenSet
-		* nodeTest,
-		* node,
+		* nodeStart (getNode(posOrigin)),
 		* nodeStop;
 
-	nodeStart->linkNode(0, nullptr, 0, target);
+	nodeStart->linkNode(0, nullptr, 0, posTarget);
 
-	PathfindingOpenSet openList;
-	openList.addNode(nodeStart);
+	PathfindingOpenSet testNodes;
+	testNodes.addNode(nodeStart);
 
 	Position posStop;
 	int tuCost;
 
-	const bool missile = missileTarget != nullptr
-					  && maxTuCost == -1;
+	const bool launched = launchTarget != nullptr
+					   && maxTuCost == -1;
 
-	while (openList.isNodeSetEmpty() == false) // if the openList is empty, reached the end
+	while (testNodes.isNodeSetEmpty() == false)
 	{
-		nodeTest = openList.getNode();
-		const Position& posStart = nodeTest->getPosition();
-		nodeTest->setChecked();
+		nodeStart = testNodes.getNode();
+		const Position& posStart = nodeStart->getPosition();
+		nodeStart->setChecked();
 
-		if (posStart == target) // found the target.
+		if (posStart == posTarget)
 		{
 			_path.clear();
 
-			node = nodeTest;
-			while (node->getPrevNode() != nullptr)
+			while (nodeStart->getPrevNode() != nullptr)
 			{
-				_path.push_back(node->getPrevDir());
-				node = node->getPrevNode();
+				_path.push_back(nodeStart->getPrevDir());
+				nodeStart->getPrevNode();
 			}
 
 			if (_strafe == true
 				&& _unit->getUnitRules() != nullptr
 				&& _unit->getUnitRules()->isMechanical() == true)
 			{
-				const int delta = std::abs((_path.back() + 4) % 8 - _unit->getUnitDirection());
+				const int delta (std::abs((_path.back() + 4) % 8 - _unit->getUnitDirection()));
 				if (delta > 1 && delta < 7)
 				{
-					_strafe = false; // illegal direction for tank-strafe.
-					_battleAction->strafe = false;
-
+					_strafe =
+					_battleAction->strafe = false; // illegal direction for tank-strafe.
 					return false;
 				}
 			}
-
 			return true;
 		}
 
-		for (int // try all reachable neighbours.
+		for (int
 				dir = 0;
 				dir != 10; // dir 0 thro 7, up/down
 				++dir)
 		{
-			//Log(LOG_INFO) << ". try dir ... " << dir;
 			tuCost = getTuCostPf(
 							posStart,
 							dir,
 							&posStop,
-							missileTarget,
-							missile,
+							launchTarget,
+							launched,
 							false);
-			//Log(LOG_INFO) << ". TU Cost = " << tuCost;
-			if (tuCost >= 255) // Skip unreachable / blocked
-				continue;
-
-			if (sneak == true
-				&& _battleSave->getTile(posStop)->getTileVisible() == true)
+			if (tuCost < FAIL)
 			{
-				tuCost *= 2; // avoid being seen
-			}
+				if (sneak == true
+					&& _battleSave->getTile(posStop)->getTileVisible() == true)
+				{
+					tuCost *= 2;
+				}
 
-			nodeStop = getNode(posStop);
-			if (nodeStop->getChecked() == true) // algorithm means this node is already at minimum cost
-			{
-				//Log(LOG_INFO) << ". node already Checked ... cont.";
-				continue;
-			}
+				nodeStop = getNode(posStop);
+				if (nodeStop->getChecked() == false)
+				{
+					_tuCostTotal = nodeStart->getTuCostNode(launched) + tuCost;
 
-			_tuCostTotal = nodeTest->getTuCostNode(missile) + tuCost;
+					if ((nodeStop->inOpenSet() == false
+							|| nodeStop->getTuCostNode(launched) > _tuCostTotal)
+						&& _tuCostTotal <= maxTuCost)
+					{
+						nodeStop->linkNode(
+										_tuCostTotal,
+										nodeStart,
+										dir,
+										posTarget);
 
-			if ((nodeStop->inOpenSet() == false // if this node is unvisited or has only been visited from inferior paths...
-					|| nodeStop->getTuCostNode(missile) > _tuCostTotal)
-				&& _tuCostTotal <= maxTuCost)
-			{
-				//Log(LOG_INFO) << ". nodeChecked(dir) = " << dir << " totalCost = " << _tuCostTotal;
-				nodeStop->linkNode(
-								_tuCostTotal,
-								nodeTest,
-								dir,
-								target);
-
-				openList.addNode(nodeStop);
+						testNodes.addNode(nodeStop);
+					}
+				}
 			}
 		}
 	}
 
-	return false; // unable to reach the target
+	return false;
+}
+
+/**
+ * Locates all tiles reachable to @a unit with a TU cost no more than @a maxTuCost.
+ * @note Uses Dijkstra's algorithm. See also aStarPath().
+ * @param unit		- pointer to a BattleUnit
+ * @param maxTuCost	- the maximum cost of the path to each tile
+ * @return, vector of reachable tile indices sorted in ascending order of cost;
+ * the first tile is the start location itself
+ */
+std::vector<size_t> Pathfinding::findReachable(
+		const BattleUnit* const unit,
+		int maxTuCost)
+{
+	for (std::vector<PathfindingNode>::iterator
+			i = _nodes.begin();
+			i != _nodes.end();
+			++i)
+	{
+		i->resetNode();
+	}
+
+	PathfindingNode
+		* nodeStart (getNode(unit->getPosition())),
+		* nodeStop;
+
+	nodeStart->linkNode(0, nullptr, 0);
+
+	PathfindingOpenSet testNodes;
+	testNodes.addNode(nodeStart);
+
+	std::vector<PathfindingNode*> nodes; // note these are not route-nodes perse: *every Tile* is a PathfindingNode.
+
+	Position posStop;
+	int
+		tuCost,
+		tuCostTotal;
+
+	while (testNodes.isNodeSetEmpty() == false)
+	{
+		nodeStart = testNodes.getNode();
+		const Position& posStart (nodeStart->getPosition());
+
+		for (int
+				dir = 0;
+				dir != 10;
+				++dir)
+		{
+			tuCost = getTuCostPf(
+							posStart,
+							dir,
+							&posStop);
+
+			if (tuCost < FAIL)
+			{
+				tuCostTotal = nodeStart->getTuCostNode() + tuCost;
+				if (tuCostTotal <= maxTuCost
+					&& tuCostTotal <= unit->getEnergy())
+				{
+					nodeStop = getNode(posStop);
+					if (nodeStop->getChecked() == false)
+					{
+						if (nodeStop->inOpenSet() == false
+							|| nodeStop->getTuCostNode() > tuCostTotal)
+						{
+							nodeStop->linkNode(
+											tuCostTotal,
+											nodeStart,
+											dir);
+
+							testNodes.addNode(nodeStop);
+						}
+					}
+				}
+			}
+		}
+
+		nodeStart->setChecked();
+		nodes.push_back(nodeStart);
+	}
+
+	std::sort(
+			nodes.begin(),
+			nodes.end(),
+			MinNodeCosts());
+
+	std::vector<size_t> tileIndices;
+	tileIndices.reserve(nodes.size());
+
+	for (std::vector<PathfindingNode*>::const_iterator
+			i = nodes.begin();
+			i != nodes.end();
+			++i)
+	{
+		tileIndices.push_back(_battleSave->getTileIndex((*i)->getPosition()));
+	}
+
+	return tileIndices;
 }
 
 /**
@@ -698,8 +785,8 @@ bool Pathfinding::aStarPath( // private.
  * @param posStart		- reference to the start position
  * @param dir			- direction of movement
  * @param posStop		- pointer to destination Position
- * @param missileTarget	- pointer to targeted BattleUnit (default nullptr)
- * @param missile		- true if a guided missile (default false)
+ * @param launchTarget	- pointer to targeted BattleUnit (default nullptr)
+ * @param launched		- true if a guided missile (default false)
  * @param bresenh		- true if calc'd by Breshenham pathing (default true)
  * @return, TU cost or 255 if movement is impossible
  */
@@ -707,16 +794,12 @@ int Pathfinding::getTuCostPf(
 		const Position& posStart,
 		int dir,
 		Position* const posStop,
-		const BattleUnit* const missileTarget,
-		bool missile,
+		const BattleUnit* const launchTarget,
+		bool launched,
 		bool bresenh)
 {
 	//Log(LOG_INFO) << "Pathfinding::getTuCostPf() " << _unit->getId();
-	static const int FAIL = 255;
-
-	directionToVector(
-					dir,
-					posStop);
+	directionToVector(dir, posStop);
 	*posStop += posStart;
 
 	bool
@@ -820,7 +903,7 @@ int Pathfinding::getTuCostPf(
 				if (isBlockedPath(
 							tileStart,
 							dir,
-							missileTarget) == true)
+							launchTarget) == true)
 				{
 					//if (debug) Log(LOG_INFO) << "too far up[1]";
 					return FAIL;
@@ -909,7 +992,7 @@ int Pathfinding::getTuCostPf(
 					if (isBlockedPath( // check if path can go this way
 								tileStart,
 								dir,
-								missileTarget) == true)
+								launchTarget) == true)
 					{
 						//Log(LOG_INFO) << "same Z, blocked, dir = " << dir;
 						return FAIL;
@@ -963,7 +1046,7 @@ int Pathfinding::getTuCostPf(
 				if (isBlockedPath(
 							tileStart,
 							dir,
-							missileTarget) == true)
+							launchTarget) == true)
 				{
 					//if (debug) Log(LOG_INFO) << "partsUp blocked";
 					return FAIL;
@@ -979,11 +1062,11 @@ int Pathfinding::getTuCostPf(
 			if (isBlocked(
 						tileStop,
 						O_FLOOR,
-						missileTarget) == true
+						launchTarget) == true
 				|| isBlocked(
 							tileStop,
 							O_OBJECT,
-							missileTarget) == true)
+							launchTarget) == true)
 			{
 				//if (debug) Log(LOG_INFO) << "just blocked";
 				return FAIL;
@@ -991,7 +1074,7 @@ int Pathfinding::getTuCostPf(
 // CHECK FOR BLOCKAGE_end.
 
 
-			if (missile == true) // if missile GO.
+			if (launched == true) // if missile GO.
 				return 0;
 
 
@@ -1204,7 +1287,7 @@ int Pathfinding::getTuCostPf(
 		if (isBlockedPath(
 					ulTile,
 					3,
-					missileTarget) == true)
+					launchTarget) == true)
 		{
 			//Log(LOG_INFO) << "blocked uL,lR " << (*posStop);
 			return FAIL;
@@ -1215,7 +1298,7 @@ int Pathfinding::getTuCostPf(
 		if (isBlockedPath(
 					urTile,
 					5,
-					missileTarget) == true)
+					launchTarget) == true)
 		{
 			//Log(LOG_INFO) << "blocked uR,lL " << (*posStop);
 			return FAIL;
@@ -1355,13 +1438,13 @@ void Pathfinding::abortPath()
  * Determines whether going from one Tile to another is blocked.
  * @param startTile		- pointer to start tile
  * @param dir			- direction of movement
- * @param missileTarget	- pointer to targeted BattleUnit (default nullptr)
+ * @param launchTarget	- pointer to targeted BattleUnit (default nullptr)
  * @return, true if path is blocked
  */
 bool Pathfinding::isBlockedPath( // public
 		const Tile* const startTile,
 		const int dir,
-		const BattleUnit* const missileTarget) const
+		const BattleUnit* const launchTarget) const
 {
 	//Log(LOG_INFO) << "Pathfinding::isBlocked() #1";
 
@@ -1386,7 +1469,7 @@ bool Pathfinding::isBlockedPath( // public
 			if (isBlocked(
 						startTile,
 						O_NORTHWALL,
-						missileTarget))
+						launchTarget))
 			{
 				return true;
 			}
@@ -1397,28 +1480,28 @@ bool Pathfinding::isBlockedPath( // public
 			if (isBlocked(
 						startTile,
 						O_NORTHWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posEast),
 						O_WESTWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posEast),
 						O_NORTHWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posEast),
 						O_OBJECT,
-						missileTarget,
+						launchTarget,
 						BIGWALL_NESW)
 				|| isBlocked(
 						_battleSave->getTile(pos + posEast + posNorth),
 						O_WESTWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posNorth),
 						O_OBJECT,
-						missileTarget,
+						launchTarget,
 						BIGWALL_NESW))
 			{
 				return true;
@@ -1430,7 +1513,7 @@ bool Pathfinding::isBlockedPath( // public
 			if (isBlocked(
 						_battleSave->getTile(pos + posEast),
 						O_WESTWALL,
-						missileTarget))
+						launchTarget))
 			{
 				return true;
 			}
@@ -1441,28 +1524,28 @@ bool Pathfinding::isBlockedPath( // public
 			if (isBlocked(
 						_battleSave->getTile(pos + posEast),
 						O_WESTWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posEast),
 						O_OBJECT,
-						missileTarget,
+						launchTarget,
 						BIGWALL_NWSE)
 				|| isBlocked(
 						_battleSave->getTile(pos + posEast + posSouth),
 						O_NORTHWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posEast + posSouth),
 						O_WESTWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posSouth),
 						O_NORTHWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posSouth),
 						O_OBJECT,
-						missileTarget,
+						launchTarget,
 						BIGWALL_NWSE))
 			{
 				return true;
@@ -1474,7 +1557,7 @@ bool Pathfinding::isBlockedPath( // public
 			if (isBlocked(
 						_battleSave->getTile(pos + posSouth),
 						O_NORTHWALL,
-						missileTarget))
+						launchTarget))
 			{
 				return true;
 			}
@@ -1485,28 +1568,28 @@ bool Pathfinding::isBlockedPath( // public
 			if (isBlocked(
 						startTile,
 						O_WESTWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posSouth),
 						O_WESTWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posSouth),
 						O_NORTHWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posSouth),
 						O_OBJECT,
-						missileTarget,
+						launchTarget,
 						BIGWALL_NESW)
 				|| isBlocked(
 						_battleSave->getTile(pos + posSouth + posWest),
 						O_NORTHWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posWest),
 						O_OBJECT,
-						missileTarget,
+						launchTarget,
 						BIGWALL_NESW))
 			{
 				return true;
@@ -1518,7 +1601,7 @@ bool Pathfinding::isBlockedPath( // public
 			if (isBlocked(
 						startTile,
 						O_WESTWALL,
-						missileTarget))
+						launchTarget))
 			{
 				return true;
 			}
@@ -1529,28 +1612,28 @@ bool Pathfinding::isBlockedPath( // public
 			if (isBlocked(
 						startTile,
 						O_WESTWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						startTile,
 						O_NORTHWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posWest),
 						O_NORTHWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posWest),
 						O_OBJECT,
-						missileTarget,
+						launchTarget,
 						BIGWALL_NWSE)
 				|| isBlocked(
 						_battleSave->getTile(pos + posNorth),
 						O_WESTWALL,
-						missileTarget)
+						launchTarget)
 				|| isBlocked(
 						_battleSave->getTile(pos + posNorth),
 						O_OBJECT,
-						missileTarget,
+						launchTarget,
 						BIGWALL_NWSE))
 			{
 				return true;
@@ -1564,14 +1647,14 @@ bool Pathfinding::isBlockedPath( // public
  * Determines whether a certain part of a tile blocks movement.
  * @param tile			- pointer to a specified Tile, can be nullptr
  * @param partType		- part of the tile (MapData.h)
- * @param missileTarget	- pointer to targeted BattleUnit (default nullptr)
+ * @param launchTarget	- pointer to targeted BattleUnit (default nullptr)
  * @param diagExclusion	- to exclude diagonal bigWalls (default BIGWALL_NONE) (Pathfinding.h)
  * @return, true if path is blocked
  */
 bool Pathfinding::isBlocked( // private.
 		const Tile* const tile,
 		const MapDataType partType,
-		const BattleUnit* const missileTarget,
+		const BattleUnit* const launchTarget,
 		const BigwallType diagExclusion) const
 {
 	//Log(LOG_INFO) << "Pathfinding::isBlocked() #2";
@@ -1603,7 +1686,7 @@ bool Pathfinding::isBlocked( // private.
 		case O_WESTWALL:
 			{
 				//Log(LOG_INFO) << ". part is Westwall";
-				if (missileTarget != nullptr					// missiles can't pathfind through closed doors.
+				if (launchTarget != nullptr					// missiles can't pathfind through closed doors.
 					&& tile->getMapData(O_WESTWALL) != nullptr	// ... neither can proxy mines.
 					&& (tile->getMapData(O_WESTWALL)->isDoor() == true
 						|| (tile->getMapData(O_WESTWALL)->isUfoDoor() == true
@@ -1641,7 +1724,7 @@ bool Pathfinding::isBlocked( // private.
 		case O_NORTHWALL:
 			{
 				//Log(LOG_INFO) << ". part is Northwall";
-				if (missileTarget != nullptr					// missiles can't pathfind through closed doors.
+				if (launchTarget != nullptr					// missiles can't pathfind through closed doors.
 					&& tile->getMapData(O_NORTHWALL) != nullptr	// ... neither can proxy mines.
 					&& (tile->getMapData(O_NORTHWALL)->isDoor() == true
 						|| (tile->getMapData(O_NORTHWALL)->isUfoDoor() == true
@@ -1684,7 +1767,7 @@ bool Pathfinding::isBlocked( // private.
 				if (targetUnit != nullptr)
 				{
 					if (targetUnit == _unit
-						|| targetUnit == missileTarget
+						|| targetUnit == launchTarget
 						|| targetUnit->isOut_t(OUT_STAT) == true)
 					{
 						return false;
@@ -1732,7 +1815,7 @@ bool Pathfinding::isBlocked( // private.
 								return true;
 							}
 
-							if (targetUnit != missileTarget // don't let any units fall on large units
+							if (targetUnit != launchTarget // don't let any units fall on large units
 								&& targetUnit->isOut_t(OUT_STAT) == false
 								&& targetUnit->getArmor()->getSize() > 1)
 							{
@@ -1751,10 +1834,11 @@ bool Pathfinding::isBlocked( // private.
 
 	static const int TU_BLOCK_LARGEUNIT (6); // stop large units from going through hedges and over fences
 
-	if (tile->getTuCostTile(partType, _mType) == 255
+	const int tu (tile->getTuCostTile(partType, _mType));
+	if (tu == FAIL
 		|| (_unit != nullptr
 			&& _unit->getArmor()->getSize() == 2
-			&& tile->getTuCostTile(partType, _mType) > TU_BLOCK_LARGEUNIT))
+			&& tu > TU_BLOCK_LARGEUNIT))
 	{
 		//Log(LOG_INFO) << "isBlocked() EXIT true, partType = " << partType << " MT = " << (int)_mType;
 		return true;
@@ -2058,106 +2142,6 @@ bool Pathfinding::removePreview()
 bool Pathfinding::isPathPreviewed() const
 {
 	return _previewed;
-}
-
-/**
- * Locates all tiles reachable to @a unit with a TU cost no more than @a tuMax.
- * @note Uses Dijkstra's algorithm.
- * @param unit	- pointer to a BattleUnit
- * @param tuMax	- the maximum cost of the path to each tile
- * @return, vector of reachable tile indices sorted in ascending order of cost;
- * the first tile is the start location itself
- */
-std::vector<int> Pathfinding::findReachable(
-		const BattleUnit* const unit,
-		int tuMax)
-{
-	for (std::vector<PathfindingNode>::iterator
-			i = _nodes.begin();
-			i != _nodes.end();
-			++i)
-	{
-		i->reset();
-	}
-
-	PathfindingNode
-		* const startNode = getNode(unit->getPosition()),
-		* currentNode,
-		* nextNode;
-
-	startNode->linkNode(0,nullptr,0);
-
-	PathfindingOpenSet unvisited;
-	unvisited.addNode(startNode);
-
-	std::vector<PathfindingNode*> reachable;	// note these are not route-nodes perse;
-												// *every Tile* is a PathfindingNode.
-	Position nextPos;
-	int
-		tuCost,
-		totalTuCost,
-		staMax = unit->getEnergy();
-
-	while (unvisited.isNodeSetEmpty() == false) // 'unvisited' -> 'openList'
-	{
-		currentNode = unvisited.getNode();
-		const Position& currentPos = currentNode->getPosition();
-
-		for (int // Try all reachable neighbours.
-				dir = 0;
-				dir != 10;
-				++dir)
-		{
-			tuCost = getTuCostPf(
-							currentPos,
-							dir,
-							&nextPos);
-
-			if (tuCost != 255) // Skip unreachable / blocked
-			{
-				totalTuCost = currentNode->getTuCostNode(false) + tuCost;
-				if (totalTuCost <= tuMax
-					&& totalTuCost <= staMax)
-				{
-					nextNode = getNode(nextPos);
-					if (nextNode->getChecked() == false) // the algorithm means this node is already at minimum cost.
-					{
-						if (nextNode->inOpenSet() == false
-							|| nextNode->getTuCostNode(false) > totalTuCost) // if this node is unvisited or visited from a better path.
-						{
-							nextNode->linkNode(
-											totalTuCost,
-											currentNode,
-											dir);
-
-							unvisited.addNode(nextNode);
-						}
-					}
-				}
-			}
-		}
-
-		currentNode->setChecked();
-		reachable.push_back(currentNode);
-	}
-
-	std::sort(
-			reachable.begin(),
-			reachable.end(),
-			MinNodeCosts());
-
-	std::vector<int> tileIndices;
-	tileIndices.reserve(reachable.size());
-
-	for (std::vector<PathfindingNode*>::const_iterator
-			i = reachable.begin();
-			i != reachable.end();
-			++i)
-	{
-		tileIndices.push_back(_battleSave->getTileIndex((*i)->getPosition()));
-	}
-
-	return tileIndices;
 }
 
 /**

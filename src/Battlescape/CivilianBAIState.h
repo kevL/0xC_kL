@@ -40,7 +40,6 @@ class CivilianBAIState
 private:
 	int
 		_tuEscape,
-		_spottersHostile,
 		_targetsHostile;
 
 	BattleAction
@@ -48,9 +47,9 @@ private:
 		* _patrolAction;
 
 	/// Counts how many aLiens spot this unit.
-	int countSpotters(const Position& pos) const;
+	int tallySpotters(const Position& pos) const;
 	/// Counts the quantity of Hostiles that the civilian sees.
-	int countHostiles();
+	int tallyAggro();
 
 	/// Sets up an escape objective.
 	void setupEscape();

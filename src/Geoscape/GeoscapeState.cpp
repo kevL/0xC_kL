@@ -2437,12 +2437,9 @@ void GeoscapeState::time30Minutes()
 			}
 
 			if ((*j)->showReady() == true)
-			{
-				const std::wstring wst = tr("STR_CRAFT_READY")
-											.arg((*i)->getName(nullptr))
-											.arg((*j)->getName(_game->getLanguage()));
-				popup(new CraftReadyState(this, wst));
-			}
+				popup(new CraftReadyState(this, tr("STR_CRAFT_READY")
+													.arg((*i)->getName(nullptr))
+													.arg((*j)->getName(_game->getLanguage()))));
 		}
 	}
 

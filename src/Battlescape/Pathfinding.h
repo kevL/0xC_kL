@@ -44,6 +44,8 @@ class Pathfinding
 {
 
 private:
+	static const int FAIL = 255;
+
 	bool
 		_alt,
 		_ctrl,
@@ -66,27 +68,27 @@ private:
 	std::vector<PathfindingNode> _nodes;
 
 
-	/// Gets the node at a position.
+	/// Gets the (Pathfinding) node at a (tile) Position.
 	PathfindingNode* getNode(const Position& pos);
 
 	/// Determines whether a tile blocks a movementType.
 	bool isBlocked(
 			const Tile* const tile,
 			const MapDataType partType,
-			const BattleUnit* const missileTarget = nullptr,
+			const BattleUnit* const launchTarget = nullptr,
 			const BigwallType diagExclusion = BIGWALL_NONE) const;
 	/// Tries to find a straight line path between two positions.
 	bool bresenhamPath(
 			const Position& origin,
 			const Position& target,
-			const BattleUnit* const missileTarget,
+			const BattleUnit* const launchTarget,
 			bool sneak = false,
 			int maxTuCost = 1000);
 	/// Tries to find a path between two positions.
 	bool aStarPath(
-			const Position& origin,
-			const Position& target,
-			const BattleUnit* const missileTarget,
+			const Position& posOrigin,
+			const Position& posTarget,
+			const BattleUnit* const launchTarget,
 			bool sneak = false,
 			int maxTuCost = 1000);
 
@@ -121,15 +123,20 @@ private:
 		void calculate(
 				const BattleUnit* const unit,
 				Position posStop,
-				const BattleUnit* const missileTarget = nullptr,
+				const BattleUnit* const launchTarget = nullptr,
 				int maxTuCost = 1000,
 				bool strafeRejected = false);
+
+		/// Gets all reachable tiles based on cost.
+		std::vector<size_t> findReachable(
+				const BattleUnit* const unit,
+				int tuMax);
 
 		/// Determines whether or not movement between startTile and endTile is possible in the direction.
 		bool isBlockedPath(
 				const Tile* const startTile,
 				const int dir,
-				const BattleUnit* const missileTarget = nullptr) const;
+				const BattleUnit* const launchTarget = nullptr) const;
 
 		/// Aborts the current path.
 		void abortPath();
@@ -153,22 +160,17 @@ private:
 				const Position& posStart,
 				int dir,
 				Position* const posStop,
-				const BattleUnit* const missileTarget = nullptr,
-				bool missile = false,
+				const BattleUnit* const launchTarget = nullptr,
+				bool launched = false,
 				bool bresenh = true);
 		/// Gets _tuCostTotal; finds out whether we can hike somewhere in this turn or not.
-		int getTotalTUCost() const
+		int getTuCostTotalPf() const
 		{ return _tuCostTotal; }
 
 		/// Checks if the movement is valid, for the up/down button.
 		int validateUpDown(
 				const Position& posStart,
 				const int dir);
-
-		/// Gets all reachable tiles, based on cost.
-		std::vector<int> findReachable(
-				const BattleUnit* const unit,
-				int tuMax);
 
 		/// Previews the path.
 		bool previewPath(bool discard = false);

@@ -2208,8 +2208,8 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 				Pathfinding* const pf (_battleSave->getPathfinding());
 				pf->setPathingUnit(unit);
 
-				const std::vector<int> reachable (pf->findReachable(unit, tu));
-				const size_t tileId (static_cast<size_t>(reachable[RNG::pick(reachable.size())])); // <-- WARNING: no Safety on size !
+				const std::vector<size_t> reachable (pf->findReachable(unit, tu));
+				const size_t tileId (reachable[RNG::pick(reachable.size())]); // <-- WARNING: no Safety on size !
 
 				_battleSave->tileCoords(
 									tileId,

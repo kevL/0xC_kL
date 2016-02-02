@@ -58,7 +58,7 @@ const Position& PathfindingNode::getPosition() const
 /**
  * Resets this Node.
  */
-void PathfindingNode::reset()
+void PathfindingNode::resetNode()
 {
 	_checked = false;
 	_openSetEntry = nullptr;
@@ -80,10 +80,10 @@ bool PathfindingNode::getChecked() const
  */
 int PathfindingNode::getTuCostNode(bool missile) const
 {
-	if (missile == true)
-		return 0;
+	if (missile == false)
+		return _tuCost;
 
-	return _tuCost;
+	return 0;
 }
 
 /**

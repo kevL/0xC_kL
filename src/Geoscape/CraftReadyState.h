@@ -44,6 +44,7 @@ class CraftReadyState
 {
 private:
 	GeoscapeState* _state;
+
 	Text* _txtMessage;
 	TextButton
 		* _btnOk,
@@ -52,7 +53,7 @@ private:
 
 
 	public:
-		/// Creates the CraftReady state.
+		/// Constructs the CraftReady state.
 		CraftReadyState(
 				GeoscapeState* state,
 				const std::wstring& wst);
@@ -68,6 +69,7 @@ private:
 		void btnOk5SecsClick(Action* action);
 		///
 		// TODO: btnBaseClick()
+		// TODO: btnCraftInfoClick()
 };
 
 }

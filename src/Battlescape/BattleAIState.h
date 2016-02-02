@@ -63,20 +63,24 @@ protected:
 	static const int
 		FAST_PASS_THRESHOLD		= 100,
 		BASE_SUCCESS_SYSTEMATIC	= 100,
-		BASE_SUCCESS_DESPERATE	= 10 + BASE_SUCCESS_SYSTEMATIC,
-		EXPOSURE_PENALTY		= 10,
-		FIRE_PENALTY			= 40,
-		CUR_TILE_PREF			= 15,
-		COVER_BONUS				= 25;
+		BASE_SUCCESS_DESPERATE	= 15 + BASE_SUCCESS_SYSTEMATIC,
+		EXPOSURE_PENALTY		= 12,
+		FIRE_PENALTY			= 37,
+		CUR_TILE_PREF			= 16,
+		COVER_BONUS				= 29,
+
+		ESCAPE_FAIL				= -100000;
 
 //	bool _traceAI;
 
+	int _spottersOrigin;
+
 	BattleUnit
 		* _unit,
-		* _aggroTarget;
+		* _unitAggro;
 	Node
 		* _startNode,
-		* _toNode;
+		* _stopNode;
 	SavedBattleGame* _battleSave;
 
 	AIMode _AIMode;

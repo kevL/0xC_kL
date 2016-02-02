@@ -36,10 +36,11 @@ BattleAIState::BattleAIState(
 	:
 		_battleSave(battleSave),
 		_unit(unit),
-		_aggroTarget(nullptr),
+		_unitAggro(nullptr),
 		_AIMode(AI_PATROL),
 		_startNode(nullptr),
-		_toNode(nullptr)
+		_stopNode(nullptr),
+		_spottersOrigin(0)
 {
 //	_traceAI = Options::traceAI;
 }
@@ -90,7 +91,7 @@ void BattleAIState::resetAI()
 {
 	_AIMode = AI_PATROL;
 	_startNode =
-	_toNode = nullptr;
+	_stopNode = nullptr;
 }
 
 /**

@@ -214,12 +214,13 @@ private:
 		 * Converts coordinates into a unique index.
 		 * getTile() calls this every time, so should be inlined along with it.
 		 * @note Are not functions that are defined inside the class def'n here
-		 * supposedly assumed as 'inlined' ......
+		 * supposedly assumed as 'inlined' ...... And the true result of keyword
+		 * "inline" is actually something quite different. ah C++ clear as mud.
 		 * @param pos - a position to convert
 		 * @return, the unique index
 		 */
-		inline int getTileIndex(const Position& pos) const
-		{ return (pos.z * _mapsize_y * _mapsize_x) + (pos.y * _mapsize_x) + pos.x; }
+		inline size_t getTileIndex(const Position& pos) const
+		{ return static_cast<size_t>((pos.z * _mapsize_y * _mapsize_x) + (pos.y * _mapsize_x) + pos.x); }
 
 		/// Converts a tile index to its coordinates.
 		void tileCoords(
