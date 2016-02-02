@@ -138,7 +138,7 @@ private:
 		/// Gets all reachable tiles based on cost.
 		std::vector<size_t> findReachable(
 				const BattleUnit* const unit,
-				int tuMax);
+				int maxTuCost);
 
 		/// Gets the TU cost to move from 1 tile to the other.
 		int getTuCostPf(

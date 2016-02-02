@@ -666,13 +666,12 @@ bool Pathfinding::aStarPath( // private.
 	Position posStop;
 	int tuCost;
 
-	const bool launched = launchTarget != nullptr
-					   && maxTuCost == -1;
+	const bool launched (launchTarget != nullptr && maxTuCost == -1);
 
 	while (testNodes.isNodeSetEmpty() == false)
 	{
 		nodeStart = testNodes.getNode();
-		const Position& posStart = nodeStart->getPosition();
+		const Position& posStart (nodeStart->getPosition());
 		nodeStart->setChecked();
 
 		if (posStart == posTarget)
@@ -682,7 +681,7 @@ bool Pathfinding::aStarPath( // private.
 			while (nodeStart->getPrevNode() != nullptr)
 			{
 				_path.push_back(nodeStart->getPrevDir());
-				nodeStart->getPrevNode();
+				nodeStart = nodeStart->getPrevNode();
 			}
 
 			if (_strafe == true
@@ -693,7 +692,7 @@ bool Pathfinding::aStarPath( // private.
 				if (delta > 1 && delta < 7)
 				{
 					_strafe =
-					_battleAction->strafe = false; // illegal direction for tank-strafe.
+					_battleAction->strafe = false;
 					return false;
 				}
 			}
@@ -702,7 +701,7 @@ bool Pathfinding::aStarPath( // private.
 
 		for (int
 				dir = 0;
-				dir != 10; // dir 0 thro 7, up/down
+				dir != 10;
 				++dir)
 		{
 			tuCost = getTuCostPf(
@@ -753,97 +752,6 @@ bool Pathfinding::aStarPath( // private.
  * @return, vector of reachable tile indices sorted in ascending order of cost;
  * the first tile is the start location itself
  */
-/*std::vector<size_t> Pathfinding::findReachable(
-		const BattleUnit* const unit,
-		int tuMax)
-{
-	for (std::vector<PathfindingNode>::iterator
-			i = _nodes.begin();
-			i != _nodes.end();
-			++i)
-	{
-		i->resetNode();
-	}
-
-	PathfindingNode
-		* const startNode = getNode(unit->getPosition()),
-		* currentNode,
-		* nextNode;
-
-	startNode->linkNode(0,nullptr,0);
-
-	PathfindingOpenSet unvisited;
-	unvisited.addNode(startNode);
-
-	std::vector<PathfindingNode*> reachable;	// note these are not route-nodes perse;
-												// *every Tile* is a PathfindingNode.
-	Position nextPos;
-	int
-		tuCost,
-		totalTuCost,
-		staMax = unit->getEnergy();
-
-	while (unvisited.isNodeSetEmpty() == false) // 'unvisited' -> 'openList'
-	{
-		currentNode = unvisited.getNode();
-		const Position& currentPos = currentNode->getPosition();
-
-		for (int // Try all reachable neighbours.
-				dir = 0;
-				dir != 10;
-				++dir)
-		{
-			tuCost = getTuCostPf(
-							currentPos,
-							dir,
-							&nextPos);
-
-			if (tuCost != 255) // Skip unreachable / blocked
-			{
-				totalTuCost = currentNode->getTuCostNode(false) + tuCost;
-				if (totalTuCost <= tuMax
-					&& totalTuCost <= staMax)
-				{
-					nextNode = getNode(nextPos);
-					if (nextNode->getChecked() == false) // the algorithm means this node is already at minimum cost.
-					{
-						if (nextNode->inOpenSet() == false
-							|| nextNode->getTuCostNode(false) > totalTuCost) // if this node is unvisited or visited from a better path.
-						{
-							nextNode->linkNode(
-											totalTuCost,
-											currentNode,
-											dir);
-
-							unvisited.addNode(nextNode);
-						}
-					}
-				}
-			}
-		}
-
-		currentNode->setChecked();
-		reachable.push_back(currentNode);
-	}
-
-	std::sort(
-			reachable.begin(),
-			reachable.end(),
-			MinNodeCosts());
-
-	std::vector<size_t> tileIndices;
-	tileIndices.reserve(reachable.size());
-
-	for (std::vector<PathfindingNode*>::const_iterator
-			i = reachable.begin();
-			i != reachable.end();
-			++i)
-	{
-		tileIndices.push_back(_battleSave->getTileIndex((*i)->getPosition()));
-	}
-
-	return tileIndices;
-} */
 std::vector<size_t> Pathfinding::findReachable(
 		const BattleUnit* const unit,
 		int maxTuCost)
