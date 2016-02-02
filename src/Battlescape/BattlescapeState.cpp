@@ -1967,7 +1967,7 @@ void BattlescapeState::btnKneelClick(Action*)
 					pf->calculate(
 								_battleGame->getCurrentAction()->actor,
 								_battleGame->getCurrentAction()->target);
-					pf->removePreview();
+					pf->clearPreview();
 					pf->previewPath();
 				}
 			}
@@ -2649,7 +2649,7 @@ void BattlescapeState::btnPsiClick(Action* action)
 		// update any path preview
 		if (_battleGame->getPathfinding()->isPathPreviewed())
 		{
-			_battleGame->getPathfinding()->removePreview();
+			_battleGame->getPathfinding()->clearPreview();
 			_battleGame->getPathfinding()->previewPath();
 		}
 	}
@@ -2676,7 +2676,7 @@ void BattlescapeState::btnPsiClick(Action* action)
 		// update any path preview
 		if (_battleGame->getPathfinding()->isPathPreviewed())
 		{
-			_battleGame->getPathfinding()->removePreview();
+			_battleGame->getPathfinding()->clearPreview();
 			_battleGame->getPathfinding()->previewPath();
 		}
 	}

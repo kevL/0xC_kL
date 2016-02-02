@@ -73,7 +73,9 @@ protected:
 
 //	bool _traceAI;
 
-	int _spottersOrigin;
+	int
+		_spottersOrigin,
+		_tuEscape;
 
 	BattleUnit
 		* _unit,
@@ -90,12 +92,13 @@ protected:
 		/// Creates a new BattleAIState linked to the SavedBattleGame and a certain BattleUnit.
 		BattleAIState(
 				SavedBattleGame* const battleSave,
-				BattleUnit* const unit);
+				BattleUnit* const unit,
+				Node* const startNode);
 		/// Cleans up the BattleAIState.
 		virtual ~BattleAIState();
 
 		/// Loads the AI state from YAML.
-		void load(const YAML::Node& node);
+		virtual void load(const YAML::Node& node);
 		/// Saves the AI state to YAML.
 		virtual YAML::Node save() const;
 

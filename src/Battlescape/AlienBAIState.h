@@ -50,8 +50,7 @@ private:
 		_intell,
 		_targetsExposed,
 		_targetsVisible,
-		_tuAmbush,
-		_tuEscape;
+		_tuAmbush;
 //		_reserveTUs;
 
 	std::vector<size_t>
@@ -60,10 +59,10 @@ private:
 //		_wasHitBy;
 
 	BattleAction
-		* _ambushAction,
-		* _attackAction,
 		* _escapeAction,
 		* _patrolAction,
+		* _ambushAction,
+		* _attackAction,
 		* _psiAction;
 
 	BattleActionType _reserve;
@@ -130,12 +129,12 @@ private:
 		AlienBAIState(
 				SavedBattleGame* const battleSave,
 				BattleUnit* const unit,
-				Node* const node = nullptr);
+				Node* const startNode = nullptr);
 		/// Cleans up the AlienBAIState.
 		~AlienBAIState();
 
 		/// Loads the AI state from YAML.
-		void load(const YAML::Node& node);
+		void load(const YAML::Node& node) override;
 		/// Saves the AI state to YAML.
 		YAML::Node save() const override;
 

@@ -2351,7 +2351,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
   */
 bool BattlescapeGame::cancelCurrentAction(bool force)
 {
-	if (_battleSave->getPathfinding()->removePreview() == false
+	if (_battleSave->getPathfinding()->clearPreview() == false
 		|| Options::battlePreviewPath == PATH_NONE)
 	{
 		if (_battleStates.empty() == true || force == true)
@@ -2627,7 +2627,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 						|| _currentAction.actor->getUnitRules()->isMechanical() == false))
 				{
 					if (allowPreview == true)
-						pf->removePreview();
+						pf->clearPreview();
 
 					Position screenPixel;
 					getMap()->getCamera()->convertMapToScreen(pos, &screenPixel);
@@ -2657,7 +2657,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 						|| pf->isModAlt() != alt
 						|| pf->isZPath() != zPath))
 				{
-					pf->removePreview();
+					pf->clearPreview();
 				}
 
 				_currentAction.target = pos;
@@ -2670,7 +2670,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					if (allowPreview == true
 						&& pf->previewPath() == false)
 					{
-						pf->removePreview();
+						pf->clearPreview();
 						allowPreview = false;
 					}
 

@@ -50,19 +50,19 @@ namespace OpenXcom
  * Sets up an AlienBAIState w/ BattleAIState.
  * @param battleSave	- pointer to SavedBattleGame
  * @param unit			- pointer to the BattleUnit
- * @param node			- pointer to the Node the unit originates from (default nullptr)
+ * @param startNode		- pointer to the Node the unit originates at (default nullptr)
  */
 AlienBAIState::AlienBAIState(
 		SavedBattleGame* const battleSave,
 		BattleUnit* const unit,
-		Node* const node)
+		Node* const startNode)
 	:
 		BattleAIState(
 			battleSave,
-			unit),
+			unit,
+			startNode),
 		_targetsExposed(0),
 		_targetsVisible(0),
-		_tuEscape(0),
 		_tuAmbush(0),
 //		_reserveTUs(0),
 		_rifle(false),
@@ -75,26 +75,24 @@ AlienBAIState::AlienBAIState(
 		_intell(unit->getIntelligence())
 {
 	//Log(LOG_INFO) << "Create AlienBAIState";
-	_startNode = node;
-
-	_patrolAction	= new BattleAction();
-	_attackAction	= new BattleAction();
-	_ambushAction	= new BattleAction();
 	_escapeAction	= new BattleAction();
+	_patrolAction	= new BattleAction();
+	_ambushAction	= new BattleAction();
+	_attackAction	= new BattleAction();
 	_psiAction		= new BattleAction();
 	//Log(LOG_INFO) << "Create AlienBAIState EXIT";
 }
 
 /**
- * Deletes the BattleAIState.
+ * Deletes the AlienBAIState.
  */
 AlienBAIState::~AlienBAIState()
 {
 	//Log(LOG_INFO) << "Delete AlienBAIState";
-	delete _patrolAction;
-	delete _attackAction;
-	delete _ambushAction;
 	delete _escapeAction;
+	delete _patrolAction;
+	delete _ambushAction;
+	delete _attackAction;
 	delete _psiAction;
 }
 
@@ -104,7 +102,8 @@ AlienBAIState::~AlienBAIState()
  */
 void AlienBAIState::load(const YAML::Node& node)
 {
-	int
+	BattleAIState::load(node);
+/*	int
 		startNodeId,
 		stopNodeId;
 
@@ -118,7 +117,7 @@ void AlienBAIState::load(const YAML::Node& node)
 		_startNode = _battleSave->getNodes()->at(startNodeId);
 
 	if (stopNodeId != -1)
-		_stopNode = _battleSave->getNodes()->at(stopNodeId);
+		_stopNode = _battleSave->getNodes()->at(stopNodeId); */
 }
 
 /**
@@ -127,7 +126,8 @@ void AlienBAIState::load(const YAML::Node& node)
  */
 YAML::Node AlienBAIState::save() const
 {
-	int
+	return BattleAIState::save();
+/*	int
 		startNodeId	= -1,
 		stopNodeId	= -1;
 
@@ -141,7 +141,7 @@ YAML::Node AlienBAIState::save() const
 	node["AIMode"]		= static_cast<int>(_AIMode);
 //	node["wasHitBy"]	= _wasHitBy;
 
-	return node;
+	return node; */
 }
 
 /**
@@ -924,6 +924,189 @@ void AlienBAIState::setupAttack() // private.
  * seen by '_unitAggro'. If there is no such tile run away from the target.
  * @note Fills out the '_escapeAction' with useful data.
  */
+/*void AlienBAIState::setupEscape() // private.
+{
+	bool coverFound (false);
+
+	selectNearestTarget();
+	_tuEscape = 0;
+
+	int
+		bestTileScore (-100000),
+		tileScore,
+		t (-1),
+		dist;
+
+	if (_unitAggro != nullptr)
+		dist = TileEngine::distance(
+								_unit->getPosition(),
+								_unitAggro->getPosition());
+	else
+		dist = 0;
+
+	// weights of various factors in choosing a tile to which to withdraw
+	const int unitsSpotting (tallySpotters(_unit->getPosition()));
+
+	Position bestTile (0,0,0);
+	const Tile* tile;
+
+	std::vector<Position> tileSearch (_battleSave->getTileSearch());
+	RNG::shuffle(tileSearch.begin(), tileSearch.end());
+
+	Pathfinding* const pf (_battleSave->getPathfinding());
+	pf->setPathingUnit(_unit);
+
+	while (t < 150 && coverFound == false)
+	{
+		_escapeAction->target = _unit->getPosition();		// start looking in a direction away from the enemy
+		if (_battleSave->getTile(_escapeAction->target) == nullptr)
+			_escapeAction->target = _unit->getPosition();	// cornered at the edge of the map perhaps?
+
+		tileScore = 0;
+
+		if (t == -1)
+		{
+			// you know, maybe we should just stay where we are and not risk reaction fire...
+			// or maybe continue to wherever we were running to and not risk looking stupid
+			if (_battleSave->getTile(_unit->_lastCover) != nullptr)
+				_escapeAction->target = _unit->_lastCover;
+		}
+		else if (t < static_cast<int>(_battleSave->SEARCH_SIZE)) //121 // looking for cover
+		{
+			_escapeAction->target.x += tileSearch[t].x;
+			_escapeAction->target.y += tileSearch[t].y;
+
+			tileScore = BASE_SUCCESS_SYSTEMATIC;
+
+			if (_escapeAction->target == _unit->getPosition())
+			{
+				if (unitsSpotting > 0)
+				{
+					// maybe don't stay in the same spot? move or something if there's any point to it?
+					_escapeAction->target.x += RNG::generate(-20,20);
+					_escapeAction->target.y += RNG::generate(-20,20);
+				}
+				else
+					tileScore += CUR_TILE_PREF;
+			}
+		}
+		else
+		{
+			//if (t == 121 && _traceAI) Log(LOG_INFO) << "best tileScore after systematic search was: " << bestTileScore;
+			tileScore = BASE_SUCCESS_DESPERATE; // ruuuuuuun!!1
+
+			_escapeAction->target = _unit->getPosition();
+			_escapeAction->target.x += RNG::generate(-10,10);
+			_escapeAction->target.y += RNG::generate(-10,10);
+			_escapeAction->target.z = _unit->getPosition().z + RNG::generate(-1,1);
+
+			if (_escapeAction->target.z < 0)
+				_escapeAction->target.z = 0;
+			else if (_escapeAction->target.z >= _battleSave->getMapSizeZ())
+				_escapeAction->target.z = _unit->getPosition().z;
+		}
+
+		++t;
+
+		// think, Dang NABBIT!!!
+		tile = _battleSave->getTile(_escapeAction->target);
+		int distTarget;
+		if (_unitAggro != nullptr)
+			distTarget = TileEngine::distance(
+										_unitAggro->getPosition(),
+										_escapeAction->target);
+		else
+			distTarget = 0;
+
+		if (dist >= distTarget)
+			tileScore -= (distTarget - dist) * 10;
+		else
+			tileScore += (distTarget - dist) * 10;
+
+		if (tile == nullptr)
+			tileScore = -100001; // no you can't quit the battlefield by running off the map.
+		else
+		{
+			if (std::find(
+					_reachable.begin(),
+					_reachable.end(),
+					_battleSave->getTileIndex(_escapeAction->target)) == _reachable.end())
+			{
+				continue; // just ignore unreachable tiles
+			}
+
+			const int spotters (tallySpotters(_escapeAction->target));
+			if (spotters != 0
+				|| _spottersOrigin != 0)
+			{
+				if (_spottersOrigin <= spotters)
+					tileScore -= (1 + spotters - _spottersOrigin) * EXPOSURE_PENALTY; // that's for giving away our position, schmuckhead.
+				else
+					tileScore += (_spottersOrigin - spotters) * EXPOSURE_PENALTY;
+			}
+
+			if (tile->getFire() != 0)
+				tileScore -= FIRE_PENALTY;
+			else
+				tileScore += tile->getSmoke() * 5;
+
+			if (tile->getDangerous() == true)
+				tileScore -= BASE_SUCCESS_SYSTEMATIC;
+
+//			if (_traceAI)
+//			{
+//				tile->setPreviewColor(tileScore < 0? 3: (tileScore < FAST_PASS_THRESHOLD / 2? 8: (tileScore < FAST_PASS_THRESHOLD? 9: 5)));
+//				tile->setPreviewDir(10);
+//				tile->setPreviewTu(tileScore);
+//			}
+		}
+
+		if (tile != nullptr && tileScore > bestTileScore)
+		{
+			// calculate TUs to tile
+			// this could be gotten w/ findReachable() somehow but that would break something for sure
+			// kL_note: But maybe not after my adulterations to Pathfinding/this/etc.
+			pf->calculate(_unit, _escapeAction->target);
+
+			if (_escapeAction->target == _unit->getPosition()
+				|| pf->getStartDirection() != -1)
+			{
+				bestTileScore = tileScore;
+				bestTile = _escapeAction->target;
+
+				_tuEscape = pf->getTuCostTotalPf();
+				if (_escapeAction->target == _unit->getPosition())
+					_tuEscape = 1;
+
+//				if (_traceAI)
+//				{
+//					tile->setPreviewColor(tileScore < 0? 7:(tileScore < FAST_PASS_THRESHOLD / 2? 10:(tileScore < FAST_PASS_THRESHOLD? 4:5)));
+//					tile->setPreviewDir(10);
+//					tile->setPreviewTu(tileScore);
+//				}
+			}
+			pf->abortPath();
+
+			if (bestTileScore > FAST_PASS_THRESHOLD)
+				coverFound = true; // good enough, gogo-agogo!!
+		}
+	}
+
+	_escapeAction->target = bestTile;
+	//if (_traceAI) _battleSave->getTile(_escapeAction->target)->setPreviewColor(13);
+
+	if (bestTileScore < -99999)
+	{
+		//if (_traceAI) Log(LOG_INFO) << "Escape estimation failed.";
+		_escapeAction->type = BA_RETHINK; // do something, just don't look dumbstruck :P
+	}
+	else
+	{
+		//if (_traceAI) Log(LOG_INFO) << "Escape estimation completed after " << t << " tries, "
+		//		<< _battleSave->getTileEngine()->distance(_unit->getPosition(), bestTile) << " squares or so away.";
+		_escapeAction->type = BA_MOVE;
+	}
+} */
 void AlienBAIState::setupEscape() // private.
 {
 	_tuEscape = 0;
@@ -1032,10 +1215,10 @@ void AlienBAIState::setupEscape() // private.
 
 			if (tile->getDangerous() == true)
 				scoreTest -= BASE_SUCCESS_SYSTEMATIC;
-/*			if (_traceAI) {
-				tile->setPreviewColor(scoreTest < 0 ? 3: (scoreTest < FAST_PASS_THRESHOLD / 2 ? 8: (scoreTest < FAST_PASS_THRESHOLD ? 9: 5)));
-				tile->setPreviewDir(10);
-				tile->setPreviewTu(scoreTest); } */
+//			if (_traceAI) {
+//				tile->setPreviewColor(scoreTest < 0 ? 3: (scoreTest < FAST_PASS_THRESHOLD / 2 ? 8: (scoreTest < FAST_PASS_THRESHOLD ? 9: 5)));
+//				tile->setPreviewDir(10);
+//				tile->setPreviewTu(scoreTest); }
 
 			if (scoreTest > score)
 			{
@@ -1050,10 +1233,10 @@ void AlienBAIState::setupEscape() // private.
 						_tuEscape = pf->getTuCostTotalPf();
 					else
 						_tuEscape = 1;
-/*					if (_traceAI) {
-						tile->setPreviewColor(scoreTest < 0? 7:(scoreTest < FAST_PASS_THRESHOLD / 2? 10:(scoreTest < FAST_PASS_THRESHOLD? 4:5)));
-						tile->setPreviewDir(10);
-						tile->setPreviewTu(scoreTest); } */
+//					if (_traceAI) {
+//						tile->setPreviewColor(scoreTest < 0? 7:(scoreTest < FAST_PASS_THRESHOLD / 2? 10:(scoreTest < FAST_PASS_THRESHOLD? 4:5)));
+//						tile->setPreviewDir(10);
+//						tile->setPreviewTu(scoreTest); }
 				}
 				pf->abortPath();
 

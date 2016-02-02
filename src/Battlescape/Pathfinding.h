@@ -67,16 +67,9 @@ private:
 
 	std::vector<PathfindingNode> _nodes;
 
+	/// Sets the movement type for the path.
+	void setMoveType();
 
-	/// Gets the (Pathfinding) node at a (tile) Position.
-	PathfindingNode* getNode(const Position& pos);
-
-	/// Determines whether a tile blocks a movementType.
-	bool isBlocked(
-			const Tile* const tile,
-			const MapDataType partType,
-			const BattleUnit* const launchTarget = nullptr,
-			const BigwallType diagExclusion = BIGWALL_NONE) const;
 	/// Tries to find a straight line path between two positions.
 	bool bresenhamPath(
 			const Position& origin,
@@ -92,15 +85,22 @@ private:
 			bool sneak = false,
 			int maxTuCost = 1000);
 
-	/// Determines whether a unit can fall down from this tile.
-	bool canFallDown(const Tile* const tile) const;
+	/// Gets the (Pathfinding) node at a (tile) Position.
+	PathfindingNode* getNode(const Position& pos);
+
+	/// Determines whether a tile blocks a movementType.
+	bool isBlocked(
+			const Tile* const tile,
+			const MapDataType partType,
+			const BattleUnit* const launchTarget = nullptr,
+			const BigwallType diagExclusion = BIGWALL_NONE) const;
+
 	/// Determines whether a unit can fall down from this tile.
 	bool canFallDown(
 			const Tile* const tile,
 			int armorSize) const;
-
-	/// Sets the movement type for the path.
-	void setMoveType();
+	/// Determines whether a unit can fall down from this tile.
+	bool canFallDown(const Tile* const tile) const;
 
 
 	public:
@@ -119,6 +119,14 @@ private:
 		/// Cleans up the Pathfinding.
 		~Pathfinding();
 
+		/// Sets unit in order to exploit low-level pathing functions.
+		void setPathingUnit(BattleUnit* const unit);
+		/// Sets keyboard input modifiers.
+		void setInputModifiers();
+
+		/// Aborts the current path.
+		void abortPath();
+
 		/// Calculates the shortest path.
 		void calculate(
 				const BattleUnit* const unit,
@@ -132,29 +140,6 @@ private:
 				const BattleUnit* const unit,
 				int tuMax);
 
-		/// Determines whether or not movement between startTile and endTile is possible in the direction.
-		bool isBlockedPath(
-				const Tile* const startTile,
-				const int dir,
-				const BattleUnit* const launchTarget = nullptr) const;
-
-		/// Aborts the current path.
-		void abortPath();
-
-		/// Converts direction to a unit-vector.
-		static void directionToVector(
-				const int dir,
-				Position* const posVect);
-		/// Converts a unit-vector to a direction.
-		static void vectorToDirection(
-				const Position& posVect,
-				int& dir);
-
-		/// Checks whether a path is ready and returns the direction.
-		int getStartDirection();
-		/// Dequeues a path and returns the direction.
-		int dequeuePath();
-
 		/// Gets the TU cost to move from 1 tile to the other.
 		int getTuCostPf(
 				const Position& posStart,
@@ -167,6 +152,12 @@ private:
 		int getTuCostTotalPf() const
 		{ return _tuCostTotal; }
 
+		/// Determines whether or not movement between startTile and endTile is possible in the direction.
+		bool isBlockedPath(
+				const Tile* const startTile,
+				const int dir,
+				const BattleUnit* const launchTarget = nullptr) const;
+
 		/// Checks if the movement is valid, for the up/down button.
 		int validateUpDown(
 				const Position& posStart,
@@ -175,14 +166,9 @@ private:
 		/// Previews the path.
 		bool previewPath(bool discard = false);
 		/// Removes the path preview.
-		bool removePreview();
+		bool clearPreview();
 		/// Gets the path preview setting.
 		bool isPathPreviewed() const;
-
-		/// Sets unit in order to exploit low-level pathing functions.
-		void setPathingUnit(BattleUnit* const unit);
-		/// Sets keyboard input modifiers.
-		void setInputModifiers();
 
 		/// Gets the CTRL modifier setting.
 		bool isModCtrl() const;
@@ -197,10 +183,23 @@ private:
 		/// Gets TU cost for opening a door.
 		int getOpenDoor() const;
 
-		/// Gets a reference to the path.
-		const std::vector<int>& getPath();
-		/// Makes a copy to the path.
+		/// Checks whether a path is ready and returns the direction.
+		int getStartDirection();
+		/// Dequeues a path and returns the direction.
+		int dequeuePath();
+		/// Gets the path.
+		const std::vector<int>& getPath() const;
+		/// Gets a copy of the path.
 		std::vector<int> copyPath() const;
+
+		/// Converts direction to a unit-vector.
+		static void directionToVector(
+				const int dir,
+				Position* const posVect);
+		/// Converts a unit-vector to a direction.
+		static void vectorToDirection(
+				const Position& posVect,
+				int& dir);
 };
 
 }

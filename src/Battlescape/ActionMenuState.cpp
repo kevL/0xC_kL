@@ -325,7 +325,7 @@ void ActionMenuState::handle(Action* action)
  */
 void ActionMenuState::btnActionMenuClick(Action* action)
 {
-	_game->getSavedGame()->getBattleSave()->getPathfinding()->removePreview();
+	_game->getSavedGame()->getBattleSave()->getPathfinding()->clearPreview();
 
 	size_t btnId = MENU_ITEMS;
 

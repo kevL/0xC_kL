@@ -38,9 +38,7 @@ class CivilianBAIState
 {
 
 private:
-	int
-		_tuEscape,
-		_targetsHostile;
+	int _targetsHostile;
 
 	BattleAction
 		* _escapeAction,
@@ -49,7 +47,7 @@ private:
 	/// Counts how many aLiens spot this unit.
 	int tallySpotters(const Position& pos) const;
 	/// Counts the quantity of Hostiles that the civilian sees.
-	int tallyAggro();
+	int tallyHostiles();
 
 	/// Sets up an escape objective.
 	void setupEscape();
@@ -65,12 +63,12 @@ private:
 		CivilianBAIState(
 				SavedBattleGame* const battleSave,
 				BattleUnit* const unit,
-				Node* const node = nullptr);
+				Node* const startNode = nullptr);
 		/// Cleans up the BattleAIState.
 		~CivilianBAIState();
 
 		/// Loads the AI state from YAML.
-		void load(const YAML::Node& node);
+		void load(const YAML::Node& node) override;
 		/// Saves the AI state to YAML.
 		YAML::Node save() const override;
 

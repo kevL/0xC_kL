@@ -30,21 +30,19 @@ namespace OpenXcom
  * Sets up a CivilianBAIState.
  * @param battleSave	- pointer to the SavedBattleGame
  * @param unit			- pointer to the BattleUnit
- * @param node			- pointer to the Node the unit originates from (default nullptr)
+ * @param startNode		- pointer to the Node the unit originates at (default nullptr)
  */
 CivilianBAIState::CivilianBAIState(
 		SavedBattleGame* const battleSave,
 		BattleUnit* const unit,
-		Node* const node)
+		Node* const startNode)
 	:
 		BattleAIState(
 			battleSave,
-			unit),
-		_tuEscape(0),
+			unit,
+			startNode),
 		_targetsHostile(0)
 {
-	_startNode = node;
-
 	_escapeAction = new BattleAction();
 	_patrolAction = new BattleAction();
 }
@@ -64,7 +62,8 @@ CivilianBAIState::~CivilianBAIState()
  */
 void CivilianBAIState::load(const YAML::Node& node)
 {
-	_AIMode = static_cast<AIMode>(node["AIMode"].as<int>(0));
+	BattleAIState::load(node);
+/*	_AIMode = static_cast<AIMode>(node["AIMode"].as<int>(0));
 
 	const int
 		startNodeId	= node["startNode"]	.as<int>(-1),
@@ -74,7 +73,7 @@ void CivilianBAIState::load(const YAML::Node& node)
 		_startNode = _battleSave->getNodes()->at(static_cast<size_t>(startNodeId));
 
 	if (stopNodeId != -1)
-		_stopNode = _battleSave->getNodes()->at(static_cast<size_t>(stopNodeId));
+		_stopNode = _battleSave->getNodes()->at(static_cast<size_t>(stopNodeId)); */
 }
 
 /**
@@ -83,7 +82,8 @@ void CivilianBAIState::load(const YAML::Node& node)
  */
 YAML::Node CivilianBAIState::save() const
 {
-	int
+	return BattleAIState::save();
+/*	int
 		startNodeId = -1,
 		stopNodeId = -1;
 
@@ -96,7 +96,7 @@ YAML::Node CivilianBAIState::save() const
 	node["stopNode"]	= stopNodeId;
 	node["AIMode"]		= static_cast<int>(_AIMode);
 
-	return node;
+	return node; */
 }
 
 /**
@@ -121,7 +121,7 @@ void CivilianBAIState::think(BattleAction* const action)
 
 	_escapeAction->AIcount = action->AIcount;
 
-	_targetsHostile = tallyAggro();
+	_targetsHostile = tallyHostiles();
 	_spottersOrigin = tallySpotters(_unit->getPosition());
 
 //	if (_traceAI)
@@ -192,10 +192,12 @@ void CivilianBAIState::think(BattleAction* const action)
 			action->target = _patrolAction->target;
 	}
 
-	if (action->type == BA_MOVE
-		&& action->target != _unit->getPosition())
+	if (action->type == BA_MOVE)
 	{
-		_tuEscape = 0;
+		if (action->target != _unit->getPosition())
+			_tuEscape = 0;
+		else
+			action->type = BA_NONE;
 	}
 }
 
@@ -205,7 +207,7 @@ void CivilianBAIState::think(BattleAction* const action)
  * @note If none of the hostiles can target the civilian this returns 0.
  * @return, quantity of potential perps
  */
-int CivilianBAIState::tallyAggro() // private.
+int CivilianBAIState::tallyHostiles() // private.
 {
 	int
 		tally = 0,
@@ -214,7 +216,7 @@ int CivilianBAIState::tallyAggro() // private.
 
 	_unitAggro = nullptr;
 
-	const Position originVoxel = _battleSave->getTileEngine()->getSightOriginVoxel(_unit);
+	const Position originVoxel (_battleSave->getTileEngine()->getSightOriginVoxel(_unit));
 
 	Position targetVoxel;
 	for (std::vector<BattleUnit*>::const_iterator
@@ -302,7 +304,9 @@ int CivilianBAIState::tallySpotters(const Position& pos) const // private.
  */
 void CivilianBAIState::setupEscape() // private.
 {
-	tallyAggro(); // sets _unitAggro
+	_tuEscape = 0;
+
+	tallyHostiles(); // sets _unitAggro
 
 	int
 		distAggroOrigin,
@@ -370,7 +374,7 @@ void CivilianBAIState::setupEscape() // private.
 			else if (_escapeAction->target.z >= _battleSave->getMapSizeZ())
 				_escapeAction->target.z = _battleSave->getMapSizeZ();
 		}
-		i += 10;
+		i += RNG::generate(1,10);
 
 
 		if (_unitAggro != nullptr)

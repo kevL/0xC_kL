@@ -96,13 +96,78 @@ Pathfinding::~Pathfinding()
 {}
 
 /**
- * Gets the Node on a given position on the map.
- * @param pos - reference the Position
- * @return, pointer to PathfindingNode
+ * Sets unit etc in order to exploit pathing functions.
+ * @note This has evolved into an initialization routine.
+ * @param unit - pointer to a BattleUnit
  */
-PathfindingNode* Pathfinding::getNode(const Position& pos) // private.
+void Pathfinding::setPathingUnit(BattleUnit* const unit)
 {
-	return &_nodes[_battleSave->getTileIndex(pos)];
+	_unit = unit;
+
+	if (_battleSave->getBattleState() == nullptr) // safety for battlescape generation.
+		_battleAction = nullptr;
+	else
+		_battleAction = _battleSave->getBattleGame()->getCurrentAction();
+
+	if (unit != nullptr)
+		setMoveType();
+	else
+		_mType = MT_WALK;
+}
+
+/**
+ * Sets the movement type for the path.
+ */
+void Pathfinding::setMoveType() // private.
+{
+	_mType = _unit->getMoveTypeUnit();
+
+	if (_alt == true // this forces soldiers in flyingsuits to walk on (or fall to) the ground.
+		&& _mType == MT_FLY
+		&& _unit->getGeoscapeSoldier() != nullptr)
+//			|| _unit->getUnitRules()->isMechanical() == false)	// hovertanks & cyberdiscs always hover.
+//		&& _unit->getRaceString() != "STR_FLOATER"				// floaters always float
+//		&& _unit->getRaceString() != "STR_CELATID"				// celatids always .. float.
+//		&& _unit->getRaceString() != "STR_ETHEREAL")			// Ethereals *can* walk, but they don't like to.
+	{															// Should turn this into Ruleset param: 'alwaysFloat'
+		_mType = MT_WALK;										// or use floatHeight > 0 or something-like-that
+	}
+}
+
+/**
+ * Sets keyboard input modifiers.
+ */
+void Pathfinding::setInputModifiers()
+{
+	if (_battleSave->getSide() != FACTION_PLAYER
+		|| _battleSave->getBattleGame()->playerPanicHandled() == false)
+	{
+		_ctrl =
+		_alt =
+		_zPath = false;
+	}
+	else
+	{
+		_ctrl = (SDL_GetModState() & KMOD_CTRL) != 0;
+		_alt = (SDL_GetModState() & KMOD_ALT) != 0;
+
+		const Uint8* const keystate = SDL_GetKeyState(nullptr);
+		if (keystate[SDLK_z] != 0)
+			_zPath = true;
+		else
+			_zPath = false;
+	}
+}
+
+/**
+ * Aborts the current path - clears the path vector.
+ */
+void Pathfinding::abortPath()
+{
+	setInputModifiers();
+
+	_tuCostTotal = 0;
+	_path.clear();
 }
 
 /**
@@ -688,6 +753,97 @@ bool Pathfinding::aStarPath( // private.
  * @return, vector of reachable tile indices sorted in ascending order of cost;
  * the first tile is the start location itself
  */
+/*std::vector<size_t> Pathfinding::findReachable(
+		const BattleUnit* const unit,
+		int tuMax)
+{
+	for (std::vector<PathfindingNode>::iterator
+			i = _nodes.begin();
+			i != _nodes.end();
+			++i)
+	{
+		i->resetNode();
+	}
+
+	PathfindingNode
+		* const startNode = getNode(unit->getPosition()),
+		* currentNode,
+		* nextNode;
+
+	startNode->linkNode(0,nullptr,0);
+
+	PathfindingOpenSet unvisited;
+	unvisited.addNode(startNode);
+
+	std::vector<PathfindingNode*> reachable;	// note these are not route-nodes perse;
+												// *every Tile* is a PathfindingNode.
+	Position nextPos;
+	int
+		tuCost,
+		totalTuCost,
+		staMax = unit->getEnergy();
+
+	while (unvisited.isNodeSetEmpty() == false) // 'unvisited' -> 'openList'
+	{
+		currentNode = unvisited.getNode();
+		const Position& currentPos = currentNode->getPosition();
+
+		for (int // Try all reachable neighbours.
+				dir = 0;
+				dir != 10;
+				++dir)
+		{
+			tuCost = getTuCostPf(
+							currentPos,
+							dir,
+							&nextPos);
+
+			if (tuCost != 255) // Skip unreachable / blocked
+			{
+				totalTuCost = currentNode->getTuCostNode(false) + tuCost;
+				if (totalTuCost <= tuMax
+					&& totalTuCost <= staMax)
+				{
+					nextNode = getNode(nextPos);
+					if (nextNode->getChecked() == false) // the algorithm means this node is already at minimum cost.
+					{
+						if (nextNode->inOpenSet() == false
+							|| nextNode->getTuCostNode(false) > totalTuCost) // if this node is unvisited or visited from a better path.
+						{
+							nextNode->linkNode(
+											totalTuCost,
+											currentNode,
+											dir);
+
+							unvisited.addNode(nextNode);
+						}
+					}
+				}
+			}
+		}
+
+		currentNode->setChecked();
+		reachable.push_back(currentNode);
+	}
+
+	std::sort(
+			reachable.begin(),
+			reachable.end(),
+			MinNodeCosts());
+
+	std::vector<size_t> tileIndices;
+	tileIndices.reserve(reachable.size());
+
+	for (std::vector<PathfindingNode*>::const_iterator
+			i = reachable.begin();
+			i != reachable.end();
+			++i)
+	{
+		tileIndices.push_back(_battleSave->getTileIndex((*i)->getPosition()));
+	}
+
+	return tileIndices;
+} */
 std::vector<size_t> Pathfinding::findReachable(
 		const BattleUnit* const unit,
 		int maxTuCost)
@@ -772,10 +928,21 @@ std::vector<size_t> Pathfinding::findReachable(
 			i != nodes.end();
 			++i)
 	{
+		//Log(LOG_INFO) << "pf: " << _battleSave->getTileIndex((*i)->getPosition());
 		tileIndices.push_back(_battleSave->getTileIndex((*i)->getPosition()));
 	}
 
 	return tileIndices;
+}
+
+/**
+ * Gets the Node on a given position on the map.
+ * @param pos - reference the Position
+ * @return, pointer to PathfindingNode
+ */
+PathfindingNode* Pathfinding::getNode(const Position& pos) // private.
+{
+	return &_nodes[_battleSave->getTileIndex(pos)];
 }
 
 /**
@@ -1347,94 +1514,6 @@ int Pathfinding::getTuCostPf(
 }
 
 /**
- * Converts direction to a unit-vector.
- * @note Direction starts north = 0 and goes clockwise.
- * @param dir		- source direction
- * @param posVect	- pointer to a Position
- */
-void Pathfinding::directionToVector( // static.
-		const int dir,
-		Position* const posVect)
-{
-	static const int
-		x[10] = { 0, 1, 1, 1, 0,-1,-1,-1, 0, 0},
-		y[10] = {-1,-1, 0, 1, 1, 1, 0,-1, 0, 0},
-		z[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 1,-1};
-
-	posVect->x = x[dir];
-	posVect->y = y[dir];
-	posVect->z = z[dir];
-}
-
-/**
- * Converts unit-vector to a direction.
- * @note Direction starts north = 0 and goes clockwise.
- * @param posVect	- reference to a Position
- * @param dir		- reference to the resulting direction (up/down & same-tile sets dir -1)
- */
-void Pathfinding::vectorToDirection( // static.
-		const Position& posVect,
-		int& dir)
-{
-	static const int
-		x[8] = { 0, 1, 1, 1, 0,-1,-1,-1},
-		y[8] = {-1,-1, 0, 1, 1, 1, 0,-1};
-
-	for (size_t
-			i = 0;
-			i != 8;
-			++i)
-	{
-		if (x[i] == posVect.x
-			&& y[i] == posVect.y)
-		{
-			dir = static_cast<int>(i);
-			return;
-		}
-	}
-
-	dir = -1;
-}
-
-/**
- * Checks whether a path is ready and gives the first direction.
- * @return, direction where the unit needs to go next, -1 if it's the end of the path
- */
-int Pathfinding::getStartDirection()
-{
-	if (_path.empty() == false)
-		return _path.back();
-
-	return -1;
-}
-
-/**
- * Dequeues the next path direction. Ie, returns the direction and removes it from queue.
- * @return, direction where the unit needs to go next, -1 if it's the end of the path
- */
-int Pathfinding::dequeuePath()
-{
-	if (_path.empty() == true)
-		return -1;
-
-	const int last_element = _path.back();
-	_path.pop_back();
-
-	return last_element;
-}
-
-/**
- * Aborts the current path - clears the path vector.
- */
-void Pathfinding::abortPath()
-{
-	setInputModifiers();
-
-	_tuCostTotal = 0;
-	_path.clear();
-}
-
-/**
  * Determines whether going from one Tile to another is blocked.
  * @param startTile		- pointer to start tile
  * @param dir			- direction of movement
@@ -1849,103 +1928,6 @@ bool Pathfinding::isBlocked( // private.
 }
 
 /**
- * Determines whether a unit can fall down from this tile.
- * True if the current position is higher than 0 (the tileBelow does not exist)
- * or if the tile has no floor (and there is no unit standing below).
- * @param tile - the current tile
- * @return, true if a unit on @a tile can fall to a lower level
- */
-bool Pathfinding::canFallDown(const Tile* const tile) const // private
-{
-	if (tile->getPosition().z == 0) // already on lowest maplevel
-		return false;
-
-	return tile->hasNoFloor(_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
-}
-
-/**
- * Wrapper for canFallDown() above.
- * @param tile		- pointer to the current Tile
- * @param armorSize	- the size of the unit
- * @return, true if a unit on @a tile can fall to a lower level
- */
-bool Pathfinding::canFallDown( // private
-		const Tile* const tile,
-		int armorSize) const
-{
-	for (int
-			x = 0;
-			x != armorSize;
-			++x)
-	{
-		for (int
-				y = 0;
-				y != armorSize;
-				++y)
-		{
-			if (canFallDown(_battleSave->getTile(tile->getPosition() + Position(x,y,0))) == false)
-				return false;
-		}
-	}
-
-	return true;
-}
-
-/**
- * Checks if vertical movement is valid.
- * @note There is a grav lift or the unit can fly and there are no obstructions.
- * @param posStart	- start position
- * @param dir		- up or down
- * @return,	-1 can't fly
-//			-1 kneeling (stop unless on gravLift)
-			 0 blocked (stop)
-			 1 gravLift (go)
-			 2 flying (go unless blocked)
- */
-int Pathfinding::validateUpDown(
-		const Position& posStart,
-		const int dir)
-{
-	Position posStop;
-	directionToVector(
-					dir,
-					&posStop);
-	posStop += posStart;
-
-	const Tile
-		* const startTile = _battleSave->getTile(posStart),
-		* const destTile = _battleSave->getTile(posStop);
-
-	if (destTile == nullptr)
-		return 0;
-
-	const bool gravLift = startTile->getMapData(O_FLOOR) != nullptr
-					   && startTile->getMapData(O_FLOOR)->isGravLift()
-					   && destTile->getMapData(O_FLOOR) != nullptr
-					   && destTile->getMapData(O_FLOOR)->isGravLift();
-
-	if (gravLift == true)
-		return 1;
-
-	if (_mType == MT_FLY //_unit->getMoveTypeUnit() == MT_FLY
-		|| (dir == DIR_DOWN
-			&& _alt == true))
-	{
-		if ((dir == DIR_UP
-				&& destTile->hasNoFloor(startTile))
-			|| (dir == DIR_DOWN
-				&& startTile->hasNoFloor(_battleSave->getTile(posStart + Position(0,0,-1)))))
-		{
-			return 2; // flying.
-		}
-		else
-			return 0; // blocked.
-	}
-
-	return -1; // no flying suit.
-}
-
-/**
  * Marks tiles for the path preview.
  * @param discard - true removes preview (default false)
  * @return, true if the preview is created or discarded; false if nothing happens
@@ -1957,6 +1939,7 @@ bool Pathfinding::previewPath(bool discard)
 	{
 		return false;
 	}
+
 	_previewed = !discard;
 
 
@@ -2006,6 +1989,7 @@ bool Pathfinding::previewPath(bool discard)
 		else
 			switchBack = false; */
 
+		Tile* tileAbove;
 		for (std::vector<int>::reverse_iterator
 				i = _path.rbegin();
 				i != _path.rend();
@@ -2060,12 +2044,9 @@ bool Pathfinding::previewPath(bool discard)
 			}
 
 			tuSpent += tileTu;
-			reserveOk = _battleSave->getBattleGame()->checkReservedTu(
-																_unit,
-																tuSpent);
-//																true);
-			start = dest;
+			reserveOk = _battleSave->getBattleGame()->checkReservedTu(_unit, tuSpent);
 
+			start = dest;
 			for (int
 					x = armorSize;
 					x != -1;
@@ -2077,23 +2058,22 @@ bool Pathfinding::previewPath(bool discard)
 						--y)
 				{
 					tile = _battleSave->getTile(start + Position(x,y,0));
-					Tile* const tileAbove = _battleSave->getTile(start + Position(x,y,1));
-
 					if (i == _path.rend() - 1)
 						tile->setPreviewDir(10);
 					else
 						tile->setPreviewDir(*(i + 1)); // next dir
 
-					if ((x && y)
+					if ((x != 0 && y != 0)
 						|| armorSize == 0)
 					{
 						tile->setPreviewTu(unitTu);
 					}
 
+					tileAbove = _battleSave->getTile(start + Position(x,y,1));
 					if (tileAbove != nullptr
 						&& tileAbove->getPreviewDir() == 0
 						&& tileTu == 0
-						&& _mType != MT_FLY)				// unit fell down
+						&& _mType != MT_FLY) // unit fell down
 					{
 						tileAbove->setPreviewDir(DIR_DOWN);	// retroactively set tileAbove's direction
 					}
@@ -2125,14 +2105,14 @@ bool Pathfinding::previewPath(bool discard)
  * Unmarks the tiles used for path preview.
  * @return, true if preview gets removed
  */
-bool Pathfinding::removePreview()
+bool Pathfinding::clearPreview()
 {
-	if (_previewed == false)
-		return false;
-
-	previewPath(true);
-
-	return true;
+	if (_previewed == true)
+	{
+		previewPath(true);
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -2145,67 +2125,95 @@ bool Pathfinding::isPathPreviewed() const
 }
 
 /**
- * Sets unit etc in order to exploit pathing functions.
- * @note This has evolved into an initialization routine.
- * @param unit - pointer to a BattleUnit
+ * Wrapper for canFallDown().
+ * @param tile		- pointer to the current Tile
+ * @param armorSize	- the size of the unit
+ * @return, true if a unit on @a tile can fall to a lower level
  */
-void Pathfinding::setPathingUnit(BattleUnit* const unit)
+bool Pathfinding::canFallDown( // private
+		const Tile* const tile,
+		int armorSize) const
 {
-	_unit = unit;
-
-	if (_battleSave->getBattleState() == nullptr) // safety for battlescape generation.
-		_battleAction = nullptr;
-	else
-		_battleAction = _battleSave->getBattleGame()->getCurrentAction();
-
-	if (unit != nullptr)
-		setMoveType();
-	else
-		_mType = MT_WALK;
+	for (int
+			x = 0;
+			x != armorSize;
+			++x)
+	{
+		for (int
+				y = 0;
+				y != armorSize;
+				++y)
+		{
+			if (canFallDown(_battleSave->getTile(tile->getPosition() + Position(x,y,0))) == false)
+				return false;
+		}
+	}
+	return true;
 }
 
 /**
- * Sets the movement type for the path.
+ * Determines whether a unit can fall down from this tile.
+ * True if the current position is higher than 0 (the tileBelow does not exist)
+ * or if the tile has no floor (and there is no unit standing below).
+ * @param tile - pointer to the current tile
+ * @return, true if a unit on @a tile can fall to a lower level
  */
-void Pathfinding::setMoveType() // private.
+bool Pathfinding::canFallDown(const Tile* const tile) const // private
 {
-	_mType = _unit->getMoveTypeUnit();
+	if (tile->getPosition().z == 0)
+		return false;
 
-	if (_alt == true // this forces soldiers in flyingsuits to walk on (or fall to) the ground.
-		&& _mType == MT_FLY
-		&& _unit->getGeoscapeSoldier() != nullptr)
-//			|| _unit->getUnitRules()->isMechanical() == false)	// hovertanks & cyberdiscs always hover.
-//		&& _unit->getRaceString() != "STR_FLOATER"				// floaters always float
-//		&& _unit->getRaceString() != "STR_CELATID"				// celatids always .. float.
-//		&& _unit->getRaceString() != "STR_ETHEREAL")			// Ethereals *can* walk, but they don't like to.
-	{															// Should turn this into Ruleset param: 'alwaysFloat'
-		_mType = MT_WALK;										// or use floatHeight > 0 or something-like-that
-	}
+	return tile->hasNoFloor(_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
 }
 
 /**
- * Sets keyboard input modifiers.
+ * Checks if vertical movement is valid.
+ * @note There is a grav lift or the unit can fly and there are no obstructions.
+ * @param posStart	- reference the start position
+ * @param dir		- up or down
+ * @return,	-1 can't fly
+//			-1 kneeling (stop unless on gravLift)
+			 0 blocked (stop)
+			 1 gravLift (go)
+			 2 flying (go unless blocked)
  */
-void Pathfinding::setInputModifiers()
+int Pathfinding::validateUpDown(
+		const Position& posStart,
+		const int dir)
 {
-	if (_battleSave->getSide() != FACTION_PLAYER
-		|| _battleSave->getBattleGame()->playerPanicHandled() == false)
-	{
-		_ctrl =
-		_alt =
-		_zPath = false;
-	}
-	else
-	{
-		_ctrl = (SDL_GetModState() & KMOD_CTRL) != 0;
-		_alt = (SDL_GetModState() & KMOD_ALT) != 0;
+	Position posStop;
+	directionToVector(dir, &posStop);
+	posStop += posStart;
 
-		const Uint8* const keystate = SDL_GetKeyState(nullptr);
-		if (keystate[SDLK_z] != 0)
-			_zPath = true;
-		else
-			_zPath = false;
+	const Tile
+		* const startTile (_battleSave->getTile(posStart)),
+		* const destTile (_battleSave->getTile(posStop));
+
+	if (destTile == nullptr)
+		return 0;
+
+	if (startTile->getMapData(O_FLOOR) != nullptr
+		&& startTile->getMapData(O_FLOOR)->isGravLift()
+		&& destTile->getMapData(O_FLOOR) != nullptr
+		&& destTile->getMapData(O_FLOOR)->isGravLift())
+	{
+		return 1;
 	}
+
+	if (_mType == MT_FLY //_unit->getMoveTypeUnit() == MT_FLY
+		|| (dir == DIR_DOWN
+			&& _alt == true))
+	{
+		if ((dir == DIR_UP
+				&& destTile->hasNoFloor(startTile))
+			|| (dir == DIR_DOWN
+				&& startTile->hasNoFloor(_battleSave->getTile(posStart + Position(0,0,-1)))))
+		{
+			return 2; // flying.
+		}
+		return 0; // blocked.
+	}
+	return -1; // no flying suit.
 }
 
 /**
@@ -2255,21 +2263,98 @@ int Pathfinding::getOpenDoor() const
 }
 
 /**
+ * Checks whether a path is ready and returns the first direction.
+ * @return, direction where the unit needs to go next, -1 if it's the end of the path
+ */
+int Pathfinding::getStartDirection()
+{
+	if (_path.empty() == false)
+		return _path.back();
+
+	return -1;
+}
+
+/**
+ * Dequeues the next path direction and returns that direction.
+ * @return, direction where the unit needs to go next, -1 if it's the end of the path
+ */
+int Pathfinding::dequeuePath()
+{
+	if (_path.empty() == true)
+		return -1;
+
+	const int last_element = _path.back();
+	_path.pop_back();
+
+	return last_element;
+}
+
+/**
  * Gets a reference to the current path.
  * @return, reference to a vector of directions
  */
-const std::vector<int>& Pathfinding::getPath()
+const std::vector<int>& Pathfinding::getPath() const
 {
 	return _path;
 }
 
 /**
- * Makes a copy of the current path.
+ * Copies the current path.
  * @return, copy of the path
  */
 std::vector<int> Pathfinding::copyPath() const
 {
 	return _path;
+}
+
+/**
+ * Converts direction to a unit-vector.
+ * @note Direction starts north = 0 and goes clockwise.
+ * @param dir		- source direction
+ * @param posVect	- pointer to a Position
+ */
+void Pathfinding::directionToVector( // static.
+		const int dir,
+		Position* const posVect)
+{
+	static const int
+		x[10] = { 0, 1, 1, 1, 0,-1,-1,-1, 0, 0},
+		y[10] = {-1,-1, 0, 1, 1, 1, 0,-1, 0, 0},
+		z[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 1,-1};
+
+	posVect->x = x[dir];
+	posVect->y = y[dir];
+	posVect->z = z[dir];
+}
+
+/**
+ * Converts unit-vector to a direction.
+ * @note Direction starts north = 0 and goes clockwise.
+ * @param posVect	- reference to a Position
+ * @param dir		- reference to the resulting direction (up/down & same-tile sets dir -1)
+ */
+void Pathfinding::vectorToDirection( // static.
+		const Position& posVect,
+		int& dir)
+{
+	static const int
+		x[8] = { 0, 1, 1, 1, 0,-1,-1,-1},
+		y[8] = {-1,-1, 0, 1, 1, 1, 0,-1};
+
+	for (size_t
+			i = 0;
+			i != 8;
+			++i)
+	{
+		if (   x[i] == posVect.x
+			&& y[i] == posVect.y)
+		{
+			dir = static_cast<int>(i);
+			return;
+		}
+	}
+
+	dir = -1;
 }
 
 }

@@ -29,18 +29,21 @@ namespace OpenXcom
  * Sets up a BattleAIState.
  * @param battleSave	- pointer to the SavedBattleGame
  * @param unit			- pointer to a BattleUnit
+ * @param startNode		- pointer to the unit's start Node
  */
 BattleAIState::BattleAIState(
 		SavedBattleGame* const battleSave,
-		BattleUnit* const unit)
+		BattleUnit* const unit,
+		Node* const startNode)
 	:
 		_battleSave(battleSave),
 		_unit(unit),
+		_startNode(startNode),
 		_unitAggro(nullptr),
 		_AIMode(AI_PATROL),
-		_startNode(nullptr),
 		_stopNode(nullptr),
-		_spottersOrigin(0)
+		_spottersOrigin(0),
+		_tuEscape(0)
 {
 //	_traceAI = Options::traceAI;
 }
@@ -55,8 +58,20 @@ BattleAIState::~BattleAIState() // virtual.
  * Loads the AI state from a YAML file.
  * @param node - reference a YAML node
  */
-void BattleAIState::load(const YAML::Node&)
-{}
+void BattleAIState::load(const YAML::Node& node) // virtual
+{
+	_AIMode = static_cast<AIMode>(node["AIMode"].as<int>(0));
+
+	const int
+		startNodeId	= node["startNode"]	.as<int>(-1),
+		stopNodeId	= node["stopNode"]	.as<int>(-1);
+
+	if (startNodeId != -1)
+		_startNode = _battleSave->getNodes()->at(static_cast<size_t>(startNodeId));
+
+	if (stopNodeId != -1)
+		_stopNode = _battleSave->getNodes()->at(static_cast<size_t>(stopNodeId));
+}
 
 /**
  * Saves the AI state to a YAML file.
@@ -64,7 +79,27 @@ void BattleAIState::load(const YAML::Node&)
  */
 YAML::Node BattleAIState::save() const // virtual.
 {
-	return YAML::Node();
+	int
+		startNodeId,
+		stopNodeId;
+
+	if (_startNode != nullptr)
+		startNodeId	= _startNode->getId();
+	else
+		startNodeId = -1;
+
+	if (_stopNode != nullptr)
+		stopNodeId = _stopNode->getId();
+	else
+		stopNodeId = -1;
+
+	YAML::Node node;
+
+	node["startNode"]	= startNodeId;
+	node["stopNode"]	= stopNodeId;
+	node["AIMode"]		= static_cast<int>(_AIMode);
+
+	return node;
 }
 
 /**
