@@ -842,7 +842,7 @@ void UnitInfoState::exitPress(Action*) const // private.
 												BA_USE,
 												_game->getRuleset()->getItem("STR_MIND_PROBE")))
 		{
-			_battleSave->getBattleGame()->cancelCurrentAction();
+			_battleSave->getBattleGame()->cancelTacticalAction();
 		}
 	}
 

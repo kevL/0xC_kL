@@ -39,9 +39,9 @@ BattleAIState::BattleAIState(
 		_battleSave(battleSave),
 		_unit(unit),
 		_startNode(startNode),
-		_unitAggro(nullptr),
-		_AIMode(AI_PATROL),
 		_stopNode(nullptr),
+		_AIMode(AI_PATROL),
+		_unitAggro(nullptr),
 		_spottersOrigin(0),
 		_tuEscape(0)
 {

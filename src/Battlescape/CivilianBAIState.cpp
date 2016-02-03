@@ -19,9 +19,6 @@
 
 #include "CivilianBAIState.h"
 
-//#define _USE_MATH_DEFINES
-//#include <cmath>
-
 
 namespace OpenXcom
 {
@@ -63,17 +60,6 @@ CivilianBAIState::~CivilianBAIState()
 void CivilianBAIState::load(const YAML::Node& node)
 {
 	BattleAIState::load(node);
-/*	_AIMode = static_cast<AIMode>(node["AIMode"].as<int>(0));
-
-	const int
-		startNodeId	= node["startNode"]	.as<int>(-1),
-		stopNodeId	= node["stopNode"]	.as<int>(-1);
-
-	if (startNodeId != -1)
-		_startNode = _battleSave->getNodes()->at(static_cast<size_t>(startNodeId));
-
-	if (stopNodeId != -1)
-		_stopNode = _battleSave->getNodes()->at(static_cast<size_t>(stopNodeId)); */
 }
 
 /**
@@ -83,20 +69,6 @@ void CivilianBAIState::load(const YAML::Node& node)
 YAML::Node CivilianBAIState::save() const
 {
 	return BattleAIState::save();
-/*	int
-		startNodeId = -1,
-		stopNodeId = -1;
-
-	if (_startNode != nullptr)	startNodeId	= _startNode->getId();
-	if (_stopNode != nullptr)	stopNodeId	= _stopNode->getId();
-
-	YAML::Node node;
-
-	node["startNode"]	= startNodeId;
-	node["stopNode"]	= stopNodeId;
-	node["AIMode"]		= static_cast<int>(_AIMode);
-
-	return node; */
 }
 
 /**
@@ -116,8 +88,8 @@ YAML::Node CivilianBAIState::save() const
 void CivilianBAIState::think(BattleAction* const action)
 {
 	//Log(LOG_INFO) << "CivilianBAIState::think()";
- 	action->type = BA_RETHINK;
 	action->actor = _unit;
+ 	action->type = BA_RETHINK;
 
 	_escapeAction->AIcount = action->AIcount;
 
@@ -163,7 +135,7 @@ void CivilianBAIState::think(BattleAction* const action)
 
 	if (evaluate == true)
 	{
-		evaluateAIMode();
+		evaluateAiMode();
 //		if (_traceAI)
 //		{
 //			std::string AIMode;
@@ -318,7 +290,7 @@ void CivilianBAIState::setupEscape() // private.
 	else
 		distAggroOrigin = 0;
 
-	const int spottersOrigin = tallySpotters(_unit->getPosition());
+	const int spottersOrigin (tallySpotters(_unit->getPosition()));
 
 	const Tile* tile;
 
@@ -486,14 +458,12 @@ void CivilianBAIState::setupPatrol() // private.
 		}
 	} */
 
-	Pathfinding* const pf = _battleSave->getPathfinding();
+	Pathfinding* const pf (_battleSave->getPathfinding());
 	pf->setPathingUnit(_unit);
 
-	int triesLeft = 5; // look for a new node to walk towards
-	while (_stopNode == nullptr && triesLeft != 0)
+	int i (5); // look for a new node to walk towards
+	while (_stopNode == nullptr && i-- != 0)
 	{
-		--triesLeft;
-
 		_stopNode = _battleSave->getPatrolNode(true, _unit, _startNode);
 		if (_stopNode == nullptr)
 			_stopNode = _battleSave->getPatrolNode(false, _unit, _startNode);
@@ -521,53 +491,64 @@ void CivilianBAIState::setupPatrol() // private.
 /**
  * Re-evaluates the situation and makes a decision from available options.
  */
-void CivilianBAIState::evaluateAIMode() // private.
+void CivilianBAIState::evaluateAiMode() // private.
 {
 	if (_stopNode != nullptr)
 	{
 		float
-			escape = 0.f,
-			patrol = 30.f;
+			escapeOdds,
+			patrolOdds;
 
 		if (_targetsHostile != 0)
 		{
-			escape = 15.f;
-			patrol = 15.f;
+			escapeOdds = 15.f;
+			patrolOdds = 15.f;
+		}
+		else
+		{
+			escapeOdds = 0.f,
+			patrolOdds = 30.f;
 		}
 
 		if (_spottersOrigin != 0)
 		{
-			patrol = 0.f;
+			patrolOdds = 0.f;
 			if (_tuEscape == 0) setupEscape();
 		}
 
 		switch (_AIMode)
 		{
-			case AI_PATROL: patrol *= 1.1f; break;
-			case AI_ESCAPE: escape *= 1.1f;
+			case AI_PATROL: patrolOdds *= 1.1f; break;
+			case AI_ESCAPE: escapeOdds *= 1.1f;
 		}
 
-		const float healthRatio = static_cast<float>(_unit->getHealth())
-								/ static_cast<float>(_unit->getBattleStats()->health);
+		const float healthRatio (static_cast<float>(_unit->getHealth())
+							   / static_cast<float>(_unit->getBattleStats()->health));
 		if (healthRatio < 0.33f)
-			escape *= 1.7f;
+			escapeOdds *= 1.7f;
 		else if (healthRatio < 0.67f)
-			escape *= 1.4f;
+			escapeOdds *= 1.4f;
 		else if (healthRatio < 0.999f)
-			escape *= 1.1f;
+			escapeOdds *= 1.1f;
 
 		switch (_unit->getAggression())
 		{
-			case 0: escape *= 1.4f; break;
-			case 2: escape *= 0.7f;
+			case 0:
+				escapeOdds *= 1.4f;
+				break;
+			case 1:
+				break;
+			default:
+			case 2:
+				escapeOdds *= 0.7f;
 		}
 
 		if (_spottersOrigin != 0)
-			escape = 10.f * escape * static_cast<float>(_spottersOrigin + 10) / 100.f;
+			escapeOdds = 10.f * escapeOdds * static_cast<float>(_spottersOrigin + 10) / 100.f;
 		else
-			escape /= 2.f;
+			escapeOdds /= 2.f;
 
-		if (RNG::generate(1, static_cast<int>(patrol) + static_cast<int>(escape)) <= static_cast<int>(patrol))
+		if (RNG::generate(1, static_cast<int>(patrolOdds) + static_cast<int>(escapeOdds)) <= static_cast<int>(patrolOdds))
 		{
 			_AIMode = AI_PATROL;
 			return;

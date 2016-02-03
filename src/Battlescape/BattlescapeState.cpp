@@ -1531,7 +1531,7 @@ void BattlescapeState::mapClick(Action* action)
 
 
 	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT // right-click removes pathPreview or aborts walking state
-		&& _battleGame->cancelCurrentAction() == true)
+		&& _battleGame->cancelTacticalAction() == true)
 	{
 		return;
 	}
@@ -1797,7 +1797,7 @@ void BattlescapeState::btnUnitUpPress(Action*)
 			if (valid > 0) // gravLift or flying
 			{
 				_overlay->getFrame(0)->blit(_btnUnitUp);
-				_battleGame->cancelCurrentAction();
+				_battleGame->cancelTacticalAction();
 				_battleGame->moveUpDown(
 									_battleSave->getSelectedUnit(),
 									Pathfinding::DIR_UP);
@@ -1838,7 +1838,7 @@ void BattlescapeState::btnUnitDownPress(Action*)
 							Pathfinding::DIR_DOWN) > 0)
 		{
 			_overlay->getFrame(7)->blit(_btnUnitDown);
-			_battleGame->cancelCurrentAction();
+			_battleGame->cancelTacticalAction();
 			_battleGame->moveUpDown(
 								_battleSave->getSelectedUnit(),
 								Pathfinding::DIR_DOWN);
@@ -2012,7 +2012,7 @@ void BattlescapeState::btnInventoryClick(Action*)
 				_btnLaunch->setVisible(false);
 			}
 
-			_battleGame->cancelCurrentAction(true);
+			_battleGame->cancelTacticalAction(true);
 //			_overlay->getFrame(3)->blit(_btnInventory); // clear() not implemented @ InventoryState.
 			_game->pushState(new InventoryState(
 											true, //_battleSave->getDebugTac() == false, // CHEAT For debugging.
@@ -2190,7 +2190,7 @@ void BattlescapeState::selectNextPlayerUnit(
 		if (unit != nullptr)
 			_map->getCamera()->centerOnPosition(unit->getPosition());
 
-		_battleGame->cancelCurrentAction();
+		_battleGame->cancelTacticalAction();
 		_battleGame->setupSelector();
 	}
 }
@@ -2218,7 +2218,7 @@ void BattlescapeState::selectPreviousPlayerUnit(
 		if (unit != nullptr)
 			_map->getCamera()->centerOnPosition(unit->getPosition());
 
-		_battleGame->cancelCurrentAction();
+		_battleGame->cancelTacticalAction();
 		_battleGame->setupSelector();
 	}
 }
@@ -2350,7 +2350,7 @@ void BattlescapeState::btnStatsClick(Action* action)
 			_btnLaunch->setVisible(false);
 		}
 
-		_battleGame->cancelCurrentAction(true);
+		_battleGame->cancelTacticalAction(true);
 		if (edge == false)
 			popup(new UnitInfoState(
 								_battleSave->getSelectedUnit(),
@@ -2366,7 +2366,7 @@ void BattlescapeState::btnLeftHandLeftClick(Action*)
 {
 	if (playableUnitSelected() == true)
 	{
-		_battleGame->cancelCurrentAction();
+		_battleGame->cancelTacticalAction();
 		_battleSave->getSelectedUnit()->setActiveHand(AH_LEFT);
 
 		_map->cacheUnits();
@@ -2387,7 +2387,7 @@ void BattlescapeState::btnLeftHandRightClick(Action*)
 {
 	if (playableUnitSelected() == true)
 	{
-		_battleGame->cancelCurrentAction();
+		_battleGame->cancelTacticalAction();
 
 		_battleSave->getSelectedUnit()->setActiveHand(AH_LEFT);
 		updateSoldierInfo(false);
@@ -2405,7 +2405,7 @@ void BattlescapeState::btnRightHandLeftClick(Action*)
 {
 	if (playableUnitSelected() == true)
 	{
-		_battleGame->cancelCurrentAction();
+		_battleGame->cancelTacticalAction();
 		_battleSave->getSelectedUnit()->setActiveHand(AH_RIGHT);
 
 		_map->cacheUnits();
@@ -2426,7 +2426,7 @@ void BattlescapeState::btnRightHandRightClick(Action*)
 {
 	if (playableUnitSelected() == true)
 	{
-		_battleGame->cancelCurrentAction();
+		_battleGame->cancelTacticalAction();
 
 		_battleSave->getSelectedUnit()->setActiveHand(AH_RIGHT);
 		updateSoldierInfo(false);
@@ -2530,7 +2530,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 					_battleSave->setSelectedUnit(nextSpotter);
 					updateSoldierInfo();
 
-					_battleGame->cancelCurrentAction();
+					_battleGame->cancelTacticalAction();
 					_battleGame->setupSelector();
 				}
 
@@ -2602,7 +2602,7 @@ void BattlescapeState::btnLaunchPress(Action* action)
 		_map->getWaypoints()->clear();
 		_btnLaunch->setVisible(false);
 
-		_battleGame->cancelCurrentAction(true);
+		_battleGame->cancelTacticalAction(true);
 		_battleGame->setupSelector();
 	}
 

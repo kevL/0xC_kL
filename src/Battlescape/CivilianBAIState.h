@@ -55,7 +55,7 @@ private:
 	void setupPatrol();
 
 	/// Re-evaluates the situation and makes a decision from available options.
-	void evaluateAIMode();
+	void evaluateAiMode();
 
 
 	public:

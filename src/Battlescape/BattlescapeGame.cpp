@@ -47,7 +47,7 @@
 
 #include "../Engine/Game.h"
 #include "../Engine/Language.h"
-//#include "../Engine/Logger.h"
+#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -101,16 +101,13 @@ BattlescapeGame::BattlescapeGame(
 	//Log(LOG_INFO) << "Create BattlescapeGame";
 	_debugPlay = false;
 
-	cancelCurrentAction();
-	checkForCasualties(
-					nullptr,
-					nullptr,
-					true);
+	cancelTacticalAction();
+	checkForCasualties(nullptr, nullptr, true);
 
-//	_currentAction.actor = nullptr;
-//	_currentAction.type = BA_NONE;
-//	_currentAction.targeting = false;
-	_currentAction.clearAction();
+//	_tacAction.actor = nullptr;
+//	_tacAction.type = BA_NONE;
+//	_tacAction.targeting = false;
+	_tacAction.clearAction();
 
 	_universalFist = new BattleItem(
 								getRuleset()->getItem("STR_FIST"),
@@ -332,7 +329,7 @@ void BattlescapeGame::popState()
 				switch (action.type)
 				{
 					case BA_LAUNCH:
-						_currentAction.waypoints.clear(); // no break;
+						_tacAction.waypoints.clear(); // no break;
 					case BA_THROW:
 					case BA_SNAPSHOT:
 					case BA_AIMEDSHOT:
@@ -341,12 +338,12 @@ void BattlescapeGame::popState()
 					case BA_PSICONFUSE:
 					case BA_PSICOURAGE:
 					case BA_PSICONTROL:
-						cancelCurrentAction(true);
+						cancelTacticalAction(true);
 						break;
 
 					case BA_USE:
 						if (action.weapon->getRules()->getBattleType() == BT_MINDPROBE)
-							cancelCurrentAction(true);
+							cancelTacticalAction(true);
 						break;
 				}
 			}
@@ -406,9 +403,9 @@ void BattlescapeGame::popState()
 							switch (action.type)
 							{
 								case BA_LAUNCH:
-									_currentAction.waypoints.clear(); // no break;
+									_tacAction.waypoints.clear(); // no break;
 								case BA_THROW:
-									cancelCurrentAction(true);
+									cancelTacticalAction(true);
 									break;
 
 								case BA_SNAPSHOT:
@@ -418,7 +415,7 @@ void BattlescapeGame::popState()
 																		BA_SNAPSHOT,
 																		action.weapon))
 									{
-										cancelCurrentAction(true);
+										cancelTacticalAction(true);
 									}
 									break;
 
@@ -429,7 +426,7 @@ void BattlescapeGame::popState()
 																		BA_AUTOSHOT,
 																		action.weapon))
 									{
-										cancelCurrentAction(true);
+										cancelTacticalAction(true);
 									}
 									break;
 
@@ -440,7 +437,7 @@ void BattlescapeGame::popState()
 																		BA_AIMEDSHOT,
 																		action.weapon))
 									{
-										cancelCurrentAction(true);
+										cancelTacticalAction(true);
 									}
 							}
 						}
@@ -536,7 +533,7 @@ void BattlescapeGame::popState()
 			|| _battleSave->getSelectedUnit()->isOut_t() == true)
 		{
 			//Log(LOG_INFO) << ". unit incapacitated: cancelAction & deSelect)";
-			cancelCurrentAction();	// note that this *will* setupSelector() under certain
+			cancelTacticalAction();	// note that this *will* setupSelector() under certain
 			setupSelector();		// circumstances - eg, if current action was targetting.
 			_battleSave->setSelectedUnit(nullptr);
 		}
@@ -668,35 +665,18 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	BattleAction action;
 	action.actor = unit;
 	action.AIcount = _AIActionCounter;
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << "BATTLESCAPE::handleUnitAI id-" << unit->getId();
 	unit->think(&action);
-
-/*	Log(LOG_INFO) << ". _unit->think() DONE Mode = " << unit->getAIState()->getAIMode();
-	std::string st;
-	switch (action.type)
-	{
-		case  0: st = "none";			break;	// BA_NONE
-		case  1: st = "turn";			break;	// BA_TURN
-		case  2: st = "walk";			break;	// BA_MOVE
-		case  3: st = "prime";			break;	// BA_PRIME
-		case  4: st = "throw";			break;	// BA_THROW
-		case  5: st = "autoshot";		break;	// BA_AUTOSHOT
-		case  6: st = "snapshot";		break;	// BA_SNAPSHOT
-		case  7: st = "aimedshot";		break;	// BA_AIMEDSHOT
-		case  8: st = "hit";			break;	// BA_MELEE
-		case  9: st = "use";			break;	// BA_USE
-		case 10: st = "launch";			break;	// BA_LAUNCH
-		case 11: st = "mindcontrol";	break;	// BA_PSICONTROL
-		case 12: st = "panic";			break;	// BA_PSIPANIC
-		case 13: st = "rethink";		break;	// BA_RETHINK
-		case 14: st = "defuse";			break;	// BA_DEFUSE
-		case 15: st = "drop";			break;	// BA_DROP
-		case 16: st = "confuse";		break;	// BA_PSICONFUSE
-		case 17: st = "courage";				// BA_PSICOURAGE
-	}
-	Log(LOG_INFO) << ". _unit->think() DONE Action = " << st; */
+	Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat [1] " << action.debugActionType(action.type);
 
 	if (action.type == BA_RETHINK)
+	{
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << "BATTLESCAPE: Re-Think id-" << unit->getId();
 		unit->think(&action);
+		Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat [2] " << action.debugActionType(action.type);
+	}
 
 	_AIActionCounter = action.AIcount;
 
@@ -714,7 +694,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	{
 		_playedAggroSound = true;
 
-		const int soundId = unit->getAggroSound();
+		const int soundId (unit->getAggroSound());
 		if (soundId != -1)
 			getResourcePack()->getSound("BATTLE.CAT", soundId)
 								->play(-1, getMap()->getSoundAngle(unit->getPosition()));
@@ -822,8 +802,8 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 				case BA_PSICONTROL:
 					if (_battleSave->getTileEngine()->psiAttack(&action) == true)
 					{
-						const BattleUnit* const psiVictim = _battleSave->getTile(action.target)->getTileUnit();
-						Language* const lang = _parentState->getGame()->getLanguage();
+						const BattleUnit* const psiVictim (_battleSave->getTile(action.target)->getTileUnit());
+						Language* const lang (_parentState->getGame()->getLanguage());
 						std::wstring wst;
 						switch (action.type)
 						{
@@ -914,108 +894,108 @@ void BattlescapeGame::endAiTurn()
  */
 void BattlescapeGame::handleNonTargetAction()
 {
-	if (_currentAction.targeting == false)
+	if (_tacAction.targeting == false)
 	{
-		_currentAction.cameraPosition = Position(0,0,-1);
+		_tacAction.cameraPosition = Position(0,0,-1);
 
 		int showWarning = 0;
 
 		// NOTE: These actions are done partly in ActionMenuState::btnActionMenuClick() and
 		// this subsequently handles a greater or lesser proportion of the resultant niceties.
 		//
-		switch (_currentAction.type)
+		switch (_tacAction.type)
 		{
 			case BA_PRIME:
 			case BA_DEFUSE:
-				if (_currentAction.actor->spendTimeUnits(_currentAction.TU) == false)
+				if (_tacAction.actor->spendTimeUnits(_tacAction.TU) == false)
 				{
-					_currentAction.result = "STR_NOT_ENOUGH_TIME_UNITS";
+					_tacAction.result = "STR_NOT_ENOUGH_TIME_UNITS";
 					showWarning = 1;
 				}
 				else
 				{
-					_currentAction.weapon->setFuse(_currentAction.value);
+					_tacAction.weapon->setFuse(_tacAction.value);
 
-					if (_currentAction.value == -1)
+					if (_tacAction.value == -1)
 					{
-						_currentAction.result = "STR_GRENADE_IS_DEACTIVATED";
+						_tacAction.result = "STR_GRENADE_IS_DEACTIVATED";
 						showWarning = 1;
 					}
-					else if (_currentAction.value == 0)
+					else if (_tacAction.value == 0)
 					{
-						_currentAction.result = "STR_GRENADE_IS_ACTIVATED";
+						_tacAction.result = "STR_GRENADE_IS_ACTIVATED";
 						showWarning = 1;
 					}
 					else
 					{
-						_currentAction.result = "STR_GRENADE_IS_ACTIVATED_";
+						_tacAction.result = "STR_GRENADE_IS_ACTIVATED_";
 						showWarning = 2;
 					}
 				}
 			break;
 
 			case BA_USE:
-				if (_currentAction.result.empty() == false)
+				if (_tacAction.result.empty() == false)
 					showWarning = 1;
-				else if (_currentAction.targetUnit != nullptr)
+				else if (_tacAction.targetUnit != nullptr)
 				{
-					_battleSave->reviveUnit(_currentAction.targetUnit);
-					_currentAction.targetUnit = nullptr;
+					_battleSave->reviveUnit(_tacAction.targetUnit);
+					_tacAction.targetUnit = nullptr;
 				}
 			break;
 
 			case BA_LAUNCH:
-				if (_currentAction.result.empty() == false)
+				if (_tacAction.result.empty() == false)
 					showWarning = 1;
 			break;
 
 			case BA_MELEE:
-				if (_currentAction.result.empty() == false)
+				if (_tacAction.result.empty() == false)
 					showWarning = 1;
-				else if (_currentAction.actor->spendTimeUnits(_currentAction.TU) == false)
+				else if (_tacAction.actor->spendTimeUnits(_tacAction.TU) == false)
 				{
-					_currentAction.result = "STR_NOT_ENOUGH_TIME_UNITS";
+					_tacAction.result = "STR_NOT_ENOUGH_TIME_UNITS";
 					showWarning = 1;
 				}
 				else
 				{
-					statePushBack(new ProjectileFlyBState(this, _currentAction));
+					statePushBack(new ProjectileFlyBState(this, _tacAction));
 					return;
 				}
 			break;
 
 			case BA_DROP:
-				if (_currentAction.result.empty() == false)
+				if (_tacAction.result.empty() == false)
 					showWarning = 1;
 				else
 				{
-					_battleSave->getTileEngine()->applyGravity(_currentAction.actor->getTile());
+					_battleSave->getTileEngine()->applyGravity(_tacAction.actor->getTile());
 					getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)
-										->play(-1, getMap()->getSoundAngle(_currentAction.actor->getPosition()));
+										->play(-1, getMap()->getSoundAngle(_tacAction.actor->getPosition()));
 				}
 			break;
 
 			case BA_EXECUTE:
-				if (_currentAction.result.empty() == false)
+				if (_tacAction.result.empty() == false)
 					showWarning = 1;
-				else if (_currentAction.targetUnit != nullptr)
+				else if (_tacAction.targetUnit != nullptr)
 					executeUnit();
 		}
 
 		if (showWarning != 0)
 		{
 			if (showWarning == 1)
-				_parentState->warning(_currentAction.result);
+				_parentState->warning(_tacAction.result);
 			else if (showWarning == 2)
 				_parentState->warning(
-									_currentAction.result,
+									_tacAction.result,
 									true,
-									_currentAction.value);
+									_tacAction.value);
 
-			_currentAction.result.clear();
+			_tacAction.result.clear();
 		}
 
-		_currentAction.type = BA_NONE;
+		_tacAction.type = BA_NONE;
 		_parentState->updateSoldierInfo();
 	}
 
@@ -1027,12 +1007,12 @@ void BattlescapeGame::handleNonTargetAction()
  */
 void BattlescapeGame::executeUnit() // private.
 {
-	_currentAction.actor->aim();
-	_currentAction.actor->clearCache();
-	getMap()->cacheUnit(_currentAction.actor);
+	_tacAction.actor->aim();
+	_tacAction.actor->clearCache();
+	getMap()->cacheUnit(_tacAction.actor);
 
-	const RuleItem* const itRule = _currentAction.weapon->getRules();
-	BattleItem* const ammo = _currentAction.weapon->getAmmoItem();
+	const RuleItem* const itRule = _tacAction.weapon->getRules();
+	BattleItem* const ammo = _tacAction.weapon->getAmmoItem();
 	int
 		soundId = -1,
 		aniStart = 0,	// avoid vc++ linker warning.
@@ -1057,13 +1037,13 @@ void BattlescapeGame::executeUnit() // private.
 
 	if (soundId != -1)
 		getResourcePack()->getSound("BATTLE.CAT", soundId)
-							->play(-1, getMap()->getSoundAngle(_currentAction.actor->getPosition()));
+							->play(-1, getMap()->getSoundAngle(_tacAction.actor->getPosition()));
 
 	ammo->spendBullet(
 				*_battleSave,
-				*_currentAction.weapon);
+				*_tacAction.weapon);
 
-	Position explVoxel = Position::toVoxelSpaceCentered(_currentAction.target, 2);
+	Position explVoxel = Position::toVoxelSpaceCentered(_tacAction.target, 2);
 	Explosion* const explosion = new Explosion(
 											explVoxel,
 											aniStart,
@@ -1073,16 +1053,16 @@ void BattlescapeGame::executeUnit() // private.
 	getMap()->getExplosions()->push_back(explosion);
 	_executeProgress = true;
 
-	_currentAction.targetUnit->playDeathSound(); // scream little piggie
+	_tacAction.targetUnit->playDeathSound(); // scream little piggie
 
-	_currentAction.actor->spendTimeUnits(_currentAction.TU);
+	_tacAction.actor->spendTimeUnits(_tacAction.TU);
 
-	_currentAction.targetUnit->setHealth(0);
-	_currentAction.targetUnit = nullptr;
+	_tacAction.targetUnit->setHealth(0);
+	_tacAction.targetUnit = nullptr;
 
 	checkForCasualties(
-				_currentAction.weapon,
-				_currentAction.actor,
+				_tacAction.weapon,
+				_tacAction.actor,
 				false, false, true);
 }
 
@@ -1096,9 +1076,9 @@ void BattlescapeGame::setupSelector()
 	SelectorType type;
 	int quads = 1;
 
-	if (_currentAction.targeting == true)
+	if (_tacAction.targeting == true)
 	{
-		switch (_currentAction.type)
+		switch (_tacAction.type)
 		{
 			case BA_THROW:
 				type = CT_THROW;
@@ -1124,8 +1104,8 @@ void BattlescapeGame::setupSelector()
 	{
 		type = CT_NORMAL;
 
-		if ((_currentAction.actor = _battleSave->getSelectedUnit()) != nullptr)
-			quads = _currentAction.actor->getArmor()->getSize();
+		if ((_tacAction.actor = _battleSave->getSelectedUnit()) != nullptr)
+			quads = _tacAction.actor->getArmor()->getSize();
 	}
 
 	getMap()->setSelectorType(type, quads);
@@ -1244,9 +1224,9 @@ void BattlescapeGame::endTurn() // private.
 	_AISecondMove = false;
 	_parentState->showLaunchButton(false);
 
-	_currentAction.targeting = false;
-	_currentAction.type = BA_NONE;
-	_currentAction.waypoints.clear();
+	_tacAction.targeting = false;
+	_tacAction.type = BA_NONE;
+	_tacAction.waypoints.clear();
 	getMap()->getWaypoints()->clear();
 
 	Tile* tile;
@@ -1343,8 +1323,7 @@ void BattlescapeGame::endTurn() // private.
 		if ((*i)->getOriginalFaction() == _battleSave->getSide()
 			&& (*i)->isOut_t(OUT_STAT) == false)
 		{
-			tile = (*i)->getTile();
-			if (tile != nullptr
+			if ((tile = (*i)->getTile()) != nullptr
 				&& (tile->getSmoke() != 0 || tile->getFire() != 0))
 			{
 				tile->hitTileInventory(); // Damage tile's unit w/ Smoke & Fire at end of unit's faction's Turn-phase.
@@ -1971,7 +1950,7 @@ bool BattlescapeGame::checkReservedTu(
 	{
 		const AlienBAIState* const ai (dynamic_cast<AlienBAIState*>(unit->getAIState()));
 		if (ai != nullptr)
-			batReserved = ai->getReservedAIAction();
+			batReserved = ai->getReservedAiAction();
 		else
 			batReserved = BA_NONE;	// something went ... wrong. Should always be an AI for non-player units (although i
 									// guess it could-maybe-but-unlikely be a CivilianBAIState here in checkReservedTu()).
@@ -2349,30 +2328,30 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
   * @param force - force the action to be cancelled (default false)
   * @return, true if anything was cancelled
   */
-bool BattlescapeGame::cancelCurrentAction(bool force)
+bool BattlescapeGame::cancelTacticalAction(bool force)
 {
 	if (_battleSave->getPathfinding()->clearPreview() == false
 		|| Options::battlePreviewPath == PATH_NONE)
 	{
 		if (_battleStates.empty() == true || force == true)
 		{
-			if (_currentAction.targeting == true)
+			if (_tacAction.targeting == true)
 			{
-				if (_currentAction.type == BA_LAUNCH
-					&& _currentAction.waypoints.empty() == false)
+				if (_tacAction.type == BA_LAUNCH
+					&& _tacAction.waypoints.empty() == false)
 				{
-					_currentAction.waypoints.pop_back();
+					_tacAction.waypoints.pop_back();
 
 					if (getMap()->getWaypoints()->empty() == false)
 						getMap()->getWaypoints()->pop_back();
 
-					if (_currentAction.waypoints.empty() == true)
+					if (_tacAction.waypoints.empty() == true)
 						_parentState->showLaunchButton(false);
 				}
 				else
 				{
-					_currentAction.targeting = false;
-					_currentAction.type = BA_NONE;
+					_tacAction.targeting = false;
+					_tacAction.type = BA_NONE;
 
 					if (force == false
 						&& (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true))
@@ -2401,7 +2380,7 @@ bool BattlescapeGame::cancelCurrentAction(bool force)
  */
 BattleAction* BattlescapeGame::getCurrentAction()
 {
-	return &_currentAction;
+	return &_tacAction;
 }
 
 /**
@@ -2419,45 +2398,45 @@ bool BattlescapeGame::isBusy() const
  */
 void BattlescapeGame::primaryAction(const Position& pos)
 {
-	_currentAction.actor = _battleSave->getSelectedUnit();
+	_tacAction.actor = _battleSave->getSelectedUnit();
 	BattleUnit* const targetUnit (_battleSave->selectUnit(pos));
 
-	if (_currentAction.actor != nullptr
-		&& _currentAction.targeting == true)
+	if (_tacAction.actor != nullptr
+		&& _tacAction.targeting == true)
 	{
-		_currentAction.strafe = false;
+		_tacAction.strafe = false;
 
-		switch (_currentAction.type)
+		switch (_tacAction.type)
 		{
 			case BA_LAUNCH:
-				if (static_cast<int>(_currentAction.waypoints.size()) < _currentAction.weapon->getRules()->isWaypoints())
+				if (static_cast<int>(_tacAction.waypoints.size()) < _tacAction.weapon->getRules()->isWaypoints())
 				{
 					_parentState->showLaunchButton();
-					_currentAction.waypoints.push_back(pos);
+					_tacAction.waypoints.push_back(pos);
 					getMap()->getWaypoints()->push_back(pos);
 				}
 				break;
 
 			case BA_USE:
-				if (_currentAction.weapon->getRules()->getBattleType() == BT_MINDPROBE)
+				if (_tacAction.weapon->getRules()->getBattleType() == BT_MINDPROBE)
 				{
 					if (targetUnit != nullptr
-						&& targetUnit->getFaction() != _currentAction.actor->getFaction()
+						&& targetUnit->getFaction() != _tacAction.actor->getFaction()
 						&& targetUnit->getUnitVisible() == true)
 					{
-						if (_currentAction.weapon->getRules()->isLosRequired() == false
+						if (_tacAction.weapon->getRules()->isLosRequired() == false
 							|| std::find(
-									_currentAction.actor->getHostileUnits().begin(),
-									_currentAction.actor->getHostileUnits().end(),
-									targetUnit) != _currentAction.actor->getHostileUnits().end())
+									_tacAction.actor->getHostileUnits().begin(),
+									_tacAction.actor->getHostileUnits().end(),
+									targetUnit) != _tacAction.actor->getHostileUnits().end())
 						{
 							if (TileEngine::distance(
-												_currentAction.actor->getPosition(),
-												_currentAction.target) <= _currentAction.weapon->getRules()->getMaxRange())
+												_tacAction.actor->getPosition(),
+												_tacAction.target) <= _tacAction.weapon->getRules()->getMaxRange())
 							{
-								if (_currentAction.actor->spendTimeUnits(_currentAction.TU) == true)
+								if (_tacAction.actor->spendTimeUnits(_tacAction.TU) == true)
 								{
-									const int soundId = _currentAction.weapon->getRules()->getFireHitSound();
+									const int soundId = _tacAction.weapon->getRules()->getFireHitSound();
 									if (soundId != -1)
 										getResourcePack()->getSound("BATTLE.CAT", soundId)
 															->play(-1, getMap()->getSoundAngle(pos));
@@ -2469,7 +2448,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 								}
 								else
 								{
-									cancelCurrentAction();
+									cancelTacticalAction();
 									_parentState->warning("STR_NOT_ENOUGH_TIME_UNITS");
 								}
 							}
@@ -2488,58 +2467,58 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			case BA_PSICOURAGE:
 				if (targetUnit != nullptr
 					&& targetUnit->getUnitVisible() == true
-					&& ((_currentAction.type != BA_PSICOURAGE
+					&& ((_tacAction.type != BA_PSICOURAGE
 							&& targetUnit->getFaction() != FACTION_PLAYER)
-						|| (_currentAction.type == BA_PSICOURAGE
+						|| (_tacAction.type == BA_PSICOURAGE
 							&& targetUnit->getFaction() != FACTION_HOSTILE)))
 				{
-					bool aLienPsi = (_currentAction.weapon == nullptr);
+					bool aLienPsi = (_tacAction.weapon == nullptr);
 					if (aLienPsi == true)
-						_currentAction.weapon = _alienPsi;
+						_tacAction.weapon = _alienPsi;
 
-					_currentAction.target = pos;
-					_currentAction.TU = _currentAction.actor->getActionTu(
-																		_currentAction.type,
-																		_currentAction.weapon);
+					_tacAction.target = pos;
+					_tacAction.TU = _tacAction.actor->getActionTu(
+																		_tacAction.type,
+																		_tacAction.weapon);
 
-					if (_currentAction.weapon->getRules()->isLosRequired() == false
+					if (_tacAction.weapon->getRules()->isLosRequired() == false
 						|| std::find(
-								_currentAction.actor->getHostileUnits().begin(),
-								_currentAction.actor->getHostileUnits().end(),
-								targetUnit) != _currentAction.actor->getHostileUnits().end())
+								_tacAction.actor->getHostileUnits().begin(),
+								_tacAction.actor->getHostileUnits().end(),
+								targetUnit) != _tacAction.actor->getHostileUnits().end())
 					{
 						if (TileEngine::distance(
-											_currentAction.actor->getPosition(),
-											_currentAction.target) <= _currentAction.weapon->getRules()->getMaxRange())
+											_tacAction.actor->getPosition(),
+											_tacAction.target) <= _tacAction.weapon->getRules()->getMaxRange())
 						{
-							_currentAction.cameraPosition = Position(0,0,-1);
+							_tacAction.cameraPosition = Position(0,0,-1);
 
-							statePushBack(new ProjectileFlyBState(this, _currentAction));
+							statePushBack(new ProjectileFlyBState(this, _tacAction));
 
-							if (_currentAction.actor->getTimeUnits() >= _currentAction.TU) // WAIT, check this *before* all the stuff above!!!
+							if (_tacAction.actor->getTimeUnits() >= _tacAction.TU) // WAIT, check this *before* all the stuff above!!!
 							{
-								if (getTileEngine()->psiAttack(&_currentAction) == true)
+								if (getTileEngine()->psiAttack(&_tacAction) == true)
 								{
 									Game* const game (_parentState->getGame());
 									std::wstring wst;
-									switch (_currentAction.type)
+									switch (_tacAction.type)
 									{
 										default:
 										case BA_PSIPANIC:
 											wst = game->getLanguage()->getString("STR_PSI_PANIC_SUCCESS")
-																			.arg(_currentAction.value);
+																			.arg(_tacAction.value);
 											break;
 										case BA_PSICONTROL:
 											wst = game->getLanguage()->getString("STR_PSI_CONTROL_SUCCESS")
-																			.arg(_currentAction.value);
+																			.arg(_tacAction.value);
 											break;
 										case BA_PSICONFUSE:
 											wst = game->getLanguage()->getString("STR_PSI_CONFUSE_SUCCESS")
-																			.arg(_currentAction.value);
+																			.arg(_tacAction.value);
 											break;
 										case BA_PSICOURAGE:
 											wst = game->getLanguage()->getString("STR_PSI_COURAGE_SUCCESS")
-																			.arg(_currentAction.value);
+																			.arg(_tacAction.value);
 									}
 									game->pushState(new InfoboxState(wst));
 
@@ -2548,7 +2527,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 							}
 							else
 							{
-								cancelCurrentAction();
+								cancelTacticalAction();
 								_parentState->warning("STR_NOT_ENOUGH_TIME_UNITS");
 							}
 						}
@@ -2560,7 +2539,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 
 
 					if (aLienPsi == true)
-						_currentAction.weapon = nullptr;
+						_tacAction.weapon = nullptr;
 				}
 				break;
 
@@ -2568,19 +2547,19 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				getMap()->setSelectorType(CT_NONE);
 				_parentState->getGame()->getCursor()->setHidden();
 
-				_currentAction.target = pos;
-				if (_currentAction.type == BA_THROW
-					|| _currentAction.weapon->getAmmoItem() == nullptr
-					|| _currentAction.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
+				_tacAction.target = pos;
+				if (_tacAction.type == BA_THROW
+					|| _tacAction.weapon->getAmmoItem() == nullptr
+					|| _tacAction.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
 				{
-					_currentAction.cameraPosition = getMap()->getCamera()->getMapOffset();
+					_tacAction.cameraPosition = getMap()->getCamera()->getMapOffset();
 				}
 				else
-					_currentAction.cameraPosition = Position(0,0,-1);
+					_tacAction.cameraPosition = Position(0,0,-1);
 
-				_battleStates.push_back(new ProjectileFlyBState(this, _currentAction));	// TODO: should check for valid LoF/LoT *before* invoking this
+				_battleStates.push_back(new ProjectileFlyBState(this, _tacAction));	// TODO: should check for valid LoF/LoT *before* invoking this
 																						// instead of the (flakey) checks in that state. Then conform w/ AI ...
-				statePushFront(new UnitTurnBState(this, _currentAction));
+				statePushFront(new UnitTurnBState(this, _tacAction));
 		}
 	}
 	else
@@ -2588,7 +2567,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 		bool allowPreview = (Options::battlePreviewPath != PATH_NONE);
 
 		if (targetUnit != nullptr
-			&& targetUnit != _currentAction.actor
+			&& targetUnit != _tacAction.actor
 			&& (targetUnit->getUnitVisible() == true || _debugPlay == true))
 		{
 			if (targetUnit->getFaction() == _battleSave->getSide())
@@ -2596,16 +2575,16 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				_battleSave->setSelectedUnit(targetUnit);
 				_parentState->updateSoldierInfo();
 
-				cancelCurrentAction();
+				cancelTacticalAction();
 				setupSelector();
 
-				_currentAction.actor = targetUnit;
+				_tacAction.actor = targetUnit;
 			}
 		}
 		else if (playableUnitSelected() == true)
 		{
 			Pathfinding* const pf (_battleSave->getPathfinding());
-			pf->setPathingUnit(_currentAction.actor);
+			pf->setPathingUnit(_tacAction.actor);
 
 			const bool
 				ctrl ((SDL_GetModState() & KMOD_CTRL) != 0),
@@ -2619,12 +2598,12 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				zPath = false;
 
 			if (targetUnit != nullptr
-				&& targetUnit == _currentAction.actor
-				&& _currentAction.actor->getArmor()->getSize() == 1)
+				&& targetUnit == _tacAction.actor
+				&& _tacAction.actor->getArmor()->getSize() == 1)
 			{
 				if (ctrl == true
-					&& (_currentAction.actor->getGeoscapeSoldier() != nullptr
-						|| _currentAction.actor->getUnitRules()->isMechanical() == false))
+					&& (_tacAction.actor->getGeoscapeSoldier() != nullptr
+						|| _tacAction.actor->getUnitRules()->isMechanical() == false))
 				{
 					if (allowPreview == true)
 						pf->clearPreview();
@@ -2637,22 +2616,22 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					getMap()->findMousePointer(mousePixel);
 
 					if (mousePixel.x > screenPixel.x + 16)
-						_currentAction.actor->setTurnDirection(-1);
+						_tacAction.actor->setTurnDirection(-1);
 					else
-						_currentAction.actor->setTurnDirection(1);
+						_tacAction.actor->setTurnDirection(1);
 
 					Pathfinding::directionToVector(
-											(_currentAction.actor->getUnitDirection() + 4) % 8,
-											&_currentAction.target);
-					_currentAction.target += pos;
+											(_tacAction.actor->getUnitDirection() + 4) % 8,
+											&_tacAction.target);
+					_tacAction.target += pos;
 
-					statePushBack(new UnitTurnBState(this, _currentAction));
+					statePushBack(new UnitTurnBState(this, _tacAction));
 				}
 			}
 			else
 			{
 				if (allowPreview == true
-					&& (_currentAction.target != pos
+					&& (_tacAction.target != pos
 						|| pf->isModCtrl() != ctrl
 						|| pf->isModAlt() != alt
 						|| pf->isZPath() != zPath))
@@ -2660,10 +2639,10 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					pf->clearPreview();
 				}
 
-				_currentAction.target = pos;
+				_tacAction.target = pos;
 				pf->calculate(
-						_currentAction.actor,
-						_currentAction.target);
+						_tacAction.actor,
+						_tacAction.target);
 
 				if (pf->getStartDirection() != -1)
 				{
@@ -2679,7 +2658,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 						getMap()->setSelectorType(CT_NONE);
 						_parentState->getGame()->getCursor()->setHidden();
 
-						statePushBack(new UnitWalkBState(this, _currentAction));
+						statePushBack(new UnitWalkBState(this, _tacAction));
 					}
 				}
 			}
@@ -2693,15 +2672,15 @@ void BattlescapeGame::primaryAction(const Position& pos)
  */
 void BattlescapeGame::secondaryAction(const Position& pos)
 {
-	_currentAction.actor = _battleSave->getSelectedUnit();
-	if (_currentAction.actor->getPosition() != pos)
+	_tacAction.actor = _battleSave->getSelectedUnit();
+	if (_tacAction.actor->getPosition() != pos)
 	{
-		_currentAction.target = pos;
-		_currentAction.strafe = _currentAction.actor->getTurretType() != -1
+		_tacAction.target = pos;
+		_tacAction.strafe = _tacAction.actor->getTurretType() != -1
 							 && (SDL_GetModState() & KMOD_CTRL) != 0
 							 && Options::battleStrafe == true;
 
-		statePushBack(new UnitTurnBState(this, _currentAction)); // open door or rotate turret.
+		statePushBack(new UnitTurnBState(this, _tacAction)); // open door or rotate turret.
 	}
 	else
 		_parentState->btnKneelClick(nullptr); // could put just about anything here Orelly.
@@ -2715,15 +2694,15 @@ void BattlescapeGame::launchAction()
 	_parentState->showLaunchButton(false);
 
 	getMap()->getWaypoints()->clear();
-	_currentAction.target = _currentAction.waypoints.front();
+	_tacAction.target = _tacAction.waypoints.front();
 
 	getMap()->setSelectorType(CT_NONE);
 	_parentState->getGame()->getCursor()->setHidden();
 
-//	_currentAction.cameraPosition = getMap()->getCamera()->getMapOffset();
+//	_tacAction.cameraPosition = getMap()->getCamera()->getMapOffset();
 
-	_battleStates.push_back(new ProjectileFlyBState(this, _currentAction));
-	statePushFront(new UnitTurnBState(this, _currentAction));
+	_battleStates.push_back(new ProjectileFlyBState(this, _tacAction));
+	statePushFront(new UnitTurnBState(this, _tacAction));
 }
 
 /**
@@ -2732,9 +2711,9 @@ void BattlescapeGame::launchAction()
  */
 void BattlescapeGame::psiButtonAction()
 {
-	_currentAction.weapon = nullptr;
-	_currentAction.targeting = true;
-	_currentAction.type = BA_PSIPANIC;
+	_tacAction.weapon = nullptr;
+	_tacAction.targeting = true;
+	_tacAction.type = BA_PSIPANIC;
 
 	setupSelector();
 }
@@ -2749,22 +2728,22 @@ void BattlescapeGame::moveUpDown(
 		const BattleUnit* const unit,
 		int dir)
 {
-	_currentAction.target = unit->getPosition();
+	_tacAction.target = unit->getPosition();
 
 	if (dir == Pathfinding::DIR_UP)
-		++_currentAction.target.z;
+		++_tacAction.target.z;
 	else
-		--_currentAction.target.z;
+		--_tacAction.target.z;
 
 	getMap()->setSelectorType(CT_NONE);
 	_parentState->getGame()->getCursor()->setHidden();
 
 	Pathfinding* const pf (_battleSave->getPathfinding());
 	pf->calculate(
-				_currentAction.actor,
-				_currentAction.target);
+				_tacAction.actor,
+				_tacAction.target);
 
-	statePushBack(new UnitWalkBState(this, _currentAction));
+	statePushBack(new UnitWalkBState(this, _tacAction));
 }
 
 /**
@@ -2773,7 +2752,7 @@ void BattlescapeGame::moveUpDown(
  */
 void BattlescapeGame::requestEndTurn()
 {
-	cancelCurrentAction();
+	cancelTacticalAction();
 
 	if (_endTurnRequested == false)
 	{

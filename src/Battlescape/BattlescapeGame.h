@@ -126,37 +126,69 @@ struct BattleAction
 //			pauseAfterShot(false)
 	{}
 
-	public:
-		/// kL. heh This could cause problems.
-		/// @note This is not to be used unless instantiating a BattlescapeGame.
-		void clearAction() // kL
+	/// heh This could cause problems.
+	/**
+	 * Clears the BattleAction completely.
+	 * @note This is not to be used unless instantiating a BattlescapeGame.
+	 */
+	void clearAction()
+	{
+		type = BA_NONE;
+		actor = nullptr;
+		targetUnit = nullptr;
+		weapon = nullptr;
+		TU = 0;
+		targeting = false;
+		value = 0;
+		result = "";
+		strafe = false;
+		dash = false;
+		diff = 0;
+		autoShotCount = 0;
+		cameraPosition = Position(0,0,-1);
+		desperate = false;
+		finalFacing = -1;
+		finalAction = false;
+		AIcount = 0;
+		takenXp = false;
+//		pauseAfterShot = false;
+		waypoints.clear();
+	}
+
+	/**
+	 * Translates type into a debug-string.
+	 * @return, the action-type as a string
+	 */
+	static std::string debugActionType(BattleActionType type)
+	{
+		switch (type)
 		{
-			type = BA_NONE;
-			actor = nullptr;
-			targetUnit = nullptr;
-			weapon = nullptr;
-			TU = 0;
-			targeting = false;
-			value = 0;
-			result = "";
-			strafe = false;
-			dash = false;
-			diff = 0;
-			autoShotCount = 0;
-			cameraPosition = Position(0,0,-1);
-			desperate = false;
-			finalFacing = -1;
-			finalAction = false;
-			AIcount = 0;
-			takenXp = false;
-//			pauseAfterShot = false;
-			waypoints.clear();
+			default:
+			case BA_NONE:		return "none";
+			case BA_TURN:		return "turn";
+			case BA_MOVE:		return "walk";
+			case BA_PRIME:		return "prime";
+			case BA_THROW:		return "throw";
+			case BA_AUTOSHOT:	return "autoshot";
+			case BA_SNAPSHOT:	return "snapshot";
+			case BA_AIMEDSHOT:	return "aimedshot";
+			case BA_MELEE:		return "hit";
+			case BA_USE:		return "use";
+			case BA_LAUNCH:		return "launch";
+			case BA_PSICONTROL:	return "mindcontrol";
+			case BA_PSIPANIC:	return "panic";
+			case BA_RETHINK:	return "rethink";
+			case BA_DEFUSE:		return "defuse";
+			case BA_DROP:		return "drop";
+			case BA_PSICONFUSE:	return "confuse";
+			case BA_PSICOURAGE:	return "courage";
 		}
+	}
 };
 
 
 /**
- * Battlescape game - the core game engine of the battlescape game.
+ * Battlescape Game - the core class of the tactical battlefield.
  */
 class BattlescapeGame // * no copy cTor.
 {
@@ -173,7 +205,7 @@ private:
 		_shotgunProgress;
 	int _AIActionCounter;
 
-	BattleAction _currentAction;
+	BattleAction _tacAction;
 
 	BattleItem
 		* _alienPsi,
@@ -270,7 +302,7 @@ private:
 				int tu) const;
 
 		/// Cancels the current action.
-		bool cancelCurrentAction(bool force = false);
+		bool cancelTacticalAction(bool force = false);
 		/// Gets a pointer to access action members directly.
 		BattleAction* getCurrentAction();
 

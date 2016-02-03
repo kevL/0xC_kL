@@ -244,7 +244,7 @@ void UnitDieBState::think()
 			if (liveHostile == 0 || livePlayer == 0)
 			{
 				_battleSave->setSelectedUnit(nullptr);
-				_parent->cancelCurrentAction(true);
+				_parent->cancelTacticalAction(true);
 				_parent->requestEndTurn();
 			}
 		} */

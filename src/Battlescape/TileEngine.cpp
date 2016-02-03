@@ -5685,7 +5685,7 @@ VoxelType TileEngine::voxelCheck(
 //				if (layer > -1)
 //				{
 				x = targetVoxel.x % 16;
-				// That should be (8,8,10) as per BattlescapeGame::handleNonTargetAction() if (_currentAction.type == BA_MELEE)
+				// That should be (8,8,10) as per BattlescapeGame::handleNonTargetAction() if (_tacAction.type == BA_MELEE)
 
 				loftId = (targetUnit->getLoft(layer) << 4) + y;
 				//Log(LOG_INFO) << "loftId = " << loftId << " vD-size = " << (int)_voxelData->size();
@@ -5915,7 +5915,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 					if (liveHostile == 0 || livePlayer == 0)
 					{
 						_battleSave->setSelectedUnit(nullptr);
-						_battleSave->getBattleGame()->cancelCurrentAction(true);
+						_battleSave->getBattleGame()->cancelTacticalAction(true);
 						_battleSave->getBattleGame()->requestEndTurn();
 					}
 				} */

@@ -41,13 +41,12 @@ class AlienBAIState
 private:
 	bool
 		_blaster,
-		_didPsi,
 		_grenade,
 		_melee,
+		_psi,
 		_rifle;
 	int
-		_closestDist,
-		_intell,
+		_distClosest,
 		_targetsExposed,
 		_targetsVisible,
 		_tuAmbush;
@@ -67,65 +66,65 @@ private:
 
 	BattleActionType _reserve;
 
-	/// Sets up a patrol objective.
+	/// Sets up an AI_PATROL BattleAction.
 	void setupPatrol();
-	/// Sets up an ambush objective.
-	void setupAmbush();
-	/// Sets up a combat objective.
+	/// Sets up an AI_COMBAT BattleAction.
 	void setupAttack();
-	/// Sets up an escape objective.
+	/// Sets up an AI_AMBUSH BattleAction.
+	void setupAmbush();
+	/// Sets up an AI_ESCAPE BattleAction.
 	void setupEscape();
 
-	/// Counts how many xCom and Civilian units are known to the unit.
+	/// Selects the AI Mode for BattlescapeGame::handleUnitAI().
+	void evaluateAiMode();
+
+	/// Counts valid targets Player and neutral.
 	int tallyTargets() const;
-	/// Counts how many known xCom units are able to see the unit.
+	/// Counts Player units that spot a position.
 	int tallySpotters(const Position& pos) const;
 
 	/// Selects the nearest target seen and returns the quantity of viable targets.
 	int selectNearestTarget();
-	/// Selects the closest known xCom unit for ambushing.
+	/// Selects the closest exposed Player unit.
 	bool selectPlayerTarget();
-	/// Selects a random known target.
+	/// Selects an exposed Player or neutral unit.
 	bool selectTarget();
-	/// Selects the nearest reachable point relative to a target.
+	/// Selects the nearest reachable position relative to a target.
 	bool selectPosition(
 			const BattleUnit* const targetUnit,
 			int maxTuCost) const;
 	/// Selects a suitable position from which to shoot.
-	bool findFirePoint();
+	bool findFirePosition();
 
-	/// Selects the AI Mode for BattlescapeGame::handleUnitAI().
-	void evaluateAIMode();
-
-	/// Tries to setup a melee attack/charge.
+	/// Sets up a melee/charge sub-action of AI_COMBAT.
 	void meleeAction();
-	/// Finishes setting up a melee attack/charge.
+	/// Finishes setting up a melee/charge.
 	void faceMelee();
-	/// Tries to trace a waypoint projectile.
+	/// Sets up a launcher sub-action of AI_COMBAT.
 	void wayPointAction();
 	/// Constructs a waypoint path for a guided projectile.
 	bool pathWaypoints();
-	/// Tries to setup a shot.
+	/// Sets up a shot-projectile sub-action of AI_COMBAT.
 	void projectileAction();
-	/// Selects a fire method.
+	/// Selects a fire method for a shot-projectile action.
 	void selectFireMethod();
-	/// Tries to setup a grenade throw.
+	/// Sets up a throw-grenade sub-action of AI_COMBAT.
 	void grenadeAction();
-	/// Tries to setup a psionic attack.
+	/// Sets up a psionic sub-action of AI_COMBAT.
 	bool psiAction();
 
-	/// Checks to make sure a target is valid given the parameters.
+	/// Checks to ensure that a particular BattleUnit is a valid target.
 	bool validTarget(
 			const BattleUnit* const unit,
 			bool assessDanger = false,
 			bool includeCivs = false) const;
 
-	/// Assumes the aLien has both a ranged and a melee weapon, and selects one.
+	/// Chooses between a melee or ranged attack if both are available.
 	void selectMeleeOrRanged();
 
 
 	public:
-		/// Creates a new AlienBAIState linked to the game and a certain unit.
+		/// Creates an AlienBAIState for a BattleUnit.
 		AlienBAIState(
 				SavedBattleGame* const battleSave,
 				BattleUnit* const unit,
@@ -133,37 +132,40 @@ private:
 		/// Cleans up the AlienBAIState.
 		~AlienBAIState();
 
-		/// Loads the AI state from YAML.
+		/// Loads the BAI state from YAML.
 		void load(const YAML::Node& node) override;
-		/// Saves the AI state to YAML.
+		/// Saves the BAI state to YAML.
 		YAML::Node save() const override;
 
-		/// Enters the state.
-//		void enter();
-		/// Exits the state.
-//		void exit();
 		/// Runs state functionality every AI cycle.
 		void think(BattleAction* const action) override;
 
-		/// Sets the "unit was hit" flag true.
-//		void setWasHitBy(BattleUnit *attacker);
-		/// Gets whether the unit was hit.
-//		getWasHitBy(int attacker) const;
-
-		/// Decides if we should throw a grenade/launch a missile to this position.
+		/// Decides if it's okay to create an explosion.
 		bool explosiveEfficacy(
 				const Position& posTarget,
 				const BattleUnit* const attacker,
 				const int explRadius,
 				const int diff) const;
 //				bool grenade = false) const;
-//		bool getNodeOfBestEfficacy(BattleAction* action);
 
-		/// Checks the alien's TU reservation setting.
-		BattleActionType getReservedAIAction() const;
+		/// Gets the TU reservation setting.
+		BattleActionType getReservedAiAction() const;
+
+		/// Enters the state.
+//		void enter();
+		/// Exits the state.
+//		void exit();
 
 		/// Gets the current target-unit.
 //		BattleUnit* getTarget();
+
+		///
+//		bool getNodeOfBestEfficacy(BattleAction* action);
+
+		/// Sets the "unit was hit" flag true.
+//		void setWasHitBy(BattleUnit *attacker);
+		/// Gets whether the unit was hit.
+//		getWasHitBy(int attacker) const;
 };
 
 }
