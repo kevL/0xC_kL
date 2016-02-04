@@ -84,6 +84,13 @@ struct BriefingData
 	{};
 };
 
+enum ChronoResult
+{
+	FORCE_WIN,	// 0
+	FORCE_LOSE,	// 1
+	FORCE_ABORT	// 2
+};
+
 
 class Ruleset;
 class RuleTerrain;
@@ -119,6 +126,7 @@ private:
 		_objectivesReqd,
 		_pointsPer30,
 		_shade,
+		_turnLimit,
 		_width;
 
 	std::string
@@ -139,6 +147,7 @@ private:
 	std::vector<DeploymentData> _data;
 
 	BriefingData _briefingData;
+	ChronoResult _chronoResult;
 	SpecialTileType _objectiveType;
 
 	public:
@@ -153,7 +162,7 @@ private:
 		/// Gets the Alien Deployment's type.
 		const std::string& getType() const;
 		/// Gets a pointer to the data.
-		std::vector<DeploymentData>* getDeploymentData();
+		const std::vector<DeploymentData>* getDeploymentData() const;
 
 		/// Gets dimensions.
 		void getDimensions(
@@ -205,7 +214,7 @@ private:
 		int getDurationMax() const;
 
 		/// Gets the list of music to pick from.
-		const std::vector<std::string>& getDeploymentMusics();
+		const std::vector<std::string>& getDeploymentMusics() const;
 
 		/// Gets the objective type for this mission.
 		SpecialTileType getObjectiveType() const;
@@ -226,6 +235,11 @@ private:
 		int getDespawnPenalty() const;
 		/// Gets the half-hourly score penalty xCom receives for a site existing.
 		int getPointsPer30() const;
+
+		/// Gets the turn limit for the Deployment.
+		const int getTurnLimit() const;
+		/// Gets the result when the timer runs out.
+		const ChronoResult getChronoResult() const;
 };
 
 }

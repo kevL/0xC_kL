@@ -36,7 +36,7 @@ class Window;
 
 
 /**
- * Screen which announces the next turn.
+ * Screen that announces the next turn.
  */
 class NextTurnState
 	:
@@ -61,12 +61,12 @@ private:
 
 
 	public:
-		/// Creates the Next Turn state.
+		/// Creates the NextTurnState.
 		NextTurnState(
 				SavedBattleGame* battleSave,
 				BattlescapeState* state,
 				bool aliensPacified = false);
-		/// Cleans up the Next Turn state.
+		/// Cleans up the NextTurnState.
 		~NextTurnState();
 
 		/// Handler for clicking anything.

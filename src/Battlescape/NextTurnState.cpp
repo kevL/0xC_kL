@@ -44,6 +44,9 @@
 
 #include "../Resource/XcomResourcePack.h"
 
+#include "../Ruleset/RuleInterface.h"
+#include "../Ruleset/Ruleset.h"
+
 #include "../Savegame/SavedBattleGame.h"
 #include "../Savegame/SavedGame.h"
 #include "../Savegame/Tile.h"			// kL, for terrain explosions
@@ -130,7 +133,17 @@ NextTurnState::NextTurnState(
 		_txtTurn->setBig();
 		_txtTurn->setAlign(ALIGN_CENTER);
 		_txtTurn->setHighContrast();
-		_txtTurn->setText(tr("STR_TURN").arg(_battleSave->getTurn()));
+
+		std::wostringstream woststr;
+		woststr << tr("STR_TURN").arg(_battleSave->getTurn());
+		if (_battleSave->getTurnLimit() != 0)
+		{
+			woststr << L" / " << _battleSave->getTurnLimit();
+			if (_battleSave->getTurnLimit() - _battleSave->getTurn() < 4)
+				_txtTurn->setColor(_game->getRuleset()->getInterface("inventory")->getElement("weight")->color2); // borrow 'overweight' color ...
+		}
+		_txtTurn->setText(woststr.str());
+//		_txtTurn->setText(tr("STR_TURN").arg(_battleSave->getTurn()));
 
 		_txtSide->setBig();
 		_txtSide->setAlign(ALIGN_CENTER);

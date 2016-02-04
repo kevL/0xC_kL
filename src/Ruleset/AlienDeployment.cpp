@@ -155,6 +155,8 @@ AlienDeployment::AlienDeployment(const std::string& type)
 		_objectiveFailedScore(0),
 		_despawnPenalty(0),
 		_pointsPer30(0),
+		_turnLimit(0),
+		_chronoResult(FORCE_LOSE),
 		_markerType("STR_TERROR_SITE"),
 		_alert("STR_ALIENS_TERRORISE"),
 		_alertBg("BACK03.SCR")
@@ -224,6 +226,9 @@ void AlienDeployment::load(const YAML::Node& node)
 		_objectiveFailedText	= node["objectiveFailed"][0].as<std::string>(_objectiveFailedText);
 		_objectiveFailedScore	= node["objectiveFailed"][1].as<int>(_objectiveFailedScore);
 	}
+
+	_turnLimit = node["turnLimit"].as<int>(_turnLimit);
+	_chronoResult = static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
 }
 
 /**
@@ -240,7 +245,7 @@ const std::string& AlienDeployment::getType() const
  * Gets a pointer to the data.
  * @return, pointer to a vector holding the DeploymentData
  */
-std::vector<DeploymentData>* AlienDeployment::getDeploymentData()
+const std::vector<DeploymentData>* AlienDeployment::getDeploymentData() const
 {
 	return &_data;
 }
@@ -409,7 +414,7 @@ int AlienDeployment::getDurationMax() const
  * Gets the list of musics this deployment has to choose from.
  * @return, list of track names
  */
-const std::vector<std::string>& AlienDeployment::getDeploymentMusics()
+const std::vector<std::string>& AlienDeployment::getDeploymentMusics() const
 {
 	return _musics;
 }
@@ -492,6 +497,24 @@ int AlienDeployment::getDespawnPenalty() const
 int AlienDeployment::getPointsPer30() const
 {
 	return _pointsPer30;
+}
+
+/**
+ * Gets the maximum number of turns before the mission ends.
+ * @return, the turn limit
+ */
+const int AlienDeployment::getTurnLimit() const
+{
+	return _turnLimit;
+}
+
+/**
+ * Gets the result to perform when the timer expires.
+ * @return, the ChronoResult (AlienDeployment.h)
+ */
+const ChronoResult AlienDeployment::getChronoResult() const
+{
+	return _chronoResult;
 }
 
 }

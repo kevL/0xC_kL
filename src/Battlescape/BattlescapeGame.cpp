@@ -1401,6 +1401,28 @@ void BattlescapeGame::endTurn() // private.
 		return;
 	}
 
+	if (_battleSave->getTurnLimit() != 0
+		&& _battleSave->getTurnLimit() < _battleSave->getTurn())
+	{
+		switch (_battleSave->getChronoResult())
+		{
+			case FORCE_WIN:
+				_parentState->finishBattle(false, livePlayer);
+				break;
+
+			default:
+			case FORCE_LOSE:
+				_battleSave->setAborted();
+				_parentState->finishBattle(true, 0);
+				break;
+
+			case FORCE_ABORT:
+				_battleSave->setAborted();
+				_parentState->finishBattle(true, tallyPlayerExit());
+		}
+		return;
+	}
+
 	const bool battleComplete = liveHostile == 0
 							 || livePlayer == 0;
 
@@ -3292,7 +3314,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 }
 
 /**
- * Tallies the living units in the game.
+ * Tallies the conscious units Player and Hostile.
  * @param liveHostile	- reference in which to store the live aLien tally
  * @param livePlayer	- reference in which to store the live xCom tally
  * @return, true if all aliens are dead or pacified independent of battleAllowPsionicCapture option
@@ -3301,7 +3323,7 @@ bool BattlescapeGame::tallyUnits(
 		int& liveHostile,
 		int& livePlayer) const
 {
-	bool ret = true;
+	bool ret (true);
 
 	liveHostile =
 	livePlayer = 0;
@@ -3316,18 +3338,18 @@ bool BattlescapeGame::tallyUnits(
 			switch ((*j)->getOriginalFaction())
 			{
 				case FACTION_HOSTILE:
-					if ((*j)->getFaction() != FACTION_PLAYER
-						|| Options::battleAllowPsionicCapture == false)
+					if (Options::battleAllowPsionicCapture == false
+						|| (*j)->isMindControlled() == false)
 					{
 						++liveHostile;
 					}
 
-					if ((*j)->getFaction() == FACTION_HOSTILE)
+					if ((*j)->isMindControlled() == false)
 						ret = false;
 					break;
 
 				case FACTION_PLAYER:
-					if ((*j)->getFaction() == FACTION_PLAYER)
+					if ((*j)->isMindControlled() == false)
 						++livePlayer;
 					else
 						++liveHostile;
@@ -3339,7 +3361,53 @@ bool BattlescapeGame::tallyUnits(
 	return ret;
 }
 
-/*
+/**
+ * Tallies the conscious player-units at an Exit-area.
+ * @return, quantity of units at exit
+ */
+int BattlescapeGame::tallyPlayerExit() const
+{
+	int ret (0);
+	for (std::vector<BattleUnit*>::const_iterator
+			j = _battleSave->getUnits()->begin();
+			j != _battleSave->getUnits()->end();
+			++j)
+	{
+		if ((*j)->isInExitArea(END_POINT) == true
+			&& (*j)->isOut_t(OUT_STAT) == false
+			&& (*j)->getOriginalFaction() == FACTION_PLAYER)
+//			&& (*j)->isMindControlled() == false) // allow.
+		{
+			++ret;
+		}
+	}
+	return ret;
+}
+
+/**
+ * Tallies conscious hostile-units.
+ * @return, quantity of hostiles
+ */
+int BattlescapeGame::tallyHostiles() const
+{
+	int ret (0);
+	for (std::vector<BattleUnit*>::const_iterator
+			j = _battleSave->getUnits()->begin();
+			j != _battleSave->getUnits()->end();
+			++j)
+	{
+		if ((*j)->isOut_t(OUT_STAT) == false
+			&& (*j)->getOriginalFaction() == FACTION_HOSTILE
+			&& (Options::battleAllowPsionicCapture == false
+				|| (*j)->isMindControlled() == false))
+		{
+			++ret;
+		}
+	}
+	return ret;
+}
+
+/**
  * Sets the TU reserved type as a BattleAction.
  * @param bat - a battleactiontype (BattlescapeGame.h)
  *
@@ -3348,7 +3416,7 @@ void BattlescapeGame::setReservedAction(BattleActionType bat)
 	_battleSave->setBatReserved(bat);
 } */
 
-/*
+/**
  * Returns the action type that is reserved.
  * @return, the BattleActionType that is reserved
  *
@@ -3357,7 +3425,7 @@ BattleActionType BattlescapeGame::getReservedAction() const
 	return _battleSave->getBatReserved();
 } */
 
-/*
+/**
  * Sets the kneel reservation setting.
  * @param reserved - true to reserve an extra 4 TUs to kneel
  *
@@ -3366,7 +3434,7 @@ void BattlescapeGame::setKneelReserved(bool reserved) const
 	_battleSave->setKneelReserved(reserved);
 } */
 
-/*
+/**
  * Gets the kneel reservation setting.
  * @return, kneel reservation setting
  *

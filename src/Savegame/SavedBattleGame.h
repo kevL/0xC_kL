@@ -27,6 +27,8 @@
 #include "BattleUnit.h"
 //#include "../Battlescape/BattlescapeGame.h" // BattleActionType (included in BattleUnit.h)
 
+#include "../Ruleset/AlienDeployment.h"
+
 
 namespace OpenXcom
 {
@@ -87,10 +89,12 @@ private:
 		_mapsize_z,
 		_objectivesDestroyed,
 		_objectivesNeeded,
-		_turn;
+		_turn,
+		_turnLimit;
 	size_t _mapSize;
 
 //	BattleActionType _batReserved;
+	ChronoResult _chronoResult;
 	Position _rfTriggerPosition;
 	SpecialTileType _objectiveType;
 	TacticalType _tacType;
@@ -290,9 +294,8 @@ private:
 		/// Gets the playing side.
 		UnitFaction getSide() const;
 
-		/// Gets the turn number.
+		/// Gets the turn.
 		int getTurn() const;
-
 		/// Ends the turn.
 		bool endFactionTurn();
 
@@ -320,7 +323,7 @@ private:
 		void removeItem(BattleItem* const item);
 
 		/// Sets whether the mission was aborted.
-		void setAborted(bool flag);
+		void setAborted(bool flag = true);
 		/// Checks if the mission was aborted.
 		bool isAborted() const;
 
@@ -474,6 +477,15 @@ private:
 		void setWalkUnit(const BattleUnit* const unit);
 		/// Gets the previous walking unit.
 		const BattleUnit* getWalkUnit() const;
+
+		/// Sets the turn limit for tactical.
+		void setTurnLimit(int limit);
+		/// Gets the turn limit for tactical.
+		const int getTurnLimit() const;
+		/// Sets the result when the timer runs out.
+		void setChronoResult(ChronoResult result);
+		/// Gets the result when the timer runs out.
+		const ChronoResult getChronoResult() const;
 
 		/// Gets the reserved fire mode.
 //		BattleActionType getBatReserved() const;

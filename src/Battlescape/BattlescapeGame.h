@@ -374,10 +374,14 @@ private:
 				BattleItem* const item,
 				BattleUnit* const unit) const;
 
-		/// Tallies the living units.
+		/// Tallies conscious units.
 		bool tallyUnits(
 				int& liveHostile,
 				int& livePlayer) const;
+		/// Tallies conscious player-units at an Exit-area.
+		int tallyPlayerExit() const;
+		/// Tallies conscious hostile-units.
+		int tallyHostiles() const;
 
 		/// Sets the TU reserved type.
 //		void setReservedAction(BattleActionType bat);

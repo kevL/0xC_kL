@@ -258,11 +258,14 @@ void BattlescapeGenerator::run()
 {
 	_unitSequence = BattleUnit::MAX_SOLDIER_ID; // geoscape soldier IDs should stay below this number
 
-	AlienDeployment* deployRule;
+	const AlienDeployment* deployRule;
 	if (_ufo != nullptr)
 		deployRule = _rules->getDeployment(_ufo->getRules()->getType());
 	else
 		deployRule = _rules->getDeployment(_battleSave->getTacticalType());
+
+	_battleSave->setTurnLimit(deployRule->getTurnLimit());
+	_battleSave->setChronoResult(deployRule->getChronoResult());
 
 	deployRule->getDimensions(
 						&_mapsize_x,
@@ -591,7 +594,11 @@ void BattlescapeGenerator::nextStage()
 	}
 
 
-	AlienDeployment* const deployRule (_rules->getDeployment(_battleSave->getTacticalType()));
+	const AlienDeployment* const deployRule (_rules->getDeployment(_battleSave->getTacticalType()));
+
+	_battleSave->setTurnLimit(deployRule->getTurnLimit());
+	_battleSave->setChronoResult(deployRule->getChronoResult());
+
 	deployRule->getDimensions(
 						&_mapsize_x,
 						&_mapsize_y,
@@ -1593,7 +1600,7 @@ bool BattlescapeGenerator::placeItem( // private.
  * Deploys the aLiens according to the AlienDeployment rules.
  * @param deployRule - pointer to the AlienDeployment rule
  */
-void BattlescapeGenerator::deployAliens(AlienDeployment* const deployRule) // private.
+void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule) // private.
 {
 	int month = _gameSave->getMonthsPassed();
 	if (month != -1)

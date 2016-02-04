@@ -46,10 +46,10 @@
 
 #include "../Resource/XcomResourcePack.h"
 
-#include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/MapDataSet.h"
 #include "../Ruleset/MCDPatch.h"
 #include "../Ruleset/OperationPool.h"
+#include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleInventory.h"
 #include "../Ruleset/Ruleset.h"
 
@@ -96,7 +96,9 @@ SavedBattleGame::SavedBattleGame(
 		_pacified(false),
 		_rfTriggerPosition(0,0,-1),
 		_initTu(20),
-		_walkUnit(nullptr)
+		_walkUnit(nullptr),
+		_turnLimit(0),
+		_chronoResult(FORCE_LOSE)
 //		_dragInvert(false),
 //		_dragTimeTolerance(0),
 //		_dragPixelTolerance(0)
@@ -531,6 +533,9 @@ void SavedBattleGame::load(
 	_objectivesDestroyed	= node["objectivesDestroyed"]	.as<int>(_objectivesDestroyed);
 	_objectivesNeeded		= node["objectivesNeeded"]		.as<int>(_objectivesNeeded);
 
+	_turnLimit = node["turnLimit"].as<int>(_turnLimit);
+	_chronoResult = static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
+
 	_alienRace				= node["alienRace"]				.as<std::string>(_alienRace);
 //	_kneelReserved			= node["kneelReserved"]			.as<bool>(_kneelReserved);
 
@@ -749,6 +754,9 @@ YAML::Node SavedBattleGame::save() const
 	}
 
 	node["music"] = _music;
+
+	node["turnLimit"]		= _turnLimit;
+	node["chronoResult"]	= static_cast<int>(_chronoResult);
 
 	return node;
 }
@@ -1221,7 +1229,7 @@ UnitFaction SavedBattleGame::getSide() const
 }
 
 /**
- * Gets the current turn number.
+ * Gets the current turn.
  * @return, the current turn
  */
 int SavedBattleGame::getTurn() const
@@ -1328,13 +1336,6 @@ bool SavedBattleGame::endFactionTurn()
 	// ** _side HAS ADVANCED to next faction after here!!! ** //
 
 
-	int
-		liveHostile,
-		livePlayer;
-	_battleState->getBattleGame()->tallyUnits(
-											liveHostile,
-											livePlayer);
-
 	if (_cheatAI == false // pseudo the Turn-20 / less-than-3-aliens-left Reveal rule.
 		&& _side == FACTION_HOSTILE
 		&& _turn > 5)
@@ -1350,7 +1351,7 @@ bool SavedBattleGame::endFactionTurn()
 			{
 				const int delta = RNG::generate(0,5);
 				if (_turn > 17 + delta
-					|| (_turn > 5 && liveHostile < delta - 1))
+					|| (_turn > 5 && _battleState->getBattleGame()->tallyHostiles() < delta - 1))
 				{
 					_cheatAI = true;
 				}
@@ -1632,7 +1633,7 @@ void SavedBattleGame::removeItem(BattleItem* const item)
 
 /**
  * Sets whether the mission was aborted or successful.
- * @param flag - true if the mission was aborted, or false if the mission was successful.
+ * @param flag - true if the mission was aborted, or false if the mission was successful (default true)
  */
 void SavedBattleGame::setAborted(bool flag)
 {
@@ -2965,6 +2966,42 @@ void SavedBattleGame::setWalkUnit(const BattleUnit* const unit)
 const BattleUnit* SavedBattleGame::getWalkUnit() const
 {
 	return _walkUnit;
+}
+
+/**
+ * Sets the turn limit for tactical.
+ * @param limit - the turn limit
+ */
+void SavedBattleGame::setTurnLimit(int limit)
+{
+	_turnLimit = limit;
+}
+
+/**
+ * Gets the maximum number of turns before tactical ends.
+ * @return, the turn limit
+ */
+const int SavedBattleGame::getTurnLimit() const
+{
+	return _turnLimit;
+}
+
+/**
+ * Sets the result to occur when the timer runs out.
+ * @param result - the result to perform (AlienDeployment.h)
+ */
+void SavedBattleGame::setChronoResult(ChronoResult result)
+{
+	_chronoResult = result;
+}
+
+/**
+ * Gets the result to perform when the timer expires.
+ * @return, the result to perform (AlienDeployment.h)
+ */
+const ChronoResult SavedBattleGame::getChronoResult() const
+{
+	return _chronoResult;
 }
 
 }

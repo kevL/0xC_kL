@@ -123,7 +123,7 @@ private:
 			BattleUnit* const unit) const;
 
 	/// Deploys the aliens according to the AlienDeployment rule.
-	void deployAliens(AlienDeployment* const deployRule);
+	void deployAliens(const AlienDeployment* const deployRule);
 	/// Adds an alien to the game.
 	BattleUnit* addAlien(
 			RuleUnit* const unitRule,
