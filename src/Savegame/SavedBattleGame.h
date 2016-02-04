@@ -80,7 +80,7 @@ private:
 		_pacified,
 		_unitsFalling;
 	int
-		_tacticalShade,
+		_cheatTurn,
 		_groundLevel,
 		_initTu,
 		_itemId,
@@ -89,6 +89,7 @@ private:
 		_mapsize_z,
 		_objectivesDestroyed,
 		_objectivesNeeded,
+		_tacticalShade,
 		_turn,
 		_turnLimit;
 	size_t _mapSize;
@@ -486,6 +487,9 @@ private:
 		void setChronoResult(ChronoResult result);
 		/// Gets the result when the timer runs out.
 		const ChronoResult getChronoResult() const;
+
+		/// Sets the turn for the AI to start the cheating aLiens.
+		void setCheatTurn(int turn);
 
 		/// Gets the reserved fire mode.
 //		BattleActionType getBatReserved() const;

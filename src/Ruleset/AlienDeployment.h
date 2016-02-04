@@ -114,6 +114,7 @@ private:
 		_finalMission,
 		_noRetreat;
 	int
+		_cheatTurn,
 		_civilians,
 		_despawnPenalty,
 		_durationMax,
@@ -240,6 +241,9 @@ private:
 		const int getTurnLimit() const;
 		/// Gets the result when the timer runs out.
 		const ChronoResult getChronoResult() const;
+
+		/// Gets which turn the aLiens start cheating on.
+		const int getCheatTurn() const;
 };
 
 }

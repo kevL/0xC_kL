@@ -266,6 +266,7 @@ void BattlescapeGenerator::run()
 
 	_battleSave->setTurnLimit(deployRule->getTurnLimit());
 	_battleSave->setChronoResult(deployRule->getChronoResult());
+	_battleSave->setCheatTurn(deployRule->getCheatTurn());
 
 	deployRule->getDimensions(
 						&_mapsize_x,
@@ -598,6 +599,7 @@ void BattlescapeGenerator::nextStage()
 
 	_battleSave->setTurnLimit(deployRule->getTurnLimit());
 	_battleSave->setChronoResult(deployRule->getChronoResult());
+	_battleSave->setCheatTurn(deployRule->getCheatTurn());
 
 	deployRule->getDimensions(
 						&_mapsize_x,

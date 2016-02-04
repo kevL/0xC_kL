@@ -98,7 +98,8 @@ SavedBattleGame::SavedBattleGame(
 		_initTu(20),
 		_walkUnit(nullptr),
 		_turnLimit(0),
-		_chronoResult(FORCE_LOSE)
+		_chronoResult(FORCE_LOSE),
+		_cheatTurn(20)
 //		_dragInvert(false),
 //		_dragTimeTolerance(0),
 //		_dragPixelTolerance(0)
@@ -536,6 +537,7 @@ void SavedBattleGame::load(
 	_turnLimit = node["turnLimit"].as<int>(_turnLimit);
 	_chronoResult = static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
 
+	_cheatTurn				= node["cheatTurn"]				.as<int>(_cheatTurn);
 	_alienRace				= node["alienRace"]				.as<std::string>(_alienRace);
 //	_kneelReserved			= node["kneelReserved"]			.as<bool>(_kneelReserved);
 
@@ -760,6 +762,9 @@ YAML::Node SavedBattleGame::save() const
 		node["turnLimit"] = _turnLimit;
 		node["chronoResult"] = static_cast<int>(_chronoResult);
 	}
+
+	if (_cheatTurn != 20)
+		node["cheatTurn"] = _cheatTurn;
 
 	return node;
 }
@@ -1341,7 +1346,7 @@ bool SavedBattleGame::endFactionTurn()
 
 	if (_cheatAI == false // pseudo the Turn-20 / less-than-3-aliens-left Reveal rule.
 		&& _side == FACTION_HOSTILE
-		&& _turn > 5)
+		&& _turn > _cheatTurn / 4)
 	{
 		for (std::vector<BattleUnit*>::const_iterator
 				i = _units.begin();
@@ -1352,9 +1357,10 @@ bool SavedBattleGame::endFactionTurn()
 				&& (*i)->getFaction() == FACTION_HOSTILE
 				&& (*i)->isMindControlled() == false)
 			{
-				const int delta = RNG::generate(0,5);
-				if (_turn > 17 + delta
-					|| (_turn > 5 && _battleState->getBattleGame()->tallyHostiles() < delta - 1))
+				const int r = RNG::generate(0,5);
+				if (_turn > _cheatTurn - 3 + r
+					|| (_turn > (_cheatTurn / 4)
+						&& _battleState->getBattleGame()->tallyHostiles() < r - 1))
 				{
 					_cheatAI = true;
 				}
@@ -3005,6 +3011,15 @@ void SavedBattleGame::setChronoResult(ChronoResult result)
 const ChronoResult SavedBattleGame::getChronoResult() const
 {
 	return _chronoResult;
+}
+
+/**
+ * Sets the turn at which the player's units become exposed to the AI.
+ * @param turn - the turn for the AI to start cheating
+ */
+void SavedBattleGame::setCheatTurn(int turn)
+{
+	_cheatTurn = turn;
 }
 
 }

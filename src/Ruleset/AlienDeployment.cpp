@@ -157,6 +157,7 @@ AlienDeployment::AlienDeployment(const std::string& type)
 		_pointsPer30(0),
 		_turnLimit(0),
 		_chronoResult(FORCE_LOSE),
+		_cheatTurn(20),
 		_markerType("STR_TERROR_SITE"),
 		_alert("STR_ALIENS_TERRORISE"),
 		_alertBg("BACK03.SCR")
@@ -229,6 +230,7 @@ void AlienDeployment::load(const YAML::Node& node)
 
 	_turnLimit = node["turnLimit"].as<int>(_turnLimit);
 	_chronoResult = static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
+	_cheatTurn = node["cheatTurn"].as<int>(_cheatTurn);
 }
 
 /**
@@ -515,6 +517,15 @@ const int AlienDeployment::getTurnLimit() const
 const ChronoResult AlienDeployment::getChronoResult() const
 {
 	return _chronoResult;
+}
+
+/**
+ * Gets the turn at which the player's units become exposed to the AI.
+ * @return, the turn for the AI to start cheating
+ */
+const int AlienDeployment::getCheatTurn() const
+{
+	return _cheatTurn;
 }
 
 }
