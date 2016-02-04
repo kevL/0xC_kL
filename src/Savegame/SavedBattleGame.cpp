@@ -755,8 +755,11 @@ YAML::Node SavedBattleGame::save() const
 
 	node["music"] = _music;
 
-	node["turnLimit"]		= _turnLimit;
-	node["chronoResult"]	= static_cast<int>(_chronoResult);
+	if (_turnLimit != 0)
+	{
+		node["turnLimit"] = _turnLimit;
+		node["chronoResult"] = static_cast<int>(_chronoResult);
+	}
 
 	return node;
 }
