@@ -2630,17 +2630,19 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					if (allowPreview == true)
 						pf->clearPreview();
 
-					Position screenPixel;
-					getMap()->getCamera()->convertMapToScreen(pos, &screenPixel);
-					screenPixel += getMap()->getCamera()->getMapOffset();
+					Position
+						pxScreen,
+						pxPointer;
 
-					Position mousePixel;
-					getMap()->findMousePointer(mousePixel);
+					getMap()->getCamera()->convertMapToScreen(pos, &pxScreen);
+					pxScreen += getMap()->getCamera()->getMapOffset();
 
-					if (mousePixel.x > screenPixel.x + 16)
+					getMap()->findMousePointer(pxPointer);
+
+					if (pxPointer.x > pxScreen.x + 16)
 						_tacAction.actor->setTurnDirection(-1);
 					else
-						_tacAction.actor->setTurnDirection(1);
+						_tacAction.actor->setTurnDirection(+1);
 
 					Pathfinding::directionToVector(
 											(_tacAction.actor->getUnitDirection() + 4) % 8,
@@ -2699,8 +2701,8 @@ void BattlescapeGame::secondaryAction(const Position& pos)
 	{
 		_tacAction.target = pos;
 		_tacAction.strafe = _tacAction.actor->getTurretType() != -1
-							 && (SDL_GetModState() & KMOD_CTRL) != 0
-							 && Options::battleStrafe == true;
+						 && (SDL_GetModState() & KMOD_CTRL) != 0
+						 && Options::battleStrafe == true;
 
 		statePushBack(new UnitTurnBState(this, _tacAction)); // open door or rotate turret.
 	}

@@ -1479,20 +1479,20 @@ bool TileEngine::checkReactionFire(
 	// a target that is a potential RF-spotter *will* be damaged when this runs
 	// since damage + checkForCasualties() has already been called. fucko*
 
-	bool ret = false;
+	bool ret (false);
 
 	if (triggerUnit->getFaction() == FACTION_PLAYER // note MC'd aLiens do not RF.
 		|| triggerUnit->isMindControlled() == false)
 	{
 		//Log(LOG_INFO) << ". Target = VALID";
-		std::vector<BattleUnit*> spotters = getSpottingUnits(triggerUnit);
+		std::vector<BattleUnit*> spotters (getSpottingUnits(triggerUnit));
 		//Log(LOG_INFO) << ". # spotters = " << spotters.size();
 
-		BattleUnit* reactorUnit = getReactor( // get the first man up to bat.
+		BattleUnit* reactorUnit (getReactor( // get the first man up to bat.
 										spotters,
 										triggerUnit,
 										tuSpent,
-										autoSpot);
+										autoSpot));
 		// start iterating through the possible reactors until
 		// the current unit is the one with the highest score.
 		while (reactorUnit != triggerUnit)
@@ -1549,7 +1549,7 @@ bool TileEngine::checkReactionFire(
 std::vector<BattleUnit*> TileEngine::getSpottingUnits(const BattleUnit* const unit)
 {
 	//Log(LOG_INFO) << "TileEngine::getSpottingUnits() vs. id-" << unit->getId() << " " << unit->getPosition();
-	const Tile* const tile = unit->getTile();
+	const Tile* const tile (unit->getTile());
 	std::vector<BattleUnit*> spotters;
 
 	for (std::vector<BattleUnit*>::const_iterator
@@ -1601,9 +1601,9 @@ BattleUnit* TileEngine::getReactor(
 {
 	//Log(LOG_INFO) << "TileEngine::getReactor() vs id-" << defender->getId();
 	//Log(LOG_INFO) << ". tuSpent = " << tuSpent;
-	BattleUnit* nextReactor = nullptr;
+	BattleUnit* nextReactor (nullptr);
 	int
-		init = -1,
+		init (-1),
 		initTest;
 
 	for (std::vector<BattleUnit*>::const_iterator
@@ -1612,15 +1612,11 @@ BattleUnit* TileEngine::getReactor(
 			++i)
 	{
 		//Log(LOG_INFO) << ". . check nextReactor id-" << (*i)->getId();
-//		if ((*i)->isOut() == false)
-		if ((*i)->isOut_t() == false)
+		if ((*i)->isOut_t() == false
+			&& (initTest = (*i)->getInitiative()) > init)
 		{
-			initTest = (*i)->getInitiative();
-			if (initTest > init)
-			{
-				init = initTest;
-				nextReactor = *i;
-			}
+			init = initTest;
+			nextReactor = *i;
 		}
 	}
 
@@ -1722,11 +1718,10 @@ bool TileEngine::reactionShot(
 			return false;
 		}
 
-		bool canMelee = false;
+		bool canMelee (false);
 		for (int
 				i = 0;
-				i != 8
-					&& canMelee == false;
+				i != 8 && canMelee == false;
 				++i)
 		{
 			canMelee = validMeleeRange(unit, i, targetUnit);	// hopefully this is blocked by walls & bigWalls ...
@@ -1735,23 +1730,21 @@ bool TileEngine::reactionShot(
 																// cf. ActionMenuState::btnActionMenuItemClick()
 		}
 
-		if (canMelee == false)
-			return false;
+		if (canMelee == false) return false;
 	}
 	else
 	{
 		_rfAction->type = BA_NONE;
 		selectFireMethod(*_rfAction); // choose BAT & setTU req'd.
 
-		if (_rfAction->type == BA_NONE)
-			return false;
+		if (_rfAction->type == BA_NONE) return false;
 	}
 
 	_rfAction->targeting = true;
 
 	if (unit->getFaction() == FACTION_HOSTILE)
 	{
-		AlienBAIState* ai = dynamic_cast<AlienBAIState*>(unit->getAIState());
+		AlienBAIState* ai (dynamic_cast<AlienBAIState*>(unit->getAIState()));
 		if (ai == nullptr)
 		{
 			ai = new AlienBAIState(_battleSave, unit);
@@ -1795,17 +1788,14 @@ bool TileEngine::reactionShot(
  */
 void TileEngine::selectFireMethod(BattleAction& action) // <- TODO: this action ought be replaced w/ _rfAction, i think.
 {
-	const RuleItem* const itRule = action.weapon->getRules();
-	const int dist = _battleSave->getTileEngine()->distance(
+	const RuleItem* const itRule (action.weapon->getRules());
+	const int dist (_battleSave->getTileEngine()->distance(
 														action.actor->getPosition(),
-														action.target);
-	if (dist > itRule->getMaxRange()
-		|| dist < itRule->getMinRange()) // this might not be what I think it is ...
-	{
+														action.target));
+	if (dist > itRule->getMaxRange() || dist < itRule->getMinRange()) // this might not be what I think it is ...
 		return;
-	}
 
-	const int tu = action.actor->getTimeUnits();
+	const int tu (action.actor->getTimeUnits());
 
 	if (dist <= itRule->getAutoRange())
 	{

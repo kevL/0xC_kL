@@ -456,7 +456,7 @@ void CraftEquipmentState::moveLeft()
 }
 
 /**
- * Moves the given number of items (selected) to the base.
+ * Moves the given number of items (selected) to the Base.
  * @param qtyDelta - quantity change
  */
 void CraftEquipmentState::moveLeftByValue(int qtyDelta)
@@ -556,7 +556,7 @@ void CraftEquipmentState::moveRight()
 }
 
 /**
- * Moves the given number of items (selected) to the craft.
+ * Moves the given number of items (selected) to the Craft.
  * @param qtyDelta - quantity change
  */
 void CraftEquipmentState::moveRightByValue(int qtyDelta)
@@ -581,21 +581,20 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 			RuleItem* const itRule (_game->getRuleset()->getItem(_items[_sel]));
 			if (itRule->isFixed() == true) // load vehicle, convert item to a vehicle
 			{
-				int tankSize (_game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(itRule->getType())->getArmor())->getSize());
-				tankSize *= tankSize;
+				int tankQuads (_game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(itRule->getType())->getArmor())->getSize());
+				tankQuads *= tankQuads;
 
 				const int spaceAvailable (std::min(
 												_craft->getRules()->getVehicles() - _craft->getQtyVehicles(true),
 												_craft->getSpaceAvailable())
-											/ tankSize);
+											/ tankQuads);
 
 				if (spaceAvailable > 0
-					&& _craft->getLoadCapacity() - _craft->calcLoadCurrent() >= tankSize * 10) // note: 10 is the 'load' that a single 'space' uses.
+					&& _craft->getLoadCapacity() - _craft->calcLoadCurrent() >= tankQuads * 10) // note: 10 is the 'load' that a single 'space' uses.
 				{
 					qtyDelta = std::min(qtyDelta, spaceAvailable);
-					qtyDelta = std::min(
-									qtyDelta,
-									(_craft->getLoadCapacity() - _craft->calcLoadCurrent()) / (tankSize * 10));
+					qtyDelta = std::min(qtyDelta,
+									   (_craft->getLoadCapacity() - _craft->calcLoadCurrent()) / (tankQuads * 10));
 
 					if (itRule->getCompatibleAmmo()->empty() == false)
 					{
@@ -615,7 +614,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 						}
 
 						if (_game->getSavedGame()->getMonthsPassed() == -1)
-							baseQty = 1;
+							baseQty = qtyDelta;
 						else
 							baseQty = _base->getStorageItems()->getItemQuantity(aRule->getType()) / tankClipSize;
 
@@ -634,7 +633,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 									_base->getStorageItems()->removeItem(_items[_sel]);
 								}
 
-								_craft->getVehicles()->push_back(new Vehicle(itRule, requiredRounds, tankSize));
+								_craft->getVehicles()->push_back(new Vehicle(itRule, requiredRounds, tankQuads));
 							}
 						}
 						else // not enough Ammo
@@ -663,7 +662,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 							_craft->getVehicles()->push_back(new Vehicle(
 																	itRule,
 																	itRule->getClipSize(),
-																	tankSize));
+																	tankQuads));
 						}
 					}
 				}
