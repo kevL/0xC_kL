@@ -70,6 +70,7 @@ class SavedBattleGame
 
 private:
 	static const size_t SEARCH_DIST = 11;
+	static const int CHEAT_DEFAULT = 20;
 
 	bool
 		_aborted,

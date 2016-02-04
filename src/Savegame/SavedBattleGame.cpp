@@ -99,7 +99,7 @@ SavedBattleGame::SavedBattleGame(
 		_walkUnit(nullptr),
 		_turnLimit(0),
 		_chronoResult(FORCE_LOSE),
-		_cheatTurn(20)
+		_cheatTurn(CHEAT_DEFAULT)
 //		_dragInvert(false),
 //		_dragTimeTolerance(0),
 //		_dragPixelTolerance(0)
@@ -763,7 +763,7 @@ YAML::Node SavedBattleGame::save() const
 		node["chronoResult"] = static_cast<int>(_chronoResult);
 	}
 
-	if (_cheatTurn != 20)
+	if (_cheatTurn != CHEAT_DEFAULT)
 		node["cheatTurn"] = _cheatTurn;
 
 	return node;
