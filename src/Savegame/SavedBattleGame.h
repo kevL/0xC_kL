@@ -123,7 +123,7 @@ private:
 	std::list<BattleUnit*> _fallingUnits;
 
 	std::vector<BattleItem*>
-		_deleted,
+		_toDelete,
 		_items,
 		_recoverConditional,
 		_recoverGuaranteed;
@@ -322,7 +322,7 @@ private:
 		void randomizeItemLocations(Tile* const tile);
 
 		/// Removes an item from the game.
-		void removeItem(BattleItem* const item);
+		void toDeleteItem(BattleItem* const item);
 
 		/// Sets whether the mission was aborted.
 		void setAborted(bool flag = true);

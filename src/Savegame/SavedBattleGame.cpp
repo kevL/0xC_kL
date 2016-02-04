@@ -191,8 +191,8 @@ SavedBattleGame::~SavedBattleGame()
 		delete *i;
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = _deleted.begin();
-			i != _deleted.end();
+			i = _toDelete.begin();
+			i != _toDelete.end();
 			++i)
 		delete *i;
 
@@ -1587,13 +1587,13 @@ void SavedBattleGame::randomizeItemLocations(Tile* const tile)
  *		- tile inventory
  *		- battleunit inventory
  *		- battlegame-items container
- * Upon removal the pointer to the item is kept in the '_deleted' vector that is
+ * Upon removal the pointer to the item is kept in the '_toDelete' vector that is
  * flushed and destroyed in the SavedBattleGame dTor.
  * @param item - pointer to an item to remove
  */
-void SavedBattleGame::removeItem(BattleItem* const item)
+void SavedBattleGame::toDeleteItem(BattleItem* const item)
 {
-	Tile* const tile = item->getTile();
+	Tile* const tile (item->getTile());
 	if (tile != nullptr)
 	{
 		for (std::vector<BattleItem*>::const_iterator
@@ -1609,7 +1609,7 @@ void SavedBattleGame::removeItem(BattleItem* const item)
 		}
 	}
 
-	BattleUnit* const unit = item->getOwner();
+	BattleUnit* const unit (item->getOwner());
 	if (unit != nullptr)
 	{
 		for (std::vector<BattleItem*>::const_iterator
@@ -1637,7 +1637,7 @@ void SavedBattleGame::removeItem(BattleItem* const item)
 		}
 	}
 
-	_deleted.push_back(item);
+	_toDelete.push_back(item);
 }
 
 /**
@@ -2179,11 +2179,10 @@ void SavedBattleGame::removeCorpse(const BattleUnit* const unit)
 	{
 		if ((*i)->getUnit() == unit)
 		{
-			removeItem(*i);
+			toDeleteItem(*i);
 			--i;
 
-			if (--quad == 0)
-				return;
+			if (--quad == 0) return;
 		}
 	}
 }

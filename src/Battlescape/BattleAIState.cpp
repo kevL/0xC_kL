@@ -130,17 +130,17 @@ void BattleAIState::resetAI()
 }
 
 /**
- * Gets the AI Mode for debug-readout.
- * @return, AI Mode as a string
+ * Converts an AIMode into a string for debugging.
+ * @return, AI Mode as string
  */
-std::string BattleAIState::getAIMode() const // virtual.
+std::string BattleAIState::debugAiMode(AIMode mode) // static.
 {
-	switch (_AIMode)
+	switch (mode)
 	{
-		case 0: return "Patrol";
-		case 1: return "Ambush";
-		case 2: return "Combat";
-		case 3: return "Escape";
+		case AI_PATROL: return "PATROL";
+		case AI_AMBUSH: return "AMBUSH";
+		case AI_COMBAT: return "COMBAT";
+		case AI_ESCAPE: return "ESCAPE";
 	}
 
 	return "error - no AI Mode";

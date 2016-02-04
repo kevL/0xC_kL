@@ -113,8 +113,8 @@ protected:
 		/// Resets the unit's saved parameters.
 		void resetAI();
 
-		/// Gets the AI Mode for debug-readout.
-		virtual std::string getAIMode() const;
+		// Converts the AIMode into a string for debugging.
+		static std::string debugAiMode(AIMode mode);
 };
 
 }

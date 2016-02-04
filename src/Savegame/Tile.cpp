@@ -1176,8 +1176,8 @@ void Tile::hitTileInventory(SavedBattleGame* const battleSave)
 						&& (unit == nullptr || unit->getUnitStatus() == STATUS_DEAD))
 					{
 						//Log(LOG_INFO) << ". . destroy item";
-						battleSave->removeItem(*i);	// This should not kill *and* remove a unit's corpse on the same
-						break;						// tilePhase; but who knows, I haven't traced it comprehensively.
+						battleSave->toDeleteItem(*i);	// This should not kill *and* remove a unit's corpse on the same
+						break;							// tilePhase; but who knows, I haven't traced it comprehensively.
 					}
 					else
 					{

@@ -991,7 +991,7 @@ void UnitWalkBState::postPathProcedures() // private.
 
 	if (_unit->getFaction() != FACTION_PLAYER)
 	{
-		int dir = _action.finalFacing;
+		int dir (_action.finalFacing);
 
 		if (_action.finalAction == true)
 			_unit->dontReselect();
@@ -999,7 +999,7 @@ void UnitWalkBState::postPathProcedures() // private.
 		if (_unit->getChargeTarget() != nullptr)
 		{
 			//Log(LOG_INFO) << ". . charging = TRUE";
-			const Position posTarget = _unit->getChargeTarget()->getPosition();
+			const Position posTarget (_unit->getChargeTarget()->getPosition());
 			dir = TileEngine::getDirectionTo(_unit->getPosition(), posTarget);
 			// kL_notes (pre-above):
 			// put an appropriate facing direction here
@@ -1010,18 +1010,20 @@ void UnitWalkBState::postPathProcedures() // private.
 
 			if (_parent->getTileEngine()->validMeleeRange(
 													_unit, dir,
-													_action.actor->getChargeTarget()) == true)
+													_unit->getChargeTarget()) == true)
 			{
+				_unit->setChargeTarget();
+
 				BattleAction action;
 				action.actor = _unit;
 				action.target = posTarget;
 				action.targeting = true;
 				action.type = BA_MELEE;
-				action.weapon = _unit->getMainHandWeapon(false);
-//				action.weapon = _unit->getMeleeWeapon();
+//				action.weapon = _unit->getMainHandWeapon(false);
+				action.weapon = _unit->getMeleeWeapon();
 
 // if (action.weapon == nullptr)
-				const std::string meleeWeapon = _unit->getMeleeWeapon();
+/*				const std::string meleeWeapon = _unit->getMeleeWeapon();
 				bool instaWeapon = false;
 
 				if (meleeWeapon == "STR_FIST")
@@ -1060,18 +1062,16 @@ void UnitWalkBState::postPathProcedures() // private.
 					&& action.weapon->getRules()->getBattleType() != BT_FIREARM) // probly shouldn't be here <-
 				{
 					action.weapon = nullptr;
-				}
+				} */
 
-
-				_unit->setChargeTarget(nullptr);
 
 				if (action.weapon != nullptr) // also checked in getActionTu() & ProjectileFlyBState::init()
 				{
 					action.TU = _unit->getActionTu(action.type, action.weapon);
 					_parent->statePushBack(new ProjectileFlyBState(_parent, action));
 
-					if (instaWeapon == true)
-						_battleSave->removeItem(action.weapon);
+//					if (instaWeapon == true)
+//						_battleSave->toDeleteItem(action.weapon);
 				}
 			}
 		}
@@ -1117,10 +1117,10 @@ void UnitWalkBState::postPathProcedures() // private.
  */
 int UnitWalkBState::getFinalDirection() const // private.
 {
-	const int diff = static_cast<int>(_parent->getBattlescapeState()->getSavedGame()->getDifficulty());
+	const int diff (static_cast<int>(_parent->getBattlescapeState()->getSavedGame()->getDifficulty()));
 	if (RNG::percent((diff + 1) * 20 - _unit->getRankInt() * 5) == true)
 	{
-		const BattleUnit* facedUnit = nullptr;
+		const BattleUnit* facedUnit (nullptr);
 		int
 			distSqr = 100000,
 			distTest;
@@ -1165,7 +1165,7 @@ bool UnitWalkBState::visForUnits() const // private.
 		return false;
 	}
 
-	bool ret = _te->calculateFOV(_unit);
+	bool ret (_te->calculateFOV(_unit));
 
 	if (_unit->getFaction() != FACTION_PLAYER)
 	{
@@ -1211,7 +1211,7 @@ void UnitWalkBState::setWalkSpeed(bool gravLift) const // private.
  */
 void UnitWalkBState::playMoveSound() // private.
 {
-	const int phase = _unit->getWalkPhase();
+	const int phase (_unit->getWalkPhase());
 	int soundId = -1;
 
 	if (_unit->getMoveSound() != -1)
@@ -1236,10 +1236,10 @@ void UnitWalkBState::playMoveSound() // private.
 			if (phase == 3 || phase == 7)
 			{
 				const Tile
-					* const tile = _unit->getTile(),
-					* const tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1));
+					* const tile (_unit->getTile()),
+					* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
 
-				const int stepSound = tile->getFootstepSound(tileBelow);
+				const int stepSound (tile->getFootstepSound(tileBelow));
 				if (stepSound > -1)
 				{
 					if (phase == 3)
@@ -1313,7 +1313,7 @@ bool UnitWalkBState::groundCheck() const // private.
 	const Tile* tileBelow;
 	Position pos;
 
-	const int unitSize = _unit->getArmor()->getSize() - 1;
+	const int unitSize (_unit->getArmor()->getSize() - 1);
 	for (int
 			x = unitSize;
 			x != -1;
@@ -1340,7 +1340,7 @@ bool UnitWalkBState::groundCheck() const // private.
 void UnitWalkBState::establishTilesLink() const // private.
 {
 	//Log(LOG_INFO) << "UnitWalkBState::establishTilesLink()";
-	const int armorSize = _unit->getArmor()->getSize() - 1;
+	const int armorSize (_unit->getArmor()->getSize() - 1);
 	for (int
 			x = armorSize;
 			x != -1;
@@ -1368,7 +1368,7 @@ void UnitWalkBState::clearTilesLink(bool origin) const // private.
 		pos = _unit->getPosition(),
 		posTest;
 
-	const int armorSize = _unit->getArmor()->getSize() - 1;
+	const int armorSize (_unit->getArmor()->getSize() - 1);
 	for (int
 			x = armorSize;
 			x != -1;

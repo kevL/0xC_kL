@@ -1686,12 +1686,14 @@ bool TileEngine::reactionShot(
 	{
 		_rfAction->weapon = unit->getMainHandWeapon(true);
 
-		if (_rfAction->weapon == nullptr
+		if (_rfAction->weapon == nullptr)
+			_rfAction->weapon = unit->getMeleeWeapon();
+/*		if (_rfAction->weapon == nullptr
 			&& _rfAction->actor->getUnitRules() != nullptr
 			&& _rfAction->actor->getUnitRules()->getMeleeWeapon() == "STR_FIST")
 		{
 			_rfAction->weapon = _battleSave->getBattleGame()->getFist();
-		}
+		} */
 	}
 
 	if (_rfAction->weapon == nullptr
@@ -2559,10 +2561,7 @@ void TileEngine::explode(
 											//Log(LOG_INFO) << ". . . . INVENTORY: primed grenade";
 											(*i)->setFuse(-2);
 
-											const Position pos = Position(
-																		tileStop->getPosition().x * 16 + 8,
-																		tileStop->getPosition().y * 16 + 8,
-																		tileStop->getPosition().z * 24 + 2);
+											const Position pos (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
 											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
 																										_battleSave->getBattleGame(),
 																										pos, *i, attacker));
@@ -2570,7 +2569,7 @@ void TileEngine::explode(
 										else if ((*i)->getFuse() != -2)
 										{
 											//Log(LOG_INFO) << ". . . . INVENTORY: removeItem = " << (*i)->getRules()->getType();
-											_battleSave->removeItem(*i);
+											_battleSave->toDeleteItem(*i);
 											break;
 //											--i; // "vector iterator not decrementable" - yeesh.
 										}
@@ -2739,7 +2738,7 @@ void TileEngine::explode(
 											if (bu->getGeoscapeSoldier() != nullptr // send Death notice.
 												&& Options::battleNotifyDeath == true)
 											{
-												Game* const game = _battleSave->getBattleState()->getGame();
+												Game* const game (_battleSave->getBattleState()->getGame());
 												game->pushState(new InfoboxOKState(game->getLanguage()->getString( // "has been killed with Fire ..."
 																											"STR_HAS_BEEN_KILLED",
 																											bu->getGender())
@@ -2756,14 +2755,14 @@ void TileEngine::explode(
 										{
 											(*i)->setFuse(-2);
 
-											const Position voxelExpl = Position::toVoxelSpaceCentered(tileStop->getPosition(), 2);
+											const Position voxelExpl (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
 											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
 																										_battleSave->getBattleGame(),
 																										voxelExpl, *i, attacker));
 										}
 										else if ((*i)->getFuse() != -2)
 										{
-											_battleSave->removeItem(*i);
+											_battleSave->toDeleteItem(*i);
 											break;
 //											--i; // "vector iterator not decrementable" - yeesh.
 										}

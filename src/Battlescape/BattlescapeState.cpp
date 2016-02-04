@@ -3616,17 +3616,18 @@ void BattlescapeState::handAction( // private.
 {
 	if (_battleGame->isBusy() == false)
 	{
-		BattleAction* const action = _battleGame->getCurrentAction();
+		BattleAction* const action (_battleGame->getCurrentAction());
 		action->weapon = nullptr; // safety.
 
 		if (item != nullptr)
 			action->weapon = item;
-		else if (action->actor->getUnitRules() != nullptr
-			&& action->actor->getUnitRules()->getMeleeWeapon() == "STR_FIST")
+		else //if (action->actor->getMeleeWeapon() != nullptr)
+//		else if (action->actor->getUnitRules() != nullptr
+//			&& action->actor->getUnitRules()->getMeleeWeapon() == "STR_FIST")
 		{
 			// TODO: This can be generalized later; right now the only 'meleeWeapon' is "STR_FIST" - the Universal Fist!!!
 //			const RuleItem* const itRule = _rules->getItem(action->actor->getUnitRules()->getMeleeWeapon());
-			action->weapon = _battleGame->getFist();
+			action->weapon = action->actor->getMeleeWeapon();
 		}
 
 		if (action->weapon != nullptr)

@@ -191,6 +191,7 @@ private:
 
 	BattleAIState* _unitAIState;
 //	BattleItem* _specWeapon[SPEC_WEAPON_MAX];
+	BattleItem* _fist;
 	BattlescapeGame* _battleGame;
 	BattleUnit* _charging;
 	Surface* _cache[5];
@@ -597,8 +598,9 @@ private:
 		/// Gets a grenade from this unit's belt if possible.
 		BattleItem* getGrenade() const;
 		/// Gets this unit's melee weapon as a string.
-		std::string getMeleeWeapon() const;
-//		BattleItem* getMeleeWeapon(); // kL_note: changed.
+//		std::string getMeleeWeapon() const;
+		/// Gets this unit's built-in melee weapon.
+		BattleItem* getMeleeWeapon();
 
 		/// Reloads righthand weapon of this unit if needed.
 		bool checkAmmo();
@@ -745,7 +747,7 @@ private:
 		void killedBy(UnitFaction faction);
 
 		/// Sets the BattleUnits that this unit is charging towards.
-		void setChargeTarget(BattleUnit* const chargeTarget);
+		void setChargeTarget(BattleUnit* const chargeTarget = nullptr);
 		/// Gets the BattleUnits that this unit is charging towards.
 		BattleUnit* getChargeTarget() const;
 

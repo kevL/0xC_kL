@@ -578,7 +578,7 @@ void ExplosionBState::explode() // private.
 		{
 			if ((*i)->getId() == _item->getId())
 			{
-				_battleSave->removeItem(_item);
+				_battleSave->toDeleteItem(_item);
 				break;
 			}
 		}

@@ -290,7 +290,7 @@ void BattleItem::spendBullet(
 		&& --_ammoQty == 0)
 	{
 		weapon.setAmmoItem();
-		battleSave.removeItem(this);
+		battleSave.toDeleteItem(this);
 	}
 }
 

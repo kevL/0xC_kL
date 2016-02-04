@@ -141,6 +141,7 @@ BattleUnit::BattleUnit(
 		_type("SOLDIER"),
 //		_race("STR_HUMAN"), // not used.
 		_activeHand(AH_NONE),
+		_fist(nullptr),
 
 		_name(soldier->getName()),
 		_id(soldier->getId()),
@@ -301,6 +302,7 @@ BattleUnit::BattleUnit(
 		_mcSkill(0),
 		_drugDose(0),
 		_isZombie(unitRule->getRace() == "STR_ZOMBIE"),
+		_fist(nullptr),
 
 		_statistics(nullptr), // Soldier Diary
 
@@ -3076,10 +3078,26 @@ bool BattleUnit::isGrenadeSuitable(const BattleItem* const grenade) const // pri
 }
 
 /**
- * Gets the type of any melee weapon this BattleUnit may be carrying, or a built in one.
- * @return, the name of a melee weapon
+ * Gets this unit's built-in melee weapon if any.
+ * @return, pointer to weapon
  */
-std::string BattleUnit::getMeleeWeapon() const
+BattleItem* BattleUnit::getMeleeWeapon()
+{
+	BattleItem* melee (getItem("STR_RIGHT_HAND"));
+	if (melee != nullptr && melee->getRules()->getBattleType() == BT_MELEE)
+		return melee;
+
+	melee = getItem("STR_LEFT_HAND");
+	if (melee != nullptr && melee->getRules()->getBattleType() == BT_MELEE)
+		return melee;
+
+	return _fist;
+
+//	melee = getSpecialWeapon(BT_MELEE);
+//	if (melee) return melee;
+//	return nullptr;
+}
+/*std::string BattleUnit::getMeleeWeapon() const
 {
 	if (getItem(ST_RIGHTHAND) != nullptr
 		&& getItem(ST_RIGHTHAND)->getRules()->getBattleType() == BT_MELEE)
@@ -3097,23 +3115,6 @@ std::string BattleUnit::getMeleeWeapon() const
 		return _unitRule->getMeleeWeapon();
 
 	return "";
-}
-/* BattleItem* BattleUnit::getMeleeWeapon()
-{
-	BattleItem* melee = getItem("STR_RIGHT_HAND");
-
-	if (melee && melee->getRules()->getBattleType() == BT_MELEE)
-		return melee;
-
-	melee = getItem("STR_LEFT_HAND");
-	if (melee && melee->getRules()->getBattleType() == BT_MELEE)
-		return melee;
-
-	melee = getSpecialWeapon(BT_MELEE);
-	if (melee)
-		return melee;
-
-	return nullptr;
 } */
 
 /**
@@ -4041,7 +4042,7 @@ void BattleUnit::killedBy(UnitFaction faction)
 
 /**
  * Sets a BattleUnit to charge towards.
- * @param chargeTarget - pointer to a BattleUnit
+ * @param chargeTarget - pointer to a BattleUnit (default nullptr)
  */
 void BattleUnit::setChargeTarget(BattleUnit* const chargeTarget)
 {
@@ -4700,6 +4701,12 @@ size_t BattleUnit::getBattleOrder() const
 void BattleUnit::setBattleForUnit(BattlescapeGame* const battleGame)
 {
 	_battleGame = battleGame;
+
+	if (_unitRule != nullptr
+		&& _unitRule->getMeleeWeapon() == "STR_FIST")
+	{
+		_fist = _battleGame->getFist();
+	}
 }
 
 /**

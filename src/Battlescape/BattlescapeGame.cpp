@@ -666,6 +666,8 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	action.actor = unit;
 	action.AIcount = _AIActionCounter;
 	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << "";
 	Log(LOG_INFO) << "BATTLESCAPE::handleUnitAI id-" << unit->getId();
 	unit->think(&action);
 	Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat [1] " << action.debugActionType(action.type);
@@ -732,68 +734,68 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 					action.TU = unit->getActionTu(action.type, action.weapon);
 					break;
 
+				case BA_MELEE:
+					action.TU = unit->getActionTu(action.type, action.weapon); // no break;
+
 				default:
 					statePushBack(new UnitTurnBState(this, action));
-					switch (action.type)
+/*					if (action.type == BA_MELEE)
 					{
-						case BA_MELEE:
+						const std::string meleeWeapon (unit->getMeleeWeapon());
+						bool instaWeapon (false);
+
+						if (action.weapon != _universalFist
+							&& meleeWeapon.empty() == false)
 						{
-							const std::string meleeWeapon (unit->getMeleeWeapon());
-							bool instaWeapon (false);
-
-							if (action.weapon != _universalFist
-								&& meleeWeapon.empty() == false)
+							bool found (false);
+							for (std::vector<BattleItem*>::const_iterator
+									i = unit->getInventory()->begin();
+									i != unit->getInventory()->end();
+									++i)
 							{
-								bool found (false);
-								for (std::vector<BattleItem*>::const_iterator
-										i = unit->getInventory()->begin();
-										i != unit->getInventory()->end();
-										++i)
+								if ((*i)->getRules()->getType() == meleeWeapon)
 								{
-									if ((*i)->getRules()->getType() == meleeWeapon)
-									{
-										// note this ought be conformed w/ bgen.addAlien equipped items to
-										// ensure radical (or standard) BT_MELEE weapons get equipped in hand;
-										// but for now just grab the meleeItem wherever it was equipped ...
-										found = true;
-										action.weapon = *i;
-										break;
-									}
-								}
-
-								if (found == false)
-								{
-									instaWeapon = true;
-									action.weapon = new BattleItem(
-																getRuleset()->getItem(meleeWeapon),
-																_battleSave->getNextItemId());
-									action.weapon->setOwner(unit);
+									// note this ought be conformed w/ bgen.addAlien equipped items to
+									// ensure radical (or standard) BT_MELEE weapons get equipped in hand;
+									// but for now just grab the meleeItem wherever it was equipped ...
+									found = true;
+									action.weapon = *i;
+									break;
 								}
 							}
-							else if (action.weapon != nullptr
-								&& action.weapon->getRules()->getBattleType() != BT_MELEE
-								&& action.weapon->getRules()->getBattleType() != BT_FIREARM)
+
+							if (found == false)
 							{
-								action.weapon = nullptr;
+								instaWeapon = true;
+								action.weapon = new BattleItem(
+															getRuleset()->getItem(meleeWeapon),
+															_battleSave->getNextItemId());
+								action.weapon->setOwner(unit);
 							}
-
-							if (action.weapon != nullptr) // also checked in getActionTu() & ProjectileFlyBState::init()
-							{
-								action.TU = unit->getActionTu(action.type, action.weapon);
-
-								statePushBack(new ProjectileFlyBState(this, action));
-
-								if (instaWeapon == true)
-									_battleSave->removeItem(action.weapon);
-							}
-							return;
 						}
-					}
+						else if (action.weapon != nullptr
+							&& action.weapon->getRules()->getBattleType() != BT_MELEE
+							&& action.weapon->getRules()->getBattleType() != BT_FIREARM)
+						{
+							action.weapon = nullptr;
+						}
+
+						if (action.weapon != nullptr) // also checked in getActionTu() & ProjectileFlyBState::init()
+						{
+							action.TU = unit->getActionTu(action.type, action.weapon);
+
+							statePushBack(new ProjectileFlyBState(this, action));
+
+							if (instaWeapon == true)
+								_battleSave->toDeleteItem(action.weapon);
+						}
+						return;
+					} */
 			}
 
-			//Log(LOG_INFO) << ". attack action.Type = " << action.type
-			//				<< ", action.Target = " << action.target
-			//				<< " action.Weapon = " << action.weapon->getRules()->getName().c_str();
+			Log(LOG_INFO) << ". ATTACK action.Type = " << action.debugActionType(action.type)
+						  << " action.Target = " << action.target
+						  << " action.Weapon = " << action.weapon->getRules()->getName().c_str();
 			statePushBack(new ProjectileFlyBState(this, action));
 
 			switch (action.type)
@@ -1255,7 +1257,7 @@ void BattlescapeGame::endTurn() // private.
 				statePushNext(new ExplosionBState(
 												this, pos, *j,
 												(*j)->getPriorOwner()));
-				_battleSave->removeItem(*j);
+				_battleSave->toDeleteItem(*j);
 
 				statePushBack(nullptr);
 				return;
@@ -3454,14 +3456,17 @@ bool BattlescapeGame::getKneelReserved() const
  */
 bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 {
-	int unitSize = unit->getArmor()->getSize() - 1;
+	Tile* tile;
+	Position pos;
+
+	const int armorSize (unit->getArmor()->getSize() - 1);
 	for (int
-			x = unitSize;
+			x = armorSize;
 			x != -1;
 			--x)
 	{
 		for (int
-				y = unitSize;
+				y = armorSize;
 				y != -1;
 				--y)
 		{
@@ -3475,9 +3480,9 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 						ty != 2;
 						++ty)
 				{
-					Tile* const tile = _battleSave->getTile(unit->getPosition()
-																   + Position( x, y, 0)
-																   + Position(tx,ty, 0));
+					tile = _battleSave->getTile(unit->getPosition()
+													   + Position( x, y, 0)
+													   + Position(tx,ty, 0));
 					if (tile != nullptr)
 					{
 						for (std::vector<BattleItem*>::const_iterator
@@ -3492,23 +3497,21 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 								_battleSave->getPathfinding()->vectorToDirection(
 																			Position(tx,ty,0),
 																			dir);
-								//Log(LOG_INFO) << "dir = " << dir;
 								if (_battleSave->getPathfinding()->isBlockedPath(
 																			_battleSave->getTile(unit->getPosition() + Position(x,y,0)),
 																			dir,
-																			unit) == false)	// kL try passing in OBJECT_SELF as a missile target to kludge for closed doors.
+																			unit) == false)	// try passing in OBJECT_SELF as a missile target to kludge for closed doors.
 								{															// there *might* be a problem if the Proxy is on a non-walkable tile ....
-									const Position pos = Position::toVoxelSpaceCentered(
-																					tile->getPosition(),
-																					-(tile->getTerrainLevel()));
+									pos = Position::toVoxelSpaceCentered(
+																	tile->getPosition(),
+																	-(tile->getTerrainLevel()));
 									statePushNext(new ExplosionBState(
 																	this, pos, *i,
 																	(*i)->getPriorOwner()));
-									_battleSave->removeItem(*i); // does/should this even be done (also done at end of ExplosionBState) -> causes a double-explosion if remarked here.
+									_battleSave->toDeleteItem(*i); // does/should this even be done (also done at end of ExplosionBState) -> causes a double-explosion if remarked here.
 
 									unit->clearCache();
 									getMap()->cacheUnit(unit);
-
 									return true;
 								}
 							}
@@ -3518,7 +3521,6 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 			}
 		}
 	}
-
 	return false;
 }
 
@@ -3570,11 +3572,11 @@ BattleItem* BattlescapeGame::getAlienPsi() const
  */
 void BattlescapeGame::objectiveDone()
 {
-	const Game* const game = _parentState->getGame();
-	const AlienDeployment* const deployRule = game->getRuleset()->getDeployment(_battleSave->getTacticalType());
+	const Game* const game (_parentState->getGame());
+	const AlienDeployment* const deployRule (game->getRuleset()->getDeployment(_battleSave->getTacticalType()));
 	if (deployRule != nullptr)
 	{
-		const std::string messagePop = deployRule->getObjectivePopup();
+		const std::string messagePop (deployRule->getObjectivePopup());
 		if (messagePop.empty() == false)
 			_infoboxQueue.push_back(new InfoboxOKState(game->getLanguage()->getString(messagePop)));
 	}
