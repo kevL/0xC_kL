@@ -659,7 +659,7 @@ void SavedGame::save(const std::string& file) const
 //	brief["version"]	= OPENXCOM_VERSION_SHORT;
 
 //	std::string git_sha = OPENXCOM_VERSION_GIT;
-//	if (git_sha[0] ==  '.')
+//	if (git_sha.empty() == false && git_sha[0] ==  '.')
 //		git_sha.erase(0,1);
 //	brief["build"] = git_sha;
 
@@ -711,84 +711,58 @@ void SavedGame::save(const std::string& file) const
 			i = _countries.begin();
 			i != _countries.end();
 			++i)
-	{
 		node["countries"].push_back((*i)->save());
-	}
 
 	for (std::vector<Region*>::const_iterator
 			i = _regions.begin();
 			i != _regions.end();
 			++i)
-	{
 		node["regions"].push_back((*i)->save());
-	}
 
 	for (std::vector<Base*>::const_iterator
 			i = _bases.begin();
 			i != _bases.end();
 			++i)
-	{
 		node["bases"].push_back((*i)->save());
-	}
 
 	for (std::vector<Waypoint*>::const_iterator
 			i = _waypoints.begin();
 			i != _waypoints.end();
 			++i)
-	{
 		node["waypoints"].push_back((*i)->save());
-	}
 
 	for (std::vector<MissionSite*>::const_iterator
 			i = _missionSites.begin();
 			i != _missionSites.end();
 			++i)
-	{
 		node["missionSites"].push_back((*i)->save());
-	}
 
 	// Alien bases must be saved before alien missions.
 	for (std::vector<AlienBase*>::const_iterator
 			i = _alienBases.begin();
 			i != _alienBases.end();
 			++i)
-	{
 		node["alienBases"].push_back((*i)->save());
-	}
 
-	// Missions must be saved before UFOs, but after alien bases.
+	// Missions must be saved before UFOs but after alien bases.
 	for (std::vector<AlienMission*>::const_iterator
 			i = _activeMissions.begin();
 			i != _activeMissions.end();
 			++i)
-	{
 		node["alienMissions"].push_back((*i)->save());
-	}
 
-	// UFOs must be after missions
+	// UFOs must be after missions.
 	for (std::vector<Ufo*>::const_iterator
 			i = _ufos.begin();
 			i != _ufos.end();
 			++i)
-	{
 		node["ufos"].push_back((*i)->save(getMonthsPassed() == -1));
-	}
 
 	for (std::vector<ResearchGeneral*>::const_iterator
 			i = _research.begin();
 			i != _research.end();
 			++i)
-	{
 		node["research"].push_back((*i)->save());
-	}
-
-/*	for (std::vector<const RuleResearch*>::const_iterator
-			i = _poppedResearch.begin();
-			i != _poppedResearch.end();
-			++i)
-	{
-		node["poppedResearch"].push_back((*i)->getType());
-	} */
 
 	node["alienStrategy"] = _alienStrategy->save();
 
@@ -796,17 +770,13 @@ void SavedGame::save(const std::string& file) const
 			i = _deadSoldiers.begin();
 			i != _deadSoldiers.end();
 			++i)
-	{
 		node["deadSoldiers"].push_back((*i)->save());
-	}
 
 	for (std::vector<MissionStatistics*>::const_iterator
 			i = _missionStatistics.begin();
 			i != _missionStatistics.end();
 			++i)
-	{
 		node["missionStatistics"].push_back((*i)->save());
-	}
 
 	if (_battleSave != nullptr)
 		node["battleGame"] = _battleSave->save();

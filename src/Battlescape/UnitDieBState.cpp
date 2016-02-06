@@ -105,10 +105,9 @@ UnitDieBState::UnitDieBState(
 					i != nodeList->end();
 					++i)
 			{
-				if (TileEngine::distanceSqr(
-										(*i)->getPosition(),
-										_unit->getPosition(),
-										false) < 5)
+				if (TileEngine::distance(
+									(*i)->getPosition(),
+									_unit->getPosition()) < 3)
 				{
 					(*i)->setNodeType((*i)->getNodeType() | Node::TYPE_DANGEROUS);
 				}

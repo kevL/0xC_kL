@@ -120,7 +120,6 @@ private:
 		_recoveryPoints,
 		_transferTime,
 		_turretType,
-		_waypoint,
 		_weight,
 
 		_heal,
@@ -175,6 +174,8 @@ private:
 		_floorSprite,
 		_handSprite,
 		_bulletSprite;
+
+	size_t _waypoint;
 
 	double _size;
 
@@ -235,7 +236,7 @@ private:
 		/// Gets if the item is two-handed.
 		bool isTwoHanded() const;
 		/// Gets if the item is a launcher and if so how many waypoints can be set.
-		int isWaypoints() const;
+		size_t isWaypoints() const;
 		/// Gets if the item is fixed.
 		bool isFixed() const;
 

@@ -1157,7 +1157,7 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
  */
 BattleUnit* SavedBattleGame::selectUnit(const Position& pos)
 {
-	BattleUnit* const unit = getTile(pos)->getTileUnit();
+	BattleUnit* const unit (getTile(pos)->getTileUnit());
 	if (unit != nullptr && unit->isOut_t(OUT_STAT) == false)
 		return unit;
 
@@ -1587,8 +1587,8 @@ void SavedBattleGame::randomizeItemLocations(Tile* const tile)
  *		- tile inventory
  *		- battleunit inventory
  *		- battlegame-items container
- * Upon removal the pointer to the item is kept in the '_toDelete' vector that is
- * flushed and destroyed in the SavedBattleGame dTor.
+ * Upon removal the pointer to the item is kept in the '_toDelete' vector which
+ * is flushed and destroyed in the SavedBattleGame dTor.
  * @param item - pointer to an item to remove
  */
 void SavedBattleGame::toDeleteItem(BattleItem* const item)
@@ -1899,9 +1899,9 @@ Node* SavedBattleGame::getPatrolNode(
  */
 Node* SavedBattleGame::getNearestNode(const BattleUnit* const unit) const
 {
-	Node* node = nullptr;
+	Node* node (nullptr);
 	int
-		dist = 100000,
+		dist = 1000000,
 		distTest;
 
 	for (std::vector<Node*>::const_iterator
@@ -1913,7 +1913,9 @@ Node* SavedBattleGame::getNearestNode(const BattleUnit* const unit) const
 			&& (unit->getArmor()->getSize() == 1
 				|| !((*i)->getNodeType() & Node::TYPE_SMALL)))
 		{
-			distTest = TileEngine::distanceSqr((*i)->getPosition(), unit->getPosition());
+			distTest = TileEngine::distSqr(
+									(*i)->getPosition(),
+									unit->getPosition());
 			if (distTest < dist)
 			{
 				dist = distTest;
@@ -2640,7 +2642,7 @@ void SavedBattleGame::blackTiles()
 }
 
 /**
- *
+ * Gets an 11x11 grid of positions (-10 to +10 x/y).
  * @return, the tilesearch vector for use in AI functions
  */
 const std::vector<Position> SavedBattleGame::getTileSearch()

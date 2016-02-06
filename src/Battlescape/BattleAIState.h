@@ -67,8 +67,9 @@ protected:
 		BASE_SUCCESS			= 73,
 		EXPOSURE_PENALTY		= 12,
 		FIRE_PENALTY			= 37,
-		CUR_TILE_PREF			= 16,
 		COVER_BONUS				= 29,
+		SMOKE_BONUS_MULT		= 3,
+		CUR_TILE_PREF			= 16,
 
 		ESCAPE_FAIL				= -100000;
 

@@ -59,7 +59,7 @@ private:
 	BattleUnit* _unit;
 	SavedBattleGame* _battleSave;
 
-	BattleAction* _battleAction;
+	BattleAction* _pathAction;
 
 	MovementType _mType;
 
@@ -131,8 +131,8 @@ private:
 		void calculate(
 				const BattleUnit* const unit,
 				Position posStop,
-				const BattleUnit* const launchTarget = nullptr,
 				int maxTuCost = 1000,
+				const BattleUnit* const launchTarget = nullptr,
 				bool strafeRejected = false);
 
 		/// Gets all reachable tiles based on cost.

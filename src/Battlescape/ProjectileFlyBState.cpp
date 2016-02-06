@@ -65,9 +65,7 @@ ProjectileFlyBState::ProjectileFlyBState(
 		BattleAction action,
 		Position posOrigin)
 	:
-		BattleState(
-			parent,
-			action),
+		BattleState(parent, action),
 		_posOrigin(posOrigin),
 		_battleSave(parent->getBattleSave()),
 		_originVoxel(0,0,-1),
@@ -104,7 +102,7 @@ void ProjectileFlyBState::init()
 
 	//Log(LOG_INFO) << "projFlyB init() targetPosTile = " << _action.target;
 	_initialized = true;
-	_parent->getCurrentAction()->takenXp = false;
+	_parent->getTacticalAction()->takenXp = false;
 
 	_unit = _action.actor;
 
@@ -1123,7 +1121,7 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 	else
 		success = false;
 
-	int soundId = -1;
+	int soundId (-1);
 	if (success == false)
 	{
 		if (_ammo->getRules()->getBattleType() == BT_MELEE
@@ -1164,15 +1162,15 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 	_parent->getMap()->setSelectorType(CT_NONE); // might be already done in primaryAction()
 
 
-	const BattleUnit* const targetUnit = _battleSave->getTile(_action.target)->getTileUnit();
-	const int height = targetUnit->getHeight() / 2
-					 + targetUnit->getFloatHeight()
-					 - _battleSave->getTile(_action.target)->getTerrainLevel();
+	const BattleUnit* const targetUnit (_battleSave->getTile(_action.target)->getTileUnit());
+	const int height (targetUnit->getHeight() / 2
+					+ targetUnit->getFloatHeight()
+					- _battleSave->getTile(_action.target)->getTerrainLevel());
 
 	Position hitVoxel;
-	_battleSave->getPathfinding()->directionToVector(
-												_unit->getUnitDirection(),
-												&hitVoxel);
+	Pathfinding::directionToVector(
+								_unit->getUnitDirection(),
+								&hitVoxel);
 	hitVoxel = Position::toVoxelSpaceCentered(_action.target, height) - (hitVoxel * 2);
 
 	_parent->statePushNext(new ExplosionBState(

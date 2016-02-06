@@ -827,9 +827,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 							{
 								if (hasUnit == true
 									&& (_selectorType != CT_PSI
-										|| ((_battleSave->getBattleGame()->getCurrentAction()->type == BA_PSICOURAGE
+										|| ((_battleSave->getBattleGame()->getTacticalAction()->type == BA_PSICOURAGE
 												&& _unit->getFaction() != FACTION_HOSTILE)
-											|| (_battleSave->getBattleGame()->getCurrentAction()->type != BA_PSICOURAGE
+											|| (_battleSave->getBattleGame()->getTacticalAction()->type != BA_PSICOURAGE
 												&& _unit->getFaction() != FACTION_PLAYER))))
 								{
 									frame = (_aniFrame % 2);	// yellow flashing box
@@ -1224,7 +1224,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 											&& (_unit->getArmor()->getSize() == 1 || quadrant == 1)
 //											&& _projectileInFOV == false && _explosionInFOV == false)
 //											&& _battleSave->getBattleState()->allowButtons() == true
-											&& _battleSave->getBattleGame()->getCurrentAction()->type == BA_NONE)
+											&& _battleSave->getBattleGame()->getTacticalAction()->type == BA_NONE)
 											// well that's quirky. The exposed value of actor gets drawn on the
 											// defender (at least when within one tile) for a brief flash, even
 											// before projectile and explosion is taken into account. If projectile
@@ -1428,9 +1428,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 							{
 								if (hasUnit == true //|| unitBelow != nullptr)
 									&& (_selectorType != CT_PSI
-										|| ((_battleSave->getBattleGame()->getCurrentAction()->type == BA_PSICOURAGE
+										|| ((_battleSave->getBattleGame()->getTacticalAction()->type == BA_PSICOURAGE
 												&& _unit->getFaction() != FACTION_HOSTILE)
-											|| (_battleSave->getBattleGame()->getCurrentAction()->type != BA_PSICOURAGE
+											|| (_battleSave->getBattleGame()->getTacticalAction()->type != BA_PSICOURAGE
 												&& _unit->getFaction() != FACTION_PLAYER))))
 								{
 									frame = 3 + (_aniFrame % 2);	// yellow flashing box
@@ -1479,7 +1479,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								// to turn accuracy to 'red 0' if target is out of LoS/LoF.
 								//
 								// TODO: use Projectile::rangeAccuracy() as a static function.
-								const BattleAction* const action (_battleSave->getBattleGame()->getCurrentAction());
+								const BattleAction* const action (_battleSave->getBattleGame()->getTacticalAction());
 								int accuracy;
 								Uint8 color;
 
@@ -1566,7 +1566,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							}
 							else if (_selectorType == CT_THROW) // indicator for Throwing.
 							{
-								BattleAction* const action (_battleSave->getBattleGame()->getCurrentAction());
+								BattleAction* const action (_battleSave->getBattleGame()->getTacticalAction());
 								action->target = Position(itX,itY,itZ);
 
 								unsigned accuracy;

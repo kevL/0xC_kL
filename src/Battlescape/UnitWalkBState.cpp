@@ -1120,9 +1120,9 @@ int UnitWalkBState::getFinalDirection() const // private.
 	const int diff (static_cast<int>(_parent->getBattlescapeState()->getSavedGame()->getDifficulty()));
 	if (RNG::percent((diff + 1) * 20 - _unit->getRankInt() * 5) == true)
 	{
-		const BattleUnit* facedUnit (nullptr);
+		const BattleUnit* unitFaced (nullptr);
 		int
-			distSqr = 100000,
+			dist (1000000),
 			distTest;
 
 		for (std::vector<BattleUnit*>::const_iterator
@@ -1135,19 +1135,21 @@ int UnitWalkBState::getFinalDirection() const // private.
 				&& (*i)->getExposed() != -1
 				&& (*i)->getExposed() <= _unit->getIntelligence())
 			{
-				distTest = TileEngine::distanceSqr(
-												_unit->getPosition(),
-												(*i)->getPosition());
-				if (distTest < distSqr)
+				distTest = TileEngine::distSqr(
+											_unit->getPosition(),
+											(*i)->getPosition());
+				if (distTest < dist)
 				{
-					distSqr = distTest;
-					facedUnit = *i;
+					dist = distTest;
+					unitFaced = *i;
 				}
 			}
 		}
 
-		if (facedUnit != nullptr)
-			return TileEngine::getDirectionTo(_unit->getPosition(), facedUnit->getPosition());
+		if (unitFaced != nullptr)
+			return TileEngine::getDirectionTo(
+										_unit->getPosition(),
+										unitFaced->getPosition());
 	}
 
 	return -1;
@@ -1313,14 +1315,14 @@ bool UnitWalkBState::groundCheck() const // private.
 	const Tile* tileBelow;
 	Position pos;
 
-	const int unitSize (_unit->getArmor()->getSize() - 1);
+	const int armorSize (_unit->getArmor()->getSize() - 1);
 	for (int
-			x = unitSize;
+			x = armorSize;
 			x != -1;
 			--x)
 	{
 		for (int
-				y = unitSize;
+				y = armorSize;
 				y != -1;
 				--y)
 		{
@@ -1330,7 +1332,6 @@ bool UnitWalkBState::groundCheck() const // private.
 				return true;
 		}
 	}
-
 	return false;
 }
 

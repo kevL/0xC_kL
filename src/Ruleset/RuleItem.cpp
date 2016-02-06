@@ -232,7 +232,7 @@ void RuleItem::load(
 	_tuReload			= node["tuReload"]			.as<int>(_tuReload);
 	_tuUnload			= node["tuUnload"]			.as<int>(_tuUnload);
 	_twoHanded			= node["twoHanded"]			.as<bool>(_twoHanded);
-	_waypoint			= node["waypoint"]			.as<int>(_waypoint);
+	_waypoint			= node["waypoint"]			.as<size_t>(_waypoint);
 	_fixedWeapon		= node["fixedWeapon"]		.as<bool>(_fixedWeapon);
 	_invWidth			= node["invWidth"]			.as<int>(_invWidth);
 	_invHeight			= node["invHeight"]			.as<int>(_invHeight);
@@ -403,7 +403,7 @@ bool RuleItem::isTwoHanded() const
  * Gets if the item is a launcher and if so how many waypoints can be set.
  * @return, maximum waypoints for the Item
  */
-int RuleItem::isWaypoints() const
+size_t RuleItem::isWaypoints() const
 {
 	return _waypoint;
 }

@@ -41,10 +41,10 @@ protected:
 	public:
 		/// Creates a new BattleState linked to the BattlescapeGame.
 		BattleState(
-				BattlescapeGame* parent,
-				BattleAction action);
-		/// Creates a new BattleState linked to the game.
-		explicit BattleState(BattlescapeGame* parent);
+				BattlescapeGame* const parent,
+				BattleAction action = {});
+		///
+//		explicit BattleState(BattlescapeGame* const parent);
 		/// Cleans up the BattleState.
 		virtual ~BattleState();
 

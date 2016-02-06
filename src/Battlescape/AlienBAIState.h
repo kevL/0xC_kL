@@ -39,11 +39,17 @@ class AlienBAIState
 {
 
 private:
+	static const int
+		PSI_LOS_WEIGHT		= 55,
+		PSI_SWITCH_TARGET	= 30,
+		PSI_CUTOFF			= 25,
+		PSI_OR_BLASTER_PCT	= 88;
+
 	bool
 		_blaster,
-		_grenade,
+//		_grenade,
+		_hasPsiBeenSet,
 		_melee,
-		_psi,
 		_rifle;
 	int
 		_distClosest,
@@ -89,34 +95,35 @@ private:
 	bool selectPlayerTarget();
 	/// Selects an exposed Player or neutral unit.
 	bool selectTarget();
+
+	/// Selects a suitable position from which to shoot.
+	bool selectFirePosition();
 	/// Selects the nearest reachable position relative to a target.
-	bool selectPosition(
+	bool selectMeleePosition(
 			const BattleUnit* const targetUnit,
 			int maxTuCost) const;
-	/// Selects a suitable position from which to shoot.
-	bool findFirePosition();
 
 	/// Sets up a melee/charge sub-action of AI_COMBAT.
 	void meleeAction();
 	/// Finishes setting up a melee/charge.
 	void faceMelee();
 	/// Sets up a launcher sub-action of AI_COMBAT.
-	void wayPointAction();
+	bool wayPointAction();
 	/// Constructs a waypoint path for a guided projectile.
-	bool pathWaypoints();
+	bool pathWaypoints(const BattleUnit* const unit);
 	/// Sets up a shot-projectile sub-action of AI_COMBAT.
-	void projectileAction();
+	void rifleAction();
 	/// Selects a fire method for a shot-projectile action.
 	void selectFireMethod();
 	/// Sets up a throw-grenade sub-action of AI_COMBAT.
-	void grenadeAction();
+	bool grenadeAction();
 	/// Sets up a psionic sub-action of AI_COMBAT.
 	bool psiAction();
 
 	/// Checks to ensure that a particular BattleUnit is a valid target.
 	bool validTarget(
 			const BattleUnit* const unit,
-			bool assessDanger = false,
+			bool dangerTile = false,
 			bool includeCivs = false) const;
 
 	/// Chooses between a melee or ranged attack if both are available.

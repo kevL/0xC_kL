@@ -29,7 +29,7 @@ namespace OpenXcom
  * @param action - struct containing info about current BattleAction
  */
 BattleState::BattleState(
-		BattlescapeGame* parent,
+		BattlescapeGame* const parent,
 		BattleAction action)
 	:
 		_parent(parent),
@@ -38,16 +38,16 @@ BattleState::BattleState(
 
 /**
  * Sets up a BattleState.
- * @param parent - pointer to the parent state
- */
-BattleState::BattleState(BattlescapeGame* parent)
+ * @param parent - pointer to the parent BattlescapeGame
+ *
+BattleState::BattleState(BattlescapeGame* const parent)
 	:
 		_parent(parent)
 {
-	_action.result = "";
-	_action.targeting = false;
-	_action.TU = 0;
-}
+//	_action.result = "";
+//	_action.targeting = false;
+//	_action.TU = 0;
+} */
 
 /**
  * Deletes the BattleState.

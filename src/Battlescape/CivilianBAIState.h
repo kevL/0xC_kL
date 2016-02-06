@@ -44,18 +44,18 @@ private:
 		* _escapeAction,
 		* _patrolAction;
 
+	/// Sets up a patrol objective.
+	void setupPatrol();
+	/// Sets up an escape objective.
+	void setupEscape();
+
+	/// Evaluates the situation and makes a decision from available options.
+	void evaluateAiMode();
+
 	/// Counts how many aLiens spot this unit.
 	int tallySpotters(const Position& pos) const;
 	/// Counts the quantity of Hostiles that the civilian sees.
-	int tallyHostiles();
-
-	/// Sets up an escape objective.
-	void setupEscape();
-	/// Sets up a patrol objective.
-	void setupPatrol();
-
-	/// Re-evaluates the situation and makes a decision from available options.
-	void evaluateAiMode();
+	int selectHostile();
 
 
 	public:

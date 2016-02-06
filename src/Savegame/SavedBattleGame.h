@@ -407,7 +407,7 @@ private:
 		/// Resets the visibility of all tiles on the map.
 		void blackTiles();
 
-		/// Gets an 11x11 grid of positions (-10 to +10) to check.
+		/// Gets an 11x11 grid of positions (-10 to +10 x/y).
 		const std::vector<Position> getTileSearch();
 
 		/// Checks if the AI has engaged cheat mode.

@@ -105,11 +105,11 @@ void ExplosionBState::init()
 			_areaOfEffect = false;
 		else
 		{
-			// getCurrentAction() only works for player actions: aliens cannot melee attack with rifle butts.
+			// getTacticalAction() only works for player actions: aliens cannot melee attack with rifle butts.
 			_pistolWhip = _unit != nullptr
 					   && _unit->getFaction() == FACTION_PLAYER
 					   && _item->getRules()->getBattleType() != BT_MELEE
-					   && _parent->getCurrentAction()->type == BA_MELEE;
+					   && _parent->getTacticalAction()->type == BA_MELEE;
 
 			if (_pistolWhip == true)
 				_power = _item->getRules()->getMeleePower();
@@ -424,7 +424,7 @@ void ExplosionBState::explode() // private.
 
 	if (_melee == true)
 	{
-		_battleSave->getBattleGame()->getCurrentAction()->type = BA_NONE;
+		_parent->getTacticalAction()->type = BA_NONE;
 
 		if (_unit != nullptr)
 		{

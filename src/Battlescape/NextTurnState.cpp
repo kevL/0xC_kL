@@ -215,7 +215,7 @@ void NextTurnState::think()
  */
 void NextTurnState::nextTurn()
 {
-	static bool switchMusic = true;
+	static bool switchMusic (true);
 
 	// Done here and in DebriefingState, but removed from ~BattlescapeGame (see)
 	_battleSave->getBattleGame()->cleanupDeleted();
@@ -267,10 +267,10 @@ void NextTurnState::nextTurn()
 				switchMusic = true;
 
 
-			Tile* const tile = _battleSave->getTileEngine()->checkForTerrainExplosions();
+			Tile* const tile (_battleSave->getTileEngine()->checkForTerrainExplosions());
 			if (tile != nullptr)
 			{
-				const Position pos = Position::toVoxelSpaceCentered(tile->getPosition(), 10);
+				const Position pos (Position::toVoxelSpaceCentered(tile->getPosition(), 10));
 				_battleSave->getBattleGame()->statePushBack(new ExplosionBState(
 																			_battleSave->getBattleGame(),
 																			pos,

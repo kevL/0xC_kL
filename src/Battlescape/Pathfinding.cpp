@@ -57,7 +57,7 @@ Pathfinding::Pathfinding(SavedBattleGame* const battleSave)
 	:
 		_battleSave(battleSave),
 		_unit(nullptr),
-		_battleAction(nullptr),
+		_pathAction(nullptr),
 		_previewed(false),
 		_strafe(false),
 		_tuCostTotal(0),
@@ -105,9 +105,9 @@ void Pathfinding::setPathingUnit(BattleUnit* const unit)
 	_unit = unit;
 
 	if (_battleSave->getBattleState() == nullptr) // safety for battlescape generation.
-		_battleAction = nullptr;
+		_pathAction = nullptr;
 	else
-		_battleAction = _battleSave->getBattleGame()->getCurrentAction();
+		_pathAction = _battleSave->getBattleGame()->getTacticalAction();
 
 	if (unit != nullptr)
 		setMoveType();
@@ -149,9 +149,9 @@ void Pathfinding::setInputModifiers()
 	else
 	{
 		_ctrl = (SDL_GetModState() & KMOD_CTRL) != 0;
-		_alt = (SDL_GetModState() & KMOD_ALT) != 0;
+		_alt  = (SDL_GetModState() & KMOD_ALT)  != 0;
 
-		const Uint8* const keystate = SDL_GetKeyState(nullptr);
+		const Uint8* const keystate (SDL_GetKeyState(nullptr));
 		if (keystate[SDLK_z] != 0)
 			_zPath = true;
 		else
@@ -166,8 +166,8 @@ void Pathfinding::abortPath()
 {
 	setInputModifiers();
 
-	_tuCostTotal = 0;
 	_path.clear();
+	_tuCostTotal = 0;
 }
 
 /**
@@ -175,15 +175,15 @@ void Pathfinding::abortPath()
  * @note 'launchTarget' is required only when called by AlienBAIState::pathWaypoints().
  * @param unit				- pointer to a BattleUnit
  * @param posStop			- destination Position
- * @param launchTarget		- pointer to a targeted BattleUnit (default nullptr)
  * @param maxTuCost			- maximum time units this path can cost (default 1000)
+ * @param launchTarget		- pointer to a targeted BattleUnit (default nullptr)
  * @param strafeRejected	- true if path needs to be recalculated w/out strafe (default false)
  */
 void Pathfinding::calculate(
 		const BattleUnit* const unit, // -> should not need 'unit' here anymore; done in setPathingUnit() unless FACTION_PLAYER ...
 		Position posStop,
-		const BattleUnit* const launchTarget,
 		int maxTuCost,
+		const BattleUnit* const launchTarget,
 		bool strafeRejected)
 {
 	//Log(LOG_INFO) << "Pathfinding::calculate()";
@@ -224,7 +224,7 @@ void Pathfinding::calculate(
 		strafeRejected = true;
 
 
-	const Tile* tileStop = _battleSave->getTile(posStop);
+	const Tile* tileStop (_battleSave->getTile(posStop));
 
 	// TODO: Check all quadrants.
 	// NOTE: Is this check even necessary since it's done again below.
@@ -336,10 +336,10 @@ void Pathfinding::calculate(
 		}
 
 
-		const Position posStart = unit->getPosition();
+		const Position posStart (unit->getPosition());
 
-		const bool isMech = unit->getUnitRules() != nullptr
-						 && unit->getUnitRules()->isMechanical();
+		const bool isMech (unit->getUnitRules() != nullptr
+						&& unit->getUnitRules()->isMechanical());
 
 		_strafe = strafeRejected == false
 			   && Options::battleStrafe == true
@@ -352,11 +352,11 @@ void Pathfinding::calculate(
 			   && std::abs(posStop.x - posStart.x) < 2
 			   && std::abs(posStop.y - posStart.y) < 2;
 
-		_battleAction->strafe = _strafe;
+		_pathAction->strafe = _strafe;
 
 
-		const bool sneak = unit->getFaction() == FACTION_HOSTILE
-						&& Options::sneakyAI == true;
+		const bool sneak (unit->getFaction() == FACTION_HOSTILE
+					   && Options::sneakyAI == true);
 
 		if (posStart.z == posStop.z
 			&& bresenhamPath(
@@ -387,14 +387,13 @@ void Pathfinding::calculate(
 
 		if (_path.empty() == false)
 		{
-			if (_path.size() > 2
-				&& _strafe == true)
+			if (_path.size() > 2 && _strafe == true)
 			{
 				calculate( // iterate this function ONCE ->
 						unit,
 						posStop_cache,
-						launchTarget,
 						maxTuCost,
+						launchTarget,
 						true); // <- sets '_strafe' FALSE so loop never gets back in here.
 			}
 			else if (Options::battleStrafe == true
@@ -406,21 +405,21 @@ void Pathfinding::calculate(
 			{
 				_strafe = false;
 
-				if (_battleAction != nullptr) // this is a safety.
+				if (_pathAction != nullptr) // this is a safety.
 				{
-					_battleAction->strafe = false;
-					_battleAction->dash = true;
-					if (_battleAction->actor != nullptr)	// but this sometimes happens via AlienBAIState::setupAmbush() at least
-						_battleAction->actor->setDashing();	// if end turn is done w/out a selected unit. (not sure)
+					_pathAction->strafe = false;
+					_pathAction->dash = true;
+					if (_pathAction->actor != nullptr)		// but this sometimes happens via AlienBAIState::setupAmbush() at least
+						_pathAction->actor->setDashing();	// if end turn is done w/out a selected unit. (not sure)
 				}
 			}
 			else //if (_strafe == false)
 			{
-				if (_battleAction != nullptr) // this is a safety.
+				if (_pathAction != nullptr) // this is a safety.
 				{
-					_battleAction->dash = false;
-					if (_battleAction->actor != nullptr)			// but this sometimes happens via AlienBAIState::setupAmbush() at least.
-						_battleAction->actor->setDashing(false);	// if end turn is done w/out a selected unit. (for sure)
+					_pathAction->dash = false;
+					if (_pathAction->actor != nullptr)			// but this sometimes happens via AlienBAIState::setupAmbush() at least.
+						_pathAction->actor->setDashing(false);	// if end turn is done w/out a selected unit. (for sure)
 				}
 			}
 		}
@@ -692,7 +691,7 @@ bool Pathfinding::aStarPath( // private.
 				if (delta > 1 && delta < 7)
 				{
 					_strafe =
-					_battleAction->strafe = false;
+					_pathAction->strafe = false;
 					return false;
 				}
 			}
@@ -1334,7 +1333,7 @@ int Pathfinding::getTuCostPf(
 					if (bresenh == true)
 					{
 						_strafe = false; // illegal direction for tank-strafe.
-						_battleAction->strafe = false;
+						_pathAction->strafe = false;
 					}
 				}
 				else if (_unit->getUnitDirection() != dir) // if not dashing straight ahead 1 tile.
@@ -1932,7 +1931,7 @@ bool Pathfinding::previewPath(bool discard)
 						unitEnergy -= 3;
 					}
 
-					if (_battleAction->dash == true)
+					if (_pathAction->dash == true)
 					{
 						tileTu -= _openDoor;
 						unitEnergy -= tileTu * 3 / 2;

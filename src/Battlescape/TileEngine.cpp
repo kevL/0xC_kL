@@ -408,7 +408,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 	if (dir % 2)
 	{
 		diag = true;
-		y2 = MAX_VIEW_DISTANCE;
+		y2 = SIGHTDIST_TSp;
 	}
 	else
 		diag = false;
@@ -439,7 +439,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 	const int mapSize_z = _battleSave->getMapSizeZ();
 	for (int
 			x = 0; // does the unit itself really need checking ... Yes, marks own Tile as _visible.
-			x <= MAX_VIEW_DISTANCE;
+			x <= SIGHTDIST_TSp;
 			++x)
 	{
 		if (diag == false)
@@ -460,7 +460,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 			{
 				posTest.z = z;
 
-				if (x * x + y * y <= MAX_VIEW_DISTANCE_SQR)
+				if (x * x + y * y <= SIGHTDIST_TSp_Sqr)
 				{
 //					const int
 //						deltaPos_x = (sign_x[dir] * (swapXY ? y : x)),
@@ -723,7 +723,7 @@ void TileEngine::calculateFOV(
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		if (distanceSqr(pos, (*i)->getPosition(), false) <= MAX_VIEW_DISTANCE_SQR + 1) // +1 for ...
+		if (distSqr(pos, (*i)->getPosition(), false) <= SIGHTDIST_TSp_Sqr + 1) // +1 for ...
 			calculateFOV(*i);
 	}
 	_spotSound = true;
@@ -748,10 +748,10 @@ void TileEngine::recalculateFOV(bool spotSound)
 }
 
 /**
- * Checks visibility of a unit to a tile.
+ * Checks visibility of a BattleUnit on @a tile to @a unit.
  * @param unit - pointer to a BattleUnit that's looking at @a tile
  * @param tile - pointer to a Tile that @a unit is looking at
- * @return, true if the unit on @a tile is seen
+ * @return, true if a BattleUnit on @a tile is seen
  */
 bool TileEngine::visible(
 		const BattleUnit* const unit,
@@ -760,7 +760,7 @@ bool TileEngine::visible(
 	if (tile == nullptr)
 		return false;
 
-	const BattleUnit* const targetUnit = tile->getTileUnit();
+	const BattleUnit* const targetUnit (tile->getTileUnit());
 	if (targetUnit == nullptr || targetUnit->isOut_t() == true)
 		return false;
 
@@ -771,18 +771,19 @@ bool TileEngine::visible(
 	const int dist = distance(
 							unit->getPosition(),
 							targetUnit->getPosition());
-	if (dist * dist > MAX_VIEW_DISTANCE_SQR)
+//	if (dist * dist > SIGHTDIST_TSp_Sqr)
+	if (dist > SIGHTDIST_TSp)
 		return false;
 
 	if (unit->getFaction() == FACTION_PLAYER
 		&& tile->getShade() > MAX_SHADE_TO_SEE_UNITS
-		&& dist > 23 - _battleSave->getTacticalShade())
+		&& dist > SIGHTDIST_TSp + 3 - _battleSave->getTacticalShade())
 	{
 		return false;
 	}
 
 
-	const Position originVoxel = getSightOriginVoxel(unit);
+	const Position originVoxel (getSightOriginVoxel(unit));
 	Position scanVoxel;
 	if (canTargetUnit(
 					&originVoxel,
@@ -798,9 +799,8 @@ bool TileEngine::visible(
 				&trj,
 				unit);
 
-
-		double distObscured = static_cast<double>(trj.size());
-		const Tile* scanTile = _battleSave->getTile(unit->getPosition());
+		float obscured (static_cast<float>(trj.size()));
+		const Tile* scanTile (_battleSave->getTile(unit->getPosition()));
 
 		for (size_t
 				i = 0;
@@ -809,8 +809,9 @@ bool TileEngine::visible(
 		{
 			scanTile = _battleSave->getTile(Position::toTileSpace(trj.at(i)));
 
-			distObscured += static_cast<double>(scanTile->getSmoke() + scanTile->getFire()) / 3.;
-			if (static_cast<int>(std::ceil(distObscured * distObscured)) > MAX_VOXEL_VIEW_DIST_SQR)
+			obscured += static_cast<float>(scanTile->getSmoke() + scanTile->getFire()) / 3.f;
+//			if (static_cast<int>(std::ceil(obscured * obscured)) > SIGHTDIST_VSp_Sqr)
+			if (static_cast<int>(std::ceil(obscured)) > SIGHTDIST_VSp)
 				return false;
 		}
 
@@ -828,17 +829,14 @@ bool TileEngine::visible(
  */
 BattleUnit* TileEngine::getTargetUnit(const Tile* const tile) const
 {
-	if (tile != nullptr)
-	{
-		if (tile->getTileUnit() != nullptr) // warning: Careful not to use this when UnitWalkBState has transient units placed.
-			return tile->getTileUnit();
+	if (tile->getTileUnit() != nullptr) // warning: Careful not to use this when UnitWalkBState has transient units placed.
+		return tile->getTileUnit();
 
-		if (tile->getPosition().z > 0 && tile->hasNoFloor() == true)
-		{
-			const Tile* const tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1));
-			if (tileBelow->getTileUnit() != nullptr)
-				return tileBelow->getTileUnit();
-		}
+	if (tile->getPosition().z > 0 && tile->hasNoFloor() == true)
+	{
+		const Tile* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
+		if (tileBelow->getTileUnit() != nullptr)
+			return tileBelow->getTileUnit();
 	}
 
 	return nullptr;
@@ -851,16 +849,16 @@ BattleUnit* TileEngine::getTargetUnit(const Tile* const tile) const
  */
 Position TileEngine::getSightOriginVoxel(const BattleUnit* const unit) const
 {
-	const Position pos = unit->getPosition();
-	Position originVoxel = Position::toVoxelSpaceCentered(
+	const Position pos (unit->getPosition());
+	Position originVoxel (Position::toVoxelSpaceCentered(
 													pos,
 													unit->getHeight(true) - 4
 														- _battleSave->getTile(pos)->getTerrainLevel(), // TODO: this is quadrant #1, will not be accurate in all cases.
-													unit->getArmor()->getSize());
-	const int ceilingZ = pos.z * 24 + 23;
+													unit->getArmor()->getSize()));
+	const int ceilingZ (pos.z * 24 + 23);
 	if (ceilingZ < originVoxel.z)
 	{
-		const Tile* const tileAbove = _battleSave->getTile(pos + Position(0,0,1));
+		const Tile* const tileAbove (_battleSave->getTile(pos + Position(0,0,1)));
 		if (tileAbove == nullptr || tileAbove->hasNoFloor() == false)
 			originVoxel.z = ceilingZ; // careful with that ceiling, Eugene.
 	}
@@ -2104,14 +2102,14 @@ void TileEngine::hit(
 				}
 
 				if (melee == false
-					&& _battleSave->getBattleGame()->getCurrentAction()->takenXp == false
+					&& _battleSave->getBattleGame()->getTacticalAction()->takenXp == false
 					&& targetUnit->getFaction() == FACTION_HOSTILE
 					&& attacker != nullptr
 					&& attacker->getGeoscapeSoldier() != nullptr
 					&& attacker->isMindControlled() == false
 					&& _battleSave->getBattleGame()->playerPanicHandled() == true)
 				{
-					_battleSave->getBattleGame()->getCurrentAction()->takenXp = true;
+					_battleSave->getBattleGame()->getTacticalAction()->takenXp = true;
 					attacker->addFiringExp();
 				}
 			}
@@ -6265,7 +6263,7 @@ int TileEngine::distance( // static.
  * @param considerZ	- true to consider the z coordinate (default true)
  * @return, distance
  */
-int TileEngine::distanceSqr( // static.
+int TileEngine::distSqr( // static.
 		const Position& pos1,
 		const Position& pos2,
 		const bool considerZ)

@@ -43,7 +43,7 @@ BattleAIState::BattleAIState(
 		_AIMode(AI_PATROL),
 		_unitAggro(nullptr),
 		_spottersOrigin(0),
-		_tuEscape(0)
+		_tuEscape(-1)
 {
 //	_traceAI = Options::traceAI;
 }

@@ -52,6 +52,10 @@ int generate(
 double generate(
 		double valMin,
 		double valMax);
+/// Generates a floating-point value, inclusive.
+float generate(
+		float valMin,
+		float valMax);
 
 /// Generates an integer, inclusive (external version).
 int seedless(

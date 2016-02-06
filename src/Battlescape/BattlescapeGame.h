@@ -61,7 +61,7 @@ enum BattleActionType
 	BA_LAUNCH,		// 10
 	BA_PSICONTROL,	// 11
 	BA_PSIPANIC,	// 12
-	BA_RETHINK,		// 13
+	BA_THINK,		// 13
 	BA_DEFUSE,		// 14, kL_add ->>
 	BA_DROP,		// 15
 	BA_PSICONFUSE,	// 16 reduces victim's TU
@@ -177,7 +177,7 @@ struct BattleAction
 			case BA_LAUNCH:		return "launch";
 			case BA_PSICONTROL:	return "mindcontrol";
 			case BA_PSIPANIC:	return "panic";
-			case BA_RETHINK:	return "rethink";
+			case BA_THINK:		return "think";
 			case BA_DEFUSE:		return "defuse";
 			case BA_DROP:		return "drop";
 			case BA_PSICONFUSE:	return "confuse";
@@ -304,7 +304,7 @@ private:
 		/// Cancels the current action.
 		bool cancelTacticalAction(bool force = false);
 		/// Gets a pointer to access action members directly.
-		BattleAction* getCurrentAction();
+		BattleAction* getTacticalAction();
 
 		/// Determines whether there is an action currently going on.
 		bool isBusy() const;

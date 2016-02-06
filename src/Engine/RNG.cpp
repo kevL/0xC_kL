@@ -153,6 +153,28 @@ double generate(
 }
 
 /**
+ * Generates a uniformly distributed random floating-point value within the
+ * specified range.
+ * @param valMin - minimum number, inclusive
+ * @param valMax - maximum number, inclusive
+ * @return, generated value
+ */
+float generate(
+		float valMin,
+		float valMax)
+{
+	float delta (valMax - valMin);
+	if (AreSame(delta, 0.f))
+		return valMin;
+
+	delta = (static_cast<float>(std::numeric_limits<uint64_t>::max()) / delta);
+	if (AreSame(delta, 0.f))
+		return valMin;
+
+	return (static_cast<float>(next_x()) / delta) + valMin;
+}
+
+/**
  * Generates a uniformly distributed random integer within the specified range.
  * @note Distinct from "generate" in that it uses the external generator.
  * @param min - minimum number, inclusive

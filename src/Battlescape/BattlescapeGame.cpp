@@ -672,7 +672,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	unit->think(&action);
 	Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat [1] " << action.debugActionType(action.type);
 
-	if (action.type == BA_RETHINK)
+	if (action.type == BA_THINK)
 	{
 		Log(LOG_INFO) << "";
 		Log(LOG_INFO) << "BATTLESCAPE: Re-Think id-" << unit->getId();
@@ -1978,22 +1978,22 @@ bool BattlescapeGame::checkReservedTu(
 		else
 			batReserved = BA_NONE;	// something went ... wrong. Should always be an AI for non-player units (although i
 									// guess it could-maybe-but-unlikely be a CivilianBAIState here in checkReservedTu()).
-		const int extraReserve = RNG::generate(0,13); // added in below ->
+		const int extraReserve (RNG::generate(0,13)); // added in below ->
 
 		// This could use some tweaking, for the poor aLiens:
 		switch (batReserved) // aLiens reserve TUs as a percentage rather than just enough for a single action.
 		{
 			case BA_SNAPSHOT:
-			return (tu + extraReserve + (unit->getBattleStats()->tu / 3) <= unit->getTimeUnits());		// 33%
+				return (tu + extraReserve + (unit->getBattleStats()->tu / 3) <= unit->getTimeUnits());		// 33%
 
 			case BA_AUTOSHOT:
-			return (tu + extraReserve + (unit->getBattleStats()->tu * 2 / 5) <= unit->getTimeUnits());	// 40%
+				return (tu + extraReserve + (unit->getBattleStats()->tu * 2 / 5) <= unit->getTimeUnits());	// 40%
 
 			case BA_AIMEDSHOT:
-			return (tu + extraReserve + (unit->getBattleStats()->tu / 2) <= unit->getTimeUnits());		// 50%
+				return (tu + extraReserve + (unit->getBattleStats()->tu / 2) <= unit->getTimeUnits());		// 50%
 
 			default:
-			return (tu <= unit->getTimeUnits()); // + extraReserve
+				return (tu <= unit->getTimeUnits()); // + extraReserve
 		}
 	}
 
@@ -2222,7 +2222,6 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 				pf->calculate(
 							action.actor,
 							action.target,
-							nullptr,
 							tu);
 
 				if (pf->getStartDirection() != -1)
@@ -2402,7 +2401,7 @@ bool BattlescapeGame::cancelTacticalAction(bool force)
  * @note This appears to be for Player's units only.
  * @return, pointer to BattleAction
  */
-BattleAction* BattlescapeGame::getCurrentAction()
+BattleAction* BattlescapeGame::getTacticalAction()
 {
 	return &_tacAction;
 }
@@ -2433,7 +2432,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 		switch (_tacAction.type)
 		{
 			case BA_LAUNCH:
-				if (static_cast<int>(_tacAction.waypoints.size()) < _tacAction.weapon->getRules()->isWaypoints())
+				if (_tacAction.waypoints.size() < _tacAction.weapon->getRules()->isWaypoints())
 				{
 					_parentState->showLaunchButton();
 					_tacAction.waypoints.push_back(pos);
@@ -3494,9 +3493,9 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 								&& (*i)->getFuse() != -1)
 							{
 								int dir; // cred: animal310 - http://openxcom.org/bugs/openxcom/issues/765
-								_battleSave->getPathfinding()->vectorToDirection(
-																			Position(tx,ty,0),
-																			dir);
+								Pathfinding::vectorToDirection(
+															Position(tx,ty,0),
+															dir);
 								if (_battleSave->getPathfinding()->isBlockedPath(
 																			_battleSave->getTile(unit->getPosition() + Position(x,y,0)),
 																			dir,
@@ -3504,7 +3503,7 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 								{															// there *might* be a problem if the Proxy is on a non-walkable tile ....
 									pos = Position::toVoxelSpaceCentered(
 																	tile->getPosition(),
-																	-(tile->getTerrainLevel()));
+																	2 - (tile->getTerrainLevel()));
 									statePushNext(new ExplosionBState(
 																	this, pos, *i,
 																	(*i)->getPriorOwner()));

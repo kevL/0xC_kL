@@ -52,14 +52,16 @@ struct BattleAction;
 class TileEngine
 {
 	public:
-		static const int MAX_VIEW_DISTANCE = 20;
+		static const int
+			SIGHTDIST_TSp		= 20,							// tile-space
+			SIGHTDIST_TSp_Sqr	= SIGHTDIST_TSp * SIGHTDIST_TSp;
 
 private:
 	static const int
-		MAX_VIEW_DISTANCE_SQR	= MAX_VIEW_DISTANCE * MAX_VIEW_DISTANCE,
-		MAX_VOXEL_VIEW_DISTANCE	= 16 * MAX_VIEW_DISTANCE,
-		MAX_VOXEL_VIEW_DIST_SQR	= MAX_VOXEL_VIEW_DISTANCE * MAX_VOXEL_VIEW_DISTANCE,
-		MAX_SHADE_TO_SEE_UNITS	= 8,
+		SIGHTDIST_VSp		= SIGHTDIST_TSp * 16,				// voxel-space
+		SIGHTDIST_VSp_Sqr	= SIGHTDIST_VSp * SIGHTDIST_VSp,
+
+		MAX_SHADE_TO_SEE_UNITS = 8,
 
 		heightFromCenter[11];
 
@@ -330,7 +332,7 @@ private:
 				const Position& pos2,
 				const bool considerZ = true);
 		/// Checks the distance squared between two positions.
-		static int distanceSqr(
+		static int distSqr(
 				const Position& pos1,
 				const Position& pos2,
 				const bool considerZ = true);
