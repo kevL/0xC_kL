@@ -1104,6 +1104,7 @@ void BattlescapeState::init()
 
 /**
  * Runs the timers and handles popups.
+ * @note Called by the engine core.
  */
 void BattlescapeState::think()
 {
@@ -2688,7 +2689,7 @@ void BattlescapeState::btnPsiClick(Action* action)
 void BattlescapeState::btnReloadClick(Action*)
 {
 	if (playableUnitSelected() == true
-		&& _battleSave->getSelectedUnit()->checkAmmo() == true)
+		&& _battleSave->getSelectedUnit()->checkReload() == true)
 	{
 		_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_RELOAD)
 									->play(-1, _map->getSoundAngle(_battleSave->getSelectedUnit()->getPosition()));

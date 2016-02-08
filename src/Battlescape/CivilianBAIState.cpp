@@ -88,12 +88,17 @@ YAML::Node CivilianBAIState::save() const
 void CivilianBAIState::think(BattleAction* const action)
 {
 	//Log(LOG_INFO) << "CivilianBAIState::think()";
-	action->actor = _unit;
- 	action->type = BA_THINK;
 
-	_escapeAction->AIcount = action->AIcount;
+	_pf = _battleSave->getPathfinding();
+	_te = _battleSave->getTileEngine();
 
-	_targetsHostile = selectHostile();
+	action->type = BA_THINK;
+
+	_pf->setPathingUnit(_unit);
+
+//	_escapeAction->AIcount = action->AIcount;
+
+	_targetsHostile = selectHostile(); // sets _unitAggro.
 	_spottersOrigin = tallySpotters(_unit->getPosition());
 
 //	if (_traceAI)
@@ -110,6 +115,8 @@ void CivilianBAIState::think(BattleAction* const action)
 
 	if (_spottersOrigin != 0 && _tuEscape == -1)
 		setupEscape();
+	else
+		_reachable.clear();
 
 	setupPatrol();
 
@@ -129,11 +136,8 @@ void CivilianBAIState::think(BattleAction* const action)
 			}
 	}
 
-	if (evaluate == false && _spottersOrigin != 0)
-//			|| _unit->getHealth() < _unit->getBattleStats()->health * 2 / 3))
-	{
+	if (evaluate == false && _spottersOrigin != 0) // (_spottersOrigin != 0 || _unit->getHealth() < _unit->getBattleStats()->health * 2 / 3)
 		evaluate = true;
-	}
 
 	if (evaluate == true)
 	{
@@ -156,6 +160,7 @@ void CivilianBAIState::think(BattleAction* const action)
 			action->type = _escapeAction->type;
 			action->target = _escapeAction->target;
 			action->AIcount = 3;
+//			action->finalAction = true; // <- AlienBAI uses this instead of AICount= 3 <--
 			action->desperate = true;
 
 			_unit->dontReselect();
@@ -167,12 +172,10 @@ void CivilianBAIState::think(BattleAction* const action)
 			action->target = _patrolAction->target;
 	}
 
-	if (action->type == BA_MOVE)
+	if (action->type == BA_MOVE
+		&& action->target != _unit->getPosition())
 	{
-		if (action->target != _unit->getPosition())
-			_tuEscape = -1;
-		else
-			action->type = BA_NONE; // maybe BA_THINK ...
+		_tuEscape = -1;
 	}
 }
 
@@ -193,31 +196,8 @@ void CivilianBAIState::setupPatrol() // private.
 
 	if (_startNode == nullptr)
 		_startNode = _battleSave->getNearestNode(_unit);
-/*{
-		// assume closest node as "from node"
-		// on same level to avoid strange things and the node has to match unit size or it will freeze
-		int dist = 1000000;
-		for (std::vector<Node*>::const_iterator
-				i = _battleSave->getNodes()->begin();
-				i != _battleSave->getNodes()->end();
-				++i)
-		{
-			Node* node = *i;
-			const int distTest = _battleSave->getTileEngine()->distSqr(_unit->getPosition(), node->getPosition());
-			if (_unit->getPosition().z == node->getPosition().z
-				&& distTest < dist
-				&& (node->getNodeType() & Node::TYPE_SMALL))
-			{
-				_startNode = node;
-				dist = distTest;
-			}
-		}
-	} */
 
-	Pathfinding* const pf (_battleSave->getPathfinding());
-	pf->setPathingUnit(_unit);
-
-	int i (5); // look for a new node to walk towards
+	int i (5);
 	while (_stopNode == nullptr && i-- != 0)
 	{
 		_stopNode = _battleSave->getPatrolNode(true, _unit, _startNode);
@@ -226,17 +206,16 @@ void CivilianBAIState::setupPatrol() // private.
 
 		if (_stopNode != nullptr)
 		{
-			pf->calculate(_unit, _stopNode->getPosition());
-			if (pf->getStartDirection() == -1)
+			_pf->calculate(_unit, _stopNode->getPosition());
+			if (_pf->getStartDirection() == -1)
 				_stopNode = nullptr;
 
-			pf->abortPath();
+			_pf->abortPath();
 		}
 	}
 
 	if (_stopNode != nullptr)
 	{
-		_patrolAction->actor = _unit;
 		_patrolAction->type = BA_MOVE;
 		_patrolAction->target = _stopNode->getPosition();
 	}
@@ -251,7 +230,8 @@ void CivilianBAIState::setupEscape() // private.
 {
 	_tuEscape = -1;
 
-	selectHostile(); // sets _unitAggro
+//	if (_unitAggro == nullptr)
+//	selectHostile(); // sets _unitAggro
 
 	int
 		distAggroOrigin,
@@ -274,11 +254,8 @@ void CivilianBAIState::setupEscape() // private.
 	std::vector<Position> tileSearch (_battleSave->getTileSearch());
 	RNG::shuffle(tileSearch.begin(), tileSearch.end());
 
-	Pathfinding* const pf (_battleSave->getPathfinding());
-	pf->setPathingUnit(_unit);
-
 	const int tu (_unit->getTimeUnits() / 2);
-	const std::vector<size_t> reachable (pf->findReachable(_unit, tu));
+	_reachable = _pf->findReachable(_unit, tu);
 
 	bool coverFound (false);
 	size_t i = 0;
@@ -333,9 +310,9 @@ void CivilianBAIState::setupEscape() // private.
 
 		if ((tile = _battleSave->getTile(_escapeAction->target)) != nullptr
 			&& std::find(
-					reachable.begin(),
-					reachable.end(),
-					_battleSave->getTileIndex(tile->getPosition())) != reachable.end())
+					_reachable.begin(),
+					_reachable.end(),
+					_battleSave->getTileIndex(tile->getPosition())) != _reachable.end())
 		{
 			scoreTest += (_spottersOrigin - tallySpotters(_escapeAction->target)) * EXPOSURE_PENALTY;
 
@@ -350,17 +327,17 @@ void CivilianBAIState::setupEscape() // private.
 
 			if (scoreTest > score)
 			{
-				pf->calculate(
+				_pf->calculate(
 							_unit,
 							_escapeAction->target,
 							tu);
 
-				if (pf->getStartDirection() != -1
+				if (_pf->getStartDirection() != -1
 					|| _escapeAction->target == _unit->getPosition())
 				{
 					score = scoreTest;
 //					if (_escapeAction->target != _unit->getPosition())
-					_tuEscape = pf->getTuCostTotalPf();
+					_tuEscape = _pf->getTuCostTotalPf();
 //					else
 //						_tuEscape = 1;
 //					if (_traceAI) {
@@ -368,7 +345,7 @@ void CivilianBAIState::setupEscape() // private.
 //						tile->setPreviewDir(10);
 //						tile->setPreviewTu(scoreTest); }
 				}
-				pf->abortPath();
+				_pf->abortPath();
 
 				if (score > FAST_PASS_THRESHOLD)
 					coverFound = true;
@@ -416,7 +393,10 @@ void CivilianBAIState::evaluateAiMode() // private.
 		if (_spottersOrigin != 0)
 		{
 			patrolOdds = 0.f;
-			if (_tuEscape == -1) setupEscape();
+			if (_tuEscape == -1)
+				setupEscape();
+			else
+				_reachable.clear();
 		}
 
 		switch (_AIMode)
@@ -475,8 +455,7 @@ int CivilianBAIState::selectHostile() // private.
 
 	_unitAggro = nullptr;
 
-	const TileEngine* const te (_battleSave->getTileEngine());
-	const Position originVoxel (te->getSightOriginVoxel(_unit));
+	const Position originVoxel (_te->getSightOriginVoxel(_unit));
 	Position targetVoxel;
 
 	for (std::vector<BattleUnit*>::const_iterator
@@ -486,14 +465,14 @@ int CivilianBAIState::selectHostile() // private.
 	{
 		if ((*i)->getFaction() == FACTION_HOSTILE
 			&& (*i)->isOut_t(OUT_STAT) == false
-			&& te->visible(_unit, (*i)->getTile()) == true)
+			&& _te->visible(_unit, (*i)->getTile()) == true)
 		{
 			++tally;
 			distTest = TileEngine::distSqr(
 										_unit->getPosition(),
 										(*i)->getPosition());
 			if (distTest < dist
-				&& te->canTargetUnit(
+				&& _te->canTargetUnit(
 								&originVoxel,
 								(*i)->getTile(),
 								&targetVoxel,
@@ -519,7 +498,6 @@ int CivilianBAIState::selectHostile() // private.
 int CivilianBAIState::tallySpotters(const Position& pos) const // private.
 {
 	int ret (0);
-	const TileEngine* const te (_battleSave->getTileEngine());
 	Position
 		originVoxel,
 		targetVoxel;
@@ -539,8 +517,8 @@ int CivilianBAIState::tallySpotters(const Position& pos) const // private.
 			&& (*i)->isOut_t(OUT_STAT) == false
 			&& TileEngine::distSqr(pos, (*i)->getPosition()) <= TileEngine::SIGHTDIST_TSp_Sqr) // Could use checkViewSector() and/or visible()
 		{
-			originVoxel = te->getSightOriginVoxel(*i);
-			if (te->canTargetUnit(
+			originVoxel = _te->getSightOriginVoxel(*i);
+			if (_te->canTargetUnit(
 							&originVoxel,
 							_battleSave->getTile(pos),
 							&targetVoxel,

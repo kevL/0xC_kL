@@ -906,7 +906,7 @@ int Pathfinding::getTuCostPf(
 
 	Position posOffset;
 
-	const int armorSize = _unit->getArmor()->getSize() - 1;
+	const int armorSize (_unit->getArmor()->getSize() - 1);
 	for (int
 			x = 0;
 			x <= armorSize;

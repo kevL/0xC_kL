@@ -1939,7 +1939,7 @@ bool SavedBattleGame::isNodeType(
 		const Node* const node,
 		const BattleUnit* const unit) const
 {
-	const int type = node->getNodeType();
+	const int type (node->getNodeType());
 
 	if (type & Node::TYPE_DANGEROUS)
 		return false;

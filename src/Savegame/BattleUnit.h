@@ -594,16 +594,19 @@ private:
 		ActiveHand getActiveHand();
 
 		/// Gets the item in this unit's main hand.
-		BattleItem* getMainHandWeapon(bool quickest);
-		/// Gets a grenade from this unit's belt if possible.
+		BattleItem* getMainHandWeapon(
+				bool quickest,
+				bool inclMelee = true,
+				bool checkFist = false);
+		/// Gets a grenade if possible.
 		BattleItem* getGrenade() const;
-		/// Gets this unit's melee weapon as a string.
-//		std::string getMeleeWeapon() const;
-		/// Gets this unit's built-in melee weapon.
-		BattleItem* getMeleeWeapon();
+		/// Gets this unit's melee weapon if any.
+		BattleItem* getMeleeWeapon() const;
+		/// Gets this unit's ranged weapon if any.
+		BattleItem* getRangedWeapon(bool quickest) const;
 
-		/// Reloads righthand weapon of this unit if needed.
-		bool checkAmmo();
+		/// Reloads weapon if needed.
+		bool checkReload();
 
 		/// Checks if this unit is in the exit area.
 		bool isInExitArea(SpecialTileType tileType = START_POINT) const;
@@ -831,7 +834,7 @@ private:
 		bool isHiding() const
 		{ return _hidingForTurn; };
 		/// Sets this unit hiding or not.
-		void setHiding(const bool hiding)
+		void setHiding(bool hiding = true)
 		{ _hidingForTurn = hiding; };
 
 		/// Puts the unit in the corner to think about what he's done.

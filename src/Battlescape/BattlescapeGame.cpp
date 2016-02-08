@@ -162,6 +162,7 @@ void BattlescapeGame::init()
 
 /**
  * Checks for units panicking or falling and so on.
+ * @note Called by BattlescapeState::think().
  */
 void BattlescapeGame::think()
 {
@@ -452,7 +453,7 @@ void BattlescapeGame::popState()
 
 					if (_battleSave->getSide() != FACTION_PLAYER && _debugPlay == false)
 					{
-						BattleUnit* selUnit = _battleSave->getSelectedUnit();
+						BattleUnit* selUnit (_battleSave->getSelectedUnit());
 						if (_AIActionCounter > 2	// AI does three things per unit before switching to the
 							|| selUnit == nullptr	// next or it got killed before doing the second thing
 							|| selUnit->isOut_t() == true)
@@ -626,6 +627,7 @@ void BattlescapeGame::centerOnUnit( // private.
 
 /**
  * Handles the processing of the AI states of a unit.
+ * Called by BattlescapeGame::think().
  * @param unit - pointer to a BattleUnit
  */
 void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
@@ -670,14 +672,14 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	Log(LOG_INFO) << "";
 	Log(LOG_INFO) << "BATTLESCAPE::handleUnitAI id-" << unit->getId();
 	unit->think(&action);
-	Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat [1] " << action.debugActionType(action.type);
+	Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat [1] " << BattleAction::debugActionType(action.type);
 
 	if (action.type == BA_THINK)
 	{
 		Log(LOG_INFO) << "";
 		Log(LOG_INFO) << "BATTLESCAPE: Re-Think id-" << unit->getId();
 		unit->think(&action);
-		Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat [2] " << action.debugActionType(action.type);
+		Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat [2] " << BattleAction::debugActionType(action.type);
 	}
 
 	_AIActionCounter = action.AIcount;
@@ -713,7 +715,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 				pf->calculate(action.actor, action.target);
 
 			if (pf->getStartDirection() != -1)
-				statePushBack(new UnitWalkBState(this, action));
+				statePushBack(new UnitWalkBState(this, action)); // TODO: If action.desperate use 'dash' interval-speed.
 
 			break;
 		}
@@ -793,7 +795,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 					} */
 			}
 
-			Log(LOG_INFO) << ". ATTACK action.Type = " << action.debugActionType(action.type)
+			Log(LOG_INFO) << ". ATTACK action.Type = " << BattleAction::debugActionType(action.type)
 						  << " action.Target = " << action.target
 						  << " action.Weapon = " << action.weapon->getRules()->getName().c_str();
 			statePushBack(new ProjectileFlyBState(this, action));
@@ -900,7 +902,7 @@ void BattlescapeGame::handleNonTargetAction()
 	{
 		_tacAction.cameraPosition = Position(0,0,-1);
 
-		int showWarning = 0;
+		int showWarning (0);
 
 		// NOTE: These actions are done partly in ActionMenuState::btnActionMenuClick() and
 		// this subsequently handles a greater or lesser proportion of the resultant niceties.
@@ -1013,12 +1015,12 @@ void BattlescapeGame::executeUnit() // private.
 	_tacAction.actor->clearCache();
 	getMap()->cacheUnit(_tacAction.actor);
 
-	const RuleItem* const itRule = _tacAction.weapon->getRules();
-	BattleItem* const ammo = _tacAction.weapon->getAmmoItem();
+	const RuleItem* const itRule (_tacAction.weapon->getRules());
+	BattleItem* const ammo (_tacAction.weapon->getAmmoItem());
 	int
-		soundId = -1,
-		aniStart = 0,	// avoid vc++ linker warning.
-		isMelee = 0;	// avoid vc++ linker warning.
+		soundId (-1),
+		aniStart (0),	// avoid vc++ linker warning.
+		isMelee (0);	// avoid vc++ linker warning.
 
 	switch (itRule->getBattleType()) // find hit-sound & ani.
 	{
@@ -1045,13 +1047,13 @@ void BattlescapeGame::executeUnit() // private.
 				*_battleSave,
 				*_tacAction.weapon);
 
-	Position explVoxel = Position::toVoxelSpaceCentered(_tacAction.target, 2);
-	Explosion* const explosion = new Explosion(
+	const Position explVoxel (Position::toVoxelSpaceCentered(_tacAction.target, 2));
+	Explosion* const explosion (new Explosion(
 											explVoxel,
 											aniStart,
 											0,
 											false,
-											isMelee);
+											isMelee));
 	getMap()->getExplosions()->push_back(explosion);
 	_executeProgress = true;
 
@@ -1978,26 +1980,33 @@ bool BattlescapeGame::checkReservedTu(
 		else
 			batReserved = BA_NONE;	// something went ... wrong. Should always be an AI for non-player units (although i
 									// guess it could-maybe-but-unlikely be a CivilianBAIState here in checkReservedTu()).
-		const int extraReserve (RNG::generate(0,13)); // added in below ->
 
 		// This could use some tweaking, for the poor aLiens:
+		const int extraReserve (RNG::generate(0,13));
+		int tuReserve;
+
 		switch (batReserved) // aLiens reserve TUs as a percentage rather than just enough for a single action.
 		{
 			case BA_SNAPSHOT:
-				return (tu + extraReserve + (unit->getBattleStats()->tu / 3) <= unit->getTimeUnits());		// 33%
+				tuReserve = unit->getBattleStats()->tu / 3 + extraReserve;		// 33%
+				break;
 
 			case BA_AUTOSHOT:
-				return (tu + extraReserve + (unit->getBattleStats()->tu * 2 / 5) <= unit->getTimeUnits());	// 40%
+				tuReserve = unit->getBattleStats()->tu * 2 / 5 + extraReserve;	// 40%
+				break;
 
 			case BA_AIMEDSHOT:
-				return (tu + extraReserve + (unit->getBattleStats()->tu / 2) <= unit->getTimeUnits());		// 50%
+				tuReserve = unit->getBattleStats()->tu / 2 + extraReserve;		// 50%
+				break;
 
 			default:
-				return (tu <= unit->getTimeUnits()); // + extraReserve
+				tuReserve = 0;
 		}
+
+		return (tu + tuReserve <= unit->getTimeUnits());
 	}
 
-	// ** Below here is for xCom soldiers exclusively ***
+	// ** Below here is for xCom units exclusively ***
 	// (which i don't care about - except that this is also used for pathPreviews in Pathfinding object)
 //	batReserved = _battleSave->getBatReserved();
 	batReserved = BA_NONE;	// <- default for player's units
@@ -2019,20 +2028,27 @@ bool BattlescapeGame::checkReservedTu(
 
 	if (weapon != nullptr)
 	{
-		if (weapon->getRules()->getBattleType() == BT_MELEE)
-			batReserved = BA_MELEE;
-		else if (weapon->getRules()->getBattleType() == BT_FIREARM)
+		const RuleItem* const itRule (weapon->getRules());
+		switch (itRule->getBattleType())
 		{
-			if (unit->getActionTu(batReserved = BA_SNAPSHOT, weapon) == 0)
-				if (unit->getActionTu((batReserved = BA_AUTOSHOT), weapon) == 0)
+			case BT_MELEE:
+				batReserved = BA_MELEE;
+				break;
+
+			case BT_FIREARM:
+				if (itRule->getSnapTu() != 0)
+					batReserved = BA_SNAPSHOT;
+				else if (itRule->getAutoTu() != 0)
+					batReserved = BA_AUTOSHOT;
+				else if (itRule->getAimedTu() != 0)
 					batReserved = BA_AIMEDSHOT;
 		}
 	}
 
-	if (tu + unit->getActionTu(batReserved, weapon) > unit->getTimeUnits()) // safeties in place @ getActionTu()
-		return false;
+	if (tu + unit->getActionTu(batReserved, weapon) <= unit->getTimeUnits()) // safeties in place @ getActionTu()
+		return true;
 
-	return true;
+	return false;
 }
 // * @param test - true to suppress error messages (default false)
 /*		// if reserved for Aimed shot drop to Auto shot
@@ -2251,12 +2267,9 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 					statePushBack(new UnitTurnBState(this, action, false));
 				}
 
-				action.weapon = unit->getMainHandWeapon(true);
-				if (action.weapon == nullptr)
+				action.weapon = unit->getRangedWeapon(true);	// unit->getMainHandWeapon(true); unit->getMeleeWeapon();
+				if (action.weapon == nullptr)					// TODO: implement Charge + Melee against nearest unit.
 					action.weapon = unit->getGrenade();
-
-				// TODO: run up to another unit and slug it with the Universal Fist.
-				// Or w/ an already-equipped melee weapon
 
 				if (action.weapon != nullptr)
 				{
@@ -2988,18 +3001,19 @@ bool BattlescapeGame::pickupItem(BattleAction* const action) const
 		{
 			//Log(LOG_INFO) << ". . pickup on spot";
 			if (takeItemFromGround(targetItem, action->actor) == true
+				&& targetItem->getRules()->getBattleType() == BT_FIREARM
 				&& targetItem->getAmmoItem() == nullptr)
 			{
 				//Log(LOG_INFO) << ". . . check Ammo.";
-				action->actor->checkAmmo();
+				action->actor->checkReload();
 			}
 			return true;
 		}
 		else
 		{
 			//Log(LOG_INFO) << ". . move to spot";
-			action->target = targetItem->getTile()->getPosition();
 			action->type = BA_MOVE;
+			action->target = targetItem->getTile()->getPosition();
 		}
 	}
 	return false;

@@ -152,7 +152,9 @@ private:
 		BattleUnit* getTargetUnit(const Tile* const tile) const;
 
 		/// Gets the origin voxel of a unit's eyesight.
-		Position getSightOriginVoxel(const BattleUnit* const unit) const;
+		Position getSightOriginVoxel(
+				const BattleUnit* const unit,
+				const Position* pos = nullptr) const;
 		/// Gets the origin voxel of a given action.
 		Position getOriginVoxel(
 				const BattleAction& action,
@@ -187,7 +189,7 @@ private:
 				BattleUnit* const defender,
 				const int tuSpent = 0,
 				bool autoSpot = true) const;
-		/// Fires off a reaction shot.
+		/// Fires off a reaction shot if possible.
 		bool reactionShot(
 				BattleUnit* const unit,
 				const BattleUnit* const targetUnit);

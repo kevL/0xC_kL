@@ -43,7 +43,7 @@
 #include "../Battlescape/TileEngine.h"
 
 #include "../Engine/Language.h"
-//#include "../Engine/Logger.h"
+#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -1064,8 +1064,8 @@ void BattleUnit::turn(bool turret)
 		else if (_dirTurret > 7)
 			_dirTurret = 0;
 
-		if (_visible == true
-			|| _faction == FACTION_PLAYER) // kL_note: Faction_player should *always* be _visible...
+		if (_visible == true)
+//			|| _faction == FACTION_PLAYER) // kL_note: Faction_player should *always* be _visible...
 		{
 			_cacheInvalid = true;
 		}
@@ -2650,16 +2650,19 @@ std::vector<BattleItem*>* BattleUnit::getInventory()
 
 /**
  * Lets the AI do its thing.
+ * @note Called by BattlescapeGame::handleUnitAI().
  * @param action - current AI action
  */
 void BattleUnit::think(BattleAction* const action)
 {
-	//Log(LOG_INFO) << "BattleUnit::think()";
-	//Log(LOG_INFO) << ". checkAmmo()";
-	checkAmmo();
-	//Log(LOG_INFO) << ". _unitAIState->think()";
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << "BattleUnit::think() id-" << _id;
+	Log(LOG_INFO) << ". checkReload()";
+	checkReload();
+	Log(LOG_INFO) << ". _unitAIState->think()";
 	_unitAIState->think(action);
-	//Log(LOG_INFO) << "BattleUnit::think() EXIT";
+	Log(LOG_INFO) << "BattleUnit::think() EXIT";
+	Log(LOG_INFO) << "";
 }
 
 /**
@@ -2688,7 +2691,7 @@ BattleAIState* BattleUnit::getAIState() const
 }
 
 /**
- * Sets the tile that a unit is standing on.
+ * Sets the tile that this BattleUnit is standing on.
  * @param tile		- pointer to a Tile
  * @param tileBelow	- pointer to the Tile below
  */
@@ -2700,23 +2703,30 @@ void BattleUnit::setTile(
 
 	if (_tile != nullptr)
 	{
-		if (_status == STATUS_WALKING
-			&& _moveType == MT_FLY
-			&& _tile->hasNoFloor(tileBelow) == true)
+		switch (_status)
 		{
-			_status = STATUS_FLYING;
-			_floating = true;
+			case STATUS_WALKING:
+				if (_moveType == MT_FLY
+					&& _tile->hasNoFloor(tileBelow) == true)
+				{
+					_floating = true;
+					_status = STATUS_FLYING;
+				}
+				break;
+
+			case STATUS_FLYING:
+				if (_dirVertical == 0
+					&& _tile->hasNoFloor(tileBelow) == false)
+				{
+					_floating = false;
+					_status = STATUS_WALKING;
+				}
+				break;
+
+			case STATUS_UNCONSCIOUS:
+				_floating = _moveType == MT_FLY
+						 && _tile->hasNoFloor(tileBelow) == true;
 		}
-		else if (_status == STATUS_FLYING
-			&& _dirVertical == 0
-			&& _tile->hasNoFloor(tileBelow) == false)
-		{
-			_status = STATUS_WALKING;
-			_floating = false;
-		}
-		else if (_status == STATUS_UNCONSCIOUS)
-			_floating = _moveType == MT_FLY
-					 && _tile->hasNoFloor(tileBelow);
 	}
 	else
 		_floating = false;
@@ -2916,13 +2926,19 @@ ActiveHand BattleUnit::getActiveHand()
 /**
  * Gets the 'main hand weapon' of this BattleUnit.
  * @note A call to this function also sets the Active-hand.
- * @param quickest - true to choose the quickest weapon
+ * @param quickest	- true to choose the quickest weapon
+ * @param inclMelee	- true to include check for melee weapon (default true)
+ * @param checkFist	- true to include a check for the universalFist (default false)
+ *					  false to bypass Fist, or to engage handleUnitAI() -> pickupItem().
  * @return, pointer to a BattleItem or nullptr
  */
-BattleItem* BattleUnit::getMainHandWeapon(bool quickest)
+BattleItem* BattleUnit::getMainHandWeapon(
+		bool quickest,
+		bool inclMelee,
+		bool checkFist)
 {
-	// kL_note: This gets called way too much, from somewhere, when just walking around.
-	// probably AI patrol state
+	// kL_note: This gets called way too much, from somewhere, when just walking
+	// around. probably AI patrol state
 
 	//Log(LOG_INFO) << "BattleUnit::getMainHandWeapon()";
 	BattleItem
@@ -2933,11 +2949,13 @@ BattleItem* BattleUnit::getMainHandWeapon(bool quickest)
 
 	const bool
 		hasRT (rtWeapon != nullptr
-				&& (rtWeapon->getRules()->getBattleType() == BT_MELEE
+				&& ((inclMelee == true
+						&& rtWeapon->getRules()->getBattleType() == BT_MELEE)
 					|| (rtWeapon->getRules()->getBattleType() == BT_FIREARM
 						&& rtWeapon->getAmmoItem() != nullptr))),
 		hasLT (ltWeapon != nullptr
-				&& (ltWeapon->getRules()->getBattleType() == BT_MELEE
+				&& ((inclMelee == true
+						&& ltWeapon->getRules()->getBattleType() == BT_MELEE)
 					|| (ltWeapon->getRules()->getBattleType() == BT_FIREARM
 						&& ltWeapon->getAmmoItem() != nullptr)));
 	//Log(LOG_INFO) << ". hasRT = " << hasRT;
@@ -2946,6 +2964,9 @@ BattleItem* BattleUnit::getMainHandWeapon(bool quickest)
 	if (!hasRT && !hasLT)
 	{
 		setActiveHand(AH_NONE);
+		if (checkFist == true)
+			return _fist;
+
 		return nullptr;
 	}
 
@@ -2978,26 +2999,10 @@ BattleItem* BattleUnit::getMainHandWeapon(bool quickest)
 			if ((ltTU = itRule->getAimedTu()) == 0)
 				if ((ltTU = itRule->getLaunchTu()) == 0)
 					ltTU = itRule->getMeleeTu();
-	// note: Should probly account for 'noReaction' weapons ...
+	// note: Should probly account for 'noReaction' weapons ... before reaction-algorhithm fizzles.
 
 	//Log(LOG_INFO) << ". . rtTU = " << rtTU;
 	//Log(LOG_INFO) << ". . ltTU = " << ltTU;
-
-/*	if (!rtTU && !ltTU)
-	{
-		_activeHand = AH_NONE;
-		return nullptr;
-	}
-	if (rtTU && !ltTU)
-	{
-		_activeHand = AH_RIGHT;
-		return rtWeapon;
-	}
-	if (!rtTU && ltTU)
-	{
-		_activeHand = AH_LEFT;
-		return ltWeapon;
-	} */
 
 	if (quickest == true) // rtTU && ltTU
 	{
@@ -3022,21 +3027,21 @@ BattleItem* BattleUnit::getMainHandWeapon(bool quickest)
 }
 
 /**
- * Get a grenade from hand or belt.
- * @note Called by AI/panic.
- * @return, pointer to a grenade or nullptr
+ * Gets a grenade.
+ * @note Called by AI/player-panic.
+ * @return, pointer to a grenade (nullptr if none)
  */
 BattleItem* BattleUnit::getGrenade() const
 {
-	BattleItem* grenade = getItem(ST_RIGHTHAND);
-	if (grenade == nullptr
-		|| grenade->getRules()->getBattleType() != BT_GRENADE
-		|| isGrenadeSuitable(grenade) == false)
+	BattleItem* grenade;
+	if ((grenade = getItem(ST_RIGHTHAND)) != nullptr
+		&& grenade->getRules()->getBattleType() == BT_GRENADE
+		&& isGrenadeSuitable(grenade) == true)
 	{
-		grenade = getItem(ST_LEFTHAND);
+		return grenade;
 	}
 
-	if (grenade != nullptr
+	if ((grenade = getItem(ST_LEFTHAND)) != nullptr
 		&& grenade->getRules()->getBattleType() == BT_GRENADE
 		&& isGrenadeSuitable(grenade) == true)
 	{
@@ -3063,25 +3068,25 @@ BattleItem* BattleUnit::getGrenade() const
 }
 
 /**
- * Gets if a grenade is suitable for the required use.
- * @return, true if item is suitable for AI/panic usage by faction.
+ * Gets if a grenade is suitable for AI/panic usage.
+ * @return, true if so
  */
 bool BattleUnit::isGrenadeSuitable(const BattleItem* const grenade) const // private.
 {
-	if (_battleGame->playerPanicHandled() == true // -> is AI, only non-smoke grenades are usable.
-		&& grenade->getRules()->getDamageType() == DT_SMOKE)
+	if (grenade->getRules()->getDamageType() != DT_SMOKE
+		|| _battleGame->playerPanicHandled() == false)
 	{
-		return false;
+		return true; // -> is player-panic allow smoke grenades.
 	}
 
-	return true; // -> is panic, allow smoke grenades too.
+	return false; // -> is AI only !smoke grenades.
 }
 
 /**
- * Gets this unit's built-in melee weapon if any.
- * @return, pointer to weapon
+ * Gets this BattleUnit's melee weapon if any.
+ * @return, pointer to melee weapon (nullptr if none)
  */
-BattleItem* BattleUnit::getMeleeWeapon()
+BattleItem* BattleUnit::getMeleeWeapon() const
 {
 	BattleItem* melee (getItem("STR_RIGHT_HAND"));
 	if (melee != nullptr && melee->getRules()->getBattleType() == BT_MELEE)
@@ -3097,78 +3102,132 @@ BattleItem* BattleUnit::getMeleeWeapon()
 //	if (melee) return melee;
 //	return nullptr;
 }
-/*std::string BattleUnit::getMeleeWeapon() const
+
+/**
+ * Gets this BattleUnit's ranged weapon if any.
+ * @param quickest - true if reaction fire
+ * @return, pointer to weapon (nullptr if none)
+ */
+BattleItem* BattleUnit::getRangedWeapon(bool quickest) const
 {
-	if (getItem(ST_RIGHTHAND) != nullptr
-		&& getItem(ST_RIGHTHAND)->getRules()->getBattleType() == BT_MELEE)
+	BattleItem
+		* const rtWeapon (getItem(ST_RIGHTHAND)),
+		* const ltWeapon (getItem(ST_LEFTHAND));
+	//if (rtWeapon != nullptr) Log(LOG_INFO) << "right weapon " << rtWeapon->getRules()->getType();
+	//if (ltWeapon != nullptr) Log(LOG_INFO) << "left weapon " << ltWeapon->getRules()->getType();
+
+	const bool
+		hasRT (rtWeapon != nullptr
+				&& rtWeapon->getRules()->getBattleType() == BT_FIREARM
+				&& rtWeapon->getAmmoItem() != nullptr),
+		hasLT (ltWeapon != nullptr
+				&& ltWeapon->getRules()->getBattleType() == BT_FIREARM
+				&& ltWeapon->getAmmoItem() != nullptr);
+
+	if (!hasRT && !hasLT)
 	{
-		return getItem(ST_RIGHTHAND)->getRules()->getType();
+//		setActiveHand(AH_NONE);
+		return nullptr;
 	}
 
-	if (getItem(ST_LEFTHAND) != nullptr
-		&& getItem(ST_LEFTHAND)->getRules()->getBattleType() == BT_MELEE)
+	if (hasRT && !hasLT)
 	{
-		return getItem(ST_LEFTHAND)->getRules()->getType();
+//		setActiveHand(AH_RIGHT);
+		return rtWeapon;
 	}
 
-	if (_unitRule != nullptr) // -> do not CTD for Mc'd xCom agents.
-		return _unitRule->getMeleeWeapon();
+	if (!hasRT && hasLT)
+	{
+//		setActiveHand(AH_LEFT);
+		return ltWeapon;
+	}
 
-	return "";
-} */
+	const RuleItem* itRule (rtWeapon->getRules());
+	int rtTU = itRule->getSnapTu();
+	if (rtTU == 0)
+		if ((rtTU = itRule->getAutoTu()) == 0)
+			if ((rtTU = itRule->getAimedTu()) == 0)
+				if ((rtTU = itRule->getLaunchTu()) == 0)
+					rtTU = itRule->getMeleeTu();
+
+	itRule = ltWeapon->getRules();
+	int ltTU = itRule->getSnapTu();
+	if (ltTU == 0)
+		if ((ltTU = itRule->getAutoTu()) == 0)
+			if ((ltTU = itRule->getAimedTu()) == 0)
+				if ((ltTU = itRule->getLaunchTu()) == 0)
+					ltTU = itRule->getMeleeTu();
+	// note: Should probly account for 'noReaction' weapons ... before reaction-algorhithm fizzles.
+
+	if (quickest == true) // rtTU && ltTU
+	{
+		if (rtTU <= ltTU)
+		{
+//			setActiveHand(AH_RIGHT);
+			return rtWeapon;
+		}
+
+//		setActiveHand(AH_LEFT);
+		return ltWeapon;
+	}
+
+	if (rtTU >= ltTU)
+	{
+//		setActiveHand(AH_RIGHT);
+		return rtWeapon;
+	}
+
+//	setActiveHand(AH_LEFT);
+	return ltWeapon;
+}
 
 /**
  * Check if this BattleUnit has ammo and if so reload weapon.
- * @note Used by the AI as well as player's reload hotkey.
- * @return, true if unit has a loaded weapon or has just loaded it
+ * @note Used by the AI as well as player's reload.
+ * @return, true if unit loads its weapon
  */
-bool BattleUnit::checkAmmo()
+bool BattleUnit::checkReload()
 {
-	BattleItem* weapon (getItem(ST_RIGHTHAND));
-	if (weapon == nullptr
-		|| weapon->getAmmoItem() != nullptr
-		|| weapon->getRules()->getBattleType() == BT_MELEE)
+	BattleItem* weapon;
+	if ((weapon = getItem(ST_RIGHTHAND)) == nullptr
+		|| weapon->getRules()->getBattleType() != BT_FIREARM
+		|| weapon->getAmmoItem() != nullptr)
 	{
-		weapon = getItem(ST_LEFTHAND);
-		if (weapon == nullptr
-			|| weapon->getAmmoItem() != nullptr
-			|| weapon->getRules()->getBattleType() == BT_MELEE)
+		if ((weapon = getItem(ST_LEFTHAND)) == nullptr
+			|| weapon->getRules()->getBattleType() != BT_FIREARM
+			|| weapon->getAmmoItem() != nullptr)
 		{
 			return false;
 		}
 	}
 
-	const int reloadTu (weapon->getRules()->getReloadTu());
-	if (_tu >= reloadTu)
+	const int tuReload (weapon->getRules()->getReloadTu());
+	if (_tu >= tuReload)
 	{
-		// if it's a non-melee weapon with no ammo and 15 or more TUs might need to look for ammo ...
-		BattleItem* ammo = nullptr;
+		BattleItem* load (nullptr);
 		for (std::vector<BattleItem*>::const_iterator
 				i = getInventory()->begin();
-				i != getInventory()->end() && ammo == nullptr;
+				i != getInventory()->end() && load == nullptr;
 				++i)
 		{
 			for (std::vector<std::string>::const_iterator
 					j = weapon->getRules()->getCompatibleAmmo()->begin();
-					j != weapon->getRules()->getCompatibleAmmo()->end() && ammo == nullptr;
+					j != weapon->getRules()->getCompatibleAmmo()->end() && load == nullptr;
 					++j)
 			{
 				if (*j == (*i)->getRules()->getType())
-					ammo = *i;
+					load = *i;
 			}
 		}
 
-		if (ammo != nullptr)
+		if (load != nullptr)
 		{
-			_tu -= reloadTu;
-			weapon->setAmmoItem(ammo);
+			_tu -= tuReload;
+			weapon->setAmmoItem(load);
 			return true;
 		}
 	}
 
-	// didn't find any compatible ammo in inventory
-	// or weapon is loaded/ doesn't require ammo
-	// or not enough TU to reload anyway.
 	return false;
 }
 

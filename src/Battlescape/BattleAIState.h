@@ -85,9 +85,13 @@ protected:
 	Node
 		* _startNode,
 		* _stopNode;
+	Pathfinding* _pf;
 	SavedBattleGame* _battleSave;
+	TileEngine* _te;
 
 	AIMode _AIMode;
+
+	std::vector<size_t> _reachable;
 
 
 	public:

@@ -844,21 +844,26 @@ BattleUnit* TileEngine::getTargetUnit(const Tile* const tile) const
 
 /**
  * Gets the origin voxel of a unit's LoS.
- * @param unit - the watcher
+ * @param unit	- pointer to the watcher
+ * @param pos	- pointer to a hypothetical Position (default nullptr to use @a unit's current position)
  * @return, approximately an eyeball voxel
  */
-Position TileEngine::getSightOriginVoxel(const BattleUnit* const unit) const
+Position TileEngine::getSightOriginVoxel(
+		const BattleUnit* const unit,
+		const Position* pos) const
 {
-	const Position pos (unit->getPosition());
+	if (pos == nullptr)
+		pos = &unit->getPosition();
+
 	Position originVoxel (Position::toVoxelSpaceCentered(
-													pos,
+													*pos,
 													unit->getHeight(true) - 4
-														- _battleSave->getTile(pos)->getTerrainLevel(), // TODO: this is quadrant #1, will not be accurate in all cases.
+														- _battleSave->getTile(*pos)->getTerrainLevel(), // TODO: this is quadrant #1, will not be accurate in all cases.
 													unit->getArmor()->getSize()));
-	const int ceilingZ (pos.z * 24 + 23);
+	const int ceilingZ ((*pos).z * 24 + 23);
 	if (ceilingZ < originVoxel.z)
 	{
-		const Tile* const tileAbove (_battleSave->getTile(pos + Position(0,0,1)));
+		const Tile* const tileAbove (_battleSave->getTile(*pos + Position(0,0,1)));
 		if (tileAbove == nullptr || tileAbove->hasNoFloor() == false)
 			originVoxel.z = ceilingZ; // careful with that ceiling, Eugene.
 	}
@@ -902,8 +907,10 @@ Position TileEngine::getOriginVoxel(
  * @param tileTarget	- pointer to Tile to check against
  * @param scanVoxel		- pointer to voxel that is returned coordinate of hit
  * @param excludeUnit	- pointer to unitSelf (to not hit self)
- * @param targetUnit	- pointer to a hypothetical unit to draw a virtual LoF for AI-ambush usage;
-						  if left nullptr this function behaves normally (default nullptr)
+ * @param targetUnit	- pointer to a hypothetical unit to draw a virtual LoF
+ *						  for AI-ambush usage; if left nullptr this function
+ *						  behaves normally (default nullptr to use @a tileTarget's
+ *						  current unit)
  * @return, true if a unit can be targeted
  */
 bool TileEngine::canTargetUnit(
@@ -1651,7 +1658,7 @@ BattleUnit* TileEngine::getReactor(
 }
 
 /**
- * Fires off a reaction shot.
+ * Fires off a reaction shot if possible.
  * @param unit			- pointer to the spotting unit
  * @param targetUnit	- pointer to the spotted unit
  * @return, true if a shot happens
@@ -1677,15 +1684,15 @@ bool TileEngine::reactionShot(
 
 			default:
 			case AH_NONE:
-				_rfAction->weapon = unit->getMainHandWeapon(true);
+				_rfAction->weapon = unit->getMainHandWeapon(true,true,true);
 		}
 	}
 	else // aLien .....
 	{
-		_rfAction->weapon = unit->getMainHandWeapon(true);
+		_rfAction->weapon = unit->getMainHandWeapon(true,true,true); // will get Rifle OR Melee OR Fist
 
-		if (_rfAction->weapon == nullptr)
-			_rfAction->weapon = unit->getMeleeWeapon();
+//		if (_rfAction->weapon == nullptr)
+//			_rfAction->weapon = unit->getMeleeWeapon(); // will get Melee OR Fist
 /*		if (_rfAction->weapon == nullptr
 			&& _rfAction->actor->getUnitRules() != nullptr
 			&& _rfAction->actor->getUnitRules()->getMeleeWeapon() == "STR_FIST")
@@ -1694,11 +1701,10 @@ bool TileEngine::reactionShot(
 		} */
 	}
 
-	if (_rfAction->weapon == nullptr
+	if (_rfAction->weapon == nullptr // lasers & melee are their own ammo-items and return INT_MAX for ammo-qty.
 		|| _rfAction->weapon->getRules()->canReactionFire() == false
-		|| _rfAction->weapon->getAmmoItem() == nullptr					// lasers & melee are their own ammo-items
-//		|| _rfAction->weapon->getAmmoItem()->getAmmoQuantity() == 0		// lasers & melee return INT_MAX
-		|| (_rfAction->actor->getFaction() != FACTION_HOSTILE			// is not an aLien and has unresearched weapon.
+		|| _rfAction->weapon->getAmmoItem() == nullptr
+		|| (_rfAction->actor->getFaction() != FACTION_HOSTILE
 			&& _battleSave->getGeoscapeSave()->isResearched(_rfAction->weapon->getRules()->getRequirements()) == false))
 	{
 		return false;
@@ -1753,10 +1759,10 @@ bool TileEngine::reactionShot(
 
 		if (_rfAction->weapon->getAmmoItem()->getRules()->getExplosionRadius() > 0
 			&& ai->explosiveEfficacy(
-									_rfAction->target,
-									unit,
-									_rfAction->weapon->getAmmoItem()->getRules()->getExplosionRadius(),
-									_battleSave->getBattleState()->getSavedGame()->getDifficulty()) == false)
+								_rfAction->target,
+								unit,
+								_rfAction->weapon->getAmmoItem()->getRules()->getExplosionRadius(),
+								_battleSave->getBattleState()->getSavedGame()->getDifficulty()) == false)
 		{
 			_rfAction->targeting = false;
 		}
@@ -1904,11 +1910,11 @@ void TileEngine::hit(
 {
 	if (dType == DT_NONE) return; // bypass Psi-attacks. Psi-attacks don't get this far anymore ... but safety.
 
-	const Position posTarget = Position::toTileSpace(targetVoxel);
-	Tile* const tile = _battleSave->getTile(posTarget);
+	const Position posTarget (Position::toTileSpace(targetVoxel));
+	Tile* const tile (_battleSave->getTile(posTarget));
 	if (tile == nullptr) return;
 
-	BattleUnit* targetUnit = tile->getTileUnit();
+	BattleUnit* targetUnit (tile->getTileUnit());
 
 	VoxelType voxelType;
 	if (melee == true)
@@ -1942,7 +1948,7 @@ void TileEngine::hit(
 				// DT_MELEE,	// 7
 				// DT_ACID,		// 8
 				// DT_SMOKE		// 9
-				const MapDataType partType = static_cast<MapDataType>(voxelType); // Note that MapDataType & VoxelType correspond.
+				const MapDataType partType (static_cast<MapDataType>(voxelType)); // Note that MapDataType & VoxelType correspond.
 
 				switch (dType) // round up.
 				{
@@ -1990,26 +1996,26 @@ void TileEngine::hit(
 			if (targetUnit == nullptr
 				&& _battleSave->getTile(posTarget)->hasNoFloor() == true)
 			{
-				const Tile* const tileBelow = _battleSave->getTile(posTarget + Position(0,0,-1));
+				const Tile* const tileBelow (_battleSave->getTile(posTarget + Position(0,0,-1)));
 				if (tileBelow != nullptr && tileBelow->getTileUnit() != nullptr)
 					targetUnit = tileBelow->getTileUnit();
 			}
 
 			if (targetUnit != nullptr)
 			{
-				const int antecedentWounds = targetUnit->getFatalWounds();
+				const int antecedentWounds (targetUnit->getFatalWounds());
 
 				if (attacker != nullptr
 					&& attacker->getSpecialAbility() == SPECAB_BURN) // Silacoids can set targets on fire!!
 				{
-					const float vulnr = targetUnit->getArmor()->getDamageModifier(DT_IN);
+					const float vulnr (targetUnit->getArmor()->getDamageModifier(DT_IN));
 					if (vulnr > 0.f)
 					{
 						int fire (attacker->getUnitRules()->getSpecabPower());
 						fire = RNG::generate(
 										fire / 8,
 										fire * 3 / 8);
-						const int burn = RNG::generate(0, static_cast<int>(Round(vulnr * 5.f)));
+						const int burn (RNG::generate(0, static_cast<int>(Round(vulnr * 5.f))));
 
 						targetUnit->takeDamage(
 											Position(0,0,0),
@@ -2021,11 +2027,11 @@ void TileEngine::hit(
 				} // kL_end.
 
 				const Position
-					centerUnitVoxel = Position::toVoxelSpaceCentered(
+					centerUnitVoxel (Position::toVoxelSpaceCentered(
 																targetUnit->getPosition(),
 																targetUnit->getHeight() / 2 + targetUnit->getFloatHeight() - tile->getTerrainLevel(),
-																targetUnit->getArmor()->getSize()),
-					relationalVoxel = targetVoxel - centerUnitVoxel;
+																targetUnit->getArmor()->getSize())),
+					relationalVoxel (targetVoxel - centerUnitVoxel);
 
 				double delta;
 				if (dType == DT_HE || Options::battleTFTDDamage == true)
@@ -2034,10 +2040,10 @@ void TileEngine::hit(
 					delta = 100.;
 
 				const int
-					power1 = static_cast<int>(std::floor(static_cast<double>(power) * (100. - delta) / 100.)) + 1,
-					power2 = static_cast<int>(std::ceil(static_cast<double>(power) * (100. + delta) / 100.));
+					power1 (static_cast<int>(std::floor(static_cast<double>(power) * (100. - delta) / 100.)) + 1),
+					power2 (static_cast<int>(std::ceil(static_cast<double>(power) * (100. + delta) / 100.)));
 
-				int extraPower = 0;
+				int extraPower (0);
 				if (attacker != nullptr) // bonus to damage per Accuracy (TODO: use ranks also for xCom or aLien)
 				{
 					if (   dType == DT_AP
@@ -6109,49 +6115,49 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
  */
 int TileEngine::faceWindow(const Position& pos) const
 {
-	int ret = -1;
-
-	const Tile* tile = _battleSave->getTile(pos);
-	if (tile != nullptr)
+	const Tile* tile;
+	if ((tile = _battleSave->getTile(pos)) != nullptr)
 	{
 		if (tile->getMapData(O_NORTHWALL) != nullptr
 			&& tile->getMapData(O_NORTHWALL)->stopLOS() == false)
 		{
-			ret = 0;
+			if (pos.y != 0)
+				return 0;
+			else
+				return -1; // do not look into the Void.
 		}
-		else if (tile->getMapData(O_WESTWALL) != nullptr
+
+		if (tile->getMapData(O_WESTWALL) != nullptr
 			&& tile->getMapData(O_WESTWALL)->stopLOS() == false)
 		{
-			ret = 6;
+			if (pos.x != 0)
+				return 6;
+			else
+				return -1;
 		}
 	}
 
-	tile = _battleSave->getTile(pos + Position(1,0,0));
-	if (tile != nullptr
+	if ((tile = _battleSave->getTile(pos + Position(1,0,0))) != nullptr
 		&& tile->getMapData(O_WESTWALL) != nullptr
 		&& tile->getMapData(O_WESTWALL)->stopLOS() == false)
 	{
-		ret = 2;
+		if (pos.x != _battleSave->getMapSizeX() - 1)
+			return 2;
+		else
+			return -1;
 	}
 
-	tile = _battleSave->getTile(pos + Position(0,1,0));
-	if (tile != nullptr
+	if ((tile = _battleSave->getTile(pos + Position(0,1,0))) != nullptr
 		&& tile->getMapData(O_NORTHWALL) != nullptr
 		&& tile->getMapData(O_NORTHWALL)->stopLOS() == false)
 	{
-		ret = 4;
+		if (pos.y != _battleSave->getMapSizeY() - 1)
+			return 4;
+		else
+			return -1;
 	}
 
-
-	if ((ret == 0 && pos.y == 0) // do not look into the Void
-		|| (ret == 2 && pos.x == _battleSave->getMapSizeX() - 1)
-		|| (ret == 4 && pos.y == _battleSave->getMapSizeY() - 1)
-		|| (ret == 6 && pos.x == 0))
-	{
-		return -1;
-	}
-
-	return ret;
+	return -1;
 }
 
 /**

@@ -983,6 +983,8 @@ void UnitWalkBState::doStatusTurn() // private.
 
 /**
  * Handles some calculations when the path is finished.
+ * @note Used mostly to finish an AI BA_MOVE but also to set player-units' TU to
+ * zero after panick. Also updates lighting, FoV, sprites, and pops state.
  */
 void UnitWalkBState::postPathProcedures() // private.
 {
@@ -991,9 +993,9 @@ void UnitWalkBState::postPathProcedures() // private.
 
 	if (_unit->getFaction() != FACTION_PLAYER)
 	{
-		int dir (_action.finalFacing);
+		int dir;
 
-		if (_action.finalAction == true)
+		if (_action.finalAction == true) // set by AlienBAI Ambush/Escape.
 			_unit->dontReselect();
 
 		if (_unit->getChargeTarget() != nullptr)
@@ -1019,10 +1021,10 @@ void UnitWalkBState::postPathProcedures() // private.
 				action.target = posTarget;
 				action.targeting = true;
 				action.type = BA_MELEE;
-//				action.weapon = _unit->getMainHandWeapon(false);
-				action.weapon = _unit->getMeleeWeapon();
+				action.weapon = _unit->getMeleeWeapon(); // will get Melee OR Fist
 
-// if (action.weapon == nullptr)
+//				if (action.weapon == nullptr)
+//				{
 /*				const std::string meleeWeapon = _unit->getMeleeWeapon();
 				bool instaWeapon = false;
 
@@ -1064,7 +1066,6 @@ void UnitWalkBState::postPathProcedures() // private.
 					action.weapon = nullptr;
 				} */
 
-
 				if (action.weapon != nullptr) // also checked in getActionTu() & ProjectileFlyBState::init()
 				{
 					action.TU = _unit->getActionTu(action.type, action.weapon);
@@ -1075,19 +1076,19 @@ void UnitWalkBState::postPathProcedures() // private.
 				}
 			}
 		}
-		else if (_unit->isHiding() == true)
+		else if (_unit->isHiding() == true) // set by AI_ESCAPE Mode.
 		{
-//			dir = _unit->getUnitDirection() + 4; // just remove this so I don't have to look at Sectopod arses.
 			_unit->setHiding(false);
 			_unit->dontReselect();
+			dir = RNG::generate(0,7);
+//			dir = (_unit->getUnitDirection() + 4) % 8;
 		}
-
-		if (dir == -1)
+		else if ((dir = _action.finalFacing) == -1) // set by AlienBAIState::setupAmbush() & selectFirePosition()
 			dir = getFinalDirection();
 
 		if (dir != -1)
 		{
-			_unit->setDirectionTo(dir % 8);
+			_unit->setDirectionTo(dir);
 			while (_unit->getUnitStatus() == STATUS_TURNING)
 			{
 				_unit->turn();
@@ -1151,7 +1152,6 @@ int UnitWalkBState::getFinalDirection() const // private.
 										_unit->getPosition(),
 										unitFaced->getPosition());
 	}
-
 	return -1;
 }
 

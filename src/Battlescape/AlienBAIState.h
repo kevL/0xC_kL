@@ -58,9 +58,7 @@ private:
 		_tuAmbush;
 //		_reserveTUs;
 
-	std::vector<size_t>
-		_reachable,
-		_reachableAttack;
+	std::vector<size_t> _reachableAttack;
 //		_wasHitBy;
 
 	BattleAction
@@ -101,7 +99,7 @@ private:
 	/// Selects the nearest reachable position relative to a target.
 	bool selectMeleePosition(
 			const BattleUnit* const targetUnit,
-			int maxTuCost) const;
+			int maxTuCost);
 
 	/// Sets up a melee/charge sub-action of AI_COMBAT.
 	void meleeAction();

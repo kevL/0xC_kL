@@ -135,7 +135,7 @@ private:
 				const BattleUnit* const launchTarget = nullptr,
 				bool strafeRejected = false);
 
-		/// Gets all reachable tiles based on cost.
+		/// Gets all reachable tile-indices based on TU.
 		std::vector<size_t> findReachable(
 				const BattleUnit* const unit,
 				int maxTuCost);

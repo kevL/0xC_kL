@@ -75,14 +75,14 @@ BattleItem::BattleItem(
 		_painKiller	= _itRule->getPainKillerQuantity();
 		_stimulant	= _itRule->getStimulantQuantity();
 	}
-	else if (_itRule->getCompatibleAmmo()->empty() == true	// These weapons do not need ammo;
-		&& (_itRule->getBattleType() == BT_FIREARM			// '_ammoItem' points to the weapon itself.
-			|| _itRule->getBattleType() == BT_MELEE))
+	else if (_itRule->getBattleType() == BT_MELEE				// Melee weapons do NOT take ammo atm.
+		|| (_itRule->getBattleType() == BT_FIREARM				// These weapons do not need ammo -->
+			&& _itRule->getCompatibleAmmo()->empty() == true))	// '_ammoItem' points to the weapon itself.
 	{
 		// lasers, melee, etc have "clipsize -1"
 //		setAmmoQuantity(-1);	// needed for melee-item reaction hits, etc. (can be set in Ruleset but do it here)
 								// Except that it creates problems w/ TANKS returning to Base. So do it in Ruleset:
-								// melee items need "clipSize -1" to do reactionFire.
+								// melee items need "clipSize -1" to do reactionFire. Unless i changed it ....
 		_ammoItem = this;
 	}
 }

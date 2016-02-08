@@ -44,6 +44,8 @@ BattleAIState::BattleAIState(
 		_unitAggro(nullptr),
 		_spottersOrigin(0),
 		_tuEscape(-1)
+//		_pf(battleSave->getPathfinding())	// <- needs to be set after BAI are created.
+//		_te(battleSave->getTileEngine())	// <- needs to be set after BAI are created.
 {
 //	_traceAI = Options::traceAI;
 }
@@ -114,6 +116,7 @@ YAML::Node BattleAIState::save() const // virtual.
 
 /**
  * Runs any code the state needs to keep updating every AI cycle.
+ * Called by BattleUnit::think().
  * @param action - (possible) AI BattleAction to execute after thinking is done.
  */
 void BattleAIState::think(BattleAction* const) // virtual.
