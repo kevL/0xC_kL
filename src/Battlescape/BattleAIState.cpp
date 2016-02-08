@@ -44,8 +44,6 @@ BattleAIState::BattleAIState(
 		_unitAggro(nullptr),
 		_spottersOrigin(0),
 		_tuEscape(-1)
-//		_pf(battleSave->getPathfinding())	// <- needs to be set after BAI are created.
-//		_te(battleSave->getTileEngine())	// <- needs to be set after BAI are created.
 {
 //	_traceAI = Options::traceAI;
 }

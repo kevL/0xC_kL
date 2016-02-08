@@ -22,6 +22,7 @@
 #include "../Engine/RNG.h"
 
 #include "../Savegame/BattleUnit.h"
+#include "../Savegame/SavedBattleGame.h"
 
 
 namespace OpenXcom
@@ -33,8 +34,8 @@ namespace OpenXcom
  * @param unit		- pointer to a panicking BattleUnit
  */
 UnitPanicBState::UnitPanicBState(
-		BattlescapeGame* parent,
-		BattleUnit* unit)
+		BattlescapeGame* const parent,
+		BattleUnit* const unit)
 	:
 		BattleState(parent),
 		_unit(unit)
@@ -57,19 +58,20 @@ UnitPanicBState::~UnitPanicBState()
  */
 void UnitPanicBState::think()
 {
-	if (_unit != nullptr)
+	if (_unit->isOut_t(OUT_STAT) == false)
 	{
-		if (_unit->isOut_t(OUT_STAT) == false)
-		{
-			_unit->setUnitStatus(STATUS_STANDING);
-			_unit->moraleChange(10 + RNG::generate(0,10));
-		}
-
-		_unit->setTimeUnits(0);
-		_unit->setDashing(false);
+		_unit->setUnitStatus(STATUS_STANDING);
+		_unit->moraleChange(10 + RNG::generate(0,10));
 	}
 
-	_parent->setupSelector();
+	_unit->setTimeUnits(0);
+	_unit->setDashing(false);
+
+	if (_parent->getBattleSave()->getSide() == FACTION_PLAYER
+		|| _parent->getBattleSave()->getDebugTac() == true)
+	{
+		_parent->setupSelector();
+	}
 	_parent->popState();
 }
 

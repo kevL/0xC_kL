@@ -535,8 +535,7 @@ void BattlescapeGame::popState()
 			|| _battleSave->getSelectedUnit()->isOut_t() == true)
 		{
 			//Log(LOG_INFO) << ". unit incapacitated: cancelAction & deSelect)";
-			cancelTacticalAction();	// note that this *will* setupSelector() under certain
-			setupSelector();		// circumstances - eg, if current action was targetting.
+			cancelTacticalAction();
 			_battleSave->setSelectedUnit(nullptr);
 		}
 
@@ -2193,7 +2192,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 		unit->setUnitStatus(STATUS_STANDING);
 		BattleAction action;
 		action.actor = unit;
-		int tu = unit->getTimeUnits();
+		int tu (unit->getTimeUnits());
 
 		switch (status)
 		{

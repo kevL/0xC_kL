@@ -2181,10 +2181,10 @@ void BattlescapeState::selectNextPlayerUnit(
 	if (allowButtons() == true
 		&& _battleGame->getTacticalAction()->type == BA_NONE)
 	{
-		BattleUnit* const unit = _battleSave->selectNextFactionUnit(
+		BattleUnit* const unit (_battleSave->selectNextFactionUnit(
 																checkReselect,
 																dontReselect,
-																checkInventory);
+																checkInventory));
 		updateSoldierInfo();
 
 		if (unit != nullptr)
@@ -2209,10 +2209,10 @@ void BattlescapeState::selectPreviousPlayerUnit(
 	if (allowButtons() == true
 		&& _battleGame->getTacticalAction()->type == BA_NONE)
 	{
-		BattleUnit* const unit = _battleSave->selectPreviousFactionUnit(
+		BattleUnit* const unit (_battleSave->selectPreviousFactionUnit(
 																	checkReselect,
 																	dontReselect,
-																	checkInventory);
+																	checkInventory));
 		updateSoldierInfo();
 
 		if (unit != nullptr)
