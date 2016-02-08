@@ -212,8 +212,8 @@ void AlienBAIState::think(BattleAction* const action)
 
 	if (tuPre > -1)
 		_reachableAttack = _pf->findReachable(_unit, tuPre); // TODO: Let aLiens turn-to-shoot w/out extra Tu.
-//	else
-//		_reachableAttack.clear(); // tidy.
+	else
+		_reachableAttack.clear();
 
 
 	// NOTE: These setups probly have an order: Escape, Ambush, Attack, Patrol.
@@ -420,7 +420,7 @@ void AlienBAIState::think(BattleAction* const action)
 }
 
 /**
- * Sets up a patrol action for AI_PATROL Mode.
+ * Sets up a BattleAction for AI_PATROL Mode.
  * @note This is mainly going from node to node & moving about the map -
  * handles Node selection.
  * @note Fills out the '_patrolAction' with useful data.
@@ -663,7 +663,7 @@ void AlienBAIState::setupAttack() // private.
 }
 
 /**
- * Sets up an ambush action for AI_AMBUSH Mode.
+ * Sets up a BattleAction for AI_AMBUSH Mode.
  * @note The idea is to check within a 11x11 tile square for a tile which is not
  * seen by the aggroTarget but that can be reached by him/her. Then intuit where
  * AI will see that target first from a covered position and set that as the
@@ -776,10 +776,6 @@ void AlienBAIState::setupAmbush() // private.
 		{
 			_ambushAction->type = BA_MOVE;
 			originVoxel = _te->getSightOriginVoxel(_unit, &_ambushAction->target);
-//			originVoxel = Position::toVoxelSpaceCentered(
-//													_ambushAction->target,
-//													_unit->getHeight(true) - 4
-//														- _battleSave->getTile(_ambushAction->target)->getTerrainLevel());
 			Position posNext;
 
 			_pf->setPathingUnit(_unitAggro);
@@ -815,7 +811,7 @@ void AlienBAIState::setupAmbush() // private.
 }
 
 /**
- * Sets up moving for cover for AI_ESCAPE Mode.
+ * Sets up a BattleAction for AI_ESCAPE Mode.
  * @note The idea is to check within a 11x11 tile square for a tile that is not
  * seen by '_unitAggro'. If there is no such tile run away from the target.
  * @note Fills out the '_escapeAction' with useful data.
@@ -1518,7 +1514,7 @@ bool AlienBAIState::selectFirePosition() // private.
  */
 bool AlienBAIState::selectMeleePosition( // private.
 		const BattleUnit* const targetUnit,
-		int maxTuCost)
+		int maxTuCost) const
 {
 	bool ret (false);
 
@@ -1936,7 +1932,6 @@ bool AlienBAIState::grenadeAction() // private.
 				action.type = BA_THROW;
 
 				const Position
-//					originVoxel (_battleSave->getTileEngine()->getOriginVoxel(action)),
 					originVoxel (_battleSave->getTileEngine()->getSightOriginVoxel(_unit)),
 					targetVoxel (Position::toVoxelSpaceCentered(
 															action.target,

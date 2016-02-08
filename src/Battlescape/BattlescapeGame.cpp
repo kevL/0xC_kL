@@ -123,6 +123,7 @@ BattlescapeGame::BattlescapeGame(
 	{
 		(*i)->setBattleForUnit(this);
 	}
+
 	// sequence of instantiations:
 	// - SavedBattleGame
 	// - BattlescapeGenerator

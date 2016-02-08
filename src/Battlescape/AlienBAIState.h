@@ -99,7 +99,7 @@ private:
 	/// Selects the nearest reachable position relative to a target.
 	bool selectMeleePosition(
 			const BattleUnit* const targetUnit,
-			int maxTuCost);
+			int maxTuCost) const;
 
 	/// Sets up a melee/charge sub-action of AI_COMBAT.
 	void meleeAction();
