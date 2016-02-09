@@ -1083,7 +1083,7 @@ void UnitWalkBState::postPathProcedures() // private.
 			dir = RNG::generate(0,7);
 //			dir = (_unit->getUnitDirection() + 4) % 8;
 		}
-		else if ((dir = _action.finalFacing) == -1) // set by AlienBAIState::setupAmbush() & selectFirePosition()
+		else if ((dir = _action.finalFacing) == -1) // set by AlienBAIState::setupAmbush() & findFirePosition()
 			dir = getFinalDirection();
 
 		if (dir != -1)

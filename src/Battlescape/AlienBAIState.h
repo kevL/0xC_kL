@@ -95,9 +95,9 @@ private:
 	bool selectTarget();
 
 	/// Selects a suitable position from which to shoot.
-	bool selectFirePosition();
+	bool findFirePosition();
 	/// Selects the nearest reachable position relative to a target.
-	bool selectMeleePosition(
+	bool findMeleePosition(
 			const BattleUnit* const targetUnit,
 			int maxTuCost) const;
 
@@ -112,7 +112,7 @@ private:
 	/// Sets up a shot-projectile sub-action of AI_COMBAT.
 	void rifleAction();
 	/// Selects a fire method for a shot-projectile action.
-	void selectFireMethod();
+	void chooseFireMethod();
 	/// Sets up a throw-grenade sub-action of AI_COMBAT.
 	bool grenadeAction();
 	/// Sets up a psionic sub-action of AI_COMBAT.
@@ -125,7 +125,7 @@ private:
 			bool includeCivs = false) const;
 
 	/// Chooses between a melee or ranged attack if both are available.
-	void selectMeleeOrRanged();
+	void chooseMeleeOrRanged();
 
 
 	public:
@@ -147,9 +147,9 @@ private:
 
 		/// Decides if it's okay to create an explosion.
 		bool explosiveEfficacy(
-				const Position& posTarget,
+				const Position& pos,
 				const BattleUnit* const attacker,
-				const int explRadius,
+				const int radius,
 				const int diff) const;
 //				bool grenade = false) const;
 

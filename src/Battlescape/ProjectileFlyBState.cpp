@@ -156,7 +156,7 @@ void ProjectileFlyBState::init()
 
 
 	// autoshot will default back to snapshot if it's not possible
-	// This shouldn't happen w/ selectFireMethod() properly in place.
+	// This shouldn't happen w/ chooseFireMethod() properly in place.
 	if (_action.type == BA_AUTOSHOT
 		&& _action.weapon->getRules()->getAccuracyAuto() == 0)
 	{

@@ -2926,7 +2926,7 @@ ActiveHand BattleUnit::getActiveHand()
 /**
  * Gets the 'main hand weapon' of this BattleUnit.
  * @note A call to this function also sets the Active-hand.
- * @param quickest	- true to choose the quickest weapon
+ * @param quickest	- true to choose the quickest weapon (default false)
  * @param inclMelee	- true to include check for melee weapon (default true)
  * @param checkFist	- true to include a check for the universalFist (default false)
  *					  false to bypass Fist, or to engage handleUnitAI() -> pickupItem().

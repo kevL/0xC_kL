@@ -254,6 +254,8 @@ int BattleItem::setAmmoItem(
 			{
 				_ammoItem = item;
 				_ammoItem->_isLoad = true;
+				_ammoItem->_inventoryX =
+				_ammoItem->_inventoryY = 0;
 				if (loadSave == false)
 				{
 					_ammoItem->setInventorySection();

@@ -595,7 +595,7 @@ private:
 
 		/// Gets the item in this unit's main hand.
 		BattleItem* getMainHandWeapon(
-				bool quickest,
+				bool quickest = false,
 				bool inclMelee = true,
 				bool checkFist = false);
 		/// Gets a grenade if possible.

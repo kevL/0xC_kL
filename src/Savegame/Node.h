@@ -76,9 +76,9 @@ private:
 										// NOTE: getNodeType() is also used in SavedBattleGame::getPatrolNode() <- ie, it's not about spawning only; it affects patrolling also.
 			TYPE_LARGEFLYING	= 0x04,	// kL_add
 			TYPE_LARGE			= 0x08,	// kL_add (not used... equivalent to Any)
-			TYPE_DANGEROUS		= 0x10,	// kL_changed from 0x04[ie.large] -> an alien was shot here, stop patrolling to it like an idiot with a death wish
+			TYPE_DANGEROUS		= 0x10,	// kL_changed from 0x04[ie.large] -> an aLien was shot here, stop patrolling to it like an idiot with a death wish
 
-			nodeRank[8][8]; // maps node-ranks (.RMP) to aliens' ranks
+			nodeRank[8][8]; // maps node-ranks (.RMP) to aLiens' ranks
 
 		/// Creates a Node.
 		Node();

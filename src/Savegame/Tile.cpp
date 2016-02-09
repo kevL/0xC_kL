@@ -486,7 +486,7 @@ DoorResult Tile::openDoor(
 
 			if (unit != nullptr
 				&& unit->getTimeUnits() < _objects[partType]->getTuCostPart(unit->getMoveTypeUnit()))
-//											+ unit->getActionTu(reserved, unit->getMainHandWeapon(false)))
+//											+ unit->getActionTu(reserved, unit->getMainHandWeapon()))
 			{
 				return DR_ERR_TU;
 			}
@@ -508,7 +508,7 @@ DoorResult Tile::openDoor(
 			{
 				if (unit != nullptr
 					&& unit->getTimeUnits() < _objects[partType]->getTuCostPart(unit->getMoveTypeUnit()))
-//												+ unit->getActionTu(reserved, unit->getMainHandWeapon(false)))
+//												+ unit->getActionTu(reserved, unit->getMainHandWeapon()))
 				{
 					return DR_ERR_TU;
 				}

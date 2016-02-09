@@ -1741,7 +1741,7 @@ bool TileEngine::reactionShot(
 	else
 	{
 		_rfAction->type = BA_NONE;
-		selectFireMethod(*_rfAction); // choose BAT & setTU req'd.
+		chooseFireMethod(*_rfAction); // choose BAT & setTU req'd.
 
 		if (_rfAction->type == BA_NONE) return false;
 	}
@@ -1792,7 +1792,7 @@ bool TileEngine::reactionShot(
  * Selects a fire method based on range & time units.
  * @param action - reference a BattleAction struct
  */
-void TileEngine::selectFireMethod(BattleAction& action) // <- TODO: this action ought be replaced w/ _rfAction, i think.
+void TileEngine::chooseFireMethod(BattleAction& action) // <- TODO: this action ought be replaced w/ _rfAction, i think.
 {
 	const RuleItem* const itRule (action.weapon->getRules());
 	const int dist (_battleSave->getTileEngine()->distance(

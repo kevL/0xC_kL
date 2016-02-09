@@ -685,7 +685,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	_AIActionCounter = action.AIcount;
 
 	if (unit->getFaction() == FACTION_HOSTILE
-		&& unit->getMainHandWeapon(false) == nullptr
+		&& unit->getMainHandWeapon() == nullptr
 		&& unit->getRankString() != "STR_LIVE_TERRORIST"
 		&& pickupItem(&action) == true
 		&& _battleSave->getDebugTac() == true) // <- order matters.
@@ -2023,7 +2023,7 @@ bool BattlescapeGame::checkReservedTu(
 
 		default:
 		case AH_NONE:
-			weapon = unit->getMainHandWeapon(false);
+			weapon = unit->getMainHandWeapon();
 	}
 
 	if (weapon != nullptr)

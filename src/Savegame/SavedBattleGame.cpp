@@ -1901,7 +1901,7 @@ Node* SavedBattleGame::getNearestNode(const BattleUnit* const unit) const
 {
 	Node* node (nullptr);
 	int
-		dist = 1000000,
+		dist (1000000),
 		distTest;
 
 	for (std::vector<Node*>::const_iterator
@@ -1940,13 +1940,11 @@ bool SavedBattleGame::isNodeType(
 		const BattleUnit* const unit) const
 {
 	const int type (node->getNodeType());
-
-	if (type & Node::TYPE_DANGEROUS)
-		return false;
-
 	if (type == 0)
 		return true;
 
+	if (type & Node::TYPE_DANGEROUS)
+		return false;
 
 	if (type & Node::TYPE_FLYING)
 		return unit->getMoveTypeUnit() == MT_FLY
@@ -1960,11 +1958,6 @@ bool SavedBattleGame::isNodeType(
 
 	return true;
 }
-//	&& (!(node->getNodeType() & Node::TYPE_SMALL)		// the small unit bit is not set
-//		|| unit->getArmor()->getSize() == 1)				// or the unit is small
-//	&& (!(node->getNodeType() & Node::TYPE_FLYING)		// the flying unit bit is not set
-//		|| unit->getMovementType() == MT_FLY)				// or the unit can fly
-//	&& !(node->getNodeType() & Node::TYPE_DANGEROUS)	// don't go there if an alien got shot there; stupid behavior like that
 
 /**
  * Carries out new turn preparations such as fire and smoke spreading.

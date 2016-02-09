@@ -194,7 +194,7 @@ private:
 				BattleUnit* const unit,
 				const BattleUnit* const targetUnit);
 		/// Selects a fire method based on range & time units.
-		void selectFireMethod(BattleAction& action);
+		void chooseFireMethod(BattleAction& action);
 		/// Gets the unique reaction fire BattleAction struct.
 //		BattleAction* getRfAction();
 		/// Gets the reaction fire shot list.
