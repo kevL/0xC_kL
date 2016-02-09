@@ -83,12 +83,12 @@ ActionMenuState::ActionMenuState(
 	}
 
 	// Build the popup menu
-	const RuleItem* const itRule = _action->weapon->getRules();
-	size_t id = 0;
+	const RuleItem* const itRule (_action->weapon->getRules());
+	size_t id (0);
 
-	const bool hasHands = _action->actor->getGeoscapeSoldier() != nullptr
-					   || _action->actor->getUnitRules()->hasHands() == true
-					   || _action->weapon->getRules()->isFixed() == true;
+	const bool hasHands (_action->actor->getGeoscapeSoldier() != nullptr
+					  || _action->actor->getUnitRules()->hasHands() == true
+					  || _action->weapon->getRules()->isFixed() == true);
 
 	if (itRule->isFixed() == false) // Throw & Drop (if not a fixed weapon)
 	{
@@ -246,8 +246,8 @@ ActionMenuState::ActionMenuState(
 			&& canExecuteTarget() == true)
 		{
 			addItem(
-					BA_EXECUTE,
-					"STR_EXECUTE",
+					BA_LIQUIDATE,
+					"STR_LIQUIDATE",
 					&id);
 		}
 	}
@@ -442,7 +442,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 				_game->popState();
 				break;
 
-			case BA_EXECUTE:
+			case BA_LIQUIDATE:
 				_game->popState();
 				_game->pushState(new ExecuteState(_action));
 				break;

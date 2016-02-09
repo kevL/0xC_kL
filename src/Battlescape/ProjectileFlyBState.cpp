@@ -778,9 +778,6 @@ void ProjectileFlyBState::think()
 			if (_unit->isOut_t() == false && _action.type != BA_MELEE)
 				_unit->setUnitStatus(STATUS_STANDING);
 
-//			if (_battleSave->getSide() == FACTION_PLAYER || _battleSave->getDebugTac() == true)
-//				_parent->setupSelector(); // <- not yet! Do it in popState() when everything is finished.
-
 			_parent->popState();
 		}
 	}

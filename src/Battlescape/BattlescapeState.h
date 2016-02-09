@@ -232,7 +232,7 @@ private:
 	/// Animates a target cursor over hostile unit when hostileUnit indicator is clicked.
 	void hostileTargeter();
 	/// Draws an execution explosion on the Map.
-	void executionExplosion();
+	void liquidationExplosion();
 	/// Draws a shotgun blast explosion on the Map.
 	void shotgunExplosion();
 

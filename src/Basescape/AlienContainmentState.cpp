@@ -108,7 +108,7 @@ AlienContainmentState::AlienContainmentState(
 	if (_origin == OPT_BATTLESCAPE)
 	{
 		_window->setBackground(_game->getResourcePack()->getSurface("BACK04.SCR"));
-		st = "STR_EXECUTE";
+		st = "STR_LIQUIDATE";
 	}
 	else
 	{

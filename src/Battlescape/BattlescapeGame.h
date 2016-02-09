@@ -66,7 +66,7 @@ enum BattleActionType
 	BA_DROP,		// 15
 	BA_PSICONFUSE,	// 16 reduces victim's TU
 	BA_PSICOURAGE,	// 17 increases morale of ally
-	BA_EXECUTE		// 18
+	BA_LIQUIDATE	// 18
 };
 
 /**
@@ -151,8 +151,8 @@ struct BattleAction
 		finalAction = false;
 		AIcount = 0;
 		takenXp = false;
-//		pauseAfterShot = false;
 		waypoints.clear();
+//		pauseAfterShot = false;
 	}
 
 	/**
@@ -230,8 +230,8 @@ private:
 	/// Ends the AI turn.
 	void endAiTurn();
 
-	/// Summary execution.
-	void executeUnit();
+	/// Coup de grace - a non-target action.
+	void liquidateUnit();
 	/// Ends the turn.
 	void endTurn();
 	/// Picks the first soldier that is panicking.
@@ -409,10 +409,10 @@ private:
 		/// Sets up a mission complete notification.
 		void objectiveDone();
 
-		/// Gets if an execution is underway.
-		bool getExecution() const;
-		/// Finishes an execution.
-		void endExecution();
+		/// Gets if a coup-de-grace action is underway and needs to be animated.
+		bool getLiquidate() const;
+		/// Finishes a coup-de-grace action.
+		void endLiquidate();
 
 		/// Sets if a shotgun blast is underway.
 		void setShotgun(bool shotgun = true);

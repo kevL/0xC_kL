@@ -518,22 +518,18 @@ void AlienBAIState::setupPatrol() // private.
 			}
 		}
 	}
-	else
+	else if (_startNode != nullptr
+		&& _startNode->getNodeRank() != NR_SCOUT
+		&& (_battleSave->getTile(_unit->getPosition()) == nullptr // <- shouldn't be necessary.
+			|| _battleSave->getTile(_unit->getPosition())->getFire() == 0)
+		&& (_battleSave->isCheating() == false
+			|| RNG::percent(_unit->getAggression() * 25) == false))
 	{
 		// After turn 20 or if the morale is low aLiens move out of the UFO to scout.
 		// kL_note: That, above is wrong. Orig behavior depends on "aggression" setting;
 		// determines whether aliens come out of UFO to scout/search (attack, actually).
 		// Also anyone standing in fire should also probably move ....
-		if (_startNode != nullptr
-			&& _startNode->getNodeRank() != NR_SCOUT
-			&& (_battleSave->getTile(_unit->getPosition()) == nullptr // <- shouldn't be necessary.
-				|| _battleSave->getTile(_unit->getPosition())->getFire() == 0)
-			&& (_battleSave->isCheating() == false
-				|| RNG::percent(_unit->getAggression() * 25) == false))
-		{
 			scout = false;
-		}
-
 	}
 
 	if (_stopNode == nullptr)
@@ -2048,7 +2044,7 @@ bool AlienBAIState::psiAction() // private.
 
 		int tuCost (_unit->getActionTu(BA_PSIPANIC, itRule));
 		if (_tuEscape != -1)
-			tuCost += _tuEscape; // check if aLien has the required TUs and can still make it to cover
+			tuCost += _tuEscape;
 		//Log(LOG_INFO) << "AlienBAIState::psiAction() tuCost = " << tuCost;
 		if (_unit->getTimeUnits() >= tuCost)
 		{
@@ -2122,25 +2118,16 @@ bool AlienBAIState::psiAction() // private.
 					&& _attackAction->weapon->getAmmoItem())
 				{
 					if (_attackAction->weapon->getAmmoItem()->getRules()->getPower() > chance)
-					{
-						//Log(LOG_INFO) << "AlienBAIState::psiAction() EXIT 2, False";
 						return false;
-					}
 				}
 				else if (RNG::generate(35, 155) > chance)
-				{
-					//Log(LOG_INFO) << "AlienBAIState::psiAction() EXIT 3, False";
-					return false;
-				} */
-
-				//if (_traceAI) Log(LOG_INFO) << "making a psionic attack this turn";
+					return false; */
 
 				_unitAggro = unitTarget;
 				_psiAction->target = unitTarget->getPosition();
 
 				const int morale (unitTarget->getMorale());
-				if (morale > 0)		// panicAtk is valid since target has morale to chew away
-//					&& choice < 30)	// esp. if aLien atkStr is low
+				if (morale > 0) //&& choice < 30 // panicAtk is valid since target has morale to chew away esp. if aLien atkStr is low
 				{
 					//Log(LOG_INFO) << ". . test if MC or Panic";
 					const int bravery (unitTarget->getBattleStats()->bravery);

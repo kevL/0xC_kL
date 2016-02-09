@@ -76,7 +76,7 @@ ExecuteState::ExecuteState(BattleAction* const action)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK02.SCR"));
 	_window->setHighContrast();
 
-	_txtTitle->setText(tr("STR_EXECUTE"));
+	_txtTitle->setText(tr("STR_LIQUIDATE"));
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setHighContrast();
 	_txtTitle->setBig();

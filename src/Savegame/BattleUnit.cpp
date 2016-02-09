@@ -2012,9 +2012,9 @@ int BattleUnit::getActionTu(
 			cost = itRule->getMeleeTu();
 			break;
 
-		case BA_EXECUTE:
+		case BA_LIQUIDATE:
 			cost = 19; // flat rate.
-		break;
+			break;
 
 		case BA_USE:
 		case BA_PSIPANIC:
@@ -2041,7 +2041,7 @@ int BattleUnit::getActionTu(
 			|| bat == BA_THROW)
 		&& bat != BA_DEFUSE
 		&& bat != BA_DROP
-		&& bat != BA_EXECUTE)
+		&& bat != BA_LIQUIDATE)
 	{
 		return std::max(1,
 						static_cast<int>(std::floor(static_cast<double>(getBattleStats()->tu * cost) / 100.)));

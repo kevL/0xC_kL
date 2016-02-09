@@ -120,19 +120,19 @@ void Pathfinding::setPathingUnit(BattleUnit* const unit)
  */
 void Pathfinding::setMoveType() // private.
 {
-	_mType = _unit->getMoveTypeUnit();
-
-	if (_alt == true // this forces soldiers in flyingsuits to walk on (or fall to) the ground.
-		&& _mType == MT_FLY
+	if ((_mType = _unit->getMoveTypeUnit()) == MT_FLY
+		&& _alt == true // this forces soldiers in flyingsuits to walk on (or fall to) the ground.
 		&& _unit->getGeoscapeSoldier() != nullptr)
+	{
+		_mType = MT_WALK;
+	}
+}
 //			|| _unit->getUnitRules()->isMechanical() == false)	// hovertanks & cyberdiscs always hover.
 //		&& _unit->getRaceString() != "STR_FLOATER"				// floaters always float
 //		&& _unit->getRaceString() != "STR_CELATID"				// celatids always .. float.
 //		&& _unit->getRaceString() != "STR_ETHEREAL")			// Ethereals *can* walk, but they don't like to.
-	{															// Should turn this into Ruleset param: 'alwaysFloat'
-		_mType = MT_WALK;										// or use floatHeight > 0 or something-like-that
-	}
-}
+// Should turn this into Ruleset param: 'alwaysFloat'
+// or use floatHeight > 0 or something-like-that
 
 /**
  * Sets keyboard input modifiers.
@@ -187,9 +187,6 @@ void Pathfinding::calculate(
 		bool strafeRejected)
 {
 	//Log(LOG_INFO) << "Pathfinding::calculate()";
-//	_path.clear();
-//	_tuCostTotal = 0;
-
 	// i'm DONE with these out of bounds errors.
 	// kL_note: I really don't care what you're "DONE" with ..... if you're going
 	// to cry like a babby, at least make it humorous -- like
@@ -203,7 +200,6 @@ void Pathfinding::calculate(
 		return;
 	}
 
-//	setInputModifiers();
 	abortPath();
 
 	setMoveType(); // redundant in some cases ...

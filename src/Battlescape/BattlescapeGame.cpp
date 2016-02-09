@@ -704,6 +704,28 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 								->play(-1, getMap()->getSoundAngle(unit->getPosition()));
 	}
 
+	Log(LOG_INFO)
+			<< "\n"
+			<< "type = " << BattleAction::debugActionType(action.type) << "\n"
+			<< "actor = " << (action.actor ? std::to_string(action.actor->getId()) : "NONE") << "\n"
+			<< "targetUnit = " << (action.targetUnit ? std::to_string(action.targetUnit->getId()) : "NONE") << "\n"
+			<< "weapon = " << (action.weapon ? action.weapon->getRules()->getType() : "NONE") << "\n"
+			<< "TU = " << action.TU << "\n"
+			<< "targeting = " << action.targeting << "\n"
+			<< "value = " << action.value << "\n"
+			<< "result = " << action.result << "\n"
+			<< "strafe = " << action.strafe << "\n"
+			<< "dash = " << action.dash << "\n"
+			<< "diff = " << action.diff << "\n"
+			<< "autoShotCount = " << action.autoShotCount << "\n"
+			<< "cameraPosition = " << action.cameraPosition << "\n"
+			<< "desperate = " << action.desperate << "\n"
+			<< "finalFacing = " << action.finalFacing << "\n"
+			<< "finalAction = " << action.finalAction << "\n"
+			<< "AIcount = " << action.AIcount << "\n"
+			<< "takenXp = " << action.takenXp << "\n"
+			<< "waypoints = " << (action.waypoints.empty() ? "NONE" : "yes");
+
 	switch (action.type)
 	{
 		case BA_MOVE:
@@ -795,7 +817,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 					} */
 			}
 
-			Log(LOG_INFO) << ". ATTACK action.Type = " << BattleAction::debugActionType(action.type)
+			Log(LOG_INFO) << "BATTLESCAPE: Attack action.Type = " << BattleAction::debugActionType(action.type)
 						  << " action.Target = " << action.target
 						  << " action.Weapon = " << action.weapon->getRules()->getName().c_str();
 			statePushBack(new ProjectileFlyBState(this, action));
@@ -979,11 +1001,11 @@ void BattlescapeGame::handleNonTargetAction()
 				}
 			break;
 
-			case BA_EXECUTE:
+			case BA_LIQUIDATE:
 				if (_tacAction.result.empty() == false)
 					showWarning = 1;
 				else if (_tacAction.targetUnit != nullptr)
-					executeUnit();
+					liquidateUnit();
 		}
 
 		if (showWarning != 0)
@@ -1007,9 +1029,9 @@ void BattlescapeGame::handleNonTargetAction()
 }
 
 /**
- * Summary execution.
+ * Coup de grace - a non-target action.
  */
-void BattlescapeGame::executeUnit() // private.
+void BattlescapeGame::liquidateUnit() // private.
 {
 	_tacAction.actor->aim();
 	_tacAction.actor->clearCache();
@@ -3596,18 +3618,18 @@ void BattlescapeGame::objectiveDone()
 }
 
 /**
- * Gets if an execution is underway and needs animation.
+ * Gets if a coup-de-grace action is underway and needs to be animated.
  * @return, true if execute
  */
-bool BattlescapeGame::getExecution() const
+bool BattlescapeGame::getLiquidate() const
 {
 	return _executeProgress;
 }
 
 /**
- * Finishes an execution.
+ * Finishes a coup-de-grace action.
  */
-void BattlescapeGame::endExecution()
+void BattlescapeGame::endLiquidate()
 {
 	_executeProgress = false;
 }
@@ -3622,7 +3644,7 @@ void BattlescapeGame::setShotgun(bool shotgun)
 }
 
 /**
- * Gets if a shotgun blast is underway and needs animation.
+ * Gets if a shotgun blast is underway and needs to be animated.
  * @return, true if shotgun
  */
 bool BattlescapeGame::getShotgun() const

@@ -3396,8 +3396,8 @@ void BattlescapeState::animate()
 				if (_targeter->getVisible() == true)
 					hostileTargeter();
 
-				if (_battleGame->getExecution() == true)
-					executionExplosion();
+				if (_battleGame->getLiquidate() == true)
+					liquidationExplosion();
 
 				if (_isOverweight == true && RNG::seedless(0,3) == 0)
 					_overWeight->setVisible(!_overWeight->getVisible());
@@ -3542,7 +3542,7 @@ void BattlescapeState::hostileTargeter() // private.
 {
 	static const int cursorFrames[TARGET_FRAMES] = {0,1,2,3,4,0}; // note: does not show the last frame.
 
-	Surface* const targetCursor = _game->getResourcePack()->getSurfaceSet("TARGET.PCK")->getFrame(cursorFrames[_targeterFrame]);
+	Surface* const targetCursor (_game->getResourcePack()->getSurfaceSet("TARGET.PCK")->getFrame(cursorFrames[_targeterFrame]));
 	targetCursor->blit(_targeter);
 
 	if (++_targeterFrame == TARGET_FRAMES)
@@ -3552,7 +3552,7 @@ void BattlescapeState::hostileTargeter() // private.
 /**
  * Draws an execution explosion on the Map.
  */
-void BattlescapeState::executionExplosion() // private.
+void BattlescapeState::liquidationExplosion() // private.
 {
 	for (std::list<Explosion*>::const_iterator
 			i = _battleGame->getMap()->getExplosions()->begin();
@@ -3566,9 +3566,9 @@ void BattlescapeState::executionExplosion() // private.
 
 			if (_battleGame->getMap()->getExplosions()->empty() == true)
 			{
-				_battleGame->endExecution();
+				_battleGame->endLiquidate();
 
-				BattleUnit* const selUnit = _battleSave->getSelectedUnit();
+				BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 				selUnit->aim(false);
 				selUnit->clearCache();
 				_battleGame->getMap()->cacheUnits();
