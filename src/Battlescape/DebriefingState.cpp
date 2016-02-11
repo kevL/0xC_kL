@@ -1061,7 +1061,7 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		if ((*i)->getTile() == nullptr)								// This unit is not on a tile ... give it one.
 		{
-			Position pos = (*i)->getPosition();
+			Position pos ((*i)->getPosition());
 			if (pos == Position(-1,-1,-1))							// in fact, this Unit is in limbo ... ie, is carried.
 			{
 				for (std::vector<BattleItem*>::const_iterator		// so look for its body or corpse ...

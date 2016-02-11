@@ -93,7 +93,7 @@ private:
 		_tacticalShade,
 		_turn,
 		_turnLimit;
-	size_t _mapSize;
+	size_t _qtyTilesTotal;
 
 //	BattleActionType _batReserved;
 	ChronoResult _chronoResult;

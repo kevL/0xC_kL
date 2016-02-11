@@ -84,7 +84,7 @@ private:
 
 	/// Counts valid targets Player and neutral.
 	int tallyTargets() const;
-	/// Counts Player units that spot a position.
+	/// Counts player units that spot a position.
 	int tallySpotters(const Position& pos) const;
 
 	/// Selects the nearest target seen and returns the quantity of viable targets.

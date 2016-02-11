@@ -85,14 +85,15 @@ enum SoundFormat
 };
 
 /**
- * Path preview modes (can be OR'd together).
+ * Path Preview Modes for the battlefield.
+ * @note Can be OR'd together.
  */
 enum PathPreview
 {
-	PATH_NONE		= 0x00,	// 0000 (must always be zero)
+	PATH_NONE		= 0x00,	// 0000
 	PATH_ARROWS		= 0x01,	// 0001
 	PATH_TU_COST	= 0x02,	// 0010
-	PATH_FULL		= 0x03	// 0011 (must always be all values combined)
+	PATH_FULL		= 0x03	// 0011 arrows + tuCost
 };
 
 /**

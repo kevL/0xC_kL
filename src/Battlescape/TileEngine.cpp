@@ -4582,37 +4582,41 @@ void TileEngine::openAdjacentDoors( // private.
  */
 bool TileEngine::closeUfoDoors() const
 {
-	int ret = false;
-	for (size_t // prepare a list of tiles on fire/smoke & close any ufo doors
+	int ret (false);
+	Tile* tile;
+	const Tile
+		* tileNorth,
+		* tileWest;
+	const BattleUnit* unit;
+
+	for (size_t
 			i = 0;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
-		if (_battleSave->getTiles()[i]->getTileUnit()
-			&& _battleSave->getTiles()[i]->getTileUnit()->getArmor()->getSize() > 1)
+		tile = _battleSave->getTiles()[i];
+		if (tile->getTileUnit()
+			&& tile->getTileUnit()->getArmor()->getSize() > 1)
 		{
-			const BattleUnit* const unit = _battleSave->getTiles()[i]->getTileUnit();
+			unit = tile->getTileUnit();
+			tileNorth = _battleSave->getTile(tile->getPosition() + Position( 0,-1,0));
+			tileWest  = _battleSave->getTile(tile->getPosition() + Position(-1, 0,0));
 
-			const Tile
-				* const tile = _battleSave->getTiles()[i],
-				* const tileNorth = _battleSave->getTile(tile->getPosition() + Position( 0,-1,0)),
-				* const tileWest  = _battleSave->getTile(tile->getPosition() + Position(-1, 0,0));
 			if ((tile->isUfoDoorOpen(O_NORTHWALL) == true
 					&& tileNorth != nullptr
-					&& tileNorth->getTileUnit() != nullptr // probly not needed.
+					&& tileNorth->getTileUnit() != nullptr
 					&& tileNorth->getTileUnit() == unit)
 				|| (tile->isUfoDoorOpen(O_WESTWALL) == true
 					&& tileWest != nullptr
-					&& tileWest->getTileUnit() != nullptr // probly not needed.
+					&& tileWest->getTileUnit() != nullptr
 					&& tileWest->getTileUnit() == unit))
 			{
 				continue;
 			}
 		}
 
-		ret |= _battleSave->getTiles()[i]->closeUfoDoor();
+		ret |= tile->closeUfoDoor();
 	}
-
 	return ret;
 }
 

@@ -19,7 +19,7 @@
 
 #include "BattleAIState.h"
 
-//#include "../Engine/Options.h"
+#include "../Engine/Options.h"
 
 
 namespace OpenXcom
@@ -43,10 +43,9 @@ BattleAIState::BattleAIState(
 		_AIMode(AI_PATROL),
 		_unitAggro(nullptr),
 		_spottersOrigin(0),
-		_tuEscape(-1)
-{
-//	_traceAI = Options::traceAI;
-}
+		_tuEscape(-1),
+		_traceAI(Options::traceAI)
+{}
 
 /**
  * Deletes the BattleAIState.
@@ -131,6 +130,15 @@ void BattleAIState::resetAI()
 }
 
 /**
+ * Gets the current AIMode setting.
+ * @return, the AIMode (BattleAIState.h)
+ */
+AIMode BattleAIState::getAIMode()
+{
+	return _AIMode;
+}
+
+/**
  * Converts an AIMode into a string for debugging.
  * @return, AI Mode as string
  */
@@ -145,6 +153,39 @@ std::string BattleAIState::debugAiMode(AIMode mode) // static.
 	}
 
 	return "error - no AI Mode";
+}
+
+/**
+ * Gets a color representative of AI-movement calculations.
+ * @param val - value to represent
+ * @return, color
+ */
+Uint8 BattleAIState::debugTraceColor( // static
+		bool valid,
+		int score)
+{
+	if (score < 0)
+	{
+		if (valid == true)
+			return TRACE_ORANGE;
+		return TRACE_RED;
+	}
+
+	if (score < FAST_PASS_THRESHOLD / 2)
+	{
+		if (valid == true)
+			return TRACE_BROWN;
+		return TRACE_BLUE;
+	}
+
+	if (score < FAST_PASS_THRESHOLD)
+	{
+		if (valid == true)
+			return TRACE_GREEN;
+		return TRACE_YELLOW;
+	}
+
+	return TRACE_LIME;
 }
 
 }

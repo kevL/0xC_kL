@@ -67,10 +67,10 @@ Tile::Tile(const Position& pos)
 		_explosiveType(DT_NONE),
 		_unit(nullptr),
 		_animOffset(0),
-		_markerColor(0),
+		_previewColor(0),
 		_visible(false),
-		_preview(-1),
-		_tuMarker(-1),
+		_previewDir(-1),
+		_previewTu(-1),
 		_danger(false)
 {
 	for (size_t
@@ -1556,7 +1556,7 @@ bool Tile::getTileVisible() const
  */
 void Tile::setPreviewDir(int dir)
 {
-	_preview = dir;
+	_previewDir = dir;
 }
 
 /**
@@ -1565,7 +1565,7 @@ void Tile::setPreviewDir(int dir)
  */
 int Tile::getPreviewDir() const
 {
-	return _preview;
+	return _previewDir;
 }
 
 /**
@@ -1574,7 +1574,7 @@ int Tile::getPreviewDir() const
  */
 void Tile::setPreviewTu(int tu)
 {
-	_tuMarker = tu;
+	_previewTu = tu;
 }
 
 /**
@@ -1583,7 +1583,7 @@ void Tile::setPreviewTu(int tu)
  */
 int Tile::getPreviewTu() const
 {
-	return _tuMarker;
+	return _previewTu;
 }
 
 /**
@@ -1592,7 +1592,7 @@ int Tile::getPreviewTu() const
  */
 void Tile::setPreviewColor(Uint8 color)
 {
-	_markerColor = color;
+	_previewColor = color;
 }
 
 /**
@@ -1601,7 +1601,7 @@ void Tile::setPreviewColor(Uint8 color)
  */
 int Tile::getPreviewColor() const
 {
-	return static_cast<int>(_markerColor);
+	return static_cast<int>(_previewColor);
 }
 
 /**

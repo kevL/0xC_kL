@@ -20,7 +20,6 @@
 #ifndef OPENXCOM_BATTLESCAPEGAME_H
 #define OPENXCOM_BATTLESCAPEGAME_H
 
-//#include <cstddef> // nullptr (for NB code-assistant only)
 #include <list>
 //#include <string>
 #include <vector>
@@ -157,9 +156,10 @@ struct BattleAction
 
 	/**
 	 * Translates type into a debug-string.
+	 * @param type - the BattleActionType (BattlescapeGame.h)
 	 * @return, the action-type as a string
 	 */
-	static std::string debugActionType(BattleActionType type)
+	static std::string debugActionType(const BattleActionType type)
 	{
 		switch (type)
 		{
@@ -221,6 +221,8 @@ private:
 
 	/// Determines whether there are any actions pending for the given unit.
 	bool noActionsPending(const BattleUnit* const unit) const;
+	/// Clears the trace-AI markers on all battlefield Tiles.
+	void resetTraceTiles();
 	/// Centers the battlefield camera on a BattleUnit.
 	void centerOnUnit(
 			const BattleUnit* const unit,

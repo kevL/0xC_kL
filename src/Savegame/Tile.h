@@ -88,10 +88,10 @@ private:
 		_light[LIGHTLAYERS],
 		_mapDataId[PARTS_TILE],
 		_mapDataSetId[PARTS_TILE],
-		_preview,
-		_smoke,
-		_tuMarker;
-	Uint8 _markerColor;
+		_previewDir,
+		_previewTu,
+		_smoke;
+	Uint8 _previewColor;
 
 	DamageType _explosiveType;
 

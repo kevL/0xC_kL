@@ -70,7 +70,7 @@ SavedBattleGame::SavedBattleGame(
 		_mapsize_x(0),
 		_mapsize_y(0),
 		_mapsize_z(0),
-		_mapSize(0),
+		_qtyTilesTotal(0),
 		_selectedUnit(nullptr),
 		_lastSelectedUnit(nullptr),
 		_pf(nullptr),
@@ -148,7 +148,7 @@ SavedBattleGame::~SavedBattleGame()
 	//Log(LOG_INFO) << "Delete SavedBattleGame";
 	for (size_t
 			i = 0;
-			i != _mapSize;
+			i != _qtyTilesTotal;
 			++i)
 		delete _tiles[i];
 
@@ -285,7 +285,7 @@ void SavedBattleGame::load(
 			const int index (unserializeInt(&readBuffer, serKey.index));
 			assert(
 				index > -1
-				&& index < static_cast<int>(_mapSize));
+				&& index < static_cast<int>(_qtyTilesTotal));
 
 			_tiles[static_cast<size_t>(index)]->loadBinary(readBuffer, serKey); // loadBinary's privileges to advance *readBuffer have been revoked
 			readBuffer += serKey.totalBytes - serKey.index;	// readBuffer is now incremented strictly by totalBytes in case there are obsolete fields present in the data
@@ -556,7 +556,7 @@ void SavedBattleGame::load(
 	//Log(LOG_INFO) << "SavedBattleGame::load() EXIT";
 
 	// TEST, reveal all tiles
-//	for (size_t i = 0; i != _mapSize; ++i)
+//	for (size_t i = 0; i != _qtyTilesTotal; ++i)
 //		_tiles[i]->setDiscovered(true, 2);
 }
 
@@ -585,7 +585,7 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 
 	for (size_t
 			i = 0;
-			i != _mapSize;
+			i != _qtyTilesTotal;
 			++i)
 	{
 		for (int
@@ -654,7 +654,7 @@ YAML::Node SavedBattleGame::save() const
 #if 0 // <- change to '1' to save Tiles in a human-readable non-binary format.
 	for (size_t
 			i = 0;
-			i != _mapSize;
+			i != _qtyTilesTotal;
 			++i)
 	{
 		if (_tiles[i]->isVoid() == false)
@@ -671,14 +671,14 @@ YAML::Node SavedBattleGame::save() const
 	node["tileSetIDSize"]		= Tile::serializationKey._mapDataSetId;
 	node["tileBoolFieldsSize"]	= Tile::serializationKey.boolFields;
 
-	size_t tilesDataSize = static_cast<size_t>(Tile::serializationKey.totalBytes) * _mapSize;
+	size_t tilesDataSize = static_cast<size_t>(Tile::serializationKey.totalBytes) * _qtyTilesTotal;
 	Uint8
 		* const tilesData = static_cast<Uint8*>(calloc(tilesDataSize, 1)),
 		* writeBuffer = tilesData;
 
 	for (size_t
 			i = 0;
-			i != _mapSize;
+			i != _qtyTilesTotal;
 			++i)
 	{
 		serializeInt( // <- save ALL Tiles. (Stop void tiles returning undiscovered postReload.)
@@ -791,10 +791,10 @@ void SavedBattleGame::initMap(
 {
 	if (_nodes.empty() == false) // Delete old stuff,
 	{
-		_mapSize = static_cast<size_t>(_mapsize_x * _mapsize_y * _mapsize_z);
+		_qtyTilesTotal = static_cast<size_t>(_mapsize_x * _mapsize_y * _mapsize_z);
 		for (size_t
 				i = 0;
-				i != _mapSize;
+				i != _qtyTilesTotal;
 				++i)
 		{
 			delete _tiles[i];
@@ -817,14 +817,14 @@ void SavedBattleGame::initMap(
 	_mapsize_x = mapsize_x; // Create Tile objects.
 	_mapsize_y = mapsize_y;
 	_mapsize_z = mapsize_z;
-	_mapSize = static_cast<size_t>(mapsize_z * mapsize_y * mapsize_x);
+	_qtyTilesTotal = static_cast<size_t>(mapsize_z * mapsize_y * mapsize_x);
 
-	_tiles = new Tile*[_mapSize];
+	_tiles = new Tile*[_qtyTilesTotal];
 
 	Position pos;
 	for (size_t
 			i = 0;
-			i != _mapSize;
+			i != _qtyTilesTotal;
 			++i)
 	{
 		tileCoords(
@@ -961,7 +961,7 @@ int SavedBattleGame::getMapSizeZ() const
  */
 size_t SavedBattleGame::getMapSizeXYZ() const
 {
-	return _mapSize;
+	return _qtyTilesTotal;
 }
 
 /**
@@ -1443,7 +1443,7 @@ void SavedBattleGame::debugTac()
 
 	for (size_t // reveal tiles.
 			i = 0;
-			i != _mapSize;
+			i != _qtyTilesTotal;
 			++i)
 	{
 		_tiles[i]->setRevealed(ST_CONTENT);
@@ -1969,26 +1969,23 @@ void SavedBattleGame::tileVolatiles()
 		tilesFired,
 		tilesSmoked;
 
+	Tile* tile;
 	for (size_t
 			i = 0;
-			i != _mapSize;
+			i != _qtyTilesTotal;
 			++i)
 	{
-		if (getTiles()[i]->getFire() != 0)
-			tilesFired.push_back(getTiles()[i]);
+		tile = getTiles()[i];
+		if (tile->getFire() != 0)
+			tilesFired.push_back(tile);
 
-		if (getTiles()[i]->getSmoke() != 0)
-			tilesSmoked.push_back(getTiles()[i]);
+		if (tile->getSmoke() != 0)
+			tilesSmoked.push_back(tile);
 
-		getTiles()[i]->setDangerous(false); // reset.
+		tile->setDangerous(false); // reset.
 	}
 
-	//Log(LOG_INFO) << "tilesFired.size = " << tilesFired.size();
-	//Log(LOG_INFO) << "tilesSmoked.size = " << tilesSmoked.size();
-
-	Tile* tile;
 	int var;
-
 	for (std::vector<Tile*>::const_iterator
 			i = tilesFired.begin();
 			i != tilesFired.end();
@@ -2073,8 +2070,8 @@ void SavedBattleGame::tileVolatiles()
 /**
  * Checks for and revives unconscious BattleUnits.
  * @param faction - the faction to check
- */
-/* void SavedBattleGame::reviveUnits(const UnitFaction faction)
+ *
+void SavedBattleGame::reviveUnits(const UnitFaction faction)
 {
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _units.begin();
@@ -2625,7 +2622,7 @@ void SavedBattleGame::blackTiles()
 {
 	for (size_t
 			i = 0;
-			i != _mapSize;
+			i != _qtyTilesTotal;
 			++i)
 	{
 		_tiles[i]->setRevealed(ST_WEST, false);

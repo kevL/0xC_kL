@@ -427,7 +427,7 @@ void AlienBAIState::think(BattleAction* const action)
  */
 void AlienBAIState::setupPatrol() // private.
 {
-	//Log(LOG_INFO) << "AlienBAIState::setupPatrol()";
+	Log(LOG_INFO) << "AlienBAIState::setupPatrol() id-" << _unit->getId();
 	_patrolAction->TU = 0;
 
 	if (_stopNode != nullptr
@@ -586,25 +586,25 @@ void AlienBAIState::setupAttack() // private.
 	if (_targetsVisible != 0)
 	{
 		Log(LOG_INFO) << ". _targetsVisible = " << _targetsVisible;
-		Log(LOG_INFO) << ". . try grenadeAction()";
+		Log(LOG_INFO) << ". . Run grenadeAction()";
 		if (grenadeAction() == false)
 		{
 			Log(LOG_INFO) << ". . . try rifle Or melee";
 			if (_rifle == true && _melee == true)
 			{
-				Log(LOG_INFO) << ". . Melee & Rifle are TRUE, do chooseMeleeOrRanged()";
+				Log(LOG_INFO) << ". . Melee & Rifle are TRUE, chooseMeleeOrRanged()";
 				chooseMeleeOrRanged();
 			}
 
 			if (_rifle == true)
 			{
-				Log(LOG_INFO) << ". . rifleAction()";
+				Log(LOG_INFO) << ". . Run rifleAction()";
 				rifleAction();
 				Log(LOG_INFO) << "";
 			}
 			else if (_melee == true)
 			{
-				Log(LOG_INFO) << ". . meleeAction()";
+				Log(LOG_INFO) << ". . Run meleeAction()";
 				meleeAction();
 				Log(LOG_INFO) << "";
 			}
@@ -622,8 +622,7 @@ void AlienBAIState::setupAttack() // private.
 		|| _spottersOrigin != 0
 		|| RNG::generate(0, _unit->getAggression()) < _unit->getAggression())
 	{
-		if (findFirePosition() == true)
-			Log(LOG_INFO) << ". . findFirePosition TRUE " << _attackAction->target;
+		if (findFirePosition() == true) Log(LOG_INFO) << ". . findFirePosition TRUE " << _attackAction->target;
 		else Log(LOG_INFO) << ". . findFirePosition FAILED";
 	}
 	Log(LOG_INFO) << "AlienBAIState::setupAttack() EXIT";
@@ -639,17 +638,14 @@ void AlienBAIState::setupAttack() // private.
  */
 void AlienBAIState::setupAmbush() // private.
 {
+	Log(LOG_INFO) << "AlienBAIState::setupAmbush() id-" << _unit->getId();
 	_ambushAction->type = BA_THINK;
 	_tuAmbush = -1;
 
 //	if (selectPlayerTarget() == true) // sets _unitAggro.
 	if (_unitAggro != nullptr)
 	{
-		Position
-			originVoxel (_te->getSightOriginVoxel(_unitAggro)),
-			scanVoxel, // placeholder.
-			pos;
-		const Tile* tile;
+		Log(LOG_INFO) << ". _unitAggro id-" << _unitAggro->getId();
 		int
 			score (0),
 			scoreTest,
@@ -672,6 +668,13 @@ void AlienBAIState::setupAmbush() // private.
 						_reachableAttack.end(),
 						_battleSave->getTileIndex(pos)) != _reachableAttack.end())
 			{ */
+		Tile* tile;
+
+		Position
+			originVoxel (_te->getSightOriginVoxel(_unitAggro)),
+			scanVoxel, // placeholder.
+			pos;
+
 		std::vector<Position> tileSearch (_battleSave->getTileSearch());
 		RNG::shuffle(tileSearch.begin(), tileSearch.end());
 
@@ -681,19 +684,25 @@ void AlienBAIState::setupAmbush() // private.
 				++i)
 		{
 			pos = _unit->getPosition() + *i;
+			Log(LOG_INFO) << ". . tileSearch " << pos;
+
 			if ((tile = _battleSave->getTile(pos)) != nullptr
 				&& std::find(
 						_reachableAttack.begin(),
 						_reachableAttack.end(),
 						_battleSave->getTileIndex(pos)) != _reachableAttack.end())
 			{
-/*				if (_traceAI) // color all the nodes in range purple.
+				Log(LOG_INFO) << ". . . reachable w/ Attack " << pos;
+				if (_traceAI)
 				{
-					tile->setPreviewDir(10);
-					tile->setPreviewColor(13);
-				} */
+					tile->setPreviewColor(TRACE_YELLOW);
+					tile->setPreviewDir(TRACE_DIR);
+					tile->setPreviewTu(485); // "4m8u5h"
+				}
 
-				if (tallySpotters(pos) == 0
+				int debugSpotters = tallySpotters(pos);
+				Log(LOG_INFO) << ". . . spotters = " << debugSpotters;
+				if (debugSpotters /*tallySpotters(pos)*/ == 0
 					&& _te->canTargetUnit(
 									&originVoxel,
 									tile,
@@ -701,6 +710,8 @@ void AlienBAIState::setupAmbush() // private.
 									_unitAggro,
 									_unit) == false)
 				{
+					Log(LOG_INFO) << ". . . . " << _unitAggro->getId() << " cannot target " << pos;
+					Log(LOG_INFO) << ". . . . calc Path for ACTOR to pos";
 					_pf->setPathingUnit(_unit);
 					_pf->calculate(_unit, pos);
 
@@ -708,30 +719,37 @@ void AlienBAIState::setupAmbush() // private.
 					{
 						tu = _pf->getTuCostTotalPf();
 
-						scoreTest = BASE_SUCCESS_SYSTEMATIC;
-						scoreTest -= tu;
-
+						Log(LOG_INFO) << ". . . . . calc Path for TARGET to pos";
 						_pf->setPathingUnit(_unitAggro);
 						_pf->calculate(_unitAggro, pos);
 
 						if (_pf->getStartDirection() != -1)
 						{
+							Log(LOG_INFO) << ". . . . . . cross-pathing Done";
+							scoreTest = BASE_SUCCESS_SYSTEMATIC;
+							scoreTest -= tu;
+
 							if (_te->faceWindow(pos) != -1)
 								scoreTest += COVER_BONUS;
 
+							Log(LOG_INFO) << ". . . . . . scoreTest = " << scoreTest;
 							if (scoreTest > score)
 							{
 								score = scoreTest;
+								Log(LOG_INFO) << ". . . . . . . high Score = " << score;
+
 								targetPath = _pf->copyPath();
 
 								_ambushAction->target = pos;
-//								if (pos == _unit->getPosition())
-//									_tuAmbush = 1;
-//								else
 								_tuAmbush = tu;
+								Log(LOG_INFO) << ". . . . . . . pos " << pos;
+								Log(LOG_INFO) << ". . . . . . . tu = " << tu;
 
 								if (score > FAST_PASS_THRESHOLD - 20)
+								{
+									Log(LOG_INFO) << ". . . . . . . . Beats (FAST_PASS_THRESHOLD - 20) break";
 									break;
+								}
 							}
 						}
 					}
@@ -739,19 +757,22 @@ void AlienBAIState::setupAmbush() // private.
 			}
 		}
 
-		if (score != 0)
+		if (_tuAmbush != -1)
 		{
+			Log(LOG_INFO) << ". . _tuAmbush = " << _tuAmbush;
+
 			_ambushAction->type = BA_MOVE;
 			originVoxel = _te->getSightOriginVoxel(_unit, &_ambushAction->target);
-			Position posNext;
 
 			_pf->setPathingUnit(_unitAggro);
 			pos = _unitAggro->getPosition();
 
+			Position posNext;
+
 			size_t t (targetPath.size());
-			while (t != 0)
+			while (t-- != 0)
 			{
-				--t;
+				Log(LOG_INFO) << ". . . walk hypoTarget";
 
 				_pf->getTuCostPf(pos, targetPath.back(), &posNext);
 				targetPath.pop_back();
@@ -765,16 +786,29 @@ void AlienBAIState::setupAmbush() // private.
 									_unit,
 									_unitAggro) == true)
 				{
+					if (_traceAI)
+					{
+						tile->setPreviewColor(TRACE_RED);
+						tile->setPreviewDir(TRACE_DIR);
+						tile->setPreviewTu(485); // "4m8u5h"
+					}
 					_ambushAction->finalFacing = TileEngine::getDirectionTo(_ambushAction->target, pos);
+					Log(LOG_INFO) << ". . . . finalFacing = " << _ambushAction->finalFacing;
 					break;
 				}
 			}
+		}
 
-			//if (_traceAI) Log(LOG_INFO) << "Ambush estimation will move to " << _ambushAction->target;
-			return;
+		if (_traceAI)
+		{
+			tile = _battleSave->getTile(_ambushAction->target);
+			tile->setPreviewColor(TRACE_PURPLE);
+			tile->setPreviewDir(TRACE_DIR);
+			tile->setPreviewTu(485); // "4m8u5h"
 		}
 	}
-	//if (_traceAI) Log(LOG_INFO) << "Ambush estimation failed";
+	Log(LOG_INFO) << "setupAmbush() EXIT";
+	Log(LOG_INFO) << "";
 }
 
 /**
@@ -785,6 +819,7 @@ void AlienBAIState::setupAmbush() // private.
  */
 void AlienBAIState::setupEscape() // private.
 {
+	Log(LOG_INFO) << "AlienBAIState::setupEscape() id-" << _unit->getId();
 //	selectNearestTarget(); // sets _unitAggro
 //	const int spottersOrigin (tallySpotters(_unit->getPosition()));
 
@@ -798,7 +833,7 @@ void AlienBAIState::setupEscape() // private.
 	else
 		distAggroOrigin = 0;
 
-	const Tile* tile;
+	Tile* tile;
 	int
 		score (ESCAPE_FAIL),
 		scoreTest;
@@ -886,10 +921,13 @@ void AlienBAIState::setupEscape() // private.
 
 			if (tile->getDangerous() == true)
 				scoreTest -= BASE_SUCCESS_SYSTEMATIC;
-//			if (_traceAI) {
-//				tile->setPreviewColor(scoreTest < 0 ? 3: (scoreTest < FAST_PASS_THRESHOLD / 2 ? 8: (scoreTest < FAST_PASS_THRESHOLD ? 9: 5)));
-//				tile->setPreviewDir(10);
-//				tile->setPreviewTu(scoreTest); }
+
+//			if (_traceAI)
+//			{
+//				tile->setPreviewColor(BattleAIState::debugTraceColor(false, scoreTest));
+//				tile->setPreviewDir(TRACE_DIR);
+//				tile->setPreviewTu(scoreTest);
+//			}
 
 			if (scoreTest > score)
 			{
@@ -900,10 +938,13 @@ void AlienBAIState::setupEscape() // private.
 				{
 					score = scoreTest;
 					_tuEscape = _pf->getTuCostTotalPf();
-//					if (_traceAI) {
-//						tile->setPreviewColor(scoreTest < 0? 7:(scoreTest < FAST_PASS_THRESHOLD / 2? 10:(scoreTest < FAST_PASS_THRESHOLD? 4:5)));
-//						tile->setPreviewDir(10);
-//						tile->setPreviewTu(scoreTest); }
+
+//					if (_traceAI)
+//					{
+//						tile->setPreviewColor(BattleAIState::debugTraceColor(true, scoreTest));
+//						tile->setPreviewDir(TRACE_DIR);
+//						tile->setPreviewTu(score);
+//					}
 				}
 				_pf->abortPath();
 
@@ -915,7 +956,7 @@ void AlienBAIState::setupEscape() // private.
 
 	if (score != ESCAPE_FAIL)
 	{
-		//if (_traceAI) _battleSave->getTile(_escapeAction->target)->setPreviewColor(13);
+//		if (_traceAI) _battleSave->getTile(_escapeAction->target)->setPreviewColor(TRACE_PURPLE);
 		_escapeAction->type = BA_MOVE;
 	}
 	else
@@ -1188,15 +1229,16 @@ int AlienBAIState::tallyTargets() const // private.
 int AlienBAIState::tallySpotters(const Position& pos) const // private.
 {
 	int ret (0);
-	Position
-		originVoxel,
-		targetVoxel;
 
 	const BattleUnit* hypoUnit;
 	if (pos != _unit->getPosition())
 		hypoUnit = _unit;
 	else
 		hypoUnit = nullptr;
+
+	Position
+		originVoxel,
+		targetVoxel;
 
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _battleSave->getUnits()->begin();
@@ -1207,8 +1249,8 @@ int AlienBAIState::tallySpotters(const Position& pos) const // private.
 			&& TileEngine::distSqr(pos, (*i)->getPosition()) <= TileEngine::SIGHTDIST_TSp_Sqr) // Could use checkViewSector() and/or visible()
 		{
 			originVoxel = _te->getSightOriginVoxel(*i);
-			if (_te->canTargetUnit(
-								&originVoxel,
+			if (_te->canTargetUnit(				// check if xCom agent can target on position
+								&originVoxel,	// WARNING: Does not include visible() check.
 								_battleSave->getTile(pos),
 								&targetVoxel,
 								*i,

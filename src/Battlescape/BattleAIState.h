@@ -71,9 +71,21 @@ protected:
 		SMOKE_BONUS_MULT		= 3,
 		CUR_TILE_PREF			= 16,
 
-		ESCAPE_FAIL				= -100000;
+		ESCAPE_FAIL				= -100000,
 
-//	bool _traceAI;
+		TRACE_DIR				= 10;
+
+	static const Uint8
+		TRACE_RED		=  3,
+		TRACE_GREEN		=  4,
+		TRACE_LIME		=  5,
+		TRACE_ORANGE	=  7,
+		TRACE_BLUE		=  8,
+		TRACE_YELLOW	= 10,
+		TRACE_BROWN		= 11,
+		TRACE_PURPLE	= 13;
+
+	bool _traceAI;
 
 	int
 		_spottersOrigin,
@@ -118,8 +130,14 @@ protected:
 		/// Resets the unit's saved parameters.
 		void resetAI();
 
-		// Converts the AIMode into a string for debugging.
+		/// Gets the current AIMode setting.
+		AIMode getAIMode();
+		/// Converts the AIMode into a string for debugging.
 		static std::string debugAiMode(AIMode mode);
+		/// Gets a color representative of AI-movement calculations.
+		static Uint8 debugTraceColor(
+				bool chosen,
+				int score);
 };
 
 }

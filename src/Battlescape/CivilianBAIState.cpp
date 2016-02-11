@@ -208,7 +208,7 @@ void CivilianBAIState::setupEscape() // private.
 	else
 		distAggroOrigin = 0;
 
-	const Tile* tile;
+	Tile* tile;
 	int
 		score (ESCAPE_FAIL),
 		scoreTest;
@@ -263,8 +263,8 @@ void CivilianBAIState::setupEscape() // private.
 
 		if (_unitAggro != nullptr)
 			distAggroTarget = TileEngine::distance(
-										_escapeAction->target,
-										_unitAggro->getPosition());
+												_escapeAction->target,
+												_unitAggro->getPosition());
 		else
 			distAggroTarget = 0;
 
@@ -283,10 +283,11 @@ void CivilianBAIState::setupEscape() // private.
 				scoreTest -= FIRE_PENALTY;
 			else
 				scoreTest += tile->getSmoke() * SMOKE_BONUS_MULT;
-//			if (_traceAI) {
-//				tile->setPreviewColor(scoreTest < 0 ? 3 : (scoreTest < FAST_PASS_THRESHOLD / 2 ? 8 : (scoreTest < FAST_PASS_THRESHOLD ? 9 : 5)));
-//				tile->setPreviewDir(10);
-//				tile->setPreviewTu(scoreTest); }
+
+			if (_traceAI) {
+				tile->setPreviewColor(debugTraceColor(false, scoreTest));
+				tile->setPreviewDir(TRACE_DIR);
+				tile->setPreviewTu(scoreTest); }
 
 			if (scoreTest > score)
 			{
@@ -300,10 +301,11 @@ void CivilianBAIState::setupEscape() // private.
 				{
 					score = scoreTest;
 					_tuEscape = _pf->getTuCostTotalPf();
-//					if (_traceAI) {
-//						tile->setPreviewColor(scoreTest < 0 ? 7: (scoreTest < FAST_PASS_THRESHOLD / 2 ? 10: (scoreTest < FAST_PASS_THRESHOLD ? 4: 5)));
-//						tile->setPreviewDir(10);
-//						tile->setPreviewTu(scoreTest); }
+
+					if (_traceAI) {
+						tile->setPreviewColor(debugTraceColor(true, scoreTest));
+						tile->setPreviewDir(TRACE_DIR);
+						tile->setPreviewTu(scoreTest); }
 				}
 				_pf->abortPath();
 
@@ -315,7 +317,7 @@ void CivilianBAIState::setupEscape() // private.
 
 	if (score != ESCAPE_FAIL)
 	{
-		//if (_traceAI) _battleSave->getTile(_escapeAction->target)->setPreviewColor(13);
+		if (_traceAI) _battleSave->getTile(_escapeAction->target)->setPreviewColor(TRACE_PURPLE);
 		_escapeAction->type = BA_MOVE;
 	}
 	else

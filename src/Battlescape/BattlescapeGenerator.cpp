@@ -1184,7 +1184,7 @@ BattleUnit* BattlescapeGenerator::addXcomUnit(BattleUnit* const unit) // private
 		&& _baseEquiptMode == false)
 	{
 		//Log(LOG_INFO) << ". no Craft";
-		const Node* const node = _battleSave->getSpawnNode(NR_XCOM, unit);
+		const Node* const node (_battleSave->getSpawnNode(NR_XCOM, unit));
 		if (node != nullptr)
 		{
 			//Log(LOG_INFO) << ". . spawnNode valid";
@@ -1226,11 +1226,11 @@ BattleUnit* BattlescapeGenerator::addXcomUnit(BattleUnit* const unit) // private
 				++i)
 		{
 			//Log(LOG_INFO) << ". getCraftDeployment()";
-			const Position pos = Position(
-										(*i)[0] + (_craftPos.x * 10),
-										(*i)[1] + (_craftPos.y * 10),
-										(*i)[2] + _craftZ);
-			bool canPlace = true;
+			const Position pos (Position(
+									(*i)[0] + (_craftPos.x * 10),
+									(*i)[1] + (_craftPos.y * 10),
+									(*i)[2] + _craftZ));
+			bool canPlace (true);
 			for (int
 					x = 0;
 					x != unit->getArmor()->getSize() && canPlace == true;
@@ -1261,34 +1261,34 @@ BattleUnit* BattlescapeGenerator::addXcomUnit(BattleUnit* const unit) // private
 	else // mission w/ transport craft that does not have ruleset Deployments. Or it's a craft/base Equip.
 	{
 		//Log(LOG_INFO) << ". baseEquip OR Craft w/out Deployment rule";
-		int tankPos = 0;
-
-		const size_t totalTiles = static_cast<size_t>(_mapsize_x * _mapsize_y * _mapsize_z);
+		Tile* tile;
+		int tankOrder (0);
 		for (size_t
 				i = 0;
-				i != totalTiles;
+				i != _battleSave->getMapSizeXYZ();
 				++i)
 		{
-			if (canPlaceXcomUnit(_battleSave->getTiles()[i]) == true)
+			tile = _battleSave->getTiles()[i];
+			if (canPlaceXcomUnit(tile) == true)
 			{
 				if (unit->getGeoscapeSoldier() == nullptr)
 				{
 					if ((unit->getArmor()->getSize() == 1
-							|| _battleSave->getTiles()[i]->getPosition().x == _tileEquipt->getPosition().x)
-						&& ++tankPos == 3
+							|| tile->getPosition().x == _tileEquipt->getPosition().x)
+						&& ++tankOrder == 3
 						&& _battleSave->setUnitPosition(
 													unit,
-													_battleSave->getTiles()[i]->getPosition()) == true)
+													tile->getPosition()) == true)
 					{
-						_battleSave->getUnits()->push_back(unit); // add unit to vector of Units.
+						_battleSave->getUnits()->push_back(unit);
 						return unit;
 					}
 				}
 				else if (_battleSave->setUnitPosition(
 													unit,
-													_battleSave->getTiles()[i]->getPosition()) == true)
+													tile->getPosition()) == true)
 				{
-					_battleSave->getUnits()->push_back(unit); // add unit to vector of Units.
+					_battleSave->getUnits()->push_back(unit);
 					return unit;
 				}
 			}
@@ -1306,8 +1306,8 @@ BattleUnit* BattlescapeGenerator::addXcomUnit(BattleUnit* const unit) // private
  */
 bool BattlescapeGenerator::canPlaceXcomUnit(Tile* const tile) // private.
 {
-	// to spawn an xcom soldier there has to be a tile with a floor
-	// with the starting point attribute and no objects in the way
+	// To spawn an xcom soldier there has to be a tile with a floor
+	// with the starting point attribute and no objects in the way.
 	if (tile != nullptr													// is a tile
 		&& tile->getMapData(O_FLOOR) != nullptr							// has a floor
 		&& tile->getMapData(O_FLOOR)->getSpecialType() == START_POINT	// is a 'start point', ie. cargo tile
@@ -1320,7 +1320,6 @@ bool BattlescapeGenerator::canPlaceXcomUnit(Tile* const tile) // private.
 
 		return true;
 	}
-
 	return false;
 }
 
@@ -2326,17 +2325,20 @@ void BattlescapeGenerator::loadRMP( // private.
  */
 void BattlescapeGenerator::fuelPowerSources() // private.
 {
+	BattleItem* alienFuel;
+	const Tile* tile;
 	for (size_t
 			i = 0;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
-		if (_battleSave->getTiles()[i]->getMapData(O_OBJECT)
-			&& _battleSave->getTiles()[i]->getMapData(O_OBJECT)->getSpecialType() == UFO_POWER_SOURCE)
+		tile = _battleSave->getTiles()[i];
+		if (tile->getMapData(O_OBJECT)
+			&& tile->getMapData(O_OBJECT)->getSpecialType() == UFO_POWER_SOURCE)
 		{
-			BattleItem* const alienFuel = new BattleItem(
-													_rules->getItem(_rules->getAlienFuelType()),
-													_battleSave->getNextItemId());
+			alienFuel = new BattleItem(
+									_rules->getItem(_rules->getAlienFuelType()),
+									_battleSave->getNextItemId());
 
 			_battleSave->getItems()->push_back(alienFuel);
 			_battleSave->getTiles()[i]->addItem(
@@ -2351,6 +2353,7 @@ void BattlescapeGenerator::fuelPowerSources() // private.
  */
 void BattlescapeGenerator::explodePowerSources() // private.
 {
+	const Tile* tile;
 	Position voxel;
 
 	for (size_t
@@ -2358,31 +2361,34 @@ void BattlescapeGenerator::explodePowerSources() // private.
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
-		if (_battleSave->getTiles()[i]->getMapData(O_OBJECT) != nullptr
-			&& _battleSave->getTiles()[i]->getMapData(O_OBJECT)->getSpecialType() == UFO_POWER_SOURCE
-			&& RNG::percent(80) == true)
+		if (RNG::percent(80) == true)
 		{
-			voxel = Position::toVoxelSpaceCentered(
-												_battleSave->getTiles()[i]->getPosition(),
-												10);
+			tile = _battleSave->getTiles()[i];
+			if (tile->getMapData(O_OBJECT) != nullptr
+				&& tile->getMapData(O_OBJECT)->getSpecialType() == UFO_POWER_SOURCE)
+			{
+				voxel = Position::toVoxelSpaceCentered(
+													tile->getPosition(),
+													10);
 
-			double power = static_cast<double>(_ufo->getUfoDamagePct());	// range: ~50+ to ~100-
-			if (RNG::percent(static_cast<int>(power) / 2) == true)			// chance for full range Explosion (even if crash took low damage)
-				power = RNG::generate(1.,100.);
+				double power (static_cast<double>(_ufo->getUfoDamagePct()));	// range: ~50+ to ~100-
+				if (RNG::percent(static_cast<int>(power) / 2) == true)			// chance for full range Explosion (even if crash took low damage)
+					power = RNG::generate(1.,100.);
 
-			power *= RNG::generate(0.1,2.);
-			power += std::pow(power, 2) / 160.;
+				power *= RNG::generate(0.1,2.);
+				power += std::pow(power, 2) / 160.;
 
-			if (power > 0.5)
-				_battleSave->getTileEngine()->explode(
-													voxel,
-													static_cast<int>(std::ceil(power)),
-													DT_HE,
-													21);
+				if (power > 0.5)
+					_battleSave->getTileEngine()->explode(
+														voxel,
+														static_cast<int>(std::ceil(power)),
+														DT_HE,
+														21);
+			}
 		}
 	}
 
-	const Tile* tile = _battleSave->getTileEngine()->checkForTerrainExplosions();
+	tile = _battleSave->getTileEngine()->checkForTerrainExplosions();
 	while (tile != nullptr)
 	{
 		voxel = Position::toVoxelSpaceCentered(tile->getPosition(), 10);
@@ -2428,13 +2434,14 @@ void BattlescapeGenerator::runInventory(
 
 	MapDataSet* const dataSet = new MapDataSet("blank", _game);
 	MapData* const data = new MapData(dataSet);
+	Tile* tile;
 
 	for (size_t
 			i = 0;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
-		Tile* const tile = _battleSave->getTiles()[i];
+		tile = _battleSave->getTiles()[i];
 		tile->setMapData(
 					data,
 					0,0,
@@ -4055,14 +4062,15 @@ bool BattlescapeGenerator::removeBlocks(MapScript* const directive) // private.
  */
 void BattlescapeGenerator::setupObjectives(const AlienDeployment* const deployRule)
 {
-	const SpecialTileType specialType = deployRule->getObjectiveType();
+	const SpecialTileType specialType (deployRule->getObjectiveType());
 	if (specialType != STT_NONE)
 	{
 		int
-			req = deployRule->getObjectivesRequired(),
-			inSitu = 0;
-		const int parts = static_cast<int>(Tile::PARTS_TILE);
+			req (deployRule->getObjectivesRequired()),
+			inSitu (0);
+		const int parts (static_cast<int>(Tile::PARTS_TILE));
 		MapDataType partType;
+		const Tile* tile;
 
 		for (size_t
 				i = 0;
@@ -4074,9 +4082,10 @@ void BattlescapeGenerator::setupObjectives(const AlienDeployment* const deployRu
 					j != parts;
 					++j)
 			{
+				tile = _battleSave->getTiles()[i];
 				partType = static_cast<MapDataType>(j);
-				if (_battleSave->getTiles()[i]->getMapData(partType)
-					&& _battleSave->getTiles()[i]->getMapData(partType)->getSpecialType() == specialType)
+				if (tile->getMapData(partType)
+					&& tile->getMapData(partType)->getSpecialType() == specialType)
 				{
 					++inSitu;
 				}

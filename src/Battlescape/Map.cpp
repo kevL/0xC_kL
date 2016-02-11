@@ -132,7 +132,7 @@ Map::Map(
 	_iconHeight = _game->getRuleset()->getInterface("battlescape")->getElement("icons")->h;
 
 	_previewSetting	= Options::battlePreviewPath;
-//	if (Options::traceAI == true) _previewSetting = PATH_FULL; // turn everything on to see the markers.
+	if (Options::traceAI == true) _previewSetting = PATH_FULL; // turn everything on to see the markers.
 
 	_spriteWidth = _res->getSurfaceSet("BLANKS.PCK")->getFrame(0)->getWidth();
 	_spriteHeight = _res->getSurfaceSet("BLANKS.PCK")->getFrame(0)->getHeight();
@@ -632,7 +632,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 		frame,
 		tileShade,
 		shade,
-		animOffset,
+		aniOffset,
 		quadrant;	// The quadrant is 0 for small units; large units have quadrants 1,2 & 3 also; describes		0|1
 					// the relative x/y Position of the unit's primary quadrant vs. the current tile's Position.	2|3
 	bool
@@ -1322,7 +1322,6 @@ void Map::drawTerrain(Surface* const surface) // private.
 									}
 								}
 							}
-//							else unitBelow = nullptr; // for use below when deciding whether to redraw cursorFront.
 						}
 					}
 
@@ -1342,9 +1341,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 							shade = 0;
 						}
 
-						animOffset = _aniFrame / 2 + _tile->getAnimationOffset();
-						if (animOffset > 3) animOffset -= 4;
-						frame += animOffset;
+						aniOffset = _aniFrame / 2 + _tile->getAnimationOffset();
+						if (aniOffset > 3) aniOffset -= 4;
+						frame += aniOffset;
 
 						sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
 						//if (sprite != nullptr)
@@ -1355,10 +1354,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 									shade);
 					} // end Smoke & Fire
 
-// Draw pathPreview
-					if (_tile->getPreviewDir() != -1
-						&& (_previewSetting & PATH_ARROWS)
-						&& _tile->isRevealed(ST_WEST) == true)
+// Draw pathPreview (arrows)
+					if ((_previewSetting & PATH_ARROWS)
+						&& _tile->getPreviewDir() != -1
+						&& _tile->isRevealed(ST_WEST) == true) // what.
 					{
 						if (itZ > 0 && _tile->hasNoFloor(tileBelow) == true)
 						{
@@ -1402,8 +1401,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 // Draw Cursor Front
 					if (_selectorType != CT_NONE
 						&& _battleSave->getBattleState()->getMouseOverIcons() == false
-						&& _selectorX > itX - _selectorSize
-						&& _selectorY > itY - _selectorSize
+						&& _selectorX >  itX - _selectorSize
+						&& _selectorY >  itY - _selectorSize
 						&& _selectorX <= itX
 						&& _selectorY <= itY)
 					{
@@ -1416,17 +1415,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 									posScreen.y);
 						}
 						else if (viewLevel == itZ)
-//							|| (unitBelow != nullptr && unitBelow->getPosition().z == viewLevel)) // BattleUnit was redrawn below curTile.
 						{
-//							int vertOffset;
-//							if (unitBelow != nullptr)
-//								vertOffset = 24;
-//							else
-//								vertOffset = 0;
-
 							if (_selectorType != CT_AIM)
 							{
-								if (hasUnit == true //|| unitBelow != nullptr)
+								if (hasUnit == true
 									&& (_selectorType != CT_PSI
 										|| ((_battleSave->getBattleGame()->getTacticalAction()->type == BA_PSICOURAGE
 												&& _unit->getFaction() != FACTION_HOSTILE)
@@ -1440,7 +1432,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							}
 							else // CT_AIM ->
 							{
-								if (hasUnit == true) //|| unitBelow != nullptr)
+								if (hasUnit == true)
 									frame = 7 + (_aniFrame / 2);	// yellow animated crosshairs
 								else
 									frame = 6;						// red static crosshairs
@@ -1599,10 +1591,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										posScreen.x,
 										posScreen.y);
 							}
-						}
 
-						if (viewLevel == itZ)// || unitBelow != nullptr // BattleUnit was redrawn below curTile.
-						{
 							switch (_selectorType)
 							{
 								case CT_PSI:
@@ -1757,7 +1746,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 	}
 	// end arrow.
 
-	if (_battleSave->getPathfinding()->isPathPreviewed() == true)
+	if (_battleSave->getPathfinding()->isPathPreviewed() == true
+		|| Options::traceAI == true)
 	{
 		_numWaypoint->setBordered(); // make a border for the pathPreview display
 
@@ -1791,12 +1781,11 @@ void Map::drawTerrain(Surface* const surface) // private.
 							&& _tile->isRevealed(ST_CONTENT) == true
 							&& _tile->getPreviewDir() != -1)
 						{
-							int offset_y = -_tile->getTerrainLevel();
+							int offset_y (-_tile->getTerrainLevel());
 
 							if (_previewSetting & PATH_ARROWS)
 							{
 								tileBelow = _battleSave->getTile(posField + Position(0,0,-1));
-
 								if (itZ > 0 && _tile->hasNoFloor(tileBelow) == true)
 								{
 									sprite = _res->getSurfaceSet("Pathfinding")->getFrame(23);
@@ -1821,33 +1810,34 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 							if ((_previewSetting & PATH_TU_COST) && _tile->getPreviewTu() > -1)
 							{
-								int offset_x = 2;
+								int offset_x (2);
 								if (_tile->getPreviewTu() > 9)
 									offset_x += 2;
 
 								if (_battleSave->getSelectedUnit() != nullptr
 									&& _battleSave->getSelectedUnit()->getArmor()->getSize() > 1)
 								{
-									offset_y += 1;
-									if (!(_previewSetting & PATH_ARROWS))
-										offset_y += 7;
+									if (_previewSetting & PATH_ARROWS)
+										offset_y += 1;
+									else
+										offset_y += 8;
 								}
 
 								_numWaypoint->setValue(static_cast<unsigned>(_tile->getPreviewTu()));
 								_numWaypoint->draw();
 
-								if (!(_previewSetting & PATH_ARROWS))
+								if (_previewSetting & PATH_ARROWS)
+									_numWaypoint->blitNShade(
+												surface,
+												posScreen.x + 16 - offset_x,
+												posScreen.y + 30 - offset_y);
+								else
 									_numWaypoint->blitNShade(
 												surface,
 												posScreen.x + 16 - offset_x,
 												posScreen.y + 37 - offset_y,
 												0, false,
 												_tile->getPreviewColor());
-								else
-									_numWaypoint->blitNShade(
-												surface,
-												posScreen.x + 16 - offset_x,
-												posScreen.y + 30 - offset_y);
 							}
 						}
 					}
@@ -1890,8 +1880,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 					sprite = _res->getSurfaceSet("X1.PCK")->getFrame((*i)->getCurrentFrame());
 					sprite->blitNShade(
 							surface,
-							bullet.x - (sprite->getWidth() / 2), //64,
-							bullet.y - (sprite->getHeight() / 2)); //64);
+							bullet.x - (sprite->getWidth() / 2),
+							bullet.y - (sprite->getHeight() / 2));
 				}
 				else if ((*i)->isHit() == 0) // bullet, http://ufopaedia.org/index.php?title=SMOKE.PCK
 				{

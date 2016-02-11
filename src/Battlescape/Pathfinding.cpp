@@ -747,7 +747,7 @@ bool Pathfinding::aStarPath( // private.
  * @param unit		- pointer to a BattleUnit
  * @param maxTuCost	- the maximum cost of the path to each tile
  * @return, vector of reachable tile indices sorted in ascending order of cost;
- * the first tile is the start location itself
+ *			the first tile is the start location itself
  */
 std::vector<size_t> Pathfinding::findReachable(
 		const BattleUnit* const unit,
@@ -1857,9 +1857,9 @@ bool Pathfinding::previewPath(bool discard)
 				++i)
 		{
 			tile = _battleSave->getTiles()[i];
+			tile->setPreviewColor(0);
 			tile->setPreviewDir(-1);
 			tile->setPreviewTu(-1);
-			tile->setPreviewColor(0);
 		}
 	}
 	else
