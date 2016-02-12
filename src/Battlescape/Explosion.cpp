@@ -23,40 +23,24 @@
 namespace OpenXcom
 {
 
-const int
-	Explosion::FRAMES_BULLET	= 10,
-	Explosion::FRAMES_EXPLODE	= 8,
-	Explosion::FRAMES_HIT		= 4,
-	Explosion::FRAMES_TORCH		= 6;
-
-
 /**
- * Sets up a Explosion sprite with the specified size and position.
- * @param pos			- explosion center position in voxel x/y/z
- * @param frameStart	- used to offset different explosions to different frames on the spritesheet
+ * Sets up an Explosion sprite to animate at a specified position.
+ * @param type			- the ExplosionType (Explosion.h)
+ * @param pos			- explosion's center position in voxel-space
+ * @param startAni		- used to offset different explosions to different frames on its spritesheet
  * @param startDelay	- used to delay the start of explosion (default 0)
- * @param big			- flag to indicate it is a real explosion (true) or a bullet hit (default false)
- * @param hit			- used for melee and psi attacks (default 0)
- *						 1 - is a melee attack that SUCCEEDED or Psi-attack
- *						 0 - is not a hit-type attack
- *						-1 - is a melee attack that MISSED
- * @param torch			- true if animating a fusion torch
  */
 Explosion::Explosion(
+		const ExplosionType type,
 		const Position pos,
-		int frameStart,
-		int startDelay,
-		bool big,
-		int hit,
-		bool torch)
+		int startAni,
+		int startDelay)
 	:
+		_type(type),
 		_pos(pos),
-		_frameStart(frameStart),
-		_frameCurrent(frameStart),
-		_startDelay(startDelay),
-		_big(big),
-		_hit(hit),
-		_torch(torch)
+		_startAni(startAni),
+		_currentAni(startAni),
+		_startDelay(startDelay)
 {}
 
 /**
@@ -66,57 +50,61 @@ Explosion::~Explosion()
 {}
 
 /**
- * Animates the explosion further.
+ * Steps the Explosion forward frame-by-frame.
+ * @note These animations are played by Map::drawTerrain() at the end of that
+ * function.
  * @return, true if the animation is queued or playing
  */
 bool Explosion::animate()
 {
-	if (_startDelay != 0)
+	if (_startDelay == 0)
 	{
-		--_startDelay;
-		return true;
-	}
+		++_currentAni;
 
-	++_frameCurrent;
-
-	if (_torch == true)
-//	if (_frameStart == 88)		// special handling for Fusion Torch - it has 6 frames that cycle 6 times.
-	{							// TODO: #88+ (fusion torch) is loaded into **SMOKE.PCK** (but note that HIT.PCK & X1.PCK
-		static int torchCycle;	// are also ref'd by these Explosions, and used in Map drawTerrain)
-
-		if (torchCycle == 7)
+		switch (_type)
 		{
-			torchCycle = 0;
-			return false;
-		}
-		else
-		{
-			if (_frameCurrent == _frameStart + FRAMES_TORCH - 1)
+			case ET_TORCH: // special handling for Fusion Torch - it has 6 frames that cycle 6 times
 			{
-				_frameCurrent = 88;
-				++torchCycle;
+				static int torchCycle;
+				if (torchCycle == 7)
+				{
+					torchCycle = 0;
+					return false;
+				}
+
+				if (_currentAni == _startAni + FRAMES_TORCH - 1)
+				{
+					_currentAni = START_FUSION;
+					++torchCycle;
+				}
+				break;
 			}
 
-			return true;
+			case ET_AOE:
+				if (_currentAni == _startAni + FRAMES_AOE)
+					return false;
+				break;
+
+			case ET_BULLET:
+				if (_currentAni == _startAni + FRAMES_BULLET)
+					return false;
+				break;
+
+			case ET_MELEE_ATT:
+			case ET_MELEE_HIT:
+			case ET_PSI:
+				if (_currentAni == _startAni + FRAMES_MELEEPSI)
+					return false;
 		}
 	}
-
-	if ((_hit != 0
-			&& _frameCurrent == _frameStart + FRAMES_HIT)		// melee or psiamp
-		|| (_big == true
-			&& _frameCurrent == _frameStart + FRAMES_EXPLODE)	// explosion
-		|| (_big == false
-			&& _hit == 0
-			&& _frameCurrent == _frameStart + FRAMES_BULLET))	// bullet
-	{
-		return false;
-	}
+	else
+		--_startDelay;
 
 	return true;
 }
 
 /**
- * Gets the current position in voxel space.
+ * Gets this Explosion's position in voxel-space.
  * @return, position in voxel space
  */
 const Position Explosion::getPosition() const
@@ -125,44 +113,23 @@ const Position Explosion::getPosition() const
 }
 
 /**
- * Gets the current frame in the animation.
- * @return, currently playing frame number of the animation
+ * Gets the currently playing sprite-ID.
+ * @return, sprite-ID
  */
-int Explosion::getCurrentFrame() const
+int Explosion::getCurrentSprite() const
 {
-	if (_startDelay != 0)
-		return -1;
+	if (_startDelay == 0) return _currentAni;
 
-	return _frameCurrent;
+	return -1;
 }
 
 /**
- * Returns flag to indicate if it is a bullet hit (false) or a real explosion (true).
- * @return, true if this is a real explosion; false if a bullet, psi, or melee hit
+ * Gets this Explosion's type.
+ * @return, the ExplosionType (Explosion.h)
  */
-bool Explosion::isBig() const
+ExplosionType Explosion::getExplosionType() const
 {
-	return _big;
+	return _type;
 }
-
-/**
- * Returns flag to indicate if it is a melee or psi attack.
- * @return,	 1 - psi attack or successful melee attack
- *			 0 - not a melee or psi attack
- *			-1 - unsuccessful melee attack
- */
-int Explosion::isHit() const
-{
-	return _hit;
-}
-
-/*
- * Checks if this is a fusion torch.
- * @return, true if torch
- *
-bool Explosion::isTorch() const // note: Don't need this ... see Map::_explosionInFOV
-{
-	return _torch;
-} */
 
 }

@@ -344,7 +344,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 
 	if (btnId != MENU_ITEMS)
 	{
-		const RuleItem* const itRule = _action->weapon->getRules();
+		const RuleItem* const itRule (_action->weapon->getRules());
 
 		_action->TU = _menuSelect[btnId]->getMenuActionTu();
 		_action->type = _menuSelect[btnId]->getMenuActionType();
@@ -354,7 +354,8 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 			case BA_NONE: // doggie bark
 			{
 				_game->popState();
-				const int soundId = itRule->getMeleeSound();
+
+				const int soundId (itRule->getMeleeSound());
 				if (soundId != -1)
 					_game->getResourcePack()->getSound("BATTLE.CAT", soundId)
 												->play(-1, _game->getSavedGame()->getBattleSave()->getBattleGame()->getMap()
@@ -460,11 +461,11 @@ void ActionMenuState::btnActionMenuClick(Action* action)
  */
 bool ActionMenuState::canExecuteTarget() // private.
 {
-	const SavedBattleGame* const battleSave = _game->getSavedGame()->getBattleSave();
-	const Position pos = _action->actor->getPosition();
-	const Tile* tile = battleSave->getTile(pos);
+	const SavedBattleGame* const battleSave (_game->getSavedGame()->getBattleSave());
+	const Position pos (_action->actor->getPosition());
+	const Tile* tile (battleSave->getTile(pos));
 
-	const int armorSize = _action->actor->getArmor()->getSize();
+	const int armorSize (_action->actor->getArmor()->getSize());
 	for (int
 			x = 0;
 			x != armorSize;

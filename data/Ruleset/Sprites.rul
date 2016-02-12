@@ -182,6 +182,20 @@ extraSprites:
   - type: HIT.PCK
     files:
       0: Resources/Sprites/ufograph/hit/
+  - type: ClawTooth
+    width: 128
+    height: 40
+    subX: 32
+    subY: 40
+    files:
+      0: Resources/aniMelee/Sword.png
+  - type: ClawTooth
+    width: 128
+    height: 40
+    subX: 32
+    subY: 40
+    files:
+      8: Resources/aniMelee/Claws.png
   - type: MEDIBITS.DAT
     width: 312
     height: 58

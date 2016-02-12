@@ -288,8 +288,7 @@ void BattleItem::spendBullet(
 		SavedBattleGame& battleSave,
 		BattleItem& weapon)
 {
-	if (_ammoQty != -1 // <- infinite ammo
-		&& --_ammoQty == 0)
+	if (_ammoQty != -1 && --_ammoQty == 0) // -1== infinite
 	{
 		weapon.setAmmoItem();
 		battleSave.toDeleteItem(this);

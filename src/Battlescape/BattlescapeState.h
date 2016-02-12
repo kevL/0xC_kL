@@ -440,7 +440,7 @@ private:
 		Map* getMap() const;
 
 		/// Show debug message onScreen.
-		void debugPrint(const std::wstring& wst);
+		void printDebug(const std::wstring& wst);
 		/// Show warning message.
 		void warning(
 				const std::string& st,

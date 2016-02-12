@@ -55,8 +55,8 @@ items:
 #    handSprite: 0
     bulletSprite: 7
     fireSound: 11
-    fireHitSound: 19
-    hitAnimation: 36
+    fireSoundHit: 19
+    fireHitAni: 36
     power: 186
     accuracySnap: 56
     accuracyAimed: 128

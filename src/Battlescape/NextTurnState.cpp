@@ -225,9 +225,9 @@ void NextTurnState::nextTurn()
 		liveHostile,
 		livePlayer;
 	_state->getBattleGame()->tallyUnits(liveHostile, livePlayer);
-	if (livePlayer == 0			// all xCom dead, or
-		|| (liveHostile == 0	// not the final mission and all aLiens dead.
-			&& _battleSave->getObjectiveType() != MUST_DESTROY))
+	if (livePlayer == 0
+		|| (liveHostile == 0
+			&& _battleSave->getObjectiveType() != MUST_DESTROY)) // <- not the final mission
 	{
 		switchMusic = true;
 		_state->finishBattle(false, livePlayer);

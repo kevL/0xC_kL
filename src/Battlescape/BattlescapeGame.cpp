@@ -177,15 +177,19 @@ void BattlescapeGame::think()
 				BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 				if (selUnit != nullptr)
 				{
-					_parentState->debugPrint(Text::intWide(selUnit->getId()));
+					_parentState->printDebug(Text::intWide(selUnit->getId()));
 					if (handlePanickingUnit(selUnit) == false)
 					{
-						//Log(LOG_INFO) << "BattlescapeGame::think() call handleUnitAI() " << selUnit->getId();
+						Log(LOG_INFO) << "BattlescapeGame::think() call handleUnitAI() " << selUnit->getId();
 						handleUnitAI(selUnit);
 					}
 				}
-				else if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr) // find 1st AI-unit else endTurn
+				else if (_battleSave->selectNextFactionUnit(
+														true,
+														_AISecondMove == true) == nullptr) // find 1st AI-unit else endTurn
+				{
 					endAiTurn();
+				}
 			}
 		}
 		else // it's a player turn
@@ -197,7 +201,7 @@ void BattlescapeGame::think()
 				{
 					//Log(LOG_INFO) << "bg:think() . panic Handled TRUE";
 					_battleSave->getTileEngine()->recalculateFOV();
-					_battleSave->getBattleState()->updateSoldierInfo();
+					_battleSave->getBattleState()->updateSoldierInfo(false);
 				}
 			}
 			else
@@ -459,8 +463,8 @@ void BattlescapeGame::popState()
 					if (_battleSave->getSide() != FACTION_PLAYER && _debugPlay == false)
 					{
 						BattleUnit* selUnit (_battleSave->getSelectedUnit());
-						if (_AIActionCounter > 2	// AI does three things per unit before switching to the
-							|| selUnit == nullptr	// next or it got killed before doing the second thing
+						if (_AIActionCounter > 2	// AI does two things per unit before switching to the next
+							|| selUnit == nullptr	// unit or it got killed before doing its second thing.
 							|| selUnit->isOut_t() == true)
 						{
 							_AIActionCounter = 0;
@@ -474,7 +478,7 @@ void BattlescapeGame::popState()
 							if (_battleStates.empty() == true // nothing left for Actor to do
 								&& _battleSave->selectNextFactionUnit(true) == nullptr)
 							{
-								endAiTurn();
+								endAiTurn(); // NOTE: This is probly handled just as well by think().
 							}
 
 							if ((selUnit = _battleSave->getSelectedUnit()) != nullptr)
@@ -663,8 +667,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	if (unit->getTimeUnits() == 0)
 		unit->dontReselect();
 
-	if (_AIActionCounter > 1
-		|| unit->reselectAllowed() == false)
+	if (_AIActionCounter > 1 || unit->reselectAllowed() == false)
 	{
 		selectNextAiUnit(unit);
 		return;
@@ -705,7 +708,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	{
 		Log(LOG_INFO) << "";
 		Log(LOG_INFO) << ". BATTLESCAPE: Re-Think id-" << unit->getId();
-		Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [in] = " << _AIActionCounter;
+		Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [in] = " << action.AIcount;
 		unit->think(&action);
 		Log(LOG_INFO) << ". BATTLESCAPE: id-" << unit->getId() << " bat [2] " << BattleAction::debugActionType(action.type);
 		Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [out] = " << action.AIcount;
@@ -722,7 +725,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 		Log(LOG_INFO) << ". pickup Weapon ...";
 		if (_battleSave->getDebugTac() == true) // <- order matters.
 		{
-			_parentState->updateSoldierInfo();
+			_parentState->updateSoldierInfo(false);
 		}
 	}
 
@@ -738,7 +741,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	}
 
 	std::wstring wst (Language::cpToWstr(BattleAIState::debugAiMode(unit->getAIState()->getAIMode())));
-	_parentState->debugPrint(wst + L"> " + Text::intWide(unit->getId()));
+	_parentState->printDebug(wst + L"> " + Text::intWide(unit->getId()));
 	Log(LOG_INFO)
 			<< "\n"
 			<< "type = "			<< BattleAction::debugActionType(action.type) << "\n"
@@ -759,7 +762,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 			<< "finalAction = "		<< action.finalAction << "\n"
 			<< "AIcount = "			<< action.AIcount << "\n"
 			<< "takenXp = "			<< action.takenXp << "\n"
-			<< "waypoints = "		<< (action.waypoints.empty() ? "NONE" : "yes");
+			<< "waypoints = "		<< action.waypoints.size();
 
 	switch (action.type)
 	{
@@ -768,11 +771,12 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 			Pathfinding* const pf (_battleSave->getPathfinding());
 			pf->setPathingUnit(action.actor);
 
-			if (_battleSave->getTile(action.target) != nullptr)
+			if (_battleSave->getTile(action.target) != nullptr)	// TODO: Check that .target is not unit's current Tile.
+			{													// Or ensure that AIState does not return BA_MOVE if so.
 				pf->calculate(action.actor, action.target);
-
-			if (pf->getStartDirection() != -1)
-				statePushBack(new UnitWalkBState(this, action)); // TODO: If action.desperate use 'dash' interval-speed.
+				if (pf->getStartDirection() != -1)
+					statePushBack(new UnitWalkBState(this, action)); // TODO: If action.desperate use 'dash' interval-speed.
+			}
 
 			break;
 		}
@@ -898,8 +902,12 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 {
 	_AIActionCounter = 0;
 
-	if (_battleSave->selectNextFactionUnit(true, _AISecondMove) == nullptr)
+	if (_battleSave->selectNextFactionUnit(
+										true,
+										_AISecondMove == true) == nullptr)
+	{
 		endAiTurn();
+	}
 
 	const BattleUnit* const nextUnit (_battleSave->getSelectedUnit());
 	if (nextUnit != nullptr)
@@ -925,6 +933,7 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 					_battleSave->getShuffleUnits()->end(),
 					unit) < 1)
 			{
+				Log(LOG_INFO) << "BATTLESCAPE::selectNextAiUnit() --- second Move ---";
 				_AISecondMove = true;
 			}
 		}
@@ -1074,26 +1083,30 @@ void BattlescapeGame::liquidateUnit() // private.
 
 	const RuleItem* const itRule (_tacAction.weapon->getRules());
 	BattleItem* const ammo (_tacAction.weapon->getAmmoItem());
+	ExplosionType explType;
 	int
-		soundId (-1),
-		aniStart (0),	// avoid vc++ linker warning.
-		isMelee (0);	// avoid vc++ linker warning.
+		soundId,
+		aniStart;
 
-	switch (itRule->getBattleType()) // find hit-sound & ani.
+	switch (itRule->getBattleType())
 	{
-		case BT_MELEE:
-			isMelee = 1;
-			aniStart = itRule->getMeleeAnimation();
-
-			if ((soundId = ammo->getRules()->getMeleeHitSound()) == -1)
-				if ((soundId = itRule->getMeleeHitSound()) == -1)
-					soundId = ResourcePack::ITEM_DROP;
-			break;
+		default:
 		case BT_FIREARM:
-			aniStart = ammo->getRules()->getHitAnimation();
+			if (itRule->getType() == "STR_FUSION_TORCH_POWER_CELL")
+				explType = ET_TORCH;
+			else
+				explType = ET_BULLET;
+
+			aniStart = ammo->getRules()->getFireHitAnimation();
 
 			if ((soundId = ammo->getRules()->getFireHitSound()) == -1)
 				soundId = itRule->getFireHitSound();
+			break;
+
+		case BT_MELEE:
+			explType = ET_MELEE_ATT;
+			aniStart = itRule->getMeleeAnimation();
+			soundId = itRule->getMeleeHitSound();
 	}
 
 	if (soundId != -1)
@@ -1104,15 +1117,20 @@ void BattlescapeGame::liquidateUnit() // private.
 				*_battleSave,
 				*_tacAction.weapon);
 
-	const Position explVoxel (Position::toVoxelSpaceCentered(_tacAction.target, 2));
-	Explosion* const explosion (new Explosion(
-											explVoxel,
-											aniStart,
-											0,
-											false,
-											isMelee));
-	getMap()->getExplosions()->push_back(explosion);
-	_executeProgress = true;
+	if (aniStart != -1)
+	{
+		Explosion* const explosion (new Explosion(
+												explType,
+												Position::toVoxelSpaceCentered(_tacAction.target, 2),
+												aniStart));
+		getMap()->getExplosions()->push_back(explosion);
+		_executeProgress = true;
+
+		Uint32 interval (static_cast<Uint32>(
+						 std::max(1,
+								static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION) - itRule->getExplosionSpeed())));
+		setStateInterval(interval);
+	}
 
 	_tacAction.targetUnit->playDeathSound(); // scream little piggie
 
@@ -1484,8 +1502,8 @@ void BattlescapeGame::endTurn() // private.
 		return;
 	}
 
-	const bool battleComplete = liveHostile == 0
-							 || livePlayer == 0;
+	const bool battleComplete (liveHostile == 0
+							|| livePlayer  == 0);
 
 	if (battleComplete == false)
 	{

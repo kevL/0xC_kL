@@ -134,13 +134,14 @@ private:
 		_explosionSpeed,
 
 		_fireSound,
-		_fireHitSound,
-		_hitAnimation,
+		_fireSoundHit,
+		_fireHitAni,
+		_firePower,
 		_meleeSound,
+		_meleeSoundHit,
+		_meleeAni,
+		_meleeHitAni,
 		_meleePower,
-		_meleeAnimation,
-		_meleeHitSound,
-		_power,
 		_shotgunPellets,
 		_shotgunPattern,
 		_autoKick,
@@ -247,7 +248,7 @@ private:
 		/// Gets the item's hit sound.
 		int getFireHitSound() const;
 		/// Gets the item's hit animation.
-		int getHitAnimation() const;
+		int getFireHitAnimation() const;
 
 		/// Gets the item's power.
 		int getPower() const;
@@ -392,14 +393,16 @@ private:
 		/// Used to determine if a weapon is capable of Reaction Fire.
 		bool canReactionFire() const;
 
-		/// Gets the sound this weapon makes when you swing it at someone.
+		/// Gets the sound a weapon makes when you swing it at someone.
 		int getMeleeSound() const;
-		/// Gets the sound this weapon makes when you punch someone in the face with it.
+		/// Gets the sound a weapon makes when you punch someone in the face with it.
 		int getMeleeHitSound() const;
-		/// Ok, so this isn't a melee type weapon but we're using it for melee anyway... Gets its melee damage.
+		/// Gets a weapon's melee damage.
 		int getMeleePower() const;
-		/// Gets the melee animation starting frame (comes from hit.pck).
+		/// Gets a weapon's melee-swing animation.
 		int getMeleeAnimation() const;
+		/// Gets a weapon's melee-hit animation.
+		int getMeleeHitAnimation() const;
 
 		/// Checks if LOS is required to use this item (only applies to psionic type items)
 		bool isLosRequired() const;

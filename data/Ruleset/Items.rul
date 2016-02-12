@@ -83,8 +83,8 @@ items:
     costSell: 1450
     transferTime: 48
     weight: 0
-    fireHitSound: 13
-    hitAnimation: 26
+    fireSoundHit: 13
+    fireHitAni: 26
     power: 92
     damageType: 1
     clipSize: 18
@@ -117,8 +117,8 @@ items:
     costSell: 2400
     transferTime: 48
     weight: 0
-    fireHitSound: 5
-    hitAnimation: 0
+    fireSoundHit: 5
+#    fireHitAni: 0
     power: 115
     damageType: 3
     clipSize: 6
@@ -134,8 +134,8 @@ items:
 #    handSprite: 0
     bulletSprite: 5
     fireSound: 11
-    fireHitSound: 19
-    hitAnimation: 36
+    fireSoundHit: 19
+    fireHitAni: 36
     power: 186
     damageType: 4
     accuracySnap: 56
@@ -158,10 +158,10 @@ items:
 #    handSprite: 0
     bulletSprite: 8
     fireSound: 18
-    fireHitSound: 19
+    fireSoundHit: 19
     power: 127
     damageType: 5
-    hitAnimation: 46
+    fireHitAni: 46
     accuracySnap: 83
     accuracyAimed: 110
     tuSnap: 33
@@ -199,8 +199,8 @@ items:
     costSell: 216240 # 720800
     transferTime: 48
     weight: 0
-    fireHitSound: 5
-    hitAnimation: 0
+    fireSoundHit: 5
+#    fireHitAni: 0
     power: 216
     damageType: 3
     clipSize: 6
@@ -237,8 +237,8 @@ items:
     weight: 2
     bigSprite: 4
     floorSprite: 4
-    fireHitSound: 22
-    hitAnimation: 26
+    fireSoundHit: 22
+    fireHitAni: 26
     power: 25
     damageType: 1
     clipSize: 9
@@ -274,8 +274,8 @@ items:
     weight: 3
     bigSprite: 2
     floorSprite: 2
-    fireHitSound: 22
-    hitAnimation: 26
+    fireSoundHit: 22
+    fireHitAni: 26
     power: 36
     damageType: 1
     clipSize: 18
@@ -310,8 +310,8 @@ items:
     weight: 6
     bigSprite: 12
     floorSprite: 12
-    fireHitSound: 13
-    hitAnimation: 26
+    fireSoundHit: 13
+    fireHitAni: 26
     power: 73
     damageType: 1
     clipSize: 6
@@ -325,8 +325,8 @@ items:
     weight: 6
     bigSprite: 13
     floorSprite: 13
-    fireHitSound: 12
-#    hitAnimation: 0
+    fireSoundHit: 12
+#    fireHitAni: 0
     power: 61
     damageType: 3
     clipSize: 6
@@ -342,8 +342,8 @@ items:
     weight: 6
     bigSprite: 14
     floorSprite: 14
-    fireHitSound: 12
-#    hitAnimation: 0
+    fireSoundHit: 12
+#    fireHitAni: 0
     power: 62
     damageType: 2
     clipSize: 6
@@ -384,8 +384,8 @@ items:
     weight: 7
     bigSprite: 8
     floorSprite: 8
-    fireHitSound: 13
-    hitAnimation: 26
+    fireSoundHit: 13
+    fireHitAni: 26
     power: 53
     damageType: 1
     clipSize: 12
@@ -399,8 +399,8 @@ items:
     weight: 7
     bigSprite: 9
     floorSprite: 9
-    fireHitSound: 12
-#    hitAnimation: 0
+    fireSoundHit: 12
+#    fireHitAni: 0
     power: 49
     damageType: 3
     clipSize: 12
@@ -416,8 +416,8 @@ items:
     weight: 7
     bigSprite: 10
     floorSprite: 10
-    fireHitSound: 12
-#    hitAnimation: 0
+    fireSoundHit: 12
+#    fireHitAni: 0
     power: 52
     damageType: 2
     clipSize: 12
@@ -455,7 +455,7 @@ items:
     weight: 9
     bigSprite: 16
     floorSprite: 16
-    fireHitSound: 5
+    fireSoundHit: 5
     power: 81
     damageType: 3
 #    explosionSpeed:
@@ -471,7 +471,7 @@ items:
     weight: 13
     bigSprite: 17
     floorSprite: 17
-    fireHitSound: 5
+    fireSoundHit: 5
     power: 98
     damageType: 3
 #    explosionSpeed:
@@ -487,8 +487,8 @@ items:
     weight: 11
     bigSprite: 18
     floorSprite: 18
-    fireHitSound: 5
-#    hitAnimation: 0
+    fireSoundHit: 5
+#    fireHitAni: 0
     power: 92
     damageType: 2
 #    explosionSpeed:
@@ -506,8 +506,8 @@ items:
     handSprite: 112
     bulletSprite: 5
     fireSound: 11
-    fireHitSound: 19
-    hitAnimation: 36
+    fireSoundHit: 19
+    fireHitAni: 36
     power: 43
     damageType: 4
     accuracyAuto: 23
@@ -530,8 +530,8 @@ items:
     handSprite: 8
     bulletSprite: 6
     fireSound: 11
-    fireHitSound: 19
-    hitAnimation: 36
+    fireSoundHit: 19
+    fireHitAni: 36
     power: 62
     damageType: 4
     accuracyAuto: 43
@@ -555,8 +555,8 @@ items:
     handSprite: 16
     bulletSprite: 7
     fireSound: 11
-    fireHitSound: 19
-    hitAnimation: 36
+    fireSoundHit: 19
+    fireHitAni: 36
     power: 119
     damageType: 4
     accuracySnap: 72
@@ -575,7 +575,7 @@ items:
     weight: 4
     bigSprite: 19
     floorSprite: 19
-    fireHitSound: 12
+    fireSoundHit: 12
     power: 47
     damageType: 3
     battleType: 4
@@ -589,8 +589,8 @@ items:
     weight: 5
     bigSprite: 519 #org 20
     floorSprite: 519 #org 20
-    hitAnimation: 24
-    fireHitSound: 12
+    fireHitAni: 24
+    fireSoundHit: 12
     power: 57
     damageType: 9
     battleType: 4
@@ -604,7 +604,7 @@ items:
     weight: 6
     bigSprite: 21
     floorSprite: 21
-    fireHitSound: 12
+    fireSoundHit: 12
     power: 69
     damageType: 3
     battleType: 5
@@ -618,7 +618,7 @@ items:
     weight: 12
     bigSprite: 22
     floorSprite: 22
-    fireHitSound: 5
+    fireSoundHit: 5
     power: 134
     damageType: 3
     battleType: 4
@@ -662,7 +662,8 @@ items:
     bigSprite: 33
     floorSprite: 32
     handSprite: 88
-    fireHitSound: 36
+    meleeSoundHit: 36
+    meleeHitAni: 0
     battleType: 9
     twoHanded: true
     invWidth: 1
@@ -678,6 +679,7 @@ items:
     floorSprite: 26
     handSprite: 80
     meleeSound: 54
+    meleeHitAni: 0
     power: 65
     damageType: 6
     blastRadius: -2 #to bypass auto-explRadius-calc for DT_STUN
@@ -764,8 +766,8 @@ items:
     weight: 4
     bigSprite: 25
     floorSprite: 33
-    fireHitSound: 19
-    hitAnimation: 46
+    fireSoundHit: 19
+    fireHitAni: 46
     power: 109
     damageType: 5
     clipSize: 11
@@ -807,8 +809,8 @@ items:
     weight: 3
     bigSprite: 41
     floorSprite: 33
-    fireHitSound: 19
-    hitAnimation: 46
+    fireSoundHit: 19
+    fireHitAni: 46
     power: 86
     damageType: 5
     clipSize: 13
@@ -849,8 +851,8 @@ items:
     weight: 2
     bigSprite: 34
     floorSprite: 33
-    fireHitSound: 19
-    hitAnimation: 46
+    fireSoundHit: 19
+    fireHitAni: 46
     power: 57
     damageType: 5
     clipSize: 19
@@ -890,8 +892,8 @@ items:
     weight: 5
     bigSprite: 36
     floorSprite: 35
-    fireHitSound: 5
-#    hitAnimation: 0
+    fireSoundHit: 5
+#    fireHitAni: 0
     power: 182
     damageType: 3
     clipSize: 1
@@ -934,8 +936,8 @@ items:
     weight: 4
     bigSprite: 38
     floorSprite: 90 # was 37
-    fireHitSound: 12
-    hitAnimation: 16
+    fireSoundHit: 12
+    fireHitAni: 16
     power: 85
     damageType: 6
     clipSize: 1
@@ -952,7 +954,7 @@ items:
     weight: 3
     bigSprite: 39
     floorSprite: 38
-    fireHitSound: 5
+    fireSoundHit: 5
     power: 81
     damageType: 3
     battleType: 4
@@ -970,7 +972,7 @@ items:
     weight: 4
     bigSprite: 29
     floorSprite: 28
-    fireHitSound: 37
+    fireSoundHit: 37
     battleType: 8
     invWidth: 2
     invHeight: 2
@@ -1321,8 +1323,8 @@ items:
     handSprite: 104
     bulletSprite: 8
     fireSound: 18
-    fireHitSound: 19
-    hitAnimation: 46
+    fireSoundHit: 19
+    fireHitAni: 46
     power: 147
     damageType: 5
     accuracySnap: 76
@@ -1341,6 +1343,8 @@ items:
     floorSprite: 31
     handSprite: 104
     meleeSound: 48
+    meleeAni: 8
+    meleeHitAni: 0
     clipSize: -1
     strengthApplied: true
     damageType: 7
@@ -1358,6 +1362,8 @@ items:
     floorSprite: 31
     handSprite: 104
     meleeSound: 49
+#    meleeAni: #not implemented yet
+    meleeHitAni: 0
     clipSize: -1
     strengthApplied: true
     damageType: 7
@@ -1377,8 +1383,8 @@ items:
     handSprite: 104
     bulletSprite: 8
     fireSound: 51
-    fireHitSound: 19
-    hitAnimation: 46
+    fireSoundHit: 19
+    fireHitAni: 46
     power: 144
     damageType: 8
     accuracySnap: 68
@@ -1398,6 +1404,8 @@ items:
     floorSprite: 31
     handSprite: 104
     meleeSound: 50
+    meleeAni: 8
+    meleeHitAni: 0
     strengthApplied: true
     damageType: 7
     accuracyMelee: 71
@@ -1415,8 +1423,8 @@ items:
     floorSprite: 31
     handSprite: 104
     fireSound: 18
-    fireHitSound: 19
-    hitAnimation: 46
+    fireSoundHit: 19
+    fireHitAni: 46
     power: 123
     damageType: 5
     accuracyAuto: 47
@@ -1436,6 +1444,8 @@ items:
     weight: 3
     bigSprite: -5
     meleeSound: 48
+#    meleeAni: #not implemented yet
+    meleeHitAni: 0
     strengthApplied: true
     damageType: 7
     accuracyMelee: 50
@@ -1595,16 +1605,19 @@ items:
 # Special Psi Weapon for Aliens. Usage of this is hard-coded.
 # DO NOT DELETE!
   - type: ALIEN_PSI_WEAPON
-    fireHitSound: 36
+    meleeSoundHit: 36
+    meleeHitAni: 0
     battleType: 9
     tuUse: 35 # kL: was 25
     flatRate: false #kL: was true
     recover: false
+# Universal Fist Weapon for Aliens. Usage of this is hard-coded.
+# DO NOT DELETE!
   - type: STR_FIST
     bigSprite: 56 #temp: Elerium
-    meleeSound: 39
-    meleeHitSound: 38
-#    hitAnimation: 0
+    meleeSound: 39 # swish
+    meleeSoundHit: 38 # thock
+    meleeHitAni: 0
     power: 18
     strengthApplied: true
     damageType: 6

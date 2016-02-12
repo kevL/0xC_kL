@@ -35,8 +35,8 @@ items:
     battleType: 2
     invWidth: 1
     invHeight: 1
-#    fireHitSound: 337
-    hitAnimation: 88 #note this gets very special handling in Explosion class
+#    fireSoundHit: 337
+    fireHitAni: 88 #note this gets very special handling in Explosion class
     armor: 5
     listOrder: 3711
 manufacture:

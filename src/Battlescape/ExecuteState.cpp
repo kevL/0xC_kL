@@ -118,11 +118,11 @@ void ExecuteState::init()
 
 	BattleUnit* targetUnit;
 
-	const SavedBattleGame* const battleSave = _game->getSavedGame()->getBattleSave();
-	const Position pos = _action->actor->getPosition();
-	Tile* tile = battleSave->getTile(pos);
+	const SavedBattleGame* const battleSave (_game->getSavedGame()->getBattleSave());
+	const Position pos (_action->actor->getPosition());
+	Tile* tile;
 
-	const int actorSize = _action->actor->getArmor()->getSize();
+	const int actorSize (_action->actor->getArmor()->getSize());
 	for (int
 			x = 0;
 			x != actorSize;
@@ -182,30 +182,31 @@ void ExecuteState::lstTargetPress(Action* action)
 			_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
 		else
 		{
-			BattleUnit* const targetUnit = _targetUnits[_lstTarget->getSelectedRow()];
+			BattleUnit* const targetUnit (_targetUnits[_lstTarget->getSelectedRow()]);
 			_action->target = targetUnit->getPosition(); // jic.
 			_action->targetUnit = targetUnit;
 
-			const RuleItem
-				* const itRule = _action->weapon->getRules(),
-				* const amRule = _action->weapon->getAmmoItem()->getRules();
-			int soundId = -1;
+			const RuleItem* const itRule (_action->weapon->getRules());
+			int soundId;
 
-			switch (itRule->getBattleType()) // find attack-sound.
+			switch (itRule->getBattleType())
 			{
-				case BT_MELEE:
-					if ((soundId = amRule->getMeleeSound()) == -1)
-						if ((soundId = itRule->getMeleeSound()) == -1)
-							soundId = ResourcePack::ITEM_THROW;
-					break;
+				default:
 				case BT_FIREARM:
-					if ((soundId = amRule->getFireSound()) == -1)
+					if ((soundId = _action->weapon->getAmmoItem()->getRules()->getFireSound()) == -1)
 						soundId = itRule->getFireSound();
+					break;
+
+				case BT_MELEE:
+					if (itRule->getMeleeHitSound() == -1)
+						soundId = itRule->getMeleeSound();
+					else
+						soundId = -1;
 			}
 
 			if (soundId != -1)
 			{
-				const Map* const battleMap = _game->getSavedGame()->getBattleSave()->getBattleGame()->getMap();
+				const Map* const battleMap (_game->getSavedGame()->getBattleSave()->getBattleGame()->getMap());
 				_game->getResourcePack()->getSound("BATTLE.CAT", soundId)
 											->play(-1, battleMap->getSoundAngle(_action->actor->getPosition()));
 			}

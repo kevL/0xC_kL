@@ -1566,7 +1566,7 @@ void BattlescapeState::mapClick(Action* action)
 						<< L" ";
 
 			woststr << L"pos " << pos;
-			debugPrint(woststr.str());
+			printDebug(woststr.str());
 //			}
 		}
 	}
@@ -1654,22 +1654,22 @@ inline void BattlescapeState::handle(Action* action)
 						{																//   player turn else the HUD won't show back up.
 							beep = true;
 							_battleSave->debugTac();
-							debugPrint(L"debug set active");
+							printDebug(L"debug set active");
 						}
 						else
-							debugPrint(L"player turn only");
+							printDebug(L"player turn only");
 					}
 					else
 					{
 						switch (action->getDetails()->key.keysym.sym)
 						{
 							case SDLK_d:												// "ctrl-d" - debug already enabled.
-								debugPrint(L"debug already active");
+								printDebug(L"debug already active");
 								break;
 
 							case SDLK_v:												// "ctrl-v" - reset tile visibility.
 								beep = true;
-								debugPrint(L"blacking all tiles");
+								printDebug(L"blacking all tiles");
 								_battleSave->blackTiles();
 								break;
 
@@ -1680,7 +1680,7 @@ inline void BattlescapeState::handle(Action* action)
 								{
 									case SDLK_k:										// "ctrl-k" - kill all aliens.
 										beep = true; //MB_ICONERROR
-										debugPrint(L"dispersing influenza");
+										printDebug(L"dispersing influenza");
 										for (std::vector<BattleUnit*>::const_iterator
 												i = _battleSave->getUnits()->begin();
 												i !=_battleSave->getUnits()->end();
@@ -1698,7 +1698,7 @@ inline void BattlescapeState::handle(Action* action)
 
 									case SDLK_j:										// "ctrl-j" - stun all aliens.
 										beep = true; //MB_ICONWARNING
-										debugPrint(L"deploying Celine Dione");
+										printDebug(L"deploying Celine Dione");
 										for (std::vector<BattleUnit*>::const_iterator
 											i = _battleSave->getUnits()->begin();
 											i !=_battleSave->getUnits()->end();
@@ -3696,7 +3696,7 @@ Map* BattlescapeState::getMap() const
  * Shows a debug message in the topleft corner.
  * @param wst - reference a debug message
  */
-void BattlescapeState::debugPrint(const std::wstring& wst)
+void BattlescapeState::printDebug(const std::wstring& wst)
 {
 //	if (_battleSave->getDebugTac() == true)
 	_txtDebug->setText(wst);

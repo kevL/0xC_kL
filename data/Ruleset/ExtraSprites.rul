@@ -68,13 +68,13 @@ extraSprites:
     subY: 3
     files:
       0: Resources/UI/globe_ufo.png
-  - type: StatusIcons
-    width: 294
-    height: 14
-    subX: 14
-    subY: 14
-    files:
-      0: Resources/Sprites/ufograph/statusbar/statusbar.png
+#  - type: StatusIcons
+#    width: 294
+#    height: 14
+#    subX: 14
+#    subY: 14
+#    files:
+#      0: Resources/Sprites/ufograph/statusbar/statusbar.png
   - type: Cygnus_BG
     singleImage: true
     width: 640

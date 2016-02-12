@@ -261,8 +261,8 @@ void AlienBAIState::think(BattleAction* const action)
 		case AI_PATROL:
 			if (_spottersOrigin != 0
 				|| _targetsVisible != 0
-				|| _targetsExposed != 0
-				|| RNG::percent(9) == true)
+				|| _targetsExposed != 0)
+//				|| RNG::percent(9) == true)
 			{
 				evaluate = true;
 			}
@@ -291,23 +291,17 @@ void AlienBAIState::think(BattleAction* const action)
 	}
 	Log(LOG_INFO) << ". do Evaluate = " << evaluate;
 
-	if (evaluate == false
-		&& (_spottersOrigin > 1
+	if (evaluate == true
+		|| (_spottersOrigin > 1
 			|| _unit->getHealth() < _unit->getBattleStats()->health * 2 / 3
 			|| (_unitAggro != nullptr
 				&& _unitAggro->getExposed() > _unit->getIntelligence())
 			|| (_battleSave->isCheating() == true
-				&& _AIMode != AI_COMBAT)))
+				&& _AIMode != AI_COMBAT)));
 	{
-		evaluate = true;
-	}
-	Log(LOG_INFO) << ". do Evaluate (other) = " << evaluate;
-
-	if (evaluate == true)
-	{
-		Log(LOG_INFO) << ". AIMode pre-Evaluate = " << BattleAIState::debugAiMode(_AIMode);
+		Log(LOG_INFO) << ". . AIMode pre-Evaluate = " << BattleAIState::debugAiMode(_AIMode);
 		evaluateAiMode();
-		Log(LOG_INFO) << ". AIMode post-Evaluate = " << BattleAIState::debugAiMode(_AIMode);
+		Log(LOG_INFO) << ". . AIMode post-Evaluate = " << BattleAIState::debugAiMode(_AIMode);
 	}
 
 	Log(LOG_INFO) << ". evaluate [2] " << BattleAIState::debugAiMode(_AIMode);
@@ -384,8 +378,8 @@ void AlienBAIState::think(BattleAction* const action)
 
 			action->type = _ambushAction->type;
 			action->target = _ambushAction->target;
-			action->finalFacing = _ambushAction->finalFacing;
 			action->finalAction = true;
+			action->finalFacing = _ambushAction->finalFacing;
 
 			break;
 
@@ -403,7 +397,7 @@ void AlienBAIState::think(BattleAction* const action)
 
 	if (action->type == BA_MOVE)
 	{
-		Log(LOG_INFO) << ". do BA_MOVE";
+		Log(LOG_INFO) << ". BA_MOVE";
 		if (action->target == _unit->getPosition())
 		{
 			Log(LOG_INFO) << ". . Stay put";
@@ -554,7 +548,8 @@ void AlienBAIState::setupPatrol() // private.
 
 		_pf->abortPath();
 	}
-	//Log(LOG_INFO) << "AlienBAIState::setupPatrol() EXIT";
+	Log(LOG_INFO) << "AlienBAIState::setupPatrol() EXIT";
+	Log(LOG_INFO) << "";
 }
 
 /**
@@ -626,6 +621,7 @@ void AlienBAIState::setupAttack() // private.
 		else Log(LOG_INFO) << ". . findFirePosition FAILED";
 	}
 	Log(LOG_INFO) << "AlienBAIState::setupAttack() EXIT";
+	Log(LOG_INFO) << "";
 }
 
 /**
@@ -807,7 +803,7 @@ void AlienBAIState::setupAmbush() // private.
 			tile->setPreviewTu(485); // "4m8u5h"
 		}
 	}
-	Log(LOG_INFO) << "setupAmbush() EXIT";
+	Log(LOG_INFO) << "AlienBAIState::setupAmbush() EXIT";
 	Log(LOG_INFO) << "";
 }
 
@@ -964,6 +960,8 @@ void AlienBAIState::setupEscape() // private.
 		_escapeAction->type = BA_THINK;
 		_tuEscape = -1;
 	}
+	Log(LOG_INFO) << "AlienBAIState::setupEscape() EXIT";
+	Log(LOG_INFO) << "";
 }
 
 /**
@@ -982,7 +980,7 @@ void AlienBAIState::evaluateAiMode() // private.
 	}
 
 	// if the aliens are cheating or the unit is charging enforce combat as a priority
-	if (_battleSave->isCheating() == true // <- hmm, do i want this - kL_note
+	if (_battleSave->isCheating() == true // <- do i want this - kL_note
 		|| _unit->getChargeTarget() != nullptr
 		|| _blaster == true)	// The two (_blaster== true) checks in this function ought obviate the entire re-evaluate thing!
 								// Note there is a valid targetPosition but targetUnit is NOT at that Pos if blaster=TRUE ....
@@ -2082,7 +2080,7 @@ bool AlienBAIState::psiAction() // private.
 		&& _hasPsiBeenSet == false
 		&& _unit->isMindControlled() == false)
 	{
-		const RuleItem* const itRule (_battleSave->getBattleGame()->getAlienPsi()->getRules()); //getRuleset()->getItem("ALIEN_PSI_WEAPON"));
+		const RuleItem* const itRule (_battleSave->getBattleGame()->getAlienPsi()->getRules());
 
 		int tuCost (_unit->getActionTu(BA_PSIPANIC, itRule));
 		if (_tuEscape != -1)
@@ -2103,8 +2101,8 @@ bool AlienBAIState::psiAction() // private.
 				choice (0),
 				choiceTest;
 			Position
-				origin,
-				target;
+				originVoxel,
+				targetVoxel; // placeholder.
 
 			for (std::vector<BattleUnit*>::const_iterator
 					i = _battleSave->getUnits()->begin();
@@ -2124,11 +2122,11 @@ bool AlienBAIState::psiAction() // private.
 					dist = TileEngine::distance(
 										(*i)->getPosition(),
 										_unit->getPosition()) * 2;
-					origin = _battleSave->getTileEngine()->getSightOriginVoxel(_unit);
+					originVoxel = _battleSave->getTileEngine()->getSightOriginVoxel(_unit);
 					losTest = static_cast<int>(_battleSave->getTileEngine()->canTargetUnit(
-																						&origin,
+																						&originVoxel,
 																						(*i)->getTile(),
-																						&target,
+																						&targetVoxel,
 																						_unit)) * PSI_LOS_WEIGHT;
 					//Log(LOG_INFO) << ". . . ";
 					//Log(LOG_INFO) << ". . . targetID = " << (*i)->getId();

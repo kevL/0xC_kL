@@ -39,8 +39,8 @@ items:
     bigSprite: 4
     floorSprite: 4
     bulletSprite: 1
-    hitAnimation: 26
-    fireHitSound: 22
+    fireHitAni: 26
+    fireSoundHit: 22
     power: 30
     damageType: 1
     clipSize: 18
@@ -81,8 +81,8 @@ items:
     bigSprite: 503
     floorSprite: 503
     bulletSprite: 15
-    hitAnimation: 26
-    fireHitSound: 22
+    fireHitAni: 26
+    fireSoundHit: 22
     power: 42
     damageType: 1
     clipSize: 5
@@ -128,8 +128,8 @@ items:
     floorSprite: 505
 #    handSprite: 32 #stock, AC
     bulletSprite: 14
-    hitAnimation: 26
-    fireHitSound: 22
+    fireHitAni: 26
+    fireSoundHit: 22
     power: 25
     damageType: 1
     clipSize: 30
@@ -176,8 +176,8 @@ items:
     bigSprite: 507
     floorSprite: 507
     bulletSprite: 2
-    hitAnimation: 26
-    fireHitSound: 22
+    fireHitAni: 26
+    fireSoundHit: 22
     power: 45
     damageType: 1
     clipSize: 25
@@ -219,8 +219,8 @@ items:
     floorSprite: 509
 #    handSprite: 32 #stock, AC
     bulletSprite: 15
-    hitAnimation: 26
-    fireHitSound: 22
+    fireHitAni: 26
+    fireSoundHit: 22
     power: 55
     damageType: 1
     clipSize: 10
@@ -263,8 +263,8 @@ items:
     bigSprite: 511
     floorSprite: 511
     bulletSprite: 15
-    hitAnimation: 26
-    fireHitSound: 13
+    fireHitAni: 26
+    fireSoundHit: 13
     power: 83
     damageType: 1
     clipSize: 5
@@ -311,8 +311,8 @@ items:
     bigSprite: 513
     floorSprite: 513
     bulletSprite: 2
-    hitAnimation: 26
-    fireHitSound: 13
+    fireHitAni: 26
+    fireSoundHit: 13
     power: 39
     damageType: 1
     clipSize: 35
@@ -381,8 +381,8 @@ items:
     bigSprite: 516
     floorSprite: 516
     bulletSprite: 2
-    hitAnimation: 26
-    fireHitSound: 22
+    fireHitAni: 26
+    fireSoundHit: 22
     power: 16
     damageType: 1
     clipSize: 8
@@ -398,8 +398,8 @@ items:
     bigSprite: 517
     floorSprite: 517
     bulletSprite: 2
-    hitAnimation: 26
-    fireHitSound: 22
+    fireHitAni: 26
+    fireSoundHit: 22
     power: 26
     damageType: 1
     clipSize: 8
@@ -417,8 +417,8 @@ items:
     bigSprite: 518
     floorSprite: 518
     bulletSprite: 2
-    hitAnimation: 26
-    fireHitSound: 22
+    fireHitAni: 26
+    fireSoundHit: 22
     power: 36
     damageType: 1
     clipSize: 8
@@ -436,7 +436,7 @@ items:
     weight: 4
     bigSprite: 27 #was 519
     floorSprite: 27 #was 519
-    fireHitSound: 12
+    fireSoundHit: 12
     power: 57
     damageType: 2
     battleType: 4
@@ -455,7 +455,7 @@ items:
     handSprite: 568
     bulletSprite: 0
     fireSound: 167
-    fireHitSound: 5
+    fireSoundHit: 5
     power: 93
     accuracySnap: 57
     accuracyAimed: 103
@@ -484,7 +484,7 @@ items:
     weight: 13
     bigSprite: 521
     floorSprite: 521
-    fireHitSound: 5
+    fireSoundHit: 5
     power: 142
     damageType: 1 #AP
     clipSize: 1
@@ -532,8 +532,8 @@ items:
 #    weight: 4
 #    bigSprite: 692
 #    floorSprite: 16
-#    fireHitSound: 0
-#    hitAnimation: 0
+#    fireSoundHit: 0
+#    fireHitAni: 0
 #    power: 100
 #    damageType: 3
 #    clipSize: 1

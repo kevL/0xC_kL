@@ -26,60 +26,63 @@
 namespace OpenXcom
 {
 
+enum ExplosionType
+{
+	ET_AOE,			// 0
+	ET_BULLET,		// 1
+	ET_MELEE_ATT,	// 2
+	ET_MELEE_HIT,	// 3
+	ET_PSI,			// 4
+	ET_TORCH		// 5
+};
+
+
 /**
- * This class represents an explode animation.
- * @note Map is the owner of an instance of this class during its short life.
- * It animates a bullet or psi hit or a big explosion animation.
+ * This class represents an Explosion animation.
+ * @note Map is the owner of an instance of this class during its short life. It
+ * animates any/all types of explosion animations.
  */
 class Explosion
 {
 
 private:
-	bool
-		_big,
-		_torch;
+	static const int
+		FRAMES_AOE		=  8,
+		FRAMES_BULLET	= 10,
+		FRAMES_MELEEPSI	=  4,
+		FRAMES_TORCH	=  6,
+		START_FUSION	= 88;
+
 	int
-		_frameCurrent,
-		_frameStart,
-		_hit,
+		_currentAni,
+		_startAni,
 		_startDelay;
 
+	const ExplosionType _type;
 	const Position _pos;
 
 
 	public:
-		static const int
-			FRAMES_BULLET,
-			FRAMES_EXPLODE,
-			FRAMES_HIT,
-			FRAMES_TORCH;
-
-		/// Creates a new Explosion.
+		/// Creates an Explosion.
 		Explosion(
+				const ExplosionType type,
 				const Position pos,
-				int frameStart,
-				int startDelay = 0,
-				bool big = false,
-				int hit = 0,
-				bool torch = false);
+				int startAni,
+				int startDelay = 0);
 		/// Cleans up the Explosion.
 		~Explosion();
 
-		/// Moves the Explosion on one frame.
+		/// Steps the Explosion forward.
 		bool animate();
 
-		/// Gets the current position in voxel space.
+		/// Gets the Explosion's position in voxel-space.
 		const Position getPosition() const;
 
-		/// Gets the current frame.
-		int getCurrentFrame() const;
+		/// Gets the currently playing sprite-ID.
+		int getCurrentSprite() const;
 
-		/// Checks if this is a real explosion.
-		bool isBig() const;
-		/// Checks if this is a melee or psi hit.
-		int isHit() const;
-		/// Checks if this is a fusion torch.
-//		bool isTorch() const;
+		/// Gets the Explosion's type.
+		ExplosionType getExplosionType() const;
 };
 
 }

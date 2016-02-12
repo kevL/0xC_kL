@@ -11,8 +11,9 @@ items:
     floorSprite: 76
     handSprite: 144
     meleeSound: 39
-    meleeHitSound: 67
-    meleeAnimation: 4
+    meleeSoundHit: 67
+    meleeAni: 4
+    meleeHitAni: 0
     power: 30
     strengthApplied: true
     damageType: 7
@@ -44,13 +45,13 @@ extraSprites:
     subY: 40
     files:
       144: Resources/CombatKnife/HandCombatKnife.png
-  - type: HIT.PCK
+  - type: ClawTooth
     width: 128
     height: 40
     subX: 32
     subY: 40
     files:
-      4: Resources/CombatKnife/AttackMelee_luna.png
+      4: Resources/aniMelee/AttackMelee_luna.png
 extraSounds:
   - type: BATTLE.CAT
     files:

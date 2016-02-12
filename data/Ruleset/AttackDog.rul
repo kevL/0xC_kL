@@ -10,6 +10,8 @@ items:
 #    handSprite: 0
     power: 23
     damageType: 7 # melee
+    meleeAni: 0
+    meleeHitAni: 0
     meleeSound: 210
     accuracyMelee: 67
     tuMelee: 16

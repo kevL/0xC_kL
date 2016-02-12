@@ -46,10 +46,10 @@ RuleItem::RuleItem(const std::string& type)
 		_floorSprite(-1),
 		_handSprite(120),
 		_bulletSprite(-1),
+		_firePower(0),
 		_fireSound(-1),
-		_fireHitSound(-1),
-		_hitAnimation(-1),
-		_power(0),
+		_fireSoundHit(-1),
+		_fireHitAni(-1),
 		_dType(DT_NONE),
 		_maxRange(200), // could be -1 for infinite.
 		_aimRange(20),
@@ -106,10 +106,11 @@ RuleItem::RuleItem(const std::string& type)
 		_noReaction(false),
 		_noResearch(false),
 		_meleePower(0),
-		_meleeAnimation(0),
+		_meleeAni(-1),
+		_meleeHitAni(-1),
 		_meleeSound(-1),
-		_meleeHitSound(-1),
-		_specialType(STT_NONE), // -1
+		_meleeSoundHit(-1),
+		_specialType(STT_NONE),
 		_canExecute(false),
 		_defusePulse(false)
 {}
@@ -163,9 +164,8 @@ void RuleItem::load(
 
 	if (node["bulletSprite"])
 	{
-		// Projectiles: 385 entries ((105*33) / (3*3)) (35 sprites per projectile(0-34), 11 projectiles (0-10))
 		_bulletSprite = node["bulletSprite"].as<int>(_bulletSprite) * 35;
-		if (_bulletSprite >= 385)
+		if (_bulletSprite >= 385) // Projectiles: 385 entries ((105*33) / (3*3)) (35 sprites per projectile(0-34), 11 projectiles (0-10))
 			_bulletSprite += modIndex;
 	}
 
@@ -176,11 +176,11 @@ void RuleItem::load(
 			_fireSound += modIndex;
 	}
 
-	if (node["fireHitSound"])
+	if (node["fireSoundHit"])
 	{
-		_fireHitSound = node["fireHitSound"].as<int>(_fireHitSound);
-		if (_fireHitSound > 54) // BATTLE.CAT: 55 entries
-			_fireHitSound += modIndex;
+		_fireSoundHit = node["fireSoundHit"].as<int>(_fireSoundHit);
+		if (_fireSoundHit > 54) // BATTLE.CAT: 55 entries
+			_fireSoundHit += modIndex;
 	}
 
 	if (node["meleeSound"])
@@ -190,32 +190,37 @@ void RuleItem::load(
 			_meleeSound += modIndex;
 	}
 
-	if (node["meleeHitSound"])
+	if (node["meleeSoundHit"])
 	{
-		_meleeHitSound = node["meleeHitSound"].as<int>(_meleeHitSound);
-		if (_meleeHitSound > 54) // BATTLE.CAT: 55 entries
-			_meleeHitSound += modIndex;
+		_meleeSoundHit = node["meleeSoundHit"].as<int>(_meleeSoundHit);
+		if (_meleeSoundHit > 54) // BATTLE.CAT: 55 entries
+			_meleeSoundHit += modIndex;
 	}
 
-	if (node["hitAnimation"])
+	if (node["fireHitAni"])
 	{
-		_hitAnimation = node["hitAnimation"].as<int>(_hitAnimation);
-		if (_hitAnimation > 55) // SMOKE.PCK: 56 entries
-			_hitAnimation += modIndex;
+		_fireHitAni = node["fireHitAni"].as<int>(_fireHitAni);
+		if (_fireHitAni > 55) // SMOKE.PCK: 56 entries
+			_fireHitAni += modIndex;
 	}
 
-	if (node["meleeAnimation"])
+	if (node["meleeHitAni"])
 	{
-		_meleeAnimation = node["meleeAnimation"].as<int>(_meleeAnimation);
-		if (_meleeAnimation > 3) // HIT.PCK: 4 entries
-			_meleeAnimation += modIndex;
+		_meleeHitAni = node["meleeHitAni"].as<int>(_meleeHitAni);
+		if (_meleeHitAni > 3) // HIT.PCK: 4 entries
+			_meleeHitAni += modIndex;
 	}
+
+	_meleeAni = node["meleeAni"].as<int>(_meleeAni);
 
 	_dType			= static_cast<DamageType>(node["damageType"]		.as<int>(_dType));
 	_battleType		= static_cast<BattleType>(node["battleType"]		.as<int>(_battleType));
 	_specialType	= static_cast<SpecialTileType>(node["specialType"]	.as<int>(_specialType));
 
-	_power				= node["power"]				.as<int>(_power);
+	_firePower			= node["power"]				.as<int>(_firePower);
+	_meleePower			= node["meleePower"]		.as<int>(_meleePower);
+	_strengthApplied	= node["strengthApplied"]	.as<bool>(_strengthApplied);
+	_skillApplied		= node["skillApplied"]		.as<bool>(_skillApplied);
 	_clipSize			= node["clipSize"]			.as<int>(_clipSize);
 	_compatibleAmmo		= node["compatibleAmmo"]	.as<std::vector<std::string>>(_compatibleAmmo);
 	_accuracyAuto		= node["accuracyAuto"]		.as<int>(_accuracyAuto);
@@ -265,12 +270,9 @@ void RuleItem::load(
 	_shotgunPellets		= node["shotgunPellets"]	.as<int>(_shotgunPellets);
 	_shotgunPattern		= node["shotgunPattern"]	.as<int>(_shotgunPattern);
 	_zombieUnit			= node["zombieUnit"]		.as<std::string>(_zombieUnit);
-	_strengthApplied	= node["strengthApplied"]	.as<bool>(_strengthApplied);
-	_skillApplied		= node["skillApplied"]		.as<bool>(_skillApplied);
 	_LOSRequired		= node["LOSRequired"]		.as<bool>(_LOSRequired);
 	_noReaction			= node["noReaction"]		.as<bool>(_noReaction);
 	_noResearch			= node["noResearch"]		.as<bool>(_noResearch);
-	_meleePower			= node["meleePower"]		.as<int>(_meleePower);
 	_defusePulse		= node["defusePulse"]		.as<bool>(_defusePulse);
 
 	switch (_dType)
@@ -442,16 +444,16 @@ int RuleItem::getFireSound() const
  */
 int RuleItem::getFireHitSound() const
 {
-	return _fireHitSound;
+	return _fireSoundHit;
 }
 
 /**
  * Gets the item's hit animation.
  * @return, the hit animation ID
  */
-int RuleItem::getHitAnimation() const
+int RuleItem::getFireHitAnimation() const
 {
-	return _hitAnimation;
+	return _fireHitAni;
 }
 
 /**
@@ -460,7 +462,7 @@ int RuleItem::getHitAnimation() const
  */
 int RuleItem::getPower() const
 {
-	return _power;
+	return _firePower;
 }
 
 /**
@@ -737,11 +739,11 @@ int RuleItem::getExplosionRadius() const
 			|| _dType == DT_SMOKE
 			|| _dType == DT_IN))
 	{
-		return _power / 20;
+		return _firePower / 20;
 	}
 
 //	if (_dType == DT_IN)
-//		return _power / 30;
+//		return _firePower / 30;
 
 	return _blastRadius;
 }
@@ -1006,8 +1008,8 @@ bool RuleItem::canReactionFire() const
 }
 
 /**
- * The sound this weapon makes when you swing it at someone.
- * @return, the weapon's melee attack sound
+ * The sound the weapon makes when you swing it at someone.
+ * @return, the melee-attack sound-ID
  */
 int RuleItem::getMeleeSound() const
 {
@@ -1015,17 +1017,17 @@ int RuleItem::getMeleeSound() const
 }
 
 /**
- * The sound this weapon makes when you punch someone in the face with it.
- * @return, the weapon's melee hit sound
+ * The sound the weapon makes when you punch someone in the face with it.
+ * @return, the melee-hit sound-ID
  */
 int RuleItem::getMeleeHitSound() const
 {
-	return _meleeHitSound;
+	return _meleeSoundHit;
 }
 
 /**
- * The damage this weapon does when you punch someone in the face with it.
- * @return, the weapon's melee power
+ * The damage the weapon does when you punch someone in the face with it.
+ * @return, the melee power
  */
 int RuleItem::getMeleePower() const
 {
@@ -1033,12 +1035,21 @@ int RuleItem::getMeleePower() const
 }
 
 /**
- * The starting frame offset in hit.pck to use for the animation.
- * @return, the starting frame offset in HIT.PCK to use for the animation
+ * Gets the sprite-offset in "ClawTooth" used to start the melee-swing animation.
+ * @return, the offset to start at
  */
 int RuleItem::getMeleeAnimation() const
 {
-	return _meleeAnimation;
+	return _meleeAni;
+}
+
+/**
+ * Gets the sprite-offset in "HIT.PCK" used to start the hit-success animation.
+ * @return, the offset to start at
+ */
+int RuleItem::getMeleeHitAnimation() const
+{
+	return _meleeHitAni;
 }
 
 /**

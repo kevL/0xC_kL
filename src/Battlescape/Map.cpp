@@ -361,7 +361,7 @@ void Map::draw()
 					&& (tile->getTileVisible() == true
 						|| (tile->getTileUnit() != nullptr
 							&& tile->getTileUnit()->getUnitVisible() == true)
-						|| (*i)->isBig() == true
+						|| (*i)->isAoE() == true
 						|| (*i)->isTorch() == true
 						|| _battleSave->getSide() != FACTION_PLAYER)) // shows hit-explosion during aLien berserk
 				{
@@ -1354,7 +1354,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									shade);
 					} // end Smoke & Fire
 
-// Draw pathPreview (arrows)
+// Draw pathPreview (arrows solid)
 					if ((_previewSetting & PATH_ARROWS)
 						&& _tile->getPreviewDir() != -1
 						&& _tile->isRevealed(ST_WEST) == true) // what.
@@ -1783,7 +1783,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						{
 							int offset_y (-_tile->getTerrainLevel());
 
-							if (_previewSetting & PATH_ARROWS)
+							if (_previewSetting & PATH_ARROWS) // arrows semi-transparent
 							{
 								tileBelow = _battleSave->getTile(posField + Position(0,0,-1));
 								if (itZ > 0 && _tile->hasNoFloor(tileBelow) == true)
@@ -1873,45 +1873,46 @@ void Map::drawTerrain(Surface* const surface) // private.
 									(*i)->getPosition(),
 									&bullet);
 
-			if ((*i)->getCurrentFrame() > -1)
+			if ((*i)->getCurrentSprite() > -1)
 			{
-				if ((*i)->isBig() == true) // explosion, http://ufopaedia.org/index.php?title=X1.PCK
+				switch ((*i)->getExplosionType())
 				{
-					sprite = _res->getSurfaceSet("X1.PCK")->getFrame((*i)->getCurrentFrame());
-					sprite->blitNShade(
-							surface,
-							bullet.x - (sprite->getWidth() / 2),
-							bullet.y - (sprite->getHeight() / 2));
-				}
-				else if ((*i)->isHit() == 0) // bullet, http://ufopaedia.org/index.php?title=SMOKE.PCK
-				{
-					sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame((*i)->getCurrentFrame());
-					sprite->blitNShade(
-							surface,
-							bullet.x - 15,
-							bullet.y - 15);
-				}
-				else //if ((*i)->isHit() == 1) // melee or psiamp, http://ufopaedia.org/index.php?title=HIT.PCK
-				{	 // put that back in to acknowledge -1 as a no-animation melee miss.
-					sprite = _res->getSurfaceSet("HIT.PCK")->getFrame((*i)->getCurrentFrame());
-					sprite->blitNShade(
-							surface,
-							bullet.x - 15,
-							bullet.y - 25);
+					case ET_AOE: // Explosions, http://ufopaedia.org/index.php?title=X1.PCK
+						sprite = _res->getSurfaceSet("X1.PCK")->getFrame((*i)->getCurrentSprite());
+						sprite->blitNShade(
+								surface,
+								bullet.x - (sprite->getWidth() / 2),
+								bullet.y - (sprite->getHeight() / 2));
+						break;
 
-					if ((*i)->isHit() == 1) // temp kludge to show batman-type hit if melee is successful
-					{
-						sprite = _res->getSurfaceSet("HIT.PCK")->getFrame((*i)->getCurrentFrame() - 4);
-						if (sprite != nullptr)
+					case ET_BULLET: // Bullet-hits, http://ufopaedia.org/index.php?title=SMOKE.PCK
+					case ET_TORCH:
+						sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame((*i)->getCurrentSprite());
+						sprite->blitNShade(
+								surface,
+								bullet.x - 15,
+								bullet.y - 15);
+						break;
+
+					case ET_MELEE_HIT:	// Melee success, http://ufopaedia.org/index.php?title=HIT.PCK
+					case ET_PSI:		// Psiamp strikes
+							sprite = _res->getSurfaceSet("HIT.PCK")->getFrame((*i)->getCurrentSprite());
 							sprite->blitNShade(
 									surface,
 									bullet.x - 15,
 									bullet.y - 25);
-					}
+						break;
+
+					case ET_MELEE_ATT: // Melee swing
+							sprite = _res->getSurfaceSet("ClawTooth")->getFrame((*i)->getCurrentSprite());
+							sprite->blitNShade(
+									surface,
+									bullet.x - 15,
+									bullet.y - 25);
 				}
 			}
 		}
-/*		} */
+//		}
 	}
 	surface->unlock();
 }

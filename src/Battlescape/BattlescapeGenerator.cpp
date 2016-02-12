@@ -2361,30 +2361,28 @@ void BattlescapeGenerator::explodePowerSources() // private.
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
-		if (RNG::percent(80) == true)
+		tile = _battleSave->getTiles()[i];
+		if (tile->getMapData(O_OBJECT) != nullptr
+			&& tile->getMapData(O_OBJECT)->getSpecialType() == UFO_POWER_SOURCE
+			&& RNG::percent(80) == true)
 		{
-			tile = _battleSave->getTiles()[i];
-			if (tile->getMapData(O_OBJECT) != nullptr
-				&& tile->getMapData(O_OBJECT)->getSpecialType() == UFO_POWER_SOURCE)
-			{
-				voxel = Position::toVoxelSpaceCentered(
-													tile->getPosition(),
-													10);
+			voxel = Position::toVoxelSpaceCentered(
+												tile->getPosition(),
+												10);
 
-				double power (static_cast<double>(_ufo->getUfoDamagePct()));	// range: ~50+ to ~100-
-				if (RNG::percent(static_cast<int>(power) / 2) == true)			// chance for full range Explosion (even if crash took low damage)
-					power = RNG::generate(1.,100.);
+			double power (static_cast<double>(_ufo->getUfoDamagePct()));	// range: ~50+ to ~100-
+			if (RNG::percent(static_cast<int>(power) / 2) == true)			// chance for full range Explosion (even if crash took low damage)
+				power = RNG::generate(1.,100.);
 
-				power *= RNG::generate(0.1,2.);
-				power += std::pow(power, 2) / 160.;
+			power *= RNG::generate(0.1,2.);
+			power += std::pow(power, 2) / 160.;
 
-				if (power > 0.5)
-					_battleSave->getTileEngine()->explode(
-														voxel,
-														static_cast<int>(std::ceil(power)),
-														DT_HE,
-														21);
-			}
+			if (power > 0.5)
+				_battleSave->getTileEngine()->explode(
+													voxel,
+													static_cast<int>(std::ceil(power)),
+													DT_HE,
+													21);
 		}
 	}
 

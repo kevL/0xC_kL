@@ -67,8 +67,8 @@ Tile::Tile(const Position& pos)
 		_explosiveType(DT_NONE),
 		_unit(nullptr),
 		_animOffset(0),
-		_previewColor(0),
 		_visible(false),
+		_previewColor(0),
 		_previewDir(-1),
 		_previewTu(-1),
 		_danger(false)

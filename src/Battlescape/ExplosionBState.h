@@ -46,11 +46,11 @@ class ExplosionBState
 private:
 	bool
 		_areaOfEffect,
+		_buttHurt,
 		_forceCamera,
-		_melee,
-		_meleeSuccess,
 		_lowerWeapon,
-		_pistolWhip;
+		_melee,
+		_meleeSuccess;
 	int _power;
 //		_extend,
 
