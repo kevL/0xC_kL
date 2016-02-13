@@ -8,7 +8,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_RIFLE
     meleePower: 30
     tuMelee: 35
@@ -16,7 +16,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_HEAVY_CANNON
     meleePower: 40
     tuMelee: 45
@@ -24,7 +24,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_AUTO_CANNON
     meleePower: 40
     tuMelee: 45
@@ -32,7 +32,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_ROCKET_LAUNCHER
     meleePower: 50
     tuMelee: 75
@@ -40,7 +40,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_LASER_PISTOL
     meleePower: 15
     tuMelee: 15
@@ -48,7 +48,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_LASER_RIFLE
     meleePower: 30
     tuMelee: 35
@@ -56,7 +56,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_HEAVY_LASER
     meleePower: 40
     tuMelee: 45
@@ -64,7 +64,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_PLASMA_PISTOL
     meleePower: 15
     tuMelee: 15
@@ -72,7 +72,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_PLASMA_RIFLE
     meleePower: 30
     tuMelee: 35
@@ -80,7 +80,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_HEAVY_PLASMA
     meleePower: 40
     tuMelee: 45
@@ -88,7 +88,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_BLASTER_LAUNCHER
     meleePower: 50
     tuMelee: 75
@@ -96,7 +96,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_SMALL_LAUNCHER
     meleePower: 25
     tuMelee: 35
@@ -104,7 +104,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
 #EqualTerms:
   - type: STR_MACHINE_PISTOL
     meleePower: 20
@@ -113,7 +113,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_MAGNUM
     meleePower: 20
     tuMelee: 20
@@ -121,7 +121,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_SMG
     meleePower: 25
     tuMelee: 35
@@ -129,7 +129,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_ASSAULT_RIFLE
     meleePower: 30
     tuMelee: 35
@@ -137,7 +137,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_MARKSMANS_RIFLE
     meleePower: 30
     tuMelee: 35
@@ -145,7 +145,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_SNIPER_RIFLE
     meleePower: 30
     tuMelee: 35
@@ -153,7 +153,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_SAW
     meleePower: 50
     tuMelee: 75
@@ -161,7 +161,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_SHOTGUN
     meleePower: 30
     tuMelee: 35
@@ -169,7 +169,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_REINFORCED_SHOTGUN
     meleePower: 30
     tuMelee: 35
@@ -177,7 +177,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_SSRL
     meleePower: 25
     tuMelee: 35
@@ -185,7 +185,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
 #note: could include Rockets etc.
   - type: STR_FUSION_TORCH
     meleePower: 50
@@ -194,7 +194,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_GRENADE_LAUNCHER
     meleePower: 40
     tuMelee: 45
@@ -202,7 +202,7 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
   - type: STR_LMG
     meleePower: 35
     tuMelee: 40
@@ -210,4 +210,4 @@ items:
     strengthApplied: true
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0

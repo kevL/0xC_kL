@@ -130,7 +130,7 @@ private:
 			int aLienRank,
 			bool outside);
 	/// Finds a spot near a friend to spawn at.
-	bool placeUnitNearFriend(BattleUnit* const unit);
+	bool placeUnitNearFaction(BattleUnit* const unit);
 
 	/// Spawns civilians on a terror mission.
 	void deployCivilians(int civilians);

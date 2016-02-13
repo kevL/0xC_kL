@@ -663,7 +663,7 @@ items:
     floorSprite: 32
     handSprite: 88
     meleeSoundHit: 36
-    meleeHitAni: 0
+    meleeAniHit: 0
     battleType: 9
     twoHanded: true
     invWidth: 1
@@ -679,7 +679,7 @@ items:
     floorSprite: 26
     handSprite: 80
     meleeSound: 54
-    meleeHitAni: 0
+    meleeAniHit: 0
     power: 65
     damageType: 6
     blastRadius: -2 #to bypass auto-explRadius-calc for DT_STUN
@@ -1344,7 +1344,7 @@ items:
     handSprite: 104
     meleeSound: 48
     meleeAni: 8
-    meleeHitAni: 0
+    meleeAniHit: 0
     clipSize: -1
     strengthApplied: true
     damageType: 7
@@ -1363,7 +1363,7 @@ items:
     handSprite: 104
     meleeSound: 49
 #    meleeAni: #not implemented yet
-    meleeHitAni: 0
+    meleeAniHit: 0
     clipSize: -1
     strengthApplied: true
     damageType: 7
@@ -1405,7 +1405,7 @@ items:
     handSprite: 104
     meleeSound: 50
     meleeAni: 8
-    meleeHitAni: 0
+    meleeAniHit: 0
     strengthApplied: true
     damageType: 7
     accuracyMelee: 71
@@ -1445,7 +1445,7 @@ items:
     bigSprite: -5
     meleeSound: 48
 #    meleeAni: #not implemented yet
-    meleeHitAni: 0
+    meleeAniHit: 0
     strengthApplied: true
     damageType: 7
     accuracyMelee: 50
@@ -1606,7 +1606,7 @@ items:
 # DO NOT DELETE!
   - type: ALIEN_PSI_WEAPON
     meleeSoundHit: 36
-    meleeHitAni: 0
+    meleeAniHit: 0
     battleType: 9
     tuUse: 35 # kL: was 25
     flatRate: false #kL: was true
@@ -1617,7 +1617,7 @@ items:
     bigSprite: 56 #temp: Elerium
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
-    meleeHitAni: 0
+    meleeAniHit: 0
     power: 18
     strengthApplied: true
     damageType: 6

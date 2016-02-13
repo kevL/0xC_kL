@@ -43,7 +43,7 @@ MapData::MapData(MapDataSet* const dataSet)
 		_isDoor(false),
 		_blockFire(false),
 		_blockSmoke(false),
-		_baseModule(false),
+		_baseObject(false),
 		_yOffset(0),
 		_tuWalk(0),
 		_tuSlide(0),
@@ -211,7 +211,7 @@ void MapData::setStopLOS(bool stopLOS)
  * @param isDoor		- true if this is a normal door
  * @param blockFire		- true if this blocks fire
  * @param blockSmoke	- true if this blocks smoke
- * @param baseModule	- true if this is a base module (objective) item
+ * @param baseObject	- true if this is a base-object/aLien-objective
  */
 void MapData::setFlags(
 		bool isUfoDoor,
@@ -222,7 +222,7 @@ void MapData::setFlags(
 		bool isDoor,
 		bool blockFire,
 		bool blockSmoke,
-		bool baseModule)
+		bool baseObject)
 {
 	_isUfoDoor = isUfoDoor;
 	_stopLOS = stopLOS;
@@ -232,7 +232,7 @@ void MapData::setFlags(
 	_isDoor = isDoor;
 	_blockFire = blockFire;
 	_blockSmoke = blockSmoke;
-	_baseModule = baseModule;
+	_baseObject = baseObject;
 }
 
 /**
@@ -677,16 +677,16 @@ void MapData::setNoFloor(bool isNoFloor)
 }
 
 /**
- * Check if this is an xcom base tile-part.
- * @return, true if it is a base tile-part
+ * Checks if this is an aLien-objective tile-part.
+ * @return, true if so
  */
-bool MapData::isBaseModule() const
+bool MapData::isBaseObject() const
 {
-	return _baseModule;
+	return _baseObject;
 }
 
 /**
- * Sets if this tilepart is psychedelic.
+ * Sets if this tile-part is psychedelic.
  * @param psycho - true if psycho
  */
 void MapData::setPsychedelic(int psycho)
@@ -695,7 +695,7 @@ void MapData::setPsychedelic(int psycho)
 }
 
 /**
- * Gets if this tilepart is psychedelic.
+ * Gets if this tile-part is psychedelic.
  * @return, true if psycho
  */
 int MapData::getPsychedelic() const

@@ -88,7 +88,7 @@ SavedBattleGame::SavedBattleGame(
 		_cheatAI(false),
 //		_batReserved(BA_NONE),
 //		_kneelReserved(false),
-		_invBattle(nullptr),
+		_equiptTile(nullptr),
 		_groundLevel(-1),
 		_tacType(TCT_DEFAULT),
 		_controlDestroyed(false),
@@ -2650,32 +2650,33 @@ bool SavedBattleGame::isCheating()
 }
 
 /**
- * Gets a reference to the base module destruction map.
- * @note This map contains information on how many destructible base modules
+ * Gets a reference to the base-module destruction map.
+ * @note This map contains information on how many destructible base-modules
  * remain at any given grid reference in the basescape, using [x][y] format.
- * -1 for "no items" 0 for "destroyed" and any actual number represents how many
- * left.
- * @return, reference to a vector of vectors containing pairs of ints that make up base module damage maps
+ * -1 - no objects
+ *  0 - destroyed
+ *  # - quantity
+ * @return, reference to a vector of vectors containing pairs of ints that
+ *			represent the base-modules that are intact/destroyed by aLiens
  */
-std::vector<std::vector<std::pair<int, int>>>& SavedBattleGame::getModuleMap()
+std::vector<std::vector<std::pair<int,int>>>& SavedBattleGame::baseDestruct()
 {
 	return _baseModules;
 }
 
 /**
  * Calculates the number of map modules remaining by counting the map objects on
- * the top floor who have the baseModule flag set. We store this data in the
- * grid as outlined in the comments above, in pairs representing initial and
- * current values.
+ * the top floor that have the baseModule flag set.
+ * @note Store this data in the grid - as outlined in the comments above - in
+ * pairs that represent initial and current values.
  */
-void SavedBattleGame::calcModuleMap()
+void SavedBattleGame::calcBaseDestruct()
 {
 	_baseModules.resize(
-					_mapsize_x / 10,
-					std::vector<std::pair<int, int>>(
-												_mapsize_y / 10,
-												std::make_pair(-1,-1)));
+					static_cast<size_t>(_mapsize_x / 10),
+					std::vector<std::pair<int,int>>(_mapsize_y / 10, std::make_pair(-1,-1)));
 
+	const Tile* tile;
 	for (int // need a bunch of size_t ->
 			x = 0;
 			x != _mapsize_x;
@@ -2691,11 +2692,9 @@ void SavedBattleGame::calcModuleMap()
 					z != _mapsize_z;
 					++z)
 			{
-				const Tile* const tile (getTile(Position(x,y,z)));
-
-				if (tile != nullptr
+				if ((tile = getTile(Position(x,y,z))) != nullptr
 					&& tile->getMapData(O_OBJECT) != nullptr
-					&& tile->getMapData(O_OBJECT)->isBaseModule() == true)
+					&& tile->getMapData(O_OBJECT)->isBaseObject() == true)
 				{
 					_baseModules[x / 10]
 								[y / 10].first += _baseModules[x / 10]
@@ -2719,19 +2718,21 @@ SavedGame* SavedBattleGame::getGeoscapeSave() const
 }
 
 /**
- * Gets the list of items that are guaranteed to be recovered (ie: items that were in the skyranger).
- * @return, the list of items guaranteed recovered
+ * Gets the list of items that are guaranteed to be recovered.
+ * @note These items are in the transport.
+ * @return, pointer to a vector of pointers to BattleItems
  */
-std::vector<BattleItem*>* SavedBattleGame::getGuaranteedRecoveredItems()
+std::vector<BattleItem*>* SavedBattleGame::guaranteedItems()
 {
 	return &_recoverGuaranteed;
 }
 
 /**
- * Gets the list of items that are not guaranteed to be recovered (ie: items that were NOT in the skyranger).
- * @return, the list of items conditionally recovered
+ * Gets the list of items that are NOT guaranteed to be recovered.
+ * @note These items are NOT in the transport.
+ * @return, pointer to a vector of pointers to BattleItems
  */
-std::vector<BattleItem*>* SavedBattleGame::getConditionalRecoveredItems()
+std::vector<BattleItem*>* SavedBattleGame::conditionalItems()
 {
 	return &_recoverConditional;
 }
@@ -2739,24 +2740,27 @@ std::vector<BattleItem*>* SavedBattleGame::getConditionalRecoveredItems()
 /**
  * Sets the battlescape inventory tile when BattlescapeGenerator runs.
  * For use in base missions to randomize item locations.
- * @param invBattle - pointer to the tile where battle inventory is created
+ * @param equiptTile - pointer to the Tile where tactical equip't should be
  */
-void SavedBattleGame::setBattleInventory(Tile* invBattle)
+void SavedBattleGame::setBattleInventory(Tile* const equiptTile)
 {
-	_invBattle = invBattle;
+	_equiptTile = equiptTile;
 }
 
 /**
  * Gets the inventory tile for preBattle InventoryState OK click.
+ * @return, pointer to the tactical equip't Tile
  */
 Tile* SavedBattleGame::getBattleInventory() const
 {
-	return _invBattle;
+	return _equiptTile;
 }
 
 /**
- * Sets the alien race for this battle.
- * Currently used only for Base Defense missions, but should fill for other missions also.
+ * Sets the aLien race for this battle.
+ * @note Currently used only for Base Defense missions but should fill for other
+ * missions also.
+ * @param alienRace - reference to an alien-race string
  */
 void SavedBattleGame::setAlienRace(const std::string& alienRace)
 {
@@ -2764,9 +2768,10 @@ void SavedBattleGame::setAlienRace(const std::string& alienRace)
 }
 
 /**
- * Gets the alien race participating in this battle.
- * Currently used only to get the alien race for SoldierDiary statistics
+ * Gets the aLien race participating in this battle.
+ * @note Currently used only to get the aLien race for SoldierDiary statistics
  * after a Base Defense mission.
+ * @return, reference to the alien-race string
  */
 const std::string& SavedBattleGame::getAlienRace() const
 {
@@ -2775,7 +2780,7 @@ const std::string& SavedBattleGame::getAlienRace() const
 
 /**
  * Sets the ground level.
- * @param level - ground level as determined in BattlescapeGenerator.
+ * @param level - ground level as determined in BattlescapeGenerator
  */
 void SavedBattleGame::setGroundLevel(const int level)
 {

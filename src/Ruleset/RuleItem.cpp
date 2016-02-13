@@ -107,7 +107,7 @@ RuleItem::RuleItem(const std::string& type)
 		_noResearch(false),
 		_meleePower(0),
 		_meleeAni(-1),
-		_meleeHitAni(-1),
+		_meleeAniHit(-1),
 		_meleeSound(-1),
 		_meleeSoundHit(-1),
 		_specialType(STT_NONE),
@@ -204,11 +204,11 @@ void RuleItem::load(
 			_fireHitAni += modIndex;
 	}
 
-	if (node["meleeHitAni"])
+	if (node["meleeAniHit"])
 	{
-		_meleeHitAni = node["meleeHitAni"].as<int>(_meleeHitAni);
-		if (_meleeHitAni > 3) // HIT.PCK: 4 entries
-			_meleeHitAni += modIndex;
+		_meleeAniHit = node["meleeAniHit"].as<int>(_meleeAniHit);
+		if (_meleeAniHit > 3) // HIT.PCK: 4 entries
+			_meleeAniHit += modIndex;
 	}
 
 	_meleeAni = node["meleeAni"].as<int>(_meleeAni);
@@ -1049,7 +1049,7 @@ int RuleItem::getMeleeAnimation() const
  */
 int RuleItem::getMeleeHitAnimation() const
 {
-	return _meleeHitAni;
+	return _meleeAniHit;
 }
 
 /**

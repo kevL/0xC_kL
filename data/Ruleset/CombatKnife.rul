@@ -13,7 +13,7 @@ items:
     meleeSound: 39
     meleeSoundHit: 67
     meleeAni: 4
-    meleeHitAni: 0
+    meleeAniHit: 0
     power: 30
     strengthApplied: true
     damageType: 7

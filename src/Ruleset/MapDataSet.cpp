@@ -38,8 +38,8 @@ namespace OpenXcom
 {
 
 MapData
-	* MapDataSet::_blankTile = nullptr,
-	* MapDataSet::_scorchedTile = nullptr;
+	* MapDataSet::_blankTile (nullptr),
+	* MapDataSet::_scorchedTile (nullptr);
 
 
 /**

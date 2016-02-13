@@ -91,7 +91,7 @@ class MapData
 
 private:
 	bool
-		_baseModule,
+		_baseObject,
 		_blockFire,
 		_blockSmoke,
 		_isDoor,
@@ -182,7 +182,7 @@ private:
 				bool isDoor,
 				bool blockFire,
 				bool blockSmoke,
-				bool baseModule);
+				bool baseObject);
 
 		/// Gets the amount of blockage of a certain type.
 		int getBlock(DamageType dType) const;
@@ -292,8 +292,8 @@ private:
 		/// Sets this tile as not a floor.
 		void setNoFloor(bool isNoFloor);
 
-		/// Check if this is an xcom base object.
-		bool isBaseModule() const;
+		/// Checks if this is an aLien-objective tile-part.
+		bool isBaseObject() const;
 
 		/// Sets if this tilepart is psychedelic.
 		void setPsychedelic(int psycho);

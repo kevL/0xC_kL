@@ -11,7 +11,7 @@ items:
     power: 23
     damageType: 7 # melee
     meleeAni: 0
-    meleeHitAni: 0
+    meleeAniHit: 0
     meleeSound: 210
     accuracyMelee: 67
     tuMelee: 16
@@ -104,8 +104,9 @@ extraSprites:
 extraSounds:
   - type: BATTLE.CAT
     files:
-      210: Resources/MoreCivilians/DogAttack.wav
-      211: Resources/MoreCivilians/DogDeath.wav
+      210: Resources/MoreCivilians/dog_bark.ogg
+      211: Resources/MoreCivilians/dog_pain_short.ogg
+      212: Resources/MoreCivilians/dog_growl.ogg
 extraStrings:
   - type: en-US
     strings:

@@ -1980,10 +1980,10 @@ void TileEngine::hit(
 				{
 					if (partType == O_OBJECT
 						&& _battleSave->getTacType() == TCT_BASEDEFENSE
-						&& tile->getMapData(O_OBJECT)->isBaseModule() == true
+						&& tile->getMapData(O_OBJECT)->isBaseObject() == true
 						&& tile->getMapData(O_OBJECT)->getArmor() <= power)
 					{
-						_battleSave->getModuleMap()[(targetVoxel.x / 16) / 10]
+						_battleSave->baseDestruct()[(targetVoxel.x / 16) / 10]
 												   [(targetVoxel.y / 16) / 10].second--;
 					}
 					tile->hitTile(partType, power, _battleSave);
@@ -4124,9 +4124,9 @@ void TileEngine::detonate(Tile* const tile) const
 			}
 
 			if (_battleSave->getTacType() == TCT_BASEDEFENSE
-				&& tiles[i]->getMapData(partType)->isBaseModule() == true)
+				&& tiles[i]->getMapData(partType)->isBaseObject() == true)
 			{
-				_battleSave->getModuleMap()[tile->getPosition().x / 10]
+				_battleSave->baseDestruct()[tile->getPosition().x / 10]
 										   [tile->getPosition().y / 10].second--;
 			}
 

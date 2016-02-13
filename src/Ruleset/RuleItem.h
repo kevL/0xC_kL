@@ -140,7 +140,7 @@ private:
 		_meleeSound,
 		_meleeSoundHit,
 		_meleeAni,
-		_meleeHitAni,
+		_meleeAniHit,
 		_meleePower,
 		_shotgunPellets,
 		_shotgunPattern,

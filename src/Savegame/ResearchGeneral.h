@@ -57,7 +57,7 @@ private:
 	public:
 		/// Constructor.
 		ResearchGeneral(
-				const RuleResearch* resRule,
+				const RuleResearch* const resRule,
 				bool done = false);
 //		void init();
 		/// dTor.
@@ -76,7 +76,7 @@ private:
 
 		/// Sets the Ufopaedia entry as seen.
 		void setBeenSeen(const bool seen = false);
-		/// Gets whether the Ufopaedia has been accessed.
+		/// Gets whether the Ufopaedia entry has been accessed.
 		bool getBeenSeen() const;
 
 		/// Loads the ResearchGeneral from a YAML file.

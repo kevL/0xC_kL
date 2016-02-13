@@ -109,7 +109,7 @@ private:
 	const BattleUnit* _walkUnit;
 	Pathfinding* _pf;
 	Tile
-		* _invBattle,
+		* _equiptTile,
 		** _tiles;
 	TileEngine* _te;
 
@@ -414,20 +414,20 @@ private:
 		bool isCheating();
 
 		/// Gets a reference to the baseModules map.
-		std::vector<std::vector<std::pair<int, int>>>& getModuleMap();
+		std::vector<std::vector<std::pair<int, int>>>& baseDestruct();
 		/// Calculates the number of map modules remaining
-		void calcModuleMap();
+		void calcBaseDestruct();
 
 		/// Gets a pointer to the Geoscape save.
 		SavedGame* getGeoscapeSave() const;
 
 		/// Gets the list of items guaranteed to be recovered.
-		std::vector<BattleItem*>* getGuaranteedRecoveredItems();
+		std::vector<BattleItem*>* guaranteedItems();
 		/// Gets the list of items that MIGHT get recovered.
-		std::vector<BattleItem*>* getConditionalRecoveredItems();
+		std::vector<BattleItem*>* conditionalItems();
 
 		/// Sets the inventory tile when BattlescapeGenerator runs.
-		void setBattleInventory(Tile* invBattle);
+		void setBattleInventory(Tile* const equiptTile);
 		/// Gets the inventory tile for preBattle InventoryState OK click.
 		Tile* getBattleInventory() const;
 

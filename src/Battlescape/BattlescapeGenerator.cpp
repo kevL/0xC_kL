@@ -392,7 +392,7 @@ void BattlescapeGenerator::run()
 	{
 		for (int i = 0; i < _battleSave->getMapSizeXYZ(); ++i)
 			_battleSave->getTiles()[i]->setDiscovered(true, 2);
-		_battleSave->calcModuleMap();
+		_battleSave->calcBaseDestruct();
 	}
 	if (_missionType == "STR_ALIEN_BASE_ASSAULT"
 		|| _missionType == "STR_MARS_THE_FINAL_ASSAULT")
@@ -487,9 +487,9 @@ void BattlescapeGenerator::nextStage()
 	// - and those that are scattered about on the ground that will be recovered ONLY on success.
 	// This does not include items in soldiers' hands.
 	std::vector<BattleItem*>
-		* takeHomeGuaranteed (_battleSave->getGuaranteedRecoveredItems()),
-		* takeHomeConditional (_battleSave->getConditionalRecoveredItems()),
-		takeToNextStage,
+		* itemsGuaranteed (_battleSave->guaranteedItems()),
+		* itemsConditional (_battleSave->conditionalItems()),
+		passToNextStage,
 		carryToNextStage,
 		removeFromGame;
 
@@ -513,10 +513,10 @@ void BattlescapeGenerator::nextStage()
 					if ((*i)->getUnit() != nullptr
 						|| _gameSave->isResearched((*i)->getRules()->getRequirements()) == false)
 					{
-						toContainer = takeHomeGuaranteed;
+						toContainer = itemsGuaranteed;
 					}
 					else
-						toContainer = &takeToNextStage;
+						toContainer = &passToNextStage;
 				}
 				else
 				{
@@ -526,15 +526,15 @@ void BattlescapeGenerator::nextStage()
 						if (tile->getMapData(O_FLOOR) != nullptr
 							&& tile->getMapData(O_FLOOR)->getSpecialType() == START_POINT)
 						{
-							toContainer = takeHomeGuaranteed;
+							toContainer = itemsGuaranteed;
 						}
 						else if (tile->getMapData(O_FLOOR) != nullptr
 							&& tile->getMapData(O_FLOOR)->getSpecialType() == END_POINT)
 						{
-							toContainer = &takeToNextStage;
+							toContainer = &passToNextStage;
 						}
 						else
-							toContainer = takeHomeConditional;
+							toContainer = itemsConditional;
 					}
 					else
 						toContainer = &removeFromGame;
@@ -668,9 +668,9 @@ void BattlescapeGenerator::nextStage()
 				_battleSave->setSelectedUnit(*i);
 			}
 
-			const Node* const node = _battleSave->getSpawnNode(NR_XCOM, *i);
+			const Node* const node (_battleSave->getSpawnNode(NR_XCOM, *i));
 			if (node != nullptr
-				|| placeUnitNearFriend(*i) == true)
+				|| placeUnitNearFaction(*i) == true)
 			{
 				if (node != nullptr)
 					_battleSave->setUnitPosition(*i, node->getPosition());
@@ -702,10 +702,10 @@ void BattlescapeGenerator::nextStage()
 		_battleSave->selectNextFactionUnit();
 	}
 
-	const RuleInventory* const grdRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
+	const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
 	for (std::vector<BattleItem*>::const_iterator
-		i = takeToNextStage.begin();
-		i != takeToNextStage.end();
+		i = passToNextStage.begin();
+		i != passToNextStage.end();
 		++i)
 	{
 		_battleSave->getItems()->push_back(*i);
@@ -752,7 +752,7 @@ void BattlescapeGenerator::nextStage()
 
 	_unitSequence = _battleSave->getUnits()->back()->getId() + 1;
 
-	const size_t qtyUnits_pre = _battleSave->getUnits()->size();
+	const size_t qtyUnits_pre (_battleSave->getUnits()->size());
 
 	deployAliens(deployRule); // <-- ALIEN DEPLOYMENT.
 
@@ -809,7 +809,7 @@ void BattlescapeGenerator::deployXcom() // private.
 					++i)
 			{
 				//Log(LOG_INFO) << ". . isCraft: addXcomVehicle " << (int)*i;
-				BattleUnit* const unit = addXcomVehicle(*i);
+				BattleUnit* const unit (addXcomVehicle(*i));
 				if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
 					_battleSave->setSelectedUnit(unit);
 			}
@@ -823,7 +823,7 @@ void BattlescapeGenerator::deployXcom() // private.
 				++i)
 		{
 			//Log(LOG_INFO) << ". . isBase: addXcomVehicle " << (int)*i;
-			BattleUnit* const unit = addXcomVehicle(*i);
+			BattleUnit* const unit (addXcomVehicle(*i));
 			if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
 				_battleSave->setSelectedUnit(unit);
 		}
@@ -843,7 +843,7 @@ void BattlescapeGenerator::deployXcom() // private.
 					j != (*i)->getVehicles()->end();
 					++j)
 				{
-					BattleUnit* const unit = addXcomVehicle(*j);
+					BattleUnit* const unit (addXcomVehicle(*j));
 					if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
 						_battleSave->setSelectedUnit(unit);
 				}
@@ -864,7 +864,7 @@ void BattlescapeGenerator::deployXcom() // private.
 					|| (*i)->getCraft()->getCraftStatus() != CS_OUT)))
 		{
 			//Log(LOG_INFO) << ". . addXcomUnit " << (*i)->getId();
-			BattleUnit* const unit = addXcomUnit(new BattleUnit(*i, _gameSave->getDifficulty())); // for VictoryPts value per death.
+			BattleUnit* const unit (addXcomUnit(new BattleUnit(*i, _gameSave->getDifficulty()))); // for VictoryPts value per death.
 			if (unit != nullptr)
 			{
 				//Log(LOG_INFO) << "bGen::deployXcom() ID " << unit->getId() << " battleOrder = " << _battleOrder + 1;
@@ -898,7 +898,7 @@ void BattlescapeGenerator::deployXcom() // private.
 	}
 	//Log(LOG_INFO) << ". setUnit(s) DONE";
 
-	const RuleInventory* const grdRule = _rules->getInventoryRule(ST_GROUND);
+	const RuleInventory* const grdRule (_rules->getInventoryRule(ST_GROUND));
 
 	if (_craft != nullptr) // UFO or Base Assault or Craft-equip.
 	{
@@ -939,7 +939,7 @@ void BattlescapeGenerator::deployXcom() // private.
 					)
 			{
 				//Log(LOG_INFO) << ". . . item = " << i->first << " (" << i->second << ")";
-				const RuleItem* const itRule = _rules->getItem(i->first);
+				const RuleItem* const itRule (_rules->getItem(i->first));
 				if (itRule->getBigSprite() != -1
 					&& itRule->getBattleType() != BT_NONE
 					&& itRule->getBattleType() != BT_CORPSE
@@ -1097,22 +1097,22 @@ void BattlescapeGenerator::deployXcom() // private.
  */
 BattleUnit* BattlescapeGenerator::addXcomVehicle(Vehicle* const vehicle) // private.
 {
-	const std::string vhclType = vehicle->getRules()->getType();
-	RuleUnit* const unitRule = _rules->getUnitRule(vhclType);
+	const std::string vhclType (vehicle->getRules()->getType());
+	RuleUnit* const unitRule (_rules->getUnitRule(vhclType));
 
-	BattleUnit* const supportUnit = addXcomUnit(new BattleUnit( // add Vehicle as a unit.
+	BattleUnit* const supportUnit (addXcomUnit(new BattleUnit( // add Vehicle as a unit.
 															unitRule,
 															FACTION_PLAYER,
 															_unitSequence++,
 															_rules->getArmor(unitRule->getArmor()),
-															DIFF_BEGINNER)); // <- but do not upgrade tanks
+															DIFF_BEGINNER))); // <- but do not upgrade tanks
 	if (supportUnit != nullptr)
 	{
 		supportUnit->setTurretType(vehicle->getRules()->getTurretType());
 
-		BattleItem* item = new BattleItem( // add Vehicle as an item and assign the unit as its owner.
+		BattleItem* item (new BattleItem( // add Vehicle as an item and assign the unit as its owner.
 									_rules->getItem(vhclType),
-									_battleSave->getNextItemId());
+									_battleSave->getNextItemId()));
 		if (placeItem(item, supportUnit) == false)
 		{
 			Log(LOG_WARNING) << "BattlescapeGenerator could not add: " << vhclType;
@@ -1126,10 +1126,10 @@ BattleUnit* BattlescapeGenerator::addXcomVehicle(Vehicle* const vehicle) // priv
 
 		if (vehicle->getRules()->getCompatibleAmmo()->empty() == false)
 		{
-			const std::string ammoType = vehicle->getRules()->getCompatibleAmmo()->front();
-			BattleItem* const ammoItem = new BattleItem(
+			const std::string ammoType (vehicle->getRules()->getCompatibleAmmo()->front());
+			BattleItem* const ammoItem (new BattleItem(
 													_rules->getItem(ammoType),
-													_battleSave->getNextItemId());
+													_battleSave->getNextItemId()));
 			if (placeItem(ammoItem, supportUnit) == false) // add 'ammoItem' and assign the Vehicle-ITEM as its owner.
 			{
 				Log(LOG_WARNING) << "BattlescapeGenerator could not add [" << ammoType << "] to " << vhclType;
@@ -1153,7 +1153,7 @@ BattleUnit* BattlescapeGenerator::addXcomVehicle(Vehicle* const vehicle) // priv
 					i != unitRule->getBuiltInWeapons().end();
 					++i)
 			{
-				RuleItem* const itRule = _rules->getItem(*i);
+				RuleItem* const itRule (_rules->getItem(*i));
 				if (itRule != nullptr)
 				{
 					item = new BattleItem(itRule, _battleSave->getNextItemId());
@@ -1201,9 +1201,9 @@ BattleUnit* BattlescapeGenerator::addXcomUnit(BattleUnit* const unit) // private
 		else if (_battleSave->getTacType() != TCT_BASEDEFENSE)
 		{
 			//Log(LOG_INFO) << ". . spawnNode NOT valid - not baseDefense";
-			if (placeUnitNearFriend(unit) == true)
+			if (placeUnitNearFaction(unit) == true)
 			{
-				//Log(LOG_INFO) << ". . . placeUnitNearFriend() TRUE";
+				//Log(LOG_INFO) << ". . . placeUnitNearFaction() TRUE";
 				_battleSave->getUnits()->push_back(unit); // add unit to vector of Units.
 
 				unit->setUnitDirection(RNG::generate(0,7));
@@ -1420,7 +1420,7 @@ void BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
  */
 void BattlescapeGenerator::setTacticalSprites() const // private.
 {
-	RuleArmor* const armorRule = _rules->getArmor(_terrainRule->getPyjamaType());
+	RuleArmor* const armorRule (_rules->getArmor(_terrainRule->getPyjamaType()));
 
 	Base* base;
 	if (_craft != nullptr)
@@ -1492,15 +1492,15 @@ bool BattlescapeGenerator::placeItem( // private.
 		BattleUnit* const unit) const
 {
 	const RuleInventory
-		* const rhRule = _rules->getInventoryRule(ST_RIGHTHAND),
-		* const lhRule = _rules->getInventoryRule(ST_LEFTHAND);
+		* const rhRule (_rules->getInventoryRule(ST_RIGHTHAND)),
+		* const lhRule (_rules->getInventoryRule(ST_LEFTHAND));
 	BattleItem
-		* const rhWeapon = unit->getItem(ST_RIGHTHAND),
-		* const lhWeapon = unit->getItem(ST_LEFTHAND);
+		* const rhWeapon (unit->getItem(ST_RIGHTHAND)),
+		* const lhWeapon (unit->getItem(ST_LEFTHAND));
 
-	RuleItem* const itRule = item->getRules();
+	RuleItem* const itRule (item->getRules());
 
-	int placed = 0;
+	int placed (0);
 
 	if (itRule->isFixed() == true)
 	{
@@ -1603,10 +1603,10 @@ bool BattlescapeGenerator::placeItem( // private.
  */
 void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule) // private.
 {
-	int month = _gameSave->getMonthsPassed();
+	int month (_gameSave->getMonthsPassed());
 	if (month != -1)
 	{
-		const int itemLevel_top = static_cast<int>(_rules->getAlienItemLevels().size()) - 1;
+		const int itemLevel_top (static_cast<int>(_rules->getAlienItemLevels().size()) - 1);
 		if (month > itemLevel_top)
 			month = itemLevel_top;
 
@@ -1616,7 +1616,7 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule)
 	else
 		month = _alienItemLevel;
 
-	const AlienRace* const raceRule = _game->getRuleset()->getAlienRace(_alienRace);
+	const AlienRace* const raceRule (_game->getRuleset()->getAlienRace(_alienRace));
 	if (raceRule == nullptr)
 	{
 		throw Exception("Map generator encountered an error: Unknown race: ["
@@ -1787,14 +1787,14 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 		int aLienRank,
 		bool outside)
 {
-	const GameDifficulty diff = _gameSave->getDifficulty();
-	BattleUnit* const unit = new BattleUnit(
+	const GameDifficulty diff (_gameSave->getDifficulty());
+	BattleUnit* const unit (new BattleUnit(
 										unitRule,
 										FACTION_HOSTILE,
 										_unitSequence++,
 										_rules->getArmor(unitRule->getArmor()),
 										diff,
-										_gameSave->getMonthsPassed());
+										_gameSave->getMonthsPassed()));
 
 	if (aLienRank > 7) // safety to avoid index out of bounds errors
 		aLienRank = 7;
@@ -1809,14 +1809,13 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 	else
 		node = nullptr;
 
-	const size_t ranks_2 = (sizeof(Node::nodeRank) / sizeof(Node::nodeRank[0][0]))
-						 / (sizeof(Node::nodeRank) / sizeof(Node::nodeRank[0]));
+	const size_t ranks_2 ((sizeof(Node::nodeRank) / sizeof(Node::nodeRank[0][0]))
+						/ (sizeof(Node::nodeRank) / sizeof(Node::nodeRank[0])));
 	if (node == nullptr) // ie. if not spawning on a Civ-Scout node
 	{
 		for (size_t
 				i = 0;
-				i != ranks_2 // =8, 2nd dimension of nodeRank[][], ref Node.cpp
-					&& node == nullptr;
+				i != ranks_2 && node == nullptr; // =8, 2nd dimension of nodeRank[][], ref Node.cpp
 				++i)
 		{
 			node = _battleSave->getSpawnNode(
@@ -1829,7 +1828,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 			&& _battleSave->setUnitPosition(
 										unit,
 										node->getPosition()) == true)
-		|| placeUnitNearFriend(unit) == true)
+		|| placeUnitNearFaction(unit) == true)
 	{
 		unit->setAIState(new AlienBAIState(
 										_battleSave,
@@ -1837,7 +1836,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 										node));
 		unit->setRankInt(aLienRank);
 
-		Position posCraft = _battleSave->getUnits()->at(0)->getPosition(); // aLiens face Craft
+		const Position posCraft (_battleSave->getUnits()->at(0)->getPosition()); // aLiens face Craft
 		int dir;
 		if (RNG::percent((diff + 1) * 20) == true
 			&& TileEngine::distance(
@@ -1853,7 +1852,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 			dir = RNG::generate(0,7);
 		unit->setUnitDirection(dir);
 
-		int tu = unit->getTimeUnits();
+		int tu (unit->getTimeUnits());
 		tu = static_cast<int>(ceil(
 			 static_cast<double>(tu) * RNG::generate(0.,1.)));
 		unit->setTimeUnits(tu);
@@ -1877,48 +1876,29 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
  * @param unit - pointer to the BattleUnit in question
  * @return, true if @a unit was successfully placed
  */
-bool BattlescapeGenerator::placeUnitNearFriend(BattleUnit* const unit) // private.
+bool BattlescapeGenerator::placeUnitNearFaction(BattleUnit* const unit) // private.
 {
-	if (unit != nullptr
-		&& _battleSave->getUnits()->empty() == false)
+	if (unit != nullptr && _battleSave->getUnits()->empty() == false)
 	{
-		const BattleUnit* friendUnit;
-		Position posEntry;
-		int tries;
-		bool isLarge;
-
-		for (int
-				i = 0;
-				i != 10;
-				++i)
+		const BattleUnit* unitFriend;
+		int t (100);
+		while (t-- != 0)
 		{
-			posEntry = Position(-1,-1,-1);
-			tries = 100;
-			isLarge = false;
-
-			while (posEntry == Position(-1,-1,-1)
-				&& tries != 0)
+			unitFriend = _battleSave->getUnits()->at(RNG::pick(_battleSave->getUnits()->size()));
+			if (unitFriend->getFaction() == unit->getFaction()
+				&& unitFriend->getPosition() != Position(-1,-1,-1)
+				&& unitFriend->getArmor()->getSize() >= unit->getArmor()->getSize())
 			{
-				friendUnit = _battleSave->getUnits()->at(RNG::pick(_battleSave->getUnits()->size()));
-				if (friendUnit->getFaction() == unit->getFaction()
-					&& friendUnit->getPosition() != Position(-1,-1,-1)
-					&& friendUnit->getArmor()->getSize() >= unit->getArmor()->getSize())
+				if (_battleSave->placeUnitNearPosition(
+													unit,
+													unitFriend->getPosition(),
+													unitFriend->getArmor()->getSize() == 2) == true)
 				{
-					posEntry = friendUnit->getPosition();
-					isLarge = (friendUnit->getArmor()->getSize() == 2);
+					return true;
 				}
-
-				--tries;
-			}
-
-			if (tries != 0
-				&& _battleSave->placeUnitNearPosition(unit, posEntry, isLarge) == true)
-			{
-				return true;
 			}
 		}
 	}
-
 	return false;
 }
 
@@ -1930,11 +1910,10 @@ void BattlescapeGenerator::deployCivilians(int civilians) // private.
 {
 	if (civilians != 0)
 	{
-		const int qty = std::max(
-							1,
+		const int qty (std::max(1,
 							RNG::generate(
 										civilians / 2,
-										civilians));
+										civilians)));
 		for (int
 				i = 0;
 				i != qty;
@@ -1961,7 +1940,7 @@ void BattlescapeGenerator::addCivilian(RuleUnit* const unitRule) // private.
 	Node* const node = _battleSave->getSpawnNode(NR_SCOUT, unit);
 	if ((node != nullptr
 			&& _battleSave->setUnitPosition(unit, node->getPosition()) == true)
-		|| placeUnitNearFriend(unit) == true)
+		|| placeUnitNearFaction(unit) == true)
 	{
 		unit->setAIState(new CivilianBAIState(_battleSave, unit, node));
 		unit->setUnitDirection(RNG::generate(0,7));
@@ -3121,7 +3100,7 @@ void BattlescapeGenerator::generateBaseMap() // private.
 		}
 	}
 
-	_battleSave->calcModuleMap();
+	_battleSave->calcBaseDestruct();
 }
 
 /**

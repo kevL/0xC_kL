@@ -454,7 +454,7 @@ void AlienBAIState::setupPatrol() // private.
 			&& (   _attackAction->weapon->getRules()->getAccuracySnap() != 0 // TODO: this ought be expanded to include melee.
 				|| _attackAction->weapon->getRules()->getAccuracyAuto() != 0
 				|| _attackAction->weapon->getRules()->getAccuracyAimed() != 0)
-			&& _battleSave->getModuleMap()[_startNode->getPosition().x / 10]
+			&& _battleSave->baseDestruct()[_startNode->getPosition().x / 10]
 										  [_startNode->getPosition().y / 10].second > 0)
 		{
 			const MapData* data;
@@ -473,7 +473,7 @@ void AlienBAIState::setupPatrol() // private.
 						++j)
 				{
 					if ((data = _battleSave->getTile(Position(i,j,1))->getMapData(O_OBJECT)) != nullptr
-						&& data->isBaseModule() == true)
+						&& data->isBaseObject() == true)
 //						&& data->getDieMCD() && data->getArmor() < 60) // TODO: Create function canDestroy(int power);
 					{
 						_patrolAction->type = BA_SNAPSHOT;

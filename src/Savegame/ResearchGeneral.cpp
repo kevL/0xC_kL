@@ -31,7 +31,7 @@ namespace OpenXcom
  * @param done - true to consider research completed (for skirmish)
  */
 ResearchGeneral::ResearchGeneral(
-		const RuleResearch* resRule,
+		const RuleResearch* const resRule,
 		bool done)
 	:
 		_resRule(resRule),
@@ -102,7 +102,7 @@ void ResearchGeneral::setBeenSeen(const bool seen)
 }
 
 /**
- * Gets whether the Ufopaedia has been accessed.
+ * Gets whether the Ufopaedia entry has been accessed.
  * @return, true if seen
  */
 bool ResearchGeneral::getBeenSeen() const
