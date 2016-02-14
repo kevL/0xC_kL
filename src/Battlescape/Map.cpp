@@ -1730,18 +1730,21 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 			posScreen.x += _spriteWidth / 2;
 
-			const int phaseCycle (static_cast<int>(4. * std::sin(22.5 / static_cast<double>(_aniFrame + 1))));
+			static const int phaseCycle[8] = {0,-3,3,-2,-3,-2,0,1};
+//			const int phaseCycle (static_cast<int>(4. * std::sin(22.5 / static_cast<double>(_aniFrame + 1))));
 
 			if (_unit->isKneeled() == true)
 				_arrow_kneel->blitNShade(
 						surface,
 						posScreen.x - (_arrow_kneel->getWidth() / 2),
-						posScreen.y - _arrow_kneel->getHeight() - 4 - phaseCycle);
+						posScreen.y - _arrow_kneel->getHeight() - 4 - phaseCycle[_aniFrame]);
+//						posScreen.y - _arrow_kneel->getHeight() - 4 - phaseCycle);
 			else
 				_arrow->blitNShade(
 						surface,
 						posScreen.x - _arrow->getWidth() / 2,
-						posScreen.y - _arrow->getHeight() + phaseCycle);
+						posScreen.y - _arrow->getHeight() + phaseCycle[_aniFrame]);
+//						posScreen.y - _arrow->getHeight() + phaseCycle);
 		}
 	}
 	// end arrow.
