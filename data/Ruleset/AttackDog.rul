@@ -51,7 +51,7 @@ units:
     kneelHeight: 10
     value: 8
     deathSound: 211
-    aggroSound: 210
+    aggroSound: 212
     energyRecovery: 65
     hasHands: false
     dog: true

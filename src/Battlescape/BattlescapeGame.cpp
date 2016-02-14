@@ -47,7 +47,7 @@
 
 #include "../Engine/Game.h"
 #include "../Engine/Language.h"
-#include "../Engine/Logger.h"
+//#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -180,7 +180,7 @@ void BattlescapeGame::think()
 					_parentState->printDebug(Text::intWide(selUnit->getId()));
 					if (handlePanickingUnit(selUnit) == false)
 					{
-						Log(LOG_INFO) << "BattlescapeGame::think() call handleUnitAI() " << selUnit->getId();
+						//Log(LOG_INFO) << "BattlescapeGame::think() call handleUnitAI() " << selUnit->getId();
 						handleUnitAI(selUnit);
 					}
 				}
@@ -303,11 +303,11 @@ void BattlescapeGame::statePushBack(BattleState* const battleState)
 void BattlescapeGame::popState()
 {
 	//Log(LOG_INFO) << "BattlescapeGame::popState() qtyStates = " << (int)_battleStates.size();
-	if (Options::traceAI)
-		Log(LOG_INFO) << "BattlescapeGame::popState() "
-					  << "id-" << (_tacAction.actor ? std::to_string(_tacAction.actor->getId()) : " Actor NONE")
-					  << " AIActionCounter = " << _AIActionCounter
-					  << " tuSelected = " << (_battleSave->getSelectedUnit() ? std::to_string(_battleSave->getSelectedUnit()->getTimeUnits()) : "selUnit NONE");
+//	if (Options::traceAI)
+//		Log(LOG_INFO) << "BattlescapeGame::popState() "
+//					  << "id-" << (_tacAction.actor ? std::to_string(_tacAction.actor->getId()) : " Actor NONE")
+//					  << " AIActionCounter = " << _AIActionCounter
+//					  << " tuSelected = " << (_battleSave->getSelectedUnit() ? std::to_string(_battleSave->getSelectedUnit()->getTimeUnits()) : "selUnit NONE");
 
 	if (getMap()->getExplosions()->empty() == true) // Explosions need to run fast after popping ProjectileFlyBState etc etc.
 	{
@@ -695,34 +695,34 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 	BattleAction action;
 	action.actor = unit;
 	action.AIcount = _AIActionCounter;
-	Log(LOG_INFO) << "";
-	Log(LOG_INFO) << "";
-	Log(LOG_INFO) << "";
-	Log(LOG_INFO) << "BATTLESCAPE::handleUnitAI id-" << unit->getId();
-	Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [in] = " << _AIActionCounter;
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "BATTLESCAPE::handleUnitAI id-" << unit->getId();
+	//Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [in] = " << _AIActionCounter;
 	unit->think(&action);
-	Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat [1] " << BattleAction::debugActionType(action.type);
-	Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [out] = " << action.AIcount;
+	//Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat [1] " << BattleAction::debugActionType(action.type);
+	//Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [out] = " << action.AIcount;
 
 	if (action.type == BA_THINK)
 	{
-		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << ". BATTLESCAPE: Re-Think id-" << unit->getId();
-		Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [in] = " << action.AIcount;
+		//Log(LOG_INFO) << "";
+		//Log(LOG_INFO) << ". BATTLESCAPE: Re-Think id-" << unit->getId();
+		//Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [in] = " << action.AIcount;
 		unit->think(&action);
-		Log(LOG_INFO) << ". BATTLESCAPE: id-" << unit->getId() << " bat [2] " << BattleAction::debugActionType(action.type);
-		Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [out] = " << action.AIcount;
+		//Log(LOG_INFO) << ". BATTLESCAPE: id-" << unit->getId() << " bat [2] " << BattleAction::debugActionType(action.type);
+		//Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [out] = " << action.AIcount;
 	}
 
 	_AIActionCounter = action.AIcount;
-	Log(LOG_INFO) << "BATTLESCAPE: AIActionCount = " << _AIActionCounter;
+	//Log(LOG_INFO) << "BATTLESCAPE: AIActionCount = " << _AIActionCounter;
 
 	if (unit->getFaction() == FACTION_HOSTILE // pickup Item ->
 		&& unit->getMainHandWeapon() == nullptr
 		&& unit->getRankString() != "STR_LIVE_TERRORIST" // TODO: new funct. hasFixedWeapon().
 		&& pickupItem(&action) == true)
 	{
-		Log(LOG_INFO) << ". pickup Weapon ...";
+		//Log(LOG_INFO) << ". pickup Weapon ...";
 		if (_battleSave->getDebugTac() == true) // <- order matters.
 		{
 			_parentState->updateSoldierInfo(false);
@@ -742,27 +742,27 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 	std::wstring wst (Language::cpToWstr(BattleAIState::debugAiMode(unit->getAIState()->getAIMode())));
 	_parentState->printDebug(wst + L"> " + Text::intWide(unit->getId()));
-	Log(LOG_INFO)
-			<< "\n"
-			<< "type = "			<< BattleAction::debugActionType(action.type) << "\n"
-			<< "actor = "			<< (action.actor ? std::to_string(action.actor->getId()) : "NONE") << "\n"
-			<< "targetUnit = "		<< (action.targetUnit ? std::to_string(action.targetUnit->getId()) : "NONE") << "\n"
-			<< "weapon = "			<< (action.weapon ? action.weapon->getRules()->getType() : "NONE") << "\n"
-			<< "TU = "				<< action.TU << "\n"
-			<< "targeting = "		<< action.targeting << "\n"
-			<< "value = "			<< action.value << "\n"
-			<< "result = "			<< action.result << "\n"
-			<< "strafe = "			<< action.strafe << "\n"
-			<< "dash = "			<< action.dash << "\n"
-			<< "diff = "			<< action.diff << "\n"
-			<< "autoShotCount = "	<< action.autoShotCount << "\n"
-			<< "cameraPosition = "	<< action.cameraPosition << "\n"
-			<< "desperate = "		<< action.desperate << "\n"
-			<< "finalFacing = "		<< action.finalFacing << "\n"
-			<< "finalAction = "		<< action.finalAction << "\n"
-			<< "AIcount = "			<< action.AIcount << "\n"
-			<< "takenXp = "			<< action.takenXp << "\n"
-			<< "waypoints = "		<< action.waypoints.size();
+//	Log(LOG_INFO)
+//			<< "\n"
+//			<< "type = "			<< BattleAction::debugActionType(action.type) << "\n"
+//			<< "actor = "			<< (action.actor ? std::to_string(action.actor->getId()) : "NONE") << "\n"
+//			<< "targetUnit = "		<< (action.targetUnit ? std::to_string(action.targetUnit->getId()) : "NONE") << "\n"
+//			<< "weapon = "			<< (action.weapon ? action.weapon->getRules()->getType() : "NONE") << "\n"
+//			<< "TU = "				<< action.TU << "\n"
+//			<< "targeting = "		<< action.targeting << "\n"
+//			<< "value = "			<< action.value << "\n"
+//			<< "result = "			<< action.result << "\n"
+//			<< "strafe = "			<< action.strafe << "\n"
+//			<< "dash = "			<< action.dash << "\n"
+//			<< "diff = "			<< action.diff << "\n"
+//			<< "autoShotCount = "	<< action.autoShotCount << "\n"
+//			<< "cameraPosition = "	<< action.cameraPosition << "\n"
+//			<< "desperate = "		<< action.desperate << "\n"
+//			<< "finalFacing = "		<< action.finalFacing << "\n"
+//			<< "finalAction = "		<< action.finalAction << "\n"
+//			<< "AIcount = "			<< action.AIcount << "\n"
+//			<< "takenXp = "			<< action.takenXp << "\n"
+//			<< "waypoints = "		<< action.waypoints.size();
 
 	switch (action.type)
 	{
@@ -856,9 +856,9 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 					} */
 			}
 
-			Log(LOG_INFO) << "BATTLESCAPE: Attack action.Type = " << BattleAction::debugActionType(action.type)
-						  << " action.Target = " << action.target
-						  << " action.Weapon = " << action.weapon->getRules()->getName().c_str();
+//			Log(LOG_INFO) << "BATTLESCAPE: Attack action.Type = " << BattleAction::debugActionType(action.type)
+//						  << " action.Target = " << action.target
+//						  << " action.Weapon = " << action.weapon->getRules()->getName().c_str();
 			statePushBack(new ProjectileFlyBState(this, action));
 
 			switch (action.type)
@@ -933,7 +933,7 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 					_battleSave->getShuffleUnits()->end(),
 					unit) < 1)
 			{
-				Log(LOG_INFO) << "BATTLESCAPE::selectNextAiUnit() --- second Move ---";
+				//Log(LOG_INFO) << "BATTLESCAPE::selectNextAiUnit() --- second Move ---";
 				_AISecondMove = true;
 			}
 		}
