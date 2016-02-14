@@ -90,7 +90,7 @@ BattlescapeGenerator::BattlescapeGenerator(Game* const game)
 		_craft(nullptr),
 		_ufo(nullptr),
 		_base(nullptr),
-		_mission(nullptr),
+		_site(nullptr),
 		_alienBase(nullptr),
 		_terrainRule(nullptr),
 		_shade(0),
@@ -162,7 +162,7 @@ void BattlescapeGenerator::init() // private.
 void BattlescapeGenerator::setCraft(Craft* craft)
 {
 	_craft = craft;
-	_craft->setInBattlescape();
+	_craft->setTactical();
 }
 
 /**
@@ -172,7 +172,7 @@ void BattlescapeGenerator::setCraft(Craft* craft)
 void BattlescapeGenerator::setUfo(Ufo* ufo)
 {
 	_ufo = ufo;
-	_ufo->setInBattlescape();
+	_ufo->setTactical();
 }
 
 /**
@@ -182,17 +182,17 @@ void BattlescapeGenerator::setUfo(Ufo* ufo)
 void BattlescapeGenerator::setBase(Base* base)
 {
 	_base = base;
-	_base->setInBattlescape();
+	_base->setTactical();
 }
 
 /**
  * Sets the mission site involved in the battle.
- * @param mission - pointer to MissionSite
+ * @param site - pointer to MissionSite
  */
-void BattlescapeGenerator::setMissionSite(MissionSite* mission)
+void BattlescapeGenerator::setMissionSite(MissionSite* site)
 {
-	_mission = mission;
-	_mission->setInBattlescape();
+	_site = site;
+	_site->setTactical();
 }
 
 /**
@@ -202,7 +202,7 @@ void BattlescapeGenerator::setMissionSite(MissionSite* mission)
 void BattlescapeGenerator::setAlienBase(AlienBase* base)
 {
 	_alienBase = base;
-	_alienBase->setInBattlescape();
+	_alienBase->setTactical();
 }
 
 /**
@@ -296,7 +296,7 @@ void BattlescapeGenerator::run()
 		else // UFO crashed/landed or MissionSite
 		{
 			const Target* target;
-			if (_mission != nullptr) target = _mission;
+			if (_site != nullptr) target = _site;
 			else target = _ufo;
 			_terrainRule = _rules->getTerrain(_texture->getTextureTerrain(target));
 		}
@@ -721,7 +721,7 @@ void BattlescapeGenerator::nextStage()
 				i != _gameSave->getMissionSites()->end();
 				++i)
 		{
-			if ((*i)->isInBattlescape() == true)
+			if ((*i)->getTactical() == true)
 			{
 				_alienRace = (*i)->getAlienRace();
 				break;
@@ -735,7 +735,7 @@ void BattlescapeGenerator::nextStage()
 					i != _gameSave->getAlienBases()->end();
 					++i)
 			{
-				if ((*i)->isInBattlescape() == true)
+				if ((*i)->getTactical() == true)
 				{
 					_alienRace = (*i)->getAlienRace();
 					break;

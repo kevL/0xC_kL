@@ -1731,7 +1731,7 @@ double Base::getCommanderHelp(const std::string& resType)
  * Returns this Base's battlescape status.
  * @return, true if Base is the battlescape
  */
-bool Base::isInBattlescape() const
+bool Base::getTactical() const
 {
 	return _tactical;
 }
@@ -1740,7 +1740,7 @@ bool Base::isInBattlescape() const
  * Changes this Base's battlescape status.
  * @param tactical - true if in the battlescape (default true)
  */
-void Base::setInBattlescape(bool tactical)
+void Base::setTactical(bool tactical)
 {
 	_tactical = tactical;
 }

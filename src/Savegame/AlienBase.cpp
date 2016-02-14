@@ -171,7 +171,7 @@ void AlienBase::setLabel(const std::string& edit)
  * Gets this AlienBase's battlescape status.
  * @return, true if this base is in the battlescape
  */
-bool AlienBase::isInBattlescape() const
+bool AlienBase::getTactical() const
 {
 	return _tactical;
 }
@@ -180,7 +180,7 @@ bool AlienBase::isInBattlescape() const
  * Sets this AlienBase's battlescape status.
  * @param tactical - true if this base is in battle (default true)
  */
-void AlienBase::setInBattlescape(bool tactical)
+void AlienBase::setTactical(bool tactical)
 {
 	_tactical = tactical;
 }

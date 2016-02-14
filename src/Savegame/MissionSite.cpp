@@ -190,7 +190,7 @@ void MissionSite::setSecondsLeft(int sec)
  * Gets this MissionSite's battlescape status.
  * @return, true if in the battlescape
  */
-bool MissionSite::isInBattlescape() const
+bool MissionSite::getTactical() const
 {
 	return _tactical;
 }
@@ -199,7 +199,7 @@ bool MissionSite::isInBattlescape() const
  * Sets this MissionSite's battlescape status.
  * @param tactical - true if in the battlescape (default true)
  */
-void MissionSite::setInBattlescape(bool tactical)
+void MissionSite::setTactical(bool tactical)
 {
 	_tactical = tactical;
 }

@@ -95,9 +95,9 @@ private:
 		void setSecondsLeft(int sec);
 
 		/// Sets this MissionSite's battlescape status.
-		void setInBattlescape(bool tactical = true);
+		void setTactical(bool tactical = true);
 		/// Gets if this MissionSite is in battlescape.
-		bool isInBattlescape() const;
+		bool getTactical() const;
 
 		/// Gets this MissionSite's alien race.
 		std::string getAlienRace() const;

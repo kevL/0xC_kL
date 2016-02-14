@@ -592,7 +592,7 @@ void Ufo::think()
  * Sets this Ufo's battlescape status.
  * @param tactical - true if in battlescape (default true)
  */
-void Ufo::setInBattlescape(bool tactical)
+void Ufo::setTactical(bool tactical)
 {
 	if ((_tactical = tactical) == true)
 		setSpeed(0);
@@ -602,7 +602,7 @@ void Ufo::setInBattlescape(bool tactical)
  * Gets this Ufo's battlescape status.
  * @return, true if in battlescape
  */
-bool Ufo::isInBattlescape() const
+bool Ufo::getTactical() const
 {
 	return _tactical;
 }

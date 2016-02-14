@@ -173,7 +173,7 @@ void CraftSoldiersState::init()
 // unfortunately this would rely on the list of battleSoldiers *not* changing when entering/cancelling InventoryState
 //		_selUnitId = battleSave->getSelectedUnit()->getBattleOrder();
 		_game->getSavedGame()->setBattleSave(nullptr);
-		_craft->setInBattlescape(false);
+		_craft->setTactical(false);
 	}
 
 	_lstSoldiers->clearList();

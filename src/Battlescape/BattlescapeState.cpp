@@ -501,7 +501,7 @@ BattlescapeState::BattlescapeState()
 			i != _gameSave->getBases()->end() && baseLabel.empty() == true;
 			++i)
 	{
-		if ((*i)->isInBattlescape() == true)
+		if ((*i)->getTactical() == true)
 		{
 			target = dynamic_cast<Target*>(*i);
 			baseLabel = (*i)->getName(_game->getLanguage());
@@ -514,7 +514,7 @@ BattlescapeState::BattlescapeState()
 				j != (*i)->getCrafts()->end() && baseLabel.empty() == true;
 				++j)
 		{
-			if ((*j)->isInBattlescape() == true)
+			if ((*j)->getTactical() == true)
 			{
 				target = dynamic_cast<Target*>(*j);
 				baseLabel = (*i)->getName(_game->getLanguage());
@@ -532,11 +532,10 @@ BattlescapeState::BattlescapeState()
 
 		for (std::vector<Ufo*>::const_iterator
 				i = _gameSave->getUfos()->begin();
-				i != _gameSave->getUfos()->end()
-					&& woststr.str().empty() == true;
+				i != _gameSave->getUfos()->end() && woststr.str().empty() == true;
 				++i)
 		{
-			if ((*i)->isInBattlescape() == true)
+			if ((*i)->getTactical() == true)
 			{
 				target = dynamic_cast<Target*>(*i);
 
@@ -551,11 +550,10 @@ BattlescapeState::BattlescapeState()
 
 		for (std::vector<MissionSite*>::const_iterator
 				i = _gameSave->getMissionSites()->begin();
-				i != _gameSave->getMissionSites()->end()
-					&& woststr.str().empty() == true;
+				i != _gameSave->getMissionSites()->end() && woststr.str().empty() == true;
 				++i)
 		{
-			if ((*i)->isInBattlescape() == true)
+			if ((*i)->getTactical() == true)
 			{
 				target = dynamic_cast<Target*>(*i);
 				woststr << tr("STR_TERROR_MISSION") << L"> " << (*i)->getName(_game->getLanguage()); // <- not necessarily a Terror Mission ...
@@ -564,11 +562,10 @@ BattlescapeState::BattlescapeState()
 
 		for (std::vector<AlienBase*>::const_iterator
 				i = _gameSave->getAlienBases()->begin();
-				i != _gameSave->getAlienBases()->end()
-					&& woststr.str().empty() == true;
+				i != _gameSave->getAlienBases()->end() && woststr.str().empty() == true;
 				++i)
 		{
-			if ((*i)->isInBattlescape() == true)
+			if ((*i)->getTactical() == true)
 			{
 				target = dynamic_cast<Target*>(*i);
 				woststr << tr("STR_ALIEN_BASE_ASSAULT") << L"> " << (*i)->getName(_game->getLanguage());
@@ -3768,7 +3765,7 @@ void BattlescapeState::finishBattle(
 					&& nextStageRace.empty() == true;
 				++ts)
 		{
-			if ((*ts)->isInBattlescape() == true)
+			if ((*ts)->getTactical() == true)
 				nextStageRace = (*ts)->getAlienRace();
 		}
 
@@ -3778,7 +3775,7 @@ void BattlescapeState::finishBattle(
 					&& nextStageRace.empty() == true;
 				++ab)
 		{
-			if ((*ab)->isInBattlescape() == true)
+			if ((*ab)->getTactical() == true)
 				nextStageRace = (*ab)->getAlienRace();
 		}
 

@@ -214,7 +214,7 @@ void SoldiersState::init()
 	if (_game->getSavedGame()->getBattleSave() != nullptr)
 	{
 		_game->getSavedGame()->setBattleSave(nullptr);
-		_base->setInBattlescape(false);
+		_base->setTactical(false);
 	}
 
 

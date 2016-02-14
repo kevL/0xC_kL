@@ -284,12 +284,11 @@ DebriefingState::DebriefingState()
 	}
 
 
-	const int aLienPts ((_diff + 1) * 235);
 	if (_region != nullptr)
 	{
 		if (_destroyXComBase == true)
 		{
-			_region->addActivityAlien(aLienPts);
+			_region->addActivityAlien((_diff + 1) * 235);
 			_region->recentActivityAlien();
 		}
 		else
@@ -303,7 +302,7 @@ DebriefingState::DebriefingState()
 	{
 		if (_destroyXComBase == true)
 		{
-			_country->addActivityAlien(aLienPts);
+			_country->addActivityAlien((_diff + 1) * 235);
 			_country->recentActivityAlien();
 		}
 		else
@@ -313,7 +312,7 @@ DebriefingState::DebriefingState()
 		}
 	}
 
-	std::string rating; // Calculate rating
+	std::string rating;
 	if (total < -99)
 	{
 		_music = OpenXcom::res_MUSIC_TAC_DEBRIEFING_BAD;
@@ -848,7 +847,7 @@ void DebriefingState::prepareDebriefing() // private.
 				j != (*i)->getCrafts()->end();
 				++j)
 		{
-			if ((*j)->isInBattlescape() == true)
+			if ((*j)->getTactical() == true)
 			{
 				if (_skirmish == false)
 					_missionCost = (*i)->craftExpense(*j);
@@ -862,37 +861,34 @@ void DebriefingState::prepareDebriefing() // private.
 
 				_craft->returnToBase();
 				_craft->setTacticalReturn();
-				_craft->setInBattlescape(false);
+				_craft->setTactical(false);
 			}
 			else if ((*j)->getDestination() != nullptr)
 			{
 				if (soldierLive != 0 && aborted == false)
 				{
 					const Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getDestination()));
-					if (ufo != nullptr && ufo->isInBattlescape() == true)
+					if (ufo != nullptr && ufo->getTactical() == true)
 						(*j)->returnToBase();
 				}
 
 				const MissionSite* const site (dynamic_cast<MissionSite*>((*j)->getDestination()));
-				if (site != nullptr && site->isInBattlescape() == true)
+				if (site != nullptr && site->getTactical() == true)
 					(*j)->returnToBase();
 			}
 		}
 
-		if ((*i)->isInBattlescape() == true) // in case this DON'T have a craft (ie. baseDefense)
+		if ((*i)->getTactical() == true) // in case this DON'T have a craft (ie. baseDefense)
 		{
 			_base = *i;
-
 			_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
 
 			lon = _base->getLongitude();
 			lat = _base->getLatitude();
 
-			if (aborted == true)
-				_destroyXComBase = true;
-			else
+			if (soldierLive != 0 && aborted == false)
 			{
-				_base->setInBattlescape(false);
+				_base->setTactical(false);
 				_base->cleanupBaseDefense(); // so ... does this mean that each tank's entire 'clip' gets wasted
 
 				bool facDestroyed = false;
@@ -914,6 +910,8 @@ void DebriefingState::prepareDebriefing() // private.
 				if (facDestroyed == true)
 					_base->destroyDisconnectedFacilities(); // this may cause the base to become disjointed; destroy the disconnected parts.
 			}
+			else
+				_destroyXComBase = true;
 		}
 	}
 
@@ -951,21 +949,20 @@ void DebriefingState::prepareDebriefing() // private.
 			i != _gameSave->getUfos()->end();
 			++i)
 	{
-		if ((*i)->isInBattlescape() == true)
+		if ((*i)->getTactical() == true)
 		{
 			found = true;
 			_txtRecovery->setText(tr("STR_UFO_RECOVERY"));
 			_missionStatistics->ufo = (*i)->getRules()->getType();
 
-			if (soldierLive != 0
-				&& aborted == false)
+			if (soldierLive != 0 && aborted == false)
 			{
 				delete *i;
 				_gameSave->getUfos()->erase(i);
 			}
 			else
 			{
-				(*i)->setInBattlescape(false);
+				(*i)->setTactical(false);
 				if ((*i)->getUfoStatus() == Ufo::LANDED)
 					(*i)->setSecondsLeft(15);
 			}
@@ -981,7 +978,7 @@ void DebriefingState::prepareDebriefing() // private.
 				i != _gameSave->getMissionSites()->end();
 				++i)
 		{
-			if ((*i)->isInBattlescape() == true)
+			if ((*i)->getTactical() == true)
 			{
 				found = true;
 				delete *i;
@@ -998,7 +995,7 @@ void DebriefingState::prepareDebriefing() // private.
 				i != _gameSave->getAlienBases()->end();
 				++i)
 		{
-			if ((*i)->isInBattlescape() == true)
+			if ((*i)->getTactical() == true)
 			{
 				_txtRecovery->setText(tr("STR_ALIEN_BASE_RECOVERY"));
 
@@ -1033,7 +1030,7 @@ void DebriefingState::prepareDebriefing() // private.
 					_gameSave->getAlienBases()->erase(i);
 				}
 				else
-					(*i)->setInBattlescape(false);
+					(*i)->setTactical(false);
 
 				break;
 			}
@@ -1152,16 +1149,16 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				case FACTION_PLAYER:
 					if (aborted == false
-						|| ((missionAccomplished == true || tacType != TCT_BASEDEFENSE)
-							&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LIMBO)))
+						|| (((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LIMBO)
+							&& (/*missionAccomplished == true ||*/ tacType != TCT_BASEDEFENSE)))
 					{
 						++soldierExit;
+						recoverItems((*i)->getInventory());
 
 						Soldier* const sol ((*i)->getGeoscapeSoldier());
 						if (sol != nullptr)
 						{
 							(*i)->postMissionProcedures();
-							recoverItems((*i)->getInventory());
 
 							if (_skirmish == false)
 								_missionCost += _base->soldierExpense(sol);
@@ -1345,9 +1342,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 
 	std::string tacResult;
-
-	if (soldierLive != 0
-		&& (aborted == false || missionAccomplished == true))
+	if (missionAccomplished == true)
 	{
 		switch (tacType)
 		{
@@ -1374,60 +1369,13 @@ void DebriefingState::prepareDebriefing() // private.
 			addStat(
 				objectiveCompleteText,
 				objectiveCompleteScore);
-
-		if (aborted == false)
-		{
-			recoverItems(battleSave->conditionalItems());
-
-			const int parts (static_cast<int>(Tile::PARTS_TILE));
-			MapDataType partType;
-
-			for (size_t
-					i = 0;
-					i != battleSave->getMapSizeXYZ();
-					++i)
-			{
-				for (int
-						j = 0;
-						j != parts;
-						++j)
-				{
-					partType = static_cast<MapDataType>(j);
-					if (battleSave->getTiles()[i]->getMapData(partType) != nullptr)
-					{
-						const SpecialTileType tileType (battleSave->getTiles()[i]->getMapData(partType)->getSpecialType());
-						if (_specialTypes.find(tileType) != _specialTypes.end())
-							addStat(
-								_specialTypes[tileType]->type,
-								_specialTypes[tileType]->value);
-					}
-				}
-
-				recoverItems(battleSave->getTiles()[i]->getInventory());
-			}
-		}
-		else
-		{
-			for (size_t
-					i = 0;
-					i != battleSave->getMapSizeXYZ();
-					++i)
-			{
-				if (battleSave->getTiles()[i]->getMapData(O_FLOOR) != nullptr
-					&& battleSave->getTiles()[i]->getMapData(O_FLOOR)->getSpecialType() == START_POINT)
-				{
-					recoverItems(battleSave->getTiles()[i]->getInventory());
-				}
-			}
-		}
 	}
-	else // mission FAIL.
+	else
 	{
 		switch (tacType)
 		{
 			case TCT_BASEDEFENSE:
 				tacResult = "STR_BASE_IS_LOST";
-				_destroyXComBase = true;
 				break;
 
 			case TCT_MISSIONSITE:
@@ -1449,8 +1397,64 @@ void DebriefingState::prepareDebriefing() // private.
 			addStat(
 				objectiveFailedText,
 				objectiveFailedScore);
+	}
 
-		if (soldierLive != 0 && _destroyXComBase == false)
+	if (soldierLive != 0)
+	{
+		recoverItems(battleSave->guaranteedItems());
+
+		if (aborted == false)
+		{
+			recoverItems(battleSave->conditionalItems());
+
+			const int parts (static_cast<int>(Tile::PARTS_TILE));
+			MapDataType partType;
+			for (size_t
+					i = 0;
+					i != battleSave->getMapSizeXYZ();
+					++i)
+			{
+				recoverItems(battleSave->getTiles()[i]->getInventory());
+
+				for (int
+						j = 0;
+						j != parts;
+						++j)
+				{
+					partType = static_cast<MapDataType>(j);
+					if (battleSave->getTiles()[i]->getMapData(partType) != nullptr)
+					{
+						const SpecialTileType tileType (battleSave->getTiles()[i]->getMapData(partType)->getSpecialType());
+						if (_specialTypes.find(tileType) != _specialTypes.end())
+							addStat(
+								_specialTypes[tileType]->type,
+								_specialTypes[tileType]->value);
+					}
+				}
+			}
+
+			for (std::vector<DebriefingStat*>::const_iterator
+					i = _stats.begin();
+					i != _stats.end();
+					++i)
+			{
+				if ((*i)->item == _specialTypes[ALIEN_ALLOYS]->type)
+				{
+					int alloyDivisor;
+					if (tacType == TCT_BASEASSAULT)
+						alloyDivisor = 150;
+					else
+						alloyDivisor = 15;
+
+					(*i)->qty /= alloyDivisor;
+					(*i)->score /= alloyDivisor;
+				}
+
+				if ((*i)->recover == true && (*i)->qty != 0)
+					_base->getStorageItems()->addItem((*i)->item, (*i)->qty);
+			}
+		}
+		else if (_destroyXComBase == false)
 		{
 			for (size_t
 					i = 0;
@@ -1480,33 +1484,6 @@ void DebriefingState::prepareDebriefing() // private.
 												fullClips);
 		}
 	}
-
-	if (soldierLive != 0)
-	{
-		for (std::vector<DebriefingStat*>::const_iterator
-				i = _stats.begin();
-				i != _stats.end();
-				++i)
-		{
-			if ((*i)->item == _specialTypes[ALIEN_ALLOYS]->type)
-			{
-				int alloyDivisor;
-				if (tacType == TCT_BASEASSAULT)
-					alloyDivisor = 150;
-				else
-					alloyDivisor = 15;
-
-				(*i)->qty /= alloyDivisor;
-				(*i)->score /= alloyDivisor;
-			}
-
-			if ((*i)->recover == true && (*i)->qty != 0)
-				_base->getStorageItems()->addItem((*i)->item, (*i)->qty);
-		}
-
-		recoverItems(battleSave->guaranteedItems());
-	}
-
 
 	if (_craft != nullptr)
 		reequipCraft();

@@ -218,9 +218,9 @@ private:
 		bool detect(const Target* const target) const;
 
 		/// Sets the Craft's battlescape status.
-		void setInBattlescape(bool tactical = true);
+		void setTactical(bool tactical = true);
 		/// Gets if the Craft is in battlescape.
-		bool isInBattlescape() const;
+		bool getTactical() const;
 
 		/// Gets if Craft is destroyed during dogfights.
 		bool isDestroyed() const;

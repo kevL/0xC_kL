@@ -1069,7 +1069,7 @@ bool Craft::detect(const Target* const target) const
  * Gets this Craft's battlescape status.
  * @return, true if Craft is on the battlescape
  */
-bool Craft::isInBattlescape() const
+bool Craft::getTactical() const
 {
 	return _tactical;
 }
@@ -1078,7 +1078,7 @@ bool Craft::isInBattlescape() const
  * Sets this Craft's battlescape status.
  * @param tactical - true if Craft is on the battlescape (default true)
  */
-void Craft::setInBattlescape(bool tactical)
+void Craft::setTactical(bool tactical)
 {
 	if (tactical == true)
 		setSpeed(0);

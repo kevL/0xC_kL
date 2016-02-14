@@ -87,7 +87,7 @@ private:
 	Craft* _craft;
 	Game* _game;
 	MapBlock* _testBlock;
-	MissionSite* _mission;
+	MissionSite* _site;
 	ResourcePack* _res;
 	Ruleset* _rules;
 	RuleTerrain* _terrainRule;
@@ -218,8 +218,8 @@ private:
 		void setUfo(Ufo* ufo);
 		/// Sets the XCom base.
 		void setBase(Base* base);
-		/// Sets the mission site.
-		void setMissionSite(MissionSite* mission);
+		/// Sets the mission-site.
+		void setMissionSite(MissionSite* site);
 		/// Sets the alien base
 		void setAlienBase(AlienBase* base);
 		/// Sets the terrain.

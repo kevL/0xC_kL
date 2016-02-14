@@ -82,9 +82,9 @@ private:
 		void setLabel(const std::string& edit);
 
 		/// Sets the AlienBase's battlescape status.
-		void setInBattlescape(bool tactical = true);
+		void setTactical(bool tactical = true);
 		/// Gets the AlienBase's battlescape status.
-		bool isInBattlescape() const;
+		bool getTactical() const;
 
 		/// Gets the AlienBase's detected status.
 		bool isDetected() const;

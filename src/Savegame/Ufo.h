@@ -170,9 +170,9 @@ private:
 		bool isDestroyed() const;
 
 		/// Sets the UFO's battlescape status.
-		void setInBattlescape(bool tactical = true);
+		void setTactical(bool tactical = true);
 		/// Gets if the UFO is in battlescape.
-		bool isInBattlescape() const;
+		bool getTactical() const;
 
 		/// Gets the UFO's alien race.
 		const std::string& getAlienRace() const;

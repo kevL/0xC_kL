@@ -232,7 +232,7 @@ void CraftInfoState::init()
 	if (_game->getSavedGame()->getBattleSave() != nullptr)
 	{
 		_game->getSavedGame()->setBattleSave(nullptr);
-		_craft->setInBattlescape(false);
+		_craft->setTactical(false);
 	}
 
 	const bool skirmish = (_game->getSavedGame()->getMonthsPassed() == -1);

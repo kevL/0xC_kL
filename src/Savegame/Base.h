@@ -273,9 +273,9 @@ private:
 		const std::vector<Production*>& getProductions() const;
 
 		/// Sets the Base's battlescape status.
-		void setInBattlescape(bool tactical = true);
+		void setTactical(bool tactical = true);
 		/// Gets if the Base is in the battlescape.
-		bool isInBattlescape() const;
+		bool getTactical() const;
 
 		/// Sets this Base as eligible for alien retaliation.
 		void setBaseExposed(bool exposed = true);

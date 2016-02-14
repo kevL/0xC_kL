@@ -287,7 +287,7 @@ void CraftEquipmentState::init()
 	{
 		_selUnitId = battleSave->getSelectedUnit()->getBattleOrder();
 		_game->getSavedGame()->setBattleSave(nullptr);
-		_craft->setInBattlescape(false);
+		_craft->setTactical(false);
 	}
 
 	displayExtraButtons();
