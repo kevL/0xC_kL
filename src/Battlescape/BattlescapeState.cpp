@@ -1964,7 +1964,7 @@ void BattlescapeState::btnKneelClick(Action*)
 				if (pf->isPathPreviewed() == true)
 				{
 					pf->setPathingUnit(_battleGame->getTacticalAction()->actor);
-					pf->calculate(
+					pf->calculatePath(
 								_battleGame->getTacticalAction()->actor,
 								_battleGame->getTacticalAction()->target);
 					pf->clearPreview();

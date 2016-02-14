@@ -32,14 +32,14 @@ class Ruleset;
 
 
 /**
- * Stores the information about alien strategy.
+ * Stores the information about aLien Strategy.
  */
 class AlienStrategy
 {
 
 private:
-	WeightedOptions _regionChances; // The chances of each region to be targeted for a mission.
-	std::map<std::string, WeightedOptions*> _regionMissions; // The chances of each mission type for each region.
+	WeightedOptions _regionChances;								// The chances of each region-type to be targeted for a mission.
+	std::map<std::string, WeightedOptions*> _regionMissions;	// The chances of each mission-type for each region.
 
 	std::map<std::string, int> _missionRuns;
 	std::map<std::string, std::vector<std::pair<std::string, size_t>>> _missionLocations;
@@ -56,41 +56,41 @@ private:
 		/// Frees resources used by the AlienStrategy.
 		~AlienStrategy();
 
-		/// Saves the data to YAML.
-		YAML::Node save() const;
-
 		/// Initializes values according to the rules.
 		void init(const Ruleset* const rules);
+
 		/// Loads the data from YAML.
 		void load(const YAML::Node& node);
+		/// Saves the requisite data to YAML.
+		YAML::Node save() const;
 
 		/// Chooses a random region for a regular mission.
-		std::string chooseRandomRegion(const Ruleset* const rules);
+		std::string chooseRegion(const Ruleset* const rules);
 		/// Chooses a random mission for a region.
-		std::string chooseRandomMission(const std::string& region) const;
+		std::string chooseMission(const std::string& regionType) const;
 
 		/// Removes a region and mission from the list of possibilities.
-		bool removeMission(
-				const std::string& region,
-				const std::string& mission);
+		bool clearRegion(
+				const std::string& regionType,
+				const std::string& missionType);
 
-		/// Checks the number of missions labelled 'id' that have run.
-		int getMissionsRun(const std::string& id);
-		/// Increments the number of missions labelled 'id' that have run.
-		void addMissionRun(const std::string& id);
-		/// Adds a mission location to the storage array.
+		/// Gets the quantity of a specified mission-type that have run.
+		int getMissionsRun(const std::string& missionType);
+		/// Increments the quantity of a specified mission-type that have run.
+		void addMissionRun(const std::string& missionType);
+		/// Adds a mission's location to the cache.
 		void addMissionLocation(
-				const std::string& id,
-				const std::string& region,
+				const std::string& missionType,
+				const std::string& regionType,
 				size_t zone,
 				size_t track);
-		/// Checks if a given mission location has been attacked already.
+		/// Checks if a specified mission-location has been attacked already.
 		bool validateMissionLocation(
-				const std::string& id,
-				const std::string& region,
+				const std::string& missionType,
+				const std::string& regionType,
 				size_t zone);
-		/// Checks that a given region appears in the strategy table.
-		bool validateMissionRegion(const std::string& region) const;
+		/// Checks if a specified region appears in the strategy table.
+		bool validateMissionRegion(const std::string& regionType) const;
 };
 
 }

@@ -192,14 +192,16 @@ void BaseDefenseState::nextStep()
 
 					if (++_explosionCount == 3)
 						_action = BD_END;
-				return;
+
+					return;
 
 				case BD_END:
 					_thinkCycles = -1;
 //					_game->getCursor()->setVisible();
 					_btnOk->setVisible();
-				return;
-			} // end switch()
+
+					return;
+			}
 
 			if (_attacks == _defenses)
 			{
@@ -243,7 +245,7 @@ void BaseDefenseState::nextStep()
 				}
 			}
 
-			const BaseFacility* const defFac = _base->getDefenses()->at(_attacks);
+			const BaseFacility* const defFac (_base->getDefenses()->at(_attacks));
 
 			switch (_action)
 			{
@@ -256,7 +258,8 @@ void BaseDefenseState::nextStep()
 									L" ",L" ");
 					++_row;
 					if (_row > 14) _lstDefenses->scrollDown(true);
-				return;
+
+					return;
 
 				case BD_FIRE:
 					_lstDefenses->setCellText(
@@ -269,14 +272,15 @@ void BaseDefenseState::nextStep()
 													true);
 					_action = BD_RESOLVE;
 					_timer->setInterval(TI_SLOW);
-				return;
+
+					return;
 
 				case BD_RESOLVE:
 					if (RNG::percent(defFac->getRules()->getHitRatio()) == true)
 					{
 						_game->getResourcePack()->playSoundFX(defFac->getRules()->getHitSound());
 
-						int power = defFac->getRules()->getDefenseValue();
+						int power (defFac->getRules()->getDefenseValue());
 						power = RNG::generate( // vary power between 75% and 133% ( stock is 50..150% )
 											power * 3 / 4,
 											power * 4 / 3);
@@ -302,7 +306,7 @@ void BaseDefenseState::nextStep()
 
 					++_attacks;
 					_timer->setInterval(TI_MEDIUM);
-			} // end switch()
+			}
 		}
 	}
 }
@@ -325,7 +329,7 @@ void BaseDefenseState::btnOkClick(Action*)
 	}
 	else
 	{
-		_base->cleanupDefenses(true);
+		_base->cleanupBaseDefense(true);
 		_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
 	}
 }

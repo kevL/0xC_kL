@@ -67,7 +67,7 @@ UnitWalkBState::UnitWalkBState(
 		_battleSave(parent->getBattleSave()),
 		_falling(false),
 		_preStepTurn(false),
-		_unitsSpotted(0),
+		_antecedentOpponents(0),
 		_preStepCost(0),
 		_tileSwitchDone(false),
 		_isVisible(false),
@@ -108,7 +108,7 @@ void UnitWalkBState::init()
 	}
 
 	// This is used only for aLiens:
-	_unitsSpotted = _unit->getHostileUnitsThisTurn().size();
+	_antecedentOpponents = _unit->getHostileUnitsThisTurn().size();
 
 	_pf->setPathingUnit(_unit);
 	_dirStart = _pf->getStartDirection();
@@ -413,13 +413,13 @@ bool UnitWalkBState::doStatusStand() // private.
 		}
 		else
 		{
-			const int dirStrafe = (_dirStart + 4) % 8;
+			const int dirStrafe ((_dirStart + 4) % 8);
 			_unit->setFaceDirection(dirStrafe);
 			//Log(LOG_INFO) << ". STANDING strafeTank, setFaceDirection() -> " << dirStrafe;
 
 			if (_unit->getTurretType() != -1)
 			{
-				const int turretOffset = _unit->getTurretDirection() - _unit->getUnitDirection();
+				const int turretOffset (_unit->getTurretDirection() - _unit->getUnitDirection());
 				_unit->setTurretDirection((turretOffset + dirStrafe) % 8);
 				//Log(LOG_INFO) << ". STANDING strafeTank, setTurretDirection() -> " << (turretOffset + dirStrafe);
 			}
@@ -430,15 +430,15 @@ bool UnitWalkBState::doStatusStand() // private.
 	//Log(LOG_INFO) << ". getTuCostPf() & posStop";
 	Position posStop;
 	int
-		tuCost = _pf->getTuCostPf(pos, dir, &posStop), // gets tu cost but also sets the destination position.
+		tuCost (_pf->getTuCostPf(pos, dir, &posStop)), // gets tu cost but also sets the destination position.
 		tuTest,
 		staCost;
 	//Log(LOG_INFO) << ". tuCost = " << tuCost;
 
-	Tile* const destTile = _battleSave->getTile(posStop);
+	Tile* const destTile (_battleSave->getTile(posStop));
 
 	if (destTile != nullptr // would hate to see what happens if destTile=nullptr, nuclear war no doubt.
-		&& destTile->getFire() > 0
+		&& destTile->getFire() != 0
 		&& _unit->avoidsFire() == true)
 	{
 		//Log(LOG_INFO) << ". . subtract tu inflation for a fireTile";
@@ -1172,7 +1172,7 @@ bool UnitWalkBState::visForUnits() const // private.
 	if (_unit->getFaction() != FACTION_PLAYER)
 	{
 		ret = ret
-		   && _unit->getHostileUnitsThisTurn().size() > _unitsSpotted
+		   && _unit->getHostileUnitsThisTurn().size() > _antecedentOpponents
 		   && _action.desperate == false
 		   && _unit->getChargeTarget() == nullptr;
 	}

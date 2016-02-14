@@ -26,7 +26,7 @@
 #      STR_CYDONIA_OR_BUST: false        # and does NOT have Cydonia or bust
 #    maxRuns: 12                         # this mission type can only execute this number of times, -1 for infinite (default -1)
 #    avoidRepeats: 12                    # this means "store an array of the 12 previous coordinates, and don't use them again" (default 0)
-#    varName: researching                # this is an internal variable name, used for tracking maxruns and avoidRepeats (default none)
+#    varType: researching                # this is an internal variable name, used for tracking maxruns and avoidRepeats (default none)
 #    useTable: false                     # check this mission type appears in the mission tables, and remove it if it does? (default true)
 #
 missionScripts:

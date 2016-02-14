@@ -2163,7 +2163,7 @@ int Base::getDefenseTotal() const
 /**
  * Sets up this Base's defenses against UFO attacks.
  */
-void Base::setupDefenses()
+void Base::setupBaseDefense()
 {
 	_defenses.clear();
 
@@ -2237,7 +2237,7 @@ void Base::setupDefenses()
 		const std::string itemId ((i)->first);
 		const int itemQty ((i)->second);
 
-		RuleItem* const itRule = (_rules->getItem(itemId));
+		RuleItem* const itRule (_rules->getItem(itemId));
 		if (itRule->isFixed() == true)
 		{
 			int tankSize;
@@ -2315,7 +2315,7 @@ void Base::setupDefenses()
  * the tanks and their ammo.
  * @param hwpToStores - true to return the HWPs to storage (default false)
  */
-void Base::cleanupDefenses(bool hwpToStores)
+void Base::cleanupBaseDefense(bool hwpToStores)
 {
 	_defenses.clear();
 

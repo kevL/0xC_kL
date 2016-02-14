@@ -1547,7 +1547,7 @@ void GeoscapeState::time5Seconds()
 						{
 							mission->setWaveCountdown(30 * (RNG::generate(0,48) + 400));
 							(*i)->setDestination(nullptr);
-							base->setupDefenses();
+							base->setupBaseDefense();
 
 							resetTimer();
 
@@ -3970,14 +3970,13 @@ void GeoscapeState::determineAlienMissions() // private.
 			&& (directive->getLastMonth() >= month
 				|| directive->getLastMonth() == -1)
 			&& (directive->getMaxRuns() == -1
-				|| directive->getMaxRuns() > strategy.getMissionsRun(directive->getVarName()))
+				|| directive->getMaxRuns() > strategy.getMissionsRun(directive->getVarType()))
 			&& directive->getMinDifficulty() <= _gameSave->getDifficulty())
 		{
 			bool go (true);
 			for (std::map<std::string, bool>::const_iterator
 					j = directive->getResearchTriggers().begin();
-					j != directive->getResearchTriggers().end()
-						&& go == true;
+					j != directive->getResearchTriggers().end() && go == true;
 					++j)
 			{
 				go = (_gameSave->isResearched(j->first) == j->second);
@@ -4067,7 +4066,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 
 	if (directive->getSiteType() == true)
 	{
-		missionType = directive->genMissionDatum(month, GT_MISSION);
+		missionType = directive->genDataType(month, GT_MISSION);
 		const std::vector<std::string> missions (directive->getMissionTypes(month));
 		size_t
 			missionsTotal (missions.size()),
@@ -4131,7 +4130,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 						{
 							if ((*k).isPoint() == true
 								&& strategy.validateMissionLocation(
-																directive->getVarName(),
+																directive->getVarType(),
 																regionRule->getType(),
 																testZone) == true)
 							{
@@ -4167,7 +4166,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 		while (targetZone == std::numeric_limits<size_t>::max())
 		{
 			if (directive->hasRegionWeights() == true)
-				targetRegion = directive->genMissionDatum(month, GT_REGION);
+				targetRegion = directive->genDataType(month, GT_REGION);
 			else
 				targetRegion = _rules->getRegionsList().at(RNG::pick(_rules->getRegionsList().size()));
 
@@ -4197,7 +4196,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 		}
 
 		strategy.addMissionLocation(
-								directive->getVarName(),
+								directive->getVarType(),
 								targetRegion,
 								targetZone,
 								directive->getRepeatAvoidance());
@@ -4280,9 +4279,9 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 		}
 	}
 	else if (directive->hasRegionWeights() == false)
-		targetRegion = strategy.chooseRandomRegion(_rules);
+		targetRegion = strategy.chooseRegion(_rules);
 	else
-		targetRegion = directive->genMissionDatum(month, GT_REGION);
+		targetRegion = directive->genDataType(month, GT_REGION);
 
 	if (targetRegion.empty() == true)
 		return false;
@@ -4299,9 +4298,9 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 	if (missionType.empty() == true)
 	{
 		if (directive->hasMissionWeights() == false)
-			missionType = strategy.chooseRandomMission(targetRegion);
+			missionType = strategy.chooseMission(targetRegion);
 		else
-			missionType = directive->genMissionDatum(month, GT_MISSION);
+			missionType = directive->genDataType(month, GT_MISSION);
 	}
 
 	if (missionType.empty() == true)
@@ -4321,7 +4320,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 	if (directive->hasRaceWeights() == false)
 		raceType = missionRule->generateRace(month);
 	else
-		raceType = directive->genMissionDatum(month, GT_RACE);
+		raceType = directive->genDataType(month, GT_RACE);
 
 	if (_rules->getAlienRace(raceType) == nullptr)
 	{
@@ -4339,13 +4338,13 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 	mission->setId(_gameSave->getCanonicalId("ALIEN_MISSIONS"));
 	mission->setRegion(targetRegion, *_rules);
 	mission->setMissionSiteZone(targetZone);
-	strategy.addMissionRun(directive->getVarName());
+	strategy.addMissionRun(directive->getVarType());
 	mission->start(directive->getDelay());
 
 	_gameSave->getAlienMissions().push_back(mission);
 
 	if (directive->usesTable() == true)
-		strategy.removeMission(
+		strategy.clearRegion(
 							targetRegion,
 							missionType);
 
@@ -4367,8 +4366,8 @@ void GeoscapeState::determineAlienMissions(bool atGameStart) // private.
 		// One randomly selected mission.
 		//
 		AlienStrategy& strategy = _gameSave->getAlienStrategy();
-		const std::string& region = strategy.chooseRandomRegion(_rules);
-		const std::string& mission = strategy.chooseRandomMission(region);
+		const std::string& region = strategy.chooseRegion(_rules);
+		const std::string& mission = strategy.chooseMission(region);
 
 		// Choose race for this mission.
 		const RuleAlienMission& missionRule = *_rules->getAlienMission(mission);
@@ -4387,7 +4386,7 @@ void GeoscapeState::determineAlienMissions(bool atGameStart) // private.
 		_gameSave->getAlienMissions().push_back(alienMission);
 
 		// Make sure this combination never comes up again.
-		strategy.removeMission(
+		strategy.clearRegion(
 							region,
 							mission);
 	}
@@ -4417,7 +4416,7 @@ void GeoscapeState::determineAlienMissions(bool atGameStart) // private.
 		_gameSave->getAlienMissions().push_back(alienMission);
 
 		// Make sure this combination never comes up again.
-		strategy.removeMission(
+		strategy.clearRegion(
 							region,
 							mission);
 	}

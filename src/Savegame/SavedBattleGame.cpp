@@ -318,7 +318,7 @@ void SavedBattleGame::load(
 	BattleUnit* unit;
 	UnitFaction
 		faction,
-		originalFaction;
+		factionOrg;
 
 	Log(LOG_INFO) << ". load units";
 	for (YAML::const_iterator
@@ -326,18 +326,16 @@ void SavedBattleGame::load(
 			i != node["units"].end();
 			++i)
 	{
-		id				= (*i)["id"]										.as<int>();
-		faction			= static_cast<UnitFaction>((*i)["faction"]			.as<int>());
-		originalFaction	= static_cast<UnitFaction>((*i)["originalFaction"]	.as<int>(faction)); // .. technically, static_cast<int>(faction).
+		id			= (*i)["id"]										.as<int>();
+		faction		= static_cast<UnitFaction>((*i)["faction"]			.as<int>());
+		factionOrg	= static_cast<UnitFaction>((*i)["originalFaction"]	.as<int>(faction)); // .. technically, static_cast<int>(faction).
 
 		const GameDifficulty diff (savedGame->getDifficulty());
-		if (id < BattleUnit::MAX_SOLDIER_ID)	// BattleUnit is linked to a geoscape soldier
-		{
-			unit = new BattleUnit(				// look up the matching soldier
+		if (id < BattleUnit::MAX_SOLDIER_ID)			// instance a BattleUnit from a geoscape-soldier
+			unit = new BattleUnit(
 							savedGame->getSoldier(id),
-							diff);				// kL_add: For VictoryPts value per death.
-		}
-		else									// create a new Unit, not-soldier but Vehicle, Civie, or aLien.
+							diff);
+		else											// instance a BattleUnit as an aLien, civie, or support-unit
 		{
 			const std::string
 				type	((*i)["genUnitType"]	.as<std::string>()),
@@ -346,7 +344,7 @@ void SavedBattleGame::load(
 			if (rules->getUnitRule(type) != nullptr && rules->getArmor(armor) != nullptr) // safeties.
 				unit = new BattleUnit(
 									rules->getUnitRule(type),
-									originalFaction,
+									factionOrg,
 									id,
 									rules->getArmor(armor),
 									diff,

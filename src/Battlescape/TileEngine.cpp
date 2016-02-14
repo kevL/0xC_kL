@@ -503,16 +503,16 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 										&& unit->getOriginalFaction() == FACTION_PLAYER
 										&& spottedUnit->getFaction() == FACTION_HOSTILE)
 									{
-										const std::vector<BattleUnit*> spottedUnits = unit->getHostileUnitsThisTurn();
+										const std::vector<BattleUnit*> previouslySpottedUnits (unit->getHostileUnitsThisTurn());
 										if (std::find(
-													spottedUnits.begin(),
-													spottedUnits.end(),
-													spottedUnit) == spottedUnits.end())
+													previouslySpottedUnits.begin(),
+													previouslySpottedUnits.end(),
+													spottedUnit) == previouslySpottedUnits.end())
 										{
-											const int soundId = unit->getAggroSound();
+											const int soundId (unit->getAggroSound());
 											if (soundId != -1)
 											{
-												const BattlescapeGame* const battle = _battleSave->getBattleGame();
+												const BattlescapeGame* const battle (_battleSave->getBattleGame());
 												battle->getResourcePack()->getSound("BATTLE.CAT", soundId)
 																			->play(-1, battle->getMap()->getSoundAngle(unit->getPosition()));
 											}

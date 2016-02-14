@@ -60,7 +60,7 @@ AlienBAIState::AlienBAIState(
 		_targetsVisible(0),
 		_tuAmbush(-1),
 //		_reserveTUs(0),
-		_rifle(false),
+		_rifle(false), // TODO: enum AIWeaponType ...
 		_melee(false),
 		_blaster(false),
 //		_grenade(false),
@@ -190,6 +190,7 @@ void AlienBAIState::think(BattleAction* const action)
 				}
 				break;
 			}
+
 			case BT_MELEE:
 			{
 				Log(LOG_INFO) << ". . melee TRUE";
@@ -536,7 +537,7 @@ void AlienBAIState::setupPatrol() // private.
 	_patrolAction->type = BA_THINK;
 	if (_stopNode != nullptr)
 	{
-		_pf->calculate(_unit, _stopNode->getPosition());
+		_pf->calculatePath(_unit, _stopNode->getPosition());
 		if (_pf->getStartDirection() != -1)
 		{
 			_stopNode->allocateNode();
@@ -709,7 +710,7 @@ void AlienBAIState::setupAmbush() // private.
 					Log(LOG_INFO) << ". . . . " << _unitAggro->getId() << " cannot target " << pos;
 					Log(LOG_INFO) << ". . . . calc Path for ACTOR to pos";
 					_pf->setPathingUnit(_unit);
-					_pf->calculate(_unit, pos);
+					_pf->calculatePath(_unit, pos);
 
 					if (_pf->getStartDirection() != -1)
 					{
@@ -717,7 +718,7 @@ void AlienBAIState::setupAmbush() // private.
 
 						Log(LOG_INFO) << ". . . . . calc Path for TARGET to pos";
 						_pf->setPathingUnit(_unitAggro);
-						_pf->calculate(_unitAggro, pos);
+						_pf->calculatePath(_unitAggro, pos);
 
 						if (_pf->getStartDirection() != -1)
 						{
@@ -927,7 +928,7 @@ void AlienBAIState::setupEscape() // private.
 
 			if (scoreTest > score)
 			{
-				_pf->calculate(_unit, _escapeAction->target);
+				_pf->calculatePath(_unit, _escapeAction->target);
 
 				if (_pf->getStartDirection() != -1
 					|| _escapeAction->target == _unit->getPosition())
@@ -1455,7 +1456,7 @@ bool AlienBAIState::findFirePosition() // private.
 															&targetVoxel,
 															_unit) == true)
 				{
-					_pf->calculate(_unit, pos);
+					_pf->calculatePath(_unit, pos);
 					if (_pf->getStartDirection() != -1) // && _pf->getTuCostTotalPf() <= _unit->getTimeUnits()
 					{
 						scoreTest = BASE_SUCCESS_SYSTEMATIC - tallySpotters(pos) * EXPOSURE_PENALTY;
@@ -1546,7 +1547,7 @@ bool AlienBAIState::findMeleePosition( // private.
 							&& _battleSave->setUnitPosition(_unit, pos, true) == true
 							&& _battleSave->getTile(pos)->getDangerous() == false)
 						{
-							_pf->calculate(_unit, pos, maxTuCost);
+							_pf->calculatePath(_unit, pos, maxTuCost);
 							if (_pf->getStartDirection() != -1 && _pf->getPath().size() < dist)
 							{
 								ret = true;
@@ -1733,10 +1734,10 @@ bool AlienBAIState::pathWaypoints(const BattleUnit* const unit) // private.
 	Log(LOG_INFO) << ". actor id-" << _unit->getId() << " pos " << _unit->getPosition();
 
 	_pf->setPathingUnit(_unit);
-	_pf->calculate(
+	_pf->calculatePath(
 				_unit,
 				unit->getPosition(),
-				-1,
+				Pathfinding::TU_INFINITE,
 				unit);
 	int dir (_pf->dequeuePath());
 

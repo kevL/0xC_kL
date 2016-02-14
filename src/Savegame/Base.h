@@ -315,9 +315,9 @@ private:
 		/// Gets this Base's defense value.
 		int getDefenseTotal() const;
 		/// Sets up this Base defenses.
-		void setupDefenses();
+		void setupBaseDefense();
 		/// Cleans up this Base's defenses vector after a Ufo attack and optionally reclaims the tanks and their ammo.
-		void cleanupDefenses(bool hwpToStores = false);
+		void cleanupBaseDefense(bool hwpToStores = false);
 
 		/// Sets the result of this Base's defense against aLien attacks.
 		void setDefenseResult(int result);

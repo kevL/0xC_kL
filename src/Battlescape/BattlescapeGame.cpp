@@ -773,7 +773,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 			if (_battleSave->getTile(action.target) != nullptr)	// TODO: Check that .target is not unit's current Tile.
 			{													// Or ensure that AIState does not return BA_MOVE if so.
-				pf->calculate(action.actor, action.target);
+				pf->calculatePath(action.actor, action.target);
 				if (pf->getStartDirection() != -1)
 					statePushBack(new UnitWalkBState(this, action)); // TODO: If action.desperate use 'dash' interval-speed.
 			}
@@ -2310,7 +2310,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 									&action.target.x,
 									&action.target.y,
 									&action.target.z);
-				pf->calculate(
+				pf->calculatePath(
 							action.actor,
 							action.target,
 							tu);
@@ -2753,7 +2753,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				}
 
 				_tacAction.target = pos;
-				pf->calculate(
+				pf->calculatePath(
 						_tacAction.actor,
 						_tacAction.target);
 
@@ -2852,7 +2852,7 @@ void BattlescapeGame::moveUpDown(
 	_parentState->getGame()->getCursor()->setHidden();
 
 	Pathfinding* const pf (_battleSave->getPathfinding());
-	pf->calculate(
+	pf->calculatePath(
 				_tacAction.actor,
 				_tacAction.target);
 

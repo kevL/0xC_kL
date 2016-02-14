@@ -44,7 +44,7 @@ class WeightedOptions;
 
 
 /**
- * For scripted missions.
+ * For so-called scripted missions.
  */
 class RuleMissionScript
 {
@@ -65,7 +65,7 @@ private:
 
 	std::string
 		_type,
-		_varName;
+		_varType;
 
 	std::vector<int> _conditions;
 
@@ -80,72 +80,73 @@ private:
 
 
 	public:
-		/// Creates a new mission script.
+		/// Creates a MissionScript.
 		explicit RuleMissionScript(const std::string& type);
-		/// Deletes a mission script.
+		/// Deletes the MissionScript.
 		~RuleMissionScript();
 
-		/// Loads a mission script from yaml.
+		/// Loads a MissionScript from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets the name of the script command.
+		/// Gets the type of the MissionScript.
 		std::string getType() const;
-		/// Gets the name of the variable to use for keeping track of ... things.
-		std::string getVarName() const;
+		/// Gets the variable used to track stuff in the SavedGame.
+		std::string getVarType() const;
 
-		/// Gets a complete and unique list of all the mission types contained within this command.
-		const std::set<std::string> getAllMissionTypes() const;
-		/// Gets a list of the mission types in this command's mission weights for a given month.
-		const std::vector<std::string> getMissionTypes(const size_t month) const;
-		/// Gets a list of the regions in this command's region weights for a given month.
-		const std::vector<std::string> getRegions(const size_t month) const;
-
-		/// Gets the first month this command will run.
+		/// Gets the first month the MissionScript is allowed to execute.
 		int getFirstMonth() const;
-		/// Gets the last month this command will run.
+		/// Gets the last month the MissionScript is allowed to execute.
 		int getLastMonth() const;
 
-		/// Gets the label of this command for conditions.
+		/// Gets the label of the MissionScript for its conditions.
 		int getLabel() const;
 
-		/// Gets the odds of this command executing.
+		/// Gets the odds of the MissionScript executing.
 		int getExecutionOdds() const;
-		/// Gets the odds of this mission targetting an xcom base.
+		/// Gets the odds of the MissionScript targeting an xCom Base.
 		int getTargetBaseOdds() const;
 
-		/// Gets the minimum difficulty for this command to run
+		/// Gets the minimum game-difficulty the MissionScript is allowed to execute at.
 		GameDifficulty getMinDifficulty() const;
-		/// Gets the maximum number of times to run a command with this varName
+
+		/// Gets the maximum number of times a directive with the MissionScript's varType is allowed to execute.
 		int getMaxRuns() const;
-		/// Gets how many previous mission sites to track.
+		/// Gets the quantity of previous mission-sites to track.
 		int getRepeatAvoidance() const;
-		/// Gets the number of minutes to delay spawning the first wave.
+		/// Gets the quantity of minutes to delay spawning a first wave.
 		int getDelay() const;
 
-		/// Gets the list of conditions this command requires in order to run.
+		/// Gets a list of conditions the MissionScript requires before it is allowed to execute.
 		const std::vector<int>& getConditions() const;
 
-		/// Checks if this command has race weights.
+		/// Checks if the MissionScript has race-weights.
 		bool hasRaceWeights() const;
-		/// Checks if this command has mission weights.
+		/// Checks if the MissionScript has mission-weights.
 		bool hasMissionWeights() const;
-		/// Checks if this command has region weights.
+		/// Checks if the MissionScript has region-weights.
 		bool hasRegionWeights() const;
 
-		/// Gets the research triggers that may apply to this command.
+		/// Gets any research triggers that apply to the MissionScript.
 		const std::map<std::string, bool>& getResearchTriggers() const;
 
-		/// Checks if this mission uses the table.
+		/// Checks if the MissionScript uses the "table".
 		bool usesTable() const;
 
-		/// Generates either a region, a mission, or a race based on the month.
-		std::string genMissionDatum(
+		/// Gets the list of all mission-types contained within the MissionScript.
+		const std::set<std::string> getAllMissionTypes() const;
+		/// Gets a list of mission-types in this MissionScript's mission-weights for a given month.
+		const std::vector<std::string> getMissionTypes(const size_t month) const;
+		/// Gets a list of the Regions in this MissionScript's region-weights for a given month.
+		const std::vector<std::string> getRegions(const size_t month) const;
+
+		/// Generates a region, a mission, or a race based on the current month.
+		std::string genDataType(
 				const size_t monthsPassed,
 				const GenerationType type) const;
 
-		/// Sets this script to a terror mission type command or not.
+		/// Sets the MissionScript to a site-mission type directive or not.
 		void setSiteType(const bool siteType);
-		/// Checks if this is a terror-type mission or not.
+		/// Gets if the MissionScript is a site-mission type or not.
 		bool getSiteType() const;
 };
 

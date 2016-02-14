@@ -54,9 +54,7 @@ AlienStrategy::~AlienStrategy()
 			i = _regionMissions.begin();
 			i != _regionMissions.end();
 			++i)
-	{
 		delete i->second;
-	}
 }
 
 /**
@@ -65,21 +63,19 @@ AlienStrategy::~AlienStrategy()
  */
 void AlienStrategy::init(const Ruleset* const rules)
 {
-	const std::vector<std::string> regions = rules->getRegionsList();
+	const std::vector<std::string> regions (rules->getRegionsList());
 	for (std::vector<std::string>::const_iterator
 			i = regions.begin();
 			i != regions.end();
 			++i)
 	{
-		const RuleRegion* const region = rules->getRegion(*i);
+		const RuleRegion* const region (rules->getRegion(*i));
 		_regionChances.setWeight(
 							*i,
 							region->getWeight());
 
-		WeightedOptions* const missions = new WeightedOptions(region->getAvailableMissions());
-		_regionMissions.insert(std::make_pair(
-											*i,
-											missions));
+		WeightedOptions* const weightedMissions (new WeightedOptions(region->getAvailableMissions()));
+		_regionMissions.insert(std::make_pair(*i, weightedMissions));
 	}
 }
 
@@ -89,27 +85,25 @@ void AlienStrategy::init(const Ruleset* const rules)
  */
 void AlienStrategy::load(const YAML::Node& node)
 {
-	for (MissionsByRegion::iterator
+	for (MissionsByRegion::const_iterator
 			i = _regionMissions.begin();
 			i != _regionMissions.end();
 			++i)
-	{
 		delete i->second;
-	}
 
 	_regionMissions.clear();
 	_regionChances.clearWeights();
 	_regionChances.load(node["regions"]);
 
-	const YAML::Node& strat = node["possibleMissions"];
+	const YAML::Node& strat (node["possibleMissions"]);
 
 	for (YAML::const_iterator
 			i = strat.begin();
 			i != strat.end();
 			++i)
 	{
-		const std::string region	= (*i)["region"].as<std::string>();
-		const YAML::Node& missions	= (*i)["missions"];
+		const std::string region	((*i)["region"].as<std::string>());
+		const YAML::Node& missions	((*i)["missions"]);
 
 		std::auto_ptr<WeightedOptions> options(new WeightedOptions());
 		options->load(missions);
@@ -123,7 +117,7 @@ void AlienStrategy::load(const YAML::Node& node)
 }
 
 /**
- * Saves the alien data to a YAML file.
+ * Saves the aLien Strategy to a YAML file.
  * @return, YAML node
  */
 YAML::Node AlienStrategy::save() const
@@ -152,71 +146,62 @@ YAML::Node AlienStrategy::save() const
 }
 
 /**
- * Chooses one of the regions for a mission.
+ * Chooses a region that's available for a mission.
  * @param rules - pointer to the Ruleset
- * @return, the region id
+ * @return, the region-type
  */
-std::string AlienStrategy::chooseRandomRegion(const Ruleset* const rules)
+std::string AlienStrategy::chooseRegion(const Ruleset* const rules)
 {
-	std::string chosen (_regionChances.getOptionResult());
-	if (chosen.empty() == true)
+	std::string ret (_regionChances.getOptionResult());
+	if (ret.empty() == true)
 	{
-		// no more missions to choose from, refresh
-		// First free allocated memory.
 		for (MissionsByRegion::const_iterator
 				i = _regionMissions.begin();
 				i != _regionMissions.end();
 				++i)
-		{
 			delete i->second;
-		}
 
 		_regionMissions.clear();
 
-		// re-initialize the list
  		init(rules);
-		// now try that again:
- 		chosen = _regionChances.getOptionResult();
+ 		ret = _regionChances.getOptionResult();
 	}
+	assert(ret != "");
 
-	assert(chosen != "");
-
-	return chosen;
+	return ret;
 }
 
 /**
- * Chooses one of the missions available for @a region.
- * @param region - reference the region id
- * @return, the mission id
+ * Chooses a mission that's available for a region.
+ * @param regionType - reference to a region-type
+ * @return, the mission-type
  */
-std::string AlienStrategy::chooseRandomMission(const std::string& region) const
+std::string AlienStrategy::chooseMission(const std::string& regionType) const
 {
-	MissionsByRegion::const_iterator found (_regionMissions.find(region));
-	assert(found != _regionMissions.end());
+	MissionsByRegion::const_iterator weightedRegions (_regionMissions.find(regionType));
+	assert(weightedRegions != _regionMissions.end());
 
-	return found->second->getOptionResult();
+	return weightedRegions->second->getOptionResult();
 }
 
 /**
- * Removes @a mission from the list of possible missions for @a region.
- * @param region	- the region id
- * @param mission	- the mission id
+ * Removes @a missionType from the list of possible missions for @a regionType.
+ * @param regionType	- reference to the region-type
+ * @param missionType	- reference to the mission-type
  * @return, true if there are no more regions with missions available
  */
-bool AlienStrategy::removeMission(
-		const std::string& region,
-		const std::string& mission)
+bool AlienStrategy::clearRegion(
+		const std::string& regionType,
+		const std::string& missionType)
 {
-	MissionsByRegion::const_iterator found (_regionMissions.find(region));
-	if (found != _regionMissions.end())
+	MissionsByRegion::const_iterator weightedRegions (_regionMissions.find(regionType));
+	if (weightedRegions != _regionMissions.end())
 	{
-		found->second->setWeight(mission, 0);
-
-//		if (found->second->empty() == true)
-		if (found->second->hasNoWeight() == true)
+		weightedRegions->second->setWeight(missionType, 0);
+		if (weightedRegions->second->hasNoWeight() == true)
 		{
-			_regionMissions.erase(found);
-			_regionChances.setWeight(region, 0);
+			_regionMissions.erase(weightedRegions);
+			_regionChances.setWeight(regionType, 0);
 		}
 	}
 
@@ -224,88 +209,92 @@ bool AlienStrategy::removeMission(
 }
 
 /**
- * Checks the number of missions labelled 'id' that have run.
- * @return, the number of missions already run
+ * Gets the quantity of a specified mission-type that have run.
+ * @param missionType - reference to a mission-type
+ * @return, the quantity of missions already run
  */
-int AlienStrategy::getMissionsRun(const std::string& id)
+int AlienStrategy::getMissionsRun(const std::string& missionType)
 {
-	if (_missionRuns.find(id) != _missionRuns.end())
-		return _missionRuns[id];
+	if (_missionRuns.find(missionType) != _missionRuns.end())
+		return _missionRuns[missionType];
 
 	return 0;
 }
 
 /**
- * Increments the number of missions labelled 'id' that have run.
- * @param id - the variable name to use to keep track of runs
+ * Increments the quantity of a specified mission-type that have run.
+ * @param missionType - reference to a mission-type
  */
-void AlienStrategy::addMissionRun(const std::string& id)
+void AlienStrategy::addMissionRun(const std::string& missionType)
 {
-	if (id.empty() == true)
-		return;
-
-	++_missionRuns[id];
+//	if (missionType.empty() == false)
+//		++_missionRuns[missionType]; // i don't trust that. Perhaps post-fix increment works ....
+	if (missionType.empty() == false)
+	{
+		if (_missionRuns.find(missionType) != _missionRuns.end())
+			++_missionRuns[missionType];
+		else
+			_missionRuns[missionType] = 1;
+	}
 }
 
 /**
- * Adds a mission location to the storage array.
- * @param id		- name of the variable under which to store this info
- * @param region	- name of the region
- * @param zone		- number of the zone within the region
- * @param track 	- maximum size of the list to maintain
+ * Adds a mission-location to the cache.
+ * @param missionType	- reference to a mission-type
+ * @param regionType	- reference to a region-type
+ * @param zone			- the zone-ID within the region
+ * @param track			- quantity of entries to maintain in the list
  */
 void AlienStrategy::addMissionLocation(
-		const std::string& id,
-		const std::string& region,
+		const std::string& missionType,
+		const std::string& regionType,
 		size_t zone,
 		size_t track)
 {
-	if (track == 0)
-		return;
-
-	_missionLocations[id].push_back(std::make_pair(region, zone));
-	if (_missionLocations[id].size() > track)
-		_missionLocations.erase(_missionLocations.begin());
+	if (track != 0)
+	{
+		_missionLocations[missionType].push_back(std::make_pair(regionType, zone));
+		if (_missionLocations[missionType].size() > track)
+			_missionLocations.erase(_missionLocations.begin());
+	}
 }
 
 /**
- * Checks that a given mission location (city or whatever) isn't stored in the
+ * Checks if a given mission-location and zone-ID are stored together in the
  * list of previously attacked locations.
- * @param id		- name of the variable under which this info is stored
- * @param region	- name of the region
- * @param zone		- number of the region to check
- * @return, true if the region is valid (it's not in the table)
+ * @param missionType	- reference to a mission-type
+ * @param regionType	- reference to a region-type
+ * @param zone			- the zone-ID within the region
+ * @return, true if the region is not in the table
  */
 bool AlienStrategy::validateMissionLocation(
-		const std::string& id,
-		const std::string& region,
+		const std::string& missionType,
+		const std::string& regionType,
 		size_t zone)
 {
-	if (_missionLocations.find(id) != _missionLocations.end())
+	if (_missionLocations.find(missionType) != _missionLocations.end())
 	{
 		for (std::vector<std::pair<std::string, size_t>>::const_iterator
-				i = _missionLocations[id].begin();
-				i != _missionLocations[id].end();
+				i = _missionLocations[missionType].begin();
+				i != _missionLocations[missionType].end();
 				++i)
 		{
-			if ((*i).first == region
-				&& (*i).second == zone)
-			{
+			if ((*i).first == regionType && (*i).second == zone)
 				return false;
-			}
 		}
 	}
 
 	return true;
 }
+
 /**
- * Checks that a given region appears in the strategy table.
- * @param region - region to check for validity
- * @return, true if the region appears in the table
+ * Checks if a given region is already in the strategy table.
+ * @param regionType - reference to a region-type
+ * @return, true if the region is in the table
  */
-bool AlienStrategy::validateMissionRegion(const std::string& region) const
+bool AlienStrategy::validateMissionRegion(const std::string& regionType) const
 {
-	return (_regionMissions.find(region) != _regionMissions.end());
+	return (_regionMissions.find(regionType) != _regionMissions.end());
 }
 
 }

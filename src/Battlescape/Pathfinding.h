@@ -43,6 +43,9 @@ class Tile;
 class Pathfinding
 {
 
+	public:
+		static const int TU_INFINITE = std::numeric_limits<int>::max();
+
 private:
 	static const int FAIL = 255;
 
@@ -75,15 +78,14 @@ private:
 			const Position& origin,
 			const Position& target,
 			const BattleUnit* const launchTarget,
-			bool sneak = false,
-			int maxTuCost = 1000);
+			bool sneak = false);
 	/// Tries to find a path between two positions.
 	bool aStarPath(
 			const Position& posOrigin,
 			const Position& posTarget,
 			const BattleUnit* const launchTarget,
 			bool sneak = false,
-			int maxTuCost = 1000);
+			int maxTuCost = TU_INFINITE);
 
 	/// Gets the (Pathfinding) node at a (tile) Position.
 	PathfindingNode* getNode(const Position& pos);
@@ -128,10 +130,10 @@ private:
 		void abortPath();
 
 		/// Calculates the shortest path.
-		void calculate(
+		void calculatePath(
 				const BattleUnit* const unit,
 				Position posStop,
-				int maxTuCost = 1000,
+				int maxTuCost = TU_INFINITE,
 				const BattleUnit* const launchTarget = nullptr,
 				bool strafeRejected = false);
 
@@ -146,7 +148,6 @@ private:
 				int dir,
 				Position* const posStop,
 				const BattleUnit* const launchTarget = nullptr,
-				bool launched = false,
 				bool bresenh = true);
 		/// Gets _tuCostTotal; finds out whether we can hike somewhere in this turn or not.
 		int getTuCostTotalPf() const
@@ -161,7 +162,8 @@ private:
 		/// Checks if the movement is valid, for the up/down button.
 		int validateUpDown(
 				const Position& posStart,
-				const int dir);
+				const int dir,
+				const bool launch = false);
 
 		/// Previews the path.
 		bool previewPath(bool discard = false);

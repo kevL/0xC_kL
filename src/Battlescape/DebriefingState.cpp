@@ -721,6 +721,7 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		_stats.push_back(new DebriefingStat((*i).second->type, true));
 	}
+	_stats.push_back(new DebriefingStat(_rules->getAlienFuelType(), true));
 /*	_stats.push_back(new DebriefingStat("STR_UFO_POWER_SOURCE", true)); // ->> SpecialTileTypes <<-|
 	_stats.push_back(new DebriefingStat("STR_UFO_NAVIGATION", true));
 	_stats.push_back(new DebriefingStat("STR_UFO_CONSTRUCTION", true));
@@ -731,14 +732,6 @@ void DebriefingState::prepareDebriefing() // private.
 	_stats.push_back(new DebriefingStat("STR_EXAMINATION_ROOM", true));
 	_stats.push_back(new DebriefingStat("STR_ALIEN_ALLOYS", true));
 	_stats.push_back(new DebriefingStat("STR_ALIEN_HABITAT", true)); */
-
-	_stats.push_back(new DebriefingStat(_rules->getAlienFuelType(), true));
-
-	const bool aborted (battleSave->isAborted());
-	bool missionAccomplished (aborted == false //&& soldierLive != 0
-						   || battleSave->allObjectivesDestroyed() == true);
-
-	std::vector<Craft*>::const_iterator pCraft;
 
 	_missionStatistics->timeStat = *_gameSave->getTime();
 	_missionStatistics->type = battleSave->getTacticalType();
@@ -751,11 +744,11 @@ void DebriefingState::prepareDebriefing() // private.
 			_missionStatistics->alienRace = "STR_UNKNOWN";
 	}
 
+	const bool aborted (battleSave->isAborted());
 
-	// let's see what happened with units
 	int
-		soldierExit (0), // if this stays 0 the craft is lost ...
-		soldierLive (0), // if this stays 0 the craft is lost ...
+		soldierExit (0),
+		soldierLive (0),
 		soldierDead (0), // Soldier Diary.
 		soldierOut  (0);
 
@@ -775,13 +768,11 @@ void DebriefingState::prepareDebriefing() // private.
 				{
 					++soldierOut;
 				}
-
 				++soldierLive;
 			}
-			else // STATUS_DEAD
+			else
 			{
 				++soldierDead;
-
 				if ((*i)->getGeoscapeSoldier() != nullptr)
 					(*i)->getStatistics()->KIA = true;
 			}
@@ -838,7 +829,11 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 
-	// Determine xCom craft or base and get its coordinates.
+	bool missionAccomplished ((aborted == false && soldierLive != 0)
+							|| battleSave->allObjectivesDestroyed() == true);
+
+	std::vector<Craft*>::const_iterator pCraft;
+
 	double
 		lon (0.), // avoid vc++ linker warnings.
 		lat (0.); // avoid vc++ linker warnings.
@@ -848,7 +843,7 @@ void DebriefingState::prepareDebriefing() // private.
 			i != _gameSave->getBases()->end();
 			++i)
 	{
-		for (std::vector<Craft*>::const_iterator // in case there is a craft - check which craft it is about
+		for (std::vector<Craft*>::const_iterator
 				j = (*i)->getCrafts()->begin();
 				j != (*i)->getCrafts()->end();
 				++j)
@@ -898,7 +893,7 @@ void DebriefingState::prepareDebriefing() // private.
 			else
 			{
 				_base->setInBattlescape(false);
-				_base->cleanupDefenses(); // so ... does this mean that each tank's entire 'clip' gets wasted
+				_base->cleanupBaseDefense(); // so ... does this mean that each tank's entire 'clip' gets wasted
 
 				bool facDestroyed = false;
 				for (std::vector<BaseFacility*>::const_iterator
@@ -1007,11 +1002,6 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				_txtRecovery->setText(tr("STR_ALIEN_BASE_RECOVERY"));
 
-				if (aborted == true || soldierLive == 0)
-					missionAccomplished = battleSave->allObjectivesDestroyed();
-				else
-					missionAccomplished = true;
-
 				if (missionAccomplished == true)
 				{
 					if (objectiveCompleteText.empty() == false)
@@ -1024,8 +1014,8 @@ void DebriefingState::prepareDebriefing() // private.
 							objectiveCompleteScore);
 					}
 
-					std::for_each( // Take care to remove supply missions for the aLien base.
-							_gameSave->getAlienMissions().begin(),
+					std::for_each(
+							_gameSave->getAlienMissions().begin(), // remove supply missions for the aLien base.
 							_gameSave->getAlienMissions().end(),
 							ClearAlienBase(*i));
 
@@ -1053,7 +1043,6 @@ void DebriefingState::prepareDebriefing() // private.
 
 	const TacticalType tacType (battleSave->getTacType());
 
-	// Time to care about units.
 	for (std::vector<BattleUnit*>::const_iterator
 			i = battleSave->getUnits()->begin();
 			i != battleSave->getUnits()->end();
@@ -1104,7 +1093,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 				case FACTION_PLAYER:
 				{
-					const Soldier* const sol (_gameSave->getSoldier((*i)->getId()));
+					const Soldier* const sol (_gameSave->getSoldier((*i)->getId())); // TODO: _geoscapeSoldier
 					if (sol != nullptr)
 					{
 						if (_skirmish == false)
@@ -1163,7 +1152,7 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				case FACTION_PLAYER:
 				{
-					const Soldier* const sol (_gameSave->getSoldier((*i)->getId()));
+					const Soldier* const sol (_gameSave->getSoldier((*i)->getId())); // TODO: _geoscapeSoldier
 
 					if (aborted == false
 						|| ((missionAccomplished == true || tacType != TCT_BASEDEFENSE)

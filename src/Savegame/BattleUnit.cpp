@@ -567,7 +567,6 @@ void BattleUnit::loadSpotted(SavedBattleGame* const battleSave)
 			}
 		}
 	}
-
 	_spotted.clear();
 }
 
@@ -672,18 +671,13 @@ YAML::Node BattleUnit::save() const
 		if (_expMelee != 0)			node["expMelee"]		= _expMelee;
 	}
 
-/*	for (size_t
-			i = 0;
-			i != _recolor.size();
-			++i)
-	{
-		YAML::Node p;
-
-		p.push_back(static_cast<int>(_recolor[i].first));
-		p.push_back(static_cast<int>(_recolor[i].second));
-
-		node["recolor"].push_back(p);
-	} */
+//	for (size_t i = 0; i != _recolor.size(); ++i)
+//	{
+//		YAML::Node p;
+//		p.push_back(static_cast<int>(_recolor[i].first));
+//		p.push_back(static_cast<int>(_recolor[i].second));
+//		node["recolor"].push_back(p);
+//	}
 
 	if (_faction == FACTION_PLAYER
 		&& _originalFaction == FACTION_PLAYER
@@ -2137,34 +2131,21 @@ bool BattleUnit::getUnitVisible() const
  */
 void BattleUnit::addToHostileUnits(BattleUnit* const unit)
 {
-	bool addUnit = true;
-
-	for (std::vector<BattleUnit*>::const_iterator
-			i = _hostileUnitsThisTurn.begin();
-			i != _hostileUnitsThisTurn.end();
-			++i)
+	if (std::find(
+			_hostileUnitsThisTurn.begin(),
+			_hostileUnitsThisTurn.end(),
+			unit) == _hostileUnitsThisTurn.end())
 	{
-		if (*i == unit)
-		{
-			addUnit = false;
-			break;
-		}
-	}
-
-	if (addUnit == true)
 		_hostileUnitsThisTurn.push_back(unit); // <- don't think I even use this anymore .... Maybe for AI .... doggie barks.
-
-
-	for (std::vector<BattleUnit*>::const_iterator
-			i = _hostileUnits.begin();
-			i != _hostileUnits.end();
-			++i)
-	{
-		if (*i == unit)
-			return;
 	}
 
-	_hostileUnits.push_back(unit);
+	if (std::find(
+			_hostileUnits.begin(),
+			_hostileUnits.end(),
+			unit) == _hostileUnits.end())
+	{
+		_hostileUnits.push_back(unit);
+	}
 }
 
 /**
@@ -2830,7 +2811,7 @@ BattleItem* BattleUnit::getItem(
 
 /**
  * Checks if there's an item in the specified inventory position.
- * @param section	- a InventorySection (RuleInventory.h)
+ * @param section	- an InventorySection (RuleInventory.h)
  * @param x			- X position in section (default 0)
  * @param y			- Y position in section (default 0)
  * @return, pointer to BattleItem or nullptr if none
@@ -2937,9 +2918,6 @@ BattleItem* BattleUnit::getMainHandWeapon(
 		bool inclMelee,
 		bool checkFist)
 {
-	// kL_note: This gets called way too much, from somewhere, when just walking
-	// around. probably AI patrol state
-
 	//Log(LOG_INFO) << "BattleUnit::getMainHandWeapon()";
 	BattleItem
 		* const rtWeapon (getItem(ST_RIGHTHAND)),
@@ -2964,8 +2942,7 @@ BattleItem* BattleUnit::getMainHandWeapon(
 	if (!hasRT && !hasLT)
 	{
 		setActiveHand(AH_NONE);
-		if (checkFist == true)
-			return _fist;
+		if (checkFist == true) return _fist;
 
 		return nullptr;
 	}
@@ -3388,7 +3365,7 @@ void BattleUnit::postMissionProcedures(
 		const SavedGame* const gameSave,
 		const bool dead)
 {
-	Soldier* const sol (gameSave->getSoldier(_id));
+	Soldier* const sol (gameSave->getSoldier(_id)); // TODO: _geoscapeSoldier
 	if (sol != nullptr)
 	{
 		sol->postTactical(_kills);
@@ -3749,8 +3726,7 @@ std::wstring BattleUnit::getName(
 		const Language* const lang,
 		bool debugId) const
 {
-	if (_geoscapeSoldier == nullptr
-		&& lang != nullptr)
+	if (_geoscapeSoldier == nullptr && lang != nullptr)
 	{
 		std::wstring ret;
 		if (_type.find("STR_") != std::string::npos)

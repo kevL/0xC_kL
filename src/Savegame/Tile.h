@@ -175,7 +175,7 @@ private:
 		bool hasNoFloor(const Tile* const tileBelow = nullptr) const;
 
 		/// Checks if the Tile is a big wall.
-		bool isBigWall() const;
+//		bool isBigWall() const;
 
 		/// Gets terrain level.
 		int getTerrainLevel() const;

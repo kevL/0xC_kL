@@ -293,11 +293,11 @@ void Tile::getMapData(
 }
 
 /**
- * Gets whether this tile has no objects.
+ * Gets whether this Tile has no objects.
  * @note The function does not check for a BattleUnit in this Tile.
  * @param testInventory - true to check for inventory items (default true)
  * @param testVolatiles - true to check for smoke and/or fire (default true)
- * @return, true if there is nothing but air on this tile
+ * @return, true if there is nothing but air on this Tile
  */
 bool Tile::isVoid(
 		const bool testInventory,
@@ -364,9 +364,9 @@ int Tile::getTuCostTile(
 }
 
 /**
- * Gets whether this tile has a floor or not.
+ * Gets whether this Tile has a floor or not.
  * @note If no tile-part defined as floor then it has no floor.
- * @param tileBelow - the tile below this tile (default nullptr)
+ * @param tileBelow - the tile below this Tile (default nullptr)
  * @return, true if tile has no floor
  */
 bool Tile::hasNoFloor(const Tile* const tileBelow) const
@@ -387,19 +387,19 @@ bool Tile::hasNoFloor(const Tile* const tileBelow) const
 }
 
 /**
- * Gets whether this tile has a bigwall.
- * @return, true if the content-object in this tile is a bigwall (BigwallType in Pathfinding.h)
- */
+ * Gets whether this Tile has a bigwall.
+ * @return, true if the content-object in this Tile is a bigwall (BigwallType in Pathfinding.h)
+ *
 bool Tile::isBigWall() const
 {
 	if (_objects[O_OBJECT] != nullptr)
 		return (_objects[O_OBJECT]->getBigwall() != BIGWALL_NONE);
 
 	return false;
-}
+} */
 
 /**
- * Gets the terrain level of this tile.
+ * Gets the terrain level of this Tile.
  * @note For graphical Y offsets etc. Terrain level starts and 0 and goes
  * upwards to -24; negative values are higher.
  * @return, the level in pixels
@@ -419,8 +419,8 @@ int Tile::getTerrainLevel() const
 }
 
 /**
- * Gets this tile's footstep sound.
- * @param tileBelow - pointer to the Tile below this tile
+ * Gets this Tile's footstep sound.
+ * @param tileBelow - pointer to the Tile below this Tile
  * @return, sound ID
  *			0 - none
  *			1 - metal
@@ -747,7 +747,7 @@ void Tile::hitTile(
 }
 
 /**
- * Sets a "virtual" explosive on this tile.
+ * Sets a "virtual" explosive on this Tile.
  * @note Mark a tile this way to detonate it later because the same tile can be
  * visited multiple times by "explosion rays". The explosive power that gets set
  * on a tile is that of the most powerful ray that passes through it -- see
@@ -769,7 +769,7 @@ void Tile::setExplosive(
 }
 
 /**
- * Gets if & how powerfully this tile will explode.
+ * Gets if & how powerfully this Tile will explode.
  * @note Don't confuse this with a tile's inherent explosive power. This value
  * is set by explosions external to the tile itself.
  * @return, how big the BOOM will be / how much tile-destruction
@@ -780,7 +780,7 @@ int Tile::getExplosive() const
 }
 
 /**
- * Gets explosive type of this tile.
+ * Gets explosive type of this Tile.
  * @return, explosive type
  */
 DamageType Tile::getExplosiveType() const
@@ -945,7 +945,7 @@ void Tile::decreaseFire()
 }
 
 /**
- * Gets the number of turns left for this tile to be on fire.
+ * Gets the number of turns left for this Tile to be on fire.
  * @return, turns left
  */
 int Tile::getFire() const
@@ -988,7 +988,7 @@ void Tile::decreaseSmoke()
 }
 
 /**
- * Gets the number of turns left for this tile to smoke.
+ * Gets the number of turns left for this Tile to smoke.
  * @return, turns left
  */
 int Tile::getSmoke() const
@@ -1026,7 +1026,7 @@ bool Tile::isFirable() const // private.
 }
 
 /**
- * Ends this tile's turn. Units catch on fire.
+ * Ends this Tile's turn. Units catch on fire.
  * @note Separated from resolveOverlaps() above so that units take damage before
  * smoke/fire spreads to them; this is so that units would have to end their
  * turn on a tile before smoke/fire damages them. That is they get a chance to
@@ -1522,7 +1522,7 @@ bool Tile::hasPrimedGrenade() const
 }
 
 /**
- * Gets the inventory on this tile.
+ * Gets the inventory on this Tile.
  * @return, pointer to a vector of pointers to BattleItems
  */
 std::vector<BattleItem*>* Tile::getInventory()
@@ -1570,7 +1570,7 @@ int Tile::getPreviewDir() const
 
 /**
  * Sets a number to be displayed by pathfinding preview.
- * @param tu - # of TUs left if/when this tile is reached
+ * @param tu - # of TUs left if/when this Tile is reached
  */
 void Tile::setPreviewTu(int tu)
 {
@@ -1579,7 +1579,7 @@ void Tile::setPreviewTu(int tu)
 
 /**
  * Gets the number to be displayed for pathfinding preview.
- * @return, # of TUs left if/when this tile is reached
+ * @return, # of TUs left if/when this Tile is reached
  */
 int Tile::getPreviewTu() const
 {
@@ -1587,7 +1587,7 @@ int Tile::getPreviewTu() const
 }
 
 /**
- * Sets the path preview marker color on this tile.
+ * Sets the path preview marker color on this Tile.
  * @param color - color of marker
  */
 void Tile::setPreviewColor(Uint8 color)
@@ -1596,7 +1596,7 @@ void Tile::setPreviewColor(Uint8 color)
 }
 
 /**
- * Gets the path preview marker color on this tile.
+ * Gets the path preview marker color on this Tile.
  * @return, color of marker
  */
 int Tile::getPreviewColor() const
@@ -1614,7 +1614,7 @@ void Tile::setDangerous(bool danger)
 }
 
 /**
- * Gets the danger flag on this tile.
+ * Gets the danger flag on this Tile.
  * @return, true if the tile is considered dangerous to aLiens
  */
 bool Tile::getDangerous() const

@@ -74,8 +74,8 @@ std::string WeightedOptions::getOptionResult() const
 {
 	if (_totalWeight != 0)
 	{
-		const size_t pick (static_cast<size_t>(RNG::generate(1, // can't use RNG::pick() because 1.
-						   static_cast<int>(_totalWeight))));
+		const size_t pick (static_cast<size_t>(RNG::generate(1, // can't use RNG::pick() because '1'.
+															 static_cast<int>(_totalWeight))));
 		size_t tally (0);
 		std::map<std::string, size_t>::const_iterator i (_options.begin());
 		while (i != _options.end())

@@ -175,18 +175,18 @@ void Pathfinding::abortPath()
  * @note 'launchTarget' is required only when called by AlienBAIState::pathWaypoints().
  * @param unit				- pointer to a BattleUnit
  * @param posStop			- destination Position
- * @param maxTuCost			- maximum time units this path can cost (default 1000)
+ * @param maxTuCost			- maximum time units this path can cost (default TU_INFINITE)
  * @param launchTarget		- pointer to a targeted BattleUnit (default nullptr)
  * @param strafeRejected	- true if path needs to be recalculated w/out strafe (default false)
  */
-void Pathfinding::calculate(
+void Pathfinding::calculatePath(
 		const BattleUnit* const unit, // -> should not need 'unit' here anymore; done in setPathingUnit() unless FACTION_PLAYER ...
 		Position posStop,
 		int maxTuCost,
 		const BattleUnit* const launchTarget,
 		bool strafeRejected)
 {
-	//Log(LOG_INFO) << "Pathfinding::calculate()";
+	//Log(LOG_INFO) << "Pathfinding::calculatePath()";
 	// i'm DONE with these out of bounds errors.
 	// kL_note: I really don't care what you're "DONE" with ..... if you're going
 	// to cry like a babby, at least make it humorous -- like
@@ -202,21 +202,14 @@ void Pathfinding::calculate(
 
 	abortPath();
 
-	setMoveType(); // redundant in some cases ...
-
-	if (launchTarget != nullptr && maxTuCost == -1)
-		// pathfinding for Launcher; not sure how 'launchTarget' affects initialization yet.
-		// TODO: figure how 'launchTarget' and 'maxTuCost' work together or not.
-		// -> are they redudant, and if so how redundant. ... Completely redundant, it seems
-		// ... in fact it appears to be one of those things that was never thoroughly thought
-		// through: bresenham always uses its own default of 1000, while aStar never sets
-		// its launched=true boolean because it needs -1 passed in ...... plus it does
-		// further checks directly against maxTuCost.
+	if (launchTarget != nullptr)
 	{
 		_mType = MT_FLY;
-		maxTuCost = 1000;
+		maxTuCost = TU_INFINITE;
 		strafeRejected = true;
 	}
+	else
+		setMoveType(); // redundant in some cases ...
 
 	if (unit->getFaction() != FACTION_PLAYER)
 		strafeRejected = true;
@@ -361,8 +354,7 @@ void Pathfinding::calculate(
 						posStart,
 						posStop,
 						launchTarget,
-						sneak
-						/*maxTuCost*/) == true)
+						sneak) == true)
 		{
 			std::reverse(
 					_path.begin(),
@@ -387,12 +379,12 @@ void Pathfinding::calculate(
 		{
 			if (_path.size() > 2 && _strafe == true)
 			{
-				calculate( // iterate this function ONCE ->
-						unit,
-						posStop_cache,
-						maxTuCost,
-						launchTarget,
-						true); // <- sets '_strafe' FALSE so loop never gets back in here.
+				calculatePath( // iterate this function ONCE ->
+							unit,
+							posStop_cache,
+							maxTuCost,
+							launchTarget,
+							true); // <- sets '_strafe' FALSE so loop never gets back in here.
 			}
 			else if (Options::battleStrafe == true
 				&& _ctrl == true
@@ -431,15 +423,13 @@ void Pathfinding::calculate(
  * @param target		- reference the Position to end at
  * @param launchTarget	- pointer to targeted BattleUnit
  * @param sneak			- true if unit is sneaking (default false)
- * @param maxTuCost		- maximum time units the path can cost (default 1000)
  * @return, true if a path is found
  */
 bool Pathfinding::bresenhamPath( // private.
 		const Position& origin,
 		const Position& target,
 		const BattleUnit* const launchTarget,
-		bool sneak,
-		int maxTuCost)
+		bool sneak)
 {
 	//Log(LOG_INFO) << "Pathfinding::bresenhamPath()";
 	static const int
@@ -480,8 +470,6 @@ bool Pathfinding::bresenhamPath( // private.
 
 	Position posLast (origin);
 	Position posNext;
-
-	_tuCostTotal = 0;
 
 	// start and end points
 	x0 = origin.x; x1 = target.x;
@@ -561,8 +549,7 @@ bool Pathfinding::bresenhamPath( // private.
 										posLast,
 										dir,
 										&posNext,
-										launchTarget,
-										launchTarget != nullptr && maxTuCost == 1000));
+										launchTarget));
 			//Log(LOG_INFO) << ". TU Cost = " << tuCost;
 
 			if (sneak == true
@@ -593,8 +580,7 @@ bool Pathfinding::bresenhamPath( // private.
 			else
 				return false;
 
-			if (launchTarget == nullptr
-				&& tuCost != FAIL)
+			if (tuCost != FAIL && launchTarget == nullptr)
 			{
 				tuCostLast = tuCost;
 				_tuCostTotal += tuCost;
@@ -633,7 +619,7 @@ bool Pathfinding::bresenhamPath( // private.
  * @param posTarget		- reference the position to end at
  * @param launchTarget	- pointer to targeted BattleUnit
  * @param sneak			- true if the unit is sneaking (default false)
- * @param maxTuCost		- maximum time units this path can cost (default 1000)
+ * @param maxTuCost		- maximum time units this path can cost (default TU_INFINITE)
  * @return, true if a path is found
  */
 bool Pathfinding::aStarPath( // private.
@@ -662,8 +648,6 @@ bool Pathfinding::aStarPath( // private.
 
 	Position posStop;
 	int tuCost;
-
-	const bool launched (launchTarget != nullptr && maxTuCost == -1);
 
 	while (testNodes.isNodeSetEmpty() == false)
 	{
@@ -706,7 +690,6 @@ bool Pathfinding::aStarPath( // private.
 							dir,
 							&posStop,
 							launchTarget,
-							launched,
 							false);
 			if (tuCost < FAIL)
 			{
@@ -719,10 +702,10 @@ bool Pathfinding::aStarPath( // private.
 				nodeStop = getNode(posStop);
 				if (nodeStop->getChecked() == false)
 				{
-					_tuCostTotal = tuCost + nodeStart->getTuCostNode(launched);
+					_tuCostTotal = tuCost + nodeStart->getTuCostNode(launchTarget != nullptr);
 
 					if ((nodeStop->inOpenSet() == false
-							|| nodeStop->getTuCostNode(launched) > _tuCostTotal)
+							|| nodeStop->getTuCostNode(launchTarget != nullptr) > _tuCostTotal)
 						&& _tuCostTotal <= maxTuCost)
 					{
 						nodeStop->linkNode(
@@ -858,7 +841,6 @@ PathfindingNode* Pathfinding::getNode(const Position& pos) // private.
  * @param dir			- direction of movement
  * @param posStop		- pointer to destination Position
  * @param launchTarget	- pointer to targeted BattleUnit (default nullptr)
- * @param launched		- true if a guided missile (default false)
  * @param bresenh		- true if calc'd by Breshenham pathing (default true)
  * @return, TU cost or 255 if movement is impossible
  */
@@ -867,7 +849,6 @@ int Pathfinding::getTuCostPf(
 		int dir,
 		Position* const posStop,
 		const BattleUnit* const launchTarget,
-		bool launched,
 		bool bresenh)
 {
 	//Log(LOG_INFO) << "Pathfinding::getTuCostPf() " << _unit->getId();
@@ -875,18 +856,18 @@ int Pathfinding::getTuCostPf(
 	*posStop += posStart;
 
 	bool
-		fall = false,
-		stairs = false;
+		fall   (false),
+		stairs (false);
 
 	int
-		partsGoingUp = 0,
-		partsGoingDown = 0,
-		partsFalling = 0,
-		partsChangingHeight = 0,
+		partsGoingUp		(0),
+		partsGoingDown		(0),
+		partsFalling		(0),
+		partsChangingHeight	(0),
 //		partsOnAir = 0,
 
 		cost,
-		costTotal = 0,
+		costTotal (0),
 
 		wallTu,
 		wallTotal,
@@ -1020,7 +1001,7 @@ int Pathfinding::getTuCostPf(
 				&& _mType != MT_FLY
 				&& canFallDown(tileStop) == true
 				&& tileStopBelow != nullptr
-				&& tileStopBelow->getTerrainLevel() < -11)	// higher than 1-half up.
+				&& tileStopBelow->getTerrainLevel() < -11) // higher than 1-half up.
 			{
 				++partsGoingDown;
 				//Log(LOG_INFO) << "partsDown = " << partsGoingDown;
@@ -1036,6 +1017,7 @@ int Pathfinding::getTuCostPf(
 				}
 			}
 			else if (_mType == MT_FLY
+				&& launchTarget == nullptr // TODO: <-- Think about that.
 				&& tileStopBelow != nullptr
 				&& tileStopBelow->getTileUnit() != nullptr
 				&& tileStopBelow->getTileUnit() != _unit)
@@ -1081,12 +1063,12 @@ int Pathfinding::getTuCostPf(
 			{
 				if (validateUpDown(
 								posStart + posOffset,
-								dir) < 1)
+								dir,
+								launchTarget != nullptr) < 1)
 				{
 					return FAIL;
 				}
-
-				cost = 8; // vertical movement by flying suit or grav lift
+				cost = 8; // vertical movement by flying suit or grav lift (or missile launch...)
 			}
 
 			// check if there's a floor else fall down; for walking off roofs and pathing in mid-air ...
@@ -1146,7 +1128,7 @@ int Pathfinding::getTuCostPf(
 // CHECK FOR BLOCKAGE_end.
 
 
-			if (launched == true) // if missile GO.
+			if (launchTarget != nullptr) // if missile GO.
 				return 0;
 
 
@@ -1453,172 +1435,172 @@ bool Pathfinding::isBlockedPath( // public
 			if (isBlocked(
 						startTile,
 						O_NORTHWALL,
-						launchTarget))
+						launchTarget) == true)
 			{
 				return true;
 			}
-			return false;
+			break;
 
 		case 1: // north-east
 			//Log(LOG_INFO) << ". try NorthEast";
 			if (isBlocked(
 						startTile,
 						O_NORTHWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posEast),
 						O_WESTWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posEast),
 						O_NORTHWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posEast),
 						O_OBJECT,
 						launchTarget,
-						BIGWALL_NESW)
+						BIGWALL_NESW) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posEast + posNorth),
 						O_WESTWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posNorth),
 						O_OBJECT,
 						launchTarget,
-						BIGWALL_NESW))
+						BIGWALL_NESW) == true)
 			{
 				return true;
 			}
-			return false;
+			break;
 
 		case 2: // east
 			//Log(LOG_INFO) << ". try East";
 			if (isBlocked(
 						_battleSave->getTile(pos + posEast),
 						O_WESTWALL,
-						launchTarget))
+						launchTarget) == true)
 			{
 				return true;
 			}
-			return false;
+			break;
 
 		case 3: // south-east
 			//Log(LOG_INFO) << ". try SouthEast";
 			if (isBlocked(
 						_battleSave->getTile(pos + posEast),
 						O_WESTWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posEast),
 						O_OBJECT,
 						launchTarget,
-						BIGWALL_NWSE)
+						BIGWALL_NWSE) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posEast + posSouth),
 						O_NORTHWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posEast + posSouth),
 						O_WESTWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posSouth),
 						O_NORTHWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posSouth),
 						O_OBJECT,
 						launchTarget,
-						BIGWALL_NWSE))
+						BIGWALL_NWSE) == true)
 			{
 				return true;
 			}
-			return false;
+			break;
 
 		case 4: // south
 			//Log(LOG_INFO) << ". try South";
 			if (isBlocked(
 						_battleSave->getTile(pos + posSouth),
 						O_NORTHWALL,
-						launchTarget))
+						launchTarget) == true)
 			{
 				return true;
 			}
-			return false;
+			break;
 
 		case 5: // south-west
 			//Log(LOG_INFO) << ". try SouthWest";
 			if (isBlocked(
 						startTile,
 						O_WESTWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posSouth),
 						O_WESTWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posSouth),
 						O_NORTHWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posSouth),
 						O_OBJECT,
 						launchTarget,
-						BIGWALL_NESW)
+						BIGWALL_NESW) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posSouth + posWest),
 						O_NORTHWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posWest),
 						O_OBJECT,
 						launchTarget,
-						BIGWALL_NESW))
+						BIGWALL_NESW) == true)
 			{
 				return true;
 			}
-			return false;
+			break;
 
 		case 6: // west
 			//Log(LOG_INFO) << ". try West";
 			if (isBlocked(
 						startTile,
 						O_WESTWALL,
-						launchTarget))
+						launchTarget) == true)
 			{
 				return true;
 			}
-			return false;
+			break;
 
 		case 7: // north-west
 			//Log(LOG_INFO) << ". try NorthWest";
 			if (isBlocked(
 						startTile,
 						O_WESTWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						startTile,
 						O_NORTHWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posWest),
 						O_NORTHWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posWest),
 						O_OBJECT,
 						launchTarget,
-						BIGWALL_NWSE)
+						BIGWALL_NWSE) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posNorth),
 						O_WESTWALL,
-						launchTarget)
+						launchTarget) == true
 				|| isBlocked(
 						_battleSave->getTile(pos + posNorth),
 						O_OBJECT,
 						launchTarget,
-						BIGWALL_NWSE))
+						BIGWALL_NWSE) == true)
 			{
 				return true;
 			}
@@ -1629,7 +1611,7 @@ bool Pathfinding::isBlockedPath( // public
 
 /**
  * Determines whether a certain part of a tile blocks movement.
- * @param tile			- pointer to a specified Tile, can be nullptr
+ * @param tile			- pointer to a Tile, can be nullptr
  * @param partType		- part of the tile (MapData.h)
  * @param launchTarget	- pointer to targeted BattleUnit (default nullptr)
  * @param diagExclusion	- to exclude diagonal bigWalls (default BIGWALL_NONE) (Pathfinding.h)
@@ -1670,7 +1652,7 @@ bool Pathfinding::isBlocked( // private.
 		case O_WESTWALL:
 			{
 				//Log(LOG_INFO) << ". part is Westwall";
-				if (launchTarget != nullptr					// missiles can't pathfind through closed doors.
+				if (launchTarget != nullptr						// missiles can't pathfind through closed doors.
 					&& tile->getMapData(O_WESTWALL) != nullptr	// ... neither can proxy mines.
 					&& (tile->getMapData(O_WESTWALL)->isDoor() == true
 						|| (tile->getMapData(O_WESTWALL)->isUfoDoor() == true
@@ -1708,7 +1690,7 @@ bool Pathfinding::isBlocked( // private.
 		case O_NORTHWALL:
 			{
 				//Log(LOG_INFO) << ". part is Northwall";
-				if (launchTarget != nullptr					// missiles can't pathfind through closed doors.
+				if (launchTarget != nullptr						// missiles can't pathfind through closed doors.
 					&& tile->getMapData(O_NORTHWALL) != nullptr	// ... neither can proxy mines.
 					&& (tile->getMapData(O_NORTHWALL)->isDoor() == true
 						|| (tile->getMapData(O_NORTHWALL)->isUfoDoor() == true
@@ -1746,35 +1728,41 @@ bool Pathfinding::isBlocked( // private.
 		case O_FLOOR:
 			{
 				//Log(LOG_INFO) << ". part is Floor";
-				const BattleUnit* targetUnit (tile->getTileUnit());
+				const BattleUnit* blockUnit (tile->getTileUnit());
 
-				if (targetUnit != nullptr)
+				if (blockUnit != nullptr)
 				{
-					if (targetUnit == _unit
-						|| targetUnit == launchTarget
-						|| targetUnit->isOut_t(OUT_STAT) == true)
+					if (blockUnit == _unit
+						|| blockUnit == launchTarget
+						|| blockUnit->isOut_t(OUT_STAT) == true)
 					{
 						return false;
 					}
 
+					if (launchTarget != nullptr // == isAI
+						&& launchTarget != blockUnit
+						&& blockUnit->getFaction() == FACTION_HOSTILE)
+					{
+						return true;
+					}
+
 					if (_unit != nullptr)
 					{
-						if (_unit->getFaction() == targetUnit->getFaction())
+						if (_unit->getFaction() == blockUnit->getFaction())
 							return true;
 
 						switch (_unit->getFaction())
 						{
 							case FACTION_PLAYER:
-								if (targetUnit->getUnitVisible() == true)
+								if (blockUnit->getUnitVisible() == true)
 									return true;
 								break;
 
 							default:
-							case FACTION_HOSTILE:
 								if (std::find(
-									_unit->getHostileUnitsThisTurn().begin(),
-									_unit->getHostileUnitsThisTurn().end(),
-									targetUnit) != _unit->getHostileUnitsThisTurn().end())
+										_unit->getHostileUnitsThisTurn().begin(),
+										_unit->getHostileUnitsThisTurn().end(),
+										blockUnit) != _unit->getHostileUnitsThisTurn().end())
 								{
 									return true;
 								}
@@ -1784,24 +1772,23 @@ bool Pathfinding::isBlocked( // private.
 				else if (tile->hasNoFloor() == true	// This section is devoted to ensuring that large units
 					&& _mType != MT_FLY)			// do not take part in any kind of falling behaviour.
 				{
-					Position pos = tile->getPosition();
-					while (pos.z > -1)
+					Position pos (tile->getPosition());
+					while (pos.z != -1)
 					{
 						const Tile* const testTile (_battleSave->getTile(pos));
-						targetUnit = testTile->getTileUnit();
+						blockUnit = testTile->getTileUnit();
 
-						if (targetUnit != nullptr
-							&& targetUnit != _unit)
+						if (blockUnit != nullptr && blockUnit != _unit)
 						{
 							if (_unit != nullptr // don't let large units fall on other units
-								&& _unit->getArmor()->getSize() > 1)
+								&& _unit->getArmor()->getSize() == 2)
 							{
 								return true;
 							}
 
-							if (targetUnit != launchTarget // don't let any units fall on large units
-								&& targetUnit->isOut_t(OUT_STAT) == false
-								&& targetUnit->getArmor()->getSize() > 1)
+							if (blockUnit != launchTarget // don't let any units fall on large units
+								&& blockUnit->isOut_t(OUT_STAT) == false
+								&& blockUnit->getArmor()->getSize() == 2)
 							{
 								return true;
 							}
@@ -2073,9 +2060,11 @@ bool Pathfinding::canFallDown(const Tile* const tile) const // private
 
 /**
  * Checks if vertical movement is valid.
- * @note There is a grav lift or the unit can fly and there are no obstructions.
+ * @note Checks if there is a grav lift or the unit can fly and there are no
+ * obstructions.
  * @param posStart	- reference the start position
  * @param dir		- up or down
+ * @param launch	- true if pathing a waypoint-launcher/guided missile (default false)
  * @return,	-1 can't fly
 //			-1 kneeling (stop unless on gravLift)
 			 0 blocked (stop)
@@ -2084,8 +2073,9 @@ bool Pathfinding::canFallDown(const Tile* const tile) const // private
  */
 int Pathfinding::validateUpDown(
 		const Position& posStart,
-		const int dir)
-{
+		const int dir,
+		const bool launch)	// <- not so sure this is needed.
+{							// ie, AI Blaster Launches have found holes in floor just fine so far.
 	Position posStop;
 	directionToVector(dir, &posStop);
 	posStop += posStart;
@@ -2105,15 +2095,24 @@ int Pathfinding::validateUpDown(
 		return 1;
 	}
 
-	if (_mType == MT_FLY //_unit->getMoveTypeUnit() == MT_FLY
-		|| (dir == DIR_DOWN
-			&& _alt == true))
+	if (_mType == MT_FLY
+		|| (dir == DIR_DOWN && _alt == true))
 	{
 		if ((dir == DIR_UP
 				&& destTile->hasNoFloor(startTile))
 			|| (dir == DIR_DOWN
 				&& startTile->hasNoFloor(_battleSave->getTile(posStart + Position(0,0,-1)))))
 		{
+			if (launch)
+			{
+				if ((dir == DIR_UP
+						&& destTile->getMapData(O_FLOOR)->getLoftId(0) != 0)
+					|| (dir == DIR_DOWN
+						&& startTile->getMapData(O_FLOOR)->getLoftId(0) != 0))
+				{
+					return 0; // blocked.
+				}
+			}
 			return 2; // flying.
 		}
 		return 0; // blocked.

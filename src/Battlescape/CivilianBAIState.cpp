@@ -172,7 +172,7 @@ void CivilianBAIState::setupPatrol() // private.
 
 	if (_stopNode != nullptr)
 	{
-		_pf->calculate(_unit, _stopNode->getPosition());
+		_pf->calculatePath(_unit, _stopNode->getPosition());
 		if (_pf->getStartDirection() == -1)
 			_stopNode = nullptr;
 
@@ -291,7 +291,7 @@ void CivilianBAIState::setupEscape() // private.
 
 			if (scoreTest > score)
 			{
-				_pf->calculate(
+				_pf->calculatePath(
 							_unit,
 							_escapeAction->target,
 							tuHalf);

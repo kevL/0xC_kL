@@ -830,7 +830,7 @@ void BattlescapeGenerator::deployXcom() // private.
 
 		// Only add vehicles from the craft in skirmish mode otherwise the
 		// base's vehicle-vector will already contain these due to the geoscape
-		// calling Base->setupDefenses().
+		// calling Base->setupBaseDefense().
 		if (_gameSave->getMonthsPassed() == -1)
 		{
 			for (std::vector<Craft*>::const_iterator // Add Vehicles from Crafts at Base.

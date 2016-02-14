@@ -404,19 +404,23 @@ void Ruleset::reloadCountryLines() const
 }
 
 /**
- * Checks to ensure that Mission scripts don't buttfuck reapers w/out ky.
+ * Checks to ensure that MissionScripts don't buttfuck reapers w/out ky-jelly.
  */
 void Ruleset::validateMissions() const
 {
-	// these need to be validated, otherwise we're gonna get into some serious trouble down the line.
-	// it may seem like a somewhat arbitrary limitation, but there is a good reason behind it.
-	// i'd need to know what results are going to be before they are formulated, and there's a heirarchical structure to
-	// the order in which variables are determined for a mission, and the order is DIFFERENT for regular missions vs
-	// missions that spawn a mission site. where normally we pick a region, then a mission based on the weights for that region.
-	// a terror-type mission picks a mission type FIRST, then a region based on the criteria defined by the mission.
-	// there is no way i can conceive of to reconcile this difference to allow mixing and matching,
-	// short of knowing the results of calls to the RNG before they're determined.
-	// the best solution i can come up with is to disallow it, as there are other ways to acheive what this would amount to anyway,
+	// these need to be validated, otherwise we're gonna get into some serious
+	// trouble down the line. it may seem like a somewhat arbitrary limitation,
+	// but there is a good reason behind it. i'd need to know what results are
+	// going to be before they are formulated, and there's a heirarchical
+	// structure to the order in which variables are determined for a mission,
+	// and the order is DIFFERENT for regular missions vs missions that spawn a
+	// mission site. where normally we pick a region, then a mission based on
+	// the weights for that region. a terror-type mission picks a mission type
+	// FIRST, then a region based on the criteria defined by the mission. there
+	// is no way i can conceive of to reconcile this difference to allow mixing
+	// and matching, short of knowing the results of calls to the RNG before
+	// they're determined. the best solution i can come up with is to disallow
+	// it, as there are other ways to acheive what this would amount to anyway,
 	// and they don't require time travel. - Warboy
 	for (std::map<std::string, RuleMissionScript*>::const_iterator
 			i = _missionScripts.begin();
@@ -425,42 +429,52 @@ void Ruleset::validateMissions() const
 	{
 		RuleMissionScript* const scriptRule ((*i).second);
 
-		const std::set<std::string> missions (scriptRule->getAllMissionTypes());
-		if (missions.empty() == false)
+		const std::set<std::string> missionTypes (scriptRule->getAllMissionTypes());
+		if (missionTypes.empty() == false)
 		{
-			std::set<std::string>::const_iterator j (missions.begin());
+			std::set<std::string>::const_iterator j (missionTypes.begin());
+			if (getAlienMission(*j) == nullptr)
+			{
+				throw Exception("ERROR with MissionScript: " + (*i).first
+					+ ": alien mission type: " + *j + "not defined, "
+					+ "so sayeth the wise Alfonso.");
+			}
 
-			const bool isSite = getAlienMission(*j)
-							 && getAlienMission(*j)->getObjective() == alm_SITE;
+			const bool isSite (getAlienMission(*j)->getObjective() == alm_SITE);
 			scriptRule->setSiteType(isSite);
 
 			for (
 					;
-					j != missions.end();
+					j != missionTypes.end();
 					++j)
 			{
 				if (getAlienMission(*j) != nullptr
 					&& (getAlienMission(*j)->getObjective() == alm_SITE) != isSite)
 				{
-					throw Exception("Error with MissionScript: " + (*i).first
-						+ " cannot mix terror/non-terror missions in a single command, so sayeth the wise Alfonso.");
+					throw Exception("ERROR with MissionScript: " + (*i).first
+						+ ": cannot mix Terror/non-Terror missions in one directive, "
+						+ "so sayeth the wise Alfonso.");
 				}
 			}
 		}
 	}
 
-	// instead of passing a pointer to the region load function and moving the alienMission loading before region loading
-	// and sanitizing there, i'll sanitize here, i'm sure this sanitation will grow, and will need to be refactored into
-	// its own function at some point, but for now, i'll put it here next to the missionScript sanitation, because it seems
-	// the logical place for it, given that this sanitation is required as a result of moving all terror mission handling
-	// into missionScripting behaviour. apologies to all the modders that will be getting errors and need to adjust their
-	// rulesets, but this will save you weird errors down the line. - Warboy
+	// instead of passing a pointer to the region load function and moving the
+	// alienMission loading before region loading and sanitizing there, i'll
+	// sanitize here, i'm sure this sanitation will grow, and will need to be
+	// refactored into its own function at some point, but for now, i'll put it
+	// here next to the missionScript sanitation, because it seems the logical
+	// place for it, given that this sanitation is required as a result of
+	// moving all terror mission handling into missionScripting behaviour.
+	// apologies to all the modders that will be getting errors and need to
+	// adjust their rulesets, but this will save you weird errors down the line.
+	// - Warboy
 	for (std::map<std::string, RuleRegion*>::const_iterator
 			i = _regions.begin();
 			i != _regions.end();
 			++i)
 	{
-		const std::vector<std::string> types = (*i).second->getAvailableMissions().getTypes();
+		const std::vector<std::string> types ((*i).second->getAvailableMissions().getTypes());
 		for (std::vector<std::string>::const_iterator
 				j = types.begin();
 				j != types.end();
@@ -468,8 +482,10 @@ void Ruleset::validateMissions() const
 		{
 			if (getAlienMission(*j)->getObjective() == alm_SITE)
 			{
-				throw Exception("Error with MissionWeights: Region: " + (*i).first + " has " + *j
-					+ " listed. Terror mission can only be invoked via missionScript, so sayeth Lolth.");
+				throw Exception("ERROR with MissionWeights: Region: " + (*i).first
+					+ ": has " + *j + " listed. "
+					+ "Terror mission can only be invoked via missionScript, "
+					+ "so sayeth the wise Alfonso.");
 			}
 		}
 	}
@@ -1282,7 +1298,7 @@ const std::vector<OperationPool*>& Ruleset::getOperations() const
  */
 RuleCountry* Ruleset::getCountry(const std::string& id) const
 {
-	std::map<std::string, RuleCountry*>::const_iterator i = _countries.find(id);
+	std::map<std::string, RuleCountry*>::const_iterator i (_countries.find(id));
 	if (i != _countries.end())
 		return i->second;
 
@@ -1305,7 +1321,7 @@ const std::vector<std::string>& Ruleset::getCountriesList() const
  */
 RuleRegion* Ruleset::getRegion(const std::string& id) const
 {
-	std::map<std::string, RuleRegion*>::const_iterator i = _regions.find(id);
+	std::map<std::string, RuleRegion*>::const_iterator i (_regions.find(id));
 	if (i != _regions.end())
 		return i->second;
 
@@ -1328,7 +1344,7 @@ const std::vector<std::string>& Ruleset::getRegionsList() const
  */
 RuleBaseFacility* Ruleset::getBaseFacility(const std::string& id) const
 {
-	std::map<std::string, RuleBaseFacility*>::const_iterator i = _facilities.find(id);
+	std::map<std::string, RuleBaseFacility*>::const_iterator i (_facilities.find(id));
 	if (i != _facilities.end())
 		return i->second;
 
@@ -1351,7 +1367,7 @@ const std::vector<std::string>& Ruleset::getBaseFacilitiesList() const
  */
 RuleCraft* Ruleset::getCraft(const std::string& id) const
 {
-	std::map<std::string, RuleCraft*>::const_iterator i = _crafts.find(id);
+	std::map<std::string, RuleCraft*>::const_iterator i (_crafts.find(id));
 	if (i != _crafts.end())
 		return i->second;
 
@@ -1374,7 +1390,7 @@ const std::vector<std::string>& Ruleset::getCraftsList() const
  */
 RuleCraftWeapon* Ruleset::getCraftWeapon(const std::string& id) const
 {
-	std::map<std::string, RuleCraftWeapon*>::const_iterator i = _craftWeapons.find(id);
+	std::map<std::string, RuleCraftWeapon*>::const_iterator i (_craftWeapons.find(id));
 	if (i != _craftWeapons.end())
 		return i->second;
 
@@ -1419,7 +1435,7 @@ const std::vector<std::string>& Ruleset::getItemsList() const
  */
 RuleUfo* Ruleset::getUfo(const std::string& id) const
 {
-	std::map<std::string, RuleUfo*>::const_iterator i = _ufos.find(id);
+	std::map<std::string, RuleUfo*>::const_iterator i (_ufos.find(id));
 	if (i != _ufos.end())
 		return i->second;
 
@@ -1442,7 +1458,7 @@ const std::vector<std::string>& Ruleset::getUfosList() const
  */
 RuleTerrain* Ruleset::getTerrain(const std::string& type) const
 {
-	std::map<std::string, RuleTerrain*>::const_iterator i = _terrains.find(type);
+	std::map<std::string, RuleTerrain*>::const_iterator i (_terrains.find(type));
 
 	if (i != _terrains.end())
 		return i->second;
@@ -1466,7 +1482,7 @@ const std::vector<std::string>& Ruleset::getTerrainList() const
  */
 MapDataSet* Ruleset::getMapDataSet(const std::string& name)
 {
-	std::map<std::string, MapDataSet*>::const_iterator i = _mapDataSets.find(name);
+	std::map<std::string, MapDataSet*>::const_iterator i (_mapDataSets.find(name));
 	if (i == _mapDataSets.end())
 	{
 		MapDataSet* const dataSet (new MapDataSet(name, _game));
@@ -1493,7 +1509,7 @@ std::map<std::string, RuleAward*> Ruleset::getAwardsList() const
  */
 RuleSoldier* Ruleset::getSoldier(const std::string& type) const
 {
-	std::map<std::string, RuleSoldier*>::const_iterator i = _soldiers.find(type);
+	std::map<std::string, RuleSoldier*>::const_iterator i (_soldiers.find(type));
 	if (i != _soldiers.end())
 		return i->second;
 
@@ -1516,7 +1532,7 @@ const std::vector<std::string>& Ruleset::getSoldiersList() const
  */
 RuleUnit* Ruleset::getUnitRule(const std::string& type) const
 {
-	std::map<std::string, RuleUnit*>::const_iterator i = _units.find(type);
+	std::map<std::string, RuleUnit*>::const_iterator i (_units.find(type));
 	if (i != _units.end())
 		return i->second;
 
@@ -1530,7 +1546,7 @@ RuleUnit* Ruleset::getUnitRule(const std::string& type) const
  */
 AlienRace* Ruleset::getAlienRace(const std::string& type) const
 {
-	std::map<std::string, AlienRace*>::const_iterator i = _alienRaces.find(type);
+	std::map<std::string, AlienRace*>::const_iterator i (_alienRaces.find(type));
 	if (i != _alienRaces.end())
 		return i->second;
 
@@ -1553,7 +1569,7 @@ const std::vector<std::string>& Ruleset::getAlienRacesList() const
  */
 AlienDeployment* Ruleset::getDeployment(const std::string& name) const
 {
-	std::map<std::string, AlienDeployment*>::const_iterator i = _alienDeployments.find(name);
+	std::map<std::string, AlienDeployment*>::const_iterator i (_alienDeployments.find(name));
 	if (i != _alienDeployments.end())
 		return i->second;
 
@@ -1576,7 +1592,7 @@ const std::vector<std::string>& Ruleset::getDeploymentsList() const
  */
 RuleArmor* Ruleset::getArmor(const std::string& name) const
 {
-	std::map<std::string, RuleArmor*>::const_iterator i = _armors.find(name);
+	std::map<std::string, RuleArmor*>::const_iterator i (_armors.find(name));
 	if (i != _armors.end())
 		return i->second;
 
@@ -1626,7 +1642,7 @@ int Ruleset::getPersonnelTime() const
  */
 ArticleDefinition* Ruleset::getUfopaediaArticle(const std::string& article_id) const
 {
-	std::map<std::string, ArticleDefinition*>::const_iterator i = _ufopaediaArticles.find(article_id);
+	std::map<std::string, ArticleDefinition*>::const_iterator i (_ufopaediaArticles.find(article_id));
 	if (i != _ufopaediaArticles.end())
 		return i->second;
 
@@ -1658,7 +1674,7 @@ std::map<std::string, RuleInventory*>* Ruleset::getInventories()
  */
 RuleInventory* Ruleset::getInventory(const std::string& type) const
 {
-	std::map<std::string, RuleInventory*>::const_iterator i = _inventories.find(type);
+	std::map<std::string, RuleInventory*>::const_iterator i (_inventories.find(type));
 	if (i != _inventories.end())
 		return i->second;
 
@@ -1734,7 +1750,7 @@ int Ruleset::detHighTuInventoryCost() const
 		cost,
 		costHigh = 0;
 
-	const RuleInventory* const grdRule = getInventoryRule(ST_GROUND);
+	const RuleInventory* const grdRule (getInventoryRule(ST_GROUND));
 	for (std::map<std::string, RuleInventory*>::const_iterator
 			i = _inventories.begin();
 			i != _inventories.end();
@@ -1770,7 +1786,7 @@ int Ruleset::detHighTuInventoryCost() const
  */
 RuleResearch* Ruleset::getResearch(const std::string& id) const
 {
-	std::map<std::string, RuleResearch*>::const_iterator i = _research.find(id);
+	std::map<std::string, RuleResearch*>::const_iterator i (_research.find(id));
 	if (i != _research.end())
 		return i->second;
 
@@ -1793,7 +1809,7 @@ const std::vector<std::string>& Ruleset::getResearchList() const
  */
 RuleManufacture* Ruleset::getManufacture(const std::string& id) const
 {
-	std::map<std::string, RuleManufacture*>::const_iterator i = _manufacture.find(id);
+	std::map<std::string, RuleManufacture*>::const_iterator i (_manufacture.find(id));
 	if (i != _manufacture.end())
 		return i->second;
 
@@ -1842,7 +1858,7 @@ std::vector<RuleBaseFacility*> Ruleset::getCustomBaseFacilities() const
  */
 const UfoTrajectory* Ruleset::getUfoTrajectory(const std::string& id) const
 {
-	std::map<std::string, UfoTrajectory*>::const_iterator i = _ufoTrajectories.find(id);
+	std::map<std::string, UfoTrajectory*>::const_iterator i (_ufoTrajectories.find(id));
 
 	if (i != _ufoTrajectories.end())
 		return i->second;
@@ -1857,7 +1873,7 @@ const UfoTrajectory* Ruleset::getUfoTrajectory(const std::string& id) const
  */
 const RuleAlienMission* Ruleset::getAlienMission(const std::string& id) const
 {
-	std::map<std::string, RuleAlienMission*>::const_iterator i = _alienMissions.find(id);
+	std::map<std::string, RuleAlienMission*>::const_iterator i (_alienMissions.find(id));
 	if (i != _alienMissions.end())
 		return i->second;
 
@@ -1890,7 +1906,7 @@ const RuleAlienMission* Ruleset::getRandomMission(
 		}
 	}
 
-	const int pick = RNG::generate(1, totalWeight);
+	const int pick (RNG::generate(1, totalWeight));
 	for (std::map<int, RuleAlienMission*>::const_iterator
 			i = eligibleMissions.begin();
 			i != eligibleMissions.end();
@@ -1946,7 +1962,7 @@ const GameTime& Ruleset::getStartingTime() const
  */
 MCDPatch* Ruleset::getMCDPatch(const std::string& id) const
 {
-	std::map<std::string, MCDPatch*>::const_iterator i = _MCDPatches.find(id);
+	std::map<std::string, MCDPatch*>::const_iterator i (_MCDPatches.find(id));
 	if (i != _MCDPatches.end())
 		return i->second;
 
@@ -2031,8 +2047,8 @@ struct compareRule
 			const std::string& r2) const
 	{
 		const T
-			* const rule1 = (_ruleset->*_lookup)(r1),
-			* const rule2 = (_ruleset->*_lookup)(r2);
+			* const rule1 ((_ruleset->*_lookup)(r1)),
+			* const rule2 ((_ruleset->*_lookup)(r2));
 
 		return (rule1->getListOrder() < rule2->getListOrder());
 	}
@@ -2058,8 +2074,8 @@ struct compareRule<RuleCraftWeapon>
 			const std::string& r2) const
 	{
 		const RuleItem
-			* const rule1 = _ruleset->getItem(_ruleset->getCraftWeapon(r1)->getLauncherItem()),
-			* const rule2 = _ruleset->getItem(_ruleset->getCraftWeapon(r2)->getLauncherItem());
+			* const rule1 (_ruleset->getItem(_ruleset->getCraftWeapon(r1)->getLauncherItem())),
+			* const rule2 (_ruleset->getItem(_ruleset->getCraftWeapon(r2)->getLauncherItem()));
 
 		return (rule1->getListOrder() < rule2->getListOrder());
 	}
@@ -2086,11 +2102,11 @@ struct compareRule<RuleArmor>
 			const std::string& r2) const
 	{
 		const RuleArmor
-			* const armorRule1 = _ruleset->getArmor(r1),
-			* const armorRule2 = _ruleset->getArmor(r2);
+			* const armorRule1 (_ruleset->getArmor(r1)),
+			* const armorRule2 (_ruleset->getArmor(r2));
 		const RuleItem
-			* const itRule1 = _ruleset->getItem(armorRule1->getStoreItem()),
-			* const itRule2 = _ruleset->getItem(armorRule2->getStoreItem());
+			* const itRule1 (_ruleset->getItem(armorRule1->getStoreItem())),
+			* const itRule2 (_ruleset->getItem(armorRule2->getStoreItem()));
 
 /*		if (itRule1 == nullptr && itRule2 == nullptr)
 //			return (armorRule1 < armorRule2); // tiebreaker, don't care about order, pointers are good as any.
@@ -2149,8 +2165,8 @@ struct compareRule<ArticleDefinition>
 			const std::string& r2) const
 	{
 		const ArticleDefinition
-			* const rule1 = _ruleset->getUfopaediaArticle(r1),
-			* const rule2 = _ruleset->getUfopaediaArticle(r2);
+			* const rule1 (_ruleset->getUfopaediaArticle(r1)),
+			* const rule2 (_ruleset->getUfopaediaArticle(r2));
 
 //		if (_sections[rule1->section] == _sections[rule2->section])
 		if (_listOrder == true)
@@ -2378,22 +2394,21 @@ std::string Ruleset::getFontName() const
  */
 int Ruleset::getMaxRadarRange() const
 {
-	int ret = 0;
-
+	int ret (0);
+	const RuleBaseFacility* facRule;
+	int range;
 	for (std::vector<std::string>::const_iterator
 			i = _facilitiesIndex.begin();
 			i != _facilitiesIndex.end();
 			++i)
 	{
-		const RuleBaseFacility* const facRule = getBaseFacility(*i);
-		if (facRule != nullptr)
+		if ((facRule = getBaseFacility(*i)) != nullptr)
 		{
-			const int range = facRule->getRadarRange();
+			range = facRule->getRadarRange();
 			if (range > ret)
 				ret = range;
 		}
 	}
-
 	return ret;
 }
 
@@ -2431,7 +2446,7 @@ int Ruleset::getRetaliation() const
  */
 RuleInterface* Ruleset::getInterface(const std::string& id) const
 {
-	std::map<std::string, RuleInterface*>::const_iterator i = _interfaces.find(id);
+	std::map<std::string, RuleInterface*>::const_iterator i (_interfaces.find(id));
 	if (i != _interfaces.end())
 		return i->second;
 
@@ -2481,7 +2496,7 @@ const std::vector<std::string>* Ruleset::getMissionScriptList() const
  */
 RuleMissionScript* Ruleset::getMissionScript(const std::string& type) const
 {
-	std::map<std::string, RuleMissionScript*>::const_iterator i = _missionScripts.find(type);
+	std::map<std::string, RuleMissionScript*>::const_iterator i (_missionScripts.find(type));
 	if (i != _missionScripts.end())
 		return i->second;
 
@@ -2495,7 +2510,7 @@ RuleMissionScript* Ruleset::getMissionScript(const std::string& type) const
  */
 const std::vector<MapScript*>* Ruleset::getMapScript(const std::string& type) const
 {
-	std::map<std::string, std::vector<MapScript*>>::const_iterator i = _mapScripts.find(type);
+	std::map<std::string, std::vector<MapScript*>>::const_iterator i (_mapScripts.find(type));
 	if (i != _mapScripts.end())
 	{
 		//Log(LOG_INFO) << "rules: i->first = " << i->first;
