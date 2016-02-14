@@ -885,7 +885,7 @@ int Tile::getFuel(MapDataType partType) const
  */
 bool Tile::ignite(int power)
 {
-	if (power != 0 && isSmokable() == true)
+	if (power != 0 && allowSmoke() == true)
 	{
 		const int fuel = getFuel();
 		if (fuel != 0)
@@ -899,7 +899,7 @@ bool Tile::ignite(int power)
 					addSmoke((burn + 15) / 16);
 
 					// TODO: pass in tileBelow and check its terrainLevel for -24; drop fire through to any tileBelow ...
-					if (isFirable() == true)
+					if (allowFire() == true)
 						addFire(fuel + 1);
 
 					return true;
@@ -917,7 +917,7 @@ bool Tile::ignite(int power)
  */
 void Tile::addFire(int turns)
 {
-	if (turns != 0 && isFirable() == true)
+	if (turns != 0 && allowFire() == true)
 	{
 		if (_smoke == 0 && _fire == 0)
 			_animOffset = RNG::seedless(0,3);
@@ -959,7 +959,7 @@ int Tile::getFire() const
  */
 void Tile::addSmoke(int turns)
 {
-	if (turns != 0 && isSmokable() == true)
+	if (turns != 0 && allowSmoke() == true)
 	{
 		if (_smoke == 0 && _fire == 0)
 			_animOffset = RNG::seedless(0,3);
@@ -997,32 +997,51 @@ int Tile::getSmoke() const
 }
 
 /**
- * Checks if this Tile can have smoke.
- * @note Only the object is checked. Diagonal bigWalls never smoke.
+ * Checks if this Tile accepts smoke.
+ * @note Only the object is checked: diagonal bigWalls that have their
+ * '_blockSmoke' flag set TRUE never smoke.
  * @return, true if smoke can occupy this Tile
  */
-bool Tile::isSmokable() const // private.
+bool Tile::allowSmoke() const // private.
 {
-	return _objects[O_OBJECT] == nullptr
-		|| (_objects[O_OBJECT]->getBigwall() != BIGWALL_NESW
-			&& _objects[O_OBJECT]->getBigwall() != BIGWALL_NWSE
-			&& _objects[O_OBJECT]->blockSmoke() == false);
+	if (_objects[O_OBJECT] != nullptr)
+	{
+		switch (_objects[O_OBJECT]->getBigwall())
+		{
+			case BIGWALL_NESW:
+			case BIGWALL_NWSE:
+				if (_objects[O_OBJECT]->blockSmoke() == true)
+					return false;
+		}
+	}
+	return true;
 }
 
 /**
- * Checks if this Tile can have fire.
- * @note Only the floor and object are checked. Diagonal bigWalls never fire.
- * Fire needs a floor.
+ * Checks if this Tile accepts fire.
+ * @note Only the floor and object are checked: diagonal bigWalls and floors
+ * that have their '_blockFire' flag set TRUE never fire.
  * @return, true if fire can occupy this Tile
  */
-bool Tile::isFirable() const // private.
+bool Tile::allowFire() const // private.
 {
-	return (_objects[O_FLOOR] != nullptr
-		&& _objects[O_FLOOR]->blockFire() == false)
-		&& (_objects[O_OBJECT] == nullptr
-			|| (_objects[O_OBJECT]->getBigwall() != BIGWALL_NESW
-				&& _objects[O_OBJECT]->getBigwall() != BIGWALL_NWSE
-				&& _objects[O_OBJECT]->blockFire() == false));
+	if (_objects[O_FLOOR] != nullptr
+		&& _objects[O_FLOOR]->blockFire() == true)
+	{
+		return false;
+	}
+
+	if (_objects[O_OBJECT] != nullptr)
+	{
+		switch (_objects[O_OBJECT]->getBigwall())
+		{
+			case BIGWALL_NESW:
+			case BIGWALL_NWSE:
+				if (_objects[O_OBJECT]->blockFire() == true)
+					return false;
+		}
+	}
+	return true;
 }
 
 /**

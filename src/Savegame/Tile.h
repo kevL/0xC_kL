@@ -102,10 +102,10 @@ private:
 
 	std::vector<BattleItem*> _inventory;
 
-	/// Checks if the Tile can have smoke.
-	bool isSmokable() const;
-	/// Checks if the Tile can have fire.
-	bool isFirable() const;
+	/// Checks if the Tile accepts smoke.
+	bool allowSmoke() const;
+	/// Checks if the Tile accepts fire.
+	bool allowFire() const;
 
 	/// Converts obscure inverse MCD notation to understandable percentages.
 	int convertBurnToPct(int burn) const;
