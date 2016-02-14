@@ -1093,7 +1093,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 				case FACTION_PLAYER:
 				{
-					const Soldier* const sol (_gameSave->getSoldier((*i)->getId())); // TODO: _geoscapeSoldier
+					Soldier* const sol ((*i)->getGeoscapeSoldier());
 					if (sol != nullptr)
 					{
 						if (_skirmish == false)
@@ -1110,7 +1110,7 @@ void DebriefingState::prepareDebriefing() // private.
 						{
 							if (*j == sol)
 							{
-								(*i)->postMissionProcedures(_gameSave, true);
+								(*i)->postMissionProcedures(true);
 								(*j)->die(_gameSave);
 
 								delete *j;
@@ -1151,18 +1151,16 @@ void DebriefingState::prepareDebriefing() // private.
 			switch (orgFaction)
 			{
 				case FACTION_PLAYER:
-				{
-					const Soldier* const sol (_gameSave->getSoldier((*i)->getId())); // TODO: _geoscapeSoldier
-
 					if (aborted == false
 						|| ((missionAccomplished == true || tacType != TCT_BASEDEFENSE)
 							&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LIMBO)))
 					{
-						(*i)->postMissionProcedures(_gameSave);
 						++soldierExit;
 
+						Soldier* const sol ((*i)->getGeoscapeSoldier());
 						if (sol != nullptr)
 						{
+							(*i)->postMissionProcedures();
 							recoverItems((*i)->getInventory());
 
 							if (_skirmish == false)
@@ -1228,6 +1226,7 @@ void DebriefingState::prepareDebriefing() // private.
 							"STR_XCOM_OPERATIVES_MISSING_IN_ACTION",
 							-value);
 
+						Soldier* const sol ((*i)->getGeoscapeSoldier());
 						if (sol != nullptr)
 						{
 							for (std::vector<Soldier*>::const_iterator
@@ -1237,7 +1236,7 @@ void DebriefingState::prepareDebriefing() // private.
 							{
 								if (*j == sol)
 								{
-									(*i)->postMissionProcedures(_gameSave, true);
+									(*i)->postMissionProcedures(true);
 									(*i)->getStatistics()->MIA = true;
 									(*i)->instaKill();
 
@@ -1252,9 +1251,7 @@ void DebriefingState::prepareDebriefing() // private.
 							}
 						}
 					}
-
 					break;
-				}
 
 				case FACTION_HOSTILE:
 					if ((*i)->isMindControlled() == true

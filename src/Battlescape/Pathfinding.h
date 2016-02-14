@@ -43,9 +43,6 @@ class Tile;
 class Pathfinding
 {
 
-	public:
-		static const int TU_INFINITE = std::numeric_limits<int>::max();
-
 private:
 	static const int FAIL = 255;
 
@@ -78,14 +75,14 @@ private:
 			const Position& origin,
 			const Position& target,
 			const BattleUnit* const launchTarget,
-			bool sneak = false);
+			bool sneak);
 	/// Tries to find a path between two positions.
 	bool aStarPath(
 			const Position& posOrigin,
 			const Position& posTarget,
 			const BattleUnit* const launchTarget,
-			bool sneak = false,
-			int maxTuCost = TU_INFINITE);
+			int maxTuCost,
+			bool sneak);
 
 	/// Gets the (Pathfinding) node at a (tile) Position.
 	PathfindingNode* getNode(const Position& pos);
@@ -107,8 +104,9 @@ private:
 
 	public:
 		static const int
-			DIR_UP   = 8,
-			DIR_DOWN = 9;
+			TU_INFINITE	= std::numeric_limits<int>::max(),
+			DIR_UP		= 8,
+			DIR_DOWN	= 9;
 
 		static Uint8
 			red,

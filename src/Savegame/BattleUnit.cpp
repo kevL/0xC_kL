@@ -3358,114 +3358,107 @@ void BattleUnit::addMeleeExp(int qty)
 
 /**
  * Calculates experience increases and if wounded days to spend in sickbay.
- * @param gameSave	- pointer to SavedGame
- * @param dead		- true if dead or missing (default false)
+ * @param dead - true if dead or missing (default false)
  */
-void BattleUnit::postMissionProcedures(
-		const SavedGame* const gameSave,
-		const bool dead)
+void BattleUnit::postMissionProcedures(const bool dead)
 {
-	Soldier* const sol (gameSave->getSoldier(_id)); // TODO: _geoscapeSoldier
-	if (sol != nullptr)
+	_geoscapeSoldier->postTactical(_kills);
+
+	UnitStats* const stats (_geoscapeSoldier->getCurrentStats());
+	const UnitStats caps (_geoscapeSoldier->getRules()->getStatCaps());
+
+	if (dead == false && stats->health > _health)
 	{
-		sol->postTactical(_kills);
+		const int recovery (stats->health - _health);
+		_geoscapeSoldier->setRecovery(RNG::generate(
+												(recovery + 1) / 2,
+												 recovery));
+	}
 
-		UnitStats* const stats (sol->getCurrentStats());
-		const UnitStats caps (sol->getRules()->getStatCaps());
+	if (_expBravery != 0
+		&& stats->bravery < caps.bravery)
+	{
+		if (_expBravery > RNG::generate(0,8))
+			stats->bravery += 10;
+	}
 
-		if (dead == false && stats->health > _health)
-		{
-			const int recovery (stats->health - _health);
-			sol->setRecovery(RNG::generate(
-										(recovery + 1) / 2, // round up.
-										 recovery));
-		}
+	if (_expFiring != 0
+		&& stats->firing < caps.firing)
+	{
+		stats->firing += improveStat(_expFiring);
 
-		if (_expBravery != 0
-			&& stats->bravery < caps.bravery)
-		{
-			if (_expBravery > RNG::generate(0,8))
-				stats->bravery += 10;
-		}
-
-		if (_expFiring != 0
-			&& stats->firing < caps.firing)
-		{
-			stats->firing += improveStat(_expFiring);
-
-			// add a touch of reactions if good firing .....
-			if (_expFiring - 2 > 0
-				&& stats->reactions < caps.reactions)
-			{
-				_expReactions += _expFiring / 3;
-			}
-		}
-
-		if (_expReactions != 0
+		// add a touch of reactions if good firing .....
+		if (_expFiring - 2 > 0
 			&& stats->reactions < caps.reactions)
 		{
-			stats->reactions += improveStat(_expReactions);
+			_expReactions += _expFiring / 3;
 		}
+	}
 
-		if (_expMelee != 0
-			&& stats->melee < caps.melee)
+	if (_expReactions != 0
+		&& stats->reactions < caps.reactions)
+	{
+		stats->reactions += improveStat(_expReactions);
+	}
+
+	if (_expMelee != 0
+		&& stats->melee < caps.melee)
+	{
+		stats->melee += improveStat(_expMelee);
+	}
+
+	if (_expPsiSkill != 0
+		&& stats->psiSkill < caps.psiSkill)
+	{
+		stats->psiSkill += improveStat(_expPsiSkill);
+	}
+
+	if ((_expPsiStrength /= 3) != 0
+		&& stats->psiStrength < caps.psiStrength)
+	{
+		stats->psiStrength += improveStat(_expPsiStrength);
+	}
+
+	if (_expThrowing != 0
+		&& stats->throwing < caps.throwing)
+	{
+		stats->throwing += improveStat(_expThrowing);
+	}
+
+
+	const bool expPri (_expBravery != 0
+					|| _expReactions != 0
+					|| _expFiring != 0
+					|| _expMelee != 0);
+
+	if (expPri == true
+		|| _expPsiSkill != 0
+		|| _expPsiStrength != 0)
+	{
+		if (hasFirstKill() == true)
+			_geoscapeSoldier->promoteRank();
+
+		if (expPri == true)
 		{
-			stats->melee += improveStat(_expMelee);
-		}
+			int delta (caps.tu - stats->tu);
+			if (delta > 0)
+				stats->tu += RNG::generate(0,
+										(delta / 10) + 2) - 1;
 
-		if (_expPsiSkill != 0
-			&& stats->psiSkill < caps.psiSkill)
-		{
-			stats->psiSkill += improveStat(_expPsiSkill);
-		}
+			delta = caps.health - stats->health;
+			if (delta > 0)
+				stats->health += RNG::generate(0,
+										(delta / 10) + 2) - 1;
 
-		if ((_expPsiStrength /= 3) != 0
-			&& stats->psiStrength < caps.psiStrength)
-		{
-			stats->psiStrength += improveStat(_expPsiStrength);
-		}
+			delta = caps.strength - stats->strength;
+			if (delta > 0)
+				stats->strength += RNG::generate(0,
+										(delta / 10) + 2) - 1;
 
-		if (_expThrowing != 0
-			&& stats->throwing < caps.throwing)
-		{
-			stats->throwing += improveStat(_expThrowing);
-		}
-
-
-		const bool expPri = _expBravery != 0
-						 || _expReactions != 0
-						 || _expFiring != 0
-						 || _expMelee != 0;
-
-		if (expPri == true
-			|| _expPsiSkill != 0
-			|| _expPsiStrength != 0)
-		{
-			if (hasFirstKill() == true)
-				sol->promoteRank();
-
-			if (expPri == true)
-			{
-				int delta (caps.tu - stats->tu);
-				if (delta > 0)
-					stats->tu += RNG::generate(0,
-											(delta / 10) + 2) - 1;
-
-				delta = caps.health - stats->health;
-				if (delta > 0)
-					stats->health += RNG::generate(0,
-											(delta / 10) + 2) - 1;
-
-				delta = caps.strength - stats->strength;
-				if (delta > 0)
-					stats->strength += RNG::generate(0,
-											(delta / 10) + 2) - 1;
-
-				delta = caps.stamina - stats->stamina;
-				if (delta > 0)
-					stats->stamina += RNG::generate(0,
-											(delta / 10) + 2) - 1;
-			}
+			delta = caps.stamina - stats->stamina;
+			if (delta > 0)
+				stats->stamina += RNG::generate(0,
+										(delta / 10) + 2) - 1;
 		}
 	}
 }

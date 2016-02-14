@@ -205,7 +205,6 @@ void Pathfinding::calculatePath(
 	if (launchTarget != nullptr)
 	{
 		_mType = MT_FLY;
-		maxTuCost = TU_INFINITE;
 		strafeRejected = true;
 	}
 	else
@@ -368,8 +367,8 @@ void Pathfinding::calculatePath(
 						posStart,
 						posStop,
 						launchTarget,
-						sneak,
-						maxTuCost) == false)
+						maxTuCost,
+						sneak) == false)
 			{
 				abortPath();
 			}
@@ -422,7 +421,7 @@ void Pathfinding::calculatePath(
  * @param origin		- reference the Position to start from
  * @param target		- reference the Position to end at
  * @param launchTarget	- pointer to targeted BattleUnit
- * @param sneak			- true if unit is sneaking (default false)
+ * @param sneak			- true if unit is sneaking
  * @return, true if a path is found
  */
 bool Pathfinding::bresenhamPath( // private.
@@ -618,16 +617,16 @@ bool Pathfinding::bresenhamPath( // private.
  * @param posOrigin		- reference the position to start from
  * @param posTarget		- reference the position to end at
  * @param launchTarget	- pointer to targeted BattleUnit
- * @param sneak			- true if the unit is sneaking (default false)
- * @param maxTuCost		- maximum time units this path can cost (default TU_INFINITE)
+ * @param maxTuCost		- maximum time units this path can cost
+ * @param sneak			- true if the unit is sneaking
  * @return, true if a path is found
  */
 bool Pathfinding::aStarPath( // private.
 		const Position& posOrigin,
 		const Position& posTarget,
 		const BattleUnit* const launchTarget,
-		bool sneak,
-		int maxTuCost)
+		int maxTuCost,
+		bool sneak)
 {
 	for (std::vector<PathfindingNode>::iterator
 			i = _nodes.begin();

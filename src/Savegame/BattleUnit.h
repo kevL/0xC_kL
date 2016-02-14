@@ -645,9 +645,7 @@ private:
 		void addMeleeExp(int qty = 1);
 
 		/// Calculates experience and days wounded.
-		void postMissionProcedures(
-				const SavedGame* const gameSave,
-				const bool dead = false);
+		void postMissionProcedures(const bool dead = false);
 
 		/// Gets the sprite index of this unit for the MiniMap.
 		int getMiniMapSpriteIndex() const;
