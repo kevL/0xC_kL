@@ -304,7 +304,6 @@ private:
 		{
 			switch (type)
 			{
-				default:
 				case VOXEL_EMPTY:
 					return "-1 VOXEL_EMPTY";
 				case VOXEL_FLOOR:
@@ -320,6 +319,7 @@ private:
 				case VOXEL_OUTOFBOUNDS:
 					return "5 VOXEL_OUTOFBOUNDS";
 			}
+			return "ERROR: no VoxelType";
 		}
 };
 

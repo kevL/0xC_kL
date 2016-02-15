@@ -77,7 +77,7 @@ Projectile::Projectile(
 		_trjId(0),
 		_bulletSprite(-1)
 {
-	//Log(LOG_INFO) << "\n";
+	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "cTor origin = " << posOrigin;
 	//Log(LOG_INFO) << "cTor target = " << targetVoxel << " tSpace " << (targetVoxel / Position(16,16,24));
 
@@ -230,12 +230,12 @@ VoxelType Projectile::calculateShot(
 		//Log(LOG_INFO) << ". postAcu target = " << _targetVoxel << " tSpace " << (_targetVoxel / Position(16,16,24));
 	}
 
-	const VoxelType voxelType = _battleSave->getTileEngine()->plotLine( // finally do a line calculation and store the trajectory.
+	const VoxelType impactType (_battleSave->getTileEngine()->plotLine( // finally do a line calculation and store the trajectory.
 																	originVoxel,
 																	_targetVoxel,
 																	true,
 																	&_trj,
-																	_action.actor);
+																	_action.actor));
 	//Log(LOG_INFO) << ". trajBegin = " << _trj.front() << " tSpace " << (_trj.front() / Position(16,16,24));
 	//Log(LOG_INFO) << ". trajFinal = " << _trj.back() << " tSpace " << (_trj.back() / Position(16,16,24));
 	if (_action.type == BA_AUTOSHOT)
@@ -245,7 +245,7 @@ VoxelType Projectile::calculateShot(
 	}
 
 	//Log(LOG_INFO) << ". RET voxelType = " << voxelType;
-	return voxelType;
+	return impactType;
 }
 
 /**

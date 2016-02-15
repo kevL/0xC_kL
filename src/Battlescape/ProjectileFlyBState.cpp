@@ -164,13 +164,16 @@ void ProjectileFlyBState::init()
 
 	// snapshot defaults to "hit" if it's a melee weapon (in case of reaction
 	// with a melee weapon) for Silacoid attack etc.
-	if (_action.weapon->getRules()->getBattleType() == BT_MELEE
-		&& (_action.type == BA_SNAPSHOT
-			|| _action.type == BA_AUTOSHOT
-			|| _action.type == BA_AIMEDSHOT))
+	if (_action.weapon->getRules()->getBattleType() == BT_MELEE)
 	{
 		//Log(LOG_INFO) << ". convert shotType to BA_MELEE";
-		_action.type = BA_MELEE;
+		switch (_action.type)
+		{
+			case BA_SNAPSHOT:
+			case BA_AUTOSHOT:
+			case BA_AIMEDSHOT:
+				_action.type = BA_MELEE;
+		}
 	}
 
 	switch (_action.type)
@@ -481,8 +484,8 @@ bool ProjectileFlyBState::createProjectile() // private.
 		switch (_prjImpact)
 		{
 			case VOXEL_FLOOR:
-			case VOXEL_UNIT:
 			case VOXEL_OBJECT:
+			case VOXEL_UNIT:
 				//Log(LOG_INFO) << ". . VALID";
 				if (_unit->getFaction() != FACTION_PLAYER
 					&& _prjItem->getRules()->isGrenade() == true)
@@ -505,7 +508,10 @@ bool ProjectileFlyBState::createProjectile() // private.
 				}
 				break;
 
-			default: // unable to throw here; Note that BattleUnit accuracy^ should *not* be considered before this. Unless this is some sort of failsafe/exploit for the AI ...
+			default: // unable to throw here
+				// Note that BattleUnit accuracy^ should *not* be considered before this.
+				// Unless this is some sort of failsafe/exploit for the AI ... no it's
+				// just the fucko-spaghetti-like code that's used throughout. /shrug
 				//Log(LOG_INFO) << ". . NOT Valid";
 				//Log(LOG_INFO) << ". . no throw, Voxel_Empty or _Wall or _OutofBounds";
 				delete prj;

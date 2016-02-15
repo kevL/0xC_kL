@@ -4823,14 +4823,14 @@ VoxelType TileEngine::plotLine(
 /**
  * Calculates a parabolic trajectory for thrown items.
  * @note Accuracy is NOT considered; this is a true path/trajectory.
- * @param originVoxel			- reference the origin in voxelspace
- * @param targetVoxel			- reference the target in voxelspace
- * @param storeTrj				- true will store the whole trajectory - otherwise it stores the last position only
- * @param trj					- pointer to a vector of Positions in which the trajectory will be stored
- * @param excludeUnit			- pointer to a unit to exclude - makes sure the trajectory does not hit the shooter itself
- * @param arc					- how high the parabola goes: 1.0 is almost straight throw, 3.0 is a very high throw, to throw over a fence for example
- * @param allowCeil	- true to allow arching shots to hit a ceiling ... (default false)
- * @param deltaVoxel			- reference the deviation of the angles that should be taken into account (0,0,0) is perfection (default Position(0,0,0))
+ * @param originVoxel	- reference the origin in voxelspace
+ * @param targetVoxel	- reference the target in voxelspace
+ * @param storeTrj		- true will store the whole trajectory - otherwise it stores the last position only
+ * @param trj			- pointer to a vector of Positions in which the trajectory will be stored
+ * @param excludeUnit	- pointer to a unit to exclude - makes sure the trajectory does not hit the shooter itself
+ * @param arc			- how high the parabola goes: 1.0 is almost straight throw, 3.0 is a very high throw, to throw over a fence for example
+ * @param allowCeil		- true to allow arching shots to hit a ceiling ... (default false)
+ * @param deltaVoxel	- reference the deviation of the angles that should be taken into account (0,0,0) is perfection (default Position(0,0,0))
  * @return, VoxelType (MapData.h)
  *			 -1 hit nothing
  *			0-3 tile-part (floor / westwall / northwall / object)
@@ -4979,9 +4979,10 @@ bool TileEngine::validateThrow(
 		}
 
 		// This had me hunting through throwing-algorithms for hours. It turns
-		// out that player *can* throw onto the upper tile of a gravLift if
-		// there is a BattleUnit standing on it. ... interesting quirk, that.
-		if (tile->getTileUnit() == nullptr
+		// out that an item *can* be throw onto the upper tile of a gravLift if
+		// there is a BattleUnit standing on it ... interesting quirk that.
+		if (tile->getPosition().z != 0
+			&& tile->getTileUnit() == nullptr
 			&& tile->getMapData(O_FLOOR) != nullptr
 			&& tile->getMapData(O_FLOOR)->isGravLift() == true)
 		{
@@ -5032,22 +5033,6 @@ bool TileEngine::validateThrow(
 							action.type != BA_THROW);
 		//Log(LOG_INFO) << ". . plotParabola()[1] = " << MapData::debugVoxelType(impactTest);
 
-/*		switch (impactTest)
-		{
-			case VOXEL_EMPTY:
-			case VOXEL_FLOOR:
-			case VOXEL_OBJECT:
-			case VOXEL_UNIT:
-				if (Position::toTileSpace(trj.at(0)) == posTarget)
-				{
-					if (impactType != nullptr) *impactType = impactTest;
-					impact = true;
-				}
-				break;
-
-			default :
-				parabolicCoefficient_Low += ARC_DELTA;
-		} */
 		if (   impactTest != VOXEL_OUTOFBOUNDS
 			&& impactTest != VOXEL_WESTWALL
 			&& impactTest != VOXEL_NORTHWALL
@@ -5087,22 +5072,6 @@ bool TileEngine::validateThrow(
 								action.type != BA_THROW);
 			//Log(LOG_INFO) << ". . plotParabola()[2] = " << MapData::debugVoxelType(impactTest);
 
-/*			switch (impactTest)
-			{
-				case VOXEL_WESTWALL:
-				case VOXEL_NORTHWALL:
-				case VOXEL_OUTOFBOUNDS:
-					impact = false;
-					break;
-
-				default:
-					if (Position::toTileSpace(trj.at(0)) != posTarget)
-					{
-						impact = false;
-						break;
-					}
-					parabolicCoefficient_High += ARC_DELTA;
-			} */
 			if (   impactTest == VOXEL_OUTOFBOUNDS
 				|| impactTest == VOXEL_WESTWALL
 				|| impactTest == VOXEL_NORTHWALL
@@ -5544,7 +5513,7 @@ bool TileEngine::isVoxelVisible(const Position& voxel) const
 } */
 
 /**
- * Checks for a target in voxel space.
+ * Checks for a target in voxel-space.
  * @param targetVoxel		- reference the Position to check in voxel-space
  * @param excludeUnit		- pointer to unit NOT to do checks for (default nullptr)
  * @param excludeAllUnits	- true to NOT do checks on any unit (default false)
