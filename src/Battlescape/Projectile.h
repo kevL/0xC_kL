@@ -39,9 +39,9 @@ class Tile;
 
 
 /**
- * A class that represents a projectile.
+ * A class that represents a Projectile.
  * @note Map is the owner of an instance of this class during its short life.
- * It calculates its own trajectory and then moves along this pre-calculated
+ * It calculates a trajectory and then steps along this pre-calculated
  * trajectory in voxel space.
  */
 class Projectile
@@ -67,7 +67,7 @@ private:
 
 	std::vector<Position> _trj;
 
-	///
+	/// Calculates a final target in voxel-space.
 	void applyAccuracy(
 			const Position& originVoxel,
 			Position* const targetVoxel,
@@ -82,14 +82,14 @@ private:
 			const BattleUnit* const targetUnit,
 			int elevation,
 			const Tile* tileTarget) const;
-	///
+	/// Verifies that a targeted position has LoF.
 	bool verifyTarget(
 			const Position& originVoxel,
 			bool useExclude = true);
 
 
 	public:
-		/// Creates a new Projectile.
+		/// Creates a Projectile.
 		Projectile(
 				const ResourcePack* const res,
 				const SavedBattleGame* const battleSave,
@@ -108,35 +108,35 @@ private:
 		/// Calculates the trajectory for a curved path.
 		VoxelType calculateThrow(double accuracy);
 
-		/// Moves the projectile one step in its trajectory.
+		/// Forwards the Projectile one step in its trajectory.
 		bool traceProjectile();
-		/// Skips the bullet flight.
+		/// Skips flight.
 		void skipTrajectory();
 
-		/// Gets the projectile's current position in voxel-space.
+		/// Gets the Projectile's current position in voxel-space.
 		Position getPosition(int offsetId = 0) const;
-		/// Gets an ID for the projectile's current surface.
+		/// Gets an ID for the Projectile's current surface.
 		int getBulletSprite(int id) const;
 		/// Gets the thrown item.
 		BattleItem* getThrowItem() const;
 		/// Gets the thrown item's sprite.
 		Surface* getThrowSprite() const;
 
-		/// Gets the BattleAction associated with this projectile.
+		/// Gets the BattleAction associated with the Projectile.
 		BattleAction* getBattleAction();
 
-		/// Gets the ACTUAL target-position for this projectile.
+		/// Gets the ACTUAL target-position for the Projectile.
 		Position getFinalPosition() const;
-		/// Gets the final direction of the projectile's trajectory as a unit-vector.
+		/// Gets the final direction of the Projectile's trajectory as a unit-vector.
 		Position getStrikeVector() const;
 
 		/// Stores the final direction of a missile or thrown-object.
 //		void storeProjectileDirection() const;
-		/// Gets the Position of origin for the projectile.
+		/// Gets the Position of origin for the Projectile.
 //		Position getOrigin();
-		/// Gets the INTENDED target-position for the projectile.
+		/// Gets the INTENDED target-position for the Projectile.
 //		Position getTarget() const;
-		/// Gets if this this projectile is being drawn back-to-front or front-to-back.
+		/// Gets if this the Projectile is being drawn back-to-front or front-to-back.
 //		bool isReversed() const;
 };
 

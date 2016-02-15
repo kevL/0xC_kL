@@ -63,7 +63,18 @@ private:
 
 		MAX_SHADE_TO_SEE_UNITS = 8,
 
-		heightFromCenter[11];
+		heightFromCenter[11],
+
+		POWER_BLOCK = 100000, //std::numeric_limits<int>::max(), // -> block needs to be able to add without overflowing.
+
+		LIGHT_FIRE	= 15,
+		LIGHT_SUN	= 15,
+		LIGHT_UNIT	= 12;
+
+	static const size_t
+		LIGHT_LAYER_AMBIENT	= 0u,
+		LIGHT_LAYER_STATIC	= 1u,
+		LIGHT_LAYER_DYNAMIC	= 2u;
 
 	bool
 //		_debug,
@@ -83,7 +94,7 @@ private:
 
 	const std::vector<Uint16>* _voxelData;
 
-	///
+	/// Adds a pseudo-circular light pattern to the battlefield.
 	void addLight(
 			const Position& pos,
 			int power,
@@ -116,7 +127,7 @@ private:
 
 
 	public:
-		/// Creates a new TileEngine class.
+		/// Creates a TileEngine class.
 		TileEngine(
 				SavedBattleGame* const battleSave,
 				const std::vector<Uint16>* const voxelData);

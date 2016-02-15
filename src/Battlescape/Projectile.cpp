@@ -51,11 +51,12 @@ namespace OpenXcom
 {
 
 Position Projectile::targetVoxel_cache; // static across all Projectile invokations <-
+
 const double Projectile::PCT = 0.01;
 
 
 /**
- * Creates a Projectile on the battle map and calculates its movement.
+ * Creates a Projectile on the battle map and calculates its trajectory.
  * @param res			- pointer to ResourcePack
  * @param battleSave	- pointer to SavedBattleGame
  * @param action		- reference the BattleAction (BattlescapeGame.h)
@@ -100,7 +101,7 @@ Projectile::Projectile(
 			if (_action.weapon->getRules()->getArcingShot() == true)
 				_speed /= 2;
 
-			const BattleItem* const bullet = _action.weapon->getAmmoItem(); // the weapon itself if not-req'd. eg, lasers/melee
+			const BattleItem* const bullet (_action.weapon->getAmmoItem()); // the weapon itself if not-req'd. eg, lasers/melee
 			if (bullet != nullptr) // try to get the required info from the bullet
 			{
 				_bulletSprite = bullet->getRules()->getBulletSprite();
@@ -148,18 +149,7 @@ Projectile::~Projectile()
  * @note This is a wrapper for calculateShot() below - it calculates and
  * passes on the acting unit's originVoxel.
  * @param accuracy - accuracy of the projectile's trajectory (a battleunit's accuracy)
- * @return, VoxelType (MapData.h)
- *			 -1 nothing to hit / no line of fire
- *			0-3 tile-part (floor / westwall / northwall / object)
- *			  4 unit
- *			  5 out-of-map
- * VOXEL_EMPTY			// -1
- * VOXEL_FLOOR			//  0
- * VOXEL_WESTWALL		//  1
- * VOXEL_NORTHWALL		//  2
- * VOXEL_OBJECT			//  3
- * VOXEL_UNIT			//  4
- * VOXEL_OUTOFBOUNDS	//  5
+ * @return, VoxelType (MapData.h) see calculateShot() below_
  */
 VoxelType Projectile::calculateShot(double accuracy)
 {
@@ -202,9 +192,9 @@ VoxelType Projectile::calculateShot(
 		&& _action.autoShotCount == 1
 		&& _action.type != BA_LAUNCH
 		&& _battleSave->getBattleGame()->playerPanicHandled() == true
-		&& ((	   (SDL_GetModState() & KMOD_CTRL) == 0
-				&& (SDL_GetModState() & KMOD_ALT) == 0
-				&& (SDL_GetModState() & KMOD_SHIFT) == 0)
+		&& ((	   (SDL_GetModState() & KMOD_CTRL)	== 0
+				&& (SDL_GetModState() & KMOD_ALT)	== 0
+				&& (SDL_GetModState() & KMOD_SHIFT)	== 0)
 			|| Options::battleForceFire == false))
 	{
 		//Log(LOG_INFO) << "originVoxel " << originVoxel << " useExclude = " << useExclude;
@@ -225,8 +215,6 @@ VoxelType Projectile::calculateShot(
 		if (_action.actor->getFaction() == FACTION_PLAYER) accuracy = 0.60;
 		else accuracy = 0.55;
 	} */
-/*	if (targetUnit != nullptr && targetUnit->isDashing() == true)
-		accuracy -= 0.16; */
 
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << ". preAcu target = " << _targetVoxel << " tSpace " << (_targetVoxel / Position(16,16,24));
@@ -239,7 +227,6 @@ VoxelType Projectile::calculateShot(
 					&_targetVoxel,
 					accuracy,
 					_battleSave->getTile(_action.target));
-//					false,
 		//Log(LOG_INFO) << ". postAcu target = " << _targetVoxel << " tSpace " << (_targetVoxel / Position(16,16,24));
 	}
 
@@ -280,9 +267,9 @@ VoxelType Projectile::calculateShot(
  */
 VoxelType Projectile::calculateThrow(double accuracy)
 {
-	const Position originVoxel = _battleSave->getTileEngine()->getOriginVoxel(_action);
+	const Position originVoxel (_battleSave->getTileEngine()->getOriginVoxel(_action));
 
-	VoxelType voxelType = VOXEL_OUTOFBOUNDS;
+	VoxelType voxelType (VOXEL_OUTOFBOUNDS);
 	double arc;
 	if (_battleSave->getTileEngine()->validateThrow(
 												_action,
@@ -291,12 +278,12 @@ VoxelType Projectile::calculateThrow(double accuracy)
 												&arc,
 												&voxelType) == true)
 	{
-		VoxelType voxelTest = VOXEL_OUTOFBOUNDS;
+		VoxelType voxelTest (VOXEL_OUTOFBOUNDS);
 		while (voxelTest == VOXEL_OUTOFBOUNDS) // Do a parabola calculation and store the trajectory.
 		{
 			_trj.clear();
 
-			Position deltaVoxel = _targetVoxel;
+			Position deltaVoxel (_targetVoxel);
 			applyAccuracy(
 						originVoxel,
 						&deltaVoxel,
@@ -319,7 +306,7 @@ VoxelType Projectile::calculateThrow(double accuracy)
 			// See also TileEngine::validateThrow()
 			if (voxelTest != VOXEL_OUTOFBOUNDS && _action.type == BA_THROW)
 			{
-				const Tile* const tileTarget = _battleSave->getTile(Position::toTileSpace(_trj.back())); // _trj.at(0) <- see TileEngine::validateThrow()
+				const Tile* const tileTarget (_battleSave->getTile(Position::toTileSpace(_trj.back()))); // _trj.at(0) <- see TileEngine::validateThrow()
 				if (tileTarget != nullptr
 					&& tileTarget->getMapData(O_OBJECT) != nullptr
 					&& (tileTarget->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NESW
@@ -332,7 +319,6 @@ VoxelType Projectile::calculateThrow(double accuracy)
 				}
 			}
 		}
-
 		return voxelType;
 	}
 
@@ -340,7 +326,7 @@ VoxelType Projectile::calculateThrow(double accuracy)
 }
 
 /**
- * Calculates the new target in voxel space based on a given accuracy modifier.
+ * Calculates a final target in voxel-space based on a given accuracy modifier.
  * @param originVoxel	- reference the start position of the trajectory in voxelspace
  * @param targetVoxel	- pointer to a position to store the end of the trajectory in voxelspace
  * @param accuracy		- accuracy modifier
@@ -358,16 +344,16 @@ void Projectile::applyAccuracy( // private.
 	//Log(LOG_INFO) << ". z = " << targetVoxel->z;
 
 	//Log(LOG_INFO) << "input Target = " << (*targetVoxel);
-	static const double ACU_MIN = 0.01;
+	static const double ACU_MIN (0.01);
 	const int
-		delta_x = originVoxel.x - targetVoxel->x,
-		delta_y = originVoxel.y - targetVoxel->y;
+		delta_x (originVoxel.x - targetVoxel->x),
+		delta_y (originVoxel.y - targetVoxel->y);
 	// Do not use Z-axis. It messes up pure vertical shots.
-	const double targetDist = std::sqrt(
-							  static_cast<double>((delta_x * delta_x) + (delta_y * delta_y)));
+	const double targetDist (std::sqrt(
+							 static_cast<double>((delta_x * delta_x) + (delta_y * delta_y))));
 	//Log(LOG_INFO) << ". targetDist = " << targetDist;
 
-	const RuleItem* const itRule = _action.weapon->getRules(); // <- after reading up, 'const' is basically worthless & wordy waste of effort.
+	const RuleItem* const itRule (_action.weapon->getRules()); // <- after reading up, 'const' is basically worthless & wordy waste of effort.
 	if (_action.type != BA_THROW
 		&& itRule->getArcingShot() == false)
 	{
@@ -400,12 +386,12 @@ void Projectile::applyAccuracy( // private.
 			deltaHori,
 			deltaVert;
 		static const double
-			div_HORI = 6.,
-			div_VERT = div_HORI * 1.69;
+			div_HORI (6.),
+			div_VERT (div_HORI * 1.69);
 
 		if (_action.autoShotCount == 1)
 		{
-			const int autoHit = static_cast<int>(std::ceil(accuracy * 21.)); // chance for Bulls-eye.
+			const int autoHit (static_cast<int>(std::ceil(accuracy * 21.))); // chance for Bulls-eye.
 //			if (false) // TEST do AutoHit.
 			if (RNG::percent(autoHit) == false)
 			{
@@ -435,8 +421,8 @@ void Projectile::applyAccuracy( // private.
 		else // 2nd+ shot of burst.
 		{
 			// The angle deviations are spread using a normal distribution:
-			double kick = (static_cast<double>(itRule->getAutoKick()) * PCT)
-						- (static_cast<double>(_action.actor->getStrength()) / 1000.);
+			double kick ((static_cast<double>(itRule->getAutoKick()) * PCT)
+					   - (static_cast<double>(_action.actor->getStrength()) / 1000.));
 			kick = std::max(kick, ACU_MIN);
 			deltaHori = RNG::boxMuller(0., kick / div_HORI); // horizontal miss in radians
 			deltaVert = RNG::boxMuller(0., kick / div_VERT); // vertical miss in radians
@@ -480,7 +466,7 @@ void Projectile::applyAccuracy( // private.
 			fi = 0.; // avoid vc++ linker warnings
 		}
 
-		static const double OUTER_LIMIT = 3200.;
+		static const double OUTER_LIMIT (3200.);
 		if (calcHori == true)
 		{
 			targetVoxel->x = static_cast<int>(Round(static_cast<double>(originVoxel.x)
@@ -522,15 +508,14 @@ void Projectile::applyAccuracy( // private.
 
 		accuracy = accuracy * 50. + 69.3; // arbitrary adjustment.
 
-		double deviation = perfect - accuracy;
-		deviation = std::max(
-						ACU_MIN,
-						deviation * targetDist * PCT);
+		double deviation (perfect - accuracy);
+		deviation = std::max(ACU_MIN,
+							 deviation * targetDist * PCT);
 
 		const double
-			dx = RNG::boxMuller(0., deviation) / 4.,
-			dy = RNG::boxMuller(0., deviation) / 4.,
-			dz = RNG::boxMuller(0., deviation) / 6.;
+			dx (RNG::boxMuller(0., deviation) / 4.),
+			dy (RNG::boxMuller(0., deviation) / 4.),
+			dz (RNG::boxMuller(0., deviation) / 6.);
 
 		//Log(LOG_INFO) << "Proj: applyAccuracy target[1] " << *targetVoxel;
 		targetVoxel->x += static_cast<int>(Round(dx));
@@ -550,7 +535,7 @@ void Projectile::applyAccuracy( // private.
 
 		if (_action.type == BA_THROW)
 		{
-			const Tile* const tile = _battleSave->getTile(Position::toTileSpace(*targetVoxel));
+			const Tile* const tile (_battleSave->getTile(Position::toTileSpace(*targetVoxel)));
 			targetVoxel->x = (targetVoxel->x & 0xFFF0) + 8;
 			targetVoxel->y = (targetVoxel->y & 0xFFF0) + 8;
 			targetVoxel->z = (targetVoxel->z / 24 * 24) - tile->getTerrainLevel();
@@ -615,7 +600,7 @@ double Projectile::rangeAccuracy( // private.
 		const RuleItem* const itRule,
 		int dist) const
 {
-	const int shortRange = itRule->getMinRange();
+	const int shortRange (itRule->getMinRange());
 	if (dist < shortRange)
 		return static_cast<double>((shortRange - dist) * itRule->getDropoff()) * PCT;
 
@@ -645,7 +630,7 @@ double Projectile::targetAccuracy( // private.
 		int elevation,
 		const Tile* tileTarget) const
 {
-	int ret = 0;
+	int ret (0);
 
 	if (targetUnit != nullptr)
 	{
@@ -692,22 +677,22 @@ bool Projectile::verifyTarget(
 		excludeUnit = nullptr;
 
 	//Log(LOG_INFO) << "Verify ... call plotLine() targetVoxel " << _targetVoxel;
-	const VoxelType voxelType = _battleSave->getTileEngine()->plotLine(
+	const VoxelType voxelType (_battleSave->getTileEngine()->plotLine(
 																	originVoxel,
 																	_targetVoxel,
 																	false,
 																	&_trj,
-																	excludeUnit);
+																	excludeUnit));
 	//Log(LOG_INFO) << "voxelType = " << (int)voxelType;
 	//Log(LOG_INFO) << "isTrj = " << (int)(_trj.empty() == false);
 	if (voxelType != VOXEL_EMPTY && _trj.empty() == false)
 	{
-		Position posTest = Position::toTileSpace(_trj.at(0));
+		Position posTest (Position::toTileSpace(_trj.at(0)));
 		//Log(LOG_INFO) << ". posTest " << posTest << " posTarget" << _action.target;
 
 		if (voxelType == VOXEL_UNIT)
 		{
-			const Tile* const tileTest = _battleSave->getTile(posTest);
+			const Tile* const tileTest (_battleSave->getTile(posTest));
 			if (tileTest != nullptr && tileTest->getTileUnit() == nullptr) // must be poking head up from tileBelow
 				posTest += Position(0,0,-1);
 		}
@@ -730,8 +715,8 @@ bool Projectile::verifyTarget(
 				case VOXEL_UNIT:
 				{
 					const BattleUnit
-						* const targetUnit = _battleSave->getTile(_action.target)->getTileUnit(),
-						* const testUnit = _battleSave->getTile(posTest)->getTileUnit();
+						* const targetUnit (_battleSave->getTile(_action.target)->getTileUnit()),
+						* const testUnit (_battleSave->getTile(posTest)->getTileUnit());
 					if (testUnit != targetUnit && testUnit->getUnitVisible() == true)
 						return false;
 					break;
@@ -747,7 +732,7 @@ bool Projectile::verifyTarget(
 }
 
 /**
- * Moves this Projectile further along its trajectory.
+ * Steps this Projectile further along its trajectory.
  * @return, true if projectile is still pathing
  */
 bool Projectile::traceProjectile()
@@ -784,11 +769,11 @@ Position Projectile::getPosition(int offsetId) const
 {
 	if (offsetId == 0) return _trj.at(_trjId);
 
-	offsetId = std::max(
-					0,
-					std::min(
-						static_cast<int>(_trjId) + offsetId,
-						static_cast<int>(_trj.size() - 1)));
+	offsetId = std::max(0,
+						std::min(
+							static_cast<int>(_trjId) + offsetId,
+							static_cast<int>(_trj.size() - 1)));
+
 	return _trj.at(static_cast<size_t>(offsetId));
 }
 
@@ -854,14 +839,15 @@ Position Projectile::getStrikeVector() const
 {
 	Position posVect; // inits to Position(0,0,0)
 
-	const size_t trjSize = _trj.size();
+	const size_t trjSize (_trj.size());
 	if (trjSize > 2)
 	{
 		const Position
-			posFinal = _trj.back(),
-			posPre = _trj.at(trjSize - 3);
+			posFinal (_trj.back()),
+			posPre (_trj.at(trjSize - 3));
 
-		int x,y;
+		int
+			x,y;
 
 		if (posFinal.x - posPre.x != 0)
 		{
