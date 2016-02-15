@@ -64,7 +64,7 @@ private:
 	VoxelType _prjImpact;
 
 	/// Tries to create a projectile sprite.
-	bool createNewProjectile();
+	bool createProjectile();
 
 	/// Peforms a melee attack.
 	void performMeleeAttack();

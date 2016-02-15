@@ -2669,13 +2669,13 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					_tacAction.cameraPosition = Position(0,0,-1);
 
 				_battleStates.push_back(new ProjectileFlyBState(this, _tacAction));	// TODO: should check for valid LoF/LoT *before* invoking this
-																						// instead of the (flakey) checks in that state. Then conform w/ AI ...
+																					// instead of the (flakey) checks in that state. Then conform w/ AI ...
 				statePushFront(new UnitTurnBState(this, _tacAction));
 		}
 	}
 	else
 	{
-		bool allowPreview = (Options::battlePreviewPath != PATH_NONE);
+		bool allowPreview (Options::battlePreviewPath != PATH_NONE);
 
 		if (targetUnit != nullptr
 			&& targetUnit != _tacAction.actor

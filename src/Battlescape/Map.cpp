@@ -1482,12 +1482,11 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 									const Position originVoxel (te->getSightOriginVoxel(action->actor));
 									Position scanVoxel;
-									const BattleUnit* const excludeUnit (action->actor);
 									zero = te->canTargetUnit(
 														&originVoxel,
 														_tile,
 														&scanVoxel,
-														excludeUnit) == false;
+														action->actor) == false;
 								}
 								else
 									zero = false;
@@ -1495,10 +1494,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 								if (zero == false)
 								{
 									const RuleItem* const weaponRule (action->weapon->getRules());
-									const int distance (TileEngine::distance(
-																		Position(itX,itY,itZ),
-																		action->actor->getPosition()));
-									if (distance <= weaponRule->getMaxRange())
+									const int dist (TileEngine::distance(
+																	Position(itX,itY,itZ),
+																	action->actor->getPosition()));
+									if (dist <= weaponRule->getMaxRange())
 									{
 										const int lowerLimit (weaponRule->getMinRange());
 										int upperLimit;
@@ -1519,17 +1518,17 @@ void Map::drawTerrain(Surface* const surface) // private.
 										}
 
 										accuracy = static_cast<int>(Round(action->actor->getAccuracy(*action) * 100.));
-										if (distance > upperLimit)
+										if (dist > upperLimit)
 										{
-											accuracy -= (distance - upperLimit) * weaponRule->getDropoff();
+											accuracy -= (dist - upperLimit) * weaponRule->getDropoff();
 											if (accuracy > 0)
 												color = ACU_ORANGE;
 											else
 												zero = true;
 										}
-										else if (distance < lowerLimit)
+										else if (dist < lowerLimit)
 										{
-											accuracy -= (lowerLimit - distance) * weaponRule->getDropoff();
+											accuracy -= (lowerLimit - dist) * weaponRule->getDropoff();
 											if (accuracy > 0)
 												color = ACU_ORANGE;
 											else

@@ -251,6 +251,7 @@ VoxelType Projectile::calculateShot(
 /**
  * Calculates the trajectory for a parabolic path.
  * @note Accuracy affects the VoxelType result.
+ * @sa TileEngine::validateThrow()
  * @param accuracy - accuracy of the projectile's trajectory (a battleunit's accuracy)
  * @return, VoxelType (MapData.h)
  *			 -1 nothing to hit / no line of fire
@@ -267,20 +268,25 @@ VoxelType Projectile::calculateShot(
  */
 VoxelType Projectile::calculateThrow(double accuracy)
 {
+	//Log(LOG_INFO) << "Projectile::calculateThrow()";
 	const Position originVoxel (_battleSave->getTileEngine()->getOriginVoxel(_action));
 
-	VoxelType voxelType (VOXEL_OUTOFBOUNDS);
+	VoxelType impactType (VOXEL_OUTOFBOUNDS);
 	double arc;
+	//Log(LOG_INFO) << ". call TileEngine::validateThrow()";
+	//Log(LOG_INFO) << "";
 	if (_battleSave->getTileEngine()->validateThrow(
 												_action,
 												originVoxel,
 												_targetVoxel,
 												&arc,
-												&voxelType) == true)
+												&impactType) == true)
 	{
-		VoxelType voxelTest (VOXEL_OUTOFBOUNDS);
-		while (voxelTest == VOXEL_OUTOFBOUNDS) // Do a parabola calculation and store the trajectory.
+		//Log(LOG_INFO) << ". VALID";
+		VoxelType impactTest (VOXEL_OUTOFBOUNDS);
+		while (impactTest == VOXEL_OUTOFBOUNDS) // Do a parabola calculation and store the trajectory.
 		{
+			//Log(LOG_INFO) << ". . iter OUTOFBOUNDS";
 			_trj.clear();
 
 			Position deltaVoxel (_targetVoxel);
@@ -291,7 +297,9 @@ VoxelType Projectile::calculateThrow(double accuracy)
 						_battleSave->getTile(_action.target));
 
 			deltaVoxel -= _targetVoxel;
-			voxelTest = _battleSave->getTileEngine()->plotParabola(
+			//Log(LOG_INFO) << ". call TileEngine::plotParabola() arc = " << arc;
+			//Log(LOG_INFO) << "";
+			impactTest = _battleSave->getTileEngine()->plotParabola(
 																originVoxel,
 																_targetVoxel,
 																true,
@@ -301,27 +309,36 @@ VoxelType Projectile::calculateThrow(double accuracy)
 																_action.type != BA_THROW,
 																deltaVoxel);
 
+			//Log(LOG_INFO) << ". . test = " << MapData::debugVoxelType(impactTest);
 			// Don't let thrown items land on diagonal bigWalls.
 			// This prevents exploiting the blast-propagation routine out from both sides of a diagonal bigWall.
-			// See also TileEngine::validateThrow()
-			if (voxelTest != VOXEL_OUTOFBOUNDS && _action.type == BA_THROW)
+			// Prevent Grenades from landing on diagonal bigWalls.
+			// See also TileEngine::validateThrow().
+			if (_action.type == BA_THROW && impactTest == VOXEL_OBJECT)
 			{
-				const Tile* const tileTarget (_battleSave->getTile(Position::toTileSpace(_trj.back()))); // _trj.at(0) <- see TileEngine::validateThrow()
-				if (tileTarget != nullptr
-					&& tileTarget->getMapData(O_OBJECT) != nullptr
-					&& (tileTarget->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NESW
-						|| tileTarget->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NWSE))
-//					&& _action.target->getMapData(O_OBJECT)->getTuCostPart(MT_WALK) == 255
-//					&& (action.weapon->getRules()->getBattleType() == BT_GRENADE
-//						|| action.weapon->getRules()->getBattleType() == BT_PROXYGRENADE))
+				//Log(LOG_INFO) << ". . . NOT outofbounds";
+				const Tile* const tile (_battleSave->getTile(Position::toTileSpace(_trj.back()))); // _trj.at(0)
+//				if (tile != nullptr && tile->getMapData(O_OBJECT) != nullptr) // safety. Should be unnecessary because impactTest=VOXEL_OBJECT ....
+//					&& tile->getMapData(O_OBJECT)->getTuCostPart(MT_WALK) == 255
+//					&& action.weapon->getRules()->isGrenade() == true)
 				{
-					voxelTest = VOXEL_OUTOFBOUNDS; // prevent Grenades from landing on diagonal BigWalls.
+					switch (tile->getMapData(O_OBJECT)->getBigwall())
+					{
+						case BIGWALL_NESW:
+						case BIGWALL_NWSE:
+							impactTest = VOXEL_OUTOFBOUNDS;
+					}
 				}
 			}
 		}
-		return voxelType;
+		//Log(LOG_INFO) << "ret = " << MapData::debugVoxelType(impactType);
+		//Log(LOG_INFO) << "";
+
+		return impactType;
 	}
 
+	//Log(LOG_INFO) << "ret VOXEL_OUTOFBOUNDS";
+	//Log(LOG_INFO) << "";
 	return VOXEL_OUTOFBOUNDS;
 }
 

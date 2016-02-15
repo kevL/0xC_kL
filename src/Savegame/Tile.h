@@ -204,7 +204,7 @@ private:
 		 * @note Used for visibility/light blocking checks. This function
 		 * assumes that there are never 2 doors on 1 tile or a door and another
 		 * wall on 1 tile.
-		 * @param partType - the tile part to consider
+		 * @param partType - the tile-part to consider
 		 * @return, true if ufo-door is valid and not closed
 		 */
 		bool isUfoDoorOpen(MapDataType partType) const
@@ -230,11 +230,11 @@ private:
 		/// Gets the shade amount.
 		int getShade() const;
 
-		/// Destroys a tile part.
+		/// Destroys a tile-part.
 		void destroyTilepart(
 				MapDataType partType,
 				SavedBattleGame* const battleSave);
-		/// Damages a tile part.
+		/// Damages a tile-part.
 		void hitTile(
 				MapDataType partType,
 				int power,

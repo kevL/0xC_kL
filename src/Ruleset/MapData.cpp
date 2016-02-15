@@ -28,7 +28,7 @@ namespace OpenXcom
 {
 
 /**
- * Creates a new MapData tile-part.
+ * Creates a MapData tile-part.
  * @note yes, This is a tile-part.
  * @param dataSet - pointer to the MapDataSet this tile-part belongs to
  */
@@ -109,8 +109,8 @@ void MapData::setSprite(
 }
 
 /**
- * Gets whether this is an animated ufo door.
- * @return, true if this is an animated ufo door
+ * Gets whether this tile-part is an animated ufo door.
+ * @return, true if an animated ufo door
  */
 bool MapData::isUfoDoor() const
 {
@@ -118,8 +118,8 @@ bool MapData::isUfoDoor() const
 }
 
 /**
- * Gets whether this stops LoS.
- * @return, true if this stops LoS
+ * Gets whether this tile-part stops LoS.
+ * @return, true if stops LoS
  */
 bool MapData::stopLOS() const
 {
@@ -127,8 +127,8 @@ bool MapData::stopLOS() const
 }
 
 /**
- * Gets whether this is a floor.
- * @return, true if this is not a floor
+ * Gets whether this tile-part is a floor.
+ * @return, true if a floor
  */
 bool MapData::isNoFloor() const
 {
@@ -136,7 +136,8 @@ bool MapData::isNoFloor() const
 }
 
 /**
- * Gets whether this is a big wall that blocks all surrounding diagonal paths.
+ * Gets whether this tile-part is a big wall that blocks all surrounding
+ * diagonal paths.
  * @note Return value key:
  * 0: not a bigWall
  * 1: regular bigWall
@@ -156,8 +157,8 @@ BigwallType MapData::getBigwall() const
 }
 
 /**
- * Gets whether this is a normal door.
- * @return, true if this is a normal door
+ * Gets whether this tile-part is a normal door.
+ * @return, true if a normal door
  */
 bool MapData::isDoor() const
 {
@@ -165,8 +166,8 @@ bool MapData::isDoor() const
 }
 
 /**
- * Gets whether this is a grav lift.
- * @return, true if this is a grav lift
+ * Gets whether this tile-part is a grav lift.
+ * @return, true if a grav lift
  */
 bool MapData::isGravLift() const
 {
@@ -174,8 +175,8 @@ bool MapData::isGravLift() const
 }
 
 /**
- * Gets whether this tile part blocks smoke.
- * @return, true if it blocks smoke
+ * Gets whether this tile-part blocks smoke.
+ * @return, true if blocks smoke
  */
 bool MapData::blockSmoke() const
 {
@@ -183,8 +184,8 @@ bool MapData::blockSmoke() const
 }
 
 /**
- * Gets whether this tile part blocks fire.
- * @return, true if it blocks fire
+ * Gets whether this tile-part blocks fire.
+ * @return, true if blocks fire
  */
 bool MapData::blockFire() const
 {
@@ -192,8 +193,8 @@ bool MapData::blockFire() const
 }
 
 /**
- * Sets whether this tile part stops LoS.
- * @return, true if stops LoS (default true)
+ * Sets whether this tile-part stops LoS.
+ * @param, true if stops LoS
  */
 void MapData::setStopLOS(bool stopLOS)
 {
@@ -203,15 +204,15 @@ void MapData::setStopLOS(bool stopLOS)
 
 /**
  * Sets a bunch of flags.
- * @param isUfoDoor		- true if this is a ufo door
- * @param stopLOS		- true if this stops line of sight
- * @param isNoFloor		- true if this is *not* a floor
- * @param bigWall		- type of a bigWall
- * @param isGravLift	- true if this is a grav lift
- * @param isDoor		- true if this is a normal door
- * @param blockFire		- true if this blocks fire
- * @param blockSmoke	- true if this blocks smoke
- * @param baseObject	- true if this is a base-object/aLien-objective
+ * @param isUfoDoor		- true if a ufo door
+ * @param stopLOS		- true if stops line of sight
+ * @param isNoFloor		- true if *not* a floor
+ * @param bigWall		- type if a bigWall
+ * @param isGravLift	- true if a grav lift
+ * @param isDoor		- true if a normal door
+ * @param blockFire		- true if blocks fire
+ * @param blockSmoke	- true if blocks smoke
+ * @param baseObject	- true if a base-object/aLien-objective
  */
 void MapData::setFlags(
 		bool isUfoDoor,
@@ -313,8 +314,8 @@ void MapData::setHEBlock(int heBlock)
 }
 
 /**
- * Gets the Y offset for drawing.
- * @return, the height in pixels
+ * Gets the Y offset for drawing this tile-part.
+ * @return, the offset in pixels
  */
 int MapData::getYOffset() const
 {
@@ -323,15 +324,15 @@ int MapData::getYOffset() const
 
 /**
  * Sets the offset on the Y axis for drawing this tile-part.
- * @param value - the offset
+ * @param offset - the offset in pixels
  */
-void MapData::setYOffset(int value)
+void MapData::setYOffset(int offset)
 {
-	_yOffset = value;
+	_yOffset = offset;
 }
 
 /**
- * Gets the MapDataType/part-type of this tile-part.
+ * Gets the MapDataType (part-type) of this tile-part.
  * @return, the tile-part type (0-3)
  */
 MapDataType MapData::getPartType() const
@@ -340,7 +341,7 @@ MapDataType MapData::getPartType() const
 }
 
 /**
- * Sets the MapDataType/part-type of this tile-part.
+ * Sets the MapDataType (part-type) of this tile-part.
  * @param type - the tile-part type (0-3)
  */
 void MapData::setPartType(MapDataType type)
@@ -349,8 +350,8 @@ void MapData::setPartType(MapDataType type)
 }
 
 /**
- * Gets the SpecialTileType.
- * @return, the SpecialTileType
+ * Gets this tile-part's SpecialTileType.
+ * @return, the SpecialTileType (MapData.h)
  */
 SpecialTileType MapData::getSpecialType() const
 {
@@ -358,7 +359,7 @@ SpecialTileType MapData::getSpecialType() const
 }
 
 /**
- * Sets the SpecialTileType.
+ * Sets this tile-part's SpecialTileType.
  * @param value	- SpecialTileType (MapData.h)
  */
 void MapData::setSpecialType(SpecialTileType type)
@@ -367,7 +368,7 @@ void MapData::setSpecialType(SpecialTileType type)
 }
 
 /**
- * Gets the TU cost to move over/through the tile-part.
+ * Gets the TU cost to move over/through this tile-part.
  * @param moveType - the movement type
  * @return, the TU cost
  */
@@ -384,7 +385,7 @@ int MapData::getTuCostPart(MovementType moveType) const
 }
 
 /**
- * Sets the TU cost to move over the tile-part.
+ * Sets the TU cost to move over this tile-part.
  * @param walk	- the walking TU cost
  * @param fly	- the flying TU cost
  * @param slide	- the sliding TU cost
@@ -401,7 +402,7 @@ void MapData::setTUCosts(
 
 /**
  * Adds to the graphical Y-offset of units or objects on this tile-part.
- * @return, Y offset
+ * @return, y-offset in pixels
  */
 int MapData::getTerrainLevel() const
 {
@@ -410,11 +411,11 @@ int MapData::getTerrainLevel() const
 
 /**
  * Sets the Y-offset for units or objects on this tile-part.
- * @param value - Y offset
+ * @param offset - y-offset in pixels
  */
-void MapData::setTerrainLevel(int value)
+void MapData::setTerrainLevel(int offset)
 {
-	_terrainLevel = value;
+	_terrainLevel = offset;
 }
 
 /**
@@ -549,9 +550,9 @@ void MapData::setFuel(int value)
 }
 
 /**
- * Gets the loft index for a certain layer.
- * @param layer - the layer
- * @return, the LOFT index
+ * Gets the LoFT index for a certain layer.
+ * @param layer - the layer (0..11)
+ * @return, the LoFT index
  */
 size_t MapData::getLoftId(size_t layer) const
 {
@@ -559,8 +560,8 @@ size_t MapData::getLoftId(size_t layer) const
 }
 
 /**
- * Sets the loft index for a certain layer.
- * @param loft	- the LOFT index
+ * Sets the LoFT index for a certain layer.
+ * @param loft	- the LoFT index
  * @param layer	- the layer (0..11)
  */
 void MapData::setLoftId(
@@ -605,11 +606,21 @@ void MapData::setExplosiveType(int value)
 {
 	switch (value) // account for (HE_Type)MCD vs. (RuleItem.h enum)DamageType mismatch
 	{
-		case 0: _explosiveType = DT_HE;		return;
+		case 0:
+			_explosiveType = DT_HE;
+			break;
+
 		default:
-		case 1: _explosiveType = DT_SMOKE;	return;
-		case 5: _explosiveType = DT_IN;		return;
-		case 6: _explosiveType = DT_STUN;
+		case 1:
+			_explosiveType = DT_SMOKE;
+			break;
+
+		case 5:
+			_explosiveType = DT_IN;
+			break;
+
+		case 6:
+			_explosiveType = DT_STUN;
 	}
 }
 

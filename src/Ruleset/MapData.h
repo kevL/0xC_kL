@@ -200,7 +200,7 @@ private:
 		/// Gets the offset on the Y axis when drawing this object.
 		int getYOffset() const;
 		/// Sets the offset on the Y axis for drawing this object.
-		void setYOffset(int value);
+		void setYOffset(int offset);
 
 		/// Gets the type of tile.
 		MapDataType getPartType() const;
@@ -223,7 +223,7 @@ private:
 		/// Adds this to the graphical Y offset of units or objects on this tile.
 		int getTerrainLevel() const;
 		/// Sets Y offset for units/objects on this tile.
-		void setTerrainLevel(int value);
+		void setTerrainLevel(int offset);
 
 		/// Gets the index to the footstep sound.
 		int getFootstepSound() const;
@@ -299,6 +299,28 @@ private:
 		void setPsychedelic(int psycho);
 		/// Gets if this tilepart is psychedelic.
 		int getPsychedelic() const;
+
+		static std::string debugVoxelType(VoxelType type)
+		{
+			switch (type)
+			{
+				default:
+				case VOXEL_EMPTY:
+					return "-1 VOXEL_EMPTY";
+				case VOXEL_FLOOR:
+					return "0 VOXEL_FLOOR";
+				case VOXEL_WESTWALL:
+					return "1 VOXEL_WESTWALL";
+				case VOXEL_NORTHWALL:
+					return "2 VOXEL_NORTHWALL";
+				case VOXEL_OBJECT:
+					return "3 VOXEL_OBJECT";
+				case VOXEL_UNIT:
+					return "4 VOXEL_UNIT";
+				case VOXEL_OUTOFBOUNDS:
+					return "5 VOXEL_OUTOFBOUNDS";
+			}
+		}
 };
 
 }

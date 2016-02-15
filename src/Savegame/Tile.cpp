@@ -447,7 +447,7 @@ int Tile::getFootstepSound(const Tile* const tileBelow) const
 
 /**
  * Open a door on this Tile.
- * @param partType		- a tile part type (MapData.h)
+ * @param partType		- a tile-part type (MapData.h)
  * @param unit			- pointer to a BattleUnit (default nullptr)
 // * @param reserved	- BattleActionType (BattlescapeGame.h) (default BA_NONE)
  * @return, DoorResult (Tile.h)
@@ -516,7 +516,7 @@ DoorResult Tile::openDoor(
 
 /**
  * Opens a door without checks.
- * @param partType - a tile part type (MapData.h)
+ * @param partType - a tile-part type (MapData.h)
  */
 void Tile::openDoorAuto(const MapDataType partType)
 {
@@ -1263,7 +1263,7 @@ int Tile::getAnimationOffset() const
 
 /**
  * Get the sprite of a certain part of this Tile.
- * @param partType - tile part to get a sprite for
+ * @param partType - tile-part to get a sprite for
  * @return, pointer to the sprite
  */
 Surface* Tile::getSprite(MapDataType partType) const

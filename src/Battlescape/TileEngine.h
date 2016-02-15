@@ -278,7 +278,7 @@ private:
 				std::vector<Position>* const trj,
 				const BattleUnit* const excludeUnit,
 				const double arc,
-				const bool allowCeiling = false,
+				const bool allowCeil = false,
 				const Position& deltaVoxel = Position(0,0,0)) const;
 
 		/// Validates a throwing action.
@@ -287,7 +287,7 @@ private:
 				const Position& originVoxel,
 				const Position& targetVoxel,
 				double* const arc = nullptr,
-				VoxelType* const voxelType = nullptr) const;
+				VoxelType* const impactType = nullptr) const;
 		/// Validates the throwing range.
 		static bool validThrowRange(
 				const BattleAction* const action,
