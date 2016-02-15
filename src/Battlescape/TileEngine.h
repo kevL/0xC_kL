@@ -65,8 +65,9 @@ private:
 
 		heightFromCenter[11],
 
-		POWER_BLOCK = 100000, //std::numeric_limits<int>::max(), // -> block needs to be able to add without overflowing.
-
+		POWER_BLOCK = 100000,	// this is a hardblock for HE; hence it has to be higher
+								// than the highest HE power in the Rulesets, but it also
+								// needs to be able to add without overflowing.
 		LIGHT_FIRE	= 15,
 		LIGHT_SUN	= 15,
 		LIGHT_UNIT	= 12;

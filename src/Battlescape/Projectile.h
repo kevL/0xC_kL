@@ -108,7 +108,7 @@ private:
 		/// Calculates the trajectory for a curved path.
 		VoxelType calculateThrow(double accuracy);
 
-		/// Forwards the Projectile one step in its trajectory.
+		/// Forwards the Projectile one step along its trajectory.
 		bool traceProjectile();
 		/// Skips flight.
 		void skipTrajectory();

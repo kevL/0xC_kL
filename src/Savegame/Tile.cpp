@@ -55,9 +55,9 @@ Tile::SerializationKey Tile::serializationKey =
 
 
 /**
-* cTor.
-* @param pos - reference Position
-*/
+ * Creates a Tile.
+ * @param pos - reference to a Position
+ */
 Tile::Tile(const Position& pos)
 	:
 		_pos(pos),
@@ -73,18 +73,19 @@ Tile::Tile(const Position& pos)
 		_previewTu(-1),
 		_danger(false)
 {
-	for (size_t
+	size_t i;
+	for (
 			i = 0;
 			i != PARTS_TILE;
 			++i)
 	{
-		_objects[i]			=  0;
+		_objects[i]			=  nullptr;
 		_mapDataId[i]		= -1;
 		_mapDataSetId[i]	= -1;
 		_curFrame[i]		=  0;
 	}
 
-	for (size_t
+	for (
 			i = 0;
 			i != SECTIONS;
 			++i)
@@ -92,7 +93,7 @@ Tile::Tile(const Position& pos)
 		_revealed[i] = false;
 	}
 
-	for (size_t
+	for (
 			i = 0;
 			i != LIGHTLAYERS;
 			++i)
@@ -169,9 +170,9 @@ void Tile::loadBinary(
 	_fire		= unserializeInt(&buffer, serKey._fire);
 	_animOffset	= unserializeInt(&buffer, serKey._animOffset);
 
-	const int boolFields = unserializeInt(
-										&buffer,
-										serKey.boolFields);
+	const int boolFields (unserializeInt(
+									&buffer,
+									serKey.boolFields));
 
 	_revealed[ST_WEST]		= (boolFields & 0x01) ? true : false;
 	_revealed[ST_NORTH]		= (boolFields & 0x02) ? true : false;
@@ -248,7 +249,7 @@ void Tile::saveBinary(Uint8** buffer) const
 	serializeInt(buffer, serializationKey._fire,		_fire);
 	serializeInt(buffer, serializationKey._animOffset,	_animOffset);
 
-	int boolFields = (_revealed[ST_WEST] ? 0x01 : 0x0) + (_revealed[ST_NORTH] ? 0x02 : 0x0) + (_revealed[ST_CONTENT] ? 0x04 : 0x0);
+	int boolFields ((_revealed[ST_WEST] ? 0x01 : 0x0) + (_revealed[ST_NORTH] ? 0x02 : 0x0) + (_revealed[ST_CONTENT] ? 0x04 : 0x0));
 
 	boolFields |= isUfoDoorOpen(O_WESTWALL)  ? 0x08 : 0x0;
 	boolFields |= isUfoDoorOpen(O_NORTHWALL) ? 0x10 : 0x0;
@@ -303,40 +304,30 @@ bool Tile::isVoid(
 		const bool testInventory,
 		const bool testVolatiles) const
 {
-	bool ret = _objects[O_FLOOR] == nullptr
-			&& _objects[O_WESTWALL] == nullptr
-			&& _objects[O_NORTHWALL] == nullptr
-			&& _objects[O_OBJECT] == nullptr;
+	bool ret (_objects[O_FLOOR] == nullptr
+		   && _objects[O_WESTWALL] == nullptr
+		   && _objects[O_NORTHWALL] == nullptr
+		   && _objects[O_OBJECT] == nullptr);
 
 	if (testInventory == true)
-		ret = ret
-		   && _inventory.empty() == true;
+		ret &= (_inventory.empty() == true);
 
 	if (testVolatiles == true)
-		ret = ret
-		   && _smoke == 0; // -> fireTiles always have smoke.
+		ret &= (_smoke == 0); // -> fireTiles always have smoke.
 
 	return ret;
 }
 
 /**
  * Gets the TU cost to move over a partType of this Tile.
- * @param partType - the part type (MapData.h)
- * @param moveType - the movement type (MapData.h)
+ * @param partType - the part-type (MapData.h)
+ * @param moveType - the movement-type (MapData.h)
  * @return, TU cost
  */
 int Tile::getTuCostTile(
 		MapDataType partType,
 		MovementType moveType) const
 {
-/*	if (_objects[partType] != nullptr
-		&& !(_objects[partType]->isUfoDoor() == true
-			&& _curFrame[partType] > 1)
-		&& !(partType == O_OBJECT
-			&& _objects[partType]->getBigwall() > BIGWALL_NWSE)) // ie. side-walls
-	{
-		return _objects[partType]->getTuCostPart(moveType);
-	} */
 	if (_objects[partType] != nullptr
 		&& (_objects[partType]->isUfoDoor() == false
 			|| _curFrame[partType] < 2))
@@ -350,8 +341,7 @@ int Tile::getTuCostTile(
 					case BIGWALL_BLOCK:
 					case BIGWALL_NESW:
 					case BIGWALL_NWSE:
-						return _objects[partType]->getTuCostPart(moveType);
-						// question: Why do side-bigwalls return 0.
+						return _objects[partType]->getTuCostPart(moveType); // question: Why do side-bigwalls return 0.
 				}
 				break;
 
@@ -406,14 +396,13 @@ bool Tile::isBigWall() const
  */
 int Tile::getTerrainLevel() const
 {
-	int level = 0;
+	int level (0);
 	if (_objects[static_cast<size_t>(O_FLOOR)] != nullptr)
 		level = _objects[static_cast<size_t>(O_FLOOR)]->getTerrainLevel();
 
 	if (_objects[static_cast<size_t>(O_OBJECT)] != nullptr)
-		level = std::min(
-					level,
-					_objects[static_cast<size_t>(O_OBJECT)]->getTerrainLevel());
+		level = std::min(level,
+						_objects[static_cast<size_t>(O_OBJECT)]->getTerrainLevel());
 
 	return level;
 }
@@ -422,7 +411,7 @@ int Tile::getTerrainLevel() const
  * Gets this Tile's footstep sound.
  * @param tileBelow - pointer to the Tile below this Tile
  * @return, sound ID
- *			0 - none
+ *		 -1/0 - none
  *			1 - metal
  *			2 - wood/stone
  *			3 - dirt
@@ -551,7 +540,7 @@ void Tile::openDoorAuto(const MapDataType partType)
  */
 bool Tile::closeUfoDoor()
 {
-	int ret = false;
+	int ret (false);
 	for (size_t
 			i = 0;
 			i != PARTS_TILE;
@@ -626,30 +615,29 @@ void Tile::addLight(
 		int light,
 		size_t layer)
 {
-	if (_light[layer] < light)
-		_light[layer] = light;
+	if (light > _light[layer])
+		_light[layer] = (light > LIGHT_FULL) ? LIGHT_FULL : light;
 }
 
 /**
  * Gets this Tile's shade: 0-15.
- * @note Returns the brightest of all light layers.
- * @note Shade is the inverse of light level so a maximum amount of light (15)
- * returns shade level 0.
- * @return, shade
+ * @note Returns the brightest of all light-layers.
+ * @note Shade is the inverse of light-level so a maximum amount of light '15'
+ * returns shade-level '0'.
+ * @return, the current shade
  */
 int Tile::getShade() const
 {
-	int light = 0;
+	int light (0);
 	for (size_t
-			layer = 0;
-			layer != LIGHTLAYERS;
-			++layer)
+			i = 0;
+			i != LIGHTLAYERS;
+			++i)
 	{
-		if (_light[layer] > light)
-			light = _light[layer];
+		if (_light[i] > light)
+			light = _light[i];
 	}
-
-	return std::max(0, 15 - light);
+	return LIGHT_FULL - light;
 }
 
 /**

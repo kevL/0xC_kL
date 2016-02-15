@@ -133,7 +133,7 @@ private:
 		/// Checks whether OpenGL output is requested.
 		static bool isOpenGLEnabled();
 
-		/// update the game scale as required.
+		/// Updates the video-scale as required.
 		static void updateScale(
 				int& type,
 				int selection,

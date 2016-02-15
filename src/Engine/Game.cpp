@@ -431,11 +431,11 @@ void Game::run()
 			if (!(Options::useOpenGL && Options::vSyncForOpenGL)
 				&& Options::FPS > 0)
 			{
-				// Update FPS delay time based on the time of the last draw.
-				int fps = (SDL_GetAppState() & SDL_APPINPUTFOCUS) ? Options::FPS : Options::FPSInactive;
+				// Update FPS-delay-time based on the time of the last draw.
+				int fps ((SDL_GetAppState() & SDL_APPINPUTFOCUS) ? Options::FPS : Options::FPSInactive);
 				if (fps < 1) fps = 1;
 				_ticksTillNextSlice = static_cast<int>(
-									 1000.f / static_cast<float>(fps)
+										1000.f / static_cast<float>(fps)
 										- static_cast<float>(SDL_GetTicks() - _tickOfLastSlice));
 			}
 			else
@@ -454,7 +454,7 @@ void Game::run()
 					SDL_Delay(369);
 				}
 
-				std::list<State*>::const_iterator i = _states.end();
+				std::list<State*>::const_iterator i (_states.end());
 				do
 				{
 					--i; // find top underlying fullscreen state,
@@ -481,7 +481,8 @@ void Game::run()
 		{
 			case RUNNING:
 				SDL_Delay(1);	// Save CPU from going 100%
-			break;
+				break;
+
 			case SLOWED:
 			case PAUSED:
 				SDL_Delay(100);	// More slowing down.
@@ -505,7 +506,7 @@ void Game::quit(bool force)
 		&& _gameSave->isIronman() == true
 		&& _gameSave->getName().empty() == false)
 	{
-		const std::string file = CrossPlatform::sanitizeFilename(Language::wstrToFs(_gameSave->getName())) + ".sav";
+		const std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_gameSave->getName())) + ".sav");
 		_gameSave->save(file);
 	}
 

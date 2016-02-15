@@ -72,6 +72,8 @@ class Tile
 		static const size_t PARTS_TILE = 4;
 
 private:
+	static const int LIGHT_FULL = 15;
+
 	static const size_t
 		LIGHTLAYERS	= 3,
 		SECTIONS	= 3;
@@ -125,9 +127,9 @@ private:
 			Uint32 totalBytes; // per structure including any data not mentioned here and accounting for all array members
 		} serializationKey;
 
-		/// Creates a tile.
+		/// Creates a Tile.
 		explicit Tile(const Position& pos);
-		/// Cleans up a tile.
+		/// Cleans up the Tile.
 		~Tile();
 
 		/// Loads the tile from yaml.

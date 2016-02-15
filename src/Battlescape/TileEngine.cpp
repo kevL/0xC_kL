@@ -383,7 +383,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 	else
 		dir = unit->getUnitDirection();
 
-	const bool swapXY ((dir == 0 || dir == 4));
+	const bool swapXY (dir == 0 || dir == 4);
 
 	static const int
 		sign_x[8] = { 1, 1, 1, 1,-1,-1,-1,-1},
@@ -427,7 +427,6 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 			++posUnit.z;
 	}
 
-	const int mapSize_z (_battleSave->getMapSizeZ());
 	for (int
 			x = 0; // does the unit itself really need checking ... Yes, marks own Tile as _visible.
 			x <= SIGHTDIST_TSp;
@@ -446,7 +445,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 		{
 			for (int
 					z = 0;
-					z != mapSize_z;
+					z != _battleSave->getMapSizeZ();
 					++z)
 			{
 				posTest.z = z;
@@ -3424,7 +3423,7 @@ int TileEngine::horizontalBlockage(
 			if (dType == DT_NONE)
 				return -1;
 
-			//Log(LOG_INFO) << "explode End: hardblock 1000";
+			//Log(LOG_INFO) << "explode End: hardblock";
 			return POWER_BLOCK;
 		}
 	}

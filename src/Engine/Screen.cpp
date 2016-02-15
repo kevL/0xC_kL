@@ -99,7 +99,7 @@ void Screen::makeVideoFlags() // private.
 	else
 		SDL_putenv(const_cast<char*>("SDL_VIDEO_CENTERED="));
 
-	_bpp = (is32bitEnabled() || isOpenGLEnabled()) ? 32 : 8;
+	_bpp = (is32bitEnabled() == true || isOpenGLEnabled() == true) ? 32 : 8;
 
 	_baseWidth = Options::baseXResolution;
 	_baseHeight = Options::baseYResolution;
@@ -150,7 +150,7 @@ Surface* Screen::getSurface()
 }
 
 /**
- * Handles screen key shortcuts.
+ * Handles screen-key shortcuts.
  * @param action - pointer to an Action
  */
 void Screen::handle(Action* action)
@@ -443,7 +443,7 @@ void Screen::resetDisplay(bool resetVideo)
 		if (_screen == nullptr)
 		{
 			Log(LOG_ERROR) << SDL_GetError();
-			Log(LOG_INFO) << "Attempting to set display to default resolution...";
+			Log(LOG_INFO) << "Attempting to set display to default resolution ...";
 			_screen = SDL_SetVideoMode(
 									640,400,
 									_bpp, _flags);
@@ -662,7 +662,7 @@ void Screen::screenshot(const std::string& file) const
 
 
 /**
- * Check whether a 32bpp scaler has been selected.
+ * Checks whether a 32bpp scaler has been selected.
  * @return, true if it is enabled with a compatible resolution
  */
 bool Screen::is32bitEnabled() // static.
@@ -686,7 +686,7 @@ bool Screen::is32bitEnabled() // static.
 }
 
 /**
- * Check if OpenGL is enabled.
+ * Checks if OpenGL is enabled.
  * @return, true if enabled
  */
 bool Screen::isOpenGLEnabled() // static.
@@ -743,29 +743,32 @@ void Screen::updateScale( // static.
 		case SCALE_15X:
 			width	= static_cast<int>(static_cast<double>(Screen::ORIGINAL_WIDTH) * 1.5);
 			height	= static_cast<int>(static_cast<double>(Screen::ORIGINAL_HEIGHT) * 1.5);
-		break;
+			break;
+
 		case SCALE_2X:
 			width	= static_cast<int>(static_cast<double>(Screen::ORIGINAL_WIDTH) * 2.);
 			height	= static_cast<int>(static_cast<double>(Screen::ORIGINAL_HEIGHT) * 2.);
-		break;
+			break;
+
 		case SCALE_SCREEN_DIV_3:
 			width	= static_cast<int>(static_cast<double>(Options::displayWidth) / 3.);
 			height	= static_cast<int>(static_cast<double>(Options::displayHeight) / pixelRatioY / 3.);
-		break;
+			break;
+
 		case SCALE_SCREEN_DIV_2:
 			width	= static_cast<int>(static_cast<double>(Options::displayWidth) / 2.);
 			height	= static_cast<int>(static_cast<double>(Options::displayHeight) / pixelRatioY / 2.);
-		break;
+			break;
+
 		case SCALE_SCREEN:
 			width	= Options::displayWidth;
 			height	= static_cast<int>(static_cast<double>(Options::displayHeight / pixelRatioY));
-		break;
+			break;
 
-		case SCALE_ORIGINAL:
 		default:
+		case SCALE_ORIGINAL:
 			width	= Screen::ORIGINAL_WIDTH;
 			height	= Screen::ORIGINAL_HEIGHT;
-		break;
 	}
 
 // G++ linker wants it this way ...
