@@ -326,10 +326,10 @@ private:
 		/// Gets the list of mission sites.
 		std::vector<MissionSite*>* getMissionSites();
 
-		/// Gets the current battle save.
+		/// Gets the current SavedBattleGame.
 		SavedBattleGame* getBattleSave();
-		/// Sets the current battle save.
-		void setBattleSave(SavedBattleGame* const battleSave);
+		/// Sets the current SavedBattleGame.
+		void setBattleSave(SavedBattleGame* const battleSave = nullptr);
 
 
 		/// Gets the ResearchGenerals.

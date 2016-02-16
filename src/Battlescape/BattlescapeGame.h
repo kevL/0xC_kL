@@ -317,10 +317,10 @@ private:
 		void secondaryAction(const Position& pos);
 		/// Handler for the blaster launcher button.
 		void launchAction();
-		/// Handler for the psi button.
+		/// Handler for the psi-button.
 		void psiButtonAction();
 
-		/// Moves a unit up or down.
+		/// Moves a BattleUnit up or down.
 		void moveUpDown(
 				const BattleUnit* const unit,
 				int dir);
@@ -337,26 +337,28 @@ private:
 				bool created = false,
 				bool disown = false);
 
-		/// Converts a unit into a unit of another type.
+		/// Converts a BattleUnit into a different type of BattleUnit.
 		BattleUnit* convertUnit(BattleUnit* const unit);
+		/// Converts a BattleUnit for DebriefingState.
+//		void speedyConvert(BattleUnit* const unit);
 
-		/// Gets the map.
+		/// Gets the battlefield Map.
 		Map* getMap() const;
-		/// Gets the save.
+		/// Gets the SavedBattleGame data object.
 		SavedBattleGame* getBattleSave() const;
-		/// Gets the tilengine.
+		/// Gets the TileEngine.
 		TileEngine* getTileEngine() const;
-		/// Gets the pathfinding.
+		/// Gets Pathfinding.
 		Pathfinding* getPathfinding() const;
-		/// Gets the resourcepack.
+		/// Gets the ResourcePack.
 		ResourcePack* getResourcePack() const;
-		/// Gets the ruleset.
+		/// Gets the Ruleset.
 		const Ruleset* getRuleset() const;
 
-		/// Returns whether player panic has been handled.
+		/// Returns whether player-panic has been handled.
 		bool playerPanicHandled() const
 		{ return _playerPanicHandled; }
-		/// Sets var to start handling panic for Player.
+		/// Sets var to start handling panic for Player's units.
 		void setPlayerPanic() { _playerPanicHandled = false; }
 
 		/// Tries to find an item and pick it up if possible.

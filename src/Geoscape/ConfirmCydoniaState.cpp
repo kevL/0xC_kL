@@ -109,10 +109,10 @@ void ConfirmCydoniaState::btnYesClick(Action*)
 	_game->popState();
 	_game->popState();
 
-	SavedBattleGame* const battle = new SavedBattleGame(
+	SavedBattleGame* const battleSave (new SavedBattleGame(
 													&_game->getRuleset()->getOperations(),
-													_game->getRuleset());
-	_game->getSavedGame()->setBattleSave(battle);
+													_game->getRuleset()));
+	_game->getSavedGame()->setBattleSave(battleSave);
 
 	BattlescapeGenerator bGen = BattlescapeGenerator(_game);
 
@@ -121,12 +121,11 @@ void ConfirmCydoniaState::btnYesClick(Action*)
 			i != _game->getRuleset()->getDeploymentsList().end();
 			++i)
 	{
-		const AlienDeployment* const ruleDeploy = _game->getRuleset()->getDeployment(*i);
-		if (ruleDeploy->isFinalDestination() == true)
+		const AlienDeployment* const deployRule (_game->getRuleset()->getDeployment(*i));
+		if (deployRule->isFinalDestination() == true)
 		{
-			battle->setTacticalType(*i);
-			bGen.setAlienRace(ruleDeploy->getRace());
-
+			battleSave->setTacticalType(*i);
+			bGen.setAlienRace(deployRule->getRace());
 			break;
 		}
 	}

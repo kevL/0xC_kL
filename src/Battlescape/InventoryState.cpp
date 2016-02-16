@@ -758,18 +758,18 @@ void InventoryState::btnOkClick(Action*)
 		{
 			_battleSave->resetUnitsOnTiles();
 
-			Tile* const invTile = _battleSave->getBattleInventory();
-			_battleSave->randomizeItemLocations(invTile);	// This doesn't seem to happen on second stage of Multi-State MISSIONS.
+			Tile* const inTile (_battleSave->getBattleInventory());
+			_battleSave->randomizeItemLocations(inTile);	// This doesn't seem to happen on second stage of Multi-State MISSIONS.
 															// In fact, none of this !_tuMode InventoryState appears to run for 2nd staged missions.
 															// and BattlescapeGenerator::nextStage() has its own bu->prepUnit() call ....
 /*			if (_battleSave->getTurn() == 1)				// but Leaving this out could be troublesome for Multi-Stage MISSIONS.
 			{
 				//Log(LOG_INFO) << ". turn = 1";
 				_battleSave->randomizeItemLocations(invTile);
-				if (invTile->getTileUnit())
+				if (inTile->getTileUnit())
 				{
 					// make sure the unit closest to the ramp is selected.
-					_battleSave->setSelectedUnit(invTile->getTileUnit());
+					_battleSave->setSelectedUnit(inTile->getTileUnit());
 				}
 			} */
 
@@ -779,7 +779,7 @@ void InventoryState::btnOkClick(Action*)
 					++i)
 			{
 				if ((*i)->getFaction() == FACTION_PLAYER)
-					(*i)->initTu(true);
+					(*i)->prepTu(true);
 			}
 		}
 	}

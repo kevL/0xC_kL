@@ -3932,9 +3932,9 @@ void GeoscapeState::handleBaseDefense(
 
 	if (base->getAvailableSoldiers(true) != 0)
 	{
-		SavedBattleGame* const battle = new SavedBattleGame(&_rules->getOperations(), _rules);
-		_gameSave->setBattleSave(battle);
-		battle->setTacticalType("STR_BASE_DEFENSE");
+		SavedBattleGame* const battleSave (new SavedBattleGame(&_rules->getOperations(), _rules));
+		_gameSave->setBattleSave(battleSave);
+		battleSave->setTacticalType("STR_BASE_DEFENSE");
 
 		BattlescapeGenerator bGen = BattlescapeGenerator(_game);
 		bGen.setBase(base);

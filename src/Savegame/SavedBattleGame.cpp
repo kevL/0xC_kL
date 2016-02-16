@@ -140,7 +140,7 @@ SavedBattleGame::SavedBattleGame(
 }
 
 /**
- * Deletes the game content from memory.
+ * Deletes the battlescape content from memory.
  */
 SavedBattleGame::~SavedBattleGame()
 {
@@ -526,6 +526,24 @@ void SavedBattleGame::load(
 		}
 	}
 
+	for (YAML::const_iterator
+			i = node["items"].begin();
+			i != node["items"].end();
+			++i)
+	{
+		st = (*i)["type"].as<std::string>();
+		if (rules->getItem(st) != nullptr)
+		{
+			id = (*i)["id"].as<int>(-1); // note: 'id' should always be valid here.
+			item = new BattleItem(
+								rules->getItem(st),
+								nullptr,
+								id);
+			item->load(*i);
+			_toDelete.push_back(item);
+		}
+	}
+
 	Log(LOG_INFO) << ". set some vars";
 
 	_objectiveType = static_cast<SpecialTileType>(node["objectiveType"].as<int>(_objectiveType));
@@ -710,7 +728,7 @@ YAML::Node SavedBattleGame::save() const
 		node["nodes"].push_back((*i)->save());
 	}
 
-	if (_tacticalType == "STR_BASE_DEFENSE")
+	if (_tacType == TCT_BASEDEFENSE)
 		node["moduleMap"] = _baseModules;
 
 	for (std::vector<BattleUnit*>::const_iterator
@@ -729,14 +747,6 @@ YAML::Node SavedBattleGame::save() const
 		node["items"].push_back((*i)->save());
 	}
 
-//	node["batReserved"]		= static_cast<int>(_batReserved);
-//	node["kneelReserved"]	= _kneelReserved;
-	node["alienRace"]		= _alienRace;
-	node["operationTitle"]	= Language::wstrToUtf8(_operationTitle);
-
-	if (_controlDestroyed == true)
-		node["controlDestroyed"] = _controlDestroyed;
-
 	for (std::vector<BattleItem*>::const_iterator
 			i = _recoverGuaranteed.begin();
 			i != _recoverGuaranteed.end();
@@ -752,6 +762,23 @@ YAML::Node SavedBattleGame::save() const
 	{
 		node["recoverConditional"].push_back((*i)->save());
 	}
+
+	for (std::vector<BattleItem*>::const_iterator
+			i = _toDelete.begin();
+			i != _toDelete.end();
+			++i)
+	{
+		if ((*i)->getProperty() == true)
+			node["toDelete"].push_back((*i)->save());
+	}
+
+//	node["batReserved"]		= static_cast<int>(_batReserved);
+//	node["kneelReserved"]	= _kneelReserved;
+	node["alienRace"]		= _alienRace;
+	node["operationTitle"]	= Language::wstrToUtf8(_operationTitle);
+
+	if (_controlDestroyed == true)
+		node["controlDestroyed"] = _controlDestroyed;
 
 	node["music"] = _music;
 
@@ -1584,7 +1611,7 @@ void SavedBattleGame::randomizeItemLocations(Tile* const tile)
  * @note Items need to be checked for removal from three vectors:
  *		- tile inventory
  *		- battleunit inventory
- *		- battlegame-items container
+ *		- battlescape-items container
  * Upon removal the pointer to the item is kept in the '_toDelete' vector which
  * is flushed and destroyed in the SavedBattleGame dTor.
  * @param item - pointer to an item to remove
@@ -2160,7 +2187,7 @@ void SavedBattleGame::reviveUnit(
  */
 void SavedBattleGame::removeCorpse(const BattleUnit* const unit)
 {
-	int quad (unit->getArmor()->getSize() * unit->getArmor()->getSize());
+	int quadrants (unit->getArmor()->getSize() * unit->getArmor()->getSize());
 
 	for (std::vector<BattleItem*>::const_iterator
 			i = _items.begin();
@@ -2170,9 +2197,8 @@ void SavedBattleGame::removeCorpse(const BattleUnit* const unit)
 		if ((*i)->getUnit() == unit)
 		{
 			toDeleteItem(*i);
+			if (--quadrants == 0) return;
 			--i;
-
-			if (--quad == 0) return;
 		}
 	}
 }
@@ -2193,9 +2219,9 @@ bool SavedBattleGame::setUnitPosition(
 	if (unit != nullptr)
 	{
 //		_pf->setPathingUnit(unit); // <- this is not valid when doing base equip.
-		Position posTest = pos; // strip const.
+		Position posTest (pos); // strip const.
 
-		const int armorSize = unit->getArmor()->getSize() - 1;
+		const int armorSize (unit->getArmor()->getSize() - 1);
 		for (int
 				x = armorSize;
 				x != -1;
@@ -2206,7 +2232,7 @@ bool SavedBattleGame::setUnitPosition(
 					y != -1;
 					--y)
 			{
-				const Tile* const tile = getTile(posTest + Position(x,y,0));
+				const Tile* const tile (getTile(posTest + Position(x,y,0)));
 				if (tile != nullptr)
 				{
 					if (tile->getTerrainLevel() == -24)
@@ -2241,7 +2267,7 @@ bool SavedBattleGame::setUnitPosition(
 					}
 
 					// TODO: check for ceiling also.
-					const Tile* const tileAbove = getTile(posTest + Position(x,y,1));
+					const Tile* const tileAbove (getTile(posTest + Position(x,y,1)));
 					if (tileAbove != nullptr
 						&& tileAbove->getTileUnit() != nullptr
 						&& tileAbove->getTileUnit() != unit
@@ -2271,7 +2297,6 @@ bool SavedBattleGame::setUnitPosition(
 		if (test == false)
 		{
 			unit->setPosition(posTest);
-
 			for (int
 					x = armorSize;
 					x != -1;
@@ -2288,10 +2313,8 @@ bool SavedBattleGame::setUnitPosition(
 				}
 			}
 		}
-
 		return true;
 	}
-
 	return false;
 }
 

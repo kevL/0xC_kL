@@ -1212,11 +1212,11 @@ SavedBattleGame* SavedGame::getBattleSave()
 
 /**
  * Set SavedBattleGame object.
- * @param battleSave - pointer to a SavedBattleGame object
+ * @param battleSave - pointer to a SavedBattleGame object (default nullptr)
  */
 void SavedGame::setBattleSave(SavedBattleGame* const battleSave)
 {
-	delete _battleSave;
+	if (_battleSave != nullptr) delete _battleSave;
 	_battleSave = battleSave;
 }
 

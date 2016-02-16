@@ -3789,10 +3789,10 @@ void BattlescapeState::finishBattle(
 		_popups.clear();
 		_battleSave->setTacticalType(next);
 
-		BattlescapeGenerator bgen = BattlescapeGenerator(_game);
-//		bgen.setAlienRace("STR_MIXED");
-//		bgen.setAlienRace(nextStageRace);
-		bgen.nextStage();
+		BattlescapeGenerator bGen = BattlescapeGenerator(_game);
+//		bGen.setAlienRace("STR_MIXED");
+//		bGen.setAlienRace(nextStageRace);
+		bGen.nextStage();
 
 		_game->popState();
 		_game->pushState(new BriefingState());

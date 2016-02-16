@@ -1268,7 +1268,7 @@ int Tile::getAnimationOffset() const
  */
 Surface* Tile::getSprite(MapDataType partType) const
 {
-	const MapData* const data = _objects[partType];
+	const MapData* const data (_objects[partType]);
 	if (data != nullptr)
 		return data->getDataset()->getSurfaceset()->getFrame(data->getSprite(_curFrame[partType]));
 

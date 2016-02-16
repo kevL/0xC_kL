@@ -648,7 +648,7 @@ void BattlescapeGenerator::nextStage()
 //	setTacticalSprites();
 	_battleSave->setAborted(false);
 
-	bool selectDone = false;
+	bool selectDone (false);
 	for (std::vector<BattleUnit*>::const_iterator // <-- XCOM DEPLOYMENT.
 			i = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
@@ -1073,6 +1073,7 @@ void BattlescapeGenerator::deployXcom() // private.
 			i != _tileEquipt->getInventory()->end();
 			)
 	{
+		(*i)->setProperty();
 		_battleSave->getItems()->push_back(*i);
 		if ((*i)->getInventorySection() != grdRule)
 		{

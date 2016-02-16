@@ -5867,7 +5867,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 				}
 
 				victim->setFaction(action->actor->getFaction());
-				victim->initTu();
+				victim->prepTu();
 				victim->allowReselect();
 				victim->setUnitStatus(STATUS_STANDING);
 

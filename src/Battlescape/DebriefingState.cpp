@@ -97,7 +97,7 @@ DebriefingState::DebriefingState()
 		_country(nullptr),
 		_base(nullptr),
 		_craft(nullptr),
-		_noContainment(false),
+		_alienDies(false),
 		_manageContainment(false),
 		_destroyXComBase(false),
 		_aliensControlled(0),
@@ -461,7 +461,7 @@ DebriefingState::DebriefingState()
 DebriefingState::~DebriefingState()
 {
 	if (_game->isQuitting() == true)
-		_gameSave->setBattleSave(nullptr);
+		_gameSave->setBattleSave();
 
 	for (std::vector<DebriefingStat*>::const_iterator
 			i = _stats.begin();
@@ -510,7 +510,7 @@ void DebriefingState::btnOkClick(Action*)
 			participants.push_back((*i)->getGeoscapeSoldier());
 	}
 
-	_gameSave->setBattleSave(nullptr);
+	_gameSave->setBattleSave();
 	_game->popState();
 
 	if (_skirmish == true)
@@ -542,7 +542,7 @@ void DebriefingState::btnOkClick(Action*)
 			if (_missingItems.empty() == false)
 				_game->pushState(new CannotReequipState(_missingItems));
 
-			if (_noContainment == true)
+			if (_alienDies == true)
 				_game->pushState(new NoContainmentState());
 			else if (_manageContainment == true)
 			{
@@ -1565,7 +1565,7 @@ void DebriefingState::prepareDebriefing() // private.
 }
 
 /**
- * Reequips a craft after a mission.
+ * Reequips a Craft after tactical.
  * @param craft - pointer to Craft (default nullptr)
  */
 void DebriefingState::reequipCraft(Craft* craft) // private.
@@ -1591,13 +1591,7 @@ void DebriefingState::reequipCraft(Craft* craft) // private.
 			++i)
 	{
 		qtyBase = _base->getStorageItems()->getItemQuantity(i->first);
-
-		if (qtyBase >= i->second)
-		{
-			_base->getStorageItems()->removeItem(i->first, i->second);
-//			used = i->second; // kL
-		}
-		else
+		if (qtyBase < i->second)
 		{
 			_base->getStorageItems()->removeItem(i->first, qtyBase);
 
@@ -1612,8 +1606,12 @@ void DebriefingState::reequipCraft(Craft* craft) // private.
 				qtyLost,
 				craft->getName(_game->getLanguage())
 			};
-
 			_missingItems.push_back(stat);
+		}
+		else
+		{
+			_base->getStorageItems()->removeItem(i->first, i->second);
+//			used = i->second; // kL
 		}
 
 		// kL_begin:
@@ -1851,9 +1849,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 								if (itRule->isRecoverable() == true
 									&& unit->getOriginalFaction() == FACTION_HOSTILE)
 								{
-									// ADD STUNNED ALIEN COUNTING HERE_kL
 									++_aliensStunned; // for Nike Cross determination.
-
 									recoverLiveAlien(unit);
 								}
 								else if (unit->getOriginalFaction() == FACTION_NEUTRAL)
@@ -1897,17 +1893,25 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 }
 
 /**
- * Recovers a live alien from the battlescape.
+ * Recovers a live aLien from the battlefield.
  * @param unit - pointer to a BattleUnit to recover
  */
 void DebriefingState::recoverLiveAlien(BattleUnit* const unit) // private.
 {
-	if (unit->getSpawnUnit().empty() == false)
-	{
-		BattleUnit* const conUnit (_gameSave->getBattleSave()->getBattleGame()->convertUnit(unit)); // TODO: use a sparsed down version of convertUnit() here.
-		conUnit->setFaction(FACTION_PLAYER);
-	}
-	else if (_base->hasContainment() == true)
+//	std::string type;
+//	if ((*i)->getSpawnUnit().empty() == false)	// btw. This should never happen.
+//		type = (*i)->getSpawnUnit();			// Zombies can't be MC'd basically. Can't be stunned either.
+//	else										// And Soldiers should spawn into zombies ~immediately.
+//		type = (*i)->getType();					// Plus aLiens can't be zombified.
+
+//	if (unit->getSpawnUnit().empty() == false) // DON'T USE THIS IT CAN BREAK THE ITERATOR.
+//	{
+//		BattleUnit* const conUnit (_gameSave->getBattleSave()->getBattleGame()->speedyConvert(unit));
+//		conUnit->setFaction(FACTION_PLAYER);
+//		return;
+//	}
+
+	if (_base->hasContainment() == true)
 	{
 		//Log(LOG_INFO) << ". . . alienLive = " << unit->getType() << " id-" << unit->getId();
 		const std::string type (unit->getType());
@@ -1928,7 +1932,7 @@ void DebriefingState::recoverLiveAlien(BattleUnit* const unit) // private.
 	else
 	{
 		//Log(LOG_INFO) << ". . . alienDead = " << unit->getType();
-		_noContainment = true;
+		_alienDies = true;
 		addStat(
 			"STR_ALIEN_CORPSES_RECOVERED",
 			unit->getValue() / 3);
@@ -1938,10 +1942,12 @@ void DebriefingState::recoverLiveAlien(BattleUnit* const unit) // private.
 //			corpseItem = _rules->getArmor(_rules->getUnit(unit->getSpawnUnit())->getArmor())->getCorpseGeoscape();
 //		else
 //			corpseItem = unit->getArmor()->getCorpseGeoscape();
-		const std::string corpseItem (unit->getArmor()->getCorpseGeoscape());
+//		const std::string corpseItem (unit->getArmor()->getCorpseGeoscape());
+//
+//		if (corpseItem.empty() == false) // safety.
+//			_base->getStorageItems()->addItem(corpseItem);
 
-		if (corpseItem.empty() == false) // safety.
-			_base->getStorageItems()->addItem(corpseItem);
+		_base->getStorageItems()->addItem(unit->getArmor()->getCorpseGeoscape()); // pls error-out if there isn't one.
 	}
 }
 

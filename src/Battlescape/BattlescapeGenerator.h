@@ -207,7 +207,7 @@ private:
 
 
 	public:
-		/// Creates a new BattlescapeGenerator class
+		/// Creates a BattlescapeGenerator class
 		explicit BattlescapeGenerator(Game* const game);
 		/// Cleans up the BattlescapeGenerator.
 		~BattlescapeGenerator();

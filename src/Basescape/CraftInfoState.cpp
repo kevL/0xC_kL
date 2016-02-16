@@ -231,11 +231,11 @@ void CraftInfoState::init()
 	// Reset stuff when coming back from pre-battle Inventory.
 	if (_game->getSavedGame()->getBattleSave() != nullptr)
 	{
-		_game->getSavedGame()->setBattleSave(nullptr);
+		_game->getSavedGame()->setBattleSave();
 		_craft->setTactical(false);
 	}
 
-	const bool skirmish = (_game->getSavedGame()->getMonthsPassed() == -1);
+	const bool skirmish (_game->getSavedGame()->getMonthsPassed() == -1);
 
 	_btnInventory->setVisible(_craft->getQtySoldiers() != 0
 						   && _craft->getCraftItems()->getTotalQuantity() != 0
@@ -632,11 +632,11 @@ void CraftInfoState::btnInventoryClick(Action*)
 {
 	if (_edtCraft->isFocused() == false)
 	{
-		SavedBattleGame* const battle = new SavedBattleGame();
-		_game->getSavedGame()->setBattleSave(battle);
-		BattlescapeGenerator bgen = BattlescapeGenerator(_game);
+		SavedBattleGame* const battleSave (new SavedBattleGame());
+		_game->getSavedGame()->setBattleSave(battleSave);
 
-		bgen.runInventory(_craft);
+		BattlescapeGenerator bGen = BattlescapeGenerator(_game);
+		bGen.runInventory(_craft);
 
 		_game->getScreen()->clear();
 		_game->pushState(new InventoryState());
@@ -657,8 +657,8 @@ void CraftInfoState::edtCraftChange(Action*)
  */
 void CraftInfoState::calculateTacticalCost() // private.
 {
-	const int cost = _base->calcSoldierBonuses(_craft)
-				   + _craft->getRules()->getSoldiers() * 1000;
+	const int cost (_base->calcSoldierBonuses(_craft)
+				  + _craft->getRules()->getSoldiers() * 1000);
 	_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(cost)));
 }
 

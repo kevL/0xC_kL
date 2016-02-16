@@ -58,7 +58,8 @@ BattleItem::BattleItem(
 		_painKiller(0),
 		_heal(0),
 		_stimulant(0),
-		_isLoad(false)
+		_isLoad(false),
+		_xcomProperty(false)
 {
 	if (pId != nullptr)	// <- this is for SavedBattleGame only to keep
 	{					// track of a brand new item on the battlefield
@@ -99,13 +100,24 @@ BattleItem::~BattleItem()
  */
 void BattleItem::load(const YAML::Node& node)
 {
-	_inventoryX	= node["inventoryX"].as<int>(_inventoryX);
-	_inventoryY	= node["inventoryY"].as<int>(_inventoryY);
-	_ammoQty	= node["ammoQty"]	.as<int>(_ammoQty);
-	_painKiller	= node["painKiller"].as<int>(_painKiller);
-	_heal		= node["heal"]		.as<int>(_heal);
-	_stimulant	= node["stimulant"]	.as<int>(_stimulant);
-	_fuse		= node["fuse"]		.as<int>(_fuse);
+	_inventoryX		= node["inventoryX"]	.as<int>(_inventoryX);
+	_inventoryY		= node["inventoryY"]	.as<int>(_inventoryY);
+	_ammoQty		= node["ammoQty"]		.as<int>(_ammoQty);
+	_painKiller		= node["painKiller"]	.as<int>(_painKiller);
+	_heal			= node["heal"]			.as<int>(_heal);
+	_stimulant		= node["stimulant"]		.as<int>(_stimulant);
+	_fuse			= node["fuse"]			.as<int>(_fuse);
+	_xcomProperty	= node["xcomProperty"]	.as<bool>(_xcomProperty);
+}
+
+/**
+ * Loads a deleted item from a YAML file.
+ * @param node - YAML node
+ */
+void BattleItem::loadDeleted(const YAML::Node& node)
+{
+	_xcomProperty = true;
+//	_xcomProperty = node["xcomProperty"].as<bool>(_xcomProperty);
 }
 
 /**
@@ -119,18 +131,18 @@ YAML::Node BattleItem::save() const
 	node["id"]   = _id;
 	node["type"] = _itRule->getType();
 
-	if (_inventoryX != 0) node["inventoryX"]	= _inventoryX;
-	if (_inventoryY != 0) node["inventoryY"]	= _inventoryY;
+	if (_inventoryX != 0) node["inventoryX"] = _inventoryX;
+	if (_inventoryY != 0) node["inventoryY"] = _inventoryY;
 
-	if (_ammoQty > 0)		node["ammoQty"]		= _ammoQty;
-	if (_painKiller != 0)	node["painKiller"]	= _painKiller;
-	if (_heal != 0)			node["heal"]		= _heal;
-	if (_stimulant != 0)	node["stimulant"]	= _stimulant;
-	if (_fuse != -1)		node["fuse"]		= _fuse;
-
+	if (_ammoQty > 0)			node["ammoQty"]			= _ammoQty;
+	if (_painKiller != 0)		node["painKiller"]		= _painKiller;
+	if (_heal != 0)				node["heal"]			= _heal;
+	if (_stimulant != 0)		node["stimulant"]		= _stimulant;
+	if (_fuse != -1)			node["fuse"]			= _fuse;
+	if (_xcomProperty == true)	node["xcomProperty"]	= _xcomProperty;
 
 	if (_owner != nullptr)		node["owner"]		= _owner->getId();
-//	else					node["owner"] = -1; // cf. SavedBattleGame::load()
+//	else						node["owner"] = -1; // cf. SavedBattleGame::load()
 	if (_ownerPre != nullptr
 		&& _ownerPre != _owner)	node["ownerPre"]	= _ownerPre->getId();
 
@@ -143,6 +155,22 @@ YAML::Node BattleItem::save() const
 //	else						node["position"] = Position(-1,-1,-1); // cf. SavedBattleGame::load()
 	if (_ammoItem != nullptr)	node["ammoItem"]	= _ammoItem->getId();
 //	else						node["ammoItem"] = -1; // cf. SavedBattleGame::load()
+
+	return node;
+}
+
+/**
+ * Saves a deleted item to a YAML file.
+ * @return, YAML node
+ */
+YAML::Node BattleItem::saveDeleted() const
+{
+	YAML::Node node;
+
+	node["id"]   = _id;
+	node["type"] = _itRule->getType();
+
+//	if (_xcomProperty == true) node["xcomProperty"] = _xcomProperty;
 
 	return node;
 }
@@ -555,9 +583,9 @@ int BattleItem::getStimulantQuantity() const
 
 /**
  * Converts a carried unconscious body into a battlefield corpse-item.
- * @param itRule - pointer to rules of the corpse item to convert this item into
+ * @param itRule - pointer to rules of the corpse-item to convert this item into
  */
-void BattleItem::convertToCorpse(RuleItem* const itRule)
+void BattleItem::changeRule(RuleItem* const itRule)
 {
 	if (_unit != nullptr
 		&& _itRule->getBattleType() == BT_CORPSE
@@ -565,6 +593,23 @@ void BattleItem::convertToCorpse(RuleItem* const itRule)
 	{
 		_itRule = itRule;
 	}
+}
+
+/**
+ * Sets this BattleItem as belonging to xCom.
+ */
+void BattleItem::setProperty()
+{
+	_xcomProperty = true;
+}
+
+/**
+ * Gets if this BattleItem belongs to xCom.
+ * @return, true if xcom property
+ */
+bool BattleItem::getProperty() const
+{
+	return _xcomProperty;
 }
 
 }

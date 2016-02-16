@@ -342,7 +342,7 @@ void UnitDieBState::convertToCorpse() // private.
 		{
 			if ((*i)->getUnit() == _unit) // unit is in an inventory so unit must be a 1x1 unit
 			{
-				(*i)->convertToCorpse(_parent->getRuleset()->getItem(_unit->getArmor()->getCorpseBattlescape()[0]));
+				(*i)->changeRule(_parent->getRuleset()->getItem(_unit->getArmor()->getCorpseBattlescape()[0]));
 				break;
 			}
 		}

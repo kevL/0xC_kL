@@ -101,9 +101,9 @@ class DebriefingState
 
 private:
 	bool
+		_alienDies,
 		_destroyXComBase,
 		_manageContainment,
-		_noContainment,
 		_skirmish;
 	int
 		_aliensControlled,
@@ -146,18 +146,18 @@ private:
 	std::vector<Soldier*> _soldiersMedalled;
 	std::vector<SoldierDead*> _soldiersLost;
 
-	/// Adds to the debriefing stats.
+	/// Adds a DebriefingStat.
 	void addStat(
 			const std::string& type,
 			int score,
 			int qty = 1);
-	/// Prepares debriefing.
+	/// Prepares the debriefing.
 	void prepareDebriefing();
-	/// Recovers items from the battlescape.
+	/// Recovers items from the battlefield.
 	void recoverItems(std::vector<BattleItem*>* const battleItems);
-	/// Recovers an alien from the battlescape.
+	/// Recovers an aLien from the battlefield.
 	void recoverLiveAlien(BattleUnit* const unit);
-	/// Reequips a craft after a mission.
+	/// Reequips a Craft after tactical.
 	void reequipCraft(Craft* craft = nullptr);
 
 

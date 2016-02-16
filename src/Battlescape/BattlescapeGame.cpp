@@ -2925,14 +2925,14 @@ void BattlescapeGame::dropItem(
 }
 
 /**
- * Converts a unit into a unit of another type.
- * @param unit - pointer to a unit to convert
- * @return, pointer to the new unit
+ * Converts a BattleUnit into a different type of BattleUnit.
+ * @param unit - pointer to a BattleUnit to convert
+ * @return, pointer to the converted BattleUnit
  */
 BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 {
 	//Log(LOG_INFO) << "BattlescapeGame::convertUnit() " << conType;
-	const bool wasVisible = unit->getUnitVisible();
+	const bool wasVisible (unit->getUnitVisible());
 
 	_battleSave->getBattleState()->showPsiButton(false);
 	_battleSave->removeCorpse(unit); // in case the unit was unconscious
@@ -2955,20 +2955,20 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 	_battleSave->getTile(unit->getPosition())->setUnit(nullptr);
 
 
-	std::string st = unit->getSpawnUnit();
-	RuleUnit* const unitRule = getRuleset()->getUnitRule(st);
+	std::string st (unit->getSpawnUnit());
+	RuleUnit* const unitRule (getRuleset()->getUnitRule(st));
 	st = unitRule->getArmor();
 
-	BattleUnit* const conUnit = new BattleUnit(
+	BattleUnit* const conUnit (new BattleUnit(
 											unitRule,
 											FACTION_HOSTILE,
 											_battleSave->getUnits()->back()->getId() + 1,
 											getRuleset()->getArmor(st),
 											_parentState->getGame()->getSavedGame()->getDifficulty(),
 											_parentState->getGame()->getSavedGame()->getMonthsPassed(),
-											this);
+											this));
 
-	const Position posUnit = unit->getPosition();
+	const Position posUnit (unit->getPosition());
 	_battleSave->getTile(posUnit)->setUnit(
 										conUnit,
 										_battleSave->getTile(posUnit + Position(0,0,-1)));
@@ -2987,15 +2987,14 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 	conUnit->setAIState(new AlienBAIState(_battleSave, conUnit));
 
 	st = unitRule->getRace().substr(4) + "_WEAPON";
-	BattleItem* const item = new BattleItem(
+	BattleItem* const item (new BattleItem(
 										getRuleset()->getItem(st),
-										_battleSave->getNextItemId());
+										_battleSave->getNextItemId()));
 	item->changeOwner(conUnit);
 	item->setInventorySection(getRuleset()->getInventoryRule(ST_RIGHTHAND));
 	_battleSave->getItems()->push_back(item);
 
 	getMap()->cacheUnit(conUnit);
-
 	conUnit->setUnitVisible(wasVisible);
 
 	getTileEngine()->applyGravity(conUnit->getTile());
@@ -3006,7 +3005,55 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 }
 
 /**
- * Gets the map.
+ * Converts a BattleUnit for DebriefingState.
+ * @param unit - pointer to a BattleUnit to convert
+ * DON'T USE THIS IT CAN BREAK THE ITERATOR in DebriefingState.
+ *
+void BattlescapeGame::speedyConvert(BattleUnit* const unit)
+{
+	_battleSave->removeCorpse(unit); // in case the unit was unconscious
+
+	unit->instaKill();
+	unit->setSpecialAbility(SPECAB_NONE);
+
+	for (std::vector<BattleItem*>::const_iterator
+			i = unit->getInventory()->begin();
+			i != unit->getInventory()->end();
+			++i)
+	{
+		dropItem(unit->getPosition(), *i);
+		(*i)->setOwner();
+	}
+	unit->getInventory()->clear();
+
+	unit->setTile(nullptr);
+	_battleSave->getTile(unit->getPosition())->setUnit(nullptr);
+
+
+	std::string st (unit->getSpawnUnit());
+	RuleUnit* const unitRule (getRuleset()->getUnitRule(st));
+	st = unitRule->getArmor();
+
+	BattleUnit* const conUnit (new BattleUnit(
+											unitRule,
+											FACTION_HOSTILE,
+											_battleSave->getUnits()->back()->getId() + 1,
+											getRuleset()->getArmor(st),
+											_parentState->getGame()->getSavedGame()->getDifficulty(),
+											_parentState->getGame()->getSavedGame()->getMonthsPassed(),
+											this));
+
+	const Position posUnit (unit->getPosition());
+	_battleSave->getTile(posUnit)->setUnit(
+										conUnit,
+										_battleSave->getTile(posUnit + Position(0,0,-1)));
+	conUnit->setPosition(posUnit);
+
+	_battleSave->getUnits()->push_back(conUnit);
+} */
+
+/**
+ * Gets the battlefield Map.
  * @return, pointer to Map
  */
 Map* BattlescapeGame::getMap() const
@@ -3015,7 +3062,7 @@ Map* BattlescapeGame::getMap() const
 }
 
 /**
- * Gets the battle game save data object.
+ * Gets the SavedBattleGame data object.
  * @return, pointer to SavedBattleGame
  */
 SavedBattleGame* BattlescapeGame::getBattleSave() const
@@ -3024,7 +3071,7 @@ SavedBattleGame* BattlescapeGame::getBattleSave() const
 }
 
 /**
- * Gets the tilengine.
+ * Gets the TileEngine.
  * @return, pointer to TileEngine
  */
 TileEngine* BattlescapeGame::getTileEngine() const
@@ -3033,7 +3080,7 @@ TileEngine* BattlescapeGame::getTileEngine() const
 }
 
 /**
- * Gets the pathfinding.
+ * Gets Pathfinding.
  * @return, pointer to Pathfinding
  */
 Pathfinding* BattlescapeGame::getPathfinding() const
@@ -3042,7 +3089,7 @@ Pathfinding* BattlescapeGame::getPathfinding() const
 }
 
 /**
- * Gets the resourcepack.
+ * Gets the ResourcePack.
  * @return, pointer to ResourcePack
  */
 ResourcePack* BattlescapeGame::getResourcePack() const
@@ -3051,7 +3098,7 @@ ResourcePack* BattlescapeGame::getResourcePack() const
 }
 
 /**
- * Gets the ruleset.
+ * Gets the Ruleset.
  * @return, pointer to Ruleset
  */
 const Ruleset* BattlescapeGame::getRuleset() const

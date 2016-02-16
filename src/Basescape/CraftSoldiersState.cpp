@@ -167,12 +167,12 @@ void CraftSoldiersState::init()
 	State::init();
 
 	// Reset stuff when coming back from pre-battle Inventory.
-	const SavedBattleGame* const battleSave = _game->getSavedGame()->getBattleSave();
+	const SavedBattleGame* const battleSave (_game->getSavedGame()->getBattleSave());
 	if (battleSave != nullptr)
 	{
-// unfortunately this would rely on the list of battleSoldiers *not* changing when entering/cancelling InventoryState
+//		unfortunately this would rely on the list of battleSoldiers *not* changing when entering/cancelling InventoryState
 //		_selUnitId = battleSave->getSelectedUnit()->getBattleOrder();
-		_game->getSavedGame()->setBattleSave(nullptr);
+		_game->getSavedGame()->setBattleSave();
 		_craft->setTactical(false);
 	}
 
@@ -451,13 +451,13 @@ void CraftSoldiersState::btnInventoryClick(Action*)
 					REC_SOLDIER,
 					_lstSoldiers->getScroll());
 
-	SavedBattleGame* const battle = new SavedBattleGame();
-	_game->getSavedGame()->setBattleSave(battle);
-	BattlescapeGenerator bgen = BattlescapeGenerator(_game);
+	SavedBattleGame* const battleSave (new SavedBattleGame());
+	_game->getSavedGame()->setBattleSave(battleSave);
 
-	bgen.runInventory(_craft);
-// unfortunately this would rely on the list of battleSoldiers *not* changing when entering/cancelling InventoryState
-//	bgen.runInventory(_craft, nullptr, _selUnitId);
+	BattlescapeGenerator bGen = BattlescapeGenerator(_game);
+	bGen.runInventory(_craft);
+//	unfortunately this would rely on the list of battleSoldiers *not* changing when entering/cancelling InventoryState
+//	bGen.runInventory(_craft, nullptr, _selUnitId);
 
 	_game->getScreen()->clear();
 	_game->pushState(new InventoryState());
@@ -468,8 +468,8 @@ void CraftSoldiersState::btnInventoryClick(Action*)
  */
 void CraftSoldiersState::calculateTacticalCost() // private.
 {
-	const int cost = _base->calcSoldierBonuses(_craft)
-				   + _craft->getRules()->getSoldiers() * 1000;
+	const int cost (_base->calcSoldierBonuses(_craft)
+				  + _craft->getRules()->getSoldiers() * 1000);
 	_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(cost)));
 }
 
@@ -478,9 +478,10 @@ void CraftSoldiersState::calculateTacticalCost() // private.
  */
 void CraftSoldiersState::displayExtraButtons() const // private.
 {
-	const bool hasSoldier = _craft->getQtySoldiers() != 0;
+	const bool hasSoldier (_craft->getQtySoldiers() != 0);
 	_btnUnload->setVisible(hasSoldier);
-	_btnInventory->setVisible(hasSoldier && _craft->getCraftItems()->getTotalQuantity() != 0
+	_btnInventory->setVisible(hasSoldier
+						   && _craft->getCraftItems()->getTotalQuantity() != 0
 						   && _game->getSavedGame()->getMonthsPassed() != -1);
 }
 

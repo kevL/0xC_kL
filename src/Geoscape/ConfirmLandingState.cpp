@@ -65,14 +65,14 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Confirm Landing window.
+ * Initializes all the elements in the ConfirmLanding window.
  * @param craft 	- pointer to the Craft to confirm
  * @param texRule	- pointer to the RuleTexture of the landing site (default nullptr)
  * @param shade		- shade of the landing site (default -1)
  */
 ConfirmLandingState::ConfirmLandingState(
 		Craft* const craft,
-		RuleTexture* texRule, // always passes in the vector of eligible Globe Terrains for the land-poly's textureInt.
+		RuleTexture* texRule, // passes in the vector of eligible Globe Terrains for the land-poly's textureInt.
 		const int shade)
 	:
 		_craft(craft),
@@ -125,20 +125,19 @@ ConfirmLandingState::ConfirmLandingState(
 	// NOTE: the following terrain determination will fall through to
 	// BattlescapeGenerator for Base assault/defense and Cydonia missions;
 	// concerned only with UFOs and MissionSites here.
-	Ufo* const ufo = dynamic_cast<Ufo*>(_craft->getDestination());
-	MissionSite* const site = dynamic_cast<MissionSite*>(_craft->getDestination());
+	Ufo* const ufo (dynamic_cast<Ufo*>(_craft->getDestination()));
+	MissionSite* const site (dynamic_cast<MissionSite*>(_craft->getDestination()));
 
 	if (ufo != nullptr || site != nullptr) // ... else it's an aLienBase assault (NOT defense nor Cydonia).
 	{
 		double // Determine if Craft is landing at a City.
-			lon = _craft->getLongitude(),
-			lat = _craft->getLatitude();
-		bool city = false;
+			lon (_craft->getLongitude()),
+			lat (_craft->getLatitude());
+		bool city (false);
 
 		for (std::vector<Region*>::const_iterator
 				i = _game->getSavedGame()->getRegions()->begin();
-				i != _game->getSavedGame()->getRegions()->end()
-					&& city == false;
+				i != _game->getSavedGame()->getRegions()->end() && city == false;
 //					&& _city == nullptr;
 				++i)
 		{
@@ -146,8 +145,7 @@ ConfirmLandingState::ConfirmLandingState(
 			{
 				for (std::vector<RuleCity*>::const_iterator
 						j = (*i)->getRules()->getCities()->begin();
-						j != (*i)->getRules()->getCities()->end()
-							&& city == false;
+						j != (*i)->getRules()->getCities()->end() && city == false;
 //							&& _city == nullptr;
 						++j)
 				{
@@ -208,14 +206,14 @@ ConfirmLandingState::ConfirmLandingState(
 
 					// get a Terrain from AlienDeployment first
 					Log(LOG_INFO) << ". . . finding eligibleTerrain for AlienDeployment";
-					const AlienDeployment* const deployRule = site->getSiteDeployment();
+					const AlienDeployment* const deployRule (site->getSiteDeployment());
 					terrainList = deployRule->getDeployTerrains();
 
 					// second, check for Terrains in Globe-Texture(INT) ...
 					if (terrainList.empty() == true)
 					{
 						Log(LOG_INFO) << ". . . finding eligibleTerrain for RuleGlobe";
-						const RuleGlobe* const globeRule = _game->getRuleset()->getGlobe();
+						const RuleGlobe* const globeRule (_game->getRuleset()->getGlobe());
 //						const RuleTexture* const texRule = globeRule->getTextureRule(_city->getTextureId());
 						terrainList = globeRule->getGlobeTerrains(); //texRule->getTextureDeployments() -> now uses a weighted system ....
 					}
@@ -251,8 +249,8 @@ ConfirmLandingState::ConfirmLandingState(
 					// note that differences between tex -1 & tex -2 have not been implemented yet,
 					// so treat them both the same -> texture(INT) #10
 					// INDUSTRIALUFO, MADURBANUFO, NATIVEUFO
-					const RuleGlobe* const globeRule = _game->getRuleset()->getGlobe();
-					const RuleTexture* const cityTextureRule = globeRule->getTextureRule(OpenXcom::TT_URBAN);
+					const RuleGlobe* const globeRule (_game->getRuleset()->getGlobe());
+					const RuleTexture* const cityTextureRule (globeRule->getTextureRule(OpenXcom::TT_URBAN));
 
 					terrainType = cityTextureRule->getTextureTerrain(ufo);
 					// NOTE that inputting coordinates can screw getTextureTerrain() if & when 'target'
@@ -360,14 +358,14 @@ void ConfirmLandingState::btnYesClick(Action*)
 	_game->getResourcePack()->fadeMusic(_game, 335);
 	_game->popState();
 
-	Ufo* const ufo = dynamic_cast<Ufo*>(_craft->getDestination());
-	MissionSite* const site = dynamic_cast<MissionSite*>(_craft->getDestination());
-	AlienBase* const alienBase = dynamic_cast<AlienBase*>(_craft->getDestination());
+	Ufo* const ufo (dynamic_cast<Ufo*>(_craft->getDestination()));
+	MissionSite* const site (dynamic_cast<MissionSite*>(_craft->getDestination()));
+	AlienBase* const alienBase (dynamic_cast<AlienBase*>(_craft->getDestination()));
 
-	SavedBattleGame* battle = new SavedBattleGame(
-											&_game->getRuleset()->getOperations(),
-											_game->getRuleset());
-	_game->getSavedGame()->setBattleSave(battle);
+	SavedBattleGame* const battleSave (new SavedBattleGame(
+													&_game->getRuleset()->getOperations(),
+													_game->getRuleset()));
+	_game->getSavedGame()->setBattleSave(battleSave);
 
 	BattlescapeGenerator bGen (_game);
 	bGen.setCraft(_craft);
@@ -375,9 +373,9 @@ void ConfirmLandingState::btnYesClick(Action*)
 	if (ufo != nullptr)
 	{
 		if (ufo->getUfoStatus() == Ufo::CRASHED)
-			battle->setTacticalType("STR_UFO_CRASH_RECOVERY");
+			battleSave->setTacticalType("STR_UFO_CRASH_RECOVERY");
 		else
-			battle->setTacticalType("STR_UFO_GROUND_ASSAULT");
+			battleSave->setTacticalType("STR_UFO_GROUND_ASSAULT");
 
 		bGen.setUfo(ufo);
 		bGen.setAlienRace(ufo->getAlienRace());
@@ -388,7 +386,7 @@ void ConfirmLandingState::btnYesClick(Action*)
 	}
 	else if (site != nullptr)
 	{
-		battle->setTacticalType(site->getSiteDeployment()->getType());
+		battleSave->setTacticalType(site->getSiteDeployment()->getType());
 
 		bGen.setMissionSite(site);
 		bGen.setAlienRace(site->getAlienRace());
@@ -398,7 +396,7 @@ void ConfirmLandingState::btnYesClick(Action*)
 	}
 	else if (alienBase != nullptr)
 	{
-		battle->setTacticalType("STR_ALIEN_BASE_ASSAULT");
+		battleSave->setTacticalType("STR_ALIEN_BASE_ASSAULT");
 
 		bGen.setAlienBase(alienBase);
 		bGen.setAlienRace(alienBase->getAlienRace());

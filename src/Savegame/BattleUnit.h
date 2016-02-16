@@ -533,7 +533,7 @@ private:
 		/// Prepares this unit for a new turn.
 		void prepUnit(bool full = true);
 		/// Calculates and resets this BattleUnit's time units and energy.
-		void initTu(
+		void prepTu(
 				bool preBattle = false,
 				bool hasPanicked = false,
 				bool reverted = false);
@@ -565,7 +565,7 @@ private:
 		/// Sets next AI State.
 		void setAIState(BattleAIState* const aiState = nullptr);
 
-		/// Sets the Tile this unit is standing on.
+		/// Sets the Tile that the BattleUnit occupies.
 		void setTile(
 				Tile* const tile,
 				const Tile* const tileBelow = nullptr);

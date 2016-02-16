@@ -582,17 +582,18 @@ void NewBattleState::btnOkClick(Action*)
 		&& _craft->getQtySoldiers() == 0
 		&& _craft->getQtyVehicles() == 0)
 	{
+		// TODO: Tell Player what's missing.
 		return;
 	}
 
-	SavedBattleGame* const battle (new SavedBattleGame(&_rules->getOperations(), _rules));
-	_game->getSavedGame()->setBattleSave(battle);
-	battle->setTacticalType(_missionTypes[_cbxMission->getSelected()]);
-	BattlescapeGenerator bGen = BattlescapeGenerator(_game);
-	Base* base = nullptr;
+	SavedBattleGame* const battleSave (new SavedBattleGame(&_rules->getOperations(), _rules));
+	_game->getSavedGame()->setBattleSave(battleSave);
+	battleSave->setTacticalType(_missionTypes[_cbxMission->getSelected()]);
 
+	BattlescapeGenerator bGen = BattlescapeGenerator(_game);
 	bGen.setTerrain(_rules->getTerrain(_terrainTypes[_cbxTerrain->getSelected()]));
 
+	Base* base;
 	if (_missionTypes[_cbxMission->getSelected()] == "STR_BASE_DEFENSE") // base defense
 	{
 		base = _craft->getBase();
@@ -602,6 +603,8 @@ void NewBattleState::btnOkClick(Action*)
 	else if (_missionTypes[_cbxMission->getSelected()] == "STR_ALIEN_BASE_ASSAULT") // alien base
 	//_missionTypes[_cbxMission->getSelected()].find("STR_ALIEN_BASE") != std::string::npos
 	{
+		base = nullptr;
+
 		AlienBase* const alienBase (new AlienBase());
 		alienBase->setId(1);
 		alienBase->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
@@ -613,25 +616,29 @@ void NewBattleState::btnOkClick(Action*)
 	else if (_craft != nullptr
 		&& _rules->getUfo(_missionTypes[_cbxMission->getSelected()]) != nullptr) // ufo assault
 	{
-		Ufo* const ufo = new Ufo(_rules->getUfo(_missionTypes[_cbxMission->getSelected()]));
+		base = nullptr;
+
+		Ufo* const ufo (new Ufo(_rules->getUfo(_missionTypes[_cbxMission->getSelected()])));
 		ufo->setId(1);
 		_craft->setDestination(ufo);
 		bGen.setUfo(ufo);
 
 		if (RNG::percent(50) == true) // either ground assault or ufo crash
-			battle->setTacticalType("STR_UFO_GROUND_ASSAULT");
+			battleSave->setTacticalType("STR_UFO_GROUND_ASSAULT");
 		else
-			battle->setTacticalType("STR_UFO_CRASH_RECOVERY");
+			battleSave->setTacticalType("STR_UFO_CRASH_RECOVERY");
 
 		_game->getSavedGame()->getUfos()->push_back(ufo);
 	}
 	else // mission site
 	{
-		const AlienDeployment* const deployment (_rules->getDeployment(battle->getTacticalType()));
+		base = nullptr;
+
+		const AlienDeployment* const deployment (_rules->getDeployment(battleSave->getTacticalType()));
 		const RuleAlienMission* const mission (_rules->getAlienMission(_rules->getAlienMissionList().front())); // doesn't matter
-		MissionSite* const missionSite = new MissionSite(
+		MissionSite* const missionSite (new MissionSite(
 													mission,
-													deployment);
+													deployment));
 		missionSite->setId(1);
 		missionSite->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
 
@@ -652,9 +659,7 @@ void NewBattleState::btnOkClick(Action*)
 	bGen.setShade(_slrDarkness->getValue());
 	bGen.setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
 	bGen.setAlienItemlevel(_slrAlienTech->getValue());
-
 	bGen.run();
-
 
 	_game->popState();
 	_game->popState();

@@ -40,7 +40,9 @@ class BattleItem
 {
 
 private:
-	bool _isLoad;
+	bool
+		_isLoad,
+		_xcomProperty;
 	int
 		_ammoQty,
 		_fuse,
@@ -73,8 +75,12 @@ private:
 
 		/// Loads the item from YAML.
 		void load(const YAML::Node& node);
+		/// Loads a deleted item from YAML.
+		void loadDeleted(const YAML::Node& node);
 		/// Saves the item to YAML.
 		YAML::Node save() const;
+		/// Saves a deleted item to YAML.
+		YAML::Node saveDeleted() const;
 
 		/// Gets the item's ruleset.
 		RuleItem* getRules() const;
@@ -159,8 +165,13 @@ private:
 		/// Gets medikit stimulant quantity
 		int getStimulantQuantity() const;
 
-		/// Sets the item's ruleset.
-		void convertToCorpse(RuleItem* const itRule);
+		/// Sets rules for the BattleItem.
+		void changeRule(RuleItem* const itRule);
+
+		/// Sets the BattleItem as belonging to xCom.
+		void setProperty();
+		/// Gets if this BattleItem belongs to xCom.
+		bool getProperty() const;
 };
 
 }

@@ -286,7 +286,7 @@ void CraftEquipmentState::init()
 	if (battleSave != nullptr)
 	{
 		_selUnitId = battleSave->getSelectedUnit()->getBattleOrder();
-		_game->getSavedGame()->setBattleSave(nullptr);
+		_game->getSavedGame()->setBattleSave();
 		_craft->setTactical(false);
 	}
 
@@ -726,9 +726,9 @@ void CraftEquipmentState::btnInventoryClick(Action*)
 {
 	SavedBattleGame* const battleSave (new SavedBattleGame());
 	_game->getSavedGame()->setBattleSave(battleSave);
-	BattlescapeGenerator bgen = BattlescapeGenerator(_game);
 
-	bgen.runInventory(_craft, nullptr, _selUnitId);
+	BattlescapeGenerator bGen = BattlescapeGenerator(_game);
+	bGen.runInventory(_craft, nullptr, _selUnitId);
 
 	_game->getScreen()->clear();
 	_game->pushState(new InventoryState());
@@ -739,8 +739,8 @@ void CraftEquipmentState::btnInventoryClick(Action*)
  */
 void CraftEquipmentState::calculateTacticalCost() // private.
 {
-	const int cost = _base->calcSoldierBonuses(_craft)
-				   + _craft->getRules()->getSoldiers() * 1000;
+	const int cost (_base->calcSoldierBonuses(_craft)
+				  + _craft->getRules()->getSoldiers() * 1000);
 	_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(cost)));
 }
 
@@ -749,10 +749,11 @@ void CraftEquipmentState::calculateTacticalCost() // private.
  */
 void CraftEquipmentState::displayExtraButtons() const // private.
 {
-	const bool hasItem = _craft->getCraftItems()->getTotalQuantity() != 0;
+	const bool hasItem (_craft->getCraftItems()->getTotalQuantity() != 0);
 	_btnClear->setVisible(hasItem);
-	_btnInventory->setVisible(hasItem && _craft->getQtySoldiers() != 0
-						   && _game->getSavedGame()->getMonthsPassed() != -1);
+	_btnInventory->setVisible(hasItem
+						  && _craft->getQtySoldiers() != 0
+						  && _game->getSavedGame()->getMonthsPassed() != -1);
 }
 
 /*

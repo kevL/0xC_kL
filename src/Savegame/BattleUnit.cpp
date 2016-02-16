@@ -1458,8 +1458,8 @@ int BattleUnit::takeDamage(
 	if (dType == DT_STUN && power < 1)
 		return 0;
 
-	UnitBodyPart bodyPart = BODYPART_TORSO;
-	const bool woundable = isWoundable();
+	UnitBodyPart bodyPart (BODYPART_TORSO);
+	const bool woundable (isWoundable());
 
 	if (power > 0 && ignoreArmor == false)
 	{
@@ -1471,8 +1471,8 @@ int BattleUnit::takeDamage(
 		{
 			int dirRel;
 			const int
-				abs_x = std::abs(voxelRel.x),
-				abs_y = std::abs(voxelRel.y);
+				abs_x (std::abs(voxelRel.x)),
+				abs_y (std::abs(voxelRel.y));
 
 			if (abs_y > abs_x * 2)
 				dirRel = 8 + 4 * static_cast<int>(voxelRel.y > 0);	// hit from South (y-pos) or North (y-neg)
@@ -1543,7 +1543,7 @@ int BattleUnit::takeDamage(
 			//Log(LOG_INFO) << ". bodyPart = " << (int)bodyPart;
 		}
 
-		const int armor = getArmor(side); // armor damage
+		const int armor (getArmor(side)); // armor damage
 		setArmor(
 				std::max(0,
 						armor - (power + 9) / 10), // round up.
@@ -1555,9 +1555,9 @@ int BattleUnit::takeDamage(
 
 	if (power > 0)
 	{
-		const bool selfAware = _geoscapeSoldier != nullptr
-							|| (_unitRule->isMechanical() == false
-								&& _isZombie == false);
+		const bool selfAware (_geoscapeSoldier != nullptr
+						  || (_unitRule->isMechanical() == false
+								&& _isZombie == false));
 		int wounds = 0;
 
 		if (dType == DT_STUN)
@@ -1604,11 +1604,11 @@ int BattleUnit::takeDamage(
 		{
 			moraleChange(-wounds * 3);
 
-			int moraleLoss = (110 - _stats.bravery) / 10;
+			int moraleLoss ((110 - _stats.bravery) / 10);
 			if (moraleLoss > 0)
 			{
-				int leadership = 100; // <- for civilians & pre-battle PS explosion.
-				if (_battleGame != nullptr) // ie. don't CTD on preBattle power-source explosion.
+				int leadership (100);		// <- for civilians & pre-battle PS explosion.
+				if (_battleGame != nullptr)	// ie. don't CTD on preBattle power-source explosion.
 				{
 					if (_originalFaction == FACTION_PLAYER)
 						leadership = _battleGame->getBattlescapeState()->getSavedBattleGame()->getMoraleModifier();
@@ -2463,7 +2463,7 @@ void BattleUnit::prepUnit(bool full)
 	}
 
 	if (_status != STATUS_UNCONSCIOUS)
-		initTu(false, hasPanicked, reverted);
+		prepTu(false, hasPanicked, reverted);
 }
 
 /**
@@ -2472,7 +2472,7 @@ void BattleUnit::prepUnit(bool full)
  * @param hasPanicked	- true if unit has just panicked (default false)
  * @param reverted		- true if unit has just reverted from MC (default false)
  */
-void BattleUnit::initTu(
+void BattleUnit::prepTu(
 		bool preBattle,
 		bool hasPanicked,
 		bool reverted)
@@ -2487,7 +2487,7 @@ void BattleUnit::initTu(
 	{
 		_tu = _stats.tu;
 
-		const int overBurden = getCarriedWeight() - getStrength();
+		const int overBurden (getCarriedWeight() - getStrength());
 		if (overBurden > 0)
 			_tu -= overBurden;
 
@@ -2509,7 +2509,7 @@ void BattleUnit::initTu(
 
 		if (preBattle == false)				// no energy recovery needed at battle start
 		{									// and none wanted for next stage battles:
-			int energy = _stats.stamina;	// advanced Energy recovery ->
+			int energy (_stats.stamina);	// advanced Energy recovery ->
 			if (_geoscapeSoldier != nullptr)
 			{
 				if (_kneeled == true)
@@ -2672,7 +2672,7 @@ BattleAIState* BattleUnit::getAIState() const
 }
 
 /**
- * Sets the tile that this BattleUnit is standing on.
+ * Sets the tile that this BattleUnit occupies.
  * @param tile		- pointer to a Tile
  * @param tileBelow	- pointer to the Tile below
  */
