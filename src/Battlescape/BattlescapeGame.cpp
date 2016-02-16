@@ -1469,9 +1469,9 @@ void BattlescapeGame::endTurn() // private.
 	int // if all units from either faction are killed - the mission is over.
 		liveHostile,
 		livePlayer;
-	const bool hostilesPacified = tallyUnits(
+	const bool hostilesPacified (tallyUnits(
 										liveHostile,
-										livePlayer);
+										livePlayer));
 
 	if (_battleSave->getObjectiveType() == MUST_DESTROY // brain death, end Final Mission.
 		&& _battleSave->allObjectivesDestroyed() == true)
@@ -1548,7 +1548,7 @@ void BattlescapeGame::endTurn() // private.
 
 /**
  * Checks for casualties and adjusts morale accordingly.
- * @note Also checks if Alien Base Control was destroyed in a BaseAssault tactical.
+// * @note Also checks if Alien Base Control was destroyed in a BaseAssault tactical.
  * @param weapon		- pointer to the weapon responsible (default nullptr)
  * @param attacker		- pointer to credit the kill (default nullptr)
  * @param hiddenExpl	- true for UFO Power Source explosions at the start of battlescape (default false)
@@ -1594,14 +1594,14 @@ void BattlescapeGame::checkForCasualties(
 
 
 	std::string
-		killStatRace		= "STR_UNKNOWN",
-		killStatRank		= "STR_UNKNOWN",
-		killStatWeapon		= "STR_WEAPON_UNKNOWN",
-		killStatWeaponAmmo	= "STR_WEAPON_UNKNOWN";
+		killStatRace		("STR_UNKNOWN"),
+		killStatRank		("STR_UNKNOWN"),
+		killStatWeapon		("STR_WEAPON_UNKNOWN"),
+		killStatWeaponAmmo	("STR_WEAPON_UNKNOWN");
 	int
-		killStatMission	= 0,
-		killStatTurn	= 0,
-		killStatPoints	= 0;
+		killStatMission	(0),
+		killStatTurn	(0),
+		killStatPoints	(0);
 
 
 	if (attacker != nullptr
@@ -1617,7 +1617,7 @@ void BattlescapeGame::checkForCasualties(
 		}
 
 		const RuleItem* itRule;
-		const BattleItem* item = attacker->getItem(ST_RIGHTHAND);
+		const BattleItem* item (attacker->getItem(ST_RIGHTHAND));
 		if (item != nullptr)
 		{
 			itRule = item->getRules();
@@ -1652,6 +1652,7 @@ void BattlescapeGame::checkForCasualties(
 		stunned,
 		converted,
 		bypass;
+	std::vector<BattleUnit*> convertedUnits;
 
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _battleSave->getUnits()->begin();
@@ -1670,8 +1671,8 @@ void BattlescapeGame::checkForCasualties(
 			{
 				if ((*i)->getSpawnUnit() == "STR_ZOMBIE") // human->zombie (nobody cares about zombie->chryssalid)
 				{
-					converted = true;
-					convertUnit(*i);
+					converted = true; // do morale changes but not collapsing animations.
+					convertedUnits.push_back(*i);
 				}
 				else if (stunned == false)
 					bypass = true;
@@ -1679,7 +1680,7 @@ void BattlescapeGame::checkForCasualties(
 
 			if (bypass == false)
 			{
-				BattleUnit* const defender = *i; // kL
+				BattleUnit* const defender (*i); // kL
 
 				// Awards: decide victim race and rank
 				// TODO: if a unit was stunned but gets up and is re-stunned or killed,
@@ -1727,7 +1728,7 @@ void BattlescapeGame::checkForCasualties(
 					|| converted == true)
 				{
 					if (execution == true)
-						defender->setUnitStatus(STATUS_DEAD);
+						defender->instaKill();
 					else if (dead == true)
 						defender->setUnitStatus(STATUS_DISABLED);
 
@@ -1776,7 +1777,7 @@ void BattlescapeGame::checkForCasualties(
 								|| (attacker->getOriginalFaction() == FACTION_PLAYER
 									&& defender->getOriginalFaction() == FACTION_HOSTILE))
 							{
-								const int courage = 10 * bonus / 100;
+								const int courage (10 * bonus / 100);
 								attacker->moraleChange(courage); // double what rest of squad gets below
 							}
 							// attacker (mc'd or not) will get a penalty with friendly fire (mc'd or not)
@@ -1784,7 +1785,7 @@ void BattlescapeGame::checkForCasualties(
 							else if (attacker->getOriginalFaction() == FACTION_PLAYER
 								&& defender->getOriginalFaction() == FACTION_PLAYER)
 							{
-								int chagrin = 5000 / bonus; // huge chagrin!
+								int chagrin (5000 / bonus); // huge chagrin!
 								if (defender->getUnitRules() != nullptr
 									&& defender->getUnitRules()->isMechanical() == true)
 								{
@@ -1796,7 +1797,7 @@ void BattlescapeGame::checkForCasualties(
 							{
 								if (attacker->getOriginalFaction() == FACTION_PLAYER)
 								{
-									const int dishonor = 2000 / bonus;
+									const int dishonor (2000 / bonus);
 									attacker->moraleChange(-dishonor);
 								}
 								else if (attacker->getOriginalFaction() == FACTION_HOSTILE)
@@ -1809,7 +1810,7 @@ void BattlescapeGame::checkForCasualties(
 //					if (defender->getFaction() != FACTION_NEUTRAL) // civie deaths now affect other Factions.
 //					{
 					// penalty for the death of a unit; civilians & MC'd aLien units return 100.
-					const int loss = _battleSave->getMoraleModifier(defender);
+					const int loss (_battleSave->getMoraleModifier(defender));
 					// These two are factions (aTeam & bTeam leaderships mitigate losses).
 					int
 						aTeam, // winners
@@ -1831,7 +1832,6 @@ void BattlescapeGame::checkForCasualties(
 							j != _battleSave->getUnits()->end();
 							++j)
 					{
-//						if ((*j)->isOut(true, true) == false
 						if ((*j)->isOut_t() == false
 							&& (*j)->isFearable() == true) // not mechanical. Or a ZOMBIE!!
 						{
@@ -1844,7 +1844,7 @@ void BattlescapeGame::checkForCasualties(
 							{
 								// losing team(s) all get a morale loss
 								// based on their individual Bravery & rank of unit that was killed
-								int moraleLoss = (110 - (*j)->getBattleStats()->bravery) / 10;
+								int moraleLoss ((110 - (*j)->getBattleStats()->bravery) / 10);
 								if (moraleLoss > 0) // pure safety, ain't gonna happen really.
 								{
 									moraleLoss = moraleLoss * loss * 2 / bTeam;
@@ -1946,6 +1946,14 @@ void BattlescapeGame::checkForCasualties(
 		}
 	}
 
+	for (std::vector<BattleUnit*>::const_iterator
+			i = convertedUnits.begin();
+			i != convertedUnits.end();
+			++i)
+	{
+		convertUnit(*i);
+	}
+
 
 	_parentState->hotWoundsRefresh();
 
@@ -1953,7 +1961,7 @@ void BattlescapeGame::checkForCasualties(
 	{
 		if (_battleSave->getSide() == FACTION_PLAYER)
 		{
-			const BattleUnit* const unit = _battleSave->getSelectedUnit();
+			const BattleUnit* const unit (_battleSave->getSelectedUnit());
 			_parentState->showPsiButton(unit != nullptr
 									 && unit->getOriginalFaction() == FACTION_HOSTILE
 									 && unit->getBattleStats()->psiSkill != 0

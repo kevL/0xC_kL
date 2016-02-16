@@ -1217,7 +1217,7 @@ void BattleUnit::keepWalking(
 }
 
 /**
- * Calculates the half- and full-phases of walking.
+ * Calculates the half- and full-phases for unit-movement.
  * @param halfPhase - reference the halfPhase var
  * @param fullPhase - reference the fullPhase var
  */
@@ -1230,9 +1230,9 @@ void BattleUnit::walkPhaseCutoffs(
 		halfPhase = 4;
 		fullPhase = 8;
 	}
-	else // diagonal walking takes double the steps
+	else
 	{
-		fullPhase = 8 + 8 * (_dir % 2);
+		fullPhase = 8 + 8 * (_dir % 2); // diagonal walking takes double the steps
 
 		if (_armor->getSize() > 1)
 		{
@@ -1251,17 +1251,17 @@ void BattleUnit::walkPhaseCutoffs(
 }
 
 /**
- * Sets a unit's status.
- * @param status - UnitStatus enum (BattleUnit.h)
+ * Sets this BattleUnit's status.
+ * @param status - UnitStatus (BattleUnit.h)
  */
 void BattleUnit::setUnitStatus(const UnitStatus status)
 {
-	_status = status;
-}
-
+	_status = status;	// TODO: Make a call to instaKill() or putDown() here.
+}						// - adjust according to dead or unconscious and remove
+						// all the extraneous stuff that's littered throughout the rest of the code.
 /**
  * Gets this BattleUnit's status.
- * @return, UnitStatus enum (BattleUnit.h)
+ * @return, UnitStatus (BattleUnit.h)
  */
 UnitStatus BattleUnit::getUnitStatus() const
 {
@@ -1269,7 +1269,7 @@ UnitStatus BattleUnit::getUnitStatus() const
 }
 
 /**
- * Gets the soldier's gender.
+ * Gets this BattleUnit's gender.
  * @return, SoldierGender enum
  */
 SoldierGender BattleUnit::getGender() const
@@ -1758,7 +1758,7 @@ void BattleUnit::knockOut()
 {
 	if (_spawnUnit.empty() == false)
 	{
-		BattleUnit* const conUnit = _battleGame->convertUnit(this);
+		BattleUnit* const conUnit (_battleGame->convertUnit(this));
 		conUnit->knockOut();
 	}
 	else if (_unitRule != nullptr
@@ -1767,15 +1767,15 @@ void BattleUnit::knockOut()
 	{
 		_health = 0;
 	}
-	else
+	else if (_stunLevel < _health)
 		_stunLevel = _health;
 }
 
 /**
- * Initializes the falling sequence.
- * @note Occurs after death or stunned.
+ * Initializes the collapsing sequence.
+ * @note This is only for dead or stunned units.
  */
-void BattleUnit::startFalling()
+void BattleUnit::startCollapsing()
 {
 	_status = STATUS_COLLAPSING;
 	_fallPhase = 0;
@@ -1783,9 +1783,9 @@ void BattleUnit::startFalling()
 }
 
 /**
- * Advances the phase of falling sequence.
+ * Advances the phase of the collapsing sequence.
  */
-void BattleUnit::keepFalling()
+void BattleUnit::keepCollapsing()
 {
 	if (_diedByFire == true)
 		_fallPhase = _armor->getDeathFrames();
@@ -1806,10 +1806,10 @@ void BattleUnit::keepFalling()
 }
 
 /**
- * Returns the phase of the falling sequence.
+ * Returns the phase of the collapsing sequence.
  * @return, phase
  */
-int BattleUnit::getFallingPhase() const
+int BattleUnit::getCollapsingPhase() const
 {
 	return _fallPhase;
 }
@@ -1880,36 +1880,37 @@ bool BattleUnit::isOut_t(OutCheck test) const
 	{
 		default:
 		case OUT_ALL:
-			if (   _status == STATUS_DEAD
-				|| _status == STATUS_UNCONSCIOUS
-				|| _status == STATUS_LIMBO
-				|| _health == 0
-				|| _health <= _stunLevel)
+			switch (_status)
 			{
-				return true;
+				case STATUS_DEAD:
+				case STATUS_UNCONSCIOUS:
+				case STATUS_LIMBO:
+					return true;
 			}
-			return false;
+
+			if (_health == 0 || _health <= _stunLevel)
+				return true;
+			break;
 
 		case OUT_STAT:
-			if (   _status == STATUS_DEAD
-				|| _status == STATUS_UNCONSCIOUS
-				|| _status == STATUS_LIMBO)
+			switch (_status)
 			{
-				return true;
+				case STATUS_DEAD:
+				case STATUS_UNCONSCIOUS:
+				case STATUS_LIMBO:
+					return true;
 			}
-			return false;
+			break;
 
 		case OUT_HLTH:
 			if (_health == 0)
 				return true;
-
-			return false;
+			break;
 
 		case OUT_STUN:
 			if (_health != 0 && _health <= _stunLevel)
 				return true;
-
-			return false;
+			break;
 
 		case OUT_HLTH_STUN:
 			if (_health == 0 || _health <= _stunLevel)
@@ -3599,20 +3600,20 @@ void BattleUnit::morphine()
 	else
 	{
 		_stunLevel += 7 + RNG::generate(0,6);
-		const float healthPct = static_cast<float>(_health) / static_cast<float>(getBattleStats()->health);
+		const float healthPct (static_cast<float>(_health) / static_cast<float>(getBattleStats()->health));
 		_morale = std::min(100,
 						_morale + 50 - static_cast<int>(30.f * healthPct));
 	}
 
-	if (isOut_t(OUT_HLTH) == true			// just died. Use death animations.
-		|| (isOut_t(OUT_STUN) == true
+	if (isOut_t(OUT_HLTH) == true			// just died. Use death animations
+		|| (isOut_t(OUT_STUN) == true		// unless already unconscious.
 			&& isOut_t(OUT_STAT) == false))
 	{
 		_battleGame->checkForCasualties(
 									_battleGame->getTacticalAction()->weapon,
 									_battleGame->getTacticalAction()->actor,
 									false,false,
-									isOut_t(OUT_STAT) == true); // 'execution' (no death animations) only if unit is unconscious already.
+									isOut_t(OUT_STAT) == true); // 'execution' (no death animations) unless unit is unconscious already.
 	}
 }
 
@@ -3825,10 +3826,10 @@ int BattleUnit::getMoveSound() const
 bool BattleUnit::isWoundable() const
 {
 	return _status != STATUS_DEAD
-		&& (_geoscapeSoldier != nullptr
-			|| (Options::battleAlienBleeding == true
-				&& _unitRule->isMechanical() == false
-				&& _isZombie == false));
+			&& (_geoscapeSoldier != nullptr
+				|| (Options::battleAlienBleeding == true
+					&& _unitRule->isMechanical() == false
+					&& _isZombie == false));
 }
 
 /**
@@ -3838,10 +3839,10 @@ bool BattleUnit::isWoundable() const
 bool BattleUnit::isFearable() const
 {
 	return _status != STATUS_DEAD
-		&& _status != STATUS_UNCONSCIOUS
-		&& (_geoscapeSoldier != nullptr
-			|| (_unitRule->isMechanical() == false
-				&& _isZombie == false));
+			&& _status != STATUS_UNCONSCIOUS
+			&& (_geoscapeSoldier != nullptr
+				|| (_unitRule->isMechanical() == false
+					&& _isZombie == false));
 }
 
 /**
@@ -3851,9 +3852,22 @@ bool BattleUnit::isFearable() const
 bool BattleUnit::isHealable() const
 {
 	return _status != STATUS_DEAD
-		&& (_geoscapeSoldier != nullptr
-			|| (_unitRule->isMechanical() == false
-				&& _isZombie == false));
+			&& (_geoscapeSoldier != nullptr
+				|| (_unitRule->isMechanical() == false
+					&& _isZombie == false));
+}
+
+/**
+ * Gets whether this BattleUnit can be revived.
+ * @return, true if unit can be revived
+ */
+bool BattleUnit::isRevivable() const
+{
+	return _status == STATUS_UNCONSCIOUS
+			&& (_geoscapeSoldier != nullptr
+				|| (_unitRule->isMechanical() == false
+					&& _armor->getSize() == 1
+					&& _isZombie == false));
 }
 
 /**
@@ -3938,6 +3952,16 @@ void BattleUnit::setFaction(UnitFaction faction)
 }
 
 /**
+ * Gets if this unit is in the limbo phase between getting killed or stunned and
+ * the end of its collapse sequence.
+ * @return, true if about to die
+ */
+bool BattleUnit::getAboutToFall() const
+{
+	return _aboutToFall;
+}
+
+/**
  * Sets health to 0 and status dead.
  * @note Used when getting zombified, etc.
  */
@@ -3947,16 +3971,6 @@ void BattleUnit::instaKill()
 	_status = STATUS_DEAD;
 
 	putDown();
-}
-
-/**
- * Gets if this unit is in the limbo phase between getting killed or stunned and
- * the end of its collapse sequence.
- * @return, true if about to die
- */
-bool BattleUnit::getAboutToFall() const
-{
-	return _aboutToFall;
 }
 
 /**
@@ -3971,7 +3985,9 @@ void BattleUnit::putDown()
 			case STATUS_DEAD:
 				setAIState();
 				break;
-			default: // unconscious
+
+			default:
+			case STATUS_UNCONSCIOUS:
 				_unitAIState->resetAI();
 		}
 	}
@@ -4021,8 +4037,9 @@ void BattleUnit::putDown()
 
 	_faction = _originalFaction;
 	_kneeled = false;	// don't get hunkerdown bonus against HE detonations
-//	_visible = false;	// don't do this: it mucks up convertUnit() respawning;
-						// ie, '_visible' flag is not transferred properly.
+
+	if (_spawnUnit.empty() == true) // else convertUnit() will take care of it.
+		_visible = false;
 
 	_turnsExposed = -1;	// don't risk aggro per the AI
 /*	// taken care of in SavedBattleGame::endFactionTurn()

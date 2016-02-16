@@ -370,7 +370,7 @@ private:
 		void keepWalking(
 				const Tile* const tileBelow,
 				bool recache);
-		/// Calculates the mid- and end-phases of walking.
+		/// Calculates the mid- and end-phases for unit-movement.
 		void walkPhaseCutoffs(
 				int& halfPhase,
 				int& fullPhase) const;
@@ -449,12 +449,12 @@ private:
 		/// Knocks this unit out instantly.
 		void knockOut();
 
-		/// Starts the falling sequence. This is only for collapsing dead or unconscious units.
-		void startFalling();
-		/// Advances the falling sequence.
-		void keepFalling();
-		/// Gets the falling sequence phase.
-		int getFallingPhase() const;
+		/// Starts the collapsing sequence.
+		void startCollapsing();
+		/// Advances the collapsing sequence.
+		void keepCollapsing();
+		/// Gets the collapsing sequence phase.
+		int getCollapsingPhase() const;
 
 		/// Starts the aiming sequence. This is only for celatids.
 		void startAiming();
@@ -709,6 +709,8 @@ private:
 		bool isFearable() const;
 		/// Gets whether this unit can be accessed with the Medikit.
 		bool isHealable() const;
+		/// Gets whether the BattleUnit can be revived.
+		bool isRevivable() const;
 
 		/// Gets this unit's intelligence.
 		int getIntelligence() const;
@@ -730,10 +732,11 @@ private:
 		/// Converts this unit to a faction.
 		void setFaction(UnitFaction faction);
 
-		/// Sets this unit's health to 0 and status to dead.
-		void instaKill();
 		/// Gets if this unit is about to die.
 		bool getAboutToFall() const;
+
+		/// Sets this unit's health to 0 and status to dead.
+		void instaKill();
 		/// Sets this unit's parameters as down (collapsed/ unconscious/ dead).
 		void putDown();
 

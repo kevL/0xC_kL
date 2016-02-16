@@ -308,7 +308,7 @@ void UnitSprite::drawRoutine0()
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		torso = _unitSet->getFrame(die + _unit->getFallingPhase());
+		torso = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
 		drawRecolored(torso);
 		return;
 	}
@@ -678,7 +678,7 @@ void UnitSprite::drawRoutine1()
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		torso = _unitSet->getFrame(_unit->getFallingPhase() + die);
+		torso = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
 		drawRecolored(torso);
 		return;
 	}
@@ -991,7 +991,7 @@ void UnitSprite::drawRoutine4()
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		sprite = _unitSet->getFrame(_unit->getFallingPhase() + die);
+		sprite = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
 		drawRecolored(sprite);
 		return;
 	}
@@ -1172,7 +1172,7 @@ void UnitSprite::drawRoutine6()
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		torso = _unitSet->getFrame(_unit->getFallingPhase() + die);
+		torso = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
 		drawRecolored(torso);
 		return;
 	}
@@ -1406,7 +1406,7 @@ void UnitSprite::drawRoutine7()
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		torso = _unitSet->getFrame(_unit->getFallingPhase() + die);
+		torso = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
 		drawRecolored(torso);
 		return;
 	}
@@ -1489,7 +1489,7 @@ void UnitSprite::drawRoutine8()
 	switch (_unit->getUnitStatus())
 	{
 		case STATUS_COLLAPSING:
-			sprite = _unitSet->getFrame(_unit->getFallingPhase() + die);
+			sprite = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
 			break;
 		case STATUS_AIMING:
 			sprite = _unitSet->getFrame(aim);
@@ -1521,8 +1521,9 @@ void UnitSprite::drawRoutine9()
 	switch (_unit->getUnitStatus())
 	{
 		case STATUS_COLLAPSING:
-			sprite = _unitSet->getFrame(die + _unit->getFallingPhase());
+			sprite = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
 			break;
+
 		case STATUS_AIMING:
 		{
 			const int framesTotal = _unit->getArmor()->getShootFrames();
@@ -1545,7 +1546,8 @@ void UnitSprite::drawRoutine9()
 			// that; super-slow animation speed doesn't even let keepAiming()
 			// get called. ... not sure how the animation is ended in that case
 			// but something does it.
-		} break;
+			break;
+		}
 
 		default:
 			sprite = _unitSet->getFrame(body + _aniFrame);

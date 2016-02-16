@@ -2511,9 +2511,9 @@ void TileEngine::explode(
 										bu->setTakenExpl();
 
 										const double
-											power0 = static_cast<double>(_powerE),
-											power1 = power0 * 0.5,
-											power2 = power0 * 1.5;
+											power0 (static_cast<double>(_powerE)),
+											power1 (power0 * 0.5),
+											power2 (power0 * 1.5);
 
 										powerUnit = static_cast<int>(RNG::generate(power1, power2)) // bell curve
 												  + static_cast<int>(RNG::generate(power1, power2));
@@ -2536,7 +2536,7 @@ void TileEngine::explode(
 											if (bu->getGeoscapeSoldier() != nullptr // send Death notice.
 												&& Options::battleNotifyDeath == true)
 											{
-												Game* const game = _battleSave->getBattleState()->getGame();
+												Game* const game (_battleSave->getBattleState()->getGame());
 												game->pushState(new InfoboxOKState(game->getLanguage()->getString( // "has exploded ..."
 																											"STR_HAS_BEEN_KILLED",
 																											bu->getGender())
@@ -2718,7 +2718,6 @@ void TileEngine::explode(
 																_powerE * 3 / 4);
 										bu->takeDamage(Position(0,0,0), powerUnit, DT_IN, true);
 
-//										if (bu->getHealth() == 0)
 										if (bu->isOut_t(OUT_HLTH) == true)
 										{
 											bu->instaKill();

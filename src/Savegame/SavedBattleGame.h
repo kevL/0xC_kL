@@ -369,7 +369,7 @@ private:
 		/// Revives unconscious units.
 		void reviveUnit(
 				BattleUnit* const unit,
-				bool atTurnOver = false);
+				bool turnOver = false);
 		/// Removes the body item that corresponds to the unit.
 		void removeCorpse(const BattleUnit* const unit);
 

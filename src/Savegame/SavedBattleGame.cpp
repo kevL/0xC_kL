@@ -527,8 +527,8 @@ void SavedBattleGame::load(
 	}
 
 	for (YAML::const_iterator
-			i = node["items"].begin();
-			i != node["items"].end();
+			i = node["toDelete"].begin();
+			i != node["toDelete"].end();
 			++i)
 	{
 		st = (*i)["type"].as<std::string>();
@@ -553,9 +553,9 @@ void SavedBattleGame::load(
 	_turnLimit = node["turnLimit"].as<int>(_turnLimit);
 	_chronoResult = static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
 
-	_cheatTurn				= node["cheatTurn"]				.as<int>(_cheatTurn);
-	_alienRace				= node["alienRace"]				.as<std::string>(_alienRace);
-//	_kneelReserved			= node["kneelReserved"]			.as<bool>(_kneelReserved);
+	_cheatTurn = node["cheatTurn"].as<int>(_cheatTurn);
+	_alienRace = node["alienRace"].as<std::string>(_alienRace);
+//	_kneelReserved = node["kneelReserved"].as<bool>(_kneelReserved);
 
 //	_batReserved = static_cast<BattleActionType>(node["batReserved"].as<int>(_batReserved));
 	_operationTitle = Language::utf8ToWstr(node["operationTitle"].as<std::string>());
@@ -563,7 +563,6 @@ void SavedBattleGame::load(
 
 	if (node["controlDestroyed"])
 		_controlDestroyed = node["controlDestroyed"].as<bool>();
-
 
 	_music = node["music"].as<std::string>(_music);
 
@@ -919,8 +918,7 @@ TacticalType SavedBattleGame::getTacType() const
  */
 void SavedBattleGame::setTacticalType(const std::string& type)
 {
-	_tacticalType = type;
-	setTacType(_tacticalType);
+	setTacType(_tacticalType = type);
 }
 
 /**
@@ -2116,27 +2114,18 @@ void SavedBattleGame::reviveUnits(const UnitFaction faction)
  * @note Revived units need a tile to stand on. If the unit's current position
  * is occupied then all directions around the tile are searched for a free tile
  * to place the unit on. If no free tile is found the unit stays unconscious.
- * @param atTurnOver - true if called from SavedBattleGame::endFactionTurn (default false)
+ * @param turnOver - true if called from SavedBattleGame::endFactionTurn (default false)
  */
 void SavedBattleGame::reviveUnit(
 		BattleUnit* const unit,
-		bool atTurnOver)
+		bool turnOver)
 {
-	if (unit->getUnitStatus() == STATUS_UNCONSCIOUS
-		&& unit->getStun() < unit->getHealth() + static_cast<int>(atTurnOver) // do health=stun if unit is about to get healed in Prep Turn.
-		&& (unit->getGeoscapeSoldier() != nullptr
-			|| (unit->getUnitRules()->isMechanical() == false
-				&& unit->getArmor()->getSize() == 1)))
+	if (unit->isRevivable() == true
+		&& unit->getStun() < unit->getHealth() + static_cast<int>(turnOver)) // do health=stun if unit is about to get healed in Prep Turn.
 	{
-		if (unit->getFaction() == FACTION_HOSTILE)	// faction will be Original here
-			unit->setExposed();						// due to death/stun sequence.
-		else
-			unit->setExposed(-1);
+		Position pos (unit->getPosition());
 
-
-		Position posCorpse (unit->getPosition());
-
-		if (posCorpse == Position(-1,-1,-1)) // if carried
+		if (pos == Position(-1,-1,-1)) // if carried
 		{
 			for (std::vector<BattleItem*>::const_iterator
 					i = _items.begin();
@@ -2147,24 +2136,35 @@ void SavedBattleGame::reviveUnit(
 					&& (*i)->getUnit() == unit
 					&& (*i)->getOwner() != nullptr)
 				{
-					posCorpse = (*i)->getOwner()->getPosition();
+					pos = (*i)->getOwner()->getPosition();
 					break;
 				}
 			}
 		}
 
-		const Tile* const tileCorpse = getTile(posCorpse);
-		bool largeUnit = tileCorpse != nullptr
-					  && tileCorpse->getTileUnit() != nullptr
-					  && tileCorpse->getTileUnit() != unit
-					  && tileCorpse->getTileUnit()->getArmor()->getSize() == 2;
+		const Tile* const tile (getTile(pos));
+		bool largeUnit (tile != nullptr
+					 && tile->getTileUnit() != nullptr
+					 && tile->getTileUnit() != unit
+					 && tile->getTileUnit()->getArmor()->getSize() == 2);
 
-		if (placeUnitNearPosition(unit, posCorpse, largeUnit) == true)
+		if (placeUnitNearPosition(unit, pos, largeUnit) == true)
 		{
 			unit->setUnitStatus(STATUS_STANDING);
 
-			if (unit->getGeoscapeSoldier() != nullptr)
-				unit->kneel(true);
+			switch (unit->getFaction()) // faction will be Original here due to death/stun sequence.
+			{
+				case FACTION_HOSTILE:
+					unit->setExposed();
+					break;
+
+				case FACTION_PLAYER:
+					if (unit->getGeoscapeSoldier() != nullptr)
+						unit->kneel(true);
+					unit->setUnitVisible(); // no break;
+				case FACTION_NEUTRAL:
+					unit->setExposed(-1);
+			}
 
 			unit->clearCache();
 			unit->setUnitDirection(RNG::generate(0,7));
