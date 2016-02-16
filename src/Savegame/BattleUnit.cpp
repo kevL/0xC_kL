@@ -2541,7 +2541,7 @@ void BattleUnit::prepTu(
  */
 void BattleUnit::moraleChange(int change)
 {
-	if (isFearable() == true)
+	if (isMoralable() == true)
 	{
 		_morale += change;
 
@@ -3836,7 +3836,7 @@ bool BattleUnit::isWoundable() const
  * Gets whether this unit can be affected by morale loss.
  * @return, true if unit can be affected by morale changes
  */
-bool BattleUnit::isFearable() const
+bool BattleUnit::isMoralable() const
 {
 	return _status != STATUS_DEAD
 			&& _status != STATUS_UNCONSCIOUS

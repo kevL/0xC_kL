@@ -467,20 +467,13 @@ DebriefingState::~DebriefingState()
 			i = _stats.begin();
 			i != _stats.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::map<int, SpecialType*>::const_iterator
 			i = _specialTypes.begin();
 			i != _specialTypes.end();
 			++i)
-	{
 		delete i->second;
-	}
-	_specialTypes.clear();
-
-	_rounds.clear();
 }
 
 /**
@@ -500,16 +493,6 @@ void DebriefingState::btnOkClick(Action*)
 {
 	_game->getResourcePack()->fadeMusic(_game, 863);
 
-	std::vector<Soldier*> participants;
-	for (std::vector<BattleUnit*>::const_iterator
-			i = _gameSave->getBattleSave()->getUnits()->begin();
-			i != _gameSave->getBattleSave()->getUnits()->end();
-			++i)
-	{
-		if ((*i)->getGeoscapeSoldier() != nullptr)
-			participants.push_back((*i)->getGeoscapeSoldier());
-	}
-
 	_gameSave->setBattleSave();
 	_game->popState();
 
@@ -521,6 +504,7 @@ void DebriefingState::btnOkClick(Action*)
 		{
 			bool playAwardMusic (false);
 
+			// NOTE: These pop to player in reverse order.
 			if (_soldiersLost.empty() == false)
 			{
 				playAwardMusic = true;
@@ -531,6 +515,16 @@ void DebriefingState::btnOkClick(Action*)
 			{
 				playAwardMusic = true;
 				_game->pushState(new CeremonyState(_soldiersMedalled));
+			}
+
+			std::vector<Soldier*> participants;
+			for (std::vector<BattleUnit*>::const_iterator
+					i = _gameSave->getBattleSave()->getUnits()->begin();
+					i != _gameSave->getBattleSave()->getUnits()->end();
+					++i)
+			{
+				if ((*i)->getGeoscapeSoldier() != nullptr)
+					participants.push_back((*i)->getGeoscapeSoldier());
 			}
 
 			if (_gameSave->handlePromotions(participants) == true)
@@ -743,8 +737,6 @@ void DebriefingState::prepareDebriefing() // private.
 			_missionStatistics->alienRace = "STR_UNKNOWN";
 	}
 
-	const bool aborted (battleSave->isAborted());
-
 	int
 		soldierExit (0),
 		soldierLive (0),
@@ -798,6 +790,8 @@ void DebriefingState::prepareDebriefing() // private.
 			}
 		}
 	}
+
+	const bool aborted (battleSave->isAborted());
 
 	if (soldierLive == 1)
 	{

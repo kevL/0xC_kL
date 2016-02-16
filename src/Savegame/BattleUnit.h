@@ -706,7 +706,7 @@ private:
 		/// Gets whether this unit can be affected by fatal wounds.
 		bool isWoundable() const;
 		/// Gets whether this unit can be affected by fear.
-		bool isFearable() const;
+		bool isMoralable() const;
 		/// Gets whether this unit can be accessed with the Medikit.
 		bool isHealable() const;
 		/// Gets whether the BattleUnit can be revived.

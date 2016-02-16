@@ -2111,7 +2111,7 @@ bool AlienBAIState::psiAction() // private.
 					i != _battleSave->getUnits()->end();
 					++i)
 			{
-				if ((*i)->getGeoscapeSoldier() != nullptr	// what about doggies .... Should use isFearable() for doggies ....
+				if ((*i)->getGeoscapeSoldier() != nullptr	// what about doggies .... Should use isMoralable() for doggies ....
 					&& validTarget(*i, true) == true		// will check for Mc, Exposed, etc.
 					&& (itRule->isLosRequired() == false
 						|| std::find(

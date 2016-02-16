@@ -2114,7 +2114,8 @@ void SavedBattleGame::reviveUnits(const UnitFaction faction)
  * @note Revived units need a tile to stand on. If the unit's current position
  * is occupied then all directions around the tile are searched for a free tile
  * to place the unit on. If no free tile is found the unit stays unconscious.
- * @param turnOver - true if called from SavedBattleGame::endFactionTurn (default false)
+ * @param unit		- pointer to a BattleUnit to try to revive
+ * @param turnOver	- true if called from SavedBattleGame::endFactionTurn (default false)
  */
 void SavedBattleGame::reviveUnit(
 		BattleUnit* const unit,
@@ -2174,7 +2175,7 @@ void SavedBattleGame::reviveUnit(
 
 			_te->calculateUnitLighting();
 			_te->calculateFOV(unit->getPosition(), true);
-			removeCorpse(unit);
+			deleteBody(unit);
 
 			_battleState->hotWoundsRefresh();
 		}
@@ -2182,10 +2183,10 @@ void SavedBattleGame::reviveUnit(
 }
 
 /**
- * Removes the body item (corpse) that corresponds to a unit.
+ * Sends the body-item that corresponds to a BattleUnit to the deleted queue.
  * @param unit - pointer to a BattleUnit
  */
-void SavedBattleGame::removeCorpse(const BattleUnit* const unit)
+void SavedBattleGame::deleteBody(const BattleUnit* const unit)
 {
 	int quadrants (unit->getArmor()->getSize() * unit->getArmor()->getSize());
 

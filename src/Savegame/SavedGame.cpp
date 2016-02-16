@@ -1828,8 +1828,9 @@ Soldier* SavedGame::getSoldier(int id) const
 
 /**
  * Handles the higher promotions - not the rookie-squaddie ones.
- * @param participants - a list of soldiers that were actually present at the battle
- * @return, true if any promotions happened - so show the promotions screen
+ * @param participants - reference to a list of pointers to Soldiers that were
+ *						 actually present at the battle
+ * @return, true if a Ceremony is to happen
  */
 bool SavedGame::handlePromotions(std::vector<Soldier*>& participants)
 {
@@ -1864,10 +1865,10 @@ bool SavedGame::handlePromotions(std::vector<Soldier*>& participants)
 	}
 
 
-	int pro = 0;
+	int pro (0);
 
-	Soldier* fragBait = nullptr;
-	const int totalSoldiers = static_cast<int>(soldiers.size());
+	Soldier* fragBait (nullptr);
+	const int totalSoldiers (static_cast<int>(soldiers.size()));
 
 	if (data.totalCommanders == 0 // There can be only one.
 		&& totalSoldiers > 29)
@@ -1933,15 +1934,15 @@ void SavedGame::processSoldier(
 	{
 		case RANK_COMMANDER:
 			++promoData.totalCommanders;
-		break;
+			break;
 
 		case RANK_COLONEL:
 			++promoData.totalColonels;
-		break;
+			break;
 
 		case RANK_CAPTAIN:
 			++promoData.totalCaptains;
-		break;
+			break;
 
 		case RANK_SERGEANT:
 			++promoData.totalSergeants;
@@ -1960,9 +1961,9 @@ Soldier* SavedGame::inspectSoldiers(
 		const std::vector<Soldier*>& participants,
 		SoldierRank soldierRank)
 {
-	Soldier* fragBait = nullptr;
+	Soldier* fragBait (nullptr);
 	int
-		score = 0,
+		score (0),
 		scoreTest;
 
 	for (std::vector<Soldier*>::const_iterator
@@ -1985,7 +1986,6 @@ Soldier* SavedGame::inspectSoldiers(
 			}
 		}
 	}
-
 	return fragBait;
 }
 
@@ -1996,18 +1996,17 @@ Soldier* SavedGame::inspectSoldiers(
  */
 int SavedGame::getSoldierScore(Soldier* soldier)
 {
-	const UnitStats* const stats = soldier->getCurrentStats();
-
-	int score = stats->health * 2
-			  + stats->stamina * 2
-			  + stats->reactions * 4
-			  + stats->bravery * 4
-			  + (stats->tu + stats->firing * 2) * 3
-			  + stats->melee
-			  + stats->throwing
-			  + stats->strength
-			  + stats->psiStrength * 4	// kL_add. Include these even if not yet revealed.
-			  + stats->psiSkill * 2;	// kL_add.
+	const UnitStats* const stats (soldier->getCurrentStats());
+	int score (stats->health * 2
+			 + stats->stamina * 2
+			 + stats->reactions * 4
+			 + stats->bravery * 4
+			 + (stats->tu + stats->firing * 2) * 3
+			 + stats->melee
+			 + stats->throwing
+			 + stats->strength
+			 + stats->psiStrength * 4	// kL_add. Include these even if not yet revealed.
+			 + stats->psiSkill * 2);	// kL_add.
 
 //	if (stats->psiSkill > 0)
 //		score += stats->psiStrength
@@ -2087,12 +2086,12 @@ AlienMission* SavedGame::findAlienMission(
 		const std::string& region,
 		MissionObjective objective) const
 {
-	std::vector<AlienMission*>::const_iterator mission = std::find_if(
-																_activeMissions.begin(),
-																_activeMissions.end(),
-																matchRegionAndType(region, objective));
-	if (mission != _activeMissions.end())
-		return *mission;
+	std::vector<AlienMission*>::const_iterator i (std::find_if(
+															_activeMissions.begin(),
+															_activeMissions.end(),
+															matchRegionAndType(region, objective)));
+	if (i != _activeMissions.end())
+		return *i;
 
 	return nullptr;
 }
@@ -2164,10 +2163,10 @@ Region* SavedGame::locateRegion(
 		double lon,
 		double lat) const
 {
-	const std::vector<Region*>::const_iterator i = std::find_if(
+	const std::vector<Region*>::const_iterator i (std::find_if(
 															_regions.begin(),
 															_regions.end(),
-															ContainsPoint(lon,lat));
+															ContainsPoint(lon,lat)));
 	if (i != _regions.end())
 		return *i;
 

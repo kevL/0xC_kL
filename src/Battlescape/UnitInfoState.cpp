@@ -702,7 +702,7 @@ void UnitInfoState::init()
 	if (psiSkill != 0 || sol == nullptr)
 	{
 		woststr.str(L"");
-		if (_unit->isFearable() == true)
+		if (_unit->isMoralable() == true)
 		{
 			stat = _unit->getBattleStats()->psiStrength;
 			woststr << stat;

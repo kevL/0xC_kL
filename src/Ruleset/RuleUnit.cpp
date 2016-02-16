@@ -342,7 +342,7 @@ bool RuleUnit::isDog() const
  * - isTrackedVehicle
  * - isPsiAttackable / isSentient <- DONE
  * - canRevive (from status_Unconscious)
- * - canChangeMorale (see isFearable())
+ * - canChangeMorale (see isMoralable())
  * - isInfectable (can have a spawnUnit string set on it)
  * - isMetal (cannot catch fire)
  * - canOpenDoors etc.

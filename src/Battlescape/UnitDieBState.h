@@ -22,7 +22,7 @@
 
 #include "BattleState.h"
 
-#include "../Ruleset/RuleItem.h" // DamageType
+#include "../Ruleset/RuleItem.h"
 
 
 namespace OpenXcom
@@ -53,9 +53,9 @@ private:
 
 	DamageType _dType;
 
-	/// Converts a unit to a corpse.
-	void convertToCorpse();
-	/// Centers the camera on a collapsing BattleUnit.
+	/// Converts a BattleUnit to a body-item.
+	void convertToBodyItem();
+	/// Centers Camera on a collapsing BattleUnit.
 	void centerOnUnitDeath();
 
 

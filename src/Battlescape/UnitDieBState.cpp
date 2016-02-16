@@ -105,9 +105,9 @@ UnitDieBState::UnitDieBState(
 			_parent->getMap()->setUnitDying();
 
 		if (_unit->getSpawnUnit().empty() == false)
-			_unit->setDirectionTo(3); // inits STATUS_TURNING if not facing correctly. Else STATUS_STANDING
+			_unit->setDirectionTo(3); // -> STATUS_TURNING if not facing correctly. Else STATUS_STANDING
 		else
-			_unit->initDeathSpin(); // inits STATUS_TURNING
+			_unit->initDeathSpin(); // -> STATUS_TURNING
 	}
 	else // pre-battle hidden explosion death or a stunned non-visible unit
 	{
@@ -170,7 +170,7 @@ void UnitDieBState::think()
 // #3
 	else if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		_unit->keepCollapsing(); // -> STATUS_DEAD or STATUS_UNCONSCIOUS ( ie. isOut() )
+		_unit->keepCollapsing(); // -> STATUS_DEAD or STATUS_UNCONSCIOUS ie. isOut_t()
 	}
 // #2
 	else if (_unit->isOut_t(OUT_STAT) == false) // this ought be Status_Standing/Disabled also.
@@ -267,7 +267,7 @@ void UnitDieBState::think()
 			_unit->putDown();
 
 		if (_unit->getSpawnUnit().empty() == true)
-			convertToCorpse();
+			convertToBodyItem();
 		else
 			_parent->convertUnit(_unit);
 	}
@@ -277,32 +277,27 @@ void UnitDieBState::think()
 }
 
 /**
- * Converts unit to a corpse-item.
- * @note This is used also for units that go unconscious.
- * @note Dead or Unconscious units get a nullptr-Tile ptr but keep track of the
+ * Converts a BattleUnit to a body-item.
+ * @note Dead or Unconscious units get a nullptr-Tile but keep track of the
  * Position of their death.
  */
-void UnitDieBState::convertToCorpse() // private.
+void UnitDieBState::convertToBodyItem() // private.
 {
 	_battleSave->getBattleState()->showPsiButton(false);
 
 	const Position pos (_unit->getPosition());
-
-	// remove the unconscious body item corresponding to this unit,
-	// and if it was being carried, keep track of what slot it was in
 	const bool carried (pos == Position(-1,-1,-1));
 	if (carried == false)
-		_battleSave->removeCorpse(_unit);
+		_battleSave->deleteBody(_unit);
 
 	const int armorSize (_unit->getArmor()->getSize() - 1);
 
 	// move inventory from unit to the ground for non-large units
-	const bool drop (armorSize == 0
-				  && carried == false
-				  && (Options::battleWeaponSelfDestruction == false
-						|| _unit->getOriginalFaction() != FACTION_HOSTILE
-						|| _unit->getUnitStatus() == STATUS_UNCONSCIOUS));
-	if (drop == true)
+	if (armorSize == 0
+		&& carried == false
+		&& (Options::battleWeaponSelfDestruction == false
+			  || _unit->getOriginalFaction() != FACTION_HOSTILE
+			  || _unit->getUnitStatus() == STATUS_UNCONSCIOUS))
 	{
 		std::vector<BattleItem*> itemsToKeep;
 
@@ -408,10 +403,10 @@ void UnitDieBState::convertToCorpse() // private.
 					tile->addSmoke(RNG::generate(0,2)); // more smoke ...
 				}
 
-				BattleItem* const corpse (new BattleItem(
-													_parent->getRuleset()->getItem(_unit->getArmor()->getCorpseBattlescape()[--quadrants]),
-													_battleSave->getNextItemId()));
-				corpse->setUnit(_unit);
+				BattleItem* const body (new BattleItem(
+												_parent->getRuleset()->getItem(_unit->getArmor()->getCorpseBattlescape()[--quadrants]),
+												_battleSave->getNextItemId()));
+				body->setUnit(_unit);
 
 				if (tile != nullptr						// kL, safety. (had a CTD when ethereal dies on water).
 					&& tile->getTileUnit() == _unit)	// <- check in case unit was displaced by another unit ... that sounds pretty darn shakey.
@@ -421,11 +416,10 @@ void UnitDieBState::convertToCorpse() // private.
 
 				_parent->dropItem(
 								pos + Position(x,y,0),
-								corpse,
+								body,
 								true);
 			}
 		}
-
 		_parent->getTileEngine()->calculateFOV(pos, true); // expose any units that were hiding behind dead unit
 	}
 }

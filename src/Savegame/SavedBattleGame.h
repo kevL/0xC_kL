@@ -370,8 +370,8 @@ private:
 		void reviveUnit(
 				BattleUnit* const unit,
 				bool turnOver = false);
-		/// Removes the body item that corresponds to the unit.
-		void removeCorpse(const BattleUnit* const unit);
+		/// Removes the body-item that corresponds to a BattleUnit.
+		void deleteBody(const BattleUnit* const unit);
 
 		/// Sets or tries to set a unit of a certain size on a certain position of the map.
 		bool setUnitPosition(
