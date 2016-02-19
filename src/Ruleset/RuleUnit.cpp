@@ -89,7 +89,7 @@ void RuleUnit::load(
 	_energyRecovery	= node["energyRecovery"].as<int>(_energyRecovery);
 	_livingWeapon	= node["livingWeapon"]	.as<bool>(_livingWeapon);
 	_meleeWeapon	= node["meleeWeapon"]	.as<std::string>(_meleeWeapon);
-	_builtInWeapons	= node["builtInWeapons"].as<std::vector<std::string>>(_builtInWeapons);
+//	_builtInWeapons	= node["builtInWeapons"].as<std::vector<std::string>>(_builtInWeapons);
 	_female			= node["female"]		.as<bool>(_female);
 	_dog			= node["dog"]			.as<bool>(_dog);
 	_mechanical		= node["mechanical"]	.as<bool>(_mechanical);
@@ -311,12 +311,12 @@ const std::string& RuleUnit::getMeleeWeapon() const
  * @note This is a vector of strings representing any weapons that are inherent
  * to this creature. Unlike '_livingWeapon' this is used in ADDITION to any
  * loadout or living weapon item that may be defined.
- * @return, list of weapons that are integral to this unit.
- */
+ * @return, list of weapons that are (further) integral to this unit.
+ *
 const std::vector<std::string>& RuleUnit::getBuiltInWeapons() const
 {
 	return _builtInWeapons;
-}
+} */
 
 /**
  * Gets if this Unit is female.

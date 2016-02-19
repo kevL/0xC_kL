@@ -369,7 +369,7 @@ private:
 				const Soldier* const sol,
 				const bool dead = false);
 		/// Calculates the expense of sending HWPs/doggies on a tactical mission.
-		int hwpExpense(
+		int supportExpense(
 				const int hwpSize,
 				const bool dead = false);
 		/// Calculates the expense of sending a transport craft on a tactical mission.

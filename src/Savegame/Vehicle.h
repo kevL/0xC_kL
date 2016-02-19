@@ -29,8 +29,8 @@ namespace OpenXcom
 class RuleItem;
 
 /**
- * Represents a vehicle (tanks etc.) kept in a craft.
- * Contains variable info about a vehicle like ammo.
+ * Represents a Vehicle (tanks, dogs, etc.) kept onboard a Craft.
+ * @note Contains variable info about a Vehicle like ammo.
  * @sa RuleItem
  */
 class Vehicle
@@ -40,35 +40,35 @@ private:
 
 	int
 		_ammo,
-		_size;
+		_quadrants;
 
 	const RuleItem* const _itRule;
 
 
 	public:
 
-		/// Creates a vehicle of the specified type.
+		/// Creates a Vehicle of the specified type.
 		Vehicle(
 				const RuleItem* const itRule,
 				int ammo,
-				int unitSize);
-		/// Cleans up the vehicle.
+				int quadrants);
+		/// Cleans up the Vehicle.
 		~Vehicle();
 
-		/// Loads the vehicle from YAML.
+		/// Loads the Vehicle from YAML.
 		void load(const YAML::Node& node);
-		/// Saves the vehicle to YAML.
+		/// Saves the Vehicle to YAML.
 		YAML::Node save() const;
 
-		/// Gets the vehicle's ruleset.
+		/// Gets the Vehicle's rules.
 		const RuleItem* getRules() const;
 
-		/// Gets the vehicle's ammo.
+		/// Gets the Vehicle's ammo.
 		int getAmmo() const;
-		/// Sets the vehicle's ammo.
+		/// Sets the Vehicle's ammo.
 		void setAmmo(int ammo);
 
-		/// Gets the vehicle's size.
+		/// Gets the Vehicle's size.
 		int getSize() const;
 };
 

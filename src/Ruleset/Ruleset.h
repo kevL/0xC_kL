@@ -311,7 +311,7 @@ protected:
 		/// Gets a map of the inventory list.
 		std::map<std::string, RuleInventory*>* getInventories();
 		/// Gets the ruleset for a specific inventory.
-		RuleInventory* getInventory(const std::string& type) const;
+		const RuleInventory* getInventory(const std::string& type) const;
 		/// Gets the ruleset for a specific inventory.
 		const RuleInventory* getInventoryRule(const InventorySection sectionId) const;
 		/// Converts all inventory mappings from string-keys to enumerated-keys.
@@ -322,7 +322,7 @@ protected:
 		int detHighTuInventoryCost() const;
 
 		/// Gets the ruleset for a specific research project.
-		RuleResearch* getResearch(const std::string& id) const;
+		const RuleResearch* getResearch(const std::string& id) const;
 		/// Gets the list of all research projects.
 		const std::vector<std::string>& getResearchList() const;
 		/// Gets the ruleset for a specific manufacture project.

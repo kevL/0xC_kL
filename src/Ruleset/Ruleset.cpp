@@ -1671,7 +1671,7 @@ std::map<std::string, RuleInventory*>* Ruleset::getInventories()
  * @param type - reference the inventory type
  * @return, pointer to RuleInventory
  */
-RuleInventory* Ruleset::getInventory(const std::string& type) const
+const RuleInventory* Ruleset::getInventory(const std::string& type) const
 {
 	std::map<std::string, RuleInventory*>::const_iterator i (_inventories.find(type));
 	if (i != _inventories.end())
@@ -1759,7 +1759,6 @@ int Ruleset::detHighTuInventoryCost() const
 		if (cost > costHigh)
 			costHigh = cost;
 	}
-
 	return costHigh;
 }
 /*	for (std::map<std::string, RuleInventory*>::const_iterator
@@ -1783,7 +1782,7 @@ int Ruleset::detHighTuInventoryCost() const
  * @param id - reference a research project type
  * @return, pointer to RuleResearch
  */
-RuleResearch* Ruleset::getResearch(const std::string& id) const
+const RuleResearch* Ruleset::getResearch(const std::string& id) const
 {
 	std::map<std::string, RuleResearch*>::const_iterator i (_research.find(id));
 	if (i != _research.end())

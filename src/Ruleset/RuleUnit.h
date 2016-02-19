@@ -251,7 +251,7 @@ private:
 		_type,
 		_spawnUnit;
 
-	std::vector<std::string> _builtInWeapons;
+//	std::vector<std::string> _builtInWeapons;
 
 	SpecialAbility _specab;
 	UnitStats _stats;
@@ -317,7 +317,7 @@ private:
 		/// Gets the name of any melee weapon that may be built in to this unit.
 		const std::string& getMeleeWeapon() const;
 		/// Gets a vector of integrated items this unit has available.
-		const std::vector<std::string>& getBuiltInWeapons() const;
+//		const std::vector<std::string>& getBuiltInWeapons() const;
 
 		/// Gets if this RuleUnit is female.
 		bool isFemale() const;

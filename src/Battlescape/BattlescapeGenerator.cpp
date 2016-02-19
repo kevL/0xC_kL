@@ -788,7 +788,7 @@ void BattlescapeGenerator::nextStage()
 }
 
 /**
-* Deploys all the X-COM units and equipment based on the Geoscape base / craft.
+* Deploys all the X-COM units and equipment based on the geoscape Base or Craft.
 */
 void BattlescapeGenerator::deployXcom() // private.
 {
@@ -808,8 +808,8 @@ void BattlescapeGenerator::deployXcom() // private.
 					i != _craft->getVehicles()->end();
 					++i)
 			{
-				//Log(LOG_INFO) << ". . isCraft: addXcomVehicle " << (int)*i;
-				BattleUnit* const unit (addXcomVehicle(*i));
+				//Log(LOG_INFO) << ". . isCraft: prepareSupport " << (int)*i;
+				BattleUnit* const unit (prepareSupport(*i));
 				if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
 					_battleSave->setSelectedUnit(unit);
 			}
@@ -822,8 +822,8 @@ void BattlescapeGenerator::deployXcom() // private.
 				i != _base->getVehicles()->end();
 				++i)
 		{
-			//Log(LOG_INFO) << ". . isBase: addXcomVehicle " << (int)*i;
-			BattleUnit* const unit (addXcomVehicle(*i));
+			//Log(LOG_INFO) << ". . isBase: prepareSupport " << (int)*i;
+			BattleUnit* const unit (prepareSupport(*i));
 			if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
 				_battleSave->setSelectedUnit(unit);
 		}
@@ -843,7 +843,7 @@ void BattlescapeGenerator::deployXcom() // private.
 					j != (*i)->getVehicles()->end();
 					++j)
 				{
-					BattleUnit* const unit (addXcomVehicle(*j));
+					BattleUnit* const unit (prepareSupport(*j));
 					if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
 						_battleSave->setSelectedUnit(unit);
 				}
@@ -863,8 +863,8 @@ void BattlescapeGenerator::deployXcom() // private.
 				&& ((*i)->getCraft() == nullptr
 					|| (*i)->getCraft()->getCraftStatus() != CS_OUT)))
 		{
-			//Log(LOG_INFO) << ". . addXcomUnit " << (*i)->getId();
-			BattleUnit* const unit (addXcomUnit(new BattleUnit(*i, _gameSave->getDifficulty()))); // for VictoryPts value per death.
+			//Log(LOG_INFO) << ". . addPlayerUnit " << (*i)->getId();
+			BattleUnit* const unit (addPlayerUnit(new BattleUnit(*i, _gameSave->getDifficulty()))); // for VictoryPts value per death.
 			if (unit != nullptr)
 			{
 				//Log(LOG_INFO) << "bGen::deployXcom() ID " << unit->getId() << " battleOrder = " << _battleOrder + 1;
@@ -881,7 +881,7 @@ void BattlescapeGenerator::deployXcom() // private.
 		throw Exception("Map generator encountered an error: no xcom units could be placed on the map.");
 	}
 
-	//Log(LOG_INFO) << ". addXcomUnit(s) DONE";
+	//Log(LOG_INFO) << ". addPlayerUnit(s) DONE";
 
 	for (std::vector<BattleUnit*>::const_iterator // pre-battle Equip; give all xCom Soldiers access to the inventory tile.
 			i = _battleSave->getUnits()->begin();
@@ -1014,7 +1014,7 @@ void BattlescapeGenerator::deployXcom() // private.
 	// IN THAT INVENTORY(vector) UNTIL EVERYTHING IS EQUIPPED & LOADED. Then
 	// the inventory-tile is cleaned up at the end of this function....
 	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << ". placeItemByLayout Pt I";
+	//Log(LOG_INFO) << ". placeLayout Pt I";
 	for (std::vector<BattleItem*>::const_iterator // Equip soldiers based on equipment-layout Part I.
 			i = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
@@ -1025,12 +1025,12 @@ void BattlescapeGenerator::deployXcom() // private.
 			&& (*i)->getRules()->getBattleType() != BT_AMMO)
 		{
 			//Log(LOG_INFO) << ". . place " << (*i)->getRules()->getType();
-			placeItemByLayout(*i);
+			placeLayout(*i);
 		}
 	}
 
 	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << ". placeItemByLayout Pt II";
+	//Log(LOG_INFO) << ". placeLayout Pt II";
 	for (std::vector<BattleItem*>::const_iterator // Equip soldiers based on equipment-layout Part II.
 			i = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
@@ -1041,10 +1041,10 @@ void BattlescapeGenerator::deployXcom() // private.
 			&& (*i)->getRules()->getBattleType() == BT_AMMO)
 		{
 			//Log(LOG_INFO) << ". . . place " << (*i)->getRules()->getType();
-			placeItemByLayout(*i);
+			placeLayout(*i);
 		}
 	}
-	//Log(LOG_INFO) << ". placeItemByLayout all DONE";
+	//Log(LOG_INFO) << ". placeLayout all DONE";
 
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << ". Load Ground Weapons...";
@@ -1090,36 +1090,36 @@ void BattlescapeGenerator::deployXcom() // private.
 }
 
 /**
- * Adds an XCom vehicle to the game.
- * @note Sets the correct turret depending on the ammo type and adds auxilliary
+ * Prepares a player-support-unit to be added to the battlescape.
+ * @note Sets the correct turret depending on its ammo-type and adds auxilliary
  * weapons if any.
  * @param vehicle - pointer to Vehicle
  * @return, pointer to the spawned unit; nullptr if unable to create and equip
  */
-BattleUnit* BattlescapeGenerator::addXcomVehicle(Vehicle* const vehicle) // private.
+BattleUnit* BattlescapeGenerator::prepareSupport(Vehicle* const vehicle) // private.
 {
-	const std::string vhclType (vehicle->getRules()->getType());
-	RuleUnit* const unitRule (_rules->getUnitRule(vhclType));
+	const std::string vhclType (vehicle->getRules()->getType());	// Convert this item-type ...
+	RuleUnit* const unitRule (_rules->getUnitRule(vhclType));		// ... to a unitRule. tata!
 
-	BattleUnit* const supportUnit (addXcomUnit(new BattleUnit( // add Vehicle as a unit.
+	BattleUnit* const supportUnit (addPlayerUnit(new BattleUnit(	// then add Vehicle as a unit.
 															unitRule,
 															FACTION_PLAYER,
 															_unitSequence++,
 															_rules->getArmor(unitRule->getArmor()),
-															DIFF_BEGINNER))); // <- but do not upgrade tanks
+															DIFF_BEGINNER))); // <- do not upgrade tanks
 	if (supportUnit != nullptr)
 	{
 		supportUnit->setTurretType(vehicle->getRules()->getTurretType());
 
-		BattleItem* item (new BattleItem( // add Vehicle as an item and assign the unit as its owner.
-									_rules->getItem(vhclType),
-									_battleSave->getNextItemId()));
-		if (placeItem(item, supportUnit) == false)
+		BattleItem* weapon (new BattleItem(							// add Vehicle as a weapon-item and assign the unit itself as the owner of the weapon.
+										_rules->getItem(vhclType),
+										_battleSave->getNextItemId()));
+		if (placeGeneric(weapon, supportUnit) == false)
 		{
 			Log(LOG_WARNING) << "BattlescapeGenerator could not add: " << vhclType;
-			--_unitSequence;
 
-			delete item;
+			--_unitSequence;
+			delete weapon;
 			delete supportUnit;
 
 			return nullptr;
@@ -1128,16 +1128,16 @@ BattleUnit* BattlescapeGenerator::addXcomVehicle(Vehicle* const vehicle) // priv
 		if (vehicle->getRules()->getCompatibleAmmo()->empty() == false)
 		{
 			const std::string ammoType (vehicle->getRules()->getCompatibleAmmo()->front());
-			BattleItem* const ammoItem (new BattleItem(
+			BattleItem* const ammoItem (new BattleItem(				// add ammo and assign the weapon as its owner.
 													_rules->getItem(ammoType),
 													_battleSave->getNextItemId()));
-			if (placeItem(ammoItem, supportUnit) == false) // add 'ammoItem' and assign the Vehicle-ITEM as its owner.
+			if (placeGeneric(ammoItem, supportUnit) == false)
 			{
 				Log(LOG_WARNING) << "BattlescapeGenerator could not add [" << ammoType << "] to " << vhclType;
-				--_unitSequence;
 
+				--_unitSequence;
 				delete ammoItem;
-				delete item;
+				delete weapon;
 				delete supportUnit;
 
 				return nullptr;
@@ -1147,7 +1147,7 @@ BattleUnit* BattlescapeGenerator::addXcomVehicle(Vehicle* const vehicle) // priv
 		}
 
 
-		if (unitRule->getBuiltInWeapons().empty() == false) // add item(builtInWeapon) -- what about ammo
+/*		if (unitRule->getBuiltInWeapons().empty() == false) // add item(builtInWeapon) -- what about ammo
 		{
 			for (std::vector<std::string>::const_iterator
 					i = unitRule->getBuiltInWeapons().begin();
@@ -1157,30 +1157,31 @@ BattleUnit* BattlescapeGenerator::addXcomVehicle(Vehicle* const vehicle) // priv
 				RuleItem* const itRule (_rules->getItem(*i));
 				if (itRule != nullptr)
 				{
-					item = new BattleItem(itRule, _battleSave->getNextItemId());
-					if (placeItem(item, supportUnit) == false)
+					weapon = new BattleItem(itRule, _battleSave->getNextItemId());
+					if (placeGeneric(weapon, supportUnit) == false)
 					{
 						Log(LOG_WARNING) << "BattlescapeGenerator could not add [" << itRule->getType() << "] to " << vhclType;
-						delete item;
+						delete weapon;
 					}
 				}
 			}
-		}
+		} */
 	}
 
 	return supportUnit;
 }
 
 /**
- * Adds a soldier to the game and places him on a free spawnpoint.
- * Spawnpoints are either tiles in case of an XCom craft that landed
- * or they are mapnodes in case there's no craft.
+ * Adds a player-unit to the battlescape and places it at an unallocated
+ * spawn-point.
+ * @note Spawn-points are Tiles in case of an XCom Craft that landed or they are
+ * resource-defined mapnodes if there is no Craft.
  * @param unit - pointer to an xCom BattleUnit
  * @return, pointer to the spawned unit if successful else nullptr
  */
-BattleUnit* BattlescapeGenerator::addXcomUnit(BattleUnit* const unit) // private.
+BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // private.
 {
-	//Log(LOG_INFO) << "bsg:addXcomUnit()";
+	//Log(LOG_INFO) << "bsg:addPlayerUnit()";
 	if ((_craft == nullptr || _craftDeployed == false) // (_missionType == "STR_ALIEN_BASE_ASSAULT" || _missionType == "STR_MARS_THE_FINAL_ASSAULT") <- taken care of in MapScripting.
 		&& _baseEquiptMode == false)
 	{
@@ -1242,13 +1243,13 @@ BattleUnit* BattlescapeGenerator::addXcomUnit(BattleUnit* const unit) // private
 						y != unit->getArmor()->getSize() && canPlace == true;
 						++y)
 				{
-					canPlace = canPlaceXcomUnit(_battleSave->getTile(pos + Position(x,y,0)));
+					canPlace = canPlacePlayerUnit(_battleSave->getTile(pos + Position(x,y,0)));
 				}
 			}
 
 			if (canPlace == true)
 			{
-				//Log(LOG_INFO) << ". canPlaceXcomUnit()";
+				//Log(LOG_INFO) << ". canPlacePlayerUnit()";
 				if (_battleSave->setUnitPosition(unit, pos) == true)
 				{
 					//Log(LOG_INFO) << ". setUnitPosition()";
@@ -1270,7 +1271,7 @@ BattleUnit* BattlescapeGenerator::addXcomUnit(BattleUnit* const unit) // private
 				++i)
 		{
 			tile = _battleSave->getTiles()[i];
-			if (canPlaceXcomUnit(tile) == true)
+			if (canPlacePlayerUnit(tile) == true)
 			{
 				if (unit->getGeoscapeSoldier() == nullptr)
 				{
@@ -1301,13 +1302,14 @@ BattleUnit* BattlescapeGenerator::addXcomUnit(BattleUnit* const unit) // private
 }
 
 /**
- * Checks if a soldier/tank can be placed on a given tile.
- * @param tile - the given tile
- * @return, true if unit can be placed on Tile
+ * Checks if a soldier/support can be placed on a given Tile.
+ * @note Helper for addPlayerUnit().
+ * @param tile - pointer to a Tile
+ * @return, true if unit can be placed there
  */
-bool BattlescapeGenerator::canPlaceXcomUnit(Tile* const tile) // private.
+bool BattlescapeGenerator::canPlacePlayerUnit(Tile* const tile) // private.
 {
-	// To spawn an xcom soldier there has to be a tile with a floor
+	// To spawn an XCom unit there has to be a tile with a floor
 	// with the starting point attribute and no objects in the way.
 	if (tile != nullptr													// is a tile
 		&& tile->getMapData(O_FLOOR) != nullptr							// has a floor
@@ -1325,12 +1327,13 @@ bool BattlescapeGenerator::canPlaceXcomUnit(Tile* const tile) // private.
 }
 
 /**
- * Loads a weapon on the inventoryTile.
+ * Loads a weapon on the equipment Tile.
+ * @note Helper for deployXcom().
  * @param item - pointer to a BattleItem
  */
 void BattlescapeGenerator::loadGroundWeapon(BattleItem* const item) // private.
 {
-	const RuleInventory* const grdRule = _rules->getInventory("STR_GROUND");
+	const RuleInventory* const grdRule (_rules->getInventoryRule(ST_GROUND));
 	for (std::vector<BattleItem*>::const_iterator
 			i = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
@@ -1346,10 +1349,10 @@ void BattlescapeGenerator::loadGroundWeapon(BattleItem* const item) // private.
 }
 
 /**
- * Places an item on an xCom Soldier based on his/her equipment layout.
+ * Places an item on an xCom Soldier based on his/her equipment-layout.
  * @param item - pointer to a BattleItem
  */
-void BattlescapeGenerator::placeItemByLayout(BattleItem* const item) // private.
+void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
 {
 	const RuleInventory* const grdRule (_rules->getInventoryRule(ST_GROUND));
 
@@ -1482,16 +1485,18 @@ void BattlescapeGenerator::setTacticalSprites() const // private.
 	} */
 
 /**
- * Adds an item to an xCom soldier (auto-equip ONLY). kL_note: I don't use that part.
+ * Places an item on an xCom soldier (auto-equip ONLY). kL_note: I don't use that part.
  * Or to an xCom tank, also adds items & terrorWeapons to aLiens, deployAliens()!
- * @param item - pointer to the BattleItem
- * @param unit - pointer to the BattleUnit
+ * @param item - pointer to a BattleItem
+ * @param unit - pointer to a BattleUnit
  * @return, true if item was placed
  */
-bool BattlescapeGenerator::placeItem( // private.
+bool BattlescapeGenerator::placeGeneric( // private.
 		BattleItem* const item,
 		BattleUnit* const unit) const
 {
+	int placed (0);
+
 	const RuleInventory
 		* const rhRule (_rules->getInventoryRule(ST_RIGHTHAND)),
 		* const lhRule (_rules->getInventoryRule(ST_LEFTHAND));
@@ -1500,12 +1505,11 @@ bool BattlescapeGenerator::placeItem( // private.
 		* const lhWeapon (unit->getItem(ST_LEFTHAND));
 
 	RuleItem* const itRule (item->getRules());
-
-	int placed (0);
-
 	if (itRule->isFixed() == true)
 	{
-		if (rhWeapon == nullptr)
+		item->setInventorySection(rhRule);
+		placed = 1;
+/*		if (rhWeapon == nullptr) // not needed at present.
 		{
 			item->setInventorySection(rhRule);
 			placed = 1;
@@ -1514,7 +1518,7 @@ bool BattlescapeGenerator::placeItem( // private.
 		{
 			item->setInventorySection(lhRule);
 			placed = 1;
-		}
+		} */
 	}
 	else
 	{
@@ -1594,7 +1598,6 @@ bool BattlescapeGenerator::placeItem( // private.
 			_battleSave->getItems()->push_back(item);
 			return true;
 	}
-
 	return false; // If not placed the item will be deleted.
 }
 
@@ -1681,7 +1684,7 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule)
 
 			if (unit != nullptr)
 			{
-				// Built in weapons: the unit has this weapon regardless of loadout or what have you.
+/*				// Built in weapons: the unit has this weapon regardless of loadout or what have you.
 				if (unitRule->getBuiltInWeapons().empty() == false)
 				{
 					for (std::vector<std::string>::const_iterator
@@ -1695,7 +1698,7 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule)
 							item = new BattleItem(
 												itRule,
 												_battleSave->getNextItemId());
-							if (placeItem(item, unit) == false)
+							if (placeGeneric(item, unit) == false)
 							{
 								Log(LOG_WARNING) << "BattlescapeGenerator could not add ["
 												 << itRule->getType() << "] to " << unit->getType();
@@ -1703,13 +1706,11 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule)
 							}
 						}
 					}
-				}
+				} */
 
-				// terrorist aliens' equipment is a special case - they are fitted
-				// with a weapon which is the alien's name with suffix _WEAPON
 				if (unitRule->isLivingWeapon() == true)
 				{
-					std::string terrorWeapon = unitRule->getRace().substr(4);
+					std::string terrorWeapon (unitRule->getRace().substr(4));
 					terrorWeapon += "_WEAPON";
 
 					itRule = _rules->getItem(terrorWeapon);
@@ -1718,14 +1719,14 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule)
 						item = new BattleItem( // terror aLiens add their weapons
 											itRule,
 											_battleSave->getNextItemId());
-						if (placeItem(item, unit) == false)
+						if (placeGeneric(item, unit) == false)
 						{
 							Log(LOG_WARNING) << "BattlescapeGenerator could not add ["
 											 << itRule->getType() << "] to " << unit->getType();
 							delete item;
 						}
-						else
-							unit->setTurretType(item->getRules()->getTurretType());
+//						else // -> there are no aLien turret-types at present. I don't do MiB. i do aLiens.
+//							unit->setTurretType(item->getRules()->getTurretType());
 					}
 				}
 				else
@@ -1759,7 +1760,7 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule)
 							item = new BattleItem( // aLiens add items
 												itRule,
 												_battleSave->getNextItemId());
-							if (placeItem(item, unit) == false)
+							if (placeGeneric(item, unit) == false)
 							{
 								Log(LOG_WARNING) << "BattlescapeGenerator could not add ["
 												 << itRule->getType() << "] to " << unit->getType();

@@ -99,32 +99,32 @@ private:
 	std::string _alienRace;
 
 
-	/// Sets the map size and associated vars.
+	/// Sets the map-size and associated vars.
 	void init();
 
-	/// Deploys the XCOM units on the mission.
+	/// Deploys XCOM units for the mission.
 	void deployXcom();
-	/// Adds a vehicle to the game.
-	BattleUnit* addXcomVehicle(Vehicle* const vehicle);
-	/// Adds a soldier to the game.
-	BattleUnit* addXcomUnit(BattleUnit* const unit);
-	/// Runs necessary checks before physically setting the position.
-	bool canPlaceXcomUnit(Tile* const tile);
-	/// Loads a weapon on the inventoryTile.
+	/// Prepares a player-support-unit to be added to the Battlescape.
+	BattleUnit* prepareSupport(Vehicle* const vehicle);
+	/// Adds a player-unit to the Battlescape.
+	BattleUnit* addPlayerUnit(BattleUnit* const unit);
+	/// Runs necessary checks before setting a unit's position.
+	bool canPlacePlayerUnit(Tile* const tile);
+	/// Loads a weapon that's lying on the XCOM-equipment Tile.
 	void loadGroundWeapon(BattleItem* const item);
-	/// Places an item on a soldier based on equipment layout.
-	void placeItemByLayout(BattleItem* const item);
-	/// Sets xCom soldiers' combat clothing style - spritesheets & paperdolls.
+	/// Places a BattleItem on a Soldier based on that Soldier's equipment-layout.
+	void placeLayout(BattleItem* const item);
+	/// Sets XCOM Soldiers' combat-clothing style - ie. spritesheets & paperdolls.
 	void setTacticalSprites() const;
 
-	/// Adds an item to a unit and the game.
-	bool placeItem(
+	/// Places a BattleItem on a BattleUnit and adds it to the Battlescape.
+	bool placeGeneric(
 			BattleItem* const item,
 			BattleUnit* const unit) const;
 
-	/// Deploys the aliens according to the AlienDeployment rule.
+	/// Deploys the aLiens according to an AlienDeployment rule.
 	void deployAliens(const AlienDeployment* const deployRule);
-	/// Adds an alien to the game.
+	/// Adds an aLien to the battlescape.
 	BattleUnit* addAlien(
 			RuleUnit* const unitRule,
 			int aLienRank,
@@ -132,9 +132,9 @@ private:
 	/// Finds a spot near a friend to spawn at.
 	bool placeUnitNearFaction(BattleUnit* const unit);
 
-	/// Spawns civilians on a terror mission.
+	/// Spawns civilians for a terror-mission.
 	void deployCivilians(int civilians);
-	/// Adds a civlian to the game.
+	/// Adds a civilian to the Battlescape.
 	void addCivilian(RuleUnit* const unitRule);
 
 	/// Loads an XCom MAP file.

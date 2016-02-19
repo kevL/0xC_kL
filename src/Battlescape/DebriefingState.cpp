@@ -676,17 +676,19 @@ void ClearAlienBase::operator() (AlienMission* mission) const
  */
 void DebriefingState::prepareDebriefing() // private.
 {
+	const RuleItem* itRule;
 	for (std::vector<std::string>::const_iterator
 			i = _rules->getItemsList().begin();
 			i != _rules->getItemsList().end();
 			++i)
 	{
-		const SpecialTileType tileType (_rules->getItem(*i)->getSpecialType());
+		itRule = _rules->getItem(*i);
+		const SpecialTileType tileType (itRule->getSpecialType());
 		if (tileType > 1)
 		{
 			SpecialType* const specialType (new SpecialType());
 			specialType->type = *i;
-			specialType->value = _rules->getItem(*i)->getRecoveryPoints();
+			specialType->value = itRule->getRecoveryPoints();
 
 			_specialTypes[tileType] = specialType;
 		}
@@ -781,12 +783,12 @@ void DebriefingState::prepareDebriefing() // private.
 		{
 			if ((*i)->getUnitStatus() != STATUS_DEAD)
 			{
+				++soldierLive;
 				if ((*i)->getUnitStatus() == STATUS_UNCONSCIOUS
 					|| (*i)->getFaction() == FACTION_HOSTILE)
 				{
 					++soldierOut;
 				}
-				++soldierLive;
 			}
 			else
 			{
@@ -801,7 +803,6 @@ void DebriefingState::prepareDebriefing() // private.
 	if (soldierOut == soldierLive)
 	{
 		soldierLive = 0;
-
 		for (std::vector<BattleUnit*>::const_iterator
 				i = battleSave->getUnits()->begin();
 				i != battleSave->getUnits()->end();
@@ -810,8 +811,7 @@ void DebriefingState::prepareDebriefing() // private.
 			if ((*i)->getOriginalFaction() == FACTION_PLAYER
 				&& (*i)->getUnitStatus() != STATUS_DEAD)
 			{
-				(*i)->instaKill();
-
+				(*i)->setUnitStatus(STATUS_DEAD);
 				if ((*i)->getGeoscapeSoldier() != nullptr)
 					(*i)->getStatistics()->MIA = true;
 			}
@@ -830,16 +830,16 @@ void DebriefingState::prepareDebriefing() // private.
 			if ((*i)->getGeoscapeSoldier() != nullptr
 				&& (*i)->getUnitStatus() != STATUS_DEAD)
 			{
-				if (soldierDead == 0			// only one soldier went on the mission if
-					&& _aliensControlled == 0	// only one soldier survived AND none have died
-					&& _aliensKilled + _aliensStunned > 1 + _diff
-					&& aborted == false)
+				if (soldierDead == 0
+					&& aborted == false
+					&& _aliensControlled == 0
+					&& _aliensKilled + _aliensStunned > 1 + _diff)
 				{
 					(*i)->getStatistics()->ironMan = true;
 					break;
 				}
-				else if ((*i)->getStatistics()->hasFriendlyFired() == false	// if only one soldier survived give him a medal!
-					&& soldierDead != 0)									// unless he killed all the others ...
+				else if (soldierDead != 0									// if only one soldier survived give him a medal!
+					&& (*i)->getStatistics()->hasFriendlyFired() == false)	// unless he killed all the others ...
 				{
 					(*i)->getStatistics()->loneSurvivor = true;
 					break;
@@ -985,9 +985,8 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				(*i)->setTactical(false);
 				if ((*i)->getUfoStatus() == Ufo::LANDED)
-					(*i)->setSecondsLeft(15);
+					(*i)->setSecondsLeft(5);
 			}
-
 			break;
 		}
 	}
@@ -1033,7 +1032,7 @@ void DebriefingState::prepareDebriefing() // private.
 					}
 
 					std::for_each(
-							_gameSave->getAlienMissions().begin(), // remove supply missions for the aLien base.
+							_gameSave->getAlienMissions().begin(),
 							_gameSave->getAlienMissions().end(),
 							ClearAlienBase(*i));
 
@@ -1086,7 +1085,6 @@ void DebriefingState::prepareDebriefing() // private.
 					}
 				}
 			}
-
 			(*i)->setTile(battleSave->getTile(pos));
 		}
 
@@ -1142,7 +1140,7 @@ void DebriefingState::prepareDebriefing() // private.
 					else
 					{
 						if (_skirmish == false)
-							_missionCost += _base->hwpExpense(
+							_missionCost += _base->supportExpense(
 														(*i)->getArmor()->getSize() * (*i)->getArmor()->getSize(),
 														true);
 						addStat(
@@ -1170,8 +1168,8 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				case FACTION_PLAYER:
 					if (aborted == false
-						|| (((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LIMBO)
-							&& (/*missionAccomplished == true ||*/ tacType != TCT_BASEDEFENSE)))
+						|| ((tacType != TCT_BASEDEFENSE /*|| missionAccomplished == true*/)
+							&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LIMBO)))
 					{
 						++soldierExit;
 						recoverItems((*i)->getInventory());
@@ -1184,58 +1182,54 @@ void DebriefingState::prepareDebriefing() // private.
 							if (_skirmish == false)
 								_missionCost += _base->soldierExpense(sol);
 
-//							sol->calcStatString( // calculate new statString
+//							sol->calcStatString(
 //											_rules->getStatStrings(),
 //											Options::psiStrengthEval
 //												&& _gameSave->isResearched(_rules->getPsiRequirements()));
 						}
 						else
 						{
-							_base->getStorageItems()->addItem((*i)->getType());
-
 							if (_skirmish == false)
-								_missionCost += _base->hwpExpense((*i)->getArmor()->getSize() * (*i)->getArmor()->getSize());
-
-							const RuleItem* supportRule;
-							const BattleItem* aItem;
-
-							if ((*i)->getItem(ST_RIGHTHAND) != nullptr)
 							{
-								supportRule = _rules->getItem((*i)->getType()); // note this is basically the support-unit itself.
-								if (supportRule->getCompatibleAmmo()->empty() == false)
-								{
-									aItem = (*i)->getItem(ST_RIGHTHAND)->getAmmoItem();
-									if (aItem != nullptr) //&& aItem->getAmmoQuantity() > 0)
-									{
-										int total (aItem->getAmmoQuantity());
-										if (supportRule->getFullClip() != 0) // meaning this tank can store multiple clips-of-clips, yeh ...
-											total /= aItem->getRules()->getFullClip();
+								const int armorSize ((*i)->getArmor()->getSize());
+								_missionCost += _base->supportExpense(armorSize * armorSize);
+							}
 
-										_base->getStorageItems()->addItem(
-																		supportRule->getCompatibleAmmo()->front(),
-																		total);
-									}
+							_base->getStorageItems()->addItem((*i)->getType());	// return the support-unit to Stores.
+
+							const BattleItem* item ((*i)->getItem(ST_RIGHTHAND));
+							if (item != nullptr
+								&& item->selfPowered() == false)
+							{
+								itRule = item->getRules();
+								if (itRule->isFixed() == true
+									&& itRule->getBattleType() == BT_FIREARM)
+								{
+									if ((item = item->getAmmoItem()) != nullptr)
+										_base->getStorageItems()->addItem(		// return any ammo from the support-unit's fixed-weapon to Stores.
+																	item->getRules()->getCompatibleAmmo()->front(),
+																	item->getAmmoQuantity());
 								}
 							}
 
-							if ((*i)->getItem(ST_LEFTHAND) != nullptr)
+/*							if ((weapon = (*i)->getItem(ST_LEFTHAND)) != nullptr)
 							{
-								supportRule = (*i)->getItem(ST_LEFTHAND)->getRules();
-								if (supportRule->getCompatibleAmmo()->empty() == false)
+								itRule = weapon->getRules();
+								if (itRule->getCompatibleAmmo()->empty() == false)
 								{
-									aItem = (*i)->getItem(ST_LEFTHAND)->getAmmoItem();
-									if (aItem != nullptr) //&& aItem->getAmmoQuantity() > 0)
+									ordnance = weapon->getAmmoItem();
+									if (ordnance != nullptr) //&& ordnance->getAmmoQuantity() > 0)
 									{
-										int total (aItem->getAmmoQuantity());
-										if (supportRule->getFullClip() != 0) // meaning this tank can store multiple  clips-of-clips
-											total /= aItem->getRules()->getFullClip();
+										int total (ordnance->getAmmoQuantity());
+										if (itRule->getFullClip() != 0) // meaning this tank can store multiple  clips-of-clips
+											total /= ordnance->getRules()->getFullClip();
 
 										_base->getStorageItems()->addItem(
-																		supportRule->getCompatibleAmmo()->front(),
+																		itRule->getCompatibleAmmo()->front(),
 																		total);
 									}
 								}
-							}
+							} */
 						}
 					}
 					else
@@ -1792,7 +1786,8 @@ void DebriefingState::reequipCraft(Craft* craft) // private.
 
 /**
  * Recovers items from tactical.
- * @note Converts the battlescape inventory into a geoscape ItemContainer.
+ * @note Transfers the contents of a battlefield-inventory to the Base's stores.
+ * This does not handle fixed-weapons/items.
  * @param battleItems - pointer to a vector of pointers to BattleItems on the battlefield
  */
 void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) // private.

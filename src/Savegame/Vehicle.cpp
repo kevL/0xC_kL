@@ -26,20 +26,20 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a vehicle of the specified type.
- * @note This describes a vehicle that has been loaded onto a Craft only.
+ * Initializes the Vehicle from the specified rule.
+ * @note This describes a Vehicle that has been loaded onto a Craft only.
  * @param itRule	- pointer to RuleItem
- * @param ammo		- initial ammo
- * @param vhclSize	- size in tiles
+ * @param ammo		- ammo quantity when loaded onto Craft
+ * @param quadrants	- size in quadrants
  */
 Vehicle::Vehicle(
 		const RuleItem* const itRule,
 		int ammo,
-		int vhclSize)
+		int quadrants)
 	:
 		_itRule(itRule),
 		_ammo(ammo),
-		_size(vhclSize)
+		_quadrants(quadrants)
 {}
 
 /**
@@ -49,17 +49,17 @@ Vehicle::~Vehicle()
 {}
 
 /**
- * Loads the vehicle from a YAML file.
+ * Loads this Vehicle from a YAML file.
  * @param node - reference a YAML node
  */
 void Vehicle::load(const YAML::Node& node)
 {
-	_ammo = node["ammo"].as<int>(_ammo);
-	_size = node["size"].as<int>(_size);
+	_ammo		= node["ammo"].as<int>(_ammo);
+	_quadrants	= node["size"].as<int>(_quadrants);
 }
 
 /**
- * Saves the vehicle to a YAML file.
+ * Saves this Vehicle to a YAML file.
  * @return, YAML node
  */
 YAML::Node Vehicle::save() const
@@ -68,13 +68,13 @@ YAML::Node Vehicle::save() const
 
 	node["type"] = _itRule->getType();
 	node["ammo"] = _ammo;
-	node["size"] = _size;
+	node["size"] = _quadrants;
 
 	return node;
 }
 
 /**
- * Returns the ruleset for the vehicle's type.
+ * Returns the rules for this Vehicle's type.
  * @return, pointer to RuleItem
  */
 const RuleItem* Vehicle::getRules() const
@@ -83,20 +83,20 @@ const RuleItem* Vehicle::getRules() const
 }
 
 /**
- * Returns the ammo contained in this vehicle.
- * @return, quantity of weapon ammo
+ * Gets the ammo contained in this Vehicle.
+ * @return, quantity of weapon-ammo
  */
 int Vehicle::getAmmo() const
 {
-	if (_ammo == -1)
-		return 255;
+	if (_ammo != -1)
+		return _ammo;
 
-	return _ammo;
+	return 255;
 }
 
 /**
- * Changes the ammo contained in this vehicle.
- * @param ammo - quantity of weapon ammo
+ * Sets the ammo contained in this Vehicle.
+ * @param ammo - quantity of weapon-ammo
  */
 void Vehicle::setAmmo(int ammo)
 {
@@ -105,12 +105,12 @@ void Vehicle::setAmmo(int ammo)
 }
 
 /**
- * Returns the size occupied by this vehicle in a transport craft.
+ * Returns the size occupied by this Vehicle in a transport Craft.
  * @return, size in tiles
  */
 int Vehicle::getSize() const
 {
-	return _size;
+	return _quadrants;
 }
 
 }

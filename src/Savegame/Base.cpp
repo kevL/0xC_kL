@@ -3119,7 +3119,7 @@ int Base::soldierExpense(
  * @param dead		- true if HWP got destroyed while on tactical (default false)
  * @return, the expense
  */
-int Base::hwpExpense(
+int Base::supportExpense(
 		const int hwpSize,
 		const bool dead)
 {

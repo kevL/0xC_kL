@@ -2766,7 +2766,7 @@ BattleItem* BattleUnit::getItem(
 
 /**
  * Checks if there's an item in the specified inventory position.
- * @note Used only in BattlescapeGenerator::placeItemByLayout()
+ * @note Used only in BattlescapeGenerator::placeLayout()
  * @param type	- reference to an inventory type
  * @param x		- X position in section (default 0)
  * @param y		- Y position in section (default 0)
