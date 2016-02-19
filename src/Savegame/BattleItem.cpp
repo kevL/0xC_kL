@@ -53,7 +53,7 @@ BattleItem::BattleItem(
 		_inventoryX(0),
 		_inventoryY(0),
 		_ammoItem(nullptr),
-		_ammoQty(itRule->getClipSize()),
+		_ammoQty(itRule->getFullClip()),
 		_fuse(-1),
 		_painKiller(0),
 		_heal(0),
@@ -70,22 +70,25 @@ BattleItem::BattleItem(
 		_id = id;
 
 
-	if (_itRule->getBattleType() == BT_MEDIKIT)
+	switch (_itRule->getBattleType())
 	{
-		_heal		= _itRule->getHealQuantity();
-		_painKiller	= _itRule->getPainKillerQuantity();
-		_stimulant	= _itRule->getStimulantQuantity();
+		case BT_MEDIKIT:
+			_heal		= _itRule->getHealQuantity();
+			_painKiller	= _itRule->getPainKillerQuantity();
+			_stimulant	= _itRule->getStimulantQuantity();
+			break;
+
+		case BT_FIREARM: // Firearms w/out defined ammo ARE the ammo.
+			if (_itRule->getCompatibleAmmo()->empty() == false)
+				break; // no break;
+		case BT_MELEE: // Melee weapons do NOT require ammo.
+			_ammoItem = this;
 	}
-	else if (_itRule->getBattleType() == BT_MELEE				// Melee weapons do NOT take ammo atm.
-		|| (_itRule->getBattleType() == BT_FIREARM				// These weapons do not need ammo -->
-			&& _itRule->getCompatibleAmmo()->empty() == true))	// '_ammoItem' points to the weapon itself.
-	{
-		// lasers, melee, etc have "clipsize -1"
-//		setAmmoQuantity(-1);	// needed for melee-item reaction hits, etc. (can be set in Ruleset but do it here)
-								// Except that it creates problems w/ TANKS returning to Base. So do it in Ruleset:
-								// melee items need "clipSize -1" to do reactionFire. Unless i changed it ....
-		_ammoItem = this;
-	}
+	// NOTE: lasers, melee, etc. have "clipsize -1" [ie, SetAmmoQuantity(-1)]
+	// - needed for melee-item reaction hits, etc. Can be set in Ruleset but do
+	// it here. Except that it creates problems w/ TANKS returning to Base. So
+	// do it in Ruleset: melee-items need "clipSize -1" to do reactionFire.
+	// Unless i changed it ....
 }
 
 /**

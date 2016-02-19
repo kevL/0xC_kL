@@ -236,10 +236,10 @@ int CraftWeapon::getClipsLoaded(const Ruleset* const rules) const
 {
 	const RuleItem* const clip (rules->getItem(_cwRule->getClipItem()));
 
-	if (clip == nullptr || clip->getClipSize() < 1)
+	if (clip == nullptr || clip->getFullClip() < 1)
 		return _ammo / _cwRule->getRearmRate(); // round down.
 
-	return _ammo / clip->getClipSize(); // round down.
+	return _ammo / clip->getFullClip(); // round down.
 }
 
 }

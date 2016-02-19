@@ -214,7 +214,7 @@ void ManufactureStartState::init()
 		const Ruleset* const rules (_game->getRuleset());
 
 		bool reqCraft = false;
-		for (std::map<std::string,int>::const_iterator
+		for (std::map<std::string, int>::const_iterator
 				i = _manfRule->getRequiredItems().begin();
 				i != _manfRule->getRequiredItems().end();
 				++i)

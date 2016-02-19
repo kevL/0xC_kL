@@ -324,7 +324,7 @@ PurchaseState::PurchaseState(Base* const base)
 
 			wst = tr(type);
 
-			clipSize = clRule->getClipSize();
+			clipSize = clRule->getFullClip();
 			if (clipSize > 1)
 				wst += (L"s (" + Text::intWide(clipSize) + L")");
 
@@ -427,7 +427,7 @@ PurchaseState::PurchaseState(Base* const base)
 			{
 				if (itRule->getType().substr(0,8) != "STR_HWP_") // *cuckoo** weapon clips
 				{
-					clipSize = itRule->getClipSize();
+					clipSize = itRule->getFullClip();
 					if (clipSize > 1)
 						wst += (L" (" + Text::intWide(clipSize) + L")");
 				}
@@ -447,7 +447,7 @@ PurchaseState::PurchaseState(Base* const base)
 					&& itRule->getCompatibleAmmo()->empty() == false)
                 {
 					amRule = rules->getItem(itRule->getCompatibleAmmo()->front());
-					clipSize = amRule->getClipSize();
+					clipSize = amRule->getFullClip();
 					if (clipSize != 0)
 						wst += (L" (" + Text::intWide(clipSize) + L")");
                 }
@@ -884,7 +884,7 @@ void PurchaseState::updateItemStrings() // private.
 			const RuleItem* const itRule (_game->getRuleset()->getItem(_items[getItemIndex(_sel)]));
 			if (itRule->getBattleType() == BT_AMMO		// ammo for weapon or hwp
 				|| (itRule->getBattleType() == BT_NONE	// ammo for craft armament
-					&& itRule->getClipSize() != 0))
+					&& itRule->getFullClip() != 0))
 			{
 				_lstItems->setRowColor(_sel, _colorAmmo);
 			}

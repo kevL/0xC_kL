@@ -111,7 +111,7 @@ UnitDieBState::UnitDieBState(
 	}
 	else // pre-battle hidden explosion death or a stunned non-visible unit
 	{
-		if (_unit->isOut_t(OUT_HLTH) == true)
+		if (_unit->isOut_t(OUT_HEALTH) == true)
 			_unit->instaKill();
 		else
 			_unit->knockOut(); // convert if has a "spawnUnit" set. Else sets health0 / stun=health
@@ -146,7 +146,7 @@ void UnitDieBState::think()
 		}
 
 		if (_doneScream == false
-			&& _unit->isOut_t(OUT_STUN) == false
+			&& _unit->isOut_t(OUT_STUNNED) == false
 			&& _unit->hasCried() == false
 			&& _unit->getOverDose() == false)
 		{

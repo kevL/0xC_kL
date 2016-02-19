@@ -446,7 +446,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 			color = BLUE;
 
 			if ((itRule->getBattleType() == BT_AMMO
-					|| (itRule->getBattleType() == BT_NONE && itRule->getClipSize() != 0))
+					|| (itRule->getBattleType() == BT_NONE && itRule->getFullClip() != 0))
 				&& itRule->getType() != _game->getRuleset()->getAlienFuelType())
 			{
 				item.insert(0, L"  ");

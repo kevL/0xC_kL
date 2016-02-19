@@ -46,9 +46,9 @@ CannotReequipState::CannotReequipState(std::vector<ReequipStat> missingItems)
 
 	_txtTitle		= new Text(300, 69, 10, 9);
 
-	_txtItem		= new Text(162, 9, 16, 77);
-	_txtQuantity	= new Text(46, 9, 178, 77);
-	_txtCraft		= new Text(80, 9, 224, 77);
+	_txtItem		= new Text(162, 9,  16, 77);
+	_txtQuantity	= new Text( 46, 9, 178, 77);
+	_txtCraft		= new Text( 80, 9, 224, 77);
 
 	_lstItems		= new TextList(285, 89, 16, 87);
 
@@ -101,12 +101,10 @@ CannotReequipState::CannotReequipState(std::vector<ReequipStat> missingItems)
 			i != missingItems.end();
 			++i)
 	{
-		std::wostringstream woststr;
-		woststr << i->qtyLost;
 		_lstItems->addRow(
 						3,
 						tr(i->type).c_str(),
-						woststr.str().c_str(),
+						Text::intWide(i->qtyLost).c_str(),
 						i->craft.c_str());
 	}
 }

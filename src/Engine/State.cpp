@@ -97,23 +97,23 @@ void State::setInterface(
 		bool alterPal,
 		bool tactical)
 {
-	int backPal = -1;
-	PaletteType palette = PAL_NONE;
+	int backPal (-1);
+	PaletteType palType (PAL_NONE);
 
 	_ruleInterface = _game->getRuleset()->getInterface(category);
 	if (_ruleInterface != nullptr)
 	{
-		palette = _ruleInterface->getPalette();
-		const Element* element = _ruleInterface->getElement("palette");
+		palType = _ruleInterface->getPalette();
+		const Element* element (_ruleInterface->getElement("palType"));
 
 		_ruleInterfaceParent = _game->getRuleset()->getInterface(_ruleInterface->getParent());
 		if (_ruleInterfaceParent != nullptr)
 		{
 			if (element == nullptr)
-				element = _ruleInterfaceParent->getElement("palette");
+				element = _ruleInterfaceParent->getElement("palType");
 
-			if (palette == PAL_NONE)
-				palette = _ruleInterfaceParent->getPalette();
+			if (palType == PAL_NONE)
+				palType = _ruleInterfaceParent->getPalette();
 		}
 
 		if (element != nullptr
@@ -131,11 +131,11 @@ void State::setInterface(
 	}
 
 	if (tactical == true)
-		palette = PAL_BATTLESCAPE;
-	else if (palette == PAL_NONE)
-		palette = PAL_GEOSCAPE;
+		palType = PAL_BATTLESCAPE;
+	else if (palType == PAL_NONE)
+		palType = PAL_GEOSCAPE;
 
-	setPalette(palette, backPal);
+	setPalette(palType, backPal);
 }
 
 /**
@@ -176,11 +176,11 @@ void State::add(
 {
 	surface->setPalette(_palette);
 
-	BattlescapeButton* const tacBtn = dynamic_cast<BattlescapeButton*>(surface);
+	BattlescapeButton* const tacBtn (dynamic_cast<BattlescapeButton*>(surface));
 
 	if (_game->getRuleset()->getInterface(category) != nullptr)
 	{
-		const Element* const element = _game->getRuleset()->getInterface(category)->getElement(id);
+		const Element* const element (_game->getRuleset()->getInterface(category)->getElement(id));
 		if (element != nullptr)
 		{
 			if (parent != nullptr)
@@ -365,7 +365,7 @@ void State::resetAll()
 			i != _surfaces.end();
 			++i)
 	{
-		InteractiveSurface* const srf = dynamic_cast<InteractiveSurface*>(*i);
+		InteractiveSurface* const srf (dynamic_cast<InteractiveSurface*>(*i));
 		if (srf != nullptr)
 		{
 			srf->unpress(this);

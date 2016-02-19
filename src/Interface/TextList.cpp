@@ -41,6 +41,8 @@ namespace OpenXcom
 
 /**
  * Sets up a blank list with the specified size and position.
+ * @note A sound policy is to specify the list-height as a multiple-of-8 + 1
+ * pixels (8 being the height of the small font -1px).
  * @param width		- width in pixels
  * @param height	- height in pixels
  * @param x			- X position in pixels (default 0)
@@ -102,9 +104,8 @@ TextList::TextList(
 	_down->setVisible(false);
 	_down->setTextList(this);
 
-	const int h = std::max(
-						1,
-						_down->getY() - _up->getY() - _up->getHeight());
+	const int h (std::max(1,
+						 _down->getY() - _up->getY() - _up->getHeight()));
 	_scrollbar = new ScrollBar(
 							_up->getWidth(),
 							h,
@@ -260,7 +261,6 @@ void TextList::setRowColor(
 		if ((*i)->getHighContrast() != contrast)
 			(*i)->setHighContrast(contrast);
 	}
-
 	_redraw = true;
 }
 
@@ -374,20 +374,20 @@ void TextList::addRow(
 
 	std::vector<Text*> txtRow;
 	int
-		rowOffset_x = 0,
-		qtyRows = 1,
-		rowHeight = 0;
+		rowOffset_x	(0),
+		qtyRows		(1),
+		rowHeight	(0);
 
 	for (size_t
 			i = 0;
 			i != static_cast<size_t>(cols);
 			++i)
 	{
-		Text* const txt = new Text( // Place text
+		Text* const txt (new Text( // Place text
 								_columns[i],
 								_font->getHeight(),
 								_margin + rowOffset_x,
-								getY());
+								getY()));
 
 		txt->setPalette(this->getPalette());
 		txt->initText(_big, _small, _lang);
@@ -408,7 +408,7 @@ void TextList::addRow(
 
 		// grab this before enabling word wrap so it can
 		// be used to calculate the total row height below
-		const int vertPad = _font->getHeight() - txt->getTextHeight();
+		const int vertPad (_font->getHeight() - txt->getTextHeight());
 
 		if (_wrap == true // wordwrap text if necessary
 			&& txt->getTextWidth() > txt->getWidth())
@@ -427,9 +427,9 @@ void TextList::addRow(
 		if (_dot == true // place dots between text
 			&& i < static_cast<size_t>(cols) - 1)
 		{
-			std::wstring buf = txt->getText();
+			std::wstring buf (txt->getText());
 
-			size_t width = txt->getTextWidth();
+			size_t width (txt->getTextWidth());
 			while (width < _columns[i])
 			{
 				width += static_cast<size_t>(static_cast<int>(_font->getChar('.')->getCrop()->w) + _font->getSpacing());
@@ -482,11 +482,11 @@ void TextList::addRow(
 			shape2 = ARROW_SMALL_RIGHT;
 		}
 
-		ArrowButton* const a1 = new ArrowButton(
+		ArrowButton* const a1 (new ArrowButton(
 											shape1,
 											11,8,
 											getX() + _arrowPos,
-											getY());
+											getY()));
 		a1->setListButton();
 		a1->setPalette(this->getPalette());
 		a1->setColor(_up->getColor());
@@ -495,11 +495,11 @@ void TextList::addRow(
 		a1->onMouseRelease(_leftRelease);
 		_arrowLeft.push_back(a1);
 
-		ArrowButton* const a2 = new ArrowButton(
+		ArrowButton* const a2 (new ArrowButton(
 											shape2,
 											11,8,
 											getX() + _arrowPos + 12,
-											getY());
+											getY()));
 		a2->setListButton();
 		a2->setPalette(this->getPalette());
 		a2->setColor(_up->getColor());

@@ -199,11 +199,11 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 																					(*l)->getRules()->getCompatibleAmmo()->end(),
 																					itRule->getType());
 								if (ammo != (*l)->getRules()->getCompatibleAmmo()->end()
-									&& (*l)->getAmmo() < itRule->getClipSize())
+									&& (*l)->getAmmo() < itRule->getFullClip())
 								{
 									const int toTank = std::min(
 															(*j)->getQuantity(),
-															itRule->getClipSize() - (*l)->getAmmo());
+															itRule->getFullClip() - (*l)->getAmmo());
 									(*l)->setAmmo((*l)->getAmmo() + toTank);
 
 									// Note that the items have already been delivered in Geoscape->Transfer::advance()

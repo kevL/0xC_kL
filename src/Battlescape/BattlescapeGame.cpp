@@ -125,7 +125,7 @@ BattlescapeGame::BattlescapeGame(
 	}
 
 	// sequence of instantiations:
-	// - SavedBattleGame
+	// - SavedBattleGame		- dTor: DebriefingState::btnOkClick()
 	// - BattlescapeGenerator
 	// - BattlescapeState
 	// - this.
@@ -361,8 +361,8 @@ void BattlescapeGame::popState()
 		else
 			actionFail = false;
 
-		//Log(LOG_INFO) << ". move Front-state to _deleted.";
-		_deleted.push_back(_battleStates.front());
+		//Log(LOG_INFO) << ". move Front-state to _deletedStates.";
+		_deletedStates.push_back(_battleStates.front());
 		//Log(LOG_INFO) << ". states.Popfront";
 		_battleStates.pop_front();
 
@@ -1661,8 +1661,8 @@ void BattlescapeGame::checkForCasualties(
 	{
 		if ((*i)->getUnitStatus() != STATUS_LIMBO) // kL_tentative.
 		{
-			dead = (*i)->isOut_t(OUT_HLTH);
-			stunned = (*i)->isOut_t(OUT_STUN);
+			dead = (*i)->isOut_t(OUT_HEALTH);
+			stunned = (*i)->isOut_t(OUT_STUNNED);
 
 			converted =
 			bypass = false;
@@ -3673,18 +3673,18 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 }
 
 /**
- * Cleans up all the deleted states.
+ * Deletes all BattleStates that are queued for deletion.
  */
-void BattlescapeGame::cleanupDeleted()
+void BattlescapeGame::cleanBattleStates()
 {
 	for (std::list<BattleState*>::const_iterator
-			i = _deleted.begin();
-			i != _deleted.end();
+			i = _deletedStates.begin();
+			i != _deletedStates.end();
 			++i)
 	{
 		delete *i;
 	}
-	_deleted.clear();
+	_deletedStates.clear();
 }
 
 /**

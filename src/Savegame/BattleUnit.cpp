@@ -1600,7 +1600,7 @@ int BattleUnit::takeDamage(
 			}
 		}
 
-		if (isOut_t(OUT_HLTH) == false && selfAware == true)
+		if (isOut_t(OUT_HEALTH) == false && selfAware == true)
 		{
 			moraleChange(-wounds * 3);
 
@@ -1869,8 +1869,8 @@ void BattleUnit::setAimingPhase(int phase)
  * @param test - what to check for (default OUT_ALL) (BattleUnit.h)
  *				 OUT_ALL		- everything
  *				 OUT_STAT		- status dead or unconscious or limbo'd
- *				 OUT_HLTH		- health
- *				 OUT_STUN		- stun only
+ *				 OUT_HEALTH		- health
+ *				 OUT_STUNNED		- stun only
  *				 OUT_HLTH_STUN	- health or stun
  * @return, true if unit is incapacitated
  */
@@ -1902,12 +1902,12 @@ bool BattleUnit::isOut_t(OutCheck test) const
 			}
 			break;
 
-		case OUT_HLTH:
+		case OUT_HEALTH:
 			if (_health == 0)
 				return true;
 			break;
 
-		case OUT_STUN:
+		case OUT_STUNNED:
 			if (_health != 0 && _health <= _stunLevel)
 				return true;
 			break;
@@ -3605,8 +3605,8 @@ void BattleUnit::morphine()
 						_morale + 50 - static_cast<int>(30.f * healthPct));
 	}
 
-	if (isOut_t(OUT_HLTH) == true			// just died. Use death animations
-		|| (isOut_t(OUT_STUN) == true		// unless already unconscious.
+	if (isOut_t(OUT_HEALTH) == true			// just died. Use death animations
+		|| (isOut_t(OUT_STUNNED) == true		// unless already unconscious.
 			&& isOut_t(OUT_STAT) == false))
 	{
 		_battleGame->checkForCasualties(
@@ -4528,7 +4528,6 @@ bool BattleUnit::isSelectable(
 		bool checkInventory) const
 {
 	return _faction == faction
-//		&& isOut() == false
 		&& isOut_t(OUT_STAT) == false
 		&& (checkReselect == false
 			|| reselectAllowed() == true)

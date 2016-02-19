@@ -722,7 +722,7 @@ void ProjectileFlyBState::think()
 			{
 				//Log(LOG_INFO) << "reset Camera for " << _action.actor->getId();
 				const std::map<int, Position>* const rfShotPos (_battleSave->getTileEngine()->getRfShooterPositions());
-				std::map<int, Position>::const_iterator i = rfShotPos->find(_action.actor->getId());
+				std::map<int, Position>::const_iterator i (rfShotPos->find(_action.actor->getId()));
 
 				//for (std::map<int, Position>::const_iterator j = rfShotPos->begin(); j != rfShotPos->end(); ++j)
 				//{ Log(LOG_INFO) << ". . shotList"; Log(LOG_INFO) << ". . " << j->first << " " << j->second; }

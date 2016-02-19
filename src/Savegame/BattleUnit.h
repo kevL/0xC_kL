@@ -107,8 +107,8 @@ enum OutCheck
 {
 	OUT_ALL,		// 0
 	OUT_STAT,		// 1
-	OUT_HLTH,		// 2
-	OUT_STUN,		// 3
+	OUT_HEALTH,		// 2
+	OUT_STUNNED,		// 3
 	OUT_HLTH_STUN	// 4
 };
 

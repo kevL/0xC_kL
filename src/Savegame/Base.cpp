@@ -2255,7 +2255,7 @@ void Base::setupBaseDefense()
 				{
 					_vehicles.push_back(new Vehicle(
 												itRule,
-												itRule->getClipSize(),
+												itRule->getFullClip(),
 												tankSize));
 				}
 				_items->removeItem(itemId, itemQty);
@@ -2266,14 +2266,14 @@ void Base::setupBaseDefense()
 				int
 					tankClipSize,
 					requiredRounds;
-				if (aRule->getClipSize() > 0 && itRule->getClipSize() > 0)
+				if (aRule->getFullClip() > 0 && itRule->getFullClip() > 0)
 				{
-					requiredRounds = itRule->getClipSize();
-					tankClipSize = requiredRounds / aRule->getClipSize();
+					requiredRounds = itRule->getFullClip();
+					tankClipSize = requiredRounds / aRule->getFullClip();
 				}
 				else
 				{
-					requiredRounds = aRule->getClipSize();
+					requiredRounds = aRule->getFullClip();
 					tankClipSize = requiredRounds;
 				}
 
@@ -2357,10 +2357,10 @@ void Base::cleanupBaseDefense(bool hwpToStores)
 			{
 				const RuleItem* const aRule (_rules->getItem(itRule->getCompatibleAmmo()->front()));
 				int requiredRounds;
-				if (aRule->getClipSize() > 0 && itRule->getClipSize() > 0)
-					requiredRounds = itRule->getClipSize() / aRule->getClipSize();
+				if (aRule->getFullClip() > 0 && itRule->getFullClip() > 0)
+					requiredRounds = itRule->getFullClip() / aRule->getFullClip();
 				else
-					requiredRounds = aRule->getClipSize();
+					requiredRounds = aRule->getFullClip();
 
 				_items->addItem(
 							aRule->getType(),

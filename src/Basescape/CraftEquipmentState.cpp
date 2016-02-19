@@ -223,7 +223,7 @@ CraftEquipmentState::CraftEquipmentState(
 			wst = tr(*i);
 			if (itRule->getBattleType() == BT_AMMO) // weapon clips
 			{
-				clipSize = itRule->getClipSize();
+				clipSize = itRule->getFullClip();
 				if (clipSize > 1)
 					wst += (L" (" + Text::intWide(clipSize) + L")");
 
@@ -233,7 +233,7 @@ CraftEquipmentState::CraftEquipmentState(
 				&& itRule->getCompatibleAmmo()->empty() == false)
 			{
 				aRule = _game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front());
-				clipSize = aRule->getClipSize();
+				clipSize = aRule->getFullClip();
 				if (clipSize != 0)
 					wst += (L" (" + Text::intWide(clipSize) + L")");
 			}
@@ -602,14 +602,14 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 						int
 							tankClipSize,
 							requiredRounds;
-						if (aRule->getClipSize() > 0 && itRule->getClipSize() > 0)
+						if (aRule->getFullClip() > 0 && itRule->getFullClip() > 0)
 						{
-							requiredRounds = itRule->getClipSize();
-							tankClipSize = requiredRounds / aRule->getClipSize();
+							requiredRounds = itRule->getFullClip();
+							tankClipSize = requiredRounds / aRule->getFullClip();
 						}
 						else
 						{
-							requiredRounds = aRule->getClipSize();
+							requiredRounds = aRule->getFullClip();
 							tankClipSize = requiredRounds;
 						}
 
@@ -661,7 +661,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 
 							_craft->getVehicles()->push_back(new Vehicle(
 																	itRule,
-																	itRule->getClipSize(),
+																	itRule->getFullClip(),
 																	tankQuads));
 						}
 					}

@@ -258,7 +258,6 @@ void CeremonyDeadState::btnOkClick(Action*)
 		_game->getResourcePack()->fadeMusic(_game, 863);
 		_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
 	}
-
 	_game->popState();
 }
 

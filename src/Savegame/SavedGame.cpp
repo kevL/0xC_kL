@@ -1086,7 +1086,7 @@ void SavedGame::setTime(GameTime gt)
  */
 int SavedGame::getCanonicalId(const std::string& objectType)
 {
-	std::map<std::string, int>::iterator i = _ids.find(objectType);
+	std::map<std::string, int>::iterator i (_ids.find(objectType));
 	if (i != _ids.end())
 		return i->second++;
 
@@ -1094,7 +1094,7 @@ int SavedGame::getCanonicalId(const std::string& objectType)
 	return _ids[objectType]++;
 }
 
-/*
+/**
  * Resets the list of unique object IDs.
  * @param ids - new ID list as a reference to a map of strings & ints
  *
@@ -1126,7 +1126,6 @@ int SavedGame::getCountryFunding() const
 	{
 		total += (*i)->getFunding().back();
 	}
-
 	return total;
 }
 

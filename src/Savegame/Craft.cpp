@@ -989,7 +989,7 @@ std::string Craft::rearm(const Ruleset* const rules)
 			{
 				int clipsUsed = (*i)->rearm(
 										baseClips,
-										rules->getItem(clip)->getClipSize());
+										rules->getItem(clip)->getFullClip());
 				if (clipsUsed != 0)
 				{
 					if (clipsUsed < 0) // trick. See CraftWeapon::rearm() - not enough clips at Base

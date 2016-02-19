@@ -54,7 +54,7 @@ private:
 		_type;
 	std::map<std::string, Element> _elements;
 
-	PaletteType _palettePt;
+	PaletteType _palType;
 
 	/// Converts the palette from a string to PaletteType.
 	static PaletteType convertToPaletteType(const std::string& palette);

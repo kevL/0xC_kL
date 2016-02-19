@@ -47,9 +47,9 @@ PromotionsState::PromotionsState()
 
 	_txtTitle		= new Text(300, 17, 10, 13);
 
-	_txtName		= new Text(114, 9, 16, 32);
-	_txtRank		= new Text(70, 9, 150, 32);
-	_txtBase		= new Text(80, 9, 220, 32);
+	_txtName		= new Text(114, 9,  16, 32);
+	_txtRank		= new Text( 70, 9, 150, 32);
+	_txtBase		= new Text( 80, 9, 220, 32);
 
 	_lstSoldiers	= new TextList(285, 129, 16, 42);
 
@@ -108,10 +108,10 @@ PromotionsState::PromotionsState()
 		{
 			if ((*j)->isPromoted() == true)
 				_lstSoldiers->addRow(
-									3,
-									(*j)->getName().c_str(),
-									tr((*j)->getRankString()).c_str(),
-									(*i)->getName(nullptr).c_str());
+								3,
+								(*j)->getName().c_str(),
+								tr((*j)->getRankString()).c_str(),
+								(*i)->getName(nullptr).c_str());
 		}
 	}
 }
@@ -134,7 +134,6 @@ void PromotionsState::btnOkClick(Action*)
 		_game->getResourcePack()->fadeMusic(_game, 863);
 		_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
 	}
-
 	_game->popState();
 }
 

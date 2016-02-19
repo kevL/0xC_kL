@@ -1684,7 +1684,7 @@ inline void BattlescapeState::handle(Action* action)
 												++i)
 										{
 											if ((*i)->getOriginalFaction() == FACTION_HOSTILE
-												&& (*i)->isOut_t(OUT_HLTH) == false)
+												&& (*i)->isOut_t(OUT_HEALTH) == false)
 											{
 												checkCasualties = true;
 												(*i)->setHealth(0);
@@ -1702,7 +1702,7 @@ inline void BattlescapeState::handle(Action* action)
 											++i)
 										{
 											if ((*i)->getOriginalFaction() == FACTION_HOSTILE
-												&& (*i)->isOut_t(OUT_HLTH) == false)
+												&& (*i)->isOut_t(OUT_HEALTH) == false)
 											{
 												checkCasualties = true;
 												(*i)->setStun((*i)->getHealth() + 1000);
@@ -3086,14 +3086,14 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 		{
 			case BT_FIREARM:
 			case BT_MELEE:
-				if (rtItem->selfPowered() == false || itRule->getClipSize() > 0)
+				if (rtItem->selfPowered() == false || itRule->getFullClip() > 0)
 				{
 					if (rtItem->getAmmoItem() != nullptr)
 					{
 						_numAmmoR->setVisible();
 						const int
 							qty = rtItem->getAmmoItem()->getAmmoQuantity(),
-							clipSize = rtItem->getAmmoItem()->getRules()->getClipSize();
+							clipSize = rtItem->getAmmoItem()->getRules()->getFullClip();
 						_numAmmoR->setValue(static_cast<unsigned>(qty));
 
 						Uint8 color;
@@ -3150,14 +3150,14 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 		{
 			case BT_FIREARM:
 			case BT_MELEE:
-				if (ltItem->selfPowered() == false || itRule->getClipSize() > 0)
+				if (ltItem->selfPowered() == false || itRule->getFullClip() > 0)
 				{
 					_numAmmoL->setVisible();
 					if (ltItem->getAmmoItem() != nullptr)
 					{
 						const int
 							qty = ltItem->getAmmoItem()->getAmmoQuantity(),
-							clipSize = ltItem->getAmmoItem()->getRules()->getClipSize();
+							clipSize = ltItem->getAmmoItem()->getRules()->getFullClip();
 						_numAmmoL->setValue(static_cast<unsigned>(qty));
 
 						Uint8 color;
@@ -3273,7 +3273,7 @@ void BattlescapeState::hotWoundsRefresh()
 			&& unit->getFaction() == FACTION_PLAYER
 			&& unit->isMindControlled() == false
 			&& unit->getGeoscapeSoldier() != nullptr
-			&& unit->isOut_t(OUT_HLTH) == false)
+			&& unit->isOut_t(OUT_HEALTH) == false)
 		{
 			srfBadge->blit(_btnWounded[k]);
 			_btnWounded[k]->setVisible(vis);

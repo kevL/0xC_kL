@@ -214,7 +214,7 @@ private:
 	SavedBattleGame* _battleSave;
 
 	std::list<BattleState*>
-		_deleted,
+		_deletedStates,
 		_battleStates;
 	std::vector<InfoboxOKState*> _infoboxQueue;
 
@@ -399,8 +399,8 @@ private:
 		/// Checks for and triggers proximity grenades.
 		bool checkProxyGrenades(BattleUnit* const unit);
 
-		/// Cleans up all the deleted states. [Delete all battlestates that are queued for deletion.]
-		void cleanupDeleted();
+		/// Cleans up all the deleted BattleStates.
+		void cleanBattleStates();
 
 		/// Gets the BattlescapeState.
 		BattlescapeState* getBattlescapeState() const;

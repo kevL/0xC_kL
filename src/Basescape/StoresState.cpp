@@ -128,21 +128,21 @@ StoresState::StoresState(Base* base)
 	_lstStores->setSelectable();
 
 
-	const SavedGame* const gameSave = _game->getSavedGame();
-	const Ruleset* const rules = _game->getRuleset();
+	const SavedGame* const gameSave (_game->getSavedGame());
+	const Ruleset* const rules (_game->getRuleset());
 	const RuleItem
-		* itRule = nullptr,
-		* laRule = nullptr,
-		* clRule = nullptr;
-	const RuleCraftWeapon* cwRule = nullptr;
+		* itRule (nullptr),
+		* laRule (nullptr),
+		* clRule (nullptr);
+	const RuleCraftWeapon* cwRule (nullptr);
 
 	int
-		row = 0,
+		row (0),
 		qty,
 		clipSize;
 	Uint8 color;
 
-	const std::vector<std::string>& items = rules->getItemsList();
+	const std::vector<std::string>& items (rules->getItemsList());
 	for (std::vector<std::string>::const_iterator
 			i = items.begin();
 			i != items.end();
@@ -157,14 +157,13 @@ StoresState::StoresState(Base* base)
 				color = BLUE;
 				itRule = rules->getItem(*i);
 
-				std::wstring item = tr(*i);
+				std::wstring item (tr(*i));
 
-				bool craftOrdnance = false;
-				const std::vector<std::string>& cwList = rules->getCraftWeaponsList();
+				bool craftOrdnance (false);
+				const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
 				for (std::vector<std::string>::const_iterator
 						j = cwList.begin();
-						j != cwList.end()
-							&& craftOrdnance == false;
+						j != cwList.end() && craftOrdnance == false;
 						++j)
 				{
 					// Special handling for treating craft weapons as items
@@ -183,7 +182,7 @@ StoresState::StoresState(Base* base)
 					else if (clRule == itRule)
 					{
 						craftOrdnance = true;
-						clipSize = clRule->getClipSize(); // launcher Ammo quantity
+						clipSize = clRule->getFullClip(); // launcher Ammo quantity
 						if (clipSize > 1)
 							item += (L"s (" + Text::intWide(clipSize) + L")");
 					}
@@ -193,20 +192,20 @@ StoresState::StoresState(Base* base)
 					&& itRule->getCompatibleAmmo()->empty() == false)
 				{
 					clRule = rules->getItem(itRule->getCompatibleAmmo()->front());
-					clipSize = clRule->getClipSize();
+					clipSize = clRule->getFullClip();
 					if (clipSize != 0)
 						item += (L" (" + Text::intWide(clipSize) + L")");
 				}
 
 				if ((itRule->getBattleType() == BT_AMMO
 						|| (itRule->getBattleType() == BT_NONE
-							&& itRule->getClipSize() > 0))
+							&& itRule->getFullClip() > 0))
 					&& itRule->getType() != _game->getRuleset()->getAlienFuelType())
 				{
 					if (itRule->getBattleType() == BT_AMMO
 						&& itRule->getType().substr(0, 8) != "STR_HWP_") // *cuckoo** weapon clips
 					{
-						clipSize = itRule->getClipSize();
+						clipSize = itRule->getFullClip();
 						if (clipSize > 1)
 							item += (L" (" + Text::intWide(clipSize) + L")");
 					}
@@ -226,21 +225,14 @@ StoresState::StoresState(Base* base)
 					color = YELLOW;
 				}
 
-				std::wostringstream
-					woststr1,
-					woststr2;
-
-				woststr1 << qty;
-				woststr2 << std::fixed << std::setprecision(1) << (static_cast<double>(qty) * itRule->getSize());
+				std::wostringstream woststr;
+				woststr << std::fixed << std::setprecision(1) << (static_cast<double>(qty) * itRule->getSize());
 				_lstStores->addRow(
 								3,
 								item.c_str(),
-								woststr1.str().c_str(),
-								woststr2.str().c_str());
-
-				_lstStores->setRowColor(
-									row++,
-									color);
+								Text::intWide(qty).c_str(),
+								woststr.str().c_str());
+				_lstStores->setRowColor(row++, color);
 /*			std::wostringstream woststr1;
 			woststr1 << qty;
 			if (rules->getItem(*i)->isAlien() == true)

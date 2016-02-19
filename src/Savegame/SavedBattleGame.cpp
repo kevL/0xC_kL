@@ -1401,7 +1401,7 @@ bool SavedBattleGame::endFactionTurn()
 	{
 		if ((*i)->getUnitStatus() != STATUS_LIMBO)
 		{
-			if ((*i)->isOut_t(OUT_HLTH) == false)
+			if ((*i)->isOut_t(OUT_HEALTH) == false)
 			{
 				(*i)->setDashing(false);	// Safety. no longer dashing; dash is effective
 											// vs. Reaction Fire only and is/ought be
@@ -1661,6 +1661,15 @@ void SavedBattleGame::toDeleteItem(BattleItem* const item)
 	}
 
 	_toDelete.push_back(item);
+}
+
+/**
+ * Returns a copy of the deleted-items vector.
+ * @return, a vector of pointers to deleted BattleItems
+ */
+std::vector<BattleItem*> SavedBattleGame::getDeletedItems() const
+{
+	return _toDelete;
 }
 
 /**
@@ -2183,7 +2192,7 @@ void SavedBattleGame::reviveUnit(
 }
 
 /**
- * Sends the body-item that corresponds to a BattleUnit to the deleted queue.
+ * Sends the body-item that corresponds to a BattleUnit to the deleted vector.
  * @param unit - pointer to a BattleUnit
  */
 void SavedBattleGame::deleteBody(const BattleUnit* const unit)

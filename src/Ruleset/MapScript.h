@@ -55,10 +55,10 @@ struct TunnelData
 	///
 	MCDReplacement* getMCDReplacement(std::string type)
 	{
-		if (replacements.find(type) == replacements.end())
-			return nullptr;
+		if (replacements.find(type) != replacements.end())
+			return &replacements[type];
 
-		return &replacements[type];
+		return nullptr;
 	}
 };
 

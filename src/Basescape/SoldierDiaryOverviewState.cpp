@@ -241,14 +241,14 @@ void SoldierDiaryOverviewState::init()
 {
 	State::init();
 
-	SoldierDiary* diary = nullptr;
+	SoldierDiary* diary (nullptr);
 
 	if (_base == nullptr)
 	{
 		if (_soldierId >= _listDead->size())
 			_soldierId = 0;
 
-		const SoldierDead* const solDead = _listDead->at(_soldierId);
+		const SoldierDead* const solDead (_listDead->at(_soldierId));
 		diary = solDead->getDiary();
 
 		_txtTitle->setText(solDead->getName());
@@ -258,7 +258,7 @@ void SoldierDiaryOverviewState::init()
 		if (_soldierId >= _list->size())
 			_soldierId = 0;
 
-		const Soldier* const sol = _list->at(_soldierId);
+		const Soldier* const sol (_list->at(_soldierId));
 		diary = sol->getDiary();
 
 		_txtTitle->setText(sol->getName());
@@ -271,13 +271,13 @@ void SoldierDiaryOverviewState::init()
 		return;
 
 
-	const std::vector<MissionStatistics*>* const missionStatistics = _game->getSavedGame()->getMissionStatistics();
+	const std::vector<MissionStatistics*>* const missionStatistics (_game->getSavedGame()->getMissionStatistics());
 	for (std::vector<MissionStatistics*>::const_reverse_iterator
 			i = missionStatistics->rbegin();
 			i != missionStatistics->rend();
 			++i)
 	{
-		const int missionId = (*i)->id;
+		const int missionId ((*i)->id);
 
 		for (std::vector<int>::const_iterator
 				j = diary->getMissionIdList().begin();
@@ -433,7 +433,7 @@ void SoldierDiaryOverviewState::lstMissionInfoClick(Action*)
 {
 	_curRow = _lstDiary->getScroll();
 
-	const size_t row = _lstDiary->getRows() - _lstDiary->getSelectedRow() - 1;
+	const size_t row (_lstDiary->getRows() - _lstDiary->getSelectedRow() - 1);
 	_game->pushState(new SoldierDiaryMissionState(
 												_base,
 												_soldierId,

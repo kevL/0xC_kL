@@ -369,10 +369,10 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	{
 		case DIARY_KILLS:
 			_displayGroup = _btnKills;
-		break;
+			break;
 		case DIARY_MISSIONS:
 			_displayGroup = _btnMissions;
-		break;
+			break;
 		case DIARY_MEDALS:
 			_displayGroup = _btnAwards;
 	}
@@ -759,7 +759,7 @@ void SoldierDiaryPerformanceState::btnMedalsToggle(Action*)
  */
 void SoldierDiaryPerformanceState::lstMouseOver(Action*)
 {
-	const size_t row = _lstAwards->getSelectedRow();
+	const size_t row (_lstAwards->getSelectedRow());
 
 	if (_awardsListEntry.empty() == true
 		|| row > _awardsListEntry.size() - 1)

@@ -41,7 +41,7 @@ SoundSet::SoundSet()
  */
 SoundSet::~SoundSet()
 {
-	for (std::map<int, Sound*>::iterator
+	for (std::map<int, Sound*>::const_iterator
 			i = _sounds.begin();
 			i != _sounds.end();
 			++i)

@@ -432,7 +432,7 @@ void TransferItemsState::init()
 				{
 					craftOrdnance = true;
 
-					const int clipSize = clRule->getClipSize(); // launcher Ammo
+					const int clipSize = clRule->getFullClip(); // launcher Ammo
 					if (clipSize > 1)
 						item += (L"s (" + Text::intWide(clipSize) + L")");
 				}
@@ -443,13 +443,13 @@ void TransferItemsState::init()
 
 			if ((itRule->getBattleType() == BT_AMMO
 					|| (itRule->getBattleType() == BT_NONE
-						&& itRule->getClipSize() != 0))
+						&& itRule->getFullClip() != 0))
 				&& itRule->getType() != _game->getRuleset()->getAlienFuelType()) // <- is this necessary
 			{
 				if (itRule->getBattleType() == BT_AMMO
 					&& itRule->getType().substr(0,8) != "STR_HWP_") // *cuckoo** weapon clips
 				{
-					const int clipSize = itRule->getClipSize();
+					const int clipSize = itRule->getFullClip();
 					if (clipSize > 1)
 						item += (L" (" + Text::intWide(clipSize) + L")");
 				}
@@ -463,7 +463,7 @@ void TransferItemsState::init()
 					&& itRule->getCompatibleAmmo()->empty() == false)
                 {
 					clRule = _game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front());
-					const int clipSize = clRule->getClipSize();
+					const int clipSize = clRule->getFullClip();
 					if (clipSize != 0)
 						item += (L" (" + Text::intWide(clipSize) + L")");
                 }
@@ -1038,7 +1038,7 @@ void TransferItemsState::updateItemStrings() // private.
 		}
 		else if (itRule->getBattleType() == BT_AMMO
 			|| (itRule->getBattleType() == BT_NONE
-				&& itRule->getClipSize() != 0))
+				&& itRule->getFullClip() != 0))
 		{
 			color = _colorAmmo;
 		}

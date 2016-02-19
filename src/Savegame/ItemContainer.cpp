@@ -56,6 +56,7 @@ void ItemContainer::load(const YAML::Node& node)
 YAML::Node ItemContainer::save() const
 {
 	YAML::Node node;
+
 	node = _contents;
 
 	return node;
@@ -74,7 +75,6 @@ void ItemContainer::modifyContents(
 	if (_contents.find(type) != _contents.end())
 	{
 		_contents[type] += qty;
-
 		if (_contents[type] < 1)
 			_contents.erase(type);
 	}
@@ -91,14 +91,14 @@ void ItemContainer::addItem(
 		const std::string& type,
 		int qty)
 {
-	if (type.empty() == false)
+	if (type.empty() == false) // likely redundant in a well-wrought ruleset.
 	{
-		if (_contents.find(type) == _contents.end())
-			_contents[type] = 0; // prep <map>
-
-		_contents[type] += qty;
+		if (_contents.find(type) != _contents.end())
+			_contents[type] += qty;
+		else
+			_contents.emplace(type, qty);
 	}
-	else Log(LOG_WARNING) << "ItemContainer::addItem() failed ID " << type;
+	//else Log(LOG_WARNING) << "ItemContainer::addItem() failed ID " << type;
 }
 
 /**
@@ -111,24 +111,20 @@ void ItemContainer::removeItem(
 		const std::string& type,
 		int qty)
 {
-	if (type.empty() == false && _contents.find(type) != _contents.end())
+	if (type.empty() == false // likely redundant in a well-wrought ruleset.
+		&& _contents.find(type) != _contents.end())
 	{
 		if (qty < _contents[type])
 			_contents[type] -= qty;
 		else
 			_contents.erase(type);
 	}
-	else if (type.empty() == true) Log(LOG_WARNING) << "ItemContainer::removeItem() failed ID " << type;
-	else if (_contents.find(type) == _contents.end()) Log(LOG_WARNING) << "ItemContainer::removeItem() failed to find " << type;
+	//else if (type.empty() == true) Log(LOG_WARNING) << "ItemContainer::removeItem() failed ID " << type;
+	//else if (_contents.find(type) == _contents.end()) Log(LOG_WARNING) << "ItemContainer::removeItem() failed to find " << type;
 }
-/* std::map<std::string, int>::const_iterator ItemContainer::removeItem(
-		const std::string& type,
-		int qty)
+/* std::map<std::string, int>::const_iterator ItemContainer::removeItem(const std::string& type, int qty)
 {
-	for (std::map<std::string, int>::const_iterator
-			i = _contents.begin();
-			i != _contents.end();
-			++i)
+	for (std::map<std::string, int>::const_iterator i = _contents.begin(); i != _contents.end(); ++i)
 	{
 		if (i->first == type)
 		{
@@ -137,11 +133,9 @@ void ItemContainer::removeItem(
 				_contents[type] -= qty;
 				return ++i;
 			}
-
 			return _contents.erase(i);
 		}
 	}
-
 	return _contents.end();
 } */
 
@@ -152,13 +146,12 @@ void ItemContainer::removeItem(
  */
 int ItemContainer::getItemQuantity(const std::string& type) const
 {
-//	if (type.empty() == false)
+	if (type.empty() == false) // likely redundant in a well-wrought ruleset.
 	{
-		std::map<std::string, int>::const_iterator i = _contents.find(type);
+		std::map<std::string, int>::const_iterator i (_contents.find(type));
 		if (i != _contents.end())
 			return i->second;
 	}
-
 	return 0;
 }
 
@@ -176,7 +169,6 @@ int ItemContainer::getTotalQuantity() const
 	{
 		total += i->second;
 	}
-
 	return total;
 }
 
@@ -187,15 +179,14 @@ int ItemContainer::getTotalQuantity() const
  */
 double ItemContainer::getTotalSize(const Ruleset* const rules) const
 {
-	double total = 0;
+	double total (0.);
 	for (std::map<std::string, int>::const_iterator
 			i = _contents.begin();
 			i != _contents.end();
 			++i)
 	{
-		total += rules->getItem(i->first)->getSize() * i->second;
+		total += rules->getItem(i->first)->getSize() * static_cast<double>(i->second);
 	}
-
 	return total;
 }
 

@@ -26,7 +26,12 @@
 
 #include "../Engine/State.h"
 
-#include "../Savegame/SavedGame.h"
+//#include "../Ruleset/RuleItem.h"
+
+//#include "../Savegame/BattleItem.h"
+#include "../Savegame/MissionStatistics.h"
+//#include "../Savegame/Soldier.h"
+#include "../Savegame/SoldierDead.h"
 
 
 namespace OpenXcom
@@ -41,17 +46,17 @@ struct DebriefingStat
 	int
 		qty,
 		score;
-	std::string item;
+	std::string type;
 
 	/// cTor.
 	DebriefingStat(
-			const std::string& type,
-			bool rec = false)
+			const std::string& typeId,
+			bool recovery = false)
 		:
-			item(type),
+			type(typeId),
 			score(0),
 			qty(0),
-			recover(rec)
+			recover(recovery)
 	{};
 };
 
@@ -139,9 +144,14 @@ private:
 	MissionStatistics* _missionStatistics;
 
 	std::map<int, SpecialType*> _specialTypes;
-	std::map<RuleItem*, int> _rounds;
+	std::map<const RuleItem*, int>
+		_clips,
+		_clipsProperty,
+		_itemsGained,
+		_itemsLostProperty;
 
 	std::vector<ReequipStat> _missingItems;
+
 	std::vector<DebriefingStat*> _stats;
 	std::vector<Soldier*> _soldiersMedalled;
 	std::vector<SoldierDead*> _soldiersLost;
@@ -153,7 +163,7 @@ private:
 			int qty = 1);
 	/// Prepares the debriefing.
 	void prepareDebriefing();
-	/// Recovers items from the battlefield.
+	/// Recovers items from tactical.
 	void recoverItems(std::vector<BattleItem*>* const battleItems);
 	/// Recovers an aLien from the battlefield.
 	void recoverLiveAlien(BattleUnit* const unit);

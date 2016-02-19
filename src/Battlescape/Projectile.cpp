@@ -408,32 +408,36 @@ void Projectile::applyAccuracy( // private.
 
 		if (_action.autoShotCount == 1)
 		{
-			const int autoHit (static_cast<int>(std::ceil(accuracy * 21.))); // chance for Bulls-eye.
+//			const int autoHit (static_cast<int>(std::ceil(accuracy * 21.))); // chance for Bulls-eye.
 //			if (false) // TEST do AutoHit.
-			if (RNG::percent(autoHit) == false)
-			{
+//			if (RNG::percent(autoHit) == false) // TODO: If autoHit divide deviation by 10.
+//			{
 				//Log(LOG_INFO) << ". NOT autoHit";
-				double deviation;
-				if (_action.actor->getFaction() == FACTION_HOSTILE)
-					deviation = 0.15;	// give the poor aLiens an aiming advantage over xCom & Mc'd units
-										// DO IT IN RULESET! not here. Okay do it here because of faction/MC-thing ...
-				else
-					deviation = 0.21;	// for Player
-
-				deviation /= accuracy + 0.16;
-				deviation = std::max(ACU_MIN, deviation);
-				//Log(LOG_INFO) << ". deviation = " << deviation;
-
-				// The angle deviations are spread using a normal distribution:
-				deltaHori = RNG::boxMuller(0., deviation / div_HORI); // horizontal miss in radians
-				deltaVert = RNG::boxMuller(0., deviation / div_VERT); // vertical miss in radians
-			}
+			double deviation;
+			if (_action.actor->getFaction() == FACTION_HOSTILE)
+				deviation = 0.15;	// give the poor aLiens an aiming advantage over xCom & Mc'd units
+									// DO IT IN RULESET! not here. Okay do it here because of faction/MC-thing ...
 			else
-			{
+				deviation = 0.21;	// for Player
+
+			deviation /= accuracy + 0.16;
+			const int autoHit (static_cast<int>(std::ceil(accuracy * 21.))); // chance for Bulls-eye.
+			if (RNG::percent(autoHit) == true)
+				deviation /= 10.;
+
+			deviation = std::max(ACU_MIN, deviation);
+			//Log(LOG_INFO) << ". deviation = " << deviation;
+
+			// The angle deviations are spread using a normal distribution:
+			deltaHori = RNG::boxMuller(0., deviation / div_HORI); // horizontal miss in radians
+			deltaVert = RNG::boxMuller(0., deviation / div_VERT); // vertical miss in radians
+//			}
+//			else
+//			{
 				//Log(LOG_INFO) << ". autoHit";
-				deltaHori =
-				deltaVert = 0.;
-			}
+//				deltaHori =
+//				deltaVert = 0.;
+//			}
 		}
 		else // 2nd+ shot of burst.
 		{

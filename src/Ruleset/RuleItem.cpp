@@ -632,7 +632,7 @@ int RuleItem::getInventoryHeight() const
  * Melee items have clipsize(0), lasers etc have clipsize(-1).
  * @return, the ammo clip size
  */
-int RuleItem::getClipSize() const
+int RuleItem::getFullClip() const
 {
 	return _clipSize;
 }

@@ -323,6 +323,8 @@ private:
 
 		/// Removes an item from the game.
 		void toDeleteItem(BattleItem* const item);
+		/// Returns a copy of the deleted-items vector.
+		std::vector<BattleItem*> getDeletedItems() const;
 
 		/// Sets whether the mission was aborted.
 		void setAborted(bool flag = true);
@@ -370,7 +372,7 @@ private:
 		void reviveUnit(
 				BattleUnit* const unit,
 				bool turnOver = false);
-		/// Removes the body-item that corresponds to a BattleUnit.
+		/// Sends the body-item that corresponds to a BattleUnit to the deleted vector.
 		void deleteBody(const BattleUnit* const unit);
 
 		/// Sets or tries to set a unit of a certain size on a certain position of the map.

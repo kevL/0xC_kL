@@ -50,9 +50,9 @@ ArticleStateVehicle::ArticleStateVehicle(const ArticleDefinitionVehicle* const d
 	:
 		ArticleState(defs->id)
 {
-	RuleUnit* const unit = _game->getRuleset()->getUnitRule(defs->id);
-	const RuleArmor* const armorRule = _game->getRuleset()->getArmor(unit->getArmor());
-	const RuleItem* const itRule = _game->getRuleset()->getItem(defs->id);
+	RuleUnit* const unit (_game->getRuleset()->getUnitRule(defs->id));
+	const RuleArmor* const armorRule (_game->getRuleset()->getArmor(unit->getArmor()));
+	const RuleItem* const itRule (_game->getRuleset()->getItem(defs->id));
 
 	_txtTitle	= new Text(310,  17,  5,  23);
 	_txtInfo	= new Text(300, 150, 10, 122);
@@ -81,98 +81,80 @@ ArticleStateVehicle::ArticleStateVehicle(const ArticleDefinitionVehicle* const d
 	_txtInfo->setColor(uPed_BLUE_SLATE);
 	_txtInfo->setWordWrap();
 
-	_lstStats->setColumns(2, 175, 145);
+	_lstStats->setColumns(2, 175,145);
 	_lstStats->setColor(uPed_GREEN_SLATE);
 	_lstStats->setDot();
 
-	std::wostringstream woststr;
-
-	woststr << unit->getStats()->tu;
 	_lstStats->addRow(
 				2,
 				tr("STR_TIME_UNITS").c_str(),
-				woststr.str().c_str());
+				Text::intWide(unit->getStats()->tu).c_str());
 
-	woststr.str(L"");
-	woststr << unit->getStats()->health;
 	_lstStats->addRow(
 				2,
 				tr("STR_HEALTH").c_str(),
-				woststr.str().c_str());
+				Text::intWide(unit->getStats()->health).c_str());
 
-	woststr.str(L"");
-	woststr << armorRule->getFrontArmor();
 	_lstStats->addRow(
 				2,
 				tr("STR_FRONT_ARMOR").c_str(),
-				woststr.str().c_str());
+				Text::intWide(armorRule->getFrontArmor()).c_str());
 
-	woststr.str(L"");
-	woststr << armorRule->getSideArmor();
 	_lstStats->addRow(
 				2,
 				tr("STR_LEFT_ARMOR").c_str(),
-				woststr.str().c_str());
+				Text::intWide(armorRule->getSideArmor()).c_str());
 	_lstStats->addRow(
 				2,
 				tr("STR_RIGHT_ARMOR").c_str(),
-				woststr.str().c_str());
+				Text::intWide(armorRule->getSideArmor()).c_str());
 
-	woststr.str(L"");
-	woststr << armorRule->getRearArmor();
 	_lstStats->addRow(
 				2,
 				tr("STR_REAR_ARMOR").c_str(),
-				woststr.str().c_str());
+				Text::intWide(armorRule->getRearArmor()).c_str());
 
-	woststr.str(L"");
-	woststr << armorRule->getUnderArmor();
 	_lstStats->addRow(
 				2,
 				tr("STR_UNDER_ARMOR").c_str(),
-				woststr.str().c_str());
+				Text::intWide(armorRule->getUnderArmor()).c_str());
 
 	_lstStats->addRow(
 				2,
 				tr("STR_WEAPON_LC").c_str(),
 				tr(defs->weapon).c_str());
 
-	woststr.str(L"");
 	if (itRule->getCompatibleAmmo()->empty() == false)
 	{
 		const RuleItem* const aRule (_game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front()));
 
-		woststr << aRule->getPower();
 		_lstStats->addRow(
 					2,
 					tr("STR_WEAPON_POWER").c_str(),
-					woststr.str().c_str());
+					Text::intWide(aRule->getPower()).c_str());
 
 		_lstStats->addRow(
 					2,
 					tr("STR_ORDNANCE_LC").c_str(),
 					tr(aRule->getType()).c_str());
 
-		woststr.str(L"");
-		if (itRule->getClipSize() > 0)
-			woststr << itRule->getClipSize();
+		int clipSize;
+		if (itRule->getFullClip() > 0)
+			clipSize = itRule->getFullClip();
 		else
-			woststr << aRule->getClipSize();
+			clipSize = aRule->getFullClip();
 		_lstStats->addRow(
 					2,
 					tr("STR_ROUNDS").c_str(),
-					woststr.str().c_str());
+					Text::intWide(clipSize).c_str());
 
 		_txtInfo->setY(138);
 	}
 	else
-	{
-		woststr << itRule->getPower();
 		_lstStats->addRow(
 					2,
 					tr("STR_WEAPON_POWER").c_str(),
-					woststr.str().c_str());
-	}
+					Text::intWide(itRule->getPower()).c_str());
 
 	centerAllSurfaces();
 }

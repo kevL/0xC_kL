@@ -295,7 +295,7 @@ private:
 		int getInventoryHeight() const;
 
 		/// Gets the ammo amount.
-		int getClipSize() const;
+		int getFullClip() const;
 
 		/// Draws the item's hand sprite onto a surface.
 		void drawHandSprite(

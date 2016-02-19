@@ -592,7 +592,7 @@ void ExplosionBState::explode() // private.
 				i != _battleSave->getUnits()->end();
 				++i)
 		{
-			if ((*i)->isOut_t(OUT_HLTH) == false)
+			if ((*i)->isOut_t(OUT_HEALTH) == false)
 				(*i)->hasCried(false);
 		}
 	}

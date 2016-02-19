@@ -33,7 +33,7 @@ namespace OpenXcom
 RuleInterface::RuleInterface(const std::string& type)
 	:
 		_type(type),
-		_palettePt(PAL_NONE)
+		_palType(PAL_NONE)
 {}
 
 /**
@@ -50,7 +50,7 @@ void RuleInterface::load(const YAML::Node& node)
 {
 	_parent		= node["parent"]	.as<std::string>(_parent);
 	_palette	= node["palette"]	.as<std::string>(_palette);
-	_palettePt	= convertToPaletteType(_palette);
+	_palType	= convertToPaletteType(_palette);
 
 	for (YAML::const_iterator
 			i = node["elements"].begin();
@@ -61,7 +61,7 @@ void RuleInterface::load(const YAML::Node& node)
 
 		if ((*i)["pos"])
 		{
-			const std::pair<int,int> pos = (*i)["pos"].as<std::pair<int,int>>();
+			const std::pair<int,int> pos ((*i)["pos"].as<std::pair<int,int>>());
 			element.x = pos.first;
 			element.y = pos.second;
 		}
@@ -71,7 +71,7 @@ void RuleInterface::load(const YAML::Node& node)
 
 		if ((*i)["size"])
 		{
-			const std::pair<int,int> pos = (*i)["size"].as<std::pair<int,int>>();
+			const std::pair<int,int> pos ((*i)["size"].as<std::pair<int,int>>());
 			element.w = pos.first;
 			element.h = pos.second;
 		}
@@ -126,7 +126,7 @@ PaletteType RuleInterface::convertToPaletteType(const std::string& palette) // p
  */
 const Element* RuleInterface::getElement(const std::string& id) const // <- why i hate const. There is likely NO optimization done despite this.
 {
-	const std::map<std::string, Element>::const_iterator i = _elements.find(id);
+	const std::map<std::string, Element>::const_iterator i (_elements.find(id));
 	if (i != _elements.end())
 		return &i->second;
 
@@ -139,7 +139,7 @@ const Element* RuleInterface::getElement(const std::string& id) const // <- why 
  */
 PaletteType RuleInterface::getPalette() const
 {
-	return _palettePt;
+	return _palType;
 }
 
 /**

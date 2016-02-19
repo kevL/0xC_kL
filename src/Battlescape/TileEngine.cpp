@@ -362,7 +362,6 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 	unit->clearHostileUnits();
 //	unit->clearVisibleTiles();
 
-//	if (unit->isOut(true, true) == true)
 	if (unit->isOut_t() == true)
 		return false;
 
@@ -2065,7 +2064,7 @@ void TileEngine::hit(
 				{
 					if (attacker != nullptr
 						&& (antecedentWounds < targetUnit->getFatalWounds()
-							|| targetUnit->isOut_t(OUT_HLTH) == true)) // .. just do this here and bDone with it. Regularly done in BattlescapeGame::checkForCasualties()
+							|| targetUnit->isOut_t(OUT_HEALTH) == true)) // .. just do this here and bDone with it. Regularly done in BattlescapeGame::checkForCasualties()
 					{
 						targetUnit->killedBy(attacker->getFaction());
 					}
@@ -2522,7 +2521,7 @@ void TileEngine::explode(
 										bu->takeDamage(Position(0,0,0), powerUnit, DT_HE);
 										//Log(LOG_INFO) << ". . . INVENTORY: damage = " << dam;
 
-										if (bu->isOut_t(OUT_HLTH) == true)
+										if (bu->isOut_t(OUT_HEALTH) == true)
 										{
 											//Log(LOG_INFO) << ". . . . INVENTORY: instaKill";
 											bu->instaKill();
@@ -2718,7 +2717,7 @@ void TileEngine::explode(
 																_powerE * 3 / 4);
 										bu->takeDamage(Position(0,0,0), powerUnit, DT_IN, true);
 
-										if (bu->isOut_t(OUT_HLTH) == true)
+										if (bu->isOut_t(OUT_HEALTH) == true)
 										{
 											bu->instaKill();
 
@@ -2779,7 +2778,7 @@ void TileEngine::explode(
 						if (attacker != nullptr)
 						{
 //							if (targetUnit->getHealth() == 0
-							if (targetUnit->isOut_t(OUT_HLTH) == true
+							if (targetUnit->isOut_t(OUT_HEALTH) == true
 								|| wounds < targetUnit->getFatalWounds())
 							{
 								targetUnit->killedBy(attacker->getFaction()); // kL .. just do this here and bDone with it. Normally done in BattlescapeGame::checkForCasualties()

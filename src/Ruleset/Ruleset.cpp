@@ -1072,8 +1072,8 @@ T* Ruleset::loadRule(
 
 	if (node[keyId])
 	{
-		const std::string type = node[keyId].as<std::string>();
-		typename std::map<std::string, T*>::const_iterator i = types->find(type);
+		const std::string type (node[keyId].as<std::string>());
+		typename std::map<std::string, T*>::const_iterator i (types->find(type));
 		if (i != types->end())
 			rule = i->second;
 		else
@@ -1087,22 +1087,21 @@ T* Ruleset::loadRule(
 	}
 	else if (node["delete"])
 	{
-		const std::string type = node["delete"].as<std::string>();
-		typename std::map<std::string, T*>::const_iterator i = types->find(type);
+		const std::string type (node["delete"].as<std::string>());
+		typename std::map<std::string, T*>::const_iterator i (types->find(type));
 		if (i != types->end())
 			types->erase(i);
 
 		if (index != nullptr)
 		{
-			const std::vector<std::string>::const_iterator j = std::find(
+			const std::vector<std::string>::const_iterator j (std::find(
 																	index->begin(),
 																	index->end(),
-																	type);
+																	type));
 			if (j != index->end())
 				index->erase(j);
 		}
 	}
-
 	return rule;
 }
 
@@ -2244,7 +2243,7 @@ void Ruleset::sortLists()
 										false)); */
 }
 
-/*
+/**
  * Gets the research-requirements for Psi-Lab (it's a cache for psiStrengthEval)
  * @return, vector of strings that are psi requirements
  *
@@ -2274,13 +2273,11 @@ Soldier* Ruleset::genSoldier(
 }
 /*	Soldier* soldier = nullptr;
 	int newId = save->getId("STR_SOLDIER");
-
 	// Original X-COM gives up after 10 tries so they did the same here
 	bool duplicate = true;
 	for (int // Check for duplicates
 			i = 0;
-			i != 10
-				&& duplicate == true;
+			i != 10 && duplicate == true;
 			++i)
 	{
 		delete soldier;
@@ -2305,7 +2302,6 @@ Soldier* Ruleset::genSoldier(
 				if ((*j)->getName() == soldier->getName())
 					duplicate = true;
 			}
-
 			for (std::vector<Transfer*>::const_iterator
 					j = (*i)->getTransfers()->begin();
 					j != (*i)->getTransfers()->end()
@@ -2320,12 +2316,10 @@ Soldier* Ruleset::genSoldier(
 			}
 		}
 	} */
-
 //	soldier->calcStatString( // calculate new statString
 //						getStatStrings(),
 //						(Options::psiStrengthEval
 //							&& save->isResearched(getPsiRequirements())));
-
 //	return soldier;
 
 /**
@@ -2358,8 +2352,8 @@ std::string Ruleset::getFontName() const
 /**
  * Gets minimum radar range out of all facilities.
  * @return, the minimum range
- */
-/* int Ruleset::getMinRadarRange() const
+ *
+int Ruleset::getMinRadarRange() const
 {
 	static int minRadarRange = -1;
 
@@ -2395,8 +2389,9 @@ std::string Ruleset::getFontName() const
 int Ruleset::getMaxRadarRange() const
 {
 	int ret (0);
-	const RuleBaseFacility* facRule;
 	int range;
+
+	const RuleBaseFacility* facRule;
 	for (std::vector<std::string>::const_iterator
 			i = _facilitiesIndex.begin();
 			i != _facilitiesIndex.end();
