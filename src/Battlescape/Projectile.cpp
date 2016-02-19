@@ -418,7 +418,7 @@ void Projectile::applyAccuracy( // private.
 				deviation = 0.15;	// give the poor aLiens an aiming advantage over xCom & Mc'd units
 									// DO IT IN RULESET! not here. Okay do it here because of faction/MC-thing ...
 			else
-				deviation = 0.21;	// for Player
+				deviation = 0.21;	// for Player & civies.
 
 			deviation /= accuracy + 0.16;
 			const int autoHit (static_cast<int>(std::ceil(accuracy * 21.))); // chance for Bulls-eye.

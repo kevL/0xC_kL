@@ -76,7 +76,7 @@ private:
 	/// Builds the Soldier Stat increases screen.
 	void buildSoldierStats();
 
-	/// Adds a row-entry to a TextList.
+	/// Formats mapped input to a TextList.
 	void styleList(
 			const std::map<const RuleItem*, int>& input,
 			TextList* const list);

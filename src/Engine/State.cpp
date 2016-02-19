@@ -104,13 +104,13 @@ void State::setInterface(
 	if (_ruleInterface != nullptr)
 	{
 		palType = _ruleInterface->getPalette();
-		const Element* element (_ruleInterface->getElement("palType"));
+		const Element* element (_ruleInterface->getElement("palette"));
 
 		_ruleInterfaceParent = _game->getRuleset()->getInterface(_ruleInterface->getParent());
 		if (_ruleInterfaceParent != nullptr)
 		{
 			if (element == nullptr)
-				element = _ruleInterfaceParent->getElement("palType");
+				element = _ruleInterfaceParent->getElement("palette");
 
 			if (palType == PAL_NONE)
 				palType = _ruleInterfaceParent->getPalette();

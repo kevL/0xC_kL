@@ -1511,7 +1511,7 @@ void DebriefingState::prepareDebriefing() // private.
 			i != _clips.end();
 			++i)
 	{
-		if ((qtyFullClip = i->first->getFullClip()) != 0)
+		if ((qtyFullClip = i->first->getFullClip()) != 0) // safety.
 		{
 			clipsTotal = i->second / qtyFullClip;
 			if (clipsTotal == 0)

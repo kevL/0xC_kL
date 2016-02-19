@@ -44,8 +44,8 @@ namespace OpenXcom
  * DebriefExtraState cTor.
  * @param base			- pointer to the Base that was in tactical
  * @param operation		- the operation title
- * @param itemsLost		- copy of the vector of pointers to lost BattleItems
- * @param itemsGained	- a map of strings&ints representing gained BattleItems
+ * @param itemsLost		- a map of pointers to RuleItems & ints for lost items
+ * @param itemsGained	- a map of pointers to RuleItems & ints for gained items
  */
 DebriefExtraState::DebriefExtraState(
 		const Base* const base,
@@ -167,9 +167,9 @@ void DebriefExtraState::buildSoldierStats() // private.
 }
 
 /**
- * Adds a row-entry to a TextList.
- * @param input	- reference to the mapped-input of strings & quantities
- * @param list	- pointer to a TextList
+ * Formats mapped input to a TextList.
+ * @param input	- reference to the mapped-input of pointers-to-RuleItems & quantities
+ * @param list	- pointer to a 2-column TextList to format
  */
 void DebriefExtraState::styleList( // private.
 		const std::map<const RuleItem*, int>& input,
