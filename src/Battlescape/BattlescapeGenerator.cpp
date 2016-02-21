@@ -830,38 +830,6 @@ void BattlescapeGenerator::deployXcom() // private.
 			if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
 				_battleSave->setSelectedUnit(unit);
 		}
-/*		for (std::vector<Vehicle*>::const_iterator // Add Vehicles that are in Base inventory.
-				i = _base->getVehicles()->begin();
-				i != _base->getVehicles()->end();
-				++i)
-		{
-			//Log(LOG_INFO) << ". . isBase: prepareSupport " << (int)*i;
-			BattleUnit* const unit (prepareSupport(*i));
-			if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
-				_battleSave->setSelectedUnit(unit);
-		}
-
-		// Only add vehicles from the craft in skirmish mode otherwise the
-		// base's vehicle-vector will already contain these due to the geoscape
-		// calling Base::setupBaseDefense().
-		if (_gameSave->getMonthsPassed() == -1)
-		{
-			for (std::vector<Craft*>::const_iterator // Add Vehicles from Crafts at Base.
-				i = _base->getCrafts()->begin();
-				i != _base->getCrafts()->end();
-				++i)
-			{
-				for (std::vector<Vehicle*>::const_iterator
-					j = (*i)->getVehicles()->begin();
-					j != (*i)->getVehicles()->end();
-					++j)
-				{
-					BattleUnit* const unit (prepareSupport(*j));
-					if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
-						_battleSave->setSelectedUnit(unit);
-				}
-			}
-		} */
 	}
 
 	for (std::vector<Soldier*>::const_iterator // Add Soldiers that are in the Craft or Base.
@@ -968,7 +936,7 @@ void BattlescapeGenerator::deployXcom() // private.
 						//Log(LOG_INFO) << ". . . . addItem() ToTile iter = " << (j + 1);
 						_tileEquipt->addItem(
 										new BattleItem(
-													_rules->getItem(i->first),
+													itRule,
 													_battleSave->getNextItemId()),
 										grdRule);
 					}
