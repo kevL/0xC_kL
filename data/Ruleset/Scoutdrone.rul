@@ -31,7 +31,7 @@ items:
     power: 42
     damageType: 9
     battleType: 2
-    clipSize: 8
+    fullClip: 8
     blastRadius: 3
     explosionSpeed: -15
     listOrder: 1099

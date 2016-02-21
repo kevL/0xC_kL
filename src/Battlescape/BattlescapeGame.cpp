@@ -110,10 +110,10 @@ BattlescapeGame::BattlescapeGame(
 	_tacAction.clearAction();
 
 	_universalFist = new BattleItem(
-								getRuleset()->getItem("STR_FIST"),
+								getRuleset()->getItemRule("STR_FIST"),
 								battleSave->getNextItemId());
 	_alienPsi = new BattleItem(
-							getRuleset()->getItem("ALIEN_PSI_WEAPON"),
+							getRuleset()->getItemRule("ALIEN_PSI_WEAPON"),
 							battleSave->getNextItemId());
 
 	for (std::vector<BattleUnit*>::const_iterator
@@ -831,7 +831,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 							{
 								instaWeapon = true;
 								action.weapon = new BattleItem(
-															getRuleset()->getItem(meleeWeapon),
+															getRuleset()->getItemRule(meleeWeapon),
 															_battleSave->getNextItemId());
 								action.weapon->setOwner(unit);
 							}
@@ -3001,7 +3001,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 
 	st = unitRule->getRace().substr(4) + "_WEAPON";
 	BattleItem* const item (new BattleItem(
-										getRuleset()->getItem(st),
+										getRuleset()->getItemRule(st),
 										_battleSave->getNextItemId()));
 	item->changeOwner(conUnit);
 	item->setInventorySection(getRuleset()->getInventoryRule(ST_RIGHTHAND));
@@ -3384,7 +3384,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 		* const rhWeapon (unit->getItem(ST_RIGHTHAND)),
 		* const lhWeapon (unit->getItem(ST_LEFTHAND));
 
-	RuleItem* const itRule (item->getRules());
+	const RuleItem* const itRule (item->getRules());
 	int placed (0);
 
 	switch (itRule->getBattleType())

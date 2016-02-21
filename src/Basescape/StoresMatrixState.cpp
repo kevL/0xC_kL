@@ -309,7 +309,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 			i != itList.end();
 			++i)
 	{
-		itRule = rules->getItem(*i);
+		itRule = rules->getItemRule(*i);
 		stTest = itRule->getType();
 
 		woststr0.str(L"");
@@ -368,8 +368,8 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 
 						if ((*l)->getAmmo() != 255)
 						{
-							const RuleItem* const ammoRule = rules->getItem(
-																rules->getItem((*l)->getRules()->getType())
+							const RuleItem* const ammoRule = rules->getItemRule(
+																rules->getItemRule((*l)->getRules()->getType())
 															->getCompatibleAmmo()->front());
 
 							if (ammoRule->getType() == stTest)
@@ -403,15 +403,15 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 				// Special handling for treating craft weapons as items
 				cwRule = rules->getCraftWeapon(*j);
 
-				if (itRule == rules->getItem(cwRule->getLauncherItem())
-					|| itRule == rules->getItem(cwRule->getClipItem()))
+				if (itRule == rules->getItemRule(cwRule->getLauncherItem())
+					|| itRule == rules->getItemRule(cwRule->getClipItem()))
 				{
 					craftOrdnance = true;
 				}
 			}
 
-/*				launchRule = rules->getItem(cwRule->getLauncherItem());
-				clipRule = rules->getItem(cwRule->getClipItem());
+/*				launchRule = rules->getItemRule(cwRule->getLauncherItem());
+				clipRule = rules->getItemRule(cwRule->getClipItem());
 				if (launchRule == itRule)
 				{
 					craftOrdnance = true;
@@ -436,7 +436,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 /*			if (itRule->isFixed() // tank w/ Ordnance.
 				&& !itRule->getCompatibleAmmo()->empty())
 			{
-				clipRule = _game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front());
+				clipRule = _game->getRuleset()->getItemRule(itRule->getCompatibleAmmo()->front());
 				int clipSize = clipRule->getClipSize();
 				if (clipSize > 0)
 					item = item + L" (" + Text::intWide(clipSize) + L")";
@@ -455,7 +455,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 
 			if (gameSave->isResearched(itRule->getType()) == false				// not researched or is research exempt
 				&& (gameSave->isResearched(itRule->getRequirements()) == false	// and has requirements to use but not been researched
-					|| rules->getItem(*i)->isAlien() == true						// or is an alien
+					|| rules->getItemRule(*i)->isAlien() == true						// or is an alien
 					|| itRule->getBattleType() == BT_CORPSE							// or is a corpse
 					|| itRule->getBattleType() == BT_NONE)							// or is not a battlefield item
 				&& craftOrdnance == false)										// and is not craft ordnance

@@ -171,7 +171,7 @@ void Craft::load(
 			i != _items->getContents()->end();
 			)
 	{
-		if (rules->getItem(i->first) == nullptr)
+		if (rules->getItemRule(i->first) == nullptr)
 		{
 			Log(LOG_ERROR) << "Failed to load item " << i->first;
 			i = _items->getContents()->erase(i);
@@ -186,11 +186,11 @@ void Craft::load(
 			++i)
 	{
 		type = (*i)["type"].as<std::string>();
-		if (rules->getItem(type) != nullptr)
+		if (rules->getItemRule(type) != nullptr)
 		{
 			const int quadrants (rules->getArmor(rules->getUnitRule(type)->getArmor())->getSize());
 			Vehicle* const vehicle (new Vehicle(
-											rules->getItem(type),
+											rules->getItemRule(type),
 											0,
 											quadrants * quadrants));
 			vehicle->load(*i);
@@ -983,7 +983,7 @@ std::string Craft::rearm(const Ruleset* const rules)
 			{
 				int clipsUsed ((*i)->rearm(
 										baseClips,
-										rules->getItem(clip)->getFullClip()));
+										rules->getItemRule(clip)->getFullClip()));
 				if (clipsUsed != 0)
 				{
 					if (clipsUsed < 0) // trick. See CraftWeapon::rearm() - not enough clips at Base
@@ -1058,7 +1058,7 @@ bool Craft::detect(const Target* const target) const
 
 /**
  * Gets whether this Craft's is participating in a tactical mission.
- * @return, true if deployed on the battlefield
+ * @return, true if on or near the battlefield
  */
 bool Craft::getTactical() const
 {
@@ -1067,14 +1067,12 @@ bool Craft::getTactical() const
 
 /**
  * Sets whether this Craft is participating in a tactical mission.
- * @param tactical - true if deployed on the battlefield (default true)
+ * @param tactical - true if on or near the battlefield (default true)
  */
 void Craft::setTactical(bool tactical)
 {
-	if (tactical == true)
+	if ((_tactical = tactical) == true)
 		setSpeed(0);
-
-	_tactical = tactical;
 }
 
 /**

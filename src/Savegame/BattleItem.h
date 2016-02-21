@@ -60,14 +60,14 @@ private:
 		* _ownerPre,
 		* _unit;
 	const RuleInventory* _section;
-	RuleItem* _itRule;
+	const RuleItem* _itRule;
 	Tile* _tile;
 
 
 	public:
 		/// Creates a item of the specified type.
 		BattleItem(
-				RuleItem* const itRule,
+				const RuleItem* const itRule,
 				int* pId,
 				int id = -1);
 		/// Cleans up the item.
@@ -83,7 +83,7 @@ private:
 		YAML::Node saveDeleted() const;
 
 		/// Gets the item's ruleset.
-		RuleItem* getRules() const;
+		const RuleItem* getRules() const;
 
 		/// Gets the item's ammo quantity
 		int getAmmoQuantity() const;
@@ -166,7 +166,7 @@ private:
 		int getStimulantQuantity() const;
 
 		/// Sets rules for the BattleItem.
-		void changeRule(RuleItem* const itRule);
+		void changeRule(const RuleItem* const itRule);
 
 		/// Sets the BattleItem as belonging to xCom.
 		void setProperty();

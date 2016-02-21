@@ -360,7 +360,7 @@ private:
 				const bool dead = false);
 		/// Calculates the expense of sending HWPs/doggies on a tactical mission.
 		int supportExpense(
-				const int hwpSize,
+				const int quadrants,
 				const bool dead = false);
 		/// Calculates the expense of sending a transport craft on a tactical mission.
 		int craftExpense(const Craft* const craft);

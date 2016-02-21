@@ -43,7 +43,7 @@ items:
     fireSoundHit: 22
     power: 30
     damageType: 1
-    clipSize: 18
+    fullClip: 18
     battleType: 2
     armor: 12
 #------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ items:
     fireSoundHit: 22
     power: 42
     damageType: 1
-    clipSize: 5
+    fullClip: 5
     battleType: 2
     armor: 12
 #------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ items:
     fireSoundHit: 22
     power: 25
     damageType: 1
-    clipSize: 30
+    fullClip: 30
     battleType: 2
     invWidth: 1
     invHeight: 1
@@ -180,7 +180,7 @@ items:
     fireSoundHit: 22
     power: 45
     damageType: 1
-    clipSize: 25
+    fullClip: 25
     battleType: 2
 #------------------------------------------------------------------------------
   - type: STR_MARKSMANS_RIFLE
@@ -223,7 +223,7 @@ items:
     fireSoundHit: 22
     power: 55
     damageType: 1
-    clipSize: 10
+    fullClip: 10
     battleType: 2
     invWidth: 1
     invHeight: 1
@@ -267,7 +267,7 @@ items:
     fireSoundHit: 13
     power: 83
     damageType: 1
-    clipSize: 5
+    fullClip: 5
     battleType: 2
     invWidth: 1
     invHeight: 1
@@ -315,7 +315,7 @@ items:
     fireSoundHit: 13
     power: 39
     damageType: 1
-    clipSize: 35
+    fullClip: 35
     battleType: 2
     invWidth: 2
     invHeight: 1
@@ -385,7 +385,7 @@ items:
     fireSoundHit: 22
     power: 16
     damageType: 1
-    clipSize: 8
+    fullClip: 8
     battleType: 2
     shotgunPellets: 8
     shotgunPattern: 8
@@ -402,7 +402,7 @@ items:
     fireSoundHit: 22
     power: 26
     damageType: 1
-    clipSize: 8
+    fullClip: 8
     battleType: 2
     shotgunPellets: 6
     shotgunPattern: 6
@@ -421,7 +421,7 @@ items:
     fireSoundHit: 22
     power: 36
     damageType: 1
-    clipSize: 8
+    fullClip: 8
     battleType: 2
     shotgunPellets: 4
     shotgunPattern: 4
@@ -466,7 +466,7 @@ items:
 #    snapRange: 15
 #    minRange: 8
 #    dropoff: 2
-    clipSize: 1
+    fullClip: 1
     battleType: 1
     twoHanded: true
     invWidth: 1
@@ -487,7 +487,7 @@ items:
     fireSoundHit: 5
     power: 142
     damageType: 1 #AP
-    clipSize: 1
+    fullClip: 1
     battleType: 2
     twoHanded: true
     invWidth: 1
@@ -536,7 +536,7 @@ items:
 #    fireHitAni: 0
 #    power: 100
 #    damageType: 3
-#    clipSize: 1
+#    fullClip: 1
 #    battleType: 2
 #    invWidth: 1
 #    invHeight: 2

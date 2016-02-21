@@ -253,7 +253,7 @@ PurchaseState::PurchaseState(Base* const base)
 			++i)
 	{
 		cwRule = rules->getCraftWeapon(*i);
-		laRule = rules->getItem(cwRule->getLauncherItem());
+		laRule = rules->getItemRule(cwRule->getLauncherItem());
 		type = laRule->getType();
 
 		if (laRule->getBuyCost() != 0) // + isResearched
@@ -301,7 +301,7 @@ PurchaseState::PurchaseState(Base* const base)
 		}
 
 		// Handle craft weapon ammo.
-		clRule = rules->getItem(cwRule->getClipItem());
+		clRule = rules->getItemRule(cwRule->getClipItem());
 		type = clRule->getType();
 
 		if (clRule->getBuyCost() != 0) // clRule != nullptr && // + isResearched
@@ -357,7 +357,7 @@ PurchaseState::PurchaseState(Base* const base)
 			i != purchaseList.end();
 			++i)
 	{
-		itRule = rules->getItem(*i);
+		itRule = rules->getItemRule(*i);
 		//Log(LOG_INFO) << (*i) << " list# " << itRule->getListOrder(); // Prints listOrder to LOG.
 
 		if (itRule->getBuyCost() != 0)
@@ -407,8 +407,8 @@ PurchaseState::PurchaseState(Base* const base)
 
 						if ((*k)->getAmmo() != 255)
 						{
-							amRule = rules->getItem(
-									 rules->getItem((*k)->getRules()->getType())
+							amRule = rules->getItemRule(
+									 rules->getItemRule((*k)->getRules()->getType())
 									 ->getCompatibleAmmo()->front());
 
 							if (amRule->getType() == type)
@@ -446,7 +446,7 @@ PurchaseState::PurchaseState(Base* const base)
                 if (itRule->isFixed() == true // tank w/ Ordnance.
 					&& itRule->getCompatibleAmmo()->empty() == false)
                 {
-					amRule = rules->getItem(itRule->getCompatibleAmmo()->front());
+					amRule = rules->getItemRule(itRule->getCompatibleAmmo()->front());
 					clipSize = amRule->getFullClip();
 					if (clipSize != 0)
 						wst += (L" (" + Text::intWide(clipSize) + L")");
@@ -564,7 +564,7 @@ void PurchaseState::btnOkClick(Action*)
 
 				case PST_ITEM:
 				{
-					const RuleItem* const itRule (rules->getItem(_items[getItemIndex(sel)]));
+					const RuleItem* const itRule (rules->getItemRule(_items[getItemIndex(sel)]));
 					transfer = new Transfer(itRule->getTransferTime());
 					transfer->setTransferItems(
 										_items[getItemIndex(sel)],
@@ -699,7 +699,7 @@ int PurchaseState::getPrice() // private.
 			return _game->getRuleset()->getCraft(_crafts[getCraftIndex(_sel)])->getBuyCost();
 
 		case PST_ITEM:
-			return _game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getBuyCost();
+			return _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getBuyCost();
 	}
 
 	return 0;
@@ -749,7 +749,7 @@ void PurchaseState::increaseByValue(int qtyDelta)
 				break;
 
 			case PST_ITEM:
-				if (_storeSize + _game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getStoreSize()
+				if (_storeSize + _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize()
 						> static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() + 0.05)
 				{
 					error = tr("STR_NOT_ENOUGH_STORE_SPACE");
@@ -794,7 +794,7 @@ void PurchaseState::increaseByValue(int qtyDelta)
 
 			case PST_ITEM:
 			{
-				const double storesPerItem (_game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getStoreSize());
+				const double storesPerItem (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize());
 				double qtyAllowed;
 
 				if (AreSame(storesPerItem, 0.) == false)
@@ -854,7 +854,7 @@ void PurchaseState::decreaseByValue(int qtyDelta)
 			break;
 
 		case PST_ITEM:
-			_storeSize -= _game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getStoreSize() * static_cast<double>(qtyDelta);
+			_storeSize -= _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize() * static_cast<double>(qtyDelta);
 	}
 
 	_orderQty[_sel] -= qtyDelta;
@@ -881,7 +881,7 @@ void PurchaseState::updateItemStrings() // private.
 
 		if (getPurchaseType(_sel) == PST_ITEM)
 		{
-			const RuleItem* const itRule (_game->getRuleset()->getItem(_items[getItemIndex(_sel)]));
+			const RuleItem* const itRule (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]));
 			if (itRule->getBattleType() == BT_AMMO		// ammo for weapon or hwp
 				|| (itRule->getBattleType() == BT_NONE	// ammo for craft armament
 					&& itRule->getFullClip() != 0))

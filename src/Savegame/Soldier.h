@@ -124,7 +124,7 @@ private:
 		const RuleSoldier* getRules() const;
 
 		/// Gets a pointer to initial stats.
-		UnitStats* getInitStats();
+		const UnitStats* getInitStats();
 		/// Gets a pointer to current stats.
 		UnitStats* getCurrentStats();
 

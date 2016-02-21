@@ -840,7 +840,7 @@ void UnitInfoState::exitPress(Action*) const // private.
 		const BattleUnit* const unit (_battleSave->getSelectedUnit());
 		if (unit->getTimeUnits() < unit->getActionTu(
 												BA_USE,
-												_game->getRuleset()->getItem("STR_MIND_PROBE")))
+												_game->getRuleset()->getItemRule("STR_MIND_PROBE")))
 		{
 			_battleSave->getBattleGame()->cancelTacticalAction();
 		}

@@ -89,6 +89,8 @@ class UfoTrajectory;
  * @note A ruleset holds all the constant info that never changes throughout a
  * game, like stats of all the in-game items, countries, research tree, soldier
  * names, starting base, etc.
+ *
+ * HOWEVER, RuleUnit can have its UnitStats substruct modified.
  */
 class Ruleset
 {
@@ -148,7 +150,7 @@ protected:
 		_terrainIndex,
 		_ufopaediaIndex,
 		_ufosIndex;
-//		_psiRequirements; // it's a cache for psiStrengthEval
+//		_psiRequirements; // it's a cache for psiStrengthEval ...
 
 	std::vector<std::vector<int>> _alienItemLevels;
 
@@ -180,7 +182,7 @@ protected:
 	std::map<std::string, RuleTerrain*>			_terrains;
 	std::map<std::string, RuleUfo*>				_ufos;
 	std::map<std::string, RuleVideo*>			_videos;
-//	std::map<std::string, SoundDefinition*>		_soundDefs;
+//	std::map<std::string, SoundDefinition*>		_soundDefs; // TFTD.
 	std::map<std::string, UfoTrajectory*>		_ufoTrajectories;
 	std::map<std::string, RuleUnit*>			_units;
 
@@ -194,12 +196,12 @@ protected:
 
 	std::map<InventorySection, RuleInventory*> _inventories_ST;
 
-	/// Loads all ruleset files from a directory.
+	/// Loads all ruleset-files from a directory.
 	void loadFiles(const std::string& dir);
-	/// Loads a ruleset from a YAML file.
+	/// Loads a ruleset-file that's in YAML.
 	void loadFile(const std::string& file);
 
-	/// Loads a ruleset element.
+	/// Loads a ruleset-element.
 	template<typename T>
 	T* loadRule(
 			const YAML::Node& node,
@@ -209,91 +211,91 @@ protected:
 
 
 	public:
-		/// Creates a blank ruleset.
+		/// Creates a blank Ruleset.
 		explicit Ruleset(const Game* const game);
-		/// Cleans up the ruleset.
+		/// Cleans up the Ruleset.
 		~Ruleset();
 
 		/// Reloads the country lines.
 		void reloadCountryLines() const;
 
-		/// Checks to ensure Mission scripts are okay.
+		/// Checks to ensure MissionScripts are okay.
 		void validateMissions() const;
 
-		/// Loads a ruleset from the given source.
+		/// Loads the Ruleset from a given source.
 		void load(const std::string& src);
 
-		/// Generates the starting saved game.
+		/// Generates a starting SavedGame.
 		SavedGame* newSave() const;
 
-		/// Gets the pool list for soldier names.
+		/// Gets the pool list for Soldier names.
 		const std::vector<SoldierNamePool*>& getPools() const;
-		/// Gets the pool list for operation titles.
+		/// Gets the pool list for Operation titles.
 		const std::vector<OperationPool*>& getOperations() const;
 
-		/// Gets the ruleset for a country type.
+		/// Gets the rules for a Country type.
 		RuleCountry* getCountry(const std::string& id) const;
-		/// Gets the available countries.
+		/// Gets the available Countries.
 		const std::vector<std::string>& getCountriesList() const;
-		/// Gets the ruleset for a region type.
+		/// Gets the rules for a Region type.
 		RuleRegion* getRegion(const std::string& id) const;
-		/// Gets the available regions.
+		/// Gets the available Regions.
 		const std::vector<std::string>& getRegionsList() const;
 
-		/// Gets the ruleset for a facility type.
+		/// Gets the rules for a Facility type.
 		RuleBaseFacility* getBaseFacility(const std::string& id) const;
-		/// Gets the available facilities.
+		/// Gets the available Facilities.
 		const std::vector<std::string>& getBaseFacilitiesList() const;
 
-		/// Gets the ruleset for a craft type.
+		/// Gets the rules for a Craft type.
 		RuleCraft* getCraft(const std::string& id) const;
-		/// Gets the available crafts.
+		/// Gets the available Crafts.
 		const std::vector<std::string>& getCraftsList() const;
-		/// Gets the ruleset for a craft weapon type.
+		/// Gets the rules for a CraftWeapon type.
 		RuleCraftWeapon* getCraftWeapon(const std::string& id) const;
-		/// Gets the available craft weapons.
+		/// Gets the available CraftWeapons.
 		const std::vector<std::string>& getCraftWeaponsList() const;
 
-		/// Gets the ruleset for an item type.
-		RuleItem* getItem(const std::string& id) const;
-		/// Gets the available items.
+		/// Gets the rules for an Item type.
+		RuleItem* getItemRule(const std::string& id) const;
+		/// Gets the available Items.
 		const std::vector<std::string>& getItemsList() const;
 
-		/// Gets the ruleset for a UFO type.
+		/// Gets the rules for a UFO type.
 		RuleUfo* getUfo(const std::string& id) const;
 		/// Gets the available UFOs.
 		const std::vector<std::string>& getUfosList() const;
 
-		/// Gets terrains for battlescape games.
+		/// Gets rules for Terrain types.
 		RuleTerrain* getTerrain(const std::string& type) const;
-		/// Gets the available terrains.
+		/// Gets the available Terrains.
 		const std::vector<std::string>& getTerrainList() const;
 
-		/// Gets mapdatafile for battlescape games.
+		/// Gets the MapDataSet for the battlefield.
 		MapDataSet* getMapDataSet(const std::string& name);
 
-		/// Gets award rules.
+		/// Gets the rules for Awards.
 		std::map<std::string, RuleAward*> getAwardsList() const;
 
-		/// Gets soldier unit rules.
+		/// Gets the rules for a Soldier type.
 		RuleSoldier* getSoldier(const std::string& type) const;
-		/// Returns the list of all soldiers provided by this Ruleset.
+		/// Returns a list of all soldier-types provided by the Ruleset.
 		const std::vector<std::string>& getSoldiersList() const;
-		/// Gets non-soldier unit rules.
+		/// Gets non-Soldier-unit rules.
 		RuleUnit* getUnitRule(const std::string& type) const;
 
-		/// Gets alien race rules.
+		/// Gets the rules for AlienRace types.
 		AlienRace* getAlienRace(const std::string& type) const;
-		/// Gets the available alien races.
+		/// Gets the available AlienRaces.
 		const std::vector<std::string>& getAlienRacesList() const;
-		/// Gets deployment rules.
+		/// Gets the rules for AlienDeployment types.
 		AlienDeployment* getDeployment(const std::string& name) const;
-		/// Gets the available alien deployments.
+		/// Gets the available AlienDeployments.
 		const std::vector<std::string>& getDeploymentsList() const;
 
-		/// Gets armor rules.
+		/// Gets the rules for Armor types.
 		RuleArmor* getArmor(const std::string& name) const;
-		/// Gets the available armors.
+		/// Gets the available Armors.
 		const std::vector<std::string>& getArmorsList() const;
 
 		/// Gets the cost of an engineer.
@@ -303,127 +305,128 @@ protected:
 		/// Gets the transfer time of personnel.
 		int getPersonnelTime() const;
 
-		/// Gets Ufopaedia ArticleDefinition.
+		/// Gets a Ufopaedia ArticleDefinition.
 		ArticleDefinition* getUfopaediaArticle(const std::string& article_id) const;
-		/// Gets the available articles.
+		/// Gets the available Articles.
 		const std::vector<std::string>& getUfopaediaList() const;
 
-		/// Gets a map of the inventory list.
+		/// Gets a map of the Inventories.
 		std::map<std::string, RuleInventory*>* getInventories();
-		/// Gets the ruleset for a specific inventory.
+		/// Gets the rules for a specific Inventory from a type.
 		const RuleInventory* getInventory(const std::string& type) const;
-		/// Gets the ruleset for a specific inventory.
+		/// Gets the rules for a specific Inventory from a section-ID.
 		const RuleInventory* getInventoryRule(const InventorySection sectionId) const;
-		/// Converts all inventory mappings from string-keys to enumerated-keys.
+		/// Converts all inventory-mappings from string-keys to enumerated-keys.
 		void convertInventories();
 		/// Returns the sorted list of inventories.
 //		const std::vector<std::string>& getInventoryList() const;
-		/// Determines the highest TU-value used.
+		/// Determines the highest TU-value used in Inventory rules.
 		int detHighTuInventoryCost() const;
 
-		/// Gets the ruleset for a specific research project.
+		/// Gets the rules for a specific research-project.
 		const RuleResearch* getResearch(const std::string& id) const;
-		/// Gets the list of all research projects.
+		/// Gets the list of all research-projects.
 		const std::vector<std::string>& getResearchList() const;
-		/// Gets the ruleset for a specific manufacture project.
+		/// Gets the rules for a specific manufacture-project.
 		RuleManufacture* getManufacture(const std::string& id) const;
-		/// Gets the list of all manufacture projects.
+		/// Gets the list of all manufacture-projects.
 		const std::vector<std::string>& getManufactureList() const;
 
-		/// Gets facilities for custom bases.
+		/// Gets Facilities for custom-bases.
 		std::vector<OpenXcom::RuleBaseFacility*> getCustomBaseFacilities() const;
 
 		/// Gets a specific UfoTrajectory.
 		const UfoTrajectory* getUfoTrajectory(const std::string& id) const;
-		/// Gets the ruleset for a specific alien mission.
+
+		/// Gets the rules for a specific AlienMission.
 		const RuleAlienMission* getAlienMission(const std::string& id) const;
-		/// Gets the ruleset for a random alien mission.
+		/// Gets the rules for a random AlienMission.
 		const RuleAlienMission* getRandomMission(
 				MissionObjective objective,
 				size_t monthsPassed) const;
-		/// Gets the list of all alien missions.
+		/// Gets a list of all AlienMissions.
 		const std::vector<std::string>& getAlienMissionList() const;
 
-		/// Gets the alien item level table.
+		/// Gets the AlienItemLevel table.
 		const std::vector<std::vector<int>>& getAlienItemLevels() const;
 
-		/// Gets the pre-defined starting base.
+		/// Gets the default start-base.
 		const YAML::Node& getStartingBase() const;
-		/// Gets the pre-defined start time of a game.
+		/// Gets the default start-time.
 		const GameTime& getStartingTime() const;
 
 		/// Gets an MCDPatch.
 		MCDPatch* getMCDPatch(const std::string& name) const;
 
-		/// Gets the music rules
+		/// Gets the music rules.
 		std::vector<std::pair<std::string, RuleMusic*>> getMusicTracks() const;
 
-		/// Gets the list of external Sprites.
+		/// Gets a list of external Sprites.
 		std::vector<std::pair<std::string, ExtraSprites*>> getExtraSprites() const;
-		/// Gets the list of external Sounds.
+		/// Gets a list of external Sounds.
 		std::vector<std::pair<std::string, ExtraSounds*>> getExtraSounds() const;
-		/// Gets the list of external Strings.
+		/// Gets a list of external Strings.
 		std::map<std::string, ExtraStrings*> getExtraStrings() const;
 
 		/// Gets the list of StatStrings.
 //		std::vector<StatString*> getStatStrings() const;
 
-		/// Sorts all the lists according to their weight.
+		/// Sorts all the lists according to their weights.
 		void sortLists();
 
 		/// Gets the research-requirements for Psi-Lab (it's a cache for psiStrengthEval)
 //		std::vector<std::string> getPsiRequirements() const;
 
-		/// Generates a new soldier.
+		/// Generates a Soldier.
 		Soldier* genSoldier(
 				SavedGame* const save,
 				std::string type = "") const;
 
-		/// Gets the item to be used as fuel for ships.
+		/// Gets the item-type to be used as fuel for UFOs.
 		const std::string& getAlienFuelType() const;
-		/// Gets the amount of alien fuel to recover
+		/// Gets the quantity of alien-fuel to recover per fuel-item found.
 		int getAlienFuelQuantity() const;
 
-		/// Gets the font name.
+		/// Gets the Font name.
 		std::string getFontName() const;
 
-		/// Gets the minimum radar's range.
+		/// Gets the minimum radar-range.
 //		int getMinRadarRange() const;
-		/// Gets maximum radar range out of all facilities.
+		/// Gets maximum radar-range of all Facilities.
 		int getMaxRadarRange() const;
 		/// Gets the cutoff between small & large radars.
 		int getRadarCutoffRange() const;
 
-		/// Gets the turn aliens are allowed to throw their first grenades.
+		/// Gets the turn that aLiens are allowed to throw their first grenades.
 		int getFirstGrenade() const;
 
 		/// Gets the basic retaliation chance.
 		int getRetaliation() const;
 
-		/// Gets information on an interface element.
+		/// Gets the rules for an Interface.
 		RuleInterface* getInterface(const std::string& id) const;
 
-		/// Gets the ruleset for the globe.
+		/// Gets the rules for the Globe.
 		RuleGlobe* getGlobe() const;
 
 		/// Gets the list of selective files for insertion into internal Cat files.
 //		const std::map<std::string, SoundDefinition*>* getSoundDefinitions() const;
 
-		/// Gets the list of videos for intro/outro etc.
+		/// Gets a list of videos for intro/outro etc.
 		const std::map<std::string, RuleVideo*>* getVideos() const;
 
-		/// Gets the list of mission scripts.
+		/// Gets a list of MissionScripts.
 		const std::vector<std::string>* getMissionScriptList() const;
-		/// Gets a mission script.
+		/// Gets a specific MissionScript.
 		RuleMissionScript* getMissionScript(const std::string& type) const;
 
-		/// Gets the list of MapScripts.
+		/// Gets a list of MapScripts.
 		const std::vector<MapScript*>* getMapScript(const std::string& type) const;
 
-		/// Gets the final research Id.
+		/// Gets the final-research-type.
 		const std::string& getFinalResearch() const;
 
-		/// Gets the current Game.
+		/// Gets a pointer to the current Game.
 		const Game* getGame() const;
 };
 

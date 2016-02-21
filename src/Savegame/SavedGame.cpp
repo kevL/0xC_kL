@@ -1768,8 +1768,8 @@ bool SavedGame::isResearched(const std::string& resType) const
 {
 	if (_debugGeo == true || resType.empty() == true
 		|| _rules->getResearch(resType) == nullptr
-		|| (_rules->getItem(resType) != nullptr
-			&& _rules->getItem(resType)->isResearchExempt() == true))
+		|| (_rules->getItemRule(resType) != nullptr
+			&& _rules->getItemRule(resType)->isResearchExempt() == true))
 	{
 		return true;
 	}

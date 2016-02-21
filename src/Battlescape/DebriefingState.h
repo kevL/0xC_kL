@@ -168,7 +168,7 @@ private:
 	/// Recovers an aLien from the battlefield.
 	void recoverLiveAlien(BattleUnit* const unit);
 	/// Reequips a Craft after tactical.
-	void reequipCraft(Craft* craft = nullptr);
+	void reequipCraft(Craft* const craft);
 
 
 	public:

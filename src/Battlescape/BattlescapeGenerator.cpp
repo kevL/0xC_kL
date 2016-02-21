@@ -899,7 +899,7 @@ void BattlescapeGenerator::deployXcom() // private.
 				//Log(LOG_INFO) << ". . . . addItem() ToTile iter = " << (j + 1);
 				_tileEquipt->addItem(
 								new BattleItem(
-											_rules->getItem(i->first),
+											_rules->getItemRule(i->first),
 											_battleSave->getNextItemId()),
 								grdRule);
 			}
@@ -920,7 +920,7 @@ void BattlescapeGenerator::deployXcom() // private.
 					)
 			{
 				//Log(LOG_INFO) << ". . . item = " << i->first << " (" << i->second << ")";
-				const RuleItem* const itRule (_rules->getItem(i->first));
+				const RuleItem* const itRule (_rules->getItemRule(i->first));
 				if (itRule->getBigSprite() != -1
 					&& itRule->getBattleType() != BT_NONE
 					&& itRule->getBattleType() != BT_CORPSE
@@ -979,7 +979,7 @@ void BattlescapeGenerator::deployXcom() // private.
 						//Log(LOG_INFO) << ". . . . . addItem() ToTile iter = " << (k + 1);
 						_tileEquipt->addItem(
 										new BattleItem(
-													_rules->getItem(j->first),
+													_rules->getItemRule(j->first),
 													_battleSave->getNextItemId()),
 										grdRule);
 					}
@@ -1104,7 +1104,7 @@ void BattlescapeGenerator::prepareBaseVehicles(std::vector<Vehicle*>& vehicles) 
 			i != baseStores->getContents()->end();
 			)
 	{
-		tRule = _rules->getItem(i->first);
+		tRule = _rules->getItemRule(i->first);
 		if (tRule->isFixed() == true
 			&& _rules->getUnitRule(i->first) != nullptr) // safety.
 		{
@@ -1127,7 +1127,7 @@ void BattlescapeGenerator::prepareBaseVehicles(std::vector<Vehicle*>& vehicles) 
 				baseStores->removeItem(i->first, i->second);
 				i = baseStores->getContents()->begin(); // start over because iterator is broken due to removeItem().
 			}
-			else if ((aRule = _rules->getItem(tRule->getCompatibleAmmo()->front())) != nullptr)
+			else if ((aRule = _rules->getItemRule(tRule->getCompatibleAmmo()->front())) != nullptr)
 			{ // TODO: Switch how item-ruleset defines max-ammo-qty from the ammo's rule to the weapon's rule. -> partly done.
 				quadrants = _rules->getArmor(_rules->getUnitRule(i->first)->getArmor())->getSize();
 				quadrants *= quadrants;
@@ -1182,7 +1182,7 @@ BattleUnit* BattlescapeGenerator::prepareSupport(Vehicle* const vehicle) // priv
 		supportUnit->setTurretType(vehicle->getRules()->getTurretType());
 
 		BattleItem* const weapon (new BattleItem(					// add Vehicle as a weapon-item and assign the unit itself as the owner of the weapon.
-											_rules->getItem(type),
+											_rules->getItemRule(type),
 											_battleSave->getNextItemId()));
 		if (placeGeneric(weapon, supportUnit) == false)
 		{
@@ -1199,7 +1199,7 @@ BattleUnit* BattlescapeGenerator::prepareSupport(Vehicle* const vehicle) // priv
 		if (type.empty() == false)
 		{
 			BattleItem* const ammo (new BattleItem(					// add ammo and assign the weapon as its owner.
-												_rules->getItem(type),
+												_rules->getItemRule(type),
 												_battleSave->getNextItemId()));
 			if (placeGeneric(ammo, supportUnit) == false)
 			{
@@ -1223,7 +1223,7 @@ BattleUnit* BattlescapeGenerator::prepareSupport(Vehicle* const vehicle) // priv
 					i != unitRule->getBuiltInWeapons().end();
 					++i)
 			{
-				RuleItem* const itRule (_rules->getItem(*i));
+				RuleItem* const itRule (_rules->getItemRule(*i));
 				if (itRule != nullptr)
 				{
 					weapon = new BattleItem(itRule, _battleSave->getNextItemId());
@@ -1572,7 +1572,7 @@ bool BattlescapeGenerator::placeGeneric( // private.
 		* const rhWeapon (unit->getItem(ST_RIGHTHAND)),
 		* const lhWeapon (unit->getItem(ST_LEFTHAND));
 
-	RuleItem* const itRule (item->getRules());
+	const RuleItem* const itRule (item->getRules());
 	if (itRule->isFixed() == true)
 	{
 		item->setInventorySection(rhRule);
@@ -1701,7 +1701,7 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule)
 	int qty;
 	size_t itemLevel;
 
-	RuleItem* itRule;
+	const RuleItem* itRule;
 	BattleItem* item;
 	RuleUnit* unitRule;
 	BattleUnit* unit;
@@ -1760,7 +1760,7 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule)
 							j != unitRule->getBuiltInWeapons().end();
 							++j)
 					{
-						itRule = _rules->getItem(*j);
+						itRule = _rules->getItemRule(*j);
 						if (itRule != nullptr)
 						{
 							item = new BattleItem(
@@ -1781,7 +1781,7 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule)
 					std::string terrorWeapon (unitRule->getRace().substr(4));
 					terrorWeapon += "_WEAPON";
 
-					itRule = _rules->getItem(terrorWeapon);
+					itRule = _rules->getItemRule(terrorWeapon);
 					if (itRule != nullptr)
 					{
 						item = new BattleItem( // terror aLiens add their weapons
@@ -1822,7 +1822,7 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule)
 							setItem != (*data).itemSets.at(itemLevel).items.end();
 							++setItem)
 					{
-						itRule = _rules->getItem(*setItem);
+						itRule = _rules->getItemRule(*setItem);
 						if (itRule != nullptr)
 						{
 							item = new BattleItem( // aLiens add items
@@ -2203,20 +2203,21 @@ int BattlescapeGenerator::loadMAP( // private.
 	if (_generateFuel == true) // if one of the mapBlocks has an items array defined, don't deploy fuel algorithmically
 		_generateFuel = (block->getItems()->empty() == true);
 
+	const RuleItem* itRule;
 	for (std::map<std::string, std::vector<Position>>::const_iterator
 			i = block->getItems()->begin();
 			i != block->getItems()->end();
 			++i)
 	{
-		RuleItem* const itRule = _rules->getItem((*i).first);
+		itRule = _rules->getItemRule((*i).first);
 		for (std::vector<Position>::const_iterator
 				j = (*i).second.begin();
 				j != (*i).second.end();
 				++j)
 		{
-			BattleItem* const item = new BattleItem(
+			BattleItem* const item (new BattleItem(
 												itRule,
-												_battleSave->getNextItemId());
+												_battleSave->getNextItemId()));
 			_battleSave->getItems()->push_back(item);
 			_battleSave->getTile((*j) + Position(
 												offset_x,
@@ -2386,7 +2387,7 @@ void BattlescapeGenerator::fuelPowerSources() // private.
 			&& tile->getMapData(O_OBJECT)->getSpecialType() == UFO_POWER_SOURCE)
 		{
 			alienFuel = new BattleItem(
-									_rules->getItem(_rules->getAlienFuelType()),
+									_rules->getItemRule(_rules->getAlienFuelType()),
 									_battleSave->getNextItemId());
 
 			_battleSave->getItems()->push_back(alienFuel);

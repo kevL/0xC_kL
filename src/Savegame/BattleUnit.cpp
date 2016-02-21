@@ -63,14 +63,14 @@ namespace OpenXcom
 
 /**
  * Initializes a BattleUnit from a Soldier
- * @param soldier	- pointer to a geoscape Soldier
- * @param diff		- for VictoryPts value at death
+ * @param sol	- pointer to a geoscape Soldier
+ * @param diff	- for negative VictoryPts value at death
  */
 BattleUnit::BattleUnit(
-		Soldier* const soldier,
+		Soldier* const sol,
 		const GameDifficulty diff)
 	:
-		_geoscapeSoldier(soldier),
+		_geoscapeSoldier(sol),
 		_unitRule(nullptr),
 		_faction(FACTION_PLAYER),
 		_originalFaction(FACTION_PLAYER),
@@ -143,25 +143,25 @@ BattleUnit::BattleUnit(
 		_activeHand(AH_NONE),
 		_fist(nullptr),
 
-		_name(soldier->getName()),
-		_id(soldier->getId()),
-		_rank(soldier->getRankString()),
-		_armor(soldier->getArmor()),
-		_standHeight(soldier->getRules()->getStandHeight()),
-		_kneelHeight(soldier->getRules()->getKneelHeight()),
-		_floatHeight(soldier->getRules()->getFloatHeight()),
-		_gender(soldier->getGender()),
+		_name(sol->getName()),
+		_id(sol->getId()),
+		_rank(sol->getRankString()),
+		_armor(sol->getArmor()),
+		_standHeight(sol->getRules()->getStandHeight()),
+		_kneelHeight(sol->getRules()->getKneelHeight()),
+		_floatHeight(sol->getRules()->getFloatHeight()),
+		_gender(sol->getGender()),
 
-		_stats(*soldier->getCurrentStats())
+		_stats(*sol->getCurrentStats())
 {
 	//Log(LOG_INFO) << "Create BattleUnit 1 : soldier ID = " << getId();
-	_stats += *_armor->getStats(); // armors may modify tactical stats
+	_stats += *_armor->getStats();
 
 	_loftSet = _armor->getLoftSet();
 	_moveType = _armor->getMoveTypeArmor();
 
 	int rankValue;
-	switch (soldier->getRank())
+	switch (sol->getRank())
 	{
 		case RANK_SQUADDIE:		rankValue =	 2;	break; // was 0
 		case RANK_SERGEANT:		rankValue =	 5;	break; // was 1
@@ -173,7 +173,7 @@ BattleUnit::BattleUnit(
 			rankValue =	 0;
 	}
 
-	_value = 20 + ((soldier->getMissions() + rankValue) * (diff + 1));
+	_value = 20 + ((sol->getMissions() + rankValue) * (diff + 1));
 
 	_tu = _stats.tu;
 	_energy = _stats.stamina;
@@ -208,8 +208,8 @@ BattleUnit::BattleUnit(
 
 	deriveRank(); // -> '_rankInt'
 
-	const int look = soldier->getLook() * 2
-				   + soldier->getGender();
+	const int look = sol->getLook() * 2
+				   + sol->getGender();
 	setRecolor(
 			look,
 			look,
@@ -326,14 +326,12 @@ BattleUnit::BattleUnit(
 		_stats(*unitRule->getStats())
 {
 	//Log(LOG_INFO) << "Create BattleUnit 2 : alien ID = " << getId();
-	_stats += *_armor->getStats(); // armors may modify tactical stats (but not further modified by game difficulty or monthly progress)
+	_stats += *_armor->getStats();
 
 	if (faction == FACTION_HOSTILE)
 	{
 		_turnsExposed = 0;
-		adjustStats(
-				diff,
-				month);
+		adjustStats(diff, month);
 	}
 	else
 		_turnsExposed = -1;
@@ -4226,8 +4224,8 @@ void BattleUnit::deriveRank()
 bool BattleUnit::checkViewSector(const Position& pos) const
 {
 	const int
-		dx = pos.x - _pos.x,
-		dy = _pos.y - pos.y;
+		dx (pos.x - _pos.x),
+		dy (_pos.y - pos.y);
 
 	switch (_dir)
 	{
@@ -4263,7 +4261,6 @@ bool BattleUnit::checkViewSector(const Position& pos) const
 			if (dy > -1 && dx < 1)
 				return true;
 	}
-
 	return false;
 }
 

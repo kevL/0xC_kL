@@ -234,7 +234,7 @@ CraftWeaponProjectile* CraftWeapon::fire() const
  */
 int CraftWeapon::getClipsLoaded(const Ruleset* const rules) const
 {
-	const RuleItem* const clip (rules->getItem(_cwRule->getClipItem()));
+	const RuleItem* const clip (rules->getItemRule(_cwRule->getClipItem()));
 
 	if (clip == nullptr || clip->getFullClip() < 1)
 		return _ammo / _cwRule->getRearmRate(); // round down.

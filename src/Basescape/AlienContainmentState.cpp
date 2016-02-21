@@ -165,62 +165,63 @@ AlienContainmentState::AlienContainmentState(
 	_lstAliens->onRightArrowClick((ActionHandler)& AlienContainmentState::lstItemsRightArrowClick);
 
 	const RuleItem* itRule;
+	std::string type;
 	int qtyAliens;
-	size_t row = 0;
+	size_t row (0);
 	Uint8 color;
 
-	std::vector<std::string> baseProjects;
+	std::vector<std::string> interrogations;
 	for (std::vector<ResearchProject*>::const_iterator
 			i = _base->getResearch().begin();
 			i != _base->getResearch().end();
 			++i)
 	{
-		itRule = _game->getRuleset()->getItem((*i)->getRules()->getType());
-		if (itRule != nullptr && itRule->isAlien() == true)
-			baseProjects.push_back((*i)->getRules()->getType());
+		type = (*i)->getRules()->getType();
+		if ((itRule = _game->getRuleset()->getItemRule(type)) != nullptr
+			&& itRule->isAlien() == true)
+		{
+			interrogations.push_back(type);
+		}
 	}
 
-	if (baseProjects.empty() == false)
+	if (interrogations.empty() == false)
 		_txtInResearch->setVisible();
 	else
 		_txtInResearch->setVisible(false);
 
-	const std::vector<std::string>& itemList = _game->getRuleset()->getItemsList();
+	const std::vector<std::string>& itemList (_game->getRuleset()->getItemsList());
 	for (std::vector<std::string>::const_iterator
 			i = itemList.begin();
 			i != itemList.end();
 			++i)
 	{
-		if (_game->getRuleset()->getItem(*i)->isAlien() == true) // it's a live alien...
+		itRule = _game->getRuleset()->getItemRule(*i);
+		if (itRule->isAlien() == true) // it's a live alien...
 		{
 			qtyAliens = _base->getStorageItems()->getItemQuantity(*i); // get Qty of each aLien-type at this base
 			if (qtyAliens != 0)
 			{
-				_qty.push_back(0);		// put it in the _qty<vector> as (int)
-				_aliens.push_back(*i);	// put its name in the _aliens<vector> as (string)
-
-				std::wostringstream woststr;
-				woststr << qtyAliens;
+				_qty.push_back(0);		// put it in the _qty <vector> as (int)
+				_aliens.push_back(*i);	// put its name in the _aliens <vector> as (string)
 
 				std::wstring rpQty;
-				std::vector<std::string>::const_iterator j = std::find(
-																	baseProjects.begin(),
-																	baseProjects.end(),
-																	*i);
-				if (j != baseProjects.end())
+				std::vector<std::string>::const_iterator j (std::find(
+																	interrogations.begin(),
+																	interrogations.end(),
+																	*i));
+				if (j != interrogations.end())
 				{
 					rpQty = tr("STR_YES");
-					baseProjects.erase(j);
+					interrogations.erase(j);
 				}
 
 				_lstAliens->addRow( // show its name on the list.
 								4,
 								tr(*i).c_str(),
-								woststr.str().c_str(),
+								Text::intWide(qtyAliens).c_str(),
 								L"0",
 								rpQty.c_str());
 
-				itRule = _game->getRuleset()->getItem(*i);
 				if (_game->getSavedGame()->isResearched(itRule->getType()) == false)
 					color = YELLOW;
 				else
@@ -232,8 +233,8 @@ AlienContainmentState::AlienContainmentState(
 	}
 
 	for (std::vector<std::string>::const_iterator // add research aLiens that are not in Containment.
-			i = baseProjects.begin();
-			i != baseProjects.end();
+			i = interrogations.begin();
+			i != interrogations.end();
 			++i)
 	{
 		_qty.push_back(0);
@@ -295,7 +296,6 @@ void AlienContainmentState::btnOkClick(Action*)
 									_qty[i]);
 		}
 	}
-
 	_game->popState();
 }
 
@@ -422,7 +422,7 @@ void AlienContainmentState::increaseByValue(int change)
 {
 	if (change > 0)
 	{
-		const int qtyType = getQuantity() - _qty[_sel];
+		const int qtyType (getQuantity() - _qty[_sel]);
 		if (qtyType > 0)
 		{
 			change = std::min(change, qtyType);
@@ -467,32 +467,20 @@ void AlienContainmentState::decreaseByValue(int change)
  */
 void AlienContainmentState::update() // private.
 {
-	std::wostringstream
-		woststr1,
-		woststr2;
-
-	const int qty = getQuantity() - _qty[_sel];
-	woststr1 << qty;
-	woststr2 << _qty[_sel];
-
 	Uint8 color;
 	if (_qty[_sel] != 0)
 		color = _lstAliens->getSecondaryColor();
+	else if (_game->getSavedGame()->isResearched(_game->getRuleset()->getItemRule(_aliens[_sel])->getType()) == false)
+		color = YELLOW;
 	else
-	{
-		const RuleItem* const itRule = _game->getRuleset()->getItem(_aliens[_sel]);
-		if (_game->getSavedGame()->isResearched(itRule->getType()) == false)
-			color = YELLOW;
-		else
-			color = _lstAliens->getColor();
-	}
+		color = _lstAliens->getColor();
 
-	_lstAliens->setCellText(_sel, 1, woststr1.str()); // qty still in Containment
-	_lstAliens->setCellText(_sel, 2, woststr2.str()); // qty to torture
+	_lstAliens->setCellText(_sel, 1, Text::intWide(getQuantity() - _qty[_sel]));	// qty still in Containment
+	_lstAliens->setCellText(_sel, 2, Text::intWide(_qty[_sel]));					// qty to torture
 	_lstAliens->setRowColor(_sel, color);
 
 
-	const int freeSpace = _totalSpace - _usedSpace + _fishFood;
+	const int freeSpace (_totalSpace - _usedSpace + _fishFood);
 	_txtSpace->setText(tr("STR_SPACE_USED_SPACE_FREE_")
 						.arg(_usedSpace - _fishFood)
 						.arg(freeSpace));

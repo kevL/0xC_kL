@@ -126,7 +126,7 @@ CraftWeaponsState::CraftWeaponsState(
 			++i)
 	{
 		const RuleCraftWeapon* const cwRule = _game->getRuleset()->getCraftWeapon(*i);
-		const RuleItem* const laRule = _game->getRuleset()->getItem(cwRule->getLauncherItem());
+		const RuleItem* const laRule = _game->getRuleset()->getItemRule(cwRule->getLauncherItem());
 
 		if (_game->getSavedGame()->isResearched(laRule->getRequirements()) == true)
 		{

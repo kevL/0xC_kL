@@ -3623,7 +3623,7 @@ void BattlescapeState::handAction( // private.
 //			&& action->actor->getUnitRules()->getMeleeWeapon() == "STR_FIST")
 		{
 			// TODO: This can be generalized later; right now the only 'meleeWeapon' is "STR_FIST" - the Universal Fist!!!
-//			const RuleItem* const itRule = _rules->getItem(action->actor->getUnitRules()->getMeleeWeapon());
+//			const RuleItem* const itRule = _rules->getItemRule(action->actor->getUnitRules()->getMeleeWeapon());
 			action->weapon = action->actor->getMeleeWeapon();
 		}
 

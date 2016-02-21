@@ -34,7 +34,7 @@ items:
 #    floorSprite: 31
 #    handSprite: 104
     fireSoundHit: 54
-    clipSize: -1
+    fullClip: -1
     power: 80
     damageType: 7
     accuracyMelee: 80

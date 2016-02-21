@@ -154,7 +154,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 										// it will be matched w/ selectedRow on list-clicks for gotoBase.
 				if ((*j)->getTransferType() == PST_ITEM) // check if there's an instant use for item
 				{
-					const RuleItem* const itRule (_game->getRuleset()->getItem((*j)->getTransferItems()));
+					const RuleItem* const itRule (_game->getRuleset()->getItemRule((*j)->getTransferItems()));
 
 					for (std::vector<Craft*>::const_iterator
 							k = (*i)->getCrafts()->begin();

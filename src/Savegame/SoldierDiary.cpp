@@ -572,7 +572,7 @@ void SoldierDiary::updateDiary(
 
 			if ((*i)->hostileTurn() == true)
 			{
-				const RuleItem* const itRule (rules->getItem((*i)->_weapon));
+				const RuleItem* const itRule (rules->getItemRule((*i)->_weapon));
 				if (itRule == nullptr || itRule->isGrenade() == true)
 					++_trapKillTotal;
 				else
@@ -945,8 +945,8 @@ bool SoldierDiary::manageAwards(const Ruleset* const rules)
 								}
 
 								const RuleItem // if there are NO matches break and try the next Criteria.
-									* const weapon = rules->getItem((*kill)->_weapon),
-									* const weaponAmmo = rules->getItem((*kill)->_weaponAmmo);
+									* const weapon = rules->getItemRule((*kill)->_weapon),
+									* const weaponAmmo = rules->getItemRule((*kill)->_weaponAmmo);
 
 								if (   weapon == nullptr		//(*kill)->_weapon == "STR_WEAPON_UNKNOWN"
 									|| weaponAmmo == nullptr	//(*kill)->_weaponAmmo == "STR_WEAPON_UNKNOWN"

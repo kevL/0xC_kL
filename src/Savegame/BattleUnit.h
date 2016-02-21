@@ -250,7 +250,7 @@ private:
 
 	const RuleArmor* _armor;
 	Soldier* _geoscapeSoldier;
-	RuleUnit* _unitRule;
+	const RuleUnit* _unitRule;
 
 	MovementType _moveType;
 	SoldierGender _gender;
@@ -283,7 +283,7 @@ private:
 
 		/// Creates a BattleUnit from a geoscape Soldier.
 		BattleUnit( // xCom operatives
-				Soldier* const soldier,
+				Soldier* const sol,
 				const GameDifficulty diff); // for VictoryPts value per death.
 		/// Creates a BattleUnit from Unit rule.
 		BattleUnit( // aLiens, civies, & Tanks
@@ -767,7 +767,7 @@ private:
 		void invalidateCache();
 
 		/// Gets this BattleUnit's rules if non-Soldier else nullptr.
-		RuleUnit* getUnitRules() const
+		const RuleUnit* getUnitRules() const
 		{ return _unitRule; }
 
 		/// Sets this unit's rank integer.

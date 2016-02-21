@@ -52,7 +52,7 @@ ArticleStateVehicle::ArticleStateVehicle(const ArticleDefinitionVehicle* const d
 {
 	RuleUnit* const unit (_game->getRuleset()->getUnitRule(defs->id));
 	const RuleArmor* const armorRule (_game->getRuleset()->getArmor(unit->getArmor()));
-	const RuleItem* const itRule (_game->getRuleset()->getItem(defs->id));
+	const RuleItem* const itRule (_game->getRuleset()->getItemRule(defs->id));
 
 	_txtTitle	= new Text(310,  17,  5,  23);
 	_txtInfo	= new Text(300, 150, 10, 122);
@@ -126,7 +126,7 @@ ArticleStateVehicle::ArticleStateVehicle(const ArticleDefinitionVehicle* const d
 
 	if (itRule->getCompatibleAmmo()->empty() == false)
 	{
-		const RuleItem* const aRule (_game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front()));
+		const RuleItem* const aRule (_game->getRuleset()->getItemRule(itRule->getCompatibleAmmo()->front()));
 
 		_lstStats->addRow(
 					2,

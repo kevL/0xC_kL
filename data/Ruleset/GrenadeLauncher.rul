@@ -39,7 +39,7 @@ items:
     battleType: 2
     blastRadius: 4
 #    explosionSpeed:
-    clipSize: 1
+    fullClip: 1
     armor: 15
   - type: STR_LAUNCHER_INC
     listOrder: 3003
@@ -56,7 +56,7 @@ items:
     battleType: 2
     blastRadius: 3
 #    explosionSpeed:
-    clipSize: 1
+    fullClip: 1
     armor: 15
   - type: STR_LAUNCHER_SMOKE
     listOrder: 3004
@@ -74,7 +74,7 @@ items:
     battleType: 2
     blastRadius: 4
     explosionSpeed: -15
-    clipSize: 1
+    fullClip: 1
     armor: 15
 ufopaedia:
   - id: STR_GRENADE_LAUNCHER

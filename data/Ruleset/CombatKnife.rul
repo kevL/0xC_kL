@@ -20,7 +20,7 @@ items:
     accuracyMelee: 150
     tuMelee: 12
     battleType: 3
-    clipSize: -1
+    fullClip: -1
     invWidth: 1
     invHeight: 2
     armor: 12

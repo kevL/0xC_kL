@@ -179,7 +179,7 @@ void ManufactureCostsState::init()
 				j != required.end();
 				++j)
 		{
-			requiredCosts += _game->getRuleset()->getItem((*j).first)->getSellCost() * (*j).second;
+			requiredCosts += _game->getRuleset()->getItemRule((*j).first)->getSellCost() * (*j).second;
 
 			woststr.str(L"");
 			woststr << L"(" << (*j).second << L") " << tr((*j).first);
@@ -212,7 +212,7 @@ void ManufactureCostsState::init()
 			if ((*i)->isCraft() == true)
 				salesCost = _game->getRuleset()->getCraft((*j).first)->getSellCost();
 			else
-				salesCost = _game->getRuleset()->getItem((*j).first)->getSellCost();
+				salesCost = _game->getRuleset()->getItemRule((*j).first)->getSellCost();
 
 			salesCost *= (*j).second;
 			profit += salesCost;

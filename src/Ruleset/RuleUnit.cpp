@@ -132,7 +132,7 @@ std::string RuleUnit::getType() const
 }
 
 /**
- * Returns the unit's stats data object.
+ * Returns the unit's stats-data-struct.
  * @return, pointer to the unit's stats
  */
 UnitStats* RuleUnit::getStats()

@@ -142,13 +142,12 @@ void PsiTrainingState::init()
 
 	_lstSoldiers->clearList();
 
-	size_t row = 0;
+	size_t row (0);
 
 	for (std::vector<Soldier*>::const_iterator
 			i = _base->getSoldiers()->begin();
 			i != _base->getSoldiers()->end();
-			++i,
-				++row)
+			++i, ++row)
 	{
 		_soldiers.push_back(*i);
 

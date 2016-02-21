@@ -344,8 +344,8 @@ void SoldierInfoState::init()
 
 
 	const UnitStats
-		* const initial = _soldier->getInitStats(),
-		* const current = _soldier->getCurrentStats();
+		* const initial (_soldier->getInitStats()),
+		* const current (_soldier->getCurrentStats());
 
 	UnitStats armored = *current;
 	armored += *(_soldier->getArmor()->getStats());

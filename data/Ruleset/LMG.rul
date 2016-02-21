@@ -33,7 +33,7 @@ items:
     fireHitAni: 26
     power: 26
     damageType: 1
-    clipSize: 30
+    fullClip: 30
     battleType: 2
     armor: 23
     invWidth: 2

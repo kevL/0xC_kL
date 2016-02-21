@@ -148,7 +148,7 @@ void ExplosionBState::init()
 	else if (_unit != nullptr // cyberdiscs!!! And ... ZOMBIES.
 		&& _unit->getSpecialAbility() == SPECAB_EXPLODE)
 	{
-		_power = _parent->getRuleset()->getItem(_unit->getArmor()->getCorpseGeoscape())->getPower();
+		_power = _parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseGeoscape())->getPower();
 		const int
 			power1 (_power * 2 / 3),
 			power2 (_power * 3 / 2);
@@ -566,7 +566,7 @@ void ExplosionBState::explode() // private.
 		terrain = true;
 		int radius;
 		if (_unit != nullptr && _unit->getSpecialAbility() == SPECAB_EXPLODE)
-			radius = _parent->getRuleset()->getItem(_unit->getArmor()->getCorpseGeoscape())->getExplosionRadius();
+			radius = _parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseGeoscape())->getExplosionRadius();
 		else
 			radius = 6;
 

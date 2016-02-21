@@ -229,7 +229,7 @@ void Base::load(
 			i = _items->getContents()->begin();
 			i != _items->getContents()->end();)
 	{
-		if (_rules->getItem(i->first) == nullptr)
+		if (_rules->getItemRule(i->first) == nullptr)
 		{
 			Log(LOG_ERROR) << "Failed to load item " << i->first;
 			i = _items->getContents()->erase(i);
@@ -687,7 +687,7 @@ double Base::getUsedStores() const
 			type = itRule->getCompatibleAmmo()->front(); // craft vehicle ammo
 			if (type.empty() == false)
 			{
-				itRule = _rules->getItem(type);
+				itRule = _rules->getItemRule(type);
 				total += itRule->getStoreSize() * static_cast<double>((*j)->getAmmo());
 			}
 		}
@@ -700,7 +700,7 @@ double Base::getUsedStores() const
 	{
 		if ((*i)->getTransferType() == PST_ITEM)
 		{
-			total += _rules->getItem((*i)->getTransferItems())->getStoreSize()
+			total += _rules->getItemRule((*i)->getTransferItems())->getStoreSize()
 				   * static_cast<double>((*i)->getQuantity());
 		}
 	}
@@ -711,7 +711,7 @@ double Base::getUsedStores() const
 			++i)
 	{
 		if ((*i)->getArmor()->isBasic() == false)
-			total += _rules->getItem((*i)->getArmor()->getStoreItem())->getStoreSize();
+			total += _rules->getItemRule((*i)->getArmor()->getStoreItem())->getStoreSize();
 	}
 
 	return total;
@@ -959,7 +959,7 @@ int Base::getUsedContainment() const
 			i != _items->getContents()->end();
 			++i)
 	{
-		if (_rules->getItem(i->first)->isAlien() == true)
+		if (_rules->getItemRule(i->first)->isAlien() == true)
 			total += i->second;
 	}
 
@@ -969,7 +969,7 @@ int Base::getUsedContainment() const
 			++i)
 	{
 		if ((*i)->getTransferType() == PST_ITEM
-			&& _rules->getItem((*i)->getTransferItems())->isAlien() == true)
+			&& _rules->getItemRule((*i)->getTransferItems())->isAlien() == true)
 		{
 			total += (*i)->getQuantity();
 		}
@@ -2806,15 +2806,15 @@ int Base::soldierExpense(
 /**
  * Returns the expense of sending HWPs/doggies on a tactical mission;
  * subtracts the value from current funds.
- * @param hwpSize	- size of the HWP/doggie in tiles
+ * @param quadrants	- size of the HWP/doggie in tiles
  * @param dead		- true if HWP got destroyed while on tactical (default false)
  * @return, the expense
  */
 int Base::supportExpense(
-		const int hwpSize,
+		const int quadrants,
 		const bool dead)
 {
-	int cost (hwpSize * 750);
+	int cost (quadrants * 750);
 	if (dead == true) cost /= 2;
 
 	_cashSpent += cost;

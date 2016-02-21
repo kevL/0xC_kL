@@ -331,7 +331,7 @@ void NewBattleState::load(const std::string& file)
 						i != itemList.end();
 						++i)
 				{
-					itRule = _rules->getItem(*i);
+					itRule = _rules->getItemRule(*i);
 					if (itRule->getBattleType() != BT_CORPSE
 						&& itRule->isRecoverable() == true)
 					{
@@ -357,7 +357,7 @@ void NewBattleState::load(const std::string& file)
 							i != _craft->getCraftItems()->getContents()->end();
 							++i)
 					{
-						if (_rules->getItem(i->first) == nullptr)
+						if (_rules->getItemRule(i->first) == nullptr)
 							i->second = 0;
 					}
 				}
@@ -540,7 +540,7 @@ void NewBattleState::initPlay()
 			i != items.end();
 			++i)
 	{
-		itRule = _rules->getItem(*i);
+		itRule = _rules->getItemRule(*i);
 		if (itRule->getBattleType() != BT_CORPSE
 			&& itRule->isRecoverable() == true)
 		{

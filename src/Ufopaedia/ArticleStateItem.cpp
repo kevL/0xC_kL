@@ -75,7 +75,7 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 	add(_image);
 
 
-	const RuleItem* const itRule = _game->getRuleset()->getItem(defs->id);
+	const RuleItem* const itRule = _game->getRuleset()->getItemRule(defs->id);
 
 	itRule->drawHandSprite(
 					_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
@@ -257,7 +257,7 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 												_game->getSavedGame(),
 												ammo_article) == true)
 					{
-						const RuleItem* const ammo_rule = _game->getRuleset()->getItem((*ammo_data)[i]);
+						const RuleItem* const ammo_rule = _game->getRuleset()->getItemRule((*ammo_data)[i]);
 						_txtAmmoType[i]->setText(tr(getDamageTypeText(ammo_rule->getDamageType())));
 
 						woststr.str(L"");

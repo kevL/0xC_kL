@@ -2982,7 +2982,7 @@ void GeoscapeState::time1Day()
 
 			if (resRule0 != nullptr) // check for need to research the clip before the weapon itself is allowed to be manufactured.
 			{
-				const RuleItem* const itRule (_rules->getItem(resRule0->getType()));
+				const RuleItem* const itRule (_rules->getItemRule(resRule0->getType()));
 				if (itRule != nullptr
 					&& itRule->getBattleType() == BT_FIREARM
 					&& itRule->getCompatibleAmmo()->empty() == false)
@@ -2992,7 +2992,7 @@ void GeoscapeState::time1Day()
 						&& manfRule->getRequirements().empty() == false)
 					{
 						const std::vector<std::string>& required (manfRule->getRequirements());
-						const RuleItem* const aRule (_rules->getItem(itRule->getCompatibleAmmo()->front()));
+						const RuleItem* const aRule (_rules->getItemRule(itRule->getCompatibleAmmo()->front()));
 						if (aRule != nullptr
 							&& std::find(
 									required.begin(),

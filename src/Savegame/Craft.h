@@ -217,9 +217,9 @@ private:
 		/// Checks if a target is detected by the Craft's radar.
 		bool detect(const Target* const target) const;
 
-		/// Sets the Craft's battlescape status.
+		/// Sets if the Craft is participating in a tactical mission.
 		void setTactical(bool tactical = true);
-		/// Gets if the Craft is in battlescape.
+		/// Gets if the Craft is participating in a tactical mission.
 		bool getTactical() const;
 
 		/// Gets if Craft is destroyed during dogfights.

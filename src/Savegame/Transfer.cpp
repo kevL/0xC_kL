@@ -112,7 +112,7 @@ bool Transfer::load(
 	if (const YAML::Node& item = node["itemId"])
 	{
 		_itemId = item.as<std::string>(_itemId);
-		if (rules->getItem(_itemId) == nullptr)
+		if (rules->getItemRule(_itemId) == nullptr)
 		{
 			Log(LOG_ERROR) << "Failed to load item " << _itemId;
 			delete this;

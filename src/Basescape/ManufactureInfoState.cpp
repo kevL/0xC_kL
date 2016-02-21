@@ -273,7 +273,7 @@ void ManufactureInfoState::initProfit() // private.
 		if (manfRule->isCraft() == true)
 			sellValue = _game->getRuleset()->getCraft(i->first)->getSellCost();
 		else
-			sellValue = _game->getRuleset()->getItem(i->first)->getSellCost();
+			sellValue = _game->getRuleset()->getItemRule(i->first)->getSellCost();
 
 		_producedItemsValue += sellValue * i->second;
 	}

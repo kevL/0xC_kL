@@ -148,14 +148,14 @@ StoresState::StoresState(Base* base)
 			i != items.end();
 			++i)
 	{
-		//Log(LOG_INFO) << *i << " stores listOrder = " << rules->getItem(*i)->getListOrder(); // Prints listOrder to LOG.
-		if (rules->getItem(*i)->isAlien() == false)
+		//Log(LOG_INFO) << *i << " stores listOrder = " << rules->getItemRule(*i)->getListOrder(); // Prints listOrder to LOG.
+		if (rules->getItemRule(*i)->isAlien() == false)
 		{
 			qty = _base->getStorageItems()->getItemQuantity(*i);
 			if (qty != 0)
 			{
 				color = BLUE;
-				itRule = rules->getItem(*i);
+				itRule = rules->getItemRule(*i);
 
 				std::wstring item (tr(*i));
 
@@ -169,8 +169,8 @@ StoresState::StoresState(Base* base)
 					// Special handling for treating craft weapons as items
 					cwRule = rules->getCraftWeapon(*j);
 
-					laRule = rules->getItem(cwRule->getLauncherItem());
-					clRule = rules->getItem(cwRule->getClipItem());
+					laRule = rules->getItemRule(cwRule->getLauncherItem());
+					clRule = rules->getItemRule(cwRule->getClipItem());
 
 					if (laRule == itRule)
 					{
@@ -191,7 +191,7 @@ StoresState::StoresState(Base* base)
 				if (itRule->isFixed() == true // tank w/ Ordnance.
 					&& itRule->getCompatibleAmmo()->empty() == false)
 				{
-					clRule = rules->getItem(itRule->getCompatibleAmmo()->front());
+					clRule = rules->getItemRule(itRule->getCompatibleAmmo()->front());
 					clipSize = clRule->getFullClip();
 					if (clipSize != 0)
 						item += (L" (" + Text::intWide(clipSize) + L")");
@@ -216,7 +216,7 @@ StoresState::StoresState(Base* base)
 
 				if (gameSave->isResearched(itRule->getType()) == false				// not researched or is research exempt
 					&& (gameSave->isResearched(itRule->getRequirements()) == false	// and has requirements to use that have not been researched
-//						|| rules->getItem(*i)->isAlien() == true						// or is an alien
+//						|| rules->getItemRule(*i)->isAlien() == true						// or is an alien
 						|| itRule->getBattleType() == BT_CORPSE							// or is a corpse
 						|| itRule->getBattleType() == BT_NONE)							// or is not a battlefield item
 					&& craftOrdnance == false)										// and is not craft ordnance
@@ -235,7 +235,7 @@ StoresState::StoresState(Base* base)
 				_lstStores->setRowColor(row++, color);
 /*			std::wostringstream woststr1;
 			woststr1 << qty;
-			if (rules->getItem(*i)->isAlien() == true)
+			if (rules->getItemRule(*i)->isAlien() == true)
 			{
 				_lstStores->addRow(
 								3,

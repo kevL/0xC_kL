@@ -1447,7 +1447,7 @@ void InventoryState::txtTooltipOut(Action* action)
 	{
 		// search for template item in ground inventory
 		std::vector<BattleItem*>::iterator groundItem;
-		const bool usesAmmo = !_game->getRuleset()->getItem((*templateIt)->getItemType())->getCompatibleAmmo()->empty();
+		const bool usesAmmo = !_game->getRuleset()->getItemRule((*templateIt)->getItemType())->getCompatibleAmmo()->empty();
 		bool
 			found = false,
 			rescan = true;

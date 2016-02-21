@@ -74,19 +74,19 @@ Soldier::Soldier(
 	if (names != nullptr)
 	{
 		const UnitStats
-			minStats = _solRule->getMinStats(),
-			maxStats = _solRule->getMaxStats();
+			statsLow (_solRule->getMinStats()),
+			statsHigh (_solRule->getMaxStats());
 
-		_initialStats.tu			= RNG::generate(minStats.tu,			maxStats.tu);
-		_initialStats.stamina		= RNG::generate(minStats.stamina,		maxStats.stamina);
-		_initialStats.health		= RNG::generate(minStats.health,		maxStats.health);
-		_initialStats.bravery		= RNG::generate(minStats.bravery / 10,	maxStats.bravery / 10) * 10;
-		_initialStats.reactions		= RNG::generate(minStats.reactions,		maxStats.reactions);
-		_initialStats.firing		= RNG::generate(minStats.firing,		maxStats.firing);
-		_initialStats.throwing		= RNG::generate(minStats.throwing,		maxStats.throwing);
-		_initialStats.strength		= RNG::generate(minStats.strength,		maxStats.strength);
-		_initialStats.psiStrength	= RNG::generate(minStats.psiStrength,	maxStats.psiStrength);
-		_initialStats.melee			= RNG::generate(minStats.melee,			maxStats.melee);
+		_initialStats.tu			= RNG::generate(statsLow.tu,			statsHigh.tu);
+		_initialStats.stamina		= RNG::generate(statsLow.stamina,		statsHigh.stamina);
+		_initialStats.health		= RNG::generate(statsLow.health,		statsHigh.health);
+		_initialStats.bravery		= RNG::generate(statsLow.bravery / 10,	statsHigh.bravery / 10) * 10;
+		_initialStats.reactions		= RNG::generate(statsLow.reactions,		statsHigh.reactions);
+		_initialStats.firing		= RNG::generate(statsLow.firing,		statsHigh.firing);
+		_initialStats.throwing		= RNG::generate(statsLow.throwing,		statsHigh.throwing);
+		_initialStats.strength		= RNG::generate(statsLow.strength,		statsHigh.strength);
+		_initialStats.psiStrength	= RNG::generate(statsLow.psiStrength,	statsHigh.psiStrength);
+		_initialStats.melee			= RNG::generate(statsLow.melee,			statsHigh.melee);
 
 		_initialStats.psiSkill = 0;
 
@@ -95,11 +95,11 @@ Soldier::Soldier(
 		_look = static_cast<SoldierLook>(RNG::generate(0,3));
 //		_gender = (SoldierGender)RNG::generate(0, 1);
 
-		// kL_begin: gender Ratios
-		const RuleGender* const gRatio = _solRule->getGenderRatio();
+		// gender Ratios
+		const RuleGender* const gRatio (_solRule->getGenderRatio());
 		const double
-			male = static_cast<double>(gRatio->male),
-			total = static_cast<double>(male + gRatio->female);
+			male (static_cast<double>(gRatio->male)),
+			total (static_cast<double>(male + gRatio->female));
 
 		if (AreSame(total, 0.)
 			|| RNG::percent(static_cast<int>(Round(male / total * 100.))))
@@ -111,7 +111,7 @@ Soldier::Soldier(
 		{
 			_gender = GENDER_FEMALE;
 			_name = L"pfc.Frita";
-		} // kL_end.
+		}
 
 /*		if (names->empty() == false)
 		{
@@ -258,7 +258,7 @@ const RuleSoldier* Soldier::getRules() const
  * Gets this Soldier's initial stats.
  * @return, address of UnitStats
  */
-UnitStats* Soldier::getInitStats()
+const UnitStats* Soldier::getInitStats()
 {
 	return &_initialStats;
 }

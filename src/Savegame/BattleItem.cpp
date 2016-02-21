@@ -40,7 +40,7 @@ namespace OpenXcom
  * @param id		- value for ID when loading a saved game (default -1)
  */
 BattleItem::BattleItem(
-		RuleItem* const itRule,
+		const RuleItem* const itRule,
 		int* pId,
 		int id)
 	:
@@ -182,7 +182,7 @@ YAML::Node BattleItem::saveDeleted() const
  * Gets the ruleset for the item's type.
  * @return, pointer to ruleset
  */
-RuleItem* BattleItem::getRules() const
+const RuleItem* BattleItem::getRules() const
 {
 	return _itRule;
 }
@@ -588,7 +588,7 @@ int BattleItem::getStimulantQuantity() const
  * Converts a carried unconscious body into a battlefield corpse-item.
  * @param itRule - pointer to rules of the corpse-item to convert this item into
  */
-void BattleItem::changeRule(RuleItem* const itRule)
+void BattleItem::changeRule(const RuleItem* const itRule)
 {
 	if (_unit != nullptr
 		&& _itRule->getBattleType() == BT_CORPSE

@@ -223,7 +223,7 @@ bool Production::enoughMaterials( // private.
 			i != _manfRule->getRequiredItems().end();
 			++i)
 	{
-		if ((rules->getItem(i->first) != nullptr
+		if ((rules->getItemRule(i->first) != nullptr
 				&& base->getStorageItems()->getItemQuantity(i->first) >= i->second)
 			|| (rules->getCraft(i->first) != nullptr
 				&& base->getCraftCount(i->first) >= i->second))
@@ -280,7 +280,7 @@ ProductionProgress Production::step(
 				else
 				{
 					// Check if it's fuel OR ammo for a Craft
-					if (rules->getItem(i->first)->getBattleType() == BT_NONE)
+					if (rules->getItemRule(i->first)->getBattleType() == BT_NONE)
 					{
 						for (std::vector<Craft*>::const_iterator
 								j = base->getCrafts()->begin();
@@ -315,9 +315,9 @@ ProductionProgress Production::step(
 
 					// kL_note: MISSING - check if it's ammo to load a tank (onboard a Craft)!
 					// from, ItemsArrivingState:
-/*					RuleItem* item = _game->getRuleset()->getItem((*j)->getItems());
+/*					RuleItem* item = _game->getRuleset()->getItemRule((*j)->getItems());
 
-					if (rules->getItem(i->first)->getBattleType() == BT_AMMO)
+					if (rules->getItemRule(i->first)->getBattleType() == BT_AMMO)
 					{
 						for (std::vector<Craft*>::iterator
 								c = base->getCrafts()->begin();
@@ -351,8 +351,8 @@ ProductionProgress Production::step(
 
 					if (_sell == true) // <- this may be Fucked.
 					{
-						gameSave->setFunds(gameSave->getFunds() + (rules->getItem(i->first)->getSellCost() * i->second));
-						base->setCashIncome(rules->getItem(i->first)->getSellCost() * i->second);
+						gameSave->setFunds(gameSave->getFunds() + (rules->getItemRule(i->first)->getSellCost() * i->second));
+						base->setCashIncome(rules->getItemRule(i->first)->getSellCost() * i->second);
 					}
 					else
 						base->getStorageItems()->addItem(i->first, i->second);
@@ -413,7 +413,7 @@ void Production::startProduction(
 			i != _manfRule->getRequiredItems().end();
 			++i)
 	{
-		if (rules->getItem(i->first) != nullptr)
+		if (rules->getItemRule(i->first) != nullptr)
 			base->getStorageItems()->removeItem(i->first, i->second);
 		else if (rules->getCraft(i->first) != nullptr) // TODO: First send a warning that a/the Craft will be unloaded and deleted.
 		{

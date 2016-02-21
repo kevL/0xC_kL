@@ -17,6 +17,7 @@ items:
     tuSnap: 34
     tuAimed: 83
     fixedWeapon: true
+    fullClip: 18 #kL
     invWidth: 2
     invHeight: 3
     turretType: 0
@@ -39,6 +40,7 @@ items:
     tuSnap: 43
     tuAimed: 64
     fixedWeapon: true
+    fullClip: 6 #kL
     invWidth: 2
     invHeight: 3
     turretType: 1
@@ -62,8 +64,8 @@ items:
     accuracyAimed: 128
     tuSnap: 37
     tuAimed: 93
-    clipSize: -1
     fixedWeapon: true
+    fullClip: -1
     invWidth: 2
     invHeight: 3
     turretType: 2
@@ -82,18 +84,18 @@ armors:
     underArmor: 85
     drawRoutine: 2
     size: 2
-    loftSet: [92, 89, 90, 91]
+    loftSet: [92,89,90,91]
     damageModifier:
-      - 1.0 #none
+      - 1.0  #none
       - 1.06 #ap
       - 0.37 #in
       - 0.73 #he
       - 0.99 #laser
       - 0.97 #plasma
-      - 0.0 #stun
+      - 0.0  #stun
       - 0.77 #melee
       - 0.43 #acid
-      - 0.0 #smoke
+      - 0.0  #smoke
 units:
   - type: STR_TANK_CANNON_ALLOY
     race: STR_TANK_CANNON_ALLOY

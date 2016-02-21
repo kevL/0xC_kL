@@ -148,7 +148,7 @@ ManufactureStartState::ManufactureStartState(
 				woststr2;
 			woststr1 << L'\x01' << i->second;
 
-			if (_game->getRuleset()->getItem(i->first) != nullptr)
+			if (_game->getRuleset()->getItemRule(i->first) != nullptr)
 			{
 				woststr2 << L'\x01' << stores->getItemQuantity(i->first);
 				showStart &= (stores->getItemQuantity(i->first) >= i->second);
@@ -213,13 +213,13 @@ void ManufactureStartState::init()
 		_init = false;
 		const Ruleset* const rules (_game->getRuleset());
 
-		bool reqCraft = false;
+		bool reqCraft (false);
 		for (std::map<std::string, int>::const_iterator
 				i = _manfRule->getRequiredItems().begin();
 				i != _manfRule->getRequiredItems().end();
 				++i)
 		{
-			if (rules->getItem(i->first) == nullptr
+			if (rules->getItemRule(i->first) == nullptr
 				&& rules->getCraft(i->first) != nullptr)
 			{
 				reqCraft = true;

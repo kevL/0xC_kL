@@ -350,7 +350,7 @@ void TransferItemsState::init()
 			_baseQty.push_back(baseQty);
 			_items.push_back(*i);
 
-			itRule = rules->getItem(*i);
+			itRule = rules->getItemRule(*i);
 			const std::string itType = itRule->getType();
 
 			int destQty = _baseTarget->getStorageItems()->getItemQuantity(*i);
@@ -394,8 +394,8 @@ void TransferItemsState::init()
 						if ((*k)->getAmmo() != 255)
 						{
 							const RuleItem
-								* const tankRule = _game->getRuleset()->getItem((*k)->getRules()->getType()),
-								* const ammoRule = _game->getRuleset()->getItem(tankRule->getCompatibleAmmo()->front());
+								* const tankRule = _game->getRuleset()->getItemRule((*k)->getRules()->getType()),
+								* const ammoRule = _game->getRuleset()->getItemRule(tankRule->getCompatibleAmmo()->front());
 
 							if (ammoRule->getType() == itType)
 								destQty += (*k)->getAmmo();
@@ -417,8 +417,8 @@ void TransferItemsState::init()
 			{
 				cwRule = rules->getCraftWeapon(*j);
 
-				laRule = rules->getItem(cwRule->getLauncherItem());
-				clRule = rules->getItem(cwRule->getClipItem());
+				laRule = rules->getItemRule(cwRule->getLauncherItem());
+				clRule = rules->getItemRule(cwRule->getClipItem());
 
 				if (laRule == itRule)
 				{
@@ -462,7 +462,7 @@ void TransferItemsState::init()
                 if (itRule->isFixed() == true // tank w/ Ordnance.
 					&& itRule->getCompatibleAmmo()->empty() == false)
                 {
-					clRule = _game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front());
+					clRule = _game->getRuleset()->getItemRule(itRule->getCompatibleAmmo()->front());
 					const int clipSize = clRule->getFullClip();
 					if (clipSize != 0)
 						item += (L" (" + Text::intWide(clipSize) + L")");
@@ -473,7 +473,7 @@ void TransferItemsState::init()
 
 			if (savedGame->isResearched(itRule->getType()) == false				// not researched or is research exempt
 				&& (savedGame->isResearched(itRule->getRequirements()) == false	// and has requirements to use but not been researched
-					|| rules->getItem(*i)->isAlien() == true						// or is an alien
+					|| rules->getItemRule(*i)->isAlien() == true						// or is an alien
 					|| itRule->getBattleType() == BT_CORPSE							// or is a corpse
 					|| itRule->getBattleType() == BT_NONE)							// or is not a battlefield item
 				&& craftOrdnance == false)										// and is not craft ordnance
@@ -758,7 +758,7 @@ int TransferItemsState::getCost() const // private.
 	{
 		case PST_ITEM:
 		{
-			const RuleItem* const itRule = _game->getRuleset()->getItem(_items[getItemIndex(_sel)]);
+			const RuleItem* const itRule = _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]);
 			if (itRule->getType() == "STR_ALIEN_ALLOYS")
 				cost = 0.1;
 			else if (itRule->getType() == _game->getRuleset()->getAlienFuelType())
@@ -826,7 +826,7 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 	switch (getTransferType(_sel))
 	{
 		case PST_ITEM:
-			itRule = _game->getRuleset()->getItem(_items[getItemIndex(_sel)]);
+			itRule = _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]);
 
 			if (itRule->isAlien() == false)
 			{
@@ -834,7 +834,7 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 					wstError = tr("STR_NOT_ENOUGH_STORE_SPACE");
 				else
 				{
-					const double storesPerItem (_game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getStoreSize());
+					const double storesPerItem (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize());
 					double qtyAllowed;
 
 					if (AreSame(storesPerItem, 0.) == false)
@@ -961,7 +961,7 @@ void TransferItemsState::decreaseByValue(int qtyDelta)
 	{
 		case PST_ITEM:
 		{
-			const RuleItem* const itRule (_game->getRuleset()->getItem(_items[getItemIndex(_sel)]));
+			const RuleItem* const itRule (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]));
 			if (itRule->isAlien() == false)
 				_storeSize -= itRule->getStoreSize() * static_cast<double>(qtyDelta);
 			else
@@ -1008,7 +1008,7 @@ void TransferItemsState::updateItemStrings() // private.
 	else if (getTransferType(_sel) == PST_ITEM)
 	{
 		const Ruleset* const rules (_game->getRuleset());
-		const RuleItem* const itRule (rules->getItem(_items[getItemIndex(_sel)]));
+		const RuleItem* const itRule (rules->getItemRule(_items[getItemIndex(_sel)]));
 
 		bool craftOrdnance = false;
 		const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
@@ -1018,8 +1018,8 @@ void TransferItemsState::updateItemStrings() // private.
 				++i)
 		{
 			const RuleCraftWeapon* const cwRule (rules->getCraftWeapon(*i));
-			if (itRule == rules->getItem(cwRule->getLauncherItem())
-				|| itRule == rules->getItem(cwRule->getClipItem()))
+			if (itRule == rules->getItemRule(cwRule->getLauncherItem())
+				|| itRule == rules->getItemRule(cwRule->getClipItem()))
 			{
 				craftOrdnance = true;
 				break;
@@ -1029,7 +1029,7 @@ void TransferItemsState::updateItemStrings() // private.
 		const SavedGame* const gameSave (_game->getSavedGame());
 		if (gameSave->isResearched(itRule->getType()) == false				// not researched or is research exempt
 			&& (gameSave->isResearched(itRule->getRequirements()) == false	// and has requirements to use but not been researched
-				|| rules->getItem(itRule->getType())->isAlien() == true			// or is an alien
+				|| rules->getItemRule(itRule->getType())->isAlien() == true			// or is an alien
 				|| itRule->getBattleType() == BT_CORPSE							// or is a corpse
 				|| itRule->getBattleType() == BT_NONE)							// or is not a battlefield item
 			&& craftOrdnance == false)										// and is not craft ordnance

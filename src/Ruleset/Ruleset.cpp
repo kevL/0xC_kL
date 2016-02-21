@@ -1054,7 +1054,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 }
 
 /**
- * Loads a rule element adding/removing from vectors as necessary.
+ * Loads a ruleset-element adding/removing from vectors as necessary.
  * @param node	- reference a YAML node
  * @param types	- pointer to a map associated to the rule type
  * @param index	- pointer to a vector of indices for the rule type (default nullptr)
@@ -1062,7 +1062,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
  * @return, pointer to new rule if one was created or nullptr if one was removed
  */
 template<typename T>
-T* Ruleset::loadRule(
+T* Ruleset::loadRule( // protected.
 		const YAML::Node& node,
 		std::map<std::string, T*>* types,
 		std::vector<std::string>* index,
@@ -1410,7 +1410,7 @@ const std::vector<std::string>& Ruleset::getCraftWeaponsList() const
  * @param id - reference to an Item type
  * @return, pointer to RuleItem or nullptr if not found
  */
-RuleItem* Ruleset::getItem(const std::string& id) const
+RuleItem* Ruleset::getItemRule(const std::string& id) const
 {
 	std::map<std::string, RuleItem*>::const_iterator i (_items.find(id));
 	if (i != _items.end())
@@ -2073,8 +2073,8 @@ struct compareRule<RuleCraftWeapon>
 			const std::string& r2) const
 	{
 		const RuleItem
-			* const rule1 (_ruleset->getItem(_ruleset->getCraftWeapon(r1)->getLauncherItem())),
-			* const rule2 (_ruleset->getItem(_ruleset->getCraftWeapon(r2)->getLauncherItem()));
+			* const rule1 (_ruleset->getItemRule(_ruleset->getCraftWeapon(r1)->getLauncherItem())),
+			* const rule2 (_ruleset->getItemRule(_ruleset->getCraftWeapon(r2)->getLauncherItem()));
 
 		return (rule1->getListOrder() < rule2->getListOrder());
 	}
@@ -2104,8 +2104,8 @@ struct compareRule<RuleArmor>
 			* const armorRule1 (_ruleset->getArmor(r1)),
 			* const armorRule2 (_ruleset->getArmor(r2));
 		const RuleItem
-			* const itRule1 (_ruleset->getItem(armorRule1->getStoreItem())),
-			* const itRule2 (_ruleset->getItem(armorRule2->getStoreItem()));
+			* const itRule1 (_ruleset->getItemRule(armorRule1->getStoreItem())),
+			* const itRule2 (_ruleset->getItemRule(armorRule2->getStoreItem()));
 
 /*		if (itRule1 == nullptr && itRule2 == nullptr)
 //			return (armorRule1 < armorRule2); // tiebreaker, don't care about order, pointers are good as any.
@@ -2187,7 +2187,7 @@ void Ruleset::sortLists()
 			_itemsIndex.end(),
 			compareRule<RuleItem>(
 							this,
-							(compareRule<RuleItem>::RuleLookup)& Ruleset::getItem));
+							(compareRule<RuleItem>::RuleLookup)& Ruleset::getItemRule));
 	std::sort(
 			_craftsIndex.begin(),
 			_craftsIndex.end(),

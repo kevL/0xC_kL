@@ -198,7 +198,7 @@ void DebriefExtraState::styleList( // private.
 
 		if (_game->getSavedGame()->isResearched(type) == false								// not researched or is research exempt
 			&& (_game->getSavedGame()->isResearched(i->first->getRequirements()) == false		// and has requirements to use that have not been researched
-//				|| rules->getItem(*i)->isAlien() == true										// or is an alien
+//				|| rules->getItemRule(*i)->isAlien() == true										// or is an alien
 				|| i->first->getBattleType() == BT_CORPSE))										// or is a corpse
 //				|| i->first->getBattleType() == BT_NONE)										// or is not a battlefield item
 //			&& craftOrdnance == false)														// and is not craft ordnance

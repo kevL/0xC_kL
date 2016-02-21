@@ -17,7 +17,7 @@ items:
     tuMelee: 16
     battleType: 3 # melee
     fixedWeapon: true
-    clipSize: -1
+    fullClip: -1
     invWidth: 2
     invHeight: 3
     listOrder: 1073

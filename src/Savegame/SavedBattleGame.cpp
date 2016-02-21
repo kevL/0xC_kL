@@ -436,11 +436,11 @@ void SavedBattleGame::load(
 				++j)
 		{
 			st = (*j)["type"].as<std::string>();
-			if (rules->getItem(st) != nullptr)
+			if (rules->getItemRule(st) != nullptr)
 			{
 				id = (*j)["id"].as<int>(-1); // note: 'id' should always be valid here.
 				item = new BattleItem(
-									rules->getItem(st),
+									rules->getItemRule(st),
 									nullptr,
 									id);
 
@@ -504,7 +504,7 @@ void SavedBattleGame::load(
 			i != node["items"].end();
 			++i)
 	{
-		if (rules->getItem((*i)["type"].as<std::string>()) != nullptr)
+		if (rules->getItemRule((*i)["type"].as<std::string>()) != nullptr)
 		{
 			const int ammo ((*i)["ammoItem"].as<int>(-1)); // cf. BattleItem::save()
 			if (ammo != -1)
@@ -532,11 +532,11 @@ void SavedBattleGame::load(
 			++i)
 	{
 		st = (*i)["type"].as<std::string>();
-		if (rules->getItem(st) != nullptr)
+		if (rules->getItemRule(st) != nullptr)
 		{
 			id = (*i)["id"].as<int>(-1); // note: 'id' should always be valid here.
 			item = new BattleItem(
-								rules->getItem(st),
+								rules->getItemRule(st),
 								nullptr,
 								id);
 			item->load(*i);

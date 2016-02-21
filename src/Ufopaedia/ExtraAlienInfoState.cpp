@@ -138,7 +138,7 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 		if (unitRule->isLivingWeapon() == true)
 		{
 			std::string terrorWeapon = unitRule->getRace().substr(4) + "_WEAPON";
-			const RuleItem* const itRule = _game->getRuleset()->getItem(terrorWeapon);
+			const RuleItem* const itRule = _game->getRuleset()->getItemRule(terrorWeapon);
 			if (itRule != nullptr)
 			{
 				const DamageType dType = itRule->getDamageType();

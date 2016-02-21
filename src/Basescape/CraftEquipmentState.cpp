@@ -174,7 +174,7 @@ CraftEquipmentState::CraftEquipmentState(
 	_lstEquipment->onRightArrowClick((ActionHandler)& CraftEquipmentState::lstEquipmentRightArrowClick);
 
 
-	size_t row = 0;
+	size_t row (0);
 	std::wostringstream
 		woststr1,
 		woststr2;
@@ -194,7 +194,7 @@ CraftEquipmentState::CraftEquipmentState(
 			i != itemList.end();
 			++i)
 	{
-		itRule = _game->getRuleset()->getItem(*i);
+		itRule = _game->getRuleset()->getItemRule(*i);
 
 		craftQty = 0;
 		if (itRule->isFixed() == true)
@@ -232,7 +232,7 @@ CraftEquipmentState::CraftEquipmentState(
 			else if (itRule->isFixed() == true // tank w/ Ordnance.
 				&& itRule->getCompatibleAmmo()->empty() == false)
 			{
-				aRule = _game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front());
+				aRule = _game->getRuleset()->getItemRule(itRule->getCompatibleAmmo()->front());
 				clipSize = aRule->getFullClip();
 				if (clipSize != 0)
 					wst += (L" (" + Text::intWide(clipSize) + L")");
@@ -403,7 +403,7 @@ void CraftEquipmentState::lstEquipmentRightArrowClick(Action* action)
  */
 void CraftEquipmentState::updateQuantity()
 {
-	const RuleItem* const itRule (_game->getRuleset()->getItem(_items[_sel]));
+	const RuleItem* const itRule (_game->getRuleset()->getItemRule(_items[_sel]));
 
 	int craftQty;
 	if (itRule->isFixed() == true)
@@ -463,7 +463,7 @@ void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 {
 	if (qtyDelta > 0)
 	{
-		const RuleItem* const itRule (_game->getRuleset()->getItem(_items[_sel]));
+		const RuleItem* const itRule (_game->getRuleset()->getItemRule(_items[_sel]));
 
 		int craftQty;
 		if (itRule->isFixed() == true)
@@ -480,7 +480,7 @@ void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 				if (itRule->getCompatibleAmmo()->empty() == false)
 				{
 					// first remove all vehicles to redistribute the ammo
-					const RuleItem* const aRule (_game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front()));
+					const RuleItem* const aRule (_game->getRuleset()->getItemRule(itRule->getCompatibleAmmo()->front()));
 
 					for (std::vector<Vehicle*>::const_iterator
 							i = _craft->getVehicles()->begin();
@@ -578,7 +578,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 		{
 			qtyDelta = std::min(qtyDelta, baseQty);
 
-			RuleItem* const itRule (_game->getRuleset()->getItem(_items[_sel]));
+			const RuleItem* const itRule (_game->getRuleset()->getItemRule(_items[_sel]));
 			if (itRule->isFixed() == true) // load vehicle, convert item to a vehicle
 			{
 				int quadrants (_game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(itRule->getType())->getArmor())->getSize());
@@ -598,7 +598,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 
 					if (itRule->getCompatibleAmmo()->empty() == false) // tank needs Ammo.
 					{
-						const RuleItem* const aRule (_game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front()));
+						const RuleItem* const aRule (_game->getRuleset()->getItemRule(itRule->getCompatibleAmmo()->front()));
 						int
 							qtyFullClip,
 							rounds;
@@ -680,7 +680,6 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 					LocalizedText msg(tr(
 									"STR_NO_MORE_EQUIPMENT_ALLOWED",
 									_craft->getLoadCapacity()));
-//									_craft->getRules()->getItems()));
 
 					_game->pushState(new ErrorMessageState(
 														msg,
@@ -688,7 +687,6 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 														Palette::blockOffset(15)+1,
 														"BACK04.SCR",
 														2));
-
 					qtyDelta = _craft->getLoadCapacity() - _craft->calcLoadCurrent();
 				}
 
