@@ -174,7 +174,7 @@ private:
 		void setArmor(RuleArmor* const armor);
 
 		/// Gets the soldier's wound recovery time.
-		int getRecovery() const;
+		int getSickbay() const;
 		/// Sets the soldier's wound recovery time.
 		void setRecovery(int recovery);
 		/// Gets a soldier's wounds as a percent.

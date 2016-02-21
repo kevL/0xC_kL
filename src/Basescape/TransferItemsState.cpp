@@ -267,8 +267,8 @@ void TransferItemsState::init()
 			std::wostringstream woststr;
 			woststr << (*i)->getName();
 
-			if ((*i)->getRecovery() != 0)
-				woststr << L" (" << (*i)->getRecovery() << L" dy)";
+			if ((*i)->getSickbay() != 0)
+				woststr << L" (" << (*i)->getSickbay() << L" dy)";
 
 			_lstItems->addRow(
 							4,
@@ -830,11 +830,11 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 
 			if (itRule->isAlien() == false)
 			{
-				if (_baseTarget->storesOverfull(itRule->getSize() + _storeSize - 0.05))
+				if (_baseTarget->storesOverfull(itRule->getStoreSize() + _storeSize - 0.05))
 					wstError = tr("STR_NOT_ENOUGH_STORE_SPACE");
 				else
 				{
-					const double storesPerItem (_game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getSize());
+					const double storesPerItem (_game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getStoreSize());
 					double qtyAllowed;
 
 					if (AreSame(storesPerItem, 0.) == false)
@@ -952,7 +952,8 @@ void TransferItemsState::decreaseByValue(int qtyDelta)
 	if (qtyDelta < 1 || _transferQty[_sel] < 1)
 		return;
 
-	qtyDelta = std::min(qtyDelta, _transferQty[_sel]);
+	qtyDelta = std::min(qtyDelta,
+						_transferQty[_sel]);
 
 	const Craft* craft (nullptr);
 
@@ -962,7 +963,7 @@ void TransferItemsState::decreaseByValue(int qtyDelta)
 		{
 			const RuleItem* const itRule (_game->getRuleset()->getItem(_items[getItemIndex(_sel)]));
 			if (itRule->isAlien() == false)
-				_storeSize -= itRule->getSize() * static_cast<double>(qtyDelta);
+				_storeSize -= itRule->getStoreSize() * static_cast<double>(qtyDelta);
 			else
 				_qtyAlien -= qtyDelta;
 			break;

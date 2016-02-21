@@ -481,7 +481,7 @@ void Soldier::setArmor(RuleArmor* const armorRule)
  * Gets the amount of time until this Soldier is fully healed.
  * @return, quantity of days
  */
-int Soldier::getRecovery() const
+int Soldier::getSickbay() const
 {
 	return _recovery;
 }

@@ -59,7 +59,6 @@ class Ruleset;
 class SavedGame;
 class Soldier;
 class Transfer;
-class Vehicle;
 
 
 /**
@@ -101,12 +100,8 @@ private:
 	std::vector<ResearchProject*> _research;
 	std::vector<Soldier*> _soldiers;
 	std::vector<Transfer*> _transfers;
-	std::vector<Vehicle*> _vehicles;
 
-	/// Determines space taken up by ammo clips about to rearm craft.
-//	double getIgnoredStores();
-
-	/// Calculates the chance that aLiens have to detect this Base.
+	/// Calculates the chance that aLiens have to detect the Base.
 	int calcDetChance(
 			int diff,
 			int facQty,
@@ -123,129 +118,129 @@ private:
 		/// Cleans up the Base.
 		~Base();
 
-		/// Loads a Base from YAML.
+		/// Loads the Base from YAML.
 		using Target::load;
 		void load(
 				const YAML::Node& node,
 				SavedGame* const gameSave,
 				bool firstBase = false,
 				bool skirmish = false);
-		/// Saves this Base to YAML.
+		/// Saves the Base to YAML.
 		YAML::Node save() const override;
-		/// Saves this Base's ID to YAML.
+		/// Saves the Base's ID to YAML.
 		YAML::Node saveId() const override;
 
-		/// Gets this Base's name.
+		/// Gets the Base's name.
 		std::wstring getName(const Language* const lang) const override;
-		/// Sets this Base's name.
+		/// Sets the Base's name.
 		void setName(const std::wstring& wst);
-		/// Gets this Base's marker.
+		/// Gets the Base's marker.
 		int getMarker() const override;
 
-		/// Gets this Base's facilities.
+		/// Gets the Base's facilities.
 		std::vector<BaseFacility*>* getFacilities();
-		/// Gets this Base's soldiers.
+		/// Gets the Base's soldiers.
 		std::vector<Soldier*>* getSoldiers();
-		/// Gets this Base's crafts.
+		/// Gets the Base's crafts.
 		std::vector<Craft*>* getCrafts();
-		/// Gets this Base's transfers.
+		/// Gets the Base's transfers.
 		std::vector<Transfer*>* getTransfers();
 
-		/// Gets this Base's items.
+		/// Gets the Base's items.
 		ItemContainer* getStorageItems();
 
-		/// Gets this Base's scientists.
+		/// Gets the Base's scientists.
 		int getScientists() const;
-		/// Sets this Base's scientists.
+		/// Sets the Base's scientists.
 		void setScientists(int scientists);
-		/// Gets this Base's engineers.
+		/// Gets the Base's engineers.
 		int getEngineers() const;
-		/// Sets this Base's engineers.
+		/// Sets the Base's engineers.
 		void setEngineers(int engineers);
 
-		/// Gets this Base's available soldiers.
+		/// Gets the Base's available soldiers.
 		int getAvailableSoldiers(const bool combatReady = false) const;
-		/// Gets this Base's total soldiers.
+		/// Gets the Base's total soldiers.
 		int getTotalSoldiers() const;
 
-		/// Gets this Base's total scientists.
+		/// Gets the Base's total scientists.
 		int getTotalScientists() const;
 		/// Gets the number of scientists at work.
 		int getAllocatedScientists() const;
-		/// Gets this Base's total engineers.
+		/// Gets the Base's total engineers.
 		int getTotalEngineers() const;
 		/// Gets the number of engineers at work.
 		int getAllocatedEngineers() const;
 
-		/// Gets this Base's used living quarters.
+		/// Gets the Base's used living quarters.
 		int getUsedQuarters() const;
-		/// Gets this Base's available living quarters.
+		/// Gets the Base's available living quarters.
 		int getTotalQuarters() const;
-		/// Gets this Base's total free personel space.
+		/// Gets the Base's total free personel space.
 		int getFreeQuarters() const;
 
-		/// Gets this Base's used storage space.
+		/// Gets the Base's used storage space.
 		double getUsedStores() const;
-		/// Gets this Base's available storage space.
+		/// Gets the Base's available storage space.
 		int getTotalStores() const;
-		/// Checks if this Base's stores are overfull.
+		/// Checks if the Base's stores are overfull.
 		bool storesOverfull(double offset = 0.) const;
 
-		/// Gets this Base's used laboratory space.
+		/// Gets the Base's used laboratory space.
 		int getUsedLaboratories() const;
-		/// Gets this Base's available laboratory space.
+		/// Gets the Base's available laboratory space.
 		int getTotalLaboratories() const;
 		/// Gets the number of available space lab (not used by a ResearchProject).
 		int getFreeLaboratories() const;
-		/// Checks if this Base has research facilities.
+		/// Checks if the Base has research facilities.
 		bool hasResearch() const;
 
-		/// Gets this Base's used workshop space.
+		/// Gets the Base's used workshop space.
 		int getUsedWorkshops() const;
-		/// Gets this Base's available workshop space.
+		/// Gets the Base's available workshop space.
 		int getTotalWorkshops() const;
 		/// Gets the number of available space lab (not used by a Production).
 		int getFreeWorkshops() const;
-		/// Checks if this Base has production facilities.
+		/// Checks if the Base has production facilities.
 		bool hasProduction() const;
 
-		/// Gets this Base's used psi lab space.
+		/// Gets the Base's used psi lab space.
 		int getUsedPsiLabs() const;
-		/// Gets this Base's total available psi lab space.
+		/// Gets the Base's total available psi lab space.
 		int getTotalPsiLabs() const;
-		/// Gets this Base's total free psi lab space.
+		/// Gets the Base's total free psi lab space.
 		int getFreePsiLabs() const;
-		/// Checks if this Base has psi labs.
+		/// Checks if the Base has psi labs.
 		bool hasPsiLabs() const;
 
 		/// Gets the total amount of used containment space.
 		int getUsedContainment() const;
 		/// Gets the total amount of containment space.
 		int getTotalContainment() const;
-		/// Gets this Base's total free containment space.
+		/// Gets the Base's total free containment space.
 		int getFreeContainment() const;
-		/// Checks if this Base has alien containment.
+		/// Checks if the Base has alien containment.
 		bool hasContainment() const;
 		/// Gets the quantity of aLiens currently under interrogation.
 		int getInterrogatedAliens() const;
 
-		/// Gets this Base's used hangars.
+		/// Gets the Base's used hangars.
 		int getUsedHangars() const;
-		/// Gets this Base's available hangars.
+		/// Gets the Base's available hangars.
 		int getTotalHangars() const;
-		/// Gets this Base's total free hangar space.
+		/// Gets the Base's total free hangar space.
 		int getFreeHangars() const;
 
-		/// Gets this Base's soldiers of a certain type.
+		/// Gets the Base's soldiers of a certain type.
 		int getSoldierCount(const std::string &soldier) const;
-		/// Gets this Base's crafts of a certain type.
+		/// Gets the Base's crafts of a certain type.
 		int getCraftCount(const std::string& craft) const;
 
-		/// Gets the list of this Base's ResearchProject.
+		/// Gets the list of the Base's ResearchProject.
 		const std::vector<ResearchProject*>& getResearch() const;
-		/// Adds a new ResearchProject to this Base.
+		/// Adds a new ResearchProject to the Base.
 		void addResearch(ResearchProject* const project);
-		/// Removes a ResearchProject from this Base.
+		/// Removes a ResearchProject from the Base.
 		void removeResearch(
 				ResearchProject* const project,
 				bool grantHelp = true,
@@ -265,11 +260,11 @@ private:
 		/// Gets commander factor for Research Help.
 		double getCommanderHelp(const std::string& rp);
 
-		/// Adds a Production to this Base.
+		/// Adds a Production to the Base.
 		void addProduction(Production* const prod);
-		/// Removes a Production from this Base.
+		/// Removes a Production from the Base.
 		void removeProduction(const Production* const prod);
-		/// Gets a list of this Base's Production.
+		/// Gets a list of the Base's Production.
 		const std::vector<Production*>& getProductions() const;
 
 		/// Sets the Base's battlescape status.
@@ -277,89 +272,84 @@ private:
 		/// Gets if the Base is in the battlescape.
 		bool getTactical() const;
 
-		/// Sets this Base as eligible for alien retaliation.
+		/// Sets the Base as eligible for alien retaliation.
 		void setBaseExposed(bool exposed = true);
-		/// Gets if this Base is eligible for alien retaliation.
+		/// Gets if the Base is eligible for alien retaliation.
 		bool getBaseExposed() const;
 
-		/// Sets this Base as placed and in operation.
+		/// Sets the Base as placed and in operation.
 		void setBasePlaced();
-		/// Gets if this Base has been placed on the Globe.
+		/// Gets if the Base has been placed on the Globe.
 		bool getBasePlaced() const;
 
-		/// Checks if this Base is hyper-wave equipped.
+		/// Checks if the Base is hyper-wave equipped.
 		bool getHyperDetection() const;
-		/// Gets this Base's short range detection.
+		/// Gets the Base's short range detection.
 //		int getShortRangeDetection() const;
-		/// Gets this Base's short range detection value.
+		/// Gets the Base's short range detection value.
 		int getShortRangeTotal() const;
-		/// Gets this Base's long range detection.
+		/// Gets the Base's long range detection.
 //		int getLongRangeDetection() const;
-		/// Gets this Base's long range detection.
+		/// Gets the Base's long range detection.
 		int getLongRangeTotal() const;
 
-		/// Checks if a target is detected by this Base's radar.
+		/// Checks if a target is detected by the Base's radar.
 		int detect(Target* const target) const;
-		/// Checks if a target is inside this Base's radar range.
+		/// Checks if a target is inside the Base's radar range.
 		double insideRadarRange(const Target* const target) const;
 
-		/// Gets the detection chance for this Base.
+		/// Gets the detection chance for the Base.
 		int getDetectionChance(
 				int diff,
 				int* facQty = nullptr,
 				int* shields = nullptr) const;
 
-		/// Gets how many Grav Shields this Base has.
+		/// Gets how many Grav Shields the Base has.
 		size_t getGravShields() const;
 
-		/// Gets this Base's defense value.
+		/// Gets the Base's defense value.
 		int getDefenseTotal() const;
-		/// Sets up this Base defenses.
-		void setupBaseDefense();
-		/// Cleans up this Base's defenses vector after a Ufo attack and optionally reclaims the tanks and their ammo.
-		void cleanupBaseDefense(bool hwpToStores = false);
-
-		/// Sets the result of this Base's defense against aLien attacks.
+		/// Sets up the Base defenses.
+		bool setupBaseDefense();
+		/// Cleans up the Base defenses.
+		void clearBaseDefense();
+		/// Sets the result of the Base's defense against aLien attacks.
 		void setDefenseResult(int result);
-		/// Gets the result of this Base's defense against aLien attacks.
+		/// Gets the result of the Base's defense against aLien attacks.
 		int getDefenseResult() const;
-
 		/// Gets a list of defensive Facilities.
 		std::vector<BaseFacility*>* getDefenses();
 
-		/// Gets this Base's vehicles.
-		std::vector<Vehicle*>* getVehicles();
-
-		/// Destroys all disconnected facilities in this Base.
+		/// Destroys all disconnected facilities in the Base.
 		void destroyDisconnectedFacilities();
 		/// Gets a sorted list of the facilities(=iterators) NOT connected to the Access Lift.
 		std::list<std::vector<BaseFacility*>::const_iterator> getDisconnectedFacilities(const BaseFacility* const ignoreFac = nullptr);
 		/// Destroys a facility and deals with the side effects.
 		std::vector<BaseFacility*>::const_iterator destroyFacility(std::vector<BaseFacility*>::const_iterator pFac);
 
-		/// Gets this Base's craft maintenance.
+		/// Gets the Base's craft maintenance.
 		int getCraftMaintenance() const;
-		/// Gets this Base's personnel maintenance.
+		/// Gets the Base's personnel maintenance.
 		int getPersonnelMaintenance() const;
-		/// Gets this Base's facility maintenance.
+		/// Gets the Base's facility maintenance.
 		int getFacilityMaintenance() const;
-		/// Gets this Base's total monthly maintenance.
+		/// Gets the Base's total monthly maintenance.
 		int getMonthlyMaintenace() const;
 
-		/// Increases (or decreases) this Base's total income amount.
+		/// Increases (or decreases) the Base's total income amount.
 		void setCashIncome(int cash);
-		/// Gets this Base's total income amount.
+		/// Gets the Base's total income amount.
 		int getCashIncome() const;
-		/// Increases (or decreases) this Base's total spent amount.
+		/// Increases (or decreases) the Base's total spent amount.
 		void setCashSpent(int cash);
-		/// Gets this Base's total spent amount.
+		/// Gets the Base's total spent amount.
 		int getCashSpent() const;
 
-		/// Sets various recalls for this Base.
+		/// Sets various recalls for the Base.
 		void setRecallRow(
 				RecallType recallType,
 				size_t row);
-		/// Gets various recalls for this Base.
+		/// Gets various recalls for the Base.
 		size_t getRecallRow(RecallType recallType) const;
 
 		/// Calculates the bonus cost for soldiers by rank.

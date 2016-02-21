@@ -291,7 +291,7 @@ private:
 				const UnitFaction faction,
 				const int id,
 				RuleArmor* const armor,
-				const GameDifficulty diff,
+				const GameDifficulty diff = DIFF_BEGINNER,
 				const int month = 0, // for upping aLien stats as time progresses.
 				BattlescapeGame* const battleGame = nullptr);
 		/// Cleans up the BattleUnit.

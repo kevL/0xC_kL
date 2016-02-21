@@ -232,10 +232,10 @@ private:
 		/// Gets the Craft's vehicles of a certain type.
 		int getVehicleCount(const std::string& vehicle) const;
 
-		/// Sets the Craft's dogfight status.
-		void setInDogfight(const bool inDogfight);
-		/// Gets if the Craft is in dogfight.
-		bool isInDogfight() const;
+		/// Sets if the Craft is in a dogfight.
+		void inDogfight(bool dogfight);
+		/// Gets if the Craft is in a dogfight.
+		bool inDogfight() const;
 
 		/// Gets the Craft's unique id.
 		CraftId getUniqueId() const;

@@ -672,7 +672,7 @@ void SellState::changeByValue(
 			if (_soldiers[_sel]->getArmor()->getStoreItem() != "STR_NONE")
 			{
 				itRule = _game->getRuleset()->getItem(_soldiers[_sel]->getArmor()->getStoreItem());
-				_storeSize += static_cast<double>(dir) * itRule->getSize();
+				_storeSize += static_cast<double>(dir) * itRule->getStoreSize();
 			}
 			break;
 
@@ -688,11 +688,11 @@ void SellState::changeByValue(
 				if (*i != nullptr)
 				{
 					itRule = _game->getRuleset()->getItem((*i)->getRules()->getLauncherItem());
-					storesReq += itRule->getSize();
+					storesReq += itRule->getStoreSize();
 
 					itRule = _game->getRuleset()->getItem((*i)->getRules()->getClipItem());
 					if (itRule != nullptr)
-						storesReq += static_cast<double>((*i)->getClipsLoaded(_game->getRuleset())) * itRule->getSize();
+						storesReq += static_cast<double>((*i)->getClipsLoaded(_game->getRuleset())) * itRule->getStoreSize();
 				}
 			}
 			_storeSize += static_cast<double>(dir) * storesReq;
@@ -701,7 +701,7 @@ void SellState::changeByValue(
 
 		case PST_ITEM:
 			itRule = _game->getRuleset()->getItem(_items[getItemIndex(_sel)]);
-			_storeSize -= static_cast<double>(dir * qtyDelta) * itRule->getSize();
+			_storeSize -= static_cast<double>(dir * qtyDelta) * itRule->getStoreSize();
 	}
 
 	updateItemStrings();

@@ -323,7 +323,7 @@ private:
 		std::list<DogfightState*>& getDogfights();
 
 		/// Handles base defense
-		void handleBaseDefense(
+		void startBaseDefenseTactical(
 				Base* const base,
 				Ufo* const ufo);
 

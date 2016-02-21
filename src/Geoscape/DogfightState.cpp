@@ -159,7 +159,7 @@ DogfightState::DogfightState(
 {
 	_fullScreen = false;
 
-	_craft->setInDogfight(true);
+	_craft->inDogfight(true);
 
 	_window					= new Surface(160, 96, _x, _y);
 
@@ -557,7 +557,7 @@ DogfightState::~DogfightState()
 	}
 
 	if (_craft != nullptr)
-		_craft->setInDogfight(false);
+		_craft->inDogfight(false);
 
 	if (_ufo != nullptr) // frees the ufo for the next engagement
 		_ufo->setTimerTicked(false);
@@ -576,7 +576,7 @@ void DogfightState::think()
 		if (_endDogfight == false //_timeout == 0 && // appears to be a safety.
 			&& (_craft->getDestination() != _ufo
 				|| _ufo->getUfoStatus() == Ufo::LANDED
-				|| _craft->isInDogfight() == false))
+				|| _craft->inDogfight() == false))
 		{
 			//std::string st1 = _craft->getRules()->getType();
 			//std::ostringstream oststr;
@@ -758,7 +758,7 @@ void DogfightState::updateDogfight()
 		&& (_ufo != dynamic_cast<Ufo*>(_craft->getDestination())	// check if Craft's destination has changed
 			|| _craft->getLowFuel() == true							// check if Craft is low on fuel
 			|| (_timeout == 0 && _ufo->isCrashed() == true)			// check if UFO has been shot down
-			|| _craft->isInDogfight() == false))
+			|| _craft->inDogfight() == false))
 	{
 		//std::string st1 = _craft->getRules()->getType();
 		//std::ostringstream oststr;
@@ -2158,7 +2158,7 @@ void DogfightState::endDogfight() // private.
 	_endDogfight = true;
 
 	if (_craft != nullptr)
-		_craft->setInDogfight(false);
+		_craft->inDogfight(false);
 
 	// note: Might want to reset UFO's timer-ticker here also. See ~dTor.
 }

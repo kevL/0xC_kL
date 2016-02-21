@@ -185,7 +185,7 @@ double ItemContainer::getTotalSize(const Ruleset* const rules) const
 			i != _contents.end();
 			++i)
 	{
-		total += rules->getItem(i->first)->getSize() * static_cast<double>(i->second);
+		total += rules->getItem(i->first)->getStoreSize() * static_cast<double>(i->second);
 	}
 	return total;
 }

@@ -148,7 +148,7 @@ private:
 		_autoShots,
 
 		_blastRadius,
-		_clipSize,
+		_fullClip,
 
 		_accuracyAimed,
 		_accuracyAuto,
@@ -215,7 +215,7 @@ private:
 		const std::vector<std::string>& getRequirements() const;
 
 		/// Gets the item's size.
-		double getSize() const;
+		double getStoreSize() const;
 
 		/// Gets the item's purchase cost.
 		int getBuyCost() const;

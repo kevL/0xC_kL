@@ -204,7 +204,7 @@ void CraftSoldiersState::init()
 
 		_lstSoldiers->setRowColor(row, color);
 
-		if ((*i)->getRecovery() != 0)
+		if ((*i)->getSickbay() != 0)
 		{
 			const int pct = (*i)->getRecoveryPct();
 			if (pct > 50)
@@ -285,7 +285,7 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 	{
 		Soldier* const sol = _base->getSoldiers()->at(_lstSoldiers->getSelectedRow());
 
-		if (sol->getRecovery() != 0
+		if (sol->getSickbay() != 0
 			|| (sol->getCraft() != nullptr
 				&& sol->getCraft()->getCraftStatus() == CS_OUT))
 		{

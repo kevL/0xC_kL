@@ -174,7 +174,7 @@ void CraftArmorState::init()
 
 		_lstSoldiers->setRowColor(row, color);
 
-		if ((*i)->getRecovery() > 0)
+		if ((*i)->getSickbay() > 0)
 		{
 			const int pct = (*i)->getRecoveryPct();
 			if (pct > 50)

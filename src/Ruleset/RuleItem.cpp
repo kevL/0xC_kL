@@ -70,7 +70,7 @@ RuleItem::RuleItem(const std::string& type)
 		_tuReload(15),
 		_tuUnload(12),
 		_tuPrime(0),
-		_clipSize(0),
+		_fullClip(0),
 		_blastRadius(-1),
 		_battleType(BT_NONE),
 		_arcingShot(false),
@@ -221,7 +221,7 @@ void RuleItem::load(
 	_meleePower			= node["meleePower"]		.as<int>(_meleePower);
 	_strengthApplied	= node["strengthApplied"]	.as<bool>(_strengthApplied);
 	_skillApplied		= node["skillApplied"]		.as<bool>(_skillApplied);
-	_clipSize			= node["clipSize"]			.as<int>(_clipSize);
+	_fullClip			= node["fullClip"]			.as<int>(_fullClip);
 	_compatibleAmmo		= node["compatibleAmmo"]	.as<std::vector<std::string>>(_compatibleAmmo);
 	_accuracyAuto		= node["accuracyAuto"]		.as<int>(_accuracyAuto);
 	_accuracySnap		= node["accuracySnap"]		.as<int>(_accuracySnap);
@@ -291,7 +291,7 @@ void RuleItem::load(
 }
 
 /**
- * Gets the item type.
+ * Gets the item-type.
  * @note Each item has a unique type.
  * @return, the item's type
  */
@@ -324,7 +324,7 @@ const std::vector<std::string>& RuleItem::getRequirements() const
  * Gets the amount of space this item takes up in a storage facility.
  * @return, the storage size
  */
-double RuleItem::getSize() const
+double RuleItem::getStoreSize() const
 {
 	return _size;
 }
@@ -629,12 +629,12 @@ int RuleItem::getInventoryHeight() const
 
 /**
  * Gets the item's ammo clip size.
- * Melee items have clipsize(0), lasers etc have clipsize(-1).
+ * @note Melee and other self-powered items have fullClip= -1.
  * @return, the ammo clip size
  */
 int RuleItem::getFullClip() const
 {
-	return _clipSize;
+	return _fullClip;
 }
 
 /**

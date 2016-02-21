@@ -29,7 +29,7 @@ namespace OpenXcom
  * Initializes the Vehicle from the specified rule.
  * @note This describes a Vehicle that has been loaded onto a Craft only.
  * @param itRule	- pointer to RuleItem
- * @param ammo		- ammo quantity when loaded onto Craft
+ * @param ammo		- quantity when loaded onto Craft
  * @param quadrants	- size in quadrants
  */
 Vehicle::Vehicle(
@@ -105,10 +105,10 @@ void Vehicle::setAmmo(int ammo)
 }
 
 /**
- * Returns the size occupied by this Vehicle in a transport Craft.
- * @return, size in tiles
+ * Gets the size in quadrants that this Vehicle occupies in a transport Craft.
+ * @return, size in tiles/quadrants
  */
-int Vehicle::getSize() const
+int Vehicle::getQuads() const
 {
 	return _quadrants;
 }

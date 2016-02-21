@@ -68,8 +68,8 @@ private:
 		/// Sets the Vehicle's ammo.
 		void setAmmo(int ammo);
 
-		/// Gets the Vehicle's size.
-		int getSize() const;
+		/// Gets the Vehicle's size in quadrants.
+		int getQuads() const;
 };
 
 }

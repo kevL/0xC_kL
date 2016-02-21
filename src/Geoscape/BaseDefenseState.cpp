@@ -151,7 +151,7 @@ void BaseDefenseState::think()
 /**
  * Advances the state of the State by doing this.
  */
-void BaseDefenseState::nextStep()
+void BaseDefenseState::nextStep() // private.
 {
 	if (_thinkCycles != -1)
 	{
@@ -245,7 +245,7 @@ void BaseDefenseState::nextStep()
 				}
 			}
 
-			const BaseFacility* const defFac (_base->getDefenses()->at(_attacks));
+			const BaseFacility* const fac (_base->getDefenses()->at(_attacks));
 
 			switch (_action)
 			{
@@ -254,7 +254,7 @@ void BaseDefenseState::nextStep()
 
 					_lstDefenses->addRow(
 									3,
-									tr(defFac->getRules()->getType()),
+									tr(fac->getRules()->getType()),
 									L" ",L" ");
 					++_row;
 					if (_row > 14) _lstDefenses->scrollDown(true);
@@ -268,7 +268,7 @@ void BaseDefenseState::nextStep()
 //					_lstDefenses->setCellColor(_row - 1, 1, 160, /* slate */ true);
 
 					_game->getResourcePack()->playSoundFX(
-													defFac->getRules()->getFireSound(),
+													fac->getRules()->getFireSound(),
 													true);
 					_action = BD_RESOLVE;
 					_timer->setInterval(TI_SLOW);
@@ -276,11 +276,11 @@ void BaseDefenseState::nextStep()
 					return;
 
 				case BD_RESOLVE:
-					if (RNG::percent(defFac->getRules()->getHitRatio()) == true)
+					if (RNG::percent(fac->getRules()->getHitRatio()) == true)
 					{
-						_game->getResourcePack()->playSoundFX(defFac->getRules()->getHitSound());
+						_game->getResourcePack()->playSoundFX(fac->getRules()->getHitSound());
 
-						int power (defFac->getRules()->getDefenseValue());
+						int power (fac->getRules()->getDefenseValue());
 						power = RNG::generate( // vary power between 75% and 133% ( stock is 50..150% )
 											power * 3 / 4,
 											power * 4 / 3);
@@ -320,18 +320,16 @@ void BaseDefenseState::btnOkClick(Action*)
 	_timer->stop();
 	_game->popState();
 
-	if (_ufo->getUfoStatus() != Ufo::DESTROYED) // TODO: if Status_Crashed, set up Battleship crash site near the xCom Base.
+	_base->clearBaseDefense();
+
+	// TODO: if Status_Crashed, set up Battleship crash-site near the xCom Base.
+	if (_ufo->getUfoStatus() != Ufo::DESTROYED)
 	{
-		// need to handle if Defenses reduce UFO-crew to zilch but don't destroy the UFO.
-		// probably handled by GeoscapeState::handleBaseDefense()-> new BriefingState
 		_base->setDefenseResult(_ufo->getUfoDamagePct());
-		_state->handleBaseDefense(_base, _ufo);
+		_state->startBaseDefenseTactical(_base, _ufo);
 	}
 	else
-	{
-		_base->cleanupBaseDefense(true);
 		_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
-	}
 }
 
 }

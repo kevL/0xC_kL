@@ -226,7 +226,7 @@ StoresState::StoresState(Base* base)
 				}
 
 				std::wostringstream woststr;
-				woststr << std::fixed << std::setprecision(1) << (static_cast<double>(qty) * itRule->getSize());
+				woststr << std::fixed << std::setprecision(1) << (static_cast<double>(qty) * itRule->getStoreSize());
 				_lstStores->addRow(
 								3,
 								item.c_str(),

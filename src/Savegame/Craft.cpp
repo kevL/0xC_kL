@@ -187,13 +187,13 @@ void Craft::load(
 		type = (*i)["type"].as<std::string>();
 		if (rules->getItem(type) != nullptr)
 		{
-			const int armorSize (rules->getArmor(rules->getUnitRule(type)->getArmor())->getSize());
-			Vehicle* const vhcl (new Vehicle(
+			const int quadrants (rules->getArmor(rules->getUnitRule(type)->getArmor())->getSize());
+			Vehicle* const vehicle (new Vehicle(
 											rules->getItem(type),
 											0,
-											armorSize * armorSize));
-			vhcl->load(*i);
-			_vehicles.push_back(vhcl);
+											quadrants * quadrants));
+			vehicle->load(*i);
+			_vehicles.push_back(vehicle);
 		}
 		else Log(LOG_ERROR) << "Failed to load item " << type;
 	}
@@ -624,20 +624,18 @@ int Craft::getQtyVehicles(bool quadrants) const
 	{
 		if (quadrants == true)
 		{
-			int ret = 0;
+			int ret (0);
 			for (std::vector<Vehicle*>::const_iterator
 					i = _vehicles.begin();
 					i != _vehicles.end();
 					++i)
 			{
-				ret += (*i)->getSize();
+				ret += (*i)->getQuads();
 			}
 			return ret;
 		}
-
 		return static_cast<int>(_vehicles.size());
 	}
-
 	return 0;
 }
 
@@ -1075,7 +1073,7 @@ bool Craft::getTactical() const
 }
 
 /**
- * Sets this Craft's battlescape status.
+ * Sets this Craft's tactical status.
  * @param tactical - true if Craft is on the battlescape (default true)
  */
 void Craft::setTactical(bool tactical)
@@ -1087,10 +1085,10 @@ void Craft::setTactical(bool tactical)
 }
 
 /**
- * Gets the craft destroyed status.
- * @note If the amount of damage the craft takes is more than its health it will
+ * Gets whether this Craft's has been destroyed.
+ * @note If the amount of damage a Craft takes is more than its health it will
  * be destroyed.
- * @return, true if the craft is destroyed
+ * @return, true if destroyed
  */
 bool Craft::isDestroyed() const
 {
@@ -1098,7 +1096,7 @@ bool Craft::isDestroyed() const
 }
 
 /**
- * Gets the amount of space available for soldiers and vehicles.
+ * Gets the amount of space available for Soldiers and Vehicles.
  * @return, space available
  */
 int Craft::getSpaceAvailable() const
@@ -1107,33 +1105,30 @@ int Craft::getSpaceAvailable() const
 }
 
 /**
- * Gets the amount of space in use by soldiers and vehicles.
+ * Gets the amount of space in use by Soldiers and Vehicles.
  * @return, space used
  */
 int Craft::getSpaceUsed() const
 {
-	int vehicleSpaceUsed = 0; // <- could use getQtyVehicles(true)
-
+	int total (0); // <- could use getQtyVehicles(true)
 	for (std::vector<Vehicle*>::const_iterator
 			i = _vehicles.begin();
 			i != _vehicles.end();
 			++i)
 	{
-		vehicleSpaceUsed += (*i)->getSize();
+		total += (*i)->getQuads();
 	}
-
-	return getQtySoldiers() + vehicleSpaceUsed;
+	return total + getQtySoldiers();
 }
 
 /**
- * Gets the total amount of vehicles of a certain type stored in the craft.
- * @param vehicle - reference a vehicle type
- * @return, number of vehicles
+ * Gets the total amount of Vehicles of a certain type stored in the craft.
+ * @param vehicle - reference a vehicle-type
+ * @return, quantity of vehicles
  */
 int Craft::getVehicleCount(const std::string& vehicle) const
 {
-	int total = 0;
-
+	int total (0);
 	for (std::vector<Vehicle*>::const_iterator
 			i = _vehicles.begin();
 			i != _vehicles.end();
@@ -1142,37 +1137,36 @@ int Craft::getVehicleCount(const std::string& vehicle) const
 		if ((*i)->getRules()->getType() == vehicle)
 			++total;
 	}
-
 	return total;
 }
 
 /**
- * Gets the craft's dogfight status.
- * @return, true if this Craft is in a dogfight
+ * Gets whether this Craft is in a dogfight.
+ * @return, true if dogfighting
  */
-bool Craft::isInDogfight() const
+bool Craft::inDogfight() const
 {
 	return _inDogfight;
 }
 
 /**
- * Sets the craft's dogfight status.
- * @param inDogfight - true if this Craft is in a dogfight
+ * Sets whether this Craft is in a dogfight.
+ * @param inDogfight - true if dogfighting
  */
-void Craft::setInDogfight(const bool inDogfight)
+void Craft::inDogfight(bool dogfight)
 {
-	_inDogfight = inDogfight;
+	_inDogfight = dogfight;
 }
 
 /**
- * Gets this Craft's unique id.
- * @return, a tuple of the craft's type and per-type id
+ * Gets this Craft's unique ID.
+ * @return, tuple of the craft-type and per-type-id
  */
 CraftId Craft::getUniqueId() const
 {
 	return std::make_pair(
-						_crRule->getType(),
-						_id);
+					_crRule->getType(),
+					_id);
 }
 
 /**

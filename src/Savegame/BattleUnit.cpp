@@ -225,7 +225,7 @@ BattleUnit::BattleUnit(
  * @param faction		- faction the unit belongs to
  * @param id			- the unit's unique ID
  * @param armor			- pointer to unit's armor
- * @param diff			- the current game's difficulty setting (for aLien stat adjustment)
+ * @param diff			- the current game's difficulty setting (for aLien stat adjustment) (default DIFF_BEGINNER)
  * @param month			- the current month (default 0)
  * @param battleGame	- pointer to the BattlescapeGame (default nullptr)
  */

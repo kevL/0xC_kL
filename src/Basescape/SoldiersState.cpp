@@ -243,7 +243,7 @@ void SoldiersState::init()
 									row,
 									_lstSoldiers->getSecondaryColor());
 
-			if ((*i)->getRecovery() != 0)
+			if ((*i)->getSickbay() != 0)
 			{
 				Uint8 color;
 				const int pct = (*i)->getRecoveryPct();

@@ -749,8 +749,8 @@ void PurchaseState::increaseByValue(int qtyDelta)
 				break;
 
 			case PST_ITEM:
-				if (_storeSize + _game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getSize()
-					> static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() + 0.05)
+				if (_storeSize + _game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getStoreSize()
+						> static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() + 0.05)
 				{
 					error = tr("STR_NOT_ENOUGH_STORE_SPACE");
 				}
@@ -794,7 +794,7 @@ void PurchaseState::increaseByValue(int qtyDelta)
 
 			case PST_ITEM:
 			{
-				const double storesPerItem (_game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getSize());
+				const double storesPerItem (_game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getStoreSize());
 				double qtyAllowed;
 
 				if (AreSame(storesPerItem, 0.) == false)
@@ -854,7 +854,7 @@ void PurchaseState::decreaseByValue(int qtyDelta)
 			break;
 
 		case PST_ITEM:
-			_storeSize -= _game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getSize() * static_cast<double>(qtyDelta);
+			_storeSize -= _game->getRuleset()->getItem(_items[getItemIndex(_sel)])->getStoreSize() * static_cast<double>(qtyDelta);
 	}
 
 	_orderQty[_sel] -= qtyDelta;

@@ -223,7 +223,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 		const Ufo* const ufo = dynamic_cast<Ufo*>(_craft->getDestination());
 		if (ufo != nullptr)
 		{
-			if (_craft->isInDogfight() == true)
+			if (_craft->inDogfight() == true)
 			{
 				speed = ufo->getSpeed();	// THIS DOES NOT CHANGE THE SPEED of the xCom CRAFT
 											// for Fuel usage. (ie. it should)

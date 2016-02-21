@@ -152,9 +152,9 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 			{
 				_bases.push_back(*i);	// a sequential vector of bases w/ transfers-completed to;
 										// it will be matched w/ selectedRow on list-clicks for gotoBase.
-				if ((*j)->getTransferType() == PST_ITEM) // check if there's an automated use for item
+				if ((*j)->getTransferType() == PST_ITEM) // check if there's an instant use for item
 				{
-					const RuleItem* const itRule = _game->getRuleset()->getItem((*j)->getTransferItems());
+					const RuleItem* const itRule (_game->getRuleset()->getItem((*j)->getTransferItems()));
 
 					for (std::vector<Craft*>::const_iterator
 							k = (*i)->getCrafts()->begin();
@@ -172,6 +172,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 										if ((*k)->getRules()->getRefuelItem() == itRule->getType())
 											(*k)->setWarned(false);
 										break;
+
 									case CS_REARMING:
 										for (std::vector<CraftWeapon*>::const_iterator
 												l = (*k)->getWeapons()->begin();
@@ -194,16 +195,16 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 									l != (*k)->getVehicles()->end();
 									++l)
 							{
-								std::vector<std::string>::const_iterator ammo = std::find(
-																					(*l)->getRules()->getCompatibleAmmo()->begin(),
-																					(*l)->getRules()->getCompatibleAmmo()->end(),
-																					itRule->getType());
-								if (ammo != (*l)->getRules()->getCompatibleAmmo()->end()
+								std::vector<std::string>::const_iterator load (std::find(
+																				(*l)->getRules()->getCompatibleAmmo()->begin(),
+																				(*l)->getRules()->getCompatibleAmmo()->end(),
+																				itRule->getType()));
+								if (load != (*l)->getRules()->getCompatibleAmmo()->end()
 									&& (*l)->getAmmo() < itRule->getFullClip())
 								{
-									const int toTank = std::min(
+									const int toTank (std::min(
 															(*j)->getQuantity(),
-															itRule->getFullClip() - (*l)->getAmmo());
+															itRule->getFullClip() - (*l)->getAmmo()));
 									(*l)->setAmmo((*l)->getAmmo() + toTank);
 
 									// Note that the items have already been delivered in Geoscape->Transfer::advance()
@@ -215,12 +216,10 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 					}
 				}
 
-				std::wostringstream woststr;
-				woststr << (*j)->getQuantity();
 				_lstTransfers->addRow(
 									3,
 									(*j)->getName(_game->getLanguage()).c_str(),
-									woststr.str().c_str(),
+									Text::intWide((*j)->getQuantity()).c_str(),
 									(*i)->getName(nullptr).c_str());
 
 				delete *j; // remove transfer

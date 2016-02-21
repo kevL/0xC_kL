@@ -541,7 +541,7 @@ void SoldierInfoState::init()
 	_txtCraft->setText(tr("STR_CRAFT_").arg(craft));
 
 
-	const int recovery = _soldier->getRecovery();
+	const int recovery = _soldier->getSickbay();
 	if (recovery != 0)
 	{
 		Uint8 color;

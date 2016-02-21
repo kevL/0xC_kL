@@ -217,7 +217,7 @@ void BattlescapeGenerator::setTerrain(RuleTerrain* terrain)
 
 /**
  * Sets the world shade where a ufo crashed or landed.
- * @note This is used to determine the battlescape light level.
+ * @note This is used to determine the Battlescape light-level.
  * @param shade - shade of the polygon on the globe
  */
 void BattlescapeGenerator::setShade(int shade)
@@ -817,7 +817,20 @@ void BattlescapeGenerator::deployXcom() // private.
 	}
 	else if (_base != nullptr && _baseEquiptMode == false)
 	{
-		for (std::vector<Vehicle*>::const_iterator // Add Vehicles that are in Base inventory.
+		// TODO: Add vehicles to a BaseDefense mission straight from Stores and Craft.
+		std::vector<Vehicle*> vehicles;
+		prepareBaseVehicles(vehicles);
+		for (std::vector<Vehicle*>::const_iterator
+				i = vehicles.begin();
+				i != vehicles.end();
+				++i)
+		{
+			//Log(LOG_INFO) << ". . isBase: prepareSupport " << (int)*i;
+			BattleUnit* const unit (prepareSupport(*i));
+			if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
+				_battleSave->setSelectedUnit(unit);
+		}
+/*		for (std::vector<Vehicle*>::const_iterator // Add Vehicles that are in Base inventory.
 				i = _base->getVehicles()->begin();
 				i != _base->getVehicles()->end();
 				++i)
@@ -830,7 +843,7 @@ void BattlescapeGenerator::deployXcom() // private.
 
 		// Only add vehicles from the craft in skirmish mode otherwise the
 		// base's vehicle-vector will already contain these due to the geoscape
-		// calling Base->setupBaseDefense().
+		// calling Base::setupBaseDefense().
 		if (_gameSave->getMonthsPassed() == -1)
 		{
 			for (std::vector<Craft*>::const_iterator // Add Vehicles from Crafts at Base.
@@ -848,7 +861,7 @@ void BattlescapeGenerator::deployXcom() // private.
 						_battleSave->setSelectedUnit(unit);
 				}
 			}
-		}
+		} */
 	}
 
 	for (std::vector<Soldier*>::const_iterator // Add Soldiers that are in the Craft or Base.
@@ -859,7 +872,7 @@ void BattlescapeGenerator::deployXcom() // private.
 		if ((_craft != nullptr
 				&& (*i)->getCraft() == _craft)
 			|| (_craft == nullptr
-				&& (*i)->getRecovery() == 0
+				&& (*i)->getSickbay() == 0
 				&& ((*i)->getCraft() == nullptr
 					|| (*i)->getCraft()->getCraftStatus() != CS_OUT)))
 		{
@@ -1090,7 +1103,97 @@ void BattlescapeGenerator::deployXcom() // private.
 }
 
 /**
- * Prepares a player-support-unit to be added to the battlescape.
+ * Constructs a vector of Vehicles that can participate in a BaseDefense tactical.
+ * @param vehicles - reference to a vector of pointers to Vehicles
+ */
+void BattlescapeGenerator::prepareBaseVehicles(std::vector<Vehicle*>& vehicles) // private.
+{
+	for (std::vector<Craft*>::const_iterator // add Vehicles that are in Crafts at the Base.
+			i = _base->getCrafts()->begin();
+			i != _base->getCrafts()->end();
+			++i)
+	{
+		if ((*i)->getCraftStatus() != CS_OUT)
+		{
+			for (std::vector<Vehicle*>::const_iterator
+					j = (*i)->getVehicles()->begin();
+					j != (*i)->getVehicles()->end();
+					++j)
+			{
+				vehicles.push_back(*j);
+			}
+		}
+	}
+
+	const RuleItem
+		* tRule,
+		* aRule;
+	int quadrants;
+
+	ItemContainer* const baseStores (_base->getStorageItems());
+	for (std::map<std::string, int>::const_iterator // add Vehicles in Base's stores.
+			i = baseStores->getContents()->begin();
+			i != baseStores->getContents()->end();
+			)
+	{
+		tRule = _rules->getItem(i->first);
+		if (tRule->isFixed() == true
+			&& _rules->getUnitRule(i->first) != nullptr) // safety.
+		{
+			if (tRule->getFullClip() < 1) // could transpose selfPowered() to RuleItem as well as the BattleItem for this check. And/or to Vehicle object.
+			{
+				quadrants = _rules->getArmor(_rules->getUnitRule(i->first)->getArmor())->getSize();
+				quadrants *= quadrants;
+
+				for (int
+						j = 0;
+						j != i->second;
+						++j)
+				{
+					vehicles.push_back(new Vehicle(
+												tRule,
+												tRule->getFullClip(),
+												quadrants));
+				}
+
+				baseStores->removeItem(i->first, i->second);
+				i = baseStores->getContents()->begin(); // start over because iterator is broken due to removeItem().
+			}
+			else if ((aRule = _rules->getItem(tRule->getCompatibleAmmo()->front())) != nullptr)
+			{ // TODO: Switch how item-ruleset defines max-ammo-qty from the ammo's rule to the weapon's rule. -> partly done.
+				quadrants = _rules->getArmor(_rules->getUnitRule(i->first)->getArmor())->getSize();
+				quadrants *= quadrants;
+
+				const int
+					clipsRequired (tRule->getFullClip()),
+					baseClips (baseStores->getItemQuantity(aRule->getType())),
+
+					qty = std::min(i->second, baseClips / clipsRequired);
+				for (int
+						j = 0;
+						j != qty;
+						++j)
+				{
+					vehicles.push_back(new Vehicle(
+												tRule,
+												clipsRequired * aRule->getFullClip(),
+												quadrants));
+					baseStores->removeItem(aRule->getType(), clipsRequired);
+				}
+
+				baseStores->removeItem(i->first, qty);
+				i = baseStores->getContents()->begin(); // start over because iterator is broken due to removeItem().
+			}
+			else
+				++i;
+		}
+		else
+			++i;
+	}
+}
+
+/**
+ * Prepares a player-support-unit to be added to the Battlescape.
  * @note Sets the correct turret depending on its ammo-type and adds auxilliary
  * weapons if any.
  * @param vehicle - pointer to Vehicle
@@ -1098,25 +1201,24 @@ void BattlescapeGenerator::deployXcom() // private.
  */
 BattleUnit* BattlescapeGenerator::prepareSupport(Vehicle* const vehicle) // private.
 {
-	const std::string vhclType (vehicle->getRules()->getType());	// Convert this item-type ...
-	RuleUnit* const unitRule (_rules->getUnitRule(vhclType));		// ... to a unitRule. tata!
+	std::string type (vehicle->getRules()->getType());				// Convert this item-type ...
+	RuleUnit* const unitRule (_rules->getUnitRule(type));			// ... to a unitRule. tata!
 
 	BattleUnit* const supportUnit (addPlayerUnit(new BattleUnit(	// then add Vehicle as a unit.
 															unitRule,
 															FACTION_PLAYER,
 															_unitSequence++,
-															_rules->getArmor(unitRule->getArmor()),
-															DIFF_BEGINNER))); // <- do not upgrade tanks
+															_rules->getArmor(unitRule->getArmor()))));
 	if (supportUnit != nullptr)
 	{
 		supportUnit->setTurretType(vehicle->getRules()->getTurretType());
 
-		BattleItem* weapon (new BattleItem(							// add Vehicle as a weapon-item and assign the unit itself as the owner of the weapon.
-										_rules->getItem(vhclType),
-										_battleSave->getNextItemId()));
+		BattleItem* const weapon (new BattleItem(					// add Vehicle as a weapon-item and assign the unit itself as the owner of the weapon.
+											_rules->getItem(type),
+											_battleSave->getNextItemId()));
 		if (placeGeneric(weapon, supportUnit) == false)
 		{
-			Log(LOG_WARNING) << "BattlescapeGenerator could not add: " << vhclType;
+			Log(LOG_WARNING) << "BattlescapeGenerator could not add: " << type;
 
 			--_unitSequence;
 			delete weapon;
@@ -1125,27 +1227,26 @@ BattleUnit* BattlescapeGenerator::prepareSupport(Vehicle* const vehicle) // priv
 			return nullptr;
 		}
 
-		if (vehicle->getRules()->getCompatibleAmmo()->empty() == false)
+		type = vehicle->getRules()->getCompatibleAmmo()->front();
+		if (type.empty() == false)
 		{
-			const std::string ammoType (vehicle->getRules()->getCompatibleAmmo()->front());
-			BattleItem* const ammoItem (new BattleItem(				// add ammo and assign the weapon as its owner.
-													_rules->getItem(ammoType),
-													_battleSave->getNextItemId()));
-			if (placeGeneric(ammoItem, supportUnit) == false)
+			BattleItem* const ammo (new BattleItem(					// add ammo and assign the weapon as its owner.
+												_rules->getItem(type),
+												_battleSave->getNextItemId()));
+			if (placeGeneric(ammo, supportUnit) == false)
 			{
-				Log(LOG_WARNING) << "BattlescapeGenerator could not add [" << ammoType << "] to " << vhclType;
+				Log(LOG_WARNING) << "BattlescapeGenerator could not add " << type << " to " << vehicle->getRules()->getType();
 
 				--_unitSequence;
-				delete ammoItem;
+				delete ammo;
 				delete weapon;
 				delete supportUnit;
 
 				return nullptr;
 			}
 
-			ammoItem->setAmmoQuantity(vehicle->getAmmo());
+			ammo->setAmmoQuantity(vehicle->getAmmo());
 		}
-
 
 /*		if (unitRule->getBuiltInWeapons().empty() == false) // add item(builtInWeapon) -- what about ammo
 		{
@@ -1167,12 +1268,11 @@ BattleUnit* BattlescapeGenerator::prepareSupport(Vehicle* const vehicle) // priv
 			}
 		} */
 	}
-
 	return supportUnit;
 }
 
 /**
- * Adds a player-unit to the battlescape and places it at an unallocated
+ * Adds a player-unit to the Battlescape and places it at an unallocated
  * spawn-point.
  * @note Spawn-points are Tiles in case of an XCom Craft that landed or they are
  * resource-defined mapnodes if there is no Craft.

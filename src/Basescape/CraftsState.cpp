@@ -243,7 +243,7 @@ std::wstring CraftsState::getAltStatus(Craft* const craft)
 		const Ufo* const ufo = dynamic_cast<Ufo*>(craft->getDestination());
 		if (ufo != nullptr)
 		{
-			if (craft->isInDogfight() == true)
+			if (craft->inDogfight() == true)
 				status = tr("STR_TAILING_UFO").arg(ufo->getId());
 			else if (ufo->getUfoStatus() == Ufo::FLYING)
 				status = tr("STR_INTERCEPTING_UFO").arg(ufo->getId());

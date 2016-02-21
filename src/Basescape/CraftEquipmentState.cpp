@@ -581,42 +581,42 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 			RuleItem* const itRule (_game->getRuleset()->getItem(_items[_sel]));
 			if (itRule->isFixed() == true) // load vehicle, convert item to a vehicle
 			{
-				int tankQuads (_game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(itRule->getType())->getArmor())->getSize());
-				tankQuads *= tankQuads;
+				int quadrants (_game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(itRule->getType())->getArmor())->getSize());
+				quadrants *= quadrants;
 
 				const int spaceAvailable (std::min(
 												_craft->getRules()->getVehicles() - _craft->getQtyVehicles(true),
 												_craft->getSpaceAvailable())
-											/ tankQuads);
+											/ quadrants);
 
 				if (spaceAvailable > 0
-					&& _craft->getLoadCapacity() - _craft->calcLoadCurrent() >= tankQuads * 10) // note: 10 is the 'load' that a single 'space' uses.
+					&& _craft->getLoadCapacity() - _craft->calcLoadCurrent() >= quadrants * 10) // note: 10 is the 'load' that a single 'space' uses.
 				{
 					qtyDelta = std::min(qtyDelta, spaceAvailable);
 					qtyDelta = std::min(qtyDelta,
-									   (_craft->getLoadCapacity() - _craft->calcLoadCurrent()) / (tankQuads * 10));
+									   (_craft->getLoadCapacity() - _craft->calcLoadCurrent()) / (quadrants * 10));
 
-					if (itRule->getCompatibleAmmo()->empty() == false)
+					if (itRule->getCompatibleAmmo()->empty() == false) // tank needs Ammo.
 					{
 						const RuleItem* const aRule (_game->getRuleset()->getItem(itRule->getCompatibleAmmo()->front()));
 						int
-							tankClipSize,
-							requiredRounds;
+							qtyFullClip,
+							rounds;
 						if (aRule->getFullClip() > 0 && itRule->getFullClip() > 0)
 						{
-							requiredRounds = itRule->getFullClip();
-							tankClipSize = requiredRounds / aRule->getFullClip();
+							rounds = itRule->getFullClip();
+							qtyFullClip = rounds / aRule->getFullClip();
 						}
 						else
 						{
-							requiredRounds = aRule->getFullClip();
-							tankClipSize = requiredRounds;
+							rounds = aRule->getFullClip();
+							qtyFullClip = rounds;
 						}
 
 						if (_game->getSavedGame()->getMonthsPassed() == -1)
 							baseQty = qtyDelta;
 						else
-							baseQty = _base->getStorageItems()->getItemQuantity(aRule->getType()) / tankClipSize;
+							baseQty = _base->getStorageItems()->getItemQuantity(aRule->getType()) / qtyFullClip;
 
 						qtyDelta = std::min(qtyDelta, baseQty); // maximum number of Vehicles w/ full Ammo.
 
@@ -629,11 +629,14 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 							{
 								if (_game->getSavedGame()->getMonthsPassed() != -1)
 								{
-									_base->getStorageItems()->removeItem(aRule->getType(), tankClipSize);
+									_base->getStorageItems()->removeItem(aRule->getType(), qtyFullClip);
 									_base->getStorageItems()->removeItem(_items[_sel]);
 								}
 
-								_craft->getVehicles()->push_back(new Vehicle(itRule, requiredRounds, tankQuads));
+								_craft->getVehicles()->push_back(new Vehicle(
+																		itRule,
+																		rounds,
+																		quadrants));
 							}
 						}
 						else // not enough Ammo
@@ -662,7 +665,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 							_craft->getVehicles()->push_back(new Vehicle(
 																	itRule,
 																	itRule->getFullClip(),
-																	tankQuads));
+																	quadrants));
 						}
 					}
 				}

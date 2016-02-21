@@ -92,6 +92,9 @@ private:
 	Ufo* _ufo;
 	Window* _window;
 
+	/// Advances the base-defense.
+	void nextStep();
+
 
 	public:
 		/// Creates the Base Defense state.
@@ -104,8 +107,6 @@ private:
 
 		/// Handle the Timer.
 		void think() override;
-		/// Does the next step.
-		void nextStep();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

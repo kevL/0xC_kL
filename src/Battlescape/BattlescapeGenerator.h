@@ -104,6 +104,8 @@ private:
 
 	/// Deploys XCOM units for the mission.
 	void deployXcom();
+	/// Constructs a vector of Vehicles that can participate in a Base Defense tactical.
+	void prepareBaseVehicles(std::vector<Vehicle*>& vehicles);
 	/// Prepares a player-support-unit to be added to the Battlescape.
 	BattleUnit* prepareSupport(Vehicle* const vehicle);
 	/// Adds a player-unit to the Battlescape.

@@ -435,7 +435,7 @@ DebriefingState::DebriefingState()
 			{
 				//Log(LOG_INFO) << ". . . alive";
 				statistics->daysWounded =
-				_missionStatistics->injuryList[sol->getId()] = sol->getRecovery();
+				_missionStatistics->injuryList[sol->getId()] = sol->getSickbay();
 
 				sol->getDiary()->updateDiary(
 											statistics,
@@ -910,7 +910,6 @@ void DebriefingState::prepareDebriefing() // private.
 			if (soldierLive != 0 && aborted == false)
 			{
 				_base->setTactical(false);
-				_base->cleanupBaseDefense(); // so ... does this mean that each tank's entire 'clip' gets wasted
 
 				bool facDestroyed (false);
 				for (std::vector<BaseFacility*>::const_iterator
@@ -1530,8 +1529,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 	if (_craft != nullptr)
 		reequipCraft();
-
-	if (tacType == TCT_BASEDEFENSE)
+	else if (tacType == TCT_BASEDEFENSE)
 	{
 		if (_destroyXComBase == false)
 		{
@@ -1543,16 +1541,6 @@ void DebriefingState::prepareDebriefing() // private.
 				if ((*i)->getCraftStatus() != CS_OUT)
 					reequipCraft(*i);
 			}
-
-			for (std::vector<Vehicle*>::const_iterator
-					i = _base->getVehicles()->begin();
-					i != _base->getVehicles()->end();
-					++i)
-			{
-				delete *i;
-			}
-
-			_base->getVehicles()->clear();
 		}
 		else if (_skirmish == false)
 		{
