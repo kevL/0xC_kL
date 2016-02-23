@@ -58,7 +58,8 @@ enum BattleType
 	BT_MINDPROBE,		// 8
 	BT_PSIAMP,			// 9
 	BT_FLARE,			// 10
-	BT_CORPSE			// 11
+	BT_CORPSE,			// 11
+	BT_FUEL				// 12
 };
 
 enum SpecialTileType

@@ -113,8 +113,8 @@ bool CraftWeapon::setAmmo(int ammo)
 		return false;
 	}
 
-	if (_ammo > _cwRule->getAmmoMax())
-		_ammo = _cwRule->getAmmoMax();
+	if (_ammo > _cwRule->getLoadCapacity())
+		_ammo = _cwRule->getLoadCapacity();
 
 	return true;
 }
@@ -148,7 +148,7 @@ int CraftWeapon::rearm(
 		int clipSize)
 {
 	const int
-		fullQty (_cwRule->getAmmoMax()),
+		fullQty (_cwRule->getLoadCapacity()),
 		rateQty (_cwRule->getRearmRate());
 
 	int
@@ -234,7 +234,7 @@ CraftWeaponProjectile* CraftWeapon::fire() const
  */
 int CraftWeapon::getClipsLoaded(const Ruleset* const rules) const
 {
-	const RuleItem* const clip (rules->getItemRule(_cwRule->getClipItem()));
+	const RuleItem* const clip (rules->getItemRule(_cwRule->getClipType()));
 
 	if (clip == nullptr || clip->getFullClip() < 1)
 		return _ammo / _cwRule->getRearmRate(); // round down.

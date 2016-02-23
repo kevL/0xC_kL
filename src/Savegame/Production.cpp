@@ -302,7 +302,7 @@ ProductionProgress Production::step(
 												++k)
 										{
 											if (*k != nullptr
-												&& (*k)->getRules()->getClipItem() == i->first)
+												&& (*k)->getRules()->getClipType() == i->first)
 											{
 												(*k)->setCantLoad(false);
 												(*j)->setWarned(false);

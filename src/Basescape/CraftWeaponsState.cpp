@@ -119,14 +119,17 @@ CraftWeaponsState::CraftWeaponsState(
 
 	_cwRules.push_back(nullptr); // no weapon/disarm.
 
-	const std::vector<std::string>& cwList = _game->getRuleset()->getCraftWeaponsList();
+	const RuleCraftWeapon* cwRule;
+	const RuleItem* laRule;
+
+	const std::vector<std::string>& cwList (_game->getRuleset()->getCraftWeaponsList());
 	for (std::vector<std::string>::const_iterator
 			i = cwList.begin();
 			i != cwList.end();
 			++i)
 	{
-		const RuleCraftWeapon* const cwRule = _game->getRuleset()->getCraftWeapon(*i);
-		const RuleItem* const laRule = _game->getRuleset()->getItemRule(cwRule->getLauncherItem());
+		cwRule = _game->getRuleset()->getCraftWeapon(*i);
+		laRule = _game->getRuleset()->getItemRule(cwRule->getLauncherType());
 
 		if (_game->getSavedGame()->isResearched(laRule->getRequirements()) == true)
 		{
@@ -136,13 +139,13 @@ CraftWeaponsState::CraftWeaponsState(
 				woststr1,
 				woststr2;
 
-			if (_base->getStorageItems()->getItemQuantity(cwRule->getLauncherItem()) != 0)
-				woststr1 << _base->getStorageItems()->getItemQuantity(cwRule->getLauncherItem());
+			if (_base->getStorageItems()->getItemQuantity(cwRule->getLauncherType()) != 0)
+				woststr1 << _base->getStorageItems()->getItemQuantity(cwRule->getLauncherType());
 			else
 				woststr1 << L"-";
 
-			if (cwRule->getClipItem().empty() == false)
-				woststr2 << _base->getStorageItems()->getItemQuantity(cwRule->getClipItem());
+			if (cwRule->getClipType().empty() == false)
+				woststr2 << _base->getStorageItems()->getItemQuantity(cwRule->getClipType());
 			else
 				woststr2 << tr("STR_NOT_AVAILABLE");
 
@@ -183,32 +186,32 @@ void CraftWeaponsState::lstWeaponsClick(Action*)
 	CraftWeapon* cw (_craft->getWeapons()->at(_pod));
 	const RuleCraftWeapon* cwRule (_cwRules[_lstWeapons->getSelectedRow()]);
 
-	std::string launcherType;
+	std::string laType;
 	if (cwRule != nullptr)
 	{
-		launcherType = cwRule->getLauncherItem();
-		if (storage->getItemQuantity(launcherType) == 0
+		laType = cwRule->getLauncherType();
+		if (storage->getItemQuantity(laType) == 0
 			|| (cw != nullptr && cw->getRules() == cwRule))
 		{
-			launcherType.clear();
+			laType.clear();
 		}
 	}
 
 	if (cw != nullptr
-		&& (cwRule == nullptr || launcherType.empty() == false))
+		&& (cwRule == nullptr || laType.empty() == false))
 	{
-		storage->addItem(cw->getRules()->getLauncherItem());
+		storage->addItem(cw->getRules()->getLauncherType());
 		storage->addItem(
-					cw->getRules()->getClipItem(),
+					cw->getRules()->getClipType(),
 					cw->getClipsLoaded(_game->getRuleset()));
 
 		delete cw;
 		_craft->getWeapons()->at(_pod) = nullptr;
 	}
 
-	if (launcherType.empty() == false)
+	if (laType.empty() == false)
 	{
-		storage->removeItem(launcherType);
+		storage->removeItem(laType);
 
 		cw = new CraftWeapon(cwRule);
 		cw->setRearming();

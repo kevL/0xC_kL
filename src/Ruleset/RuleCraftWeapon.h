@@ -93,14 +93,14 @@ private:
 		int getAggressiveReload() const;
 
 		/// Gets a CraftWeapon's maximum ammo.
-		int getAmmoMax() const;
+		int getLoadCapacity() const;
 		/// Gets a CraftWeapon's rearm rate.
 		int getRearmRate() const;
 
-		/// Gets a CraftWeapon's launcher item.
-		std::string getLauncherItem() const;
-		/// Gets a CraftWeapon's clip item.
-		std::string getClipItem() const;
+		/// Gets a CraftWeapon's launcher item-type.
+		std::string getLauncherType() const;
+		/// Gets a CraftWeapon's ammunition item-type.
+		std::string getClipType() const;
 
 		/// Gets a CraftWeapon's projectile's type.
 		CwpType getProjectileType() const;

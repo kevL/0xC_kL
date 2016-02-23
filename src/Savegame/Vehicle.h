@@ -64,7 +64,7 @@ private:
 		const RuleItem* getRules() const;
 
 		/// Gets the Vehicle's load.
-		int getAmmo() const;
+		int getLoad() const;
 		/// Sets the Vehicle's load.
 //		void setAmmo(int load);
 

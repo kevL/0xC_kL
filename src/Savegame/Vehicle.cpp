@@ -86,12 +86,9 @@ const RuleItem* Vehicle::getRules() const
  * Gets the load contained in this Vehicle.
  * @return, quantity of weapon-load
  */
-int Vehicle::getAmmo() const
+int Vehicle::getLoad() const
 {
-	if (_load != -1)
-		return _load;
-
-	return 255;
+	return _load;
 }
 
 /**

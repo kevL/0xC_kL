@@ -177,7 +177,7 @@ int RuleCraftWeapon::getAggressiveReload() const
  * Gets the maximum amount of ammo the CraftWeapon can carry.
  * @return, the amount of ammo
  */
-int RuleCraftWeapon::getAmmoMax() const
+int RuleCraftWeapon::getLoadCapacity() const
 {
 	return _ammoMax;
 }
@@ -192,19 +192,19 @@ int RuleCraftWeapon::getRearmRate() const
 }
 
 /**
- * Gets the language string of the item that is the CraftWeapon.
- * @return, the item name
+ * Gets the string-ID of the CraftWeapon.
+ * @return, the string-ID
  */
-std::string RuleCraftWeapon::getLauncherItem() const
+std::string RuleCraftWeapon::getLauncherType() const
 {
 	return _launcher;
 }
 
 /**
- * Gets the language string of the item used to load the CraftWeapon with ammo.
- * @return, the item name
+ * Gets the string-ID of the CraftWeapon's ammo-type.
+ * @return, the string-ID
  */
-std::string RuleCraftWeapon::getClipItem() const
+std::string RuleCraftWeapon::getClipType() const
 {
 	return _clip;
 }

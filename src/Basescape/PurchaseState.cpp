@@ -254,7 +254,7 @@ PurchaseState::PurchaseState(Base* const base)
 			++i)
 	{
 		cwRule = rules->getCraftWeapon(*i);
-		laRule = rules->getItemRule(cwRule->getLauncherItem());
+		laRule = rules->getItemRule(cwRule->getLauncherType());
 		type = laRule->getType();
 
 		if (laRule->getBuyCost() != 0) // + isResearched
@@ -277,7 +277,7 @@ PurchaseState::PurchaseState(Base* const base)
 
 			item = tr(type);
 
-			if ((clip = cwRule->getAmmoMax()) != 0)
+			if ((clip = cwRule->getLoadCapacity()) != 0)
 				item += (L" (" + Text::intWide(clip) + L")");
 
 			_lstItems->addRow(
@@ -301,7 +301,7 @@ PurchaseState::PurchaseState(Base* const base)
 		}
 
 		// Handle craft weapon ammo.
-		clRule = rules->getItemRule(cwRule->getClipItem());
+		clRule = rules->getItemRule(cwRule->getClipType());
 		type = clRule->getType();
 
 		if (clRule->getBuyCost() != 0) // clRule != nullptr && // + isResearched
@@ -403,10 +403,10 @@ PurchaseState::PurchaseState(Base* const base)
 					{
 						if ((*k)->getRules()->getType() == type)
 							++baseQty;
-						else if ((*k)->getAmmo() > 0
+						else if ((*k)->getLoad() > 0
 							&& (*k)->getRules()->getCompatibleAmmo()->front() == type)
 						{
-							baseQty += (*k)->getAmmo();
+							baseQty += (*k)->getLoad();
 						}
 					}
 				}

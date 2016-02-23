@@ -395,10 +395,10 @@ void TransferItemsState::init()
 					{
 						if ((*k)->getRules()->getType() == type)
 							++destQty;
-						else if ((*k)->getAmmo() > 0
+						else if ((*k)->getLoad() > 0
 							&& (*k)->getRules()->getCompatibleAmmo()->front() == type)
 						{
-							destQty += (*k)->getAmmo();
+							destQty += (*k)->getLoad();
 						}
 					}
 				}
@@ -416,13 +416,13 @@ void TransferItemsState::init()
 					++j)
 			{
 				cwRule = rules->getCraftWeapon(*j);
-				if (rules->getItemRule(cwRule->getLauncherItem()) == itRule) // Launcher
+				if (rules->getItemRule(cwRule->getLauncherType()) == itRule) // Launcher
 				{
 					craftOrdnance = true;
-					if ((clip = cwRule->getAmmoMax()) > 0)
+					if ((clip = cwRule->getLoadCapacity()) > 0)
 						item += (L" (" + Text::intWide(clip) + L")");
 				}
-				else if ((clRule = rules->getItemRule(cwRule->getClipItem())) == itRule) // launcher Ammo
+				else if ((clRule = rules->getItemRule(cwRule->getClipType())) == itRule) // launcher Ammo
 				{
 					craftOrdnance = true;
 					if ((clip = clRule->getFullClip()) > 1)
@@ -432,9 +432,7 @@ void TransferItemsState::init()
 
 			Uint8 color;
 			if (itRule->getBattleType() == BT_AMMO
-				|| (itRule->getBattleType() == BT_NONE
-					&& itRule->getFullClip() != 0
-					&& itRule->getType() != _game->getRuleset()->getAlienFuelType()))
+				|| (itRule->getBattleType() == BT_NONE && itRule->getFullClip() != 0))
 			{
 				color = _colorAmmo;
 				item.insert(0, L"  ");
@@ -960,8 +958,8 @@ void TransferItemsState::updateItemStrings() // private.
 				++i)
 		{
 			cwRule = rules->getCraftWeapon(*i);
-			if (itRule == rules->getItemRule(cwRule->getLauncherItem())
-				|| itRule == rules->getItemRule(cwRule->getClipItem()))
+			if (itRule == rules->getItemRule(cwRule->getLauncherType())
+				|| itRule == rules->getItemRule(cwRule->getClipType()))
 			{
 				craftOrdnance = true;
 				break;

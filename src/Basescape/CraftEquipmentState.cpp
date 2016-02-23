@@ -644,7 +644,7 @@ void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 							if (_game->getSavedGame()->getMonthsPassed() != -1)
 								_base->getStorageItems()->addItem(
 																itRule->getCompatibleAmmo()->front(),
-																(*i)->getAmmo());
+																(*i)->getLoad());
 							delete *i;
 							i = _craft->getVehicles()->erase(i);
 						}

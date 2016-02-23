@@ -288,7 +288,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 
 		woststr.str(L"");
 		woststr << tr("STR_ROUNDS_").arg(w1->getAmmo())
-				<< L" (" << w1->getRules()->getAmmoMax() << L")";
+				<< L" (" << w1->getRules()->getLoadCapacity() << L")";
 		_txtW1Ammo->setText(woststr.str());
 	}
 	else
@@ -305,7 +305,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 
 		woststr.str(L"");
 		woststr << tr("STR_ROUNDS_").arg(w2->getAmmo())
-				<< L" (" << w2->getRules()->getAmmoMax() << L")";
+				<< L" (" << w2->getRules()->getLoadCapacity() << L")";
 		_txtW2Ammo->setText(woststr.str());
 	}
 	else

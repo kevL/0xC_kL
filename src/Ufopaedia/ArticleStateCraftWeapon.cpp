@@ -113,7 +113,7 @@ ArticleStateCraftWeapon::ArticleStateCraftWeapon(const ArticleDefinitionCraftWea
 	_lstInfo->addRow(
 				2,
 				tr("STR_ROUNDS").c_str(),
-				Text::intWide(cwRule->getAmmoMax()).c_str());
+				Text::intWide(cwRule->getLoadCapacity()).c_str());
 
 	for (size_t
 			i = 0;

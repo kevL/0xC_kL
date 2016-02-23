@@ -168,13 +168,13 @@ StoresState::StoresState(Base* base)
 						++j)
 				{
 					cwRule = rules->getCraftWeapon(*j);
-					if (rules->getItemRule(cwRule->getLauncherItem()) == itRule) // Launcher
+					if (rules->getItemRule(cwRule->getLauncherType()) == itRule) // Launcher
 					{
 						craftOrdnance = true;
-						if ((clip = cwRule->getAmmoMax()) != 0)
+						if ((clip = cwRule->getLoadCapacity()) != 0)
 							item += (L" (" + Text::intWide(clip) + L")");
 					}
-					else if ((clRule = rules->getItemRule(cwRule->getClipItem())) == itRule) // launcher Ammo
+					else if ((clRule = rules->getItemRule(cwRule->getClipType())) == itRule) // launcher Ammo
 					{
 						craftOrdnance = true;
 						if ((clip = clRule->getFullClip()) > 1)
@@ -189,9 +189,7 @@ StoresState::StoresState(Base* base)
 				}
 
 				if (itRule->getBattleType() == BT_AMMO
-					|| (itRule->getBattleType() == BT_NONE
-						&& itRule->getFullClip() != 0
-						&& itRule->getType() != _game->getRuleset()->getAlienFuelType()))
+					|| (itRule->getBattleType() == BT_NONE && itRule->getFullClip() != 0))
 				{
 					color = PURPLE;
 					item.insert(0, L"  ");

@@ -1202,12 +1202,12 @@ void DebriefingState::prepareDebriefing() // private.
 							_base->getStorageItems()->addItem((*i)->getType()); // return the support-unit to Stores.
 
 							const BattleItem* ordnance ((*i)->getItem(ST_RIGHTHAND));
-							if (ordnance != nullptr && ordnance->selfPowered() == false)	// NOTE: sort of redundant w/ fullClip > 0
+							if (ordnance != nullptr)
 							{
 								itRule = ordnance->getRules();
-								if (itRule->isFixed() == true
-									&& itRule->getFullClip() > 0							// NOTE: sort of redundant w/ selfPowered()
-									&& itRule->getBattleType() == BT_FIREARM)
+								if (itRule->isFixed() == true)
+//									&& itRule->getBattleType() == BT_FIREARM
+//									&& itRule->getFullClip() > 0)
 								{
 									if ((ordnance = ordnance->getAmmoItem()) != nullptr)
 										_base->getStorageItems()->addItem( // return any load from the support-unit's fixed-weapon to Stores.
@@ -1691,7 +1691,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 			}
 			else
 			{
-				const std::string type (itRule->getCompatibleAmmo()->front()); // no safety. Assumes that tanks w/ clip > 0 have compatibleAmmo def'n'd.
+				const std::string type (itRule->getCompatibleAmmo()->front());
 				const int
 					clipsRequired (itRule->getFullClip()),
 					baseClips (_base->getStorageItems()->getItemQuantity(type));

@@ -431,11 +431,11 @@ void CraftInfoState::init()
 			woststr.str(L"");
 			woststr << tr("STR_AMMO_").arg(cw->getAmmo())
 					<< L"\n\x01"
-					<< tr("STR_MAX_").arg(cwRule->getAmmoMax());
-			if (cw->getAmmo() < cwRule->getAmmoMax())
+					<< tr("STR_MAX_").arg(cwRule->getLoadCapacity());
+			if (cw->getAmmo() < cwRule->getLoadCapacity())
 			{
 				hours = static_cast<int>(std::ceil( // rearm every half-hour.
-						static_cast<double>(cwRule->getAmmoMax() - cw->getAmmo()) / static_cast<double>(cwRule->getRearmRate())
+						static_cast<double>(cwRule->getLoadCapacity() - cw->getAmmo()) / static_cast<double>(cwRule->getRearmRate())
 						/ 2.));
 				woststr << formatTime(
 									hours,
@@ -477,11 +477,11 @@ void CraftInfoState::init()
 			woststr.str(L"");
 			woststr << tr("STR_AMMO_").arg(cw->getAmmo())
 					<< L"\n\x01"
-					<< tr("STR_MAX_").arg(cwRule->getAmmoMax());
-			if (cw->getAmmo() < cwRule->getAmmoMax())
+					<< tr("STR_MAX_").arg(cwRule->getLoadCapacity());
+			if (cw->getAmmo() < cwRule->getLoadCapacity())
 			{
 				hours = static_cast<int>(std::ceil( // rearm every half-hour.
-						static_cast<double>(cwRule->getAmmoMax() - cw->getAmmo()) / static_cast<double>(cwRule->getRearmRate())
+						static_cast<double>(cwRule->getLoadCapacity() - cw->getAmmo()) / static_cast<double>(cwRule->getRearmRate())
 						/ 2.));
 				woststr << formatTime(
 									hours,

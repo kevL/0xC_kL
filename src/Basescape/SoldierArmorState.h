@@ -38,7 +38,7 @@ class Window;
 
 
 /**
- * SoldierArmor window that allows changing of the Armor equipped on a Soldier.
+ * SoldierArmor window that allows changing the Armor of a Soldier.
  */
 class SoldierArmorState
 	:

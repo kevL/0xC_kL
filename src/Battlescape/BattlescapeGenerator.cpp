@@ -1101,56 +1101,52 @@ void BattlescapeGenerator::prepareBaseVehicles(std::vector<Vehicle*>& vehicles) 
 		itRule = _rules->getItemRule(i->first);
 		if (itRule->isFixed() == true)
 		{
-			const RuleUnit* const unitRule (_rules->getUnitRule(i->first));
-			if (unitRule != nullptr) // safety. For Vehicles the item-type and unit-type MUST be the same. TODO: Remove the safety.
-			{
-				quadrants = _rules->getArmor(unitRule->getArmor())->getSize();
-				quadrants *= quadrants;
+			quadrants = _rules->getArmor(_rules->getUnitRule(i->first)->getArmor())->getSize();
+			quadrants *= quadrants;
 
-				if (itRule->getFullClip() < 1)
+			if (itRule->getFullClip() < 1)
+			{
+				for (int
+						j = 0;
+						j != i->second;
+						++j)
+				{
+					vehicles.push_back(new Vehicle(
+												itRule,
+												itRule->getFullClip(),
+												quadrants));
+				}
+				baseStores->removeItem(i->first, i->second);
+
+				i = baseStores->getContents()->begin();
+				continue;
+			}
+			else
+			{
+				const std::string type (itRule->getCompatibleAmmo()->front());
+				const int
+					clipsRequired (itRule->getFullClip()),
+					baseClips (baseStores->getItemQuantity(type)),
+
+					tanks = std::min(i->second,
+									 baseClips / clipsRequired);
+				if (tanks != 0)
 				{
 					for (int
 							j = 0;
-							j != i->second;
+							j != tanks;
 							++j)
 					{
 						vehicles.push_back(new Vehicle(
 													itRule,
-													itRule->getFullClip(),
+													clipsRequired,
 													quadrants));
 					}
-					baseStores->removeItem(i->first, i->second);
+					baseStores->removeItem(i->first, tanks);
+					baseStores->removeItem(type, clipsRequired * tanks);
 
-					i = baseStores->getContents()->begin(); // start over because iterator is broken due to removeItem().
+					i = baseStores->getContents()->begin();
 					continue;
-				}
-				else
-				{
-					const std::string type (itRule->getCompatibleAmmo()->front()); // no safety. Assumes that tanks w/ clip > 0 have compatibleAmmo def'n'd.
-					const int
-						clipsRequired (itRule->getFullClip()),
-						baseClips (baseStores->getItemQuantity(type)),
-
-						tanks = std::min(i->second,
-										 baseClips / clipsRequired);
-					if (tanks != 0)
-					{
-						for (int
-								j = 0;
-								j != tanks;
-								++j)
-						{
-							vehicles.push_back(new Vehicle(
-														itRule,
-														clipsRequired,
-														quadrants));
-						}
-						baseStores->removeItem(i->first, tanks);
-						baseStores->removeItem(type, clipsRequired * tanks);
-
-						i = baseStores->getContents()->begin(); // start over because iterator is broken due to removeItem().
-						continue;
-					}
 				}
 			}
 		}
@@ -1213,7 +1209,7 @@ BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // priv
 				return nullptr;
 			}
 
-			load->setAmmoQuantity(vehicle->getAmmo());
+			load->setAmmoQuantity(vehicle->getLoad());
 		}
 
 /*		if (unitRule->getBuiltInWeapons().empty() == false) // add item(builtInWeapon) -- what about ammo

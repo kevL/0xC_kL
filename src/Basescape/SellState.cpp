@@ -279,13 +279,13 @@ SellState::SellState(Base* const base)
 					++j)
 			{
 				cwRule = rules->getCraftWeapon(*j);
-				if (rules->getItemRule(cwRule->getLauncherItem()) == itRule) // Launcher
+				if (rules->getItemRule(cwRule->getLauncherType()) == itRule)
 				{
 					craftOrdnance = true;
-					if ((clip = cwRule->getAmmoMax()) != 0)
+					if ((clip = cwRule->getLoadCapacity()) != 0)
 						item += (L" (" + Text::intWide(clip) + L")");
 				}
-				else if ((clRule = rules->getItemRule(cwRule->getClipItem())) == itRule) // launcher Ammo
+				else if ((clRule = rules->getItemRule(cwRule->getClipType())) == itRule)
 				{
 					craftOrdnance = true;
 					if ((clip = clRule->getFullClip()) > 1)
@@ -295,10 +295,8 @@ SellState::SellState(Base* const base)
 
 			Uint8 color;
 
-			if (itRule->getBattleType() == BT_AMMO		// #2 - weapon clips & HWP rounds
-				|| (itRule->getBattleType() == BT_NONE	// #0 - craft weapon rounds
-					&& itRule->getFullClip() != 0
-					&& itRule->getType() != _game->getRuleset()->getAlienFuelType()))
+			if (itRule->getBattleType() == BT_AMMO
+				|| (itRule->getBattleType() == BT_NONE && itRule->getFullClip() != 0))
 			{
 				color = _colorAmmo;
 				item.insert(0, L"  ");
@@ -675,10 +673,10 @@ void SellState::changeByValue(
 			{
 				if (*i != nullptr)
 				{
-					itRule = _game->getRuleset()->getItemRule((*i)->getRules()->getLauncherItem());
+					itRule = _game->getRuleset()->getItemRule((*i)->getRules()->getLauncherType());
 					storesReq += itRule->getStoreSize();
 
-					itRule = _game->getRuleset()->getItemRule((*i)->getRules()->getClipItem());
+					itRule = _game->getRuleset()->getItemRule((*i)->getRules()->getClipType());
 					if (itRule != nullptr)
 						storesReq += static_cast<double>((*i)->getClipsLoaded(_game->getRuleset())) * itRule->getStoreSize();
 				}
@@ -724,8 +722,8 @@ void SellState::updateItemStrings() // private.
 				++i)
 		{
 			cwRule = rules->getCraftWeapon(*i);
-			if (itRule == rules->getItemRule(cwRule->getLauncherItem())
-				|| itRule == rules->getItemRule(cwRule->getClipItem()))
+			if (itRule == rules->getItemRule(cwRule->getLauncherType())
+				|| itRule == rules->getItemRule(cwRule->getClipType()))
 			{
 				craftOrdnance = true;
 				break;

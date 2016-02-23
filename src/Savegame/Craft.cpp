@@ -901,7 +901,7 @@ void Craft::checkup()
 		if (*i != nullptr)
 		{
 			++cw;
-			if ((*i)->getAmmo() < (*i)->getRules()->getAmmoMax())
+			if ((*i)->getAmmo() < (*i)->getRules()->getLoadCapacity())
 				(*i)->setRearming();
 			else
 				++armok;
@@ -974,7 +974,7 @@ std::string Craft::rearm(const Ruleset* const rules)
 		{
 			test.clear();
 
-			const std::string clip ((*i)->getRules()->getClipItem());
+			const std::string clip ((*i)->getRules()->getClipType());
 			const int baseClips (_base->getStorageItems()->getItemQuantity(clip));
 
 			if (clip.empty() == true)
@@ -1260,7 +1260,7 @@ int Craft::getDowntime(bool& delayed)
 		if (*i != nullptr
 			&& (*i)->getRearming() == true)
 		{
-			const int reqQty ((*i)->getRules()->getAmmoMax() - (*i)->getAmmo());
+			const int reqQty ((*i)->getRules()->getLoadCapacity() - (*i)->getAmmo());
 
 			hours += static_cast<int>(std::ceil(
 					 static_cast<double>(reqQty)
@@ -1269,7 +1269,7 @@ int Craft::getDowntime(bool& delayed)
 
 			if (delayed == false)
 			{
-				const std::string clip ((*i)->getRules()->getClipItem());
+				const std::string clip ((*i)->getRules()->getClipType());
 				if (clip.empty() == false)
 				{
 					int baseQty (_base->getStorageItems()->getItemQuantity(clip));
@@ -1403,7 +1403,7 @@ void Craft::unloadCraft(
 			if (itRule->getFullClip() > 0)
 				_base->getStorageItems()->addItem(
 											itRule->getCompatibleAmmo()->front(),
-											(*i)->getAmmo());
+											(*i)->getLoad());
 			if (updateCraft == true)
 			{
 				delete *i;
@@ -1437,9 +1437,9 @@ void Craft::unloadCraft(
 		{
 			if (*i != nullptr)
 			{
-				_base->getStorageItems()->addItem((*i)->getRules()->getLauncherItem());
+				_base->getStorageItems()->addItem((*i)->getRules()->getLauncherType());
 				_base->getStorageItems()->addItem(
-											(*i)->getRules()->getClipItem(),
+											(*i)->getRules()->getClipType(),
 											(*i)->getClipsLoaded(rules));
 			}
 		}

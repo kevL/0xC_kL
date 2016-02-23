@@ -686,7 +686,7 @@ double Base::getUsedStores() const
 			if (itRule->getFullClip() > 0) // craft vehicle ammo
 			{
 				itRule = _rules->getItemRule(itRule->getCompatibleAmmo()->front());
-				total += itRule->getStoreSize() * static_cast<double>((*j)->getAmmo());
+				total += itRule->getStoreSize() * static_cast<double>((*j)->getLoad());
 			}
 		}
 	}

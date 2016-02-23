@@ -180,7 +180,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 												++l)
 										{
 											if (*l != nullptr
-												&& (*l)->getRules()->getClipItem() == itRule->getType())
+												&& (*l)->getRules()->getClipType() == itRule->getType())
 											{
 												(*l)->setCantLoad(false);
 												(*k)->setWarned(false);

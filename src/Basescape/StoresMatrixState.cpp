@@ -363,10 +363,10 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 					{
 						if ((*l)->getRules()->getType() == type)
 							++qty[baseId];
-						else if ((*l)->getAmmo() > 0
+						else if ((*l)->getLoad() > 0
 							&& (*l)->getRules()->getCompatibleAmmo()->front() == type)
 						{
-							qty[baseId] += (*l)->getAmmo();
+							qty[baseId] += (*l)->getLoad();
 						}
 					}
 				}
@@ -393,8 +393,8 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 					++j)
 			{
 				cwRule = rules->getCraftWeapon(*j);
-				if (itRule == rules->getItemRule(cwRule->getLauncherItem())
-					|| itRule == rules->getItemRule(cwRule->getClipItem()))
+				if (itRule == rules->getItemRule(cwRule->getLauncherType())
+					|| itRule == rules->getItemRule(cwRule->getClipType()))
 				{
 					craftOrdnance = true;
 				}
@@ -404,9 +404,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 			color = BLUE;
 
 			if (itRule->getBattleType() == BT_AMMO
-				|| (itRule->getBattleType() == BT_NONE
-					&& itRule->getFullClip() != 0
-					&& itRule->getType() != _game->getRuleset()->getAlienFuelType()))
+				|| (itRule->getBattleType() == BT_NONE && itRule->getFullClip() != 0))
 			{
 				color = PURPLE;
 				item.insert(0, L"  ");

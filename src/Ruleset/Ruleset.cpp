@@ -2073,8 +2073,8 @@ struct compareRule<RuleCraftWeapon>
 			const std::string& r2) const
 	{
 		const RuleItem
-			* const rule1 (_ruleset->getItemRule(_ruleset->getCraftWeapon(r1)->getLauncherItem())),
-			* const rule2 (_ruleset->getItemRule(_ruleset->getCraftWeapon(r2)->getLauncherItem()));
+			* const rule1 (_ruleset->getItemRule(_ruleset->getCraftWeapon(r1)->getLauncherType())),
+			* const rule2 (_ruleset->getItemRule(_ruleset->getCraftWeapon(r2)->getLauncherType()));
 
 		return (rule1->getListOrder() < rule2->getListOrder());
 	}

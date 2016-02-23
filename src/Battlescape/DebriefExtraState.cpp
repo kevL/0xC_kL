@@ -189,8 +189,7 @@ void DebriefExtraState::styleList( // private.
 		wst = tr(type);
 		color = YELLOW;
 
-		if (i->first->getBattleType() == BT_AMMO
-			&& _game->getRuleset()->getAlienFuelType() != type)
+		if (i->first->getBattleType() == BT_AMMO)
 		{
 			wst.insert(0, L"  ");
 			color = PURPLE;
