@@ -173,7 +173,7 @@ private:
 		void load(
 				const YAML::Node& node,
 				Ruleset* const rules,
-				const SavedGame* const savedGame);
+				const SavedGame* const gameSave);
 		/// Load map resources.
 		void loadMapResources(const Game* const game);
 		/// Saves a saved battle game to YAML.
@@ -343,9 +343,9 @@ private:
 		bool allObjectivesDestroyed() const;
 
 		/// Sets the next available item ID value.
-		void setNextItemId();
+		void setCanonicalBattleId();
 		/// Gets the next available item ID value.
-		int* getNextItemId();
+		int* getCanonicalBattleId();
 
 		/// Gets a spawn node.
 		Node* getSpawnNode(

@@ -19,7 +19,7 @@
 
 #include "ItemContainer.h"
 
-#include "../Engine/Logger.h"
+//#include "../Engine/Logger.h"
 
 #include "../Ruleset/RuleItem.h"
 #include "../Ruleset/Ruleset.h"
@@ -91,12 +91,12 @@ void ItemContainer::addItem(
 		const std::string& type,
 		int qty)
 {
-	if (type.empty() == false) // likely redundant in a well-wrought ruleset.
+	if (qty > 0 && type.empty() == false) // likely redundant in a well-wrought ruleset.
 	{
 		if (_contents.find(type) != _contents.end())
 			_contents[type] += qty;
 		else
-			_contents.emplace(type, qty);
+			_contents[type] = qty;
 	}
 	//else Log(LOG_WARNING) << "ItemContainer::addItem() failed ID " << type;
 }
@@ -111,7 +111,7 @@ void ItemContainer::removeItem(
 		const std::string& type,
 		int qty)
 {
-	if (type.empty() == false // likely redundant in a well-wrought ruleset.
+	if (qty > 0 && type.empty() == false // likely redundant in a well-wrought ruleset.
 		&& _contents.find(type) != _contents.end())
 	{
 		if (qty < _contents[type])
@@ -161,7 +161,7 @@ int ItemContainer::getItemQuantity(const std::string& type) const
  */
 int ItemContainer::getTotalQuantity() const
 {
-	int total = 0;
+	int total (0);
 	for (std::map<std::string, int>::const_iterator
 			i = _contents.begin();
 			i != _contents.end();

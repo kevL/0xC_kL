@@ -45,7 +45,7 @@ private:
 	bool _delayPop;
 
 	Craft* _craft;
-	GeoscapeState* _geo;
+	GeoscapeState* _geoState;
 	Surface
 		* _sprite,
 		* _srfTarget;
@@ -68,7 +68,7 @@ private:
 		/// Creates the Geoscape CraftPatrol state.
 		CraftPatrolState(
 				Craft* const craft,
-				GeoscapeState* const geo);
+				GeoscapeState* const geoState);
 		/// Cleans up the Geoscape CraftPatrol state.
 		~CraftPatrolState();
 

@@ -50,8 +50,8 @@ class LocalizedText
 {
 
 private:
-	unsigned _nextArg;	// the next argument ID.
-	std::wstring _text;	// the actual localized text.
+	unsigned _nextArg;	// the next argument ID
+	std::wstring _text;	// the actual LocalizedText
 
 	///
 	LocalizedText(
@@ -132,16 +132,16 @@ LocalizedText LocalizedText::arg(T val) const
 {
 	std::wostringstream woststr;
 	woststr << '{' << _nextArg << '}';
-	std::wstring marker (woststr.str()); // init.
+	std::wstring marker (woststr.str());
 
 	size_t pos = _text.find(marker);
 	if (std::string::npos == pos)
 		return *this;
 
-	std::wstring ntext (_text); // init.
+	std::wstring ntext (_text);
 	woststr.str(L"");
 	woststr << val;
-	std::wstring tval (woststr.str()); // init.
+	std::wstring tval (woststr.str());
 
 	for (
 			;
@@ -171,14 +171,14 @@ LocalizedText& LocalizedText::arg(T val)
 {
 	std::wostringstream woststr;
 	woststr << '{' << _nextArg << '}';
-	std::wstring marker (woststr.str()); // init.
+	std::wstring marker (woststr.str());
 
 	size_t pos = _text.find(marker);
 	if (std::string::npos != pos)
 	{
 		woststr.str(L"");
 		woststr << val;
-		std::wstring tval (woststr.str()); // init.
+		std::wstring tval (woststr.str());
 
 		for (
 				;
@@ -201,9 +201,7 @@ LocalizedText& LocalizedText::arg(T val)
 
 
 /// Allow streaming of LocalizedText objects.
-inline std::wostream& operator<< (
-								std::wostream& wostr,
-								const LocalizedText& txt)
+inline std::wostream& operator<< (std::wostream& wostr, const LocalizedText& txt)
 {
 	wostr << static_cast<const std::wstring&>(txt);
 	return wostr;

@@ -33,7 +33,8 @@ class Ruleset;
 
 
 /**
- * Represents the items contained by a certain entity like base stores, craft equipment, etc.
+ * Represents the items contained by a certain entity like base stores, craft
+ * equipment, etc.
  * @note Handles all necessary item management tasks.
  */
 class ItemContainer

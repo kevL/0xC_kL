@@ -34,7 +34,7 @@ class Tile;
 
 
 /**
- * Represents a single item in the battlescape.
+ * Represents a BattleItem in tactical.
  */
 class BattleItem
 {
@@ -65,112 +65,112 @@ private:
 
 
 	public:
-		/// Creates a item of the specified type.
+		/// Creates a BattleItem with specified rules.
 		BattleItem(
 				const RuleItem* const itRule,
 				int* pId,
 				int id = -1);
-		/// Cleans up the item.
+		/// Cleans up the BattleItem.
 		~BattleItem();
 
-		/// Loads the item from YAML.
+		/// Loads the BattleItem from YAML.
 		void load(const YAML::Node& node);
-		/// Loads a deleted item from YAML.
+		/// Loads a deleted BattleItem from YAML.
 		void loadDeleted(const YAML::Node& node);
-		/// Saves the item to YAML.
+		/// Saves the BattleItem to YAML.
 		YAML::Node save() const;
-		/// Saves a deleted item to YAML.
+		/// Saves a deleted BattleItem to YAML.
 		YAML::Node saveDeleted() const;
 
-		/// Gets the item's ruleset.
+		/// Gets the BattleItem's rules.
 		const RuleItem* getRules() const;
 
-		/// Gets the item's ammo quantity
+		/// Gets the BattleItem's ammo quantity
 		int getAmmoQuantity() const;
-		/// Sets the item's ammo quantity.
+		/// Sets the BattleItem's ammo quantity.
 		void setAmmoQuantity(int qty);
-		/// Gets if the item is a clip in a weapon.
+		/// Gets if the BattleItem is a clip in a weapon.
 		bool isLoad() const;
 
-		/// Gets the item's ammo item.
+		/// Gets the BattleItem's ammo BattleItem.
 		BattleItem* getAmmoItem() const;
-		/// Sets the item's ammo item.
+		/// Sets the BattleItem's ammo BattleItem.
 		int setAmmoItem(
 				BattleItem* const item = nullptr,
 				bool loadSave = false);
-		/// Checks if this item uses ammo OR is self-powered.
+		/// Checks if the BattleItem is self-powered.
 		bool selfPowered() const;
 		/// Spends a bullet from this BattleItem.
 		void spendBullet(
 				SavedBattleGame& battleSave,
 				BattleItem& weapon);
 
-		/// Gets turns until it explodes.
+		/// Gets turns until the BattleItem explodes.
 		int getFuse() const;
-		/// Sets turns until it explodes.
+		/// Sets turns until the BattleItem explodes.
 		void setFuse(int turn);
 
-		/// Gets the item's owner.
+		/// Gets the BattleItem's owner.
 		BattleUnit* getOwner() const;
 		/// Sets the owner.
 		void setOwner(BattleUnit* const owner = nullptr);
-		/// Gets the item's previous owner.
+		/// Gets the BattleItem's previous owner.
 		BattleUnit* getPriorOwner() const;
-		/// Sets the item's previous owner.
+		/// Sets the BattleItem's previous owner.
 		void setPriorOwner(BattleUnit* const ownerPre);
-		/// Removes the item from previous owner and moves to new owner.
+		/// Clears the BattleItem from its previous owner and gives it to a different BattleUnit.
 		void changeOwner(BattleUnit* const owner = nullptr);
 
-		/// Gets the item's inventory section.
+		/// Gets the BattleItem's current Inventory section.
 		const RuleInventory* getInventorySection() const;
-		/// Sets the item's inventory section.
+		/// Sets the BattleItem's Inventory section.
 		void setInventorySection(const RuleInventory* const inRule = nullptr);
-		/// Gets the item's inventory X position.
+		/// Gets the BattleItem's Inventory x-position.
 		int getSlotX() const;
-		/// Sets the item's inventory X position.
+		/// Sets the BattleItem's Inventory x-position.
 		void setSlotX(int x);
-		/// Gets the item's inventory Y position.
+		/// Gets the BattleItem's Inventory y-position.
 		int getSlotY() const;
-		/// Sets the item's inventory Y position.
+		/// Sets the BattleItem's Inventory y-position.
 		void setSlotY(int y);
-		/// Checks if the item is occupying a slot.
+		/// Checks if the BattleItem is occupying a certain slot.
 		bool occupiesSlot(
 				int x,
 				int y,
 				const BattleItem* const item = nullptr) const;
 
-		/// Gets the item's tile.
+		/// Gets the BattleItem's tile.
 		Tile* getTile() const;
-		/// Sets the tile.
+		/// Sets the BattleItem's tile.
 		void setTile(Tile* const tile);
 
-		/// Gets it's unique id.
+		/// Gets the BattleItem's unique id.
 		int getId() const;
 
-		/// Gets the corpse's unit.
+		/// Gets the BattleItem's corpse-unit if any.
 		BattleUnit* getUnit() const;
-		/// Sets the corpse's unit.
+		/// Sets the BattleItem's corpse-unit.
 		void setUnit(BattleUnit* unit);
 
-		/// Sets medikit Heal quantity
+		/// Sets the BattleItem's medikit-heal quantity.
 		void setHealQuantity(int heal);
-		/// Gets medikit heal quantity
+		/// Gets the BattleItem's medikit-heal quantity.
 		int getHealQuantity() const;
-		/// Sets medikit pain killers quantity
+		/// Sets the BattleItem's medikit-morphine quantity.
 		void setPainKillerQuantity(int pk);
-		/// Gets medikit pain killers quantity
+		/// Gets the BattleItem's medikit-morphine quantity.
 		int getPainKillerQuantity() const;
-		/// Sets medikit stimulant quantity
+		/// Sets the BattleItem's medikit-amphetamine quantity.
 		void setStimulantQuantity(int stimulant);
-		/// Gets medikit stimulant quantity
+		/// Gets the BattleItem's medikit-amphetamine quantity.
 		int getStimulantQuantity() const;
 
-		/// Sets rules for the BattleItem.
+		/// Sets a RuleItem for the BattleItem.
 		void changeRule(const RuleItem* const itRule);
 
 		/// Sets the BattleItem as belonging to xCom.
 		void setProperty();
-		/// Gets if this BattleItem belongs to xCom.
+		/// Gets if the BattleItem belongs to xCom.
 		bool getProperty() const;
 };
 

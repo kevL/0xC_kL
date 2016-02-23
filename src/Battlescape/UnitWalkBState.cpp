@@ -806,22 +806,22 @@ bool UnitWalkBState::doStatusStand_end() // private.
 	if (_unit->getFaction() == FACTION_PLAYER
 		|| _battleSave->getDebugTac() == true)
 	{
-		const BattlescapeState* const battleState = _battleSave->getBattleState();
+		const BattlescapeState* const battleState (_battleSave->getBattleState());
 
-		double stat = static_cast<double>(_unit->getBattleStats()->tu);
-		const int tu = _unit->getTimeUnits();
+		double stat (static_cast<double>(_unit->getBattleStats()->tu));
+		const int tu (_unit->getTimeUnits());
 		battleState->getTuField()->setValue(static_cast<unsigned>(tu));
 		battleState->getTuBar()->setValue(std::ceil(
 											static_cast<double>(tu) / stat * 100.));
 
 		stat = static_cast<double>(_unit->getBattleStats()->stamina);
-		const int energy = _unit->getEnergy();
+		const int energy (_unit->getEnergy());
 		battleState->getEnergyField()->setValue(static_cast<unsigned>(energy));
 		battleState->getEnergyBar()->setValue(std::ceil(
 											static_cast<double>(energy) / stat * 100.));
 	}
 
-	const Position pos = _unit->getPosition();
+	const Position pos (_unit->getPosition());
 
 	if (_falling == false
 		&& _unit->getSpecialAbility() == SPECAB_BURN) // if the unit burns floortiles, burn floortiles
@@ -875,7 +875,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 
 	// This needs to be done *before* the calculateFOV(pos) or else any newVis will
 	// be marked Visible before visForUnits() catches the new unit that is !Visible.
-	bool newVis = visForUnits();
+	const bool newVis (visForUnits());
 
 /*	// debug -->
 	BattleUnit* hostile;
@@ -1055,7 +1055,7 @@ void UnitWalkBState::postPathProcedures() // private.
 						instaWeapon = true;
 						action.weapon = new BattleItem(
 													_parent->getRuleset()->getItemRule(meleeWeapon),
-													_battleSave->getNextItemId());
+													_battleSave->getCanonicalBattleId());
 						action.weapon->setOwner(_unit);
 					}
 				}

@@ -1391,16 +1391,18 @@ void Craft::unloadCraft(
 
 	if (_crRule->getVehicles() != 0)
 	{
+		const RuleItem* itRule;
 		for (std::vector<Vehicle*>::const_iterator
 				i = _vehicles.begin();
 				i != _vehicles.end();
 				)
 		{
-			_base->getStorageItems()->addItem((*i)->getRules()->getType());
+			itRule = (*i)->getRules();
+			_base->getStorageItems()->addItem(itRule->getType());
 
-			if ((*i)->getRules()->getCompatibleAmmo()->empty() == false)
+			if (itRule->getFullClip() > 0)
 				_base->getStorageItems()->addItem(
-											(*i)->getRules()->getCompatibleAmmo()->front(),
+											itRule->getCompatibleAmmo()->front(),
 											(*i)->getAmmo());
 			if (updateCraft == true)
 			{

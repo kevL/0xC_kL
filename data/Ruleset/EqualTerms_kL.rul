@@ -873,7 +873,6 @@ armors:
       - STR_CORPSE_STREET_ARCTIC
 #    storeItem: STR_STREET_ARCTIC
     storeItem: STR_NONE
-    isBasic: true
     frontArmor: 12
     sideArmor: 9
     rearArmor: 6
@@ -904,7 +903,6 @@ armors:
       - STR_CORPSE_STREET_JUNGLE
 #    storeItem: STR_STREET_JUNGLE
     storeItem: STR_NONE
-    isBasic: true
     frontArmor: 12
     sideArmor: 9
     rearArmor: 6
@@ -935,7 +933,6 @@ armors:
       - STR_CORPSE_STREET_URBAN
 #    storeItem: STR_STREET_URBAN
     storeItem: STR_NONE
-    isBasic: true
     frontArmor: 12
     sideArmor: 9
     rearArmor: 6

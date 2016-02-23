@@ -882,7 +882,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 				if (playerWipe == false)
 				{
-					_craft->returnToBase(); // TODO: if missionSuccess.
+					_craft->returnToBase();
 					_craft->setTacticalReturn();
 					_craft->setTactical(false);
 				}
@@ -1199,19 +1199,20 @@ void DebriefingState::prepareDebriefing() // private.
 								_missionCost += _base->supportExpense(quadrants * quadrants);
 							}
 
-							_base->getStorageItems()->addItem((*i)->getType());	// return the support-unit to Stores.
+							_base->getStorageItems()->addItem((*i)->getType()); // return the support-unit to Stores.
 
 							const BattleItem* ordnance ((*i)->getItem(ST_RIGHTHAND));
-							if (ordnance != nullptr && ordnance->selfPowered() == false)
+							if (ordnance != nullptr && ordnance->selfPowered() == false)	// NOTE: sort of redundant w/ fullClip > 0
 							{
 								itRule = ordnance->getRules();
 								if (itRule->isFixed() == true
+									&& itRule->getFullClip() > 0							// NOTE: sort of redundant w/ selfPowered()
 									&& itRule->getBattleType() == BT_FIREARM)
 								{
 									if ((ordnance = ordnance->getAmmoItem()) != nullptr)
-										_base->getStorageItems()->addItem(		// return any load from the support-unit's fixed-weapon to Stores.
+										_base->getStorageItems()->addItem( // return any load from the support-unit's fixed-weapon to Stores.
 																		ordnance->getRules()->getType(),
-																		ordnance->getAmmoQuantity());
+																		ordnance->getAmmoQuantity()); // NOTE: Assumes any support-ammunition has fullClip = 1 (for now).
 								}
 							}
 
@@ -1599,8 +1600,10 @@ void DebriefingState::prepareDebriefing() // private.
  */
 void DebriefingState::reequipCraft(Craft* const craft) // private.
 {
+	if (craft == nullptr) return; // required.
+
 	int
-		qtyBase,
+		baseQty,
 		qtyLost;
 
 	ItemContainer* craftContainer (craft->getCraftItems());
@@ -1610,12 +1613,12 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 			i != craftContents.end();
 			++i)
 	{
-		qtyBase = _base->getStorageItems()->getItemQuantity(i->first);
-		if (qtyBase < i->second)
+		baseQty = _base->getStorageItems()->getItemQuantity(i->first);
+		if (baseQty < i->second)
 		{
-			_base->getStorageItems()->removeItem(i->first, qtyBase);
+			_base->getStorageItems()->removeItem(i->first, baseQty);
 
-			qtyLost = i->second - qtyBase;
+			qtyLost = i->second - baseQty;
 			craftContainer->removeItem(i->first, qtyLost);
 
 			const ReequipStat stat =
@@ -1654,24 +1657,23 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 				i != craftVehicles.getContents()->end();
 				++i)
 		{
-			if ((qtyBase = _base->getStorageItems()->getItemQuantity(i->first)) < i->second)
+			if ((baseQty = _base->getStorageItems()->getItemQuantity(i->first)) < i->second)
 			{
 				const ReequipStat stat =
 				{
 					i->first,
-					i->second - qtyBase,
+					i->second - baseQty,
 					craft->getName(_game->getLanguage())
 				};
 				_missingItems.push_back(stat);
 			}
 
-
-			const RuleItem* const itRule (_rules->getItemRule(i->first));
-
 			quadrants = _rules->getArmor(_rules->getUnitRule(i->first)->getArmor())->getSize();
 			quadrants *= quadrants;
 
-			tanks = std::min(qtyBase, i->second);
+			tanks = std::min(baseQty, i->second);
+
+			const RuleItem* const itRule (_rules->getItemRule(i->first));
 
 			if (itRule->getFullClip() < 1)
 			{
@@ -1689,8 +1691,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 			}
 			else
 			{
-				std::string type (itRule->getCompatibleAmmo()->front()); // no safety. Assumes that tanks w/ clip > 0 have compatibleAmmo def'n'd.
-
+				const std::string type (itRule->getCompatibleAmmo()->front()); // no safety. Assumes that tanks w/ clip > 0 have compatibleAmmo def'n'd.
 				const int
 					clipsRequired (itRule->getFullClip()),
 					baseClips (_base->getStorageItems()->getItemQuantity(type));
@@ -1707,7 +1708,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 				}
 
 				tanks = std::min(tanks,
-								 baseClips / (clipsRequired * i->second));
+								 baseClips / clipsRequired);
 				if (tanks != 0)
 				{
 					for (int

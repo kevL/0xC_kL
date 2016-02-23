@@ -57,11 +57,11 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the Items Arriving window.
- * @param state - pointer to the Geoscape state
+ * @param geoState - pointer to the GeoscapeState
  */
-ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
+ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 	:
-		_state(state)
+		_geoState(geoState)
 {
 	_fullScreen = false;
 
@@ -137,6 +137,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 	_lstTransfers->onMousePress((ActionHandler)& ItemsArrivingState::lstGoToBasePress);
 
 	CraftStatus status;
+	const RuleItem* itRule;
 
 	for (std::vector<Base*>::const_iterator
 			i = _game->getSavedGame()->getBases()->begin();
@@ -150,19 +151,18 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 		{
 			if ((*j)->getHours() == 0)
 			{
-				_bases.push_back(*i);	// a sequential vector of bases w/ transfers-completed to;
-										// it will be matched w/ selectedRow on list-clicks for gotoBase.
-				if ((*j)->getTransferType() == PST_ITEM) // check if there's an instant use for item
+				_bases.push_back(*i);
+
+				if ((*j)->getTransferType() == PST_ITEM)
 				{
-					const RuleItem* const itRule (_game->getRuleset()->getItemRule((*j)->getTransferItems()));
+					itRule = _game->getRuleset()->getItemRule((*j)->getTransferItems());
 
 					for (std::vector<Craft*>::const_iterator
 							k = (*i)->getCrafts()->begin();
 							k != (*i)->getCrafts()->end();
 							++k)
 					{
-						status = (*k)->getCraftStatus();
-						if (status != CS_OUT)
+						if ((status = (*k)->getCraftStatus()) != CS_OUT)
 						{
 							if ((*k)->getWarned() == true)
 							{
@@ -185,20 +185,19 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 												(*l)->setCantLoad(false);
 												(*k)->setWarned(false);
 											}
-									}
+										}
 								}
 							}
 
-
-							for (std::vector<Vehicle*>::const_iterator	// check if it's ammo to reload a vehicle
-									l = (*k)->getVehicles()->begin();	// question: what happens to craft returning to base with vehicles that are low on ammo
+/*							for (std::vector<Vehicle*>::const_iterator // check if it's ammo to reload a vehicle
+									l = (*k)->getVehicles()->begin();
 									l != (*k)->getVehicles()->end();
 									++l)
 							{
 								std::vector<std::string>::const_iterator load (std::find(
-																				(*l)->getRules()->getCompatibleAmmo()->begin(),
-																				(*l)->getRules()->getCompatibleAmmo()->end(),
-																				itRule->getType()));
+																					(*l)->getRules()->getCompatibleAmmo()->begin(),
+																					(*l)->getRules()->getCompatibleAmmo()->end(),
+																					itRule->getType()));
 								if (load != (*l)->getRules()->getCompatibleAmmo()->end()
 									&& (*l)->getAmmo() < itRule->getFullClip())
 								{
@@ -208,10 +207,10 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 									(*l)->setAmmo((*l)->getAmmo() + toTank);
 
 									// Note that the items have already been delivered in Geoscape->Transfer::advance()
-									// so they are removed from the base, not the transfer.
+									// so they are removed from the Base not the Transfer.
 									(*i)->getStorageItems()->removeItem(itRule->getType(), toTank);
 								}
-							}
+							} */ // utterly ridiculous. Vehicles will never be on a Craft w/out their full ammunition-load.
 						}
 					}
 				}
@@ -222,7 +221,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const state)
 									Text::intWide((*j)->getQuantity()).c_str(),
 									(*i)->getName(nullptr).c_str());
 
-				delete *j; // remove transfer
+				delete *j;
 				j = (*i)->getTransfers()->erase(j);
 			}
 			else
@@ -243,7 +242,7 @@ ItemsArrivingState::~ItemsArrivingState()
 void ItemsArrivingState::init()
 {
 	State::init();
-	_btnOk5Secs->setVisible(_state->is5Sec() == false);
+	_btnOk5Secs->setVisible(_geoState->is5Sec() == false);
 }
 
 /**
@@ -256,38 +255,38 @@ void ItemsArrivingState::btnCancelClick(Action*)
 }
 
 /**
- * Reduces the speed to 5 Secs and returns to the previous screen.
+ * Reduces time-compression to 5 Secs and returns to the previous screen.
  * @param action - pointer to an Action
  */
 void ItemsArrivingState::btnOk5SecsClick(Action*)
 {
-	_state->resetTimer();
+	_geoState->resetTimer();
 	_game->popState();
 }
 
 /**
- * Goes to the base for the respective transfer.
+ * Opens the Base for the respective Transfer.
  * @param action - pointer to an Action
- */
-/* void ItemsArrivingState::btnGotoBaseClick(Action*)
+ *
+void ItemsArrivingState::btnGotoBaseClick(Action*)
 {
-	_state->resetTimer();
+	_geoState->resetTimer();
 	_game->popState();
-	_game->pushState(new BasescapeState(_base, _state->getGlobe()));
+	_game->pushState(new BasescapeState(_base, _geoState->getGlobe()));
 } */
 
 /**
- * LMB or RMB opens the Basescape for the pressed row.
- * @note Do not pop the state here.
+ * LMB opens the Basescape for the pressed row.
+ * @note Do not pop this state here.
  * @param action - pointer to an Action
  */
 void ItemsArrivingState::lstGoToBasePress(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
-		Base* const base = _bases.at(_lstTransfers->getSelectedRow());
-		if (base != nullptr) // make sure player hasn't deconstructed a base while jumping back & forth between bases and the list.
-			_game->pushState(new BasescapeState(base, _state->getGlobe()));
+		Base* const base (_bases.at(_lstTransfers->getSelectedRow()));
+		if (base != nullptr)													// Make sure player hasn't deconstructed a Base while
+			_game->pushState(new BasescapeState(base, _geoState->getGlobe()));	// jumping back & forth between Bases and the list.
 	}
 }
 

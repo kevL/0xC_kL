@@ -26,19 +26,19 @@ namespace OpenXcom
 {
 
 /**
- * Initializes the Vehicle from the specified rule.
+ * Instantiates the Vehicle from a specified RuleItem.
  * @note This describes a Vehicle that has been loaded onto a Craft only.
  * @param itRule	- pointer to RuleItem
- * @param ammo		- quantity when loaded onto Craft
+ * @param load		- quantity of ammunition when loaded onto a Craft
  * @param quadrants	- size in quadrants
  */
 Vehicle::Vehicle(
 		const RuleItem* const itRule,
-		int ammo,
+		int load,
 		int quadrants)
 	:
 		_itRule(itRule),
-		_ammo(ammo),
+		_load(load),
 		_quadrants(quadrants)
 {}
 
@@ -54,7 +54,7 @@ Vehicle::~Vehicle()
  */
 void Vehicle::load(const YAML::Node& node)
 {
-	_ammo		= node["ammo"].as<int>(_ammo);
+	_load		= node["load"].as<int>(_load);
 	_quadrants	= node["size"].as<int>(_quadrants);
 }
 
@@ -67,14 +67,14 @@ YAML::Node Vehicle::save() const
 	YAML::Node node;
 
 	node["type"] = _itRule->getType();
-	node["ammo"] = _ammo;
+	node["load"] = _load;
 	node["size"] = _quadrants;
 
 	return node;
 }
 
 /**
- * Returns the rules for this Vehicle's type.
+ * Gets the RuleItem for the Vehicle.
  * @return, pointer to RuleItem
  */
 const RuleItem* Vehicle::getRules() const
@@ -83,26 +83,26 @@ const RuleItem* Vehicle::getRules() const
 }
 
 /**
- * Gets the ammo contained in this Vehicle.
- * @return, quantity of weapon-ammo
+ * Gets the load contained in this Vehicle.
+ * @return, quantity of weapon-load
  */
 int Vehicle::getAmmo() const
 {
-	if (_ammo != -1)
-		return _ammo;
+	if (_load != -1)
+		return _load;
 
 	return 255;
 }
 
 /**
- * Sets the ammo contained in this Vehicle.
- * @param ammo - quantity of weapon-ammo
- */
-void Vehicle::setAmmo(int ammo)
+ * Sets the load contained in this Vehicle.
+ * @param load - quantity of weapon-load
+ *
+void Vehicle::setAmmo(int load)
 {
-	if (_ammo != -1)
-		_ammo = ammo;
-}
+	if (_load != -1)
+		_load = load;
+} */
 
 /**
  * Gets the size in quadrants that this Vehicle occupies in a transport Craft.

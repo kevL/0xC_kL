@@ -30,7 +30,7 @@ class RuleItem;
 
 /**
  * Represents a Vehicle (tanks, dogs, etc.) kept onboard a Craft.
- * @note Contains variable info about a Vehicle like ammo.
+ * @note Contains variable info about a Vehicle like load.
  * @sa RuleItem
  */
 class Vehicle
@@ -39,7 +39,7 @@ class Vehicle
 private:
 
 	int
-		_ammo,
+		_load,
 		_quadrants;
 
 	const RuleItem* const _itRule;
@@ -47,10 +47,10 @@ private:
 
 	public:
 
-		/// Creates a Vehicle of the specified type.
+		/// Instantiates a Vehicle from the specified RuleItem.
 		Vehicle(
 				const RuleItem* const itRule,
-				int ammo,
+				int load,
 				int quadrants);
 		/// Cleans up the Vehicle.
 		~Vehicle();
@@ -60,13 +60,13 @@ private:
 		/// Saves the Vehicle to YAML.
 		YAML::Node save() const;
 
-		/// Gets the Vehicle's rules.
+		/// Gets the RuleItem for the Vehicle.
 		const RuleItem* getRules() const;
 
-		/// Gets the Vehicle's ammo.
+		/// Gets the Vehicle's load.
 		int getAmmo() const;
-		/// Sets the Vehicle's ammo.
-		void setAmmo(int ammo);
+		/// Sets the Vehicle's load.
+//		void setAmmo(int load);
 
 		/// Gets the Vehicle's size in quadrants.
 		int getQuads() const;

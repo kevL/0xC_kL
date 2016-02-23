@@ -131,33 +131,34 @@ StoresState::StoresState(Base* base)
 	const SavedGame* const gameSave (_game->getSavedGame());
 	const Ruleset* const rules (_game->getRuleset());
 	const RuleItem
-		* itRule (nullptr),
-		* laRule (nullptr),
-		* clRule (nullptr);
-	const RuleCraftWeapon* cwRule (nullptr);
+		* itRule,
+		* clRule;
+	const RuleCraftWeapon* cwRule;
+
+	std::wstring item;
 
 	int
 		row (0),
-		qty,
-		clipSize;
+		baseQty,
+		clip;
 	Uint8 color;
 
-	const std::vector<std::string>& items (rules->getItemsList());
+	const std::vector<std::string>& allItems (rules->getItemsList());
 	for (std::vector<std::string>::const_iterator
-			i = items.begin();
-			i != items.end();
+			i = allItems.begin();
+			i != allItems.end();
 			++i)
 	{
 		//Log(LOG_INFO) << *i << " stores listOrder = " << rules->getItemRule(*i)->getListOrder(); // Prints listOrder to LOG.
 		if (rules->getItemRule(*i)->isAlien() == false)
 		{
-			qty = _base->getStorageItems()->getItemQuantity(*i);
-			if (qty != 0)
+			baseQty = _base->getStorageItems()->getItemQuantity(*i);
+			if (baseQty != 0)
 			{
 				color = BLUE;
 				itRule = rules->getItemRule(*i);
 
-				std::wstring item (tr(*i));
+				item = tr(*i);
 
 				bool craftOrdnance (false);
 				const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
@@ -166,57 +167,45 @@ StoresState::StoresState(Base* base)
 						j != cwList.end() && craftOrdnance == false;
 						++j)
 				{
-					// Special handling for treating craft weapons as items
 					cwRule = rules->getCraftWeapon(*j);
-
-					laRule = rules->getItemRule(cwRule->getLauncherItem());
-					clRule = rules->getItemRule(cwRule->getClipItem());
-
-					if (laRule == itRule)
+					if (rules->getItemRule(cwRule->getLauncherItem()) == itRule) // Launcher
 					{
 						craftOrdnance = true;
-						clipSize = cwRule->getAmmoMax(); // Launcher capacity
-						if (clipSize != 0)
-							item += (L" (" + Text::intWide(clipSize) + L")");
+						if ((clip = cwRule->getAmmoMax()) != 0)
+							item += (L" (" + Text::intWide(clip) + L")");
 					}
-					else if (clRule == itRule)
+					else if ((clRule = rules->getItemRule(cwRule->getClipItem())) == itRule) // launcher Ammo
 					{
 						craftOrdnance = true;
-						clipSize = clRule->getFullClip(); // launcher Ammo quantity
-						if (clipSize > 1)
-							item += (L"s (" + Text::intWide(clipSize) + L")");
+						if ((clip = clRule->getFullClip()) > 1)
+							item += (L"s (" + Text::intWide(clip) + L")");
 					}
 				}
 
 				if (itRule->isFixed() == true // tank w/ Ordnance.
-					&& itRule->getCompatibleAmmo()->empty() == false)
+					&& (clip = itRule->getFullClip()) > 0)
 				{
-					clRule = rules->getItemRule(itRule->getCompatibleAmmo()->front());
-					clipSize = clRule->getFullClip();
-					if (clipSize != 0)
-						item += (L" (" + Text::intWide(clipSize) + L")");
+					item += (L" (" + Text::intWide(clip) + L")");
 				}
 
-				if ((itRule->getBattleType() == BT_AMMO
-						|| (itRule->getBattleType() == BT_NONE
-							&& itRule->getFullClip() > 0))
-					&& itRule->getType() != _game->getRuleset()->getAlienFuelType())
+				if (itRule->getBattleType() == BT_AMMO
+					|| (itRule->getBattleType() == BT_NONE
+						&& itRule->getFullClip() != 0
+						&& itRule->getType() != _game->getRuleset()->getAlienFuelType()))
 				{
+					color = PURPLE;
+					item.insert(0, L"  ");
 					if (itRule->getBattleType() == BT_AMMO
+						&& (clip = itRule->getFullClip()) > 1
 						&& itRule->getType().substr(0, 8) != "STR_HWP_") // *cuckoo** weapon clips
 					{
-						clipSize = itRule->getFullClip();
-						if (clipSize > 1)
-							item += (L" (" + Text::intWide(clipSize) + L")");
+						item += (L" (" + Text::intWide(clip) + L")");
 					}
-					item.insert(0, L"  ");
-
-					color = PURPLE;
 				}
 
 				if (gameSave->isResearched(itRule->getType()) == false				// not researched or is research exempt
 					&& (gameSave->isResearched(itRule->getRequirements()) == false	// and has requirements to use that have not been researched
-//						|| rules->getItemRule(*i)->isAlien() == true						// or is an alien
+//						|| rules->getItemRule(*i)->isAlien() == true					// or is an alien
 						|| itRule->getBattleType() == BT_CORPSE							// or is a corpse
 						|| itRule->getBattleType() == BT_NONE)							// or is not a battlefield item
 					&& craftOrdnance == false)										// and is not craft ordnance
@@ -226,15 +215,15 @@ StoresState::StoresState(Base* base)
 				}
 
 				std::wostringstream woststr;
-				woststr << std::fixed << std::setprecision(1) << (static_cast<double>(qty) * itRule->getStoreSize());
+				woststr << std::fixed << std::setprecision(1) << (static_cast<double>(baseQty) * itRule->getStoreSize());
 				_lstStores->addRow(
 								3,
 								item.c_str(),
-								Text::intWide(qty).c_str(),
+								Text::intWide(baseQty).c_str(),
 								woststr.str().c_str());
 				_lstStores->setRowColor(row++, color);
 /*			std::wostringstream woststr1;
-			woststr1 << qty;
+			woststr1 << baseQty;
 			if (rules->getItemRule(*i)->isAlien() == true)
 			{
 				_lstStores->addRow(
@@ -246,7 +235,7 @@ StoresState::StoresState(Base* base)
 			else
 			{
 				std::wostringstream woststr2;
-				woststr2 << std::fixed << std::setprecision(1) << (static_cast<double>(qty) * itRule->getSize());
+				woststr2 << std::fixed << std::setprecision(1) << (static_cast<double>(baseQty) * itRule->getSize());
 				_lstStores->addRow(
 								3,
 								item.c_str(),

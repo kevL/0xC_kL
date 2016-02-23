@@ -88,7 +88,8 @@ BattleItem::BattleItem(
 	// - needed for melee-item reaction hits, etc. Can be set in Ruleset but do
 	// it here. Except that it creates problems w/ TANKS returning to Base. So
 	// do it in Ruleset: melee-items need "clipSize -1" to do reactionFire.
-	// Unless i changed it ....
+	// Unless i changed it .... Actually they need "_ammoItem = this" as above.
+	// ... not sure what's up with tanks-returning-to-Base anymore.
 }
 
 /**
@@ -296,12 +297,11 @@ int BattleItem::setAmmoItem(
 			}
 		}
 	}
-
 	return -2;
 }
 
 /**
- * Determines if this BattleItem uses ammo OR is self-powered.
+ * Checks if this BattleItem is self-powered.
  * @note No ammo is needed if the item has itself assigned as its '_ammoItem'.
  * @return, true if self-powered
  */

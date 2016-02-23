@@ -242,27 +242,6 @@ void CraftArmorState::lstSoldiersPress(Action* action)
 		kL_soundPop->play(Mix_GroupAvailable(0));
 	}
 }
-/*		sorry I'll keep SoldierInfoState on RMB; it's easy enough to assign armor. TODO: Could use CTRL+click ....
-		SavedGame* _save;
-		_save = _game->getSavedGame();
-		RuleArmor* a = _game->getRuleset()->getArmor(_save->getLastSelectedArmor());
-		if (_game->getSavedGame()->getMonthsPassed() != -1)
-		{
-			if (_base->getItems()->getItem(a->getStoreItem()) > 0 || a->getStoreItem() == RuleArmor::NONE)
-			{
-				if (s->getArmor()->getStoreItem() != RuleArmor::NONE)
-					_base->getItems()->addItem(s->getArmor()->getStoreItem());
-				if (a->getStoreItem() != RuleArmor::NONE)
-					_base->getItems()->removeItem(a->getStoreItem());
-				s->setArmor(a);
-				_lstSoldiers->setCellText(_lstSoldiers->getSelectedRow(), 2, tr(a->getType()));
-			}
-		}
-		else
-		{
-			s->setArmor(a);
-			_lstSoldiers->setCellText(_lstSoldiers->getSelectedRow(), 2, tr(a->getType()));
-		} */
 
 /**
  * Reorders a Soldier up.

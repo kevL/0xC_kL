@@ -201,15 +201,15 @@ private:
 				BattleUnit* const defender,
 				const int tuSpent = 0,
 				bool autoSpot = true) const;
-		/// Fires off a reaction shot if possible.
+		/// Fires off a reaction-shot if possible.
 		bool reactionShot(
 				BattleUnit* const unit,
 				const BattleUnit* const targetUnit);
-		/// Selects a fire method based on range & time units.
-		void chooseFireMethod(BattleAction& action);
-		/// Gets the unique reaction fire BattleAction struct.
+		/// Selects a reaction-fire-method based on TU & range.
+		void chooseFireMethod();
+		/// Gets the unique reaction-fire BattleAction struct.
 //		BattleAction* getRfAction();
-		/// Gets the reaction fire shot list.
+		/// Gets the reaction-fire shot-list.
 		std::map<int, Position>* getRfShooterPositions();
 
 		/// Handles bullet/weapon hits.

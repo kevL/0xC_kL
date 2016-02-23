@@ -46,7 +46,7 @@ class ItemsArrivingState
 
 private:
 //	Base* _base;
-	GeoscapeState* _state;
+	GeoscapeState* _geoState;
 	Text
 		* _txtDestination,
 		* _txtItem,
@@ -64,7 +64,7 @@ private:
 
 	public:
 		/// Creates the ItemsArriving state.
-		explicit ItemsArrivingState(GeoscapeState* const state);
+		explicit ItemsArrivingState(GeoscapeState* const geoState);
 		/// Cleans up the ItemsArriving state.
 		~ItemsArrivingState();
 

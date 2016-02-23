@@ -45,15 +45,15 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the Craft Patrol window.
- * @param craft	- pointer to Craft
- * @param geo	- pointer to GeoscapeState
+ * @param craft	- pointer to a Craft
+ * @param geoState	- pointer to the GeoscapeState
  */
 CraftPatrolState::CraftPatrolState(
 		Craft* const craft,
-		GeoscapeState* const geo)
+		GeoscapeState* const geoState)
 	:
 		_craft(craft),
-		_geo(geo),
+		_geoState(geoState),
 		_delayPop(true)
 {
 	_fullScreen = false;
@@ -138,8 +138,8 @@ CraftPatrolState::CraftPatrolState(
 					Options::keyOkKeypad);
 
 
-	SurfaceSet* const srt = _game->getResourcePack()->getSurfaceSet("INTICON.PCK");
-	const int craftSprite = _craft->getRules()->getSprite();
+	SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet("INTICON.PCK"));
+	const int craftSprite (_craft->getRules()->getSprite());
 	srt->getFrame(craftSprite + 11)->blit(_sprite);
 }
 
@@ -155,7 +155,7 @@ CraftPatrolState::~CraftPatrolState()
 void CraftPatrolState::init()
 {
 	State::init();
-	_btn5s->setVisible(_geo->is5Sec() == false);
+	_btn5s->setVisible(_geoState->is5Sec() == false);
 }
 
 /**
@@ -173,41 +173,41 @@ void CraftPatrolState::btnOkClick(Action*)
  */
 void CraftPatrolState::btn5sClick(Action*)
 {
-	_geo->resetTimer();
+	_geoState->resetTimer();
 	_game->popState();
 }
 
 /**
- * Opens the craft info window.
+ * Opens the Craft info-window.
  * @param action - pointer to an Action
  */
 void CraftPatrolState::btnInfoClick(Action*)
 {
-	_geo->resetTimer();
+	_geoState->resetTimer();
 	_game->popState();
-	_game->pushState(new GeoscapeCraftState(_craft, _geo));
+	_game->pushState(new GeoscapeCraftState(_craft, _geoState));
 }
 
 /**
- * Returns the craft back to its base.
+ * Returns the Craft back to its Base.
  * @param action - pointer to an Action
  */
 void CraftPatrolState::btnBaseClick(Action*)
 {
-	_geo->resetTimer();
+	_geoState->resetTimer();
 	_game->popState();
 	_craft->returnToBase();
 }
 
 /**
- * Centers the craft on the globe.
+ * Centers the Craft on the Globe.
  * @param action - pointer to an Action
  */
 void CraftPatrolState::btnCenterClick(Action*)
 {
-	_geo->getGlobe()->center(
-						_craft->getLongitude(),
-						_craft->getLatitude());
+	_geoState->getGlobe()->center(
+							_craft->getLongitude(),
+							_craft->getLatitude());
 
 	if (_delayPop == true)
 	{
@@ -217,8 +217,8 @@ void CraftPatrolState::btnCenterClick(Action*)
 		return;
 	}
 
-	_geo->setPaused();
-	_geo->resetTimer();
+	_geoState->setPaused();
+	_geoState->resetTimer();
 	_game->popState();
 }
 
@@ -228,19 +228,19 @@ void CraftPatrolState::btnCenterClick(Action*)
  */
 void CraftPatrolState::btnRedirectClick(Action*)
 {
-	_geo->resetTimer();
+	_geoState->resetTimer();
 	_game->popState();
-	_game->pushState(new SelectDestinationState(_craft, _geo->getGlobe()));
+	_game->pushState(new SelectDestinationState(_craft, _geoState->getGlobe()));
 }
 
 /**
- * Hides various screen-elements to reveal the globe & Craft.
+ * Hides various screen-elements to reveal the Globe & Craft.
  */
 void CraftPatrolState::transposeWindow() // private.
 {
 	_window->setVisible(false);
 
-	const int dy = 25;
+	const int dy (25);
 	_btnOk->setY(_btnOk->getY() + dy);
 	_btn5s->setY(_btn5s->getY() + dy);
 	_btnInfo->setY(_btnInfo->getY() + dy);

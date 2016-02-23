@@ -4645,7 +4645,7 @@ MovementType BattleUnit::getMoveTypeUnit() const
 // and if it isn't they should be defined in the header.
 /* static inline BattleItem *createItem(SavedBattleGame *save, BattleUnit *unit, RuleItem *rule)
 {
-	BattleItem *item = new BattleItem(rule, save->getNextItemId());
+	BattleItem *item = new BattleItem(rule, save->getCanonicalBattleId());
 	item->setOwner(unit);
 	save->removeItem(item); //item outside inventory, deleted when SavedBattleGame dTors.
 	return item;

@@ -337,7 +337,7 @@ BattlescapeState::BattlescapeState()
 
 	if (_rules->getInterface("battlescape")->getElement("pathfinding") != nullptr)
 	{
-		const Element* const path = _rules->getInterface("battlescape")->getElement("pathfinding");
+		const Element* const path (_rules->getInterface("battlescape")->getElement("pathfinding"));
 		Pathfinding::green	= static_cast<Uint8>(path->color);
 		Pathfinding::yellow	= static_cast<Uint8>(path->color2);
 		Pathfinding::red	= static_cast<Uint8>(path->border);
@@ -352,7 +352,7 @@ BattlescapeState::BattlescapeState()
 
 
 	add(_icons);
-	Surface* const icons = _game->getResourcePack()->getSurface("ICONS");
+	Surface* const icons (_game->getResourcePack()->getSurface("ICONS"));
 	if (_game->getResourcePack()->getSurface("Logo") != nullptr)
 	{
 		Surface* const logo = _game->getResourcePack()->getSurface("Logo");
@@ -490,7 +490,7 @@ BattlescapeState::BattlescapeState()
 	_txtControlDestroyed->setAlign(ALIGN_CENTER);
 	_txtControlDestroyed->setVisible(false);
 
-	const Target* target = nullptr;
+	const Target* target (nullptr);
 
 	std::wstring
 		baseLabel,
@@ -587,8 +587,8 @@ BattlescapeState::BattlescapeState()
 	{
 		std::wostringstream woststr;
 		const double
-			lon = target->getLongitude(),
-			lat = target->getLatitude();
+			lon (target->getLongitude()),
+			lat (target->getLatitude());
 
 		for (std::vector<Region*>::const_iterator
 				i = _game->getSavedGame()->getRegions()->begin();
@@ -658,7 +658,7 @@ BattlescapeState::BattlescapeState()
 	_lstSoldierInfo->setColumns(2, 10,15);
 	_lstSoldierInfo->setMargin(0);
 
-	Surface* const srfMark = _game->getResourcePack()->getSurface("ALIENINSIGNIA");
+	Surface* const srfMark (_game->getResourcePack()->getSurface("ALIENINSIGNIA"));
 	srfMark->blit(_alienMark);
 	_alienMark->setVisible(false);
 
@@ -975,7 +975,7 @@ BattlescapeState::BattlescapeState()
 		Options::keyBattleCenterEnemy10
 	}; */
 
-	const Uint8 color = static_cast<Uint8>(_rules->getInterface("battlescape")->getElement("visibleUnits")->color);
+	const Uint8 color (static_cast<Uint8>(_rules->getInterface("battlescape")->getElement("visibleUnits")->color));
 	for (size_t
 			i = 0;
 			i != HOTSQRS;
@@ -2320,15 +2320,15 @@ void BattlescapeState::btnStatsClick(Action* action)
 {
 	if (playableUnitSelected() == true)
 	{
-		bool edge = false;
+		bool edge (false);
 
 		if (Options::battleEdgeScroll == SCROLL_TRIGGER
 			&& action->getDetails()->type == SDL_MOUSEBUTTONUP
 			&& action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		{
 			const int
-				posX = action->getXMouse(),
-				posY = action->getYMouse();
+				posX (action->getXMouse()),
+				posY (action->getYMouse());
 			if ((posX < Camera::SCROLL_BORDER * action->getXScale()
 					&& posX > 0)
 				|| posX > (_map->getWidth() - Camera::SCROLL_BORDER) * action->getXScale()
@@ -2369,7 +2369,7 @@ void BattlescapeState::btnLeftHandLeftClick(Action*)
 		_map->cacheUnits();
 		_map->draw();
 
-		const BattleUnit* const unit = _battleSave->getSelectedUnit();
+		const BattleUnit* const unit (_battleSave->getSelectedUnit());
 		handAction(
 				unit->getItem(ST_LEFTHAND),
 				unit->getFatalWound(BODYPART_LEFTARM) != 0);
@@ -2408,7 +2408,7 @@ void BattlescapeState::btnRightHandLeftClick(Action*)
 		_map->cacheUnits();
 		_map->draw();
 
-		const BattleUnit* const unit = _battleSave->getSelectedUnit();
+		const BattleUnit* const unit (_battleSave->getSelectedUnit());
 		handAction(
 				unit->getItem(ST_RIGHTHAND),
 				unit->getFatalWound(BODYPART_LEFTARM) != 0);
@@ -2470,8 +2470,8 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 		}
 		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
 		{
-			BattleUnit* nextSpotter = nullptr;
-			size_t curIter = 0;
+			BattleUnit* nextSpotter (nullptr);
+			size_t curIter (0);
 
 			for (std::vector<BattleUnit*>::const_iterator
 				j = _battleSave->getUnits()->begin();
@@ -2531,7 +2531,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 					_battleGame->setupSelector();
 				}
 
-				Camera* const camera = _map->getCamera();
+				Camera* const camera (_map->getCamera());
 				if (camera->isOnScreen(nextSpotter->getPosition()) == false
 					|| camera->getViewLevel() != nextSpotter->getPosition().z)
 				{
@@ -2680,7 +2680,8 @@ void BattlescapeState::btnPsiClick(Action* action)
 } */
 
 /**
- * Reloads the weapon in hand.
+ * Reloads a weapon in hand.
+ * @note Checks right hand then left.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnReloadClick(Action*)
@@ -2695,24 +2696,27 @@ void BattlescapeState::btnReloadClick(Action*)
 }
 
 /**
- * Removes all time units.
+ * Zeroes TU of the currently selected BattleUnit.
+ * @note Requires CTRL-key down.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnZeroTuClick(Action* action)
 {
-	if (allowButtons() == true)
+	if ((SDL_GetModState() & KMOD_CTRL) != 0
+		&& allowButtons() == true)
 	{
 		SDL_Event ev;
 		ev.type = SDL_MOUSEBUTTONDOWN;
 		ev.button.button = SDL_BUTTON_LEFT;
 
 		Action a = Action(&ev, 0.,0.,0,0);
-		action->getSender()->mousePress(&a, this);
+		action->getSender()->mousePress(&a, this); // why mouse event, for keyboard press?
 
-		if (_battleSave->getSelectedUnit() != nullptr)
+		if (_battleSave->getSelectedUnit() != nullptr) // why mouse event even possible if no selUnit?
 		{
 			_battleSave->getSelectedUnit()->setTimeUnits(0);
-			updateSoldierInfo();
+			_numTimeUnits->setValue(0u);
+			_barTimeUnits->setValue(0.);
 		}
 	}
 }
@@ -2724,9 +2728,7 @@ void BattlescapeState::btnZeroTuClick(Action* action)
 void BattlescapeState::btnUfoPaediaClick(Action*)
 {
 	if (allowButtons() == true)
-		Ufopaedia::open(
-					_game,
-					true);
+		Ufopaedia::open(_game, true);
 }
 
 /**
@@ -2747,27 +2749,30 @@ void BattlescapeState::btnConsoleToggle(Action*)
 {
 	if (allowButtons() == true)
 	{
-		if (_showConsole == 0)
+		switch (_showConsole)
 		{
-			_showConsole = 1;
-			_txtConsole2->setText(L"");
-		}
-		else if (_showConsole == 1)
-			_showConsole = 2;
-		else if (_showConsole == 2)
-		{
-			_showConsole = 0;
-			_txtConsole1->setText(L"");
-			_txtConsole2->setText(L"");
+			case 0:
+				_showConsole = 1;
+				_txtConsole2->setText(L"");
+				break;
 
-			_txtTerrain->setVisible();
-			_txtShade->setVisible();
-			_txtTurn->setVisible();
+			case 1:
+				_showConsole = 2;
+				break;
 
-			_txtOrder->setVisible();
-			_lstSoldierInfo->setVisible();
-			_alienMark->setVisible(allowAlienMark());
-			_showSoldierData = true;
+			case 2:
+				_showConsole = 0;
+				_txtConsole1->setText(L"");
+				_txtConsole2->setText(L"");
+
+				_txtTerrain->setVisible();
+				_txtShade->setVisible();
+				_txtTurn->setVisible();
+
+				_txtOrder->setVisible();
+				_lstSoldierInfo->setVisible();
+				_alienMark->setVisible(allowAlienMark());
+				_showSoldierData = true;
 		}
 
 		_txtConsole1->setVisible(_showConsole > 0);

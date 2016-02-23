@@ -239,11 +239,12 @@ PurchaseState::PurchaseState(Base* const base)
 	const RuleItem
 		* itRule,
 		* laRule,
-		* clRule,
-		* amRule;
+		* clRule;
 	std::string type;
-	std::wstring wst;
-	int clipSize;
+	std::wstring item;
+	int
+		baseQty,
+		clip;
 
 	// Add craft Weapon-types to purchase list.
 	const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
@@ -261,7 +262,7 @@ PurchaseState::PurchaseState(Base* const base)
 			_orderQty.push_back(0);
 			_items.push_back(type);
 
-			int qty = _base->getStorageItems()->getItemQuantity(type);
+			baseQty = _base->getStorageItems()->getItemQuantity(type);
 			for (std::vector<Transfer*>::const_iterator
 					j = _base->getTransfers()->begin();
 					j != _base->getTransfers()->end();
@@ -270,21 +271,20 @@ PurchaseState::PurchaseState(Base* const base)
 				if ((*j)->getTransferType() == PST_ITEM
 					&& (*j)->getTransferItems() == type)
 				{
-					qty += (*j)->getQuantity();
+					baseQty += (*j)->getQuantity();
 				}
 			}
 
-			wst = tr(type);
+			item = tr(type);
 
-			clipSize = cwRule->getAmmoMax();
-			if (clipSize != 0)
-				wst += (L" (" + Text::intWide(clipSize) + L")");
+			if ((clip = cwRule->getAmmoMax()) != 0)
+				item += (L" (" + Text::intWide(clip) + L")");
 
 			_lstItems->addRow(
 							4,
-							wst.c_str(),
+							item.c_str(),
 							Text::formatCurrency(laRule->getBuyCost()).c_str(),
-							Text::intWide(qty).c_str(),
+							Text::intWide(baseQty).c_str(),
 							L"0");
 
 			for (std::vector<std::string>::const_iterator
@@ -309,7 +309,7 @@ PurchaseState::PurchaseState(Base* const base)
 			_orderQty.push_back(0);
 			_items.push_back(type);
 
-			int qty = _base->getStorageItems()->getItemQuantity(type);
+			baseQty = _base->getStorageItems()->getItemQuantity(type);
 			for (std::vector<Transfer*>::const_iterator
 					j = _base->getTransfers()->begin();
 					j != _base->getTransfers()->end();
@@ -318,22 +318,21 @@ PurchaseState::PurchaseState(Base* const base)
 				if ((*j)->getTransferType() == PST_ITEM
 					&& (*j)->getTransferItems() == type)
 				{
-					qty += (*j)->getQuantity();
+					baseQty += (*j)->getQuantity();
 				}
 			}
 
-			wst = tr(type);
+			item = tr(type);
 
-			clipSize = clRule->getFullClip();
-			if (clipSize > 1)
-				wst += (L"s (" + Text::intWide(clipSize) + L")");
+			if ((clip = clRule->getFullClip()) > 1)
+				item += (L"s (" + Text::intWide(clip) + L")");
 
-			wst.insert(0, L"  ");
+			item.insert(0, L"  ");
 			_lstItems->addRow(
 							4,
-							wst.c_str(),
+							item.c_str(),
 							Text::formatCurrency(clRule->getBuyCost()).c_str(),
-							Text::intWide(qty).c_str(),
+							Text::intWide(baseQty).c_str(),
 							L"0");
 			_lstItems->setRowColor(_orderQty.size() - 1, _colorAmmo);
 
@@ -360,13 +359,13 @@ PurchaseState::PurchaseState(Base* const base)
 		itRule = rules->getItemRule(*i);
 		//Log(LOG_INFO) << (*i) << " list# " << itRule->getListOrder(); // Prints listOrder to LOG.
 
-		if (itRule->getBuyCost() != 0)
-//			&& _game->getSavedGame()->isResearched(itRule->getRequirements()) == true)
+		if (itRule->getBuyCost() != 0
+			&& _game->getSavedGame()->isResearched(itRule->getRequirements()) == true)
 		{
 			_orderQty.push_back(0);
 			_items.push_back(*i);
 
-			int qty = _base->getStorageItems()->getItemQuantity(*i);
+			baseQty = _base->getStorageItems()->getItemQuantity(*i);
 			type = itRule->getType();
 
 			for (std::vector<Transfer*>::const_iterator // add transfer items
@@ -375,7 +374,7 @@ PurchaseState::PurchaseState(Base* const base)
 					++j)
 			{
 				if ((*j)->getTransferItems() == type)
-					qty += (*j)->getQuantity();
+					baseQty += (*j)->getQuantity();
 			}
 
 			for (std::vector<Craft*>::const_iterator // add craft items & vehicles & vehicle ammo
@@ -391,7 +390,7 @@ PurchaseState::PurchaseState(Base* const base)
 							++k)
 					{
 						if (k->first == type)
-							qty += k->second;
+							baseQty += k->second;
 					}
 				}
 
@@ -403,62 +402,47 @@ PurchaseState::PurchaseState(Base* const base)
 							++k)
 					{
 						if ((*k)->getRules()->getType() == type)
-							++qty;
-
-						if ((*k)->getAmmo() != 255)
+							++baseQty;
+						else if ((*k)->getAmmo() > 0
+							&& (*k)->getRules()->getCompatibleAmmo()->front() == type)
 						{
-							amRule = rules->getItemRule(
-									 rules->getItemRule((*k)->getRules()->getType())
-									 ->getCompatibleAmmo()->front());
-
-							if (amRule->getType() == type)
-								qty += (*k)->getAmmo();
+							baseQty += (*k)->getAmmo();
 						}
 					}
 				}
 			}
 
-			wst = tr(*i);
+			item = tr(*i);
 
-			if (itRule->getBattleType() == BT_AMMO			// weapon clips & HWP rounds
+			bool doColor (false);
+			if (itRule->getBattleType() == BT_AMMO)			// weapon clips & HWP rounds
 //					|| (itRule->getBattleType() == BT_NONE	// craft weapon rounds - ^HANDLED ABOVE^^
 //						&& itRule->getClipSize() != 0))
-				&& itRule->getType() != rules->getAlienFuelType())
+//				&& itRule->getType() != rules->getAlienFuelType())
 			{
-				if (itRule->getType().substr(0,8) != "STR_HWP_") // *cuckoo** weapon clips
+				doColor = true;
+				item.insert(0, L"  ");
+
+				if ((clip = itRule->getFullClip()) > 1
+					&& itRule->getType().substr(0,8) != "STR_HWP_") // *cuckoo** weapon clips
 				{
-					clipSize = itRule->getFullClip();
-					if (clipSize > 1)
-						wst += (L" (" + Text::intWide(clipSize) + L")");
+					item += (L" (" + Text::intWide(clip) + L")");
 				}
-				wst.insert(0, L"  ");
-
-				_lstItems->addRow(
-								4,
-								wst.c_str(),
-								Text::formatCurrency(itRule->getBuyCost()).c_str(),
-								Text::intWide(qty).c_str(),
-								L"0");
-				_lstItems->setRowColor(_orderQty.size() - 1, _colorAmmo);
 			}
-			else
+			else if (itRule->isFixed() == true // tank w/ Ordnance.
+				&& (clip = itRule->getFullClip()) > 0)
 			{
-                if (itRule->isFixed() == true // tank w/ Ordnance.
-					&& itRule->getCompatibleAmmo()->empty() == false)
-                {
-					amRule = rules->getItemRule(itRule->getCompatibleAmmo()->front());
-					clipSize = amRule->getFullClip();
-					if (clipSize != 0)
-						wst += (L" (" + Text::intWide(clipSize) + L")");
-                }
-
-				_lstItems->addRow(
-								4,
-								wst.c_str(),
-								Text::formatCurrency(itRule->getBuyCost()).c_str(),
-								Text::intWide(qty).c_str(),
-								L"0");
+				item += (L" (" + Text::intWide(clip) + L")");
 			}
+
+			_lstItems->addRow(
+							4,
+							item.c_str(),
+							Text::formatCurrency(itRule->getBuyCost()).c_str(),
+							Text::intWide(baseQty).c_str(),
+							L"0");
+			if (doColor == true)
+				_lstItems->setRowColor(_orderQty.size() - 1, _colorAmmo);
 		}
 	}
 
@@ -701,7 +685,6 @@ int PurchaseState::getPrice() // private.
 		case PST_ITEM:
 			return _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getBuyCost();
 	}
-
 	return 0;
 }
 
@@ -760,7 +743,7 @@ void PurchaseState::increaseByValue(int qtyDelta)
 	if (error.empty() == false)
 	{
 		_timerInc->stop();
-		const RuleInterface* const uiRule = _game->getRuleset()->getInterface("buyMenu");
+		const RuleInterface* const uiRule (_game->getRuleset()->getInterface("buyMenu"));
 		_game->pushState(new ErrorMessageState(
 											error,
 											_palette,
@@ -802,9 +785,8 @@ void PurchaseState::increaseByValue(int qtyDelta)
 				else
 					qtyAllowed = std::numeric_limits<double>::max();
 
-				qtyDelta = std::min(
-								qtyDelta,
-								static_cast<int>(qtyAllowed));
+				qtyDelta = std::min(qtyDelta,
+									static_cast<int>(qtyAllowed));
 				_storeSize += static_cast<double>(qtyDelta) * storesPerItem;
 			}
 		}

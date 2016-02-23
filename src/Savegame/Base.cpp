@@ -668,7 +668,6 @@ double Base::getUsedStores() const
 	double total (_items->getTotalSize(_rules)); // items
 
 	const RuleItem* itRule;
-	std::string type;
 	for (std::vector<Craft*>::const_iterator
 			i = _crafts.begin();
 			i != _crafts.end();
@@ -684,10 +683,9 @@ double Base::getUsedStores() const
 			itRule = (*j)->getRules();
 			total += itRule->getStoreSize();
 
-			type = itRule->getCompatibleAmmo()->front(); // craft vehicle ammo
-			if (type.empty() == false)
+			if (itRule->getFullClip() > 0) // craft vehicle ammo
 			{
-				itRule = _rules->getItemRule(type);
+				itRule = _rules->getItemRule(itRule->getCompatibleAmmo()->front());
 				total += itRule->getStoreSize() * static_cast<double>((*j)->getAmmo());
 			}
 		}

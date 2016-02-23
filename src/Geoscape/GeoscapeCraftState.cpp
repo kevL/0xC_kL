@@ -200,12 +200,12 @@ GeoscapeCraftState::GeoscapeCraftState(
 	}
 
 
-	const CraftStatus stat = _craft->getCraftStatus();
+	const CraftStatus stat (_craft->getCraftStatus());
 	std::wstring status;
 	const bool
-		lowFuel = _craft->getLowFuel(),
-		missionComplete = _craft->getTacticalReturn();
-	int speed = _craft->getSpeed();
+		lowFuel (_craft->getLowFuel()),
+		missionComplete (_craft->getTacticalReturn());
+	int speed (_craft->getSpeed());
 
 	// note: Could add "DAMAGED - Return to Base" around here.
 	if (stat != CS_OUT)
@@ -220,7 +220,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 		status = tr("STR_PATROLLING");
 	else
 	{
-		const Ufo* const ufo = dynamic_cast<Ufo*>(_craft->getDestination());
+		const Ufo* const ufo (dynamic_cast<Ufo*>(_craft->getDestination()));
 		if (ufo != nullptr)
 		{
 			if (_craft->inDogfight() == true)
@@ -283,7 +283,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	if (_craft->getRules()->getWeapons() != 0
 		&& _craft->getWeapons()->at(0) != nullptr)
 	{
-		const CraftWeapon* const w1 = _craft->getWeapons()->at(0);
+		const CraftWeapon* const w1 (_craft->getWeapons()->at(0));
 		_txtW1Name->setText(tr("STR_WEAPON_ONE").arg(tr(w1->getRules()->getType())));
 
 		woststr.str(L"");
@@ -300,7 +300,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	if (_craft->getRules()->getWeapons() > 1
 		&& _craft->getWeapons()->at(1) != nullptr)
 	{
-		const CraftWeapon* const w2 = _craft->getWeapons()->at(1);
+		const CraftWeapon* const w2 (_craft->getWeapons()->at(1));
 		_txtW2Name->setText(tr("STR_WEAPON_TWO").arg(tr(w2->getRules()->getType())));
 
 		woststr.str(L"");
@@ -360,8 +360,8 @@ GeoscapeCraftState::GeoscapeCraftState(
 	}
 
 
-	SurfaceSet* const srt = _game->getResourcePack()->getSurfaceSet("INTICON.PCK");
-	const int craftSprite = _craft->getRules()->getSprite();
+	SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet("INTICON.PCK"));
+	const int craftSprite (_craft->getRules()->getSprite());
 	srt->getFrame(craftSprite + 11)->blit(_sprite);
 
 	if (transpose == true)
@@ -497,7 +497,7 @@ void GeoscapeCraftState::transposeWindow() // private.
 	_txtW2Name->setVisible(false);
 	_txtW2Ammo->setVisible(false);
 
-	int dy = 26;
+	int dy (26);
 	_btnTarget->setY(_btnTarget->getY() + dy);
 	_btnPatrol->setY(_btnPatrol->getY() + dy);
 	_btnCenter->setY(_btnCenter->getY() + dy);

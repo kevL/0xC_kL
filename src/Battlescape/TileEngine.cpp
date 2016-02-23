@@ -1475,7 +1475,7 @@ bool TileEngine::checkReactionFire(
 
 	bool ret (false);
 
-	if (triggerUnit->getFaction() == FACTION_PLAYER // note MC'd aLiens do not RF.
+	if (triggerUnit->getFaction() == FACTION_PLAYER // MC'd aLiens do not RF.
 		|| triggerUnit->isMindControlled() == false)
 	{
 		//Log(LOG_INFO) << ". Target = VALID";
@@ -1577,7 +1577,7 @@ std::vector<BattleUnit*> TileEngine::getSpottingUnits(const BattleUnit* const un
 }
 
 /**
- * Gets the unit with the highest reaction score from the spotters vector.
+ * Gets the unit with the highest reaction score from the spotters-vector.
  * @note The tuSpent parameter is needed because popState() doesn't
  * subtract TU until after the Initiative has been calculated or called from
  * ProjectileFlyBState.
@@ -1691,8 +1691,8 @@ bool TileEngine::reactionShot(
 	}
 
 	if (_rfAction->weapon == nullptr // lasers & melee are their own ammo-items and return INT_MAX for ammo-qty.
-		|| _rfAction->weapon->getRules()->canReactionFire() == false
 		|| _rfAction->weapon->getAmmoItem() == nullptr
+		|| _rfAction->weapon->getRules()->canReactionFire() == false
 		|| (_rfAction->actor->getFaction() != FACTION_HOSTILE
 			&& _battleSave->getGeoscapeSave()->isResearched(_rfAction->weapon->getRules()->getRequirements()) == false))
 	{
@@ -1701,6 +1701,7 @@ bool TileEngine::reactionShot(
 
 
 	_rfAction->target = targetUnit->getPosition();
+	_rfAction->type = BA_NONE;
 	_rfAction->TU = 0;
 
 	if (_rfAction->weapon->getRules()->getBattleType() == BT_MELEE)
@@ -1719,20 +1720,18 @@ bool TileEngine::reactionShot(
 				i != 8 && canMelee == false;
 				++i)
 		{
-			canMelee = validMeleeRange(unit, i, targetUnit);	// hopefully this is blocked by walls & bigWalls ...
-																// see also, AI do_grenade_action .....
-																// darn Sectoid tried to hurl a grenade through a northwall .. with *no LoS*
-																// cf. ActionMenuState::btnActionMenuItemClick()
+			canMelee = validMeleeRange(unit, i, targetUnit);
 		}
-
 		if (canMelee == false) return false;
 	}
 	else
 	{
-		_rfAction->type = BA_NONE;
-		chooseFireMethod(*_rfAction); // choose BAT & setTU req'd.
-
-		if (_rfAction->type == BA_NONE) return false;
+		chooseFireMethod();
+		if (_rfAction->TU == 0
+			|| _rfAction->type == BA_NONE)
+		{
+			return false;
+		}
 	}
 
 	_rfAction->targeting = true;
@@ -1778,98 +1777,95 @@ bool TileEngine::reactionShot(
 }
 
 /**
- * Selects a fire method based on range & time units.
- * @param action - reference a BattleAction struct
+ * Selects a reaction-fire-method based on TU and distance.
  */
-void TileEngine::chooseFireMethod(BattleAction& action) // <- TODO: this action ought be replaced w/ _rfAction, i think.
+void TileEngine::chooseFireMethod()
 {
-	const RuleItem* const itRule (action.weapon->getRules());
 	const int dist (_battleSave->getTileEngine()->distance(
-														action.actor->getPosition(),
-														action.target));
-	if (dist > itRule->getMaxRange() || dist < itRule->getMinRange()) // this might not be what I think it is ...
-		return;
-
-	const int tu (action.actor->getTimeUnits());
-
-	if (dist <= itRule->getAutoRange())
+														_rfAction->actor->getPosition(),
+														_rfAction->target));
+	const RuleItem* const itRule (_rfAction->weapon->getRules());
+	if (dist <= itRule->getMaxRange() && dist >= itRule->getMinRange())
 	{
-		if (itRule->getAutoTu() != 0
-			&& tu >= action.actor->getActionTu(BA_AUTOSHOT, action.weapon))
+		const int tu (_rfAction->actor->getTimeUnits());
+
+		if (dist <= itRule->getAutoRange())
 		{
-			action.type = BA_AUTOSHOT;
-			action.TU = action.actor->getActionTu(BA_AUTOSHOT, action.weapon);
+			if (itRule->getAutoTu() != 0
+				&& tu >= _rfAction->actor->getActionTu(BA_AUTOSHOT, _rfAction->weapon))
+			{
+				_rfAction->type = BA_AUTOSHOT;
+				_rfAction->TU = _rfAction->actor->getActionTu(BA_AUTOSHOT, _rfAction->weapon);
+			}
+			else if (itRule->getSnapTu() != 0
+				&& tu >= _rfAction->actor->getActionTu(BA_SNAPSHOT, _rfAction->weapon))
+			{
+				_rfAction->type = BA_SNAPSHOT;
+				_rfAction->TU = _rfAction->actor->getActionTu(BA_SNAPSHOT, _rfAction->weapon);
+			}
+			else if (itRule->getAimedTu() != 0
+				&& tu >= _rfAction->actor->getActionTu(BA_AIMEDSHOT, _rfAction->weapon))
+			{
+				_rfAction->type = BA_AIMEDSHOT;
+				_rfAction->TU = _rfAction->actor->getActionTu(BA_AIMEDSHOT, _rfAction->weapon);
+			}
 		}
-		else if (itRule->getSnapTu() != 0
-			&& tu >= action.actor->getActionTu(BA_SNAPSHOT, action.weapon))
+		else if (dist <= itRule->getSnapRange())
 		{
-			action.type = BA_SNAPSHOT;
-			action.TU = action.actor->getActionTu(BA_SNAPSHOT, action.weapon);
+			if (itRule->getSnapTu() != 0
+				&& tu >= _rfAction->actor->getActionTu(BA_SNAPSHOT, _rfAction->weapon))
+			{
+				_rfAction->type = BA_SNAPSHOT;
+				_rfAction->TU = _rfAction->actor->getActionTu(BA_SNAPSHOT, _rfAction->weapon);
+			}
+			else if (itRule->getAimedTu() != 0
+				&& tu >= _rfAction->actor->getActionTu(BA_AIMEDSHOT, _rfAction->weapon))
+			{
+				_rfAction->type = BA_AIMEDSHOT;
+				_rfAction->TU = _rfAction->actor->getActionTu(BA_AIMEDSHOT, _rfAction->weapon);
+			}
+			else if (itRule->getAutoTu() != 0
+				&& tu >= _rfAction->actor->getActionTu(BA_AUTOSHOT, _rfAction->weapon))
+			{
+				_rfAction->type = BA_AUTOSHOT;
+				_rfAction->TU = _rfAction->actor->getActionTu(BA_AUTOSHOT, _rfAction->weapon);
+			}
 		}
-		else if (itRule->getAimedTu() != 0
-			&& tu >= action.actor->getActionTu(BA_AIMEDSHOT, action.weapon))
+		else // if (dist <= itRule->getAimRange())
 		{
-			action.type = BA_AIMEDSHOT;
-			action.TU = action.actor->getActionTu(BA_AIMEDSHOT, action.weapon);
+			if (itRule->getAimedTu() != 0
+				&& tu >= _rfAction->actor->getActionTu(BA_AIMEDSHOT, _rfAction->weapon))
+			{
+				_rfAction->type = BA_AIMEDSHOT;
+				_rfAction->TU = _rfAction->actor->getActionTu(BA_AIMEDSHOT, _rfAction->weapon);
+			}
+			else if (itRule->getSnapTu() != 0
+				&& tu >= _rfAction->actor->getActionTu(BA_SNAPSHOT, _rfAction->weapon))
+			{
+				_rfAction->type = BA_SNAPSHOT;
+				_rfAction->TU = _rfAction->actor->getActionTu(BA_SNAPSHOT, _rfAction->weapon);
+			}
+			else if (itRule->getAutoTu() != 0
+				&& tu >= _rfAction->actor->getActionTu(BA_AUTOSHOT, _rfAction->weapon))
+			{
+				_rfAction->type = BA_AUTOSHOT;
+				_rfAction->TU = _rfAction->actor->getActionTu(BA_AUTOSHOT, _rfAction->weapon);
+			}
 		}
 	}
-	else if (dist <= itRule->getSnapRange())
-	{
-		if (itRule->getSnapTu() != 0
-			&& tu >= action.actor->getActionTu(BA_SNAPSHOT, action.weapon))
-		{
-			action.type = BA_SNAPSHOT;
-			action.TU = action.actor->getActionTu(BA_SNAPSHOT, action.weapon);
-		}
-		else if (itRule->getAimedTu() != 0
-			&& tu >= action.actor->getActionTu(BA_AIMEDSHOT, action.weapon))
-		{
-			action.type = BA_AIMEDSHOT;
-			action.TU = action.actor->getActionTu(BA_AIMEDSHOT, action.weapon);
-		}
-		else if (itRule->getAutoTu() != 0
-			&& tu >= action.actor->getActionTu(BA_AUTOSHOT, action.weapon))
-		{
-			action.type = BA_AUTOSHOT;
-			action.TU = action.actor->getActionTu(BA_AUTOSHOT, action.weapon);
-		}
-	}
-	else // if (dist <= itRule->getAimRange())
-	{
-		if (itRule->getAimedTu() != 0
-			&& tu >= action.actor->getActionTu(BA_AIMEDSHOT, action.weapon))
-		{
-			action.type = BA_AIMEDSHOT;
-			action.TU = action.actor->getActionTu(BA_AIMEDSHOT, action.weapon);
-		}
-		else if (itRule->getSnapTu() != 0
-			&& tu >= action.actor->getActionTu(BA_SNAPSHOT, action.weapon))
-		{
-			action.type = BA_SNAPSHOT;
-			action.TU = action.actor->getActionTu(BA_SNAPSHOT, action.weapon);
-		}
-		else if (itRule->getAutoTu() != 0
-			&& tu >= action.actor->getActionTu(BA_AUTOSHOT, action.weapon))
-		{
-			action.type = BA_AUTOSHOT;
-			action.TU = action.actor->getActionTu(BA_AUTOSHOT, action.weapon);
-		}
-	}
-
-	return;
 }
 
 /**
  * Gets the unique reaction fire BattleAction struct.
  * @return, rf action struct
- */
-/* BattleAction* TileEngine::getRfAction()
+ *
+BattleAction* TileEngine::getRfAction()
 {
 	return _rfAction;
 } */
 
 /**
- * Gets the reaction fire shot list.
+ * Gets the reaction-fire shot-list.
  * @return, pointer to a map of unit-IDs & Positions
  */
 std::map<int, Position>* TileEngine::getRfShooterPositions()

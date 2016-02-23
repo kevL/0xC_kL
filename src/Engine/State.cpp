@@ -389,7 +389,7 @@ const LocalizedText& State::tr(const std::string& id) const
  * Gets a modifiable copy of the LocalizedText for dictionary key @a id.
  * @note This function forwards the call to Language::getString(const std::string&, unsigned).
  * @param id	- reference the dictionary key to search for
- * @param qty	- the number to use for the proper version
+ * @param qty	- the number to use to find the correct plurality
  * @return, copy of the LocalizedLext
  */
 LocalizedText State::tr(

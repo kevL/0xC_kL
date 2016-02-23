@@ -109,13 +109,13 @@ SoldierArmorState::SoldierArmorState(
 	_lstArmor->setSelectable();
 
 	RuleArmor* armorRule;
-	const std::vector<std::string>& armorList = _game->getRuleset()->getArmorsList();
+	const std::vector<std::string>& armorList (_game->getRuleset()->getArmorsList());
 	for (std::vector<std::string>::const_reverse_iterator
-			i = armorList.rbegin();
-			i != armorList.rend();
-			++i)
+			rit = armorList.rbegin();
+			rit != armorList.rend();
+			++rit)
 	{
-		armorRule = _game->getRuleset()->getArmor(*i);
+		armorRule = _game->getRuleset()->getArmor(*rit);
 		if (armorRule->getUnits().empty() == true
 			|| std::find(
 					armorRule->getUnits().begin(),
@@ -137,7 +137,7 @@ SoldierArmorState::SoldierArmorState(
 								tr(armorRule->getType()).c_str(),
 								woststr.str().c_str());
 			}
-			else if (armorRule->getStoreItem() == RuleArmor::NONE)
+			else if (armorRule->isBasic() == true)
 			{
 				_armors.push_back(armorRule);
 				_lstArmor->addRow(1, tr(armorRule->getType()).c_str());
@@ -171,17 +171,14 @@ void SoldierArmorState::lstArmorClick(Action*)
 {
 	if (_game->getSavedGame()->getMonthsPassed() != -1)
 	{
-		if (_soldier->getArmor()->getStoreItem() != RuleArmor::NONE)
+		if (_soldier->getArmor()->isBasic() == false)
 			_base->getStorageItems()->addItem(_soldier->getArmor()->getStoreItem());
 
-		if (_armors[_lstArmor->getSelectedRow()]->getStoreItem() != RuleArmor::NONE)
+		if (_armors[_lstArmor->getSelectedRow()]->isBasic() == false)
 			_base->getStorageItems()->removeItem(_armors[_lstArmor->getSelectedRow()]->getStoreItem());
 	}
 
 	_soldier->setArmor(_armors[_lstArmor->getSelectedRow()]);
-//	SavedGame* gameSave = _game->getSavedGame();
-//	gameSave->setLastSelectedArmor(_armors[_lstArmor->getSelectedRow()]->getType());
-
 	_game->popState();
 }
 

@@ -204,12 +204,12 @@ SavedBattleGame::~SavedBattleGame()
  * Loads the SavedBattleGame from a YAML file.
  * @param node		- reference a YAML node
  * @param rules		- pointer to the Ruleset
- * @param savedGame	- pointer to the SavedGame
+ * @param gameSave	- pointer to the SavedGame
  */
 void SavedBattleGame::load(
 		const YAML::Node& node,
 		Ruleset* const rules,
-		const SavedGame* const savedGame)
+		const SavedGame* const gameSave)
 {
 	//Log(LOG_INFO) << "SavedBattleGame::load()";
 	_mapsize_x		= node["width"]		.as<int>(_mapsize_x);
@@ -330,10 +330,10 @@ void SavedBattleGame::load(
 		faction		= static_cast<UnitFaction>((*i)["faction"]			.as<int>());
 		factionOrg	= static_cast<UnitFaction>((*i)["originalFaction"]	.as<int>(faction)); // .. technically, static_cast<int>(faction).
 
-		const GameDifficulty diff (savedGame->getDifficulty());
+		const GameDifficulty diff (gameSave->getDifficulty());
 		if (id < BattleUnit::MAX_SOLDIER_ID)			// instance a BattleUnit from a geoscape-soldier
 			unit = new BattleUnit(
-							savedGame->getSoldier(id),
+							gameSave->getSoldier(id),
 							diff);
 		else											// instance a BattleUnit as an aLien, civie, or support-unit
 		{
@@ -348,7 +348,7 @@ void SavedBattleGame::load(
 									id,
 									rules->getArmor(armor),
 									diff,
-									savedGame->getMonthsPassed());
+									gameSave->getMonthsPassed());
 			else
 				unit = nullptr;
 		}
@@ -567,7 +567,7 @@ void SavedBattleGame::load(
 	_music = node["music"].as<std::string>(_music);
 
 	Log(LOG_INFO) << ". set item ID";
-	setNextItemId();
+	setCanonicalBattleId();
 	//Log(LOG_INFO) << "SavedBattleGame::load() EXIT";
 
 	// TEST, reveal all tiles
@@ -1749,11 +1749,11 @@ bool SavedBattleGame::allObjectivesDestroyed() const
 }
 
 /**
- * Sets the next available item ID value.
+ * Sets the next available item-ID value.
  * @note Used only at the finish of loading a SavedBattleGame.
  * @note ItemIDs start at 0.
  */
-void SavedBattleGame::setNextItemId()
+void SavedBattleGame::setCanonicalBattleId()
 {
 	int
 		id = -1,
@@ -1764,19 +1764,17 @@ void SavedBattleGame::setNextItemId()
 			i != _items.end();
 			++i)
 	{
-		idTest = (*i)->getId();
-		if (idTest > id)
+		if ((idTest = (*i)->getId()) > id)
 			id = idTest;
 	}
-
 	_itemId = ++id;
 }
 
 /**
- * Gets the next available item ID value.
+ * Gets the next available item-ID value.
  * @return, pointer to the highest available value
  */
-int* SavedBattleGame::getNextItemId()
+int* SavedBattleGame::getCanonicalBattleId()
 {
 	return &_itemId;
 }

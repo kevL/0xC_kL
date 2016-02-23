@@ -106,8 +106,8 @@ SackSoldierState::~SackSoldierState()
  */
 void SackSoldierState::btnOkClick(Action*)
 {
-	const Soldier* const sol = _base->getSoldiers()->at(_soldierId);
-	if (sol->getArmor()->getStoreItem() != RuleArmor::NONE)
+	const Soldier* const sol (_base->getSoldiers()->at(_soldierId));
+	if (sol->getArmor()->isBasic() == false)
 		_base->getStorageItems()->addItem(sol->getArmor()->getStoreItem());
 
 	delete sol;

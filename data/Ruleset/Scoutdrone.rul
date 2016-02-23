@@ -15,6 +15,7 @@ items:
     maxRange: 1
     arcingShot: true
     fixedWeapon: true
+    fullClip: 8
     noReaction: true
     invWidth: 1
     invHeight: 2
@@ -31,7 +32,7 @@ items:
     power: 42
     damageType: 9
     battleType: 2
-    fullClip: 8
+    fullClip: 1
     blastRadius: 3
     explosionSpeed: -15
     listOrder: 1099

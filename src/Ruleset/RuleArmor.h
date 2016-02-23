@@ -49,7 +49,6 @@ class RuleArmor
 {
 	public:
 		static const size_t DAMAGE_TYPES = 10;
-		static const std::string NONE;
 
 private:
 	std::string

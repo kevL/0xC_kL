@@ -9,7 +9,6 @@ armors:
     storeItem: STR_NONE
     corpseBattle:
       - STR_CORPSE
-    isBasic: true
     frontArmor: 12
     sideArmor: 9
     rearArmor: 6

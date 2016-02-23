@@ -316,8 +316,8 @@ void Game::run()
 																					_event.resize.h);
 #endif
 							int
-								dX = 0,
-								dY = 0;
+								dX (0),
+								dY (0);
 
 							Screen::updateScale(
 											Options::battlescapeScale,

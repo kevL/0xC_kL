@@ -25,9 +25,6 @@
 namespace OpenXcom
 {
 
-const std::string RuleArmor::NONE = "STR_NONE";
-
-
 /**
  * Creates a blank ruleset for a certain type of Armor.
  * @param type - reference the type
@@ -106,7 +103,7 @@ void RuleArmor::load(const YAML::Node& node)
 	}
 	_corpseGeo		= node["corpseGeo"]			.as<std::string>(_corpseGeo);
 
-	_storeItem		= node["storeItem"]		.as<std::string>(_storeItem);
+	_moveType		= static_cast<MovementType>(node["movementType"].as<int>(_moveType));
 //	_specWeapon		= node["specialWeapon"]	.as<std::string>(_specWeapon);
 	_frontArmor		= node["frontArmor"]	.as<int>(_frontArmor);
 	_sideArmor		= node["sideArmor"]		.as<int>(_sideArmor);
@@ -116,9 +113,12 @@ void RuleArmor::load(const YAML::Node& node)
 	_size			= node["size"]			.as<int>(_size);
 	_weight			= node["weight"]		.as<int>(_weight);
 	_agility		= node["agility"]		.as<int>(_agility);
-	_isBasic		= node["isBasic"]		.as<bool>(_isBasic);
 	_isSpacesuit	= node["isSpacesuit"]	.as<bool>(_isSpacesuit);
-	_moveType		= static_cast<MovementType>(node["movementType"].as<int>(_moveType));
+
+	_storeItem		= node["storeItem"]		.as<std::string>(_storeItem);
+
+	if (_storeItem == "STR_NONE")
+		_isBasic = true;
 
 	_stats.mergeStats(node["stats"].as<UnitStats>(_stats));
 
@@ -246,7 +246,7 @@ const std::vector<std::string>& RuleArmor::getCorpseBattlescape() const
 
 /**
  * Gets the storage item needed for a Soldier to equip this Armor.
- * @return, type of the store item (STR_NONE for infinite armor)
+ * @return, type of the store item ("STR_NONE" for infinite armor)
  */
 std::string RuleArmor::getStoreItem() const
 {

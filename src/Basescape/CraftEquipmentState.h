@@ -31,6 +31,8 @@ namespace OpenXcom
 
 class Base;
 class Craft;
+class Ruleset;
+
 class Text;
 class TextButton;
 class TextList;
@@ -47,6 +49,10 @@ class CraftEquipmentState
 {
 
 private:
+	static const int
+		COLOR_ERROR		= 241,
+		COLOR_ERROR_BG	= 2;
+
 	size_t
 		_sel,
 		_selUnitId;
@@ -54,6 +60,8 @@ private:
 
 	Base* _base;
 	Craft* _craft;
+	const Ruleset* _rules;
+
 	Text
 		* _txtBaseLabel,
 		* _txtCost,
@@ -113,16 +121,16 @@ private:
 		/// Handler for pressing-down a mouse-button in the list.
 //		void lstEquipmentMousePress(Action* action);
 
-		/// Moves an item to the base.
-		void moveLeft();
-		/// Moves the given number of items to the Base.
-		void moveLeftByValue(int qtyDelta);
-		/// Moves an item to the craft.
+		/// Moves an item to the Craft.
 		void moveRight();
 		/// Moves the given number of items to the Craft.
 		void moveRightByValue(int qtyDelta);
+		/// Moves an item to the Base.
+		void moveLeft();
+		/// Moves the given number of items to the Base.
+		void moveLeftByValue(int qtyDelta);
 
-		/// Empties the contents of the craft, moving all of the items back to the Base.
+		/// Empties the contents of the Craft, moving all of the items back to the Base.
 		void btnUnloadCraftClick(Action* action);
 		/// Handler for clicking the Inventory button.
 		void btnInventoryClick(Action* action);
