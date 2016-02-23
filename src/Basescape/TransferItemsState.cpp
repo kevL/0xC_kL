@@ -416,13 +416,13 @@ void TransferItemsState::init()
 					++j)
 			{
 				cwRule = rules->getCraftWeapon(*j);
-				if (rules->getItemRule(cwRule->getLauncherType()) == itRule) // Launcher
+				if (rules->getItemRule(cwRule->getLauncherType()) == itRule)
 				{
 					craftOrdnance = true;
 					if ((clip = cwRule->getLoadCapacity()) > 0)
 						item += (L" (" + Text::intWide(clip) + L")");
 				}
-				else if ((clRule = rules->getItemRule(cwRule->getClipType())) == itRule) // launcher Ammo
+				else if ((clRule = rules->getItemRule(cwRule->getClipType())) == itRule)
 				{
 					craftOrdnance = true;
 					if ((clip = clRule->getFullClip()) > 1)

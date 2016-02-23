@@ -2901,7 +2901,7 @@ void GeoscapeState::time1Day()
 				&& resRule->needsItem() == true
 				&& Options::spendResearchedItems == true)
 			{
-				(*i)->getStorageItems()->addItem(_rules->getArmor(_rules->getUnitRule(resType)->getArmor())->getCorpseGeoscape());
+				(*i)->getStorageItems()->addItem(_rules->getArmor(_rules->getUnitRule(resType)->getArmorType())->getCorpseGeoscape());
 				// ;) <- kL_note: heh i noticed that.
 			}
 

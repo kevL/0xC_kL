@@ -399,7 +399,6 @@ void UnitDieBState::convertToBodyItem() // private.
 							}
 						}
 					}
-
 					tile->addSmoke(RNG::generate(0,2)); // more smoke ...
 				}
 

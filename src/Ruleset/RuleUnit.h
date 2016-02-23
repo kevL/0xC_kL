@@ -282,7 +282,7 @@ private:
 		int getFloatHeight() const;
 
 		/// Gets the armor type.
-		std::string getArmor() const;
+		std::string getArmorType() const;
 		/// Gets the race type.
 		std::string getRace() const;
 		/// Gets the rank.

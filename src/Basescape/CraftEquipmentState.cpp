@@ -464,7 +464,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 			const RuleItem* const itRule (_rules->getItemRule(_items[_sel]));
 			if (itRule->isFixed() == true) // load vehicle, convert item to a vehicle
 			{
-				int quadrants (_rules->getArmor(_rules->getUnitRule(_items[_sel])->getArmor())->getSize());
+				int quadrants (_rules->getArmor(_rules->getUnitRule(_items[_sel])->getArmorType())->getSize());
 				quadrants *= quadrants;
 
 				const int spaceAvailable (std::min(

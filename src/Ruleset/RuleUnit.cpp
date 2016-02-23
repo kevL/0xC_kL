@@ -171,7 +171,7 @@ int RuleUnit::getFloatHeight() const
  * Gets the unit's armor type.
  * @return, the unit's armor type
  */
-std::string RuleUnit::getArmor() const
+std::string RuleUnit::getArmorType() const
 {
 	return _armor;
 }

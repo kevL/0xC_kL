@@ -267,7 +267,7 @@ private:
 		/// Pushes a state to second on the list.
 		void statePushNext(BattleState* const battleState);
 		/// Pushes a state to the back of the list.
-		void statePushBack(BattleState* const battleState);
+		void statePushBack(BattleState* const battleState = nullptr);
 		/// Removes current state.
 		void popState();
 		/// Sets state think interval.

@@ -292,7 +292,7 @@ void AlienContainmentState::btnOkClick(Action*)
 		{
 			_base->getStorageItems()->removeItem(_aliens[i], _qty[i]);
 			_base->getStorageItems()->addItem(
-									_game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(_aliens[i])->getArmor())->getCorpseGeoscape(),
+									_game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(_aliens[i])->getArmorType())->getCorpseGeoscape(),
 									_qty[i]);
 		}
 	}

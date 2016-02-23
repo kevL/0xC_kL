@@ -272,7 +272,8 @@ void BattlescapeGame::statePushNext(BattleState* const battleState)
 
 /**
  * Pushes a state to the back.
- * @param battleState - pointer to BattleState
+ * @note Passing in NULL causes an end-turn request.
+ * @param battleState - pointer to BattleState (default nullptr)
  */
 void BattlescapeGame::statePushBack(BattleState* const battleState)
 {
@@ -948,7 +949,7 @@ void BattlescapeGame::endAiTurn()
 	if (_battleSave->getDebugTac() == false)
 	{
 		_endTurnRequested = true;
-		statePushBack(nullptr);
+		statePushBack();
 	}
 	else
 	{
@@ -1270,8 +1271,8 @@ bool BattlescapeGame::kneel(BattleUnit* const unit)
 		}
 		else //if (unit->getGeoscapeSoldier() != nullptr) // MC'd xCom agent, trying to stand & walk by AI.
 		{
-			const int energyCost = std::max(0,
-										5 - unit->getArmor()->getAgility());
+			const int energyCost (std::max(0,
+										   5 - unit->getArmor()->getAgility()));
 
 			if (unit->getTimeUnits() > 9
 				&& unit->getEnergy() >= energyCost)
@@ -1322,11 +1323,10 @@ void BattlescapeGame::endTurn() // private.
 		for (std::vector<BattleItem*>::const_iterator
 				j = tile->getInventory()->begin();
 				j != tile->getInventory()->end();
-				)
+				++j)
 		{
 			if ((*j)->getRules()->getBattleType() == BT_GRENADE
-				&& (*j)->getFuse() != -1
-				&& (*j)->getFuse() < 2) // it's a grenade to explode now
+				&& (*j)->getFuse() != -1 && (*j)->getFuse() < 2) // it's a grenade to explode now
 			{
 				pos = Position::toVoxelSpaceCentered(
 												tile->getPosition(),
@@ -1336,11 +1336,9 @@ void BattlescapeGame::endTurn() // private.
 												(*j)->getPriorOwner()));
 				_battleSave->toDeleteItem(*j);
 
-				statePushBack(nullptr);
+				statePushBack();
 				return;
 			}
-
-			++j;
 		}
 	}
 
@@ -1365,7 +1363,7 @@ void BattlescapeGame::endTurn() // private.
 
 //		tile = _battleSave->getTileEngine()->checkForTerrainExplosions();
 
-		statePushBack(nullptr);	// this will repeatedly call another endTurn() so there's
+		statePushBack();	// this will repeatedly call another endTurn() so there's
 		return;					// no need to continue this one till all explosions are done.
 								// The problem arises because _battleSave->endFactionTurn() below
 								// causes *more* destruction of explosive objects, that won't explode
@@ -1454,7 +1452,7 @@ void BattlescapeGame::endTurn() // private.
 											nullptr,
 											nullptr,
 											tile));
-			statePushBack(nullptr);
+			statePushBack();
 			_endTurnProcessed = true;
 			return;
 		} */
@@ -2883,7 +2881,7 @@ void BattlescapeGame::requestEndTurn()
 	if (_endTurnRequested == false)
 	{
 		_endTurnRequested = true;
-		statePushBack(nullptr);
+		statePushBack();
 	}
 }
 
@@ -2948,9 +2946,20 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 	const bool wasVisible (unit->getUnitVisible());
 
 	_battleSave->getBattleState()->showPsiButton(false);
-	_battleSave->deleteBody(unit); // in case the unit was unconscious
 
-	unit->instaKill();
+	switch (unit->getUnitStatus())
+	{
+		case STATUS_UNCONSCIOUS:
+			unit->setUnitStatus(STATUS_DEAD);
+			unit->setHealth(0); // nobreak;
+		case STATUS_DEAD:
+			_battleSave->deleteBody(unit);
+			break;
+
+		default:
+			unit->instaKill();
+	}
+
 	unit->setSpecialAbility(SPECAB_NONE);
 
 	for (std::vector<BattleItem*>::const_iterator
@@ -2970,7 +2979,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 
 	std::string st (unit->getSpawnUnit());
 	RuleUnit* const unitRule (getRuleset()->getUnitRule(st));
-	st = unitRule->getArmor();
+	st = unitRule->getArmorType();
 
 	BattleUnit* const conUnit (new BattleUnit(
 											unitRule,

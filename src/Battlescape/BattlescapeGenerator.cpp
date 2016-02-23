@@ -1101,7 +1101,7 @@ void BattlescapeGenerator::prepareBaseVehicles(std::vector<Vehicle*>& vehicles) 
 		itRule = _rules->getItemRule(i->first);
 		if (itRule->isFixed() == true)
 		{
-			quadrants = _rules->getArmor(_rules->getUnitRule(i->first)->getArmor())->getSize();
+			quadrants = _rules->getArmor(_rules->getUnitRule(i->first)->getArmorType())->getSize();
 			quadrants *= quadrants;
 
 			if (itRule->getFullClip() < 1)
@@ -1156,7 +1156,7 @@ void BattlescapeGenerator::prepareBaseVehicles(std::vector<Vehicle*>& vehicles) 
 }
 
 /**
- * Converts a Vehicle to a player-support-unit that's to be added to the
+ * Converts a Vehicle to a player-support-unit that's about to be added to the
  * Battlescape.
  * @note Sets the correct turret depending on its item-type [and adds auxilliary
  * weapons if any - not at present, kL].
@@ -1172,7 +1172,7 @@ BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // priv
 															unitRule,
 															FACTION_PLAYER,
 															_unitSequence++,
-															_rules->getArmor(unitRule->getArmor()))));
+															_rules->getArmor(unitRule->getArmorType()))));
 	if (supportUnit != nullptr)
 	{
 		supportUnit->setTurretType(vehicle->getRules()->getTurretType());
@@ -1191,9 +1191,9 @@ BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // priv
 			return nullptr;
 		}
 
-		type = vehicle->getRules()->getCompatibleAmmo()->front();
-		if (type.empty() == false)
+		if (weapon->getRules()->getFullClip() > 0)
 		{
+			type = vehicle->getRules()->getCompatibleAmmo()->front();
 			BattleItem* const load (new BattleItem(					// add load and assign the weapon as its owner.
 												_rules->getItemRule(type),
 												_battleSave->getCanonicalBattleId()));
@@ -1210,7 +1210,10 @@ BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // priv
 			}
 
 			load->setAmmoQuantity(vehicle->getLoad());
+//			load->setProperty();
 		}
+
+//		weapon->setProperty();
 
 /*		if (unitRule->getBuiltInWeapons().empty() == false) // add item(builtInWeapon) -- what about ammo
 		{
@@ -1856,7 +1859,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 										unitRule,
 										FACTION_HOSTILE,
 										_unitSequence++,
-										_rules->getArmor(unitRule->getArmor()),
+										_rules->getArmor(unitRule->getArmorType()),
 										diff,
 										_gameSave->getMonthsPassed()));
 
@@ -1998,7 +2001,7 @@ void BattlescapeGenerator::addCivilian(RuleUnit* const unitRule) // private.
 										unitRule,
 										FACTION_NEUTRAL,
 										_unitSequence++,
-										_rules->getArmor(unitRule->getArmor())));
+										_rules->getArmor(unitRule->getArmorType())));
 
 	Node* const node (_battleSave->getSpawnNode(NR_SCOUT, unit));
 	if ((node != nullptr

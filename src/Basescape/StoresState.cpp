@@ -168,13 +168,13 @@ StoresState::StoresState(Base* base)
 						++j)
 				{
 					cwRule = rules->getCraftWeapon(*j);
-					if (rules->getItemRule(cwRule->getLauncherType()) == itRule) // Launcher
+					if (rules->getItemRule(cwRule->getLauncherType()) == itRule)
 					{
 						craftOrdnance = true;
 						if ((clip = cwRule->getLoadCapacity()) != 0)
 							item += (L" (" + Text::intWide(clip) + L")");
 					}
-					else if ((clRule = rules->getItemRule(cwRule->getClipType())) == itRule) // launcher Ammo
+					else if ((clRule = rules->getItemRule(cwRule->getClipType())) == itRule)
 					{
 						craftOrdnance = true;
 						if ((clip = clRule->getFullClip()) > 1)
@@ -220,26 +220,27 @@ StoresState::StoresState(Base* base)
 								Text::intWide(baseQty).c_str(),
 								woststr.str().c_str());
 				_lstStores->setRowColor(row++, color);
-/*			std::wostringstream woststr1;
-			woststr1 << baseQty;
-			if (rules->getItemRule(*i)->isAlien() == true)
-			{
-				_lstStores->addRow(
-								3,
-								item.c_str(),
-								woststr1.str().c_str(),
-								L"-");
-			}
-			else
-			{
-				std::wostringstream woststr2;
-				woststr2 << std::fixed << std::setprecision(1) << (static_cast<double>(baseQty) * itRule->getSize());
-				_lstStores->addRow(
-								3,
-								item.c_str(),
-								woststr1.str().c_str(),
-								woststr2.str().c_str());
-			} */
+
+/*				std::wostringstream woststr1;
+				woststr1 << baseQty;
+				if (rules->getItemRule(*i)->isAlien() == true)
+				{
+					_lstStores->addRow(
+									3,
+									item.c_str(),
+									woststr1.str().c_str(),
+									L"-");
+				}
+				else
+				{
+					std::wostringstream woststr2;
+					woststr2 << std::fixed << std::setprecision(1) << (static_cast<double>(baseQty) * itRule->getSize());
+					_lstStores->addRow(
+									3,
+									item.c_str(),
+									woststr1.str().c_str(),
+									woststr2.str().c_str());
+				} */
 			}
 		}
 	}

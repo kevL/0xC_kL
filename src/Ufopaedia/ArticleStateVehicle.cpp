@@ -50,8 +50,8 @@ ArticleStateVehicle::ArticleStateVehicle(const ArticleDefinitionVehicle* const d
 	:
 		ArticleState(defs->id)
 {
-	RuleUnit* const unit (_game->getRuleset()->getUnitRule(defs->id));
-	const RuleArmor* const armorRule (_game->getRuleset()->getArmor(unit->getArmor()));
+	RuleUnit* const unitRule (_game->getRuleset()->getUnitRule(defs->id));
+	const RuleArmor* const armorRule (_game->getRuleset()->getArmor(unitRule->getArmorType()));
 	const RuleItem* const itRule (_game->getRuleset()->getItemRule(defs->id));
 
 	_txtTitle	= new Text(310,  17,  5,  23);
@@ -88,12 +88,12 @@ ArticleStateVehicle::ArticleStateVehicle(const ArticleDefinitionVehicle* const d
 	_lstStats->addRow(
 				2,
 				tr("STR_TIME_UNITS").c_str(),
-				Text::intWide(unit->getStats()->tu).c_str());
+				Text::intWide(unitRule->getStats()->tu).c_str());
 
 	_lstStats->addRow(
 				2,
 				tr("STR_HEALTH").c_str(),
-				Text::intWide(unit->getStats()->health).c_str());
+				Text::intWide(unitRule->getStats()->health).c_str());
 
 	_lstStats->addRow(
 				2,

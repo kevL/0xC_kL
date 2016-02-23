@@ -301,7 +301,7 @@ BattleUnit::BattleUnit(
 		_mcStrength(0),
 		_mcSkill(0),
 		_drugDose(0),
-		_isZombie(unitRule->getRace() == "STR_ZOMBIE"),
+		_isZombie(false),
 		_fist(nullptr),
 
 		_statistics(nullptr), // Soldier Diary
@@ -325,6 +325,8 @@ BattleUnit::BattleUnit(
 
 		_stats(*unitRule->getStats())
 {
+	_isZombie = (_race == "STR_ZOMBIE");
+
 	//Log(LOG_INFO) << "Create BattleUnit 2 : alien ID = " << getId();
 	_stats += *_armor->getStats();
 
@@ -1647,37 +1649,42 @@ int BattleUnit::takeDamage(
  */
 void BattleUnit::playDeathSound(bool fleshWound) const
 {
-	int soundId;
-	if (_type == "SOLDIER")
+	if (_battleGame != nullptr) // check if hit by pre-battle hidden/power-source explosion.
 	{
-		if (_gender == GENDER_MALE)
+		int soundId;
+//		if (_type == "SOLDIER")
+		if (_geoscapeSoldier != nullptr)
 		{
-			if (fleshWound == true)
-				soundId = RNG::generate(141,151);
-			else
-				soundId = RNG::generate(111,116);
-		}
-		else
-		{
-			if (fleshWound == true)
-				soundId = RNG::generate(121,135);
-			else
-				soundId = RNG::generate(101,103);
-		}
-	}
-	else if (_unitRule->getRace() == "STR_CIVILIAN")
-	{
-		if (_gender == GENDER_MALE)
-			soundId = ResourcePack::MALE_SCREAM[RNG::generate(0,2)];
-		else
-			soundId = ResourcePack::FEMALE_SCREAM[RNG::generate(0,2)];
-	}
-	else
-		soundId = _deathSound;
+			switch (_gender)
+			{
+				case GENDER_MALE:
+					if (fleshWound == true)
+						soundId = RNG::generate(141,151);
+					else
+						soundId = RNG::generate(111,116);
+					break;
 
-	if (soundId != -1 && _battleGame != nullptr) // check if hit by prebattle hidden/power-source explosion.
-		_battleGame->getResourcePack()->getSound("BATTLE.CAT", soundId)
-										->play(-1, _battleGame->getMap()->getSoundAngle(_pos));
+				default:
+					if (fleshWound == true)
+						soundId = RNG::generate(121,135);
+					else
+						soundId = RNG::generate(101,103);
+			}
+		}
+		else if (_unitRule->getRace() == "STR_CIVILIAN")
+		{
+			if (_gender == GENDER_MALE)
+				soundId = ResourcePack::MALE_SCREAM[RNG::generate(0,2)];
+			else
+				soundId = ResourcePack::FEMALE_SCREAM[RNG::generate(0,2)];
+		}
+		else
+			soundId = _deathSound;
+
+		if (soundId != -1)
+			_battleGame->getResourcePack()->getSound("BATTLE.CAT", soundId)
+											->play(-1, _battleGame->getMap()->getSoundAngle(_pos));
+	}
 }
 
 /**

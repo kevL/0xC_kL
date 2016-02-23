@@ -188,7 +188,7 @@ void Craft::load(
 		type = (*i)["type"].as<std::string>();
 		if (rules->getItemRule(type) != nullptr)
 		{
-			const int quadrants (rules->getArmor(rules->getUnitRule(type)->getArmor())->getSize());
+			const int quadrants (rules->getArmor(rules->getUnitRule(type)->getArmorType())->getSize());
 			Vehicle* const vehicle (new Vehicle(
 											rules->getItemRule(type),
 											0,

@@ -66,7 +66,7 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 	centerAllSurfaces();
 
 
-	const ResourcePack* const rp = _game->getResourcePack();
+	const ResourcePack* const rp (_game->getResourcePack());
 	_window->setBackground(rp->getSurface(rp->getRandomBackground()));
 	_window->setColor(uPed_PINK);
 
@@ -113,36 +113,35 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 
 	if (unitRule != nullptr)
 	{
-		const RuleArmor* const armorRule = _game->getRuleset()->getArmor(unitRule->getArmor());
-
-		size_t row = 0;
+		const RuleArmor* const armorRule (_game->getRuleset()->getArmor(unitRule->getArmorType()));
+		size_t row (0);
 
 		for (size_t
 				i = 0;
 				i != RuleArmor::DAMAGE_TYPES;
 				++i)
 		{
-			const DamageType dType = static_cast<DamageType>(i);
-			const std::string st = ArticleState::getDamageTypeText(dType);
+			const DamageType dType (static_cast<DamageType>(i));
+			const std::string st (ArticleState::getDamageTypeText(dType));
 			if (st != "STR_UNKNOWN")
 			{
-				const int vulnr = static_cast<int>(Round(static_cast<double>(armorRule->getDamageModifier(dType)) * 100.));
+				const int vulnr (static_cast<int>(Round(static_cast<double>(armorRule->getDamageModifier(dType)) * 100.)));
 				_lstInfo->addRow(
-								2,
-								tr(st).c_str(),
-								Text::formatPercent(vulnr).c_str());
+							2,
+							tr(st).c_str(),
+							Text::formatPercent(vulnr).c_str());
 				_lstInfo->setCellColor(row++, 1, uPed_GREEN_SLATE);
 			}
 		}
 
 		if (unitRule->isLivingWeapon() == true)
 		{
-			std::string terrorWeapon = unitRule->getRace().substr(4) + "_WEAPON";
-			const RuleItem* const itRule = _game->getRuleset()->getItemRule(terrorWeapon);
+			const std::string terrorType (unitRule->getRace().substr(4) + "_WEAPON");
+			const RuleItem* const itRule (_game->getRuleset()->getItemRule(terrorType));
 			if (itRule != nullptr)
 			{
-				const DamageType dType = itRule->getDamageType();
-				const std::string stType = ArticleState::getDamageTypeText(dType);
+				const DamageType dType (itRule->getDamageType());
+				const std::string stType (ArticleState::getDamageTypeText(dType));
 				if (stType != "STR_UNKNOWN")
 				{
 					std::wstring wstPower;

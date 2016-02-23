@@ -1116,6 +1116,8 @@ void DebriefingState::prepareDebriefing() // private.
 					Soldier* const sol ((*i)->getGeoscapeSoldier());
 					if (sol != nullptr)
 					{
+						(*i)->postMissionProcedures(true);
+
 						if (_skirmish == false)
 							_missionCost += _base->soldierExpense(sol, true);
 
@@ -1128,20 +1130,16 @@ void DebriefingState::prepareDebriefing() // private.
 								j != _base->getSoldiers()->end();
 								++j)
 						{
-							if (*j == sol)
+							if (*j == sol) // note: Could return any armor the Soldier was wearing to Stores. CHEATER!!!!!
 							{
-								(*i)->postMissionProcedures(true);
 								(*j)->die(_gameSave);
-
 								delete *j;
 								_base->getSoldiers()->erase(j);
-
-								// note: Could return any armor the Soldier was wearing to Stores. CHEATER!!!!!
 								break;
 							}
 						}
 					}
-					else
+					else // support unit
 					{
 						if (_skirmish == false)
 							_missionCost += _base->supportExpense(
@@ -1150,6 +1148,20 @@ void DebriefingState::prepareDebriefing() // private.
 						addStat(
 							"STR_TANKS_DESTROYED",
 							-value);
+
+						++_itemsLostProperty[_rules->getItemRule((*i)->getType())];
+
+						const BattleItem* ordnance ((*i)->getItem(ST_RIGHTHAND));
+						if (ordnance != nullptr)
+						{
+							itRule = ordnance->getRules();
+							if (itRule->isFixed() == true
+								&& itRule->getFullClip() > 0
+								&& (ordnance = ordnance->getAmmoItem()) != nullptr)
+							{
+								_itemsLostProperty[ordnance->getRules()] += itRule->getFullClip(); // <- but check how ammunition gets expended
+							}
+						}
 					}
 					break;
 				}
@@ -1199,20 +1211,24 @@ void DebriefingState::prepareDebriefing() // private.
 								_missionCost += _base->supportExpense(quadrants * quadrants);
 							}
 
-							_base->getStorageItems()->addItem((*i)->getType()); // return the support-unit to Stores.
+							_base->getStorageItems()->addItem((*i)->getType());	// return the support-unit to Stores.
 
 							const BattleItem* ordnance ((*i)->getItem(ST_RIGHTHAND));
 							if (ordnance != nullptr)
 							{
+								int clip;
 								itRule = ordnance->getRules();
-								if (itRule->isFixed() == true)
-//									&& itRule->getBattleType() == BT_FIREARM
-//									&& itRule->getFullClip() > 0)
+								if (itRule->isFixed() == true
+									&& (clip = itRule->getFullClip()) > 0
+									&& (ordnance = ordnance->getAmmoItem()) != nullptr)
 								{
-									if ((ordnance = ordnance->getAmmoItem()) != nullptr)
-										_base->getStorageItems()->addItem( // return any load from the support-unit's fixed-weapon to Stores.
-																		ordnance->getRules()->getType(),
-																		ordnance->getAmmoQuantity()); // NOTE: Assumes any support-ammunition has fullClip = 1 (for now).
+									itRule = ordnance->getRules();
+									const int qtyLoad (ordnance->getAmmoQuantity());
+									_base->getStorageItems()->addItem(			// return any load from the support-unit's fixed-weapon to Stores.
+																	itRule->getType(),
+																	qtyLoad);
+									if (qtyLoad < clip)
+										_itemsLostProperty[itRule] += clip - qtyLoad;
 								}
 							}
 
@@ -1238,31 +1254,49 @@ void DebriefingState::prepareDebriefing() // private.
 					}
 					else
 					{
-						addStat(
-							"STR_XCOM_OPERATIVES_MISSING_IN_ACTION",
-							-value);
+						(*i)->instaKill();
 
 						Soldier* const sol ((*i)->getGeoscapeSoldier());
 						if (sol != nullptr)
 						{
+							(*i)->postMissionProcedures(true);
+							(*i)->getStatistics()->MIA = true;
+
+							addStat(
+								"STR_XCOM_OPERATIVES_MISSING_IN_ACTION",
+								-value);
+
 							for (std::vector<Soldier*>::const_iterator
 									j = _base->getSoldiers()->begin();
 									j != _base->getSoldiers()->end();
 									++j)
 							{
-								if (*j == sol)
+								if (*j == sol) // note: Could return any armor the Soldier was wearing to Stores. CHEATER!!!!!
 								{
-									(*i)->postMissionProcedures(true);
-									(*i)->getStatistics()->MIA = true;
-									(*i)->instaKill();
-
 									(*j)->die(_gameSave);
-
 									delete *j;
 									_base->getSoldiers()->erase(j);
-
-									// note: Could return any armor the Soldier was wearing to Stores. CHEATER!!!!!
 									break;
+								}
+							}
+						}
+						else // support unit
+						{
+							addStat(
+								"STR_TANKS_DESTROYED",
+								-value);
+
+							++_itemsLostProperty[_rules->getItemRule((*i)->getType())];
+
+							const BattleItem* ordnance ((*i)->getItem(ST_RIGHTHAND));
+							if (ordnance != nullptr)
+							{
+								itRule = ordnance->getRules();
+								if (itRule->isFixed() == true
+									&& itRule->getFullClip() > 0
+									&& (ordnance = ordnance->getAmmoItem()) != nullptr)
+								{
+									_itemsLostProperty[ordnance->getRules()] += itRule->getFullClip(); // <- but check how ammunition gets expended
 								}
 							}
 						}
@@ -1668,7 +1702,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 				_missingItems.push_back(stat);
 			}
 
-			quadrants = _rules->getArmor(_rules->getUnitRule(i->first)->getArmor())->getSize();
+			quadrants = _rules->getArmor(_rules->getUnitRule(i->first)->getArmorType())->getSize();
 			quadrants *= quadrants;
 
 			tanks = std::min(baseQty, i->second);
