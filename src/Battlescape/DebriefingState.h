@@ -150,6 +150,9 @@ private:
 		_itemsGained,
 		_itemsLostProperty;
 
+
+	std::map<std::wstring, std::vector<int>> _soldierStatInc;
+
 	std::vector<ReequipStat> _missingItems;
 
 	std::vector<DebriefingStat*> _stats;

@@ -189,6 +189,7 @@ DebriefingState::DebriefingState()
 
 	_lstTotal->setColumns(2, 244,36);
 	_lstTotal->setDot();
+	_lstTotal->setMargin(0);
 
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);	// note: Text is set in prepareDebriefing() before
 											// a possibly failed BaseDefense dangles '_base' ptr.
@@ -557,7 +558,8 @@ void DebriefingState::btnOkClick(Action*)
 												_base,
 												battleSave->getOperation(),
 												_itemsLostProperty,
-												_itemsGained));
+												_itemsGained,
+												_soldierStatInc));
 
 			if (_missingItems.empty() == false)
 				_game->pushState(new CannotReequipState(_missingItems));
@@ -1116,7 +1118,7 @@ void DebriefingState::prepareDebriefing() // private.
 					Soldier* const sol ((*i)->getGeoscapeSoldier());
 					if (sol != nullptr)
 					{
-						(*i)->postMissionProcedures(true);
+						_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true);
 
 						if (_skirmish == false)
 							_missionCost += _base->soldierExpense(sol, true);
@@ -1193,7 +1195,7 @@ void DebriefingState::prepareDebriefing() // private.
 						Soldier* const sol ((*i)->getGeoscapeSoldier());
 						if (sol != nullptr)
 						{
-							(*i)->postMissionProcedures();
+							_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures();
 
 							if (_skirmish == false)
 								_missionCost += _base->soldierExpense(sol);
@@ -1259,7 +1261,7 @@ void DebriefingState::prepareDebriefing() // private.
 						Soldier* const sol ((*i)->getGeoscapeSoldier());
 						if (sol != nullptr)
 						{
-							(*i)->postMissionProcedures(true);
+							_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true);
 							(*i)->getStatistics()->MIA = true;
 
 							addStat(

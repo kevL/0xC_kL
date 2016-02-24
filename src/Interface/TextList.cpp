@@ -996,7 +996,7 @@ void TextList::scrollUp(
 		if (_scroll > 0 && _rows.size() > _visibleRows)
 		{
 			if (toMax == true)
-				scrollTo(0);
+				scrollTo();
 			else
 			{
 				if (scrollByWheel == true)
@@ -1057,7 +1057,7 @@ void TextList::updateVisible()
 {
 	_visibleRows = 0;
 
-	const int delta_Y = _font->getHeight() + _font->getSpacing();
+	const int delta_Y (_font->getHeight() + _font->getSpacing());
 	for (int
 			y = 0;
 			y < getHeight();
@@ -1099,8 +1099,8 @@ void TextList::draw()
 {
 	Surface::draw();
 
-	int y = 0;
-	bool addPixel = false;
+	int y (0);
+	bool addPixel (false);
 
 	if (_rows.empty() == false)
 	{
@@ -1160,7 +1160,7 @@ void TextList::blit(Surface* surface)
 	{
 		if (_arrowPos != -1 && _rows.empty() == false)
 		{
-			int y = getY();
+			int y (getY());
 			for (size_t
 					row = _scroll;
 					row != 0 && _rows[row] == _rows[row - 1];
@@ -1169,7 +1169,7 @@ void TextList::blit(Surface* surface)
 				y -= _font->getHeight() + _font->getSpacing();
 			}
 
-			int maxY = getY() + getHeight();
+			int maxY (getY() + getHeight());
 			for (size_t
 					i = _rows[_scroll];
 					i != _texts.size() && i != _rows[_scroll] + _visibleRows && y < maxY;
@@ -1212,15 +1212,14 @@ void TextList::handle(Action* action, State* state)
 
 	if (_arrowPos != -1 && _rows.empty() == false)
 	{
-		size_t startId = _rows[_scroll];
+		size_t startId (_rows[_scroll]);
 		if (_scroll > 0 && _rows[_scroll] == _rows[_scroll - 1])
 			++startId; // arrows for first partly-visible line of text are offscreen - so don't process them
 
 		size_t
-			endId = _rows[_scroll] + 1,
-			endRow = std::min(
-						_rows.size(),
-						_scroll + _visibleRows);
+			endId (_rows[_scroll] + 1),
+			endRow (std::min(_rows.size(),
+							 _scroll + _visibleRows));
 
 		for (size_t
 				i = _scroll + 1;
@@ -1273,7 +1272,7 @@ void TextList::think()
  */
 void TextList::mousePress(Action* action, State* state)
 {
-	bool allowScroll = true;
+	bool allowScroll (true);
 
 	if (Options::changeValueByMouseWheel)
 	{
@@ -1347,7 +1346,7 @@ void TextList::mouseOver(Action* action, State* state)
 {
 	if (_selectable == true)
 	{
-		int h = _font->getHeight() + _font->getSpacing();
+		int h (_font->getHeight() + _font->getSpacing());
 		_selRow = std::max(
 						0,
 						static_cast<int>(_scroll)
@@ -1361,8 +1360,8 @@ void TextList::mouseOver(Action* action, State* state)
 																// and finally fills the titleRow w/ the relevant awardName; the last titleRow
 																// is added, but there are no soldiers nor awards for it.
 			//Log(LOG_INFO) << ". text at [" << _selRow << "] = " << Language::wstrToCp(_texts[_selRow][0]->getText());
-			const Text* const selText = _texts[_rows[_selRow]].front();
-			int y = getY() + selText->getY();
+			const Text* const selText (_texts[_rows[_selRow]].front());
+			int y (getY() + selText->getY());
 			h = selText->getHeight() + _font->getSpacing();
 
 			if (y < getY() || y + h > getY() + getHeight())
@@ -1424,17 +1423,15 @@ size_t TextList::getScroll()
 
 /**
  * Sets the scroll depth.
- * @param scroll - set the scroll depth
+ * @param scroll - set the scroll depth (default 0)
  */
 void TextList::scrollTo(size_t scroll)
 {
 	if (_scrollable == true)
 	{
-		_scroll = static_cast<size_t>(std::max(
-											0,
-											std::min(
-													static_cast<int>(_rows.size() - _visibleRows),
-													static_cast<int>(scroll))));
+		_scroll = static_cast<size_t>(std::max(0,
+											   std::min(static_cast<int>(_rows.size() - _visibleRows),
+														static_cast<int>(scroll))));
 
 		draw(); // can't just set _redraw here because Reasons!
 		updateArrows();

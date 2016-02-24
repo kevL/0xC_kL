@@ -327,7 +327,7 @@ void UnitDieBState::convertToBody() // private.
 
 	if (carried == true) // unconscious unit is being carried when it dies
 	{
-		for (std::vector<BattleItem*>::const_iterator // replace the unconscious body item with a corpse in the carrying unit's inventory
+		for (std::vector<BattleItem*>::const_iterator // change the unconscious body-item to a corpse in the carrying unit's inventory
 				i = _battleSave->getItems()->begin();
 				i != _battleSave->getItems()->end();
 				++i)
@@ -405,7 +405,7 @@ void UnitDieBState::convertToBody() // private.
 
 				if (tile != nullptr						// kL, safety. (had a CTD when ethereal dies on water).
 					&& tile->getTileUnit() == _unit)	// <- check in case unit was displaced by another unit ... that sounds pretty darn shakey.
-				{										// TODO: iterate over all mapTiles searching for the unit and nullptr-ing any tile's association to it.
+				{										// TODO: iterate over all mapTiles searching for the unit and nullptring any tile's association to it.
 					tile->setUnit(nullptr);
 				}
 

@@ -92,7 +92,7 @@ CannotReequipState::CannotReequipState(std::vector<ReequipStat> missingItems)
 	_txtCraft->setText(tr("STR_CRAFT"));
 
 
-	_lstItems->setColumns(3, 154,46,80);
+	_lstItems->setColumns(3, 154,46,72);
 	_lstItems->setBackground(_window);
 	_lstItems->setSelectable();
 

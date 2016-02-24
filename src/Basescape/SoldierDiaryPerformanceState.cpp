@@ -404,15 +404,15 @@ void SoldierDiaryPerformanceState::init()
 		_srfLevel[i]->clear();
 	}
 
-	_lstRank			->scrollTo(0); // reset scroll depth for lists
-	_lstRace			->scrollTo(0);
-	_lstWeapon			->scrollTo(0);
-	_lstKillTotals		->scrollTo(0);
-	_lstLocation		->scrollTo(0);
-	_lstType			->scrollTo(0);
-	_lstUFO				->scrollTo(0);
-	_lstMissionTotals	->scrollTo(0);
-	_lstAwards			->scrollTo(0);
+	_lstRank			->scrollTo(); // reset scroll depth for lists
+	_lstRace			->scrollTo();
+	_lstWeapon			->scrollTo();
+	_lstKillTotals		->scrollTo();
+	_lstLocation		->scrollTo();
+	_lstType			->scrollTo();
+	_lstUFO				->scrollTo();
+	_lstMissionTotals	->scrollTo();
+	_lstAwards			->scrollTo();
 	_lastScrollPos		= 0;
 
 

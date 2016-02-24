@@ -3363,16 +3363,15 @@ void BattleUnit::addMeleeExp(int qty)
 }
 
 /**
- * Calculates experience increases and if wounded days to spend in sickbay.
+ * Calculates experience increases and days to spend in sickbay if wounded.
  * @param dead - true if dead or missing (default false)
+ * @return, a vector of increases as ints
  */
-void BattleUnit::postMissionProcedures(const bool dead)
+std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 {
 	_geoscapeSoldier->postTactical(_kills);
 
 	UnitStats* const stats (_geoscapeSoldier->getCurrentStats());
-	const UnitStats caps (_geoscapeSoldier->getRules()->getStatCaps());
-
 	if (dead == false && stats->health > _health)
 	{
 		const int recovery (stats->health - _health);
@@ -3381,17 +3380,28 @@ void BattleUnit::postMissionProcedures(const bool dead)
 												 recovery));
 	}
 
+	static const size_t STATS (11u);
+	std::vector<int> statIncs (STATS, 0);
+
+	const UnitStats caps (_geoscapeSoldier->getRules()->getStatCaps());
+
 	if (_expBravery != 0
 		&& stats->bravery < caps.bravery)
 	{
 		if (_expBravery > RNG::generate(0,8))
+		{
 			stats->bravery += 10;
+			statIncs[0] = 10;
+		}
 	}
 
+	int inc;
 	if (_expFiring != 0
 		&& stats->firing < caps.firing)
 	{
-		stats->firing += improveStat(_expFiring);
+		inc = improveStat(_expFiring);
+		stats->firing += inc;
+		statIncs[1] = inc;
 
 		// add a touch of reactions if good firing .....
 		if (_expFiring - 2 > 0
@@ -3404,31 +3414,41 @@ void BattleUnit::postMissionProcedures(const bool dead)
 	if (_expReactions != 0
 		&& stats->reactions < caps.reactions)
 	{
-		stats->reactions += improveStat(_expReactions);
+		inc = improveStat(_expReactions);
+		stats->reactions += inc;
+		statIncs[2] = inc;
 	}
 
 	if (_expMelee != 0
 		&& stats->melee < caps.melee)
 	{
-		stats->melee += improveStat(_expMelee);
+		inc = improveStat(_expMelee);
+		stats->melee += inc;
+		statIncs[3] = inc;
 	}
 
 	if (_expPsiSkill != 0
 		&& stats->psiSkill < caps.psiSkill)
 	{
-		stats->psiSkill += improveStat(_expPsiSkill);
+		inc = improveStat(_expPsiSkill);
+		stats->psiSkill += inc;
+		statIncs[4] = inc;
 	}
 
 	if ((_expPsiStrength /= 3) != 0
 		&& stats->psiStrength < caps.psiStrength)
 	{
-		stats->psiStrength += improveStat(_expPsiStrength);
+		inc = improveStat(_expPsiStrength);
+		stats->psiStrength += inc;
+		statIncs[5] = inc;
 	}
 
 	if (_expThrowing != 0
 		&& stats->throwing < caps.throwing)
 	{
-		stats->throwing += improveStat(_expThrowing);
+		inc = improveStat(_expThrowing);
+		stats->throwing += inc;
+		statIncs[6] = inc;
 	}
 
 
@@ -3448,25 +3468,39 @@ void BattleUnit::postMissionProcedures(const bool dead)
 		{
 			int delta (caps.tu - stats->tu);
 			if (delta > 0)
-				stats->tu += RNG::generate(0,
-										(delta / 10) + 2) - 1;
+			{
+				inc = RNG::generate(0, (delta / 10) + 2) - 1;
+				stats->tu += inc;
+				statIncs[7] = inc;
+			}
 
 			delta = caps.health - stats->health;
 			if (delta > 0)
-				stats->health += RNG::generate(0,
-										(delta / 10) + 2) - 1;
+			{
+				inc = RNG::generate(0, (delta / 10) + 2) - 1;
+				stats->health += inc;
+				statIncs[8] = inc;
+			}
 
 			delta = caps.strength - stats->strength;
 			if (delta > 0)
-				stats->strength += RNG::generate(0,
-										(delta / 10) + 2) - 1;
+			{
+				inc = RNG::generate(0, (delta / 10) + 2) - 1;
+				stats->strength += inc;
+				statIncs[9] = inc;
+			}
 
 			delta = caps.stamina - stats->stamina;
 			if (delta > 0)
-				stats->stamina += RNG::generate(0,
-										(delta / 10) + 2) - 1;
+			{
+				inc = RNG::generate(0, (delta / 10) + 2) - 1;
+				stats->stamina += inc;
+				statIncs[10] = inc;
+			}
 		}
 	}
+
+	return statIncs;
 }
 
 /**
@@ -3550,7 +3584,6 @@ int BattleUnit::getTurretType() const
 int BattleUnit::getFatalWounds() const
 {
 	int ret = 0;
-
 	for (size_t
 			i = 0;
 			i != PARTS_BODY;
@@ -3558,7 +3591,6 @@ int BattleUnit::getFatalWounds() const
 	{
 		ret += _fatalWounds[i];
 	}
-
 	return ret;
 }
 
@@ -3667,7 +3699,7 @@ const RuleArmor* BattleUnit::getArmor() const
 	return _armor;
 }
 
-/*
+/**
  * Checks if unit is wearing a PowerSuit.
  * @return, true if this unit is wearing a PowerSuit of some sort
  *
@@ -3690,7 +3722,7 @@ bool BattleUnit::hasPowerSuit() const
 	return false;
 } */
 
-/*
+/**
  * Checks if unit is wearing a FlightSuit.
  * @return, true if this unit is wearing a FlightSuit of some sort
  *

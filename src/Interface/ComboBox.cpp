@@ -444,7 +444,7 @@ void ComboBox::toggle(bool init)
 	if (_list->getVisible() == true)
 	{
 		if (_sel < _list->getVisibleRows() / 2)
-			_list->scrollTo(0);
+			_list->scrollTo();
 		else
 			_list->scrollTo(_sel - _list->getVisibleRows() / 2);
 	}

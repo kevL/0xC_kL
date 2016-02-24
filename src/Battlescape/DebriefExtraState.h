@@ -62,6 +62,7 @@ private:
 	std::map<const RuleItem*, int>
 		_itemsGained,
 		_itemsLost;
+	std::map<std::wstring, std::vector<int>> _soldierStatInc;
 
 	Text
 		* _txtBaseLabel,
@@ -88,7 +89,8 @@ private:
 				const Base* const base,
 				std::wstring operation,
 				std::map<const RuleItem*, int> itemsLost,
-				std::map<const RuleItem*, int> itemsGained);
+				std::map<const RuleItem*, int> itemsGained,
+				std::map<std::wstring, std::vector<int>> soldierStatInc);
 		/// Cleans up the DebriefExtra state.
 		~DebriefExtraState();
 

@@ -92,7 +92,7 @@ PromotionsState::PromotionsState()
 
 	_txtBase->setText(tr("STR_BASE"));
 
-	_lstSoldiers->setColumns(3, 126,70,81);
+	_lstSoldiers->setColumns(3, 126,70,80);
 	_lstSoldiers->setBackground(_window);
 	_lstSoldiers->setSelectable();
 

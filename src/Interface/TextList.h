@@ -301,7 +301,7 @@ private:
 		/// get the scroll depth
 		size_t getScroll();
 		/// set the scroll depth
-		void scrollTo(size_t scroll);
+		void scrollTo(size_t scroll = 0);
 
 		/// Attaches this button to a combobox.
 		void setComboBox(ComboBox* comboBox);

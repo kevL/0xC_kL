@@ -108,7 +108,7 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 	else
 	{
 		unitRule = nullptr;
-		Log(LOG_INFO) << "ERROR: rules not found for unit - " << type;
+		Log(LOG_WARNING) << "Rules not found for unit: " << type;
 	}
 
 	if (unitRule != nullptr)

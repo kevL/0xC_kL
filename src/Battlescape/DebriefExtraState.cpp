@@ -51,10 +51,12 @@ DebriefExtraState::DebriefExtraState(
 		const Base* const base,
 		std::wstring operation,
 		std::map<const RuleItem*, int> itemsLost,
-		std::map<const RuleItem*, int> itemsGained)
+		std::map<const RuleItem*, int> itemsGained,
+		std::map<std::wstring, std::vector<int>> soldierStatInc)
 	:
 		_itemsLost(itemsLost),
 		_itemsGained(itemsGained),
+		_soldierStatInc(soldierStatInc),
 		_curScreen(DES_SOL_STATS)
 {
 	_window			= new Window(this, 320, 200);
@@ -101,17 +103,16 @@ DebriefExtraState::DebriefExtraState(
 
 	_txtBaseLabel->setText(base->getName(_game->getLanguage()));
 
-	_lstSolStats->setColumns(1, 176);
+	_lstSolStats->setColumns(12, 90,17,17,17,17,17,17,17,17,17,17,17);
 	_lstSolStats->setBackground(_window);
 	_lstSolStats->setSelectable();
-	_lstSolStats->setDot();
 
-	_lstGained->setColumns(2, 200,50);
+	_lstGained->setColumns(2, 242,35);
 	_lstGained->setBackground(_window);
 	_lstGained->setSelectable();
 	_lstGained->setVisible(false);
 
-	_lstLost->setColumns(2, 200,50);
+	_lstLost->setColumns(2, 242,35);
 	_lstLost->setBackground(_window);
 	_lstLost->setSelectable();
 	_lstLost->setVisible(false);
@@ -140,6 +141,7 @@ void DebriefExtraState::btnOkClick(Action*)
 			if (_itemsGained.empty() == false)
 			{
 				_curScreen = DES_LOOT_GAINED;
+				_lstGained->scrollTo();
 				_lstGained->setVisible();
 				break;
 			} // no break;
@@ -149,6 +151,7 @@ void DebriefExtraState::btnOkClick(Action*)
 			if (_itemsLost.empty() == false)
 			{
 				_curScreen = DES_LOOT_LOST;
+				_lstLost->scrollTo();
 				_lstLost->setVisible();
 				break;
 			} // no break;
@@ -163,7 +166,43 @@ void DebriefExtraState::btnOkClick(Action*)
  */
 void DebriefExtraState::buildSoldierStats() // private.
 {
+	_lstSolStats->addRow(
+					12,
+					L"",
+					L"bra",
+					L"fir",
+					L"rea",
+					L"mel",
+					L"pa",
+					L"pd",
+					L"thr",
+					L"tu",
+					L"hth",
+					L"str",
+					L"sta");
 
+	size_t row (1u);
+	for (std::map<std::wstring, std::vector<int>>::const_iterator
+			i = _soldierStatInc.begin();
+			i != _soldierStatInc.end();
+			++i, ++row)
+	{
+		_lstSolStats->addRow(
+						12,
+						i->first.c_str(),
+						i->second[0] ? Text::intWide(i->second[0]).c_str() : L"",
+						i->second[1] ? Text::intWide(i->second[1]).c_str() : L"",
+						i->second[2] ? Text::intWide(i->second[2]).c_str() : L"",
+						i->second[3] ? Text::intWide(i->second[3]).c_str() : L"",
+						i->second[4] ? Text::intWide(i->second[4]).c_str() : L"",
+						i->second[5] ? Text::intWide(i->second[5]).c_str() : L"",
+						i->second[6] ? Text::intWide(i->second[6]).c_str() : L"",
+						i->second[7] ? Text::intWide(i->second[7]).c_str() : L"",
+						i->second[8] ? Text::intWide(i->second[8]).c_str() : L"",
+						i->second[9] ? Text::intWide(i->second[9]).c_str() : L"",
+						i->second[10] ? Text::intWide(i->second[10]).c_str() : L"");
+		_lstSolStats->setRowColor(row, YELLOW);
+	}
 }
 
 /**
@@ -205,7 +244,6 @@ void DebriefExtraState::styleList( // private.
 			// well, that was !NOT! easy.
 			color = GREEN;
 		}
-
 
 		list->addRow(
 				2,

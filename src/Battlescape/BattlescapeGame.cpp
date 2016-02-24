@@ -271,7 +271,7 @@ void BattlescapeGame::statePushNext(BattleState* const battleState)
 }
 
 /**
- * Pushes a BattleState to the top of the stack.
+ * Pushes a BattleState to the back of the states-vector.
  * @note Passing in NULL causes an end-turn request.
  * @param battleState - pointer to BattleState (default nullptr)
  */
