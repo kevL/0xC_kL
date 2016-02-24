@@ -418,7 +418,6 @@ PurchaseState::PurchaseState(Base* const base)
 			if (itRule->getBattleType() == BT_AMMO)			// weapon clips & HWP rounds
 //					|| (itRule->getBattleType() == BT_NONE	// craft weapon rounds - ^HANDLED ABOVE^^
 //						&& itRule->getClipSize() != 0))
-//				&& itRule->getType() != rules->getAlienFuelType())
 			{
 				doColor = true;
 				item.insert(0, L"  ");

@@ -1159,7 +1159,7 @@ void DebriefingState::prepareDebriefing() // private.
 								&& itRule->getFullClip() > 0
 								&& (ordnance = ordnance->getAmmoItem()) != nullptr)
 							{
-								_itemsLostProperty[ordnance->getRules()] += itRule->getFullClip(); // <- but check how ammunition gets expended
+								_itemsLostProperty[ordnance->getRules()] += itRule->getFullClip();
 							}
 						}
 					}
@@ -1254,7 +1254,7 @@ void DebriefingState::prepareDebriefing() // private.
 					}
 					else
 					{
-						(*i)->instaKill();
+						(*i)->setUnitStatus(STATUS_DEAD);
 
 						Soldier* const sol ((*i)->getGeoscapeSoldier());
 						if (sol != nullptr)
@@ -1296,7 +1296,7 @@ void DebriefingState::prepareDebriefing() // private.
 									&& itRule->getFullClip() > 0
 									&& (ordnance = ordnance->getAmmoItem()) != nullptr)
 								{
-									_itemsLostProperty[ordnance->getRules()] += itRule->getFullClip(); // <- but check how ammunition gets expended
+									_itemsLostProperty[ordnance->getRules()] += itRule->getFullClip();
 								}
 							}
 						}
@@ -1899,12 +1899,12 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 void DebriefingState::recoverLiveAlien(BattleUnit* const unit) // private.
 {
 //	std::string type;
-//	if ((*i)->getSpawnUnit().empty() == false)	// btw. This should never happen.
-//		type = (*i)->getSpawnUnit();			// Zombies can't be MC'd basically. Can't be stunned either.
+//	if ((*i)->getSpawnType().empty() == false)	// btw. This should never happen.
+//		type = (*i)->getSpawnType();			// Zombies can't be MC'd basically. Can't be stunned either.
 //	else										// And Soldiers should spawn into zombies ~immediately.
 //		type = (*i)->getType();					// Plus aLiens can't be zombified.
 
-//	if (unit->getSpawnUnit().empty() == false) // DON'T USE THIS IT CAN BREAK THE ITERATOR.
+//	if (unit->getSpawnType().empty() == false) // DON'T USE THIS IT CAN BREAK THE ITERATOR.
 //	{
 //		BattleUnit* const conUnit (_gameSave->getBattleSave()->getBattleGame()->speedyConvert(unit));
 //		conUnit->setFaction(FACTION_PLAYER);
@@ -1938,8 +1938,8 @@ void DebriefingState::recoverLiveAlien(BattleUnit* const unit) // private.
 			unit->getValue() / 3);
 
 //		std::string corpseItem;
-//		if (unit->getSpawnUnit().empty() == false)
-//			corpseItem = _rules->getArmor(_rules->getUnit(unit->getSpawnUnit())->getArmor())->getCorpseGeoscape();
+//		if (unit->getSpawnType().empty() == false)
+//			corpseItem = _rules->getArmor(_rules->getUnit(unit->getSpawnType())->getArmor())->getCorpseGeoscape();
 //		else
 //			corpseItem = unit->getArmor()->getCorpseGeoscape();
 //		const std::string corpseItem (unit->getArmor()->getCorpseGeoscape());

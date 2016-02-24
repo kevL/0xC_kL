@@ -249,7 +249,7 @@ private:
 		_race,
 		_rank,
 		_type,
-		_spawnUnit;
+		_spawnType;
 
 //	std::vector<std::string> _builtInWeapons;
 
@@ -307,7 +307,7 @@ private:
 		/// Gets the unit's special ability power (fire or explode).
 		int getSpecabPower() const;
 		/// Gets the unit's spawn unit.
-		const std::string& getSpawnUnit() const;
+		const std::string& getSpawnType() const;
 
 		/// Gets stamina recovery per turn as a percentage.
 		int getEnergyRecovery() const;

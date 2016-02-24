@@ -95,7 +95,7 @@ void RuleUnit::load(
 	_mechanical		= node["mechanical"]	.as<bool>(_mechanical);
 	_psiBlock		= node["psiBlock"]		.as<bool>(_psiBlock);
 	_hasHands		= node["hasHands"]		.as<bool>(_hasHands);
-	_spawnUnit		= node["spawnUnit"]		.as<std::string>(_spawnUnit);
+	_spawnType		= node["spawnType"]		.as<std::string>(_spawnType);
 	_specabPower	= node["specabPower"]	.as<int>(_specabPower);
 	_specab			= static_cast<SpecialAbility>(node["specab"].as<int>(_specab));
 
@@ -270,9 +270,9 @@ int RuleUnit::getSpecabPower() const
  * Gets the unit that is spawned when this one dies.
  * @return, the unit's spawn unit
  */
-const std::string& RuleUnit::getSpawnUnit() const
+const std::string& RuleUnit::getSpawnType() const
 {
-	return _spawnUnit;
+	return _spawnType;
 }
 
 /**
@@ -343,7 +343,7 @@ bool RuleUnit::isDog() const
  * - isPsiAttackable / isSentient <- DONE
  * - canRevive (from status_Unconscious)
  * - canChangeMorale (see isMoralable())
- * - isInfectable (can have a spawnUnit string set on it)
+ * - isInfectable (can have a spawnType string set on it)
  * - isMetal (cannot catch fire)
  * - canOpenDoors etc.
  * @return, true if this is a non-organic purely mechanical unit

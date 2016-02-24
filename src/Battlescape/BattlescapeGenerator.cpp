@@ -1210,10 +1210,7 @@ BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // priv
 			}
 
 			load->setAmmoQuantity(vehicle->getLoad());
-//			load->setProperty();
 		}
-
-//		weapon->setProperty();
 
 /*		if (unitRule->getBuiltInWeapons().empty() == false) // add item(builtInWeapon) -- what about ammo
 		{

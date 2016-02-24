@@ -218,7 +218,7 @@ private:
 		_hostileUnitsThisTurn;
 //	std::vector<Tile*> _visibleTiles;
 
-	std::string _spawnUnit;
+	std::string _spawnType;
 
 	// static data
 	UnitStats _stats;
@@ -733,7 +733,7 @@ private:
 		void setFaction(UnitFaction faction);
 
 		/// Gets if this unit is about to die.
-		bool getAboutToFall() const;
+		bool getAboutToCollapse() const;
 
 		/// Sets this unit's health to 0 and status to dead.
 		void instaKill();
@@ -741,9 +741,9 @@ private:
 		void putDown();
 
 		/// Gets this unit's spawn unit.
-		std::string getSpawnUnit() const;
+		std::string getSpawnType() const;
 		/// Sets this unit's spawn unit.
-		void setSpawnUnit(const std::string& spawnUnit);
+		void setSpawnUnit(const std::string& spawnType);
 
 		/// Gets the faction that killed this unit.
 		UnitFaction killedBy() const;

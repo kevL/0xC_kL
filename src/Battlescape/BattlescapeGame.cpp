@@ -132,7 +132,7 @@ BattlescapeGame::BattlescapeGame(
 }
 
 /**
- * Delete BattlescapeGame.
+ * Deletes BattlescapeGame.
  */
 BattlescapeGame::~BattlescapeGame()
 {
@@ -149,7 +149,7 @@ BattlescapeGame::~BattlescapeGame()
 }
 
 /**
- * Initializes the Battlescape game.
+ * Initializes this BattlescapeGame.
  */
 void BattlescapeGame::init()
 {
@@ -222,7 +222,7 @@ void BattlescapeGame::think()
 }
 
 /**
- * Gives a time slice to the front state.
+ * Gives a time slice to the front BattleState.
  * @note The period is controlled by '_tacticalTimer' in BattlescapeState.
  */
 void BattlescapeGame::handleState()
@@ -244,7 +244,7 @@ void BattlescapeGame::handleState()
 }
 
 /**
- * Pushes a state to the front of the queue and starts it.
+ * Pushes a BattleState to the front of the queue and starts it.
  * @param battleState - pointer to BattleState
  */
 void BattlescapeGame::statePushFront(BattleState* const battleState)
@@ -254,7 +254,7 @@ void BattlescapeGame::statePushFront(BattleState* const battleState)
 }
 
 /**
- * Pushes a state as the next state after the current one.
+ * Pushes a BattleState as the next state after the current one.
  * @param battleState - pointer to BattleState
  */
 void BattlescapeGame::statePushNext(BattleState* const battleState)
@@ -266,12 +266,12 @@ void BattlescapeGame::statePushNext(BattleState* const battleState)
 	}
 	else
 		_battleStates.insert(
-					++_battleStates.begin(),
-					battleState);
+						++_battleStates.begin(),
+						battleState);
 }
 
 /**
- * Pushes a state to the back.
+ * Pushes a BattleState to the top of the stack.
  * @note Passing in NULL causes an end-turn request.
  * @param battleState - pointer to BattleState (default nullptr)
  */
@@ -1364,13 +1364,13 @@ void BattlescapeGame::endTurn() // private.
 //		tile = _battleSave->getTileEngine()->checkForTerrainExplosions();
 
 		statePushBack();	// this will repeatedly call another endTurn() so there's
-		return;					// no need to continue this one till all explosions are done.
-								// The problem arises because _battleSave->endFactionTurn() below
-								// causes *more* destruction of explosive objects, that won't explode
-								// until some later instantiation of ExplosionBState .....
-								//
-								// As to why this doesn't simply loop like other calls to
-								// do terrainExplosions, i don't know.
+		return;				// no need to continue this one till all explosions are done.
+							// The problem arises because _battleSave->endFactionTurn() below
+							// causes *more* destruction of explosive objects, that won't explode
+							// until some later instantiation of ExplosionBState .....
+							//
+							// As to why this doesn't simply loop like other calls to
+							// do terrainExplosions, i don't know.
 	}
 
 //	if (_endTurnProcessed == false)
@@ -1531,9 +1531,8 @@ void BattlescapeGame::endTurn() // private.
 	if (_endTurnRequested == true)
 	{
 		_endTurnRequested = false;
-
-		if (_battleSave->getSide() != FACTION_NEUTRAL
-			|| battleComplete == true)
+		if (battleComplete == true
+			|| _battleSave->getSide() != FACTION_NEUTRAL)
 		{
 			_parentState->getGame()->delayBlit();
 			_parentState->getGame()->pushState(new NextTurnState(
@@ -1667,7 +1666,7 @@ void BattlescapeGame::checkForCasualties(
 
 			if (dead == false) // for converting infected units that aren't dead.
 			{
-				if ((*i)->getSpawnUnit() == "STR_ZOMBIE") // human->zombie (nobody cares about zombie->chryssalid)
+				if ((*i)->getSpawnType() == "STR_ZOMBIE") // human->zombie (nobody cares about zombie->chryssalid)
 				{
 					converted = true; // do morale changes but not collapsing animations.
 					convertedUnits.push_back(*i);
@@ -2951,7 +2950,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 	{
 		case STATUS_UNCONSCIOUS:
 			unit->setUnitStatus(STATUS_DEAD);
-			unit->setHealth(0); // nobreak;
+			unit->setHealth(0); // no break;
 		case STATUS_DEAD:
 			_battleSave->deleteBody(unit);
 			break;
@@ -2970,17 +2969,16 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 		dropItem(unit->getPosition(), *i);
 		(*i)->setOwner();
 	}
-
 	unit->getInventory()->clear();
 
 	unit->setTile(nullptr);
 	_battleSave->getTile(unit->getPosition())->setUnit(nullptr);
 
 
-	std::string st (unit->getSpawnUnit());
+	std::string st (unit->getSpawnType());
 	RuleUnit* const unitRule (getRuleset()->getUnitRule(st));
-	st = unitRule->getArmorType();
 
+	st = unitRule->getArmorType();
 	BattleUnit* const conUnit (new BattleUnit(
 											unitRule,
 											FACTION_HOSTILE,
@@ -2990,12 +2988,11 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 											_parentState->getGame()->getSavedGame()->getMonthsPassed(),
 											this));
 
-	const Position posUnit (unit->getPosition());
-	_battleSave->getTile(posUnit)->setUnit(
-										conUnit,
-										_battleSave->getTile(posUnit + Position(0,0,-1)));
-	conUnit->setPosition(posUnit);
-	conUnit->setTimeUnits(0);
+	const Position pos (unit->getPosition());
+	_battleSave->getTile(pos)->setUnit(
+									conUnit,
+									_battleSave->getTile(pos + Position(0,0,-1)));
+	conUnit->setPosition(pos);
 
 	int dir;
 	if (conUnit->isZombie() == true)
@@ -3003,6 +3000,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 	else
 		dir = 3;
 	conUnit->setUnitDirection(dir);
+	conUnit->setTimeUnits(0);
 
 	_battleSave->getUnits()->push_back(conUnit);
 
@@ -3014,13 +3012,14 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 										_battleSave->getCanonicalBattleId()));
 	item->changeOwner(conUnit);
 	item->setInventorySection(getRuleset()->getInventoryRule(ST_RIGHTHAND));
+
 	_battleSave->getItems()->push_back(item);
 
 	getMap()->cacheUnit(conUnit);
 	conUnit->setUnitVisible(wasVisible);
 
 	getTileEngine()->applyGravity(conUnit->getTile());
-//	getTileEngine()->calculateUnitLighting(); // <- done in UnitDieBState. But does pre-Spawned unit always go through UnitDieBState, and if not does it matter ...
+	getTileEngine()->calculateUnitLighting();
 	getTileEngine()->calculateFOV(conUnit->getPosition(), true);
 
 	return conUnit;
@@ -3052,7 +3051,7 @@ void BattlescapeGame::speedyConvert(BattleUnit* const unit)
 	_battleSave->getTile(unit->getPosition())->setUnit(nullptr);
 
 
-	std::string st (unit->getSpawnUnit());
+	std::string st (unit->getSpawnType());
 	RuleUnit* const unitRule (getRuleset()->getUnitRule(st));
 	st = unitRule->getArmor();
 

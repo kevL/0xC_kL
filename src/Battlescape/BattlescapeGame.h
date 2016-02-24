@@ -260,17 +260,17 @@ private:
 		/// Checks for units panicking or falling and so on.
 		void think();
 
-		/// Handles states timer.
+		/// Handles the BattleState timer.
 		void handleState();
-		/// Pushes a state to the front of the list.
+		/// Pushes a BattleState to the front of the list.
 		void statePushFront(BattleState* const battleState);
-		/// Pushes a state to second on the list.
+		/// Pushes a BattleState to second on the list.
 		void statePushNext(BattleState* const battleState);
-		/// Pushes a state to the back of the list.
+		/// Pushes a BattleState to the back of the list.
 		void statePushBack(BattleState* const battleState = nullptr);
-		/// Removes current state.
+		/// Removes the current BattleState.
 		void popState();
-		/// Sets state think interval.
+		/// Sets the BattleState think interval.
 		void setStateInterval(Uint32 interval);
 
 		/// Handles unit AI.

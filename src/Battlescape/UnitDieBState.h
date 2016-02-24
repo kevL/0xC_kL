@@ -54,7 +54,7 @@ private:
 	DamageType _dType;
 
 	/// Converts a BattleUnit to a body-item.
-	void convertToBodyItem();
+	void convertToBody();
 	/// Centers Camera on a collapsing BattleUnit.
 	void centerOnUnitDeath();
 

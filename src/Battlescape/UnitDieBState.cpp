@@ -104,7 +104,7 @@ UnitDieBState::UnitDieBState(
 		if (_unit->getFaction() == FACTION_PLAYER)
 			_parent->getMap()->setUnitDying();
 
-		if (_unit->getSpawnUnit().empty() == false)
+		if (_unit->getSpawnType().empty() == false)
 			_unit->setDirectionTo(3); // -> STATUS_TURNING if not facing correctly. Else STATUS_STANDING
 		else
 			_unit->initDeathSpin(); // -> STATUS_TURNING
@@ -114,7 +114,7 @@ UnitDieBState::UnitDieBState(
 		if (_unit->isOut_t(OUT_HEALTH) == true)
 			_unit->instaKill();
 		else
-			_unit->knockOut(); // convert if has a "spawnUnit" set. Else sets health0 / stun=health
+			_unit->knockOut(); // convert if has a "spawnType" set. Else sets health0 / stun=health
 	}
 }
 
@@ -179,7 +179,7 @@ void UnitDieBState::think()
 		_parent->setStateInterval(BattlescapeState::STATE_INTERVAL_STANDARD);
 		_unit->startCollapsing(); // -> STATUS_COLLAPSING
 
-		if (_unit->getSpawnUnit().empty() == false)
+		if (_unit->getSpawnType().empty() == false)
 		{
 			while (_unit->getUnitStatus() == STATUS_COLLAPSING)
 				_unit->keepCollapsing(); // -> STATUS_DEAD or STATUS_UNCONSCIOUS ( ie. isOut() ) -> goto #4
@@ -195,7 +195,7 @@ void UnitDieBState::think()
 				i != _battleSave->getUnits()->end();
 				++i)
 		{
-			if ((*i)->getAboutToFall() == true)
+			if ((*i)->getAboutToCollapse() == true)
 			{
 				moreDead = true;
 				break;
@@ -216,7 +216,7 @@ void UnitDieBState::think()
 			if (_unit->getUnitStatus() == STATUS_DEAD)
 			{
 				if (_dType == DT_NONE
-					&& _unit->getSpawnUnit().empty() == true)
+					&& _unit->getSpawnType().empty() == true)
 				{
 					stInfo = "STR_HAS_DIED_FROM_A_FATAL_WOUND"; // ... or a Morphine overdose.
 				}
@@ -230,9 +230,7 @@ void UnitDieBState::think()
 			{
 				Game* const game (_battleSave->getBattleState()->getGame());
 				const Language* const lang (game->getLanguage());
-				game->pushState(new InfoboxOKState(lang->getString(
-																stInfo,
-																_unit->getGender())
+				game->pushState(new InfoboxOKState(lang->getString(stInfo, _unit->getGender())
 															.arg(_unit->getName(lang))));
 			}
 		}
@@ -266,8 +264,8 @@ void UnitDieBState::think()
 		else
 			_unit->putDown();
 
-		if (_unit->getSpawnUnit().empty() == true)
-			convertToBodyItem();
+		if (_unit->getSpawnType().empty() == true)
+			convertToBody();
 		else
 			_parent->convertUnit(_unit);
 	}
@@ -281,7 +279,7 @@ void UnitDieBState::think()
  * @note Dead or Unconscious units get a nullptr-Tile but keep track of the
  * Position of their death.
  */
-void UnitDieBState::convertToBodyItem() // private.
+void UnitDieBState::convertToBody() // private.
 {
 	_battleSave->getBattleState()->showPsiButton(false);
 
@@ -292,8 +290,7 @@ void UnitDieBState::convertToBodyItem() // private.
 
 	const int armorSize (_unit->getArmor()->getSize() - 1);
 
-	// move inventory from unit to the ground for non-large units
-	if (armorSize == 0
+	if (armorSize == 0 // move inventory from unit to the ground for non-large units
 		&& carried == false
 		&& (Options::battleWeaponSelfDestruction == false
 			  || _unit->getOriginalFaction() != FACTION_HOSTILE
@@ -330,8 +327,7 @@ void UnitDieBState::convertToBodyItem() // private.
 
 	if (carried == true) // unconscious unit is being carried when it dies
 	{
-		// replace the unconscious body item with a corpse in the carrying unit's inventory
-		for (std::vector<BattleItem*>::const_iterator
+		for (std::vector<BattleItem*>::const_iterator // replace the unconscious body item with a corpse in the carrying unit's inventory
 				i = _battleSave->getItems()->begin();
 				i != _battleSave->getItems()->end();
 				++i)
@@ -389,7 +385,7 @@ void UnitDieBState::convertToBodyItem() // private.
 							tileExpl->addFire(tileExpl->getFuel() + RNG::generate(1,2)); // Could use a ruleset-factor in here.
 							tileExpl->addSmoke(std::max(1,
 														std::min(6,
-																tileExpl->getFlammability() / 10)));
+																 tileExpl->getFlammability() / 10)));
 
 							if (soundPlayed == false)
 							{
@@ -409,14 +405,13 @@ void UnitDieBState::convertToBodyItem() // private.
 
 				if (tile != nullptr						// kL, safety. (had a CTD when ethereal dies on water).
 					&& tile->getTileUnit() == _unit)	// <- check in case unit was displaced by another unit ... that sounds pretty darn shakey.
-				{										// TODO: iterate over all mapTiles searching for the unit and nullptring any tile's association to it.
+				{										// TODO: iterate over all mapTiles searching for the unit and nullptr-ing any tile's association to it.
 					tile->setUnit(nullptr);
 				}
 
 				_parent->dropItem(
 								pos + Position(x,y,0),
-								body,
-								true);
+								body, true);
 			}
 		}
 		_parent->getTileEngine()->calculateFOV(pos, true); // expose any units that were hiding behind dead unit

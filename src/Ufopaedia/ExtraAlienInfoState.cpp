@@ -83,52 +83,54 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 					(ActionHandler)& ExtraAlienInfoState::btnExit,
 					Options::keyCancel);
 
-	_lstInfo->setColumns(2, 125, 25);
+	_lstInfo->setColumns(2, 125,25);
 	_lstInfo->setColor(uPed_BLUE_SLATE);
 	_lstInfo->setDot();
 	_lstInfo->setMargin();
 
-	_lstWeapon->setColumns(3, 100, 25, 25);
+	_lstWeapon->setColumns(3, 100,25,25);
 	_lstWeapon->setColor(uPed_BLUE_SLATE);
 	_lstWeapon->setDot();
 	_lstWeapon->setMargin();
 
 
-	std::string alienId;
+	std::string type;
 	if (defs->id.find("_AUTOPSY") != std::string::npos)
-		alienId = defs->id.substr(0, defs->id.length() - 8);
+		type = defs->id.substr(0, defs->id.length() - 8);
 	else
-		alienId = defs->id;
+		type = defs->id;
 
 	const RuleUnit* unitRule;
-	if (_game->getRuleset()->getUnitRule(alienId + "_SOLDIER") != nullptr)
-		unitRule = _game->getRuleset()->getUnitRule(alienId + "_SOLDIER");
-	else if (_game->getRuleset()->getUnitRule(alienId + "_TERRORIST") != nullptr)
-		unitRule = _game->getRuleset()->getUnitRule(alienId + "_TERRORIST");
+	if (_game->getRuleset()->getUnitRule(type + "_SOLDIER") != nullptr)
+		unitRule = _game->getRuleset()->getUnitRule(type + "_SOLDIER");
+	else if (_game->getRuleset()->getUnitRule(type + "_TERRORIST") != nullptr)
+		unitRule = _game->getRuleset()->getUnitRule(type + "_TERRORIST");
 	else
 	{
 		unitRule = nullptr;
-		Log(LOG_INFO) << "ERROR: rules not found for unit - " << alienId;
+		Log(LOG_INFO) << "ERROR: rules not found for unit - " << type;
 	}
 
 	if (unitRule != nullptr)
 	{
 		const RuleArmor* const armorRule (_game->getRuleset()->getArmor(unitRule->getArmorType()));
 		size_t row (0);
+		DamageType dType;
+		int vulnr;
 
 		for (size_t
 				i = 0;
 				i != RuleArmor::DAMAGE_TYPES;
 				++i)
 		{
-			const DamageType dType (static_cast<DamageType>(i));
-			const std::string st (ArticleState::getDamageTypeText(dType));
-			if (st != "STR_UNKNOWN")
+			dType = static_cast<DamageType>(i);
+			type = ArticleState::getDamageTypeText(dType);
+			if (type != "STR_UNKNOWN")
 			{
-				const int vulnr (static_cast<int>(Round(static_cast<double>(armorRule->getDamageModifier(dType)) * 100.)));
+				vulnr = static_cast<int>(Round(armorRule->getDamageModifier(dType) * 100.f));
 				_lstInfo->addRow(
 							2,
-							tr(st).c_str(),
+							tr(type).c_str(),
 							Text::formatPercent(vulnr).c_str());
 				_lstInfo->setCellColor(row++, 1, uPed_GREEN_SLATE);
 			}
@@ -136,13 +138,13 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 
 		if (unitRule->isLivingWeapon() == true)
 		{
-			const std::string terrorType (unitRule->getRace().substr(4) + "_WEAPON");
-			const RuleItem* const itRule (_game->getRuleset()->getItemRule(terrorType));
+			type = unitRule->getRace().substr(4) + "_WEAPON";
+			const RuleItem* const itRule (_game->getRuleset()->getItemRule(type));
 			if (itRule != nullptr)
 			{
-				const DamageType dType (itRule->getDamageType());
-				const std::string stType (ArticleState::getDamageTypeText(dType));
-				if (stType != "STR_UNKNOWN")
+				dType = itRule->getDamageType();
+				type = ArticleState::getDamageTypeText(dType);
+				if (type != "STR_UNKNOWN")
 				{
 					std::wstring wstPower;
 					if (itRule->isStrengthApplied() == true)
@@ -154,7 +156,7 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 									3,
 									tr("STR_WEAPON").c_str(),
 									wstPower.c_str(),
-									tr(stType).c_str());
+									tr(type).c_str());
 					_lstWeapon->setCellColor(0,1, uPed_GREEN_SLATE);
 					_lstWeapon->setCellColor(0,2, uPed_GREEN_SLATE);
 				}

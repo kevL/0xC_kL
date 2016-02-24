@@ -955,7 +955,7 @@ units:
     intelligence: 0
     aggression: 2
     energyRecovery: 40
-    spawnUnit: STR_CHRYSSALID_TERRORIST
+    spawnType: STR_CHRYSSALID_TERRORIST
     livingWeapon: true
     psiBlock: true
     hasHands: false

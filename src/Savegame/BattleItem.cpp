@@ -66,7 +66,7 @@ BattleItem::BattleItem(
 		_id = *pId;
 		++(*pId);
 	}
-	else				// load item from saved game
+	else				// <- load item from saved game
 		_id = id;
 
 

@@ -301,7 +301,7 @@ BattleUnit::BattleUnit(
 		_mcStrength(0),
 		_mcSkill(0),
 		_drugDose(0),
-		_isZombie(false),
+//		_isZombie(false),
 		_fist(nullptr),
 
 		_statistics(nullptr), // Soldier Diary
@@ -318,7 +318,7 @@ BattleUnit::BattleUnit(
 		_moveSound(unitRule->getMoveSound()),
 		_intelligence(unitRule->getIntelligence()),
 		_aggression(unitRule->getAggression()),
-		_spawnUnit(unitRule->getSpawnUnit()),
+		_spawnType(unitRule->getSpawnType()),
 		_value(unitRule->getValue()),
 		_psiBlock(unitRule->getPsiBlock()),
 		_specab(unitRule->getSpecialAbility()),
@@ -476,7 +476,7 @@ void BattleUnit::load(const YAML::Node& node)
 	_kills				= node["kills"]					.as<int>(_kills);
 	_dontReselect		= node["dontReselect"]			.as<bool>(_dontReselect);
 	_motionPoints		= node["motionPoints"]			.as<int>(_motionPoints);
-	_spawnUnit			= node["spawnUnit"]				.as<std::string>(_spawnUnit);
+	_spawnType			= node["spawnType"]				.as<std::string>(_spawnType);
 	_mcStrength			= node["mcStrength"]			.as<int>(_mcStrength);
 	_mcSkill			= node["mcSkill"]				.as<int>(_mcSkill);
 	_drugDose			= node["drugDose"]				.as<int>(_drugDose);
@@ -634,8 +634,8 @@ YAML::Node BattleUnit::save() const
 		node["dontReselect"] = _dontReselect;
 	}
 
-	if (_spawnUnit.empty() == false)
-		node["spawnUnit"] = _spawnUnit;
+	if (_spawnType.empty() == false)
+		node["spawnType"] = _spawnType;
 
 	for (size_t
 			i = 0;
@@ -1574,7 +1574,7 @@ int BattleUnit::takeDamage(
 				if (dType == DT_IN)
 				{
 					_diedByFire = true;
-					_spawnUnit.clear();
+					_spawnType.clear();
 
 					if (_isZombie == true)
 						_specab = SPECAB_EXPLODE;
@@ -1761,7 +1761,7 @@ void BattleUnit::setStun(int stun)
  */
 void BattleUnit::knockOut()
 {
-	if (_spawnUnit.empty() == false)
+	if (_spawnType.empty() == false)
 	{
 		BattleUnit* const conUnit (_battleGame->convertUnit(this));
 		conUnit->knockOut();
@@ -3915,18 +3915,18 @@ void BattleUnit::setSpecialAbility(const SpecialAbility specab)
  * Gets unit-type that is spawned when this one dies.
  * @return, special spawn unit type (ie. ZOMBIES!!!)
  */
-std::string BattleUnit::getSpawnUnit() const
+std::string BattleUnit::getSpawnType() const
 {
-	return _spawnUnit;
+	return _spawnType;
 }
 
 /**
  * Sets a unit-type that is spawned when this one dies.
- * @param spawnUnit - reference the special unit type
+ * @param spawnType - reference the special unit type
  */
-void BattleUnit::setSpawnUnit(const std::string& spawnUnit)
+void BattleUnit::setSpawnUnit(const std::string& spawnType)
 {
-	_spawnUnit = spawnUnit;
+	_spawnType = spawnType;
 }
 
 /**
@@ -3961,13 +3961,13 @@ void BattleUnit::setFaction(UnitFaction faction)
  * the end of its collapse sequence.
  * @return, true if about to die
  */
-bool BattleUnit::getAboutToFall() const
+bool BattleUnit::getAboutToCollapse() const
 {
 	return _aboutToFall;
 }
 
 /**
- * Sets health to 0 and status dead.
+ * Sets health to 0 and status dead - calls putDown() just to be sure.
  * @note Used when getting zombified, etc.
  */
 void BattleUnit::instaKill()
@@ -4043,7 +4043,7 @@ void BattleUnit::putDown()
 	_faction = _originalFaction;
 	_kneeled = false;	// don't get hunkerdown bonus against HE detonations
 
-	if (_spawnUnit.empty() == true) // else convertUnit() will take care of it.
+	if (_spawnType.empty() == true) // else convertUnit() will take care of it.
 		_visible = false;
 
 	_turnsExposed = -1;	// don't risk aggro per the AI

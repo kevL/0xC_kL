@@ -56,7 +56,7 @@ private:
 
 	static const Uint8
 		YELLOW	= 138,
-		PURPLE	= 176, // needs high contrast. Still not right ...
+		PURPLE	= 176,
 		GREEN	= 239;
 
 	std::map<const RuleItem*, int>

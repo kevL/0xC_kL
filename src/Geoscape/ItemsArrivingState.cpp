@@ -188,29 +188,6 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 										}
 								}
 							}
-
-/*							for (std::vector<Vehicle*>::const_iterator // check if it's ammo to reload a vehicle
-									l = (*k)->getVehicles()->begin();
-									l != (*k)->getVehicles()->end();
-									++l)
-							{
-								std::vector<std::string>::const_iterator load (std::find(
-																					(*l)->getRules()->getCompatibleAmmo()->begin(),
-																					(*l)->getRules()->getCompatibleAmmo()->end(),
-																					itRule->getType()));
-								if (load != (*l)->getRules()->getCompatibleAmmo()->end()
-									&& (*l)->getAmmo() < itRule->getFullClip())
-								{
-									const int toTank (std::min(
-															(*j)->getQuantity(),
-															itRule->getFullClip() - (*l)->getAmmo()));
-									(*l)->setAmmo((*l)->getAmmo() + toTank);
-
-									// Note that the items have already been delivered in Geoscape->Transfer::advance()
-									// so they are removed from the Base not the Transfer.
-									(*i)->getStorageItems()->removeItem(itRule->getType(), toTank);
-								}
-							} */ // utterly ridiculous. Vehicles will never be on a Craft w/out their full ammunition-load.
 						}
 					}
 				}

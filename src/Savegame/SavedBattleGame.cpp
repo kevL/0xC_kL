@@ -2196,7 +2196,6 @@ void SavedBattleGame::reviveUnit(
 void SavedBattleGame::deleteBody(const BattleUnit* const unit)
 {
 	int quadrants (unit->getArmor()->getSize() * unit->getArmor()->getSize());
-
 	for (std::vector<BattleItem*>::const_iterator
 			i = _items.begin();
 			i != _items.end();
