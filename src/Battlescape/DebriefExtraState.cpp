@@ -166,20 +166,20 @@ void DebriefExtraState::btnOkClick(Action*)
  */
 void DebriefExtraState::buildSoldierStats() // private.
 {
-	_lstSolStats->addRow(
+	_lstSolStats->addRow( // vid. BattleUnit::postMissionProcedures().
 					12,
 					L"",
-					L"bra",
-					L"fir",
-					L"rea",
-					L"mel",
-					L"pa",
-					L"pd",
-					L"thr",
-					L"tu",
-					L"hth",
-					L"str",
-					L"sta");
+					L"BR",
+					L"FR",
+					L"RA",
+					L"ML",
+					L"PA",
+					L"PD",
+					L"TR",
+					L"TU",
+					L"HL",
+					L"ST",
+					L"EN");
 
 	size_t row (1u);
 	for (std::map<std::wstring, std::vector<int>>::const_iterator
@@ -190,16 +190,16 @@ void DebriefExtraState::buildSoldierStats() // private.
 		_lstSolStats->addRow(
 						12,
 						i->first.c_str(),
-						i->second[0] ? Text::intWide(i->second[0]).c_str() : L"",
-						i->second[1] ? Text::intWide(i->second[1]).c_str() : L"",
-						i->second[2] ? Text::intWide(i->second[2]).c_str() : L"",
-						i->second[3] ? Text::intWide(i->second[3]).c_str() : L"",
-						i->second[4] ? Text::intWide(i->second[4]).c_str() : L"",
-						i->second[5] ? Text::intWide(i->second[5]).c_str() : L"",
-						i->second[6] ? Text::intWide(i->second[6]).c_str() : L"",
-						i->second[7] ? Text::intWide(i->second[7]).c_str() : L"",
-						i->second[8] ? Text::intWide(i->second[8]).c_str() : L"",
-						i->second[9] ? Text::intWide(i->second[9]).c_str() : L"",
+						i->second[0]  ? Text::intWide(i->second[0]).c_str()  : L"",
+						i->second[1]  ? Text::intWide(i->second[1]).c_str()  : L"",
+						i->second[2]  ? Text::intWide(i->second[2]).c_str()  : L"",
+						i->second[3]  ? Text::intWide(i->second[3]).c_str()  : L"",
+						i->second[4]  ? Text::intWide(i->second[4]).c_str()  : L"",
+						i->second[5]  ? Text::intWide(i->second[5]).c_str()  : L"",
+						i->second[6]  ? Text::intWide(i->second[6]).c_str()  : L"",
+						i->second[7]  ? Text::intWide(i->second[7]).c_str()  : L"",
+						i->second[8]  ? Text::intWide(i->second[8]).c_str()  : L"",
+						i->second[9]  ? Text::intWide(i->second[9]).c_str()  : L"",
 						i->second[10] ? Text::intWide(i->second[10]).c_str() : L"");
 		_lstSolStats->setRowColor(row, YELLOW);
 	}

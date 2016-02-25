@@ -1550,8 +1550,13 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				_itemsLostProperty.erase(i->first);
 
+				int roundsProperty;
 				std::map<const RuleItem*, int>::const_iterator pClipsProperty (_clipsProperty.find(i->first));
-				const int roundsProperty (pClipsProperty->second);
+				if (pClipsProperty != _clipsProperty.end())
+					roundsProperty = pClipsProperty->second;
+				else
+					roundsProperty = 0;
+
 				_itemsGained[i->first] = (i->second - roundsProperty) / qtyFullClip;
 
 				_base->getStorageItems()->addItem(
