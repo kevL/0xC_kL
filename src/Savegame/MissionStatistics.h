@@ -32,7 +32,7 @@ namespace OpenXcom
 {
 
 /**
- * Container for mission statistics.
+ * Container for SoldierDiary's MissionStatistics.
  */
 struct MissionStatistics
 {
@@ -58,8 +58,8 @@ struct MissionStatistics
 	GameTime timeStat;
 
 
-	///
-/*	std::string getMissionTypeLowerCase()
+/*	///
+	std::string getMissionTypeLowerCase()
 	{
 		if		(type == "STR_UFO_CRASH_RECOVERY")	return "STR_UFO_CRASH_RECOVERY_LC";
 		else if (type == "STR_UFO_GROUND_ASSAULT")	return "STR_UFO_GROUND_ASSAULT_LC";
@@ -70,7 +70,34 @@ struct MissionStatistics
 		else										return "type error";
 	} */
 
-	///
+	/// cTor [1].
+	MissionStatistics()
+		:
+			id(0),
+			timeStat(0,0,0,0,0,0),
+			region("STR_REGION_UNKNOWN"),
+			country("STR_UNKNOWN"),
+			ufo("NO_UFO"),
+			success(false),
+			score(0),
+			alienRace("STR_UNKNOWN"),
+			shade(0),
+			valiantCrux(false)
+	{}
+
+	/// cTor [2].
+	explicit MissionStatistics(const YAML::Node& node)
+		:
+			timeStat(0,0,0,0,0,0)
+	{
+		load(node);
+	}
+
+	/// dTor.
+	~MissionStatistics()
+	{}
+
+	/// Loads a MissionStatistics node from YAML.
 	void load(const YAML::Node& node)
 	{
 		timeStat.load(node["time"]);
@@ -89,7 +116,7 @@ struct MissionStatistics
 		valiantCrux	= node["valiantCrux"]	.as<bool>(valiantCrux);
 	}
 
-	///
+	/// Saves a MissionStatistics node to YAML.
 	YAML::Node save() const
 	{
 		YAML::Node node;
@@ -112,33 +139,6 @@ struct MissionStatistics
 
 		return node;
 	}
-
-	/// cTor.
-	explicit MissionStatistics(const YAML::Node& node)
-		:
-			timeStat(0,0,0,0,0,0)
-	{
-		load(node);
-	}
-
-	/// cTor.
-	MissionStatistics()
-		:
-			id(0),
-			timeStat(0,0,0,0,0,0),
-			region("STR_REGION_UNKNOWN"),
-			country("STR_UNKNOWN"),
-			ufo("NO_UFO"),
-			success(false),
-			score(0),
-			alienRace("STR_UNKNOWN"),
-			shade(0),
-			valiantCrux(false)
-	{}
-
-	/// dTor.
-	~MissionStatistics()
-	{}
 };
 
 

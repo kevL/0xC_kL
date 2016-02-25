@@ -49,7 +49,7 @@ struct BattleUnitKill
 	UnitStatus _status;
 
 
-	/// cTor.
+	/// cTor [1].
 	BattleUnitKill(
 			std::string unitRank,
 			std::string race,
@@ -72,7 +72,7 @@ struct BattleUnitKill
 			_points(points)
 	{}
 
-	///
+	/// cTor [2].
 	explicit BattleUnitKill(const YAML::Node& node)
 	{
 		load(node);
@@ -82,7 +82,7 @@ struct BattleUnitKill
 	~BattleUnitKill()
 	{}
 
-	///
+	/// Loads a BattleUnitKill node from YAML.
 	void load(const YAML::Node &node)
 	{
 		_rank		= node["rank"]		.as<std::string>(_rank);
@@ -97,7 +97,7 @@ struct BattleUnitKill
 		_faction	= static_cast<UnitFaction>(node["faction"]	.as<int>());
 	}
 
-	///
+	/// Saves a BattleUnitKill node to YAML.
 	YAML::Node save() const
 	{
 		YAML::Node node;
@@ -146,7 +146,7 @@ struct BattleUnitKill
 		_turn += _mission * 300; // Maintains divisibility by 3 as well.
 	}
 
-	/// Checks to see if turn was on HOSTILE side.
+	/// Checks to see if turn was during HOSTILE side.
 	bool hostileTurn() const
 	{
 		if ((_turn - 1) % 3 == 0)
@@ -296,7 +296,6 @@ struct BattleUnitStatistics
 		{
 			return true;
 		}
-
 		return false;
 	}
 
@@ -311,7 +310,6 @@ struct BattleUnitStatistics
 			if ((*i)->_faction == FACTION_PLAYER)
 				return true;
 		}
-
 		return false;
 	}
 
@@ -329,7 +327,6 @@ struct BattleUnitStatistics
 				return true;
 			}
 		}
-
 		return false;
 	}
 
