@@ -48,7 +48,7 @@ private:
 		_doublePop;
 
 	Craft* _craft;
-	GeoscapeState* _geo;
+	GeoscapeState* _geoState;
 	Surface
 		* _sprite,
 		* _srfTarget;
@@ -70,7 +70,7 @@ private:
 		* _txtW2Name,
 		* _txtKills;
 	TextButton
-		* _btnBase,
+		* _btnRebase,
 		* _btnCancel,
 		* _btnCenter,
 		* _btnPatrol,
@@ -85,9 +85,9 @@ private:
 	public:
 		/// Creates the Geoscape Craft state.
 		GeoscapeCraftState(
-				Craft* craft,
-				GeoscapeState* geo,
-				Waypoint* waypoint = nullptr,
+				Craft* const craft,
+				GeoscapeState* const geoState,
+				Waypoint* const waypoint = nullptr,
 				bool doublePop = false,
 				bool transpose = false);
 		/// Cleans up the Geoscape Craft state.

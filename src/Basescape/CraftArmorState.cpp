@@ -112,7 +112,7 @@ CraftArmorState::CraftArmorState(
 	_txtTitle->setText(tr("STR_SELECT_ARMOR"));
 
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
-	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
+	_txtBaseLabel->setText(_base->getName());
 
 	_txtName->setText(tr("STR_NAME_UC"));
 	_txtCraft->setText(tr("STR_CRAFT"));

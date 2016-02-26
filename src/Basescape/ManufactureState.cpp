@@ -204,7 +204,7 @@ void ManufactureState::init()
 {
 	State::init();
 
-	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
+	_txtBaseLabel->setText(_base->getName());
 	fillProductionList();
 }
 
@@ -385,7 +385,7 @@ void ManufactureState::viewMouseOver(Action*)
 		&& _base != _baseList->at(baseId)
 		&& _baseList->at(baseId)->hasProduction() == true)
 	{
-		_txtHoverBase->setText(_baseList->at(baseId)->getName(_game->getLanguage()).c_str());
+		_txtHoverBase->setText(_baseList->at(baseId)->getName().c_str());
 	}
 	else
 		_txtHoverBase->setText(L"");

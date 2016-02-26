@@ -196,7 +196,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 									3,
 									(*j)->getName(_game->getLanguage()).c_str(),
 									Text::intWide((*j)->getQuantity()).c_str(),
-									(*i)->getName(nullptr).c_str());
+									(*i)->getName().c_str());
 
 				delete *j;
 				j = (*i)->getTransfers()->erase(j);

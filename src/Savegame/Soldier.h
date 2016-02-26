@@ -142,7 +142,7 @@ private:
 		/// Sets the soldier's craft.
 		void setCraft(Craft* const craft = nullptr);
 		/// Gets the soldier's craft string.
-		std::wstring getCraftString(Language* lang) const;
+		std::wstring getCraftString(const Language* const lang) const;
 
 		/// Gets a string version of the soldier's rank.
 		std::string getRankString() const;

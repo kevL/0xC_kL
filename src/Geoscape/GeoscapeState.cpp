@@ -994,7 +994,7 @@ void GeoscapeState::handle(Action* action)
 
 	if (action->getDetails()->type == SDL_KEYDOWN)
 	{
-		bool beep = false;
+		bool beep (false);
 
 		if (Options::debug == true)
 		{
@@ -1084,7 +1084,6 @@ void GeoscapeState::handle(Action* action)
 		{
 			(*i)->handle(action);
 		}
-
 		_dfMinimized = getMinimizedDfCount();
 	}
 }
@@ -1178,7 +1177,7 @@ void GeoscapeState::think()
 		&& _game->getSavedGame()->getDebugArgDone() == true // ie. do not write info until Globe actually sets it.
 		&& _stDebug.compare(0,5, "DEBUG") == 0)
 	{
-		const std::string stDebug = _stDebug + _game->getSavedGame()->getDebugArg();
+		const std::string stDebug (_stDebug + _game->getSavedGame()->getDebugArg());
 		_txtDebug->setText(Language::cpToWstr(stDebug));
 	}
 
@@ -1229,7 +1228,7 @@ void GeoscapeState::drawUfoBlobs()
 	}
 
 	size_t
-		j = 0,
+		j (0),
 		ufoSize;
 	Uint8
 		color,
@@ -1306,9 +1305,9 @@ void GeoscapeState::updateTimeDisplay()
 
 	if (_gameSave->getMonthsPassed() != -1) // update Player's current score
 	{
-		const size_t id = _gameSave->getFundsList().size() - 1; // use fundsList to determine which entries in other vectors to use for the current month.
+		const size_t id (_gameSave->getFundsList().size() - 1); // use fundsList to determine which entries in other vectors to use for the current month.
 
-		int score = _gameSave->getResearchScores().at(id);
+		int score (_gameSave->getResearchScores().at(id));
 		for (std::vector<Region*>::const_iterator
 				i = _gameSave->getRegions()->begin();
 				i != _gameSave->getRegions()->end();
@@ -1322,7 +1321,7 @@ void GeoscapeState::updateTimeDisplay()
 			std::wstring wst;
 			if (_score != 0)
 			{
-				const int delta = score - _score;
+				const int delta (score - _score);
 				if (delta == 0)
 					wst = L"";
 				else if (delta > 0)
@@ -1344,7 +1343,7 @@ void GeoscapeState::updateTimeDisplay()
 		_txtSec->setVisible();
 	else
 	{
-		const int sec = _gameSave->getTime()->getSecond();
+		const int sec (_gameSave->getTime()->getSecond());
 		_txtSec->setVisible(sec % 15 > 9);
 //		_txtSec->setVisible(_gameSave->getTime()->getSecond() % 15 == 0);
 	}
@@ -1359,7 +1358,7 @@ void GeoscapeState::updateTimeDisplay()
 	woststr2 << std::setfill(L'0') << std::setw(2) << _gameSave->getTime()->getHour();
 	_txtHour->setText(woststr2.str());
 
-	int date = _gameSave->getTime()->getDay();
+	int date (_gameSave->getTime()->getDay());
 	if (_day != date)
 	{
 		_day = date;
@@ -2351,9 +2350,7 @@ void GeoscapeState::time30Minutes()
 	std::for_each( // decrease mission countdowns
 			_gameSave->getAlienMissions().begin(),
 			_gameSave->getAlienMissions().end(),
-			callThink(
-					*_game,
-					*_globe));
+			callThink(*_game, *_globe));
 
 	for (std::vector<AlienMission*>::const_iterator // remove finished missions
 			i = _gameSave->getAlienMissions().begin();
@@ -2406,10 +2403,10 @@ void GeoscapeState::time30Minutes()
 						{
 							(*j)->setWarned();
 							(*j)->setWarning(CW_CANTREFUEL);
-							const std::wstring wst = tr("STR_NOT_ENOUGH_ITEM_TO_REFUEL_CRAFT_AT_BASE")
+							const std::wstring wst (tr("STR_NOT_ENOUGH_ITEM_TO_REFUEL_CRAFT_AT_BASE")
 														.arg(tr(refuelItem))
 														.arg((*j)->getName(_game->getLanguage()))
-														.arg((*i)->getName(nullptr));
+														.arg((*i)->getName()));
 							popup(new CraftErrorState(this, wst));
 						}
 					}
@@ -2423,10 +2420,10 @@ void GeoscapeState::time30Minutes()
 						&& (*j)->getWarned() == false)
 					{
 						(*j)->setWarned();
-						const std::wstring wst = tr("STR_NOT_ENOUGH_ITEM_TO_REARM_CRAFT_AT_BASE")
+						const std::wstring wst (tr("STR_NOT_ENOUGH_ITEM_TO_REARM_CRAFT_AT_BASE")
 													.arg(tr(rearmClip))
 													.arg((*j)->getName(_game->getLanguage()))
-													.arg((*i)->getName(nullptr));
+													.arg((*i)->getName()));
 						popup(new CraftErrorState(this, wst));
 					}
 					break;
@@ -2436,9 +2433,11 @@ void GeoscapeState::time30Minutes()
 			}
 
 			if ((*j)->showReady() == true)
-				popup(new CraftReadyState(this, tr("STR_CRAFT_READY")
-													.arg((*i)->getName(nullptr))
-													.arg((*j)->getName(_game->getLanguage()))));
+				popup(new CraftReadyState(
+										this, *j,
+										tr("STR_CRAFT_READY")
+											.arg((*i)->getName())
+											.arg((*j)->getName(_game->getLanguage()))));
 		}
 	}
 
@@ -2446,8 +2445,8 @@ void GeoscapeState::time30Minutes()
 	if (_gameSave->getUfos()->empty() == false)
 	{
 		// TODO: pt = pt * _rules->getAlienMission("STR_ALIEN_*")->getPoints() / 100;
-		const int pt = ((_gameSave->getMonthsPassed() + 2) / 4)
-					 + static_cast<int>(_gameSave->getDifficulty());	// basic Victory Points
+		const int pt (((_gameSave->getMonthsPassed() + 2) / 4)
+					  + static_cast<int>(_gameSave->getDifficulty()));	// basic Victory Points
 
 		int aLienPts;													// Beginner @ 1st/2nd month ought add 0-pts. here
 		for (std::vector<Ufo*>::const_iterator // calc aLien points
@@ -2462,8 +2461,8 @@ void GeoscapeState::time30Minutes()
 				if (aLienPts > 0)
 				{
 					const double
-						lon = (*i)->getLongitude(),
-						lat = (*i)->getLatitude();
+						lon ((*i)->getLongitude()),
+						lat ((*i)->getLatitude());
 
 					for (std::vector<Region*>::const_iterator // points per UFO in-Region per half hour
 							j = _gameSave->getRegions()->begin();
@@ -2474,7 +2473,6 @@ void GeoscapeState::time30Minutes()
 						{
 							(*j)->addActivityAlien(aLienPts);
 							(*j)->recentActivityAlien();
-
 							break;
 						}
 					}
@@ -2488,7 +2486,6 @@ void GeoscapeState::time30Minutes()
 						{
 							(*j)->addActivityAlien(aLienPts);
 							(*j)->recentActivityAlien();
-
 							break;
 						}
 					}
@@ -2519,8 +2516,8 @@ void GeoscapeState::time1Hour()
 	if (_gameSave->getUfos()->empty() == false)
 	{
 		// TODO: pt = pt * _rules->getAlienMission("STR_ALIEN_*")->getPoints() / 100;
-		const int pt = ((_gameSave->getMonthsPassed() + 2) / 4)
-					 + static_cast<int>(_gameSave->getDifficulty());	// basic Victory Points
+		const int pt (((_gameSave->getMonthsPassed() + 2) / 4)
+					  + static_cast<int>(_gameSave->getDifficulty()));	// basic Victory Points
 
 		int aLienPts;													// Beginner @ 1st/2nd month ought add 0-pts. here
 		for (std::vector<Ufo*>::const_iterator // calc aLien points
@@ -2534,8 +2531,8 @@ void GeoscapeState::time1Hour()
 				if (aLienPts > 0)
 				{
 					const double
-						lon = (*i)->getLongitude(),
-						lat = (*i)->getLatitude();
+						lon ((*i)->getLongitude()),
+						lat ((*i)->getLatitude());
 
 					for (std::vector<Region*>::const_iterator // points per UFO in-Region per half hour
 							j = _gameSave->getRegions()->begin();
@@ -2546,7 +2543,6 @@ void GeoscapeState::time1Hour()
 						{
 							(*j)->addActivityAlien(aLienPts);
 							(*j)->recentActivityAlien();
-
 							break;
 						}
 					}
@@ -2560,7 +2556,6 @@ void GeoscapeState::time1Hour()
 						{
 							(*j)->addActivityAlien(aLienPts);
 							(*j)->recentActivityAlien();
-
 							break;
 						}
 					}
@@ -2589,7 +2584,7 @@ void GeoscapeState::time1Hour()
 	}
 
 
-	bool arrivals = false;
+	bool arrivals (false);
 	for (std::vector<Base*>::const_iterator // handle transfers
 			i = _gameSave->getBases()->begin();
 			i != _gameSave->getBases()->end();
@@ -2736,8 +2731,8 @@ void GenerateSupplyMission::operator() (const AlienBase* const base) const
 	if (RNG::percent(4) == true)
 	{
 		// Spawn supply mission for this base.
-		const RuleAlienMission& missionRule = *_rules.getAlienMission("STR_ALIEN_SUPPLY");
-		AlienMission* const mission = new AlienMission(missionRule, _gameSave);
+		const RuleAlienMission& missionRule (*_rules.getAlienMission("STR_ALIEN_SUPPLY"));
+		AlienMission* const mission (new AlienMission(missionRule, _gameSave));
 		mission->setRegion(
 					_gameSave.locateRegion(*base)->getRules()->getType(),
 					_rules);
@@ -2779,7 +2774,7 @@ void GeoscapeState::time1Day()
 
 			if ((*j)->getSickbay() != 0)
 			{
-				int chanceDeath = (*j)->getRecoveryPct();
+				int chanceDeath ((*j)->getRecoveryPct());
 				if (chanceDeath > 10)
 				{
 					//Log(LOG_INFO) << "\n";
@@ -2807,7 +2802,7 @@ void GeoscapeState::time1Day()
 
 							popup(new SoldierDiedState(
 													(*j)->getName(),
-													(*i)->getName(nullptr)));
+													(*i)->getName()));
 
 							(*j)->die(_gameSave); // holy * This copies the Diary-object
 							// so to delete Soldier-instance I need to use a CopyConstructor
@@ -2916,7 +2911,7 @@ void GeoscapeState::time1Day()
 							forcesCrack);
 			else
 			{
-				gofCrack = true;
+				gofCrack =
 				forcesCrack = true;
 			}
 
@@ -3325,7 +3320,7 @@ void GeoscapeState::resetTimer()
 
 	SDL_Event ev;
 	ev.button.button = SDL_BUTTON_LEFT;
-	Action act(
+	Action act( // TODO: 0.0,0.0, 0,0
 			&ev,
 			_game->getScreen()->getXScale(),
 			_game->getScreen()->getYScale(),
@@ -3404,11 +3399,11 @@ void GeoscapeState::globeClick(Action* action)
 
 		std::wostringstream woststr;
 		woststr << std::fixed << std::setprecision(3)
-			<< L"RAD Lon " << lonRad << L"  Lat " << latRad
-			<< std::endl
-			<< L"DEG Lon " << lonDeg << L"  Lat " << latDeg
-			<< std::endl
-			<< L"texture " << texture << L" shade " << shade;
+				<< L"RAD Lon " << lonRad << L"  Lat " << latRad
+				<< std::endl
+				<< L"DEG Lon " << lonDeg << L"  Lat " << latDeg
+				<< std::endl
+				<< L"texture " << texture << L" shade " << shade;
 
 		_txtDebug->setText(woststr.str());
 	}

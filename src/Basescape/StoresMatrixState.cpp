@@ -119,7 +119,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 	_txtTitle->setColor(BLUE);
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(base->getName(_game->getLanguage()));
+	_txtBaseLabel->setText(base->getName());
 	_txtBaseLabel->setColor(BLUE);
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
 
@@ -136,7 +136,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 	_lstMatrix->setMargin();
 
 
-	const SavedGame* const gameSave = _game->getSavedGame();
+	const SavedGame* const gameSave (_game->getSavedGame());
 	std::wstring wst;
 	int
 		qty[MTX_BASES]			= {0,0,0,0,0,0,0,0},
@@ -156,7 +156,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 			qtyScientist[i]	= base->getTotalScientists();
 			qtyEngineer[i]	= base->getTotalEngineers();
 
-			wst = base->getName(nullptr).substr(0,4);
+			wst = base->getName().substr(0,4);
 			freeSpace = static_cast<int>(static_cast<double>(base->getTotalStores()) - base->getUsedStores() + 0.5);
 
 			std::wostringstream woststr;

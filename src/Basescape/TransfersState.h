@@ -56,7 +56,7 @@ private:
 
 	public:
 		/// Creates the Transfers state.
-		explicit TransfersState(Base* base);
+		explicit TransfersState(Base* const base);
 		/// Cleans up the Transfers state.
 		~TransfersState();
 

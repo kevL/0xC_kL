@@ -147,12 +147,12 @@ CraftInfoState::CraftInfoState(
 	_edtCraft->setAlign(ALIGN_CENTER);
 	_edtCraft->onTextChange((ActionHandler)& CraftInfoState::edtCraftChange);
 
-	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
+	_txtBaseLabel->setText(_base->getName());
 	_txtStatus->setAlign(ALIGN_RIGHT);
 
 	_txtRadar->setAlign(ALIGN_CENTER);
 
-	if (_craft->getRules()->getWeapons() != 0 && _craft->getKills() != 0)
+	if (_craft->getKills() != 0) //&& _craft->getRules()->getWeapons() != 0
 	{
 		_txtKills->setText(tr("STR_KILLS_LC_").arg(_craft->getKills()));
 		_txtKills->setAlign(ALIGN_CENTER);

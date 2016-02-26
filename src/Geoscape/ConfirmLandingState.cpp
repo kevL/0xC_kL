@@ -117,7 +117,7 @@ ConfirmLandingState::ConfirmLandingState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK15.SCR"));
 
-	_txtBase->setText(craft->getBase()->getName(_game->getLanguage()));
+	_txtBase->setText(craft->getBase()->getName());
 
 	_txtShade->setText(tr("STR_SHADE_").arg(shade));
 	_txtShade->setAlign(ALIGN_RIGHT);

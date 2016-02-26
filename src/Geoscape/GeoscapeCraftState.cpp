@@ -54,20 +54,20 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the GeoscapeCraft window.
  * @param craft		- pointer to a Craft for display
- * @param geo		- pointer to the Geoscape
+ * @param geoState	- pointer to the Geoscape
  * @param waypoint	- pointer to the last UFO position if redirecting the craft (default nullptr)
  * @param doublePop	- true if two windows need to pop on exit (default false)
  * @param transpose	- true to start the state transposed (default false)
  */
 GeoscapeCraftState::GeoscapeCraftState(
-		Craft* craft,
-		GeoscapeState* geo,
-		Waypoint* waypoint,
+		Craft* const craft,
+		GeoscapeState* const geoState,
+		Waypoint* const waypoint,
 		bool doublePop,
 		bool transpose)
 	:
 		_craft(craft),
-		_geo(geo),
+		_geoState(geoState),
 		_waypoint(waypoint),
 		_doublePop(doublePop),
 		_delayPop(true)
@@ -104,7 +104,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	_btnTarget		= new TextButton( 90, 16,  32, 114);
 	_btnPatrol		= new TextButton( 90, 16, 134, 114);
 	_btnCenter		= new TextButton(192, 16,  32, 136);
-	_btnBase		= new TextButton( 90, 16,  32, 158);
+	_btnRebase		= new TextButton( 90, 16,  32, 158);
 	_btnCancel		= new TextButton( 90, 16, 134, 158);
 
 	_srfTarget		= new Surface(29, 29, 114, 86);
@@ -133,7 +133,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	add(_btnTarget,		"button",	"geoCraftScreens");
 	add(_btnPatrol,		"button",	"geoCraftScreens");
 	add(_btnCenter,		"button",	"geoCraftScreens");
-	add(_btnBase,		"button",	"geoCraftScreens");
+	add(_btnRebase,		"button",	"geoCraftScreens");
 	add(_btnCancel,		"button",	"geoCraftScreens");
 
 	add(_srfTarget);
@@ -149,9 +149,9 @@ GeoscapeCraftState::GeoscapeCraftState(
 					(ActionHandler)& GeoscapeCraftState::btnCenterClick,
 					SDLK_c);
 
-	_btnBase->setText(tr("STR_RETURN_TO_BASE"));
-	_btnBase->onMouseClick((ActionHandler)& GeoscapeCraftState::btnBaseClick);
-	_btnBase->onKeyboardPress(
+	_btnRebase->setText(tr("STR_RETURN_TO_BASE"));
+	_btnRebase->onMouseClick((ActionHandler)& GeoscapeCraftState::btnBaseClick);
+	_btnRebase->onKeyboardPress(
 					(ActionHandler)& GeoscapeCraftState::btnBaseClick,
 					SDLK_b);
 
@@ -225,8 +225,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 		{
 			if (_craft->inDogfight() == true)
 			{
-				speed = ufo->getSpeed();	// THIS DOES NOT CHANGE THE SPEED of the xCom CRAFT
-											// for Fuel usage. (ie. it should)
+				speed = ufo->getSpeed(); // THIS DOES NOT CHANGE THE SPEED of the xCom CRAFT for Fuel usage. (ie. it should)
 				status = tr("STR_TAILING_UFO").arg(ufo->getId());
 			}
 			else if (ufo->getUfoStatus() == Ufo::FLYING)
@@ -241,7 +240,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	}
 	_txtStatus->setText(tr("STR_STATUS_").arg(status));
 
-	_txtBase->setText(tr("STR_BASE_UC").arg(_craft->getBase()->getName(nullptr)));
+	_txtBase->setText(tr("STR_BASE_UC").arg(_craft->getBase()->getName()));
 
 	_txtSpeed->setText(tr("STR_SPEED_").arg(speed));
 	_txtMaxSpeed->setText(tr("STR_MAXIMUM_SPEED_UC")
@@ -335,7 +334,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 		|| missionComplete == true
 		|| _craft->getTakeoff() == false)
 	{
-		_btnBase->setVisible(false);
+		_btnRebase->setVisible(false);
 		_btnPatrol->setVisible(false);
 
 		if (stat == CS_REPAIRS
@@ -351,7 +350,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	else
 	{
 		if (_craft->getDestination() == dynamic_cast<Target*>(_craft->getBase()))
-			_btnBase->setVisible(false);
+			_btnRebase->setVisible(false);
 		else if (_craft->getDestination() == nullptr
 			&& waypoint == nullptr)
 		{
@@ -383,9 +382,9 @@ GeoscapeCraftState::~GeoscapeCraftState()
  */
 void GeoscapeCraftState::btnCenterClick(Action*)
 {
-	_geo->getGlobe()->center(
-						_craft->getLongitude(),
-						_craft->getLatitude());
+	_geoState->getGlobe()->center(
+								_craft->getLongitude(),
+								_craft->getLatitude());
 
 	if (_doublePop == true)
 	{
@@ -394,7 +393,7 @@ void GeoscapeCraftState::btnCenterClick(Action*)
 
 		_game->pushState(new GeoscapeCraftState(
 											_craft,
-											_geo,
+											_geoState,
 											nullptr,
 											false,
 											true));
@@ -409,8 +408,8 @@ void GeoscapeCraftState::btnCenterClick(Action*)
 		return;
 	}
 
-	_geo->setPaused();
-	_geo->resetTimer();
+	_geoState->setPaused();
+	_geoState->resetTimer();
 	_game->popState();
 
 	delete _waypoint;
@@ -441,7 +440,7 @@ void GeoscapeCraftState::btnTargetClick(Action*)
 		_game->popState();
 
 	_game->popState();
-	_game->pushState(new SelectDestinationState(_craft, _geo->getGlobe()));
+	_game->pushState(new SelectDestinationState(_craft, _geoState->getGlobe()));
 	delete _waypoint;
 }
 
@@ -501,10 +500,10 @@ void GeoscapeCraftState::transposeWindow() // private.
 	_btnTarget->setY(_btnTarget->getY() + dy);
 	_btnPatrol->setY(_btnPatrol->getY() + dy);
 	_btnCenter->setY(_btnCenter->getY() + dy);
-	_btnBase->setY(_btnBase->getY() + dy);
+	_btnRebase->setY(_btnRebase->getY() + dy);
 	_btnCancel->setY(_btnCancel->getY() + dy);
 
-	if (_geo->getPaused() == false)
+	if (_geoState->getPaused() == false)
 		_btnCenter->setText(tr("STR_PAUSE"));
 	else
 	{

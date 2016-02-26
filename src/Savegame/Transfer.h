@@ -94,7 +94,7 @@ private:
 				int qty = 1);
 
 		/// Gets the name of the transfer.
-		std::wstring getName(Language* const lang) const;
+		std::wstring getName(const Language* const lang) const;
 
 		/// Gets the hours remaining of the transfer.
 		int getHours() const;

@@ -50,7 +50,7 @@ private:
 		SPACING			= 4;
 
 	Craft* _craft;
-	GeoscapeState* _state;
+	GeoscapeState* _geoState;
 
 	TextButton* _btnCancel;
 	Window* _window;
@@ -60,12 +60,12 @@ private:
 
 
 	public:
-		/// Creates the Multiple Targets state.
+		/// Creates the MultipleTargets state.
 		MultipleTargetsState(
 				std::vector<Target*> targets,
 				Craft* const craft,
-				GeoscapeState* const state);
-		/// Cleans up the Multiple Targets state.
+				GeoscapeState* const geoState);
+		/// Cleans up the MultipleTargets state.
 		~MultipleTargetsState();
 
 		/// Updates the window.

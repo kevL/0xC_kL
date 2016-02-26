@@ -112,7 +112,7 @@ SoldiersState::SoldiersState(Base* base)
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
+	_txtBaseLabel->setText(_base->getName());
 
 	_txtSoldiers->setAlign(ALIGN_RIGHT);
 

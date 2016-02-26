@@ -110,7 +110,7 @@ StoresState::StoresState(Base* base)
 	_txtTitle->setText(tr("STR_STORES"));
 
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
-	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
+	_txtBaseLabel->setText(_base->getName());
 
 	_txtTotal->setText(tr("STR_QUANTITY_UC"));
 	_txtTotal->setColor(208); // white

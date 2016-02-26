@@ -49,16 +49,16 @@ namespace OpenXcom
  * Initializes all the elements in the Multiple Targets window.
  * @param targets	- vector of pointers to Target for display
  * @param craft		- pointer to Craft to retarget (nullptr if none)
- * @param state		- pointer to the GeoscapeState
+ * @param geoState	- pointer to the GeoscapeState
  */
 MultipleTargetsState::MultipleTargetsState(
 		std::vector<Target*> targets,
 		Craft* const craft,
-		GeoscapeState* const state)
+		GeoscapeState* const geoState)
 	:
 		_targets(targets),
 		_craft(craft),
-		_state(state)
+		_geoState(geoState)
 {
 	_fullScreen = false;
 
@@ -151,22 +151,22 @@ void MultipleTargetsState::popupTarget(Target* const target)
 
 	if (_craft == nullptr)
 	{
-		Base* const base = dynamic_cast<Base*>(target);
-		Craft* const craft = dynamic_cast<Craft*>(target);
-		Ufo* const ufo = dynamic_cast<Ufo*>(target);
+		Base* const base (dynamic_cast<Base*>(target));
+		Craft* const craft (dynamic_cast<Craft*>(target));
+		Ufo* const ufo (dynamic_cast<Ufo*>(target));
 
 		if (base != nullptr)
-			_game->pushState(new InterceptState(base, _state));
+			_game->pushState(new InterceptState(base, _geoState));
 		else if (craft != nullptr)
-			_game->pushState(new GeoscapeCraftState(craft, _state));
+			_game->pushState(new GeoscapeCraftState(craft, _geoState));
 		else if (ufo != nullptr)
 			_game->pushState(new UfoDetectedState(
 											ufo,
-											_state,
+											_geoState,
 											false,
 											ufo->getHyperDetected()));
 		else
-			_game->pushState(new TargetInfoState(target, _state));
+			_game->pushState(new TargetInfoState(target, _geoState));
 	}
 	else
 		_game->pushState(new ConfirmDestinationState(_craft, target));

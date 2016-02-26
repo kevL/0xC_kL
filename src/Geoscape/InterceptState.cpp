@@ -144,7 +144,7 @@ InterceptState::InterceptState(
 
 	const RuleCraft* crRule;
 
-	size_t row = 0;
+	size_t row (0);
 	for (std::vector<Base*>::const_iterator
 			i = _game->getSavedGame()->getBases()->begin();
 			i != _game->getSavedGame()->getBases()->end();
@@ -157,7 +157,7 @@ InterceptState::InterceptState(
 					j != (*i)->getCrafts()->end();
 					++j)
 			{
-				_bases.push_back((*i)->getName(nullptr).c_str());
+				_bases.push_back((*i)->getName().c_str());
 				_crafts.push_back(*j);
 
 				std::wostringstream
@@ -182,11 +182,10 @@ InterceptState::InterceptState(
 				else
 					woststr3 << L"-";
 
-				const std::wstring status = getAltStatus(*j);
 				_lstCrafts->addRow(
 								5,
 								(*j)->getName(_game->getLanguage()).c_str(),
-								status.c_str(),
+								getAltStatus(*j).c_str(),
 								woststr1.str().c_str(),
 								woststr2.str().c_str(),
 								woststr3.str().c_str());
@@ -196,7 +195,7 @@ InterceptState::InterceptState(
 	}
 
 	if (_base != nullptr)
-		_txtBase->setText(_base->getName(nullptr));
+		_txtBase->setText(_base->getName());
 }
 
 /**
@@ -213,7 +212,7 @@ InterceptState::~InterceptState()
  */
 std::wstring InterceptState::getAltStatus(Craft* const craft)
 {
-	const CraftStatus stat = craft->getCraftStatus();
+	const CraftStatus stat (craft->getCraftStatus());
 	if (stat != CS_OUT)
 	{
 		if (stat == CS_READY)
@@ -228,9 +227,8 @@ std::wstring InterceptState::getAltStatus(Craft* const craft)
 		st.push_back('_');
 
 		bool delayed;
-		const int hours = craft->getDowntime(delayed);
-		const std::wstring wst = formatTime(hours, delayed);
-		return tr(st).arg(wst);
+		const int hours (craft->getDowntime(delayed));
+		return tr(st).arg(formatTime(hours, delayed));
 	}
 
 	std::wstring status;
@@ -256,7 +254,7 @@ std::wstring InterceptState::getAltStatus(Craft* const craft)
 	}
 	else
 	{
-		const Ufo* const ufo = dynamic_cast<Ufo*>(craft->getDestination());
+		const Ufo* const ufo (dynamic_cast<Ufo*>(craft->getDestination()));
 		if (ufo != nullptr)
 		{
 			if (craft->inDogfight() == true)
@@ -291,25 +289,23 @@ std::wstring InterceptState::formatTime(
 	woststr << L"(";
 
 	const int
-		days = total / 24,
-		hours = total % 24;
+		dys (total / 24),
+		hrs (total % 24);
 
-	if (days > 0)
+	if (dys > 0)
 	{
-		woststr << tr("STR_DAY", days);
-
-		if (hours > 0)
+		woststr << tr("STR_DAY", dys);
+		if (hrs > 0)
 			woststr << L" ";
 	}
 
-	if (hours > 0)
-		woststr << tr("STR_HOUR", hours);
+	if (hrs > 0)
+		woststr << tr("STR_HOUR", hrs);
 
 	if (delayed == true)
 		woststr << L" +";
 
 	woststr << L")";
-
 	return woststr.str();
 }
 

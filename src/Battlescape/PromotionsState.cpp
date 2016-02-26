@@ -111,7 +111,7 @@ PromotionsState::PromotionsState()
 								3,
 								(*j)->getName().c_str(),
 								tr((*j)->getRankString()).c_str(),
-								(*i)->getName(nullptr).c_str());
+								(*i)->getName().c_str());
 		}
 	}
 }

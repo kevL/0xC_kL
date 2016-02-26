@@ -106,7 +106,7 @@ PsiTrainingState::PsiTrainingState(Base* base)
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(base->getName(_game->getLanguage()));
+	_txtBaseLabel->setText(base->getName());
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
 
 	_labSpace = base->getFreePsiLabs();

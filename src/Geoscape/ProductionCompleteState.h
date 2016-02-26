@@ -47,7 +47,7 @@ class ProductionCompleteState
 
 private:
 	Base* _base;
-	GeoscapeState* _state;
+	GeoscapeState* _geoState;
 
 	Text* _txtMessage;
 	TextButton
@@ -62,9 +62,9 @@ private:
 	public:
 		/// Creates the Production Complete state.
 		ProductionCompleteState(
-				Base* base,
+				Base* const base,
 				const std::wstring& item,
-				GeoscapeState* state,
+				GeoscapeState* const geoState,
 				bool gotoBaseBtn,
 				ProductionProgress endType = PROGRESS_COMPLETE);
 		/// Cleans up the Production Complete state.

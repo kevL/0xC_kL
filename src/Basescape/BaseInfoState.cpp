@@ -323,7 +323,7 @@ void BaseInfoState::init()
 {
 	State::init();
 
-	_edtBase->setText(_base->getName(nullptr));
+	_edtBase->setText(_base->getName());
 
 	for (std::vector<Region*>::const_iterator
 			i = _game->getSavedGame()->getRegions()->begin();
@@ -581,7 +581,7 @@ void BaseInfoState::handleKeyPress(Action* action)
 {
 	if (action->getDetails()->type == SDL_KEYDOWN)
 	{
-		const size_t baseId = _state->getKeyedBaseId(action->getDetails()->key.keysym.sym);
+		const size_t baseId (_state->getKeyedBaseId(action->getDetails()->key.keysym.sym));
 		if (baseId != Base::MAX_BASES)
 		{
 			_txtHoverBase->setText(L"");
@@ -639,7 +639,7 @@ void BaseInfoState::btnMonthlyCostsClick(Action*)
  */
 void BaseInfoState::miniClick(Action*)
 {
-	const size_t baseId = _mini->getHoveredBase();
+	const size_t baseId (_mini->getHoveredBase());
 	if (baseId < _baseList->size()
 		&& _base != _baseList->at(baseId))
 	{
@@ -661,16 +661,16 @@ void BaseInfoState::miniClick(Action*)
  */
 void BaseInfoState::viewMouseOver(Action*)
 {
-	bool clearText = true;
+	bool clearText (true);
 
-	const size_t baseId = _mini->getHoveredBase();
+	const size_t baseId (_mini->getHoveredBase());
 	if (baseId < _baseList->size())
 	{
-		const Base* const hoverBase = _baseList->at(baseId);
+		const Base* const hoverBase (_baseList->at(baseId));
 		if (hoverBase != _base)
 		{
 			clearText = false;
-			_txtHoverBase->setText(hoverBase->getName(_game->getLanguage()).c_str());
+			_txtHoverBase->setText(hoverBase->getName().c_str());
 			for (std::vector<Region*>::const_iterator
 					i = _game->getSavedGame()->getRegions()->begin();
 					i != _game->getSavedGame()->getRegions()->end();

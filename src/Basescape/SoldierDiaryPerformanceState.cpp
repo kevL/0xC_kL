@@ -217,7 +217,7 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	{
 //		_txtBaseLabel->setColor(BLUE);
 		_txtBaseLabel->setAlign(ALIGN_CENTER);
-		_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
+		_txtBaseLabel->setText(_base->getName());
 
 		_btnNext->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnNextClick);
 		_btnNext->onKeyboardPress(

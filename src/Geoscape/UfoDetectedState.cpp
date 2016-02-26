@@ -349,7 +349,7 @@ UfoDetectedState::UfoDetectedState(
 					i != hyperBases->end();
 					++i)
 			{
-				bases << (*i)->getName(_game->getLanguage()) << L"\n";
+				bases << (*i)->getName() << L"\n";
 			}
 			_txtBases->setText(bases.str());
 		}

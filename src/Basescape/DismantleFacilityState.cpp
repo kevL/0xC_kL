@@ -50,7 +50,7 @@ namespace OpenXcom
 DismantleFacilityState::DismantleFacilityState(
 		Base* const base,
 		BaseView* const view,
-		BaseFacility* const fac)
+		const BaseFacility* const fac)
 	:
 		_base(base),
 		_view(view),
@@ -189,15 +189,15 @@ void DismantleFacilityState::btnCancelClick(Action*)
  */
 void DismantleFacilityState::calcRefund() // private.
 {
-	const int buildCost = _fac->getRules()->getBuildCost();
+	const int buildCost (_fac->getRules()->getBuildCost());
 	if (_fac->buildFinished() == false)
 	{
 		if (_fac->getBuildTime() > _fac->getRules()->getBuildTime())
 			_refund = buildCost;
 		else
 		{
-			const float factor = static_cast<float>(_fac->getBuildTime())
-							   / static_cast<float>(_fac->getRules()->getBuildTime());
+			const float factor (static_cast<float>(_fac->getBuildTime())
+							  / static_cast<float>(_fac->getRules()->getBuildTime()));
 			_refund = static_cast<int>(ceil(
 					  static_cast<float>(buildCost) * factor));
 			if (_refund < buildCost * 10 / 100)

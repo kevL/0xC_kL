@@ -46,7 +46,7 @@ private:
 	int _refund;
 
 	Base* _base;
-	BaseFacility* _fac;
+	const BaseFacility* _fac;
 	BaseView* _view;
 
 	Text
@@ -67,7 +67,7 @@ private:
 		DismantleFacilityState(
 				Base* const base,
 				BaseView* const view,
-				BaseFacility* const fac);
+				const BaseFacility* const fac);
 		/// Cleans up the Dismantle Facility state.
 		~DismantleFacilityState();
 

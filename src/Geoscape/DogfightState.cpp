@@ -344,7 +344,7 @@ DogfightState::DogfightState(
 	_btnMinimizedIcon->setVisible(false);
 
 	std::wostringstream woststr;
-	woststr << _craft->getName(_game->getLanguage()) << L" >" << _craft->getBase()->getName(_game->getLanguage());
+	woststr << _craft->getName(_game->getLanguage()) << L" >" << _craft->getBase()->getName();
 	_txtTitle->setText(woststr.str());
 
 	_txtInterception->setText(woststr.str());

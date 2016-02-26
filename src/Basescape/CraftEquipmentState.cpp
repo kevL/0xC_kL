@@ -146,7 +146,7 @@ CraftEquipmentState::CraftEquipmentState(
 	_txtTitle->setBig();
 
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
-	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
+	_txtBaseLabel->setText(_base->getName());
 
 	_txtItem->setText(tr("STR_ITEM"));
 	_txtStores->setText(tr("STR_STORES"));

@@ -338,11 +338,11 @@ void Soldier::setCraft(Craft* const craft)
  * @param lang - pointer to Language to get strings from
  * @return, full name
  */
-std::wstring Soldier::getCraftString(Language* lang) const
+std::wstring Soldier::getCraftString(const Language* const lang) const
 {
 	std::wstring ret;
 
-	if (_recovery > 0)
+	if (_recovery != 0)
 		ret = lang->getString("STR_WOUNDED").arg(_recovery);
 	else if (_craft == nullptr)
 		ret = lang->getString("STR_NONE_UC");

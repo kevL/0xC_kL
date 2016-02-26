@@ -100,9 +100,6 @@ NewBattleState::NewBattleState()
 	_txtTerrain			= new Text(120, 9, 22, 113);
 	_cbxTerrain			= new ComboBox(this, 120, 16, 22, 123);
 
-//	_txtDepth			= new Text(120, 9, 22, 143);
-//	_slrDepth			= new Slider(120, 16, 22, 153);
-
 	_txtDifficulty		= new Text(120, 9, 178, 83);
 	_cbxDifficulty		= new ComboBox(this, 120, 16, 178, 93);
 
@@ -131,8 +128,6 @@ NewBattleState::NewBattleState()
 
 	add(_txtDarkness,		"text",		"newBattleMenu");
 	add(_slrDarkness,		"button1",	"newBattleMenu");
-//	add(_txtDepth,			"text",		"newBattleMenu");
-//	add(_slrDepth,			"button1",	"newBattleMenu");
 	add(_txtTerrain,		"text",		"newBattleMenu");
 	add(_txtDifficulty,		"text",		"newBattleMenu");
 	add(_txtAlienRace,		"text",		"newBattleMenu");
@@ -166,7 +161,6 @@ NewBattleState::NewBattleState()
 	_txtMission->setText(tr("STR_MISSION"));
 	_txtCraft->setText(tr("STR_CRAFT"));
 	_txtDarkness->setText(tr("STR_MAP_DARKNESS"));
-//	_txtDepth->setText(tr("STR_MAP_DEPTH"));
 	_txtTerrain->setText(tr("STR_MAP_TERRAIN"));
 	_txtDifficulty->setText(tr("STR_ALIEN_DIFFICULTY"));
 	_txtAlienRace->setText(tr("STR_ALIEN_RACE"));
@@ -177,10 +171,10 @@ NewBattleState::NewBattleState()
 	_cbxMission->setBackgroundFill(58); // dk.brown <- TODO: put this in Interfaces.rul
 	_cbxMission->onComboChange((ActionHandler)& NewBattleState::cbxMissionChange);
 
-	const std::vector<std::string>& craftsList = _rules->getCraftsList();
+	const std::vector<std::string>& allCraft (_rules->getCraftsList());
 	for (std::vector<std::string>::const_iterator
-			i = craftsList.begin();
-			i != craftsList.end();
+			i = allCraft.begin();
+			i != allCraft.end();
 			++i)
 	{
 		if (_rules->getCraft(*i)->getSoldiers() != 0)
@@ -191,8 +185,6 @@ NewBattleState::NewBattleState()
 	_cbxCraft->onComboChange((ActionHandler)& NewBattleState::cbxCraftChange);
 
 	_slrDarkness->setRange(0,15);
-
-//	_slrDepth->setRange(1,3);
 
 //	_cbxTerrain->onComboChange((ActionHandler)& NewBattleState::cbxTerrainChange);
 
@@ -272,7 +264,7 @@ void NewBattleState::init()
  */
 void NewBattleState::load(const std::string& file)
 {
-	const std::string config = Options::getConfigFolder() + file + ".cfg";
+	const std::string config (Options::getConfigFolder() + file + ".cfg");
 
 	if (CrossPlatform::fileExists(config) == false)
 		initPlay();
@@ -302,19 +294,19 @@ void NewBattleState::load(const std::string& file)
 
 			if (doc["base"])
 			{
-				SavedGame* const gameSave = new SavedGame(_rules);
+				SavedGame* const gameSave (new SavedGame(_rules));
 
-				Base* const base = new Base(_rules);
+				Base* const base (new Base(_rules));
 				base->load(
 						doc["base"],
 						gameSave); // note: considered as neither a 'firstBase' nor a 'skirmish' ...
 				gameSave->getBases()->push_back(base);
 
 				// Add research - setup research generals.
-				const std::vector<std::string>& resList = _rules->getResearchList();
+				const std::vector<std::string>& allResearch (_rules->getResearchList());
 				for (std::vector<std::string>::const_iterator
-						i = resList.begin();
-						i != resList.end();
+						i = allResearch.begin();
+						i != allResearch.end();
 						++i)
 				{
 					gameSave->getResearchGenerals().push_back(new ResearchGeneral(
@@ -325,10 +317,10 @@ void NewBattleState::load(const std::string& file)
 				// Generate items
 				base->getStorageItems()->getContents()->clear();
 				const RuleItem* itRule;
-				const std::vector<std::string>& itemList = _rules->getItemsList();
+				const std::vector<std::string>& allItems (_rules->getItemsList());
 				for (std::vector<std::string>::const_iterator
-						i = itemList.begin();
-						i != itemList.end();
+						i = allItems.begin();
+						i != allItems.end();
 						++i)
 				{
 					itRule = _rules->getItemRule(*i);
@@ -342,7 +334,7 @@ void NewBattleState::load(const std::string& file)
 				// Fix invalid contents
 				if (base->getCrafts()->empty() == true)
 				{
-					const std::string craftType = _crafts[_cbxCraft->getSelected()];
+					const std::string craftType (_crafts[_cbxCraft->getSelected()]);
 					_craft = new Craft(
 									_rules->getCraft(craftType),
 									base,
@@ -381,7 +373,7 @@ void NewBattleState::load(const std::string& file)
  */
 void NewBattleState::save(const std::string& file)
 {
-	const std::string config = Options::getConfigFolder() + file + ".cfg";
+	const std::string config (Options::getConfigFolder() + file + ".cfg");
 
 	std::ofstream save (config.c_str());
 	if (save.fail() == true)
@@ -534,10 +526,10 @@ void NewBattleState::initPlay()
 
 	// Generate items
 	const RuleItem* itRule;
-	const std::vector<std::string>& items (_rules->getItemsList());
+	const std::vector<std::string>& allItems (_rules->getItemsList());
 	for (std::vector<std::string>::const_iterator
-			i = items.begin();
-			i != items.end();
+			i = allItems.begin();
+			i != allItems.end();
 			++i)
 	{
 		itRule = _rules->getItemRule(*i);
@@ -727,11 +719,11 @@ void NewBattleState::btnEquipClick(Action*)
 void NewBattleState::cbxMissionChange(Action*)
 {
 	Log(LOG_INFO) << "NewBattleState::cbxMissionChange()";
-	const AlienDeployment* const ruleDeploy = _rules->getDeployment(_missionTypes[_cbxMission->getSelected()]);
+	const AlienDeployment* const ruleDeploy (_rules->getDeployment(_missionTypes[_cbxMission->getSelected()]));
 	Log(LOG_INFO) << ". ruleDeploy = " << ruleDeploy->getType();
 
 	std::vector<std::string> // Get terrains associated with this mission
-		deployTerrains = ruleDeploy->getDeployTerrains(),
+		deployTerrains (ruleDeploy->getDeployTerrains()),
 		globeTerrains;
 
 	// debug:
@@ -800,7 +792,7 @@ void NewBattleState::cbxMissionChange(Action*)
 		terrainOptions.push_back("MAP_" + *i);
 	}
 
-	bool vis = ruleDeploy->getShade() == -1; // Hide controls that don't apply to mission
+	bool vis (ruleDeploy->getShade() == -1); // Hide controls that don't apply to mission
 	_txtDarkness->setVisible(vis);
 	_slrDarkness->setVisible(vis);
 
@@ -823,8 +815,8 @@ void NewBattleState::cbxCraftChange(Action*)
 {
 	_craft->changeRules(_rules->getCraft(_crafts[_cbxCraft->getSelected()]));
 
-	const int maxSoldiers = _craft->getRules()->getSoldiers();
-	int curSoldiers = _craft->getQtySoldiers();
+	const int maxSoldiers (_craft->getRules()->getSoldiers());
+	int curSoldiers (_craft->getQtySoldiers());
 	if (curSoldiers > maxSoldiers)
 	{
 		for (std::vector<Soldier*>::const_reverse_iterator

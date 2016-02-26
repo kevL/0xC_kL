@@ -46,19 +46,19 @@ namespace OpenXcom
  * Initializes all the elements in a Production Complete window.
  * @param base			- pointer to Base the production belongs to
  * @param item			- reference the item that finished producing
- * @param state			- pointer to GeoscapeState
+ * @param geoState			- pointer to GeoscapeState
  * @param gotoBaseBtn	-
  * @param endType		- what ended the production (default PROGRESS_COMPLETE) (see Production.h)
  */
 ProductionCompleteState::ProductionCompleteState(
-		Base* base,
+		Base* const base,
 		const std::wstring& item,
-		GeoscapeState* state,
+		GeoscapeState* const geoState,
 		bool gotoBaseBtn,
 		ProductionProgress endType)
 	:
 		_base(base),
-		_state(state),
+		_geoState(geoState),
 		_endType(endType)
 {
 	_fullScreen = false;
@@ -84,7 +84,7 @@ ProductionCompleteState::ProductionCompleteState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));
 
-	_btnOk->setText(tr(gotoBaseBtn ? "STR_OK" : "STR_MORE"));
+	_btnOk->setText(tr(gotoBaseBtn == true ? "STR_OK" : "STR_MORE"));
 	_btnOk->onMouseClick((ActionHandler)& ProductionCompleteState::btnOkClick);
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& ProductionCompleteState::btnOkClick,
@@ -97,7 +97,7 @@ ProductionCompleteState::ProductionCompleteState(
 					Options::keyGeoSpeed1);
 
 	_btnGotoBase->setText(tr("STR_GO_TO_BASE"));
-	_btnGotoBase->setVisible(gotoBaseBtn);
+	_btnGotoBase->setVisible(gotoBaseBtn == true);
 	_btnGotoBase->onMouseClick((ActionHandler)& ProductionCompleteState::btnGotoBaseClick);
 	_btnGotoBase->onKeyboardPress(
 					(ActionHandler)& ProductionCompleteState::btnGotoBaseClick,
@@ -116,20 +116,20 @@ ProductionCompleteState::ProductionCompleteState(
 	{
 		case PROGRESS_CONSTRUCTION:
 			wst = tr("STR_CONSTRUCTION_OF_FACILITY_AT_BASE_IS_COMPLETE")
-					.arg(item).arg(base->getName(nullptr));
-		break;
+					.arg(item).arg(base->getName());
+			break;
 		case PROGRESS_COMPLETE:
 			wst = tr("STR_PRODUCTION_OF_ITEM_AT_BASE_IS_COMPLETE")
-					.arg(item).arg(base->getName(nullptr));
-		break;
+					.arg(item).arg(base->getName());
+			break;
 		case PROGRESS_NOT_ENOUGH_MONEY:
 			wst = tr("STR_NOT_ENOUGH_MONEY_TO_PRODUCE_ITEM_AT_BASE")
-					.arg(item).arg(base->getName(nullptr));
-		break;
+					.arg(item).arg(base->getName());
+			break;
 		case PROGRESS_NOT_ENOUGH_MATERIALS:
 			wst = tr("STR_NOT_ENOUGH_SPECIAL_MATERIALS_TO_PRODUCE_ITEM_AT_BASE")
-					.arg(item).arg(base->getName(nullptr));
-		break;
+					.arg(item).arg(base->getName());
+			break;
 
 		default:
 			assert(false);
@@ -150,7 +150,7 @@ ProductionCompleteState::~ProductionCompleteState()
 void ProductionCompleteState::init()
 {
 	State::init();
-	_btnOk5Secs->setVisible(_state->is5Sec() == false);
+	_btnOk5Secs->setVisible(_geoState->is5Sec() == false);
 }
 
 /**
@@ -168,7 +168,7 @@ void ProductionCompleteState::btnOkClick(Action*)
  */
 void ProductionCompleteState::btnOk5SecsClick(Action*)
 {
-	_state->resetTimer();
+	_geoState->resetTimer();
 	_game->popState();
 }
 
@@ -178,12 +178,12 @@ void ProductionCompleteState::btnOk5SecsClick(Action*)
  */
 void ProductionCompleteState::btnGotoBaseClick(Action*)
 {
-	_state->resetTimer();
+	_geoState->resetTimer();
 	_game->popState();
 
 	_game->pushState(new BasescapeState(
 									_base,
-									_state->getGlobe()));
+									_geoState->getGlobe()));
 }
 
 }

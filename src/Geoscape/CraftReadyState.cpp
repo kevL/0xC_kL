@@ -19,7 +19,10 @@
 
 #include "CraftReadyState.h"
 
+#include "GeoscapeCraftState.h"
 #include "GeoscapeState.h"
+
+#include "../Basescape/BasescapeState.h"
 
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
@@ -31,32 +34,42 @@
 
 #include "../Resource/ResourcePack.h"
 
+#include "../SaveGame/Base.h"
+#include "../SaveGame/Craft.h"
+
 
 namespace OpenXcom
 {
 
 /**
  * Initializes all the elements in a CraftReady window.
- * @param state	- pointer to the GeoscapeState
- * @param wst	- reference to the message
+ * @param geoState	- pointer to the GeoscapeState
+ * @param craft		- poitner to a Craft
+ * @param wst		- reference to a wide-string message
  */
 CraftReadyState::CraftReadyState(
-		GeoscapeState* state,
+		GeoscapeState* const geoState,
+		Craft* const craft,
 		const std::wstring& wst)
 	:
-		_state(state)
+		_geoState(geoState),
+		_craft(craft)
 {
 	_fullScreen = false;
 
-	_window		= new Window(this, 256, 160, 32, 20, POPUP_BOTH);
-	_txtMessage	= new Text(226, 118, 47, 30);
-	_btnOk5Secs	= new TextButton(100, 18,  48, 150);
-	_btnOk		= new TextButton(100, 18, 172, 150);
+	_window			= new Window(this, 256, 160, 32, 20, POPUP_BOTH);
+	_txtMessage		= new Text(226, 80, 47, 30);
+	_btnGoToBase	= new TextButton(100, 16,  48, 132);
+	_btnCraftInfo	= new TextButton(100, 16, 172, 132);
+	_btnOk5Secs		= new TextButton(100, 16,  48, 150);
+	_btnOk			= new TextButton(100, 16, 172, 150);
 
 	setInterface("geoCraftScreens", true);
 
 	add(_window,		"window",	"geoCraftScreens");
 	add(_txtMessage,	"text1",	"geoCraftScreens");
+	add(_btnGoToBase,	"button",	"geoCraftScreens");
+	add(_btnCraftInfo,	"button",	"geoCraftScreens");
 	add(_btnOk5Secs,	"button",	"geoCraftScreens");
 	add(_btnOk,			"button",	"geoCraftScreens");
 
@@ -74,7 +87,7 @@ CraftReadyState::CraftReadyState(
 	_btnOk5Secs->setText(tr("STR_OK_5_SECONDS"));
 	_btnOk5Secs->onMouseClick((ActionHandler)& CraftReadyState::btnOk5SecsClick);
 
-	if (_state->is5Sec() == true)
+	if (_geoState->is5Sec() == true)
 	{
 		_btnOk->onKeyboardPress(
 						(ActionHandler)& CraftReadyState::btnOkClick,
@@ -93,10 +106,16 @@ CraftReadyState::CraftReadyState(
 						Options::keyOkKeypad);
 	}
 
+	_btnGoToBase->setText(tr("STR_GO_TO_BASE"));
+	_btnGoToBase->onMouseClick((ActionHandler)& CraftReadyState::btnGoToBaseClick);
+
+	_btnCraftInfo->setText(tr("STR_CRAFT_INFO"));
+	_btnCraftInfo->onMouseClick((ActionHandler)& CraftReadyState::btnCraftInfoClick);
+
+	_txtMessage->setText(wst);
 	_txtMessage->setAlign(ALIGN_CENTER);
 	_txtMessage->setVerticalAlign(ALIGN_MIDDLE);
 	_txtMessage->setBig();
-	_txtMessage->setText(wst);
 }
 
 /**
@@ -111,7 +130,7 @@ CraftReadyState::~CraftReadyState()
 void CraftReadyState::init()
 {
 	State::init();
-	_btnOk5Secs->setVisible(_state->is5Sec() == false);
+	_btnOk5Secs->setVisible(_geoState->is5Sec() == false);
 }
 
 /**
@@ -124,13 +143,37 @@ void CraftReadyState::btnOkClick(Action*)
 }
 
 /**
- * Closes the window.
+ * Closes the window and resets the Geoscape time-compression to 5secs.
  * @param action - pointer to an Action
  */
 void CraftReadyState::btnOk5SecsClick(Action*)
 {
-	_state->resetTimer();
+	_geoState->resetTimer();
 	_game->popState();
+}
+
+/**
+ * Closes the window and goes to the Craft's Base.
+ * @param action - pointer to an Action
+ */
+void CraftReadyState::btnGoToBaseClick(Action*)
+{
+	_geoState->resetTimer();
+	_game->popState();
+	_game->pushState(new BasescapeState(
+									_craft->getBase(),
+									_geoState->getGlobe()));
+}
+
+/**
+ * Closes the window and opens CraftInfo.
+ * @param action - pointer to an Action
+ */
+void CraftReadyState::btnCraftInfoClick(Action*)
+{
+	_geoState->resetTimer();
+	_game->popState();
+	_game->pushState(new GeoscapeCraftState(_craft, _geoState));
 }
 
 }

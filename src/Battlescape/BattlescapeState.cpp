@@ -504,7 +504,7 @@ BattlescapeState::BattlescapeState()
 		if ((*i)->getTactical() == true)
 		{
 			target = dynamic_cast<Target*>(*i);
-			baseLabel = (*i)->getName(_game->getLanguage());
+			baseLabel = (*i)->getName();
 			missionLabel = tr("STR_BASE_DEFENSE");
 			break;
 		}
@@ -517,7 +517,7 @@ BattlescapeState::BattlescapeState()
 			if ((*j)->getTactical() == true)
 			{
 				target = dynamic_cast<Target*>(*j);
-				baseLabel = (*i)->getName(_game->getLanguage());
+				baseLabel = (*i)->getName();
 			}
 		}
 	}

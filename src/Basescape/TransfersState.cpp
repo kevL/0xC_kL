@@ -43,7 +43,7 @@ namespace OpenXcom
  * Initializes all the elements in the Transfers window.
  * @param base - pointer to the Base to get info from
  */
-TransfersState::TransfersState(Base* base)
+TransfersState::TransfersState(Base* const base)
 	:
 		_base(base)
 {
@@ -94,7 +94,7 @@ TransfersState::TransfersState(Base* base)
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setText(tr("STR_TRANSFERS_UC"));
 
-	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
+	_txtBaseLabel->setText(_base->getName());
 
 	_txtItem->setText(tr("STR_ITEM"));
 
@@ -111,17 +111,11 @@ TransfersState::TransfersState(Base* base)
 			i != _base->getTransfers()->end();
 			++i)
 	{
-		std::wostringstream
-			woststr1,
-			woststr2;
-		woststr1 << (*i)->getQuantity();
-		woststr2 << (*i)->getHours();
-
 		_lstTransfers->addRow(
 							3,
 							(*i)->getName(_game->getLanguage()).c_str(),
-							woststr1.str().c_str(),
-							woststr2.str().c_str());
+							Text::intWide((*i)->getQuantity()).c_str(),
+							Text::intWide((*i)->getHours()).c_str());
 	}
 }
 

@@ -113,7 +113,7 @@ CraftSoldiersState::CraftSoldiersState(
 						.arg(_craft->getName(_game->getLanguage())));
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
+	_txtBaseLabel->setText(_base->getName());
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
 
 	_txtName->setText(tr("STR_NAME_UC"));

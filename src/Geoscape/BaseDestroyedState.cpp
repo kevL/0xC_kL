@@ -87,7 +87,7 @@ BaseDestroyedState::BaseDestroyedState(
 	_txtMessage->setBig();
 	_txtMessage->setWordWrap();
 	_txtMessage->setText(tr("STR_THE_ALIENS_HAVE_DESTROYED_THE_UNDEFENDED_BASE")
-							.arg(_base->getName(nullptr)));
+							.arg(_base->getName()));
 
 	_btnCenter->setText(tr("STR_CENTER"));
 	_btnCenter->onMouseClick((ActionHandler)& BaseDestroyedState::btnCenterClick);

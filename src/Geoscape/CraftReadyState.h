@@ -28,6 +28,7 @@
 namespace OpenXcom
 {
 
+class Craft;
 class GeoscapeState;
 
 class Text;
@@ -42,11 +43,15 @@ class CraftReadyState
 	:
 		public State
 {
+
 private:
-	GeoscapeState* _state;
+	Craft* _craft;
+	GeoscapeState* _geoState;
 
 	Text* _txtMessage;
 	TextButton
+		* _btnCraftInfo,
+		* _btnGoToBase,
 		* _btnOk,
 		* _btnOk5Secs;
 	Window* _window;
@@ -55,7 +60,8 @@ private:
 	public:
 		/// Constructs the CraftReady state.
 		CraftReadyState(
-				GeoscapeState* state,
+				GeoscapeState* const geoState,
+				Craft* const craft,
 				const std::wstring& wst);
 		/// Cleans up the CraftReady state.
 		~CraftReadyState();
@@ -67,9 +73,10 @@ private:
 		void btnOkClick(Action* action);
 		/// Handler for clicking the OK 5 Secs button.
 		void btnOk5SecsClick(Action* action);
-		///
-		// TODO: btnBaseClick()
-		// TODO: btnCraftInfoClick()
+		/// Handler for clicking the GoToBase button.
+		void btnGoToBaseClick(Action* action);
+		/// Handler for clicking the CraftInfo button.
+		void btnCraftInfoClick(Action* action);
 };
 
 }

@@ -139,7 +139,7 @@ SellState::SellState(Base* const base)
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
+	_txtBaseLabel->setText(_base->getName());
 	_txtSales->setText(tr("STR_VALUE_OF_SALES")
 						.arg(Text::formatCurrency(_totalCost)));
 	_txtFunds->setText(tr("STR_FUNDS")

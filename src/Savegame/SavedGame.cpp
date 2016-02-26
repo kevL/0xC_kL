@@ -667,8 +667,8 @@ void SavedGame::save(const std::string& file) const
 	brief["savedate"]	= Version::timeStamp();
 	brief["time"]		= _time->save();
 
-	const Base* const base	= _bases.front();
-	brief["base"]			= Language::wstrToUtf8(base->getName(nullptr));
+	const Base* const base (_bases.front());
+	brief["base"] = Language::wstrToUtf8(base->getName());
 
 	if (_battleSave != nullptr)
 	{

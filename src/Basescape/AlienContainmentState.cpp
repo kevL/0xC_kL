@@ -137,7 +137,7 @@ AlienContainmentState::AlienContainmentState(
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
+	_txtBaseLabel->setText(_base->getName());
 
 	_txtSpace->setText(tr("STR_SPACE_USED_SPACE_FREE_")
 						.arg(_usedSpace)

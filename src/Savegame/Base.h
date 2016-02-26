@@ -131,7 +131,7 @@ private:
 		YAML::Node saveId() const override;
 
 		/// Gets the Base's name.
-		std::wstring getName(const Language* const lang) const override;
+		std::wstring getName(const Language* const lang = nullptr) const override;
 		/// Sets the Base's name.
 		void setName(const std::wstring& wst);
 		/// Gets the Base's marker.

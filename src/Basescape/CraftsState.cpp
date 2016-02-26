@@ -104,7 +104,7 @@ CraftsState::CraftsState(Base* base)
 	_txtTitle->setText(tr("STR_INTERCEPTION_CRAFT"));
 
 	_txtBase->setBig();
-	_txtBase->setText(tr("STR_BASE_").arg(_base->getName(nullptr)));
+	_txtBase->setText(tr("STR_BASE_").arg(_base->getName()));
 //	_txtBase->setText(_base->getName(_game->getLanguage()));
 
 	_txtName->setText(tr("STR_NAME_UC"));
@@ -145,8 +145,7 @@ void CraftsState::init()
 	for (std::vector<Craft*>::const_iterator
 			i = _base->getCrafts()->begin();
 			i != _base->getCrafts()->end();
-			++i,
-				++row)
+			++i, ++row)
 	{
 		std::wostringstream
 			woststr1,
@@ -170,7 +169,7 @@ void CraftsState::init()
 		else
 			woststr3 << L"-";
 
-		std::wstring status = getAltStatus(*i);
+		std::wstring status (getAltStatus(*i));
 		_lstCrafts->addRow(
 						5,
 						(*i)->getName(_game->getLanguage()).c_str(),
@@ -178,7 +177,6 @@ void CraftsState::init()
 						woststr1.str().c_str(),
 						woststr2.str().c_str(),
 						woststr3.str().c_str());
-
 		_lstCrafts->setCellColor(
 								row,
 								1,
@@ -197,7 +195,7 @@ void CraftsState::init()
  */
 std::wstring CraftsState::getAltStatus(Craft* const craft)
 {
-	const CraftStatus stat = craft->getCraftStatus();
+	const CraftStatus stat (craft->getCraftStatus());
 	if (stat != CS_OUT)
 	{
 		if (stat == CS_READY)
@@ -212,8 +210,8 @@ std::wstring CraftsState::getAltStatus(Craft* const craft)
 		st.push_back('_');
 
 		bool delayed;
-		const int hours = craft->getDowntime(delayed);
-		const std::wstring wst = formatTime(hours, delayed);
+		const int hours (craft->getDowntime(delayed));
+		const std::wstring wst (formatTime(hours, delayed));
 		return tr(st).arg(wst);
 	}
 
@@ -240,7 +238,7 @@ std::wstring CraftsState::getAltStatus(Craft* const craft)
 	}
 	else
 	{
-		const Ufo* const ufo = dynamic_cast<Ufo*>(craft->getDestination());
+		const Ufo* const ufo (dynamic_cast<Ufo*>(craft->getDestination()));
 		if (ufo != nullptr)
 		{
 			if (craft->inDogfight() == true)
@@ -275,8 +273,8 @@ std::wstring CraftsState::formatTime(
 	woststr << L"(";
 
 	const int
-		dys = total / 24,
-		hrs = total % 24;
+		dys (total / 24),
+		hrs (total % 24);
 
 	if (dys > 0)
 	{
@@ -293,7 +291,6 @@ std::wstring CraftsState::formatTime(
 		woststr << L" +";
 
 	woststr << L")";
-
 	return woststr.str();
 }
 
@@ -313,9 +310,9 @@ void CraftsState::btnOkClick(Action*)
  */
 void CraftsState::lstCraftsPress(Action* action)
 {
-	const double mx = action->getAbsoluteXMouse();
-	if (   mx >= _lstCrafts->getArrowsLeftEdge()
-		&& mx < _lstCrafts->getArrowsRightEdge())
+	const double mX (action->getAbsoluteXMouse());
+	if (   mX >= _lstCrafts->getArrowsLeftEdge()
+		&& mX < _lstCrafts->getArrowsRightEdge())
 	{
 		return;
 	}
@@ -329,7 +326,7 @@ void CraftsState::lstCraftsPress(Action* action)
 	}
 	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
 	{
-		const Craft* const craft = _base->getCrafts()->at(_lstCrafts->getSelectedRow());
+		const Craft* const craft (_base->getCrafts()->at(_lstCrafts->getSelectedRow()));
 		_game->getSavedGame()->setGlobeLongitude(craft->getLongitude());
 		_game->getSavedGame()->setGlobeLatitude(craft->getLatitude());
 
@@ -346,17 +343,17 @@ void CraftsState::lstCraftsPress(Action* action)
  */
 void CraftsState::lstLeftArrowClick(Action* action)
 {
-	const int row = _lstCrafts->getSelectedRow();
+	const size_t row (_lstCrafts->getSelectedRow());
 	if (row > 0)
 	{
-		Craft* const craft = _base->getCrafts()->at(row);
+		Craft* const craft (_base->getCrafts()->at(row));
 
 		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		{
 			_base->getCrafts()->at(row) = _base->getCrafts()->at(row - 1);
 			_base->getCrafts()->at(row - 1) = craft;
 
-			if (row != static_cast<int>(_lstCrafts->getScroll()))
+			if (row != _lstCrafts->getScroll())
 			{
 				SDL_WarpMouse(
 						static_cast<Uint16>(action->getLeftBlackBand() + action->getXMouse()),
@@ -385,13 +382,13 @@ void CraftsState::lstLeftArrowClick(Action* action)
 void CraftsState::lstRightArrowClick(Action* action)
 {
 	const size_t
-		qtyCrafts = _base->getCrafts()->size(),
-		row = _lstCrafts->getSelectedRow();
+		qtyCrafts (_base->getCrafts()->size()),
+		row (_lstCrafts->getSelectedRow());
 
 	if (qtyCrafts > 0
 		&& row < qtyCrafts - 1)
 	{
-		Craft* const craft = _base->getCrafts()->at(row);
+		Craft* const craft (_base->getCrafts()->at(row));
 
 		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		{

@@ -173,7 +173,7 @@ BriefingState::BriefingState(
 	}
 	else if (base != nullptr)
 	{
-		craftLabel = tr("STR_BASE_UC_").arg(base->getName(nullptr));
+		craftLabel = tr("STR_BASE_UC_").arg(base->getName());
 		_txtTarget->setVisible(false);
 	}
 

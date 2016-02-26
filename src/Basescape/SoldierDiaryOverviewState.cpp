@@ -137,7 +137,7 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 	{
 //		_txtBaseLabel->setColor(BLUE);
 		_txtBaseLabel->setAlign(ALIGN_CENTER);
-		_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
+		_txtBaseLabel->setText(_base->getName());
 	}
 	else
 		_txtBaseLabel->setVisible(false);

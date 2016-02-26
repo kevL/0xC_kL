@@ -101,7 +101,7 @@ DebriefExtraState::DebriefExtraState(
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(base->getName(_game->getLanguage()));
+	_txtBaseLabel->setText(base->getName());
 
 	_lstSolStats->setColumns(12, 90,17,17,17,17,17,17,17,17,17,17,17);
 	_lstSolStats->setBackground(_window);

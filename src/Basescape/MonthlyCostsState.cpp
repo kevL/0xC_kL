@@ -93,7 +93,7 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
-	_txtTitle->setText(tr("STR_MONTHLY_COSTS_").arg(base->getName(nullptr)));
+	_txtTitle->setText(tr("STR_MONTHLY_COSTS_").arg(base->getName()));
 	_txtTitle->setBig();
 
 	_txtUnitCost->setText(tr("STR_COST_PER_UNIT"));
@@ -107,10 +107,10 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 	_lstCrafts->setColumns(4, 124,62,43,56);
 	_lstCrafts->setMargin();
 	_lstCrafts->setDot();
-	const std::vector<std::string>& craftList (_game->getRuleset()->getCraftsList());
+	const std::vector<std::string>& allCraft (_game->getRuleset()->getCraftsList());
 	for (std::vector<std::string>::const_iterator
-			i = craftList.begin();
-			i != craftList.end();
+			i = allCraft.begin();
+			i != allCraft.end();
 			++i)
 	{
 		const RuleCraft* const crRule (_game->getRuleset()->getCraft(*i));

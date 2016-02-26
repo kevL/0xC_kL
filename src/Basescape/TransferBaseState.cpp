@@ -107,7 +107,7 @@ TransferBaseState::TransferBaseState(Base* base)
 	_txtTitle->setAlign(ALIGN_RIGHT);
 	_txtTitle->setText(tr("STR_SELECT_DESTINATION_BASE"));
 
-	_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
+	_txtBaseLabel->setText(_base->getName());
 
 	_txtFunds->setText(tr("STR_CURRENT_FUNDS_")
 						.arg(Text::formatCurrency(_game->getSavedGame()->getFunds())));
@@ -150,7 +150,7 @@ TransferBaseState::TransferBaseState(Base* base)
 			woststr << L'\x01' << area;
 			_lstBases->addRow(
 							2,
-							(*i)->getName(nullptr).c_str(),
+							(*i)->getName().c_str(),
 							woststr.str().c_str());
 			_bases.push_back(*i);
 		}

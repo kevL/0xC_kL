@@ -88,9 +88,9 @@ private:
 
 
 	public:
-		/// Creates the New Battle state.
+		/// Creates the NewBattle state.
 		NewBattleState();
-		/// Cleans up the New Battle state.
+		/// Cleans up the NewBattle state.
 		~NewBattleState();
 
 		/// Resets state.

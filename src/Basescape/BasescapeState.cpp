@@ -245,7 +245,6 @@ BasescapeState::~BasescapeState()
 		if (*i == _base)
 			return;
 	}
-
 	delete _base;
 }
 
@@ -260,7 +259,7 @@ void BasescapeState::init()
 
 	_view->setBase(_base);
 	_mini->draw();
-	_edtBase->setText(_base->getName(nullptr));
+	_edtBase->setText(_base->getName());
 
 	for (std::vector<Region*>::const_iterator
 			i = _game->getSavedGame()->getRegions()->begin();
@@ -282,17 +281,17 @@ void BasescapeState::init()
 //	_btnNewBase->setVisible(_baseList->size() < Base::MAX_BASES);
 
 	bool
-		hasFunds		= (_game->getSavedGame()->getFunds() > 0),
-		hasQuarters		= false,
-		hasSoldiers		= false,
-		hasScientists	= false,
-		hasEngineers	= false,
-		hasHangar		= false,
-		hasCraft		= false,
-		hasAlienCont	= false,
-		hasLabs			= false,
-		hasProd			= false,
-		hasStores		= false;
+		hasFunds		(_game->getSavedGame()->getFunds() > 0),
+		hasQuarters		(false),
+		hasSoldiers		(false),
+		hasScientists	(false),
+		hasEngineers	(false),
+		hasHangar		(false),
+		hasCraft		(false),
+		hasAlienCont	(false),
+		hasLabs			(false),
+		hasProd			(false),
+		hasStores		(false);
 
 	for (std::vector<BaseFacility*>::const_iterator
 			i = _base->getFacilities()->begin();
@@ -355,7 +354,7 @@ void BasescapeState::init()
 	_btnIncTrans->setVisible(_base->getTransfers()->empty() == false);
 
 
-	const std::string track = OpenXcom::res_MUSIC_GEO_GLOBE;
+	const std::string track (OpenXcom::res_MUSIC_GEO_GLOBE);
 	if (_game->getResourcePack()->isMusicPlaying(track) == false) // stop Dogfight music, Pls.
 	{
 		_game->getResourcePack()->fadeMusic(_game, 345);
@@ -392,16 +391,14 @@ void BasescapeState::setBase(Base* const base)
 		{
 			_base = base;
 			_mini->setSelectedBase(i);
-
 			return;
 		}
 	}
-
 	_base = _baseList->front();
 	_mini->setSelectedBase(0);
 }
 
-/*
+/**
  * Goes to the Build New Base screen.
  * @param action - pointer to an Action
  *
@@ -555,7 +552,6 @@ void BasescapeState::btnGeoscapeClick(Action*)
 	{
 		kL_geoMusicPlaying = false;
 		kL_geoMusicReturnState = true;
-
 		_game->popState();
 	}
 }
@@ -568,8 +564,8 @@ void BasescapeState::viewLeftClick(Action*)
 {
 	if (_edtBase->isFocused() == false)
 	{
-		const BaseFacility* const fac = _view->getSelectedFacility();
-		bool bPop = false;
+		const BaseFacility* const fac (_view->getSelectedFacility());
+		bool bPop (false);
 
 		if (fac == nullptr) // dirt.
 		{
@@ -666,7 +662,7 @@ void BasescapeState::viewRightClick(Action*)
 {
 	if (_edtBase->isFocused() == false)
 	{
-		BaseFacility* const fac = _view->getSelectedFacility();
+		const BaseFacility* const fac (_view->getSelectedFacility());
 		if (fac != nullptr)
 		{
 			if (fac->inUse() == true)
@@ -700,7 +696,7 @@ void BasescapeState::viewMouseOver(Action*)
 	{
 		std::wostringstream woststr;
 
-		const BaseFacility* const fac = _view->getSelectedFacility();
+		const BaseFacility* const fac (_view->getSelectedFacility());
 		if (fac != nullptr)
 		{
 			_txtFacility->setAlign(ALIGN_LEFT);
@@ -712,12 +708,12 @@ void BasescapeState::viewMouseOver(Action*)
 		}
 		else
 		{
-			const size_t baseId = _mini->getHoveredBase();
+			const size_t baseId (_mini->getHoveredBase());
 			if (baseId < _baseList->size()
 				&& _base != _baseList->at(baseId))
 			{
 				_txtFacility->setAlign(ALIGN_RIGHT);
-				woststr << _baseList->at(baseId)->getName(_game->getLanguage()).c_str();
+				woststr << _baseList->at(baseId)->getName().c_str();
 			}
 		}
 
@@ -742,7 +738,7 @@ void BasescapeState::miniLeftClick(Action*)
 {
 	if (_edtBase->isFocused() == false)
 	{
-		const size_t baseId = _mini->getHoveredBase();
+		const size_t baseId (_mini->getHoveredBase());
 		if (baseId < _baseList->size()
 			&& _base != _baseList->at(baseId))
 		{
@@ -773,7 +769,7 @@ void BasescapeState::miniRightClick(Action*)
 {
 	if (_edtBase->isFocused() == false)
 	{
-		const size_t baseId = _mini->getHoveredBase();
+		const size_t baseId (_mini->getHoveredBase());
 		if (baseId < _baseList->size())
 		{
 			const Base* const base (_baseList->at(baseId));
@@ -799,7 +795,7 @@ void BasescapeState::handleKeyPress(Action* action)
 	if (_edtBase->isFocused() == false
 		&& action->getDetails()->type == SDL_KEYDOWN)
 	{
-		const size_t baseId = getKeyedBaseId(action->getDetails()->key.keysym.sym);
+		const size_t baseId (getKeyedBaseId(action->getDetails()->key.keysym.sym));
 		if (baseId != Base::MAX_BASES)
 		{
 			_allowStoresWarning = true;

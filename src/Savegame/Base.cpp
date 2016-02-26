@@ -371,9 +371,10 @@ YAML::Node Base::saveId() const
 }
 
 /**
- * Returns the custom name for this Base.
- * @param lang - pointer to Language to get strings from
- * @return, name string
+ * Returns the player-specified name for this Base.
+ * @note The Language-ptr is neither used nor needed for Base-Targets.
+ * @param lang - pointer to Language to get strings from (default nullptr)
+ * @return, the base-name as a wide-string
  */
 std::wstring Base::getName(const Language* const) const
 {
@@ -381,8 +382,8 @@ std::wstring Base::getName(const Language* const) const
 }
 
 /**
- * Changes the custom name for this Base.
- * @param name - reference a name string
+ * Changes the player-specified name for this Base.
+ * @param name - reference to a wide-string
  */
 void Base::setName(const std::wstring& wst)
 {

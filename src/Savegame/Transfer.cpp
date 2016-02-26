@@ -33,7 +33,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a transfer.
+ * Initializes the Transfer.
  * @param hours - hours in-transit
  */
 Transfer::Transfer(int hours)
@@ -48,7 +48,7 @@ Transfer::Transfer(int hours)
 {}
 
 /**
- * Cleans up undelivered transfers.
+ * Cleans up undelivered Transfers.
  */
 Transfer::~Transfer()
 {
@@ -60,7 +60,7 @@ Transfer::~Transfer()
 }
 
 /**
- * Loads the transfer from a YAML file.
+ * Loads this Transfer from a YAML file.
  * @param node	- reference a YAML node
  * @param base	- pointer to a destination Base
  * @param rules	- pointer to the game's Ruleset
@@ -129,7 +129,7 @@ bool Transfer::load(
 }
 
 /**
- * Saves the transfer to a YAML file.
+ * Saves this Transfer to a YAML file.
  * @return, YAML node
  */
 YAML::Node Transfer::save() const
@@ -154,7 +154,7 @@ YAML::Node Transfer::save() const
 }
 
 /**
- * Changes the soldier being transfered.
+ * Sets the Soldier being transfered.
  * @param soldier - pointer to a Soldier
  */
 void Transfer::setSoldier(Soldier* const soldier)
@@ -163,7 +163,7 @@ void Transfer::setSoldier(Soldier* const soldier)
 }
 
 /**
- * Gets the soldier being transfered.
+ * Gets the Soldier being transfered.
  * @return, pointer to Soldier
  */
 Soldier* Transfer::getSoldier() const
@@ -172,7 +172,7 @@ Soldier* Transfer::getSoldier() const
 }
 
 /**
- * Changes the scientists being transfered.
+ * Sets the scientists being transfered.
  * @param scientists - amount of scientists
  */
 void Transfer::setScientists(int scientists)
@@ -190,7 +190,7 @@ void Transfer::setEngineers(int engineers)
 }
 
 /**
- * Changes the craft being transfered.
+ * Sets the Craft being transfered.
  * @param craft - pointer to a Craft
  */
 void Transfer::setCraft(Craft* const craft)
@@ -199,7 +199,7 @@ void Transfer::setCraft(Craft* const craft)
 }
 
 /**
- * Gets the craft being transfered.
+ * Gets the Craft being transfered.
  * @return, pointer to the Craft
  */
 Craft* Transfer::getCraft() const
@@ -208,8 +208,8 @@ Craft* Transfer::getCraft() const
 }
 
 /**
- * Returns the item-type being transfered.
- * @return, item ID
+ * Gets the item-type being transfered.
+ * @return, item-ID
  */
 std::string Transfer::getTransferItems() const
 {
@@ -217,8 +217,8 @@ std::string Transfer::getTransferItems() const
 }
 
 /**
- * Changes the item-type being transfered.
- * @param id	- reference the item ID
+ * Sets the item-type being transfered.
+ * @param id	- reference the item-ID
  * @param qty	- item quantity (default 1)
  */
 void Transfer::setTransferItems(
@@ -230,11 +230,11 @@ void Transfer::setTransferItems(
 }
 
 /**
- * Returns the name of the contents of the transfer.
- * @param lang - pointer to a Language to get strings from
- * @return, name string
+ * Returns the name of the contents of this Transfer.
+ * @param lang - pointer to a Language to get text from
+ * @return, wide-string
  */
-std::wstring Transfer::getName(Language* const lang) const
+std::wstring Transfer::getName(const Language* const lang) const
 {
 	if (_soldier != nullptr)
 		return _soldier->getName();
@@ -252,7 +252,7 @@ std::wstring Transfer::getName(Language* const lang) const
 }
 
 /**
- * Returns the time remaining until the transfer arrives at its destination.
+ * Returns the time remaining until this Transfer arrives at its destination.
  * @return, amount of hours
  */
 int Transfer::getHours() const
@@ -261,7 +261,7 @@ int Transfer::getHours() const
 }
 
 /**
- * Returns the quantity of items in the transfer.
+ * Returns the quantity of items in this Transfer.
  * @return, amount of items
  */
 int Transfer::getQuantity() const
@@ -279,7 +279,7 @@ int Transfer::getQuantity() const
 }
 
 /**
- * Returns the type of the contents of the transfer.
+ * Returns the type of the contents of this Transfer.
  * @return, PurchaseSellTransferType (Base.h)
  */
 PurchaseSellTransferType Transfer::getTransferType() const
@@ -300,7 +300,7 @@ PurchaseSellTransferType Transfer::getTransferType() const
 }
 
 /**
- * Advances the transfer and takes care of the delivery once it's arrived.
+ * Advances this Transfer and takes care of the delivery if it arrives.
  * @param base - pointer to destination Base
  */
 void Transfer::advance(Base* const base)
