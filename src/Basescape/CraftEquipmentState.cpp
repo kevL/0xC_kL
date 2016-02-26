@@ -192,54 +192,55 @@ CraftEquipmentState::CraftEquipmentState(
 			++i)
 	{
 		itRule = _rules->getItemRule(*i);
-
-		craftQty = 0;
-		if (itRule->isFixed() == true)
-			craftQty = _craft->getVehicleCount(*i);
-		else
-			craftQty = _craft->getCraftItems()->getItemQuantity(*i);
-
 		if (itRule->getBigSprite() > -1
 			&& itRule->getBattleType() != BT_NONE
 			&& itRule->getBattleType() != BT_CORPSE
-			&& _game->getSavedGame()->isResearched(itRule->getRequirements()) == true
-			&& (_base->getStorageItems()->getItemQuantity(*i) != 0 || craftQty != 0))
+			&& itRule->getBattleType() != BT_FUEL
+			&& _game->getSavedGame()->isResearched(itRule->getRequirements()) == true)
 		{
-			_items.push_back(*i);
-
-			woststr.str(L"");
-			if (_game->getSavedGame()->getMonthsPassed() != -1)
-				woststr << _base->getStorageItems()->getItemQuantity(*i);
+			if (itRule->isFixed() == true)
+				craftQty = _craft->getVehicleCount(*i);
 			else
-				woststr << "-";
+				craftQty = _craft->getCraftItems()->getItemQuantity(*i);
 
-			wst = tr(*i);
-			if (itRule->getBattleType() == BT_AMMO) // weapon clips
+			if (_base->getStorageItems()->getItemQuantity(*i) != 0 || craftQty != 0)
 			{
-				wst.insert(0, L"  ");
-				if ((clip = itRule->getFullClip()) > 1)
+				_items.push_back(*i);
+
+				woststr.str(L"");
+				if (_game->getSavedGame()->getMonthsPassed() != -1)
+					woststr << _base->getStorageItems()->getItemQuantity(*i);
+				else
+					woststr << "-";
+
+				wst = tr(*i);
+				if (itRule->getBattleType() == BT_AMMO) // weapon clips
+				{
+					wst.insert(0, L"  ");
+					if ((clip = itRule->getFullClip()) > 1)
+						wst += (L" (" + Text::intWide(clip) + L")");
+				}
+				else if (itRule->isFixed() == true // tank w/ Ordnance.
+					&& (clip = itRule->getFullClip()) > 0)
+				{
 					wst += (L" (" + Text::intWide(clip) + L")");
+				}
+
+				_lstEquipment->addRow(
+									3,
+									wst.c_str(),
+									woststr.str().c_str(),
+									Text::intWide(craftQty).c_str());
+
+				if (craftQty != 0)
+					color = _lstEquipment->getSecondaryColor();
+				else if (itRule->getBattleType() == BT_AMMO)
+					color = _ammoColor;
+				else
+					color = _lstEquipment->getColor();
+
+				_lstEquipment->setRowColor(row++, color);
 			}
-			else if (itRule->isFixed() == true // tank w/ Ordnance.
-				&& (clip = itRule->getFullClip()) > 0)
-			{
-				wst += (L" (" + Text::intWide(clip) + L")");
-			}
-
-			_lstEquipment->addRow(
-								3,
-								wst.c_str(),
-								woststr.str().c_str(),
-								Text::intWide(craftQty).c_str());
-
-			if (craftQty != 0)
-				color = _lstEquipment->getSecondaryColor();
-			else if (itRule->getBattleType() == BT_AMMO)
-				color = _ammoColor;
-			else
-				color = _lstEquipment->getColor();
-
-			_lstEquipment->setRowColor(row++, color);
 		}
 	}
 

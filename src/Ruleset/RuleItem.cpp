@@ -646,7 +646,7 @@ void RuleItem::drawHandSprite(
 		SurfaceSet* const set,
 		Surface* const surface) const
 {
-	Surface* const sprite = set->getFrame(_bigSprite);
+	Surface* const sprite (set->getFrame(_bigSprite));
 	if (sprite != nullptr) // safety.
 	{
 		sprite->setX(

@@ -1787,11 +1787,10 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 			++i)
 	{
 		itRule = (*i)->getRules();
-		type = itRule->getType();
 
 		if (itRule->isFixed() == false)
 		{
-			if (type == _rules->getAlienFuelType())
+			if (itRule->getBattleType() == BT_FUEL)
 			{
 				if (itRule->isRecoverable() == true)
 				{
@@ -1804,6 +1803,8 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 			}
 			else
 			{
+				type = itRule->getType();
+
 				if (itRule->isRecoverable() == true // add pts. for unresearched items only
 					&& itRule->getRecoveryPoints() != 0
 					&& itRule->getBattleType() != BT_CORPSE

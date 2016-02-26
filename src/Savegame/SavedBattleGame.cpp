@@ -1380,14 +1380,13 @@ bool SavedBattleGame::endFactionTurn()
 				&& (*i)->getFaction() == FACTION_HOSTILE
 				&& (*i)->isMindControlled() == false)
 			{
-				const int r = RNG::generate(0,5);
+				const int r (RNG::generate(0,5));
 				if (_turn > _cheatTurn - 3 + r
 					|| (_turn > (_cheatTurn / 4)
 						&& _battleState->getBattleGame()->tallyHostiles() < r - 1))
 				{
 					_cheatAI = true;
 				}
-
 				break;
 			}
 		}
