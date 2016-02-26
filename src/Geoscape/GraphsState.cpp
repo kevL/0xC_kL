@@ -58,16 +58,16 @@
 namespace OpenXcom
 {
 
-static int recallPage = -1;
-static size_t recallCountry = 0;
-static GraphsUserFactor recallFactor = GUF_DEFAULT;
+static int recallPage (-1);
+static size_t recallCountry (0);
+static GraphsUserFactor recallFactor (GUF_DEFAULT);
 
 static int
 	SCREEN_OFFSET_y,
 	TOGGLEALL_yCnt,
 	TOGGLEALL_yReg;
 
-const float GraphsState::PIXELS_y = 126.f;
+const float GraphsState::PIXELS_y (126.f);
 
 
 /**
@@ -120,7 +120,7 @@ GraphsState::GraphsState()
 		_reset(false),
 		_forceVis(true)
 {
-	const int offsetX	= (Options::baseXResolution - 320) / 2;
+	const int offsetX	((Options::baseXResolution - 320) / 2);
 	SCREEN_OFFSET_y		= (Options::baseYResolution - 200) / 2;
 
 	_bg = new InteractiveSurface(
@@ -206,13 +206,13 @@ GraphsState::GraphsState()
 			_userFactor = _btnFactor4;
 	}
 
-	_txtTitle		= new Text(220, 16, 100, 28);
-	_txtFactor		= new Text( 35,  9,  96, 28);
+	_txtTitle	= new Text(220, 16, 100, 28);
+	_txtFactor	= new Text( 35,  9,  96, 28);
 
-	_lstMonths		= new TextList(215, 9, 117, 182); // note These go beyond 320px.
-	_lstYears		= new TextList(215, 9, 117, 191);
+	_lstMonths	= new TextList(215, 9, 117, 182); // note These go beyond 320px.
+	_lstYears	= new TextList(215, 9, 117, 191);
 
-	_txtScore		= new Text(36, 9, 46, 82);
+	_txtScore	= new Text(36, 9, 46, 82);
 
 
 	setInterface("graphs");
@@ -237,7 +237,7 @@ GraphsState::GraphsState()
 	add(_txtScore);
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != TEXTS_y;
 			++i)
 	{
@@ -249,13 +249,13 @@ GraphsState::GraphsState()
 	}
 
 	static const Uint8
-		COL_OFF_BTN = 13,
-		COL_OFF_TXT = 16;
+		COL_OFF_BTN (13u),
+		COL_OFF_TXT (16u);
 
-	size_t btnOffset = 0;
+	size_t btnOffset (0u);
 	Uint8
 		color,
-		colorOffset = 0;
+		colorOffset (0u);
 	int
 		actA,
 		actX;
@@ -270,7 +270,7 @@ GraphsState::GraphsState()
 			++i, ++colorOffset, ++btnOffset)
 	{
 //		if (colorOffset == 17) colorOffset = 0; // <- only 15 regions IG.
-		color = colorOffset * 8;
+		color = colorOffset * 8u;
 
 		actA = (*i)->getActivityAlien().back();
 		actX = (*i)->getActivityXCom().back();
@@ -364,8 +364,8 @@ GraphsState::GraphsState()
 	add(_xcomRegionLines.at(btnOffset));
 
 
-	btnOffset = 0;
-	colorOffset = 0;
+	btnOffset = 0u;
+	colorOffset = 0u;
 
 	/* COUNTRIES */
 	for (std::vector<Country*>::const_iterator
@@ -373,8 +373,8 @@ GraphsState::GraphsState()
 			i != _game->getSavedGame()->getCountries()->end();
 			++i, ++colorOffset, ++btnOffset)
 	{
-		if (colorOffset == 17) colorOffset = 0;
-		color = colorOffset * 8;
+		if (colorOffset == 17u) colorOffset = 0u;
+		color = colorOffset * 8u;
 
 		actA = (*i)->getActivityAlien().back();
 		actX = (*i)->getActivityXCom().back();
@@ -489,13 +489,13 @@ GraphsState::GraphsState()
 		Uint8 multer; // switch colors for Income (was yellow) and Maintenance (was green)
 		switch (i)
 		{
-			case 0: multer = 2; break;
-			case 2: multer = 0; break;
+			case 0: multer = 2u; break;
+			case 2: multer = 0u; break;
 			default:
 				multer = static_cast<Uint8>(i);
 		}
 
-		_btnFinances.at(i)->setInvertColor(multer * 8 + COL_OFF_BTN);
+		_btnFinances.at(i)->setInvertColor(multer * 8u + COL_OFF_BTN);
 		_btnFinances.at(i)->onMousePress((ActionHandler)& GraphsState::btnFinanceListClick);
 
 		add(_btnFinances.at(i), "button", "graphs");
@@ -504,27 +504,27 @@ GraphsState::GraphsState()
 		add(_financeLines.at(i));
 	}
 
-	_btnFinances.at(0)->setText(tr("STR_INCOME"));
-	_btnFinances.at(1)->setText(tr("STR_EXPENDITURE"));
-	_btnFinances.at(2)->setText(tr("STR_MAINTENANCE"));
-	_btnFinances.at(3)->setText(tr("STR_BALANCE"));
-	_btnFinances.at(4)->setText(tr("STR_SCORE"));
+	_btnFinances.at(0u)->setText(tr("STR_INCOME"));
+	_btnFinances.at(1u)->setText(tr("STR_EXPENDITURE"));
+	_btnFinances.at(2u)->setText(tr("STR_MAINTENANCE"));
+	_btnFinances.at(3u)->setText(tr("STR_BALANCE"));
+	_btnFinances.at(4u)->setText(tr("STR_SCORE"));
 
-	_txtScore->setColor(49);
+	_txtScore->setColor(49u);
 	_txtScore->setAlign(ALIGN_RIGHT);
 
 
 	// Load back all the buttons' toggled states from SavedGame!
 
 	/* REGION TOGGLES */
-	std::string graphRegionToggles = _game->getSavedGame()->getGraphRegionToggles();
+	std::string graphRegionToggles (_game->getSavedGame()->getGraphRegionToggles());
 	while (graphRegionToggles.size() < _regionToggles.size())
 	{
 		graphRegionToggles.push_back('0');
 	}
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _regionToggles.size();
 			++i)
 	{
@@ -537,14 +537,14 @@ GraphsState::GraphsState()
 	}
 
 	/* COUNTRY TOGGLES */
-	std::string graphCountryToggles = _game->getSavedGame()->getGraphCountryToggles();
+	std::string graphCountryToggles (_game->getSavedGame()->getGraphCountryToggles());
 	while (graphCountryToggles.size() < _countryToggles.size())
 	{
 		graphCountryToggles.push_back('0');
 	}
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _countryToggles.size();
 			++i)
 	{
@@ -557,14 +557,14 @@ GraphsState::GraphsState()
 	}
 
 	/* FINANCE TOGGLES */
-	std::string graphFinanceToggles = _game->getSavedGame()->getGraphFinanceToggles();
+	std::string graphFinanceToggles (_game->getSavedGame()->getGraphFinanceToggles());
 	while (graphFinanceToggles.size() < _financeToggles.size())
 	{
 		graphFinanceToggles.push_back('0');
 	}
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _financeToggles.size();
 			++i)
 	{
@@ -609,13 +609,13 @@ GraphsState::GraphsState()
 					(ActionHandler)& GraphsState::keyFactor,
 					SDLK_3);
 
-	Surface* const icons = _game->getResourcePack()->getSurface("GRAPHS.SPK");
+	Surface* const icons (_game->getResourcePack()->getSurface("GRAPHS.SPK"));
 	icons->setX(offsetX);
 	icons->setY(SCREEN_OFFSET_y);
 	icons->blit(_bg);
 
-	const Uint8 colorGrid = static_cast<Uint8>(
-						   _game->getRuleset()->getInterface("graphs")->getElement("graph")->color);
+	const Uint8 colorGrid (static_cast<Uint8>(
+						  _game->getRuleset()->getInterface("graphs")->getElement("graph")->color));
 
 	_bg->drawRect( // set up the grid
 				offsetX + 125,
@@ -639,9 +639,9 @@ GraphsState::GraphsState()
 					x += 17)
 			{
 				if (i == 4)
-					color = 0;
+					color = 0u;
 				else
-					color = colorGrid + 1 + static_cast<Uint8>(i);
+					color = colorGrid + 1u + static_cast<Uint8>(i);
 
 				_bg->drawRect(
 							x,y,
@@ -664,26 +664,26 @@ GraphsState::GraphsState()
 	_lstYears->setMargin();
 
 
-	const GameTime* const gt = _game->getSavedGame()->getTime();
-	const int yr = gt->getYear();
-	size_t th = static_cast<size_t>(gt->getMonth() - 1);
+	const GameTime* const gt (_game->getSavedGame()->getTime());
+	const int yr (gt->getYear());
+	size_t th (static_cast<size_t>(gt->getMonth() - 1));
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != MONTHS_u;
 			++i)
 	{
-		if (i == 1)
+		if (i == 1u)
 		{
-			if (th == 11)
+			if (th == 11u)
 				_lstYears->setCellText(0,0, Text::intWide(yr));
 			else
 				_lstYears->setCellText(0,0, Text::intWide(yr - 1));
 		}
-		else if (th == 0)
+		else if (th == 0u)
 			_lstYears->setCellText(0, i / 2, Text::intWide(yr));
 
-		if (++th == 12) th = 0;
+		if (++th == 12u) th = 0u;
 
 		_lstMonths->setCellText(0, i, tr(GameTime::GAME_MONTHS[th]));
 	}
@@ -771,7 +771,7 @@ GraphsState::~GraphsState()
 
 	std::string toggles;
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _regionToggles.size();
 			++i)
 	{
@@ -782,7 +782,7 @@ GraphsState::~GraphsState()
 
 	toggles.clear();
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _countryToggles.size();
 			++i)
 	{
@@ -793,7 +793,7 @@ GraphsState::~GraphsState()
 
 	toggles.clear();
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _financeToggles.size();
 			++i)
 	{
@@ -824,7 +824,7 @@ void GraphsState::initButtons() // private.
 	}
 /*	for (std::vector<GraphBtnInfo*>::const_iterator	// not needed because Country-areas are all subsumed within Regions;
 			i = _countryToggles.begin();			// that is, if a country is blinking its region will already be blinking.
-			i != _countryToggles.end();				// So just start the gosh-darned timer.
+			i != _countryToggles.end();				// So just start the gosh-darned Timer.
 			++i)
 	{
 		if ((*i)->_blinkA == true || (*i)->_blinkX == true)
@@ -860,7 +860,7 @@ void GraphsState::blink() // private.
 	else
 		vis = !vis;
 
-	size_t offset = 0;
+	size_t offset = 0u;
 
 	if (_alien == true
 		&& _income == false
@@ -1183,15 +1183,15 @@ void GraphsState::btnFinanceClick(Action*)
  */
 void GraphsState::btnRegionListClick(Action* action)
 {
-	ToggleTextButton* btn = dynamic_cast<ToggleTextButton*>(action->getSender());
+	ToggleTextButton* btn (dynamic_cast<ToggleTextButton*>(action->getSender()));
 	size_t btnId;
 
 	if (btn == _btnRegionTotal)
-		btnId = _regionToggles.size() - 1;
+		btnId = _regionToggles.size() - 1u;
 	else
 	{
 		for (
-				btnId = 0;
+				btnId = 0u;
 				btnId != _btnRegions.size();
 				++btnId)
 		{
@@ -1210,15 +1210,15 @@ void GraphsState::btnRegionListClick(Action* action)
  */
 void GraphsState::btnCountryListClick(Action* action)
 {
-	ToggleTextButton* btn = dynamic_cast<ToggleTextButton*>(action->getSender());
+	ToggleTextButton* btn (dynamic_cast<ToggleTextButton*>(action->getSender()));
 	size_t btnId;
 
 	if (btn == _btnCountryTotal)
-		btnId = _countryToggles.size() - 1;
+		btnId = _countryToggles.size() - 1u;
 	else
 	{
 		for (
-				btnId = 0;
+				btnId = 0u;
 				btnId != _btnCountries.size();
 				++btnId)
 		{
@@ -1240,11 +1240,11 @@ void GraphsState::btnCountryListClick(Action* action)
  */
 void GraphsState::btnFinanceListClick(Action* action)
 {
-	ToggleTextButton* btn = dynamic_cast<ToggleTextButton*>(action->getSender());
+	ToggleTextButton* btn (dynamic_cast<ToggleTextButton*>(action->getSender()));
 	size_t btnId;
 
 	for (
-			btnId = 0;
+			btnId = 0u;
 			btnId != _btnFinances.size();
 			++btnId)
 	{
@@ -1283,7 +1283,7 @@ void GraphsState::btnResetPress(Action*) // private.
  */
 void GraphsState::initToggleAll() // private.
 {
-	bool allPressed = true;
+	bool allPressed (true);
 	if (_country == true)
 	{
 		for (std::vector<GraphBtnInfo*>::const_iterator
@@ -1331,7 +1331,7 @@ void GraphsState::btnTogglePress(Action*) // private.
 	if (_country == true)
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _game->getSavedGame()->getCountries()->size();
 				++i)
 			_countryToggles.at(i)->_pushed = vis;
@@ -1345,7 +1345,7 @@ void GraphsState::btnTogglePress(Action*) // private.
 	else
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _game->getSavedGame()->getRegions()->size();
 				++i)
 			_regionToggles.at(i)->_pushed = vis;
@@ -1386,7 +1386,7 @@ void GraphsState::keyFactor(Action* action)
 	ev.type = SDL_MOUSEBUTTONDOWN;
 	ev.button.button = SDL_BUTTON_LEFT;
 
-	Action act = Action(&ev, 0.,0., 0,0);
+	Action act (Action(&ev, 0.,0., 0,0));
 
 	if (action->getDetails()->key.keysym.sym == SDLK_1)
 	{
@@ -1403,7 +1403,6 @@ void GraphsState::keyFactor(Action* action)
 		recallFactor = GUF_QUARTER;
 		_btnFactor4->mousePress(&act, this);
 	}
-
 	drawLines(false);
 }
 
@@ -1529,10 +1528,10 @@ void GraphsState::updateScale( // private.
 		int valLow,
 		int valHigh)
 {
-	const int delta = std::max(10,
-							  (valHigh - valLow) / GRIDCELLS_y);
+	const int delta (std::max(10,
+							 (valHigh - valLow) / GRIDCELLS_y));
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != TEXTS_y;
 			++i)
 	{
@@ -1565,22 +1564,22 @@ void GraphsState::drawLines(bool reset) // private.
 void GraphsState::drawRegionLines() // private.
 {
 	int // calculate totals and set the upward maximum
-		scaleHigh = 0,
-		scaleLow = 0,
+		scaleHigh (0),
+		scaleLow (0),
 		total,
 		act,
 
 		totals[MONTHS_u] = {0,0,0,0,0,0,0,0,0,0,0,0};
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _game->getSavedGame()->getFundsList().size();
 			++i)
 	{
 		total = 0;
 
 		for (size_t
-				j = 0;
+				j = 0u;
 				j != _game->getSavedGame()->getRegions()->size();
 				++j)
 		{
@@ -1613,8 +1612,8 @@ void GraphsState::drawRegionLines() // private.
 	}
 
 
-	const int low = scaleLow; // adjust the scale to fit the upward maximum
-	int delta = scaleHigh - scaleLow;
+	const int low (scaleLow); // adjust the scale to fit the upward maximum
+	int delta (scaleHigh - scaleLow);
 
 	switch (recallFactor)
 	{
@@ -1624,7 +1623,7 @@ void GraphsState::drawRegionLines() // private.
 			delta >>= 1;
 	}
 
-	int test = 10;
+	int test (10);
 	while (delta > GRIDCELLS_y * test)
 		test += 10;
 
@@ -1639,7 +1638,7 @@ void GraphsState::drawRegionLines() // private.
 
 	// Figure out how many units to the pixel then plot the points for the graph
 	// and connect the dots.
-	const float pixelUnits = static_cast<float>(scaleHigh - scaleLow) / PIXELS_y;
+	const float pixelUnits (static_cast<float>(scaleHigh - scaleLow) / PIXELS_y);
 
 	int reduction;
 	Sint16
@@ -1648,7 +1647,7 @@ void GraphsState::drawRegionLines() // private.
 	Region* region;
 
 	for (size_t // draw region lines
-			i = 0;
+			i = 0u;
 			i != _game->getSavedGame()->getRegions()->size();
 			++i)
 	{
@@ -1660,7 +1659,7 @@ void GraphsState::drawRegionLines() // private.
 		lineVector.clear();
 
 		for (size_t
-				j = 0;
+				j = 0u;
 				j != MONTHS_u;
 				++j)
 		{
@@ -1689,7 +1688,7 @@ void GraphsState::drawRegionLines() // private.
 
 			lineVector.push_back(y);
 
-			if (lineVector.size() > 1)
+			if (lineVector.size() > 1u)
 			{
 				x = 312 - static_cast<Sint16>(j) * 17;
 
@@ -1701,12 +1700,12 @@ void GraphsState::drawRegionLines() // private.
 							lineVector.at(lineVector.size() - 2),
 							_regionToggles.at(i)->_colorPushed + 4);
 
-					switch (recallFactor)
-					{
-						case GUF_HALF:
-						case GUF_QUARTER:
-							boxLines(_alienRegionLines.at(i));
-					}
+//					switch (recallFactor)
+//					{
+//						case GUF_HALF:
+//						case GUF_QUARTER:
+					boxLines(_alienRegionLines.at(i));
+//					}
 				}
 				else
 				{
@@ -1716,12 +1715,12 @@ void GraphsState::drawRegionLines() // private.
 							lineVector.at(lineVector.size() - 2),
 							_regionToggles.at(i)->_colorPushed + 4);
 
-					switch (recallFactor)
-					{
-						case GUF_HALF:
-						case GUF_QUARTER:
-							boxLines(_xcomRegionLines.at(i));
-					}
+//					switch (recallFactor)
+//					{
+//						case GUF_HALF:
+//						case GUF_QUARTER:
+					boxLines(_xcomRegionLines.at(i));
+//					}
 				}
 			}
 		}
@@ -1738,12 +1737,12 @@ void GraphsState::drawRegionLines() // private.
 	else
 		_xcomRegionLines.back()->clear();
 
-	Uint8 color = static_cast<Uint8>(
-				_game->getRuleset()->getInterface("graphs")->getElement("regionTotal")->color2);
+	Uint8 color (static_cast<Uint8>(
+				_game->getRuleset()->getInterface("graphs")->getElement("regionTotal")->color2));
 	lineVector.clear();
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != MONTHS_u;
 			++i)
 	{
@@ -1754,7 +1753,7 @@ void GraphsState::drawRegionLines() // private.
 
 		lineVector.push_back(y);
 
-		if (lineVector.size() > 1)
+		if (lineVector.size() > 1u)
 		{
 			x = 312 - static_cast<Sint16>(i) * 17;
 
@@ -1766,12 +1765,12 @@ void GraphsState::drawRegionLines() // private.
 						lineVector.at(lineVector.size() - 2),
 						color);
 
-				switch (recallFactor)
-				{
-					case GUF_HALF:
-					case GUF_QUARTER:
-						boxLines(_alienRegionLines.back());
-				}
+//				switch (recallFactor)
+//				{
+//					case GUF_HALF:
+//					case GUF_QUARTER:
+				boxLines(_alienRegionLines.back());
+//				}
 			}
 			else
 			{
@@ -1781,12 +1780,12 @@ void GraphsState::drawRegionLines() // private.
 						lineVector.at(lineVector.size() - 2),
 						color);
 
-				switch (recallFactor)
-				{
-					case GUF_HALF:
-					case GUF_QUARTER:
-						boxLines(_xcomRegionLines.back());
-				}
+//				switch (recallFactor)
+//				{
+//					case GUF_HALF:
+//					case GUF_QUARTER:
+				boxLines(_xcomRegionLines.back());
+//				}
 			}
 		}
 	}
@@ -1807,22 +1806,22 @@ void GraphsState::drawCountryLines() // private.
 {
 	// calculate the totals, and set up the upward maximum
 	int
-		scaleHigh = 0,
-		scaleLow = 0,
+		scaleHigh (0),
+		scaleLow (0),
 		total,
 		act,
 
 		totals[MONTHS_u] = {0,0,0,0,0,0,0,0,0,0,0,0};
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _game->getSavedGame()->getFundsList().size();
 			++i)
 	{
 		total = 0;
 
 		for (size_t
-				j = 0;
+				j = 0u;
 				j != _game->getSavedGame()->getCountries()->size();
 				++j)
 		{
@@ -1857,8 +1856,8 @@ void GraphsState::drawCountryLines() // private.
 	}
 
 
-	const int low = scaleLow; // adjust the scale to fit the upward maximum
-	int delta = scaleHigh - scaleLow;
+	const int low (scaleLow); // adjust the scale to fit the upward maximum
+	int delta (scaleHigh - scaleLow);
 
 	switch (recallFactor)
 	{
@@ -1868,7 +1867,7 @@ void GraphsState::drawCountryLines() // private.
 			delta >>= 1;
 	}
 
-	int test = 10;
+	int test (10);
 	while (delta > GRIDCELLS_y * test)
 		test += 10;
 
@@ -1883,7 +1882,7 @@ void GraphsState::drawCountryLines() // private.
 
 	// Figure out how many units to the pixel then plot the points for the graph
 	// and connect the dots.
-	const float pixelUnits = static_cast<float>(scaleHigh - scaleLow) / PIXELS_y;
+	const float pixelUnits (static_cast<float>(scaleHigh - scaleLow) / PIXELS_y);
 
 	int reduction;
 	Sint16
@@ -1892,7 +1891,7 @@ void GraphsState::drawCountryLines() // private.
 	Country* country;
 
 	for (size_t // draw country lines
-			i = 0;
+			i = 0u;
 			i != _game->getSavedGame()->getCountries()->size();
 			++i)
 	{
@@ -1905,7 +1904,7 @@ void GraphsState::drawCountryLines() // private.
 		lineVector.clear();
 
 		for (size_t
-				j = 0;
+				j = 0u;
 				j != MONTHS_u;
 				++j)
 		{
@@ -1943,7 +1942,7 @@ void GraphsState::drawCountryLines() // private.
 
 			lineVector.push_back(y);
 
-			if (lineVector.size() > 1)
+			if (lineVector.size() > 1u)
 			{
 				x = 312 - static_cast<Sint16>(j) * 17;
 
@@ -1955,12 +1954,12 @@ void GraphsState::drawCountryLines() // private.
 							lineVector.at(lineVector.size() - 2),
 							_countryToggles.at(i)->_colorPushed + 4);
 
-					switch (recallFactor)
-					{
-						case GUF_HALF:
-						case GUF_QUARTER:
-							boxLines(_alienCountryLines.at(i));
-					}
+//					switch (recallFactor)
+//					{
+//						case GUF_HALF:
+//						case GUF_QUARTER:
+					boxLines(_alienCountryLines.at(i));
+//					}
 				}
 				else if (_income == true)
 				{
@@ -1970,12 +1969,12 @@ void GraphsState::drawCountryLines() // private.
 							lineVector.at(lineVector.size() - 2),
 							_countryToggles.at(i)->_colorPushed + 4);
 
-					switch (recallFactor)
-					{
-						case GUF_HALF:
-						case GUF_QUARTER:
-							boxLines(_incomeLines.at(i));
-					}
+//					switch (recallFactor)
+//					{
+//						case GUF_HALF:
+//						case GUF_QUARTER:
+					boxLines(_incomeLines.at(i));
+//					}
 				}
 				else
 				{
@@ -1985,12 +1984,12 @@ void GraphsState::drawCountryLines() // private.
 							lineVector.at(lineVector.size() - 2),
 							_countryToggles.at(i)->_colorPushed + 4);
 
-					switch (recallFactor)
-					{
-						case GUF_HALF:
-						case GUF_QUARTER:
-							boxLines(_xcomCountryLines.at(i));
-					}
+//					switch (recallFactor)
+//					{
+//						case GUF_HALF:
+//						case GUF_QUARTER:
+					boxLines(_xcomCountryLines.at(i));
+//					}
 				}
 			}
 		}
@@ -2011,12 +2010,12 @@ void GraphsState::drawCountryLines() // private.
 	else
 		_xcomCountryLines.back()->clear();
 
-	Uint8 color = static_cast<Uint8>(
-				_game->getRuleset()->getInterface("graphs")->getElement("countryTotal")->color2);
+	Uint8 color (static_cast<Uint8>(
+				_game->getRuleset()->getInterface("graphs")->getElement("countryTotal")->color2));
 	lineVector.clear();
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != MONTHS_u;
 			++i)
 	{
@@ -2027,7 +2026,7 @@ void GraphsState::drawCountryLines() // private.
 
 		lineVector.push_back(y);
 
-		if (lineVector.size() > 1)
+		if (lineVector.size() > 1u)
 		{
 			x = 312 - static_cast<Sint16>(i) * 17;
 
@@ -2039,12 +2038,12 @@ void GraphsState::drawCountryLines() // private.
 						lineVector.at(lineVector.size() - 2),
 						color);
 
-				switch (recallFactor)
-				{
-					case GUF_HALF:
-					case GUF_QUARTER:
-						boxLines(_alienCountryLines.back());
-				}
+//				switch (recallFactor)
+//				{
+//					case GUF_HALF:
+//					case GUF_QUARTER:
+				boxLines(_alienCountryLines.back());
+//				}
 			}
 			else if (_income == true)
 			{
@@ -2054,12 +2053,12 @@ void GraphsState::drawCountryLines() // private.
 						lineVector.at(lineVector.size() - 2),
 						color);
 
-				switch (recallFactor)
-				{
-					case GUF_HALF:
-					case GUF_QUARTER:
-						boxLines(_incomeLines.back());
-				}
+//				switch (recallFactor)
+//				{
+//					case GUF_HALF:
+//					case GUF_QUARTER:
+				boxLines(_incomeLines.back());
+//				}
 			}
 			else
 			{
@@ -2069,12 +2068,12 @@ void GraphsState::drawCountryLines() // private.
 						lineVector.at(lineVector.size() - 2),
 						color);
 
-				switch (recallFactor)
-				{
-					case GUF_HALF:
-					case GUF_QUARTER:
-						boxLines(_xcomCountryLines.back());
-				}
+//				switch (recallFactor)
+//				{
+//					case GUF_HALF:
+//					case GUF_QUARTER:
+				boxLines(_xcomCountryLines.back());
+//				}
 			}
 		}
 	}
@@ -2096,8 +2095,8 @@ void GraphsState::drawCountryLines() // private.
 void GraphsState::drawFinanceLines() // private. // Council Analytics
 {
 	int
-		scaleHigh = 0,
-		scaleLow = 0,
+		scaleHigh (0),
+		scaleLow (0),
 
 		income[MONTHS_u]		= {0,0,0,0,0,0,0,0,0,0,0,0},
 		expenditure[MONTHS_u]	= {0,0,0,0,0,0,0,0,0,0,0,0},
@@ -2105,20 +2104,20 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 		balance[MONTHS_u]		= {0,0,0,0,0,0,0,0,0,0,0,0},
 		score[MONTHS_u]			= {0,0,0,0,0,0,0,0,0,0,0,0},
 
-		baseIncomes = 0,
-		baseExpenses = 0;
+		baseIncomes (0),
+		baseExpenses (0);
 
 	// start filling those arrays with score values;
 	// determine which is the highest one being displayed, so we can adjust the scale
 	size_t rit;
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _game->getSavedGame()->getFundsList().size(); // use Balance as template.
 			++i)
 	{
 		rit = _game->getSavedGame()->getFundsList().size() - (i + 1);
 
-		if (i == 0)
+		if (i == 0u)
 		{
 			for (std::vector<Base*>::const_iterator
 					j = _game->getSavedGame()->getBases()->begin();
@@ -2152,11 +2151,11 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 			score[i] += (*j)->getActivityXCom().at(rit) - (*j)->getActivityAlien().at(rit);
 		}
 
-		if (i == 0) // values are stored backwards. So take 1st value for last.
+		if (i == 0u) // values are stored backwards. So take 1st value for last.
 			_txtScore->setText(Text::intWide(score[i]));
 
 
-		if (_financeToggles.at(0) == true) // INCOME
+		if (_financeToggles.at(0u) == true) // INCOME
 		{
 			if (income[i] > scaleHigh)
 				scaleHigh = income[i];
@@ -2165,7 +2164,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 				scaleLow = income[i];
 		}
 
-		if (_financeToggles.at(1) == true) // EXPENDITURE
+		if (_financeToggles.at(1u) == true) // EXPENDITURE
 		{
 			if (expenditure[i] > scaleHigh)
 				scaleHigh = expenditure[i];
@@ -2174,7 +2173,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 				scaleLow = expenditure[i];
 		}
 
-		if (_financeToggles.at(2) == true) // MAINTENANCE
+		if (_financeToggles.at(2u) == true) // MAINTENANCE
 		{
 			if (maintenance[i] > scaleHigh)
 				scaleHigh = maintenance[i];
@@ -2183,7 +2182,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 				scaleLow = maintenance[i];
 		}
 
-		if (_financeToggles.at(3) == true) // BALANCE
+		if (_financeToggles.at(3u) == true) // BALANCE
 		{
 			if (balance[i] > scaleHigh)
 				scaleHigh = balance[i];
@@ -2192,7 +2191,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 				scaleLow = balance[i];
 		}
 
-		if (_financeToggles.at(4) == true) // SCORE
+		if (_financeToggles.at(4u) == true) // SCORE
 		{
 			if (score[i] > scaleHigh)
 				scaleHigh = score[i];
@@ -2203,7 +2202,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 	}
 
 	for (size_t // toggle screens
-			i = 0;
+			i = 0u;
 			i != 5u;
 			++i)
 	{
@@ -2212,8 +2211,8 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 	}
 
 
-	const int low = scaleLow; // adjust the scale to fit the upward maximum
-	int delta = scaleHigh - scaleLow;
+	const int low (scaleLow); // adjust the scale to fit the upward maximum
+	int delta (scaleHigh - scaleLow);
 
 	switch (recallFactor)
 	{
@@ -2223,7 +2222,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 			delta >>= 1;
 	}
 
-	int test = 100;
+	int test (100);
 	while (delta > GRIDCELLS_y * test)
 		test += 100;
 
@@ -2238,7 +2237,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 
 	// Figure out how many units to the pixel then plot the points for the graph
 	// and connect the dots.
-	const float pixelUnits = static_cast<float>(scaleHigh - scaleLow) / PIXELS_y;
+	const float pixelUnits (static_cast<float>(scaleHigh - scaleLow) / PIXELS_y);
 
 	Uint8 color;
 	Sint16
@@ -2248,14 +2247,14 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 	std::vector<Sint16> lineVector;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != 5u;
 			++i)
 	{
 		lineVector.clear();
 
 		for (size_t
-				j = 0;
+				j = 0u;
 				j != MONTHS_u;
 				++j)
 		{
@@ -2265,18 +2264,18 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 			{
 				case 0:
 					reduction = static_cast<Sint16>(Round(static_cast<float>(income[j]) / pixelUnits));
-				break;
+					break;
 				case 1:
 					reduction = static_cast<Sint16>(Round(static_cast<float>(expenditure[j]) / pixelUnits));
-				break;
+					break;
 				case 2:
 					reduction = static_cast<Sint16>(Round(static_cast<float>(maintenance[j]) / pixelUnits));
-				break;
+					break;
 				case 3:
 					reduction = static_cast<Sint16>(Round(static_cast<float>(balance[j]) / pixelUnits));
-				break;
-				case 4:
+					break;
 				default: // avoid vc++ linker warning.
+				case 4:
 					reduction = static_cast<Sint16>(Round(static_cast<float>(score[j]) / pixelUnits));
 			}
 
@@ -2284,37 +2283,37 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 
 			lineVector.push_back(y);
 
-			if (lineVector.size() > 1)
+			if (lineVector.size() > 1u)
 			{
-				if (i % 2 != 0)
-					color = 8;
+				if (i % 2u != 0u)
+					color = 8u;
 				else
-					color = 0;
+					color = 0u;
 
 				Uint8 multer; // switch colors for Income (was yellow) and Maintenance (was green)
 				switch (i)
 				{
-					case 0: multer = 2; break;
-					case 2: multer = 0; break;
+					case 0: multer = 2u; break;
+					case 2: multer = 0u; break;
 					default:
 						multer = static_cast<Uint8>(i);
 				}
 
-				color = Palette::blockOffset((multer / 2) + 1) + color;
+				color = Palette::blockOffset((multer / 2u) + 1u) + color;
 
 				x = 312 - static_cast<Sint16>(j) * 17;
 				_financeLines.at(i)->drawLine(
 											x,y,
 											x + 17,
-											lineVector.at(lineVector.size() - 2),
+											lineVector.at(lineVector.size() - 2u),
 											color);
 
-				switch (recallFactor)
-				{
-					case GUF_HALF:
-					case GUF_QUARTER:
-						boxLines(_financeLines.at(i));
-				}
+//				switch (recallFactor)
+//				{
+//					case GUF_HALF:
+//					case GUF_QUARTER:
+				boxLines(_financeLines.at(i));
+//				}
 			}
 		}
 	}
@@ -2449,13 +2448,13 @@ void GraphsState::scrollButtons( // private.
 			recallCountry =
 			_btnCountryOffset = static_cast<size_t>(static_cast<int>(_btnCountryOffset) + dirVal);
 
-		std::vector<ToggleTextButton*>::const_iterator pBtn = _btnCountries.begin();
-		std::vector<Text*>::const_iterator pActA = _txtCountryActA.begin();
-		std::vector<Text*>::const_iterator pActX = _txtCountryActX.begin();
-		std::vector<bool>::iterator pBlinkA = _blinkCountryAlien.begin();
-		std::vector<bool>::iterator pBlinkX = _blinkCountryXCom.begin();
+		std::vector<ToggleTextButton*>::const_iterator pBtn (_btnCountries.begin());
+		std::vector<Text*>::const_iterator pActA (_txtCountryActA.begin());
+		std::vector<Text*>::const_iterator pActX (_txtCountryActX.begin());
+		std::vector<bool>::iterator pBlinkA (_blinkCountryAlien.begin());
+		std::vector<bool>::iterator pBlinkX (_blinkCountryXCom.begin());
 
-		size_t row = 0;
+		size_t row (0u);
 		for (std::vector<GraphBtnInfo*>::const_iterator
 				i = _countryToggles.begin();
 				i != _countryToggles.end();
