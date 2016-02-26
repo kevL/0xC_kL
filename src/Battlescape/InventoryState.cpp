@@ -364,7 +364,7 @@ InventoryState::InventoryState(
 	_txtTUs->setVisible(_tuMode);
 	_txtUseTU->setVisible(_tuMode);
 
-	const bool vis = (_tuMode == false);
+	const bool vis (_tuMode == false);
 	_txtFAcc->setVisible(vis);
 	_txtReact->setVisible(vis);
 	_txtThrow->setVisible(vis);
@@ -395,9 +395,9 @@ InventoryState::~InventoryState()
 //	delete _timer;
 	if (_parent != nullptr)
 	{
-		Tile* const tile = _battleSave->getSelectedUnit()->getTile();
+		Tile* const tile (_battleSave->getSelectedUnit()->getTile());
 
-		int flarePower = 0;
+		int flarePower (0);
 		for (std::vector<BattleItem*>::const_iterator
 				i = tile->getInventory()->begin();
 				i != tile->getInventory()->end();
@@ -410,7 +410,7 @@ InventoryState::~InventoryState()
 			}
 		}
 
-		TileEngine* const tileEngine = _battleSave->getTileEngine();
+		TileEngine* const tileEngine (_battleSave->getTileEngine());
 		tileEngine->applyGravity(tile);
 
 		if (flarePower > _flarePower)
@@ -487,7 +487,7 @@ void InventoryState::init()
 {
 	State::init();
 
-	BattleUnit* unit = _battleSave->getSelectedUnit();
+	BattleUnit* unit (_battleSave->getSelectedUnit());
 	if (unit == nullptr) // no selected unit, close inventory
 	{
 		btnOkClick(nullptr);
@@ -537,21 +537,21 @@ void InventoryState::init()
 	}
 
 
-	const Soldier* const sol = unit->getGeoscapeSoldier();
+	const Soldier* const sol (unit->getGeoscapeSoldier());
 	if (sol != nullptr)
 	{
-		SurfaceSet* const srtRank = _game->getResourcePack()->getSurfaceSet("SMOKE.PCK");
+		SurfaceSet* const srtRank (_game->getResourcePack()->getSurfaceSet("SMOKE.PCK"));
 		srtRank->getFrame(20 + sol->getRank())->blit(_btnRank);
 
-		Surface* gender = nullptr;
-		std::string look = sol->getArmor()->getSpriteInventory();
+		Surface* gender (nullptr);
+		std::string look (sol->getArmor()->getSpriteInventory());
 		switch (sol->getGender())
 		{
 			default:
 			case GENDER_MALE:
 				gender = _game->getResourcePack()->getSurface("GENDER_M");
 				look += "M";
-			break;
+				break;
 
 			case GENDER_FEMALE:
 				gender = _game->getResourcePack()->getSurface("GENDER_F");
@@ -579,10 +579,10 @@ void InventoryState::init()
 	}
 	else
 	{
-		Surface* const dolphins = _game->getResourcePack()->getSurface("DOLPHINS");
+		Surface* const dolphins (_game->getResourcePack()->getSurface("DOLPHINS"));
 		dolphins->blit(_btnRank);
 
-		Surface* const srfArmor = _game->getResourcePack()->getSurface(unit->getArmor()->getSpriteInventory());
+		Surface* const srfArmor (_game->getResourcePack()->getSurface(unit->getArmor()->getSpriteInventory()));
 		if (srfArmor != nullptr)
 			srfArmor->blit(_paper);
 	}
@@ -597,7 +597,7 @@ void InventoryState::init()
  */
 void InventoryState::updateStats() // private.
 {
-	const BattleUnit* const unit = _battleSave->getSelectedUnit();
+	const BattleUnit* const unit (_battleSave->getSelectedUnit());
 
 	if (unit->getGeoscapeSoldier() != nullptr)
 	{
@@ -611,8 +611,8 @@ void InventoryState::updateStats() // private.
 		_txtTUs->setText(tr("STR_TIME_UNITS_SHORT").arg(unit->getTimeUnits()));
 
 	const int
-		weight = unit->getCarriedWeight(_inv->getSelectedItem()),
-		strength = unit->getStrength();
+		weight (unit->getCarriedWeight(_inv->getSelectedItem())),
+		strength (unit->getStrength());
 
 	_txtWeight->setText(tr("STR_WEIGHT").arg(weight).arg(strength));
 	if (weight > strength)
@@ -622,7 +622,7 @@ void InventoryState::updateStats() // private.
 		_txtWeight->setSecondaryColor(static_cast<Uint8>(
 						_game->getRuleset()->getInterface("inventory")->getElement("weight")->color));
 
-	const int psiSkill = unit->getBattleStats()->psiSkill;
+	const int psiSkill (unit->getBattleStats()->psiSkill);
 
 	if (_tuMode == true)
 	{
@@ -668,7 +668,7 @@ void InventoryState::updateStats() // private.
  */
 void InventoryState::updateWounds() // private.
 {
-	const BattleUnit* const unit = _battleSave->getSelectedUnit();
+	const BattleUnit* const unit (_battleSave->getSelectedUnit());
 	UnitBodyPart bodyPart;
 	unsigned wound;
 
@@ -690,7 +690,7 @@ void InventoryState::updateWounds() // private.
 				}
 				else
 					_wndHead->setVisible(false);
-			break;
+				break;
 
 			case BODYPART_TORSO:
 				if (wound != 0)
@@ -700,7 +700,7 @@ void InventoryState::updateWounds() // private.
 				}
 				else
 					_wndTorso->setVisible(false);
-			break;
+				break;
 
 			case BODYPART_RIGHTARM:
 				if (wound != 0)
@@ -710,7 +710,7 @@ void InventoryState::updateWounds() // private.
 				}
 				else
 					_wndRightArm->setVisible(false);
-			break;
+				break;
 
 			case BODYPART_LEFTARM:
 				if (wound != 0)
@@ -720,7 +720,7 @@ void InventoryState::updateWounds() // private.
 				}
 				else
 					_wndLeftArm->setVisible(false);
-			break;
+				break;
 
 			case BODYPART_RIGHTLEG:
 				if (wound != 0)
@@ -730,7 +730,7 @@ void InventoryState::updateWounds() // private.
 				}
 				else
 					_wndRightLeg->setVisible(false);
-			break;
+				break;
 
 			case BODYPART_LEFTLEG:
 				if (wound != 0)
@@ -864,7 +864,7 @@ void InventoryState::btnSaveLayouts(Action*)
  */
 bool InventoryState::saveAllLayouts() const // private.
 {
-	bool ret = false;
+	bool ret (false);
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
@@ -873,7 +873,6 @@ bool InventoryState::saveAllLayouts() const // private.
 		if (saveLayout(*i) == true)
 			ret = true;
 	}
-
 	return ret;
 }
 
@@ -887,8 +886,7 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 {
 	if (unit->getGeoscapeSoldier() != nullptr)
 	{
-		std::vector<SoldierLayout*>* const layoutItems = unit->getGeoscapeSoldier()->getLayout();
-
+		std::vector<SoldierLayout*>* const layoutItems (unit->getGeoscapeSoldier()->getLayout());
 		if (layoutItems->empty() == false) // clear Soldier's items
 		{
 			for (std::vector<SoldierLayout*>::const_iterator
@@ -898,7 +896,6 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 			{
 				delete *i;
 			}
-
 			layoutItems->clear();
 		}
 
@@ -924,10 +921,8 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 												st,
 												(*i)->getFuse()));
 		}
-
 		return true;
 	}
-
 	return false;
 }
 
@@ -952,12 +947,12 @@ void InventoryState::btnUnequipUnitClick(Action*)
 	if (_tuMode == false						// don't accept clicks in battlescape because this doesn't cost TU.
 		&& _inv->getSelectedItem() == nullptr)	// or when mouse is holding an item
 	{
-		const RuleInventory* const grdRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
+		const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
 
-		BattleUnit* const unit = _battleSave->getSelectedUnit();
-		Tile* const tile = unit->getTile();
+		BattleUnit* const unit (_battleSave->getSelectedUnit());
+		Tile* const tile (unit->getTile());
 
-		std::vector<BattleItem*>* const equipt = unit->getInventory();
+		std::vector<BattleItem*>* const equipt (unit->getInventory());
 		for (std::vector<BattleItem*>::const_iterator
 				i = equipt->begin();
 				i != equipt->end();
@@ -1039,11 +1034,11 @@ void InventoryState::invClick(Action*)
 	// vast majority of this function has been subsumed into invMouseOver().
 	// But i'm leaving it in anyway ...
 
-	const BattleItem* const item = _inv->getSelectedItem();
+	const BattleItem* const item (_inv->getSelectedItem());
 	if (item != nullptr)
 	{
-		const RuleItem* const itRule = item->getRules();
-		const BattleItem* const ammo = item->getAmmoItem();
+		const RuleItem* const itRule (item->getRules());
+		const BattleItem* const ammo (item->getAmmoItem());
 
 		setExtraInfo(
 				item,
@@ -1107,12 +1102,12 @@ void InventoryState::invMouseOver(Action*)
 	}
 	else // no item on cursor.
 	{
-		const BattleItem* const item = _inv->getMouseOverItem();
+		const BattleItem* const item (_inv->getMouseOverItem());
 		if (item != nullptr)
 		{
 //			_updateTemplateButtons(false);
-			const RuleItem* const itRule = item->getRules();
-			const BattleItem* const ammo = item->getAmmoItem();
+			const RuleItem* const itRule (item->getRules());
+			const BattleItem* const ammo (item->getAmmoItem());
 
 			setExtraInfo(item, itRule, ammo);
 
@@ -1224,7 +1219,7 @@ void InventoryState::setExtraInfo( // private.
 		const BattleItem* const ammo)
 {
 	std::wostringstream label;
-	bool isArt = false;
+	bool isArt (false);
 
 	if (item->getUnit() != nullptr)
 	{
@@ -1253,9 +1248,8 @@ void InventoryState::setExtraInfo( // private.
 		isArt = true;
 	}
 
-	int weight = itRule->getWeight();
-	if (ammo != nullptr
-		&& ammo != item)
+	int weight (itRule->getWeight());
+	if (ammo != nullptr && ammo != item)
 	{
 		weight += ammo->getRules()->getWeight();
 	}
@@ -1264,8 +1258,8 @@ void InventoryState::setExtraInfo( // private.
 	_txtItem->setText(label.str());
 
 
-	const BattleUnit* const unit = _battleSave->getSelectedUnit();
-	const BattleActionType bat = itRule->getDefaultAction(item->getFuse() > -1);
+	const BattleUnit* const unit (_battleSave->getSelectedUnit());
+	const BattleActionType bat (itRule->getDefaultAction(item->getFuse() > -1));
 
 	if (unit != nullptr
 		&& isArt == false
@@ -1305,7 +1299,7 @@ void InventoryState::setExtraInfo( // private.
 
 }
 
-/*
+/**
 * Shows a tooltip for the appropriate button.
 * @param action - pointer to an Action
 *
@@ -1318,7 +1312,7 @@ void InventoryState::txtTooltipIn(Action* action)
 	}
 } */
 
-/*
+/**
 * Clears the tooltip text.
 * @param action - pointer to an Action
 *
@@ -1336,8 +1330,8 @@ void InventoryState::txtTooltipOut(Action* action)
 
 /**
  *
- */
-/* void InventoryState::_updateTemplateButtons(bool isVisible)
+ *
+void InventoryState::_updateTemplateButtons(bool isVisible)
 {
 	if (isVisible)
 	{
@@ -1368,8 +1362,8 @@ void InventoryState::txtTooltipOut(Action* action)
 
 /**
  *
- */
-/* void InventoryState::btnCreateTemplateClick(Action*)
+ *
+void InventoryState::btnCreateTemplateClick(Action*)
 {
 	if (_inv->getSelectedItem() != nullptr) // don't accept clicks when moving items
 		return;
@@ -1411,8 +1405,8 @@ void InventoryState::txtTooltipOut(Action* action)
 
 /**
  *
- */
-/* void InventoryState::btnApplyTemplateClick(Action*)
+ *
+void InventoryState::btnApplyTemplateClick(Action*)
 {
 	if (_inv->getSelectedItem() != nullptr)	// don't accept clicks when moving items
 //		|| _curInventoryTemplate.empty())	// or when the template is empty ->

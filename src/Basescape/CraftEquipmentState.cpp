@@ -192,7 +192,7 @@ CraftEquipmentState::CraftEquipmentState(
 			++i)
 	{
 		itRule = _rules->getItemRule(*i);
-		if (itRule->getBigSprite() > -1
+		if (itRule->getBigSprite() > -1 // see also BattlescapeGenerator::deployXcom().
 			&& itRule->getBattleType() != BT_NONE
 			&& itRule->getBattleType() != BT_CORPSE
 			&& itRule->getBattleType() != BT_FUEL

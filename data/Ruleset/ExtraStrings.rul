@@ -230,6 +230,7 @@ extraStrings:
       STR_NA: "na."
       STR_CRAFT_READY: "{0}{NEWLINE}{NEWLINE}{1}"
       STR_REFUND_: "refund> {0}"
+      STR_CRAFT_INFO: "Craft"
 #      STR_MORE_REPORTS: "> reports >"
 #      STR_PLASMA_BEAM_H: PB
 #Extra strings:

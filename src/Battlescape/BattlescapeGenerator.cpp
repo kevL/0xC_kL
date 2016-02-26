@@ -917,9 +917,10 @@ void BattlescapeGenerator::deployXcom() // private.
 			{
 				//Log(LOG_INFO) << ". . . item = " << i->first << " (" << i->second << ")";
 				const RuleItem* const itRule (_rules->getItemRule(i->first));
-				if (itRule->getBigSprite() != -1
+				if (itRule->getBigSprite() > -1 // see also CraftEquipmentState cTor.
 					&& itRule->getBattleType() != BT_NONE
 					&& itRule->getBattleType() != BT_CORPSE
+					&& itRule->getBattleType() != BT_FUEL
 					&& itRule->isFixed() == false
 					&& _gameSave->isResearched(itRule->getRequirements()) == true)
 				{
@@ -2445,7 +2446,7 @@ void BattlescapeGenerator::explodePowerSources() // private.
 
 /**
  * Creates a mini-battle-save for managing inventory from the Geoscape's
- * CraftEquip or BaseEquip screen.
+ * CraftEquip or BaseEquip and some other screens.
  * @note kids, don't try this at home! yer tellin' me.
  * @param craft		- pointer to Craft to handle
  * @param base		- pointer to Base to handle (default nullptr)
@@ -2473,8 +2474,8 @@ void BattlescapeGenerator::runInventory(
 					_mapsize_y,
 					_mapsize_z);
 
-	MapDataSet* const dataSet = new MapDataSet("blank", _game);
-	MapData* const data = new MapData(dataSet);
+	MapDataSet* const dataSet (new MapDataSet("blank", _game));
+	MapData* const data (new MapData(dataSet));
 	Tile* tile;
 
 	for (size_t
@@ -2512,7 +2513,7 @@ void BattlescapeGenerator::runInventory(
 		&& selUnitId != 0
 		&& static_cast<int>(selUnitId) <= qtySoldiers)
 	{
-		size_t j = 0;
+		size_t j (0);
 		for (std::vector<BattleUnit*>::const_iterator
 				i = _battleSave->getUnits()->begin();
 				i != _battleSave->getUnits()->end();

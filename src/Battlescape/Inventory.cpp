@@ -91,23 +91,23 @@ Inventory::Inventory(
 		_prime(-1),
 		_tuCost(-1)
 {
-	_srfGrid		= new Surface(
-								Options::baseXResolution,
-								Options::baseYResolution,
-								x,y);
-	_srfItems		= new Surface(
-								Options::baseXResolution,
-								Options::baseYResolution,
-								x,y);
-	_srfGrab		= new Surface(
-								RuleInventory::HAND_W * RuleInventory::SLOT_W,
-								RuleInventory::HAND_H * RuleInventory::SLOT_H);
-	_warning		= new WarningMessage(
-								224,24,
-								(Options::baseXResolution - 320) / 2 + 48,
-								(Options::baseYResolution - 200) / 2 + 176);
-	_stackNumber	= new NumberText(15,15);
-	_animTimer		= new Timer(80);
+	_srfGrid	= new Surface(
+							Options::baseXResolution,
+							Options::baseYResolution,
+							x,y);
+	_srfItems	= new Surface(
+							Options::baseXResolution,
+							Options::baseYResolution,
+							x,y);
+	_srfGrab	= new Surface(
+							RuleInventory::HAND_W * RuleInventory::SLOT_W,
+							RuleInventory::HAND_H * RuleInventory::SLOT_H);
+	_warning	= new WarningMessage(
+							224,24,
+							(Options::baseXResolution - 320) / 2 + 48,
+							(Options::baseYResolution - 200) / 2 + 176);
+	_numStack	= new NumberText(15,15);
+	_animTimer	= new Timer(80);
 
 	_warning->initText(
 					_game->getResourcePack()->getFont("FONT_BIG"),
@@ -116,7 +116,7 @@ Inventory::Inventory(
 	_warning->setTextColor(static_cast<Uint8>(_game->getRuleset()->getInterface("battlescape")->getElement("warning")->color));
 	_warning->setColor(static_cast<Uint8>(_game->getRuleset()->getInterface("battlescape")->getElement("warning")->color2));
 
-	_stackNumber->setBordered();
+	_numStack->setBordered();
 
 	_animTimer->onTimer((SurfaceHandler)& Inventory::drawPrimers);
 	_animTimer->start();
@@ -131,7 +131,7 @@ Inventory::~Inventory()
 	delete _srfItems;
 	delete _srfGrab;
 	delete _warning;
-	delete _stackNumber;
+	delete _numStack;
 	delete _animTimer;
 }
 
@@ -153,7 +153,7 @@ void Inventory::setPalette(
 	_srfGrab->setPalette(colors, firstcolor, ncolors);
 	_warning->setPalette(colors, firstcolor, ncolors);
 
-	_stackNumber->setPalette(getPalette());
+	_numStack->setPalette(getPalette());
 }
 
 /**
@@ -172,7 +172,7 @@ void Inventory::drawGrids() // private.
 {
 	_srfGrid->clear();
 
-	Text text = Text(16,9);
+	Text text (Text(16,9));
 	text.setPalette(_srfGrid->getPalette());
 	text.setHighContrast();
 	text.initText(
@@ -180,10 +180,10 @@ void Inventory::drawGrids() // private.
 				_game->getResourcePack()->getFont("FONT_SMALL"),
 				_game->getLanguage());
 
-	const RuleInterface* const rule = _game->getRuleset()->getInterface("inventory");
-	text.setColor(static_cast<Uint8>(rule->getElement("textSlots")->color));
+	const RuleInterface* const uiRule (_game->getRuleset()->getInterface("inventory"));
+	text.setColor(static_cast<Uint8>(uiRule->getElement("textSlots")->color));
 
-	const Uint8 color = static_cast<Uint8>(rule->getElement("grid")->color);
+	const Uint8 color (static_cast<Uint8>(uiRule->getElement("grid")->color));
 	bool doLabel;
 
 	SDL_Rect rect;
@@ -234,8 +234,8 @@ void Inventory::drawGrids() // private.
 			doLabel = false;
 
 			const int
-				width = i->second->getX() + RuleInventory::SLOT_W * RuleInventory::GROUND_W,
-				height = i->second->getY() + RuleInventory::SLOT_H * RuleInventory::GROUND_H;
+				width (i->second->getX() + RuleInventory::SLOT_W * RuleInventory::GROUND_W),
+				height (i->second->getY() + RuleInventory::SLOT_H * RuleInventory::GROUND_H);
 
 			for (int
 					x = i->second->getX();
@@ -281,7 +281,7 @@ void Inventory::drawItems() // private.
 	_srfItems->clear();
 	_grenadeFuses.clear();
 
-	SurfaceSet* const bigobs = _game->getResourcePack()->getSurfaceSet("BIGOBS.PCK");
+	SurfaceSet* const bigobs (_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"));
 	Surface* sprite;
 	const RuleInventory* inRule;
 
@@ -323,7 +323,7 @@ void Inventory::drawItems() // private.
 	}
 
 
-	Surface* const stackLayer = new Surface(getWidth(), getHeight());
+	Surface* const stackLayer (new Surface(getWidth(), getHeight()));
 	stackLayer->setPalette(getPalette());
 
 	static const Uint8
@@ -367,20 +367,20 @@ void Inventory::drawItems() // private.
 
 			if (qty > 1 || fatals != 0)
 			{
-				_stackNumber->setX((inRule->getX()
+				_numStack->setX((inRule->getX()
 									+ (((*i)->getSlotX() + (*i)->getRules()->getInventoryWidth()) - _groundOffset)
 										* RuleInventory::SLOT_W) - 4);
 
 				if (qty > 9 || fatals > 9)
-					_stackNumber->setX(_stackNumber->getX() - 4);
+					_numStack->setX(_numStack->getX() - 4);
 
-				_stackNumber->setY((inRule->getY()
+				_numStack->setY((inRule->getY()
 									+ ((*i)->getSlotY() + (*i)->getRules()->getInventoryHeight())
 										* RuleInventory::SLOT_H) - 6);
-				_stackNumber->setValue(fatals ? static_cast<unsigned>(fatals) : static_cast<unsigned>(qty));
-				_stackNumber->draw();
-				_stackNumber->setColor(fatals ? RED : color);
-				_stackNumber->blit(stackLayer);
+				_numStack->setValue(fatals ? static_cast<unsigned>(fatals) : static_cast<unsigned>(qty));
+				_numStack->draw();
+				_numStack->setColor(fatals ? RED : color);
+				_numStack->blit(stackLayer);
 			}
 		}
 	}
@@ -424,7 +424,7 @@ void Inventory::drawPrimers() // private.
 
 	if (_fuseFrame == 22) _fuseFrame = 0;
 
-	static Surface* const srf = _game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(9);
+	static Surface* const srf (_game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(9));
 	for (std::vector<std::pair<int,int>>::const_iterator
 			i = _grenadeFuses.begin();
 			i != _grenadeFuses.end();
@@ -465,10 +465,10 @@ void Inventory::blit(Surface* surface)
 void Inventory::mouseOver(Action* action, State* state)
 {
 	int
-		x = static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX(),
-		y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
+		x (static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX()),
+		y (static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY());
 
-	RuleInventory* const inRule = getSlotAtCursor(&x,&y);
+	RuleInventory* const inRule (getSlotAtCursor(&x,&y));
 	if (inRule != nullptr)
 	{
 		if (_tuMode == true
@@ -509,32 +509,32 @@ void Inventory::mouseOver(Action* action, State* state)
  */
 void Inventory::mouseClick(Action* action, State* state)
 {
-	int soundId = -1;
+	int soundId (-1);
 
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		if (_selItem == nullptr) // Pickup or Move item.
 		{
 			int
-				x = static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX(),
-				y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
+				x (static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX()),
+				y (static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY());
 
-			const RuleInventory* const inRule = getSlotAtCursor(&x,&y);
+			const RuleInventory* const inRule (getSlotAtCursor(&x,&y));
 			if (inRule != nullptr)
 			{
 				if (inRule->getCategory() == IC_GROUND)
 					x += _groundOffset;
 
-				BattleItem* const item = _selUnit->getItem(inRule, x,y);
+				BattleItem* const item (_selUnit->getItem(inRule, x,y));
 				if (item != nullptr)
 				{
 					if ((SDL_GetModState() & KMOD_CTRL) != 0) // Move item.
 					{
 						bool
-							placed = false,
-							toGround = true;
+							placed (false),
+							toGround (true);
 
-						const RuleInventory* targetSection = nullptr;
+						const RuleInventory* targetSection (nullptr);
 
 						if (inRule->getCategory() == IC_HAND
 							|| (inRule->getCategory() != IC_GROUND
@@ -598,7 +598,7 @@ void Inventory::mouseClick(Action* action, State* state)
 					{
 						setSelectedItem(item);
 
-						const int explTurn = item->getFuse();
+						const int explTurn (item->getFuse());
 						if (explTurn > -1)
 						{
 							std::wstring activated;
@@ -620,26 +620,26 @@ void Inventory::mouseClick(Action* action, State* state)
 		else // Drop item or Load weapon.
 		{
 			int
-				x = _srfGrab->getX()
+				x (_srfGrab->getX()
 						+ (RuleInventory::HAND_W - _selItem->getRules()->getInventoryWidth())
 							* RuleInventory::SLOT_W / 2
-						+ RuleInventory::SLOT_W / 2,
-				y = _srfGrab->getY()
+						+ RuleInventory::SLOT_W / 2),
+				y (_srfGrab->getY()
 						+ (RuleInventory::HAND_H - _selItem->getRules()->getInventoryHeight())
 							* RuleInventory::SLOT_H / 2
-						+ RuleInventory::SLOT_H / 2;
+						+ RuleInventory::SLOT_H / 2);
 
-			RuleInventory* inRule = getSlotAtCursor(&x,&y);
+			RuleInventory* inRule (getSlotAtCursor(&x,&y));
 
 			if (inRule != nullptr)
 			{
 				if (inRule->getCategory() == IC_GROUND)
 					x += _groundOffset;
 
-				BattleItem* const item = _selUnit->getItem(inRule, x,y);
+				BattleItem* const item (_selUnit->getItem(inRule, x,y));
 
-				const bool stack = inRule->getCategory() == IC_GROUND
-								&& canStack(item, _selItem) == true;
+				const bool stack (inRule->getCategory() == IC_GROUND
+							   && canStack(item, _selItem) == true);
 
 				if (item == nullptr // Put item in empty slot or stack it if possible.
 					|| item == _selItem
@@ -697,7 +697,7 @@ void Inventory::mouseClick(Action* action, State* state)
 						_warning->showMessage(_game->getLanguage()->getString("STR_WEAPON_IS_ALREADY_LOADED"));
 					else
 					{
-						bool fail = true;
+						bool fail (true);
 						for (std::vector<std::string>::const_iterator
 								i = item->getRules()->getCompatibleAmmo()->begin();
 								i != item->getRules()->getCompatibleAmmo()->end();
@@ -746,7 +746,7 @@ void Inventory::mouseClick(Action* action, State* state)
 				{
 					x += _groundOffset;
 
-					BattleItem* const item = _selUnit->getItem(inRule, x,y);
+					BattleItem* const item (_selUnit->getItem(inRule, x,y));
 					if (canStack(item, _selItem) == true)
 					{
 						if (_tuMode == false
@@ -784,19 +784,19 @@ void Inventory::mouseClick(Action* action, State* state)
 					if (_tuMode == false)
 					{
 						int
-							x = static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX(),
-							y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
+							x (static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX()),
+							y (static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY());
 
-						const RuleInventory* const inRule = getSlotAtCursor(&x,&y);
+						const RuleInventory* const inRule (getSlotAtCursor(&x,&y));
 						if (inRule != nullptr)
 						{
 							if (inRule->getCategory() == IC_GROUND)
 								x += _groundOffset;
 
-							BattleItem* const item = _selUnit->getItem(inRule, x,y);
+							BattleItem* const item (_selUnit->getItem(inRule, x,y));
 							if (item != nullptr)
 							{
-								const RuleItem* const itRule = item->getRules();
+								const RuleItem* const itRule (item->getRules());
 								if (itRule->isGrenade() == true)
 								{
 									if (item->getFuse() == -1) // Prime that grenade!
@@ -806,7 +806,7 @@ void Inventory::mouseClick(Action* action, State* state)
 											item->setFuse(0);
 											arrangeGround();
 
-											const std::wstring activated = _game->getLanguage()->getString("STR_GRENADE_IS_ACTIVATED");
+											const std::wstring activated (_game->getLanguage()->getString("STR_GRENADE_IS_ACTIVATED"));
 											_warning->showMessage(activated);
 										}
 										else // This is where activation warning for nonProxy preBattle grenades goes.
@@ -841,19 +841,19 @@ void Inventory::mouseClick(Action* action, State* state)
 			else // Open Ufopaedia article.
 			{
 				int
-					x = static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX(),
-					y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
+					x (static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX()),
+					y (static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY());
 
-				RuleInventory* const inRule = getSlotAtCursor(&x,&y);
+				RuleInventory* const inRule (getSlotAtCursor(&x,&y));
 				if (inRule != nullptr)
 				{
 					if (inRule->getCategory() == IC_GROUND)
 						x += _groundOffset;
 
-					BattleItem* const item = _selUnit->getItem(inRule, x,y);
+					BattleItem* const item (_selUnit->getItem(inRule, x,y));
 					if (item != nullptr)
 					{
-						std::string article = item->getRules()->getType(); // strip const. yay,
+						std::string article (item->getRules()->getType()); // strip const. yay,
 						Ufopaedia::openArticle(_game, article);
 					}
 				}
@@ -895,7 +895,6 @@ RuleInventory* Inventory::getSlotAtCursor( // private.
 		if (i->second->detSlotAtCursor(x,y) == true)
 			return i->second;
 	}
-
 	return nullptr;
 }
 
@@ -963,7 +962,7 @@ bool Inventory::fitItem( // private.
 		BattleItem* const item,
 		bool test)
 {
-	bool placed = false;
+	bool placed (false);
 
 	for (int
 			y = 0;
@@ -1000,7 +999,6 @@ bool Inventory::fitItem( // private.
 			}
 		}
 	}
-
 	return placed;
 }
 
@@ -1037,7 +1035,7 @@ void Inventory::arrangeGround(int dir)
 {
 	_stackLevel.clear();
 
-	const RuleInventory* const grdRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
+	const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
 
 	// first move all items out of the way -> a big number in X direction to right
 	for (std::vector<BattleItem*>::const_iterator
@@ -1054,7 +1052,7 @@ void Inventory::arrangeGround(int dir)
 	int
 		x,y,
 		width,
-		lastSlot = 0;
+		lastSlot (0);
 
 	// for each item find the most top-left position that is not occupied and will fit
 	for (std::vector<BattleItem*>::const_iterator
@@ -1274,7 +1272,7 @@ bool Inventory::unload()
 		return false;
 	}
 
-	BattleItem* const ammo = _selItem->getAmmoItem();
+	BattleItem* const ammo (_selItem->getAmmoItem());
 	if (ammo == nullptr)
 	{
 		if (_selItem->getRules()->getCompatibleAmmo()->empty() == false)

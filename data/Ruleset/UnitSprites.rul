@@ -59,6 +59,13 @@ extraSprites:
     files:
       0: Resources/Sprites/Units/sectoid/sectoid.png
 #      0: Resources/Sprites/Units/sectoid/sectoid_engineer.png #Mono-sunglasses
+  - type: SILACOID.PCK
+    width: 288
+    height: 40
+    subX: 32
+    subY: 40
+    files:
+      0: Resources/Sprites/Units/silacoid/silacoid.png
   - type: TANKS.PCK
     width: 512
     height: 320

@@ -62,7 +62,7 @@ private:
 		* _selItem;
 	BattleUnit* _selUnit;
 	Game* _game;
-	NumberText* _stackNumber;
+	NumberText* _numStack;
 	Surface
 		* _srfGrid,
 		* _srfItems,

@@ -5937,18 +5937,16 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 		return tile;
 
 
-	const bool hasNoItems (tile->getInventory()->empty());
+	const bool noItems (tile->getInventory()->empty());
 	BattleUnit* const unit (tile->getTileUnit());
 
-	if (unit == nullptr
-		&& hasNoItems == true)
-	{
+	if (unit == nullptr && noItems == true)
 		return tile;
-	}
+
 
 	Tile
-		* dt (tile),
-		* dtb (nullptr);
+		* deltaTile (tile),
+		* deltaTileBelow (nullptr);
 	Position posBelow (pos);
 
 	if (unit != nullptr)
@@ -5967,16 +5965,16 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 						x != armorSize && canFall == true;
 						++x)
 				{
-					dt = _battleSave->getTile(Position(
-													posBelow.x + x,
-													posBelow.y + y,
-													posBelow.z));
-					dtb = _battleSave->getTile(Position(
-													posBelow.x + x,
-													posBelow.y + y,
-													posBelow.z - 1));
-					if (dt->hasNoFloor(dtb) == false)	// note: polar water has no floor, so units that die on them ... uh, sink.
-						canFall = false;				// ... before I changed the loop condition to > 0, that is
+					deltaTile = _battleSave->getTile(Position(
+															posBelow.x + x,
+															posBelow.y + y,
+															posBelow.z));
+					deltaTileBelow = _battleSave->getTile(Position(
+															posBelow.x + x,
+															posBelow.y + y,
+															posBelow.z - 1));
+					if (deltaTile->hasNoFloor(deltaTileBelow) == false)	// note: polar water has no floor, so units that die on them ... uh, sink.
+						canFall = false;								// ... before I changed the loop condition to > 0, that is
 				}
 			}
 
@@ -6034,18 +6032,18 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 		}
 	}
 
-	dt = tile;
+	deltaTile = tile;
 	posBelow = pos;
 
 	while (posBelow.z > 0)
 	{
-		dt = _battleSave->getTile(posBelow);
-		dtb = _battleSave->getTile(Position(
-										posBelow.x,
-										posBelow.y,
-										posBelow.z - 1));
+		deltaTile = _battleSave->getTile(posBelow);
+		deltaTileBelow = _battleSave->getTile(Position(
+													posBelow.x,
+													posBelow.y,
+													posBelow.z - 1));
 
-		if (dt->hasNoFloor(dtb) == false)
+		if (deltaTile->hasNoFloor(deltaTileBelow) == false)
 			break;
 
 		--posBelow.z;
@@ -6053,9 +6051,9 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 
 	if (posBelow != pos)
 	{
-		dt = _battleSave->getTile(posBelow);
+		deltaTile = _battleSave->getTile(posBelow);
 
-		if (hasNoItems == false)
+		if (noItems == false)
 		{
 			for (std::vector<BattleItem*>::const_iterator
 					i = tile->getInventory()->begin();
@@ -6065,17 +6063,17 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 				if ((*i)->getUnit() != nullptr
 					&& tile->getPosition() == (*i)->getUnit()->getPosition())
 				{
-					(*i)->getUnit()->setPosition(dt->getPosition());
+					(*i)->getUnit()->setPosition(deltaTile->getPosition());
 				}
 
-				dt->addItem(*i, (*i)->getInventorySection());
+				deltaTile->addItem(*i, (*i)->getInventorySection());
 			}
 
 			tile->getInventory()->clear();
 		}
 	}
 
-	return dt;
+	return deltaTile;
 }
 
 /**
