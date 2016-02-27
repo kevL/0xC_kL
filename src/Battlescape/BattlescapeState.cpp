@@ -1353,12 +1353,11 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 							}
 							break;
 
-						default:
-							if (itRule->isGrenade() == true
-								&& item->getFuse() > -1)
-							{
+						case BT_GRENADE:
+						case BT_PROXYGRENADE:
+						case BT_FLARE:
+							if (item->getFuse() != -1)
 								wst1 += L" (" + Text::intWide(item->getFuse()) + L")";
-							}
 					}
 				}
 				else

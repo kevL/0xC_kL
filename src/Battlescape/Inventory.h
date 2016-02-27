@@ -71,7 +71,7 @@ private:
 	WarningMessage* _warning;
 
 	std::map<int, std::map<int,int>> _stackLevel;
-	std::vector<std::pair<int,int>> _grenadeFuses;
+	std::vector<std::pair<int,int>> _fusePairs;
 
 
 	/// Draws the inventory grids.

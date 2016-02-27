@@ -279,7 +279,7 @@ void Inventory::drawGrids() // private.
 void Inventory::drawItems() // private.
 {
 	_srfItems->clear();
-	_grenadeFuses.clear();
+	_fusePairs.clear();
 
 	SurfaceSet* const bigobs (_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"));
 	Surface* sprite;
@@ -293,8 +293,7 @@ void Inventory::drawItems() // private.
 	{
 		if (*i != _selItem)
 		{
-			sprite = bigobs->getFrame((*i)->getRules()->getBigSprite());
-			if (sprite != nullptr) // safety.
+			if ((sprite = bigobs->getFrame((*i)->getRules()->getBigSprite())) != nullptr) // safety.
 			{
 				inRule = (*i)->getInventorySection();
 				switch (inRule->getCategory())
@@ -312,11 +311,10 @@ void Inventory::drawItems() // private.
 								+ (RuleInventory::HAND_H - (*i)->getRules()->getInventoryHeight())
 									* RuleInventory::SLOT_H / 2);
 				}
-
 				sprite->blit(_srfItems);
 
-				if ((*i)->getFuse() > -1) // grenade primer indicators
-					_grenadeFuses.push_back(std::make_pair(sprite->getX(), sprite->getY()));
+				if ((*i)->getFuse() > -1) // grenade-primed indicators
+					_fusePairs.push_back(std::make_pair(sprite->getX(), sprite->getY()));
 			}
 			else Log(LOG_WARNING) << "Inventory::drawItems() bigob not found[1] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
 		}
@@ -353,7 +351,7 @@ void Inventory::drawItems() // private.
 				sprite->blit(_srfItems);
 
 				if ((*i)->getFuse() > -1) // grenade primer indicators
-					_grenadeFuses.push_back(std::make_pair(sprite->getX(), sprite->getY()));
+					_fusePairs.push_back(std::make_pair(sprite->getX(), sprite->getY()));
 			}
 			else Log(LOG_WARNING) << "Inventory::drawItems() bigob not found[2] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
 
@@ -426,8 +424,8 @@ void Inventory::drawPrimers() // private.
 
 	static Surface* const srf (_game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(9));
 	for (std::vector<std::pair<int,int>>::const_iterator
-			i = _grenadeFuses.begin();
-			i != _grenadeFuses.end();
+			i = _fusePairs.begin();
+			i != _fusePairs.end();
 			++i)
 	{
 		srf->blitNShade(
@@ -437,7 +435,6 @@ void Inventory::drawPrimers() // private.
 					pulse[_fuseFrame],
 					false, 3); // red
 	}
-
 	++_fuseFrame;
 }
 

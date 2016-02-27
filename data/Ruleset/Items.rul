@@ -704,6 +704,8 @@ items:
     power: 15
     battleType: 10
     armor: 8
+    tuPrime: 2
+    flatRate: true
   - type: STR_CORPSE
     weight: 28
     bigSprite: 45
