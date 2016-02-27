@@ -111,7 +111,7 @@ TileEngine::~TileEngine()
 void TileEngine::calculateSunShading() const
 {
 	Tile* tile;
-	for (size_t
+	for (size_t // reset and re-calculate sunlight.
 			i = 0;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
@@ -134,15 +134,14 @@ void TileEngine::calculateSunShading(Tile* const tile) const
 	//Log(LOG_INFO) << "TileEngine::calculateSunShading()";
 	int light (LIGHT_SUN - _battleSave->getTacticalShade());
 
-	// At night/dusk sun isn't dropping shades blocked by roofs
-	if (_battleSave->getTacticalShade() < 5)
+	if (_battleSave->getTacticalShade() < 5) // Sun doesn't drop shadows in broad daylight.
 	{
 		// kL: old code
 		if (verticalBlockage(
 						_battleSave->getTile(Position(
-												tile->getPosition().x,
-												tile->getPosition().y,
-												_battleSave->getMapSizeZ() - 1)),
+													tile->getPosition().x,
+													tile->getPosition().y,
+													_battleSave->getMapSizeZ() - 1)),
 						tile,
 						DT_NONE) != 0)
 		// kL_note: new code
@@ -184,7 +183,7 @@ void TileEngine::calculateSunShading(Tile* const tile) const
  */
 void TileEngine::calculateTerrainLighting() const
 {
-	for (size_t // reset all light to 0 first
+	for (size_t // reset.
 			i = 0;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
@@ -195,7 +194,7 @@ void TileEngine::calculateTerrainLighting() const
 	Tile* tile;
 	Position pos;
 
-	for (size_t // add lighting of terrain
+	for (size_t
 			i = 0;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
@@ -203,8 +202,7 @@ void TileEngine::calculateTerrainLighting() const
 		tile = _battleSave->getTiles()[i];
 		pos = tile->getPosition();
 
-		// only floors and objects can light up
-		if (tile->getMapData(O_FLOOR) != nullptr
+		if (tile->getMapData(O_FLOOR) != nullptr // add lighting of Floor-part
 			&& tile->getMapData(O_FLOOR)->getLightSource() != 0)
 		{
 			addLight(
@@ -213,7 +211,7 @@ void TileEngine::calculateTerrainLighting() const
 					LIGHT_LAYER_STATIC);
 		}
 
-		if (tile->getMapData(O_OBJECT) != nullptr
+		if (tile->getMapData(O_OBJECT) != nullptr // add lighting of Object-part
 			&& tile->getMapData(O_OBJECT)->getLightSource() != 0)
 		{
 			addLight(
@@ -222,7 +220,7 @@ void TileEngine::calculateTerrainLighting() const
 					LIGHT_LAYER_STATIC);
 		}
 
-		if (tile->getFire() != 0)
+		if (tile->getFire() != 0) // add lighting from Tile-fire
 			addLight(
 					pos,
 					LIGHT_FIRE,
@@ -233,11 +231,14 @@ void TileEngine::calculateTerrainLighting() const
 				j != tile->getInventory()->end();
 				++j)
 		{
-			if ((*j)->getRules()->getBattleType() == BT_FLARE)
+			if ((*j)->getRules()->getBattleType() == BT_FLARE // add lighting of battle-flares
+				&& (*j)->getFuse() != -1)
+			{
 				addLight(
 						pos,
 						(*j)->getRules()->getPower(),
 						LIGHT_LAYER_STATIC);
+			}
 		}
 	}
 }
@@ -292,7 +293,7 @@ void TileEngine::togglePersonalLighting()
  * proportional to distance.
  * @param pos	- reference to the center Position in tile-space
  * @param power	- power of light
- * @param layer	- light is separated in 3 layers: Ambient, Static and Dynamic
+ * @param layer	- light is separated in 3 layers: Ambient, Static, and Dynamic
  */
 void TileEngine::addLight(
 		const Position& pos,

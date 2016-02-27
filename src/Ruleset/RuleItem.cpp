@@ -592,8 +592,8 @@ const std::vector<std::string>* RuleItem::getCompatibleAmmo() const
 }
 
 /**
- * Gets the item's damage type.
- * @return, the damage type
+ * Gets the item's damage-type.
+ * @return, the damage-type (RuleItem.h)
  */
 DamageType RuleItem::getDamageType() const
 {
@@ -601,8 +601,8 @@ DamageType RuleItem::getDamageType() const
 }
 
 /**
- * Gets the item's battle type.
- * @return, the battle type
+ * Gets the item's battle-type.
+ * @return, the battle-type (RuleItem.h)
  */
 BattleType RuleItem::getBattleType() const
 {

@@ -58,7 +58,7 @@ private:
 	size_t _fuseFrame;
 
 	BattleItem
-		* _mouseOverItem,
+		* _overItem,
 		* _selItem;
 	BattleUnit* _selUnit;
 	Game* _game;

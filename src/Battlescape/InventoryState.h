@@ -68,10 +68,10 @@ private:
 		* _btnApplyTemplate,
 		* _btnClearInventory; */
 	BattlescapeState* _parent;
-	Inventory* _inv;
+	Inventory* _inventoryPanel;
 	NumberText
 		* _numOrder,
-		* _tuCost,
+		* _numTuCost,
 		* _wndHead,
 		* _wndTorso,
 		* _wndRightArm,
@@ -120,10 +120,7 @@ private:
 	void clearInventory(Game* game, std::vector<BattleItem*>* unitInv, Tile* groundTile); */
 
 	/// Sets the extra-info fields on mouseover and mouseclicks.
-	void setExtraInfo(
-			const BattleItem* const item,
-			const RuleItem* const itRule,
-			const BattleItem* const ammo);
+	void setExtraInfo(const BattleItem* const selOver);
 	/// Update the visibility and icons for the template buttons.
 /*	void _updateTemplateButtons(bool isVisible); */
 
@@ -163,12 +160,11 @@ private:
 		void btnRankClick(Action* action);
 
 		/// Handler for clicking on inventory items.
-		void invClick(Action* action);
-
+		void inClick(Action* action);
 		/// Handler for showing item info.
-		void invMouseOver(Action* action);
+		void inMouseOver(Action* action);
 		/// Handler for hiding item info.
-		void invMouseOut(Action* action);
+		void inMouseOut(Action* action);
 
 		/// Handles keypresses.
 		void handle(Action* action) override;

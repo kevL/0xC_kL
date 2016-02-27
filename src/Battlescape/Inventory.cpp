@@ -83,7 +83,7 @@ Inventory::Inventory(
 		_game(game),
 		_selUnit(nullptr),
 		_selItem(nullptr),
-		_mouseOverItem(nullptr),
+		_overItem(nullptr),
 		_tuMode(true),
 		_atBase(atBase),
 		_groundOffset(0),
@@ -589,7 +589,7 @@ void Inventory::mouseClick(Action* action, State* state)
 
 							if (placed == true)
 							{
-								_mouseOverItem = nullptr; // remove cursor info 'cause item is no longer under the cursor
+								_overItem = nullptr; // remove cursor info 'cause item is no longer under the cursor
 								mouseOver(action, state);
 							}
 						}
@@ -828,7 +828,7 @@ void Inventory::mouseClick(Action* action, State* state)
 									arrangeGround();
 									soundId = ResourcePack::ITEM_DROP;
 
-									_mouseOverItem = nullptr; // remove cursor info 'cause item is no longer under the cursor
+									_overItem = nullptr; // remove cursor info 'cause item is no longer under the cursor
 									mouseOver(action, state);
 								}
 							}
@@ -1244,9 +1244,9 @@ BattleItem* Inventory::getSelectedItem() const
 void Inventory::setMouseOverItem(BattleItem* const item)
 {
 	if (item != nullptr && item->getRules()->isFixed() == false)
-		_mouseOverItem = item;
+		_overItem = item;
 	else
-		_mouseOverItem = nullptr;
+		_overItem = nullptr;
 }
 
 /**
@@ -1255,7 +1255,7 @@ void Inventory::setMouseOverItem(BattleItem* const item)
  */
 BattleItem* Inventory::getMouseOverItem() const
 {
-	return _mouseOverItem;
+	return _overItem;
 }
 
 /**

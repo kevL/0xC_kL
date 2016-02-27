@@ -145,7 +145,8 @@ ActionMenuState::ActionMenuState(
 
 		if (hasHands == true)
 		{
-			if (itRule->isGrenade() == true)
+			if (itRule->isGrenade() == true
+				|| itRule->getBattleType() == BT_FLARE)
 			{
 				if (_action->weapon->getFuse() == -1) // canPrime
 					addItem(
@@ -241,7 +242,7 @@ ActionMenuState::ActionMenuState(
 		}
 
 		if (injured == false
-			&& _action->weapon->getAmmoItem() != nullptr // is loaded or self-loaded.
+			&& _action->weapon->getAmmoItem() != nullptr // is loaded or self-powered.
 			&& _action->weapon->getAmmoItem()->getRules()->canExecute() == true
 			&& canExecuteTarget() == true)
 		{
@@ -275,14 +276,15 @@ void ActionMenuState::addItem( // private.
 		wst1, // acu
 		wst2; // tu
 
-	if (   bat == BA_THROW
-		|| bat == BA_AIMEDSHOT
-		|| bat == BA_SNAPSHOT
-		|| bat == BA_AUTOSHOT
-		|| bat == BA_MELEE)
+	switch (bat)
 	{
-		var = static_cast<int>(Round(_action->actor->getAccuracy(*_action, bat) * 100.));
-		wst1 = tr("STR_ACCURACY_SHORT_KL").arg(var);
+		case BA_THROW:
+		case BA_AIMEDSHOT:
+		case BA_SNAPSHOT:
+		case BA_AUTOSHOT:
+		case BA_MELEE:
+			var = static_cast<int>(Round(_action->actor->getAccuracy(*_action, bat) * 100.));
+			wst1 = tr("STR_ACCURACY_SHORT_KL").arg(var);
 	}
 
 	var = _action->actor->getActionTu(bat, _action->weapon);
@@ -327,8 +329,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 {
 	_game->getSavedGame()->getBattleSave()->getPathfinding()->clearPreview();
 
-	size_t btnId = MENU_ITEMS;
-
+	size_t btnId (MENU_ITEMS);
 	for (size_t // find out which button was pressed
 			i = 0;
 			i != MENU_ITEMS;
@@ -340,7 +341,6 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 			break;
 		}
 	}
-
 
 	if (btnId != MENU_ITEMS)
 	{
@@ -359,18 +359,22 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 				if (soundId != -1)
 					_game->getResourcePack()->getSound("BATTLE.CAT", soundId)
 												->play(-1, _game->getSavedGame()->getBattleSave()->getBattleGame()->getMap()
-																->getSoundAngle(_action->actor->getPosition()));
+													->getSoundAngle(_action->actor->getPosition()));
 				break;
 			}
 
 			case BA_PRIME:
-				if (itRule->getBattleType() == BT_PROXYGRENADE)
+				switch (itRule->getBattleType())
 				{
-					_action->value = 0;
-					_game->popState();
+					case BT_PROXYGRENADE:
+					case BT_FLARE:
+						_action->value = 0;
+						_game->popState();
+						break;
+
+					default:
+						_game->pushState(new PrimeGrenadeState(_action, false, nullptr));
 				}
-				else
-					_game->pushState(new PrimeGrenadeState(_action, false, nullptr));
 				break;
 
 			case BA_DEFUSE:
@@ -395,28 +399,29 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 				break;
 
 			case BA_USE:
-				if (itRule->getBattleType() == BT_MEDIKIT)
+				switch (itRule->getBattleType())
 				{
-					_game->popState();
-					_game->pushState(new MediTargetState(_action));
-				}
-				else if (itRule->getBattleType() == BT_SCANNER)
-				{
-					if (_action->actor->spendTimeUnits(_action->TU) == true)
-					{
+					case BT_MEDIKIT:
 						_game->popState();
-						_game->pushState(new ScannerState(_action));
-					}
-					else
-					{
-						_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+						_game->pushState(new MediTargetState(_action));
+						break;
+
+					case BT_SCANNER:
+						if (_action->actor->spendTimeUnits(_action->TU) == true)
+						{
+							_game->popState();
+							_game->pushState(new ScannerState(_action));
+						}
+						else
+						{
+							_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+							_game->popState();
+						}
+						break;
+
+					case BT_MINDPROBE:
+						_action->targeting = true;
 						_game->popState();
-					}
-				}
-				else if (itRule->getBattleType() == BT_MINDPROBE)
-				{
-					_action->targeting = true;
-					_game->popState();
 				}
 				break;
 

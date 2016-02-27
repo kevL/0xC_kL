@@ -301,13 +301,26 @@ int BattleItem::setAmmoItem(
 }
 
 /**
- * Checks if this BattleItem is self-powered.
- * @note No ammo is needed if the item has itself assigned as its '_ammoItem'.
+ * Checks if this BattleItem has unlimited shots.
+ * @note No ammo is needed if a firearm or melee-weapon has itself assigned as
+ * its own ammo -- see assignment of '_ammoItem' in cTor.
  * @return, true if self-powered
  */
 bool BattleItem::selfPowered() const
 {
-	return (_ammoItem == this);
+	return _ammoItem == this;
+}
+
+/**
+ * Checks if this BattleItem expends itself after its last shot.
+ * @note A rocket-propelled-grenade for example.
+ * @return, true if self-expended
+ */
+bool BattleItem::selfExpended() const
+{
+	return _itRule->getBattleType() == BT_FIREARM
+		&& _itRule->getCompatibleAmmo()->empty() == true
+		&& _itRule->getFullClip() > 0;
 }
 
 /**

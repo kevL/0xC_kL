@@ -285,9 +285,9 @@ private:
 		/// Gets list of compatible ammo.
 		const std::vector<std::string>* getCompatibleAmmo() const;
 
-		/// Gets the item's damage type.
+		/// Gets the item's damage-type.
 		DamageType getDamageType() const;
-		/// Gets the item's type.
+		/// Gets the item's battle-type.
 		BattleType getBattleType() const;
 
 		/// Gets the item's inventory width.

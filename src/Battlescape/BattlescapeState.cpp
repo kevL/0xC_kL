@@ -204,11 +204,11 @@ BattlescapeState::BattlescapeState()
 
 	_btnLeftHandItem	= new InteractiveSurface(32, 48, x +   8, y + 5);
 	_btnRightHandItem	= new InteractiveSurface(32, 48, x + 280, y + 5);
-	_numAmmoL			= new NumberText(30, 5, x +  33, y + 4);
-	_numAmmoR			= new NumberText(30, 5, x + 305, y + 4);
+	_numAmmoL			= new NumberText(7, 5, x +  33, y + 4);
+	_numAmmoR			= new NumberText(7, 5, x + 305, y + 4);
 
-	_numFuseL			= new NumberText(30, 5, x +   8, y + 4);
-	_numFuseR			= new NumberText(30, 5, x + 280, y + 4);
+	_numFuseL			= new NumberText(7, 5, x +   8, y + 4);
+	_numFuseR			= new NumberText(7, 5, x + 280, y + 4);
 
 	_numTwohandL		= new NumberText(7, 5, x +  33, y + 46, true);
 	_numTwohandR		= new NumberText(7, 5, x + 305, y + 46, true);
@@ -1257,7 +1257,7 @@ void BattlescapeState::mapOver(Action* action)
 		Position pos;
 		_map->getSelectorPosition(&pos);
 
-		Tile* const tile = _battleSave->getTile(pos);
+		Tile* const tile (_battleSave->getTile(pos));
 		updateTileInfo(tile);
 
 		if (_showConsole > 0)
@@ -1268,6 +1268,7 @@ void BattlescapeState::mapOver(Action* action)
 
 /**
  * Prints contents of hovered Tile's inventory to screen.
+ * @note This should have been done w/ vectors but it works as-is.
  * @param tile - mouseOver tile
  */
 void BattlescapeState::printTileInventory(Tile* const tile) // private.
@@ -1283,7 +1284,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 	{
 		showInfo = false;
 
-		size_t row = 0;
+		size_t row (0);
 		std::wostringstream
 			woststr,	// test
 			woststr1,	// Console #1
@@ -1293,7 +1294,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 			wst1,		// first-pass
 			wst2,		// for adding ammoQty and newline
 			wst3;		// second-pass (will be compared to 1st pass to check for duplicate items)
-		int qty = 1;
+		int qty (1);
 
 		for (size_t
 				i = 0;
@@ -1304,8 +1305,8 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 
 			if (i < tile->getInventory()->size())
 			{
-				const BattleItem* const item = tile->getInventory()->at(i);
-				const RuleItem* const itRule = item->getRules();
+				const BattleItem* const item (tile->getInventory()->at(i));
+				const RuleItem* const itRule (item->getRules());
 
 				if (item->getUnit() != nullptr)
 				{
@@ -1333,19 +1334,31 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 				{
 					wst1 += tr(itRule->getType());
 
-					if (itRule->getBattleType() == BT_AMMO)
-						wst1 += L" (" + Text::intWide(item->getAmmoQuantity()) + L")";
-					else if (itRule->getBattleType() == BT_FIREARM
-						&& item->selfPowered() == false
-						&& item->getAmmoItem() != nullptr)
+					switch (itRule->getBattleType())
 					{
-						wst = tr(item->getAmmoItem()->getRules()->getType());
-						wst1 += L" | " + wst + L" (" + Text::intWide(item->getAmmoItem()->getAmmoQuantity()) + L")";
-					}
-					else if (itRule->isGrenade() == true
-						&& item->getFuse() > -1)
-					{
-						wst1 += L" (" + Text::intWide(item->getFuse()) + L")";
+						case BT_AMMO:
+							wst1 += L" (" + Text::intWide(item->getAmmoQuantity()) + L")";
+							break;
+
+						case BT_FIREARM:
+//						case BT_MELEE:
+							{
+								const BattleItem* const aItem (item->getAmmoItem());
+								if ((aItem != nullptr && item->selfPowered() == false)
+									 || item->selfExpended() == true)
+								{
+									wst = tr(aItem->getRules()->getType());
+									wst1 += L" | " + wst + L" (" + Text::intWide(aItem->getAmmoQuantity()) + L")";
+								}
+							}
+							break;
+
+						default:
+							if (itRule->isGrenade() == true
+								&& item->getFuse() > -1)
+							{
+								wst1 += L" (" + Text::intWide(item->getFuse()) + L")";
+							}
 					}
 				}
 				else
@@ -1424,7 +1437,6 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 					break;
 				}
 			}
-
 			++row;
 		}
 
@@ -1579,7 +1591,7 @@ void BattlescapeState::mapIn(Action*)
 	_map->setButtonsPressed(static_cast<Uint8>(Options::battleDragScrollButton), false);
 }
 
-/*
+/**
  * Move the mouse back to where it started after we finish drag scrolling.
  * @param action - pointer to an Action
  *
@@ -1638,7 +1650,7 @@ inline void BattlescapeState::handle(Action* action)
 
 		if (action->getDetails()->type == SDL_KEYDOWN)
 		{
-			bool beep = false;
+			bool beep (false);
 
 			if (Options::debug == true)
 			{
@@ -1672,7 +1684,7 @@ inline void BattlescapeState::handle(Action* action)
 
 							default:
 							{
-								bool checkCasualties = false;
+								bool checkCasualties (false);
 								switch (action->getDetails()->key.keysym.sym)
 								{
 									case SDLK_k:										// "ctrl-k" - kill all aliens.
@@ -2947,7 +2959,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	const Soldier* const sol (selUnit->getGeoscapeSoldier());
 	if (sol != nullptr)
 	{
-		SurfaceSet* const texture = _game->getResourcePack()->getSurfaceSet("SMOKE.PCK");
+		SurfaceSet* const texture (_game->getResourcePack()->getSurfaceSet("SMOKE.PCK"));
 		texture->getFrame(20 + sol->getRank())->blit(_rank);
 
 		if (selUnit->isKneeled() == true)
@@ -3004,10 +3016,10 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	if (ah != AH_NONE)
 	{
 		int
-			tuLaunch = 0,
-			tuAim    = 0,
-			tuAuto   = 0,
-			tuSnap   = 0;
+			tuLaunch (0),
+			tuAim    (0),
+			tuAuto   (0),
+			tuSnap   (0);
 
 		switch (ah)
 		{
@@ -3090,21 +3102,26 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 		switch (itRule->getBattleType())
 		{
 			case BT_FIREARM:
-			case BT_MELEE:
-				if (rtItem->selfPowered() == false || itRule->getFullClip() > 0)
+//			case BT_MELEE:
 				{
-					if (rtItem->getAmmoItem() != nullptr)
+					const BattleItem* const aItem (rtItem->getAmmoItem());
+					if ((aItem != nullptr && rtItem->selfPowered() == false)
+						|| rtItem->selfExpended() == true)
 					{
+						const int load (aItem->getAmmoQuantity());
+						_numAmmoR->setValue(static_cast<unsigned>(load));
 						_numAmmoR->setVisible();
-						const int
-							qty = rtItem->getAmmoItem()->getAmmoQuantity(),
-							clipSize = rtItem->getAmmoItem()->getRules()->getFullClip();
-						_numAmmoR->setValue(static_cast<unsigned>(qty));
 
 						Uint8 color;
-						if (qty == clipSize)
+						int clip;
+						if (itRule->isFixed() == true)
+							clip = itRule->getFullClip();
+						else
+							clip = aItem->getRules()->getFullClip();
+
+						if (load == clip)
 							color = GREEN_D;
-						else if (qty >= clipSize / 2)
+						else if (load >= clip / 2)
 							color = YELLOW_D;
 						else
 							color = ORANGE_D;
@@ -3154,21 +3171,26 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 		switch (itRule->getBattleType())
 		{
 			case BT_FIREARM:
-			case BT_MELEE:
-				if (ltItem->selfPowered() == false || itRule->getFullClip() > 0)
+//			case BT_MELEE:
 				{
-					_numAmmoL->setVisible();
-					if (ltItem->getAmmoItem() != nullptr)
+					const BattleItem* const aItem (ltItem->getAmmoItem());
+					if ((aItem != nullptr && ltItem->selfPowered() == false)
+						 || ltItem->selfExpended() == true)
 					{
-						const int
-							qty = ltItem->getAmmoItem()->getAmmoQuantity(),
-							clipSize = ltItem->getAmmoItem()->getRules()->getFullClip();
-						_numAmmoL->setValue(static_cast<unsigned>(qty));
+						const int load (aItem->getAmmoQuantity());
+						_numAmmoL->setValue(static_cast<unsigned>(load));
+						_numAmmoL->setVisible();
 
 						Uint8 color;
-						if (qty == clipSize)
+						int clip;
+						if (itRule->isFixed() == true)
+							clip = itRule->getFullClip();
+						else
+							clip = aItem->getRules()->getFullClip();
+
+						if (load == clip)
 							color = GREEN_D;
-						else if (qty >= clipSize / 2)
+						else if (load >= clip / 2)
 							color = YELLOW_D;
 						else
 							color = ORANGE_D;
@@ -3227,7 +3249,7 @@ void BattlescapeState::hotSqrsClear()
  */
 void BattlescapeState::hotSqrsUpdate()
 {
-	size_t j = 0;
+	size_t j (0);
 	for (std::vector<BattleUnit*>::const_iterator
 		i = _battleSave->getUnits()->begin();
 		i != _battleSave->getUnits()->end() && j != HOTSQRS;
