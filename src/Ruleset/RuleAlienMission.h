@@ -64,9 +64,9 @@ enum MissionObjective
 
 
 /**
- * Stores fixed information about a mission type.
- * @note It stores the mission waves and the distribution of the races that can
- * undertake the mission based on game date.
+ * Stores fixed information about an AlienMission.
+ * @note This stores the mission-waves and the distribution of alien-races that
+ * can undertake the mission based on game-date.
  */
 class RuleAlienMission
 {
@@ -77,31 +77,32 @@ private:
 		_retalCoef;			// Modifier for chance of retaliation.
 	size_t _specialZone;	// The mission zone to use for spawning.
 	std::string
+		_siteType,			// The type of mission-site to generate.
 		_specialUfo,		// The UFO to use for spawning.
-		_type;				// The mission's type ID.
+		_type;				// The mission's type-ID.
 
 	std::vector<MissionWave> _waves;									// The mission's waves.
-	std::vector<std::pair<size_t, WeightedOptions*>> _raceDistribution;	// The race distribution over game time.
+	std::vector<std::pair<size_t, WeightedOptions*>> _raceDistribution;	// The race distribution over game-time.
 	std::map<size_t, int> _weights;										// The mission's weights.
 
 	MissionObjective _objective; // The mission's objective type.
 
 
 	public:
-		/// Creates an Alien Mission rule.
+		/// Creates an AlienMission rule.
 		explicit RuleAlienMission(const std::string& type);
 		/// Releases all resources held by the mission.
 		~RuleAlienMission();
 
-		/// Loads alien mission data from YAML.
+		/// Loads AlienMission data from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets a race based on the game time and the racial distribution.
+		/// Gets a race based on the game-time and the racial distribution.
 		std::string generateRace(size_t monthsPassed) const;
-		/// Gets the most likely race based on the game time and the racial distribution.
+		/// Gets the most likely race based on the game-time and the racial distribution.
 //		std::string getTopRace(const size_t monthsPassed) const;
 
-		/// Gets the mission's type.
+		/// Gets the mission's type-ID.
 		const std::string& getType() const
 		{ return _type; }
 
@@ -122,15 +123,19 @@ private:
 		/// Gets the UFO type for special spawns.
 		const std::string& getSpawnUfo() const
 		{ return _specialUfo; }
-		/// Gets the zone for spawning an alien site or base.
+		/// Gets the zone for spawning a site or base.
 		size_t getSpawnZone() const
 		{ return _specialZone; }
 
-		/// Gets the chances of this mission based on the game time.
+		/// Gets the chances of this mission based on the game-time.
 		int getWeight(const size_t monthsPassed) const;
 
-		/// Gets the inherent odds of this mission spawning a retaliation mission.
+		/// Gets the basic odds of this mission spawning a retaliation mission.
 		int getRetaliation() const;
+
+		/// The type of missionSite to spawn if any.
+		const std::string& getSiteType() const
+		{ return _siteType; }
 };
 
 }

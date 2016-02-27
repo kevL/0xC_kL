@@ -327,13 +327,11 @@ MonthlyReportState::~MonthlyReportState()
 void MonthlyReportState::calculateChanges() // private.
 {
 	_ratingLast = 0;
-
 	int
-		total = 0,
-		aLienTotal = 0;
+		total (0),
+		aLienTotal (0);
 
-	const size_t lastMonth = _gameSave->getFundsList().size() - 2;
-
+	const size_t lastMonth (_gameSave->getFundsList().size() - 2);
 	for (std::vector<Region*>::const_iterator
 			i = _gameSave->getRegions()->begin();
 			i != _gameSave->getRegions()->end();
@@ -349,30 +347,27 @@ void MonthlyReportState::calculateChanges() // private.
 		aLienTotal += (*i)->getActivityAlien().at(lastMonth);
 	}
 
-
-	const int diff = static_cast<int>(_gameSave->getDifficulty());
-
+	std::string st;
+	const int diff (static_cast<int>(_gameSave->getDifficulty()));
 	for (std::vector<Country*>::const_iterator
 			i = _gameSave->getCountries()->begin();
 			i != _gameSave->getCountries()->end();
 			++i)
 	{
-		std::string st = (*i)->getRules()->getType();
-
-		if ((*i)->getNewPact() == true)
+		st = (*i)->getRules()->getType();
+		if ((*i)->getRecentPact() == true)
 			_pactList.push_back(st);
 
-		(*i)->newMonth(total, aLienTotal, diff);
-
+		(*i)->newMonth(total, aLienTotal, diff); // calculates satisfaction.
 		_deltaFunds += (*i)->getFunding().back()
 					 - (*i)->getFunding().at(lastMonth);
 
 		switch ((*i)->getSatisfaction())
 		{
-			case 1:
+			case SAT_SAD:
 				_sadList.push_back(st);
-			break;
-			case 3:
+				break;
+			case SAT_HAPPY:
 				_happyList.push_back(st);
 		}
 	}

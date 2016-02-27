@@ -81,11 +81,11 @@ private:
 				double lat) const;
 
 		/// Gets this Country's borders.
-//		const std::vector<double>& getLonMin() const {return _lonMin;}
-//		const std::vector<double>& getLonMax() const {return _lonMax;}
-//		const std::vector<double>& getLatMin() const {return _latMin;}
-//		const std::vector<double>& getLatMax() const {return _latMax;}
-		// kL: for reloading country lines
+		const std::vector<double>& getLonMin() const {return _lonMin;}
+		const std::vector<double>& getLonMax() const {return _lonMax;}
+		const std::vector<double>& getLatMin() const {return _latMin;}
+		const std::vector<double>& getLatMax() const {return _latMax;}
+		// kL: for reloading country lines in Ruleset::reloadCountryLines(). See also Globe::drawDetail().
 		std::vector<double>& getLonMin() {return _lonMin;}
 		std::vector<double>& getLonMax() {return _lonMax;}
 		std::vector<double>& getLatMin() {return _latMin;}

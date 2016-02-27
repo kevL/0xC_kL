@@ -911,12 +911,12 @@ bool Ufo::getTimerTicked() const
 }
 
 /**
- * Sets this Ufo's terrain type when it crashes or lands.
- * @param terrain - the terrain type
+ * Sets this Ufo's terrain-type when it crashes or lands.
+ * @param terrainType - the terrain type-ID (default "")
  */
-void Ufo::setUfoTerrainType(const std::string& terrain)
+void Ufo::setUfoTerrainType(const std::string& terrainType)
 {
-	_terrain = terrain;
+	_terrain = terrainType;
 }
 
 /**

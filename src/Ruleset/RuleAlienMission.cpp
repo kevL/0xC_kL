@@ -80,7 +80,7 @@ RuleAlienMission::RuleAlienMission(const std::string& type)
 {}
 
 /**
- * Ensures the allocated memory is released.
+ * Ensures that allocated memory is released.
  */
 RuleAlienMission::~RuleAlienMission()
 {
@@ -88,9 +88,7 @@ RuleAlienMission::~RuleAlienMission()
 			i = _raceDistribution.begin();
 			i != _raceDistribution.end();
 			++i)
-	{
 		delete i->second;
-	}
 }
 
 /**
@@ -106,6 +104,7 @@ void RuleAlienMission::load(const YAML::Node& node)
 	_specialZone	= node["specialZone"]	.as<size_t>(_specialZone);
 	_weights		= node["missionWeights"].as<std::map<size_t, int>>(_weights);
 	_retalCoef		= node["retalCoef"]		.as<int>(_retalCoef);
+	_siteType		= node["siteType"]		.as<std::string>(_siteType);
 
 	_objective = static_cast<MissionObjective>(node["objective"].as<int>(_objective));
 
@@ -130,9 +129,9 @@ void RuleAlienMission::load(const YAML::Node& node)
 				i != weights.end();
 				++i)
 		{
-			const size_t month = i->first.as<size_t>();
+			const size_t month (i->first.as<size_t>());
 
-			Associative::const_iterator existing = assoc.find(month);
+			Associative::const_iterator existing (assoc.find(month));
 			if (assoc.end() == existing) // new entry, load and add it.
 			{
 				std::auto_ptr<WeightedOptions> weight (new WeightedOptions); // init.
@@ -195,7 +194,7 @@ std::string RuleAlienMission::getTopRace(const size_t monthsPassed) const
 } */
 
 /**
- * Returns the Alien score for this mission.
+ * Gets the alien-score for this mission.
  * @return, amount of points
  */
 int RuleAlienMission::getPoints() const
@@ -204,33 +203,33 @@ int RuleAlienMission::getPoints() const
 }
 
 /**
- * Returns the chances of this mission being generated based on the current game date.
- * @param monthsPassed - the number of months that have passed in the game world
+ * Gets the chance of this mission being generated based on the game-date.
+ * @param monthsPassed - the number of months that have passed
  * @return, the weight
  */
 int RuleAlienMission::getWeight(const size_t monthsPassed) const
 {
-	if (_weights.empty() == true)
-		return 1;
-
-	int weight = 0;
-	for (std::map<size_t, int>::const_iterator
-			i = _weights.begin();
-			i != _weights.end();
-			++i)
+	if (_weights.empty() == false)
 	{
-		if (i->first > monthsPassed)
-			break;
+		int weight (0);
+		for (std::map<size_t, int>::const_iterator
+				i = _weights.begin();
+				i != _weights.end();
+				++i)
+		{
+			if (i->first > monthsPassed)
+				break;
 
-		weight = i->second;
+			weight = i->second;
+		}
+		return weight;
 	}
-
-	return weight;
+	return 1;
 }
 
 /**
- * Returns the modifier for the chance of shooting down a UFO on this mission
- * causing a retaliation mission to generate.
+ * Gets the modified-chance that shooting down a UFO on this type of mission
+ * causes a retaliation-mission to generate.
  * @return, retaliation coefficient
  */
 int RuleAlienMission::getRetaliation() const

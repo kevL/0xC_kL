@@ -28,6 +28,13 @@
 namespace OpenXcom
 {
 
+enum SatisfactionType
+{
+	SAT_SAD,		// 0
+	SAT_NEUTRAL,	// 1
+	SAT_HAPPY		// 2
+};
+
 class RuleCountry;
 
 /**
@@ -44,10 +51,11 @@ private:
 		_pact;
 	int
 		_recentActA,
-		_recentActX,
-		_satisfaction;
+		_recentActX;
 
-	RuleCountry* _countryRule;
+	SatisfactionType _satisfaction;
+
+	const RuleCountry* _countryRule;
 
 	std::vector<int>
 		_actA,
@@ -58,7 +66,7 @@ private:
 	public:
 		/// Creates a new country of the specified type.
 		Country(
-				RuleCountry* const countryRule,
+				const RuleCountry* const countryRule,
 				bool genFunds = false);
 		/// Cleans up the country.
 		~Country();
@@ -69,9 +77,9 @@ private:
 		YAML::Node save() const;
 
 		/// Gets the country's ruleset.
-		RuleCountry* getRules() const;
+		const RuleCountry* getRules() const;
 		/// Get the country's name.
-		std::string getType() const;
+		const std::string& getType() const;
 
 		/// Gets the country's funding.
 		std::vector<int>& getFunding();
@@ -79,7 +87,7 @@ private:
 		void setFunding(int funding);
 
 		/// Gets the country's satisfaction level.
-		int getSatisfaction() const;
+		SatisfactionType getSatisfaction() const;
 
 		/// Adds alien activity in this country.
 		void addActivityAlien(int activity);
@@ -97,13 +105,13 @@ private:
 				const int diff);
 
 		/// Gets if they're signing a new pact w/ aLiens.
-		bool getNewPact() const;
+		bool getRecentPact() const;
 		/// Signs a pact at the end of this month.
-		void setNewPact();
+		void setRecentPact();
 		/// Gets if they already signed a pact w/ aLiens.
 		bool getPact() const;
 		/// Signs a pact w/ aLiens immediately!1
-		void setPact();
+//		void setPact();
 
 		/// Handles recent alien activity in this country for GraphsState blink.
 		bool recentActivityAlien(

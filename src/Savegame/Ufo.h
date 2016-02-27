@@ -246,7 +246,7 @@ private:
 		bool getTimerTicked() const;
 
 		/// Sets a crashed or landed UFO's terrainType.
-		void setUfoTerrainType(const std::string& terrain);
+		void setUfoTerrainType(const std::string& terrainType = "");
 		/// Gets a crashed or landed UFO's terrainType.
 		std::string getUfoTerrainType() const;
 

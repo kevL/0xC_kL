@@ -34,14 +34,14 @@ namespace OpenXcom
  * @param genFunds		- true to generate new funding (default false)
  */
 Country::Country(
-		RuleCountry* const countryRule,
+		const RuleCountry* const countryRule,
 		bool genFunds)
 	:
 		_countryRule(countryRule),
 		_pact(false),
 		_newPact(false),
 		_funding(0),
-		_satisfaction(2),
+		_satisfaction(SAT_NEUTRAL),
 		_recentActA(-1),
 		_recentActX(-1)
 {
@@ -100,7 +100,7 @@ YAML::Node Country::save() const
  * Returns the ruleset for the country's type.
  * @return, pointer to RuleCountry
  */
-RuleCountry* Country::getRules() const
+const RuleCountry* Country::getRules() const
 {
 	return _countryRule;
 }
@@ -109,7 +109,7 @@ RuleCountry* Country::getRules() const
  * Gets the country's name.
  * @return, country name
  */
-std::string Country::getType() const
+const std::string& Country::getType() const
 {
 	return _countryRule->getType();
 }
@@ -140,12 +140,12 @@ void Country::setFunding(int funding)
  *			2 = satisfied
  *			3 = happy
  */
-int Country::getSatisfaction() const
+SatisfactionType Country::getSatisfaction() const
 {
-	if (_pact == true)
-		return 0;
+	if (_pact == false)
+		return _satisfaction;
 
-	return _satisfaction;
+	return SAT_NEUTRAL;
 }
 
 /**
@@ -187,9 +187,9 @@ std::vector<int>& Country::getActivityXCom()
 /**
  * Resets all the counters, calculates monthly funding, and sets the delta value
  * for the month.
- * @param xcomTotal		- the council's xcom score
- * @param alienTotal	- the council's alien score
- * @param diff			- game difficulty
+ * @param totalX	- the council's xCom score
+ * @param totalA	- the council's aLien score
+ * @param diff		- game difficulty
  */
 void Country::newMonth(
 		const int totalX,
@@ -197,25 +197,24 @@ void Country::newMonth(
 		const int diff)
 {
 	//Log(LOG_INFO) << "Country::newMonth()";
-	_satisfaction = 2;
+	_satisfaction = SAT_NEUTRAL;
 
 	const int
-		xComPts = (totalX / 10) + _actX.back(),
-		aLienPts = (totalA / 20) + _actA.back(),
-		funding = getFunding().back(),
-		oldFunding = _funding.back() / 1000;
-	int newFunding = (oldFunding * RNG::generate(5,20) / 100) * 1000;
+		xComPts ((totalX / 10) + _actX.back()),
+		aLienPts ((totalA / 20) + _actA.back()),
+		funding (getFunding().back()),
+		oldFunding (_funding.back() / 1000);
+	int newFunding ((oldFunding * RNG::generate(5,20) / 100) * 1000);
 
 	if (xComPts > aLienPts + ((diff + 1) * 20)) // country auto. increases funding
 	{
 		//Log(LOG_INFO) << ". auto funding increase";
-		const int cap = getRules()->getFundingCap() * 1000;
-
+		const int cap (getRules()->getFundingCap() * 1000);
 		if (funding + newFunding > cap)
 			newFunding = cap - funding;
 
 		if (newFunding != 0)
-			_satisfaction = 3;
+			_satisfaction = SAT_HAPPY;
 	}
 	else if (xComPts - (diff * 20) > aLienPts) // 50-50 increase/decrease funding
 	{
@@ -223,42 +222,37 @@ void Country::newMonth(
 		if (RNG::generate(0, xComPts) > aLienPts)
 		{
 			//Log(LOG_INFO) << ". . funding increase";
-			const int cap = getRules()->getFundingCap() * 1000;
-
+			const int cap (getRules()->getFundingCap() * 1000);
 			if (funding + newFunding > cap)
 				newFunding = cap - funding;
 
 			if (newFunding != 0)
-				_satisfaction = 3;
+				_satisfaction = SAT_HAPPY;
 		}
 		else if (RNG::generate(0, aLienPts) > xComPts
 			&& newFunding != 0)
 		{
 			//Log(LOG_INFO) << ". . funding decrease";
 			newFunding = -newFunding;
-			_satisfaction = 1;
+			_satisfaction = SAT_SAD;
 		}
 	}
 	else if (newFunding != 0) // auto. funding decrease
 	{
 		//Log(LOG_INFO) << ". auto funding decrease";
 		newFunding = -newFunding;
-		_satisfaction = 1;
+		_satisfaction = SAT_SAD;
 	}
 
-	if (_newPact == true // about to be in cahoots
-		&& _pact == false)
+	if (_newPact == true && _pact == false) // about to be in cahoots
 	{
 		_newPact = false;
 		_pact = true;
-//		addActivityAlien(100 + diff * 50);	// should this be added to Region also.
-	}										// Yes it should be .... or taken out here.
-											// Let AlienMission or something else take care of it.
+	}
 
-	// set the new funding and reset the activity meters
-	if (_pact == true)
+	if (_pact == true) // set the new funding and reset the activity meters
 		_funding.push_back(0);
-	else if (_satisfaction != 2)
+	else if (_satisfaction != SAT_NEUTRAL)
 		_funding.push_back(funding + newFunding);
 	else
 		_funding.push_back(funding);
@@ -275,10 +269,10 @@ void Country::newMonth(
 }
 
 /**
- * Gets if this country has signed a brand new pact with aLiens.
- * @return, true if this country will sign a new pact with aLiens
+ * Gets if this country has signed a recent pact with aLiens.
+ * @return, true if so
  */
-bool Country::getNewPact() const
+bool Country::getRecentPact() const
 {
 	return _newPact;
 }
@@ -286,7 +280,7 @@ bool Country::getNewPact() const
 /**
  * Signs a pact with aLiens at month's end.
  */
-void Country::setNewPact()
+void Country::setRecentPact()
 {
 	 _newPact = true;
 }
@@ -303,12 +297,12 @@ bool Country::getPact() const
 }
 
 /**
- * Sign a new pact.
- */
+ * Signs a new pact.
+ *
 void Country::setPact()
 {
 	 _pact = true;
-}
+} */
 
 /**
  * Handles recent aLien activity in this country for GraphsState blink.
