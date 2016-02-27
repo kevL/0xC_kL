@@ -531,7 +531,7 @@ void Ruleset::loadFiles(const std::string& dir) // protected.
 void Ruleset::loadFile(const std::string& file) // protected.
 {
 	//Log(LOG_INFO) << "Ruleset::loadFile( -> " << file;
-	const YAML::Node doc = YAML::LoadFile(file);
+	const YAML::Node doc (YAML::LoadFile(file));
 	std::string type;
 
 	for (YAML::const_iterator

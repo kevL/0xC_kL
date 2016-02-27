@@ -92,7 +92,7 @@ void MovingTarget::load(const YAML::Node& node) // virtual.
  */
 YAML::Node MovingTarget::save() const // virtual.
 {
-	YAML::Node node = Target::save();
+	YAML::Node node (Target::save());
 
 	if (_dest != nullptr)
 		node["dest"]	= _dest->saveId();
@@ -178,13 +178,13 @@ void MovingTarget::calculateSpeed()
 		calculateMeetPoint();
 
 		const double
-			dLon = std::sin(_meetPointLon - _lon)
-				 * std::cos(_meetPointLat),
-			dLat = std::cos(_lat)
-				 * std::sin(_meetPointLat) - std::sin(_lat)
-				 * std::cos(_meetPointLat)
-				 * std::cos(_meetPointLon - _lon),
-			dist = std::sqrt((dLon * dLon) + (dLat * dLat));
+			dLon (std::sin(_meetPointLon - _lon)
+				* std::cos(_meetPointLat)),
+			dLat (std::cos(_lat)
+				* std::sin(_meetPointLat) - std::sin(_lat)
+				* std::cos(_meetPointLat)
+				* std::cos(_meetPointLon - _lon)),
+			dist (std::sqrt((dLon * dLon) + (dLat * dLat)));
 
 		_speedLat = dLat / dist * _speedRadian;
 		_speedLon = dLon / dist * _speedRadian / std::cos(_lat + _speedLat);
@@ -239,40 +239,49 @@ void MovingTarget::moveTarget()
 }
 
 /**
- * Calculates meeting point with the target.
+ * Calculates meeting point with a destination-target.
  */
 void MovingTarget::calculateMeetPoint()
 {
 	_meetPointLat = _dest->getLatitude();
 	_meetPointLon = _dest->getLongitude();
 
-	MovingTarget* ufo = dynamic_cast<MovingTarget*>(_dest);
+	MovingTarget* const ufo (dynamic_cast<MovingTarget*>(_dest));
 	if (ufo != nullptr
 		&& ufo->getDestination() != nullptr
 		&& AreSame(ufo->_speedRadian, 0.) == false)
 	{
-		const double speedRatio = _speedRadian / ufo->_speedRadian;
-		if (speedRatio > 1.)
+		const double speedRatio (_speedRadian / ufo->_speedRadian);
+//		if (speedRatio > 1.) // old
 		{
 			double
-				nx = std::cos(ufo->getLatitude()) * std::sin(ufo->getLongitude()) * std::sin(ufo->getDestination()->getLatitude())
-				   - std::sin(ufo->getLatitude()) * std::cos(ufo->getDestination()->getLatitude()) * std::sin(ufo->getDestination()->getLongitude()),
-				ny = std::sin(ufo->getLatitude()) * std::cos(ufo->getDestination()->getLatitude()) * std::cos(ufo->getDestination()->getLongitude())
-				   - std::cos(ufo->getLatitude()) * std::cos(ufo->getLongitude()) * std::sin(ufo->getDestination()->getLatitude()),
-				nz = std::cos(ufo->getLatitude()) * std::cos(ufo->getDestination()->getLatitude()) * std::sin(ufo->getDestination()->getLongitude()
-				   - ufo->getLongitude());
+				nx (std::cos(ufo->getLatitude()) * std::sin(ufo->getLongitude()) * std::sin(ufo->getDestination()->getLatitude())
+				  - std::sin(ufo->getLatitude()) * std::cos(ufo->getDestination()->getLatitude()) * std::sin(ufo->getDestination()->getLongitude())),
+				ny (std::sin(ufo->getLatitude()) * std::cos(ufo->getDestination()->getLatitude()) * std::cos(ufo->getDestination()->getLongitude())
+				  - std::cos(ufo->getLatitude()) * std::cos(ufo->getLongitude()) * std::sin(ufo->getDestination()->getLatitude())),
+				nz (std::cos(ufo->getLatitude()) * std::cos(ufo->getDestination()->getLatitude()) * std::sin(ufo->getDestination()->getLongitude()
+				  - ufo->getLongitude()));
 
-			const double nk = _speedRadian / std::sqrt(nx * nx + ny * ny + nz * nz);
+			const double nk (_speedRadian / std::sqrt(nx * nx + ny * ny + nz * nz));
 			nx *= nk;
 			ny *= nk;
 			nz *= nk;
 
 			double
-				path = 0.,
+				path (0.),
 				dist;
+			double // new
+				old_pdist,
+				new_pdist (std::acos(
+									std::cos(_lat)
+								  * std::cos(_meetPointLat)
+								  * std::cos(_meetPointLon - _lon)
+								  + std::sin(_lat)
+								  * std::sin(_meetPointLat)));
 
 			do
 			{
+				old_pdist = new_pdist; // new
 				_meetPointLat += nx * std::sin(_meetPointLon) - ny * std::cos(_meetPointLon);
 
 				if (std::fabs(_meetPointLat) < M_PI_2)
@@ -281,8 +290,16 @@ void MovingTarget::calculateMeetPoint()
 					_meetPointLon += M_PI;
 
 				path += _speedRadian;
-				dist = std::acos(std::cos(_lat) * std::cos(_meetPointLat) * std::cos(_meetPointLon - _lon) + std::sin(_lat) * std::sin(_meetPointLat));
-			} while (path < M_PI && dist - path * speedRatio > 0.);
+				dist = std::acos(
+								std::cos(_lat)
+							  * std::cos(_meetPointLat)
+							  * std::cos(_meetPointLon - _lon)
+							  + std::sin(_lat)
+							  * std::sin(_meetPointLat));
+				new_pdist = dist - path * speedRatio; // new
+			}
+//			while (path < M_PI && dist - path * speedRatio > 0.); // old
+			while (path < M_PI && new_pdist > 0. && old_pdist > new_pdist); // new
 
 			while (std::fabs(_meetPointLon) > M_PI)
 				_meetPointLon -= std::copysign(M_PI * 2, _meetPointLon);
