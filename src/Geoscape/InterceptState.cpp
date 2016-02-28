@@ -53,15 +53,15 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the Intercept window.
- * @param base	- pointer to Base to show contained crafts (default nullptr to show all crafts)
- * @param geo	- pointer to GeoscapeState (default nullptr)
+ * @param base		- pointer to Base to show contained crafts (default nullptr to show all crafts)
+ * @param geoState	- pointer to GeoscapeState (default nullptr)
  */
 InterceptState::InterceptState(
 		Base* base,
-		GeoscapeState* geo)
+		GeoscapeState* geoState)
 	:
 		_base(base),
-		_geo(geo)
+		_geoState(geoState)
 {
 	_fullScreen = false;
 
@@ -210,7 +210,7 @@ InterceptState::~InterceptState()
  * @param craft - pointer to Craft in question
  * @return, status string
  */
-std::wstring InterceptState::getAltStatus(Craft* const craft)
+std::wstring InterceptState::getAltStatus(Craft* const craft) // private.
 {
 	const CraftStatus stat (craft->getCraftStatus());
 	if (stat != CS_OUT)
@@ -226,9 +226,9 @@ std::wstring InterceptState::getAltStatus(Craft* const craft)
 		std::string st (craft->getCraftStatusString());
 		st.push_back('_');
 
-		bool delayed;
-		const int hours (craft->getDowntime(delayed));
-		return tr(st).arg(formatTime(hours, delayed));
+		bool isDelayed;
+		const int hrs (craft->getDowntime(isDelayed));
+		return tr(st).arg(_game->getSavedGame()->formatCraftDowntime(hrs, isDelayed, _game->getLanguage()));
 	}
 
 	std::wstring status;
@@ -276,40 +276,6 @@ std::wstring InterceptState::getAltStatus(Craft* const craft)
 }
 
 /**
- * Formats a duration in hours into a day & hour string.
- * @param total		- time in hours
- * @param delayed	- true to add '+' for lack of materiel
- * @return, day & hour
- */
-std::wstring InterceptState::formatTime(
-		const int total,
-		const bool delayed) const
-{
-	std::wostringstream woststr;
-	woststr << L"(";
-
-	const int
-		dys (total / 24),
-		hrs (total % 24);
-
-	if (dys > 0)
-	{
-		woststr << tr("STR_DAY", dys);
-		if (hrs > 0)
-			woststr << L" ";
-	}
-
-	if (hrs > 0)
-		woststr << tr("STR_HOUR", hrs);
-
-	if (delayed == true)
-		woststr << L" +";
-
-	woststr << L")";
-	return woststr.str();
-}
-
-/**
  * Closes the window.
  * @param action - pointer to an Action
  */
@@ -324,10 +290,10 @@ void InterceptState::btnCancelClick(Action*)
  */
 void InterceptState::btnGotoBaseClick(Action*)
 {
-	_geo->resetTimer();
+	_geoState->resetTimer();
 
 	_game->popState();
-	_game->pushState(new BasescapeState(_base, _geo->getGlobe()));
+	_game->pushState(new BasescapeState(_base, _geoState->getGlobe()));
 }
 
 /**
@@ -337,7 +303,7 @@ void InterceptState::btnGotoBaseClick(Action*)
 void InterceptState::lstCraftsLeftClick(Action*)
 {
 	Craft* const craft = _crafts[_lstCrafts->getSelectedRow()];
-	_game->pushState(new GeoscapeCraftState(craft, _geo, nullptr, true));
+	_game->pushState(new GeoscapeCraftState(craft, _geoState, nullptr, true));
 }
 
 /**
@@ -349,9 +315,9 @@ void InterceptState::lstCraftsRightClick(Action*)
 	_game->popState();
 
 	const Craft* const craft = _crafts[_lstCrafts->getSelectedRow()];
-	_geo->getGlobe()->center(
-						craft->getLongitude(),
-						craft->getLatitude());
+	_geoState->getGlobe()->center(
+								craft->getLongitude(),
+								craft->getLatitude());
 }
 
 /**

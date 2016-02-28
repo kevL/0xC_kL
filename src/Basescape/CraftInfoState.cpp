@@ -284,7 +284,7 @@ void CraftInfoState::init()
 
 	const RuleCraft* const crRule (_craft->getRules());
 
-	int hours;
+	int hrs;
 	std::wostringstream
 		woststr1, // fuel
 		woststr2; // hull
@@ -295,10 +295,13 @@ void CraftInfoState::init()
 	woststr1 << tr("STR_FUEL").arg(Text::formatPercent(_craft->getFuelPct()));
 	if (crRule->getMaxFuel() - _craft->getFuel() > 0)
 	{
-		hours = static_cast<int>(std::ceil(
-				static_cast<double>(crRule->getMaxFuel() - _craft->getFuel()) / static_cast<double>(crRule->getRefuelRate())
-				/ 2.)); // refuel every half-hour.
-		woststr1 << formatTime(hours, _craft->getWarning() == CW_CANTREFUEL);
+		hrs = static_cast<int>(std::ceil(
+			  static_cast<double>(crRule->getMaxFuel() - _craft->getFuel()) / static_cast<double>(crRule->getRefuelRate())
+			  / 2.)); // refuel every half-hour.
+		woststr1 << L"\n" << _game->getSavedGame()->formatCraftDowntime(
+																	hrs,
+																	_craft->getWarning() == CW_CANTREFUEL,
+																	_game->getLanguage());
 	}
 	_txtFuel->setText(woststr1.str());
 
@@ -308,10 +311,13 @@ void CraftInfoState::init()
 	woststr2 << tr("STR_HULL_").arg(Text::formatPercent(100 - _craft->getCraftDamagePct()));
 	if (_craft->getCraftDamage() != 0)
 	{
-		hours = static_cast<int>(std::ceil(
-				static_cast<double>(_craft->getCraftDamage()) / static_cast<double>(crRule->getRepairRate())
-				/ 2.)); // repair every half-hour.
-		woststr2 << formatTime(hours, false); // ... unless item is required to repair Craft.
+		hrs = static_cast<int>(std::ceil(
+			  static_cast<double>(_craft->getCraftDamage()) / static_cast<double>(crRule->getRepairRate())
+			  / 2.)); // repair every half-hour.
+		woststr2 << L"\n" << _game->getSavedGame()->formatCraftDowntime(
+																	hrs,
+																	false, // ... unless item is required to repair Craft.
+																	_game->getLanguage());
 	}
 	_txtDamage->setText(woststr2.str());
 
@@ -428,12 +434,13 @@ void CraftInfoState::init()
 					<< tr("STR_MAX_").arg(cwRule->getLoadCapacity());
 			if (cw->getAmmo() < cwRule->getLoadCapacity())
 			{
-				hours = static_cast<int>(std::ceil( // rearm every half-hour.
-						static_cast<double>(cwRule->getLoadCapacity() - cw->getAmmo()) / static_cast<double>(cwRule->getRearmRate())
-						/ 2.));
-				woststr << formatTime(
-									hours,
-									cw->getCantLoad());
+				hrs = static_cast<int>(std::ceil(
+					  static_cast<double>(cwRule->getLoadCapacity() - cw->getAmmo()) / static_cast<double>(cwRule->getRearmRate())
+					  / 2.)); // rearm every half-hour.
+				woststr << L"\n" << _game->getSavedGame()->formatCraftDowntime(
+																			hrs,
+																			cw->getCantLoad(),
+																			_game->getLanguage());
 			}
 			_txtW1Ammo->setText(woststr.str());
 		}
@@ -474,12 +481,13 @@ void CraftInfoState::init()
 					<< tr("STR_MAX_").arg(cwRule->getLoadCapacity());
 			if (cw->getAmmo() < cwRule->getLoadCapacity())
 			{
-				hours = static_cast<int>(std::ceil( // rearm every half-hour.
-						static_cast<double>(cwRule->getLoadCapacity() - cw->getAmmo()) / static_cast<double>(cwRule->getRearmRate())
-						/ 2.));
-				woststr << formatTime(
-									hours,
-									cw->getCantLoad());
+				hrs = static_cast<int>(std::ceil(
+					  static_cast<double>(cwRule->getLoadCapacity() - cw->getAmmo()) / static_cast<double>(cwRule->getRearmRate())
+					  / 2.)); // rearm every half-hour.
+				woststr << L"\n" << _game->getSavedGame()->formatCraftDowntime(
+																			hrs,
+																			cw->getCantLoad(),
+																			_game->getLanguage());
 			}
 			_txtW2Ammo->setText(woststr.str());
 		}
@@ -496,41 +504,6 @@ void CraftInfoState::init()
 		_txtW2Name->setVisible(false);
 		_txtW2Ammo->setVisible(false);
 	}
-}
-
-/**
- * Turns an amount of time in hours into a day/hour string.
- * @param total		- time in hours
- * @param delayed	- true to add '+' (unable to rearm due to lack of materiel)
- * @return, day/hour string
- */
-std::wstring CraftInfoState::formatTime( // private.
-		const int total,
-		const bool delayed) const
-{
-	std::wostringstream woststr;
-	const int
-		dys (total / 24),
-		hrs (total % 24);
-
-	woststr << L"\n(";
-
-	if (dys != 0)
-	{
-		woststr << tr("STR_DAY", dys);
-
-		if (hrs != 0)
-			woststr << L" ";
-	}
-
-	if (hrs != 0)
-		woststr << tr("STR_HOUR", hrs);
-
-	if (delayed == true)
-		woststr << L" +";
-
-	woststr << L")";
-	return woststr.str();
 }
 
 /**

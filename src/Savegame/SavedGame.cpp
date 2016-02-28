@@ -241,7 +241,7 @@ SavedGame::~SavedGame()
  * @return, vector of SavesInfo structs (SavedGame.h)
  */
 std::vector<SaveInfo> SavedGame::getList( // static.
-		Language* lang,
+		const Language* const lang,
 		bool autoquick)
 {
 	std::vector<SaveInfo> info;
@@ -310,8 +310,8 @@ SaveInfo SavedGame::getSaveInfo( // private/static.
 		const std::string& file,
 		const Language* const lang)
 {
-	const std::string path = Options::getUserFolder() + file;
-	const YAML::Node doc = YAML::LoadFile(path);
+	const std::string path (Options::getUserFolder() + file);
+	const YAML::Node doc (YAML::LoadFile(path));
 
 	SaveInfo save;
 	save.file = file;
@@ -342,7 +342,7 @@ SaveInfo SavedGame::getSaveInfo( // private/static.
 	}
 
 	save.timestamp = CrossPlatform::getDateModified(path);
-	const std::pair<std::wstring, std::wstring> timePair = CrossPlatform::timeToString(save.timestamp);
+	const std::pair<std::wstring, std::wstring> timePair (CrossPlatform::timeToString(save.timestamp));
 	save.isoDate = timePair.first;
 	save.isoTime = timePair.second;
 
@@ -353,7 +353,7 @@ SaveInfo SavedGame::getSaveInfo( // private/static.
 				<< L" - ";
 	}
 
-	GameTime gt = GameTime(1,1,1999,12,0,0);
+	GameTime gt (GameTime(1,1,1999,12,0,0));
 	gt.load(doc["time"]);
 	details << gt.getDayString(lang)
 			<< L" "
@@ -2424,7 +2424,42 @@ void SavedGame::scorePoints(
 	}
 }
 
-/*
+/**
+ * Formats hours into days/hours for Craft refurbishing.
+ * @param hrsTotal	- total hours refurbishing
+ * @param isDelayed	- true if Craft will be delayed due to lack of materials
+ * @param lang		- pointer to a Language
+ */
+std::wstring SavedGame::formatCraftDowntime(
+		int hrsTotal,
+		bool isDelayed,
+		const Language* const lang) const
+{
+	std::wostringstream woststr;
+	woststr << L"(";
+
+	const int
+		dys (hrsTotal / 24),
+		hrs (hrsTotal % 24);
+
+	if (dys != 0)
+	{
+		woststr << lang->getString("STR_DAY", dys);
+		if (hrs != 0)
+			woststr << L" ";
+	}
+
+	if (hrs != 0)
+		woststr << lang->getString("STR_HOUR", hrs);
+
+	if (isDelayed == true)
+		woststr << L" +";
+
+	woststr << L")";
+	return woststr.str();
+}
+
+/**
  * Returns the craft corresponding to the specified ID.
  * @param craftId - the unique craft id to look up
  * @return, the craft with the specified id, or nullptr

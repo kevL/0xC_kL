@@ -193,7 +193,7 @@ void CraftsState::init()
  * @param craft - pointer to Craft in question
  * @return, status string
  */
-std::wstring CraftsState::getAltStatus(Craft* const craft)
+std::wstring CraftsState::getAltStatus(Craft* const craft) // private.
 {
 	const CraftStatus stat (craft->getCraftStatus());
 	if (stat != CS_OUT)
@@ -209,10 +209,9 @@ std::wstring CraftsState::getAltStatus(Craft* const craft)
 		std::string st (craft->getCraftStatusString());
 		st.push_back('_');
 
-		bool delayed;
-		const int hours (craft->getDowntime(delayed));
-		const std::wstring wst (formatTime(hours, delayed));
-		return tr(st).arg(wst);
+		bool isDelayed;
+		const int hrs (craft->getDowntime(isDelayed));
+		return tr(st).arg(_game->getSavedGame()->formatCraftDowntime(hrs, isDelayed, _game->getLanguage()));
 	}
 
 	std::wstring status;
@@ -257,41 +256,6 @@ std::wstring CraftsState::getAltStatus(Craft* const craft)
 	}
 
 	return status;
-}
-
-/**
- * Formats a duration in hours into a day & hour string.
- * @param total		- time in hours
- * @param delayed	- true to add '+' for lack of materiel
- * @return, day & hour
- */
-std::wstring CraftsState::formatTime(
-		const int total,
-		const bool delayed)
-{
-	std::wostringstream woststr;
-	woststr << L"(";
-
-	const int
-		dys (total / 24),
-		hrs (total % 24);
-
-	if (dys > 0)
-	{
-		woststr << tr("STR_DAY", dys);
-
-		if (hrs > 0)
-			woststr << L" ";
-	}
-
-	if (hrs > 0)
-		woststr << tr("STR_HOUR", hrs);
-
-	if (delayed == true)
-		woststr << L" +";
-
-	woststr << L")";
-	return woststr.str();
 }
 
 /**

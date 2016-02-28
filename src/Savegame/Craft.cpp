@@ -138,7 +138,7 @@ void Craft::load(
 
 	std::string type;
 
-	size_t j = 0;
+	size_t j (0);
 	for (YAML::const_iterator
 			i = node["weapons"].begin();
 			i != node["weapons"].end();
@@ -288,7 +288,7 @@ void Craft::load(
  */
 YAML::Node Craft::save() const
 {
-	YAML::Node node = MovingTarget::save();
+	YAML::Node node (MovingTarget::save());
 
 	node["type"] = _crRule->getType();
 	node["id"]   = _id;
@@ -349,8 +349,7 @@ CraftId Craft::loadId(const YAML::Node& node) // static.
  */
 YAML::Node Craft::saveId() const
 {
-	YAML::Node node = MovingTarget::saveId();
-
+	YAML::Node node (MovingTarget::saveId());
 	const CraftId uniqueId (getUniqueId());
 
 	node["type"] = uniqueId.first;
@@ -522,7 +521,6 @@ std::string Craft::getAltitude() const
 
 		return ufo->getAltitude();
 	}
-
 	return "STR_HIGH_UC";
 
 /*	switch (RNG::generate(0,3))
@@ -1237,12 +1235,12 @@ void Craft::setWarned(const bool warned)
 /**
  * Gets the quantity of time that this Craft will be repairing/rearming/refueling.
  * @note These are checked & attempted every half hour.
- * @param delayed - reference to set true if this Craft's Base will run out of materiel
+ * @param isDelayed - reference to set true if this Craft's Base will run out of materials
  * @return, hours before Craft can fly
  */
-int Craft::getDowntime(bool& delayed)
+int Craft::getDowntime(bool& isDelayed)
 {
-	delayed = false;
+	isDelayed = false;
 
 	int hours (0);
 	if (_damage > 0)
@@ -1267,7 +1265,7 @@ int Craft::getDowntime(bool& delayed)
 						/ static_cast<double>((*i)->getRules()->getRearmRate())
 					 / 2.));
 
-			if (delayed == false)
+			if (isDelayed == false)
 			{
 				const std::string clip ((*i)->getRules()->getClipType());
 				if (clip.empty() == false)
@@ -1292,7 +1290,7 @@ int Craft::getDowntime(bool& delayed)
 					}
 
 					if (baseQty < reqQty)
-						delayed = true;
+						isDelayed = true;
 				}
 			}
 		}
@@ -1307,7 +1305,7 @@ int Craft::getDowntime(bool& delayed)
 					/ static_cast<double>(_crRule->getRefuelRate())
 				 / 2.));
 
-		if (delayed == false)
+		if (isDelayed == false)
 		{
 			const std::string fuel (_crRule->getRefuelItem());
 			if (fuel.empty() == false)
@@ -1332,7 +1330,7 @@ int Craft::getDowntime(bool& delayed)
 				}
 
 				if (baseQty < reqQty)
-					delayed = true;
+					isDelayed = true;
 			}
 		}
 	}

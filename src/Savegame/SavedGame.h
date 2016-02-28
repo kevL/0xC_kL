@@ -227,7 +227,7 @@ private:
 
 		/// Gets list of saves in the user directory.
 		static std::vector<SaveInfo> getList(
-				Language* lang,
+				const Language* const lang,
 				bool autoquick);
 
 		/// Loads a saved game from YAML.
@@ -489,6 +489,12 @@ private:
 				double lat,
 				int pts,
 				bool aLien) const;
+
+		/// Formats hours into days/hours for Craft refurbishing.
+		std::wstring formatCraftDowntime(
+				int hrsTotal,
+				bool isDelayed,
+				const Language* const lang) const;
 
 		/// Returns the craft corresponding to the specified unique id.
 //		Craft* findCraftByUniqueId(const CraftId& craftId) const;

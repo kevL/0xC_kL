@@ -57,7 +57,7 @@ private:
 	Uint8 _cellColor;
 
 	Base* _base;
-	GeoscapeState* _geo;
+	GeoscapeState* _geoState;
 	Target* _target;
 	Text
 		* _txtBase,
@@ -77,17 +77,12 @@ private:
 	/// A more descriptive status of a Craft.
 	std::wstring getAltStatus(Craft* const craft);
 
-	/// Formats a duration in hours into a day & hour string.
-	std::wstring formatTime(
-			const int total,
-			const bool delayed) const;
-
 
 	public:
 		/// Creates the Intercept state.
 		InterceptState(
 				Base* base = nullptr,
-				GeoscapeState* geo = nullptr);
+				GeoscapeState* geoState = nullptr);
 		/// Cleans up the Intercept state.
 		~InterceptState();
 

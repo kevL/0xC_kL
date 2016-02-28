@@ -66,11 +66,6 @@ private:
 	/// A more descriptive status of a Craft.
 	std::wstring getAltStatus(Craft* const craft);
 
-	/// Formats a duration in hours into a day & hour string.
-	std::wstring formatTime(
-			const int total,
-			const bool delayed);
-
 
 	public:
 		/// Creates the Crafts state.

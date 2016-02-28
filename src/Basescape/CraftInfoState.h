@@ -86,10 +86,6 @@ private:
 	Timer* _blinkTimer;
 	Window* _window;
 
-	/// Formats an amount of time.
-	std::wstring formatTime(
-			const int time,
-			const bool delayed) const;
 	/// Sets current cost to send the Craft on a mission.
 	void calculateTacticalCost();
 
