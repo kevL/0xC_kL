@@ -134,12 +134,12 @@ InventoryState::InventoryState(
 	_btnGroundL	= new BattlescapeButton(32, 15,   0, 137);
 	_btnGroundR	= new BattlescapeButton(32, 15, 288, 137);
 
-/*	_btnCreateTemplate = new BattlescapeButton(32,22, _templateBtnX, _createTemplateBtnY);
-	_btnApplyTemplate = new BattlescapeButton(32,22, _templateBtnX, _applyTemplateBtnY);
-	_btnClearInventory = new BattlescapeButton(32,22, _templateBtnX, _clearInventoryBtnY); */
+//	_btnCreateTemplate = new BattlescapeButton(32,22, _templateBtnX, _createTemplateBtnY);
+//	_btnApplyTemplate = new BattlescapeButton(32,22, _templateBtnX, _applyTemplateBtnY);
+//	_btnClearInventory = new BattlescapeButton(32,22, _templateBtnX, _clearInventoryBtnY);
 
-	_txtAmmo	= new Text(40, 24, 288, 64);
-	_srfAmmo	= new Surface(
+	_txtAmmo = new Text(40, 24, 288, 64);
+	_srfAmmo = new Surface(
 						RuleInventory::HAND_W * RuleInventory::SLOT_W,
 						RuleInventory::HAND_H * RuleInventory::SLOT_H,
 						288,88);
@@ -378,7 +378,7 @@ InventoryState::InventoryState(
 //	_timer->start();
 }
 
-/*
+/**
  * Helper for the dTor.
  *
 static void _clearInventoryTemplate(std::vector<SoldierLayout*>& inventoryTemplate)
@@ -1098,10 +1098,13 @@ void InventoryState::inMouseOver(Action*)
 {
 	if (_inventoryPanel->getSelectedItem() != nullptr)
 	{
+//		_numTuCost->setValue(static_cast<unsigned>(_inventoryPanel->getTuCostInventory()));
+//		_numTuCost->setVisible(_tuMode == true
+//							&& _inventoryPanel->getTuCostInventory() > 0);
 		if (_tuMode == true)
 		{
 			const int costTu (_inventoryPanel->getTuCostInventory());
-			if (costTu != 0)
+			if (costTu > 0)
 			{
 				_numTuCost->setValue(static_cast<unsigned>(costTu));
 				_numTuCost->setVisible();
@@ -1201,7 +1204,6 @@ void InventoryState::inMouseOut(Action*)
 void InventoryState::handle(Action* action)
 {
 	State::handle(action);
-
 /*
 #ifndef __MORPHOS__
 	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)

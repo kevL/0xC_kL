@@ -481,14 +481,14 @@ void Inventory::mouseOver(Action* action, State* state)
 			if (inRule->getCategory() == IC_GROUND)
 				x += _groundOffset;
 
-			BattleItem* const item = _selUnit->getItem(inRule, x,y);
+			BattleItem* const item (_selUnit->getItem(inRule, x,y));
 			setMouseOverItem(item);
 		}
 	}
 	else
 	{
 		_tuCost = -1;
-		setMouseOverItem(nullptr);
+		setMouseOverItem();
 	}
 
 	_srfGrab->setX(static_cast<int>(std::floor(
@@ -1236,7 +1236,7 @@ BattleItem* Inventory::getSelectedItem() const
 
 /**
  * Changes the item currently under mouse cursor.
- * @param item - pointer to a BattleItem or nullptr if none
+ * @param item - pointer to a BattleItem (default nullptr)
  */
 void Inventory::setMouseOverItem(BattleItem* const item)
 {

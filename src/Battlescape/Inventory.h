@@ -144,7 +144,7 @@ private:
 		BattleItem* getSelectedItem() const;
 
 		/// Sets the mouse over item.
-		void setMouseOverItem(BattleItem* const item);
+		void setMouseOverItem(BattleItem* const item = nullptr);
 		/// Gets the mouse over item.
 		BattleItem* getMouseOverItem() const;
 
