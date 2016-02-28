@@ -322,24 +322,18 @@ void CraftInfoState::init()
 	_weapon1->clear();
 	_weapon2->clear();
 
-	SurfaceSet* const baseBits = _game->getResourcePack()->getSurfaceSet("BASEBITS.PCK");
-	const int sprite = crRule->getSprite() + 33;
+	SurfaceSet* const baseBits (_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
+	const int sprite (crRule->getSprite() + 33);
 	baseBits->getFrame(sprite)->setX(0); // BaseView::draw() changes x&y
 	baseBits->getFrame(sprite)->setY(0);
 	baseBits->getFrame(sprite)->blit(_sprite);
 
 	Surface* bit;
-	const int icon_width = 10;
+	const int icon_width (10);
 
 	if (crRule->getSoldiers() != 0)
 	{
-		int x = 0;
-
-//		bit = baseBits->getFrame(38);
-//		for (int
-//				i = 0;
-//				i != _craft->getQtySoldiers();
-//				++i, x += icon_width)
+		int x (0);
 		for (std::vector<Soldier*>::const_iterator // soldier graphic
 				i = _base->getSoldiers()->begin();
 				i != _base->getSoldiers()->end();
@@ -379,9 +373,9 @@ void CraftInfoState::init()
 		bit->setY(0);
 
 		const int
-			totalIcons = ((_equip->getWidth() - x) + (icon_width - 1)) / icon_width,
-			loadCap = _craft->getLoadCapacity() - (_craft->getSpaceUsed() * 10),
-			qtyIcons = ((totalIcons * _craft->getQtyEquipment()) + (loadCap - 1)) / loadCap;
+			totalIcons (((_equip->getWidth() - x) + (icon_width - 1)) / icon_width),
+			loadCap (_craft->getLoadCapacity() - (_craft->getSpaceUsed() * 10)),
+			qtyIcons (((totalIcons * _craft->getQtyEquipment()) + (loadCap - 1)) / loadCap);
 
 		for (int
 				i = 0;
@@ -516,8 +510,8 @@ std::wstring CraftInfoState::formatTime( // private.
 {
 	std::wostringstream woststr;
 	const int
-		dys = total / 24,
-		hrs = total % 24;
+		dys (total / 24),
+		hrs (total % 24);
 
 	woststr << L"\n(";
 
@@ -536,7 +530,6 @@ std::wstring CraftInfoState::formatTime( // private.
 		woststr << L" +";
 
 	woststr << L")";
-
 	return woststr.str();
 }
 

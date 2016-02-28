@@ -136,7 +136,7 @@ void Country::setFunding(int funding)
  * Keith Richards would be so proud.
  * @return, satisfaction level (Country.h)
  *			0 = unhappy
- *			1 = satisfied/ has pact w/ aLiens
+ *			1 = neutral OR has pact w/ aLiens
  *			2 = happy
  */
 SatisfactionType Country::getSatisfaction() const

@@ -79,7 +79,7 @@ UnitDieBState::UnitDieBState(
 		if (_unit->getFaction() == FACTION_HOSTILE)
 		{
 			const std::vector<Node*>* const nodeList (_battleSave->getNodes());
-			if (nodeList != nullptr) // this better happen.
+			if (nodeList != nullptr) // this had better happen.
 			{
 				for (std::vector<Node*>::const_iterator
 						i = nodeList->begin();
@@ -109,7 +109,7 @@ UnitDieBState::UnitDieBState(
 		else
 			_unit->initDeathSpin(); // -> STATUS_TURNING
 	}
-	else // pre-battle hidden explosion death or a stunned non-visible unit
+	else // pre-battle hidden power-source explosion death or a stunned non-visible unit
 	{
 		if (_unit->isOut_t(OUT_HEALTH) == true)
 			_unit->instaKill();

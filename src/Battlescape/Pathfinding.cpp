@@ -191,7 +191,7 @@ void Pathfinding::calculatePath(
 	// kL_note: I really don't care what you're "DONE" with ..... if you're going
 	// to cry like a babby, at least make it humorous -- like
 	// GREAT FLAMING TOADS OF HOLY RABBIT SHIT i can't stand it anymore!!1! PS. fixing out of bounds checks
-	int armorSize (unit->getArmor()->getSize());
+	const int armorSize (unit->getArmor()->getSize());
 	if (   posStop.x < 0
 		|| posStop.y < 0
 		|| posStop.x > _battleSave->getMapSizeX() - armorSize
@@ -268,23 +268,21 @@ void Pathfinding::calculatePath(
 	{
 		if (armorSize == 2)
 		{
-			--armorSize;
-
 			const Tile* tileTest;
 			const BattleUnit* unitTest;
 
 			static const int dir[3] = {4,2,3};
 
-			size_t i = 0;
+			size_t i (0);
 			for (int
 					x = 0;
-					x <= armorSize;
-					x += armorSize)
+					x < 2;
+					++x)
 			{
 				for (int
 						y = 0;
-						y <= armorSize;
-						y += armorSize)
+						y < 2;
+						++y)
 				{
 					if (x != 0 || y != 0)
 					{
@@ -719,7 +717,6 @@ bool Pathfinding::aStarPath( // private.
 			}
 		}
 	}
-
 	return false;
 }
 
@@ -1121,7 +1118,7 @@ int Pathfinding::getTuCostPf(
 							O_OBJECT,
 							launchTarget) == true)
 			{
-				//if (debug) Log(LOG_INFO) << "just blocked";
+				//Log(LOG_INFO) << "just blocked";
 				return FAIL;
 			}
 // CHECK FOR BLOCKAGE_end.
@@ -1646,7 +1643,7 @@ bool Pathfinding::isBlocked( // private.
 						return true;
 				}
 			}
-			break;
+			return false;
 
 		case O_WESTWALL:
 			{
