@@ -1940,7 +1940,7 @@ int BattleUnit::getActionTu(
 /**
  * Gets the number of time units a certain action takes for this BattleUnit.
  * @param bat		- BattleActionType (BattlescapeGame.h)
- * @param itRule	- pointer to RuleItem for TU-cost (default nullptr)
+ * @param itRule	- pointer to RuleItem for TU-costs (default nullptr -- see BattlescapeGame::checkReservedTu())
  * @return, TUs to perform action
  */
 int BattleUnit::getActionTu(
@@ -1949,7 +1949,7 @@ int BattleUnit::getActionTu(
 {
 	if (bat == BA_NONE) return 0;
 
-	int cost;
+	int cost (0);
 	switch (bat)
 	{
 		// TODO: Put "tuDefuse" & "tuThrow" yaml-entry in rules under various grenade-types etc.
@@ -1962,46 +1962,35 @@ int BattleUnit::getActionTu(
 		}
 
 		case BA_DEFUSE:
-			return 15; // flat rate.
-
-		case BA_PRIME:
-			if (itRule == nullptr)
-				return 0;
-			cost = itRule->getPrimeTu();
+			if (itRule != nullptr) cost = itRule->getDefuseTu();
 			break;
 
-		case BA_THROW: // Idea: use wt.
-			cost = 23; // fractional rate.
+		case BA_PRIME:
+			if (itRule != nullptr) cost = itRule->getPrimeTu();
+			break;
+
+		case BA_THROW: // NOTE: use wt.
+			cost = 23; // force fractional-rate below.
 			break;
 
 		case BA_LAUNCH:
-			if (itRule == nullptr)
-				return 0;
-			cost = itRule->getLaunchTu();
+			if (itRule != nullptr) cost = itRule->getLaunchTu();
 			break;
 
 		case BA_AIMEDSHOT:
-			if (itRule == nullptr)
-				return 0;
-			cost = itRule->getAimedTu();
+			if (itRule != nullptr) cost = itRule->getAimedTu();
 			break;
 
 		case BA_AUTOSHOT:
-			if (itRule == nullptr)
-				return 0;
-			cost = itRule->getAutoTu();
+			if (itRule != nullptr) cost = itRule->getAutoTu();
 			break;
 
 		case BA_SNAPSHOT:
-			if (itRule == nullptr)
-				return 0;
-			cost = itRule->getSnapTu();
+			if (itRule != nullptr) cost = itRule->getSnapTu();
 			break;
 
 		case BA_MELEE:
-			if (itRule == nullptr)
-				return 0;
-			cost = itRule->getMeleeTu();
+			if (itRule != nullptr) cost = itRule->getMeleeTu();
 			break;
 
 		case BA_LIQUIDATE:
@@ -2012,9 +2001,7 @@ int BattleUnit::getActionTu(
 		case BA_PSICONTROL:
 		case BA_PSICONFUSE:
 		case BA_PSICOURAGE:
-			if (itRule == nullptr)
-				return 0;
-			cost = itRule->getUseTu();
+			if (itRule != nullptr) cost = itRule->getUseTu();
 			break;
 
 		default:

@@ -70,6 +70,7 @@ RuleItem::RuleItem(const std::string& type)
 		_tuReload(15),
 		_tuUnload(12),
 		_tuPrime(0),
+		_tuDefuse(15),
 		_fullClip(0),
 		_blastRadius(-1),
 		_battleType(BT_NONE),
@@ -233,6 +234,7 @@ void RuleItem::load(
 	_tuLaunch			= node["tuLaunch"]			.as<int>(_tuLaunch);
 	_tuUse				= node["tuUse"]				.as<int>(_tuUse);
 	_tuPrime			= node["tuPrime"]			.as<int>(_tuPrime);
+	_tuDefuse			= node["tuDefuse"]			.as<int>(_tuDefuse);
 	_tuMelee			= node["tuMelee"]			.as<int>(_tuMelee);
 	_tuReload			= node["tuReload"]			.as<int>(_tuReload);
 	_tuUnload			= node["tuUnload"]			.as<int>(_tuUnload);
@@ -580,6 +582,15 @@ int RuleItem::getUnloadTu() const
 int RuleItem::getPrimeTu() const
 {
 	return _tuPrime;
+}
+
+/**
+ * Gets the number of Time Units needed to defuse this item.
+ * @return, the number of TU needed to defuse this item
+ */
+int RuleItem::getDefuseTu() const
+{
+	return _tuDefuse;
 }
 
 /**

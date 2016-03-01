@@ -157,6 +157,7 @@ private:
 		_accuracySnap,
 		_tuAimed,
 		_tuAuto,
+		_tuDefuse,
 		_tuLaunch,
 		_tuMelee,
 		_tuPrime,
@@ -281,6 +282,8 @@ private:
 		int getUnloadTu() const;
 		/// Gets the item's prime TU.
 		int getPrimeTu() const;
+		/// Gets the item's defuse TU.
+		int getDefuseTu() const;
 
 		/// Gets list of compatible ammo.
 		const std::vector<std::string>* getCompatibleAmmo() const;

@@ -1,3 +1,13 @@
+# Yankes stock:
+#    spriteFaceGroup: 6
+#    spriteFaceColor: [ 96, 96, 96, 96,160,160,163,163] #M0 F0 M1 F1 M2 F2 M3 F3
+#    spriteHairGroup: 9
+#    spriteHairColor: [144,144,164,164,245,245,166,166] #M0 F0 M1 F1 M2 F2 M3 F3
+# Dioxine alt:
+#    spriteFaceGroup: 14
+#    spriteFaceColor: [160, 160, 64, 160, 160, 64, 160, 160] #M0 F0 M1 F1 M2 F2 M3 F3
+#    spriteHairGroup: 4
+#    spriteHairColor: [130, 160, 201, 130, 64, 198, 160, 64] #M0 F0 M1 F1 M2 F2 M3 F3
 armors:
   - type: STR_ARMOR_NONE_UC
     spriteSheet: XCOM_0.PCK
