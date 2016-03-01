@@ -530,13 +530,15 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 						{
 							_timerRight->stop();
 							LocalizedText playerError (tr("STR_NOT_ENOUGH_AMMO_TO_ARM_HWP")
-															.arg(tr(type)));
+															.arg(clipsRequired)
+															.arg(tr(type))
+															.arg(tr(itRule->getType())));
 							_game->pushState(new ErrorMessageState(
 																playerError,
 																_palette,
-																Palette::blockOffset(15)+1,
+																COLOR_ERROR,
 																"BACK04.SCR",
-																2));
+																COLOR_ERROR_BG));
 						}
 					}
 				}

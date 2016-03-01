@@ -1080,46 +1080,47 @@ SpecialTileType RuleItem::getSpecialType() const
  */
 BattleActionType RuleItem::getDefaultAction(bool isPrimed) const
 {
-	if (_fixedWeapon == true)
-		return BA_NONE;
-
-	if (_battleType == BT_FIREARM)
+	if (_fixedWeapon == false)
 	{
-		if (_waypoint != 0)
-			return BA_LAUNCH;
+		switch (_battleType)
+		{
+//			case BT_AMMO:
+//				return BA_RELOAD;
 
-		if (_accuracySnap != 0)
-			return BA_SNAPSHOT;
+			case BT_MELEE:
+				return BA_MELEE;
 
-		if (_accuracyAuto != 0)
-			return BA_AUTOSHOT;
+			case BT_FIREARM:
+				if (_waypoint != 0)
+					return BA_LAUNCH;
 
-		if (_accuracyAimed != 0)
-			return BA_AIMEDSHOT;
+				if (_accuracySnap != 0)
+					return BA_SNAPSHOT;
+
+				if (_accuracyAuto != 0)
+					return BA_AUTOSHOT;
+
+				if (_accuracyAimed != 0)
+					return BA_AIMEDSHOT;
+				break;
+
+			case BT_GRENADE:
+			case BT_PROXYGRENADE:
+			case BT_FLARE:
+				if (isPrimed == false)
+					return BA_PRIME;
+
+				return BA_DEFUSE;
+
+			case BT_MEDIKIT:
+			case BT_SCANNER:
+			case BT_MINDPROBE:
+				return BA_USE;
+
+			case BT_PSIAMP:
+				return BA_PSIPANIC;
+		}
 	}
-
-	if (_battleType == BT_GRENADE
-		|| _battleType == BT_PROXYGRENADE)
-	{
-		if (isPrimed == false)
-			return BA_PRIME;
-		else
-			return BA_DEFUSE;
-	}
-
-	if (_battleType == BT_MEDIKIT
-		|| _battleType == BT_SCANNER
-		|| _battleType == BT_MINDPROBE)
-	{
-		return BA_USE;
-	}
-
-	if (_battleType == BT_PSIAMP)
-		return BA_PSIPANIC;
-
-	if (_tuMelee != 0)
-		return BA_MELEE;
-
 	return BA_NONE;
 }
 

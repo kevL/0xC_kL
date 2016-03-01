@@ -50,15 +50,15 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the AlienBase discovered window.
- * @param base	- pointer to the AlienBase to get info from
- * @param state	- pointer to the GeoscapeState
+ * @param aBase		- pointer to the AlienBase to get info from
+ * @param geoState	- pointer to the GeoscapeState
  */
 AlienBaseState::AlienBaseState(
-		AlienBase* base,
-		GeoscapeState* state)
+		const AlienBase* const aBase,
+		GeoscapeState* const geoState)
 	:
-		_state(state),
-		_base(base)
+		_aBase(aBase),
+		_geoState(geoState)
 {
 	_window		= new Window(this, 320, 200);
 	_txtTitle	= new Text(308, 60, 6, 60);
@@ -91,25 +91,23 @@ AlienBaseState::AlienBaseState(
 	_txtTitle->setBig();
 	_txtTitle->setWordWrap();
 
-	const double // Check location of base
-		lon = _base->getLongitude(),
-		lat = _base->getLatitude();
+	const double
+		lon (_aBase->getLongitude()),
+		lat (_aBase->getLatitude());
 
 	std::wstring
-		wstRegion,
-		wstCountry,
-		wstLocation;
+		regionType,
+		countryType,
+		loc;
 
 	for (std::vector<Country*>::iterator
 			i = _game->getSavedGame()->getCountries()->begin();
 			i != _game->getSavedGame()->getCountries()->end();
 			++i)
 	{
-		if ((*i)->getRules()->insideCountry(
-										lon,
-										lat))
+		if ((*i)->getRules()->insideCountry(lon,lat))
 		{
-			wstCountry = tr((*i)->getRules()->getType());
+			countryType = tr((*i)->getRules()->getType());
 			break;
 		}
 	}
@@ -121,19 +119,19 @@ AlienBaseState::AlienBaseState(
 	{
 		if ((*i)->getRules()->insideRegion(lon,lat))
 		{
-			wstRegion = tr((*i)->getRules()->getType());
+			regionType = tr((*i)->getRules()->getType());
 			break;
 		}
 	}
 
-	if (wstCountry.empty() == false)
-		wstLocation = tr("STR_COUNTRIES_COMMA").arg(wstCountry).arg(wstRegion);
-	else if (wstRegion.empty() == false)
-		wstLocation = wstRegion;
+	if (countryType.empty() == false)
+		loc = tr("STR_COUNTRIES_COMMA").arg(countryType).arg(regionType);
+	else if (regionType.empty() == false)
+		loc = regionType;
 	else
-		wstLocation = tr("STR_UNKNOWN");
+		loc = tr("STR_UNKNOWN");
 
-	_txtTitle->setText(tr("STR_XCOM_AGENTS_HAVE_LOCATED_AN_ALIEN_BASE_IN_REGION").arg(wstLocation));
+	_txtTitle->setText(tr("STR_XCOM_AGENTS_HAVE_LOCATED_AN_ALIEN_BASE_IN_REGION").arg(loc));
 }
 
 /**
@@ -148,10 +146,10 @@ AlienBaseState::~AlienBaseState()
  */
 void AlienBaseState::btnOkClick(Action*)
 {
-	_state->resetTimer();
-	_state->getGlobe()->center(
-							_base->getLongitude(),
-							_base->getLatitude());
+	_geoState->resetTimer();
+	_geoState->getGlobe()->center(
+								_aBase->getLongitude(),
+								_aBase->getLatitude());
 	_game->popState();
 }
 

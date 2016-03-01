@@ -19,6 +19,7 @@
 
 #include "UnitSprite.h"
 
+//#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 //#include "../Engine/ShaderDraw.h"
 #include "../Engine/ShaderMove.h"
@@ -218,8 +219,9 @@ void UnitSprite::setAnimationFrame(int frame)
 }
 
 /**
- * Draws a unit using the drawing rules of the unit.
- * @note This function is called by Map for each unit on the screen.
+ * Draws a unit using the drawing rules for the unit.
+ * @note This function is called by Map for each BattleUnit in the viewable area
+ * of the screen.
  */
 void UnitSprite::draw()
 {
@@ -245,8 +247,8 @@ void UnitSprite::draw()
 }
 
 /**
- * Drawing routine for xCom soldiers in overalls/sectoids (routine 0) and
- * mutons (routine 10)
+ * Drawing routine for soldiers, sectoids, and non-stock civilians (all routine 0),
+ * or mutons (subroutine 10).
  */
 void UnitSprite::drawRoutine0()
 {
@@ -300,9 +302,15 @@ void UnitSprite::drawRoutine0()
 
 		expectedUnitHeight = 22;
 
-	const int
-		unitDir		= _unit->getUnitDirection(),
-		walkPhase	= _unit->getWalkPhase();
+	const int unitDir (_unit->getUnitDirection());
+	int walkPhase;
+	if (_unit->isStrafeBackwards() == true)
+	{
+		if ((walkPhase = 8 - _unit->getWalkPhase()) == 8)
+			walkPhase = 0;
+	}
+	else
+		walkPhase = _unit->getWalkPhase();
 
 	Surface* torso;
 
@@ -643,7 +651,7 @@ void UnitSprite::drawRoutine0()
 }
 
 /**
- * Drawing routine for floaters.
+ * Drawing routine for floaters and waspites.
  */
 void UnitSprite::drawRoutine1()
 {
@@ -964,7 +972,8 @@ void UnitSprite::drawRoutine3()
 }
 
 /**
- * Drawing routine for civilians, ethereals, zombies.
+ * Drawing routine for stock civilians, ethereals, zombies, dogs, cybermites,
+ * and scout-drones.
  */
 void UnitSprite::drawRoutine4()
 {

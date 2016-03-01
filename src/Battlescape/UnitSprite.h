@@ -58,16 +58,17 @@ private:
 
 	const std::pair<Uint8, Uint8>* _color;
 
-	/// Drawing routine for xCom soldiers in overalls, sectoids (routine 0),
-	/// or mutons (routine 10).
+	/// Drawing routine for soldiers, sectoids, and non-stock civilians (all routine 0),
+	/// or mutons (subroutine 10).
 	void drawRoutine0();
-	/// Drawing routine for floaters.
+	/// Drawing routine for floaters and waspites.
 	void drawRoutine1();
 	/// Drawing routine for xCom tanks.
 	void drawRoutine2();
 	/// Drawing routine for cyberdiscs.
 	void drawRoutine3();
-	/// Drawing routine for civilians, ethereals, zombies.
+	/// Drawing routine for stock civilians, ethereals, zombies, dogs,
+	/// cybermites, and scout-drones.
 	void drawRoutine4();
 	/// Drawing routine for sectopods and reapers.
 	void drawRoutine5();

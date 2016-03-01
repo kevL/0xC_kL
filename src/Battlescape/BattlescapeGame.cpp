@@ -2557,7 +2557,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 							{
 								if (_tacAction.actor->spendTimeUnits(_tacAction.TU) == true)
 								{
-									const int soundId = _tacAction.weapon->getRules()->getFireHitSound();
+									const int soundId (_tacAction.weapon->getRules()->getFireHitSound());
 									if (soundId != -1)
 										getResourcePack()->getSound("BATTLE.CAT", soundId)
 															->play(-1, getMap()->getSoundAngle(pos));
@@ -2593,14 +2593,14 @@ void BattlescapeGame::primaryAction(const Position& pos)
 						|| (_tacAction.type == BA_PSICOURAGE
 							&& targetUnit->getFaction() != FACTION_HOSTILE)))
 				{
-					bool aLienPsi = (_tacAction.weapon == nullptr);
+					bool aLienPsi (_tacAction.weapon == nullptr);
 					if (aLienPsi == true)
 						_tacAction.weapon = _alienPsi;
 
 					_tacAction.target = pos;
 					_tacAction.TU = _tacAction.actor->getActionTu(
-																		_tacAction.type,
-																		_tacAction.weapon);
+																_tacAction.type,
+																_tacAction.weapon);
 
 					if (_tacAction.weapon->getRules()->isLosRequired() == false
 						|| std::find(
@@ -2697,9 +2697,9 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				_parentState->updateSoldierInfo();
 
 				cancelTacticalAction();
-				setupSelector();
-
 				_tacAction.actor = targetUnit;
+
+				setupSelector();
 			}
 		}
 		else if (playableUnitSelected() == true)
@@ -2764,8 +2764,8 @@ void BattlescapeGame::primaryAction(const Position& pos)
 
 				_tacAction.target = pos;
 				pf->calculatePath(
-						_tacAction.actor,
-						_tacAction.target);
+							_tacAction.actor,
+							_tacAction.target);
 
 				if (pf->getStartDirection() != -1)
 				{

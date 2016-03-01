@@ -34,7 +34,7 @@ class Window;
 
 
 /**
- * Displays info on an alien base.
+ * Displays info on an aLien-base.
  */
 class AlienBaseState
 	:
@@ -43,8 +43,8 @@ class AlienBaseState
 
 private:
 
-	AlienBase* _base;
-	GeoscapeState* _state;
+	const AlienBase* _aBase;
+	GeoscapeState* _geoState;
 	Text* _txtTitle;
 	TextButton* _btnOk;
 	Window* _window;
@@ -54,8 +54,8 @@ private:
 
 		/// Creates the Alien Base Detected state.
 		AlienBaseState(
-				AlienBase* base,
-				GeoscapeState* state);
+				const AlienBase* const aBase,
+				GeoscapeState* const geoState);
 		/// Cleans up the Alien Base Detected state.
 		~AlienBaseState();
 

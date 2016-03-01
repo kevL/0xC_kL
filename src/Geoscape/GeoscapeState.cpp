@@ -3288,7 +3288,7 @@ void GeoscapeState::time1Month()
 	popup(new MonthlyReportState());
 
 
-	// handle Xcom Operatives discovering bases
+	// handle xCom Secret Agents discovering bases
 	// NOTE: might want to change this to time1day() ...
 	if (_gameSave->getAlienBases()->empty() == false)
 	{
@@ -3304,7 +3304,7 @@ void GeoscapeState::time1Month()
 					&& RNG::percent(pct + 5) == true)
 				{
 					(*i)->setDetected();
-					popup(new AlienBaseState(*i, this)); // NOTE: multiple popups may glitch.
+					popup(new AlienBaseState(*i, this));
 				}
 			}
 		}

@@ -789,7 +789,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 											else
 												shade = tileShade;
 
-											calculateWalkingOffset(unitNorth, &walkOffset, trueLoc);
+											calcWalkOffset(unitNorth, &walkOffset, trueLoc);
 											sprite->blitNShade(
 													surface,
 													posScreen.x + walkOffset.x + 16,
@@ -1182,7 +1182,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 //								if (shade != 0 && quadrant != 0)	// try to even out lighting of all four quadrants of large units.
 //									shade -= 1;						// TODO: trickle this throughout this function!
 
-								calculateWalkingOffset(_unit, &walkOffset, trueLoc);
+								calcWalkOffset(_unit, &walkOffset, trueLoc);
 								sprite->blitNShade(
 										surface,
 										posScreen.x + walkOffset.x,
@@ -1303,7 +1303,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									else
 										shade = SHADE_BLACK;
 
-									calculateWalkingOffset(unitBelow, &walkOffset, trueLoc);
+									calcWalkOffset(unitBelow, &walkOffset, trueLoc);
 									sprite->blitNShade(
 											surface,
 											posScreen.x + walkOffset.x,
@@ -1457,7 +1457,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									sprite = _unit->getCache(quadrant);
 									//if (sprite != nullptr)
 									{
-										calculateWalkingOffset(_unit, &walkOffset, trueLoc);
+										calcWalkOffset(_unit, &walkOffset, trueLoc);
 										sprite->blitNShade(
 												surface,
 												posScreen.x + walkOffset.x,
@@ -2235,8 +2235,8 @@ void Map::animateMap(bool redraw)
 void Map::refreshSelectorPosition()
 {
 	const int
-		pre_X = _selectorX,
-		pre_Y = _selectorY;
+		pre_X (_selectorX),
+		pre_Y (_selectorY);
 
 	_camera->convertScreenToMap(
 							_mX,
@@ -2278,7 +2278,6 @@ bool Map::isTrueLoc(
 	{
 		return true;
 	}
-
 	return false;
 }
 
@@ -2289,10 +2288,10 @@ bool Map::isTrueLoc(
  * @param trueLoc	- true if real location; false if transient
  * @return, quadrant
  */
-int Map::getQuadrant(
+int Map::getQuadrant( // private.
 		const BattleUnit* const unit,
 		const Tile* const tile,
-		bool trueLoc) const // private.
+		bool trueLoc) const
 {
 /*	STATUS_STANDING,	//  0
 	STATUS_WALKING,		//  1
@@ -2314,7 +2313,7 @@ int Map::getQuadrant(
 			+ (tile->getPosition().y - unit->getPosition().y) * 2;
 	}
 
-	int dir = unit->getUnitDirection();
+	int dir (unit->getUnitDirection());
 	if (unit->getPosition() == unit->getStopPosition())
 		dir = (dir + 4) % 8;
 
@@ -2334,127 +2333,127 @@ int Map::getQuadrant(
  * @param offset	- pointer to the Position that will be the calculation result
  * @param trueLoc	- true if real location; false if transient
  */
-void Map::calculateWalkingOffset(
+void Map::calcWalkOffset( // private.
 		const BattleUnit* const unit,
 		Position* const offset,
-		bool trueLoc) const // private.
+		bool trueLoc) const
 {
 	*offset = Position(0,0,0);
 
-	if (unit->getUnitStatus() == STATUS_WALKING
-		|| unit->getUnitStatus() == STATUS_FLYING) // or STATUS_PANICKING
+	switch (unit->getUnitStatus())
 	{
-		static const int
-			offsetX[8] = {1, 1, 1, 0,-1,-1,-1, 0},
-			offsetY[8] = {1, 0,-1,-1,-1, 0, 1, 1},
-
-			offsetFalseX[8] = {16, 32, 16,  0,-16,-32,-16,  0}, // for duplicate drawing units from their transient
-			offsetFalseY[8] = {-8,  0,  8, 16,  8,  0, -8,-16}, // destination & last positions. See UnitWalkBState.
-			offsetFalseVert = 24;
-		const int
-			dir = unit->getUnitDirection(),			// 0..7
-			dirVert = unit->getVerticalDirection(),	// 0= none, 8= up, 9= down
-			walkPhase = unit->getWalkPhaseTrue(),
-			armorSize = unit->getArmor()->getSize();
-		int
-			halfPhase,
-			fullPhase;
-		unit->walkPhaseCutoffs(
-							halfPhase,
-							fullPhase);
-
-		const bool start = (walkPhase < halfPhase);
-		if (dirVert == 0)
-		{
-			if (start == true)
+		case STATUS_WALKING:
+		case STATUS_FLYING:
 			{
-				offset->x =  walkPhase * offsetX[dir] * 2 + ((trueLoc == true) ? 0 : -offsetFalseX[dir]);
-				offset->y = -walkPhase * offsetY[dir]     + ((trueLoc == true) ? 0 : -offsetFalseY[dir]);
+				static const int
+					offsetX[8] {1, 1, 1, 0,-1,-1,-1, 0},
+					offsetY[8] {1, 0,-1,-1,-1, 0, 1, 1},
+
+					offsetFalseX[8] {16, 32, 16,  0,-16,-32,-16,  0}, // for duplicate drawing units from their transient
+					offsetFalseY[8] {-8,  0,  8, 16,  8,  0, -8,-16}, // destination & last positions. See UnitWalkBState.
+					offsetFalseVert (24);
+				const int
+					dir (unit->getUnitDirection()),			// 0..7
+					dirVert (unit->getVerticalDirection()),	// 0= none, 8= up, 9= down
+					armorSize (unit->getArmor()->getSize());
+				int
+					walkPhase (unit->getWalkPhaseTrue()),
+					halfPhase (unit->getWalkPhaseHalf()),
+					fullPhase (unit->getWalkPhaseFull());
+
+				const bool start (walkPhase < halfPhase);
+				if (dirVert == 0)
+				{
+					if (start == true)
+					{
+						offset->x =  walkPhase * offsetX[dir] * 2 + ((trueLoc == true) ? 0 : -offsetFalseX[dir]);
+						offset->y = -walkPhase * offsetY[dir]     + ((trueLoc == true) ? 0 : -offsetFalseY[dir]);
+					}
+					else
+					{
+						offset->x =  (walkPhase - fullPhase) * offsetX[dir] * 2 + ((trueLoc == true) ? 0 : offsetFalseX[dir]);
+						offset->y = -(walkPhase - fullPhase) * offsetY[dir]     + ((trueLoc == true) ? 0 : offsetFalseY[dir]);
+					}
+				}
+
+				// if unit is between tiles interpolate its terrain level (y-adjustment).
+				const int
+					posLastZ (unit->getStartPosition().z),
+					posDestZ (unit->getStopPosition().z);
+				int
+					levelStart,
+					levelEnd;
+
+				if (start == true)
+				{
+					if (dirVert == Pathfinding::DIR_UP)
+						offset->y += (trueLoc == true) ? 0 : offsetFalseVert;
+					else if (dirVert == Pathfinding::DIR_DOWN)
+						offset->y += (trueLoc == true) ? 0 : -offsetFalseVert;
+
+					levelEnd = getTerrainLevel(
+											unit->getStopPosition(),
+											armorSize);
+
+					if (posLastZ > posDestZ)		// going down a level so 'levelEnd' 0 becomes +24 (-8 becomes 16)
+						levelEnd += 24 * (posLastZ - posDestZ);
+					else if (posLastZ < posDestZ)	// going up a level so 'levelEnd' 0 becomes -24 (-8 becomes -16)
+						levelEnd = -24 * (posDestZ - posLastZ) + std::abs(levelEnd);
+
+					levelStart = getTerrainLevel(
+											unit->getPosition(),
+											armorSize);
+					offset->y += ((levelStart * (fullPhase - walkPhase)) / fullPhase) + ((levelEnd * walkPhase) / fullPhase);
+					if (trueLoc == false && dirVert == 0)
+					{
+						if (posLastZ > posDestZ)
+							offset->y -= offsetFalseVert;
+						else if (posLastZ < posDestZ)
+							offset->y += offsetFalseVert;
+					}
+				}
+				else
+				{
+					if (dirVert == Pathfinding::DIR_UP)
+						offset->y += (trueLoc == true) ? 0 : -offsetFalseVert;
+					else if (dirVert == Pathfinding::DIR_DOWN)
+						offset->y += (trueLoc == true) ? 0 : offsetFalseVert;
+
+					levelStart = getTerrainLevel(
+											unit->getStartPosition(),
+											armorSize);
+
+					if (posLastZ > posDestZ)		// going down a level so 'levelStart' 0 becomes -24 (-8 becomes -32)
+						levelStart -= 24 * (posLastZ - posDestZ);
+					else if (posLastZ < posDestZ)	// going up a level so 'levelStart' 0 becomes +24 (-8 becomes 16)
+						levelStart =  24 * (posDestZ - posLastZ) - std::abs(levelStart);
+
+					levelEnd = getTerrainLevel(
+											unit->getStopPosition(),
+											armorSize);
+					offset->y += ((levelStart * (fullPhase - walkPhase)) / fullPhase) + ((levelEnd * walkPhase) / fullPhase);
+
+					if (trueLoc == false && dirVert == 0)
+					{
+						if (posLastZ > posDestZ)
+							offset->y += offsetFalseVert;
+						else if (posLastZ < posDestZ)
+							offset->y -= offsetFalseVert;
+					}
+				}
 			}
-			else
-			{
-				offset->x =  (walkPhase - fullPhase) * offsetX[dir] * 2 + ((trueLoc == true) ? 0 : offsetFalseX[dir]);
-				offset->y = -(walkPhase - fullPhase) * offsetY[dir]     + ((trueLoc == true) ? 0 : offsetFalseY[dir]);
-			}
-		}
+			break;
 
-		// if unit is between tiles interpolate its terrain level (y-adjustment).
-		const int
-			posLastZ = unit->getStartPosition().z,
-			posDestZ = unit->getStopPosition().z;
-		int
-			levelStart,
-			levelEnd;
-
-		if (start == true)
-		{
-			if (dirVert == Pathfinding::DIR_UP)
-				offset->y += (trueLoc == true) ? 0 : offsetFalseVert;
-			else if (dirVert == Pathfinding::DIR_DOWN)
-				offset->y += (trueLoc == true) ? 0 : -offsetFalseVert;
-
-			levelEnd = getTerrainLevel(
-									unit->getStopPosition(),
-									armorSize);
-
-			if (posLastZ > posDestZ)		// going down a level so 'levelEnd' 0 becomes +24 (-8 becomes 16)
-				levelEnd += 24 * (posLastZ - posDestZ);
-			else if (posLastZ < posDestZ)	// going up a level so 'levelEnd' 0 becomes -24 (-8 becomes -16)
-				levelEnd = -24 * (posDestZ - posLastZ) + std::abs(levelEnd);
-
-			levelStart = getTerrainLevel(
+		default: // standing, Etc.
+			offset->y += getTerrainLevel(
 									unit->getPosition(),
-									armorSize);
-			offset->y += ((levelStart * (fullPhase - walkPhase)) / fullPhase) + ((levelEnd * walkPhase) / fullPhase);
-			if (trueLoc == false && dirVert == 0)
+									unit->getArmor()->getSize());
+
+			if (unit->getUnitStatus() == STATUS_AIMING
+				&& unit->getArmor()->getCanHoldWeapon() == true)
 			{
-				if (posLastZ > posDestZ)
-					offset->y -= offsetFalseVert;
-				else if (posLastZ < posDestZ)
-					offset->y += offsetFalseVert;
+				offset->x = -16; // it's maaaaaagic.
 			}
-		}
-		else
-		{
-			if (dirVert == Pathfinding::DIR_UP)
-				offset->y += (trueLoc == true) ? 0 : -offsetFalseVert;
-			else if (dirVert == Pathfinding::DIR_DOWN)
-				offset->y += (trueLoc == true) ? 0 : offsetFalseVert;
-
-			levelStart = getTerrainLevel(
-									unit->getStartPosition(),
-									armorSize);
-
-			if (posLastZ > posDestZ)		// going down a level so 'levelStart' 0 becomes -24 (-8 becomes -32)
-				levelStart -= 24 * (posLastZ - posDestZ);
-			else if (posLastZ < posDestZ)	// going up a level so 'levelStart' 0 becomes +24 (-8 becomes 16)
-				levelStart =  24 * (posDestZ - posLastZ) - std::abs(levelStart);
-
-			levelEnd = getTerrainLevel(
-									unit->getStopPosition(),
-									armorSize);
-			offset->y += ((levelStart * (fullPhase - walkPhase)) / fullPhase) + ((levelEnd * walkPhase) / fullPhase);
-
-			if (trueLoc == false && dirVert == 0)
-			{
-				if (posLastZ > posDestZ)
-					offset->y += offsetFalseVert;
-				else if (posLastZ < posDestZ)
-					offset->y -= offsetFalseVert;
-			}
-		}
-	}
-	else // standing.
-	{
-		offset->y += getTerrainLevel(
-								unit->getPosition(),
-								unit->getArmor()->getSize());
-
-		if (unit->getUnitStatus() == STATUS_AIMING
-			&& unit->getArmor()->getCanHoldWeapon() == true)
-		{
-			offset->x = -16; // it's maaaaaagic.
-		}
 	}
 }
 
@@ -2471,7 +2470,7 @@ int Map::getTerrainLevel( // private.
 		int armorSize) const
 {
 	int
-		lowLevel = 0,
+		lowLevel (0),
 		lowTest;
 
 	for (int
@@ -2489,7 +2488,6 @@ int Map::getTerrainLevel( // private.
 				lowLevel = lowTest;
 		}
 	}
-
 	return lowLevel;
 }
 
@@ -2532,7 +2530,7 @@ void Map::cacheUnits()
 }
 
 /**
- * Check if a certain unit needs to be redrawn and if so updates sprite(s).
+ * Check if a BattleUnit needs to be redrawn and if so updates its sprite(s).
  * @param unit - pointer to a BattleUnit
  */
 void Map::cacheUnit(BattleUnit* const unit)

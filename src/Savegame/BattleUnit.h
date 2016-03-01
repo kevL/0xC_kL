@@ -151,7 +151,8 @@ private:
 		_stopShot, // to stop a unit from firing/throwing if it spots a new opponent during turning
 		_takenExpl, // used to stop large units from taking damage for each part.
 		_takenFire,
-		_visible;
+		_visible,
+		_walkBackwards;
 	int
 		_aimPhase,
 		_coverReserve,
@@ -185,6 +186,8 @@ private:
 		_tu,
 		_turnsExposed,
 		_walkPhase,
+		_walkPhaseHalf,
+		_walkPhaseFull,
 		_mcStrength,
 		_mcSkill;
 	size_t _battleOrder;
@@ -371,9 +374,15 @@ private:
 				const Tile* const tileBelow,
 				bool recache);
 		/// Calculates the mid- and end-phases for unit-movement.
-		void walkPhaseCutoffs(
-				int& halfPhase,
-				int& fullPhase) const;
+		void cacheWalkPhases();
+		/// Flags the BattleUnit as doing a backwards-ish strafe move.
+		void flagStrafeBackwards();
+		/// Checks if the BattleUnit is strafing in a backwards-ish direction.
+		bool isStrafeBackwards() const;
+		/// Gets the BattleUnit's current walking-halfphase setting.
+		int getWalkPhaseHalf() const;
+		/// Gets the BattleUnit's current walking-fullphase setting.
+		int getWalkPhaseFull() const;
 
 		/// Sets this unit's status.
 		void setUnitStatus(const UnitStatus status);

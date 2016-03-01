@@ -171,7 +171,7 @@ private:
 			const Tile* const tile,
 			bool trueLoc) const;
 	/// Calculates the offset of a unit-sprite when it is moving between 2 tiles.
-	void calculateWalkingOffset(
+	void calcWalkOffset(
 			const BattleUnit* const unit,
 			Position* const offset,
 			bool trueLoc) const;

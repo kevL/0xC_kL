@@ -98,7 +98,7 @@ private:
 	DamageType _explosiveType;
 
 	BattleUnit* _unit;
-	MapData* _objects[PARTS_TILE];
+	MapData* _parts[PARTS_TILE];
 
 	Position _pos;
 
@@ -149,7 +149,7 @@ private:
 		 * @return, pointer to MapData
 		 */
 		MapData* getMapData(MapDataType partType) const
-		{ return _objects[partType]; }
+		{ return _parts[partType]; }
 
 		/// Sets the pointer to the mapdata for a specific part of the Tile.
 		void setMapData(
@@ -208,8 +208,8 @@ private:
 		 * @return, true if ufo-door is valid and not closed
 		 */
 		bool isUfoDoorOpen(MapDataType partType) const
-		{	return _objects[partType] != nullptr
-				&& _objects[partType]->isUfoDoor() == true
+		{	return _parts[partType] != nullptr
+				&& _parts[partType]->isUfoDoor() == true
 				&& _curFrame[partType] != 0; }
 		/// Closes ufo door.
 		bool closeUfoDoor();

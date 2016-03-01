@@ -79,7 +79,7 @@ Tile::Tile(const Position& pos)
 			i != PARTS_TILE;
 			++i)
 	{
-		_objects[i]			=  nullptr;
+		_parts[i]			=  nullptr;
 		_mapDataId[i]		= -1;
 		_mapDataSetId[i]	= -1;
 		_curFrame[i]		=  0;
@@ -273,7 +273,7 @@ void Tile::setMapData(
 		const int dataSetId,
 		const MapDataType partType)
 {
-	_objects[partType] = data;
+	_parts[partType] = data;
 	_mapDataId[partType] = dataId;
 	_mapDataSetId[partType] = dataSetId;
 }
@@ -304,10 +304,10 @@ bool Tile::isVoid(
 		const bool testInventory,
 		const bool testVolatiles) const
 {
-	bool ret (_objects[O_FLOOR] == nullptr
-		   && _objects[O_WESTWALL] == nullptr
-		   && _objects[O_NORTHWALL] == nullptr
-		   && _objects[O_OBJECT] == nullptr);
+	bool ret (_parts[O_FLOOR] == nullptr
+		   && _parts[O_WESTWALL] == nullptr
+		   && _parts[O_NORTHWALL] == nullptr
+		   && _parts[O_OBJECT] == nullptr);
 
 	if (testInventory == true)
 		ret &= (_inventory.empty() == true);
@@ -328,25 +328,25 @@ int Tile::getTuCostTile(
 		MapDataType partType,
 		MovementType moveType) const
 {
-	if (_objects[partType] != nullptr
-		&& (_objects[partType]->isUfoDoor() == false
+	if (_parts[partType] != nullptr
+		&& (_parts[partType]->isUfoDoor() == false
 			|| _curFrame[partType] < 2))
 	{
 		switch (partType)
 		{
 			case O_OBJECT:
-				switch (_objects[O_OBJECT]->getBigwall())
+				switch (_parts[O_OBJECT]->getBigwall())
 				{
 					case BIGWALL_NONE:
 					case BIGWALL_BLOCK:
 					case BIGWALL_NESW:
 					case BIGWALL_NWSE:
-						return _objects[partType]->getTuCostPart(moveType); // question: Why do side-bigwalls return 0.
+						return _parts[partType]->getTuCostPart(moveType); // question: Why do side-bigwalls return 0.
 				}
 				break;
 
 			default:
-				return _objects[partType]->getTuCostPart(moveType);
+				return _parts[partType]->getTuCostPart(moveType);
 		}
 	}
 
@@ -367,8 +367,8 @@ bool Tile::hasNoFloor(const Tile* const tileBelow) const
 		return false;
 	}
 
-	if (_objects[O_FLOOR] != nullptr)
-		return _objects[O_FLOOR]->isNoFloor();
+	if (_parts[O_FLOOR] != nullptr)
+		return _parts[O_FLOOR]->isNoFloor();
 
 	// NOTE: Technically a bigWallBlock object-part could be a valid floor
 	// but it's also bad form to place an object without a floor in the same Tile.
@@ -382,8 +382,8 @@ bool Tile::hasNoFloor(const Tile* const tileBelow) const
  *
 bool Tile::isBigWall() const
 {
-	if (_objects[O_OBJECT] != nullptr)
-		return (_objects[O_OBJECT]->getBigwall() != BIGWALL_NONE);
+	if (_parts[O_OBJECT] != nullptr)
+		return (_parts[O_OBJECT]->getBigwall() != BIGWALL_NONE);
 
 	return false;
 } */
@@ -397,12 +397,12 @@ bool Tile::isBigWall() const
 int Tile::getTerrainLevel() const
 {
 	int level (0);
-	if (_objects[static_cast<size_t>(O_FLOOR)] != nullptr)
-		level = _objects[static_cast<size_t>(O_FLOOR)]->getTerrainLevel();
+	if (_parts[O_FLOOR] != nullptr)
+		level = _parts[O_FLOOR]->getTerrainLevel();
 
-	if (_objects[static_cast<size_t>(O_OBJECT)] != nullptr)
+	if (_parts[O_OBJECT] != nullptr)
 		level = std::min(level,
-						_objects[static_cast<size_t>(O_OBJECT)]->getTerrainLevel());
+						_parts[O_OBJECT]->getTerrainLevel());
 
 	return level;
 }
@@ -411,7 +411,7 @@ int Tile::getTerrainLevel() const
  * Gets this Tile's footstep sound.
  * @param tileBelow - pointer to the Tile below this Tile
  * @return, sound ID
- *		 -1/0 - none
+ *			0 - none
  *			1 - metal
  *			2 - wood/stone
  *			3 - dirt
@@ -421,28 +421,28 @@ int Tile::getTerrainLevel() const
  */
 int Tile::getFootstepSound(const Tile* const tileBelow) const
 {
-	if (_objects[O_OBJECT] != nullptr
-		&& _objects[O_OBJECT]->getFootstepSound() > 0)
+	if (_parts[O_OBJECT] != nullptr
+		&& _parts[O_OBJECT]->getFootstepSound() != 0)
 	{
-		switch (_objects[O_OBJECT]->getBigwall())
+		switch (_parts[O_OBJECT]->getBigwall())
 		{
 			case BIGWALL_NONE:
 			case BIGWALL_BLOCK:
-				return _objects[O_OBJECT]->getFootstepSound();
+				return _parts[O_OBJECT]->getFootstepSound();
 		}
 	}
 
-	if (_objects[O_FLOOR] != nullptr)
-		return _objects[O_FLOOR]->getFootstepSound();
+	if (_parts[O_FLOOR] != nullptr)
+		return _parts[O_FLOOR]->getFootstepSound();
 
-	if (_objects[O_OBJECT] == nullptr
+	if (_parts[O_OBJECT] == nullptr
 		&& tileBelow != nullptr
 		&& tileBelow->getTerrainLevel() == -24)
 	{
 		return tileBelow->getMapData(O_OBJECT)->getFootstepSound();
 	}
 
-	return -1;
+	return 0;
 }
 
 /**
@@ -462,9 +462,9 @@ DoorResult Tile::openDoor(
 		const BattleUnit* const unit)
 //		const BattleActionType reserved)
 {
-	if (_objects[partType] != nullptr)
+	if (_parts[partType] != nullptr)
 	{
-		if (_objects[partType]->isDoor() == true)
+		if (_parts[partType]->isDoor() == true)
 		{
 			if (_unit != nullptr
 				&& _unit != unit
@@ -474,29 +474,29 @@ DoorResult Tile::openDoor(
 			}
 
 			if (unit != nullptr
-				&& unit->getTimeUnits() < _objects[partType]->getTuCostPart(unit->getMoveTypeUnit()))
+				&& unit->getTimeUnits() < _parts[partType]->getTuCostPart(unit->getMoveTypeUnit()))
 //											+ unit->getActionTu(reserved, unit->getMainHandWeapon()))
 			{
 				return DR_ERR_TU;
 			}
 
 			setMapData(
-					_objects[partType]->getDataset()->getRecords()->at(_objects[partType]->getAltMCD()),
-					_objects[partType]->getAltMCD(),
+					_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD()),
+					_parts[partType]->getAltMCD(),
 					_mapDataSetId[partType],
-					_objects[partType]->getDataset()->getRecords()->at(_objects[partType]->getAltMCD())->getPartType());
+					_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD())->getPartType());
 
 			setMapData(nullptr,-1,-1, partType);
 
 			return DR_WOOD_OPEN;
 		}
 
-		if (_objects[partType]->isUfoDoor() == true)
+		if (_parts[partType]->isUfoDoor() == true)
 		{
 			if (_curFrame[partType] == 0) // ufo door part 0 - door is closed
 			{
 				if (unit != nullptr
-					&& unit->getTimeUnits() < _objects[partType]->getTuCostPart(unit->getMoveTypeUnit()))
+					&& unit->getTimeUnits() < _parts[partType]->getTuCostPart(unit->getMoveTypeUnit()))
 //												+ unit->getActionTu(reserved, unit->getMainHandWeapon()))
 				{
 					return DR_ERR_TU;
@@ -510,7 +510,6 @@ DoorResult Tile::openDoor(
 				return DR_UFO_WAIT;
 		}
 	}
-
 	return DR_NONE;
 }
 
@@ -520,17 +519,17 @@ DoorResult Tile::openDoor(
  */
 void Tile::openDoorAuto(const MapDataType partType)
 {
-/*	if (_objects[partType]->isDoor() == true)
+/*	if (_parts[partType]->isDoor() == true)
 	{
 		setMapData(
-				_objects[partType]->getDataset()->getRecords()->at(_objects[partType]->getAltMCD()),
-				_objects[partType]->getAltMCD(),
+				_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD()),
+				_parts[partType]->getAltMCD(),
 				_mapDataSetId[partType],
-				_objects[partType]->getDataset()->getRecords()->at(_objects[partType]->getAltMCD())->getPartType());
+				_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD())->getPartType());
 
 		setMapData(nullptr,-1,-1, partType);
 	}
-	else if (_objects[partType]->isUfoDoor() == true) */
+	else if (_parts[partType]->isUfoDoor() == true) */
 	_curFrame[partType] = 1; // start opening door
 }
 
@@ -552,7 +551,6 @@ bool Tile::closeUfoDoor()
 			ret = true;
 		}
 	}
-
 	return ret;
 }
 
@@ -655,21 +653,21 @@ void Tile::destroyTilepart(
 {
 	int tLevel (0);
 
-	if (_objects[partType] != nullptr)
+	if (_parts[partType] != nullptr)
 	{
-		if (_objects[partType]->isGravLift() == true
-			|| _objects[partType]->getArmor() == 255) // <- set to 255 in MCD for Truly Indestructability.
+		if (_parts[partType]->isGravLift() == true
+			|| _parts[partType]->getArmor() == 255) // <- set to 255 in MCD for Truly Indestructability.
 		{
 			return;
 		}
 
 		if (partType == O_OBJECT)
-			tLevel = _objects[O_OBJECT]->getTerrainLevel();
+			tLevel = _parts[O_OBJECT]->getTerrainLevel();
 
-		if (_objects[partType]->getSpecialType() == battleSave->getObjectiveType())
+		if (_parts[partType]->getSpecialType() == battleSave->getObjectiveType())
 			battleSave->addDestroyedObjective();
 
-		const MapData* const data (_objects[partType]);
+		const MapData* const data (_parts[partType]);
 		const int dataSetId (_mapDataSetId[partType]);
 
 		setMapData(nullptr,-1,-1, partType);
@@ -692,13 +690,13 @@ void Tile::destroyTilepart(
 
 	if (partType == O_FLOOR) // check if the floor on the lowest level is gone.
 	{
-		if (_pos.z == 0 && _objects[O_FLOOR] == nullptr)
+		if (_pos.z == 0 && _parts[O_FLOOR] == nullptr)
 			setMapData( // replace with scorched earth
 					MapDataSet::getScorchedEarthTile(),
 					1,0, O_FLOOR);
 
-		if (_objects[O_OBJECT] != nullptr // destroy the object if floor is gone.
-			&& _objects[O_OBJECT]->getBigwall() == BIGWALL_NONE)
+		if (_parts[O_OBJECT] != nullptr // destroy the object if floor is gone.
+			&& _parts[O_OBJECT]->getBigwall() == BIGWALL_NONE)
 		{
 
 			destroyTilepart(O_OBJECT, battleSave); // stop floating haybales.
@@ -729,8 +727,8 @@ void Tile::hitTile(
 		int power,
 		SavedBattleGame* const battleSave)
 {
-	//Log(LOG_INFO) << "Tile::damage() vs partType = " << partType << ", hp = " << _objects[partType]->getArmor();
-	if (power >= _objects[partType]->getArmor())
+	//Log(LOG_INFO) << "Tile::damage() vs partType = " << partType << ", hp = " << _parts[partType]->getArmor();
+	if (power >= _parts[partType]->getArmor())
 		destroyTilepart(partType, battleSave);
 }
 
@@ -782,20 +780,18 @@ DamageType Tile::getExplosiveType() const
  */
 int Tile::getFlammability() const
 {
-	int burn = 255; // not burnable. <- lower is better :)
-
+	int burn (255); // not burnable. <- lower is better :)
 	for (size_t
 			i = 0;
 			i != PARTS_TILE;
 			++i)
 	{
-		if (_objects[i] != nullptr
-			&& _objects[i]->getFlammable() < burn)
+		if (_parts[i] != nullptr
+			&& _parts[i]->getFlammable() < burn)
 		{
-			burn = _objects[i]->getFlammable();
+			burn = _parts[i]->getFlammable();
 		}
 	}
-
 	return convertBurnToPct(burn);
 }
 
@@ -807,7 +803,7 @@ int Tile::getFlammability() const
  */
 int Tile::getFlammability(MapDataType partType) const
 {
-	return convertBurnToPct(_objects[partType]->getFlammable());
+	return convertBurnToPct(_parts[partType]->getFlammable());
 }
 
 /**
@@ -822,12 +818,10 @@ int Tile::convertBurnToPct(int burn) const // private.
 		return 0;
 
 	burn = 255 - burn;
-	burn = std::max(
-				1,
-				std::min(
-					100,
-					static_cast<int>(std::ceil(
-					static_cast<double>(burn) / 255. * 100.))));
+	burn = std::max(1,
+					std::min(100,
+							static_cast<int>(std::ceil(
+							static_cast<double>(burn) / 255. * 100.))));
 
 	return burn;
 }
@@ -843,24 +837,21 @@ int Tile::getFuel(MapDataType partType) const
 {
 	if (partType == O_NULPART)
 	{
-		int fuel = 0;
-
+		int fuel (0);
 		for (size_t
 				i = 0;
 				i != PARTS_TILE;
 				++i)
 		{
-			if (_objects[i] != nullptr
-				&& _objects[i]->getFuel() > fuel)
+			if (_parts[i] != nullptr
+				&& _parts[i]->getFuel() > fuel)
 			{
-				fuel = _objects[i]->getFuel();
+				fuel = _parts[i]->getFuel();
 			}
 		}
-
 		return fuel;
 	}
-
-	return _objects[partType]->getFuel();
+	return _parts[partType]->getFuel();
 }
 
 /**
@@ -875,10 +866,10 @@ bool Tile::ignite(int power)
 {
 	if (power != 0 && allowSmoke() == true)
 	{
-		const int fuel = getFuel();
+		const int fuel (getFuel());
 		if (fuel != 0)
 		{
-			const int burn = getFlammability();
+			const int burn (getFlammability());
 			if (burn != 0)
 			{
 				power = ((((power + 4) / 5) + ((burn + 7) / 8) + (fuel * 3) + 6) / 7);
@@ -895,7 +886,6 @@ bool Tile::ignite(int power)
 			}
 		}
 	}
-
 	return false;
 }
 
@@ -992,13 +982,13 @@ int Tile::getSmoke() const
  */
 bool Tile::allowSmoke() const // private.
 {
-	if (_objects[O_OBJECT] != nullptr)
+	if (_parts[O_OBJECT] != nullptr)
 	{
-		switch (_objects[O_OBJECT]->getBigwall())
+		switch (_parts[O_OBJECT]->getBigwall())
 		{
 			case BIGWALL_NESW:
 			case BIGWALL_NWSE:
-				if (_objects[O_OBJECT]->blockSmoke() == true)
+				if (_parts[O_OBJECT]->blockSmoke() == true)
 					return false;
 		}
 	}
@@ -1013,19 +1003,19 @@ bool Tile::allowSmoke() const // private.
  */
 bool Tile::allowFire() const // private.
 {
-	if (_objects[O_FLOOR] != nullptr
-		&& _objects[O_FLOOR]->blockFire() == true)
+	if (_parts[O_FLOOR] != nullptr
+		&& _parts[O_FLOOR]->blockFire() == true)
 	{
 		return false;
 	}
 
-	if (_objects[O_OBJECT] != nullptr)
+	if (_parts[O_OBJECT] != nullptr)
 	{
-		switch (_objects[O_OBJECT]->getBigwall())
+		switch (_parts[O_OBJECT]->getBigwall())
 		{
 			case BIGWALL_NESW:
 			case BIGWALL_NWSE:
-				if (_objects[O_OBJECT]->blockFire() == true)
+				if (_parts[O_OBJECT]->blockFire() == true)
 					return false;
 		}
 	}
@@ -1137,7 +1127,7 @@ void Tile::hitTileInventory(SavedBattleGame* const battleSave)
 
 		if (powerFire != 0)
 		{
-			bool done = false;
+			bool done (false);
 			while (done == false) // handle items including unconscious or dead units on this Tile vs. DT_IN
 			{
 				if (_inventory.empty() == true)
@@ -1209,43 +1199,46 @@ void Tile::hitTileInventory(SavedBattleGame* const battleSave)
 void Tile::animateTile()
 {
 	int nextFrame;
-
 	for (size_t
 			i = 0;
 			i != PARTS_TILE;
 			++i)
 	{
-		if (_objects[i] != nullptr)
+		if (_parts[i] != nullptr)
 		{
-			const int isPsycho (_objects[i]->getPsychedelic());
-			if (isPsycho == 0)
+			switch (_parts[i]->getPsychedelic())
 			{
-				if (_objects[i]->isUfoDoor() == false
-					|| (_curFrame[i] != 0
-						&& _curFrame[i] != 7)) // ufo-door is currently static
-				{
-					nextFrame = _curFrame[i] + 1;
-
-					if (_objects[i]->isUfoDoor() == true // special handling for Avenger & Lightning doors
-						&& _objects[i]->getSpecialType() == START_POINT
-						&& nextFrame == 3)
+				default:
+				case 0:
+					if (_parts[i]->isUfoDoor() == false
+						|| (_curFrame[i] != 0
+							&& _curFrame[i] != 7)) // ufo-door is currently static
 					{
-						nextFrame = 7;
+						nextFrame = _curFrame[i] + 1;
+
+						if (_parts[i]->isUfoDoor() == true // special handling for Avenger & Lightning doors
+							&& _parts[i]->getSpecialType() == START_POINT
+							&& nextFrame == 3)
+						{
+							nextFrame = 7;
+						}
+
+						if (nextFrame == 8)
+							nextFrame = 0;
+
+						_curFrame[i] = nextFrame;
 					}
+					break;
 
-					if (nextFrame == 8)
-						nextFrame = 0;
+				case 1:
+					if (RNG::seedless(0,2) != 0) // 66%
+						_curFrame[i] = RNG::seedless(0,7);
+					break;
 
-					_curFrame[i] = nextFrame;
-				}
+				case 2:
+					if (RNG::seedless(0,2) == 0) // 33%
+						_curFrame[i] = RNG::seedless(0,7);
 			}
-			else if (isPsycho == 1)
-			{
-				if (RNG::seedless(0,2) != 0)
-					_curFrame[i] = RNG::seedless(0,7);
-			}
-			else if (RNG::seedless(0,2) == 0) // isPsycho== 2
-				_curFrame[i] = RNG::seedless(0,7);
 		}
 	}
 }
@@ -1268,7 +1261,7 @@ int Tile::getAnimationOffset() const
  */
 Surface* Tile::getSprite(MapDataType partType) const
 {
-	const MapData* const data (_objects[partType]);
+	const MapData* const data (_parts[partType]);
 	if (data != nullptr)
 		return data->getDataset()->getSurfaceset()->getFrame(data->getSprite(_curFrame[partType]));
 
@@ -1331,7 +1324,6 @@ void Tile::removeItem(BattleItem* const item)
 			break;
 		}
 	}
-
 	item->setTile(nullptr);
 }
 
@@ -1343,7 +1335,6 @@ void Tile::removeItem(BattleItem* const item)
 int Tile::getCorpseSprite(bool* fired) const
 {
 	int sprite (-1);
-
 	if (_inventory.empty() == false)
 	{
 		*fired = false;
@@ -1426,7 +1417,6 @@ int Tile::getCorpseSprite(bool* fired) const
 int Tile::getTopSprite(bool* primed) const
 {
 	int sprite (-1);
-
 	if (_inventory.empty() == false)
 	{
 		const BattleItem* grenade (nullptr);
@@ -1488,7 +1478,6 @@ int Tile::getTopSprite(bool* primed) const
 int Tile::hasUnconsciousUnit(bool playerOnly) const
 {
 	int ret (0);
-
 	for (std::vector<BattleItem*>::const_iterator
 			i = _inventory.begin();
 			i != _inventory.end();
@@ -1507,7 +1496,6 @@ int Tile::hasUnconsciousUnit(bool playerOnly) const
 				return 2;
 		}
 	}
-
 	return ret;
 }
 
@@ -1522,7 +1510,7 @@ bool Tile::hasPrimedGrenade() const
 			i != _inventory.end();
 			++i)
 	{
-		if ((*i)->getFuse() != -1)
+		if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() != -1)
 			return true;
 	}
 	return false;

@@ -90,6 +90,9 @@ BattleUnit::BattleUnit(
 		_dirFace(-1),
 		_status(STATUS_STANDING),
 		_walkPhase(0),
+		_walkPhaseHalf(0),
+		_walkPhaseFull(0),
+		_walkBackwards(false),
 		_fallPhase(0),
 		_spinPhase(-1),
 		_aimPhase(0),
@@ -261,6 +264,9 @@ BattleUnit::BattleUnit(
 		_dirFace(-1),
 		_status(STATUS_STANDING),
 		_walkPhase(0),
+		_walkPhaseHalf(0),
+		_walkPhaseFull(0),
+		_walkBackwards(false),
 		_fallPhase(0),
 		_spinPhase(-1),
 		_aimPhase(0),
@@ -971,7 +977,6 @@ int BattleUnit::getVerticalDirection() const
 void BattleUnit::turn(bool turret)
 {
 	int delta;
-
 	if (turret == true)
 	{
 		if (_dirTurret == _dirToTurret)
@@ -979,7 +984,6 @@ void BattleUnit::turn(bool turret)
 			_status = STATUS_STANDING;
 			return;
 		}
-
 		delta = _dirToTurret - _dirTurret;
 	}
 	else
@@ -989,7 +993,6 @@ void BattleUnit::turn(bool turret)
 			_status = STATUS_STANDING;
 			return;
 		}
-
 		delta = _dirTo - _dir;
 	}
 
@@ -997,8 +1000,7 @@ void BattleUnit::turn(bool turret)
 	{
 		if (delta > 0)
 		{
-			if (delta < 5
-				&& _dirTurn != -1)
+			if (delta < 5 && _dirTurn != -1)
 			{
 				if (turret == false)
 				{
@@ -1023,8 +1025,7 @@ void BattleUnit::turn(bool turret)
 		}
 		else
 		{
-			if (delta > -5
-				&& _dirTurn != 1)
+			if (delta > -5 && _dirTurn != 1)
 			{
 				if (turret == false)
 				{
@@ -1048,34 +1049,20 @@ void BattleUnit::turn(bool turret)
 			}
 		}
 
-		if (_dir < 0)
-			_dir = 7;
-		else if (_dir > 7)
-			_dir = 0;
+		if		(_dir < 0) _dir = 7;
+		else if	(_dir > 7) _dir = 0;
 
-		if (_dirTurret < 0)
-			_dirTurret = 7;
-		else if (_dirTurret > 7)
-			_dirTurret = 0;
+		if		(_dirTurret < 0) _dirTurret = 7;
+		else if	(_dirTurret > 7) _dirTurret = 0;
 
 		if (_visible == true)
-//			|| _faction == FACTION_PLAYER) // kL_note: Faction_player should *always* be _visible...
-		{
 			_cacheInvalid = true;
-		}
 	}
 
-	if (turret == true)
-	{
-		 if (_dirToTurret == _dirTurret)
-			_status = STATUS_STANDING;
-	}
-	else if (_dirTo == _dir
-		|| _status == STATUS_UNCONSCIOUS)	// kL_note: I didn't know Unconscious could turn...
-											// learn something new every day.
-											// It's used when reviving unconscious soldiers;
-											// they need to go to STATUS_STANDING.
-	{
+	if (_dirTo == _dir
+		|| (turret == true && _dirToTurret == _dirTurret)
+		|| _status == STATUS_UNCONSCIOUS)	// -> used when reviving unconscious units;
+	{										// -> they need to go to Status_Standing.
 		_status = STATUS_STANDING;
 	}
 }
@@ -1110,6 +1097,7 @@ void BattleUnit::startWalking(
 		const Tile* const tileBelow)
 {
 	_walkPhase = 0;
+
 	_posStart = _pos;
 	_posStop = posStop;
 
@@ -1117,14 +1105,8 @@ void BattleUnit::startWalking(
 	{
 		_status = STATUS_FLYING; // controls walking sound in UnitWalkBState, what else
 		_dirVertical = dir;
-
-		if (_tile->getMapData(O_FLOOR) != nullptr
-			&& _tile->getMapData(O_FLOOR)->isGravLift() == true)
-		{
-			_floating = false;
-		}
-		else
-			_floating = true;
+		_floating = _tile->getMapData(O_FLOOR) == nullptr
+				 || _tile->getMapData(O_FLOOR)->isGravLift() == false;
 	}
 	else
 	{
@@ -1142,112 +1124,131 @@ void BattleUnit::startWalking(
 			_kneeled = false;
 		}
 	}
-	//Log(LOG_INFO) << "start Phase = " << _walkPhase;
-	//Log(LOG_INFO) << ". status = " << (int)_status;
-	//Log(LOG_INFO) << ". float = " << (int)_floating;
+	cacheWalkPhases();
 }
 
 /**
  * This will increment '_walkPhase'.
  * @param tileBelow	- pointer to tile currently below this unit
- * @param recache		- true to refresh the unit cache / redraw this unit's sprite
+ * @param recache	- true to refresh the unit cache / redraw this unit's sprite
  */
 void BattleUnit::keepWalking(
 		const Tile* const tileBelow,
 		bool recache)
 {
-	++_walkPhase;
+	_cacheInvalid = recache;
 
-	int
-		halfPhase,
-		fullPhase;
+//	cacheWalkPhases();
 
-	if (recache == false) // ie. not onScreen
-	{
-		halfPhase = 1;
-		fullPhase = 2;
-	}
-	else
-		walkPhaseCutoffs(
-					halfPhase,
-					fullPhase);
+	if (++_walkPhase == _walkPhaseHalf)	// assume unit reached the destination tile
+		_pos = _posStop;				// This is actually a drawing hack so soldiers are not overlapped by floortiles fwiw.
 
-	if (_walkPhase == halfPhase) // assume unit reached the destination tile; This is actually a drawing hack so soldiers are not overlapped by floortiles
-	{
-		//Log(LOG_INFO) << "switch pos to DEST pos";
-		_pos = _posStop;
-	}
-
-	if (_walkPhase >= fullPhase) // officially reached the destination tile
+	if (_walkPhase == _walkPhaseFull) // officially reached the destination tile
 	{
 		_status = STATUS_STANDING;
 		_walkPhase =
 		_dirVertical = 0;
 
-		if (_floating == true
-			&& _tile->hasNoFloor(tileBelow) == false)
-		{
+		if (_floating == true && _tile->hasNoFloor(tileBelow) == false)
 			_floating = false;
-		}
 
-		if (_dirFace > -1) // finish strafing move facing the correct way.
+		if (_dirFace != -1) // finish strafing move facing the correct way.
 		{
 			_dir = _dirFace;
 			_dirFace = -1;
+			_walkBackwards = false;
 		}
 
-		// motion points calculation for the motion scanner blips
-		if (_armor->getSize() == 2)
+		if (_armor->getSize() == 2) // motion points calculation for motion-scanner blips
 			_motionPoints += 30;
 		else
 		{
-			// sectoids actually have less motion points but instead of creating
-			// yet another variable use the height of the unit instead
-			if (_standHeight > 16)
-				_motionPoints += 4;
+			if (_standHeight > 16)	// sectoids actually have less motion points but instead of creating
+				_motionPoints += 4;	// yet another variable use the height of the unit instead
 			else
 				_motionPoints += 3;
 		}
 	}
-
-	_cacheInvalid = recache;
-	//Log(LOG_INFO) << "cont. Phase = " << _walkPhase;
-	//Log(LOG_INFO) << ". status = " << (int)_status;
-	//Log(LOG_INFO) << ". float = " << (int)_floating;
 }
 
 /**
  * Calculates the half- and full-phases for unit-movement.
- * @param halfPhase - reference the halfPhase var
- * @param fullPhase - reference the fullPhase var
  */
-void BattleUnit::walkPhaseCutoffs(
-		int& halfPhase,
-		int& fullPhase) const
+void BattleUnit::cacheWalkPhases()
 {
 	if (_dirVertical != 0)
 	{
-		halfPhase = 4;
-		fullPhase = 8;
+		_walkPhaseHalf = 4;
+		_walkPhaseFull = 8;
 	}
 	else
 	{
-		fullPhase = 8 + 8 * (_dir % 2); // diagonal walking takes double the steps
-
-		if (_armor->getSize() > 1)
+		_walkPhaseFull = 8 + 8 * (_dir % 2); // diagonal walking takes double the steps
+		switch (_armor->getSize())
 		{
-			if (_dir < 1 || _dir > 5) // dir = 0,7,6 (upward)
-				halfPhase = fullPhase;
-			else if (_dir == 5)
-				halfPhase = 12;
-			else if (_dir == 1)
-				halfPhase = 5;
-			else
-				halfPhase = 1;
+			case 1:
+				_walkPhaseHalf = _walkPhaseFull / 2;
+				break;
+
+			case 2:
+				switch (_dir)
+				{
+					case 0:
+					case 6:
+					case 7:
+						_walkPhaseHalf = _walkPhaseFull;
+						break;
+
+					case 1:
+						_walkPhaseHalf = 5;
+						break;
+
+					case 2:
+					case 3:
+					case 4:
+						_walkPhaseHalf = 1;
+						break;
+
+					case 5:
+						_walkPhaseHalf = 12;
+				}
 		}
-		else
-			halfPhase = fullPhase / 2;
 	}
+}
+
+/**
+ * Flags this BattleUnit as doing a backwards-ish strafe move.
+ */
+void BattleUnit::flagStrafeBackwards()
+{
+	_walkBackwards = true;
+}
+
+/**
+ * Checks if this BattleUnit is strafing in a backwards-ish direction.
+ * @return, true if strafing in a backwards direction
+ */
+bool BattleUnit::isStrafeBackwards() const
+{
+	return _walkBackwards;
+}
+
+/**
+ * Gets this BattleUnit's current walking-halfphase.
+ * return, current half-phase
+ */
+int BattleUnit::getWalkPhaseHalf() const
+{
+	return _walkPhaseHalf;
+}
+
+/**
+ * Gets this BattleUnit's current walking-fullphase.
+ * return, current full-phase
+ */
+int BattleUnit::getWalkPhaseFull() const
+{
+	return _walkPhaseFull;
 }
 
 /**
@@ -1875,7 +1876,7 @@ void BattleUnit::setAimingPhase(int phase)
  *				 OUT_ALL		- everything
  *				 OUT_STAT		- status dead or unconscious or limbo'd
  *				 OUT_HEALTH		- health
- *				 OUT_STUNNED		- stun only
+ *				 OUT_STUNNED	- stun only
  *				 OUT_HLTH_STUN	- health or stun
  * @return, true if unit is incapacitated
  */
@@ -1951,26 +1952,22 @@ int BattleUnit::getActionTu(
 		const BattleActionType bat,
 		const RuleItem* const itRule) const
 {
-	if (bat == BA_NONE)
-		return 0;
+	if (bat == BA_NONE) return 0;
 
 	int cost;
-
 	switch (bat)
 	{
-		// note: Should put "tuDefuse" & "tuThrow" yaml-entry in Xcom1Ruleset under various grenade-types etc.
+		// TODO: Put "tuDefuse" & "tuThrow" yaml-entry in rules under various grenade-types etc.
 		case BA_DROP:
 		{
 			const RuleInventory
 				* const handRule (_battleGame->getRuleset()->getInventoryRule(ST_RIGHTHAND)), // might be leftHand Lol ...
 				* const grdRule (_battleGame->getRuleset()->getInventoryRule(ST_GROUND));
-			cost = handRule->getCost(grdRule); // flat rate.
-			break;
+			return handRule->getCost(grdRule); // flat rate.
 		}
 
 		case BA_DEFUSE:
-			cost = 15; // flat rate.
-			break;
+			return 15; // flat rate.
 
 		case BA_PRIME:
 			if (itRule == nullptr)
@@ -2013,8 +2010,7 @@ int BattleUnit::getActionTu(
 			break;
 
 		case BA_LIQUIDATE:
-			cost = 19; // flat rate.
-			break;
+			return 19; // flat rate.
 
 		case BA_USE:
 		case BA_PSIPANIC:
@@ -2034,19 +2030,14 @@ int BattleUnit::getActionTu(
 						// (ofc this default is rather meaningless, but there is a point)
 	}
 
-
 	if (cost > 0
-		&& ((itRule != nullptr
-				&& itRule->getFlatRate() == false) // it's a percentage, apply to TUs
-			|| bat == BA_THROW)
-		&& bat != BA_DEFUSE
-		&& bat != BA_DROP
-		&& bat != BA_LIQUIDATE)
+		&& ((itRule != nullptr && itRule->getFlatRate() == false) // it's a percentage, apply to TUs
+			|| bat == BA_THROW))
 	{
 		return std::max(1,
-						static_cast<int>(std::floor(static_cast<double>(getBattleStats()->tu * cost) / 100.)));
+						static_cast<int>(std::floor(
+						static_cast<float>(getBattleStats()->tu * cost) / 100.f)));
 	}
-
 	return cost;
 }
 

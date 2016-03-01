@@ -141,13 +141,14 @@ void RuleArmor::load(const YAML::Node& node)
 
 	_forcedTorso = static_cast<ForcedTorso>(node["forcedTorso"].as<int>(_forcedTorso));
 
-	if (   _drawRoutine ==  0
-		|| _drawRoutine ==  1
-		|| _drawRoutine ==  4
-		|| _drawRoutine ==  6
-		|| _drawRoutine == 10)
+	switch (_drawRoutine)
 	{
-		_canHoldWeapon = true;
+		case 0:
+		case 1:
+		case 4:
+		case 6:
+		case 10:
+			_canHoldWeapon = true;
 	}
 
 	_faceColorGroup		= node["spriteFaceGroup"]	.as<int>(_faceColorGroup);
@@ -253,7 +254,7 @@ std::string RuleArmor::getStoreItem() const
 	return _storeItem;
 }
 
-/*
+/**
  * Gets the type of special weapon.
  * @return, the name of the special weapon
  *

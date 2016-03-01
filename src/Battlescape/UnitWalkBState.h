@@ -72,6 +72,9 @@ private:
 	/// This function turns unit during movement.
 	void doStatusTurn();
 
+	/// Resets the unit-cache, aborts the path and the State.
+	void abortState(bool recache = true);
+
 	/// Handles some calculations when the path is finished.
 	void postPathProcedures();
 	/// Gets a suitable final facing direction for aLiens.

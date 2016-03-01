@@ -340,6 +340,7 @@ void Pathfinding::calculatePath(
 			   && std::abs(posStop.x - posStart.x) < 2
 			   && std::abs(posStop.y - posStart.y) < 2;
 
+//		if (_pathAction != nullptr) // this is a safety.
 		_pathAction->strafe = _strafe;
 
 
@@ -380,8 +381,8 @@ void Pathfinding::calculatePath(
 							unit,
 							posStop_cache,
 							maxTuCost,
-							launchTarget,
-							true); // <- sets '_strafe' FALSE so loop never gets back in here.
+							launchTarget,	// <- will be 'nullptr'
+							true);			// <- sets '_strafe' FALSE so loop never gets back in here.
 			}
 			else if (Options::battleStrafe == true
 				&& _ctrl == true
@@ -392,22 +393,22 @@ void Pathfinding::calculatePath(
 			{
 				_strafe = false;
 
-				if (_pathAction != nullptr) // this is a safety.
-				{
-					_pathAction->strafe = false;
-					_pathAction->dash = true;
-					if (_pathAction->actor != nullptr)		// but this sometimes happens via AlienBAIState::setupAmbush() at least
-						_pathAction->actor->setDashing();	// if end turn is done w/out a selected unit. (not sure)
-				}
+//				if (_pathAction != nullptr) // this is a safety.
+//				{
+				_pathAction->strafe = false;
+				_pathAction->dash = true;
+				if (_pathAction->actor != nullptr)		// but this sometimes happens via AlienBAIState::setupAmbush() at least
+					_pathAction->actor->setDashing();	// if end turn is done w/out a selected unit. (not sure)
+//				}
 			}
 			else //if (_strafe == false)
 			{
-				if (_pathAction != nullptr) // this is a safety.
-				{
-					_pathAction->dash = false;
-					if (_pathAction->actor != nullptr)			// but this sometimes happens via AlienBAIState::setupAmbush() at least.
-						_pathAction->actor->setDashing(false);	// if end turn is done w/out a selected unit. (for sure)
-				}
+//				if (_pathAction != nullptr) // this is a safety.
+//				{
+				_pathAction->dash = false;
+				if (_pathAction->actor != nullptr)			// but this sometimes happens via AlienBAIState::setupAmbush() at least.
+					_pathAction->actor->setDashing(false);	// if end turn is done w/out a selected unit. (for sure)
+//				}
 			}
 		}
 	}
@@ -1297,9 +1298,9 @@ int Pathfinding::getTuCostPf(
 			//Log(LOG_INFO) << ". pathSize = " << (int)_path.size();
 			if (_strafe == true)
 			{
-				// kL_begin: extra TU for strafe-moves ->	1 0 1
-				//											2 ^ 2
-				//											3 2 3
+				// Extra TU for strafe-moves ->	1 0 1
+				//								2 ^ 2
+				//								3 2 3
 				int delta (std::abs((dir + 4) % 8 - _unit->getUnitDirection()));
 
 				if (delta > 1 && delta < 7
@@ -1322,7 +1323,7 @@ int Pathfinding::getTuCostPf(
 					if (delta == 4) delta = 2;
 
 					cost += delta;
-				} // kL_end.
+				}
 			}
 
 			costTotal += cost;
@@ -2183,7 +2184,7 @@ int Pathfinding::dequeuePath()
 	if (_path.empty() == true)
 		return -1;
 
-	const int last_element = _path.back();
+	const int last_element (_path.back());
 	_path.pop_back();
 
 	return last_element;
@@ -2218,9 +2219,9 @@ void Pathfinding::directionToVector( // static.
 		Position* const posVect)
 {
 	static const int
-		x[10] = { 0, 1, 1, 1, 0,-1,-1,-1, 0, 0},
-		y[10] = {-1,-1, 0, 1, 1, 1, 0,-1, 0, 0},
-		z[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 1,-1};
+		x[10] { 0, 1, 1, 1, 0,-1,-1,-1, 0, 0},
+		y[10] {-1,-1, 0, 1, 1, 1, 0,-1, 0, 0},
+		z[10] { 0, 0, 0, 0, 0, 0, 0, 0, 1,-1};
 
 	posVect->x = x[dir];
 	posVect->y = y[dir];
@@ -2238,8 +2239,8 @@ void Pathfinding::vectorToDirection( // static.
 		int& dir)
 {
 	static const int
-		x[8] = { 0, 1, 1, 1, 0,-1,-1,-1},
-		y[8] = {-1,-1, 0, 1, 1, 1, 0,-1};
+		x[8] { 0, 1, 1, 1, 0,-1,-1,-1},
+		y[8] {-1,-1, 0, 1, 1, 1, 0,-1};
 
 	for (size_t
 			i = 0;
@@ -2253,7 +2254,6 @@ void Pathfinding::vectorToDirection( // static.
 			return;
 		}
 	}
-
 	dir = -1;
 }
 
