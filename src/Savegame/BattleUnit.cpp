@@ -1138,8 +1138,6 @@ void BattleUnit::keepWalking(
 {
 	_cacheInvalid = recache;
 
-//	cacheWalkPhases();
-
 	if (++_walkPhase == _walkPhaseHalf)	// assume unit reached the destination tile
 		_pos = _posStop;				// This is actually a drawing hack so soldiers are not overlapped by floortiles fwiw.
 
