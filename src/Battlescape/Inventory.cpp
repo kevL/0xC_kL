@@ -86,7 +86,7 @@ Inventory::Inventory(
 		_overItem(nullptr),
 		_tuMode(true),
 		_atBase(atBase),
-		_groundOffset(0),
+		_grdOffset(0),
 		_fuseFrame(0),
 		_prime(-1),
 		_tuCost(-1)
@@ -338,13 +338,13 @@ void Inventory::drawItems() // private.
 		if (*i != _selItem									// Items can be made invisible by setting their width to 0;
 			&& (*i)->getRules()->getInventoryWidth() != 0)	// eg, used for large-unit corpses.
 //			&& (*i)->getRules()->getInventoryHeight() != 0
-//			&& (*i)->getSlotX() >= _groundOffset			// && < _groundOffset + RuleInventory::GROUND_W ... or so.
+//			&& (*i)->getSlotX() >= _grdOffset				// && < _grdOffset + RuleInventory::GROUND_W ... or so.
 		{
 			sprite = bigobs->getFrame((*i)->getRules()->getBigSprite());
 			if (sprite != nullptr) // safety.
 			{
 				sprite->setX(inRule->getX()
-						  + ((*i)->getSlotX() - _groundOffset) * RuleInventory::SLOT_W);
+						  + ((*i)->getSlotX() - _grdOffset) * RuleInventory::SLOT_W);
 				sprite->setY(inRule->getY()
 						  + ((*i)->getSlotY() * RuleInventory::SLOT_H));
 
@@ -366,7 +366,7 @@ void Inventory::drawItems() // private.
 			if (qty > 1 || fatals != 0)
 			{
 				_numStack->setX((inRule->getX()
-									+ (((*i)->getSlotX() + (*i)->getRules()->getInventoryWidth()) - _groundOffset)
+									+ (((*i)->getSlotX() + (*i)->getRules()->getInventoryWidth()) - _grdOffset)
 										* RuleInventory::SLOT_W) - 4);
 
 				if (qty > 9 || fatals > 9)
@@ -479,7 +479,7 @@ void Inventory::mouseOver(Action* action, State* state)
 			_tuCost = -1;
 
 			if (inRule->getCategory() == IC_GROUND)
-				x += _groundOffset;
+				x += _grdOffset;
 
 			BattleItem* const item (_selUnit->getItem(inRule, x,y));
 			setMouseOverItem(item);
@@ -520,10 +520,10 @@ void Inventory::mouseClick(Action* action, State* state)
 			if (inRule != nullptr)
 			{
 				if (inRule->getCategory() == IC_GROUND)
-					x += _groundOffset;
+					x += _grdOffset;
 
-				BattleItem* const item (_selUnit->getItem(inRule, x,y));
-				if (item != nullptr)
+				BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
+				if (overItem != nullptr)
 				{
 					if ((SDL_GetModState() & KMOD_CTRL) != 0) // Move item.
 					{
@@ -561,10 +561,10 @@ void Inventory::mouseClick(Action* action, State* state)
 							if (toGround == true)
 							{
 								if (_tuMode == false
-									|| _selUnit->spendTimeUnits(item->getInventorySection()->getCost(targetSection)) == true)
+									|| _selUnit->spendTimeUnits(overItem->getInventorySection()->getCost(targetSection)) == true)
 								{
 									placed = true;
-									moveItem(item, targetSection);
+									moveItem(overItem, targetSection);
 									arrangeGround();
 
 									soundId = ResourcePack::ITEM_DROP;
@@ -574,14 +574,14 @@ void Inventory::mouseClick(Action* action, State* state)
 							}
 							else
 							{
-								_stackLevel[static_cast<size_t>(item->getSlotX())]
-										   [static_cast<size_t>(item->getSlotY())] -= 1;
+								_stackLevel[static_cast<size_t>(overItem->getSlotX())]
+										   [static_cast<size_t>(overItem->getSlotY())] -= 1;
 
-								if (fitItem(targetSection, item) == true)
+								if (fitItem(targetSection, overItem) == true)
 									placed = true;
 								else
-									_stackLevel[static_cast<size_t>(item->getSlotX())]
-											   [static_cast<size_t>(item->getSlotY())] += 1;
+									_stackLevel[static_cast<size_t>(overItem->getSlotX())]
+											   [static_cast<size_t>(overItem->getSlotY())] += 1;
 							}
 
 							if (placed == true)
@@ -593,9 +593,9 @@ void Inventory::mouseClick(Action* action, State* state)
 					}
 					else // Pickup item.
 					{
-						setSelectedItem(item);
+						setSelectedItem(overItem);
 
-						const int explTurn (item->getFuse());
+						const int explTurn (overItem->getFuse());
 						if (explTurn > -1)
 						{
 							std::wstring activated;
@@ -614,7 +614,7 @@ void Inventory::mouseClick(Action* action, State* state)
 				}
 			}
 		}
-		else // Drop item or Load weapon.
+		else // item on cursor, Drop item or Load weapon with it.
 		{
 			int
 				x (_srfGrab->getX()
@@ -631,16 +631,16 @@ void Inventory::mouseClick(Action* action, State* state)
 			if (inRule != nullptr)
 			{
 				if (inRule->getCategory() == IC_GROUND)
-					x += _groundOffset;
+					x += _grdOffset;
 
-				BattleItem* const item (_selUnit->getItem(inRule, x,y));
+				BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
 
 				const bool stack (inRule->getCategory() == IC_GROUND
-							   && canStack(item, _selItem) == true);
+							   && canStack(overItem, _selItem) == true);
 
-				if (item == nullptr // Put item in empty slot or stack it if possible.
-					|| item == _selItem
-					|| stack == true)
+				if (overItem == _selItem	// put item back where it came from
+					|| overItem == nullptr	// put item in empty slot
+					|| stack == true)		// stack item
 				{
 					if (isOverlap(
 								_selUnit,
@@ -676,10 +676,10 @@ void Inventory::mouseClick(Action* action, State* state)
 							moveItem(
 									_selItem,
 									inRule,
-									item->getSlotX(),
-									item->getSlotY());
-							_stackLevel[static_cast<size_t>(item->getSlotX())]
-									   [static_cast<size_t>(item->getSlotY())] += 1;
+									overItem->getSlotX(),
+									overItem->getSlotY());
+							_stackLevel[static_cast<size_t>(overItem->getSlotX())]
+									   [static_cast<size_t>(overItem->getSlotY())] += 1;
 							setSelectedItem();
 
 							soundId = ResourcePack::ITEM_DROP;
@@ -688,16 +688,17 @@ void Inventory::mouseClick(Action* action, State* state)
 							_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
 					}
 				}
-				else if (item->getRules()->getCompatibleAmmo()->empty() == false) // Put item in weapon.
+				else if (overItem->getRules()->getCompatibleAmmo()->empty() == false // Put item in weapon.
+					&& (_tuMode == false || overItem->getInventorySection()->getCategory() == IC_HAND))
 				{
-					if (item->getAmmoItem() != nullptr)
+					if (overItem->getAmmoItem() != nullptr)
 						_warning->showMessage(_game->getLanguage()->getString("STR_WEAPON_IS_ALREADY_LOADED"));
 					else
 					{
 						bool fail (true);
 						for (std::vector<std::string>::const_iterator
-								i = item->getRules()->getCompatibleAmmo()->begin();
-								i != item->getRules()->getCompatibleAmmo()->end();
+								i = overItem->getRules()->getCompatibleAmmo()->begin();
+								i != overItem->getRules()->getCompatibleAmmo()->end();
 								++i)
 						{
 							if (*i == _selItem->getRules()->getType())
@@ -709,24 +710,50 @@ void Inventory::mouseClick(Action* action, State* state)
 
 						if (fail == true)
 							_warning->showMessage(_game->getLanguage()->getString("STR_WRONG_AMMUNITION_FOR_THIS_WEAPON"));
-						else if (_tuMode == false
-							|| _selUnit->spendTimeUnits(item->getRules()->getReloadTu()) == true)
+						else if (_tuMode == true
+							&& _selUnit->getItem(ST_RIGHTHAND) != nullptr
+							&& _selUnit->getItem(ST_RIGHTHAND) != _selItem
+							&& _selUnit->getItem(ST_LEFTHAND) != nullptr
+							&& _selUnit->getItem(ST_LEFTHAND) != _selItem)
 						{
-							_tuCost = -1;
-
-							if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
-							{
-								_selUnit->getTile()->removeItem(_selItem);
-								arrangeGround();
-							}
-
-							item->setAmmoItem(_selItem);
-							setSelectedItem();
-
-							soundId = ResourcePack::ITEM_RELOAD;
+							_warning->showMessage(_game->getLanguage()->getString("STR_BOTH_HANDS_MUST_BE_EMPTY")); // TODO: "one hand must be empty"
 						}
 						else
-							_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+						{
+							int tuReload;
+							if (_tuMode == true)
+							{
+								tuReload = overItem->getRules()->getReloadTu();
+								InventorySection toHand;
+								if (_selUnit->getItem(ST_RIGHTHAND) == nullptr)
+									toHand = ST_RIGHTHAND;
+								else
+									toHand = ST_LEFTHAND;
+								const RuleInventory* const handRule (_game->getRuleset()->getInventoryRule(toHand));
+								tuReload += _selItem->getInventorySection()->getCost(handRule);
+							}
+							else
+								tuReload = 0; // safety, not used.
+
+							if (_tuMode == false
+								|| _selUnit->spendTimeUnits(tuReload) == true)
+							{
+								_tuCost = -1;
+
+								if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
+								{
+									_selUnit->getTile()->removeItem(_selItem);
+									arrangeGround();
+								}
+
+								overItem->setAmmoItem(_selItem);
+								setSelectedItem();
+
+								soundId = ResourcePack::ITEM_RELOAD;
+							}
+							else
+								_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+						}
 					}
 				}
 				// else swap the item positions ...
@@ -741,10 +768,10 @@ void Inventory::mouseClick(Action* action, State* state)
 				if (inRule != nullptr
 					&& inRule->getCategory() == IC_GROUND)
 				{
-					x += _groundOffset;
+					x += _grdOffset;
 
-					BattleItem* const item (_selUnit->getItem(inRule, x,y));
-					if (canStack(item, _selItem) == true)
+					BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
+					if (canStack(overItem, _selItem) == true)
 					{
 						if (_tuMode == false
 							|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
@@ -752,10 +779,10 @@ void Inventory::mouseClick(Action* action, State* state)
 							moveItem(
 									_selItem,
 									inRule,
-									item->getSlotX(),
-									item->getSlotY());
-							_stackLevel[static_cast<size_t>(item->getSlotX())]
-									   [static_cast<size_t>(item->getSlotY())] += 1;
+									overItem->getSlotX(),
+									overItem->getSlotY());
+							_stackLevel[static_cast<size_t>(overItem->getSlotX())]
+									   [static_cast<size_t>(overItem->getSlotY())] += 1;
 							setSelectedItem();
 
 							soundId = ResourcePack::ITEM_DROP;
@@ -788,38 +815,38 @@ void Inventory::mouseClick(Action* action, State* state)
 						if (inRule != nullptr)
 						{
 							if (inRule->getCategory() == IC_GROUND)
-								x += _groundOffset;
+								x += _grdOffset;
 
-							BattleItem* const item (_selUnit->getItem(inRule, x,y));
-							if (item != nullptr)
+							BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
+							if (overItem != nullptr)
 							{
-								const RuleItem* const itRule (item->getRules());
+								const RuleItem* const itRule (overItem->getRules());
 								if (itRule->isGrenade() == true)
 								{
-									if (item->getFuse() == -1) // Prime that grenade!
+									if (overItem->getFuse() == -1) // Prime that grenade!
 									{
 										if (itRule->getBattleType() == BT_PROXYGRENADE)
 										{
-											item->setFuse(0);
+											overItem->setFuse(0);
 											arrangeGround();
 
 											const std::wstring activated (_game->getLanguage()->getString("STR_GRENADE_IS_ACTIVATED"));
 											_warning->showMessage(activated);
 										}
 										else // This is where activation warning for nonProxy preBattle grenades goes.
-											_game->pushState(new PrimeGrenadeState(nullptr, true, item, this));
+											_game->pushState(new PrimeGrenadeState(nullptr, true, overItem, this));
 									}
 									else // deFuse grenade
 									{
 										_warning->showMessage(_game->getLanguage()->getString("STR_GRENADE_IS_DEACTIVATED"));
-										item->setFuse(-1);
+										overItem->setFuse(-1);
 										arrangeGround();
 									}
 								}
 								else if (inRule->getCategory() != IC_GROUND) // move item to Ground
 								{
 									moveItem(
-											item,
+											overItem,
 											_game->getRuleset()->getInventoryRule(ST_GROUND));
 
 									arrangeGround();
@@ -845,12 +872,12 @@ void Inventory::mouseClick(Action* action, State* state)
 				if (inRule != nullptr)
 				{
 					if (inRule->getCategory() == IC_GROUND)
-						x += _groundOffset;
+						x += _grdOffset;
 
-					BattleItem* const item (_selUnit->getItem(inRule, x,y));
-					if (item != nullptr)
+					BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
+					if (overItem != nullptr)
 					{
-						std::string article (item->getRules()->getType()); // strip const. yay,
+						std::string article (overItem->getRules()->getType()); // strip const. yay,
 						Ufopaedia::openArticle(_game, article);
 					}
 				}
@@ -908,7 +935,7 @@ void Inventory::moveItem( // private.
 		int x,
 		int y)
 {
-	if (inRule != item->getInventorySection()) // Handle dropping from/to ground.
+	if (inRule != item->getInventorySection()) // handle item from/to ground, or unload a weapon
 	{
 		if (inRule->getCategory() == IC_GROUND) // set to Ground
 		{
@@ -925,10 +952,11 @@ void Inventory::moveItem( // private.
 			|| item->getInventorySection()->getCategory() == IC_GROUND)	// or pick up item.
 		{
 			if (_tuMode == true												// To prevent units from picking up large objects and running around with
+				&& item->getInventorySection() != nullptr
 				&& item->getInventorySection()->getCategory() == IC_GROUND)	// nearly full TU on the same turn its weight becomes an extra tu-burden
 			{
 				_selUnit->setTimeUnits(std::max(0,
-											_selUnit->getTimeUnits() - item->getRules()->getWeight()));
+												_selUnit->getTimeUnits() - item->getRules()->getWeight()));
 			}
 
 			item->changeOwner(_selUnit);
@@ -940,9 +968,8 @@ void Inventory::moveItem( // private.
 				item->getUnit()->setPosition(Position(-1,-1,-1));
 			}
 		}
+		item->setInventorySection(inRule);
 	}
-
-	item->setInventorySection(inRule);
 	item->setSlotX(x);
 	item->setSlotY(y);
 }
@@ -1118,13 +1145,13 @@ void Inventory::arrangeGround(int dir)
 		else
 			width = 0;
 
-		if (lastSlot > _groundOffset + (RuleInventory::GROUND_W * dir) - width
-			&& (dir > 0 || _groundOffset > 0)) // don't let a shift-left go less than 0.
+		if (lastSlot > _grdOffset + (RuleInventory::GROUND_W * dir) - width
+			&& (dir > 0 || _grdOffset > 0)) // don't let a shift-left go less than 0.
 		{
-			_groundOffset += (RuleInventory::GROUND_W * dir);
+			_grdOffset += (RuleInventory::GROUND_W * dir);
 		}
 		else
-			_groundOffset = 0;
+			_grdOffset = 0;
 	}
 
 	drawItems();
@@ -1194,7 +1221,7 @@ void Inventory::setTuMode(bool tu)
 void Inventory::setSelectedUnitInventory(BattleUnit* const unit)
 {
 	_selUnit = unit;
-	_groundOffset = 999;
+	_grdOffset = 999;
 	arrangeGround(+1);
 }
 

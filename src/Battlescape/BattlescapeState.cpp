@@ -950,9 +950,9 @@ BattlescapeState::BattlescapeState()
 //	_btnZeroTUs->allowClickInversion();
 
 	// shortcuts without a specific surface button graphic.
-	_btnStats->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnReloadClick,
-					Options::keyBattleReload);
+//	_btnStats->onKeyboardPress( // NOTE: Reloading uses advanced requirements in the Inventory.
+//					(ActionHandler)& BattlescapeState::btnReloadClick,
+//					Options::keyBattleReload);
 	_btnStats->onKeyboardPress(
 					(ActionHandler)& BattlescapeState::btnPersonalLightingClick,
 					Options::keyBattlePersonalLighting);
@@ -2694,7 +2694,7 @@ void BattlescapeState::btnPsiClick(Action* action)
  * Reloads a weapon in hand.
  * @note Checks right hand then left.
  * @param action - pointer to an Action
- */
+ *
 void BattlescapeState::btnReloadClick(Action*)
 {
 	if (playableUnitSelected() == true
@@ -2704,7 +2704,7 @@ void BattlescapeState::btnReloadClick(Action*)
 									->play(-1, _map->getSoundAngle(_battleSave->getSelectedUnit()->getPosition()));
 		updateSoldierInfo(false);
 	}
-}
+} */
 
 /**
  * Zeroes TU of the currently selected BattleUnit.

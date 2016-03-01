@@ -392,7 +392,7 @@ private:
 //		void btnReserveKneelClick(Action* action);
 
 		/// Handler for clicking the reload button.
-		void btnReloadClick(Action* action);
+//		void btnReloadClick(Action* action);
 		/// Handler for clicking the expend all TUs button.
 		void btnZeroTuClick(Action* action);
 		/// Handler for clicking the UfoPaedia button.

@@ -106,7 +106,7 @@ void RuleInventory::load(
 	_cat = static_cast<InventoryCategory>(node["category"].as<int>(_cat));
 
 	// convert crappy strings into speedy Enums:
-	std::map<std::string, int> costs = node["costs"].as<std::map<std::string, int>>();
+	std::map<std::string, int> costs (node["costs"].as<std::map<std::string, int>>());
 	_costs = assignCosts(costs);
 	_section = assignSectionType(_type);
 }
@@ -136,35 +136,16 @@ InventorySection RuleInventory::getSectionType() const
  */
 InventorySection RuleInventory::assignSectionType(const std::string& type) // private/static.
 {
-	if (type == "STR_GROUND")
-		return ST_GROUND;
-
-	if (type == "STR_RIGHT_HAND")
-		return ST_RIGHTHAND;
-
-	if (type == "STR_LEFT_HAND")
-		return ST_LEFTHAND;
-
-	if (type == "STR_BELT")
-		return ST_BELT;
-
-	if (type == "STR_RIGHT_LEG")
-		return ST_RIGHTLEG;
-
-	if (type == "STR_LEFT_LEG")
-		return ST_LEFTLEG;
-
-	if (type == "STR_RIGHT_SHOULDER")
-		return ST_RIGHTSHOULDER;
-
-	if (type == "STR_LEFT_SHOULDER")
-		return ST_LEFTSHOULDER;
-
-	if (type == "STR_BACK_PACK")
-		return ST_BACKPACK;
-
-	if (type == "STR_QUICK_DRAW")
-		return ST_QUICKDRAW;
+	if (type == "STR_GROUND")			return ST_GROUND;
+	if (type == "STR_RIGHT_HAND")		return ST_RIGHTHAND;
+	if (type == "STR_LEFT_HAND")		return ST_LEFTHAND;
+	if (type == "STR_BELT")				return ST_BELT;
+	if (type == "STR_RIGHT_LEG")		return ST_RIGHTLEG;
+	if (type == "STR_LEFT_LEG")			return ST_LEFTLEG;
+	if (type == "STR_RIGHT_SHOULDER")	return ST_RIGHTSHOULDER;
+	if (type == "STR_LEFT_SHOULDER")	return ST_LEFTSHOULDER;
+	if (type == "STR_BACK_PACK")		return ST_BACKPACK;
+	if (type == "STR_QUICK_DRAW")		return ST_QUICKDRAW;
 
 	return ST_NONE; // better not happen.
 }
@@ -178,35 +159,16 @@ std::map<InventorySection, int> RuleInventory::assignCosts(std::map<std::string,
 {
 	std::map<InventorySection, int> ret;
 
-	if (costs["STR_GROUND"] != 0)
-		ret[ST_GROUND] = costs["STR_GROUND"];
-
-	if (costs["STR_RIGHT_HAND"] != 0)
-		ret[ST_RIGHTHAND] = costs["STR_RIGHT_HAND"];
-
-	if (costs["STR_LEFT_HAND"] != 0)
-		ret[ST_LEFTHAND] = costs["STR_LEFT_HAND"];
-
-	if (costs["STR_BELT"] != 0)
-		ret[ST_BELT] = costs["STR_BELT"];
-
-	if (costs["STR_RIGHT_LEG"] != 0)
-		ret[ST_RIGHTLEG] = costs["STR_RIGHT_LEG"];
-
-	if (costs["STR_LEFT_LEG"] != 0)
-		ret[ST_LEFTLEG] = costs["STR_LEFT_LEG"];
-
-	if (costs["STR_RIGHT_SHOULDER"] != 0)
-		ret[ST_RIGHTSHOULDER] = costs["STR_RIGHT_SHOULDER"];
-
-	if (costs["STR_LEFT_SHOULDER"] != 0)
-		ret[ST_LEFTSHOULDER] = costs["STR_LEFT_SHOULDER"];
-
-	if (costs["STR_BACK_PACK"] != 0)
-		ret[ST_BACKPACK] = costs["STR_BACK_PACK"];
-
-	if (costs["STR_QUICK_DRAW"] != 0)
-		ret[ST_QUICKDRAW] = costs["STR_QUICK_DRAW"];
+	if (costs["STR_GROUND"] != 0)			ret[ST_GROUND] = costs["STR_GROUND"];
+	if (costs["STR_RIGHT_HAND"] != 0)		ret[ST_RIGHTHAND] = costs["STR_RIGHT_HAND"];
+	if (costs["STR_LEFT_HAND"] != 0)		ret[ST_LEFTHAND] = costs["STR_LEFT_HAND"];
+	if (costs["STR_BELT"] != 0)				ret[ST_BELT] = costs["STR_BELT"];
+	if (costs["STR_RIGHT_LEG"] != 0)		ret[ST_RIGHTLEG] = costs["STR_RIGHT_LEG"];
+	if (costs["STR_LEFT_LEG"] != 0)			ret[ST_LEFTLEG] = costs["STR_LEFT_LEG"];
+	if (costs["STR_RIGHT_SHOULDER"] != 0)	ret[ST_RIGHTSHOULDER] = costs["STR_RIGHT_SHOULDER"];
+	if (costs["STR_LEFT_SHOULDER"] != 0)	ret[ST_LEFTSHOULDER] = costs["STR_LEFT_SHOULDER"];
+	if (costs["STR_BACK_PACK"] != 0)		ret[ST_BACKPACK] = costs["STR_BACK_PACK"];
+	if (costs["STR_QUICK_DRAW"] != 0)		ret[ST_QUICKDRAW] = costs["STR_QUICK_DRAW"];
 
 	return ret;
 }
@@ -261,8 +223,8 @@ bool RuleInventory::detSlotAtCursor(
 		int* y) const
 {
 	const int
-		mouseX = *x,
-		mouseY = *y;
+		mX (*x),
+		mY (*y);
 
 	switch (_cat)
 	{
@@ -277,10 +239,10 @@ bool RuleInventory::detSlotAtCursor(
 						y1 != HAND_H;
 						++y1)
 				{
-					if (   mouseX >= _x + SLOT_W *  x1
-						&& mouseX <  _x + SLOT_W * (x1 + 1)
-						&& mouseY >= _y + SLOT_H *  y1
-						&& mouseY <  _y + SLOT_H * (y1 + 1))
+					if (   mX >= _x + SLOT_W *  x1
+						&& mX <  _x + SLOT_W * (x1 + 1)
+						&& mY >= _y + SLOT_H *  y1
+						&& mY <  _y + SLOT_H * (y1 + 1))
 					{
 						*x =
 						*y = 0;
@@ -291,15 +253,15 @@ bool RuleInventory::detSlotAtCursor(
 		break;
 
 		case IC_GROUND:
-			if (   mouseX >= _x
-				&& mouseX <  _x + SLOT_W * GROUND_W
-				&& mouseY >= _y
-				&& mouseY <  _y + SLOT_H * GROUND_H)
+			if (   mX >= _x
+				&& mX <  _x + SLOT_W * GROUND_W
+				&& mY >= _y
+				&& mY <  _y + SLOT_H * GROUND_H)
 			{
 				*x = static_cast<int>(std::floor(
-					 static_cast<double>(mouseX - _x) / static_cast<double>(SLOT_W)));
+					 static_cast<double>(mX - _x) / static_cast<double>(SLOT_W)));
 				*y = static_cast<int>(std::floor(
-					 static_cast<double>(mouseY - _y) / static_cast<double>(SLOT_H)));
+					 static_cast<double>(mY - _y) / static_cast<double>(SLOT_H)));
 
 				return true;
 			}
@@ -311,10 +273,10 @@ bool RuleInventory::detSlotAtCursor(
 					i != _slots.end();
 					++i)
 			{
-				if (   mouseX >= _x + SLOT_W *  i->x
-					&& mouseX <  _x + SLOT_W * (i->x + 1)
-					&& mouseY >= _y + SLOT_H *  i->y
-					&& mouseY <  _y + SLOT_H * (i->y + 1))
+				if (   mX >= _x + SLOT_W *  i->x
+					&& mX <  _x + SLOT_W * (i->x + 1)
+					&& mY >= _y + SLOT_H *  i->y
+					&& mY <  _y + SLOT_H * (i->y + 1))
 				{
 					*x = i->x;
 					*y = i->y;
@@ -342,56 +304,55 @@ bool RuleInventory::fitItemInSlot(
 	switch (_cat)
 	{
 		case IC_GROUND:
-		{
-			int xOffset = 0;
-			while (x >= xOffset + GROUND_W)
-				xOffset += GROUND_W;
-
-			for (int
-					find_x = x;
-					find_x != x + item->getInventoryWidth();
-					++find_x)
 			{
+				int xOffset (0);
+				while (x >= xOffset + GROUND_W)
+					xOffset += GROUND_W;
+
 				for (int
-						find_y = y;
-						find_y != y + item->getInventoryHeight();
-						++find_y)
+						find_x = x;
+						find_x != x + item->getInventoryWidth();
+						++find_x)
 				{
-					if (!
-							(  find_x >= xOffset
-							&& find_x <  xOffset + GROUND_W
-							&& find_y > -1
-							&& find_y < GROUND_H))
+					for (int
+							find_y = y;
+							find_y != y + item->getInventoryHeight();
+							++find_y)
 					{
-						return false;
+						if (!
+								(  find_x >= xOffset
+								&& find_x <  xOffset + GROUND_W
+								&& find_y > -1
+								&& find_y < GROUND_H))
+						{
+							return false;
+						}
 					}
 				}
-			}
-		}
+			} // no break;
 		case IC_HAND:
 			return true;
 
 		default:
-		{
-			const int slotsTotal = item->getInventoryWidth() * item->getInventoryHeight();
-			int slotsFound = 0;
-
-			for (std::vector<RuleSlot>::const_iterator
-					i = _slots.begin();
-					i != _slots.end() && slotsFound < slotsTotal;
-					++i)
 			{
-				if (   i->x >= x
-					&& i->x <  x + item->getInventoryWidth()
-					&& i->y >= y
-					&& i->y <  y + item->getInventoryHeight())
-				{
-					++slotsFound;
-				}
-			}
+				const int slotsTotal (item->getInventoryWidth() * item->getInventoryHeight());
+				int slotsFound (0);
 
-			return (slotsFound == slotsTotal);
-		}
+				for (std::vector<RuleSlot>::const_iterator
+						i = _slots.begin();
+						i != _slots.end() && slotsFound < slotsTotal;
+						++i)
+				{
+					if (   i->x >= x
+						&& i->x <  x + item->getInventoryWidth()
+						&& i->y >= y
+						&& i->y <  y + item->getInventoryHeight())
+					{
+						++slotsFound;
+					}
+				}
+				return (slotsFound == slotsTotal);
+			}
 	}
 }
 

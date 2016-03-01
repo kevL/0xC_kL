@@ -1927,7 +1927,7 @@ bool BattleUnit::isOut_t(OutCheck test) const
  * @param item	- pointer to BattleItem for TU-cost
  * @return, TUs to perform action
  */
-int BattleUnit::getActionTu(
+int BattleUnit::getActionTu( // TODO: Refactor these ....
 		const BattleActionType bat,
 		const BattleItem* const item) const
 {
@@ -1952,7 +1952,7 @@ int BattleUnit::getActionTu(
 	int cost (0);
 	switch (bat)
 	{
-		// TODO: Put "tuDefuse" & "tuThrow" yaml-entry in rules under various grenade-types etc.
+		// TODO: Put "tuThrow" yaml-entry in rules under various grenade-types, etc.
 		case BA_DROP:
 		{
 			const RuleInventory
@@ -2738,7 +2738,6 @@ BattleItem* BattleUnit::getItem(
 				return *i;
 		}
 	}
-
 	return nullptr;
 }
 
@@ -2784,7 +2783,6 @@ BattleItem* BattleUnit::getItem(
 			}
 		}
 	}
-
 	return nullptr;
 }
 
@@ -2829,7 +2827,6 @@ BattleItem* BattleUnit::getItem(
 			}
 		}
 	}
-
 	return nullptr;
 }
 
@@ -3139,7 +3136,8 @@ BattleItem* BattleUnit::getRangedWeapon(bool quickest) const
 
 /**
  * Check if this BattleUnit has ammo and if so reload weapon.
- * @note Used by the AI as well as player's reload.
+ * @note Used by the AI only - Player has much stricter reloading requirements
+ * that are handled by the Inventory.
  * @return, true if unit loads its weapon
  */
 bool BattleUnit::checkReload()

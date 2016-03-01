@@ -52,7 +52,7 @@ private:
 		_atBase,
 		_tuMode;
 	int
-		_groundOffset,
+		_grdOffset,
 		_prime,
 		_tuCost;
 	size_t _fuseFrame;
