@@ -43,16 +43,16 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Target Info window.
+ * Initializes all the elements in the TargetInfo window.
  * @param target	- pointer to a Target to show info about
- * @param state		- pointer to GeoscapeState
+ * @param geoState	- pointer to GeoscapeState
  */
 TargetInfoState::TargetInfoState(
 		Target* const target,
-		GeoscapeState* const state)
+		GeoscapeState* const geoState)
 	:
 		_target(target),
-		_state(state),
+		_geoState(geoState),
 		_aBase(nullptr)
 {
 	_fullScreen = false;
@@ -91,6 +91,12 @@ TargetInfoState::TargetInfoState(
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& TargetInfoState::btnOkClick,
 					Options::keyCancel);
+	_btnOk->onKeyboardPress(
+					(ActionHandler)& TargetInfoState::btnOkClick,
+					Options::keyOk);
+	_btnOk->onKeyboardPress(
+					(ActionHandler)& TargetInfoState::btnOkClick,
+					Options::keyOkKeypad);
 
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -98,7 +104,6 @@ TargetInfoState::TargetInfoState(
 	woststr << L'\x01' << _target->getName(_game->getLanguage());
 	_txtTitle->setText(woststr.str());
 
-	_edtTarget->setVisible(false);
 	for (std::vector<AlienBase*>::const_iterator
 			i = _game->getSavedGame()->getAlienBases()->begin();
 			i != _game->getSavedGame()->getAlienBases()->end();
@@ -107,17 +112,16 @@ TargetInfoState::TargetInfoState(
 		if (_target == dynamic_cast<Target*>(*i))
 		{
 			_aBase = *i;
-
-			const std::wstring edit = Language::utf8ToWstr((*i)->getLabel());
+			const std::wstring edit (Language::utf8ToWstr((*i)->getUserLabel()));
 			_edtTarget->setText(edit);
 			_edtTarget->onTextChange((ActionHandler)& TargetInfoState::edtTargetChange);
-			_edtTarget->setVisible();
-
 			break;
 		}
 	}
+	if (_aBase == nullptr)
+		_edtTarget->setVisible(false);
 
-	bool targeted = false;
+	bool targeted (false);
 
 	_txtFollowers->setAlign(ALIGN_CENTER);
 	woststr.str(L"");
@@ -154,7 +158,7 @@ TargetInfoState::~TargetInfoState()
  */
 void TargetInfoState::edtTargetChange(Action*)
 {
-	_aBase->setLabel(Language::wstrToUtf8(_edtTarget->getText()));
+	_aBase->setUserLabel(Language::wstrToUtf8(_edtTarget->getText()));
 }
 
 /**
@@ -163,10 +167,10 @@ void TargetInfoState::edtTargetChange(Action*)
  */
 void TargetInfoState::btnInterceptClick(Action*)
 {
-	_state->resetTimer();
+	_geoState->resetTimer();
 
 	_game->popState();
-	_game->pushState(new InterceptState(nullptr, _state));
+	_game->pushState(new InterceptState(nullptr, _geoState));
 }
 
 /**

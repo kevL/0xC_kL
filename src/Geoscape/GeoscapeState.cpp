@@ -1981,7 +1981,7 @@ struct SetRetaliationStatus
 void GeoscapeState::time10Minutes()
 {
 	//Log(LOG_INFO) << "GeoscapeState::time10Minutes()";
-	const int diff = static_cast<int>(_gameSave->getDifficulty());
+	const int diff (static_cast<int>(_gameSave->getDifficulty()));
 
 	for (std::vector<Base*>::const_iterator
 			i = _gameSave->getBases()->begin();
@@ -2007,7 +2007,7 @@ void GeoscapeState::time10Minutes()
 					popup(new LowFuelState(*j, this));
 				}
 
-//				if ((*j)->getDestination() == nullptr) // Remove that; patrolling for aBases/10min was getting too bothersome.
+//				if ((*j)->getDestination() == nullptr) // Remove that: patrolling for aBases/10min was getting too bothersome.
 //				{
 				//Log(LOG_INFO) << ". Patrol for alienBases";
 				for (std::vector<AlienBase*>::const_iterator // patrol for aLien bases.
@@ -2018,20 +2018,20 @@ void GeoscapeState::time10Minutes()
 					if ((*k)->isDetected() == false)
 					{
 						const double
-							craftRadar = static_cast<double>((*j)->getRules()->getReconRange()) * greatCircleConversionFactor,
-							targetDist = (*j)->getDistance(*k) * earthRadius;
+							craftRadar (static_cast<double>((*j)->getRules()->getReconRange()) * greatCircleConversionFactor),
+							targetDist ((*j)->getDistance(*k) * earthRadius);
 						//Log(LOG_INFO) << ". . craftRadar = " << (int)craftRadar;
 						//Log(LOG_INFO) << ". . targetDist = " << (int)targetDist;
 
 						if (targetDist < craftRadar)
 						{
-							const int chance = 100 - (diff * 10) - static_cast<int>(targetDist * 50. / craftRadar);
+							const int chance (100 - (diff * 10) - static_cast<int>(targetDist * 50. / craftRadar));
 							//Log(LOG_INFO) << ". . . craft in Range, chance = " << chance;
-
 							if (RNG::percent(chance) == true)
 							{
 								//Log(LOG_INFO) << ". . . . aLienBase discovered";
-								(*k)->setDetected();
+								resetTimer();
+								popup(new AlienBaseState(*k, true));
 							}
 						}
 					}
@@ -2050,11 +2050,10 @@ void GeoscapeState::time10Minutes()
 		{
 			if ((*i)->getBaseExposed() == false)
 			{
-				std::vector<Ufo*>::const_iterator ufo = std::find_if( // find a UFO that detected this Base if any.
+				std::vector<Ufo*>::const_iterator ufo (std::find_if( // find a UFO that detected this Base if any.
 																_gameSave->getUfos()->begin(),
 																_gameSave->getUfos()->end(),
-																DetectXCOMBase(**i, diff));
-
+																DetectXCOMBase(**i, diff)));
 				if (ufo != _gameSave->getUfos()->end())
 					(*i)->setBaseExposed();
 			}
@@ -2068,15 +2067,13 @@ void GeoscapeState::time10Minutes()
 				i != _gameSave->getBases()->end();
 				++i)
 		{
-			std::vector<Ufo*>::const_iterator ufo = std::find_if( // find a UFO that detected this Base if any.
+			std::vector<Ufo*>::const_iterator ufo (std::find_if( // find a UFO that detected this Base if any.
 															_gameSave->getUfos()->begin(),
 															_gameSave->getUfos()->end(),
-															DetectXCOMBase(**i, diff));
-
+															DetectXCOMBase(**i, diff)));
 			if (ufo != _gameSave->getUfos()->end())
 				discovered[_gameSave->locateRegion(**i)] = *i;
 		}
-
 		std::for_each( // mark the Base(s) as discovered.
 					discovered.begin(),
 					discovered.end(),
@@ -2098,10 +2095,10 @@ void GeoscapeState::time10Minutes()
 
 			if ((*i)->getDetected() == false)
 			{
-				const bool hyperDet_pre = (*i)->getHyperDetected();
+				const bool hyperDet_pre ((*i)->getHyperDetected());
 				bool
-					hyperDet = false,
-					contact = false;
+					hyperDet (false),
+					contact (false);
 
 				for (std::vector<Base*>::const_iterator
 						j = _gameSave->getBases()->begin();
@@ -2125,7 +2122,7 @@ void GeoscapeState::time10Minutes()
 
 					for (std::vector<Craft*>::const_iterator
 							k = (*j)->getCrafts()->begin();
-							k != (*j)->getCrafts()->end() && contact == false;
+							k != (*j)->getCrafts()->end();
 							++k)
 					{
 						if ((*k)->getCraftStatus() == CS_OUT
@@ -2133,6 +2130,7 @@ void GeoscapeState::time10Minutes()
 							&& (*k)->detect(*i) == true)
 						{
 							contact = true;
+							break;
 						}
 					}
 				}
@@ -2155,10 +2153,10 @@ void GeoscapeState::time10Minutes()
 			}
 			else // ufo is already detected
 			{
-				const bool hyperDet_pre = (*i)->getHyperDetected();
+				const bool hyperDet_pre ((*i)->getHyperDetected());
 				bool
-					hyperDet = false,
-					contact = false;
+					hyperDet (false),
+					contact (false);
 
 				for (std::vector<Base*>::const_iterator
 						j = _gameSave->getBases()->begin();
@@ -2182,7 +2180,7 @@ void GeoscapeState::time10Minutes()
 
 					for (std::vector<Craft*>::const_iterator
 							k = (*j)->getCrafts()->begin();
-							k != (*j)->getCrafts()->end() && contact == false;
+							k != (*j)->getCrafts()->end();
 							++k)
 					{
 						if ((*k)->getCraftStatus() == CS_OUT
@@ -2190,6 +2188,7 @@ void GeoscapeState::time10Minutes()
 							&& (*k)->detect(*i) == true)
 						{
 							contact = true;
+							break;
 						}
 					}
 				}
@@ -3289,22 +3288,20 @@ void GeoscapeState::time1Month()
 
 
 	// handle xCom Secret Agents discovering bases
-	// NOTE: might want to change this to time1day() ...
 	if (_gameSave->getAlienBases()->empty() == false)
 	{
-		const int pct (20 - (static_cast<int>(_gameSave->getDifficulty()) * 5));
-		if (RNG::percent(pct + 50) == true)
+		const int pct (20 - static_cast<int>(_gameSave->getDifficulty()) * 5);
+		if (RNG::percent(50 + pct) == true)
 		{
 			for (std::vector<AlienBase*>::const_iterator
 					i = _gameSave->getAlienBases()->begin();
 					i != _gameSave->getAlienBases()->end();
 					++i)
 			{
-				if ((*i)->isDetected() == false
-					&& RNG::percent(pct + 5) == true)
+				if ((*i)->isDetected() == false && RNG::percent(5 + pct) == true)
 				{
-					(*i)->setDetected();
-					popup(new AlienBaseState(*i, this));
+					resetTimer();
+					popup(new AlienBaseState(*i, false));
 				}
 			}
 		}
@@ -3312,7 +3309,7 @@ void GeoscapeState::time1Month()
 }
 
 /**
- * Slows down the timer back to minimum speed for when important events occur.
+ * Slows down the timer down to minimum time-compression.
  */
 void GeoscapeState::resetTimer()
 {

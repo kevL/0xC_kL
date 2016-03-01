@@ -77,9 +77,9 @@ private:
 		void setAlienRace(const std::string& race);
 
 		/// Returns textedit that the player has entered.
-		std::string getLabel() const;
+		std::string getUserLabel() const;
 		/// Changes textedit that the player has entered.
-		void setLabel(const std::string& edit);
+		void setUserLabel(const std::string& edit);
 
 		/// Sets the AlienBase's battlescape status.
 		void setTactical(bool tactical = true);

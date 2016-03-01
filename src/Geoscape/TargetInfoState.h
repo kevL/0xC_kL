@@ -36,7 +36,7 @@ class Window;
 
 
 /**
- * Generic window used to display all the crafts targeting a certain point on the globe.
+ * Generic window used to display all the Craft targeting a point on the Globe.
  */
 class TargetInfoState
 	:
@@ -45,7 +45,7 @@ class TargetInfoState
 
 private:
 	AlienBase* _aBase;
-	GeoscapeState* _state;
+	GeoscapeState* _geoState;
 	Target* _target;
 	Text
 		* _txtTitle,
@@ -59,11 +59,11 @@ private:
 
 
 	public:
-		/// Creates the Target Info state.
+		/// Creates the TargetInfo state.
 		TargetInfoState(
 				Target* const target,
-				GeoscapeState* const state);
-		/// Cleans up the Target Info state.
+				GeoscapeState* const geoState);
+		/// Cleans up the TargetInfo state.
 		~TargetInfoState();
 
 		/// Edits an aLienBase's name.

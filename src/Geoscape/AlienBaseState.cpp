@@ -23,8 +23,8 @@
 
 #include "AlienBaseState.h"
 
-#include "GeoscapeState.h"
-#include "Globe.h"
+//#include "GeoscapeState.h"
+//#include "Globe.h"
 
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
@@ -51,18 +51,20 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the AlienBase discovered window.
  * @param aBase		- pointer to the AlienBase to get info from
- * @param geoState	- pointer to the GeoscapeState
+// * @param geoState	- pointer to the GeoscapeState
+ * @param recon		- true if detected by Craft reconnaissance
  */
 AlienBaseState::AlienBaseState(
-		const AlienBase* const aBase,
-		GeoscapeState* const geoState)
+		AlienBase* const aBase,
+//		GeoscapeState* const geoState,
+		bool recon)
 	:
-		_aBase(aBase),
-		_geoState(geoState)
+		_aBase(aBase)
+//		_geoState(geoState)
 {
 	_window		= new Window(this, 320, 200);
-	_txtTitle	= new Text(308, 60, 6, 60);
-	_btnOk		= new TextButton(50, 12, 135, 180);
+	_txtTitle	= new Text(300, 180, 10, 0);
+	_btnOk		= new TextButton(100, 16, 110, 180);
 
 	setInterface("alienBase");
 
@@ -88,50 +90,52 @@ AlienBaseState::AlienBaseState(
 					Options::keyCancel);
 
 	_txtTitle->setAlign(ALIGN_CENTER);
+	_txtTitle->setVerticalAlign(ALIGN_MIDDLE);
 	_txtTitle->setBig();
 	_txtTitle->setWordWrap();
+
+
+	_aBase->setDetected();
+	_aBase->setId(_game->getSavedGame()->getCanonicalId("STR_ALIEN_BASE"));
+
 
 	const double
 		lon (_aBase->getLongitude()),
 		lat (_aBase->getLatitude());
 
-	std::wstring
-		regionType,
-		countryType,
-		loc;
-
-	for (std::vector<Country*>::iterator
-			i = _game->getSavedGame()->getCountries()->begin();
-			i != _game->getSavedGame()->getCountries()->end();
-			++i)
-	{
-		if ((*i)->getRules()->insideCountry(lon,lat))
-		{
-			countryType = tr((*i)->getRules()->getType());
-			break;
-		}
-	}
-
-	for (std::vector<Region*>::iterator
+	std::wstring loc; // NOTE: Regions cover all areas of the Globe. Don't eff it up Lol.
+	for (std::vector<Region*>::const_iterator
 			i = _game->getSavedGame()->getRegions()->begin();
 			i != _game->getSavedGame()->getRegions()->end();
 			++i)
 	{
 		if ((*i)->getRules()->insideRegion(lon,lat))
 		{
-			regionType = tr((*i)->getRules()->getType());
+			loc = tr((*i)->getRules()->getType());
 			break;
 		}
 	}
-
-	if (countryType.empty() == false)
-		loc = tr("STR_COUNTRIES_COMMA").arg(countryType).arg(regionType);
-	else if (regionType.empty() == false)
-		loc = regionType;
-	else
+	for (std::vector<Country*>::const_iterator
+			i = _game->getSavedGame()->getCountries()->begin();
+			i != _game->getSavedGame()->getCountries()->end();
+			++i)
+	{
+		if ((*i)->getRules()->insideCountry(lon,lat))
+		{
+			loc += L"> ";
+			loc += tr((*i)->getRules()->getType());
+			break;
+		}
+	}
+	if (loc.empty() == true)
 		loc = tr("STR_UNKNOWN");
 
-	_txtTitle->setText(tr("STR_XCOM_AGENTS_HAVE_LOCATED_AN_ALIEN_BASE_IN_REGION").arg(loc));
+	std::string st;
+	if (recon == true)
+		st = "STR_ALIEN_BASE_DETECT_BY_CRAFT";
+	else
+		st = "STR_ALIEN_BASE_DETECT_BY_SECRET_AGENTS";
+	_txtTitle->setText(tr(st).arg(loc)); // TODO: Add canonical-ID.
 }
 
 /**
@@ -146,10 +150,10 @@ AlienBaseState::~AlienBaseState()
  */
 void AlienBaseState::btnOkClick(Action*)
 {
-	_geoState->resetTimer();
-	_geoState->getGlobe()->center(
-								_aBase->getLongitude(),
-								_aBase->getLatitude());
+//	_geoState->resetTimer();
+//	_geoState->getGlobe()->center(
+//								_aBase->getLongitude(),
+//								_aBase->getLatitude());
 	_game->popState();
 }
 

@@ -27,7 +27,7 @@ namespace OpenXcom
 {
 
 class AlienBase;
-class GeoscapeState;
+//class GeoscapeState;
 class Text;
 class TextButton;
 class Window;
@@ -43,8 +43,8 @@ class AlienBaseState
 
 private:
 
-	const AlienBase* _aBase;
-	GeoscapeState* _geoState;
+	AlienBase* _aBase;
+//	GeoscapeState* _geoState;
 	Text* _txtTitle;
 	TextButton* _btnOk;
 	Window* _window;
@@ -52,11 +52,12 @@ private:
 
 	public:
 
-		/// Creates the Alien Base Detected state.
+		/// Creates the AlienBaseDetected state.
 		AlienBaseState(
-				const AlienBase* const aBase,
-				GeoscapeState* const geoState);
-		/// Cleans up the Alien Base Detected state.
+				AlienBase* const aBase,
+//				GeoscapeState* const geoState,
+				bool recon);
+		/// Cleans up the AlienBaseDetected state.
 		~AlienBaseState();
 
 		/// Handler for clicking the OK button.

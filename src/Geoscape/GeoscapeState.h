@@ -213,24 +213,24 @@ private:
 		void updateTimeDisplay();
 		/// Converts the date to a month string.
 		std::wstring convertDateToMonth(int date);
-		/// Advances the game timer.
+		/// Advances the game-timer.
 		void timeAdvance();
-		/// Trigger whenever 5 seconds pass.
+		/// Triggers whenever 5 seconds pass.
 		void time5Seconds();
-		/// Trigger whenever 10 minutes pass.
+		/// Triggers whenever 10 minutes pass.
 		void time10Minutes();
-		/// Trigger whenever 30 minutes pass.
+		/// Triggers whenever 30 minutes pass.
 		void time30Minutes();
-		/// Trigger whenever 1 hour passes.
+		/// Triggers whenever 1 hour passes.
 		void time1Hour();
-		/// Trigger whenever 1 day passes.
+		/// Triggers whenever 1 day passes.
 		void time1Day();
-		/// Trigger whenever 1 month passes.
+		/// Triggers whenever 1 month passes.
 		void time1Month();
 
-		/// Resets the timer to minimum speed.
+		/// Sets the time-compression to minimum 5-sec intervals.
 		void resetTimer();
-		/// Gets if time compression is set to 5 second intervals.
+		/// Gets if time-compression is set to 5 second intervals.
 		bool is5Sec() const;
 
 		/// Displays a popup window.
