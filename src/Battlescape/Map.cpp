@@ -2378,11 +2378,11 @@ void Map::calcWalkOffset( // private.
 
 				// if unit is between tiles interpolate its terrain level (y-adjustment).
 				const int
-					posLastZ (unit->getStartPosition().z),
-					posDestZ (unit->getStopPosition().z);
+					posStartZ (unit->getStartPosition().z),
+					posStopZ (unit->getStopPosition().z);
 				int
 					levelStart,
-					levelEnd;
+					levelStop;
 
 				if (start == true)
 				{
@@ -2391,24 +2391,24 @@ void Map::calcWalkOffset( // private.
 					else if (dirVert == Pathfinding::DIR_DOWN)
 						offset->y += (trueLoc == true) ? 0 : -offsetFalseVert;
 
-					levelEnd = getTerrainLevel(
+					levelStop = getTerrainLevel(
 											unit->getStopPosition(),
 											armorSize);
 
-					if (posLastZ > posDestZ)		// going down a level so 'levelEnd' 0 becomes +24 (-8 becomes 16)
-						levelEnd += 24 * (posLastZ - posDestZ);
-					else if (posLastZ < posDestZ)	// going up a level so 'levelEnd' 0 becomes -24 (-8 becomes -16)
-						levelEnd = -24 * (posDestZ - posLastZ) + std::abs(levelEnd);
+					if (posStartZ > posStopZ)		// going down a level so 'levelStop' 0 becomes +24 (-8 becomes 16)
+						levelStop += 24 * (posStartZ - posStopZ);
+					else if (posStartZ < posStopZ)	// going up a level so 'levelStop' 0 becomes -24 (-8 becomes -16)
+						levelStop = -24 * (posStopZ - posStartZ) + std::abs(levelStop);
 
 					levelStart = getTerrainLevel(
 											unit->getPosition(),
 											armorSize);
-					offset->y += ((levelStart * (fullPhase - walkPhase)) / fullPhase) + ((levelEnd * walkPhase) / fullPhase);
+					offset->y += ((levelStart * (fullPhase - walkPhase)) / fullPhase) + ((levelStop * walkPhase) / fullPhase);
 					if (trueLoc == false && dirVert == 0)
 					{
-						if (posLastZ > posDestZ)
+						if (posStartZ > posStopZ)
 							offset->y -= offsetFalseVert;
-						else if (posLastZ < posDestZ)
+						else if (posStartZ < posStopZ)
 							offset->y += offsetFalseVert;
 					}
 				}
@@ -2423,21 +2423,21 @@ void Map::calcWalkOffset( // private.
 											unit->getStartPosition(),
 											armorSize);
 
-					if (posLastZ > posDestZ)		// going down a level so 'levelStart' 0 becomes -24 (-8 becomes -32)
-						levelStart -= 24 * (posLastZ - posDestZ);
-					else if (posLastZ < posDestZ)	// going up a level so 'levelStart' 0 becomes +24 (-8 becomes 16)
-						levelStart =  24 * (posDestZ - posLastZ) - std::abs(levelStart);
+					if (posStartZ > posStopZ)		// going down a level so 'levelStart' 0 becomes -24 (-8 becomes -32)
+						levelStart -= 24 * (posStartZ - posStopZ);
+					else if (posStartZ < posStopZ)	// going up a level so 'levelStart' 0 becomes +24 (-8 becomes 16)
+						levelStart =  24 * (posStopZ - posStartZ) - std::abs(levelStart);
 
-					levelEnd = getTerrainLevel(
+					levelStop = getTerrainLevel(
 											unit->getStopPosition(),
 											armorSize);
-					offset->y += ((levelStart * (fullPhase - walkPhase)) / fullPhase) + ((levelEnd * walkPhase) / fullPhase);
+					offset->y += ((levelStart * (fullPhase - walkPhase)) / fullPhase) + ((levelStop * walkPhase) / fullPhase);
 
 					if (trueLoc == false && dirVert == 0)
 					{
-						if (posLastZ > posDestZ)
+						if (posStartZ > posStopZ)
 							offset->y += offsetFalseVert;
-						else if (posLastZ < posDestZ)
+						else if (posStartZ < posStopZ)
 							offset->y -= offsetFalseVert;
 					}
 				}

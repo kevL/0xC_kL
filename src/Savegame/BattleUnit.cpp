@@ -719,35 +719,32 @@ void BattleUnit::setRecolor(
 		int utileLook,
 		int rankLook)
 {
-	const size_t qtyGroups = 4;
-	std::pair<int, int> colors[qtyGroups] =
+	static const size_t GROUPS (4);
+	std::pair<int,int> colors[GROUPS] =
 	{
 		std::make_pair(
-					_armor->getFaceColorGroup(),
-					_armor->getFaceColor(basicLook)),
+					_armor->getColorGroupFace(),
+					_armor->getColorFace(basicLook)),
 		std::make_pair(
-					_armor->getHairColorGroup(),
-					_armor->getHairColor(basicLook)),
+					_armor->getColorGroupHair(),
+					_armor->getColorHair(basicLook)),
 		std::make_pair(
-					_armor->getUtileColorGroup(),
-					_armor->getUtileColor(utileLook)),
+					_armor->getColorGroupUtile(),
+					_armor->getColorUtile(utileLook)),
 		std::make_pair(
-					_armor->getRankColorGroup(),
-					_armor->getRankColor(rankLook)),
+					_armor->getColorGroupRank(),
+					_armor->getColorRank(rankLook)),
 	};
 
 	for (size_t
 			i = 0;
-			i != qtyGroups;
+			i != GROUPS;
 			++i)
 	{
-		if (colors[i].first > 0
-			&& colors[i].second > 0)
-		{
+		if (colors[i].first > 0 && colors[i].second > 0)
 			_recolor.push_back(std::make_pair(
 										colors[i].first << 4,
 										colors[i].second));
-		}
 	}
 }
 

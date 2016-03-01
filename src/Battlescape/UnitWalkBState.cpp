@@ -600,15 +600,14 @@ bool UnitWalkBState::doStatusStand() // private.
 			else
 				unitBlockBelow = nullptr;
 
-			// can't walk into units in this tile, or on top of other units sticking their head into this tile
+			// can't walk into units in this tile or on top of other units sticking their head into this tile
 			if (_falling == false
 				&& ((unitBlock != nullptr
 						&& unitBlock != _unit)
-					|| (tileBelowDest != nullptr
-						&& unitBlockBelow != nullptr
+					|| (unitBlockBelow != nullptr
 						&& unitBlockBelow != _unit
 						&& unitBlockBelow->getHeight(true) - tileBelowDest->getTerrainLevel() > 27)))
-						// 4+ voxels poking into the tile above, we don't kick people in the head here at XCom.
+						// 4+ voxels poking into the tile above -- we don't kick people in the head here at XCOM.
 						// kL_note: this appears to be only +2 in Pathfinding....
 			{
 				//Log(LOG_INFO) << ". . . obstacle(unit) -> abortPath()";

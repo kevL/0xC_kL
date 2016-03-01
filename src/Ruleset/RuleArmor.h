@@ -67,13 +67,13 @@ private:
 	int
 		_agility,
 
+		_firePhase,
 		_deathFrames,
 		_shootFrames,
-		_firePhase,
 
 		_frontArmor,
-		_sideArmor,
 		_rearArmor,
+		_sideArmor,
 		_underArmor,
 
 		_drawRoutine,
@@ -81,10 +81,10 @@ private:
 		_size,
 		_weight,
 
-		_faceColorGroup,
-		_hairColorGroup,
-		_utileColorGroup,
-		_rankColorGroup;
+		_colorGroupFace,
+		_colorGroupHair,
+		_colorGroupRank,
+		_colorGroupUtile;
 
 	float _damageModifier[DAMAGE_TYPES];
 
@@ -93,30 +93,30 @@ private:
 	UnitStats _stats;
 
 	std::vector<int>
-		_faceColor,
-		_hairColor,
-		_utileColor,
-		_rankColor;
+		_colorFace,
+		_colorHair,
+		_colorRank,
+		_colorUtile;
 	std::vector<size_t> _loftSet;
 	std::vector<std::string>
 		_corpseBattle,
 		_units;
 
 	public:
-		/// Creates a blank armor ruleset.
+		/// Creates a blank Armor rule.
 		explicit RuleArmor(const std::string& type);
-		/// Cleans up the armor ruleset.
+		/// Cleans up an Armor's ruleset.
 		~RuleArmor();
 
-		/// Loads the armor data from YAML.
+		/// Loads an Armor's data from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets the armor's type.
+		/// Gets an Armor's type.
 		std::string getType() const;
 
-		/// Gets the unit's sprite sheet.
+		/// Gets an Armor's sprite sheet.
 		std::string getSpriteSheet() const;
-		/// Gets the unit's inventory sprite.
+		/// Gets an Armor's inventory sprite.
 		std::string getSpriteInventory() const;
 
 		/// Gets the front armor level.
@@ -133,20 +133,20 @@ private:
 		/// Gets the Battlescape corpse item.
 		const std::vector<std::string>& getCorpseBattlescape() const;
 
-		/// Gets the stores item.
+		/// Gets the storage item-ID.
 		std::string getStoreItem() const;
 
 		/// Gets the special weapon type.
 //		std::string getSpecialWeapon() const;
 
-		/// Gets the battlescape drawing routine ID.
+		/// Gets the battlescape drawing-routine for an Armor.
 		int getDrawRoutine() const;
 
-		/// Gets whether the armor can fly.
-		/// DO NOT USE THIS FUNCTION OUTSIDE THE BATTLEUNIT CONSTRUCTOR OR I WILL HUNT YOU DOWN and kiss you.
+		/// Gets whether an Armor allows flight.
+		/// DO NOT USE THIS FUNCTION OUTSIDE THE BATTLEUNIT CONSTRUCTOR OR I WILL HUNT YOU DOWN and kiss you. On the lips.
 		MovementType getMoveTypeArmor() const;
 
-		/// Gets whether this is a normal or big unit.
+		/// Gets whether an Armor is for a small or large BattleUnit.
 		int getSize() const;
 
 		/// Gets damage modifier.
@@ -155,57 +155,57 @@ private:
 		/// Gets loftSet.
 		const std::vector<size_t>& getLoftSet() const;
 
-		/// Gets the armor's stats.
+		/// Gets an Armor's stats.
 		const UnitStats* getStats() const;
 
-		/// Gets the armor's weight.
+		/// Gets an Armor's weight.
 		int getWeight() const;
 
 		/// Gets number of death frames.
 		int getDeathFrames() const;
 		/// Gets number of shoot frames.
 		int getShootFrames() const;
-		/// Gets the frame of the armor's aiming-animation that first shows a projectile.
+		/// Gets the frame of an Armor's aiming-animation that first shows a projectile.
 		int getFirePhase() const;
 
-		/// Gets if armor uses constant animation.
+		/// Gets if an Armor uses constant animation.
 		bool getConstantAnimation() const;
 
-		/// Gets if armor can hold weapon.
+		/// Gets if an Armor can hold a weapon.
 		bool getCanHoldWeapon() const;
 
-		/// Checks if this armor ignores gender (power suit/flying suit).
+		/// Checks if an Armor ignores gender (power suit/flying suit).
 		ForcedTorso getForcedTorso() const;
 
 		/// Gets face base color.
-		int getFaceColorGroup() const;
+		int getColorGroupFace() const;
 		/// Gets hair base color.
-		int getHairColorGroup() const;
-		/// Get utile base color.
-		int getUtileColorGroup() const;
-		/// Get rank base color.
-		int getRankColorGroup() const;
-		/// Get face color.
-		int getFaceColor(int id) const;
-		/// Get hair color.
-		int getHairColor(int id) const;
-		/// Get utile color.
-		int getUtileColor(int id) const;
-		/// Get rank color.
-		int getRankColor(int id) const;
+		int getColorGroupHair() const;
+		/// Gets utile base color.
+		int getColorGroupUtile() const;
+		/// Gets rank base color.
+		int getColorGroupRank() const;
+		/// Gets face color.
+		int getColorFace(int id) const;
+		/// Gets hair color.
+		int getColorHair(int id) const;
+		/// Gets utile color.
+		int getColorUtile(int id) const;
+		/// Gets rank color.
+		int getColorRank(int id) const;
 
-		/// Checks if this Armor's inventory be accessed.
+		/// Checks if an Armor's inventory can be accessed.
 		bool hasInventory() const;
 
-		/// Gets this Armor's applicable BattleUnits.
+		/// Gets an Armor's applicable BattleUnits.
 		const std::vector<std::string>& getUnits() const;
 
-		/// Gets if this Armor is basic (lowest rank, standard issue wear).
+		/// Gets if an Armor is basic (lowest rank, standard issue wear).
 		bool isBasic() const;
-		/// Gets if this Armor is powered and suitable for Mars.
+		/// Gets if an Armor is powered and suitable for Mars.
 		bool isSpacesuit() const;
 
-		/// Gets this Armor's agility used to determine stamina expenditure.
+		/// Gets an Armor's agility used to determine stamina expenditure.
 		int getAgility() const;
 };
 
