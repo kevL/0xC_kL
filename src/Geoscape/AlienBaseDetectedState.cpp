@@ -21,7 +21,7 @@
 #	define _USE_MATH_DEFINES
 #endif
 
-#include "AlienBaseState.h"
+#include "AlienBaseDetectedState.h"
 
 //#include "GeoscapeState.h"
 //#include "Globe.h"
@@ -49,12 +49,12 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the AlienBase discovered window.
+ * Initializes all the elements in the AlienBaseDetected window.
  * @param aBase		- pointer to the AlienBase to get info from
 // * @param geoState	- pointer to the GeoscapeState
  * @param recon		- true if detected by Craft reconnaissance
  */
-AlienBaseState::AlienBaseState(
+AlienBaseDetectedState::AlienBaseDetectedState(
 		AlienBase* const aBase,
 //		GeoscapeState* const geoState,
 		bool recon)
@@ -78,15 +78,15 @@ AlienBaseState::AlienBaseState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& AlienBaseState::btnOkClick);
+	_btnOk->onMouseClick((ActionHandler)& AlienBaseDetectedState::btnOkClick);
 	_btnOk->onKeyboardPress(
-					(ActionHandler)& AlienBaseState::btnOkClick,
+					(ActionHandler)& AlienBaseDetectedState::btnOkClick,
 					Options::keyOk);
 	_btnOk->onKeyboardPress(
-					(ActionHandler)& AlienBaseState::btnOkClick,
+					(ActionHandler)& AlienBaseDetectedState::btnOkClick,
 					Options::keyOkKeypad);
 	_btnOk->onKeyboardPress(
-					(ActionHandler)& AlienBaseState::btnOkClick,
+					(ActionHandler)& AlienBaseDetectedState::btnOkClick,
 					Options::keyCancel);
 
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -141,14 +141,14 @@ AlienBaseState::AlienBaseState(
 /**
  * dTor.
  */
-AlienBaseState::~AlienBaseState()
+AlienBaseDetectedState::~AlienBaseDetectedState()
 {}
 
 /**
  * Returns to the previous screen.
  * @param action - pointer to an Action
  */
-void AlienBaseState::btnOkClick(Action*)
+void AlienBaseDetectedState::btnOkClick(Action*)
 {
 //	_geoState->resetTimer();
 //	_geoState->getGlobe()->center(

@@ -32,7 +32,7 @@
 
 #include "../fmath.h"
 
-#include "AlienBaseState.h"
+#include "AlienBaseDetectedState.h"
 #include "BaseDefenseState.h"
 #include "BaseDestroyedState.h"
 #include "ConfirmLandingState.h"
@@ -2031,7 +2031,7 @@ void GeoscapeState::time10Minutes()
 							{
 								//Log(LOG_INFO) << ". . . . aLienBase discovered";
 								resetTimer();
-								popup(new AlienBaseState(*k, true));
+								popup(new AlienBaseDetectedState(*k, true));
 							}
 						}
 					}
@@ -3301,7 +3301,7 @@ void GeoscapeState::time1Month()
 				if ((*i)->isDetected() == false && RNG::percent(5 + pct) == true)
 				{
 					resetTimer();
-					popup(new AlienBaseState(*i, false));
+					popup(new AlienBaseDetectedState(*i, false));
 				}
 			}
 		}

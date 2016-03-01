@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_ALIENBASESTATE_H
-#define OPENXCOM_ALIENBASESTATE_H
+#ifndef OPENXCOM_ALIENBASEDETECTEDSTATE_H
+#define OPENXCOM_ALIENBASEDETECTEDSTATE_H
 
 #include "../Engine/State.h"
 
@@ -34,9 +34,9 @@ class Window;
 
 
 /**
- * Displays info on an aLien-base.
+ * Displays text to the effect that an aLien-base has been detected.
  */
-class AlienBaseState
+class AlienBaseDetectedState
 	:
 		public State
 {
@@ -53,12 +53,12 @@ private:
 	public:
 
 		/// Creates the AlienBaseDetected state.
-		AlienBaseState(
+		AlienBaseDetectedState(
 				AlienBase* const aBase,
 //				GeoscapeState* const geoState,
 				bool recon);
 		/// Cleans up the AlienBaseDetected state.
-		~AlienBaseState();
+		~AlienBaseDetectedState();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
