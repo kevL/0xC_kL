@@ -1669,65 +1669,59 @@ inline void BattlescapeState::handle(Action* action)
 					}
 					else
 					{
+						bool casualties (false);
 						switch (action->getDetails()->key.keysym.sym)
 						{
-							case SDLK_d:												// "ctrl-d" - debug already enabled.
+							case SDLK_d:										// "ctrl-d" - debug already enabled.
 								printDebug(L"debug already active");
 								break;
 
-							case SDLK_v:												// "ctrl-v" - reset tile visibility.
+							case SDLK_v:										// "ctrl-v" - reset tile visibility.
 								beep = true;
 								printDebug(L"blacking all tiles");
 								_battleSave->blackTiles();
 								break;
 
-							default:
-							{
-								bool checkCasualties (false);
-								switch (action->getDetails()->key.keysym.sym)
+							case SDLK_k:										// "ctrl-k" - kill all aliens.
+								beep = true; //MB_ICONERROR
+								printDebug(L"dispersing influenza");
+								for (std::vector<BattleUnit*>::const_iterator
+										i = _battleSave->getUnits()->begin();
+										i !=_battleSave->getUnits()->end();
+										++i)
 								{
-									case SDLK_k:										// "ctrl-k" - kill all aliens.
-										beep = true; //MB_ICONERROR
-										printDebug(L"dispersing influenza");
-										for (std::vector<BattleUnit*>::const_iterator
-												i = _battleSave->getUnits()->begin();
-												i !=_battleSave->getUnits()->end();
-												++i)
-										{
-											if ((*i)->getOriginalFaction() == FACTION_HOSTILE
-												&& (*i)->isOut_t(OUT_HEALTH) == false)
-											{
-												checkCasualties = true;
-												(*i)->setHealth(0);
-//												(*i)->takeDamage(Position(0,0,0), 1000, DT_AP, true);
-											}
-										}
-										break;
-
-									case SDLK_j:										// "ctrl-j" - stun all aliens.
-										beep = true; //MB_ICONWARNING
-										printDebug(L"deploying Celine Dione");
-										for (std::vector<BattleUnit*>::const_iterator
-											i = _battleSave->getUnits()->begin();
-											i !=_battleSave->getUnits()->end();
-											++i)
-										{
-											if ((*i)->getOriginalFaction() == FACTION_HOSTILE
-												&& (*i)->isOut_t(OUT_HEALTH) == false)
-											{
-												checkCasualties = true;
-												(*i)->setStun((*i)->getHealth() + 1000);
-//												(*i)->takeDamage(Position(0,0,0), 1000, DT_STUN, true);
-											}
-										}
+									if ((*i)->getOriginalFaction() == FACTION_HOSTILE
+										&& (*i)->isOut_t(OUT_HEALTH) == false)
+									{
+										casualties = true;
+										(*i)->setHealth(0);
+//										(*i)->takeDamage(Position(0,0,0), 1000, DT_AP, true);
+									}
 								}
+								break;
 
-								if (checkCasualties == true)
+							case SDLK_j:										// "ctrl-j" - stun all aliens.
+								beep = true; //MB_ICONWARNING
+								printDebug(L"deploying Celine Dione");
+								for (std::vector<BattleUnit*>::const_iterator
+									i = _battleSave->getUnits()->begin();
+									i !=_battleSave->getUnits()->end();
+									++i)
 								{
-									_battleGame->checkForCasualties(nullptr, nullptr, true);
-									_battleGame->handleState();
+									if ((*i)->getOriginalFaction() == FACTION_HOSTILE
+										&& (*i)->isOut_t(OUT_HEALTH) == false)
+									{
+										casualties = true;
+										(*i)->setStun((*i)->getHealth() + 1000);
+//										(*i)->takeDamage(Position(0,0,0), 1000, DT_STUN, true);
+									}
 								}
-							}
+						}
+
+						if (casualties == true)
+						{
+							_battleGame->checkCasualties(nullptr, nullptr, true);
+							_battleGame->handleState();
 						}
 					}
 				}
@@ -1776,13 +1770,13 @@ inline void BattlescapeState::handle(Action* action)
 			if (beep == true) MessageBeep(MB_OK);
 #endif
 		}
-/*		else if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
-		{
-			if (action->getDetails()->button.button == SDL_BUTTON_X1)
-				btnNextUnitPress(action);
-			else if (action->getDetails()->button.button == SDL_BUTTON_X2)
-				btnPrevUnitPress(action);
-		} */
+//		else if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
+//		{
+//			if (action->getDetails()->button.button == SDL_BUTTON_X1)
+//				btnNextUnitPress(action);
+//			else if (action->getDetails()->button.button == SDL_BUTTON_X2)
+//				btnPrevUnitPress(action);
+//		}
 	}
 }
 
@@ -4797,9 +4791,9 @@ void BattlescapeState::saveVoxelMap()
 					x < _battleSave->getMapSizeX() * 16;
 					++x)
 			{
-				int voxelTest = static_cast<int>(_battleSave->getTileEngine()->voxelCheck(
-																				Position(x,y,z * 2),
-																				0,0)) + 1;
+				int voxelTest = static_cast<int>(_battleSave->getTileEngine()->detVoxelType(
+																						Position(x,y,z * 2),
+																						0,0)) + 1;
 				float dist = 1.f;
 
 				if (x % 16 == 15)

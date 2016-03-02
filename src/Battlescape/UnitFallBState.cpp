@@ -370,8 +370,8 @@ void UnitFallBState::think()
 					}
 				}
 
-				//Log(LOG_INFO) << ". . checkForCasualties()";
-				_parent->checkForCasualties(nullptr, *i);
+				//Log(LOG_INFO) << ". . checkCasualties()";
+				_parent->checkCasualties(nullptr, *i);
 			}
 		}
 

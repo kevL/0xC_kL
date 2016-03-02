@@ -3610,18 +3610,18 @@ void BattleUnit::morphine()
 		_stunLevel += 7 + RNG::generate(0,6);
 		const float healthPct (static_cast<float>(_health) / static_cast<float>(getBattleStats()->health));
 		_morale = std::min(100,
-						_morale + 50 - static_cast<int>(30.f * healthPct));
+						   _morale + 50 - static_cast<int>(30.f * healthPct));
 	}
 
 	if (isOut_t(OUT_HEALTH) == true			// just died. Use death animations
-		|| (isOut_t(OUT_STUNNED) == true		// unless already unconscious.
+		|| (isOut_t(OUT_STUNNED) == true	// unless already unconscious.
 			&& isOut_t(OUT_STAT) == false))
 	{
-		_battleGame->checkForCasualties(
-									_battleGame->getTacticalAction()->weapon,
-									_battleGame->getTacticalAction()->actor,
-									false,false,
-									isOut_t(OUT_STAT) == true); // 'execution' (no death animations) unless unit is unconscious already.
+		_battleGame->checkCasualties(
+								_battleGame->getTacticalAction()->weapon,
+								_battleGame->getTacticalAction()->actor,
+								false, false,
+								isOut_t(OUT_STAT) == true); // 'execution' (no death animations) unless unit is unconscious already.
 	}
 }
 

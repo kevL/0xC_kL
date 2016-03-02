@@ -36,7 +36,7 @@ class BattleItem;
 class BattlescapeState;
 class BattleState;
 class BattleUnit;
-class InfoboxOKState;
+class InfoboxDialogState;
 class Map;
 class Pathfinding;
 class ResourcePack;
@@ -216,7 +216,7 @@ private:
 	std::list<BattleState*>
 		_deletedStates,
 		_battleStates;
-	std::vector<InfoboxOKState*> _infoboxQueue;
+	std::vector<InfoboxDialogState*> _infoboxQueue;
 
 
 	/// Determines whether there are any actions pending for the given unit.
@@ -289,12 +289,12 @@ private:
 		bool kneel(BattleUnit* const unit);
 
 		/// Checks for casualties in battle.
-		void checkForCasualties(
+		void checkCasualties(
 				const BattleItem* const weapon = nullptr,
 				BattleUnit* attacker = nullptr,
 				bool hiddenExpl = false,
 				bool terrainExpl = false,
-				bool execution = false);
+				bool liquidate = false);
 		/// Checks if a BattleUnit gets exposed after making a melee-attack.
 		void checkExposedByMelee(BattleUnit* const unit) const;
 

@@ -30,7 +30,7 @@
 #include "CivilianBAIState.h"
 #include "ExplosionBState.h"
 #include "Explosion.h"
-#include "InfoboxOKState.h"
+#include "InfoboxDialogState.h"
 #include "InfoboxState.h"
 #include "Inventory.h"
 #include "Map.h"
@@ -102,7 +102,7 @@ BattlescapeGame::BattlescapeGame(
 	_debugPlay = false;
 
 	cancelTacticalAction();
-	checkForCasualties(nullptr, nullptr, true);
+	checkCasualties(nullptr, nullptr, true);
 
 //	_tacAction.actor = nullptr;
 //	_tacAction.type = BA_NONE;
@@ -1129,7 +1129,7 @@ void BattlescapeGame::liquidateUnit() // private.
 
 		Uint32 interval (static_cast<Uint32>(
 						 std::max(1,
-								static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION) - itRule->getExplosionSpeed())));
+								  static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION) - itRule->getExplosionSpeed())));
 		setStateInterval(interval);
 	}
 
@@ -1140,7 +1140,7 @@ void BattlescapeGame::liquidateUnit() // private.
 	_tacAction.targetUnit->setHealth(0);
 	_tacAction.targetUnit = nullptr;
 
-	checkForCasualties(
+	checkCasualties(
 				_tacAction.weapon,
 				_tacAction.actor,
 				false, false, true);
@@ -1462,7 +1462,7 @@ void BattlescapeGame::endTurn() // private.
 //	_endTurnProcessed = false;
 
 
-	checkForCasualties();
+	checkCasualties();
 
 	int // if all units from either faction are killed - the mission is over.
 		liveHostile,
@@ -1550,24 +1550,24 @@ void BattlescapeGame::endTurn() // private.
  * @param attacker		- pointer to credit the kill (default nullptr)
  * @param hiddenExpl	- true for UFO Power Source explosions at the start of battlescape (default false)
  * @param terrainExpl	- true for terrain explosions (default false)
- * @param execution		- true if called by an execution (default false)
+ * @param liquidate		- true if called by an execution (default false)
  */
-void BattlescapeGame::checkForCasualties(
+void BattlescapeGame::checkCasualties(
 		const BattleItem* const weapon,
 		BattleUnit* attacker,
 		bool hiddenExpl,
 		bool terrainExpl,
-		bool execution)
+		bool liquidate)
 {
-	//Log(LOG_INFO) << "BattlescapeGame::checkForCasualties()"; if (attacker != nullptr) Log(LOG_INFO) << ". id-" << attacker->getId();
+	//Log(LOG_INFO) << "BattlescapeGame::checkCasualties()"; if (attacker != nullptr) Log(LOG_INFO) << ". id-" << attacker->getId();
 
 	// If the victim was killed by the attacker's death explosion,
 	// fetch who killed the attacker and make THAT the attacker!
-	if (attacker != nullptr && execution == false)
+	if (attacker != nullptr && liquidate == false)
 	{
 		if (attacker->getUnitStatus() == STATUS_DEAD
-			&& attacker->getMurdererId() != 0
-			&& attacker->getSpecialAbility() == SPECAB_EXPLODE)
+			&& attacker->getSpecialAbility() == SPECAB_EXPLODE	// TODO: Factor in tile explosions. Eg. hit a barrel -
+			&& attacker->getMurdererId() != 0)					// it explodes and transfers any kills to a shooter.
 		{
 			for (std::vector<BattleUnit*>::const_iterator
 					i = _battleSave->getUnits()->begin();
@@ -1587,7 +1587,6 @@ void BattlescapeGame::checkForCasualties(
 		// things differently ... see note in TileEngine::checkReactionFire().
 		checkExposedByMelee(attacker);
 	}
-	// kL_note: what about tile explosions
 
 
 	std::string
@@ -1650,26 +1649,29 @@ void BattlescapeGame::checkForCasualties(
 		converted,
 		bypass;
 	std::vector<BattleUnit*> convertedUnits;
+	BattleUnit* defender;
 
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		if ((*i)->getUnitStatus() != STATUS_LIMBO) // kL_tentative.
+		defender = *i; // <- a helpful label for ptrIterator.
+
+		if (defender->getUnitStatus() != STATUS_LIMBO) // kL_tentative.
 		{
-			dead = (*i)->isOut_t(OUT_HEALTH);
-			stunned = (*i)->isOut_t(OUT_STUNNED);
+			dead = defender->isOut_t(OUT_HEALTH);
+			stunned = defender->isOut_t(OUT_STUNNED);
 
 			converted =
 			bypass = false;
 
 			if (dead == false) // for converting infected units that aren't dead.
 			{
-				if ((*i)->getSpawnType() == "STR_ZOMBIE") // human->zombie (nobody cares about zombie->chryssalid)
+				if (defender->getSpawnType() == "STR_ZOMBIE") // human->zombie (nobody cares about zombie->chryssalid)
 				{
 					converted = true; // do morale changes but not collapsing animations.
-					convertedUnits.push_back(*i);
+					convertedUnits.push_back(defender);
 				}
 				else if (stunned == false)
 					bypass = true;
@@ -1677,8 +1679,6 @@ void BattlescapeGame::checkForCasualties(
 
 			if (bypass == false)
 			{
-				BattleUnit* const defender (*i); // kL
-
 				// Awards: decide victim race and rank
 				// TODO: if a unit was stunned but gets up and is re-stunned or killed,
 				// erase it from the previous attacker's BattleUnitKill vector and add
@@ -1724,7 +1724,7 @@ void BattlescapeGame::checkForCasualties(
 						&& defender->getUnitStatus() != STATUS_DISABLED)	// kL
 					|| converted == true)
 				{
-					if (execution == true)
+					if (liquidate == true)
 						defender->instaKill();
 					else if (dead == true)
 						defender->setUnitStatus(STATUS_DISABLED);
@@ -1733,21 +1733,21 @@ void BattlescapeGame::checkForCasualties(
 					if (attacker != nullptr)
 					{
 						defender->killedBy(attacker->getFaction()); // used in DebriefingState.
-						//Log(LOG_INFO) << "BSG::checkForCasualties() " << defender->getId() << " killedBy = " << (int)attacker->getFaction();
+						//Log(LOG_INFO) << "BSG::checkCasualties() " << defender->getId() << " killedBy = " << (int)attacker->getFaction();
 
 						if (attacker->getGeoscapeSoldier() != nullptr)
 						{
 							defender->setMurdererId(attacker->getId());
 							attacker->getStatistics()->kills.push_back(new BattleUnitKill(
-																						killStatRank,
-																						killStatRace,
-																						killStatWeapon,
-																						killStatWeaponAmmo,
-																						defender->getFaction(),
-																						STATUS_DEAD,
-																						killStatMission,
-																						killStatTurn,
-																						killStatPoints));
+																					killStatRank,
+																					killStatRace,
+																					killStatWeapon,
+																					killStatWeaponAmmo,
+																					defender->getFaction(),
+																					STATUS_DEAD,
+																					killStatMission,
+																					killStatTurn,
+																					killStatPoints));
 						}
 
 						if (attacker->isMoralable() == true)
@@ -1882,7 +1882,7 @@ void BattlescapeGame::checkForCasualties(
 					}
 //					}
 
-					if (execution == false && converted == false)
+					if (liquidate == false && converted == false)
 					{
 						DamageType dType;
 						if (weapon != nullptr)
@@ -1902,7 +1902,7 @@ void BattlescapeGame::checkForCasualties(
 
 						statePushNext(new UnitDieBState( // This is where units get sent to DEATH!
 													this,
-													*i,
+													defender,
 													dType,
 													hiddenExpl));
 					}
@@ -1914,33 +1914,30 @@ void BattlescapeGame::checkForCasualties(
 					&& defender->getUnitStatus() != STATUS_TURNING		// kL_note: may be set by UnitDieBState cTor
 					&& defender->getUnitStatus() != STATUS_DISABLED)	// kL
 				{
-					(*i)->setUnitStatus(STATUS_DISABLED); // kL
+					defender->setUnitStatus(STATUS_DISABLED); // kL
 
 					if (attacker != nullptr
 						&& attacker->getGeoscapeSoldier() != nullptr
 						&& defender->beenStunned() == false) // credit first stunner only.
 					{
 						attacker->getStatistics()->kills.push_back(new BattleUnitKill(
-																					killStatRank,
-																					killStatRace,
-																					killStatWeapon,
-																					killStatWeaponAmmo,
-																					defender->getFaction(),
-																					STATUS_UNCONSCIOUS,
-																					killStatMission,
-																					killStatTurn,
-																					killStatPoints));
+																				killStatRank,
+																				killStatRace,
+																				killStatWeapon,
+																				killStatWeaponAmmo,
+																				defender->getFaction(),
+																				STATUS_UNCONSCIOUS,
+																				killStatMission,
+																				killStatTurn,
+																				killStatPoints));
 					}
 
-					if (defender != nullptr
-						&& defender->getGeoscapeSoldier() != nullptr)
-					{
+					if (defender->getGeoscapeSoldier() != nullptr)
 						defender->getStatistics()->wasUnconscious = true;
-					}
 
 					statePushNext(new UnitDieBState( // This is where units get sent to STUNNED.
 												this,
-												*i,
+												defender,
 												DT_STUN,
 												true));
 				}
@@ -1990,7 +1987,7 @@ void BattlescapeGame::checkForCasualties(
 			{
 				_battleSave->setControlDestroyed();
 				Game* const game = _parentState->getGame();
-				game->pushState(new InfoboxOKState(game->getLanguage()->getString("STR_ALIEN_BASE_CONTROL_DESTROYED")));
+				game->pushState(new InfoboxDialogState(game->getLanguage()->getString("STR_ALIEN_BASE_CONTROL_DESTROYED")));
 			}
 		} */
 	}
@@ -2017,7 +2014,6 @@ void BattlescapeGame::checkExposedByMelee(BattleUnit* const unit) const
 				break;
 			}
 		}
-
 		unit->getRfSpotters()->clear();
 	}
 }
@@ -2027,14 +2023,13 @@ void BattlescapeGame::checkExposedByMelee(BattleUnit* const unit) const
  */
 void BattlescapeGame::showInfoBoxQueue() // private.
 {
-	for (std::vector<InfoboxOKState*>::const_iterator
+	for (std::vector<InfoboxDialogState*>::const_iterator
 			i = _infoboxQueue.begin();
 			i != _infoboxQueue.end();
 			++i)
 	{
 		_parentState->getGame()->pushState(*i);
 	}
-
 	_infoboxQueue.clear();
 }
 
@@ -3734,7 +3729,7 @@ void BattlescapeGame::objectiveDone()
 	{
 		const std::string messagePop (deployRule->getObjectivePopup());
 		if (messagePop.empty() == false)
-			_infoboxQueue.push_back(new InfoboxOKState(game->getLanguage()->getString(messagePop)));
+			_infoboxQueue.push_back(new InfoboxDialogState(game->getLanguage()->getString(messagePop)));
 	}
 }
 

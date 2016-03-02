@@ -578,12 +578,8 @@ void ExplosionBState::explode() // private.
 	}
 
 
-	//Log(LOG_INFO) << "ExplosionBState::explode() CALL bg::checkForCasualties()";
-	_parent->checkForCasualties(
-							_item,
-							_unit,
-							false,
-							terrain);
+	//Log(LOG_INFO) << "ExplosionBState::explode() CALL bg::checkCasualties()";
+	_parent->checkCasualties(_item, _unit, false, terrain);
 
 	if (itRule != nullptr && itRule->getShotgunPellets() != 0)
 	{

@@ -32,7 +32,7 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements.
- * @param msg - reference a message string
+ * @param msg - reference to a message wide-string
  */
 InfoboxState::InfoboxState(const std::wstring& msg)
 {
@@ -81,15 +81,16 @@ void InfoboxState::handle(Action* action)
 {
 	State::handle(action);
 
-	if (action->getDetails()->type == SDL_KEYDOWN
-		|| action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
+	switch (action->getDetails()->type)
 	{
-		exit();
+		case SDL_KEYDOWN:
+		case SDL_MOUSEBUTTONDOWN:
+			exit();
 	}
 }
 
 /**
- * Keeps the animation timers running.
+ * Keeps the Timer running.
  */
 void InfoboxState::think()
 {

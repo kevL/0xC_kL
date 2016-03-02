@@ -84,7 +84,7 @@ private:
 	int
 //		_missileDirection,
 		_dirRay,
-		_powerE, // effective power that actually explodes on a tile that's hit by HE.
+		_powerE, // effective power that actually explodes on a tile that's hit by HE etc.
 		_powerT; // test power that checks if _powerE even makes it to the next tile.
 
 	SavedBattleGame* _battleSave;
@@ -144,7 +144,7 @@ private:
 		/// Recalculates lighting of the battlescape for units.
 		void calculateUnitLighting() const;
 
-		/// Turn xCom soldier's personal lighting on or off.
+		/// Turn xCom units' personal lighting on or off.
 		void togglePersonalLighting();
 
 		/// Calculates Field of Vision from a unit's view point.
@@ -178,7 +178,7 @@ private:
 				Position* const scanVoxel,
 				const BattleUnit* const excludeUnit,
 				const BattleUnit* targetUnit = nullptr) const;
-		/// Check validity for targetting a Tile.
+		/// Check validity for targeting a Tile.
 		bool canTargetTilepart(
 				const Position* const originVoxel,
 				const Tile* const tileTarget,
@@ -327,13 +327,13 @@ private:
 				const int radius,
 				const BattleUnit* const unit) const;
 
-		/// Calculates the z voxel for shadows.
+		/// Calculates the z-voxel for shadows.
 		int castShadow(const Position& voxel) const;
 
 		/// Checks the visibility of a given voxel.
 //		bool isVoxelVisible(const Position& voxel) const;
 		/// Checks what type of voxel occupies targetVoxel.
-		VoxelType voxelCheck(
+		VoxelType detVoxelType(
 				const Position& targetVoxel,
 				const BattleUnit* const excludeUnit = nullptr,
 				const bool excludeAllUnits = false,

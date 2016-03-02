@@ -33,7 +33,7 @@ class Timer;
 
 /**
  * Frame that briefly shows some info like : Yasuaki Okamoto Has Panicked.
- * It disappears after 2-1/2 seconds.
+ * @note It disappears after 2-1/2 seconds.
  */
 class InfoboxState
 	:
@@ -57,7 +57,7 @@ private:
 		/// Handler for clicking anything.
 		void handle(Action* action) override;
 
-		/// Handles the timers.
+		/// Handles the Timer.
 		void think() override;
 
 		/// Closes the window.

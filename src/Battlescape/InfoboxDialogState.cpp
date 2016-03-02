@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "InfoboxOKState.h"
+#include "InfoboxDialogState.h"
 
 #include "Map.h"
 
@@ -38,10 +38,10 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements.
- * @param msg - reference the message string
+ * Initializes all the elements of an InfoboxDialog.
+ * @param msg - reference to a message wide-string
  */
-InfoboxOKState::InfoboxOKState(const std::wstring& msg)
+InfoboxDialogState::InfoboxDialogState(const std::wstring& msg)
 	:
 		_cursorVisible(_game->getCursor()->getVisible()),
 		_cursorHidden(_game->getCursor()->getHidden())
@@ -71,15 +71,15 @@ InfoboxOKState::InfoboxOKState(const std::wstring& msg)
 	_txtTitle->setBig();
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& InfoboxOKState::btnOkClick);
+	_btnOk->onMouseClick((ActionHandler)& InfoboxDialogState::btnOkClick);
 	_btnOk->onKeyboardPress(
-					(ActionHandler)& InfoboxOKState::btnOkClick,
+					(ActionHandler)& InfoboxDialogState::btnOkClick,
 					Options::keyOk);
 	_btnOk->onKeyboardPress(
-					(ActionHandler)& InfoboxOKState::btnOkClick,
+					(ActionHandler)& InfoboxDialogState::btnOkClick,
 					Options::keyOkKeypad);
 	_btnOk->onKeyboardPress(
-					(ActionHandler)& InfoboxOKState::btnOkClick,
+					(ActionHandler)& InfoboxDialogState::btnOkClick,
 					Options::keyCancel);
 	_btnOk->setHighContrast();
 
@@ -90,14 +90,14 @@ InfoboxOKState::InfoboxOKState(const std::wstring& msg)
 /**
  * dTor.
  */
-InfoboxOKState::~InfoboxOKState()
+InfoboxDialogState::~InfoboxDialogState()
 {}
 
 /**
  * Returns to the previous screen.
  * @param action - pointer to an Action
  */
-void InfoboxOKState::btnOkClick(Action*)
+void InfoboxDialogState::btnOkClick(Action*)
 {
 	_game->getCursor()->setVisible(_cursorVisible);
 	_game->getCursor()->setHidden(_cursorHidden);

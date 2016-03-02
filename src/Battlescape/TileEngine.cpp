@@ -1238,7 +1238,7 @@ bool TileEngine::canTargetTilepart(
 				tX = spiralArray[i * 2],
 				tY = spiralArray[i * 2 + 1];
 
-			if (voxelCheck(
+			if (detVoxelType(
 						Position(
 								targetVoxel.x + tX,
 								targetVoxel.y + tY,
@@ -1270,7 +1270,7 @@ bool TileEngine::canTargetTilepart(
 				tX = spiralArray[i * 2],
 				tY = spiralArray[i * 2 + 1];
 
-			if (voxelCheck(
+			if (detVoxelType(
 						Position(
 								targetVoxel.x + tX,
 								targetVoxel.y + tY,
@@ -1470,9 +1470,9 @@ bool TileEngine::checkReactionFire(
 
 	// NOTE: If RF is triggered by melee (or walking/kneeling), a target that is
 	// a potential RF-spotter will not be damaged yet and hence the damage +
-	// checkForCasualties() happens later; but if RF is triggered by a firearm,
+	// checkCasualties() happens later; but if RF is triggered by a firearm,
 	// a target that is a potential RF-spotter *will* be damaged when this runs
-	// since damage + checkForCasualties() has already been called. fucko*
+	// since damage + checkCasualties() has already been called. fucko*
 
 	bool ret (false);
 
@@ -1639,7 +1639,7 @@ BattleUnit* TileEngine::getReactor(
 		else
 		{
 			//Log(LOG_INFO) << ". after a melee-attack, wait for checkCasualties";
-			defender->getRfSpotters()->push_back(nextReactor);	// let BG::checkForCasualties() figure it out
+			defender->getRfSpotters()->push_back(nextReactor);	// let BG::checkCasualties() figure it out
 		}														// this is so that if an aLien in the spotters-vector gets put down by the trigger-shot it won't tell its buds.
 	}
 
@@ -1906,7 +1906,7 @@ void TileEngine::hit(
 	if (melee == true)
 		voxelType = VOXEL_UNIT;
 	else
-		voxelType = voxelCheck(
+		voxelType = detVoxelType(
 							targetVoxel,
 							attacker,
 							false, false, nullptr);
@@ -2032,16 +2032,18 @@ void TileEngine::hit(
 				int extraPower (0);
 				if (attacker != nullptr) // bonus to damage per Accuracy (TODO: use ranks also for xCom or aLien)
 				{
-					if (   dType == DT_AP
-						|| dType == DT_LASER
-						|| dType == DT_PLASMA
-						|| dType == DT_ACID)
+					switch (dType)
 					{
-						extraPower = attacker->getBattleStats()->firing;
-					}
-					else if (dType == DT_MELEE)
-						extraPower = attacker->getBattleStats()->melee;
+						case DT_AP:
+						case DT_LASER:
+						case DT_PLASMA:
+						case DT_ACID:
+							extraPower = attacker->getBattleStats()->firing;
+							break;
 
+						case DT_MELEE:
+							extraPower = attacker->getBattleStats()->melee;
+					}
 					extraPower = static_cast<int>(Round(static_cast<double>(power * extraPower) / 1000.));
 				}
 
@@ -2061,7 +2063,7 @@ void TileEngine::hit(
 				{
 					if (attacker != nullptr
 						&& (antecedentWounds < targetUnit->getFatalWounds()
-							|| targetUnit->isOut_t(OUT_HEALTH) == true)) // .. just do this here and bDone with it. Regularly done in BattlescapeGame::checkForCasualties()
+							|| targetUnit->isOut_t(OUT_HEALTH) == true)) // .. just do this here and bDone with it. Regularly done in BattlescapeGame::checkCasualties()
 					{
 						targetUnit->killedBy(attacker->getFaction());
 					}
@@ -2072,7 +2074,7 @@ void TileEngine::hit(
 					if (targetUnit->getSpecialAbility() == SPECAB_EXPLODE // cyberdiscs, usually. Also, cybermites ... (and Zombies, on fire).
 						&& targetUnit->isOut_t(OUT_HLTH_STUN) == true
 						&& (targetUnit->isZombie() == true
-							|| (dType != DT_STUN		// don't explode if stunned. Maybe... see above.
+							|| (   dType != DT_STUN		// don't explode if stunned. Maybe... see above.
 								&& dType != DT_SMOKE
 								&& dType != DT_HE		// don't explode if taken down w/ explosives -> wait a sec, this is hit() not explode() ...
 								&& dType != DT_IN)))	//&& dType != DT_MELEE
@@ -2141,10 +2143,10 @@ void TileEngine::explode(
 			bool grenade,
 			bool defusePulse)
 {
-/*	int iFalse = 0;
+/*	int iFalse (0);
 	for (int i = 0; i < 1000; ++i)
 	{
-		int iTest = RNG::generate(0, 1);
+		int iTest (RNG::generate(0,1));
 		if (iTest == 0) ++iFalse;
 	}
 	Log(LOG_INFO) << "RNG:TEST = " << iFalse; */
@@ -2161,7 +2163,7 @@ void TileEngine::explode(
 	if (power < 1) // quick out.
 		return;
 
-	BattleUnit* targetUnit = nullptr;
+	BattleUnit* targetUnit (nullptr);
 
 	std::set<Tile*> tilesAffected;
 	std::pair<std::set<Tile*>::const_iterator, bool> tilePair;
@@ -2179,13 +2181,13 @@ void TileEngine::explode(
 	}
 
 	Tile
-		* tileStart = nullptr,
-		* tileStop = nullptr;
+		* tileStart (nullptr),
+		* tileStop (nullptr);
 
 	int // convert voxel-space to tile-space
-		centerX = targetVoxel.x >> 4,
-		centerY = targetVoxel.y >> 4,
-		centerZ = targetVoxel.z / 24,
+		centerX (targetVoxel.x >> 4),
+		centerY (targetVoxel.y >> 4),
+		centerZ (targetVoxel.z / 24),
 
 		tileX,
 		tileY,
@@ -2193,7 +2195,7 @@ void TileEngine::explode(
 
 	double
 		r,
-		r_Max = static_cast<double>(radius),
+		r_Max (static_cast<double>(radius)),
 
 		vect_x,
 		vect_y,
@@ -2204,9 +2206,9 @@ void TileEngine::explode(
 		sin_fi,
 		cos_fi;
 
-	bool takenXp = false;
+	bool takenXp (false);
 
-//	int testIter = 0; // TEST.
+//	int testIter (0); // TEST.
 	//Log(LOG_INFO) << ". r_Max = " << r_Max;
 
 //	for (int fi = 0; fi == 0; ++fi)		// kL_note: Looks like a TEST ray. ( 0 == horizontal )
@@ -2282,8 +2284,7 @@ void TileEngine::explode(
 					Pathfinding::vectorToDirection(
 												tileStop->getPosition() - tileStart->getPosition(),
 												dir);
-					if (dir != -1
-						&& (dir & 1) == 1)
+					if (dir != -1 && (dir & 1) == 1)
 					{
 //						_powerE = static_cast<int>(static_cast<float>(_powerE) * 0.70710678f);
 //						_powerE = static_cast<int>(static_cast<double>(_powerE) * RNG::generate(0.895,0.935));
@@ -2313,16 +2314,16 @@ void TileEngine::explode(
 
 					_powerT = _powerE;
 
-					const int horiBlock = horizontalBlockage(
+					const int horiBlock (horizontalBlockage(
 														tileStart,
 														tileStop,
-														dType);
+														dType));
 					//if (horiBlock != 0) Log(LOG_INFO) << ". horiBlock = " << horiBlock;
 
-					const int vertBlock = verticalBlockage(
+					const int vertBlock (verticalBlockage(
 														tileStart,
 														tileStop,
-														dType);
+														dType));
 					//if (vertBlock != 0) Log(LOG_INFO) << ". vertBlock = " << vertBlock;
 
 					if (horiBlock < 0 && vertBlock < 0) // only visLike will return < 0 for this break here.
@@ -2382,324 +2383,219 @@ void TileEngine::explode(
 					}
 
 					int
-						powerUnit = 0,
-						wounds = 0;
+						powerUnit (0),
+						wounds (0);
 
 					if (attacker != nullptr && targetUnit != nullptr)
 						wounds = targetUnit->getFatalWounds();
 
 					switch (dType)
 					{
-						case DT_STUN: // power 0 - 200%
-						{
-							if (targetUnit != nullptr)
+							case DT_STUN: // power 0 - 200%
 							{
-								powerUnit = RNG::generate(1, _powerE * 2) // bell curve
-										  + RNG::generate(1, _powerE * 2);
-								powerUnit /= 2;
-								//Log(LOG_INFO) << ". . . powerUnit = " << powerUnit << " DT_STUN";
-								targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_STUN, true);
-							}
-
-							BattleUnit* bu;
-							for (std::vector<BattleItem*>::const_iterator
-									i = tileStop->getInventory()->begin();
-									i != tileStop->getInventory()->end();
-									++i)
-							{
-								bu = (*i)->getUnit();
-
-								if (bu != nullptr
-									&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
-									&& bu->getTakenExpl() == false)
+								if (targetUnit != nullptr)
 								{
-									bu->setTakenExpl();
-
 									powerUnit = RNG::generate(1, _powerE * 2) // bell curve
 											  + RNG::generate(1, _powerE * 2);
 									powerUnit /= 2;
-									//Log(LOG_INFO) << ". . . . powerUnit (corpse) = " << powerUnit << " DT_STUN";
-									bu->takeDamage(Position(0,0,0), powerUnit, DT_STUN, true);
+									//Log(LOG_INFO) << ". . . powerUnit = " << powerUnit << " DT_STUN";
+									targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_STUN, true);
 								}
-							}
-						}
-						break;
 
-						case DT_HE: // power 50 - 150%. 70% of that if kneeled, 85% if kneeled @ GZ
-						{
-							//Log(LOG_INFO) << ". . dType == DT_HE";
-							if (targetUnit != nullptr)
-							{
-								//Log(LOG_INFO) << ". . powerE = " << _powerE << " vs. " << targetUnit->getId();
-								const double
-									power0 = static_cast<double>(_powerE),
-									power1 = power0 * 0.5,
-									power2 = power0 * 1.5;
-
-								powerUnit = static_cast<int>(RNG::generate(power1, power2)) // bell curve
-										  + static_cast<int>(RNG::generate(power1, power2));
-								powerUnit /= 2;
-								//Log(LOG_INFO) << ". . DT_HE = " << powerUnit; // << ", vs ID " << targetUnit->getId();
-
-								if (powerUnit > 0)
-								{
-									Position pos;
-
-									// units above the explosion will be hit in the legs, units lateral to or below will be hit in the torso
-									if (distance(
-												tileStop->getPosition(),
-												Position(
-														centerX,
-														centerY,
-														centerZ)) < 2)
-									{
-										//Log(LOG_INFO) << ". . . powerUnit = " << powerUnit << " DT_HE, GZ";
-										pos = Position(0,0,0); // Ground zero effect is in effect
-										if (targetUnit->isKneeled() == true)
-										{
-											powerUnit = powerUnit * 17 / 20; // 85% damage
-											//Log(LOG_INFO) << ". . . powerUnit(kneeled) = " << powerUnit << " DT_HE, GZ";
-										}
-									}
-									else
-									{
-										//Log(LOG_INFO) << ". . . powerUnit = " << powerUnit << " DT_HE, not GZ";
-										pos = Position( // Directional damage relative to explosion position.
-													centerX * 16 - tileStop->getPosition().x * 16,
-													centerY * 16 - tileStop->getPosition().y * 16,
-													centerZ * 24 - tileStop->getPosition().z * 24);
-										if (targetUnit->isKneeled() == true)
-										{
-											powerUnit = powerUnit * 7 / 10; // 70% damage
-											//Log(LOG_INFO) << ". . . powerUnit(kneeled) = " << powerUnit << " DT_HE, not GZ";
-										}
-									}
-
-									if (powerUnit > 0)
-									{
-										targetUnit->takeDamage(pos, powerUnit, DT_HE);
-										//Log(LOG_INFO) << ". . . realDamage = " << damage << " DT_HE";
-									}
-								}
-							}
-
-							//Log(LOG_INFO) << " ";
-							BattleUnit* bu;
-							bool done = false;
-
-							while (done == false
-								&& tileStop->getInventory()->empty() == false)
-							{
+								BattleUnit* bu;
 								for (std::vector<BattleItem*>::const_iterator
 										i = tileStop->getInventory()->begin();
 										i != tileStop->getInventory()->end();
-										)
+										++i)
 								{
-									//Log(LOG_INFO) << "pos " << tileStop->getPosition();
-									//Log(LOG_INFO) << ". . INVENTORY: Item = " << (*i)->getRules()->getType();
 									bu = (*i)->getUnit();
 
 									if (bu != nullptr
 										&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
 										&& bu->getTakenExpl() == false)
 									{
-										//Log(LOG_INFO) << ". . . vs Unit unconscious";
 										bu->setTakenExpl();
 
-										const double
-											power0 (static_cast<double>(_powerE)),
-											power1 (power0 * 0.5),
-											power2 (power0 * 1.5);
-
-										powerUnit = static_cast<int>(RNG::generate(power1, power2)) // bell curve
-												  + static_cast<int>(RNG::generate(power1, power2));
+										powerUnit = RNG::generate(1, _powerE * 2) // bell curve
+												  + RNG::generate(1, _powerE * 2);
 										powerUnit /= 2;
-										//Log(LOG_INFO) << ". . . INVENTORY: power = " << powerUnit;
-										bu->takeDamage(Position(0,0,0), powerUnit, DT_HE);
-										//Log(LOG_INFO) << ". . . INVENTORY: damage = " << dam;
-
-										if (bu->isOut_t(OUT_HEALTH) == true)
-										{
-											//Log(LOG_INFO) << ". . . . INVENTORY: instaKill";
-											bu->instaKill();
-
-											if (attacker != nullptr)
-											{
-												bu->killedBy(attacker->getFaction()); // TODO: log the kill in Soldier's Diary.
-												//Log(LOG_INFO) << "TE::explode() " << bu->getId() << " killedBy = " << (int)attacker->getFaction();
-											}
-
-											if (bu->getGeoscapeSoldier() != nullptr // send Death notice.
-												&& Options::battleNotifyDeath == true)
-											{
-												Game* const game (_battleSave->getBattleState()->getGame());
-												game->pushState(new InfoboxOKState(game->getLanguage()->getString( // "has exploded ..."
-																											"STR_HAS_BEEN_KILLED",
-																											bu->getGender())
-																										.arg(bu->getName(game->getLanguage()))));
-											}
-										}
+										//Log(LOG_INFO) << ". . . . powerUnit (corpse) = " << powerUnit << " DT_STUN";
+										bu->takeDamage(Position(0,0,0), powerUnit, DT_STUN, true);
 									}
-									else if (_powerE > (*i)->getRules()->getArmor()
-										&& (bu == nullptr
-											|| (bu->getUnitStatus() == STATUS_DEAD
-												&& bu->getTakenExpl() == false)))
-									{
-										//Log(LOG_INFO) << ". . . vs Item armor";
-										if ((*i)->getFuse() > -1)
-										{
-											//Log(LOG_INFO) << ". . . . INVENTORY: primed grenade";
-											(*i)->setFuse(-2);
-
-											const Position pos (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
-											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
-																										_battleSave->getBattleGame(),
-																										pos, *i, attacker));
-										}
-										else if ((*i)->getFuse() != -2)
-										{
-											//Log(LOG_INFO) << ". . . . INVENTORY: removeItem = " << (*i)->getRules()->getType();
-											_battleSave->toDeleteItem(*i);
-											break;
-//											--i; // "vector iterator not decrementable" - yeesh.
-										}
-									}
-									//else Log(LOG_INFO) << ". . . INVENTORY: bypass item = " << (*i)->getRules()->getType();
-
-									++i; // "vector iterator not incrementable" - yeesh.
-									done = (i == tileStop->getInventory()->end());
 								}
 							}
-						}
-						break;
+							break;
+
+						case DT_HE: // power 50 - 150%. 70% of that if kneeled, 85% if kneeled @ GZ
+							{
+								//Log(LOG_INFO) << ". . dType == DT_HE";
+								if (targetUnit != nullptr)
+								{
+									//Log(LOG_INFO) << ". . powerE = " << _powerE << " vs. " << targetUnit->getId();
+									const double
+										power0 (static_cast<double>(_powerE)),
+										power1 (power0 * 0.5),
+										power2 (power0 * 1.5);
+
+									powerUnit = static_cast<int>(RNG::generate(power1, power2)) // bell curve
+											  + static_cast<int>(RNG::generate(power1, power2));
+									powerUnit /= 2;
+									//Log(LOG_INFO) << ". . DT_HE = " << powerUnit; // << ", vs ID " << targetUnit->getId();
+
+									if (powerUnit > 0)
+									{
+										Position voxelRel;
+
+										// units above the explosion will be hit in the legs, units lateral to or below will be hit in the torso
+										if (distance(
+													tileStop->getPosition(),
+													Position(
+															centerX,
+															centerY,
+															centerZ)) < 2)
+										{
+											//Log(LOG_INFO) << ". . . powerUnit = " << powerUnit << " DT_HE, GZ";
+											voxelRel = Position(0,0,0); // Ground zero effect is in effect
+											if (targetUnit->isKneeled() == true)
+											{
+												powerUnit = powerUnit * 17 / 20; // 85% damage
+												//Log(LOG_INFO) << ". . . powerUnit(kneeled) = " << powerUnit << " DT_HE, GZ";
+											}
+										}
+										else
+										{
+											//Log(LOG_INFO) << ". . . powerUnit = " << powerUnit << " DT_HE, not GZ";
+											voxelRel = Position( // Directional damage relative to explosion position.
+															centerX * 16 - tileStop->getPosition().x * 16,
+															centerY * 16 - tileStop->getPosition().y * 16,
+															centerZ * 24 - tileStop->getPosition().z * 24);
+											if (targetUnit->isKneeled() == true)
+											{
+												powerUnit = powerUnit * 7 / 10; // 70% damage
+												//Log(LOG_INFO) << ". . . powerUnit(kneeled) = " << powerUnit << " DT_HE, not GZ";
+											}
+										}
+
+										if (powerUnit > 0)
+										{
+											targetUnit->takeDamage(voxelRel, powerUnit, DT_HE);
+											//Log(LOG_INFO) << ". . . realDamage = " << damage << " DT_HE";
+										}
+									}
+								}
+
+								//Log(LOG_INFO) << " ";
+								BattleUnit* bu;
+
+								bool done (false);
+								while (done == false && tileStop->getInventory()->empty() == false)
+								{
+									for (std::vector<BattleItem*>::const_iterator
+											i = tileStop->getInventory()->begin();
+											i != tileStop->getInventory()->end();
+											)
+									{
+										//Log(LOG_INFO) << "pos " << tileStop->getPosition();
+										//Log(LOG_INFO) << ". . INVENTORY: Item = " << (*i)->getRules()->getType();
+										bu = (*i)->getUnit();
+
+										if (bu != nullptr
+											&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
+											&& bu->getTakenExpl() == false)
+										{
+											//Log(LOG_INFO) << ". . . vs Unit unconscious";
+											bu->setTakenExpl();
+
+											const double
+												power0 (static_cast<double>(_powerE)),
+												power1 (power0 * 0.5),
+												power2 (power0 * 1.5);
+
+											powerUnit = static_cast<int>(RNG::generate(power1, power2)) // bell curve
+													  + static_cast<int>(RNG::generate(power1, power2));
+											powerUnit /= 2;
+											//Log(LOG_INFO) << ". . . INVENTORY: power = " << powerUnit;
+											bu->takeDamage(Position(0,0,0), powerUnit, DT_HE);
+											//Log(LOG_INFO) << ". . . INVENTORY: damage = " << dam;
+
+											if (bu->isOut_t(OUT_HEALTH) == true)
+											{
+												//Log(LOG_INFO) << ". . . . INVENTORY: instaKill";
+												bu->instaKill();
+
+												if (attacker != nullptr)
+												{
+													bu->killedBy(attacker->getFaction()); // TODO: log the kill in Soldier's Diary.
+													//Log(LOG_INFO) << "TE::explode() " << bu->getId() << " killedBy = " << (int)attacker->getFaction();
+												}
+
+												if (bu->getGeoscapeSoldier() != nullptr // send Death notice.
+													&& Options::battleNotifyDeath == true)
+												{
+													Game* const game (_battleSave->getBattleState()->getGame());
+													game->pushState(new InfoboxDialogState(game->getLanguage()->getString( // "has exploded ..."
+																												"STR_HAS_BEEN_KILLED",
+																												bu->getGender())
+																											.arg(bu->getName(game->getLanguage()))));
+												}
+											}
+										}
+										else if (_powerE > (*i)->getRules()->getArmor()
+											&& (bu == nullptr
+												|| (bu->getUnitStatus() == STATUS_DEAD
+													&& bu->getTakenExpl() == false)))
+										{
+											//Log(LOG_INFO) << ". . . vs Item armor";
+											if ((*i)->getFuse() > -1)
+											{
+												//Log(LOG_INFO) << ". . . . INVENTORY: primed grenade";
+												(*i)->setFuse(-2);
+
+												const Position voxelExpl (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
+												_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
+																											_battleSave->getBattleGame(),
+																											voxelExpl, *i, attacker));
+											}
+											else if ((*i)->getFuse() != -2)
+											{
+												//Log(LOG_INFO) << ". . . . INVENTORY: removeItem = " << (*i)->getRules()->getType();
+												_battleSave->toDeleteItem(*i);
+												break;
+//												--i; // "vector iterator not decrementable" - yeesh.
+											}
+										}
+										//else Log(LOG_INFO) << ". . . INVENTORY: bypass item = " << (*i)->getRules()->getType();
+
+										++i; // "vector iterator not incrementable" - yeesh.
+										done = (i == tileStop->getInventory()->end());
+									}
+								}
+							}
+							break;
 
 						case DT_SMOKE:
-						{
-							if (tileStop->getTerrainLevel() > -24)
 							{
-								const int smokePow = static_cast<int>(std::ceil(
-													(static_cast<double>(_powerE) / static_cast<double>(power)) * 10.));
-								tileStop->addSmoke(smokePow + RNG::generate(0,7));
-							}
-
-							if (targetUnit != nullptr)
-							{
-								powerUnit = RNG::generate( // 10% to 20%
-														_powerE / 10,
-														_powerE / 5);
-								targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_SMOKE, true);
-								//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
-							}
-
-							BattleUnit* bu;
-							for (std::vector<BattleItem*>::const_iterator
-									i = tileStop->getInventory()->begin();
-									i != tileStop->getInventory()->end();
-									++i)
-							{
-								bu = (*i)->getUnit();
-
-								if (bu != nullptr
-									&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
-									&& bu->getTakenExpl() == false)
+								if (tileStop->getTerrainLevel() > -24)
 								{
-									bu->setTakenExpl();
+									const int powerSmoke (static_cast<int>(std::ceil(
+														 (static_cast<double>(_powerE) / static_cast<double>(power)) * 10.)));
+									tileStop->addSmoke(powerSmoke + RNG::generate(0,7));
+								}
 
+								if (targetUnit != nullptr)
+								{
 									powerUnit = RNG::generate( // 10% to 20%
 															_powerE / 10,
 															_powerE / 5);
-									bu->takeDamage(Position(0,0,0), powerUnit, DT_SMOKE, true);
+									targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_SMOKE, true);
+									//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
 								}
-							}
-						}
-						break;
 
-						case DT_IN:
-						{
-							if (targetUnit != nullptr)
-							{
-								targetUnit->setTakenExpl();
-
-								powerUnit = RNG::generate( // 25% - 75%
-														_powerE / 4,
-														_powerE * 3 / 4);
-								targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_IN, true);
-								//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
-
-								const float vulnr = targetUnit->getArmor()->getDamageModifier(DT_IN);
-								if (vulnr > 0.f)
-								{
-									const int burn = RNG::generate(0,
-																static_cast<int>(Round(5.f * vulnr)));
-									if (targetUnit->getFireUnit() < burn)
-										targetUnit->setFireUnit(burn); // catch fire and burn!!
-								}
-							}
-
-							Tile // NOTE: Should check if tileBelow's have already had napalm drop on them from this explosion ....
-								* fireTile = tileStop,
-								* tileBelow = _battleSave->getTile(fireTile->getPosition() + Position(0,0,-1));
-
-							while (fireTile != nullptr // safety.
-								&& fireTile->getPosition().z > 0
-								&& fireTile->getMapData(O_OBJECT) == nullptr
-								&& fireTile->getMapData(O_FLOOR) == nullptr
-								&& fireTile->hasNoFloor(tileBelow) == true)
-							{
-								fireTile = tileBelow;
-								tileBelow = _battleSave->getTile(fireTile->getPosition() + Position(0,0,-1));
-							}
-
-//							if (fireTile->isVoid() == false)
-//							{
-								// kL_note: So, this just sets a tile on fire/smoking regardless of its content.
-								// cf. Tile::ignite() -> well, not regardless, but automatically. That is,
-								// ignite() checks for Flammability first: if (getFlammability() == 255) don't do it.
-								// So this is, like, napalm from an incendiary round, while ignite() is for parts
-								// of the tile itself self-igniting.
-
-							if (fireTile != nullptr) // safety.
-							{
-								const int firePower = std::max(1,
-															static_cast<int>(std::ceil(
-														   (static_cast<double>(_powerE) / static_cast<double>(power)) * 11.)));
-								fireTile->addFire(firePower + fireTile->getFuel() + 3 / 4);
-								fireTile->addSmoke(std::max(
-														firePower + fireTile->getFuel(),
-														firePower + ((fireTile->getFlammability() + 9) / 10)));
-							}
-//							}
-
-							targetUnit = fireTile->getTileUnit();
-							if (targetUnit != nullptr
-								&& targetUnit->getTakenExpl() == false)
-							{
-								powerUnit = RNG::generate( // 25% - 75%
-														_powerE / 4,
-														_powerE * 3 / 4);
-								targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_IN, true);
-								//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
-
-								const float vulnr = targetUnit->getArmor()->getDamageModifier(DT_IN);
-								if (vulnr > 0.f)
-								{
-									const int burn = RNG::generate(0,
-																static_cast<int>(Round(5.f * vulnr)));
-									if (targetUnit->getFireUnit() < burn)
-										targetUnit->setFireUnit(burn); // catch fire and burn!!
-								}
-							}
-
-							BattleUnit* bu;
-							bool done = false;
-
-							while (done == false
-								&& tileStop->getInventory()->empty() == false)
-							{
+								BattleUnit* bu;
 								for (std::vector<BattleItem*>::const_iterator
-										i = fireTile->getInventory()->begin();
-										i != fireTile->getInventory()->end();
-										)
+										i = tileStop->getInventory()->begin();
+										i != tileStop->getInventory()->end();
+										++i)
 								{
 									bu = (*i)->getUnit();
 
@@ -2709,59 +2605,162 @@ void TileEngine::explode(
 									{
 										bu->setTakenExpl();
 
-										powerUnit = RNG::generate( // 25% - 75%
-																_powerE / 4,
-																_powerE * 3 / 4);
-										bu->takeDamage(Position(0,0,0), powerUnit, DT_IN, true);
-
-										if (bu->isOut_t(OUT_HEALTH) == true)
-										{
-											bu->instaKill();
-
-											if (attacker != nullptr)
-											{
-												bu->killedBy(attacker->getFaction()); // TODO: log the kill in Soldier's Diary.
-												//Log(LOG_INFO) << "TE::explode() " << bu->getId() << " killedBy = " << (int)attacker->getFaction();
-											}
-
-											if (bu->getGeoscapeSoldier() != nullptr // send Death notice.
-												&& Options::battleNotifyDeath == true)
-											{
-												Game* const game (_battleSave->getBattleState()->getGame());
-												game->pushState(new InfoboxOKState(game->getLanguage()->getString( // "has been killed with Fire ..."
-																											"STR_HAS_BEEN_KILLED",
-																											bu->getGender())
-																										.arg(bu->getName(game->getLanguage()))));
-											}
-										}
+										powerUnit = RNG::generate( // 10% to 20%
+																_powerE / 10,
+																_powerE / 5);
+										bu->takeDamage(Position(0,0,0), powerUnit, DT_SMOKE, true);
 									}
-									else if (_powerE > (*i)->getRules()->getArmor()
-										&& (bu == nullptr
-											|| (bu->getUnitStatus() == STATUS_DEAD
-												&& bu->getTakenExpl() == false)))
-									{
-										if ((*i)->getFuse() > -1)
-										{
-											(*i)->setFuse(-2);
-
-											const Position voxelExpl (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
-											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
-																										_battleSave->getBattleGame(),
-																										voxelExpl, *i, attacker));
-										}
-										else if ((*i)->getFuse() != -2)
-										{
-											_battleSave->toDeleteItem(*i);
-											break;
-//											--i; // "vector iterator not decrementable" - yeesh.
-										}
-									}
-
-									++i; // "vector iterator not incrementable" - yeesh.
-									done = (i == tileStop->getInventory()->end());
 								}
 							}
-						}
+							break;
+
+						case DT_IN:
+							{
+								if (targetUnit != nullptr)
+								{
+									targetUnit->setTakenExpl();
+
+									powerUnit = RNG::generate( // 25% - 75%
+															_powerE / 4,
+															_powerE * 3 / 4);
+									targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_IN, true);
+									//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
+
+									const float vulnr (targetUnit->getArmor()->getDamageModifier(DT_IN));
+									if (vulnr > 0.f)
+									{
+										const int burn (RNG::generate(0,
+																	  static_cast<int>(Round(5.f * vulnr))));
+										if (targetUnit->getFireUnit() < burn)
+											targetUnit->setFireUnit(burn); // catch fire and burn!!
+									}
+								}
+
+								Tile // NOTE: Should check if tileBelow's have already had napalm drop on them from this explosion ....
+									* fireTile (tileStop),
+									* tileBelow (_battleSave->getTile(fireTile->getPosition() + Position(0,0,-1)));
+
+								while (fireTile != nullptr // safety.
+									&& fireTile->getPosition().z > 0
+									&& fireTile->getMapData(O_OBJECT) == nullptr
+									&& fireTile->getMapData(O_FLOOR) == nullptr
+									&& fireTile->hasNoFloor(tileBelow) == true)
+								{
+									fireTile = tileBelow;
+									tileBelow = _battleSave->getTile(fireTile->getPosition() + Position(0,0,-1));
+								}
+
+//								if (fireTile->isVoid() == false)
+//								{
+									// kL_note: So, this just sets a tile on fire/smoking regardless of its content.
+									// cf. Tile::ignite() -> well, not regardless, but automatically. That is,
+									// ignite() checks for Flammability first: if (getFlammability() == 255) don't do it.
+									// So this is, like, napalm from an incendiary round, while ignite() is for parts
+									// of the tile itself self-igniting.
+
+								if (fireTile != nullptr) // safety.
+								{
+									const int powerFire (std::max(1,
+																  static_cast<int>(std::ceil(
+																 (static_cast<double>(_powerE) / static_cast<double>(power)) * 11.))));
+									fireTile->addFire(powerFire + fireTile->getFuel() + 3 / 4);
+									fireTile->addSmoke(std::max(
+															powerFire + fireTile->getFuel(),
+															powerFire + ((fireTile->getFlammability() + 9) / 10)));
+								}
+//								}
+
+								targetUnit = fireTile->getTileUnit();
+								if (targetUnit != nullptr
+									&& targetUnit->getTakenExpl() == false)
+								{
+									powerUnit = RNG::generate( // 25% - 75%
+															_powerE / 4,
+															_powerE * 3 / 4);
+									targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_IN, true);
+									//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
+
+									const float vulnr (targetUnit->getArmor()->getDamageModifier(DT_IN));
+									if (vulnr > 0.f)
+									{
+										const int burn (RNG::generate(0,
+																	  static_cast<int>(Round(5.f * vulnr))));
+										if (targetUnit->getFireUnit() < burn)
+											targetUnit->setFireUnit(burn); // catch fire and burn!!
+									}
+								}
+
+								BattleUnit* bu;
+
+								bool done (false);
+								while (done == false && tileStop->getInventory()->empty() == false)
+								{
+									for (std::vector<BattleItem*>::const_iterator
+											i = fireTile->getInventory()->begin();
+											i != fireTile->getInventory()->end();
+											)
+									{
+										bu = (*i)->getUnit();
+
+										if (bu != nullptr
+											&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
+											&& bu->getTakenExpl() == false)
+										{
+											bu->setTakenExpl();
+
+											powerUnit = RNG::generate( // 25% - 75%
+																	_powerE / 4,
+																	_powerE * 3 / 4);
+											bu->takeDamage(Position(0,0,0), powerUnit, DT_IN, true);
+
+											if (bu->isOut_t(OUT_HEALTH) == true)
+											{
+												bu->instaKill();
+
+												if (attacker != nullptr)
+												{
+													bu->killedBy(attacker->getFaction()); // TODO: log the kill in Soldier's Diary.
+													//Log(LOG_INFO) << "TE::explode() " << bu->getId() << " killedBy = " << (int)attacker->getFaction();
+												}
+
+												if (bu->getGeoscapeSoldier() != nullptr // send Death notice.
+													&& Options::battleNotifyDeath == true)
+												{
+													Game* const game (_battleSave->getBattleState()->getGame());
+													game->pushState(new InfoboxDialogState(game->getLanguage()->getString( // "has been killed with Fire ..."
+																												"STR_HAS_BEEN_KILLED",
+																												bu->getGender())
+																											.arg(bu->getName(game->getLanguage()))));
+												}
+											}
+										}
+										else if (_powerE > (*i)->getRules()->getArmor()
+											&& (bu == nullptr
+												|| (bu->getUnitStatus() == STATUS_DEAD
+													&& bu->getTakenExpl() == false)))
+										{
+											if ((*i)->getFuse() > -1)
+											{
+												(*i)->setFuse(-2);
+
+												const Position voxelExpl (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
+												_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
+																											_battleSave->getBattleGame(),
+																											voxelExpl, *i, attacker));
+											}
+											else if ((*i)->getFuse() != -2)
+											{
+												_battleSave->toDeleteItem(*i);
+												break;
+//												--i; // "vector iterator not decrementable" - yeesh.
+											}
+										}
+
+										++i; // "vector iterator not incrementable" - yeesh.
+										done = (i == tileStop->getInventory()->end());
+									}
+								}
+							}
 					} // End switch().
 
 
@@ -2778,7 +2777,7 @@ void TileEngine::explode(
 							if (targetUnit->isOut_t(OUT_HEALTH) == true
 								|| wounds < targetUnit->getFatalWounds())
 							{
-								targetUnit->killedBy(attacker->getFaction()); // kL .. just do this here and bDone with it. Normally done in BattlescapeGame::checkForCasualties()
+								targetUnit->killedBy(attacker->getFaction()); // kL .. just do this here and bDone with it. Normally done in BattlescapeGame::checkCasualties()
 								//Log(LOG_INFO) << "TE::explode() " << targetUnit->getId() << " killedBy = " << (int)attacker->getFaction();
 							}
 
@@ -4681,7 +4680,7 @@ VoxelType TileEngine::plotLine(
 
 		if (doVoxelCheck == true) // passes through this voxel, for Unit visibility & LoS/LoF
 		{
-			impactType = voxelCheck(
+			impactType = detVoxelType(
 								Position(cx,cy,cz),
 								excludeUnit,
 								false,
@@ -4766,7 +4765,7 @@ VoxelType TileEngine::plotLine(
 				if (swap_xz == true) std::swap(cx,cz);
 				if (swap_xy == true) std::swap(cx,cy);
 
-				impactType = voxelCheck(
+				impactType = detVoxelType(
 									Position(cx,cy,cz),
 									excludeUnit,
 									false,
@@ -4794,7 +4793,7 @@ VoxelType TileEngine::plotLine(
 				if (swap_xz == true) std::swap(cx,cz);
 				if (swap_xy == true) std::swap(cx,cy);
 
-				impactType = voxelCheck(
+				impactType = detVoxelType(
 									Position(cx,cy,cz),
 									excludeUnit,
 									false,
@@ -5466,7 +5465,7 @@ int TileEngine::castShadow(const Position& voxel) const
 			--ret)
 	{
 		voxelTest.z = ret;
-		if (voxelCheck(voxelTest) != VOXEL_EMPTY)
+		if (detVoxelType(voxelTest) != VOXEL_EMPTY)
 			break;
 	}
 	return ret;
@@ -5492,15 +5491,15 @@ bool TileEngine::isVoxelVisible(const Position& voxel) const
 			++z)
 	{
 		testVoxel.z = z;
-		if (voxelCheck(testVoxel, nullptr) == VOXEL_OBJECT)
+		if (detVoxelType(testVoxel, nullptr) == VOXEL_OBJECT)
 			return false;
 
 		++testVoxel.x;
-		if (voxelCheck(testVoxel, nullptr) == VOXEL_OBJECT)
+		if (detVoxelType(testVoxel, nullptr) == VOXEL_OBJECT)
 			return false;
 
 		++testVoxel.y;
-		if (voxelCheck(testVoxel, nullptr) == VOXEL_OBJECT)
+		if (detVoxelType(testVoxel, nullptr) == VOXEL_OBJECT)
 			return false;
 	}
 
@@ -5527,14 +5526,14 @@ bool TileEngine::isVoxelVisible(const Position& voxel) const
  * VOXEL_UNIT			//  4
  * VOXEL_OUTOFBOUNDS	//  5
  */
-VoxelType TileEngine::voxelCheck(
+VoxelType TileEngine::detVoxelType(
 		const Position& targetVoxel,
 		const BattleUnit* const excludeUnit,
 		const bool excludeAllUnits,
 		const bool onlyVisible,
 		const BattleUnit* const excludeAllBut) const
 {
-	//Log(LOG_INFO) << "TileEngine::voxelCheck()"; // massive lag-to-file, Do not use.
+	//Log(LOG_INFO) << "TileEngine::detVoxelType()"; // massive lag-to-file, Do not use.
 	const Tile
 		* tile (_battleSave->getTile(Position::toTileSpace(targetVoxel))),
 		* tileBelow;
@@ -5565,7 +5564,7 @@ VoxelType TileEngine::voxelCheck(
 		&& tile->getMapData(O_FLOOR) != nullptr
 		&& tile->getMapData(O_FLOOR)->isGravLift() == true)
 	{
-		//Log(LOG_INFO) << "voxelCheck() isGravLift";
+		//Log(LOG_INFO) << "detVoxelType() isGravLift";
 		//Log(LOG_INFO) << ". level = " << tile->getPosition().z;
 		if (tile->getPosition().z == 0)
 			return VOXEL_FLOOR;
@@ -5661,7 +5660,7 @@ VoxelType TileEngine::voxelCheck(
 					return VOXEL_UNIT;
 				}
 //				}
-//				else Log(LOG_INFO) << "ERROR TileEngine::voxelCheck() LoFT entry = " << layer;
+//				else Log(LOG_INFO) << "ERROR TileEngine::detVoxelType() LoFT entry = " << layer;
 			}
 		}
 	}

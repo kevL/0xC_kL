@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_INFOBOXOKSTATE_H
-#define OPENXCOM_INFOBOXOKSTATE_H
+#ifndef OPENXCOM_INFOBOXDIALOGSTATE_H
+#define OPENXCOM_INFOBOXDIALOGSTATE_H
 
 //#include <string>
 
@@ -34,9 +34,10 @@ class TextButton;
 
 
 /**
- * Notifies the player about things like soldiers going unconscious or dying from wounds.
+ * Notifies the player about things like soldiers going unconscious or dying
+ * from fatal wounds and must be closed by the Player.
  */
-class InfoboxOKState
+class InfoboxDialogState
 	:
 		public State
 {
@@ -52,10 +53,10 @@ private:
 
 
 	public:
-		/// Creates the InfoboxOKState.
-		explicit InfoboxOKState(const std::wstring& msg);
-		/// Cleans up the InfoboxOKState.
-		~InfoboxOKState();
+		/// Creates the InfoboxDialogState.
+		explicit InfoboxDialogState(const std::wstring& msg);
+		/// Cleans up the InfoboxDialogState.
+		~InfoboxDialogState();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

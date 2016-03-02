@@ -21,7 +21,7 @@
 
 #include "BattlescapeState.h"
 #include "Camera.h"
-#include "InfoboxOKState.h"
+#include "InfoboxDialogState.h"
 #include "Map.h"
 #include "TileEngine.h"
 
@@ -230,7 +230,7 @@ void UnitDieBState::think()
 			{
 				Game* const game (_battleSave->getBattleState()->getGame());
 				const Language* const lang (game->getLanguage());
-				game->pushState(new InfoboxOKState(lang->getString(stInfo, _unit->getGender())
+				game->pushState(new InfoboxDialogState(lang->getString(stInfo, _unit->getGender())
 															.arg(_unit->getName(lang))));
 			}
 		}
