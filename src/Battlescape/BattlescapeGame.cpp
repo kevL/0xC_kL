@@ -757,7 +757,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 //			<< "dash = "			<< action.dash << "\n"
 //			<< "diff = "			<< action.diff << "\n"
 //			<< "autoShotCount = "	<< action.autoShotCount << "\n"
-//			<< "cameraPosition = "	<< action.cameraPosition << "\n"
+//			<< "posCamera = "		<< action.posCamera << "\n"
 //			<< "desperate = "		<< action.desperate << "\n"
 //			<< "finalFacing = "		<< action.finalFacing << "\n"
 //			<< "finalAction = "		<< action.finalAction << "\n"
@@ -772,11 +772,11 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 			Pathfinding* const pf (_battleSave->getPathfinding());
 			pf->setPathingUnit(action.actor);
 
-			if (_battleSave->getTile(action.target) != nullptr)	// TODO: Check that .target is not unit's current Tile.
-			{													// Or ensure that AIState does not return BA_MOVE if so.
-				pf->calculatePath(action.actor, action.target);
+			if (_battleSave->getTile(action.posTarget) != nullptr)		// TODO: Check that .posTarget is not unit's current Tile.
+			{															// Or ensure that AIState does not return BA_MOVE if so.
+				pf->calculatePath(action.actor, action.posTarget);
 				if (pf->getStartDirection() != -1)
-					statePushBack(new UnitWalkBState(this, action)); // TODO: If action.desperate use 'dash' interval-speed.
+					statePushBack(new UnitWalkBState(this, action));	// TODO: If action.desperate use 'dash' interval-speed.
 			}
 
 			break;
@@ -868,7 +868,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 				case BA_PSICONTROL:
 					if (_battleSave->getTileEngine()->psiAttack(&action) == true)
 					{
-						const BattleUnit* const psiVictim (_battleSave->getTile(action.target)->getTileUnit());
+						const BattleUnit* const psiVictim (_battleSave->getTile(action.posTarget)->getTileUnit());
 						Language* const lang (_parentState->getGame()->getLanguage());
 						std::wstring wst;
 						switch (action.type)
@@ -967,7 +967,7 @@ void BattlescapeGame::handleNonTargetAction()
 {
 	if (_tacAction.targeting == false)
 	{
-		_tacAction.cameraPosition = Position(0,0,-1);
+		_tacAction.posCamera = Position(0,0,-1);
 
 		int showWarning (0);
 
@@ -1122,7 +1122,7 @@ void BattlescapeGame::liquidateUnit() // private.
 	{
 		Explosion* const explosion (new Explosion(
 												explType,
-												Position::toVoxelSpaceCentered(_tacAction.target, 2),
+												Position::toVoxelSpaceCentered(_tacAction.posTarget, 2),
 												aniStart));
 		getMap()->getExplosions()->push_back(explosion);
 		_executeProgress = true;
@@ -2317,12 +2317,12 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 
 				_battleSave->tileCoords(
 									tileId,
-									&action.target.x,
-									&action.target.y,
-									&action.target.z);
+									&action.posTarget.x,
+									&action.posTarget.y,
+									&action.posTarget.z);
 				pf->calculatePath(
 							action.actor,
-							action.target,
+							action.posTarget,
 							tu);
 
 				if (pf->getStartDirection() != -1)
@@ -2345,7 +2345,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 						i != pivotQty;
 						++i)
 				{
-					action.target = Position(
+					action.posTarget = Position(
 									unit->getPosition().x + RNG::generate(-5,5),
 									unit->getPosition().y + RNG::generate(-5,5),
 									unit->getPosition().z);
@@ -2361,8 +2361,8 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 					switch (action.weapon->getRules()->getBattleType())
 					{
 						case BT_FIREARM:
-							action.target = _battleSave->getTiles()[RNG::pick(_battleSave->getMapSizeXYZ())]->getPosition();
-							if (_battleSave->getTile(action.target) != nullptr)
+							action.posTarget = _battleSave->getTiles()[RNG::pick(_battleSave->getMapSizeXYZ())]->getPosition();
+							if (_battleSave->getTile(action.posTarget) != nullptr)
 							{
 								statePushBack(new UnitTurnBState(this, action, false));
 
@@ -2370,10 +2370,10 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 								if (action.weapon->getAmmoItem() == nullptr
 									|| action.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
 								{
-									action.cameraPosition = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
+									action.posCamera = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
 								}
 								else
-									action.cameraPosition = Position(0,0,-1);
+									action.posCamera = Position(0,0,-1);
 
 								const int actionTu (action.actor->getActionTu(action.type, action.weapon));
 								int shots; // tabulate how many shots can be fired before unit runs out of TUs
@@ -2401,20 +2401,20 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 									i != 50;
 									++i)
 							{
-								action.target = Position(
+								action.posTarget = Position(
 												unit->getPosition().x + RNG::generate(-20,20),
 												unit->getPosition().y + RNG::generate(-20,20),
 												unit->getPosition().z);
 
-								if (_battleSave->getTile(action.target) != nullptr)
+								if (_battleSave->getTile(action.posTarget) != nullptr)
 								{
 									statePushBack(new UnitTurnBState(this, action, false));
 
 									const Position
 										originVoxel (_battleSave->getTileEngine()->getOriginVoxel(action)),
 										targetVoxel (Position::toVoxelSpaceCentered(
-																				action.target,
-																				2 - _battleSave->getTile(action.target)->getTerrainLevel())); // LoFT of floor is typically 2 voxels thick.
+																				action.posTarget,
+																				2 - _battleSave->getTile(action.posTarget)->getTerrainLevel())); // LoFT of floor is typically 2 voxels thick.
 
 									if (_battleSave->getTileEngine()->validateThrow(
 																				action,
@@ -2422,7 +2422,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 																				targetVoxel) == true)
 									{
 										action.type = BA_THROW;
-										action.cameraPosition = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
+										action.posCamera = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
 										statePushBack(new ProjectileFlyBState(this, action));
 										break;
 									}
@@ -2553,7 +2553,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 						{
 							if (TileEngine::distance(
 												_tacAction.actor->getPosition(),
-												_tacAction.target) <= _tacAction.weapon->getRules()->getMaxRange())
+												_tacAction.posTarget) <= _tacAction.weapon->getRules()->getMaxRange())
 							{
 								if (_tacAction.actor->spendTimeUnits(_tacAction.TU) == true)
 								{
@@ -2597,7 +2597,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					if (aLienPsi == true)
 						_tacAction.weapon = _alienPsi;
 
-					_tacAction.target = pos;
+					_tacAction.posTarget = pos;
 					_tacAction.TU = _tacAction.actor->getActionTu(
 																_tacAction.type,
 																_tacAction.weapon);
@@ -2610,9 +2610,9 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					{
 						if (TileEngine::distance(
 											_tacAction.actor->getPosition(),
-											_tacAction.target) <= _tacAction.weapon->getRules()->getMaxRange())
+											_tacAction.posTarget) <= _tacAction.weapon->getRules()->getMaxRange())
 						{
-							_tacAction.cameraPosition = Position(0,0,-1);
+							_tacAction.posCamera = Position(0,0,-1);
 
 							statePushBack(new ProjectileFlyBState(this, _tacAction));
 
@@ -2668,15 +2668,15 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				getMap()->setSelectorType(CT_NONE);
 				_parentState->getGame()->getCursor()->setHidden();
 
-				_tacAction.target = pos;
+				_tacAction.posTarget = pos;
 				if (_tacAction.type == BA_THROW
 					|| _tacAction.weapon->getAmmoItem() == nullptr
 					|| _tacAction.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
 				{
-					_tacAction.cameraPosition = getMap()->getCamera()->getMapOffset();
+					_tacAction.posCamera = getMap()->getCamera()->getMapOffset();
 				}
 				else
-					_tacAction.cameraPosition = Position(0,0,-1);
+					_tacAction.posCamera = Position(0,0,-1);
 
 				_battleStates.push_back(new ProjectileFlyBState(this, _tacAction));	// TODO: should check for valid LoF/LoT *before* invoking this
 																					// instead of the (flakey) checks in that state. Then conform w/ AI ...
@@ -2745,8 +2745,8 @@ void BattlescapeGame::primaryAction(const Position& pos)
 
 					Pathfinding::directionToVector(
 											(_tacAction.actor->getUnitDirection() + 4) % 8,
-											&_tacAction.target);
-					_tacAction.target += pos;
+											&_tacAction.posTarget);
+					_tacAction.posTarget += pos;
 
 					statePushBack(new UnitTurnBState(this, _tacAction));
 				}
@@ -2754,7 +2754,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			else
 			{
 				if (allowPreview == true
-					&& (_tacAction.target != pos
+					&& (_tacAction.posTarget != pos
 						|| pf->isModCtrl() != ctrl
 						|| pf->isModAlt() != alt
 						|| pf->isZPath() != zPath))
@@ -2762,10 +2762,10 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					pf->clearPreview();
 				}
 
-				_tacAction.target = pos;
+				_tacAction.posTarget = pos;
 				pf->calculatePath(
 							_tacAction.actor,
-							_tacAction.target);
+							_tacAction.posTarget);
 
 				if (pf->getStartDirection() != -1)
 				{
@@ -2798,7 +2798,7 @@ void BattlescapeGame::secondaryAction(const Position& pos)
 	_tacAction.actor = _battleSave->getSelectedUnit();
 	if (_tacAction.actor->getPosition() != pos)
 	{
-		_tacAction.target = pos;
+		_tacAction.posTarget = pos;
 		_tacAction.strafe = _tacAction.actor->getTurretType() != -1
 						 && (SDL_GetModState() & KMOD_CTRL) != 0
 						 && Options::battleStrafe == true;
@@ -2817,12 +2817,12 @@ void BattlescapeGame::launchAction()
 	_parentState->showLaunchButton(false);
 
 	getMap()->getWaypoints()->clear();
-	_tacAction.target = _tacAction.waypoints.front();
+	_tacAction.posTarget = _tacAction.waypoints.front();
 
 	getMap()->setSelectorType(CT_NONE);
 	_parentState->getGame()->getCursor()->setHidden();
 
-//	_tacAction.cameraPosition = getMap()->getCamera()->getMapOffset();
+//	_tacAction.posCamera = getMap()->getCamera()->getMapOffset();
 
 	_battleStates.push_back(new ProjectileFlyBState(this, _tacAction));
 	statePushFront(new UnitTurnBState(this, _tacAction));
@@ -2851,12 +2851,12 @@ void BattlescapeGame::moveUpDown(
 		const BattleUnit* const unit,
 		int dir)
 {
-	_tacAction.target = unit->getPosition();
+	_tacAction.posTarget = unit->getPosition();
 
 	if (dir == Pathfinding::DIR_UP)
-		++_tacAction.target.z;
+		++_tacAction.posTarget.z;
 	else
-		--_tacAction.target.z;
+		--_tacAction.posTarget.z;
 
 	getMap()->setSelectorType(CT_NONE);
 	_parentState->getGame()->getCursor()->setHidden();
@@ -2864,7 +2864,7 @@ void BattlescapeGame::moveUpDown(
 	Pathfinding* const pf (_battleSave->getPathfinding());
 	pf->calculatePath(
 				_tacAction.actor,
-				_tacAction.target);
+				_tacAction.posTarget);
 
 	statePushBack(new UnitWalkBState(this, _tacAction));
 }
@@ -3156,7 +3156,7 @@ bool BattlescapeGame::pickupItem(BattleAction* const action) const
 		{
 			//Log(LOG_INFO) << ". . move to spot";
 			action->type = BA_MOVE;
-			action->target = targetItem->getTile()->getPosition();
+			action->posTarget = targetItem->getTile()->getPosition();
 		}
 	}
 	return false;

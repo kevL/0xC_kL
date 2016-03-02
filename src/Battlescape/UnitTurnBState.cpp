@@ -74,10 +74,10 @@ void UnitTurnBState::init()
 		_turret = _unit->getTurretType() != -1
 			   && (_action.strafe == true || _action.targeting == true);
 
-		if (   _unit->getPosition().x != _action.target.x
-			|| _unit->getPosition().y != _action.target.y)
+		if (   _unit->getPosition().x != _action.posTarget.x
+			|| _unit->getPosition().y != _action.posTarget.y)
 		{
-			_unit->setDirectionTo(_action.target, _turret); // -> STATUS_TURNING
+			_unit->setDirectionTo(_action.posTarget, _turret); // -> STATUS_TURNING
 		}
 
 		if (_unit->getUnitStatus() != STATUS_TURNING) // try to open a door

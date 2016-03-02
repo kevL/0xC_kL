@@ -1558,7 +1558,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							else if (_selectorType == CT_THROW) // indicator for Throwing.
 							{
 								BattleAction* const action (_battleSave->getBattleGame()->getTacticalAction());
-								action->target = Position(itX,itY,itZ);
+								action->posTarget = Position(itX,itY,itZ);
 
 								unsigned accuracy;
 								Uint8 color;
@@ -1566,7 +1566,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									originVoxel (_battleSave->getTileEngine()->getOriginVoxel(*action)),
 									targetVoxel (Position::toVoxelSpaceCentered( // TODO: conform this to ProjectileFlyBState (modifier keys) & Projectile::_targetVoxel
 																			Position(itX,itY,itZ),
-																			2 - _battleSave->getTile(action->target)->getTerrainLevel())); // LoFT of floor is typically 2 voxels thick.
+																			2 - _battleSave->getTile(action->posTarget)->getTerrainLevel())); // LoFT of floor is typically 2 voxels thick.
 								if (hasFloor == true
 									&& _battleSave->getTileEngine()->validateThrow(
 																				*action,

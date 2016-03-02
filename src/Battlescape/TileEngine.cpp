@@ -1701,7 +1701,7 @@ bool TileEngine::reactionShot(
 	}
 
 
-	_rfAction->target = targetUnit->getPosition();
+	_rfAction->posTarget = targetUnit->getPosition();
 	_rfAction->type = BA_NONE;
 	_rfAction->TU = 0;
 
@@ -1748,7 +1748,7 @@ bool TileEngine::reactionShot(
 
 		if (_rfAction->weapon->getAmmoItem()->getRules()->getExplosionRadius() > 0
 			&& ai->explosiveEfficacy(
-								_rfAction->target,
+								_rfAction->posTarget,
 								unit,
 								_rfAction->weapon->getAmmoItem()->getRules()->getExplosionRadius(),
 								_battleSave->getBattleState()->getSavedGame()->getDifficulty()) == false)
@@ -1784,7 +1784,7 @@ void TileEngine::chooseFireMethod()
 {
 	const int dist (_battleSave->getTileEngine()->distance(
 														_rfAction->actor->getPosition(),
-														_rfAction->target));
+														_rfAction->posTarget));
 	const RuleItem* const itRule (_rfAction->weapon->getRules());
 	if (dist <= itRule->getMaxRange() && dist >= itRule->getMinRange())
 	{
@@ -4950,7 +4950,7 @@ bool TileEngine::validateThrow(
 	//Log(LOG_INFO) << "TileEngine::validateThrow()";
 	if (action.type == BA_THROW) // ie. Do not check the following for acid-spit, grenade-launcher, etc.
 	{
-		const Tile* const tile (_battleSave->getTile(action.target)); // safety Off.
+		const Tile* const tile (_battleSave->getTile(action.posTarget)); // safety Off.
 
 		if (validThrowRange(&action, originVoxel, tile) == false)
 		{
@@ -5103,8 +5103,8 @@ bool TileEngine::validThrowRange( // static.
 		const Tile* const tile)
 {
 	const int
-		delta_x (action->actor->getPosition().x - action->target.x),
-		delta_y (action->actor->getPosition().y - action->target.y),
+		delta_x (action->actor->getPosition().x - action->posTarget.x),
+		delta_y (action->actor->getPosition().y - action->posTarget.y),
 		distThrow (static_cast<int>(std::sqrt(static_cast<double>((delta_x * delta_x) + (delta_y * delta_y)))));
 
 	int weight (action->weapon->getRules()->getWeight());
@@ -5115,7 +5115,7 @@ bool TileEngine::validThrowRange( // static.
 	}
 
 	const int deltaZ (originVoxel.z // throw up is neg./ throw down is pos.
-				   - (action->target.z * 24) + tile->getTerrainLevel());
+				   - (action->posTarget.z * 24) + tile->getTerrainLevel());
 	int dist ((getThrowDistance(
 							weight,
 							action->actor->getStrength(),
@@ -5677,7 +5677,7 @@ VoxelType TileEngine::voxelCheck(
 bool TileEngine::psiAttack(BattleAction* const action)
 {
 	//Log(LOG_INFO) << "\nTileEngine::psiAttack() attackerID " << action->actor->getId();
-	const Tile* const tile (_battleSave->getTile(action->target));
+	const Tile* const tile (_battleSave->getTile(action->posTarget));
 	if (tile == nullptr) return false;
 	//Log(LOG_INFO) << ". . target(pos) " << action->target;
 
@@ -5727,7 +5727,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 			defense (static_cast<float>(psiStrength) + (static_cast<float>(psiSkill) / 5.f)),
 			dist (static_cast<float>(distance(
 											action->actor->getPosition(),
-											action->target)));
+											action->posTarget)));
 
 		int bonusSkill; // add to psiSkill when using aLien to Panic another aLien ....
 		if (action->actor->getFaction() == FACTION_PLAYER

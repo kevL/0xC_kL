@@ -1039,7 +1039,7 @@ bool SoldierDiary::manageAwards(const Ruleset* const rules)
 	return doCeremony;
 }
 
-/*
+/**
  * Manages modular awards. (private)
  * @param nextCommendationLevel	- refrence map<string, int>
  * @param modularCommendations	- reference map<string, int>
@@ -1061,7 +1061,7 @@ void SoldierDiary::manageModularCommendations(
 	}
 } */
 
-/*
+/**
  * Awards medals to the soldier.
  * @param type - reference the type
  * @param noun - reference the noun (default "noQual")
@@ -1080,14 +1080,13 @@ void SoldierDiary::awardCommendation(
 			break;
 		}
 	}
-
 	if (newAward == true)
 		_solAwards.push_back(new SoldierAward(type, noun));
 } */
 
 /**
- * Gets a vector of mission ids.
- * @return, address of a vector of mission IDs
+ * Gets a vector of mission-IDs.
+ * @return, address of a vector of mission-IDs
  */
 std::vector<int>& SoldierDiary::getMissionIdList()
 {
@@ -1171,7 +1170,7 @@ std::map<std::string, int> SoldierDiary::getWeaponAmmoTotal() const
 }
 
 /**
- * Gets a list of quantity of missions done in a region.
+ * Gets a list of quantity of missions done by Region-type.
  * @return, address of a map of regions to missions done there
  */
 std::map<std::string, int>& SoldierDiary::getRegionTotal()
@@ -1180,7 +1179,7 @@ std::map<std::string, int>& SoldierDiary::getRegionTotal()
 }
 
 /**
- * Gets a list of quantity of missions done in a country.
+ * Gets a list of quantity of missions done by Country-type.
  * @return, address of a map of countries to missions done there
  */
 std::map<std::string, int>& SoldierDiary::getCountryTotal()
@@ -1189,7 +1188,7 @@ std::map<std::string, int>& SoldierDiary::getCountryTotal()
 }
 
 /**
- * Gets a list of quantity of missions done of a mission-type.
+ * Gets a list of quantity of missions done by Tactical-type.
  * @return, address of a map of mission types to qty
  */
 std::map<std::string, int>& SoldierDiary::getTypeTotal()
@@ -1198,7 +1197,7 @@ std::map<std::string, int>& SoldierDiary::getTypeTotal()
 }
 
 /**
- * Gets a list of quantity of missions done of a UFO-type
+ * Gets a list of quantity of missions done by UFO-type.
  * @return, address of a map of UFO types to qty
  */
 std::map<std::string, int>& SoldierDiary::getUfoTotal()
@@ -1207,7 +1206,7 @@ std::map<std::string, int>& SoldierDiary::getUfoTotal()
 }
 
 /**
- * Gets a total score for all missions.
+ * Gets the current total-score.
  * @return, sum score of all missions engaged
  */
 int SoldierDiary::getScoreTotal() const
@@ -1216,7 +1215,7 @@ int SoldierDiary::getScoreTotal() const
 }
 
 /**
- * Gets the total point-value of aLiens killed or stunned.
+ * Gets the current total points-value of units killed or stunned.
  * @return, sum points for all aliens killed or stunned
  */
 int SoldierDiary::getScorePoints() const
@@ -1225,7 +1224,7 @@ int SoldierDiary::getScorePoints() const
 }
 
 /**
- * Gets the total quantity of kills.
+ * Gets the current total quantity of kills.
  * @return, qty of kills
  */
 int SoldierDiary::getKillTotal() const
@@ -1234,7 +1233,7 @@ int SoldierDiary::getKillTotal() const
 }
 
 /**
- * Gets the total quantity of stuns.
+ * Gets the current total quantity of stuns.
  * @return, qty of stuns
  */
 int SoldierDiary::getStunTotal() const
@@ -1243,7 +1242,7 @@ int SoldierDiary::getStunTotal() const
 }
 
 /**
- * Gets the total quantity of missions.
+ * Gets the current total quantity of missions.
  * @return, qty of missions
  */
 int SoldierDiary::getMissionTotal() const
@@ -1252,7 +1251,7 @@ int SoldierDiary::getMissionTotal() const
 }
 
 /**
- * Gets the quantity of successful missions.
+ * Gets the current total quantity of successful missions.
  * @return, qty of successful missions
  */
 int SoldierDiary::getWinTotal() const
@@ -1261,7 +1260,7 @@ int SoldierDiary::getWinTotal() const
 }
 
 /**
- * Gets the total quantity of days wounded.
+ * Gets the current total quantity of days wounded.
  * @return, qty of days in sickbay
  */
 int SoldierDiary::getDaysWoundedTotal() const
@@ -1285,7 +1284,7 @@ std::string SoldierDiary::getKiaOrMia() const
 }
 
 /**
- * Increments soldier's service time by one month.
+ * Increments the Soldier's service-time by one month.
  */
 void SoldierDiary::addMonthlyService()
 {
@@ -1293,7 +1292,7 @@ void SoldierDiary::addMonthlyService()
 }
 
 /**
- * Awards special medal to each of the original 8 soldiers.
+ * Awards a special medal to each of the original 8 Soldiers.
  */
 void SoldierDiary::awardOriginalEight()
 {
@@ -1309,8 +1308,8 @@ void SoldierDiary::awardOriginalEight()
 / ___________________________________*/
 /**
  * Initializes a SoldierAward.
- * @param type		- reference the type
- * @param qualifier	- reference the noun (default "noQual")
+ * @param type		- reference to the type
+ * @param qualifier	- reference to the noun/qualifier (default "noQual")
  */
 SoldierAward::SoldierAward(
 		const std::string& type,
@@ -1319,11 +1318,11 @@ SoldierAward::SoldierAward(
 		_type(type),
 		_qual(qualifier),
 		_level(0),
-		_new(true)
+		_recent(true)
 {}
 
 /**
- * Initializes a new SoldierAward entry from YAML.
+ * Initializes a SoldierAward entry from YAML.
  * @param node - YAML node
  */
 SoldierAward::SoldierAward(const YAML::Node& node)
@@ -1347,7 +1346,7 @@ void SoldierAward::load(const YAML::Node& node)
 	_qual	= node["qualifier"]	.as<std::string>("noQual");
 	_level	= node["level"]		.as<size_t>(_level);
 
-	_new = false;
+	_recent = false;
 }
 
 /**
@@ -1359,7 +1358,7 @@ YAML::Node SoldierAward::save() const
 	YAML::Node node;
 
 	node["type"] = _type;
-	node["level"] = static_cast<int>(_level); // warning: Save this even if "0".
+	node["level"] = static_cast<int>(_level); // WARNING: Save this even if '0'.
 
 	if (_qual != "noQual")
 		node["qualifier"] = _qual;
@@ -1369,7 +1368,7 @@ YAML::Node SoldierAward::save() const
 
 /**
  * Gets this SoldierAward's type.
- * @return, award name
+ * @return, the type
  */
 const std::string SoldierAward::getType() const
 {
@@ -1377,8 +1376,8 @@ const std::string SoldierAward::getType() const
 }
 
 /**
- * Get this SoldierAward's noun.
- * @return, award noun
+ * Get this SoldierAward's noun/qualifier.
+ * @return, the qualifier
  */
 const std::string SoldierAward::getQualifier() const
 {
@@ -1386,9 +1385,9 @@ const std::string SoldierAward::getQualifier() const
 }
 
 /**
- * Gets this SoldierAward's level's type.
+ * Gets this SoldierAward's level-type.
  * @param skip -
- * @return, award level
+ * @return, decoration-level as string
  */
 const std::string SoldierAward::getClassType(int skip) const
 {
@@ -1399,7 +1398,7 @@ const std::string SoldierAward::getClassType(int skip) const
 
 /**
  * Gets this SoldierAward's level as an integer.
- * @return, award level int
+ * @return, decoration-level as int
  */
 size_t SoldierAward::getClassLevel() const
 {
@@ -1407,8 +1406,8 @@ size_t SoldierAward::getClassLevel() const
 }
 
 /**
- * Gets this SoldierAward's level description.
- * @return, award level description
+ * Gets this SoldierAward's level-description.
+ * @return, decoration-level description
  */
 const std::string SoldierAward::getClassDescription() const
 {
@@ -1418,8 +1417,8 @@ const std::string SoldierAward::getClassDescription() const
 }
 
 /**
- * Gets this SoldierAward's level class - qty stars.
- * @return, award level class
+ * Gets this SoldierAward's level-class - represents quantity of stars.
+ * @return, decoration-level class
  */
 const std::string SoldierAward::getClassDegree() const
 {
@@ -1429,20 +1428,20 @@ const std::string SoldierAward::getClassDegree() const
 }
 
 /**
- * Gets newness of this SoldierAward.
- * @return, true if the award is new
+ * Gets if this SoldierAward has been recently awarded.
+ * @return, true if recent
  */
-bool SoldierAward::isNew() const
+bool SoldierAward::isAwardRecent() const
 {
-	return _new;
+	return _recent;
 }
 
 /**
- * Sets the newness of this SoldierAward to old.
+ * Clears the recently-awarded flag from this SoldierAward.
  */
-void SoldierAward::setOld()
+void SoldierAward::clearRecent()
 {
-	_new = false;
+	_recent = false;
 }
 
 /**
@@ -1451,7 +1450,7 @@ void SoldierAward::setOld()
 void SoldierAward::addClassLevel()
 {
 	++_level;
-	_new = true;
+	_recent = true;
 }
 
 }

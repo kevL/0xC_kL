@@ -210,7 +210,7 @@ void MediTargetState::init()
 
 	if (_targetUnits.size() == 1)
 	{
-		_action->target = _targetUnits[0]->getPosition(); // jic.
+		_action->posTarget = _targetUnits[0]->getPosition(); // jic.
 		_action->targetUnit = _targetUnits[0];
 
 		_game->popState();
@@ -229,7 +229,7 @@ void MediTargetState::lstTargetPress(Action* action)
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		BattleUnit* const targetUnit = _targetUnits[_lstTarget->getSelectedRow()];
-		_action->target = targetUnit->getPosition(); // jic.
+		_action->posTarget = targetUnit->getPosition(); // jic.
 		_action->targetUnit = targetUnit;
 
 		_game->popState();

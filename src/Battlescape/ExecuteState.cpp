@@ -183,7 +183,7 @@ void ExecuteState::lstTargetPress(Action* action)
 		else
 		{
 			BattleUnit* const targetUnit (_targetUnits[_lstTarget->getSelectedRow()]);
-			_action->target = targetUnit->getPosition(); // jic.
+			_action->posTarget = targetUnit->getPosition(); // jic.
 			_action->targetUnit = targetUnit;
 
 			const RuleItem* const itRule (_action->weapon->getRules());

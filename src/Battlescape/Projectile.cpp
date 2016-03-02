@@ -226,7 +226,7 @@ VoxelType Projectile::calculateShot(
 					originVoxel,
 					&_targetVoxel,
 					accuracy,
-					_battleSave->getTile(_action.target));
+					_battleSave->getTile(_action.posTarget));
 		//Log(LOG_INFO) << ". postAcu target = " << _targetVoxel << " tSpace " << (_targetVoxel / Position(16,16,24));
 	}
 
@@ -294,7 +294,7 @@ VoxelType Projectile::calculateThrow(double accuracy)
 						originVoxel,
 						&deltaVoxel,
 						accuracy,
-						_battleSave->getTile(_action.target));
+						_battleSave->getTile(_action.posTarget));
 
 			deltaVoxel -= _targetVoxel;
 			//Log(LOG_INFO) << ". call TileEngine::plotParabola() arc = " << arc;
@@ -719,24 +719,24 @@ bool Projectile::verifyTarget(
 		}
 
 		//Log(LOG_INFO) << ". result = " << _action.result;
-		if (posTest != _action.target && _action.result.empty() == true)
+		if (posTest != _action.posTarget && _action.result.empty() == true)
 		{
 			switch (voxelType)
 			{
 				case VOXEL_NORTHWALL:
-					if (posTest.y - 1 != _action.target.y)
+					if (posTest.y - 1 != _action.posTarget.y)
 						return false;
 					break;
 
 				case VOXEL_WESTWALL:
-					if (posTest.x - 1 != _action.target.x)
+					if (posTest.x - 1 != _action.posTarget.x)
 						return false;
 					break;
 
 				case VOXEL_UNIT:
 				{
 					const BattleUnit
-						* const targetUnit (_battleSave->getTile(_action.target)->getTileUnit()),
+						* const targetUnit (_battleSave->getTile(_action.posTarget)->getTileUnit()),
 						* const testUnit (_battleSave->getTile(posTest)->getTileUnit());
 					if (testUnit != targetUnit && testUnit->getUnitVisible() == true)
 						return false;

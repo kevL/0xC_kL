@@ -134,10 +134,10 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 					++k)
 			{
 				if ((*k)->getType() == (*i).first
-					&& (*k)->isNew() == true
+					&& (*k)->isAwardRecent() == true
 					&& qualifier == "noQual")
 				{
-					(*k)->setOld();
+					(*k)->clearRecent();
 					++row;
 
 					if ((*k)->getQualifier() != "noQual")

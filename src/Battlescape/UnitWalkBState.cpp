@@ -1014,7 +1014,7 @@ void UnitWalkBState::postPathProcedures() // private.
 
 				BattleAction action;
 				action.actor = _unit;
-				action.target = posTarget;
+				action.posTarget = posTarget;
 				action.targeting = true;
 				action.type = BA_MELEE;
 				action.weapon = _unit->getMeleeWeapon(); // will get Melee OR Fist

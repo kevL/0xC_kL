@@ -148,7 +148,7 @@ void NewGameState::btnOkClick(Action*)
 	else //if (_difficulty == _btnBeginner)
 		diff = DIFF_BEGINNER;
 
-	SavedGame* const gameSave = _game->getRuleset()->newSave();
+	SavedGame* const gameSave = _game->getRuleset()->createSave();
 	gameSave->setDifficulty(diff);
 	gameSave->setIronman(_btnIronman->getPressed());
 	_game->setSavedGame(gameSave);

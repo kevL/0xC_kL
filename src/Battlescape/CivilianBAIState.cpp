@@ -130,12 +130,12 @@ void CivilianBAIState::think(BattleAction* const action)
 	{
 		case AI_PATROL:
 			action->type = _patrolAction->type;
-			action->target = _patrolAction->target;
+			action->posTarget = _patrolAction->posTarget;
 			break;
 
 		case AI_ESCAPE:
 			action->type = _escapeAction->type;
-			action->target = _escapeAction->target;
+			action->posTarget = _escapeAction->posTarget;
 			action->AIcount = 3;
 //			action->finalAction = true; // <- AlienBAI uses this instead of AICount= 3 <--
 			action->desperate = true;
@@ -145,7 +145,7 @@ void CivilianBAIState::think(BattleAction* const action)
 	}
 
 	if (action->type == BA_MOVE
-		&& action->target != _unit->getPosition())
+		&& action->posTarget != _unit->getPosition())
 	{
 		_tuEscape = -1;
 	}
@@ -182,7 +182,7 @@ void CivilianBAIState::setupPatrol() // private.
 	if (_stopNode != nullptr)
 	{
 		_patrolAction->type = BA_MOVE;
-		_patrolAction->target = _stopNode->getPosition();
+		_patrolAction->posTarget = _stopNode->getPosition();
 	}
 	else
 		_patrolAction->type = BA_THINK;
@@ -223,22 +223,22 @@ void CivilianBAIState::setupEscape() // private.
 	size_t i (0);
 	while (coverFound == false && i <= SavedBattleGame::SEARCH_SIZE)
 	{
-		_escapeAction->target = _unit->getPosition();
+		_escapeAction->posTarget = _unit->getPosition();
 
 		if (i < SavedBattleGame::SEARCH_SIZE)
 		{
 			scoreTest = BASE_SUCCESS_SYSTEMATIC;
 
-			_escapeAction->target.x += tileSearch[i].x;
-			_escapeAction->target.y += tileSearch[i].y;
+			_escapeAction->posTarget.x += tileSearch[i].x;
+			_escapeAction->posTarget.y += tileSearch[i].y;
 
-			if (_escapeAction->target == _unit->getPosition())
+			if (_escapeAction->posTarget == _unit->getPosition())
 			{
 //				if (spottersOrigin != 0)
 				if (_spottersOrigin != 0)
 				{
-					_escapeAction->target.x += RNG::generate(-20,20);
-					_escapeAction->target.y += RNG::generate(-20,20);
+					_escapeAction->posTarget.x += RNG::generate(-20,20);
+					_escapeAction->posTarget.y += RNG::generate(-20,20);
 				}
 				else
 					scoreTest += CUR_TILE_PREF;
@@ -248,36 +248,36 @@ void CivilianBAIState::setupEscape() // private.
 		{
 			scoreTest = BASE_SUCCESS_DESPERATE;
 
-			_escapeAction->target = _unit->getPosition();
-			_escapeAction->target.x += RNG::generate(-10,10);
-			_escapeAction->target.y += RNG::generate(-10,10);
-			_escapeAction->target.z = _unit->getPosition().z + RNG::generate(-1,1);
+			_escapeAction->posTarget = _unit->getPosition();
+			_escapeAction->posTarget.x += RNG::generate(-10,10);
+			_escapeAction->posTarget.y += RNG::generate(-10,10);
+			_escapeAction->posTarget.z = _unit->getPosition().z + RNG::generate(-1,1);
 
-			if (_escapeAction->target.z < 0)
-				_escapeAction->target.z = 0;
-			else if (_escapeAction->target.z >= _battleSave->getMapSizeZ())
-				_escapeAction->target.z = _battleSave->getMapSizeZ();
+			if (_escapeAction->posTarget.z < 0)
+				_escapeAction->posTarget.z = 0;
+			else if (_escapeAction->posTarget.z >= _battleSave->getMapSizeZ())
+				_escapeAction->posTarget.z = _battleSave->getMapSizeZ();
 		}
 		i += RNG::generate(1,10);
 
 
 		if (_unitAggro != nullptr)
 			distAggroTarget = TileEngine::distance(
-												_escapeAction->target,
+												_escapeAction->posTarget,
 												_unitAggro->getPosition());
 		else
 			distAggroTarget = 0;
 
 		scoreTest += (distAggroTarget - distAggroOrigin) * EXPOSURE_PENALTY;
 
-		if ((tile = _battleSave->getTile(_escapeAction->target)) != nullptr
+		if ((tile = _battleSave->getTile(_escapeAction->posTarget)) != nullptr
 			&& std::find(
 					_reachable.begin(),
 					_reachable.end(),
 					_battleSave->getTileIndex(tile->getPosition())) != _reachable.end())
 		{
 //			scoreTest += (spottersOrigin - tallySpotters(_escapeAction->target)) * EXPOSURE_PENALTY;
-			scoreTest += (_spottersOrigin - tallySpotters(_escapeAction->target)) * EXPOSURE_PENALTY;
+			scoreTest += (_spottersOrigin - tallySpotters(_escapeAction->posTarget)) * EXPOSURE_PENALTY;
 
 			if (tile->getFire() != 0)
 				scoreTest -= FIRE_PENALTY;
@@ -293,11 +293,11 @@ void CivilianBAIState::setupEscape() // private.
 			{
 				_pf->calculatePath(
 							_unit,
-							_escapeAction->target,
+							_escapeAction->posTarget,
 							tuHalf);
 
 				if (_pf->getStartDirection() != -1
-					|| _escapeAction->target == _unit->getPosition())
+					|| _escapeAction->posTarget == _unit->getPosition())
 				{
 					score = scoreTest;
 					_tuEscape = _pf->getTuCostTotalPf();
@@ -317,7 +317,7 @@ void CivilianBAIState::setupEscape() // private.
 
 	if (score != ESCAPE_FAIL)
 	{
-		if (_traceAI) _battleSave->getTile(_escapeAction->target)->setPreviewColor(TRACE_PURPLE);
+		if (_traceAI) _battleSave->getTile(_escapeAction->posTarget)->setPreviewColor(TRACE_PURPLE);
 		_escapeAction->type = BA_MOVE;
 	}
 	else

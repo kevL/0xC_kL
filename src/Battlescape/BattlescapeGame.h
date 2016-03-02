@@ -97,8 +97,8 @@ struct BattleAction
 		* actor,
 		* targetUnit;
 	Position
-		cameraPosition,
-		target;
+		posCamera,
+		posTarget;
 
 	std::list<Position> waypoints;
 
@@ -116,7 +116,7 @@ struct BattleAction
 			dash(false),
 			diff(0),
 			autoShotCount(0),
-			cameraPosition(0,0,-1),
+			posCamera(0,0,-1),
 			desperate(false),
 			finalFacing(-1),
 			finalAction(false),
@@ -144,7 +144,7 @@ struct BattleAction
 		dash = false;
 		diff = 0;
 		autoShotCount = 0;
-		cameraPosition = Position(0,0,-1);
+		posCamera = Position(0,0,-1);
 		desperate = false;
 		finalFacing = -1;
 		finalAction = false;

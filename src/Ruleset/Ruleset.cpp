@@ -1106,10 +1106,10 @@ T* Ruleset::loadRule( // protected.
 }
 
 /**
- * Generates a brand new SavedGame with starting data.
+ * Generates a SavedGame with starting data.
  * @return, pointer to the SavedGame
  */
-SavedGame* Ruleset::newSave() const
+SavedGame* Ruleset::createSave() const
 {
 	RNG::setSeed(0);
 
@@ -1251,7 +1251,7 @@ SavedGame* Ruleset::newSave() const
 
 			base->getSoldiers()->push_back(sol);
 
-			// Medal soldier a special Original Eight award.
+			// Award each Soldier the special Original Eight award.
 			SoldierDiary* const diary (sol->getDiary());
 			diary->awardOriginalEight();
 
@@ -1260,13 +1260,13 @@ SavedGame* Ruleset::newSave() const
 					j != diary->getSoldierAwards()->end();
 					++j)
 			{
-				(*j)->setOld();
+				(*j)->clearRecent();
 			}
 		}
 	}
 
 	gameSave->getBases()->push_back(base);
-	gameSave->getAlienStrategy().init(this); // Setup alien strategy
+	gameSave->getAlienStrategy().init(this); // Setup aLien strategy.
 	gameSave->setTime(_startingTime);
 
 	return gameSave;

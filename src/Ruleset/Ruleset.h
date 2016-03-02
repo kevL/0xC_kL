@@ -226,7 +226,7 @@ protected:
 		void load(const std::string& src);
 
 		/// Generates a starting SavedGame.
-		SavedGame* newSave() const;
+		SavedGame* createSave() const;
 
 		/// Gets the pool list for Soldier names.
 		const std::vector<SoldierNamePool*>& getPools() const;

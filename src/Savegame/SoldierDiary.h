@@ -42,7 +42,7 @@ class SoldierAward
 {
 
 private:
-	bool _new;
+	bool _recent;
 	size_t _level;
 	std::string
 		_type,
@@ -50,39 +50,39 @@ private:
 
 
 	public:
-		/// Creates a award of the specified type.
+		/// Creates a SoldierAward of the specified type.
 		SoldierAward(
 				const std::string& type,
 				const std::string& qualifier = "noQual");
-		/// Creates a new award and loads its contents from YAML.
+		/// Creates a SoldierAward and loads its contents from YAML.
 		explicit SoldierAward(const YAML::Node& node);
 		/// Cleans up the award.
 		~SoldierAward();
 
-		/// Loads the award information from YAML.
+		/// Loads the SoldierAward information from YAML.
 		void load(const YAML::Node& node);
-		/// Saves the award information to YAML.
+		/// Saves the SoldierAward information to YAML.
 		YAML::Node save() const;
 
-		/// Gets award name.
+		/// Gets the SoldierAward's type.
 		const std::string getType() const;
-		/// Gets award qualifier.
+		/// Gets the SoldierAward's noun/qualifier.
 		const std::string getQualifier() const;
-		/// Gets the award's decoration-level's name.
+		/// Gets the SoldierAward decoration-level type.
 		const std::string getClassType(int skip) const;
-		/// Gets the award's decoration-level's int.
+		/// Gets the SoldierAward's decoration-level-ID.
 		size_t getClassLevel() const;
-		/// Gets the award's decoration description.
+		/// Gets the SoldierAward's decoration-description.
 		const std::string getClassDescription() const;
-		/// Gets the award's decoration class.
+		/// Gets the SoldierAward's decoration-class.
 		const std::string getClassDegree() const;
 
-		/// Gets the newness of the award.
-		bool isNew() const;
-		/// Sets the award newness to false.
-		void setOld();
+		/// Gets whether the SoldierAward was recently awarded.
+		bool isAwardRecent() const;
+		/// Clears the SoldierAward's recent-flag.
+		void clearRecent();
 
-		/// Increments decoration level and sets '_new' true.
+		/// Increments the decoration-level-ID and flags '_recent'.
 		void addClassLevel();
 };
 
@@ -156,24 +156,24 @@ private:
 
 
 	public:
-		/// Creates a new soldier-diary and loads its contents from YAML.
+		/// Creates a SoldierDiary and loads its contents from YAML.
 		explicit SoldierDiary(const YAML::Node& node);
-		/// Constructs a diary.
+		/// Creates a SoldierDiary.
 		SoldierDiary();
-		/// Constructs a copy of a diary.
+		/// Constructs a copy of the SoldierDiary.
 		SoldierDiary(const SoldierDiary& copyThis);
-		/// Deconstructs a diary.
+		/// Deconstructs the SoldierDiary.
 		~SoldierDiary();
 
-		/// Overloads assignment operator.
+		/// Overloads the SoldierDiary's assignment-operator.
 		SoldierDiary& operator= (const SoldierDiary& assignThis);
 
-		/// Loads a diary.
+		/// Loads the SoldierDiary from YAML.
 		void load(const YAML::Node& node);
-		/// Saves a diary.
+		/// Saves the SoldierDiary to YAML.
 		YAML::Node save() const;
 
-		/// Updates the diary statistics.
+		/// Updates the SoldierDiary's statistics.
 		void updateDiary(
 				const BattleUnitStatistics* const unitStatistics,
 				MissionStatistics* const missionStatistics,
@@ -213,20 +213,20 @@ private:
 		/// Gets whether soldier died or went missing.
 		std::string getKiaOrMia() const;
 
-		/// Gets the solder's awards.
+		/// Gets the SoldierAwards currently in the SoldierDiary.
 		std::vector<SoldierAward*>* getSoldierAwards();
 
-		/// Manages awards, returns true if a medal is awarded.
+		/// Manages SoldierAwards and returns true if a medal is awarded.
 		bool manageAwards(const Ruleset* const rules);
 
-		/// Increments the soldier's service time.
+		/// Increments the Soldier's service-time.
 		void addMonthlyService();
-		/// Awards special medal to the original 8 soldiers.
+		/// Awards a special medal to the original 8 Soldiers.
 		void awardOriginalEight();
 
-		/// Gets the mission id list.
+		/// Gets the mission-ID list.
 		std::vector<int>& getMissionIdList();
-		/// Gets the kill list.
+		/// Gets the kills-list.
 		std::vector<BattleUnitKill*>& getKills();
 };
 

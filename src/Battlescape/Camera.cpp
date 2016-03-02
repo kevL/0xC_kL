@@ -854,7 +854,7 @@ void Camera::stopMouseScrolling()
 /**
  * Sets whether to pause the camera a moment before reverting to the position
  * it originally had before following a shot per Map tracing.
- * @sa BattleAction::cameraPosition
+ * @sa BattleAction::posCamera
  * @param pause - true to pause (default true)
  */
 void Camera::setPauseAfterShot(bool pause)
@@ -865,7 +865,7 @@ void Camera::setPauseAfterShot(bool pause)
 /**
  * Gets whether to pause the camera a moment before reverting to the position
  * it originally had before following a shot per Map tracing.
- * @sa BattleAction::cameraPosition
+ * @sa BattleAction::posCamera
  * @return, true to pause
  */
 bool Camera::getPauseAfterShot() const
