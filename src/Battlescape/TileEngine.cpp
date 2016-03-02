@@ -35,7 +35,7 @@
 #include "BattlescapeState.h"
 #include "Camera.h"
 #include "ExplosionBState.h"
-#include "InfoBoxOKState.h"
+#include "InfoboxDialogState.h"
 #include "Map.h"
 #include "Pathfinding.h"
 #include "ProjectileFlyBState.h"
@@ -2466,9 +2466,9 @@ void TileEngine::explode(
 										{
 											//Log(LOG_INFO) << ". . . powerUnit = " << powerUnit << " DT_HE, not GZ";
 											voxelRel = Position( // Directional damage relative to explosion position.
-															centerX * 16 - tileStop->getPosition().x * 16,
-															centerY * 16 - tileStop->getPosition().y * 16,
-															centerZ * 24 - tileStop->getPosition().z * 24);
+															(centerX << 4) - (tileStop->getPosition().x << 4),
+															(centerY << 4) - (tileStop->getPosition().y << 4),
+															(centerZ * 24) - (tileStop->getPosition().z * 24));
 											if (targetUnit->isKneeled() == true)
 											{
 												powerUnit = powerUnit * 7 / 10; // 70% damage
