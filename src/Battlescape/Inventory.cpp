@@ -724,13 +724,16 @@ void Inventory::mouseClick(Action* action, State* state)
 							if (_tuMode == true)
 							{
 								tuReload = overItem->getRules()->getReloadTu();
-								InventorySection toHand;
-								if (_selUnit->getItem(ST_RIGHTHAND) == nullptr)
-									toHand = ST_RIGHTHAND;
-								else
-									toHand = ST_LEFTHAND;
-								const RuleInventory* const handRule (_game->getRuleset()->getInventoryRule(toHand));
-								tuReload += _selItem->getInventorySection()->getCost(handRule);
+								if (_selItem->getInventorySection()->getCategory() != IC_HAND)
+								{
+									InventorySection toHand;
+									if (_selUnit->getItem(ST_RIGHTHAND) == nullptr)
+										toHand = ST_RIGHTHAND;
+									else
+										toHand = ST_LEFTHAND;
+									const RuleInventory* const handRule (_game->getRuleset()->getInventoryRule(toHand));
+									tuReload += _selItem->getInventorySection()->getCost(handRule);
+								}
 							}
 							else
 								tuReload = 0; // safety, not used.
