@@ -327,8 +327,6 @@ private:
 
 		/// Requests the end of the turn.
 		void requestEndTurn();
-		/// Gets if an end-turn-request is waiting.
-//		bool getEndTurnRequested() const;
 
 		/// Drops an item and affects it with gravity.
 		void dropItem(

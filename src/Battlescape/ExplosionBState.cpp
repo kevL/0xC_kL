@@ -355,7 +355,7 @@ void ExplosionBState::init()
 
 			Uint32 interval (static_cast<Uint32>(
 							 std::max(1,
-									static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION) - itRule->getExplosionSpeed())));
+									  static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION) - itRule->getExplosionSpeed())));
 			_parent->setStateInterval(interval);
 		}
 
@@ -546,8 +546,7 @@ void ExplosionBState::explode() // private.
 	}
 
 
-	bool terrain (false);
-
+	bool terrain;
 	if (_tile != nullptr)
 	{
 		terrain = true;
@@ -576,6 +575,8 @@ void ExplosionBState::explode() // private.
 				DT_HE,
 				radius);
 	}
+	else
+		terrain = false;
 
 
 	//Log(LOG_INFO) << "ExplosionBState::explode() CALL bg::checkCasualties()";

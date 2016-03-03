@@ -108,7 +108,7 @@ enum OutCheck
 	OUT_ALL,		// 0
 	OUT_STAT,		// 1
 	OUT_HEALTH,		// 2
-	OUT_STUNNED,		// 3
+	OUT_STUNNED,	// 3
 	OUT_HLTH_STUN	// 4
 };
 
@@ -121,7 +121,7 @@ enum ActiveHand
 
 
 /**
- * This holds info about a mobile object in the battlescape whether controlled
+ * This holds info about a mobile object in the Battlescape whether controlled
  * by player or AI.
  */
 class BattleUnit // no copy cTor.
@@ -846,9 +846,6 @@ private:
 		/// Sets this unit hiding or not.
 		void setHiding(bool hiding = true)
 		{ _hidingForTurn = hiding; };
-
-		/// Puts the unit in the corner to think about what he's done.
-//		void goToTimeOut();
 
 		/// Creates special weapon for the unit.
 //		void setSpecialWeapon(SavedBattleGame* save, const Ruleset* rule);

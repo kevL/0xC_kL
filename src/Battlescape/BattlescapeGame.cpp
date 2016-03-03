@@ -2880,17 +2880,9 @@ void BattlescapeGame::requestEndTurn()
 }
 
 /**
- * Gets if an end-turn-request is waiting.
- *
-bool BattlescapeGame::getEndTurnRequested() const
-{
-	return _endTurnRequested;
-} */
-
-/**
  * Drops an item to the floor and affects it with gravity then recalculates FoV
  * if it's a light-source.
- * @param pos		- reference position to place the item
+ * @param pos		- reference to a Position to place the item
  * @param item		- pointer to the item
  * @param create	- true if this is a new item (default false)
  * @param disown	- true to remove the item from the owner (default false)
@@ -2904,9 +2896,8 @@ void BattlescapeGame::dropItem(
 	if (_battleSave->getTile(pos) != nullptr		// don't spawn anything outside of bounds
 		&& item->getRules()->isFixed() == false)	// don't ever drop fixed items
 	{
-		_battleSave->getTile(pos)->addItem(
-										item,
-										getRuleset()->getInventoryRule(ST_GROUND));
+		item->setInventorySection(getRuleset()->getInventoryRule(ST_GROUND));
+		_battleSave->getTile(pos)->addItem(item);
 
 		if (item->getUnit() != nullptr)
 			item->getUnit()->setPosition(pos);
@@ -3197,7 +3188,7 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 	{
 		const Position posUnit (unit->getPosition());
 		int
-			worth = 0,
+			worth (0),
 			testWorth;
 
 		std::vector<BattleItem*> choiceItems;
@@ -3252,7 +3243,7 @@ bool BattlescapeGame::worthTaking(
 	inTypes.push_back(getRuleset()->getInventoryRule(ST_BELT));
 	inTypes.push_back(getRuleset()->getInventoryRule(ST_BACKPACK));
 
-	bool fit = false;
+	bool fit (false);
 	for (std::vector<const RuleInventory*>::const_iterator
 			i = inTypes.begin();
 			i != inTypes.end() && fit == false;

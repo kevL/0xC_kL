@@ -43,8 +43,6 @@ protected:
 		BattleState(
 				BattlescapeGame* const parent,
 				BattleAction action = {});
-		///
-//		explicit BattleState(BattlescapeGame* const parent);
 		/// Cleans up the BattleState.
 		virtual ~BattleState();
 

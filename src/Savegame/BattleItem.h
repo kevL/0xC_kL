@@ -112,16 +112,16 @@ private:
 		/// Sets turns until the BattleItem explodes.
 		void setFuse(int turn);
 
+		/// Sets the BattleItem's owner.
+		void setOwner(BattleUnit* const owner = nullptr);
 		/// Gets the BattleItem's owner.
 		BattleUnit* getOwner() const;
-		/// Sets the owner.
-		void setOwner(BattleUnit* const owner = nullptr);
-		/// Gets the BattleItem's previous owner.
-		BattleUnit* getPriorOwner() const;
 		/// Sets the BattleItem's previous owner.
 		void setPriorOwner(BattleUnit* const ownerPre);
+		/// Gets the BattleItem's previous owner.
+		BattleUnit* getPriorOwner() const;
 		/// Clears the BattleItem from its previous owner and gives it to a different BattleUnit.
-		void changeOwner(BattleUnit* const owner = nullptr);
+		void changeOwner(BattleUnit* const toUnit = nullptr);
 
 		/// Gets the BattleItem's current Inventory section.
 		const RuleInventory* getInventorySection() const;
@@ -144,7 +144,7 @@ private:
 		/// Gets the BattleItem's tile.
 		Tile* getTile() const;
 		/// Sets the BattleItem's tile.
-		void setTile(Tile* const tile);
+		void setTile(Tile* const tile = nullptr);
 
 		/// Gets the BattleItem's unique id.
 		int getId() const;

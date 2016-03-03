@@ -4556,74 +4556,6 @@ bool BattleUnit::hasInventory() const
 }
 
 /**
- * Gets the bubble-animation frame.
- * @return, frame number
- */
-/* int BattleUnit::getBreathFrame() const
-{
-	if (_floorAbove == true)
-		return 0;
-
-	return _breathFrame;
-} */
-
-/**
- * Decides if bubbles should be produced and/or updates which bubble frame.
- */
-/* void BattleUnit::breathe()
-{
-	// _breathFrame of -1 means this unit doesn't produce bubbles
-	if (_breathFrame < 0
-		|| isOut() == true)
-	{
-		_breathing = false;
-		return;
-	}
-
-	if (_breathing == false
-		|| _status == STATUS_WALKING)
-	{
-		// deviation from original: TFTD used a static 10% chance for every animation frame,
-		// instead let's use 5%, but allow morale to affect it.
-		_breathing = (_status != STATUS_WALKING
-					&& RNG::percent(105 - _morale));
-
-		_breathFrame = 0;
-	}
-
-	if (_breathing == true)
-	{
-		// advance the bubble frame
-		++_breathFrame;
-
-		// we've reached the end of the cycle, get rid of the bubbles
-		if (_breathFrame > 16)
-		{
-			_breathFrame = 0;
-			_breathing = false;
-		}
-	}
-} */
-
-/**
- * Sets the flag for "this unit is under cover" meaning don't draw bubbles.
- * @param floorAbove - true if there is a floor
- */
-/* void BattleUnit::setFloorAbove(const bool floorAbove)
-{
-	_floorAbove = floorAbove;
-} */
-
-/**
- * Checks if the floorAbove flag has been set.
- * @return, true if this unit is under cover
- */
-/* bool BattleUnit::getFloorAbove() const
-{
-	return _floorAbove;
-} */
-
-/**
  * Gets this BattleUnit's movement type.
  * @note Use this instead of checking the rules of the armor.
  * @return, MovementType
@@ -4634,28 +4566,18 @@ MovementType BattleUnit::getMoveTypeUnit() const
 }
 
 /**
- * Elevates this BattleUnit to grand galactic inquisitor status, which means
- * that it will NOT take part in a stage 2+ tactical battle.
- * @note It is still a valid BattleUnit but should be bypassed.
- */
-/* void BattleUnit::goToTimeOut()
-{
-	_status = STATUS_LIMBO;
-} */
-
-/**
  * Helper function used by BattleUnit::setSpecialWeapon().
  * @param save -
  * @param unit -
  * @param rule -
  * @return, pointer to BattleItem
- */
+ *
 // ps. this doesn't have to be and therefore shouldn't be static.
 // pps. inline functions don't have to be keyed as such if LTCG is enabled
 // and if it isn't they should be defined in the header.
-/* static inline BattleItem *createItem(SavedBattleGame *save, BattleUnit *unit, RuleItem *rule)
+static inline BattleItem* createItem(SavedBattleGame *save, BattleUnit *unit, RuleItem *rule)
 {
-	BattleItem *item = new BattleItem(rule, save->getCanonicalBattleId());
+	BattleItem* item = new BattleItem(rule, save->getCanonicalBattleId());
 	item->setOwner(unit);
 	save->removeItem(item); //item outside inventory, deleted when SavedBattleGame dTors.
 	return item;
@@ -4665,10 +4587,10 @@ MovementType BattleUnit::getMoveTypeUnit() const
  * Sets special weapon that is handled outside inventory.
  * @param save -
  * @param rule -
- */
-/* void BattleUnit::setSpecialWeapon(SavedBattleGame *save, const Ruleset *rule)
+ *
+void BattleUnit::setSpecialWeapon(SavedBattleGame* save, const Ruleset* rule)
 {
-	RuleItem *item = 0;
+	RuleItem* item = nullptr;
 	int i = 0;
 	if (getUnitRules())
 	{
@@ -4691,8 +4613,8 @@ MovementType BattleUnit::getMoveTypeUnit() const
  * Gets special weapon.
  * @param type -
  * @return, pointer to BattleItem
- */
-/* BattleItem *BattleUnit::getSpecialWeapon(BattleType type) const
+ *
+BattleItem* BattleUnit::getSpecialWeapon(BattleType type) const
 {
 	for (int i = 0; i < SPEC_WEAPON_MAX; ++i)
 		if (_specWeapon[i] && _specWeapon[i]->getRules()->getBattleType() == type)

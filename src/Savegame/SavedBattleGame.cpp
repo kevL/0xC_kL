@@ -457,34 +457,36 @@ void SavedBattleGame::load(
 				ownerPre	= (*j)["ownerPre"]	.as<int>(-1);
 				unitId		= (*j)["unit"]		.as<int>(-1);
 
-				if (ownerPre == -1 && owner != -1)
-					ownerPre = owner;
+				if (ownerPre == -1) ownerPre = owner;
 
-				for (std::vector<BattleUnit*>::const_iterator // match up items and units
+				for (std::vector<BattleUnit*>::const_iterator // match up some item-variables with units
 						k = _units.begin();
 						k != _units.end();
 						++k)
 				{
-					if ((*k)->getId() == owner)
-						item->changeOwner(*k);
+					const int testId ((*k)->getId());
+					if (testId == owner)
+					{
+						item->setOwner(*k); // call before setPriorOwner()
+						(*k)->getInventory()->push_back(item);
+					}
 
-					if ((*k)->getId() == ownerPre)
+					if (testId == ownerPre)
 						item->setPriorOwner(*k);
 
-					if ((*k)->getId() == unitId)
+					if (testId == unitId)
 						item->setUnit(*k);
 				}
 
-				if (item->getInventorySection() != nullptr // match up items and tiles // note: 'section' should always be valid. Unless it's a loaded Ammo-item.
-					&& item->getInventorySection()->getCategory() == IC_GROUND)
+				if (item->getInventorySection() != nullptr						// match up items and tiles
+					&& item->getInventorySection()->getCategory() == IC_GROUND)	// NOTE: 'section' should always be valid unless it's a loaded Ammo-item.
 				{
 					if ((*j)["position"])
 					{
 						pos = (*j)["position"].as<Position>();
-//						if (pos.z != -1)
-						getTile(pos)->addItem(
-											item,
-											rules->getInventoryRule(ST_GROUND));
+//						if (pos.z != -1) // was not saved if pos.z= -1
+						item->setInventorySection(rules->getInventoryRule(ST_GROUND));
+						getTile(pos)->addItem(item);
 					}
 					else
 						pos = Position(0,0,-1); // cf. BattleItem::save()
@@ -521,7 +523,6 @@ void SavedBattleGame::load(
 					}
 				}
 			}
-
 			++pWeapon;
 		}
 	}
@@ -1583,7 +1584,7 @@ std::vector<Position>& SavedBattleGame::getStorageSpace()
  * the storage facilities.
  * @param tile - pointer to a tile where all the goodies are placed
  */
-void SavedBattleGame::randomizeItemLocations(Tile* const tile)
+void SavedBattleGame::distributeEquipment(Tile* const tile)
 {
 	if (_storageSpace.empty() == false)
 	{
@@ -1594,7 +1595,7 @@ void SavedBattleGame::randomizeItemLocations(Tile* const tile)
 		{
 			if ((*i)->getInventorySection()->getSectionType() == ST_GROUND)
 			{
-				getTile(_storageSpace.at(RNG::pick(_storageSpace.size())))->addItem(*i, (*i)->getInventorySection());
+				getTile(_storageSpace.at(RNG::pick(_storageSpace.size())))->addItem(*i);
 				i = tile->getInventory()->erase(i);
 			}
 			else
@@ -2204,7 +2205,7 @@ void SavedBattleGame::deleteBody(const BattleUnit* const unit)
 		{
 			toDeleteItem(*i);
 			if (--quadrants == 0) return;
-			--i;
+			--i; // not the best idea.
 		}
 	}
 }

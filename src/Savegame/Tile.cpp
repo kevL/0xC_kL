@@ -1293,22 +1293,17 @@ void Tile::setTransitUnit(BattleUnit* const unit)
 }
 
 /**
- * Add an item on this Tile.
- * @param item		- pointer to a BattleItem
- * @param grdRule	- pointer to RuleInventory ground-slot
+ * Adds an item on this Tile.
+ * @param item - pointer to a BattleItem
  */
-void Tile::addItem(
-		BattleItem* const item,
-		const RuleInventory* const grdRule)
+void Tile::addItem(BattleItem* const item)
 {
-	item->setInventorySection(grdRule);
-	_inventory.push_back(item);
-
 	item->setTile(this);
+	_inventory.push_back(item);
 }
 
 /**
- * Remove an item from this Tile.
+ * Removes an item from this Tile.
  * @param item - pointer to a BattleItem
  */
 void Tile::removeItem(BattleItem* const item)
@@ -1324,7 +1319,7 @@ void Tile::removeItem(BattleItem* const item)
 			break;
 		}
 	}
-	item->setTile(nullptr);
+	item->setTile();
 }
 
 /**

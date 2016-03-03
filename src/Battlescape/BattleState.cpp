@@ -37,19 +37,6 @@ BattleState::BattleState(
 {}
 
 /**
- * Sets up a BattleState.
- * @param parent - pointer to the parent BattlescapeGame
- *
-BattleState::BattleState(BattlescapeGame* const parent)
-	:
-		_parent(parent)
-{
-//	_action.result = "";
-//	_action.targeting = false;
-//	_action.TU = 0;
-} */
-
-/**
  * Deletes the BattleState.
  */
 BattleState::~BattleState() // virtual.

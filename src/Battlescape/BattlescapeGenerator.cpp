@@ -505,7 +505,7 @@ void BattlescapeGenerator::nextStage()
 			if ((*i)->getOwner() == nullptr // assign the item a destination container ->
 				&& (*i)->getRules()->isRecoverable() == true)
 			{
-				(*i)->setFuse(-1); // TODO: If is proxy-grenade || if not carried.
+				(*i)->setFuse(-1);
 
 				if (aliensAlive == 0)
 				{
@@ -550,11 +550,11 @@ void BattlescapeGenerator::nextStage()
 			BattleItem* const load ((*i)->getAmmoItem()); // move the item to its destination container ->
 			if (load != nullptr && *i != load)
 			{
-				load->setTile(nullptr);
+				load->setTile();
 				toContainer->push_back(load);
 			}
 
-			(*i)->setTile(nullptr);
+			(*i)->setTile();
 			toContainer->push_back(*i);
 		}
 	}
@@ -705,8 +705,9 @@ void BattlescapeGenerator::nextStage()
 		i != passToNextStage.end();
 		++i)
 	{
+		(*i)->setInventorySection(grdRule);
+		_tileEquipt->addItem(*i);
 		_battleSave->getItems()->push_back(*i);
-		_tileEquipt->addItem(*i, grdRule);
 	}
 
 
@@ -881,6 +882,7 @@ void BattlescapeGenerator::deployXcom() // private.
 	{
 		//Log(LOG_INFO) << "";
 		//Log(LOG_INFO) << ". . addCraftItems";
+		BattleItem* item;
 		for (std::map<std::string, int>::const_iterator // Add items that are in the Craft.
 				i = _craft->getCraftItems()->getContents()->begin();
 				i != _craft->getCraftItems()->getContents()->end();
@@ -893,17 +895,19 @@ void BattlescapeGenerator::deployXcom() // private.
 					++j)
 			{
 				//Log(LOG_INFO) << ". . . . addItem() ToTile iter = " << (j + 1);
-				_tileEquipt->addItem(
-								new BattleItem(
-											_rules->getItemRule(i->first),
-											_battleSave->getCanonicalBattleId()),
-								grdRule);
+				item = new BattleItem(
+									_rules->getItemRule(i->first),
+									_battleSave->getCanonicalBattleId());
+				item->setInventorySection(grdRule);
+				_tileEquipt->addItem(item);
 			}
 		}
 		//Log(LOG_INFO) << ". . addCraftItems DONE";
 	}
 	else // Base Defense or Base-equip.
 	{
+		BattleItem* item;
+
 		// Add only items in Craft that are at the Base for skirmish mode; ie.
 		// Do NOT add items from the Base itself in skirmish mode.
 		if (_gameSave->getMonthsPassed() != -1) // add items that are in the Base.
@@ -931,11 +935,11 @@ void BattlescapeGenerator::deployXcom() // private.
 							++j)
 					{
 						//Log(LOG_INFO) << ". . . . addItem() ToTile iter = " << (j + 1);
-						_tileEquipt->addItem(
-										new BattleItem(
-													itRule,
-													_battleSave->getCanonicalBattleId()),
-										grdRule);
+						item = new BattleItem(
+											itRule,
+											_battleSave->getCanonicalBattleId());
+						item->setInventorySection(grdRule);
+						_tileEquipt->addItem(item);
 					}
 
 					if (_baseEquiptMode == false)
@@ -974,11 +978,11 @@ void BattlescapeGenerator::deployXcom() // private.
 							++k)
 					{
 						//Log(LOG_INFO) << ". . . . . addItem() ToTile iter = " << (k + 1);
-						_tileEquipt->addItem(
-										new BattleItem(
-													_rules->getItemRule(j->first),
-													_battleSave->getCanonicalBattleId()),
-										grdRule);
+						item = new BattleItem(
+											_rules->getItemRule(j->first),
+											_battleSave->getCanonicalBattleId());
+						item->setInventorySection(grdRule);
+						_tileEquipt->addItem(item);
 					}
 				}
 			}
@@ -2198,6 +2202,7 @@ int BattlescapeGenerator::loadMAP( // private.
 		_generateFuel = (block->getItems()->empty() == true);
 
 	const RuleItem* itRule;
+	BattleItem* item;
 	for (std::map<std::string, std::vector<Position>>::const_iterator
 			i = block->getItems()->begin();
 			i != block->getItems()->end();
@@ -2209,17 +2214,15 @@ int BattlescapeGenerator::loadMAP( // private.
 				j != (*i).second.end();
 				++j)
 		{
-			BattleItem* const item (new BattleItem(
-												itRule,
-												_battleSave->getCanonicalBattleId()));
-			_battleSave->getItems()->push_back(item);
+			item = new BattleItem(
+								itRule,
+								_battleSave->getCanonicalBattleId());
+			item->setInventorySection(_rules->getInventoryRule(ST_GROUND));
 			_battleSave->getTile((*j) + Position(
 												offset_x,
 												offset_y,
-												0))
-											->addItem(
-													item,
-													_rules->getInventoryRule(ST_GROUND));
+												0))->addItem(item);
+			_battleSave->getItems()->push_back(item);
 		}
 	}
 
@@ -2383,11 +2386,9 @@ void BattlescapeGenerator::fuelPowerSources() // private.
 			alienFuel = new BattleItem(
 									_rules->getItemRule(_rules->getAlienFuelType()),
 									_battleSave->getCanonicalBattleId());
-
+			alienFuel->setInventorySection(_rules->getInventoryRule(ST_GROUND));
+			_battleSave->getTiles()[i]->addItem(alienFuel);
 			_battleSave->getItems()->push_back(alienFuel);
-			_battleSave->getTiles()[i]->addItem(
-											alienFuel,
-											_rules->getInventoryRule(ST_GROUND));
 		}
 	}
 }

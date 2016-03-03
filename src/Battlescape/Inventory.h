@@ -81,17 +81,17 @@ private:
 	/// Shows priming warnings on grenades.
 	void drawPrimers();
 
-	/// Gets the section in the specified mouse-position.
+	/// Gets the section and slot in the specified mouse-position.
 	RuleInventory* getSlotAtCursor(
 			int* x,
 			int* y) const;
-	/// Moves an item to a specified section.
+	/// Moves an item to a specified slot.
 	void moveItem(
 			BattleItem* const item,
 			const RuleInventory* const inRule,
 			int x = 0,
 			int y = 0);
-	/// Attempts to place an item in an inventory section.
+	/// Attempts to place an item in an inventory-section.
 	bool fitItem(
 			const RuleInventory* const inRule,
 			BattleItem* const item,

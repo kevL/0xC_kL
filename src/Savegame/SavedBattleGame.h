@@ -316,10 +316,10 @@ private:
 		/// Resets tiles units are standing on
 		void resetUnitsOnTiles();
 
-		/// Gives access to the storage tiles vector.
+		/// Gives access to the storage-tiles vector.
 		std::vector<Position>& getStorageSpace();
-		/// Moves all the leftover items to random locations in the storage tiles vector.
-		void randomizeItemLocations(Tile* const tile);
+		/// Moves all the leftover items to random locations in the storage-tiles vector.
+		void distributeEquipment(Tile* const tile);
 
 		/// Removes an item from the game.
 		void toDeleteItem(BattleItem* const item);

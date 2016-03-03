@@ -926,9 +926,13 @@ RuleInventory* Inventory::getSlotAtCursor( // private.
 }
 
 /**
- * Moves an item to a specified section in the selected unit's inventory.
- * @param item		- pointer to a BattleItem
- * @param inRule	- pointer to RuleInventory
+ * Moves a specified BattleItem to any given x/y-slot in the selected unit's
+ * Inventory while respecting inventory-sections.
+ * @note Any required TU-checks and/or expenditures need to be done before
+ * calling this function (although this adds the TU-weight-penalty for picking
+ * an item up from the ground).
+ * @param item		- pointer to a BattleItem (item to move)
+ * @param inRule	- pointer to RuleInventory (section to move the item to)
  * @param x			- X position (default 0)
  * @param y			- Y position (default 0)
  */
@@ -943,7 +947,7 @@ void Inventory::moveItem( // private.
 		if (inRule->getCategory() == IC_GROUND) // set to Ground
 		{
 			item->changeOwner();
-			_selUnit->getTile()->addItem(item, item->getInventorySection());
+			_selUnit->getTile()->addItem(item);
 
 			if (item->getUnit() != nullptr
 				&& item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
@@ -971,6 +975,7 @@ void Inventory::moveItem( // private.
 				item->getUnit()->setPosition(Position(-1,-1,-1));
 			}
 		}
+
 		item->setInventorySection(inRule);
 	}
 	item->setSlotX(x);

@@ -1315,18 +1315,17 @@ void DebriefingState::prepareDebriefing() // private.
 						// this does not matter.
 					{
 						++_aliensControlled;
-
 						for (std::vector<BattleItem*>::const_iterator
 								j = (*i)->getInventory()->begin();
 								j != (*i)->getInventory()->end();
 								++j)
 						{
 							if ((*j)->getRules()->isFixed() == false)
-								(*i)->getTile()->addItem(
-													*j,
-													_rules->getInventoryRule(ST_GROUND));
+							{
+								(*j)->setInventorySection(_rules->getInventoryRule(ST_GROUND));
+								(*i)->getTile()->addItem(*j);
+							}
 						}
-
 						recoverLiveAlien(*i);
 					}
 					break;

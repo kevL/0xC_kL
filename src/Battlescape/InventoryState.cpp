@@ -762,13 +762,13 @@ void InventoryState::btnOkClick(Action*)
 			_battleSave->resetUnitsOnTiles();
 
 			Tile* const inTile (_battleSave->getBattleInventory());
-			_battleSave->randomizeItemLocations(inTile);	// This doesn't seem to happen on second stage of Multi-State MISSIONS.
+			_battleSave->distributeEquipment(inTile);	// This doesn't seem to happen on second stage of Multi-State MISSIONS.
 															// In fact, none of this !_tuMode InventoryState appears to run for 2nd staged missions.
 															// and BattlescapeGenerator::nextStage() has its own bu->prepUnit() call ....
 /*			if (_battleSave->getTurn() == 1)				// but Leaving this out could be troublesome for Multi-Stage MISSIONS.
 			{
 				//Log(LOG_INFO) << ". turn = 1";
-				_battleSave->randomizeItemLocations(invTile);
+				_battleSave->distributeEquipment(inTile);
 				if (inTile->getTileUnit())
 				{
 					// make sure the unit closest to the ramp is selected.
@@ -945,7 +945,7 @@ void InventoryState::btnGroundClick(Action* action)
  */
 void InventoryState::btnUnequipUnitClick(Action*)
 {
-	if (_tuMode == false						// don't accept clicks in battlescape because this doesn't cost TU.
+	if (_tuMode == false									// don't accept clicks in battlescape because this doesn't cost TU.
 		&& _inventoryPanel->getSelectedItem() == nullptr)	// or when mouse is holding an item
 	{
 		const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
@@ -957,12 +957,13 @@ void InventoryState::btnUnequipUnitClick(Action*)
 		for (std::vector<BattleItem*>::const_iterator
 				i = equipt->begin();
 				i != equipt->end();
-				)
+				++i)
 		{
 			(*i)->setOwner();
-			tile->addItem(*i, grdRule);
-			i = equipt->erase(i);
+			(*i)->setInventorySection(grdRule);
+			tile->addItem(*i);
 		}
+		equipt->clear();
 
 		_inventoryPanel->arrangeGround();
 		updateStats();

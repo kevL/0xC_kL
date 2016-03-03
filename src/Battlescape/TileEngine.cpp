@@ -2444,7 +2444,7 @@ void TileEngine::explode(
 
 									if (powerUnit > 0)
 									{
-										Position voxelRel;
+										Position relVoxel;
 
 										// units above the explosion will be hit in the legs, units lateral to or below will be hit in the torso
 										if (distance(
@@ -2455,7 +2455,7 @@ void TileEngine::explode(
 															centerZ)) < 2)
 										{
 											//Log(LOG_INFO) << ". . . powerUnit = " << powerUnit << " DT_HE, GZ";
-											voxelRel = Position(0,0,0); // Ground zero effect is in effect
+											relVoxel = Position(0,0,0); // Ground zero effect is in effect
 											if (targetUnit->isKneeled() == true)
 											{
 												powerUnit = powerUnit * 17 / 20; // 85% damage
@@ -2465,7 +2465,7 @@ void TileEngine::explode(
 										else
 										{
 											//Log(LOG_INFO) << ". . . powerUnit = " << powerUnit << " DT_HE, not GZ";
-											voxelRel = Position( // Directional damage relative to explosion position.
+											relVoxel = Position( // Directional damage relative to explosion position.
 															(centerX << 4) - (tileStop->getPosition().x << 4),
 															(centerY << 4) - (tileStop->getPosition().y << 4),
 															(centerZ * 24) - (tileStop->getPosition().z * 24));
@@ -2478,7 +2478,7 @@ void TileEngine::explode(
 
 										if (powerUnit > 0)
 										{
-											targetUnit->takeDamage(voxelRel, powerUnit, DT_HE);
+											targetUnit->takeDamage(relVoxel, powerUnit, DT_HE);
 											//Log(LOG_INFO) << ". . . realDamage = " << damage << " DT_HE";
 										}
 									}
@@ -2525,7 +2525,7 @@ void TileEngine::explode(
 
 												if (attacker != nullptr)
 												{
-													bu->killedBy(attacker->getFaction()); // TODO: log the kill in Soldier's Diary.
+													bu->killedBy(attacker->getFaction()); // TODO: Log the kill in Soldier's Diary.
 													//Log(LOG_INFO) << "TE::explode() " << bu->getId() << " killedBy = " << (int)attacker->getFaction();
 												}
 
@@ -2534,9 +2534,9 @@ void TileEngine::explode(
 												{
 													Game* const game (_battleSave->getBattleState()->getGame());
 													game->pushState(new InfoboxDialogState(game->getLanguage()->getString( // "has exploded ..."
-																												"STR_HAS_BEEN_KILLED",
-																												bu->getGender())
-																											.arg(bu->getName(game->getLanguage()))));
+																														"STR_HAS_BEEN_KILLED",
+																														bu->getGender())
+																													.arg(bu->getName(game->getLanguage()))));
 												}
 											}
 										}
@@ -2551,10 +2551,10 @@ void TileEngine::explode(
 												//Log(LOG_INFO) << ". . . . INVENTORY: primed grenade";
 												(*i)->setFuse(-2);
 
-												const Position voxelExpl (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
+												const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
 												_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
 																											_battleSave->getBattleGame(),
-																											voxelExpl, *i, attacker));
+																											explVoxel, *i, attacker));
 											}
 											else if ((*i)->getFuse() != -2)
 											{
@@ -2719,7 +2719,7 @@ void TileEngine::explode(
 
 												if (attacker != nullptr)
 												{
-													bu->killedBy(attacker->getFaction()); // TODO: log the kill in Soldier's Diary.
+													bu->killedBy(attacker->getFaction()); // TODO: Log the kill in Soldier's Diary.
 													//Log(LOG_INFO) << "TE::explode() " << bu->getId() << " killedBy = " << (int)attacker->getFaction();
 												}
 
@@ -2728,9 +2728,9 @@ void TileEngine::explode(
 												{
 													Game* const game (_battleSave->getBattleState()->getGame());
 													game->pushState(new InfoboxDialogState(game->getLanguage()->getString( // "has been killed with Fire ..."
-																												"STR_HAS_BEEN_KILLED",
-																												bu->getGender())
-																											.arg(bu->getName(game->getLanguage()))));
+																														"STR_HAS_BEEN_KILLED",
+																														bu->getGender())
+																													.arg(bu->getName(game->getLanguage()))));
 												}
 											}
 										}
@@ -2743,10 +2743,10 @@ void TileEngine::explode(
 											{
 												(*i)->setFuse(-2);
 
-												const Position voxelExpl (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
+												const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
 												_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
 																											_battleSave->getBattleGame(),
-																											voxelExpl, *i, attacker));
+																											explVoxel, *i, attacker));
 											}
 											else if ((*i)->getFuse() != -2)
 											{
@@ -5937,10 +5937,10 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 		return tile;
 
 
-	const bool noItems (tile->getInventory()->empty());
+	const bool nulItems (tile->getInventory()->empty());
 	BattleUnit* const unit (tile->getTileUnit());
 
-	if (unit == nullptr && noItems == true)
+	if (unit == nullptr && nulItems == true)
 		return tile;
 
 
@@ -6001,7 +6001,6 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 						_battleSave->getTile(pos + Position(x,y,0))->setUnit(nullptr);
 					}
 				}
-
 				unit->setPosition(posBelow);
 			}
 			else // if (!unit->isOut(true, true))
@@ -6013,7 +6012,6 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 									unit->getUnitDirection(),
 									unit->getPosition(),
 									_battleSave->getTile(unit->getPosition() + Position(0,0,-1)));
-//									true);
 					// and set our status to standing (rather than walking or flying) to avoid weirdness.
 					unit->setUnitStatus(STATUS_STANDING);
 				}
@@ -6023,8 +6021,6 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 									Pathfinding::DIR_DOWN,
 									unit->getPosition() + Position(0,0,-1),
 									_battleSave->getTile(unit->getPosition() + Position(0,0,-1)));
-//									true);
-
 					//Log(LOG_INFO) << "TileEngine::applyGravity(), addFallingUnit() ID " << unit->getId();
 					_battleSave->addFallingUnit(unit);
 				}
@@ -6052,8 +6048,7 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 	if (posBelow != pos)
 	{
 		deltaTile = _battleSave->getTile(posBelow);
-
-		if (noItems == false)
+		if (nulItems == false)
 		{
 			for (std::vector<BattleItem*>::const_iterator
 					i = tile->getInventory()->begin();
@@ -6065,14 +6060,11 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 				{
 					(*i)->getUnit()->setPosition(deltaTile->getPosition());
 				}
-
-				deltaTile->addItem(*i, (*i)->getInventorySection());
+				deltaTile->addItem(*i);
 			}
-
 			tile->getInventory()->clear();
 		}
 	}
-
 	return deltaTile;
 }
 

@@ -302,9 +302,7 @@ private:
 		{ return _unit; }
 
 		/// Adds item
-		void addItem(
-				BattleItem* const item,
-				const RuleInventory* const grdRule);
+		void addItem(BattleItem* const item);
 		/// Removes item
 		void removeItem(BattleItem* const item);
 

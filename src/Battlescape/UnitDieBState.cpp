@@ -66,7 +66,7 @@ UnitDieBState::UnitDieBState(
 		_noScream(noScream),
 		_battleSave(parent->getBattleSave()),
 		_doneScream(false),
-		_extraTicks(0),
+		_extraTicks(-1),
 		_init(true)
 {
 //	_unit->clearVisibleTiles();
@@ -186,8 +186,8 @@ void UnitDieBState::think()
 		}
 	}
 
-// #6 - finish.
-	if (_extraTicks == 1)
+// #5 - finish.
+	if (--_extraTicks == 0)
 	{
 		bool moreDead (false);
 		for (std::vector<BattleUnit*>::const_iterator
@@ -248,9 +248,6 @@ void UnitDieBState::think()
 			}
 		} */
 	}
-// #5
-//	else if (_extraTicks > 0)
-//		++_extraTicks;
 // #4
 	else if (_unit->isOut_t(OUT_STAT) == true) // and this ought be Status_Dead OR _Unconscious.
 	{
@@ -264,10 +261,10 @@ void UnitDieBState::think()
 		else
 			_unit->putDown();
 
-		if (_unit->getSpawnType().empty() == true)
-			convertToBody();
-		else
+		if (_unit->getSpawnType().empty() == false)
 			_parent->convertUnit(_unit);
+		else
+			convertToBody();
 	}
 
 	_unit->clearCache();

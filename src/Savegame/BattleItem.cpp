@@ -340,15 +340,6 @@ void BattleItem::spendBullet(
 }
 
 /**
- * Gets this BattleItem's owner.
- * @return, pointer to a BattleUnit
- */
-BattleUnit* BattleItem::getOwner() const
-{
-	return _owner;
-}
-
-/**
  * Sets this BattleItem's owner.
  * @param owner - pointer to BattleUnit (default nullptr)
  */
@@ -359,12 +350,12 @@ void BattleItem::setOwner(BattleUnit* const owner)
 }
 
 /**
- * Gets this BattleItem's prior owner.
+ * Gets this BattleItem's owner.
  * @return, pointer to a BattleUnit
  */
-BattleUnit* BattleItem::getPriorOwner() const
+BattleUnit* BattleItem::getOwner() const
 {
-	return _ownerPre;
+	return _owner;
 }
 
 /**
@@ -377,20 +368,30 @@ void BattleItem::setPriorOwner(BattleUnit* const ownerPre)
 }
 
 /**
- * Moves this BattleItem from a previous owner if applicable and moves it to
- * another owner if applicable.
- * @param owner - pointer to a BattleUnit (default nullptr)
+ * Gets this BattleItem's prior owner.
+ * @return, pointer to a BattleUnit
  */
-void BattleItem::changeOwner(BattleUnit* const owner)
+BattleUnit* BattleItem::getPriorOwner() const
+{
+	return _ownerPre;
+}
+
+/**
+ * Removes this BattleItem from a previous owner if applicable and moves it to
+ * another owner if applicable.
+ * @param toUnit - pointer to a BattleUnit (default nullptr)
+ */
+void BattleItem::changeOwner(BattleUnit* const toUnit)
 {
 	if (_owner != nullptr)
 		_ownerPre = _owner;
 	else
-		_ownerPre = owner;
+		_ownerPre = toUnit;
 
-	_owner = owner;
+	if ((_owner = toUnit) != nullptr)
+		_owner->getInventory()->push_back(this);
 
-	if (_ownerPre != nullptr)
+	if (_ownerPre != nullptr && _ownerPre != _owner)
 	{
 		for (std::vector<BattleItem*>::const_iterator
 				i = _ownerPre->getInventory()->begin();
@@ -404,9 +405,6 @@ void BattleItem::changeOwner(BattleUnit* const owner)
 			}
 		}
 	}
-
-	if (_owner != nullptr)
-		_owner->getInventory()->push_back(this);
 }
 
 /**
@@ -509,7 +507,7 @@ Tile* BattleItem::getTile() const
 
 /**
  * Sets this BattleItem's Tile.
- * @param tile - pointer to a tile
+ * @param tile - pointer to a tile (default nullptr)
  */
 void BattleItem::setTile(Tile* const tile)
 {
