@@ -399,7 +399,7 @@ void Inventory::think()
 		if (_prime > 0)
 			activated = Text::intWide(_prime) + L" ";
 
-		activated += _game->getLanguage()->getString("STR_GRENADE_IS_ACTIVATED");
+		activated += _game->getLanguage()->getString("STR_GRENADE_ACTIVATED");
 
 		if (_prime > 0)
 			activated += L" " + Text::intWide(_prime);
@@ -603,7 +603,7 @@ void Inventory::mouseClick(Action* action, State* state)
 							if (explTurn > 0)
 								activated = Text::intWide(explTurn) + L" ";
 
-							activated += _game->getLanguage()->getString("STR_GRENADE_IS_ACTIVATED");
+							activated += _game->getLanguage()->getString("STR_GRENADE_ACTIVATED");
 
 							if (explTurn > 0)
 								activated += L" " + Text::intWide(explTurn);
@@ -833,7 +833,7 @@ void Inventory::mouseClick(Action* action, State* state)
 											overItem->setFuse(0);
 											arrangeGround();
 
-											const std::wstring activated (_game->getLanguage()->getString("STR_GRENADE_IS_ACTIVATED"));
+											const std::wstring activated (_game->getLanguage()->getString("STR_GRENADE_ACTIVATED"));
 											_warning->showMessage(activated);
 										}
 										else // This is where activation warning for nonProxy preBattle grenades goes.
@@ -841,7 +841,7 @@ void Inventory::mouseClick(Action* action, State* state)
 									}
 									else // deFuse grenade
 									{
-										_warning->showMessage(_game->getLanguage()->getString("STR_GRENADE_IS_DEACTIVATED"));
+										_warning->showMessage(_game->getLanguage()->getString("STR_GRENADE_DEACTIVATED"));
 										overItem->setFuse(-1);
 										arrangeGround();
 									}

@@ -477,7 +477,7 @@ void BattlescapeGenerator::nextStage()
 		if ((*i)->getTile() != nullptr)		// break old Tile's link to unit.
 			(*i)->getTile()->setUnit(nullptr);
 
-		(*i)->setTile(nullptr);				// break unit's link to all Tiles.
+		(*i)->setTile();					// break unit's link to all Tiles.
 		(*i)->setPosition(posBogus, false);	// and give it a bogus Position
 	}
 
@@ -559,8 +559,8 @@ void BattlescapeGenerator::nextStage()
 		}
 	}
 
-	for (std::vector<BattleItem*>::const_iterator	// TODO: Perhaps send these items to the _toDelete container
-			i = removeFromGame.begin();				// so they will be accounted for in xCom losses if applicable.
+	for (std::vector<BattleItem*>::const_iterator
+			i = removeFromGame.begin();
 			i != removeFromGame.end();
 			++i)
 	{
@@ -578,8 +578,8 @@ void BattlescapeGenerator::nextStage()
 				}
 			}
 		}
-		delete *i;
-	}
+		delete *i;	// TODO: Send these ex-items to the _toDelete container so
+	}				// that they will be accounted for in xCom losses if applicable.
 
 	_battleSave->getItems()->clear();
 

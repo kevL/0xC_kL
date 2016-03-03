@@ -274,62 +274,39 @@ void UnitDieBState::think()
 /**
  * Converts a BattleUnit to a body-item.
  * @note Dead or Unconscious units get a nullptr-Tile but keep track of the
- * Position of their death.
+ * Position of their body.
  */
 void UnitDieBState::convertToBody() // private.
 {
 	_battleSave->getBattleState()->showPsiButton(false);
 
+	const int armorSize (_unit->getArmor()->getSize() - 1);
+
 	const Position pos (_unit->getPosition());
 	const bool carried (pos == Position(-1,-1,-1));
 	if (carried == false)
+	{
 		_battleSave->deleteBody(_unit);
 
-	const int armorSize (_unit->getArmor()->getSize() - 1);
-
-	if (armorSize == 0 // move inventory from unit to the ground for non-large units
-		&& carried == false
-		&& (Options::battleWeaponSelfDestruction == false
-			  || _unit->getOriginalFaction() != FACTION_HOSTILE
-			  || _unit->getUnitStatus() == STATUS_UNCONSCIOUS))
-	{
-		std::vector<BattleItem*> itemsToKeep;
-
-		for (std::vector<BattleItem*>::const_iterator
-				i = _unit->getInventory()->begin();
-				i != _unit->getInventory()->end();
-				++i)
+		if (armorSize == 0
+			&& (Options::battleWeaponSelfDestruction == false
+				  || _unit->getOriginalFaction() != FACTION_HOSTILE
+				  || _unit->getUnitStatus() == STATUS_UNCONSCIOUS))
 		{
-			_parent->dropItem(pos, *i);
-
-			if ((*i)->getRules()->isFixed() == false)
-				(*i)->setOwner();
-			else
-				itemsToKeep.push_back(*i);
+			_parent->dropUnitInventory(_unit);
 		}
-
-		_unit->getInventory()->clear();
-
-		for (std::vector<BattleItem*>::const_iterator
-				i = itemsToKeep.begin();
-				i != itemsToKeep.end();
-				++i)
-		{
-			_unit->getInventory()->push_back(*i);
-		}
+		_unit->setTile();
 	}
 
-	_unit->setTile(nullptr); // remove unit-tile link
 
-
-	if (carried == true) // unconscious unit is being carried when it dies
+	if (carried == true)
 	{
-		for (std::vector<BattleItem*>::const_iterator // change the unconscious body-item to a corpse in the carrying unit's inventory
+		for (std::vector<BattleItem*>::const_iterator
 				i = _battleSave->getItems()->begin();
 				i != _battleSave->getItems()->end();
 				++i)
 		{
-			if ((*i)->getUnit() == _unit) // unit is in an inventory so unit must be a 1x1 unit
+			if ((*i)->getUnit() == _unit)
 			{
 				(*i)->changeRule(_parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[0]));
 				break;
@@ -345,7 +322,7 @@ void UnitDieBState::convertToBody() // private.
 		bool soundPlayed (false);
 		size_t quadrants (static_cast<size_t>((armorSize + 1) * (armorSize + 1)));
 
-		for (int // count downward to original position so that dropItem() correctly positions large units @ their NW quadrant.
+		for (int
 				y = armorSize;
 				y != -1;
 				--y)
@@ -357,7 +334,6 @@ void UnitDieBState::convertToBody() // private.
 			{
 				tile = _battleSave->getTile(pos + Position(x,y,0));
 
-				// This block is lifted from TileEngine::explode(), switch(DT_IN).
 				if (_unit->getUnitRules() != nullptr
 					&& _unit->getUnitRules()->isMechanical() == true)
 				{
@@ -368,7 +344,7 @@ void UnitDieBState::convertToBody() // private.
 
 						while (tileExpl != nullptr // safety.
 							&& tileExpl->getPosition().z > 0
-							&& tileExpl->getMapData(O_OBJECT) == nullptr // only floors & content can catch fire.
+							&& tileExpl->getMapData(O_OBJECT) == nullptr
 							&& tileExpl->getMapData(O_FLOOR) == nullptr
 							&& tileExpl->hasNoFloor(tileExplBelow) == true)
 						{
@@ -379,7 +355,7 @@ void UnitDieBState::convertToBody() // private.
 						if (tileExpl != nullptr // safety.
 							&& tileExpl->getFire() == 0)
 						{
-							tileExpl->addFire(tileExpl->getFuel() + RNG::generate(1,2)); // Could use a ruleset-factor in here.
+							tileExpl->addFire(tileExpl->getFuel() + RNG::generate(1,2));
 							tileExpl->addSmoke(std::max(1,
 														std::min(6,
 																 tileExpl->getFlammability() / 10)));
@@ -392,7 +368,7 @@ void UnitDieBState::convertToBody() // private.
 							}
 						}
 					}
-					tile->addSmoke(RNG::generate(0,2)); // more smoke ...
+					tile->addSmoke(RNG::generate(0,2));
 				}
 
 				BattleItem* const body (new BattleItem(
@@ -411,6 +387,7 @@ void UnitDieBState::convertToBody() // private.
 								body, true);
 			}
 		}
+		// TODO: recalcLighting if a mech-unit started a fire ....
 		_parent->getTileEngine()->calculateFOV(pos, true); // expose any units that were hiding behind dead unit
 	}
 }

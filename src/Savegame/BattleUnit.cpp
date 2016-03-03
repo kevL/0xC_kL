@@ -1426,7 +1426,7 @@ int BattleUnit::getStrength() const
 /**
  * Does an amount of damage.
  * TODO: This should be in Battlegame instead of each unit having its own damage routine.
- * @param voxelRel		- reference a position in voxel-space that defines which
+ * @param relVoxel		- reference a position in voxel-space that defines which
  *						  part of armor and/or body gets hit
  * @param power			- the amount of damage to inflict
  * @param dType			- the DamageType being inflicted (RuleItem.h)
@@ -1435,7 +1435,7 @@ int BattleUnit::getStrength() const
  * @return, damage done to this BattleUnit after adjustments
  */
 int BattleUnit::takeDamage(
-		const Position& voxelRel,
+		const Position& relVoxel,
 		int power,
 		DamageType dType,
 		const bool ignoreArmor)
@@ -1461,31 +1461,31 @@ int BattleUnit::takeDamage(
 	{
 		UnitSide side = SIDE_FRONT;
 
-		if (voxelRel == Position(0,0,0))
+		if (relVoxel == Position(0,0,0))
 			side = SIDE_UNDER;
 		else
 		{
 			int dirRel;
 			const int
-				abs_x (std::abs(voxelRel.x)),
-				abs_y (std::abs(voxelRel.y));
+				abs_x (std::abs(relVoxel.x)),
+				abs_y (std::abs(relVoxel.y));
 
 			if (abs_y > abs_x * 2)
-				dirRel = 8 + 4 * static_cast<int>(voxelRel.y > 0);	// hit from South (y-pos) or North (y-neg)
+				dirRel = 8 + 4 * static_cast<int>(relVoxel.y > 0);	// hit from South (y-pos) or North (y-neg)
 			else if (abs_x > abs_y * 2)
-				dirRel = 10 + 4 * static_cast<int>(voxelRel.x < 0);	// hit from East (x-pos) or West (x-neg)
+				dirRel = 10 + 4 * static_cast<int>(relVoxel.x < 0);	// hit from East (x-pos) or West (x-neg)
 			else
 			{
-				if (voxelRel.x < 0)	// hit from West (x-neg)
+				if (relVoxel.x < 0)	// hit from West (x-neg)
 				{
-					if (voxelRel.y > 0)
+					if (relVoxel.y > 0)
 						dirRel = 13;	// hit from SouthWest (y-pos)
 					else
 						dirRel = 15;	// hit from NorthWest (y-neg)
 				}
 				else				// hit from East (x-pos)
 				{
-					if (voxelRel.y > 0)
+					if (relVoxel.y > 0)
 						dirRel = 11;	// hit from SouthEast (y-pos)
 					else
 						dirRel = 9;		// hit from NorthEast (y-neg)
@@ -1512,9 +1512,9 @@ int BattleUnit::takeDamage(
 
 			if (woundable == true)
 			{
-				if (voxelRel.z > getHeight() - 4)
+				if (relVoxel.z > getHeight() - 4)
 					bodyPart = BODYPART_HEAD;
-				else if (voxelRel.z > 5)
+				else if (relVoxel.z > 5)
 				{
 					switch (side)
 					{
@@ -2652,8 +2652,8 @@ BattleAIState* BattleUnit::getAIState() const
 
 /**
  * Sets the tile that this BattleUnit occupies.
- * @param tile		- pointer to a Tile
- * @param tileBelow	- pointer to the Tile below
+ * @param tile		- pointer to a Tile (default nullptr)
+ * @param tileBelow	- pointer to the Tile below (default nullptr)
  */
 void BattleUnit::setTile(
 		Tile* const tile,

@@ -2768,8 +2768,7 @@ void TileEngine::explode(
 					{
 						//Log(LOG_INFO) << ". . targetUnit ID " << targetUnit->getId() << ", setTaken TRUE";
 						targetUnit->setTakenExpl();
-
-						// if it's going to bleed to death and it's not a player, give credit for the kill.
+						// if it's going to bleed to death and it's not a player give credit for the kill.
 						// kL_note: See Above^
 						if (attacker != nullptr)
 						{
@@ -2789,11 +2788,10 @@ void TileEngine::explode(
 								&& _battleSave->getBattleGame()->playerPanicHandled() == true)
 							{
 								takenXp = true;
-
-								if (grenade == false)
-									attacker->addFiringExp();
-								else
+								if (grenade == true)
 									attacker->addThrowingExp();
+								else
+									attacker->addFiringExp();
 							}
 						}
 					}

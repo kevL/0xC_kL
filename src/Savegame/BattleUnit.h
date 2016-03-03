@@ -432,7 +432,7 @@ private:
 
 		/// Do damage to this unit.
 		int takeDamage(
-				const Position& voxelRel,
+				const Position& relVoxel,
 				int power,
 				DamageType dType,
 				const bool ignoreArmor = false);
@@ -576,7 +576,7 @@ private:
 
 		/// Sets the Tile that the BattleUnit occupies.
 		void setTile(
-				Tile* const tile,
+				Tile* const tile = nullptr,
 				const Tile* const tileBelow = nullptr);
 		/// Gets this unit's Tile.
 		Tile* getTile() const;

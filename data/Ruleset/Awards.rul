@@ -107,7 +107,7 @@ extraStrings:
       STR_MEDAL_MIA_NAME: "Ordum du la Forlorn"
       STR_MEDAL_MIA_DESCRIPTION: "Given to a soldier to honor their commitment to go missing while defending Planet Earth."
       STR_MEDAL_ORIGINAL8_NAME: "Ordum Overtus"
-      STR_MEDAL_ORIGINAL8_DESCRIPTION: "Given to a soldier who was first in line to combat the aLien Menace."
+      STR_MEDAL_ORIGINAL8_DESCRIPTION: "Given to a soldier who was among the first in line to combat the aLien Menace."
       STR_AWARD_0: "1st"
       STR_AWARD_1: "2nd"
       STR_AWARD_2: "3rd"

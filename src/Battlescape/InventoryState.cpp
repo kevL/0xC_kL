@@ -763,18 +763,15 @@ void InventoryState::btnOkClick(Action*)
 
 			Tile* const inTile (_battleSave->getBattleInventory());
 			_battleSave->distributeEquipment(inTile);	// This doesn't seem to happen on second stage of Multi-State MISSIONS.
-															// In fact, none of this !_tuMode InventoryState appears to run for 2nd staged missions.
-															// and BattlescapeGenerator::nextStage() has its own bu->prepUnit() call ....
-/*			if (_battleSave->getTurn() == 1)				// but Leaving this out could be troublesome for Multi-Stage MISSIONS.
-			{
-				//Log(LOG_INFO) << ". turn = 1";
-				_battleSave->distributeEquipment(inTile);
-				if (inTile->getTileUnit())
-				{
-					// make sure the unit closest to the ramp is selected.
-					_battleSave->setSelectedUnit(inTile->getTileUnit());
-				}
-			} */
+														// In fact, none of this !_tuMode InventoryState appears to run for 2nd staged missions.
+														// and BattlescapeGenerator::nextStage() has its own bu->prepUnit() call ....
+														// but Leaving this out could be troublesome for Multi-Stage MISSIONS.
+//			if (_battleSave->getTurn() == 1)
+//			{
+//				_battleSave->distributeEquipment(inTile);
+//				if (inTile->getTileUnit())
+//					_battleSave->setSelectedUnit(inTile->getTileUnit()); // make sure the unit closest to the ramp is selected.
+//			}
 
 			for (std::vector<BattleUnit*>::const_iterator
 					i = _battleSave->getUnits()->begin();

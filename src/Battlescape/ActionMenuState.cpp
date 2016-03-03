@@ -382,15 +382,9 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 				_game->popState();
 				break;
 
-			case BA_DROP: // see also BattlescapeGame::dropItem() <- adds gravity/calcLight/calcFoV
+			case BA_DROP:
 				if (_action->actor->spendTimeUnits(_action->TU) == true)
-				{
-					_action->weapon->changeOwner(); // TODO: Add parameter to changeOwner() that sets inventory-section to Ground, auto.
-					_action->weapon->setInventorySection(_game->getRuleset()->getInventoryRule(ST_GROUND));
-					_action->actor->getTile()->addItem(_action->weapon);
-
 					_action->actor->setActiveHand(_action->actor->getActiveHand());
-				}
 				else
 					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
 

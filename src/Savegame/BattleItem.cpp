@@ -251,8 +251,8 @@ BattleItem* BattleItem::getAmmoItem() const
 }
 
 /**
- * Sets an ammo item for this BattleItem.
- * @param item		- the ammo item (default nullptr)
+ * Sets an ammo-item for this BattleItem.
+ * @param item		- the ammo-item (default nullptr)
  * @param loadSave	- true if called from SavedBattleGame::load() (default false)
  * @return,	 0 = successful load or unload or nothing to unload
  *			-1 = weapon already contains ammo

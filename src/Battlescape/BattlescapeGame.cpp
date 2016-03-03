@@ -989,17 +989,17 @@ void BattlescapeGame::handleNonTargetAction()
 
 					if (_tacAction.value == -1)
 					{
-						_tacAction.result = "STR_GRENADE_IS_DEACTIVATED";
+						_tacAction.result = "STR_GRENADE_DEACTIVATED";
 						showWarning = 1;
 					}
 					else if (_tacAction.value == 0)
 					{
-						_tacAction.result = "STR_GRENADE_IS_ACTIVATED";
+						_tacAction.result = "STR_GRENADE_ACTIVATED";
 						showWarning = 1;
 					}
 					else
 					{
-						_tacAction.result = "STR_GRENADE_IS_ACTIVATED_";
+						_tacAction.result = "STR_GRENADE_ACTIVATED_";
 						showWarning = 2;
 					}
 				}
@@ -1040,9 +1040,13 @@ void BattlescapeGame::handleNonTargetAction()
 					showWarning = 1;
 				else
 				{
-					_battleSave->getTileEngine()->applyGravity(_tacAction.actor->getTile());
+					const Position pos (_tacAction.actor->getPosition());
+					dropItem(
+							pos,
+							_tacAction.weapon,
+							false, true);
 					getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)
-										->play(-1, getMap()->getSoundAngle(_tacAction.actor->getPosition()));
+										->play(-1, getMap()->getSoundAngle(pos));
 				}
 			break;
 
@@ -1053,23 +1057,24 @@ void BattlescapeGame::handleNonTargetAction()
 					liquidateUnit();
 		}
 
-		if (showWarning != 0)
+		switch (showWarning)
 		{
-			if (showWarning == 1)
+			case 1:
 				_parentState->warning(_tacAction.result);
-			else if (showWarning == 2)
+				_tacAction.result.clear();
+				break;
+
+			case 2:
 				_parentState->warning(
 									_tacAction.result,
 									true,
 									_tacAction.value);
-
-			_tacAction.result.clear();
+				_tacAction.result.clear();
 		}
 
 		_tacAction.type = BA_NONE;
 		_parentState->updateSoldierInfo();
 	}
-
 	setupSelector();
 }
 
@@ -2921,6 +2926,46 @@ void BattlescapeGame::dropItem(
 }
 
 /**
+ * Drops all items in a specific BattleUnit's inventory to the ground.
+ * @param unit - pointer to a BattleUnit
+ */
+void BattlescapeGame::dropUnitInventory(BattleUnit* const unit)
+{
+	const Position pos (unit->getPosition());
+	if (_battleSave->getTile(pos) != nullptr)
+	{
+		bool calcFoV (false);
+		for (std::vector<BattleItem*>::const_iterator
+				i = unit->getInventory()->begin();
+				i != unit->getInventory()->end();
+				++i)
+		{
+			if ((*i)->getRules()->isFixed() == false)
+			{
+				(*i)->setOwner();
+				(*i)->setInventorySection(getRuleset()->getInventoryRule(ST_GROUND));
+				_battleSave->getTile(pos)->addItem(*i);
+
+				if ((*i)->getUnit() != nullptr)
+					(*i)->getUnit()->setPosition(pos);
+
+				if ((*i)->getRules()->getBattleType() == BT_FLARE)
+					calcFoV = true;
+			}
+		}
+		unit->getInventory()->clear();
+
+		getTileEngine()->applyGravity(_battleSave->getTile(pos));
+
+		if (calcFoV == true)
+		{
+			getTileEngine()->calculateTerrainLighting();
+			getTileEngine()->recalculateFOV(true);
+		}
+	}
+}
+
+/**
  * Converts a BattleUnit into a different type of BattleUnit.
  * @param unit - pointer to a BattleUnit to convert
  * @return, pointer to the converted BattleUnit
@@ -2947,17 +2992,9 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 
 	unit->setSpecialAbility(SPECAB_NONE);
 
-	for (std::vector<BattleItem*>::const_iterator
-			i = unit->getInventory()->begin();
-			i != unit->getInventory()->end();
-			++i)
-	{
-		dropItem(unit->getPosition(), *i);
-		(*i)->setOwner();
-	}
-	unit->getInventory()->clear();
+	dropUnitInventory(unit);
 
-	unit->setTile(nullptr);
+	unit->setTile();
 	_battleSave->getTile(unit->getPosition())->setUnit(nullptr);
 
 
@@ -2993,13 +3030,17 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 	conUnit->setAIState(new AlienBAIState(_battleSave, conUnit));
 
 	st = unitRule->getRace().substr(4) + "_WEAPON";
-	BattleItem* const item (new BattleItem(
-										getRuleset()->getItemRule(st),
-										_battleSave->getCanonicalBattleId()));
-	item->changeOwner(conUnit);
-	item->setInventorySection(getRuleset()->getInventoryRule(ST_RIGHTHAND));
+	const RuleItem* const itRule (getRuleset()->getItemRule(st));
+	if (itRule != nullptr)
+	{
+		BattleItem* const weapon (new BattleItem(
+											itRule,
+											_battleSave->getCanonicalBattleId()));
+		weapon->changeOwner(conUnit);
+		weapon->setInventorySection(getRuleset()->getInventoryRule(ST_RIGHTHAND));
 
-	_battleSave->getItems()->push_back(item);
+		_battleSave->getItems()->push_back(weapon);
+	}
 
 	getMap()->cacheUnit(conUnit);
 	conUnit->setUnitVisible(wasVisible);

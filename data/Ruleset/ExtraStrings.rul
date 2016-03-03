@@ -28,7 +28,7 @@ extraStrings:
       STR_PANIC_: "panic> {0}"
       STR_CONFUSE_: "confuse> {0}"
       STR_CONTROL_: "control> {0}"
-      STR_GRENADE_IS_ACTIVATED_: "{0} > ACTIVATED < {0}"
+      STR_GRENADE_ACTIVATED_: "{0} > ACTIVATED < {0}"
       STR_SOLDIER_DIED: "died"
       STR_MATRIX: "da Matrix"
       STR_THROWACC_SHORT: "ta {ALT}{0}"

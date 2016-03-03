@@ -334,6 +334,8 @@ private:
 				BattleItem* const item,
 				bool created = false,
 				bool disown = false);
+		/// Drops all items in a specific BattleUnit's inventory to the ground.
+		void dropUnitInventory(BattleUnit* const unit);
 
 		/// Converts a BattleUnit into a different type of BattleUnit.
 		BattleUnit* convertUnit(BattleUnit* const unit);
