@@ -712,7 +712,7 @@ bool UnitWalkBState::doStatusWalk() // private.
 			{
 				//Log(LOG_INFO) << ". . remove unit from previous tile";
 				tile = _battleSave->getTile(_unit->getStartPosition() + Position(x,y,0));
-				tile->setUnit(nullptr);
+				tile->setUnit();
 				tile->setTransitUnit(_unit); // IMPORTANT: lastTile transiently holds onto this unit (all quads) for Map drawing.
 			}
 		}

@@ -1041,10 +1041,7 @@ void BattlescapeGame::handleNonTargetAction()
 				else
 				{
 					const Position pos (_tacAction.actor->getPosition());
-					dropItem(
-							pos,
-							_tacAction.weapon,
-							false, true);
+					dropItem(_tacAction.weapon, pos, 2);
 					getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)
 										->play(-1, getMap()->getSoundAngle(pos));
 				}
@@ -2289,22 +2286,14 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 				{
 					item = unit->getItem(ST_RIGHTHAND);
 					if (item != nullptr)
-						dropItem(
-								unit->getPosition(),
-								item,
-								false,
-								true);
+						dropItem(item, unit->getPosition(), 2);
 				}
 
 				if (RNG::percent(75) == true)
 				{
 					item = unit->getItem(ST_LEFTHAND);
 					if (item != nullptr)
-						dropItem(
-								unit->getPosition(),
-								item,
-								false,
-								true);
+						dropItem(item, unit->getPosition(), 2);
 				}
 
 				unit->clearCache();
@@ -2887,19 +2876,22 @@ void BattlescapeGame::requestEndTurn()
 /**
  * Drops an item to the floor and affects it with gravity then recalculates FoV
  * if it's a light-source.
+ * @param item		- pointer to a BattleItem
  * @param pos		- reference to a Position to place the item
- * @param item		- pointer to the item
- * @param create	- true if this is a new item (default false)
- * @param disown	- true to remove the item from the owner (default false)
+ * @param dropType	- how to handle this drop (default 0)
+ *					  0 - do nothing special here
+ *					  1 - clear the owner (not used currently)
+ *					  2 - clear the owner & remove the item from dropper's inventory
+ *					  3 - as a newly created item on the battlefield that needs
+ *						  to be added to the battleSave's item-list
  */
 void BattlescapeGame::dropItem(
-		const Position& pos,
 		BattleItem* const item,
-		bool created,
-		bool disown)
+		const Position& pos,
+		int dropType)
 {
-	if (_battleSave->getTile(pos) != nullptr		// don't spawn anything outside of bounds
-		&& item->getRules()->isFixed() == false)	// don't ever drop fixed items
+	if (_battleSave->getTile(pos) != nullptr
+		&& item->getRules()->isFixed() == false)
 	{
 		item->setInventorySection(getRuleset()->getInventoryRule(ST_GROUND));
 		_battleSave->getTile(pos)->addItem(item);
@@ -2907,17 +2899,20 @@ void BattlescapeGame::dropItem(
 		if (item->getUnit() != nullptr)
 			item->getUnit()->setPosition(pos);
 
-		if (created == true)
-			_battleSave->getItems()->push_back(item);
+		switch (dropType)
+		{
+			case 1: item->setOwner();
+				break;
+			case 2: item->changeOwner();
+				break;
+			case 3: _battleSave->getItems()->push_back(item);
+		}
 
-		if (disown == true)
-			item->changeOwner();
-		else if (item->getRules()->isGrenade() == false)
-			item->setOwner();
+		if (pos.z != 0)
+			getTileEngine()->applyGravity(_battleSave->getTile(pos));
 
-		getTileEngine()->applyGravity(_battleSave->getTile(pos));
-
-		if (item->getRules()->getBattleType() == BT_FLARE)
+		if (item->getRules()->getBattleType() == BT_FLARE
+			&& item->getFuse() != -1)
 		{
 			getTileEngine()->calculateTerrainLighting();
 			getTileEngine()->recalculateFOV(true);
@@ -2949,13 +2944,17 @@ void BattlescapeGame::dropUnitInventory(BattleUnit* const unit)
 				if ((*i)->getUnit() != nullptr)
 					(*i)->getUnit()->setPosition(pos);
 
-				if ((*i)->getRules()->getBattleType() == BT_FLARE)
+				if ((*i)->getRules()->getBattleType() == BT_FLARE
+					&& (*i)->getFuse() != -1)
+				{
 					calcFoV = true;
+				}
 			}
 		}
 		unit->getInventory()->clear();
 
-		getTileEngine()->applyGravity(_battleSave->getTile(pos));
+		if (pos.z != 0)
+			getTileEngine()->applyGravity(_battleSave->getTile(pos));
 
 		if (calcFoV == true)
 		{
@@ -2995,7 +2994,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 	dropUnitInventory(unit);
 
 	unit->setTile();
-	_battleSave->getTile(unit->getPosition())->setUnit(nullptr);
+	_battleSave->getTile(unit->getPosition())->setUnit();
 
 
 	std::string st (unit->getSpawnType());

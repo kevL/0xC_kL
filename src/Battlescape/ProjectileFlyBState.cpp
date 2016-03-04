@@ -836,7 +836,7 @@ void ProjectileFlyBState::think()
 				}
 				else
 				{
-					_parent->dropItem(pos, throwItem);
+					_parent->dropItem(throwItem, pos);
 
 					if (_unit->getFaction() == FACTION_HOSTILE
 						&& _prjItem->getRules()->getBattleType() == BT_GRENADE)

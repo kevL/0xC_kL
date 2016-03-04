@@ -892,8 +892,9 @@ bool Tile::ignite(int power)
 /**
  * Adds fire to this Tile.
  * @param turns - turns to burn
+ * @return, true if fire was added
  */
-void Tile::addFire(int turns)
+bool Tile::addFire(int turns)
 {
 	if (turns != 0 && allowFire() == true)
 	{
@@ -906,7 +907,10 @@ void Tile::addFire(int turns)
 
 		if (_smoke < _fire + 2)
 			_smoke = _fire + RNG::generate(2,3);
+
+		return true;
 	}
+	return false;
 }
 
 /**
@@ -1270,7 +1274,7 @@ Surface* Tile::getSprite(MapDataType partType) const
 
 /**
  * Sets a unit on this Tile.
- * @param unit		- pointer to a BattleUnit
+ * @param unit		- pointer to a BattleUnit (default nullptr)
  * @param tileBelow	- pointer to the Tile below this Tile (default nullptr)
  */
 void Tile::setUnit(

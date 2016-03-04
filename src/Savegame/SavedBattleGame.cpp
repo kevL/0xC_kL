@@ -1541,7 +1541,7 @@ void SavedBattleGame::resetUnitsOnTiles()
 							y != -1;
 							--y)
 					{
-						getTile((*i)->getTile()->getPosition() + Position(x,y,0))->setUnit(nullptr);
+						getTile((*i)->getTile()->getPosition() + Position(x,y,0))->setUnit();
 					}
 				}
 			}

@@ -212,7 +212,7 @@ void UnitFallBState::think()
 					if (*i == _battleSave->getTile((*i)->getStartPosition() + Position(x,y,0))->getTileUnit())
 					{
 						//Log(LOG_INFO) << ". Tile is not occupied";
-						_battleSave->getTile((*i)->getStartPosition() + Position(x,y,0))->setUnit(nullptr);
+						_battleSave->getTile((*i)->getStartPosition() + Position(x,y,0))->setUnit();
 					}
 				}
 			}

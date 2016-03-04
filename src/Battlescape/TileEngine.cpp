@@ -5996,7 +5996,7 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 							x != -1;
 							--x)
 					{
-						_battleSave->getTile(pos + Position(x,y,0))->setUnit(nullptr);
+						_battleSave->getTile(pos + Position(x,y,0))->setUnit();
 					}
 				}
 				unit->setPosition(posBelow);

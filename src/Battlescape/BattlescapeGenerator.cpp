@@ -474,8 +474,8 @@ void BattlescapeGenerator::nextStage()
 			(*i)->setUnitStatus(STATUS_LIMBO);
 		}
 
-		if ((*i)->getTile() != nullptr)		// break old Tile's link to unit.
-			(*i)->getTile()->setUnit(nullptr);
+		if ((*i)->getTile() != nullptr)
+			(*i)->getTile()->setUnit();		// break old Tile's link to unit.
 
 		(*i)->setTile();					// break unit's link to all Tiles.
 		(*i)->setPosition(posBogus, false);	// and give it a bogus Position

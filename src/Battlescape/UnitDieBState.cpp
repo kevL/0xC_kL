@@ -290,8 +290,8 @@ void UnitDieBState::convertToBody() // private.
 
 		if (armorSize == 0
 			&& (Options::battleWeaponSelfDestruction == false
-				  || _unit->getOriginalFaction() != FACTION_HOSTILE
-				  || _unit->getUnitStatus() == STATUS_UNCONSCIOUS))
+				|| _unit->getOriginalFaction() != FACTION_HOSTILE
+				|| _unit->getUnitStatus() == STATUS_UNCONSCIOUS))
 		{
 			_parent->dropUnitInventory(_unit);
 		}
@@ -319,7 +319,9 @@ void UnitDieBState::convertToBody() // private.
 			* tile,
 			* tileExpl,
 			* tileExplBelow;
-		bool soundPlayed (false);
+		bool
+			playSound (true),
+			calcLights (false);
 		size_t quadrants (static_cast<size_t>((armorSize + 1) * (armorSize + 1)));
 
 		for (int
@@ -355,14 +357,14 @@ void UnitDieBState::convertToBody() // private.
 						if (tileExpl != nullptr // safety.
 							&& tileExpl->getFire() == 0)
 						{
-							tileExpl->addFire(tileExpl->getFuel() + RNG::generate(1,2));
+							calcLights = tileExpl->addFire(tileExpl->getFuel() + RNG::generate(1,2));
 							tileExpl->addSmoke(std::max(1,
 														std::min(6,
 																 tileExpl->getFlammability() / 10)));
 
-							if (soundPlayed == false)
+							if (playSound == true)
 							{
-								soundPlayed = true;
+								playSound = false;
 								_parent->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::SMALL_EXPLOSION)
 															->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
 							}
@@ -376,19 +378,16 @@ void UnitDieBState::convertToBody() // private.
 												_battleSave->getCanonicalBattleId()));
 				body->setUnit(_unit);
 
-				if (tile != nullptr						// kL, safety. (had a CTD when ethereal dies on water).
-					&& tile->getTileUnit() == _unit)	// <- check in case unit was displaced by another unit ... that sounds pretty darn shakey.
-				{										// TODO: iterate over all mapTiles searching for the unit and nullptring any tile's association to it.
-					tile->setUnit(nullptr);
-				}
-
-				_parent->dropItem(
-								pos + Position(x,y,0),
-								body, true);
+				if (tile != nullptr && tile->getTileUnit() == _unit)	// safety. had a CTD when ethereal dies on water.
+					tile->setUnit();									// TODO: iterate over all mapTiles searching for the unit-item and
+																		// null-ing all tile-links to it. cf. SavedBattleGame::deleteBody().
+				_parent->dropItem(body, pos + Position(x,y,0), 3);
 			}
 		}
-		// TODO: recalcLighting if a mech-unit started a fire ....
-		_parent->getTileEngine()->calculateFOV(pos, true); // expose any units that were hiding behind dead unit
+
+		if (calcLights == true)
+			_parent->getTileEngine()->calculateTerrainLighting();
+		_parent->getTileEngine()->calculateFOV(pos, true); // expose any units that were hiding behind dead unit and account for possible Smoke too.
 	}
 }
 

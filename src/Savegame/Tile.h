@@ -261,7 +261,7 @@ private:
 		/// Tries to start fire on the Tile.
 		bool ignite(int power);
 		/// Adds fire to the Tile.
-		void addFire(int turns);
+		bool addFire(int turns);
 		/// Reduces the number of turns the Tile will burn.
 		void decreaseFire();
 		/// Gets fire.
@@ -290,7 +290,7 @@ private:
 
 		/// Sets a unit on the Tile.
 		void setUnit(
-				BattleUnit* const unit,
+				BattleUnit* const unit = nullptr,
 				const Tile* const tileBelow = nullptr);
 		/// Sets a unit transitorily on the Tile.
 		void setTransitUnit(BattleUnit* const unit);
