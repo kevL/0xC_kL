@@ -74,8 +74,8 @@ InventoryState::InventoryState(
 		BattlescapeState* const parent)
 	:
 		_tuMode(tuMode),
-		_parent(parent),
-		_flarePower(0)
+		_parent(parent)
+//		_flarePower(0)
 {
 	_battleSave = _game->getSavedGame()->getBattleSave();
 
@@ -398,28 +398,28 @@ InventoryState::~InventoryState()
 	{
 		Tile* const tile (_battleSave->getSelectedUnit()->getTile());
 
-		int flarePower (0);
-		for (std::vector<BattleItem*>::const_iterator
-				i = tile->getInventory()->begin();
-				i != tile->getInventory()->end();
-				++i)
-		{
-			if ((*i)->getRules()->getBattleType() == BT_FLARE
-				&& (*i)->getFuse() != -1
-				&& (*i)->getRules()->getPower() > flarePower)
-			{
-				flarePower = (*i)->getRules()->getPower();
-			}
-		}
+//		int flarePower (0);
+//		for (std::vector<BattleItem*>::const_iterator
+//				i = tile->getInventory()->begin();
+//				i != tile->getInventory()->end();
+//				++i)
+//		{
+//			if ((*i)->getRules()->getBattleType() == BT_FLARE
+//				&& (*i)->getFuse() != -1
+//				&& (*i)->getRules()->getPower() > flarePower)
+//			{
+//				flarePower = (*i)->getRules()->getPower();
+//			}
+//		}
 
 		TileEngine* const te (_battleSave->getTileEngine());
 		te->applyGravity(tile);
 
-		if (flarePower > _flarePower)
-		{
-			te->calculateTerrainLighting();
-			te->recalculateFOV(true); // <- done in BattlescapeGame::init() -> but without 'spotSound'
-		}
+//		if (flarePower > _flarePower)
+//		{
+		te->calculateTerrainLighting();
+		te->recalculateFOV(true); // <- done in BattlescapeGame::init() -> but without 'spotSound'
+//		}
 
 		_battleSave->getBattleGame()->getMap()->setNoDraw(false);
 	}
@@ -525,19 +525,19 @@ void InventoryState::init()
 
 	_inventoryPanel->setSelectedUnitInventory(unit);
 
-	_flarePower = 0;
-	for (std::vector<BattleItem*>::const_iterator
-			i = unit->getTile()->getInventory()->begin();
-			i != unit->getTile()->getInventory()->end();
-			++i)
-	{
-		if ((*i)->getRules()->getBattleType() == BT_FLARE
-			&& (*i)->getFuse() != -1
-			&& (*i)->getRules()->getPower() > _flarePower)
-		{
-			_flarePower = (*i)->getRules()->getPower();
-		}
-	}
+//	_flarePower = 0;										// unfortunately this can screw up when accessing the UfoPaedia
+//	for (std::vector<BattleItem*>::const_iterator			// or when picking up a flare-item, so just go ahead and run
+//			i = unit->getTile()->getInventory()->begin();	// both calcLight/Fov in the dTor regardless.
+//			i != unit->getTile()->getInventory()->end();
+//			++i)
+//	{
+//		if ((*i)->getRules()->getBattleType() == BT_FLARE
+//			&& (*i)->getFuse() != -1
+//			&& (*i)->getRules()->getPower() > _flarePower)
+//		{
+//			_flarePower = (*i)->getRules()->getPower();
+//		}
+//	}
 
 
 	const Soldier* const sol (unit->getGeoscapeSoldier());
@@ -943,7 +943,7 @@ void InventoryState::btnGroundClick(Action* action)
 void InventoryState::btnUnequipUnitClick(Action*)
 {
 	if (_tuMode == false									// don't accept clicks in battlescape because this doesn't cost TU.
-		&& _inventoryPanel->getSelectedItem() == nullptr)	// or when mouse is holding an item
+		&& _inventoryPanel->getSelectedItem() == nullptr)	// or if mouse is holding an item
 	{
 		const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
 

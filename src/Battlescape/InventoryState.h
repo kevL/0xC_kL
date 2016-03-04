@@ -54,7 +54,7 @@ private:
 /*	std::string _currentTooltip; */
 	const bool _tuMode;
 
-	int _flarePower;
+//	int _flarePower;
 
 	BattlescapeButton
 		* _btnGroundL,
