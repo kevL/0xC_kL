@@ -872,7 +872,7 @@ void BattleUnit::setDirectionTo(
 		const Position& pos,
 		bool turret)
 {
-	const int dir = TileEngine::getDirectionTo(_pos, pos);
+	const int dir (TileEngine::getDirectionTo(_pos, pos));
 	if (turret == true)
 	{
 		if (dir != _dirTurret)
@@ -1648,7 +1648,6 @@ void BattleUnit::playDeathSound(bool fleshWound) const
 	if (_battleGame != nullptr) // check if hit by pre-battle hidden/power-source explosion.
 	{
 		int soundId;
-//		if (_type == "SOLDIER")
 		if (_geoscapeSoldier != nullptr)
 		{
 			switch (_gender)
@@ -1718,16 +1717,11 @@ void BattleUnit::setHealth(int health)
  */
 bool BattleUnit::healStun(int power)
 {
-	_stunLevel -= power;
-
-	if (_stunLevel < 0)
+	if ((_stunLevel -= power) < 0)
 		_stunLevel = 0;
 
-	if (_status == STATUS_UNCONSCIOUS
-		&& _stunLevel < _health)
-	{
+	if (_status == STATUS_UNCONSCIOUS && _stunLevel < _health)
 		return true;
-	}
 
 	return false;
 }
@@ -1931,10 +1925,10 @@ int BattleUnit::getActionTu( // TODO: Refactor these ....
 		const BattleActionType bat,
 		const BattleItem* const item) const
 {
-	if (bat == BA_NONE || item == nullptr)
-		return 0;
+	if (bat != BA_NONE && item != nullptr)
+		return getActionTu(bat, item->getRules());
 
-	return getActionTu(bat, item->getRules());
+	return 0;
 }
 
 /**
@@ -2018,7 +2012,7 @@ int BattleUnit::getActionTu(
 	{
 		return std::max(1,
 						static_cast<int>(std::floor(
-						static_cast<float>(getBattleStats()->tu * cost) / 100.f)));
+						static_cast<float>(_stats.tu * cost) / 100.f)));
 	}
 	return cost;
 }
@@ -2035,7 +2029,6 @@ bool BattleUnit::spendTimeUnits(int tu)
 		_tu -= tu;
 		return true;
 	}
-
 	return false;
 }
 
@@ -2051,20 +2044,18 @@ bool BattleUnit::spendEnergy(int energy)
 		_energy -= energy;
 		return true;
 	}
-
 	return false;
 }
 
 /**
- * Sets a specific number of timeunits.
- * @param tu - the TU for this unit to set
+ * Sets a specific number of TUs.
+ * @note This must be allowed to go above the unit's capacity to allow for
+ * accurate action-cancellations in or about BattlescapeGame::popState().
+ * @param tu - the TU to set for this unit
  */
 void BattleUnit::setTimeUnits(int tu)
 {
-	if (tu < 0)
-		_tu = 0;
-	else
-		_tu = tu;
+	if ((_tu = tu) < 0) _tu = 0;
 }
 
 /**
@@ -2073,13 +2064,10 @@ void BattleUnit::setTimeUnits(int tu)
  */
 void BattleUnit::setEnergy(int energy)
 {
-	if (energy < 0)
+	if ((_energy = energy) < 0)
 		_energy = 0;
-	else
-		_energy = energy;
-
-	if (_energy > getBattleStats()->stamina)
-		_energy = getBattleStats()->stamina;
+	else if (_energy > _stats.stamina)
+		_energy = _stats.stamina;
 }
 
 /**
@@ -2170,7 +2158,6 @@ void BattleUnit::clearHostileUnitsThisTurn()
 bool BattleUnit::addToVisibleTiles(Tile* const tile)
 {
 	_visibleTiles.push_back(tile);
-
 	return true;
 } */
 
@@ -2195,7 +2182,6 @@ void BattleUnit::clearVisibleTiles()
 	{
 		(*j)->setTileVisible(false);
 	}
-
 	_visibleTiles.clear();
 } */
 
@@ -2212,7 +2198,7 @@ double BattleUnit::getAccuracy(
 	static const double PCT = 0.01;
 	double ret;
 
-	const RuleItem* const itRule = action.weapon->getRules();
+	const RuleItem* const itRule (action.weapon->getRules());
 
 	BattleActionType baType;
 	if (bat == BA_NONE)
@@ -2316,9 +2302,9 @@ double BattleUnit::getAccuracy(
  */
 double BattleUnit::getAccuracyModifier(const BattleItem* const item) const
 {
-	double ret = static_cast<double>(_health) / static_cast<double>(_stats.health);
+	double ret (static_cast<double>(_health) / static_cast<double>(_stats.health));
 
-	int wounds = _fatalWounds[BODYPART_HEAD] * 2;
+	int wounds (_fatalWounds[BODYPART_HEAD] * 2);
 	if (item != nullptr)
 	{
 		if (item->getRules()->isTwoHanded() == true)
@@ -2347,8 +2333,7 @@ void BattleUnit::setArmor(
 		int armor,
 		UnitSide side)
 {
-	if (armor < 0) armor = 0;
-	_armorHp[side] = armor;
+	if ((_armorHp[side] = armor) < 0) _armorHp[side] = 0;
 }
 
 /**
@@ -2369,9 +2354,9 @@ int BattleUnit::getArmor(UnitSide side) const
  */
 int BattleUnit::getInitiative(const int tuSpent) const
 {
-	double ret = static_cast<double>(
-				 getBattleStats()->reactions * (getTimeUnits() - tuSpent))
-				 / static_cast<double>(getBattleStats()->tu);
+	double ret (static_cast<double>(
+				_stats.reactions * (getTimeUnits() - tuSpent))
+				/ static_cast<double>(_stats.tu));
 
 	ret *= getAccuracyModifier();
 
@@ -2390,7 +2375,7 @@ void BattleUnit::prepUnit(bool full)
 	_dontReselect = false;
 	_motionPoints = 0;
 
-	bool reverted = false;
+	bool reverted;
 	if (_faction != _originalFaction) // reverting from Mind Control at start of MC-ing faction's next turn
 	{
 		reverted = true;
@@ -2400,8 +2385,10 @@ void BattleUnit::prepUnit(bool full)
 			setAIState();
 		}
 	}
+	else
+		reverted = false;
 
-	bool hasPanicked = false;
+	bool hasPanicked (false);
 	if (full == true) // don't do damage or panic when transitioning between stages
 	{
 		if (_fire > 0)
@@ -2424,7 +2411,7 @@ void BattleUnit::prepUnit(bool full)
 
 		if (_status != STATUS_UNCONSCIOUS)
 		{
-			const int panicPct = 100 - (2 * getMorale());
+			const int panicPct (100 - (2 * getMorale()));
 			if (RNG::percent(panicPct) == true)
 			{
 				hasPanicked = true;
@@ -3554,7 +3541,7 @@ int BattleUnit::getTurretType() const
  */
 int BattleUnit::getFatalWounds() const
 {
-	int ret = 0;
+	int ret (0);
 	for (size_t
 			i = 0;
 			i != PARTS_BODY;
@@ -3590,9 +3577,8 @@ void BattleUnit::heal(
 	{
 		_fatalWounds[part] -= wounds;
 
-		_health += health;
-		if (_health > getBattleStats()->health)
-			_health = getBattleStats()->health;
+		if ((_health += health) > _stats.health)
+			_health = _stats.health;
 
 		moraleChange(health);
 	}
@@ -3608,7 +3594,7 @@ void BattleUnit::morphine()
 	else
 	{
 		_stunLevel += 7 + RNG::generate(0,6);
-		const float healthPct (static_cast<float>(_health) / static_cast<float>(getBattleStats()->health));
+		const float healthPct (static_cast<float>(_health) / static_cast<float>(_stats.health));
 		_morale = std::min(100,
 						   _morale + 50 - static_cast<int>(30.f * healthPct));
 	}
@@ -3636,8 +3622,8 @@ bool BattleUnit::amphetamine(
 		int stun)
 {
 	_energy += energy;
-	if (_energy > getBattleStats()->stamina)
-		_energy = getBattleStats()->stamina;
+	if (_energy > _stats.stamina)
+		_energy = _stats.stamina;
 
 	return healStun(stun);
 }
@@ -4601,7 +4587,7 @@ void BattleUnit::setSpecialWeapon(SavedBattleGame* save, const Ruleset* rule)
 	item = rule->getItem(getArmor()->getSpecialWeapon());
 	if (item)
 		_specWeapon[i++] = createItem(save, this, item);
-	if (getBattleStats()->psiSkill > 0 && getOriginalFaction() == FACTION_HOSTILE)
+	if (_stats.psiSkill > 0 && getOriginalFaction() == FACTION_HOSTILE)
 	{
 		item = rule->getItem("ALIEN_PSI_WEAPON");
 		if (item)

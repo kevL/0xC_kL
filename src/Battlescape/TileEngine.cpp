@@ -5798,17 +5798,21 @@ bool TileEngine::psiAttack(BattleAction* const action)
 					{
 						//Log(LOG_INFO) << ". . . action->type == BA_PSIPANIC";
 						int moraleLoss (100);
-						if (action->actor->getOriginalFaction() == FACTION_PLAYER)
-							moraleLoss += statsActor->psiStrength * 2 / 3;
-						else
-							moraleLoss += statsActor->psiStrength / 2; // reduce aLiens' panic-effect
+						switch (action->actor->getOriginalFaction())
+						{
+							default:
+							case FACTION_HOSTILE:
+							case FACTION_NEUTRAL:
+								moraleLoss += statsActor->psiStrength / 2;		// 50% effect on non-Player units.
+								break;
 
+							case FACTION_PLAYER:
+								moraleLoss += statsActor->psiStrength * 2 / 3;	// 66% effect on Player's units.
+						}
 						moraleLoss -= statsVictim->bravery * 3 / 2;
-
 						//Log(LOG_INFO) << ". . . moraleLoss reduction = " << moraleLoss;
 						if (moraleLoss > 0)
 							victim->moraleChange(-moraleLoss);
-
 						//Log(LOG_INFO) << ". . . victim morale[1] = " << victim->getMorale();
 					}
 					break;
@@ -5816,9 +5820,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 				case BA_PSICONTROL:
 					{
 						//Log(LOG_INFO) << ". . . action->type == BA_PSICONTROL";
-//						if (action->actor->getFaction() == FACTION_PLAYER &&
 						if (victim->getOriginalFaction() == FACTION_HOSTILE // aLiens should be reduced to 50- Morale before MC.
-//							&& victim->getMorale() > 50)
 							&& RNG::percent(victim->getMorale() - 50) == true)
 						{
 							//Log(LOG_INFO) << ". . . . RESIST vs " << (victim->getMorale() - 50);
@@ -5827,28 +5829,38 @@ bool TileEngine::psiAttack(BattleAction* const action)
 						}
 
 						int courage (statsVictim->bravery);
-						if (action->actor->getFaction() == FACTION_HOSTILE)
+						switch (action->actor->getFaction())
 						{
-							int
-								strength (statsActor->psiStrength),
-								skill (statsActor->psiSkill);
-							victim->hostileMcValues(
-												strength,
-												skill);
+							default:
+							case FACTION_HOSTILE:
+								{
+									courage = std::min(0,
+													  (_battleSave->getMoraleModifier() / 10) + (courage / 2) - 110);
 
-							courage = std::min(0, // Morale loss for getting Mc'd.
-											  (_battleSave->getMoraleModifier() / 10) + (courage / 2) - 110);
-						}
-						else // actor->faction Player
-						{
-							if (victim->getOriginalFaction() != FACTION_HOSTILE) // xCom and civies
-							{
-								victim->setExposed(-1);	// remove Exposure.
-								courage /= 2;			// xCom Morale gain for getting Mc'd back to xCom.
-							}
-							else // victim aLien
-								courage = std::min(0, // aLien Morale loss for getting Mc'd.
-												  (_battleSave->getMoraleModifier(nullptr, false) / 10) + (courage * 3 / 4) - 110);
+									int // store a representation of the aLien's psyche in its victim.
+										str (statsActor->psiStrength),
+										skl (statsActor->psiSkill);
+									victim->hostileMcValues(str, skl);
+								}
+								break;
+
+//							case FACTION_NEUTRAL:
+							case FACTION_PLAYER:
+								switch (victim->getOriginalFaction())
+								{
+									default:
+									case FACTION_HOSTILE: // aLien Morale loss for getting Mc'd.
+										courage = std::min(0,
+														  (_battleSave->getMoraleModifier(nullptr, false) / 10) + (courage * 3 / 4) - 110);
+										break;
+
+									case FACTION_PLAYER: // xCom and civies' Moral gain for getting Mc'd back to xCom
+									case FACTION_NEUTRAL:
+									{
+										courage /= 2;
+										victim->setExposed(-1);	// bonus Exposure removal.
+									}
+								}
 						}
 						victim->moraleChange(courage);
 						//Log(LOG_INFO) << ". . . victim morale[2] = " << victim->getMorale();
