@@ -290,8 +290,8 @@ int BattleItem::setAmmoItem(
 				_ammoItem->_inventoryY = 0;
 				if (loadSave == false)
 				{
-					_ammoItem->setInventorySection();
 					_ammoItem->changeOwner();
+					_ammoItem->setInventorySection();
 				}
 				return 0;
 			}

@@ -1466,7 +1466,6 @@ void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
 					if (loaded == true)
 					{
 						item->changeOwner(*i);
-
 						item->setInventorySection(_rules->getInventory((*j)->getLayoutSection()));
 						item->setSlotX((*j)->getSlotX());
 						item->setSlotY((*j)->getSlotY());

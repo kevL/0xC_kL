@@ -5744,12 +5744,15 @@ bool TileEngine::psiAttack(BattleAction* const action)
 		attack -= defense;
 		switch (action->type)
 		{
-			case BA_PSICONTROL:
-				attack += 15.f;
-			break;
+			default:
 			case BA_PSIPANIC:
 				attack += 45.f;
-			break;
+				break;
+
+			case BA_PSICONTROL:
+				attack += 15.f;
+				break;
+
 			case BA_PSICONFUSE:
 				attack += 55.f;
 		}
@@ -5765,124 +5768,134 @@ bool TileEngine::psiAttack(BattleAction* const action)
 			//Log(LOG_INFO) << ". . Success";
 			if (action->actor->getOriginalFaction() == FACTION_PLAYER)
 			{
-				int xp (0); // avoid vc++ linker warnings.
+				int xp;
 				switch (action->type)
 				{
-					case BA_PSICONTROL:
-						if (victim->getOriginalFaction() == FACTION_HOSTILE) // no extra-XP for re-controlling Soldiers.
-							xp = 2;
-						else if (victim->getOriginalFaction() == FACTION_NEUTRAL) // only 1 extra-XP for controlling Civies.
-							xp = 1;
+					default:
+					case BA_PSIPANIC: xp = 1;
 						break;
 
-					case BA_PSIPANIC:
-						xp = 1;
-//					break;
-//					case BA_PSICONFUSE:
-//					default: xp = 0;
+					case BA_PSICONTROL:
+						switch (victim->getOriginalFaction())
+						{
+							default:
+							case FACTION_HOSTILE:	xp = 2; break;
+							case FACTION_NEUTRAL:	xp = 1; break;
+							case FACTION_PLAYER:	xp = 0;
+						}
+						break;
+
+					case BA_PSICONFUSE: xp = 0;
 				}
 				action->actor->addPsiSkillExp(xp);
 			}
 
 			//Log(LOG_INFO) << ". . victim morale[0] = " << victim->getMorale();
-			if (action->type == BA_PSIPANIC)
+			switch (action->type)
 			{
-				//Log(LOG_INFO) << ". . . action->type == BA_PSIPANIC";
-				int moraleLoss (100);
-				if (action->actor->getOriginalFaction() == FACTION_PLAYER)
-					moraleLoss += statsActor->psiStrength * 2 / 3;
-				else
-					moraleLoss += statsActor->psiStrength / 2; // reduce aLiens' panic-effect
-
-				moraleLoss -= statsVictim->bravery * 3 / 2;
-
-				//Log(LOG_INFO) << ". . . moraleLoss reduction = " << moraleLoss;
-				if (moraleLoss > 0)
-					victim->moraleChange(-moraleLoss);
-
-				//Log(LOG_INFO) << ". . . victim morale[1] = " << victim->getMorale();
-			}
-			else if (action->type == BA_PSICONFUSE)
-			{
-				//Log(LOG_INFO) << ". . . action->type == BA_PSICONFUSE";
-				const int tuLoss ((statsActor->psiSkill + 2) / 3);
-				//Log(LOG_INFO) << ". . . tuLoss = " << tuLoss;
-				if (tuLoss != 0)
-					victim->setTimeUnits(victim->getTimeUnits() - tuLoss);
-			}
-			else // BA_PSICONTROL
-			{
-				//Log(LOG_INFO) << ". . . action->type == BA_PSICONTROL";
-//				if (action->actor->getFaction() == FACTION_PLAYER &&
-				if (victim->getOriginalFaction() == FACTION_HOSTILE // aLiens should be reduced to 50- Morale before MC.
-//					&& victim->getMorale() > 50)
-					&& RNG::percent(victim->getMorale() - 50) == true)
-				{
-					//Log(LOG_INFO) << ". . . . RESIST vs " << (victim->getMorale() - 50);
-					_battleSave->getBattleState()->warning("STR_PSI_RESIST");
-					return false;
-				}
-
-				int courage (statsVictim->bravery);
-				if (action->actor->getFaction() == FACTION_HOSTILE)
-				{
-					int
-						strength (statsActor->psiStrength),
-						skill (statsActor->psiSkill);
-					victim->hostileMcValues(
-										strength,
-										skill);
-
-					courage = std::min(0, // Morale loss for getting Mc'd.
-									  (_battleSave->getMoraleModifier() / 10) + (courage / 2) - 110);
-				}
-				else // actor->faction Player
-				{
-					if (victim->getOriginalFaction() != FACTION_HOSTILE) // xCom and civies
+				default:
+				case BA_PSIPANIC:
 					{
-						victim->setExposed(-1);	// remove Exposure.
-						courage /= 2;			// xCom Morale gain for getting Mc'd back to xCom.
+						//Log(LOG_INFO) << ". . . action->type == BA_PSIPANIC";
+						int moraleLoss (100);
+						if (action->actor->getOriginalFaction() == FACTION_PLAYER)
+							moraleLoss += statsActor->psiStrength * 2 / 3;
+						else
+							moraleLoss += statsActor->psiStrength / 2; // reduce aLiens' panic-effect
+
+						moraleLoss -= statsVictim->bravery * 3 / 2;
+
+						//Log(LOG_INFO) << ". . . moraleLoss reduction = " << moraleLoss;
+						if (moraleLoss > 0)
+							victim->moraleChange(-moraleLoss);
+
+						//Log(LOG_INFO) << ". . . victim morale[1] = " << victim->getMorale();
 					}
-					else // victim aLien
-						courage = std::min(0, // aLien Morale loss for getting Mc'd.
-										  (_battleSave->getMoraleModifier(nullptr, false) / 10) + (courage * 3 / 4) - 110);
-				}
-				victim->moraleChange(courage);
-				//Log(LOG_INFO) << ". . . victim morale[2] = " << victim->getMorale();
+					break;
 
-				if (victim->getAIState() != nullptr)
-				{
-					if (victim->getOriginalFaction() == FACTION_PLAYER)
-						victim->setAIState();
-					else
-						victim->getAIState()->resetAI();
-				}
-
-				victim->setFaction(action->actor->getFaction());
-				victim->prepTu();
-				victim->allowReselect();
-				victim->setUnitStatus(STATUS_STANDING);
-
-				calculateUnitLighting();
-				calculateFOV(
-						victim->getPosition(),
-						true);
-
-/*				// if all units from either faction are mind controlled - auto-end the mission.
-				if (Options::battleAllowPsionicCapture == true && Options::battleAutoEnd == true && _battleSave->getSide() == FACTION_PLAYER)
-				{
-					//Log(LOG_INFO) << ". . . . inside tallyUnits";
-					int liveHostile, livePlayer;
-					_battleSave->getBattleGame()->tallyUnits(liveHostile, livePlayer);
-
-					if (liveHostile == 0 || livePlayer == 0)
+				case BA_PSICONTROL:
 					{
-						_battleSave->setSelectedUnit(nullptr);
-						_battleSave->getBattleGame()->cancelTacticalAction(true);
-						_battleSave->getBattleGame()->requestEndTurn();
+						//Log(LOG_INFO) << ". . . action->type == BA_PSICONTROL";
+//						if (action->actor->getFaction() == FACTION_PLAYER &&
+						if (victim->getOriginalFaction() == FACTION_HOSTILE // aLiens should be reduced to 50- Morale before MC.
+//							&& victim->getMorale() > 50)
+							&& RNG::percent(victim->getMorale() - 50) == true)
+						{
+							//Log(LOG_INFO) << ". . . . RESIST vs " << (victim->getMorale() - 50);
+							_battleSave->getBattleState()->warning("STR_PSI_RESIST");
+							return false;
+						}
+
+						int courage (statsVictim->bravery);
+						if (action->actor->getFaction() == FACTION_HOSTILE)
+						{
+							int
+								strength (statsActor->psiStrength),
+								skill (statsActor->psiSkill);
+							victim->hostileMcValues(
+												strength,
+												skill);
+
+							courage = std::min(0, // Morale loss for getting Mc'd.
+											  (_battleSave->getMoraleModifier() / 10) + (courage / 2) - 110);
+						}
+						else // actor->faction Player
+						{
+							if (victim->getOriginalFaction() != FACTION_HOSTILE) // xCom and civies
+							{
+								victim->setExposed(-1);	// remove Exposure.
+								courage /= 2;			// xCom Morale gain for getting Mc'd back to xCom.
+							}
+							else // victim aLien
+								courage = std::min(0, // aLien Morale loss for getting Mc'd.
+												  (_battleSave->getMoraleModifier(nullptr, false) / 10) + (courage * 3 / 4) - 110);
+						}
+						victim->moraleChange(courage);
+						//Log(LOG_INFO) << ". . . victim morale[2] = " << victim->getMorale();
+
+						if (victim->getAIState() != nullptr)
+						{
+							if (victim->getOriginalFaction() == FACTION_PLAYER)
+								victim->setAIState();
+							else
+								victim->getAIState()->resetAI();
+						}
+
+						victim->setFaction(action->actor->getFaction());
+						victim->prepTu();
+						victim->allowReselect();
+						victim->setUnitStatus(STATUS_STANDING);
+
+						calculateUnitLighting();
+						calculateFOV(
+								victim->getPosition(),
+								true);
+
+						// if all units from either faction are mind controlled - auto-end the mission.
+//						if (Options::battleAllowPsionicCapture == true && Options::battleAutoEnd == true && _battleSave->getSide() == FACTION_PLAYER)
+//						{
+//							//Log(LOG_INFO) << ". . . . inside tallyUnits";
+//							int liveHostile, livePlayer;
+//							_battleSave->getBattleGame()->tallyUnits(liveHostile, livePlayer);
+//							if (liveHostile == 0 || livePlayer == 0)
+//							{
+//								_battleSave->setSelectedUnit(nullptr);
+//								_battleSave->getBattleGame()->cancelTacticalAction(true);
+//								_battleSave->getBattleGame()->requestEndTurn();
+//							}
+//						}
+						//Log(LOG_INFO) << ". . . tallyUnits DONE";
 					}
-				} */
-				//Log(LOG_INFO) << ". . . tallyUnits DONE";
+					break;
+
+				case BA_PSICONFUSE:
+					{
+						//Log(LOG_INFO) << ". . . action->type == BA_PSICONFUSE";
+						const int tuLoss ((statsActor->psiSkill + 2) / 3);
+						//Log(LOG_INFO) << ". . . tuLoss = " << tuLoss;
+						if (tuLoss != 0)
+							victim->setTimeUnits(victim->getTimeUnits() - tuLoss);
+					}
 			}
 			//Log(LOG_INFO) << "TileEngine::psiAttack() ret TRUE";
 			return true;
@@ -5890,18 +5903,25 @@ bool TileEngine::psiAttack(BattleAction* const action)
 		else // psi Fail.
 		{
 			std::string info;
-			if (action->type == BA_PSIPANIC)
-				info = "STR_PANIC_";
-			else if (action->type == BA_PSICONFUSE)
-				info = "STR_CONFUSE_";
-			else
-				info = "STR_CONTROL_";
+			switch (action->type)
+			{
+				default:
+				case BA_PSIPANIC:
+					info = "STR_PANIC_";
+					break;
+
+				case BA_PSICONFUSE:
+					info = "STR_CONFUSE_";
+					break;
+
+				case BA_PSICONTROL:
+					info = "STR_CONTROL_";
+			}
 
 			//Log(LOG_INFO) << "te:psiAttack() success = " << success;
 			_battleSave->getBattleState()->warning(info, true, success);
 
 			if (victim->getOriginalFaction() == FACTION_PLAYER)
-//				&& Options::allowPsiStrengthImprovement == true)
 			{
 				int xpResist;
 				if (action->actor->getFaction() == FACTION_HOSTILE)
