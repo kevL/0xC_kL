@@ -73,7 +73,7 @@ void SoldierLayout::load(const YAML::Node& node)
 	_section	= node["section"]	.as<std::string>(_section);
 	_slotX		= node["slotX"]		.as<int>(0);
 	_slotY		= node["slotY"]		.as<int>(0);
-	_ammoItem	= node["ammoItem"]	.as<std::string>("");
+	_ammoItem	= node["ammoItem"]	.as<std::string>();
 	_fuse		= node["fuse"]		.as<int>(-1);
 }
 

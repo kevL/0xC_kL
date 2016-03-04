@@ -166,7 +166,7 @@ private:
 	void generateBaseMap();
 
 	/// Finds Alien Base start modules for Xcom equipment spawning.
-	void placeXComProperty();
+	void placeXcomProperty();
 
 	/// Clears a module from the map.
 	void clearModule(
@@ -193,7 +193,7 @@ private:
 	/// Adds a line (generally a road) to the map.
 	bool addLine(
 			MapDirection dir,
-			const std::vector<SDL_Rect*>* rects);
+			const std::vector<SDL_Rect*>* const rects);
 	/// Adds a single block at a given position.
 	bool addBlock(
 			int x,
@@ -201,11 +201,11 @@ private:
 			MapBlock* const block);
 	/// Drills some tunnels between map blocks.
 	void drillModules(
-			TunnelData* tunnelInfo,
-			const std::vector<SDL_Rect*>* rects,
+			TunnelData* const info,
+			const std::vector<SDL_Rect*>* const rects,
 			MapDirection dir);
 	/// Clears all modules in a rect from a command.
-	bool removeBlocks(MapScript* const directive);
+	bool removeBlocks(const MapScript* const directive);
 
 
 	public:

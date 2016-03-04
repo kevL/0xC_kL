@@ -50,9 +50,7 @@ RuleTerrain::~RuleTerrain()
 			i = _mapBlocks.begin();
 			i != _mapBlocks.end();
 			++i)
-	{
 		delete *i;
-	}
 }
 
 /**
@@ -89,7 +87,7 @@ void RuleTerrain::load(
 				i != mapBlocks.end();
 				++i)
 		{
-			MapBlock* const mapBlock = new MapBlock((*i)["type"].as<std::string>());
+			MapBlock* const mapBlock (new MapBlock((*i)["type"].as<std::string>()));
 			mapBlock->load(*i);
 			_mapBlocks.push_back(mapBlock);
 		}
@@ -108,7 +106,7 @@ void RuleTerrain::load(
 			i != node["music"].end();
 			++i)
 	{
-		_musics.push_back((*i).as<std::string>(""));
+		_musics.push_back((*i).as<std::string>());
 	}
 
 	_pyjamaType = node["pyjamaType"].as<std::string>(_pyjamaType);
@@ -118,7 +116,7 @@ void RuleTerrain::load(
  * Gets the array of mapblocks.
  * @return, pointer to a vector of pointers as an array of MapBlocks
  */
-std::vector<MapBlock*>* RuleTerrain::getMapBlocks()
+const std::vector<MapBlock*>* RuleTerrain::getMapBlocks()
 {
 	return &_mapBlocks;
 }
@@ -127,7 +125,7 @@ std::vector<MapBlock*>* RuleTerrain::getMapBlocks()
  * Gets the array of mapdatafiles.
  * @return, pointer to a vector of pointers as an array of MapDataSets
  */
-std::vector<MapDataSet*>* RuleTerrain::getMapDataSets()
+const std::vector<MapDataSet*>* RuleTerrain::getMapDataSets()
 {
 	return &_mapDataSets;
 }

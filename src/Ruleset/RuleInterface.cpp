@@ -83,7 +83,7 @@ void RuleInterface::load(const YAML::Node& node)
 		element.color2 = (*i)["color2"].as<int>(-1);
 		element.border = (*i)["border"].as<int>(-1);
 
-		std::string id = (*i)["id"].as<std::string>("");
+		std::string id ((*i)["id"].as<std::string>());
 		_elements[id] = element;
 	}
 }
@@ -95,26 +95,13 @@ void RuleInterface::load(const YAML::Node& node)
  */
 PaletteType RuleInterface::convertToPaletteType(const std::string& palette) // private/static.
 {
-	if (palette == "BACKPALS.DAT")
-		return PAL_BACKPALS;
-
-	if (palette == "PAL_BASESCAPE")
-		return PAL_BASESCAPE;
-
-	if (palette == "PAL_BATTLEPEDIA")
-		return PAL_BATTLEPEDIA;
-
-	if (palette == "PAL_BATTLESCAPE")
-		return PAL_BATTLESCAPE;
-
-	if (palette == "PAL_GEOSCAPE")
-		return PAL_GEOSCAPE;
-
-	if (palette == "PAL_GRAPHS")
-		return PAL_GRAPHS;
-
-	if (palette == "PAL_UFOPAEDIA")
-		return PAL_UFOPAEDIA;
+	if (palette == "BACKPALS.DAT")		return PAL_BACKPALS;
+	if (palette == "PAL_BASESCAPE")		return PAL_BASESCAPE;
+	if (palette == "PAL_BATTLEPEDIA")	return PAL_BATTLEPEDIA;
+	if (palette == "PAL_BATTLESCAPE")	return PAL_BATTLESCAPE;
+	if (palette == "PAL_GEOSCAPE")		return PAL_GEOSCAPE;
+	if (palette == "PAL_GRAPHS")		return PAL_GRAPHS;
+	if (palette == "PAL_UFOPAEDIA")		return PAL_UFOPAEDIA;
 
 	return PAL_NONE;
 }

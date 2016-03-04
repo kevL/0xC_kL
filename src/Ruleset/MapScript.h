@@ -32,14 +32,6 @@
 namespace OpenXcom
 {
 
-enum MapDirection
-{
-	MD_NONE,		// 0
-	MD_VERTICAL,	// 1
-	MD_HORIZONTAL,	// 2
-	MD_BOTH			// 3
-};
-
 struct MCDReplacement
 {
 	int
@@ -53,7 +45,7 @@ struct TunnelData
 	std::map<std::string, MCDReplacement> replacements;
 
 	///
-	MCDReplacement* getMCDReplacement(std::string type)
+	const MCDReplacement* getMcdReplacement(const std::string& type)
 	{
 		if (replacements.find(type) != replacements.end())
 			return &replacements[type];
@@ -74,6 +66,14 @@ enum MapScriptCommand
 	MSC_CHECKBLOCK,		//  6
 	MSC_REMOVE,			//  7
 	MSC_RESIZE			//  8
+};
+
+enum MapDirection
+{
+	MD_NONE,		// 0
+	MD_VERTICAL,	// 1
+	MD_HORIZONTAL,	// 2
+	MD_BOTH			// 3
 };
 
 class MapBlock;
@@ -124,13 +124,13 @@ private:
 	public:
 		/// Constructs a MapScript.
 		MapScript();
-		/// Destructs this MapScript.
+		/// Destructs the MapScript.
 		~MapScript();
 
 		/// Loads information from a ruleset file.
 		void load(const YAML::Node& node);
 
-		/// Initializes all the variables and junk for a MapScript command.
+		/// Initializes all the variables and stuff for a MapScript command.
 		void init();
 
 		/// Gets what type of command this is.
@@ -182,11 +182,11 @@ private:
 		TunnelData* getTunnelData() const
 		{ return _tunnelData; };
 
-		/// Randomly generate a block from within either the array of groups or blocks.
-		MapBlock* getNextBlock(RuleTerrain* const terraRule);
+		/// Randomly generate a MapBlock from within either the array of groups or blocks.
+		MapBlock* getNextBlock(RuleTerrain* const terrainRule);
 
-		/// Gets the UFO's name (for setUFO)
-		std::string getUfoType();
+		/// Gets the UFO's type (for setUFO).
+		const std::string& getUfoType();
 };
 
 }

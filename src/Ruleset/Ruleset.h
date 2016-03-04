@@ -272,7 +272,7 @@ protected:
 		const std::vector<std::string>& getTerrainList() const;
 
 		/// Gets the MapDataSet for the battlefield.
-		MapDataSet* getMapDataSet(const std::string& name);
+		MapDataSet* getMapDataSet(const std::string& type);
 
 		/// Gets the rules for Awards.
 		std::map<std::string, RuleAward*> getAwardsList() const;

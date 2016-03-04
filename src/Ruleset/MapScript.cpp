@@ -55,22 +55,20 @@ MapScript::~MapScript()
 			i = _rects.begin();
 			i != _rects.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	delete _tunnelData;
 }
 
 /**
- * Loads a map script directive from YAML.
+ * Loads a MapScript directive from YAML.
  * @param node - reference a YAML node
  */
 void MapScript::load(const YAML::Node& node)
 {
 	if (const YAML::Node& mapNode = node["type"])
 	{
-		const std::string directive = mapNode.as<std::string>("");
+		const std::string directive (mapNode.as<std::string>());
 
 		if (directive == "addBlock")
 			_type = MSC_ADDBLOCK;
@@ -117,7 +115,7 @@ void MapScript::load(const YAML::Node& node)
 				i != mapNode.end();
 				++i)
 		{
-			SDL_Rect* const rect = new SDL_Rect();
+			SDL_Rect* const rect (new SDL_Rect());
 			rect->x = static_cast<Sint16>((*i)[0].as<int>()); // note: not sure if YAML can do a cast to S/Uint16's
 			rect->y = static_cast<Sint16>((*i)[1].as<int>());
 			rect->w = static_cast<Uint16>((*i)[2].as<int>());
@@ -143,7 +141,7 @@ void MapScript::load(const YAML::Node& node)
 				replacement.entry = (*i)["entry"].as<int>(-1);
 				replacement.dataSet = (*i)["set"].as<int>(-1);
 
-				const std::string type = (*i)["type"].as<std::string>("");
+				const std::string type ((*i)["type"].as<std::string>());
 				_tunnelData->replacements[type] = replacement;
 			}
 		}
@@ -162,7 +160,7 @@ void MapScript::load(const YAML::Node& node)
 		if (mapNode.Type() == YAML::NodeType::Sequence)
 		{
 			int
-				entry = 0,
+				entry (0),
 				*sizes[3] =
 				{
 					&_sizeX,
@@ -197,7 +195,7 @@ void MapScript::load(const YAML::Node& node)
 		else _groups.push_back(mapNode.as<int>(0));
 	}
 
-	size_t selectionSize = _groups.size();
+	size_t selectionSize (_groups.size());
 	if (const YAML::Node& mapNode = node["blocks"])
 	{
 		_groups.clear();
@@ -233,14 +231,15 @@ void MapScript::load(const YAML::Node& node)
 				_frequencies.at(entry++) = (*i).as<int>(1);
 			}
 		}
-		else _frequencies.at(0) = mapNode.as<int>(1);
+		else
+			_frequencies.at(0) = mapNode.as<int>(1);
 	}
 
 	if (const YAML::Node& mapNode = node["maxUses"])
 	{
 		if (mapNode.Type() == YAML::NodeType::Sequence)
 		{
-			size_t entry = 0;
+			size_t entry (0);
 			for (YAML::const_iterator
 					i = mapNode.begin();
 					i != mapNode.end();
@@ -252,12 +251,13 @@ void MapScript::load(const YAML::Node& node)
 				_maxUses.at(entry++) = (*i).as<int>(-1);
 			}
 		}
-		else _maxUses.at(0) = mapNode.as<int>(-1);
+		else
+			_maxUses.at(0) = mapNode.as<int>(-1);
 	}
 
 	if (const YAML::Node& mapNode = node["direction"])
 	{
-		std::string dir = mapNode.as<std::string>("");
+		std::string dir (mapNode.as<std::string>());
 		if (dir.length() != 0)
 		{
 			std::transform(
@@ -281,13 +281,14 @@ void MapScript::load(const YAML::Node& node)
 
 	if (_direction == MD_NONE)
 	{
-		if (_type == MSC_DIGTUNNEL)
+		switch (_type)
 		{
-			throw Exception("no direction defined for dig tunnel directive, must be [V]ertical, [H]orizontal, or [B]oth");
-		}
-		else if (_type == MSC_ADDLINE)
-		{
-			throw Exception("no direction defined for add line directive, must be [V]ertical, [H]orizontal, or [B]oth");
+			case MSC_DIGTUNNEL:
+				throw Exception("no direction defined for dig tunnel directive, must be [V]ertical, [H]orizontal, or [B]oth");
+				break;
+
+			case MSC_ADDLINE:
+				throw Exception("no direction defined for add line directive, must be [V]ertical, [H]orizontal, or [B]oth");
 		}
 	}
 
@@ -336,7 +337,7 @@ int MapScript::getGroupNumber() // private.
 	if (_cumulativeFrequency > 0)
 	{
 		int pick (RNG::generate(0,
-							_cumulativeFrequency - 1));
+								_cumulativeFrequency - 1));
 
 		for (size_t
 				i = 0;
@@ -374,8 +375,8 @@ int MapScript::getBlockNumber() // private.
 {
 	if (_cumulativeFrequency > 0)
 	{
-		int pick = RNG::generate(0,
-							_cumulativeFrequency - 1);
+		int pick (RNG::generate(0,
+								_cumulativeFrequency - 1));
 
 		for (size_t
 				i = 0;
@@ -400,30 +401,29 @@ int MapScript::getBlockNumber() // private.
 			pick -= _frequenciesTemp.at(i);
 		}
 	}
-
 	return MBT_UNDEFINED;
 }
 
 /**
- * Gets a random map block from a given terrain using either the groups or the blocks defined.
- * @param terraRule - pointer to the RuleTerrain to pick a block from
+ * Gets a random MapBlock from a given terrain using either the groups or the
+ * blocks defined.
+ * @param terrainRule - pointer to the RuleTerrain to pick a block from
  * @return, pointer to a randomly chosen MapBlock given the options available in this MapScript
  */
-MapBlock* MapScript::getNextBlock(RuleTerrain* const terraRule)
+MapBlock* MapScript::getNextBlock(RuleTerrain* const terrainRule)
 {
 	if (_blocks.empty() == true)
-		return terraRule->getMapBlockRand(
+		return terrainRule->getMapBlockRand(
 										_sizeX * 10,
 										_sizeY * 10,
 										getGroupNumber());
 
 	const int result (getBlockNumber());
-	if (result < static_cast<int>(terraRule->getMapBlocks()->size())
+	if (result < static_cast<int>(terrainRule->getMapBlocks()->size())
 		&& result != MBT_UNDEFINED)
 	{
-		return terraRule->getMapBlocks()->at(static_cast<size_t>(result));
+		return terrainRule->getMapBlocks()->at(static_cast<size_t>(result));
 	}
-
 	return nullptr;
 }
 
@@ -431,7 +431,7 @@ MapBlock* MapScript::getNextBlock(RuleTerrain* const terraRule)
  * Gets the type of the UFO for the case of "setUFO".
  * @return, UFO type
  */
-std::string MapScript::getUfoType()
+const std::string& MapScript::getUfoType()
 {
 	return _ufoType;
 }

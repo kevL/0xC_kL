@@ -378,8 +378,8 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 
 
 			linear = document["linear"].as<bool>(false); // some shaders want texture linear interpolation and some don't
-			std::string fragment_source	= document["fragment"]	.as<std::string>("");
-			std::string vertex_source	= document["vertex"]	.as<std::string>("");
+			std::string fragment_source	= document["fragment"]	.as<std::string>();
+			std::string vertex_source	= document["vertex"]	.as<std::string>();
 
 			if (is_glsl)
 			{

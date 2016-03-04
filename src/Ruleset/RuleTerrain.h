@@ -73,9 +73,9 @@ private:
 		const std::string& getType() const;
 
 		/// Gets the terrain's mapblocks.
-		std::vector<MapBlock*>* getMapBlocks();
+		const std::vector<MapBlock*>* getMapBlocks();
 		/// Gets the terrain's mapdatafiles.
-		std::vector<MapDataSet*>* getMapDataSets();
+		const std::vector<MapDataSet*>* getMapDataSets();
 
 		/// Gets a random mapblock.
 		MapBlock* getMapBlockRand(
