@@ -269,17 +269,18 @@ void MapScript::load(const YAML::Node& node)
 			_direction = MD_HORIZONTAL;
 		else if (dir == "b")
 			_direction = MD_BOTH;
-		else //_direction == MD_NONE
-		{
-			switch (_type)
-			{
-				case MSC_DIGTUNNEL:
-					throw Exception("no direction defined for dig tunnel directive, must be [v]ertical, [h]orizontal, or [b]oth");
-					break;
+	}
 
-				case MSC_ADDLINE:
-					throw Exception("no direction defined for add line directive, must be [v]ertical, [h]orizontal, or [b]oth");
-			}
+	if (_direction == MD_NONE)
+	{
+		switch (_type)
+		{
+			case MSC_DIGTUNNEL:
+				throw Exception("MapScript: The direction is undefined for digTunnel operation - specify [v]ertical, [h]orizontal, or [b]oth");
+				break;
+
+			case MSC_ADDLINE:
+				throw Exception("MapScript: The direction is undefined for addLine operation - specify [v]ertical, [h]orizontal, or [b]oth");
 		}
 	}
 

@@ -29,7 +29,7 @@
 #include "../fmath.h"
 
 #include "../Engine/Language.h"
-#include "../Engine/Logger.h"
+//#include "../Engine/Logger.h"
 #include "../Engine/RNG.h"
 
 #include "../Interface/Text.h"
@@ -114,21 +114,21 @@ Soldier::Soldier(
 			_name = L"pfc.Frita";
 		}
 
-/*		if (names->empty() == false)
-		{
-			size_t nationality = RNG::generate(0, names->size() - 1);
-			_name = names->at(nationality)->genName(&_gender, _solRule->getFemaleFrequency());
-
-			// Once we add the ability to mod in extra looks, this will
-			// need to reference the ruleset for the maximum amount of looks.
-			_look = (SoldierLook)names->at(nationality)->genLook(4);
-		}
-		else
-		{
-			_name = L"";
-			_gender = (RNG::percent(_solRule->getFemaleFrequency()) ? GENDER_FEMALE : GENDER_MALE);
-			_look = (SoldierLook)RNG::generate(0, 3);
-		} */
+//		if (names->empty() == false)
+//		{
+//			size_t nationality = RNG::generate(0, names->size() - 1);
+//			_name = names->at(nationality)->genName(&_gender, _solRule->getFemaleFrequency());
+//
+//			// Once we add the ability to mod in extra looks, this will
+//			// need to reference the ruleset for the maximum amount of looks.
+//			_look = (SoldierLook)names->at(nationality)->genLook(4);
+//		}
+//		else
+//		{
+//			_name = L"";
+//			_gender = (RNG::percent(_solRule->getFemaleFrequency()) ? GENDER_FEMALE : GENDER_MALE);
+//			_look = (SoldierLook)RNG::generate(0, 3);
+//		}
 	}
 }
 
@@ -157,13 +157,12 @@ void Soldier::load(
 		const YAML::Node& node,
 		const Ruleset* const rules)
 {
-	Log(LOG_INFO) << "Soldier::load()";
+	//Log(LOG_INFO) << "Soldier::load()";
 	_rank	= static_cast<SoldierRank>(node["rank"]		.as<int>());
 	_gender	= static_cast<SoldierGender>(node["gender"]	.as<int>());
 	_look	= static_cast<SoldierLook>(node["look"]		.as<int>());
 
 	_name = Language::utf8ToWstr(node["name"].as<std::string>());
-	Log(LOG_INFO) << ". name = " << *(_name.c_str());
 
 	_id				= node["id"]			.as<int>(_id);
 	_initialStats	= node["initialStats"]	.as<UnitStats>(_initialStats);
@@ -174,14 +173,14 @@ void Soldier::load(
 	_psiTraining	= node["psiTraining"]	.as<bool>(_psiTraining);
 
 	_armorRule = rules->getArmor(node["armor"].as<std::string>());
-	if (_armorRule != nullptr) Log(LOG_INFO) << ". armor [1] = " << _armorRule->getType();
+	//if (_armorRule != nullptr) Log(LOG_INFO) << ". armor [1] = " << _armorRule->getType();
 	if (_armorRule == nullptr)
 	{
 		_armorRule = rules->getArmor(_solRule->getArmor());
-		if (_armorRule != nullptr) Log(LOG_INFO) << ". armor [2] = " << _armorRule->getType();
+		//if (_armorRule != nullptr) Log(LOG_INFO) << ". armor [2] = " << _armorRule->getType();
 	}
 
-	Log(LOG_INFO) << ". load layout";
+	//Log(LOG_INFO) << ". load layout";
 	if (const YAML::Node& layout = node["layout"])
 	{
 		SoldierLayout* layoutItem;
@@ -198,13 +197,13 @@ void Soldier::load(
 		}
 	}
 
-	Log(LOG_INFO) << ". load diary";
+	//Log(LOG_INFO) << ". load diary";
 	if (node["diary"])
 	{
-		Log(LOG_INFO) << ". . diary exists";
+		//Log(LOG_INFO) << ". . diary exists";
 		_diary->load(node["diary"]);
 	}
-	else Log(LOG_INFO) << ". . diary invalid";
+	//else Log(LOG_INFO) << ". . diary invalid";
 
 //	calcStatString(
 //			rules->getStatStrings(),
