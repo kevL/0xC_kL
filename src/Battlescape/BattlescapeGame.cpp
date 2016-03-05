@@ -1626,7 +1626,7 @@ void BattlescapeGame::checkCasualties(
 			{
 				if (defender->getSpawnType() == "STR_ZOMBIE") // human->zombie (nobody cares about zombie->chryssalid)
 				{
-					converted = true; // do morale changes but not collapsing animations.
+					converted = true; // do morale-changes and SoldierDiary but not collapsing animations.
 					convertedUnits.push_back(defender);
 				}
 				else if (stunned == false)
@@ -1645,7 +1645,7 @@ void BattlescapeGame::checkCasualties(
 //					if (liquidate == true)
 //					if (defender->getUnitStatus() == STATUS_UNCONSCIOUS)
 //						defender->instaKill();
-					if (dead == true && converted == false
+					if (dead == true //&& converted == false
 						&& defender->getUnitStatus() != STATUS_UNCONSCIOUS)
 					{
 						defender->setUnitStatus(STATUS_DISABLED);	// <- will be sent to UnitDieBState below.
@@ -1662,10 +1662,7 @@ void BattlescapeGame::checkCasualties(
 						if (attacker->getGeoscapeSoldier() != nullptr)
 						{
 							defender->setMurdererId(attacker->getId());
-							// Awards: decide victim race and rank
-							// TODO: if a unit was stunned but gets up and is re-stunned or killed,
-							// erase it from the previous attacker's BattleUnitKill vector and add
-							// it to the subsequent attacker.
+
 							diaryDefender(defender);
 							attacker->getStatistics()->kills.push_back(new BattleUnitKill(
 																					_killStatRank,
@@ -1817,18 +1814,10 @@ void BattlescapeGame::checkCasualties(
 						DamageType dType;
 						if (weapon != nullptr)
 							dType = weapon->getRules()->getDamageType();
-						else // hidden or terrain explosion or death by fatal wounds
-						{
-							if (hidden == true) // this is instant death from UFO powersources without screaming sounds
-								dType = DT_HE;
-							else
-							{
-								if (terrain == true)
-									dType = DT_HE;
-								else // no attacker and no terrain explosion - must be fatal wounds
-									dType = DT_NONE; // -> STR_HAS_DIED_FROM_A_FATAL_WOUND
-							}
-						}
+						else if (hidden == true || terrain == true)
+							dType = DT_HE;
+						else
+							dType = DT_NONE; // -> STR_HAS_DIED_FROM_A_FATAL_WOUND
 
 						statePushNext(new UnitDieBState( // This is where units get sent to DEATH!
 													this,

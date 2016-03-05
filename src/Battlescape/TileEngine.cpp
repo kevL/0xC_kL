@@ -2521,11 +2521,10 @@ void TileEngine::explode(
 											if (bu->isOut_t(OUT_HEALTH) == true)
 											{
 												//Log(LOG_INFO) << ". . . . INVENTORY: instaKill";
-												bu->instaKill();
-
+//												bu->instaKill(); // TODO: Log the kill in Soldier's Diary.
 												if (attacker != nullptr)
 												{
-													bu->killedBy(attacker->getFaction()); // TODO: Log the kill in Soldier's Diary.
+													bu->killedBy(attacker->getFaction());
 													//Log(LOG_INFO) << "TE::explode() " << bu->getId() << " killedBy = " << (int)attacker->getFaction();
 												}
 
@@ -2715,11 +2714,10 @@ void TileEngine::explode(
 
 											if (bu->isOut_t(OUT_HEALTH) == true)
 											{
-												bu->instaKill();
-
+//												bu->instaKill(); // TODO: Log the kill in Soldier's Diary.
 												if (attacker != nullptr)
 												{
-													bu->killedBy(attacker->getFaction()); // TODO: Log the kill in Soldier's Diary.
+													bu->killedBy(attacker->getFaction());
 													//Log(LOG_INFO) << "TE::explode() " << bu->getId() << " killedBy = " << (int)attacker->getFaction();
 												}
 
@@ -5854,9 +5852,12 @@ bool TileEngine::psiAttack(BattleAction* const action)
 														  (_battleSave->getMoraleModifier(nullptr, false) / 10) + (courage * 3 / 4) - 110);
 										break;
 
-									case FACTION_NEUTRAL: // no Morale change for civies unless already Mc'd by aLiens.
+									case FACTION_NEUTRAL: // Morale change for civies (-10) unless already Mc'd by aLiens.
 										if (victim->isMindControlled() == false)
-											break; // no break;
+										{
+											courage = -10;
+											break;
+										} // no break;
 									case FACTION_PLAYER: // xCom and civies' Moral gain for getting Mc'd back to xCom.
 									{
 										courage /= 2;
