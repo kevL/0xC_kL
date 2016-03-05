@@ -52,7 +52,8 @@ namespace OpenXcom
  * @param parent	- pointer to BattlescapeGame
  * @param unit		- pointer to a dying BattleUnit
  * @param dType		- type of damage that caused the death (RuleItem.h)
- * @param noScream	- true to disable the death sound for pre-battle powersource explosions as well as stun (default false)
+ * @param noScream	- true to disable the death sound for pre-battle powersource
+ *					  explosions as well as for stunned units (default false)
  */
 UnitDieBState::UnitDieBState(
 		BattlescapeGame* const parent,
@@ -299,96 +300,96 @@ void UnitDieBState::convertToBody() // private.
 	}
 
 
-	if (carried == true)
-	{
-		for (std::vector<BattleItem*>::const_iterator
-				i = _battleSave->getItems()->begin();
-				i != _battleSave->getItems()->end();
-				++i)
-		{
-			if ((*i)->getUnit() == _unit)
-			{
-				(*i)->changeRule(_parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[0]));
-				break;
-			}
-		}
-	}
-	else
-	{
-		Tile
-			* tile,
-			* tileExpl,
-			* tileExplBelow;
-		bool
-			playSound (true),
-			calcLights (false);
-		size_t quadrants (static_cast<size_t>((armorSize + 1) * (armorSize + 1)));
+//	if (carried == true)
+//	{
+//		for (std::vector<BattleItem*>::const_iterator
+//				i = _battleSave->getItems()->begin();
+//				i != _battleSave->getItems()->end();
+//				++i)
+//		{
+//			if ((*i)->getUnit() == _unit)
+//			{
+//				(*i)->changeRule(_parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[0]));
+//				break;
+//			}
+//		}
+//	}
+//	else
+//	{
+	Tile
+		* tile,
+		* tileExpl,
+		* tileExplBelow;
+	bool
+		playSound (true),
+		calcLights (false);
+	size_t quadrants (static_cast<size_t>((armorSize + 1) * (armorSize + 1)));
 
+	for (int
+			y = armorSize;
+			y != -1;
+			--y)
+	{
 		for (int
-				y = armorSize;
-				y != -1;
-				--y)
+				x = armorSize;
+				x != -1;
+				--x)
 		{
-			for (int
-					x = armorSize;
-					x != -1;
-					--x)
+			tile = _battleSave->getTile(pos + Position(x,y,0));
+
+			if (_unit->getUnitRules() != nullptr
+				&& _unit->getUnitRules()->isMechanical() == true)
 			{
-				tile = _battleSave->getTile(pos + Position(x,y,0));
-
-				if (_unit->getUnitRules() != nullptr
-					&& _unit->getUnitRules()->isMechanical() == true)
+				if (RNG::percent(6) == true)
 				{
-					if (RNG::percent(6) == true)
+					tileExpl = tile;
+					tileExplBelow = _battleSave->getTile(tileExpl->getPosition() + Position(0,0,-1));
+
+					while (tileExpl != nullptr // safety.
+						&& tileExpl->getPosition().z > 0
+						&& tileExpl->getMapData(O_OBJECT) == nullptr
+						&& tileExpl->getMapData(O_FLOOR) == nullptr
+						&& tileExpl->hasNoFloor(tileExplBelow) == true)
 					{
-						tileExpl = tile;
+						tileExpl = tileExplBelow;
 						tileExplBelow = _battleSave->getTile(tileExpl->getPosition() + Position(0,0,-1));
+					}
 
-						while (tileExpl != nullptr // safety.
-							&& tileExpl->getPosition().z > 0
-							&& tileExpl->getMapData(O_OBJECT) == nullptr
-							&& tileExpl->getMapData(O_FLOOR) == nullptr
-							&& tileExpl->hasNoFloor(tileExplBelow) == true)
+					if (tileExpl != nullptr // safety.
+						&& tileExpl->getFire() == 0)
+					{
+						calcLights = tileExpl->addFire(tileExpl->getFuel() + RNG::generate(1,2));
+						tileExpl->addSmoke(std::max(1,
+													std::min(6,
+															 tileExpl->getFlammability() / 10)));
+
+						if (playSound == true)
 						{
-							tileExpl = tileExplBelow;
-							tileExplBelow = _battleSave->getTile(tileExpl->getPosition() + Position(0,0,-1));
-						}
-
-						if (tileExpl != nullptr // safety.
-							&& tileExpl->getFire() == 0)
-						{
-							calcLights = tileExpl->addFire(tileExpl->getFuel() + RNG::generate(1,2));
-							tileExpl->addSmoke(std::max(1,
-														std::min(6,
-																 tileExpl->getFlammability() / 10)));
-
-							if (playSound == true)
-							{
-								playSound = false;
-								_parent->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::SMALL_EXPLOSION)
-															->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
-							}
+							playSound = false;
+							_parent->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::SMALL_EXPLOSION)
+														->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
 						}
 					}
-					tile->addSmoke(RNG::generate(0,2));
 				}
-
-				BattleItem* const body (new BattleItem(
-												_parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[--quadrants]),
-												_battleSave->getCanonicalBattleId()));
-				body->setUnit(_unit);
-
-				if (tile != nullptr && tile->getTileUnit() == _unit)	// safety. had a CTD when ethereal dies on water.
-					tile->setUnit();									// TODO: iterate over all mapTiles searching for the unit-item and
-																		// null-ing all tile-links to it. cf. SavedBattleGame::deleteBody().
-				_parent->dropItem(body, pos + Position(x,y,0), 3);
+				tile->addSmoke(RNG::generate(0,2));
 			}
-		}
 
-		if (calcLights == true)
-			_parent->getTileEngine()->calculateTerrainLighting();
-		_parent->getTileEngine()->calculateFOV(pos, true); // expose any units that were hiding behind dead unit and account for possible Smoke too.
+			BattleItem* const body (new BattleItem(
+											_parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[--quadrants]),
+											_battleSave->getCanonicalBattleId()));
+			body->setUnit(_unit);
+
+			if (tile != nullptr && tile->getTileUnit() == _unit)	// safety. had a CTD when ethereal dies on water.
+				tile->setUnit();									// TODO: iterate over all mapTiles searching for the unit-item and
+																	// null-ing all tile-links to it. cf. SavedBattleGame::deleteBody().
+			_parent->dropItem(body, pos + Position(x,y,0), 3);
+		}
 	}
+
+	if (calcLights == true)
+		_parent->getTileEngine()->calculateTerrainLighting();
+	_parent->getTileEngine()->calculateFOV(pos, true); // expose any units that were hiding behind dead unit and account for possible Smoke too.
+//	}
 }
 
 /**

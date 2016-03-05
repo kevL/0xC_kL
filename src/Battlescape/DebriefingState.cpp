@@ -23,6 +23,7 @@
 
 #include "DebriefingState.h"
 
+//#include <algorithm>
 //#include <sstream>
 
 #include "CannotReequipState.h"

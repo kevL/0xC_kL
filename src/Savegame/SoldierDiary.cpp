@@ -19,6 +19,8 @@
 
 #include "SoldierDiary.h"
 
+//#include <algorithm>
+
 #include "BattleUnitStatistics.h"
 #include "MissionStatistics.h"
 

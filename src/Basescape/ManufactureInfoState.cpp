@@ -19,6 +19,7 @@
 
 #include "ManufactureInfoState.h"
 
+//#include <algorithm>
 //#include <limits>
 #include <iomanip>
 

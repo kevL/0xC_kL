@@ -19,6 +19,7 @@
 
 #include "PurchaseState.h"
 
+//#include <algorithm>
 #include <iomanip>
 //#include <limits>
 //#include <map>

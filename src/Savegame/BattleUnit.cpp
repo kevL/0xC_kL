@@ -3605,9 +3605,9 @@ void BattleUnit::morphine()
 	{
 		_battleGame->checkCasualties(
 								_battleGame->getTacticalAction()->weapon,
-								_battleGame->getTacticalAction()->actor,
-								false, false,
-								isOut_t(OUT_STAT) == true); // 'execution' (no death animations) unless unit is unconscious already.
+								_battleGame->getTacticalAction()->actor);
+//								false, false,
+//								isOut_t(OUT_STAT) == true); // 'execution' (no death animations) unless unit is unconscious already.
 	}
 }
 

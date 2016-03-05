@@ -205,6 +205,18 @@ private:
 		_shotgunProgress;
 	int _AIActionCounter;
 
+	// SoldierDiary killStat info ->
+	std::string
+		_killStatRace,
+		_killStatRank,
+		_killStatWeapon,
+		_killStatWeaponAmmo;
+	int
+		_killStatMission,
+		_killStatTurn,
+		_killStatPoints;
+
+
 	BattleAction _tacAction; // for Player, aLiens use their own individual actions w/ handleUnitAI()
 
 	BattleItem
@@ -292,11 +304,17 @@ private:
 		void checkCasualties(
 				const BattleItem* const weapon = nullptr,
 				BattleUnit* attacker = nullptr,
-				bool hiddenExpl = false,
-				bool terrainExpl = false,
-				bool liquidate = false);
+				bool hidden = false,
+				bool terrain = false);
+//				bool liquidate = false);
 		/// Checks if a BattleUnit gets exposed after making a melee-attack.
 		void checkExposedByMelee(BattleUnit* const unit) const;
+		/// Collects data about attacker for SoldierDiary.
+		void diaryAttacker(
+				const BattleUnit* const attacker,
+				const BattleItem* const weapon);
+		/// Collects data about defender for SoldierDiary.
+		void diaryDefender(const BattleUnit* const defender);
 
 		/// Checks reserved tu.
 		bool checkReservedTu(

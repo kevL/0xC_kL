@@ -19,6 +19,7 @@
 
 #include "SoldierInfoState.h"
 
+//#include <algorithm>
 //#include <sstream>
 
 #include "SoldierDiaryOverviewState.h"

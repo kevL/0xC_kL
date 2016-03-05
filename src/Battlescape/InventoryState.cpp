@@ -19,6 +19,8 @@
 
 #include "InventoryState.h"
 
+//#include <algorithm>
+
 #include "BattlescapeState.h"
 #include "Inventory.h"
 #include "Map.h"

@@ -28,6 +28,7 @@
 #endif
 */ // kL_end.
 
+//#include <algorithm>
 //#include <cmath>
 //#include <cstddef> // nullptr (for NB code-assistant only)
 //#include <sstream>

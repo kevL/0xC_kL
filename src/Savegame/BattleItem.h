@@ -168,7 +168,7 @@ private:
 		int getStimulantQuantity() const;
 
 		/// Sets a RuleItem for the BattleItem.
-		void changeRule(const RuleItem* const itRule);
+//		void changeRule(const RuleItem* const itRule);
 
 		/// Sets the BattleItem as belonging to xCom.
 		void setProperty();

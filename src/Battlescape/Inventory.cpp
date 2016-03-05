@@ -19,6 +19,7 @@
 
 #include "Inventory.h"
 
+//#include <algorithm>
 //#include <cmath>
 
 #include "BattlescapeState.h"

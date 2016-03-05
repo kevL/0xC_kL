@@ -19,6 +19,8 @@
 
 #include "ComboBox.h"
 
+//#include <algorithm>
+
 #include "TextButton.h"
 #include "TextList.h"
 #include "Window.h"

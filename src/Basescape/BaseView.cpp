@@ -19,6 +19,7 @@
 
 #include "BaseView.h"
 
+//#include <algorithm>
 //#include <cmath>
 //#include <limits>
 //#include <sstream>

@@ -19,6 +19,8 @@
 
 #include "ListGamesState.h"
 
+//#include <algorithm>
+
 #include "DeleteGameState.h"
 
 #include "../Engine/Action.h"

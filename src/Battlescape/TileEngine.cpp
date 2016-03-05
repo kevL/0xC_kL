@@ -5849,13 +5849,15 @@ bool TileEngine::psiAttack(BattleAction* const action)
 								switch (victim->getOriginalFaction())
 								{
 									default:
-									case FACTION_HOSTILE: // aLien Morale loss for getting Mc'd.
+									case FACTION_HOSTILE: // aLien Morale loss for getting Mc'd by Player.
 										courage = std::min(0,
 														  (_battleSave->getMoraleModifier(nullptr, false) / 10) + (courage * 3 / 4) - 110);
 										break;
 
-									case FACTION_PLAYER: // xCom and civies' Moral gain for getting Mc'd back to xCom
-									case FACTION_NEUTRAL:
+									case FACTION_NEUTRAL: // no Morale change for civies unless already Mc'd by aLiens.
+										if (victim->isMindControlled() == false)
+											break; // no break;
+									case FACTION_PLAYER: // xCom and civies' Moral gain for getting Mc'd back to xCom.
 									{
 										courage /= 2;
 										victim->setExposed(-1);	// bonus Exposure removal.

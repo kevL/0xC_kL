@@ -19,6 +19,8 @@
 
 #include "CraftWeapon.h"
 
+//#include <algorithm>
+
 #include "CraftWeaponProjectile.h"
 
 #include "../Ruleset/RuleCraftWeapon.h"

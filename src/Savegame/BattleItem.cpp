@@ -598,7 +598,7 @@ int BattleItem::getStimulantQuantity() const
 /**
  * Converts a carried unconscious body into a battlefield corpse-item.
  * @param itRule - pointer to rules of the corpse-item to convert this item into
- */
+ *
 void BattleItem::changeRule(const RuleItem* const itRule)
 {
 	if (_unit != nullptr
@@ -607,7 +607,7 @@ void BattleItem::changeRule(const RuleItem* const itRule)
 	{
 		_itRule = itRule;
 	}
-}
+} */
 
 /**
  * Sets this BattleItem as belonging to xCom.
