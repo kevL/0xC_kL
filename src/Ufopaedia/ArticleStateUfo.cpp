@@ -102,11 +102,11 @@ ArticleStateUfo::ArticleStateUfo(const ArticleDefinitionUfo* const defs)
 	}
 	graphic->blit(_image); */
 
-	const RuleUfo* const ufo = _game->getRuleset()->getUfo(defs->id);
-	const int sprite = ufo->getSprite();
+	const RuleUfo* const ufo (_game->getRuleset()->getUfo(defs->id));
+	const int sprite (ufo->getSprite());
 	std::ostringstream oststr;
 	oststr << "INTERWIN_" << sprite;
-	Surface* const srfPreview = _game->getResourcePack()->getSurface(oststr.str());
+	Surface* const srfPreview (_game->getResourcePack()->getSurface(oststr.str()));
 	if (srfPreview != nullptr)
 		srfPreview->blit(_image);
 

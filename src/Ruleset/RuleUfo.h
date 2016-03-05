@@ -28,6 +28,15 @@
 namespace OpenXcom
 {
 
+enum UfoSizeType
+{
+	UFO_VERYSMALL,	// 0
+	UFO_SMALL,		// 1
+	UFO_MEDIUM,		// 2
+	UFO_LARGE,		// 3
+	UFO_VERYLARGE	// 4
+};
+
 class Ruleset;
 class RuleTerrain;
 
@@ -58,6 +67,8 @@ private:
 		_size,
 		_type;
 
+	UfoSizeType _sizeType;
+
 	RuleTerrain* _tacticalTerrainData;
 
 
@@ -73,9 +84,11 @@ private:
 				Ruleset* const rules);
 
 		/// Gets the UFO's type.
-		std::string getType() const;
+		const std::string& getType() const;
 		/// Gets the UFO's size.
-		std::string getSize() const;
+		const std::string& getSize() const;
+		/// Gets the size-type of this type of UFO.
+		UfoSizeType getSizeType() const;
 
 		/// Gets the UFO's radius.
 		int getRadius() const;

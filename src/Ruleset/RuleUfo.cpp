@@ -33,6 +33,7 @@ RuleUfo::RuleUfo(const std::string& type)
 	:
 		_type(type),
 		_size("STR_VERY_SMALL"),
+		_sizeType(UFO_VERYSMALL),
 		_sprite(-1),
 		_marker(-1),
 		_damageMax(0),
@@ -79,35 +80,48 @@ void RuleUfo::load(
 	_reconRange		= node["reconRange"].as<int>(_reconRange);
 	_modSprite		= node["modSprite"]	.as<std::string>(_modSprite);
 
+	if (_size == "STR_VERY_SMALL")	_sizeType = UFO_VERYSMALL;
+	if (_size == "STR_SMALL")		_sizeType = UFO_SMALL;
+	if (_size == "STR_MEDIUM_UC")	_sizeType = UFO_MEDIUM;
+	if (_size == "STR_LARGE")		_sizeType = UFO_LARGE;
+	if (_size == "STR_VERY_LARGE")	_sizeType = UFO_VERYLARGE;
+
 	if (const YAML::Node& terrain = node["battlescapeTerrainData"])
 	{
 		delete _tacticalTerrainData;
 
-		RuleTerrain* const terrainRule = new RuleTerrain(terrain["name"].as<std::string>());
-		terrainRule->load(
-						terrain,
-						rules);
+		RuleTerrain* const terrainRule (new RuleTerrain(terrain["name"].as<std::string>()));
+		terrainRule->load(terrain, rules);
 		_tacticalTerrainData = terrainRule;
 	}
 }
 
 /**
  * Gets the language string that names this UFO.
- * @note Each UFO type has a unique name.
- * @return, the Ufo's type
+ * @note Each UFO type has a unique type.
+ * @return, the type
  */
-std::string RuleUfo::getType() const
+const std::string& RuleUfo::getType() const
 {
 	return _type;
 }
 
 /**
  * Gets the size of this type of UFO.
- * @return, the Ufo's size
+ * @return, the size as string
  */
-std::string RuleUfo::getSize() const
+const std::string& RuleUfo::getSize() const
 {
 	return _size;
+}
+
+/**
+ * Gets the size-type of this type of UFO.
+ * @return, the size-type (RuleUfo.h)
+ */
+UfoSizeType RuleUfo::getSizeType() const
+{
+	return _sizeType;
 }
 
 /**
@@ -116,20 +130,15 @@ std::string RuleUfo::getSize() const
  */
 int RuleUfo::getRadius() const
 {
-	if (_size == "STR_VERY_LARGE")
-		return 4;
-
-	if (_size == "STR_LARGE")
-		return 3;
-
-	if (_size == "STR_MEDIUM_UC")
-		return 2;
-
-	if (_size == "STR_SMALL")
-		return 1;
-
-//	if (_size == "STR_VERY_SMALL")
-	return 0;
+	switch (_sizeType)
+	{
+		default:
+		case UFO_VERYSMALL:	return 0;
+		case UFO_SMALL:		return 1;
+		case UFO_MEDIUM:	return 2;
+		case UFO_LARGE:		return 3;
+		case UFO_VERYLARGE:	return 4;
+	}
 }
 
 /**

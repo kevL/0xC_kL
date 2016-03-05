@@ -1,14 +1,14 @@
 # 'MapScripts.rul'
 mapScripts:
-  - type: DEFAULT #forest, mountain
-    commands:
+  - terrain: DEFAULT #forest, mountain
+    directs:
     - type: addUFO
     - type: addCraft
 #    - type: addBlock
 #      size: 2
 #      executions: 2
     - type: fillArea
-  - type: ALIENBASE
+  - terrain: ALIENBASE
 #groups 1: tunnel, small -> for these, see hellrazor's Expanded_UBase_Nightly.rul
 #groups 2: entrance, small
 #groups 3: control, large
@@ -17,7 +17,7 @@ mapScripts:
 #groups 6: storage, large
 #groups 7: fort, small
 #groups 8: power, small
-    commands:
+    directs:
     - type: addBlock
       groups: 5 # start
       executions: 2
@@ -50,10 +50,10 @@ mapScripts:
       tunnelData:
         level: 0
         MCDReplacements:
-          - type: westWall
+          - type: west
             set: 2
             entry: 18
-          - type: northWall
+          - type: north
             set: 2
             entry: 17
           - type: corner
@@ -62,8 +62,8 @@ mapScripts:
           - type: floor
             set: 1
             entry: 63
-  - type: BOSSBATTLE
-    commands:
+  - terrain: BOSSBATTLE
+    directs:
     - type: addBlock
       groups: 5 # start
       executions: 2
@@ -81,10 +81,10 @@ mapScripts:
       tunnelData:
         level: 0
         MCDReplacements:
-          - type: westWall
+          - type: west
             set: 2
             entry: 18
-          - type: northWall
+          - type: north
             set: 2
             entry: 17
           - type: corner
@@ -93,44 +93,44 @@ mapScripts:
           - type: floor
             set: 1
             entry: 63
-  - type: DESERT
-    commands:
+  - terrain: DESERT
+    directs:
     - type: addUFO
     - type: addCraft
 #    - type: addBlock
 #      size: 2
 #      executions: 3
     - type: fillArea
-  - type: FARM
-    commands:
+  - terrain: FARM
+    directs:
     - type: addUFO
     - type: addCraft
     - type: fillArea
 #      blocks:  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25]
 #      blocks:  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
 #      maxUses: [3, 3, 3, 3, 3, 3, 3, 3, 3,  3,  3,  3,  3,  3,  3,  3,  3,  3]
-  - type: JUNGLE
-    commands:
+  - terrain: JUNGLE
+    directs:
     - type: addUFO
     - type: addCraft
     - type: fillArea
 #      blocks: [3, 4, 5, 6, 7, 8, 9, 10, 11]
 #      freqs:  [2, 2, 2, 2, 2, 2, 2,  1,  1]
-  - type: MARS
-    commands:
+  - terrain: MARS
+    directs:
     - type: addCraft
     - type: addBlock
       groups: 2
     - type: fillArea
-  - type: POLAR
-    commands:
+  - terrain: POLAR
+    directs:
     - type: addUFO
     - type: addCraft
 #    - type: addBlock
 #      size: 2
     - type: fillArea
-  - type: URBAN
-    commands:
+  - terrain: URBAN
+    directs:
     - type: addCraft
     - type: addLine
       label: 1
@@ -159,8 +159,8 @@ mapScripts:
       # because these are references to the block numbers within the sets, not the file names.
 #      blocks: [3, 4, 10, 11, 12, 13, 14]
 #      freqs:  [3, 3,  2,  2,  2,  2,  2]
-  - type: URBANUFO
-    commands:
+  - terrain: URBANUFO
+    directs:
     - type: addUFO
     - type: addCraft
     - type: addLine
@@ -190,24 +190,24 @@ mapScripts:
       # because these are references to the block numbers within the sets, not the file names.
 #      blocks: [3, 4, 10, 11, 12, 13, 14]
 #      freqs:  [3, 3,  2,  2,  2,  2,  2]
-  - type: XBASE
-    commands:
+  - terrain: XBASE
+    directs:
     - type: digTunnel
       direction: both
       tunnelData:
         level: 0
         MCDReplacements:
-          - type: westWall
+          - type: west
             set: 1
             entry: 13
-          - type: northWall
+          - type: north
             set: 1
             entry: 14
     - type: fillArea
       blocks: 20
 ###------ Terrainpack follows ------###
-  - type: AREA51URBAN 
-    commands:
+  - terrain: AREA51URBAN 
+    directs:
     - type: addCraft
     - type: addLine
       label: 1
@@ -231,8 +231,8 @@ mapScripts:
       maxUses: [ 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1]
 #      blocks:  [56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81]
 #      maxUses: [ 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1]
-  - type: COMRCURBAN
-    commands:
+  - terrain: COMRCURBAN
+    directs:
     - type: addCraft
     - type: addLine
       label: 1
@@ -252,8 +252,8 @@ mapScripts:
     - type: fillArea
       blocks: [0, 1, 2, 3, 4, 13, 14, 15, 16, 17, 18, 19, 20]
       freqs:  [2, 2, 2, 2, 2,  2,  2,  2,  2,  2,  2,  2,  2] 
-  - type: DAWNURBANA
-    commands:
+  - terrain: DAWNURBANA
+    directs:
     - type: addCraft
     - type: addLine
       label: 1
@@ -273,8 +273,8 @@ mapScripts:
     - type: fillArea
       blocks: [28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39]
       freqs:  [ 3,  3,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2] 
-  - type: DAWNURBANB
-    commands:
+  - terrain: DAWNURBANB
+    directs:
     - type: addCraft
     - type: addLine
       label: 1
@@ -294,8 +294,8 @@ mapScripts:
     - type: fillArea
       blocks: [11, 12, 13, 14, 15, 16, 17, 18, 19]
       freqs:  [ 2,  2,  2,  2,  2,  2,  2,  2,  2]
-  - type: INDUSTRIALURBAN
-    commands:
+  - terrain: INDUSTRIALURBAN
+    directs:
     - type: addCraft
     - type: addBlock
       size: 2
@@ -303,8 +303,8 @@ mapScripts:
     - type: fillArea
       blocks: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
       freqs:  [2, 2, 2, 2, 2, 2, 2,  2,  2,  2,  2,  2,  2,  2,  2]
-  - type: INDUSTRIALUFO
-    commands:
+  - terrain: INDUSTRIALUFO
+    directs:
     - type: addUFO
     - type: addCraft
     - type: addBlock
@@ -313,8 +313,8 @@ mapScripts:
     - type: fillArea
       blocks: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
       freqs:  [2, 2, 2, 2, 2, 2, 2,  2,  2,  2,  2,  2,  2,  2,  2]
-  - type: MADURBAN
-    commands:
+  - terrain: MADURBAN
+    directs:
     - type: addCraft
     - type: addLine
       label: 1
@@ -336,8 +336,8 @@ mapScripts:
     - type: fillArea
       blocks: [3, 4, 10, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 36, 37, 38]
       freqs:  [2, 2,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1]
-  - type: MADURBANUFO
-    commands:
+  - terrain: MADURBANUFO
+    directs:
     - type: addUFO
     - type: addCraft
     - type: addLine
@@ -360,8 +360,8 @@ mapScripts:
     - type: fillArea
       blocks: [3, 4, 10, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 36, 37, 38]
       freqs:  [2, 2,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1]
-  - type: NATIVEURBAN
-    commands:
+  - terrain: NATIVEURBAN
+    directs:
     - type: addCraft
     - type: addBlock
       size: 2
@@ -369,8 +369,8 @@ mapScripts:
     - type: fillArea
       blocks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 32, 33, 34, 35, 36, 46]
       freqs:  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2]
-  - type: NATIVEUFO
-    commands:
+  - terrain: NATIVEUFO
+    directs:
     - type: addUFO
     - type: addCraft
     - type: addLine
@@ -386,8 +386,8 @@ mapScripts:
     - type: fillArea
 #      blocks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 32, 33, 34, 35, 36, 46]
 #      freqs:  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2]
-  - type: PORTTFTD
-    commands:
+  - terrain: PORTTFTD
+    directs:
     - type: addCraft
       rects:
         - [0,0,4,5]
@@ -408,8 +408,8 @@ mapScripts:
       rects:
         - [0,2,3,2]
     - type: fillArea
-  - type: PORTURBAN
-    commands:
+  - terrain: PORTURBAN
+    directs:
     - type: addCraft
     - type: addLine
       label: 1
@@ -429,8 +429,8 @@ mapScripts:
     - type: fillArea
       blocks: [10, 11, 12, 13, 14, 15, 16, 17, 18]
       freqs:  [ 2,  2,  2,  2,  2,  2,  2,  2,  2]
-  - type: RAILYARDURBAN
-    commands:
+  - terrain: RAILYARDURBAN
+    directs:
     - type: addCraft
     - type: addLine
       label: 1

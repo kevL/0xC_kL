@@ -687,13 +687,32 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		itRule = _rules->getItemRule(*i);
 		const SpecialTileType tileType (itRule->getSpecialType());
-		if (tileType > 1)
+//		if (tileType > 1)
+		switch (tileType)
 		{
-			SpecialType* const specialType (new SpecialType());
-			specialType->type = *i;
-			specialType->value = itRule->getRecoveryPoints();
+//			case STT_NONE: //-1
+//			case TILE
+//			case START_POINT:
+			case UFO_POWER_SOURCE:
+			case UFO_NAVIGATION:
+			case UFO_CONSTRUCTION:
+			case ALIEN_FOOD:
+			case ALIEN_REPRODUCTION:
+			case ALIEN_ENTERTAINMENT:
+			case ALIEN_SURGERY:
+			case EXAM_ROOM:
+			case ALIEN_ALLOYS:
+			case ALIEN_HABITAT:
+//			case DEAD_TILE:
+//			case END_POINT:
+//			case MUST_DESTROY:
+				{
+					SpecialType* const specialType (new SpecialType());
+					specialType->type = *i;
+					specialType->value = itRule->getRecoveryPoints();
 
-			_specialTypes[tileType] = specialType;
+					_specialTypes[tileType] = specialType;
+				}
 		}
 	}
 
@@ -1488,7 +1507,7 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				if ((*i)->type == _specialTypes[ALIEN_ALLOYS]->type)
 				{
-					int alloyDivisor;
+					int alloyDivisor; // TODO: Subtract diff*10 for gameDifficulty.
 					if (tacType == TCT_BASEASSAULT)
 						alloyDivisor = 150;
 					else
@@ -1797,7 +1816,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 					_itemsGained[itRule] += _rules->getAlienFuelQuantity();
 					addStat(
 						_rules->getAlienFuelType(),
-						100,
+						itRule->getRecoveryPoints(),
 						_rules->getAlienFuelQuantity());
 				}
 			}

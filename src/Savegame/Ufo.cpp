@@ -641,36 +641,31 @@ CraftId Ufo::getShotDownByCraftId() const
  */
 int Ufo::getVictoryPoints() const
 {
-	int ret;
-
+	int ret (0);
 	switch (_status)
 	{
-		case Ufo::LANDED:		ret = 5; break;	// per hr.
-		case Ufo::CRASHED:		ret = 3; break;	// per hr.
-		case Ufo::DESTROYED:	ret = 0; break;
-		case Ufo::FLYING:
-		default:				ret = 2;		// per half-hr.
+		default:
+		case Ufo::FLYING:		ret = 2; break; // per half-hr.
+		case Ufo::LANDED:		ret = 5; break; // per hr.
+		case Ufo::CRASHED:		ret = 3; break; // per hr.
+		case Ufo::DESTROYED:	ret = 0;
 	}
 
-//	if (_ufoRule->getSize() == "STR_VERY_SMALL")
-	if (_ufoRule->getSize() == "STR_SMALL")
-		ret += 1;
-	else if (_ufoRule->getSize() == "STR_MEDIUM_UC")
-		ret += 2;
-	else if (_ufoRule->getSize() == "STR_LARGE")
-		ret += 3;
-	else if (_ufoRule->getSize() == "STR_VERY_LARGE")
-		ret += 5;
+	switch (_ufoRule->getSizeType())
+	{
+		default:
+		case UFO_VERYSMALL:	ret += 0; break;
+		case UFO_SMALL:		ret += 1; break;
+		case UFO_MEDIUM:	ret += 2; break;
+		case UFO_LARGE:		ret += 3; break;
+		case UFO_VERYLARGE:	ret += 5;
+	}
 
-//	if (_altitude == "STR_GROUND") // Status _LANDED or _CRASHED above.
-	if (_altitude == "STR_VERY_LOW")
-		ret += 3;
-	else if (_altitude == "STR_LOW_UC")
-		ret += 2;
-	else if (_altitude == "STR_HIGH_UC")
-		ret += 1;
-//	else if (_altitude == "STR_VERY_HIGH")
-
+	if		(_altitude == "STR_GROUND")		ret += 0; // Status _LANDED or _CRASHED included above.
+	else if	(_altitude == "STR_VERY_LOW")	ret += 3;
+	else if	(_altitude == "STR_LOW_UC")		ret += 2;
+	else if	(_altitude == "STR_HIGH_UC")	ret += 1;
+	else if	(_altitude == "STR_VERY_HIGH")	ret += 0;
 
 	return ret;
 }
@@ -682,27 +677,22 @@ int Ufo::getVictoryPoints() const
  */
 int Ufo::getVisibility() const
 {
-	int ret = 0;
+	int ret (0);
+	switch (_ufoRule->getSizeType())
+	{
+		default:
+		case UFO_VERYSMALL:	ret -= 30; break;
+		case UFO_SMALL:		ret -= 15; break;
+		case UFO_MEDIUM:	ret -=  0; break;
+		case UFO_LARGE:		ret += 15; break;
+		case UFO_VERYLARGE:	ret += 30;
+	}
 
-	if (_ufoRule->getSize() == "STR_VERY_SMALL")
-		ret = -30;
-	else if (_ufoRule->getSize() == "STR_SMALL")
-		ret = -15;
-//	else if (_ufoRule->getSize() == "STR_MEDIUM_UC")
-	else if (_ufoRule->getSize() == "STR_LARGE")
-		ret = 15;
-	else if (_ufoRule->getSize() == "STR_VERY_LARGE")
-		ret = 30;
-
-	if (_altitude == "STR_GROUND")
-		ret -= 50;
-	else if (_altitude == "STR_VERY_LOW")
-		ret -= 20;
-	else if (_altitude == "STR_LOW_UC")
-		ret -= 10;
-//	else if (_altitude == "STR_HIGH_UC")
-	else if (_altitude == "STR_VERY_HIGH")
-		ret -= 10;
+	if		(_altitude == "STR_GROUND")		ret -= 50;
+	else if	(_altitude == "STR_VERY_LOW")	ret -= 20;
+	else if	(_altitude == "STR_LOW_UC")		ret -= 10;
+	else if	(_altitude == "STR_HIGH_UC")	ret -=  0;
+	else if	(_altitude == "STR_VERY_HIGH")	ret -= 10;
 
 	return ret;
 }
@@ -713,27 +703,22 @@ int Ufo::getVisibility() const
  */
 int Ufo::getDetectors() const
 {
-	int ret = 0;
+	int ret (0);
+	switch (_ufoRule->getSizeType())
+	{
+		default:
+		case UFO_VERYSMALL:	ret -= 12; break;
+		case UFO_SMALL:		ret -=  8; break;
+		case UFO_MEDIUM:	ret -=  5; break;
+		case UFO_LARGE:		ret -=  2; break;
+		case UFO_VERYLARGE:	ret -=  0;
+	}
 
-	if (_ufoRule->getSize() == "STR_VERY_SMALL")
-		ret = -12;
-	else if (_ufoRule->getSize() == "STR_SMALL")
-		ret = -8;
-	else if (_ufoRule->getSize() == "STR_MEDIUM_UC")
-		ret = -5;
-	else if (_ufoRule->getSize() == "STR_LARGE")
-		ret = -2;
-//	else if (_ufoRule->getSize() == "STR_VERY_LARGE")
-
-	if (_altitude == "STR_GROUND")
-		ret -= 30;
-	else if (_altitude == "STR_VERY_LOW")
-		ret += 17;
-//	else if (_altitude == "STR_LOW_UC")
-	else if (_altitude == "STR_HIGH_UC")
-		ret -= 8;
-	else if (_altitude == "STR_VERY_HIGH")
-		ret -= 15;
+	if		(_altitude == "STR_GROUND")		ret -= 32;
+	else if	(_altitude == "STR_VERY_LOW")	ret += 18;
+	else if	(_altitude == "STR_LOW_UC")		ret +=  6;
+	else if	(_altitude == "STR_HIGH_UC")	ret -=  9;
+	else if	(_altitude == "STR_VERY_HIGH")	ret -= 19;
 
 	return ret;
 }

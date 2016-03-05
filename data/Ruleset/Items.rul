@@ -1032,6 +1032,7 @@ items:
     battleType: 12
     invWidth: 1
     invHeight: 1
+    recoveryPoints: 100 # per 50
     attraction: 5
   - type: STR_UFO_POWER_SOURCE
     size: 0.8

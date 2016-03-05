@@ -2337,7 +2337,7 @@ const std::string& Ruleset::getAlienFuelType() const
  */
 int Ruleset::getAlienFuelQuantity() const
 {
-	return _alienFuel.second;
+	return _alienFuel.second; // TODO: Subtract diff*5 for gameDifficulty.
 }
 
 /**
