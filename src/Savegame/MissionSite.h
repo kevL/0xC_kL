@@ -70,7 +70,7 @@ private:
 		void load(const YAML::Node& node) override;
 		/// Saves this MissionSite to YAML.
 		YAML::Node save() const override;
-		/// Saves this MissionSite's ID to YAML.
+		/// Saves this MissionSite's unique-ID to YAML.
 		YAML::Node saveId() const override;
 
 		/// Gets this MissionSite's ruleset.

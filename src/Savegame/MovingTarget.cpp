@@ -94,8 +94,7 @@ YAML::Node MovingTarget::save() const // virtual.
 {
 	YAML::Node node (Target::save());
 
-	if (_dest != nullptr)
-		node["dest"]	= _dest->saveId();
+	if (_dest != nullptr) node["dest"] = _dest->saveId();
 
 	node["speedLon"]	= serializeDouble(_speedLon);
 	node["speedLat"]	= serializeDouble(_speedLat);

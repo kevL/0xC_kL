@@ -28,7 +28,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a waypoint.
+ * Initializes the Waypoint.
  */
 Waypoint::Waypoint()
 	:
@@ -43,29 +43,31 @@ Waypoint::~Waypoint()
 {}
 
 /**
- * Loads the waypoint from a YAML file.
+ * Loads this Waypoint from a YAML file.
  * @param node - reference a YAML node
  */
 void Waypoint::load(const YAML::Node& node)
 {
 	Target::load(node);
+
 	_id = node["id"].as<int>(_id);
 }
 
 /**
- * Saves the waypoint to a YAML file.
+ * Saves this Waypoint to a YAML file.
  * @return, YAML node
  */
 YAML::Node Waypoint::save() const
 {
 	YAML::Node node	(Target::save());
+
 	node["id"] = _id;
 
 	return node;
 }
 
 /**
- * Saves the waypoint's unique identifiers to a YAML file.
+ * Saves this Waypoint's unique identifiers to a YAML file.
  * @return, YAML node
  */
 YAML::Node Waypoint::saveId() const
@@ -79,7 +81,7 @@ YAML::Node Waypoint::saveId() const
 }
 
 /**
- * Returns the waypoint's unique ID.
+ * Returns this Waypoint's ID.
  * @return, unique ID
  */
 int Waypoint::getId() const
@@ -88,7 +90,7 @@ int Waypoint::getId() const
 }
 
 /**
- * Changes the waypoint's unique ID.
+ * Changes this Waypoint's unique ID.
  * @param id - unique ID
  */
 void Waypoint::setId(int id)
@@ -97,7 +99,7 @@ void Waypoint::setId(int id)
 }
 
 /**
- * Returns the waypoint's unique identifying name.
+ * Returns this Waypoint's unique identifying name.
  * @param lang - pointer to Language to get strings from
  * @return, full name
  */
@@ -107,7 +109,7 @@ std::wstring Waypoint::getName(const Language* const lang) const
 }
 
 /**
- * Returns the globe marker for the waypoint.
+ * Returns the globe marker for this Waypoint.
  * @return, marker sprite #6
  */
 int Waypoint::getMarker() const

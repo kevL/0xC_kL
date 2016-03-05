@@ -165,8 +165,8 @@ void Ufo::load(
 	_terrain		= node["terrain"]		.as<std::string>(_terrain);
 
 	double
-		lon = _lon,
-		lat = _lat;
+		lon (_lon),
+		lat (_lat);
 	if (const YAML::Node& dest = node["dest"])
 	{
 		lon = dest["lon"].as<double>();
@@ -195,11 +195,11 @@ void Ufo::load(
 
 	if (game.getMonthsPassed() != -1)
 	{
-		const int missionId = node["mission"].as<int>();
-		std::vector<AlienMission*>::const_iterator mission = std::find_if(
+		const int missionId (node["mission"].as<int>());
+		std::vector<AlienMission*>::const_iterator mission (std::find_if(
 																	game.getAlienMissions().begin(),
 																	game.getAlienMissions().end(),
-																	matchMissionID(missionId));
+																	matchMissionID(missionId)));
 		if (mission == game.getAlienMissions().end())
 		{
 			throw Exception("Unknown mission, save file is corrupt.");
@@ -207,7 +207,8 @@ void Ufo::load(
 
 		_mission = *mission;
 
-		const std::string trjId	= node["trajectory"]		.as<std::string>();
+		const std::string trjId (node["trajectory"].as<std::string>());
+
 		_trajectory				= rules.getUfoTrajectory(trjId);
 		_trajectoryPoint		= node["trajectoryPoint"]	.as<size_t>(_trajectoryPoint);
 	}
@@ -225,15 +226,15 @@ void Ufo::load(
  */
 YAML::Node Ufo::save(bool skirmish) const
 {
-	YAML::Node node = MovingTarget::save();
+	YAML::Node node (MovingTarget::save());
 
 	node["type"]	= _ufoRule->getType();
 	node["id"]		= _id;
 
 	if (_terrain.empty() == false) node["terrain"] = _terrain;
 
-	if (_crashId != 0)		node["crashId"]	= _crashId;
-	else if (_landId != 0)	node["landId"]	= _landId;
+	if		(_crashId != 0) node["crashId"]	= _crashId;
+	else if	(_landId  != 0) node["landId"]	= _landId;
 
 	node["altitude"]	= _altitude;
 	node["direction"]	= _direction;
@@ -264,7 +265,7 @@ YAML::Node Ufo::save(bool skirmish) const
  */
 YAML::Node Ufo::saveId() const
 {
-	YAML::Node node = MovingTarget::saveId();
+	YAML::Node node (MovingTarget::saveId());
 
 	node["type"] = "STR_UFO";
 	node["id"]   = _id;

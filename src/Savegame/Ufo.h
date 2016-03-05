@@ -108,7 +108,7 @@ private:
 		/// Saves the UFO to YAML.
 		using MovingTarget::save;
 		YAML::Node save(bool skirmish) const;
-		/// Saves the UFO's ID to YAML.
+		/// Saves the UFO's unique-ID to YAML.
 		YAML::Node saveId() const override;
 
 		/// Gets the UFO's ruleset.

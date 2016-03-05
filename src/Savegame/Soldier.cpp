@@ -346,28 +346,25 @@ void Soldier::setCraft(Craft* const craft)
 }
 
 /**
- * Gets this Soldier's craft string, which is either the
+ * Gets this Soldier's craft-string, which is either the
  * soldier's wounded status, the assigned craft name, or none.
- * @param lang - pointer to Language to get strings from
- * @return, full name
+ * @param lang - pointer to Language to get translations from
+ * @return, wide-string
  */
 std::wstring Soldier::getCraftString(const Language* const lang) const
 {
-	std::wstring ret;
-
 	if (_recovery != 0)
-		ret = lang->getString("STR_WOUNDED").arg(_recovery);
-	else if (_craft == nullptr)
-		ret = lang->getString("STR_NONE_UC");
-	else
-		ret = _craft->getName(lang);
+		return lang->getString("STR_WOUNDED").arg(_recovery);
 
-	return ret;
+	if (_craft != nullptr)
+		return _craft->getName(lang);
+
+	return lang->getString("STR_NONE_UC");
 }
 
 /**
  * Gets a localizable-string representation of this Soldier's military rank.
- * @return, string ID for rank
+ * @return, string-ID for rank
  */
 std::string Soldier::getRankString() const
 {
@@ -380,7 +377,6 @@ std::string Soldier::getRankString() const
 		case RANK_COLONEL:		return "STR_COLONEL";
 		case RANK_COMMANDER:	return "STR_COMMANDER";
 	}
-
 	return "";
 }
 
@@ -466,7 +462,7 @@ SoldierLook Soldier::getLook() const
  */
 bool Soldier::isPromoted()
 {
-	const bool ret = _recentlyPromoted;
+	const bool ret (_recentlyPromoted);
 	_recentlyPromoted = false;
 
 	return ret;
@@ -505,7 +501,7 @@ int Soldier::getSickbay() const
  */
 void Soldier::setRecovery(int recovery)
 {
-	if ((_recovery = recovery) > 0) // dismiss from craft
+	if ((_recovery = recovery) != 0) // dismiss from craft
 		_craft = nullptr;
 }
 
@@ -524,7 +520,7 @@ int Soldier::getRecoveryPct() const
  */
 void Soldier::heal()
 {
-	if (--_recovery < 0) _recovery = 0;
+	if (_recovery != 0) --_recovery;
 }
 
 /**
@@ -543,11 +539,11 @@ std::vector<SoldierLayout*>* Soldier::getLayout()
  */
 bool Soldier::trainPsiDay()
 {
-	bool ret = false;
+	bool ret (false);
 
 	if (_psiTraining == true)
 	{
-		static const int PSI_PCT = 5; // % per day per soldier to become psionic-active
+		static const int PSI_PCT (5); // % per day per soldier to become psionic-active
 
 //		if (_currentStats.psiSkill >= _solRule->getStatCaps().psiSkill)	// hard cap. Note this auto-caps psiStrength also
 //			return false;												// REMOVED: Allow psi to train past cap in PsiLabs.
@@ -557,9 +553,9 @@ bool Soldier::trainPsiDay()
 			if (RNG::percent(PSI_PCT) == true)
 			{
 				ret = true;
-				int psiSkill = RNG::generate(
+				int psiSkill (RNG::generate(
 										_solRule->getMinStats().psiSkill,
-										_solRule->getMaxStats().psiSkill);
+										_solRule->getMaxStats().psiSkill));
 				if (psiSkill < 1) psiSkill = 1;
 
 				_currentStats.psiSkill =
@@ -568,9 +564,8 @@ bool Soldier::trainPsiDay()
 		}
 		else // Psi unlocked already.
 		{
-			int pct = std::max(
-							1,
-							500 / _currentStats.psiSkill);
+			int pct (std::max(1,
+							  500 / _currentStats.psiSkill));
 			if (RNG::percent(pct) == true)
 			{
 				ret = true;
@@ -580,9 +575,8 @@ bool Soldier::trainPsiDay()
 			if (_currentStats.psiStrength < _solRule->getStatCaps().psiStrength)
 //				&& Options::allowPsiStrengthImprovement == true)
 			{
-				pct = std::max(
-							1,
-							500 / _currentStats.psiStrength);
+				pct = std::max(1,
+							   500 / _currentStats.psiStrength);
 				if (RNG::percent(pct) == true)
 				{
 					ret = true;
@@ -591,7 +585,6 @@ bool Soldier::trainPsiDay()
 			}
 		}
 	}
-
 	return ret;
 }
 
@@ -618,10 +611,10 @@ void Soldier::togglePsiTraining()
  */
 void Soldier::die(SavedGame* const gameSave)
 {
-	SoldierDeath* const deathTime = new SoldierDeath();
+	SoldierDeath* const deathTime (new SoldierDeath());
 	deathTime->setTime(*gameSave->getTime());
 
-	SoldierDead* const deadSoldier = new SoldierDead(
+	SoldierDead* const deadSoldier (new SoldierDead(
 												_name,
 												_id,
 												_rank,
@@ -632,8 +625,7 @@ void Soldier::die(SavedGame* const gameSave)
 												deathTime,
 												_initialStats,
 												_currentStats,
-												*_diary); // base if I want to...
-
+												*_diary)); // base if I want to...
 	gameSave->getDeadSoldiers()->push_back(deadSoldier);
 }
 
@@ -646,7 +638,7 @@ SoldierDiary* Soldier::getDiary() const
 	return _diary;
 }
 
-/*
+/**
  * Calculates this Soldier's statString.
  * @param statStrings		- reference to a vector of pointers to statString rules
  * @param psiStrengthEval	- true if psi stats are available

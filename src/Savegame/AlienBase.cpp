@@ -83,7 +83,7 @@ YAML::Node AlienBase::save() const
  */
 YAML::Node AlienBase::saveId() const
 {
-	YAML::Node node = Target::saveId();
+	YAML::Node node (Target::saveId());
 
 	node["type"] = "STR_ALIEN_BASE";
 	node["id"]   = _id;

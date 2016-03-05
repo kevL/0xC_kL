@@ -127,7 +127,7 @@ private:
 				bool skirmish = false);
 		/// Saves the Base to YAML.
 		YAML::Node save() const override;
-		/// Saves the Base's ID to YAML.
+		/// Saves the Base's unique-ID to YAML.
 		YAML::Node saveId() const override;
 
 		/// Gets the Base's name.

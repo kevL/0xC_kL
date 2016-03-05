@@ -45,40 +45,40 @@ protected:
 
 	std::vector<Target*> _followers;
 
-	/// Creates a target.
+	/// Creates a Target.
 	Target();
 
 
 	public:
-		/// Cleans up the target.
+		/// Cleans up the Target.
 		virtual ~Target();
 
-		/// Loads the target from YAML.
+		/// Loads the Target from YAML.
 		virtual void load(const YAML::Node& node);
-		/// Saves the target to YAML.
+		/// Saves the Target to YAML.
 		virtual YAML::Node save() const;
-		/// Saves the target's ID to YAML.
+		/// Saves the Target's unique-ID to YAML.
 		virtual YAML::Node saveId() const;
 
-		/// Gets the target's longitude.
+		/// Gets the Target's longitude.
 		double getLongitude() const;
-		/// Sets the target's longitude.
+		/// Sets the Target's longitude.
 		void setLongitude(double lon);
-		/// Gets the target's latitude.
+		/// Gets the Target's latitude.
 		double getLatitude() const;
-		/// Sets the target's latitude.
+		/// Sets the Target's latitude.
 		void setLatitude(double lat);
 
-		/// Gets the target's name.
+		/// Gets the Target's name.
 		virtual std::wstring getName(const Language* const lang) const = 0;
 
-		/// Gets the target's marker.
+		/// Gets the Target's marker.
 		virtual int getMarker() const = 0;
 
-		/// Gets the target's followers.
+		/// Gets the Target's followers.
 		std::vector<Target*>* getFollowers();
 
-		/// Gets the distance to another target.
+		/// Gets the distance to another Target.
 		double getDistance(const Target* const target) const;
 };
 

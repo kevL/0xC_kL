@@ -350,12 +350,32 @@ CraftId Craft::loadId(const YAML::Node& node) // static.
 YAML::Node Craft::saveId() const
 {
 	YAML::Node node (MovingTarget::saveId());
-	const CraftId uniqueId (getUniqueId());
 
-	node["type"] = uniqueId.first;
-	node["id"]   = uniqueId.second;
+	node["type"] = _crRule->getType();
+	node["id"]   = _id;
 
 	return node;
+}
+
+/**
+ * Gets this Craft's unique-ID.
+ * @return, tuple of the craft-type and per-type-id
+ */
+CraftId Craft::getUniqueId() const
+{
+	return std::make_pair(
+					_crRule->getType(),
+					_id);
+}
+
+/**
+ * Gets this Craft's ID.
+ * @note Each craft can be identified by its type and ID.
+ * @return, unique ID
+ */
+int Craft::getId() const
+{
+	return _id;
 }
 
 /**
@@ -382,16 +402,6 @@ void Craft::changeRules(RuleCraft* const crRule)
 			i != _crRule->getWeapons();
 			++i)
 		_weapons.push_back(nullptr);
-}
-
-/**
- * Gets this Craft's unique ID.
- * @note Each craft can be identified by its type and ID.
- * @return, unique ID
- */
-int Craft::getId() const
-{
-	return _id;
 }
 
 /**
@@ -1145,17 +1155,6 @@ bool Craft::inDogfight() const
 void Craft::inDogfight(bool dogfight)
 {
 	_inDogfight = dogfight;
-}
-
-/**
- * Gets this Craft's unique-ID.
- * @return, tuple of the craft-type and per-type-id
- */
-CraftId Craft::getUniqueId() const
-{
-	return std::make_pair(
-					_crRule->getType(),
-					_id);
 }
 
 /**

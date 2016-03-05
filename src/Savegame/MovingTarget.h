@@ -78,7 +78,7 @@ protected:
 		/// Sets the MovingTarget's speed.
 		void setSpeed(const int speed);
 
-		/// Has the MovingTarget reached its destination?
+		/// Checks if the MovingTarget has reached its destination.
 		bool reachedDestination() const;
 		/// Move towards the destination.
 		void moveTarget();

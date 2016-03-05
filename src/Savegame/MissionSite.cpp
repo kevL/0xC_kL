@@ -98,7 +98,7 @@ YAML::Node MissionSite::save() const
  */
 YAML::Node MissionSite::saveId() const
 {
-	YAML::Node node = Target::saveId();
+	YAML::Node node (Target::saveId());
 
 	node["type"] = _deployRule->getMarkerType();
 	node["id"]   = _id;

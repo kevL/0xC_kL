@@ -33,7 +33,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a target with blank coordinates.
+ * Initializes a Target with blank coordinates.
  */
 Target::Target()
 	:
@@ -42,7 +42,7 @@ Target::Target()
 {}
 
 /**
- * Make sure no crafts are chasing this target.
+ * Make sure no Craft are chasing this Target.
  */
 Target::~Target() // virtual.
 {
@@ -58,7 +58,7 @@ Target::~Target() // virtual.
 }
 
 /**
- * Loads the target from a YAML file.
+ * Loads the Target from a YAML file.
  * @param node - YAML node
  */
 void Target::load(const YAML::Node& node) // virtual.
@@ -68,7 +68,7 @@ void Target::load(const YAML::Node& node) // virtual.
 }
 
 /**
- * Saves the target to a YAML file.
+ * Saves the Target to a YAML file.
  * @return, YAML node
  */
 YAML::Node Target::save() const // virtual.
@@ -82,7 +82,7 @@ YAML::Node Target::save() const // virtual.
 }
 
 /**
- * Saves the target's unique identifiers to a YAML file.
+ * Saves the Target's unique identifiers to a YAML file.
  * @return, YAML node
  */
 YAML::Node Target::saveId() const // virtual.
@@ -96,7 +96,7 @@ YAML::Node Target::saveId() const // virtual.
 }
 
 /**
- * Returns the longitude coordinate of the target.
+ * Returns the longitude coordinate of the Target.
  * @return, longitude in radians
  */
 double Target::getLongitude() const
@@ -105,7 +105,7 @@ double Target::getLongitude() const
 }
 
 /**
- * Changes the longitude coordinate of the target.
+ * Changes the longitude coordinate of the Target.
  * @param lon - longitude in radians
  */
 void Target::setLongitude(double lon)
@@ -120,7 +120,7 @@ void Target::setLongitude(double lon)
 }
 
 /**
- * Returns the latitude coordinate of the target.
+ * Returns the latitude coordinate of the Target.
  * @return, latitude in radians
  */
 double Target::getLatitude() const
@@ -129,7 +129,7 @@ double Target::getLatitude() const
 }
 
 /**
- * Changes the latitude coordinate of the target.
+ * Changes the latitude coordinate of the Target.
  * @param lat - latitude in radians
  */
 void Target::setLatitude(double lat)
@@ -149,7 +149,7 @@ void Target::setLatitude(double lat)
 }
 
 /**
- * Returns the list of crafts currently following this target.
+ * Returns the list of Craft currently following this Target.
  * @return, pointer to a vector of pointers to Crafts
  */
 std::vector<Target*>* Target::getFollowers()
@@ -158,8 +158,8 @@ std::vector<Target*>* Target::getFollowers()
 }
 
 /**
- * Returns the great circle distance to another target on the globe.
- * @param target - pointer to other target
+ * Returns the great circle distance to another Target on the globe.
+ * @param target - pointer to other Target
  * @return, distance in radians
  */
 double Target::getDistance(const Target* const target) const
