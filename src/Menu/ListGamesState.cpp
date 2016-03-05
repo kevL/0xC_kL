@@ -267,13 +267,13 @@ void ListGamesState::updateArrows() // protected.
 	{
 		case SORT_NAME_ASC:
 			_sortName->setShape(ARROW_SMALL_UP);
-		break;
+			break;
 		case SORT_NAME_DESC:
 			_sortName->setShape(ARROW_SMALL_DOWN);
-		break;
+			break;
 		case SORT_DATE_ASC:
 			_sortDate->setShape(ARROW_SMALL_UP);
-		break;
+			break;
 		case SORT_DATE_DESC:
 			_sortDate->setShape(ARROW_SMALL_DOWN);
 	}
@@ -292,26 +292,25 @@ void ListGamesState::sortList(SaveSort order)
 					_saves.begin(),
 					_saves.end(),
 					compareSaveName(false));
-		break;
+			break;
 		case SORT_NAME_DESC:
 			std::sort(
 					_saves.rbegin(),
 					_saves.rend(),
 					compareSaveName(true));
-		break;
+			break;
 		case SORT_DATE_ASC:
 			std::sort(
 					_saves.begin(),
 					_saves.end(),
 					compareSaveTimestamp(false));
-		break;
+			break;
 		case SORT_DATE_DESC:
 			std::sort(
 					_saves.rbegin(),
 					_saves.rend(),
 					compareSaveTimestamp(true));
 	}
-
 	updateList();
 }
 
@@ -320,8 +319,8 @@ void ListGamesState::sortList(SaveSort order)
  */
 void ListGamesState::updateList() // virtual.
 {
-	size_t row = 0;
-	Uint8 color = _lstSaves->getSecondaryColor();
+	size_t row (0);
+	Uint8 color (_lstSaves->getSecondaryColor());
 
 	for (std::vector<SaveInfo>::const_iterator
 			i = _saves.begin();
@@ -371,13 +370,9 @@ void ListGamesState::lstSavesMouseOver(Action*)
 	if (_editMode == false)
 	{
 		std::wstring wst;
-
-		const int sel = static_cast<int>(_lstSaves->getSelectedRow()) - static_cast<int>(_firstValid);
-		if (sel > -1
-			&& sel < static_cast<int>(_saves.size()))
-		{
+		const int sel (static_cast<int>(_lstSaves->getSelectedRow()) - static_cast<int>(_firstValid));
+		if (sel > -1 && sel < static_cast<int>(_saves.size()))
 			wst = _saves[static_cast<size_t>(sel)].details;
-		}
 
 		_txtDetails->setText(tr("STR_DETAILS").arg(wst));
 	}
@@ -416,14 +411,17 @@ void ListGamesState::sortNameClick(Action*)
 {
 	if (_sortable == true)
 	{
-		if (Options::saveOrder == SORT_NAME_ASC)
-			Options::saveOrder = SORT_NAME_DESC;
-		else
-			Options::saveOrder = SORT_NAME_ASC;
+		switch (Options::saveOrder)
+		{
+			case SORT_NAME_ASC:
+				Options::saveOrder = SORT_NAME_DESC;
+				break;
+			default:
+				Options::saveOrder = SORT_NAME_ASC;
+		}
 
 		updateArrows();
 		_lstSaves->clearList();
-
 		sortList(Options::saveOrder);
 	}
 }
@@ -436,14 +434,17 @@ void ListGamesState::sortDateClick(Action*)
 {
 	if (_sortable == true)
 	{
-		if (Options::saveOrder == SORT_DATE_ASC)
-			Options::saveOrder = SORT_DATE_DESC;
-		else
-			Options::saveOrder = SORT_DATE_ASC;
+		switch (Options::saveOrder)
+		{
+			case SORT_DATE_ASC:
+				Options::saveOrder = SORT_DATE_DESC;
+				break;
+			default:
+				Options::saveOrder = SORT_DATE_ASC;
+		}
 
 		updateArrows();
 		_lstSaves->clearList();
-
 		sortList(Options::saveOrder);
 	}
 }

@@ -68,7 +68,6 @@ void RuleTerrain::load(
 	if (const YAML::Node& mapDataSets = node["mapDataSets"])
 	{
 		_mapDataSets.clear();
-
 		for (YAML::const_iterator
 				i = mapDataSets.begin();
 				i != mapDataSets.end();
@@ -81,7 +80,6 @@ void RuleTerrain::load(
 	if (const YAML::Node& mapBlocks = node["mapBlocks"])
 	{
 		_mapBlocks.clear();
-
 		for (YAML::const_iterator
 				i = mapBlocks.begin();
 				i != mapBlocks.end();
@@ -106,7 +104,7 @@ void RuleTerrain::load(
 			i != node["music"].end();
 			++i)
 	{
-		_musics.push_back((*i).as<std::string>());
+		_musics.push_back((*i).as<std::string>()); // NOTE: might not be compatible w/ sza_MusicRules.
 	}
 
 	_pyjamaType = node["pyjamaType"].as<std::string>(_pyjamaType);

@@ -83,16 +83,15 @@ LoadGameState::LoadGameState(
 	{
 		case SAVE_QUICK:
 			_file = SavedGame::QUICKSAVE;
-		break;
+			break;
 
 		case SAVE_AUTO_GEOSCAPE:
 			_file = SavedGame::AUTOSAVE_GEOSCAPE;
-		break;
+			break;
 
 		case SAVE_AUTO_BATTLESCAPE:
 			_file = SavedGame::AUTOSAVE_BATTLESCAPE;
 	}
-
 	buildUi(palette, true);
 }
 
@@ -207,6 +206,7 @@ void LoadGameState::think()
 		}
 		catch (Exception& e)
 		{
+			// TODO: Show the ListGamesState elements again ....
 			Log(LOG_INFO) << "LoadGame error";
 			Log(LOG_ERROR) << e.what();
 			std::wostringstream error;
@@ -233,6 +233,7 @@ void LoadGameState::think()
 		}
 		catch (YAML::Exception& e)
 		{
+			// TODO: Show the ListGamesState elements again ....
 			Log(LOG_INFO) << "LoadGame error YAML";
 			Log(LOG_ERROR) << e.what();
 			std::wostringstream error;

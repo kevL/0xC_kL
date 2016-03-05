@@ -29,6 +29,7 @@
 #include "../fmath.h"
 
 #include "../Engine/Language.h"
+#include "../Engine/Logger.h"
 #include "../Engine/RNG.h"
 
 #include "../Interface/Text.h"
@@ -156,11 +157,13 @@ void Soldier::load(
 		const YAML::Node& node,
 		const Ruleset* const rules)
 {
-	_rank			= static_cast<SoldierRank>(node["rank"]		.as<int>());
-	_gender			= static_cast<SoldierGender>(node["gender"]	.as<int>());
-	_look			= static_cast<SoldierLook>(node["look"]		.as<int>());
+	Log(LOG_INFO) << "Soldier::load()";
+	_rank	= static_cast<SoldierRank>(node["rank"]		.as<int>());
+	_gender	= static_cast<SoldierGender>(node["gender"]	.as<int>());
+	_look	= static_cast<SoldierLook>(node["look"]		.as<int>());
 
 	_name = Language::utf8ToWstr(node["name"].as<std::string>());
+	Log(LOG_INFO) << ". name = " << *(_name.c_str());
 
 	_id				= node["id"]			.as<int>(_id);
 	_initialStats	= node["initialStats"]	.as<UnitStats>(_initialStats);
@@ -171,17 +174,23 @@ void Soldier::load(
 	_psiTraining	= node["psiTraining"]	.as<bool>(_psiTraining);
 
 	_armorRule = rules->getArmor(node["armor"].as<std::string>());
+	if (_armorRule != nullptr) Log(LOG_INFO) << ". armor [1] = " << _armorRule->getType();
 	if (_armorRule == nullptr)
+	{
 		_armorRule = rules->getArmor(_solRule->getArmor());
+		if (_armorRule != nullptr) Log(LOG_INFO) << ". armor [2] = " << _armorRule->getType();
+	}
 
+	Log(LOG_INFO) << ". load layout";
 	if (const YAML::Node& layout = node["layout"])
 	{
+		SoldierLayout* layoutItem;
 		for (YAML::const_iterator
 				i = layout.begin();
 				i != layout.end();
 				++i)
 		{
-			SoldierLayout* const layoutItem = new SoldierLayout(*i);
+			layoutItem = new SoldierLayout(*i);
 			if (rules->getInventory(layoutItem->getLayoutSection()) != nullptr)
 				_layout.push_back(layoutItem);
 			else
@@ -189,8 +198,13 @@ void Soldier::load(
 		}
 	}
 
+	Log(LOG_INFO) << ". load diary";
 	if (node["diary"])
+	{
+		Log(LOG_INFO) << ". . diary exists";
 		_diary->load(node["diary"]);
+	}
+	else Log(LOG_INFO) << ". . diary invalid";
 
 //	calcStatString(
 //			rules->getStatStrings(),
@@ -220,7 +234,7 @@ YAML::Node Soldier::save() const
 
 	if (_craft != nullptr)
 		node["craft"]		= _craft->saveId();
-	if (_recovery > 0)
+	if (_recovery != 0)
 		node["recovery"]	= _recovery;
 	if (_psiTraining)
 		node["psiTraining"]	= _psiTraining;

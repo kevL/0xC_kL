@@ -58,8 +58,8 @@ void Waypoint::load(const YAML::Node& node)
  */
 YAML::Node Waypoint::save() const
 {
-	YAML::Node node	= Target::save();
-	node["id"]		= _id;
+	YAML::Node node	(Target::save());
+	node["id"] = _id;
 
 	return node;
 }
@@ -70,7 +70,7 @@ YAML::Node Waypoint::save() const
  */
 YAML::Node Waypoint::saveId() const
 {
-	YAML::Node node = Target::saveId();
+	YAML::Node node (Target::saveId());
 
 	node["type"] = "STR_WAYPOINT";
 	node["id"]   = _id;

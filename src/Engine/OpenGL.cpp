@@ -30,35 +30,26 @@ bool OpenGL::checkErrors = true;
 std::string strGLError(GLenum glErr)
 {
 	std::string err;
-
 	switch (glErr)
 	{
-		case GL_INVALID_ENUM:
-			err = "GL_INVALID_ENUM";
-		break;
-		case GL_INVALID_VALUE:
-			err = "GL_INVALID_VALUE";
-		break;
-		case GL_INVALID_OPERATION:
-			err = "GL_INVALID_OPERATION";
-		break;
-		case GL_STACK_OVERFLOW:
-			err = "GL_STACK_OVERFLOW";
-		break;
-		case GL_STACK_UNDERFLOW:
-			err = "GL_STACK_UNDERFLOW";
-		break;
-		case GL_OUT_OF_MEMORY:
-			err = "GL_OUT_OF_MEMORY";
-		break;
-		case GL_NO_ERROR:
-			err = "No error! How did you even reach this code?";
-		break;
+		case GL_INVALID_ENUM:		err = "GL_INVALID_ENUM";
+			break;
+		case GL_INVALID_VALUE:		err = "GL_INVALID_VALUE";
+			break;
+		case GL_INVALID_OPERATION:	err = "GL_INVALID_OPERATION";
+			break;
+		case GL_STACK_OVERFLOW:		err = "GL_STACK_OVERFLOW";
+			break;
+		case GL_STACK_UNDERFLOW:	err = "GL_STACK_UNDERFLOW";
+			break;
+		case GL_OUT_OF_MEMORY:		err = "GL_OUT_OF_MEMORY";
+			break;
+		case GL_NO_ERROR:			err = "No error! How did you even reach this code?";
+			break;
+
 		default:
 			err = "Unknown error code!";
-		break;
 	}
-
 	return err;
 }
 
@@ -370,16 +361,16 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 	{
 		try
 		{
-			YAML::Node document = YAML::LoadFile(source_yaml_filename);
+			YAML::Node document (YAML::LoadFile(source_yaml_filename));
 
 			bool is_glsl;
-			std::string language = document["language"].as<std::string>();
+			std::string language (document["language"].as<std::string>());
 			is_glsl = (language == "GLSL");
 
 
 			linear = document["linear"].as<bool>(false); // some shaders want texture linear interpolation and some don't
-			std::string fragment_source	= document["fragment"]	.as<std::string>();
-			std::string vertex_source	= document["vertex"]	.as<std::string>();
+			std::string fragment_source	(document["fragment"]	.as<std::string>(""));
+			std::string vertex_source	(document["vertex"]		.as<std::string>(""));
 
 			if (is_glsl)
 			{

@@ -145,13 +145,14 @@ void Base::load(
 		bool firstBase,
 		bool skirmish)
 {
-	//Log(LOG_INFO) << "Base load()";
+	Log(LOG_INFO) << "Base load()";
 	Target::load(node);
 
 	_name = Language::utf8ToWstr(node["name"].as<std::string>());
 
 	std::string type;
 
+	Log(LOG_INFO) << ". load facilities";
 	if (firstBase == false || skirmish == true)
 //		|| Options::customInitialBase == false)
 	{
@@ -164,9 +165,9 @@ void Base::load(
 			type = (*i)["type"].as<std::string>();
 			if (_rules->getBaseFacility(type) != nullptr)
 			{
-				BaseFacility* const facility = new BaseFacility(
+				BaseFacility* const facility (new BaseFacility(
 															_rules->getBaseFacility(type),
-															this);
+															this));
 				facility->load(*i);
 				_facilities.push_back(facility);
 			}
@@ -174,6 +175,7 @@ void Base::load(
 		}
 	}
 
+	Log(LOG_INFO) << ". load crafts";
 	for (YAML::const_iterator
 			i = node["crafts"].begin();
 			i != node["crafts"].end();
@@ -191,21 +193,26 @@ void Base::load(
 		else Log(LOG_ERROR) << "Failed to load craft " << type;
 	}
 
+	Log(LOG_INFO) << ". load soldiers";
 	for (YAML::const_iterator
 			i = node["soldiers"].begin();
 			i != node["soldiers"].end();
 			++i)
 	{
 		type = (*i)["type"].as<std::string>(_rules->getSoldiersList().front());
+		Log(LOG_INFO) << ". . type = " << type;
 		if (_rules->getSoldier(type) != nullptr)
 		{
+			Log(LOG_INFO) << ". . . load Soldier";
 			Soldier* const sol (new Soldier(_rules->getSoldier(type)));
 			sol->load(*i, _rules);
 			sol->setCraft();
 
+			Log(LOG_INFO) << ". . . set Craft";
 			if (const YAML::Node& craft = (*i)["craft"])
 			{
 				const CraftId craftId (Craft::loadId(craft));
+				Log(LOG_INFO) << ". . . . Craft-ID = " << craftId.first << "-" << craftId.second;
 				for (std::vector<Craft*>::const_iterator
 						j = _crafts.begin();
 						j != _crafts.end();
@@ -218,12 +225,12 @@ void Base::load(
 					}
 				}
 			}
-
 			_soldiers.push_back(sol);
 		}
 		else Log(LOG_ERROR) << "Failed to load soldier " << type;
 	}
 
+	Log(LOG_INFO) << ". load items";
 	_items->load(node["items"]);
 	for (std::map<std::string, int>::const_iterator
 			i = _items->getContents()->begin();
@@ -238,6 +245,7 @@ void Base::load(
 			++i;
 	}
 
+	Log(LOG_INFO) << ". load transfers";
 	for (YAML::const_iterator
 			i = node["transfers"].begin();
 			i != node["transfers"].end();
@@ -249,6 +257,7 @@ void Base::load(
 			_transfers.push_back(transfer);
 	}
 
+	Log(LOG_INFO) << ". load research projects";
 	for (YAML::const_iterator
 			i = node["research"].begin();
 			i != node["research"].end();
@@ -268,6 +277,7 @@ void Base::load(
 		}
 	}
 
+	Log(LOG_INFO) << ". load manufacturing projects";
 	for (YAML::const_iterator
 			i = node["productions"].begin();
 			i != node["productions"].end();
@@ -289,6 +299,7 @@ void Base::load(
 		}
 	}
 
+	Log(LOG_INFO) << ". load vars";
 	_tactical	= node["tactical"]	.as<bool>(_tactical);
 	_exposed	= node["exposed"]	.as<bool>(_exposed);
 	_scientists	= node["scientists"].as<int>(_scientists);
@@ -304,7 +315,7 @@ void Base::load(
  */
 YAML::Node Base::save() const
 {
-	YAML::Node node = Target::save();
+	YAML::Node node (Target::save());
 
 	node["name"] = Language::wstrToUtf8(_name);
 
@@ -362,7 +373,7 @@ YAML::Node Base::save() const
  */
 YAML::Node Base::saveId() const
 {
-	YAML::Node node = Target::saveId();
+	YAML::Node node (Target::saveId());
 
 	node["type"] = "STR_BASE";
 	node["id"]   = 0;

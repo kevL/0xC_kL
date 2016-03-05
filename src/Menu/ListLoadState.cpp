@@ -45,9 +45,7 @@ namespace OpenXcom
  */
 ListLoadState::ListLoadState(OptionsOrigin origin)
 	:
-		ListGamesState(
-			origin,
-			0, true)
+		ListGamesState(origin, 0, true)
 {
 	_txtTitle->setText(tr("STR_SELECT_GAME_TO_LOAD"));
 
@@ -79,8 +77,7 @@ void ListLoadState::lstSavesPress(Action* action)
 			_game->getResourcePack()->fadeMusic(_game, 1123);
 		}
 
-
-		bool confirmLoad = false;
+		bool confirmLoad (false);
 		for (std::vector<std::string>::const_iterator
 				i = _saves[_lstSaves->getSelectedRow()].rulesets.begin();
 				i != _saves[_lstSaves->getSelectedRow()].rulesets.end();

@@ -41,7 +41,7 @@ namespace OpenXcom
  * @param color		- color of the UI controls
  * @param bg		- reference to the background image-string
  * @param bgColor	- background color (-1 for Battlescape)
- * @param quit		- true to quit instantly (default false)
+ * @param quit		- true to quit on close (default false)
  */
 ErrorMessageState::ErrorMessageState(
 		const std::string& st,
@@ -69,7 +69,7 @@ ErrorMessageState::ErrorMessageState(
  * @param color		- color of the UI controls
  * @param bg		- reference to the background image-string
  * @param bgColor	- background color (-1 for Battlescape)
- * @param quit		- true to quit instantly (default false)
+ * @param quit		- true to quit on close (default false)
  */
 ErrorMessageState::ErrorMessageState(
 		const std::wstring& wst,

@@ -940,7 +940,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 
 		if ((*i)["maleScream"])
 		{
-			int id = 0;
+			int id (0);
 			for (YAML::const_iterator
 					j = (*i)["maleScream"].begin();
 					j != (*i)["maleScream"].end() && id != 3;
@@ -952,7 +952,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 
 		if ((*i)["femaleScream"])
 		{
-			int id = 0;
+			int id (0);
 			for (YAML::const_iterator
 					j = (*i)["femaleScream"].begin();
 					j != (*i)["femaleScream"].end() && id != 3;
@@ -965,7 +965,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		ResourcePack::BUTTON_PRESS = (*i)["buttonPress"].as<int>(ResourcePack::BUTTON_PRESS);
 		if ((*i)["windowPopup"])
 		{
-			int id = 0;
+			int id (0);
 			for (YAML::const_iterator
 					j = (*i)["windowPopup"].begin();
 					j != (*i)["windowPopup"].end() && id != 3;
@@ -989,35 +989,36 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		ResourcePack::GRAPHS_CURSOR			= (*i)["graphsCursor"]		.as<int>(ResourcePack::GRAPHS_CURSOR);
 	}
 
+	std::string terrainType; // NOTE: MapScripts are not loaded w/ loadRule(keyId=type).
 	for (YAML::const_iterator
 			i = doc["mapScripts"].begin();
 			i != doc["mapScripts"].end();
 			++i)
 	{
-		type = (*i)["type"].as<std::string>();
+		terrainType = (*i)["terrain"].as<std::string>();
 		if ((*i)["delete"])
-			type = (*i)["delete"].as<std::string>(type);
+			terrainType = (*i)["delete"].as<std::string>(terrainType);
 
-		if (_mapScripts.find(type) != _mapScripts.end())
+		if (_mapScripts.find(terrainType) != _mapScripts.end())
 		{
 			for (std::vector<MapScript*>::const_iterator
-					j = _mapScripts[type].begin();
-					j != _mapScripts[type].end();
+					j = _mapScripts[terrainType].begin();
+					j != _mapScripts[terrainType].end();
 					)
 			{
 				delete *j;
-				j = _mapScripts[type].erase(j);
+				j = _mapScripts[terrainType].erase(j);
 			}
 		}
 
 		for (YAML::const_iterator
-				j = (*i)["commands"].begin();
-				j != (*i)["commands"].end();
+				j = (*i)["directs"].begin();
+				j != (*i)["directs"].end();
 				++j)
 		{
 			std::auto_ptr<MapScript> mapScript (new MapScript());
 			mapScript->load(*j);
-			_mapScripts[type].push_back(mapScript.release());
+			_mapScripts[terrainType].push_back(mapScript.release());
 		}
 	}
 
@@ -1888,7 +1889,7 @@ const RuleAlienMission* Ruleset::getRandomMission(
 		MissionObjective objective,
 		size_t monthsPassed) const
 {
-	int totalWeight = 0;
+	int totalWeight (0);
 
 	std::map<int, RuleAlienMission*> eligibleMissions;
 	for (std::map<std::string, RuleAlienMission*>::const_iterator

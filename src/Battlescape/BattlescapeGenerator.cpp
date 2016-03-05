@@ -3704,8 +3704,8 @@ void BattlescapeGenerator::drillModules( // private.
 		MapDirection dir)
 {
 	const MCDReplacement
-		* const westMcd		(info->getMcdReplacement("westWall")),
-		* const northMcd	(info->getMcdReplacement("northWall")),
+		* const westMcd		(info->getMcdReplacement("west")),
+		* const northMcd	(info->getMcdReplacement("north")),
 		* const cornerMcd	(info->getMcdReplacement("corner")),
 		* const floorMcd	(info->getMcdReplacement("floor"));
 

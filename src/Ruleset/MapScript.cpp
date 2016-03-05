@@ -66,33 +66,33 @@ MapScript::~MapScript()
  */
 void MapScript::load(const YAML::Node& node)
 {
-	if (const YAML::Node& mapNode = node["type"])
+	if (const YAML::Node& subnode = node["type"])
 	{
-		const std::string directive (mapNode.as<std::string>());
+		const std::string type (subnode.as<std::string>());
 
-		if (directive == "addBlock")
+		if (type == "addBlock")
 			_type = MSC_ADDBLOCK;
-		else if (directive == "addLine")
+		else if (type == "addLine")
 			_type = MSC_ADDLINE;
-		else if (directive == "addCraft")
+		else if (type == "addCraft")
 		{
 			_type = MSC_ADDCRAFT;
 			_groups.push_back(1); // this is a default and can be overridden
 		}
-		else if (directive == "addUFO")
+		else if (type == "addUFO")
 		{
 			_type = MSC_ADDUFO;
 			_groups.push_back(1); // this is a default and can be overridden
 		}
-		else if (directive == "digTunnel")
+		else if (type == "digTunnel")
 			_type = MSC_DIGTUNNEL;
-		else if (directive == "fillArea")
+		else if (type == "fillArea")
 			_type = MSC_FILLAREA;
-		else if (directive == "checkBlock")
+		else if (type == "checkBlock")
 			_type = MSC_CHECKBLOCK;
-		else if (directive == "removeBlock")
+		else if (type == "removeBlock")
 			_type = MSC_REMOVE;
-		else if (directive == "resize")
+		else if (type == "resize")
 		{
 			_type = MSC_RESIZE;
 			_sizeX =
@@ -100,7 +100,7 @@ void MapScript::load(const YAML::Node& node)
 		}
 		else
 		{
-			throw Exception("Unknown directive: " + directive);
+			throw Exception("Unknown type: " + type);
 		}
 	}
 	else
@@ -108,11 +108,11 @@ void MapScript::load(const YAML::Node& node)
 		throw Exception("Missing directive type.");
 	}
 
-	if (const YAML::Node& mapNode = node["rects"])
+	if (const YAML::Node& subnode = node["rects"])
 	{
 		for (YAML::const_iterator
-				i = mapNode.begin();
-				i != mapNode.end();
+				i = subnode.begin();
+				i != subnode.end();
 				++i)
 		{
 			SDL_Rect* const rect (new SDL_Rect());
@@ -125,12 +125,12 @@ void MapScript::load(const YAML::Node& node)
 		}
 	}
 
-	if (const YAML::Node& mapNode = node["tunnelData"])
+	if (const YAML::Node& subnode = node["tunnelData"])
 	{
 		_tunnelData = new TunnelData;
-		_tunnelData->level = mapNode["level"].as<int>(0);
+		_tunnelData->level = subnode["level"].as<int>(0);
 
-		if (const YAML::Node& data = mapNode["MCDReplacements"])
+		if (const YAML::Node& data = subnode["MCDReplacements"])
 		{
 			for (YAML::Node::const_iterator
 					i = data.begin();
@@ -147,17 +147,17 @@ void MapScript::load(const YAML::Node& node)
 		}
 	}
 
-	if (const YAML::Node& mapNode = node["conditions"])
+	if (const YAML::Node& subnode = node["conditions"])
 	{
-		if (mapNode.Type() == YAML::NodeType::Sequence)
-			_conditions = mapNode.as<std::vector<int>>(_conditions);
+		if (subnode.Type() == YAML::NodeType::Sequence)
+			_conditions = subnode.as<std::vector<int>>(_conditions);
 		else
-			_conditions.push_back(mapNode.as<int>(0));
+			_conditions.push_back(subnode.as<int>(0));
 	}
 
-	if (const YAML::Node& mapNode = node["size"])
+	if (const YAML::Node& subnode = node["size"])
 	{
-		if (mapNode.Type() == YAML::NodeType::Sequence)
+		if (subnode.Type() == YAML::NodeType::Sequence)
 		{
 			int
 				entry (0),
@@ -169,8 +169,8 @@ void MapScript::load(const YAML::Node& node)
 				};
 
 			for (YAML::const_iterator
-					i = mapNode.begin();
-					i != mapNode.end();
+					i = subnode.begin();
+					i != subnode.end();
 					++i)
 			{
 				*sizes[entry] = (*i).as<int>(1);
@@ -178,36 +178,40 @@ void MapScript::load(const YAML::Node& node)
 					break;
 			}
 		}
-		else _sizeX = _sizeY = mapNode.as<int>(_sizeX);
+		else
+			_sizeX =
+			_sizeY = subnode.as<int>(_sizeX);
 	}
 
-	if (const YAML::Node& mapNode = node["groups"])
+	if (const YAML::Node& subnode = node["groups"])
 	{
 		_groups.clear();
-		if (mapNode.Type() == YAML::NodeType::Sequence)
+		if (subnode.Type() == YAML::NodeType::Sequence)
 		{
 			for (YAML::const_iterator
-					i = mapNode.begin();
-					i != mapNode.end();
+					i = subnode.begin();
+					i != subnode.end();
 					++i)
 				_groups.push_back((*i).as<int>(0));
 		}
-		else _groups.push_back(mapNode.as<int>(0));
+		else
+			_groups.push_back(subnode.as<int>(0));
 	}
 
 	size_t selectionSize (_groups.size());
-	if (const YAML::Node& mapNode = node["blocks"])
+	if (const YAML::Node& subnode = node["blocks"])
 	{
 		_groups.clear();
-		if (mapNode.Type() == YAML::NodeType::Sequence)
+		if (subnode.Type() == YAML::NodeType::Sequence)
 		{
 			for (YAML::const_iterator
-					i = mapNode.begin();
-					i != mapNode.end();
+					i = subnode.begin();
+					i != subnode.end();
 					++i)
 				_blocks.push_back((*i).as<int>(0));
 		}
-		else _blocks.push_back(mapNode.as<int>(0));
+		else
+			_blocks.push_back(subnode.as<int>(0));
 
 		selectionSize = _blocks.size();
 	}
@@ -215,14 +219,14 @@ void MapScript::load(const YAML::Node& node)
 	_frequencies.resize(selectionSize, 1);
 	_maxUses.resize(selectionSize, -1);
 
-	if (const YAML::Node& mapNode = node["freqs"])
+	if (const YAML::Node& subnode = node["freqs"])
 	{
-		if (mapNode.Type() == YAML::NodeType::Sequence)
+		if (subnode.Type() == YAML::NodeType::Sequence)
 		{
-			size_t entry = 0;
+			size_t entry (0);
 			for (YAML::const_iterator
-					i = mapNode.begin();
-					i != mapNode.end();
+					i = subnode.begin();
+					i != subnode.end();
 					++i)
 			{
 				if (entry == selectionSize)
@@ -232,17 +236,17 @@ void MapScript::load(const YAML::Node& node)
 			}
 		}
 		else
-			_frequencies.at(0) = mapNode.as<int>(1);
+			_frequencies.at(0) = subnode.as<int>(1);
 	}
 
-	if (const YAML::Node& mapNode = node["maxUses"])
+	if (const YAML::Node& subnode = node["maxUses"])
 	{
-		if (mapNode.Type() == YAML::NodeType::Sequence)
+		if (subnode.Type() == YAML::NodeType::Sequence)
 		{
 			size_t entry (0);
 			for (YAML::const_iterator
-					i = mapNode.begin();
-					i != mapNode.end();
+					i = subnode.begin();
+					i != subnode.end();
 					++i)
 			{
 				if (entry == selectionSize)
@@ -252,43 +256,30 @@ void MapScript::load(const YAML::Node& node)
 			}
 		}
 		else
-			_maxUses.at(0) = mapNode.as<int>(-1);
+			_maxUses.at(0) = subnode.as<int>(-1);
 	}
 
-	if (const YAML::Node& mapNode = node["direction"])
+	if (const YAML::Node& subnode = node["direction"])
 	{
-		std::string dir (mapNode.as<std::string>());
-		if (dir.length() != 0)
+		std::string dir (subnode.as<std::string>());
+		dir = dir.substr(0,1);
+		if (dir == "v")
+			_direction = MD_VERTICAL;
+		else if (dir == "h")
+			_direction = MD_HORIZONTAL;
+		else if (dir == "b")
+			_direction = MD_BOTH;
+		else //_direction == MD_NONE
 		{
-			std::transform(
-						dir.begin(),
-						dir.end(),
-						dir.begin(),
-						::toupper);
-
-			if (dir.substr(0, 1) == "V")
-				_direction = MD_VERTICAL;
-			else if (dir.substr(0, 1) == "H")
-				_direction = MD_HORIZONTAL;
-			else if (dir.substr(0, 1) == "B")
-				_direction = MD_BOTH;
-			else
+			switch (_type)
 			{
-				throw Exception("direction must be [V]ertical, [H]orizontal, or [B]oth - found [" + dir + "]");
+				case MSC_DIGTUNNEL:
+					throw Exception("no direction defined for dig tunnel directive, must be [v]ertical, [h]orizontal, or [b]oth");
+					break;
+
+				case MSC_ADDLINE:
+					throw Exception("no direction defined for add line directive, must be [v]ertical, [h]orizontal, or [b]oth");
 			}
-		}
-	}
-
-	if (_direction == MD_NONE)
-	{
-		switch (_type)
-		{
-			case MSC_DIGTUNNEL:
-				throw Exception("no direction defined for dig tunnel directive, must be [V]ertical, [H]orizontal, or [B]oth");
-				break;
-
-			case MSC_ADDLINE:
-				throw Exception("no direction defined for add line directive, must be [V]ertical, [H]orizontal, or [B]oth");
 		}
 	}
 

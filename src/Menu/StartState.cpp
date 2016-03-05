@@ -82,8 +82,8 @@ StartState::StartState()
 	const int
 //		dx = (Options::baseXResolution - 320) / 2,	// kL
 //		dy = (Options::baseYResolution - 200) / 2;	// kL
-		dx = 10, // kL
-		dy = 20; // kL
+		dx (10), // kL
+		dy (20); // kL
 //	_surface = new Surface(320, 200, dx, dy);		// kL
 
 	loading = LOADING_STARTED;
@@ -119,12 +119,9 @@ StartState::StartState()
 	_text	= new Text(
 //kL				Options::baseXResolution,
 //kL				Options::baseYResolution,
-//kL				0,
-//kL				0);
-					630,
-					380,
-					dx,
-					dy);
+//kL				0,0);
+					630, 380,
+					dx, dy);
 	_cursor	= new Text(
 					_font->getWidth(),
 					_font->getHeight(),
@@ -228,7 +225,7 @@ void StartState::think()
 //			addLine(L"Press any key to continue.");
 
 			loading = LOADING_DONE;
-		break;
+			break;
 
 		case LOADING_SUCCESSFUL:
 			CrossPlatform::flashWindow();
@@ -238,7 +235,7 @@ void StartState::think()
 				&& Options::playIntro == true)
 			{
 				Log(LOG_INFO) << "Playing intro video ...";
-				const bool letterbox = Options::keepAspectRatio;
+				const bool letterbox (Options::keepAspectRatio);
 				Options::keepAspectRatio = true;
 
 				Options::baseXResolution = Screen::ORIGINAL_WIDTH;
@@ -261,7 +258,7 @@ void StartState::think()
 								true); */
 //				_game->getScreen()->resetDisplay(false);
 
-				State* const state = new MainMenuState();
+				State* const state (new MainMenuState());
 				_game->setState(state);
 
 				if (Options::badMods.empty() == false) // Check for mod loading errors
@@ -277,7 +274,6 @@ void StartState::think()
 					}
 
 					Options::badMods.clear();
-
 					_game->pushState(new ErrorMessageState(
 														error.str(),
 														state->getPalette(),
@@ -285,7 +281,6 @@ void StartState::think()
 														"BACK01.SCR",
 														_game->getRuleset()->getInterface("errorMessages")->getElement("geoscapePalette")->color));
 				}
-
 				Options::reload = false;
 			}
 
@@ -522,7 +517,7 @@ void StartState::addCursor_kL()
  */
 int StartState::load(void* ptrGame)
 {
-	Game* const game = static_cast<Game*>(ptrGame);
+	Game* const game (static_cast<Game*>(ptrGame));
 	try
 	{
 		Log(LOG_INFO) << "Loading ruleset ...";
@@ -559,7 +554,6 @@ int StartState::load(void* ptrGame)
 
 		loading = LOADING_FAILED;
 	}
-
 	return 0;
 }
 

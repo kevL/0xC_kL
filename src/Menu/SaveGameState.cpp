@@ -45,7 +45,7 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the Save Game screen.
  * @param origin	- game section that originated this state
- * @param file		- reference to name of the save file without extension
+ * @param file		- reference to name of the save-file without extension
  * @param palette	- pointer to parent state palette
  */
 SaveGameState::SaveGameState(
@@ -80,15 +80,15 @@ SaveGameState::SaveGameState(
 	{
 		case SAVE_QUICK:
 			_file = SavedGame::QUICKSAVE;
-		break;
+			break;
 
 		case SAVE_AUTO_GEOSCAPE:
 			_file = SavedGame::AUTOSAVE_GEOSCAPE;
-		break;
+			break;
 
 		case SAVE_AUTO_BATTLESCAPE:
 			_file = SavedGame::AUTOSAVE_BATTLESCAPE;
-		break;
+			break;
 
 		case SAVE_IRONMAN:
 		case SAVE_IRONMAN_END:
@@ -171,7 +171,7 @@ void SaveGameState::think()
 
 				if (_game->getSavedGame()->isIronman() == false) // And pause screen too.
 					_game->popState();
-			break;
+				break;
 
 			case SAVE_QUICK: // automatic save - Give it a default name.
 			case SAVE_AUTO_GEOSCAPE:
@@ -182,12 +182,12 @@ void SaveGameState::think()
 
 		try // Save the game
 		{
-			const std::string backup = _file + ".bak";
+			const std::string backup (_file + ".bak");
 			_game->getSavedGame()->save(backup);
 
 			const std::string
-				fullPath = Options::getUserFolder() + _file,
-				backPath = Options::getUserFolder() + backup;
+				fullPath (Options::getUserFolder() + _file),
+				backPath (Options::getUserFolder() + backup);
 			if (CrossPlatform::moveFile(
 									backPath,
 									fullPath) == false)
@@ -215,6 +215,7 @@ void SaveGameState::think()
 		}
 		catch (Exception& e)
 		{
+			// TODO: Show the ListGamesState elements again ....
 			Log(LOG_ERROR) << e.what();
 			std::wostringstream error;
 			error << tr("STR_SAVE_UNSUCCESSFUL") << L'\x02' << Language::fsToWstr(e.what());
@@ -235,6 +236,7 @@ void SaveGameState::think()
 		}
 		catch (YAML::Exception& e)
 		{
+			// TODO: Show the ListGamesState elements again ....
 			Log(LOG_ERROR) << e.what();
 			std::wostringstream error;
 			error << tr("STR_SAVE_UNSUCCESSFUL") << L'\x02' << Language::fsToWstr(e.what());

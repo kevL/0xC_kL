@@ -206,7 +206,7 @@ void AlienDeployment::load(const YAML::Node& node)
 			i != node["music"].end();
 			++i)
 	{
-		_musics.push_back((*i).as<std::string>());
+		_musics.push_back((*i).as<std::string>()); // NOTE: might not be compatible w/ sza_MusicRules.
 	}
 
 	_objectiveType = static_cast<SpecialTileType>(node["objectiveType"].as<int>(_objectiveType));

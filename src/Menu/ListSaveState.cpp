@@ -123,11 +123,11 @@ void ListSaveState::lstSavesPress(Action* action)
 			switch (_selectedPre)
 			{
 				case -1: // first click on the savegame list
-				break;
+					break;
 
 				case 0:
 					_lstSaves->setCellText(_selectedPre, 0, tr("STR_NEW_SAVED_GAME_SLOT"));
-				break;
+					break;
 
 				default:
 					_lstSaves->setCellText(_selectedPre, 0, _label);
@@ -209,7 +209,7 @@ void ListSaveState::saveGame()
 	_game->getSavedGame()->setName(_edtSave->getText());
 
 	std::string
-		file = CrossPlatform::sanitizeFilename(Language::wstrToFs(_edtSave->getText())),
+		file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_edtSave->getText()))),
 		fileOld;
 
 	if (_selected > 0)

@@ -73,7 +73,7 @@ void SoldierLayout::load(const YAML::Node& node)
 	_section	= node["section"]	.as<std::string>(_section);
 	_slotX		= node["slotX"]		.as<int>(0);
 	_slotY		= node["slotY"]		.as<int>(0);
-	_ammoItem	= node["ammoItem"]	.as<std::string>();
+	_ammoItem	= node["ammoItem"]	.as<std::string>(_ammoItem);
 	_fuse		= node["fuse"]		.as<int>(-1);
 }
 
@@ -85,12 +85,12 @@ YAML::Node SoldierLayout::save() const
 {
 	YAML::Node node;
 
-	node["itemType"]	= _itemType;
-	node["section"]		= _section;
+	node["itemType"] = _itemType;
+	node["section"]	 = _section;
 
-	if (_slotX != 0)			node["slotX"]	= _slotX;
-	if (_slotY != 0)			node["slotY"]	= _slotY;
-	if (_fuse != -1)			node["fuse"]	= _fuse;
+	if (_slotX != 0) node["slotX"]	= _slotX;
+	if (_slotY != 0) node["slotY"]	= _slotY;
+	if (_fuse != -1) node["fuse"]	= _fuse;
 
 	if (_ammoItem.empty() == false) node["ammoItem"] = _ammoItem;
 
@@ -99,7 +99,7 @@ YAML::Node SoldierLayout::save() const
 
 /**
  * Returns the item's type which has to be in an Inventory section.
- * @return, item type
+ * @return, item-type
  */
 std::string SoldierLayout::getItemType() const
 {
@@ -108,7 +108,7 @@ std::string SoldierLayout::getItemType() const
 
 /**
  * Returns the Inventory section to be occupied.
- * @return, section type
+ * @return, section-type
  */
 std::string SoldierLayout::getLayoutSection() const
 {
