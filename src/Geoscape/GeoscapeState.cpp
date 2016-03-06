@@ -1247,7 +1247,7 @@ void GeoscapeState::drawUfoBlobs()
 
 			_hostileUfos[j] = *i;
 
-			ufoSize = (*i)->getRadius();
+			ufoSize = (*i)->getRules()->getRadius();
 
 			if ((*i)->getTimerTicked() == true)
 				colorBasic = RED; // TODO: blink
@@ -1255,12 +1255,10 @@ void GeoscapeState::drawUfoBlobs()
 			{
 				switch ((*i)->getUfoStatus())
 				{
-					case Ufo::CRASHED:
-						colorBasic = BROWN;
-					break;
-					case Ufo::LANDED:
-						colorBasic = GREEN;
-					break;
+					case Ufo::CRASHED:	colorBasic = BROWN;
+						break;
+					case Ufo::LANDED:	colorBasic = GREEN;
+						break;
 					default: // Ufo::FLYING
 						colorBasic = SLATE_D;
 				}

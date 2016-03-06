@@ -74,8 +74,7 @@ Ufo::Ufo(const RuleUfo* const ufoRule)
 		_hitFrame(0),
 		_processedIntercept(false),
 		_fireCountdown(0),
-		_escapeCountdown(0),
-		_radius(ufoRule->getRadius())
+		_escapeCountdown(0)
 {}
 
 /**
@@ -88,7 +87,7 @@ Ufo::~Ufo()
 			i != _followers.end();
 			)
 	{
-		Craft* const craft = dynamic_cast<Craft*>(*i);
+		Craft* const craft (dynamic_cast<Craft*>(*i));
 		if (craft != nullptr)
 		{
 			craft->returnToBase();
@@ -103,7 +102,7 @@ Ufo::~Ufo()
 
 	if (_dest != nullptr)
 	{
-		const Waypoint* const wp = dynamic_cast<Waypoint*>(_dest);
+		const Waypoint* const wp (dynamic_cast<Waypoint*>(_dest));
 		if (wp != nullptr)
 		{
 			delete _dest;
@@ -322,15 +321,14 @@ std::wstring Ufo::getName(const Language* const lang) const
 	{
 		case FLYING:
 		case DESTROYED: // Destroyed also means leaving Earth.
-		return lang->getString("STR_UFO_").arg(_id);
+			return lang->getString("STR_UFO_").arg(_id);
 
 		case LANDED:
-		return lang->getString("STR_LANDING_SITE_").arg(_landId);
+			return lang->getString("STR_LANDING_SITE_").arg(_landId);
 
 		case CRASHED:
-		return lang->getString("STR_CRASH_SITE_").arg(_crashId);
+			return lang->getString("STR_CRASH_SITE_").arg(_crashId);
 	}
-
 	return L"";
 }
 
@@ -390,7 +388,7 @@ int Ufo::getUfoDamage() const
 int Ufo::getUfoDamagePct() const
 {
 	return static_cast<int>(std::floor(
-		   static_cast<double>(_damage) / static_cast<double>(_ufoRule->getMaxDamage()) * 100.));
+		   static_cast<float>(_damage) / static_cast<float>(_ufoRule->getMaxDamage()) * 100.f));
 }
 
 /**
@@ -461,13 +459,10 @@ void Ufo::setAltitude(const std::string& altitude)
 
 	if (_altitude != "STR_GROUND")
 		_status = FLYING;
+	else if (isCrashed() == true)
+		_status = CRASHED;
 	else
-	{
-		if (isCrashed() == true)
-			_status = CRASHED;
-		else
-			_status = LANDED;
-	}
+		_status = LANDED;
 }
 
 /**
@@ -515,8 +510,8 @@ void Ufo::calculateSpeed() // private.
 	MovingTarget::calculateSpeed();
 
 	const double
-		x = _speedLon,
-		y = -_speedLat;
+		x (_speedLon),
+		y (-_speedLat);
 
 	// This section guards vs. divide-by-zero.
 	if (AreSame(x, 0.) || AreSame(y, 0.))
@@ -537,11 +532,10 @@ void Ufo::calculateSpeed() // private.
 			else //if (x < 0.)
 				_direction = "STR_WEST";
 		}
-
 		return;
 	}
 
-	double theta = std::atan2(y,x); // theta is radians.
+	double theta (std::atan2(y,x)); // theta is radians.
 	// Convert radians to degrees so i don't go bonkers;
 	// ie. KILL IT WITH FIRE!!1@!
 	// note that this is between +/- 180 deg.
@@ -576,12 +570,12 @@ void Ufo::think()
 			moveTarget();
 			if (reachedDestination() == true)
 				setSpeed(0);
-		break;
+			break;
 
 		case LANDED:
 //			assert(_secondsLeft >= 5 && "Wrong time management.");
 			_secondsLeft -= 5;
-		break;
+			break;
 
 		case CRASHED:
 //			if (_detected == false)
@@ -756,12 +750,12 @@ const std::string& Ufo::getUfoMissionType() const
 }
 
 /**
- * Handle destination changes, making sure to delete old waypoint destinations.
+ * Handle destination changes and delete old Waypoint destinations.
  * @param dest - pointer to a new destination
  */
 void Ufo::setDestination(Target* const dest)
 {
-	const Waypoint* const old = dynamic_cast<Waypoint*>(_dest);
+	const Waypoint* const old (dynamic_cast<Waypoint*>(_dest));
 	MovingTarget::setDestination(dest);
 
 	delete old;
@@ -912,15 +906,6 @@ void Ufo::setUfoTerrainType(const std::string& terrainType)
 std::string Ufo::getUfoTerrainType() const
 {
 	return _terrain;
-}
-
-/**
- * Gets the size of this Ufo.
- * @return, the size (call it radius if you want)
- */
-size_t Ufo::getRadius() const
-{
-	return _radius;
 }
 
 }

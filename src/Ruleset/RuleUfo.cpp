@@ -128,16 +128,16 @@ UfoSizeType RuleUfo::getSizeType() const
  * Gets the radius of this type of UFO on the dogfighting window.
  * @return, the radius in pixels
  */
-int RuleUfo::getRadius() const
+size_t RuleUfo::getRadius() const
 {
 	switch (_sizeType)
 	{
 		default:
-		case UFO_VERYSMALL:	return 0;
-		case UFO_SMALL:		return 1;
-		case UFO_MEDIUM:	return 2;
-		case UFO_LARGE:		return 3;
-		case UFO_VERYLARGE:	return 4;
+		case UFO_VERYSMALL:	return 0u;
+		case UFO_SMALL:		return 1u;
+		case UFO_MEDIUM:	return 2u;
+		case UFO_LARGE:		return 3u;
+		case UFO_VERYLARGE:	return 4u;
 	}
 }
 

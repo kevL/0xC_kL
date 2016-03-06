@@ -91,7 +91,7 @@ private:
 		UfoSizeType getSizeType() const;
 
 		/// Gets the UFO's radius.
-		int getRadius() const;
+		size_t getRadius() const;
 		/// Gets the UFO's sprite.
 		int getSprite() const;
 		/// Gets the UFO's globe marker.

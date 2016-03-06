@@ -142,7 +142,7 @@ DogfightState::DogfightState(
 		_endDogfight(false),
 		_animatingHit(false),
 		_cautionLevel(2),
-		_ufoSize(ufo->getRadius()),
+		_ufoSize(static_cast<int>(ufo->getRules()->getRadius())),
 		_craftHeight(0),
 		_craftHeight_pre(0),
 //		_currentCraftDamageColor(14),
@@ -1377,7 +1377,7 @@ void DogfightState::ufoFireWeapon()
 	prj->setPower(_ufo->getRules()->getWeaponPower());
 	prj->setDirection(PD_DOWN);
 	prj->setHorizontalPosition(PH_CENTER);
-	prj->setPosition(_dist - (_ufo->getRules()->getRadius() / 2));
+	prj->setPosition(_dist - (_ufoSize / 2));
 	_projectiles.push_back(prj);
 
 	_game->getResourcePack()->playSoundFX(
