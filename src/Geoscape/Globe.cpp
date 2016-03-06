@@ -2316,12 +2316,18 @@ void Globe::drawFlights()
 					const double
 						lon1 ((*j)->getLongitude()),
 						lon2 ((*j)->getDestination()->getLongitude()),
+						lon3 ((*j)->getMeetLongitude()),
 						lat1 ((*j)->getLatitude()),
-						lat2 ((*j)->getDestination()->getLatitude());
+						lat2 ((*j)->getDestination()->getLatitude()),
+						lat3 ((*j)->getMeetLatitude());
 					drawPath(
 							_radars,
 							lon1,lat1,
 							lon2,lat2);
+					drawPath(
+							_radars,
+							lon1,lat1,
+							lon3,lat3);
 				}
 			}
 		}

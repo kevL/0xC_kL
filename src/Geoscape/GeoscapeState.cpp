@@ -1656,7 +1656,7 @@ void GeoscapeState::time5Seconds()
 							{
 								(*j)->setDestination(nullptr);
 
-								Waypoint* const wp (new Waypoint());
+								Waypoint* const wp (new Waypoint()); // Waypoint is for reconnaissance area.
 //								wp->setLongitude(ufo->getLongitude());
 //								wp->setLatitude(ufo->getLatitude());
 								wp->setLongitude(ufo->getMeetLongitude());

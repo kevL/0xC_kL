@@ -52,8 +52,10 @@ protected:
 
 	Target* _dest;
 
-	/// Calculates a new speed vector to the destination.
+	/// Calculates a new speed-vector to a destination.
 	virtual void calculateSpeed();
+	/// Calculates a meeting-point with a destination-target.
+	void calculateMeetPoint();
 
 	/// Creates a MovingTarget.
 	MovingTarget();
@@ -80,14 +82,12 @@ protected:
 
 		/// Checks if the MovingTarget has reached its destination.
 		bool reachedDestination() const;
-		/// Move towards the destination.
+		/// Moves toward the destination.
 		void moveTarget();
 
-		/// Calculate meeting point with the target.
-		void calculateMeetPoint();
-		/// Returns the latitude of the meeting point.
+		/// Returns the latitude of a meeting-point.
 		double getMeetLatitude() const;
-		/// Returns the longitude of the meeting point.
+		/// Returns the longitude of a meeting-point.
 		double getMeetLongitude() const;
 };
 

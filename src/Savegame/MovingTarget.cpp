@@ -170,7 +170,7 @@ void MovingTarget::setSpeed(const int speed)
  * Calculates the speed vector based on the great circle distance to destination
  * and current raw speed.
  */
-void MovingTarget::calculateSpeed()
+void MovingTarget::calculateSpeed() // protected/virtual.
 {
 	if (_dest != nullptr)
 	{
@@ -240,7 +240,7 @@ void MovingTarget::moveTarget()
 /**
  * Calculates meeting point with a destination-target.
  */
-void MovingTarget::calculateMeetPoint()
+void MovingTarget::calculateMeetPoint() // protected.
 {
 	_meetPointLat = _dest->getLatitude();
 	_meetPointLon = _dest->getLongitude();

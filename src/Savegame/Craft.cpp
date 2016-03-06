@@ -497,20 +497,11 @@ std::string Craft::getCraftStatusString() const
 	switch (_status)
 	{
 		default:
-		case CS_READY:
-			return "STR_READY";
-
-		case CS_REFUELLING:
-			return "STR_REFUELLING";
-
-		case CS_REARMING:
-			return "STR_REARMING";
-
-		case CS_REPAIRS:
-			return "STR_REPAIRS";
-
-		case CS_OUT:
-			return "STR_OUT";
+		case CS_READY:		return "STR_READY";
+		case CS_REFUELLING:	return "STR_REFUELLING";
+		case CS_REARMING:	return "STR_REARMING";
+		case CS_REPAIRS:	return "STR_REPAIRS";
+		case CS_OUT:		return "STR_OUT";
 	}
 }
 
