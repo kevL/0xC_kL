@@ -43,7 +43,6 @@
 
 #include "../Engine/Game.h"
 #include "../Engine/Language.h"
-//#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -2408,14 +2407,11 @@ void TileEngine::explode(
 										i != tileStop->getInventory()->end();
 										++i)
 								{
-									bu = (*i)->getUnit();
-
-									if (bu != nullptr
+									if ((bu = (*i)->getUnit()) != nullptr
 										&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
 										&& bu->getTakenExpl() == false)
 									{
 										bu->setTakenExpl();
-
 										powerUnit = RNG::generate(1, _powerE * 2) // bell curve
 												  + RNG::generate(1, _powerE * 2);
 										powerUnit /= 2;
@@ -2444,10 +2440,8 @@ void TileEngine::explode(
 
 									if (powerUnit > 0)
 									{
-										Position relVoxel;
-
-										// units above the explosion will be hit in the legs, units lateral to or below will be hit in the torso
-										if (distance(
+										Position relVoxel;	// units above the explosion will be hit in the legs
+										if (distance(		// units lateral to or below will be hit in the torso
 													tileStop->getPosition(),
 													Position(
 															centerX,
@@ -2497,15 +2491,12 @@ void TileEngine::explode(
 									{
 										//Log(LOG_INFO) << "pos " << tileStop->getPosition();
 										//Log(LOG_INFO) << ". . INVENTORY: Item = " << (*i)->getRules()->getType();
-										bu = (*i)->getUnit();
-
-										if (bu != nullptr
+										if ((bu = (*i)->getUnit()) != nullptr
 											&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
 											&& bu->getTakenExpl() == false)
 										{
 											//Log(LOG_INFO) << ". . . vs Unit unconscious";
 											bu->setTakenExpl();
-
 											const double
 												power0 (static_cast<double>(_powerE)),
 												power1 (power0 * 0.5),
@@ -2545,11 +2536,10 @@ void TileEngine::explode(
 													&& bu->getTakenExpl() == false)))
 										{
 											//Log(LOG_INFO) << ". . . vs Item armor";
-											if ((*i)->getFuse() > -1)
+											if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
 											{
 												//Log(LOG_INFO) << ". . . . INVENTORY: primed grenade";
 												(*i)->setFuse(-2);
-
 												const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
 												_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
 																											_battleSave->getBattleGame(),
@@ -2596,14 +2586,11 @@ void TileEngine::explode(
 										i != tileStop->getInventory()->end();
 										++i)
 								{
-									bu = (*i)->getUnit();
-
-									if (bu != nullptr
+									if ((bu = (*i)->getUnit()) != nullptr
 										&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
 										&& bu->getTakenExpl() == false)
 									{
 										bu->setTakenExpl();
-
 										powerUnit = RNG::generate( // 10% to 20%
 																_powerE / 10,
 																_powerE / 5);
@@ -2618,7 +2605,6 @@ void TileEngine::explode(
 								if (targetUnit != nullptr)
 								{
 									targetUnit->setTakenExpl();
-
 									powerUnit = RNG::generate( // 25% - 75%
 															_powerE / 4,
 															_powerE * 3 / 4);
@@ -2669,8 +2655,7 @@ void TileEngine::explode(
 								}
 //								}
 
-								targetUnit = fireTile->getTileUnit();
-								if (targetUnit != nullptr
+								if ((targetUnit = fireTile->getTileUnit()) != nullptr
 									&& targetUnit->getTakenExpl() == false)
 								{
 									powerUnit = RNG::generate( // 25% - 75%
@@ -2699,14 +2684,11 @@ void TileEngine::explode(
 											i != fireTile->getInventory()->end();
 											)
 									{
-										bu = (*i)->getUnit();
-
-										if (bu != nullptr
+										if ((bu = (*i)->getUnit()) != nullptr
 											&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
 											&& bu->getTakenExpl() == false)
 										{
 											bu->setTakenExpl();
-
 											powerUnit = RNG::generate( // 25% - 75%
 																	_powerE / 4,
 																	_powerE * 3 / 4);
@@ -2737,10 +2719,9 @@ void TileEngine::explode(
 												|| (bu->getUnitStatus() == STATUS_DEAD
 													&& bu->getTakenExpl() == false)))
 										{
-											if ((*i)->getFuse() > -1)
+											if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
 											{
 												(*i)->setFuse(-2);
-
 												const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
 												_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
 																											_battleSave->getBattleGame(),
