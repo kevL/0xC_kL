@@ -145,9 +145,9 @@ private:
 	bool pointBack(
 			double lon,
 			double lat) const;
-	/// Return latitude of last visible-to-player point on given longitude.
+	/// Returns latitude of last visible-to-player point on given longitude.
 //	double lastVisibleLat(double lon) const;
-	/// Get polygon pointer (Volutar)
+	/// Gets polygon pointer (Volutar)
 	Polygon* getPolygonAtCoord(
 			double lon,
 			double lat) const;
@@ -165,11 +165,11 @@ private:
 	void cache(
 			std::list<Polygon*>* const polygons,
 			std::list<Polygon*>* const cache);
-	/// Get position of sun relative to given position in polar cords and date.
+	/// Gets position of sun relative to given position in polar cords and date.
 	Cord getSunDirection(
 			double lon,
 			double lat) const;
-	/// Draw globe range circle.
+	/// Draws a globe range circle.
 	void drawGlobeCircle(
 			double lat,
 			double lon,
@@ -186,6 +186,7 @@ private:
 			double y2,
 			int shade,
 			Uint8 color = 0);
+	// Draws a "VH" line.
 	void drawVHLine(
 			Surface* surface,
 			double lon1,
@@ -193,14 +194,14 @@ private:
 			double lon2,
 			double lat2,
 			Uint8 color = 0);
-	/// Draw flight path.
+	/// Draws a flight path.
 	void drawPath(
 			Surface* surface,
 			double lon1,
 			double lat1,
 			double lon2,
 			double lat2);
-	/// Draw target marker.
+	/// Draws a target marker.
 	void drawTarget(
 			const Target* const target,
 			Surface* const surface);
@@ -397,7 +398,7 @@ private:
 		/// Gets state of base hover mode
 		bool getNewBaseHover() const;
 
-		/// Update the resolution settings, we just resized the window.
+		/// Updates the resolution settings due to resizing the window.
 		void resize();
 };
 

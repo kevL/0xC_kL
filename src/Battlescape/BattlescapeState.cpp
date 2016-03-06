@@ -1355,10 +1355,14 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 							break;
 
 						case BT_GRENADE:
+							if (item->getFuse() != -1)
+								wst1 += L" (" + Text::intWide(item->getFuse()) + L")";
+							break;
+
 						case BT_PROXYGRENADE:
 						case BT_FLARE:
 							if (item->getFuse() != -1)
-								wst1 += L" (" + Text::intWide(item->getFuse()) + L")";
+								wst1 += L" (*)";
 					}
 				}
 				else
@@ -1433,7 +1437,6 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 						woststr2.str(L"");
 						woststr2 << wst;
 					}
-
 					break;
 				}
 			}
@@ -3366,7 +3369,7 @@ void BattlescapeState::flashMedic() // private.
  */
 void BattlescapeState::blinkHealthBar() // private.
 {
-	static const int TICKS = 5;
+	static const int TICKS (5);
 	static int vis;
 
 	_barHealth->setVisible(++vis > TICKS / 2);
@@ -3438,43 +3441,49 @@ void BattlescapeState::animate()
  */
 void BattlescapeState::cycleFuses(BattleUnit* const selUnit) // private.
 {
-	static Surface* const srf = _game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(9); // plus sign
-	static const int pulse[PULSE_FRAMES] = { 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,
-											13,12,11,10, 9, 8, 7, 6, 5, 4, 3};
+	static Surface* const srf (_game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(9)); // plus sign
+	static const int pulse[PULSE_FRAMES] { 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,
+										  13,12,11,10, 9, 8, 7, 6, 5, 4, 3};
 
 	if (_fuseFrame == PULSE_FRAMES)
 		_fuseFrame = 0;
 
-	const BattleItem* item = selUnit->getItem(ST_LEFTHAND);
-	if (item != nullptr
-		&& item->getRules()->isGrenade() == true
-		&& item->getFuse() != -1)
+	const BattleItem* item (selUnit->getItem(ST_LEFTHAND));
+	if (item != nullptr && item->getFuse() != -1)
 	{
-		_btnLeftHandItem->lock();
-		srf->blitNShade(
-					_btnLeftHandItem,
-					_btnLeftHandItem->getX() + 27,
-					_btnLeftHandItem->getY() - 1,
-					pulse[_fuseFrame],
-					false, 3); // red
-		_btnLeftHandItem->unlock();
+		switch (item->getRules()->getBattleType())
+		{
+			case BT_GRENADE:
+			case BT_PROXYGRENADE:
+			case BT_FLARE:
+				_btnLeftHandItem->lock();
+				srf->blitNShade(
+							_btnLeftHandItem,
+							_btnLeftHandItem->getX() + 27,
+							_btnLeftHandItem->getY() - 1,
+							pulse[_fuseFrame],
+							false, 3); // red
+				_btnLeftHandItem->unlock();
+		}
 	}
 
-	item = selUnit->getItem(ST_RIGHTHAND);
-	if (item != nullptr
-		&& item->getRules()->isGrenade() == true
-		&& item->getFuse() != -1)
+	if ((item = selUnit->getItem(ST_RIGHTHAND)) != nullptr && item->getFuse() != -1)
 	{
-		_btnRightHandItem->lock();
-		srf->blitNShade(
-					_btnRightHandItem,
-					_btnRightHandItem->getX() + 27,
-					_btnRightHandItem->getY() - 1,
-					pulse[_fuseFrame],
-					false, 3); // red
-		_btnRightHandItem->unlock();
+		switch (item->getRules()->getBattleType())
+		{
+			case BT_GRENADE:
+			case BT_PROXYGRENADE:
+			case BT_FLARE:
+				_btnRightHandItem->lock();
+				srf->blitNShade(
+							_btnRightHandItem,
+							_btnRightHandItem->getX() + 27,
+							_btnRightHandItem->getY() - 1,
+							pulse[_fuseFrame],
+							false, 3); // red
+				_btnRightHandItem->unlock();
+		}
 	}
-
 	++_fuseFrame;
 }
 
@@ -3485,10 +3494,10 @@ void BattlescapeState::cycleFuses(BattleUnit* const selUnit) // private.
 void BattlescapeState::hotSqrsCycle(BattleUnit* const selUnit) // private.
 {
 	static int
-		delta = 1,
-		colorRed = 34,		// currently selected unit sees other unit
-		colorBlue = 114,	// another unit can see other unit
-		color_border = 15;	// dark.gray
+		delta			  (1),
+		colorRed		 (34), // currently selected unit sees other unit
+		colorBlue		(114), // another unit can see other unit
+		color_border	 (15); // dark.gray
 
 	Uint8 color;
 	bool isSpotted;
@@ -3543,10 +3552,11 @@ void BattlescapeState::hotSqrsCycle(BattleUnit* const selUnit) // private.
 			break;
 	}
 
-	if (colorRed == 34)
-		delta = 1;
-	else if (colorRed == 45)
-		delta = -1;
+	switch (colorRed)
+	{
+		case 34: delta = +1; break;
+		case 45: delta = -1;
+	}
 
 	colorRed += delta;
 	colorBlue += delta;
@@ -3558,7 +3568,7 @@ void BattlescapeState::hotSqrsCycle(BattleUnit* const selUnit) // private.
  */
 void BattlescapeState::hostileTargeter() // private.
 {
-	static const int cursorFrames[TARGET_FRAMES] = {0,1,2,3,4,0}; // note: does not show the last frame.
+	static const int cursorFrames[TARGET_FRAMES] {0,1,2,3,4,0}; // note: does not show the last frame.
 
 	Surface* const targetCursor (_game->getResourcePack()->getSurfaceSet("TARGET.PCK")->getFrame(cursorFrames[_targeterFrame]));
 	targetCursor->blit(_targeter);

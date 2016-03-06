@@ -122,20 +122,19 @@ struct GlobeStaticData
 			double y)
 	{
 		const double
-			limit = r * r,
-			norm = 1. / r;
+			limit (r * r),
+			norm (1. / r);
 
 		Cord ret;
 		ret.x = (x - ox);
 		ret.y = (y - oy);
 
-		const double temp = (ret.x) * (ret.x) + (ret.y) * (ret.y);
+		const double temp (ret.x * ret.x + ret.y * ret.y);
 		if (limit > temp)
 		{
 			ret.x *= norm;
 			ret.y *= norm;
 			ret.z = std::sqrt(limit - temp) * norm;
-
 			return ret;
 		}
 		else
@@ -143,7 +142,6 @@ struct GlobeStaticData
 			ret.x =
 			ret.y =
 			ret.z = 0.;
-
 			return ret;
 		}
 	}
@@ -159,7 +157,7 @@ struct GlobeStaticData
 				i != 240;
 				++i)
 		{
-			int j = i - 120;
+			int j (i - 120);
 
 			if		(j < -66) j = -16;
 			else if (j < -48) j = -15;
@@ -213,13 +211,12 @@ struct CreateShadow
 			const Cord& sun,
 			const Sint16& noise)
 	{
-		Cord temp = earth;
-		temp -= sun; // diff
-		temp.x *= temp.x; // norm
+		Cord temp (earth);
+		temp -= sun;		// diff
+		temp.x *= temp.x;	// norm
 		temp.y *= temp.y;
 		temp.z *= temp.z;
-		temp.x += temp.z + temp.y;
-		// we have norm of distance between 2 vectors, now stored in 'x'
+		temp.x += temp.z + temp.y; // we have norm of distance between 2 vectors, now stored in 'x'
 
 		temp.x -= 2.;
 		temp.x *= 125.;
@@ -235,7 +232,7 @@ struct CreateShadow
 
 		if (temp.x > 0.)
 		{
-			const Uint8 d = (dest & helper::ColorGroup);
+			const Uint8 d (dest & helper::ColorGroup);
 			Uint8 val;
 
 			if (temp.x > 31.)
@@ -253,7 +250,7 @@ struct CreateShadow
 				if (dest == 0)
 					return val; // this pixel is land
 
-				const Uint8 e = dest + (val / 3);
+				const Uint8 e (dest + (val / 3));
 				if (e > (d + helper::ColorShade))
 					return d + helper::ColorShade;
 
@@ -262,7 +259,7 @@ struct CreateShadow
 		}
 		else
 		{
-			const Uint8 d = (dest & helper::ColorGroup);
+			const Uint8 d (dest & helper::ColorGroup);
 			if (d == Globe::C_OCEAN
 				|| d == Globe::C_OCEAN + 16)
 			{
@@ -401,9 +398,7 @@ Globe::~Globe()
 			i = _cacheLand.begin();
 			i != _cacheLand.end();
 			++i)
-	{
 		delete *i;
-	}
 }
 
 /**
@@ -457,8 +452,8 @@ void Globe::cartToPolar( // Orthographic Projection
 	y -= _cenY;
 
 	const double
-		rho = std::sqrt(static_cast<double>(x * x + y * y)),
-		c = std::asin(rho / static_cast<double>(_radius));
+		rho (std::sqrt(static_cast<double>(x * x + y * y))),
+		c (std::asin(rho / static_cast<double>(_radius)));
 
 	if (AreSame(rho, 0.))
 	{
@@ -494,7 +489,7 @@ bool Globe::pointBack( // private.
 		  + std::sin(_cenLat) * std::sin(lat) < 0.);
 }
 
-/*
+/**
  * Returns latitude of last visible to player point on given longitude.
  * @param lon - longitude of the point
  * @return, longitude of last visible point
@@ -515,10 +510,10 @@ Polygon* Globe::getPolygonAtCoord( // private.
 		double lon,
 		double lat) const
 {
-	const double discard = 0.75f;
+	const double discard (0.75f);
     double
-		cosLat = cos(lat),
-		sinLat = sin(lat);
+		cosLat (cos(lat)),
+		sinLat (sin(lat));
 
 	for (std::list<Polygon*>::const_iterator
 			i = _rules->getPolygons()->begin();
@@ -530,7 +525,7 @@ Polygon* Globe::getPolygonAtCoord( // private.
 			x2,y2,
 			cLat,cLon;
 
-		bool pass = false;
+		bool pass (false);
 		for (size_t
 				j = 0;
 				j != (*i)->getPoints();
@@ -545,7 +540,7 @@ Polygon* Globe::getPolygonAtCoord( // private.
 		if (pass == true) continue;
 
 
-		bool odd = false;
+		bool odd (false);
 
 		cLat = (*i)->getLatitude(0); // initial point
 		cLon = (*i)->getLongitude(0);
@@ -558,7 +553,7 @@ Polygon* Globe::getPolygonAtCoord( // private.
 				j != (*i)->getPoints();
 				++j)
 		{
-			const size_t theSpot = (j + 1) % (*i)->getPoints(); // index of next point in poly
+			const size_t theSpot ((j + 1) % (*i)->getPoints()); // index of next point in poly
 			cLat = (*i)->getLatitude(theSpot);
 			cLon = (*i)->getLongitude(theSpot);
 
@@ -591,15 +586,14 @@ bool Globe::insidePolygon( // private. obsolete, see getPolygonAtCoord()
 		double lat,
 		const Polygon* const poly) const
 {
-	bool backFace = true;
+	bool backFace (true);
 
 	for (size_t
 			i = 0;
 			i != poly->getPoints();
 			++i)
 	{
-		backFace = backFace == true
-				&& pointBack(
+		backFace &= pointBack(
 						poly->getLongitude(i),
 						poly->getLatitude(i)) == true;
 	}
@@ -608,14 +602,14 @@ bool Globe::insidePolygon( // private. obsolete, see getPolygonAtCoord()
 		return false;
 
 
-	bool retOdd = false;
+	bool retOdd (false);
 
 	for (size_t
 			i = 0;
 			i != poly->getPoints();
 			++i)
 	{
-		const size_t j = (i + 1) % poly->getPoints();
+		const size_t j ((i + 1) % poly->getPoints());
 
 //		double x = lon, y = lat, x_i = poly->getLongitude(i), y_i = poly->getLatitude(i), x_j = poly->getLongitude(j), y_j = poly->getLatitude(j);
 		double
@@ -839,7 +833,7 @@ void Globe::zoomOut()
 		setZoom(_zoom - 1);
 }
 
-/*
+/**
  * Zooms the globe out as far as possible.
  *
 void Globe::zoomMin()
@@ -847,7 +841,7 @@ void Globe::zoomMin()
 	if (_zoom > 0) setZoom(0);
 } */
 
-/*
+/**
  * Zooms the globe in as close as possible.
  *
 void Globe::zoomMax()
@@ -861,11 +855,11 @@ void Globe::zoomMax()
  */
 bool Globe::zoomDogfightIn()
 {
-	const size_t dfZoom = _zoomRadii.size() - 1;
+	const size_t dfZoom (_zoomRadii.size() - 1);
 
 	if (_zoom < dfZoom)
 	{
-		const double radius = _radius;
+		const double radius (_radius);
 
 		if (radius + _radiusStep >= _zoomRadii[dfZoom])
 			setZoom(dfZoom);
@@ -877,10 +871,8 @@ bool Globe::zoomDogfightIn()
 			setZoom(_zoom);
 			_radius = radius + _radiusStep;
 		}
-
 		return false;
 	}
-
 	return true;
 }
 
@@ -890,11 +882,11 @@ bool Globe::zoomDogfightIn()
  */
 bool Globe::zoomDogfightOut()
 {
-	const size_t preDfZoom = _game->getSavedGame()->getDfZoom();
+	const size_t preDfZoom (_game->getSavedGame()->getDfZoom());
 
 	if (_zoom > preDfZoom)
 	{
-		const double radius = _radius;
+		const double radius (_radius);
 
 		if (radius - _radiusStep <= _zoomRadii[preDfZoom])
 			setZoom(preDfZoom);
@@ -906,10 +898,8 @@ bool Globe::zoomDogfightOut()
 			setZoom(_zoom);
 			_radius = radius - _radiusStep;
 		}
-
 		return false;
 	}
-
 	return true;
 }
 
@@ -961,21 +951,20 @@ void Globe::toggleRadarLines()
 		case 0:
 			_radarDetail = 1;
 			Options::globeRadarLines = true;
-		break;
+			break;
 
 		case 1:
 			_radarDetail = 2;
-		break;
+			break;
 
 		case 2:
 			_radarDetail = 3;
-		break;
+			break;
 
 		case 3:
 			_radarDetail = 0;
 			Options::globeRadarLines = false;
 	}
-
 	drawRadars();
 }
 
@@ -992,8 +981,8 @@ bool Globe::targetNear( // private.
 		int y) const
 {
 	double
-		lon = target->getLongitude(),
-		lat = target->getLatitude();
+		lon (target->getLongitude()),
+		lat (target->getLatitude());
 
 	if (pointBack(lon,lat) == false)
 	{
@@ -1003,13 +992,12 @@ bool Globe::targetNear( // private.
 		polarToCart(
 				lon,lat,
 				&tx,&ty);
-		int
-			dx = x - tx,
-			dy = y - ty;
+		const int
+			dx (x - tx),
+			dy (y - ty);
 
 		return (dx * dx + dy * dy <= NEAR_RADIUS);
 	}
-
 	return false;
 }
 
@@ -1135,8 +1123,8 @@ void Globe::cache( // private.
 			++i)
 	{
 		double
-			closest = 0.,
-			furthest = 0.,
+			closest (0.),
+			furthest (0.),
 			z;
 
 		for (size_t
@@ -1156,7 +1144,7 @@ void Globe::cache( // private.
 		if (-furthest > closest)
 			continue;
 
-		Polygon* const poly = new Polygon(**i);
+		Polygon* const poly (new Polygon(**i));
 
 		for (size_t
 				j = 0;
@@ -1224,7 +1212,7 @@ void Globe::blink()
 	{
 		_blinkVal = -_blinkVal; // can't use static because, reload.
 
-		const int j = static_cast<int>(_markerSet->getTotalFrames());
+		const int j (static_cast<int>(_markerSet->getTotalFrames()));
 		for (int
 				i = 0;
 				i != j;
@@ -1233,7 +1221,6 @@ void Globe::blink()
 			if (i != GLM_CITY)
 				_markerSet->getFrame(i)->offset(_blinkVal);
 		}
-
 		drawMarkers();
 	}
 }
@@ -1333,8 +1320,8 @@ void Globe::drawBevel()
 {
 	Uint8 p;
 	int
-		w = this->getWidth(),
-		h = this->getHeight();
+		w (this->getWidth()),
+		h (this->getHeight());
 
 	for (int
 			y = 0;
@@ -1374,19 +1361,19 @@ Cord Globe::getSunDirection( // private.
 	if (Options::globeSeasons == true)
 	{
 		const int
-			monthDays1[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365},
-			monthDays2[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366},
+			monthDays1[] {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365},
+			monthDays2[] {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366},
 
-			year = _game->getSavedGame()->getTime()->getYear(),
-			month = _game->getSavedGame()->getTime()->getMonth() - 1,
-			day = _game->getSavedGame()->getTime()->getDay() - 1;
+			year (_game->getSavedGame()->getTime()->getYear()),
+			month (_game->getSavedGame()->getTime()->getMonth() - 1),
+			day (_game->getSavedGame()->getTime()->getDay() - 1);
 
 		const double
-			tm = static_cast<double>( // day fraction is also taken into account
-						(((_game->getSavedGame()->getTime()->getHour() * 60)
+			tm (static_cast<double>( // day fraction is also taken into account
+						(((   _game->getSavedGame()->getTime()->getHour() * 60)
 							+ _game->getSavedGame()->getTime()->getMinute()) * 60)
 							+ _game->getSavedGame()->getTime()->getSecond())
-						/ 86400.;
+						/ 86400.);
 
 		double today;
 		if (year % 4 == 0 // spring equinox (start of astronomic year)
@@ -1407,22 +1394,22 @@ Cord Globe::getSunDirection( // private.
 	else
 		sun = 0.;
 
-	const double rot = _game->getSavedGame()->getTime()->getDaylight() * M_PI * 2.;
-	Cord sun_direction(std::cos(rot + lon), // init.
-					   std::sin(rot + lon) * -std::sin(lat),
-					   std::sin(rot + lon) *  std::cos(lat));
+	const double rot (_game->getSavedGame()->getTime()->getDaylight() * M_PI * 2.);
+	Cord sun_direction (std::cos(rot + lon),
+						std::sin(rot + lon) * -std::sin(lat),
+						std::sin(rot + lon) *  std::cos(lat));
 
 	if (sun > 0)
 		 sun_direction *= 1. - sun;
 	else
 		 sun_direction *= 1. + sun;
 
-	Cord pole (0, // init.
+	Cord pole (0,
 			   std::cos(lat),
 			   std::sin(lat));
 	pole *= sun;
 	sun_direction += pole;
-	double norm = sun_direction.norm();
+	double norm (sun_direction.norm());
 	norm = 1. / norm; // norm should always be greater than 0 here
 	sun_direction *= norm;
 
@@ -1488,8 +1475,8 @@ void Globe::XuLine( // private.
 	bool inv;
 	Uint8 tcol;
 	double
-		delta_x = x2 - x1,
-		delta_y = y2 - y1,
+		delta_x (x2 - x1),
+		delta_y (y2 - y1),
 		len,
 		x0,y0,
 		SX,SY;
@@ -1538,7 +1525,7 @@ void Globe::XuLine( // private.
 				tcol = color; // flight path or craft radar
 			else
 			{
-				const Uint8 colorBlock = (tcol & helper::ColorGroup);
+				const Uint8 colorBlock (tcol & helper::ColorGroup);
 
 				if (colorBlock == C_OCEAN
 					|| colorBlock == C_OCEAN + 16)
@@ -1547,7 +1534,7 @@ void Globe::XuLine( // private.
 				}
 				else // this pixel is land
 				{
-					const Uint8 colorShaded = tcol + static_cast<Uint8>(shade);
+					const Uint8 colorShaded (tcol + static_cast<Uint8>(shade));
 
 					if (colorShaded > colorBlock + helper::ColorShade)
 						tcol = colorBlock + helper::ColorShade;
@@ -1581,7 +1568,7 @@ void Globe::drawRadars()
 	{
 		double range;
 
-		const std::vector<std::string>& facilities = _game->getRuleset()->getBaseFacilitiesList();
+		const std::vector<std::string>& facilities (_game->getRuleset()->getBaseFacilitiesList());
 		for (std::vector<std::string>::const_iterator
 				i = facilities.begin();
 				i != facilities.end();
@@ -1702,8 +1689,8 @@ void Globe::drawGlobeCircle( // private.
 {
 	double
 		x,y,
-		x2 = 0.,
-		y2 = 0.,
+		x2 (0.),
+		y2 (0.),
 		lat1,
 		lon1;
 
@@ -1717,7 +1704,6 @@ void Globe::drawGlobeCircle( // private.
 		lon1 = lon + std::atan2(
 						std::sin(az) * std::sin(radius) * std::cos(lat),
 						std::cos(radius) - std::sin(lat) * std::sin(lat1));
-
 		polarToCart(
 				lon1,lat1,
 				&x,&y);
@@ -1726,7 +1712,6 @@ void Globe::drawGlobeCircle( // private.
 		{
 			x2 = x;
 			y2 = y;
-
 			continue;
 		}
 
@@ -1799,8 +1784,8 @@ void Globe::drawVHLine( // private.
 		Uint8 color)
 {
 	double
-		sx = lon2 - lon1,
-		sy = lat2 - lat1,
+		sx (lon2 - lon1),
+		sy (lat2 - lat1),
 		ln1,lt1,
 		ln2,lt2;
 	Sint16
@@ -1928,7 +1913,7 @@ void Globe::drawDetail()
 
 	if (Options::globeDetail == true)
 	{
-		Text* const label = new Text(100,9);
+		Text* const label (new Text(100,9));
 
 		label->setPalette(getPalette());
 		label->initText(
@@ -2030,7 +2015,6 @@ void Globe::drawDetail()
 				}
 			}
 		}
-
 		delete label;
 	}
 
@@ -2042,9 +2026,9 @@ void Globe::drawDetail()
 	{
 		canSwitchDebugType = true;
 		int
-			cycleCur = _game->getDebugCycle(),
-			area = 0,
-			color = 0;
+			cycleCur (_game->getDebugCycle()),
+			area (0),
+			color (0);
 
 		switch (_debugType)
 		{
@@ -2067,10 +2051,10 @@ void Globe::drawDetail()
 								++j)
 						{
 							const double
-								lon1 = (*i)->getRules()->getLonMin().at(j),
-								lon2 = (*i)->getRules()->getLonMax().at(j),
-								lat1 = (*i)->getRules()->getLatMin().at(j),
-								lat2 = (*i)->getRules()->getLatMax().at(j);
+								lon1 ((*i)->getRules()->getLonMin().at(j)),
+								lon2 ((*i)->getRules()->getLonMax().at(j)),
+								lat1 ((*i)->getRules()->getLatMin().at(j)),
+								lat2 ((*i)->getRules()->getLatMax().at(j));
 
 							drawVHLine(_countries, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
 							drawVHLine(_countries, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
@@ -2110,10 +2094,10 @@ void Globe::drawDetail()
 								++j)
 						{
 							const double
-								lon1 = (*i)->getRules()->getLonMin().at(j),
-								lon2 = (*i)->getRules()->getLonMax().at(j),
-								lat1 = (*i)->getRules()->getLatMin().at(j),
-								lat2 = (*i)->getRules()->getLatMax().at(j);
+								lon1 ((*i)->getRules()->getLonMin().at(j)),
+								lon2 ((*i)->getRules()->getLonMax().at(j)),
+								lat1 ((*i)->getRules()->getLatMin().at(j)),
+								lat2 ((*i)->getRules()->getLatMax().at(j));
 
 							drawVHLine(_countries, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
 							drawVHLine(_countries, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
@@ -2136,7 +2120,7 @@ void Globe::drawDetail()
 
 			case DTG_ZONE:
 			{
-				int limit = 0;
+				int limit (0);
 				for (std::vector<Region*>::const_iterator
 						i = _game->getSavedGame()->getRegions()->begin();
 						i != _game->getSavedGame()->getRegions()->end();
@@ -2160,7 +2144,7 @@ void Globe::drawDetail()
 						++i)
 				{
 					color = -1;
-					int zoneType = 0;
+					int zoneType (0);
 					for (std::vector<MissionZone>::const_iterator
 							j = (*i)->getRules()->getMissionZones().begin();
 							j != (*i)->getRules()->getMissionZones().end();
@@ -2175,10 +2159,10 @@ void Globe::drawDetail()
 									++k)
 							{
 								const double
-									lon1 = (*k).lonMin, // * M_PI / 180.,
-									lon2 = (*k).lonMax, // * M_PI / 180.,
-									lat1 = (*k).latMin, // * M_PI / 180.,
-									lat2 = (*k).latMax; // * M_PI / 180.;
+									lon1 ((*k).lonMin), // * M_PI / 180.,
+									lon2 ((*k).lonMax), // * M_PI / 180.,
+									lat1 ((*k).latMin), // * M_PI / 180.,
+									lat2 ((*k).latMax); // * M_PI / 180.;
 
 								drawVHLine(_countries, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
 								drawVHLine(_countries, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
@@ -2222,7 +2206,6 @@ void Globe::drawDetail()
 
 			case DTG_ZONE:
 				_debugType = DTG_COUNTRY;
-				break;
 		}
 	}
 }
@@ -2291,7 +2274,7 @@ void Globe::drawPath( // private.
 					p2.lat,
 					&x2,&y2);
 
-		if (pointBack(p1.lon, p1.lat) == false
+		if (   pointBack(p1.lon, p1.lat) == false
 			&& pointBack(p2.lon, p2.lat) == false)
 		{
 			XuLine(
@@ -2310,7 +2293,7 @@ void Globe::drawPath( // private.
 }
 
 /**
- * Draws the flight paths of player Craft flying on the globe.
+ * Draws the flight paths of player's Craft flying on the globe.
  */
 void Globe::drawFlights()
 {
@@ -2331,10 +2314,10 @@ void Globe::drawFlights()
 					&& (*j)->getDestination() != nullptr)
 				{
 					const double
-						lon1 = (*j)->getLongitude(),
-						lon2 = (*j)->getDestination()->getLongitude(),
-						lat1 = (*j)->getLatitude(),
-						lat2 = (*j)->getDestination()->getLatitude();
+						lon1 ((*j)->getLongitude()),
+						lon2 ((*j)->getDestination()->getLongitude()),
+						lat1 ((*j)->getLatitude()),
+						lat2 ((*j)->getDestination()->getLatitude());
 					drawPath(
 							_radars,
 							lon1,lat1,
@@ -2358,8 +2341,8 @@ void Globe::drawTarget( // private.
 	if (target->getMarker() != -1)
 	{
 		const double
-			lon = target->getLongitude(),
-			lat = target->getLatitude();
+			lon (target->getLongitude()),
+			lat (target->getLatitude());
 
 		if (pointBack(lon,lat) == false)
 		{
@@ -2369,7 +2352,7 @@ void Globe::drawTarget( // private.
 					lon,lat,
 					&x,&y);
 
-			Surface* const marker = _markerSet->getFrame(target->getMarker());
+			Surface* const marker (_markerSet->getFrame(target->getMarker()));
 			marker->setX(x - 1);
 			marker->setY(y - 1);
 			marker->blit(surface);
@@ -2512,8 +2495,8 @@ void Globe::mouseOver(Action* action, State* state)
 		if (Options::geoDragScrollInvert == true) // scroll. I don't use this
 		{
 			const double
-				newLon = (static_cast<double>(_totalMouseMoveX) / action->getXScale()) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1) / 2.,
-				newLat = (static_cast<double>(_totalMouseMoveY) / action->getYScale()) * ROTATE_LATITUDE / static_cast<double>(_zoom + 1) / 2.;
+				newLon ((static_cast<double>(_totalMouseMoveX) / action->getXScale()) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1) / 2.),
+				newLat ((static_cast<double>(_totalMouseMoveY) / action->getYScale()) * ROTATE_LATITUDE / static_cast<double>(_zoom + 1) / 2.);
 			center(
 				_lonPreMouseScroll + newLon / static_cast<double>(Options::geoScrollSpeed), //kL / 10.0,
 				_latPreMouseScroll + newLat / static_cast<double>(Options::geoScrollSpeed)); //kL / 10.0);
@@ -2521,8 +2504,8 @@ void Globe::mouseOver(Action* action, State* state)
 		else
 		{
 			const double
-				newLon = static_cast<double>(-action->getDetails()->motion.xrel) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1) / 2.,
-				newLat = static_cast<double>(-action->getDetails()->motion.yrel) * ROTATE_LATITUDE / static_cast<double>(_zoom + 1) / 2.;
+				newLon (static_cast<double>(-action->getDetails()->motion.xrel) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1) / 2.),
+				newLat (static_cast<double>(-action->getDetails()->motion.yrel) * ROTATE_LATITUDE / static_cast<double>(_zoom + 1) / 2.);
 			center(
 				_cenLon + newLon / static_cast<double>(Options::geoScrollSpeed), //kL / 10.0,
 				_cenLat + newLat / static_cast<double>(Options::geoScrollSpeed)); //kL / 10.0);
@@ -2723,7 +2706,7 @@ void Globe::getPolygonTextureAndShade(
 		int* shade) const
 {
 	// this is shade conversion from 0..31 levels of geoscape to battlescape levels 0..15
-	const int worldshades[32] =
+	const int worldshades[32]
 	{
 		0, 1, 1, 1, 2, 2, 2, 3,
 		3, 3, 4, 4, 4, 5, 5, 5,
@@ -2737,7 +2720,7 @@ void Globe::getPolygonTextureAndShade(
 													getSunDirection(lon,lat),
 													0)];
 
-	const Polygon* const poly = getPolygonAtCoord(lon,lat);
+	const Polygon* const poly (getPolygonAtCoord(lon,lat));
 	if (poly != nullptr)
 		*texture = poly->getPolyTexture();
 	else
@@ -2755,7 +2738,7 @@ void Globe::getPolygonTexture(
 		double lat,
 		int* texture) const
 {
-	const Polygon* const poly = getPolygonAtCoord(lon,lat);
+	const Polygon* const poly (getPolygonAtCoord(lon,lat));
 	if (poly != nullptr)
 		*texture = poly->getPolyTexture();
 	else
@@ -2774,7 +2757,7 @@ void Globe::getPolygonShade(
 		int* shade) const
 {
 	// this is shade conversion from 0..31 levels of geoscape to battlescape levels 0..15
-	const int worldshades[32] =
+	const int worldshades[32]
 	{
 		0, 1, 1, 1, 2, 2, 2, 3,
 		3, 3, 4, 4, 4, 5, 5, 5,
@@ -2794,8 +2777,8 @@ void Globe::getPolygonShade(
  */
 void Globe::resize()
 {
-	static const size_t SRF = 4;
-	Surface* const surfaces[SRF] =
+	static const size_t SRF (4);
+	Surface* const surfaces[SRF]
 	{
 		this,
 		_markers,
@@ -2804,8 +2787,8 @@ void Globe::resize()
 	};
 
 	const int
-		width = Options::baseXGeoscape - 64, // TODO: '64' should be a constant.
-		height = Options::baseYGeoscape;
+		width (Options::baseXGeoscape - 64), // TODO: '64' should be a constant.
+		height (Options::baseYGeoscape);
 
 	for (size_t
 			i = 0;

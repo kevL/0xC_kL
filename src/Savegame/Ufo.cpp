@@ -189,13 +189,14 @@ void Ufo::load(
 		else
 			_status = FLYING; // <- already done in cTor init.
 	}
-
-	if (   _status != FLYING // safety. Although this should never show up as Destroyed ....
-		&& _status != LANDED
-		&& _status != CRASHED
-		&& _status != DESTROYED)
+	switch (_status) // safety. Although this should never show up as Destroyed ....
 	{
-		_status = FLYING;
+		case FLYING:
+		case LANDED:
+		case CRASHED:
+		case DESTROYED: break;
+		default:
+			_status = FLYING;
 	}
 
 	if (game.getMonthsPassed() != -1)
@@ -211,10 +212,9 @@ void Ufo::load(
 		}
 		_mission = *mission;
 
-		const std::string trjId (node["trajectory"].as<std::string>());
-
-		_trajectory				= rules.getUfoTrajectory(trjId);
-		_trajectoryPoint		= node["trajectoryPoint"]	.as<size_t>(_trajectoryPoint);
+		const std::string trjType (node["trajectory"].as<std::string>()); // TODO: Don't save trajectory-info if UFO has been shot down.
+		_trajectory = rules.getUfoTrajectory(trjType);
+		_trajectoryPoint = node["trajectoryPoint"].as<size_t>(_trajectoryPoint);
 	}
 
 	_fireCountdown		= node["fireCountdown"]		.as<int>(_fireCountdown);
