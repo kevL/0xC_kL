@@ -60,16 +60,16 @@ private:
 	bool
 		_detected,
 		_hyperDetected,
-		_tactical,
-		_processedIntercept;
+		_processedIntercept,
+		_tactical;
 	int
 		_damage,
-		_id,
-		_crashId,
 		_escapeCountdown,
 		_fireCountdown,
 		_hitFrame,
-		_landId,
+		_id,
+		_idCrashed,
+		_idLanded,
 		_secondsLeft,
 		_shootingAt;
 	size_t _trajectoryPoint;

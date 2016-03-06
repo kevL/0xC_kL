@@ -57,8 +57,8 @@ Ufo::Ufo(const RuleUfo* const ufoRule)
 		MovingTarget(),
 		_ufoRule(ufoRule),
 		_id(0),
-		_crashId(0),
-		_landId(0),
+		_idCrashed(0),
+		_idLanded(0),
 		_damage(0),
 		_direction("STR_NORTH"),
 		_altitude("STR_HIGH_UC"),
@@ -78,7 +78,8 @@ Ufo::Ufo(const RuleUfo* const ufoRule)
 {}
 
 /**
- * Make sure our mission forgets us, and we only delete targets we own (waypoints).
+ * Make sure the AlienMission forgets this UFO and delete only owned-Targets, ie.
+ * Waypoints.
  */
 Ufo::~Ufo()
 {
@@ -113,13 +114,12 @@ Ufo::~Ufo()
 
 
 /**
- * Match AlienMission based on the unique ID.
+ * Match AlienMission based on the unique-ID.
  */
 class matchMissionID
 	:
 		public std::unary_function<const AlienMission*, bool>
 {
-
 private:
 	int _id;
 
@@ -152,8 +152,8 @@ void Ufo::load(
 	MovingTarget::load(node);
 
 	_id				= node["id"]			.as<int>(_id);
-	_crashId		= node["crashId"]		.as<int>(_crashId);
-	_landId			= node["landId"]		.as<int>(_landId);
+	_idCrashed		= node["idCrashed"]		.as<int>(_idCrashed);
+	_idLanded		= node["idLanded"]		.as<int>(_idLanded);
 	_damage			= node["damage"]		.as<int>(_damage);
 	_altitude		= node["altitude"]		.as<std::string>(_altitude);
 	_direction		= node["direction"]		.as<std::string>(_direction);
@@ -186,11 +186,17 @@ void Ufo::load(
 			_status = CRASHED;
 		else if (_altitude == "STR_GROUND")
 			_status = LANDED;
-//		else _status = FLYING; // <- done in cTor init.
+		else
+			_status = FLYING; // <- already done in cTor init.
 	}
 
-	if (_status < FLYING || _status > DESTROYED) // safety.	Although this should never show up as Destroyed ....
+	if (   _status != FLYING // safety. Although this should never show up as Destroyed ....
+		&& _status != LANDED
+		&& _status != CRASHED
+		&& _status != DESTROYED)
+	{
 		_status = FLYING;
+	}
 
 	if (game.getMonthsPassed() != -1)
 	{
@@ -203,7 +209,6 @@ void Ufo::load(
 		{
 			throw Exception("Unknown mission, save file is corrupt.");
 		}
-
 		_mission = *mission;
 
 		const std::string trjId (node["trajectory"].as<std::string>());
@@ -232,8 +237,8 @@ YAML::Node Ufo::save(bool skirmish) const
 
 	if (_terrain.empty() == false) node["terrain"] = _terrain;
 
-	if		(_crashId != 0) node["crashId"]	= _crashId;
-	else if	(_landId  != 0) node["landId"]	= _landId;
+	if		(_idCrashed != 0) node["idCrashed"]	= _idCrashed;
+	else if	(_idLanded  != 0) node["idLanded"]	= _idLanded;
 
 	node["altitude"]	= _altitude;
 	node["direction"]	= _direction;
@@ -324,10 +329,10 @@ std::wstring Ufo::getName(const Language* const lang) const
 			return lang->getString("STR_UFO_").arg(_id);
 
 		case LANDED:
-			return lang->getString("STR_LANDING_SITE_").arg(_landId);
+			return lang->getString("STR_LANDING_SITE_").arg(_idLanded);
 
 		case CRASHED:
-			return lang->getString("STR_CRASH_SITE_").arg(_crashId);
+			return lang->getString("STR_CRASH_SITE_").arg(_idCrashed);
 	}
 	return L"";
 }
@@ -360,10 +365,7 @@ int Ufo::getMarker() const
  */
 void Ufo::setUfoDamage(int damage)
 {
-	if (damage < 0)
-		_damage = 0;
-	else
-		_damage = damage;
+	if ((_damage = damage) < 0) _damage = 0;
 
 	if (isDestroyed() == true)
 		_status = DESTROYED;
@@ -785,7 +787,7 @@ size_t Ufo::getShootingAt() const
  */
 void Ufo::setLandId(int id)
 {
-	_landId = id;
+	_idLanded = id;
 }
 
 /**
@@ -794,7 +796,7 @@ void Ufo::setLandId(int id)
  */
 int Ufo::getLandId() const
 {
-	return _landId;
+	return _idLanded;
 }
 
 /**
@@ -803,7 +805,7 @@ int Ufo::getLandId() const
  */
 void Ufo::setCrashId(int id)
 {
-	_crashId = id;
+	_idCrashed = id;
 }
 
 /**
@@ -812,7 +814,7 @@ void Ufo::setCrashId(int id)
  */
 int Ufo::getCrashId() const
 {
-	return _crashId;
+	return _idCrashed;
 }
 
 /**

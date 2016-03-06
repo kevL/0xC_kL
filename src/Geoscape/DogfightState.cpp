@@ -916,6 +916,7 @@ void DogfightState::updateDogfight()
 							if (_ufo->isCrashed() == true)
 							{
 								_ufo->setShotDownByCraftId(_craft->getUniqueId());
+//								_ufo->setDestination(nullptr); // kL
 								_ufo->setSpeed(0);
 								_craft->addKill();
 
@@ -1267,6 +1268,7 @@ void DogfightState::updateDogfight()
 				}
 				else if (_ufo->getCrashId() == 0) // Set up Crash site.
 				{
+					_ufo->setDestination(nullptr); // kL
 					_ufo->setCrashId(_gameSave->getCanonicalId("STR_CRASH_SITE"));
 
 					_ufo->setSecondsLeft(RNG::generate(24,96) * 3600);

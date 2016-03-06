@@ -349,8 +349,8 @@ CraftId Craft::loadId(const YAML::Node& node) // static.
  */
 YAML::Node Craft::saveId() const
 {
-	YAML::Node node (MovingTarget::saveId());
-
+	YAML::Node node; //(MovingTarget::saveId());	// don't need to save Craft's lon/lat
+													// to simply load Soldiers ...
 	node["type"] = _crRule->getType();
 	node["id"]   = _id;
 
