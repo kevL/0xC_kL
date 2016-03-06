@@ -48,7 +48,7 @@ private:
 	bool
 		_initialized,
 		_targetFloor;
-	int _initUnitAnim;
+	int _initUnitAni;
 
 	BattleItem
 		* _ammo,

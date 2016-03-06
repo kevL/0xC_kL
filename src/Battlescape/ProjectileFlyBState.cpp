@@ -78,7 +78,7 @@ ProjectileFlyBState::ProjectileFlyBState(
 		_prjVector(0,0,-1),
 		_initialized(false),
 		_targetFloor(false),
-		_initUnitAnim(0)
+		_initUnitAni(0)
 {
 	if (_posOrigin.z == -1)
 		_posOrigin = action.actor->getPosition();
@@ -677,8 +677,8 @@ void ProjectileFlyBState::think()
 	if (_unit->getUnitStatus() == STATUS_AIMING
 		&& _unit->getArmor()->getShootFrames() != 0)
 	{
-		if (_initUnitAnim == 0)
-			_initUnitAnim = 1;
+		if (_initUnitAni == 0)
+			_initUnitAni = 1;
 
 		_unit->keepAiming();
 
@@ -686,9 +686,9 @@ void ProjectileFlyBState::think()
 			return;
 	}
 
-	if (_initUnitAnim == 1)
+	if (_initUnitAni == 1)
 	{
-		_initUnitAnim = 2;
+		_initUnitAni = 2;
 		_parent->getMap()->showProjectile();
 	}
 
@@ -928,12 +928,6 @@ void ProjectileFlyBState::think()
 					else
 						_parent->getTileEngine()->setTrueTile();
 
-					//Log(LOG_INFO) << "projFlyB think() new ExplosionBState() explVoxel " << _parent->getMap()->getProjectile()->getPosition(trjOffset);
-					//Log(LOG_INFO) << "projFlyB think() trjOffset " << trjOffset;
-					//Log(LOG_INFO) << "projFlyB think() projImpact voxelType " << (int)_prjImpact;
-					//Log(LOG_INFO) << "projFlyB think() explVoxel.x = " << static_cast<float>(_parent->getMap()->getProjectile()->getPosition(trjOffset).x) / 16.f;
-					//Log(LOG_INFO) << "projFlyB think() explVoxel.y = " << static_cast<float>(_parent->getMap()->getProjectile()->getPosition(trjOffset).y) / 16.f;
-					//Log(LOG_INFO) << "projFlyB think() explVoxel.z = " << static_cast<float>(_parent->getMap()->getProjectile()->getPosition(trjOffset).z) / 24.f;
 					_parent->statePushFront(new ExplosionBState(
 															_parent,
 															explVoxel,
@@ -983,7 +977,8 @@ void ProjectileFlyBState::think()
 						}
 					} */
 				}
-				else if (_action.type != BA_AUTOSHOT // prj *is* OUT_OF_BOUNDS ..... final projectile -> stop Aiming here instead of in ExplosionBState.
+
+				if (_action.type != BA_AUTOSHOT
 					|| _action.autoShotCount == _action.weapon->getRules()->getAutoShots()
 					|| _action.weapon->getAmmoItem() == nullptr)
 				{
