@@ -2625,10 +2625,10 @@ void TileEngine::explode(
 									* fireTile (tileStop),
 									* tileBelow (_battleSave->getTile(fireTile->getPosition() + Position(0,0,-1)));
 
-								while (fireTile != nullptr // safety.
-									&& fireTile->getPosition().z > 0
-									&& fireTile->getMapData(O_OBJECT) == nullptr
-									&& fireTile->getMapData(O_FLOOR) == nullptr
+								while (fireTile != nullptr				// safety.
+									&& fireTile->getPosition().z > 0	// safety.
+//									&& fireTile->getMapData(O_OBJECT) == nullptr
+//									&& fireTile->getMapData(O_FLOOR) == nullptr
 									&& fireTile->hasNoFloor(tileBelow) == true)
 								{
 									fireTile = tileBelow;

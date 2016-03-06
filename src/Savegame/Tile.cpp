@@ -349,7 +349,6 @@ int Tile::getTuCostTile(
 				return _parts[partType]->getTuCostPart(moveType);
 		}
 	}
-
 	return 0;
 }
 

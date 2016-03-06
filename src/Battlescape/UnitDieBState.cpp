@@ -345,10 +345,10 @@ void UnitDieBState::convertToBody() // private.
 					tileExpl = tile;
 					tileExplBelow = _battleSave->getTile(tileExpl->getPosition() + Position(0,0,-1));
 
-					while (tileExpl != nullptr // safety.
-						&& tileExpl->getPosition().z > 0
-						&& tileExpl->getMapData(O_OBJECT) == nullptr
-						&& tileExpl->getMapData(O_FLOOR) == nullptr
+					while (tileExpl != nullptr				// safety.
+						&& tileExpl->getPosition().z > 0	// safety.
+//						&& tileExpl->getMapData(O_OBJECT) == nullptr
+//						&& tileExpl->getMapData(O_FLOOR) == nullptr
 						&& tileExpl->hasNoFloor(tileExplBelow) == true)
 					{
 						tileExpl = tileExplBelow;

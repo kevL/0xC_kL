@@ -4153,9 +4153,8 @@ void BattlescapeState::updateExperienceInfo()
 
 	if (_showSoldierData == true)
 	{
-		const BattleUnit* const unit = _battleSave->getSelectedUnit();
-		if (unit != nullptr
-			&& unit->getGeoscapeSoldier() != nullptr)
+		const BattleUnit* const unit (_battleSave->getSelectedUnit());
+		if (unit != nullptr && unit->getGeoscapeSoldier() != nullptr)
 		{
 			if (unit->hasFirstKill() == true)
 				_alienMark->setVisible();
@@ -4171,7 +4170,7 @@ void BattlescapeState::updateExperienceInfo()
 			xpType.push_back(L"d "); // psiStrength defense
 
 			// ... consistent with this
-			const int xp[] =
+			const int xp[]
 			{
 				unit->getExpFiring(),
 				unit->getExpThrowing(),
@@ -4182,6 +4181,7 @@ void BattlescapeState::updateExperienceInfo()
 				unit->getExpPsiStrength()
 			};
 
+			Uint8 color;
 			for (size_t
 					i = 0;
 					i != sizeof(xp) / sizeof(xp[0]);
@@ -4191,15 +4191,15 @@ void BattlescapeState::updateExperienceInfo()
 									2,
 									xpType.at(i).c_str(),
 									Text::intWide(xp[i]).c_str());
+				if (xp[i] != 0)
+				{
+					if		(xp[i] > 10) color = BROWN_L;
+					else if	(xp[i] >  5) color = BROWN;
+					else if	(xp[i] >  2) color = ORANGE;
+					else				 color = GREEN;
 
-				if (xp[i] > 10)
-					_lstSoldierInfo->setCellColor(i, 1, BROWN_L, true);
-				else if (xp[i] > 5)
-					_lstSoldierInfo->setCellColor(i, 1, BROWN, true);
-				else if (xp[i] > 2)
-					_lstSoldierInfo->setCellColor(i, 1, ORANGE, true);
-				else if (xp[i] > 0)
-					_lstSoldierInfo->setCellColor(i, 1, GREEN, true);
+					_lstSoldierInfo->setCellColor(i, 1, color, true);
+				}
 			}
 		}
 	}
@@ -4215,15 +4215,14 @@ void BattlescapeState::updateTileInfo(const Tile* const tile)
 
 	if (tile != nullptr && tile->isRevealed(ST_CONTENT) == true)
 	{
-		size_t rows = 3;
-		int tuCost = 0;
+		size_t rows (3);
+		int tuCost (0);
 
-		const BattleUnit* const unit = _battleSave->getSelectedUnit();
+		const BattleUnit* const unit (_battleSave->getSelectedUnit());
 		if (unit != nullptr
 			&& unit->getFaction() == FACTION_PLAYER)
 		{
 			++rows;
-
 			MovementType mType = unit->getMoveTypeUnit();
 
 			tuCost = tile->getTuCostTile(O_FLOOR, mType)
@@ -4244,7 +4243,7 @@ void BattlescapeState::updateTileInfo(const Tile* const tile)
 		}
 
 
-		const int info[] =
+		const int info[]
 		{
 			static_cast<int>(tile->hasNoFloor(_battleSave->getTile(tile->getPosition() + Position(0,0,-1)))),
 			tile->getSmoke(),
@@ -4259,8 +4258,7 @@ void BattlescapeState::updateTileInfo(const Tile* const tile)
 		infoType.push_back(L"M"); // tuCost
 
 
-		Uint8 color = BLUE; // avoid VC++ linker warning.
-
+		Uint8 color;
 		for (size_t
 				i = 0;
 				i != rows;
@@ -4318,11 +4316,10 @@ void BattlescapeState::updateTileInfo(const Tile* const tile)
 								cost.c_str(),
 								infoType.at(i).c_str());
 			}
+			else
+				break;
 
-			_lstTileInfo->setCellColor(
-									i,0,
-									color,
-									true);
+			_lstTileInfo->setCellColor(i, 0, color, true);
 		}
 	}
 }
