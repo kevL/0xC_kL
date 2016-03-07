@@ -107,11 +107,11 @@ void MiniMapView::draw()
 	InteractiveSurface::draw();
 
 	const int
-		width = getWidth(),
-		height = getHeight(),
-		startX = _camera->getCenterPosition().x - (width / 2 / CELL_WIDTH),
-		startY = _camera->getCenterPosition().y - (height / 2 / CELL_HEIGHT),
-		camera_Z = _camera->getCenterPosition().z;
+		width  (getWidth()),
+		height (getHeight()),
+		startX (_camera->getCenterPosition().x - (width  / 2 / CELL_WIDTH)),
+		startY (_camera->getCenterPosition().y - (height / 2 / CELL_HEIGHT)),
+		camera_Z (_camera->getCenterPosition().z);
 
 	drawRect(
 		0,0,
@@ -134,13 +134,13 @@ void MiniMapView::draw()
 				lvl <= camera_Z;
 				++lvl)
 		{
-			int py = startY;
+			int py (startY);
 			for (int
 					y = Surface::getY();
 					y < height + Surface::getY();
 					y += CELL_HEIGHT)
 			{
-				int px = startX;
+				int px (startX);
 				for (int
 						x = Surface::getX();
 						x < width + Surface::getX();
@@ -211,8 +211,18 @@ void MiniMapView::draw()
 
 							if (tile->getFire() != 0 && tile->isRevealed(ST_CONTENT) == true) // draw fire
 							{
-								srf = _set->getFrame(97); // gravLift = FIRE also. TODO: custom ScanG.
-								srf->blitNShade(this, x,y, _cycle * 2);
+								int fire;
+								switch (_cycle)
+								{
+									default:
+									case 0:
+										fire = 469; // custom scanG's
+										break;
+									case 1:
+										fire = 470;
+								}
+								srf = _set->getFrame(fire);
+								srf->blitNShade(this, x,y);
 							}
 						}
 
@@ -220,29 +230,29 @@ void MiniMapView::draw()
 						if (unit != nullptr && unit->getUnitVisible() == true) // alive visible units
 						{
 							const int
-								armorSize = unit->getArmor()->getSize(),
-								frame = unit->getMiniMapSpriteIndex()
-									  + tile->getPosition().x - unit->getPosition().x
-									  + (tile->getPosition().y - unit->getPosition().y) * armorSize
-									  + _cycle * armorSize * armorSize;
+								armorSize (unit->getArmor()->getSize()),
+								frame (unit->getMiniMapSpriteIndex()
+									 + tile->getPosition().x - unit->getPosition().x
+									 + (tile->getPosition().y - unit->getPosition().y) * armorSize
+									 + _cycle * armorSize * armorSize);
 
 							srf = _set->getFrame(frame);
 
 							if (unit == _battleSave->getSelectedUnit())		// selected unit
 							{
-								colorGroup = 4;								// pale green palette-block
+								colorGroup  = 4;							// pale green palette-block
 								colorOffset = 0;
 							}
 							else if (unit->getFaction() == FACTION_PLAYER	// Mc'd aLien or civie
 								&& unit->isMindControlled() == true)
 							{
-								colorGroup = 11;							// brown palette-block
-								colorOffset = 1;
+								colorGroup  = 11;							// brown palette-block
+								colorOffset =  1;
 							}
 							else if (unit->getFaction() == FACTION_HOSTILE	// Mc'd xCom
 								&& unit->isMindControlled() == true)
 							{
-								colorGroup = 8;								// steel blue palette-block
+								colorGroup  = 8;							// steel blue palette-block
 								colorOffset = 0;
 							}
 							else											// else aLien.
@@ -297,10 +307,10 @@ void MiniMapView::draw()
 
 	// looks like the crosshairs for the MiniMap
 	const Sint16
-		centerX = static_cast<Sint16>(width / 2 + 2),
-		centerY = static_cast<Sint16>(height / 2 + 2),
-		xOffset = static_cast<Sint16>(CELL_WIDTH / 2),
-		yOffset = static_cast<Sint16>(CELL_HEIGHT / 2);
+		centerX (static_cast<Sint16>(width  / 2 + 2)),
+		centerY (static_cast<Sint16>(height / 2 + 2)),
+		xOffset (static_cast<Sint16>(CELL_WIDTH  / 2)),
+		yOffset (static_cast<Sint16>(CELL_HEIGHT / 2));
 
 //	const Uint8 color = static_cast<Uint8>(WHITE + _cycle * 3);
 	drawLine( // top left
@@ -460,8 +470,8 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		const int
-			mX = static_cast<int>(action->getRelativeXMouse() / action->getXScale()),
-			mY = static_cast<int>(action->getRelativeYMouse() / action->getYScale()),
+			mX (static_cast<int>(action->getRelativeXMouse() / action->getXScale())),
+			mY (static_cast<int>(action->getRelativeYMouse() / action->getYScale())),
 			// get offset (in cells) of the click relative to center of screen
 			offsetX = (mX / CELL_WIDTH)  - (_surface->w / 2 / CELL_WIDTH),
 			offsetY = (mY / CELL_HEIGHT) - (_surface->h / 2 / CELL_HEIGHT);
@@ -508,7 +518,6 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 
 			_isMouseScrolled = _isMouseScrolling = false;
 //			stopScrolling(action); // newScroll
-
 			return;
 		}
 
@@ -682,7 +691,7 @@ void MiniMapView::keyboardPress(Action* action, State* state) // private.
 {
 	InteractiveSurface::keyboardPress(action, state);
 
-	static const int scrollSpeed = 1;
+	static const int scrollSpeed (1);
 	switch (action->getDetails()->key.keysym.sym)
 	{
 		case SDLK_LEFT: // hardcoding these ... ->
