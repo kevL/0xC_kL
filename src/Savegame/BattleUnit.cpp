@@ -331,10 +331,10 @@ BattleUnit::BattleUnit(
 
 		_stats(*unitRule->getStats())
 {
-	_isZombie = (_race == "STR_ZOMBIE");
-
 	//Log(LOG_INFO) << "Create BattleUnit 2 : alien ID = " << getId();
 	_stats += *_armor->getStats();
+
+	_isZombie = (_race == "STR_ZOMBIE");
 
 	if (faction == FACTION_HOSTILE)
 	{
@@ -2006,7 +2006,7 @@ int BattleUnit::getActionTu(
 						// (ofc this default is rather meaningless, but there is a point)
 	}
 
-	if (cost > 0
+	if (cost != 0
 		&& ((itRule != nullptr && itRule->getFlatRate() == false) // it's a percentage, apply to TUs
 			|| bat == BA_THROW))
 	{

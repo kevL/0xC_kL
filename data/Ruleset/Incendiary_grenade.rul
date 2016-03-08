@@ -10,6 +10,7 @@ items:
     floorSprite: 416
     handSprite: 416
     fireSoundHit: 5
+    fireHitAni: 0
     power: 83
     damageType: 2
     battleType: 4

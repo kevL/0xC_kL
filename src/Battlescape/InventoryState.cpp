@@ -505,14 +505,12 @@ void InventoryState::init()
 		else
 			_battleSave->selectNextFactionUnit(false,false,true);
 
-		if (_battleSave->getSelectedUnit() == nullptr
-			 || _battleSave->getSelectedUnit()->hasInventory() == false)
+		if ((unit = _battleSave->getSelectedUnit()) == nullptr
+			 || unit->hasInventory() == false)
 		{
 			btnOkClick(nullptr);
 			return; // starting a mission with just vehicles. kL_note: DISALLOWED!!!
 		}
-
-		unit = _battleSave->getSelectedUnit();
 	}
 
 //	if (_parent) _parent->getMap()->getCamera()->centerOnPosition(unit->getPosition(), false);
@@ -548,18 +546,18 @@ void InventoryState::init()
 		SurfaceSet* const srtRank (_game->getResourcePack()->getSurfaceSet("SMOKE.PCK"));
 		srtRank->getFrame(20 + sol->getRank())->blit(_btnRank);
 
-		Surface* gender (nullptr);
+		Surface* srfGender (nullptr);
 		std::string look (sol->getArmor()->getSpriteInventory());
 		switch (sol->getGender())
 		{
 			default:
 			case GENDER_MALE:
-				gender = _game->getResourcePack()->getSurface("GENDER_M");
+				srfGender = _game->getResourcePack()->getSurface("GENDER_M");
 				look += "M";
 				break;
 
 			case GENDER_FEMALE:
-				gender = _game->getResourcePack()->getSurface("GENDER_F");
+				srfGender = _game->getResourcePack()->getSurface("GENDER_F");
 				look += "F";
 		}
 		switch (sol->getLook())
@@ -579,17 +577,17 @@ void InventoryState::init()
 		}
 
 		_game->getResourcePack()->getSurface(look)->blit(_paper);
-		if (gender != nullptr)
-			gender->blit(_gender);
+		if (srfGender != nullptr)
+			srfGender->blit(_gender);
 	}
 	else
 	{
 		Surface* const dolphins (_game->getResourcePack()->getSurface("DOLPHINS"));
 		dolphins->blit(_btnRank);
 
-		Surface* const srfArmor (_game->getResourcePack()->getSurface(unit->getArmor()->getSpriteInventory()));
-		if (srfArmor != nullptr)
-			srfArmor->blit(_paper);
+		Surface* const srfPaper (_game->getResourcePack()->getSurface(unit->getArmor()->getSpriteInventory()));
+		if (srfPaper != nullptr)
+			srfPaper->blit(_paper);
 	}
 
 	updateStats();
@@ -606,8 +604,8 @@ void InventoryState::updateStats() // private.
 
 	if (selUnit->getGeoscapeSoldier() != nullptr)
 	{
-		_numOrder->setValue(selUnit->getBattleOrder());
 		_numOrder->setVisible();
+		_numOrder->setValue(selUnit->getBattleOrder());
 	}
 	else
 		_numOrder->setVisible(false);
@@ -632,7 +630,10 @@ void InventoryState::updateStats() // private.
 	if (_tuMode == true)
 	{
 		if (selUnit->getBattleStats()->throwing != 0)
+		{
+			_txtThrowTU->setVisible();
 			_txtThrowTU->setText(tr("STR_THROW_").arg(selUnit->getActionTu(BA_THROW)));
+		}
 		else
 			_txtThrowTU->setVisible(false);
 

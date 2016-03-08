@@ -437,6 +437,7 @@ items:
     bigSprite: 27 #was 519
     floorSprite: 27 #was 519
     fireSoundHit: 12
+    fireHitAni: 0
     power: 57
     damageType: 2
     battleType: 4
@@ -456,6 +457,7 @@ items:
     bulletSprite: 0
     fireSound: 167
     fireSoundHit: 5
+    fireHitAni: 0
     power: 93
     accuracySnap: 57
     accuracyAimed: 103
@@ -485,6 +487,7 @@ items:
     bigSprite: 521
     floorSprite: 521
     fireSoundHit: 5
+    fireHitAni: 0 # <- change that
     power: 142
     damageType: 1 #AP
     fullClip: 1

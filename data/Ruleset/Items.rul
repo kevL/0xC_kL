@@ -459,6 +459,7 @@ items:
     bigSprite: 16
     floorSprite: 16
     fireSoundHit: 5
+    fireHitAni: 0
     power: 81
     damageType: 3
 #    explosionSpeed:
@@ -475,6 +476,7 @@ items:
     bigSprite: 17
     floorSprite: 17
     fireSoundHit: 5
+    fireHitAni: 0
     power: 98
     damageType: 3
 #    explosionSpeed:
@@ -579,6 +581,7 @@ items:
     bigSprite: 19
     floorSprite: 19
     fireSoundHit: 12
+    fireHitAni: 0
     power: 47
     damageType: 3
     battleType: 4
@@ -592,8 +595,8 @@ items:
     weight: 5
     bigSprite: 519 #org 20
     floorSprite: 519 #org 20
-    fireHitAni: 24
     fireSoundHit: 12
+    fireHitAni: 24
     power: 57
     damageType: 9
     battleType: 4
@@ -608,6 +611,7 @@ items:
     bigSprite: 21
     floorSprite: 21
     fireSoundHit: 12
+    fireHitAni: 0
     power: 69
     damageType: 3
     battleType: 5
@@ -622,6 +626,7 @@ items:
     bigSprite: 22
     floorSprite: 22
     fireSoundHit: 5
+    fireHitAni: 0
     power: 134
     damageType: 3
     battleType: 4
@@ -961,6 +966,7 @@ items:
     bigSprite: 39
     floorSprite: 38
     fireSoundHit: 5
+    fireHitAni: 0
     power: 81
     damageType: 3
     battleType: 4
