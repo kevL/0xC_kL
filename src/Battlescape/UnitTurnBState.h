@@ -42,13 +42,15 @@ private:
 		_chargeTu,
 		_turret;
 
+	int _tu;
+
 	BattleUnit* _unit;
 
 
 	public:
 		/// Creates a new UnitTurnBState class
 		UnitTurnBState(
-				BattlescapeGame* parent,
+				BattlescapeGame* const parent,
 				BattleAction action,
 				bool chargeTu = true);
 		/// Cleans up the UnitTurnBState.

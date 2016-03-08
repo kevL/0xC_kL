@@ -43,14 +43,15 @@ namespace OpenXcom
  * @param chargeTu	- true if there is TU cost, false for reaction fire and panic (default true)
  */
 UnitTurnBState::UnitTurnBState(
-		BattlescapeGame* parent,
+		BattlescapeGame* const parent,
 		BattleAction action,
 		bool chargeTu)
 	:
 		BattleState(parent, action),
-		_chargeTu(chargeTu),
 		_unit(action.actor),
-		_turret(false)
+		_chargeTu(chargeTu),
+		_turret(false),
+		_tu(0)
 {}
 
 /**
@@ -114,6 +115,21 @@ void UnitTurnBState::init()
 		}
 		else
 		{
+			if (_chargeTu == true)					// reaction fire & panic permit free turning
+			{
+				if (_unit->getTurretType() != -1	// if turreted vehicle
+					&& _action.strafe == false		// but not swivelling turret
+					&& _action.targeting == false)	// and not taking a shot at something...
+				{
+					if (_unit->getMoveTypeUnit() == MT_FLY)
+						_tu = 2;					// hover vehicles cost 2 per facing change
+					else
+						_tu = 3;					// large tracked vehicles cost 3 per facing change
+				}
+				else
+					_tu = 1;						// one tu per facing change
+			}
+
 			Uint32 interval;
 			if (_unit->getFaction() == FACTION_PLAYER)
 				interval = _parent->getBattlescapeState()->STATE_INTERVAL_XCOM;
@@ -135,55 +151,42 @@ void UnitTurnBState::init()
  */
 void UnitTurnBState::think()
 {
-	int tu;
-	if (_chargeTu == false)					// reaction fire & panic permit free turning
-		tu = 0;
-	else if (_unit->getTurretType() > -1	// if turreted vehicle
-		&& _action.strafe == false			// but not swivelling turret
-		&& _action.targeting == false)		// and not taking a shot at something...
-	{
-		if (_unit->getMoveTypeUnit() == MT_FLY)
-			tu = 2;							// hover vehicles cost 2 per facing change
-		else
-			tu = 3;							// large tracked vehicles cost 3 per facing change
-	}
-	else
-		tu = 1;								// one tu per facing change
-
 	if (_chargeTu == true
 		&& _action.targeting == false
 		&& _unit->getFaction() != FACTION_PLAYER // <- no Reserve tolerance.
-		&& _parent->checkReservedTu(_unit, tu) == false)
+		&& _parent->checkReservedTu(_unit, _tu) == false)
 	{
 		_unit->setUnitStatus(STATUS_STANDING);
 		_unit->clearTurnDirection();
 		_parent->popState();
 	}
-	else if (_unit->spendTimeUnits(tu) == true)
+	else if (_unit->spendTimeUnits(_tu) == true)
 	{
 		_unit->turn(_turret); // -> STATUS_STANDING if done
 		_unit->clearCache();
 		_parent->getMap()->cacheUnit(_unit);
 
 		const size_t antecedentOpponents (_unit->getHostileUnitsThisTurn().size());
-		const bool newVis (_parent->getTileEngine()->calculateFOV(_unit));
+		const bool spot (_parent->getTileEngine()->calculateFOV(_unit));
 
-		if (_unit->getFaction() == FACTION_PLAYER)
+		if (_chargeTu == true)
 		{
-			if (_chargeTu == true && newVis == true)
+			if (_unit->getFaction() == FACTION_PLAYER)
+			{
+				if (spot == true)
+				{
+					_unit->setUnitStatus(STATUS_STANDING);
+
+					// keep this for Faction_Player only till I figure out the AI better:
+					if (_action.targeting == true)
+						_unit->setStopShot();
+				}
+			}
+			else if (_action.type == BA_NONE
+				&& _unit->getHostileUnitsThisTurn().size() > antecedentOpponents)
 			{
 				_unit->setUnitStatus(STATUS_STANDING);
-
-				// keep this for Faction_Player only till I figure out the AI better:
-				if (_action.targeting == true)
-					_unit->setStopShot();
 			}
-		}
-		else if (_chargeTu == true
-			&& _action.type == BA_NONE
-			&& _unit->getHostileUnitsThisTurn().size() > antecedentOpponents)
-		{
-			_unit->setUnitStatus(STATUS_STANDING);
 		}
 
 		if (_unit->getUnitStatus() == STATUS_STANDING)

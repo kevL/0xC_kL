@@ -1056,10 +1056,10 @@ void BattleUnit::turn(bool turret)
 			_cacheInvalid = true;
 	}
 
-	if (_dirTo == _dir
-		|| (turret == true && _dirToTurret == _dirTurret)
+	if (   (turret == false && _dirTo == _dir)
+		|| (turret == true  && _dirToTurret == _dirTurret)
 		|| _status == STATUS_UNCONSCIOUS)	// -> used when reviving unconscious units;
-	{										// -> they need to go to Status_Standing.
+	{										// -> they need to go to Status_Standing. NOTE: Might not be required ... animo'.
 		_status = STATUS_STANDING;
 	}
 }
