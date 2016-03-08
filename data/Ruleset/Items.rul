@@ -120,7 +120,7 @@ items:
     transferTime: 48
     weight: 0
     fireSoundHit: 5
-#    fireHitAni: 0
+    fireHitAni: 0
     power: 115
     damageType: 3
     fullClip: 1 #kL
@@ -203,7 +203,7 @@ items:
     transferTime: 48
     weight: 0
     fireSoundHit: 5
-#    fireHitAni: 0
+    fireHitAni: 0
     power: 216
     damageType: 3
     fullClip: 1 #kL
@@ -329,7 +329,7 @@ items:
     bigSprite: 13
     floorSprite: 13
     fireSoundHit: 12
-#    fireHitAni: 0
+    fireHitAni: 0
     power: 61
     damageType: 3
     fullClip: 6
@@ -346,7 +346,7 @@ items:
     bigSprite: 14
     floorSprite: 14
     fireSoundHit: 12
-#    fireHitAni: 0
+    fireHitAni: 0
     power: 62
     damageType: 2
     fullClip: 6
@@ -403,7 +403,7 @@ items:
     bigSprite: 9
     floorSprite: 9
     fireSoundHit: 12
-#    fireHitAni: 0
+    fireHitAni: 0
     power: 49
     damageType: 3
     fullClip: 12
@@ -420,7 +420,7 @@ items:
     bigSprite: 10
     floorSprite: 10
     fireSoundHit: 12
-#    fireHitAni: 0
+    fireHitAni: 0
     power: 52
     damageType: 2
     fullClip: 12
@@ -491,7 +491,7 @@ items:
     bigSprite: 18
     floorSprite: 18
     fireSoundHit: 5
-#    fireHitAni: 0
+    fireHitAni: 0
     power: 92
     damageType: 2
 #    explosionSpeed:
@@ -899,7 +899,7 @@ items:
     bigSprite: 36
     floorSprite: 35
     fireSoundHit: 5
-#    fireHitAni: 0
+    fireHitAni: 0
     power: 182
     damageType: 3
     fullClip: 1

@@ -1875,8 +1875,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 			_camera->convertVoxelToScreen(
 									(*i)->getPosition(),
 									&bullet);
-			spriteId = (*i)->getCurrentSprite();
-			if (spriteId > -1)
+			if ((spriteId = (*i)->getCurrentSprite()) > -1)
 			{
 				switch ((*i)->getExplosionType())
 				{

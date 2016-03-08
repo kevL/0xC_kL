@@ -60,7 +60,6 @@ bool Explosion::animate()
 	if (_startDelay == 0)
 	{
 		++_currentAni;
-
 		switch (_type)
 		{
 			case ET_TORCH: // special handling for Fusion Torch - it has 6 frames that cycle 6 times
