@@ -1796,7 +1796,6 @@ void BattleUnit::keepCollapsing()
 		else
 			_status = STATUS_UNCONSCIOUS;
 	}
-
 	_cacheInvalid = true;
 }
 
@@ -4352,12 +4351,12 @@ void BattleUnit::initDeathSpin()
 /**
  * Continues a death spin.
  * _spinPhases:
-				-1 = no spin
-				 0 = start spin
-				 1 = CW spin, 1st rotation
-				 2 = CCW spin, 1st rotation
-				 3 = CW spin, 2nd rotation
-				 4 = CCW spin, 2nd rotation
+ *				-1 = no spin
+ *				 0 = start spin
+ *				 1 = CW spin, 1st rotation
+ *				 2 = CCW spin, 1st rotation
+ *				 3 = CW spin, 2nd rotation
+ *				 4 = CCW spin, 2nd rotation
  */
 void BattleUnit::contDeathSpin()
 {
@@ -4365,19 +4364,25 @@ void BattleUnit::contDeathSpin()
 	if (dir == 3)	// when facing player, 1 rotation left;
 					// unless started facing player, in which case 2 rotations left
 	{
-		if (_spinPhase == 0)		// remove this clause to use only 1 rotation when start faces player.
-			_spinPhase = 2;			// CCW 2 spins.
-		else if (_spinPhase == 1)	// CW rotation
-			_spinPhase = 3;			// CW rotation 2nd
-		else if (_spinPhase == 2)	// CCW rotation
-			_spinPhase = 4;			// CCW rotation 2nd
-		else if (_spinPhase == 3
-			|| _spinPhase == 4)
+		switch (_spinPhase)
 		{
-			 _spinPhase = -1; // end.
-			_status = STATUS_STANDING;
+			case 0:				// remove this clause to use only 1 rotation when start-dir faces player.
+				_spinPhase = 2;	// CCW 2 spins.
+				break;
 
-			 return;
+			case 1:				// CW rotation
+				_spinPhase = 3;	// CW rotation 2nd
+				break;
+
+			case 2:				// CCW rotation
+				_spinPhase = 4;	// CCW rotation 2nd
+				break;
+
+			case 3:				 // end.
+			case 4:
+				 _spinPhase = -1;
+				_status = STATUS_STANDING;
+				 return;
 		}
 	}
 
@@ -4399,18 +4404,15 @@ void BattleUnit::contDeathSpin()
 		}
 	}
 
-	if (_spinPhase == 1
-		|| _spinPhase == 3)
+	switch (_spinPhase)
 	{
-		++dir;
-		if (dir == 8)
-			dir = 0;
-	}
-	else
-	{
-		--dir;
-		if (dir == -1)
-			dir = 7;
+		case 1:
+		case 3:
+			if (++dir == 8) dir = 0;
+			break;
+
+		default:
+			if (--dir == -1) dir = 7;
 	}
 
 	setUnitDirection(dir);

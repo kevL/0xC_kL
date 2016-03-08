@@ -2546,10 +2546,10 @@ void Map::cacheUnit(BattleUnit* const unit)
 		UnitSprite* const sprite (new UnitSprite(width, _spriteHeight));
 		sprite->setPalette(this->getPalette());
 
-		const int armorSize (unit->getArmor()->getSize() * unit->getArmor()->getSize());
+		const int unitSize (unit->getArmor()->getSize() * unit->getArmor()->getSize());
 		for (int
 				quadrant = 0;
-				quadrant != armorSize;
+				quadrant != unitSize;
 				++quadrant)
 		{
 			Surface* cache (unit->getCache(quadrant));
@@ -2587,7 +2587,6 @@ void Map::cacheUnit(BattleUnit* const unit)
 
 			unit->setCache(cache, quadrant);
 		}
-
 		delete sprite;
 	}
 }

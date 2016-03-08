@@ -1006,7 +1006,7 @@ void BattlescapeGame::handleNonTargetAction()
 						showWarning = 2;
 					}
 				}
-			break;
+				break;
 
 			case BA_USE:
 				if (_tacAction.result.empty() == false)
@@ -1016,12 +1016,12 @@ void BattlescapeGame::handleNonTargetAction()
 					_battleSave->reviveUnit(_tacAction.targetUnit);
 					_tacAction.targetUnit = nullptr;
 				}
-			break;
+				break;
 
 			case BA_LAUNCH:
 				if (_tacAction.result.empty() == false)
 					showWarning = 1;
-			break;
+				break;
 
 			case BA_MELEE:
 				if (_tacAction.result.empty() == false)
@@ -1036,19 +1036,21 @@ void BattlescapeGame::handleNonTargetAction()
 					statePushBack(new ProjectileFlyBState(this, _tacAction));
 					return;
 				}
-			break;
+				break;
 
 			case BA_DROP:
 				if (_tacAction.result.empty() == false)
 					showWarning = 1;
 				else
 				{
+					_tacAction.actor->clearCache();
+
 					const Position pos (_tacAction.actor->getPosition());
 					dropItem(_tacAction.weapon, pos, 2);
 					getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)
 										->play(-1, getMap()->getSoundAngle(pos));
 				}
-			break;
+				break;
 
 			case BA_LIQUIDATE:
 				if (_tacAction.result.empty() == false)
