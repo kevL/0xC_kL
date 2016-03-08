@@ -318,7 +318,7 @@ VoxelType Projectile::calculateThrow(double accuracy)
 			{
 				//Log(LOG_INFO) << ". . . NOT outofbounds";
 				const Tile* const tile (_battleSave->getTile(Position::toTileSpace(_trj.back()))); // _trj.at(0)
-//				if (tile != nullptr && tile->getMapData(O_OBJECT) != nullptr) // safety. Should be unnecessary because impactTest=VOXEL_OBJECT ....
+				if (tile != nullptr && tile->getMapData(O_OBJECT) != nullptr) // safety. Should be unnecessary because impactTest=VOXEL_OBJECT ... bzzzttT.
 //					&& tile->getMapData(O_OBJECT)->getTuCostPart(MT_WALK) == 255
 //					&& action.weapon->getRules()->isGrenade() == true)
 				{
@@ -333,10 +333,8 @@ VoxelType Projectile::calculateThrow(double accuracy)
 		}
 		//Log(LOG_INFO) << "ret = " << MapData::debugVoxelType(impactType);
 		//Log(LOG_INFO) << "";
-
 		return impactType;
 	}
-
 	//Log(LOG_INFO) << "ret VOXEL_OUTOFBOUNDS";
 	//Log(LOG_INFO) << "";
 	return VOXEL_OUTOFBOUNDS;
