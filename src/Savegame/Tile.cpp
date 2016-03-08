@@ -353,24 +353,21 @@ int Tile::getTuCostTile(
 }
 
 /**
- * Gets whether this Tile has a floor or not.
- * @note If no tile-part defined as floor then it has no floor.
+ * Checks whether this Tile has a reasonable floor or not.
  * @param tileBelow - the tile below this Tile (default nullptr)
  * @return, true if tile has no floor
  */
 bool Tile::hasNoFloor(const Tile* const tileBelow) const
 {
-	if (tileBelow != nullptr
-		&& tileBelow->getTerrainLevel() == -24)
+	if (_pos.z == 0
+		|| (tileBelow != nullptr
+			&& tileBelow->getTerrainLevel() == -24))
 	{
 		return false;
 	}
 
 	if (_parts[O_FLOOR] != nullptr)
 		return _parts[O_FLOOR]->isNoFloor();
-
-	// NOTE: Technically a bigWallBlock object-part could be a valid floor
-	// but it's also bad form to place an object without a floor in the same Tile.
 
 	return true;
 }

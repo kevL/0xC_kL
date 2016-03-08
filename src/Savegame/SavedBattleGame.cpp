@@ -980,7 +980,7 @@ int SavedBattleGame::getMapSizeZ() const
 }
 
 /**
- * Gets the qty of tiles on the battlefield.
+ * Gets the total quantity of individual Tiles on the battlefield.
  * @return, the total map-size in tiles
  */
 size_t SavedBattleGame::getMapSizeXYZ() const
@@ -1020,8 +1020,8 @@ void SavedBattleGame::tileCoords(
 		int* z) const
 {
 	const int
-		i = static_cast<int>(index),
-		area = _mapsize_x * _mapsize_y;
+		i (static_cast<int>(index)),
+		area (_mapsize_x * _mapsize_y);
 
 	*z =  i / area;
 	*y = (i % area) / _mapsize_x;

@@ -125,7 +125,7 @@ void PathfindingNode::linkNode(
 
 	if (inOpenSet() == false) // otherwise this has been done already
 	{
-		Position pos = target - _pos;
+		Position pos (target - _pos);
 		pos *= pos;
 		_tuGuess = 4 * static_cast<int>(std::ceil(std::sqrt(
 					   static_cast<double>(pos.x + pos.y + pos.z))));

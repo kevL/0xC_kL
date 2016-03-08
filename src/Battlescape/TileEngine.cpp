@@ -2647,8 +2647,8 @@ void TileEngine::explode(
 								{
 									const int powerFire (std::max(1,
 																  static_cast<int>(std::ceil(
-																 (static_cast<double>(_powerE) / static_cast<double>(power)) * 11.))));
-									fireTile->addFire(powerFire + fireTile->getFuel() + 3 / 4);
+																 (static_cast<float>(_powerE) / static_cast<float>(power)) * 10.))));
+									fireTile->addFire(powerFire + fireTile->getFuel() + 2 / 3);
 									fireTile->addSmoke(std::max(
 															powerFire + fireTile->getFuel(),
 															powerFire + ((fireTile->getFlammability() + 9) / 10)));

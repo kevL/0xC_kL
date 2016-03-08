@@ -2712,38 +2712,34 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			else
 				zPath = false;
 
-			if (targetUnit != nullptr
+			if (ctrl == true
+				&& targetUnit != nullptr
 				&& targetUnit == _tacAction.actor
 				&& _tacAction.actor->getArmor()->getSize() == 1)
 			{
-				if (ctrl == true
-					&& (_tacAction.actor->getGeoscapeSoldier() != nullptr
-						|| _tacAction.actor->getUnitRules()->isMechanical() == false))
-				{
-					if (allowPreview == true)
-						pf->clearPreview();
+				if (allowPreview == true)
+					pf->clearPreview();
 
-					Position
-						pxScreen,
-						pxPointer;
+				Position
+					pxScreen,
+					pxPointer;
 
-					getMap()->getCamera()->convertMapToScreen(pos, &pxScreen);
-					pxScreen += getMap()->getCamera()->getMapOffset();
+				getMap()->getCamera()->convertMapToScreen(pos, &pxScreen);
+				pxScreen += getMap()->getCamera()->getMapOffset();
 
-					getMap()->findMousePointer(pxPointer);
+				getMap()->findMousePointer(pxPointer);
 
-					if (pxPointer.x > pxScreen.x + 16)
-						_tacAction.actor->setTurnDirection(-1);
-					else
-						_tacAction.actor->setTurnDirection(+1);
+				if (pxPointer.x > pxScreen.x + 16)
+					_tacAction.actor->setTurnDirection(-1);
+				else
+					_tacAction.actor->setTurnDirection(+1);
 
-					Pathfinding::directionToVector(
-											(_tacAction.actor->getUnitDirection() + 4) % 8,
-											&_tacAction.posTarget);
-					_tacAction.posTarget += pos;
+				Pathfinding::directionToVector(
+										(_tacAction.actor->getUnitDirection() + 4) % 8,
+										&_tacAction.posTarget);
+				_tacAction.posTarget += pos;
 
-					statePushBack(new UnitTurnBState(this, _tacAction));
-				}
+				statePushBack(new UnitTurnBState(this, _tacAction));
 			}
 			else
 			{

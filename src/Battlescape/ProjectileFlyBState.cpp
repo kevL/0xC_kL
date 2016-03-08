@@ -106,7 +106,7 @@ void ProjectileFlyBState::init()
 
 	_unit = _action.actor;
 
-	bool popThis = false;
+	bool popThis (false);
 
 	if (_unit->isOut_t() == true
 		|| _action.weapon == nullptr

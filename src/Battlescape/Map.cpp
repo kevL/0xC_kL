@@ -1772,7 +1772,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 					_camera->convertMapToScreen(posField, &posScreen);
 					posScreen += _camera->getMapOffset();
 
-					if (   posScreen.x > -_spriteWidth // only render pathPreview inside the surface
+					if (   posScreen.x > -_spriteWidth // only render pathPreview inside the screen-surface
 						&& posScreen.x <  _spriteWidth + surface->getWidth()
 						&& posScreen.y > -_spriteHeight
 						&& posScreen.y <  _spriteHeight + surface->getHeight())
@@ -1866,6 +1866,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 			}
 		}
 		else { */
+		int spriteId;
 		for (std::list<Explosion*>::const_iterator
 				i = _explosions.begin();
 				i != _explosions.end();
@@ -1874,13 +1875,13 @@ void Map::drawTerrain(Surface* const surface) // private.
 			_camera->convertVoxelToScreen(
 									(*i)->getPosition(),
 									&bullet);
-
-			if ((*i)->getCurrentSprite() > -1)
+			spriteId = (*i)->getCurrentSprite();
+			if (spriteId > -1)
 			{
 				switch ((*i)->getExplosionType())
 				{
 					case ET_AOE: // Explosions, http://ufopaedia.org/index.php?title=X1.PCK
-						sprite = _res->getSurfaceSet("X1.PCK")->getFrame((*i)->getCurrentSprite());
+						sprite = _res->getSurfaceSet("X1.PCK")->getFrame(spriteId);
 						sprite->blitNShade(
 								surface,
 								bullet.x - (sprite->getWidth() / 2),
@@ -1889,7 +1890,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 					case ET_BULLET: // Bullet-hits, http://ufopaedia.org/index.php?title=SMOKE.PCK
 					case ET_TORCH:
-						sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame((*i)->getCurrentSprite());
+						sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(spriteId);
 						sprite->blitNShade(
 								surface,
 								bullet.x - 15,
@@ -1898,7 +1899,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 					case ET_MELEE_HIT:	// Melee success, http://ufopaedia.org/index.php?title=HIT.PCK
 					case ET_PSI:		// Psiamp strikes
-							sprite = _res->getSurfaceSet("HIT.PCK")->getFrame((*i)->getCurrentSprite());
+							sprite = _res->getSurfaceSet("HIT.PCK")->getFrame(spriteId);
 							sprite->blitNShade(
 									surface,
 									bullet.x - 15,
@@ -1906,7 +1907,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						break;
 
 					case ET_MELEE_ATT: // Melee swing
-							sprite = _res->getSurfaceSet("ClawTooth")->getFrame((*i)->getCurrentSprite());
+							sprite = _res->getSurfaceSet("ClawTooth")->getFrame(spriteId);
 							sprite->blitNShade(
 									surface,
 									bullet.x - 15,

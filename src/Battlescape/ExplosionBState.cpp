@@ -455,15 +455,15 @@ void ExplosionBState::explode() // private.
 	const RuleItem* itRule;
 	if (_item != nullptr)
 	{
-		if (_item->getRules()->getBattleType() == BT_PSIAMP)
+		itRule = _item->getRules();
+		if (itRule->getBattleType() == BT_PSIAMP)
 		{
 			_parent->popState();
 			return;
 		}
-		itRule = _item->getRules();
 	}
 	else
-		itRule = nullptr; // dang vc++ linker warnings.
+		itRule = nullptr;
 
 	// Note: melee Hit success/failure, and hit/miss sound-FX, are determined in ProjectileFlyBState.
 

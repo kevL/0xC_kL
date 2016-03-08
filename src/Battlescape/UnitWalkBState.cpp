@@ -448,7 +448,7 @@ bool UnitWalkBState::doStatusStand() // private.
 		// The TU cost was artificially inflated by 32 points in getTuCostPf
 		// so it has to be deflated again here under the same conditions.
 		// See: Pathfinding::getTuCostPf(), where TU cost was inflated.
-		tuCost -= 32;
+		tuCost -= Pathfinding::TU_FIRE_AVOID;
 	}
 
 	if (_falling == true)
@@ -487,12 +487,13 @@ bool UnitWalkBState::doStatusStand() // private.
 
 	//Log(LOG_INFO) << ". check tuCost + stamina, etc. TU = " << tuCost;
 	//Log(LOG_INFO) << ". unit->TU = " << _unit->getTimeUnits();
+	static const int FAIL (255);
 	if (tuCost - _pf->getOpenDoor() > _unit->getTimeUnits())
 	{
 		//Log(LOG_INFO) << ". . tuCost > _unit->TU()";
 		if (_unit->getFaction() == FACTION_PLAYER
 			&& _parent->playerPanicHandled() == true
-			&& tuTest < 255)
+			&& tuTest < FAIL)
 		{
 			//Log(LOG_INFO) << ". send warning: not enough TU";
 			_action.result = "STR_NOT_ENOUGH_TIME_UNITS";
@@ -606,9 +607,7 @@ bool UnitWalkBState::doStatusStand() // private.
 						&& unitBlock != _unit)
 					|| (unitBlockBelow != nullptr
 						&& unitBlockBelow != _unit
-						&& unitBlockBelow->getHeight(true) - tileBelowDest->getTerrainLevel() > 27)))
-						// 4+ voxels poking into the tile above -- we don't kick people in the head here at XCOM.
-						// kL_note: this appears to be only +2 in Pathfinding....
+						&& unitBlockBelow->getHeight(true) - tileBelowDest->getTerrainLevel() > Pathfinding::CLIP_HEIGHT))) // cf. Pathfinding::getTuCostPf()
 			{
 				//Log(LOG_INFO) << ". . . obstacle(unit) -> abortPath()";
 //				_action.TU = 0;

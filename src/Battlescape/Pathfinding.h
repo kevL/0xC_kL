@@ -104,9 +104,11 @@ private:
 
 	public:
 		static const int
-			TU_INFINITE	= std::numeric_limits<int>::max(),
-			DIR_UP		= 8,
-			DIR_DOWN	= 9;
+			TU_INFINITE		= std::numeric_limits<int>::max(),
+			TU_FIRE_AVOID	= 32,
+			DIR_UP			= 8,
+			DIR_DOWN		= 9,
+			CLIP_HEIGHT		= 26;
 
 		static Uint8
 			red,

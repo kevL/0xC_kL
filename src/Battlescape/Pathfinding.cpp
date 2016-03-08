@@ -27,7 +27,6 @@
 
 #include "../Battlescape/BattlescapeGame.h"
 
-//#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 
 #include "../Ruleset/RuleArmor.h"
@@ -121,7 +120,7 @@ void Pathfinding::setPathingUnit(BattleUnit* const unit)
 void Pathfinding::setMoveType() // private.
 {
 	if ((_mType = _unit->getMoveTypeUnit()) == MT_FLY
-		&& _alt == true // this forces soldiers in flyingsuits to walk on (or fall to) the ground.
+		&& _alt == true // this forces soldiers in flightsuits to walk on (or fall to) the ground.
 		&& _unit->getGeoscapeSoldier() != nullptr)
 	{
 		_mType = MT_WALK;
@@ -191,11 +190,11 @@ void Pathfinding::calculatePath(
 	// kL_note: I really don't care what you're "DONE" with ..... if you're going
 	// to cry like a babby, at least make it humorous -- like
 	// GREAT FLAMING TOADS OF HOLY RABBIT SHIT i can't stand it anymore!!1! PS. fixing out of bounds checks
-	const int armorSize (unit->getArmor()->getSize());
+	const int unitSize (unit->getArmor()->getSize());
 	if (   posStop.x < 0
 		|| posStop.y < 0
-		|| posStop.x > _battleSave->getMapSizeX() - armorSize
-		|| posStop.y > _battleSave->getMapSizeY() - armorSize)
+		|| posStop.x > _battleSave->getMapSizeX() - unitSize
+		|| posStop.y > _battleSave->getMapSizeY() - unitSize)
 	{
 		return;
 	}
@@ -213,13 +212,10 @@ void Pathfinding::calculatePath(
 	if (unit->getFaction() != FACTION_PLAYER)
 		strafeRejected = true;
 
-
-	const Tile* tileStop (_battleSave->getTile(posStop));
-
-	// TODO: Check all quadrants.
 	// NOTE: Is this check even necessary since it's done again below.
-	if (isBlocked(			// check if destination is blocked.
-				tileStop,	// <- note these aren't the actual destTiles yet.
+	const Tile* tileStop (_battleSave->getTile(posStop));
+	if (isBlocked( // TODO: Check all quadrants.
+				tileStop,
 				O_FLOOR,
 				launchTarget) == true
 		|| isBlocked(
@@ -240,25 +236,20 @@ void Pathfinding::calculatePath(
 	{
 		++posStop.z;
 		tileStop = _battleSave->getTile(posStop);
-		//Log(LOG_INFO) << ". raising destTile 1 level, posStop = " << posStop;
 	}
 
-	// Check if there's a floor else lower the destination. This allows click in
-	// the air for non-flyers and they target the ground tile below that tile.
 	if (_mType != MT_FLY)
 	{
-		while (canFallDown(tileStop, armorSize))
+		while (canFallDown(tileStop, unitSize))
 		{
 			--posStop.z;
 			tileStop = _battleSave->getTile(posStop);
-			//Log(LOG_INFO) << ". canFallDown() -1 level, posStop = " << posStop;
 		}
 	}
 
 
-	// TODO: Check all quadrants.
-	if (isBlocked(		// recheck if destination is blocked.
-			tileStop,	// <- these are the actual destTiles.
+	if (isBlocked( // TODO: Check all quadrants.
+			tileStop,
 			O_FLOOR,
 			launchTarget) == false
 		&& isBlocked(
@@ -266,22 +257,22 @@ void Pathfinding::calculatePath(
 				O_OBJECT,
 				launchTarget) == false)
 	{
-		if (armorSize == 2)
+		if (unitSize == 2)
 		{
 			const Tile* tileTest;
 			const BattleUnit* unitTest;
 
-			static const int dir[3] = {4,2,3};
+			static const int dir[3] {4,2,3};
 
 			size_t i (0);
 			for (int
 					x = 0;
-					x < 2;
+					x != 2;
 					++x)
 			{
 				for (int
 						y = 0;
-						y < 2;
+						y != 2;
 						++y)
 				{
 					if (x != 0 || y != 0)
@@ -333,16 +324,13 @@ void Pathfinding::calculatePath(
 			   && Options::battleStrafe == true
 			   && ((_ctrl == true && isMech == false)
 					|| (_alt == true && isMech == true))
-			   && (//posStart.z == posStop.z ||
-					std::abs(
-							(_battleSave->getTile(posStop)->getTerrainLevel() - posStop.z * 24)
-						  - (_battleSave->getTile(posStart)->getTerrainLevel() - posStart.z * 24)) < 9)
+			   && (std::abs(
+						(_battleSave->getTile(posStop)->getTerrainLevel() - posStop.z * 24)
+					  - (_battleSave->getTile(posStart)->getTerrainLevel() - posStart.z * 24)) < 9)
 			   && std::abs(posStop.x - posStart.x) < 2
 			   && std::abs(posStop.y - posStart.y) < 2;
 
-//		if (_pathAction != nullptr) // this is a safety.
 		_pathAction->strafe = _strafe;
-
 
 		const bool sneak (unit->getFaction() == FACTION_HOSTILE
 					   && Options::sneakyAI == true);
@@ -361,7 +349,6 @@ void Pathfinding::calculatePath(
 		else
 		{
 			abortPath();
-
 			if (aStarPath(
 						posStart,
 						posStop,
@@ -381,8 +368,8 @@ void Pathfinding::calculatePath(
 							unit,
 							posStop_cache,
 							maxTuCost,
-							launchTarget,	// <- will be 'nullptr'
-							true);			// <- sets '_strafe' FALSE so loop never gets back in here.
+							nullptr,
+							true); // <- sets '_strafe' FALSE so loop never gets back in here.
 			}
 			else if (Options::battleStrafe == true
 				&& _ctrl == true
@@ -392,23 +379,16 @@ void Pathfinding::calculatePath(
 						&& unit->getUnitDirection() == _path.front())))
 			{
 				_strafe = false;
-
-//				if (_pathAction != nullptr) // this is a safety.
-//				{
 				_pathAction->strafe = false;
 				_pathAction->dash = true;
-				if (_pathAction->actor != nullptr)		// but this sometimes happens via AlienBAIState::setupAmbush() at least
-					_pathAction->actor->setDashing();	// if end turn is done w/out a selected unit. (not sure)
-//				}
+				if (_pathAction->actor != nullptr)
+					_pathAction->actor->setDashing();
 			}
-			else //if (_strafe == false)
+			else
 			{
-//				if (_pathAction != nullptr) // this is a safety.
-//				{
 				_pathAction->dash = false;
-				if (_pathAction->actor != nullptr)			// but this sometimes happens via AlienBAIState::setupAmbush() at least.
-					_pathAction->actor->setDashing(false);	// if end turn is done w/out a selected unit. (for sure)
-//				}
+				if (_pathAction->actor != nullptr)
+					_pathAction->actor->setDashing(false);
 			}
 		}
 	}
@@ -431,16 +411,15 @@ bool Pathfinding::bresenhamPath( // private.
 {
 	//Log(LOG_INFO) << "Pathfinding::bresenhamPath()";
 	static const int
-		DIRZ = 8,
-		stock_xd[DIRZ]	= { 0, 1, 1, 1, 0,-1,-1,-1}, // stock values
-		stock_yd[DIRZ]	= {-1,-1, 0, 1, 1, 1, 0,-1},
-		alt_xd[DIRZ]	= { 0,-1,-1,-1, 0, 1, 1, 1}, // alt values
-		alt_yd[DIRZ]	= { 1, 1, 0,-1,-1,-1, 0, 1};
+		D_TOTAL (8),
+		stock_xd[D_TOTAL]	{ 0, 1, 1, 1, 0,-1,-1,-1}, // stock values
+		stock_yd[D_TOTAL]	{-1,-1, 0, 1, 1, 1, 0,-1},
+		alt_xd[D_TOTAL]		{ 0,-1,-1,-1, 0, 1, 1, 1}, // alt values
+		alt_yd[D_TOTAL]		{ 1, 1, 0,-1,-1,-1, 0, 1};
 
 	int
-		xd[DIRZ],
-		yd[DIRZ];
-
+		xd[D_TOTAL],
+		yd[D_TOTAL];
 	if (_zPath == false)
 	{
 		//std::copy(std::begin(src), std::end(src), std::begin(dest));
@@ -464,10 +443,12 @@ bool Pathfinding::bresenhamPath( // private.
 		cx,cy,cz,
 
 		dir,
-		tuCostLast = -1;
+		tuCostLast (-1);
 
 	Position posLast (origin);
 	Position posNext;
+
+//	_tuCostTotal = 0;
 
 	// start and end points
 	x0 = origin.x; x1 = target.x;
@@ -533,7 +514,7 @@ bool Pathfinding::bresenhamPath( // private.
 			// get direction
 			for (
 					dir = 0;
-					dir != DIRZ;
+					dir != D_TOTAL;
 					++dir)
 			{
 				if (   xd[dir] == cx - posLast.x
@@ -574,6 +555,7 @@ bool Pathfinding::bresenhamPath( // private.
 							launchTarget) == false)
 			{
 				_path.push_back(dir);
+				//Log(LOG_INFO) << ". " << dir;
 			}
 			else
 				return false;
@@ -627,6 +609,8 @@ bool Pathfinding::aStarPath( // private.
 		int maxTuCost,
 		bool sneak)
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "Pathfinding::aStarPath()";
 	for (std::vector<PathfindingNode>::iterator
 			i = _nodes.begin();
 			i != _nodes.end();
@@ -651,6 +635,7 @@ bool Pathfinding::aStarPath( // private.
 	{
 		nodeStart = testNodes.getNode();
 		const Position& posStart (nodeStart->getPosition());
+		//Log(LOG_INFO) << ". posStart " << (nodeStart->getPosition());
 		nodeStart->setChecked();
 
 		if (posStart == posTarget)
@@ -660,6 +645,7 @@ bool Pathfinding::aStarPath( // private.
 			while (nodeStart->getPrevNode() != nullptr)
 			{
 				_path.push_back(nodeStart->getPrevDir());
+				//Log(LOG_INFO) << ". . " << nodeStart->getPrevDir();
 				nodeStart = nodeStart->getPrevNode();
 			}
 
@@ -689,6 +675,7 @@ bool Pathfinding::aStarPath( // private.
 							&posStop,
 							launchTarget,
 							false);
+			//Log(LOG_INFO) << ". dir= " << dir << " tuCost=" << tuCost;
 			if (tuCost < FAIL)
 			{
 				if (sneak == true
@@ -701,6 +688,7 @@ bool Pathfinding::aStarPath( // private.
 				if (nodeStop->getChecked() == false)
 				{
 					_tuCostTotal = tuCost + nodeStart->getTuCostNode(launchTarget != nullptr);
+					//Log(LOG_INFO) << ". tuCostTotal= " << _tuCostTotal;
 
 					if ((nodeStop->inOpenSet() == false
 							|| nodeStop->getTuCostNode(launchTarget != nullptr) > _tuCostTotal)
@@ -848,7 +836,8 @@ int Pathfinding::getTuCostPf(
 		const BattleUnit* const launchTarget,
 		bool bresenh)
 {
-	//Log(LOG_INFO) << "Pathfinding::getTuCostPf() " << _unit->getId();
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "Pathfinding::getTuCostPf()";// << _unit->getId();
 	directionToVector(dir, posStop);
 	*posStop += posStart;
 
@@ -860,8 +849,8 @@ int Pathfinding::getTuCostPf(
 		partsGoingUp		(0),
 		partsGoingDown		(0),
 		partsFalling		(0),
-		partsChangingHeight	(0),
-//		partsOnAir = 0,
+//		partsChangingHeight	(0), // jeez.
+		partsOnAir			(0),
 
 		cost,
 		costTotal (0),
@@ -874,7 +863,7 @@ int Pathfinding::getTuCostPf(
 
 	Tile
 		* tileStart,
-//		* tileStartBelow,
+		* tileStartBelow,
 		* tileStop,
 		* tileStopBelow,
 		* tileStopAbove,
@@ -882,18 +871,20 @@ int Pathfinding::getTuCostPf(
 
 	Position posOffset;
 
-	const int armorSize (_unit->getArmor()->getSize() - 1);
+	const int
+		unitSize (_unit->getArmor()->getSize()),
+		quadrants (unitSize * unitSize);
 	for (int
 			x = 0;
-			x <= armorSize;
+			x != unitSize;
 			++x)
 	{
 		for (int
 				y = 0;
-				y <= armorSize;
+				y != unitSize;
 				++y)
 		{
-			// first, CHECK FOR BLOCKAGE ->> then calc TU cost down below.
+			// first, CHECK FOR BLOCKAGE ->> then calc TU cost after.
 			posOffset = Position(x,y,0);
 
 			tileStart = _battleSave->getTile(posStart + posOffset);
@@ -904,210 +895,166 @@ int Pathfinding::getTuCostPf(
 			if (tileStop == nullptr)
 				return FAIL;
 
-/*			if (_mType != MT_FLY)
+			if (_mType != MT_FLY)
 			{
-				tileStartBelow = _battleSave->getTile(posStart + posOffset + Position(0,0,-1));
-				if (dir == DIR_DOWN)
+				if (x == 0 && y == 0
+					&& canFallDown(
+								tileStart,
+								unitSize) == true)
 				{
+					if (dir != DIR_DOWN)
+						return FAIL;
+
+					++partsOnAir;
+					fall = true;
+				}
+				else
+				{
+					tileStartBelow = _battleSave->getTile(posStart + posOffset + Position(0,0,-1));
 					if (tileStart->hasNoFloor(tileStartBelow) == true)
 					{
-						++partsOnAir;
-						if (partsOnAir == (armorSize + 1) * (armorSize + 1))
+						if (++partsOnAir == quadrants)
+						{
+							if (dir != DIR_DOWN)
+								return FAIL;
+
 							fall = true;
+						}
 					}
 				}
-				else if (tileStart->hasNoFloor(tileStartBelow) == true)
-				{
-					++partsOnAir;
-					if (partsOnAir == (armorSize + 1) * (armorSize + 1))
-						return FAIL; // cannot walk on air
-				}
-			} */
-/*			if (x == 0 && y == 0
-				&& _mType != MT_FLY
-				&& canFallDown(
-							tileStart,
-							armorSize + 1)) // kL_note: keep at it!! You'll get that ego you've been striving so hard for. Try Masonry.
-			{
-				if (direction != DIR_DOWN)
-					return FAIL; // cannot walk on air
+			}
 
-				fall = true;
-			} */ // end Take II ... i still don't trust that crap.
-
-			// don't let tanks phase through doors
-			if (x != 0 && y != 0
+			if (x != 0 && y != 0 // don't let large units phase through doors
 				&& ((tileStop->getMapData(O_NORTHWALL) != nullptr
 						&& tileStop->getMapData(O_NORTHWALL)->isDoor() == true)
 					|| (tileStop->getMapData(O_WESTWALL) != nullptr
 						&& tileStop->getMapData(O_WESTWALL)->isDoor() == true)))
 			{
-				//if (debug) Log(LOG_INFO) << "door bisects";
 				return FAIL;
 			}
 
-			// 'terrainLevel' starts at 0 (floor) and goes up to -24 *cuckoo**
 			if (dir < DIR_UP
-				&& tileStart->getTerrainLevel() > -16) // lower than 2-thirds up.
+				&& tileStart->getTerrainLevel() > -16)
 			{
 				if (isBlockedPath(
 							tileStart,
 							dir,
 							launchTarget) == true)
 				{
-					//if (debug) Log(LOG_INFO) << "too far up[1]";
 					return FAIL;
 				}
 
-				if (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8) // greater than 1/3 step up.
-				{
-					//if (debug) Log(LOG_INFO) << "too far up[2]";
+				if (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8)
 					return FAIL;
-				}
 			}
 
 
-			// this will later be used to re-init the start Tile
-			Position posOffsetVertical (0,0,0);
+			Position posOffsetVertical (0,0,0); // this will later be used to re-init the start Tile
 
 			tileStopBelow = _battleSave->getTile(*posStop + posOffset + Position(0,0,-1)),
 			tileStopAbove = _battleSave->getTile(*posStop + posOffset + Position(0,0, 1));
 
-			// if unit is on stairs try to go up a level
 			if (dir < DIR_UP
 				&& stairs == false
-				&& tileStart->getTerrainLevel() < -15 // higher than 2-thirds up.
+				&& tileStart->getTerrainLevel() < -15
 				&& tileStopAbove->hasNoFloor(tileStop) == false)
 			{
-				++partsGoingUp;
-				//Log(LOG_INFO) << "partsUp = " << partsGoingUp;
-
-				if (partsGoingUp > armorSize)
+				if (++partsGoingUp >= unitSize)
 				{
-					//Log(LOG_INFO) << "partsUp > armorSize";
 					stairs = true;
-
 					++posOffsetVertical.z;
 					++posStop->z;
 					tileStop = _battleSave->getTile(*posStop + posOffset);
-//					tileStopBelow = _battleSave->getTile(*posStop + Position(x,y,-1)); // NOT USED.
 				}
 			}
 			else if (dir < DIR_UP
-				&& fall == false // for safely walking down ramps or stairs ...
+				&& fall == false
 				&& _mType != MT_FLY
 				&& canFallDown(tileStop) == true
 				&& tileStopBelow != nullptr
-				&& tileStopBelow->getTerrainLevel() < -11) // higher than 1-half up.
+				&& tileStopBelow->getTerrainLevel() < -11)
 			{
-				++partsGoingDown;
-				//Log(LOG_INFO) << "partsDown = " << partsGoingDown;
-
-				if (partsGoingDown == (armorSize + 1) * (armorSize + 1))
+				if (++partsGoingDown == quadrants)
 				{
-					//Log(LOG_INFO) << "partsDown == armorSize";
 					fall = true;
-
 					--posStop->z;
 					tileStop = _battleSave->getTile(*posStop + posOffset);
-//					tileStopBelow = _battleSave->getTile(*posStop + Position(x,y,-1)); // NOT USED.
 				}
 			}
 			else if (_mType == MT_FLY
 				&& launchTarget == nullptr // TODO: <-- Think about that.
 				&& tileStopBelow != nullptr
 				&& tileStopBelow->getTileUnit() != nullptr
-				&& tileStopBelow->getTileUnit() != _unit)
+				&& tileStopBelow->getTileUnit() != _unit
+				&& tileStopBelow->getTileUnit()->getHeight(true) - tileStopBelow->getTerrainLevel() > CLIP_HEIGHT) // cf. UnitWalkBState::doStatusStand()
 			{
-				// 2 or more voxels poking into this tile -> no go
-				if (tileStopBelow->getTileUnit()->getHeight(true) - tileStopBelow->getTerrainLevel() > 26)
-				{
-					//if (debug) Log(LOG_INFO) << "head too large";
-					return FAIL;
-				}
-			}
-
-			// this means the destination is probably outside the map
-			if (tileStop == nullptr)
-			{
-				//if (debug) Log(LOG_INFO) << "dest outside Map";
 				return FAIL;
 			}
 
+			if (tileStop == nullptr)
+				return FAIL;
+
 			cost = 0;
 
-			if (dir < DIR_UP)
+			switch (dir)
 			{
-				if (posStop->z == tileStart->getPosition().z)
-				{
-					if (isBlockedPath( // check if path can go this way
-								tileStart,
-								dir,
-								launchTarget) == true)
+				case DIR_UP:
+				case DIR_DOWN:
+					if (fall == false)
 					{
-						//Log(LOG_INFO) << "same Z, blocked, dir = " << dir;
-						return FAIL;
+						if (validateUpDown(
+										posStart + posOffset,
+										dir,
+										launchTarget != nullptr) < 1)
+						{
+							return FAIL;
+						}
+						cost = 8;
 					}
+					break;
 
-					if (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8) // greater than 1/3 step up.
+				default:
+					if (posStop->z == tileStart->getPosition().z)
 					{
-						//if (debug) Log(LOG_INFO) << "same Z too high";
-						return FAIL;
+						if (isBlockedPath(
+									tileStart,
+									dir,
+									launchTarget) == true)
+						{
+							return FAIL;
+						}
+
+						if (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8)
+							return FAIL;
 					}
-				}
-			}
-			else //if (fall == false) // <- this can probly stay <--
-			{
-				if (validateUpDown(
-								posStart + posOffset,
-								dir,
-								launchTarget != nullptr) < 1)
-				{
-					return FAIL;
-				}
-				cost = 8; // vertical movement by flying suit or grav lift (or missile launch...)
 			}
 
-			// check if there's a floor else fall down; for walking off roofs and pathing in mid-air ...
-			if (fall == false
-				&& _mType != MT_FLY
-				&& canFallDown(tileStart) == true)
+			if (_mType != MT_FLY
+				&& dir != DIR_DOWN
+				&& fall == false
+				&& canFallDown(tileStart) == true
+				&& ++partsFalling == quadrants)
 			{
-				++partsFalling;
-
-				if (//dir != DIR_DOWN && // <- this can probly stay <--
-					partsFalling == (armorSize + 1) * (armorSize + 1))
-				{
-//					return false; // <- fuck you.
-//					return FAIL;
-
-					fall = true;
-					*posStop = posStart + Position(0,0,-1);
-					tileStop = _battleSave->getTile(*posStop + posOffset);
-//					tileStopBelow = _battleSave->getTile(*posStop + Position(x,y,-1)); // NOT USED.
-					dir = DIR_DOWN;
-				}
+				dir = DIR_DOWN;
+				fall = true;
+				*posStop = posStart + Position(0,0,-1);
+				tileStop = _battleSave->getTile(*posStop + posOffset);
 			}
 
 			tileStart = _battleSave->getTile(tileStart->getPosition() + posOffsetVertical);
 
-			if (dir < DIR_UP
-				&& partsGoingUp != 0)
+			if (dir < DIR_UP && partsGoingUp != 0)
 			{
 				if (isBlockedPath(
 							tileStart,
 							dir,
 							launchTarget) == true)
 				{
-					//if (debug) Log(LOG_INFO) << "partsUp blocked";
 					return FAIL;
 				}
 
-				if (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8) // greater than 1/3 step up.
-				{
-					//if (debug) Log(LOG_INFO) << "partsUp blocked, too high";
+				if (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8)
 					return FAIL;
-				}
 			}
 
 			if (isBlocked(
@@ -1119,25 +1066,20 @@ int Pathfinding::getTuCostPf(
 							O_OBJECT,
 							launchTarget) == true)
 			{
-				//Log(LOG_INFO) << "just blocked";
 				return FAIL;
 			}
 // CHECK FOR BLOCKAGE_end.
 
 
-			if (launchTarget != nullptr) // if missile GO.
+			if (launchTarget != nullptr)
 				return 0;
 
 
 			// Calculate TU costage ->
 			if (dir < DIR_UP)
 			{
-				// if not fell down and there is no floor can't know the TUs so it defaults to 4
-				if (fall == false
-					&& tileStop->hasNoFloor() == true)
-				{
+				if (fall == false && tileStop->hasNoFloor() == true)
 					cost = 4;
-				}
 				else
 				{
 					cost += tileStop->getTuCostTile(O_FLOOR, _mType);
@@ -1153,14 +1095,13 @@ int Pathfinding::getTuCostPf(
 					}
 				}
 
-				// climbing up a level costs one extra. Not.
 //				if (posOffsetVertical.z > 0) ++cost;
 
 				wallTotal =	// walking over rubble walls
 				wallTu =	// differentiates wall-Total from wall-current and keeps the '_openDoor' value straight
 				edges = 0;	// quantity of walls crossed if moving diagonally
 
-				if (   dir == 7
+				if (   dir == 7 // && !fall
 					|| dir == 0
 					|| dir == 1)
 				{
@@ -1189,7 +1130,6 @@ int Pathfinding::getTuCostPf(
 					|| dir == 3)
 				{
 					//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
-
 					if (tileStart->getPosition().z > tileStop->getPosition().z) // don't count wallCost if it's on the floor below.
 						tileStopTest = _battleSave->getTile(tileStop->getPosition() + Position(0,0,1)); // no safety req'd.
 					else
@@ -1215,7 +1155,6 @@ int Pathfinding::getTuCostPf(
 					|| dir == 5)
 				{
 					//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
-
 					if (tileStart->getPosition().z > tileStop->getPosition().z) // don't count wallCost if it's on the floor below.
 						tileStopTest = _battleSave->getTile(tileStop->getPosition() + Position(0,0,1)); // no safety req'd.
 					else
@@ -1266,8 +1205,7 @@ int Pathfinding::getTuCostPf(
 				{
 					cost = static_cast<int>(static_cast<float>(cost) * 1.5f);
 
-					if (wallTotal > 0
-						&& _openDoor == 0)
+					if (wallTotal > 0 && _openDoor == 0)
 					{
 						if (edges > 0)
 							wallTotal /= edges; // average of the walls crossed
@@ -1286,12 +1224,9 @@ int Pathfinding::getTuCostPf(
 
 			if (tileStop->getFire() != 0)
 			{
-				// TFTD thing: tiles on fire are cost 2 TU more for whatever reason.
-				// kL_note: Let's make it a UFO thing, too.
 				cost += 2;
 				if (_unit->avoidsFire() == true)
-					cost += 32;	// try to find a better path, but don't exclude this path entirely.
-								// See UnitWalkBState::doStatusStand(), where this is subtracted again.
+					cost += TU_FIRE_AVOID;	// cf. UnitWalkBState::doStatusStand() - this gets subtracted.
 			}
 
 			// Propose: if flying then no extra TU cost
@@ -1325,14 +1260,12 @@ int Pathfinding::getTuCostPf(
 					cost += delta;
 				}
 			}
-
 			costTotal += cost;
 		}
 	}
 
-	if (armorSize != 0) // only for Large units ->
+	if (unitSize == 2) // only for Large units ->
 	{
-		//Log(LOG_INFO) << "getTuCostPf() armorSize > 0 " << (*posStop);
 		// - check the path between part 0,0 and part 1,1 at destination position
 		const Tile* const ulTile (_battleSave->getTile(*posStop));
 		if (isBlockedPath(
@@ -1340,7 +1273,6 @@ int Pathfinding::getTuCostPf(
 					3,
 					launchTarget) == true)
 		{
-			//Log(LOG_INFO) << "blocked uL,lR " << (*posStop);
 			return FAIL;
 		}
 
@@ -1351,7 +1283,6 @@ int Pathfinding::getTuCostPf(
 					5,
 					launchTarget) == true)
 		{
-			//Log(LOG_INFO) << "blocked uR,lL " << (*posStop);
 			return FAIL;
 		}
 
@@ -1361,7 +1292,7 @@ int Pathfinding::getTuCostPf(
 				* const lrTile (_battleSave->getTile(*posStop + Position(1,1,0))),
 				* const llTile (_battleSave->getTile(*posStop + Position(0,1,0)));
 			const int
-				levels[4] =
+				levels[4]
 				{
 					ulTile->getTerrainLevel(),
 					urTile->getTerrainLevel(),
@@ -1369,31 +1300,21 @@ int Pathfinding::getTuCostPf(
 					lrTile->getTerrainLevel()
 				},
 
-				minLevel = *std::min_element(levels, levels + 4),
-				maxLevel = *std::max_element(levels, levels + 4);
+				minLevel (*std::min_element(levels, levels + 4)),
+				maxLevel (*std::max_element(levels, levels + 4));
 
 			if (std::abs(maxLevel - minLevel) > 8)
-			{
-				//Log(LOG_INFO) << "blocked by levels " << (*posStop) << " " << std::abs(maxLevel - minLevel);
 				return FAIL;
-			}
 		}
 
-		// If the unit changed level check that there are two parts changing
-		// level so a large unit can not go up a small sized stairs.
-		if (partsChangingHeight == 1)
-		{
-			//Log(LOG_INFO) << "blocked - not enough parts changing level";
-			return FAIL;
-		}
+//		if (partsChangingHeight == 1)
+//			return FAIL;
 
-		costTotal = static_cast<int>(Round(std::ceil( // ok, round those tanks up!
-					static_cast<double>(costTotal) / static_cast<double>((armorSize + 1) * (armorSize + 1)))));
-
-		//Log(LOG_INFO) << ". large unit costTotal = " << costTotal;
+		costTotal = static_cast<int>(Round(std::ceil( // round those tanks up!
+					static_cast<double>(costTotal) / static_cast<double>(quadrants))));
 	} // largeUnits_end.
 
-	//Log(LOG_INFO) << "Pathfinding::getTuCostPf() ret = " << costTotal;
+	//Log(LOG_INFO) << ". costTotal= " << costTotal;
 	return costTotal;
 }
 
@@ -1602,7 +1523,6 @@ bool Pathfinding::isBlockedPath( // public
 				return true;
 			}
 	}
-
 	return false;
 }
 
@@ -1817,18 +1737,18 @@ bool Pathfinding::isBlocked( // private.
 }
 
 /**
- * Marks tiles for the path preview.
+ * Marks Tiles with pathfinding info for the path-preview.
  * @param discard - true removes preview (default false)
  * @return, true if the preview is created or discarded; false if nothing happens
  */
 bool Pathfinding::previewPath(bool discard)
 {
+	//Log(LOG_INFO) << "Pathfinding::previewPath()";
 	if (_path.empty() == true
 		|| (discard == false && _previewed == true))
 	{
 		return false;
 	}
-
 	_previewed = !discard;
 
 
@@ -1849,65 +1769,65 @@ bool Pathfinding::previewPath(bool discard)
 	else
 	{
 		const int
-			armorSize = _unit->getArmor()->getSize() - 1,
-			agility = _unit->getArmor()->getAgility();
+			unitSize (_unit->getArmor()->getSize()),
+			agility (_unit->getArmor()->getAgility());
 		int
-			unitTu = _unit->getTimeUnits(),
-			unitEnergy = _unit->getEnergy(),
+			unitTu (_unit->getTimeUnits()),
+			unitEnergy (_unit->getEnergy()),
 			tuCost,			// cost per tile
-			tuTally = 0,	// only for soldiers reserving TUs
+			tuTally (0),	// only for soldiers reserving TUs
 			energyLimit,
 			dir;
 		bool
-			hathStood = false,
+			hathStood (false),
 			gravLift,
 			reserveOk,
 			falling;
 		Uint8 color;
 
 		Position
-			start = _unit->getPosition(),
-			stop;
+			posStart (_unit->getPosition()),
+			posStop;
 
-/*		bool switchBack;
-		if (_battleSave->getBattleGame()->getReservedAction() == BA_NONE)
-		{
-			switchBack = true;
-			_battleSave->getBattleGame()->setReservedAction(BA_SNAPSHOT);
-		}
-		else
-			switchBack = false; */
+//		bool switchBack;
+//		if (_battleSave->getBattleGame()->getReservedAction() == BA_NONE)
+//		{
+//			switchBack = true;
+//			_battleSave->getBattleGame()->setReservedAction(BA_SNAPSHOT);
+//		}
+//		else switchBack = false;
 
 		Tile* tileAbove;
-		for (std::vector<int>::reverse_iterator
-				i = _path.rbegin();
-				i != _path.rend();
-				++i)
+		for (std::vector<int>::const_reverse_iterator
+				rit = _path.rbegin();
+				rit != _path.rend();
+				++rit)
 		{
-			dir = *i;
-			tuCost = getTuCostPf( // gets tu cost but also gets the destination position.
-							start,
+			dir = *rit;
+			//Log(LOG_INFO) << ". dir= " << dir;
+			tuCost = getTuCostPf( // gets tu-cost but also gets the destination position.
+							posStart,
 							dir,
-							&stop);
+							&posStop);
+			//Log(LOG_INFO) << ". tuCost= " << tuCost;
 
 			energyLimit = unitEnergy;
 
 			falling = _mType != MT_FLY
 				   && canFallDown(
-							_battleSave->getTile(start),
-							armorSize + 1);
+							_battleSave->getTile(posStart),
+							unitSize);
+			//Log(LOG_INFO) << ". falling= " << (int)falling;
 			if (falling == false)
 			{
 				gravLift = dir >= DIR_UP
-						&& _battleSave->getTile(start)->getMapData(O_FLOOR) != nullptr
-						&& _battleSave->getTile(start)->getMapData(O_FLOOR)->isGravLift() == true;
+						&& _battleSave->getTile(posStart)->getMapData(O_FLOOR) != nullptr
+						&& _battleSave->getTile(posStart)->getMapData(O_FLOOR)->isGravLift() == true;
 				if (gravLift == false)
 				{
-					if (hathStood == false
-						&& _unit->isKneeled() == true)
+					if (hathStood == false && _unit->isKneeled() == true)
 					{
 						hathStood = true;
-
 						tuTally += 10;
 						unitTu -= 10; // 10 tu + 3 energy to stand up.
 						unitEnergy -= 3;
@@ -1935,40 +1855,38 @@ bool Pathfinding::previewPath(bool discard)
 			tuTally += tuCost;
 			reserveOk = _battleSave->getBattleGame()->checkReservedTu(_unit, tuTally);
 
-			start = stop;
+			posStart = posStop;
 			for (int
-					x = armorSize;
+					x = unitSize - 1;
 					x != -1;
 					--x)
 			{
 				for (int
-						y = armorSize;
+						y = unitSize - 1;
 						y != -1;
 						--y)
 				{
-					tile = _battleSave->getTile(start + Position(x,y,0));
-					if (i == _path.rend() - 1)
+					tile = _battleSave->getTile(posStart + Position(x,y,0));
+					//Log(LOG_INFO) << ". pos " << (posStart + Position(x,y,0));
+					if (rit == _path.rend() - 1)
 						tile->setPreviewDir(10);
 					else
-						tile->setPreviewDir(*(i + 1)); // next dir
+						tile->setPreviewDir(*(rit + 1)); // next dir
 
-					if ((x != 0 && y != 0)
-						|| armorSize == 0)
-					{
+					if (unitSize == 1 || (x == 1 && y == 1))
 						tile->setPreviewTu(unitTu);
-					}
 
-					tileAbove = _battleSave->getTile(start + Position(x,y,1));
+					tileAbove = _battleSave->getTile(posStart + Position(x,y,1));
 					if (tileAbove != nullptr
 						&& tileAbove->getPreviewDir() == 0
 						&& tuCost == 0
 						&& _mType != MT_FLY) // unit fell down
 					{
+						//Log(LOG_INFO) << ". unit fell down, retroactively set tileAbove's direction " << (posStart + Position(x,y,1));
 						tileAbove->setPreviewDir(DIR_DOWN);	// retroactively set tileAbove's direction
 					}
 
-					if (unitTu > -1
-						&& unitEnergy > -1)
+					if (unitTu > -1 && unitEnergy > -1)
 					{
 						if (reserveOk == true)
 							color = Pathfinding::green;
@@ -1982,11 +1900,9 @@ bool Pathfinding::previewPath(bool discard)
 				}
 			}
 		}
-
 //		if (switchBack == true)
 //			_battleSave->getBattleGame()->setReservedAction(BA_NONE);
 	}
-
 	return true;
 }
 
@@ -2014,23 +1930,24 @@ bool Pathfinding::isPathPreviewed() const
 }
 
 /**
- * Wrapper for canFallDown().
+ * Checks if large units can fall down a level.
+ * @note Wrapper for canFallDown(Tile*).
  * @param tile		- pointer to the current Tile
- * @param armorSize	- the size of the unit
- * @return, true if a unit on @a tile can fall to a lower level
+ * @param unitSize	- the size of the unit
+ * @return, true if a large unit on @a tile can fall to a lower level
  */
 bool Pathfinding::canFallDown( // private
 		const Tile* const tile,
-		int armorSize) const
+		int unitSize) const
 {
 	for (int
 			x = 0;
-			x != armorSize;
+			x != unitSize;
 			++x)
 	{
 		for (int
 				y = 0;
-				y != armorSize;
+				y != unitSize;
 				++y)
 		{
 			if (canFallDown(_battleSave->getTile(tile->getPosition() + Position(x,y,0))) == false)
@@ -2041,17 +1958,12 @@ bool Pathfinding::canFallDown( // private
 }
 
 /**
- * Determines whether a unit can fall down from this tile.
- * True if the current position is higher than 0 (the tileBelow does not exist)
- * or if the tile has no floor (and there is no unit standing below).
- * @param tile - pointer to the current tile
+ * Checks if a unit can fall down a level.
+ * @param tile - pointer to the current Tile
  * @return, true if a unit on @a tile can fall to a lower level
  */
 bool Pathfinding::canFallDown(const Tile* const tile) const // private
 {
-	if (tile->getPosition().z == 0)
-		return false;
-
 	return tile->hasNoFloor(_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
 }
 
