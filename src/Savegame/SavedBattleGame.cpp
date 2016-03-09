@@ -1664,10 +1664,10 @@ void SavedBattleGame::toDeleteItem(BattleItem* const item)
 }
 
 /**
- * Returns a copy of the deleted-items vector.
- * @return, a vector of pointers to deleted BattleItems
+ * Gives access to the deleted-items vector.
+ * @return, const-ref to a vector of pointers to deleted BattleItems
  */
-std::vector<BattleItem*> SavedBattleGame::getDeletedItems() const
+const std::vector<BattleItem*>& SavedBattleGame::getDeletedItems() const
 {
 	return _toDelete;
 }

@@ -1541,8 +1541,8 @@ void DebriefingState::prepareDebriefing() // private.
 
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = _gameSave->getBattleSave()->getDeletedItems().begin();
-			i != _gameSave->getBattleSave()->getDeletedItems().end();
+			i = battleSave->getDeletedItems().begin();
+			i != battleSave->getDeletedItems().end();
 			++i)
 	{
 		if ((*i)->getProperty() == true)

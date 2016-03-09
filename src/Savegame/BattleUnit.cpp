@@ -3986,6 +3986,7 @@ void BattleUnit::putDown()
 	}
 
 	_hasBeenStunned = true;
+	_energy = 0;
 
 	_aboutToFall = false;
 	_hasCried = false;
