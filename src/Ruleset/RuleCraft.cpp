@@ -107,16 +107,13 @@ void RuleCraft::load(
 	_transferTime	= node["transferTime"]	.as<int>(_transferTime);
 	_score			= node["score"]			.as<int>(_score);
 	_spacecraft		= node["spacecraft"]	.as<bool>(_spacecraft);
-
+	_deployment		= node["deployment"]	.as<std::vector<std::vector<int>>>(_deployment);
 
 	if (const YAML::Node& terrain = node["battlescapeTerrainData"])
 	{
 		RuleTerrain* const terrainRule (new RuleTerrain(terrain["terrain"].as<std::string>()));
 		terrainRule->load(terrain, rules);
 		_tacticalTerrainData = terrainRule;
-
-		if (const YAML::Node& deployment = node["deployment"])
-			_deployment = deployment.as<std::vector<std::vector<int>>>(_deployment);
 	}
 
 	_listOrder = node["listOrder"].as<int>(_listOrder);
