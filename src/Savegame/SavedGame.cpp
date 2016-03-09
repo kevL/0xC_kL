@@ -1732,7 +1732,7 @@ void SavedGame::getDependentResearchBasic( // private.
  * research is completed.
  * @note This function checks for fake research.
  * @param dependents	- reference to a vector of pointers to the RuleManufacture's
- * that are now available
+ *						  that are now available
  * @param resRule		- pointer to the RuleResearch that has just been discovered
  */
 void SavedGame::getPopupManufacture(
@@ -1773,7 +1773,6 @@ bool SavedGame::isResearched(const std::string& resType) const
 	{
 		return true;
 	}
-
 	return searchResearch(resType);
 }
 
@@ -1795,7 +1794,6 @@ bool SavedGame::isResearched(const std::vector<std::string>& resTypes) const
 		if (isResearched(*j) == false)
 			return false;
 	}
-
 	return true;
 }
 
@@ -1821,7 +1819,6 @@ Soldier* SavedGame::getSoldier(int id) const
 				return *j;
 		}
 	}
-
 	return nullptr;
 }
 

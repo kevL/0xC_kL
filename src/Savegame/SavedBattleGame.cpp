@@ -1664,7 +1664,7 @@ void SavedBattleGame::toDeleteItem(BattleItem* const item)
 }
 
 /**
- * Gives access to the deleted-items vector.
+ * Gives read-only access to the deleted-items vector.
  * @return, const-ref to a vector of pointers to deleted BattleItems
  */
 const std::vector<BattleItem*>& SavedBattleGame::getDeletedItems() const

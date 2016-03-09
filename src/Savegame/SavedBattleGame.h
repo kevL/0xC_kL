@@ -323,7 +323,7 @@ private:
 
 		/// Removes an item from the game.
 		void toDeleteItem(BattleItem* const item);
-		/// Returns a copy of the deleted-items vector.
+		/// Gives read-only access to the deleted-items vector.
 		const std::vector<BattleItem*>& getDeletedItems() const;
 
 		/// Sets whether the mission was aborted.

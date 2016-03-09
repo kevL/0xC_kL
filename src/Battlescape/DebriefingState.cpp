@@ -1546,26 +1546,31 @@ void DebriefingState::prepareDebriefing() // private.
 			++i)
 	{
 		if ((*i)->getProperty() == true)
-			++_itemsLostProperty[(*i)->getRules()];
+		{
+			if (_itemsGained.find(itRule = (*i)->getRules()) == _itemsGained.end())
+				++_itemsLostProperty[itRule];
+			else if (--_itemsGained[itRule] == 0)	// NOTE: '_itemsGained' shall never contain clips - vid. recoverItems()
+				_itemsGained.erase(itRule);			// ... clips handled immediately below_
+		}											// TODO: Extensive testing on item-gains/losses ....
 	}
 
 	int
 		qtyFullClip,
 		clipsTotal;
 	for (std::map<const RuleItem*, int>::const_iterator
-			i = _clips.begin();
-			i != _clips.end();
+			i = _clips.begin();	// '_clips' is a tally of both xcomProperty + found clips
+			i != _clips.end();	// so '_clipsProperty' needs to be subtracted to find clipsGained.
 			++i)
 	{
 		if ((qtyFullClip = i->first->getFullClip()) != 0) // safety.
 		{
 			clipsTotal = i->second / qtyFullClip;
-			if (clipsTotal == 0)
+			if (clipsTotal == 0)	// all clips-of-type are lost, including those brought on the mission
 			{
-				if (i->second != 0)
+				if (i->second != 0)	// and if there's a partial clip, that needs to be added to the lost-vector too.
 					++_itemsLostProperty[i->first];
 			}
-			else
+			else // clips were found whether xcomProperty or not. Add them to Base-stores!
 			{
 				_itemsLostProperty.erase(i->first);
 
@@ -1576,11 +1581,13 @@ void DebriefingState::prepareDebriefing() // private.
 				else
 					roundsProperty = 0;
 
-				_itemsGained[i->first] = (i->second - roundsProperty) / qtyFullClip;
+				int clipsGained ((i->second - roundsProperty) / qtyFullClip);
+				if (clipsGained != 0)
+					_itemsGained[i->first] = clipsGained;		// these clips are over & above those brought as xcomProperty.
 
 				_base->getStorageItems()->addItem(
 												i->first->getType(),
-												clipsTotal);
+												clipsTotal);	// these clips include both xcomProperty and found clips.
 			}
 		}
 	}
@@ -1838,51 +1845,51 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 				switch (itRule->getBattleType()) // put items back in the Base
 				{
 					case BT_CORPSE:
-					{
-						BattleUnit* const unit ((*i)->getUnit());
-						if (unit != nullptr)
 						{
-							if (itRule->isRecoverable() == true
-								&& (unit->getUnitStatus() == STATUS_DEAD
-									|| (unit->getUnitStatus() == STATUS_LIMBO // kL_tentative.
-										&& unit->isOut_t(OUT_HEALTH) == true)))
+							BattleUnit* const unit ((*i)->getUnit());
+							if (unit != nullptr)
 							{
-								//Log(LOG_INFO) << ". . corpse = " << type << " id-" << unit->getId();
-								addStat(
-									"STR_ALIEN_CORPSES_RECOVERED",
-									unit->getValue() / 3); // TODO: This should rather be the 'recoveryPoints' of the corpse-item!
-
-								std::string corpse (unit->getArmor()->getCorpseGeoscape());
-								if (corpse.empty() == false) // safety.
+								if (itRule->isRecoverable() == true
+									&& (unit->getUnitStatus() == STATUS_DEAD
+										|| (unit->getUnitStatus() == STATUS_LIMBO // kL_tentative.
+											&& unit->isOut_t(OUT_HEALTH) == true)))
 								{
-									_base->getStorageItems()->addItem(corpse);
-									++_itemsGained[itRule];
+									//Log(LOG_INFO) << ". . corpse = " << type << " id-" << unit->getId();
+									addStat(
+										"STR_ALIEN_CORPSES_RECOVERED",
+										unit->getValue() / 3); // TODO: This should rather be the 'recoveryPoints' of the corpse-item!
+
+									std::string corpse (unit->getArmor()->getCorpseGeoscape());
+									if (corpse.empty() == false) // safety.
+									{
+										_base->getStorageItems()->addItem(corpse);
+										++_itemsGained[itRule];
+									}
 								}
-							}
-							else if (unit->getUnitStatus() == STATUS_UNCONSCIOUS
-								|| (unit->getUnitStatus() == STATUS_LIMBO
-									&& unit->isOut_t(OUT_STUNNED) == true)) // kL_tentative.
-							{
-								switch (unit->getOriginalFaction()) // TODO: Add captured alien-types to a DebriefExtra screen.
+								else if (unit->getUnitStatus() == STATUS_UNCONSCIOUS
+									|| (unit->getUnitStatus() == STATUS_LIMBO
+										&& unit->isOut_t(OUT_STUNNED) == true)) // kL_tentative.
 								{
-									case FACTION_HOSTILE:
-										if (itRule->isRecoverable() == true)
-										{
-											++_aliensStunned; // for Nike Cross determination.
-											recoverLiveAlien(unit);
-										}
-										break;
+									switch (unit->getOriginalFaction()) // TODO: Add captured alien-types to a DebriefExtra screen.
+									{
+										case FACTION_HOSTILE:
+											if (itRule->isRecoverable() == true)
+											{
+												++_aliensStunned; // for Nike Cross determination.
+												recoverLiveAlien(unit);
+											}
+											break;
 
-									case FACTION_NEUTRAL:
-										//Log(LOG_INFO) << ". . unconsciousCivie = " << type;
-										addStat(
-											"STR_CIVILIANS_SAVED",
-											unit->getValue()); // duplicated above.
+										case FACTION_NEUTRAL:
+											//Log(LOG_INFO) << ". . unconsciousCivie = " << type;
+											addStat(
+												"STR_CIVILIANS_SAVED",
+												unit->getValue()); // duplicated above.
+									}
 								}
 							}
 						}
 						break;
-					}
 
 					case BT_AMMO:
 						if (itRule->isRecoverable() == true)

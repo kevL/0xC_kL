@@ -53,12 +53,12 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Manage Alien Containment screen.
- * @param base		- pointer to the base to get info from
+ * Initializes all the elements in the AlienContainment screen.
+ * @param base		- pointer to the Base to get info from
  * @param origin	- game section that originated this state
  */
 AlienContainmentState::AlienContainmentState(
-		Base* base,
+		Base* const base,
 		OptionsOrigin origin)
 	:
 		_base(base),
@@ -166,9 +166,6 @@ AlienContainmentState::AlienContainmentState(
 
 	const RuleItem* itRule;
 	std::string type;
-	int qtyAliens;
-	size_t row (0);
-	Uint8 color;
 
 	std::vector<std::string> interrogations;
 	for (std::vector<ResearchProject*>::const_iterator
@@ -184,15 +181,16 @@ AlienContainmentState::AlienContainmentState(
 		}
 	}
 
-	if (interrogations.empty() == false)
-		_txtInResearch->setVisible();
-	else
+	if (interrogations.empty() == true)
 		_txtInResearch->setVisible(false);
 
-	const std::vector<std::string>& itemList (_game->getRuleset()->getItemsList());
+	int qtyAliens;
+	size_t row (0);
+
+	const std::vector<std::string>& allItems (_game->getRuleset()->getItemsList());
 	for (std::vector<std::string>::const_iterator
-			i = itemList.begin();
-			i != itemList.end();
+			i = allItems.begin();
+			i != allItems.end();
 			++i)
 	{
 		itRule = _game->getRuleset()->getItemRule(*i);
@@ -223,11 +221,9 @@ AlienContainmentState::AlienContainmentState(
 								rpQty.c_str());
 
 				if (_game->getSavedGame()->isResearched(itRule->getType()) == false)
-					color = YELLOW;
-				else
-					color = _lstAliens->getColor();
+					_lstAliens->setRowColor(row, YELLOW);
 
-				_lstAliens->setRowColor(row++, color);
+				++row;
 			}
 		}
 	}
@@ -485,8 +481,8 @@ void AlienContainmentState::update() // private.
 						.arg(_usedSpace - _fishFood)
 						.arg(freeSpace));
 
-	_btnCancel->setVisible(_totalSpace < _usedSpace);
 	_btnOk->setVisible(_fishFood > 0 && freeSpace > -1);
+	_btnCancel->setVisible(_totalSpace - _usedSpace > -1);
 }
 
 /**

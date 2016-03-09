@@ -66,6 +66,7 @@ private:
 
 	Text
 		* _txtBaseLabel,
+		* _txtGainLoss,
 		* _txtTitle;
 	TextButton* _btnOk;
 	TextList

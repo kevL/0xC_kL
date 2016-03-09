@@ -40,8 +40,7 @@ class Window;
 
 
 /**
- * ManageAlienContainment screen that lets the player manage aLiens in a
- * particular base.
+ * AlienContainment screen that lets the player manage aLiens in a particular base.
  */
 class AlienContainmentState
 	:
@@ -88,11 +87,11 @@ private:
 
 
 	public:
-		/// Creates the ManageAlienContainment state.
+		/// Creates the AlienContainment state.
 		AlienContainmentState(
-				Base* base,
+				Base* const base,
 				OptionsOrigin origin);
-		/// Cleans up the ManageAlienContainment state.
+		/// Cleans up the AlienContainment state.
 		~AlienContainmentState();
 
 		/// Runs the timers.

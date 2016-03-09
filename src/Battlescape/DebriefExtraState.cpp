@@ -61,8 +61,9 @@ DebriefExtraState::DebriefExtraState(
 {
 	_window			= new Window(this, 320, 200);
 
-	_txtTitle		= new Text(280, 16, 16, 8);
-	_txtBaseLabel	= new Text( 80,  9, 16, 8);
+	_txtTitle		= new Text(280, 16,  16, 8);
+	_txtBaseLabel	= new Text( 80,  9,  16, 8);
+	_txtGainLoss	= new Text( 80,  9, 224, 8);
 
 	_lstSolStats	= new TextList(285, 145, 16, 32);
 	_lstGained		= new TextList(285, 145, 16, 32);
@@ -75,6 +76,7 @@ DebriefExtraState::DebriefExtraState(
 	add(_window,		"window",	"debriefing");
 	add(_txtTitle,		"heading",	"debriefing");
 	add(_txtBaseLabel,	"text",		"debriefing");
+	add(_txtGainLoss,	"text",		"debriefing");
 	add(_lstSolStats,	"list",		"debriefing");
 	add(_lstGained,		"list",		"cannotReequip");
 	add(_lstLost,		"list",		"debriefing");
@@ -102,6 +104,9 @@ DebriefExtraState::DebriefExtraState(
 	_txtTitle->setBig();
 
 	_txtBaseLabel->setText(base->getName());
+
+	_txtGainLoss->setText(L"stats");
+	_txtGainLoss->setAlign(ALIGN_RIGHT);
 
 	_lstSolStats->setColumns(12, 90,17,17,17,17,17,17,17,17,17,17,17);
 	_lstSolStats->setBackground(_window);
@@ -141,6 +146,7 @@ void DebriefExtraState::btnOkClick(Action*)
 			if (_itemsGained.empty() == false)
 			{
 				_curScreen = DES_LOOT_GAINED;
+				_txtGainLoss->setText(L"gains");
 				_lstGained->scrollTo();
 				_lstGained->setVisible();
 				break;
@@ -151,6 +157,7 @@ void DebriefExtraState::btnOkClick(Action*)
 			if (_itemsLost.empty() == false)
 			{
 				_curScreen = DES_LOOT_LOST;
+				_txtGainLoss->setText(L"losses");
 				_lstLost->scrollTo();
 				_lstLost->setVisible();
 				break;
@@ -190,16 +197,16 @@ void DebriefExtraState::buildSoldierStats() // private.
 		_lstSolStats->addRow(
 						12,
 						i->first.c_str(),
-						i->second[0]  ? Text::intWide(i->second[0]).c_str()  : L"",
-						i->second[1]  ? Text::intWide(i->second[1]).c_str()  : L"",
-						i->second[2]  ? Text::intWide(i->second[2]).c_str()  : L"",
-						i->second[3]  ? Text::intWide(i->second[3]).c_str()  : L"",
-						i->second[4]  ? Text::intWide(i->second[4]).c_str()  : L"",
-						i->second[5]  ? Text::intWide(i->second[5]).c_str()  : L"",
-						i->second[6]  ? Text::intWide(i->second[6]).c_str()  : L"",
-						i->second[7]  ? Text::intWide(i->second[7]).c_str()  : L"",
-						i->second[8]  ? Text::intWide(i->second[8]).c_str()  : L"",
-						i->second[9]  ? Text::intWide(i->second[9]).c_str()  : L"",
+						i->second[ 0] ? Text::intWide(i->second[ 0]).c_str() : L"",
+						i->second[ 1] ? Text::intWide(i->second[ 1]).c_str() : L"",
+						i->second[ 2] ? Text::intWide(i->second[ 2]).c_str() : L"",
+						i->second[ 3] ? Text::intWide(i->second[ 3]).c_str() : L"",
+						i->second[ 4] ? Text::intWide(i->second[ 4]).c_str() : L"",
+						i->second[ 5] ? Text::intWide(i->second[ 5]).c_str() : L"",
+						i->second[ 6] ? Text::intWide(i->second[ 6]).c_str() : L"",
+						i->second[ 7] ? Text::intWide(i->second[ 7]).c_str() : L"",
+						i->second[ 8] ? Text::intWide(i->second[ 8]).c_str() : L"",
+						i->second[ 9] ? Text::intWide(i->second[ 9]).c_str() : L"",
 						i->second[10] ? Text::intWide(i->second[10]).c_str() : L"");
 		_lstSolStats->setRowColor(row, YELLOW);
 	}
@@ -208,7 +215,7 @@ void DebriefExtraState::buildSoldierStats() // private.
 /**
  * Formats mapped input to a TextList.
  * @param input	- reference to the mapped-input of pointers-to-RuleItems & quantities
- * @param list	- pointer to a 2-column TextList to format
+ * @param list	- pointer to a 2-column TextList to format w/ data
  */
 void DebriefExtraState::styleList( // private.
 		const std::map<const RuleItem*, int>& input,
