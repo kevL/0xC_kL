@@ -16,7 +16,7 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     transferTime: 72
     score: 250
     battlescapeTerrainData:
-      name: PLANE
+      terrain: PLANE
       mapDataSets:
         - BLANKS
         - PLANE
@@ -75,7 +75,7 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     reconRange: 1200
     score: 375
     battlescapeTerrainData:
-      name: LIGHTNIN
+      terrain: LIGHTNIN
       mapDataSets:
         - BLANKS
         - LIGHTNIN
@@ -118,7 +118,7 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     score: 475
     spacecraft: true
     battlescapeTerrainData:
-      name: AVENGER
+      terrain: AVENGER
       mapDataSets:
         - BLANKS
         - AVENGER

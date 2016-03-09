@@ -465,14 +465,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 						if (preBattle == true
 							|| _battleSave->getBattleGame()->playerPanicHandled() == true) // spot units ->>
 						{
-							spottedUnit = _battleSave->getTile(posTest)->getTileUnit();
-//							if (spottedUnit != nullptr)
-//								Log(LOG_INFO) << "CalcFoV for " << unit->getId()
-//											  << " - unit on Tile id-" << spottedUnit->getId()
-//											  << " " << spottedUnit->getPosition()
-//											  << " vis = " << visible(unit, _battleSave->getTile(posTest));
-
-							if (spottedUnit != nullptr
+							if ((spottedUnit = _battleSave->getTile(posTest)->getTileUnit()) != nullptr
 								&& spottedUnit->isOut_t(OUT_STAT) == false
 								&& visible(
 										unit,
@@ -518,8 +511,8 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 									unit->addToHostileUnits(spottedUnit);
 //									unit->addToVisibleTiles(spottedUnit->getTile());
 
-									if (_battleSave->getSide() == FACTION_HOSTILE
-										&& unit->getFaction() == FACTION_HOSTILE)
+									if (unit->getFaction() == FACTION_HOSTILE
+										&& _battleSave->getSide() == FACTION_HOSTILE)
 									{
 										//Log(LOG_INFO) << "calculateFOV() id " << unit->getId() << " spots " << spottedUnit->getId();
 										spottedUnit->setExposed();	// note that xCom agents can be seen by enemies but *not* become Exposed.
@@ -552,12 +545,12 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 															size_y,
 															0);
 									blockType = plotLine(
-													pos,
-													posTest,
-													true,
-													&trj,
-													unit,
-													false);
+														pos,
+														posTest,
+														true,
+														&trj,
+														unit,
+														false);
 
 									trjLength = trj.size();
 
@@ -565,8 +558,18 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 //									if (blockType > 0)		// kL: -1 - do NOT crop trajectory (ie. hit content-object)
 															//		0 - expose Tile (should never return this, unless out-of-bounds)
 															//		1 - crop the trajectory (hit regular wall)
-									if (blockType > VOXEL_FLOOR) // 0
-										--trjLength;
+
+//									if (blockType > VOXEL_FLOOR) // 0
+									switch (blockType)
+									{
+										//VOXEL_FLOOR			//  0
+										case VOXEL_WESTWALL:	//  1
+										case VOXEL_NORTHWALL:	//  2
+										case VOXEL_OBJECT:		//  3
+										case VOXEL_UNIT:		//  4
+										case VOXEL_OUTOFBOUNDS:	//  5
+											--trjLength;
+									}
 
 									for (size_t
 											i = 0;

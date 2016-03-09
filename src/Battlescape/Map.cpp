@@ -875,7 +875,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								&& (_tile->getMapData(O_WESTWALL)->isDoor() == true
 									|| _tile->getMapData(O_WESTWALL)->isUfoDoor() == true))
 							{
-								shade = std::min(9, _tile->getShade());
+								shade = std::min(6, _tile->getShade());
 							}
 							else
 								shade = tileShade;
@@ -895,7 +895,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								&& (_tile->getMapData(O_NORTHWALL)->isDoor() == true
 									|| _tile->getMapData(O_NORTHWALL)->isUfoDoor() == true))
 							{
-								shade = std::min(9, _tile->getShade());
+								shade = std::min(6, _tile->getShade());
 							}
 							else
 								shade = tileShade;
@@ -1132,38 +1132,38 @@ void Map::drawTerrain(Surface* const surface) // private.
 							{
 								case 0:
 								case 4:
-								{
-									const Tile
-										* const tileNorth (_battleSave->getTile(posField + Position(0,-1,0))),
-										* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0)));
-									draw = checkNorth(tileNorth, tileNorthEast);
-								}
-								break;
+									{
+										const Tile
+											* const tileNorth (_battleSave->getTile(posField + Position(0,-1,0))),
+											* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0)));
+										draw = checkNorth(tileNorth, tileNorthEast);
+									}
+									break;
 
 								case 2:
 								case 6:
-								{
-									const Tile
-										* const tileWest (_battleSave->getTile(posField + Position(-1,0,0))),
-										* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0)));
-									draw = checkWest(tileWest, tileSouthWest, nullptr, &halfRight);
-								}
-								break;
+									{
+										const Tile
+											* const tileWest (_battleSave->getTile(posField + Position(-1,0,0))),
+											* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0)));
+										draw = checkWest(tileWest, tileSouthWest, nullptr, &halfRight);
+									}
+									break;
 
 								case 1:
 								case 5:
-								{
-									const Tile
-										* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0))),
-										* const tileSouthSouthWest (_battleSave->getTile(posField + Position(-1,2,0)));
-									draw = checkWest(tileSouthWest, tileSouthSouthWest);
+									{
+										const Tile
+											* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0))),
+											* const tileSouthSouthWest (_battleSave->getTile(posField + Position(-1,2,0)));
+										draw = checkWest(tileSouthWest, tileSouthSouthWest);
 
-									const Tile
-										* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0))),
-										* const tileNorthNorthEast (_battleSave->getTile(posField + Position(1,-2,0)));
-									draw = draw
-										&& checkNorth(tileNorthEast, tileNorthNorthEast);
-								}
+										const Tile
+											* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0))),
+											* const tileNorthNorthEast (_battleSave->getTile(posField + Position(1,-2,0)));
+										draw = draw
+											&& checkNorth(tileNorthEast, tileNorthNorthEast);
+									}
 							}
 						}
 
@@ -2213,7 +2213,7 @@ void Map::animateMap(bool redraw)
 	}
 
 	for (std::vector<BattleUnit*>::const_iterator	// animate certain units
-			i = _battleSave->getUnits()->begin();	// (large flying units have a propulsion animation)
+			i = _battleSave->getUnits()->begin();	// eg. large flying units have a propulsion animation
 			i != _battleSave->getUnits()->end();
 			++i)
 	{

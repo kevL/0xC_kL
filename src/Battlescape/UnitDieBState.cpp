@@ -281,7 +281,7 @@ void UnitDieBState::convertToBody() // private.
 {
 	_battleSave->getBattleState()->showPsiButton(false);
 
-	const int armorSize (_unit->getArmor()->getSize() - 1);
+	const int unitSize (_unit->getArmor()->getSize());
 
 	const Position pos (_unit->getPosition());
 	const bool carried (pos == Position(-1,-1,-1));
@@ -289,7 +289,7 @@ void UnitDieBState::convertToBody() // private.
 	{
 		_battleSave->deleteBody(_unit);
 
-		if (armorSize == 0
+		if (unitSize == 1
 			&& (Options::battleWeaponSelfDestruction == false
 				|| _unit->getOriginalFaction() != FACTION_HOSTILE
 				|| _unit->getUnitStatus() == STATUS_UNCONSCIOUS))
@@ -323,15 +323,15 @@ void UnitDieBState::convertToBody() // private.
 	bool
 		playSound (true),
 		calcLights (false);
-	size_t quadrants (static_cast<size_t>((armorSize + 1) * (armorSize + 1)));
+	size_t quadrants (static_cast<size_t>(unitSize * unitSize));
 
 	for (int
-			y = armorSize;
+			y = unitSize - 1;
 			y != -1;
 			--y)
 	{
 		for (int
-				x = armorSize;
+				x = unitSize - 1;
 				x != -1;
 				--x)
 		{

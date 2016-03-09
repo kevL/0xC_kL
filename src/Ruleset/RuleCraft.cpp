@@ -111,7 +111,7 @@ void RuleCraft::load(
 
 	if (const YAML::Node& terrain = node["battlescapeTerrainData"])
 	{
-		RuleTerrain* const terrainRule (new RuleTerrain(terrain["name"].as<std::string>()));
+		RuleTerrain* const terrainRule (new RuleTerrain(terrain["terrain"].as<std::string>()));
 		terrainRule->load(terrain, rules);
 		_tacticalTerrainData = terrainRule;
 
