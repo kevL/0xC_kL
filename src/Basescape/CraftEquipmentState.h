@@ -41,7 +41,7 @@ class Window;
 
 
 /**
- * Equipment screen that lets the player pick the equipment to load onto a Craft.
+ * Screen that lets the player load equipment onto a Craft.
  */
 class CraftEquipmentState
 	:

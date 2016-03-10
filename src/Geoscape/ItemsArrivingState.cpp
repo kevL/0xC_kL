@@ -97,11 +97,11 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
-/*	_btnGotoBase->setText(tr("STR_GO_TO_BASE"));
-	_btnGotoBase->onMouseClick((ActionHandler)& ItemsArrivingState::btnGotoBaseClick);
-	_btnGotoBase->onKeyboardPress(
-					(ActionHandler)& ItemsArrivingState::btnGotoBaseClick,
-					Options::keyOk); */
+//	_btnGotoBase->setText(tr("STR_GO_TO_BASE"));
+//	_btnGotoBase->onMouseClick((ActionHandler)& ItemsArrivingState::btnGotoBaseClick);
+//	_btnGotoBase->onKeyboardPress(
+//					(ActionHandler)& ItemsArrivingState::btnGotoBaseClick,
+//					Options::keyOk);
 
 	_btnOk5Secs->setText(tr("STR_OK_5_SECONDS"));
 	_btnOk5Secs->onMouseClick((ActionHandler)& ItemsArrivingState::btnOk5SecsClick);
@@ -136,9 +136,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 	_lstTransfers->setSelectable();
 	_lstTransfers->onMousePress((ActionHandler)& ItemsArrivingState::lstGoToBasePress);
 
-	CraftStatus status;
 	const RuleItem* itRule;
-
 	for (std::vector<Base*>::const_iterator
 			i = _game->getSavedGame()->getBases()->begin();
 			i != _game->getSavedGame()->getBases()->end();
@@ -156,37 +154,33 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 				if ((*j)->getTransferType() == PST_ITEM)
 				{
 					itRule = _game->getRuleset()->getItemRule((*j)->getTransferItems());
-
 					for (std::vector<Craft*>::const_iterator
 							k = (*i)->getCrafts()->begin();
 							k != (*i)->getCrafts()->end();
 							++k)
 					{
-						if ((status = (*k)->getCraftStatus()) != CS_OUT)
+						if ((*k)->getWarned() == true)
 						{
-							if ((*k)->getWarned() == true)
+							switch ((*k)->getCraftStatus())
 							{
-								switch (status)
-								{
-									case CS_REFUELLING:
-										if ((*k)->getRules()->getRefuelItem() == itRule->getType())
-											(*k)->setWarned(false);
-										break;
+								case CS_REFUELLING:
+									if ((*k)->getRules()->getRefuelItem() == itRule->getType())
+										(*k)->setWarned(false);
+									break;
 
-									case CS_REARMING:
-										for (std::vector<CraftWeapon*>::const_iterator
-												l = (*k)->getWeapons()->begin();
-												l != (*k)->getWeapons()->end();
-												++l)
+								case CS_REARMING:
+									for (std::vector<CraftWeapon*>::const_iterator
+											l = (*k)->getWeapons()->begin();
+											l != (*k)->getWeapons()->end();
+											++l)
+									{
+										if (*l != nullptr
+											&& (*l)->getRules()->getClipType() == itRule->getType())
 										{
-											if (*l != nullptr
-												&& (*l)->getRules()->getClipType() == itRule->getType())
-											{
-												(*l)->setCantLoad(false);
-												(*k)->setWarned(false);
-											}
+											(*l)->setCantLoad(false);
+											(*k)->setWarned(false);
 										}
-								}
+									}
 							}
 						}
 					}

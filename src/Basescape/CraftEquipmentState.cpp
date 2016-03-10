@@ -611,55 +611,30 @@ void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 		{
 			qtyDelta = std::min(qtyDelta, craftQty);
 
-			if (itRule->isFixed() == true) // convert vehicle to item
+			if (itRule->isFixed() == true) // convert Vehicles to storage-items
 			{
-				if (itRule->getFullClip() < 1) // no Ammo.
+				if (_game->getSavedGame()->getMonthsPassed() != -1)
 				{
-					if (_game->getSavedGame()->getMonthsPassed() != -1)
-						_base->getStorageItems()->addItem(_items[_sel], qtyDelta);
-
-					for (std::vector<Vehicle*>::const_iterator
-							i = _craft->getVehicles()->begin();
-							i != _craft->getVehicles()->end();
-							)
-					{
-						if ((*i)->getRules() == itRule)
-						{
-							delete *i;
-							i = _craft->getVehicles()->erase(i);
-
-							if (--qtyDelta == 0)
-								break;
-						}
-						else
-							++i;
-					}
+					_base->getStorageItems()->addItem(_items[_sel], qtyDelta);
+					if (itRule->getFullClip() > 0)
+						_base->getStorageItems()->addItem(
+														itRule->getCompatibleAmmo()->front(),
+														itRule->getFullClip() * qtyDelta); // Vehicles onboard Craft always have full clips.
 				}
-				else // tank has Ammo.
+
+				for (std::vector<Vehicle*>::const_iterator
+						i = _craft->getVehicles()->begin();
+						i != _craft->getVehicles()->end() && qtyDelta != 0;
+						)
 				{
-					for (std::vector<Vehicle*>::const_iterator
-							i = _craft->getVehicles()->begin();
-							i != _craft->getVehicles()->end();
-							)
+					if ((*i)->getRules() == itRule)
 					{
-						if ((*i)->getRules() == itRule)
-						{
-							if (_game->getSavedGame()->getMonthsPassed() != -1)
-								_base->getStorageItems()->addItem(
-																itRule->getCompatibleAmmo()->front(),
-																(*i)->getLoad());
-							delete *i;
-							i = _craft->getVehicles()->erase(i);
-						}
-						else
-							++i;
+						--qtyDelta;
+						delete *i;
+						i = _craft->getVehicles()->erase(i);
 					}
-
-					if (_game->getSavedGame()->getMonthsPassed() != -1)
-						_base->getStorageItems()->addItem(_items[_sel], craftQty);
-
-					if (craftQty > qtyDelta)
-						moveRightByValue(craftQty - qtyDelta);
+					else
+						++i;
 				}
 			}
 			else

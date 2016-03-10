@@ -1761,7 +1761,7 @@ void SavedGame::getPopupManufacture(
 
 /**
  * Checks if a RuleResearch is discovered.
- * @param resType - reference a research type
+ * @param resType - reference a research-type
  * @return, true if type has been researched
  */
 bool SavedGame::isResearched(const std::string& resType) const
@@ -1778,21 +1778,21 @@ bool SavedGame::isResearched(const std::string& resType) const
 
 /**
  * Checks if a list of RuleResearch is discovered.
- * @param resTypes - reference a vector of strings of research types
+ * @param resTypes - reference a vector of strings of research-types
  * @return, true if all types have been researched
  */
 bool SavedGame::isResearched(const std::vector<std::string>& resTypes) const
 {
-	if (_debugGeo == true || resTypes.empty() == true)
-		return true;
-
-	for (std::vector<std::string>::const_iterator
-			j = resTypes.begin();
-			j != resTypes.end();
-			++j)
+	if (_debugGeo == false && resTypes.empty() == false)
 	{
-		if (isResearched(*j) == false)
-			return false;
+		for (std::vector<std::string>::const_iterator
+				j = resTypes.begin();
+				j != resTypes.end();
+				++j)
+		{
+			if (isResearched(*j) == false)
+				return false;
+		}
 	}
 	return true;
 }

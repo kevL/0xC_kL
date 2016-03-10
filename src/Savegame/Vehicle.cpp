@@ -97,8 +97,7 @@ int Vehicle::getLoad() const
  *
 void Vehicle::setAmmo(int load)
 {
-	if (_load != -1)
-		_load = load;
+	if (_load != -1) _load = load;
 } */
 
 /**
