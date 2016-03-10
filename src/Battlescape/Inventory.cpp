@@ -185,71 +185,25 @@ void Inventory::drawGrids() // private.
 	text.setColor(static_cast<Uint8>(uiRule->getElement("textSlots")->color));
 
 	const Uint8 color (static_cast<Uint8>(uiRule->getElement("grid")->color));
-	bool doLabel;
 
 	SDL_Rect rect;
-
+	bool doLabel;
 	for (std::map<std::string, RuleInventory*>::const_iterator
 			i = _game->getRuleset()->getInventories()->begin();
 			i != _game->getRuleset()->getInventories()->end();
 			++i)
 	{
-		doLabel = true;
-
-		if (i->second->getCategory() == IC_SLOT) // draw grid
+		switch (i->second->getCategory())
 		{
-			for (std::vector<RuleSlot>::const_iterator
-					j = i->second->getSlots()->begin();
-					j != i->second->getSlots()->end();
-					++j)
-			{
-				rect.x = static_cast<Sint16>(i->second->getX() + RuleInventory::SLOT_W * j->x);
-				rect.y = static_cast<Sint16>(i->second->getY() + RuleInventory::SLOT_H * j->y);
-				rect.w = static_cast<Uint16>(RuleInventory::SLOT_W + 1);
-				rect.h = static_cast<Uint16>(RuleInventory::SLOT_H + 1);
-				_srfGrid->drawRect(&rect, color);
-
-				++rect.x;
-				++rect.y;
-				rect.w -= 2;
-				rect.h -= 2;
-				_srfGrid->drawRect(&rect, 0);
-			}
-		}
-		else if (i->second->getCategory() == IC_HAND) // draw grid
-		{
-			rect.x = static_cast<Sint16>(i->second->getX());
-			rect.y = static_cast<Sint16>(i->second->getY());
-			rect.w = static_cast<Uint16>(RuleInventory::HAND_W * RuleInventory::SLOT_W);
-			rect.h = static_cast<Uint16>(RuleInventory::HAND_H * RuleInventory::SLOT_H);
-			_srfGrid->drawRect(&rect, color);
-
-			++rect.x;
-			++rect.y;
-			rect.w -= 2;
-			rect.h -= 2;
-			_srfGrid->drawRect(&rect, 0);
-		}
-		else if (i->second->getCategory() == IC_GROUND) // draw grid
-		{
-			doLabel = false;
-
-			const int
-				width (i->second->getX() + RuleInventory::SLOT_W * RuleInventory::GROUND_W),
-				height (i->second->getY() + RuleInventory::SLOT_H * RuleInventory::GROUND_H);
-
-			for (int
-					x = i->second->getX();
-					x < width;
-					x += RuleInventory::SLOT_W)
-			{
-				for (int
-						y = i->second->getY();
-						y < height;
-						y += RuleInventory::SLOT_H)
+			case IC_SLOT: // draw grids for unit-sections
+				doLabel = true;
+				for (std::vector<RuleSlot>::const_iterator
+						j = i->second->getSlots()->begin();
+						j != i->second->getSlots()->end();
+						++j)
 				{
-					rect.x = static_cast<Sint16>(x);
-					rect.y = static_cast<Sint16>(y);
+					rect.x = static_cast<Sint16>(i->second->getX() + RuleInventory::SLOT_W * j->x);
+					rect.y = static_cast<Sint16>(i->second->getY() + RuleInventory::SLOT_H * j->y);
 					rect.w = static_cast<Uint16>(RuleInventory::SLOT_W + 1);
 					rect.h = static_cast<Uint16>(RuleInventory::SLOT_H + 1);
 					_srfGrid->drawRect(&rect, color);
@@ -260,7 +214,55 @@ void Inventory::drawGrids() // private.
 					rect.h -= 2;
 					_srfGrid->drawRect(&rect, 0);
 				}
-			}
+				break;
+
+			case IC_HAND: // draw grids for hand-sections
+				doLabel = true;
+				rect.x = static_cast<Sint16>(i->second->getX());
+				rect.y = static_cast<Sint16>(i->second->getY());
+				rect.w = static_cast<Uint16>(RuleInventory::HAND_W * RuleInventory::SLOT_W);
+				rect.h = static_cast<Uint16>(RuleInventory::HAND_H * RuleInventory::SLOT_H);
+				_srfGrid->drawRect(&rect, color);
+
+				++rect.x;
+				++rect.y;
+				rect.w -= 2;
+				rect.h -= 2;
+				_srfGrid->drawRect(&rect, 0);
+				break;
+
+			default:
+			case IC_GROUND: // draw grid for ground-section
+				{
+					doLabel = false;
+					const int
+						width (i->second->getX() + RuleInventory::SLOT_W * RuleInventory::GROUND_W),
+						height (i->second->getY() + RuleInventory::SLOT_H * RuleInventory::GROUND_H);
+
+					for (int
+							x = i->second->getX();
+							x < width;
+							x += RuleInventory::SLOT_W)
+					{
+						for (int
+								y = i->second->getY();
+								y < height;
+								y += RuleInventory::SLOT_H)
+						{
+							rect.x = static_cast<Sint16>(x);
+							rect.y = static_cast<Sint16>(y);
+							rect.w = static_cast<Uint16>(RuleInventory::SLOT_W + 1);
+							rect.h = static_cast<Uint16>(RuleInventory::SLOT_H + 1);
+							_srfGrid->drawRect(&rect, color);
+
+							++rect.x;
+							++rect.y;
+							rect.w -= 2;
+							rect.h -= 2;
+							_srfGrid->drawRect(&rect, 0);
+						}
+					}
+				}
 		}
 
 		if (doLabel == true)
@@ -331,7 +333,7 @@ void Inventory::drawItems() // private.
 
 	inRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
 	list = _selUnit->getTile()->getInventory();
-	for (std::vector<BattleItem*>::const_iterator // Ground section.
+	for (std::vector<BattleItem*>::const_iterator // draw Ground section.
 			i = list->begin();
 			i != list->end();
 			++i)
@@ -393,22 +395,15 @@ void Inventory::drawItems() // private.
  */
 void Inventory::think()
 {
-	if (_prime > -1)
+	if (_prime != -1)
 	{
 		std::wstring activated;
-
-		if (_prime > 0)
-			activated = Text::intWide(_prime) + L" ";
-
+		if (_prime > 0) activated = Text::intWide(_prime) + L" ";
 		activated += _game->getLanguage()->getString("STR_GRENADE_ACTIVATED");
-
-		if (_prime > 0)
-			activated += L" " + Text::intWide(_prime);
-
+		if (_prime > 0) activated += L" " + Text::intWide(_prime);
 		_warning->showMessage(activated);
 		_prime = -1;
 	}
-
 	_warning->think();
 	_animTimer->think(nullptr, this);
 }
@@ -600,15 +595,9 @@ void Inventory::mouseClick(Action* action, State* state)
 						if (explTurn > -1)
 						{
 							std::wstring activated;
-
-							if (explTurn > 0)
-								activated = Text::intWide(explTurn) + L" ";
-
+							if (explTurn > 0) activated = Text::intWide(explTurn) + L" ";
 							activated += _game->getLanguage()->getString("STR_GRENADE_ACTIVATED");
-
-							if (explTurn > 0)
-								activated += L" " + Text::intWide(explTurn);
-
+							if (explTurn > 0) activated += L" " + Text::intWide(explTurn);
 							_warning->showMessage(activated);
 						}
 					}
@@ -769,8 +758,7 @@ void Inventory::mouseClick(Action* action, State* state)
 				y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
 
 				inRule = getSlotAtCursor(&x,&y);
-				if (inRule != nullptr
-					&& inRule->getCategory() == IC_GROUND)
+				if (inRule != nullptr && inRule->getCategory() == IC_GROUND)
 				{
 					x += _grdOffset;
 
@@ -825,39 +813,47 @@ void Inventory::mouseClick(Action* action, State* state)
 							if (overItem != nullptr)
 							{
 								const RuleItem* const itRule (overItem->getRules());
-								if (itRule->isGrenade() == true)
+								switch (itRule->getBattleType())
 								{
-									if (overItem->getFuse() == -1) // Prime that grenade!
-									{
-										if (itRule->getBattleType() == BT_PROXYGRENADE)
+									case BT_GRENADE:
+									case BT_PROXYGRENADE:
+									case BT_FLARE:
+										if (overItem->getFuse() == -1) // Prime that grenade!
 										{
-											overItem->setFuse(0);
-											arrangeGround();
+											switch (itRule->getBattleType())
+											{
+												case BT_PROXYGRENADE:
+												case BT_FLARE:
+													overItem->setFuse(0);
+													arrangeGround();
+													_warning->showMessage(_game->getLanguage()->getString("STR_GRENADE_ACTIVATED"));
+													break;
 
-											const std::wstring activated (_game->getLanguage()->getString("STR_GRENADE_ACTIVATED"));
-											_warning->showMessage(activated);
+												default: // This is where activation warning for nonProxy preBattle grenades goes.
+													_game->pushState(new PrimeGrenadeState(nullptr, true, overItem, this));
+											}
 										}
-										else // This is where activation warning for nonProxy preBattle grenades goes.
-											_game->pushState(new PrimeGrenadeState(nullptr, true, overItem, this));
-									}
-									else // deFuse grenade
-									{
-										_warning->showMessage(_game->getLanguage()->getString("STR_GRENADE_DEACTIVATED"));
-										overItem->setFuse(-1);
-										arrangeGround();
-									}
-								}
-								else if (inRule->getCategory() != IC_GROUND) // move item to Ground
-								{
-									moveItem(
-											overItem,
-											_game->getRuleset()->getInventoryRule(ST_GROUND));
+										else // deFuse grenade
+										{
+											_warning->showMessage(_game->getLanguage()->getString("STR_GRENADE_DEACTIVATED"));
+											overItem->setFuse(-1);
+											arrangeGround();
+										}
+										break;
 
-									arrangeGround();
-									soundId = ResourcePack::ITEM_DROP;
+									default:
+										if (inRule->getCategory() != IC_GROUND) // move item to Ground
+										{
+											moveItem(
+													overItem,
+													_game->getRuleset()->getInventoryRule(ST_GROUND));
 
-									_overItem = nullptr; // remove cursor info 'cause item is no longer under the cursor
-									mouseOver(action, state);
+											arrangeGround();
+											soundId = ResourcePack::ITEM_DROP;
+
+											_overItem = nullptr; // remove cursor info 'cause item is no longer under the cursor
+											mouseOver(action, state);
+										}
 								}
 							}
 						}
@@ -1051,7 +1047,8 @@ bool Inventory::canStack( // private.
 			|| (itemA->getAmmoItem() && itemB->getAmmoItem()												// or they both have ammo
 				&& itemA->getAmmoItem()->getRules() == itemB->getAmmoItem()->getRules()						// and the same ammo type
 				&& itemA->getAmmoItem()->getAmmoQuantity() == itemB->getAmmoItem()->getAmmoQuantity()))		// and the same ammo quantity
-		&& itemA->getFuse() == -1 && itemB->getFuse() == -1												// and neither is set to explode
+//		&& itemA->getFuse() == -1 && itemB->getFuse() == -1												// and neither is set to explode
+		&& itemA->getFuse() == itemB->getFuse()															// and both have the same fuse-setting
 		&& itemA->getUnit() == nullptr && itemB->getUnit() == nullptr									// and neither is a corpse or unconscious unit
 		&& itemA->getPainKillerQuantity() == itemB->getPainKillerQuantity()								// and if it's a medkit, it has the same number of charges
 		&& itemA->getHealQuantity() == itemB->getHealQuantity()

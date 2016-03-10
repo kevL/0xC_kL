@@ -488,8 +488,8 @@ void AlienContainmentState::update() // private.
 /**
  * Handles the mouse-wheels on the arrow-buttons.
  * @param action - pointer to an Action
- */
-/*void AlienContainmentState::lstItemsMousePress(Action* action)
+ *
+void AlienContainmentState::lstItemsMousePress(Action* action)
 {
 	_sel = _lstAliens->getSelectedRow();
 

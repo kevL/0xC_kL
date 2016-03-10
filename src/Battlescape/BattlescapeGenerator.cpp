@@ -1421,7 +1421,9 @@ void BattlescapeGenerator::loadGroundWeapon(BattleItem* const item) // private.
  */
 void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
 {
+	//Log(LOG_INFO) << "placeLayout item " << item->getRules()->getType();
 	const RuleInventory* const grdRule (_rules->getInventoryRule(ST_GROUND));
+	std::string loadType;
 
 	bool loaded;
 	for (std::vector<BattleUnit*>::const_iterator
@@ -1431,19 +1433,23 @@ void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
 	{
 		if ((*i)->getGeoscapeSoldier() != nullptr)
 		{
+			//Log(LOG_INFO) << ". on " << (*i)->getGeoscapeSoldier()->getName().c_str();
 			const std::vector<SoldierLayout*>* const layout ((*i)->getGeoscapeSoldier()->getLayout());
 			for (std::vector<SoldierLayout*>::const_iterator
 					j = layout->begin();
 					j != layout->end();
 					++j)
 			{
+				//Log(LOG_INFO) << ". . iterate layout items";
 				if ((*j)->getItemType() == item->getRules()->getType()
 					&& (*i)->getItem(
 								(*j)->getLayoutSection(),
 								(*j)->getSlotX(),
 								(*j)->getSlotY()) == nullptr)
 				{
-					if ((*j)->getAmmoType().empty() == true)
+					//Log(LOG_INFO) << ". . . type match!";
+					loadType = (*j)->getAmmoType();
+					if (loadType.empty() == true)
 						loaded = true;
 					else
 					{
@@ -1454,7 +1460,7 @@ void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
 								++k)
 						{
 							if ((*k)->getInventorySection() == grdRule
-								&& (*k)->getRules()->getType() == (*j)->getAmmoType()
+								&& (*k)->getRules()->getType() == loadType
 								&& item->setAmmoItem(*k) == 0)
 							{
 								loaded = true;
@@ -1465,17 +1471,22 @@ void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
 
 					if (loaded == true)
 					{
+						//Log(LOG_INFO) << ". . . . PLACED";
 						item->changeOwner(*i);
 						item->setInventorySection(_rules->getInventory((*j)->getLayoutSection()));
 						item->setSlotX((*j)->getSlotX());
 						item->setSlotY((*j)->getSlotY());
 
-						if (item->getRules()->isGrenade() == true
-							&& Options::includePrimeStateInSavedLayout == true)
+						switch (item->getRules()->getBattleType())
 						{
-							item->setFuse((*j)->getFuse());
+							case BT_GRENADE:
+							case BT_PROXYGRENADE:
+							case BT_FLARE:
+								if (Options::includePrimeStateInSavedLayout == true)
+									item->setFuse((*j)->getFuse());
 						}
 					}
+					return;
 				}
 			}
 		}
