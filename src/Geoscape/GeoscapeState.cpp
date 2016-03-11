@@ -941,7 +941,7 @@ GeoscapeState::~GeoscapeState()
 	delete _dfStartTimer;
 	delete _dfTimer;
 
-	std::list<DogfightState*>::const_iterator pDf = _dogfights.begin();
+	std::list<DogfightState*>::const_iterator pDf (_dogfights.begin());
 	for (
 			;
 			pDf != _dogfights.end();
@@ -1255,11 +1255,13 @@ void GeoscapeState::drawUfoBlobs()
 			{
 				switch ((*i)->getUfoStatus())
 				{
-					case Ufo::CRASHED:	colorBasic = BROWN;
+					case Ufo::CRASHED: colorBasic = BROWN;
 						break;
-					case Ufo::LANDED:	colorBasic = GREEN;
+					case Ufo::LANDED: colorBasic = GREEN;
 						break;
-					default: // Ufo::FLYING
+
+					default:
+					case Ufo::FLYING:
 						colorBasic = SLATE_D;
 				}
 			}
@@ -1287,7 +1289,6 @@ void GeoscapeState::drawUfoBlobs()
 													0);
 				}
 			}
-
 			++j;
 		}
 	}
@@ -1435,13 +1436,13 @@ void GeoscapeState::timeAdvance()
 
 		if (timeLap_t != 0)
 		{
-			bool update = false;
+			bool update (false);
 			for (int
 					i = 0;
 					i != timeLap_t && _pause == false;
 					++i)
 			{
-				const TimeTrigger trigger = _gameSave->getTime()->advance();
+				const TimeTrigger trigger (_gameSave->getTime()->advance());
 				if (trigger != TIME_1SEC)
 				{
 					update = true;
@@ -2271,8 +2272,8 @@ bool GeoscapeState::processMissionSite(MissionSite* const site) const
 	bool expired;
 
 	const int
-		diff = static_cast<int>(_gameSave->getDifficulty()),
-		month = _gameSave->getMonthsPassed();
+		diff (static_cast<int>(_gameSave->getDifficulty())),
+		month (_gameSave->getMonthsPassed());
 	int
 		aLienPts,
 		basicPts;
@@ -2311,7 +2312,6 @@ bool GeoscapeState::processMissionSite(MissionSite* const site) const
 		delete site;
 		return true;
 	}
-
 	return false;
 }
 
@@ -2327,13 +2327,12 @@ struct expireCrashedUfo: public std::unary_function<Ufo*, void>
 	{
 		if (ufo->getUfoStatus() == Ufo::CRASHED)
 		{
-			const int sec = ufo->getSecondsLeft();
+			const int sec (ufo->getSecondsLeft());
 			if (sec >= 30 * 60)
 			{
 				ufo->setSecondsLeft(sec - 30 * 60);
 				return;
 			}
-
 			ufo->setUfoStatus(Ufo::DESTROYED); // mark expired UFOs for removal.
 		}
 	}
@@ -3040,8 +3039,8 @@ void GeoscapeState::time1Day()
 	// if research has been completed but no new research events are triggered show an empty
 	// NewPossibleResearchState so players have a chance to allocate the now-free scientists.
 	// kL_note: already taken care of. Just reset timer to 5sec and let ResearchCompleteState poke the player.
-/*	if (resEvents.empty() == false && newResEvents.empty() == true)
-		newResEvents.push_back(NewPossibleResearchInfo(std::vector<const RuleResearch*>(), true)); */
+//	if (resEvents.empty() == false && newResEvents.empty() == true)
+//		newResEvents.push_back(NewPossibleResearchInfo(std::vector<const RuleResearch*>(), true));
 
 	// show events
 	for (std::vector<ProductionCompleteInfo>::const_iterator

@@ -58,7 +58,7 @@ CraftReadyState::CraftReadyState(
 	_fullScreen = false;
 
 	_window			= new Window(this, 256, 160, 32, 20, POPUP_BOTH);
-	_txtMessage		= new Text(226, 80, 47, 30);
+	_txtMessage		= new Text(226, 100, 47, 30);
 	_btnGoToBase	= new TextButton(100, 16,  48, 132);
 	_btnCraftInfo	= new TextButton(100, 16, 172, 132);
 	_btnOk5Secs		= new TextButton(100, 16,  48, 150);

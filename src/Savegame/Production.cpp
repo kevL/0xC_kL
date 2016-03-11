@@ -50,9 +50,9 @@ Production::Production(
 	:
 		_manfRule(manfRule),
 		_amount(amount),
-		_infinite(false),
 		_timeSpent(0),
 		_engineers(0),
+		_infinite(false),
 		_sell(false)
 {}
 
@@ -151,20 +151,20 @@ void Production::setInfiniteAmount(bool infinite)
 /**
  * Gets the time spent on this Production so far.
  * @return, time spent
- */
+ *
 int Production::getTimeSpent() const
 {
 	return _timeSpent;
-}
+} */
 
 /**
  * Sets the time spent on this Production so far.
  * @param spent - time spent
- */
+ *
 void Production::setTimeSpent(int spent)
 {
 	_timeSpent = spent;
-}
+} */
 
 /**
  * Gets the quantity of assigned engineers to this Production.
@@ -246,19 +246,19 @@ ProductionProgress Production::step(
 		SavedGame* const gameSave,
 		const Ruleset* const rules)
 {
+	const int qtyDone_pre (getAmountProduced());
 	_timeSpent += _engineers;
 
 	const int qtyDone (getAmountProduced());
-	if (qtyDone < getAmountProduced())
+	if (qtyDone_pre < qtyDone)
 	{
 
 		int produced;
 		if (_infinite == false)
-			produced = std::min( // required to not overproduce
-							getAmountProduced(),
-							_amount) - qtyDone;
+			produced = std::min(qtyDone, // required to not overproduce
+							   _amount) - qtyDone_pre;
 		else
-			produced = getAmountProduced() - qtyDone;
+			produced = qtyDone - qtyDone_pre;
 
 		int qty (0);
 		do
@@ -278,12 +278,11 @@ ProductionProgress Production::step(
 					base->getCrafts()->push_back(craft);
 					break;
 				}
-				else
+				else // Check if it's fuel or ammunition-rounds for a Craft
 				{
-					// Check if it's fuel OR ammo for a Craft
 					if (rules->getItemRule(i->first)->getBattleType() == BT_NONE)
 					{
-						for (std::vector<Craft*>::const_iterator
+						for (std::vector<Craft*>::const_iterator // see also ItemsArrivingState cTor.
 								j = base->getCrafts()->begin();
 								j != base->getCrafts()->end();
 								++j)
@@ -296,6 +295,7 @@ ProductionProgress Production::step(
 										if ((*j)->getRules()->getRefuelItem() == i->first)
 											(*j)->setWarned(false);
 										break;
+
 									case CS_REARMING:
 										for (std::vector<CraftWeapon*>::const_iterator
 												k = (*j)->getWeapons()->begin();
@@ -314,43 +314,7 @@ ProductionProgress Production::step(
 						}
 					}
 
-					// kL_note: MISSING - check if it's ammo to load a tank (onboard a Craft)!
-					// from, ItemsArrivingState:
-/*					RuleItem* item = _game->getRuleset()->getItemRule((*j)->getItems());
-
-					if (rules->getItemRule(i->first)->getBattleType() == BT_AMMO)
-					{
-						for (std::vector<Craft*>::iterator
-								c = base->getCrafts()->begin();
-								c != base->getCrafts()->end();
-								++c)
-						{
-							for (std::vector<Vehicle*>::iterator // check if it's ammo to reload a vehicle
-									v = (*c)->getVehicles()->begin();
-									v != (*c)->getVehicles()->end();
-									++v)
-							{
-								std::vector<std::string>::iterator ammo = std::find(
-																				(*v)->getRules()->getCompatibleAmmo()->begin(),
-																				(*v)->getRules()->getCompatibleAmmo()->end(),
-																				item->getType());
-								if (ammo != (*v)->getRules()->getCompatibleAmmo()->end()
-									&& (*v)->getAmmo() < item->getClipSize())
-								{
-									int used = std::min(
-													(*j)->getQuantity(),
-													item->getClipSize() - (*v)->getAmmo());
-									(*v)->setAmmo((*v)->getAmmo() + used);
-
-									// Note that the items have already been delivered --
-									// so they are removed from the base, not the transfer.
-									base->getItems()->removeItem(item->getType(), used);
-								}
-							}
-						}
-					} */
-
-					if (_sell == true) // <- this may be Fucked.
+					if (_sell == true)
 					{
 						gameSave->setFunds(gameSave->getFunds() + (rules->getItemRule(i->first)->getSellCost() * i->second));
 						base->setCashIncome(rules->getItemRule(i->first)->getSellCost() * i->second);
@@ -360,8 +324,7 @@ ProductionProgress Production::step(
 				}
 			}
 
-			++qty;
-			if (qty < produced)
+			if (++qty < produced)
 			{
 				if (enoughMoney(gameSave) == false)
 					return PROGRESS_NOT_ENOUGH_MONEY;
@@ -375,13 +338,10 @@ ProductionProgress Production::step(
 		while (qty < produced);
 	}
 
-	if (getAmountProduced() >= _amount
-		&& _infinite == false)
-	{
+	if (qtyDone >= _amount && _infinite == false)
 		return PROGRESS_COMPLETE;
-	}
 
-	if (qtyDone < getAmountProduced())
+	if (qtyDone_pre < qtyDone)
 	{
 		if (enoughMoney(gameSave) == false)
 			return PROGRESS_NOT_ENOUGH_MONEY;

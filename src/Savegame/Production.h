@@ -94,9 +94,9 @@ private:
 		void setInfiniteAmount(bool infinite);
 
 		/// Gets the time spent on the Production so far.
-		int getTimeSpent() const;
+//		int getTimeSpent() const;
 		/// Sets the time spent on the Production so far.
-		void setTimeSpent(int spent);
+//		void setTimeSpent(int spent);
 
 		/// Gets the quantity of assigned engineers to the Production.
 		int getAssignedEngineers() const;

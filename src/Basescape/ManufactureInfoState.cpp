@@ -499,11 +499,10 @@ void ManufactureInfoState::moreEngineer(int change) // private.
 	if (change > 0)
 	{
 		const int
-			availableEngineers = _base->getEngineers(),
-			availableWorkSpace = _base->getFreeWorkshops();
+			availableEngineers (_base->getEngineers()),
+			availableWorkSpace (_base->getFreeWorkshops());
 
-		if (availableEngineers > 0
-			&& availableWorkSpace > 0)
+		if (availableEngineers > 0 && availableWorkSpace > 0)
 		{
 			change = std::min(
 							change,
@@ -561,7 +560,7 @@ void ManufactureInfoState::lessEngineer(int change) // private.
 {
 	if (change > 0)
 	{
-		const int assigned = _production->getAssignedEngineers();
+		const int assigned (_production->getAssignedEngineers());
 		if (assigned > 0)
 		{
 			change = std::min(
@@ -631,7 +630,7 @@ void ManufactureInfoState::moreUnit(int change) // private.
 		}
 		else
 		{
-			const int units = _production->getAmountTotal();
+			const int units (_production->getAmountTotal());
 			change = std::min(
 							change,
 							std::numeric_limits<int>::max() - units);
@@ -712,7 +711,7 @@ void ManufactureInfoState::lessUnit(int change) // private.
 {
 	if (change > 0)
 	{
-		const int units = _production->getAmountTotal();
+		const int units (_production->getAmountTotal());
 		change = std::min(
 						change,
 						units - (_production->getAmountProduced() + 1));

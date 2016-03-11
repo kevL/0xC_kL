@@ -58,7 +58,8 @@ private:
 		* _txtUfo,
 
 		* _txtRegion,
-		* _txtTexture;
+		* _txtTexture,
+		* _txtTimeLeft;
 	TextButton
 		* _btn5Sec,
 		* _btnCancel,

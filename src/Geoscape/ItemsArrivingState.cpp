@@ -154,7 +154,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 				if ((*j)->getTransferType() == PST_ITEM)
 				{
 					itRule = _game->getRuleset()->getItemRule((*j)->getTransferItems());
-					for (std::vector<Craft*>::const_iterator
+					for (std::vector<Craft*>::const_iterator // see also Production::step().
 							k = (*i)->getCrafts()->begin();
 							k != (*i)->getCrafts()->end();
 							++k)
