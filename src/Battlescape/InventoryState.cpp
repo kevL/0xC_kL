@@ -948,28 +948,29 @@ void InventoryState::btnUnequipUnitClick(Action*)
 	if (_tuMode == false									// don't accept clicks in battlescape because this doesn't cost TU.
 		&& _inventoryPanel->getSelectedItem() == nullptr)	// or if mouse is holding an item
 	{
-		const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
-
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
-		Tile* const tile (unit->getTile());
-
 		std::vector<BattleItem*>* const equipt (unit->getInventory());
-		for (std::vector<BattleItem*>::const_iterator
-				i = equipt->begin();
-				i != equipt->end();
-				++i)
+		if (equipt->empty() == false)
 		{
-			(*i)->setOwner();
-			(*i)->setInventorySection(grdRule);
-			tile->addItem(*i);
+			_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)->play();
+
+			const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
+			Tile* const tile (unit->getTile());
+			for (std::vector<BattleItem*>::const_iterator
+					i = equipt->begin();
+					i != equipt->end();
+					++i)
+			{
+				(*i)->setOwner();
+				(*i)->setInventorySection(grdRule);
+				tile->addItem(*i);
+			}
+			equipt->clear();
+
+			_inventoryPanel->arrangeGround();
+			updateStats();
+			_battleSave->getBattleState()->refreshMousePosition();
 		}
-		equipt->clear();
-
-		_inventoryPanel->arrangeGround();
-		updateStats();
-		_battleSave->getBattleState()->refreshMousePosition();
-
-		_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)->play();
 	}
 }
 /* void InventoryState::btnUnequipUnitClick(Action*)

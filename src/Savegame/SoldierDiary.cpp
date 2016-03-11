@@ -892,14 +892,14 @@ bool SoldierDiary::manageAwards(const Ruleset* const rules)
 									dType (0);
 
 								static const std::string
-									bType_array[BATS] =
+									bType_array[BATS]
 									{
 										"BT_NONE",		"BT_FIREARM",		"BT_AMMO",		"BT_MELEE",
 										"BT_GRENADE",	"BT_PROXYGRENADE",	"BT_MEDIKIT",	"BT_SCANNER",
 										"BT_MINDPROBE",	"BT_PSIAMP",		"BT_FLARE",		"BT_CORPSE",
 										"BT_END"
 									},
-									dType_array[DATS] =
+									dType_array[DATS]
 									{
 										"DT_NONE",	"DT_AP",		"DT_IN",	"DT_HE",
 										"DT_LASER",	"DT_PLASMA",	"DT_STUN",	"DT_MELEE",
