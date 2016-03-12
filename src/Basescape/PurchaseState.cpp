@@ -53,6 +53,7 @@
 #include "../Savegame/Craft.h"
 #include "../Savegame/ItemContainer.h"
 #include "../Savegame/SavedGame.h"
+#include "../Savegame/SoldierDiary.h"
 #include "../Savegame/Transfer.h"
 #include "../Savegame/Vehicle.h"
 
@@ -171,10 +172,10 @@ PurchaseState::PurchaseState(Base* const base)
 
 
 	const RuleSoldier* solRule;
-	const std::vector<std::string>& soldierList (rules->getSoldiersList());
+	const std::vector<std::string>& soldierTypes (rules->getSoldiersList());
 	for (std::vector<std::string>::const_iterator
-			i = soldierList.begin();
-			i != soldierList.end();
+			i = soldierTypes.begin();
+			i != soldierTypes.end();
 			++i)
 	{
 		solRule = rules->getSoldier(*i);
@@ -509,9 +510,13 @@ void PurchaseState::btnOkClick(Action*)
 							++i)
 					{
 						transfer = new Transfer(rules->getPersonnelTime());
-						transfer->setSoldier(rules->genSoldier(
+						Soldier* const sol (rules->genSoldier(
 															_game->getSavedGame(),
 															_soldiers[sel]));
+						SoldierDiary* const diary (sol->getDiary());
+						diary->awardHonoraryMedal();
+						diary->getSoldierAwards()->back()->clearRecent();
+						transfer->setSoldier(sol);
 						_base->getTransfers()->push_back(transfer);
 					}
 					break;
@@ -536,10 +541,10 @@ void PurchaseState::btnOkClick(Action*)
 					{
 						RuleCraft* const crftRule (rules->getCraft(_crafts[getCraftIndex(sel)]));
 						transfer = new Transfer(crftRule->getTransferTime());
-						Craft* const craft = new Craft(
+						Craft* const craft (new Craft(
 													crftRule,
 													_base,
-													_game->getSavedGame()->getCanonicalId(_crafts[getCraftIndex(sel)]));
+													_game->getSavedGame()->getCanonicalId(_crafts[getCraftIndex(sel)])));
 						craft->setCraftStatus(CS_REFUELLING);
 						transfer->setCraft(craft);
 						_base->getTransfers()->push_back(transfer);
@@ -708,8 +713,7 @@ void PurchaseState::increase()
  */
 void PurchaseState::increaseByValue(int qtyDelta)
 {
-	if (qtyDelta < 1)
-		return;
+	if (qtyDelta < 1) return;
 
 	std::wstring error;
 
@@ -892,7 +896,7 @@ void PurchaseState::updateItemStrings() // private.
  */
 PurchaseSellTransferType PurchaseState::getPurchaseType(size_t sel) const // private.
 {
-	size_t rowCutoff = _soldiers.size();
+	size_t rowCutoff (_soldiers.size());
 
 	if (sel < rowCutoff)
 		return PST_SOLDIER;
@@ -929,7 +933,7 @@ size_t PurchaseState::getCraftIndex(size_t sel) const // private.
 	return sel - _soldiers.size() - 2;
 }
 
-/*
+/**
  * Handles the mouse-wheels on the arrow-buttons.
  * @param action - pointer to an Action
  *

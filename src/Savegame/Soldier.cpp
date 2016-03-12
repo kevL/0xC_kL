@@ -141,9 +141,7 @@ Soldier::~Soldier()
 			i = _layout.begin();
 			i != _layout.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	delete _diary;
 }

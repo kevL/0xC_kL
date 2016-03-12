@@ -1255,14 +1255,7 @@ SavedGame* Ruleset::createSave() const
 			// Award each Soldier the special Original Eight award.
 			SoldierDiary* const diary (sol->getDiary());
 			diary->awardOriginalEight();
-
-			for (std::vector<SoldierAward*>::const_iterator
-					j = diary->getSoldierAwards()->begin();
-					j != diary->getSoldierAwards()->end();
-					++j)
-			{
-				(*j)->clearRecent();
-			}
+			diary->getSoldierAwards()->back()->clearRecent();
 		}
 	}
 
@@ -2253,7 +2246,7 @@ std::vector<std::string> Ruleset::getPsiRequirements() const
 } */
 
 /**
- * Creates a new randomly-generated soldier.
+ * Creates a new randomly-generated Soldier.
  * @param gameSave	- pointer to SavedGame
  * @param type		- the soldier type to generate (default "")
  * @return, pointer to the newly generated Soldier

@@ -223,6 +223,8 @@ private:
 		void addMonthlyService();
 		/// Awards a special medal to the original 8 Soldiers.
 		void awardOriginalEight();
+		/// Awards an honorary medal upon joining team-xCom.
+		void awardHonoraryMedal();
 
 		/// Gets the mission-ID list.
 		std::vector<int>& getMissionIdList();

@@ -1301,6 +1301,13 @@ void SoldierDiary::awardOriginalEight()
 	_solAwards.push_back(new SoldierAward("STR_MEDAL_ORIGINAL8_NAME"));
 }
 
+/**
+ * Awards an honorary medal upon joining team-xCom.
+ */
+void SoldierDiary::awardHonoraryMedal()
+{
+	_solAwards.push_back(new SoldierAward("STR_MEDAL_HONOR_CROSS_NAME"));
+}
 
 
 //____________________________________//
