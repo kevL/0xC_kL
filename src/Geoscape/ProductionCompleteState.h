@@ -56,8 +56,6 @@ private:
 		* _btnOk5Secs;
 	Window* _window;
 
-	ProductionProgress _endType;
-
 
 	public:
 		/// Creates the Production Complete state.

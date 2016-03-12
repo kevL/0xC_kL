@@ -2626,18 +2626,23 @@ void GeoscapeState::time1Hour()
 				j != progress.end();
 				++j)
 		{
-			if (j->second > PROGRESS_NOT_COMPLETE)
+			switch (j->second)
 			{
-				(*i)->removeProduction(j->first);
+				case PROGRESS_COMPLETE:
+				case PROGRESS_NOT_ENOUGH_MONEY:
+				case PROGRESS_NOT_ENOUGH_MATERIALS:
+				case PROGRESS_MAX:
+				case PROGRESS_CONSTRUCTION:
+					(*i)->removeProduction(j->first);
 
-				if (events.empty() == false) // set the previous event to NOT show btn.
-					events.back().gotoBaseBtn = false;
+					if (events.empty() == false) // set the previous event to NOT show btn.
+						events.back().gotoBaseBtn = false;
 
-				events.push_back(ProductionCompleteInfo(
-													*i,
-													tr(j->first->getRules()->getType()),
-													(arrivals == false),
-													j->second));
+					events.push_back(ProductionCompleteInfo(
+														*i,
+														tr(j->first->getRules()->getType()),
+														(arrivals == false),
+														j->second));
 			}
 		}
 

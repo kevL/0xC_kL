@@ -225,14 +225,14 @@ bool Production::enoughMaterials( // private.
 			++i)
 	{
 		if ((rules->getItemRule(i->first) != nullptr
-				&& base->getStorageItems()->getItemQuantity(i->first) >= i->second)
+				&& base->getStorageItems()->getItemQuantity(i->first) < i->second)
 			|| (rules->getCraft(i->first) != nullptr
-				&& base->getCraftCount(i->first) >= i->second))
+				&& base->getCraftCount(i->first) < i->second))
 		{
-			return true;
+			return false;
 		}
 	}
-	return false;
+	return true;
 }
 
 /**

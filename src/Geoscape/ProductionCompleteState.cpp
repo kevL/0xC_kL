@@ -46,8 +46,8 @@ namespace OpenXcom
  * Initializes all the elements in a Production Complete window.
  * @param base			- pointer to Base the production belongs to
  * @param item			- reference the item that finished producing
- * @param geoState			- pointer to GeoscapeState
- * @param gotoBaseBtn	-
+ * @param geoState		- pointer to GeoscapeState
+ * @param gotoBaseBtn	- true to show the goToBase button
  * @param endType		- what ended the production (default PROGRESS_COMPLETE) (see Production.h)
  */
 ProductionCompleteState::ProductionCompleteState(
@@ -58,14 +58,13 @@ ProductionCompleteState::ProductionCompleteState(
 		ProductionProgress endType)
 	:
 		_base(base),
-		_geoState(geoState),
-		_endType(endType)
+		_geoState(geoState)
 {
 	_fullScreen = false;
 
 	_window			= new Window(this, 256, 160, 32, 20, POPUP_BOTH);
 
-	_txtMessage		= new Text(246, 110, 37, 35);
+	_txtMessage		= new Text(200, 115, 60, 35);
 
 	_btnGotoBase	= new TextButton(72, 16,  48, 154);
 	_btnOk5Secs		= new TextButton(72, 16, 124, 154);
@@ -106,13 +105,8 @@ ProductionCompleteState::ProductionCompleteState(
 					(ActionHandler)& ProductionCompleteState::btnGotoBaseClick,
 					Options::keyOkKeypad);
 
-	_txtMessage->setAlign(ALIGN_CENTER);
-	_txtMessage->setVerticalAlign(ALIGN_MIDDLE);
-	_txtMessage->setBig();
-	_txtMessage->setWordWrap();
-
 	std::wstring wst;
-	switch (_endType)
+	switch (endType)
 	{
 		case PROGRESS_CONSTRUCTION:
 			wst = tr("STR_CONSTRUCTION_OF_FACILITY_AT_BASE_IS_COMPLETE")
@@ -134,8 +128,11 @@ ProductionCompleteState::ProductionCompleteState(
 		default:
 			assert(false);
 	}
-
 	_txtMessage->setText(wst);
+	_txtMessage->setAlign(ALIGN_CENTER);
+	_txtMessage->setVerticalAlign(ALIGN_MIDDLE);
+	_txtMessage->setBig();
+	_txtMessage->setWordWrap();
 }
 
 /**
