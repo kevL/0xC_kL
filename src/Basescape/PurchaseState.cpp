@@ -515,7 +515,6 @@ void PurchaseState::btnOkClick(Action*)
 															_soldiers[sel]));
 						SoldierDiary* const diary (sol->getDiary());
 						diary->awardHonoraryMedal();
-						diary->getSoldierAwards()->back()->clearRecent();
 						transfer->setSoldier(sol);
 						_base->getTransfers()->push_back(transfer);
 					}

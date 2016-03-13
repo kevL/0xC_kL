@@ -53,7 +53,8 @@ private:
 		/// Creates a SoldierAward of the specified type.
 		SoldierAward(
 				const std::string& type,
-				const std::string& qualifier = "noQual");
+				const std::string& qualifier = "noQual",
+				bool recent = true);
 		/// Creates a SoldierAward and loads its contents from YAML.
 		explicit SoldierAward(const YAML::Node& node);
 		/// Cleans up the award.

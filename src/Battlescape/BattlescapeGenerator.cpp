@@ -806,7 +806,7 @@ void BattlescapeGenerator::deployXcom() // private.
 					i != _craft->getVehicles()->end();
 					++i)
 			{
-				//Log(LOG_INFO) << ". . isCraft: convertVehicle " << (int)*i;
+				//Log(LOG_INFO) << ". . Craft: convertVehicle " << (int)*i;
 				BattleUnit* const unit (convertVehicle(*i));
 				if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
 					_battleSave->setSelectedUnit(unit);

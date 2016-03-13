@@ -496,7 +496,7 @@ void DebriefingState::btnOkClick(Action*)
 		_game->setState(new MainMenuState());
 	else
 	{
-		if (_destroyXComBase == false) // TODO: Meridian's stat-increases + equip't-haul
+		if (_destroyXComBase == false)
 		{
 			bool playAwardMusic (false);
 

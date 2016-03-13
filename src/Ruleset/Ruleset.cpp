@@ -1255,7 +1255,6 @@ SavedGame* Ruleset::createSave() const
 			// Award each Soldier the special Original Eight award.
 			SoldierDiary* const diary (sol->getDiary());
 			diary->awardOriginalEight();
-			diary->getSoldierAwards()->back()->clearRecent();
 		}
 	}
 

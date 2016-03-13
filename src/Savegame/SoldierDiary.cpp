@@ -1298,7 +1298,10 @@ void SoldierDiary::addMonthlyService()
  */
 void SoldierDiary::awardOriginalEight()
 {
-	_solAwards.push_back(new SoldierAward("STR_MEDAL_ORIGINAL8_NAME"));
+	_solAwards.push_back(new SoldierAward(
+									"STR_MEDAL_ORIGINAL8_NAME",
+									"noQual",
+									false));
 }
 
 /**
@@ -1306,7 +1309,10 @@ void SoldierDiary::awardOriginalEight()
  */
 void SoldierDiary::awardHonoraryMedal()
 {
-	_solAwards.push_back(new SoldierAward("STR_MEDAL_HONOR_CROSS_NAME"));
+	_solAwards.push_back(new SoldierAward(
+									"STR_MEDAL_HONOR_CROSS_NAME",
+									"noQual",
+									false));
 }
 
 
@@ -1319,15 +1325,17 @@ void SoldierDiary::awardHonoraryMedal()
  * Initializes a SoldierAward.
  * @param type		- reference to the type
  * @param qualifier	- reference to the noun/qualifier (default "noQual")
+ * @param recent	- true to inform player of award after tactical (default true)
  */
 SoldierAward::SoldierAward(
 		const std::string& type,
-		const std::string& qualifier)
+		const std::string& qualifier,
+		bool recent)
 	:
 		_type(type),
 		_qual(qualifier),
-		_level(0),
-		_recent(true)
+		_recent(recent),
+		_level(0)
 {}
 
 /**
@@ -1367,10 +1375,9 @@ YAML::Node SoldierAward::save() const
 	YAML::Node node;
 
 	node["type"] = _type;
-	node["level"] = static_cast<int>(_level); // WARNING: Save this even if '0'.
+	node["level"] = static_cast<int>(_level); // WARNING: Save this even if '0'. don't know why tho
 
-	if (_qual != "noQual")
-		node["qualifier"] = _qual;
+	if (_qual != "noQual") node["qualifier"] = _qual;
 
 	return node;
 }

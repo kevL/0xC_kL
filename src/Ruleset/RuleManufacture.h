@@ -55,38 +55,38 @@ private:
 
 
 	public:
-		/// Creates a new manufacture.
+		/// Creates a new RuleManufacture.
 		explicit RuleManufacture(const std::string& type);
 
-		/// Loads the manufacture from YAML.
+		/// Loads the RuleManufacture from YAML.
 		void load(
 				const YAML::Node& node,
 				int listOrder);
 
-		/// Gets the manufacture type.
+		/// Gets the RuleManufacture's type.
 		const std::string& getType() const;
-		/// Gets the manufacture category.
+		/// Gets the RuleManufacture's category.
 		const std::string& getCategory() const;
 
-		/// Gets if this is a Craft-type.
+		/// Gets if the RuleManufacture produces a Craft.
 		bool isCraft() const;
 
-		/// Gets the manufacture's requirements.
+		/// Gets the RuleManufacture's requirements.
 		const std::vector<std::string>& getRequirements() const;
 
-		/// Gets the required workshop space.
+		/// Gets the required workshop-space.
 		int getSpaceRequired() const;
-		/// Gets the time required to manufacture one object.
+		/// Gets the time required to produce one object.
 		int getManufactureTime() const;
-		/// Gets the cost of manufacturing one object.
+		/// Gets the cost to produce one object.
 		int getManufactureCost() const;
 
-		/// Gets the list of items required to manufacture one object.
+		/// Gets the list of items required to produce one object.
 		const std::map<std::string, int>& getRequiredItems() const;
-		/// Gets the list of items produced by completing one object of this project.
+		/// Gets the list of items produced by completing one object.
 		const std::map<std::string, int>& getProducedItems() const;
 
-		/// Gets the list weight for this manufacture item.
+		/// Gets the list weight for the RuleManufacture.
 		int getListOrder() const;
 };
 

@@ -1081,8 +1081,8 @@ int Base::getUsedHangars() const
 			++i)
 	{
 		if ((*i)->getRules()->isCraft() == true)
-			total += ((*i)->getAmountTotal() - (*i)->getAmountProduced());
-			// TODO: This should account for the case when (*i)->getInfiniteAmount() == TRUE
+			total += ((*i)->getTotalQuantity() - (*i)->getProducedQuantity());
+			// TODO: This should account for the case when (*i)->getInfinite() == TRUE
 	}
 
 	return total;

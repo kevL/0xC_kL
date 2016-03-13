@@ -39,7 +39,6 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the ResearchComplete screen.
- * @param game		- pointer to the core game
  * @param resRule	- pointer to the completed RuleResearch
  * @param gofRule	- pointer to bonus completed RuleResearch
  */
@@ -73,29 +72,45 @@ ResearchCompleteState::ResearchCompleteState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));
 
+	_txtTitle->setText(tr("STR_RESEARCH_COMPLETED"));
+	_txtTitle->setAlign(ALIGN_CENTER);
+	_txtTitle->setBig();
+
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick((ActionHandler)& ResearchCompleteState::btnOkClick);
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& ResearchCompleteState::btnOkClick,
 					Options::keyCancel);
 
-	_btnReport->setText(tr("STR_VIEW_REPORTS"));
-	_btnReport->onMouseClick((ActionHandler)& ResearchCompleteState::btnReportClick);
-	_btnReport->onKeyboardPress(
-						(ActionHandler)& ResearchCompleteState::btnReportClick,
+	if (_resRule != nullptr || _gofRule != nullptr)
+	{
+		_btnReport->setText(tr("STR_VIEW_REPORTS"));
+		_btnReport->onMouseClick((ActionHandler)& ResearchCompleteState::btnReportClick);
+		_btnReport->onKeyboardPress(
+							(ActionHandler)& ResearchCompleteState::btnReportClick,
+							Options::keyOk);
+		_btnReport->onKeyboardPress(
+							(ActionHandler)& ResearchCompleteState::btnReportClick,
+							Options::keyOkKeypad);
+	}
+	else
+	{
+		_btnReport->setVisible(false);
+
+		_btnOk->onKeyboardPress(
+						(ActionHandler)& ResearchCompleteState::btnOkClick,
 						Options::keyOk);
-	_btnReport->onKeyboardPress(
-						(ActionHandler)& ResearchCompleteState::btnReportClick,
+		_btnOk->onKeyboardPress(
+						(ActionHandler)& ResearchCompleteState::btnOkClick,
 						Options::keyOkKeypad);
+	}
 
-	_txtTitle->setBig();
-	_txtTitle->setAlign(ALIGN_CENTER);
-	_txtTitle->setText(tr("STR_RESEARCH_COMPLETED"));
-
-	_txtResearch->setAlign(ALIGN_CENTER);
-	_txtResearch->setBig();
 	if (_resRule != nullptr)
+	{
 		_txtResearch->setText(tr(_resRule->getType()));
+		_txtResearch->setAlign(ALIGN_CENTER);
+		_txtResearch->setBig();
+	}
 	else
 		_txtResearch->setVisible(false);
 }

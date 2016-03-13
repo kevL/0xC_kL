@@ -244,7 +244,7 @@ void ManufactureState::fillProductionList()
 			woststr2,
 			woststr3;
 
-		if ((*i)->getSellItems() == true)
+		if ((*i)->getAutoSales() == true)
 		{
 //			std::streamsize strSize = woststr1.tellp();
 //			woststr1.str(L"$" + woststr1.str());
@@ -254,11 +254,11 @@ void ManufactureState::fillProductionList()
 		}
 		woststr1 << tr((*i)->getRules()->getType());
 
-		woststr2 << (*i)->getAmountProduced() << L"/";
-		if ((*i)->getInfiniteAmount() == true)
+		woststr2 << (*i)->getProducedQuantity() << L"/";
+		if ((*i)->getInfinite() == true)
 			woststr2 << L"oo";
 		else
-			woststr2 << (*i)->getAmountTotal();
+			woststr2 << (*i)->getTotalQuantity();
 
 		int
 			days,

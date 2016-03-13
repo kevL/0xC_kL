@@ -34,8 +34,8 @@ class RuleResearch;
 
 
 /**
- * Window which inform the player that a research project is finished.
- * @note Allow him/her to view information about the project (its Ufopaedia entry).
+ * Window which informs the player that a research-project is finished.
+ * @note Allows player to view a Ufopaedia-article.
  */
 class ResearchCompleteState
 	:

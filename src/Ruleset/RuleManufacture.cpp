@@ -24,8 +24,8 @@ namespace OpenXcom
 {
 
 /**
- * Creates a new Manufacture.
- * @param type - reference a unique manufacture type
+ * Creates a new Manufacture rule.
+ * @param type - reference a unique manufacture-type
  */
 RuleManufacture::RuleManufacture(const std::string& type)
 	:
@@ -40,7 +40,7 @@ RuleManufacture::RuleManufacture(const std::string& type)
 }
 
 /**
- * Loads a RuleManufacture from a YAML file.
+ * Loads the RuleManufacture from a YAML file.
  * @param node		- reference a YAML node
  * @param listOrder	- the list weight for this manufacture
  */
@@ -78,7 +78,7 @@ void RuleManufacture::load(
 }
 
 /**
- * Gets the unique type of the manufacture.
+ * Gets the unique type of this RuleManufacture.
  * @return, reference to the type
  */
 const std::string& RuleManufacture::getType() const
@@ -87,8 +87,8 @@ const std::string& RuleManufacture::getType() const
 }
 
 /**
- * Gets the category shown in the manufacture list.
- * @return, the category
+ * Gets the category shown in the production-list.
+ * @return, reference to the category
  */
 const std::string& RuleManufacture::getCategory() const
 {
@@ -96,8 +96,8 @@ const std::string& RuleManufacture::getCategory() const
 }
 
 /**
- * Gets if this is a Craft-type.
- * @return, true if Craft is produced
+ * Gets if this RuleManufacture produces a Craft.
+ * @return, true if a Craft is to be produced
  */
 bool RuleManufacture::isCraft() const
 {
@@ -105,7 +105,7 @@ bool RuleManufacture::isCraft() const
 }
 
 /**
- * Gets the list of research required to manufacture this object.
+ * Gets the list of research-requirements to produce this object.
  * @return, reference to a vector of research IDs
  */
 const std::vector<std::string>& RuleManufacture::getRequirements() const
@@ -114,7 +114,7 @@ const std::vector<std::string>& RuleManufacture::getRequirements() const
 }
 
 /**
- * Gets the required workspace to start production.
+ * Gets the workspace-requirements to start production.
  * @return, the required workspace
  */
 int RuleManufacture::getSpaceRequired() const
@@ -123,7 +123,7 @@ int RuleManufacture::getSpaceRequired() const
 }
 
 /**
- * Gets the time needed to manufacture one object.
+ * Gets the time needed to produce one object.
  * @return, the time needed in man-hours
  */
 int RuleManufacture::getManufactureTime() const
@@ -132,7 +132,7 @@ int RuleManufacture::getManufactureTime() const
 }
 
 /**
- * Gets the cost of manufacturing one object.
+ * Gets the cost of producing one object.
  * @return, the cost
  */
 int RuleManufacture::getManufactureCost() const
@@ -141,8 +141,8 @@ int RuleManufacture::getManufactureCost() const
 }
 
 /**
- * Gets the list of items required to manufacture one object.
- * @return, reference to the list of items required
+ * Gets the list of items required to produce one object.
+ * @return, reference to the list of required item-types
  */
 const std::map<std::string, int>& RuleManufacture::getRequiredItems() const
 {
@@ -150,7 +150,7 @@ const std::map<std::string, int>& RuleManufacture::getRequiredItems() const
 }
 
 /**
- * Gets the list of items produced by completing one object of this project.
+ * Gets the list of items produced by completing one object.
  * @note By default it contains only the item's ID-string with a value of 1.
  * @return, reference to the list of items produced
  */
@@ -160,7 +160,7 @@ const std::map<std::string, int>& RuleManufacture::getProducedItems() const
 }
 
 /**
- * Gets the list weight for this manufacture item.
+ * Gets the list-weight for this RuleManufacture.
  * @return, the list weight
  */
 int RuleManufacture::getListOrder() const

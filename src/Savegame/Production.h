@@ -53,7 +53,7 @@ private:
 		_infinite,
 		_sell;
 	int
-		_amount,
+		_quantity,
 		_engineers,
 		_timeSpent;
 
@@ -69,7 +69,7 @@ private:
 		/// Tracks a Base manufacturing project.
 		Production(
 				const RuleManufacture* const manfRule,
-				int amount);
+				int quantity);
 		/// Cleans the Base manufacturing project.
 		~Production();
 
@@ -82,21 +82,14 @@ private:
 		const RuleManufacture* getRules() const;
 
 		/// Gets the total quantity to produce.
-		int getAmountTotal() const;
+		int getTotalQuantity() const;
 		/// Sets the total quantity to produce.
-		void setAmountTotal(int amount);
-		/// Gets the quantity of produced items so far.
-		int getAmountProduced() const;
+		void setTotalQuantity(int quantity);
 
 		/// Gets if the Production is to produce an infinite quantity.
-		bool getInfiniteAmount() const;
+		bool getInfinite() const;
 		/// Sets if the Production is to produce an infinite quantity.
-		void setInfiniteAmount(bool infinite);
-
-		/// Gets the time spent on the Production so far.
-//		int getTimeSpent() const;
-		/// Sets the time spent on the Production so far.
-//		void setTimeSpent(int spent);
+		void setInfinite(bool infinite);
 
 		/// Gets the quantity of assigned engineers to the Production.
 		int getAssignedEngineers() const;
@@ -104,9 +97,12 @@ private:
 		void setAssignedEngineers(int engineers);
 
 		/// Gets if the produced items are to be sold immediately.
-		bool getSellItems() const;
+		bool getAutoSales() const;
 		/// Sets if the produced items are to be sold immediately.
-		void setSellItems(bool sell);
+		void setAutoSales(bool sell);
+
+		/// Gets the quantity of produced items so far.
+		int getProducedQuantity() const;
 
 		/// Advances the Production by a step.
 		ProductionProgress step(
@@ -124,6 +120,11 @@ private:
 		bool tillFinish(
 				int& days,
 				int& hours) const;
+
+		/// Gets the time spent on the Production so far.
+//		int getTimeSpent() const;
+		/// Sets the time spent on the Production so far.
+//		void setTimeSpent(int spent);
 };
 
 }

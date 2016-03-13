@@ -42,14 +42,14 @@ namespace OpenXcom
 /**
  * Tracks a Base manufacturing project.
  * @param manfRule	- pointer to RuleManufacture
- * @param amount	- quantity to produce
+ * @param quantity	- quantity to produce
  */
 Production::Production(
 		const RuleManufacture* const manfRule,
-		int amount)
+		int quantity)
 	:
 		_manfRule(manfRule),
-		_amount(amount),
+		_quantity(quantity),
 		_timeSpent(0),
 		_engineers(0),
 		_infinite(false),
@@ -70,7 +70,7 @@ void Production::load(const YAML::Node& node)
 {
 	_engineers	= node["assigned"]	.as<int>(_engineers);
 	_timeSpent	= node["spent"]		.as<int>(_timeSpent);
-	_amount		= node["amount"]	.as<int>(_amount);
+	_quantity	= node["quantity"]	.as<int>(_quantity);
 	_infinite	= node["infinite"]	.as<bool>(_infinite);
 	_sell		= node["sell"]		.as<bool>(_sell);
 }
@@ -83,9 +83,9 @@ YAML::Node Production::save() const
 {
 	YAML::Node node;
 
-	node["item"]	= _manfRule->getType();
-	node["spent"]	= _timeSpent;
-	node["amount"]	= _amount;
+	node["item"]		= _manfRule->getType();
+	node["spent"]		= _timeSpent;
+	node["quantity"]	= _quantity;
 
 	if (_engineers != 0)	node["assigned"]	= _engineers;
 	if (_infinite == true)	node["infinite"]	= _infinite;
@@ -107,34 +107,25 @@ const RuleManufacture* Production::getRules() const
  * Gets the total quantity to produce.
  * @return, total quantity
  */
-int Production::getAmountTotal() const
+int Production::getTotalQuantity() const
 {
-	return _amount;
+	return _quantity;
 }
 
 /**
  * Sets the total quantity to produce.
- * @param amount - total quantity
+ * @param quantity - total quantity
  */
-void Production::setAmountTotal(int amount)
+void Production::setTotalQuantity(int quantity)
 {
-	_amount = amount;
-}
-
-/**
- * Gets the quantity of produced items so far.
- * @return, quantity produced
- */
-int Production::getAmountProduced() const
-{
-	return _timeSpent / _manfRule->getManufactureTime();
+	_quantity = quantity;
 }
 
 /**
  * Gets if this Production is to produce an infinite quantity.
  * @return, true if infinite
  */
-bool Production::getInfiniteAmount() const
+bool Production::getInfinite() const
 {
 	return _infinite;
 }
@@ -143,28 +134,10 @@ bool Production::getInfiniteAmount() const
  * Sets if this Production is to produce an infinite quantity.
  * @param infinite - true if infinite
  */
-void Production::setInfiniteAmount(bool infinite)
+void Production::setInfinite(bool infinite)
 {
 	_infinite = infinite;
 }
-
-/**
- * Gets the time spent on this Production so far.
- * @return, time spent
- *
-int Production::getTimeSpent() const
-{
-	return _timeSpent;
-} */
-
-/**
- * Sets the time spent on this Production so far.
- * @param spent - time spent
- *
-void Production::setTimeSpent(int spent)
-{
-	_timeSpent = spent;
-} */
 
 /**
  * Gets the quantity of assigned engineers to this Production.
@@ -188,7 +161,7 @@ void Production::setAssignedEngineers(int engineers)
  * Gets if the produced items are to be sold immediately.
  * @return, true if sell
  */
-bool Production::getSellItems() const
+bool Production::getAutoSales() const
 {
 	return _sell;
 }
@@ -197,7 +170,7 @@ bool Production::getSellItems() const
  * Sets if the produced items are to be sold immediately.
  * @param sell - true if sell
  */
-void Production::setSellItems(bool sell)
+void Production::setAutoSales(bool sell)
 {
 	_sell = sell;
 }
@@ -213,7 +186,7 @@ bool Production::enoughMoney(const SavedGame* const gameSave) const // private.
 
 /**
  * Checks if there is enough resource material to continue production.
- * @return, true if materials available
+ * @return, true if materials are available
  */
 bool Production::enoughMaterials( // private.
 		Base* const base,
@@ -236,6 +209,15 @@ bool Production::enoughMaterials( // private.
 }
 
 /**
+ * Gets the quantity of produced items so far.
+ * @return, quantity produced
+ */
+int Production::getProducedQuantity() const
+{
+	return _timeSpent / _manfRule->getManufactureTime();
+}
+
+/**
  * Advances this Production by a step.
  * @param base		- pointer to a Base
  * @param gameSave	- pointer to the SavedGame
@@ -246,21 +228,19 @@ ProductionProgress Production::step(
 		SavedGame* const gameSave,
 		const Ruleset* const rules)
 {
-	const int qtyDone_pre (getAmountProduced());
+	const int qtyDone_pre (getProducedQuantity());
 	_timeSpent += _engineers;
 
-	const int qtyDone (getAmountProduced());
-	if (qtyDone_pre < qtyDone)
+	const int qtyDone_total (getProducedQuantity());
+	if (qtyDone_pre < qtyDone_total)
 	{
-
-		int produced;
-		if (_infinite == false)
-			produced = std::min(qtyDone, // required to not overproduce
-							   _amount) - qtyDone_pre;
+		int producedQty;
+		if (_infinite == false) // don't overproduce '_quantity'
+			producedQty = std::min(qtyDone_total,
+								  _quantity) - qtyDone_pre;
 		else
-			produced = qtyDone - qtyDone_pre;
+			producedQty = qtyDone_total - qtyDone_pre;
 
-		int qty (0);
 		do
 		{
 			for (std::map<std::string, int>::const_iterator
@@ -268,7 +248,7 @@ ProductionProgress Production::step(
 					i != _manfRule->getProducedItems().end();
 					++i)
 			{
-				if (_manfRule->getCategory() == "STR_CRAFT")
+				if (_manfRule->isCraft() == true)
 				{
 					Craft* const craft (new Craft(
 												rules->getCraft(i->first),
@@ -278,9 +258,10 @@ ProductionProgress Production::step(
 					base->getCrafts()->push_back(craft);
 					break;
 				}
-				else // Check if it's fuel or ammunition-rounds for a Craft
+				else
 				{
-					if (rules->getItemRule(i->first)->getBattleType() == BT_NONE)
+					const RuleItem* const itRule (rules->getItemRule(i->first)); // check if it's fuel for a Craft or ammunition-rounds for a CraftWeapon
+					if (itRule->getBattleType() == BT_NONE)
 					{
 						for (std::vector<Craft*>::const_iterator // see also ItemsArrivingState cTor.
 								j = base->getCrafts()->begin();
@@ -316,15 +297,16 @@ ProductionProgress Production::step(
 
 					if (_sell == true)
 					{
-						gameSave->setFunds(gameSave->getFunds() + (rules->getItemRule(i->first)->getSellCost() * i->second));
-						base->setCashIncome(rules->getItemRule(i->first)->getSellCost() * i->second);
+						const int profit (itRule->getSellCost() * i->second);
+						gameSave->setFunds(gameSave->getFunds() + profit);
+						base->setCashIncome(profit);
 					}
 					else
 						base->getStorageItems()->addItem(i->first, i->second);
 				}
 			}
 
-			if (++qty < produced)
+			if (--producedQty != 0) // check to ensure there's enough money/materials to produce multiple-items (if applicable) *in this step*
 			{
 				if (enoughMoney(gameSave) == false)
 					return PROGRESS_NOT_ENOUGH_MONEY;
@@ -332,16 +314,16 @@ ProductionProgress Production::step(
 				if (enoughMaterials(base, rules) == false)
 					return PROGRESS_NOT_ENOUGH_MATERIALS;
 
-				startProduction(base, gameSave, rules);
+				startProduction(base, gameSave, rules); // remove resources for the next of multiple-items *in this step*
 			}
 		}
-		while (qty < produced);
+		while (producedQty != 0);
 	}
 
-	if (qtyDone >= _amount && _infinite == false)
+	if (_infinite == false && qtyDone_total >= _quantity)
 		return PROGRESS_COMPLETE;
 
-	if (qtyDone_pre < qtyDone)
+	if (qtyDone_pre < qtyDone_total)
 	{
 		if (enoughMoney(gameSave) == false)
 			return PROGRESS_NOT_ENOUGH_MONEY;
@@ -410,11 +392,11 @@ bool Production::tillFinish(
 	{
 		if (_sell == true || _infinite == true)
 		{
-			hours = (getAmountProduced() + 1) * getRules()->getManufactureTime()
+			hours = (getProducedQuantity() + 1) * _manfRule->getManufactureTime()
 				  - _timeSpent;
 		}
 		else
-			hours = getAmountTotal() * _manfRule->getManufactureTime()
+			hours = getTotalQuantity() * _manfRule->getManufactureTime()
 				  - _timeSpent;
 
 		hours = (hours + _engineers - 1) / _engineers;
@@ -426,5 +408,23 @@ bool Production::tillFinish(
 	}
 	return false;
 }
+
+/**
+ * Gets the time spent on this Production so far.
+ * @return, time spent
+ *
+int Production::getTimeSpent() const
+{
+	return _timeSpent;
+} */
+
+/**
+ * Sets the time spent on this Production so far.
+ * @param spent - time spent
+ *
+void Production::setTimeSpent(int spent)
+{
+	_timeSpent = spent;
+} */
 
 }

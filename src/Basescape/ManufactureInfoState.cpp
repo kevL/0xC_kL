@@ -241,7 +241,7 @@ void ManufactureInfoState::buildUi() // private.
 		_base->addProduction(_production);
 	}
 
-	_btnSell->setPressed(_production->getSellItems() == true);
+	_btnSell->setPressed(_production->getAutoSales() == true);
 
 	initProfit();
 	setAssignedEngineer();
@@ -297,10 +297,10 @@ int ManufactureInfoState::calcProfit() // private.
 	else
 		sellValue = 0;
 
-	if (_production->getInfiniteAmount() == true)
+	if (_production->getInfinite() == true)
 		qty = 1;
 	else
-		qty = _production->getAmountTotal() - _production->getAmountProduced();
+		qty = _production->getTotalQuantity() - _production->getProducedQuantity();
 
 	return qty * (sellValue - _production->getRules()->getManufactureCost());
 }
@@ -313,11 +313,11 @@ int ManufactureInfoState::calcProfit() // private.
 		numEngineers = _production->getAssignedEngineers(),
 		manHoursPerMonth = AVG_HOURS_PER_MONTH * numEngineers;
 
-	if (_production->getInfiniteAmount() == false)
+	if (_production->getInfinite() == false)
 	{
 		// scale down to actual number of man hours required if the job takes less than one month
 		const int manHoursRemaining = manfRule->getManufactureTime()
-									* (_production->getAmountTotal() - _production->getAmountProduced());
+									* (_production->getTotalQuantity() - _production->getProducedQuantity());
 		manHoursPerMonth = std::min(
 								manHoursPerMonth,
 								manHoursRemaining);
@@ -328,10 +328,10 @@ int ManufactureInfoState::calcProfit() // private.
 	return itemsPerMonth * (sellValue - manfRule->getManufactureCost()); */
 
 /**
-* Refreshes profit values.
-* @param action - pointer to an Action
-*/
-/*void ManufactureInfoState::btnSellClick(Action*)
+ * Refreshes profit values.
+ * @param action - pointer to an Action
+ *
+void ManufactureInfoState::btnSellClick(Action*)
 {
 	setAssignedEngineer();
 } */
@@ -345,7 +345,7 @@ void ManufactureInfoState::btnSellRelease(Action* action) // private.
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
 		|| action->getDetails()->button.button == SDL_BUTTON_RIGHT)
 	{
-		_production->setSellItems(_btnSell->getPressed() == true);
+		_production->setAutoSales(_btnSell->getPressed() == true);
 		setAssignedEngineer();
 //		updateTimeTotal();
 	}
@@ -372,7 +372,6 @@ void ManufactureInfoState::btnOkClick(Action*) // private.
 								_base,
 								_game->getSavedGame(),
 								_game->getRuleset());
-
 	exitState();
 }
 
@@ -447,10 +446,10 @@ void ManufactureInfoState::setAssignedEngineer() // private.
 	_txtAllocated->setText(woststr1.str());
 
 	woststr2 << L"> \x01";
-	if (_production->getInfiniteAmount() == true)
+	if (_production->getInfinite() == true)
 		woststr2 << L"oo";
 	else
-		woststr2 << _production->getAmountTotal();
+		woststr2 << _production->getTotalQuantity();
 
 	_txtTodo->setText(woststr2.str());
 
@@ -467,8 +466,8 @@ void ManufactureInfoState::setAssignedEngineer() // private.
 	_txtMonthlyProfit->setText(tr(st)
 						.arg(woststr3.str()));
 
-	_btnOk->setVisible(_production->getAmountTotal() > 0
-					|| _production->getInfiniteAmount() == true);
+	_btnOk->setVisible(_production->getTotalQuantity() > 0
+					|| _production->getInfinite() == true);
 
 	updateTimeTotal();
 }
@@ -630,7 +629,7 @@ void ManufactureInfoState::moreUnit(int change) // private.
 		}
 		else
 		{
-			const int units (_production->getAmountTotal());
+			const int units (_production->getTotalQuantity());
 			change = std::min(
 							change,
 							std::numeric_limits<int>::max() - units);
@@ -639,7 +638,7 @@ void ManufactureInfoState::moreUnit(int change) // private.
 				change = std::min(
 								change,
 								_base->getFreeHangars());
-			_production->setAmountTotal(units + change);
+			_production->setTotalQuantity(units + change);
 
 			setAssignedEngineer();
 		}
@@ -653,7 +652,7 @@ void ManufactureInfoState::moreUnit(int change) // private.
 void ManufactureInfoState::moreUnitPress(Action* action) // private.
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		&& _production->getAmountTotal() < std::numeric_limits<int>::max())
+		&& _production->getTotalQuantity() < std::numeric_limits<int>::max())
 	{
 		_timerMoreUnit->start();
 	}
@@ -678,7 +677,7 @@ void ManufactureInfoState::moreUnitRelease(Action* action) // private.
  */
 void ManufactureInfoState::moreUnitClick(Action* action) // private.
 {
-	if (_production->getInfiniteAmount() == false) // We can't increase over infinite :) [cf. Cantor]
+	if (_production->getInfinite() == false) // We can't increase over infinite :) [cf. Cantor]
 	{
 		if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
 		{
@@ -694,7 +693,7 @@ void ManufactureInfoState::moreUnitClick(Action* action) // private.
 			}
 			else
 			{
-				_production->setInfiniteAmount(true);
+				_production->setInfinite(true);
 				setAssignedEngineer();
 			}
 		}
@@ -711,11 +710,11 @@ void ManufactureInfoState::lessUnit(int change) // private.
 {
 	if (change > 0)
 	{
-		const int units (_production->getAmountTotal());
+		const int units (_production->getTotalQuantity());
 		change = std::min(
 						change,
-						units - (_production->getAmountProduced() + 1));
-		_production->setAmountTotal(units - change);
+						units - (_production->getProducedQuantity() + 1));
+		_production->setTotalQuantity(units - change);
 
 		setAssignedEngineer();
 	}
@@ -750,14 +749,14 @@ void ManufactureInfoState::lessUnitRelease(Action* action) // private.
  */
 void ManufactureInfoState::lessUnitClick(Action* action) // private.
 {
-	_production->setInfiniteAmount(false);
+	_production->setInfinite(false);
 
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		lessUnit(getQty());
 	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT
-		|| _production->getAmountTotal() <= _production->getAmountProduced())
+		|| _production->getTotalQuantity() <= _production->getProducedQuantity())
 	{
-		_production->setAmountTotal(_production->getAmountProduced() + 1);
+		_production->setTotalQuantity(_production->getProducedQuantity() + 1);
 		setAssignedEngineer();
 	}
 }
@@ -783,8 +782,8 @@ void ManufactureInfoState::onLessEngineer() // private.
 /**
  * Increases or decreases the Engineers according the mouse-wheel used.
  * @param action - pointer to an Action
- */
-/* void ManufactureInfoState::handleWheelEngineer(Action* action)
+ *
+void ManufactureInfoState::handleWheelEngineer(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
 		moreEngineer(Options::changeValueByMouseWheel);
