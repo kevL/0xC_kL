@@ -93,7 +93,7 @@ private:
 		void setVolume(
 				int music,
 				int sound,
-				int ui);
+				int ui = -1);
 		/// Adjusts a linear volume level to an exponential one.
 		static double volExp(int vol);
 

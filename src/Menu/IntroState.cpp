@@ -63,9 +63,8 @@ IntroState::IntroState(const bool wasLetterBoxed)
 //	Options::musicVolume = Options::soundVolume = std::max(_oldMusic, _oldSound/8);
 
 	_game->setVolume(
-				Options::musicVolume + 20, // my music files need a bit of a boost for these intro segs.
-				Options::soundVolume + 8,
-				-1);
+				Options::musicVolume + 19, // my music files need a bit of a boost for these intro segs.
+				Options::soundVolume + 9);
 
 	const std::map<std::string, RuleVideo*>* const videoRulesets (_game->getRuleset()->getVideos());
 	const std::map<std::string, RuleVideo*>::const_iterator pRule (videoRulesets->find("intro"));

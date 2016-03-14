@@ -62,7 +62,7 @@
 namespace OpenXcom
 {
 
-const double Game::VOLUME_GRADIENT = 10.;
+const double Game::VOLUME_GRADIENT = 10.; // static.
 
 
 /**
@@ -516,7 +516,7 @@ void Game::quit(bool force)
  * @note Range is from 0 to MIX_MAX_VOLUME.
  * @param music	- music volume
  * @param sound	- sound volume
- * @param ui	- ui volume
+ * @param ui	- ui volume (default -1)
  */
 void Game::setVolume(
 		int music,
@@ -536,7 +536,7 @@ void Game::setVolume(
 		{
 			sound = static_cast<int>(volExp(sound) * static_cast<double>(SDL_MIX_MAXVOLUME));
 			Mix_Volume(-1, sound);		// sets volume on *all channels*
-			Mix_Volume(3, sound / 2);	// channel 3: reserved for ambient sound effect.
+			Mix_Volume(3, sound / 2);	// channel 3: reserved for ambient sound effect (not used in UFO).
 		}
 
 		if (ui != -1)
