@@ -581,8 +581,8 @@ void IntroState::init()
 
 /**
  * Ends the video - postvideo niceties.
- * @note Music at least has already stopped abruptly if user-skipped before this
- * is called.
+ * @note Music at least has already stopped abruptly if skipped-by-user before
+ * this is called.
  */
 void IntroState::endVideo()
 {
@@ -625,8 +625,8 @@ void IntroState::endVideo()
 
 
 		SDL_Color
-			pal[256],
-			pal2[256];
+			pal[256u],
+			pal2[256u];
 
 		std::memcpy(
 				pal,
@@ -644,8 +644,8 @@ void IntroState::endVideo()
 //				break; // don't bother w/ escaping the fade-out ...
 
 			for (size_t
-					j = 0;
-					j != 256;
+					j = 0u;
+					j != 256u;
 					++j)
 			{
 				pal2[j].r = pal[j].r * i / FADE_STEPS;

@@ -81,19 +81,22 @@ Window::Window(
 	_timer = new Timer(15);
 	_timer->onTimer((SurfaceHandler)& Window::popup);
 
-	if (_popType == POPUP_NONE)
-		_popProgress = POP_HALT;
-	else
+	switch (_popType)
 	{
-		_hidden = true;
-		_timer->start();
+		case POPUP_NONE:
+			_popProgress = POP_HALT;
+			break;
 
-		if (_state != nullptr)
-		{
-			_fullScreen = _state->isFullScreen();
-			if (_fullScreen == true && _toggle == true) // <- for opening UfoPaedia in battlescape w/ black BG.
-				_state->toggleScreen();
-		}
+		default:
+			_hidden = true;
+			_timer->start();
+
+			if (_state != nullptr)
+			{
+				_fullScreen = _state->isFullScreen();
+				if (_fullScreen == true && _toggle == true) // <- for opening UfoPaedia in battlescape w/ black BG.
+					_state->toggleScreen();
+			}
 	}
 }
 
@@ -115,7 +118,6 @@ void Window::think()
 		_state->hideAll();
 		_hidden = false;
 	}
-
 	_timer->think(nullptr, this);
 }
 
@@ -130,10 +132,10 @@ void Window::popup() // private.
 		soundPopup[static_cast<size_t>(RNG::seedless(1,2))]->play(Mix_GroupAvailable(0));
 	}
 
-	if (_popProgress == POP_GO)
+	if (_popProgress == POP_GO
+		&& (_popStep += POPUP_SPEED) > 1.f)
 	{
-		if ((_popStep += POPUP_SPEED) > 1.f)
-			_popProgress = POP_HALT;
+		_popProgress = POP_HALT;
 	}
 
 	if (_popProgress == POP_HALT)
@@ -165,42 +167,57 @@ bool Window::isPopupDone() const
 void Window::draw()
 {
 	Surface::draw();
+
 	SDL_Rect rect;
+	switch (_popType)
+	{
+		default:
+		case POPUP_NONE:
+			rect.x = 0;
+			rect.w = static_cast<Uint16>(getWidth());
 
-	if (_popType == POPUP_HORIZONTAL || _popType == POPUP_BOTH)
-	{
-		rect.x = static_cast<Sint16>(
-				(static_cast<float>(getWidth()) - (static_cast<float>(getWidth()) * _popStep))) / 2;
-		rect.w = static_cast<Uint16>(
-				 static_cast<float>(getWidth()) * _popStep);
-	}
-	else
-	{
-		rect.x = 0;
-		rect.w = static_cast<Uint16>(getWidth());
-	}
+			rect.y = 0;
+			rect.h = static_cast<Uint16>(getHeight());
+			break;
 
-	if (_popType == POPUP_VERTICAL || _popType == POPUP_BOTH)
-	{
-		rect.y = static_cast<Sint16>(
-				(static_cast<float>(getHeight()) - (static_cast<float>(getHeight()) * _popStep))) / 2;
-		rect.h = static_cast<Uint16>(
-				 static_cast<float>(getHeight()) * _popStep);
-	}
-	else
-	{
-		rect.y = 0;
-		rect.h = static_cast<Uint16>(getHeight());
+		case POPUP_BOTH:
+			rect.x = static_cast<Sint16>(
+					(static_cast<float>(getWidth()) - (static_cast<float>(getWidth()) * _popStep))) / 2;
+			rect.w = static_cast<Uint16>(
+					 static_cast<float>(getWidth()) * _popStep);
+
+			rect.y = static_cast<Sint16>(
+					(static_cast<float>(getHeight()) - (static_cast<float>(getHeight()) * _popStep))) / 2;
+			rect.h = static_cast<Uint16>(
+					 static_cast<float>(getHeight()) * _popStep);
+			break;
+
+		case POPUP_HORIZONTAL:
+			rect.x = static_cast<Sint16>(
+					(static_cast<float>(getWidth()) - (static_cast<float>(getWidth()) * _popStep))) / 2;
+			rect.w = static_cast<Uint16>(
+					 static_cast<float>(getWidth()) * _popStep);
+
+			rect.y = 0;
+			rect.h = static_cast<Uint16>(getHeight());
+			break;
+
+		case POPUP_VERTICAL:
+			rect.y = static_cast<Sint16>(
+					(static_cast<float>(getHeight()) - (static_cast<float>(getHeight()) * _popStep))) / 2;
+			rect.h = static_cast<Uint16>(
+					 static_cast<float>(getHeight()) * _popStep);
+
+			rect.x = 0;
+			rect.w = static_cast<Uint16>(getWidth());
 	}
 
 	Uint8
 		color,
 		gradient;
 
-	if (_contrast == true)
-		gradient = 2;
-	else
-		gradient = 1;
+	if (_contrast == true)	gradient = 2;
+	else					gradient = 1;
 
 	color = _color + (gradient * 3);
 
@@ -227,21 +244,15 @@ void Window::draw()
 			{
 				case 0:
 					color = _color + (gradient * 5);
-					setPixelColor(
-								rect.w,
-								0,
-								color);
-				break;
+					setPixelColor(rect.w, 0, color);
+					break;
 				case 1:
 					color = _color + (gradient * 2);
-				break;
+					break;
 				case 2:
 					color = _color + (gradient * 4);
-					setPixelColor(
-								rect.w + 1,
-								1,
-								color);
-				break;
+					setPixelColor(rect.w + 1, 1, color);
+					break;
 				case 3:
 					color = _color + (gradient * 3);
 			}
@@ -257,23 +268,17 @@ void Window::draw()
 			if (rect.w > 0 && rect.h > 0)
 				drawRect(&rect, color);
 
-			if (i < 2)
-				color -= gradient;
-			else
-				color += gradient;
+			if (i < 2)	color -= gradient;
+			else		color += gradient;
 
 			++rect.x;
 			++rect.y;
 
-			if (rect.w > 1)
-				rect.w -= 2;
-			else
-				rect.w = 0;
+			if (rect.w > 1)	rect.w -= 2;
+			else			rect.w = 0;
 
-			if (rect.h > 1)
-				rect.h -= 2;
-			else
-				rect.h = 0;
+			if (rect.h > 1)	rect.h -= 2;
+			else			rect.h = 0;
 		}
 	}
 
@@ -338,10 +343,8 @@ void Window::setBackground(
 		int dY)
 {
 	_bg = bg;
-
 	_bgX = dX;
 	_bgY = dY;
-
 	_redraw = true;
 }
 

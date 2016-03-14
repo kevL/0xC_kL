@@ -716,20 +716,20 @@ int Screen::getDY() const
 /**
  * Gets the center-x pixel.
  * @return, center-x
- */
+ *
 int Screen::getCenterX() const
 {
-	return _baseWidth;
-}
+	return _baseWidth / 2;
+} */
 
 /**
  * Gets the center-y pixel.
  * @return, center-y
- */
+ *
 int Screen::getCenterY() const
 {
-	return _baseHeight;
-}
+	return _baseHeight / 2;
+} */
 
 /**
  * Changes a given scale and if necessary switches the current base resolution.

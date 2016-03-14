@@ -89,9 +89,9 @@ private:
 		int getDY() const;
 
 		/// Gets the center-x pixel.
-		int getCenterX() const;
+//		int getCenterX() const;
 		/// Gets the center-y pixel.
-		int getCenterY() const;
+//		int getCenterY() const;
 
 		/// Gets the internal buffer.
 		Surface* getSurface();

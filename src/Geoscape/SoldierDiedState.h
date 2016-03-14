@@ -34,7 +34,7 @@ class Window;
 
 
 /**
- * Notifies the player when a soldier dies due to critical injuries while in Sickbay.
+ * Notifies the player when a soldier dies due to critical injuries in Sickbay.
  */
 class SoldierDiedState
 	:
@@ -42,6 +42,7 @@ class SoldierDiedState
 {
 
 private:
+	static const int BGPAL_RED = 5;
 	static const Uint8 CYAN = 133;
 
 	Text
@@ -52,11 +53,11 @@ private:
 
 
 	public:
-		/// Creates the Soldier Died state.
+		/// Creates the SoldierDied state.
 		SoldierDiedState(
 				const std::wstring& name,
 				const std::wstring& base);
-		/// Cleans up the Soldier Died state.
+		/// Cleans up the SoldierDied state.
 		~SoldierDiedState();
 
 		/// Handler for clicking the OK button.

@@ -620,7 +620,7 @@ void State::setPalette(
 	if (backpal != -1)
 		setPalette(
 				_game->getResourcePack()->getPalette(PAL_BACKPALS)
-					->getColors(static_cast<int>(Palette::blockOffset(static_cast<Uint8>(backpal)))),
+						->getColors(static_cast<int>(Palette::blockOffset(static_cast<Uint8>(backpal)))),
 				Palette::PAL_bgID,
 				16,
 				false);
