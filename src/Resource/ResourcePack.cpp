@@ -195,20 +195,20 @@ SurfaceSet* ResourcePack::getSurfaceSet(const std::string& name) const
 
 /**
  * Returns a specific music from the resource set.
- * @note This has become redundant w/ getRandomMusic() below.
+ * @note This has become redundant w/ getMusicRand() below.
  * @param trackType - reference the track of a Music
  * @return, pointer to the Music
  */
 Music* ResourcePack::getMusic(const std::string& trackType) const
 {
-	if (Options::mute == true)
-		return _muteMusic;
+	if (Options::mute == false)
+		return getMusicRand(trackType, "");
 
-	return getRandomMusic(trackType, "");
+	return _muteMusic;
 }
 
 /**
- * Checks if a particular music track is playing.
+ * Checks if a particular music-track is playing.
  * @param trackType - reference the track to check for
  * @return, true if playing
  */
@@ -233,7 +233,7 @@ void ResourcePack::playMusic(
 	if (_playingMusic != trackType && Options::mute == false)
 	{
 		//Log(LOG_INFO) << ". new trak = " << trackType;
-		const Music* const music = getRandomMusic(trackType, terrainType);
+		const Music* const music (getMusicRand(trackType, terrainType));
 		if (music != _muteMusic) // note: '_muteMusic'= nullptr
 		{
 			if (Options::musicAlwaysLoop == false
@@ -263,21 +263,21 @@ void ResourcePack::fadeMusic(
 	_playingMusic.clear();
 
 #ifndef __NO_MUSIC
-	if (Mix_PlayingMusic() == 0)
-		return;
-
-	if (Mix_GetMusicType(nullptr) != MUS_MID)
+	if (Mix_PlayingMusic() != 0)
 	{
-		game->setInputActive(false);
+		if (Mix_GetMusicType(nullptr) != MUS_MID)
+		{
+			game->setInputActive(false);
 
-		Mix_FadeOutMusic(fadeDur); // fade out!
-//		func_fade();
+			Mix_FadeOutMusic(fadeDur); // fade out!
+//			func_fade();
 
-		while (Mix_PlayingMusic() == 1)
-		{}
+			while (Mix_PlayingMusic() == 1)
+			{}
+		}
+		else // SDL_Mixer has trouble with native midi and volume on windows - which is the most likely use case - so f@%# it.
+			Mix_HaltMusic();
 	}
-	else // SDL_Mixer has trouble with native midi and volume on windows, which is the most likely use case, so f@%# it.
-		Mix_HaltMusic();
 #endif
 }
 
@@ -287,7 +287,7 @@ void ResourcePack::fadeMusic(
  * @param terrainType	- reference the RuleTerrain type
  * @return, pointer to the Music
  */
-Music* ResourcePack::getRandomMusic( // private.
+Music* ResourcePack::getMusicRand( // private.
 		const std::string& trackType,
 		const std::string& terrainType) const
 {
@@ -311,9 +311,9 @@ Music* ResourcePack::getRandomMusic( // private.
 
 				return _musicFile.at(trackId.first);
 			}
-			//else Log(LOG_INFO) << "ResourcePack::getRandomMusic() No music for terrain - MUTE";
+			//else Log(LOG_INFO) << "ResourcePack::getMusicRand() No music for terrain - MUTE";
 		}
-		//else Log(LOG_INFO) << "ResourcePack::getRandomMusic() No music assignment - MUTE";
+		//else Log(LOG_INFO) << "ResourcePack::getMusicRand() No music assignment - MUTE";
 	}
 
 	return _muteMusic;

@@ -142,21 +142,21 @@ private:
 		///
 		~FlcPlayer();
 
-		/// Open FLC or FLI file, read header, prepare to play it
+		/// Opens FLC or FLI file, read header, prepare to play it.
 		bool init(
 				const char* filename,
 				void (*frameCallBack)(),
 				Game* game,
 				int dx,
 				int dy);
-		/// Play the loaded file; set flc.mainScreen first!
+		/// Plays the loaded file; set flc.mainScreen first!
 		void play(bool skipLastFrame);
-		/// Free memory, free love, etc.
+		/// Frees memory, free love, etc.
 		void deInit();
-		/// Stop FLC Player
+		/// Stops FLC Player.
 		void stop();
-		/// Delay player at the end
-		void delay(Uint32 milliseconds);
+		/// Delays player at the end.
+		void delay(Uint32 millisec);
 		///
 		void setHeaderSpeed(int speed);
 		///

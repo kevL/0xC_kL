@@ -147,7 +147,7 @@ Game::Game(const std::string& title)
 	// Create invisible hardware cursor to workaround bug with absolute positioning pointing devices
 //	SDL_ShowCursor(SDL_ENABLE);
 	SDL_ShowCursor(SDL_DISABLE); // kL
-	Uint8 cursor = 0;
+	Uint8 cursor (0);
 	SDL_SetCursor(SDL_CreateCursor(
 								&cursor, &cursor,
 								1,1,0,0));
@@ -172,9 +172,7 @@ Game::~Game()
 			i = _states.begin();
 			i != _states.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	SDL_FreeCursor(SDL_GetCursor());
 
@@ -224,7 +222,7 @@ void Game::run()
 	};
 
 	// This will avoid processing SDL's resize event on startup, workaround for the heap allocation error it causes.
-	bool startupEvent = Options::allowResize;
+	bool startupEvent (Options::allowResize);
 
 	while (_quit == false)
 	{
@@ -275,7 +273,7 @@ void Game::run()
 //				break;
 				case SDL_QUIT:
 					quit();
-				break;
+					break;
 
 				case SDL_ACTIVEEVENT:
 					switch (reinterpret_cast<SDL_ActiveEvent*>(&_event)->state)
@@ -289,7 +287,7 @@ void Game::run()
 //						case SDL_APPMOUSEFOCUS: // sub-Consciously ignore it.
 //							break;
 					}
-				break;
+					break;
 
 				case SDL_VIDEORESIZE:
 					if (Options::allowResize == true)
@@ -302,19 +300,19 @@ void Game::run()
 								screenWidth = Screen::ORIGINAL_WIDTH,
 								screenHeight = Screen::ORIGINAL_HEIGHT;
 
-							Options::newDisplayWidth = Options::displayWidth = std::max(
-																					screenWidth,
-																					_event.resize.w);
-							Options::newDisplayHeight = Options::displayHeight = std::max(
-																					screenHeight,
-																					_event.resize.h);
+							Options::newDisplayWidth =
+							Options::displayWidth = std::max(screenWidth,
+															_event.resize.w);
+							Options::newDisplayHeight =
+							Options::displayHeight = std::max(screenHeight,
+															 _event.resize.h);
 #else
-							Options::newDisplayWidth = Options::displayWidth = std::max(
-																					Screen::ORIGINAL_WIDTH,
-																					_event.resize.w);
-							Options::newDisplayHeight = Options::displayHeight = std::max(
-																					Screen::ORIGINAL_HEIGHT,
-																					_event.resize.h);
+							Options::newDisplayWidth =
+							Options::displayWidth = std::max(Screen::ORIGINAL_WIDTH,
+															_event.resize.w);
+							Options::newDisplayHeight =
+							Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
+															 _event.resize.h);
 #endif
 							int
 								dX (0),
@@ -346,7 +344,7 @@ void Game::run()
 						else
 							startupEvent = false;
 					}
-				break;
+					break;
 
 				case SDL_MOUSEMOTION:
 				case SDL_MOUSEBUTTONDOWN:
@@ -407,7 +405,6 @@ void Game::run()
 										}
 										else
 											++_debugCycle;
-
 										break;
 									}
 									case SDLK_l:									// "ctrl-l" reload country lines
@@ -516,32 +513,33 @@ void Game::quit(bool force)
 
 /**
  * Changes the audio volume of the music and sound effect channels.
- * @param sound	- sound volume, from 0 to MIX_MAX_VOLUME
- * @param music	- music volume, from 0 to MIX_MAX_VOLUME
- * @param ui	- ui volume, from 0 to MIX_MAX_VOLUME
+ * @note Range is from 0 to MIX_MAX_VOLUME.
+ * @param music	- music volume
+ * @param sound	- sound volume
+ * @param ui	- ui volume
  */
 void Game::setVolume(
-		int sound,
 		int music,
+		int sound,
 		int ui)
 {
 	if (Options::mute == false)
 	{
-		if (music > -1)
+		if (music != -1)
 		{
 			music = static_cast<int>(volExp(music) * static_cast<double>(SDL_MIX_MAXVOLUME));
 			Mix_VolumeMusic(music);
 //			func_set_music_volume(music);
 		}
 
-		if (sound > -1)
+		if (sound != -1)
 		{
 			sound = static_cast<int>(volExp(sound) * static_cast<double>(SDL_MIX_MAXVOLUME));
 			Mix_Volume(-1, sound);		// sets volume on *all channels*
 			Mix_Volume(3, sound / 2);	// channel 3: reserved for ambient sound effect.
 		}
 
-		if (ui > -1)
+		if (ui != -1)
 		{
 			ui = static_cast<int>(volExp(ui) * static_cast<double>(SDL_MIX_MAXVOLUME));
 			// ... they use channels #1 & #2 btw. and group them accordingly in initAudio() below_
@@ -858,15 +856,15 @@ void Game::setInputActive(bool active)
  */
 void Game::defaultLanguage()
 {
-	const std::string defaultLang = "en-US";
+	const std::string defaultLang ("en-US");
 
 	if (Options::language.empty() == true) // No language set, detect based on system
 	{
 		const std::string
-			local = CrossPlatform::getLocale(),
-			lang = local.substr(
+			local (CrossPlatform::getLocale()),
+			lang (local.substr(
 							0,
-							local.find_first_of('-'));
+							local.find_first_of('-')));
 
 		try // Try to load full locale
 		{
@@ -908,8 +906,8 @@ void Game::initAudio()
 	else
 		audioFormat = AUDIO_S16SYS;
 
-	const int coefBuffer = std::max(1,
-									Options::audioBuffer1k);
+	const int coefBuffer (std::max(1,
+								   Options::audioBuffer1k));
 	if (Mix_OpenAudio(
 				Options::audioSampleRate,
 				audioFormat,
@@ -923,12 +921,15 @@ void Game::initAudio()
 	else
 	{
 		Mix_AllocateChannels(16);
-		Mix_ReserveChannels(4); // 4th channel (#3) is for ambient sFx
-		Mix_GroupChannels(0,2,0);
+		Mix_ReserveChannels(4); // 4th channel (#3) is for ambient sFx (not channel-grouped, not even by default channel-group #-1; channel must be specified explicitly to be used)
+		Mix_GroupChannels(
+						0,	// low channel
+						2,	// high channel
+						0);	// channel-group #
 
 		setVolume(
-				Options::soundVolume,
 				Options::musicVolume,
+				Options::soundVolume,
 				Options::uiVolume);
 		Log(LOG_INFO) << "SDL_mixer initialized.";
 	}

@@ -38,6 +38,8 @@ class IntroState
 {
 
 private:
+	static const Uint32 FINISH_PERSIST = 5000;
+
 	bool _wasLetterBoxed;
 //	int _oldMusic, _oldSound;
 

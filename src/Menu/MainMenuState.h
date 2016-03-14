@@ -32,7 +32,7 @@ class Window;
 
 
 /**
- * Main Menu window displayed when first starting the game.
+ * Main Menu window displayed when starting the Game or loading a save etc.
  */
 class MainMenuState
 	:
@@ -59,6 +59,9 @@ private:
 		MainMenuState();
 		/// Cleans up the Main Menu state.
 		~MainMenuState();
+
+		/// Initializes the state.
+		void init();
 
 		/// Handler for clicking the New Game button.
 		void btnNewGameClick(Action* action);

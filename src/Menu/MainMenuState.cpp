@@ -31,10 +31,10 @@
 
 #include "../Engine/Game.h"
 #include "../Engine/Language.h"
-//#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 #include "../Engine/Screen.h"
 
+//#include "../Interface/Cursor.h"
 #include "../Interface/Text.h"
 #include "../Interface/TextButton.h"
 #include "../Interface/Window.h"
@@ -154,7 +154,8 @@ MainMenuState::MainMenuState()
 									OpenXcom::res_MUSIC_START_MAINMENU,
 									"", 1); // only once, Pls.
 
-	SDL_ShowCursor(SDL_ENABLE); // kL: stabilize my cursor. I disabled it in Game and show it here instead.
+	if (SDL_ShowCursor(SDL_QUERY) == SDL_DISABLE)
+		SDL_ShowCursor(SDL_ENABLE); // center my cursor. disabled in Game cTor and shown here instead.
 }
 
 /**
@@ -162,6 +163,32 @@ MainMenuState::MainMenuState()
  */
 MainMenuState::~MainMenuState()
 {}
+
+/**
+ * Initializes the state.
+ */
+void MainMenuState::init()
+{
+	State::init();
+
+//	_game->getCursor()->fakeMotion(); // not working ->
+//
+//	int
+//		x,y,
+//		dir;
+//	SDL_GetMouseState(&x,&y);
+//
+//	if (x == 0)	dir = +1;
+//	else		dir = -1;
+//
+//	SDL_WarpMouse(
+//			static_cast<Uint16>(x + dir),
+//			static_cast<Uint16>(y));
+//	SDL_GetMouseState(&x,&y);
+//	SDL_WarpMouse(
+//			static_cast<Uint16>(x - dir),
+//			static_cast<Uint16>(y));
+}
 
 /**
  * Opens the New Game window.
@@ -193,8 +220,8 @@ void MainMenuState::btnLoadClick(Action*)
 /**
  * Opens the Options screen.
  * @param action - pointer to an Action
- */
-/* void MainMenuState::btnOptionsClick(Action*)
+ *
+void MainMenuState::btnOptionsClick(Action*)
 {
 	Options::backupDisplay();
 	_game->pushState(new OptionsVideoState(OPT_MENU));
@@ -208,7 +235,7 @@ void MainMenuState::btnPlayIntroClick(Action*)
 {
 	_game->getResourcePack()->fadeMusic(_game, 924);
 
-	const bool letterbox = Options::keepAspectRatio;
+	const bool letterbox (Options::keepAspectRatio);
 	Options::keepAspectRatio = true;
 
 	Options::baseXResolution = Screen::ORIGINAL_WIDTH;
@@ -228,7 +255,7 @@ void MainMenuState::btnQuitClick(Action*)
 	_game->quit();
 }
 
-/*
+/**
  * Updates the scale.
  * @param dX - reference the delta of X
  * @param dY - reference the delta of Y

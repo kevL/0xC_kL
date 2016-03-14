@@ -55,17 +55,16 @@ void RuleVideo::load(const YAML::Node& node)
 		}
 	}
 
-	// Slides
-/*	if(const YAML::Node &slides = node["slides"])
-	{
-		for(YAML::const_iterator
-				i = slides.begin();
-				i != slides.end();
-				++i)
-		{
-			_slides.push_back(*i).as<std::string>());
-		}
-	} */
+//	if(const YAML::Node &slides = node["slides"])
+//	{
+//		for(YAML::const_iterator
+//				i = slides.begin();
+//				i != slides.end();
+//				++i)
+//		{
+//			_slides.push_back(*i).as<std::string>());
+//		}
+//	}
 }
 
 /**

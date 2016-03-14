@@ -59,7 +59,7 @@ void Music::load(const std::string& file)
 #ifndef __NO_MUSIC
 	// SDL only takes UTF-8 filenames
 	// so here's an ugly hack to match this ugly reasoning
-	const std::string utf8 = Language::wstrToUtf8(Language::fsToWstr(file));
+	const std::string utf8 (Language::wstrToUtf8(Language::fsToWstr(file)));
 
 	_music = Mix_LoadMUS(utf8.c_str());
 	if (_music == nullptr)
@@ -79,9 +79,9 @@ void Music::load(
 		int byteSize)
 {
 #ifndef __NO_MUSIC
-	SDL_RWops* const rwops = SDL_RWFromConstMem(
+	SDL_RWops* const rwops (SDL_RWFromConstMem(
 											data,
-											byteSize);
+											byteSize));
 	_music = Mix_LoadMUS_RW(rwops);
 	SDL_FreeRW(rwops);
 

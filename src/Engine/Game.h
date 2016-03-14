@@ -91,8 +91,8 @@ private:
 
 		/// Sets the game's audio volume.
 		void setVolume(
-				int sound,
 				int music,
+				int sound,
 				int ui);
 		/// Adjusts a linear volume level to an exponential one.
 		static double volExp(int vol);

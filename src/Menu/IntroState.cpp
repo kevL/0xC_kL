@@ -33,8 +33,11 @@
 #include "../Engine/Options.h"
 #include "../Engine/Screen.h"
 #include "../Engine/Sound.h"
+#include "../Engine/Surface.h"
 
 //#include "../Engine/Adlib/adlplayer.h"
+
+//#include "../Interface/Cursor.h"
 
 #include "../Resource/XcomResourcePack.h"
 
@@ -60,18 +63,16 @@ IntroState::IntroState(const bool wasLetterBoxed)
 //	Options::musicVolume = Options::soundVolume = std::max(_oldMusic, _oldSound/8);
 
 	_game->setVolume(
-				Options::soundVolume,
-				Options::musicVolume,
+				Options::musicVolume + 20, // my music files need a bit of a boost for these intro segs.
+				Options::soundVolume + 8,
 				-1);
 
-	const Ruleset* const rules = _game->getRuleset();
-	const std::map<std::string, RuleVideo*>* const videoRulesets = rules->getVideos();
-
-	const std::map<std::string, RuleVideo*>::const_iterator videoRuleIt = videoRulesets->find("intro");
-	if (videoRuleIt != videoRulesets->end())
+	const std::map<std::string, RuleVideo*>* const videoRulesets (_game->getRuleset()->getVideos());
+	const std::map<std::string, RuleVideo*>::const_iterator pRule (videoRulesets->find("intro"));
+	if (pRule != videoRulesets->end())
 	{
-		const RuleVideo* const videoRule = videoRuleIt->second;
-		const std::vector<std::string>* const videos = videoRule->getVideos();
+		const RuleVideo* const videoRule (pRule->second);
+		const std::vector<std::string>* const videos (videoRule->getVideos());
 		for (std::vector<std::string>::const_iterator
 				i = videos->begin();
 				i != videos->end();
@@ -80,7 +81,6 @@ IntroState::IntroState(const bool wasLetterBoxed)
 			_introFiles.push_back(CrossPlatform::getDataFile(*i));
 		}
 	}
-
 	_introSoundFileDOS = CrossPlatform::getDataFile("SOUND/INTRO.CAT");
 	_introSoundFileWin = CrossPlatform::getDataFile("SOUND/SAMPLE3.CAT");
 }
@@ -101,7 +101,7 @@ typedef struct
 
 
 // the pure MS-DOS experience
-static soundInFile introCatOnlySounds[] =
+static soundInFile introCatOnlySounds[]
 {
 	{"INTRO.CAT",  0x0, 32},
 	{"INTRO.CAT",  0x1, 32},
@@ -132,7 +132,7 @@ static soundInFile introCatOnlySounds[] =
 };
 
 
-static soundInFile sample3CatOnlySounds[] =
+static soundInFile sample3CatOnlySounds[]
 {
 	{"SAMPLE3.CAT",	 24,  32},	// machine gun
 	{"SAMPLE3.CAT",	  5,  32},	// plasma rifle
@@ -166,7 +166,7 @@ static soundInFile sample3CatOnlySounds[] =
 // an attempt at a mix of (subjectively) the best sounds from the two versions
 // difficult because we can't find a definitive map from old sequence numbers to SAMPLE3.CAT indexes
 // probably only the Steam version of the game comes with both INTRO.CAT and SAMPLE3.CAT
-static soundInFile hybridIntroSounds[] =
+static soundInFile hybridIntroSounds[]
 {
 	{"SAMPLE3.CAT",   24,  32},	// machine gun
 	{"SAMPLE3.CAT",    5,  32},	// plasma rifle
@@ -198,12 +198,12 @@ static soundInFile hybridIntroSounds[] =
 // sample3: 18 is takeoff, 20 is landing; 19 is flyby whoosh sound, not sure for which craft
 
 
-static soundInFile* introSounds[] =
+static soundInFile* introSounds[]
 {
 	hybridIntroSounds,
 	introCatOnlySounds,
 	sample3CatOnlySounds,
-	0
+	nullptr
 };
 
 
@@ -214,144 +214,144 @@ typedef struct
 } introSoundEffect;
 
 
-static introSoundEffect introSoundTrack[] =
+static introSoundEffect introSoundTrack[]
 {
-	{0, 0x200}, // inserting this to keep the code simple
-	{149, 0x11}, // searchlight *whoosh*
-	{150, 0x11}, // kL, doubling
-	{173, 0x0C},
-	{183, 0x0E},
-	{205, 0x15},
-	{211, 0x201},
-	{211, 0x407},
-	{223, 0x7},
-	{250, 0x1},
-	{253, 0x1},
-	{255, 0x1},
-	{257, 0x1},
-	{260, 0x1},
-	{261, 0x3},
-	{262, 0x1},
-	{264, 0x1},
-	{268, 0x1},
-	{270, 0x1},
-	{272, 0x5},
-	{272, 0x1},
-	{274, 0x1},
-	{278, 0x1},
-	{280, 0x1},
-	{282, 0x8},
-	{282, 0x1},
-	{284, 0x1},
-	{286, 0x1},
-	{288, 0x1},
-	{290, 0x1},
-	{292, 0x6},
-	{292, 0x1},
-	{296, 0x1},
-	{298, 0x1},
-	{300, 0x1},
-	{302, 0x1},
-	{304, 0x1},
-	{306, 0x1},
-	{308, 0x1},
-	{310, 0x1},
-	{312, 0x1},
-	{378, 0x202},
-	{378, 0x9}, // alarm
-	{386, 0x9},
-	{393, 0x9},
-	{399, 0x17}, // bleeps
-	{433, 0x17},
-	{463, 0x12}, // warning
-	{477, 0x12},
-	{487, 0x13}, // ufo detected
-	{495, 0x16}, // voice
-	{501, 0x16},
-//kL	{512, 0xd},  // feet -- not in original
-//kL	{514, 0xd},  // feet -- not in original
-//kL	{522, 0x0B}, // rifle grab
-	{523, 0x0B}, // kL
-//kL	{523, 0xd},  // feet -- not in original
-//kL	{525, 0xd},  // feet -- not in original
-	{534, 0x18},
-	{535, 0x405},
-	{560, 0x407},
-	{577, 0x14},
-	{582, 0x405},
-//	{582, 0x18}, // landing! correcting to landing sound!
-	{582, 0x19},
-	{613, 0x407},
-	{615, 0x10},
-	{635, 0x14},
-	{638, 0x14},
-	{639, 0x14},
-	{644, 0x2},
-	{646, 0x2},
-	{648, 0x2},
-	{650, 0x2},
-	{652, 0x2},
-	{654, 0x2},
-	{656, 0x2},
-	{658, 0x2},
-	{660, 0x2},
-	{662, 0x2},
-	{664, 0x2},
-	{666, 0x2},
-	{668, 0x401},
-	{681, 0x406},
-	{687, 0x402},
-	{689, 0x407},
-	{694, 0x0A},
-	{711, 0x407},
-	{711, 0x0},
-	{714, 0x0},
-	{716, 0x4},
-	{717, 0x0},
-	{720, 0x0},
-	{723, 0x0},
-	{726, 0x5},
-	{726, 0x0},
-	{729, 0x0},
-	{732, 0x0},
-	{735, 0x0},
-	{738, 0x0},
-	{741, 0x0},
-	{742, 0x6},
-	{744, 0x0},
-	{747, 0x0},
-	{750, 0x0},
-	{753, 0x0},
-	{756, 0x0},
-	{759, 0x0},
-	{762, 0x0},
-	{765, 0x0},
-	{768, 0x0},
-	{771, 0x0},
-	{774, 0x0},
-	{777, 0x0},
-	{780, 0x0},
-	{783, 0x0},
-	{786, 0x0},
-	{789, 0x15},	// big growl
-//	{790, 0x15},	// big growl
-//	{790, 0x15},	// 2x loud growl
-	{790, 0x15},	// 2x loud growl, kL:chorus
-	{807, 0x2},
-	{810, 0x2},
-	{812, 0x2},
-	{814, 0x2},
-	{816, 0x0},
-	{819, 0x0},
-	{822, 0x0},
-	{824, 0x40A},
-//	{824, 0x5},		// out of place alien yell, gaaach
-//	{827, 0x6},		// out of place alien yell
-	{835, 0x0F},
-	{841, 0x0F},
-	{845, 0x0F},
-	{855, 0x407},
-	{879, 0x0C},
+	{    0,   0x200}, // inserting this to keep the code simple
+	{  149,    0x11}, // searchlight *whoosh*
+	{  150,    0x11}, // kL, doubling
+	{  173,    0x0C},
+	{  183,    0x0E},
+	{  205,    0x15},
+	{  211,   0x201},
+	{  211,   0x407},
+	{  223,     0x7},
+	{  250,     0x1},
+	{  253,     0x1},
+	{  255,     0x1},
+	{  257,     0x1},
+	{  260,     0x1},
+	{  261,     0x3},
+	{  262,     0x1},
+	{  264,     0x1},
+	{  268,     0x1},
+	{  270,     0x1},
+	{  272,     0x5},
+	{  272,     0x1},
+	{  274,     0x1},
+	{  278,     0x1},
+	{  280,     0x1},
+	{  282,     0x8},
+	{  282,     0x1},
+	{  284,     0x1},
+	{  286,     0x1},
+	{  288,     0x1},
+	{  290,     0x1},
+	{  292,     0x6},
+	{  292,     0x1},
+	{  296,     0x1},
+	{  298,     0x1},
+	{  300,     0x1},
+	{  302,     0x1},
+	{  304,     0x1},
+	{  306,     0x1},
+	{  308,     0x1},
+	{  310,     0x1},
+	{  312,     0x1},
+	{  378,   0x202},
+	{  378,     0x9}, // alarm
+	{  386,     0x9},
+	{  393,     0x9},
+	{  399,    0x17}, // bleeps
+	{  433,    0x17},
+	{  463,    0x12}, // warning
+	{  477,    0x12},
+	{  487,    0x13}, // ufo detected
+	{  495,    0x16}, // voice
+	{  501,    0x16},
+//	{  512,     0xd}, // feet -- not in original
+//	{  514,     0xd}, // feet -- not in original
+//	{  522,    0x0B}, // rifle grab
+	{  523,    0x0B}, // kL
+//	{  523,     0xd}, // feet -- not in original
+//	{  525,     0xd}, // feet -- not in original
+	{  534,    0x18},
+	{  535,   0x405},
+	{  560,   0x407},
+	{  577,    0x14},
+	{  582,   0x405},
+//	{  582,    0x18}, // landing!
+	{  582,    0x19}, // corrected landing sound!
+	{  613,   0x407},
+	{  615,    0x10},
+	{  635,    0x14},
+	{  638,    0x14},
+	{  639,    0x14},
+	{  644,     0x2},
+	{  646,     0x2},
+	{  648,     0x2},
+	{  650,     0x2},
+	{  652,     0x2},
+	{  654,     0x2},
+	{  656,     0x2},
+	{  658,     0x2},
+	{  660,     0x2},
+	{  662,     0x2},
+	{  664,     0x2},
+	{  666,     0x2},
+	{  668,   0x401},
+	{  681,   0x406},
+	{  687,   0x402},
+	{  689,   0x407},
+	{  694,    0x0A},
+	{  711,   0x407},
+	{  711,     0x0},
+	{  714,     0x0},
+	{  716,     0x4},
+	{  717,     0x0},
+	{  720,     0x0},
+	{  723,     0x0},
+	{  726,     0x5},
+	{  726,     0x0},
+	{  729,     0x0},
+	{  732,     0x0},
+	{  735,     0x0},
+	{  738,     0x0},
+	{  741,     0x0},
+	{  742,     0x6},
+	{  744,     0x0},
+	{  747,     0x0},
+	{  750,     0x0},
+	{  753,     0x0},
+	{  756,     0x0},
+	{  759,     0x0},
+	{  762,     0x0},
+	{  765,     0x0},
+	{  768,     0x0},
+	{  771,     0x0},
+	{  774,     0x0},
+	{  777,     0x0},
+	{  780,     0x0},
+	{  783,     0x0},
+	{  786,     0x0},
+	{  789,    0x15}, // big growl
+//	{  790,    0x15}, // big growl
+//	{  790,    0x15}, // 2x loud growl
+	{  790,    0x15}, // 2x loud growl, kL:chorus
+	{  807,     0x2},
+	{  810,     0x2},
+	{  812,     0x2},
+	{  814,     0x2},
+	{  816,     0x0},
+	{  819,     0x0},
+	{  822,     0x0},
+	{  824,   0x40A},
+//	{  824,     0x5}, // out of place alien yell, gaaach
+//	{  827,     0x6}, // out of place alien yell
+	{  835,    0x0F},
+	{  841,    0x0F},
+	{  845,    0x0F},
+	{  855,   0x407},
+	{  879,    0x0C},
 	{65535, 0x0FFFF}
 };
 
@@ -363,9 +363,10 @@ static struct AudioSequence
 
 int trackPosition;
 
-ResourcePack* rp;
-Music* m;
-Sound* s;
+const ResourcePack* rp;
+
+Music* pMusic;
+Sound* pSound;
 FlcPlayer* _flcPlayer;
 
 
@@ -373,12 +374,12 @@ FlcPlayer* _flcPlayer;
  *
  */
 AudioSequence(
-		ResourcePack* resources,
-		FlcPlayer* flcPlayer)
+		const ResourcePack* const res,
+		FlcPlayer* const flcPlayer)
 	:
-		rp(resources),
-		m(nullptr),
-		s(nullptr),
+		rp(res),
+		pMusic(nullptr),
+		pSound(nullptr),
 		trackPosition(0),
 		_flcPlayer(flcPlayer)
 {}
@@ -390,64 +391,64 @@ void operator()()
 {
 	while (_flcPlayer->getFrameCount() >= introSoundTrack[trackPosition].frameNumber)
 	{
-		const int command = introSoundTrack[trackPosition].sound;
-		if (command & 0x200)
+		const int soundTrigger (introSoundTrack[trackPosition].sound);
+		if (soundTrigger & 0x200)
 		{
 #ifndef __NO_MUSIC
-			switch (command)
+			switch (soundTrigger)
 			{
 				case 0x200:
 					Log(LOG_DEBUG) << "Playing gmintro1";
-					m = rp->getMusic(OpenXcom::res_MUSIC_START_INTRO1);
-					m->play(1);
-				break;
+					pMusic = rp->getMusic(OpenXcom::res_MUSIC_START_INTRO1);
+					pMusic->play(1);
+					break;
+
 				case 0x201:
 					Log(LOG_DEBUG) << "Playing gmintro2";
-					m = rp->getMusic(OpenXcom::res_MUSIC_START_INTRO2);
-					m->play(1);
-				break;
+					pMusic = rp->getMusic(OpenXcom::res_MUSIC_START_INTRO2);
+					pMusic->play(1);
+					break;
+
 				case 0x202:
 					Log(LOG_DEBUG) << "Playing gmintro3";
-					m = rp->getMusic(OpenXcom::res_MUSIC_START_INTRO3);
-					m->play(1);
-					//Mix_HookMusicFinished(_FlcPlayer::stop);
-				break;
+					pMusic = rp->getMusic(OpenXcom::res_MUSIC_START_INTRO3);
+					pMusic->play(1);
+//					Mix_HookMusicFinished(_flcPlayer::stop);
 			}
 #endif
 		}
-		else if (command & 0x400)
+		else if (soundTrigger & 0x400)
 		{
-			const int newSpeed = (command & 0xff);
-			_flcPlayer->setHeaderSpeed(newSpeed);
-			Log(LOG_DEBUG) << "Frame delay now: " << newSpeed;
+			const int speed (soundTrigger & 0xff);
+			_flcPlayer->setHeaderSpeed(speed);
+			Log(LOG_DEBUG) << "Frame delay now: " << speed;
 		}
-		else if (command <= 0x19)
+		else if (soundTrigger <= 0x19)
 		{
-			for (soundInFile
+			for (soundInFile // try hybrid sound set then intro.cat or sample3.cat alone
 					**sounds = introSounds;
 					*sounds != nullptr;
-					++sounds) // try hybrid sound set, then intro.cat or sample3.cat alone
+					++sounds)
 			{
-				const soundInFile* const sf = (*sounds) + command;
-				Log(LOG_DEBUG) << "playing: " << sf->catFile << ":" << sf->sound << " for index " << command;
+				const soundInFile* const sf ((*sounds) + soundTrigger);
+				Log(LOG_DEBUG) << "playing: " << sf->catFile << ":" << sf->sound << " for index " << soundTrigger;
 
-				s = rp->getSound(
-								sf->catFile,
-								sf->sound);
-				if (s != nullptr)
+				pSound = rp->getSound(
+									sf->catFile,
+									sf->sound);
+				if (pSound != nullptr)
 				{
-					s->play(-1); // kL
-//kL				int channel = trackPosition %4; // use at most four channels to play sound effects
-//kL				s->play(channel);
-//kL				double ratio = static_cast<double>(Options::soundVolume) / static_cast<double>(MIX_MAX_VOLUME);
-//kL				Mix_Volume(channel, static_cast<int>(static_cast<double>(sf->volume) * ratio));
+					pSound->play(-1); // kL
+//					int channel = trackPosition %4; // use at most four channels to play sound effects
+//					pSound->play(channel);
+//					double ratio = static_cast<double>(Options::soundVolume) / static_cast<double>(MIX_MAX_VOLUME);
+//					Mix_Volume(channel, static_cast<int>(static_cast<double>(sf->volume) * ratio));
 
 					break;
 				}
 				else Log(LOG_DEBUG) << "Couldn't play " << sf->catFile << ":" << sf->sound;
 			}
 		}
-
 		++trackPosition;
 	}
 }
@@ -465,48 +466,40 @@ static void audioHandler()
 
 
 /**
- * Play the intro.
+ * Plays the intro video(s).
  */
 void IntroState::init()
 {
 	State::init();
 
 	Options::keepAspectRatio = _wasLetterBoxed;
-	const int videoFilesNum = _introFiles.size();
 
-	if (videoFilesNum > 0)
+	const int videoFilesQty (_introFiles.size());
+	if (videoFilesQty != 0)
 	{
-		bool oldVideoFile = false;
+		const int
+			dx ((Options::baseXResolution - Screen::ORIGINAL_WIDTH)  / 2),
+			dy ((Options::baseYResolution - Screen::ORIGINAL_HEIGHT) / 2);
 
-		// Might be old video file
-		if (videoFilesNum == 1
+		if (videoFilesQty == 1 // Original introduction video.
 			&& (CrossPlatform::fileExists(_introSoundFileDOS) == true
 				|| CrossPlatform::fileExists(_introSoundFileWin) == true))
 		{
-			oldVideoFile = true;
-		}
-
-		const int
-			dx = (Options::baseXResolution - Screen::ORIGINAL_WIDTH) / 2,
-			dy = (Options::baseYResolution - Screen::ORIGINAL_HEIGHT) / 2;
-
-		if (oldVideoFile == true)
-		{
-			const std::string& videoFileName = _introFiles[0];
-			if (CrossPlatform::fileExists(videoFileName) == true)
+			//Log(LOG_INFO) << "ORIGINAL INTRO";
+			const std::string& videoFile (_introFiles[0]);
+			if (CrossPlatform::fileExists(videoFile) == true)
 			{
 				_flcPlayer = new FlcPlayer();
 				audioSequence = new AudioSequence(
 											_game->getResourcePack(),
 											_flcPlayer);
 				_flcPlayer->init(
-							videoFileName.c_str(),
-							&audioHandler,
-							_game,
-							dx,
-							dy);
+								videoFile.c_str(),
+								&audioHandler,
+								_game,
+								dx,dy);
 				_flcPlayer->play(true);
-				_flcPlayer->delay(10000);
+				_flcPlayer->delay(FINISH_PERSIST);
 
 				delete _flcPlayer;
 				delete audioSequence;
@@ -515,6 +508,7 @@ void IntroState::init()
 		}
 		else
 		{
+			//Log(LOG_INFO) << "not ORIGINAL";
 			_flcPlayer = new FlcPlayer();
 
 			for (std::vector<std::string>::const_iterator
@@ -522,15 +516,14 @@ void IntroState::init()
 					i != _introFiles.end();
 					++i)
 			{
-				const std::string& videoFileName = *i;
-				if (CrossPlatform::fileExists(videoFileName) == true)
+				const std::string& videoFile (*i);
+				if (CrossPlatform::fileExists(videoFile) == true)
 				{
 					_flcPlayer->init(
-								videoFileName.c_str(),
-								0,
+								videoFile.c_str(),
+								nullptr,
 								_game,
-								dx,
-								dy);
+								dx,dy);
 					_flcPlayer->play(false);
 					_flcPlayer->deInit();
 				}
@@ -559,75 +552,150 @@ void IntroState::init()
 					true); */
 	_game->getScreen()->resetDisplay(false);
 
+//	int
+//		x (_game->getScreen()->getCenterX()),
+//		y (_game->getScreen()->getCenterY());
+//	SDL_WarpMouse(
+//			static_cast<Uint16>(x),
+//			static_cast<Uint16>(y));
+
+//	_game->getCursor()->fakeMotion();
+//	int
+//		x,y,
+//		dir;
+//	SDL_GetMouseState(&x,&y);
+//
+//	if (x == 0)	dir = +1;
+//	else		dir = -1;
+//
+//	SDL_WarpMouse(
+//			static_cast<Uint16>(x + dir),
+//			static_cast<Uint16>(y));
+//	SDL_GetMouseState(&x,&y);
+//	SDL_WarpMouse(
+//			static_cast<Uint16>(x - dir),
+//			static_cast<Uint16>(y));
+
 	_game->setState(new MainMenuState());
 }
 
 /**
  * Ends the video - postvideo niceties.
+ * @note Music at least has already stopped abruptly if user-skipped before this
+ * is called.
  */
 void IntroState::endVideo()
 {
-#ifndef __NO_MUSIC
-	Mix_FadeOutChannel(-1, 863); // note: This ain't music, technically.
-#endif
-	_game->getResourcePack()->fadeMusic(_game, 863);
-
-	SDL_Color
-		pal[256],
-		pal2[256];
-
-	std::memcpy(
-			pal,
-			_game->getScreen()->getPalette(),
-			sizeof(SDL_Color) * 256);
-
-	for (Uint8
-			i = 20;
-			i != 0;
-			--i)
+	//Log(LOG_INFO) << "intro: endVideo()";
+	//Log(LOG_INFO) << ". playing Music= " << Mix_PlayingMusic();
+	// Fades can be done only in 8bpp otherwise instantly end it.
+	if (_game->getScreen()->getSurface()->getSurface()->format->BitsPerPixel == 8)
 	{
-		SDL_Event event;
-		if (SDL_PollEvent(&event)
-			&& event.type == SDL_KEYDOWN)
-		{
-//			if (event.key.keysym.sym == SDLK_ESCAPE) // kL_add: cf. FlcPlayer::SDLPolling()
-			break;
-		}
+		//Log(LOG_INFO) << ". 8bpp TRUE";
+		const Uint32 FADE_DELAY (45u);
+		const Uint8 FADE_STEPS (20u);
+/*
+		const int fadeDur (static_cast<int>(FADE_DELAY) * static_cast<int>(FADE_STEPS));
 
-		for (size_t
-				color = 0;
-				color != 256;
-				++color)
-		{
-			pal2[color].r = pal[color].r * i / 20;
-			pal2[color].g = pal[color].g * i / 20;
-			pal2[color].b = pal[color].b * i / 20;
-			pal2[color].unused = pal[color].unused;
-		}
+		Mix_FadeOutChannel(-1, fadeDur);
 
-		_game->getScreen()->setPalette(
-									pal2,
-									0,
-									256,
-									true);
-		_game->getScreen()->flip();
-		SDL_Delay(45);
+#ifndef __NO_MUSIC
+//		_game->getResourcePack()->fadeMusic(_game, FADE_DELAY * FADE_STEPS);
+		if (Mix_GetMusicType(nullptr) != MUS_MID)
+		{
+			//Log(LOG_INFO) << ". . fade music";
+			Mix_FadeOutMusic(fadeDur);
+//			func_fade();
+
+//			while (Mix_PlayingMusic() == 1)
+//			{
+//				Log(LOG_INFO) << ". . music still playing ... loop";
+//			}
+		}
+		else
+		{
+			//Log(LOG_INFO) << ". . halt music";
+			Mix_HaltMusic();
+		}
+#endif
+*/
+//		int deltaVol (Mix_VolumeMusic(-1));
+//		deltaVol /= FADE_STEPS;
+		//Log(LOG_INFO) << ". . deltaVol= " << deltaVol;
+
+
+		SDL_Color
+			pal[256],
+			pal2[256];
+
+		std::memcpy(
+				pal,
+				_game->getScreen()->getPalette(),
+				sizeof(SDL_Color) * 256);
+
+		for (Uint8
+				i = FADE_STEPS;
+				i != 0u;
+				--i)
+		{
+			//Log(LOG_INFO) << ". . fade step= " << (int)i;
+//			SDL_Event event;
+//			if (SDL_PollEvent(&event) != 0 && event.type == SDL_KEYDOWN) // cf. FlcPlayer::SDLPolling()
+//				break; // don't bother w/ escaping the fade-out ...
+
+			for (size_t
+					j = 0;
+					j != 256;
+					++j)
+			{
+				pal2[j].r = pal[j].r * i / FADE_STEPS;
+				pal2[j].g = pal[j].g * i / FADE_STEPS;
+				pal2[j].b = pal[j].b * i / FADE_STEPS;
+				pal2[j].unused = pal[j].unused;
+			}
+
+			_game->getScreen()->setPalette(
+										pal2,
+										0,
+										256,
+										true);
+			_game->getScreen()->flip();
+
+//			int vol (Mix_VolumeMusic(-1));
+			//Log(LOG_INFO) << ". . vol= " << vol;
+//			Mix_VolumeMusic(vol - deltaVol);
+
+			SDL_Delay(FADE_DELAY);
+		}
 	}
+/*	else
+	{
+		//Log(LOG_INFO) << ". 8bpp FALSE";
+		Mix_HaltChannel(-1);
+
+#ifndef __NO_MUSIC
+ 		Mix_HaltMusic();
+#endif
+	} */
 
 	_game->getScreen()->clear();
 	_game->getScreen()->flip();
 
 //	Options::musicVolume = _oldMusic;
 //	Options::soundVolume = _oldSound;
+	//Log(LOG_INFO) << ". set Game Volume";
 	_game->setVolume(
-				Options::soundVolume,
 				Options::musicVolume,
+				Options::soundVolume,
 				Options::uiVolume);
 
-#ifndef __NO_MUSIC
+/*	//Log(LOG_INFO) << ". stop Sound";
 	Sound::stop();
+
+#ifndef __NO_MUSIC
+	//Log(LOG_INFO) << ". stop Music";
 	Music::stop();
-#endif
+#endif */
 }
 
 }

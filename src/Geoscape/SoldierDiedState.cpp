@@ -75,19 +75,19 @@ SoldierDiedState::SoldierDiedState(
 					(ActionHandler)& SoldierDiedState::btnOkClick,
 					Options::keyCancel);
 
+	std::wstring msg (name);
+	msg += L'\n';
+	msg += tr("STR_SOLDIER_DIED");
+	_txtTitle->setText(msg);
 	_txtTitle->setColor(CYAN);
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setVerticalAlign(ALIGN_MIDDLE);
-	std::wstring msg = name;
-	msg += L'\n';
-	msg += tr("STR_SOLDIER_DIED");
-	_txtTitle->setText(msg);
 
+	_txtBase->setText(base);
 	_txtBase->setColor(CYAN);
 	_txtBase->setSmall();
 	_txtBase->setAlign(ALIGN_CENTER);
-	_txtBase->setText(base);
 }
 
 /**

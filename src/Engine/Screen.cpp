@@ -164,8 +164,8 @@ void Screen::handle(Action* action)
 #endif
 			switch (Timer::coreInterval)
 			{
-				case 1: Timer::coreInterval =  6;	break;
-				case 6: Timer::coreInterval = 14;	break;
+				case 1: Timer::coreInterval =  6; break;
+				case 6: Timer::coreInterval = 14; break;
 
 				default:
 					Timer::coreInterval = 1;
@@ -385,8 +385,8 @@ int Screen::getHeight() const
 void Screen::resetDisplay(bool resetVideo)
 {
 	int
-		width = Options::displayWidth,
-		height = Options::displayHeight;
+		width (Options::displayWidth),
+		height (Options::displayHeight);
 
 #ifdef __linux__
 	Uint32 oldFlags = _flags;
@@ -468,12 +468,11 @@ void Screen::resetDisplay(bool resetVideo)
 	_clear.w = static_cast<Uint16>(getWidth());
 	_clear.h = static_cast<Uint16>(getHeight());
 
-	double pixelRatioY = 1.;
-	if (Options::nonSquarePixelRatio
-		&& Options::allowResize == false)
-	{
+	double pixelRatioY;
+	if (Options::nonSquarePixelRatio && Options::allowResize == false)
 		pixelRatioY = 1.2;
-	}
+	else
+		pixelRatioY = 1.;
 
 	bool cursorInBlackBands;
 	if (Options::keepAspectRatio == false)
@@ -485,52 +484,50 @@ void Screen::resetDisplay(bool resetVideo)
 	else
 		cursorInBlackBands = Options::cursorInBlackBandsInBorderlessWindow;
 
-	if (_scaleX > _scaleY
-		&& Options::keepAspectRatio == true)
+	if (Options::keepAspectRatio == true && _scaleX != _scaleY)
 	{
-		const int targetWidth = static_cast<int>(std::floor(_scaleY * static_cast<double>(_baseWidth)));
-
-		_topBlackBand =
-		_bottomBlackBand = 0;
-		_leftBlackBand = (getWidth() - targetWidth) / 2;
-		if (_leftBlackBand < 0)
-			_leftBlackBand = 0;
-
-		_rightBlackBand = getWidth() - targetWidth - _leftBlackBand;
-		_cursorTopBlackBand = 0;
-
-		if (cursorInBlackBands == true)
+		if (_scaleX > _scaleY)
 		{
-			_scaleX = _scaleY;
-			_cursorLeftBlackBand = _leftBlackBand;
-		}
-		else
-			_cursorLeftBlackBand = 0;
-	}
-	else if (_scaleX < _scaleY
-		&& Options::keepAspectRatio == true)
-	{
-		const int targetHeight = static_cast<int>(std::floor(_scaleX * static_cast<double>(_baseHeight) * pixelRatioY));
+			const int targetWidth (static_cast<int>(std::floor(_scaleY * static_cast<double>(_baseWidth))));
 
-		_topBlackBand = (getHeight() - targetHeight) / 2;
-		if (_topBlackBand < 0)
-			_topBlackBand = 0;
-
-		_bottomBlackBand = getHeight() - targetHeight - _topBlackBand;
-		if (_bottomBlackBand < 0)
+			_topBlackBand =
 			_bottomBlackBand = 0;
+			_leftBlackBand = (getWidth() - targetWidth) / 2;
+			if (_leftBlackBand < 0) _leftBlackBand = 0;
 
-		_leftBlackBand =
-		_rightBlackBand =
-		_cursorLeftBlackBand = 0;
-
-		if (cursorInBlackBands == true)
-		{
-			_scaleY = _scaleX;
-			_cursorTopBlackBand = _topBlackBand;
-		}
-		else
+			_rightBlackBand = getWidth() - targetWidth - _leftBlackBand;
 			_cursorTopBlackBand = 0;
+
+			if (cursorInBlackBands == true)
+			{
+				_scaleX = _scaleY;
+				_cursorLeftBlackBand = _leftBlackBand;
+			}
+			else
+				_cursorLeftBlackBand = 0;
+		}
+		else if (_scaleX < _scaleY)
+		{
+			const int targetHeight (static_cast<int>(std::floor(_scaleX * static_cast<double>(_baseHeight) * pixelRatioY)));
+
+			_topBlackBand = (getHeight() - targetHeight) / 2;
+			if (_topBlackBand < 0) _topBlackBand = 0;
+
+			_bottomBlackBand = getHeight() - targetHeight - _topBlackBand;
+			if (_bottomBlackBand < 0) _bottomBlackBand = 0;
+
+			_leftBlackBand =
+			_rightBlackBand =
+			_cursorLeftBlackBand = 0;
+
+			if (cursorInBlackBands == true)
+			{
+				_scaleY = _scaleX;
+				_cursorTopBlackBand = _topBlackBand;
+			}
+			else
+				_cursorTopBlackBand = 0;
+		}
 	}
 	else
 		_topBlackBand =
@@ -606,7 +603,7 @@ int Screen::getCursorLeftBlackBand() const
  */
 void Screen::screenshot(const std::string& file) const
 {
-	SDL_Surface* const screenshot = SDL_AllocSurface(
+	SDL_Surface* const screenshot (SDL_AllocSurface(
 												0,
 												getWidth() - getWidth() % 4,
 												getHeight(),
@@ -614,16 +611,16 @@ void Screen::screenshot(const std::string& file) const
 												0xff,
 												0xff00,
 												0xff0000,
-												0);
+												0));
 
 	if (isOpenGLEnabled() == true)
 	{
 #ifndef __NO_OPENGL
-		GLenum screenFormat = GL_RGB;
+		GLenum screenFormat (GL_RGB);
 
 		for (int
 				y = 0;
-				y < getHeight();
+				y != getHeight();
 				++y)
 		{
 			glReadPixels(
@@ -642,16 +639,16 @@ void Screen::screenshot(const std::string& file) const
 	else
 		SDL_BlitSurface(
 					_screen,
-					0,
+					nullptr,
 					screenshot,
-					0);
+					nullptr);
 
-	unsigned error = lodepng::encode(
+	unsigned error (lodepng::encode(
 								file,
 								(const unsigned char*)(screenshot->pixels),
 								getWidth() - getWidth() % 4,
 								getHeight(),
-								LCT_RGB);
+								LCT_RGB));
 	if (error != 0)
 	{
 		Log(LOG_ERROR) << "Saving to PNG failed: " << lodepng_error_text(error);
@@ -668,10 +665,10 @@ void Screen::screenshot(const std::string& file) const
 bool Screen::is32bitEnabled() // static.
 {
 	int
-		w = Options::displayWidth,
-		h = Options::displayHeight,
-		baseW = Options::baseXResolution,
-		baseH = Options::baseYResolution;
+		w (Options::displayWidth),
+		h (Options::displayHeight),
+		baseW (Options::baseXResolution),
+		baseH (Options::baseYResolution);
 
 	return ((Options::useHQXFilter == true || Options::useXBRZFilter == true)
 			&& ((	   w == baseW * 2
@@ -717,13 +714,31 @@ int Screen::getDY() const
 }
 
 /**
-* Changes a given scale and if necessary switches the current base resolution.
-* @param type		- reference which scale option is in use (Battlescape or Geoscape)
-* @param selection	- the new scale level
-* @param width		- reference which x scale to adjust
-* @param height		- reference which y scale to adjust
-* @param change		- true to change the current scale
-*/
+ * Gets the center-x pixel.
+ * @return, center-x
+ */
+int Screen::getCenterX() const
+{
+	return _baseWidth;
+}
+
+/**
+ * Gets the center-y pixel.
+ * @return, center-y
+ */
+int Screen::getCenterY() const
+{
+	return _baseHeight;
+}
+
+/**
+ * Changes a given scale and if necessary switches the current base resolution.
+ * @param type		- reference which scale option is in use (Battlescape or Geoscape)
+ * @param selection	- the new scale level
+ * @param width		- reference which x scale to adjust
+ * @param height		- reference which y scale to adjust
+ * @param change		- true to change the current scale
+ */
 void Screen::updateScale( // static.
 		int& type,
 		int selection,
@@ -774,22 +789,18 @@ void Screen::updateScale( // static.
 // G++ linker wants it this way ...
 #ifdef _DEBUG
 	const int
-		screenWidth = Screen::ORIGINAL_WIDTH,
-		screenHeight = Screen::ORIGINAL_HEIGHT;
+		screenWidth (Screen::ORIGINAL_WIDTH),
+		screenHeight (Screen::ORIGINAL_HEIGHT);
 
-	width = std::max(
-					width,
-					screenWidth);
-	height = std::max(
-					height,
-					screenHeight);
+	width = std::max(width,
+					 screenWidth);
+	height = std::max(height,
+					  screenHeight);
 #else
-	width = std::max(
-					width,
-					Screen::ORIGINAL_WIDTH);
-	height = std::max(
-					height,
-					Screen::ORIGINAL_HEIGHT);
+	width = std::max(width,
+					 Screen::ORIGINAL_WIDTH);
+	height = std::max(height,
+					  Screen::ORIGINAL_HEIGHT);
 #endif
 
 	if (change == true

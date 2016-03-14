@@ -59,7 +59,7 @@ private:
 	Sound* _muteSound;
 
 	/// Gets a random music. This is private to prevent access. Use playMusic() instead.
-	Music* getRandomMusic(
+	Music* getMusicRand(
 			const std::string& trackType,
 			const std::string& terrainType) const;
 

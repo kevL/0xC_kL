@@ -46,7 +46,7 @@ private:
 		virtual ~Music();
 
 		/// Loads music from the specified file.
-		virtual void load(const std::string& filename);
+		virtual void load(const std::string& file);
 		/// Loads music from a chunk of memory.
 		virtual void load(
 				const void* data,

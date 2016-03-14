@@ -250,8 +250,8 @@ void OptionsAudioState::slrMusicVolumeChange(Action*)
 {
 	Options::musicVolume = _slrMusicVolume->getValue();
 	_game->setVolume(
-				Options::soundVolume,
 				Options::musicVolume,
+				Options::soundVolume,
 				Options::uiVolume);
 }
 
@@ -263,8 +263,8 @@ void OptionsAudioState::slrSoundVolumeChange(Action*)
 {
 	Options::soundVolume = _slrSoundVolume->getValue();
 	_game->setVolume(
-				Options::soundVolume,
 				Options::musicVolume,
+				Options::soundVolume,
 				Options::uiVolume);
 }
 
@@ -285,8 +285,8 @@ void OptionsAudioState::slrUiVolumeChange(Action*)
 {
 	Options::uiVolume = _slrUiVolume->getValue();
 	_game->setVolume(
-				Options::soundVolume,
 				Options::musicVolume,
+				Options::soundVolume,
 				Options::uiVolume);
 }
 
