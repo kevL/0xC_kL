@@ -642,8 +642,8 @@ void Game::popState()
 /**
  * Gets the current (top) State.
  * @return, current state
- */
-/* State* Game::getState() const
+ *
+State* Game::getState() const
 {
 	if (_states.empty() == false)
 		return _states.back();

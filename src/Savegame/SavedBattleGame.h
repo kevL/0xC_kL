@@ -485,11 +485,11 @@ private:
 		/// Sets the turn limit for tactical.
 		void setTurnLimit(int limit);
 		/// Gets the turn limit for tactical.
-		const int getTurnLimit() const;
-		/// Sets the result when the timer runs out.
+		int getTurnLimit() const;
+		/// Sets the result when the turn-timer runs out.
 		void setChronoResult(ChronoResult result);
-		/// Gets the result when the timer runs out.
-		const ChronoResult getChronoResult() const;
+		/// Gets the result when the turn-timer runs out.
+		ChronoResult getChronoResult() const;
 
 		/// Sets the turn for the AI to start the cheating aLiens.
 		void setCheatTurn(int turn);

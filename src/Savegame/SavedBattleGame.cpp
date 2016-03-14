@@ -2992,8 +2992,8 @@ void SavedBattleGame::setWalkUnit(const BattleUnit* const unit)
 /**
  * Gets the previous walking unit.
  * @note Used for controlling the Camera during aLien movement incl/ panic.
- * Stops the Camera from recentering on a unit that just moved and so is already
- * nearly centered but is getting another slice from the AI-engine.
+ * Stops the Camera from re-centering on a unit that just moved and so is
+ * already nearly centered but is getting another slice from the AI-engine.
  * @return, pointer to a BattleUnit
  */
 const BattleUnit* SavedBattleGame::getWalkUnit() const
@@ -3014,13 +3014,13 @@ void SavedBattleGame::setTurnLimit(int limit)
  * Gets the maximum number of turns before tactical ends.
  * @return, the turn limit
  */
-const int SavedBattleGame::getTurnLimit() const
+int SavedBattleGame::getTurnLimit() const
 {
 	return _turnLimit;
 }
 
 /**
- * Sets the result to occur when the timer runs out.
+ * Sets the result to occur when the turn-timer runs out.
  * @param result - the result to perform (AlienDeployment.h)
  */
 void SavedBattleGame::setChronoResult(ChronoResult result)
@@ -3029,10 +3029,10 @@ void SavedBattleGame::setChronoResult(ChronoResult result)
 }
 
 /**
- * Gets the result to perform when the timer expires.
+ * Gets the result to perform when the turn-timer expires.
  * @return, the result to perform (AlienDeployment.h)
  */
-const ChronoResult SavedBattleGame::getChronoResult() const
+ChronoResult SavedBattleGame::getChronoResult() const
 {
 	return _chronoResult;
 }

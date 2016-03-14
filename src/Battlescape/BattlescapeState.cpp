@@ -3758,12 +3758,11 @@ void BattlescapeState::popup(State* state)
 }
 
 /**
- * Finishes up the current battle, shuts down the battlescape and presents the
- * debriefing screen for the mission.
+ * Finishes up the current battle, and either shuts down the battlescape and
+ * presents the debriefing screen for the mission OR sets up a/the next-stage.
  * @param abort			- true if the mission was aborted
- * @param inExitArea	- number of soldiers in the exit area OR number of
- *						  survivors when battle finished due to either all
- *						  aliens or objective being destroyed
+ * @param inExitArea	- quantity of soldiers in the exit-area OR quantity of survivors when battle
+ *						  finished due to either all aLiens pacified or objective being destroyed
  */
 void BattlescapeState::finishBattle(
 		const bool abort,
@@ -3772,24 +3771,31 @@ void BattlescapeState::finishBattle(
 	while (_game->isState(this) == false)
 		_game->popState();
 
+	_popups.clear();
+
 	_game->getCursor()->setVisible();
 	_game->getResourcePack()->fadeMusic(_game, 975);
 
+	const std::string type (_battleSave->getTacticalType());
+	const AlienDeployment* const ruleDeploy (_rules->getDeployment(type)); // should be VALID always here.
 
-	const std::string type = _battleSave->getTacticalType();
-	std::string next;
-
-	if (_battleSave->getTacType() != TCT_UFOCRASHED
-		&& _battleSave->getTacType() != TCT_UFOLANDED)
+	std::string nextStage;
+	switch (_battleSave->getTacType())
 	{
-		next = _rules->getDeployment(type)->getNextStage();
+		//TCT_DEFAULT:			// -1 init.
+		//TCT_UFOCRASHED,		//  0
+		//TCT_UFOLANDED,		//  1
+		case TCT_BASEASSAULT:	//  2
+		case TCT_BASEDEFENSE:	//  3
+		case TCT_MISSIONSITE:	//  4
+		case TCT_MARS1:			//  5
+		case TCT_MARS2:			//  6
+			nextStage = ruleDeploy->getNextStage();
 	}
 
-	if (next.empty() == false	// if there is a next mission stage, and
-		&& inExitArea > 0)		// there are soldiers in Exit_Area OR all aLiens are dead, Load the Next Stage!!!
-	{
-/*		std::string nextStageRace = _rules->getDeployment(type)->getNextStageRace();
-
+	if (nextStage.empty() == false && inExitArea != 0)	// If there is a next mission stage and there are soldiers
+	{													// in Exit_Area OR all aLiens are dead, Load the Next Stage!!!
+/*		std::string nextStageRace (ruleDeploy->getNextStageRace());
 		for (std::vector<TerrorSite*>::const_iterator
 				ts = _gameSave->getTerrorSites()->begin();
 				ts != _gameSave->getTerrorSites()->end()
@@ -3799,7 +3805,6 @@ void BattlescapeState::finishBattle(
 			if ((*ts)->getTactical() == true)
 				nextStageRace = (*ts)->getAlienRace();
 		}
-
 		for (std::vector<AlienBase*>::const_iterator
 				ab = _gameSave->getAlienBases()->begin();
 				ab != _gameSave->getAlienBases()->end()
@@ -3809,7 +3814,6 @@ void BattlescapeState::finishBattle(
 			if ((*ab)->getTactical() == true)
 				nextStageRace = (*ab)->getAlienRace();
 		}
-
 		if (nextStageRace.empty() == true)
 			nextStageRace = "STR_MIXED";
 		else if (_rules->getAlienRace(nextStageRace) == nullptr)
@@ -3817,8 +3821,7 @@ void BattlescapeState::finishBattle(
 			throw Exception(nextStageRace + " race not found.");
 		} */
 
-		_popups.clear();
-		_battleSave->setTacticalType(next);
+		_battleSave->setTacticalType(nextStage);
 
 		BattlescapeGenerator bGen = BattlescapeGenerator(_game);
 //		bGen.setAlienRace("STR_MIXED");
@@ -3828,18 +3831,15 @@ void BattlescapeState::finishBattle(
 		_game->popState();
 		_game->pushState(new BriefingState());
 	}
-	else
+	else // end Mission.
 	{
-		_popups.clear();
 		_aniTimer->stop();
 		_tacticalTimer->stop();
 		_game->popState();
 
-		if (abort == true		// abort was done or no player is still alive
-			|| inExitArea == 0)	// this concludes to defeat when in mars or mars landing mission
-		{
-			if (_rules->getDeployment(type) != nullptr
-				&& _rules->getDeployment(type)->isNoRetreat() == true
+		if (abort == true || inExitArea == 0)	// Abort was done or no player is still alive. This concludes to defeat when
+		{										// in a 'noRetreat' or 'final' mission, like Mars landing or Mars aLien base.
+			if (ruleDeploy->isNoRetreat() == true
 				&& _gameSave->getMonthsPassed() != -1)
 			{
 				_game->pushState(new DefeatState());
@@ -3847,10 +3847,9 @@ void BattlescapeState::finishBattle(
 			else
 				_game->pushState(new DebriefingState());
 		}
-		else					// no abort was done and at least a player is still alive
-		{						// this concludes to victory when in mars mission
-			if (_rules->getDeployment(type) != nullptr
-				&& _rules->getDeployment(type)->isFinalMission() == true
+		else									// No abort was done and at least a player is still alive. This
+		{										// concludes to victory when in a 'final' mission, like Mars aLien base.
+			if (ruleDeploy->isFinalMission() == true
 				&& _gameSave->getMonthsPassed() != -1)
 			{
 				_game->pushState(new VictoryState());

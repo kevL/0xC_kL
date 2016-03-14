@@ -238,12 +238,12 @@ private:
 		int getPointsPer30() const;
 
 		/// Gets the turn limit for the Deployment.
-		const int getTurnLimit() const;
+		int getTurnLimit() const;
 		/// Gets the result when the timer runs out.
-		const ChronoResult getChronoResult() const;
+		ChronoResult getChronoResult() const;
 
 		/// Gets which turn the aLiens start cheating on.
-		const int getCheatTurn() const;
+		int getCheatTurn() const;
 };
 
 }

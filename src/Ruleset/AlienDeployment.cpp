@@ -505,7 +505,7 @@ int AlienDeployment::getPointsPer30() const
  * Gets the maximum number of turns before the mission ends.
  * @return, the turn limit
  */
-const int AlienDeployment::getTurnLimit() const
+int AlienDeployment::getTurnLimit() const
 {
 	return _turnLimit;
 }
@@ -514,7 +514,7 @@ const int AlienDeployment::getTurnLimit() const
  * Gets the result to perform when the timer expires.
  * @return, the ChronoResult (AlienDeployment.h)
  */
-const ChronoResult AlienDeployment::getChronoResult() const
+ChronoResult AlienDeployment::getChronoResult() const
 {
 	return _chronoResult;
 }
@@ -523,7 +523,7 @@ const ChronoResult AlienDeployment::getChronoResult() const
  * Gets the turn at which the player's units become exposed to the AI.
  * @return, the turn for the AI to start cheating
  */
-const int AlienDeployment::getCheatTurn() const
+int AlienDeployment::getCheatTurn() const
 {
 	return _cheatTurn;
 }
