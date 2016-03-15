@@ -272,6 +272,8 @@ void UnitSprite::drawRoutine0() // private.
 		rarm2H		(248),
 		rarmShoot	(256),
 
+		offYKneel	(  4),
+
 // direction:         0      1        2        3        4        5        6        7
 // #firstFrame:      56     80      104      128      152      176      200      224
 		legsWalk[8] {56, 56+24, 56+24*2, 56+24*3, 56+24*4, 56+24*5, 56+24*6, 56+24*7},
@@ -297,10 +299,17 @@ void UnitSprite::drawRoutine0() // private.
 		offX7[8]		{ 0,  6,  8, 12,  2, -5, -5,-13}, // for the left handed rifles (muton)
 		offY7[8]		{-4, -6, -1,  0,  3,  0,  1,  0}, // for the left handed rifles (muton)
 
-		offYKneel  ( 4),
-		offXAiming (16),
-
 		expectedUnitHeight (22);
+
+	Surface* torso;
+
+	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
+	{
+		torso = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
+		torso->setX(OFFSET);
+		drawRecolored(torso);
+		return;
+	}
 
 	const int unitDir (_unit->getUnitDirection());
 
@@ -313,15 +322,6 @@ void UnitSprite::drawRoutine0() // private.
 	else
 		walkPhase = _unit->getWalkPhase();
 
-	Surface* torso;
-
-	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
-	{
-		torso = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
-		drawRecolored(torso);
-		return;
-	}
-
 	Surface
 		* rightArm,
 		* leftArm,
@@ -329,36 +329,50 @@ void UnitSprite::drawRoutine0() // private.
 		* itRT (nullptr),
 		* itLT (nullptr);
 
-	if (_drawRoutine == 0)
+	switch (_drawRoutine)
 	{
-		if (_unit->getArmor()->getForcedTorso() == TORSO_ALWAYS_FEMALE
-			|| (_unit->getGender() == GENDER_FEMALE
-				&& _unit->getArmor()->getForcedTorso() != TORSO_ALWAYS_MALE))
-		{
-			torso = _unitSet->getFrame(unitDir + femaleTorso);
-		}
-		else
-			torso = _unitSet->getFrame(unitDir + maleTorso);
-	}
-	else
-	{
-		if (_unit->getGender() == GENDER_FEMALE)
-			torso = _unitSet->getFrame(unitDir + femaleTorso);
-		else
-			torso = _unitSet->getFrame(unitDir + maleTorso);
+		default:
+		case 0:
+			if (_unit->getArmor()->getForcedTorso() == TORSO_ALWAYS_FEMALE // TODO: Remove this confusion.
+				|| (_unit->getGender() == GENDER_FEMALE
+					&& _unit->getArmor()->getForcedTorso() != TORSO_ALWAYS_MALE))
+			{
+				torso = _unitSet->getFrame(unitDir + femaleTorso);
+			}
+			else
+				torso = _unitSet->getFrame(unitDir + maleTorso);
+			break;
+
+		case 10:
+			switch (_unit->getGender())
+			{
+				default:
+				case GENDER_MALE:
+					torso = _unitSet->getFrame(unitDir + maleTorso);
+					break;
+
+				case GENDER_FEMALE:
+					torso = _unitSet->getFrame(unitDir + femaleTorso);
+			}
 	}
 
 	const bool
-		isWalking (_unit->getUnitStatus() == STATUS_WALKING),
-		isKneeled (_unit->isKneeled());
+		isKneeled (_unit->isKneeled()),
+		isWalking (_unit->getUnitStatus() == STATUS_WALKING);
 	int torsoHandsWeaponY;
 
 	if (isWalking == true)
 	{
-		if (_drawRoutine == 10)
-			torsoHandsWeaponY = yoffWalk_10[walkPhase];
-		else
-			torsoHandsWeaponY = yoffWalk[walkPhase];
+		switch (_drawRoutine)
+		{
+			default:
+			case 0:
+				torsoHandsWeaponY = yoffWalk[walkPhase];
+				break;
+
+			case 10:
+				torsoHandsWeaponY = yoffWalk_10[walkPhase];
+		}
 
 		torso->setY(torsoHandsWeaponY);
 
@@ -399,23 +413,25 @@ void UnitSprite::drawRoutine0() // private.
 		else
 		{
 			itRT = _itSetRT->getFrame(unitDir + _itRT->getRules()->getHandSprite());
-			if (_drawRoutine == 10)
+			switch (_drawRoutine)
 			{
-				if (_itRT->getRules()->isTwoHanded() == true)
-				{
-					itRT->setX(offX3[unitDir]);
-					itRT->setY(offY3[unitDir]);
-				}
-				else
-				{
-					itRT->setX(offX5[unitDir]);
-					itRT->setY(offY5[unitDir]);
-				}
-			}
-			else
-			{
-				itRT->setX(0);
-				itRT->setY(0);
+				default:
+				case 0:
+					itRT->setX(0);
+					itRT->setY(0);
+					break;
+
+				case 10:
+					if (_itRT->getRules()->isTwoHanded() == true)
+					{
+						itRT->setX(offX3[unitDir]);
+						itRT->setY(offY3[unitDir]);
+					}
+					else
+					{
+						itRT->setX(offX5[unitDir]);
+						itRT->setY(offY5[unitDir]);
+					}
 			}
 		}
 
@@ -423,17 +439,28 @@ void UnitSprite::drawRoutine0() // private.
 			|| _itRT->getRules()->getBattleType() == BT_MELEE)
 		{
 			leftArm = _unitSet->getFrame(unitDir + larm2H);
-			if (_unit->getUnitStatus() == STATUS_AIMING)
-				rightArm = _unitSet->getFrame(unitDir + rarmShoot);
-			else
-				rightArm = _unitSet->getFrame(unitDir + rarm2H);
+			switch (_unit->getUnitStatus())
+			{
+				case STATUS_AIMING:
+					rightArm = _unitSet->getFrame(unitDir + rarmShoot);
+					break;
+
+				default:
+					rightArm = _unitSet->getFrame(unitDir + rarm2H);
+			}
 		}
 		else
 		{
-			if (_drawRoutine == 10)
-				rightArm = _unitSet->getFrame(unitDir + rarm2H);
-			else
-				rightArm = _unitSet->getFrame(unitDir + rarm1H);
+			switch (_drawRoutine)
+			{
+				default:
+				case 0:
+					rightArm = _unitSet->getFrame(unitDir + rarm1H);
+					break;
+
+				case 10:
+					rightArm = _unitSet->getFrame(unitDir + rarm2H);
+			}
 		}
 
 		if (isWalking == true)
@@ -454,15 +481,17 @@ void UnitSprite::drawRoutine0() // private.
 		itLT = _itSetLT->getFrame(unitDir + _itLT->getRules()->getHandSprite());
 		if (_itLT->getRules()->isTwoHanded() == false)
 		{
-			if (_drawRoutine == 10)
+			switch (_drawRoutine)
 			{
-				itLT->setX(offX4[unitDir]);
-				itLT->setY(offY4[unitDir]);
-			}
-			else
-			{
-				itLT->setX(offX2[unitDir]);
-				itLT->setY(offY2[unitDir]);
+				default:
+				case 0:
+					itLT->setX(offX2[unitDir]);
+					itLT->setY(offY2[unitDir]);
+					break;
+
+				case 10:
+					itLT->setX(offX4[unitDir]);
+					itLT->setY(offY4[unitDir]);
 			}
 		}
 		else
@@ -478,15 +507,17 @@ void UnitSprite::drawRoutine0() // private.
 				|| _itLT->getRules()->getBattleType() == BT_MELEE))
 		{
 			itLT = _itSetLT->getFrame((unitDir + 2) % 8 + _itLT->getRules()->getHandSprite());
-			if (_drawRoutine == 10)
+			switch (_drawRoutine)
 			{
-				itLT->setX(offX7[unitDir]);
-				itLT->setY(offY7[unitDir]);
-			}
-			else
-			{
-				itLT->setX(offX6[unitDir]);
-				itLT->setY(offY6[unitDir]);
+				default:
+				case 0:
+					itLT->setX(offX6[unitDir]);
+					itLT->setY(offY6[unitDir]);
+					break;
+
+				case 10:
+					itLT->setX(offX7[unitDir]);
+					itLT->setY(offY7[unitDir]);
 			}
 			rightArm = _unitSet->getFrame(unitDir + rarmShoot);
 		}
@@ -521,18 +552,18 @@ void UnitSprite::drawRoutine0() // private.
 	if (itRT) itRT->setY(itRT->getY() + (expectedUnitHeight - _unit->getStandHeight()));
 	if (itLT) itLT->setY(itLT->getY() + (expectedUnitHeight - _unit->getStandHeight()));
 
-	if (_unit->getUnitStatus() == STATUS_AIMING)
+	if (_unit->getUnitStatus() == STATUS_AIMING
+		&& _itRT == nullptr && _itLT == nullptr) // using Universal Fist. so PUNCH!! ( this is so funny )
 	{
-		if (_itRT == nullptr && _itLT == nullptr) // using Universal Fist. so PUNCH!! ( this is so funny )
-			rightArm = _unitSet->getFrame(rarmShoot + unitDir);
-
-		torso->		setX(offXAiming);
-		rightArm->	setX(offXAiming);
-		leftArm->	setX(offXAiming);
-		legs->		setX(offXAiming);
-		if (itRT) itRT->setX(itRT->getX() + offXAiming);
-		if (itLT) itLT->setX(itLT->getX() + offXAiming);
+		rightArm = _unitSet->getFrame(rarmShoot + unitDir);
 	}
+
+	torso->		setX(OFFSET);
+	rightArm->	setX(OFFSET);
+	leftArm->	setX(OFFSET);
+	legs->		setX(OFFSET);
+	if (itRT) itRT->setX(itRT->getX() + OFFSET);
+	if (itLT) itLT->setX(itLT->getX() + OFFSET);
 
 	switch (unitDir)
 	{
@@ -686,15 +717,14 @@ void UnitSprite::drawRoutine1() // private.
 		offX2[8]	{-8,  3,  7, 13,  6, -3, -5,-13 }, // for the weapons
 		offY2[8]	{ 1, -4, -1,  0,  3,  3,  5,  0 }, // for the weapons
 		offX3[8]	{ 0,  6,  6, 12, -4, -5, -5,-13 }, // for the left handed rifles
-		offY3[8]	{-4, -4, -1,  0,  5,  0,  1,  0 }, // for the left handed rifles
-
-		offXAiming (16);
+		offY3[8]	{-4, -4, -1,  0,  5,  0,  1,  0 }; // for the left handed rifles
 
 	Surface* torso;
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
 		torso = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
+		torso->setX(OFFSET);
 		drawRecolored(torso);
 		return;
 	}
@@ -709,18 +739,21 @@ void UnitSprite::drawRoutine1() // private.
 		* itRT		(nullptr),
 		* itLT		(nullptr);
 
-	if (_unit->getUnitStatus() == STATUS_WALKING
-		|| _unit->getUnitStatus() == STATUS_FLYING)
+	switch (_unit->getUnitStatus())
 	{
-		torso = _unitSet->getFrame(
-								  unitDir * 5
-								+ static_cast<int>(
-								  static_cast<float>(walkPhase) / 1.6f)
-								+ walk);
-		torso->setY(yoffWalk[walkPhase]);
+		case STATUS_WALKING:
+		case STATUS_FLYING:
+			torso = _unitSet->getFrame(
+									  unitDir * 5
+									+ static_cast<int>(
+									  static_cast<float>(walkPhase) / 1.6f)
+									+ walk);
+			torso->setY(yoffWalk[walkPhase]);
+			break;
+
+		default:
+			torso = _unitSet->getFrame(unitDir + stand);
 	}
-	else
-		torso = _unitSet->getFrame(unitDir + stand);
 
 	sortHandObjects();
 
@@ -743,10 +776,15 @@ void UnitSprite::drawRoutine1() // private.
 		if (_itRT->getRules()->isTwoHanded() == true)
 		{
 			leftArm = _unitSet->getFrame(unitDir + larm2H);
-			if (_unit->getUnitStatus() == STATUS_AIMING)
-				rightArm = _unitSet->getFrame(unitDir + rarmShoot);
-			else
-				rightArm = _unitSet->getFrame(unitDir + rarm2H);
+			switch (_unit->getUnitStatus())
+			{
+				case STATUS_AIMING:
+					rightArm = _unitSet->getFrame(unitDir + rarmShoot);
+					break;
+
+				default:
+					rightArm = _unitSet->getFrame(unitDir + rarm2H);
+			}
 		}
 		else
 			rightArm = _unitSet->getFrame(unitDir + rarm1H);
@@ -795,14 +833,11 @@ void UnitSprite::drawRoutine1() // private.
 		leftArm->	setY(0);
 	}
 
-	if (_unit->getUnitStatus() == STATUS_AIMING)
-	{
-		torso->		setX(offXAiming);
-		rightArm->	setX(offXAiming);
-		leftArm->	setX(offXAiming);
-		if (itRT) itRT->setX(itRT->getX() + offXAiming);
-		if (itLT) itLT->setX(itLT->getX() + offXAiming);
-	}
+	torso->		setX(OFFSET);
+	rightArm->	setX(OFFSET);
+	leftArm->	setX(OFFSET);
+	if (itRT) itRT->setX(itRT->getX() + OFFSET);
+	if (itLT) itLT->setX(itLT->getX() + OFFSET);
 
 	switch (unitDir)
 	{
@@ -884,6 +919,7 @@ void UnitSprite::drawRoutine2() // private.
 	if (_quad != 0 && hover != 0)
 	{
 		quad = _unitSet->getFrame((_quad - 1) * 8 + _aniFrame + walk);
+		quad->setX(OFFSET);
 		drawRecolored(quad);
 	}
 
@@ -899,24 +935,25 @@ void UnitSprite::drawRoutine2() // private.
 		unitDir = _unit->getUnitDirection();
 
 	quad = _unitSet->getFrame(hover + (_quad * 8) + unitDir);
+	quad->setX(OFFSET);
 	drawRecolored(quad);
 
-/*	if (_quad == 3 && turret != -1)
-	{
-		quad = _unitSet->getFrame(64 + (turret * 8) + _unit->getTurretDirection());
-		int
-			turretOffsetX = 0,
-			turretOffsetY = -4;
-		if (hover != 0)
-		{
-			turretOffsetX += offX[unitDir];
-			turretOffsetY += offY[unitDir];
-		}
-
-		quad->setX(turretOffsetX);
-		quad->setY(turretOffsetY);
-		drawRecolored(quad);
-	} */
+//	if (_quad == 3 && turret != -1)
+//	{
+//		quad = _unitSet->getFrame(64 + (turret * 8) + _unit->getTurretDirection());
+//		int
+//			turretOffsetX = 0,
+//			turretOffsetY = -4;
+//		if (hover != 0)
+//		{
+//			turretOffsetX += offX[unitDir];
+//			turretOffsetY += offY[unitDir];
+//		}
+//
+//		quad->setX(turretOffsetX);
+//		quad->setY(turretOffsetY);
+//		drawRecolored(quad);
+//	}
 	if (turret != -1)
 	{
 		quad = _unitSet->getFrame(64 + (turret * 8) + _unit->getTurretDirection());
@@ -924,25 +961,27 @@ void UnitSprite::drawRoutine2() // private.
 			turretOffsetX,
 			turretOffsetY;
 
-		if (_quad == 0)
+		switch (_quad)
 		{
-			turretOffsetX = 0,
-			turretOffsetY = 12;
-		}
-		else if (_quad == 1)
-		{
-			turretOffsetX = -16,
-			turretOffsetY = 4;
-		}
-		else if (_quad == 2)
-		{
-			turretOffsetX = 16,
-			turretOffsetY = 4;
-		}
-		else // _quad== 3
-		{
-			turretOffsetX = 0,
-			turretOffsetY = -4;
+			default:
+			case 0:
+				turretOffsetX =  0,
+				turretOffsetY = 12;
+				break;
+
+			case 1:
+				turretOffsetX = -16,
+				turretOffsetY =   4;
+				break;
+
+			case 2:
+				turretOffsetX = 16,
+				turretOffsetY =  4;
+				break;
+
+			case 3:
+				turretOffsetX =  0,
+				turretOffsetY = -4;
 		}
 
 		if (hover != 0)
@@ -955,7 +994,7 @@ void UnitSprite::drawRoutine2() // private.
 			turretOffsetY += offY[unitDir];
 		}
 
-		quad->setX(turretOffsetX);
+		quad->setX(turretOffsetX + OFFSET);
 		quad->setY(turretOffsetY);
 		drawRecolored(quad);
 	}
@@ -982,6 +1021,7 @@ void UnitSprite::drawRoutine3() // private.
 	}
 
 	quad = _unitSet->getFrame((_quad * 8) + _unit->getUnitDirection());
+	quad->setX(OFFSET);
 	drawRecolored(quad);
 }
 
@@ -1001,8 +1041,6 @@ void UnitSprite::drawRoutine4() // private.
 		walk  ( 8),
 		die   (72),
 
-		offXAiming (16),
-
 		offX[8]		{ 8, 10,  7,  4, -9,-11, -7, -3 }, // for the weapons
 		offY[8]		{-6, -3,  0,  2,  0, -4, -7, -9 }, // for the weapons
 		offX2[8]	{-8,  3,  5, 12,  6, -1, -5,-13 }, // for the weapons
@@ -1015,6 +1053,7 @@ void UnitSprite::drawRoutine4() // private.
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
 		sprite = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
+		sprite->setX(OFFSET);
 		drawRecolored(sprite);
 		return;
 	}
@@ -1084,12 +1123,9 @@ void UnitSprite::drawRoutine4() // private.
 		}
 	}
 
-	if (_unit->getUnitStatus() == STATUS_AIMING)
-	{
-		sprite->setX(offXAiming);
-		if (itRT) itRT->setX(itRT->getX() + offXAiming);
-		if (itLT) itLT->setX(itLT->getX() + offXAiming);
-	}
+	sprite->setX(OFFSET);
+	if (itRT) itRT->setX(itRT->getX() + OFFSET);
+	if (itLT) itLT->setX(itLT->getX() + OFFSET);
 
 	switch (unitDir)
 	{
@@ -1150,14 +1186,20 @@ void UnitSprite::drawRoutine5() // private.
 
 	Surface* quad;
 
-	if (_unit->getUnitStatus() == STATUS_WALKING)
-		quad = _unitSet->getFrame(_unit->getUnitDirection() * 16
-								+ _quad * 4
-								+ _unit->getWalkPhase() / 2 % 4
-								+ walk);
-	else
-		quad = _unitSet->getFrame(_unit->getUnitDirection() + _quad * 8);
+	switch (_unit->getUnitStatus())
+	{
+		case STATUS_WALKING:
+			quad = _unitSet->getFrame(_unit->getUnitDirection() * 16
+									+ _quad * 4
+									+ _unit->getWalkPhase() / 2 % 4
+									+ walk);
+			break;
 
+		default:
+			quad = _unitSet->getFrame(_unit->getUnitDirection() + _quad * 8);
+	}
+
+	quad->setX(OFFSET);
 	drawRecolored(quad);
 }
 
@@ -1183,8 +1225,6 @@ void UnitSprite::drawRoutine6() // private.
 		rarm2H		(115),
 		rarmShoot	(123),
 
-		offXAiming	(16),
-
 		legsWalk[8]		{32, 40, 48, 56, 64, 72, 80, 88},
 		yoffWalk[8]		{ 3,  3,  2,  1,  0,  0,  1,  2}, // bobbing up and down
 		xoffWalka[8]	{ 0,  0,  1,  2,  3,  3,  2,  1},
@@ -1202,6 +1242,7 @@ void UnitSprite::drawRoutine6() // private.
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
 		torso = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
+		torso->setX(OFFSET);
 		drawRecolored(torso);
 		return;
 	}
@@ -1219,27 +1260,32 @@ void UnitSprite::drawRoutine6() // private.
 
 	torso = _unitSet->getFrame(unitDir + body);
 
-	if (_unit->getUnitStatus() == STATUS_WALKING)
+	switch (_unit->getUnitStatus())
 	{
-		int xoffWalk;
-		if (unitDir < 3)
-			xoffWalk = xoffWalka[walkPhase];
-		if (unitDir < 7 && unitDir > 3)
-			xoffWalk = xoffWalkb[walkPhase];
-		else
-			xoffWalk = 0;
+		case STATUS_WALKING:
+		{
+			int xoffWalk;
+			if (unitDir < 3)
+				xoffWalk = xoffWalka[walkPhase];
+			if (unitDir < 7 && unitDir > 3)
+				xoffWalk = xoffWalkb[walkPhase];
+			else
+				xoffWalk = 0;
 
-		torso->		setX(xoffWalk);
-		torso->		setY(yoffWalk[walkPhase]);
-		rightArm->	setX(xoffWalk);
-		rightArm->	setY(yoffWalk[walkPhase]);
-		leftArm->	setX(xoffWalk);
-		leftArm->	setY(yoffWalk[walkPhase]);
+			torso->		setX(xoffWalk);
+			torso->		setY(yoffWalk[walkPhase]);
+			rightArm->	setX(xoffWalk);
+			rightArm->	setY(yoffWalk[walkPhase]);
+			leftArm->	setX(xoffWalk);
+			leftArm->	setY(yoffWalk[walkPhase]);
 
-		legs = _unitSet->getFrame(walkPhase + legsWalk[unitDir]);
+			legs = _unitSet->getFrame(walkPhase + legsWalk[unitDir]);
+			break;
+		}
+
+		default:
+			legs = _unitSet->getFrame(unitDir + legsStand);
 	}
-	else
-		legs = _unitSet->getFrame(unitDir + legsStand);
 
 	sortHandObjects();
 
@@ -1265,10 +1311,15 @@ void UnitSprite::drawRoutine6() // private.
 		if (_itRT->getRules()->isTwoHanded() == true)
 		{
 			leftArm = _unitSet->getFrame(unitDir + larm2H);
-			if (_unit->getUnitStatus() == STATUS_AIMING)
-				rightArm = _unitSet->getFrame(unitDir + rarmShoot);
-			else
-				rightArm = _unitSet->getFrame(unitDir + rarm2H);
+			switch (_unit->getUnitStatus())
+			{
+				case STATUS_AIMING:
+					rightArm = _unitSet->getFrame(unitDir + rarmShoot);
+					break;
+
+				default:
+					rightArm = _unitSet->getFrame(unitDir + rarm2H);
+			}
 		}
 		else
 			rightArm = _unitSet->getFrame(unitDir + rarm1H);
@@ -1327,18 +1378,18 @@ void UnitSprite::drawRoutine6() // private.
 		leftArm->	setY(0);
 	}
 
-	if (_unit->getUnitStatus() == STATUS_AIMING)
+	if (_unit->getUnitStatus() == STATUS_AIMING
+		&& _itRT == nullptr && _itLT == nullptr) // using Universal Fist. so PUNCH!! ( this is so funny )
 	{
-		if (_itRT == nullptr && _itLT == nullptr) // using Universal Fist. so PUNCH!! ( this is so funny )
-			rightArm = _unitSet->getFrame(unitDir + rarmShoot);
-
-		torso->		setX(offXAiming);
-		rightArm->	setX(offXAiming);
-		leftArm->	setX(offXAiming);
-		legs->		setX(offXAiming);
-		if (itRT) itRT->setX(itRT->getX() + offXAiming);
-		if (itLT) itLT->setX(itLT->getX() + offXAiming);
+		rightArm = _unitSet->getFrame(unitDir + rarmShoot);
 	}
+
+	torso->		setX(OFFSET);
+	rightArm->	setX(OFFSET);
+	leftArm->	setX(OFFSET);
+	legs->		setX(OFFSET);
+	if (itRT) itRT->setX(itRT->getX() + OFFSET);
+	if (itLT) itLT->setX(itLT->getX() + OFFSET);
 
 	switch (unitDir)
 	{
@@ -1442,6 +1493,7 @@ void UnitSprite::drawRoutine7() // private.
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
 		torso = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
+		torso->setX(OFFSET);
 		drawRecolored(torso);
 		return;
 	}
@@ -1455,21 +1507,29 @@ void UnitSprite::drawRoutine7() // private.
 		* leftArm,
 		* legs;
 
-	if (_unit->getUnitStatus() == STATUS_WALKING)
+	switch (_unit->getUnitStatus())
 	{
-		const int walkPhase	(_unit->getWalkPhase());
-		torso->setY(yoffWalk[walkPhase]);
-		rightArm	= _unitSet->getFrame(walkPhase + rarmWalk[unitDir]);
-		leftArm		= _unitSet->getFrame(walkPhase + larmWalk[unitDir]);
-		legs		= _unitSet->getFrame(walkPhase + legsWalk[unitDir]);
+		case STATUS_WALKING:
+		{
+			const int walkPhase	(_unit->getWalkPhase());
+			torso->setY(yoffWalk[walkPhase]);
+			rightArm	= _unitSet->getFrame(walkPhase + rarmWalk[unitDir]);
+			leftArm		= _unitSet->getFrame(walkPhase + larmWalk[unitDir]);
+			legs		= _unitSet->getFrame(walkPhase + legsWalk[unitDir]);
+			break;
+		}
+
+		default:
+			torso->setY(0);
+			rightArm	= _unitSet->getFrame(unitDir + rarmStand);
+			leftArm		= _unitSet->getFrame(unitDir + larmStand);
+			legs		= _unitSet->getFrame(unitDir + legsStand);
 	}
-	else
-	{
-		torso->setY(0);
-		rightArm	= _unitSet->getFrame(unitDir + rarmStand);
-		leftArm		= _unitSet->getFrame(unitDir + larmStand);
-		legs		= _unitSet->getFrame(unitDir + legsStand);
-	}
+
+	torso->		setX(OFFSET);
+	legs->		setX(OFFSET);
+	leftArm->	setX(OFFSET);
+	rightArm->	setX(OFFSET);
 
 	switch (unitDir)
 	{
@@ -1539,6 +1599,7 @@ void UnitSprite::drawRoutine8() // private.
 			sprite = _unitSet->getFrame(body + pulsate[_aniFrame]);
 	}
 
+	sprite->setX(OFFSET);
 	drawRecolored(sprite);
 }
 
@@ -1594,6 +1655,7 @@ void UnitSprite::drawRoutine9() // private.
 			sprite = _unitSet->getFrame(body + _aniFrame);
 	}
 
+	sprite->setX(OFFSET);
 	drawRecolored(sprite);
 }
 

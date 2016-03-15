@@ -41,6 +41,8 @@ class UnitSprite final
 {
 
 private:
+	static const int OFFSET = 16;	// to account for the fact that unit-sprites
+									// are created double-width.
 	int
 		_aniFrame,
 		_colorSize,
