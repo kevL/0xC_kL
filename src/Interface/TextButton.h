@@ -54,6 +54,10 @@ private:
 	Text* _text;
 	TextButton** _group;
 
+	/// For use by RuleInterface.
+	void setSecondaryColor(Uint8 color) override
+	{ setTextColor(color); }
+
 
 protected:
 	bool isButtonHandled(Uint8 btn = 0) override;
@@ -75,8 +79,6 @@ protected:
 		void setColor(Uint8 color) override;
 		/// Gets the text button's color.
 		Uint8 getColor() const;
-		/// Sets the secondary color of this TextButton.
-		void setSecondaryColor(Uint8 color) override;
 		/// Sets the text button's text color.
 		void setTextColor(Uint8 color);
 

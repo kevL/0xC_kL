@@ -22,7 +22,6 @@
 #include "CrossPlatform.h"
 #include "DosFont.h"
 //#include "Language.h"
-//#include "Logger.h"
 #include "Surface.h"
 
 
@@ -31,7 +30,7 @@ namespace OpenXcom
 
 std::wstring Font::_index;
 
-SDL_Color Font::_palette[] =
+SDL_Color Font::_palette[6]
 {
 	{  0,   0,   0,   0},
 	{255, 255, 255, 255},
@@ -41,6 +40,11 @@ SDL_Color Font::_palette[] =
 	{ 63,  63,  63, 255}
 };
 
+SDL_Color Font::_terminal[2]
+{
+	{  0,   0,   0,   0},
+	{192, 192, 192, 255}
+};
 
 /**
  * Initializes this Font with a blank surface.
@@ -83,24 +87,25 @@ void Font::load(const YAML::Node& node)
 	_spacing	= node["spacing"]	.as<int>(_spacing);
 	_monospace	= node["monospace"]	.as<bool>(_monospace);
 
-	const std::string image = "Language/" + node["image"].as<std::string>();
+	const std::string image ("Language/" + node["image"].as<std::string>());
 
-	Surface* const fontTemp = new Surface(_width, _height);
-	fontTemp->loadImage(CrossPlatform::getDataFile(image));
+	Surface* const font (new Surface(_width, _height));
+	font->loadImage(CrossPlatform::getDataFile(image));
 
 	_surface = new Surface(
-						fontTemp->getWidth(),
-						fontTemp->getHeight());
+						font->getWidth(),
+						font->getHeight());
 	_surface->setPalette(_palette, 0,6);
-	fontTemp->blit(_surface);
+	font->blit(_surface);
 
-	delete fontTemp;
+	delete font;
 
 	init();
 }
 
 /**
  * Generates a pre-defined Codepage 437 (MS-DOS terminal) font.
+ * @note Used for the DOS-Art load-screen during StartState.
  */
 void Font::loadTerminal()
 {
@@ -109,28 +114,26 @@ void Font::loadTerminal()
 	_spacing = 0;
 	_monospace = true;
 
-	SDL_RWops* const rw = SDL_RWFromConstMem(dosFont, DOSFONT_SIZE);
-	SDL_Surface* const s = SDL_LoadBMP_RW(rw, 0);
+	SDL_RWops* const rw (SDL_RWFromConstMem(dosFont, DOSFONT_SIZE));
+	SDL_Surface* const srf (SDL_LoadBMP_RW(rw, 0));
 	SDL_FreeRW(rw);
 
-	_surface = new Surface(s->w, s->h);
-	SDL_Color terminal[2] =
-	{
-		{  0,   0,   0,   0},
-		{192, 192, 192, 255}
-	};
+	_surface = new Surface(srf->w, srf->h);
+	_surface->setPalette(_terminal, 0,2);
 
-	_surface->setPalette(terminal, 0,2);
+	SDL_BlitSurface(
+				srf,
+				nullptr,
+				_surface->getSurface(),
+				nullptr);
+	SDL_FreeSurface(srf);
 
-	SDL_BlitSurface(s, 0, _surface->getSurface(), 0);
-	SDL_FreeSurface(s);
-
-	const std::wstring temp = _index;
+	const std::wstring id (_index);
 	_index = L" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
 	init();
 
-	_index = temp;
+	_index = id;
 }
 
 /**
@@ -140,8 +143,7 @@ void Font::loadTerminal()
 void Font::init()
 {
 	_surface->lock();
-
-	const int len = (_surface->getWidth() / _width);
+	const int len (_surface->getWidth() / _width);
 
 	if (_monospace == true)
 	{
@@ -151,10 +153,9 @@ void Font::init()
 				++i)
 		{
 			SDL_Rect rect;
-
 			const int
-				startX = static_cast<int>(i) % len * _width,
-				startY = static_cast<int>(i) / len * _height;
+				startX (static_cast<int>(i) % len * _width),
+				startY (static_cast<int>(i) / len * _height);
 
 			rect.x = static_cast<Sint16>(startX);
 			rect.y = static_cast<Sint16>(startY);
@@ -172,23 +173,21 @@ void Font::init()
 				++i)
 		{
 			SDL_Rect rect;
-
 			const int
-				startX = static_cast<int>(i) % len * _width,
-				startY = static_cast<int>(i) / len * _height;
+				startX (static_cast<int>(i) % len * _width),
+				startY (static_cast<int>(i) / len * _height);
 			int
-				left = -1,
-				right = -1;
+				left (-1),
+				right (-1);
 
 			for (int
 					x = startX;
-					x < startX + _width;
+					x != startX + _width;
 					++x)
 			{
 				for (int
 						y = startY;
-						y < startY + _height
-							&& left == -1;
+						y != startY + _height && left == -1;
 						++y)
 				{
 					if (_surface->getPixelColor(x,y) != 0)
@@ -203,8 +202,7 @@ void Font::init()
 			{
 				for (int
 						y = startY + _height;
-						y-- != startY
-							&& right == -1;
+						y-- != startY && right == -1;
 						)
 				{
 					if (_surface->getPixelColor(x,y) != 0)
@@ -220,7 +218,6 @@ void Font::init()
 			_chars[_index[i]] = rect;
 		}
 	}
-
 	_surface->unlock();
 }
 
@@ -278,7 +275,7 @@ int Font::getSpacing() const
  */
 SDL_Rect Font::getCharSize(wchar_t fontChar)
 {
-	SDL_Rect charSize = {0,0,0,0};
+	SDL_Rect charSize {0,0,0u,0u};
 
 	if (fontChar != 1
 		&& isLinebreak(fontChar) == false
@@ -313,49 +310,6 @@ SDL_Rect Font::getCharSize(wchar_t fontChar)
 Surface* Font::getSurface() const
 {
 	return _surface;
-}
-
-/**
- *
- * @param file	-
- * @param width	-
- */
-void Font::fix(
-		const std::string& file,
-		int width)
-{
-	Surface* const srf = new Surface(width, 512);
-
-	srf->setPalette(_palette, 0,6);
-	_surface->setPalette(_palette, 0,6);
-
-	int
-		x = 0,
-		y = 0;
-
-	for (size_t
-			i = 0;
-			i != _index.length();
-			++i)
-	{
-		SDL_Rect rect = _chars[_index[i]];
-		_surface->getCrop()->x = rect.x;
-		_surface->getCrop()->y = rect.y;
-		_surface->getCrop()->w = rect.w;
-		_surface->getCrop()->h = rect.h;
-		_surface->setX(x);
-		_surface->setY(y);
-		_surface->blit(srf);
-
-		x += _width;
-		if (x == width)
-		{
-			x = 0;
-			y += _height;
-		}
-	}
-
-	SDL_SaveBMP(srf->getSurface(), file.c_str());
 }
 
 }

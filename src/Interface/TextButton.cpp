@@ -110,19 +110,9 @@ Uint8 TextButton::getColor() const
 }
 
 /**
- * Sets the secondary color of this TextButton.
- * @param color - the color
+ * Changes the color for the text only.
+ * @param color - color value
  */
-void TextButton::setSecondaryColor(Uint8 color)
-{
-	_text->setSecondaryColor(color);
-	_redraw = true;
-}
-
-/**
-* Changes the color for the text only.
-* @param color - color value
-*/
 void TextButton::setTextColor(Uint8 color)
 {
 	_text->setColor(color);
@@ -130,8 +120,8 @@ void TextButton::setTextColor(Uint8 color)
 }
 
 /**
-* Changes the text to use the big-size font.
-*/
+ * Changes the text to use the big-size font.
+ */
 void TextButton::setBig()
 {
 	_text->setBig();
@@ -139,8 +129,8 @@ void TextButton::setBig()
 }
 
 /**
-* Changes the text to use the small-size font.
-*/
+ * Changes the text to use the small-size font.
+ */
 void TextButton::setSmall()
 {
 	_text->setSmall();
@@ -148,9 +138,9 @@ void TextButton::setSmall()
 }
 
 /**
-* Returns the font currently used by the text.
-* @return, pointer to Font
-*/
+ * Returns the font currently used by the text.
+ * @return, pointer to Font
+ */
 Font* TextButton::getFont() const
 {
 	return _text->getFont();
@@ -253,7 +243,7 @@ void TextButton::draw()
 	rect.w = static_cast<Uint16>(getWidth());
 	rect.h = static_cast<Uint16>(getHeight());
 
-	Uint8 color = _color + _contrast;
+	Uint8 color (_color + _contrast);
 
 	// limit highest color to darkest hue/shade in its palette-block.
 //	const Uint8 topColor = ((_color / 16) * 16) + 15; // exploit INT
@@ -269,12 +259,11 @@ void TextButton::draw()
 
 		drawRect(&rect, color);
 
-		if (i %2 == 0)
+		if (i % 2 == 0)
 		{
 			++rect.x;
 			++rect.y;
 		}
-
 		--rect.w;
 		--rect.h;
 
@@ -283,30 +272,28 @@ void TextButton::draw()
 			case 0:
 //				color = _color + (_contrast * 5);
 //				if (color > topColor) color = topColor;
-
 				setPixelColor(
 						static_cast<int>(rect.w),
 						0,
 						color);
-			break;
+				break;
 
 			case 1:
 				color = _color + (_contrast * 2);
-			break;
+				break;
 
 			case 2:
 				color = _color + (_contrast * 4);
 //				if (color > topColor) color = topColor;
-
 				setPixelColor(
 						static_cast<int>(rect.w) + 1,
 						1,
 						color);
-			break;
+				break;
 
 			case 3:
 				color = _color + (_contrast * 3);
-			break;
+				break;
 
 			case 4:
 				if (_geoscapeButton == true)
@@ -345,12 +332,10 @@ void TextButton::mousePress(Action* action, State* state)
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
 		&& _group != nullptr)
 	{
-		TextButton* pre = *_group;
+		TextButton* pre (*_group);
 		*_group = this;
 
-		if (pre != nullptr)
-			pre->draw();
-
+		if (pre != nullptr) pre->draw();
 		draw();
 	}
 
@@ -360,18 +345,10 @@ void TextButton::mousePress(Action* action, State* state)
 //			&& _group == nullptr
 			&& action->getDetails()->button.button != SDL_BUTTON_WHEELUP
 			&& action->getDetails()->button.button != SDL_BUTTON_WHEELDOWN
-			&& (_comboBox == nullptr
-				|| _comboBox->getVisible() == true))
+			&& (_comboBox == nullptr || _comboBox->getVisible() == true))
 		{
 			soundPress->play(Mix_GroupAvailable(0));
 		}
-
-/*		if (_comboBox != nullptr // moved to mouseRelease()
-			&& _comboBox->getVisible() == true)
-		{
-			_comboBox->toggle();
-		} */
-
 		draw();
 	}
 
@@ -387,11 +364,8 @@ void TextButton::mouseRelease(Action* action, State* state)
 {
 	if (isButtonHandled(action->getDetails()->button.button) == true)
 	{
-		if (_comboBox != nullptr // was in mousePress()
-			&& _comboBox->getVisible() == true)
-		{
+		if (_comboBox != nullptr && _comboBox->getVisible() == true)
 			_comboBox->toggle();
-		}
 
 		draw();
 	}

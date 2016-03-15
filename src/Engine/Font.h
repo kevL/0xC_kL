@@ -47,6 +47,7 @@ class Font
 private:
 	static std::wstring _index;
 	static SDL_Color _palette[6];
+	static SDL_Color _terminal[2];
 
 	bool _monospace;
 	int
@@ -106,11 +107,6 @@ private:
 
 		/// Gets the font's surface.
 		Surface* getSurface() const;
-
-		///
-		void fix(
-				const std::string& file,
-				int width);
 };
 
 }
