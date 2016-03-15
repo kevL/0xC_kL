@@ -312,6 +312,9 @@ InventoryState::InventoryState(
 	_btnGroundR->onMouseClick(
 					(ActionHandler)& InventoryState::btnUnequipUnitClick,
 					SDL_BUTTON_RIGHT);
+	_btnGroundR->onKeyboardPress(
+					(ActionHandler)& InventoryState::btnUnequipUnitClick,
+					Options::keyInvClear);
 //	_btnGroundR->setTooltip("STR_SCROLL_RIGHT");
 //	_btnGroundR->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
 //	_btnGroundR->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);

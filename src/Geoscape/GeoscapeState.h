@@ -162,7 +162,7 @@ private:
 		_dogfightsToStart;
 
 	/// Creates the prefix for a debugging message.
-	void fabricateDebugPrefix();
+	void fabricateDebugPretext();
 
 	/// Assigns whether an aLien cracked under pressure.
 	void getAlienCracks(

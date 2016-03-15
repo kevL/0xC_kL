@@ -996,32 +996,32 @@ void GeoscapeState::handle(Action* action)
 	{
 		bool beep (false);
 
-		if (Options::debug == true)
+		if (Options::debug == true
+			&& (SDL_GetModState() & KMOD_CTRL) != 0)
 		{
-			if ((SDL_GetModState() & KMOD_CTRL) != 0)
+			if (action->getDetails()->key.keysym.sym == SDLK_d)				// "ctrl-d" - enable/disable debug mode
 			{
-				if (action->getDetails()->key.keysym.sym == SDLK_d)				// "ctrl-d" - enable debug mode
+				beep = true;
+				if (_gameSave->toggleDebugActive() == true)
+					fabricateDebugPretext();
+				else
 				{
-					beep = true;
-					if (_gameSave->toggleDebugActive() == true)
-						fabricateDebugPrefix();
-					else
-					{
-						_txtDebug->setText(L"");
-						_stDebug = "";
-					}
+					_txtDebug->setText(L"");
+					_stDebug = "";
 				}
-				else if (_gameSave->getDebugGeo() == true)
+			}
+			else if (_gameSave->getDebugGeo() == true)
+			{
+				switch (action->getDetails()->key.keysym.sym)
 				{
-					if (action->getDetails()->key.keysym.sym == SDLK_c)			// "ctrl-c" - cycle areas
-					{															// note: also handled in Game::run() where the 'cycle' is determined.
-						beep = true;
+					case SDLK_c:		// "ctrl-c" - cycle areas
+						beep = true;	// NOTE: Also handled in Game::run() where the 'cycle' is determined.
 						_txtDebug->setText(L"");
-						fabricateDebugPrefix();
-					}
-					else if (action->getDetails()->key.keysym.sym == SDLK_a)	// "ctrl-a" - delete soldier awards
-					{															// note: Clears awards of the living, not of the Memorial Dead.
-						beep = true;
+						fabricateDebugPretext();
+						break;
+
+					case SDLK_a:		// "ctrl-a" - delete soldier awards
+						beep = true;	// NOTE: Clears awards of the living, not of the Memorial Dead.
 						_txtDebug->setText(L"SOLDIER COMMENDATIONS DELETED");
 						for (std::vector<Base*>::const_iterator
 								i = _game->getSavedGame()->getBases()->begin();
@@ -1043,14 +1043,15 @@ void GeoscapeState::handle(Action* action)
 								(*j)->getDiary()->getSoldierAwards()->clear();
 							}
 						}
-					}
-					else
+						break;
+
+					default:
 						_txtDebug->setText(L"");
 				}
 			}
 		}
 
-		if (_gameSave->isIronman() == false) // quick save and quick load
+		if (_gameSave->isIronman() == false)										// quick-save and quick-load
 		{
 			if (action->getDetails()->key.keysym.sym == Options::keyQuickSave)		// f6 - quickSave
 			{
@@ -1091,7 +1092,7 @@ void GeoscapeState::handle(Action* action)
 /**
  * Creates the prefix for a debugging message.
  */
-void GeoscapeState::fabricateDebugPrefix() // private.
+void GeoscapeState::fabricateDebugPretext() // private.
 {
 	_stDebug = "DEBUG MODE : ";
 	switch (_globe->getDebugType())
