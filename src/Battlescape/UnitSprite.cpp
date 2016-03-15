@@ -193,7 +193,7 @@ struct ColorReplace
 }
 
 
-void UnitSprite::drawRecolored(Surface* src)
+void UnitSprite::drawRecolored(Surface* src) // private.
 {
 	if (_colorSize != 0)
 	{
@@ -250,7 +250,7 @@ void UnitSprite::draw()
  * Drawing routine for soldiers, sectoids, and non-stock civilians (all routine 0),
  * or mutons (subroutine 10).
  */
-void UnitSprite::drawRoutine0()
+void UnitSprite::drawRoutine0() // private.
 {
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
@@ -258,51 +258,52 @@ void UnitSprite::drawRoutine0()
 	// what no _redraw!
 
 	static const int // magic static numbers
-		maleTorso	=  32,
-		femaleTorso	= 267,
-		legsStand	=  16,
-		legsKneel	=  24,
-		die			= 264,
-		legsFloat	= 275,
+		maleTorso	( 32),
+		femaleTorso	(267),
+		legsStand	( 16),
+		legsKneel	( 24),
+		die			(264),
+		legsFloat	(275),
 
-		larmStand	=   0,
-		rarmStand	=   8,
-		rarm1H		= 232,
-		larm2H		= 240,
-		rarm2H		= 248,
-		rarmShoot	= 256,
+		larmStand	(  0),
+		rarmStand	(  8),
+		rarm1H		(232),
+		larm2H		(240),
+		rarm2H		(248),
+		rarmShoot	(256),
 
-// direction:           0      1      2        3        4        5        6        7
-// #firstFrame:        56     80    104      128      152      176      200      224
-		legsWalk[8] = {56, 56+24, 56+24*2, 56+24*3, 56+24*4, 56+24*5, 56+24*6, 56+24*7},
-// #firstFrame:        40     64     88      112      136      160      184      208
-		larmWalk[8] = {40, 40+24, 40+24*2, 40+24*3, 40+24*4, 40+24*5, 40+24*6, 40+24*7},
-// #firstFrame:        48     72     96      120      144      168      192      216
-		rarmWalk[8] = {48, 48+24, 48+24*2, 48+24*3, 48+24*4, 48+24*5, 48+24*6, 48+24*7},
+// direction:         0      1        2        3        4        5        6        7
+// #firstFrame:      56     80      104      128      152      176      200      224
+		legsWalk[8] {56, 56+24, 56+24*2, 56+24*3, 56+24*4, 56+24*5, 56+24*6, 56+24*7},
+// #firstFrame:      40     64       88      112      136      160      184      208
+		larmWalk[8] {40, 40+24, 40+24*2, 40+24*3, 40+24*4, 40+24*5, 40+24*6, 40+24*7},
+// #firstFrame:      48     72       96      120      144      168      192      216
+		rarmWalk[8] {48, 48+24, 48+24*2, 48+24*3, 48+24*4, 48+24*5, 48+24*6, 48+24*7},
 
-		yoffWalk[8]		= { 1,  0, -1,  0,  1,  0, -1,  0}, // bobbing up and down
-		yoffWalk_mut[8]	= { 1,  1,  0,  0,  1,  1,  0,  0}, // bobbing up and down (muton)
-		offX[8]			= { 8, 10,  7,  4, -9,-11, -7, -3}, // for the weapons
-		offY[8]			= {-6, -3,  0,  2,  0, -4, -7, -9}, // for the weapons
-		offX2[8]		= {-8,  3,  5, 12,  6, -1, -5,-13}, // for the left handed weapons
-		offY2[8]		= { 1, -4, -2,  0,  3,  3,  5,  0}, // for the left handed weapons
-		offX3[8]		= { 0,  0,  2,  2,  0,  0,  0,  0}, // for the weapons (muton)
-		offY3[8]		= {-3, -3, -1, -1, -1, -3, -3, -2}, // for the weapons (muton)
-		offX4[8]		= {-8,  2,  7, 14,  7, -2, -4, -8}, // for the left handed weapons
-		offY4[8]		= {-3, -3, -1,  0,  3,  3,  0,  1}, // for the left handed weapons
-		offX5[8]		= {-1,  1,  1,  2,  0, -1,  0,  0}, // for the weapons (muton)
-		offY5[8]		= { 1, -1, -1, -1, -1, -1, -3,  0}, // for the weapons (muton)
-		offX6[8]		= { 0,  6,  6,  12,-4, -5, -5,-13}, // for the left handed rifles
-		offY6[8]		= {-4, -4, -1,  0,  5,  0,  1,  0}, // for the left handed rifles
-		offX7[8]		= { 0,  6,  8, 12,  2, -5, -5,-13}, // for the left handed rifles (muton)
-		offY7[8]		= {-4, -6, -1,  0,  3,  0,  1,  0}, // for the left handed rifles (muton)
+		yoffWalk[8]		{ 1,  0, -1,  0,  1,  0, -1,  0}, // bobbing up and down
+		yoffWalk_10[8]	{ 1,  1,  0,  0,  1,  1,  0,  0}, // bobbing up and down (muton)
+		offX[8]			{ 8, 10,  7,  4, -9,-11, -7, -3}, // for the weapons
+		offY[8]			{-6, -3,  0,  2,  0, -4, -7, -9}, // for the weapons
+		offX2[8]		{-8,  3,  5, 12,  6, -1, -5,-13}, // for the left handed weapons
+		offY2[8]		{ 1, -4, -2,  0,  3,  3,  5,  0}, // for the left handed weapons
+		offX3[8]		{ 0,  0,  2,  2,  0,  0,  0,  0}, // for the weapons (muton)
+		offY3[8]		{-3, -3, -1, -1, -1, -3, -3, -2}, // for the weapons (muton)
+		offX4[8]		{-8,  2,  7, 14,  7, -2, -4, -8}, // for the left handed weapons
+		offY4[8]		{-3, -3, -1,  0,  3,  3,  0,  1}, // for the left handed weapons
+		offX5[8]		{-1,  1,  1,  2,  0, -1,  0,  0}, // for the weapons (muton)
+		offY5[8]		{ 1, -1, -1, -1, -1, -1, -3,  0}, // for the weapons (muton)
+		offX6[8]		{ 0,  6,  6,  12,-4, -5, -5,-13}, // for the left handed rifles
+		offY6[8]		{-4, -4, -1,  0,  5,  0,  1,  0}, // for the left handed rifles
+		offX7[8]		{ 0,  6,  8, 12,  2, -5, -5,-13}, // for the left handed rifles (muton)
+		offY7[8]		{-4, -6, -1,  0,  3,  0,  1,  0}, // for the left handed rifles (muton)
 
-		offYKneel  =  4,
-		offXAiming = 16,
+		offYKneel  ( 4),
+		offXAiming (16),
 
-		expectedUnitHeight = 22;
+		expectedUnitHeight (22);
 
 	const int unitDir (_unit->getUnitDirection());
+
 	int walkPhase;
 	if (_unit->isStrafeBackwards() == true)
 	{
@@ -325,8 +326,8 @@ void UnitSprite::drawRoutine0()
 		* rightArm,
 		* leftArm,
 		* legs,
-		* itRT = nullptr,
-		* itLT = nullptr;
+		* itRT (nullptr),
+		* itLT (nullptr);
 
 	if (_drawRoutine == 0)
 	{
@@ -348,14 +349,14 @@ void UnitSprite::drawRoutine0()
 	}
 
 	const bool
-		isWalking = (_unit->getUnitStatus() == STATUS_WALKING),
-		isKneeled = _unit->isKneeled();
+		isWalking (_unit->getUnitStatus() == STATUS_WALKING),
+		isKneeled (_unit->isKneeled());
 	int torsoHandsWeaponY;
 
 	if (isWalking == true)
 	{
 		if (_drawRoutine == 10)
-			torsoHandsWeaponY = yoffWalk_mut[walkPhase];
+			torsoHandsWeaponY = yoffWalk_10[walkPhase];
 		else
 			torsoHandsWeaponY = yoffWalk[walkPhase];
 
@@ -542,7 +543,8 @@ void UnitSprite::drawRoutine0()
 			drawRecolored(legs);
 			drawRecolored(torso);
 			drawRecolored(rightArm);
-		break;
+			break;
+
 		case 1:
 			drawRecolored(leftArm);
 			drawRecolored(legs);
@@ -550,7 +552,8 @@ void UnitSprite::drawRoutine0()
 			drawRecolored(torso);
 			if (itRT) itRT->blit(this);
 			drawRecolored(rightArm);
-		break;
+			break;
+
 		case 2:
 			drawRecolored(leftArm);
 			drawRecolored(legs);
@@ -558,7 +561,8 @@ void UnitSprite::drawRoutine0()
 			if (itLT) itLT->blit(this);
 			if (itRT) itRT->blit(this);
 			drawRecolored(rightArm);
-		break;
+			break;
+
 		case 3:
 			if (_unit->getUnitStatus() != STATUS_AIMING
 				&& ((_itRT != nullptr && _itRT->getRules()->isTwoHanded() == true)
@@ -580,7 +584,8 @@ void UnitSprite::drawRoutine0()
 				if (itRT) itRT->blit(this);
 				if (itLT) itLT->blit(this);
 			}
-		break;
+			break;
+
 		case 4:
 			drawRecolored(legs);
 			drawRecolored(rightArm);
@@ -588,7 +593,8 @@ void UnitSprite::drawRoutine0()
 			drawRecolored(leftArm);
 			if (itRT) itRT->blit(this);
 			if (itLT) itLT->blit(this);
-		break;
+			break;
+
 		case 5:
 			if (_unit->getUnitStatus() != STATUS_AIMING
 				&& ((_itRT != nullptr && _itRT->getRules()->isTwoHanded() == true)
@@ -610,7 +616,8 @@ void UnitSprite::drawRoutine0()
 				drawRecolored(torso);
 				drawRecolored(leftArm);
 			}
-		break;
+			break;
+
 		case 6:
 			drawRecolored(rightArm);
 			if (itRT) itRT->blit(this);
@@ -618,7 +625,8 @@ void UnitSprite::drawRoutine0()
 			drawRecolored(legs);
 			drawRecolored(torso);
 			drawRecolored(leftArm);
-		break;
+			break;
+
 		case 7:
 			if (_unit->getUnitStatus() != STATUS_AIMING
 				&& ((_itRT != nullptr && _itRT->getRules()->isTwoHanded() == true)
@@ -653,7 +661,7 @@ void UnitSprite::drawRoutine0()
 /**
  * Drawing routine for floaters and waspites.
  */
-void UnitSprite::drawRoutine1()
+void UnitSprite::drawRoutine1() // private.
 {
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
@@ -661,26 +669,26 @@ void UnitSprite::drawRoutine1()
 	// what no _redraw!
 
 	static const int // magic static numbers
-		stand = 16,
-		walk  = 24,
-		die   = 64,
+		stand (16),
+		walk  (24),
+		die   (64),
 
-		rarm      =  0,
-		larm      =  8,
-		rarm2H    = 75,
-		larm2H    = 67,
-		rarmShoot = 83,
-		rarm1H    = 91, // note that arms are switched vs "normal" sheets
+		rarm      ( 0),
+		larm      ( 8),
+		rarm2H    (75),
+		larm2H    (67),
+		rarmShoot (83),
+		rarm1H    (91), // note that arms are switched vs "normal" sheets
 
-		yoffWalk[8]	= { 0,  0,  0,  0,  0,  0,  0,  0 }, // bobbing up and down
-		offX[8]		= { 8, 10,  7,  4, -9,-11, -7, -3 }, // for the weapons
-		offY[8]		= {-6, -3,  0,  2,  0, -4, -7, -9 }, // for the weapons
-		offX2[8]	= {-8,  3,  7, 13,  6, -3, -5,-13 }, // for the weapons
-		offY2[8]	= { 1, -4, -1,  0,  3,  3,  5,  0 }, // for the weapons
-		offX3[8]	= { 0,  6,  6, 12, -4, -5, -5,-13 }, // for the left handed rifles
-		offY3[8]	= {-4, -4, -1,  0,  5,  0,  1,  0 }, // for the left handed rifles
+		yoffWalk[8]	{ 0,  0,  0,  0,  0,  0,  0,  0 }, // bobbing up and down
+		offX[8]		{ 8, 10,  7,  4, -9,-11, -7, -3 }, // for the weapons
+		offY[8]		{-6, -3,  0,  2,  0, -4, -7, -9 }, // for the weapons
+		offX2[8]	{-8,  3,  7, 13,  6, -3, -5,-13 }, // for the weapons
+		offY2[8]	{ 1, -4, -1,  0,  3,  3,  5,  0 }, // for the weapons
+		offX3[8]	{ 0,  6,  6, 12, -4, -5, -5,-13 }, // for the left handed rifles
+		offY3[8]	{-4, -4, -1,  0,  5,  0,  1,  0 }, // for the left handed rifles
 
-		offXAiming = 16;
+		offXAiming (16);
 
 	Surface* torso;
 
@@ -692,14 +700,14 @@ void UnitSprite::drawRoutine1()
 	}
 
 	const int
-		unitDir		= _unit->getUnitDirection(),
-		walkPhase	= _unit->getWalkPhase();
+		unitDir		(_unit->getUnitDirection()),
+		walkPhase	(_unit->getWalkPhase());
 
 	Surface
-		* rightArm	= _unitSet->getFrame(unitDir + rarm),
-		* leftArm	= _unitSet->getFrame(unitDir + larm),
-		* itRT		= nullptr,
-		* itLT		= nullptr;
+		* rightArm	(_unitSet->getFrame(unitDir + rarm)),
+		* leftArm	(_unitSet->getFrame(unitDir + larm)),
+		* itRT		(nullptr),
+		* itLT		(nullptr);
 
 	if (_unit->getUnitStatus() == STATUS_WALKING
 		|| _unit->getUnitStatus() == STATUS_FLYING)
@@ -804,7 +812,8 @@ void UnitSprite::drawRoutine1()
 			drawRecolored(leftArm);
 			drawRecolored(torso);
 			drawRecolored(rightArm);
-		break;
+			break;
+
 		case 1:
 		case 2:
 			drawRecolored(leftArm);
@@ -812,7 +821,8 @@ void UnitSprite::drawRoutine1()
 			drawRecolored(rightArm);
 			if (itRT) itRT->blit(this);
 			if (itLT) itLT->blit(this);
-		break;
+			break;
+
 		case 3:
 		case 4:
 			drawRecolored(torso);
@@ -820,21 +830,24 @@ void UnitSprite::drawRoutine1()
 			drawRecolored(rightArm);
 			if (itRT) itRT->blit(this);
 			if (itLT) itLT->blit(this);
-		break;
+			break;
+
 		case 5:
 			drawRecolored(rightArm);
 			drawRecolored(torso);
 			drawRecolored(leftArm);
 			if (itRT) itRT->blit(this);
 			if (itLT) itLT->blit(this);
-		break;
+			break;
+
 		case 6:
 			drawRecolored(rightArm);
 			if (itRT) itRT->blit(this);
 			if (itLT) itLT->blit(this);
 			drawRecolored(torso);
 			drawRecolored(leftArm);
-		break;
+			break;
+
 		case 7:
 			drawRecolored(rightArm);
 			if (itRT) itRT->blit(this);
@@ -853,20 +866,20 @@ void UnitSprite::drawRoutine1()
 /**
  * Drawing routine for xCom tanks.
  */
-void UnitSprite::drawRoutine2()
+void UnitSprite::drawRoutine2() // private.
 {
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
 
 	// what no _redraw!
 
-	static const int walk = 104; // magic static number
+	static const int walk (104); // magic static number
 
 	Surface* quad;
 
 	const int
-		turret = _unit->getTurretType(),
-		hover  = (_unit->getMoveTypeUnit() == MT_FLY) ? 32 : 0;
+		turret (_unit->getTurretType()),
+		hover  ((_unit->getMoveTypeUnit() == MT_FLY) ? 32 : 0);
 
 	if (_quad != 0 && hover != 0)
 	{
@@ -935,8 +948,8 @@ void UnitSprite::drawRoutine2()
 		if (hover != 0)
 		{
 			static const int
-				offX[8] = {-2,-7,-5, 0, 5, 7, 2, 0},
-				offY[8] = {-1,-3,-4,-5,-4,-3,-1,-1};
+				offX[8] {-2,-7,-5, 0, 5, 7, 2, 0},
+				offY[8] {-1,-3,-4,-5,-4,-3,-1,-1};
 
 			turretOffsetX += offX[unitDir];
 			turretOffsetY += offY[unitDir];
@@ -951,16 +964,17 @@ void UnitSprite::drawRoutine2()
 /**
  * Drawing routine for cyberdiscs.
  */
-void UnitSprite::drawRoutine3()
+void UnitSprite::drawRoutine3() // private.
 {
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
 
 	// what no _redraw!
 
-	static const int walk = 32; // magic static number
+	static const int walk (32); // magic static number
 
 	Surface* quad;
+
 	if (_quad != 0)
 	{
 		quad = _unitSet->getFrame((_quad - 1) * 8 + _aniFrame + walk);
@@ -975,7 +989,7 @@ void UnitSprite::drawRoutine3()
  * Drawing routine for stock civilians, ethereals, zombies, dogs, cybermites,
  * and scout-drones.
  */
-void UnitSprite::drawRoutine4()
+void UnitSprite::drawRoutine4() // private.
 {
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
@@ -983,18 +997,18 @@ void UnitSprite::drawRoutine4()
 	// what no _redraw!
 
 	static const int // magic static numbers
-		stand =  0,
-		walk  =  8,
-		die   = 72,
+		stand ( 0),
+		walk  ( 8),
+		die   (72),
 
-		offXAiming = 16,
+		offXAiming (16),
 
-		offX[8]		= { 8, 10,  7,  4, -9,-11, -7, -3 }, // for the weapons
-		offY[8]		= {-6, -3,  0,  2,  0, -4, -7, -9 }, // for the weapons
-		offX2[8]	= {-8,  3,  5, 12,  6, -1, -5,-13 }, // for the weapons
-		offY2[8]	= { 1, -4, -2,  0,  3,  3,  5,  0 }, // for the weapons
-		offX3[8]	= { 0,  6,  6, 12, -4, -5, -5,-13 }, // for the left handed rifles
-		offY3[8]	= {-4, -4, -1,  0,  5,  0,  1,  0 }; // for the left handed rifles
+		offX[8]		{ 8, 10,  7,  4, -9,-11, -7, -3 }, // for the weapons
+		offY[8]		{-6, -3,  0,  2,  0, -4, -7, -9 }, // for the weapons
+		offX2[8]	{-8,  3,  5, 12,  6, -1, -5,-13 }, // for the weapons
+		offY2[8]	{ 1, -4, -2,  0,  3,  3,  5,  0 }, // for the weapons
+		offX3[8]	{ 0,  6,  6, 12, -4, -5, -5,-13 }, // for the left handed rifles
+		offY3[8]	{-4, -4, -1,  0,  5,  0,  1,  0 }; // for the left handed rifles
 
 	Surface* sprite;
 
@@ -1006,10 +1020,10 @@ void UnitSprite::drawRoutine4()
 	}
 
 	Surface
-		* itRT = nullptr,
-		* itLT = nullptr;
+		* itRT (nullptr),
+		* itLT (nullptr);
 
-	const int unitDir = _unit->getUnitDirection();
+	const int unitDir (_unit->getUnitDirection());
 
 	if (_unit->getUnitStatus() == STATUS_WALKING
 		&& _unit->getRaceString() != "STR_ETHEREAL") // stop the ethereal shuffle.
@@ -1083,28 +1097,33 @@ void UnitSprite::drawRoutine4()
 			if (itLT) itLT->blit(this);
 			if (itRT) itRT->blit(this);
 			drawRecolored(sprite);
-		break;
+			break;
+
 		case 1:
 			if (itLT) itLT->blit(this);
 			drawRecolored(sprite);
 			if (itRT) itRT->blit(this);
-		break;
+			break;
+
 		case 2:
 			drawRecolored(sprite);
 			if (itLT) itLT->blit(this);
 			if (itRT) itRT->blit(this);
-		break;
+			break;
+
 		case 3:
 		case 4:
 			drawRecolored(sprite);
 			if (itRT) itRT->blit(this);
 			if (itLT) itLT->blit(this);
-		break;
+			break;
+
 		case 5:
 			if (itRT) itRT->blit(this);
 			drawRecolored(sprite);
 			if (itLT) itLT->blit(this);
-		break;
+			break;
+
 		case 6:
 		case 7:
 			if (itRT) itRT->blit(this);
@@ -1120,16 +1139,17 @@ void UnitSprite::drawRoutine4()
 /**
  * Drawing routine for sectopods and reapers.
  */
-void UnitSprite::drawRoutine5()
+void UnitSprite::drawRoutine5() // private.
 {
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
 
 	// what no _redraw!
 
-	static const int walk = 32; // magic static number
+	static const int walk (32); // magic static number
 
 	Surface* quad;
+
 	if (_unit->getUnitStatus() == STATUS_WALKING)
 		quad = _unitSet->getFrame(_unit->getUnitDirection() * 16
 								+ _quad * 4
@@ -1144,7 +1164,7 @@ void UnitSprite::drawRoutine5()
 /**
  * Drawing routine for snakemans.
  */
-void UnitSprite::drawRoutine6()
+void UnitSprite::drawRoutine6() // private.
 {
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
@@ -1152,30 +1172,30 @@ void UnitSprite::drawRoutine6()
 	// what no _redraw!
 
 	static const int // magic static numbers
-		body		= 24,
-		legsStand	= 16,
-		die			= 96,
+		body		(24),
+		legsStand	(16),
+		die			(96),
 
-		larmStand	=   0,
-		rarmStand	=   8,
-		rarm1H		=  99,
-		larm2H		= 107,
-		rarm2H		= 115,
-		rarmShoot	= 123,
+		larmStand	(  0),
+		rarmStand	(  8),
+		rarm1H		( 99),
+		larm2H		(107),
+		rarm2H		(115),
+		rarmShoot	(123),
 
-		offXAiming	= 16,
+		offXAiming	(16),
 
-		legsWalk[8]		= {32, 40, 48, 56, 64, 72, 80, 88},
-		yoffWalk[8]		= { 3,  3,  2,  1,  0,  0,  1,  2}, // bobbing up and down
-		xoffWalka[8]	= { 0,  0,  1,  2,  3,  3,  2,  1},
-		xoffWalkb[8]	= { 0,  0, -1, -2, -3, -3, -2, -1},
-		yoffStand[8]	= { 2,  1,  1,  0,  0,  0,  0,  0},
-		offX[8]			= { 8, 10,  5,  2, -8,-10, -5, -2}, // for the weapons
-		offY[8]			= {-6, -3,  0,  0,  2, -3, -7, -9}, // for the weapons
-		offX2[8]		= {-8,  2,  7, 13,  7,  0, -3,-15}, // for the weapons
-		offY2[8]		= { 1, -4, -2,  0,  3,  3,  5,  0}, // for the weapons
-		offX3[8]		= { 0,  6,  6, 12, -4, -5, -5,-13}, // for the left handed rifles
-		offY3[8]		= {-4, -4, -1,  0,  5,  0,  1,  0}; // for the left handed rifles
+		legsWalk[8]		{32, 40, 48, 56, 64, 72, 80, 88},
+		yoffWalk[8]		{ 3,  3,  2,  1,  0,  0,  1,  2}, // bobbing up and down
+		xoffWalka[8]	{ 0,  0,  1,  2,  3,  3,  2,  1},
+		xoffWalkb[8]	{ 0,  0, -1, -2, -3, -3, -2, -1},
+		yoffStand[8]	{ 2,  1,  1,  0,  0,  0,  0,  0},
+		offX[8]			{ 8, 10,  5,  2, -8,-10, -5, -2}, // for the weapons
+		offY[8]			{-6, -3,  0,  0,  2, -3, -7, -9}, // for the weapons
+		offX2[8]		{-8,  2,  7, 13,  7,  0, -3,-15}, // for the weapons
+		offY2[8]		{ 1, -4, -2,  0,  3,  3,  5,  0}, // for the weapons
+		offX3[8]		{ 0,  6,  6, 12, -4, -5, -5,-13}, // for the left handed rifles
+		offY3[8]		{-4, -4, -1,  0,  5,  0,  1,  0}; // for the left handed rifles
 
 	Surface* torso;
 
@@ -1187,15 +1207,15 @@ void UnitSprite::drawRoutine6()
 	}
 
 	const int
-		unitDir		= _unit->getUnitDirection(),
-		walkPhase	= _unit->getWalkPhase();
+		unitDir		(_unit->getUnitDirection()),
+		walkPhase	(_unit->getWalkPhase());
 
 	Surface
 		* legs,
-		* rightArm	= _unitSet->getFrame(unitDir + rarmStand),
-		* leftArm	= _unitSet->getFrame(unitDir + larmStand),
-		* itRT		= nullptr,
-		* itLT		= nullptr;
+		* rightArm	(_unitSet->getFrame(unitDir + rarmStand)),
+		* leftArm	(_unitSet->getFrame(unitDir + larmStand)),
+		* itRT		(nullptr),
+		* itLT		(nullptr);
 
 	torso = _unitSet->getFrame(unitDir + body);
 
@@ -1329,7 +1349,8 @@ void UnitSprite::drawRoutine6()
 			drawRecolored(legs);
 			drawRecolored(torso);
 			drawRecolored(rightArm);
-		break;
+			break;
+
 		case 1:
 			drawRecolored(leftArm);
 			drawRecolored(legs);
@@ -1337,7 +1358,8 @@ void UnitSprite::drawRoutine6()
 			drawRecolored(torso);
 			if (itRT) itRT->blit(this);
 			drawRecolored(rightArm);
-		break;
+			break;
+
 		case 2:
 			drawRecolored(leftArm);
 			drawRecolored(legs);
@@ -1345,7 +1367,8 @@ void UnitSprite::drawRoutine6()
 			drawRecolored(rightArm);
 			if (itRT) itRT->blit(this);
 			if (itLT) itLT->blit(this);
-		break;
+			break;
+
 		case 3:
 			drawRecolored(legs);
 			drawRecolored(torso);
@@ -1353,7 +1376,8 @@ void UnitSprite::drawRoutine6()
 			drawRecolored(rightArm);
 			if (itRT) itRT->blit(this);
 			if (itLT) itLT->blit(this);
-		break;
+			break;
+
 		case 4:
 		case 5:
 			drawRecolored(rightArm);
@@ -1362,7 +1386,8 @@ void UnitSprite::drawRoutine6()
 			drawRecolored(leftArm);
 			if (itRT) itRT->blit(this);
 			if (itLT) itLT->blit(this);
-		break;
+			break;
+
 		case 6:
 			drawRecolored(rightArm);
 			drawRecolored(legs);
@@ -1370,7 +1395,8 @@ void UnitSprite::drawRoutine6()
 			if (itLT) itLT->blit(this);
 			drawRecolored(torso);
 			drawRecolored(leftArm);
-		break;
+			break;
+
 		case 7:
 			if (itRT) itRT->blit(this);
 			if (itLT) itLT->blit(this);
@@ -1391,7 +1417,7 @@ void UnitSprite::drawRoutine6()
 /**
  * Drawing routine for chryssalid.
  */
-void UnitSprite::drawRoutine7()
+void UnitSprite::drawRoutine7() // private.
 {
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
@@ -1399,17 +1425,17 @@ void UnitSprite::drawRoutine7()
 	// what no _redraw!
 
 	static const int // magic static numbers
-		body		=  24,
-		legsStand	=  16,
-		die			= 224,
+		body		( 24),
+		legsStand	( 16),
+		die			(224),
 
-		larmStand	= 0,
-		rarmStand	= 8,
+		larmStand	(0),
+		rarmStand	(8),
 
-		legsWalk[8] = { 48, 48+24, 48+24*2, 48+24*3, 48+24*4, 48+24*5, 48+24*6, 48+24*7 },
-		larmWalk[8] = { 32, 32+24, 32+24*2, 32+24*3, 32+24*4, 32+24*5, 32+24*6, 32+24*7 },
-		rarmWalk[8] = { 40, 40+24, 40+24*2, 40+24*3, 40+24*4, 40+24*5, 40+24*6, 40+24*7 },
-		yoffWalk[8] = {  1,     0,      -1,       0,       1,       0,      -1,       0 }; // bobbing up and down
+		legsWalk[8] { 48, 48+24, 48+24*2, 48+24*3, 48+24*4, 48+24*5, 48+24*6, 48+24*7 },
+		larmWalk[8] { 32, 32+24, 32+24*2, 32+24*3, 32+24*4, 32+24*5, 32+24*6, 32+24*7 },
+		rarmWalk[8] { 40, 40+24, 40+24*2, 40+24*3, 40+24*4, 40+24*5, 40+24*6, 40+24*7 },
+		yoffWalk[8] {  1,     0,      -1,       0,       1,       0,      -1,       0 }; // bobbing up and down
 
 	Surface* torso;
 
@@ -1420,7 +1446,7 @@ void UnitSprite::drawRoutine7()
 		return;
 	}
 
-	const int unitDir = _unit->getUnitDirection();
+	const int unitDir (_unit->getUnitDirection());
 
 	torso = _unitSet->getFrame(unitDir + body);
 
@@ -1431,7 +1457,7 @@ void UnitSprite::drawRoutine7()
 
 	if (_unit->getUnitStatus() == STATUS_WALKING)
 	{
-		const int walkPhase	= _unit->getWalkPhase();
+		const int walkPhase	(_unit->getWalkPhase());
 		torso->setY(yoffWalk[walkPhase]);
 		rightArm	= _unitSet->getFrame(walkPhase + rarmWalk[unitDir]);
 		leftArm		= _unitSet->getFrame(walkPhase + larmWalk[unitDir]);
@@ -1454,13 +1480,15 @@ void UnitSprite::drawRoutine7()
 			drawRecolored(legs);
 			drawRecolored(torso);
 			drawRecolored(rightArm);
-		break;
+			break;
+
 		case 3:
 			drawRecolored(legs);
 			drawRecolored(torso);
 			drawRecolored(leftArm);
 			drawRecolored(rightArm);
-		break;
+			break;
+
 		case 4:
 		case 5:
 		case 6:
@@ -1468,7 +1496,8 @@ void UnitSprite::drawRoutine7()
 			drawRecolored(legs);
 			drawRecolored(torso);
 			drawRecolored(leftArm);
-		break;
+			break;
+
 		case 7:
 			drawRecolored(leftArm);
 			drawRecolored(rightArm);
@@ -1480,7 +1509,7 @@ void UnitSprite::drawRoutine7()
 /**
  * Drawing routine for silacoids.
  */
-void UnitSprite::drawRoutine8()
+void UnitSprite::drawRoutine8() // private.
 {
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
@@ -1488,18 +1517,20 @@ void UnitSprite::drawRoutine8()
 	_redraw = true;
 
 	static const int // magic static numbers
-		body = 0,
-		aim  = 5,
-		die  = 6,
+		body (0),
+		aim  (5),
+		die  (6),
 
-		pulsate[8] = {0,1,2,3,4,3,2,1};
+		pulsate[8] {0,1,2,3,4,3,2,1};
 
 	Surface* sprite;
+
 	switch (_unit->getUnitStatus())
 	{
 		case STATUS_COLLAPSING:
 			sprite = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
 			break;
+
 		case STATUS_AIMING:
 			sprite = _unitSet->getFrame(aim);
 			break;
@@ -1514,7 +1545,7 @@ void UnitSprite::drawRoutine8()
 /**
  * Drawing routine for celatids.
  */
-void UnitSprite::drawRoutine9()
+void UnitSprite::drawRoutine9() // private.
 {
 	if (_unit->isOut_t(OUT_STAT) == true)
 		return;
@@ -1522,11 +1553,12 @@ void UnitSprite::drawRoutine9()
 	_redraw = true;
 
 	static const int // magic static numbers
-		body  =  0,
-		die   = 25,
-		shoot =  8; // frames 8..23 or ..24 (24 is merely a green ball sprite)
+		body  ( 0),
+		die   (25),
+		shoot ( 8); // frames 8..23 or ..24 (24 is merely a green ball sprite)
 
 	Surface* sprite;
+
 	switch (_unit->getUnitStatus())
 	{
 		case STATUS_COLLAPSING:
@@ -1535,11 +1567,11 @@ void UnitSprite::drawRoutine9()
 
 		case STATUS_AIMING:
 		{
-			const int framesTotal = _unit->getArmor()->getShootFrames();
-			int
-				phase = _unit->getAimingPhase(),
-				extra;
+			const int
+				framesTotal (_unit->getArmor()->getShootFrames()),
+				phase (_unit->getAimingPhase());
 
+			int extra;
 			if (phase == framesTotal)
 				extra = 2; // bounce back one frame at the end.
 			else
@@ -1548,11 +1580,11 @@ void UnitSprite::drawRoutine9()
 			sprite = _unitSet->getFrame(std::min(
 											shoot + phase - extra,
 											shoot + framesTotal - 1));
-			// Clamp that because slow (read, long) think()->draw intervals
+			// Clamp that because slow (read: long) think()->draw intervals
 			// cause it to exceed the upper bound of total shootFrames.
-			_unit->setAimingPhase(++phase);
+			_unit->setAimingPhase(phase + 1);
 			// -> let BattleUnit::keepAiming() iterate the final aimPhase. nix
-			// that; super-slow animation speed doesn't even let keepAiming()
+			// that; a super-slow animation speed won't even let keepAiming()
 			// get called. ... not sure how the animation is ended in that case
 			// but something does it.
 			break;
@@ -1568,7 +1600,7 @@ void UnitSprite::drawRoutine9()
 /**
  * Determines which hand-objects to display.
  */
-void UnitSprite::sortHandObjects()
+void UnitSprite::sortHandObjects() // private.
 {
 	// this is the draw active-hand code:
 	if (_itRT != nullptr && _itLT != nullptr)
@@ -1579,23 +1611,23 @@ void UnitSprite::sortHandObjects()
 		_itLT = nullptr;
 	}
 	// this is the draw dual-wield code:
-/*	if (_itRT && _itRT->getRules()->isTwoHanded() == true)
-	{
-		if (_itLT && _itLT->getRules()->isTwoHanded() == true)
-		{
-			if (_unit->getActiveHand() == AH_LEFT)
-				_itRT = _itLT;
-
-			_itLT = nullptr;
-		}
-		else if (_unit->getUnitStatus() != STATUS_AIMING)
-			_itLT = nullptr;
-	}
-	else if (_itLT && _itLT->getRules()->isTwoHanded() == true)
-	{
-		if (_unit->getUnitStatus() != STATUS_AIMING)
-			_itRT = nullptr;
-	} */
+//	if (_itRT && _itRT->getRules()->isTwoHanded() == true)
+//	{
+//		if (_itLT && _itLT->getRules()->isTwoHanded() == true)
+//		{
+//			if (_unit->getActiveHand() == AH_LEFT)
+//				_itRT = _itLT;
+//
+//			_itLT = nullptr;
+//		}
+//		else if (_unit->getUnitStatus() != STATUS_AIMING)
+//			_itLT = nullptr;
+//	}
+//	else if (_itLT && _itLT->getRules()->isTwoHanded() == true)
+//	{
+//		if (_unit->getUnitStatus() != STATUS_AIMING)
+//			_itRT = nullptr;
+//	}
 }
 
 }

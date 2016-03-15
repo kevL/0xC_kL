@@ -1,6 +1,6 @@
-// This file is only used in conjunction with Options.h/Options.cpp.
+// This file is used only in conjunction with Options.h/Options.cpp.
 //
-// To add a new option, add a new variable entry and a corresponding OptionInfo
+// To add a new option add a new variable entry and a corresponding OptionInfo
 // in Options.cpp.
 
 //#ifndef OPTIONS_INC_H
