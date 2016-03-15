@@ -602,7 +602,7 @@ void DebriefingState::btnOkClick(Action*)
 											OPT_GEOSCAPE,
 											SAVE_IRONMAN,
 											_palette));
-		else if (Options::autosave == true)
+		else if (Options::autosave == true) // NOTE: Auto-save points are fucked; they should be done *before* important events, not after.
 			_game->pushState(new SaveGameState(
 											OPT_GEOSCAPE,
 											SAVE_AUTO_GEOSCAPE,

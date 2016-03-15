@@ -3002,7 +3002,7 @@ const BattleUnit* SavedBattleGame::getWalkUnit() const
 }
 
 /**
- * Sets the turn limit for tactical.
+ * Sets the maximum number of turns before tactical ends.
  * @param limit - the turn limit
  */
 void SavedBattleGame::setTurnLimit(int limit)
@@ -3029,7 +3029,7 @@ void SavedBattleGame::setChronoResult(ChronoResult result)
 }
 
 /**
- * Gets the result to perform when the turn-timer expires.
+ * Gets the result to perform when the turn-timer runs out.
  * @return, the result to perform (AlienDeployment.h)
  */
 ChronoResult SavedBattleGame::getChronoResult() const

@@ -82,6 +82,7 @@ private:
 		BROWN		= 160;
 
 	bool
+		_autosave,
 		_firstInit,
 		_iconsHidden,
 		_isMouseScrolled,
@@ -501,6 +502,9 @@ private:
 		void updateExperienceInfo();
 		/// Updates tile info for the tile under mouseover.
 		void updateTileInfo(const Tile* const tile);
+
+		/// Autosave next turn.
+		void autosave();
 
 		/// Saves a map as used by the AI.
 		void saveAIMap();

@@ -61,9 +61,9 @@ namespace OpenXcom
 MonthlyReportState::MonthlyReportState()
 	:
 		_gameOver(false),
+		_ratingPrior(0),
 		_ratingTotal(0),
 		_deltaFunds(0),
-		_ratingLast(0),
 		_gameSave(_game->getSavedGame())
 {
 	_window		= new Window(this, 320, 200);
@@ -113,8 +113,8 @@ MonthlyReportState::MonthlyReportState()
 	calculateChanges(); // <- sets Rating etc.
 
 	int
-		month = _gameSave->getTime()->getMonth() - 1,
-		year = _gameSave->getTime()->getYear();
+		month (_gameSave->getTime()->getMonth() - 1),
+		year (_gameSave->getTime()->getYear());
 
 	if (month == 0)
 	{
@@ -141,15 +141,15 @@ MonthlyReportState::MonthlyReportState()
 	_txtMonth->setText(tr("STR_MONTH").arg(tr(st)).arg(year));
 
 	const int
-		diff = static_cast<int>(_gameSave->getDifficulty()),
-		difficulty_threshold = 250 * (diff - 4);
+		diff (static_cast<int>(_gameSave->getDifficulty())),
+		difficulty_threshold (250 * (diff - 4));
 		// 0 -> -1000
 		// 1 -> -750
 		// 2 -> -500
 		// 3 -> -250
 		// 4 -> 0
 
-	std::string music = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT;
+	std::string music (OpenXcom::res_MUSIC_GEO_MONTHLYREPORT);
 
 	std::wstring wst;
 	if (_ratingTotal > 10000)
@@ -193,7 +193,7 @@ MonthlyReportState::MonthlyReportState()
 	_txtChange->setText(tr("STR_FUNDING_CHANGE").arg(woststr.str()));
 
 
-	if (_ratingLast <= difficulty_threshold // calculate satisfaction
+	if (_ratingPrior <= difficulty_threshold // calculate satisfaction
 		&& _ratingTotal <= difficulty_threshold)
 	{
 		wst = tr("STR_YOU_HAVE_NOT_SUCCEEDED");
@@ -287,11 +287,11 @@ MonthlyReportState::MonthlyReportState()
 					Options::keyCancel);
 
 
+	_txtFailure->setText(tr("STR_YOU_HAVE_FAILED"));
 	_txtFailure->setBig();
 	_txtFailure->setAlign(ALIGN_CENTER);
 	_txtFailure->setVerticalAlign(ALIGN_MIDDLE);
 	_txtFailure->setWordWrap();
-	_txtFailure->setText(tr("STR_YOU_HAVE_FAILED"));
 	_txtFailure->setVisible(false);
 
 	_btnBigOk->setText(tr("STR_OK"));
@@ -326,12 +326,13 @@ MonthlyReportState::~MonthlyReportState()
  */
 void MonthlyReportState::calculateChanges() // private.
 {
-	_ratingLast = 0;
+	_ratingPrior = 0;
 	int
-		total (0),
-		aLienTotal (0);
+		player (0),
+		alien (0);
 
-	const size_t lastMonth (_gameSave->getFundsList().size() - 2);
+	const size_t assessMonth (_gameSave->getFundsList().size() - 2u); // <- the index of the month assessed
+
 	for (std::vector<Region*>::const_iterator
 			i = _gameSave->getRegions()->begin();
 			i != _gameSave->getRegions()->end();
@@ -339,12 +340,12 @@ void MonthlyReportState::calculateChanges() // private.
 	{
 		(*i)->newMonth();
 
-		if (lastMonth > 0)
-			_ratingLast += (*i)->getActivityXCom().at(lastMonth - 1)
-						 - (*i)->getActivityAlien().at(lastMonth - 1);
+		if (assessMonth > 0)
+			_ratingPrior += (*i)->getActivityXCom().at(assessMonth - 1u)
+						 - (*i)->getActivityAlien().at(assessMonth - 1u);
 
-		total += (*i)->getActivityXCom().at(lastMonth);
-		aLienTotal += (*i)->getActivityAlien().at(lastMonth);
+		player += (*i)->getActivityXCom().at(assessMonth);
+		alien += (*i)->getActivityAlien().at(assessMonth);
 	}
 
 	std::string st;
@@ -355,12 +356,13 @@ void MonthlyReportState::calculateChanges() // private.
 			++i)
 	{
 		st = (*i)->getRules()->getType();
+
 		if ((*i)->getRecentPact() == true)
 			_pactList.push_back(st);
 
-		(*i)->newMonth(total, aLienTotal, diff); // calculates satisfaction.
+		(*i)->newMonth(player, alien, diff); // calculates satisfaction & funding.
 		_deltaFunds += (*i)->getFunding().back()
-					 - (*i)->getFunding().at(lastMonth);
+					 - (*i)->getFunding().at(assessMonth);
 
 		switch ((*i)->getSatisfaction())
 		{
@@ -372,11 +374,11 @@ void MonthlyReportState::calculateChanges() // private.
 		}
 	}
 
-	if (lastMonth > 0)
-		_ratingLast += _gameSave->getResearchScores().at(lastMonth - 1);
+	if (assessMonth > 0)
+		_ratingPrior += _gameSave->getResearchScores().at(assessMonth - 1u);
 
-	total += _gameSave->getResearchScores().at(lastMonth);
-	_ratingTotal = total - aLienTotal;
+	player += _gameSave->getResearchScores().at(assessMonth);
+	_ratingTotal = player - alien;
 }
 
 /**
@@ -397,40 +399,42 @@ void MonthlyReportState::btnOkClick(Action*)
 											OPT_GEOSCAPE,
 											SAVE_IRONMAN,
 											_palette));
-		else if (Options::autosave == true)
+		else if (Options::autosave == true) // NOTE: Auto-save points are fucked; they should be done *before* important events, not after.
 			_game->pushState(new SaveGameState(
 											OPT_GEOSCAPE,
 											SAVE_AUTO_GEOSCAPE,
 											_palette));
 	}
+	else if (_txtFailure->getVisible() == false)
+	{
+		_window->setColor(static_cast<Uint8>(_game->getRuleset()->getInterface("monthlyReport")->getElement("window")->color2));
+
+		_txtTitle->setVisible(false);
+		_txtMonth->setVisible(false);
+		_txtRating->setVisible(false);
+		_txtChange->setVisible(false);
+//		_txtIncome->setVisible(false);
+//		_txtMaintenance->setVisible(false);
+//		_txtBalance->setVisible(false);
+		_txtDesc->setVisible(false);
+		_btnOk->setVisible(false);
+
+		_txtFailure->setVisible();
+		_btnBigOk->setVisible();
+
+		_game->getResourcePack()->fadeMusic(_game, 1157);
+		_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_LOSE);
+	}
 	else
 	{
-		if (_txtFailure->getVisible() == true)
-		{
-			_game->popState();
-			_game->pushState(new DefeatState());
-		}
-		else
-		{
-			_window->setColor(static_cast<Uint8>(_game->getRuleset()->getInterface("monthlyReport")->getElement("window")->color2));
+		_game->popState();
+		_game->pushState(new DefeatState());
 
-			_txtTitle->setVisible(false);
-			_txtMonth->setVisible(false);
-			_txtRating->setVisible(false);
-			_txtChange->setVisible(false);
-//			_txtIncome->setVisible(false);
-//			_txtMaintenance->setVisible(false);
-//			_txtBalance->setVisible(false);
-			_txtDesc->setVisible(false);
-			_btnOk->setVisible(false);
-
-			_txtFailure->setVisible();
-			_btnBigOk->setVisible();
-
-
-			_game->getResourcePack()->fadeMusic(_game, 1157);
-			_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_LOSE);
-		}
+		if (_game->getSavedGame()->isIronman() == true)
+			_game->pushState(new SaveGameState(
+											OPT_GEOSCAPE,
+											SAVE_IRONMAN,
+											_palette));
 	}
 }
 
@@ -454,8 +458,7 @@ std::wstring MonthlyReportState::countryList( // private.
 			woststr << tr(singular).arg(tr(countries.front()));
 		else
 		{
-			LocalizedText countryList = tr(countries.front());
-
+			LocalizedText countryList (tr(countries.front()));
 			std::vector<std::string>::const_iterator i;
 			for (
 					i = countries.begin() + 1;
@@ -465,16 +468,14 @@ std::wstring MonthlyReportState::countryList( // private.
 				countryList = tr("STR_COUNTRIES_COMMA").arg(countryList).arg(tr(*i));
 			}
 			countryList = tr("STR_COUNTRIES_AND").arg(countryList).arg(tr(*i));
-
 			woststr << tr(plural).arg(countryList);
 		}
 	}
-
 	return woststr.str();
 }
 
 /**
- * Handles monthly soldier awards.
+ * Handles monthly Soldier awards.
  */
 void MonthlyReportState::awards() // private.
 {

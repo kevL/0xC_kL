@@ -134,7 +134,8 @@ BattlescapeState::BattlescapeState()
 		_targeterFrame(0),
 		_showSoldierData(false),
 		_iconsHidden(false),
-		_isOverweight(false)
+		_isOverweight(false),
+		_autosave(false)
 {
 	//Log(LOG_INFO) << "Create BattlescapeState";
 	STATE_INTERVAL_XCOM		= static_cast<Uint32>(Options::battleXcomSpeed);
@@ -142,13 +143,13 @@ BattlescapeState::BattlescapeState()
 	STATE_INTERVAL_ALIEN	= static_cast<Uint32>(Options::battleAlienSpeed);
 
 	const int
-		screenWidth		= Options::baseXResolution,
-		screenHeight	= Options::baseYResolution,
-		iconsWidth		= _rules->getInterface("battlescape")->getElement("icons")->w, // 320
-		iconsHeight		= _rules->getInterface("battlescape")->getElement("icons")->h, // 56
-		playableHeight	= screenHeight - iconsHeight,
-		x				= (screenWidth - iconsWidth) / 2,
-		y				= screenHeight - iconsHeight;
+		screenWidth		(Options::baseXResolution),
+		screenHeight	(Options::baseYResolution),
+		iconsWidth		(_rules->getInterface("battlescape")->getElement("icons")->w), // 320
+		iconsHeight		(_rules->getInterface("battlescape")->getElement("icons")->h), // 56
+		playableHeight	(screenHeight - iconsHeight),
+		x				((screenWidth - iconsWidth) / 2),
+		y				(screenHeight - iconsHeight);
 
 	_txtBaseLabel			= new Text(120, 9, screenWidth - 121, 0);
 	_txtRegion				= new Text(120, 9, screenWidth - 121, 10);
@@ -234,14 +235,13 @@ BattlescapeState::BattlescapeState()
 			HOTSQRS,
 			static_cast<BattleUnit*>(nullptr));
 
-	int offsetX = 0;
+	int offsetX (0);
 	for (size_t
 			i = 0;
 			i != HOTSQRS;
 			++i)
 	{
-		if (i > 9)
-			offsetX = 15;
+		if (i > 9) offsetX = 15;
 
 		_btnHostileUnit[i] = new InteractiveSurface(
 												15,13,
@@ -356,7 +356,7 @@ BattlescapeState::BattlescapeState()
 	Surface* const icons (_game->getResourcePack()->getSurface("ICONS"));
 	if (_game->getResourcePack()->getSurface("Logo") != nullptr)
 	{
-		Surface* const logo = _game->getResourcePack()->getSurface("Logo");
+		Surface* const logo (_game->getResourcePack()->getSurface("Logo"));
 		logo->setX(48);
 		logo->setY(32);
 		logo->blit(icons);
@@ -1092,11 +1092,27 @@ void BattlescapeState::init()
 	else
 		_txtControlDestroyed->setVisible(false);
 
+	if (_autosave == true)
+	{
+		_autosave = false;
+		if (_game->getSavedGame()->isIronman() == true)
+			_game->pushState(new SaveGameState(
+											OPT_BATTLESCAPE,
+											SAVE_IRONMAN,
+											_palette));
+		else if (Options::autosave == true) // NOTE: Auto-save points are fucked; they should be done *before* important events, not after.
+			_game->pushState(new SaveGameState(
+											OPT_BATTLESCAPE,
+											SAVE_AUTO_BATTLESCAPE,
+											_palette));
+	}
+
 //	_txtTooltip->setText(L"");
-/*	if (_battleSave->getKneelReserved())
-		_btnReserveKneel->invert(_btnReserveKneel->getColor()+3);
-	_btnReserveKneel->toggle(_battleSave->getKneelReserved());
-	_battleGame->setKneelReserved(_battleSave->getKneelReserved()); */
+//	if (_battleSave->getKneelReserved())
+//		_btnReserveKneel->invert(_btnReserveKneel->getColor()+3);
+//	_btnReserveKneel->toggle(_battleSave->getKneelReserved());
+//	_battleGame->setKneelReserved(_battleSave->getKneelReserved());
+
 	//Log(LOG_INFO) << "BattlescapeState::init() EXIT";
 }
 
@@ -3837,11 +3853,13 @@ void BattlescapeState::finishBattle(
 		_tacticalTimer->stop();
 		_game->popState();
 
+		bool ironsave (false);
 		if (abort == true || inExitArea == 0)	// Abort was done or no player is still alive. This concludes to defeat when
 		{										// in a 'noRetreat' or 'final' mission, like Mars landing or Mars aLien base.
 			if (ruleDeploy->isNoRetreat() == true
 				&& _gameSave->getMonthsPassed() != -1)
 			{
+				ironsave = _game->getSavedGame()->isIronman() == true;
 				_game->pushState(new DefeatState());
 			}
 			else
@@ -3852,10 +3870,20 @@ void BattlescapeState::finishBattle(
 			if (ruleDeploy->isFinalMission() == true
 				&& _gameSave->getMonthsPassed() != -1)
 			{
+				ironsave = _game->getSavedGame()->isIronman() == true;
 				_game->pushState(new VictoryState());
 			}
 			else
 				_game->pushState(new DebriefingState());
+		}
+
+		if (ironsave == true)
+		{
+			_game->getSavedGame()->setBattleSave();
+			_game->pushState(new SaveGameState(
+											OPT_GEOSCAPE,
+											SAVE_IRONMAN,
+											_palette));
 		}
 	}
 }
@@ -4321,6 +4349,14 @@ void BattlescapeState::updateTileInfo(const Tile* const tile)
 			_lstTileInfo->setCellColor(i, 0, color, true);
 		}
 	}
+}
+
+/**
+ * Autosave the game the next time the Battlescape is displayed.
+ */
+void BattlescapeState::autosave()
+{
+	_autosave = true;
 }
 
 /**

@@ -482,9 +482,9 @@ private:
 		/// Gets the previous walking unit.
 		const BattleUnit* getWalkUnit() const;
 
-		/// Sets the turn limit for tactical.
+		/// Sets the turn-limit for tactical.
 		void setTurnLimit(int limit);
-		/// Gets the turn limit for tactical.
+		/// Gets the turn-limit for tactical.
 		int getTurnLimit() const;
 		/// Sets the result when the turn-timer runs out.
 		void setChronoResult(ChronoResult result);

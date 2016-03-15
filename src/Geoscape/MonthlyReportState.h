@@ -48,7 +48,7 @@ private:
 	bool _gameOver;
 	int
 		_deltaFunds,
-		_ratingLast,
+		_ratingPrior,
 		_ratingTotal;
 
 	SavedGame* _gameSave;

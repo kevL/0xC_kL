@@ -198,9 +198,8 @@ void create()
 	_info.push_back(OptionInfo("allowPsiStrengthImprovement", &allowPsiStrengthImprovement, false, "STR_ALLOWPSISTRENGTHIMPROVEMENT", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleStrafe", &battleStrafe, false, "STR_STRAFE", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleForceFire", &battleForceFire, true, "STR_FORCE_FIRE", "STR_BATTLESCAPE"));
-	_info.push_back(OptionInfo("skipNextTurnScreen", &skipNextTurnScreen, false, "STR_SKIPNEXTTURNSCREEN", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleTFTDDamage", &battleTFTDDamage, false, "STR_TFTDDAMAGE", "STR_BATTLESCAPE"));
-	_info.push_back(OptionInfo("battleRangeBasedAccuracy", &battleRangeBasedAccuracy, false, "STR_BATTLERANGEBASEDACCURACY", "STR_BATTLESCAPE")); // kL
+	_info.push_back(OptionInfo("battleRangeBasedAccuracy", &battleRangeBasedAccuracy, false, "STR_BATTLERANGEBASEDACCURACY", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleAlienPanicMessages", &battleAlienPanicMessages, true, "STR_ALIENPANICMESSAGES", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleAlienBleeding", &battleAlienBleeding, false, "STR_ALIENBLEEDING", "STR_BATTLESCAPE"));
 

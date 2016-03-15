@@ -511,7 +511,7 @@ int AlienDeployment::getTurnLimit() const
 }
 
 /**
- * Gets the result to perform when the timer expires.
+ * Gets the result to perform when the turn-timer runs out.
  * @return, the ChronoResult (AlienDeployment.h)
  */
 ChronoResult AlienDeployment::getChronoResult() const

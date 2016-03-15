@@ -1475,6 +1475,11 @@ void GeoscapeState::time5Seconds()
 	if (_gameSave->getBases()->empty() == true) // Game Over if there are no more bases.
 	{
 		popup(new DefeatState());
+		if (_game->getSavedGame()->isIronman() == true)
+			_game->pushState(new SaveGameState(
+											OPT_GEOSCAPE,
+											SAVE_IRONMAN,
+											_palette));
 		return;
 	}
 
@@ -3117,7 +3122,7 @@ void GeoscapeState::time1Day()
 	}
 
 
-	std::for_each( // handle supply of alien bases.
+	std::for_each( // handle supply of aLien bases.
 			_gameSave->getAlienBases()->begin(),
 			_gameSave->getAlienBases()->end(),
 			GenerateSupplyMission(*_rules, *_gameSave));
@@ -3127,9 +3132,15 @@ void GeoscapeState::time1Day()
 //	if (day == 10 || day == 20)
 //	{
 	if (_gameSave->isIronman() == true)
-		popup(new SaveGameState(OPT_GEOSCAPE, SAVE_IRONMAN, _palette));
-	else if (Options::autosave == true)
-		popup(new SaveGameState(OPT_GEOSCAPE, SAVE_AUTO_GEOSCAPE, _palette));
+		popup(new SaveGameState(
+							OPT_GEOSCAPE,
+							SAVE_IRONMAN,
+							_palette));
+	else if (Options::autosave == true) // NOTE: Auto-save points are fucked; they should be done *before* important events, not after.
+		popup(new SaveGameState(
+							OPT_GEOSCAPE,
+							SAVE_AUTO_GEOSCAPE,
+							_palette));
 //	}
 	//Log(LOG_INFO) << "GeoscapeState::time1Day() EXIT";
 }

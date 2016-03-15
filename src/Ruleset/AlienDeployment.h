@@ -237,9 +237,9 @@ private:
 		/// Gets the half-hourly score penalty xCom receives for a site existing.
 		int getPointsPer30() const;
 
-		/// Gets the turn limit for the Deployment.
+		/// Gets the turn-limit for this Deployment.
 		int getTurnLimit() const;
-		/// Gets the result when the timer runs out.
+		/// Gets the result when the turn-timer runs out.
 		ChronoResult getChronoResult() const;
 
 		/// Gets which turn the aLiens start cheating on.
