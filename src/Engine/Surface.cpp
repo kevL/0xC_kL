@@ -81,30 +81,26 @@ inline void* NewAligned(
 		int width,
 		int height)
 {	const int
-		pitch = GetPitch(bpp, width),
-		total = pitch * height;
-	void* buffer = nullptr;
+		pitch (GetPitch(bpp, width)),
+		total (pitch * height);
+	void* buffer (nullptr);
 
 #ifndef _WIN32
-	#ifdef __MORPHOS__
-
-	buffer = calloc(total, 1);
-	if (buffer == nullptr)
+#	ifdef __MORPHOS__
+	if ((buffer = calloc(total, 1)) == nullptr)
 	{
 		throw Exception("Failed to allocate surface");
 	}
-
-	#else
+#	else
 	int rc;
 	if ((rc = posix_memalign(&buffer, 16, total)))
 	{
 		throw Exception(strerror(rc));
 	}
-	#endif
+#	endif
 #else
 	// of course Windows has to be difficult about this!
-	buffer = _aligned_malloc(total, 16);
-	if (buffer == nullptr)
+	if ((buffer = _aligned_malloc(total, 16)) == nullptr)
 	{
 		throw Exception("Failed to allocate surface");
 	}
@@ -200,11 +196,11 @@ Surface::Surface(const Surface& other)
 {
 	if (other._alignedBuffer) // if native OpenXcom aligned surface
 	{
-		const Uint8 bpp = other._surface->format->BitsPerPixel;
+		const Uint8 bpp (other._surface->format->BitsPerPixel);
 		const int
-			width = other.getWidth(),
-			height = other.getHeight(),
-			pitche = GetPitch(bpp, width);
+			width (other.getWidth()),
+			height (other.getHeight()),
+			pitche (GetPitch(bpp, width));
 
 		_alignedBuffer = NewAligned(bpp, width, height);
 		_surface = SDL_CreateRGBSurfaceFrom(
@@ -280,9 +276,7 @@ Surface::~Surface() // virtual.
  */
 void Surface::loadScr(const std::string& file)
 {
-	std::ifstream imgFile( // Load file and put pixels in surface
-					file.c_str(),
-					std::ios::binary);
+	std::ifstream imgFile (file.c_str(), std::ios::binary); // Load file and put pixels in surface
 	if (imgFile.fail() == true)
 	{
 		throw Exception(file + " not found");
@@ -294,8 +288,8 @@ void Surface::loadScr(const std::string& file)
 
 	lock();
 	int
-		x = 0,
-		y = 0;
+		x (0),
+		y (0);
 
 	for (std::vector<char>::const_iterator
 			i = buffer.begin();
@@ -322,7 +316,7 @@ void Surface::loadImage(const std::string& file)
 	Log(LOG_VERBOSE) << "Loading image w/ LodePNG: " << file;
 
 	std::vector<unsigned char> png; // Try loading with LodePNG first
-	unsigned error = lodepng::load_file(png, file);
+	unsigned error (lodepng::load_file(png, file));
 	if (error == 0)
 	{
 		std::vector<unsigned char> image;
@@ -339,12 +333,12 @@ void Surface::loadImage(const std::string& file)
 							height,
 							state,
 							png);
-		if (error == 0)
+		if (error == 0u)
 		{
-			LodePNGColorMode* color = &state.info_png.color;
+			LodePNGColorMode* color (&state.info_png.color);
 
-			unsigned bpp = lodepng_get_bpp(color);
-			if (bpp == 8)
+			unsigned bpp (lodepng_get_bpp(color));
+			if (bpp == 8u)
 			{
 				_alignedBuffer = NewAligned(bpp, width, height);
 				_surface = SDL_CreateRGBSurfaceFrom(
@@ -357,8 +351,8 @@ void Surface::loadImage(const std::string& file)
 				if (_surface != nullptr)
 				{
 					int
-						x = 0,
-						y = 0;
+						x (0),
+						y (0);
 
 					for (std::vector<unsigned char>::const_iterator
 							i = image.begin();
@@ -372,7 +366,24 @@ void Surface::loadImage(const std::string& file)
 							(SDL_Color*)color->palette,
 							0,
 							color->palettesize);
-					SDL_SetColorKey(_surface, SDL_SRCCOLORKEY, 0u);
+
+					int transparent (0);
+					for (int
+							i = 0;
+							i != _surface->format->palette->ncolors;
+							++i)
+					{
+						SDL_Color* palColor (_surface->format->palette->colors + i);
+						if (palColor->unused == 0)
+						{
+							transparent = i;
+							break;
+						}
+					}
+					SDL_SetColorKey(
+								_surface,
+								SDL_SRCCOLORKEY,
+								static_cast<Uint32>(transparent));
 				}
 			}
 		}
@@ -382,14 +393,14 @@ void Surface::loadImage(const std::string& file)
 	{
 		// SDL only takes UTF-8 filenames
 		// so here's an ugly hack to match this ugly reasoning
-		const std::string utf8 = Language::wstrToUtf8(Language::fsToWstr(file));
-		Log(LOG_VERBOSE) << "LodePNG failed - loading image w/ SDL: " << utf8;
+		const std::string utf8 (Language::wstrToUtf8(Language::fsToWstr(file)));
+		Log(LOG_WARNING) << "LodePNG failed - loading image w/ SDL: " << utf8;
 		_surface = IMG_Load(utf8.c_str());
 	}
 
 	if (_surface == nullptr)
 	{
-		const std::string err = file + ":" + IMG_GetError();
+		const std::string err (file + ":" + IMG_GetError());
 		throw Exception(err);
 	}
 }
@@ -403,9 +414,7 @@ void Surface::loadImage(const std::string& file)
  */
 void Surface::loadSpk(const std::string& file)
 {
-	std::ifstream imgFile( // Load file and put pixels in surface
-						file.c_str(),
-						std::ios::in | std::ios::binary);
+	std::ifstream imgFile(file.c_str(), std::ios::in | std::ios::binary); // Load file and put pixels in surface
 	if (imgFile.fail() == true)
 	{
 		throw Exception(file + " not found");
@@ -415,8 +424,8 @@ void Surface::loadSpk(const std::string& file)
 	Uint16 flag;
 	Uint8 value;
 	int
-		x = 0,
-		y = 0;
+		x (0),
+		y (0);
 
 	while (imgFile.read(
 					(char*)&flag,
@@ -572,7 +581,7 @@ void Surface::offset(
 				x < _surface->w && y < _surface->h;
 				)
 		{
-			const int colorPre = static_cast<int>(getPixelColor(x,y));
+			const int colorPre (static_cast<int>(getPixelColor(x,y)));
 			int colorPost;
 
 			if (shift > 0)
@@ -613,7 +622,7 @@ void Surface::invert(Uint8 mid)
 			x < _surface->w && y < _surface->h;
 			)
 	{
-		Uint8 color = getPixelColor(x,y);
+		Uint8 color (getPixelColor(x,y));
 		if (color != 0)
 			color = static_cast<Uint8>(color + (mid - color) * 2);
 //			color += static_cast<Uint8>((static_cast<int>(mid) - static_cast<int>(color))) * 2;
@@ -699,8 +708,9 @@ void Surface::copy(Surface* surface)
 				_surface,
 				nullptr); */
 	const int
-		from_x = _x - surface->getX(),
-		from_y = _y - surface->getY();
+		src_x (_x - surface->getX()),
+		src_y (_y - surface->getY());
+	Uint8 pixel;
 
 	lock();
 	for (int
@@ -708,9 +718,9 @@ void Surface::copy(Surface* surface)
 			x < _surface->w && y < _surface->h;
 			)
 	{
-		const Uint8 pixel = surface->getPixelColor(
-												from_x + x,
-												from_y + y);
+		pixel = surface->getPixelColor(
+									src_x + x,
+									src_y + y);
 		setPixelIterative(&x,&y, pixel);
 	}
 	unlock();
@@ -1007,7 +1017,7 @@ static inline void func(
 {
 	if (src != 0)
 	{
-		const int newShade = static_cast<int>(src & 15) + shade;
+		const int newShade (static_cast<int>(src & 15) + shade);
 		if (newShade > 15) // so dark it would flip over to another color - make it black instead
 			dest = 15;
 		else
@@ -1042,7 +1052,7 @@ static inline void func(
 {
 	if (src != 0)
 	{
-		const int newShade = static_cast<int>(src & 15) + shade;
+		const int newShade (static_cast<int>(src & 15) + shade);
 		if (newShade > 15) // so dark it would flip over to another color - make it black instead
 			dest = 15;
 		else
@@ -1116,7 +1126,7 @@ void Surface::invalidate(bool redraw)
 	_redraw = redraw;
 }
 
-/*
+/**
  * Returns the help description of this surface for showing in tooltips eg.
  * @return, string ID
  *
@@ -1125,10 +1135,10 @@ std::string Surface::getTooltip() const
 	return _tooltip;
 } */
 
-/*
-* Changes the help description of this surface for showing in tooltips eg.
-* @param tooltip - reference a string ID
-*
+/**
+ * Changes the help description of this surface for showing in tooltips eg.
+ * @param tooltip - reference a string ID
+ *
 void Surface::setTooltip(const std::string& tooltip)
 {
 	_tooltip = tooltip;
@@ -1144,19 +1154,19 @@ void Surface::resize(
 		int width,
 		int height)
 {
-	Uint8 bpp = _surface->format->BitsPerPixel; // Set up new surface
-	int pitche = GetPitch(bpp, width);
-	void* alignedBuffer = NewAligned(
+	Uint8 bpp (_surface->format->BitsPerPixel); // Set up new surface
+	int pitche (GetPitch(bpp, width));
+	void* alignedBuffer (NewAligned(
 								bpp,
 								width,
-								height);
-	SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(
+								height));
+	SDL_Surface* surface (SDL_CreateRGBSurfaceFrom(
 												alignedBuffer,
 												width,
 												height,
 												bpp,
 												pitche,
-												0,0,0,0);
+												0,0,0,0));
 	if (surface == nullptr)
 	{
 		throw Exception(SDL_GetError());
@@ -1197,10 +1207,7 @@ void Surface::resize(
  */
 void Surface::setWidth(int width) // virtual.
 {
-	resize(
-		width,
-		_surface->h);
-
+	resize(width, _surface->h);
 	_redraw = true;
 }
 
@@ -1212,10 +1219,7 @@ void Surface::setWidth(int width) // virtual.
  */
 void Surface::setHeight(int height) // virtual.
 {
-	resize(
-		_surface->w,
-		height);
-
+	resize(_surface->w, height);
 	_redraw = true;
 }
 
