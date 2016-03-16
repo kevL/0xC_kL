@@ -36,7 +36,6 @@
 
 #include "../Interface/Cursor.h"
 #include "../Interface/Text.h"
-//#include "../Interface/TurnCounter.h"	// kL, extern 'kL_TurnCount'
 #include "../Interface/Window.h"
 
 #include "../Resource/XcomResourcePack.h"
@@ -175,15 +174,12 @@ void NextTurnState::handle(Action* action)
 {
 	State::handle(action);
 
-	if (action->getDetails()->type == SDL_KEYDOWN
-		|| action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
+	switch (action->getDetails()->type)
 	{
-//		kL_TurnCount = _battleSave->getTurn();
-//		_turnCounter = _state->getTurnCounter();
-//		_turnCounter->update();
-
-		_state->updateTurn();
-		nextTurn();
+		case SDL_KEYDOWN:
+		case SDL_MOUSEBUTTONDOWN:
+			_state->updateTurn();
+			nextTurn();
 	}
 }
 
@@ -194,7 +190,7 @@ void NextTurnState::nextTurn()
 {
 	static bool switchMusic (true);
 
-	// Done here and in DebriefingState, but removed from ~BattlescapeGame (see)
+	// Done here and in DebriefingState but removed from ~BattlescapeGame.
 	_battleSave->getBattleGame()->cleanBattleStates();
 	_game->popState();
 

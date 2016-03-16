@@ -49,7 +49,6 @@ class Text;
 class TextList;
 class Tile;
 class Timer;
-//class TurnCounter;
 class WarningMessage;
 
 
@@ -207,7 +206,6 @@ private:
 	Timer
 		* _aniTimer,
 		* _tacticalTimer;
-//	TurnCounter* _turnCounter;
 	WarningMessage* _warning;
 
 	std::vector<State*> _popups;
@@ -479,8 +477,6 @@ private:
 				int& dX,
 				int& dY) override;
 
-		/// Gets the TurnCounter.
-//		TurnCounter* getTurnCounter() const;
 		/// Updates the turn text.
 		void updateTurn();
 

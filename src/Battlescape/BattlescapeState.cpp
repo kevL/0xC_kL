@@ -74,7 +74,6 @@
 #include "../Interface/NumberText.h"
 #include "../Interface/Text.h"
 #include "../Interface/TextList.h"
-//#include "../Interface/TurnCounter.h" // kL
 
 #include "../Menu/LoadGameState.h"
 #include "../Menu/PauseState.h"
@@ -322,7 +321,6 @@ BattlescapeState::BattlescapeState()
 	_txtDebug		= new Text(145, 9, screenWidth - 145, screenHeight - 9);
 //	_txtTooltip		= new Text(300, 10, x + 2, y - 10);
 
-//	_turnCounter	= new TurnCounter(20, 5, 0, 0);
 	_txtTerrain		= new Text(150, 9, 1,  0);
 	_txtShade		= new Text( 50, 9, 1, 10);
 	_txtTurn		= new Text( 50, 9, 1, 20);
@@ -1052,19 +1050,15 @@ void BattlescapeState::init()
 	_map->draw();
 	_battleGame->init();
 
-//	kL_TurnCount = _battleSave->getTurn();	// kL
-//	_turnCounter->update();					// kL
-//	_turnCounter->draw();					// kL
-
 	updateSoldierInfo();
 
-/*	switch (_battleSave->getBatReserved())
-	{
-		case BA_SNAPSHOT: _reserve = _btnReserveSnap; break;
-		case BA_AIMEDSHOT: _reserve = _btnReserveAimed; break;
-		case BA_AUTOSHOT: _reserve = _btnReserveAuto; break;
-		default: _reserve = _btnReserveNone; break;
-	} */
+//	switch (_battleSave->getBatReserved())
+//	{
+//		case BA_SNAPSHOT: _reserve = _btnReserveSnap; break;
+//		case BA_AIMEDSHOT: _reserve = _btnReserveAimed; break;
+//		case BA_AUTOSHOT: _reserve = _btnReserveAuto; break;
+//		default: _reserve = _btnReserveNone; break;
+//	}
 
 	if (_firstInit == true && playableUnitSelected() == true)
 	{
@@ -1079,10 +1073,10 @@ void BattlescapeState::init()
 		_battleSave->calibrateMusic(track, terrain);
 		_game->getResourcePack()->playMusic(track, terrain);
 
-/*		_btnReserveNone->setGroup(&_reserve);
-		_btnReserveSnap->setGroup(&_reserve);
-		_btnReserveAimed->setGroup(&_reserve);
-		_btnReserveAuto->setGroup(&_reserve); */
+//		_btnReserveNone->setGroup(&_reserve);
+//		_btnReserveSnap->setGroup(&_reserve);
+//		_btnReserveAimed->setGroup(&_reserve);
+//		_btnReserveAuto->setGroup(&_reserve);
 	}
 
 	_numLayers->setValue(static_cast<unsigned>(_map->getCamera()->getViewLevel()) + 1);
@@ -4051,15 +4045,6 @@ void BattlescapeState::resize(
 		}
 	}
 }
-
-/**
- * Returns the TurnCounter used by the Battlescape.
- * @return, pointer to TurnCounter
- */
-/* TurnCounter* BattlescapeState::getTurnCounter() const
-{
-	return _turnCounter;
-} */
 
 /**
  * Updates the turn text.
