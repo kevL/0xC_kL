@@ -417,7 +417,7 @@ void Game::run()
 			}
 		}
 
-//		if (_inputActive == false)	// kL->
+//		if (_inputActive == false) // kL->
 		_inputActive = true;
 
 

@@ -335,19 +335,19 @@ void Screen::setPalette(
 	}
 
 	// Sanity check
-/*	SDL_Color *newcolors = _screen->format->palette->colors;
-	for (int i = firstcolor, j = 0; i < firstcolor + ncolors; i++, j++)
-	{
-		Log(LOG_DEBUG) << (int)newcolors[i].r << " - " << (int)newcolors[i].g << " - " << (int)newcolors[i].b;
-		Log(LOG_DEBUG) << (int)colors[j].r << " + " << (int)colors[j].g << " + " << (int)colors[j].b;
-		if (newcolors[i].r != colors[j].r ||
-			newcolors[i].g != colors[j].g ||
-			newcolors[i].b != colors[j].b)
-		{
-			Log(LOG_ERROR) << "Display palette doesn't match requested palette";
-			break;
-		}
-	} */
+//	SDL_Color *newcolors (_screen->format->palette->colors);
+//	for (int i = firstcolor, j = 0; i < firstcolor + ncolors; i++, j++)
+//	{
+//		Log(LOG_DEBUG) << (int)newcolors[i].r << " - " << (int)newcolors[i].g << " - " << (int)newcolors[i].b;
+//		Log(LOG_DEBUG) << (int)colors[j].r << " + " << (int)colors[j].g << " + " << (int)colors[j].b;
+//		if (newcolors[i].r != colors[j].r ||
+//			newcolors[i].g != colors[j].g ||
+//			newcolors[i].b != colors[j].b)
+//		{
+//			Log(LOG_ERROR) << "Display palette doesn't match requested palette";
+//			break;
+//		}
+//	}
 }
 
 /**
@@ -714,30 +714,12 @@ int Screen::getDY() const
 }
 
 /**
- * Gets the center-x pixel.
- * @return, center-x
- *
-int Screen::getCenterX() const
-{
-	return _baseWidth / 2;
-} */
-
-/**
- * Gets the center-y pixel.
- * @return, center-y
- *
-int Screen::getCenterY() const
-{
-	return _baseHeight / 2;
-} */
-
-/**
  * Changes a given scale and if necessary switches the current base resolution.
  * @param type		- reference which scale option is in use (Battlescape or Geoscape)
  * @param selection	- the new scale level
  * @param width		- reference which x scale to adjust
- * @param height		- reference which y scale to adjust
- * @param change		- true to change the current scale
+ * @param height	- reference which y scale to adjust
+ * @param change	- true to change the current scale
  */
 void Screen::updateScale( // static.
 		int& type,

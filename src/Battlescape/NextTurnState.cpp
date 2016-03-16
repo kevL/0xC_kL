@@ -218,7 +218,7 @@ void NextTurnState::nextTurn()
 			if (_battleSave->getSide() == FACTION_PLAYER
 				&& (turn == 1 || (turn % Options::autosaveFrequency) == 0))
 			{
-				_state->autosave();
+				_state->autosave(); // NOTE: Auto-save points are fucked; they should be done *before* important events, not after.
 			}
 
 			if (turn != 1)

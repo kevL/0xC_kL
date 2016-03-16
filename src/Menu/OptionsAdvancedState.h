@@ -34,8 +34,7 @@ namespace OpenXcom
 class TextList;
 
 /**
- * Options window that displays the
- * advanced game settings.
+ * Options window that displays the advanced game settings.
  */
 class OptionsAdvancedState
 	:

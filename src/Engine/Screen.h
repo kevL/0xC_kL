@@ -88,11 +88,6 @@ private:
 		/// Gets vertical offset.
 		int getDY() const;
 
-		/// Gets the center-x pixel.
-//		int getCenterX() const;
-		/// Gets the center-y pixel.
-//		int getCenterY() const;
-
 		/// Gets the internal buffer.
 		Surface* getSurface();
 

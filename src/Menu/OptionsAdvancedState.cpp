@@ -271,7 +271,7 @@ void OptionsAdvancedState::lstOptionsClick(Action* action)
 			}
 			else
 			{
-				minVal = 0;
+				minVal =
 				maxVal = 0;
 			}
 
@@ -291,6 +291,9 @@ void OptionsAdvancedState::lstOptionsClick(Action* action)
 	}
 }
 
+/**
+ *
+ */
 void OptionsAdvancedState::lstOptionsMouseOver(Action*)
 {
 	std::wstring desc;

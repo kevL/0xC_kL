@@ -166,29 +166,11 @@ MainMenuState::~MainMenuState()
 
 /**
  * Initializes the state.
- */
+ *
 void MainMenuState::init()
 {
 	State::init();
-
-//	_game->getCursor()->fakeMotion(); // not working ->
-//
-//	int
-//		x,y,
-//		dir;
-//	SDL_GetMouseState(&x,&y);
-//
-//	if (x == 0)	dir = +1;
-//	else		dir = -1;
-//
-//	SDL_WarpMouse(
-//			static_cast<Uint16>(x + dir),
-//			static_cast<Uint16>(y));
-//	SDL_GetMouseState(&x,&y);
-//	SDL_WarpMouse(
-//			static_cast<Uint16>(x - dir),
-//			static_cast<Uint16>(y));
-}
+} */
 
 /**
  * Opens the New Game window.

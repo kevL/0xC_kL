@@ -37,8 +37,6 @@
 
 //#include "../Engine/Adlib/adlplayer.h"
 
-//#include "../Interface/Cursor.h"
-
 #include "../Resource/XcomResourcePack.h"
 
 #include "../Ruleset/Ruleset.h"
@@ -551,29 +549,11 @@ void IntroState::init()
 					true); */
 	_game->getScreen()->resetDisplay(false);
 
-//	int
-//		x (_game->getScreen()->getCenterX()),
-//		y (_game->getScreen()->getCenterY());
-//	SDL_WarpMouse(
-//			static_cast<Uint16>(x),
-//			static_cast<Uint16>(y));
-
-//	_game->getCursor()->fakeMotion();
-//	int
-//		x,y,
-//		dir;
-//	SDL_GetMouseState(&x,&y);
-//
-//	if (x == 0)	dir = +1;
-//	else		dir = -1;
-//
-//	SDL_WarpMouse(
-//			static_cast<Uint16>(x + dir),
-//			static_cast<Uint16>(y));
-//	SDL_GetMouseState(&x,&y);
-//	SDL_WarpMouse(
-//			static_cast<Uint16>(x - dir),
-//			static_cast<Uint16>(y));
+	// I can't get a real refresh/update to work here or on forward to MainMenu,
+	// unfortunately. So this ensures merely that the cursor appears centered.
+	SDL_WarpMouse(
+			static_cast<Uint16>(_game->getScreen()->getWidth() / 2),
+			static_cast<Uint16>(_game->getScreen()->getHeight() / 2));
 
 	_game->setState(new MainMenuState());
 }

@@ -61,7 +61,7 @@ private:
 		~MainMenuState();
 
 		/// Initializes the state.
-		void init();
+//		void init() override;
 
 		/// Handler for clicking the New Game button.
 		void btnNewGameClick(Action* action);
