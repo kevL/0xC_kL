@@ -333,27 +333,40 @@ void UnitSprite::drawRoutine0() // private.
 	{
 		default:
 		case 0:
-			if (_unit->getArmor()->getForcedTorso() == TORSO_ALWAYS_FEMALE // TODO: Remove this confusion.
-				|| (_unit->getGender() == GENDER_FEMALE
-					&& _unit->getArmor()->getForcedTorso() != TORSO_ALWAYS_MALE))
-			{
-				torso = _unitSet->getFrame(unitDir + femaleTorso);
-			}
-			else
-				torso = _unitSet->getFrame(unitDir + maleTorso);
-			break;
-
-		case 10:
 			switch (_unit->getGender())
 			{
 				default:
 				case GENDER_MALE:
-					torso = _unitSet->getFrame(unitDir + maleTorso);
+					switch (_unit->getArmor()->getForcedTorso())
+					{
+						default:
+						case TORSO_STANDARD:
+						case TORSO_POWERSUIT:
+							torso = _unitSet->getFrame(unitDir + maleTorso);
+							break;
+
+						case TORSO_FLIGHTSUIT:
+							torso = _unitSet->getFrame(unitDir + femaleTorso);
+					}
 					break;
 
 				case GENDER_FEMALE:
-					torso = _unitSet->getFrame(unitDir + femaleTorso);
+					switch (_unit->getArmor()->getForcedTorso())
+					{
+						default:
+						case TORSO_STANDARD:
+						case TORSO_FLIGHTSUIT:
+							torso = _unitSet->getFrame(unitDir + femaleTorso);
+							break;
+
+						case TORSO_POWERSUIT:
+							torso = _unitSet->getFrame(unitDir + maleTorso);
+					}
 			}
+			break;
+
+		case 10:
+			torso = _unitSet->getFrame(unitDir + maleTorso);
 	}
 
 	const bool

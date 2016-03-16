@@ -76,12 +76,12 @@ UnitInfoState::UnitInfoState(
 		_preBattle(preBattle),
 		_battleSave(_game->getSavedGame()->getBattleSave())
 {
-/*	if (Options::maximizeInfoScreens)
-	{
-		Options::baseXResolution = Screen::ORIGINAL_WIDTH;
-		Options::baseYResolution = Screen::ORIGINAL_HEIGHT;
-		_game->getScreen()->resetDisplay(false);
-	} */
+//	if (Options::maximizeInfoScreens)
+//	{
+//		Options::baseXResolution = Screen::ORIGINAL_WIDTH;
+//		Options::baseYResolution = Screen::ORIGINAL_HEIGHT;
+//		_game->getScreen()->resetDisplay(false);
+//	}
 
 	_bg			= new Surface(320, 200);
 	_exit		= new InteractiveSurface(
@@ -96,102 +96,102 @@ UnitInfoState::UnitInfoState(
 	_numOrder	= new NumberText(7, 5, 0, 5); // x-value is set in init()
 
 	int
-		step = 9,
-		yPos = 38;
+		step (9),
+		yPos (38);
 
-	_txtTimeUnits	= new Text(140, 9, 8, yPos);
-	_numTimeUnits	= new Text(18, 9, 151, yPos);
-	_barTimeUnits	= new Bar(280, 5, 170, yPos + 1);
-
-	yPos += step;
-	_txtEnergy		= new Text(140, 9, 8, yPos);
-	_numEnergy		= new Text(18, 9, 151, yPos);
-	_barEnergy		= new Bar(280, 5, 170, yPos + 1);
+	_txtTimeUnits	= new Text(140, 9,   8, yPos);
+	_numTimeUnits	= new Text( 18, 9, 151, yPos);
+	_barTimeUnits	= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtHealth		= new Text(140, 9, 8, yPos);
-	_numHealth		= new Text(18, 9, 151, yPos);
-	_numStun		= new Text(18, 9, 127, yPos);
-	_barHealth		= new Bar(280, 5, 170, yPos + 1);
+	_txtEnergy		= new Text(140, 9,   8, yPos);
+	_numEnergy		= new Text( 18, 9, 151, yPos);
+	_barEnergy		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtFatalWounds	= new Text(140, 9, 8, yPos);
-	_numFatalWounds	= new Text(18, 9, 151, yPos);
-	_barFatalWounds	= new Bar(280, 5, 170, yPos + 1);
+	_txtHealth		= new Text(140, 9,   8, yPos);
+	_numHealth		= new Text( 18, 9, 151, yPos);
+	_numStun		= new Text( 18, 9, 127, yPos);
+	_barHealth		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtBravery		= new Text(140, 9, 8, yPos);
-	_numBravery		= new Text(18, 9, 151, yPos);
-	_barBravery		= new Bar(280, 5, 170, yPos + 1);
+	_txtFatalWounds	= new Text(140, 9,   8, yPos);
+	_numFatalWounds	= new Text( 18, 9, 151, yPos);
+	_barFatalWounds	= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtMorale		= new Text(140, 9, 8, yPos);
-	_numMorale		= new Text(18, 9, 151, yPos);
-	_barMorale		= new Bar(280, 5, 170, yPos + 1);
+	_txtBravery		= new Text(140, 9,   8, yPos);
+	_numBravery		= new Text( 18, 9, 151, yPos);
+	_barBravery		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtReactions	= new Text(140, 9, 8, yPos);
-	_numReactions	= new Text(18, 9, 151, yPos);
-	_barReactions	= new Bar(280, 5, 170, yPos + 1);
+	_txtMorale		= new Text(140, 9,   8, yPos);
+	_numMorale		= new Text( 18, 9, 151, yPos);
+	_barMorale		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtFiring		= new Text(140, 9, 8, yPos);
-	_numFiring		= new Text(18, 9, 151, yPos);
-	_barFiring		= new Bar(280, 5, 170, yPos + 1);
+	_txtReactions	= new Text(140, 9,   8, yPos);
+	_numReactions	= new Text( 18, 9, 151, yPos);
+	_barReactions	= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtThrowing	= new Text(140, 9, 8, yPos);
-	_numThrowing	= new Text(18, 9, 151, yPos);
-	_barThrowing	= new Bar(280, 5, 170, yPos + 1);
+	_txtFiring		= new Text(140, 9,   8, yPos);
+	_numFiring		= new Text( 18, 9, 151, yPos);
+	_barFiring		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtMelee		= new Text(140, 9, 8, yPos);
-	_numMelee		= new Text(18, 9, 151, yPos);
-	_barMelee		= new Bar(280, 5, 170, yPos + 1);
+	_txtThrowing	= new Text(140, 9,   8, yPos);
+	_numThrowing	= new Text( 18, 9, 151, yPos);
+	_barThrowing	= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtStrength	= new Text(140, 9, 8, yPos);
-	_numStrength	= new Text(18, 9, 151, yPos);
-	_barStrength	= new Bar(280, 5, 170, yPos + 1);
+	_txtMelee		= new Text(140, 9,   8, yPos);
+	_numMelee		= new Text( 18, 9, 151, yPos);
+	_barMelee		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtPsiStrength	= new Text(140, 9, 8, yPos);
-	_numPsiStrength	= new Text(18, 9, 151, yPos);
-	_barPsiStrength	= new Bar(280, 5, 170, yPos + 1);
+	_txtStrength	= new Text(140, 9,   8, yPos);
+	_numStrength	= new Text( 18, 9, 151, yPos);
+	_barStrength	= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtPsiSkill	= new Text(140, 9, 8, yPos);
-	_numPsiSkill	= new Text(18, 9, 151, yPos);
-	_barPsiSkill	= new Bar(280, 5, 170, yPos + 1);
+	_txtPsiStrength	= new Text(140, 9,   8, yPos);
+	_numPsiStrength	= new Text( 18, 9, 151, yPos);
+	_barPsiStrength	= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtFrontArmor	= new Text(140, 9, 8, yPos);
-	_numFrontArmor	= new Text(18, 9, 151, yPos);
-	_barFrontArmor	= new Bar(280, 5, 170, yPos + 1);
+	_txtPsiSkill	= new Text(140, 9,   8, yPos);
+	_numPsiSkill	= new Text( 18, 9, 151, yPos);
+	_barPsiSkill	= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtLeftArmor	= new Text(140, 9, 8, yPos);
-	_numLeftArmor	= new Text(18, 9, 151, yPos);
-	_barLeftArmor	= new Bar(280, 5, 170, yPos + 1);
+	_txtFrontArmor	= new Text(140, 9,   8, yPos);
+	_numFrontArmor	= new Text( 18, 9, 151, yPos);
+	_barFrontArmor	= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtRightArmor	= new Text(140, 9, 8, yPos);
-	_numRightArmor	= new Text(18, 9, 151, yPos);
-	_barRightArmor	= new Bar(280, 5, 170, yPos + 1);
+	_txtLeftArmor	= new Text(140, 9,   8, yPos);
+	_numLeftArmor	= new Text( 18, 9, 151, yPos);
+	_barLeftArmor	= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtRearArmor	= new Text(140, 9, 8, yPos);
-	_numRearArmor	= new Text(18, 9, 151, yPos);
-	_barRearArmor	= new Bar(280, 5, 170, yPos + 1);
+	_txtRightArmor	= new Text(140, 9,   8, yPos);
+	_numRightArmor	= new Text( 18, 9, 151, yPos);
+	_barRightArmor	= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += step;
-	_txtUnderArmor	= new Text(140, 9, 8, yPos);
-	_numUnderArmor	= new Text(18, 9, 151, yPos);
-	_barUnderArmor	= new Bar(280, 5, 170, yPos + 1);
+	_txtRearArmor	= new Text(140, 9,   8, yPos);
+	_numRearArmor	= new Text( 18, 9, 151, yPos);
+	_barRearArmor	= new Bar( 280, 5, 170, yPos + 1);
+
+	yPos += step;
+	_txtUnderArmor	= new Text(140, 9,   8, yPos);
+	_numUnderArmor	= new Text( 18, 9, 151, yPos);
+	_barUnderArmor	= new Bar( 280, 5, 170, yPos + 1);
 
 	if (_mindProbe == false)
 	{
-		_btnPrev	= new TextButton(18, 18, 2, 2);
+		_btnPrev	= new TextButton(18, 18,   2, 2);
 		_btnNext	= new TextButton(18, 18, 300, 2);
 	}
 
@@ -304,8 +304,8 @@ UnitInfoState::UnitInfoState(
 					Options::keyBattleStats);
 
 	Uint8
-		color = static_cast<Uint8>(_game->getRuleset()->getInterface("stats")->getElement("text")->color),
-		color2 = static_cast<Uint8>(_game->getRuleset()->getInterface("stats")->getElement("text")->color2);
+		color (static_cast<Uint8>(_game->getRuleset()->getInterface("stats")->getElement("text")->color)),
+		color2 (static_cast<Uint8>(_game->getRuleset()->getInterface("stats")->getElement("text")->color2));
 
 	_txtName->setAlign(ALIGN_CENTER);
 	_txtName->setBig();
@@ -521,7 +521,7 @@ UnitInfoState::~UnitInfoState()
 //	delete _timer;
 }
 
-/*
+/**
  * Hits the think timer.
  *
 void UnitInfoState::think()
@@ -533,7 +533,7 @@ void UnitInfoState::think()
 	}
 } */
 
-/*
+/**
  * Advances to the next/previous Unit when right/left key is depressed.
  *
 void UnitInfoState::keyRepeat() // private.
@@ -569,15 +569,19 @@ void UnitInfoState::init()
 				<< L" ";
 
 		Surface* gender = nullptr;
-		if (sol->getGender() == GENDER_MALE)
-			gender = _game->getResourcePack()->getSurface("GENDER_M");
-		else
-			gender = _game->getResourcePack()->getSurface("GENDER_F");
+		switch (sol->getGender())
+		{
+			default:
+			case GENDER_MALE:
+				gender = _game->getResourcePack()->getSurface("GENDER_M");
+				break;
 
-		if (gender != nullptr)
-			gender->blit(_gender);
+			case GENDER_FEMALE:
+				gender = _game->getResourcePack()->getSurface("GENDER_F");
+		}
+		gender->blit(_gender);
 
-		const size_t order = _unit->getBattleOrder();
+		const size_t order (_unit->getBattleOrder());
 		if (order < 10)
 			_numOrder->setX(_btnNext->getX() - 6);
 		else
@@ -597,7 +601,7 @@ void UnitInfoState::init()
 	_txtName->setBig();
 
 	// TU, Health, & Bravery ->
-	int stat = _unit->getTimeUnits();
+	int stat (_unit->getTimeUnits());
 	_numTimeUnits->setText(Text::intWide(stat));
 	_barTimeUnits->setMaxValue(static_cast<double>(_unit->getBattleStats()->tu));
 	_barTimeUnits->setValue(static_cast<double>(stat));
@@ -609,7 +613,7 @@ void UnitInfoState::init()
 
 	stat = _unit->getHealth();
 	_numHealth->setText(Text::intWide(stat));
-	const int stat2 = _unit->getStun();
+	const int stat2 (_unit->getStun());
 	if (stat2 != 0)
 	{
 		_numStun->setText(Text::intWide(stat2));
@@ -660,9 +664,9 @@ void UnitInfoState::init()
 	_numMorale->setText(Text::intWide(stat));
 
 	// Primary Abilities ->
-	const double acuModi = _unit->getAccuracyModifier();
+	const double acuModi (_unit->getAccuracyModifier());
 
-	double arbitraryVariable = static_cast<double>(_unit->getBattleStats()->reactions);
+	double arbitraryVariable (static_cast<double>(_unit->getBattleStats()->reactions));
 	_barReactions->setMaxValue(arbitraryVariable);
 	arbitraryVariable *= acuModi;
 	_barReactions->setValue(arbitraryVariable);
@@ -698,7 +702,7 @@ void UnitInfoState::init()
 	_numStrength->setText(Text::intWide(stat));
 
 	// Psionics ->
-	const int psiSkill = _unit->getBattleStats()->psiSkill;
+	const int psiSkill (_unit->getBattleStats()->psiSkill);
 	if (psiSkill != 0 || sol == nullptr)
 	{
 		woststr.str(L"");
@@ -778,17 +782,16 @@ void UnitInfoState::init()
 void UnitInfoState::handle(Action* action)
 {
 	State::handle(action);
-
-/*	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
-	{
-		if (_mindProbe == false)
-		{
-			if (action->getDetails()->button.button == SDL_BUTTON_X1)
-				btnNextClick(action);
-			else if (action->getDetails()->button.button == SDL_BUTTON_X2)
-				btnPrevClick(action);
-		}
-	} */
+//	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
+//	{
+//		if (_mindProbe == false)
+//		{
+//			if (action->getDetails()->button.button == SDL_BUTTON_X1)
+//				btnNextClick(action);
+//			else if (action->getDetails()->button.button == SDL_BUTTON_X2)
+//				btnPrevClick(action);
+//		}
+//	}
 }
 
 /**
@@ -846,14 +849,14 @@ void UnitInfoState::exitPress(Action*) const // private.
 		}
 	}
 
-/*	if (_fromInventory == false)
-	{
-		if (Options::maximizeInfoScreens)
-		{
-			Screen::updateScale(Options::battlescapeScale, Options::battlescapeScale, Options::baseXBattlescape, Options::baseYBattlescape, true);
-			_game->getScreen()->resetDisplay(false);
-		}
-	} else */
+//	if (_fromInventory == false)
+//	{
+//		if (Options::maximizeInfoScreens)
+//		{
+//			Screen::updateScale(Options::battlescapeScale, Options::battlescapeScale, Options::baseXBattlescape, Options::baseYBattlescape, true);
+//			_game->getScreen()->resetDisplay(false);
+//		}
+//	} else
 	if (_mindProbe == true || _unit->hasInventory() == true)
 		_game->popState();
 	else if (_preBattle == false)

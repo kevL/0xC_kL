@@ -34,9 +34,9 @@ namespace OpenXcom
 
 enum ForcedTorso
 {
-	TORSO_USE_GENDER,	// 0
-	TORSO_ALWAYS_MALE,	// 1
-	TORSO_ALWAYS_FEMALE	// 2
+	TORSO_STANDARD,		// 0
+	TORSO_POWERSUIT,	// 1
+	TORSO_FLIGHTSUIT	// 2
 };
 
 
@@ -59,7 +59,6 @@ private:
 		_storeItem,
 		_type;
 	bool
-		_canHoldWeapon,
 		_constantAnimation,
 		_hasInventory,
 		_isBasic,
@@ -170,9 +169,6 @@ private:
 
 		/// Gets if an Armor uses constant animation.
 		bool getConstantAnimation() const;
-
-		/// Gets if an Armor can hold a weapon.
-		bool getCanHoldWeapon() const;
 
 		/// Checks if an Armor ignores gender (power suit/flying suit).
 		ForcedTorso getForcedTorso() const;

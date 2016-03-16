@@ -100,8 +100,8 @@ SoldierInfoState::SoldierInfoState(
 	_txtDay			= new Text(30, 9, 237, 57);
 
 
-	int yPos = 80;
-	const int step = 11;
+	const int step (11);
+	int yPos (80);
 
 	_txtTimeUnits	= new Text(120, 9,   6, yPos);
 	_numTimeUnits	= new Text( 18, 9, 131, yPos);
@@ -327,10 +327,10 @@ void SoldierInfoState::init()
 	_soldier = _list->at(_soldierId);
 	_edtSoldier->setText(_soldier->getName());
 
-	SurfaceSet* const srt = _game->getResourcePack()->getSurfaceSet("BASEBITS.PCK");
-	srt->getFrame(_soldier->getRankSprite())->setX(0);
-	srt->getFrame(_soldier->getRankSprite())->setY(0);
-	srt->getFrame(_soldier->getRankSprite())->blit(_rank);
+	SurfaceSet* const baseBits (_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
+	baseBits->getFrame(_soldier->getRankSprite())->setX(0);
+	baseBits->getFrame(_soldier->getRankSprite())->setY(0);
+	baseBits->getFrame(_soldier->getRankSprite())->blit(_rank);
 
 	_gender->clear();
 	Surface* gender;
@@ -542,11 +542,11 @@ void SoldierInfoState::init()
 	_txtCraft->setText(tr("STR_CRAFT_").arg(craft));
 
 
-	const int recovery = _soldier->getSickbay();
+	const int recovery (_soldier->getSickbay());
 	if (recovery != 0)
 	{
 		Uint8 color;
-		const int pct = _soldier->getRecoveryPct();
+		const int pct (_soldier->getRecoveryPct());
 		if (pct > 50)
 			color = ORANGE;
 		else if (pct > 10)
@@ -672,37 +672,38 @@ void SoldierInfoState::btnAutoStatAll(Action*)
 {
 	_allowExit = false;
 
+	Soldier* sol;
 	for (size_t
 			i = 0;
 			i != _list->size();
 			++i)
 	{
-		Soldier* const soldier = _list->at(i);
+		sol = _list->at(i);
 
-		if (soldier == _soldier)
-			soldier->setName(_edtSoldier->getText());
+		if (sol == _soldier)
+			sol->setName(_edtSoldier->getText());
 
-		soldier->autoStat();
+		sol->autoStat();
 
-		if (soldier == _soldier)
+		if (sol == _soldier)
 			init();
 	}
 
 	// TEST: for updating Soldier Awards ***
 	// note that decorationLevels need to also be zero'd in the savedgame file.
-/*	for (std::vector<Base*>::const_iterator
-			i = _game->getSavedGame()->getBases()->begin();
-			i != _game->getSavedGame()->getBases()->end();
-			++i)
-	{
-		for (std::vector<Soldier*>::const_iterator
-				j = (*i)->getSoldiers()->begin();
-				j != (*i)->getSoldiers()->end();
-				++j)
-		{
-			(*j)->getDiary()->manageAwards(_game->getRuleset());
-		}
-	} */
+//	for (std::vector<Base*>::const_iterator
+//			i = _game->getSavedGame()->getBases()->begin();
+//			i != _game->getSavedGame()->getBases()->end();
+//			++i)
+//	{
+//		for (std::vector<Soldier*>::const_iterator
+//				j = (*i)->getSoldiers()->begin();
+//				j != (*i)->getSoldiers()->end();
+//				++j)
+//		{
+//			(*j)->getDiary()->manageAwards(_game->getRuleset());
+//		}
+//	}
 }
 
 /**
@@ -766,9 +767,7 @@ void SoldierInfoState::btnPrevClick(Action*)
  */
 void SoldierInfoState::btnNextClick(Action*)
 {
-	++_soldierId;
-
-	if (_soldierId >= _list->size())
+	if (++_soldierId >= _list->size())
 		_soldierId = 0;
 
 	init();

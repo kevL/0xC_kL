@@ -1652,6 +1652,7 @@ void BattleUnit::playDeathSound(bool fleshWound) const
 		{
 			switch (_gender)
 			{
+				default:
 				case GENDER_MALE:
 					if (fleshWound == true)
 						soundId = RNG::generate(141,151);
@@ -1659,7 +1660,7 @@ void BattleUnit::playDeathSound(bool fleshWound) const
 						soundId = RNG::generate(111,116);
 					break;
 
-				default:
+				case GENDER_FEMALE:
 					if (fleshWound == true)
 						soundId = RNG::generate(121,135);
 					else
@@ -1668,10 +1669,16 @@ void BattleUnit::playDeathSound(bool fleshWound) const
 		}
 		else if (_unitRule->getRace() == "STR_CIVILIAN")
 		{
-			if (_gender == GENDER_MALE)
-				soundId = ResourcePack::MALE_SCREAM[RNG::generate(0,2)];
-			else
-				soundId = ResourcePack::FEMALE_SCREAM[RNG::generate(0,2)];
+			switch (_gender)
+			{
+				default:
+				case GENDER_MALE:
+					soundId = ResourcePack::MALE_SCREAM[RNG::generate(0,2)];
+					break;
+
+				case GENDER_FEMALE:
+					soundId = ResourcePack::FEMALE_SCREAM[RNG::generate(0,2)];
+			}
 		}
 		else
 			soundId = _deathSound;

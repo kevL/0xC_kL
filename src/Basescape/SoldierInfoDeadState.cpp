@@ -74,62 +74,62 @@ SoldierInfoDeadState::SoldierInfoDeadState(size_t soldierId)
 	_txtMissions	= new Text(100, 9, 130, 49);
 	_txtKills		= new Text(100, 9, 230, 49);
 
-	const int step = 11;
-	int yPos = 80;
+	const int step (11);
+	int yPos (80);
 
-	_txtTimeUnits	= new Text(120, 9, 6, yPos);
-	_numTimeUnits	= new Text(18, 9, 131, yPos);
-	_barTimeUnits	= new Bar(234, 7, 150, yPos + 1);
-
-	yPos += step;
-	_txtStamina		= new Text(120, 9, 5, yPos);
-	_numStamina		= new Text(18, 9, 131, yPos);
-	_barStamina		= new Bar(234, 7, 150, yPos + 1);
+	_txtTimeUnits	= new Text(120, 9,   6, yPos);
+	_numTimeUnits	= new Text( 18, 9, 131, yPos);
+	_barTimeUnits	= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += step;
-	_txtHealth		= new Text(120, 9, 6, yPos);
-	_numHealth		= new Text(18, 9, 131, yPos);
-	_barHealth		= new Bar(234, 7, 150, yPos + 1);
+	_txtStamina		= new Text(120, 9,   5, yPos);
+	_numStamina		= new Text( 18, 9, 131, yPos);
+	_barStamina		= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += step;
-	_txtBravery		= new Text(120, 9, 6, yPos);
-	_numBravery		= new Text(18, 9, 131, yPos);
-	_barBravery		= new Bar(234, 7, 150, yPos + 1);
+	_txtHealth		= new Text(120, 9,   6, yPos);
+	_numHealth		= new Text( 18, 9, 131, yPos);
+	_barHealth		= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += step;
-	_txtReactions	= new Text(120, 9, 6, yPos);
-	_numReactions	= new Text(18, 9, 131, yPos);
-	_barReactions	= new Bar(234, 7, 150, yPos + 1);
+	_txtBravery		= new Text(120, 9,   6, yPos);
+	_numBravery		= new Text( 18, 9, 131, yPos);
+	_barBravery		= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += step;
-	_txtFiring		= new Text(120, 9, 6, yPos);
-	_numFiring		= new Text(18, 9, 131, yPos);
-	_barFiring		= new Bar(234, 7, 150, yPos + 1);
+	_txtReactions	= new Text(120, 9,   6, yPos);
+	_numReactions	= new Text( 18, 9, 131, yPos);
+	_barReactions	= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += step;
-	_txtThrowing	= new Text(120, 9, 6, yPos);
-	_numThrowing	= new Text(18, 9, 131, yPos);
-	_barThrowing	= new Bar(234, 7, 150, yPos + 1);
+	_txtFiring		= new Text(120, 9,   6, yPos);
+	_numFiring		= new Text( 18, 9, 131, yPos);
+	_barFiring		= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += step;
-	_txtMelee		= new Text(120, 9, 6, yPos);
-	_numMelee		= new Text(18, 9, 131, yPos);
-	_barMelee		= new Bar(234, 7, 150, yPos + 1);
+	_txtThrowing	= new Text(120, 9,   6, yPos);
+	_numThrowing	= new Text( 18, 9, 131, yPos);
+	_barThrowing	= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += step;
-	_txtStrength	= new Text(120, 9, 6, yPos);
-	_numStrength	= new Text(18, 9, 131, yPos);
-	_barStrength	= new Bar(234, 7, 150, yPos + 1);
+	_txtMelee		= new Text(120, 9,   6, yPos);
+	_numMelee		= new Text( 18, 9, 131, yPos);
+	_barMelee		= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += step;
-	_txtPsiStrength	= new Text(120, 9, 6, yPos);
-	_numPsiStrength	= new Text(18, 9, 131, yPos);
-	_barPsiStrength	= new Bar(234, 7, 150, yPos + 1);
+	_txtStrength	= new Text(120, 9,   6, yPos);
+	_numStrength	= new Text( 18, 9, 131, yPos);
+	_barStrength	= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += step;
-	_txtPsiSkill	= new Text(120, 9, 6, yPos);
-	_numPsiSkill	= new Text(18, 9, 131, yPos);
-	_barPsiSkill	= new Bar(234, 7, 150, yPos + 1);
+	_txtPsiStrength	= new Text(120, 9,   6, yPos);
+	_numPsiStrength	= new Text( 18, 9, 131, yPos);
+	_barPsiStrength	= new Bar( 234, 7, 150, yPos + 1);
+
+	yPos += step;
+	_txtPsiSkill	= new Text(120, 9,   6, yPos);
+	_numPsiSkill	= new Text( 18, 9, 131, yPos);
+	_barPsiSkill	= new Bar( 234, 7, 150, yPos + 1);
 
 	setPalette(PAL_BASESCAPE);
 
@@ -264,7 +264,7 @@ void SoldierInfoDeadState::init()
 	_soldier = _list->at(_soldierId);
 	_txtSoldier->setText(_soldier->getName());
 
-	SurfaceSet* const baseBits = _game->getResourcePack()->getSurfaceSet("BASEBITS.PCK");
+	SurfaceSet* const baseBits (_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
 	baseBits->getFrame(_soldier->getRankSprite())->setX(0);
 	baseBits->getFrame(_soldier->getRankSprite())->setY(0);
 	baseBits->getFrame(_soldier->getRankSprite())->blit(_rank);
@@ -279,7 +279,7 @@ void SoldierInfoDeadState::init()
 	if (gender != nullptr)
 		gender->blit(_gender);
 
-	const SoldierDeath* const death = _soldier->getDeath();
+	const SoldierDeath* const death (_soldier->getDeath());
 	std::wostringstream date;
 	date << death->getTime()->getDayString(_game->getLanguage());
 	date << L" ";
@@ -290,8 +290,8 @@ void SoldierInfoDeadState::init()
 
 
 	const UnitStats
-		* const initial = _soldier->getInitStats(),
-		* const current = _soldier->getCurrentStats();
+		* const initial (_soldier->getInitStats()),
+		* const current (_soldier->getCurrentStats());
 
 	std::wostringstream woststr;
 
@@ -457,9 +457,7 @@ void SoldierInfoDeadState::btnNextClick(Action*)
  */
 void SoldierInfoDeadState::btnPrevClick(Action*)
 {
-	++_soldierId;
-
-	if (_soldierId >= _list->size())
+	if (++_soldierId >= _list->size())
 		_soldierId = 0;
 
 	init();

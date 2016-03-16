@@ -549,8 +549,8 @@ void InventoryState::init()
 		SurfaceSet* const srtRank (_game->getResourcePack()->getSurfaceSet("SMOKE.PCK"));
 		srtRank->getFrame(20 + sol->getRank())->blit(_btnRank);
 
-		Surface* srfGender (nullptr);
 		std::string look (sol->getArmor()->getSpriteInventory());
+		Surface* srfGender;
 		switch (sol->getGender())
 		{
 			default:
@@ -563,6 +563,8 @@ void InventoryState::init()
 				srfGender = _game->getResourcePack()->getSurface("GENDER_F");
 				look += "F";
 		}
+		srfGender->blit(_gender);
+
 		switch (sol->getLook())
 		{
 			default:
@@ -580,8 +582,6 @@ void InventoryState::init()
 		}
 
 		_game->getResourcePack()->getSurface(look)->blit(_paper);
-		if (srfGender != nullptr)
-			srfGender->blit(_gender);
 	}
 	else
 	{

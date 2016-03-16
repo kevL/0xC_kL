@@ -2276,19 +2276,6 @@ int Map::getQuadrant( // private.
 		const Tile* const tile,
 		bool trueLoc) const
 {
-/*	STATUS_STANDING,	//  0
-	STATUS_WALKING,		//  1
-	STATUS_FLYING,		//  2
-	STATUS_TURNING,		//  3
-	STATUS_AIMING,		//  4
-	STATUS_COLLAPSING,	//  5
-	STATUS_DEAD,		//  6
-	STATUS_UNCONSCIOUS,	//  7
-	STATUS_PANICKING,	//  8
-	STATUS_BERSERK,		//  9
-	STATUS_LIMBO,		// 10
-	STATUS_DISABLED		// 11 */
-
 	if (trueLoc == true //unit->getUnitStatus() == STATUS_STANDING ||
 		|| unit->getVerticalDirection() != 0)
 	{
@@ -2431,12 +2418,6 @@ void Map::calcWalkOffset( // private.
 			offset->y += getTerrainLevel(
 									unit->getPosition(),
 									unit->getArmor()->getSize());
-
-//			if (unit->getUnitStatus() == STATUS_AIMING
-//				&& unit->getArmor()->getCanHoldWeapon() == true)
-//			{
-//				offset->x = -16; // it's maaaaaagic.
-//			}
 	}
 }
 
@@ -2520,12 +2501,6 @@ void Map::cacheUnit(BattleUnit* const unit)
 {
 	if (unit->getCacheInvalid() == true)
 	{
-//		int width;
-//		if (unit->getUnitStatus() == STATUS_AIMING)
-//			width = _spriteWidth * 2;
-//		else
-//			width = _spriteWidth;
-//		UnitSprite* const sprite (new UnitSprite(width, _spriteHeight));
 		UnitSprite* const sprite (new UnitSprite(
 											_spriteWidth * 2,
 											_spriteHeight));

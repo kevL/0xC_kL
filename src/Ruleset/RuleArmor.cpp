@@ -44,9 +44,8 @@ RuleArmor::RuleArmor(const std::string& type)
 		_shootFrames(0),
 		_firePhase(0),
 		_constantAnimation(false),
-		_canHoldWeapon(false),
 		_hasInventory(true),
-		_forcedTorso(TORSO_USE_GENDER),
+		_forcedTorso(TORSO_STANDARD),
 		_colorGroupFace(0),
 		_colorGroupHair(0),
 		_colorGroupUtile(0),
@@ -140,16 +139,6 @@ void RuleArmor::load(const YAML::Node& node)
 	_constantAnimation	= node["constantAnimation"]	.as<bool>(_constantAnimation);
 
 	_forcedTorso = static_cast<ForcedTorso>(node["forcedTorso"].as<int>(_forcedTorso));
-
-	switch (_drawRoutine)
-	{
-		case 0:
-		case 1:
-		case 4:
-		case 6:
-		case 10:
-			_canHoldWeapon = true;
-	}
 
 	_colorGroupFace		= node["spriteFaceGroup"]	.as<int>(_colorGroupFace);
 	_colorGroupHair		= node["spriteHairGroup"]	.as<int>(_colorGroupHair);
@@ -365,15 +354,6 @@ int RuleArmor::getFirePhase() const
 bool RuleArmor::getConstantAnimation() const
 {
 	return _constantAnimation;
-}
-
-/**
- * Gets if the Armor can hold weapon.
- * @return, true if it can
- */
-bool RuleArmor::getCanHoldWeapon() const
-{
-	return _canHoldWeapon;
 }
 
 /**

@@ -695,10 +695,16 @@ const LocalizedText& Language::getString(
 		SoldierGender gender) const
 {
 	std::string genderId;
-	if (gender == GENDER_MALE)
-		genderId = id + "_MALE";
-	else
-		genderId = id + "_FEMALE";
+	switch (gender)
+	{
+		default:
+		case GENDER_MALE:
+			genderId = id + "_MALE";
+			break;
+
+		case GENDER_FEMALE:
+			genderId = id + "_FEMALE";
+	}
 
 	return getString(genderId);
 }
