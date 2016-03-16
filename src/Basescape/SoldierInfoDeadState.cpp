@@ -74,59 +74,59 @@ SoldierInfoDeadState::SoldierInfoDeadState(size_t soldierId)
 	_txtMissions	= new Text(100, 9, 130, 49);
 	_txtKills		= new Text(100, 9, 230, 49);
 
-	const int step (11);
+	static const int STEP_y (11);
 	int yPos (80);
 
 	_txtTimeUnits	= new Text(120, 9,   6, yPos);
 	_numTimeUnits	= new Text( 18, 9, 131, yPos);
 	_barTimeUnits	= new Bar( 234, 7, 150, yPos + 1);
 
-	yPos += step;
+	yPos += STEP_y;
 	_txtStamina		= new Text(120, 9,   5, yPos);
 	_numStamina		= new Text( 18, 9, 131, yPos);
 	_barStamina		= new Bar( 234, 7, 150, yPos + 1);
 
-	yPos += step;
+	yPos += STEP_y;
 	_txtHealth		= new Text(120, 9,   6, yPos);
 	_numHealth		= new Text( 18, 9, 131, yPos);
 	_barHealth		= new Bar( 234, 7, 150, yPos + 1);
 
-	yPos += step;
+	yPos += STEP_y;
 	_txtBravery		= new Text(120, 9,   6, yPos);
 	_numBravery		= new Text( 18, 9, 131, yPos);
 	_barBravery		= new Bar( 234, 7, 150, yPos + 1);
 
-	yPos += step;
+	yPos += STEP_y;
 	_txtReactions	= new Text(120, 9,   6, yPos);
 	_numReactions	= new Text( 18, 9, 131, yPos);
 	_barReactions	= new Bar( 234, 7, 150, yPos + 1);
 
-	yPos += step;
+	yPos += STEP_y;
 	_txtFiring		= new Text(120, 9,   6, yPos);
 	_numFiring		= new Text( 18, 9, 131, yPos);
 	_barFiring		= new Bar( 234, 7, 150, yPos + 1);
 
-	yPos += step;
+	yPos += STEP_y;
 	_txtThrowing	= new Text(120, 9,   6, yPos);
 	_numThrowing	= new Text( 18, 9, 131, yPos);
 	_barThrowing	= new Bar( 234, 7, 150, yPos + 1);
 
-	yPos += step;
+	yPos += STEP_y;
 	_txtMelee		= new Text(120, 9,   6, yPos);
 	_numMelee		= new Text( 18, 9, 131, yPos);
 	_barMelee		= new Bar( 234, 7, 150, yPos + 1);
 
-	yPos += step;
+	yPos += STEP_y;
 	_txtStrength	= new Text(120, 9,   6, yPos);
 	_numStrength	= new Text( 18, 9, 131, yPos);
 	_barStrength	= new Bar( 234, 7, 150, yPos + 1);
 
-	yPos += step;
+	yPos += STEP_y;
 	_txtPsiStrength	= new Text(120, 9,   6, yPos);
 	_numPsiStrength	= new Text( 18, 9, 131, yPos);
 	_barPsiStrength	= new Bar( 234, 7, 150, yPos + 1);
 
-	yPos += step;
+	yPos += STEP_y;
 	_txtPsiSkill	= new Text(120, 9,   6, yPos);
 	_numPsiSkill	= new Text( 18, 9, 131, yPos);
 	_barPsiSkill	= new Bar( 234, 7, 150, yPos + 1);
