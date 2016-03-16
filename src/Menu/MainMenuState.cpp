@@ -34,7 +34,6 @@
 #include "../Engine/Options.h"
 #include "../Engine/Screen.h"
 
-//#include "../Interface/Cursor.h"
 #include "../Interface/Text.h"
 #include "../Interface/TextButton.h"
 #include "../Interface/Window.h"

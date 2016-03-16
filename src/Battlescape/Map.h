@@ -68,12 +68,14 @@ private:
 	static const int
 		BULLET_SPRITES	= 35,
 		SHADE_BLACK		= 16,
-		SHADE_UNIT		=  5,
-		SHADE_DOOR		=  6,
 		DIST_ARC_SMOOTH	=  8,
 
 		WHITE = 1,
 		RED   = 3;
+
+	const int // can't be static (debug cfg.) go fucking figure.
+		SHADE_UNIT = 5,
+		SHADE_DOOR = 6;
 
 	static const Uint8
 		WHITE_u		=  1,
