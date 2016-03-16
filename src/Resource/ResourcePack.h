@@ -169,7 +169,7 @@ private:
 			Palette* getPalette(const PaletteType palType) const;
 			/// Sets a new palette.
 			void setPalette(
-					SDL_Color* colors,
+					SDL_Color* const colors,
 					int firstcolor = 0,
 					int ncolors = 256);
 

@@ -34,10 +34,10 @@ class Text;
 
 
 /**
- * Colored button with a text label.
- * @note Drawn to look like a 3D-shaped box with text on top, responds to mouse
- * clicks. Can be attached to a group of buttons to turn it into a radio button,
- * with only one button pushed at a time.
+ * Colored button with a Text label.
+ * @note Drawn to look like a 3D-shaped box with text on top and responds to
+ * mouse clicks. Can be attached to a group of buttons to make it behave like a
+ * radio-button with only one button depressed at a time.
  */
 class TextButton
 	:
@@ -45,7 +45,9 @@ class TextButton
 {
 
 private:
-	bool _geoscapeButton;
+	bool _silent;
+//		_geoscapeButton,
+
 	Uint8
 		_color,
 		_contrast;
@@ -55,8 +57,11 @@ private:
 	TextButton** _group;
 
 	/// For use by RuleInterface.
-	void setSecondaryColor(Uint8 color) override
-	{ setTextColor(color); }
+	/// kL_note: Using this instead of the regular setSecondaryColor() will
+	/// cause the Text to be rendered in the secondary-color; however, I'm using
+	/// the secondary-color for the depressed-color (inverted-color) instead.
+//	void setSecondaryColor(Uint8 color) override
+//	{ setTextColor(color); }
 
 
 protected:
@@ -64,56 +69,58 @@ protected:
 
 
 	public:
-		static Sound* soundPress;
+		static const Sound* soundPress;
 
-		/// Creates a new text button with the specified size and position.
+		/// Creates a TextButton with the specified size and position.
 		TextButton(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the text button.
+		/// Cleans up the TextButton.
 		~TextButton();
 
-		/// Sets the text button's color.
+		/// Sets the TextButton's color.
 		void setColor(Uint8 color) override;
-		/// Gets the text button's color.
+		/// Gets the TextButton's color.
 		Uint8 getColor() const;
-		/// Sets the text button's text color.
+		/// Sets the secondary color of this TextButton.
+		void setSecondaryColor(Uint8 color) override;
+		/// Sets the TextButton's Text color.
 		void setTextColor(Uint8 color);
 
-		/// Sets the text size to big.
+		/// Sets the Text size to big.
 		void setBig();
-		/// Sets the text size to small.
+		/// Sets the Text size to small.
 		void setSmall();
-		/// Gets the text button's current font.
+		/// Gets the TextButton's current Font.
 		Font* getFont() const;
-		/// Initializes the text edit's resources.
+		/// Initializes the TextButton's resources.
 		void initText(
-				Font* big,
-				Font* small,
-				Language* lang) override;
+				Font* const big,
+				Font* const small,
+				const Language* const lang) override;
 
-		/// Sets the text button's high contrast color setting.
+		/// Sets the TextButton's high contrast color setting.
 		void setHighContrast(bool contrast = true);
 
-		/// Sets the text button's text.
+		/// Sets the TextButton's Text.
 		void setText(const std::wstring& text);
-		/// Gets the text button's text.
+		/// Gets the TextButton's Text.
 		std::wstring getText() const;
 		/// Gets a pointer to the Text.
 		Text* getTextPtr() const;
 
-		/// Sets the text button's group.
-		void setGroup(TextButton** group);
+		/// Sets the TextButton's group.
+		void setGroup(TextButton** const group);
 
-		/// Sets the text button's palette.
+		/// Sets the TextButton's palette.
 		void setPalette(
-				SDL_Color* colors,
+				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
 
-		/// Draws the text button.
+		/// Draws the TextButton.
 		void draw() override;
 
 		/// Special handling for mouse presses.
@@ -129,7 +136,11 @@ protected:
 		/// Sets the height of this TextButton.
 		void setHeight(int height) override;
 
-		void setGeoscapeButton(bool geo);
+		/// Sets whether this TextButton is a Geoscape button.
+//		void setGeoscapeButton(bool geo);
+
+		/// Sets this TextButton as silent.
+	   void setSilent();
 };
 
 }

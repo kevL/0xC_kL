@@ -67,7 +67,7 @@ private:
 	Font
 		* _big,
 		* _small;
-	Language* _lang;
+	const Language* _lang;
 	Surface
 		* _srfDog,
 		* _selector;
@@ -92,12 +92,12 @@ private:
 
 		/// Initializes the base view's various resources.
 		void initText(
-				Font* big,
-				Font* small,
-				Language* lang) override;
+				Font* const big,
+				Font* const small,
+				const Language* const lang) override;
 
 		/// Sets the base to display.
-		void setBase(Base* base);
+		void setBase(Base* const base);
 
 		/// Sets the texture for this base view.
 		void setTexture(SurfaceSet* const texture);

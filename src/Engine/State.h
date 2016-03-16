@@ -40,11 +40,11 @@ class Surface;
 
 
 /**
- * A game state that receives user input and reacts accordingly.
- * @note Game states typically represent a whole window or screen that the user
+ * A game-state that receives user input and reacts accordingly.
+ * @note Game-states typically represent a whole window or screen that the user
  * interacts with, making the game ... well, interactive. They automatically
  * handle child elements used to transmit information from/to the user and are
- * linked to the core game engine which manages them.
+ * linked to the core game-engine which manages them.
  */
 class State
 {
@@ -68,87 +68,85 @@ protected:
 
 
 	public:
-		/// Creates a new state linked to a game.
+		/// Creates State linked to a game.
 		State();
-		/// Cleans up the state.
+		/// Cleans up the State.
 		virtual ~State();
 
-		/// Sets interface rules.
+		/// Sets the Interface rules.
 		void setInterface(
 				const std::string& category,
 				bool alterPal = false,
 				bool tactical = false);
 
-		/// Adds a child element to the state.
+		/// Adds a child-element to the State.
 		void add(Surface* surface);
-		/// Adds a child element to the state.
 		void add(
 				Surface* surface,
 				const std::string& id,
 				const std::string& category,
 				Surface* parent = nullptr);
-		/// Gets whether the state is a full-screen.
+		/// Gets whether the State is full-screen.
 		bool isFullScreen() const;
-		/// Toggles whether the state is a full-screen.
+		/// Toggles whether the State is full-screen.
 		void toggleScreen();
 
-		/// Initializes the state.
+		/// Initializes the State.
 		virtual void init();
-		/// Runs state functionality every cycle.
+		/// Runs State functionality every cycle.
 		virtual void think();
-		/// Blits the state to the screen.
+		/// Blits the State to the screen.
 		virtual void blit();
 
 		/// Handles any events.
 		virtual void handle(Action* action);
 
-		/// Hides all the state surfaces.
+		/// Hides all the State Surfaces.
 		void hideAll();
-		/// Shws all the state surfaces.
+		/// Shows all the State Surfaces.
 		void showAll();
-		/// Resets all the state surfaces.
+		/// Resets all the State Surfaces.
 		void resetAll();
 
-		/// Get the localized text.
+		/// Gets a LocalizedText.
 		const LocalizedText& tr(const std::string& id) const;
-		/// Get the localized text.
 		LocalizedText tr(
 				const std::string& id,
 				unsigned qty) const;
 
-		/// redraw all the text-type surfaces.
+		/// Redraws all the text-type Surfaces.
 		void redrawText();
-		/// center all surfaces relative to the screen.
+		/// Centers all Surfaces relative to the screen.
 		void centerAllSurfaces();
-		/// lower all surfaces by half the screen height.
+		/// Lowers all Surfaces by half the screen-height.
 		void lowerAllSurfaces();
-		/// switch the colours to use the battlescape palette.
+		/// Switches colors to use the Battlescape Palette.
 		void applyBattlescapeTheme();
 
-		/// Sets game object pointer
+		/// Sets the Game-object pointer.
 		static void setGamePtr(Game* game);
 
-		/// Sets a modal surface.
-		void setModal(InteractiveSurface* surface);
+		/// Sets a modal Surface.
+		void setModal(InteractiveSurface* srf);
 
-		/// Changes a set of colors on the state's 8bpp palette.
+		/// Changes a set of colors on the State's 8-bpp Palette.
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256,
 				bool immediately = true);
-		/// Changes the state's 8bpp palette with certain resources.
+		/// Changes the State's 8-bpp Palette with certain resources.
 		void setPalette(
-				const PaletteType palette,
+				const PaletteType pal,
 				int backpal = -1);
-		/// Gets the state's 8bpp palette.
+		/// Gets the State's 8-bpp Palette.
 		SDL_Color* getPalette();
 
-		/// Let the state know the window has been resized.
+		/// Lets the State know the window has been resized.
 		virtual void resize(
 				int& dX,
 				int& dY);
-		/// Re-orients all the surfaces in the state.
+		/// Re-orients all Surfaces in the State.
 		virtual void recenter(
 				int dX,
 				int dY);

@@ -47,41 +47,41 @@ private:
 
 
 	public:
-		/// Creates a new Battlescape message with the specified size and position.
+		/// Creates a BattlescapeMessage with the specified size and position.
 		BattlescapeMessage(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the Battlescape message.
+		/// Cleans up the BattlescapeMessage.
 		~BattlescapeMessage();
 
-		/// Sets the X position of the surface.
+		/// Sets the x-position of the surface.
 		void setX(int x) override;
-		/// Sets the Y position of the surface.
+		/// Sets the y-position of the surface.
 		void setY(int y) override;
 
-		/// Sets the Battlescape message's background.
-		void setBackground(Surface* background);
-		/// Sets the Battlescape message's text.
+		/// Sets the BattlescapeMessage's background.
+		void setBackground(Surface* const bg);
+		/// Sets the BattlescapeMessage's text.
 		void setText(const std::wstring& message);
-		/// Initializes the Battlescape message's resources.
+		/// Initializes the BattlescapeMessage's resources.
 		void initText(
-				Font* big,
-				Font* small,
-				Language* lang) override;
-		/// Sets the Battlescape message's palette.
+				Font* const big,
+				Font* const small,
+				const Language* const lang) override;
+		/// Sets the BattlescapeMessage's palette.
 		void setPalette(
-				SDL_Color* colors,
+				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
 		/// Blits the warning message.
 		void blit(Surface* surface) override;
 
-		/// Special handling for setting the height of the battlescape message.
+		/// Special handling for setting the height of the BattlescapeMessage.
 		void setHeight(int height) override;
 
-		/// Sets the text color of the battlescape message.
+		/// Sets the text-color of the BattlescapeMessage.
 		void setTextColor(Uint8 color);
 };
 

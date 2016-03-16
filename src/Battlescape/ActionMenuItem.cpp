@@ -152,7 +152,7 @@ int ActionMenuItem::getMenuActionTu() const
  * @param ncolors		- amount of colors to replace
  */
 void ActionMenuItem::setPalette(
-		SDL_Color* colors,
+		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors)
 {

@@ -82,7 +82,7 @@ private:
 
 		/// Sets the palettes.
 		void setPalette(
-				SDL_Color* colors,
+				SDL_Color* const colors,
 				int firstcolor,
 				int ncolors) override;
 		/// Redraws it.

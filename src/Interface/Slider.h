@@ -81,9 +81,9 @@ private:
 		void setY(int y) override;
 		/// Initializes the slider's resources.
 		void initText(
-				Font* big,
-				Font* small,
-				Language* lang) override;
+				Font* const big,
+				Font* const small,
+				const Language* const lang) override;
 		/// Sets the slider's high contrast color setting.
 		void setHighContrast(bool contrast = true);
 		/// Sets the slider's color.
@@ -92,7 +92,7 @@ private:
 		Uint8 getColor() const;
 		/// Sets the slider's palette.
 		void setPalette(
-				SDL_Color* colors,
+				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
 		/// Sets the slider's range.

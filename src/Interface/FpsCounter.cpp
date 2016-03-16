@@ -88,7 +88,7 @@ FpsCounter::~FpsCounter()
  * @param ncolors		- amount of colors to replace (default 256)
  */
 void FpsCounter::setPalette(
-		SDL_Color* colors,
+		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors)
 {

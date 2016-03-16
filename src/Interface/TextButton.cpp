@@ -32,11 +32,11 @@
 namespace OpenXcom
 {
 
-Sound* TextButton::soundPress = 0;
+const Sound* TextButton::soundPress = 0;
 
 
 /**
- * Sets up a text button with the specified size and position.
+ * Sets up the TextButton with a specified size and position.
  * The text is centered on the button.
  * @param width		- width in pixels
  * @param height	- height in pixels
@@ -56,7 +56,8 @@ TextButton::TextButton(
 		_color(0),
 		_group(nullptr),
 		_contrast(1),
-		_geoscapeButton(false),
+//		_geoscapeButton(false),
+		_silent(false),
 		_comboBox(nullptr)
 {
 	_text = new Text(
@@ -70,7 +71,7 @@ TextButton::TextButton(
 }
 
 /**
- * Deletes the contained Text.
+ * Deletes this TextButton.
  */
 TextButton::~TextButton()
 {
@@ -90,7 +91,7 @@ bool TextButton::isButtonHandled(Uint8 btn)
 }
 
 /**
- * Changes the color for the button and text.
+ * Changes the color for this TextButton and Text.
  * @param color - color value
  */
 void TextButton::setColor(Uint8 color)
@@ -101,7 +102,7 @@ void TextButton::setColor(Uint8 color)
 }
 
 /**
- * Returns the color for the button and text.
+ * Returns the color for this TextButton and Text.
  * @return, color value
  */
 Uint8 TextButton::getColor() const
@@ -110,7 +111,17 @@ Uint8 TextButton::getColor() const
 }
 
 /**
- * Changes the color for the text only.
+ * Sets the secondary color of this TextButton.
+ * @param color - the color
+ */
+void TextButton::setSecondaryColor(Uint8 color)
+{
+	_text->setSecondaryColor(color);
+	_redraw = true;
+}
+
+/**
+ * Changes the color for the Text only.
  * @param color - color value
  */
 void TextButton::setTextColor(Uint8 color)
@@ -120,7 +131,7 @@ void TextButton::setTextColor(Uint8 color)
 }
 
 /**
- * Changes the text to use the big-size font.
+ * Changes the Text to use the big-size Font.
  */
 void TextButton::setBig()
 {
@@ -129,7 +140,7 @@ void TextButton::setBig()
 }
 
 /**
- * Changes the text to use the small-size font.
+ * Changes the Text to use the small-size Font.
  */
 void TextButton::setSmall()
 {
@@ -138,7 +149,7 @@ void TextButton::setSmall()
 }
 
 /**
- * Returns the font currently used by the text.
+ * Returns the Font currently used by the Text.
  * @return, pointer to Font
  */
 Font* TextButton::getFont() const
@@ -147,26 +158,26 @@ Font* TextButton::getFont() const
 }
 
 /**
- * Changes the various resources needed for text rendering.
- * The different fonts need to be passed in advance since the
- * text size can change mid-text, and the language affects
- * how the text is rendered.
+ * Changes the various resources needed for Text rendering.
+ * @note The different fonts need to be passed in advance since the text-size
+ * can change mid-text and the language affects how the Text is rendered.
  * @param big	- pointer to large-size Font
  * @param small	- pointer to small-size Font
  * @param lang	- pointer to current Language
  */
 void TextButton::initText(
-		Font* big,
-		Font* small,
-		Language* lang)
+		Font* const big,
+		Font* const small,
+		const Language* const lang)
 {
 	_text->initText(big, small, lang);
 	_redraw = true;
 }
 
 /**
- * Enables/disables high contrast color. Mostly used for Battlescape UI.
- * @param contrast - high contrast setting (default true)
+ * Enables/disables high-contrast color.
+ * @note Mostly used for Battlescape UI.
+ * @param contrast - high-contrast setting (default true)
  */
 void TextButton::setHighContrast(bool contrast)
 {
@@ -176,8 +187,8 @@ void TextButton::setHighContrast(bool contrast)
 }
 
 /**
- * Changes the text of the button label.
- * @param text - reference to a text string
+ * Changes the Text of the button-label.
+ * @param text - reference to a text-string
  */
 void TextButton::setText(const std::wstring& text)
 {
@@ -186,8 +197,8 @@ void TextButton::setText(const std::wstring& text)
 }
 
 /**
- * Returns the text of the button label.
- * @return, text string
+ * Returns the Text of the button-label.
+ * @return, text-string
  */
 std::wstring TextButton::getText() const
 {
@@ -204,11 +215,11 @@ Text* TextButton::getTextPtr() const
 }
 
 /**
- * Changes the button group this button belongs to.
+ * Changes the button-group this TextButton belongs to.
+ * @note Passing NULL makes it a regular button.
  * @param group - pointer to a pointer to the pressed button in the group
- * Null makes it a regular button.
  */
-void TextButton::setGroup(TextButton** group)
+void TextButton::setGroup(TextButton** const group)
 {
 	_group = group;
 	_redraw = true;
@@ -221,7 +232,7 @@ void TextButton::setGroup(TextButton** group)
  * @param ncolors		- amount of colors to replace (default 256)
  */
 void TextButton::setPalette(
-		SDL_Color* colors,
+		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors)
 {
@@ -231,7 +242,7 @@ void TextButton::setPalette(
 
 /**
  * Draws the labeled button.
- * The colors are inverted if the button is pressed.
+ * @note The colors are inverted if this TextButton is pressed.
  */
 void TextButton::draw()
 {
@@ -293,14 +304,14 @@ void TextButton::draw()
 
 			case 3:
 				color = _color + (_contrast * 3);
-				break;
-
-			case 4:
-				if (_geoscapeButton == true)
-				{
-					setPixelColor(0,0, _color);
-					setPixelColor(1,1, _color);
-				}
+//				break;
+//
+//			case 4:
+//				if (_geoscapeButton == true)
+//				{
+//					setPixelColor(0,0, _color);
+//					setPixelColor(1,1, _color);
+//				}
 		}
 	}
 
@@ -312,10 +323,10 @@ void TextButton::draw()
 
 	if (press == true)
 	{
-		if (_geoscapeButton == true)
-			this->invert(_color + (_contrast * 2));
-		else
-			this->invert(_color + (_contrast * 3));
+//		if (_geoscapeButton == true)
+//			this->invert(_color + (_contrast * 2));
+//		else
+		this->invert(_color + (_contrast * 3));
 	}
 
 	_text->setInvert(press);
@@ -323,9 +334,9 @@ void TextButton::draw()
 }
 
 /**
- * Sets the button as the pressed button if it's part of a group.
+ * Sets this TextButton as the depressed button if it's part of a group.
  * @param action	- pointer to an Action
- * @param state		- state that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void TextButton::mousePress(Action* action, State* state)
 {
@@ -341,7 +352,8 @@ void TextButton::mousePress(Action* action, State* state)
 
 	if (isButtonHandled(action->getDetails()->button.button) == true)
 	{
-		if (soundPress != nullptr
+		if (_silent == false
+//			&& soundPress != nullptr
 //			&& _group == nullptr
 			&& action->getDetails()->button.button != SDL_BUTTON_WHEELUP
 			&& action->getDetails()->button.button != SDL_BUTTON_WHEELDOWN
@@ -356,9 +368,9 @@ void TextButton::mousePress(Action* action, State* state)
 }
 
 /**
- * Sets the button as the released button.
+ * Sets this TextButton as the released button.
  * @param action	- pointer to an Action
- * @param state		- state that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void TextButton::mouseRelease(Action* action, State* state)
 {
@@ -374,7 +386,7 @@ void TextButton::mouseRelease(Action* action, State* state)
 }
 
 /**
- * Hooks up the button to work as part of an existing combobox toggling its
+ * Hooks up this TextButton to work as part of an existing ComboBox toggling its
  * state when pressed.
  * @param comboBox - pointer to ComboBox
  */
@@ -407,9 +419,21 @@ void TextButton::setHeight(int height)
 	_text->setHeight(height);
 }
 
+/**
+ * Sets whether this TextButton is a Geoscape button.
+ * @param geo - true if Geo
+ *
 void TextButton::setGeoscapeButton(bool geo)
 {
 	_geoscapeButton = geo;
+} */
+
+/**
+ * Sets this TextButton as silent.
+ */
+void TextButton::setSilent()
+{
+	_silent = true;
 }
 
 }

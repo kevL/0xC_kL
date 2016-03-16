@@ -170,7 +170,7 @@ void ScrollBar::setBackground(Surface* bg)
  * @param ncolors		- amount of colors to replace
  */
 void ScrollBar::setPalette(
-		SDL_Color* colors,
+		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors)
 {

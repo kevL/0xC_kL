@@ -49,12 +49,11 @@
 namespace OpenXcom
 {
 
-/// Initializes static member
-Game* State::_game = nullptr;
+Game* State::_game = nullptr; // static.
 
 
 /**
- * Initializes a brand new state with no child elements.
+ * Initializes the State with no child-elements.
  * @note States are full-screen by default.
  */
 State::State()
@@ -64,7 +63,7 @@ State::State()
 		_ruleInterface(nullptr),
 		_ruleInterfaceParent(nullptr)
 {
-	std::memset( // initialize palette to all black
+	std::memset( // initialize palette to all-black
 			_palette,
 			0,
 			sizeof(_palette));
@@ -73,7 +72,7 @@ State::State()
 }
 
 /**
- * Deletes all the child elements contained in the state.
+ * Deletes the child-elements contained in this State.
  */
 State::~State()
 {
@@ -81,16 +80,14 @@ State::~State()
 			i = _surfaces.begin();
 			i != _surfaces.end();
 			++i)
-	{
 		delete *i;
-	}
 }
 
 /**
- * Sets interface data from the ruleset - also sets the palette for the state.
+ * Sets Interface data from the ruleset - also sets the Palette for this State.
  * @param category - reference the name of the interface from the Interfaces ruleset
  * @param alterPal - true to swap out the backpal colors (default false)
- * @param tactical - true to use battlescape palette (applies only to options screens) (default false)
+ * @param tactical - true to use Battlescape palette (applies only to options screens) (default false)
  */
 void State::setInterface(
 		const std::string& category,
@@ -130,20 +127,18 @@ void State::setInterface(
 		}
 	}
 
-	if (tactical == true)
-		palType = PAL_BATTLESCAPE;
-	else if (palType == PAL_NONE)
-		palType = PAL_GEOSCAPE;
+	if (tactical == true)			palType = PAL_BATTLESCAPE;
+	else if (palType == PAL_NONE)	palType = PAL_GEOSCAPE;
 
 	setPalette(palType, backPal);
 }
 
 /**
- * Adds a new child surface for the state to take care of, giving it the game's
- * display palette. Once associated, the state handles all of the surface's
- * behaviour and management automatically.
- * @note Since visible elements can overlap one another they have to
- * be added in ascending Z-Order to be blitted correctly onto the screen.
+ * Adds a child-surface for this State to take care of, giving it the Game's
+ * display palette.
+ * @note Once associated the State handles all of the Surface's behavior and
+ * management automatically. Since visible elements can overlap they have to be
+ * added in ascending Z-Order to be blitted correctly onto the screen.
  * @param surface - child surface
  */
 void State::add(Surface* surface)
@@ -160,9 +155,10 @@ void State::add(Surface* surface)
 }
 
 /**
- * As above except this adds a surface based on an interface element defined in the ruleset.
- * @note that this function REQUIRES the ruleset to have been loaded prior to use.
- * @note if no parent is defined the element will not be moved.
+ * As above except this adds a Surface based on an interface-element defined in
+ * the ruleset.
+ * @note that this function REQUIRES the ruleset to have been loaded prior to
+ * use. If no parent is defined the element will not be moved.
  * @param surface	- pointer to child Surface
  * @param id		- reference the ID of the element defined in the ruleset if any
  * @param category	- reference the category of elements this interface is associated with
@@ -225,13 +221,12 @@ void State::add(
 					_game->getResourcePack()->getFont("FONT_SMALL"),
 					_game->getLanguage());
 	}
-
 	_surfaces.push_back(surface);
 }
 
 /**
- * Returns whether this is a full-screen state.
- * @note This is used to optimize the state machine since full-screen states
+ * Returns whether this is a full-screen State.
+ * @note This is used to optimize the state-machine since full-screen states
  * automatically cover the whole screen (whether they actually use it all or
  * not) so states behind them can be safely ignored since they'd be covered up.
  * @return, true if full-screen
@@ -252,7 +247,7 @@ void State::toggleScreen()
 }
 
 /**
- * Initializes the state and its child elements.
+ * Initializes this State and its child-elements.
  * @note This is used for settings that have to be reset every time the state is
  * returned to focus (eg. palettes) so can't just be put in the constructor.
  * There's a stack of states so they can be created once but then repeatedly
@@ -275,7 +270,7 @@ void State::init() // virtual
 }
 
 /**
- * Runs any code the state needs to keep updating every game cycle, like timers
+ * Runs any code this State needs to keep updating every game-cycle like timers
  * and other real-time elements.
  */
 void State::think() // virtual
@@ -290,7 +285,7 @@ void State::think() // virtual
 }
 
 /**
- * Blits all the visible Surface child elements onto the display screen by order
+ * Blits all the visible Surface child-elements onto the display-screen by order
  * of addition.
  */
 void State::blit() // virtual
@@ -305,21 +300,21 @@ void State::blit() // virtual
 }
 
 /**
- * Takes care of any events from the core game engine, and passes them on to its
- * InteractiveSurface child elements.
+ * Takes care of any events from the core game-engine and passes them on to any
+ * InteractiveSurface child-elements.
  * @param action - pointer to an Action
  */
 void State::handle(Action* action) // virtual
 {
 	if (_modal == nullptr)
 	{
+		InteractiveSurface* srf;
 		for (std::vector<Surface*>::const_reverse_iterator
 				i = _surfaces.rbegin();
 				i != _surfaces.rend();
 				++i)
 		{
-			InteractiveSurface* const srf = dynamic_cast<InteractiveSurface*>(*i);
-			if (srf != nullptr)
+			if ((srf = dynamic_cast<InteractiveSurface*>(*i)) != nullptr)
 				srf->handle(action, this);
 		}
 	}
@@ -328,7 +323,7 @@ void State::handle(Action* action) // virtual
 }
 
 /**
- * Hides all the Surface child elements on display.
+ * Hides all the Surface child-elements from displaying.
  */
 void State::hideAll()
 {
@@ -342,7 +337,7 @@ void State::hideAll()
 }
 
 /**
- * Shows all the hidden Surface child elements.
+ * Shows all the hidden Surface child-elements.
  */
 void State::showAll()
 {
@@ -356,17 +351,17 @@ void State::showAll()
 }
 
 /**
- * Resets the status of all the Surface child elements like unpressing buttons.
+ * Resets the status of all the Surface child-elements like unpressing buttons.
  */
 void State::resetAll()
 {
+	InteractiveSurface* srf;
 	for (std::vector<Surface*>::const_iterator
 			i = _surfaces.begin();
 			i != _surfaces.end();
 			++i)
 	{
-		InteractiveSurface* const srf (dynamic_cast<InteractiveSurface*>(*i));
-		if (srf != nullptr)
+		if ((srf = dynamic_cast<InteractiveSurface*>(*i)) != nullptr)
 		{
 			srf->unpress(this);
 //			srf->setFocus(false);
@@ -400,7 +395,7 @@ LocalizedText State::tr(
 }
 
 /**
- * Centers all the surfaces on the screen.
+ * Centers all the Surfaces on the screen.
  */
 void State::centerAllSurfaces()
 {
@@ -415,7 +410,7 @@ void State::centerAllSurfaces()
 }
 
 /**
- * Drops all the surfaces by half the screen height.
+ * Drops all the Surfaces by half the screen-height.
  */
 void State::lowerAllSurfaces()
 {
@@ -429,82 +424,75 @@ void State::lowerAllSurfaces()
 }
 
 /**
- * Switches all the colors to something a little more battlescape appropriate.
+ * Switches all the colors to something a little more Battlescape appropriate.
  */
 void State::applyBattlescapeTheme()
 {
-	const Element* const element = _game->getRuleset()->getInterface("mainMenu")->getElement("battlescapeTheme");
+	const Element* const element (_game->getRuleset()->getInterface("mainMenu")->getElement("battlescapeTheme"));
 
 	for (std::vector<Surface*>::const_iterator
 			i = _surfaces.begin();
 			i != _surfaces.end();
 			++i)
 	{
-		Window* const window = dynamic_cast<Window*>(*i);
+		Window* const window (dynamic_cast<Window*>(*i));
 		if (window != nullptr)
 		{
 			window->setColor(static_cast<Uint8>(element->color));
 			window->setHighContrast();
 			window->setBackground(_game->getResourcePack()->getSurface("Diehard"));
-
 			continue;
 		}
 
-		Text* const text = dynamic_cast<Text*>(*i);
+		Text* const text (dynamic_cast<Text*>(*i));
 		if (text != nullptr)
 		{
 			text->setColor(static_cast<Uint8>(element->color));
 			text->setHighContrast();
-
 			continue;
 		}
 
-		TextButton* const btn = dynamic_cast<TextButton*>(*i);
+		TextButton* const btn (dynamic_cast<TextButton*>(*i));
 		if (btn != nullptr)
 		{
 			btn->setColor(static_cast<Uint8>(element->color));
 			btn->setHighContrast();
-
 			continue;
 		}
 
-		TextEdit* const edit = dynamic_cast<TextEdit*>(*i);
+		TextEdit* const edit (dynamic_cast<TextEdit*>(*i));
 		if (edit != nullptr)
 		{
 			edit->setColor(static_cast<Uint8>(element->color));
 			edit->setHighContrast();
-
 			continue;
 		}
 
-		TextList* const textList = dynamic_cast<TextList*>(*i);
+		TextList* const textList (dynamic_cast<TextList*>(*i));
 		if (textList != nullptr)
 		{
 			textList->setColor(static_cast<Uint8>(element->color));
 			textList->setArrowColor(static_cast<Uint8>(element->border));
 			textList->setHighContrast();
-
 			continue;
 		}
 
-		ArrowButton* const arrow = dynamic_cast<ArrowButton*>(*i);
+		ArrowButton* const arrow (dynamic_cast<ArrowButton*>(*i));
 		if (arrow != nullptr)
 		{
 			arrow->setColor(static_cast<Uint8>(element->border));
-
 			continue;
 		}
 
-		Slider* const slider = dynamic_cast<Slider*>(*i);
+		Slider* const slider (dynamic_cast<Slider*>(*i));
 		if (slider != nullptr)
 		{
 			slider->setColor(static_cast<Uint8>(element->color));
 			slider->setHighContrast();
-
 			continue;
 		}
 
-		ComboBox* const combo = dynamic_cast<ComboBox*>(*i);
+		ComboBox* const combo (dynamic_cast<ComboBox*>(*i));
 		if (combo != nullptr)
 		{
 			combo->setColor(static_cast<Uint8>(element->color));
@@ -515,7 +503,7 @@ void State::applyBattlescapeTheme()
 }
 
 /**
- * Redraws all the text-type surfaces.
+ * Redraws all the text-like Surfaces.
  */
 void State::redrawText()
 {
@@ -524,15 +512,15 @@ void State::redrawText()
 			i != _surfaces.end();
 			++i)
 	{
-		const Text* const text = dynamic_cast<Text*>(*i);
-		const TextButton* const btn = dynamic_cast<TextButton*>(*i);
-		const TextEdit* const edit = dynamic_cast<TextEdit*>(*i);
-		const TextList* const textList = dynamic_cast<TextList*>(*i);
+		const Text* const text (dynamic_cast<Text*>(*i));
+		const TextButton* const btn (dynamic_cast<TextButton*>(*i));
+		const TextEdit* const edit (dynamic_cast<TextEdit*>(*i));
+		const TextList* const list (dynamic_cast<TextList*>(*i));
 
-		if (text != nullptr
-			|| btn != nullptr
+		if (   text != nullptr
+			|| btn  != nullptr
 			|| edit != nullptr
-			|| textList != nullptr)
+			|| list != nullptr)
 		{
 			(*i)->draw();
 		}
@@ -540,18 +528,18 @@ void State::redrawText()
 }
 
 /**
- * Changes the current modal surface.
- * @note If a surface is modal then only that surface can receive events. This
+ * Changes the currently responsive Surface.
+ * @note If a Surface is modal then only that Surface can receive events. This
  * is used when an element needs to take priority over everything else, eg. focus.
- * @param surface - pointer to modal surface; nullptr for no modal
+ * @param srf - pointer to modal Surface; nullptr for no modal in this State
  */
-void State::setModal(InteractiveSurface* surface)
+void State::setModal(InteractiveSurface* srf)
 {
-	_modal = surface;
+	_modal = srf;
 }
 
 /**
- * Replaces a certain amount of colors in the state's palette.
+ * Replaces a certain amount of colors in this State's palette.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- amount of colors to replace (default 256)
@@ -584,20 +572,20 @@ void State::setPalette(
 
 /**
  * Loads palettes from the game resources into the state.
- * @param palette - reference the string ID of the palette to load
- * @param backpal - BACKPALS.DAT offset to use (default -1)
+ * @param pal		- reference the string ID of the palette to load
+ * @param backpal	- BACKPALS.DAT offset to use (default -1)
  */
 void State::setPalette(
-		const PaletteType palette,
+		const PaletteType pal,
 		int backpal)
 {
 	setPalette(
-			_game->getResourcePack()->getPalette(palette)->getColors(),
+			_game->getResourcePack()->getPalette(pal)->getColors(),
 			0,
 			256,
 			false);
 
-	switch (palette)
+	switch (pal)
 	{
 		case PAL_BASESCAPE:
 			_cursorColor = static_cast<Uint8>(ResourcePack::BASESCAPE_CURSOR);
@@ -629,7 +617,7 @@ void State::setPalette(
 }
 
 /**
- * Returns the state's 8bpp palette.
+ * Returns this State's 8-bpp palette.
  * @return, pointer to the palette's colors
  */
 SDL_Color* State::getPalette()
@@ -638,7 +626,7 @@ SDL_Color* State::getPalette()
 }
 
 /**
- * Each state will probably need its own resize handling so this space
+ * Each State will probably need its own resize handling so this space is
  * intentionally left blank.
  * @param dX - reference the delta of X
  * @param dY - reference the delta of Y
@@ -651,7 +639,7 @@ void State::resize(
 }
 
 /**
- * Re-orients all the surfaces in the state.
+ * Re-orients all the Surfaces in the State.
  * @param dX - delta of X
  * @param dY - delta of Y
  */
@@ -670,8 +658,8 @@ void State::recenter(
 }
 
 /**
- * Sets a pointer to the Game object.
- * @note This pointer can be used universally by all child-States.
+ * Sets a pointer to the Game-object.
+ * @note This pointer can be used universally by all child-states.
  * @param game - THE pointer to Game
  */
 void State::setGamePtr(Game* game)

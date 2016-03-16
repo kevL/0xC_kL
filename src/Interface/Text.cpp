@@ -24,7 +24,6 @@
 
 #include "../Engine/Font.h"
 #include "../Engine/Language.h"
-//#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 //#include "../Engine/ShaderDraw.h"
 #include "../Engine/ShaderMove.h"
@@ -33,7 +32,7 @@
 namespace OpenXcom
 {
 /**
- * Sets up a blank text with the specified size and position.
+ * Sets up the blank Text with a specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
  * @param x			- X position in pixels (default 0)
@@ -150,7 +149,7 @@ std::wstring Text::formatPercent(int val) // static.
 }
 
 /**
- * Changes the text to use the big-size font.
+ * Changes this Text to use the big-size Font.
  */
 void Text::setBig()
 {
@@ -159,7 +158,7 @@ void Text::setBig()
 }
 
 /**
- * Changes the text to use the small-size font.
+ * Changes this Text to use the small-size Font.
  */
 void Text::setSmall()
 {
@@ -168,7 +167,7 @@ void Text::setSmall()
 }
 
 /**
- * Returns the font currently used by the text.
+ * Returns the Font currently used by this Text.
  * @return, pointer to Font
  */
 Font* Text::getFont() const
@@ -178,21 +177,20 @@ Font* Text::getFont() const
 
 /**
  * Changes the various resources needed for text rendering.
- * @note The different fonts need to be passed in advance since the text size
- * can change mid-text and the language affects how the text is rendered.
+ * @note The different fonts need to be passed in advance since the text-size
+ * can change mid-text and the language affects how this Text is rendered.
  * @param big	- pointer to large-size Font
  * @param small	- pointer to small-size Font
  * @param lang	- pointer to current Language
  */
 void Text::initText(
-		Font* big,
-		Font* small,
-		Language* lang)
+		Font* const big,
+		Font* const small,
+		const Language* const lang)
 {
 	_big = big;
-	_small = small;
+	_small = _font = small;
 	_lang = lang;
-	_font = _small;
 
 	processText();
 }
@@ -207,7 +205,7 @@ void Text::setText(const std::wstring& text)
 
 	processText();
 
-	if (_font == _big // if big text won't fit the space try small text
+	if (_font == _big // if big Font won't fit the space try small Font
 		&& (getTextWidth() > getWidth() || getTextHeight() > getHeight())
 		&& _text[_text.size() - 1] != L'.')
 	{
@@ -235,8 +233,7 @@ void Text::setWordWrap(
 		const bool wrap,
 		const bool indent)
 {
-	if (_wrap != wrap
-		|| indent != _indent)
+	if (_wrap != wrap || indent != _indent)
 	{
 		_wrap = wrap;
 		_indent = indent;
@@ -263,10 +260,8 @@ void Text::setInvert(const bool invert)
  */
 void Text::setHighContrast(const bool contrast)
 {
-	if (contrast == true)
-		_contrast = 3;
-	else
-		_contrast = 1;
+	if (contrast == true)	_contrast = 3;
+	else					_contrast = 1;
 
 	_redraw = true;
 }
@@ -281,7 +276,7 @@ bool Text::getHighContrast() const
 }
 
 /**
- * Changes the way the text is aligned horizontally relative to the drawing area.
+ * Changes the way this Text is aligned horizontally relative to the drawing area.
  * @param align - horizontal alignment (enum Text.h)
  */
 void Text::setAlign(TextHAlign align)
@@ -291,7 +286,7 @@ void Text::setAlign(TextHAlign align)
 }
 
 /**
- * Returns the way the text is aligned horizontally relative to the drawing area.
+ * Returns the way this Text is aligned horizontally relative to the drawing area.
  * @return, horizontal alignment (enum Text.h)
  */
 TextHAlign Text::getAlign() const
@@ -300,7 +295,7 @@ TextHAlign Text::getAlign() const
 }
 
 /**
- * Changes the way the text is aligned vertically relative to the drawing area.
+ * Changes the way this Text is aligned vertically relative to the drawing area.
  * @param valign - vertical alignment (enum Text.h)
  */
 void Text::setVerticalAlign(TextVAlign valign)
@@ -310,20 +305,20 @@ void Text::setVerticalAlign(TextVAlign valign)
 }
 
 /**
- * Changes the color used to render the text.
- * @note Unlike regular graphics fonts are greyscale so they need to be
+ * Changes the color used to render this Text.
+ * @note Unlike regular graphics Fonts are greyscale so they need to be
  * assigned a specific position in the palette to be displayed.
  * @param color - color value
  */
 void Text::setColor(Uint8 color)
 {
-	_color = color;
+	_color =
 	_color2 = color;
 	_redraw = true;
 }
 
 /**
- * Returns the color used to render the text.
+ * Returns the color used to render this Text.
  * @return, color value
  */
 Uint8 Text::getColor() const
@@ -332,9 +327,9 @@ Uint8 Text::getColor() const
 }
 
 /**
- * Changes the secondary color used to render the text.
+ * Changes the secondary color used to render this Text.
  * @note The text switches between the primary and secondary color whenever
- * there's a 0x01 in the string.
+ * there's a '0x01' in the string.
  * @param color - color value
  */
 void Text::setSecondaryColor(Uint8 color)
@@ -344,7 +339,7 @@ void Text::setSecondaryColor(Uint8 color)
 }
 
 /**
- * Returns the secondary color used to render the text.
+ * Returns the secondary color used to render this Text.
  * @return, color value
  */
 Uint8 Text::getSecondaryColor() const
@@ -373,7 +368,7 @@ int Text::getTextWidth(int line) const
 {
 	if (line == -1)
 	{
-		int width = 0;
+		int width (0);
 		for (std::vector<int>::const_iterator
 				i = _lineWidth.begin();
 				i != _lineWidth.end();
@@ -382,7 +377,6 @@ int Text::getTextWidth(int line) const
 			if (*i > width)
 				width = *i;
 		}
-
 		return width;
 	}
 
@@ -399,7 +393,7 @@ int Text::getTextHeight(int line) const
 {
 	if (line == -1)
 	{
-		int height = 0;
+		int height (0);
 		for (std::vector<int>::const_iterator
 				i = _lineHeight.begin();
 				i != _lineHeight.end();
@@ -407,7 +401,6 @@ int Text::getTextHeight(int line) const
 		{
 			height += *i;
 		}
-
 		return height;
 	}
 
@@ -415,7 +408,7 @@ int Text::getTextHeight(int line) const
 }
 
 /**
- * Adds to the text's height.
+ * Adds to this Text's height.
  * @param pad - pixels to add to height of a textline (default 1)
  */
 void Text::addTextHeight(int pad)
@@ -444,13 +437,13 @@ void Text::processText() // private.
 		_lineWidth.clear();
 		_lineHeight.clear();
 
-		bool start = true;
+		bool start (true);
 		int
-			width = 0,
-			word = 0;
+			width (0),
+			word  (0);
 		size_t
-			space = 0,
-			textIndentation = 0;
+			space (0),
+			textIndentation (0);
 
 		Font* font (_font);
 
@@ -564,7 +557,7 @@ void Text::processText() // private.
  */
 int Text::getLineX(int line) const
 {
-	int x = 0;
+	int x (0);
 
 	switch (_lang->getTextDirection())
 	{
@@ -579,6 +572,7 @@ int Text::getLineX(int line) const
 					x = getWidth() - 1 - _lineWidth[line];
 			}
 			break;
+
 		case DIRECTION_RTL:
 			switch (_align)
 			{
@@ -628,20 +622,17 @@ struct PaletteShift
 
 
 /**
- * Draws all the characters in the text with a really nasty complex gritty text
- * rendering algorithm logic stuff.
+ * Draws all the characters in this Text with a really nasty complex gritty text
+ * rendering algorithmic logic-stuff.
  */
 void Text::draw()
 {
 	Surface::draw();
 
-	if (_text.empty() == true
-		|| _font == nullptr)
-	{
+	if (_text.empty() == true || _font == nullptr)
 		return;
-	}
 
-	if (Options::debugUi == true) // show text borders for debugUI
+	if (Options::debugUi == true) // show text-borders for debugUI
 	{
 		SDL_Rect rect;
 		rect.x =
@@ -658,19 +649,17 @@ void Text::draw()
 	}
 
 	int
-		line = 0,
-		x = getLineX(line),
-		y = 0,
-		height = 0,
-		color = _color,
-		dir = 1,
-		mid = 0;
+		line	(0),
+		x		(getLineX(line)),
+		y		(0),
+		height	(0),
+		color	(_color),
+		dir		(1),
+		mid		(0);
 
 	const std::wstring* wst;
-	if (_wrap == true)
-		wst = &_wrappedText;
-	else
-		wst = &_text;
+	if (_wrap == true)	wst = &_wrappedText;
+	else				wst = &_text;
 
 	for (std::vector<int>::const_iterator
 			i = _lineHeight.begin();
@@ -696,13 +685,13 @@ void Text::draw()
 	if (_lang->getTextDirection() == DIRECTION_RTL) // set up text direction
 		dir = -1;
 
-	if (_invert == true) // invert text by inverting the font palette on index 3 (font palettes use indices 1..5)
+	if (_invert == true) // invert text by inverting the font-palette on index 3 (font-palettes use indices 1..5)
 		mid = 3;
 
 	Font* font (_font);
 
 
-	for (std::wstring::const_iterator // draw each letter one by one
+	for (std::wstring::const_iterator // draw each letter one-by-one
 			i = wst->begin();
 			i != wst->end();
 			++i)
@@ -716,22 +705,21 @@ void Text::draw()
 			y += font->getCharSize(*i).h;
 			x = getLineX(line);
 
-			if (*i == L'\x02') // switch to small font
+			if (*i == L'\x02') // switch to small-font
 				font = _small;
+			// TODO: Implement a switch to large-font.
 		}
 		else if (*i == L'\x01') // switch to alternate color or back to original
 		{
-			if (color == _color)
-				color = _color2;
-			else
-				color = _color;
+			if (color == _color)	color = _color2;
+			else					color = _color;
 		}
 		else
 		{
 			if (dir < 0)
 				x += dir * font->getCharSize(*i).w;
 
-			Surface* const srfChar = font->getChar(*i);
+			Surface* const srfChar (font->getChar(*i));
 			srfChar->setX(x);
 			srfChar->setY(y);
 			ShaderDraw<PaletteShift>(

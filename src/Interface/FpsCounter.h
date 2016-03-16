@@ -58,7 +58,7 @@ private:
 
 		/// Sets the FPS counter's palette.
 		void setPalette(
-				SDL_Color* colors,
+				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
 		/// Sets the FpsCounter's color.

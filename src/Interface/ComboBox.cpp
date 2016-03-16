@@ -137,7 +137,7 @@ void ComboBox::setY(int y)
  * @param ncolors		- amount of colors to replace (default 256)
  */
 void ComboBox::setPalette(
-		SDL_Color* colors,
+		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors)
 {
@@ -151,14 +151,14 @@ void ComboBox::setPalette(
 
 /**
  * Changes the resources for the text in the combo box.
- * @param big	- pointer to large-size font
- * @param small	- pointer to small-size font
- * @param lang	- pointer to current language
+ * @param big	- pointer to large-size Font
+ * @param small	- pointer to small-size Font
+ * @param lang	- pointer to current Language
  */
 void ComboBox::initText(
-		Font* big,
-		Font* small,
-		Language* lang)
+		Font* const big,
+		Font* const small,
+		const Language* const lang)
 {
 	_lang = lang;
 	_button->initText(big, small, lang);
@@ -169,7 +169,7 @@ void ComboBox::initText(
  * Changes the surface used to draw the background of the combo box.
  * @param bg - new background
  */
-void ComboBox::setBackground(Surface* bg)
+void ComboBox::setBackground(Surface* const bg)
 {
 	_window->setBackground(bg);
 }

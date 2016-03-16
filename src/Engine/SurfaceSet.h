@@ -33,7 +33,7 @@ class Surface;
 
 
 /**
- * Container of a set of surfaces.
+ * Container of a set of Surfaces.
  * @note Used to manage single images that contain series of frames inside like
  * animated sprites, making them easier to access without constant cropping.
  */
@@ -80,7 +80,7 @@ private:
 
 		/// Sets the surface set's palette.
 		void setPalette(
-				SDL_Color* colors,
+				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256);
 

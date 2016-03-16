@@ -101,7 +101,7 @@ private:
 
 		/// Sets the screen's 8bpp palette.
 		void setPalette(
-				SDL_Color* colors,
+				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256,
 				bool immediately = false);

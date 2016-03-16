@@ -102,17 +102,17 @@ BaseView::~BaseView()
 }
 
 /**
- * Changes the various resources needed for text rendering.
- * @note The different fonts need to be passed in advance since the text size can
- * change mid-text and the language affects how text is rendered.
- * @param big	- pointer to large-size font
- * @param small	- pointer to small-size font
- * @param lang	- pointer to current language
+ * Changes the various resources needed for text-rendering.
+ * @note The different fonts need to be passed in advance since the text-size
+ * can change mid-text and the language affects how the Text is rendered.
+ * @param big	- pointer to large-size Font
+ * @param small	- pointer to small-size Font
+ * @param lang	- pointer to current Language
  */
 void BaseView::initText(
-		Font* big,
-		Font* small,
-		Language* lang)
+		Font* const big,
+		Font* const small,
+		const Language* const lang)
 {
 	_big = big;
 	_small = small;
@@ -120,10 +120,10 @@ void BaseView::initText(
 }
 
 /**
- * Changes the current base to display and initializes the internal base grid.
+ * Changes the Base to display and initializes the internal base-grid.
  * @param base - pointer to Base to display
  */
-void BaseView::setBase(Base* base)
+void BaseView::setBase(Base* const base)
 {
 	_base = base;
 	_selFacility = nullptr;

@@ -149,9 +149,9 @@ void Slider::setY(int y)
  * @param lang	- pointer to current language
  */
 void Slider::initText(
-		Font* big,
-		Font* small,
-		Language* lang)
+		Font* const big,
+		Font* const small,
+		const Language* const lang)
 {
 	_txtMinus->initText(big, small, lang);
 	_txtPlus->initText(big, small, lang);
@@ -201,7 +201,7 @@ Uint8 Slider::getColor() const
  * @param ncolors		- amount of colors to replace
  */
 void Slider::setPalette(
-		SDL_Color* colors,
+		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors)
 {

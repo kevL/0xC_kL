@@ -59,7 +59,7 @@ private:
 
 	ActionHandler _change;
 
-	Language* _lang;
+	const Language* _lang;
 	State* _state;
 	Surface* _arrow;
 	TextButton* _button;
@@ -90,18 +90,18 @@ private:
 
 		/// Sets the palette of the text list.
 		void setPalette(
-				SDL_Color* colors,
+				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
 
 		/// Initializes the resources for the text list.
 		void initText(
-				Font* big,
-				Font* small,
-				Language* lang) override;
+				Font* const big,
+				Font* const small,
+				const Language* const lang) override;
 
 		/// Sets the background surface.
-		void setBackground(Surface* bg);
+		void setBackground(Surface* const bg);
 		/// Sets the color to fill the background.
 		void setBackgroundFill(Uint8 color);
 

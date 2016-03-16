@@ -111,7 +111,7 @@ protected:
 		virtual void initText(
 				Font*,
 				Font*,
-				Language*)
+				const Language*)
 		{};
 
 		/// Draws a filled rectangle on the surface.
@@ -161,7 +161,7 @@ protected:
 
 		/// Sets the surface's palette.
 		virtual void setPalette(
-				SDL_Color* colors,
+				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256);
 

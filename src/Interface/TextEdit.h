@@ -90,9 +90,9 @@ private:
 
 		/// Initializes the text edit's resources.
 		void initText(
-				Font* big,
-				Font* small,
-				Language* lang) override;
+				Font* const big,
+				Font* const small,
+				const Language* const lang) override;
 
 		/// Sets the text's string.
 		void setText(const std::wstring& text);
@@ -129,7 +129,7 @@ private:
 		Uint8 getSecondaryColor() const;
 		/// Sets the palette.
 		void setPalette(
-				SDL_Color* colors,
+				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
 

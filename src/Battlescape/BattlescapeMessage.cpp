@@ -99,9 +99,9 @@ void BattlescapeMessage::setY(int y)
  * Changes the message background.
  * @param background - pointer to background surface
  */
-void BattlescapeMessage::setBackground(Surface* background)
+void BattlescapeMessage::setBackground(Surface* const bg)
 {
-	_window->setBackground(background);
+	_window->setBackground(bg);
 }
 
 /**
@@ -114,18 +114,17 @@ void BattlescapeMessage::setText(const std::wstring& message)
 }
 
 /**
- * Changes the various resources needed for text rendering.
- * The different fonts need to be passed in advance since the
- * text size can change mid-text, and the language affects
- * how the text is rendered.
+ * Changes the various resources needed for text-rendering.
+ * The different fonts need to be passed in advance since the text-size
+ * can change mid-text and the language affects how the Text is rendered.
  * @param big	- pointer to large-size Font
  * @param small	- pointer to small-size Font
  * @param lang	- pointer to current Language
  */
 void BattlescapeMessage::initText(
-		Font* big,
-		Font* small,
-		Language* lang)
+		Font* const big,
+		Font* const small,
+		const Language* const lang)
 {
 	_text->initText(big, small, lang);
 	_text->setBig();
@@ -138,7 +137,7 @@ void BattlescapeMessage::initText(
  * @param ncolors		- amount of colors to replace (default 256)
  */
 void BattlescapeMessage::setPalette(
-		SDL_Color* colors,
+		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors)
 {

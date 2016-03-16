@@ -101,9 +101,9 @@ void WarningMessage::setTextColor(Uint8 color)
  * @param lang	- pointer to current language
  */
 void WarningMessage::initText(
-		Font* big,
-		Font* small,
-		Language* lang)
+		Font* const big,
+		Font* const small,
+		const Language* const lang)
 {
 	_text->initText(big, small, lang);
 }
@@ -115,7 +115,7 @@ void WarningMessage::initText(
  * @param ncolors		- amount of colors to replace (default 256)
  */
 void WarningMessage::setPalette(
-		SDL_Color* colors,
+		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors)
 {

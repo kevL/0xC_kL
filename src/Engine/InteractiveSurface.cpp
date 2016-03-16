@@ -66,10 +66,10 @@ InteractiveSurface::~InteractiveSurface() // virtual
  */
 bool InteractiveSurface::isButtonPressed(Uint8 btn) // virtual.
 {
-	if (btn == 0)
-		return (_buttonsPressed != 0);
+	if (btn != 0)
+		return (_buttonsPressed & SDL_BUTTON(btn)) != 0;
 
-	return (_buttonsPressed & SDL_BUTTON(btn)) != 0;
+	return (_buttonsPressed != 0);
 }
 
 /**
@@ -83,11 +83,9 @@ bool InteractiveSurface::isButtonHandled(Uint8 btn) // virtual
 				|| _release.find(0) != _release.end());
 
 	if (handled == false && btn != 0)
-	{
 		handled = (_click.find(btn) != _click.end()
 				|| _press.find(btn) != _press.end()
 				|| _release.find(btn) != _release.end());
-	}
 
 	return handled;
 }

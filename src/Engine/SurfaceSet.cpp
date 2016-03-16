@@ -314,7 +314,7 @@ size_t SurfaceSet::getTotalFrames() const
  * @param ncolors		- amount of colors to replace (default 256)
  */
 void SurfaceSet::setPalette(
-		SDL_Color* colors,
+		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors)
 {

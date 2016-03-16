@@ -91,7 +91,7 @@ private:
 		/// Determines the size and position of each character in the font.
 		void init();
 
-		/// Gets a particular character from the font, with its real size.
+		/// Gets a particular character from the font with its real size.
 		Surface* getChar(wchar_t fontChar);
 
 		/// Gets the font's character width.

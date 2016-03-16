@@ -1377,7 +1377,7 @@ void GraphsState::btnFactorPress(Action* action) // private.
 }
 
 /**
- * Sets the graphs to a user expansion by hot-key.
+ * Sets the graph-lines to a user expansion by hot-key.
  * @param action - pointer to an Action
  */
 void GraphsState::keyFactor(Action* action)
@@ -1388,20 +1388,21 @@ void GraphsState::keyFactor(Action* action)
 
 	Action act (Action(&ev, 0.,0., 0,0));
 
-	if (action->getDetails()->key.keysym.sym == SDLK_1)
+	switch (action->getDetails()->key.keysym.sym)
 	{
-		recallFactor = GUF_DEFAULT;
-		_btnFactor1->mousePress(&act, this);
-	}
-	else if (action->getDetails()->key.keysym.sym == SDLK_2)
-	{
-		recallFactor = GUF_HALF;
-		_btnFactor2->mousePress(&act, this);
-	}
-	else if (action->getDetails()->key.keysym.sym == SDLK_3)
-	{
-		recallFactor = GUF_QUARTER;
-		_btnFactor4->mousePress(&act, this);
+		case SDLK_1:
+			recallFactor = GUF_DEFAULT;
+			_btnFactor1->mousePress(&act, this);
+			break;
+
+		case SDLK_2:
+			recallFactor = GUF_HALF;
+			_btnFactor2->mousePress(&act, this);
+			break;
+
+		case SDLK_3:
+			recallFactor = GUF_QUARTER;
+			_btnFactor4->mousePress(&act, this);
 	}
 	drawLines(false);
 }
@@ -2487,10 +2488,10 @@ void GraphsState::scrollButtons( // private.
  * @note Helper for scrollButtons().
  */
 void GraphsState::updateButton( // private.
-		GraphBtnInfo* info,
-		ToggleTextButton* btn,
-		Text* aLiens,
-		Text* xCom)
+		const GraphBtnInfo* const info,
+		ToggleTextButton* const btn,
+		Text* const aLiens,
+		Text* const xCom)
 {
 	btn->setText(info->_label);
 	btn->setInvertColor(info->_colorPushed);

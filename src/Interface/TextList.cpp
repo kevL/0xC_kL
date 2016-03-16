@@ -548,7 +548,7 @@ void TextList::setColumns(
  * @param ncolors		- amount of colors to replace (default 256)
  */
 void TextList::setPalette(
-		SDL_Color* colors,
+		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors)
 {
@@ -592,12 +592,12 @@ void TextList::setPalette(
  * @param lang	- pointer to current language
  */
 void TextList::initText(
-		Font* big,
-		Font* small,
-		Language* lang)
+		Font* const big,
+		Font* const small,
+		const Language* const lang)
 {
 	_big = big;
-	_small = small;
+	_small =
 	_font = small;
 	_lang = lang;
 

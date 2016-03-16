@@ -224,7 +224,7 @@ void Font::init()
 /**
  * Returns a particular character from the set stored in this Font.
  * @param fontChar - character to use for size/position
- * @return, pointer to this Font's surface with the respective cropping rectangle set up
+ * @return, pointer to the Surface with the respective cropping rectangle
  */
 Surface* Font::getChar(wchar_t fontChar)
 {
@@ -239,6 +239,7 @@ Surface* Font::getChar(wchar_t fontChar)
 	}
 	return nullptr;
 }
+
 /**
  * Returns the maximum width for any character in this Font.
  * @return, width in pixels
@@ -271,7 +272,7 @@ int Font::getSpacing() const
 /**
  * Returns the dimensions of a particular character in this Font.
  * @param fontChar - font character
- * @return, width and height dimensions (X and Y are ignored)
+ * @return, width and height dimensions (x/y are set as safeties)
  */
 SDL_Rect Font::getCharSize(wchar_t fontChar)
 {
@@ -303,9 +304,9 @@ SDL_Rect Font::getCharSize(wchar_t fontChar)
 }
 
 /**
- * Returns the surface stored within this Font.
+ * Returns the Surface stored within this Font.
  * @note Used for loading the actual graphic into this Font.
- * @return, pointer to the internal surface
+ * @return, pointer to the internal Surface
  */
 Surface* Font::getSurface() const
 {

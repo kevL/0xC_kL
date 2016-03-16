@@ -150,7 +150,7 @@ private:
 	void btnTogglePress(Action* action);
 	/// Sets the graphs to a user expansion by mouse-click.
 	void btnFactorPress(Action* action);
-	/// Sets the graphs to a user expansion by hot-key.
+	/// Sets the graph-lines to a user expansion by hot-key.
 	void keyFactor(Action* action);
 
 	/// Resets all the elements on screen.
@@ -179,10 +179,10 @@ private:
 			bool init = false);
 	/// Updates button appearances when scrolling the lists.
 	void updateButton(
-			GraphBtnInfo* info,
-			ToggleTextButton* btn,
-			Text* aLiens,
-			Text* xCom);
+			const GraphBtnInfo* const info,
+			ToggleTextButton* const btn,
+			Text* const aLiens,
+			Text* const xCom);
 
 
 	public:

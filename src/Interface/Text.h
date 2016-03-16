@@ -51,8 +51,8 @@ enum TextVAlign
 
 
 /**
- * Text string displayed on screen.
- * @note Takes the characters from a Font and puts them together on screen to
+ * Text displayed on-screen.
+ * @note Takes the characters from a Font and puts them together on-screen to
  * display a string of text taking care of any required aligning or wrapping.
  */
 class Text
@@ -78,7 +78,7 @@ private:
 		* _big,
 		* _small,
 		* _font;
-	Language* _lang;
+	const Language* _lang;
 
 	TextHAlign _align;
 	TextVAlign _valign;
@@ -87,18 +87,18 @@ private:
 		_lineHeight,
 		_lineWidth;
 
-	/// Processes the contained text.
+	/// Processes the contained Text.
 	void processText();
 
 
 	public:
-		/// Creates a new text with the specified size and position.
+		/// Creates a Text with the specified size and position.
 		Text(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the text.
+		/// Cleans up the Text.
 		~Text();
 
 		/// Quickly converts an integer to a wide-string.
@@ -113,68 +113,68 @@ private:
 		/// Formats an integer value as percentage.
 		static std::wstring formatPercent(int val);
 
-		/// Sets the text size to big.
+		/// Sets the Text size to its big Font.
 		void setBig();
-		/// Sets the text size to small.
+		/// Sets the Text size to its small Font.
 		void setSmall();
 
-		/// Gets the text's current font.
+		/// Gets the Text's current Font.
 		Font* getFont() const;
 
-		/// Initializes the resources for the text.
+		/// Initializes the resources for the Text.
 		void initText(
-				Font* big,
-				Font* small,
-				Language* lang) override;
+				Font* const big,
+				Font* const small,
+				const Language* const lang) override;
 
-		/// Sets the text's string.
-		void setText(const std::wstring& text);
-		/// Gets the text's string.
+		/// Sets the Text's string.
+		void setText(const std::wstring& Text);
+		/// Gets the Text's string.
 		std::wstring getText() const;
 
-		/// Sets the text's wordwrap setting.
+		/// Sets the Text's wordwrap setting.
 		void setWordWrap(
 				const bool wrap = true,
 				const bool indent = false);
 
-		/// Sets the text's color invert setting.
+		/// Sets the Text's color invert setting.
 		void setInvert(const bool invert = true);
 
-		/// Sets this Text's high contrast color setting.
+		/// Sets the Text's high contrast color setting.
 		void setHighContrast(const bool contrast = true);
-		/// Gets if this Text is using high contrast color.
+		/// Gets if the Text is using high contrast color.
 		bool getHighContrast() const;
 
-		/// Sets the text's horizontal alignment.
+		/// Sets the Text's horizontal alignment.
 		void setAlign(TextHAlign align);
-		/// Gets the text's horizontal alignment.
+		/// Gets the Text's horizontal alignment.
 		TextHAlign getAlign() const;
-		/// Sets the text's vertical alignment.
+		/// Sets the Text's vertical alignment.
 		void setVerticalAlign(TextVAlign valign);
 
-		/// Sets the text's color.
+		/// Sets the Text's color.
 		void setColor(Uint8 color) override;
-		/// Gets the text's color.
+		/// Gets the Text's color.
 		Uint8 getColor() const;
-		/// Sets the text's secondary color.
+		/// Sets the Text's secondary color.
 		void setSecondaryColor(Uint8 color) override;
-		/// Gets the text's secondary color.
+		/// Gets the Text's secondary color.
 		Uint8 getSecondaryColor() const;
 
-		/// Gets the number of lines in the wrapped text if wrapping is enabled.
+		/// Gets the number of lines in the wrapped Text if wrapping is enabled.
 		int getNumLines() const;
 
-		/// Gets the rendered text's width.
+		/// Gets the rendered Text's width.
 		int getTextWidth(int line = -1) const;
-		/// Gets the rendered text's height.
+		/// Gets the rendered Text's height.
 		int getTextHeight(int line = -1) const;
-		/// Adds to the text's height.
+		/// Adds to the Text's height.
 		void addTextHeight(int pad = 1);
 
-		/// Gets the X position of a text line.
+		/// Gets the x-position of a Text line.
 		int getLineX(int line) const;
 
-		/// Draws the text.
+		/// Draws the Text.
 		void draw() override;
 };
 

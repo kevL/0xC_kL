@@ -91,7 +91,7 @@ private:
 		* _big,
 		* _font,
 		* _small;
-	Language* _lang;
+	const Language* _lang;
 	ScrollBar* _scrollbar;
 	Surface
 		* _bg,
@@ -186,14 +186,14 @@ private:
 
 		/// Sets the palette of the text list.
 		void setPalette(
-				SDL_Color* colors,
+				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
 		/// Initializes the resources for the text list.
 		void initText(
-				Font* big,
-				Font* small,
-				Language* lang) override;
+				Font* const big,
+				Font* const small,
+				const Language* const lang) override;
 
 		/// Sets the height of the surface.
 		void setHeight(int height) override;

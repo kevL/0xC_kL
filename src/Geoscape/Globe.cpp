@@ -1172,7 +1172,7 @@ void Globe::cache( // private.
  * @param ncolors		- amount of colors to replace
  */
 void Globe::setPalette(
-		SDL_Color* colors,
+		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors)
 {

@@ -169,9 +169,9 @@ void TextEdit::setSmall()
  * @param lang	- pointer to current language
  */
 void TextEdit::initText(
-		Font* big,
-		Font* small,
-		Language* lang)
+		Font* const big,
+		Font* const small,
+		const Language* const lang)
 {
 	_text->initText(big, small, lang);
 	_caret->initText(big, small, lang);
@@ -324,7 +324,7 @@ Uint8 TextEdit::getSecondaryColor() const
  * @param ncolors		- amount of colors to replace (default 256)
  */
 void TextEdit::setPalette(
-		SDL_Color* colors,
+		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors)
 {

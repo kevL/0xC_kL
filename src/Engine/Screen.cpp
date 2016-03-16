@@ -282,14 +282,14 @@ void Screen::clear()
 }
 
 /**
- * Changes the 8bpp palette used to render the screen's contents.
+ * Changes the 8-bpp palette used to render the screen's contents.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace
  * @param ncolors		- amount of colors to replace
  * @param immediately	- apply palette changes immediately otherwise wait for next blit
  */
 void Screen::setPalette(
-		SDL_Color* colors,
+		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors,
 		bool immediately)
