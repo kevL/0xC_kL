@@ -120,8 +120,8 @@ GraphsState::GraphsState()
 		_reset(false),
 		_forceVis(true)
 {
-	const int offsetX	((Options::baseXResolution - 320) / 2);
-	SCREEN_OFFSET_y		= (Options::baseYResolution - 200) / 2;
+	const int offsetX ((Options::baseXResolution - 320) / 2);
+	SCREEN_OFFSET_y  = (Options::baseYResolution - 200) / 2;
 
 	_bg = new InteractiveSurface(
 							Options::baseXResolution,
@@ -584,6 +584,7 @@ GraphsState::GraphsState()
 
 	_btnFactor1->setText(L"1");
 	_btnFactor1->setGroup(&_userFactor);
+	_btnFactor1->setSilent();
 	_btnFactor1->onMousePress(
 					(ActionHandler)& GraphsState::btnFactorPress,
 					SDL_BUTTON_LEFT);
@@ -593,6 +594,7 @@ GraphsState::GraphsState()
 
 	_btnFactor2->setText(L"2");
 	_btnFactor2->setGroup(&_userFactor);
+	_btnFactor2->setSilent();
 	_btnFactor2->onMousePress(
 					(ActionHandler)& GraphsState::btnFactorPress,
 					SDL_BUTTON_LEFT);
@@ -602,6 +604,7 @@ GraphsState::GraphsState()
 
 	_btnFactor4->setText(L"3");
 	_btnFactor4->setGroup(&_userFactor);
+	_btnFactor4->setSilent();
 	_btnFactor4->onMousePress(
 					(ActionHandler)& GraphsState::btnFactorPress,
 					SDL_BUTTON_LEFT);

@@ -312,7 +312,7 @@ int TextList::getRowY(size_t row) const
 	return getY() + _texts[row][0]->getY();
 }
 
-/*
+/**
  * Returns the height of a specific text row in the list.
  * @param row - row number
  * @return, height in pixels
@@ -322,7 +322,7 @@ int TextList::getTextHeight(size_t row) const // myk002
 	return _texts[row].front()->getTextHeight();
 } */
 
-/*
+/**
  * Returns the number of lines of a specific text row in the list.
  * @param row - row number
  * @return, number of lines
@@ -383,7 +383,7 @@ void TextList::addRow(
 			i != static_cast<size_t>(cols);
 			++i)
 	{
-		Text* const txt (new Text( // Place text
+		Text* const txt (new Text( // place text
 								_columns[i],
 								_font->getHeight(),
 								_margin + rowOffset_x,
@@ -399,10 +399,8 @@ void TextList::addRow(
 
 		txt->setHighContrast(_contrast);
 
-		if (_font == _big)
-			txt->setBig();
-		else
-			txt->setSmall();
+		if (_font == _big)	txt->setBig();
+		else				txt->setSmall();
 
 		txt->setText(va_arg(args, wchar_t*));
 
@@ -420,9 +418,8 @@ void TextList::addRow(
 							txt->getNumLines());
 		}
 
-		rowHeight = std::max(
-						rowHeight,
-						txt->getTextHeight() + vertPad);
+		rowHeight = std::max(rowHeight,
+							 txt->getTextHeight() + vertPad);
 
 		if (_dot == true // place dots between text
 			&& i < static_cast<size_t>(cols) - 1)

@@ -522,7 +522,7 @@ void InteractiveSurface::onMouseOut(ActionHandler handler)
 
 /**
  * Sets a function to be called every time a key is pressed.
- * @note The surface must be focused.
+ * @note The Surface must be focused.
  * @param handler	- ActionHandler
  * @param keyPress	- keyboard key to check for (note: ignores modifiers)
  *					  Set to 0 for any key (default SDLK_ANY)
@@ -539,7 +539,7 @@ void InteractiveSurface::onKeyboardPress( // Note: this fires somehow on mouse b
 
 /**
  * Sets a function to be called every time a key is released.
- * @note The surface must be focused.
+ * @note The Surface must be focused.
  * @param handler		- ActionHandler
  * @param keyRelease	- keyboard key to check for (note: ignores modifiers)
  *						  Set to 0 for any key (default SDLK_ANY)
@@ -555,7 +555,7 @@ void InteractiveSurface::onKeyboardRelease(
 }
 
 /**
- * Sets a flag for this button to say "member of a TextList" to true.
+ * Flags this InteractiveSurface as a button of a TextList.
  */
 void InteractiveSurface::setListButton()
 {

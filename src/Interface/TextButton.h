@@ -136,11 +136,11 @@ protected:
 		/// Sets the height of this TextButton.
 		void setHeight(int height) override;
 
-		/// Sets whether this TextButton is a Geoscape button.
-//		void setGeoscapeButton(bool geo);
-
 		/// Sets this TextButton as silent.
 	   void setSilent();
+
+		/// Sets whether this TextButton is a Geoscape button.
+//		void setGeoscapeButton(bool geo);
 };
 
 }

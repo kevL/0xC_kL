@@ -420,6 +420,14 @@ void TextButton::setHeight(int height)
 }
 
 /**
+ * Sets this TextButton as silent.
+ */
+void TextButton::setSilent()
+{
+	_silent = true;
+}
+
+/**
  * Sets whether this TextButton is a Geoscape button.
  * @param geo - true if Geo
  *
@@ -427,13 +435,5 @@ void TextButton::setGeoscapeButton(bool geo)
 {
 	_geoscapeButton = geo;
 } */
-
-/**
- * Sets this TextButton as silent.
- */
-void TextButton::setSilent()
-{
-	_silent = true;
-}
 
 }

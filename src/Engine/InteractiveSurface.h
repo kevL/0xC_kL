@@ -153,7 +153,7 @@ private:
 					ActionHandler handler,
 					SDLKey key = SDLK_ANY);
 
-			/// Set this surface as a TextList button.
+			/// Sets this surface as a TextList button.
 			void setListButton();
 };
 

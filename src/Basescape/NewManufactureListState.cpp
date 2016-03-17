@@ -183,7 +183,7 @@ void NewManufactureListState::lstProdClick(Action*)
 {
 	_scroll = _lstManufacture->getScroll();
 
-	const RuleManufacture* manfRule = nullptr;
+	const RuleManufacture* manfRule (nullptr);
 	for (std::vector<const RuleManufacture*>::iterator
 			i = _available.begin();
 			i != _available.end();
@@ -217,10 +217,7 @@ void NewManufactureListState::fillProductionList()
 	_available.clear();
 	_displayStrings.clear();
 
-	_game->getSavedGame()->getAvailableProductions(
-											_available,
-											_base);
-
+	_game->getSavedGame()->getAvailableProductions(_available, _base);
 	for (std::vector<const RuleManufacture*>::const_iterator
 			i = _available.begin();
 			i != _available.end();

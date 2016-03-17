@@ -29,6 +29,8 @@ namespace OpenXcom
 
 /**
  * Constructs a ToggleTextButton.
+ * @note This class does not trigger a TextButton::soundPress as it is currently
+ * structured.
  * @param width		- the width
  * @param height	- the height
  * @param x			- the X position
@@ -66,21 +68,21 @@ ToggleTextButton::~ToggleTextButton(void)
  */
 void ToggleTextButton::mousePress(Action* action, State* state)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		|| action->getDetails()->button.button == SDL_BUTTON_RIGHT)
+	switch (action->getDetails()->button.button)
 	{
-		_isPressed = !_isPressed;
-		_fakeGroup = _isPressed ? this : nullptr; // this is the trick that makes TextButton stick
+		case SDL_BUTTON_LEFT:
+		case SDL_BUTTON_RIGHT:
+			_isPressed = !_isPressed;
+			_fakeGroup = _isPressed ? this : nullptr; // this is the trick that makes TextButton stick
 
-		if (_isPressed == true
-			&& _invertedColor != std::numeric_limits<uint8_t>::max())
-		{
-			TextButton::setColor(_invertedColor);
-		}
-		else
-			TextButton::setColor(_originalColor);
+			if (_isPressed == true
+				&& _invertedColor != std::numeric_limits<uint8_t>::max())
+			{
+				TextButton::setColor(_invertedColor);
+			}
+			else
+				TextButton::setColor(_originalColor);
 	}
-
 	InteractiveSurface::mousePress(action, state); // skip TextButton's code as it will try to set *_group
 	draw();
 }
