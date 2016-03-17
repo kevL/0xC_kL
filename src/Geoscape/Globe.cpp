@@ -1265,7 +1265,7 @@ void Globe::draw()
 	drawShadow();
 	drawMarkers();
 	drawDetail();
-	drawFlights();
+	drawFlightPaths();
 }
 
 /**
@@ -2295,7 +2295,7 @@ void Globe::drawPath( // private.
 /**
  * Draws the flight paths of player's Craft flying on the globe.
  */
-void Globe::drawFlights()
+void Globe::drawFlightPaths()
 {
 	if (Options::globeFlightPaths == true)
 	{
@@ -2328,6 +2328,7 @@ void Globe::drawFlights()
 							_radars,
 							lon1,lat1,
 							lon3,lat3);
+					drawInterceptMarker(lon3,lat3);
 				}
 			}
 		}
@@ -2336,7 +2337,31 @@ void Globe::drawFlights()
 }
 
 /**
- * Draws the marker for a specified target on the globe.
+ * Draws the end-point of player's Craft on an intercept-trajectory.
+ * @param lon - longitude to place the marker at
+ * @param lat - latitude to place the marker at
+ */
+void Globe::drawInterceptMarker( // private.
+		const double lon,
+		const double lat)
+{
+	if (pointBack(lon,lat) == false)
+	{
+		Sint16
+			x,y;
+		polarToCart(
+				lon,lat,
+				&x,&y);
+
+		Surface* const marker (_markerSet->getFrame(GLM_WAYPOINT));
+		marker->setX(x - 1);
+		marker->setY(y - 1);
+		marker->blit(_markers);
+	}
+}
+
+/**
+ * Draws the marker for a specified Target on the globe.
  * @param target	- pointer to globe Target
  * @param surface	- pointer to globe Surface
  */
@@ -2344,7 +2369,8 @@ void Globe::drawTarget( // private.
 		const Target* const target,
 		Surface* const surface)
 {
-	if (target->getMarker() != -1)
+	const int markerId (target->getMarker());
+	if (markerId != -1)
 	{
 		const double
 			lon (target->getLongitude()),
@@ -2358,7 +2384,7 @@ void Globe::drawTarget( // private.
 					lon,lat,
 					&x,&y);
 
-			Surface* const marker (_markerSet->getFrame(target->getMarker()));
+			Surface* const marker (_markerSet->getFrame(markerId));
 			marker->setX(x - 1);
 			marker->setY(y - 1);
 			marker->blit(surface);

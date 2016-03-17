@@ -201,6 +201,10 @@ private:
 			double lat1,
 			double lon2,
 			double lat2);
+	/// Draws the end-point of player's Craft on an intercept-trajectory.
+	void drawInterceptMarker(
+		const double lon,
+		const double lat);
 	/// Draws a target marker.
 	void drawTarget(
 			const Target* const target,
@@ -346,7 +350,7 @@ private:
 		/// Draws the radar ranges of the globe.
 		void drawRadars();
 		/// Draws the flight paths of the globe.
-		void drawFlights();
+		void drawFlightPaths();
 		/// Draws the country details of the globe.
 		void drawDetail();
 		/// Gets the current debugType for Geoscape.
