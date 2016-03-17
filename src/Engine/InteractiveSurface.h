@@ -153,7 +153,7 @@ private:
 					ActionHandler handler,
 					SDLKey key = SDLK_ANY);
 
-			/// Sets this surface as a TextList button.
+			/// Sets this InteractiveSurface as a TextList button.
 			void setListButton();
 };
 

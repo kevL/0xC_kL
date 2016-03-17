@@ -57,12 +57,10 @@ StoresState::StoresState(Base* base)
 {
 	_window			= new Window(this, 320, 200);
 
-	_txtTitle		= new Text(300, 17, 10, 8);
+	_txtTitle		= new Text(300, 17,  10, 8);
+	_txtBaseLabel	= new Text( 80,  9, 224, 8);
 
-	_txtBaseLabel	= new Text(80, 9, 224, 8);
-
-	_txtTotal		= new Text(50, 9, 200, 18);
-
+	_txtTotal		= new Text( 50, 9, 200, 18);
 	_txtItem		= new Text(162, 9,  16, 25);
 	_txtQuantity	= new Text( 84, 9, 178, 25);
 	_txtSpaceUsed	= new Text( 26, 9, 262, 25);

@@ -102,7 +102,8 @@ BasescapeState::BasescapeState(
 	_txtRegion		= new Text(126, 9, 194, 15);
 	_txtFunds		= new Text(126, 9, 194, 24);
 
-	_btnBaseInfo	= new TextButton(128, 12, 192,  56);
+	_btnBaseInfo	= new TextButton( 64, 12, 192,  56);
+	_btnStores		= new TextButton( 64, 12, 256,  56);
 	_btnSoldiers	= new TextButton( 64, 12, 192,  68);
 	_btnMemorial	= new TextButton( 64, 12, 256,  68);
 	_btnCrafts		= new TextButton(128, 12, 192,  80);
@@ -130,6 +131,7 @@ BasescapeState::BasescapeState(
 	add(_txtFunds,			"text3",		"basescape");
 
 	add(_btnBaseInfo,		"button",		"basescape");
+	add(_btnStores,			"button",		"basescape");
 	add(_btnSoldiers,		"button",		"basescape");
 	add(_btnMemorial,		"button",		"basescape");
 	add(_btnCrafts,			"button",		"basescape");
@@ -178,6 +180,9 @@ BasescapeState::BasescapeState(
 
 	_btnBaseInfo->setText(tr("STR_BASE_INFORMATION"));
 	_btnBaseInfo->onMouseClick((ActionHandler)& BasescapeState::btnBaseInfoClick);
+
+	_btnStores->setText(tr("STR_STORES"));
+	_btnStores->onMouseClick((ActionHandler)& BasescapeState::btnStoresClick);
 
 	_btnSoldiers->setText(tr("STR_SOLDIERS_UC"));
 	_btnSoldiers->onMouseClick((ActionHandler)& BasescapeState::btnSoldiersClick);
@@ -242,8 +247,7 @@ BasescapeState::~BasescapeState()
 			i != _baseList->end();
 			++i)
 	{
-		if (*i == _base)
-			return;
+		if (*i == _base) return;
 	}
 	delete _base;
 }
@@ -323,6 +327,7 @@ void BasescapeState::init()
 			if ((*i)->getRules()->getCrafts() != 0)
 			{
 				hasHangar = true;
+
 				if (_base->getCrafts()->empty() == false)
 					hasCraft = true;
 			}
@@ -341,6 +346,7 @@ void BasescapeState::init()
 		}
 	}
 
+	_btnStores->setVisible(hasStores);
 	_btnSoldiers->setVisible(hasSoldiers);
 	_btnCrafts->setVisible(hasCraft);
 	_btnAliens->setVisible(hasAlienCont); // ie. hasLiveAliens
@@ -417,6 +423,16 @@ void BasescapeState::btnBaseInfoClick(Action*)
 {
 	if (_edtBase->isFocused() == false)
 		_game->pushState(new BaseInfoState(_base, this));
+}
+
+/**
+ * Goes to the Stores screen.
+ * @param action - pointer to an Action
+ */
+void BasescapeState::btnStoresClick(Action*)
+{
+	if (_edtBase->isFocused() == false)
+		_game->pushState(new StoresState(_base));
 }
 
 /**
@@ -834,9 +850,7 @@ size_t BasescapeState::getKeyedBaseId(SDLKey keyId) const
 	{
 		if (baseKeys[baseId] == keyId)
 		{
-			if (*i != _base)
-				return baseId;
-
+			if (*i != _base) return baseId;
 			break;
 		}
 	}

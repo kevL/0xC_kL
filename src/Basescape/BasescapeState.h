@@ -69,6 +69,7 @@ private:
 		* _btnResearch,
 		* _btnSell,
 		* _btnSoldiers,
+		* _btnStores,
 		* _btnTransfer;
 //		* _btnNewBase,
 
@@ -90,6 +91,8 @@ private:
 
 		/// Handler for clicking the Base Information button.
 		void btnBaseInfoClick(Action* action);
+		/// Handler for clicking the Stores button.
+		void btnStoresClick(Action* action);
 		/// Handler for clicking the Soldiers button.
 		void btnSoldiersClick(Action* action);
 		/// Handler for clicking the Memorial button.
