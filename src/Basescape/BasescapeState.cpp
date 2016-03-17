@@ -295,6 +295,7 @@ void BasescapeState::init()
 		hasAlienCont	(false),
 		hasLabs			(false),
 		hasProd			(false),
+		hasStorage		(false),
 		hasStores		(false);
 
 	for (std::vector<BaseFacility*>::const_iterator
@@ -327,7 +328,6 @@ void BasescapeState::init()
 			if ((*i)->getRules()->getCrafts() != 0)
 			{
 				hasHangar = true;
-
 				if (_base->getCrafts()->empty() == false)
 					hasCraft = true;
 			}
@@ -342,19 +342,23 @@ void BasescapeState::init()
 				hasProd = true;
 
 			if ((*i)->getRules()->getStorage() != 0)
-				hasStores = true;
+			{
+				hasStorage = true;
+				if (_base->getStorageItems()->getTotalQuantity() != 0)
+					 hasStores = true;
+			}
 		}
 	}
 
 	_btnStores->setVisible(hasStores);
 	_btnSoldiers->setVisible(hasSoldiers);
 	_btnCrafts->setVisible(hasCraft);
-	_btnAliens->setVisible(hasAlienCont); // ie. hasLiveAliens
+	_btnAliens->setVisible(hasAlienCont); // TODO: hasLiveAliens
 	_btnResearch->setVisible(hasLabs && hasScientists);
 	_btnManufacture->setVisible(hasProd && hasEngineers);
-	_btnPurchase->setVisible(hasFunds && (hasStores || hasQuarters || hasHangar)); // ie, hasFree... space
-	_btnSell->setVisible(hasStores || hasQuarters || hasCraft || hasAlienCont); // ie. hasFreeSoldiers || hasFreeScientists || hasFreeEngineers || hasLiveAliens || hasItemsInStorage
-	_btnTransfer->setVisible(hasFunds && (hasStores || hasQuarters || hasCraft || hasAlienCont)); // ditto.
+	_btnPurchase->setVisible(hasFunds && (hasStorage || hasQuarters || hasHangar));
+	_btnSell->setVisible(hasStores || hasQuarters || hasCraft || hasAlienCont); // TODO: hasFreeSoldiers || hasFreeScientists || hasFreeEngineers || hasLiveAliens
+	_btnTransfer->setVisible(hasFunds && (hasStores || hasQuarters || hasCraft || hasAlienCont)); // TODO: ditto.
 	_btnFacilities->setVisible(hasFunds);
 
 	_btnIncTrans->setVisible(_base->getTransfers()->empty() == false);
