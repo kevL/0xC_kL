@@ -34,8 +34,8 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Ufo Lost window.
- * @param id - reference the ID of the UFO
+ * Initializes all the elements in the UfoLost window.
+ * @param id - reference to the ID of the UFO
  */
 UfoLostState::UfoLostState(const std::wstring& id)
 	:
@@ -46,7 +46,7 @@ UfoLostState::UfoLostState(const std::wstring& id)
 
 	_window		= new Window(this, 192, 104, 32, 48, POPUP_BOTH);
 	_txtTitle	= new Text(160, 32, 48, 72);
-	_btnOk		= new TextButton(80, 14, 88, 114);
+	_btnOk		= new TextButton(80, 16, 88, 114);
 
 	setInterface("UFOInfo");
 
@@ -73,10 +73,10 @@ UfoLostState::UfoLostState(const std::wstring& id)
 
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
-	std::wstring s = _id;
-	s += L'\n';
-	s += tr("STR_TRACKING_LOST");
-	_txtTitle->setText(s);
+	std::wstring wst (_id);
+	wst += L'\n';
+	wst += tr("STR_TRACKING_LOST");
+	_txtTitle->setText(wst);
 }
 
 /**

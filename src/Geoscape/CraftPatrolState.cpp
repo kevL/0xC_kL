@@ -58,12 +58,12 @@ CraftPatrolState::CraftPatrolState(
 {
 	_fullScreen = false;
 
-	_window			= new Window(this, 224, 168, 16, 16, POPUP_BOTH);
+	_window = new Window(this, 224, 168, 16, 16, POPUP_BOTH);
 
-	_sprite			= new Surface(
-								32,38,
-								_window->getX() + _window->getWidth() - 16,
-								_window->getY() - 11);
+	_sprite = new Surface(
+						32,38,
+						_window->getX() + _window->getWidth() - 16,
+						_window->getY() - 11);
 
 	_txtDestination	= new Text(224, 78, 16, 40); // was 32 w/ _txtPatrolling
 //	_txtPatrolling	= new Text(224, 17, 16, 100);
@@ -213,7 +213,6 @@ void CraftPatrolState::btnCenterClick(Action*)
 	{
 		_delayPop = false;
 		transposeWindow();
-
 		return;
 	}
 
@@ -251,7 +250,10 @@ void CraftPatrolState::transposeWindow() // private.
 	_txtDestination->setVisible(false);
 	_btnCenter->setText(tr("STR_PAUSE"));
 
-	_game->getResourcePack()->getSurface("TARGET_UFO")->blit(_srfTarget);
+	Surface* const srf (_game->getResourcePack()->getSurface("TARGET_UFO"));
+	srf->setX(0);
+	srf->setY(0);
+	srf->blit(_srfTarget);
 }
 
 }

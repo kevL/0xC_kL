@@ -524,19 +524,19 @@ std::string Craft::getAltitude() const
 	}
 	return "STR_HIGH_UC";
 
-/*	switch (RNG::generate(0,3))
-	{
-		default: // avoid vc++ linker warnings.
-		case 0:
-		case 1: return "STR_LOW_UC";
-		case 2: return "STR_HIGH_UC";
-		case 3: return "STR_VERY_HIGH";
-	} */
+//	switch (RNG::generate(0,3))
+//	{
+//		default: // avoid vc++ linker warnings.
+//		case 0:
+//		case 1: return "STR_LOW_UC";
+//		case 2: return "STR_HIGH_UC";
+//		case 3: return "STR_VERY_HIGH";
+//	}
 }
 
 /**
  * Sets the destination of this Craft.
- * @param dest - pointer to Target destination
+ * @param dest - pointer to Target destination (default nullptr)
  */
 void Craft::setDestination(Target* const dest)
 {
@@ -787,7 +787,7 @@ int Craft::getFuelLimit() const
 		   static_cast<double>(getFuelConsumption()) * dist / speed));
 }
 
-/*
+/**
  * Calculates the minimum required fuel for this Craft to get back to Base.
  * @note Speed and distance are in radians.
  * @param base - pointer to a target Base
@@ -865,7 +865,7 @@ void Craft::think()
 		if (reachedDestination() == true
 			&& _dest == dynamic_cast<Target*>(_base))
 		{
-			setDestination(nullptr);
+			setDestination();
 			setSpeed(0);
 
 			_lowFuel =
@@ -1166,7 +1166,7 @@ int Craft::getLoadCapacity() const
 	return _loadCap;
 }
 
-/*
+/**
  * Sets current load.
  * @param load - current load
  *

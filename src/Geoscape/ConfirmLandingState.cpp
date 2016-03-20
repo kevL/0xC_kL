@@ -419,15 +419,14 @@ void ConfirmLandingState::btnYesClick(Action*)
 void ConfirmLandingState::btnNoClick(Action*)
 {
 //	_craft->returnToBase();
-	_craft->setDestination(nullptr);
+	_craft->setDestination();
 	_game->popState();
 }
 
 /**
  * Selects a terrain type for crashed or landed UFOs.
  * @param lat - latitude of the UFO
- */
-/*
+ *
 RuleTerrain* ConfirmLandingState::selectTerrain(const double lat)
 {
 	std::vector<RuleTerrain*> terrains;
@@ -481,8 +480,7 @@ RuleTerrain* ConfirmLandingState::selectTerrain(const double lat)
 /**
  * Selects a terrain type for missions at cities.
  * @param lat - latitude of the city
- */
-/*
+ *
 RuleTerrain* ConfirmLandingState::selectCityTerrain(const double lat)
 {
 	const AlienDeployment* const ruleDeploy = _game->getRuleset()->getDeployment("STR_TERROR_MISSION");

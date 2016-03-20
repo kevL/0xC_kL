@@ -143,7 +143,7 @@ private:
 			/// Fades the currently playing music.
 			void fadeMusic(
 					Game* const game,
-					const int fadeDur);
+					const int millisec);
 
 			/// Clear a music assignment
 			void clearMusicAssignment(

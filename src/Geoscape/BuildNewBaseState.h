@@ -36,7 +36,7 @@ class Window;
 
 
 /**
- * Screen that allows the player to place a new base on the globe.
+ * Screen that allows the player to place a new Base on the Globe.
  */
 class BuildNewBaseState
 	:
@@ -64,27 +64,30 @@ private:
 
 
 	public:
-		/// Creates the Build New Base state.
+		/// Creates a BuildNewBaseState.
 		BuildNewBaseState(
 				Base* const base,
 				Globe* const globe,
 				bool firstBase = false);
-		/// Cleans up the Build New Base state.
+		/// Cleans up the BuildNewBaseState.
 		~BuildNewBaseState();
 
-		/// Resets globe.
+		/// Resets Globe.
 		void init() override;
 		/// Runs the timer.
 		void think() override;
 
 		/// Handles actions.
 		void handle(Action* action) override;
-		/// Handler for clicking the globe.
+		/// Handler for clicking the Globe.
 		void globeClick(Action* action);
-		/// Handler for mouse hovering the globe.
+		/// Handler for mouse hovering the Globe.
 		void globeHover(Action* action);
-		/// Handler for redrawing hover (delayed)
+		/// Handler for redrawing hover (delayed).
 		void hoverRedraw();
+
+		/// Handler for clicking the cancel-button.
+		void btnCancelClick(Action* action);
 
 		/// Handler for pressing the Rotate Left arrow.
 //		void btnRotateLeftPress(Action* action);
@@ -111,10 +114,7 @@ private:
 		/// Handler for right-clicking the Zoom Out icon.
 //		void btnZoomOutRightClick(Action* action);
 
-		/// Handler for clicking the Cancel button.
-		void btnCancelClick(Action* action);
-
-		/// Let the state know the window has been resized.
+		/// Lets the State know the window has been resized.
 		void resize(
 				int& dX,
 				int& dY) override;

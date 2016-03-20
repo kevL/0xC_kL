@@ -73,7 +73,7 @@ protected:
 		/// Gets the MovingTarget's destination.
 		Target* getDestination() const;
 		/// Sets the MovingTarget's destination.
-		virtual void setDestination(Target* const dest);
+		virtual void setDestination(Target* const dest = nullptr);
 
 		/// Gets the MovingTarget's speed.
 		int getSpeed() const;

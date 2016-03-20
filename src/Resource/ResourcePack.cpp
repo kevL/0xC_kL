@@ -254,11 +254,11 @@ void ResourcePack::playMusic(
 /**
  * Fades the currently playing music.
  * @param game		- pointer to the Game object
- * @param fadeDur	- duration of the fade in milliseconds
+ * @param millisec	- duration of the fade in milliseconds
  */
 void ResourcePack::fadeMusic(
 		Game* const game,
-		const int fadeDur)
+		const int millisec)
 {
 	_playingMusic.clear();
 
@@ -268,12 +268,17 @@ void ResourcePack::fadeMusic(
 		if (Mix_GetMusicType(nullptr) != MUS_MID)
 		{
 			game->setInputActive(false);
+			/* See also:
+			SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE); // <- not MOUSEMOTION tho; want to *keep only* mouse-movements.
+			SDL_WarpMouse(static_cast<Uint16>(_xBeforeMouseScrolling), static_cast<Uint16>(_yBeforeMouseScrolling));
+			SDL_EventState(SDL_MOUSEMOTION, SDL_ENABLE);
+			*/
 
-			Mix_FadeOutMusic(fadeDur); // fade out!
+			Mix_FadeOutMusic(millisec); // fade out!
 //			func_fade();
 
 			while (Mix_PlayingMusic() == 1)
-			{}
+			{} // keep fades short (under 1 sec) because things go completely unresponsive to the Player.
 		}
 		else // SDL_Mixer has trouble with native midi and volume on windows - which is the most likely use case - so f@%# it.
 			Mix_HaltMusic();

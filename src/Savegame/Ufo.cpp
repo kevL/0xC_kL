@@ -753,7 +753,7 @@ const std::string& Ufo::getUfoMissionType() const
 
 /**
  * Handle destination changes and delete old Waypoint destinations.
- * @param dest - pointer to a new destination
+ * @param dest - pointer to a new destination (default nullptr)
  */
 void Ufo::setDestination(Target* const dest)
 {

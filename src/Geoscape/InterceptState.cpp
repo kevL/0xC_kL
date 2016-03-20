@@ -57,8 +57,8 @@ namespace OpenXcom
  * @param geoState	- pointer to GeoscapeState (default nullptr)
  */
 InterceptState::InterceptState(
-		Base* base,
-		GeoscapeState* geoState)
+		Base* const base,
+		GeoscapeState* const geoState)
 	:
 		_base(base),
 		_geoState(geoState)
@@ -228,7 +228,9 @@ std::wstring InterceptState::getAltStatus(Craft* const craft) // private.
 
 		bool isDelayed;
 		const int hrs (craft->getDowntime(isDelayed));
-		return tr(st).arg(_game->getSavedGame()->formatCraftDowntime(hrs, isDelayed, _game->getLanguage()));
+		return tr(st).arg(_game->getSavedGame()->formatCraftDowntime(
+																hrs, isDelayed,
+																_game->getLanguage()));
 	}
 
 	std::wstring status;
@@ -271,7 +273,6 @@ std::wstring InterceptState::getAltStatus(Craft* const craft) // private.
 
 		_cellColor = PURPLE;
 	}
-
 	return status;
 }
 
@@ -285,7 +286,7 @@ void InterceptState::btnCancelClick(Action*)
 }
 
 /**
- * Goes to the base for the respective craft.
+ * Goes to the Base of the respective Craft.
  * @param action - pointer to an Action
  */
 void InterceptState::btnGotoBaseClick(Action*)
@@ -297,24 +298,24 @@ void InterceptState::btnGotoBaseClick(Action*)
 }
 
 /**
- * Opens the craft info window.
+ * Opens a craft-info window.
  * @param action - pointer to an Action
  */
 void InterceptState::lstCraftsLeftClick(Action*)
 {
-	Craft* const craft = _crafts[_lstCrafts->getSelectedRow()];
+	Craft* const craft (_crafts[_lstCrafts->getSelectedRow()]);
 	_game->pushState(new GeoscapeCraftState(craft, _geoState, nullptr, true));
 }
 
 /**
- * Centers on the selected craft.
+ * Centers on the selected Craft.
  * @param action - pointer to an Action
  */
 void InterceptState::lstCraftsRightClick(Action*)
 {
 	_game->popState();
 
-	const Craft* const craft = _crafts[_lstCrafts->getSelectedRow()];
+	const Craft* const craft (_crafts[_lstCrafts->getSelectedRow()]);
 	_geoState->getGlobe()->center(
 								craft->getLongitude(),
 								craft->getLatitude());
@@ -330,7 +331,7 @@ void InterceptState::lstCraftsMouseOver(Action*)
 	{
 		std::wstring wst;
 
-		const size_t sel = _lstCrafts->getSelectedRow();
+		const size_t sel (_lstCrafts->getSelectedRow());
 		if (sel < _bases.size())
 			wst = _bases[sel];
 		else

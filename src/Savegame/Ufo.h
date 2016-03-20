@@ -209,7 +209,7 @@ private:
 		{ return *_trajectory; }
 
 		/// Sets the UFO's destination.
-		void setDestination(Target* const dest) override;
+		void setDestination(Target* const dest = nullptr) override;
 
 		/// Sets the interceptor engaging this Ufo.
 		void setShootingAt(const size_t target);

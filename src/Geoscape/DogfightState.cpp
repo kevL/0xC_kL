@@ -916,7 +916,7 @@ void DogfightState::updateDogfight()
 							if (_ufo->isCrashed() == true)
 							{
 								_ufo->setShotDownByCraftId(_craft->getUniqueId());
-//								_ufo->setDestination(nullptr); // kL
+//								_ufo->setDestination(); // kL
 								_ufo->setSpeed(0);
 								_craft->addKill();
 
@@ -1268,7 +1268,7 @@ void DogfightState::updateDogfight()
 				}
 				else if (_ufo->getCrashId() == 0) // Set up Crash site.
 				{
-					_ufo->setDestination(nullptr); // kL
+					_ufo->setDestination(); // kL
 					_ufo->setCrashId(_gameSave->getCanonicalId("STR_CRASH_SITE"));
 
 					_ufo->setSecondsLeft(RNG::generate(24,96) * 3600); // TODO: Put min/max in UFO-rules per UFO-type.
@@ -1740,59 +1740,64 @@ void DogfightState::btnMinimizeDfClick(Action*)
  */
 void DogfightState::btnMaximizeDfPress(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT) // note that this includes keyboard press for whatever reason.
+	switch (action->getDetails()->button.button)
 	{
-		_texture->clear();
+		case SDL_BUTTON_LEFT: // note that this includes keyboard press for whatever reason.
+		{
+			_texture->clear();
 
-		Surface* const srfTexture (_game->getResourcePack()->getSurface(getTextureIcon()));
-		if (srfTexture != nullptr)
-			srfTexture->blit(_texture);
-		else Log(LOG_WARNING) << "Texture icon for dogfight not available.";
+			Surface* const srfTexture (_game->getResourcePack()->getSurface(getTextureIcon()));
+			if (srfTexture != nullptr)
+				srfTexture->blit(_texture);
+			else Log(LOG_WARNING) << "Texture icon for dogfight not available.";
 
-		_minimized = false;
+			_minimized = false;
 
-		_window->setVisible();
-		_btnStandoff->setVisible();
-		_btnCautious->setVisible();
-		_btnStandard->setVisible();
-		_btnAggressive->setVisible();
-		_btnDisengage->setVisible();
-		_btnUfo->setVisible();
-		_texture->setVisible();
-		_btnMinimize->setVisible();
-		_battleScope->setVisible();
-		_weapon1->setVisible();
-		_range1->setVisible();
-		_weapon2->setVisible();
-		_range2->setVisible();
-		_damage->setVisible();
-		_txtAmmo1->setVisible();
-		_txtAmmo2->setVisible();
-		_txtDistance->setVisible();
-		_txtStatus->setVisible();
-		_txtTitle->setVisible();
+			_window->setVisible();
+			_btnStandoff->setVisible();
+			_btnCautious->setVisible();
+			_btnStandard->setVisible();
+			_btnAggressive->setVisible();
+			_btnDisengage->setVisible();
+			_btnUfo->setVisible();
+			_texture->setVisible();
+			_btnMinimize->setVisible();
+			_battleScope->setVisible();
+			_weapon1->setVisible();
+			_range1->setVisible();
+			_weapon2->setVisible();
+			_range2->setVisible();
+			_damage->setVisible();
+			_txtAmmo1->setVisible();
+			_txtAmmo2->setVisible();
+			_txtDistance->setVisible();
+			_txtStatus->setVisible();
+			_txtTitle->setVisible();
 
-		_btnMinimizedIcon->setVisible(false);
-		_txtInterception->setVisible(false);
-		_previewUfo->setVisible(false);
+			_btnMinimizedIcon->setVisible(false);
+			_txtInterception->setVisible(false);
+			_previewUfo->setVisible(false);
 
-		_geo->resetInterceptPorts();
+			_geo->resetInterceptPorts();
 
-		if (_geo->getDfZoomOutTimer()->isRunning() == true)
-			_geo->getDfZoomOutTimer()->stop();
+			if (_geo->getDfZoomOutTimer()->isRunning() == true)
+				_geo->getDfZoomOutTimer()->stop();
 
-		if (_geo->getMinimizedDfCount() == _totalIntercepts - 1)
-			_geo->storePreDfCoords();
+			if (_geo->getMinimizedDfCount() == _totalIntercepts - 1)
+				_geo->storePreDfCoords();
 
-		_globe->center(
-					_craft->getLongitude(),
-					_craft->getLatitude());
+			_globe->center(
+						_craft->getLongitude(),
+						_craft->getLatitude());
 
-		if (_geo->getDfZoomInTimer()->isRunning() == false)
-			_geo->getDfZoomInTimer()->start();
+			if (_geo->getDfZoomInTimer()->isRunning() == false)
+				_geo->getDfZoomInTimer()->start();
+			break;
+		}
+
+		case SDL_BUTTON_RIGHT:
+			_game->pushState(new GeoscapeCraftState(_craft, _geo));
 	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		_game->pushState(new GeoscapeCraftState(_craft, _geo));
 }
 
 /**

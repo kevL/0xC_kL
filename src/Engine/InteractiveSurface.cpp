@@ -29,7 +29,7 @@ const SDLKey InteractiveSurface::SDLK_ANY = static_cast<SDLKey>(-1); // using an
 
 
 /**
- * Sets up a blank interactive surface with the specified size and position.
+ * Sets up a blank InteractiveSurface with the specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
  * @param x			- X position in pixels (default 0)
@@ -106,7 +106,7 @@ void InteractiveSurface::setButtonPressed(
 }
 
 /**
- * Changes the visibility of the surface.
+ * Changes the visibility of this Surface.
  * @note A non-visible surface isn't blitted nor does it receive events.
  * @param visible - true if visible (default true)
  */
@@ -120,10 +120,10 @@ void InteractiveSurface::setVisible(bool visible)
 
 /**
  * Called whenever an action occurs and processes it to check if it's relevant
- * to the surface and converts it into a meaningful interaction like a "click"
+ * to this Surface and converts it into a meaningful interaction like a "click"
  * calling the respective handlers.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void InteractiveSurface::handle( // virtual
 		Action* action,
@@ -247,7 +247,7 @@ void InteractiveSurface::handle( // virtual
 }
 
 /**
- * Changes the surface's focus.
+ * Changes this Surface's focus.
  * @note Surfaces will only receive keyboard events if focused.
  * @param focus - true if focused (default true)
  */
@@ -257,7 +257,7 @@ void InteractiveSurface::setFocus(bool focus) // virtual
 }
 
 /**
- * Returns the surface's focus.
+ * Returns this Surface's focus.
  * @note Surfaces will only receive keyboard events if focused.
  * @return, true if focused
  */
@@ -268,7 +268,7 @@ bool InteractiveSurface::isFocused() const
 
 /**
  * Simulates a "mouse button release".
- * @note Used in circumstances where the surface is unpressed without user input.
+ * @note Used in circumstances where this Surface is unpressed without user input.
  * @param state - pointer to running State
  */
 void InteractiveSurface::unpress(State* state) // virtual
@@ -286,11 +286,11 @@ void InteractiveSurface::unpress(State* state) // virtual
 }
 
 /**
- * Called every time there's a mouse press over the surface.
- * @note Allows the surface to have custom functionality for this action and can
+ * Called every time there's a mouse press over this Surface.
+ * @note Allows this Surface to have custom functionality for this action and can
  * be called externally to simulate the action.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void InteractiveSurface::mousePress(Action* action, State* state) // virtual
 {
@@ -310,11 +310,11 @@ void InteractiveSurface::mousePress(Action* action, State* state) // virtual
 }
 
 /**
- * Called every time there's a mouse release over the surface.
- * @note Allows the surface to have custom functionality for this action and can
+ * Called every time there's a mouse release over this Surface.
+ * @note Allows this Surface to have custom functionality for this action and can
  * be called externally to simulate the action.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void InteractiveSurface::mouseRelease(Action* action, State* state) // virtual
 {
@@ -334,11 +334,11 @@ void InteractiveSurface::mouseRelease(Action* action, State* state) // virtual
 }
 
 /**
- * Called every time there's a mouse click on the surface.
- * @note Allows the surface to have custom functionality for this action and can
+ * Called every time there's a mouse click on this Surface.
+ * @note Allows this Surface to have custom functionality for this action and can
  * be called externally to simulate the action.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void InteractiveSurface::mouseClick(Action* action, State* state) // virtual
 {
@@ -358,11 +358,11 @@ void InteractiveSurface::mouseClick(Action* action, State* state) // virtual
 }
 
 /**
- * Called every time the mouse moves into the surface.
- * @note Allows the surface to have custom functionality for this action and can
+ * Called every time the mouse moves into this Surface.
+ * @note Allows this Surface to have custom functionality for this action and can
  * be called externally to simulate the action.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void InteractiveSurface::mouseIn(Action* action, State* state) // virtual
 {
@@ -371,11 +371,11 @@ void InteractiveSurface::mouseIn(Action* action, State* state) // virtual
 }
 
 /**
- * Called every time the mouse moves over the surface.
- * @note Allows the surface to have custom functionality for this action and can
+ * Called every time the mouse moves over this Surface.
+ * @note Allows this Surface to have custom functionality for this action and can
  * be called externally to simulate the action.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void InteractiveSurface::mouseOver(Action* action, State* state) // virtual
 {
@@ -384,11 +384,11 @@ void InteractiveSurface::mouseOver(Action* action, State* state) // virtual
 }
 
 /**
- * Called every time the mouse moves out of the surface.
- * @note Allows the surface to have custom functionality for this action and can
+ * Called every time the mouse moves out of this Surface.
+ * @note Allows this Surface to have custom functionality for this action and can
  * be called externally to simulate the action.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void InteractiveSurface::mouseOut(Action* action, State* state) // virtual
 {
@@ -397,11 +397,11 @@ void InteractiveSurface::mouseOut(Action* action, State* state) // virtual
 }
 
 /**
- * Called every time there's a keyboard press when the surface is focused.
- * @note Allows the surface to have custom functionality for this action and can
+ * Called every time there's a keyboard press when this Surface is focused.
+ * @note Allows this Surface to have custom functionality for this action and can
  * be called externally to simulate the action.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void InteractiveSurface::keyboardPress(Action* action, State* state) // virtual
 {
@@ -423,11 +423,11 @@ void InteractiveSurface::keyboardPress(Action* action, State* state) // virtual
 }
 
 /**
- * Called every time there's a keyboard release over the surface.
- * @note Allows the surface to have custom functionality for this action and can
+ * Called every time there's a keyboard release over this Surface.
+ * @note Allows this Surface to have custom functionality for this action and can
  * be called externally to simulate the action.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void InteractiveSurface::keyboardRelease(Action* action, State* state) // virtual
 {
@@ -449,7 +449,7 @@ void InteractiveSurface::keyboardRelease(Action* action, State* state) // virtua
 }
 
 /**
- * Sets a function to be called every time the surface is mouse clicked.
+ * Sets a function to be called every time this Surface is mouse clicked.
  * @param handler	- ActionHandler
  * @param btn		- mouse button to check for; set to 0 for any button (default SDL_BUTTON_LEFT=1)
  */
@@ -464,7 +464,7 @@ void InteractiveSurface::onMouseClick(
 }
 
 /**
- * Sets a function to be called every time the surface is mouse pressed.
+ * Sets a function to be called every time this Surface is mouse pressed.
  * @param handler	- ActionHandler
  * @param btn		- mouse button to check for; set to 0 for any button (default 0)
  */
@@ -479,7 +479,7 @@ void InteractiveSurface::onMousePress(
 }
 
 /**
- * Sets a function to be called every time the surface is mouse released.
+ * Sets a function to be called every time this Surface is mouse released.
  * @param handler	- ActionHandler
  * @param btn		- mouse button to check for; set to 0 for any button (default 0)
  */
@@ -494,7 +494,7 @@ void InteractiveSurface::onMouseRelease(
 }
 
 /**
- * Sets a function to be called every time the mouse moves into the surface.
+ * Sets a function to be called every time the mouse moves into this Surface.
  * @param handler - ActionHandler
  */
 void InteractiveSurface::onMouseIn(ActionHandler handler)
@@ -503,7 +503,7 @@ void InteractiveSurface::onMouseIn(ActionHandler handler)
 }
 
 /**
- * Sets a function to be called every time the mouse moves over the surface.
+ * Sets a function to be called every time the mouse moves over this Surface.
  * @param handler - ActionHandler
  */
 void InteractiveSurface::onMouseOver(ActionHandler handler)
@@ -512,7 +512,7 @@ void InteractiveSurface::onMouseOver(ActionHandler handler)
 }
 
 /**
- * Sets a function to be called every time the mouse moves out of the surface.
+ * Sets a function to be called every time the mouse moves out of this Surface.
  * @param handler - ActionHandler
  */
 void InteractiveSurface::onMouseOut(ActionHandler handler)

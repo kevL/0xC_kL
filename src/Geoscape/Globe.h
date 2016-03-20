@@ -69,6 +69,7 @@ private:
 		ROTATE_LATITUDE;
 
 	bool
+		_drawCrosshair,
 		_hover,
 		_isMouseScrolled,
 		_isMouseScrolling,
@@ -79,11 +80,11 @@ private:
 		_radarDetail,
 		_totalMouseMoveX,
 		_totalMouseMoveY;
-//		_xBeforeMouseScrolling,
-//		_yBeforeMouseScrolling;
 	double
 		_cenLat,
 		_cenLon,
+		_crosshairLat,
+		_crosshairLon,
 		_hoverLat,
 		_hoverLon,
 		_lonPreMouseScroll,
@@ -105,17 +106,9 @@ private:
 	RuleGlobe* _rules;
 	Surface
 		* _countries,
+		* _crosshair,
 		* _markers,
 		* _radars;
-/*		* _mkAlienBase,	// kL_begin:
-		* _mkAlienSite,
-		* _mkCity,
-		* _mkCraft,
-		* _mkCrashedUfo,
-		* _mkFlyingUfo,
-		* _mkLandedUfo,
-		* _mkWaypoint,
-		* _mkXcomBase;	// kL_end. */
 	SurfaceSet
 		* _markerSet,
 		* _texture;
@@ -152,10 +145,10 @@ private:
 			double lon,
 			double lat) const;
 	/// Checks if a point is inside a polygon.
-	bool insidePolygon( // obsolete, see getPolygonAtCoord()
-			double lon,
-			double lat,
-			const Polygon* const poly) const;
+//	bool insidePolygon( // obsolete, see getPolygonAtCoord()
+//			double lon,
+//			double lat,
+//			const Polygon* const poly) const;
 	/// Checks if a target is near a point.
 	bool targetNear(
 			const Target* const target,
@@ -209,6 +202,8 @@ private:
 	void drawTarget(
 			const Target* const target,
 			Surface* const surface);
+	/// Draws a big yellow/red crosshair-targeter.
+	void drawCrosshair();
 
 
 	public:
@@ -309,30 +304,30 @@ private:
 				double lon,
 				double lat) const;
 
-		/// Turns on/off the globe detail.
+		/// Turns on/off the Globe detail.
 		void toggleDetail();
 		/// Turns on/off the radar lines.
 		void toggleRadarLines();
 
-		/// Gets all the targets near a point on the globe.
+		/// Gets all the Targets near a point on the Globe.
 		std::vector<Target*> getTargets(
 				int x,
 				int y,
-				bool craftOnly = true) const;
+				bool flightTargets = true) const;
 
-		/// Caches visible globe polygons.
+		/// Caches visible Polygons.
 		void cachePolygons();
-		/// Sets the palette of the globe.
+		/// Sets the Palette of the Globe.
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
 
-		/// Handles the timers.
+		/// Handles the Timers.
 		void think() override;
 		/// Blinks the markers.
 		void blink();
-		/// Toggles the blinking.
+		/// Toggles blinking.
 		void toggleBlink();
 		/// Rotates the globe.
 		void rotate();
@@ -357,8 +352,14 @@ private:
 		DebugTypeGlobe getDebugType() const;
 		/// Draws all the markers over the globe.
 		void drawMarkers();
+		/// Sets the co-ordinates to draw a crosshair at.
+		void setCrosshair(
+				const double lon,
+				const double lat);
+		/// Hides the crosshair.
+		void clearCrosshair();
 		/// Blits the globe onto another surface.
-		void blit(Surface* surface) override;
+		void blit(Surface* const srf) override;
 
 		/// Special handling for mouse hover.
 		void mouseOver(Action* action, State* state) override;
@@ -370,9 +371,6 @@ private:
 		void mouseClick(Action* action, State* state) override;
 		/// Special handling for key presses.
 		void keyboardPress(Action* action, State* state) override;
-
-		/// Moves the mouse back to where it started after drag scrolling ends.
-//		void stopScrolling(Action* action);
 
 		/// Gets the polygons texture and shade at the given point.
 		void getPolygonTextureAndShade(

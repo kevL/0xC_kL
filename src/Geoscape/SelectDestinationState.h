@@ -43,6 +43,8 @@ class SelectDestinationState
 {
 
 private:
+	bool _ufoLost;
+
 	Craft* _craft;
 	Globe* _globe;
 //	InteractiveSurface* _btnRotateLeft, * _btnRotateRight, * _btnRotateUp, * _btnRotateDown, * _btnZoomIn, * _btnZoomOut;
@@ -55,28 +57,29 @@ private:
 
 
 	public:
-		/// Creates the Select Destination state.
+		/// Creates the SelectDestinationState.
 		SelectDestinationState(
 				Craft* const craft,
-				Globe* const globe);
-		/// Cleans up the Select Destination state.
+				Globe* const globe,
+				bool ufoLost = false);
+		/// Cleans up the SelectDestinationState.
 		~SelectDestinationState();
 
-		/// Resets globe.
+		/// Initializes the State.
 		void init() override;
-		/// Runs the timer.
+		/// Runs the Timer.
 //		void think();
 
 		/// Handles actions.
 		void handle(Action* action) override;
-		/// Handler for clicking the globe.
+		/// Handler for clicking the Globe.
 		void globeClick(Action* action);
 		/// Handler for clicking the Cancel button.
 		void btnCancelClick(Action* action);
 		/// Handler for clicking the Cydonia mission button.
 		void btnCydoniaClick(Action* action);
 
-		/// Let the state know the window has been resized.
+		/// Lets the State know the window has been resized.
 		void resize(
 				int& dX,
 				int& dY) override;

@@ -115,7 +115,7 @@ Target* MovingTarget::getDestination() const
 
 /**
  * Changes the destination the MovingTarget is heading to.
- * @param dest - pointer to Target destination
+ * @param dest - pointer to Target destination (default nullptr)
  */
 void MovingTarget::setDestination(Target* const dest) // virtual.
 {

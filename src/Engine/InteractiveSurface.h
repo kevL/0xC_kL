@@ -82,16 +82,16 @@ private:
 
 
 		public:
-			/// Creates a new interactive surface with the specified size and position.
+			/// Creates an InteractiveSurface with the specified size and position.
 			InteractiveSurface(
 					int width,
 					int height,
 					int x = 0,
 					int y = 0);
-			/// Cleans up the interactive surface.
+			/// Cleans up the Interactivesurface.
 			virtual ~InteractiveSurface();
 
-			/// Sets the surface's visibility.
+			/// Sets the Surface's visibility.
 			void setVisible(bool visible = true) override;
 
 			/// Processes any pending events.
@@ -99,12 +99,12 @@ private:
 					Action* action,
 					State* state);
 
-			/// Sets the focus of this surface.
+			/// Sets the focus of the Surface.
 			virtual void setFocus(bool focus = true);
-			/// Gets the focus of this surface.
+			/// Gets the focus of the Surface.
 			bool isFocused() const;
 
-			/// Unpresses the surface.
+			/// Unpresses the Surface.
 			virtual void unpress(State* state);
 
 			/// Processes a mouse button press event.
@@ -125,35 +125,35 @@ private:
 			/// Processes a keyboard key release event.
 			virtual void keyboardRelease(Action* action, State* state);
 
-			/// Hooks an action handler to a mouse click on the surface.
+			/// Hooks an ActionHandler to a mouse click on the Surface.
 			void onMouseClick(
 					ActionHandler handler,
 					Uint8 btn = SDL_BUTTON_LEFT);
-			/// Hooks an action handler to a mouse press over the surface.
+			/// Hooks an ActionHandler to a mouse press over the Surface.
 			void onMousePress(
 					ActionHandler handler,
 					Uint8 btn = 0);
-			/// Hooks an action handler to a mouse release over the surface.
+			/// Hooks an ActionHandler to a mouse release over the Surface.
 			void onMouseRelease(
 					ActionHandler handler,
 					Uint8 btn = 0);
-			/// Hooks an action handler to moving the mouse into the surface.
+			/// Hooks an ActionHandler to moving the mouse into the Surface.
 			void onMouseIn(ActionHandler handler);
-			/// Hooks an action handler to moving the mouse over the surface.
+			/// Hooks an ActionHandler to moving the mouse over the Surface.
 			void onMouseOver(ActionHandler handler);
-			/// Hooks an action handler to moving the mouse out of the surface.
+			/// Hooks an ActionHandler to moving the mouse out of the Surface.
 			void onMouseOut(ActionHandler handler);
 
-			/// Hooks an action handler to pressing a key when the surface is focused.
+			/// Hooks an ActionHandler to pressing a key when the Surface is focused.
 			void onKeyboardPress(
 					ActionHandler handler,
 					SDLKey key = SDLK_ANY);
-			/// Hooks an action handler to releasing a key when the surface is focused.
+			/// Hooks an ActionHandler to releasing a key when the Surface is focused.
 			void onKeyboardRelease(
 					ActionHandler handler,
 					SDLKey key = SDLK_ANY);
 
-			/// Sets this InteractiveSurface as a TextList button.
+			/// Sets the InteractiveSurface as a TextList button.
 			void setListButton();
 };
 

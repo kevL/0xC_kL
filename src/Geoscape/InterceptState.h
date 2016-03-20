@@ -81,8 +81,8 @@ private:
 	public:
 		/// Creates the Intercept state.
 		InterceptState(
-				Base* base = nullptr,
-				GeoscapeState* geoState = nullptr);
+				Base* const base = nullptr,
+				GeoscapeState* const geoState = nullptr);
 		/// Cleans up the Intercept state.
 		~InterceptState();
 

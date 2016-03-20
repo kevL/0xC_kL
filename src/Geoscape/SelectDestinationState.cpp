@@ -55,20 +55,24 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the Select Destination window.
- * @param craft	- pointer to the Craft
- * @param globe	- pointer to the Globe
+ * @param craft		- pointer to the Craft
+ * @param globe		- pointer to the Globe
+ * @param ufoLost	- true if called after ufo-detection was lost
  */
 SelectDestinationState::SelectDestinationState(
 		Craft* const craft,
-		Globe* const globe)
+		Globe* const globe,
+		bool ufoLost)
 	:
 		_craft(craft),
-		_globe(globe)
+		_globe(globe),
+		_ufoLost(ufoLost)
 {
+	Log(LOG_INFO) << "SelectDestinationState cTor";
 	_fullScreen = false;
 
-	const int dX = _game->getScreen()->getDX();
-//		dy = _game->getScreen()->getDY();
+	const int dX (_game->getScreen()->getDX());
+//	int dy = _game->getScreen()->getDY();
 
 /*	_btnRotateLeft	= new InteractiveSurface(12, 10, 259 + dX * 2, 176 + dy);
 	_btnRotateRight	= new InteractiveSurface(12, 10, 283 + dX * 2, 176 + dy);
@@ -79,7 +83,7 @@ SelectDestinationState::SelectDestinationState(
 
 	_window = new Window(this, 256, 30);
 	_window->setX(dX);
-	_window->setDY(0);
+//	_window->setDY(0); // -> default when x= 0.
 
 //	_txtTitle	= new Text(100, 9, 16 + dX, 10);
 
@@ -103,9 +107,11 @@ SelectDestinationState::SelectDestinationState(
 	add(_btnCancel,		"genericButton1",	"geoscape");
 	add(_btnCydonia,	"genericButton1",	"geoscape");
 
+
 	_txtError->setText(tr("STR_OUTSIDE_CRAFT_RANGE"));
 	_txtError->setVisible(false);
 
+	// NOTE: Replacing onMouseClick() w/ onMousePress() causes a bizarre CTD situation.
 	_globe->onMouseClick((ActionHandler)& SelectDestinationState::globeClick);
 
 /*	_btnRotateLeft->onMousePress((ActionHandler)& SelectDestinationState::btnRotateLeftPress);
@@ -164,8 +170,8 @@ SelectDestinationState::SelectDestinationState(
 			i != _craft->getBase()->getSoldiers()->end();
 			++i)
 		{
-			if ((*i)->getCraft() == _craft
-				&& (*i)->getArmor()->isSpacesuit() == false)
+			if ((*i)->getCraft() == _craft						// TODO: Allow click but then give warning in
+				&& (*i)->getArmor()->isSpacesuit() == false)	// ConfirmCydoniaState if not suited appropriately.
 			{
 				_btnCydonia->setVisible(false);
 				break;
@@ -201,18 +207,21 @@ SelectDestinationState::SelectDestinationState(
  * dTor.
  */
 SelectDestinationState::~SelectDestinationState()
-{}
+{
+	Log(LOG_INFO) << "SelectDestinationState dTor";
+}
 
 /**
- * Stop the globe movement.
+ * Initializes the State.
  */
 void SelectDestinationState::init()
 {
+	Log(LOG_INFO) << "SelectDestinationState::init()";
 	State::init();
 }
 
 /**
- * Runs the globe rotation timer.
+ * Runs the Globe's rotation Timer.
  *
 void SelectDestinationState::think()
 {
@@ -221,73 +230,94 @@ void SelectDestinationState::think()
 } */
 
 /**
- * Handles the globe.
+ * Handles the Globe.
  * @param action - pointer to an Action
  */
 void SelectDestinationState::handle(Action* action)
 {
+	Log(LOG_INFO) << "SelectDestinationState::handle()";
 	State::handle(action);
-	_globe->handle(action, this);
+
+	if (static_cast<int>(std::floor(action->getAbsoluteYMouse())) > _window->getY() + _window->getHeight()) // ignore window clicks
+		_globe->handle(action, this);
 }
 
 /**
- * Processes any left-clicks for picking a target or right-clicks to scroll the globe.
+ * Processes left-clicks for picking a Target and ensures that any crosshair
+ * gets removed from the Globe.
  * @param action - pointer to an Action
  */
 void SelectDestinationState::globeClick(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT) // set Waypoint
+	Log(LOG_INFO) << "SelectDestinationState::globeClick()";
+	const int mY (static_cast<int>(std::floor(action->getAbsoluteYMouse())));
+	if (mY > _window->getY() + _window->getHeight()) // ignore window clicks
 	{
-		const int mY = static_cast<int>(std::floor(action->getAbsoluteYMouse()));
-		if (mY < _window->getY() + _window->getHeight()) // ignore window clicks
-			return;
+		const Uint8 btnId (action->getDetails()->button.button);
 
-		const int mX = static_cast<int>(std::floor(action->getAbsoluteXMouse()));
-		double
-			lon,lat;
-		_globe->cartToPolar(
-						static_cast<Sint16>(mX),
-						static_cast<Sint16>(mY),
-						&lon,&lat);
-
-		Waypoint* const wp = new Waypoint();
-		wp->setLongitude(lon);
-		wp->setLatitude(lat);
-
-		const RuleCraft* const craftRule = _craft->getRules();
-		int range = _craft->getFuel();
-		if (craftRule->getRefuelItem().empty() == false)
-			range *= craftRule->getMaxSpeed();
-
-		range /= 6; // six doses per hour on Geoscape.
-
-		if (range < static_cast<int>(std::floor(
-				  (_craft->getDistance(wp) + _craft->getBase()->getDistance(wp)) * earthRadius)))
+		if (_ufoLost == true)
 		{
-			_txtError->setVisible();
-			delete wp;
+			switch (btnId)
+			{
+				case SDL_BUTTON_LEFT:
+				case SDL_BUTTON_RIGHT:
+						Log(LOG_INFO) << ". ufoLost TRUE";
+						_ufoLost = false;
+						_globe->clearCrosshair();
+						_craft->setDestination();
+						_globe->draw();
+			}
 		}
-		else
+
+		if (btnId == SDL_BUTTON_LEFT) // set a Waypoint
 		{
-			_txtError->setVisible(false);
+			const int mX (static_cast<int>(std::floor(action->getAbsoluteXMouse())));
+			double
+				lon,lat;
+			_globe->cartToPolar(
+							static_cast<Sint16>(mX),
+							static_cast<Sint16>(mY),
+							&lon,&lat);
 
-			std::vector<Target*> targets = _globe->getTargets(mX, mY);
-			std::vector<Target*>::const_iterator i = std::find( // do not show Craft's current target
-															targets.begin(),
-															targets.end(),
-															dynamic_cast<Target*>(_craft->getDestination()));
-			if (i != targets.end())
-				targets.erase(i);
+			Waypoint* const wp (new Waypoint());
+			wp->setLongitude(lon);
+			wp->setLatitude(lat);
 
-			if (targets.empty() == false)
+			const RuleCraft* const craftRule (_craft->getRules());
+			int range (_craft->getFuel());
+			if (craftRule->getRefuelItem().empty() == false)
+				range *= craftRule->getMaxSpeed();
+
+			range /= 6; // six doses per hour on Geoscape.
+
+			if (range < static_cast<int>(std::floor(
+					  (_craft->getDistance(wp) + _craft->getBase()->getDistance(wp)) * earthRadius)))
+			{
+				_txtError->setVisible();
 				delete wp;
+			}
 			else
-				targets.push_back(wp);
+			{
+				_txtError->setVisible(false);
 
-			_game->pushState(new MultipleTargetsState(
-													targets,
-													_craft,
-													nullptr));
+				std::vector<Target*> targets (_globe->getTargets(mX, mY));
+				std::vector<Target*>::const_iterator i (std::find( // do not show Craft's current target
+																targets.begin(),
+																targets.end(),
+																dynamic_cast<Target*>(_craft->getDestination())));
+				if (i != targets.end())
+					targets.erase(i);
+
+				if (targets.empty() == false)
+					delete wp;
+				else
+					targets.push_back(wp);
+
+				_game->pushState(new MultipleTargetsState(
+														targets,
+														_craft,
+														nullptr));
+			}
 		}
 	}
 }
@@ -298,14 +328,28 @@ void SelectDestinationState::globeClick(Action* action)
  */
 void SelectDestinationState::btnCancelClick(Action*)
 {
+	Log(LOG_INFO) << "SelectDestinationState::btnCancelClick()";
+	if (_ufoLost == true)
+	{
+		_globe->clearCrosshair();
+		_craft->setDestination();
+	}
 	_game->popState();
 }
 
 /**
- *
+ * Goes to Cydonia on Mars.
+ * @param action - pointer to an Action
  */
 void SelectDestinationState::btnCydoniaClick(Action*)
 {
+	Log(LOG_INFO) << "SelectDestinationState::btnCydoniaClick()";
+	if (_ufoLost == true)
+	{
+		_globe->clearCrosshair();
+		_craft->setDestination();
+	}
+
 	if (_craft->getQtySoldiers() != 0) //|| _craft->getQtyVehicles() > 0)
 		_game->pushState(new ConfirmCydoniaState(_craft));
 }
@@ -337,7 +381,7 @@ void SelectDestinationState::resize(
 }
 
 }
-/*
+/**
  * Starts rotating the globe to the left.
  * @param action - pointer to an Action
  *
@@ -345,7 +389,7 @@ void SelectDestinationState::btnRotateLeftPress(Action*)
 {
 	_globe->rotateLeft();
 } */
-/*
+/**
  * Stops rotating the globe to the left.
  * @param action - pointer to an Action
  *
@@ -353,7 +397,7 @@ void SelectDestinationState::btnRotateLeftRelease(Action*)
 {
 	_globe->rotateStopLon();
 } */
-/*
+/**
  * Starts rotating the globe to the right.
  * @param action - pointer to an Action
  *
@@ -361,7 +405,7 @@ void SelectDestinationState::btnRotateRightPress(Action*)
 {
 	_globe->rotateRight();
 } */
-/*
+/**
  * Stops rotating the globe to the right.
  * @param action - pointer to an Action
  *
@@ -369,7 +413,7 @@ void SelectDestinationState::btnRotateRightRelease(Action*)
 {
 	_globe->rotateStopLon();
 } */
-/*
+/**
  * Starts rotating the globe upwards.
  * @param action - pointer to an Action
  *
@@ -377,7 +421,7 @@ void SelectDestinationState::btnRotateUpPress(Action*)
 {
 	_globe->rotateUp();
 } */
-/*
+/**
  * Stops rotating the globe upwards.
  * @param action - pointer to an Action
  *
@@ -385,7 +429,7 @@ void SelectDestinationState::btnRotateUpRelease(Action*)
 {
 	_globe->rotateStopLat();
 } */
-/*
+/**
  * Starts rotating the globe downwards.
  * @param action - pointer to an Action
  *
@@ -393,7 +437,7 @@ void SelectDestinationState::btnRotateDownPress(Action*)
 {
 	_globe->rotateDown();
 } */
-/*
+/**
  * Stops rotating the globe downwards.
  * @param action - pointer to an Action
  *
@@ -401,7 +445,7 @@ void SelectDestinationState::btnRotateDownRelease(Action*)
 {
 	_globe->rotateStopLat();
 } */
-/*
+/**
  * Zooms into the globe.
  * @param action - pointer to an Action
  *
@@ -409,7 +453,7 @@ void SelectDestinationState::btnZoomInLeftClick(Action*)
 {
 	_globe->zoomIn();
 } */
-/*
+/**
  * Zooms the globe maximum.
  * @param action - pointer to an Action
  *
@@ -417,7 +461,7 @@ void SelectDestinationState::btnZoomInRightClick(Action*)
 {
 	_globe->zoomMax();
 } */
-/*
+/**
  * Zooms out of the globe.
  * @param action - pointer to an Action
  *
@@ -425,7 +469,7 @@ void SelectDestinationState::btnZoomOutLeftClick(Action*)
 {
 	_globe->zoomOut();
 } */
-/*
+/**
  * Zooms the globe minimum.
  * @param action - pointer to an Action
  *

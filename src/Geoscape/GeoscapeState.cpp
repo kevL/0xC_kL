@@ -1553,7 +1553,7 @@ void GeoscapeState::time5Seconds()
 							resetTimer();
 
 							mission->setWaveCountdown(30 * (RNG::generate(0,48) + 400));
-							(*i)->setDestination(nullptr);
+							(*i)->setDestination();
 
 							if (base->setupBaseDefense() == true)
 								popup(new BaseDefenseState(base, *i, this));
@@ -1661,9 +1661,9 @@ void GeoscapeState::time5Seconds()
 							}
 							else
 							{
-								(*j)->setDestination(nullptr);
+//								(*j)->setDestination();
 
-								Waypoint* const wp (new Waypoint()); // Waypoint is for reconnaissance area.
+								Waypoint* const wp (new Waypoint()); // Waypoint is for reconnaissance destination-target.
 //								wp->setLongitude(ufo->getLongitude());
 //								wp->setLatitude(ufo->getLatitude());
 								wp->setLongitude(ufo->getMeetLongitude());
@@ -1759,7 +1759,7 @@ void GeoscapeState::time5Seconds()
 								else if (ufo->getUfoStatus() != Ufo::LANDED)
 								{
 									popup(new CraftPatrolState(*j, this));
-									(*j)->setDestination(nullptr);
+									(*j)->setDestination();
 								}
 						}
 					}
@@ -1785,7 +1785,7 @@ void GeoscapeState::time5Seconds()
 					else // do Patrol at waypoint.
 					{
 						popup(new CraftPatrolState(*j, this));
-						(*j)->setDestination(nullptr);
+						(*j)->setDestination();
 					}
 				}
 
@@ -2231,6 +2231,7 @@ void GeoscapeState::time10Minutes()
 	}
 }
 
+
 /**
  * *** FUNCTOR ***
  * @brief Call AlienMission::think() with proper parameters.
@@ -2343,6 +2344,7 @@ struct expireCrashedUfo: public std::unary_function<Ufo*, void>
 		}
 	}
 };
+
 
 /**
  * Takes care of any game logic that has to run every game half hour.

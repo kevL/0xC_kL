@@ -33,8 +33,7 @@ class Window;
 
 
 /**
- * Screen that allows the player
- * to pick a target for a craft on the globe.
+ * Screen that allows the player to confirm departure to Cydonia.
  */
 class ConfirmCydoniaState
 	:

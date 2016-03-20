@@ -151,7 +151,7 @@ private:
 		std::string getAltitude() const;
 
 		/// Sets the Craft's destination.
-		void setDestination(Target* const dest) override;
+		void setDestination(Target* const dest = nullptr) override;
 
 		/// Gets the Craft's amount of weapons.
 		int getQtyWeapons() const;

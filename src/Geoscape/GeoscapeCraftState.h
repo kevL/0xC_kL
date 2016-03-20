@@ -80,6 +80,8 @@ private:
 
 	/// Hides various screen-elements to reveal the globe & Craft.
 	void transposeWindow();
+	/// Applies the targeter-graphic to the last-known UFO coordinates.
+	void targeter();
 
 
 	public:
