@@ -349,8 +349,8 @@ GeoscapeCraftState::GeoscapeCraftState(
 	}
 	else if (_craft->getDestination() == dynamic_cast<Target*>(_craft->getBase()))
 		_btnRebase->setVisible(false);
-	else if (_craft->getDestination() == nullptr
-		&& _waypoint == nullptr)
+	else if (_craft->getDestination() == nullptr)
+//		&& _waypoint == nullptr) // <- not needed anymore. Craft w/ redirect/_waypoint still have a destination-UFO.
 	{
 		_btnPatrol->setVisible(false);
 	}
@@ -522,7 +522,7 @@ void GeoscapeCraftState::transposeWindow() // private.
 		_btnPatrol->setY(dy);
 	}
 
-	Surface* const srf (_game->getResourcePack()->getSurface("TARGET_UFO"));
+	Surface* const srf (_game->getResourcePack()->getSurface("Crosshairs"));
 	srf->setX(0);
 	srf->setY(0);
 	srf->blit(_srfTarget);

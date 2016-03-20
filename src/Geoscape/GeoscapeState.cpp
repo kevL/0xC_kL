@@ -1661,12 +1661,8 @@ void GeoscapeState::time5Seconds()
 							}
 							else
 							{
-//								(*j)->setDestination();
-
-								Waypoint* const wp (new Waypoint()); // Waypoint is for reconnaissance destination-target.
-//								wp->setLongitude(ufo->getLongitude());
-//								wp->setLatitude(ufo->getLatitude());
-								wp->setLongitude(ufo->getMeetLongitude());
+								Waypoint* const wp (new Waypoint());		// Waypoint is for reconnaissance target-destination;
+								wp->setLongitude(ufo->getMeetLongitude());	// flags GeoscapeCraftState as a special instance.
 								wp->setLatitude(ufo->getMeetLatitude());
 								wp->setId(ufo->getId());
 

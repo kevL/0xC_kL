@@ -54,7 +54,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Build New Base window.
+ * Initializes all the elements in the BuildNewBase window.
  * @param base		- pointer to the Base to place
  * @param globe		- pointer to the geoscape Globe
  * @param firstBase	- true if this the first base in the game (default false)
@@ -149,14 +149,16 @@ BuildNewBaseState::BuildNewBaseState(
 	_txtTitle->setText(tr("STR_SELECT_SITE_FOR_NEW_BASE"));
 	_txtTitle->setAlign(ALIGN_CENTER);
 
-	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& BuildNewBaseState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& BuildNewBaseState::btnCancelClick,
-					Options::keyCancel);
-
 	if (_firstBase == true)
 		_btnCancel->setVisible(false);
+	else
+	{
+		_btnCancel->setText(tr("STR_CANCEL_UC"));
+		_btnCancel->onMouseClick((ActionHandler)& BuildNewBaseState::btnCancelClick);
+		_btnCancel->onKeyboardPress(
+						(ActionHandler)& BuildNewBaseState::btnCancelClick,
+						Options::keyCancel);
+	}
 
 	_showRadar = Options::globeRadarLines;
 	Options::globeRadarLines = true;
@@ -174,7 +176,7 @@ BuildNewBaseState::~BuildNewBaseState()
 }
 
 /**
- * Stops the globe and adds radar hover effect.
+ * Stops the Globe and adds radar hover effect.
  */
 void BuildNewBaseState::init()
 {
@@ -184,7 +186,7 @@ void BuildNewBaseState::init()
 }
 
 /**
- * Runs the globe rotation timer.
+ * Runs the Globe rotation timer.
  */
 void BuildNewBaseState::think()
 {
@@ -194,7 +196,7 @@ void BuildNewBaseState::think()
 }
 
 /**
- * Handles the globe.
+ * Handles the Globe.
  * @param action - pointer to an Action
  */
 void BuildNewBaseState::handle(Action* action)
@@ -204,7 +206,7 @@ void BuildNewBaseState::handle(Action* action)
 }
 
 /**
- * Processes mouse-hover event for Base placement,
+ * Processes mouse-hover event for Base placement.
  * @param action - pointer to an Action
  */
 void BuildNewBaseState::globeHover(Action* action)
@@ -244,7 +246,7 @@ void BuildNewBaseState::hoverRedraw()
 }
 
 /**
- * Processes any left-clicks for base placement or right-clicks to scroll the globe.
+ * Processes any left-clicks for Base placement.
  * @param action - pointer to an Action
  */
 void BuildNewBaseState::globeClick(Action* action)
@@ -260,35 +262,35 @@ void BuildNewBaseState::globeClick(Action* action)
 						static_cast<Sint16>(mouseY),
 						&lon, &lat);
 
-		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+//		if (action->getDetails()->button.button == SDL_BUTTON_LEFT) // This is called only on LMB.
+//		{
+		if (_globe->insideLand(lon, lat) == true)
 		{
-			if (_globe->insideLand(lon, lat) == true)
+			_base->setLongitude(lon);
+			_base->setLatitude(lat);
+
+			for (std::vector<Craft*>::const_iterator
+					i = _base->getCrafts()->begin();
+					i != _base->getCrafts()->end();
+					++i)
 			{
-				_base->setLongitude(lon);
-				_base->setLatitude(lat);
-
-				for (std::vector<Craft*>::const_iterator
-						i = _base->getCrafts()->begin();
-						i != _base->getCrafts()->end();
-						++i)
-				{
-					(*i)->setLongitude(lon);
-					(*i)->setLatitude(lat);
-				}
-
-				if (_firstBase == true)
-					_game->pushState(new BaseNameState(_base, _globe, true));
-				else
-					_game->pushState(new ConfirmNewBaseState(_base, _globe));
+				(*i)->setLongitude(lon);
+				(*i)->setLatitude(lat);
 			}
+
+			if (_firstBase == true)
+				_game->pushState(new BaseNameState(_base, _globe, true));
 			else
-				_game->pushState(new ErrorMessageState(
-												tr("STR_XCOM_BASE_CANNOT_BE_BUILT"),
-												_palette,
-												_game->getRuleset()->getInterface("geoscape")->getElement("genericWindow")->color,
-												_game->getResourcePack()->getRandomBackground(),
-												_game->getRuleset()->getInterface("geoscape")->getElement("palette")->color));
+				_game->pushState(new ConfirmNewBaseState(_base, _globe));
 		}
+		else
+			_game->pushState(new ErrorMessageState(
+											tr("STR_XCOM_BASE_CANNOT_BE_BUILT"),
+											_palette,
+											_game->getRuleset()->getInterface("geoscape")->getElement("genericWindow")->color,
+											_game->getResourcePack()->getRandomBackground(),
+											_game->getRuleset()->getInterface("geoscape")->getElement("palette")->color));
+//		}
 	}
 }
 

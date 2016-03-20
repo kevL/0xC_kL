@@ -35,7 +35,7 @@ class Window;
 
 
 /**
- * Craft window that displays info about a specific craft out on the Geoscape.
+ * State that displays info about a specific Craft on the Geoscape.
  */
 class GeoscapeCraftState
 	:

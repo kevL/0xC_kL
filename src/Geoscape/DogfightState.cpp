@@ -737,7 +737,7 @@ void DogfightState::animate()
 }
 
 /**
- * Updates all the elements in the dogfight.
+ * Updates all the elements in this Dogfight.
  * @note Includes ufo movement, weapons fire, projectile movement, ufo escape
  * conditions, craft and ufo destruction conditions, and retaliation mission
  * generation as applicable.
@@ -858,9 +858,8 @@ void DogfightState::updateDogfight()
 					if ((*i)->getGlobalType() != PGT_BEAM
 						&& (*i)->getDirection() == PD_UP)
 					{
-//						(*i)->setPosition((*i)->getPosition() + delta);	// Don't let the interceptor mystically push or pull its fired projectiles. So to speak ....
 						if (delta > 0)
-							(*i)->setRange((*i)->getRange() + delta);	// Also don't let interceptor mystically push or pull its fired projectiles.
+							(*i)->setRange((*i)->getRange() + delta); // Don't let interceptor mystically push or pull its fired projectiles.
 					}
 				}
 			}
@@ -916,7 +915,6 @@ void DogfightState::updateDogfight()
 							if (_ufo->isCrashed() == true)
 							{
 								_ufo->setShotDownByCraftId(_craft->getUniqueId());
-//								_ufo->setDestination(); // kL
 								_ufo->setSpeed(0);
 								_craft->addKill();
 
@@ -1077,7 +1075,7 @@ void DogfightState::updateDogfight()
 						--_w2FireCountdown;
 				}
 
-				if (cw->getAmmo() == 0 // Handle craft distance according to option set by user and available ammo.
+				if (cw->getAmmo() == 0 // Handle craft distance according to option set by player and available ammo.
 					&& prjInFlight == false
 					&& _craft->isDestroyed() == false)
 				{
@@ -1268,7 +1266,7 @@ void DogfightState::updateDogfight()
 				}
 				else if (_ufo->getCrashId() == 0) // Set up Crash site.
 				{
-					_ufo->setDestination(); // kL
+					_ufo->setDestination();
 					_ufo->setCrashId(_gameSave->getCanonicalId("STR_CRASH_SITE"));
 
 					_ufo->setSecondsLeft(RNG::generate(24,96) * 3600); // TODO: Put min/max in UFO-rules per UFO-type.
@@ -1295,7 +1293,6 @@ void DogfightState::updateDogfight()
 						(*i)->setTimeout(MSG_TIMEOUT); // persist other port(s).
 					}
 				}
-
 				_timeout *= 2; // persist this port twice normal duration.
 			}
 

@@ -555,7 +555,7 @@ void UfoDetectedState::transposeWindow() // private.
 	_btn5Sec->setY(_btn5Sec->getY() + dy);
 	_btnCancel->setY(_btnCancel->getY() + dy);
 
-	Surface* const srf (_game->getResourcePack()->getSurface("TARGET_UFO"));
+	Surface* const srf (_game->getResourcePack()->getSurface("Crosshairs"));
 	srf->setX(0);
 	srf->setY(0);
 	srf->blit(_srfTarget);

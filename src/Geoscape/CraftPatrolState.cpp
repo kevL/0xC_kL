@@ -250,7 +250,7 @@ void CraftPatrolState::transposeWindow() // private.
 	_txtDestination->setVisible(false);
 	_btnCenter->setText(tr("STR_PAUSE"));
 
-	Surface* const srf (_game->getResourcePack()->getSurface("TARGET_UFO"));
+	Surface* const srf (_game->getResourcePack()->getSurface("Crosshairs"));
 	srf->setX(0);
 	srf->setY(0);
 	srf->blit(_srfTarget);

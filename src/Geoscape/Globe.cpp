@@ -295,7 +295,7 @@ struct CreateShadow
 
 
 /**
- * Sets up a globe with the specified size and position.
+ * Sets up the Globe with a specified size and position.
  * @param game		- pointer to the core Game
  * @param cenX		- X position of the center of the globe
  * @param cenY		- Y position of the center of the globe
@@ -405,8 +405,8 @@ Globe::~Globe()
 }
 
 /**
- * Converts a polar point into a cartesian point for
- * mapping a polygon onto the 3D-looking globe.
+ * Converts a polar-point into a cartesian-point for mapping a Polygon onto the
+ * 3D-looking Globe.
  * @param lon	- longitude of the polar point
  * @param lat	- latitude of the polar point
  * @param x		- pointer to the output X position
@@ -438,8 +438,8 @@ void Globe::polarToCart( // Orthographic projection
 }
 
 /**
- * Converts a cartesian point into a polar point for
- * mapping a globe click onto the flat world map.
+ * Converts a cartesian-point into a polar-point for mapping a globe-click onto
+ * the flat world.
  * @param x		- X position of the cartesian point
  * @param y		- Y position of the cartesian point
  * @param lon	- pointer to the output longitude
@@ -479,7 +479,8 @@ void Globe::cartToPolar( // Orthographic Projection
 }
 
 /**
- * Checks if a polar point is on the back-half of the globe, invisible to the player.
+ * Checks if a polar-point is on the back-half of this Globe hence invisible to
+ * the player.
  * @param lon - longitude of the point
  * @param lat - latitude of the point
  * @return, true if it's on the back, false if it's on the front
@@ -493,7 +494,7 @@ bool Globe::pointBack( // private.
 }
 
 /**
- * Returns latitude of last visible to player point on given longitude.
+ * Returns latitude of last visible-to-player point on given longitude.
  * @param lon - longitude of the point
  * @return, longitude of last visible point
  *
@@ -578,7 +579,7 @@ Polygon* Globe::getPolygonAtCoord( // private.
 }
 
 /**
- * Checks if a polar point is inside a certain Polygon.
+ * Checks if a polar-point is inside a certain Polygon.
  * @param lon	- longitude of the point
  * @param lat	- latitude of the point
  * @param poly	- pointer to the polygon
@@ -590,35 +591,22 @@ bool Globe::insidePolygon( // private. obsolete, see getPolygonAtCoord()
 		const Polygon* const poly) const
 {
 	bool backFace (true);
-	for (size_t
-			i = 0;
-			i != poly->getPoints();
-			++i)
+	for (size_t i = 0; i != poly->getPoints(); ++i)
 	{
-		backFace &= pointBack(
-						poly->getLongitude(i),
-						poly->getLatitude(i)) == true;
+		backFace &= pointBack(poly->getLongitude(i), poly->getLatitude(i)) == true;
 	}
 
-	if (backFace != pointBack(lon,lat))
-		return false;
-
+	if (backFace != pointBack(lon,lat)) return false;
 
 	bool retOdd (false);
-
-	for (size_t
-			i = 0;
-			i != poly->getPoints();
-			++i)
+	for (size_t i = 0; i != poly->getPoints(); ++i)
 	{
 		const size_t j ((i + 1) % poly->getPoints());
-
 //		double x = lon, y = lat, x_i = poly->getLongitude(i), y_i = poly->getLatitude(i), x_j = poly->getLongitude(j), y_j = poly->getLatitude(j);
 		double
 			x,y,
 			x_i,x_j,
 			y_i,y_j;
-
 		polarToCart(
 				poly->getLongitude(i),
 				poly->getLatitude(i),
@@ -630,7 +618,6 @@ bool Globe::insidePolygon( // private. obsolete, see getPolygonAtCoord()
 		polarToCart(
 				lon,lat,
 				&x,&y);
-
 		if (((		   y_i <  y
 					&& y_j >= y)
 				|| (   y_j <  y
@@ -641,7 +628,6 @@ bool Globe::insidePolygon( // private. obsolete, see getPolygonAtCoord()
 			retOdd ^= (x_i + (y - y_i) / (y_j - y_i) * (x_j - x_i) < x); // holy space-time continuum batman.
 		}
 	}
-
 	return retOdd;
 } */
 
@@ -651,12 +637,8 @@ bool Globe::insidePolygon( // private. obsolete, see getPolygonAtCoord()
 void Globe::rotateLeft()
 {
 	_rotLon = -ROTATE_LONGITUDE;
-
 	if (_rotTimer->isRunning() == false)
-	{
-		clearCrosshair();
 		_rotTimer->start();
-	}
 }
 
 /**
@@ -665,12 +647,8 @@ void Globe::rotateLeft()
 void Globe::rotateRight()
 {
 	_rotLon = ROTATE_LONGITUDE;
-
 	if (_rotTimer->isRunning() == false)
-	{
-		clearCrosshair();
 		_rotTimer->start();
-	}
 }
 
 /**
@@ -679,12 +657,8 @@ void Globe::rotateRight()
 void Globe::rotateUp()
 {
 	_rotLat = -ROTATE_LATITUDE;
-
 	if (_rotTimer->isRunning() == false)
-	{
-		clearCrosshair();
 		_rotTimer->start();
-	}
 }
 
 /**
@@ -693,12 +667,8 @@ void Globe::rotateUp()
 void Globe::rotateDown()
 {
 	_rotLat = ROTATE_LATITUDE;
-
 	if (_rotTimer->isRunning() == false)
-	{
-		clearCrosshair();
 		_rotTimer->start();
-	}
 }
 
 /**
@@ -708,7 +678,6 @@ void Globe::rotateStop()
 {
 	_rotLon =
 	_rotLat = 0.;
-
 	_rotTimer->stop();
 }
 
@@ -718,7 +687,6 @@ void Globe::rotateStop()
 void Globe::rotateStopLon()
 {
 	_rotLon = 0.;
-
 	if (AreSame(_rotLat, 0.))
 		_rotTimer->stop();
 }
@@ -729,13 +697,12 @@ void Globe::rotateStopLon()
 void Globe::rotateStopLat()
 {
 	_rotLat = 0.;
-
 	if (AreSame(_rotLon, 0.))
 		_rotTimer->stop();
 }
 
 /**
- * Sets up the radius of earth at various zoom levels.
+ * Sets up the radius of earth at various zoom-levels.
  * @param width		- the new width of the Globe
  * @param height	- the new height of the Globe
  */
@@ -783,7 +750,7 @@ void Globe::setupRadii( // private.
 }
 
 /**
- * Changes the current globe zoom factor.
+ * Changes the current globe-zoom factor.
  * @param zoom - the new zoom level
  */
 void Globe::setZoom(size_t zoom) // private.
@@ -812,8 +779,8 @@ void Globe::setZoom(size_t zoom) // private.
 }
 
 /**
- * Gets the Globe's current zoom level.
- * @return, zoom level
+ * Gets the Globe's current zoom-level.
+ * @return, zoom-level
  */
 size_t Globe::getZoom() const
 {
@@ -821,8 +788,8 @@ size_t Globe::getZoom() const
 }
 
 /**
- * Gets the number of zoom levels available.
- * @return, number of zoom levels
+ * Gets the number of zoom-levels available.
+ * @return, number of zoom-levels
  */
 size_t Globe::getZoomLevels() const
 {
@@ -830,29 +797,25 @@ size_t Globe::getZoomLevels() const
 }
 
 /**
- * Increases the zoom level on the globe.
+ * Increases the zoom-level on this Globe.
  */
 void Globe::zoomIn()
 {
-	clearCrosshair();
-
 	if (_zoom < _zoomRadii.size() - 1)
 		setZoom(_zoom + 1);
 }
 
 /**
- * Decreases the zoom level on the globe.
+ * Decreases the zoom-level on this Globe.
  */
 void Globe::zoomOut()
 {
-	clearCrosshair();
-
 	if (_zoom > 0)
 		setZoom(_zoom - 1);
 }
 
 /**
- * Zooms the globe out as far as possible.
+ * Zooms this Globe out as far as possible.
  *
 void Globe::zoomMin()
 {
@@ -860,7 +823,7 @@ void Globe::zoomMin()
 } */
 
 /**
- * Zooms the globe in as close as possible.
+ * Zooms this Globe in as close as possible.
  *
 void Globe::zoomMax()
 {
@@ -868,8 +831,8 @@ void Globe::zoomMax()
 } */
 
 /**
- * Zooms the globe smoothly into dogfight level.
- * @return, true if the globe has finished zooming in
+ * Zooms this Globe smoothly into a Dogfight.
+ * @return, true if zoom has finished
  */
 bool Globe::zoomDogfightIn()
 {
@@ -895,8 +858,8 @@ bool Globe::zoomDogfightIn()
 }
 
 /**
- * Zooms the globe smoothly out of dogfight level.
- * @return, true if the globe has finished zooming out
+ * Zooms this Globe smoothly out of a Dogfight.
+ * @return, true if the zoom has finished
  */
 bool Globe::zoomDogfightOut()
 {
@@ -922,7 +885,7 @@ bool Globe::zoomDogfightOut()
 }
 
 /**
- * Rotates the globe to center on a certain polar point on the world map.
+ * Rotates this Globe to center on a certain polar-point.
  * @param lon - longitude of the point
  * @param lat - latitude of the point
  */
@@ -937,7 +900,7 @@ void Globe::center(
 }
 
 /**
- * Checks if a polar point is inside the globe's landmass.
+ * Checks if a polar-point is inside land.
  * @param lon - longitude of the point
  * @param lat - latitude of the point
  * @return, true if point is over land
@@ -950,7 +913,7 @@ bool Globe::insideLand(
 }
 
 /**
- * Switches the amount of detail shown on the globe.
+ * Switches the amount of detail shown on this Globe.
  * @note Country and city details are shown only when zoomed in.
  */
 void Globe::toggleDetail()
@@ -960,7 +923,7 @@ void Globe::toggleDetail()
 }
 
 /**
- * Turns Radar lines on or off.
+ * Turns radar-lines on or off.
  */
 void Globe::toggleRadarLines()
 {
@@ -987,7 +950,7 @@ void Globe::toggleRadarLines()
 }
 
 /**
- * Checks if a certain target is near a certain cartesian point.
+ * Checks if a certain target is near a certain cartesian-point.
  * @param target	- pointer to Target
  * @param x			- X coordinate of point
  * @param y			- Y coordinate of point
@@ -1020,7 +983,7 @@ bool Globe::targetNear( // private.
 }
 
 /**
- * Returns a list of all the Targets currently near a cartesian point.
+ * Returns a list of all the Targets currently near a cartesian-point.
  * @param x				- X coordinate of point
  * @param y				- Y coordinate of point
  * @param flightTargets	- true to get targets for Craft only (default true)
@@ -1107,9 +1070,9 @@ std::vector<Target*> Globe::getTargets(
 }
 
 /**
- * Takes care of pre-calculating all the polygons currently visible on the globe
- * and caching them so they only need to be recalculated when the globe is
- * actually moved.
+ * Takes care of pre-calculating all the Polygons currently visible on this
+ * Globe and caching them so they only need to be recalculated when this Globe
+ * is actually moved.
  */
 void Globe::cachePolygons()
 {
@@ -1117,7 +1080,7 @@ void Globe::cachePolygons()
 }
 
 /**
- * Caches a set of polygons.
+ * Caches a set of Polygons.
  * @param polygons	- pointer to list of polygons
  * @param cache		- pointer to cache list
  */
@@ -1184,7 +1147,7 @@ void Globe::cache( // private.
 }
 
 /**
- * Replaces a certain amount of colors in the palette of the globe.
+ * Replaces a certain amount of colors in the palette of this Globe.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace
  * @param ncolors		- amount of colors to replace
@@ -1253,8 +1216,8 @@ void Globe::toggleBlink()
 }
 
 /**
- * Rotates the globe by a set amount.
- * @note Necessary since the globe keeps rotating while a button is pressed down.
+ * Rotates this Globe by a set amount.
+ * @note Necessary since the Globe keeps rotating while a button is held down.
  */
 void Globe::rotate()
 {
@@ -1268,7 +1231,7 @@ void Globe::rotate()
 }
 
 /**
- * Draws the whole globe part by part.
+ * Draws this whole Globe part by part.
  */
 void Globe::draw()
 {
@@ -1304,8 +1267,8 @@ void Globe::drawOcean()
 }
 
 /**
- * Renders the land taking all the visible world polygons and texturing and
- * shading them accordingly.
+ * Renders the land taking all the visible world-polygons and texturing and
+ * shading them appropriately.
  */
 void Globe::drawLand()
 {
@@ -1335,7 +1298,7 @@ void Globe::drawLand()
 }
 
 /**
- * Draws a 3d bevel around the continents.
+ * Draws a 3d-bevel around the continents.
  */
 void Globe::drawBevel()
 {
@@ -1368,7 +1331,7 @@ void Globe::drawBevel()
 }
 
 /**
- * Gets position of sun from point on globe.
+ * Gets position of sun from point on this Globe.
  * @param lon - longitude of position
  * @param lat - latitude of position
  * @return, position of sun
@@ -1439,7 +1402,7 @@ Cord Globe::getSunDirection( // private.
 
 /**
  * Shadows the earth according to the sun's direction.
- * @note Also handles the terminator (noise).
+ * @note Also handles the terminator-fluxions (noise).
  */
 void Globe::drawShadow()
 {
@@ -1577,7 +1540,7 @@ void Globe::XuLine( // private.
 }
 
 /**
- * Draws the radar ranges of player's Bases and Craft on the globe.
+ * Draws the radar-circles of player's Bases and Craft on this Globe.
  */
 void Globe::drawRadars()
 {
@@ -1694,7 +1657,7 @@ void Globe::drawRadars()
 }
 
 /**
- * Draws globe range circle.
+ * Draws a range circle.
  * @param lat		-
  * @param lon		-
  * @param radius	-
@@ -1859,7 +1822,7 @@ void Globe::drawVHLine( // private.
 }
 
 /**
- * Draws the details of the countries on the globe based on the current zoom level.
+ * Draws the details of the countries on this Globe based on the current zoom-level.
  */
 void Globe::drawDetail()
 {
@@ -2388,7 +2351,7 @@ void Globe::drawInterceptMarker( // private.
 }
 
 /**
- * Draws the marker for a specified Target on the globe.
+ * Draws the marker for a specified Target on this Globe.
  * @param target	- pointer to globe Target
  * @param surface	- pointer to globe Surface
  */
@@ -2485,7 +2448,7 @@ void Globe::drawCrosshair() // private.
 				_crosshairLat,
 				&x,&y);
 
-		Surface* const crosshair (_game->getResourcePack()->getSurface("TARGET_UFO"));
+		Surface* const crosshair (_game->getResourcePack()->getSurface("Crosshairs"));
 		crosshair->setX(x - 14);
 		crosshair->setY(y - 14);
 		crosshair->blit(_crosshair);
@@ -2530,7 +2493,7 @@ void Globe::blit(Surface* const srf)
 }
 
 /**
- * Ignores any mouse hovers that are outside the globe.
+ * Ignores any mouse-hovers that are outside this Globe.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -2573,7 +2536,7 @@ void Globe::mouseOver(Action* action, State* state)
 			_mouseOverThreshold = std::abs(_totalMouseMoveX) > Options::dragScrollPixelTolerance
 							   || std::abs(_totalMouseMoveY) > Options::dragScrollPixelTolerance;
 
-		if (Options::geoDragScrollInvert == true) // scroll. I don't use this
+		if (Options::geoDragScrollInvert == true) // scroll. I don't use inverted scrolling.
 		{
 			const double
 				newLon ((static_cast<double>(_totalMouseMoveX) / action->getXScale()) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1) / 2.),
@@ -2599,12 +2562,14 @@ void Globe::mouseOver(Action* action, State* state)
 }
 
 /**
- * Ignores any mouse clicks that are outside the globe.
+ * Ignores any mouse-clicks that are outside this Globe.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
 void Globe::mousePress(Action* action, State* state)
 {
+	clearCrosshair();
+
 	double
 		lon,lat;
 	cartToPolar(
@@ -2632,7 +2597,7 @@ void Globe::mousePress(Action* action, State* state)
 }
 
 /**
- * Ignores any mouse clicks that are outside the globe.
+ * Ignores any mouse-clicks that are outside this Globe.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -2650,7 +2615,7 @@ void Globe::mouseRelease(Action* action, State* state)
 }
 
 /**
- * Ignores any mouse clicks that are outside the globe and handles globe
+ * Ignores any mouse-clicks that are outside this Globe and handles this Globe's
  * rotation and zooming.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to

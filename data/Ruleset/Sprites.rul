@@ -106,12 +106,12 @@ extraSprites:
     files:
       0: Resources/Sprites/geodata/interwin/textures/tex_urban.png
 # -------- GEOGRAPH -------- #
-  - type: TARGET_UFO
+  - type: Crosshairs
     width: 29
     height: 29
     singleImage: true
     files:
-      0: Resources/Sprites/geograph/target.png
+      0: Resources/Sprites/geograph/crosshairs.png
   - type: BACK07.SCR #-> ALTBACK07.SCR (see XcomResourcePack.cpp)
     width: 320
     height: 200
