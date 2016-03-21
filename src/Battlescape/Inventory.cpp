@@ -413,8 +413,8 @@ void Inventory::think()
  */
 void Inventory::drawPrimers() // private.
 {
-	static const int pulse[22] = { 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,
-								  13,12,11,10, 9, 8, 7, 6, 5, 4, 3};
+	static const int pulse[22] { 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,
+								13,12,11,10, 9, 8, 7, 6, 5, 4, 3};
 
 	if (_fuseFrame == 22) _fuseFrame = 0;
 
@@ -1112,10 +1112,10 @@ void Inventory::arrangeGround(int dir)
 							yd < (*i)->getRules()->getInventoryHeight() && fit == true;
 							++yd)
 					{
-						BattleItem* const item = _selUnit->getItem(
+						BattleItem* const item (_selUnit->getItem(
 																grdRule,
 																x + xd,
-																y + yd);
+																y + yd));
 						fit = (item == nullptr);
 
 						if (canStack(item, *i) == true)
@@ -1132,9 +1132,8 @@ void Inventory::arrangeGround(int dir)
 				if (*i != _selItem && width != 0) // only increase the stack level if the item is actually visible.
 					_stackLevel[x][y] += 1;
 
-				lastSlot = std::max(
-								lastSlot,
-								x + width);
+				lastSlot = std::max(lastSlot,
+									x + width);
 			}
 			else if (++y > RuleInventory::GROUND_H - (*i)->getRules()->getInventoryHeight())
 			{

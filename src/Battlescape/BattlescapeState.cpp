@@ -1807,21 +1807,26 @@ void BattlescapeState::btnUnitUpPress(Action*)
 		if (pf->isModAlt() == false)
 		{
 			pf->setPathingUnit(_battleSave->getSelectedUnit());
-			const int valid (pf->validateUpDown(
-											_battleSave->getSelectedUnit()->getPosition(),
-											Pathfinding::DIR_UP));
-			if (valid > 0) // gravLift or flying
+			switch (pf->validateUpDown(
+									_battleSave->getSelectedUnit()->getPosition(),
+									Pathfinding::DIR_UP))
 			{
-				_overlay->getFrame(0)->blit(_btnUnitUp);
-				_battleGame->cancelTacticalAction();
-				_battleGame->moveUpDown(
-									_battleSave->getSelectedUnit(),
-									Pathfinding::DIR_UP);
+				case FLY_CANT:
+					warning("STR_ACTION_NOT_ALLOWED_NOFLY");
+					break;
+
+				case FLY_BLOCKED:
+					warning("STR_ACTION_NOT_ALLOWED_ROOF");
+					break;
+
+				case FLY_GRAVLIFT:
+				case FLY_GOOD:
+					_overlay->getFrame(0)->blit(_btnUnitUp);
+					_battleGame->cancelTacticalAction();
+					_battleGame->moveUpDown(
+										_battleSave->getSelectedUnit(),
+										Pathfinding::DIR_UP);
 			}
-			else if (valid == -1)
-				warning("STR_ACTION_NOT_ALLOWED_NOFLY");
-			else
-				warning("STR_ACTION_NOT_ALLOWED_ROOF");
 		}
 		else
 			warning("STR_ACTION_NOT_ALLOWED_NOFLY");
@@ -1849,18 +1854,23 @@ void BattlescapeState::btnUnitDownPress(Action*)
 		pf->setInputModifiers();
 		pf->setPathingUnit(_battleSave->getSelectedUnit());
 
-		if (pf->validateUpDown(
-							_battleSave->getSelectedUnit()->getPosition(),
-							Pathfinding::DIR_DOWN) > 0)
+		switch (pf->validateUpDown(
+								_battleSave->getSelectedUnit()->getPosition(),
+								Pathfinding::DIR_DOWN))
 		{
-			_overlay->getFrame(7)->blit(_btnUnitDown);
-			_battleGame->cancelTacticalAction();
-			_battleGame->moveUpDown(
-								_battleSave->getSelectedUnit(),
-								Pathfinding::DIR_DOWN);
+			case FLY_CANT:
+			case FLY_BLOCKED:
+				warning("STR_ACTION_NOT_ALLOWED_FLOOR");
+				break;
+
+			case FLY_GRAVLIFT:
+			case FLY_GOOD:
+				_overlay->getFrame(7)->blit(_btnUnitDown);
+				_battleGame->cancelTacticalAction();
+				_battleGame->moveUpDown(
+									_battleSave->getSelectedUnit(),
+									Pathfinding::DIR_DOWN);
 		}
-		else
-			warning("STR_ACTION_NOT_ALLOWED_FLOOR");
 	}
 }
 

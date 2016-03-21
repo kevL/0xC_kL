@@ -1002,14 +1002,19 @@ int Pathfinding::getTuCostPf(
 				case DIR_DOWN:
 					if (fall == false)
 					{
-						if (validateUpDown(
+						switch (validateUpDown(
 										posStart + posOffset,
-										dir,
-										launchTarget != nullptr) < 1)
+										dir))
+//										launchTarget != nullptr))
 						{
-							return FAIL;
+							case FLY_CANT:
+							case FLY_BLOCKED:
+								return FAIL;
+
+							case FLY_GRAVLIFT:
+							case FLY_GOOD:
+								cost = 8;
 						}
-						cost = 8;
 					}
 					break;
 
@@ -1973,17 +1978,13 @@ bool Pathfinding::canFallDown(const Tile* const tile) const // private
  * obstructions.
  * @param posStart	- reference the start position
  * @param dir		- up or down
- * @param launch	- true if pathing a waypoint-launcher/guided missile (default false)
- * @return,	-1 can't fly
-//			-1 kneeling (stop unless on gravLift)
-			 0 blocked (stop)
-			 1 gravLift (go)
-			 2 flying (go unless blocked)
+// * @param launch	- true if pathing a waypoint-launcher/guided missile (default false)
+ * @return, UpDownCheck (Pathfinding.h)
  */
-int Pathfinding::validateUpDown(
+UpDownCheck Pathfinding::validateUpDown(
 		const Position& posStart,
-		const int dir,
-		const bool launch)	// <- not so sure this is needed.
+		const int dir)
+//		const bool launch)	// <- not so sure this is needed.
 {							// ie, AI Blaster Launches have found holes in floor just fine so far.
 	Position posStop;
 	directionToVector(dir, &posStop);
@@ -1994,14 +1995,14 @@ int Pathfinding::validateUpDown(
 		* const destTile (_battleSave->getTile(posStop));
 
 	if (destTile == nullptr)
-		return 0;
+		return FLY_BLOCKED;
 
 	if (startTile->getMapData(O_FLOOR) != nullptr
 		&& startTile->getMapData(O_FLOOR)->isGravLift()
 		&& destTile->getMapData(O_FLOOR) != nullptr
 		&& destTile->getMapData(O_FLOOR)->isGravLift())
 	{
-		return 1;
+		return FLY_GRAVLIFT;
 	}
 
 	if (_mType == MT_FLY
@@ -2012,21 +2013,21 @@ int Pathfinding::validateUpDown(
 			|| (dir == DIR_DOWN
 				&& startTile->hasNoFloor(_battleSave->getTile(posStart + Position(0,0,-1)))))
 		{
-			if (launch)
-			{
-				if ((dir == DIR_UP
-						&& destTile->getMapData(O_FLOOR)->getLoftId(0) != 0)
-					|| (dir == DIR_DOWN
-						&& startTile->getMapData(O_FLOOR)->getLoftId(0) != 0))
-				{
-					return 0; // blocked.
-				}
-			}
-			return 2; // flying.
+//			if (launch)
+//			{
+//				if ((dir == DIR_UP
+//						&& destTile->getMapData(O_FLOOR)->getLoftId(0) != 0)
+//					|| (dir == DIR_DOWN
+//						&& startTile->getMapData(O_FLOOR)->getLoftId(0) != 0))
+//				{
+//					return FLY_BLOCKED;
+//				}
+//			}
+			return FLY_GOOD;
 		}
-		return 0; // blocked.
+		return FLY_BLOCKED;
 	}
-	return -1; // no flying suit.
+	return FLY_CANT;
 }
 
 /**

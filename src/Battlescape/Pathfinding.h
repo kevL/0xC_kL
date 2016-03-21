@@ -31,6 +31,14 @@
 namespace OpenXcom
 {
 
+enum UpDownCheck
+{
+	FLY_CANT,		// 0
+	FLY_BLOCKED,	// 1
+	FLY_GRAVLIFT,	// 2
+	FLY_GOOD		// 3
+};
+
 class BattleUnit;
 class SavedBattleGame;
 class Tile;
@@ -160,10 +168,10 @@ private:
 				const BattleUnit* const launchTarget = nullptr) const;
 
 		/// Checks if the movement is valid, for the up/down button.
-		int validateUpDown(
+		UpDownCheck validateUpDown(
 				const Position& posStart,
-				const int dir,
-				const bool launch = false);
+				const int dir);
+//				const bool launch = false);
 
 		/// Previews the path.
 		bool previewPath(bool discard = false);
