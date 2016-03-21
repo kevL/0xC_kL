@@ -160,7 +160,7 @@ void MovingTarget::setSpeed(const int speed)
 {
 	_speed = speed;
 
-	// each nautical mile is 1/60th of a degree; each hour contains 720 5-second periods.
+	// Each nautical mile is 1/60th of a degree; each hour contains 720 5-second periods.
 	_speedRadian = static_cast<double>(_speed) * unitToRads / 720.;
 
 	calculateSpeed();
@@ -188,7 +188,7 @@ void MovingTarget::calculateSpeed() // protected/virtual.
 		_speedLat = dLat / dist * _speedRadian;
 		_speedLon = dLon / dist * _speedRadian / std::cos(_lat + _speedLat);
 
-		// Check for invalid speeds when a division by zero occurs due to near-lightspeed values
+		// Check for invalid speeds when a division by zero occurs due to near-lightspeed values.
 		if (isNaNorInf(_speedLon, _speedLat) == true)
 		{
 			_speedLon =

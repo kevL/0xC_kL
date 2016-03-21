@@ -65,9 +65,9 @@ MultipleTargetsState::MultipleTargetsState(
 	if (_targets.size() > 1)
 	{
 		int
-			height = (BUTTON_HEIGHT * (_targets.size() + 1)) + (SPACING * (_targets.size())) + (MARGIN * 2),
-			window_y = (200 - height) / 2,
-			btn_y = window_y + MARGIN;
+			height ((BUTTON_HEIGHT * (_targets.size() + 1)) + (SPACING * (_targets.size())) + (MARGIN * 2)),
+			window_y ((200 - height) / 2),
+			btn_y (window_y + MARGIN);
 
 		_window = new Window(
 							this,
@@ -88,11 +88,11 @@ MultipleTargetsState::MultipleTargetsState(
 				i != _targets.size();
 				++i)
 		{
-			TextButton* btn = new TextButton(
+			TextButton* btn (new TextButton(
 										116,
 										BUTTON_HEIGHT,
 										70,
-										btn_y);
+										btn_y));
 			btn->setText(_targets[i]->getName(_game->getLanguage()));
 			btn->onMouseClick((ActionHandler)& MultipleTargetsState::btnTargetClick);
 			add(btn, "button", "UFOInfo");
@@ -161,10 +161,10 @@ void MultipleTargetsState::popupTarget(Target* const target)
 			_game->pushState(new GeoscapeCraftState(craft, _geoState));
 		else if (ufo != nullptr)
 			_game->pushState(new UfoDetectedState(
-											ufo,
-											_geoState,
-											false,
-											ufo->getHyperDetected()));
+												ufo,
+												_geoState,
+												false,
+												ufo->getHyperDetected()));
 		else
 			_game->pushState(new TargetInfoState(target, _geoState));
 	}

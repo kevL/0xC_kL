@@ -30,6 +30,7 @@ class Craft;
 class Target;
 class Text;
 class TextButton;
+class Waypoint;
 class Window;
 
 
@@ -44,6 +45,8 @@ class ConfirmDestinationState
 private:
 	Craft* _craft;
 	Target* _target;
+	Waypoint* _waypoint0;
+
 	Text* _txtTarget;
 	TextButton
 		* _btnCancel,

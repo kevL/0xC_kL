@@ -512,7 +512,7 @@ void Ufo::calculateSpeed() // private.
 	MovingTarget::calculateSpeed();
 
 	const double
-		x (_speedLon),
+		x ( _speedLon),
 		y (-_speedLat);
 
 	// This section guards vs. divide-by-zero.

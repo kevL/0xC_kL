@@ -51,8 +51,6 @@ ConfirmDestinationState::ConfirmDestinationState(
 		_craft(craft),
 		_target(target)
 {
-	const Waypoint* const wp = dynamic_cast<Waypoint*>(_target);
-
 	_fullScreen = false;
 
 	_window		= new Window(this, 224, 72, 16, 64);
@@ -61,9 +59,13 @@ ConfirmDestinationState::ConfirmDestinationState(
 	_btnCancel	= new TextButton(75, 16,  51, 111);
 	_btnOk		= new TextButton(75, 16, 130, 111);
 
+	_waypoint0 = dynamic_cast<Waypoint*>(_target);
+	if (_waypoint0 != nullptr && _waypoint0->getId() != 0)
+		_waypoint0 = nullptr;
+
 	setInterface(
 			"confirmDestination",
-			wp != nullptr && wp->getId() == 0);
+			_waypoint0 != nullptr);
 
 	add(_window,	"window",	"confirmDestination");
 	add(_txtTarget,	"text",		"confirmDestination");
@@ -78,7 +80,7 @@ ConfirmDestinationState::ConfirmDestinationState(
 	_txtTarget->setBig();
 	_txtTarget->setAlign(ALIGN_CENTER);
 	_txtTarget->setVerticalAlign(ALIGN_MIDDLE);
-	if (wp != nullptr && wp->getId() == 0)
+	if (_waypoint0 != nullptr)
 		_txtTarget->setText(tr("STR_TARGET_WAY_POINT"));
 	else
 		_txtTarget->setText(tr("STR_TARGET").arg(_target->getName(_game->getLanguage())));
@@ -111,11 +113,10 @@ ConfirmDestinationState::~ConfirmDestinationState()
  */
 void ConfirmDestinationState::btnOkClick(Action*)
 {
-	Waypoint* const wp = dynamic_cast<Waypoint*>(_target);
-	if (wp != nullptr && wp->getId() == 0)
+	if (_waypoint0 != nullptr)
 	{
-		wp->setId(_game->getSavedGame()->getCanonicalId("STR_WAYPOINT"));
-		_game->getSavedGame()->getWaypoints()->push_back(wp);
+		_waypoint0->setId(_game->getSavedGame()->getCanonicalId("STR_WAYPOINT"));
+		_game->getSavedGame()->getWaypoints()->push_back(_waypoint0);
 	}
 
 	_craft->setDestination(_target);
@@ -131,9 +132,8 @@ void ConfirmDestinationState::btnOkClick(Action*)
  */
 void ConfirmDestinationState::btnCancelClick(Action*)
 {
-	const Waypoint* const wp = dynamic_cast<Waypoint*>(_target);
-	if (wp != nullptr && wp->getId() == 0)
-		delete wp;
+	if (_waypoint0 != nullptr)
+		delete _waypoint0;
 
 	_game->popState();
 }
