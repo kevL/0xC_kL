@@ -39,7 +39,7 @@ MissionSite::MissionSite(
 	:
 		Target(),
 		_missionRule(missionRule),
-		_deployRule(ruleDeploy),
+		_ruleDeploy(ruleDeploy),
 		_id(0),
 		_texture(-1),
 		_secondsLeft(0),
@@ -83,7 +83,7 @@ YAML::Node MissionSite::save() const
 	node["race"]		= _race;
 	node["texture"]		= _texture;
 	node["type"]		= _missionRule->getType();
-	node["deployment"]	= _deployRule->getType();
+	node["deployment"]	= _ruleDeploy->getType();
 
 	if (_detected == true)	node["detected"]	= _detected;
 	if (_secondsLeft != 0)	node["secondsLeft"]	= _secondsLeft;
@@ -100,7 +100,7 @@ YAML::Node MissionSite::saveId() const
 {
 	YAML::Node node (Target::saveId());
 
-	node["type"] = _deployRule->getMarkerType();
+	node["type"] = _ruleDeploy->getMarkerType();
 	node["id"]   = _id;
 
 	return node;
@@ -121,7 +121,7 @@ const RuleAlienMission* MissionSite::getRules() const
  */
 const AlienDeployment* MissionSite::getSiteDeployment() const
 {
-	return _deployRule;
+	return _ruleDeploy;
 }
 
 /**
@@ -149,7 +149,7 @@ void MissionSite::setId(const int id)
  */
 std::wstring MissionSite::getName(const Language* const lang) const
 {
-	return lang->getString(_deployRule->getMarkerType()).arg(_id);
+	return lang->getString(_ruleDeploy->getMarkerType()).arg(_id);
 }
 
 /**
@@ -160,7 +160,7 @@ int MissionSite::getMarker() const
 {
 	if (_detected == true)
 	{
-		const int ret (_deployRule->getMarkerIcon());
+		const int ret (_ruleDeploy->getMarkerIcon());
 		if (ret != -1) return ret; // for a custom marker.
 
 		return Globe::GLM_MISSIONSITE;

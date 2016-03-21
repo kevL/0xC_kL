@@ -73,13 +73,13 @@ BriefingState::BriefingState(
 	_btnOk			= new TextButton(288, 16, 16, 177);
 
 
-	std::string type = _game->getSavedGame()->getBattleSave()->getTacticalType();
-	const AlienDeployment* ruleDeploy = _game->getRuleset()->getDeployment(type); // check, Xcom1Ruleset->alienDeployments for a missionType
+	std::string type (_game->getSavedGame()->getBattleSave()->getTacticalType());
+	const AlienDeployment* ruleDeploy (_game->getRuleset()->getDeployment(type)); // check, Xcom1Ruleset->alienDeployments for a missionType
 
 	if (ruleDeploy == nullptr // landing site or crash site -> define BG & Music by ufoType instead
 		&& craft != nullptr)
 	{
-		const Ufo* const ufo = dynamic_cast<Ufo*>(craft->getDestination());
+		const Ufo* const ufo (dynamic_cast<Ufo*>(craft->getDestination()));
 		if (ufo != nullptr) // landing site or crash site.
 			ruleDeploy = _game->getRuleset()->getDeployment(ufo->getRules()->getType()); // check, Xcom1Ruleset->alienDeployments for a ufoType
 	}
@@ -99,19 +99,25 @@ BriefingState::BriefingState(
 	}
 	else
 	{
-		const BriefingData dataBrief = ruleDeploy->getBriefingData();
+		const BriefingData dataBrief (ruleDeploy->getBriefingData());
 
 		bg = dataBrief.background;
 		bgColor = dataBrief.palette;
 
-		const TacticalType tacType = _game->getSavedGame()->getBattleSave()->getTacType();
-		if (tacType == TCT_UFOCRASHED)
-			track = OpenXcom::res_MUSIC_GEO_BRIEF_UFOCRASHED;
-		else if (tacType == TCT_UFOLANDED)
-			track = OpenXcom::res_MUSIC_GEO_BRIEF_UFOLANDED;
-		else
-			track = dataBrief.music;	// note This currently conflicts w/ UFO Recovery/Assault.
-										// that is, the music assigned to a UFO will be overridden ...
+		switch (_game->getSavedGame()->getBattleSave()->getTacType())
+		{
+			case TCT_UFOCRASHED:
+				track = OpenXcom::res_MUSIC_GEO_BRIEF_UFOCRASHED;
+				break;
+
+			case TCT_UFOLANDED:
+				track = OpenXcom::res_MUSIC_GEO_BRIEF_UFOLANDED;
+				break;
+
+			default:
+				track = dataBrief.music;	// note This currently conflicts w/ UFO Recovery/Assault.
+											// that is, the music assigned to a UFO will be overridden ...
+		}
 //		_txtBriefing->setY(_txtBriefing->getY() + dataBrief.textOffset);
 //		_txtCraft->setY(_txtCraft->getY() + dataBrief.textOffset);
 //		_txtTarget->setVisible(dataBrief.showTargetText);
@@ -217,7 +223,7 @@ void BriefingState::btnOkClick(Action*)
 	Options::baseYResolution = Options::baseYBattlescape;
 	_game->getScreen()->resetDisplay(false);
 
-	BattlescapeState* const battleState = new BattlescapeState(); // <- ah there it is!
+	BattlescapeState* const battleState (new BattlescapeState()); // <- ah there it is!
 
 	int
 		liveHostile,

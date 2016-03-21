@@ -443,6 +443,7 @@ void SavedGame::load(
 	_end = static_cast<GameEnding>(doc["end"].as<int>(_end));
 
 	_monthsPassed			= doc["monthsPassed"]		.as<int>(_monthsPassed);
+	_warned					= doc["warned"]				.as<bool>(_warned);
 	_graphRegionToggles		= doc["graphRegionToggles"]	.as<std::string>(_graphRegionToggles);
 	_graphCountryToggles	= doc["graphCountryToggles"].as<std::string>(_graphCountryToggles);
 	_graphFinanceToggles	= doc["graphFinanceToggles"].as<std::string>(_graphFinanceToggles);
@@ -451,7 +452,6 @@ void SavedGame::load(
 	_researchScores			= doc["researchScores"]		.as<std::vector<int>>(_researchScores);
 	_income					= doc["income"]				.as<std::vector<int64_t>>(_income);
 	_expenditure			= doc["expenditure"]		.as<std::vector<int64_t>>(_expenditure);
-	_warned					= doc["warned"]				.as<bool>(_warned);
 	_ids					= doc["ids"]				.as<std::map<std::string, int>>(_ids);
 //	_radarLines				= doc["radarLines"]			.as<bool>(_radarLines);
 //	_detail					= doc["detail"]				.as<bool>(_detail);
@@ -691,8 +691,11 @@ void SavedGame::save(const std::string& file) const
 
 	node["rng"]					= RNG::getSeed();
 	node["difficulty"]			= static_cast<int>(_difficulty);
-	node["end"]					= static_cast<int>(_end);
-	node["monthsPassed"]		= _monthsPassed;
+
+	if (_end != END_NONE)		node["end"]				= static_cast<int>(_end);
+	if (_monthsPassed != -1)	node["monthsPassed"]	= _monthsPassed;
+	if (_warned == true)		node["warned"]			= _warned;
+
 	node["graphRegionToggles"]	= _graphRegionToggles;
 	node["graphCountryToggles"]	= _graphCountryToggles;
 	node["graphFinanceToggles"]	= _graphFinanceToggles;
@@ -701,7 +704,6 @@ void SavedGame::save(const std::string& file) const
 	node["researchScores"]		= _researchScores;
 	node["income"]				= _income;
 	node["expenditure"]			= _expenditure;
-	node["warned"]				= _warned;
 	node["ids"]					= _ids;
 //	node["radarLines"]			= _radarLines;
 //	node["detail"]				= _detail;

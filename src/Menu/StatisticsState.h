@@ -46,9 +46,9 @@ private:
 	TextList* _lstStats;
 	Window* _window;
 
-	// Sums a list of numbers.
+	/// Sums a list of numbers.
 	template <typename T>
-	T total(const std::vector<T>& vec) const;
+	T total(const std::vector<T>& vect) const;
 
 
 	public:

@@ -54,7 +54,7 @@ private:
 		_race,
 		_terrain;
 
-	const AlienDeployment* _deployRule;
+	const AlienDeployment* _ruleDeploy;
 	const RuleAlienMission* _missionRule;
 
 

@@ -1740,7 +1740,7 @@ int Ruleset::detHighTuInventoryCost() const
 {
 	int
 		costTest,
-		cost = 0;
+		cost (0);
 
 	const RuleInventory* const grdRule (getInventoryRule(ST_GROUND));
 	for (std::map<std::string, RuleInventory*>::const_iterator

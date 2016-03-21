@@ -163,7 +163,7 @@ void StatisticsState::listStats()
 			i != gameSave->getMissionStatistics()->end();
 			++i)
 	{
-		if ((*i)->success)
+		if ((*i)->success == true)
 			++missionsWin;
 		else
 			++missionsLoss;
@@ -208,7 +208,7 @@ void StatisticsState::listStats()
 	for (std::vector<Soldier*>::const_iterator
 			i = solLive.begin();
 			i != solLive.end();
-		 ++i)
+			++i)
 	{
 		SoldierDiary* const diary ((*i)->getDiary());
 
@@ -306,8 +306,8 @@ void StatisticsState::listStats()
 		ufosDetected (gameSave->getCanonicalId("STR_UFO") - 1),
 		alienBases (gameSave->getCanonicalId("STR_ALIEN_BASE") - 1),
 		terrorSites (gameSave->getCanonicalId("STR_TERROR_SITE") - 1);
-	int totalCrafts (0);
 
+	int totalCrafts (0);
 	for (std::vector<std::string>::const_iterator
 			i = _game->getRuleset()->getCraftsList().begin();
 			i != _game->getRuleset()->getCraftsList().end();
@@ -317,10 +317,10 @@ void StatisticsState::listStats()
 	}
 
 	const int currentBases (gameSave->getBases()->size());
+
 	int
 		currentScientists (0),
 		currentEngineers  (0);
-
 	for (std::vector<Base*>::const_iterator
 			i = gameSave->getBases()->begin();
 			i != gameSave->getBases()->end();
@@ -359,7 +359,7 @@ void StatisticsState::listStats()
 		"STR_5_SUPERHUMAN"
 	};
 
-	// TODO: Translate
+	// TODO: Translate this.
 	_lstStats->addRow(2, L"Difficulty",					tr(difficulty[gameSave->getDifficulty()]).c_str());
 	_lstStats->addRow(2, L"Average monthly score",		Text::intWide(monthlyScore).c_str());
 	_lstStats->addRow(2, L"Total income",				Text::formatCurrency(totalIncome).c_str());
