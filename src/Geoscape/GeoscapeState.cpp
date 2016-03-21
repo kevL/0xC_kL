@@ -1664,7 +1664,6 @@ void GeoscapeState::time5Seconds()
 								Waypoint* const wp (new Waypoint());		// Waypoint is for reconnaissance target-destination;
 								wp->setLongitude((*j)->getMeetLongitude());	// it also flags GeoscapeCraftState as a special instance.
 								wp->setLatitude((*j)->getMeetLatitude());
-								wp->setId(_gameSave->getCanonicalId("STR_WAYPOINT"));
 
 								resetTimer();
 								popup(new GeoscapeCraftState(*j, this, wp));
