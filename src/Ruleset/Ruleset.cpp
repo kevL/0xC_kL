@@ -1739,8 +1739,8 @@ const std::vector<std::string>& Ruleset::getInventoryList() const
 int Ruleset::detHighTuInventoryCost() const
 {
 	int
-		cost,
-		costHigh = 0;
+		costTest,
+		cost = 0;
 
 	const RuleInventory* const grdRule (getInventoryRule(ST_GROUND));
 	for (std::map<std::string, RuleInventory*>::const_iterator
@@ -1748,11 +1748,11 @@ int Ruleset::detHighTuInventoryCost() const
 			i != _inventories.end();
 			++i)
 	{
-		cost = (*i).second->getCost(grdRule);
-		if (cost > costHigh)
-			costHigh = cost;
+		costTest = (*i).second->getCost(grdRule);
+		if (costTest > cost)
+			cost = costTest;
 	}
-	return costHigh;
+	return cost;
 }
 /*	for (std::map<std::string, RuleInventory*>::const_iterator
 			i = _inventories.begin();

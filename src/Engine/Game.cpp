@@ -727,7 +727,7 @@ void Game::loadLanguage(const std::string& file)
 }
 
 /**
- * Returns the ResourcePack currently in use by this Game.
+ * Gets the ResourcePack currently in use by this Game.
  * @return, pointer to the ResourcePack
  */
 ResourcePack* Game::getResourcePack() const
@@ -746,7 +746,7 @@ void Game::setResourcePack(ResourcePack* const res)
 }
 
 /**
- * Returns the SavedGame currently in use by this Game.
+ * Gets the SavedGame currently in use by this Game.
  * @return, pointer to the SavedGame
  */
 SavedGame* Game::getSavedGame() const
@@ -756,16 +756,16 @@ SavedGame* Game::getSavedGame() const
 
 /**
  * Sets a SavedGame for this Game to use.
- * @param save - pointer to the SavedGame
+ * @param gameSave - pointer to the SavedGame (default nullptr)
  */
-void Game::setSavedGame(SavedGame* const save)
+void Game::setSavedGame(SavedGame* const gameSave)
 {
 	delete _gameSave;
-	_gameSave = save;
+	_gameSave = gameSave;
 }
 
 /**
- * Returns the Ruleset currently in use by this Game.
+ * Gets the Ruleset currently in use by this Game.
  * @return, pointer to the Ruleset
  */
 Ruleset* Game::getRuleset() const

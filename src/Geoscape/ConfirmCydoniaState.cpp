@@ -121,11 +121,11 @@ void ConfirmCydoniaState::btnYesClick(Action*)
 			i != _game->getRuleset()->getDeploymentsList().end();
 			++i)
 	{
-		const AlienDeployment* const deployRule (_game->getRuleset()->getDeployment(*i));
-		if (deployRule->isFinalDestination() == true)
+		const AlienDeployment* const ruleDeploy (_game->getRuleset()->getDeployment(*i));
+		if (ruleDeploy->isFinalDestination() == true)
 		{
 			battleSave->setTacticalType(*i);
-			bGen.setAlienRace(deployRule->getRace());
+			bGen.setAlienRace(ruleDeploy->getRace());
 			break;
 		}
 	}

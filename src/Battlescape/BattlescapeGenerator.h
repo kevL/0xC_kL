@@ -125,7 +125,7 @@ private:
 			BattleUnit* const unit) const;
 
 	/// Deploys the aLiens according to an AlienDeployment rule.
-	void deployAliens(const AlienDeployment* const deployRule);
+	void deployAliens(const AlienDeployment* const ruleDeploy);
 	/// Adds an aLien to the battlescape.
 	BattleUnit* addAlien(
 			RuleUnit* const unitRule,
@@ -245,7 +245,7 @@ private:
 				size_t selUnitId = 0);
 
 		/// Sets up the objectives for the map.
-		void setupObjectives(const AlienDeployment* const deployRule);
+		void setupObjectives(const AlienDeployment* const ruleDeploy);
 };
 
 }

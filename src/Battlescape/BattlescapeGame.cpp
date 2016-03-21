@@ -1671,7 +1671,7 @@ void BattlescapeGame::checkCasualties(
 																					_killStatRace,
 																					_killStatWeapon,
 																					_killStatWeaponAmmo,
-																					defender->getFaction(),
+																					defender->getOriginalFaction(),
 																					STATUS_DEAD,
 																					_killStatMission,
 																					_killStatTurn,
@@ -1847,7 +1847,7 @@ void BattlescapeGame::checkCasualties(
 																				_killStatRace,
 																				_killStatWeapon,
 																				_killStatWeaponAmmo,
-																				defender->getFaction(),
+																				defender->getOriginalFaction(),
 																				STATUS_UNCONSCIOUS,
 																				_killStatMission,
 																				_killStatTurn,
@@ -3758,10 +3758,10 @@ BattleItem* BattlescapeGame::getAlienPsi() const
 void BattlescapeGame::objectiveDone()
 {
 	const Game* const game (_parentState->getGame());
-	const AlienDeployment* const deployRule (game->getRuleset()->getDeployment(_battleSave->getTacticalType()));
-	if (deployRule != nullptr)
+	const AlienDeployment* const ruleDeploy (game->getRuleset()->getDeployment(_battleSave->getTacticalType()));
+	if (ruleDeploy != nullptr)
 	{
-		const std::string messagePop (deployRule->getObjectivePopup());
+		const std::string messagePop (ruleDeploy->getObjectivePopup());
 		if (messagePop.empty() == false)
 			_infoboxQueue.push_back(new InfoboxDialogState(game->getLanguage()->getString(messagePop)));
 	}

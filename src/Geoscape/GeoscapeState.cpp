@@ -1024,8 +1024,8 @@ void GeoscapeState::handle(Action* action)
 						beep = true;	// NOTE: Clears awards of the living, not of the Memorial Dead.
 						_txtDebug->setText(L"SOLDIER COMMENDATIONS DELETED");
 						for (std::vector<Base*>::const_iterator
-								i = _game->getSavedGame()->getBases()->begin();
-								i != _game->getSavedGame()->getBases()->end();
+								i = _gameSave->getBases()->begin();
+								i != _gameSave->getBases()->end();
 								++i)
 						{
 							for (std::vector<Soldier*>::const_iterator
@@ -1175,10 +1175,10 @@ void GeoscapeState::think()
 
 
 	if (Options::debug == true
-		&& _game->getSavedGame()->getDebugArgDone() == true // ie. do not write info until Globe actually sets it.
+		&& _gameSave->getDebugArgDone() == true // ie. do not write info until Globe actually sets it.
 		&& _stDebug.compare(0,5, "DEBUG") == 0)
 	{
-		const std::string stDebug (_stDebug + _game->getSavedGame()->getDebugArg());
+		const std::string stDebug (_stDebug + _gameSave->getDebugArg());
 		_txtDebug->setText(Language::cpToWstr(stDebug));
 	}
 
@@ -1475,8 +1475,9 @@ void GeoscapeState::time5Seconds()
 	//Log(LOG_INFO) << "GeoscapeState::time5Seconds()";
 	if (_gameSave->getBases()->empty() == true) // Game Over if there are no more bases.
 	{
+		_gameSave->setEnding(END_LOSE);
 		popup(new DefeatState());
-		if (_game->getSavedGame()->isIronman() == true)
+		if (_gameSave->isIronman() == true)
 			_game->pushState(new SaveGameState(
 											OPT_GEOSCAPE,
 											SAVE_IRONMAN,
@@ -3102,7 +3103,7 @@ void GeoscapeState::time1Day()
 
 	const RuleAlienMission* const missionRule (_rules->getRandomMission( // handle regional and country points for alien bases
 																	alm_BASE,
-																	_game->getSavedGame()->getMonthsPassed()));
+																	_gameSave->getMonthsPassed()));
 	const int aLienPts ((missionRule->getPoints() * (static_cast<int>(_gameSave->getDifficulty()) + 1)) / 100);
 	if (aLienPts != 0)
 	{
@@ -3248,7 +3249,7 @@ void GeoscapeState::time1Month()
 					{
 						const RuleAlienMission& missionRule = *_rules->getRandomMission(
 																					alm_RETAL,
-																					_game->getSavedGame()->getMonthsPassed());
+																					_gameSave->getMonthsPassed());
 						AlienMission* const mission = new AlienMission(
 																	missionRule,
 																	*_gameSave);
@@ -3956,7 +3957,7 @@ void GeoscapeState::startBaseDefenseTactical(
 void GeoscapeState::determineAlienMissions() // private.
 {
 	AlienStrategy& strategy (_gameSave->getAlienStrategy());
-	const int month (_game->getSavedGame()->getMonthsPassed());
+	const int month (_gameSave->getMonthsPassed());
 	std::vector<RuleMissionScript*> availableMissions;
 	std::map<int, bool> conditions;
 
@@ -4058,7 +4059,7 @@ void GeoscapeState::determineAlienMissions() // private.
 bool GeoscapeState::processDirective(RuleMissionScript* const directive) // private.
 {
 	AlienStrategy& strategy (_gameSave->getAlienStrategy());
-	const int month (_game->getSavedGame()->getMonthsPassed());
+	const int month (_gameSave->getMonthsPassed());
 	const RuleAlienMission* missionRule;
 	std::string
 		targetRegion,
@@ -4353,7 +4354,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 	return true;
 }
 
-/*
+/**
  * Determine the alien missions to start each month.
  * @note In the vanilla game a terror mission plus one other are started in
  * random regions. The very first mission is Sectoid Research in the region of
@@ -4424,14 +4425,14 @@ void GeoscapeState::determineAlienMissions(bool atGameStart) // private.
 	}
 } */
 
-/*
+/**
  * Sets up a land mission. Eg TERROR!!!
  *
 void GeoscapeState::setupLandMission() // private.
 {
 	const RuleAlienMission& missionRule = *_rules->getRandomMission(
 																alm_SITE,
-																_game->getSavedGame()->getMonthsPassed());
+																_gameSave->getMonthsPassed());
 
 	// Determine a random region with a valid mission zone and no mission already running.
 	const RuleRegion* regRule = nullptr; // avoid VC++ linker warning.
@@ -4449,7 +4450,7 @@ void GeoscapeState::setupLandMission() // private.
 																			0,
 																			static_cast<int>(regionsList.size()) - 1))]);
 		if (regRule->getMissionZones().size() > missionRule.getSpawnZone()
-			&& _game->getSavedGame()->findAlienMission(
+			&& _gameSave->findAlienMission(
 													regRule->getType(),
 													alm_SITE) == nullptr)
 		{
@@ -4472,15 +4473,15 @@ void GeoscapeState::setupLandMission() // private.
 		AlienMission* const mission = new AlienMission(
 													missionRule,
 													*_gameSave);
-		mission->setId(_game->getSavedGame()->getId("ALIEN_MISSIONS"));
+		mission->setId(_gameSave->getId("ALIEN_MISSIONS"));
 		mission->setRegion(
 						regRule->getType(),
 						*_rules);
-		const std::string& race = missionRule.generateRace(static_cast<size_t>(_game->getSavedGame()->getMonthsPassed()));
+		const std::string& race = missionRule.generateRace(static_cast<size_t>(_gameSave->getMonthsPassed()));
 		mission->setRace(race);
 		mission->start(150);
 
-		_game->getSavedGame()->getAlienMissions().push_back(mission);
+		_gameSave->getAlienMissions().push_back(mission);
 	}
 } */
 

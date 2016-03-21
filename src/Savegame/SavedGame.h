@@ -87,6 +87,16 @@ enum SaveType
 };
 
 /**
+ * Enumerator for the current game ending.
+ */
+enum GameEnding
+{
+	END_NONE,	// 0
+	END_WIN,	// 1
+	END_LOSE	// 2
+};
+
+/**
  * Enumerator for the save mode.
  */
 enum SaveMode
@@ -161,6 +171,7 @@ private:
 		_globeLon;
 
 	GameDifficulty _difficulty;
+	GameEnding _end;
 
 	AlienStrategy* _alienStrategy;
 	GameTime* _time;
@@ -246,6 +257,11 @@ private:
 		GameDifficulty getDifficulty() const;
 		/// Sets the game difficulty.
 		void setDifficulty(GameDifficulty difficulty);
+
+		/// Gets the game ending.
+		GameEnding getEnding() const;
+		/// Sets the game ending.
+		void setEnding(GameEnding end);
 
 		/// Gets if the game is in ironman mode.
 		bool isIronman() const;

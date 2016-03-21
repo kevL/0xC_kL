@@ -62,7 +62,7 @@ private:
 		/// Creates this MissionSite.
 		MissionSite(
 				const RuleAlienMission* const missionRule,
-				const AlienDeployment* const deployRule);
+				const AlienDeployment* const ruleDeploy);
 		/// Cleans up this MissionSite.
 		~MissionSite();
 

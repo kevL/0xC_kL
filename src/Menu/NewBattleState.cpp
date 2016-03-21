@@ -670,7 +670,7 @@ void NewBattleState::btnCancelClick(Action*)
 {
 	save();
 
-	_game->setSavedGame(nullptr);
+	_game->setSavedGame();
 	_game->popState();
 }
 

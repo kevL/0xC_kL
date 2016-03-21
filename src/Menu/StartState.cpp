@@ -319,7 +319,7 @@ void StartState::animate()
 	if (loading == LOADING_STARTED)
 	{
 		std::wostringstream woststr;
-		woststr << L"Loading " << Language::utf8ToWstr(OPENXCOM_VERSION_GIT); // kL
+		woststr << L"Loading " << Language::utf8ToWstr(OPENXCOM_VERSION_GIT);
 //		woststr << L"Loading OpenXcom " << Language::utf8ToWstr(OPENXCOM_VERSION_SHORT) << Language::utf8ToWstr(OPENXCOM_VERSION_GIT) << "...";
 		if (Options::reload == true)
 		{

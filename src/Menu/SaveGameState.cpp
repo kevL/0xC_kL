@@ -210,7 +210,7 @@ void SaveGameState::think()
 //				_game->getScreen()->resetDisplay(false);
 
 				_game->setState(new MainMenuState());
-				_game->setSavedGame(nullptr);
+				_game->setSavedGame();
 			}
 		}
 		catch (Exception& e)

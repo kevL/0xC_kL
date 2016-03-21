@@ -74,14 +74,14 @@ BriefingState::BriefingState(
 
 
 	std::string type = _game->getSavedGame()->getBattleSave()->getTacticalType();
-	const AlienDeployment* deployRule = _game->getRuleset()->getDeployment(type); // check, Xcom1Ruleset->alienDeployments for a missionType
+	const AlienDeployment* ruleDeploy = _game->getRuleset()->getDeployment(type); // check, Xcom1Ruleset->alienDeployments for a missionType
 
-	if (deployRule == nullptr // landing site or crash site -> define BG & Music by ufoType instead
+	if (ruleDeploy == nullptr // landing site or crash site -> define BG & Music by ufoType instead
 		&& craft != nullptr)
 	{
 		const Ufo* const ufo = dynamic_cast<Ufo*>(craft->getDestination());
 		if (ufo != nullptr) // landing site or crash site.
-			deployRule = _game->getRuleset()->getDeployment(ufo->getRules()->getType()); // check, Xcom1Ruleset->alienDeployments for a ufoType
+			ruleDeploy = _game->getRuleset()->getDeployment(ufo->getRules()->getType()); // check, Xcom1Ruleset->alienDeployments for a ufoType
 	}
 
 	std::string
@@ -90,7 +90,7 @@ BriefingState::BriefingState(
 		bg;		// default defined in Ruleset/AlienDeployment.h: "BACK16.SCR",
 	int bgColor;
 
-	if (deployRule == nullptr) // should never happen
+	if (ruleDeploy == nullptr) // should never happen
 	{
 		Log(LOG_WARNING) << "No deployment rule for Briefing: " << type;
 		bg = "BACK16.SCR";
@@ -99,7 +99,7 @@ BriefingState::BriefingState(
 	}
 	else
 	{
-		const BriefingData dataBrief = deployRule->getBriefingData();
+		const BriefingData dataBrief = ruleDeploy->getBriefingData();
 
 		bg = dataBrief.background;
 		bgColor = dataBrief.palette;

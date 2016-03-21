@@ -222,6 +222,9 @@ private:
 
 		/// Increments the Soldier's service-time.
 		void addMonthlyService();
+		/// Gets the total months in service.
+		int getMonthsService() const;
+
 		/// Awards a special medal to the original 8 Soldiers.
 		void awardOriginalEight();
 		/// Awards an honorary medal upon joining team-xCom.

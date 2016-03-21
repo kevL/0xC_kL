@@ -307,13 +307,13 @@ void AlienMission::think(
 
 				const RuleTexture* const texture (rules.getGlobe()->getTextureRule(area.texture));
 
-				const AlienDeployment* deployRule;
+				const AlienDeployment* ruleDeploy;
 				if (rules.getDeployment(wave.ufoType) != nullptr)
-					deployRule = rules.getDeployment(wave.ufoType);
+					ruleDeploy = rules.getDeployment(wave.ufoType);
 				else
-					deployRule = rules.getDeployment(texture->getTextureDeployment());
+					ruleDeploy = rules.getDeployment(texture->getTextureDeployment());
 
-				spawnMissionSite(deployRule, area);
+				spawnMissionSite(ruleDeploy, area);
 			}
 
 			++_ufoCount;
@@ -702,14 +702,14 @@ void AlienMission::ufoReachedWaypoint(
 																trajectory.getZone(pt),
 																dynamic_cast<Target*>(&ufo)));
 
-				const AlienDeployment* deployRule (rules.getDeployment(_missionRule.getSiteType()));
-				if (deployRule == nullptr)
+				const AlienDeployment* ruleDeploy (rules.getDeployment(_missionRule.getSiteType()));
+				if (ruleDeploy == nullptr)
 				{
 					const RuleTexture* const texture (rules.getGlobe()->getTextureRule(area.texture));
-					deployRule = rules.getDeployment(texture->getTextureDeployment());
+					ruleDeploy = rules.getDeployment(texture->getTextureDeployment());
 				}
 
-				MissionSite* const site (spawnMissionSite(deployRule, area));
+				MissionSite* const site (spawnMissionSite(ruleDeploy, area));
 				if (site != nullptr)
 				{
 					_gameSave.getMissionSites()->push_back(site);
@@ -771,25 +771,25 @@ void AlienMission::ufoReachedWaypoint(
 
 /**
  * Attempts to spawn a Mission Site at a given location.
- * @param deployRule	- pointer to the AlienDeployment
+ * @param ruleDeploy	- pointer to the AlienDeployment
  * @param area			- reference an area of the globe
  * @return, pointer to the site
  */
 MissionSite* AlienMission::spawnMissionSite( // private.
-		const AlienDeployment* const deployRule,
+		const AlienDeployment* const ruleDeploy,
 		const MissionArea& area)
 {
-	if (deployRule != nullptr)
+	if (ruleDeploy != nullptr)
 	{
 		MissionSite* const site (new MissionSite(
 											&_missionRule,
-											deployRule));
+											ruleDeploy));
 		site->setLongitude(RNG::generate(area.lonMin, area.lonMax));
 		site->setLatitude(RNG::generate(area.latMin, area.latMax));
-		site->setId(_gameSave.getCanonicalId(deployRule->getMarkerType()));
+		site->setId(_gameSave.getCanonicalId(ruleDeploy->getMarkerType()));
 		site->setSecondsLeft(RNG::generate(
-										deployRule->getDurationMin(),
-										deployRule->getDurationMax()) * 3600);
+										ruleDeploy->getDurationMin(),
+										ruleDeploy->getDurationMax()) * 3600);
 		site->setAlienRace(_race);
 		site->setSiteTextureId(area.texture);
 		site->setCity(area.site);

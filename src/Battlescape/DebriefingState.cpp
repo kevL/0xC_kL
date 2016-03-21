@@ -724,19 +724,19 @@ void DebriefingState::prepareDebriefing() // private.
 		objectiveFailedScore   (0); // dang vc++ compiler warnings.
 
 	SavedBattleGame* const battleSave (_gameSave->getBattleSave());
-	const AlienDeployment* const deployRule (_rules->getDeployment(battleSave->getTacticalType()));
+	const AlienDeployment* const ruleDeploy (_rules->getDeployment(battleSave->getTacticalType()));
 	// kL_note: I have a strong suspicion that although checks are made for a
-	// valid deployRule below if there isn't one you're borked anyway.
-	if (deployRule != nullptr)
+	// valid ruleDeploy below if there isn't one you're borked anyway.
+	if (ruleDeploy != nullptr)
 	{
-		if (deployRule->getObjectiveCompleteInfo(
+		if (ruleDeploy->getObjectiveCompleteInfo(
 											objectiveCompleteText,
 											objectiveCompleteScore) == true)
 		{
 			_stats.push_back(new DebriefingStat(objectiveCompleteText));
 		}
 
-		if (deployRule->getObjectiveFailedInfo(
+		if (ruleDeploy->getObjectiveFailedInfo(
 											objectiveFailedText,
 											objectiveFailedScore) == false)
 		{

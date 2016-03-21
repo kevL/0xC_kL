@@ -130,10 +130,10 @@ private:
 		/// Sets a new resource pack for the game.
 		void setResourcePack(ResourcePack* const res);
 
-		/// Gets the currently loaded saved game.
+		/// Gets the currently loaded SavedGame.
 		SavedGame* getSavedGame() const;
-		/// Sets a new saved game for the game.
-		void setSavedGame(SavedGame* const save);
+		/// Sets the SavedGame.
+		void setSavedGame(SavedGame* const gameSave = nullptr);
 
 		/// Gets the currently loaded ruleset.
 		Ruleset* getRuleset() const;

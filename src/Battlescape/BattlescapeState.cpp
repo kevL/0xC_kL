@@ -590,8 +590,8 @@ BattlescapeState::BattlescapeState()
 			lat (target->getLatitude());
 
 		for (std::vector<Region*>::const_iterator
-				i = _game->getSavedGame()->getRegions()->begin();
-				i != _game->getSavedGame()->getRegions()->end();
+				i = _gameSave->getRegions()->begin();
+				i != _gameSave->getRegions()->end();
 				++i)
 		{
 			if ((*i)->getRules()->insideRegion(lon,lat) == true)
@@ -602,8 +602,8 @@ BattlescapeState::BattlescapeState()
 		}
 
 		for (std::vector<Country*>::const_iterator
-				i = _game->getSavedGame()->getCountries()->begin();
-				i != _game->getSavedGame()->getCountries()->end();
+				i = _gameSave->getCountries()->begin();
+				i != _gameSave->getCountries()->end();
 				++i)
 		{
 			if ((*i)->getRules()->insideCountry(lon,lat) == true)
@@ -1089,7 +1089,7 @@ void BattlescapeState::init()
 	if (_autosave == true)
 	{
 		_autosave = false;
-		if (_game->getSavedGame()->isIronman() == true)
+		if (_gameSave->isIronman() == true)
 			_game->pushState(new SaveGameState(
 											OPT_BATTLESCAPE,
 											SAVE_IRONMAN,
@@ -1341,7 +1341,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 							wst1 += L" (" + item->getUnit()->getName(_game->getLanguage()) + L")";
 					}
 				}
-				else if (_game->getSavedGame()->isResearched(itRule->getRequirements()) == true)
+				else if (_gameSave->isResearched(itRule->getRequirements()) == true)
 				{
 					wst1 += tr(itRule->getType());
 
@@ -3778,8 +3778,9 @@ void BattlescapeState::popup(State* state)
 }
 
 /**
- * Finishes up the current battle, and either shuts down the battlescape and
+ * Finishes up the current battle and either shuts down the battlescape and
  * presents the debriefing screen for the mission OR sets up a/the next-stage.
+ * @note Possibly ends the game as well.
  * @param abort			- true if the mission was aborted
  * @param inExitArea	- quantity of soldiers in the exit-area OR quantity of survivors when battle
  *						  finished due to either all aLiens pacified or objective being destroyed
@@ -3857,33 +3858,41 @@ void BattlescapeState::finishBattle(
 		_tacticalTimer->stop();
 		_game->popState();
 
-		bool ironsave (false);
-		if (abort == true || inExitArea == 0)	// Abort was done or no player is still alive. This concludes to defeat when
-		{										// in a 'noRetreat' or 'final' mission, like Mars landing or Mars aLien base.
-			if (ruleDeploy->isNoRetreat() == true
+		bool ironsave;
+		if (abort == true || inExitArea == 0)			// Abort was done or no player is still alive.
+		{
+			if (ruleDeploy->isNoRetreat() == true		// This concludes to defeat when in a 'noRetreat' or 'final' mission, like Mars landing or Mars aLien base.
 				&& _gameSave->getMonthsPassed() != -1)
 			{
-				ironsave = _game->getSavedGame()->isIronman() == true;
+				_gameSave->setEnding(END_LOSE);
+				ironsave = _gameSave->isIronman() == true;
 				_game->pushState(new DefeatState());
 			}
 			else
+			{
+				ironsave = false;
 				_game->pushState(new DebriefingState());
+			}
 		}
-		else									// No abort was done and at least a player is still alive. This
-		{										// concludes to victory when in a 'final' mission, like Mars aLien base.
-			if (ruleDeploy->isFinalMission() == true
+		else											// No abort was done and at least a player is still alive.
+		{
+			if (ruleDeploy->isFinalMission() == true	// This concludes to victory when in a 'final' mission, like Mars aLien base.
 				&& _gameSave->getMonthsPassed() != -1)
 			{
-				ironsave = _game->getSavedGame()->isIronman() == true;
+				_gameSave->setEnding(END_WIN);
+				ironsave = _gameSave->isIronman() == true;
 				_game->pushState(new VictoryState());
 			}
 			else
+			{
+				ironsave = false;
 				_game->pushState(new DebriefingState());
+			}
 		}
 
 		if (ironsave == true)
 		{
-			_game->getSavedGame()->setBattleSave();
+			_gameSave->setBattleSave();
 			_game->pushState(new SaveGameState(
 											OPT_GEOSCAPE,
 											SAVE_IRONMAN,

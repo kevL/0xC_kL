@@ -35,11 +35,11 @@ namespace OpenXcom
  */
 MissionSite::MissionSite(
 		const RuleAlienMission* const missionRule,
-		const AlienDeployment* const deployRule)
+		const AlienDeployment* const ruleDeploy)
 	:
 		Target(),
 		_missionRule(missionRule),
-		_deployRule(deployRule),
+		_deployRule(ruleDeploy),
 		_id(0),
 		_texture(-1),
 		_secondsLeft(0),

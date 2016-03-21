@@ -38,6 +38,8 @@
 #include "../Interface/Cursor.h"
 #include "../Interface/Text.h"
 
+#include "../Menu/StatisticsState.h"
+
 #include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/Ruleset.h"
 
@@ -183,25 +185,35 @@ void LoadGameState::think()
 			gameSave->load(_file, _game->getRuleset());
 			_game->setSavedGame(gameSave);
 
-			Options::baseXResolution = Options::baseXGeoscape;
-			Options::baseYResolution = Options::baseYGeoscape;
-
-			_game->getScreen()->resetDisplay(false);
-			_game->setState(new GeoscapeState());
-
-			if (gameSave->getBattleSave() != nullptr)
+			if (_game->getSavedGame()->getEnding() != END_NONE)
 			{
-				Log(LOG_INFO) << "LoadGameState: loading battlescape map";
-				_game->getSavedGame()->getBattleSave()->loadMapResources(_game);
-
-				Options::baseXResolution = Options::baseXBattlescape;
-				Options::baseYResolution = Options::baseYBattlescape;
-
+				Options::baseXResolution = Screen::ORIGINAL_WIDTH;
+				Options::baseYResolution = Screen::ORIGINAL_HEIGHT;
 				_game->getScreen()->resetDisplay(false);
 
-				BattlescapeState* const battleState (new BattlescapeState());
-				_game->pushState(battleState);
-				gameSave->getBattleSave()->setBattleState(battleState);
+				_game->setState(new StatisticsState); // TODO: A way of saving non-Ironman saves for re-viewing post-game statistics.
+			}
+			else
+			{
+				Options::baseXResolution = Options::baseXGeoscape;
+				Options::baseYResolution = Options::baseYGeoscape;
+				_game->getScreen()->resetDisplay(false);
+
+				_game->setState(new GeoscapeState());
+
+				if (gameSave->getBattleSave() != nullptr)
+				{
+					Log(LOG_INFO) << "LoadGameState: loading battlescape map";
+					_game->getSavedGame()->getBattleSave()->loadMapResources(_game);
+
+					Options::baseXResolution = Options::baseXBattlescape;
+					Options::baseYResolution = Options::baseYBattlescape;
+					_game->getScreen()->resetDisplay(false);
+
+					BattlescapeState* const battleState (new BattlescapeState());
+					_game->pushState(battleState);
+					gameSave->getBattleSave()->setBattleState(battleState);
+				}
 			}
 		}
 		catch (Exception& e)
@@ -227,7 +239,7 @@ void LoadGameState::think()
 													_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapePalette")->color));
 
 			if (_game->getSavedGame() == gameSave)
-				_game->setSavedGame(nullptr);
+				_game->setSavedGame();
 			else
 				delete gameSave;
 		}
@@ -254,7 +266,7 @@ void LoadGameState::think()
 													_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapePalette")->color));
 
 			if (_game->getSavedGame() == gameSave)
-				_game->setSavedGame(nullptr);
+				_game->setSavedGame();
 			else
 				delete gameSave;
 		}

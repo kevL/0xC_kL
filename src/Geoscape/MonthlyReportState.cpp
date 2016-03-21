@@ -78,7 +78,7 @@ MonthlyReportState::MonthlyReportState()
 	_btnOk		= new TextButton(288, 16, 16, 177);
 
 	_txtFailure	= new Text(288, 160, 16, 10);
-	_btnBigOk	= new TextButton(120, 18, 100, 175);
+	_btnOkLoser	= new TextButton(120, 18, 100, 175);
 
 //	_txtIncome = new Text(300, 9, 16, 32);
 //	_txtMaintenance = new Text(130, 9, 16, 40);
@@ -94,7 +94,7 @@ MonthlyReportState::MonthlyReportState()
 	add(_txtDesc,		"text2",	"monthlyReport");
 	add(_btnOk,			"button",	"monthlyReport");
 	add(_txtFailure,	"text2",	"monthlyReport");
-	add(_btnBigOk,		"button",	"monthlyReport");
+	add(_btnOkLoser,	"button",	"monthlyReport");
 
 //	add(_txtIncome,			"text1", "monthlyReport");
 //	add(_txtMaintenance,	"text1", "monthlyReport");
@@ -171,7 +171,7 @@ MonthlyReportState::MonthlyReportState()
 	_txtRating->setText(tr("STR_MONTHLY_RATING").arg(_ratingTotal).arg(wst));
 
 /*	std::wostringstream ss; // ADD:
-	ss << tr("STR_INCOME") << L"> \x01" << Text::formatCurrency(_game->getSavedGame()->getCountryFunding());
+	ss << tr("STR_INCOME") << L"> \x01" << Text::formatCurrency(_gameSave->getCountryFunding());
 	ss << L" (";
 	if (_deltaFunds > 0)
 		ss << '+';
@@ -179,11 +179,11 @@ MonthlyReportState::MonthlyReportState()
 	_txtIncome->setText(ss.str());
 
 	std::wostringstream ss2;
-	ss2 << tr("STR_MAINTENANCE") << L"> \x01" << Text::formatCurrency(_game->getSavedGame()->getBaseMaintenances());
+	ss2 << tr("STR_MAINTENANCE") << L"> \x01" << Text::formatCurrency(_gameSave->getBaseMaintenances());
 	_txtMaintenance->setText(ss2.str());
 
 	std::wostringstream ss3;
-	ss3 << tr("STR_BALANCE") << L"> \x01" << Text::formatCurrency(_game->getSavedGame()->getFunds());
+	ss3 << tr("STR_BALANCE") << L"> \x01" << Text::formatCurrency(_gameSave->getFunds());
 	_txtBalance->setText(ss3.str());
 // end ADD. */
 
@@ -294,18 +294,18 @@ MonthlyReportState::MonthlyReportState()
 	_txtFailure->setWordWrap();
 	_txtFailure->setVisible(false);
 
-	_btnBigOk->setText(tr("STR_OK"));
-	_btnBigOk->onMouseClick((ActionHandler)& MonthlyReportState::btnOkClick);
-	_btnBigOk->onKeyboardPress(
+	_btnOkLoser->setText(tr("STR_OK"));
+	_btnOkLoser->onMouseClick((ActionHandler)& MonthlyReportState::btnOkClick);
+	_btnOkLoser->onKeyboardPress(
 					(ActionHandler)& MonthlyReportState::btnOkClick,
 					Options::keyOk);
-	_btnBigOk->onKeyboardPress(
+	_btnOkLoser->onKeyboardPress(
 					(ActionHandler)& MonthlyReportState::btnOkClick,
 					Options::keyOkKeypad);
-	_btnBigOk->onKeyboardPress(
+	_btnOkLoser->onKeyboardPress(
 					(ActionHandler)& MonthlyReportState::btnOkClick,
 					Options::keyCancel);
-	_btnBigOk->setVisible(false);
+	_btnOkLoser->setVisible(false);
 
 
 	_game->getResourcePack()->playMusic(music, "", 1);
@@ -420,7 +420,7 @@ void MonthlyReportState::btnOkClick(Action*)
 		_btnOk->setVisible(false);
 
 		_txtFailure->setVisible();
-		_btnBigOk->setVisible();
+		_btnOkLoser->setVisible();
 
 		_game->getResourcePack()->fadeMusic(_game, 1157);
 		_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_LOSE);
@@ -430,7 +430,9 @@ void MonthlyReportState::btnOkClick(Action*)
 		_game->popState();
 		_game->pushState(new DefeatState());
 
-		if (_game->getSavedGame()->isIronman() == true)
+		_gameSave->setEnding(END_LOSE);
+
+		if (_gameSave->isIronman() == true)
 			_game->pushState(new SaveGameState(
 											OPT_GEOSCAPE,
 											SAVE_IRONMAN,

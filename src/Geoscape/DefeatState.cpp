@@ -33,7 +33,8 @@
 
 #include "../Interface/Text.h"
 
-#include "../Menu/MainMenuState.h"
+//#include "../Menu/MainMenuState.h"
+#include "../Menu/StatisticsState.h"
 
 #include "../Resource/XcomResourcePack.h"
 
@@ -54,7 +55,7 @@ DefeatState::DefeatState()
 	Options::baseYResolution = Screen::ORIGINAL_HEIGHT;
 	_game->getScreen()->resetDisplay(false); */
 
-	const char* files[] =
+	const char* files[]
 	{
 		"PICT4.LBM",
 		"PICT5.LBM"
@@ -70,7 +71,7 @@ DefeatState::DefeatState()
 			i != SCREENS;
 			++i)
 	{
-		Surface* const screen = _game->getResourcePack()->getSurface(files[i]);
+		Surface* const screen (_game->getResourcePack()->getSurface(files[i]));
 
 		_bg[i] = new InteractiveSurface(320, 200);
 
@@ -103,7 +104,7 @@ DefeatState::DefeatState()
 
 	if (_game->getSavedGame()->isIronman() == true) // Ironman is over, rambo
 	{
-		const std::string file = CrossPlatform::sanitizeFilename(Language::wstrToFs(_game->getSavedGame()->getName())) + ".sav";
+		const std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_game->getSavedGame()->getName())) + ".sav");
 		CrossPlatform::deleteFile(Options::getUserFolder() + file);
 	}
 }
@@ -117,17 +118,17 @@ DefeatState::~DefeatState()
 }
 
 /**
- * Handle timers.
- */
-/* void DefeatState::think()
+ * Handles timers.
+ *
+void DefeatState::think()
 {
 	_timer->think(this, nullptr);
 } */
 
 /**
  * Shows the next screen on a timed basis.
- */
-/* void DefeatState::screenTimer()
+ *
+void DefeatState::screenTimer()
 {
 	screenPress(nullptr);
 } */
@@ -146,9 +147,7 @@ void DefeatState::screenPress(Action*)
 		_text[_curScreen]->setVisible(false);
 	}
 
-	++_curScreen;
-
-	if (_curScreen < SCREENS) // next screen
+	if (++_curScreen < SCREENS) // next screen
 	{
 		setPalette(_bg[_curScreen]->getPalette());
 		_bg[_curScreen]->setVisible();
@@ -156,7 +155,7 @@ void DefeatState::screenPress(Action*)
 
 		init();
 	}
-	else // quit game
+	else // to StatisticsState -> MainMenuState.
 	{
 		_game->popState();
 /*		Screen::updateScale(
@@ -167,8 +166,9 @@ void DefeatState::screenPress(Action*)
 						true);
 		_game->getScreen()->resetDisplay(false); */
 
-		_game->setState(new MainMenuState());
-		_game->setSavedGame(nullptr);
+		_game->setState(new StatisticsState());
+//		_game->setState(new MainMenuState());
+//		_game->setSavedGame();
 	}
 }
 

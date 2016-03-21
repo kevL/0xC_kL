@@ -193,7 +193,7 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	{
 //		_txtDaylight->setColor(YELLOW);
 //		_txtDaylight->setSecondaryColor(WHITE);
-		if (stats->at(missionId)->shade < 9)
+		if (stats->at(missionId)->shade < MissionStatistics::NIGHT_SHADE)
 			_txtDaylight->setText(tr("STR_DAYLIGHT_TYPE").arg(tr("STR_DAY")));
 		else
 			_txtDaylight->setText(tr("STR_DAYLIGHT_TYPE").arg(tr("STR_NIGHT")));
@@ -215,7 +215,7 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	else
 		_txtDaysWounded->setVisible(false);
 
-	Uint8 color = _game->getRuleset()->getInterface("awardsMissionInfo")->getElement("list")->color2;
+	Uint8 color (_game->getRuleset()->getInterface("awardsMissionInfo")->getElement("list")->color2);
 
 //	_srfLine->drawLine(0,0, 120,0, YELLOW + 1);
 	_srfLine->drawLine(0,0, 120,0, color + 1u);

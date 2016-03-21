@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_NEWGAMESTATE_H
-#define OPENXCOM_NEWGAMESTATE_H
+#ifndef OPENXCOM_STATISTICSSTATE_H
+#define OPENXCOM_STATISTICSSTATE_H
 
 #include "../Engine/State.h"
 
@@ -28,45 +28,40 @@ namespace OpenXcom
 
 class Text;
 class TextButton;
-class ToggleTextButton;
+class TextList;
 class Window;
 
 
 /**
- * A new-game window that displays the list of possible difficulties.
+ * Statistics window that shows up at the end of the game.
  */
-class NewGameState
+class StatisticsState
 	:
 		public State
 {
 
 private:
-	Text
-		* _txtIronman,
-		* _txtTitle;
-	TextButton
-		* _btnBeginner,
-		* _btnExperienced,
-		* _btnVeteran,
-		* _btnGenius,
-		* _btnSuperhuman,
-		* _btnCancel,
-		* _btnOk,
-		* _difficulty;
-	ToggleTextButton* _btnIronman;
+	Text* _txtTitle;
+	TextButton* _btnOk;
+	TextList* _lstStats;
 	Window* _window;
+
+	// Sums a list of numbers.
+	template <typename T>
+	T total(const std::vector<T>& vec) const;
 
 
 	public:
-		/// Creates the New Game state.
-		NewGameState();
-		/// Cleans up the New Game state.
-		~NewGameState();
+		/// Creates a StatisticsState.
+		StatisticsState();
+		/// Cleans up the StatisticsState.
+		~StatisticsState();
+
+		/// Gets the statistics.
+		void listStats();
 
 		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
-		/// Handler for clicking the Cancel button.
-		void btnCancelClick(Action* action);
 };
 
 }

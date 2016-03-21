@@ -31,7 +31,8 @@
 
 #include "../Interface/Text.h"
 
-#include "../Menu/MainMenuState.h"
+//#include "../Menu/MainMenuState.h"
+#include "../Menu/StatisticsState.h"
 
 #include "../Resource/XcomResourcePack.h"
 
@@ -52,7 +53,7 @@ VictoryState::VictoryState()
 	Options::baseYResolution = Screen::ORIGINAL_HEIGHT;
 	_game->getScreen()->resetDisplay(false); */
 
-	const char* files[] =
+	const char* files[]
 	{
 		"PICT1.LBM",
 		"PICT2.LBM",
@@ -74,7 +75,7 @@ VictoryState::VictoryState()
 			i < SCREENS;
 			++i)
 	{
-		Surface* const screen = _game->getResourcePack()->getSurface(files[i]);
+		Surface* const screen (_game->getResourcePack()->getSurface(files[i]));
 
 		_bg[i] = new InteractiveSurface(320, 200);
 
@@ -122,16 +123,16 @@ VictoryState::~VictoryState()
 
 /**
  * Shows the next screen on a timed basis.
- */
-/*void VictoryState::screenTimer()
+ *
+void VictoryState::screenTimer()
 {
 	screenPress(nullptr);
 } */
 
 /**
  * Handle timers.
- */
-/*void VictoryState::think()
+ *
+void VictoryState::think()
 {
 	_timer->think(this, nullptr);
 } */
@@ -150,9 +151,7 @@ void VictoryState::screenPress(Action*)
 		_text[_curScreen]->setVisible(false);
 	}
 
-	++_curScreen;
-
-	if (_curScreen < SCREENS) // next screen
+	if (++_curScreen < SCREENS) // next screen
 	{
 		setPalette(_bg[_curScreen]->getPalette());
 		_bg[_curScreen]->setVisible();
@@ -160,7 +159,7 @@ void VictoryState::screenPress(Action*)
 
 		init();
 	}
-	else // quit game
+	else // to StatisticsState -> MainMenuState.
 	{
 		_game->popState();
 /*		Screen::updateScale(
@@ -171,8 +170,9 @@ void VictoryState::screenPress(Action*)
 						true);
 		_game->getScreen()->resetDisplay(false); */
 
-		_game->setState(new MainMenuState());
-		_game->setSavedGame(nullptr);
+		_game->setState(new StatisticsState());
+//		_game->setState(new MainMenuState());
+//		_game->setSavedGame();
 	}
 }
 

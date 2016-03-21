@@ -307,8 +307,12 @@ struct BattleUnitStatistics
 				i != kills.end();
 				++i)
 		{
-			if ((*i)->_faction == FACTION_PLAYER)
-				return true;
+			switch ((*i)->_faction)
+			{
+				case FACTION_PLAYER:
+				case FACTION_NEUTRAL:
+					return true;
+			}
 		}
 		return false;
 	}
@@ -321,11 +325,8 @@ struct BattleUnitStatistics
 				i != kills.end();
 				++i)
 		{
-			if ((*i)->_faction == FACTION_HOSTILE
-				&& ((*i)->_status == STATUS_DEAD || (*i)->_status == STATUS_UNCONSCIOUS))
-			{
+			if ((*i)->_faction == FACTION_HOSTILE)
 				return true;
-			}
 		}
 		return false;
 	}

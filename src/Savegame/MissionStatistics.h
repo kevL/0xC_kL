@@ -36,6 +36,8 @@ namespace OpenXcom
  */
 struct MissionStatistics
 {
+	static const int NIGHT_SHADE = 9;
+
 	bool
 		success,
 		valiantCrux;

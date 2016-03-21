@@ -327,6 +327,7 @@ protected:
 		const RuleResearch* getResearch(const std::string& id) const;
 		/// Gets the list of all research-projects.
 		const std::vector<std::string>& getResearchList() const;
+
 		/// Gets the rules for a specific manufacture-project.
 		RuleManufacture* getManufacture(const std::string& id) const;
 		/// Gets the list of all manufacture-projects.

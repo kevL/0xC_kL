@@ -1294,6 +1294,15 @@ void SoldierDiary::addMonthlyService()
 }
 
 /**
+ * Returns the total months the Soldier has been in service.
+ * @return, quantity of months
+ */
+int SoldierDiary::getMonthsService() const
+{
+	return _monthsService;
+}
+
+/**
  * Awards a special medal to each of the original 8 Soldiers.
  */
 void SoldierDiary::awardOriginalEight()

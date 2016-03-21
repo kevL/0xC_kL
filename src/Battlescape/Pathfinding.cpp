@@ -1974,9 +1974,9 @@ bool Pathfinding::canFallDown(const Tile* const tile) const // private
 
 /**
  * Checks if vertical movement is valid.
- * @note Checks if there is a grav lift or the unit can fly and there are no
+ * @note Checks if there is a gravlift or the unit can fly and there are no
  * obstructions.
- * @param posStart	- reference the start position
+ * @param posStart	- reference to a start position
  * @param dir		- up or down
 // * @param launch	- true if pathing a waypoint-launcher/guided missile (default false)
  * @return, UpDownCheck (Pathfinding.h)
@@ -2013,12 +2013,10 @@ UpDownCheck Pathfinding::validateUpDown(
 			|| (dir == DIR_DOWN
 				&& startTile->hasNoFloor(_battleSave->getTile(posStart + Position(0,0,-1)))))
 		{
-//			if (launch)
+//			if (launch == true)
 //			{
-//				if ((dir == DIR_UP
-//						&& destTile->getMapData(O_FLOOR)->getLoftId(0) != 0)
-//					|| (dir == DIR_DOWN
-//						&& startTile->getMapData(O_FLOOR)->getLoftId(0) != 0))
+//				if ((dir == DIR_UP && destTile->getMapData(O_FLOOR)->getLoftId(0) != 0)
+//					|| (dir == DIR_DOWN && startTile->getMapData(O_FLOOR)->getLoftId(0) != 0))
 //				{
 //					return FLY_BLOCKED;
 //				}

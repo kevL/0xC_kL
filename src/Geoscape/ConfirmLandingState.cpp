@@ -200,14 +200,14 @@ ConfirmLandingState::ConfirmLandingState(
 					if (terrainList.empty() == true)
 					{
 						// get a Terrain from AlienDeployment
-						const AlienDeployment* const deployRule = site->getSiteDeployment();
-						terrainList = deployRule->getDeployTerrains();
+						const AlienDeployment* const ruleDeploy = site->getSiteDeployment();
+						terrainList = ruleDeploy->getDeployTerrains();
 					} */
 
 					// get a Terrain from AlienDeployment first
 					Log(LOG_INFO) << ". . . finding eligibleTerrain for AlienDeployment";
-					const AlienDeployment* const deployRule (site->getSiteDeployment());
-					terrainList = deployRule->getDeployTerrains();
+					const AlienDeployment* const ruleDeploy (site->getSiteDeployment());
+					terrainList = ruleDeploy->getDeployTerrains();
 
 					// second, check for Terrains in Globe-Texture(INT) ...
 					if (terrainList.empty() == true)

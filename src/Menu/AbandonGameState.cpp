@@ -124,7 +124,12 @@ void AbandonGameState::btnYesClick(Action*)
 {
 	_game->getResourcePack()->fadeMusic(_game, 863);
 
-	if (_game->getSavedGame()->isIronman() == false)
+	if (_game->getSavedGame()->isIronman() == true)
+		_game->pushState(new SaveGameState(
+										OPT_GEOSCAPE,
+										SAVE_IRONMAN_END,
+										_palette));
+	else
 	{
 		// This uses baseX/Y options for Geoscape & Basescape:
 //		Options::baseXResolution = Options::baseXGeoscape; // kL
@@ -139,13 +144,8 @@ void AbandonGameState::btnYesClick(Action*)
 //		_game->getScreen()->resetDisplay(false);
 
 		_game->setState(new MainMenuState());
-		_game->setSavedGame(nullptr);
+		_game->setSavedGame();
 	}
-	else
-		_game->pushState(new SaveGameState(
-										OPT_GEOSCAPE,
-										SAVE_IRONMAN_END,
-										_palette));
 }
 
 /**

@@ -37,7 +37,7 @@ class Text;
 
 
 /**
- * Loads a saved game with an optional message.
+ * Loads a saved-game with an optional message.
  */
 class LoadGameState
 	:
@@ -54,17 +54,16 @@ private:
 
 
 	public:
-		/// Creates the Load Game state.
+		/// Creates a LoadGameState.
 		LoadGameState(
 				OptionsOrigin origin,
 				const std::string& file,
 				SDL_Color* const palette);
-		/// Creates the Load Game state.
 		LoadGameState(
 				OptionsOrigin origin,
 				SaveType type,
 				SDL_Color* const palette);
-		/// Cleans up the Load Game state.
+		/// Cleans up the LoadGameState.
 		~LoadGameState();
 
 		/// Creates the interface.

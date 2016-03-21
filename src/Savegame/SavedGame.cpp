@@ -127,6 +127,7 @@ SavedGame::SavedGame(const Ruleset* const rules)
 	:
 		_rules(rules),
 		_difficulty(DIFF_BEGINNER),
+		_end(END_NONE),
 		_ironman(false),
 		_globeLon(0.),
 		_globeLat(0.),
@@ -439,6 +440,8 @@ void SavedGame::load(
 	}
 	_difficulty = static_cast<GameDifficulty>(diff);
 
+	_end = static_cast<GameEnding>(doc["end"].as<int>(_end));
+
 	_monthsPassed			= doc["monthsPassed"]		.as<int>(_monthsPassed);
 	_graphRegionToggles		= doc["graphRegionToggles"]	.as<std::string>(_graphRegionToggles);
 	_graphCountryToggles	= doc["graphCountryToggles"].as<std::string>(_graphCountryToggles);
@@ -688,6 +691,7 @@ void SavedGame::save(const std::string& file) const
 
 	node["rng"]					= RNG::getSeed();
 	node["difficulty"]			= static_cast<int>(_difficulty);
+	node["end"]					= static_cast<int>(_end);
 	node["monthsPassed"]		= _monthsPassed;
 	node["graphRegionToggles"]	= _graphRegionToggles;
 	node["graphCountryToggles"]	= _graphCountryToggles;
@@ -823,8 +827,26 @@ void SavedGame::setDifficulty(GameDifficulty difficulty)
 }
 
 /**
+ * Gets this SavedGame's current end-type.
+ * @return, end-type (SavedGame.h)
+ */
+GameEnding SavedGame::getEnding() const
+{
+	return _end;
+}
+
+/**
+ * Sets this SavedGame's current end-type.
+ * @param end - end-type (SavedGame.h)
+ */
+void SavedGame::setEnding(GameEnding end)
+{
+	_end = end;
+}
+
+/**
  * Returns if the game is set to ironman mode.
- * Ironman games cannot be manually saved.
+ * @note Ironman games cannot be manually saved.
  * @return, Tony Stark
  */
 bool SavedGame::isIronman() const
@@ -834,7 +856,7 @@ bool SavedGame::isIronman() const
 
 /**
  * Changes if the game is set to ironman mode.
- * Ironman games cannot be manually saved.
+ * @note Ironman games cannot be manually saved.
  * @param ironman - Tony Stark
  */
 void SavedGame::setIronman(bool ironman)
@@ -957,8 +979,8 @@ void SavedGame::setDfZoom(size_t zoom)
 void SavedGame::monthlyFunding()
 {
 	int
-		income = 0,
-		expenditure = 0;
+		income (0),
+		expenditure (0);
 
 	for (std::vector<Base*>::const_iterator
 			i = _bases.begin();
@@ -986,7 +1008,7 @@ void SavedGame::monthlyFunding()
 
 
 	// MAINTENANCE
-	const int maintenance = getBaseMaintenances();
+	const int maintenance (getBaseMaintenances());
 
 	_maintenance.back() = maintenance;
 	_maintenance.push_back(0);

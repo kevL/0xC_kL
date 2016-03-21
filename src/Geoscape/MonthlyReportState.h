@@ -61,7 +61,7 @@ private:
 		* _txtTitle;
 	TextButton
 		* _btnOk,
-		* _btnBigOk;
+		* _btnOkLoser;
 	Window* _window;
 
 	std::vector<std::string>

@@ -258,23 +258,23 @@ void BattlescapeGenerator::run()
 {
 	_unitSequence = BattleUnit::MAX_SOLDIER_ID; // geoscape soldier IDs should stay below this number
 
-	const AlienDeployment* deployRule;
+	const AlienDeployment* ruleDeploy;
 	if (_ufo != nullptr)
-		deployRule = _rules->getDeployment(_ufo->getRules()->getType());
+		ruleDeploy = _rules->getDeployment(_ufo->getRules()->getType());
 	else
-		deployRule = _rules->getDeployment(_battleSave->getTacticalType());
+		ruleDeploy = _rules->getDeployment(_battleSave->getTacticalType());
 
-	_battleSave->setTurnLimit(deployRule->getTurnLimit());
-	_battleSave->setChronoResult(deployRule->getChronoResult());
-	_battleSave->setCheatTurn(deployRule->getCheatTurn());
+	_battleSave->setTurnLimit(ruleDeploy->getTurnLimit());
+	_battleSave->setChronoResult(ruleDeploy->getChronoResult());
+	_battleSave->setCheatTurn(ruleDeploy->getCheatTurn());
 
-	deployRule->getDimensions(
+	ruleDeploy->getDimensions(
 						&_mapsize_x,
 						&_mapsize_y,
 						&_mapsize_z);
 	if (_terrainRule == nullptr)	// '_terrainRule' NOT set for Cydonia, Base assault/defense. Already set for NewBattleState ...... & UFO, & missionSite.
 	{
-		_terrainRule = _rules->getTerrain(deployRule->getDeployTerrains().at(RNG::pick(deployRule->getDeployTerrains().size())));
+		_terrainRule = _rules->getTerrain(ruleDeploy->getDeployTerrains().at(RNG::pick(ruleDeploy->getDeployTerrains().size())));
 		if (_terrainRule == nullptr)
 		{
 			// trouble: no texture and no deployment terrain, most likely scenario is a UFO landing on water: use the first available terrain.
@@ -288,10 +288,10 @@ void BattlescapeGenerator::run()
 	{
 		if (_texture == nullptr
 			|| _texture->getTextureDetail()->empty() == true
-			|| deployRule->getDeployTerrains().empty() == false)
+			|| ruleDeploy->getDeployTerrains().empty() == false)
 		{
-			size_t pick = RNG::generate(0, deployRule->getDeployTerrains().size() - 1);
-			_terrainRule = _rules->getTerrain(deployRule->getDeployTerrains().at(pick));
+			size_t pick = RNG::generate(0, ruleDeploy->getDeployTerrains().size() - 1);
+			_terrainRule = _rules->getTerrain(ruleDeploy->getDeployTerrains().at(pick));
 		}
 		else // UFO crashed/landed or MissionSite
 		{
@@ -301,7 +301,7 @@ void BattlescapeGenerator::run()
 			_terrainRule = _rules->getTerrain(_texture->getTextureTerrain(target));
 		}
 	} */
-/*	if (deployRule->getDeployTerrains().empty() == true) // UFO crashed/landed
+/*	if (ruleDeploy->getDeployTerrains().empty() == true) // UFO crashed/landed
 	{
 		Log(LOG_INFO) << "bGen::run() deployment-terrains NOT valid";
 		if (_siteTerrain == nullptr) // kL
@@ -326,13 +326,13 @@ void BattlescapeGenerator::run()
 	}
 	else // set-piece battle like Cydonia or Terror site or Base assault/defense
 	{
-		Log(LOG_INFO) << "bGen::run() Choose terrain from deployment, qty = " << deployRule->getDeployTerrains().size();
-		const size_t pick = RNG::generate(0, deployRule->getDeployTerrains().size() - 1);
-		_terrainRule = _rules->getTerrain(deployRule->getDeployTerrains().at(pick));
+		Log(LOG_INFO) << "bGen::run() Choose terrain from deployment, qty = " << ruleDeploy->getDeployTerrains().size();
+		const size_t pick = RNG::generate(0, ruleDeploy->getDeployTerrains().size() - 1);
+		_terrainRule = _rules->getTerrain(ruleDeploy->getDeployTerrains().at(pick));
 	} */
 
 	const std::vector<MapScript*>* script = nullptr; // alienDeployment script overrides terrain script <-
-	const std::string scriptDeploy = deployRule->getScript();
+	const std::string scriptDeploy = ruleDeploy->getScript();
 	//Log(LOG_INFO) << "bgen: scriptDeploy = " << scriptDeploy;
 	if (scriptDeploy.empty() == false)
 	{
@@ -359,10 +359,10 @@ void BattlescapeGenerator::run()
 	}
 
 	generateMap(script);							// <--| BATTLEFIELD GENERATION. <--|||
-	setupObjectives(deployRule);
+	setupObjectives(ruleDeploy);
 
-	if (deployRule->getShade() != -1)
-		setShade(deployRule->getShade());
+	if (ruleDeploy->getShade() != -1)
+		setShade(ruleDeploy->getShade());
 
 	_battleSave->setTacticalShade(_shade);
 
@@ -373,14 +373,14 @@ void BattlescapeGenerator::run()
 
 	const size_t qtyUnits_pre (_battleSave->getUnits()->size());
 
-	deployAliens(deployRule);						// <--| ALIEN DEPLOYMENT. <--|||
+	deployAliens(ruleDeploy);						// <--| ALIEN DEPLOYMENT. <--|||
 
 	if (qtyUnits_pre == _battleSave->getUnits()->size())
 	{
 		throw Exception("Map generator encountered an error: no alien units could be placed on the map.");
 	}
 
-	deployCivilians(deployRule->getCivilians());	// <--| CIVILIAN DEPLOYMENT. <--|||
+	deployCivilians(ruleDeploy->getCivilians());	// <--| CIVILIAN DEPLOYMENT. <--|||
 
 	if (_generateFuel == true)
 		fuelPowerSources();
@@ -424,7 +424,7 @@ void BattlescapeGenerator::run()
 		}
 	} */
 
-	std::vector<std::string> tracks (deployRule->getDeploymentMusics());
+	std::vector<std::string> tracks (ruleDeploy->getDeploymentMusics());
 	if (tracks.empty() == false)
 		_battleSave->setMusic(tracks.at(RNG::pick(tracks.size(), true)));
 	else
@@ -592,23 +592,23 @@ void BattlescapeGenerator::nextStage()
 	}
 
 
-	const AlienDeployment* const deployRule (_rules->getDeployment(_battleSave->getTacticalType()));
+	const AlienDeployment* const ruleDeploy (_rules->getDeployment(_battleSave->getTacticalType()));
 
-	_battleSave->setTurnLimit(deployRule->getTurnLimit());
-	_battleSave->setChronoResult(deployRule->getChronoResult());
-	_battleSave->setCheatTurn(deployRule->getCheatTurn());
+	_battleSave->setTurnLimit(ruleDeploy->getTurnLimit());
+	_battleSave->setChronoResult(ruleDeploy->getChronoResult());
+	_battleSave->setCheatTurn(ruleDeploy->getCheatTurn());
 
-	deployRule->getDimensions(
+	ruleDeploy->getDimensions(
 						&_mapsize_x,
 						&_mapsize_y,
 						&_mapsize_z);
 
-	_terrainRule = _rules->getTerrain(deployRule->getDeployTerrains().at(RNG::pick(deployRule->getDeployTerrains().size())));
+	_terrainRule = _rules->getTerrain(ruleDeploy->getDeployTerrains().at(RNG::pick(ruleDeploy->getDeployTerrains().size())));
 
 
 	const std::vector<MapScript*>* scripts (nullptr); // hardrule: Deployment takes priority over Terrain.
 
-	std::string script (deployRule->getScript());
+	std::string script (ruleDeploy->getScript());
 	if (script.empty() == false)
 	{
 		scripts = _rules->getMapScript(script);
@@ -637,9 +637,9 @@ void BattlescapeGenerator::nextStage()
 	}
 
 	generateMap(scripts); // <--| BATTLE MAP GENERATION. <--|||
-	setupObjectives(deployRule);
+	setupObjectives(ruleDeploy);
 
-	setShade(deployRule->getShade()); // note: 2nd stage must have deployment-shade set, else 0 (bright).
+	setShade(ruleDeploy->getShade()); // note: 2nd stage must have deployment-shade set, else 0 (bright).
 	_battleSave->setTacticalShade(_shade);
 	_battleSave->setBattleTerrain(_terrainRule->getType());
 //	setTacticalSprites();
@@ -711,7 +711,7 @@ void BattlescapeGenerator::nextStage()
 	}
 
 
-	_alienRace = deployRule->getRace();
+	_alienRace = ruleDeploy->getRace();
 	if (_alienRace.empty() == true)
 	{
 		for (std::vector<MissionSite*>::const_iterator
@@ -752,14 +752,14 @@ void BattlescapeGenerator::nextStage()
 
 	const size_t qtyUnits_pre (_battleSave->getUnits()->size());
 
-	deployAliens(deployRule); // <--| ALIEN DEPLOYMENT. <--|||
+	deployAliens(ruleDeploy); // <--| ALIEN DEPLOYMENT. <--|||
 
 	if (qtyUnits_pre == _battleSave->getUnits()->size())
 	{
 		throw Exception("Map generator encountered an error: no alien units could be placed on the map.");
 	}
 
-	deployCivilians(deployRule->getCivilians()); // <--| CIVILIAN DEPLOYMENT. <--|||
+	deployCivilians(ruleDeploy->getCivilians()); // <--| CIVILIAN DEPLOYMENT. <--|||
 
 /*	// Probly don't need this anymore; it's done via "revealedFloors" in MapScripting ... but not quite.
 	for (int i = 0; i < _battleSave->getMapSizeXYZ(); ++i)
@@ -1680,9 +1680,9 @@ bool BattlescapeGenerator::placeGeneric( // private.
 
 /**
  * Deploys the aLiens according to the AlienDeployment rules.
- * @param deployRule - pointer to the AlienDeployment rule
+ * @param ruleDeploy - pointer to the AlienDeployment rule
  */
-void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule) // private.
+void BattlescapeGenerator::deployAliens(const AlienDeployment* const ruleDeploy) // private.
 {
 	int month (_gameSave->getMonthsPassed());
 	if (month != -1)
@@ -1691,8 +1691,8 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule)
 		if (month > itemLevel_top)
 			month = itemLevel_top;
 
-		if (deployRule->getRace().empty() == false) // race re-defined by Deployment if there is one.
-			_alienRace = deployRule->getRace();
+		if (ruleDeploy->getRace().empty() == false) // race re-defined by Deployment if there is one.
+			_alienRace = ruleDeploy->getRace();
 	}
 	else
 		month = _alienItemLevel;
@@ -1716,8 +1716,8 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const deployRule)
 	BattleUnit* unit;
 
 	for (std::vector<DeploymentData>::const_iterator
-			data = deployRule->getDeploymentData()->begin();
-			data != deployRule->getDeploymentData()->end();
+			data = ruleDeploy->getDeploymentData()->begin();
+			data != ruleDeploy->getDeploymentData()->end();
 			++data)
 	{
 		aLien = raceRule->getMember((*data).alienRank);
@@ -4035,15 +4035,15 @@ bool BattlescapeGenerator::removeBlocks(const MapScript* const directive) // pri
 
 /**
  * Sets up the objectives for the map.
- * @param deployRule - deployment data from which to fetch data
+ * @param ruleDeploy - deployment data from which to fetch data
  */
-void BattlescapeGenerator::setupObjectives(const AlienDeployment* const deployRule)
+void BattlescapeGenerator::setupObjectives(const AlienDeployment* const ruleDeploy)
 {
-	const SpecialTileType specialType (deployRule->getObjectiveType());
+	const SpecialTileType specialType (ruleDeploy->getObjectiveType());
 	if (specialType != STT_NONE)
 	{
 		int
-			req (deployRule->getObjectivesRequired()),
+			req (ruleDeploy->getObjectivesRequired()),
 			inSitu (0);
 		const int parts (static_cast<int>(Tile::PARTS_TILE));
 		MapDataType partType;
