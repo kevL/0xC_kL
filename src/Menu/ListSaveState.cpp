@@ -56,10 +56,10 @@ ListSaveState::ListSaveState(OptionsOrigin origin)
 
 	_txtTitle->setText(tr("STR_SELECT_SAVE_POSITION"));
 
-/*	if (_game->getSavedGame()->isIronman())
-		_btnCancel->setVisible(false);
-	else
-		_btnCancel->setX(180); */
+//	if (_game->getSavedGame()->isIronman())
+//		_btnCancel->setVisible(false);
+//	else
+//		_btnCancel->setX(180);
 
 	// Tactical: selected SaveSlot for Battlescape is grayscaled.
 	_edtSave->setColor(Palette::blockOffset(10)); // geo:SLATE
@@ -100,58 +100,61 @@ void ListSaveState::updateList()
  */
 void ListSaveState::lstSavesPress(Action* action)
 {
-/*	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT && _edtSave->isFocused())
-	{
-		_edtSave->setText(L"");
-		_edtSave->setVisible(false);
-		_edtSave->setFocus(false, false);
-		_lstSaves->setScrolling(true);
-	} */
+//	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT && _edtSave->isFocused())
+//	{
+//		_edtSave->setText(L"");
+//		_edtSave->setVisible(false);
+//		_edtSave->setFocus(false, false);
+//		_lstSaves->setScrolling(true);
+//	}
 
 	if (_editMode == false)
 	{
-		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+		switch (action->getDetails()->button.button)
 		{
-			_editMode = true;
-			_btnSaveGame->setVisible();
-			_lstSaves->setSelectable(false);
-			_lstSaves->setScrollable(false);
+			case SDL_BUTTON_LEFT:
+				_editMode = true;
+				_btnSaveGame->setVisible();
+				_lstSaves->setSelectable(false);
+				_lstSaves->setScrollable(false);
 
-			_selectedPre = _selected;
-			_selected = _lstSaves->getSelectedRow();
+				_selectedPre = _selected;
+				_selected = _lstSaves->getSelectedRow();
 
-			switch (_selectedPre)
-			{
-				case -1: // first click on the savegame list
-					break;
+				switch (_selectedPre)
+				{
+					case -1: // first click on the savegame list
+						break;
 
-				case 0:
-					_lstSaves->setCellText(_selectedPre, 0, tr("STR_NEW_SAVED_GAME_SLOT"));
-					break;
+					case 0:
+						_lstSaves->setCellText(_selectedPre, 0, tr("STR_NEW_SAVED_GAME_SLOT"));
+						break;
 
-				default:
-					_lstSaves->setCellText(_selectedPre, 0, _label);
-			}
+					default:
+						_lstSaves->setCellText(_selectedPre, 0, _label);
+				}
 
-			_label = _lstSaves->getCellText(_lstSaves->getSelectedRow(), 0);
-			_lstSaves->setCellText(_lstSaves->getSelectedRow(), 0, L"");
+				_label = _lstSaves->getCellText(_lstSaves->getSelectedRow(), 0);
+				_lstSaves->setCellText(_lstSaves->getSelectedRow(), 0, L"");
 
-			_edtSave->storeText(_label);
+				_edtSave->storeText(_label);
 
-			if (_lstSaves->getSelectedRow() == 0)
-				_label = L"";
+				if (_lstSaves->getSelectedRow() == 0)
+					_label = L"";
 
-			_edtSave->setText(_label);
+				_edtSave->setText(_label);
 
-			_edtSave->setX(_lstSaves->getColumnX(0));
-			_edtSave->setY(_lstSaves->getRowY(_selected));
-			_edtSave->setVisible();
-			_edtSave->setFocus(true, false); // note: modal=false allows keypress Enter to save.
+				_edtSave->setX(_lstSaves->getColumnX(0));
+				_edtSave->setY(_lstSaves->getRowY(_selected));
+				_edtSave->setVisible();
+				_edtSave->setFocus(true, false); // note: modal=false allows keypress Enter to save.
 
-			ListGamesState::disableSort();
+				ListGamesState::disableSort();
+				break;
+
+			case SDL_BUTTON_RIGHT:
+				ListGamesState::lstSavesPress(action); // -> delete file
 		}
-		else
-			ListGamesState::lstSavesPress(action); // RMB -> delete file
 	}
 }
 

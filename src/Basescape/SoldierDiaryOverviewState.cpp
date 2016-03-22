@@ -297,9 +297,9 @@ void SoldierDiaryOverviewState::init()
 					location << tr((*i)->country);
 
 				if ((*i)->success == true)
-					status << tr("STR_MISSION_WIN");
+					status << tr("STR_VICTORY");
 				else
-					status << tr("STR_MISSION_LOSS");
+					status << tr("STR_DEFEAT");
 
 				status << " - " << tr((*i)->rating);
 

@@ -703,7 +703,7 @@ GraphsState::GraphsState()
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_txtFactor->setText(L"$1000");
+	_txtFactor->setText(tr("STR_FINANCE_THOUSANDS"));
 
 
 	_isfUfoRegion->onMousePress(
@@ -2138,12 +2138,12 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 		}
 		else
 		{
-			income[i] = static_cast<int>(_game->getSavedGame()->getIncomeList().at(rit)) / 1000; // perhaps add Country funding
-			expenditure[i] = static_cast<int>(_game->getSavedGame()->getExpenditureList().at(rit)) / 1000;
-			maintenance[i] = static_cast<int>(_game->getSavedGame()->getMaintenanceList().at(rit)) / 1000;
+			income[i] = static_cast<int>(_game->getSavedGame()->getIncomeList().at(rit) / 1000); // perhaps add Country funding
+			expenditure[i] = static_cast<int>(_game->getSavedGame()->getExpenditureList().at(rit) / 1000);
+			maintenance[i] = static_cast<int>(_game->getSavedGame()->getMaintenanceList().at(rit) / 1000);
 		}
 
-		balance[i] = static_cast<int>(_game->getSavedGame()->getFundsList().at(rit)) / 1000; // note: these (int)casts render int64_t useless.
+		balance[i] = static_cast<int>(_game->getSavedGame()->getFundsList().at(rit) / 1000);
 		score[i] = _game->getSavedGame()->getResearchScores().at(rit);
 
 

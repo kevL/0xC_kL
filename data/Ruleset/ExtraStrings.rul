@@ -174,7 +174,6 @@ extraStrings:
       STR_BASEDETECTION: "Base Detection"
       STR_FACILITIES: "Facilities"
       STR_MINDSHIELDS: "Shielding"
-      STR_DIFFICULTY: "Difficulty"
       STR_EXPOSURE: "exposure"
       STR_PER10MIN: "per 10 min"
       STR_SHOT_TYPE_LAUNCH: "launch"

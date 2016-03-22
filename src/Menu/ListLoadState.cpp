@@ -64,51 +64,71 @@ ListLoadState::~ListLoadState()
  */
 void ListLoadState::lstSavesPress(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		kL_curBase = 0;
-
-		if (_origin == OPT_MENU
-			|| (_origin == OPT_GEOSCAPE
-				&& _saves[_lstSaves->getSelectedRow()].mode == SM_BATTLESCAPE)
-			|| (_origin == OPT_BATTLESCAPE
-				&& _saves[_lstSaves->getSelectedRow()].mode == SM_GEOSCAPE))
+		case SDL_BUTTON_LEFT:
 		{
-			_game->getResourcePack()->fadeMusic(_game, 1123);
-		}
+			kL_curBase = 0;
 
-		bool confirmLoad (false);
-		for (std::vector<std::string>::const_iterator
-				i = _saves[_lstSaves->getSelectedRow()].rulesets.begin();
-				i != _saves[_lstSaves->getSelectedRow()].rulesets.end();
-				++i)
-		{
-			if (std::find(
-						Options::rulesets.begin(),
-						Options::rulesets.end(),
-						*i) == Options::rulesets.end())
+			bool fade;
+			switch (_origin)
 			{
-				confirmLoad = true;
-				break;
+				default:
+				case OPT_MENU:
+					fade = true;
+					break;
+
+				case OPT_GEOSCAPE:
+					if (_saves[_lstSaves->getSelectedRow()].mode == SM_BATTLESCAPE)
+						fade = true;
+					else
+						fade = false;
+					break;
+
+				case OPT_BATTLESCAPE:
+					if (_saves[_lstSaves->getSelectedRow()].mode == SM_GEOSCAPE)
+						fade = true;
+					else
+						fade = false;
 			}
+			if (fade == true)
+				_game->getResourcePack()->fadeMusic(_game, 1123);
+
+			bool confirmLoad (false);
+			for (std::vector<std::string>::const_iterator
+					i = _saves[_lstSaves->getSelectedRow()].rulesets.begin();
+					i != _saves[_lstSaves->getSelectedRow()].rulesets.end();
+					++i)
+			{
+				if (std::find(
+							Options::rulesets.begin(),
+							Options::rulesets.end(),
+							*i) == Options::rulesets.end())
+				{
+					confirmLoad = true;
+					break;
+				}
+			}
+
+			if (confirmLoad == false)
+			{
+				hideElements();
+				_game->pushState(new LoadGameState(
+												_origin,
+												_saves[_lstSaves->getSelectedRow()].file,
+												_palette));
+			}
+			else
+				_game->pushState(new ConfirmLoadState(
+												_origin,
+												_saves[_lstSaves->getSelectedRow()].file,
+												this));
+			break;
 		}
 
-		if (confirmLoad == false)
-		{
-			hideElements();
-			_game->pushState(new LoadGameState(
-											_origin,
-											_saves[_lstSaves->getSelectedRow()].file,
-											_palette));
-		}
-		else
-			_game->pushState(new ConfirmLoadState(
-											_origin,
-											_saves[_lstSaves->getSelectedRow()].file,
-											this));
+		case SDL_BUTTON_RIGHT:
+			ListGamesState::lstSavesPress(action); // -> delete file
 	}
-	else
-		ListGamesState::lstSavesPress(action); // RMB -> delete file
 }
 
 /**

@@ -162,7 +162,7 @@ NewBattleState::NewBattleState()
 	_txtCraft->setText(tr("STR_CRAFT"));
 	_txtDarkness->setText(tr("STR_MAP_DARKNESS"));
 	_txtTerrain->setText(tr("STR_MAP_TERRAIN"));
-	_txtDifficulty->setText(tr("STR_ALIEN_DIFFICULTY"));
+	_txtDifficulty->setText(tr("STR_DIFFICULTY"));
 	_txtAlienRace->setText(tr("STR_ALIEN_RACE"));
 	_txtAlienTech->setText(tr("STR_ALIEN_TECH_LEVEL"));
 

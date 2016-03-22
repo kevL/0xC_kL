@@ -132,10 +132,10 @@ void StatisticsState::listStats()
 	switch (gameSave->getEnding())
 	{
 		case END_WIN:
-			woststr << tr("STR_MISSION_WIN");
+			woststr << tr("STR_VICTORY");
 			break;
 		case END_LOSE:
-			woststr << tr("STR_MISSION_LOSS");
+			woststr << tr("STR_DEFEAT");
 	}
 	const GameTime* const gt (gameSave->getTime());
 	woststr << L'\x02'
@@ -360,32 +360,32 @@ void StatisticsState::listStats()
 	};
 
 	// TODO: Translate this.
-	_lstStats->addRow(2, L"Difficulty",					tr(difficulty[gameSave->getDifficulty()]).c_str());
-	_lstStats->addRow(2, L"Average monthly score",		Text::intWide(monthlyScore).c_str());
-	_lstStats->addRow(2, L"Total income",				Text::formatCurrency(totalIncome).c_str());
-	_lstStats->addRow(2, L"Total expenditure",			Text::formatCurrency(totalExpenses).c_str());
-	_lstStats->addRow(2, L"Missions accomplished",		Text::intWide(missionsWin).c_str());
-	_lstStats->addRow(2, L"Missions failed",			Text::intWide(missionsLoss).c_str());
-	_lstStats->addRow(2, L"Night missions",				Text::intWide(nightMissions).c_str());
-	_lstStats->addRow(2, L"Best rating",				Text::intWide(bestScore).c_str());
-	_lstStats->addRow(2, L"Worst rating",				Text::intWide(worstScore).c_str());
-	_lstStats->addRow(2, L"Soldiers recruited",			Text::intWide(soldiersRecruited).c_str());
-	_lstStats->addRow(2, L"Soldiers lost",				Text::intWide(soldiersLost).c_str());
-	_lstStats->addRow(2, L"Aliens killed",				Text::intWide(aliensKilled).c_str());
-	_lstStats->addRow(2, L"Aliens captured",			Text::intWide(aliensCaptured).c_str());
-	_lstStats->addRow(2, L"Friendly fire incidents",	Text::intWide(friendlyKills).c_str());
-	_lstStats->addRow(2, L"Most effective weapon",		tr(highestWeapon).c_str());
-	_lstStats->addRow(2, L"Longest months in service",	Text::intWide(longestMonths).c_str());
-	_lstStats->addRow(2, L"Sick days",					Text::intWide(daysWounded).c_str());
-	_lstStats->addRow(2, L"UFOs detected",				Text::intWide(ufosDetected).c_str());
-	_lstStats->addRow(2, L"Alien bases discovered",		Text::intWide(alienBases).c_str());
-	_lstStats->addRow(2, L"Countries infiltrated",		Text::intWide(countriesLost).c_str());
-	_lstStats->addRow(2, L"Cities terrorized",			Text::intWide(terrorSites).c_str());
-	_lstStats->addRow(2, L"Bases built",				Text::intWide(currentBases).c_str());
-	_lstStats->addRow(2, L"Craft owned",				Text::intWide(totalCrafts).c_str());
-	_lstStats->addRow(2, L"Scientists hired",			Text::intWide(currentScientists).c_str());
-	_lstStats->addRow(2, L"Engineers hired",			Text::intWide(currentEngineers).c_str());
-	_lstStats->addRow(2, L"Research completed",			Text::intWide(researchDone).c_str());
+	_lstStats->addRow(2, tr("STR_DIFFICULTY").c_str(),				tr(difficulty[gameSave->getDifficulty()]).c_str());
+	_lstStats->addRow(2, tr("STR_AVERAGE_MONTHLY_RATING").c_str(),	Text::intWide(monthlyScore).c_str());
+	_lstStats->addRow(2, tr("STR_TOTAL_INCOME").c_str(),			Text::formatCurrency(totalIncome).c_str());
+	_lstStats->addRow(2, tr("STR_TOTAL_EXPENDITURE").c_str(),		Text::formatCurrency(totalExpenses).c_str());
+	_lstStats->addRow(2, tr("STR_MISSIONS_WON").c_str(),			Text::intWide(missionsWin).c_str());
+	_lstStats->addRow(2, tr("STR_MISSIONS_LOST").c_str(),			Text::intWide(missionsLoss).c_str());
+	_lstStats->addRow(2, tr("STR_NIGHT_MISSIONS").c_str(),			Text::intWide(nightMissions).c_str());
+	_lstStats->addRow(2, tr("STR_BEST_RATING").c_str(),				Text::intWide(bestScore).c_str());
+	_lstStats->addRow(2, tr("STR_WORST_RATING").c_str(),			Text::intWide(worstScore).c_str());
+	_lstStats->addRow(2, tr("STR_SOLDIERS_RECRUITED").c_str(),		Text::intWide(soldiersRecruited).c_str());
+	_lstStats->addRow(2, tr("STR_SOLDIERS_LOST").c_str(),			Text::intWide(soldiersLost).c_str());
+	_lstStats->addRow(2, tr("STR_ALIEN_KILLS").c_str(),				Text::intWide(aliensKilled).c_str());
+	_lstStats->addRow(2, tr("STR_ALIEN_CAPTURES").c_str(),			Text::intWide(aliensCaptured).c_str());
+	_lstStats->addRow(2, tr("STR_FRIENDLY_KILLS").c_str(),			Text::intWide(friendlyKills).c_str());
+	_lstStats->addRow(2, tr("STR_WEAPON_MOST_KILLS").c_str(),		tr(highestWeapon).c_str());
+	_lstStats->addRow(2, tr("STR_LONGEST_SERVICE").c_str(),			Text::intWide(longestMonths).c_str());
+	_lstStats->addRow(2, tr("STR_TOTAL_DAYS_WOUNDED").c_str(),		Text::intWide(daysWounded).c_str());
+	_lstStats->addRow(2, tr("STR_TOTAL_UFOS").c_str(),				Text::intWide(ufosDetected).c_str());
+	_lstStats->addRow(2, tr("STR_TOTAL_ALIEN_BASES").c_str(),		Text::intWide(alienBases).c_str());
+	_lstStats->addRow(2, tr("STR_COUNTRIES_LOST").c_str(),			Text::intWide(countriesLost).c_str());
+	_lstStats->addRow(2, tr("STR_TOTAL_TERROR_SITES").c_str(),		Text::intWide(terrorSites).c_str());
+	_lstStats->addRow(2, tr("STR_TOTAL_BASES").c_str(),				Text::intWide(currentBases).c_str());
+	_lstStats->addRow(2, tr("STR_TOTAL_CRAFT").c_str(),				Text::intWide(totalCrafts).c_str());
+	_lstStats->addRow(2, tr("STR_TOTAL_SCIENTISTS").c_str(),		Text::intWide(currentScientists).c_str());
+	_lstStats->addRow(2, tr("STR_TOTAL_ENGINEERS").c_str(),			Text::intWide(currentEngineers).c_str());
+	_lstStats->addRow(2, tr("STR_TOTAL_RESEARCH").c_str(),			Text::intWide(researchDone).c_str());
 }
 
 /**

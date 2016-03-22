@@ -109,8 +109,8 @@ SoldierMemorialState::SoldierMemorialState()
 	{
 		recruited += (*i)->getTotalSoldiers();
 	}
-	_txtRecruited->setText(tr("STR_SOLDIERS_RECRUITED").arg(recruited));
-	_txtLost->setText(tr("STR_SOLDIERS_LOST").arg(lost));
+	_txtRecruited->setText(tr("STR_SOLDIERS_RECRUITED_").arg(recruited));
+	_txtLost->setText(tr("STR_SOLDIERS_LOST_").arg(lost));
 
 	_lstSoldiers->setColumns(5, 124,70,26,23,33);
 	_lstSoldiers->setBackground(_window);

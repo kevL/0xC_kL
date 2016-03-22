@@ -68,7 +68,7 @@ private:
 		/// Handler for clicking the Saves list.
 		void lstSavesPress(Action* action) override;
 
-		/// Save game.
+		/// Saves game.
 		void saveGame();
 };
 
