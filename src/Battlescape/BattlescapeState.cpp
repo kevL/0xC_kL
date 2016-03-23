@@ -327,7 +327,7 @@ BattlescapeState::BattlescapeState()
 
 	_txtOrder		= new Text(55, 9, 1, 37);
 	_lstSoldierInfo	= new TextList(25, 57, 1, 47);
-	_alienMark		= new Surface(9, 11, 1, 105);
+	_alienIcon		= new Surface(9, 11, 1, 105);
 
 	_txtConsole1	= new Text(screenWidth / 2, y, 0, 0);
 	_txtConsole2	= new Text(screenWidth / 2, y, screenWidth / 2, 0);
@@ -640,7 +640,7 @@ BattlescapeState::BattlescapeState()
 	add(_txtTurn,			"infoText",			"battlescape");
 	add(_txtOrder,			"operationTitle",	"battlescape"); // white
 	add(_lstSoldierInfo,	"textName",			"battlescape"); // blue
-	add(_alienMark);
+	add(_alienIcon);
 
 	_txtTerrain->setHighContrast();
 	_txtTerrain->setText(tr("STR_TEXTURE_").arg(tr(_battleSave->getBattleTerrain())));
@@ -657,9 +657,9 @@ BattlescapeState::BattlescapeState()
 	_lstSoldierInfo->setColumns(2, 10,15);
 	_lstSoldierInfo->setMargin(0);
 
-	Surface* const srfMark (_game->getResourcePack()->getSurface("ALIENINSIGNIA"));
-	srfMark->blit(_alienMark);
-	_alienMark->setVisible(false);
+	Surface* const srfAlien (_game->getResourcePack()->getSurface("ALIENINSIGNIA"));
+	srfAlien->blit(_alienIcon);
+	_alienIcon->setVisible(false);
 
 
 	_rank->setVisible(false);
@@ -1465,7 +1465,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 
 	_txtOrder->setVisible(showInfo);
 	_lstSoldierInfo->setVisible(showInfo);
-	_alienMark->setVisible(showInfo && allowAlienMark());
+	_alienIcon->setVisible(showInfo && allowAlienIcon());
 	_showSoldierData = showInfo;
 }
 
@@ -2800,7 +2800,7 @@ void BattlescapeState::btnConsoleToggle(Action*)
 
 				_txtOrder->setVisible();
 				_lstSoldierInfo->setVisible();
-				_alienMark->setVisible(allowAlienMark());
+				_alienIcon->setVisible(allowAlienIcon());
 				_showSoldierData = true;
 		}
 
@@ -3665,7 +3665,7 @@ void BattlescapeState::handAction( // private.
 	if (_battleGame->isBusy() == false)
 	{
 		BattleAction* const action (_battleGame->getTacticalAction());
-		action->weapon = nullptr; // safety.
+//		action->weapon = nullptr; // safety.
 
 		if (item != nullptr)
 			action->weapon = item;
@@ -3937,7 +3937,7 @@ BattlescapeGame* BattlescapeState::getBattleGame()
 }
 
 /**
- * Handler for the mouse moving over the icons disabling the tile selection cube.
+ * Handler for the mouse moving over the icons disabling the tile-selector cuboid.
  * @param action - pointer to an Action
  */
 void BattlescapeState::mouseInIcons(Action*)
@@ -3953,14 +3953,14 @@ void BattlescapeState::mouseInIcons(Action*)
 
 	_txtOrder->setVisible();
 	_lstSoldierInfo->setVisible();
-	_alienMark->setVisible(allowAlienMark());
+	_alienIcon->setVisible(allowAlienIcon());
 	_showSoldierData = true;
 
 	_lstTileInfo->setVisible(false);
 }
 
 /**
- * Handler for the mouse going out of the icons enabling the tile selection cube.
+ * Handler for the mouse going out of the icons enabling the tile-selector cuboid.
  * @param action - pointer to an Action
  */
 void BattlescapeState::mouseOutIcons(Action*)
@@ -3987,51 +3987,51 @@ void BattlescapeState::resize(
 		int& dX,
 		int& dY)
 {
-	dX = Options::baseXResolution;
-	dY = Options::baseYResolution;
-
-	int divisor = 1;
-	double pixelRatioY = 1.;
-
-	if (Options::nonSquarePixelRatio)
-		pixelRatioY = 1.2;
-
+	int divisor;
 	switch (Options::battlescapeScale)
 	{
 		case SCALE_SCREEN_DIV_3:
 			divisor = 3;
-		break;
+			break;
+
 		case SCALE_SCREEN_DIV_2:
 			divisor = 2;
-		break;
+			break;
+
 		case SCALE_SCREEN:
-		break;
+			divisor = 1;
+			break;
 
 		default:
-			dX = 0;
+			dX =
 			dY = 0;
-		return;
+			return;
 	}
+
+	double pixelRatioY;
+	if (Options::nonSquarePixelRatio)
+		pixelRatioY = 1.2;
+	else
+		pixelRatioY = 1.;
+
+	dX = Options::baseXResolution;
+	dY = Options::baseYResolution;
 
 // G++ linker wants it this way ...
 #ifdef _DEBUG
 	const int
-		screenWidth = Screen::ORIGINAL_WIDTH,
-		screenHeight = Screen::ORIGINAL_HEIGHT;
+		screenWidth (Screen::ORIGINAL_WIDTH),
+		screenHeight (Screen::ORIGINAL_HEIGHT);
 
-	Options::baseXResolution = std::max(
-									screenWidth,
-									Options::displayWidth / divisor);
-	Options::baseYResolution = std::max(
-									screenHeight,
-									static_cast<int>(static_cast<double>(Options::displayHeight) / pixelRatioY / static_cast<double>(divisor)));
+	Options::baseXResolution = std::max(screenWidth,
+										Options::displayWidth / divisor);
+	Options::baseYResolution = std::max(screenHeight,
+										static_cast<int>(static_cast<double>(Options::displayHeight) / pixelRatioY / static_cast<double>(divisor)));
 #else
-	Options::baseXResolution = std::max(
-									Screen::ORIGINAL_WIDTH,
-									Options::displayWidth / divisor);
-	Options::baseYResolution = std::max(
-									Screen::ORIGINAL_HEIGHT,
-									static_cast<int>(static_cast<double>(Options::displayHeight) / pixelRatioY / static_cast<double>(divisor)));
+	Options::baseXResolution = std::max(Screen::ORIGINAL_WIDTH,
+										Options::displayWidth / divisor);
+	Options::baseYResolution = std::max(Screen::ORIGINAL_HEIGHT,
+										static_cast<int>(static_cast<double>(Options::displayHeight) / pixelRatioY / static_cast<double>(divisor)));
 #endif
 
 	dX = Options::baseXResolution - dX;
@@ -4040,16 +4040,14 @@ void BattlescapeState::resize(
 	_map->setWidth(Options::baseXResolution);
 	_map->setHeight(Options::baseYResolution);
 	_map->getCamera()->resize();
-	_map->getCamera()->jumpXY(
-							dX / 2,
-							dY / 2);
+	_map->getCamera()->jumpXY(dX / 2, dY / 2);
 
 	for (std::vector<Surface*>::const_iterator
 			i = _surfaces.begin();
 			i != _surfaces.end();
 			++i)
 	{
-		if (*i != _map
+		if (   *i != _map // TODO: Add more surfaces to exclude since I added many more.
 			&& *i != _btnPsi
 			&& *i != _btnLaunch
 			&& *i != _txtDebug)
@@ -4057,11 +4055,8 @@ void BattlescapeState::resize(
 			(*i)->setX((*i)->getX() + dX / 2);
 			(*i)->setY((*i)->getY() + dY);
 		}
-		else if (*i != _map
-			&& *i != _txtDebug)
-		{
+		else if (*i != _map && *i != _txtDebug)
 			(*i)->setX((*i)->getX() + dX);
-		}
 	}
 }
 
@@ -4102,7 +4097,7 @@ void BattlescapeState::toggleIcons(bool vis)
 
 	_txtOrder->setVisible(vis);
 	_lstSoldierInfo->setVisible(vis);
-	_alienMark->setVisible(vis && allowAlienMark());
+	_alienIcon->setVisible(vis && allowAlienIcon());
 	_showSoldierData = vis;
 
 //	_txtControlDestroyed->setVisible(vis);
@@ -4167,7 +4162,7 @@ Bar* BattlescapeState::getEnergyBar() const
  * Checks if it's okay to show a rookie's kill/stun alien icon.
  * @return, true if okay to show icon
  */
-bool BattlescapeState::allowAlienMark() const
+bool BattlescapeState::allowAlienIcon() const // private.
 {
 	return _battleSave->getSelectedUnit() != nullptr
 		&& _battleSave->getSelectedUnit()->getGeoscapeSoldier() != nullptr
@@ -4175,20 +4170,20 @@ bool BattlescapeState::allowAlienMark() const
 }
 
 /**
- * Updates experience data for the currently selected soldier.
+ * Updates experience data for the currently selected Soldier.
  */
 void BattlescapeState::updateExperienceInfo()
 {
 	_lstSoldierInfo->clearList();
-	_alienMark->setVisible(false);
+	_alienIcon->setVisible(false);
 
 	if (_showSoldierData == true)
 	{
-		const BattleUnit* const unit (_battleSave->getSelectedUnit());
-		if (unit != nullptr && unit->getGeoscapeSoldier() != nullptr)
+		const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
+		if (selUnit != nullptr && selUnit->getGeoscapeSoldier() != nullptr)
 		{
-			if (unit->hasFirstKill() == true)
-				_alienMark->setVisible();
+			if (selUnit->hasFirstKill() == true)
+				_alienIcon->setVisible();
 
 			// keep this consistent ...
 			std::vector<std::wstring> xpType;
@@ -4203,13 +4198,13 @@ void BattlescapeState::updateExperienceInfo()
 			// ... consistent with this
 			const int xp[]
 			{
-				unit->getExpFiring(),
-				unit->getExpThrowing(),
-				unit->getExpMelee(),
-				unit->getExpReactions(),
-				unit->getExpBravery(),
-				unit->getExpPsiSkill(),
-				unit->getExpPsiStrength()
+				selUnit->getExpFiring(),
+				selUnit->getExpThrowing(),
+				selUnit->getExpMelee(),
+				selUnit->getExpReactions(),
+				selUnit->getExpBravery(),
+				selUnit->getExpPsiSkill(),
+				selUnit->getExpPsiStrength()
 			};
 
 			Uint8 color;
@@ -4240,7 +4235,7 @@ void BattlescapeState::updateExperienceInfo()
  * Updates tile info for the tile under mouseover.
  * @param tile - pointer to a Tile
  */
-void BattlescapeState::updateTileInfo(const Tile* const tile)
+void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 {
 	_lstTileInfo->clearList();
 

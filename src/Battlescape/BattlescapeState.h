@@ -178,7 +178,7 @@ private:
 	SavedBattleGame* _battleSave;
 	SavedGame* _gameSave;
 	Surface
-		* _alienMark,
+		* _alienIcon,
 		* _bigBtnBorder,
 		* _overWeight,
 		* _rank,
@@ -239,6 +239,11 @@ private:
 	void handAction(
 			BattleItem* const item,
 			bool injured = false);
+
+	/// Checks if it's okay to show a rookie's kill/stun alien icon.
+	bool allowAlienIcon() const;
+	/// Updates tile info for the tile under mouseover.
+	void updateTileInfo(const Tile* const tile);
 
 
 	public:
@@ -492,12 +497,8 @@ private:
 		/// Gets the Energy bar from icons.
 		Bar* getEnergyBar() const;
 
-		/// Checks if it's okay to show a rookie's kill/stun alien icon.
-		bool allowAlienMark() const;
 		/// Updates experience data for the currently selected soldier.
 		void updateExperienceInfo();
-		/// Updates tile info for the tile under mouseover.
-		void updateTileInfo(const Tile* const tile);
 
 		/// Autosave next turn.
 		void autosave();
