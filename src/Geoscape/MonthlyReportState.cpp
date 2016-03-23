@@ -320,6 +320,13 @@ MonthlyReportState::~MonthlyReportState()
 {}
 
 /**
+ * Updates palettes.
+ */
+void MonthlyReportState::init()
+{
+	State::init();
+}
+/**
  * Updates all activity counters, gathers all scores, gets countries to sign
  * pacts, adjusts their fundings, assesses their satisfaction, and finally
  * calculates overall total score, with thanks to Volutar for the formulae.

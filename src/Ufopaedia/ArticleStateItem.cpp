@@ -75,7 +75,7 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 	add(_image);
 
 
-	const RuleItem* const itRule = _game->getRuleset()->getItemRule(defs->id);
+	const RuleItem* const itRule (_game->getRuleset()->getItemRule(defs->id));
 
 	itRule->drawHandSprite(
 					_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
@@ -89,7 +89,7 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 		_txtTwoHand->setColor(uPed_BLUE_SLATE);
 	}
 
-	const std::vector<std::string>* const ammo_data = itRule->getCompatibleAmmo();
+	const std::vector<std::string>* const ammo_data (itRule->getCompatibleAmmo());
 
 	// SHOT STATS TABLE (for firearms only)
 	if (itRule->getBattleType() == BT_FIREARM)
@@ -99,12 +99,12 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 		_txtShotType->setText(tr("STR_SHOT_TYPE"));
 		_txtShotType->setColor(uPed_BLUE_SLATE);
 
-		_txtAccuracy = new Text(50, 17, 108, 66);
+		_txtAccuracy = new Text(52, 17, 108, 66);
 		add(_txtAccuracy);
 		_txtAccuracy->setText(tr("STR_ACCURACY_UC"));
 		_txtAccuracy->setColor(uPed_BLUE_SLATE);
 
-		_txtTuCost = new Text(60, 17, 160, 66);
+		_txtTuCost = new Text(52, 17, 160, 66);
 		add(_txtTuCost);
 		_txtTuCost->setText(tr("STR_TIME_UNIT_COST"));
 		_txtTuCost->setColor(uPed_BLUE_SLATE);
@@ -112,13 +112,14 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 		_lstInfo = new TextList(204, 57, 8, 82);
 		add(_lstInfo);
 		_lstInfo->setColor(uPed_GREEN_SLATE); // color for %-data!
-		_lstInfo->setColumns(3, 100, 52, 52);
+		_lstInfo->setColumns(3, 100,52,52);
+		_lstInfo->setMargin(0);
 		_lstInfo->setBig();
 
 
 		std::wstring tu;
 
-		int current_row = 0;
+		int current_row (0);
 		if (itRule->getAutoTu() != 0)
 		{
 			if (itRule->getFlatRate() == true)
@@ -218,13 +219,13 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 	switch (itRule->getBattleType())
 	{
 		case BT_FIREARM:
-			_txtDamage = new Text(80, 10, 199, 7);
+			_txtDamage = new Text(50, 10, 210, 7);
 			add(_txtDamage);
 			_txtDamage->setText(tr("STR_DAMAGE_UC"));
 			_txtDamage->setColor(uPed_BLUE_SLATE);
 			_txtDamage->setAlign(ALIGN_CENTER);
 
-			_txtAmmo = new Text(45, 10, 271, 7);
+			_txtAmmo = new Text(40, 10, 275, 7);
 			add(_txtAmmo);
 			_txtAmmo->setText(tr("STR_AMMO"));
 			_txtAmmo->setColor(uPed_BLUE_SLATE);
@@ -244,20 +245,20 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 			}
 			else
 			{
-				const size_t AMMO_TYPES = std::min(
+				const size_t AMMO_TYPES (std::min(
 												ammo_data->size(),
-												static_cast<size_t>(3)); // yeh right.
+												static_cast<size_t>(3))); // yeh right.
 				for (size_t
 						i = 0;
 						i != AMMO_TYPES;
 						++i)
 				{
-					const ArticleDefinition* const ammo_article = _game->getRuleset()->getUfopaediaArticle((*ammo_data)[i]);
+					const ArticleDefinition* const ammo_article (_game->getRuleset()->getUfopaediaArticle((*ammo_data)[i]));
 					if (Ufopaedia::isArticleAvailable(
 												_game->getSavedGame(),
 												ammo_article) == true)
 					{
-						const RuleItem* const ammo_rule = _game->getRuleset()->getItemRule((*ammo_data)[i]);
+						const RuleItem* const ammo_rule (_game->getRuleset()->getItemRule((*ammo_data)[i]));
 						_txtAmmoType[i]->setText(tr(getDamageTypeText(ammo_rule->getDamageType())));
 
 						woststr.str(L"");
@@ -274,17 +275,17 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 					}
 				}
 			}
-		break;
+			break;
 
 		case BT_AMMO:
 		case BT_GRENADE:
 		case BT_PROXYGRENADE:
 		case BT_MELEE:
-/*			_txtDamage = new Text(82, 10, 194, 7);
-			add(_txtDamage);
-			_txtDamage->setColor(uPed_BLUE_SLATE);
-			_txtDamage->setAlign(ALIGN_CENTER);
-			_txtDamage->setText(tr("STR_DAMAGE_UC")); */
+//			_txtDamage = new Text(82, 10, 194, 7);
+//			add(_txtDamage);
+//			_txtDamage->setColor(uPed_BLUE_SLATE);
+//			_txtDamage->setAlign(ALIGN_CENTER);
+//			_txtDamage->setText(tr("STR_DAMAGE_UC"));
 
 			_txtAmmoType[0]->setText(tr(getDamageTypeText(itRule->getDamageType())));
 

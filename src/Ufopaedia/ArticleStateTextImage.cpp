@@ -68,12 +68,11 @@ ArticleStateTextImage::ArticleStateTextImage(const ArticleDefinitionTextImage* c
 	_txtTitle->setBig();
 	_txtTitle->setWordWrap();
 
-	const int text_height = _txtTitle->getTextHeight();
 	_txtInfo = new Text(
 					defs->text_width,
 					162,
 					5,
-					23 + text_height);
+					23 + _txtTitle->getTextHeight());
 	add(_txtInfo);
 	_txtInfo->setText(tr(defs->text));
 	_txtInfo->setColor(uPed_BLUE_SLATE);
@@ -114,7 +113,7 @@ bool ArticleStateTextImage::showInfoBtn() // private.
 {
 	if (_defs->id.find("_AUTOPSY") != std::string::npos)
 	{
-		const std::string alienId = _defs->id.substr(0, _defs->id.length() - 8);
+		const std::string alienId (_defs->id.substr(0, _defs->id.length() - 8));
 		if (_game->getSavedGame()->isResearched(alienId) == true)
 			return true;
 	}

@@ -110,7 +110,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Battlescape screen.
+ * Initializes all the elements in the Battlescape HUD.
  */
 BattlescapeState::BattlescapeState()
 	:

@@ -304,8 +304,8 @@ void StatisticsState::listStats()
 
 	const int
 		ufosDetected (gameSave->getCanonicalId("STR_UFO") - 1),
-		alienBases (gameSave->getCanonicalId("STR_ALIEN_BASE") - 1),
-		terrorSites (gameSave->getCanonicalId("STR_TERROR_SITE") - 1);
+		alienBases   (gameSave->getCanonicalId("STR_ALIEN_BASE") - 1),
+		terrorSites  (gameSave->getCanonicalId("STR_TERROR_SITE") - 1);
 
 	int totalCrafts (0);
 	for (std::vector<std::string>::const_iterator
@@ -359,7 +359,6 @@ void StatisticsState::listStats()
 		"STR_5_SUPERHUMAN"
 	};
 
-	// TODO: Translate this.
 	_lstStats->addRow(2, tr("STR_DIFFICULTY").c_str(),				tr(difficulty[gameSave->getDifficulty()]).c_str());
 	_lstStats->addRow(2, tr("STR_AVERAGE_MONTHLY_RATING").c_str(),	Text::intWide(monthlyScore).c_str());
 	_lstStats->addRow(2, tr("STR_TOTAL_INCOME").c_str(),			Text::formatCurrency(totalIncome).c_str());

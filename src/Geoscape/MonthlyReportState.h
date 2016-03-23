@@ -88,6 +88,9 @@ private:
 		/// Cleans up the Monthly Report state.
 		~MonthlyReportState();
 
+		/// Updates palettes.
+		void init();
+
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
 };

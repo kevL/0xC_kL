@@ -51,7 +51,7 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 		ArticleState(defs->id),
 		_row(0)
 {
-	const RuleArmor* const armorRule = _game->getRuleset()->getArmor(defs->id);
+	const RuleArmor* const armorRule (_game->getRuleset()->getArmor(defs->id));
 
 	_txtTitle = new Text(300, 17, 5, 24);
 
@@ -72,7 +72,7 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 	_image = new Surface(320, 200);
 	add(_image);
 
-	std::string look = armorRule->getSpriteInventory();
+	std::string look (armorRule->getSpriteInventory());
 	look += "M0.SPK";
 	if (CrossPlatform::fileExists(CrossPlatform::getDataFile("UFOGRAPH/" + look)) == false
 		&& _game->getResourcePack()->getSurface(look) == nullptr)
@@ -82,9 +82,9 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 	_game->getResourcePack()->getSurface(look)->blit(_image);
 
 
-	_lstInfo = new TextList(150, 129, 150, 12);
+	_lstInfo = new TextList(155, 129, 145, 12);
 	add(_lstInfo);
-	_lstInfo->setColumns(2, 125, 25);
+	_lstInfo->setColumns(2, 120,27);
 	_lstInfo->setColor(uPed_BLUE_SLATE);
 	_lstInfo->setDot();
 
@@ -110,11 +110,11 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 			i != RuleArmor::DAMAGE_TYPES;
 			++i)
 	{
-		const DamageType dType = static_cast<DamageType>(i);
-		const std::string st = getDamageTypeText(dType);
+		const DamageType dType (static_cast<DamageType>(i));
+		const std::string st (getDamageTypeText(dType));
 		if (st != "STR_UNKNOWN")
 		{
-			const int vulnr = static_cast<int>(Round(static_cast<double>(armorRule->getDamageModifier(dType)) * 100.));
+			const int vulnr (static_cast<int>(Round(static_cast<double>(armorRule->getDamageModifier(dType)) * 100.)));
 			addStat(st, Text::formatPercent(vulnr));
 		}
 	}
@@ -122,7 +122,6 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 	_lstInfo->addRow(0);
 	++_row;
 
-	// Add unit stats
 	addStat("STR_TIME_UNITS",			armorRule->getStats()->tu,			true);
 	addStat("STR_STAMINA",				armorRule->getStats()->stamina,		true);
 	addStat("STR_HEALTH",				armorRule->getStats()->health,		true);
@@ -158,11 +157,8 @@ void ArticleStateArmor::addStat( // private.
 	if (iStat != 0)
 	{
 		std::wostringstream woststr;
-		if (addSign == true
-			&& iStat > 0)
-		{
+		if (addSign == true && iStat > 0)
 			woststr << L'+';
-		}
 		woststr << iStat;
 
 		_lstInfo->addRow(

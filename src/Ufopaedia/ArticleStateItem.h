@@ -33,7 +33,7 @@ class TextList;
 
 
 /**
- * ArticleStateItem has a caption, text, preview image and a stats block.
+ * ArticleStateItem has a caption, text, preview-image and a stats-block.
  */
 class ArticleStateItem
 	:

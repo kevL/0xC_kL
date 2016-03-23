@@ -48,15 +48,15 @@ class ArticleState
 
 protected:
 	static const Uint8
-		uPed_ORANGE			= 16,
-		uPed_VIOLET			= 83,
+		uPed_ORANGE			=  16,
+		uPed_VIOLET			=  83,
 		uPed_PINK			= 162, // -> 192+ lt.brown for ExtraAlienInfo
 		uPed_BLUE_SLATE		= 239,
 		uPed_GREEN_SLATE	= 244,
 
 		GEOSCAPE_CYAN		= 133,
 
-		BASESCAPE_VIOLET	= 64,
+		BASESCAPE_VIOLET	=  64,
 		BASESCAPE_BLUE		= 218,
 		BASESCAPE_WHITE		= 208,
 
@@ -73,33 +73,33 @@ protected:
 		* _btnPrev;
 	Timer* _timer;
 
-	/// constructor (can be instantiated by derived classes only)
+	/// Constructor (can be instantiated by derived classes only).
 	explicit ArticleState(const std::string& article_id);
-	/// destructor
+	/// Destructor.
 	virtual ~ArticleState();
 
 	/// Advances to the next/previous Article when right/left key is depressed.
 	void keyRepeat();
 
-	/// screen layout helpers
+	/// Screen-layout helpers.
 	void initLayout(bool contrast = true);
 
-	/// callback for OK button
+	/// Callback for OK button.
 	void btnOkClick(Action* action);
-	/// callback for PREV button
+	/// Callback for PREV button.
 	void btnPrevClick(Action* action);
-	/// callback for NEXT button
+	/// Callback for NEXT button.
 	void btnNextClick(Action* action);
 
 
 	public:
-		/// Runs the timer.
+		/// Runs the Timer.
 		void think() override;
 
-		/// converts damage type to string
+		/// Converts damage-type to string.
 		static std::string getDamageTypeText(DamageType dType);
 
-		/// returns the article id
+		/// Returns the article-ID.
 		std::string getId() const
 		{ return _id; }
 };

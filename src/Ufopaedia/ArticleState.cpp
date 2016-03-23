@@ -60,7 +60,7 @@ ArticleState::~ArticleState() // virtual/protected.
 }
 
 /**
- * Hits the think timer.
+ * Hits the think Timer.
  */
 void ArticleState::think()
 {
@@ -73,7 +73,7 @@ void ArticleState::think()
  */
 void ArticleState::keyRepeat() // private.
 {
-	Uint8* keystate = SDL_GetKeyState(nullptr);
+	Uint8* keystate (SDL_GetKeyState(nullptr));
 	if (keystate[Options::keyGeoRight] == 1 || keystate[SDLK_KP6] == 1)
 		btnNextClick(nullptr);
 	else if (keystate[Options::keyGeoLeft] == 1 || keystate[SDLK_KP4] == 1)
@@ -81,7 +81,7 @@ void ArticleState::keyRepeat() // private.
 }
 
 /**
- * Gets damage type as a string.
+ * Gets damage-type as a string.
  * @param dType - the DamageType (RuleItem.h)
  * @return, type string
  */
@@ -99,7 +99,6 @@ std::string ArticleState::getDamageTypeText(DamageType dType) // static.
 		case DT_ACID:	return "STR_DAMAGE_ACID";
 		case DT_SMOKE:	return "STR_DAMAGE_SMOKE";
 	}
-
 	return "STR_UNKNOWN";
 }
 

@@ -1142,7 +1142,7 @@ std::vector<Country*>* SavedGame::getCountries()
  */
 int SavedGame::getCountryFunding() const
 {
-	int total = 0;
+	int total (0);
 	for (std::vector<Country*>::const_iterator
 			i = _countries.begin();
 			i != _countries.end();
@@ -1186,7 +1186,7 @@ const std::vector<Base*>* SavedGame::getBases() const
  */
 int SavedGame::getBaseMaintenances() const
 {
-	int total = 0;
+	int total (0);
 	for (std::vector<Base*>::const_iterator
 			i = _bases.begin();
 			i != _bases.end();
@@ -1267,13 +1267,9 @@ bool SavedGame::searchResearch(
 			i != _research.end();
 			++i)
 	{
-		if ((*i)->getType() == type)
-		{
-			if ((*i)->getStatus() == status)
-				return true;
-		}
+		if ((*i)->getType() == type && (*i)->getStatus() == status)
+			return true;
 	}
-
 	return false;
 }
 
@@ -1292,13 +1288,9 @@ bool SavedGame::searchResearch(
 			i != _research.end();
 			++i)
 	{
-		if ((*i)->getRules() == resRule)
-		{
-			if ((*i)->getStatus() == status)
-				return true;
-		}
+		if ((*i)->getRules() == resRule && (*i)->getStatus() == status)
+			return true;
 	}
-
 	return false;
 }
 
@@ -1312,7 +1304,7 @@ bool SavedGame::setResearchStatus(
 		const std::string& type,
 		const ResearchStatus status)
 {
-	bool ret = false;
+	bool ret (false);
 	for (std::vector<ResearchGeneral*>::const_iterator
 			i = _research.begin();
 			i != _research.end();
@@ -1330,11 +1322,9 @@ bool SavedGame::setResearchStatus(
 				if (uPed != type)
 					setResearchStatus(_rules->getResearch(uPed));
 			}
-
 			return ret;
 		}
 	}
-
 	return false;
 }
 
@@ -1348,7 +1338,7 @@ bool SavedGame::setResearchStatus(
 		const RuleResearch* resRule,
 		const ResearchStatus status)
 {
-	bool ret = false;
+	bool ret (false);
 	for (std::vector<ResearchGeneral*>::const_iterator
 			i = _research.begin();
 			i != _research.end();
@@ -1366,11 +1356,9 @@ bool SavedGame::setResearchStatus(
 				if (uPed != resRule->getType())
 					setResearchStatus(_rules->getResearch(uPed));
 			}
-
 			return ret;
 		}
 	}
-
 	return false;
 }
 
@@ -1589,7 +1577,6 @@ bool SavedGame::checkPrerequisites(const RuleResearch* const resRule) const // p
 			}
 		}
 	}
-
 	return true;
 }
 
@@ -1617,7 +1604,6 @@ bool SavedGame::hasRequiredResearch(const RuleResearch* const resRule) const // 
 			}
 		}
 	}
-
 	return true;
 }
 

@@ -53,7 +53,7 @@ class WarningMessage;
 
 
 /**
- * Battlescape screen which shows the tactical battle.
+ * Battlescape screen that shows tactical-battle info and controls.
  */
 class BattlescapeState final
 	:
