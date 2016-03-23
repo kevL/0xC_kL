@@ -61,7 +61,7 @@
 namespace OpenXcom
 {
 
-const int TileEngine::heightFromCenter[11] =
+const int TileEngine::heightFromCenter[11]
 {
 		  0,
 	 -2,  2,
@@ -835,10 +835,10 @@ BattleUnit* TileEngine::getTargetUnit(const Tile* const tile) const
 }
 
 /**
- * Gets the origin voxel of a unit's LoS.
+ * Gets the origin-voxel of a unit's LoS.
  * @param unit	- pointer to the watcher
  * @param pos	- pointer to a hypothetical Position (default nullptr to use @a unit's current position)
- * @return, approximately an eyeball voxel
+ * @return, approximately an eyeball-voxel
  */
 Position TileEngine::getSightOriginVoxel(
 		const BattleUnit* const unit,
@@ -866,12 +866,12 @@ Position TileEngine::getSightOriginVoxel(
 /**
  * Gets the origin-voxel of a shot/throw or missile.
  * @param action	- reference the BattleAction
- * @param tile		- pointer to a start tile (default nullptr)
+ * @param tile		- pointer to a start-tile (default nullptr)
  * @return, position of the origin in voxel-space
  */
 Position TileEngine::getOriginVoxel(
 		const BattleAction& action,
-		const Tile* tile) const
+		const Tile* const tile) const
 {
 	if (action.type == BA_LAUNCH)
 	{
@@ -903,6 +903,8 @@ Position TileEngine::getOriginVoxel(
  *						  for AI-ambush usage; if left nullptr this function
  *						  behaves normally (default nullptr to use @a tileTarget's
  *						  current unit)
+ * @param force			- pointer to bool that stores whether shot should be
+ *						  automatically verified in Projectile instantiation (default nullptr not used)
  * @return, true if a unit can be targeted
  */
 bool TileEngine::canTargetUnit(
@@ -910,7 +912,8 @@ bool TileEngine::canTargetUnit(
 		const Tile* const tileTarget,
 		Position* const scanVoxel,
 		const BattleUnit* const excludeUnit,
-		const BattleUnit* targetUnit) const
+		const BattleUnit* targetUnit,
+		bool* const force) const
 {
 /*	static bool debugged = false;
 	bool debug;
@@ -936,19 +939,18 @@ bool TileEngine::canTargetUnit(
 	if (targetUnit == nullptr)
 	{
 		hypothetical = false;
-
 		targetUnit = tileTarget->getTileUnit();
 		if (targetUnit == nullptr)
 		{
 			//if (debug) Log(LOG_INFO) << ". no Unit, ret FALSE";
 			return false; // no unit in the tileTarget even if it's elevated and appearing in it.
 		}
-		offsetX = offsetY = 0;
+		offsetX =
+		offsetY = 0;
 	}
 	else
 	{
 		hypothetical = true;
-
 		offsetX = targetUnit->getPosition().x - tileTarget->getPosition().x;
 		offsetY = targetUnit->getPosition().y - tileTarget->getPosition().y;
 	}
@@ -962,20 +964,20 @@ bool TileEngine::canTargetUnit(
 	const Position targetVoxel (Position::toVoxelSpaceCentered(tileTarget->getPosition()));
 	const int
 		targetLow (targetVoxel.z
-					- tileTarget->getTerrainLevel()
-					+ targetUnit->getFloatHeight()),
-		armorSize (targetUnit->getArmor()->getSize() - 1);
+				 - tileTarget->getTerrainLevel()
+				 + targetUnit->getFloatHeight()),
+		unitSize (targetUnit->getArmor()->getSize() - 1);
 	int
 		targetHigh (targetLow),
 		targetMid,
 		height;
 
-	//if (debug) Log(LOG_INFO) << ". armorSize = " << armorSize;
+	//if (debug) Log(LOG_INFO) << ". unitSize = " << unitSize;
 	//if (debug) Log(LOG_INFO) << ". offsetX = " << offsetX;
 	//if (debug) Log(LOG_INFO) << ". offsetY = " << offsetY;
 
 	size_t radius; // radius = LoFT-id
-	if (armorSize == 0)
+	if (unitSize == 0)
 		radius = targetUnit->getLoft();
 	else
 		radius = 3;
@@ -987,7 +989,7 @@ bool TileEngine::canTargetUnit(
 	const int
 		relX (static_cast<int>(Round(static_cast<float>( relVoxel.y) * theta))),
 		relY (static_cast<int>(Round(static_cast<float>(-relVoxel.x) * theta))),
-		targetSlices[10] =
+		targetSlices[10]
 		{
 			 0,		 0,
 			 relX,	 relY,
@@ -1058,17 +1060,17 @@ bool TileEngine::canTargetUnit(
 
 			trj.clear();
 
-			const VoxelType test = plotLine(
-										*originVoxel,
-										*scanVoxel,
-										false,
-										&trj,
-										excludeUnit);
+			const VoxelType testVoxel (plotLine(
+											*originVoxel,
+											*scanVoxel,
+											false,
+											&trj,
+											excludeUnit));
 /*			if (debug)
 			{
 				if (trj.empty() == false) Log(LOG_INFO) << ". . . . test " << trj.at(0);
 				std::string st;
-				switch (test)
+				switch (testVoxel)
 				{
 					case VOXEL_EMPTY:		st = "VOXEL_EMPTY";			break;	// -1
 					case VOXEL_FLOOR:		st = "VOXEL_FLOOR";			break;	//  0
@@ -1081,39 +1083,41 @@ bool TileEngine::canTargetUnit(
 				Log(LOG_INFO) << ". . . . testLine = " << st;
 			} */
 
-			if (test == VOXEL_UNIT)
+			switch (testVoxel)
 			{
-//				for (int // voxel of hit must be inside of scanned tileTarget(s)
-//						x = 0;
-//						x <= armorSize;
-//						++x)
-//				{
-//					if (debug) Log(LOG_INFO) << ". . . . iterate x-Size";
-//					for (int
-//							y = 0;
-//							y <= armorSize;
-//							++y)
-//				{
-//						if (debug) Log(LOG_INFO) << ". . . . . iterate y-Size";
-				if (   (trj.at(0).x >> 4) == (scanVoxel->x >> 4) /*+ x*/ + offsetX
-					&& (trj.at(0).y >> 4) == (scanVoxel->y >> 4) /*+ y*/ + offsetY
-					&&  trj.at(0).z >= targetLow
-					&&  trj.at(0).z <= targetHigh)
-				{
-					//if (debug) Log(LOG_INFO) << ". . . . . . TargetUnit found @ scanVoxel " << (*scanVoxel);
-					targetable_x.push_back(scanVoxel->x);
-					targetable_y.push_back(scanVoxel->y);
-					targetable_z.push_back(scanVoxel->z);
-				}
+				case VOXEL_UNIT:
+//					for (int // voxel of hit must be inside of scanned tileTarget(s)
+//							x = 0;
+//							x <= unitSize;
+//							++x)
+//					{
+//						if (debug) Log(LOG_INFO) << ". . . . iterate x-Size";
+//						for (int
+//								y = 0;
+//								y <= unitSize;
+//								++y)
+//					{
+//							if (debug) Log(LOG_INFO) << ". . . . . iterate y-Size";
+					if (   (trj.at(0).x >> 4) == (scanVoxel->x >> 4) /*+ x*/ + offsetX
+						&& (trj.at(0).y >> 4) == (scanVoxel->y >> 4) /*+ y*/ + offsetY
+						&&  trj.at(0).z >= targetLow
+						&&  trj.at(0).z <= targetHigh)
+					{
+						//if (debug) Log(LOG_INFO) << ". . . . . . TargetUnit found @ scanVoxel " << (*scanVoxel);
+						targetable_x.push_back(scanVoxel->x);
+						targetable_y.push_back(scanVoxel->y);
+						targetable_z.push_back(scanVoxel->z);
+					}
+//						}
 //					}
-//				}
-			}
-			else if (test == VOXEL_EMPTY
-				&& hypothetical == true
-				&& trj.empty() == false)
-			{
-				//if (debug) Log(LOG_INFO) << ". . . hypothetical Found, ret TRUE";
-				return true;
+					break;
+
+				case VOXEL_EMPTY:
+					if (hypothetical == true && trj.empty() == false)
+					{
+						//if (debug) Log(LOG_INFO) << ". . . hypothetical Found, ret TRUE";
+						return true;
+					}
 			}
 		}
 	}
@@ -1134,6 +1138,7 @@ bool TileEngine::canTargetUnit(
 		const int target_z ((minVal + maxVal) / 2);
 
 		*scanVoxel = Position(target_x, target_y, target_z);
+		if (force != nullptr) *force = true;
 
 		//if (debug) Log(LOG_INFO) << ". scanVoxel RET " << (*scanVoxel) << " " << ((*scanVoxel) / Position(16,16,24)) << " area=" << targetable_x.size();
 		return true;

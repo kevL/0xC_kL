@@ -53,6 +53,7 @@ private:
 
 
 //	bool _reversed;
+	bool _forced;
 	int
 		_bulletSprite,
 		_speed;
@@ -99,8 +100,9 @@ private:
 		/// Cleans up the Projectile.
 		~Projectile();
 
-		/// Calculates the trajectory for a straight path.
+		/// Calculates the trajectory of a line-path for a non-BL weapon.
 		VoxelType calculateShot(double accuracy);
+		/// Calculates the trajectory of a line-path for a Blaster Launch.
 		VoxelType calculateShot(
 				double accuracy,
 				const Position& originVoxel,
@@ -129,6 +131,9 @@ private:
 		Position getFinalPosition() const;
 		/// Gets the final direction of the Projectile's trajectory as a unit-vector.
 		Position getStrikeVector() const;
+
+		/// Sets a forced-shot against a Unit.
+		void setForced();
 
 		/// Stores the final direction of a missile or thrown-object.
 //		void storeProjectileDirection() const;

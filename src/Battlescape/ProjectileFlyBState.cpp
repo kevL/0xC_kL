@@ -70,7 +70,8 @@ ProjectileFlyBState::ProjectileFlyBState(
 		_posOrigin(posOrigin),
 		_battleSave(parent->getBattleSave()),
 		_originVoxel(0,0,-1),
-//		_targetVoxel(-1,-1,-1),
+		_targetVoxel(-1,-1,-1),
+		_forced(false),
 		_unit(nullptr),
 		_ammo(nullptr),
 		_prjItem(nullptr),
@@ -331,11 +332,16 @@ void ProjectileFlyBState::init()
 				//Log(LOG_INFO) << "projFlyB targetVoxel[2] = " << _targetVoxel;
 			}
 			else
+			{
 				_parent->getTileEngine()->canTargetUnit( // <- this is a normal shot by xCom or aLiens.
 													&originVoxel,
 													tileTarget,
 													&_targetVoxel,
-													_unit);
+													_unit,
+													nullptr,
+													&_forced);
+				//Log(LOG_INFO) << ". canTargetUnit() targetVoxel " << _targetVoxel << " targetTile " << Position::toTileSpace(_targetVoxel);
+			}
 		}
 		else if (tileTarget->getMapData(O_OBJECT) != nullptr	// force vs. Object by using CTRL above^
 			&& (_unit->getFaction() != FACTION_PLAYER			// bypass Object by pressing SHIFT
@@ -591,6 +597,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 		}
 		else // non-BL weapon
 		{
+			if (_forced == true) prj->setForced();
 			_prjImpact = prj->calculateShot(_unit->getAccuracy(_action)); // this should probly be TE:plotLine() - cf. else(error) below_
 			//Log(LOG_INFO) << ". shoot weapon[1], voxelType = " << (int)_prjImpact;
 			//Log(LOG_INFO) << "prjFlyB accuracy = " << _unit->getAccuracy(_action);

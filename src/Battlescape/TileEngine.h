@@ -170,14 +170,15 @@ private:
 		/// Gets the origin voxel of a given action.
 		Position getOriginVoxel(
 				const BattleAction& action,
-				const Tile* tile = nullptr) const;
+				const Tile* const tile = nullptr) const;
 		/// Checks validity for targetting a BattleUnit.
 		bool canTargetUnit(
 				const Position* const originVoxel,
 				const Tile* const tileTarget,
 				Position* const scanVoxel,
 				const BattleUnit* const excludeUnit,
-				const BattleUnit* targetUnit = nullptr) const;
+				const BattleUnit* targetUnit = nullptr,
+				bool* const force = nullptr) const;
 		/// Check validity for targeting a Tile.
 		bool canTargetTilepart(
 				const Position* const originVoxel,

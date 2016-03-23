@@ -74,6 +74,7 @@ Projectile::Projectile(
 		_action(action),
 		_posOrigin(posOrigin),
 		_targetVoxel(targetVoxel),
+		_forced(false),
 		_trjId(0),
 		_bulletSprite(-1)
 {
@@ -201,7 +202,7 @@ VoxelType Projectile::calculateShot(
 		if (verifyTarget(originVoxel, useExclude) == false)
 		{
 			//Log(LOG_INFO) << ". ret VOXEL_EMPTY";
-			return VOXEL_EMPTY;
+			return VOXEL_EMPTY; // <- that is, FAIL.
 		}
 	}
 
@@ -209,12 +210,12 @@ VoxelType Projectile::calculateShot(
 	//Log(LOG_INFO) << ". autoshotCount[1] = " << _action.autoShotCount;
 
 	// guided missiles drift, but how much is based on the shooter's faction rather than accuracy.
-/*	if (_action.type == BA_LAUNCH)
-	{
-		extendLine = _action.waypoints.size() < 2;
-		if (_action.actor->getFaction() == FACTION_PLAYER) accuracy = 0.60;
-		else accuracy = 0.55;
-	} */
+//	if (_action.type == BA_LAUNCH)
+//	{
+//		extendLine = _action.waypoints.size() < 2;
+//		if (_action.actor->getFaction() == FACTION_PLAYER) accuracy = 0.60;
+//		else accuracy = 0.55;
+//	}
 
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << ". preAcu target = " << _targetVoxel << " tSpace " << (_targetVoxel / Position(16,16,24));
@@ -244,7 +245,7 @@ VoxelType Projectile::calculateShot(
 		targetVoxel_cache = _trj.back();
 	}
 
-	//Log(LOG_INFO) << ". RET voxelType = " << voxelType;
+	//Log(LOG_INFO) << ". RET voxelType = " << impactType;
 	return impactType;
 }
 
@@ -685,9 +686,9 @@ double Projectile::targetAccuracy( // private.
  * @param useExclude	- true for normal shots; false for BL-waypoints (default true)
  * @return, true if shot allowed
  */
-bool Projectile::verifyTarget(
+bool Projectile::verifyTarget( // private.
 		const Position& originVoxel,
-		bool useExclude) // private.
+		bool useExclude)
 {
 	const BattleUnit* excludeUnit;
 	if (useExclude == true)
@@ -702,37 +703,41 @@ bool Projectile::verifyTarget(
 																	false,
 																	&_trj,
 																	excludeUnit));
-	//Log(LOG_INFO) << "voxelType = " << (int)voxelType;
-	//Log(LOG_INFO) << "isTrj = " << (int)(_trj.empty() == false);
+	//Log(LOG_INFO) << ". voxelType = " << (int)voxelType;
+	//Log(LOG_INFO) << ". isTrj = " << (int)(_trj.empty() == false);
 	if (voxelType != VOXEL_EMPTY && _trj.empty() == false)
 	{
 		Position posTest (Position::toTileSpace(_trj.at(0)));
 		//Log(LOG_INFO) << ". posTest " << posTest << " posTarget" << _action.target;
 
-		if (voxelType == VOXEL_UNIT)
-		{
-			const Tile* const tileTest (_battleSave->getTile(posTest));
-			if (tileTest != nullptr && tileTest->getTileUnit() == nullptr) // must be poking head up from tileBelow
-				posTest += Position(0,0,-1);
-		}
+//		if (voxelType == VOXEL_UNIT) // <- moved below ->
+//		{
+//			const Tile* const tileTest (_battleSave->getTile(posTest));
+//			if (tileTest != nullptr && tileTest->getTileUnit() == nullptr) // must be poking head up from tileBelow
+//				posTest += Position(0,0,-1);
+//		}
 
 		//Log(LOG_INFO) << ". result = " << _action.result;
-		if (posTest != _action.posTarget && _action.result.empty() == true)
+		if (posTest != _action.posTarget) // && _action.result.empty() == true) // -> a non-empty _action.result should never get here.
 		{
 			switch (voxelType)
 			{
 				case VOXEL_NORTHWALL:
-					if (posTest.y - 1 != _action.posTarget.y)
+					if (posTest.y - 1 != _action.posTarget.y && _forced == false)
 						return false;
 					break;
 
 				case VOXEL_WESTWALL:
-					if (posTest.x - 1 != _action.posTarget.x)
+					if (posTest.x - 1 != _action.posTarget.x && _forced == false)
 						return false;
 					break;
 
 				case VOXEL_UNIT:
 				{
+					const Tile* const tileTest (_battleSave->getTile(posTest));		// -> from above <-
+					if (tileTest != nullptr && tileTest->getTileUnit() == nullptr)	// must be poking head up from tileBelow
+						posTest += Position(0,0,-1);
+
 					const BattleUnit
 						* const targetUnit (_battleSave->getTile(_action.posTarget)->getTileUnit()),
 						* const testUnit (_battleSave->getTile(posTest)->getTileUnit());
@@ -741,12 +746,17 @@ bool Projectile::verifyTarget(
 					break;
 				}
 
+				case VOXEL_FLOOR:
+				case VOXEL_OBJECT:
+					if (_forced == false) return false; // TODO: This correctly.
+					break;
+
 				default:
+				case VOXEL_OUTOFBOUNDS:
 					return false;
 			}
 		}
 	}
-
 	return true;
 }
 
@@ -896,9 +906,23 @@ Position Projectile::getStrikeVector() const
 	return posVect;
 }
 
+/**
+ * Sets a forced-shot against a Unit.
+ * @note This is used in rare circumstances when TileEngine::canTargetUnit()
+ * determines a targetVoxel that's inbetween a targetUnit's upper and lower
+ * exposed areas -- so that verifyTarget() will allow a shot against a Voxel_Unit
+ * despite the plotted voxel belonging to an object-part. In this case you'll
+ * need to *miss* the voxel to actually hit the targeted BattleUnit.
+ * TODO: that.
+ */
+void Projectile::setForced()
+{
+	_forced = true;
 }
 
-/*
+}
+
+/**
  * Stores the final direction of a missile or thrown-object for use by
  * TileEngine blast propagation.
  * @note This is to prevent blasts from propagating on both sides of diagonal
@@ -932,7 +956,7 @@ void Projectile::storeProjectileDirection() const
 	_battleSave->getTileEngine()->setProjectileDirection(dir);
 } */
 
-/*
+/**
  * Gets the Position of origin for the projectile.
  * @note Instead of using the actor's position use the voxel origin translated
  * to a tile position - this is a workaround for large units.
@@ -943,7 +967,7 @@ Position Projectile::getOrigin()
 	return _trj.front() / Position(16,16,24); // returning this by const& might be okay due to 'extended temporaries' in C++
 } */
 
-/*
+/**
  * Gets the INTENDED target for this projectile.
  * @note It is important to note that we do not use the final position of the
  * projectile here but rather the targeted tile.
@@ -954,7 +978,7 @@ Position Projectile::getTarget() const
 	return _action.target; // returning this by const& might be okay
 } */
 
-/*
+/**
  * Gets if this projectile is to be drawn left to right or right to left.
  * @return, true if this is to be drawn in reverse order
  *
