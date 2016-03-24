@@ -64,7 +64,6 @@ NextTurnState::NextTurnState(
 		_battleSave(battleSave),
 		_state(state),
 		_aliensPacified(aliensPacified)
-//		_turnCounter(nullptr)
 {
 	_window = new Window(this, 320, 200);
 

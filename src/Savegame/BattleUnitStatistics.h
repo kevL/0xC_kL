@@ -318,7 +318,7 @@ struct BattleUnitStatistics
 	}
 
 	/// Gets if unit has killed or stunned a hostile.
-	bool hasKillOrStun() const
+	bool hasTakedown() const
 	{
 		for (std::vector<BattleUnitKill*>::const_iterator
 				i = kills.begin();

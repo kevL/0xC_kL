@@ -3939,7 +3939,7 @@ void BattleUnit::addKillCount()
 bool BattleUnit::hasFirstKill() const
 {
 	return _rankInt == 0
-		&& _statistics->hasKillOrStun() == true; // || _kills > 0 // redundant, but faster
+		&& _statistics->hasTakedown() == true; // || _kills > 0 // redundant, but faster
 }
 
 /**

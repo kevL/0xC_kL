@@ -93,6 +93,7 @@
 #include "../Savegame/Base.h"
 #include "../Savegame/BattleItem.h"
 #include "../Savegame/BattleUnit.h"
+#include "../Savegame/BattleUnitStatistics.h"
 #include "../Savegame/Country.h"
 #include "../Savegame/Craft.h"
 #include "../Savegame/MissionSite.h"
@@ -327,7 +328,7 @@ BattlescapeState::BattlescapeState()
 
 	_txtOrder		= new Text(55, 9, 1, 37);
 	_lstSoldierInfo	= new TextList(25, 57, 1, 47);
-	_alienIcon		= new Surface(9, 11, 1, 105);
+	_alienIcon		= new Surface(29, 119, 1, 105); // each icon is 9x11 px. so this can contain 3x10 alien-heads = 30.
 
 	_txtConsole1	= new Text(screenWidth / 2, y, 0, 0);
 	_txtConsole2	= new Text(screenWidth / 2, y, screenWidth / 2, 0);
@@ -619,9 +620,6 @@ BattlescapeState::BattlescapeState()
 	}
 
 
-//	add(_turnCounter);
-//	_turnCounter->setColor(BLUE);
-
 	add(_lstTileInfo,	"textName",	"battlescape"); // blue
 	add(_txtConsole1,	"textName",	"battlescape");
 	add(_txtConsole2,	"textName",	"battlescape");
@@ -657,8 +655,6 @@ BattlescapeState::BattlescapeState()
 	_lstSoldierInfo->setColumns(2, 10,15);
 	_lstSoldierInfo->setMargin(0);
 
-	Surface* const srfAlien (_game->getResourcePack()->getSurface("ALIENINSIGNIA"));
-	srfAlien->blit(_alienIcon);
 	_alienIcon->setVisible(false);
 
 
@@ -4164,9 +4160,44 @@ Bar* BattlescapeState::getEnergyBar() const
  */
 bool BattlescapeState::allowAlienIcon() const // private.
 {
-	return _battleSave->getSelectedUnit() != nullptr
-		&& _battleSave->getSelectedUnit()->getGeoscapeSoldier() != nullptr
-		&& _battleSave->getSelectedUnit()->hasFirstKill();
+	_alienIcon->clear();
+
+	bool ret (false);
+
+	const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
+	if (selUnit != nullptr
+		&& selUnit->getGeoscapeSoldier() != nullptr)
+	{
+		const BattleUnitStatistics* const statistics (selUnit->getStatistics());
+		if (statistics->kills.empty() == false)
+		{
+			static const size_t ICONS (30);
+			size_t j (0);
+			int
+				x,y;
+			for (std::vector<BattleUnitKill*>::const_iterator
+					i = statistics->kills.begin();
+					i != statistics->kills.end() && j != ICONS;
+					++i)
+			{
+				if ((*i)->_faction == FACTION_HOSTILE) // draw icons
+				{
+					//Log(LOG_INFO) << "Icon id-" << selUnit->getId() << " j= " << j;
+					ret = true;
+					x = (j % 3) * 10;
+					y = (j / 3) * 12;
+
+					Surface* const srfAlien (_game->getResourcePack()->getSurface("AlienIcon"));
+					srfAlien->setX(x);
+					srfAlien->setY(y);
+					srfAlien->blit(_alienIcon);
+
+					++j;
+				}
+			}
+		}
+	}
+	return ret;
 }
 
 /**
@@ -4180,10 +4211,10 @@ void BattlescapeState::updateExperienceInfo()
 	if (_showSoldierData == true)
 	{
 		const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
-		if (selUnit != nullptr && selUnit->getGeoscapeSoldier() != nullptr)
+		if (selUnit != nullptr
+			&& selUnit->getGeoscapeSoldier() != nullptr)
 		{
-			if (selUnit->hasFirstKill() == true)
-				_alienIcon->setVisible();
+			_alienIcon->setVisible(allowAlienIcon());
 
 			// keep this consistent ...
 			std::vector<std::wstring> xpType;
@@ -4244,12 +4275,12 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 		size_t rows (3);
 		int tuCost (0);
 
-		const BattleUnit* const unit (_battleSave->getSelectedUnit());
-		if (unit != nullptr
-			&& unit->getFaction() == FACTION_PLAYER)
+		const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
+		if (selUnit != nullptr
+			&& selUnit->getFaction() == FACTION_PLAYER)
 		{
 			++rows;
-			MovementType mType = unit->getMoveTypeUnit();
+			const MovementType mType (selUnit->getMoveTypeUnit());
 
 			tuCost = tile->getTuCostTile(O_FLOOR, mType)
 				   + tile->getTuCostTile(O_OBJECT, mType);
@@ -4327,7 +4358,7 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 								value.c_str(),
 								infoType.at(i).c_str());
 			}
-			else if (unit != nullptr) // tuCost
+			else if (selUnit != nullptr) // tuCost
 			{
 				color = BLUE;
 
