@@ -37,7 +37,7 @@ RuleArmor::RuleArmor(const std::string& type)
 		_rearArmor(0),
 		_underArmor(0),
 		_drawRoutine(0),
-		_moveType(MT_WALK),
+		_mType(MT_WALK),
 		_size(1),
 		_weight(0),
 		_deathFrames(3),
@@ -102,7 +102,7 @@ void RuleArmor::load(const YAML::Node& node)
 	}
 	_corpseGeo		= node["corpseGeo"]			.as<std::string>(_corpseGeo);
 
-	_moveType		= static_cast<MovementType>(node["movementType"].as<int>(_moveType));
+	_mType			= static_cast<MoveType>(node["movementType"].as<int>(_mType));
 //	_specWeapon		= node["specialWeapon"]	.as<std::string>(_specWeapon);
 	_frontArmor		= node["frontArmor"]	.as<int>(_frontArmor);
 	_sideArmor		= node["sideArmor"]		.as<int>(_sideArmor);
@@ -267,11 +267,11 @@ int RuleArmor::getDrawRoutine() const
  * @important: do not use this function outside the BattleUnit constructor
  * unless you are SURE you know what you are doing.
  * For more information see the BattleUnit constructor.
- * @return, MovementType enum
+ * @return, MoveType (MapData.h)
  */
-MovementType RuleArmor::getMoveTypeArmor() const
+MoveType RuleArmor::getMoveTypeArmor() const
 {
-	return _moveType;
+	return _mType;
 }
 
 /**

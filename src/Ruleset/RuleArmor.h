@@ -88,7 +88,7 @@ private:
 	float _damageModifier[DAMAGE_TYPES];
 
 	ForcedTorso _forcedTorso;
-	MovementType _moveType;
+	MoveType _mType;
 	UnitStats _stats;
 
 	std::vector<int>
@@ -143,7 +143,7 @@ private:
 
 		/// Gets whether an Armor allows flight.
 		/// DO NOT USE THIS FUNCTION OUTSIDE THE BATTLEUNIT CONSTRUCTOR OR I WILL HUNT YOU DOWN and kiss you. On the lips.
-		MovementType getMoveTypeArmor() const;
+		MoveType getMoveTypeArmor() const;
 
 		/// Gets whether an Armor is for a small or large BattleUnit.
 		int getSize() const;

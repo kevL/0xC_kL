@@ -320,13 +320,13 @@ bool Tile::isVoid(
 
 /**
  * Gets the TU cost to move over a partType of this Tile.
- * @param partType - the part-type (MapData.h)
- * @param moveType - the movement-type (MapData.h)
+ * @param partType	- the MapDataType (MapData.h)
+ * @param type		- the MoveType (MapData.h)
  * @return, TU cost
  */
 int Tile::getTuCostTile(
 		MapDataType partType,
-		MovementType moveType) const
+		MoveType type) const
 {
 	if (_parts[partType] != nullptr
 		&& (_parts[partType]->isUfoDoor() == false
@@ -341,12 +341,12 @@ int Tile::getTuCostTile(
 					case BIGWALL_BLOCK:
 					case BIGWALL_NESW:
 					case BIGWALL_NWSE:
-						return _parts[partType]->getTuCostPart(moveType); // question: Why do side-bigwalls return 0.
+						return _parts[partType]->getTuCostPart(type); // question: Why do side-bigwalls return 0.
 				}
 				break;
 
 			default:
-				return _parts[partType]->getTuCostPart(moveType);
+				return _parts[partType]->getTuCostPart(type);
 		}
 	}
 	return 0;

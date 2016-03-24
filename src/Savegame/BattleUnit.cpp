@@ -150,18 +150,19 @@ BattleUnit::BattleUnit(
 		_id(sol->getId()),
 		_rank(sol->getRankString()),
 		_armor(sol->getArmor()),
+		_loftSet(sol->getArmor()->getLoftSet()),
+		_mType(sol->getArmor()->getMoveTypeArmor()),
 		_standHeight(sol->getRules()->getStandHeight()),
 		_kneelHeight(sol->getRules()->getKneelHeight()),
 		_floatHeight(sol->getRules()->getFloatHeight()),
 		_gender(sol->getGender()),
 
-		_stats(*sol->getCurrentStats())
+		_stats(*sol->getCurrentStats()),
+
+		_lastCover(Position(-1,-1,-1))
 {
 	//Log(LOG_INFO) << "Create BattleUnit 1 : soldier ID = " << getId();
 	_stats += *_armor->getStats();
-
-	_loftSet = _armor->getLoftSet();
-	_moveType = _armor->getMoveTypeArmor();
 
 	int rankValue;
 	switch (sol->getRank())
@@ -207,12 +208,10 @@ BattleUnit::BattleUnit(
 //	for (int i = 0; i < SPEC_WEAPON_MAX; ++i)
 //		_specWeapon[i] = 0;
 
-	_lastCover = Position(-1,-1,-1);
-
 	deriveRank(); // -> '_rankInt'
 
-	const int look = sol->getLook() * 2
-				   + sol->getGender();
+	const int look (sol->getLook() * 2
+				  + sol->getGender());
 	setRecolor(
 			look,
 			look,
@@ -318,7 +317,6 @@ BattleUnit::BattleUnit(
 		_standHeight(unitRule->getStandHeight()),
 		_kneelHeight(unitRule->getKneelHeight()),
 		_floatHeight(unitRule->getFloatHeight()),
-		_loftSet(armor->getLoftSet()),
 		_deathSound(unitRule->getDeathSound()),
 		_aggroSound(unitRule->getAggroSound()),
 		_moveSound(unitRule->getMoveSound()),
@@ -329,7 +327,12 @@ BattleUnit::BattleUnit(
 		_psiBlock(unitRule->getPsiBlock()),
 		_specab(unitRule->getSpecialAbility()),
 
-		_stats(*unitRule->getStats())
+		_loftSet(armor->getLoftSet()),
+		_mType(armor->getMoveTypeArmor()),
+
+		_stats(*unitRule->getStats()),
+
+		_lastCover(Position(-1,-1,-1))
 {
 	//Log(LOG_INFO) << "Create BattleUnit 2 : alien ID = " << getId();
 	_stats += *_armor->getStats();
@@ -352,8 +355,6 @@ BattleUnit::BattleUnit(
 		_gender = GENDER_FEMALE;
 	else
 		_gender = GENDER_MALE;
-
-	_moveType = _armor->getMoveTypeArmor();
 
 	_armorHp[SIDE_FRONT]	= _armor->getFrontArmor();
 	_armorHp[SIDE_LEFT]		=
@@ -380,7 +381,6 @@ BattleUnit::BattleUnit(
 //	for (int i = 0; i < SPEC_WEAPON_MAX; ++i)
 //		_specWeapon[i] = 0;
 
-	_lastCover = Position(-1,-1,-1);
 	//Log(LOG_INFO) << "Create BattleUnit 2, DONE";
 }
 /*	int rankInt = 0;
@@ -2659,7 +2659,7 @@ void BattleUnit::setTile(
 		switch (_status)
 		{
 			case STATUS_WALKING:
-				if (_moveType == MT_FLY
+				if (_mType == MT_FLY
 					&& _tile->hasNoFloor(tileBelow) == true)
 				{
 					_floating = true;
@@ -2677,7 +2677,7 @@ void BattleUnit::setTile(
 				break;
 
 			case STATUS_UNCONSCIOUS:
-				_floating = _moveType == MT_FLY
+				_floating = _mType == MT_FLY
 						 && _tile->hasNoFloor(tileBelow) == true;
 		}
 	}
@@ -4554,11 +4554,11 @@ bool BattleUnit::hasInventory() const
 /**
  * Gets this BattleUnit's movement type.
  * @note Use this instead of checking the rules of the armor.
- * @return, MovementType
+ * @return, MoveType (MapData.h)
  */
-MovementType BattleUnit::getMoveTypeUnit() const
+MoveType BattleUnit::getMoveTypeUnit() const
 {
-	return _moveType;
+	return _mType;
 }
 
 /**

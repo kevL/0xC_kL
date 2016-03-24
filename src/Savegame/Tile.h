@@ -171,7 +171,7 @@ private:
 		/// Gets the TU cost to walk over a certain part of the Tile.
 		int getTuCostTile(
 				MapDataType partType,
-				MovementType moveType) const;
+				MoveType type) const;
 
 		/// Checks if the Tile has a floor.
 		bool hasNoFloor(const Tile* const tileBelow = nullptr) const;

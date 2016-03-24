@@ -255,7 +255,7 @@ private:
 	Soldier* _geoscapeSoldier;
 	const RuleUnit* _unitRule;
 
-	MovementType _moveType;
+	MoveType _mType;
 	SoldierGender _gender;
 	SpecialAbility _specab;
 
@@ -838,7 +838,7 @@ private:
 		bool hasInventory() const;
 
 		/// Gets this unit's movement type.
-		MovementType getMoveTypeUnit() const;
+		MoveType getMoveTypeUnit() const;
 
 		/// Gets if this unit is hiding or not.
 		bool isHiding() const

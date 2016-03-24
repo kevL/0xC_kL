@@ -46,7 +46,7 @@ class Tile;
 
 /**
  * A utility class that calculates the shortest path between two points on the
- * battlescape map.
+ * battlefield.
  */
 class Pathfinding
 {
@@ -69,7 +69,7 @@ private:
 
 	BattleAction* _pathAction;
 
-	MovementType _mType;
+	MoveType _mType;
 
 	std::vector<int> _path;
 
@@ -187,8 +187,8 @@ private:
 		/// Gets the zPath modifier setting.
 		bool isZPath() const;
 
-		/// Gets the current movementType.
-		MovementType getMoveTypePf() const;
+		/// Gets the current MoveType.
+		MoveType getMoveTypePf() const;
 
 		/// Gets TU cost for opening a door.
 		int getOpenDoor() const;

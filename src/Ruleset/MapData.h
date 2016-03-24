@@ -26,7 +26,7 @@
 namespace OpenXcom
 {
 
-enum MovementType
+enum MoveType
 {
 	MT_WALK,	// 0
 	MT_FLY,		// 1 note Fly & Slide should be switched here and in ruleset-armors
@@ -212,9 +212,9 @@ private:
 		/// Sets a special tile type and object type.
 		void setSpecialType(SpecialTileType type);
 
-		/// Gets the TU cost to move over the object.
-		int getTuCostPart(MovementType moveType) const;
-		/// Sets the TU cost to move over the object.
+		/// Gets the TU cost to move over the part.
+		int getTuCostPart(MoveType type) const;
+		/// Sets the TU cost to move over the part.
 		void setTUCosts(
 				int walk,
 				int fly,

@@ -41,8 +41,8 @@ namespace OpenXcom
 
 Uint8 // static not const.
 	Pathfinding::red	=  3, // defaults ->
-	Pathfinding::green	=  4, // overridden by Interfaces.rul
-	Pathfinding::yellow	= 10; // when BattlescapeState loads.
+	Pathfinding::green	=  4, // overridden by Interfaces.rul when BattlescapeState loads
+	Pathfinding::yellow	= 10;
 
 
 /**
@@ -822,9 +822,9 @@ PathfindingNode* Pathfinding::getNode(const Position& pos) // private.
  * Gets the TU cost to move from 1 tile to another - ONE STEP ONLY!
  * @note But also updates the destination Position because it is possible that
  * the unit uses stairs or falls while moving.
- * @param posStart		- reference to the start position
+ * @param posStart		- reference to the start-position
  * @param dir			- direction of movement
- * @param posStop		- pointer to destination Position
+ * @param posStop		- pointer to destination-position
  * @param launchTarget	- pointer to targeted BattleUnit (default nullptr)
  * @param bresenh		- true if calc'd by Breshenham pathing (default true)
  * @return, TU cost or 255 if movement is impossible
@@ -846,11 +846,11 @@ int Pathfinding::getTuCostPf(
 		stairs (false);
 
 	int
-		partsGoingUp		(0),
-		partsGoingDown		(0),
-		partsFalling		(0),
+		partsGoingUp	(0),
+		partsGoingDown	(0),
+		partsFalling	(0),
+		partsOnAir		(0),
 //		partsChangingHeight	(0), // jeez.
-		partsOnAir			(0),
 
 		cost,
 		costTotal (0),
@@ -902,8 +902,7 @@ int Pathfinding::getTuCostPf(
 								tileStart,
 								unitSize) == true)
 				{
-					if (dir != DIR_DOWN)
-						return FAIL;
+					if (dir != DIR_DOWN) return FAIL;
 
 					++partsOnAir;
 					fall = true;
@@ -915,8 +914,7 @@ int Pathfinding::getTuCostPf(
 					{
 						if (++partsOnAir == quadrants)
 						{
-							if (dir != DIR_DOWN)
-								return FAIL;
+							if (dir != DIR_DOWN) return FAIL;
 
 							fall = true;
 						}
@@ -933,19 +931,14 @@ int Pathfinding::getTuCostPf(
 				return FAIL;
 			}
 
-			if (dir < DIR_UP
-				&& tileStart->getTerrainLevel() > -16)
+			if (dir < DIR_UP && tileStart->getTerrainLevel() > -16
+				&& (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8
+					|| isBlockedPath(
+								tileStart,
+								dir,
+								launchTarget) == true))
 			{
-				if (isBlockedPath(
-							tileStart,
-							dir,
-							launchTarget) == true)
-				{
-					return FAIL;
-				}
-
-				if (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8)
-					return FAIL;
+				return FAIL;
 			}
 
 
@@ -1003,9 +996,9 @@ int Pathfinding::getTuCostPf(
 					if (fall == false)
 					{
 						switch (validateUpDown(
-										posStart + posOffset,
-										dir))
-//										launchTarget != nullptr))
+											posStart + posOffset,
+											dir))
+//											launchTarget != nullptr))
 						{
 							case FLY_CANT:
 							case FLY_BLOCKED:
@@ -1019,18 +1012,14 @@ int Pathfinding::getTuCostPf(
 					break;
 
 				default:
-					if (posStop->z == tileStart->getPosition().z)
+					if (posStop->z == tileStart->getPosition().z
+						&& (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8
+							|| isBlockedPath(
+										tileStart,
+										dir,
+										launchTarget) == true))
 					{
-						if (isBlockedPath(
-									tileStart,
-									dir,
-									launchTarget) == true)
-						{
-							return FAIL;
-						}
-
-						if (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8)
-							return FAIL;
+						return FAIL;
 					}
 			}
 
@@ -1048,18 +1037,14 @@ int Pathfinding::getTuCostPf(
 
 			tileStart = _battleSave->getTile(tileStart->getPosition() + posOffsetVertical);
 
-			if (dir < DIR_UP && partsGoingUp != 0)
+			if (dir < DIR_UP && partsGoingUp != 0
+				&& (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8
+					|| isBlockedPath(
+								tileStart,
+								dir,
+								launchTarget) == true))
 			{
-				if (isBlockedPath(
-							tileStart,
-							dir,
-							launchTarget) == true)
-				{
-					return FAIL;
-				}
-
-				if (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8)
-					return FAIL;
+				return FAIL;
 			}
 
 			if (isBlocked(
@@ -1325,7 +1310,7 @@ int Pathfinding::getTuCostPf(
 
 /**
  * Determines whether going from one Tile to another is blocked.
- * @param startTile		- pointer to start tile
+ * @param startTile		- pointer to start-tile
  * @param dir			- direction of movement
  * @param launchTarget	- pointer to targeted BattleUnit (default nullptr)
  * @return, true if path is blocked
@@ -1533,7 +1518,7 @@ bool Pathfinding::isBlockedPath( // public
 
 /**
  * Determines whether a certain part of a tile blocks movement.
- * @param tile			- pointer to a Tile, can be nullptr
+ * @param tile			- pointer to a Tile can be nullptr
  * @param partType		- part of the tile (MapData.h)
  * @param launchTarget	- pointer to targeted BattleUnit (default nullptr)
  * @param diagExclusion	- to exclude diagonal bigWalls (default BIGWALL_NONE) (Pathfinding.h)
@@ -1557,172 +1542,175 @@ bool Pathfinding::isBlocked( // private.
 	switch (partType)
 	{
 		case O_OBJECT:
-			//Log(LOG_INFO) << ". part is Bigwall/object";
+			//Log(LOG_INFO) << ". part is Bigwall/object " << tile->getPosition();
 			if (tile->getMapData(O_OBJECT) != nullptr
 				&& tile->getMapData(O_OBJECT)->getBigwall() != diagExclusion)
 			{
+				//Log(LOG_INFO) << ". . bigwall NOT diagExclusion";
 				switch (tile->getMapData(O_OBJECT)->getBigwall())
 				{
 					case BIGWALL_BLOCK:
 					case BIGWALL_NESW:
 					case BIGWALL_NWSE:
+						//Log(LOG_INFO) << ". . . BLOCKED";
 						return true;
 				}
 			}
-			return false;
+			//Log(LOG_INFO) << ". NOT Blocked";
+			return false; // why is this here ... again. I took it out and put it back because, why.
 
 		case O_WESTWALL:
+		{
+			//Log(LOG_INFO) << ". part is Westwall";
+			if (launchTarget != nullptr						// missiles can't pathfind through closed doors.
+				&& tile->getMapData(O_WESTWALL) != nullptr	// ... neither can proxy mines.
+				&& (tile->getMapData(O_WESTWALL)->isDoor() == true
+					|| (tile->getMapData(O_WESTWALL)->isUfoDoor() == true
+						&& tile->isUfoDoorOpen(O_WESTWALL) == false)))
 			{
-				//Log(LOG_INFO) << ". part is Westwall";
-				if (launchTarget != nullptr						// missiles can't pathfind through closed doors.
-					&& tile->getMapData(O_WESTWALL) != nullptr	// ... neither can proxy mines.
-					&& (tile->getMapData(O_WESTWALL)->isDoor() == true
-						|| (tile->getMapData(O_WESTWALL)->isUfoDoor() == true
-							&& tile->isUfoDoorOpen(O_WESTWALL) == false)))
+				return true;
+			}
+
+			if (tile->getMapData(O_OBJECT) != nullptr)
+			{
+				switch (tile->getMapData(O_OBJECT)->getBigwall())
 				{
-					return true;
+					case BIGWALL_WEST:
+					case BIGWALL_W_N:
+						return true;
 				}
+			}
 
-				if (tile->getMapData(O_OBJECT) != nullptr)
+			const Tile* const tileWest (_battleSave->getTile(tile->getPosition() + Position(-1,0,0)));
+			if (tileWest == nullptr)
+				return true;
+
+			if (tileWest->getMapData(O_OBJECT) != nullptr)
+			{
+				switch (tileWest->getMapData(O_OBJECT)->getBigwall())
 				{
-					switch (tile->getMapData(O_OBJECT)->getBigwall())
-					{
-						case BIGWALL_WEST:
-						case BIGWALL_W_N:
-							return true;
-					}
-				}
-
-				const Tile* const tileWest (_battleSave->getTile(tile->getPosition() + Position(-1,0,0)));
-				if (tileWest == nullptr)
-					return true;
-
-				if (tileWest->getMapData(O_OBJECT) != nullptr)
-				{
-					switch (tileWest->getMapData(O_OBJECT)->getBigwall())
-					{
-						case BIGWALL_EAST:
-						case BIGWALL_E_S:
-							return true;
-					}
+					case BIGWALL_EAST:
+					case BIGWALL_E_S:
+						return true;
 				}
 			}
 			break;
+		}
 
 		case O_NORTHWALL:
+		{
+			//Log(LOG_INFO) << ". part is Northwall";
+			if (launchTarget != nullptr						// missiles can't pathfind through closed doors.
+				&& tile->getMapData(O_NORTHWALL) != nullptr	// ... neither can proxy mines.
+				&& (tile->getMapData(O_NORTHWALL)->isDoor() == true
+					|| (tile->getMapData(O_NORTHWALL)->isUfoDoor() == true
+						&& tile->isUfoDoorOpen(O_NORTHWALL) == false)))
 			{
-				//Log(LOG_INFO) << ". part is Northwall";
-				if (launchTarget != nullptr						// missiles can't pathfind through closed doors.
-					&& tile->getMapData(O_NORTHWALL) != nullptr	// ... neither can proxy mines.
-					&& (tile->getMapData(O_NORTHWALL)->isDoor() == true
-						|| (tile->getMapData(O_NORTHWALL)->isUfoDoor() == true
-							&& tile->isUfoDoorOpen(O_NORTHWALL) == false)))
+				return true;
+			}
+
+			if (tile->getMapData(O_OBJECT) != nullptr)
+			{
+				switch (tile->getMapData(O_OBJECT)->getBigwall())
 				{
-					return true;
+					case BIGWALL_NORTH:
+					case BIGWALL_W_N:
+						return true;
 				}
+			}
 
-				if (tile->getMapData(O_OBJECT) != nullptr)
+			const Tile* const tileNorth (_battleSave->getTile(tile->getPosition() + Position(0,-1,0)));
+			if (tileNorth == nullptr)
+				return true;
+
+			if (tileNorth->getMapData(O_OBJECT) != nullptr)
+			{
+				switch (tileNorth->getMapData(O_OBJECT)->getBigwall())
 				{
-					switch (tile->getMapData(O_OBJECT)->getBigwall())
-					{
-						case BIGWALL_NORTH:
-						case BIGWALL_W_N:
-							return true;
-					}
-				}
-
-				const Tile* const tileNorth (_battleSave->getTile(tile->getPosition() + Position(0,-1,0)));
-				if (tileNorth == nullptr)
-					return true;
-
-				if (tileNorth->getMapData(O_OBJECT) != nullptr)
-				{
-					switch (tileNorth->getMapData(O_OBJECT)->getBigwall())
-					{
-						case BIGWALL_SOUTH:
-						case BIGWALL_E_S:
-							return true;
-					}
+					case BIGWALL_SOUTH:
+					case BIGWALL_E_S:
+						return true;
 				}
 			}
 			break;
+		}
 
 		case O_FLOOR:
+		{
+			//Log(LOG_INFO) << ". part is Floor";
+			const BattleUnit* blockUnit (tile->getTileUnit());
+
+			if (blockUnit != nullptr)
 			{
-				//Log(LOG_INFO) << ". part is Floor";
-				const BattleUnit* blockUnit (tile->getTileUnit());
-
-				if (blockUnit != nullptr)
+				if (blockUnit == _unit
+					|| blockUnit == launchTarget
+					|| blockUnit->isOut_t(OUT_STAT) == true)
 				{
-					if (blockUnit == _unit
-						|| blockUnit == launchTarget
-						|| blockUnit->isOut_t(OUT_STAT) == true)
-					{
-						return false;
-					}
-
-					if (launchTarget != nullptr // == isAI
-						&& launchTarget != blockUnit
-						&& blockUnit->getFaction() == FACTION_HOSTILE)
-					{
-						return true;
-					}
-
-					if (_unit != nullptr)
-					{
-						if (_unit->getFaction() == blockUnit->getFaction())
-							return true;
-
-						switch (_unit->getFaction())
-						{
-							case FACTION_PLAYER:
-								if (blockUnit->getUnitVisible() == true)
-									return true;
-								break;
-
-							default:
-								if (std::find(
-										_unit->getHostileUnitsThisTurn().begin(),
-										_unit->getHostileUnitsThisTurn().end(),
-										blockUnit) != _unit->getHostileUnitsThisTurn().end())
-								{
-									return true;
-								}
-						}
-					}
+					return false;
 				}
-				else if (tile->hasNoFloor() == true	// This section is devoted to ensuring that large units
-					&& _mType != MT_FLY)			// do not take part in any kind of falling behaviour.
+
+				if (launchTarget != nullptr // == isAI
+					&& launchTarget != blockUnit
+					&& blockUnit->getFaction() == FACTION_HOSTILE)
 				{
-					Position pos (tile->getPosition());
-					while (pos.z != -1)
+					return true;
+				}
+
+				if (_unit != nullptr)
+				{
+					if (_unit->getFaction() == blockUnit->getFaction())
+						return true;
+
+					switch (_unit->getFaction())
 					{
-						const Tile* const testTile (_battleSave->getTile(pos));
-						blockUnit = testTile->getTileUnit();
-
-						if (blockUnit != nullptr && blockUnit != _unit)
-						{
-							if (_unit != nullptr // don't let large units fall on other units
-								&& _unit->getArmor()->getSize() == 2)
-							{
+						case FACTION_PLAYER:
+							if (blockUnit->getUnitVisible() == true)
 								return true;
-							}
-
-							if (blockUnit != launchTarget // don't let any units fall on large units
-								&& blockUnit->isOut_t(OUT_STAT) == false
-								&& blockUnit->getArmor()->getSize() == 2)
-							{
-								return true;
-							}
-						}
-
-						if (testTile->hasNoFloor() == false)
 							break;
 
-						--pos.z;
+						default:
+							if (std::find(
+									_unit->getHostileUnitsThisTurn().begin(),
+									_unit->getHostileUnitsThisTurn().end(),
+									blockUnit) != _unit->getHostileUnitsThisTurn().end())
+							{
+								return true;
+							}
 					}
 				}
 			}
+			else if (tile->hasNoFloor() == true	// This section is devoted to ensuring that large units
+				&& _mType != MT_FLY)			// do not take part in any kind of falling behaviour.
+			{
+				Position pos (tile->getPosition());
+				while (pos.z != -1)
+				{
+					const Tile* const testTile (_battleSave->getTile(pos));
+					blockUnit = testTile->getTileUnit();
+
+					if (blockUnit != nullptr && blockUnit != _unit)
+					{
+						if (_unit != nullptr // don't let large units fall on other units
+							&& _unit->getArmor()->getSize() == 2)
+						{
+							return true;
+						}
+
+						if (blockUnit != launchTarget // don't let any units fall on large units
+							&& blockUnit->isOut_t(OUT_STAT) == false
+							&& blockUnit->getArmor()->getSize() == 2)
+						{
+							return true;
+						}
+					}
+
+					if (testTile->hasNoFloor() == false)
+						break;
+
+					--pos.z;
+				}
+			}
+		}
 	}
 
 	static const int TU_BLOCK_LARGEUNIT (6); // stop large units from going through hedges and over fences
@@ -2059,7 +2047,7 @@ bool Pathfinding::isZPath() const
  * Gets the current movementType.
  * @return, the currently pathing unit's movementType (MapData.h)
  */
-MovementType Pathfinding::getMoveTypePf() const
+MoveType Pathfinding::getMoveTypePf() const
 {
 	return _mType;
 }

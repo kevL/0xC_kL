@@ -369,18 +369,17 @@ void MapData::setSpecialType(SpecialTileType type)
 
 /**
  * Gets the TU cost to move over/through this tile-part.
- * @param moveType - the movement type
+ * @param type - the MoveType (MapData.h)
  * @return, the TU cost
  */
-int MapData::getTuCostPart(MovementType moveType) const
+int MapData::getTuCostPart(MoveType type) const
 {
-	switch (moveType)
+	switch (type)
 	{
 		case MT_WALK:	return _tuWalk;
 		case MT_SLIDE:	return _tuSlide;
 		case MT_FLY:	return _tuFly;
 	}
-
 	return 0;
 }
 

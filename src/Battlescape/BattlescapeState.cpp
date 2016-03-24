@@ -4280,7 +4280,7 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 			&& selUnit->getFaction() == FACTION_PLAYER)
 		{
 			++rows;
-			const MovementType mType (selUnit->getMoveTypeUnit());
+			const MoveType mType (selUnit->getMoveTypeUnit());
 
 			tuCost = tile->getTuCostTile(O_FLOOR, mType)
 				   + tile->getTuCostTile(O_OBJECT, mType);

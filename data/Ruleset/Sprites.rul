@@ -296,7 +296,7 @@ extraSprites:
     files:
       0: Resources/Sprites/ufograph/x1/x1.png
 # -------- GENDER -------- #
-  - type: ALIENINSIGNIA
+  - type: AlienIcon
     width: 9
     height: 11
     singleImage: true
