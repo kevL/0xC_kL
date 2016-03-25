@@ -277,16 +277,6 @@ void Pathfinding::calculatePath(
 				{
 					if (x != 0 || y != 0)
 					{
-						tileTest = _battleSave->getTile(posStop + Position(x,y,0));
-						if (x != 0 && y != 0
-							&& ((tileTest->getMapData(O_NORTHWALL) != nullptr
-									&& tileTest->getMapData(O_NORTHWALL)->isDoor() == true)
-								|| (tileTest->getMapData(O_WESTWALL) != nullptr
-									&& tileTest->getMapData(O_WESTWALL)->isDoor() == true)))
-						{
-							return;
-						}
-
 						if (isBlockedPath(
 										tileStop,
 										dir[i],
@@ -299,8 +289,17 @@ void Pathfinding::calculatePath(
 							return;
 						}
 
-						unitTest = tileTest->getTileUnit();
-						if (unitTest != nullptr
+						tileTest = _battleSave->getTile(posStop + Position(x,y,0));
+						if (x != 0 && y != 0
+							&& ((tileTest->getMapData(O_NORTHWALL) != nullptr
+									&& tileTest->getMapData(O_NORTHWALL)->isDoor() == true)
+								|| (tileTest->getMapData(O_WESTWALL) != nullptr
+									&& tileTest->getMapData(O_WESTWALL)->isDoor() == true)))
+						{
+							return;
+						}
+
+						if ((unitTest = tileTest->getTileUnit()) != nullptr
 							&& unitTest != unit
 							&& unitTest != launchTarget
 							&& unitTest->getUnitVisible() == true)
@@ -320,6 +319,7 @@ void Pathfinding::calculatePath(
 		const bool isMech (unit->getUnitRules() != nullptr
 						&& unit->getUnitRules()->isMechanical());
 
+		_pathAction->strafe =
 		_strafe = strafeRejected == false
 			   && Options::battleStrafe == true
 			   && ((_ctrl == true && isMech == false)
@@ -330,10 +330,8 @@ void Pathfinding::calculatePath(
 			   && std::abs(posStop.x - posStart.x) < 2
 			   && std::abs(posStop.y - posStart.y) < 2;
 
-		_pathAction->strafe = _strafe;
-
-		const bool sneak (unit->getFaction() == FACTION_HOSTILE
-					   && Options::sneakyAI == true);
+		const bool sneak (Options::sneakyAI == true
+					   && unit->getFaction() == FACTION_HOSTILE);
 
 		if (posStart.z == posStop.z
 			&& bresenhamPath(
@@ -378,7 +376,7 @@ void Pathfinding::calculatePath(
 					|| (_path.size() == 1
 						&& unit->getUnitDirection() == _path.front())))
 			{
-				_strafe = false;
+				_strafe =
 				_pathAction->strafe = false;
 				_pathAction->dash = true;
 				if (_pathAction->actor != nullptr)
@@ -573,14 +571,14 @@ bool Pathfinding::bresenhamPath( // private.
 		drift_xy = drift_xy - delta_y;
 		drift_xz = drift_xz - delta_z;
 
-		// step in y plane
+		// step in y-plane
 		if (drift_xy < 0)
 		{
 			y = y + step_y;
 			drift_xy = drift_xy + delta_x;
 		}
 
-		// same in z
+		// step in z-plane
 		if (drift_xz < 0)
 		{
 			z = z + step_z;
@@ -795,7 +793,6 @@ std::vector<size_t> Pathfinding::findReachable(
 
 	std::vector<size_t> tileIndices;
 	tileIndices.reserve(nodes.size());
-
 	for (std::vector<PathfindingNode*>::const_iterator
 			i = nodes.begin();
 			i != nodes.end();
@@ -804,7 +801,6 @@ std::vector<size_t> Pathfinding::findReachable(
 		//Log(LOG_INFO) << "pf: " << _battleSave->getTileIndex((*i)->getPosition());
 		tileIndices.push_back(_battleSave->getTileIndex((*i)->getPosition()));
 	}
-
 	return tileIndices;
 }
 
@@ -884,16 +880,14 @@ int Pathfinding::getTuCostPf(
 				y != unitSize;
 				++y)
 		{
-			// first, CHECK FOR BLOCKAGE ->> then calc TU cost after.
+// first, CHECK FOR BLOCKAGE ->> then calc TU cost after.
 			posOffset = Position(x,y,0);
 
-			tileStart = _battleSave->getTile(posStart + posOffset);
-			if (tileStart == nullptr)
+			if ((  tileStart = _battleSave->getTile(posStart + posOffset)) == nullptr
+				|| (tileStop = _battleSave->getTile(*posStop + posOffset)) == nullptr)
+			{
 				return FAIL;
-
-			tileStop = _battleSave->getTile(*posStop + posOffset);
-			if (tileStop == nullptr)
-				return FAIL;
+			}
 
 			if (_mType != MT_FLY)
 			{
@@ -904,8 +898,8 @@ int Pathfinding::getTuCostPf(
 				{
 					if (dir != DIR_DOWN) return FAIL;
 
-					++partsOnAir;
 					fall = true;
+					++partsOnAir;
 				}
 				else
 				{
@@ -1007,6 +1001,19 @@ int Pathfinding::getTuCostPf(
 							case FLY_GRAVLIFT:
 							case FLY_GOOD:
 								cost = 8;
+
+								if (tileStop->getMapData(O_OBJECT) != nullptr)
+								{
+									switch (tileStop->getMapData(O_OBJECT)->getBigwall())
+									{
+										case BIGWALL_NONE:
+										case BIGWALL_BLOCK:
+										case BIGWALL_NESW:
+										case BIGWALL_NWSE:
+											cost += tileStop->getTuCostTile(O_OBJECT, _mType);
+											// TODO: Early-exit if cost>FAIL.
+									}
+								}
 						}
 					}
 					break;
@@ -1060,30 +1067,21 @@ int Pathfinding::getTuCostPf(
 			}
 // CHECK FOR BLOCKAGE_end.
 
-
-			if (launchTarget != nullptr)
-				return 0;
-
-
-			// Calculate TU costage ->
-			if (dir < DIR_UP)
+// Calculate TU costage ->
+			if (dir < DIR_UP && fall == false)
 			{
-				if (fall == false && tileStop->hasNoFloor() == true)
-					cost = 4;
+				if (tileStop->getMapData(O_FLOOR) != nullptr)
+					cost = tileStop->getTuCostTile(O_FLOOR, _mType);
 				else
-				{
-					cost += tileStop->getTuCostTile(O_FLOOR, _mType);
+					cost = 4;
 
-					if (fall == false
-						&& stairs == false
-						&& tileStop->getMapData(O_OBJECT) != nullptr)
-					{
-						cost += tileStop->getTuCostTile(O_OBJECT, _mType);
+				if (stairs == false && tileStop->getMapData(O_OBJECT) != nullptr)
+					cost += tileStop->getTuCostTile(O_OBJECT, _mType);
 
-						if (tileStop->getMapData(O_FLOOR) == nullptr)
-							cost += 4;
-					}
-				}
+				// TODO: Early-exit if cost>FAIL.
+//				if (cost >= FAIL) return FAIL; // quick outs ->
+//				else if (launchTarget != nullptr) return 0; // <- provided walls have actually been blocked already, not based on TU > FAIL
+
 
 //				if (posOffsetVertical.z > 0) ++cost;
 
@@ -1315,18 +1313,12 @@ int Pathfinding::getTuCostPf(
  * @param launchTarget	- pointer to targeted BattleUnit (default nullptr)
  * @return, true if path is blocked
  */
-bool Pathfinding::isBlockedPath( // public
+bool Pathfinding::isBlockedPath(
 		const Tile* const startTile,
 		const int dir,
 		const BattleUnit* const launchTarget) const
 {
-	//Log(LOG_INFO) << "Pathfinding::isBlocked() #1";
-
-	// check if the difference in height between start and destination is not too high
-	// so we can not jump to the highest part of the stairs from the floor
-	// stairs terrainlevel goes typically -8 -16 (2 steps) or -4 -12 -20 (3 steps)
-	// this "maximum jump height" is therefore set to 8
-
+	//Log(LOG_INFO) << "Pathfinding::isBlockedPath()";
 	const Position pos (startTile->getPosition());
 
 	static const Position
@@ -1530,7 +1522,7 @@ bool Pathfinding::isBlocked( // private.
 		const BattleUnit* const launchTarget,
 		const BigwallType diagExclusion) const
 {
-	//Log(LOG_INFO) << "Pathfinding::isBlocked() #2";
+	//Log(LOG_INFO) << "Pathfinding::isBlocked()";
 	if (tile == nullptr) return true;
 
 //	if (tile->getMapData(O_OBJECT) != nullptr
@@ -1543,21 +1535,46 @@ bool Pathfinding::isBlocked( // private.
 	{
 		case O_OBJECT:
 			//Log(LOG_INFO) << ". part is Bigwall/object " << tile->getPosition();
-			if (tile->getMapData(O_OBJECT) != nullptr
+/*			if (   tile->getMapData(O_OBJECT) != nullptr
+				&& tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NONE
+				&& (   tile->getMapData(O_OBJECT)->getBigwall() == BIGWALL_BLOCK
+					|| tile->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NESW
+					|| tile->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NWSE)
 				&& tile->getMapData(O_OBJECT)->getBigwall() != diagExclusion)
 			{
-				//Log(LOG_INFO) << ". . bigwall NOT diagExclusion";
+				return true;
+			}
+			else
+				return false; */
+/*			if (tile->getMapData(O_OBJECT) != nullptr
+				&& tile->getMapData(O_OBJECT)->getBigwall() != diagExclusion)
+			{
 				switch (tile->getMapData(O_OBJECT)->getBigwall())
 				{
 					case BIGWALL_BLOCK:
 					case BIGWALL_NESW:
 					case BIGWALL_NWSE:
-						//Log(LOG_INFO) << ". . . BLOCKED";
 						return true;
+
+					default:
+						return false;
 				}
+			} */
+			if (tile->getMapData(O_OBJECT) == nullptr)
+				return false;
+			else
+			{
+				const BigwallType type (tile->getMapData(O_OBJECT)->getBigwall());
+				switch (type)
+				{
+					case BIGWALL_BLOCK:
+					case BIGWALL_NESW:
+					case BIGWALL_NWSE:
+						if (type != diagExclusion)
+							return true;
+				}
+				return false;
 			}
-			//Log(LOG_INFO) << ". NOT Blocked";
-			return false; // why is this here ... again. I took it out and put it back because, why.
 
 		case O_WESTWALL:
 		{
@@ -1980,15 +1997,31 @@ UpDownCheck Pathfinding::validateUpDown(
 
 	const Tile
 		* const startTile (_battleSave->getTile(posStart)),
-		* const destTile (_battleSave->getTile(posStop));
+		* const stopTile (_battleSave->getTile(posStop));
 
-	if (destTile == nullptr)
-		return FLY_BLOCKED;
+	if (stopTile == nullptr) return FLY_BLOCKED;
+
+
+	if (stopTile->getMapData(O_OBJECT) != nullptr)	// NOTE: This is effectively an early-out for up/down movement; getTuCostPf()
+	{												// will also prevent movement if TU-cost(O_OBJECT) is more than the unit has.
+		switch (stopTile->getMapData(O_OBJECT)->getBigwall())
+		{
+			case BIGWALL_NONE:
+				if (stopTile->getMapData(O_OBJECT)->getTuCostPart(_mType) != 255)
+					break;
+				// 'else' no break;
+
+			case BIGWALL_BLOCK:
+			case BIGWALL_NESW:
+			case BIGWALL_NWSE:
+				return FLY_BLOCKED;
+		}
+	}
 
 	if (startTile->getMapData(O_FLOOR) != nullptr
 		&& startTile->getMapData(O_FLOOR)->isGravLift()
-		&& destTile->getMapData(O_FLOOR) != nullptr
-		&& destTile->getMapData(O_FLOOR)->isGravLift())
+		&& stopTile->getMapData(O_FLOOR) != nullptr
+		&& stopTile->getMapData(O_FLOOR)->isGravLift())
 	{
 		return FLY_GRAVLIFT;
 	}
@@ -1997,13 +2030,13 @@ UpDownCheck Pathfinding::validateUpDown(
 		|| (dir == DIR_DOWN && _alt == true))
 	{
 		if ((dir == DIR_UP
-				&& destTile->hasNoFloor(startTile))
+				&& stopTile->hasNoFloor(startTile))
 			|| (dir == DIR_DOWN
 				&& startTile->hasNoFloor(_battleSave->getTile(posStart + Position(0,0,-1)))))
 		{
 //			if (launch == true)
 //			{
-//				if ((dir == DIR_UP && destTile->getMapData(O_FLOOR)->getLoftId(0) != 0)
+//				if ((dir == DIR_UP && stopTile->getMapData(O_FLOOR)->getLoftId(0) != 0)
 //					|| (dir == DIR_DOWN && startTile->getMapData(O_FLOOR)->getLoftId(0) != 0))
 //				{
 //					return FLY_BLOCKED;
