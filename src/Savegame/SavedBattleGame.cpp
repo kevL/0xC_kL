@@ -2168,7 +2168,7 @@ void SavedBattleGame::reviveUnit(
 
 				case FACTION_PLAYER:
 					if (unit->getGeoscapeSoldier() != nullptr)
-						unit->kneel(true);
+						unit->kneelUnit(true);
 					unit->setUnitVisible(); // no break;
 				case FACTION_NEUTRAL:
 					unit->setExposed(-1);

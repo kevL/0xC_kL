@@ -1838,9 +1838,9 @@ bool Pathfinding::previewPath(bool discard)
 					if (hathStood == false && _unit->isKneeled() == true)
 					{
 						hathStood = true;
-						tuTally += 10;
-						unitTu -= 10; // 10 tu + 3 energy to stand up.
-						unitEnergy -= 3;
+						tuTally += TU_STAND;
+						unitTu -= TU_STAND;
+						unitEnergy -= std::max(0, EN_STAND - agility);
 					}
 
 					if (_pathAction->dash == true)

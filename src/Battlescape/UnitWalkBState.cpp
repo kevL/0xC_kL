@@ -342,7 +342,7 @@ bool UnitWalkBState::doStatusStand() // private.
 		//Log(LOG_INFO) << ". kneeled, and path Valid";
 		_kneelCheck = false;
 
-		if (_parent->kneel(_unit) == true)
+		if (_parent->kneelToggle(_unit) == true)
 		{
 			//Log(LOG_INFO) << ". . Stand up";
 //			_unit->clearCache();					// <- These are handled by BattleUnit::kneel() [invalidate cache]

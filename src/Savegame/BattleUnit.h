@@ -201,6 +201,7 @@ private:
 	Tile* _tile;
 
 	Position
+		_lastCover,
 		_pos,
 		_posStart,
 		_posStop;
@@ -260,7 +261,7 @@ private:
 	SpecialAbility _specab;
 
 	BattleUnitStatistics* _statistics;
-	int _murdererId; // used to credit the murderer with the kills that this unit got by blowing up on death
+	int _murdererId; // used to credit another unit with any kills that this BattleUnit got by blowing up on death
 
 
 	/// Converts an amount of experience to a stat increase.
@@ -272,69 +273,64 @@ private:
 			int utileLook,
 			int rankLook);
 
-	/// Gets if a grenade is suitable for an AI or panic situation.
+	/// Gets if a grenade-type is suitable for an AI or panic situation.
 	bool isGrenadeSuitable(const BattleItem* const grenade) const;
 
 
 	public:
 		static const int MAX_SOLDIER_ID = 1000000;
 
-		// scratch value for AI's left hand to tell its right hand what's up...
-		// don't zone out and start patrolling again
-		Position _lastCover;
-
-
 		/// Creates a BattleUnit from a geoscape Soldier.
 		BattleUnit( // xCom operatives
 				Soldier* const sol,
 				const GameDifficulty diff); // for VictoryPts value per death.
-		/// Creates a BattleUnit from Unit rule.
+		/// Creates a BattleUnit from a RuleUnit.
 		BattleUnit( // aLiens, civies, & Tanks
 				RuleUnit* const unitRule,
 				const UnitFaction faction,
 				const int id,
 				RuleArmor* const armor,
 				const GameDifficulty diff = DIFF_BEGINNER,
-				const int month = 0, // for upping aLien stats as time progresses.
+				const int month = 0, // for upping aLien-stats as time progresses.
 				BattlescapeGame* const battleGame = nullptr);
 		/// Cleans up the BattleUnit.
 		~BattleUnit();
 
-		/// Loads this unit from YAML.
+		/// Loads the BattleUnit from YAML.
 		void load(const YAML::Node& node);
-		/// Loads the vector of units spotted this turn during SavedBattleGame load.
+		/// Loads the vector of units-spotted this turn during SavedBattleGame load.
 		void loadSpotted(SavedBattleGame* const battleSave);
-		/// Saves this unit to YAML.
+		/// Saves the BattleUnit to YAML.
 		YAML::Node save() const;
 
-		/// Gets this BattleUnit's ID.
+		/// Gets the BattleUnit's ID.
 		int getId() const;
-		/// Gets this unit's type as a string.
+		/// Gets the BattleUnit's type as a string.
 		std::string getType() const;
-		/// Gets this unit's rank string.
+		/// Gets the BattleUnit's rank string.
 		std::string getRankString() const;
-		/// Gets this unit's race string.
+		/// Gets the BattleUnit's race string.
 		std::string getRaceString() const;
 
-		/// Gets this unit's geoscape Soldier object.
+		/// Gets the BattleUnit's geoscape Soldier object.
 		Soldier* getGeoscapeSoldier() const;
 
-		/// Sets this unit's position.
+		/// Sets the BattleUnit's position.
 		void setPosition(
 				const Position& pos,
 				bool updateLast = true);
-		/// Gets this unit's position.
+		/// Gets the BattleUnit's position.
 		const Position& getPosition() const;
-		/// Gets this unit's position.
+		/// Gets the BattleUnit's position.
 		const Position& getStartPosition() const;
-		/// Gets this unit's destination when walking.
+		/// Gets the BattleUnit's destination when walking.
 		const Position& getStopPosition() const;
 
-		/// Sets this unit's direction 0-7.
+		/// Sets the BattleUnit's direction 0-7.
 		void setUnitDirection(
 				int dir,
 				bool turret = true);
-		/// Gets this unit's direction.
+		/// Gets the BattleUnit's direction.
 		int getUnitDirection() const;
 		/// Looks at a certain point.
 		void setDirectionTo(
@@ -344,17 +340,17 @@ private:
 		void setDirectionTo(
 				int dir,
 				bool force = false);
-		/// Sets this unit's face direction - only used by strafing moves.
+		/// Sets the BattleUnit's face direction - only used by strafing moves.
 		void setFaceDirection(int dir);
-		/// Gets this unit's face direction - only used by strafing moves.
+		/// Gets the BattleUnit's face direction - only used by strafing moves.
 		int getFaceDirection() const;
-		/// Sets this unit's turret direction.
+		/// Sets the BattleUnit's turret direction.
 		void setTurretDirection(int dir);
-		/// Gets this unit's turret direction.
+		/// Gets the BattleUnit's turret direction.
 		int getTurretDirection() const;
-		/// Gets this unit's turret To direction.
+		/// Gets the BattleUnit's turret To direction.
 		int getTurretToDirection() const;
-		/// Gets this unit's vertical direction.
+		/// Gets the BattleUnit's vertical direction.
 		int getVerticalDirection() const;
 
 		/// Turns to the destination direction.
@@ -384,78 +380,83 @@ private:
 		/// Gets the BattleUnit's current walking-fullphase setting.
 		int getWalkPhaseFull() const;
 
-		/// Sets this unit's status.
+		/// Sets the BattleUnit's status.
 		void setUnitStatus(const UnitStatus status);
-		/// Gets this unit's status.
+		/// Gets the BattleUnit's status.
 		UnitStatus getUnitStatus() const;
 
-		/// Gets the unit's gender.
+		/// Gets the BattleUnit's gender.
 		SoldierGender getGender() const;
-		/// Gets the unit's faction.
-		UnitFaction getFaction() const;
 
-		/// Gets the unit's cache for the battlescape.
+		/// Gets the BattleUnit's faction.
+		UnitFaction getFaction() const;
+		/// Converts the BattleUnit to a faction.
+		void setFaction(UnitFaction faction);
+		/// Gets the BattleUnit's original faction
+		UnitFaction getOriginalFaction() const;
+
+		/// Gets the BattleUnit's cache for the battlescape.
 		Surface* getCache(int quadrant = 0) const;
-		/// Sets the unit's cache and cached flag.
+		/// Sets the BattleUnit's cache and cached flag.
 		void setCache(
 				Surface* const cache,
 				int quadrant = 0);
-		/// Clears this BattleUnit's sprite-cache flag.
+		/// Clears the BattleUnit's sprite-cache flag.
 		void clearCache();
-		/// Gets if this BattleUnit's sprite-cache is invalid.
+		/// Gets if the BattleUnit's sprite-cache is invalid.
 		bool getCacheInvalid() const;
 
-		/// Gets unit sprite recolor values.
+		/// Gets unit-sprite recolor values.
 		const std::vector<std::pair<Uint8, Uint8>>& getRecolor() const;
 
-		/// Kneels or stands this unit.
-		void kneel(bool kneel);
-		/// Gets if this unit is kneeled.
+		/// Kneels or stands the BattleUnit.
+		void kneelUnit(bool kneel);
+		/// Gets if the BattleUnit is kneeled.
 		bool isKneeled() const;
 
-		/// Gets if this unit is floating.
+		/// Gets if the BattleUnit is floating.
 		bool isFloating() const;
 
-		/// Aims this unit's weapon.
+		/// Aims the BattleUnit's weapon.
 		void aim(bool aim = true);
 
-		/// Gets this unit's time units.
+		/// Gets the BattleUnit's time units.
 		int getTimeUnits() const;
-		/// Gets this unit's stamina.
+		/// Gets the BattleUnit's stamina.
 		int getEnergy() const;
-		/// Gets this unit's health.
+		/// Gets the BattleUnit's health.
 		int getHealth() const;
-		/// Gets this unit's bravery.
+		/// Gets the BattleUnit's bravery.
 		int getMorale() const;
-		/// Gets this unit's effective strength.
+		/// Gets the BattleUnit's effective strength.
 		int getStrength() const;
 
-		/// Do damage to this unit.
+		/// Do damage to the BattleUnit.
 		int takeDamage(
 				const Position& relVoxel,
 				int power,
 				DamageType dType,
 				const bool ignoreArmor = false);
 
-		/// Plays the unit's death sound.
+		/// Plays the BattleUnit's death sound.
 		void playDeathSound(bool fleshWound = false) const;
 
-		/// Sets this unit as having cried out from a shotgun blast to the face.
+		/// Sets the BattleUnit as having cried out from a shotgun blast to the face.
 		void hasCried(bool cried);
-		/// Gets if this unit has cried already.
+		/// Gets if the BattleUnit has cried already.
 		bool hasCried() const;
 
-		/// Sets this unit's health level.
+		/// Sets the BattleUnit's health level.
 		void setHealth(int health);
 
-		/// Heals stun level of this unit.
+		/// Heals stun level of the BattleUnit.
 		bool healStun(int power);
-		/// Gets this unit's stun level.
+		/// Gets the BattleUnit's stun level.
 		int getStun() const;
-		/// Sets this unit's stun level.
+		/// Sets the BattleUnit's stun level.
 		void setStun(int stun);
 
-		/// Knocks this unit out instantly.
+		/// Knocks the BattleUnit out instantly.
 		void knockOut();
 
 		/// Starts the collapsing sequence.
@@ -474,7 +475,7 @@ private:
 		/// Sets aiming sequence phase.
 		void setAimingPhase(int phase);
 
-		/// Gets if this unit is out - either dead or unconscious.
+		/// Gets if the BattleUnit is out - either dead or unconscious.
 		bool isOut_t(OutCheck test = OUT_ALL) const;
 
 		/// Gets the number of time units a certain action takes.
@@ -491,12 +492,12 @@ private:
 		bool spendEnergy(int energy);
 		/// Sets time units.
 		void setTimeUnits(int tu);
-		/// Sets the unit's energy level.
+		/// Sets the BattleUnit's energy level.
 		void setEnergy(int energy);
 
-		/// Sets whether this unit is visible.
+		/// Sets whether the BattleUnit is visible.
 		void setUnitVisible(bool flag = true);
-		/// Gets whether this unit is visible.
+		/// Gets whether the BattleUnit is visible.
 		bool getUnitVisible() const;
 		/// Adds a unit to the BattleUnit's visible and/or recently spotted hostile units.
 		void addToHostileUnits(BattleUnit* const unit);
@@ -511,60 +512,60 @@ private:
 
 		/// Adds tile to visible tiles.
 //		bool addToVisibleTiles(Tile* const tile);
-		/// Gets this unit's list of visible tiles.
+		/// Gets the BattleUnit's list of visible tiles.
 //		std::vector<Tile*>* getVisibleTiles();
-		/// Clears this unit's visible tiles.
+		/// Clears the BattleUnit's visible tiles.
 //		void clearVisibleTiles();
 
 		/// Calculates firing or throwing accuracy.
 		double getAccuracy(
 				const BattleAction& action,
 				const BattleActionType bat = BA_NONE) const;
-		/// Calculates this unit's accuracy modifier.
+		/// Calculates the BattleUnit's accuracy modifier.
 		double getAccuracyModifier(const BattleItem* const item = nullptr) const;
 
-		/// Sets this unit's armor value.
+		/// Sets the BattleUnit's armor value.
 		void setArmor(
 				int armor,
 				UnitSide side);
-		/// Gets this unit's Armor.
+		/// Gets the BattleUnit's Armor.
 		const RuleArmor* getArmor() const;
-		/// Gets this unit's armor value on a particular side.
+		/// Gets the BattleUnit's armor value on a particular side.
 		int getArmor(UnitSide side) const;
-		/// Checks if this unit is wearing a PowerSuit.
+		/// Checks if the BattleUnit is wearing a PowerSuit.
 //		bool hasPowerSuit() const;
-		/// Checks if this unit is wearing a FlightSuit.
+		/// Checks if the BattleUnit is wearing a FlightSuit.
 //		bool hasFlightSuit() const;
 
-		/// Gets this unit's current reaction score.
+		/// Gets the BattleUnit's current reaction score.
 		int getInitiative(const int tuSpent = 0) const;
 
-		/// Prepares this unit for a new turn.
+		/// Prepares the BattleUnit for a new turn.
 		void prepUnit(bool full = true);
-		/// Calculates and resets this BattleUnit's time units and energy.
+		/// Calculates and resets the BattleUnit's time units and energy.
 		void prepTu(
 				bool preBattle = false,
 				bool hasPanicked = false,
 				bool reverted = false);
 
-		/// Changes this unit's morale.
+		/// Changes the BattleUnit's morale.
 		void moraleChange(int change);
 
-		/// Don't reselect this unit.
+		/// Don't reselect the BattleUnit.
 		void dontReselect();
-		/// Reselect this unit.
+		/// Reselect the BattleUnit.
 		void allowReselect();
-		/// Checks whether reselecting this unit is allowed.
+		/// Checks whether reselecting the BattleUnit is allowed.
 		bool reselectAllowed() const;
 
-		/// Sets this unit's fire value.
+		/// Sets the BattleUnit's fire value.
 		void setFireUnit(int fire);
-		/// Gets this unit's fire value.
+		/// Gets the BattleUnit's fire value.
 		int getFireUnit() const;
-		/// Gives this BattleUnit damage from personal fire.
+		/// Gives the BattleUnit damage from personal fire.
 		void takeFire();
 
-		/// Gets the list of items in this unit's inventory.
+		/// Gets the list of items in the BattleUnit's inventory.
 		std::vector<BattleItem*>* getInventory();
 
 		/// Lets AI do its thing.
@@ -578,51 +579,51 @@ private:
 		void setTile(
 				Tile* const tile = nullptr,
 				const Tile* const tileBelow = nullptr);
-		/// Gets this unit's Tile.
+		/// Gets the BattleUnit's Tile.
 		Tile* getTile() const;
 
-		/// Gets the item in the specified slot of this unit's inventory.
+		/// Gets the item in the specified slot of the BattleUnit's inventory.
 		BattleItem* getItem(
 				const RuleInventory* const inRule,
 				int x = 0,
 				int y = 0) const;
-		/// Gets the item in the specified slot of this unit's inventory.
+		/// Gets the item in the specified slot of the BattleUnit's inventory.
 		BattleItem* getItem(
 				const std::string& type,
 				int x = 0,
 				int y = 0) const;
-		/// Gets the item in the specified slot of this unit's inventory.
+		/// Gets the item in the specified slot of the BattleUnit's inventory.
 		BattleItem* getItem(
 				InventorySection section,
 				int x = 0,
 				int y = 0) const;
 
-		/// Sets the hand this unit has active.
+		/// Sets the hand the BattleUnit has active.
 		void setActiveHand(ActiveHand hand);
-		/// Gets this unit's active hand.
+		/// Gets the BattleUnit's active hand.
 		ActiveHand getActiveHand();
 
-		/// Gets the item in this unit's main hand.
+		/// Gets the item in the BattleUnit's main hand.
 		BattleItem* getMainHandWeapon(
 				bool quickest = false,
 				bool inclMelee = true,
 				bool checkFist = false);
 		/// Gets a grenade if possible.
 		BattleItem* getGrenade() const;
-		/// Gets this unit's melee weapon if any.
+		/// Gets the BattleUnit's melee weapon if any.
 		BattleItem* getMeleeWeapon() const;
-		/// Gets this unit's ranged weapon if any.
+		/// Gets the BattleUnit's ranged weapon if any.
 		BattleItem* getRangedWeapon(bool quickest) const;
 
 		/// Reloads weapon if needed.
 		bool checkReload();
 
-		/// Checks if this unit is in the exit area.
+		/// Checks if the BattleUnit is in the exit area.
 		bool isInExitArea(SpecialTileType tileType = START_POINT) const;
 
-		/// Gets this unit's height taking into account kneeling/standing.
+		/// Gets the BattleUnit's height taking into account kneeling/standing.
 		int getHeight(bool floating = false) const;
-		/// Gets this unit's floating elevation.
+		/// Gets the BattleUnit's floating elevation.
 		int getFloatHeight() const;
 
 		/// Gets a soldier's Firing experience.
@@ -656,15 +657,15 @@ private:
 		/// Calculates experience and days wounded.
 		std::vector<int> postMissionProcedures(const bool dead = false);
 
-		/// Gets the sprite index of this unit for the MiniMap.
+		/// Gets the sprite index of the BattleUnit for the MiniMap.
 		int getMiniMapSpriteIndex() const;
 
-		/// Sets the turret type of this unit (-1 is no turret).
+		/// Sets the turret type of the BattleUnit (-1 is no turret).
 		void setTurretType(int turretType);
-		/// Gets the turret type of this unit (-1 is no turret).
+		/// Gets the turret type of the BattleUnit (-1 is no turret).
 		int getTurretType() const;
 
-		/// Gets this unit's total number of fatal wounds.
+		/// Gets the BattleUnit's total number of fatal wounds.
 		int getFatalWounds() const;
 		/// Gets fatal wound amount of a body part.
 		int getFatalWound(UnitBodyPart part) const;
@@ -673,115 +674,110 @@ private:
 				UnitBodyPart part,
 				int wounds,
 				int health);
-		/// Gives pain killers to this unit.
+		/// Gives pain killers to the BattleUnit.
 		void morphine();
-		/// Gives stimulants to this unit.
+		/// Gives stimulants to the BattleUnit.
 		bool amphetamine(
 				int energy,
 				int stun);
 
-		/// Gets if the unit has overdosed on morphine.
+		/// Gets if the BattleUnit has overdosed on morphine.
 		bool getOverDose() const;
 
-		/// Gets motion points of this unit for the motion scanner.
+		/// Gets motion points of the BattleUnit for the motion scanner.
 		int getMotionPoints() const;
 
-		/// Gets this unit's name.
+		/// Gets the BattleUnit's name.
 		std::wstring getName(
 				const Language* const lang = nullptr,
 				bool debugId = false) const;
 
-		/// Gets this unit's stats.
+		/// Gets the BattleUnit's stats.
 		const UnitStats* getBattleStats() const;
 
-		/// Gets this unit's stand height.
+		/// Gets the BattleUnit's stand height.
 		int getStandHeight() const;
-		/// Gets this unit's kneel height.
+		/// Gets the BattleUnit's kneel height.
 		int getKneelHeight() const;
 
-		/// Gets this unit's loft ID.
+		/// Gets the BattleUnit's loft ID.
 		size_t getLoft(size_t layer = 0) const;
 
-		/// Gets this unit's victory point value.
+		/// Gets the BattleUnit's victory point value.
 		int getValue() const;
 
-		/// Gets this unit's death sound.
+		/// Gets the BattleUnit's death sound.
 		int getDeathSound() const;
-		/// Gets this unit's move sound.
+		/// Gets the BattleUnit's move sound.
 		int getMoveSound() const;
-		/// Gets this unit's aggro sound.
+		/// Gets the BattleUnit's aggro sound.
 		int getAggroSound() const;
 
-		/// Gets whether this unit can be affected by fatal wounds.
+		/// Gets whether the BattleUnit can be affected by fatal wounds.
 		bool isWoundable() const;
-		/// Gets whether this unit can be affected by fear.
+		/// Gets whether the BattleUnit can be affected by fear.
 		bool isMoralable() const;
-		/// Gets whether this unit can be accessed with the Medikit.
+		/// Gets whether the BattleUnit can be accessed with the Medikit.
 		bool isHealable() const;
 		/// Gets whether the BattleUnit can be revived.
 		bool isRevivable() const;
 
-		/// Gets this unit's intelligence.
+		/// Gets the BattleUnit's intelligence.
 		int getIntelligence() const;
-		/// Gets this unit's aggression.
+		/// Gets the BattleUnit's aggression.
 		int getAggression() const;
 
-		/// Gets this unit's special ability.
+		/// Gets the BattleUnit's special ability.
 		SpecialAbility getSpecialAbility() const;
-		/// Sets this unit's special ability.
+		/// Sets the BattleUnit's special ability.
 		void setSpecialAbility(const SpecialAbility specab);
 
-		/// Adds a kill to this unit's kill-counter.
+		/// Adds a kill to the BattleUnit's kill-counter.
 		void addKillCount();
 		/// Gets if this is a Rookie and has made his/her first kill.
 		bool hasFirstKill() const;
 
-		/// Gets this unit's original faction
-		UnitFaction getOriginalFaction() const;
-		/// Converts this unit to a faction.
-		void setFaction(UnitFaction faction);
-
-		/// Gets if this unit is about to die.
+		/// Gets if the BattleUnit is about to die.
 		bool getAboutToCollapse() const;
 
-		/// Sets this unit's health to 0 and status to dead.
+		/// Sets the BattleUnit's health to 0 and status to dead.
 		void instaKill();
-		/// Sets this unit's parameters as down (collapsed/ unconscious/ dead).
+		/// Sets the BattleUnit's parameters as down (collapsed/ unconscious/ dead).
 		void putDown();
 
-		/// Gets this unit's spawn unit.
+		/// Gets the BattleUnit's spawn unit.
 		std::string getSpawnType() const;
-		/// Sets this unit's spawn unit.
+		/// Sets the BattleUnit's spawn unit.
 		void setSpawnUnit(const std::string& spawnType);
 
-		/// Gets the faction that killed this unit.
+		/// Gets the faction that killed the BattleUnit.
 		UnitFaction killedBy() const;
-		/// Sets the faction that killed this unit.
+		/// Sets the faction that killed the BattleUnit.
 		void killedBy(UnitFaction faction);
 
-		/// Sets the BattleUnits that this unit is charging towards.
+		/// Sets the BattleUnits that the BattleUnit is charging towards.
 		void setChargeTarget(BattleUnit* const chargeTarget = nullptr);
-		/// Gets the BattleUnits that this unit is charging towards.
+		/// Gets the BattleUnits that the BattleUnit is charging towards.
 		BattleUnit* getChargeTarget() const;
 
 		/// Gets the carried weight in strength units.
 		int getCarriedWeight(const BattleItem* const dragItem = nullptr) const;
 
-		/// Sets how many turns this unit will be exposed for.
+		/// Sets how many turns the BattleUnit will be exposed for.
 		void setExposed(int turns = 0);
-		/// Sets how many turns this unit will be exposed for.
+		/// Sets how many turns the BattleUnit will be exposed for.
 		int getExposed() const;
 
-		/// This call this after the default copy constructor deletes this unit's sprite-cache.
+		/// This call this after the default copy constructor deletes the BattleUnit's sprite-cache.
 		void invalidateCache();
 
-		/// Gets this BattleUnit's rules if non-Soldier else nullptr.
+		/// Gets the BattleUnit's rules if non-Soldier else nullptr.
 		const RuleUnit* getUnitRules() const
 		{ return _unitRule; }
 
-		/// Sets this unit's rank integer.
+		/// Sets the BattleUnit's rank integer.
 		void setRankInt(int rankInt);
-		/// Gets this unit's rank integer.
+		/// Gets the BattleUnit's rank integer.
 		int getRankInt() const;
 		/// Derives a rank integer based on rank string (for xcom soldiers ONLY)
 		void deriveRank();
@@ -789,14 +785,14 @@ private:
 		/// This function checks if a tile is visible using maths.
 		bool checkViewSector(const Position& pos) const;
 
-		/// Adjusts this unit's stats according to difficulty.
+		/// Adjusts the BattleUnit's stats according to difficulty.
 		void adjustStats(
 				const GameDifficulty diff,
 				const int month);
 
-		/// Sets this unit's cover-reserve TU.
+		/// Sets the BattleUnit's cover-reserve TU.
 		void setCoverReserve(int tuReserve);
-		/// Gets this unit's cover-reserve TU.
+		/// Gets the BattleUnit's cover-reserve TU.
 		int getCoverReserve() const;
 
 		/// Initializes a death spin.
@@ -805,7 +801,7 @@ private:
 		void contDeathSpin();
 		/// Regulates inititialization, direction & duration of the death spin-cycle.
 		int getSpinPhase() const;
-		/// Sets the spinPhase of this unit.
+		/// Sets the spinPhase of the BattleUnit.
 		void setSpinPhase(int spinphase);
 
 		/// To stop a unit from firing/throwing if it spots a new opponent during turning.
@@ -813,69 +809,69 @@ private:
 		/// To stop a unit from firing/throwing if it spots a new opponent during turning.
 		bool getStopShot() const;
 
-		/// Sets this unit as dashing.
+		/// Sets the BattleUnit as dashing.
 		void setDashing(bool dash = true);
-		/// Gets if this unit is dashing.
+		/// Gets if the BattleUnit is dashing.
 		bool isDashing() const;
 
-		/// Sets this unit as having been damaged in a single explosion.
+		/// Sets the BattleUnit as having been damaged in a single explosion.
 		void setTakenExpl(bool beenhit = true);
-		/// Gets if this unit has aleady been damaged in a single explosion.
+		/// Gets if the BattleUnit has aleady been damaged in a single explosion.
 		bool getTakenExpl() const;
 
-		/// Sets this unit as having been damaged in a single fire.
+		/// Sets the BattleUnit as having been damaged in a single fire.
 		void setTakenFire(bool beenhit = true);
-		/// Gets if this unit has aleady been damaged in a single fire.
+		/// Gets if the BattleUnit has aleady been damaged in a single fire.
 		bool getTakenFire() const;
 
-		/// Returns true if this unit is selectable.
+		/// Returns true if the BattleUnit is selectable.
 		bool isSelectable(
 				UnitFaction faction,
 				bool checkReselect = false,
 				bool checkInventory = false) const;
 
-		/// Returns true if this unit has an inventory.
+		/// Returns true if the BattleUnit has an inventory.
 		bool hasInventory() const;
 
-		/// Gets this unit's movement type.
+		/// Gets the BattleUnit's movement type.
 		MoveType getMoveTypeUnit() const;
 
-		/// Gets if this unit is hiding or not.
+		/// Gets if the BattleUnit is hiding or not.
 		bool isHiding() const
 		{ return _hidingForTurn; };
-		/// Sets this unit hiding or not.
+		/// Sets the BattleUnit hiding or not.
 		void setHiding(bool hiding = true)
 		{ _hidingForTurn = hiding; };
 
-		/// Creates special weapon for the unit.
+		/// Creates special weapon for the BattleUnit.
 //		void setSpecialWeapon(SavedBattleGame* save, const Ruleset* rule);
 		/// Get special weapon.
 //		BattleItem* getSpecialWeapon(BattleType type) const;
 
-		/// Gets this unit's mission statistics.
+		/// Gets the BattleUnit's mission statistics.
 		BattleUnitStatistics* getStatistics() const;
-		/// Sets this unit murderer's id.
+		/// Sets the BattleUnit murderer's id.
 		void setMurdererId(int id);
-		/// Gets this unit murderer's id.
+		/// Gets the BattleUnit murderer's id.
 		int getMurdererId() const;
 
-		/// Sets this unit's order in battle.
+		/// Sets the BattleUnit's order in battle.
 		void setBattleOrder(size_t order);
-		/// Gets this unit's order in battle.
+		/// Gets the BattleUnit's order in battle.
 		size_t getBattleOrder() const;
 
-		/// Sets the BattleGame for this unit.
+		/// Sets the BattleGame for the BattleUnit.
 		void setBattleForUnit(BattlescapeGame* const battleGame);
 
-		/// Sets this BattleUnit's turn direction when spinning 180 degrees.
+		/// Sets the BattleUnit's turn direction when spinning 180 degrees.
 		void setTurnDirection(int dir);
 		/// Clears turn direction.
 		void clearTurnDirection();
 
-		/// Sets this BattleUnit as having just revived during a Turnover.
+		/// Sets the BattleUnit as having just revived during a Turnover.
 		void setRevived(bool revived = true);
 
-		/// Gets all units in the battlescape that are valid RF-spotters of this BattleUnit.
+		/// Gets all units in the battlescape that are valid RF-spotters of the BattleUnit.
 		std::list<BattleUnit*>* getRfSpotters();
 
 		/// Sets the parameters of a successful mind-control psi attack.
@@ -885,17 +881,20 @@ private:
 		/// Gets if the BattleUnit is mind-controlled.
 		bool isMindControlled() const;
 
-		/// Gets if this unit is a Zombie.
+		/// Gets if the BattleUnit is a Zombie.
 		bool isZombie() const;
 
-		/// Gets if this unit avoids fire-tiles.
+		/// Gets if the BattleUnit avoids fire-tiles.
 		bool avoidsFire() const;
 
-		/// Gets if this RuleUnit is immune to psionic attacks.
+		/// Gets if the BattleUnit is immune to psionic attacks.
 		bool psiBlock() const;
 
-		/// Gets if this BattleUnit has been stunned before.
+		/// Gets if the BattleUnit has been stunned before.
 		bool beenStunned() const;
+
+		/// Gets the BattleUnit's last-cover Position. Scratch value for AI's lefthand to tell its righthand what's up ... don't zone out and start patrolling again.
+		Position getLastCover() const;
 };
 
 }

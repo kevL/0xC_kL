@@ -298,7 +298,7 @@ private:
 		bool playableUnitSelected();
 
 		/// Handles kneeling action.
-		bool kneel(BattleUnit* const unit);
+		bool kneelToggle(BattleUnit* const unit);
 
 		/// Checks for casualties in battle.
 		void checkCasualties(

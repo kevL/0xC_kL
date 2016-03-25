@@ -1965,7 +1965,7 @@ void BattlescapeState::btnKneelClick(Action*)
 		if (unit != nullptr)
 		{
 			//Log(LOG_INFO) << "BattlescapeState::btnKneelClick()";
-			if (_battleGame->kneel(unit) == true)
+			if (_battleGame->kneelToggle(unit) == true)
 			{
 				_battleGame->getTileEngine()->calculateFOV(unit->getPosition(), true);
 				// need that here, so that my newVis algorithm works without

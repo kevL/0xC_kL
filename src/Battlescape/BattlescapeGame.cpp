@@ -1218,7 +1218,7 @@ bool BattlescapeGame::playableUnitSelected()
  * @param unit - pointer to a BattleUnit
  * @return, true if the action succeeded
  */
-bool BattlescapeGame::kneel(BattleUnit* const unit)
+bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 {
 	//Log(LOG_INFO) << "BattlescapeGame::kneel()";
 	if (unit->getGeoscapeSoldier() != nullptr)
@@ -1229,22 +1229,22 @@ bool BattlescapeGame::kneel(BattleUnit* const unit)
 			{
 				int tu;
 				if (unit->isKneeled() == true)
-					tu = 10;
+					tu = Pathfinding::TU_STAND;
 				else
-					tu = 3;
+					tu = Pathfinding::TU_KNEEL;
 
 //				if (checkReservedTu(unit, tu) == true)
-//					|| (tu == 3 && _battleSave->getKneelReserved() == true))
+//					|| (tu == Pathfinding::TU_KNEEL && _battleSave->getKneelReserved() == true))
 //				{
 				if (unit->getTimeUnits() >= tu)
 				{
-					if (tu == 3
-						|| (tu == 10
+					if (tu == Pathfinding::TU_KNEEL
+						|| (tu == Pathfinding::TU_STAND
 							&& unit->spendEnergy(std::max(0,
-													5 - unit->getArmor()->getAgility())) == true))
+														  Pathfinding::EN_STAND - unit->getArmor()->getAgility())) == true))
 					{
 						unit->spendTimeUnits(tu);
-						unit->kneel(unit->isKneeled() == false);
+						unit->kneelUnit(unit->isKneeled() == false);
 						// kneeling or standing up can reveal new terrain or units. I guess. -> sure can!
 						// But updateSoldierInfo() also does does calculateFOV(), so ...
 //						getTileEngine()->calculateFOV(unit);
@@ -1279,15 +1279,15 @@ bool BattlescapeGame::kneel(BattleUnit* const unit)
 		else //if (unit->getGeoscapeSoldier() != nullptr) // MC'd xCom agent, trying to stand & walk by AI.
 		{
 			const int energyCost (std::max(0,
-										   5 - unit->getArmor()->getAgility()));
+										   Pathfinding::EN_STAND - unit->getArmor()->getAgility()));
 
-			if (unit->getTimeUnits() > 9
+			if (unit->getTimeUnits() >= Pathfinding::TU_STAND
 				&& unit->getEnergy() >= energyCost)
 			{
-				unit->spendTimeUnits(10);
+				unit->spendTimeUnits(Pathfinding::TU_STAND);
 				unit->spendEnergy(energyCost);
 
-				unit->kneel(false);
+				unit->kneelUnit(false);
 				getMap()->cacheUnits();
 
 				return true;

@@ -854,8 +854,8 @@ void AlienBAIState::setupEscape() // private.
 
 			scoreTest = 0;
 
-			if (_battleSave->getTile(_unit->_lastCover) != nullptr)
-				_escapeAction->posTarget = _unit->_lastCover;
+			if (_battleSave->getTile(_unit->getLastCover()) != nullptr)
+				_escapeAction->posTarget = _unit->getLastCover();
 			else
 				_escapeAction->posTarget = _unit->getPosition();
 		}

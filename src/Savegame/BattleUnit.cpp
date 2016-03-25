@@ -62,7 +62,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a BattleUnit from a Soldier
+ * Initializes the BattleUnit from a Soldier
  * @param sol	- pointer to a geoscape Soldier
  * @param diff	- for negative VictoryPts value at death
  */
@@ -222,7 +222,7 @@ BattleUnit::BattleUnit(
 }
 
 /**
- * Creates this BattleUnit from a (non-Soldier) Unit-rule object.
+ * Creates the BattleUnit from a (non-Soldier) Unit-rule object.
  * @param unitRule		- pointer to RuleUnit
  * @param faction		- faction the unit belongs to
  * @param id			- the unit's unique ID
@@ -245,7 +245,7 @@ BattleUnit::BattleUnit(
 		_id(id),
 		_faction(faction),
 		_originalFaction(faction),
-		_killedBy(FACTION_NONE), // was, faction
+		_killedBy(FACTION_NONE),
 		_murdererId(0),
 		_armor(armor),
 		_battleGame(battleGame),
@@ -758,7 +758,7 @@ int BattleUnit::getId() const
 }
 
 /**
- * Gets unit type.
+ * Gets this BattleUnit's type-ID.
  * @return, unit type
  */
 std::string BattleUnit::getType() const
@@ -767,7 +767,7 @@ std::string BattleUnit::getType() const
 }
 
 /**
- * Gets this unit's rank string.
+ * Gets this BattleUnit's rank string.
  * @return, rank
  */
 std::string BattleUnit::getRankString() const
@@ -776,7 +776,7 @@ std::string BattleUnit::getRankString() const
 }
 
 /**
- * Gets this unit's race string.
+ * Gets this BattleUnit's race string.
  * @return, race
  */
 std::string BattleUnit::getRaceString() const
@@ -864,7 +864,7 @@ int BattleUnit::getUnitDirection() const
 }
 
 /**
- * Look at a point.
+ * Looks at a point.
  * @param pos		- reference the position to look at
  * @param turret	- true to turn the turret (default false to turn the unit)
  */
@@ -1274,7 +1274,7 @@ SoldierGender BattleUnit::getGender() const
 }
 
 /**
- * Returns the unit's faction.
+ * Returns this BattleUnit's faction.
  * @return, UnitFaction enum (player, hostile or neutral)
  */
 UnitFaction BattleUnit::getFaction() const
@@ -1283,7 +1283,26 @@ UnitFaction BattleUnit::getFaction() const
 }
 
 /**
- * Check if the unit is still cached in the Map cache.
+ * Converts this BattleUnit to another faction.
+ * @note Its original faction is still stored as such.
+ * @param faction - UnitFaction
+ */
+void BattleUnit::setFaction(UnitFaction faction)
+{
+	_faction = faction;
+}
+
+/**
+ * Gets this BattleUnit's original Faction.
+ * @return, original UnitFaction (BattleUnit.h)
+ */
+UnitFaction BattleUnit::getOriginalFaction() const
+{
+	return _originalFaction;
+}
+
+/**
+ * Check if this BattleUnit is still cached in the Map cache.
  * @note When the unit needs to animate it needs to be re-cached.
  * @param quadrant - quadrant to check (default 0)
  * @return, pointer to the cache Surface used
@@ -1294,7 +1313,7 @@ Surface* BattleUnit::getCache(int quadrant) const
 }
 
 /**
- * Sets the unit's cache flag.
+ * Sets this BattleUnit's cache flag.
  * @note Set to true when the unit has to be redrawn from scratch.
  * @param cache		- pointer to cache surface to use
  * @param quadrant	- unit quadrant to cache (default 0)
@@ -1335,17 +1354,17 @@ const std::vector<std::pair<Uint8, Uint8>>& BattleUnit::getRecolor() const
 }
 
 /**
- * Kneels or stands this unit.
+ * Kneels or stands this BattleUnit.
  * @param kneeled - true to kneel, false to stand up
  */
-void BattleUnit::kneel(bool kneel)
+void BattleUnit::kneelUnit(bool kneel)
 {
 	_kneeled = kneel;
 	_cacheInvalid = true;
 }
 
 /**
- * Gets if this unit is kneeling.
+ * Gets if this BattleUnit is kneeling.
  * @return, true if kneeled
  */
 bool BattleUnit::isKneeled() const
@@ -1354,7 +1373,7 @@ bool BattleUnit::isKneeled() const
 }
 
 /**
- * Gets if this unit is floating.
+ * Gets if this BattleUnit is floating.
  * @note A unit is floating if there is no ground underneath.
  * @return, true if floating
  */
@@ -1415,7 +1434,7 @@ int BattleUnit::getMorale() const
 }
 
 /**
- * Gets this unit's current effective strength.
+ * Gets this BattleUnit's current effective strength.
  * @return, current strength
  */
 int BattleUnit::getStrength() const
@@ -1606,10 +1625,15 @@ int BattleUnit::takeDamage(
 				int leadership (100);		// <- for civilians & pre-battle PS explosion.
 				if (_battleGame != nullptr)	// ie. don't CTD on preBattle power-source explosion.
 				{
-					if (_originalFaction == FACTION_PLAYER)
-						leadership = _battleGame->getBattlescapeState()->getSavedBattleGame()->getMoraleModifier();
-					else if (_originalFaction == FACTION_HOSTILE)
-						leadership = _battleGame->getBattlescapeState()->getSavedBattleGame()->getMoraleModifier(nullptr, false);
+					switch (_originalFaction)
+					{
+						case FACTION_PLAYER:
+							leadership = _battleGame->getBattlescapeState()->getSavedBattleGame()->getMoraleModifier();
+							break;
+
+						case FACTION_HOSTILE:
+							leadership = _battleGame->getBattlescapeState()->getSavedBattleGame()->getMoraleModifier(nullptr, false);
+					}
 				}
 
 				moraleLoss = moraleLoss * power * 10 / leadership;
@@ -1690,7 +1714,7 @@ void BattleUnit::playDeathSound(bool fleshWound) const
 }
 
 /**
- * Sets this unit as having cried out from a shotgun blast to the face.
+ * Sets this BattleUnit as having cried out from a shotgun blast to the face.
  * @note So that it doesn't scream for each pellet.
  * @param cried - true if hit
  */
@@ -1700,7 +1724,7 @@ void BattleUnit::hasCried(bool cried)
 }
 
 /**
- * Gets if this unit has cried already.
+ * Gets if this BattleUnit has cried already.
  * @return, true if cried
  */
 bool BattleUnit::hasCried() const
@@ -1709,7 +1733,7 @@ bool BattleUnit::hasCried() const
 }
 
 /**
- * Sets this unit's health level.
+ * Sets this BattleUnit's health level.
  * @param health - the health to set
  */
 void BattleUnit::setHealth(int health)
@@ -1734,7 +1758,7 @@ bool BattleUnit::healStun(int power)
 }
 
 /**
- * Gets the amount of stun damage this unit has.
+ * Gets the amount of stun damage this BattleUnit has.
  * @return, stun level
  */
 int BattleUnit::getStun() const
@@ -1743,7 +1767,7 @@ int BattleUnit::getStun() const
 }
 
 /**
- * Sets this unit's stun level.
+ * Sets this BattleUnit's stun level.
  */
 void BattleUnit::setStun(int stun)
 {
@@ -1751,7 +1775,7 @@ void BattleUnit::setStun(int stun)
 }
 
 /**
- * Raises a unit's stun level sufficiently so that the unit is ready to become
+ * Raises a unit's stun level sufficiently so that this BattleUnit is ready to become
  * unconscious.
  * @note Used when another unit falls on top of this unit. Zombified units first
  * convert to their spawn unit.
@@ -2077,7 +2101,7 @@ void BattleUnit::setEnergy(int energy)
 }
 
 /**
- * Sets whether this unit is visible to the player - that is should it be drawn.
+ * Sets whether this BattleUnit is visible to the player - that is should it be drawn.
  * @param flag - true if visible (default true)
  */
 void BattleUnit::setUnitVisible(bool flag)
@@ -2086,7 +2110,7 @@ void BattleUnit::setUnitVisible(bool flag)
 }
 
 /**
- * Gets whether this unit is visible.
+ * Gets whether this BattleUnit is visible.
  * @return, true if visible
  */
 bool BattleUnit::getUnitVisible() const
@@ -2524,7 +2548,7 @@ void BattleUnit::moraleChange(int change)
 }
 
 /**
- * Marks this unit as not reselectable.
+ * Marks this BattleUnit as not reselectable.
  */
 void BattleUnit::dontReselect()
 {
@@ -2532,7 +2556,7 @@ void BattleUnit::dontReselect()
 }
 
 /**
- * Marks this unit as reselectable.
+ * Marks this BattleUnit as reselectable.
  */
 void BattleUnit::allowReselect()
 {
@@ -2540,7 +2564,7 @@ void BattleUnit::allowReselect()
 }
 
 /**
- * Checks whether reselecting this unit is allowed.
+ * Checks whether reselecting this BattleUnit is allowed.
  * @return, true if reselect allowed
  */
 bool BattleUnit::reselectAllowed() const
@@ -2549,7 +2573,7 @@ bool BattleUnit::reselectAllowed() const
 }
 
 /**
- * Sets the amount of turns this unit is on fire.
+ * Sets the amount of turns this BattleUnit is on fire.
  * @param fire - amount of turns this unit will be on fire (no fire 0)
  */
 void BattleUnit::setFireUnit(int fire)
@@ -2559,7 +2583,7 @@ void BattleUnit::setFireUnit(int fire)
 }
 
 /**
- * Gets the amount of turns this unit is on fire.
+ * Gets the amount of turns this BattleUnit is on fire.
  * @return, amount of turns this unit will be on fire (0 - no fire)
  */
 int BattleUnit::getFireUnit() const
@@ -3179,7 +3203,7 @@ bool BattleUnit::checkReload()
 }
 
 /**
- * Check if this unit is in the exit area.
+ * Check if this BattleUnit is in an exit-area.
  * @param tileType - type of exit tile to check for (RuleItem.h) (default START_POINT)
  * @return, true if unit is in a special exit area
  */
@@ -3191,7 +3215,7 @@ bool BattleUnit::isInExitArea(SpecialTileType tileType) const
 }
 
 /**
- * Gets this unit's height whether standing or kneeling.
+ * Gets this BattleUnit's height whether standing or kneeling.
  * @param floating - true to include floating value (default false)
  * @return, unit's height
  */
@@ -3207,7 +3231,7 @@ int BattleUnit::getHeight(bool floating) const
 }
 
 /**
- * Gets this unit's Firing experience.
+ * Gets this BattleUnit's Firing experience.
  * @return, firing xp
  */
 int BattleUnit::getExpFiring() const
@@ -3485,7 +3509,7 @@ int BattleUnit::improveStat(int xp) // private.
 }
 
 /**
- * Get the unit's minimap sprite index.
+ * Get this BattleUnit's minimap sprite index.
  * @note Used to display the unit on the minimap.
  * @return, the unit minimap index
  */
@@ -3644,7 +3668,7 @@ bool BattleUnit::getOverDose() const
 }
 
 /**
- * Gets motion points for the motion scanner.
+ * Gets this BattleUnit's motion-points for the motion-scanner.
  * @note More points is a larger blip on the scanner.
  * @return, motion points
  */
@@ -3663,7 +3687,7 @@ const RuleArmor* BattleUnit::getArmor() const
 }
 
 /**
- * Checks if unit is wearing a PowerSuit.
+ * Checks if this BattleUnit is wearing a PowerSuit.
  * @return, true if this unit is wearing a PowerSuit of some sort
  *
 bool BattleUnit::hasPowerSuit() const
@@ -3686,7 +3710,7 @@ bool BattleUnit::hasPowerSuit() const
 } */
 
 /**
- * Checks if unit is wearing a FlightSuit.
+ * Checks if this BattleUnit is wearing a FlightSuit.
  * @return, true if this unit is wearing a FlightSuit of some sort
  *
 bool BattleUnit::hasFlightSuit() const
@@ -3752,7 +3776,7 @@ const UnitStats* BattleUnit::getBattleStats() const
 }
 
 /**
- * Gets a unit's stand height.
+ * Gets this BattleUnit's stand-height.
  * @return, this unit's height in voxels when standing
  */
 int BattleUnit::getStandHeight() const
@@ -3761,7 +3785,7 @@ int BattleUnit::getStandHeight() const
 }
 
 /**
- * Gets a unit's kneel height.
+ * Gets this BattleUnit's kneel-height.
  * @return, this unit's height in voxels when kneeling
  */
 int BattleUnit::getKneelHeight() const
@@ -3770,7 +3794,7 @@ int BattleUnit::getKneelHeight() const
 }
 
 /**
- * Gets a unit's floating elevation.
+ * Gets this BattleUnit's float-elevation.
  * @return, this unit's elevation over the ground in voxels when floating or flying
  */
 int BattleUnit::getFloatHeight() const
@@ -3779,9 +3803,10 @@ int BattleUnit::getFloatHeight() const
 }
 
 /**
- * Gets this unit's LOFT id, one per unit tile.
+ * Gets this BattleUnit's LOFT-id.
  * @note This is one slice only as it is repeated over the entire height of the
- * unit - each tile has only one LOFT.
+ * unit - each tile has only one LOFT. Also, in practice each layer is doubled
+ * so that each layer is 2 voxels in height.
  * @param layer - an entry in this BattleUnit's LOFT set (default 0)
  * @return, this unit's Line of Fire Template id
  */
@@ -3791,7 +3816,7 @@ size_t BattleUnit::getLoft(size_t layer) const
 }
 
 /**
- * Gets this unit's value.
+ * Gets this BattleUnit's value.
  * @note Used for score at debriefing.
  * @return, value score
  */
@@ -3801,7 +3826,7 @@ int BattleUnit::getValue() const
 }
 
 /**
- * Gets this unit's death sound.
+ * Gets this BattleUnit's death-sound.
  * @return, death sound ID
  */
 int BattleUnit::getDeathSound() const
@@ -3810,7 +3835,7 @@ int BattleUnit::getDeathSound() const
 }
 
 /**
- * Gets this unit's move sound.
+ * Gets this BattleUnit's move-sound.
  * @return, move sound ID
  */
 int BattleUnit::getMoveSound() const
@@ -3819,7 +3844,7 @@ int BattleUnit::getMoveSound() const
 }
 
 /**
- * Gets whether the unit can be affected by fatal wounds.
+ * Gets whether this BattleUnit can be affected by fatal wounds.
  * @note Normally only soldiers are affected by fatal wounds.
  * @return, true if unit can be affected by fatal wounds
  */
@@ -3833,7 +3858,7 @@ bool BattleUnit::isWoundable() const
 }
 
 /**
- * Gets whether this unit can be affected by morale loss.
+ * Gets whether this BattleUnit can be affected by morale loss.
  * @return, true if unit can be affected by morale changes
  */
 bool BattleUnit::isMoralable() const
@@ -3846,7 +3871,7 @@ bool BattleUnit::isMoralable() const
 }
 
 /**
- * Gets whether this unit can be accessed with the Medikit.
+ * Gets whether this BattleUnit can be accessed with the Medikit.
  * @return, true if unit can be treated
  */
 bool BattleUnit::isHealable() const
@@ -3871,7 +3896,7 @@ bool BattleUnit::isRevivable() const
 }
 
 /**
- * Gets the number of turns an AI unit remembers a soldier's position.
+ * Gets the number of turns an AI unit will remember a player-unit's position.
  * @return, intelligence
  */
 int BattleUnit::getIntelligence() const
@@ -3880,7 +3905,7 @@ int BattleUnit::getIntelligence() const
 }
 
 /**
- * Gets this unit's aggression rating for use by the AI.
+ * Gets this BattleUnit's aggression-rating for use by the AI.
  * @return, aggression
  */
 int BattleUnit::getAggression() const
@@ -3889,8 +3914,8 @@ int BattleUnit::getAggression() const
 }
 
 /**
- * Gets this unit's special ability (SpecialAbility enum).
- * @return, SpecialAbility
+ * Gets this BattleUnit's special-ability.
+ * @return, SpecialAbility (RuleUnit.h)
  */
 SpecialAbility BattleUnit::getSpecialAbility() const
 {
@@ -3898,8 +3923,8 @@ SpecialAbility BattleUnit::getSpecialAbility() const
 }
 
 /**
- * Sets this unit's special ability (SpecialAbility enum).
- * @param specab - SpecialAbility
+ * Sets this BattleUnit's special-ability.
+ * @param specab - SpecialAbility (RuleUnit.h)
  */
 void BattleUnit::setSpecialAbility(const SpecialAbility specab)
 {
@@ -3943,17 +3968,8 @@ bool BattleUnit::hasFirstKill() const
 }
 
 /**
- * Converts unit to another faction - original faction is still stored.
- * @param faction - UnitFaction
- */
-void BattleUnit::setFaction(UnitFaction faction)
-{
-	_faction = faction;
-}
-
-/**
- * Gets if this unit is in the limbo phase between getting killed or stunned and
- * the end of its collapse sequence.
+ * Gets if this BattleUnit is in the awkward phase between getting killed or stunned
+ * and the end of its collapse-sequence.
  * @return, true if about to die
  */
 bool BattleUnit::getAboutToCollapse() const
@@ -4069,7 +4085,7 @@ int BattleUnit::getAggroSound() const
 }
 
 /**
- * Gets the faction the unit was killed by.
+ * Gets the faction this BattleUnit was killed by.
  * @return, UnitFaction
  */
 UnitFaction BattleUnit::killedBy() const
@@ -4078,7 +4094,7 @@ UnitFaction BattleUnit::killedBy() const
 }
 
 /**
- * Sets the faction the unit was killed by.
+ * Sets the faction this BattleUnit was killed by.
  * @param faction - UnitFaction
  */
 void BattleUnit::killedBy(UnitFaction faction)
@@ -4096,7 +4112,7 @@ void BattleUnit::setChargeTarget(BattleUnit* const chargeTarget)
 }
 
 /**
- * Gets the unit this BattleUnit is charging towards.
+ * Gets the unit that this BattleUnit is charging towards.
  * @return, pointer to a BattleUnit
  */
 BattleUnit* BattleUnit::getChargeTarget() const
@@ -4105,7 +4121,7 @@ BattleUnit* BattleUnit::getChargeTarget() const
 }
 
 /**
- * Gets the unit's carried weight in strength units.
+ * Gets this BattleUnit's carried weight in strength units.
  * @param dragItem - item to ignore
  * @return, weight
  */
@@ -4134,7 +4150,7 @@ int BattleUnit::getCarriedWeight(const BattleItem* const dragItem) const
 }
 
 /**
- * Sets how long since this unit was last exposed to a Hostile unit.
+ * Sets how long since this BattleUnit was last exposed to a Hostile unit.
  * @note Use -1 for NOT exposed. Aliens are always exposed.
  * @param turns - turns this unit has been exposed (default 0)
  */
@@ -4145,21 +4161,12 @@ void BattleUnit::setExposed(int turns)
 }
 
 /**
- * Gets how long since this unit was exposed.
+ * Gets how long since this BattleUnit was exposed.
  * @return, turns this unit has been exposed
  */
 int BattleUnit::getExposed() const
 {
 	return _turnsExposed;
-}
-
-/**
- * Gets this unit's original Faction.
- * @return, original UnitFaction
- */
-UnitFaction BattleUnit::getOriginalFaction() const
-{
-	return _originalFaction;
 }
 
 /**
@@ -4519,7 +4526,7 @@ bool BattleUnit::getTakenFire() const
 
 /**
  * Checks if this BattleUnit can be selected.
- * Only conscious units belonging to the specified faction can be selected.
+ * @#note Only conscious units belonging to the specified faction can be selected.
  * @param faction			- the faction to compare
  * @param checkReselect		- check if the unit is reselectable
  * @param checkInventory	- check if the unit has an inventory
@@ -4532,10 +4539,8 @@ bool BattleUnit::isSelectable(
 {
 	return _faction == faction
 		&& isOut_t(OUT_STAT) == false
-		&& (checkReselect == false
-			|| reselectAllowed() == true)
-		&& (checkInventory == false
-			|| hasInventory() == true);
+		&& (checkReselect == false || reselectAllowed() == true)
+		&& (checkInventory == false || hasInventory() == true);
 }
 
 /**
@@ -4628,7 +4633,7 @@ BattleUnitStatistics* BattleUnit::getStatistics() const
 }
 
 /**
- * Sets the unit murderer's ID.
+ * Sets this BattleUnit's murderer's ID.
  * @param id - murderer ID
  */
 void BattleUnit::setMurdererId(int id)
@@ -4637,8 +4642,8 @@ void BattleUnit::setMurdererId(int id)
 }
 
 /**
- * Gets the unit murderer's id.
- * @return, murderer idID
+ * Gets this BattleUnit's murderer's ID.
+ * @return, murderer ID
  */
 int BattleUnit::getMurdererId() const
 {
@@ -4646,7 +4651,7 @@ int BattleUnit::getMurdererId() const
 }
 
 /**
- * Sets the unit's order in battle.
+ * Sets this BattleUnit's order of battle.
  * @param order - position on the craft or at the base
  */
 void BattleUnit::setBattleOrder(size_t order)
@@ -4655,7 +4660,7 @@ void BattleUnit::setBattleOrder(size_t order)
 }
 
 /**
- * Gets the unit's order in battle.
+ * Gets this BattleUnit's order of battle.
  * @return, position on the craft or at the base
  */
 size_t BattleUnit::getBattleOrder() const
@@ -4715,7 +4720,7 @@ std::list<BattleUnit*>* BattleUnit::getRfSpotters()
 
 /**
  * Sets or Gets the Psi strength and skill of an aLien who successfully
- * mind-controls this unit.
+ * mind-controls this BattleUnit.
  * @note These values are used if Player tries to re-control a hostile xCom unit.
  * @param strength	- psi strength
  * @param skill		- psi skill
@@ -4749,7 +4754,7 @@ bool BattleUnit::isMindControlled() const
 }
 
 /**
- * Gets if this unit is a Zombie.
+ * Gets if this BattleUnit is a Zombie.
  * @return, true if zombie
  */
 bool BattleUnit::isZombie() const
@@ -4758,7 +4763,7 @@ bool BattleUnit::isZombie() const
 }
 
 /**
- * Gets if this unit avoids fire-tiles.
+ * Gets if this BattleUnit avoids fire-tiles.
  * @return, true if unit avoids fire
  */
 bool BattleUnit::avoidsFire() const
@@ -4789,6 +4794,16 @@ bool BattleUnit::psiBlock() const
 bool BattleUnit::beenStunned() const
 {
 	return _hasBeenStunned;
+}
+
+/**
+ * Gets the BattleUnit's last-cover Position.
+ * @note Scratch value for AI's lefthand to tell its righthand what's up ...
+ * don't zone out and start patrolling again.
+ */
+Position BattleUnit::getLastCover() const
+{
+	return _lastCover;
 }
 
 }
