@@ -385,7 +385,7 @@ items:
     fireSoundHit: 22
     power: 16
     damageType: 1
-    fullClip: 8
+    fullClip: 6
     battleType: 2
     shotgunPellets: 8
     shotgunPattern: 8
@@ -402,7 +402,7 @@ items:
     fireSoundHit: 22
     power: 26
     damageType: 1
-    fullClip: 8
+    fullClip: 6
     battleType: 2
     shotgunPellets: 6
     shotgunPattern: 6
@@ -421,7 +421,7 @@ items:
     fireSoundHit: 22
     power: 36
     damageType: 1
-    fullClip: 8
+    fullClip: 6
     battleType: 2
     shotgunPellets: 4
     shotgunPattern: 4

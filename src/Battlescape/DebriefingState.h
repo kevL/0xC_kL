@@ -107,9 +107,9 @@ class DebriefingState
 private:
 	bool
 		_alienDies,
-		_destroyXComBase,
+		_destroyPlayerBase,
 		_manageContainment,
-		_skirmish;
+		_isQuickBattle;
 	int
 		_aliensControlled,
 		_aliensKilled,

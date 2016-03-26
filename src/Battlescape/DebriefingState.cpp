@@ -93,14 +93,14 @@ DebriefingState::DebriefingState()
 		_rules(_game->getRuleset()),
 		_gameSave(_game->getSavedGame()),
 		_diff(static_cast<int>(_game->getSavedGame()->getDifficulty())),
-		_skirmish(_game->getSavedGame()->getMonthsPassed() == -1),
+		_isQuickBattle(_game->getSavedGame()->getMonthsPassed() == -1),
 		_region(nullptr),
 		_country(nullptr),
 		_base(nullptr),
 		_craft(nullptr),
 		_alienDies(false),
 		_manageContainment(false),
-		_destroyXComBase(false),
+		_destroyPlayerBase(false),
 		_aliensControlled(0),
 		_aliensKilled(0),
 		_aliensStunned(0),
@@ -284,7 +284,7 @@ DebriefingState::DebriefingState()
 
 	if (_region != nullptr)
 	{
-		if (_destroyXComBase == true)
+		if (_destroyPlayerBase == true)
 		{
 			_region->addActivityAlien((_diff + 1) * 235);
 			_region->recentActivityAlien();
@@ -298,7 +298,7 @@ DebriefingState::DebriefingState()
 
 	if (_country != nullptr)
 	{
-		if (_destroyXComBase == true)
+		if (_destroyPlayerBase == true)
 		{
 			_country->addActivityAlien((_diff + 1) * 235);
 			_country->recentActivityAlien();
@@ -332,7 +332,7 @@ DebriefingState::DebriefingState()
 			rating = "STR_RATING_STUPENDOUS";
 	}
 
-	if (_skirmish == false && _missionCost != 0)
+	if (_isQuickBattle == false && _missionCost != 0)
 	{
 //		_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(_missionCost)));
 		_txtCost->setText(Text::formatCurrency(_missionCost));
@@ -492,11 +492,11 @@ void DebriefingState::btnOkClick(Action*)
 	_game->getResourcePack()->fadeMusic(_game, 863);
 	_game->popState();
 
-	if (_skirmish == true)
+	if (_isQuickBattle == true)
 		_game->setState(new MainMenuState());
 	else
 	{
-		if (_destroyXComBase == false)
+		if (_destroyPlayerBase == false)
 		{
 			bool playAwardMusic (false);
 
@@ -524,8 +524,6 @@ void DebriefingState::btnOkClick(Action*)
 			//
 			// NOTE: Rearranging these states would require considerable fade/playMusic adjustment.
 
-			SavedBattleGame* const battleSave (_gameSave->getBattleSave());
-
 			// NOTE: These push to player in reverse order.
 			if (_soldiersLost.empty() == false)
 			{
@@ -538,6 +536,8 @@ void DebriefingState::btnOkClick(Action*)
 				playAwardMusic = true;
 				_game->pushState(new CeremonyState(_soldiersMedalled));
 			}
+
+			SavedBattleGame* const battleSave (_gameSave->getBattleSave());
 
 			std::vector<Soldier*> participants;
 			for (std::vector<BattleUnit*>::const_iterator
@@ -565,7 +565,7 @@ void DebriefingState::btnOkClick(Action*)
 			if (_missingItems.empty() == false)
 				_game->pushState(new CannotReequipState(_missingItems));
 
-			if (_alienDies == true)
+			if (_alienDies == true) // TODO: These (aLiens) need to happen *after* extra-info screens.
 				_game->pushState(new NoContainmentState());
 			else if (_manageContainment == true)
 			{
@@ -780,7 +780,7 @@ void DebriefingState::prepareDebriefing() // private.
 	_missionStatistics->timeStat = *_gameSave->getTime();
 	_missionStatistics->type = battleSave->getTacticalType();
 
-	if (_skirmish == false) // Do all aLienRace types here for SoldierDiary stat.
+	if (_isQuickBattle == false) // Do all aLienRace types here for SoldierDiary stat.
 	{
 		if (battleSave->getAlienRace().empty() == false) // safety.
 			_missionStatistics->alienRace = battleSave->getAlienRace();
@@ -893,7 +893,7 @@ void DebriefingState::prepareDebriefing() // private.
 		{
 			if ((*j)->getTactical() == true) // has Craft, ergo NOT BaseDefense
 			{
-				if (_skirmish == false)
+				if (_isQuickBattle == false)
 					_missionCost = (*i)->craftExpense(*j);
 
 				lon = (*j)->getLongitude();
@@ -958,7 +958,7 @@ void DebriefingState::prepareDebriefing() // private.
 					_base->destroyDisconnectedFacilities(); // this may cause the base to become disjointed; destroy the disconnected parts.
 			}
 			else
-				_destroyXComBase = true;
+				_destroyPlayerBase = true;
 		}
 	}
 
@@ -1140,7 +1140,7 @@ void DebriefingState::prepareDebriefing() // private.
 					{
 						_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true);
 
-						if (_skirmish == false)
+						if (_isQuickBattle == false)
 							_missionCost += _base->soldierExpense(sol, true);
 
 						addStat(
@@ -1163,7 +1163,7 @@ void DebriefingState::prepareDebriefing() // private.
 					}
 					else // support unit
 					{
-						if (_skirmish == false)
+						if (_isQuickBattle == false)
 							_missionCost += _base->supportExpense(
 															(*i)->getArmor()->getSize() * (*i)->getArmor()->getSize(),
 															true);
@@ -1217,7 +1217,7 @@ void DebriefingState::prepareDebriefing() // private.
 						{
 							_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures();
 
-							if (_skirmish == false)
+							if (_isQuickBattle == false)
 								_missionCost += _base->soldierExpense(sol);
 
 //							sol->calcStatString(
@@ -1227,7 +1227,7 @@ void DebriefingState::prepareDebriefing() // private.
 						}
 						else
 						{
-							if (_skirmish == false)
+							if (_isQuickBattle == false)
 							{
 								const int quadrants ((*i)->getArmor()->getSize());
 								_missionCost += _base->supportExpense(quadrants * quadrants);
@@ -1413,6 +1413,10 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		switch (tacType)
 		{
+			case TCT_DEFAULT: //-1
+				tacResult = "Warning: no TacType";
+				break;
+
 			case TCT_BASEDEFENSE:
 				tacResult = "STR_BASE_IS_SAVED";
 				break;
@@ -1428,6 +1432,8 @@ void DebriefingState::prepareDebriefing() // private.
 				break;
 
 			default:
+			case TCT_UFOCRASHED:
+			case TCT_UFOLANDED:
 				tacResult = "STR_UFO_IS_RECOVERED";
 		}
 		_txtTitle->setText(tr(tacResult));
@@ -1441,6 +1447,10 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		switch (tacType)
 		{
+			case TCT_DEFAULT: //-1
+				tacResult = "Warning: no TacType";
+				break;
+
 			case TCT_BASEDEFENSE:
 				tacResult = "STR_BASE_IS_LOST";
 				break;
@@ -1456,6 +1466,8 @@ void DebriefingState::prepareDebriefing() // private.
 				break;
 
 			default:
+			case TCT_UFOCRASHED:
+			case TCT_UFOLANDED:
 				tacResult = "STR_UFO_IS_NOT_RECOVERED";
 		}
 		_txtTitle->setText(tr(tacResult));
@@ -1508,10 +1520,14 @@ void DebriefingState::prepareDebriefing() // private.
 				if ((*i)->type == _specialTypes[ALIEN_ALLOYS]->type)
 				{
 					int alloyDivisor; // TODO: Subtract diff*10 for gameDifficulty.
-					if (tacType == TCT_BASEASSAULT)
-						alloyDivisor = 150;
-					else
-						alloyDivisor = 15;
+					switch (tacType)
+					{
+						case TCT_BASEASSAULT:
+							alloyDivisor = 150;
+							break;
+						default:
+							alloyDivisor = 15;
+					}
 
 					(*i)->qty /= alloyDivisor;
 					(*i)->score /= alloyDivisor;
@@ -1523,7 +1539,7 @@ void DebriefingState::prepareDebriefing() // private.
 					_base->getStorageItems()->addItem((*i)->type, (*i)->qty);
 			}
 		}
-		else if (_destroyXComBase == false)
+		else if (_destroyPlayerBase == false)
 		{
 			for (size_t
 					i = 0;
@@ -1595,7 +1611,7 @@ void DebriefingState::prepareDebriefing() // private.
 	switch (tacType)
 	{
 		case TCT_BASEDEFENSE:
-			if (_destroyXComBase == false)
+			if (_destroyPlayerBase == false)
 			{
 				for (std::vector<Craft*>::const_iterator
 						i = _base->getCrafts()->begin();
@@ -1606,7 +1622,7 @@ void DebriefingState::prepareDebriefing() // private.
 						reequipCraft(*i);
 				}
 			}
-			else if (_skirmish == false)
+			else if (_isQuickBattle == false)
 			{
 				for (std::vector<Base*>::const_iterator
 						i = _gameSave->getBases()->begin();
@@ -1928,7 +1944,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 
 /**
  * Recovers a live aLien from the battlefield.
- * @param unit - pointer to a BattleUnit to recover
+ * @param unit - pointer to a BattleUnit to recover the corpse of
  */
 void DebriefingState::recoverLiveAlien(BattleUnit* const unit) // private.
 {
@@ -1962,6 +1978,8 @@ void DebriefingState::recoverLiveAlien(BattleUnit* const unit) // private.
 
 		_base->getStorageItems()->addItem(type);
 		_manageContainment = _base->getFreeContainment() < 0;
+
+		++_itemsGained[_rules->getItemRule(type)];
 	}
 	else
 	{
@@ -1981,11 +1999,11 @@ void DebriefingState::recoverLiveAlien(BattleUnit* const unit) // private.
 //		if (corpseItem.empty() == false) // safety.
 //			_base->getStorageItems()->addItem(corpseItem);
 
-		std::string corpse (unit->getArmor()->getCorpseGeoscape());
-		if (corpse.empty() == false) // safety. [Or error-out if there isn't one.]
+		std::string aLienCorpse (unit->getArmor()->getCorpseGeoscape());
+		if (aLienCorpse.empty() == false) // safety. [Or error-out if there isn't one.]
 		{
-			_base->getStorageItems()->addItem(corpse);
-			++_itemsGained[_rules->getItemRule(corpse)];
+			_base->getStorageItems()->addItem(aLienCorpse);
+			++_itemsGained[_rules->getItemRule(aLienCorpse)];
 		}
 	}
 }
