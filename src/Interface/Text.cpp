@@ -197,7 +197,7 @@ void Text::initText(
 
 /**
  * Changes the string displayed on screen.
- * @param text - reference a text string
+ * @param text - reference a text-string
  */
 void Text::setText(const std::wstring& text)
 {
@@ -360,7 +360,7 @@ int Text::getNumLines() const
 }
 
 /**
- * Returns the rendered text's width.
+ * Gets this Text's rendered width.
  * @param line - line to get the width of or -1 to get whole text width (default -1)
  * @return, width in pixels
  */
@@ -384,8 +384,8 @@ int Text::getTextWidth(int line) const
 }
 
 /**
- * Returns the rendered text's height.
- * @note Useful to check if wordwrap applies.
+ * Gets this Text's rendered height.
+ * @note Used to check if wordwrap applies.
  * @param line - line to get the height of or -1 to get whole text height (default -1)
  * @return, height in pixels
  */

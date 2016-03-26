@@ -156,7 +156,8 @@ BattlescapeState::BattlescapeState()
 	_lstTileInfo			= new TextList(18, 33, screenWidth - 19, 70);
 	_txtControlDestroyed	= new Text(iconsWidth, 9, x, y - 20);
 	_txtMissionLabel		= new Text(iconsWidth, 9, x, y - 10);
-	_txtOperationTitle		= new Text(screenWidth, 17, 0, 2);
+	_txtOperationTitle		= new Text(screenWidth, 16, 0, 2);
+	_srfTitle				= new Surface(screenWidth, 19, 0, 0);
 
 	// Create buttonbar - this should appear at the bottom-center of the screen
 	_icons = new InteractiveSurface(
@@ -177,8 +178,8 @@ BattlescapeState::BattlescapeState()
 	_numDir		= new NumberText(3, 5, x + 150, y + 6);
 	_numDirTur	= new NumberText(3, 5, x + 167, y + 6);
 
-	_rank		= new Surface(26, 23, x + 107, y + 33);
-	_overWeight	= new Surface( 2,  2, x + 130, y + 34);
+	_srfRank		= new Surface(26, 23, x + 107, y + 33);
+	_srfOverweight	= new Surface( 2,  2, x + 130, y + 34);
 
 	_btnUnitUp			= new BattlescapeButton(32,  16, x +  48, y);
 	_btnUnitDown		= new BattlescapeButton(32,  16, x +  48, y + 16);
@@ -225,10 +226,10 @@ BattlescapeState::BattlescapeState()
 //		visibleUnitX = _rules->getInterface("battlescape")->getElement("visibleUnits")->x,
 //		visibleUnitY = _rules->getInterface("battlescape")->getElement("visibleUnits")->y;
 
-	_targeter = new Surface(
-						32,40,
-						screenWidth / 2 - 16,
-						playableHeight / 2);
+	_srfTargeter = new Surface(
+							32,40,
+							screenWidth / 2 - 16,
+							playableHeight / 2);
 
 	std::fill_n(
 			_hostileUnit,
@@ -295,7 +296,7 @@ BattlescapeState::BattlescapeState()
 						32,24,
 						screenWidth - 32,
 						45);
-	_bigBtnBorder	= new Surface(
+	_srfBtnBorder	= new Surface(
 						32,24,
 						screenWidth - 32,
 						0);
@@ -328,7 +329,7 @@ BattlescapeState::BattlescapeState()
 
 	_txtOrder		= new Text(55, 9, 1, 37);
 	_lstSoldierInfo	= new TextList(25, 57, 1, 47);
-	_alienIcon		= new Surface(29, 119, 1, 105); // each icon is 9x11 px. so this can contain 3x10 alien-heads = 30.
+	_srfAlienIcon	= new Surface(29, 119, 1, 105); // each icon is 9x11 px. so this can contain 3x10 alien-heads = 30.
 
 	_txtConsole1	= new Text(screenWidth / 2, y, 0, 0);
 	_txtConsole2	= new Text(screenWidth / 2, y, screenWidth / 2, 0);
@@ -365,7 +366,7 @@ BattlescapeState::BattlescapeState()
 	_overlay = _game->getResourcePack()->getSurfaceSet("ICONS_OVERLAY");
 
 
-	add(_rank,				"rank",					"battlescape", _icons);
+	add(_srfRank,			"rank",					"battlescape", _icons);
 	add(_btnUnitUp,			"buttonUnitUp",			"battlescape", _icons); // note: these are not registered in Interfaces.rul
 	add(_btnUnitDown,		"buttonUnitDown",		"battlescape", _icons);
 	add(_btnMapUp,			"buttonMapUp",			"battlescape", _icons);
@@ -384,7 +385,7 @@ BattlescapeState::BattlescapeState()
 	add(_numDir,			"numIcons",				"battlescape", _icons);
 	add(_numDirTur,			"numIcons",				"battlescape", _icons);
 	add(_numLayers,			"numIcons",				"battlescape", _icons);	// goes overtop _icons
-	add(_overWeight);														// goes overtop _rank
+	add(_srfOverweight);													// goes overtop _srfRank
 	add(_txtName,			"textName",				"battlescape", _icons);
 	add(_numTULaunch,		"numDark",				"battlescape", _icons);
 	add(_numTUAim,			"numDark",				"battlescape", _icons);
@@ -418,9 +419,9 @@ BattlescapeState::BattlescapeState()
 	add(_numMediR1,			"numDark",				"battlescape", _icons);
 	add(_numMediR2,			"numDark",				"battlescape", _icons);
 	add(_numMediR3,			"numDark",				"battlescape", _icons);
-	add(_targeter);
+	add(_srfTargeter);
 
-	_targeter->setVisible(false);
+	_srfTargeter->setVisible(false);
 
 	for (size_t
 			i = 0;
@@ -452,11 +453,11 @@ BattlescapeState::BattlescapeState()
 	_btnPsi->onMouseClick((ActionHandler)& BattlescapeState::btnPsiClick);
 	_btnPsi->setVisible(false);
 
-	add(_bigBtnBorder);
+	add(_srfBtnBorder);
 
-	_bigBtnBorder->drawRect(0,0, 32,24, 1);
-	_bigBtnBorder->drawRect(1,1, 30,22, 0);
-	_bigBtnBorder->setVisible(false);
+	_srfBtnBorder->drawRect(0,0, 32,24, 1);
+	_srfBtnBorder->drawRect(1,1, 30,22, 0);
+	_srfBtnBorder->setVisible(false);
 
 //	add(_txtTooltip, "textTooltip", "battlescape", _icons);
 //	_txtTooltip->setHighContrast();
@@ -464,6 +465,7 @@ BattlescapeState::BattlescapeState()
 	add(_txtDebug,				"textName",			"battlescape");
 	add(_warning,				"warning",			"battlescape", _icons);
 	add(_txtOperationTitle,		"operationTitle",	"battlescape");
+	add(_srfTitle);
 	add(_txtBaseLabel,			"infoText",			"battlescape");
 	add(_txtRegion,				"infoText",			"battlescape");
 	add(_txtControlDestroyed,	"infoText",			"battlescape");
@@ -472,8 +474,8 @@ BattlescapeState::BattlescapeState()
 	_txtDebug->setHighContrast();
 	_txtDebug->setAlign(ALIGN_RIGHT);
 
-	_warning->setColor(static_cast<Uint8>(_rules->getInterface("battlescape")->getElement("warning")->color2));
 	_warning->setTextColor(static_cast<Uint8>(_rules->getInterface("battlescape")->getElement("warning")->color));
+	_warning->setColor(static_cast<Uint8>(_rules->getInterface("battlescape")->getElement("warning")->color2));
 
 	if (_battleSave->getOperation().empty() == false)
 	{
@@ -481,6 +483,26 @@ BattlescapeState::BattlescapeState()
 		_txtOperationTitle->setHighContrast();
 		_txtOperationTitle->setAlign(ALIGN_CENTER);
 		_txtOperationTitle->setBig();
+
+		const Sint16
+			text_width	(static_cast<Sint16>(_txtOperationTitle->getTextWidth()) + 12),
+			x_left		((static_cast<Sint16>(screenWidth) - text_width) / 2),
+			x_right		(x_left + text_width),
+			y_high		(static_cast<Sint16>(_srfTitle->getY()) + 1),
+			y_low		(static_cast<Sint16>(_srfTitle->getHeight()) - 1);
+
+//		_srfTitle->drawLine( // low line
+//						x_left,  y_low,
+//						x_right, y_low,
+//						2);
+		_srfTitle->drawLine( // left line
+						x_left, y_high,
+						x_left, y_low,
+						2);
+		_srfTitle->drawLine( // right line
+						x_right, y_high,
+						x_right, y_low,
+						2); // TODO: Get color (Uint8) of OperationTitle [#0].
 	}
 	else
 		_txtOperationTitle->setVisible(false);
@@ -638,7 +660,7 @@ BattlescapeState::BattlescapeState()
 	add(_txtTurn,			"infoText",			"battlescape");
 	add(_txtOrder,			"operationTitle",	"battlescape"); // white
 	add(_lstSoldierInfo,	"textName",			"battlescape"); // blue
-	add(_alienIcon);
+	add(_srfAlienIcon);
 
 	_txtTerrain->setHighContrast();
 	_txtTerrain->setText(tr("STR_TEXTURE_").arg(tr(_battleSave->getBattleTerrain())));
@@ -655,13 +677,13 @@ BattlescapeState::BattlescapeState()
 	_lstSoldierInfo->setColumns(2, 10,15);
 	_lstSoldierInfo->setMargin(0);
 
-	_alienIcon->setVisible(false);
+	_srfAlienIcon->setVisible(false);
 
 
-	_rank->setVisible(false);
+	_srfRank->setVisible(false);
 
-	_overWeight->drawRect(0,0,2,2, RED_D);
-	_overWeight->setVisible(false);
+	_srfOverweight->drawRect(0,0,2,2, RED_D);
+	_srfOverweight->setVisible(false);
 
 	_icons->onMouseIn((ActionHandler)& BattlescapeState::mouseInIcons);
 	_icons->onMouseOut((ActionHandler)& BattlescapeState::mouseOutIcons);
@@ -1146,7 +1168,7 @@ void BattlescapeState::think()
 }
 
 /**
- * Processes any mouse moving over the map.
+ * Processes any mouse moving over the Map.
  * @param action - pointer to an Action
  */
 void BattlescapeState::mapOver(Action* action)
@@ -1461,7 +1483,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 
 	_txtOrder->setVisible(showInfo);
 	_lstSoldierInfo->setVisible(showInfo);
-	_alienIcon->setVisible(showInfo && allowAlienIcon());
+	_srfAlienIcon->setVisible(showInfo && allowAlienIcon());
 	_showSoldierData = showInfo;
 }
 
@@ -2490,7 +2512,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 			_map->getCamera()->centerOnPosition(_hostileUnit[i]->getPosition());
 			// (but note that it makes no such burp against _hostileUnit[] below_)
 
-			_targeter->setVisible();
+			_srfTargeter->setVisible();
 			_targeterFrame = 0;
 		}
 		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
@@ -2613,8 +2635,8 @@ void BattlescapeState::btnLaunchPress(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
-		_bigBtnBorder->setY(20);
-		_bigBtnBorder->setVisible();
+		_srfBtnBorder->setY(20);
+		_srfBtnBorder->setVisible();
 
 		_battleGame->launchAction();
 	}
@@ -2640,8 +2662,8 @@ void BattlescapeState::btnPsiClick(Action* action)
 	if (_map->getSelectorType() != CT_PSI
 		&& _battleGame->getTacticalAction()->waypoints.empty() == true)
 	{
-		_bigBtnBorder->setY(45);
-		_bigBtnBorder->setVisible();
+		_srfBtnBorder->setY(45);
+		_srfBtnBorder->setVisible();
 
 		_battleGame->psiButtonAction();
 	}
@@ -2796,7 +2818,7 @@ void BattlescapeState::btnConsoleToggle(Action*)
 
 				_txtOrder->setVisible();
 				_lstSoldierInfo->setVisible();
-				_alienIcon->setVisible(allowAlienIcon());
+				_srfAlienIcon->setVisible(allowAlienIcon());
 				_showSoldierData = true;
 		}
 
@@ -2875,7 +2897,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 {
 	hotSqrsClear();
 
-	_rank				->clear();
+	_srfRank			->clear();
 	_btnRightHandItem	->clear();
 	_btnLeftHandItem	->clear();
 	_btnKneel			->clear();
@@ -2897,7 +2919,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	_numMediR2			->setVisible(false);
 	_numMediR3			->setVisible(false);
 
-	_overWeight			->setVisible(false);
+	_srfOverweight		->setVisible(false);
 	_numDir				->setVisible(false);
 	_numDirTur			->setVisible(false);
 
@@ -2917,7 +2939,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 		_txtName->setText(L"");
 
-		_rank			->setVisible(false);
+		_srfRank		->setVisible(false);
 
 		_numTimeUnits	->setVisible(false);
 		_barTimeUnits	->setVisible(false);
@@ -2939,7 +2961,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	}
 //	else not aLien nor civilian; ie. a controlled unit ->>
 
-	_rank			->setVisible();
+	_srfRank		->setVisible();
 
 	_numTimeUnits	->setVisible();
 	_barTimeUnits	->setVisible();
@@ -2973,7 +2995,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	if (sol != nullptr)
 	{
 		SurfaceSet* const texture (_game->getResourcePack()->getSurfaceSet("SMOKE.PCK"));
-		texture->getFrame(20 + sol->getRank())->blit(_rank);
+		texture->getFrame(20 + sol->getRank())->blit(_srfRank);
 
 		if (selUnit->isKneeled() == true)
 			_overlay->getFrame(9)->blit(_btnKneel);
@@ -3430,21 +3452,21 @@ void BattlescapeState::animate()
 				if (selUnit->getFatalWounds() != 0)
 					blinkHealthBar();
 
-				if (_targeter->getVisible() == true)
+				if (_srfTargeter->getVisible() == true)
 					hostileTargeter();
 
 				if (_battleGame->getLiquidate() == true)
 					liquidationExplosion();
 
 				if (_isOverweight == true && RNG::seedless(0,3) == 0)
-					_overWeight->setVisible(!_overWeight->getVisible());
+					_srfOverweight->setVisible(!_srfOverweight->getVisible());
 
 				static int stickyTiks;
-				if (_bigBtnBorder->getVisible() == true
+				if (_srfBtnBorder->getVisible() == true
 					&& ++stickyTiks == 3)
 				{
 					stickyTiks = 0;
-					_bigBtnBorder->setVisible(false);
+					_srfBtnBorder->setVisible(false);
 				}
 			}
 		}
@@ -3587,10 +3609,10 @@ void BattlescapeState::hostileTargeter() // private.
 	static const int cursorFrames[TARGET_FRAMES] {0,1,2,3,4,0}; // note: does not show the last frame.
 
 	Surface* const targetCursor (_game->getResourcePack()->getSurfaceSet("TARGET.PCK")->getFrame(cursorFrames[_targeterFrame]));
-	targetCursor->blit(_targeter);
+	targetCursor->blit(_srfTargeter);
 
 	if (++_targeterFrame == TARGET_FRAMES)
-		_targeter->setVisible(false);
+		_srfTargeter->setVisible(false);
 }
 
 /**
@@ -3949,7 +3971,7 @@ void BattlescapeState::mouseInIcons(Action*)
 
 	_txtOrder->setVisible();
 	_lstSoldierInfo->setVisible();
-	_alienIcon->setVisible(allowAlienIcon());
+	_srfAlienIcon->setVisible(allowAlienIcon());
 	_showSoldierData = true;
 
 	_lstTileInfo->setVisible(false);
@@ -4093,14 +4115,14 @@ void BattlescapeState::toggleIcons(bool vis)
 
 	_txtOrder->setVisible(vis);
 	_lstSoldierInfo->setVisible(vis);
-	_alienIcon->setVisible(vis && allowAlienIcon());
+	_srfAlienIcon->setVisible(vis && allowAlienIcon());
 	_showSoldierData = vis;
 
 //	_txtControlDestroyed->setVisible(vis);
 	_txtMissionLabel->setVisible(vis);
 	_lstTileInfo->setVisible(vis);
 
-	_overWeight->setVisible(vis && _isOverweight);
+	_srfOverweight->setVisible(vis && _isOverweight);
 
 	for (size_t
 			i = 0;
@@ -4160,7 +4182,7 @@ Bar* BattlescapeState::getEnergyBar() const
  */
 bool BattlescapeState::allowAlienIcon() const // private.
 {
-	_alienIcon->clear();
+	_srfAlienIcon->clear();
 
 	bool ret (false);
 
@@ -4190,7 +4212,7 @@ bool BattlescapeState::allowAlienIcon() const // private.
 					Surface* const srfAlien (_game->getResourcePack()->getSurface("AlienIcon"));
 					srfAlien->setX(x);
 					srfAlien->setY(y);
-					srfAlien->blit(_alienIcon);
+					srfAlien->blit(_srfAlienIcon);
 
 					++j;
 				}
@@ -4206,7 +4228,7 @@ bool BattlescapeState::allowAlienIcon() const // private.
 void BattlescapeState::updateExperienceInfo()
 {
 	_lstSoldierInfo->clearList();
-	_alienIcon->setVisible(false);
+	_srfAlienIcon->setVisible(false);
 
 	if (_showSoldierData == true)
 	{
@@ -4214,7 +4236,7 @@ void BattlescapeState::updateExperienceInfo()
 		if (selUnit != nullptr
 			&& selUnit->getGeoscapeSoldier() != nullptr)
 		{
-			_alienIcon->setVisible(allowAlienIcon());
+			_srfAlienIcon->setVisible(allowAlienIcon());
 
 			// keep this consistent ...
 			std::vector<std::wstring> xpType;

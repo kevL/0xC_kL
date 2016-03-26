@@ -893,7 +893,7 @@ private:
 		/// Gets if the BattleUnit has been stunned before.
 		bool beenStunned() const;
 
-		/// Gets the BattleUnit's last-cover Position. Scratch value for AI's lefthand to tell its righthand what's up ... don't zone out and start patrolling again.
+		/// Gets the BattleUnit's last-cover Position.
 		Position getLastCover() const;
 };
 

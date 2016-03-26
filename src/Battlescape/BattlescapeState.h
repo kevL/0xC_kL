@@ -178,11 +178,12 @@ private:
 	SavedBattleGame* _battleSave;
 	SavedGame* _gameSave;
 	Surface
-		* _alienIcon,
-		* _bigBtnBorder,
-		* _overWeight,
-		* _rank,
-		* _targeter;
+		* _srfAlienIcon,
+		* _srfBtnBorder,
+		* _srfOverweight,
+		* _srfRank,
+		* _srfTargeter,
+		* _srfTitle;
 	SurfaceSet* _overlay;
 	Tile* _tileWounded[WOUNDED];
 	Text

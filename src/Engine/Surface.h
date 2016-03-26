@@ -66,16 +66,16 @@ protected:
 
 
 	public:
-		/// Creates a new surface with the specified size and position.
+		/// Creates a Surface with the specified size and position.
 		Surface(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0,
 				int bpp = 8);
-		/// Creates a new surface from an existing one.file
+		/// Creates a Surface from an existing one.
 		Surface(const Surface& other);
-		/// Cleans up the surface.
+		/// Cleans up the Surface.
 		virtual ~Surface();
 
 		/// Loads an X-Com SCR graphic.
@@ -87,64 +87,64 @@ protected:
 		/// Loads a general image file.
 		void loadImage(const std::string& file);
 
-		/// Clears the surface's contents with a specified colour.
+		/// Clears the Surface's contents with a specified colour.
 		void clear(Uint32 color = 0);
-		/// Offsets the surface's colors by a set amount.
+		/// Offsets the Surface's colors by a set amount.
 		void offset(
 				int shift,
 				int colorLow = -1,
 				int colorHigh = -1,
 				int multer = 1);
-		/// Inverts the surface's colors.
+		/// Inverts the Surface's colors.
 		void invert(Uint8 mid);
 
-		/// Runs surface functionality every cycle
+		/// Runs Surface functionality every cycle
 		virtual void think();
-		/// Draws the surface's graphic.
+		/// Draws the Surface's graphic.
 		virtual void draw();
-		/// Blits this surface onto another one.
+		/// Blits the Surface onto another one.
 		virtual void blit(Surface* surface);
-		/// Copies a portion of another surface into this one.
+		/// Copies a portion of another Surface into this one.
 		void copy(Surface* surface);
 
-		/// Initializes the surface's various text resources.
+		/// Initializes the Surface's various text resources.
 		virtual void initText(
 				Font*,
 				Font*,
 				const Language*)
 		{};
 
-		/// Draws a filled rectangle on the surface.
+		/// Draws a filled rectangle on the Surface.
 		void drawRect(
 				SDL_Rect* rect,
 				Uint8 color);
-		/// Draws a filled rectangle on the surface.
+		/// Draws a filled rectangle on the Surface.
 		void drawRect(
 				Sint16 x,
 				Sint16 y,
 				Sint16 w,
 				Sint16 h,
 				Uint8 color);
-		/// Draws a line on the surface.
+		/// Draws a line on the Surface.
 		void drawLine(
 				Sint16 x1,
 				Sint16 y1,
 				Sint16 x2,
 				Sint16 y2,
 				Uint8 color);
-		/// Draws a filled circle on the surface.
+		/// Draws a filled circle on the Surface.
 		void drawCircle(
 				Sint16 x,
 				Sint16 y,
 				Sint16 r,
 				Uint8 color);
-		/// Draws a filled polygon on the surface.
+		/// Draws a filled polygon on the Surface.
 		void drawPolygon(
 				Sint16* x,
 				Sint16* y,
 				size_t n,
 				Uint8 color);
-		/// Draws a textured polygon on the surface.
+		/// Draws a textured polygon on the Surface.
 		void drawTexturedPolygon(
 				Sint16* x,
 				Sint16* y,
@@ -152,57 +152,57 @@ protected:
 				Surface* texture,
 				int dx,
 				int dy);
-		/// Draws a string on the surface.
+		/// Draws a string on the Surface.
 		void drawString(
 				Sint16 x,
 				Sint16 y,
 				const char* s,
 				Uint8 color);
 
-		/// Sets the surface's palette.
+		/// Sets the Surface's palette.
 		virtual void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256);
 
 		/**
-		 * Returns the surface's 8bpp palette.
+		 * Returns the Surface's 8-bpp palette.
 		 * @return, pointer to the palette's colors
 		 */
 		SDL_Color* getPalette() const
 		{ return _surface->format->palette->colors; }
 
-		/// Sets the X position of the surface.
+		/// Sets the X position of the Surface.
 		virtual void setX(int x);
 		/**
-		 * Returns the position of the surface in the X axis.
+		 * Returns the position of the Surface in the x-axis.
 		 * @return, X position in pixels
 		 */
 		int getX() const
 		{ return _x; }
 
-		/// Sets the Y position of the surface.
+		/// Sets the Y position of the Surface.
 		virtual void setY(int y);
 		/**
-		 * Returns the position of the surface in the Y axis.
+		 * Returns the position of the Surface in the y-axis.
 		 * @return, Y position in pixels
 		 */
 		int getY() const
 		{ return _y; }
 
-		/// Sets the surface's visibility.
+		/// Sets the Surface's visibility.
 		virtual void setVisible(bool visible = true);
-		/// Gets the surface's visibility.
+		/// Gets the Surface's visibility.
 		bool getVisible() const;
 
-		/// Resets the cropping rectangle for the surface.
+		/// Resets the cropping rectangle for the Surface.
 		void resetCrop();
-		/// Gets the cropping rectangle for the surface.
+		/// Gets the cropping rectangle for the Surface.
 		SDL_Rect* getCrop();
 
 		/**
-		 * Changes the color of a pixel in the surface relative to the top-left
-		 * corner of the surface.
+		 * Changes the color of a pixel in the Surface relative to the top-left
+		 * corner.
 		 * @param x		- X position of the pixel
 		 * @param y		- Y position of the pixel
 		 * @param color	- color for the pixel
@@ -223,7 +223,7 @@ protected:
 
 
 		/**
-		 * Changes the color of a pixel in the surface and returns the next
+		 * Changes the color of a pixel in the Surface and returns the next
 		 * pixel position.
 		 * @note Useful when changing a lot of pixels in a row - eg. loading
 		 * images.
@@ -247,7 +247,7 @@ protected:
 		}
 
 		/**
-		 * Returns the color of a specified pixel in the surface.
+		 * Returns the color of a specified pixel in the Surface.
 		 * @param x - X position of the pixel
 		 * @param y - Y position of the pixel
 		 * @return, color of the pixel
@@ -274,30 +274,30 @@ protected:
 		{ return _surface; }
 
 		/**
-		 * Returns the width of the surface.
+		 * Returns the width of the Surface.
 		 * @return, width in pixels
 		 */
 		int getWidth() const
 		{ return _surface->w; }
-		/// Sets the width of the surface.
+		/// Sets the width of the Surface.
 		virtual void setWidth(int width); // should be Unit16
 		/**
-		 * Returns the height of the surface.
+		 * Returns the height of the Surface.
 		 * @return, height in pixels
 		 */
 		int getHeight() const
 		{ return _surface->h; }
-		/// Sets the height of the surface.
+		/// Sets the height of the Surface.
 		virtual void setHeight(int height); // should be Unit16
 
-		/// Sets the surface's special hidden flag.
+		/// Sets the Surface's special hidden flag.
 		void setHidden(bool hidden = true); // note: is not virtual.
-		/// Gets the surface's special hidden flag.
+		/// Gets the Surface's special hidden flag.
 		bool getHidden() const;
 
-		/// Locks the surface.
+		/// Locks the Surface.
 		void lock();
-		/// Unlocks the surface.
+		/// Unlocks the Surface.
 		void unlock();
 
 		/// Specific blit function to blit battlescape terrain data in different shades in a fast way.
@@ -310,21 +310,21 @@ protected:
 				int colorGroup = 0,
 				bool halfLeft = false);
 
-		/// Invalidate the surface: force it to be redrawn
+		/// Invalidates the Surface which forces it to be redrawn
 		void invalidate(bool redraw = true);
 
-		/// Gets the tooltip of the surface.
+		/// Gets the tooltip of the Surface.
 //		std::string getTooltip() const;
-		/// Sets the tooltip of the surface.
+		/// Sets the tooltip of the Surface.
 //		void setTooltip(const std::string& tooltip);
 
-		/// Sets the color of the surface.
+		/// Sets the color of the Surface.
 		virtual void setColor(Uint8 /*color*/)
 		{};
-		/// Sets the secondary color of the surface.
+		/// Sets the secondary color of the Surface.
 		virtual void setSecondaryColor(Uint8 /*color*/)
 		{};
-		/// Sets the border colour of the surface.
+		/// Sets the border color of the Surface.
 		virtual void setBorderColor(Uint8 /*color*/)
 		{};
 };

@@ -259,7 +259,7 @@ Surface::Surface(const Surface& other)
 }
 
 /**
- * Deletes the surface from memory.
+ * Deletes this Surface from memory.
  */
 Surface::~Surface() // virtual.
 {
@@ -268,7 +268,7 @@ Surface::~Surface() // virtual.
 }
 
 /**
- * Loads the contents of an X-Com SCR image file into the surface.
+ * Loads the contents of an X-Com SCR image file into this Surface.
  * @note SCR files are simply uncompressed images containing the palette offset
  * of each pixel.
  * @param file - reference the filename of the SCR image
@@ -302,7 +302,7 @@ void Surface::loadScr(const std::string& file)
 }
 
 /**
- * Loads the contents of an image file of a known format into the surface.
+ * Loads the contents of an image file of a known format into this Surface.
  * @param file - reference the filename of the image
  */
 void Surface::loadImage(const std::string& file)
@@ -406,7 +406,7 @@ void Surface::loadImage(const std::string& file)
 }
 
 /**
- * Loads the contents of an X-Com SPK image file into the surface.
+ * Loads the contents of an X-Com SPK image file into this Surface.
  * @note SPK files are compressed with a custom algorithm since they're usually
  * full-screen images.
  * @param file - reference the filename of the SPK image
@@ -473,7 +473,7 @@ void Surface::loadSpk(const std::string& file)
 }
 
 /**
- * Loads the contents of a TFTD BDY image file into the surface.
+ * Loads the contents of a TFTD BDY image file into this Surface.
  * @note BDY files are compressed with a custom algorithm.
  * @param file - reference the filename of the BDY image
  * @sa http://www.ufopaedia.org/index.php?title=Image_Formats#BDY
@@ -541,7 +541,7 @@ void Surface::loadBdy(const std::string& file)
 } */
 
 /**
- * Clears the entire contents of the surface resulting in a blank image of the
+ * Clears the entire contents of this Surface resulting in a blank image of the
  * specified color (0 for transparent).
  * @param color - the color for the background of the surface (default 0)
  */
@@ -560,7 +560,7 @@ void Surface::clear(Uint32 color)
 }
 
 /**
- * Shifts all the colors in the surface by a set amount.
+ * Shifts all the colors in this Surface by a set amount.
  * @note This is a common method in 8bpp games to simulate color effects for cheap.
  * @param shift		- amount to shift
  * @param colorLow	- minimum color to shift to (default -1)
@@ -610,7 +610,7 @@ void Surface::offset(
 }
 
 /**
- * Inverts all the colors in the surface according to a middle point.
+ * Inverts all the colors in this Surface according to a middle point.
  * @note Used for effects like shifting a button between pressed and unpressed.
  * @param mid - middle point color
  */
@@ -633,14 +633,14 @@ void Surface::invert(Uint8 mid)
 }
 
 /**
- * Runs any code the surface needs to keep updating every game cycle like
+ * Runs any code this Surface needs to keep updating every game cycle like
  * animations and other real-time elements.
  */
 void Surface::think() // virtual.
 {}
 
 /**
- * Draws the graphic that the surface contains before it gets blitted onto
+ * Draws the graphic that this Surface contains before it gets blitted onto
  * other surfaces.
  * @note The surface is only redrawn if the flag is set by a property change to
  * avoid unnecessary drawing.
@@ -694,7 +694,7 @@ void Surface::copy(Surface* surface)
 {
 /*	SDL_BlitSurface uses color matching, and is therefore unreliable
 	as a means to copy the contents of one surface to another; instead
-	we have to do this manually.
+	you have to do this manually.
 
 	SDL_Rect from;
 	from.w = getWidth();
@@ -727,7 +727,7 @@ void Surface::copy(Surface* surface)
 }
 
 /**
- * Draws a filled rectangle on the surface.
+ * Draws a filled rectangle on this Surface.
  * @param rect	- pointer to SDL_Rect
  * @param color	- color of the rectangle
  */
@@ -742,9 +742,9 @@ void Surface::drawRect(
 }
 
 /**
- * Draws a filled rectangle on the surface.
- * @param x		- X position in pixels
- * @param y		- Y position in pixels
+ * Draws a filled rectangle on this Surface.
+ * @param x		- x-position in pixels
+ * @param y		- y-position in pixels
  * @param w		- width in pixels
  * @param h		- height in pixels
  * @param color	- color of the rectangle
@@ -770,11 +770,11 @@ void Surface::drawRect(
 }
 
 /**
- * Draws a line on the surface.
- * @param x1	- start x coordinate in pixels
- * @param y1	- start y coordinate in pixels
- * @param x2	- end x coordinate in pixels
- * @param y2	- end y coordinate in pixels
+ * Draws a line on this Surface.
+ * @param x1	- start x-coordinate in pixels
+ * @param y1	- start y-coordinate in pixels
+ * @param x2	- end x-coordinate in pixels
+ * @param y2	- end y-coordinate in pixels
  * @param color	- color of the line
  */
 void Surface::drawLine(
@@ -792,9 +792,9 @@ void Surface::drawLine(
 }
 
 /**
- * Draws a filled circle on the surface.
- * @param x		- X coordinate in pixels
- * @param y		- Y coordinate in pixels
+ * Draws a filled circle on this Surface.
+ * @param x		- x-coordinate in pixels
+ * @param y		- y-coordinate in pixels
  * @param r		- radius in pixels
  * @param color	- color of the circle
  */
@@ -812,9 +812,9 @@ void Surface::drawCircle(
 }
 
 /**
- * Draws a filled polygon on the surface.
- * @param x		- pointer to (an array of) x coordinate(s)
- * @param y		- pointer to (an array of) y coordinate(s)
+ * Draws a filled polygon on this Surface.
+ * @param x		- pointer to (an array of) x-coordinate(s)
+ * @param y		- pointer to (an array of) y-coordinate(s)
  * @param n		- number of points
  * @param color	- color of the polygon
  */
@@ -832,13 +832,13 @@ void Surface::drawPolygon(
 }
 
 /**
- * Draws a textured polygon on the surface.
- * @param x			- pointer to (an array of) x coordinate(s)
- * @param y			- pointer to (an array of) y coordinate(s)
+ * Draws a textured polygon on this Surface.
+ * @param x			- pointer to (an array of) x-coordinate(s)
+ * @param y			- pointer to (an array of) y-coordinate(s)
  * @param n			- number of points
  * @param texture	- pointer to texture for polygon
- * @param dx		- X offset of texture relative to the screen
- * @param dy		- Y offset of texture relative to the screen
+ * @param dx		- x-offset of texture relative to the screen
+ * @param dy		- y-offset of texture relative to the screen
  */
 void Surface::drawTexturedPolygon(
 		Sint16* x,
@@ -857,10 +857,10 @@ void Surface::drawTexturedPolygon(
 }
 
 /**
- * Draws a text string on the surface.
- * @param x		- X coordinate in pixels
- * @param y		- Y coordinate in pixels
- * @param s		- pointer to string of char's to draw
+ * Draws a text string on this Surface.
+ * @param x		- x-coordinate in pixels
+ * @param y		- y-coordinate in pixels
+ * @param s		- pointer to a string of char's to draw
  * @param color	- color of string
  */
 void Surface::drawString(
@@ -877,8 +877,8 @@ void Surface::drawString(
 }
 
 /**
- * Changes the position of the surface in the X axis.
- * @param x - X position in pixels
+ * Changes the position of this Surface in the x-axis.
+ * @param x - x-position in pixels
  */
 void Surface::setX(int x) // virtual.
 {
@@ -886,8 +886,8 @@ void Surface::setX(int x) // virtual.
 }
 
 /**
- * Changes the position of the surface in the Y axis.
- * @param y - Y position in pixels
+ * Changes the position of this Surface in the y-axis.
+ * @param y - y-position in pixels
  */
 void Surface::setY(int y) // virtual.
 {
@@ -895,7 +895,7 @@ void Surface::setY(int y) // virtual.
 }
 
 /**
- * Changes the visibility of the surface.
+ * Changes the visibility of this Surface.
  * @note An nonvisible surface isn't blitted nor does it receive events.
  * @param visible - visibility (default true)
  */
@@ -905,7 +905,7 @@ void Surface::setVisible(bool visible) // virtual.
 }
 
 /**
- * Returns the visible state of the surface.
+ * Returns the visible state of this Surface.
  * @return, current visibility
  */
 bool Surface::getVisible() const
@@ -914,7 +914,7 @@ bool Surface::getVisible() const
 }
 
 /**
- * Resets the cropping rectangle set for this surface
+ * Resets the cropping rectangle set for this Surface
  * so the whole surface is blitted.
  */
 void Surface::resetCrop()
@@ -926,7 +926,7 @@ void Surface::resetCrop()
 }
 
 /**
- * Returns the cropping rectangle for this surface.
+ * Returns the cropping rectangle for this Surface.
  * @return, pointer to the cropping rectangle
  */
 SDL_Rect* Surface::getCrop()
@@ -935,7 +935,7 @@ SDL_Rect* Surface::getCrop()
 }
 
 /**
- * Replaces a certain amount of colors in the surface's palette.
+ * Replaces a certain amount of colors in this Surface's palette.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- amount of colors to replace (default 256)
@@ -965,7 +965,7 @@ void Surface::setHidden(bool hidden) // note: is not virtual.
 }
 
 /**
- * Gets the surface's special hidden flag.
+ * Gets this Surface's special hidden flag.
  * @return, true if hidden
  */
 bool Surface::getHidden() const
@@ -974,7 +974,7 @@ bool Surface::getHidden() const
 }
 
 /**
- * Locks the surface from outside access for pixel-level access.
+ * Locks this Surface from outside access for pixel-level access.
  * @note Must be unlocked afterwards.
  * @sa unlock()
  */
@@ -984,7 +984,7 @@ void Surface::lock()
 }
 
 /**
- * Unlocks the surface after it's been locked to resume blitting operations.
+ * Unlocks this Surface after it's been locked to resume blitting operations.
  * @sa lock()
  */
 void Surface::unlock()
@@ -1118,7 +1118,7 @@ void Surface::blitNShade(
 }
 
 /**
- * Set the surface to be redrawn.
+ * Sets this Surface to be redrawn.
  * @param redraw - true means redraw (default true)
  */
 void Surface::invalidate(bool redraw)
@@ -1145,7 +1145,7 @@ void Surface::setTooltip(const std::string& tooltip)
 } */
 
 /**
- * Recreates the surface with a new size.
+ * Recreates this Surface with a new size.
  * @note Old contents will not be altered and may be cropped to fit the new size.
  * @param width Width in pixels.
  * @param height Height in pixels.
@@ -1200,7 +1200,7 @@ void Surface::resize(
 }
 
 /**
- * Changes the width of the surface.
+ * Changes the width of this Surface.
  * @warning This is not a trivial setter! It will force the surface to be
  * recreated for the new size.
  * @param width - new width in pixels
@@ -1212,7 +1212,7 @@ void Surface::setWidth(int width) // virtual.
 }
 
 /**
- * Changes the height of the surface.
+ * Changes the height of this Surface.
  * @warning This is not a trivial setter! It will force the surface to be
  * recreated for the new size.
  * @param height - new height in pixels

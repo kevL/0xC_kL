@@ -113,11 +113,10 @@ private:
 		/// Formats an integer value as percentage.
 		static std::wstring formatPercent(int val);
 
-		/// Sets the Text size to its big Font.
+		/// Sets the Text to its big Font.
 		void setBig();
-		/// Sets the Text size to its small Font.
+		/// Sets the Text to its small Font.
 		void setSmall();
-
 		/// Gets the Text's current Font.
 		Font* getFont() const;
 
@@ -128,7 +127,7 @@ private:
 				const Language* const lang) override;
 
 		/// Sets the Text's string.
-		void setText(const std::wstring& Text);
+		void setText(const std::wstring& text);
 		/// Gets the Text's string.
 		std::wstring getText() const;
 
