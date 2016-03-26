@@ -37,14 +37,15 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a camera.
+ * Sets up the Camera.
+ * @note Goebbels wants pics.
  * @param spriteWidth		- width of map sprite
  * @param spriteHeight		- height of map sprite
- * @param mapsize_x			- current map size in X axis
- * @param mapsize_y			- current map size in Y axis
- * @param mapsize_z			- current map size in Z axis
+ * @param mapsize_x			- current map-size in x-axis
+ * @param mapsize_y			- current map-size in y-axis
+ * @param mapsize_z			- current map-size in z-axis
  * @param battleField		- pointer to Map
- * @param playableHeight	- height of Map surface minus icons-height
+ * @param playableHeight	- height of map-surface minus icons-height
  */
 Camera::Camera(
 		int spriteWidth,
@@ -77,17 +78,16 @@ Camera::Camera(
 {}
 
 /**
- * Deletes the Camera.
+ * Deletes this Camera.
  */
 Camera::~Camera()
 {}
 
 /**
- * Sets this Camera's mouse- and keyboard- scrolling timers for use in the
+ * Sets this Camera's mouse- and keyboard-scrolling Timers for use in the
  * battlefield.
- * @note Goebbels wants pics.
- * @param mouseTimer	- pointer to mouse Timer
- * @param keyboardTimer	- pointer to keyboard Timer
+ * @param mouseTimer	- pointer to mouse-timer
+ * @param keyboardTimer	- pointer to keyboard-timer
  */
 void Camera::setScrollTimers(
 		Timer* const mouseTimer,
@@ -115,7 +115,7 @@ void Camera::intMinMax( // private.
 }
 
 /**
- * Handles camera mouse shortcuts.
+ * Handles this Camera's mouse-press events.
  * @param action	- pointer to an Action
  * @param state		- State that the action handlers belong to
  */
@@ -130,15 +130,20 @@ void Camera::mousePress(Action* action, State*)
 	else if (Options::battleDragScrollButton != SDL_BUTTON_MIDDLE
 		|| (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
 	{
-		if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-			down();
-		else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-			up();
+		switch (action->getDetails()->button.button)
+		{
+			case SDL_BUTTON_WHEELUP:
+				down();
+				break;
+
+			case SDL_BUTTON_WHEELDOWN:
+				up();
+		}
 	}
 }
 
 /**
- * Handles camera mouse shortcuts.
+ * Handles this Camera's mouse-release events.
  * @param action	- pointer to an Action
  * @param state		- State that the action handlers belong to
  */
@@ -153,8 +158,8 @@ void Camera::mouseRelease(Action* action, State*)
 		_scrollTrigger = false;
 
 		int
-			posX = action->getXMouse(),
-			posY = action->getYMouse();
+			posX (action->getXMouse()),
+			posY (action->getYMouse());
 
 		if ((posX > 0
 				&& posX < SCROLL_BORDER * action->getXScale())
@@ -171,7 +176,7 @@ void Camera::mouseRelease(Action* action, State*)
 }
 
 /**
- * Handles mouse over events.
+ * Handles this Camera's mouse-over events.
  * @param action	- pointer to an Action
  * @param state		- State that the action handlers belong to
  */
@@ -182,9 +187,9 @@ void Camera::mouseOver(Action* action, State*)
 			|| _scrollTrigger == true))
 	{
 		int
-			posX = action->getXMouse(),
-			posY = action->getYMouse(),
-			scrollSpeed = Options::battleScrollSpeed;
+			posX (action->getXMouse()),
+			posY (action->getYMouse()),
+			scrollSpeed (Options::battleScrollSpeed);
 
 		if (posX < SCROLL_BORDER * action->getXScale()) // left scroll
 		{
@@ -268,7 +273,7 @@ void Camera::mouseOver(Action* action, State*)
 }
 
 /**
- * Handles camera keyboard shortcuts.
+ * Handles this Camera's keyboard-press events.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -276,43 +281,43 @@ void Camera::keyboardPress(Action* action, State*)
 {
 	if (_map->getSelectorType() != CT_NONE)
 	{
-		const int scrollSpeed = Options::battleScrollSpeed;
+		const int scrollSpeed (Options::battleScrollSpeed);
 		switch (action->getDetails()->key.keysym.sym)
 		{
 			case SDLK_LEFT: // hardcoding these ... ->
 			case SDLK_KP4:
 				_scrollKeyX = scrollSpeed;
-			break;
+				break;
 
 			case SDLK_RIGHT:
 			case SDLK_KP6:
 				_scrollKeyX = -scrollSpeed;
-			break;
+				break;
 
 			case SDLK_UP:
 			case SDLK_KP8:
 				_scrollKeyY = scrollSpeed;
-			break;
+				break;
 
 			case SDLK_DOWN:
 			case SDLK_KP2:
 				_scrollKeyY = -scrollSpeed;
-			break;
+				break;
 
 			case SDLK_KP7:
 				_scrollKeyX =
 				_scrollKeyY = scrollSpeed;
-			break;
+				break;
 
 			case SDLK_KP9:
 				_scrollKeyX = -scrollSpeed;
 				_scrollKeyY =  scrollSpeed;
-			break;
+				break;
 
 			case SDLK_KP1:
 				_scrollKeyX =  scrollSpeed;
 				_scrollKeyY = -scrollSpeed;
-			break;
+				break;
 
 			case SDLK_KP3:
 				_scrollKeyX =
@@ -337,7 +342,7 @@ void Camera::keyboardPress(Action* action, State*)
 }
 
 /**
- * Handles camera keyboard shortcuts.
+ * Handles this Camera's keyboard-release events.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -352,14 +357,14 @@ void Camera::keyboardRelease(Action* action, State*)
 			case SDLK_RIGHT:
 			case SDLK_KP6:
 				_scrollKeyX = 0;
-			break;
+				break;
 
 			case SDLK_UP:
 			case SDLK_KP8:
 			case SDLK_DOWN:
 			case SDLK_KP2:
 				_scrollKeyY = 0;
-			break;
+				break;
 
 			default:
 				_scrollKeyX =
@@ -384,7 +389,7 @@ void Camera::keyboardRelease(Action* action, State*)
 }
 
 /**
- * Handles mouse-scrolling.
+ * Handles this Camera's mouse-scrolling.
  */
 void Camera::scrollMouse()
 {
@@ -395,7 +400,7 @@ void Camera::scrollMouse()
 }
 
 /**
- * Handles keyboard-scrolling.
+ * Handles this Camera's keyboard-scrolling.
  */
 void Camera::scrollKey()
 {
@@ -407,9 +412,9 @@ void Camera::scrollKey()
 
 /**
  * Handles scrolling with given delta.
- * @param x			- X delta
- * @param y			- Y delta
- * @param redraw	- true to redraw map
+ * @param x			- x-delta
+ * @param y			- y-delta
+ * @param redraw	- true to redraw Map
  */
 void Camera::scrollXY(
 		int x,
@@ -445,7 +450,7 @@ void Camera::scrollXY(
 		_offsetField.x += _centerField.y;
 		_offsetField.y -= _centerField.y;
 	} */
-	bool stop = false;
+	bool stop (false);
 	do
 	{
 		convertScreenToMap( // convert center of screen to center of battleField
@@ -547,7 +552,7 @@ bool Camera::down()
 }
 
 /**
- * Gets the view level.
+ * Gets the view-level.
  * @return, the displayed level
  */
 int Camera::getViewLevel() const
@@ -556,8 +561,8 @@ int Camera::getViewLevel() const
 }
 
 /**
- * Sets the view level.
- * @param viewLevel - new view level
+ * Sets the view-level.
+ * @param viewLevel - level to display
  */
 void Camera::setViewLevel(int viewLevel)	// The call from Map::drawTerrain() causes a stack overflow loop when projectile in FoV.
 {											// Solution: remove draw() call below_
@@ -572,7 +577,7 @@ void Camera::setViewLevel(int viewLevel)	// The call from Map::drawTerrain() cau
 }
 
 /**
- * Centers map on a certain position.
+ * Centers the Map on a certain position.
  * @param posField	- reference the Position to center on
  * @param redraw	- true to redraw map (default true)
  */
@@ -607,7 +612,7 @@ void Camera::centerOnPosition(
 }
 
 /**
- * Gets map's center position.
+ * Gets the Map's center-position.
  * @return, center Position
  */
 Position Camera::getCenterPosition()
@@ -617,11 +622,11 @@ Position Camera::getCenterPosition()
 }
 
 /**
- * Converts screen coordinates XY to map coordinates XYZ.
- * @param screenX	- screen x position
- * @param screenY	- screen y position
- * @param mapX		- pointer to the map x position
- * @param mapY		- pointer to the map y position
+ * Converts screen-coordinates x/y to map-coordinates x/y/z.
+ * @param screenX	- screen x-position
+ * @param screenY	- screen y-position
+ * @param mapX		- pointer to the map x-position
+ * @param mapY		- pointer to the map y-position
  */
 void Camera::convertScreenToMap(
 		int screenX,
@@ -629,7 +634,7 @@ void Camera::convertScreenToMap(
 		int* mapX,
 		int* mapY) const
 {
-	const int width_4 = _spriteWidth / 4;
+	const int width_4 (_spriteWidth / 4);
 
 	// add half a tile-height to the screen-position per layer above floor-level
 	screenY += -_spriteWidth / 2 + _offsetField.z * ((_spriteHeight + width_4) / 2);
@@ -654,17 +659,17 @@ void Camera::convertScreenToMap(
 }
 
 /**
- * Converts map coordinates XYZ to screen positions XY.
- * @param posField	- reference the XYZ coordinates on the map (tilespace)
- * @param posScreen	- pointer to the screen Position pixel (upper left corner of sprite-rectangle)
+ * Converts map-coordinates x/y/z to screen-positions x/y.
+ * @param posField	- reference the x/y/z coordinates on the Map (tile-space)
+ * @param posScreen	- pointer to the screen-position pixel (upper left corner of sprite-rectangle)
  */
 void Camera::convertMapToScreen(
 		const Position& posField,
 		Position* const posScreen) const
 {
 	const int
-		width_2 = _spriteWidth / 2,
-		width_4 = _spriteWidth / 4;
+		width_2 (_spriteWidth / 2),
+		width_4 (_spriteWidth / 4);
 
 	posScreen->x = posField.x * width_2 - posField.y * width_2;
 	posScreen->y = posField.x * width_4 + posField.y * width_4 - posField.z * ((_spriteHeight + width_4) / 2);
@@ -672,26 +677,26 @@ void Camera::convertMapToScreen(
 }
 
 /**
- * Converts voxel coordinates XYZ to screen positions XY.
- * @param posVoxel	- reference the XYZ coordinates of the voxel
- * @param posScreen	- pointer to the screen Position
+ * Converts voxel-coordinates x/y/z to screen-position x/y.
+ * @param posVoxel	- reference the x/y/z coordinates of the voxel
+ * @param posScreen	- pointer to the screen-position
  */
 void Camera::convertVoxelToScreen(
 		const Position& posVoxel,
 		Position* const posScreen) const
 {
-	const Position mapPosition = Position(
+	const Position mapPosition (Position(
 										posVoxel.x >> 4, // yeh i know: just say no.
 										posVoxel.y >> 4,
-										posVoxel.z / 24);
+										posVoxel.z / 24));
 	convertMapToScreen(
 					mapPosition,
 					posScreen);
 
 	const double
-		dx = posVoxel.x - (mapPosition.x << 4),
-		dy = posVoxel.y - (mapPosition.y << 4),
-		dz = posVoxel.z - (mapPosition.z * 24);
+		dx (posVoxel.x - (mapPosition.x << 4)),
+		dy (posVoxel.y - (mapPosition.y << 4)),
+		dz (posVoxel.z - (mapPosition.z * 24));
 
 	posScreen->x += static_cast<int>(dx - dy) + (_spriteWidth / 2);
 	posScreen->y += static_cast<int>(((static_cast<double>(_spriteHeight) / 2.)) + (dx / 2.) + (dy / 2.) - dz);
@@ -700,8 +705,8 @@ void Camera::convertVoxelToScreen(
 }
 
 /**
- * Gets the map size x.
- * @return, the map size x
+ * Gets the map-size x.
+ * @return, the map-size x
  */
 int Camera::getMapSizeX() const
 {
@@ -709,8 +714,8 @@ int Camera::getMapSizeX() const
 }
 
 /**
- * Gets the map size y.
- * @return, the map size y
+ * Gets the map-size y.
+ * @return, the map-size y
  */
 int Camera::getMapSizeY() const
 {
@@ -718,8 +723,8 @@ int Camera::getMapSizeY() const
 }
 
 /**
- * Gets the map offset.
- * @return, the map offset Position
+ * Gets the map-offset.
+ * @return, the map-position offset
  */
 Position Camera::getMapOffset() const
 {
@@ -727,8 +732,8 @@ Position Camera::getMapOffset() const
 }
 
 /**
- * Sets the map offset.
- * @param pos - the map offset Position
+ * Sets the map-offset.
+ * @param pos - the map-position offset
  */
 void Camera::setMapOffset(const Position& pos)
 {
@@ -736,7 +741,7 @@ void Camera::setMapOffset(const Position& pos)
 }
 
 /**
- * Toggles showing all map layers.
+ * Toggles showing all map-layers.
  * @return, true if all layers showed
  */
 bool Camera::toggleShowLayers()
@@ -745,7 +750,7 @@ bool Camera::toggleShowLayers()
 }
 
 /**
- * Checks if the camera is showing all map layers.
+ * Checks if this Camera is showing all map-layers.
  * @return, true if all layers are currently showing
  */
 bool Camera::getShowLayers() const
@@ -754,10 +759,10 @@ bool Camera::getShowLayers() const
 }
 
 /**
- * Checks if map coordinates XYZ are on screen.
- * @note This does not care about Map's Z-level; only whether @a posField is on screen.
+ * Checks if map-coordinates x/y/z are on-screen.
+ * @note This does not care about the Map's z-level, only whether @a posField is on screen.
  * @param posField - reference the coordinates to check
- * @return, true if the map coordinates are on screen
+ * @return, true if the map-coordinates are on-screen
  */
 bool Camera::isOnScreen(const Position& posField) const
 {
@@ -768,22 +773,22 @@ bool Camera::isOnScreen(const Position& posField) const
 	posScreen.x += _offsetField.x;
 	posScreen.y += _offsetField.y;
 
-	static const int border = 28; // buffer the edges a bit.
+	static const int border (28); // buffer the edges a bit.
 
 	return posScreen.x > 8 + border // -> try these
 		&& posScreen.x < _screenWidth - 8 - _spriteWidth - border
 		&& posScreen.y > -16 + border
 		&& posScreen.y < _screenHeight - 80 - border; // <- icons.
 }
-/*
+/**
  * Checks if map coordinates X,Y,Z are on screen.
  * @param posField Coordinates to check.
  * @param unitWalking True to offset coordinates for a unit walking.
  * @param unitSize size of unit (0 - single, 1 - 2x2, etc, used for walking only
  * @param boundary True if it's for caching calculation
  * @return True if the map coordinates are on screen.
- */
-/* bool Camera::isOnScreen(const Position &posField, const bool unitWalking, const int unitSize, const bool boundary) const
+ *
+ bool Camera::isOnScreen(const Position &posField, const bool unitWalking, const int unitSize, const bool boundary) const
 {
 	Position posScreen;
 	convertMapToScreen(posField, &posScreen);
@@ -833,7 +838,7 @@ bool Camera::isOnScreen(const Position& posField) const
 } */
 
 /**
- * Resizes the viewable window of the camera.
+ * Resizes the viewable window of this Camera.
  */
 void Camera::resize()
 {
@@ -844,7 +849,7 @@ void Camera::resize()
 }
 
 /**
- * Stops the mouse scrolling.
+ * Stops any mouse-scrolling.
  */
 void Camera::stopMouseScrolling()
 {
@@ -852,7 +857,7 @@ void Camera::stopMouseScrolling()
 }
 
 /**
- * Sets whether to pause the camera a moment before reverting to the position
+ * Sets whether to pause this Camera a moment before reverting to the position
  * it originally had before following a shot per Map tracing.
  * @sa BattleAction::posCamera
  * @param pause - true to pause (default true)
@@ -863,7 +868,7 @@ void Camera::setPauseAfterShot(bool pause)
 }
 
 /**
- * Gets whether to pause the camera a moment before reverting to the position
+ * Gets whether to pause this Camera a moment before reverting to the position
  * it originally had before following a shot per Map tracing.
  * @sa BattleAction::posCamera
  * @return, true to pause

@@ -39,7 +39,8 @@ class Camera
 {
 
 private:
-//	static const int SCROLL_INTERVAL = 50; // kL
+	static const int SCROLL_DIAGONAL_EDGE = 60;
+//	static const int SCROLL_INTERVAL = 50;
 
 	bool
 		_pauseAfterShot,
@@ -75,11 +76,9 @@ private:
 
 
 	public:
-		static const int
-			SCROLL_BORDER			= 5,
-			SCROLL_DIAGONAL_EDGE	= 60;
+		static const int SCROLL_BORDER = 5;
 
-		/// Creates a new camera.
+		/// Creates a Camera.
 		Camera(
 				int spriteWidth,
 				int spriteHeight,
@@ -88,7 +87,7 @@ private:
 				int mapsize_z,
 				Map* battleField,
 				int playableHeight);
-		/// Cleans up the camera.
+		/// Cleans up the Camera.
 		~Camera();
 
 		/// Special handling for mouse press.
@@ -164,7 +163,7 @@ private:
 
 		/// Toggles showing all map layers.
 		bool toggleShowLayers();
-		/// Checks if the camera is showing all map layers.
+		/// Checks if the Camera is showing all map layers.
 		bool getShowLayers() const;
 
 		/// Checks if map coordinates X,Y,Z are on screen.
@@ -176,9 +175,9 @@ private:
 		/// Stops mouse scrolling.
 		void stopMouseScrolling();
 
-		/// Sets whether to pause the camera before reverting its position.
+		/// Sets whether to pause the Camera before reverting its position.
 		void setPauseAfterShot(bool pause = true);
-		/// Gets whether to pause the camera before reverting its position.
+		/// Gets whether to pause the Camera before reverting its position.
 		bool getPauseAfterShot() const;
 };
 
