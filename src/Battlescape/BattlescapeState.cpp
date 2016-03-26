@@ -157,7 +157,7 @@ BattlescapeState::BattlescapeState()
 	_txtControlDestroyed	= new Text(iconsWidth, 9, x, y - 20);
 	_txtMissionLabel		= new Text(iconsWidth, 9, x, y - 10);
 	_txtOperationTitle		= new Text(screenWidth, 16, 0, 2);
-	_srfTitle				= new Surface(screenWidth, 19, 0, 0);
+	_srfTitle				= new Surface(screenWidth, 21, 0, 0);
 
 	// Create buttonbar - this should appear at the bottom-center of the screen
 	_icons = new InteractiveSurface(
@@ -485,11 +485,11 @@ BattlescapeState::BattlescapeState()
 		_txtOperationTitle->setBig();
 
 		const Sint16
-			text_width	(static_cast<Sint16>(_txtOperationTitle->getTextWidth()) + 12),
+			text_width	(static_cast<Sint16>(_txtOperationTitle->getTextWidth()) + 14),
 			x_left		((static_cast<Sint16>(screenWidth) - text_width) / 2),
 			x_right		(x_left + text_width),
 			y_high		(static_cast<Sint16>(_srfTitle->getY()) + 1),
-			y_low		(static_cast<Sint16>(_srfTitle->getHeight()) - 1);
+			y_low		(static_cast<Sint16>(_srfTitle->getHeight()) - 2);
 
 //		_srfTitle->drawLine( // low line
 //						x_left,  y_low,
@@ -498,11 +498,20 @@ BattlescapeState::BattlescapeState()
 		_srfTitle->drawLine( // left line
 						x_left, y_high,
 						x_left, y_low,
-						2);
+						WHITE);
 		_srfTitle->drawLine( // right line
 						x_right, y_high,
 						x_right, y_low,
-						2); // TODO: Get color (Uint8) of OperationTitle [#0].
+						WHITE); // TODO: Get color (Uint8) of OperationTitle [#0].
+
+		_srfTitle->drawLine( // left line shadow
+						x_left + 1, y_high + 1,
+						x_left + 1, y_low + 1,
+						14);//ORANGE_D);
+		_srfTitle->drawLine( // right line shadow
+						x_right + 1, y_high + 1,
+						x_right + 1, y_low + 1,
+						14);//ORANGE_D);
 	}
 	else
 		_txtOperationTitle->setVisible(false);

@@ -68,6 +68,7 @@ private:
 		PULSE_FRAMES	= 22;
 
 	static const Uint8
+		WHITE		=   2,
 		ORANGE		=  16,
 		ORANGE_D	=  20,
 		RED			=  32,
