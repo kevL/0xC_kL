@@ -60,8 +60,8 @@ State::State()
 	:
 		_fullScreen(true),
 		_modal(nullptr),
-		_ruleInterface(nullptr),
-		_ruleInterfaceParent(nullptr)
+		_uiRule(nullptr),
+		_uiRuleParent(nullptr)
 {
 	std::memset( // initialize palette to all-black
 			_palette,
@@ -84,53 +84,49 @@ State::~State()
 }
 
 /**
- * Sets Interface data from the ruleset - also sets the Palette for this State.
- * @param category - reference the name of the interface from the Interfaces ruleset
- * @param alterPal - true to swap out the backpal colors (default false)
- * @param tactical - true to use Battlescape palette (applies only to options screens) (default false)
+ * Sets the User Interface data from a ruleset.
+ * @note Also sets the Palette for the State.
+ * @param category - reference the category of the interface from an Interfaces ruleset
+ * @param alterPal - true to swap out the backpal-colors (default false)
+ * @param tactical - true to use Battlescape Palette (applies only to options screens) (default false)
  */
 void State::setInterface(
 		const std::string& category,
 		bool alterPal,
 		bool tactical)
 {
-	int backPal (-1);
+	int backpalColor (-1);
 	PaletteType palType (PAL_NONE);
 
-	_ruleInterface = _game->getRuleset()->getInterface(category);
-	if (_ruleInterface != nullptr)
+	if ((_uiRule = _game->getRuleset()->getInterface(category)) != nullptr)
 	{
-		palType = _ruleInterface->getPalette();
-		const Element* element (_ruleInterface->getElement("palette"));
+		palType = _uiRule->getPalette();
+		const Element* elBackpal (_uiRule->getElement("backpal"));
 
-		_ruleInterfaceParent = _game->getRuleset()->getInterface(_ruleInterface->getParent());
-		if (_ruleInterfaceParent != nullptr)
+		_uiRuleParent = _game->getRuleset()->getInterface(_uiRule->getParent());
+		if (_uiRuleParent != nullptr)
 		{
-			if (element == nullptr)
-				element = _ruleInterfaceParent->getElement("palette");
-
 			if (palType == PAL_NONE)
-				palType = _ruleInterfaceParent->getPalette();
+				palType = _uiRuleParent->getPalette();
+			if (elBackpal == nullptr)
+				elBackpal = _uiRuleParent->getElement("backpal");
 		}
 
-		if (element != nullptr
-			&& tactical == false)
+		if (elBackpal != nullptr && tactical == false)
 		{
 			int color;
-			if (alterPal == true)
-				color = element->color2;
-			else
-				color = element->color;
+			if (alterPal == true)	color = elBackpal->color2;
+			else					color = elBackpal->color;
 
 			if (color != std::numeric_limits<int>::max())
-				backPal = color;
+				backpalColor = color;
 		}
 	}
 
 	if (tactical == true)			palType = PAL_BATTLESCAPE;
 	else if (palType == PAL_NONE)	palType = PAL_GEOSCAPE;
 
-	setPalette(palType, backPal);
+	setPalette(palType, backpalColor);
 }
 
 /**
@@ -161,14 +157,14 @@ void State::add(Surface* surface)
  * use. If no parent is defined the element will not be moved.
  * @param surface	- pointer to child Surface
  * @param id		- reference the ID of the element defined in the ruleset if any
- * @param category	- reference the category of elements this interface is associated with
+ * @param category	- reference the category of elements the Interface is associated with
  * @param parent	- pointer to the Surface to base the coordinates of this element off (default nullptr)
  */
 void State::add(
-		Surface* surface,
+		Surface* const surface,
 		const std::string& id,
 		const std::string& category,
-		Surface* parent)
+		Surface* const parent)
 {
 	surface->setPalette(_palette);
 

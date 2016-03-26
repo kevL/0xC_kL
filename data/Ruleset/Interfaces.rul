@@ -1,7 +1,7 @@
 interfaces:
   - type: mainMenu
     elements:
-      - id: palette
+      - id: backpal
         color: 1     # dark rust, olive-brown=0
       - id: window
         color: 133   # minty green
@@ -19,7 +19,7 @@ interfaces:
         border: 0
   - type: newBattleMenu
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 133   # minty green
@@ -35,7 +35,7 @@ interfaces:
         color: 133   # minty green
   - type: newGameMenu
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 133   # minty green
@@ -47,7 +47,7 @@ interfaces:
         color: 133   # minty green
   - type: optionsMenu
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 133   # minty green
@@ -100,7 +100,7 @@ interfaces:
         border: 133  # minty green
   - type: saveMenus
     elements:
-      - id: palette
+      - id: backpal
         color: 6     # oxide
       - id: window
         color: 133   # minty green
@@ -125,7 +125,7 @@ interfaces:
         color: 133   # minty green
   - type: pauseMenu
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 239   # bright green, was # 133 minty green
@@ -145,7 +145,7 @@ interfaces:
         color: 0     # white
   - type: geoCraftScreens
     elements:
-      - id: palette
+      - id: backpal
         color: 4     # aqua
         color2: 6    # oxide
       - id: window
@@ -170,7 +170,7 @@ interfaces:
         border: 133  # minty green
   - type: targetInfo
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 138   # yellow
@@ -181,7 +181,7 @@ interfaces:
         color: 133   # minty green
   - type: confirmDestination
     elements:
-      - id: palette
+      - id: backpal
         color: 4     # aqua
         color2: 6    # oxide
       - id: window
@@ -194,7 +194,7 @@ interfaces:
         color: 133   # minty green
   - type: confirmCydonia
     elements:
-      - id: palette
+      - id: backpal
         color: 5     # red
       - id: window
         color: 133   # minty green
@@ -204,7 +204,7 @@ interfaces:
         color: 138   # yellow
   - type: confirmLanding
     elements:
-      - id: palette
+      - id: backpal
         color: 3     # pink
       - id: window
         color: 133   # minty green
@@ -215,7 +215,7 @@ interfaces:
         color: 133   # minty green
   - type: lowFuel
     elements:
-      - id: palette
+      - id: backpal
         color: 4     # aqua
       - id: text
         color: 138   # yellow
@@ -227,7 +227,7 @@ interfaces:
         color: 133   # minty green
   - type: UFOInfo
     elements:
-      - id: palette
+      - id: backpal
         color: 7     # dark blue/purple
         color2: 2    # red/orange
       - id: window
@@ -240,7 +240,7 @@ interfaces:
   - type: baseDefense
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 2     # red/orange
       - id: window
         color: 246   # purple
@@ -250,7 +250,7 @@ interfaces:
         color: 218   # blue
   - type: terrorSite
     elements:
-      - id: palette
+      - id: backpal
         color: 3     # pink
       - id: window
         color: 133   # minty green
@@ -260,7 +260,7 @@ interfaces:
         color: 133   # minty green
   - type: alienBase
     elements:
-      - id: palette
+      - id: backpal
         color: 3     # pink
       - id: window
         color: 239   # bright green
@@ -270,7 +270,7 @@ interfaces:
         color: 138   # yellow
   - type: itemsArriving
     elements:
-      - id: palette
+      - id: backpal
         color: 6     # oxide
       - id: window
         color: 133   # minty green
@@ -283,7 +283,7 @@ interfaces:
         color: 133   # minty green
   - type: geoResearch
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 239   # bright green
@@ -295,7 +295,7 @@ interfaces:
         color: 133   # minty green
   - type: geoManufacture
     elements:
-      - id: palette
+      - id: backpal
         color: 6     # oxide
       - id: window
         color: 239   # bright green
@@ -346,7 +346,7 @@ interfaces:
         color: 25
   - type: baseNaming
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 133   # minty green
@@ -356,7 +356,7 @@ interfaces:
         color: 133   # minty green
   - type: monthlyReport
     elements:
-      - id: palette
+      - id: backpal
         color: 3
       - id: window
         color: 239   # bright green
@@ -371,7 +371,7 @@ interfaces:
   - type: psiTraining
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 7     # violet
       - id: window
         color: 246   # purple
@@ -384,7 +384,7 @@ interfaces:
   - type: allocatePsi
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 7     # violet
       - id: window
         color: 218   # blue
@@ -399,7 +399,7 @@ interfaces:
         color: 218   # blue
   - type: fundingWindow
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 239   # bright green
@@ -431,7 +431,7 @@ interfaces:
         color2: 153  # was 144 # also magenta (the line itself)
   - type: ufopaedia
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 239   # bright green
@@ -446,7 +446,7 @@ interfaces:
         color: 239   # bright green
   - type: noContainment
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 239   # bright green
@@ -456,7 +456,7 @@ interfaces:
         color: 133   # minty green
   - type: promotions
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 239   # bright green
@@ -470,7 +470,7 @@ interfaces:
         color: 239   # bright green
   - type: cannotReequip
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 239   # bright green
@@ -484,7 +484,7 @@ interfaces:
         color: 133   # minty green
   - type: debriefing
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 239   # bright green
@@ -505,7 +505,7 @@ interfaces:
         color: 133   # minty green
   - type: geoscape
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
         color2: 6
       - id: textLoad
@@ -539,7 +539,7 @@ interfaces:
   - type: sellMenu
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 218   # blue
@@ -556,7 +556,7 @@ interfaces:
   - type: buyMenu
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 218   # blue
@@ -577,7 +577,7 @@ interfaces:
   - type: manageContainment
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 1     # burgundy
       - id: window
         color: 218   # blue
@@ -597,7 +597,7 @@ interfaces:
   - type: transferBaseSelect
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 4     # dark green
       - id: window
         color: 213   # gold
@@ -612,7 +612,7 @@ interfaces:
   - type: transferMenu
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 218   # blue
@@ -632,7 +632,7 @@ interfaces:
   - type: transferConfirm
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 6     # oxide
       - id: window
         color: 213   # gold
@@ -644,7 +644,7 @@ interfaces:
   - type: transferInfo
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 6     # oxide
       - id: window
         color: 246   # purple
@@ -658,7 +658,7 @@ interfaces:
   - type: selectFacility
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 6     # oxide
       - id: window
         color: 213   # gold
@@ -671,7 +671,7 @@ interfaces:
   - type: placeFacility
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 6     # oxide
       - id: window
         color: 218   # blue
@@ -688,7 +688,7 @@ interfaces:
   - type: dismantleFacility
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 6     # oxide
       - id: window
         color: 241   # pink
@@ -699,7 +699,7 @@ interfaces:
   - type: manufactureMenu
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 6     # oxide
       - id: window
         color: 246   # purple
@@ -758,7 +758,7 @@ interfaces:
   - type: researchMenu
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 1     # burgundy
       - id: window
         color: 218   # blue
@@ -817,7 +817,7 @@ interfaces:
   - type: storesInfo
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 218   # blue
@@ -830,7 +830,7 @@ interfaces:
   - type: costsInfo
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 6     # oxide
       - id: window
         color: 241   # pink
@@ -846,7 +846,7 @@ interfaces:
   - type: soldierList
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 2     # orange
       - id: window
         color: 241   # pink
@@ -923,7 +923,7 @@ interfaces:
   - type: sackSoldier
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 6     # oxide
       - id: window
         color: 241   # pink
@@ -934,7 +934,7 @@ interfaces:
   - type: soldierArmor
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 4     # green
       - id: window
         color: 218   # blue
@@ -948,7 +948,7 @@ interfaces:
   - type: soldierMemorial
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 7     # violet
       - id: window
         color: 218   # blue
@@ -963,7 +963,7 @@ interfaces:
   - type: craftEquipment
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 2     # orange
       - id: window
         color: 241   # pink
@@ -985,7 +985,7 @@ interfaces:
   - type: craftArmor
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 4     # aqua
       - id: window
         color: 218   # blue
@@ -1001,7 +1001,7 @@ interfaces:
   - type: craftInfo
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 3     # pink
       - id: window
         color: 218   # blue
@@ -1016,7 +1016,7 @@ interfaces:
   - type: craftWeapons
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 4     # aqua
       - id: window
         color: 246   # purple
@@ -1029,7 +1029,7 @@ interfaces:
   - type: craftSoldiers
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 2     # orange
       - id: window
         color: 246   # purple
@@ -1047,7 +1047,7 @@ interfaces:
   - type: craftSelect
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 3     # pink
       - id: window
         color: 241   # pink
@@ -1180,7 +1180,7 @@ interfaces:
         color: 0
   - type: briefing
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # brown
       - id: window
         color: 239   # bright green
@@ -1302,7 +1302,7 @@ interfaces:
   - type: awards
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 0     # olive
         color2: 4    # slate blue
       - id: window
@@ -1327,7 +1327,7 @@ interfaces:
   - type: awardsMissionInfo
     palette: PAL_BASESCAPE
     elements:
-      - id: palette
+      - id: backpal
         color: 1     # brown
       - id: window
         color: 218   # blue

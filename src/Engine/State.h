@@ -59,8 +59,8 @@ protected:
 
 	InteractiveSurface* _modal;
 	RuleInterface
-		* _ruleInterface,
-		* _ruleInterfaceParent;
+		* _uiRule,
+		* _uiRuleParent;
 
 	SDL_Color _palette[256];
 
@@ -73,7 +73,7 @@ protected:
 		/// Cleans up the State.
 		virtual ~State();
 
-		/// Sets the Interface rules.
+		/// Sets the Interface rule.
 		void setInterface(
 				const std::string& category,
 				bool alterPal = false,
@@ -82,10 +82,10 @@ protected:
 		/// Adds a child-element to the State.
 		void add(Surface* surface);
 		void add(
-				Surface* surface,
+				Surface* const surface,
 				const std::string& id,
 				const std::string& category,
-				Surface* parent = nullptr);
+				Surface* const parent = nullptr);
 		/// Gets whether the State is full-screen.
 		bool isFullScreen() const;
 		/// Toggles whether the State is full-screen.

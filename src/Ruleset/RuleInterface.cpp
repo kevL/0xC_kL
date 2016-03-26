@@ -83,7 +83,7 @@ void RuleInterface::load(const YAML::Node& node)
 		element.color2 = (*i)["color2"].as<int>(-1);
 		element.border = (*i)["border"].as<int>(-1);
 
-		std::string id ((*i)["id"].as<std::string>());
+		const std::string id ((*i)["id"].as<std::string>());
 		_elements[id] = element;
 	}
 }
@@ -107,7 +107,7 @@ PaletteType RuleInterface::convertToPaletteType(const std::string& palette) // p
 }
 
 /**
- * Retrieves info on an element
+ * Retrieves info on an element.
  * @param id - reference a string defining the element
  * @return, pointer to Element
  */

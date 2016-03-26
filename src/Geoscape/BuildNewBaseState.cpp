@@ -289,7 +289,7 @@ void BuildNewBaseState::globeClick(Action* action)
 											_palette,
 											_game->getRuleset()->getInterface("geoscape")->getElement("genericWindow")->color,
 											_game->getResourcePack()->getRandomBackground(),
-											_game->getRuleset()->getInterface("geoscape")->getElement("palette")->color));
+											_game->getRuleset()->getInterface("geoscape")->getElement("backpal")->color));
 //		}
 	}
 }

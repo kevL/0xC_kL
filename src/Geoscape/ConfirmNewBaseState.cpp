@@ -142,7 +142,7 @@ void ConfirmNewBaseState::btnOkClick(Action*)
 											_palette,
 											_game->getRuleset()->getInterface("geoscape")->getElement("genericWindow")->color,
 											"BACK01.SCR",
-											_game->getRuleset()->getInterface("geoscape")->getElement("palette")->color));
+											_game->getRuleset()->getInterface("geoscape")->getElement("backpal")->color));
 }
 
 /**

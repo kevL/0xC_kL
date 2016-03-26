@@ -85,7 +85,7 @@ BriefingState::BriefingState(
 	}
 
 	std::string
-		description = type + "_BRIEFING",
+		description (type + "_BRIEFING"),
 		track,	// default defined in Ruleset/AlienDeployment.h: OpenXcom::res_MUSIC_GEO_BRIEFING,
 		bg;		// default defined in Ruleset/AlienDeployment.h: "BACK16.SCR",
 	int bgColor;
@@ -94,7 +94,7 @@ BriefingState::BriefingState(
 	{
 		Log(LOG_WARNING) << "No deployment rule for Briefing: " << type;
 		bg = "BACK16.SCR";
-		bgColor = _game->getRuleset()->getInterface("briefing")->getElement("palette")->color;
+		bgColor = _game->getRuleset()->getInterface("briefing")->getElement("backpal")->color;
 		track = OpenXcom::res_MUSIC_GEO_BRIEFING;
 	}
 	else
