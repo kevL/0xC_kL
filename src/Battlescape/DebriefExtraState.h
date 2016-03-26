@@ -56,7 +56,8 @@ private:
 
 	static const Uint8
 		YELLOW	= 138,
-		PURPLE	= 176,
+		BROWN	= 143,
+		GRAY	= 159,
 		GREEN	= 239;
 
 	std::map<const RuleItem*, int>

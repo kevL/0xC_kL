@@ -148,7 +148,7 @@ StoresState::StoresState(Base* base)
 			++i)
 	{
 		//Log(LOG_INFO) << *i << " stores listOrder = " << rules->getItemRule(*i)->getListOrder(); // Prints listOrder to LOG.
-		if (rules->getItemRule(*i)->isAlien() == false)
+		if (rules->getItemRule(*i)->isLiveAlien() == false)
 		{
 			baseQty = _base->getStorageItems()->getItemQuantity(*i);
 			if (baseQty != 0)
@@ -201,7 +201,7 @@ StoresState::StoresState(Base* base)
 
 				if (gameSave->isResearched(itRule->getType()) == false				// not researched or is research exempt
 					&& (gameSave->isResearched(itRule->getRequirements()) == false	// and has requirements to use that have not been researched
-//						|| rules->getItemRule(*i)->isAlien() == true					// or is an alien
+//						|| rules->getItemRule(*i)->isLiveAlien() == true				// or is an alien
 						|| itRule->getBattleType() == BT_CORPSE							// or is a corpse
 						|| itRule->getBattleType() == BT_NONE)							// or is not a battlefield item
 					&& craftOrdnance == false)										// and is not craft ordnance
@@ -221,7 +221,7 @@ StoresState::StoresState(Base* base)
 
 /*				std::wostringstream woststr1;
 				woststr1 << baseQty;
-				if (rules->getItemRule(*i)->isAlien() == true)
+				if (rules->getItemRule(*i)->isLiveAlien() == true)
 				{
 					_lstStores->addRow(
 									3,

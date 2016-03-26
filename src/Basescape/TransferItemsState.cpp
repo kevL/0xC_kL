@@ -456,7 +456,7 @@ void TransferItemsState::init()
 
 			if (gameSave->isResearched(itRule->getType()) == false				// not researched or is research exempt
 				&& (gameSave->isResearched(itRule->getRequirements()) == false	// and has requirements to use but not been researched
-					|| rules->getItemRule(*i)->isAlien() == true					// or is an alien
+					|| rules->getItemRule(*i)->isLiveAlien() == true				// or is an alien
 					|| itRule->getBattleType() == BT_CORPSE							// or is a corpse
 					|| itRule->getBattleType() == BT_NONE)							// or is not a battlefield item
 				&& craftOrdnance == false)										// and is not craft ordnance
@@ -721,7 +721,7 @@ int TransferItemsState::getCost() const // private.
 					cost = 0.1;
 				else if (_items[getItemIndex(_sel)] == _game->getRuleset()->getAlienFuelType())
 					cost = 1.;
-				else if (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->isAlien() == true)
+				else if (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->isLiveAlien() == true)
 					cost = 200.;
 				else
 					cost = 10.;
@@ -784,7 +784,7 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 		case PST_ITEM:
 			itRule = _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]);
 
-			if (itRule->isAlien() == false)
+			if (itRule->isLiveAlien() == false)
 			{
 				if (_baseTarget->storesOverfull(itRule->getStoreSize() + _storeSize - 0.05))
 					wstError = tr("STR_NOT_ENOUGH_STORE_SPACE");
@@ -908,7 +908,7 @@ void TransferItemsState::decreaseByValue(int qtyDelta)
 		case PST_ITEM:
 		{
 			const RuleItem* const itRule (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]));
-			if (itRule->isAlien() == false)
+			if (itRule->isLiveAlien() == false)
 				_storeSize -= itRule->getStoreSize() * static_cast<double>(qtyDelta);
 			else
 				_qtyAlien -= qtyDelta;
@@ -970,7 +970,7 @@ void TransferItemsState::updateItemStrings() // private.
 		const SavedGame* const gameSave (_game->getSavedGame());
 		if (gameSave->isResearched(itRule->getType()) == false				// not researched or is research exempt
 			&& (gameSave->isResearched(itRule->getRequirements()) == false	// and has requirements to use but not been researched
-				|| itRule->isAlien() == true									// or is an alien
+				|| itRule->isLiveAlien() == true								// or is an alien
 				|| itRule->getBattleType() == BT_CORPSE							// or is a corpse
 				|| itRule->getBattleType() == BT_NONE)							// or is not a battlefield item
 			&& craftOrdnance == false)										// and is not craft ordnance

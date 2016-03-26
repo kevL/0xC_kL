@@ -969,7 +969,7 @@ int Base::getUsedContainment() const
 			i != _items->getContents()->end();
 			++i)
 	{
-		if (_rules->getItemRule(i->first)->isAlien() == true)
+		if (_rules->getItemRule(i->first)->isLiveAlien() == true)
 			total += i->second;
 	}
 
@@ -979,7 +979,7 @@ int Base::getUsedContainment() const
 			++i)
 	{
 		if ((*i)->getTransferType() == PST_ITEM
-			&& _rules->getItemRule((*i)->getTransferItems())->isAlien() == true)
+			&& _rules->getItemRule((*i)->getTransferItems())->isLiveAlien() == true)
 		{
 			total += (*i)->getQuantity();
 		}

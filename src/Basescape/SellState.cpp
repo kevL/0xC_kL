@@ -262,7 +262,7 @@ SellState::SellState(Base* const base)
 
 		if (baseQty != 0
 			&& (Options::canSellLiveAliens == true
-				|| rules->getItemRule(*i)->isAlien() == false))
+				|| rules->getItemRule(*i)->isLiveAlien() == false))
 		{
 			_sellQty.push_back(0);
 			_items.push_back(*i);
@@ -320,7 +320,7 @@ SellState::SellState(Base* const base)
 
 			if (gameSave->isResearched(itRule->getType()) == false				// not researched or research exempt
 				&& (gameSave->isResearched(itRule->getRequirements()) == false	// and has requirements to use but not been researched
-					|| rules->getItemRule(*i)->isAlien() == true					// or is an alien
+					|| rules->getItemRule(*i)->isLiveAlien() == true				// or is an alien
 					|| itRule->getBattleType() == BT_CORPSE							// or is a corpse
 					|| itRule->getBattleType() == BT_NONE)							// or is not a battlefield item
 				&& craftOrdnance == false)										// and is not craft ordnance
@@ -734,7 +734,7 @@ void SellState::updateItemStrings() // private.
 		const SavedGame* const gameSave (_game->getSavedGame());
 		if (gameSave->isResearched(itRule->getType()) == false				// not researched or is research exempt
 			&& (gameSave->isResearched(itRule->getRequirements()) == false	// and has requirements to use but not been researched
-				|| itRule->isAlien() == true									// or is an alien
+				|| itRule->isLiveAlien() == true								// or is an alien
 				|| itRule->getBattleType() == BT_CORPSE							// or is a corpse
 				|| itRule->getBattleType() == BT_NONE)							// or is not a battlefield item
 			&& craftOrdnance == false)										// and is not craft ordnance

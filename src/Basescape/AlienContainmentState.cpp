@@ -175,7 +175,7 @@ AlienContainmentState::AlienContainmentState(
 	{
 		type = (*i)->getRules()->getType();
 		if ((itRule = _game->getRuleset()->getItemRule(type)) != nullptr
-			&& itRule->isAlien() == true)
+			&& itRule->isLiveAlien() == true)
 		{
 			interrogations.push_back(type);
 		}
@@ -194,7 +194,7 @@ AlienContainmentState::AlienContainmentState(
 			++i)
 	{
 		itRule = _game->getRuleset()->getItemRule(*i);
-		if (itRule->isAlien() == true) // it's a live alien...
+		if (itRule->isLiveAlien() == true)
 		{
 			qtyAliens = _base->getStorageItems()->getItemQuantity(*i); // get Qty of each aLien-type at this base
 			if (qtyAliens != 0)

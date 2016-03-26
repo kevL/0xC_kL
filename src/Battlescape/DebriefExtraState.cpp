@@ -78,7 +78,7 @@ DebriefExtraState::DebriefExtraState(
 	add(_txtBaseLabel,	"text",		"debriefing");
 	add(_txtGainLoss,	"text",		"debriefing");
 	add(_lstSolStats,	"list",		"debriefing");
-	add(_lstGained,		"list",		"cannotReequip");
+	add(_lstGained,		"list",		"debriefing");
 	add(_lstLost,		"list",		"debriefing");
 	add(_btnOk,			"button",	"debriefing");
 
@@ -146,7 +146,7 @@ void DebriefExtraState::btnOkClick(Action*)
 			if (_itemsGained.empty() == false)
 			{
 				_curScreen = DES_LOOT_GAINED;
-				_txtGainLoss->setText(L"gains");
+				_txtGainLoss->setText(L"loot");
 				_lstGained->scrollTo();
 				_lstGained->setVisible();
 				break;
@@ -157,7 +157,7 @@ void DebriefExtraState::btnOkClick(Action*)
 			if (_itemsLost.empty() == false)
 			{
 				_curScreen = DES_LOOT_LOST;
-				_txtGainLoss->setText(L"losses");
+				_txtGainLoss->setText(L"lost");
 				_lstLost->scrollTo();
 				_lstLost->setVisible();
 				break;
@@ -224,39 +224,49 @@ void DebriefExtraState::styleList( // private.
 	std::string type;
 	std::wstring wst;
 	Uint8 color;
+	bool contrast;
 	int row (0);
 
 	for (std::map<const RuleItem*, int>::const_iterator
 			i = input.begin();
 			i != input.end();
-			++i)
+			++i, ++row)
 	{
 		type = i->first->getType();
 		wst = tr(type);
-		color = YELLOW;
 
-		if (i->first->getBattleType() == BT_AMMO)
+		if (i->first->isLiveAlien() == true)
 		{
-			wst.insert(0, L"  ");
-			color = PURPLE;
+			color = GRAY;
+			contrast = true;
 		}
-
-		if (_game->getSavedGame()->isResearched(type) == false								// not researched or is research exempt
-			&& (_game->getSavedGame()->isResearched(i->first->getRequirements()) == false		// and has requirements to use that have not been researched
-//				|| rules->getItemRule(*i)->isAlien() == true									// or is an alien
+		else if (_game->getSavedGame()->isResearched(type) == false							// not researched or is research exempt
+			&& (_game->getSavedGame()->isResearched(i->first->getRequirements()) == false	// and has requirements to use that have not been researched
 				|| i->first->getBattleType() == BT_CORPSE))										// or is a corpse
-//				|| i->first->getBattleType() == BT_NONE)										// or is not a battlefield item
-//			&& craftOrdnance == false)														// and is not craft ordnance
 		{
-			// well, that was !NOT! easy.
 			color = GREEN;
+			contrast = false;
+
+			if (i->first->getBattleType() == BT_AMMO)
+				wst.insert(0, L"  ");
+		}
+		else if (i->first->getBattleType() == BT_AMMO)
+		{
+			color = BROWN;
+			contrast = true;
+			wst.insert(0, L"  ");
+		}
+		else
+		{
+			color = YELLOW;
+			contrast = false;
 		}
 
 		list->addRow(
 				2,
 				wst.c_str(),
 				Text::intWide(i->second).c_str());
-		list->setRowColor(row++, color /*(color == PURPLE)*/);
+		list->setRowColor(row, color, contrast);
 	}
 }
 

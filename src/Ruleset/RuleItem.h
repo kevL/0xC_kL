@@ -337,12 +337,12 @@ private:
 		int getTurretType() const;
 
 		/// Checks if this a live alien.
-		bool isAlien() const;
+		bool isLiveAlien() const;
 
-		/// Should we charge a flat rate?
+		/// Gets if the rated TU-cost is a flat rate.
 		bool getFlatRate() const;
 
-		/// Should this weapon arc?
+		/// Gets if the weapon fires an arcing shot-trajectory.
 		bool getArcingShot() const;
 
 		/// How much do aliens want this thing?
@@ -351,14 +351,14 @@ private:
 		/// Gets the list weight for this item.
 		int getListOrder() const;
 
-		/// How fast does a projectile fired from this weapon travel.
+		/// Gets how fast a projectile fired from the weapon travels.
 		int getBulletSpeed() const;
-		/// How fast does the explosion animation play.
+		/// Gets how fast the weapon's explosion-animation plays.
 		int getExplosionSpeed() const;
 
-		/// How many auto shots does this weapon fire.
+		/// Gets how many auto-shots the weapon fires.
 		int getAutoShots() const;
-		/// How much kick does the weapon give on autoshot.
+		/// Gets how much kick the weapon gives on auto-shot.
 		int getAutoKick() const;
 
 		/// Checks if this item is a 2 handed weapon.
