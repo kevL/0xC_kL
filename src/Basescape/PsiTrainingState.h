@@ -35,7 +35,7 @@ class Window;
 
 
 /**
- * Screen that allocates soldiers to psionic training.
+ * Screen that allocates Soldiers to psionic training.
  */
 class PsiTrainingState final
 	:
@@ -63,9 +63,9 @@ private:
 
 
 	public:
-		/// Creates the Psi Training state.
+		/// Creates a PsiTraining state.
 		explicit PsiTrainingState(Base* base);
-		/// Cleans up the Psi Training state.
+		/// Cleans up the PsiTraining state.
 		~PsiTrainingState();
 
 		/// Refreshes the soldier-list.

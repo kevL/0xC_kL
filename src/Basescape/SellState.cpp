@@ -691,13 +691,13 @@ void SellState::changeByValue(
 			_storeSize -= static_cast<double>(dir * qtyDelta) * itRule->getStoreSize();
 	}
 
-	updateItemStrings();
+	update();
 }
 
 /**
  * Updates the quantity-strings of the selected item.
  */
-void SellState::updateItemStrings() // private.
+void SellState::update() // private.
 {
 	_lstItems->setCellText(_sel, 1, Text::intWide(getBaseQuantity() - _sellQty[_sel]));
 	_lstItems->setCellText(_sel, 2, Text::intWide(_sellQty[_sel]));

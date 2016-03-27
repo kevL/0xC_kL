@@ -65,7 +65,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes an empty base.
+ * Initializes a Base.
  * @param rule - pointer to Ruleset
  */
 Base::Base(const Ruleset* const rules)
@@ -89,7 +89,7 @@ Base::Base(const Ruleset* const rules)
 }
 
 /**
- * Deletes the contents of this Base from memory.
+ * Deletes the contents of this Base.
  */
 Base::~Base()
 {
@@ -133,7 +133,7 @@ Base::~Base()
 }
 
 /**
- * Loads a base from a YAML file.
+ * Loads this Base from a YAML file.
  * @param node		- reference a YAML node
  * @param gameSave	- pointer to SavedGame
  * @param firstBase	- true if this is the first Base of a new game (default false)
@@ -643,7 +643,7 @@ int Base::getUsedQuarters() const
 }
 
 /**
- * Returns the total amount of living quarters available in this Base.
+ * Returns the total amount of living quarters in this Base.
  * @return, total personel space
  */
 int Base::getTotalQuarters() const
@@ -728,7 +728,7 @@ double Base::getUsedStores() const
 }
 
 /**
- * Returns the total amount of stores available in this Base.
+ * Returns the total amount of stores in this Base.
  * @return, total storage space
  */
 int Base::getTotalStores() const
@@ -782,7 +782,7 @@ int Base::getUsedLaboratories() const
 }
 
 /**
- * Returns the total amount of laboratories available in this Base.
+ * Returns the total amount of laboratories in this Base.
  * @return, total laboratory space
  */
 int Base::getTotalLaboratories() const
@@ -846,7 +846,7 @@ int Base::getUsedWorkshops() const
 }
 
 /**
- * Returns the total amount of workshops available in this Base.
+ * Returns the total amount of workshops in this Base.
  * @return, total workshop space
  */
 int Base::getTotalWorkshops() const
@@ -893,7 +893,7 @@ bool Base::hasProduction() const
 }
 
 /**
- * Returns the total amount of used PsiLab Space in this Base.
+ * Returns the total amount of used psilab-space in this Base.
  * @return, used psilab space
  */
 int Base::getUsedPsiLabs() const
@@ -911,7 +911,7 @@ int Base::getUsedPsiLabs() const
 }
 
 /**
- * Returns the total amount of PsiLab Space available in this Base.
+ * Returns the total amount of psilab-space in this Base.
  * @return, total psilab space
  */
 int Base::getTotalPsiLabs() const
@@ -929,7 +929,7 @@ int Base::getTotalPsiLabs() const
 }
 
 /**
- * Returns psilab space not in use.
+ * Returns psilab-space not in use.
  * @return, free space
  */
 int Base::getFreePsiLabs() const
@@ -938,7 +938,7 @@ int Base::getFreePsiLabs() const
 }
 
 /**
- * Returns whether or not this Base has Psi Laboratories.
+ * Returns whether or not this Base has Psionic Laboratories.
  * @return, true if psiLabs exist
  */
 bool Base::hasPsiLabs() const
@@ -958,7 +958,7 @@ bool Base::hasPsiLabs() const
 }
 
 /**
- * Returns the total amount of used containment space in this Base.
+ * Returns the total amount of used containment-space in this Base.
  * @return, used containment space incl. transfers & interrogations
  */
 int Base::getUsedContainment() const
@@ -989,7 +989,7 @@ int Base::getUsedContainment() const
 }
 
 /**
- * Returns the total amount of containment space available in this Base.
+ * Returns the total amount of containment-space in this Base.
  * @return, total containment space
  */
 int Base::getTotalContainment() const
@@ -1007,7 +1007,7 @@ int Base::getTotalContainment() const
 }
 
 /**
- * Returns alien containment space not in use.
+ * Returns alien containment-space not in use.
  * @return, free space
  */
 int Base::getFreeContainment() const
@@ -1089,7 +1089,7 @@ int Base::getUsedHangars() const
 }
 
 /**
- * Returns the total amount of hangars available in this Base.
+ * Returns the total amount of hangars in this Base.
  * @return, total hangars
  */
 int Base::getTotalHangars() const
@@ -1107,7 +1107,7 @@ int Base::getTotalHangars() const
 }
 
 /**
- * Returns hangar space not in use.
+ * Returns hangar-space not in use.
  * @return, free space
  */
 int Base::getFreeHangars() const
@@ -1116,8 +1116,8 @@ int Base::getFreeHangars() const
 }
 
 /**
- * Returns the total amount of soldiers of a certain type occupying this Base.
- * @param soldier - soldier type
+ * Returns the total amount of Soldiers of a certain type occupying this Base.
+ * @param soldier - soldier-type
  * @return, quantity of soldiers
  */
 int Base::getSoldierCount(const std::string& soldier) const
@@ -1151,7 +1151,7 @@ int Base::getSoldierCount(const std::string& soldier) const
  * Returns the total amount of Craft of a certain type stored at or being
  * transfered to this Base.
  * @note Used by MonthlyCostsState.
- * @param craft - reference the craft type
+ * @param craft - reference the craft-type
  * @return, quantity of craft-type
  */
 int Base::getCraftCount(const std::string& craft) const

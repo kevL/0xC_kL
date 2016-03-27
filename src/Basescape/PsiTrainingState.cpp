@@ -50,7 +50,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Psi Training screen.
+ * Initializes all the elements in the PsiTraining screen.
  * @param base - pointer to the Base to get info from
  */
 PsiTrainingState::PsiTrainingState(Base* base)
@@ -134,7 +134,7 @@ PsiTrainingState::~PsiTrainingState()
 {}
 
 /**
- * Resets the palette. uh, not really.
+ * Resets the palette and soldier-list.
  */
 void PsiTrainingState::init()
 {
@@ -211,59 +211,59 @@ void PsiTrainingState::btnOkClick(Action*)
  */
 void PsiTrainingState::lstSoldiersPress(Action* action)
 {
-	const double mx = action->getAbsoluteXMouse();
-	if (mx >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge())
-		&& mx < static_cast<double>(_lstSoldiers->getArrowsRightEdge()))
+	const double mX (action->getAbsoluteXMouse());
+	if (mX >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge())
+		&& mX < static_cast<double>(_lstSoldiers->getArrowsRightEdge()))
 	{
 		return;
 	}
 
 	_sel = _lstSoldiers->getSelectedRow();
 
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		if (_base->getSoldiers()->at(_sel)->inPsiTraining() == false)
-		{
-			if (_base->getUsedPsiLabs() < _base->getTotalPsiLabs())
+		case SDL_BUTTON_LEFT:
+			if (_base->getSoldiers()->at(_sel)->inPsiTraining() == false)
+			{
+				if (_base->getUsedPsiLabs() < _base->getTotalPsiLabs())
+				{
+					_lstSoldiers->setCellText(
+											_sel,
+											3,
+											tr("STR_YES"));
+					_lstSoldiers->setRowColor(
+											_sel,
+											_lstSoldiers->getSecondaryColor());
+					_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(--_labSpace));
+					_base->getSoldiers()->at(_sel)->togglePsiTraining();
+				}
+			}
+			else
 			{
 				_lstSoldiers->setCellText(
 										_sel,
 										3,
-										tr("STR_YES"));
+										tr("STR_NO"));
 				_lstSoldiers->setRowColor(
 										_sel,
-										_lstSoldiers->getSecondaryColor());
-
-				_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(--_labSpace));
-
+										_lstSoldiers->getColor());
+				_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(++_labSpace));
 				_base->getSoldiers()->at(_sel)->togglePsiTraining();
 			}
-		}
-		else
-		{
-			_lstSoldiers->setCellText(
-									_sel,
-									3,
-									tr("STR_NO"));
-			_lstSoldiers->setRowColor(
-									_sel,
-									_lstSoldiers->getColor());
-			_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(++_labSpace));
-			_base->getSoldiers()->at(_sel)->togglePsiTraining();
-		}
-	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-	{
-		_base->setRecallRow(
-						REC_SOLDIER,
-						_lstSoldiers->getScroll());
-		_game->pushState(new SoldierInfoState(_base, _sel));
-		kL_soundPop->play(Mix_GroupAvailable(0));
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			_base->setRecallRow(
+							REC_SOLDIER,
+							_lstSoldiers->getScroll());
+
+			_game->pushState(new SoldierInfoState(_base, _sel));
+			kL_soundPop->play(Mix_GroupAvailable(0));
 	}
 }
 
 /**
- * Reorders a soldier up.
+ * Re-orders a Soldier up.
  * @param action - pointer to an Action
  */
 void PsiTrainingState::lstLeftArrowClick(Action* action)
@@ -272,41 +272,42 @@ void PsiTrainingState::lstLeftArrowClick(Action* action)
 					REC_SOLDIER,
 					_lstSoldiers->getScroll());
 
-	const size_t row = _lstSoldiers->getSelectedRow();
+	const size_t row (_lstSoldiers->getSelectedRow());
 	if (row > 0)
 	{
-		Soldier* const soldier = _base->getSoldiers()->at(row);
+		Soldier* const sol (_base->getSoldiers()->at(row));
 
-		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+		switch (action->getDetails()->button.button)
 		{
-			_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row - 1);
-			_base->getSoldiers()->at(row - 1) = soldier;
+			case SDL_BUTTON_LEFT:
+				_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row - 1);
+				_base->getSoldiers()->at(row - 1) = sol;
 
-			if (row != _lstSoldiers->getScroll())
-			{
-				SDL_WarpMouse(
-						static_cast<Uint16>(action->getLeftBlackBand() + action->getXMouse()),
-						static_cast<Uint16>(action->getTopBlackBand() + action->getYMouse()
-												- static_cast<int>(8. * action->getYScale())));
-			}
-			else
-			{
+				if (row != _lstSoldiers->getScroll())
+				{
+					SDL_WarpMouse(
+							static_cast<Uint16>(action->getLeftBlackBand() + action->getXMouse()),
+							static_cast<Uint16>(action->getTopBlackBand() + action->getYMouse()
+													- static_cast<int>(8. * action->getYScale())));
+				}
+				else
+				{
+					_base->setRecallRow(
+									REC_SOLDIER,
+									_lstSoldiers->getScroll() - 1);
+					_lstSoldiers->scrollUp();
+				}
+				break;
+
+			case SDL_BUTTON_RIGHT:
 				_base->setRecallRow(
 								REC_SOLDIER,
-								_lstSoldiers->getScroll() - 1);
-				_lstSoldiers->scrollUp();
-			}
-		}
-		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		{
-			_base->setRecallRow(
-							REC_SOLDIER,
-							_lstSoldiers->getScroll() + 1);
+								_lstSoldiers->getScroll() + 1);
 
-			_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
-			_base->getSoldiers()->insert(
-									_base->getSoldiers()->begin(),
-									soldier);
+				_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
+				_base->getSoldiers()->insert(
+										_base->getSoldiers()->begin(),
+										sol);
 		}
 	}
 
@@ -314,7 +315,7 @@ void PsiTrainingState::lstLeftArrowClick(Action* action)
 }
 
 /**
- * Reorders a soldier down.
+ * Re-orders a Soldier down.
  * @param action - pointer to an Action
  */
 void PsiTrainingState::lstRightArrowClick(Action* action)
@@ -324,40 +325,40 @@ void PsiTrainingState::lstRightArrowClick(Action* action)
 					_lstSoldiers->getScroll());
 
 	const size_t
-		qtySoldiers = _base->getSoldiers()->size(),
-		row = _lstSoldiers->getSelectedRow();
+		qtySoldiers (_base->getSoldiers()->size()),
+		row (_lstSoldiers->getSelectedRow());
 
-	if (qtySoldiers > 0
-		&& row < qtySoldiers - 1)
+	if (qtySoldiers > 0 && row < qtySoldiers - 1)
 	{
-		Soldier* const soldier = _base->getSoldiers()->at(row);
+		Soldier* const sol (_base->getSoldiers()->at(row));
 
-		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+		switch (action->getDetails()->button.button)
 		{
-			_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row + 1);
-			_base->getSoldiers()->at(row + 1) = soldier;
+			case SDL_BUTTON_LEFT:
+				_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row + 1);
+				_base->getSoldiers()->at(row + 1) = sol;
 
-			if (row != _lstSoldiers->getVisibleRows() - 1 + _lstSoldiers->getScroll())
-			{
-				SDL_WarpMouse(
-						static_cast<Uint16>(action->getLeftBlackBand() + action->getXMouse()),
-						static_cast<Uint16>(action->getTopBlackBand() + action->getYMouse()
-												+ static_cast<int>(8. * action->getYScale())));
-			}
-			else
-			{
-				_base->setRecallRow(
-								REC_SOLDIER,
-								_lstSoldiers->getScroll() + 1);
-				_lstSoldiers->scrollDown();
-			}
-		}
-		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		{
-			_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
-			_base->getSoldiers()->insert(
-									_base->getSoldiers()->end(),
-									soldier);
+				if (row != _lstSoldiers->getVisibleRows() - 1 + _lstSoldiers->getScroll())
+				{
+					SDL_WarpMouse(
+							static_cast<Uint16>(action->getLeftBlackBand() + action->getXMouse()),
+							static_cast<Uint16>(action->getTopBlackBand() + action->getYMouse()
+													+ static_cast<int>(8. * action->getYScale())));
+				}
+				else
+				{
+					_base->setRecallRow(
+									REC_SOLDIER,
+									_lstSoldiers->getScroll() + 1);
+					_lstSoldiers->scrollDown();
+				}
+				break;
+
+			case SDL_BUTTON_RIGHT:
+				_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
+				_base->getSoldiers()->insert(
+										_base->getSoldiers()->end(),
+										sol);
 		}
 	}
 

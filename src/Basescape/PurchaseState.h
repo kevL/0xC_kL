@@ -86,7 +86,7 @@ private:
 	/// Gets selected price.
 	int getPrice();
 	/// Updates the quantity-strings of the selected item.
-	void updateItemStrings();
+	void update();
 	/// Gets the purchase type.
 	PurchaseSellTransferType getPurchaseType(size_t sel) const;
 	/// Gets the index of selected item.

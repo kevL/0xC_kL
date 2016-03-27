@@ -587,7 +587,7 @@ bool Soldier::trainPsiDay()
 }
 
 /**
- * Gets whether or not this Soldier is in psi training.
+ * Gets whether or not this Soldier is in psi-training.
  * @return, true if training
  */
 bool Soldier::inPsiTraining() const
@@ -596,7 +596,7 @@ bool Soldier::inPsiTraining() const
 }
 
 /**
- * Toggles whether or not this Soldier is in psi training.
+ * Toggles whether or not this Soldier is in psi-training.
  */
 void Soldier::togglePsiTraining()
 {
@@ -655,45 +655,44 @@ void Soldier::autoStat()
 
 	switch (_rank)
 	{
-		case 0: stat << "r"; break;
-		case 1: stat << "q"; break;
-		case 2: stat << "t"; break;
-		case 3: stat << "p"; break;
-		case 4: stat << "n"; break;
-		case 5: stat << "x"; break;
+		case 0: stat << L"r"; break;
+		case 1: stat << L"q"; break;
+		case 2: stat << L"t"; break;
+		case 3: stat << L"p"; break;
+		case 4: stat << L"n"; break;
+		case 5: stat << L"x"; break;
 
-		default: stat << "z";
+		default: stat << L"z";
 	}
 
-	stat << _currentStats.firing << ".";
-	stat << _currentStats.reactions << ".";
+	stat << _currentStats.firing << L".";
+	stat << _currentStats.reactions << L".";
 	stat << _currentStats.strength;
 
 	switch (_currentStats.bravery)
 	{
-		case  10: stat << "a";	break;
-		case  20: stat << "b";	break;
-		case  30: stat << "c";	break;
-		case  40: stat << "d";	break;
-		case  50: stat << "e";	break;
-		case  60: stat << "f";	break;
-		case  70: stat << "g";	break;
-		case  80: stat << "h";	break;
-		case  90: stat << "i";	break;
-		case 100: stat << "j";	break;
+		case  10: stat << L"a";	break;
+		case  20: stat << L"b";	break;
+		case  30: stat << L"c";	break;
+		case  40: stat << L"d";	break;
+		case  50: stat << L"e";	break;
+		case  60: stat << L"f";	break;
+		case  70: stat << L"g";	break;
+		case  80: stat << L"h";	break;
+		case  90: stat << L"i";	break;
+		case 100: stat << L"j";	break;
 
-		default: stat << "z";
+		default: stat << L"z";
 	}
 
-//	if (_currentStats.psiSkill >= _solRule->getMinStats().psiSkill)
 	if (_currentStats.psiSkill != 0)
 	{
 		stat << (_currentStats.psiStrength + _currentStats.psiSkill / 5);
 
 		if (_currentStats.psiSkill >= _solRule->getStatCaps().psiSkill)
-			stat << ":";
+			stat << L":";
 		else
-			stat << ".";
+			stat << L".";
 
 		stat << (_currentStats.psiStrength * _currentStats.psiSkill / 100);
 	}

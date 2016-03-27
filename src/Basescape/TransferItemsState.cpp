@@ -874,7 +874,7 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 											uiRule->getElement("errorPalette")->color));
 	}
 	else
-		updateItemStrings();
+		update();
 }
 
 /**
@@ -892,7 +892,7 @@ void TransferItemsState::decrease()
 }
 
 /**
- * Decreases the quantity of the selected item to transfer.
+ * Decreases the quantity of the selected row to transfer.
  * @param qtyDelta - how many to remove
  */
 void TransferItemsState::decreaseByValue(int qtyDelta)
@@ -928,13 +928,13 @@ void TransferItemsState::decreaseByValue(int qtyDelta)
 	_transferQty[_sel] -= qtyDelta;
 	_costTotal -= getCost() * qtyDelta;
 
-	updateItemStrings();
+	update();
 }
 
 /**
- * Updates the quantity-strings of the selected item.
+ * Updates the quantity-strings of the selected row.
  */
-void TransferItemsState::updateItemStrings() // private.
+void TransferItemsState::update() // private.
 {
 	_lstItems->setCellText(_sel, 1, Text::intWide(_baseQty[_sel]));
 	_lstItems->setCellText(_sel, 2, Text::intWide(_transferQty[_sel]));
@@ -1055,7 +1055,7 @@ double TransferItemsState::getDistance() const // private.
 }
 
 /**
- * Gets the type of selected item.
+ * Gets the type of selected Item.
  * @param sel - the selected item
  * @return, PurchaseSellTransferType (Base.h)
  */
@@ -1079,7 +1079,7 @@ PurchaseSellTransferType TransferItemsState::getTransferType(size_t sel) const /
 }
 
 /**
- * Gets the transfer-index of the currently selected item.
+ * Gets the transfer-index of the currently selected Item.
  * @param sel - selected item
  * @return, transfer-index
  */
@@ -1093,7 +1093,7 @@ size_t TransferItemsState::getItemIndex(size_t sel) const // private.
 }
 
 /**
- * Gets the index of selected craft.
+ * Gets the index of selected Craft.
  * @param sel - selected craft
  * @return, index of the selected craft
  */

@@ -2841,7 +2841,7 @@ void GeoscapeState::time1Day()
 					j != (*i)->getSoldiers()->end();
 					++j)
 			{
-				if ((*j)->trainPsiDay() == true)
+				if ((*j)->getSickbay() == 0 && (*j)->trainPsiDay() == true)
 				{
 					(*j)->autoStat();
 //					sortSoldiers = true;

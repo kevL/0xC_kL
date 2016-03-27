@@ -113,7 +113,7 @@ private:
 	size_t getCraftIndex(size_t sel) const;
 
 	/// Updates the quantity-strings of selected row.
-	void updateItemStrings();
+	void update();
 
 
 	public:

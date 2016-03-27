@@ -62,7 +62,7 @@ class Transfer;
 
 
 /**
- * Represents a player base on the globe.
+ * Represents a player's Base on the Globe.
  * @note Bases can contain facilities, personnel, crafts and equipment.
  */
 class Base final

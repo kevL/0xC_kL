@@ -797,7 +797,7 @@ void PurchaseState::increaseByValue(int qtyDelta)
 		_orderQty[_sel] += qtyDelta;
 		_costTotal += getPrice() * qtyDelta;
 
-		updateItemStrings();
+		update();
 	}
 }
 
@@ -845,13 +845,13 @@ void PurchaseState::decreaseByValue(int qtyDelta)
 	_orderQty[_sel] -= qtyDelta;
 	_costTotal -= getPrice() * qtyDelta;
 
-	updateItemStrings();
+	update();
 }
 
 /**
  * Updates the quantity-strings of the selected item.
  */
-void PurchaseState::updateItemStrings() // private.
+void PurchaseState::update() // private.
 {
 	_txtPurchases->setText(tr("STR_COST_OF_PURCHASES_")
 							.arg(Text::formatCurrency(_costTotal)));
