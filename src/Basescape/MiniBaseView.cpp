@@ -305,7 +305,7 @@ void MiniBaseView::draw()
 /**
  * Selects the base the mouse is hovered over.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void MiniBaseView::mouseOver(Action* action, State* state)
 {
@@ -321,7 +321,7 @@ void MiniBaseView::mouseOver(Action* action, State* state)
 /**
  * Deselects the base the mouse was hovered over.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void MiniBaseView::mouseOut(Action* action, State* state)
 {

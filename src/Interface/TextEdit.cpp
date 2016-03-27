@@ -428,7 +428,7 @@ bool TextEdit::exceedsMaxWidth(wchar_t fontChar) // private.
 /**
  * Focuses this TextEdit when it's pressed on; position caret otherwise.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void TextEdit::mousePress(Action* action, State* state)
 {
@@ -470,7 +470,7 @@ void TextEdit::mousePress(Action* action, State* state)
  * Changes this TextEdit according to keyboard input and unfocuses the text if
  * Enter is pressed.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void TextEdit::keyboardPress(Action* action, State* state)
 {

@@ -40,13 +40,13 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a blank list with the specified size and position.
+ * Sets up the blank TextList with a specified size and position.
  * @note A sound policy is to specify the list-height as a multiple-of-8 + 1
  * pixels (8 being the height of the small font -1px).
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- X position in pixels (default 0)
- * @param y			- Y position in pixels (default 0)
+ * @param x			- x-position in pixels (default 0)
+ * @param y			- y-position in pixels (default 0)
  */
 TextList::TextList(
 		int width,
@@ -116,7 +116,7 @@ TextList::TextList(
 }
 
 /**
- * Deletes all the stuff contained in the list.
+ * Deletes all the stuff contained in this TextList.
  */
 TextList::~TextList()
 {
@@ -149,9 +149,9 @@ TextList::~TextList()
 }
 
 /**
-* Changes the position of the surface in the X axis.
-* @param x - X position in pixels
-*/
+ * Sets the position of the surface in the x-axis.
+ * @param x - x-position in pixels
+ */
 void TextList::setX(int x)
 {
 	Surface::setX(x);
@@ -165,9 +165,9 @@ void TextList::setX(int x)
 }
 
 /**
-* Changes the position of the surface in the Y axis.
-* @param y - Y position in pixels
-*/
+ * Sets the position of the surface in the y-axis.
+ * @param y - y-position in pixels
+ */
 void TextList::setY(int y)
 {
 	Surface::setY(y);
@@ -181,8 +181,8 @@ void TextList::setY(int y)
 }
 
 /**
- * Gets the arrowsLeftEdge.
- * @return, arrowsLeftEdge
+ * Gets the ArrowButtons' left-edge.
+ * @return, left edge in pixels
  */
 int TextList::getArrowsLeftEdge()
 {
@@ -190,8 +190,8 @@ int TextList::getArrowsLeftEdge()
 }
 
 /**
- * Gets the arrowsRightEdge.
- * @return, arrowsRightEdge
+ * Gets the ArrowButtons' right-edge.
+ * @return, right edge in pixels
  */
 int TextList::getArrowsRightEdge()
 {
@@ -199,7 +199,7 @@ int TextList::getArrowsRightEdge()
 }
 
 /**
- * Unpresses all the arrow buttons.
+ * Unpresses all the arrow-buttons.
  * @param state - pointer to running state
  */
 void TextList::unpress(State* state)
@@ -220,7 +220,7 @@ void TextList::unpress(State* state)
 }
 
 /**
- * Changes the color of a specific Text object in the list.
+ * Sets the color of a specific Text object in this TextList.
  * @param row		- row number
  * @param column	- column number
  * @param color		- text color
@@ -241,7 +241,7 @@ void TextList::setCellColor(
 }
 
 /**
- * Changes the text color of a whole row in the list.
+ * Sets the text-color of a whole row in this TextList.
  * @param row		- row number
  * @param color		- text color
  * @param contrast	- true for high contrast (default false)
@@ -265,7 +265,7 @@ void TextList::setRowColor(
 }
 
 /**
- * Returns the text of a specific Text object in the list.
+ * Gets the text of a specific Text object in this TextList.
  * @param row		- row number
  * @param column	- column number
  * @return, text string
@@ -278,7 +278,7 @@ std::wstring TextList::getCellText(
 }
 
 /**
- * Changes the text of a specific Text object in the list.
+ * Sets the text of a specific Text object in this TextList.
  * @param row		- row number
  * @param column	- column number
  * @param text		- text string
@@ -293,9 +293,9 @@ void TextList::setCellText(
 }
 
 /**
- * Returns the X position of a specific text column in the list.
+ * Gets the x-position of a specific text column in this TextList.
  * @param column - column number
- * @return, X position in pixels
+ * @return, x-position in pixels
  */
 int TextList::getColumnX(size_t column) const
 {
@@ -303,9 +303,9 @@ int TextList::getColumnX(size_t column) const
 }
 
 /**
- * Returns the Y position of a specific text row in the list.
+ * Gets the y-position of a specific text row in this TextList.
  * @param row - row number
- * @return, Y position in pixels
+ * @return, y-position in pixels
  */
 int TextList::getRowY(size_t row) const
 {
@@ -313,7 +313,7 @@ int TextList::getRowY(size_t row) const
 }
 
 /**
- * Returns the height of a specific text row in the list.
+ * Gets the height of a specific text row in this TextList.
  * @param row - row number
  * @return, height in pixels
  *
@@ -323,7 +323,7 @@ int TextList::getTextHeight(size_t row) const // myk002
 } */
 
 /**
- * Returns the number of lines of a specific text row in the list.
+ * Gets the number of lines of a specific text row in this TextList.
  * @param row - row number
  * @return, number of lines
  *
@@ -333,7 +333,7 @@ int TextList::getNumTextLines(size_t row) const // myk002
 } */
 
 /**
- * Returns the amount of text rows stored in the list.
+ * Gets the quantity of text rows stored in this TextList.
  * @return, number of rows
  */
 size_t TextList::getTexts() const
@@ -342,7 +342,7 @@ size_t TextList::getTexts() const
 }
 
 /**
- * Returns the amount of physical rows stored in the list.
+ * Gets the quantity of physical rows stored in this TextList.
  * @return, number of rows
  */
 size_t TextList::getRows() const
@@ -351,7 +351,7 @@ size_t TextList::getRows() const
 }
 
 /**
- * Returns the amount of visible rows stored in the list.
+ * Gets the quantity of visible rows stored in this TextList.
  * @return, number of rows
  */
 size_t TextList::getVisibleRows() const
@@ -360,7 +360,7 @@ size_t TextList::getVisibleRows() const
 }
 
 /**
- * Adds a new row of text to the list automatically creating the required Text
+ * Adds a new row of text to this TextList automatically creating the required Text
  * objects lined up where they need to be.
  * @param cols	- number of columns
  * @param ...	- text for each cell in the new row
@@ -462,7 +462,7 @@ void TextList::addRow(
 	}
 
 
-	if (_arrowPos != -1) // Place arrow buttons
+	if (_arrowPos != -1) // Place arrow-buttons
 	{
 		ArrowShape
 			shape1,
@@ -513,7 +513,7 @@ void TextList::addRow(
 }
 
 /**
- * Changes the columns that the list contains.
+ * Sets the columns that this TextList contains.
  * @note While rows can be unlimited, columns need to be specified since they
  * can have various widths for lining up the text.
  * @param cols	- number of columns
@@ -538,11 +538,11 @@ void TextList::setColumns(
 }
 
 /**
- * Replaces a certain amount of colors in the palette of all the text contained
- * in the list.
+ * Replaces a certain quantity of colors in the palette of all the text contained
+ * in this TextList.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace (default 0)
- * @param ncolors		- amount of colors to replace (default 256)
+ * @param ncolors		- quantity of colors to replace (default 256)
  */
 void TextList::setPalette(
 		SDL_Color* const colors,
@@ -582,8 +582,8 @@ void TextList::setPalette(
 }
 
 /**
- * Changes the resources for the text in the list and calculates the selector
- * and visible amount of rows.
+ * Changes the resources for the text in this TextList and calculates the selector
+ * and visible quantity of rows.
  * @param big	- pointer to large-size font
  * @param small	- pointer to small-size font
  * @param lang	- pointer to current language
@@ -612,7 +612,7 @@ void TextList::initText(
 }
 
 /**
- * Changes the height of the text list.
+ * Sets the height of the TextList.
  * @param height - new height in pixels
  */
 void TextList::setHeight(int height)
@@ -628,7 +628,7 @@ void TextList::setHeight(int height)
 }
 
 /**
- * Changes the color of the text in the list.
+ * Sets the color of the text in this TextList.
  * @note This doesn't change the color of existing text - just the color of text
  * added from then on.
  * @param color - color value
@@ -653,7 +653,7 @@ void TextList::setColor(Uint8 color)
 }
 
 /**
- * Returns the color of the text in the list.
+ * Gets the color of the text in this TextList.
  * @return, color value
  */
 Uint8 TextList::getColor() const
@@ -662,7 +662,7 @@ Uint8 TextList::getColor() const
 }
 
 /**
- * Changes the secondary color of the text in the list.
+ * Sets the secondary color of the text in this TextList.
  * @param color - color value
  */
 void TextList::setSecondaryColor(Uint8 color)
@@ -671,7 +671,7 @@ void TextList::setSecondaryColor(Uint8 color)
 }
 
 /**
- * Returns the secondary color of the text in the list.
+ * Gets the secondary color of the text in this TextList.
  * @return, color value
  */
 Uint8 TextList::getSecondaryColor() const
@@ -712,7 +712,7 @@ void TextList::setWordWrap(bool wrap)
 }
 
 /**
- * Changes the horizontal alignment of the text in the list.
+ * Sets the horizontal alignment of the text in this TextList.
  * @note This doesn't change the alignment of existing text just the alignment
  * of text added from then on.
  * @param align	- horizontal alignment
@@ -747,7 +747,7 @@ void TextList::setDot(bool dot)
 }
 
 /**
- * If enabled the list will respond to player input highlighting selected rows
+ * If enabled this TextList will respond to player input highlighting selected rows
  * and receiving clicks.
  * @param selectable - selectable setting (default true)
  */
@@ -757,7 +757,7 @@ void TextList::setSelectable(bool selectable)
 }
 
 /**
- * Changes the text list to use the big-size font.
+ * Sets the TextList to use the big-size font.
  */
 void TextList::setBig()
 {
@@ -774,7 +774,7 @@ void TextList::setBig()
 }
 
 /**
- * Changes the text list to use the small-size font.
+ * Sets the TextList to use the small-size font.
  */
 void TextList::setSmall()
 {
@@ -801,7 +801,7 @@ void TextList::setCondensed(bool condensed)
 }
 
 /**
- * Returns the currently selected row if the text list is selectable.
+ * Gets the currently selected row if the TextList is selectable.
  * @return, selected row (-1 if none)
  */
 size_t TextList::getSelectedRow() const
@@ -813,7 +813,7 @@ size_t TextList::getSelectedRow() const
 }
 
 /**
- * Changes the surface used to draw the background of the selector.
+ * Sets the surface used to draw the background of the selector.
  * @param bg - new background
  */
 void TextList::setBackground(Surface* bg)
@@ -823,7 +823,7 @@ void TextList::setBackground(Surface* bg)
 }
 
 /**
- * Changes the horizontal margin placed around the text.
+ * Sets the horizontal margin placed around the text.
  * @param margin - margin in pixels (default 0)
  */
 void TextList::setMargin(int margin)
@@ -832,7 +832,7 @@ void TextList::setMargin(int margin)
 }
 
 /**
- * Returns the margin of the text in the list.
+ * Gets the margin of the text in this TextList.
  * @return, margin in pixels
  */
 int TextList::getMargin() const
@@ -841,7 +841,7 @@ int TextList::getMargin() const
 }
 
 /**
- * Changes the color of the arrow buttons in the list.
+ * Sets the color of the arrow-buttons in this TextList.
  * @param color - color value
  */
 void TextList::setArrowColor(Uint8 color)
@@ -852,7 +852,7 @@ void TextList::setArrowColor(Uint8 color)
 }
 
 /**
- * Sets the position of the column of arrow buttons in the text list.
+ * Sets the position of the column of arrow-buttons in the TextList.
  * @param pos	- X in pixels (-1 to disable)
  * @param type	- arrow orientation type
  */
@@ -951,7 +951,7 @@ void TextList::onRightArrowRelease(ActionHandler handler)
 }
 
 /**
- * Removes all the rows currently stored in the list.
+ * Removes all the rows currently stored in this TextList.
  */
 void TextList::clearList()
 {
@@ -980,7 +980,7 @@ void TextList::clearList()
 }
 
 /**
- * Scrolls the text in the list up by one row or to the top.
+ * Scrolls the text in this TextList up by one row or to the top.
  * @param toMax			- true scrolls to the top of the list; false one row up (default false)
  * @param scrollByWheel	- true uses wheel scroll (default false)
  */
@@ -1008,9 +1008,9 @@ void TextList::scrollUp(
 }
 
 /**
- * Scrolls the text in the list down by one row or to the bottom.
+ * Scrolls the text in this TextList down by one row or to the bottom.
  * @param toMax			- true to scroll to the bottom of the list; false = one row down (default false)
- * @param scrollByWheel	- true uses wheel scroll (default false)
+ * @param scrollByWheel	- true uses wheel-scroll (default false)
  */
 void TextList::scrollDown(
 		bool toMax,
@@ -1034,8 +1034,8 @@ void TextList::scrollDown(
 }
 
 /**
- * Updates the visibility of the arrow buttons according to the current scroll
- * position.
+ * Updates the visibility of the arrow-buttons according to the current
+ * scroll-position.
  */
 void TextList::updateArrows()
 {
@@ -1048,29 +1048,29 @@ void TextList::updateArrows()
 }
 
 /**
- * Updates the amount of visible rows according to the current list and font size.
+ * Updates the quantity of visible rows according to the current list and font-size.
  */
 void TextList::updateVisible()
 {
 	_visibleRows = 0;
 
-	const int delta_Y (_font->getHeight() + _font->getSpacing());
+	const int delta_y (_font->getHeight() + _font->getSpacing());
 	for (int
 			y = 0;
 			y < getHeight();
-			y += delta_Y)
+			y += delta_y)
 	{
 		++_visibleRows;
 	}
 
-	if (getHeight() > static_cast<int>(_visibleRows - 1) * delta_Y)
+	if (getHeight() > static_cast<int>(_visibleRows - 1) * delta_y)
 		--_visibleRows;
 
 	updateArrows();
 }
 
 /**
- * Changes whether the list can be scrolled.
+ * Sets whether this TextList can be scrolled.
  * @param scrolling - true allows scrolling (default true)
  * @param scrollPos - custom +/- x_offset for the scroll buttons (default 0)
  */
@@ -1090,7 +1090,7 @@ void TextList::setScrollable(
 }
 
 /**
- * Draws the text list and all the text contained within.
+ * Draws the TextList and all the text contained within.
  */
 void TextList::draw()
 {
@@ -1140,7 +1140,7 @@ void TextList::draw()
 }
 
 /**
- * Blits the text list and selector.
+ * Blits the TextList and selector.
  * @param surface - pointer to a surface to blit onto
  */
 void TextList::blit(Surface* surface)
@@ -1195,9 +1195,9 @@ void TextList::blit(Surface* surface)
 }
 
 /**
- * Passes events to arrow buttons.
+ * Passes events to arrow-buttons.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void TextList::handle(Action* action, State* state)
 {
@@ -1265,7 +1265,7 @@ void TextList::think()
 /**
  * Ignores any mouse clicks that aren't on a row.
  * @param action	- pointer to an Action
- * @param state		- state that the action handlers belong to
+ * @param state		- state that the ActionHandlers belong to
  */
 void TextList::mousePress(Action* action, State* state)
 {
@@ -1297,7 +1297,7 @@ void TextList::mousePress(Action* action, State* state)
 /**
  * Ignores any mouse clicks that aren't on a row.
  * @param action	- pointer to an Action
- * @param state		- state that the action handlers belong to
+ * @param state		- state that the ActionHandlers belong to
  */
 void TextList::mouseRelease(Action* action, State* state)
 {
@@ -1313,7 +1313,7 @@ void TextList::mouseRelease(Action* action, State* state)
 /**
  * Ignores any mouse clicks that aren't on a row.
  * @param action	- pointer to an Action
- * @param state		- state that the action handlers belong to
+ * @param state		- state that the ActionHandlers belong to
  */
 void TextList::mouseClick(Action* action, State* state)
 {
@@ -1337,7 +1337,7 @@ void TextList::mouseClick(Action* action, State* state)
 /**
  * Selects the row the mouse is over.
  * @param action	- pointer to an Action
- * @param state		- state that the action handlers belong to
+ * @param state		- state that the ActionHandlers belong to
  */
 void TextList::mouseOver(Action* action, State* state)
 {
@@ -1399,7 +1399,7 @@ void TextList::mouseOver(Action* action, State* state)
 /**
  * Deselects the row.
  * @param action	- pointer to an Action
- * @param state		- state that the action handlers belong to
+ * @param state		- state that the ActionHandlers belong to
  */
 void TextList::mouseOut(Action* action, State* state)
 {
@@ -1410,8 +1410,8 @@ void TextList::mouseOut(Action* action, State* state)
 }
 
 /**
- * Gets the scroll depth.
- * @return, scroll depth
+ * Gets the scroll-depth.
+ * @return, scroll-depth
  */
 size_t TextList::getScroll()
 {
@@ -1419,8 +1419,8 @@ size_t TextList::getScroll()
 }
 
 /**
- * Sets the scroll depth.
- * @param scroll - set the scroll depth (default 0)
+ * Sets the scroll-depth.
+ * @param scroll - scroll-depth (default 0)
  */
 void TextList::scrollTo(size_t scroll)
 {
@@ -1430,24 +1430,24 @@ void TextList::scrollTo(size_t scroll)
 											   std::min(static_cast<int>(_rows.size() - _visibleRows),
 														static_cast<int>(scroll))));
 
-		draw(); // can't just set _redraw here because Reasons!
+		draw(); // can't just set '_redraw' here because Reasons!
 		updateArrows();
 	}
 }
 
 /**
- * Hooks up the button to work as part of an existing combobox,
- * updating the selection when it's pressed.
- * @param comboBox - pointer to a combobox
+ * Hooks up the button to work as part of an existing ComboBox updating the
+ * selection when it's pressed.
+ * @param box - pointer to a ComboBox
  */
-void TextList::setComboBox(ComboBox* comboBox)
+void TextList::setComboBox(ComboBox* box)
 {
-	_comboBox = comboBox;
+	_comboBox = box;
 }
 
 /**
- * Gets the combobox that this list is attached to, if any.
- * @return, pointer to the associated combobox
+ * Gets the ComboBox that this TextList is attached to if any.
+ * @return, pointer to the associated ComboBox
  */
 ComboBox* TextList::getComboBox() const
 {
@@ -1455,8 +1455,8 @@ ComboBox* TextList::getComboBox() const
 }
 
 /**
- * Sets the border color.
- * @param color - border color
+ * Sets the border-color.
+ * @param color - border-color
  */
 void TextList::setBorderColor(Uint8 color)
 {
@@ -1466,8 +1466,8 @@ void TextList::setBorderColor(Uint8 color)
 }
 
 /**
- * Gets the scrollbar color.
- * @return, scrollbar color
+ * Gets the scrollbar-color.
+ * @return, scrollbar-color
  */
 Uint8 TextList::getScrollbarColor() const
 {

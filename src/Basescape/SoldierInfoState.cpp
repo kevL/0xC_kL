@@ -555,7 +555,7 @@ void SoldierInfoState::init()
 			color = GREEN;
 
 		_txtRecovery->setSecondaryColor(color);
-		_txtRecovery->setText(tr("STR_WOUND_RECOVERY").arg(tr("STR_DAY", recovery)));
+		_txtRecovery->setText(tr("STR_WOUND_RECOVERY_").arg(tr("STR_DAY", recovery)));
 		_txtRecovery->setVisible();
 
 		_txtDay->setColor(color);
@@ -575,13 +575,13 @@ void SoldierInfoState::init()
 
 	if (_game->getSavedGame()->getMonthsPassed() != -1)
 	{
-		_txtMissions->setText(tr("STR_MISSIONS").arg(_soldier->getMissions()));
-		_txtKills->setText(tr("STR_KILLS").arg(_soldier->getKills()));
+		_txtMissions->setText(tr("STR_MISSIONS_").arg(_soldier->getMissions()));
+		_txtKills->setText(tr("STR_KILLS_").arg(_soldier->getKills()));
 	}
 	else // skirmish Mode.
 	{
-		_txtMissions->setText(tr("STR_MISSIONS").arg(L"-"));
-		_txtKills->setText(tr("STR_KILLS").arg(L"-"));
+		_txtMissions->setText(tr("STR_MISSIONS_").arg(L"-"));
+		_txtKills->setText(tr("STR_KILLS_").arg(L"-"));
 	}
 
 	_txtPsionic->setVisible(_soldier->inPsiTraining());

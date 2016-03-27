@@ -183,7 +183,7 @@ void ScrollBar::setPalette(
 /**
  * Automatically updates the scrollbar when the mouse moves.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void ScrollBar::handle(Action* action, State* state)
 {
@@ -226,7 +226,7 @@ void ScrollBar::blit(Surface* surface)
 /**
  * The scrollbar only moves while the button is pressed.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void ScrollBar::mousePress(Action* action, State* state)
 {
@@ -254,7 +254,7 @@ void ScrollBar::mousePress(Action* action, State* state)
 /**
  * The scrollbar stops moving when the button is released.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void ScrollBar::mouseRelease(Action* action, State* state)
 {
@@ -295,7 +295,7 @@ void ScrollBar::scroll()
 /**
  * Handles keyboard presses.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void ScrollBar::keyboardPress(Action* action, State* state)
 {
@@ -344,7 +344,7 @@ void ScrollBar::keyboardPress(Action* action, State* state)
 /**
  * Handles keyboard releases.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void ScrollBar::keyboardRelease(Action* action, State* state)
 {

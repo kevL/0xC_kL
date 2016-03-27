@@ -391,8 +391,8 @@ void SoldierInfoDeadState::init()
 
 
 	_txtRank->setText(tr("STR_RANK_").arg(tr(_soldier->getRankString())));
-	_txtMissions->setText(tr("STR_MISSIONS").arg(_soldier->getMissions()));
-	_txtKills->setText(tr("STR_KILLS").arg(_soldier->getKills()));
+	_txtMissions->setText(tr("STR_MISSIONS_").arg(_soldier->getMissions()));
+	_txtKills->setText(tr("STR_KILLS_").arg(_soldier->getKills()));
 
 	if (current->psiSkill != 0)
 	{

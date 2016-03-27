@@ -393,7 +393,7 @@ void ComboBox::think()
 /**
  * Passes events to internal components.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void ComboBox::handle(Action* action, State* state)
 {

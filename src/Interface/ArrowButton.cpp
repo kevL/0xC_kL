@@ -358,7 +358,7 @@ void ArrowButton::scroll()
 /**
  * Starts scrolling the associated list.
  * @param action - pointer to an Action
- * @param state - state that the action handlers belong to
+ * @param state - state that the ActionHandlers belong to
  */
 void ArrowButton::mousePress(Action* action, State* state)
 {
@@ -378,7 +378,7 @@ void ArrowButton::mousePress(Action* action, State* state)
 /**
  * Stops scrolling the associated list.
  * @param action - pointer to an Action
- * @param state - state that the action handlers belong to
+ * @param state - state that the ActionHandlers belong to
  */
 void ArrowButton::mouseRelease(Action* action, State* state)
 {
@@ -394,7 +394,7 @@ void ArrowButton::mouseRelease(Action* action, State* state)
 /**
  * Scrolls the associated list to top or bottom.
  * @param action - pointer to an Action
- * @param state - state that the action handlers belong to
+ * @param state - state that the ActionHandlers belong to
  */
 void ArrowButton::mouseClick(Action* action, State* state)
 {

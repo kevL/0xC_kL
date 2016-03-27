@@ -147,7 +147,7 @@ void ScannerView::draw()
 /**
  * Handles clicks on the scanner view.
  * @param action - pointer to an Action
- * @param state - state that the action handlers belong to
+ * @param state - state that the ActionHandlers belong to
  */
 void ScannerView::mouseClick(Action*, State*)
 {}

@@ -44,7 +44,7 @@ class ScrollBar;
 
 
 /**
- * List of Text's split into rows & columns.
+ * A TextList is a list of Text's split into rows & columns.
  * @note Contains a set of Text's that are automatically lined up by rows and
  * columns like a big table making it easy to manage them together.
  */
@@ -114,118 +114,118 @@ private:
 
 
 	public:
-		/// Creates a text list with the specified size and position.
+		/// Creates a TextList with the specified size and position.
 		TextList(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the text list.
+		/// Cleans up the TextList.
 		~TextList();
 
-		/// Sets the X position of the surface.
+		/// Sets the x-position of the Surface.
 		void setX(int x) override;
-		/// Sets the Y position of the surface.
+		/// Sets the y-position of the Surface.
 		void setY(int y) override;
 
-		/// Gets the arrowsLeftEdge.
+		/// Gets the ArrowButtons' left-edge.
 		int getArrowsLeftEdge();
-		/// Gets the arrowsRightEdge.
+		/// Gets the ArrowButtons' right-edge.
 		int getArrowsRightEdge();
 
-		/// Unpresses the surface.
+		/// Unpresses the Surface.
 		void unpress(State* state) override;
 
-		/// Sets the text color of a certain cell.
+		/// Sets the text-color of a certain cell.
 		void setCellColor(
 				size_t row,
 				size_t column,
 				Uint8 color,
 				bool contrast = false);
-		/// Sets the text color of a certain row.
+		/// Sets the text-color of a certain row.
 		void setRowColor(
 				size_t row,
 				Uint8 color,
 				bool contrast = false);
 
-		/// Gets the text of a certain cell.
+		/// Gets the text-string of a certain cell.
 		std::wstring getCellText(
 				size_t row,
 				size_t column) const;
-		/// Sets the text of a certain cell.
+		/// Sets the text-string of a certain cell.
 		void setCellText(
 				size_t row,
 				size_t column,
 				const std::wstring& text);
 
-		/// Gets the X position of a certain column.
+		/// Gets the x-position of a certain column.
 		int getColumnX(size_t column) const;
-		/// Gets the Y position of a certain row.
+		/// Gets the y-position of a certain row.
 		int getRowY(size_t row) const;
 
-		/// Gets the height of the row text in pixels
+		/// Gets the height of a text-row in pixels
 //		int getTextHeight(size_t row) const;
-		/// Gets the number of lines in the wrapped text for the specified row.
+		/// Gets the number of lines in the wrapped text for a specified row.
 //		int getNumTextLines(size_t row) const;
 
-		/// Gets the amount of text in the list.
+		/// Gets the quantity of Texts in the list.
 		size_t getTexts() const;
-		/// Gets the amount of rows in the list.
+		/// Gets the quantity of rows in the list.
 		size_t getRows() const;
-		/// Gets the amount of visible rows in the list.
+		/// Gets the quantity of visible rows in the list.
 		size_t getVisibleRows() const;
 
-		/// Adds a new row to the text list.
+		/// Adds a new row to the TextList.
 		void addRow(
 				int cols,
 				...);
-		/// Sets the columns in the text list.
+		/// Sets the columns in the TextList.
 		void setColumns(
 				int cols,
 				...);
 
-		/// Sets the palette of the text list.
+		/// Sets the palette of the TextList.
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
-		/// Initializes the resources for the text list.
+		/// Initializes the resources for the TextList.
 		void initText(
 				Font* const big,
 				Font* const small,
 				const Language* const lang) override;
 
-		/// Sets the height of the surface.
+		/// Sets the height of the Surface.
 		void setHeight(int height) override;
 
-		/// Sets the text color of the text list.
+		/// Sets the text-color of the TextList.
 		void setColor(Uint8 color) override;
-		/// Gets the text color of the text list.
+		/// Gets the text-color of the TextList.
 		Uint8 getColor() const;
-		/// Sets the secondary color of the text list.
+		/// Sets the secondary color of the TextList.
 		void setSecondaryColor(Uint8 color) override;
-		/// Gets the secondary color of the text list.
+		/// Gets the secondary color of the TextList.
 		Uint8 getSecondaryColor() const;
 
-		/// Sets the text list's high contrast color setting.
+		/// Sets the TextList's high-contrast setting.
 		void setHighContrast(bool contrast = true);
-		/// Sets the text list's wordwrap setting.
+		/// Sets the TextList's wordwrap setting.
 		void setWordWrap(bool wrap = true);
 
-		/// Sets the text horizontal alignment of the text list.
+		/// Sets the horizontal alignment of the TextList.
 		void setAlign(
 				TextHAlign align,
 				int col = -1);
 
-		/// Sets whether to separate columns with dots.
+		/// Sets whether to add dots to rows.
 		void setDot(bool dot = true);
 
-		/// Sets whether the list is selectable.
+		/// Sets whether the TextList's rows are selectable and/or highlight on mouse-overs.
 		void setSelectable(bool selectable = true);
 
-		/// Sets the text size to big.
+		/// Sets the font-size to big.
 		void setBig();
-		/// Sets the text size to small.
+		/// Sets the font-size to small.
 		void setSmall();
 
 		/// Sets whether to condense columns instead of a table like layout.
@@ -234,83 +234,83 @@ private:
 		/// Sets the background for the selector.
 		void setBackground(Surface* bg);
 
-		/// Gets the selected row in the list.
+		/// Gets the selected row in the TextList.
 		size_t getSelectedRow() const;
 
-		/// Sets the margin of the text list.
+		/// Sets the margin of the TextList.
 		void setMargin(int margin = 0);
-		/// Gets the margin of the text list.
+		/// Gets the margin of the TextList.
 		int getMargin() const;
 
-		/// Sets the arrow color of the text list.
+		/// Sets the arrow-color of the TextList.
 		void setArrowColor(Uint8 color);
-		/// Sets the arrow column of the text list.
+		/// Sets the arrow-column of the TextList.
 		void setArrowColumn(
 				int pos,
 				ArrowOrientation type);
 
-		/// Hooks an action handler to a mouse click on the left arrows.
+		/// Hooks an action handler to a mouse-click on the left arrows.
 		void onLeftArrowClick(ActionHandler handler);
-		/// Hooks an action handler to a mouse press over the left arrows.
+		/// Hooks an action handler to a mouse-press over the left arrows.
 		void onLeftArrowPress(ActionHandler handler);
-		/// Hooks an action handler to a mouse release over the left arrows.
+		/// Hooks an action handler to a mouse-release over the left arrows.
 		void onLeftArrowRelease(ActionHandler handler);
-		/// Hooks an action handler to a mouse click on the right arrows.
+		/// Hooks an action handler to a mouse-click on the right arrows.
 		void onRightArrowClick(ActionHandler handler);
-		/// Hooks an action handler to a mouse press over the right arrows.
+		/// Hooks an action handler to a mouse-press over the right arrows.
 		void onRightArrowPress(ActionHandler handler);
-		/// Hooks an action handler to a mouse release over the right arrows.
+		/// Hooks an action handler to a mouse-release over the right arrows.
 		void onRightArrowRelease(ActionHandler handler);
 
-		/// Clears the list.
+		/// Clears the TextList.
 		void clearList();
 
-		/// Scrolls the list up.
+		/// Scrolls the TextList up.
 		void scrollUp(
 				bool toMax = false,
 				bool scrollByWheel = false);
-		/// Scrolls the list down.
+		/// Scrolls the TextList down.
 		void scrollDown(
 				bool toMax = false,
 				bool scrollByWheel = false);
-		/// Sets the list scrollable.
+		/// Sets the TextList scrollable.
 		void setScrollable(
 				bool scrollable = true,
 				int scrollPos = 0);
 
-		/// Draws the text onto the text list.
+		/// Draws the text onto the TextList.
 		void draw() override;
-		/// Blits the text list onto another surface.
+		/// Blits the TextList onto another Surface.
 		void blit(Surface* surface) override;
-		/// Thinks arrow buttons.
+		/// Thinks the arrow-buttons.
 		void think() override;
 
-		/// Handles arrow buttons.
+		/// Handles the arrow-buttons.
 		void handle(Action* action, State* state) override;
-		/// Special handling for mouse presses.
+		/// Special handling for mouse-presses.
 		void mousePress(Action* action, State* state) override;
-		/// Special handling for mouse releases.
+		/// Special handling for mouse-releases.
 		void mouseRelease(Action* action, State* state) override;
-		/// Special handling for mouse clicks.
+		/// Special handling for mouse-clicks.
 		void mouseClick(Action* action, State* state) override;
-		/// Special handling for mouse hovering.
+		/// Special handling for mouse-hovering.
 		void mouseOver(Action* action, State* state) override;
-		/// Special handling for mouse hovering out.
+		/// Special handling for mouse-hovering out.
 		void mouseOut(Action* action, State* state) override;
 
-		/// get the scroll depth
+		/// Gets the current scroll-depth.
 		size_t getScroll();
-		/// set the scroll depth
+		/// Sets the scroll-depth.
 		void scrollTo(size_t scroll = 0);
 
-		/// Attaches this button to a combobox.
-		void setComboBox(ComboBox* comboBox);
-		/// Checks for a combobox.
+		/// Attaches a button to a ComboBox.
+		void setComboBox(ComboBox* box);
+		/// Checks for a ComboBox.
 		ComboBox* getComboBox() const;
 
-		///
+		/// Sets the border-color.
 		void setBorderColor(Uint8 color) override;
-		///
+		/// Gets the border-color.
 		Uint8 getScrollbarColor() const;
 };
 

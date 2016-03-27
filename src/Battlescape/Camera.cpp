@@ -117,7 +117,7 @@ void Camera::intMinMax( // private.
 /**
  * Handles this Camera's mouse-press events.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void Camera::mousePress(Action* action, State*)
 {
@@ -145,7 +145,7 @@ void Camera::mousePress(Action* action, State*)
 /**
  * Handles this Camera's mouse-release events.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void Camera::mouseRelease(Action* action, State*)
 {
@@ -178,7 +178,7 @@ void Camera::mouseRelease(Action* action, State*)
 /**
  * Handles this Camera's mouse-over events.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void Camera::mouseOver(Action* action, State*)
 {

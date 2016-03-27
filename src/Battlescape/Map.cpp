@@ -2112,7 +2112,7 @@ void Map::setPalette(
 /**
  * Handles mouse presses on the Map.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void Map::mousePress(Action* action, State* state)
 {
@@ -2123,7 +2123,7 @@ void Map::mousePress(Action* action, State* state)
 /**
  * Handles mouse releases on the Map.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void Map::mouseRelease(Action* action, State* state)
 {
@@ -2134,7 +2134,7 @@ void Map::mouseRelease(Action* action, State* state)
 /**
  * Handles mouse over events on the Map.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void Map::mouseOver(Action* action, State* state)
 {
@@ -2160,7 +2160,7 @@ void Map::findMousePointer(Position& point)
 /**
  * Handles keyboard presses on the Map.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void Map::keyboardPress(Action* action, State* state)
 {
@@ -2171,7 +2171,7 @@ void Map::keyboardPress(Action* action, State* state)
 /**
  * Handles keyboard releases on the Map.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void Map::keyboardRelease(Action* action, State* state)
 {

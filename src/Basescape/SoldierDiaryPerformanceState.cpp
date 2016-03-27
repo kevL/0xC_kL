@@ -276,7 +276,7 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 //	_txtUFO->setColor(PINK);
 	_txtUFO->setText(tr("STR_MISSIONS_BY_UFO"));
 
-	Uint8 color		= _game->getRuleset()->getInterface("awards")->getElement("list")->color2;
+	Uint8 color		 (_game->getRuleset()->getInterface("awards")->getElement("list")->color2);
 	_colorBtnUp		= _game->getRuleset()->getInterface("awards")->getElement("button2")->color;
 	_colorBtnDown	= _game->getRuleset()->getInterface("awards")->getElement("button2")->color2;
 	_color1stCol	= _game->getRuleset()->getInterface("awards")->getElement("list2")->color;
@@ -498,7 +498,7 @@ void SoldierDiaryPerformanceState::init()
 		if (_soldierId >= _listDead->size())
 			_soldierId = 0;
 
-		const SoldierDead* const deadSoldier = _listDead->at(_soldierId);
+		const SoldierDead* const deadSoldier (_listDead->at(_soldierId));
 		_diary = deadSoldier->getDiary();
 
 		_txtTitle->setText(deadSoldier->getName());
@@ -508,7 +508,7 @@ void SoldierDiaryPerformanceState::init()
 		if (_soldierId >= _list->size())
 			_soldierId = 0;
 
-		const Soldier* const soldier = _list->at(_soldierId);
+		const Soldier* const soldier (_list->at(_soldierId));
 		_diary = soldier->getDiary();
 
 		_txtTitle->setText(soldier->getName());
@@ -526,13 +526,13 @@ void SoldierDiaryPerformanceState::init()
 		wst4;
 
 	if (_diary->getMissionTotal() != 0) // Mission stats ->
-		wst1 = tr("STR_MISSIONS").arg(_diary->getMissionTotal());
+		wst1 = tr("STR_MISSIONS_").arg(_diary->getMissionTotal());
 	if (_diary->getWinTotal() != 0)
-		wst2 = tr("STR_WINS").arg(_diary->getWinTotal());
+		wst2 = tr("STR_WINS_").arg(_diary->getWinTotal());
 	if (_diary->getScoreTotal() != 0)
-		wst3 = tr("STR_SCORE_VALUE").arg(_diary->getScoreTotal());
+		wst3 = tr("STR_SCORE_VALUE_").arg(_diary->getScoreTotal());
 	if (_diary->getDaysWoundedTotal() != 0)
-		wst4 = tr("STR_DAYS_WOUNDED").arg(_diary->getDaysWoundedTotal()).arg(L" dy");
+		wst4 = tr("STR_DAYS_WOUNDED_").arg(_diary->getDaysWoundedTotal()).arg(L" dy");
 
 	_lstMissionTotals->addRow(
 						4,
@@ -543,17 +543,17 @@ void SoldierDiaryPerformanceState::init()
 
 
 	if (_diary->getKillTotal() != 0) // Kill stats ->
-		wst1 = tr("STR_KILLS").arg(_diary->getKillTotal());
+		wst1 = tr("STR_KILLS_").arg(_diary->getKillTotal());
 	else
 		wst1 = L"";
 
 	if (_diary->getStunTotal() != 0)
-		wst2 = tr("STR_STUNS").arg(_diary->getStunTotal());
+		wst2 = tr("STR_STUNS_").arg(_diary->getStunTotal());
 	else
 		wst2 = L"";
 
 	if (_diary->getScorePoints() != 0)
-		wst3 = tr("STR_SCORE_VALUE").arg(_diary->getScorePoints());
+		wst3 = tr("STR_SCORE_VALUE_").arg(_diary->getScorePoints());
 	else
 		wst3 = L"";
 
@@ -565,7 +565,7 @@ void SoldierDiaryPerformanceState::init()
 
 
 	const size_t lstCols (6);
-	TextList* const lstArray[lstCols] = // Mission & Kill stats ->
+	TextList* const lstArray[lstCols] // Mission & Kill stats ->
 	{
 		_lstRace,
 		_lstRank,
@@ -575,7 +575,7 @@ void SoldierDiaryPerformanceState::init()
 		_lstUFO
 	};
 
-	const std::map<std::string, int> mapArray[lstCols] =
+	const std::map<std::string, int> mapArray[lstCols]
 	{
 		_diary->getAlienRaceTotal(),
 		_diary->getAlienRankTotal(),
@@ -665,10 +665,10 @@ void SoldierDiaryPerformanceState::drawMedals() // private.
 		}
 
 		const RuleAward* awardRule;
-		const size_t scroll = _lstAwards->getScroll();
+		const size_t scroll (_lstAwards->getScroll());
 		int sprite;
 
-		size_t j = 0;
+		size_t j (0);
 		for (std::vector<SoldierAward*>::const_iterator
 				i = _diary->getSoldierAwards()->begin();
 				i != _diary->getSoldierAwards()->end();

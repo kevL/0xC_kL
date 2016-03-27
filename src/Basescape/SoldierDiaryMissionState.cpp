@@ -164,17 +164,17 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 
 //	_txtScore->setColor(YELLOW);
 //	_txtScore->setSecondaryColor(WHITE);
-	_txtScore->setText(tr("STR_SCORE_VALUE").arg(stats->at(missionId)->score));
+	_txtScore->setText(tr("STR_SCORE_VALUE_").arg(stats->at(missionId)->score));
 
 //	_txtMissionType->setColor(YELLOW);
 //	_txtMissionType->setSecondaryColor(WHITE);
-	_txtMissionType->setText(tr("STR_MISSION_TYPE").arg(tr(stats->at(missionId)->type))); // 'type' was, getMissionTypeLowerCase()
+	_txtMissionType->setText(tr("STR_MISSION_TYPE_").arg(tr(stats->at(missionId)->type))); // 'type' was, getMissionTypeLowerCase()
 
 	if (stats->at(missionId)->ufo != "NO_UFO")
 	{
 //		_txtUFO->setColor(YELLOW);
 //		_txtUFO->setSecondaryColor(WHITE);
-		_txtUFO->setText(tr("STR_UFO_TYPE").arg(tr(stats->at(missionId)->ufo)));
+		_txtUFO->setText(tr("STR_UFO_TYPE_").arg(tr(stats->at(missionId)->ufo)));
 	}
 	else
 		_txtUFO->setVisible(false);
@@ -183,7 +183,7 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	{
 //		_txtRace->setColor(YELLOW);
 //		_txtRace->setSecondaryColor(WHITE);
-		_txtRace->setText(tr("STR_RACE_TYPE").arg(tr(stats->at(missionId)->alienRace)));
+		_txtRace->setText(tr("STR_RACE_TYPE_").arg(tr(stats->at(missionId)->alienRace)));
 	}
 	else
 		_txtRace->setVisible(false);
@@ -194,9 +194,9 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 //		_txtDaylight->setColor(YELLOW);
 //		_txtDaylight->setSecondaryColor(WHITE);
 		if (stats->at(missionId)->shade < MissionStatistics::NIGHT_SHADE)
-			_txtDaylight->setText(tr("STR_DAYLIGHT_TYPE").arg(tr("STR_DAY")));
+			_txtDaylight->setText(tr("STR_DAYLIGHT_TYPE_").arg(tr("STR_DAY")));
 		else
-			_txtDaylight->setText(tr("STR_DAYLIGHT_TYPE").arg(tr("STR_NIGHT")));
+			_txtDaylight->setText(tr("STR_DAYLIGHT_TYPE_").arg(tr("STR_NIGHT")));
 	}
 	else
 		_txtDaylight->setVisible(false);
@@ -206,11 +206,11 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 //		_txtDaysWounded->setColor(YELLOW);
 //		_txtDaysWounded->setSecondaryColor(WHITE);
 		if (daysWounded == -1)
-			_txtDaysWounded->setText(tr("STR_DAYS_WOUNDED").arg(tr("STR_KIA")).arg(L""));
+			_txtDaysWounded->setText(tr("STR_DAYS_WOUNDED_").arg(tr("STR_KIA")).arg(L""));
 		else if (daysWounded == -2)
-			_txtDaysWounded->setText(tr("STR_DAYS_WOUNDED").arg(tr("STR_MIA")).arg(L""));
+			_txtDaysWounded->setText(tr("STR_DAYS_WOUNDED_").arg(tr("STR_MIA")).arg(L""));
 		else
-			_txtDaysWounded->setText(tr("STR_DAYS_WOUNDED").arg(daysWounded).arg(L" dy"));
+			_txtDaysWounded->setText(tr("STR_DAYS_WOUNDED_").arg(daysWounded).arg(L" dy"));
 	}
 	else
 		_txtDaysWounded->setVisible(false);
@@ -266,7 +266,7 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	{
 //		_txtKills->setColor(YELLOW);
 //		_txtKills->setSecondaryColor(WHITE);
-		_txtKills->setText(tr("STR_MARKS").arg(killQty));
+		_txtKills->setText(tr("STR_TAKEDOWNS_").arg(killQty));
 	}
 	else
 		_txtKills->setVisible(false);
@@ -275,7 +275,7 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	{
 //		_txtPoints->setColor(YELLOW);
 //		_txtPoints->setSecondaryColor(WHITE);
-		_txtPoints->setText(tr("STR_POINTS_VALUE").arg(points));
+		_txtPoints->setText(tr("STR_POINTS_VALUE_").arg(points));
 	}
 	else
 		_txtPoints->setVisible(false);

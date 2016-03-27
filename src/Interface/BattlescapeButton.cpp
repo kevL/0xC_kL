@@ -94,7 +94,7 @@ void BattlescapeButton::setGroup(BattlescapeButton** group)
  * Sets the button as the pressed button if it's part of a group and inverts the
  * colors when pressed.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void BattlescapeButton::mousePress(Action* action, State* state)
 {
@@ -121,7 +121,7 @@ void BattlescapeButton::mousePress(Action* action, State* state)
 /**
  * Sets the button as the released button if it's part of a group.
  * @param action	- pointer to an Action
- * @param state		- State that the action handlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void BattlescapeButton::mouseRelease(Action* action, State* state)
 {
