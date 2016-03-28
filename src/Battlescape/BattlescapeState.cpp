@@ -1497,27 +1497,18 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 }
 
 /**
- * Processes any presses on the map.
+ * Processes any presses on the Map.
  * @param action - pointer to an Action
  */
 void BattlescapeState::mapPress(Action* action)
 {
-	// don't handle mouseclicks over the buttons (it overlaps with map surface)
 	if (_mouseOverIcons == false
 		&& action->getDetails()->button.button == Options::battleDragScrollButton)
 	{
 		_isMouseScrolling = true;
 		_isMouseScrolled = false;
 
-//		SDL_GetMouseState(&_xBeforeMouseScrolling, &_yBeforeMouseScrolling);
 		_offsetPreDragScroll = _map->getCamera()->getMapOffset();
-
-/*		if (!Options::battleDragScrollInvert && _cursorPosition.z == 0)
-		{
-			_cursorPosition.x = static_cast<int>(action->getDetails()->motion.x);
-			_cursorPosition.y = static_cast<int>(action->getDetails()->motion.y);
-			_cursorPosition.z = 1; // the Z is irrelevant to our mouse position, but we can use it as a boolean to check if the position is set or not
-		} */
 
 		_totalMouseMoveX =
 		_totalMouseMoveY = 0;
@@ -1527,7 +1518,7 @@ void BattlescapeState::mapPress(Action* action)
 }
 
 /**
- * Processes any clicks.
+ * Processes any mouse-clicks on the Map.
  * @param action - pointer to an Action
  */
 void BattlescapeState::mapClick(Action* action)
@@ -1551,7 +1542,6 @@ void BattlescapeState::mapClick(Action* action)
 
 			_isMouseScrolled =
 			_isMouseScrolling = false;
-//			stopScrolling(action); // newScroll
 		}
 	}
 
@@ -1559,20 +1549,15 @@ void BattlescapeState::mapClick(Action* action)
 	{
 		// While scrolling, other buttons are ineffective
 		if (action->getDetails()->button.button == Options::battleDragScrollButton)
-		{
 			_isMouseScrolling = false;
-//			stopScrolling(action); // newScroll
-		}
 		else
 			return;
 
-		// Check if we have to revoke the scrolling, because it was too short in time, so it was a click
+		// Check if the scrolling has to be revoked because it was too short in time so it was a click.
 		if (_mouseOverThreshold == false
 			&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 		{
 			_isMouseScrolled = false;
-//			_map->getCamera()->setMapOffset(_offsetPreDragScroll); // oldScroll
-//			stopScrolling(action); // newScroll
 		}
 
 		if (_isMouseScrolled == true)
@@ -1595,12 +1580,15 @@ void BattlescapeState::mapClick(Action* action)
 
 		if (_battleSave->getTile(pos) != nullptr)
 		{
-			if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-				_battleGame->primaryAction(pos);
-			else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT
-				&& playableUnitSelected() == true)
+			switch (action->getDetails()->button.button)
 			{
-				_battleGame->secondaryAction(pos);
+				case SDL_BUTTON_LEFT:
+					_battleGame->primaryAction(pos);
+					break;
+
+				case SDL_BUTTON_RIGHT:
+					if (playableUnitSelected() == true)
+						_battleGame->secondaryAction(pos);
 			}
 
 //			if (_battleSave->getDebugTac() == true)
@@ -1622,7 +1610,7 @@ void BattlescapeState::mapClick(Action* action)
 }
 
 /**
- * Handles mouse entering the map surface.
+ * Handles mouse entering the Map surface.
  * @param action - pointer to an Action
  */
 void BattlescapeState::mapIn(Action*)
@@ -1630,35 +1618,6 @@ void BattlescapeState::mapIn(Action*)
 	_isMouseScrolling = false;
 	_map->setButtonsPressed(static_cast<Uint8>(Options::battleDragScrollButton), false);
 }
-
-/**
- * Move the mouse back to where it started after we finish drag scrolling.
- * @param action - pointer to an Action
- *
-void BattlescapeState::stopScrolling(Action* action)
-{
-	if (Options::battleDragScrollInvert)
-	{
-		SDL_WarpMouse(static_cast<Uint16>(_xBeforeMouseScrolling), static_cast<Uint16>(_yBeforeMouseScrolling));
-		action->setMouseAction(_xBeforeMouseScrolling, _yBeforeMouseScrolling, _map->getX(), _map->getY());
-		_battleGame->setupSelector();
-		if (_battleGame->getTacticalAction()->actor == nullptr && (_save->getSide() == FACTION_PLAYER || _save->getDebugTac() == true))
-			_map->setSelectorType(CT_NORMAL);
-	}
-	else
-	{
-		SDL_WarpMouse(static_cast<Uint16>(_cursorPosition.x), static_cast<Uint16>(_cursorPosition.y));
-		action->setMouseAction(
-				static_cast<int>(static_cast<double>(_cursorPosition.x) / action->getXScale()),
-				static_cast<int>(static_cast<double>(_cursorPosition.y) / action->getYScale()),
-				_game->getScreen()->getSurface()->getX(), _game->getScreen()->getSurface()->getY());
-
-		_map->setSelectorPosition(
-							static_cast<int>(static_cast<double>(_cursorPosition.x) / action->getXScale()),
-							static_cast<int>(static_cast<double>(_cursorPosition.y) / action->getYScale()));
-	}
-	_cursorPosition.z = 0; // reset our "mouse position stored" flag
-} */
 
 /**
  * Takes care of any events from the core game engine.
@@ -1675,18 +1634,6 @@ inline void BattlescapeState::handle(Action* action)
 				|| action->getDetails()->type == SDL_MOUSEBUTTONUP)))
 	{
 		State::handle(action);
-/*		if (_isMouseScrolling && !Options::battleDragScrollInvert) // newScroll
-		{
-			_map->setSelectorPosition(
-								(_cursorPosition.x - _game->getScreen()->getCursorLeftBlackBand()) / action->getXScale(),
-								(_cursorPosition.y - _game->getScreen()->getCursorTopBlackBand()) / action->getYScale());
-//			_map->setSelectorPosition( // newScroll
-//								static_cast<int>(static_cast<double>(_cursorPosition.x) / action->getXScale()),
-//								static_cast<int>(static_cast<double>(_cursorPosition.y) / action->getYScale()));
-//			_map->setSelectorPosition(
-//								static_cast<int>(static_cast<double>(_xBeforeMouseScrolling) / action->getXScale()),
-//								static_cast<int>(static_cast<double>(_yBeforeMouseScrolling) / action->getYScale()));
-		} */
 
 		if (action->getDetails()->type == SDL_KEYDOWN)
 		{
@@ -1698,9 +1645,9 @@ inline void BattlescapeState::handle(Action* action)
 				{
 					if (_battleSave->getDebugTac() == false)
 					{
-						if (action->getDetails()->key.keysym.sym == SDLK_d				// "ctrl-d" - enable debug mode.
-							&& allowButtons() == true)									// - disallow turning debug-mode on during a non-
-						{																//   player turn else the HUD won't show back up.
+						if (action->getDetails()->key.keysym.sym == SDLK_d		// "ctrl-d" - enable debug mode.
+							&& allowButtons() == true)							// - disallow turning debug-mode on during a non-
+						{														//   player turn else the HUD won't show back up.
 							beep = true;
 							_battleSave->debugTac();
 							printDebug(L"debug set active");
@@ -3437,7 +3384,7 @@ void BattlescapeState::toggleKneelButton(BattleUnit* unit)
 }
 
 /**
- * Animates things on the map and in the HUD.
+ * Animates things on the Map and in the HUD.
  */
 void BattlescapeState::animate()
 {
@@ -3759,7 +3706,8 @@ SavedBattleGame* BattlescapeState::getSavedBattleGame() const
 }
 
 /**
- * Gets pointer to the map. Some states need this info.
+ * Gets pointer to the Map.
+ * @note Some states need this info.
  * @return, pointer to Map
  */
 Map* BattlescapeState::getMap() const

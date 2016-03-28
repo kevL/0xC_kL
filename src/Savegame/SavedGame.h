@@ -408,9 +408,9 @@ private:
 		///  Returns the list of alien bases.
 		std::vector<AlienBase*>* getAlienBases();
 
-		/// Toggles and returns the debug flag.
+		/// Toggles and returns the Geoscape debug flag.
 		bool toggleDebugActive();
-		/// Gets the debug flag.
+		/// Gets the current Geoscape debug flag.
 		bool getDebugGeo() const;
 
 		/// Gets the list of research scores.

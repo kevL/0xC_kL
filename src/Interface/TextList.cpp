@@ -404,7 +404,7 @@ void TextList::addRow(
 
 		txt->setText(va_arg(args, wchar_t*));
 
-		// grab this before enabling word wrap so it can be used to calculate the total row height below
+		// grab this before enabling word-wrap so it can be used to calculate the total row-height below
 		const int vertPad (_font->getHeight() - txt->getTextHeight());
 
 		if (_wrap == true // wordwrap text if necessary

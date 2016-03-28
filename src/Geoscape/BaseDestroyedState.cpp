@@ -106,10 +106,10 @@ BaseDestroyedState::BaseDestroyedState(
 
 
 	const double
-		lon = base->getLongitude(),
-		lat = base->getLatitude();
-	const std::vector<Region*>* regionList = _game->getSavedGame()->getRegions();
-	std::vector<Region*>::const_iterator pRegion = regionList->begin();
+		lon (base->getLongitude()),
+		lat (base->getLatitude());
+	const std::vector<Region*>* regionList (_game->getSavedGame()->getRegions());
+	std::vector<Region*>::const_iterator pRegion (regionList->begin());
 	for (
 			;
 			pRegion != regionList->end();
@@ -119,9 +119,9 @@ BaseDestroyedState::BaseDestroyedState(
 			break;
 	}
 
-	const AlienMission* const mission = _game->getSavedGame()->findAlienMission(
+	const AlienMission* const mission (_game->getSavedGame()->findAlienMission(
 																			(*pRegion)->getRules()->getType(),
-																			alm_RETAL);
+																			alm_RETAL));
 
 	for (std::vector<Ufo*>::const_iterator
 			i = _game->getSavedGame()->getUfos()->begin();
@@ -169,7 +169,7 @@ void BaseDestroyedState::finish()
 								(static_cast<int>(_game->getSavedGame()->getDifficulty()) + 1) * 200,
 								true);
 
-	std::vector<Base*>* const baseList = _game->getSavedGame()->getBases();
+	std::vector<Base*>* const baseList (_game->getSavedGame()->getBases());
 	for (std::vector<Base*>::const_iterator
 			i = baseList->begin();
 			i != baseList->end();
@@ -189,7 +189,7 @@ void BaseDestroyedState::finish()
 }
 
 /**
- * Deletes the base and scores aLien victory points.
+ * Deletes the Base and scores aLien victory points.
  * @param action - pointer to an Action
  */
 void BaseDestroyedState::btnOkClick(Action*)
@@ -198,7 +198,7 @@ void BaseDestroyedState::btnOkClick(Action*)
 }
 
 /**
- * Deletes the base and scores aLien victory points, and centers the Globe.
+ * Deletes the Base and scores aLien victory points, and centers the Globe.
  * @param action - pointer to an Action
  */
 void BaseDestroyedState::btnCenterClick(Action*)

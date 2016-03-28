@@ -98,7 +98,6 @@ namespace
 /// A helper class/struct for drawing shadows & noise on the Globe.
 struct GlobeStaticData
 {
-
 	/// array of shading gradient
 	Sint16 shade_gradient[240];
 	/// size of x & y of noise surface
@@ -2004,13 +2003,13 @@ void Globe::drawDetail()
 
 
 	// Debug stuff follows ...
-	static bool canSwitchDebugType;
+	static bool switchDebugType;
 
 	if (_game->getSavedGame()->getDebugGeo() == true)
 	{
-		canSwitchDebugType = true;
+		switchDebugType = true;
 		int
-			cycleCur (_game->getDebugCycle()),
+			cycle (_game->getDebugCycle()),
 			area (0),
 			color (0);
 
@@ -2018,15 +2017,15 @@ void Globe::drawDetail()
 		{
 			case DTG_COUNTRY:
 			{
-				if (cycleCur >= static_cast<int>(_game->getSavedGame()->getCountries()->size()))
-					_game->setDebugCycle(cycleCur = -1);
+				if (cycle >= static_cast<int>(_game->getSavedGame()->getCountries()->size()))
+					_game->setDebugCycle(cycle = -1);
 
 				for (std::vector<Country*>::const_iterator
 						i = _game->getSavedGame()->getCountries()->begin();
 						i != _game->getSavedGame()->getCountries()->end();
 						++i, ++area)
 				{
-					if (cycleCur == area || cycleCur == -1)
+					if (cycle == area || cycle == -1)
 					{
 						color += 10;
 						for (size_t
@@ -2047,7 +2046,7 @@ void Globe::drawDetail()
 						}
 					}
 
-					if (area == cycleCur)
+					if (area == cycle)
 					{
 						if (_game->getSavedGame()->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
 							_game->getSavedGame()->setDebugArg((*i)->getType());
@@ -2061,15 +2060,15 @@ void Globe::drawDetail()
 
 			case DTG_REGION:
 			{
-				if (cycleCur >= static_cast<int>(_game->getSavedGame()->getRegions()->size()))
-					_game->setDebugCycle(cycleCur = -1);
+				if (cycle >= static_cast<int>(_game->getSavedGame()->getRegions()->size()))
+					_game->setDebugCycle(cycle = -1);
 
 				for (std::vector<Region*>::const_iterator
 						i = _game->getSavedGame()->getRegions()->begin();
 						i != _game->getSavedGame()->getRegions()->end();
 						++i, ++area)
 				{
-					if (cycleCur == area || cycleCur == -1)
+					if (cycle == area || cycle == -1)
 					{
 						color += 10;
 						for (size_t
@@ -2090,7 +2089,7 @@ void Globe::drawDetail()
 						}
 					}
 
-					if (area == cycleCur)
+					if (area == cycle)
 					{
 						if (_game->getSavedGame()->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
 							_game->getSavedGame()->setDebugArg((*i)->getType());
@@ -2119,8 +2118,8 @@ void Globe::drawDetail()
 					}
 				}
 
-				if (cycleCur >= limit)
-					_game->setDebugCycle(cycleCur = -1);
+				if (cycle >= limit)
+					_game->setDebugCycle(cycle = -1);
 
 				for (std::vector<Region*>::const_iterator
 						i = _game->getSavedGame()->getRegions()->begin();
@@ -2134,7 +2133,7 @@ void Globe::drawDetail()
 							j != (*i)->getRules()->getMissionZones().end();
 							++j, ++area, ++zoneType)
 					{
-						if (cycleCur == area || cycleCur == -1)
+						if (cycle == area || cycle == -1)
 						{
 							color += 2;
 							for (std::vector<MissionArea>::const_iterator
@@ -2155,7 +2154,7 @@ void Globe::drawDetail()
 							}
 						}
 
-						if (area == cycleCur)
+						if (area == cycle)
 						{
 							if (_game->getSavedGame()->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
 							{
@@ -2169,15 +2168,15 @@ void Globe::drawDetail()
 							_game->getSavedGame()->setDebugArg("");
 					}
 
-					if (area == cycleCur)
+					if (area == cycle)
 						break;
 				}
 			}
 		}
 	}
-	else if (canSwitchDebugType == true) // effectively toggles debugMode.
+	else if (switchDebugType == true) // effectively toggles debugMode.
 	{
-		canSwitchDebugType = false;
+		switchDebugType = false;
 		switch (_debugType)
 		{
 			case DTG_COUNTRY:
@@ -2679,6 +2678,7 @@ void Globe::mouseClick(Action* action, State* state)
 	if (isNaNorInf(lon,lat) == false)
 	{
 		InteractiveSurface::mouseClick(action, state);
+
 		if (btnId == SDL_BUTTON_RIGHT)
 			center(lon,lat);
 	}

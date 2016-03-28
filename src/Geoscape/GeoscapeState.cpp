@@ -999,7 +999,7 @@ void GeoscapeState::handle(Action* action)
 		if (Options::debug == true
 			&& (SDL_GetModState() & KMOD_CTRL) != 0)
 		{
-			if (action->getDetails()->key.keysym.sym == SDLK_d)				// "ctrl-d" - enable/disable debug mode
+			if (action->getDetails()->key.keysym.sym == SDLK_d)					// "ctrl-d" - enable/disable debug mode
 			{
 				beep = true;
 				if (_gameSave->toggleDebugActive() == true)
@@ -1014,14 +1014,14 @@ void GeoscapeState::handle(Action* action)
 			{
 				switch (action->getDetails()->key.keysym.sym)
 				{
-					case SDLK_c:		// "ctrl-c" - cycle areas
-						beep = true;	// NOTE: Also handled in Game::run() where the 'cycle' is determined.
+					case SDLK_c:												// "ctrl-c" - cycle areas
+						beep = true;											// NOTE: Also handled in Game::run() where the 'cycle' is determined.
 						_txtDebug->setText(L"");
 						fabricateDebugPretext();
 						break;
 
-					case SDLK_a:		// "ctrl-a" - delete soldier awards
-						beep = true;	// NOTE: Clears awards of the living, not of the Memorial Dead.
+					case SDLK_a:												// "ctrl-a" - delete soldier awards
+						beep = true;											// NOTE: Clears awards of the living, not of the Memorial Dead.
 						_txtDebug->setText(L"SOLDIER COMMENDATIONS DELETED");
 						for (std::vector<Base*>::const_iterator
 								i = _gameSave->getBases()->begin();
@@ -1100,9 +1100,11 @@ void GeoscapeState::fabricateDebugPretext() // private.
 		case DTG_COUNTRY:
 			_stDebug += "country : ";
 			break;
+
 		case DTG_REGION:
 			_stDebug += "region : ";
 			break;
+
 		case DTG_ZONE:
 			_stDebug += "missionZones : ";
 	}
@@ -3412,9 +3414,12 @@ void GeoscapeState::globeClick(Action* action)
 				<< std::endl
 				<< L"DEG Lon " << lonDeg << L"  Lat " << latDeg
 				<< std::endl
-				<< L"texture " << texture << L" shade " << shade;
+				<< L"texture " << texture;
+		if (texture != -1)
+			woststr << L" shade " << shade;
 
 		_txtDebug->setText(woststr.str());
+		// TODO: If paused redraw HUD.
 	}
 }
 

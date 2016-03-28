@@ -260,11 +260,11 @@ void AlienMission::start(size_t countdown)
 
 /**
  * Advances this AlienMission.
- * @param engine	- reference the Game data
- * @param globe		- reference the Globe
+ * @param game	- reference to the Game
+ * @param globe	- reference to the Globe
  */
 void AlienMission::think(
-		Game& engine,
+		const Game& game,
 		const Globe& globe)
 {
 	if (_waveCount < _missionRule.getWaveTotal())
@@ -273,7 +273,7 @@ void AlienMission::think(
 			_spawnTime -= 30;
 		else
 		{
-			const Ruleset& rules (*engine.getRuleset());
+			const Ruleset& rules (*game.getRuleset());
 			const MissionWave& wave (_missionRule.getWave(_waveCount));
 			const UfoTrajectory& trajectory (*rules.getUfoTrajectory(wave.trajectory));
 

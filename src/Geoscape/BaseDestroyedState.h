@@ -34,7 +34,7 @@ class Window;
 
 
 /**
- * Base Destroyed screen.
+ * The BaseDestroyed screen.
  */
 class BaseDestroyedState
 	:
@@ -52,11 +52,11 @@ private:
 
 
 	public:
-		/// Creates the Base Destroyed state.
+		/// Creates the BaseDestroyed state.
 		BaseDestroyedState(
 						const Base* const base,
 						Globe* const globe);
-		/// Cleans up the Base Destroyed state.
+		/// Cleans up the BaseDestroyed state.
 		~BaseDestroyedState();
 
 		///

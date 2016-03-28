@@ -152,7 +152,7 @@ private:
 
 		/// Handles UFO spawning for the mission.
 		void think(
-				Game& engine,
+				const Game& game,
 				const Globe& globe);
 
 		/// Handles UFO reaching a waypoint.

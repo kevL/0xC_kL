@@ -114,6 +114,7 @@ FundingState::FundingState()
 	_txtScore->setText(tr("STR_SCORE"));
 
 	_lstCountries->setColumns(6, 94,60,6,54,6,54);
+	_lstCountries->setMargin();
 	_lstCountries->setDot();
 	for (std::vector<Country*>::const_iterator
 			i = _game->getSavedGame()->getCountries()->begin();
@@ -128,15 +129,15 @@ FundingState::FundingState()
 			woststr5;
 
 		const std::vector<int>
-			funds = (*i)->getFunding(),
-			actX = (*i)->getActivityXCom(),
-			actA = (*i)->getActivityAlien();
+			funds ((*i)->getFunding()),
+			actX ((*i)->getActivityXCom()),
+			actA ((*i)->getActivityAlien());
 
 		woststr1 << L'\x01' << Text::formatCurrency(funds.at(funds.size() - 1));
 
 		if (funds.size() > 1)
 		{
-			int change = funds.back() - funds.at(funds.size() - 2);
+			int change (funds.back() - funds.at(funds.size() - 2));
 			if (change > 0)
 				woststr2 << L'\x01' << L'+';
 			else if (change < 0)
@@ -155,7 +156,7 @@ FundingState::FundingState()
 			woststr3 << Text::formatCurrency(0);
 		}
 
-		int score = actX.at(actX.size() - 1) - actA.at(actA.size() - 1);
+		int score (actX.at(actX.size() - 1) - actA.at(actA.size() - 1));
 		if (score > -1)
 			woststr4 << L' ' << L' ';
 		else
@@ -177,8 +178,8 @@ FundingState::FundingState()
 	}
 
 
-	const int gross = _game->getSavedGame()->getCountryFunding();
-	int net = gross;
+	const int gross (_game->getSavedGame()->getCountryFunding());
+	int net (gross);
 
 	for (std::vector<Base*>::const_iterator
 		i = _game->getSavedGame()->getBases()->begin();

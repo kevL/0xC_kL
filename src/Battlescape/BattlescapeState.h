@@ -95,8 +95,6 @@ private:
 		_showConsole,
 		_totalMouseMoveX,
 		_totalMouseMoveY;
-//		_xBeforeMouseScrolling,
-//		_yBeforeMouseScrolling;
 	size_t
 		_fuseFrame,
 		_targeterFrame;
@@ -272,17 +270,14 @@ private:
 		/// Runs the timers and handles popups.
 		void think() override;
 
-		/// Handler for moving mouse over the map.
+		/// Handler for moving mouse over the Map.
 		void mapOver(Action* action);
-		/// Handler for pressing the map.
+		/// Handler for pressing the Map.
 		void mapPress(Action* action);
-		/// Handler for clicking the map.
+		/// Handler for clicking the Map.
 		void mapClick(Action* action);
-		/// Handler for entering with mouse to the map surface.
+		/// Handler for the mouse entering the Map surface.
 		void mapIn(Action* action);
-
-		/// Move the mouse back to where it started after we finish drag scrolling.
-//		void stopScrolling(Action* action);
 
 		/// Handles keypresses.
 		void handle(Action* action) override;
@@ -429,11 +424,11 @@ private:
 		/// Shows a selected unit's kneeled state.
 		void toggleKneelButton(BattleUnit* unit);
 
-		/// Animates map objects on the map, also smoke,fire, ...
+		/// Animates map objects on the Map, also smoke,fire, ...
 		void animate();
 		/// Handles the top battle game state.
 		void handleState();
-		/// Sets the state timer interval.
+		/// Sets the state-timer interval.
 		void setStateInterval(Uint32 interval);
 
 		/// Gets game.

@@ -49,9 +49,7 @@ RuleRegion::~RuleRegion()
 			i = _cities.begin();
 			i != _cities.end();
 			++i)
-	{
 		delete *i;
-	}
 }
 
 /**
@@ -197,20 +195,20 @@ bool RuleRegion::insideRegion(
  */
 std::vector<RuleCity*>* RuleRegion::getCities()
 {
-/*	if (_cities.empty() == true) // kL_note: unused for now. Just return the cities, thanks anyway.
-		for (std::vector<MissionZone>::const_iterator
-				i = _missionZones.begin();
-				i != _missionZones.end();
-				++i)
-			for (std::vector<MissionArea>::const_iterator
-					j = i->areas.begin();
-					j != i->areas.end();
-					++j)
-				if (j->isPoint() == true && j->site.empty() == false)
-					_cities.push_back(new RuleCity(
-												j->site,
-												j->lonMin,
-												j->latMin)); */
+//	if (_cities.empty() == true) // kL_note: unused for now. Just return the cities, thanks anyway.
+//		for (std::vector<MissionZone>::const_iterator
+//				i = _missionZones.begin();
+//				i != _missionZones.end();
+//				++i)
+//			for (std::vector<MissionArea>::const_iterator
+//					j = i->areas.begin();
+//					j != i->areas.end();
+//					++j)
+//				if (j->isPoint() == true && j->site.empty() == false)
+//					_cities.push_back(new RuleCity(
+//												j->site,
+//												j->lonMin,
+//												j->latMin));
 	return &_cities;
 }
 
@@ -264,12 +262,12 @@ std::pair<double, double> RuleRegion::getRandomPoint(size_t zone) const
 
 		const size_t pick (RNG::pick(_missionZones[zone].areas.size()));
 		const double
-			lon = RNG::generate(
+			lon (RNG::generate(
 							_missionZones[zone].areas[pick].lonMin,
-							_missionZones[zone].areas[pick].lonMax),
-			lat = RNG::generate(
+							_missionZones[zone].areas[pick].lonMax)),
+			lat (RNG::generate(
 							_missionZones[zone].areas[pick].latMin,
-							_missionZones[zone].areas[pick].latMax);
+							_missionZones[zone].areas[pick].latMax));
 
 		return std::make_pair(lon,lat);
 	}
@@ -279,9 +277,9 @@ std::pair<double, double> RuleRegion::getRandomPoint(size_t zone) const
 }
 
 /**
- * Gets the area data for the mission point in the specified zone and coordinates.
- * @param zone		- the target zone
- * @param target	- the target coordinates
+ * Gets the area data for a mission-point in the specified zone and coordinates.
+ * @param zone		- the target-zone
+ * @param target	- the target-coordinates
  * @return, a MissionArea from which to extract coordinates, textures, or any other pertinent information
  */
 MissionArea RuleRegion::getMissionPoint(
@@ -308,8 +306,8 @@ MissionArea RuleRegion::getMissionPoint(
 	return MissionArea();
 }
 
-/*
- * Gets the area data for the random mission point in this Region.
+/**
+ * Gets the area-data for the random mission-point in this Region.
  * @return, a MissionArea from which to extract coordinates, textures, or any other pertinent information
  *
 MissionArea RuleRegion::getRandomMissionPoint(size_t zone) const

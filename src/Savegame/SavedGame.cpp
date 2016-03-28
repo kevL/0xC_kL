@@ -2033,7 +2033,7 @@ std::vector<AlienBase*>* SavedGame::getAlienBases()
 }
 
 /**
- * Toggles and returns the debug flag.
+ * Toggles and returns the Geoscape debug flag.
  * @return, true if debug active
  */
 bool SavedGame::toggleDebugActive()
@@ -2042,7 +2042,7 @@ bool SavedGame::toggleDebugActive()
 }
 
 /**
- * Gets the current debug flag.
+ * Gets the current Geoscape debug flag.
  * @return, true if debug active
  */
 bool SavedGame::getDebugGeo() const

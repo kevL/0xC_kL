@@ -90,8 +90,8 @@ const RuleBaseFacility* BaseFacility::getRules() const
 }
 
 /**
- * Returns this BaseFacility's x-position on the base grid.
- * @return, x-position in grid squares
+ * Returns this BaseFacility's x-position on the base-grid.
+ * @return, x-position in grid-squares
  */
 int BaseFacility::getX() const
 {
@@ -99,8 +99,8 @@ int BaseFacility::getX() const
 }
 
 /**
- * Changes this BaseFacility's x-position on the base grid.
- * @param x - x-position in grid squares
+ * Changes this BaseFacility's x-position on the base-grid.
+ * @param x - x-position in grid-squares
  */
 void BaseFacility::setX(int x)
 {
@@ -108,8 +108,8 @@ void BaseFacility::setX(int x)
 }
 
 /**
- * Returns this BaseFacility's y-position on the base grid.
- * @return, y-position in grid squares
+ * Returns this BaseFacility's y-position on the base-grid.
+ * @return, y-position in grid-squares
  */
 int BaseFacility::getY() const
 {
@@ -117,8 +117,8 @@ int BaseFacility::getY() const
 }
 
 /**
- * Changes this BaseFacility's y-position on the base grid.
- * @param y - y-position in grid squares
+ * Changes this BaseFacility's y-position on the base-grid.
+ * @param y - y-position in grid-squares
  */
 void BaseFacility::setY(int y)
 {
