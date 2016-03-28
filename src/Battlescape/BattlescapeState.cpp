@@ -119,8 +119,6 @@ BattlescapeState::BattlescapeState()
 		_battleSave(_game->getSavedGame()->getBattleSave()),
 		_rules(_game->getRuleset()),
 //		_reserve(0),
-//		_xBeforeMouseScrolling(0),
-//		_yBeforeMouseScrolling(0),
 		_totalMouseMoveX(0),
 		_totalMouseMoveY(0),
 		_mouseOverThreshold(false),
@@ -1177,7 +1175,7 @@ void BattlescapeState::think()
 }
 
 /**
- * Processes any mouse moving over the Map.
+ * Processes any mouse-motion over the Map.
  * @param action - pointer to an Action
  */
 void BattlescapeState::mapOver(Action* action)
@@ -1185,14 +1183,14 @@ void BattlescapeState::mapOver(Action* action)
 	if (_isMouseScrolling == true
 		&& action->getDetails()->type == SDL_MOUSEMOTION)
 	{
-		// The following is the workaround for a rare problem where sometimes
-		// the mouse-release event is missed for any reason.
-		// (checking: is the dragScroll-mouse-button still pressed?)
-		// However if the SDL is also missed the release event, then it is to no avail :(
+		// What follows is a workaround for a rare problem where sometimes the
+		// mouse-release event is missed for some reason. However if SDL also
+		// missed the release event then this won't work.
+		//
+		// This part handles the release if it's missed and another button is used.
 		if ((SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
 		{
-			// so we missed again the mouse-release :(
-			// Check if we have to revoke the scrolling, because it was too short in time, so it was a click
+			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
 			if (_mouseOverThreshold == false
 				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
@@ -1201,91 +1199,33 @@ void BattlescapeState::mapOver(Action* action)
 
 			_isMouseScrolled =
 			_isMouseScrolling = false;
-//			stopScrolling(action); // newScroll
-
 			return;
 		}
 
 		_isMouseScrolled = true;
 
-/*		// Set the mouse cursor back ( or not )
-		SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
-		SDL_WarpMouse(static_cast<Uint16>(_xBeforeMouseScrolling), static_cast<Uint16>(_yBeforeMouseScrolling));
-//		SDL_WarpMouse(_game->getScreen()->getWidth() / 2, _game->getScreen()->getHeight() / 2 - _map->getIconHeight() / 2); // newScroll
-		SDL_EventState(SDL_MOUSEMOTION, SDL_ENABLE); */
-
 		_totalMouseMoveX += static_cast<int>(action->getDetails()->motion.xrel);
 		_totalMouseMoveY += static_cast<int>(action->getDetails()->motion.yrel);
 
-		if (_mouseOverThreshold == false) // check threshold
+		if (_mouseOverThreshold == false)
 			_mouseOverThreshold = std::abs(_totalMouseMoveX) > Options::dragScrollPixelTolerance
 							   || std::abs(_totalMouseMoveY) > Options::dragScrollPixelTolerance;
 
 
-		if (Options::battleDragScrollInvert == true) // scroll. I don't use this
+		if (Options::battleDragScrollInvert == true) // scroll. I don't use inverted scrolling.
 		{
-/*			_map->getCamera()->setMapOffset(_mapOffsetBeforeMouseScrolling);
-			int scrollX = -(int)((double)_totalMouseMoveX / action->getXScale());
-			int scrollY = -(int)((double)_totalMouseMoveY / action->getYScale());
-			Position delta2 = _map->getCamera()->getMapOffset();
-			_map->getCamera()->scrollXY(scrollX, scrollY, true);
-			delta2 = _map->getCamera()->getMapOffset() - delta2;
-			if (scrollX != delta2.x || scrollY != delta2.y) // Keep the limits...
-			{
-				_totalMouseMoveX = -(int) (delta2.x * action->getXScale());
-				_totalMouseMoveY = -(int) (delta2.y * action->getYScale());
-			} */
-
 			_map->getCamera()->scrollXY(
 									static_cast<int>(static_cast<double>(-action->getDetails()->motion.xrel) / action->getXScale()),
 									static_cast<int>(static_cast<double>(-action->getDetails()->motion.yrel) / action->getYScale()),
 									false);
-
-			// We don't want to look the mouse-cursor jumping :)
-//			action->getDetails()->motion.x = static_cast<Uint16>(_xBeforeMouseScrolling);
-//			action->getDetails()->motion.y = static_cast<Uint16>(_yBeforeMouseScrolling);
-
 			_map->setSelectorType(CT_NONE);
 		}
 		else
 		{
-/*			Position delta = _map->getCamera()->getMapOffset();
-			_map->getCamera()->setMapOffset(_mapOffsetBeforeMouseScrolling);
-			int scrollX = (int)((double)_totalMouseMoveX / action->getXScale());
-			int scrollY = (int)((double)_totalMouseMoveY / action->getYScale());
-			Position delta2 = _map->getCamera()->getMapOffset();
-			_map->getCamera()->scrollXY(scrollX, scrollY, true);
-			delta2 = _map->getCamera()->getMapOffset() - delta2;
-			delta = _map->getCamera()->getMapOffset() - delta;
-			if (scrollX != delta2.x || scrollY != delta2.y) // Keep the limits...
-			{
-				_totalMouseMoveX = (int)(delta2.x * action->getXScale());
-				_totalMouseMoveY = (int)(delta2.y * action->getYScale());
-			} */
-
 			_map->getCamera()->scrollXY(
 									static_cast<int>(static_cast<double>(action->getDetails()->motion.xrel) * 3.62 / action->getXScale()),
 									static_cast<int>(static_cast<double>(action->getDetails()->motion.yrel) * 3.62 / action->getYScale()),
 									false);
-
-/*			Position delta = _map->getCamera()->getMapOffset();
-			delta = _map->getCamera()->getMapOffset() - delta;
-			_cursorPosition.x = std::min(
-									_game->getScreen()->getWidth() - static_cast<int>(Round(action->getXScale())),
-									std::max(0, _cursorPosition.x + static_cast<int>(Round(static_cast<double>(delta.x) * action->getXScale()))));
-			_cursorPosition.y = std::min(
-									_game->getScreen()->getHeight() - static_cast<int>(Round(action->getYScale())),
-									std::max(0, _cursorPosition.y + static_cast<int>(Round(static_cast<double>(delta.y) * action->getYScale())))); */
-/*			int barWidth = _game->getScreen()->getCursorLeftBlackBand();
-			int barHeight = _game->getScreen()->getCursorTopBlackBand();
-			int cursorX = _cursorPosition.x + Round(delta.x * action->getXScale());
-			int cursorY = _cursorPosition.y + Round(delta.y * action->getYScale());
-			_cursorPosition.x = std::min(_game->getScreen()->getWidth() - barWidth - (int)(Round(action->getXScale())), std::max(barWidth, cursorX));
-			_cursorPosition.y = std::min(_game->getScreen()->getHeight() - barHeight - (int)(Round(action->getYScale())), std::max(barHeight, cursorY)); */
-
-			// We don't want to look the mouse-cursor jumping :)
-//			action->getDetails()->motion.x = static_cast<Uint16>(_cursorPosition.x);
-//			action->getDetails()->motion.y = static_cast<Uint16>(_cursorPosition.y);
 		}
 
 		_game->getCursor()->handle(action);
@@ -1523,17 +1463,17 @@ void BattlescapeState::mapPress(Action* action)
  */
 void BattlescapeState::mapClick(Action* action)
 {
-	// The following is the workaround for a rare problem where sometimes
-	// the mouse-release event is missed for any reason.
-	// However if the SDL is also missed the release event, then it is to no avail :(
-	// (this part handles the release if it is missed and now another button is used)
+	// What follows is a workaround for a rare problem where sometimes the
+	// mouse-release event is missed for some reason. However if SDL also
+	// missed the release event then this won't work.
+	//
+	// This part handles the release if it's missed and another button is used.
 	if (_isMouseScrolling == true)
 	{
 		if (action->getDetails()->button.button != Options::battleDragScrollButton
 			&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
 		{
-			// so we missed again the mouse-release :(
-			// Check if we have to revoke the scrolling, because it was too short in time, so it was a click
+			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
 			if (_mouseOverThreshold == false
 				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
@@ -1545,23 +1485,21 @@ void BattlescapeState::mapClick(Action* action)
 		}
 	}
 
-	if (_isMouseScrolling == true) // DragScroll-Button release: release mouse-scroll-mode
+	if (_isMouseScrolling == true) // dragScroll-button release: release mouse-scroll-mode
 	{
-		// While scrolling, other buttons are ineffective
-		if (action->getDetails()->button.button == Options::battleDragScrollButton)
-			_isMouseScrolling = false;
-		else
+		if (action->getDetails()->button.button != Options::battleDragScrollButton) // other buttons are ineffective while scrolling
 			return;
 
-		// Check if the scrolling has to be revoked because it was too short in time so it was a click.
+		_isMouseScrolling = false;
+
+		// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
 		if (_mouseOverThreshold == false
 			&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 		{
 			_isMouseScrolled = false;
 		}
 
-		if (_isMouseScrolled == true)
-			return;
+		if (_isMouseScrolled == true) return;
 	}
 
 

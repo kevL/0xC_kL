@@ -2511,9 +2511,12 @@ void Globe::mouseOver(Action* action, State* state)
 		// What follows is a workaround for a rare problem where sometimes the
 		// mouse-release event is missed for some reason. However if SDL also
 		// missed the release event then this won't work.
+		//
+		// This part handles the release if it's missed and another button is used.
 		if ((SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::geoDragScrollButton)) == 0)
 		{
-			if (_mouseOverThreshold == false // check if the scrolling has to be revoked because it was too short in time and hence was a click
+			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
+			if (_mouseOverThreshold == false
 				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
 				center(
@@ -2523,7 +2526,6 @@ void Globe::mouseOver(Action* action, State* state)
 
 			_isMouseScrolled =
 			_isMouseScrolling = false;
-
 			return;
 		}
 		_isMouseScrolled = true;
@@ -2531,7 +2533,7 @@ void Globe::mouseOver(Action* action, State* state)
 		_totalMouseMoveX += static_cast<int>(action->getDetails()->motion.xrel);
 		_totalMouseMoveY += static_cast<int>(action->getDetails()->motion.yrel);
 
-		if (_mouseOverThreshold == false) // check threshold
+		if (_mouseOverThreshold == false)
 			_mouseOverThreshold = std::abs(_totalMouseMoveX) > Options::dragScrollPixelTolerance
 							   || std::abs(_totalMouseMoveY) > Options::dragScrollPixelTolerance;
 
@@ -2641,12 +2643,15 @@ void Globe::mouseClick(Action* action, State* state)
 	// What follows is a workaround for a rare problem where sometimes the
 	// mouse-release event is missed for some reason. However if SDL also
 	// missed the release event then this won't work.
-	if (_isMouseScrolling == true) // this part handles the release if it's missed and another button is used
+	//
+	// This part handles the release if it's missed and another button is used.
+	if (_isMouseScrolling == true)
 	{
 		if (btnId != Options::geoDragScrollButton
 			&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::geoDragScrollButton)) == 0)
 		{
-			if (_mouseOverThreshold == false // check if the scrolling has to be revoked because it was too short in time and hence was a click
+			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
+			if (_mouseOverThreshold == false
 				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
 				center(
@@ -2663,7 +2668,8 @@ void Globe::mouseClick(Action* action, State* state)
 
 		_isMouseScrolling = false;
 
-		if (_mouseOverThreshold == false // check if the scrolling has to be revoked because it was too short in time and hence was a click
+		// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
+		if (_mouseOverThreshold == false
 			&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 		{
 			_isMouseScrolled = false;

@@ -67,8 +67,6 @@ private:
 		_scrollKeyY,
 		_totalMouseMoveX,
 		_totalMouseMoveY;
-//		_xBeforeMouseScrolling,
-//		_yBeforeMouseScrolling;
 
 	Camera* _camera;
 	const Game* _game;
@@ -77,7 +75,6 @@ private:
 	Timer* _timerScroll;
 
 	Position _posPreDragScroll;
-//		_cursorPosition;
 
 	Uint32 _mouseScrollStartTime;
 
@@ -90,13 +87,12 @@ private:
 	void mouseOver(Action* action, State* state) override;
 	/// Handles moving the mouse into the MiniMap surface.
 	void mouseIn(Action* action, State* state) override;
-	///
-//	void stopScrolling(Action* action);
+
 	/// Scrolls the MiniMap by keyboard.
 	void keyScroll();
-	/// Handling for keyboard presses.
+	/// Handling for keyboard-presses.
 	void keyboardPress(Action* action, State* state) override;
-	/// Handling for keyboard releases.
+	/// Handling for keyboard-releases.
 	void keyboardRelease(Action* action, State* state) override;
 	/// Controls timer-start and timer-stop.
 	void handleTimer();
