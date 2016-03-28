@@ -33,8 +33,8 @@ namespace OpenXcom
  * structured.
  * @param width		- the width
  * @param height	- the height
- * @param x			- the X position
- * @param y			- the Y position
+ * @param x			- the x-position
+ * @param y			- the y-position
  */
 ToggleTextButton::ToggleTextButton(
 		int width,

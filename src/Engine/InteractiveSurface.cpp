@@ -32,8 +32,8 @@ const SDLKey InteractiveSurface::SDLK_ANY = static_cast<SDLKey>(-1); // using an
  * Sets up a blank InteractiveSurface with the specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- X position in pixels (default 0)
- * @param y			- Y position in pixels (default 0)
+ * @param x			- x-position in pixels (default 0)
+ * @param y			- y-position in pixels (default 0)
  */
 InteractiveSurface::InteractiveSurface(
 		int width,

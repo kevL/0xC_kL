@@ -84,17 +84,17 @@ private:
 		/// Gets the left black band width.
 		int getLeftBlackBand() const;
 
-		/// Gets the mouse's X position.
+		/// Gets the mouse's x-position.
 		int getXMouse() const;
-		/// Gets the mouse's Y position.
+		/// Gets the mouse's y-position.
 		int getYMouse() const;
-		/// Gets the mouse's absolute X position.
+		/// Gets the mouse's absolute x-position.
 		double getAbsoluteXMouse() const;
-		/// Gets the mouse's absolute Y position.
+		/// Gets the mouse's absolute y-position.
 		double getAbsoluteYMouse() const;
-		/// Gets the mouse's relative X position.
+		/// Gets the mouse's relative x-position.
 		double getRelativeXMouse() const;
-		/// Gets the mouse's relative Y position.
+		/// Gets the mouse's relative y-position.
 		double getRelativeYMouse() const;
 
 		/// Gets the sender of the Action.

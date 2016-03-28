@@ -44,8 +44,8 @@ Sound* Window::soundPopup[3] = {0,0,0}; // static.
  * @param state		- pointer to State the window belongs to
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- X position in pixels (default 0)
- * @param y			- Y position in pixels (default 0)
+ * @param x			- x-position in pixels (default 0)
+ * @param y			- y-position in pixels (default 0)
  * @param popType	- popup animation type (default POPUP_NONE)
  * @param toggle	- true to toggle screen before & after popup (default true)
  */
@@ -360,7 +360,7 @@ void Window::setBackgroundFill(Uint8 color)
 
 /**
  * Changes the horizontal offset of the surface in the X axis.
- * @param dX - X position in pixels
+ * @param dX - x-position in pixels
  */
 void Window::setDX(int dX)
 {
@@ -369,7 +369,7 @@ void Window::setDX(int dX)
 
 /**
  * Changes the vertical offset of the surface in the Y axis.
- * @param dY - Y position in pixels
+ * @param dY - y-position in pixels
  */
 void Window::setDY(int dY)
 {

@@ -35,8 +35,8 @@ namespace OpenXcom
  * Sets up the blank Text with a specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- X position in pixels (default 0)
- * @param y			- Y position in pixels (default 0)
+ * @param x			- x-position in pixels (default 0)
+ * @param y			- y-position in pixels (default 0)
  */
 Text::Text(
 		int width,
@@ -551,9 +551,9 @@ void Text::processText() // private.
 }
 
 /**
- * Calculates the starting X position for a line of text.
+ * Calculates the starting x-position for a line of text.
  * @param line - the line number (0 = first, etc)
- * @return, the X position in pixels
+ * @return, the x-position in pixels
  */
 int Text::getLineX(int line) const
 {

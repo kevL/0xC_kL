@@ -83,9 +83,9 @@ private:
 		/// Cleans up the combo box.
 		~ComboBox();
 
-		/// Sets the X position of the surface.
+		/// Sets the x-position of the surface.
 		void setX(int x) override;
-		/// Sets the Y position of the surface.
+		/// Sets the y-position of the surface.
 		void setY(int y) override;
 
 		/// Sets the palette of the text list.

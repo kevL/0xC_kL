@@ -47,8 +47,8 @@ namespace OpenXcom
  * Sets up a base view with the specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- X position in pixels (default 0)
- * @param y			- Y position in pixels (default 0)
+ * @param x			- x-position in pixels (default 0)
+ * @param y			- y-position in pixels (default 0)
  */
 BaseView::BaseView(
 		int width,
@@ -214,8 +214,8 @@ void BaseView::resetSelectedFacility()
 }
 
 /**
- * Returns the X position of the grid square the mouse is currently over.
- * @return, X position on the grid
+ * Returns the x-position of the grid square the mouse is currently over.
+ * @return, x-position on the grid
  */
 int BaseView::getGridX() const
 {
@@ -223,8 +223,8 @@ int BaseView::getGridX() const
 }
 
 /**
- * Returns the Y position of the grid square the mouse is currently over.
- * @return, Y position on the grid
+ * Returns the y-position of the grid square the mouse is currently over.
+ * @return, y-position on the grid
  */
 int BaseView::getGridY() const
 {

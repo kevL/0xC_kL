@@ -83,8 +83,8 @@ namespace OpenXcom
  * @param game				- pointer to the core Game
  * @param width				- width in pixels
  * @param height			- height in pixels
- * @param x					- X position in pixels
- * @param y					- Y position in pixels
+ * @param x					- x-position in pixels
+ * @param y					- y-position in pixels
  * @param playableHeight	- current visible Map height
  */
 Map::Map(

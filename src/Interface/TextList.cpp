@@ -404,8 +404,7 @@ void TextList::addRow(
 
 		txt->setText(va_arg(args, wchar_t*));
 
-		// grab this before enabling word wrap so it can
-		// be used to calculate the total row height below
+		// grab this before enabling word wrap so it can be used to calculate the total row height below
 		const int vertPad (_font->getHeight() - txt->getTextHeight());
 
 		if (_wrap == true // wordwrap text if necessary
@@ -413,9 +412,8 @@ void TextList::addRow(
 		{
 //			txt->setHeight(_font->getHeight() * 2 + _font->getSpacing());
 			txt->setWordWrap(true, true);
-			qtyRows = std::max(
-							qtyRows,
-							txt->getNumLines());
+			qtyRows = std::max(qtyRows,
+							   txt->getNumLines());
 		}
 
 		rowHeight = std::max(rowHeight,
@@ -448,9 +446,7 @@ void TextList::addRow(
 			i = 0;
 			i != static_cast<size_t>(cols);
 			++i)
-	{
 		txtRow[i]->setHeight(rowHeight);
-	}
 
 	_texts.push_back(txtRow);
 	for (int
@@ -462,21 +458,23 @@ void TextList::addRow(
 	}
 
 
-	if (_arrowPos != -1) // Place arrow-buttons
+	if (_arrowPos != -1) // place arrow-buttons
 	{
 		ArrowShape
 			shape1,
 			shape2;
 
-		if (_arrowType == ARROW_VERTICAL)
+		switch (_arrowType)
 		{
-			shape1 = ARROW_SMALL_UP;
-			shape2 = ARROW_SMALL_DOWN;
-		}
-		else
-		{
-			shape1 = ARROW_SMALL_LEFT;
-			shape2 = ARROW_SMALL_RIGHT;
+			case ARROW_VERTICAL:
+				shape1 = ARROW_SMALL_UP;
+				shape2 = ARROW_SMALL_DOWN;
+				break;
+
+			default:
+			case ARROW_HORIZONTAL:
+				shape1 = ARROW_SMALL_LEFT;
+				shape2 = ARROW_SMALL_RIGHT;
 		}
 
 		ArrowButton* const a1 (new ArrowButton(
@@ -530,9 +528,7 @@ void TextList::setColumns(
 			i = 0;
 			i != cols;
 			++i)
-	{
 		_columns.push_back(va_arg(args, int));
-	}
 
 	va_end(args);
 }
@@ -728,9 +724,7 @@ void TextList::setAlign(
 				i = 0;
 				i != _columns.size();
 				++i)
-		{
 			_align[i] = align;
-		}
 	}
 	else
 		_align[col] = align;
@@ -964,9 +958,7 @@ void TextList::clearList()
 				j = i->begin();
 				j != i->end();
 				++j)
-		{
 			delete *j;
-		}
 
 		i->clear();
 	}
@@ -981,92 +973,45 @@ void TextList::clearList()
 
 /**
  * Scrolls the text in this TextList up by one row or to the top.
- * @param toMax			- true scrolls to the top of the list; false one row up (default false)
- * @param scrollByWheel	- true uses wheel scroll (default false)
+ * @param full	- true scrolls to the top of the list (default false)
+ * @param wheel	- true uses wheel-scroll (default false)
  */
 void TextList::scrollUp(
-		bool toMax,
-		bool scrollByWheel)
+		bool full,
+		bool wheel)
 {
-	if (_scrollable == true)
+	if (_scrollable == true
+		&& _scroll > 0 && _rows.size() > _visibleRows)
 	{
-		if (_scroll > 0 && _rows.size() > _visibleRows)
-		{
-			if (toMax == true)
-				scrollTo();
-			else
-			{
-				if (scrollByWheel == true)
-					scrollTo(_scroll - std::min(
-											static_cast<size_t>(Options::mousewheelSpeed),
-											_scroll));
-				else
-					scrollTo(_scroll - 1);
-			}
-		}
+		if (full == true)
+			scrollTo();
+		else if (wheel == true)
+			scrollTo(_scroll - std::min(_scroll,
+										static_cast<size_t>(Options::mousewheelSpeed)));
+		else
+			scrollTo(_scroll - 1);
 	}
 }
 
 /**
  * Scrolls the text in this TextList down by one row or to the bottom.
- * @param toMax			- true to scroll to the bottom of the list; false = one row down (default false)
- * @param scrollByWheel	- true uses wheel-scroll (default false)
+ * @param full	- true to scroll to the bottom of the list (default false)
+ * @param wheel	- true uses wheel-scroll (default false)
  */
 void TextList::scrollDown(
-		bool toMax,
-		bool scrollByWheel)
+		bool full,
+		bool wheel)
 {
-	if (_scrollable == true)
+	if (_scrollable == true
+		&& _rows.size() > _visibleRows && _scroll < _rows.size() - _visibleRows)
 	{
-		if (_rows.size() > _visibleRows && _scroll < _rows.size() - _visibleRows)
-		{
-			if (toMax == true)
-				scrollTo(_rows.size() - _visibleRows);
-			else
-			{
-				if (scrollByWheel == true)
-					scrollTo(_scroll + static_cast<size_t>(Options::mousewheelSpeed));
-				else
-					scrollTo(_scroll + 1);
-			}
-		}
+		if (full == true)
+			scrollTo(_rows.size() - _visibleRows);
+		else if (wheel == true)
+			scrollTo(_scroll + static_cast<size_t>(Options::mousewheelSpeed));
+		else
+			scrollTo(_scroll + 1);
 	}
-}
-
-/**
- * Updates the visibility of the arrow-buttons according to the current
- * scroll-position.
- */
-void TextList::updateArrows()
-{
-	_up->setVisible(_rows.size() > _visibleRows); //&& _scroll > 0);
-	_down->setVisible(_rows.size() > _visibleRows); //&& _scroll < _rows.size() - _visibleRows);
-
-	_scrollbar->setVisible(_rows.size() > _visibleRows);
-	_scrollbar->invalidate();
-	_scrollbar->blit(this);
-}
-
-/**
- * Updates the quantity of visible rows according to the current list and font-size.
- */
-void TextList::updateVisible()
-{
-	_visibleRows = 0;
-
-	const int delta_y (_font->getHeight() + _font->getSpacing());
-	for (int
-			y = 0;
-			y < getHeight();
-			y += delta_y)
-	{
-		++_visibleRows;
-	}
-
-	if (getHeight() > static_cast<int>(_visibleRows - 1) * delta_y)
-		--_visibleRows;
-
-	updateArrows();
 }
 
 /**
@@ -1087,6 +1032,43 @@ void TextList::setScrollable(
 		_down->setX(getX() + getWidth() + _scrollPos);
 		_scrollbar->setX(getX() + getWidth() + _scrollPos);
 	}
+}
+
+/**
+ * Updates the visibility of the arrow-buttons according to the current
+ * scroll-position.
+ */
+void TextList::updateArrows() // private.
+{
+	_up->setVisible(_rows.size() > _visibleRows); //&& _scroll > 0);
+	_down->setVisible(_rows.size() > _visibleRows); //&& _scroll < _rows.size() - _visibleRows);
+
+	_scrollbar->setVisible(_rows.size() > _visibleRows);
+	_scrollbar->invalidate();
+	_scrollbar->blit(this);
+}
+
+/**
+ * Updates the quantity of visible rows according to the current list and
+ * font-size.
+ */
+void TextList::updateVisible() // private.
+{
+	_visibleRows = 0;
+
+	const int delta_y (_font->getHeight() + _font->getSpacing());
+	for (int
+			y = 0;
+			y < getHeight();
+			y += delta_y)
+	{
+		++_visibleRows;
+	}
+
+	if (getHeight() > static_cast<int>(_visibleRows - 1) * delta_y)
+		--_visibleRows;
+
+	updateArrows();
 }
 
 /**
@@ -1145,11 +1127,8 @@ void TextList::draw()
  */
 void TextList::blit(Surface* surface)
 {
-	if (_visible == true
-		&& _hidden == false)
-	{
+	if (_visible == true && _hidden == false)
 		_selector->blit(surface);
-	}
 
 	Surface::blit(surface);
 
@@ -1269,20 +1248,26 @@ void TextList::think()
  */
 void TextList::mousePress(Action* action, State* state)
 {
-	bool allowScroll (true);
-
-	if (Options::changeValueByMouseWheel)
+	bool allowScroll;
+	if (Options::changeValueByMouseWheel == true)
 	{
 		allowScroll = (action->getAbsoluteXMouse() < _arrowsLeftEdge
 					|| action->getAbsoluteXMouse() > _arrowsRightEdge);
 	}
+	else
+		allowScroll = true;
 
 	if (allowScroll == true)
 	{
-		if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-			scrollUp(false, true);
-		else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-			scrollDown(false, true);
+		switch (action->getDetails()->button.button)
+		{
+			case SDL_BUTTON_WHEELUP:
+				scrollUp(false, true);
+				break;
+
+			case SDL_BUTTON_WHEELDOWN:
+				scrollDown(false, true);
+		}
 	}
 
 	if (_selectable == true)
@@ -1322,6 +1307,7 @@ void TextList::mouseClick(Action* action, State* state)
 		if (_selRow < _rows.size())
 		{
 			InteractiveSurface::mouseClick(action, state);
+
 			if (_comboBox != nullptr
 				&& action->getDetails()->button.button == SDL_BUTTON_LEFT)
 			{
@@ -1381,11 +1367,11 @@ void TextList::mouseOver(Action* action, State* state)
 			_selector->copy(_bg);
 
 			if (_contrast == true)
-				_selector->offset(-10,1);
+				_selector->offsetBlock(-5);
 			else if (_comboBox != nullptr)
 				_selector->offset(1, Palette::PAL_bgID);
 			else
-				_selector->offset(-10, Palette::PAL_bgID);
+				_selector->offsetBlock(-10);
 
 			_selector->setVisible();
 		}

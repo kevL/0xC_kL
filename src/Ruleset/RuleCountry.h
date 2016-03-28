@@ -70,9 +70,9 @@ private:
 		/// Gets the country's funding cap.
 		int getFundingCap() const;
 
-		/// Gets the country's label X position.
+		/// Gets the country's label x-position.
 		double getLabelLongitude() const;
-		/// Gets the country's label Y position.
+		/// Gets the country's label y-position.
 		double getLabelLatitude() const;
 
 		/// Checks if a point is inside the country.

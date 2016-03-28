@@ -109,9 +109,9 @@ private:
 		/// Prevents any mouseover bugs on dismantling base facilities before setBase has had time to update the base.
 		void resetSelectedFacility();
 
-		/// Gets the X position of the currently selected square.
+		/// Gets the x-position of the currently selected square.
 		int getGridX() const;
-		/// Gets the Y position of the currently selected square.
+		/// Gets the y-position of the currently selected square.
 		int getGridY() const;
 
 		/// Sets whether the base view is selectable.

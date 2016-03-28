@@ -426,8 +426,8 @@ void BattleItem::setInventorySection(const RuleInventory* const inRule)
 }
 
 /**
- * Gets the item's inventory X position.
- * @return, X position
+ * Gets the item's inventory x-position.
+ * @return, x-position
  */
 int BattleItem::getSlotX() const
 {
@@ -435,8 +435,8 @@ int BattleItem::getSlotX() const
 }
 
 /**
- * Sets the item's inventory X position.
- * @param x - X position
+ * Sets the item's inventory x-position.
+ * @param x - x-position
  */
 void BattleItem::setSlotX(int x)
 {
@@ -444,8 +444,8 @@ void BattleItem::setSlotX(int x)
 }
 
 /**
- * Gets the item's inventory Y position.
- * @return, Y position
+ * Gets the item's inventory y-position.
+ * @return, y-position
  */
 int BattleItem::getSlotY() const
 {
@@ -453,8 +453,8 @@ int BattleItem::getSlotY() const
 }
 
 /**
- * Sets the item's inventory Y position.
- * @param y - Y position
+ * Sets the item's inventory y-position.
+ * @param y - y-position
  */
 void BattleItem::setSlotY(int y)
 {
@@ -463,8 +463,8 @@ void BattleItem::setSlotY(int y)
 
 /**
  * Checks if an item occupies x-y inventory slot(s).
- * @param x		- slot X position
- * @param y 	- slot Y position
+ * @param x		- slot x-position
+ * @param y 	- slot y-position
  * @param item	- pointer to an item to check to place (default nullptr)
  * @return, true if item occupies x-y slot
  */

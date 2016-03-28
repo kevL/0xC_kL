@@ -64,8 +64,8 @@ namespace OpenXcom
  * @param game		- pointer to core Game
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- X position in pixels (default 0)
- * @param y			- Y position in pixels (default 0)
+ * @param x			- x-position in pixels (default 0)
+ * @param y			- y-position in pixels (default 0)
  * @param atBase	- true if inventory is accessed from Basescape (default false)
  */
 Inventory::Inventory(
@@ -903,8 +903,8 @@ void Inventory::mouseClick(Action* action, State* state)
 
 /**
  * Gets the inventory section located in the specified mouse position.
- * @param x - pointer to mouse X position; returns the slot's X position
- * @param y - pointer to mouse Y position; returns the slot's Y position
+ * @param x - pointer to mouse x-position; returns the slot's x-position
+ * @param y - pointer to mouse y-position; returns the slot's y-position
  * @return, pointer to section rules or nullptr if none
  */
 RuleInventory* Inventory::getSlotAtCursor( // private.
@@ -930,8 +930,8 @@ RuleInventory* Inventory::getSlotAtCursor( // private.
  * an item up from the ground).
  * @param item		- pointer to a BattleItem (item to move)
  * @param inRule	- pointer to RuleInventory (section to move the item to)
- * @param x			- X position (default 0)
- * @param y			- Y position (default 0)
+ * @param x			- x-position (default 0)
+ * @param y			- y-position (default 0)
  */
 void Inventory::moveItem( // private.
 		BattleItem* const item,
@@ -1168,8 +1168,8 @@ void Inventory::arrangeGround(int dir)
  * @param unit		- pointer to BattleUnit w/ inventory
  * @param item		- pointer to a BattleItem to be placed
  * @param inRule	- pointer to a RuleInventory section
- * @param x			- X position in section (default 0)
- * @param y			- Y position in section (default 0)
+ * @param x			- x-position in section (default 0)
+ * @param y			- y-position in section (default 0)
  * @return, true if overlap
  */
 bool Inventory::isOverlap( // static.

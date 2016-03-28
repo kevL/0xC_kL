@@ -40,8 +40,8 @@ const Sound* TextButton::soundPress = 0;
  * The text is centered on the button.
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- X position in pixels (default 0)
- * @param y			- Y position in pixels (default 0)
+ * @param x			- x-position in pixels (default 0)
+ * @param y			- y-position in pixels (default 0)
  */
 TextButton::TextButton(
 		int width,

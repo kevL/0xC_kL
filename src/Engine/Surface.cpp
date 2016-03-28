@@ -137,8 +137,8 @@ inline void DeleteAligned(void* buffer)
  * drawing logic, so it just covers the maximum drawing area.
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- X position in pixels (default 0)
- * @param y			- Y position in pixels (default 0)
+ * @param x			- x-position in pixels (default 0)
+ * @param y			- y-position in pixels (default 0)
  * @param bpp		- bits-per-pixel depth (default 8)
  */
 Surface::Surface(
@@ -543,7 +543,7 @@ void Surface::loadBdy(const std::string& file)
 /**
  * Clears the entire contents of this Surface resulting in a blank image of the
  * specified color (0 for transparent).
- * @param color - the color for the background of the surface (default 0)
+ * @param color - the color for the background (default 0)
  */
 void Surface::clear(Uint32 color)
 {
@@ -560,12 +560,13 @@ void Surface::clear(Uint32 color)
 }
 
 /**
- * Shifts all the colors in this Surface by a set amount.
- * @note This is a common method in 8bpp games to simulate color effects for cheap.
- * @param shift		- amount to shift
- * @param colorLow	- minimum color to shift to (default -1)
- * @param colorHigh	- maximum color to shift to (default -1)
- * @param multer	- shift multiplier (default 1)
+ * Shifts all the colors in this Surface by a specified amount.
+ * @note This is a common method in 8-bpp games to simulate color effects for
+ * cheap.
+ * @param shift		- shift
+ * @param colorLow	- lowest color-value to shift to (default -1)
+ * @param colorHigh	- highest color-value to shift to (default -1)
+ * @param multer	- shift-multiplier (default 1)
  */
 void Surface::offset(
 		int shift,
@@ -582,23 +583,62 @@ void Surface::offset(
 				)
 		{
 			const int colorPre (static_cast<int>(getPixelColor(x,y)));
-			int colorPost;
 
+			int colorPost;
 			if (shift > 0)
 				colorPost = (colorPre * multer) + shift;
 			else
 				colorPost = (colorPre + shift) / multer;
 
-			if (colorLow != -1
-				&& colorPost < colorLow)
-			{
+			if (colorLow != -1 && colorPost < colorLow)
 				colorPost = colorLow;
-			}
-			else if (colorHigh != -1
-				&& colorPost > colorHigh)
-			{
+			else if (colorHigh != -1 && colorPost > colorHigh)
 				colorPost = colorHigh;
-			}
+
+			if (colorPre > 0)
+				setPixelIterative(&x,&y, static_cast<Uint8>(colorPost));
+			else
+				setPixelIterative(&x,&y, 0);
+		}
+		unlock();
+	}
+}
+
+/**
+ * Shifts all the colors in this Surface by a specified amount while keeping
+ * them inside a fixed-size color-block.
+ * @param shift		- shift
+ * @param blocksize	- color-block-size (default 16)
+ * @param multer	- shift-multiplier (default 1)
+ */
+void Surface::offsetBlock(
+		int shift,
+		int blocksize,
+		int multer)
+{
+	if (shift != 0)
+	{
+		lock();
+		for (int
+				x = 0, y = 0;
+				x < _surface->w && y < _surface->h;
+				)
+		{
+			const int
+				colorPre (static_cast<int>(getPixelColor(x,y))),
+				colorLow (colorPre / blocksize * blocksize),
+				colorHigh (colorLow + blocksize);
+
+			int colorPost;
+			if (shift > 0)
+				colorPost = (colorPre * multer) + shift;
+			else
+				colorPost = (colorPre + shift) / multer;
+
+			if (colorLow != -1 && colorPost < colorLow)
+				colorPost = colorLow;
+			else if (colorHigh != -1 && colorPost > colorHigh)
+				colorPost = colorHigh;
 
 			if (colorPre > 0)
 				setPixelIterative(&x,&y, static_cast<Uint8>(colorPost));
@@ -652,10 +692,10 @@ void Surface::draw() // virtual.
 }
 
 /**
- * Blits this surface onto another one with its position relative to the
+ * Blits this Surface onto another one with its position relative to the
  * top-left corner of the target surface.
- * @note The cropping rectangle controls the portion of the surface that is blitted.
- * @param surface - pointer to surface to blit onto
+ * @note The cropping rectangle controls the area that is blitted.
+ * @param surface - pointer to Surface to blit onto
  */
 void Surface::blit(Surface* surface) // virtual.
 {
@@ -877,7 +917,7 @@ void Surface::drawString(
 }
 
 /**
- * Changes the position of this Surface in the x-axis.
+ * Sets the position of this Surface in the x-axis.
  * @param x - x-position in pixels
  */
 void Surface::setX(int x) // virtual.
@@ -886,7 +926,7 @@ void Surface::setX(int x) // virtual.
 }
 
 /**
- * Changes the position of this Surface in the y-axis.
+ * Sets the position of this Surface in the y-axis.
  * @param y - y-position in pixels
  */
 void Surface::setY(int y) // virtual.
@@ -895,7 +935,7 @@ void Surface::setY(int y) // virtual.
 }
 
 /**
- * Changes the visibility of this Surface.
+ * Sets the visibility of this Surface.
  * @note An nonvisible surface isn't blitted nor does it receive events.
  * @param visible - visibility (default true)
  */
@@ -905,7 +945,7 @@ void Surface::setVisible(bool visible) // virtual.
 }
 
 /**
- * Returns the visible state of this Surface.
+ * Gets the visible state of this Surface.
  * @return, current visibility
  */
 bool Surface::getVisible() const
@@ -926,7 +966,7 @@ void Surface::resetCrop()
 }
 
 /**
- * Returns the cropping rectangle for this Surface.
+ * Gets the cropping rectangle for this Surface.
  * @return, pointer to the cropping rectangle
  */
 SDL_Rect* Surface::getCrop()
@@ -998,16 +1038,15 @@ void Surface::unlock()
  */
 struct ColorReplace
 {
-
 /**
-* Function used by ShaderDraw in Surface::blitNShade
-* set shade and replace color in that surface
-* @param dest		- destination pixel
-* @param src		- source pixel
-* @param shade		- value of shade of this surface
-* @param newColor	- new color to set (it should be offseted by 4)
-* @param - notused
-*/
+ * Sets shade and replaces color in a Surface.
+ * @note Function used by ShaderDraw in Surface::blitNShade.
+ * @param dest		- destination-pixel
+ * @param src		- source-pixel
+ * @param shade		- value of shade
+ * @param newColor	- new color to set (it should be offseted by 4)
+ * @param			- notused
+ */
 static inline void func(
 		Uint8& dest,
 		const Uint8& src,
@@ -1024,7 +1063,6 @@ static inline void func(
 			dest = static_cast<Uint8>(newColor | newShade);
 	}
 }
-
 };
 
 
@@ -1033,16 +1071,15 @@ static inline void func(
  */
 struct StandartShade
 {
-
 /**
-* Function used by ShaderDraw in Surface::blitNShade
-* set shade
-* @param dest	- destination pixel
-* @param src	- source pixel
-* @param shade	- value of shade of this surface
-* @param - notused
-* @param - notused
-*/
+ * Sets shade.
+ * Function used by ShaderDraw in Surface::blitNShade.
+ * @param dest	- destination-pixel
+ * @param src	- source-pixel
+ * @param shade	- value of shade
+ * @param		- notused
+ * @param		- notused
+ */
 static inline void func(
 		Uint8& dest,
 		const Uint8& src,
@@ -1059,7 +1096,6 @@ static inline void func(
 			dest = static_cast<Uint8>((static_cast<int>(src) & (15 << 4)) | newShade);
 	}
 }
-
 };
 
 
@@ -1069,8 +1105,8 @@ static inline void func(
  * @note There is no surface locking here - you have to make sure to lock the
  * surface at the start of blitting and unlock it when done.
  * @param surface		- Surface to blit to
- * @param x				- X position of Surface blitted to
- * @param y				- Y position of Surface blitted to
+ * @param x				- x-position of Surface blitted to
+ * @param y				- y-position of Surface blitted to
  * @param colorOffset	- color offset (generally 0-16) (default 0 = no offset)
  * @param halfRight		- blit only the right half (default false)
  * @param colorGroup	- the actual colorblock + 1 because 0 is no new base color (default 0)
@@ -1127,7 +1163,7 @@ void Surface::invalidate(bool redraw)
 }
 
 /**
- * Returns the help description of this surface for showing in tooltips eg.
+ * Gets the help-description of this Surface for showing in tooltips eg.
  * @return, string ID
  *
 std::string Surface::getTooltip() const
@@ -1136,7 +1172,7 @@ std::string Surface::getTooltip() const
 } */
 
 /**
- * Changes the help description of this surface for showing in tooltips eg.
+ * Sets the help-description of this Surface for showing in tooltips eg.
  * @param tooltip - reference a string ID
  *
 void Surface::setTooltip(const std::string& tooltip)
@@ -1200,7 +1236,7 @@ void Surface::resize(
 }
 
 /**
- * Changes the width of this Surface.
+ * Sets the width of this Surface.
  * @warning This is not a trivial setter! It will force the surface to be
  * recreated for the new size.
  * @param width - new width in pixels
@@ -1212,7 +1248,7 @@ void Surface::setWidth(int width) // virtual.
 }
 
 /**
- * Changes the height of this Surface.
+ * Sets the height of this Surface.
  * @warning This is not a trivial setter! It will force the surface to be
  * recreated for the new size.
  * @param height - new height in pixels

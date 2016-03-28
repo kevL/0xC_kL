@@ -297,12 +297,12 @@ struct CreateShadow
 /**
  * Sets up the Globe with a specified size and position.
  * @param game		- pointer to the core Game
- * @param cenX		- X position of the center of the globe
- * @param cenY		- Y position of the center of the globe
+ * @param cenX		- x-position of the center of the globe
+ * @param cenY		- y-position of the center of the globe
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- X position in pixels (default 0)
- * @param y			- Y position in pixels (default 0)
+ * @param x			- x-position in pixels (default 0)
+ * @param y			- y-position in pixels (default 0)
  */
 Globe::Globe(
 		Game* const game,
@@ -409,8 +409,8 @@ Globe::~Globe()
  * 3D-looking Globe.
  * @param lon	- longitude of the polar point
  * @param lat	- latitude of the polar point
- * @param x		- pointer to the output X position
- * @param y		- pointer to the output Y position
+ * @param x		- pointer to the output x-position
+ * @param y		- pointer to the output y-position
  */
 void Globe::polarToCart( // Orthographic projection
 		double lon,
@@ -440,8 +440,8 @@ void Globe::polarToCart( // Orthographic projection
 /**
  * Converts a cartesian-point into a polar-point for mapping a globe-click onto
  * the flat world.
- * @param x		- X position of the cartesian point
- * @param y		- Y position of the cartesian point
+ * @param x		- x-position of the cartesian point
+ * @param y		- y-position of the cartesian point
  * @param lon	- pointer to the output longitude
  * @param lat	- pointer to the output latitude
  */

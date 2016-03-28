@@ -107,7 +107,7 @@ private:
 		_arrowLeft,
 		_arrowRight;
 
-	/// Updates the arrow buttons.
+	/// Updates the arrow-buttons.
 	void updateArrows();
 	/// Updates the visible rows.
 	void updateVisible();
@@ -267,12 +267,12 @@ private:
 
 		/// Scrolls the TextList up.
 		void scrollUp(
-				bool toMax = false,
-				bool scrollByWheel = false);
+				bool full = false,
+				bool wheel = false);
 		/// Scrolls the TextList down.
 		void scrollDown(
-				bool toMax = false,
-				bool scrollByWheel = false);
+				bool full = false,
+				bool wheel = false);
 		/// Sets the TextList scrollable.
 		void setScrollable(
 				bool scrollable = true,

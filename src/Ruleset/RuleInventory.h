@@ -116,9 +116,9 @@ private:
 		/// Gets the Inventory's section.
 		InventorySection getSectionType() const;
 
-		/// Gets the X position of the Inventory.
+		/// Gets the x-position of the Inventory.
 		int getX() const;
-		/// Gets the Y position of the Inventory.
+		/// Gets the y-position of the Inventory.
 		int getY() const;
 
 		/// Gets the Inventory category.

@@ -174,8 +174,8 @@ std::map<InventorySection, int> RuleInventory::assignCosts(std::map<std::string,
 }
 
 /**
- * Gets the X position of this Inventory section on the screen.
- * @return, X position in pixels
+ * Gets the x-position of this Inventory section on the screen.
+ * @return, x-position in pixels
  */
 int RuleInventory::getX() const
 {
@@ -183,8 +183,8 @@ int RuleInventory::getX() const
 }
 
 /**
- * Gets the Y position of this Inventory section on the screen.
- * @return, Y position in pixels
+ * Gets the y-position of this Inventory section on the screen.
+ * @return, y-position in pixels
  */
 int RuleInventory::getY() const
 {
@@ -214,8 +214,8 @@ const std::vector<RuleSlot>* RuleInventory::getSlots() const
 
 /**
  * Checks if there's a Slot located in the specified mouse-position.
- * @param x - mouse X position; returns the slot's X position
- * @param y - mouse Y position; returns the slot's Y position
+ * @param x - mouse x-position; returns the slot's x-position
+ * @param y - mouse y-position; returns the slot's y-position
  * @return, true if there's a slot here
  */
 bool RuleInventory::detSlotAtCursor(
@@ -292,8 +292,8 @@ bool RuleInventory::detSlotAtCursor(
 /**
  * Checks if an item completely fits into a certain Slot-position.
  * @param item	- pointer to RuleItem
- * @param x		- slot X position
- * @param y		- slot Y position
+ * @param x		- slot x-position
+ * @param y		- slot y-position
  * @return, true if there's room there
  */
 bool RuleInventory::fitItemInSlot(

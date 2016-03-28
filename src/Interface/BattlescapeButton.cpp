@@ -29,8 +29,8 @@ namespace OpenXcom
  * Sets up a battlescape button with the specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- X position in pixels (default 0)
- * @param y			- Y position in pixels (default 0)
+ * @param x			- x-position in pixels (default 0)
+ * @param y			- y-position in pixels (default 0)
  */
 BattlescapeButton::BattlescapeButton(
 		int width,
@@ -218,7 +218,7 @@ void BattlescapeButton::blit(Surface* surface)
 
 /**
  * Changes the position of the surface in the X axis.
- * @param x - X position in pixels
+ * @param x - x-position in pixels
  */
 void BattlescapeButton::setX(int x)
 {
@@ -230,7 +230,7 @@ void BattlescapeButton::setX(int x)
 
 /**
  * Changes the position of the surface in the Y axis.
- * @param y - Y position in pixels
+ * @param y - y-position in pixels
  */
 void BattlescapeButton::setY(int y)
 {

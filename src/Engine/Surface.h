@@ -87,13 +87,18 @@ protected:
 		/// Loads a general image file.
 		void loadImage(const std::string& file);
 
-		/// Clears the Surface's contents with a specified colour.
+		/// Clears the Surface's contents with a specified color.
 		void clear(Uint32 color = 0);
 		/// Offsets the Surface's colors by a set amount.
 		void offset(
 				int shift,
 				int colorLow = -1,
 				int colorHigh = -1,
+				int multer = 1);
+		/// Offsets the Surface's colors within a specified color-block.
+		void offsetBlock(
+				int shift,
+				int blocksize = 16,
 				int multer = 1);
 		/// Inverts the Surface's colors.
 		void invert(Uint8 mid);
@@ -166,26 +171,26 @@ protected:
 				int ncolors = 256);
 
 		/**
-		 * Returns the Surface's 8-bpp palette.
+		 * Gets the Surface's 8-bpp palette.
 		 * @return, pointer to the palette's colors
 		 */
 		SDL_Color* getPalette() const
 		{ return _surface->format->palette->colors; }
 
-		/// Sets the X position of the Surface.
+		/// Sets the x-position of the Surface.
 		virtual void setX(int x);
 		/**
-		 * Returns the position of the Surface in the x-axis.
-		 * @return, X position in pixels
+		 * Gets the position of the Surface in the x-axis.
+		 * @return, x-position in pixels
 		 */
 		int getX() const
 		{ return _x; }
 
-		/// Sets the Y position of the Surface.
+		/// Sets the y-position of the Surface.
 		virtual void setY(int y);
 		/**
-		 * Returns the position of the Surface in the y-axis.
-		 * @return, Y position in pixels
+		 * Gets the position of the Surface in the y-axis.
+		 * @return, y-position in pixels
 		 */
 		int getY() const
 		{ return _y; }
@@ -201,10 +206,10 @@ protected:
 		SDL_Rect* getCrop();
 
 		/**
-		 * Changes the color of a pixel in the Surface relative to the top-left
+		 * Sets the color of a pixel in the Surface relative to the top-left
 		 * corner.
-		 * @param x		- X position of the pixel
-		 * @param y		- Y position of the pixel
+		 * @param x		- x-position of the pixel
+		 * @param y		- y-position of the pixel
 		 * @param color	- color for the pixel
 		 */
 		void setPixelColor(
@@ -223,12 +228,12 @@ protected:
 
 
 		/**
-		 * Changes the color of a pixel in the Surface and returns the next
+		 * Sets the color of a pixel in the Surface and returns the next
 		 * pixel position.
 		 * @note Useful when changing a lot of pixels in a row - eg. loading
 		 * images.
-		 * @param x		- pointer to the X position of the pixel; changes to the next X position in the sequence
-		 * @param y		- pointer to the Y position of the pixel; changes to the next Y position in the sequence
+		 * @param x		- pointer to the x-position of the pixel; changes to the next x-position in the sequence
+		 * @param y		- pointer to the y-position of the pixel; changes to the next y-position in the sequence
 		 * @param color	- color for the pixel
 		 */
 		void setPixelIterative( // setPixelColorIterative
@@ -247,9 +252,9 @@ protected:
 		}
 
 		/**
-		 * Returns the color of a specified pixel in the Surface.
-		 * @param x - X position of the pixel
-		 * @param y - Y position of the pixel
+		 * Gets the color of a specified pixel in the Surface.
+		 * @param x - x-position of the pixel
+		 * @param y - y-position of the pixel
 		 * @return, color of the pixel
 		 */
 		Uint8 getPixelColor(
@@ -267,14 +272,14 @@ protected:
 		}
 
 		/**
-		 * Returns the internal SDL_Surface for SDL calls.
-		 * @return, pointer to the surface
+		 * Gets the internal SDL_Surface for SDL calls.
+		 * @return, pointer to the Surface
 		 */
 		SDL_Surface* getSurface() const
 		{ return _surface; }
 
 		/**
-		 * Returns the width of the Surface.
+		 * Gets the width of the Surface.
 		 * @return, width in pixels
 		 */
 		int getWidth() const
@@ -282,7 +287,7 @@ protected:
 		/// Sets the width of the Surface.
 		virtual void setWidth(int width); // should be Unit16
 		/**
-		 * Returns the height of the Surface.
+		 * Gets the height of the Surface.
 		 * @return, height in pixels
 		 */
 		int getHeight() const

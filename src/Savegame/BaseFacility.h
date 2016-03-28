@@ -67,13 +67,13 @@ private:
 		/// Gets the facility's ruleset.
 		const RuleBaseFacility* getRules() const;
 
-		/// Gets the facility's X position.
+		/// Gets the facility's x-position.
 		int getX() const;
-		/// Sets the facility's X position.
+		/// Sets the facility's x-position.
 		void setX(int x);
-		/// Gets the facility's Y position.
+		/// Gets the facility's y-position.
 		int getY() const;
-		/// Sets the facility's Y position.
+		/// Sets the facility's y-position.
 		void setY(int y);
 
 		/// Gets the facility's construction time.

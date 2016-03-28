@@ -31,7 +31,7 @@ class Timer;
 
 
 /**
- * Vertical scrollbar control to select from a range of values.
+ * A vertical scrollbar-control for TextLists.
  */
 class ScrollBar final
 	:
@@ -54,67 +54,67 @@ private:
 	TextList* _list;
 	Timer* _timer;
 
-	/// Draws the scrollbar track.
+	/// Draws the ScrollBar track.
 	void drawTrack();
-	/// Draws the scrollbar thumb.
+	/// Draws the ScrollBar thumb.
 	void drawThumb();
 
 
 	public:
-		/// Creates a new scrollbar with the specified size and position.
+		/// Creates a ScrollBar with the specified size and position.
 		ScrollBar(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the scrollbar.
+		/// Cleans up the ScrollBar.
 		~ScrollBar();
 
-		/// Sets the X position of the surface.
+		/// Sets the x-position of the Surface.
 		void setX(int x) override;
-		/// Sets the Y position of the surface.
+		/// Sets the y-position of the Surface.
 		void setY(int y) override;
-		/// Sets the height of the surface.
+		/// Sets the height of the Surface.
 		void setHeight(int height) override;
 
-		/// Sets the scrollbar's color.
+		/// Sets the ScrollBar's color.
 		void setColor(Uint8 color) override;
-		/// Gets the scrollbar's color.
+		/// Gets the ScrollBar's color.
 		Uint8 getColor() const;
-		/// Sets the scrollbar's high contrast color setting.
+		/// Sets the ScrollBar's high-contrast color-setting.
 		void setHighContrast(bool contrast = true);
 
-		/// Sets the scrollbar's list.
+		/// Sets the ScrollBar's TextList.
 		void setTextList(TextList* textList);
 
 		/// Sets the background for the track.
-		void setBackground(Surface* bg);
-		/// Sets the scrollbar's palette.
+		void setBackground(Surface* const bg);
+		/// Sets the ScrollBar's Palette.
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
 
-		/// Blits the scrollbar onto another surface.
+		/// Blits the ScrollBar onto another Surface.
 		void blit(Surface* surface) override;
 
-		/// Moves the scrollbar.
+		/// Moves the ScrollBar.
 		void handle(Action* action, State* state) override;
-		/// Special handling for mouse presses.
+		/// Special handling for mouse-presses.
 		void mousePress(Action* action, State* state) override;
-		/// Special handling for mouse releases.
+		/// Special handling for mouse-releases.
 		void mouseRelease(Action* action, State* state) override;
 
-		/// Gives ticks to keyboard press.
+		/// Gives ticks to keyboard-press.
 		void think() override;
-		/// Scrolls the list.
+		/// Scrolls the TextList.
 		void scroll();
-		/// Handles keyboard presses.
+		/// Handles keyboard-presses.
 		void keyboardPress(Action* action, State* state) override;
-		/// Handles keyboard releases.
+		/// Handles keyboard-releases.
 		void keyboardRelease(Action* action, State* state) override;
 
-		/// Draws the scrollbar contents.
+		/// Draws the ScrollBar.
 		void draw() override;
 };
 

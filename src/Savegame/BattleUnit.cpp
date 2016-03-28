@@ -2721,8 +2721,8 @@ Tile* BattleUnit::getTile() const
 /**
  * Checks if there's an item in the specified inventory position.
  * @param inRule	- pointer to RuleInventory
- * @param x			- X position in section (default 0)
- * @param y			- Y position in section (default 0)
+ * @param x			- x-position in section (default 0)
+ * @param y			- y-position in section (default 0)
  * @return, pointer to BattleItem or nullptr if none
  */
 BattleItem* BattleUnit::getItem(
@@ -2762,8 +2762,8 @@ BattleItem* BattleUnit::getItem(
  * Checks if there's an item in the specified inventory position.
  * @note Used only in BattlescapeGenerator::placeLayout()
  * @param type	- reference to an inventory type
- * @param x		- X position in section (default 0)
- * @param y		- Y position in section (default 0)
+ * @param x		- x-position in section (default 0)
+ * @param y		- y-position in section (default 0)
  * @return, pointer to BattleItem or nullptr if none
  */
 BattleItem* BattleUnit::getItem(
@@ -2806,8 +2806,8 @@ BattleItem* BattleUnit::getItem(
 /**
  * Checks if there's an item in the specified inventory position.
  * @param section	- an InventorySection (RuleInventory.h)
- * @param x			- X position in section (default 0)
- * @param y			- Y position in section (default 0)
+ * @param x			- x-position in section (default 0)
+ * @param y			- y-position in section (default 0)
  * @return, pointer to BattleItem or nullptr if none
  */
 BattleItem* BattleUnit::getItem(

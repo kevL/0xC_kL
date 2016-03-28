@@ -41,8 +41,8 @@ namespace OpenXcom
  * Sets up a UnitSprite with the specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- X position in pixels (default 0)
- * @param y			- Y position in pixels (default 0)
+ * @param x			- x-position in pixels (default 0)
+ * @param y			- y-position in pixels (default 0)
  */
 UnitSprite::UnitSprite(
 		int width,
