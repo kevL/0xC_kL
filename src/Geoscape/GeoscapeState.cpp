@@ -984,7 +984,7 @@ void GeoscapeState::blit()
 }
 
 /**
- * Handles key shortcuts.
+ * Handles keyboard shortcuts.
  * @param action - pointer to an Action
  */
 void GeoscapeState::handle(Action* action)

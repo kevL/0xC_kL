@@ -198,7 +198,7 @@ private:
 		/// Cleans up the Geoscape state.
 		~GeoscapeState();
 
-		/// Handles keypresses.
+		/// Handles keyboard-shortcuts.
 		void handle(Action* action) override;
 
 		/// Updates the palette and timer.

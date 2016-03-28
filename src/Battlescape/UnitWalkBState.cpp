@@ -498,7 +498,6 @@ bool UnitWalkBState::doStatusStand() // private.
 			//Log(LOG_INFO) << ". send warning: not enough TU";
 			_action.result = "STR_NOT_ENOUGH_TIME_UNITS";
 		}
-
 		abortState();
 		return false;
 	}
@@ -511,21 +510,18 @@ bool UnitWalkBState::doStatusStand() // private.
 		{
 			_action.result = "STR_NOT_ENOUGH_ENERGY";
 		}
-
 		abortState();
 		return false;
 	}
 
-	if (_parent->playerPanicHandled() == true					// note this operates differently for player-units and non-player units;
-		&& _unit->getFaction() != FACTION_PLAYER				// <- no Reserve tolerance.
-		&& _parent->checkReservedTu(_unit, tuCost) == false)	// Only player's units will *bypass* abortPath() due to panicking ....
-																// Tbh, other code should have rendered the playerPanicHandled() redundant.
-																// That is to say this should kick in *only* when player has actively
-	{															// clicked to move but tries to go further than TUs allow; because
-		//Log(LOG_INFO) << ". . checkReservedTu(_unit, tuCost) == false";	// either the AI or the panic-code should not try to
-		_unit->clearCache();												// move a unit farther than its [reserved] TUs would allow
-		_parent->getMap()->cacheUnit(_unit);
-		_pf->abortPath();
+	if (_parent->playerPanicHandled() == true								// NOTE: this operates differently for player-units and non-player units;
+		&& _unit->getFaction() != FACTION_PLAYER							// <- no Reserve tolerance.
+		&& _parent->checkReservedTu(_unit, tuCost) == false)				// Only player's units will *bypass* abortPath() due to panicking ....
+	{																		// Tbh, other code should have rendered the playerPanicHandled() redundant.
+		//Log(LOG_INFO) << ". . checkReservedTu(_unit, tuCost) == false";	// That is to say this should kick in *only* when player has actively
+		_unit->clearCache();												// clicked to move but tries to go further than TUs allow; because
+		_parent->getMap()->cacheUnit(_unit);								// either the AI or the panic-code should not try to
+		_pf->abortPath();													// move a unit farther than its [reserved] TUs would allow
 		return false;
 	}
 
@@ -611,7 +607,6 @@ bool UnitWalkBState::doStatusStand() // private.
 			{
 				//Log(LOG_INFO) << ". . . obstacle(unit) -> abortPath()";
 //				_action.TU = 0;
-
 				abortState();
 				return false;
 			}
@@ -639,16 +634,20 @@ bool UnitWalkBState::doStatusStand() // private.
 		_unit->startWalking(
 						dir, posStop,
 						_battleSave->getTile(pos + Position(0,0,-1)));
-
 		//Log(LOG_INFO) << ". . WalkBState: establishTilesLink()";
 		establishTilesLink();
 	}
 	//Log(LOG_INFO) << ". EXIT (dir!=-1) : " << _unit->getId();
 
-	if (dir == Pathfinding::DIR_DOWN)
-		_walkCam->setViewLevel(pos.z - 1);
-	else
-		_walkCam->setViewLevel(pos.z);
+	switch (dir)
+	{
+		case Pathfinding::DIR_DOWN:
+			_walkCam->setViewLevel(pos.z - 1);
+			break;
+
+		default:
+			_walkCam->setViewLevel(pos.z);
+	}
 
 	return true;
 }

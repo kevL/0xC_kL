@@ -2510,16 +2510,15 @@ bool BattlescapeGame::isBusy() const
 }
 
 /**
- * Left click activates a primary action.
- * @param pos - reference a Position on the map
+ * Left-click activates a primary action.
+ * @param pos - reference a Position on the Map
  */
 void BattlescapeGame::primaryAction(const Position& pos)
 {
 	_tacAction.actor = _battleSave->getSelectedUnit();
 	BattleUnit* const targetUnit (_battleSave->selectUnit(pos));
 
-	if (_tacAction.actor != nullptr
-		&& _tacAction.targeting == true)
+	if (_tacAction.actor != nullptr && _tacAction.targeting == true)
 	{
 		_tacAction.strafe = false;
 
@@ -2584,10 +2583,8 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			case BA_PSICOURAGE:
 				if (targetUnit != nullptr
 					&& targetUnit->getUnitVisible() == true
-					&& ((_tacAction.type != BA_PSICOURAGE
-							&& targetUnit->getFaction() != FACTION_PLAYER)
-						|| (_tacAction.type == BA_PSICOURAGE
-							&& targetUnit->getFaction() != FACTION_HOSTILE)))
+					&& ((   _tacAction.type != BA_PSICOURAGE && targetUnit->getFaction() != FACTION_PLAYER)
+						|| (_tacAction.type == BA_PSICOURAGE && targetUnit->getFaction() != FACTION_HOSTILE)))
 				{
 					bool aLienPsi (_tacAction.weapon == nullptr);
 					if (aLienPsi == true)
@@ -2783,7 +2780,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 
 /**
  * Right click activates a secondary action.
- * @param pos - reference a Position on the map
+ * @param pos - reference a Position on the Map
  */
 void BattlescapeGame::secondaryAction(const Position& pos)
 {
@@ -3192,7 +3189,7 @@ bool BattlescapeGame::pickupItem(BattleAction* const action) const
 }
 
 /**
- * Searches through items on the map that were dropped on an alien turn and
+ * Searches through items on the Map that were dropped on an alien turn and
  * picks the most attractive one.
  * @param unit - pointer to the BattleUnit looking for an item
  * @return, the BattleItem to go for

@@ -325,7 +325,7 @@ void Pathfinding::calculatePath(
 			   && ((_ctrl == true && isMech == false)
 					|| (_alt == true && isMech == true))
 			   && (std::abs(
-						(_battleSave->getTile(posStop)->getTerrainLevel() - posStop.z * 24)
+						(_battleSave->getTile(posStop)->getTerrainLevel()  - posStop.z  * 24)
 					  - (_battleSave->getTile(posStart)->getTerrainLevel() - posStart.z * 24)) < 9)
 			   && std::abs(posStop.x - posStart.x) < 2
 			   && std::abs(posStop.y - posStart.y) < 2;
