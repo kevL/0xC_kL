@@ -67,7 +67,7 @@ FundingState::FundingState()
 	_txtChange		= new Text( 60, 9, 178 + dX, 25);
 	_txtScore		= new Text( 60, 9, 238 + dX, 25);
 
-	_lstCountries	= new TextList(277, 121, 24 + dX,  34);
+	_lstCountries	= new TextList(285, 121, 16 + dX,  34);
 	_lstTotal		= new TextList(285,  17, 16 + dX, 157);
 
 	_btnOk			= new TextButton(288, 16, 16 + dX, 177);
@@ -136,8 +136,8 @@ FundingState::FundingState()
 		}
 	} */ // End debug-data.
 
-	_lstCountries->setColumns(6, 94,60,6,54,6,54);
-	_lstCountries->setMargin();
+	_lstCountries->setColumns(6, 102,60,6,54,6,54);
+//	_lstCountries->setMargin();
 	_lstCountries->setDot();
 	_lstCountries->setBackground(_window);
 	_lstCountries->setSelectable();
