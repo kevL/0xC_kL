@@ -2779,7 +2779,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 }
 
 /**
- * Right click activates a secondary action.
+ * Right-click activates a secondary action.
  * @param pos - reference a Position on the Map
  */
 void BattlescapeGame::secondaryAction(const Position& pos)
@@ -2788,7 +2788,7 @@ void BattlescapeGame::secondaryAction(const Position& pos)
 	if (_tacAction.actor->getPosition() != pos)
 	{
 		_tacAction.posTarget = pos;
-		_tacAction.strafe = _tacAction.actor->getTurretType() != -1
+		_tacAction.strafe = _tacAction.actor->getTurretType() != TRT_NONE
 						 && (SDL_GetModState() & KMOD_CTRL) != 0
 						 && Options::battleStrafe == true;
 

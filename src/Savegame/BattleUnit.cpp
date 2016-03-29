@@ -77,7 +77,7 @@ BattleUnit::BattleUnit(
 		_killedBy(FACTION_NONE), // was, FACTION_PLAYER
 		_murdererId(0),
 		_battleGame(nullptr),
-		_turretType(-1),
+		_turretType(TRT_NONE),
 		_tile(nullptr),
 		_pos(Position()),
 		_posStart(Position()),
@@ -250,7 +250,7 @@ BattleUnit::BattleUnit(
 		_armor(armor),
 		_battleGame(battleGame),
 		_rankInt(5), // aLien soldier, this includes Civies.
-		_turretType(-1),
+		_turretType(TRT_NONE),
 		_pos(Position()),
 		_posStart(Position()),
 		_posStop(Position()),
@@ -475,7 +475,6 @@ void BattleUnit::load(const YAML::Node& node)
 	_morale				= node["morale"]				.as<int>(_morale);
 	_floating			= node["floating"]				.as<bool>(_floating);
 	_fire				= node["fire"]					.as<int>(_fire);
-	_turretType			= node["turretType"]			.as<int>(_turretType);
 	_visible			= node["visible"]				.as<bool>(_visible);
 	_turnsExposed		= node["turnsExposed"]			.as<int>(_turnsExposed);
 	_rankInt			= node["rankInt"]				.as<int>(_rankInt);
@@ -490,6 +489,7 @@ void BattleUnit::load(const YAML::Node& node)
 	_hasBeenStunned		= node["beenStunned"]			.as<bool>(_hasBeenStunned);
 	_charging			= nullptr;
 
+	_turretType = static_cast<TurretType>(node["turretType"].as<int>(_turretType));
 	_activeHand = static_cast<ActiveHand>(node["activeHand"].as<int>(_activeHand));
 
 	for (size_t
@@ -618,7 +618,7 @@ YAML::Node BattleUnit::save() const
 	if (_morale != 100)				node["morale"]			= _morale;
 	if (_floating == true)			node["floating"]		= _floating;
 	if (_fire != 0)					node["fire"]			= _fire;
-	if (_turretType != -1)			node["turretType"]		= _turretType; // TODO: use unitRule to get turretType.
+	if (_turretType != TRT_NONE)	node["turretType"]		= static_cast<int>(_turretType); // TODO: use unitRule to get turretType.
 	if (_visible == true)			node["visible"]			= _visible;
 	if (_killedBy != FACTION_NONE)	node["killedBy"]		= static_cast<int>(_killedBy);
 	if (_motionPoints != 0)			node["motionPoints"]	= _motionPoints;
@@ -850,7 +850,7 @@ void BattleUnit::setUnitDirection(
 	_dir =
 	_dirTo = dir;
 
-	if (turret == true) // || _turretType == -1
+	if (turret == true) // || _turretType == TRT_NONE
 		_dirTurret = dir;
 }
 
@@ -1002,7 +1002,7 @@ void BattleUnit::turn(bool turret)
 				if (turret == false)
 				{
 					++_dir;
-					if (_turretType > -1)
+					if (_turretType != TRT_NONE)
 						++_dirTurret;
 				}
 				else
@@ -1013,7 +1013,7 @@ void BattleUnit::turn(bool turret)
 				if (turret == false)
 				{
 					--_dir;
-					if (_turretType > -1)
+					if (_turretType != TRT_NONE)
 						--_dirTurret;
 				}
 				else
@@ -1027,7 +1027,7 @@ void BattleUnit::turn(bool turret)
 				if (turret == false)
 				{
 					--_dir;
-					if (_turretType > -1)
+					if (_turretType != TRT_NONE)
 						--_dirTurret;
 				}
 				else
@@ -1038,7 +1038,7 @@ void BattleUnit::turn(bool turret)
 				if (turret == false)
 				{
 					++_dir;
-					if (_turretType > -1)
+					if (_turretType != TRT_NONE)
 						++_dirTurret;
 				}
 				else
@@ -3546,21 +3546,19 @@ int BattleUnit::getMiniMapSpriteIndex() const
 }
 
 /**
- * Sets the turret type.
- * @note -1 is no turret.
- * @param turretType - the turret type to set
+ * Sets this BattleUnit's turret-type.
+ * @param turretType - the TurretType (RuleItem.h)
  */
-void BattleUnit::setTurretType(int turretType)
+void BattleUnit::setTurretType(TurretType turretType)
 {
 	_turretType = turretType;
 }
 
 /**
- * Gets the turret type.
- * @note -1 is no turret.
- * @return, turret type
+ * Gets this BattleUnit's turret-type.
+ * @return, the turret-type (RuleItem.h)
  */
-int BattleUnit::getTurretType() const
+TurretType BattleUnit::getTurretType() const
 {
 	return _turretType;
 }
@@ -3583,7 +3581,7 @@ int BattleUnit::getFatalWounds() const
 }
 
 /**
- * Gets the amount of fatal wounds for a body part.
+ * Gets the amount of fatal wounds for a body-part.
  * @param part - the body part in the range 0-5 (BattleUnit.h)
  * @return, fatal wounds @a part has
  */

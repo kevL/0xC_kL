@@ -19,7 +19,6 @@
 
 #include "Country.h"
 
-//#include "../Engine/Logger.h"
 #include "../Engine/RNG.h"
 
 #include "../Ruleset/RuleCountry.h"
@@ -29,7 +28,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a country of the specified type.
+ * Initializes the Country from a specified type.
  * @param countryRule	- pointer to RuleCountry
  * @param genFunds		- true to generate new funding (default false)
  */
@@ -59,7 +58,7 @@ Country::~Country()
 {}
 
 /**
- * Loads the country from a YAML file.
+ * Loads this Country from a YAML file.
  * @param node - reference a YAML node
  */
 void Country::load(const YAML::Node& node)
@@ -74,7 +73,7 @@ void Country::load(const YAML::Node& node)
 }
 
 /**
- * Saves the country to a YAML file.
+ * Saves this Country to a YAML file.
  * @return, YAML node
  */
 YAML::Node Country::save() const
@@ -97,7 +96,7 @@ YAML::Node Country::save() const
 }
 
 /**
- * Returns the ruleset for the country's type.
+ * Returns the ruleset for this Country's type.
  * @return, pointer to RuleCountry
  */
 const RuleCountry* Country::getRules() const
@@ -106,8 +105,8 @@ const RuleCountry* Country::getRules() const
 }
 
 /**
- * Gets the country's name.
- * @return, country name
+ * Gets this Country's type.
+ * @return, country-type
  */
 const std::string& Country::getType() const
 {
@@ -115,7 +114,7 @@ const std::string& Country::getType() const
 }
 
 /**
- * Returns the country's current monthly funding.
+ * Returns this Country's current monthly funding.
  * @return, reference to a vector of monthly funds
  */
 std::vector<int>& Country::getFunding()
@@ -124,7 +123,7 @@ std::vector<int>& Country::getFunding()
 }
 
 /**
- * Changes the country's current monthly funding.
+ * Changes this Country's current monthly funding.
  * @param funding - monthly funds
  */
 void Country::setFunding(int funding)
@@ -148,7 +147,7 @@ SatisfactionType Country::getSatisfaction() const
 }
 
 /**
- * Adds to the country's alien activity level.
+ * Adds to this Country's alien-activity-level.
  * @param activity - how many points to add
  */
 void Country::addActivityAlien(int activity)
@@ -157,16 +156,7 @@ void Country::addActivityAlien(int activity)
 }
 
 /**
- * Adds to the country's xcom activity level.
- * @param activity - how many points to add
- */
-void Country::addActivityXCom(int activity)
-{
-	_actX.back() += activity;
-}
-
-/**
- * Gets the country's alien activity level.
+ * Gets this Country's alien-activity-level.
  * @return, reference to a vector of activity levels
  */
 std::vector<int>& Country::getActivityAlien()
@@ -175,7 +165,16 @@ std::vector<int>& Country::getActivityAlien()
 }
 
 /**
- * Gets the country's xcom activity level.
+ * Adds to this Country's xcom-activity-level.
+ * @param activity - how many points to add
+ */
+void Country::addActivityXCom(int activity)
+{
+	_actX.back() += activity;
+}
+
+/**
+ * Gets this Country's xcom-activity-level.
  * @return, reference to a vector of activity levels
  */
 std::vector<int>& Country::getActivityXCom()

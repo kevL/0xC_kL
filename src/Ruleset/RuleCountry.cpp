@@ -32,7 +32,7 @@ namespace OpenXcom
 {
 
 /**
- * Creates a blank ruleset for a certain type of country.
+ * Creates blank rules for a specific Country.
  * @param type - string defining the type
  */
 RuleCountry::RuleCountry(const std::string& type)
@@ -51,7 +51,7 @@ RuleCountry::~RuleCountry()
 {}
 
 /**
- * Loads the country type from a YAML file.
+ * Loads the RuleCountry from a YAML file.
  * @param node - reference a YAML node
  */
 void RuleCountry::load(const YAML::Node& node)
@@ -84,9 +84,9 @@ void RuleCountry::load(const YAML::Node& node)
 }
 
 /**
- * Gets the language string that names this country.
- * @note Each country type has a unique name.
- * @return, the country's name
+ * Gets the type-string of the RuleCountry.
+ * @note Each country-type is unique.
+ * @return, the country-type
  */
 const std::string& RuleCountry::getType() const
 {
@@ -94,7 +94,7 @@ const std::string& RuleCountry::getType() const
 }
 
 /**
- * Generates the random starting funding for the country.
+ * Generates the random starting funding for the represented Country.
  * @return, the monthly funding
  */
 int RuleCountry::generateFunding() const
@@ -105,8 +105,8 @@ int RuleCountry::generateFunding() const
 }
 
 /**
- * Gets the country's funding cap.
- * @note Country funding can never exceed this.
+ * Gets the represented Country's funding-cap.
+ * @note Country-funding can never exceed this amount.
  * @return, the funding cap in thousands
  */
 int RuleCountry::getFundingCap() const
@@ -115,7 +115,7 @@ int RuleCountry::getFundingCap() const
 }
 
 /**
- * Gets the longitude of the country's label on the globe.
+ * Gets the longitude of the represented Country's label on the Globe.
  * @return, the longitude in radians
  */
 double RuleCountry::getLabelLongitude() const
@@ -124,7 +124,7 @@ double RuleCountry::getLabelLongitude() const
 }
 
 /**
- * Gets the latitude of the country's label on the globe.
+ * Gets the latitude of the represented Country's label on the Globe.
  * @return, the latitude in radians
  */
 double RuleCountry::getLabelLatitude() const
@@ -133,7 +133,7 @@ double RuleCountry::getLabelLatitude() const
 }
 
 /**
- * Checks if a point is inside this country.
+ * Checks if a point is inside the represented Country's borders.
  * @param lon - longitude in radians
  * @param lat - latitude in radians
  * @return, true if inside

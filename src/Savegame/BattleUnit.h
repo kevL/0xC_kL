@@ -239,7 +239,6 @@ private:
 		_moveSound,
 		_rankInt,
 		_standHeight,
-		_turretType,
 		_value;
 
 	std::string
@@ -259,6 +258,7 @@ private:
 	MoveType _mType;
 	SoldierGender _gender;
 	SpecialAbility _specab;
+	TurretType _turretType;
 
 	BattleUnitStatistics* _statistics;
 	int _murdererId; // used to credit another unit with any kills that this BattleUnit got by blowing up on death
@@ -660,10 +660,10 @@ private:
 		/// Gets the sprite index of the BattleUnit for the MiniMap.
 		int getMiniMapSpriteIndex() const;
 
-		/// Sets the turret type of the BattleUnit (-1 is no turret).
-		void setTurretType(int turretType);
-		/// Gets the turret type of the BattleUnit (-1 is no turret).
-		int getTurretType() const;
+		/// Sets the turret-type of the BattleUnit.
+		void setTurretType(TurretType turretType);
+		/// Gets the turret-type of the BattleUnit.
+		TurretType getTurretType() const;
 
 		/// Gets the BattleUnit's total number of fatal wounds.
 		int getFatalWounds() const;

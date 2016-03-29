@@ -90,7 +90,7 @@ RuleItem::RuleItem(const std::string& type)
 		_energyRecovery(0),
 		_recoveryPoints(0),
 		_armor(20),
-		_turretType(-1),
+		_turretType(TRT_NONE),
 		_recover(true),
 		_liveAlien(false),
 		_attraction(0),
@@ -123,7 +123,7 @@ RuleItem::~RuleItem()
 {}
 
 /**
- * Loads the item from a YAML file.
+ * Loads this Item from a YAML file.
  * @param node		- reference the YAML node
  * @param modIndex	- offsets the sounds and sprite values to avoid conflicts
  * @param listOrder	- the list weight for this item
@@ -217,6 +217,7 @@ void RuleItem::load(
 	_dType			= static_cast<DamageType>(node["damageType"]		.as<int>(_dType));
 	_battleType		= static_cast<BattleType>(node["battleType"]		.as<int>(_battleType));
 	_specialType	= static_cast<SpecialTileType>(node["specialType"]	.as<int>(_specialType));
+	_turretType		= static_cast<TurretType>(node["turretType"]		.as<int>(_turretType));
 
 	_firePower			= node["power"]				.as<int>(_firePower);
 	_meleePower			= node["meleePower"]		.as<int>(_meleePower);
@@ -252,7 +253,6 @@ void RuleItem::load(
 	_energyRecovery		= node["energyRecovery"]	.as<int>(_energyRecovery);
 	_recoveryPoints		= node["recoveryPoints"]	.as<int>(_recoveryPoints);
 	_armor				= node["armor"]				.as<int>(_armor);
-	_turretType			= node["turretType"]		.as<int>(_turretType);
 	_recover			= node["recover"]			.as<bool>(_recover);
 	_liveAlien			= node["liveAlien"]			.as<bool>(_liveAlien);
 	_blastRadius		= node["blastRadius"]		.as<int>(_blastRadius);
@@ -293,9 +293,9 @@ void RuleItem::load(
 }
 
 /**
- * Gets the item-type.
- * @note Each item has a unique type.
- * @return, the item's type
+ * Gets this Item's type.
+ * @note Each Item has a unique type.
+ * @return, the item-type
  */
 const std::string& RuleItem::getType() const
 {
@@ -359,7 +359,7 @@ int RuleItem::getTransferTime() const
 }
 
 /**
- * Gets the weight of the item.
+ * Gets the weight of this Item.
  * @return, the weight in strength units
  */
 int RuleItem::getWeight() const
@@ -404,7 +404,7 @@ bool RuleItem::isTwoHanded() const
 }
 
 /**
- * Gets if the item is a launcher and if so how many waypoints can be set.
+ * Gets if this Item is a launcher and if so how many waypoints it can set.
  * @return, maximum waypoints for the Item
  */
 size_t RuleItem::isWaypoints() const
@@ -441,7 +441,7 @@ int RuleItem::getFireSound() const
 }
 
 /**
- * Gets the item's hit sound.
+ * Gets the Item's hit sound.
  * @return, the hit sound ID
  */
 int RuleItem::getFireHitSound() const
@@ -450,7 +450,7 @@ int RuleItem::getFireHitSound() const
 }
 
 /**
- * Gets the item's hit animation.
+ * Gets the Item's hit animation.
  * @return, the hit animation ID
  */
 int RuleItem::getFireHitAnimation() const
@@ -459,7 +459,7 @@ int RuleItem::getFireHitAnimation() const
 }
 
 /**
- * Gets the item's damage-power or light-power if its BattleType is BT_FLARE.
+ * Gets the Item's damage-power or light-power if its BattleType is BT_FLARE.
  * @return, the power
  */
 int RuleItem::getPower() const
@@ -468,7 +468,7 @@ int RuleItem::getPower() const
 }
 
 /**
- * Gets the item's accuracy for snapshots.
+ * Gets the Item's accuracy for snapshots.
  * @return, the snapshot accuracy
  */
 int RuleItem::getAccuracySnap() const
@@ -477,7 +477,7 @@ int RuleItem::getAccuracySnap() const
 }
 
 /**
- * Gets the item's accuracy for autoshots.
+ * Gets the Item's accuracy for autoshots.
  * @return, the autoshot accuracy
  */
 int RuleItem::getAccuracyAuto() const
@@ -486,7 +486,7 @@ int RuleItem::getAccuracyAuto() const
 }
 
 /**
- * Gets the item's accuracy for aimed shots.
+ * Gets the Item's accuracy for aimed shots.
  * @return, the aimed accuracy
  */
 int RuleItem::getAccuracyAimed() const
@@ -495,7 +495,7 @@ int RuleItem::getAccuracyAimed() const
 }
 
 /**
- * Gets the item's accuracy for melee attacks.
+ * Gets the Item's accuracy for melee attacks.
  * @return, the melee accuracy
  */
 int RuleItem::getAccuracyMelee() const
@@ -504,7 +504,7 @@ int RuleItem::getAccuracyMelee() const
 }
 
 /**
- * Gets the item's TU cost for snapshots.
+ * Gets the Item's TU cost for snapshots.
  * @return, the snapshot TU percentage
  */
 int RuleItem::getSnapTu() const
@@ -513,7 +513,7 @@ int RuleItem::getSnapTu() const
 }
 
 /**
- * Gets the item's TU cost for autoshots.
+ * Gets the Item's TU cost for autoshots.
  * @return, the autoshot TU percentage
  */
 int RuleItem::getAutoTu() const
@@ -522,7 +522,7 @@ int RuleItem::getAutoTu() const
 }
 
 /**
- * Gets the item's TU cost for aimed shots.
+ * Gets the Item's TU cost for aimed shots.
  * @return, the aimed shot TU percentage
  */
 int RuleItem::getAimedTu() const
@@ -531,7 +531,7 @@ int RuleItem::getAimedTu() const
 }
 
 /**
- * Gets the item's TU cost for launched shots.
+ * Gets the Item's TU cost for launched shots.
  * @return, the launch shot TU percentage
  */
 int RuleItem::getLaunchTu() const
@@ -540,7 +540,7 @@ int RuleItem::getLaunchTu() const
 }
 
 /**
- * Gets the item's TU cost for melee attacks.
+ * Gets the Item's TU cost for melee attacks.
  * @return, the melee TU percentage
  */
 int RuleItem::getMeleeTu() const
@@ -603,7 +603,7 @@ const std::vector<std::string>* RuleItem::getCompatibleAmmo() const
 }
 
 /**
- * Gets the item's damage-type.
+ * Gets the Item's damage-type.
  * @return, the damage-type (RuleItem.h)
  */
 DamageType RuleItem::getDamageType() const
@@ -612,7 +612,7 @@ DamageType RuleItem::getDamageType() const
 }
 
 /**
- * Gets the item's battle-type.
+ * Gets the Item's battle-type.
  * @return, the battle-type (RuleItem.h)
  */
 BattleType RuleItem::getBattleType() const
@@ -621,7 +621,7 @@ BattleType RuleItem::getBattleType() const
 }
 
 /**
- * Gets the item's width in a soldier's inventory.
+ * Gets the Item's width in a soldier's inventory.
  * @return, the width
  */
 int RuleItem::getInventoryWidth() const
@@ -630,7 +630,7 @@ int RuleItem::getInventoryWidth() const
 }
 
 /**
- * Gets the item's height in a soldier's inventory.
+ * Gets the Item's height in a soldier's inventory.
  * @return, the height
  */
 int RuleItem::getInventoryHeight() const
@@ -639,7 +639,7 @@ int RuleItem::getInventoryHeight() const
 }
 
 /**
- * Gets the item's ammo clip size.
+ * Gets the Item's ammo clip size.
  * @note Melee and other self-powered items have fullClip= -1.
  * @return, the ammo clip size
  */
@@ -673,7 +673,7 @@ void RuleItem::drawHandSprite(
 }
 
 /**
- * Gets the heal quantity of the item.
+ * Gets the heal quantity of the Item.
  * @return, the new heal quantity
  */
 int RuleItem::getHealQuantity() const
@@ -682,7 +682,7 @@ int RuleItem::getHealQuantity() const
 }
 
 /**
- * Gets the pain killer quantity of the item.
+ * Gets the pain killer quantity of the Item.
  * @return, the new pain killer quantity
  */
 int RuleItem::getPainKillerQuantity() const
@@ -691,7 +691,7 @@ int RuleItem::getPainKillerQuantity() const
 }
 
 /**
- * Gets the stimulant quantity of the item.
+ * Gets the stimulant quantity of the Item.
  * @return, the new stimulant quantity
  */
 int RuleItem::getStimulantQuantity() const
@@ -736,7 +736,7 @@ int RuleItem::getStunRecovery() const
 }
 
 /**
- * Returns the item's max explosion radius.
+ * Returns the Item's max explosion radius.
  * @note Small explosions don't have a restriction. Larger explosions are
  * restricted using a formula with a maximum of radius 10 no matter how large
  * the explosion. kL_note: nah...
@@ -760,7 +760,7 @@ int RuleItem::getExplosionRadius() const
 }
 
 /**
- * Returns the item's recovery points.
+ * Returns the Item's recovery points.
  * @note This is used during the battlescape debriefing score calculation.
  * @return, the recovery points
  */
@@ -770,9 +770,10 @@ int RuleItem::getRecoveryPoints() const
 }
 
 /**
- * Returns the item's armor.
- * @note The item is destroyed when an explosion power bigger than its armor hits it.
- * @return, the armor
+ * Returns this Item's armor-value.
+ * @note The item is destroyed when an explosive power higher than its armor
+ * hits it.
+ * @return, the armor-value
  */
 int RuleItem::getArmor() const
 {
@@ -780,8 +781,8 @@ int RuleItem::getArmor() const
 }
 
 /**
- * Returns if the item should be recoverable from the battlescape.
- * @return, true if item is recoverable
+ * Returns if the Item is recoverable from the battlefield.
+ * @return, true if recoverable
  */
 bool RuleItem::isRecoverable() const
 {
@@ -789,10 +790,10 @@ bool RuleItem::isRecoverable() const
 }
 
 /**
- * Returns the item's Turret Type.
- * @return, the turret index (-1 for no turret)
+ * Returns the Item's turret-type.
+ * @return, the TurretType (RuleItem.h)
  */
-int RuleItem::getTurretType() const
+TurretType RuleItem::getTurretType() const
 {
 	return _turretType;
 }
@@ -816,8 +817,8 @@ bool RuleItem::getFlatRate() const
 }
 
 /**
- * Returns if this weapon should arc its shots.
- * @return, true if this weapon arcs its shots
+ * Returns if this weapon uses arcing shots.
+ * @return, true if parabola-trajectory
  */
 bool RuleItem::getArcingShot() const
 {
@@ -825,7 +826,7 @@ bool RuleItem::getArcingShot() const
 }
 
 /**
- * Gets the attraction value for this item (for AI).
+ * Gets the attraction-value for this item (for AI).
  * @return, the attraction value
  */
 int RuleItem::getAttraction() const
@@ -834,7 +835,7 @@ int RuleItem::getAttraction() const
 }
 
 /**
- * Gets the list weight for this research item
+ * Gets the list-weight for this research item
  * @return, the list weight
  */
 int RuleItem::getListOrder() const
@@ -1084,7 +1085,7 @@ SpecialTileType RuleItem::getSpecialType() const
 }
 
 /**
- * Gets the item's default BattleAction.
+ * Gets the Item's default BattleAction.
  * @note Used to show a TU cost in InventoryState. Lifted from ActionMenuState cTor.
  * @param isPrimed - true if checking a grenade and it's primed (default false)
  * @return, BattleActionType (BattlescapeGame.h)
@@ -1177,7 +1178,7 @@ bool RuleItem::canExecute() const
 }
 
 /**
- * Gets if an explosion of the item causes an electro-magnetic pulse.
+ * Gets if an explosion of the Item causes an electro-magnetic pulse.
  * @return, true if EM pulse
  */
 bool RuleItem::defusePulse() const

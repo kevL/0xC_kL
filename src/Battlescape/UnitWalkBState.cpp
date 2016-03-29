@@ -420,7 +420,7 @@ bool UnitWalkBState::doStatusStand() // private.
 			_unit->setFaceDirection(dirStrafe);
 			//Log(LOG_INFO) << ". STANDING strafeTank, setFaceDirection() -> " << dirStrafe;
 
-			if (_unit->getTurretType() != -1)
+			if (_unit->getTurretType() != TRT_NONE)
 			{
 				const int dirTurret (_unit->getTurretDirection() - _unit->getUnitDirection());
 				_unit->setTurretDirection((dirTurret + dirStrafe) % 8);
@@ -681,7 +681,7 @@ bool UnitWalkBState::doStatusWalk() // private.
 		clearTilesLink(false);
 		_unit->setDirectionTo( // turn to blocking unit. TODO: This likely needs sprite-caching ....
 						_unit->getStopPosition(),
-						_unit->getTurretType() != -1);
+						_unit->getTurretType() != TRT_NONE);
 
 		_pf->abortPath();
 		_unit->setUnitStatus(STATUS_STANDING);

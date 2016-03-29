@@ -33,9 +33,11 @@
 #include "../Resource/ResourcePack.h"
 
 #include "../Ruleset/RuleCountry.h"
+#include "../Ruleset/RuleRegion.h" // debug-data
 
 #include "../Savegame/Base.h"
 #include "../Savegame/Country.h"
+#include "../Savegame/Region.h" // debug-data
 #include "../Savegame/SavedGame.h"
 
 
@@ -112,6 +114,29 @@ FundingState::FundingState()
 	_txtChange->setText(tr("STR_CHANGE"));
 
 	_txtScore->setText(tr("STR_SCORE"));
+
+	// debug-data:
+	for (std::vector<Country*>::const_iterator
+			i = _game->getSavedGame()->getCountries()->begin();
+			i != _game->getSavedGame()->getCountries()->end();
+			++i)
+	{
+		const double
+			lon ((*i)->getRules()->getLabelLongitude()),
+			lat ((*i)->getRules()->getLabelLatitude());
+
+		for (std::vector<Region*>::const_iterator
+				j = _game->getSavedGame()->getRegions()->begin();
+				j != _game->getSavedGame()->getRegions()->end();
+				++j)
+		{
+			if ((*j)->getRules()->insideRegion(lon,lat) == true)
+			{
+				Log(LOG_INFO) << (*i)->getRules()->getType() << " in region: " << (*j)->getRules()->getType();
+				break;
+			}
+		}
+	} // End debug-data.
 
 	_lstCountries->setColumns(6, 94,60,6,54,6,54);
 	_lstCountries->setMargin();

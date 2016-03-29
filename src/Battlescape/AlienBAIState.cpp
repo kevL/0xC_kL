@@ -1807,6 +1807,16 @@ void AlienBAIState::chooseFireMethod() // private.
 {
 	_attackAction->type = BA_THINK;
 
+	const int dist (TileEngine::distance(
+									_unit->getPosition(),
+									_attackAction->posTarget));
+	const RuleItem* const itRule (_attackAction->weapon->getRules());
+	if (   dist > itRule->getMaxRange()
+		|| dist < itRule->getMinRange())
+	{
+		return;
+	}
+
 	int tuReserve (_unit->getTimeUnits());
 	if (_tuEscape != -1
 		&& RNG::generate(0,_unit->getAggression()) == 0)
@@ -1814,26 +1824,23 @@ void AlienBAIState::chooseFireMethod() // private.
 		tuReserve -= _tuEscape;
 	}
 
-	const int dist (TileEngine::distance(
-									_unit->getPosition(),
-									_attackAction->posTarget));
-	if (dist <= _attackAction->weapon->getRules()->getAutoRange())
+	if (dist <= itRule->getAutoRange())
 	{
-		if (_attackAction->weapon->getRules()->getAutoTu() != 0
+		if (itRule->getAutoTu() != 0
 			&& tuReserve >= _unit->getActionTu(
 											BA_AUTOSHOT,
 											_attackAction->weapon))
 		{
 			_attackAction->type = BA_AUTOSHOT;
 		}
-		else if (_attackAction->weapon->getRules()->getSnapTu() != 0
+		else if (itRule->getSnapTu() != 0
 			&& tuReserve >= _unit->getActionTu(
 											BA_SNAPSHOT,
 											_attackAction->weapon))
 		{
 			_attackAction->type = BA_SNAPSHOT;
 		}
-		else if (_attackAction->weapon->getRules()->getAimedTu() != 0
+		else if (itRule->getAimedTu() != 0
 			&& tuReserve >= _unit->getActionTu(
 											BA_AIMEDSHOT,
 											_attackAction->weapon))
@@ -1841,23 +1848,23 @@ void AlienBAIState::chooseFireMethod() // private.
 			_attackAction->type = BA_AIMEDSHOT;
 		}
 	}
-	else if (dist <= _attackAction->weapon->getRules()->getSnapRange())
+	else if (dist <= itRule->getSnapRange())
 	{
-		if (_attackAction->weapon->getRules()->getSnapTu() != 0
+		if (itRule->getSnapTu() != 0
 			&& tuReserve >= _unit->getActionTu(
 											BA_SNAPSHOT,
 											_attackAction->weapon))
 		{
 			_attackAction->type = BA_SNAPSHOT;
 		}
-		else if (_attackAction->weapon->getRules()->getAimedTu() != 0
+		else if (itRule->getAimedTu() != 0
 			&& tuReserve >= _unit->getActionTu(
 											BA_AIMEDSHOT,
 											_attackAction->weapon))
 		{
 			_attackAction->type = BA_AIMEDSHOT;
 		}
-		else if (_attackAction->weapon->getRules()->getAutoTu() != 0
+		else if (itRule->getAutoTu() != 0
 			&& tuReserve >= _unit->getActionTu(
 											BA_AUTOSHOT,
 											_attackAction->weapon))
@@ -1865,23 +1872,23 @@ void AlienBAIState::chooseFireMethod() // private.
 			_attackAction->type = BA_AUTOSHOT;
 		}
 	}
-	else if (dist <= _attackAction->weapon->getRules()->getAimRange())
+	else if (dist <= itRule->getAimRange())
 	{
-		if (_attackAction->weapon->getRules()->getAimedTu() != 0
+		if (itRule->getAimedTu() != 0
 			&& tuReserve >= _unit->getActionTu(
 											BA_AIMEDSHOT,
 											_attackAction->weapon))
 		{
 			_attackAction->type = BA_AIMEDSHOT;
 		}
-		else if (_attackAction->weapon->getRules()->getSnapTu() != 0
+		else if (itRule->getSnapTu() != 0
 			&& tuReserve >= _unit->getActionTu(
 											BA_SNAPSHOT,
 											_attackAction->weapon))
 		{
 			_attackAction->type = BA_SNAPSHOT;
 		}
-		else if (_attackAction->weapon->getRules()->getAutoTu() != 0
+		else if (itRule->getAutoTu() != 0
 			&& tuReserve >= _unit->getActionTu(
 											BA_AUTOSHOT,
 											_attackAction->weapon))

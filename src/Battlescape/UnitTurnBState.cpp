@@ -72,7 +72,7 @@ void UnitTurnBState::init()
 
 		// if unit has a turret and it's either strafing or turning during
 		// targeting then only the turret turns
-		_turret = _unit->getTurretType() != -1
+		_turret = _unit->getTurretType() != TRT_NONE
 			   && (_action.strafe == true || _action.targeting == true);
 
 		if (   _unit->getPosition().x != _action.posTarget.x
@@ -115,19 +115,19 @@ void UnitTurnBState::init()
 		}
 		else
 		{
-			if (_chargeTu == true)					// reaction fire & panic permit free turning
+			if (_chargeTu == true)						// reaction fire & panic permit free turning
 			{
-				if (_unit->getTurretType() != -1	// if turreted vehicle
-					&& _action.strafe == false		// but not swivelling turret
-					&& _action.targeting == false)	// and not taking a shot at something...
+				if (_unit->getTurretType() != TRT_NONE	// if turreted vehicle
+					&& _action.strafe == false			// but not swivelling turret
+					&& _action.targeting == false)		// and not taking a shot at something...
 				{
 					if (_unit->getMoveTypeUnit() == MT_FLY)
-						_tu = 2;					// hover vehicles cost 2 per facing change
+						_tu = 2;						// hover vehicles cost 2 per facing change
 					else
-						_tu = 3;					// large tracked vehicles cost 3 per facing change
+						_tu = 3;						// large tracked vehicles cost 3 per facing change
 				}
 				else
-					_tu = 1;						// one tu per facing change
+					_tu = 1;							// one tu per facing change
 			}
 
 			Uint32 interval;

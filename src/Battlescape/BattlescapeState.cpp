@@ -2904,7 +2904,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	_numDir->setValue(selUnit->getUnitDirection());
 	_numDir->setVisible();
 
-	if (selUnit->getTurretType() != -1)
+	if (selUnit->getTurretType() != TRT_NONE)
 	{
 		_numDirTur->setValue(selUnit->getTurretDirection());
 		_numDirTur->setVisible();

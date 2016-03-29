@@ -925,9 +925,8 @@ void UnitSprite::drawRoutine2() // private.
 
 	Surface* quad;
 
-	const int
-		turret (_unit->getTurretType()),
-		hover  ((_unit->getMoveTypeUnit() == MT_FLY) ? 32 : 0);
+	const TurretType turret (_unit->getTurretType());
+	const int hover ((_unit->getMoveTypeUnit() == MT_FLY) ? 32 : 0);
 
 	if (_quad != 0 && hover != 0)
 	{
@@ -951,9 +950,9 @@ void UnitSprite::drawRoutine2() // private.
 	quad->setX(OFFSET);
 	drawRecolored(quad);
 
-//	if (_quad == 3 && turret != -1)
+//	if (_quad == 3 && turret != TRT_NONE)
 //	{
-//		quad = _unitSet->getFrame(64 + (turret * 8) + _unit->getTurretDirection());
+//		quad = _unitSet->getFrame(64 + (static_cast<int>(turret) * 8) + _unit->getTurretDirection());
 //		int
 //			turretOffsetX = 0,
 //			turretOffsetY = -4;
@@ -967,9 +966,9 @@ void UnitSprite::drawRoutine2() // private.
 //		quad->setY(turretOffsetY);
 //		drawRecolored(quad);
 //	}
-	if (turret != -1)
+	if (turret != TRT_NONE)
 	{
-		quad = _unitSet->getFrame(64 + (turret * 8) + _unit->getTurretDirection());
+		quad = _unitSet->getFrame(64 + (static_cast<int>(turret) * 8) + _unit->getTurretDirection());
 		int
 			turretOffsetX,
 			turretOffsetY;

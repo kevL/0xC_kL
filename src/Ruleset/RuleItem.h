@@ -62,6 +62,16 @@ enum BattleType
 	BT_FUEL				// 12
 };
 
+enum TurretType
+{
+	TRT_NONE = -1,	// -1
+	TRT_CANNON,		//  0 // NOTE: values > -1 are used only for UnitSprite drawing.
+	TRT_ROCKET,		//  1
+	TRT_LASER,		//  2
+	TRT_PLASMA,		//  3
+	TRT_BLASTER		//  4
+};
+
 enum SpecialTileType
 {
 	STT_NONE = -1,			// -1
@@ -120,7 +130,6 @@ private:
 		_listOrder,
 		_recoveryPoints,
 		_transferTime,
-		_turretType,
 		_weight,
 
 		_heal,
@@ -190,6 +199,7 @@ private:
 	BattleType _battleType;
 	DamageType _dType;
 	SpecialTileType _specialType;
+	TurretType _turretType;
 
 	std::vector<std::string>
 		_compatibleAmmo,
@@ -333,8 +343,8 @@ private:
 		/// Gets the item's recoverability.
 		bool isRecoverable() const;
 
-		/// Gets the item's turret type.
-		int getTurretType() const;
+		/// Gets the item's turret-type.
+		TurretType getTurretType() const;
 
 		/// Checks if this a live alien.
 		bool isLiveAlien() const;

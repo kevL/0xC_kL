@@ -377,7 +377,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 	const size_t antecedentOpponents (unit->getHostileUnitsThisTurn().size());
 
 	int dir;
-	if (unit->getTurretType() != -1) // && Options::battleStrafe == true
+	if (unit->getTurretType() != TRT_NONE) // && Options::battleStrafe == true
 		dir = unit->getTurretDirection();
 	else
 		dir = unit->getUnitDirection();

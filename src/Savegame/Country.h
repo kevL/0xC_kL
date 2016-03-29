@@ -38,8 +38,8 @@ enum SatisfactionType
 class RuleCountry;
 
 /**
- * Represents a country that funds the player.
- * @note Contains variable info about a country like monthly funding and various
+ * Represents a Country that funds the player.
+ * @note Contains variable info about a Country like monthly funding and various
  * activities.
  */
 class Country
@@ -64,38 +64,38 @@ private:
 
 
 	public:
-		/// Creates a new country of the specified type.
+		/// Creates a Country of the specified type.
 		Country(
 				const RuleCountry* const countryRule,
 				bool genFunds = false);
-		/// Cleans up the country.
+		/// Cleans up the Country.
 		~Country();
 
-		/// Loads the country from YAML.
+		/// Loads the Country from YAML.
 		void load(const YAML::Node& node);
-		/// Saves the country to YAML.
+		/// Saves the Country to YAML.
 		YAML::Node save() const;
 
-		/// Gets the country's ruleset.
+		/// Gets the Country's ruleset.
 		const RuleCountry* getRules() const;
-		/// Get the country's name.
+		/// Gets the Country's type.
 		const std::string& getType() const;
 
-		/// Gets the country's funding.
+		/// Gets the Country's funding.
 		std::vector<int>& getFunding();
-		/// Sets the country's funding.
+		/// Sets the Country's funding.
 		void setFunding(int funding);
 
-		/// Gets the country's satisfaction level.
+		/// Gets the Country's satisfaction-level.
 		SatisfactionType getSatisfaction() const;
 
-		/// Adds alien activity in this country.
+		/// Adds alien activity in the Country.
 		void addActivityAlien(int activity);
-		/// Adds xcom activity in this country.
-		void addActivityXCom(int activity);
-		/// Gets alien activity for this country.
+		/// Gets alien activity for the Country.
 		std::vector<int>& getActivityAlien();
-		/// Gets xcom activity for this country.
+		/// Adds xcom activity in the Country.
+		void addActivityXCom(int activity);
+		/// Gets xcom activity for the Country.
 		std::vector<int>& getActivityXCom();
 
 		/// Stores last month's counters, starts new counters, sets this month's change.
@@ -113,11 +113,11 @@ private:
 		/// Signs a pact w/ aLiens immediately!1
 //		void setPact();
 
-		/// Handles recent alien activity in this country for GraphsState blink.
+		/// Handles recent alien activity in the Country for GraphsState blink.
 		bool recentActivityAlien(
 				bool activity = true,
 				bool graphs = false);
-		/// Handles recent XCOM activity in this country for GraphsState blink.
+		/// Handles recent XCOM activity in the Country for GraphsState blink.
 		bool recentActivityXCom(
 				bool activity = true,
 				bool graphs = false);
