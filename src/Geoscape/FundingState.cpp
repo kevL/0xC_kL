@@ -60,12 +60,12 @@ FundingState::FundingState()
 
 	_window			= new Window(this, 320, 200, 0 + dX, 0, POPUP_BOTH);
 
-	_txtTitle		= new Text(300, 17, 10 + dX, 9);
+	_txtTitle		= new Text(300, 16, 10 + dX, 9);
 
 	_txtCountry		= new Text(102, 9,  16 + dX, 25);
-	_txtFunding		= new Text( 60, 9, 118 + dX, 25);
-	_txtChange		= new Text( 60, 9, 178 + dX, 25);
-	_txtScore		= new Text( 60, 9, 238 + dX, 25);
+	_txtFunding		= new Text( 60, 9, 126 + dX, 25);
+	_txtChange		= new Text( 60, 9, 186 + dX, 25);
+	_txtScore		= new Text( 60, 9, 246 + dX, 25);
 
 	_lstCountries	= new TextList(285, 121, 16 + dX,  34);
 	_lstTotal		= new TextList(285,  17, 16 + dX, 157);
@@ -169,7 +169,7 @@ FundingState::FundingState()
 			case 13: regionType = "STR_SOUTH_ATLANTIC";		break;
 			case 14: regionType = "STR_INDIAN_OCEAN";
 		}
-		_lstCountries->addRow(1, tr(regionType).c_str());
+		_lstCountries->addRow(1, tr(regionType + "_UC").c_str());
 		_lstCountries->setRowColor(row, BROWN, true);
 
 		for (std::vector<Country*>::const_iterator
