@@ -104,10 +104,10 @@ private:
 				const int totalA,
 				const int diff);
 
-		/// Gets if they're signing a new pact w/ aLiens.
-		bool getRecentPact() const;
-		/// Signs a pact at the end of this month.
+		/// Signs a pact w/ aLiens at the end of the current month.
 		void setRecentPact();
+		/// Gets if they're signing a pact w/ aLiens.
+		bool getRecentPact() const;
 		/// Gets if they already signed a pact w/ aLiens.
 		bool getPact() const;
 		/// Signs a pact w/ aLiens immediately!1

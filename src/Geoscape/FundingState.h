@@ -42,6 +42,8 @@ class FundingState
 {
 
 private:
+	static const Uint8 BROWN = 143;
+
 	Text
 		* _txtChange,
 		* _txtCountry,

@@ -1,6 +1,7 @@
 # 'Geography.rul'
 countries:
   - type: STR_ALGERIA
+    region: STR_NORTH_AFRICA
     fundingBase: 100
     fundingCap: 1000
     labelLon: 2.3
@@ -10,6 +11,7 @@ countries:
       - [358.4, 8.3, -37.2, -31.3]
       - [359.8, 9, -21.8, -19]
   - type: STR_ANGOLA
+    region: STR_SOUTHERN_AFRICA
     fundingBase: 100
     fundingCap: 1000
     labelLon: 16.8
@@ -17,6 +19,7 @@ countries:
     areas:
       - [11.8, 22.5, 6.9, 18]
   - type: STR_ARGENTINA
+    region: STR_SOUTH_AMERICA
     fundingBase: 100
     fundingCap: 1000
     labelLon: 295.2
@@ -30,6 +33,7 @@ countries:
       - [302, 304.4, 27, 30]
       - [299, 302.7, 50.8, 52.6]
   - type: STR_AUSTRALIA
+    region: STR_AUSTRALASIA
     fundingBase: 205
     fundingCap: 2050
     labelLon: 132.6
@@ -38,6 +42,7 @@ countries:
       - [110, 156, 10, 40]
       - [144, 149, 40, 44.3]
   - type: STR_AUSTRIA
+    region: STR_EUROPE
     fundingBase: 130
     fundingCap: 1300
     labelLon: 13.8
@@ -46,6 +51,7 @@ countries:
       - [10.7, 17.2, -47.5, -46.5]
       - [13.3, 17.2, -48.9, -47.5]
   - type: STR_BELARUS
+    region: STR_EUROPE
     fundingBase: 130
     fundingCap: 1300
     labelLon: 26.0
@@ -53,6 +59,7 @@ countries:
     areas:
       - [24, 31.4, -55, -51.5]
   - type: STR_BELGIUM
+    region: STR_EUROPE
     fundingBase: 180
     fundingCap: 1800
     labelLon: 3.734
@@ -60,6 +67,7 @@ countries:
     areas:
       - [2, 6, -51.9, -50]
   - type: STR_BRAZIL
+    region: STR_SOUTH_AMERICA
     fundingBase: 165
     fundingCap: 1650
     labelLon: 307.9
@@ -78,6 +86,7 @@ countries:
       - [305.3, 309.3, 31.2, 33]
       - [330.3, 330.7, 20.3, 20.7]
   - type: STR_BULGARIA
+    region: STR_EUROPE
     fundingBase: 85
     fundingCap: 850
     labelLon: 26.0
@@ -85,6 +94,7 @@ countries:
     areas:
       - [22.6, 29, -44, -41.5]
   - type: STR_CANADA
+    region: STR_NORTH_AMERICA
     fundingBase: 225
     fundingCap: 2250
     labelLon: 249.1
@@ -101,6 +111,7 @@ countries:
       - [293.5, 298, -45, -43.2]
       - [305, 307.9, -49.4, -46.7]
   - type: STR_CHILE
+    region: STR_SOUTH_AMERICA
     fundingBase: 75
     fundingCap: 750
     labelLon: 289.093
@@ -111,6 +122,7 @@ countries:
       - [283, 288, 37, 55]
       - [288, 295, 52.2, 55.5]
   - type: STR_CHINA
+    region: STR_SOUTH_EAST_ASIA
     fundingBase: 335
     fundingCap: 3350
     labelLon: 100.573
@@ -123,6 +135,7 @@ countries:
       - [124, 133, -50.5, -40]
       - [108, 113, -22, -17.9]
   - type: STR_COLOMBIA
+    region: STR_SOUTH_AMERICA
     fundingBase: 155
     fundingCap: 1550
     labelLon: 285.5
@@ -133,6 +146,7 @@ countries:
       - [286.3, 290.2, -0.5, 2.4]
       - [288.7, 290.2, -1.8, -0.5]
   - type: STR_CONGO
+    region: STR_SOUTHERN_AFRICA
     fundingBase: 100
     fundingCap: 1000
     labelLon: 23.0
@@ -142,6 +156,7 @@ countries:
       - [22.5, 29, 6.9, 12.3]
       - [12.7, 18.4, 2, 6]
   - type: STR_CUBA
+    region: STR_NORTH_AMERICA
     fundingBase: 75
     fundingCap: 750
     labelLon: 282.0
@@ -150,6 +165,7 @@ countries:
       - [275, 283.4, -23.5, -21]
       - [281.8, 285.8, -21, -19.6]
   - type: STR_CZECH
+    region: STR_EUROPE
     fundingBase: 125
     fundingCap: 1250
     labelLon: 16.1
@@ -157,6 +173,7 @@ countries:
     areas:
       - [12.2, 18.5, -50.9, -48.9]
   - type: STR_DENMARK
+    region: STR_EUROPE
     fundingBase: 185
     fundingCap: 1850
     labelLon: 9.0
@@ -164,6 +181,7 @@ countries:
     areas:
       - [7.3, 11.5, -58, -54.8]
   - type: STR_EGYPT
+    region: STR_NORTH_AFRICA
     fundingBase: 125
     fundingCap: 1250
     labelLon: 29.73
@@ -172,6 +190,7 @@ countries:
       - [25, 34, -31.9, -22]
       - [34, 35.2, -26.61, -22.296]
   - type: STR_ETHIOPIA
+    region: STR_NORTH_AFRICA
     fundingBase: 100
     fundingCap: 1000
     labelLon: 38.1
@@ -180,6 +199,7 @@ countries:
       - [33.7, 43.1, -14, -4]
       - [43.1, 47.5, -9.5, -5]
   - type: STR_FINLAND
+    region: STR_EUROPE
     fundingBase: 190
     fundingCap: 1900
     labelLon: 25.649
@@ -189,6 +209,7 @@ countries:
       - [20.6, 22.7, -64, -59.6]
       - [29.7, 31.4, -69.4, -62.3]
   - type: STR_FRANCE
+    region: STR_EUROPE
     fundingBase: 255
     fundingCap: 2550
     labelLon: 0.5
@@ -201,6 +222,7 @@ countries:
       - [163.6, 167.2, 19.9, 22.7]
       - [304, 308, -6.8, -2.6]
   - type: STR_GERMANY
+    region: STR_EUROPE
     fundingBase: 205
     fundingCap: 2050
     labelLon: 9.3
@@ -210,6 +232,7 @@ countries:
       - [6, 12.2, -50.9, -47.5]
       - [12.2, 13.3, -48.9, -47.5]
   - type: STR_GREECE
+    region: STR_EUROPE
     fundingBase: 205
     fundingCap: 2050
     labelLon: 22.1
@@ -218,6 +241,7 @@ countries:
       - [19.1, 25.7, -41.5, -36.3]
       - [23, 26.7, -36, -34.7]
   - type: STR_HUNGARY
+    region: STR_EUROPE
     fundingBase: 105
     fundingCap: 1050
     labelLon: 20.1
@@ -225,6 +249,7 @@ countries:
     areas:
       - [17.2, 21.8, -48, -45.9]
   - type: STR_INDIA
+    region: STR_CENTRAL_ASIA
     fundingBase: 115
     fundingCap: 1150
     labelLon: 78.957
@@ -235,6 +260,7 @@ countries:
       - [85, 89, -27, -18]
       - [68, 70, -23.7, -21.2]
   - type: STR_INDONESIA
+    region: STR_AUSTRALASIA
     fundingBase: 125
     fundingCap: 1250
     labelLon: 119.953
@@ -247,6 +273,7 @@ countries:
       - [101, 102, -2.17, -0.57]
       - [102, 103, -1.54, -0.57]
   - type: STR_IRAN
+    region: STR_CENTRAL_ASIA
     fundingBase: 160
     fundingCap: 1600
     labelLon: 54.0
@@ -256,6 +283,7 @@ countries:
       - [50, 61, -29, -26.3]
       - [57.5, 61, -26.3, -24.7]
   - type: STR_IRAQ
+    region: STR_CENTRAL_ASIA
     fundingBase: 275
     fundingCap: 2750
     labelLon: 43.2
@@ -263,6 +291,7 @@ countries:
     areas:
       - [40.6, 47, -36, -29]
   - type: STR_IRELAND
+    region: STR_EUROPE
     fundingBase: 180
     fundingCap: 1800
     labelLon: 350.868
@@ -271,6 +300,7 @@ countries:
       - [348.4, 353.9, -53.9, -51.1]
       - [348.8, 352, -55.4, -53.9]
   - type: STR_ISRAEL
+    region: STR_NORTH_AFRICA
     fundingBase: 175
     fundingCap: 1750
     labelLon: 34.95
@@ -278,6 +308,7 @@ countries:
     areas:
       - [34, 36.1, -34.8, -29.4]
   - type: STR_ITALY
+    region: STR_EUROPE
     fundingBase: 145
     fundingCap: 1450
     labelLon: 11.883
@@ -288,6 +319,7 @@ countries:
       - [12, 18.6, -41.4, -36.5]
       - [7.7, 10.3, -41.3, -38.4]
   - type: STR_IVORY
+    region: STR_NORTH_AFRICA
     fundingBase: 100
     fundingCap: 1000
     labelLon: 353.9
@@ -295,6 +327,7 @@ countries:
     areas:
       - [351.4, 357.4, -10.5, -4.4]
   - type: STR_JAPAN
+    region: STR_SOUTH_EAST_ASIA
     fundingBase: 385
     fundingCap: 3850
     labelLon: 138.6
@@ -304,6 +337,7 @@ countries:
       - [137.8, 147, -45.6, -40]
       - [129, 130, -33.8, -31.95]
   - type: STR_KENYA
+    region: STR_NORTH_AFRICA
     fundingBase: 100
     fundingCap: 1000
     labelLon: 37.6
@@ -311,6 +345,7 @@ countries:
     areas:
       - [34, 41.5, -4, 4.3]
   - type: STR_KOREA
+    region: STR_SOUTH_EAST_ASIA
     fundingBase: 150
     fundingCap: 1500
     labelLon: 126.888
@@ -318,6 +353,7 @@ countries:
     areas:
       - [124, 130, -40, -33.8]
   - type: STR_LIBYA
+    region: STR_NORTH_AFRICA
     fundingBase: 110
     fundingCap: 1100
     labelLon: 17.3
@@ -326,6 +362,7 @@ countries:
       - [9.5, 25, -33.7, -23.5]
       - [17, 25, -23.5, -20]
   - type: STR_MEXICO
+    region: STR_NORTH_AMERICA
     fundingBase: 150
     fundingCap: 1500
     labelLon: 257.2
@@ -339,6 +376,7 @@ countries:
       - [265, 272.5, -19, -16]
       - [268.9, 273.6, -22, -19]
   - type: STR_MOZAMBIQUE
+    region: STR_SOUTHERN_AFRICA
     fundingBase: 100
     fundingCap: 1000
     labelLon: 35.2
@@ -347,6 +385,7 @@ countries:
       - [31.8, 35.6, 14, 26.6]
       - [35.6, 40.7, 9.9, 20]
   - type: STR_NETHERLANDS
+    region: STR_EUROPE
     fundingBase: 185
     fundingCap: 1850
     labelLon: 3.0
@@ -354,6 +393,7 @@ countries:
     areas:
       - [2, 6, -53.8, -51.9]
   - type: STR_NEWZEALAND
+    region: STR_AUSTRALASIA
     fundingBase: 100
     fundingCap: 1000
     labelLon: 175.11
@@ -362,6 +402,7 @@ countries:
       - [164, 177.2, 40, 47]
       - [172, 179, 33.5, 40]
   - type: STR_NIGERIA
+    region: STR_NORTH_AFRICA
     fundingBase: 165
     fundingCap: 1650
     labelLon: 7.5
@@ -369,6 +410,7 @@ countries:
     areas:
       - [2.5, 15, -14.2, -4]
   - type: STR_NORWAY
+    region: STR_EUROPE
     fundingBase: 225
     fundingCap: 2250
     labelLon: 7.91
@@ -380,6 +422,7 @@ countries:
       - [15.5, 29.5, -71.6, -69.2]
       - [15.5, 19, -69.2, -67.3]
   - type: STR_PAKISTAN
+    region: STR_CENTRAL_ASIA
     fundingBase: 135
     fundingCap: 1350
     labelLon: 66.5
@@ -388,6 +431,7 @@ countries:
       - [61, 70, -31.6, -23.7]
       - [70, 74, -35, -30]
   - type: STR_PERU
+    region: STR_SOUTH_AMERICA
     fundingBase: 70
     fundingCap: 700
     labelLon: 282.4
@@ -398,6 +442,7 @@ countries:
       - [282, 290.1, 11.5, 17.7]
       - [286.3, 288.9, 9.3, 11.5]
   - type: STR_PHILIPPINES
+    region: STR_SOUTH_EAST_ASIA
     fundingBase: 105
     fundingCap: 1050
     labelLon: 120.685
@@ -406,6 +451,7 @@ countries:
       - [117, 126, -19.5, -11.6]
       - [121, 128, -11.6, -5]
   - type: STR_POLAND
+    region: STR_EUROPE
     fundingBase: 150
     fundingCap: 1500
     labelLon: 17.382
@@ -414,6 +460,7 @@ countries:
       - [15, 24, -54.5, -50.9]
       - [18.5, 24, -50.9, -49.5]
   - type: STR_PORTUGAL
+    region: STR_EUROPE
     fundingBase: 85
     fundingCap: 850
     labelLon: 350.5
@@ -422,6 +469,7 @@ countries:
       - [350, 353.8, -41.6, -39.5]
       - [350, 352.8, -39.5, -36.7]
   - type: STR_QATAR
+    region: STR_CENTRAL_ASIA
     fundingBase: 160
     fundingCap: 1600
     labelLon: 51.2
@@ -429,6 +477,7 @@ countries:
     areas:
       - [50, 53.2, -26.3, -23]
   - type: STR_ROMANIA
+    region: STR_EUROPE
     fundingBase: 175
     fundingCap: 1750
     labelLon: 24.6
@@ -436,6 +485,7 @@ countries:
     areas:
       - [21.8, 30.2, -47.5, -44]
   - type: STR_RUSSIA
+    region: STR_SIBERIA
     fundingBase: 535
     fundingCap: 5350
     labelLon: 69.0
@@ -450,6 +500,7 @@ countries:
       - [19, 22.8, -55.5, -54.5]
       - [115.5, 117.8, 74.9, 75.6]
   - type: STR_SAUDI
+    region: STR_CENTRAL_ASIA
     fundingBase: 255
     fundingCap: 2550
     labelLon: 45.9
@@ -461,6 +512,7 @@ countries:
       - [35.2, 37.8, -29, -24.1]
       - [37, 40.6, -32, -29]
   - type: STR_SOUTH_AFRICA
+    region: STR_SOUTHERN_AFRICA
     fundingBase: 305
     fundingCap: 3050
     labelLon: 25.0
@@ -469,6 +521,7 @@ countries:
       - [15, 25, 26, 35]
       - [25, 31.8, 22, 35]
   - type: STR_SPAIN
+    region: STR_EUROPE
     fundingBase: 95
     fundingCap: 950
     labelLon: 356.3
@@ -481,6 +534,7 @@ countries:
       - [352.8, 358.4, -37.2, -36.1]
       - [352.8, 353.8, -39.5, -37.2]
   - type: STR_SWEDEN
+    region: STR_EUROPE
     fundingBase: 205
     fundingCap: 2050
     labelLon: 14.723
@@ -491,6 +545,7 @@ countries:
       - [15.5, 22.7, -67.3, -64]
       - [19, 22.7, -69.2, -67.3]
   - type: STR_SYRIA
+    region: STR_EUROPE # move to Central Asia (not so easy, it's split right in half between Europe and North Africa, bordering on Central Asia)
     fundingBase: 125
     fundingCap: 1250
     labelLon: 38.1
@@ -498,6 +553,7 @@ countries:
     areas:
       - [36.1, 40.6, -36, -32.6]
   - type: STR_TAIWAN
+    region: STR_SOUTH_EAST_ASIA
     fundingBase: 120
     fundingCap: 1200
     labelLon: 120.77
@@ -505,6 +561,7 @@ countries:
     areas:
       - [119.5, 122.8, -25.3, -21.5]
   - type: STR_THAILAND
+    region: STR_SOUTH_EAST_ASIA
     fundingBase: 195
     fundingCap: 1950
     labelLon: 102.0
@@ -514,6 +571,7 @@ countries:
       - [103.3, 105.8, -17.5, -10.5]
       - [105.8, 107.4, -16.2, -12.4]
   - type: STR_TURKEY
+    region: STR_EUROPE
     fundingBase: 155
     fundingCap: 1550
     labelLon: 35.3
@@ -522,6 +580,7 @@ countries:
       - [29, 46, -42, -36]
       - [25.7, 29, -41.5, -36]
   - type: STR_UAE
+    region: STR_CENTRAL_ASIA
     fundingBase: 140
     fundingCap: 1400
     labelLon: 55.3
@@ -529,6 +588,7 @@ countries:
     areas:
       - [53.2, 57.5, -26.3, -23]
   - type: STR_UK
+    region: STR_EUROPE
     fundingBase: 235
     fundingCap: 2350
     labelLon: 357.845
@@ -539,6 +599,7 @@ countries:
       - [345.388, 346.048, 7.8, 8.3]
       - [321.4, 324.9, 53.5, 54.9]
   - type: STR_UKRAINE
+    region: STR_EUROPE
     fundingBase: 195
     fundingCap: 1950
     labelLon: 31.1
@@ -548,6 +609,7 @@ countries:
       - [34.1, 38.3, -50.3, -44.2]
       - [30.2, 34.1, -47.5, -44.2]
   - type: STR_USA
+    region: STR_NORTH_AMERICA
     fundingBase: 675
     fundingCap: 6750
     labelLon: 260.0
@@ -569,6 +631,7 @@ countries:
       - [0, 360, 89.7, 90]
       - [181.7, 182.3, -28.2, -27.7]
   - type: STR_VENEZULA
+    region: STR_SOUTH_AMERICA
     fundingBase: 190
     fundingCap: 1900
     labelLon: 294.0
@@ -578,6 +641,7 @@ countries:
       - [292.4, 296, -6.8, -1.8]
       - [296, 299.581, -6.8, -4.8]
   - type: STR_VIETNAM
+    region: STR_SOUTH_EAST_ASIA
     fundingBase: 125
     fundingCap: 1250
     labelLon: 108.246

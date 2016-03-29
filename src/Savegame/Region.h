@@ -50,42 +50,42 @@ private:
 
 
 	public:
-		/// Creates a new region of the specified type.
+		/// Creates a Region with the specified RuleRegion.
 		explicit Region(RuleRegion* const regionRule);
-		/// Cleans up the region.
+		/// Cleans up the Region.
 		~Region();
 
-		/// Loads the region from YAML.
+		/// Loads the Region from YAML.
 		void load(const YAML::Node& node);
-		/// Saves the region to YAML.
+		/// Saves the Region to YAML.
 		YAML::Node save() const;
 
-		/// Gets the region's ruleset.
+		/// Gets the Region's rules.
 		RuleRegion* getRules() const;
-		/// Get the region's name.
+		/// Get the Region's type.
 		std::string getType() const;
 
-		/// Adds alien activity in this region.
+		/// Adds alien activity in the Region.
 		void addActivityAlien(int activity);
-		/// Adds xcom activity in this region.
+		/// Adds xcom activity in the Region.
 		void addActivityXCom(int activity);
-		/// Gets xcom activity for this region.
+		/// Gets xcom activity for the Region.
 		std::vector<int>& getActivityAlien();
-		/// Gets xcom activity for this region.
+		/// Gets xcom activity for the Region.
 		std::vector<int>& getActivityXCom();
 
-		/// Stores last month's counters, starts new counters.
+		/// Stores last month's counters and starts new counters.
 		void newMonth();
 
-		/// Handles recent alien activity in this region for GraphsState blink.
+		/// Handles recent aLien-activity in the Region for GraphsState blink.
 		bool recentActivityAlien(
 				bool activity = true,
 				bool graphs = false);
-		/// Handles recent XCOM activity in this region for GraphsState blink.
+		/// Handles recent XCOM-activity in the Region for GraphsState blink.
 		bool recentActivityXCom(
 				bool activity = true,
 				bool graphs = false);
-		/// Resets activity.
+		/// Resets activity in the Region.
 		void resetActivity();
 };
 

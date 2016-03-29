@@ -59,8 +59,9 @@ void RuleCountry::load(const YAML::Node& node)
 	_type			= node["type"]			.as<std::string>(_type);
 	_fundingBase	= node["fundingBase"]	.as<int>(_fundingBase);
 	_fundingCap		= node["fundingCap"]	.as<int>(_fundingCap);
-	_labelLon		= node["labelLon"]		.as<double>(_labelLon) * M_PI / 180.;
-	_labelLat		= node["labelLat"]		.as<double>(_labelLat) * M_PI / 180.;
+	_labelLon		= node["labelLon"]		.as<double>(_labelLon) * M_PI / 180.; // converts degrees to radians
+	_labelLat		= node["labelLat"]		.as<double>(_labelLat) * M_PI / 180.; // converts degrees to radians
+	_region			= node["region"]		.as<std::string>();
 
 	std::vector<std::vector<double>> areas;
 	areas = node["areas"].as<std::vector<std::vector<double>>>(areas);
@@ -130,6 +131,15 @@ double RuleCountry::getLabelLongitude() const
 double RuleCountry::getLabelLatitude() const
 {
 	return _labelLat;
+}
+
+/**
+ * Gets the Region in which the label of a Country is based.
+ * @return, the region-type string
+ */
+const std::string& RuleCountry::getCountryRegion() const
+{
+	return _region;
 }
 
 /**

@@ -267,20 +267,20 @@ void Country::newMonth(
 }
 
 /**
+ * Signs a pact with aLiens at month's end.
+ */
+void Country::setRecentPact()
+{
+	 _newPact = true;
+}
+
+/**
  * Gets if this country has signed a recent pact with aLiens.
  * @return, true if so
  */
 bool Country::getRecentPact() const
 {
 	return _newPact;
-}
-
-/**
- * Signs a pact with aLiens at month's end.
- */
-void Country::setRecentPact()
-{
-	 _newPact = true;
 }
 
 /**

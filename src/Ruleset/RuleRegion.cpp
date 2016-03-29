@@ -30,7 +30,7 @@ namespace OpenXcom
 {
 
 /**
- * Creates a blank ruleset for a certain type of Region.
+ * Creates a blank ruleset for a certain RuleRegion.
  * @param type - reference the string defining the type
  */
 RuleRegion::RuleRegion(const std::string& type)
@@ -41,7 +41,7 @@ RuleRegion::RuleRegion(const std::string& type)
 {}
 
 /**
- * Deletes the Region from memory.
+ * Deletes the RuleRegion from memory.
  */
 RuleRegion::~RuleRegion()
 {
@@ -53,7 +53,7 @@ RuleRegion::~RuleRegion()
 }
 
 /**
- * Loads the Region type from a YAML file.
+ * Loads the RuleRegion type from a YAML file.
  * @param node - reference a YAML node
  */
 void RuleRegion::load(const YAML::Node& node)
@@ -67,7 +67,7 @@ void RuleRegion::load(const YAML::Node& node)
 			i != areas.size();
 			++i)
 	{
-		_lonMin.push_back(areas[i][0] * M_PI / 180.);
+		_lonMin.push_back(areas[i][0] * M_PI / 180.); // converts degrees to radians ->
 		_lonMax.push_back(areas[i][1] * M_PI / 180.);
 		_latMin.push_back(areas[i][2] * M_PI / 180.);
 		_latMax.push_back(areas[i][3] * M_PI / 180.);
@@ -132,9 +132,9 @@ void RuleRegion::load(const YAML::Node& node)
 }
 
 /**
- * Gets the language string that names this Region.
- * @note Each Region type has a unique name.
- * @return, the region type
+ * Gets the language string that names this RuleRegion.
+ * @note Each region-type has a unique name.
+ * @return, the region-type
  */
 const std::string& RuleRegion::getType() const
 {
@@ -142,7 +142,7 @@ const std::string& RuleRegion::getType() const
 }
 
 /**
- * Gets the cost of building a base inside this Region.
+ * Gets the cost of building a base inside the RuleRegion.
  * @return, the construction cost
  */
 int RuleRegion::getBaseCost() const
@@ -151,10 +151,10 @@ int RuleRegion::getBaseCost() const
 }
 
 /**
- * Checks if a point is inside this Region.
+ * Checks if a point is inside the RuleRegion.
  * @param lon - longitude in radians
  * @param lat - latitude in radians
- * @return, true if point is inside this region
+ * @return, true if point is inside the region
  */
 bool RuleRegion::insideRegion(
 		double lon,
@@ -189,7 +189,7 @@ bool RuleRegion::insideRegion(
 }
 
 /**
- * Gets the list of cities contained in this Region.
+ * Gets the list of cities contained in the RuleRegion.
  * @note Build & cache a vector of all MissionAreas that are Cities.
  * @return, pointer to a vector of pointers to Cities
  */
@@ -213,10 +213,10 @@ std::vector<RuleCity*>* RuleRegion::getCities()
 }
 
 /**
- * Gets the weight of the Region for mission selection.
+ * Gets the weight of the RuleRegion for aLien-mission-selection.
  * @note This is only used when creating a new game since these weights change
  * in the course of the game.
- * @return, the initial weight of this Region
+ * @return, the initial weight
  */
 size_t RuleRegion::getWeight() const
 {
@@ -224,7 +224,7 @@ size_t RuleRegion::getWeight() const
 }
 
 /**
- * Gets a list of all MissionZones in the Region.
+ * Gets a list of all MissionZones in the RuleRegion.
  * @return, reference to a vector of MissionZones
  */
 const std::vector<MissionZone>& RuleRegion::getMissionZones() const
@@ -233,8 +233,8 @@ const std::vector<MissionZone>& RuleRegion::getMissionZones() const
 }
 
 /**
- * Gets a random point that is guaranteed to be inside the given zone.
- * @param zone - the target zone
+ * Gets a random point that is guaranteed to be inside a specified zone.
+ * @param zone - the target-zone
  * @return, a pair of longitude and latitude
  */
 std::pair<double, double> RuleRegion::getRandomPoint(size_t zone) const
@@ -277,9 +277,9 @@ std::pair<double, double> RuleRegion::getRandomPoint(size_t zone) const
 }
 
 /**
- * Gets the area data for a mission-point in the specified zone and coordinates.
+ * Gets the area-data for a mission-point in a specified zone and coordinate.
  * @param zone		- the target-zone
- * @param target	- the target-coordinates
+ * @param target	- the target-coordinate
  * @return, a MissionArea from which to extract coordinates, textures, or any other pertinent information
  */
 MissionArea RuleRegion::getMissionPoint(
@@ -307,7 +307,7 @@ MissionArea RuleRegion::getMissionPoint(
 }
 
 /**
- * Gets the area-data for the random mission-point in this Region.
+ * Gets the area-data for the random mission-point in the RuleRegion.
  * @return, a MissionArea from which to extract coordinates, textures, or any other pertinent information
  *
 MissionArea RuleRegion::getRandomMissionPoint(size_t zone) const

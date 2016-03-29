@@ -34,6 +34,7 @@
 
 #include "../Ruleset/RuleCountry.h"
 #include "../Ruleset/RuleRegion.h" // debug-data
+#include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/Base.h"
 #include "../Savegame/Country.h"
@@ -103,20 +104,17 @@ FundingState::FundingState()
 					(ActionHandler)& FundingState::btnOkClick,
 					Options::keyGeoFunding);
 
+	_txtTitle->setText(tr("STR_INTERNATIONAL_RELATIONS"));
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
-	_txtTitle->setText(tr("STR_INTERNATIONAL_RELATIONS"));
 
 	_txtCountry->setText(tr("STR_COUNTRY"));
-
 	_txtFunding->setText(tr("STR_FUNDING"));
-
 	_txtChange->setText(tr("STR_CHANGE"));
-
 	_txtScore->setText(tr("STR_SCORE"));
 
 	// debug-data:
-	for (std::vector<Country*>::const_iterator
+/*	for (std::vector<Country*>::const_iterator
 			i = _game->getSavedGame()->getCountries()->begin();
 			i != _game->getSavedGame()->getCountries()->end();
 			++i)
@@ -133,15 +131,115 @@ FundingState::FundingState()
 			if ((*j)->getRules()->insideRegion(lon,lat) == true)
 			{
 				Log(LOG_INFO) << (*i)->getRules()->getType() << " in region: " << (*j)->getRules()->getType();
-				break;
+//				break;
 			}
 		}
-	} // End debug-data.
+	} */ // End debug-data.
 
 	_lstCountries->setColumns(6, 94,60,6,54,6,54);
 	_lstCountries->setMargin();
 	_lstCountries->setDot();
-	for (std::vector<Country*>::const_iterator
+	_lstCountries->setBackground(_window);
+	_lstCountries->setSelectable();
+
+	static const int REGIONS (15);
+
+	int row (0);
+	std::string regionType;
+	for (int
+			i = 0;
+			i != REGIONS;
+			++i, ++row)
+	{
+		switch (i)
+		{
+			case  0: regionType = "STR_EUROPE";				break;
+			case  1: regionType = "STR_SIBERIA";			break;
+			case  2: regionType = "STR_NORTH_AMERICA";		break;
+			case  3: regionType = "STR_SOUTH_AMERICA";		break;
+			case  4: regionType = "STR_CENTRAL_ASIA";		break;
+			case  5: regionType = "STR_SOUTH_EAST_ASIA";	break;
+			case  6: regionType = "STR_AUSTRALASIA";		break;
+			case  7: regionType = "STR_NORTH_AFRICA";		break;
+			case  8: regionType = "STR_SOUTHERN_AFRICA";	break;
+			case  9: regionType = "STR_ARCTIC";				break;
+			case 10: regionType = "STR_ANTARCTICA";			break;
+			case 11: regionType = "STR_PACIFIC";			break;
+			case 12: regionType = "STR_NORTH_ATLANTIC";		break;
+			case 13: regionType = "STR_SOUTH_ATLANTIC";		break;
+			case 14: regionType = "STR_INDIAN_OCEAN";
+		}
+		_lstCountries->addRow(1, tr(regionType).c_str());
+		_lstCountries->setRowColor(row, BROWN, true);
+
+		for (std::vector<Country*>::const_iterator
+				i = _game->getSavedGame()->getCountries()->begin();
+				i != _game->getSavedGame()->getCountries()->end();
+				++i)
+		{
+			if ((*i)->getRules()->getCountryRegion() == regionType)
+			{
+				++row;
+				std::wostringstream
+					woststr1,
+					woststr2,
+					woststr3,
+					woststr4,
+					woststr5;
+
+				const std::vector<int>
+					funds ((*i)->getFunding()),
+					actX ((*i)->getActivityXCom()),
+					actA ((*i)->getActivityAlien());
+
+				woststr1 << L'\x01' << Text::formatCurrency(funds.at(funds.size() - 1));
+
+				if (funds.size() > 1)
+				{
+					int change (funds.back() - funds.at(funds.size() - 2));
+					if (change > 0)
+						woststr2 << L'\x01' << L'+';
+					else if (change < 0)
+					{
+						woststr2 << L'\x01' << L'-';
+						change = -change;
+					}
+					else
+						woststr2 << L' ' << L' ';
+
+					woststr3 << L'\x01' << Text::formatCurrency(change);
+				}
+				else
+				{
+					woststr2 << L' ' << L' ';
+					woststr3 << Text::formatCurrency(0);
+				}
+
+				int score (actX.at(actX.size() - 1) - actA.at(actA.size() - 1));
+				if (score > -1)
+					woststr4 << L' ' << L' ';
+				else
+				{
+					woststr4 << L'\x01' << L'-';
+					score = -score;
+				}
+
+				woststr5 << L'\x01' << score;
+
+				_lstCountries->addRow(
+									6,
+									tr((*i)->getRules()->getType()).c_str(),
+									woststr1.str().c_str(),
+									woststr2.str().c_str(),
+									woststr3.str().c_str(),
+									woststr4.str().c_str(),
+									woststr5.str().c_str());
+			}
+		}
+	}
+
+
+/*	for (std::vector<Country*>::const_iterator
 			i = _game->getSavedGame()->getCountries()->begin();
 			i != _game->getSavedGame()->getCountries()->end();
 			++i)
@@ -200,7 +298,7 @@ FundingState::FundingState()
 							woststr3.str().c_str(),
 							woststr4.str().c_str(),
 							woststr5.str().c_str());
-	}
+	} */
 
 
 	const int gross (_game->getSavedGame()->getCountryFunding());

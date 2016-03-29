@@ -44,7 +44,9 @@ private:
 		_labelLon,
 		_labelLat;
 
-	std::string _type;
+	std::string
+		_region,
+		_type;
 
 	std::vector<double>
 		_lonMin,
@@ -74,6 +76,9 @@ private:
 		double getLabelLongitude() const;
 		/// Gets the country's label y-position.
 		double getLabelLatitude() const;
+
+		/// Gets the Region in which the label of a Country is based.
+		const std::string& getCountryRegion() const;
 
 		/// Checks if a point is inside the country.
 		bool insideCountry(

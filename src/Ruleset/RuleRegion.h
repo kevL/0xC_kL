@@ -118,39 +118,39 @@ private:
 		static const int MZ_CITY = 3;
 
 
-		/// Creates a blank Region ruleset.
+		/// Creates a blank RuleRegion.
 		explicit RuleRegion(const std::string& type);
-		/// Cleans up the Region ruleset.
+		/// Cleans up the RuleRegion.
 		~RuleRegion();
 
-		/// Loads the Region from YAML.
+		/// Loads the RuleRegion from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets the Region's type.
+		/// Gets the RuleRegion's type.
 		const std::string& getType() const;
 
-		/// Gets the Region's cost to construct a Base.
+		/// Gets the RuleRegion's cost to construct a Base.
 		int getBaseCost() const;
 
-		/// Checks if a point is inside the Region.
+		/// Checks if a point is inside the RuleRegion.
 		bool insideRegion(
 				double lon,
 				double lat) const;
 
-		/// Gets the Cities in the Region.
+		/// Gets the Cities in the RuleRegion.
 		std::vector<RuleCity*>* getCities();
 
-		/// Gets the weight of the Region for mission selection.
+		/// Gets the weight of the RuleRegion for alien-mission-selection.
 		size_t getWeight() const;
-		/// Gets the weighted list of missions for the Region.
+		/// Gets the weighted list of missions for the RuleRegion.
 		const WeightedOptions& getAvailableMissions() const
 		{ return _missionWeights; }
 
-		/// Gets the substitute Mission Region.
+		/// Gets the substitute region-type for an alien-mission.
 		const std::string& getMissionRegion() const
 		{ return _missionRegion; }
 
-		/// Gets the list of MissionZones in the Region.
+		/// Gets the list of MissionZones in the RuleRegion.
 		const std::vector<MissionZone>& getMissionZones() const;
 
 		/// Gets a random point inside a MissionZone.
@@ -159,10 +159,10 @@ private:
 		MissionArea getMissionPoint(
 				size_t zone,
 				const Target* const target) const;
-		/// Gets a random MissionArea in the Region.
+		/// Gets a random MissionArea in the RuleRegion.
 //		MissionArea getRandomMissionPoint(size_t zone) const;
 
-		/// Gets the Region's borders.
+		/// Gets the RuleRegion's borders.
 		const std::vector<double>& getLonMax() const {return _lonMax;}
 		const std::vector<double>& getLonMin() const {return _lonMin;}
 		const std::vector<double>& getLatMax() const {return _latMax;}

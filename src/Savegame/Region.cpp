@@ -212,7 +212,7 @@ bool Region::recentActivityXCom(
 }
 
 /**
- * Resets activity.
+ * Resets activity in this Region.
  */
 void Region::resetActivity()
 {
