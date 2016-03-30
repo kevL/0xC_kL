@@ -1482,70 +1482,71 @@ void BattlescapeGame::endTurn() // private.
 		&& _battleSave->allObjectivesDestroyed() == true)
 	{
 		_parentState->finishBattle(false, livePlayer);
-		return;
 	}
-
-	if (_battleSave->getTurnLimit() != 0
-		&& _battleSave->getTurnLimit() < _battleSave->getTurn())
+	else
 	{
-		switch (_battleSave->getChronoResult())
+		if (_battleSave->getTurnLimit() != 0
+			&& _battleSave->getTurnLimit() < _battleSave->getTurn())
 		{
-			case FORCE_WIN:
-				_parentState->finishBattle(false, livePlayer);
-				break;
+			switch (_battleSave->getChronoResult())
+			{
+				case FORCE_WIN:
+					_parentState->finishBattle(false, livePlayer);
+					break;
 
-			default:
-			case FORCE_LOSE:
-				_battleSave->setAborted();
-				_parentState->finishBattle(true, 0);
-				break;
+				default:
+				case FORCE_LOSE:
+					_battleSave->setAborted();
+					_parentState->finishBattle(true, 0);
+					break;
 
-			case FORCE_ABORT:
-				_battleSave->setAborted();
-				_parentState->finishBattle(true, tallyPlayerExit());
-		}
-		return;
-	}
-
-	const bool battleComplete (liveHostile == 0
-							|| livePlayer  == 0);
-
-	if (battleComplete == false)
-	{
-		showInfoBoxQueue();
-		_parentState->updateSoldierInfo();
-
-		if (_battleSave->getSide() == FACTION_HOSTILE
-			&& _battleSave->getDebugTac() == false)
-		{
-			getMap()->setSelectorType(CT_NONE);
-			_battleSave->getBattleState()->toggleIcons(false);
-		}
-		else
-		{
-			setupSelector();
-			if (playableUnitSelected() == true)
-				centerOnUnit(_battleSave->getSelectedUnit());
-
-			if (_battleSave->getDebugTac() == false)
-				_battleSave->getBattleState()->toggleIcons(true);
+				case FORCE_ABORT:
+					_battleSave->setAborted();
+					_parentState->finishBattle(true, tallyPlayerExit());
+			}
+			return;
 		}
 
-		if (hostilesPacified == true)
-			_battleSave->setPacified();
-	}
+		const bool battleComplete ((liveHostile == 0 && _battleSave->getObjectiveType() != MUST_DESTROY)
+								 || livePlayer  == 0);
 
-	if (_endTurnRequested == true)
-	{
-		_endTurnRequested = false;
-		if (battleComplete == true
-			|| _battleSave->getSide() != FACTION_NEUTRAL)
+		if (battleComplete == false)
 		{
-			_parentState->getGame()->delayBlit();
-			_parentState->getGame()->pushState(new NextTurnState(
-															_battleSave,
-															_parentState,
-															hostilesPacified));
+			showInfoBoxQueue();
+			_parentState->updateSoldierInfo();
+
+			if (_battleSave->getSide() == FACTION_HOSTILE
+				&& _battleSave->getDebugTac() == false)
+			{
+				getMap()->setSelectorType(CT_NONE);
+				_battleSave->getBattleState()->toggleIcons(false);
+			}
+			else
+			{
+				setupSelector();
+				if (playableUnitSelected() == true)
+					centerOnUnit(_battleSave->getSelectedUnit());
+
+				if (_battleSave->getDebugTac() == false)
+					_battleSave->getBattleState()->toggleIcons(true);
+			}
+
+			if (hostilesPacified == true)
+				_battleSave->setPacified();
+		}
+
+		if (_endTurnRequested == true)
+		{
+			_endTurnRequested = false;
+			if (_battleSave->getSide() != FACTION_NEUTRAL
+				|| battleComplete == true)
+			{
+				_parentState->getGame()->delayBlit();
+				_parentState->getGame()->pushState(new NextTurnState(
+																_battleSave,
+																_parentState,
+																hostilesPacified));
+			}
 		}
 	}
 }
@@ -3542,6 +3543,9 @@ bool BattlescapeGame::tallyUnits(
 			}
 		}
 	}
+
+	if (livePlayer == 0 && liveHostile == 0)
+		livePlayer = -1; // adjudicate: Player Victory.
 
 	//Log(LOG_INFO) << "bg:tallyUnits() ret = " << ret << "; Sol = " << livePlayer << "; aLi = " << liveHostile;
 	return ret;

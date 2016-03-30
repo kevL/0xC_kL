@@ -34,7 +34,7 @@ class Window;
 
 
 /**
- * Screen which asks for confirmation to abort mission.
+ * Screen which asks for confirmation to abort a tactical mission.
  */
 class AbortMissionState
 	:
@@ -42,14 +42,12 @@ class AbortMissionState
 {
 
 private:
-	int
-		_insideExitArea,
-		_outsideExitArea;
+	int _insideExit;
 
 	BattlescapeState* _state;
 	Text
 		* _txtAbort,
-		* _txtInExit,
+		* _txtInsideExit,
 		* _txtOutsideExit;
 	TextButton
 		* _btnCancel,
@@ -59,11 +57,11 @@ private:
 
 
 	public:
-		/// Creates the Abort Mission state.
+		/// Creates the AbortMission state.
 		AbortMissionState(
-				SavedBattleGame* battleSave,
-				BattlescapeState* state);
-		/// Cleans up the Abort Mission state.
+				SavedBattleGame* const battleSave,
+				BattlescapeState* const state);
+		/// Cleans up the AbortMission state.
 		~AbortMissionState();
 
 		/// Handler for clicking the OK button.

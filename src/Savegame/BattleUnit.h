@@ -618,7 +618,7 @@ private:
 		/// Reloads weapon if needed.
 		bool checkReload();
 
-		/// Checks if the BattleUnit is in the exit area.
+		/// Checks if the BattleUnit is in an exit-area.
 		bool isInExitArea(SpecialTileType tileType = START_POINT) const;
 
 		/// Gets the BattleUnit's height taking into account kneeling/standing.
@@ -626,33 +626,33 @@ private:
 		/// Gets the BattleUnit's floating elevation.
 		int getFloatHeight() const;
 
-		/// Gets a soldier's Firing experience.
+		/// Gets a Soldier's firing-experience.
 		int getExpFiring() const;
-		/// Gets a soldier's Throwing experience.
+		/// Gets a Soldier's throwing-experience.
 		int getExpThrowing() const;
-		/// Gets a soldier's Melee experience.
+		/// Gets a Soldier's melee-experience.
 		int getExpMelee() const;
-		/// Gets a soldier's Reactions experience.
+		/// Gets a Soldier's reactions-experience.
 		int getExpReactions() const;
-		/// Gets a soldier's Bravery experience.
+		/// Gets a Soldier's bravery-experience.
 		int getExpBravery() const;
-		/// Gets a soldier's PsiSkill experience.
+		/// Gets a Soldier's psiSkill-experience.
 		int getExpPsiSkill() const;
-		/// Gets a soldier's PsiStrength experience.
+		/// Gets a Soldier's psiStrength-experience.
 		int getExpPsiStrength() const;
 
-		/// Adds one to the reaction exp counter.
-		void addReactionExp();
-		/// Adds one to the firing exp counter.
+		/// Adds one to the firing-exp counter.
 		void addFiringExp();
-		/// Adds one to the throwing exp counter.
+		/// Adds one to the throwing-exp counter.
 		void addThrowingExp();
-		/// Adds qty to the psiSkill exp counter.
-		void addPsiSkillExp(int qty = 1);
-		/// Adds qty to the psiStrength exp counter.
-		void addPsiStrengthExp(int qty = 1);
-		/// Adds qty to the melee exp counter.
+		/// Adds qty to the melee-exp counter.
 		void addMeleeExp(int qty = 1);
+		/// Adds one to the reaction-exp counter.
+		void addReactionExp();
+		/// Adds qty to the psiSkill-exp counter.
+		void addPsiSkillExp(int qty = 1);
+		/// Adds qty to the psiStrength-exp counter.
+		void addPsiStrengthExp(int qty = 1);
 
 		/// Calculates experience and days wounded.
 		std::vector<int> postMissionProcedures(const bool dead = false);

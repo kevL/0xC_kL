@@ -56,12 +56,12 @@ private:
 
 
 	public:
-		/// Creates the NextTurnState.
+		/// Creates the NextTurn state.
 		NextTurnState(
-				SavedBattleGame* battleSave,
-				BattlescapeState* state,
+				SavedBattleGame* const battleSave,
+				BattlescapeState* const state,
 				bool aliensPacified = false);
-		/// Cleans up the NextTurnState.
+		/// Cleans up the NextTurn state.
 		~NextTurnState();
 
 		/// Handler for clicking anything.

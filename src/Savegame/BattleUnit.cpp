@@ -3204,8 +3204,8 @@ bool BattleUnit::checkReload()
 
 /**
  * Check if this BattleUnit is in an exit-area.
- * @param tileType - type of exit tile to check for (RuleItem.h) (default START_POINT)
- * @return, true if unit is in a special exit area
+ * @param tileType - type of exit-tile to check for (RuleItem.h) (default START_POINT)
+ * @return, true if unit is in a designated exit-area
  */
 bool BattleUnit::isInExitArea(SpecialTileType tileType) const
 {
@@ -3294,15 +3294,6 @@ int BattleUnit::getExpPsiStrength() const
 }
 
 /**
- * Adds one to the reaction exp counter.
- */
-void BattleUnit::addReactionExp()
-{
-//	if (_battleGame->getBattleSave()->getPacified() == false)
-	++_expReactions;
-}
-
-/**
  * Adds one to the firing exp counter.
  */
 void BattleUnit::addFiringExp()
@@ -3318,6 +3309,25 @@ void BattleUnit::addThrowingExp()
 {
 //	if (_battleGame->getBattleSave()->getPacified() == false)
 	++_expThrowing;
+}
+
+/**
+ * Adds qty to the melee exp counter.
+ * @param qty - amount to add (default 1)
+ */
+void BattleUnit::addMeleeExp(int qty)
+{
+//	if (_battleGame->getBattleSave()->getPacified() == false)
+	_expMelee += qty;
+}
+
+/**
+ * Adds one to the reaction exp counter.
+ */
+void BattleUnit::addReactionExp()
+{
+//	if (_battleGame->getBattleSave()->getPacified() == false)
+	++_expReactions;
 }
 
 /**
@@ -3338,16 +3348,6 @@ void BattleUnit::addPsiStrengthExp(int qty)
 {
 //	if (_battleGame->getBattleSave()->getPacified() == false)
 	_expPsiStrength += qty;
-}
-
-/**
- * Adds qty to the melee exp counter.
- * @param qty - amount to add (default 1)
- */
-void BattleUnit::addMeleeExp(int qty)
-{
-//	if (_battleGame->getBattleSave()->getPacified() == false)
-	_expMelee += qty;
 }
 
 /**

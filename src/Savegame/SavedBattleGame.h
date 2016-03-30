@@ -327,7 +327,7 @@ private:
 		const std::vector<BattleItem*>& getDeletedItems() const;
 
 		/// Sets whether the mission was aborted.
-		void setAborted(bool flag = true);
+		void setAborted(bool abort = true);
 		/// Checks if the mission was aborted.
 		bool isAborted() const;
 

@@ -215,17 +215,17 @@ private:
 		~BattlescapeGenerator();
 
 		/// Sets the XCom craft.
-		void setCraft(Craft* craft);
+		void setCraft(Craft* const craft);
 		/// Sets the ufo.
-		void setUfo(Ufo* ufo);
+		void setUfo(Ufo* const ufo);
 		/// Sets the XCom base.
-		void setBase(Base* base);
+		void setBase(Base* const base);
 		/// Sets the mission-site.
-		void setMissionSite(MissionSite* site);
+		void setMissionSite(MissionSite* const site);
 		/// Sets the alien base
-		void setAlienBase(AlienBase* base);
+		void setAlienBase(AlienBase* const base);
 		/// Sets the terrain.
-		void setTerrain(RuleTerrain* terrain);
+		void setTerrain(RuleTerrain* const terrain);
 		/// Sets the polygon shade.
 		void setShade(int shade);
 		/// Sets the alien race.

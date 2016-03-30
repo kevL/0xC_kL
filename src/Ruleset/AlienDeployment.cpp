@@ -323,17 +323,8 @@ const std::string& AlienDeployment::getScript() const
 }
 
 /**
- * Gets if aborting this mission will fail the game.
- * @return, true if aborting this mission will fail the game
- */
-bool AlienDeployment::isNoRetreat() const
-{
-	return _noRetreat;
-}
-
-/**
- * Gets if winning this mission completes the game.
- * @return, true if winning this mission completes the game
+ * Checks if this AlienDeployment is where to send Craft via the ConfirmCydonia btn.
+ * @return, true if Cydonia
  */
 bool AlienDeployment::isFinalDestination() const
 {
@@ -341,8 +332,17 @@ bool AlienDeployment::isFinalDestination() const
 }
 
 /**
- * Gets if winning this mission completes the game.
- * @return, true if winning this mission completes the game
+ * Checks if aborting or losing this AlienDeployment will lose the game.
+ * @return, true if fail
+ */
+bool AlienDeployment::isNoRetreat() const
+{
+	return _noRetreat;
+}
+
+/**
+ * Checks if this AlienDeployment finishes the game.
+ * @return, true if final tactical
  */
 bool AlienDeployment::isFinalMission() const
 {
@@ -350,7 +350,7 @@ bool AlienDeployment::isFinalMission() const
 }
 
 /**
- * Gets the alert message displayed when this mission spawns.
+ * Gets the alert-message displayed when this AlienDeployment spawns.
  * @return, ID for the message
  */
 const std::string& AlienDeployment::getAlertMessage() const
@@ -359,7 +359,7 @@ const std::string& AlienDeployment::getAlertMessage() const
 }
 
 /**
- * Gets the alert background displayed when this mission spawns.
+ * Gets the alert-background displayed when this AlienDeployment spawns.
  * @return, ID for the background
  */
 const std::string& AlienDeployment::getAlertBackground() const
@@ -368,7 +368,7 @@ const std::string& AlienDeployment::getAlertBackground() const
 }
 
 /**
- * Gets the briefing data for this mission type.
+ * Gets the briefing-data for this AlienDeployment.
  * @return, data for the briefing window to use
  */
 BriefingData AlienDeployment::getBriefingData() const
@@ -377,7 +377,7 @@ BriefingData AlienDeployment::getBriefingData() const
 }
 
 /**
- * Returns the globe marker type for this mission.
+ * Returns the globe-marker-type for this AlienDeployment.
  * @return, ID for marker type
  */
 const std::string& AlienDeployment::getMarkerType() const
@@ -386,7 +386,7 @@ const std::string& AlienDeployment::getMarkerType() const
 }
 
 /**
- * Returns the globe marker icon for this mission.
+ * Returns the globe-marker-icon for this AlienDeployment.
  * @return, marker sprite (-1 if not set)
  */
 int AlienDeployment::getMarkerIcon() const
@@ -395,7 +395,7 @@ int AlienDeployment::getMarkerIcon() const
 }
 
 /**
- * Returns the minimum duration for this mission type.
+ * Returns the minimum duration for this AlienDeployment to exist on the Globe.
  * @return, minimum duration in hours
  */
 int AlienDeployment::getDurationMin() const
@@ -404,7 +404,7 @@ int AlienDeployment::getDurationMin() const
 }
 
 /**
- * Returns the maximum duration for this mission type.
+ * Returns the maximum duration for this AlienDeployment to exist on the Globe.
  * @return, maximum duration in hours
  */
 int AlienDeployment::getDurationMax() const
@@ -413,8 +413,8 @@ int AlienDeployment::getDurationMax() const
 }
 
 /**
- * Gets the list of musics this deployment has to choose from.
- * @return, list of track names
+ * Gets the list of musics that this AlienDeployment can choose from.
+ * @return, list of tracks
  */
 const std::vector<std::string>& AlienDeployment::getDeploymentMusics() const
 {
@@ -422,7 +422,7 @@ const std::vector<std::string>& AlienDeployment::getDeploymentMusics() const
 }
 
 /**
- * Gets the objective type for this mission (eg alien control consoles).
+ * Gets the objective type for this AlienDeployment (eg alien-control-consoles).
  * @return, objective type (RuleItem.h)
  */
 SpecialTileType AlienDeployment::getObjectiveType() const
@@ -431,7 +431,7 @@ SpecialTileType AlienDeployment::getObjectiveType() const
 }
 
 /**
- * Gets the number of objectives required by this mission.
+ * Gets the number of objectives required by this AlienDeployment.
  * @return, number of objectives
  */
 int AlienDeployment::getObjectivesRequired() const
@@ -440,8 +440,7 @@ int AlienDeployment::getObjectivesRequired() const
 }
 
 /**
- * Gets the string name for the popup to splash when the objective conditions
- * are met.
+ * Gets the string for the popup to splash when objective-conditions are met.
  * @return, string to pop
  */
 const std::string& AlienDeployment::getObjectivePopup() const

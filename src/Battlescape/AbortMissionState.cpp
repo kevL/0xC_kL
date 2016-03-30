@@ -50,19 +50,18 @@ namespace OpenXcom
  * @param state			- pointer to the BattlescapeState
  */
 AbortMissionState::AbortMissionState(
-		SavedBattleGame* battleSave,
-		BattlescapeState* state)
+		SavedBattleGame* const battleSave,
+		BattlescapeState* const state)
 	:
 		_battleSave(battleSave),
 		_state(state),
-		_insideExitArea(0),
-		_outsideExitArea(0)
+		_insideExit(0)
 {
 	_fullScreen = false;
 
 	_window			= new Window(this, 320, 144);
 
-	_txtInExit		= new Text(304, 17, 16, 25);
+	_txtInsideExit	= new Text(304, 17, 16, 25);
 	_txtOutsideExit	= new Text(304, 17, 16, 50);
 
 	_txtAbort		= new Text(320, 17, 0, 84);
@@ -73,7 +72,7 @@ AbortMissionState::AbortMissionState(
 	setPalette(PAL_BATTLESCAPE);
 
 	add(_window,			"messageWindowBorder",	"battlescape");
-	add(_txtInExit,			"messageWindows",		"battlescape");
+	add(_txtInsideExit,		"messageWindows",		"battlescape");
 	add(_txtOutsideExit,	"messageWindows",		"battlescape");
 	add(_txtAbort,			"messageWindows",		"battlescape");
 	add(_btnCancel,			"messageWindowButtons",	"battlescape");
@@ -82,13 +81,26 @@ AbortMissionState::AbortMissionState(
 	centerAllSurfaces();
 
 
+	_window->setBackground(_game->getResourcePack()->getSurface("Diehard"));
+	_window->setHighContrast();
+
 	std::string nextStage;
-	if (_battleSave->getTacType() != TCT_UFOLANDED
-		&& _battleSave->getTacType() != TCT_UFOCRASHED)
+	switch (_battleSave->getTacType())
 	{
-		nextStage = _game->getRuleset()->getDeployment(_battleSave->getTacticalType())->getNextStage();
+		case TCT_BASEASSAULT:	//  2
+		case TCT_BASEDEFENSE:	//  3
+		case TCT_MISSIONSITE:	//  4
+		case TCT_MARS1:			//  5
+		case TCT_MARS2:			//  6
+			nextStage = _game->getRuleset()->getDeployment(_battleSave->getTacticalType())->getNextStage();
+//			break;
+//		default:
+//		case TCT_DEFAULT:		// -1 init.
+//		case TCT_UFOCRASHED:	//  0
+//		case TCT_UFOLANDED:		//  1
 	}
 
+	int outsideExit (0);
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
@@ -97,42 +109,39 @@ AbortMissionState::AbortMissionState(
 		if ((*i)->getOriginalFaction() == FACTION_PLAYER
 			&& (*i)->isOut_t(OUT_STAT) == false)
 		{
-			if ((nextStage.empty() == false
-					&& (*i)->isInExitArea(END_POINT))
-				|| (nextStage == ""
-					&& (*i)->isInExitArea() == true))
+			if (   (nextStage.empty() == true  && (*i)->isInExitArea() == true)
+				|| (nextStage.empty() == false && (*i)->isInExitArea(END_POINT)))
 			{
-				++_insideExitArea;
+				++_insideExit;
 			}
 			else
-				++_outsideExitArea;
+				++outsideExit;
 		}
 	}
 
-
-	_window->setBackground(_game->getResourcePack()->getSurface("Diehard"));
-	_window->setHighContrast();
-
-	_txtInExit->setText(tr("STR_UNITS_IN_EXIT_AREA", _insideExitArea));
-	_txtInExit->setBig();
-	_txtInExit->setAlign(ALIGN_CENTER);
-	_txtInExit->setHighContrast();
-
-	_txtOutsideExit->setText(tr("STR_UNITS_OUTSIDE_EXIT_AREA", _outsideExitArea));
-	_txtOutsideExit->setBig();
-	_txtOutsideExit->setAlign(ALIGN_CENTER);
-	_txtOutsideExit->setHighContrast();
-
-	if (_battleSave->getTacType() == TCT_BASEDEFENSE)
+	switch (_battleSave->getTacType())
 	{
-		_txtInExit->setVisible(false);
-		_txtOutsideExit->setVisible(false);
+		case TCT_BASEDEFENSE:
+			_txtInsideExit->setVisible(false);
+			_txtOutsideExit->setVisible(false);
+			break;
+
+		default:
+			_txtInsideExit->setText(tr("STR_UNITS_IN_EXIT_AREA", _insideExit));
+			_txtInsideExit->setBig();
+			_txtInsideExit->setAlign(ALIGN_CENTER);
+			_txtInsideExit->setHighContrast();
+
+			_txtOutsideExit->setText(tr("STR_UNITS_OUTSIDE_EXIT_AREA", outsideExit));
+			_txtOutsideExit->setBig();
+			_txtOutsideExit->setAlign(ALIGN_CENTER);
+			_txtOutsideExit->setHighContrast();
 	}
 
-	_txtAbort->setBig();
+	_txtAbort->setText(tr("STR_ABORT_MISSION_QUESTION"));
 	_txtAbort->setAlign(ALIGN_CENTER);
 	_txtAbort->setHighContrast();
-	_txtAbort->setText(tr("STR_ABORT_MISSION_QUESTION"));
+	_txtAbort->setBig();
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->setHighContrast();
@@ -143,6 +152,9 @@ AbortMissionState::AbortMissionState(
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& AbortMissionState::btnOkClick,
 					Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(
+					(ActionHandler)& AbortMissionState::btnOkClick,
+					Options::keyBattleAbort);
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
 	_btnCancel->setHighContrast();
@@ -150,9 +162,6 @@ AbortMissionState::AbortMissionState(
 	_btnCancel->onKeyboardPress(
 					(ActionHandler)& AbortMissionState::btnCancelClick,
 					Options::keyCancel);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& AbortMissionState::btnCancelClick,
-					Options::keyBattleAbort);
 }
 
 /**
@@ -170,7 +179,7 @@ void AbortMissionState::btnOkClick(Action*)
 	_game->popState();
 
 	_battleSave->setAborted();
-	_state->finishBattle(true, _insideExitArea);
+	_state->finishBattle(true, _insideExit);
 }
 
 /**

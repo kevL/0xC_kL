@@ -50,9 +50,9 @@ private:
 
 
 	public:
-		/// Creates the Select Destination state.
-		explicit ConfirmCydoniaState(Craft* craft);
-		/// Cleans up the Select Destination state.
+		/// Creates the ConfirmCydonia state.
+		explicit ConfirmCydoniaState(Craft* const craft);
+		/// Cleans up the ConfirmCydonia state.
 		~ConfirmCydoniaState();
 
 		/// Handler for clicking the Cancel button.

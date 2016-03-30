@@ -57,8 +57,8 @@ namespace OpenXcom
  * @param aliensPacified	- true if all remaining aliens are mind-controlled (default false)
  */
 NextTurnState::NextTurnState(
-		SavedBattleGame* battleSave,
-		BattlescapeState* state,
+		SavedBattleGame* const battleSave,
+		BattlescapeState* const state,
 		bool aliensPacified)
 	:
 		_battleSave(battleSave),
@@ -196,8 +196,10 @@ void NextTurnState::nextTurn()
 	int
 		liveHostile,
 		livePlayer;
-	_state->getBattleGame()->tallyUnits(liveHostile, livePlayer);
-	if (livePlayer == 0
+	_state->getBattleGame()->tallyUnits(
+									liveHostile,
+									livePlayer);
+	if (livePlayer < 1
 		|| (liveHostile == 0
 			&& _battleSave->getObjectiveType() != MUST_DESTROY)) // <- not the final mission
 	{

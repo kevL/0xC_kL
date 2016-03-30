@@ -1674,11 +1674,11 @@ const std::vector<BattleItem*>& SavedBattleGame::getDeletedItems() const
 
 /**
  * Sets whether the mission was aborted or successful.
- * @param flag - true if the mission was aborted, or false if the mission was successful (default true)
+ * @param abort - true if tactical was aborted or false if successful (default true)
  */
-void SavedBattleGame::setAborted(bool flag)
+void SavedBattleGame::setAborted(bool abort)
 {
-	_aborted = flag;
+	_aborted = abort;
 }
 
 /**

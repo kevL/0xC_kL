@@ -195,6 +195,7 @@ DebriefingState::DebriefingState()
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);	// note: Text is set in prepareDebriefing() before
 											// a possibly failed BaseDefense dangles '_base' ptr.
 
+
 	prepareDebriefing(); // <- |-- GATHER ALL DATA HERE <- < ||
 
 
@@ -674,8 +675,8 @@ void ClearAlienBase::operator() (AlienMission* mission) const
 /**
  * Prepares debriefing: gathers Aliens, Corpses, Artefacts, UFO Components.
  * Adds the items to the craft.
- * @note Also calculates the soldiers' experience and possible promotions. If
- * aborted only the things on the exit area are recovered.
+ * @note Also calculates the Soldiers' experience and possible promotions. If
+ * aborted only the things on the exit-area are recovered.
  */
 void DebriefingState::prepareDebriefing() // private.
 {
@@ -717,23 +718,21 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 	std::string
-		objectiveCompleteText,
+		objectiveText,
 		objectiveFailedText;
 	int
-		objectiveCompleteScore (0), // dang vc++ compiler warnings.
-		objectiveFailedScore   (0); // dang vc++ compiler warnings.
+		objectiveScore		 (0), // dang vc++ compiler warnings.
+		objectiveFailedScore (0); // dang vc++ compiler warnings.
 
 	SavedBattleGame* const battleSave (_gameSave->getBattleSave());
 	const AlienDeployment* const ruleDeploy (_rules->getDeployment(battleSave->getTacticalType()));
-	// kL_note: I have a strong suspicion that although checks are made for a
-	// valid ruleDeploy below if there isn't one you're borked anyway.
 	if (ruleDeploy != nullptr)
 	{
 		if (ruleDeploy->getObjectiveCompleteInfo(
-											objectiveCompleteText,
-											objectiveCompleteScore) == true)
+											objectiveText,
+											objectiveScore) == true)
 		{
-			_stats.push_back(new DebriefingStat(objectiveCompleteText));
+			_stats.push_back(new DebriefingStat(objectiveText));
 		}
 
 		if (ruleDeploy->getObjectiveFailedInfo(
@@ -794,34 +793,49 @@ void DebriefingState::prepareDebriefing() // private.
 		playerDead (0), // Soldier Diary.
 		playerOut  (0);
 
-	// Evaluate how many surviving xCom units there are and if they are
-	// unconscious and how many have died - for the Awards Ceremony.
+	bool isHostileAlive	(false);
+//		isCivilianAlive (false);
+
 	for (std::vector<BattleUnit*>::const_iterator
 			i = battleSave->getUnits()->begin();
 			i != battleSave->getUnits()->end();
 			++i)
 	{
-		if ((*i)->getOriginalFaction() == FACTION_PLAYER)
+		switch ((*i)->getOriginalFaction())
 		{
-			if ((*i)->getUnitStatus() != STATUS_DEAD)
-			{
-				++playerLive;
-				if ((*i)->getUnitStatus() == STATUS_UNCONSCIOUS
-					|| (*i)->getFaction() == FACTION_HOSTILE)
+			case FACTION_PLAYER:
+				if ((*i)->getUnitStatus() == STATUS_DEAD)
 				{
-					++playerOut;
+					++playerDead;
+					if ((*i)->getGeoscapeSoldier() != nullptr)
+						(*i)->getStatistics()->KIA = true;
 				}
-			}
-			else
-			{
-				++playerDead;
-				if ((*i)->getGeoscapeSoldier() != nullptr)
-					(*i)->getStatistics()->KIA = true;
-			}
+				else
+				{
+					++playerLive;
+					if ((*i)->getUnitStatus() == STATUS_UNCONSCIOUS
+						|| (*i)->getFaction() == FACTION_HOSTILE)
+					{
+						++playerOut;
+					}
+				}
+				break;
+
+			case FACTION_HOSTILE:
+				if ((*i)->isOut_t(OUT_STAT) == false
+					&& (Options::battleAllowPsionicCapture == false
+						|| (*i)->isMindControlled() == false))
+				{
+					isHostileAlive = true;
+				}
+//				break;
+//
+//			case FACTION_NEUTRAL:
+//				if ((*i)->isOut_t(OUT_STAT) == false)
+//					isCivilianAlive = true;
 		}
 	}
 
-	// if all xCom units are unconscious the aliens get to have their way with them
 	if (playerOut == playerLive)
 	{
 		playerLive = 0;
@@ -852,8 +866,8 @@ void DebriefingState::prepareDebriefing() // private.
 			if ((*i)->getGeoscapeSoldier() != nullptr
 				&& (*i)->getUnitStatus() != STATUS_DEAD)
 			{
-				if (playerDead == 0
-					&& aborted == false
+				if (aborted == false
+					&& playerDead == 0
 					&& _aliensControlled == 0
 					&& _aliensKilled + _aliensStunned > 1 + _diff)
 				{
@@ -871,10 +885,43 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 
-	_missionStatistics->success = (playerLive != 0 && aborted == false)
-								|| battleSave->allObjectivesDestroyed() == true;
-	const bool playerWipe (playerLive == 0
-					   || (aborted == true && playerExit == 0));
+//	_missionStatistics->success = (aborted == false && (playerLive != 0 || isHostileAlive == false))
+//								|| battleSave->allObjectivesDestroyed() == true;
+	_missionStatistics->success = isHostileAlive == false
+							   || battleSave->allObjectivesDestroyed() == true;
+	const bool playerWipe ((aborted == true && playerExit == 0)
+						 || playerLive == 0);
+
+/*	bool
+		missionAccomplished,
+		craftRecovered;
+
+	switch (battleSave->getTacType())
+	{
+//			case TCT_DEFAULT: //-1
+//				break;
+
+			case TCT_BASEDEFENSE:
+				missionAccomplished = (aborted == false && (playerLive != 0 || isHostileAlive == false));
+				craftRecovered = missionAccomplished;
+				break;
+
+			case TCT_MISSIONSITE:
+				missionAccomplished = (aborted == false && (playerLive != 0 || isHostileAlive == false || isCivilianAlive == true));
+				break;
+
+			case TCT_BASEASSAULT:
+			case TCT_MARS1:
+			case TCT_MARS2:
+				break;
+
+			default:
+			case TCT_UFOCRASHED:
+			case TCT_UFOLANDED:
+				missionAccomplished = (aborted == false && playerLive != 0)
+									|| ();
+	} */
+
 
 	double
 		lon (0.), // avoid vc++ linker warnings.
@@ -934,7 +981,8 @@ void DebriefingState::prepareDebriefing() // private.
 			lon = _base->getLongitude();
 			lat = _base->getLatitude();
 
-			if (playerLive != 0 && aborted == false)
+//			if (aborted == false && playerLive != 0)
+			if (_missionStatistics->success == true)
 			{
 				_base->setTactical(false);
 
@@ -1002,7 +1050,8 @@ void DebriefingState::prepareDebriefing() // private.
 			_txtRecovery->setText(tr("STR_UFO_RECOVERY"));
 			_missionStatistics->ufo = (*i)->getRules()->getType();
 
-			if (playerLive != 0 && aborted == false)
+//			if (aborted == false && playerLive != 0)
+			if (_missionStatistics->success == true)
 			{
 				delete *i;
 				_gameSave->getUfos()->erase(i);
@@ -1047,14 +1096,13 @@ void DebriefingState::prepareDebriefing() // private.
 
 				if (_missionStatistics->success == true)
 				{
-					if (objectiveCompleteText.empty() == false)
+					if (objectiveText.empty() == false)
 					{
-						objectiveCompleteScore = std::max(
-													(objectiveCompleteScore + 9) / 10,
-													 objectiveCompleteScore - (_diff * 50));
+						objectiveScore = std::max((objectiveScore + 9) / 10,
+												   objectiveScore - (_diff * 50));
 						addStat(
-							objectiveCompleteText,
-							objectiveCompleteScore);
+							objectiveText,
+							objectiveScore);
 					}
 
 					std::for_each(
@@ -1118,174 +1166,34 @@ void DebriefingState::prepareDebriefing() // private.
 		const UnitFaction orgFaction ((*i)->getOriginalFaction());
 		const int value ((*i)->getValue());
 
-		if ((*i)->getUnitStatus() == STATUS_DEAD)
+		switch ((*i)->getUnitStatus())
 		{
-			//Log(LOG_INFO) << ". unitDead " << (*i)->getId() << " type = " << (*i)->getType();
-			switch (orgFaction)
-			{
-				case FACTION_HOSTILE:
-					if ((*i)->killedBy() == FACTION_PLAYER)
-					{
-						//Log(LOG_INFO) << ". . killed by xCom";
-						addStat(
-							"STR_ALIENS_KILLED",
-							value);
-					}
-					break;
-
-				case FACTION_PLAYER:
+			case STATUS_DEAD:
+				//Log(LOG_INFO) << ". unitDead " << (*i)->getId() << " type = " << (*i)->getType();
+				switch (orgFaction)
 				{
-					Soldier* const sol ((*i)->getGeoscapeSoldier());
-					if (sol != nullptr)
-					{
-						_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true);
-
-						if (_isQuickBattle == false)
-							_missionCost += _base->soldierExpense(sol, true);
-
-						addStat(
-							"STR_XCOM_OPERATIVES_KILLED",
-							-value);
-
-						for (std::vector<Soldier*>::const_iterator
-								j = _base->getSoldiers()->begin();
-								j != _base->getSoldiers()->end();
-								++j)
+					case FACTION_HOSTILE:
+						if ((*i)->killedBy() == FACTION_PLAYER)
 						{
-							if (*j == sol) // note: Could return any armor the Soldier was wearing to Stores. CHEATER!!!!!
-							{
-								(*j)->die(_gameSave);
-								delete *j;
-								_base->getSoldiers()->erase(j);
-								break;
-							}
+							//Log(LOG_INFO) << ". . killed by xCom";
+							addStat(
+								"STR_ALIENS_KILLED",
+								value);
 						}
-					}
-					else // support unit
+						break;
+
+					case FACTION_PLAYER:
 					{
-						if (_isQuickBattle == false)
-							_missionCost += _base->supportExpense(
-															(*i)->getArmor()->getSize() * (*i)->getArmor()->getSize(),
-															true);
-						addStat(
-							"STR_TANKS_DESTROYED",
-							-value);
-
-						++_itemsLostProperty[_rules->getItemRule((*i)->getType())];
-
-						const BattleItem* ordnance ((*i)->getItem(ST_RIGHTHAND));
-						if (ordnance != nullptr)
-						{
-							itRule = ordnance->getRules();
-							if (itRule->isFixed() == true
-								&& itRule->getFullClip() > 0
-								&& (ordnance = ordnance->getAmmoItem()) != nullptr)
-							{
-								_itemsLostProperty[ordnance->getRules()] += itRule->getFullClip();
-							}
-						}
-					}
-					break;
-				}
-
-				case FACTION_NEUTRAL:
-					if ((*i)->killedBy() == FACTION_PLAYER)
-						addStat(
-							"STR_CIVILIANS_KILLED_BY_XCOM_OPERATIVES",
-							-(value * 2));
-					else
-						addStat(
-							"STR_CIVILIANS_KILLED_BY_ALIENS",
-							-value);
-			}
-		}
-		else // alive units possible unconscious.
-		{
-			//Log(LOG_INFO) << ". unitLive " << (*i)->getId() << " type = " << (*i)->getType();
-			switch (orgFaction)
-			{
-				case FACTION_PLAYER:
-					if (aborted == false
-						|| ((tacType != TCT_BASEDEFENSE /*|| _missionStatistics->success == true*/)
-							&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LIMBO)))
-					{
-						++playerExit;
-						recoverItems((*i)->getInventory());
-
-						Soldier* const sol ((*i)->getGeoscapeSoldier());
-						if (sol != nullptr)
-						{
-							_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures();
-
-							if (_isQuickBattle == false)
-								_missionCost += _base->soldierExpense(sol);
-
-//							sol->calcStatString(
-//											_rules->getStatStrings(),
-//											Options::psiStrengthEval
-//												&& _gameSave->isResearched(_rules->getPsiRequirements()));
-						}
-						else
-						{
-							if (_isQuickBattle == false)
-							{
-								const int quadrants ((*i)->getArmor()->getSize());
-								_missionCost += _base->supportExpense(quadrants * quadrants);
-							}
-
-							_base->getStorageItems()->addItem((*i)->getType());	// return the support-unit to Stores.
-
-							const BattleItem* ordnance ((*i)->getItem(ST_RIGHTHAND));
-							if (ordnance != nullptr)
-							{
-								int clip;
-								itRule = ordnance->getRules();
-								if (itRule->isFixed() == true
-									&& (clip = itRule->getFullClip()) > 0
-									&& (ordnance = ordnance->getAmmoItem()) != nullptr)
-								{
-									itRule = ordnance->getRules();
-									const int qtyLoad (ordnance->getAmmoQuantity());
-									_base->getStorageItems()->addItem(			// return any load from the support-unit's fixed-weapon to Stores.
-																	itRule->getType(),
-																	qtyLoad);
-									if (qtyLoad < clip)
-										_itemsLostProperty[itRule] += clip - qtyLoad;
-								}
-							}
-
-/*							if ((weapon = (*i)->getItem(ST_LEFTHAND)) != nullptr)
-							{
-								itRule = weapon->getRules();
-								if (itRule->getCompatibleAmmo()->empty() == false)
-								{
-									ordnance = weapon->getAmmoItem();
-									if (ordnance != nullptr) //&& ordnance->getAmmoQuantity() > 0)
-									{
-										int total (ordnance->getAmmoQuantity());
-										if (itRule->getFullClip() != 0) // meaning this tank can store multiple  clips-of-clips
-											total /= ordnance->getRules()->getFullClip();
-
-										_base->getStorageItems()->addItem(
-																		itRule->getCompatibleAmmo()->front(),
-																		total);
-									}
-								}
-							} */
-						}
-					}
-					else
-					{
-						(*i)->setUnitStatus(STATUS_DEAD);
-
 						Soldier* const sol ((*i)->getGeoscapeSoldier());
 						if (sol != nullptr)
 						{
 							_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true);
-							(*i)->getStatistics()->MIA = true;
+
+							if (_isQuickBattle == false)
+								_missionCost += _base->soldierExpense(sol, true);
 
 							addStat(
-								"STR_XCOM_OPERATIVES_MISSING_IN_ACTION",
+								"STR_XCOM_OPERATIVES_KILLED",
 								-value);
 
 							for (std::vector<Soldier*>::const_iterator
@@ -1304,6 +1212,10 @@ void DebriefingState::prepareDebriefing() // private.
 						}
 						else // support unit
 						{
+							if (_isQuickBattle == false)
+								_missionCost += _base->supportExpense(
+																(*i)->getArmor()->getSize() * (*i)->getArmor()->getSize(),
+																true);
 							addStat(
 								"STR_TANKS_DESTROYED",
 								-value);
@@ -1322,49 +1234,197 @@ void DebriefingState::prepareDebriefing() // private.
 								}
 							}
 						}
+						break;
 					}
-					break;
 
-				case FACTION_HOSTILE:
-					if ((*i)->isMindControlled() == true
-						&& (*i)->isOut_t(OUT_STAT) == false
-						&& (aborted == false || (*i)->isInExitArea() == true))
-						// This never actually runs unless the early psi-exit option,
-						// where all aliens are dead or mind-controlled, is turned on --
-						// except for the two-stage Cydonia mission in which case all
-						// this does not matter.
-					{
-						++_aliensControlled;
-						for (std::vector<BattleItem*>::const_iterator
-								j = (*i)->getInventory()->begin();
-								j != (*i)->getInventory()->end();
-								++j)
+					case FACTION_NEUTRAL:
+						if ((*i)->killedBy() == FACTION_PLAYER)
+							addStat(
+								"STR_CIVILIANS_KILLED_BY_XCOM_OPERATIVES",
+								-(value * 2));
+						else
+							addStat(
+								"STR_CIVILIANS_KILLED_BY_ALIENS",
+								-value);
+				}
+				break;
+
+			default: // alive units possible unconscious.
+				//Log(LOG_INFO) << ". unitLive " << (*i)->getId() << " type = " << (*i)->getType();
+				switch (orgFaction)
+				{
+					case FACTION_PLAYER:
+						if (aborted == false
+							|| ((tacType != TCT_BASEDEFENSE || _missionStatistics->success == true)
+								&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LIMBO)))
 						{
-							if ((*j)->getRules()->isFixed() == false)
+							++playerExit;
+							recoverItems((*i)->getInventory());
+
+							Soldier* const sol ((*i)->getGeoscapeSoldier());
+							if (sol != nullptr)
 							{
-								(*j)->setInventorySection(_rules->getInventoryRule(ST_GROUND));
-								(*i)->getTile()->addItem(*j);
+								_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures();
+
+								if (_isQuickBattle == false)
+									_missionCost += _base->soldierExpense(sol);
+
+//								sol->calcStatString(
+//												_rules->getStatStrings(),
+//												Options::psiStrengthEval
+//													&& _gameSave->isResearched(_rules->getPsiRequirements()));
+							}
+							else
+							{
+								if (_isQuickBattle == false)
+								{
+									const int quadrants ((*i)->getArmor()->getSize());
+									_missionCost += _base->supportExpense(quadrants * quadrants);
+								}
+
+								_base->getStorageItems()->addItem((*i)->getType());	// return the support-unit to Stores.
+
+								const BattleItem* ordnance ((*i)->getItem(ST_RIGHTHAND));
+								if (ordnance != nullptr)
+								{
+									int clip;
+									itRule = ordnance->getRules();
+									if (itRule->isFixed() == true
+										&& (clip = itRule->getFullClip()) > 0
+										&& (ordnance = ordnance->getAmmoItem()) != nullptr)
+									{
+										itRule = ordnance->getRules();
+										const int qtyLoad (ordnance->getAmmoQuantity());
+										_base->getStorageItems()->addItem(			// return any load from the support-unit's fixed-weapon to Stores.
+																		itRule->getType(),
+																		qtyLoad);
+										if (qtyLoad < clip)
+											_itemsLostProperty[itRule] += clip - qtyLoad;
+									}
+								}
+
+//								if ((weapon = (*i)->getItem(ST_LEFTHAND)) != nullptr)
+//								{
+//									itRule = weapon->getRules();
+//									if (itRule->getCompatibleAmmo()->empty() == false)
+//									{
+//										ordnance = weapon->getAmmoItem();
+//										if (ordnance != nullptr) //&& ordnance->getAmmoQuantity() > 0)
+//										{
+//											int total (ordnance->getAmmoQuantity());
+//											if (itRule->getFullClip() != 0) // meaning this tank can store multiple  clips-of-clips
+//												total /= ordnance->getRules()->getFullClip();
+//
+//											_base->getStorageItems()->addItem(
+//																			itRule->getCompatibleAmmo()->front(),
+//																			total);
+//										}
+//									}
+//								}
 							}
 						}
-						recoverLiveAlien(*i);
-					}
-					break;
+						else
+						{
+							(*i)->setUnitStatus(STATUS_DEAD);
 
-				case FACTION_NEUTRAL:
-					if (playerLive == 0
-						|| (aborted == true && (*i)->isInExitArea() == false))
-					{
-						addStat(
-							"STR_CIVILIANS_KILLED_BY_ALIENS",
-							-value);
-					}
-					else
-						addStat(
-							"STR_CIVILIANS_SAVED",
-							value); // duplicated below.
-			}
-		}
-	}
+							Soldier* const sol ((*i)->getGeoscapeSoldier());
+							if (sol != nullptr)
+							{
+								_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true);
+								(*i)->getStatistics()->MIA = true;
+
+								addStat(
+									"STR_XCOM_OPERATIVES_MISSING_IN_ACTION",
+									-value);
+
+								for (std::vector<Soldier*>::const_iterator
+										j = _base->getSoldiers()->begin();
+										j != _base->getSoldiers()->end();
+										++j)
+								{
+									if (*j == sol) // note: Could return any armor the Soldier was wearing to Stores. CHEATER!!!!!
+									{
+										(*j)->die(_gameSave);
+										delete *j;
+										_base->getSoldiers()->erase(j);
+										break;
+									}
+								}
+							}
+							else // support unit
+							{
+								addStat(
+									"STR_TANKS_DESTROYED",
+									-value);
+
+								++_itemsLostProperty[_rules->getItemRule((*i)->getType())];
+
+								const BattleItem* ordnance ((*i)->getItem(ST_RIGHTHAND));
+								if (ordnance != nullptr)
+								{
+									itRule = ordnance->getRules();
+									if (itRule->isFixed() == true
+										&& itRule->getFullClip() > 0
+										&& (ordnance = ordnance->getAmmoItem()) != nullptr)
+									{
+										_itemsLostProperty[ordnance->getRules()] += itRule->getFullClip();
+									}
+								}
+							}
+						}
+						break;
+
+					case FACTION_HOSTILE:
+						if ((*i)->isMindControlled() == true
+							&& (*i)->isOut_t(OUT_STAT) == false
+							&& (aborted == false || (*i)->isInExitArea() == true))
+							// This never actually runs unless the early psi-exit option,
+							// where all aliens are dead or mind-controlled, is turned on --
+							// except for the two-stage Cydonia mission in which case all
+							// this does not matter.
+						{
+							++_aliensControlled;
+							for (std::vector<BattleItem*>::const_iterator
+									j = (*i)->getInventory()->begin();
+									j != (*i)->getInventory()->end();
+									++j)
+							{
+								if ((*j)->getRules()->isFixed() == false)
+								{
+									(*j)->setInventorySection(_rules->getInventoryRule(ST_GROUND));
+									(*i)->getTile()->addItem(*j);
+								}
+							}
+							recoverLiveAlien(*i);
+						}
+						break;
+
+					case FACTION_NEUTRAL:
+						if (_missionStatistics->success == true && isHostileAlive == false
+							|| (aborted == true && (*i)->isInExitArea() == true))
+						{
+							addStat(
+								"STR_CIVILIANS_SAVED",
+								value); // duplicated below.
+						}
+						else
+							addStat(
+								"STR_CIVILIANS_KILLED_BY_ALIENS",
+								-value);
+/*						if ((aborted == true && (*i)->isInExitArea() == false)
+							|| playerLive == 0)
+						{
+							addStat(
+								"STR_CIVILIANS_KILLED_BY_ALIENS",
+								-value);
+						}
+						else
+							addStat(
+								"STR_CIVILIANS_SAVED",
+								value); */ // duplicated below.
+				} // End unit_faction switch.
+		} // End unit_status switch.
+	} //End loop BattleUnits.
 
 	if (_craft != nullptr && playerWipe == true)
 	{
@@ -1391,10 +1451,11 @@ void DebriefingState::prepareDebriefing() // private.
 		_base->getCrafts()->erase(pCraft);
 		_txtTitle->setText(tr("STR_CRAFT_IS_LOST"));
 
-		return; // -> EXIT <--|||
+		return; // ||-> EXIT <--|||
 	}
 
-	if (aborted == true && tacType == TCT_BASEDEFENSE)
+//	if (aborted == true && tacType == TCT_BASEDEFENSE)
+	if (_missionStatistics->success == false && tacType == TCT_BASEDEFENSE)
 	{
 		for (std::vector<Craft*>::const_iterator
 				i = _base->getCrafts()->begin();
@@ -1438,10 +1499,10 @@ void DebriefingState::prepareDebriefing() // private.
 		}
 		_txtTitle->setText(tr(tacResult));
 
-		if (objectiveCompleteText.empty() == false)
+		if (objectiveText.empty() == false)
 			addStat(
-				objectiveCompleteText,
-				objectiveCompleteScore);
+				objectiveText,
+				objectiveScore);
 	}
 	else
 	{

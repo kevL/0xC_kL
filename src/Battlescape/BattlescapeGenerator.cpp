@@ -159,7 +159,7 @@ void BattlescapeGenerator::init() // private.
  * Sets the XCom craft involved in the battle.
  * @param craft - pointer to Craft
  */
-void BattlescapeGenerator::setCraft(Craft* craft)
+void BattlescapeGenerator::setCraft(Craft* const craft)
 {
 	_craft = craft;
 	_craft->setTactical();
@@ -169,7 +169,7 @@ void BattlescapeGenerator::setCraft(Craft* craft)
  * Sets the ufo involved in the battle.
  * @param ufo - pointer to Ufo
  */
-void BattlescapeGenerator::setUfo(Ufo* ufo)
+void BattlescapeGenerator::setUfo(Ufo* const ufo)
 {
 	_ufo = ufo;
 	_ufo->setTactical();
@@ -179,7 +179,7 @@ void BattlescapeGenerator::setUfo(Ufo* ufo)
  * Sets the XCom base involved in the battle.
  * @param base - pointer to Base
  */
-void BattlescapeGenerator::setBase(Base* base)
+void BattlescapeGenerator::setBase(Base* const base)
 {
 	_base = base;
 	_base->setTactical();
@@ -189,7 +189,7 @@ void BattlescapeGenerator::setBase(Base* base)
  * Sets the mission site involved in the battle.
  * @param site - pointer to MissionSite
  */
-void BattlescapeGenerator::setMissionSite(MissionSite* site)
+void BattlescapeGenerator::setMissionSite(MissionSite* const site)
 {
 	_site = site;
 	_site->setTactical();
@@ -199,7 +199,7 @@ void BattlescapeGenerator::setMissionSite(MissionSite* site)
  * Sets the alien base involved in the battle.
  * @param base - pointer to AlienBase
  */
-void BattlescapeGenerator::setAlienBase(AlienBase* base)
+void BattlescapeGenerator::setAlienBase(AlienBase* const base)
 {
 	_alienBase = base;
 	_alienBase->setTactical();
@@ -210,7 +210,7 @@ void BattlescapeGenerator::setAlienBase(AlienBase* base)
  * or nextStage().
  * @param texture - pointer to RuleTerrain
  */
-void BattlescapeGenerator::setTerrain(RuleTerrain* terrain)
+void BattlescapeGenerator::setTerrain(RuleTerrain* const terrain)
 {
 	_terrainRule = terrain;
 }

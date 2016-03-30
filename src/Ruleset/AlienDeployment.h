@@ -189,45 +189,45 @@ private:
 		/// Gets the script to use for this deployment.
 		const std::string& getScript() const;
 
-		/// Checks if aborting this mission will fail the game (all mars and t'leth stages).
-		bool isNoRetreat() const;
-		/// Checks if this is the destination for the final mission (mars stage 1, t'leth stage 1).
+		/// Checks if the AlienDeployment is where to send Craft via the ConfirmCydonia btn.
 		bool isFinalDestination() const;
-		/// Checks if winning this mission will complete the game (mars stage 2, t'leth stage 3).
+		/// Checks if aborting or losing the AlienDeployment will lose the game.
+		bool isNoRetreat() const;
+		/// Checks if the AlienDeployment finishes the game.
 		bool isFinalMission() const;
 
-		/// Gets the alert message for this mission type.
+		/// Gets the alert-message for the AlienDeployment.
 		const std::string& getAlertMessage() const;
-		/// Gets the alert background for this mission type.
+		/// Gets the alert-background for the AlienDeployment.
 		const std::string& getAlertBackground() const;
 
-		/// Gets the briefing data for this mission type.
+		/// Gets the briefing-data for the AlienDeployment.
 		BriefingData getBriefingData() const;
 
-		/// Gets the marker type for this mission.
+		/// Gets the marker-type for the AlienDeployment.
 		const std::string& getMarkerType() const;
-		/// Gets the marker icon for this mission.
+		/// Gets the marker-icon for the AlienDeployment.
 		int getMarkerIcon() const;
 
-		/// Gets the minimum duration for this mission.
+		/// Gets the minimum duration for the AlienDeployment.
 		int getDurationMin() const;
-		/// Gets the maximum duration for this mission.
+		/// Gets the maximum duration for the AlienDeployment.
 		int getDurationMax() const;
 
 		/// Gets the list of music to pick from.
 		const std::vector<std::string>& getDeploymentMusics() const;
 
-		/// Gets the objective type for this mission.
+		/// Gets the objective-type for the AlienDeployment.
 		SpecialTileType getObjectiveType() const;
 		/// Gets a fixed number of objectives required if any.
 		int getObjectivesRequired() const;
-		/// Gets the string to pop up when the mission objectives are complete.
+		/// Gets the string to pop up when the mission-objectives are complete.
 		const std::string& getObjectivePopup() const;
-		/// Fills out the objective complete info.
+		/// Fills out the objective-complete info.
 		bool getObjectiveCompleteInfo(
 				std::string& text,
 				int& score) const;
-		/// Fills out the objective failed info.
+		/// Fills out the objective-failed info.
 		bool getObjectiveFailedInfo(
 				std::string& text,
 				int& score) const;
@@ -237,7 +237,7 @@ private:
 		/// Gets the half-hourly score penalty xCom receives for a site existing.
 		int getPointsPer30() const;
 
-		/// Gets the turn-limit for this Deployment.
+		/// Gets the turn-limit for the AlienDeployment.
 		int getTurnLimit() const;
 		/// Gets the result when the turn-timer runs out.
 		ChronoResult getChronoResult() const;

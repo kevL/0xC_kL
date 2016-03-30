@@ -451,10 +451,10 @@ private:
 		/// Displays a popup window.
 		void popup(State* state);
 
-		/// Finishes a tactical battle.
+		/// Finishes tactical battle.
 		void finishBattle(
-				const bool abort,
-				const int inExitArea);
+				bool aborted,
+				int playerUnits);
 
 		/// Shows the launch button.
 		void showLaunchButton(bool show = true);

@@ -3691,17 +3691,18 @@ void BattlescapeState::popup(State* state)
 }
 
 /**
- * Finishes the current battle and either shuts down the battlescape and
- * presents the debriefing screen for the mission OR sets up a/the next-stage.
+ * Finishes the current battle and either shuts down the Battlescape and
+ * presents the debriefing-screen OR sets up another Battlescape for next-stage.
  * @note Possibly ends the game as well.
- * @param abort			- true if the mission was aborted
- * @param inExitArea	- quantity of soldiers in the exit-area OR quantity of
- *						  survivors when battle finished due to either all aLiens
- *						  pacified or mission-objectives being destroyed
+ * @param aborted		- true if the mission was aborted
+ * @param playerUnits	- quantity of player-units in the exit-area (aborted) or
+ *						  when battle is finished (aLiens pacified or mission-
+ *						  objectives destroyed; -1 for all units are deceased
+ *						  both Player and Hostile.
  */
 void BattlescapeState::finishBattle(
-		const bool abort,
-		const int inExitArea)
+		bool aborted,
+		int playerUnits)
 {
 	while (_game->isState(this) == false)
 		_game->popState();
@@ -3719,25 +3720,25 @@ void BattlescapeState::finishBattle(
 	{
 		switch (_battleSave->getTacType())
 		{
-			//TCT_DEFAULT:			// -1 init.
-			//TCT_UFOCRASHED,		//  0
-			//TCT_UFOLANDED,		//  1
 			case TCT_BASEASSAULT:	//  2
 			case TCT_BASEDEFENSE:	//  3
 			case TCT_MISSIONSITE:	//  4
 			case TCT_MARS1:			//  5
 			case TCT_MARS2:			//  6
 				nextStage = ruleDeploy->getNextStage();
+//				break;
+//			case TCT_DEFAULT:		// -1 init.
+//			case TCT_UFOCRASHED:	//  0
+//			case TCT_UFOLANDED:		//  1
 		}
 	}
 
-	if (nextStage.empty() == false && inExitArea != 0)	// If there is a next mission stage and there are soldiers
-	{													// in Exit_Area OR all aLiens are dead, Load the Next Stage!!!
+	if (nextStage.empty() == false && playerUnits > 0)	// If there is a next-stage and there are player-units in an
+	{													// Exit_Area OR all aLiens are dead, Load the Next Stage!!!
 //		std::string nextStageRace (ruleDeploy->getNextStageRace());
 //		for (std::vector<TerrorSite*>::const_iterator
 //				ts = _gameSave->getTerrorSites()->begin();
-//				ts != _gameSave->getTerrorSites()->end()
-//					&& nextStageRace.empty() == true;
+//				ts != _gameSave->getTerrorSites()->end() && nextStageRace.empty() == true;
 //				++ts)
 //		{
 //			if ((*ts)->getTactical() == true)
@@ -3745,8 +3746,7 @@ void BattlescapeState::finishBattle(
 //		}
 //		for (std::vector<AlienBase*>::const_iterator
 //				ab = _gameSave->getAlienBases()->begin();
-//				ab != _gameSave->getAlienBases()->end()
-//					&& nextStageRace.empty() == true;
+//				ab != _gameSave->getAlienBases()->end() && nextStageRace.empty() == true;
 //				++ab)
 //		{
 //			if ((*ab)->getTactical() == true)
@@ -3775,8 +3775,61 @@ void BattlescapeState::finishBattle(
 		_tacticalTimer->stop();
 		_game->popState();
 
+
 		bool ironsave;
-		if (abort == true || inExitArea == 0)			// Abort was done or no player-units are still alive.
+		if (_gameSave->getMonthsPassed() != -1)
+		{
+			if (ruleDeploy != nullptr)
+			{
+				if (ruleDeploy->isFinalMission() == true) // must fulfill objectives
+				{
+					ironsave = _gameSave->isIronman() == true;
+
+					if (aborted == true
+						|| _battleSave->allObjectivesDestroyed() == false) //&& playerUnits < 1
+					{
+						_gameSave->setEnding(END_LOSE);
+						_game->pushState(new DefeatState());
+					}
+					else //if (_battleSave->allObjectivesDestroyed() == true)
+					{
+						_gameSave->setEnding(END_WIN);
+						_game->pushState(new VictoryState());
+					}
+				}
+				else if (ruleDeploy->isNoRetreat() == true)
+				{
+					ironsave = _gameSave->isIronman() == true;
+
+					if (aborted == true || playerUnits < 1)
+					{
+						_gameSave->setEnding(END_LOSE);
+						_game->pushState(new DefeatState());
+					}
+					else
+					{
+						ironsave = false;
+						_game->pushState(new DebriefingState());
+					}
+				}
+				else // non-critical battle
+				{
+					ironsave = false;
+					_game->pushState(new DebriefingState());
+				}
+			}
+			else // ufo crashed or landed
+			{
+				ironsave = false;
+				_game->pushState(new DebriefingState());
+			}
+		}
+		else // insta-battle
+		{
+			ironsave = false;
+			_game->pushState(new DebriefingState());
+		}
+/*		if (aborted == true || playerUnits == 0)		// Abort was done or no player-units are still alive.
 		{												// This concludes to defeat when in a 'noRetreat' or 'final' mission, like Mars landing or Mars aLien base.
 			if (ruleDeploy != nullptr
 				&& ruleDeploy->isNoRetreat() == true
@@ -3795,7 +3848,7 @@ void BattlescapeState::finishBattle(
 		else											// No abort was done and at least one player-unit is still alive.
 		{												// This concludes to victory when in a 'final' mission, like Mars aLien base.
 			if (ruleDeploy != nullptr
-				&& ruleDeploy->isFinalMission() == true
+				&& ruleDeploy->isFinalMission() == true	// <- do *not* win if all units dead both Player and Hostile
 				&& _gameSave->getMonthsPassed() != -1)
 			{
 				_gameSave->setEnding(END_WIN);
@@ -3807,7 +3860,7 @@ void BattlescapeState::finishBattle(
 				ironsave = false;
 				_game->pushState(new DebriefingState());
 			}
-		}
+		} */
 
 		if (ironsave == true)
 		{
