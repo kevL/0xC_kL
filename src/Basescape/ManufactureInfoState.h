@@ -169,11 +169,11 @@ private:
 
 
 	public:
-		/// Creates the State (new production).
+		/// Creates a ManufactureInfo state (new production).
 		ManufactureInfoState(
 				Base* const base,
 				const RuleManufacture* const _manfRule);
-		/// Creates the State (modify production).
+		/// Creates a ManufactureInfo (modify production).
 		ManufactureInfoState(
 				Base* const base,
 				Production* const production);

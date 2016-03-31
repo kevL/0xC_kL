@@ -115,7 +115,7 @@ private:
 	std::vector<CraftWeaponProjectile*> _projectiles;
 
 	Craft* _craft;
-	GeoscapeState* _geo;
+	GeoscapeState* _geoState;
 	Globe* _globe;
 	ImageButton
 		* _btnStandoff,
@@ -165,7 +165,7 @@ private:
 					Globe* const globe,
 					Craft* const craft,
 					Ufo* const ufo,
-					GeoscapeState* const geo);
+					GeoscapeState* const geoState);
 		/// Cleans up the Dogfight state.
 		~DogfightState();
 

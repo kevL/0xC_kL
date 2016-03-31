@@ -56,7 +56,7 @@ NewManufactureListState::NewManufactureListState(
 {
 	_fullScreen = false;
 
-	_window			= new Window(this, 320, 162, 0, 23, POPUP_BOTH);
+	_window			= new Window(this, 320, 170, 0, 23, POPUP_BOTH);
 
 	_txtTitle		= new Text(320, 16, 16, 30);
 
@@ -65,10 +65,10 @@ NewManufactureListState::NewManufactureListState(
 
 	_cbxCategory	= new ComboBox(this, 140, 16, 173, 30);
 
-	_lstManufacture	= new TextList(285, 105, 16, 55);
+	_lstManufacture	= new TextList(285, 113, 16, 55);
 
-	_btnCostTable	= new TextButton(142, 16,  16, 162);
-	_btnCancel		= new TextButton(142, 16, 162, 162);
+	_btnCostTable	= new TextButton(130, 16,  20, 170);
+	_btnCancel		= new TextButton(130, 16, 170, 170);
 
 	setInterface("selectNewManufacture");
 

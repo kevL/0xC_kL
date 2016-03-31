@@ -104,23 +104,23 @@ void ManufactureInfoState::buildUi() // private.
 {
 	_fullScreen = false;
 
-	_window					= new Window(this, 320, 170, 0, 15, POPUP_BOTH);
+	_window					= new Window(this, 320, 170, 0, 23, POPUP_BOTH);
 
-	_txtTitle				= new Text(280, 17, 20, 25);
+	_txtTitle				= new Text(280, 17, 20, 33);
 
-	_txtTimeDescr			= new Text(30, 17, 244, 36);
-	_txtTimeTotal			= new Text(30, 17, 274, 36);
-	_btnSell				= new ToggleTextButton(60, 16, 244, 56);
+	_txtTimeDescr			= new Text(30, 17, 244, 44);
+	_txtTimeTotal			= new Text(30, 17, 274, 44);
+	_btnSell				= new ToggleTextButton(60, 16, 244, 64);
 
-	_txtAvailableEngineer	= new Text(100, 9, 16, 47);
-	_txtAvailableSpace		= new Text(100, 9, 16, 57);
-	_txtMonthlyProfit		= new Text(160, 9, 16, 67);
+	_txtAvailableEngineer	= new Text(100, 9, 16, 55);
+	_txtAvailableSpace		= new Text(100, 9, 16, 65);
+	_txtMonthlyProfit		= new Text(160, 9, 16, 75);
 
-	_txtAllocatedEngineer	= new Text(84, 17,  16, 80);
-	_txtAllocated			= new Text(50, 17, 100, 80);
+	_txtAllocatedEngineer	= new Text(84, 17,  16, 88);
+	_txtAllocated			= new Text(50, 17, 100, 88);
 
-	_txtUnitToProduce		= new Text(84, 17, 176, 80);
-	_txtTodo				= new Text(50, 17, 260, 80);
+	_txtUnitToProduce		= new Text(84, 17, 176, 88);
+	_txtTodo				= new Text(50, 17, 260, 88);
 
 //	_txtEngineerUp			= new Text(100, 17, 32, 111);
 //	_btnEngineerUp			= new ArrowButton(ARROW_BIG_UP, 14, 14, 145, 111);
@@ -130,13 +130,13 @@ void ManufactureInfoState::buildUi() // private.
 //	_btnUnitUp				= new ArrowButton(ARROW_BIG_UP, 14, 14, 280, 111);
 //	_txtUnitDown			= new Text(100, 17, 205, 135);
 //	_btnUnitDown			= new ArrowButton(ARROW_BIG_DOWN, 14, 14, 280, 135);
-	_btnEngineerUp			= new ArrowButton(ARROW_BIG_UP,   100, 16,  30, 111);
-	_btnEngineerDown		= new ArrowButton(ARROW_BIG_DOWN, 100, 16,  30, 135);
-	_btnUnitUp				= new ArrowButton(ARROW_BIG_UP,   100, 16, 190, 111);
-	_btnUnitDown			= new ArrowButton(ARROW_BIG_DOWN, 100, 16, 190, 135);
+	_btnEngineerUp			= new ArrowButton(ARROW_BIG_UP,   100, 16,  30, 119);
+	_btnEngineerDown		= new ArrowButton(ARROW_BIG_DOWN, 100, 16,  30, 143);
+	_btnUnitUp				= new ArrowButton(ARROW_BIG_UP,   100, 16, 190, 119);
+	_btnUnitDown			= new ArrowButton(ARROW_BIG_DOWN, 100, 16, 190, 143);
 
-	_btnStop				= new TextButton(135, 16,  10, 159);
-	_btnOk					= new TextButton(135, 16, 175, 159);
+	_btnStop				= new TextButton(130, 16,  20, 170);
+	_btnOk					= new TextButton(130, 16, 170, 170);
 
 //	_surfaceEngineers = new InteractiveSurface(160, 150, 0, 25);
 //	_surfaceEngineers->onMouseClick((ActionHandler)& ManufactureInfoState::handleWheelEngineer, 0);

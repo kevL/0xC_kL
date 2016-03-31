@@ -112,21 +112,21 @@ const int DogfightState::_projectileBlobs[4][6][3] =
 
 /**
  * Initializes all the elements in the Dogfight window.
- * @param globe	- pointer to the Globe
- * @param craft	- pointer to the Craft intercepting
- * @param ufo	- pointer to the UFO getting intercepted
- * @param geo	- pointer to GeoscapeState
+ * @param globe		- pointer to the Globe
+ * @param craft		- pointer to the Craft intercepting
+ * @param ufo		- pointer to the UFO getting intercepted
+ * @param geoState	- pointer to GeoscapeState
  */
 DogfightState::DogfightState(
 		Globe* const globe,
 		Craft* const craft,
 		Ufo* const ufo,
-		GeoscapeState* const geo)
+		GeoscapeState* const geoState)
 	:
 		_globe(globe),
 		_craft(craft),
 		_ufo(ufo),
-		_geo(geo),
+		_geoState(geoState),
 		_gameSave(_game->getSavedGame()),
 		_diff(static_cast<int>(_game->getSavedGame()->getDifficulty())),
 		_timeout(MSG_TIMEOUT),
@@ -176,9 +176,9 @@ DogfightState::DogfightState(
 	_btnDisengage			= new ImageButton(36, 15, _x + 83, _y +  4);
 	_btnUfo					= new ImageButton(36, 15, _x + 83, _y + 20);
 
-	_btnAggressive			= new ImageButton(36, 15, _x + 120, _y +  4);
+	_btnCautious			= new ImageButton(36, 15, _x + 120, _y +  4);
 	_btnStandard			= new ImageButton(36, 15, _x + 120, _y + 20);
-	_btnCautious			= new ImageButton(36, 15, _x + 120, _y + 36);
+	_btnAggressive			= new ImageButton(36, 15, _x + 120, _y + 36);
 	_btnStandoff			= new ImageButton(36, 17, _x + 120, _y + 52);
 	_craftStance = _btnStandoff;
 
@@ -545,7 +545,7 @@ DogfightState::DogfightState(
  */
 DogfightState::~DogfightState()
 {
-	_geo->resetTimer();
+	_geoState->resetTimer();
 
 	delete _craftDamageAnimTimer;
 
@@ -774,7 +774,7 @@ void DogfightState::updateDogfight()
 			int escapeTicks (_ufo->getEscapeCountdown());
 			if (escapeTicks > 0)
 			{
-				_geo->drawUfoBlobs();
+				_geoState->drawUfoBlobs();
 
 				if (_dist < DST_STANDOFF)
 					_ufo->setEscapeCountdown(--escapeTicks);
@@ -795,12 +795,12 @@ void DogfightState::updateDogfight()
 		finalRun = true;
 		resetStatus("STR_UFO_OUTRUNNING_INTERCEPTOR");
 
-		if (_geo->getDfCCC() == false) // should need to run this only once per.
+		if (_geoState->getDfCCC() == false) // should need to run this only once per.
 		{
 			int qtyCraftVsUfo (0);
 			for (std::list<DogfightState*>::const_iterator
-					i = _geo->getDogfights().begin();
-					i != _geo->getDogfights().end();
+					i = _geoState->getDogfights().begin();
+					i != _geoState->getDogfights().end();
 					++i)
 			{
 				if ((*i)->getUfo() == _ufo
@@ -811,9 +811,9 @@ void DogfightState::updateDogfight()
 			}
 
 			if (qtyCraftVsUfo == 1)
-				_geo->setDfCCC(
-							_craft->getLongitude(),
-							_craft->getLatitude());
+				_geoState->setDfCCC(
+								_craft->getLongitude(),
+								_craft->getLatitude());
 		}
 	}
 	else // UFO cannot break off because it's crappier than the crappy craft.
@@ -1107,8 +1107,8 @@ void DogfightState::updateDogfight()
 				std::vector<size_t> altIntercepts; // Randomize UFO's target.
 
 				for (std::list<DogfightState*>::const_iterator
-						i = _geo->getDogfights().begin();
-						i != _geo->getDogfights().end();
+						i = _geoState->getDogfights().begin();
+						i != _geoState->getDogfights().end();
 						++i)
 				{
 					if (*i != this // target can be either '_slot' OR in 'altIntercept' but not both.
@@ -1282,8 +1282,8 @@ void DogfightState::updateDogfight()
 			else
 			{
 				for (std::list<DogfightState*>::const_iterator
-					i = _geo->getDogfights().begin();
-					i != _geo->getDogfights().end();
+					i = _geoState->getDogfights().begin();
+					i != _geoState->getDogfights().end();
 					++i)
 				{
 					if (*i != this
@@ -1482,8 +1482,8 @@ void DogfightState::keyEscape(Action*)
 	{
 		bool miniAll (true);
 		for (std::list<DogfightState*>::const_iterator
-				i = _geo->getDogfights().begin();
-				i != _geo->getDogfights().end();
+				i = _geoState->getDogfights().begin();
+				i != _geoState->getDogfights().end();
 				++i)
 		{
 			if ((*i)->isStandingOff() == false) //_dist >= DST_STANDOFF
@@ -1616,13 +1616,13 @@ void DogfightState::btnDisengageClick(Action*)
 		_desired = DST_ENGAGE + 10;
 	}
 
-	if (_geo->getMinimizedDfCount() == _totalIntercepts - 1)
+	if (_geoState->getMinimizedDfCount() == _totalIntercepts - 1)
 	{
-		if (_geo->getDfZoomInTimer()->isRunning() == true)
-			_geo->getDfZoomInTimer()->stop();
+		if (_geoState->getDfZoomInTimer()->isRunning() == true)
+			_geoState->getDfZoomInTimer()->stop();
 
-		if (_geo->getDfZoomOutTimer()->isRunning() == false)
-			_geo->getDfZoomOutTimer()->start();
+		if (_geoState->getDfZoomOutTimer()->isRunning() == false)
+			_geoState->getDfZoomOutTimer()->start();
 	}
 }
 
@@ -1674,7 +1674,7 @@ void DogfightState::previewClick(Action*)
  */
 void DogfightState::btnMinimizeDfClick(Action*)
 {
-	_geo->resetTimer();
+	_geoState->resetTimer();
 
 	if (_ufo->isCrashed() == false
 		&& _craft->isDestroyed() == false
@@ -1712,16 +1712,16 @@ void DogfightState::btnMinimizeDfClick(Action*)
 				_btnMinimizedIcon->setVisible();
 				_txtInterception->setVisible();
 
-				if (_geo->getMinimizedDfCount() == _totalIntercepts)
+				if (_geoState->getMinimizedDfCount() == _totalIntercepts)
 				{
-					if (_geo->getDfZoomInTimer()->isRunning() == true)
-						_geo->getDfZoomInTimer()->stop();
+					if (_geoState->getDfZoomInTimer()->isRunning() == true)
+						_geoState->getDfZoomInTimer()->stop();
 
-					if (_geo->getDfZoomOutTimer()->isRunning() == false)
-						_geo->getDfZoomOutTimer()->start();
+					if (_geoState->getDfZoomOutTimer()->isRunning() == false)
+						_geoState->getDfZoomOutTimer()->start();
 				}
 				else
-					_geo->resetInterceptPorts();
+					_geoState->resetInterceptPorts();
 			}
 			else
 				resetStatus("STR_PROJECTILE_IN_FLIGHT");
@@ -1775,25 +1775,25 @@ void DogfightState::btnMaximizeDfPress(Action* action)
 			_txtInterception->setVisible(false);
 			_previewUfo->setVisible(false);
 
-			_geo->resetInterceptPorts();
+			_geoState->resetInterceptPorts();
 
-			if (_geo->getDfZoomOutTimer()->isRunning() == true)
-				_geo->getDfZoomOutTimer()->stop();
+			if (_geoState->getDfZoomOutTimer()->isRunning() == true)
+				_geoState->getDfZoomOutTimer()->stop();
 
-			if (_geo->getMinimizedDfCount() == _totalIntercepts - 1)
-				_geo->storePreDfCoords();
+			if (_geoState->getMinimizedDfCount() == _totalIntercepts - 1)
+				_geoState->storePreDfCoords();
 
 			_globe->center(
 						_craft->getLongitude(),
 						_craft->getLatitude());
 
-			if (_geo->getDfZoomInTimer()->isRunning() == false)
-				_geo->getDfZoomInTimer()->start();
+			if (_geoState->getDfZoomInTimer()->isRunning() == false)
+				_geoState->getDfZoomInTimer()->start();
 			break;
 		}
 
 		case SDL_BUTTON_RIGHT:
-			_game->pushState(new GeoscapeCraftState(_craft, _geo));
+			_game->pushState(new GeoscapeCraftState(_craft, _geoState));
 	}
 }
 
@@ -2039,7 +2039,7 @@ void DogfightState::resetInterceptPort(
 		size_t dfOpenTotal)
 {
 	if (_slot > _totalIntercepts)
-		_slot = _geo->getOpenDfSlot(); // not sure what this is doing anymore ...
+		_slot = _geoState->getOpenDfSlot(); // not sure what this is doing anymore ...
 
 	_minimizedIconX = 5;
 	_minimizedIconY = (5 * _slot) + (16 * (_slot - 1));

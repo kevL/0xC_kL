@@ -64,31 +64,32 @@ ManufactureStartState::ManufactureStartState(
 {
 	_fullScreen = false;
 
-	_window				= new Window(this, 320, 170, 0, 15);
+	_window				= new Window(this, 320, 170, 0, 23);
 
-	_txtTitle			= new Text(300, 16, 10, 26);
+	_txtTitle			= new Text(300, 16, 10, 34);
 
-	_txtManHour			= new Text(150, 9, 20, 45);
-	_txtCost			= new Text(150, 9, 20, 55);
-	_txtWorkSpace		= new Text(150, 9, 20, 65);
+	_btnCostTable		= new TextButton(130, 16, 170, 53);
 
-	_txtRequiredItems	= new Text(150, 9, 20, 75);
+	_txtManHour			= new Text(150, 9, 20, 53);
+	_txtCost			= new Text(150, 9, 20, 63);
+	_txtWorkSpace		= new Text(150, 9, 20, 73);
 
-	_txtItemRequired	= new Text(60, 9,  40, 85);
-	_txtUnitsRequired	= new Text(60, 9, 180, 85);
-	_txtUnitsAvailable	= new Text(60, 9, 240, 85);
+	_txtRequiredItems	= new Text(150, 9, 20, 83);
 
-	_lstRequiredItems	= new TextList(240, 57, 40, 100);
+	_txtItemRequired	= new Text(60, 9,  40, 93);
+	_txtUnitsRequired	= new Text(60, 9, 180, 93);
+	_txtUnitsAvailable	= new Text(60, 9, 240, 93);
 
-	_btnCostTable		= new TextButton(130, 16, 170, 45);
+	_lstRequiredItems	= new TextList(240, 57, 40, 108);
 
-	_btnCancel			= new TextButton(130, 16,  20, 160);
-	_btnStart			= new TextButton(130, 16, 170, 160);
+	_btnCancel			= new TextButton(130, 16,  20, 170);
+	_btnStart			= new TextButton(130, 16, 170, 170);
 
 	setInterface("allocateManufacture");
 
 	add(_window,		"window",	"allocateManufacture");
 	add(_txtTitle,		"text",		"allocateManufacture");
+	add(_btnCostTable,	"button",	"allocateManufacture");
 	add(_txtManHour,	"text",		"allocateManufacture");
 	add(_txtCost,		"text",		"allocateManufacture");
 	add(_txtWorkSpace,	"text",		"allocateManufacture");
@@ -99,7 +100,6 @@ ManufactureStartState::ManufactureStartState(
 	add(_txtUnitsAvailable,	"text", "allocateManufacture");
 	add(_lstRequiredItems,	"list", "allocateManufacture");
 
-	add(_btnCostTable,	"button", "allocateManufacture");
 	add(_btnCancel,		"button", "allocateManufacture");
 	add(_btnStart,		"button", "allocateManufacture");
 
@@ -111,6 +111,9 @@ ManufactureStartState::ManufactureStartState(
 	_txtTitle->setText(tr(_manfRule->getType()));
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
+
+	_btnCostTable->setText(tr("STR_PRODUCTION_COSTS"));
+	_btnCostTable->onMouseClick((ActionHandler)& ManufactureStartState::btnCostsClick);
 
 	_txtManHour->setText(tr("STR_ENGINEER_HOURS_TO_PRODUCE_ONE_UNIT_")
 							.arg(_manfRule->getManufactureTime()));
@@ -174,9 +177,6 @@ ManufactureStartState::ManufactureStartState(
 	_txtUnitsAvailable->setVisible(showReqs);
 	_lstRequiredItems->setVisible(showReqs);
 
-
-	_btnCostTable->setText(tr("STR_PRODUCTION_COSTS"));
-	_btnCostTable->onMouseClick((ActionHandler)& ManufactureStartState::btnCostsClick);
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
 	_btnCancel->onMouseClick((ActionHandler)& ManufactureStartState::btnCancelClick);
