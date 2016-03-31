@@ -1474,9 +1474,9 @@ void BattlescapeGame::endTurn() // private.
 	int // if all units from either faction are killed - the mission is over.
 		liveHostile,
 		livePlayer;
-	const bool hostilesPacified (tallyUnits(
-										liveHostile,
-										livePlayer));
+	const bool pacified (tallyUnits(
+								liveHostile,
+								livePlayer));
 
 	if (_battleSave->getObjectiveType() == MUST_DESTROY // brain death, end Final Mission.
 		&& _battleSave->allObjectivesDestroyed() == true)
@@ -1531,8 +1531,7 @@ void BattlescapeGame::endTurn() // private.
 					_battleSave->getBattleState()->toggleIcons(true);
 			}
 
-			if (hostilesPacified == true)
-				_battleSave->setPacified();
+			_battleSave->setPacified(pacified);
 		}
 
 		if (_endTurnRequested == true)
@@ -1545,7 +1544,7 @@ void BattlescapeGame::endTurn() // private.
 				_parentState->getGame()->pushState(new NextTurnState(
 																_battleSave,
 																_parentState,
-																hostilesPacified));
+																pacified));
 			}
 		}
 	}
@@ -3504,7 +3503,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
  * Tallies the conscious units Player and Hostile.
  * @param liveHostile	- reference in which to store the live aLien tally
  * @param livePlayer	- reference in which to store the live xCom tally
- * @return, true if all aliens are dead or pacified independent of battleAllowPsionicCapture option
+ * @return, true if all aliens are dead or pacified independent of 'battleAllowPsionicCapture' option
  */
 bool BattlescapeGame::tallyUnits(
 		int& liveHostile,
@@ -3563,9 +3562,9 @@ int BattlescapeGame::tallyPlayerExit() const
 			j != _battleSave->getUnits()->end();
 			++j)
 	{
-		if ((*j)->isInExitArea(END_POINT) == true
+		if ((*j)->getOriginalFaction() == FACTION_PLAYER
 			&& (*j)->isOut_t(OUT_STAT) == false
-			&& (*j)->getOriginalFaction() == FACTION_PLAYER)
+			&& (*j)->isInExitArea(END_POINT) == true)
 //			&& (*j)->isMindControlled() == false) // allow.
 		{
 			++ret;
@@ -3586,8 +3585,8 @@ int BattlescapeGame::tallyHostiles() const
 			j != _battleSave->getUnits()->end();
 			++j)
 	{
-		if ((*j)->isOut_t(OUT_STAT) == false
-			&& (*j)->getOriginalFaction() == FACTION_HOSTILE
+		if ((*j)->getOriginalFaction() == FACTION_HOSTILE
+			&& (*j)->isOut_t(OUT_STAT) == false
 			&& (Options::battleAllowPsionicCapture == false
 				|| (*j)->isMindControlled() == false))
 		{

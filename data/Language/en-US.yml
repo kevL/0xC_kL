@@ -721,7 +721,7 @@ en-US:
   STR_FUNDING_CHANGE: "exChequer> {ALT}{0}"
   STR_COUNCIL_REDUCE_DEBTS: "{NEWLINE}The Council of Funding Nations is not happy with your financial position. You must reduce your debts below $1 million or the project will be terminated.{NEWLINE}"
   STR_HYPER_WAVE_TRANSMISSIONS_ARE_DECODED: "> hyperCrypt.deCode <"
-  STR_CRAFT_TYPE: "craft type"
+  STR_CRAFT_TYPE: "type"
   STR_RACE: "race"
   STR_MISSION: "mission"
   STR_ZONE: "zone"

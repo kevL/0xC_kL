@@ -56,7 +56,7 @@ private:
 
 
 	public:
-		/// Creates the NextTurn state.
+		/// Creates a NextTurn state.
 		NextTurnState(
 				SavedBattleGame* const battleSave,
 				BattlescapeState* const state,

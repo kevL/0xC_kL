@@ -1274,7 +1274,7 @@ void Base::removeResearch(
 
 /**
  * Research Help ala XcomUtil.
- * @param aLien - reference the name of an alien that got prodded
+ * @param aLien - reference the name of an aLien that got prodded
  */
 void Base::researchHelp(const std::string& aLien)
 {
@@ -1327,7 +1327,7 @@ void Base::researchHelp(const std::string& aLien)
  * Gets soldier coefficient for Research Help.
  * @return, help coef
  */
-double Base::getSoldierHelp(const std::string& resType)
+double Base::getSoldierHelp(const std::string& resType) // private/static.
 {
 	if (resType.compare("STR_ALIEN_GRENADE") == 0
 		|| resType.compare("STR_ALIEN_ENTERTAINMENT") == 0
@@ -1364,7 +1364,7 @@ double Base::getSoldierHelp(const std::string& resType)
  * Gets navigator coefficient for Research Help.
  * @return, help coef
  */
-double Base::getNavigatorHelp(const std::string& resType)
+double Base::getNavigatorHelp(const std::string& resType) // private/static.
 {
 	if (resType.compare("STR_HYPER_WAVE_DECODER") == 0
 		|| resType.compare("STR_UFO_NAVIGATION") == 0)
@@ -1427,7 +1427,7 @@ double Base::getNavigatorHelp(const std::string& resType)
  * Gets medic coefficient for Research Help.
  * @return, help coef
  */
-double Base::getMedicHelp(const std::string& resType)
+double Base::getMedicHelp(const std::string& resType) // private/static.
 {
 	if (resType.compare("STR_ALIEN_FOOD") == 0
 		|| resType.compare("STR_ALIEN_SURGERY") == 0
@@ -1469,7 +1469,7 @@ double Base::getMedicHelp(const std::string& resType)
  * Gets engineer coefficient for Research Help.
  * @return, help coef
  */
-double Base::getEngineerHelp(const std::string& resType)
+double Base::getEngineerHelp(const std::string& resType) // private/static.
 {
 	if (resType.compare("STR_BLASTER_LAUNCHER") == 0
 		|| resType.compare("STR_BLASTER_BOMB") == 0)
@@ -1525,7 +1525,7 @@ double Base::getEngineerHelp(const std::string& resType)
  * Gets leader coefficient for Research Help.
  * @return, help coef
  */
-double Base::getLeaderHelp(const std::string& resType)
+double Base::getLeaderHelp(const std::string& resType) // private/static.
 {
 	if (resType.compare("STR_EXAMINATION_ROOM") == 0)
 		return 0.8;
@@ -1577,7 +1577,7 @@ double Base::getLeaderHelp(const std::string& resType)
  * Gets commander coefficient for Research Help.
  * @return, help coef
  */
-double Base::getCommanderHelp(const std::string& resType)
+double Base::getCommanderHelp(const std::string& resType) // private/static.
 {
 	if (resType.compare("STR_BLASTER_LAUNCHER") == 0
 		|| resType.compare("STR_EXAMINATION_ROOM") == 0)
@@ -1628,7 +1628,7 @@ double Base::getCommanderHelp(const std::string& resType)
 }
 
 /**
- * Returns this Base's battlescape status.
+ * Returns this Base's battlescape-status.
  * @return, true if Base is the battlescape
  */
 bool Base::getTactical() const
@@ -1637,7 +1637,7 @@ bool Base::getTactical() const
 }
 
 /**
- * Changes this Base's battlescape status.
+ * Changes this Base's battlescape-status.
  * @param tactical - true if in the battlescape (default true)
  */
 void Base::setTactical(bool tactical)
@@ -1646,7 +1646,7 @@ void Base::setTactical(bool tactical)
 }
 
 /**
- * Sets if this Base is a valid alien retaliation target.
+ * Sets if this Base is a valid alien-retaliation-target.
  * @param exposed - true if eligible for retaliation (default true)
  */
 void Base::setBaseExposed(bool exposed)
@@ -1655,7 +1655,7 @@ void Base::setBaseExposed(bool exposed)
 }
 
 /**
- * Gets if this Base is a valid alien retaliation target.
+ * Gets if this Base is a valid alien-retaliation-target.
  * @return, true if eligible for retaliation
  */
 bool Base::getBaseExposed() const
@@ -1704,8 +1704,8 @@ bool Base::getHyperDetection() const
 /**
  * Returns the total amount of short range detection facilities in this Base.
  * @return, quantity of shortrange detection facilities
- */
-/* int Base::getShortRangeDetection() const
+ *
+int Base::getShortRangeDetection() const
 {
 	int
 		total = 0,
@@ -1768,8 +1768,8 @@ int Base::getShortRangeTotal() const
 /**
  * Returns the total amount of long range detection facilities in this Base.
  * @return, quantity of longrange detection facilities
- */
-/* int Base::getLongRangeDetection() const
+ *
+int Base::getLongRangeDetection() const
 {
 	int total = 0;
 	int minRadarRange = _rules->getMinRadarRange();
@@ -1815,8 +1815,8 @@ int Base::getLongRangeTotal() const
 }
 
 /**
- * Returns if a certain Target is covered by this Base's radar range taking into
- * account the range and chance.
+ * Returns if a specified Target is detected inside this Base's radar-range
+ * taking into account both range and probability.
  * @param target - pointer to a UFO to attempt detection against
  * @return,	0 undetected
  *			1 hyperdetected only
@@ -1899,7 +1899,7 @@ double Base::insideRadarRange(const Target* const target) const
 		}
 	}
 
-	if (hyperDet == true) ret = -ret;
+	if (hyperDet == true) ret = -ret; // <- use negative value to pass (hyperdetection= true)
 	return ret;
 }
 
@@ -2019,8 +2019,8 @@ int Base::calcDetChance( // private.
 }
 
 /**
- * Gets the number of gravShields at this base.
- * @return, total gravShields
+ * Gets the number of grav-shields at this base.
+ * @return, total grav-shields
  */
 size_t Base::getGravShields() const
 {
@@ -2040,7 +2040,7 @@ size_t Base::getGravShields() const
 }
 
 /**
- * Returns the total defense value of all the facilities at this Base.
+ * Returns the total defense-value of all the facilities at this Base.
  * @note Used for BaseInfoState bar.
  * @return, defense value
  */
@@ -2088,7 +2088,7 @@ void Base::clearBaseDefense()
 }
 
 /**
- * Sets the effect of this Base's defense facilities before BaseDefense starts.
+ * Sets the effect of this Base's defense-facilities before BaseDefense starts.
  * @param result - the defense result
  */
 void Base::setDefenseResult(int result)
@@ -2097,7 +2097,7 @@ void Base::setDefenseResult(int result)
 }
 
 /**
- * Gets the effect of this Base's defense facilities before BaseDefense starts.
+ * Gets the effect of this Base's defense-facilities before BaseDefense starts.
  * @return, the defense result
  */
 int Base::getDefenseResult() const

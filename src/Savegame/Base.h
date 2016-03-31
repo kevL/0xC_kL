@@ -101,6 +101,19 @@ private:
 	std::vector<Soldier*> _soldiers;
 	std::vector<Transfer*> _transfers;
 
+	/// Gets soldier-factor for Research Help.
+	static double getSoldierHelp(const std::string& rp);
+	/// Gets navigator-factor for Research Help.
+	static double getNavigatorHelp(const std::string& rp);
+	/// Gets medic-factor for Research Help.
+	static double getMedicHelp(const std::string& rp);
+	/// Gets engineer-factor for Research Help.
+	static double getEngineerHelp(const std::string& rp);
+	/// Gets leader-factor for Research Help.
+	static double getLeaderHelp(const std::string& rp);
+	/// Gets commander-factor for Research Help.
+	static double getCommanderHelp(const std::string& rp);
+
 	/// Calculates the chance that aLiens have to detect the Base.
 	int calcDetChance(
 			int diff,
@@ -113,7 +126,7 @@ private:
 			MAX_BASES = 8,
 			BASE_SIZE = 6;
 
-		/// Creates a new Base.
+		/// Creates a Base.
 		explicit Base(const Ruleset* const rules);
 		/// Cleans up the Base.
 		~Base();
@@ -247,18 +260,6 @@ private:
 				bool goOffline = false);
 		/// Research Help ala XcomUtil.
 		void researchHelp(const std::string& aLien);
-		/// Gets soldier factor for Research Help.
-		double getSoldierHelp(const std::string& rp);
-		/// Gets navigator factor for Research Help.
-		double getNavigatorHelp(const std::string& rp);
-		/// Gets medic factor for Research Help.
-		double getMedicHelp(const std::string& rp);
-		/// Gets engineer factor for Research Help.
-		double getEngineerHelp(const std::string& rp);
-		/// Gets leader factor for Research Help.
-		double getLeaderHelp(const std::string& rp);
-		/// Gets commander factor for Research Help.
-		double getCommanderHelp(const std::string& rp);
 
 		/// Adds a Production to the Base.
 		void addProduction(Production* const prod);

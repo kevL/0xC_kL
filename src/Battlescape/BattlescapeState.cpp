@@ -3682,7 +3682,7 @@ void BattlescapeState::warning(
 }
 
 /**
- * Adds a new popup window to the queue (this prevents popups from overlapping).
+ * Adds a new popup-window to the queue (this prevents popups from overlapping).
  * @param state - pointer to popup State
  */
 void BattlescapeState::popup(State* state)
@@ -3712,58 +3712,27 @@ void BattlescapeState::finishBattle(
 	_game->getCursor()->setVisible();
 	_game->getResourcePack()->fadeMusic(_game, 975);
 
-	const std::string type (_battleSave->getTacticalType());
-	const AlienDeployment* const ruleDeploy (_rules->getDeployment(type)); // should be VALID always here. Pssst, it's not.
+	const AlienDeployment* const ruleDeploy (_rules->getDeployment(_battleSave->getTacticalType()));
 
 	std::string nextStage;
 	if (ruleDeploy != nullptr)
 	{
 		switch (_battleSave->getTacType())
 		{
-			case TCT_BASEASSAULT:	//  2
-			case TCT_BASEDEFENSE:	//  3
-			case TCT_MISSIONSITE:	//  4
-			case TCT_MARS1:			//  5
-			case TCT_MARS2:			//  6
+			case TCT_BASEASSAULT: // no check for next-stage if Ufo_Crashed or _Landed.
+			case TCT_BASEDEFENSE:
+			case TCT_MISSIONSITE:
+			case TCT_MARS1:
+			case TCT_MARS2:
 				nextStage = ruleDeploy->getNextStage();
-//				break;
-//			case TCT_DEFAULT:		// -1 init.
-//			case TCT_UFOCRASHED:	//  0
-//			case TCT_UFOLANDED:		//  1
 		}
 	}
 
-	if (nextStage.empty() == false && playerUnits > 0)	// If there is a next-stage and there are player-units in an
-	{													// Exit_Area OR all aLiens are dead, Load the Next Stage!!!
-//		std::string nextStageRace (ruleDeploy->getNextStageRace());
-//		for (std::vector<TerrorSite*>::const_iterator
-//				ts = _gameSave->getTerrorSites()->begin();
-//				ts != _gameSave->getTerrorSites()->end() && nextStageRace.empty() == true;
-//				++ts)
-//		{
-//			if ((*ts)->getTactical() == true)
-//				nextStageRace = (*ts)->getAlienRace();
-//		}
-//		for (std::vector<AlienBase*>::const_iterator
-//				ab = _gameSave->getAlienBases()->begin();
-//				ab != _gameSave->getAlienBases()->end() && nextStageRace.empty() == true;
-//				++ab)
-//		{
-//			if ((*ab)->getTactical() == true)
-//				nextStageRace = (*ab)->getAlienRace();
-//		}
-//		if (nextStageRace.empty() == true)
-//			nextStageRace = "STR_MIXED";
-//		else if (_rules->getAlienRace(nextStageRace) == nullptr)
-//		{
-//			throw Exception(nextStageRace + " race not found.");
-//		}
-
+	if (nextStage.empty() == false && playerUnits > 0)
+	{
 		_battleSave->setTacticalType(nextStage);
 
 		BattlescapeGenerator bGen = BattlescapeGenerator(_game);
-//		bGen.setAlienRace("STR_MIXED");
-//		bGen.setAlienRace(nextStageRace);
 		bGen.nextStage();
 
 		_game->popState();
@@ -3776,15 +3745,14 @@ void BattlescapeState::finishBattle(
 		_game->popState();
 
 
-		bool ironsave;
+		bool debrief;
 		if (_gameSave->getMonthsPassed() != -1)
 		{
 			if (ruleDeploy != nullptr)
 			{
 				if (ruleDeploy->isFinalMission() == true) // must fulfill objectives
 				{
-					ironsave = _gameSave->isIronman() == true;
-
+					debrief = false;
 					if (aborted == true
 						|| _battleSave->allObjectivesDestroyed() == false) //&& playerUnits < 1
 					{
@@ -3799,37 +3767,46 @@ void BattlescapeState::finishBattle(
 				}
 				else if (ruleDeploy->isNoRetreat() == true)
 				{
-					ironsave = _gameSave->isIronman() == true;
-
 					if (aborted == true || playerUnits < 1)
 					{
+						debrief = false;
 						_gameSave->setEnding(END_LOSE);
 						_game->pushState(new DefeatState());
 					}
 					else
-					{
-						ironsave = false;
-						_game->pushState(new DebriefingState());
-					}
+						debrief = true;
 				}
 				else // non-critical battle
-				{
-					ironsave = false;
-					_game->pushState(new DebriefingState());
-				}
+					debrief = true;
 			}
 			else // ufo crashed or landed
-			{
-				ironsave = false;
-				_game->pushState(new DebriefingState());
-			}
+				debrief = true;
 		}
 		else // insta-battle
+			debrief = true;
+
+		bool ironsave;
+		if (debrief == true)
 		{
-			ironsave = false;
 			_game->pushState(new DebriefingState());
+			ironsave = false;
 		}
-/*		if (aborted == true || playerUnits == 0)		// Abort was done or no player-units are still alive.
+		else
+			ironsave = _gameSave->isIronman() == true;
+
+		if (ironsave == true)
+		{
+			_gameSave->setBattleSave();
+			_game->pushState(new SaveGameState(
+											OPT_GEOSCAPE,
+											SAVE_IRONMAN,
+											_palette));
+		}
+	}
+}
+// old win/lose mission determination:
+/*
+		if (aborted == true || playerUnits == 0)		// Abort was done or no player-units are still alive.
 		{												// This concludes to defeat when in a 'noRetreat' or 'final' mission, like Mars landing or Mars aLien base.
 			if (ruleDeploy != nullptr
 				&& ruleDeploy->isNoRetreat() == true
@@ -3860,18 +3837,36 @@ void BattlescapeState::finishBattle(
 				ironsave = false;
 				_game->pushState(new DebriefingState());
 			}
-		} */
-
-		if (ironsave == true)
-		{
-			_gameSave->setBattleSave();
-			_game->pushState(new SaveGameState(
-											OPT_GEOSCAPE,
-											SAVE_IRONMAN,
-											_palette));
 		}
-	}
-}
+*/
+// old next-stage data:
+/*
+		std::string nextStageRace (ruleDeploy->getNextStageRace());
+		for (std::vector<TerrorSite*>::const_iterator
+				ts = _gameSave->getTerrorSites()->begin();
+				ts != _gameSave->getTerrorSites()->end() && nextStageRace.empty() == true;
+				++ts)
+		{
+			if ((*ts)->getTactical() == true)
+				nextStageRace = (*ts)->getAlienRace();
+		}
+		for (std::vector<AlienBase*>::const_iterator
+				ab = _gameSave->getAlienBases()->begin();
+				ab != _gameSave->getAlienBases()->end() && nextStageRace.empty() == true;
+				++ab)
+		{
+			if ((*ab)->getTactical() == true)
+				nextStageRace = (*ab)->getAlienRace();
+		}
+		if (nextStageRace.empty() == true)
+			nextStageRace = "STR_MIXED";
+		else if (_rules->getAlienRace(nextStageRace) == nullptr)
+		{
+			throw Exception(nextStageRace + " race not found.");
+		}
+*/
+//		bGen.setAlienRace("STR_MIXED");
+//		bGen.setAlienRace(nextStageRace);
 
 /**
  * Shows the launch button.

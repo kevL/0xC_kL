@@ -2920,16 +2920,17 @@ void SavedBattleGame::calibrateMusic(
 
 /**
  * Sets the aLiens as having been pacified.
- * @note Experience gains are no longer allowed once this is set.
+// * @note Experience gains are no longer allowed once this is set.
+ * @param pacified - true if pacified (default true)
  */
-void SavedBattleGame::setPacified()
+void SavedBattleGame::setPacified(bool pacified)
 {
-	_pacified = true;
+	_pacified = pacified;
 }
 
 /**
  * Gets whether the aLiens have been pacified yet.
- * @note Experience gains are no longer allowed if this is set.
+// * @note Experience gains are no longer allowed if this is set.
  * @return, true if pacified
  */
 bool SavedBattleGame::getPacified() const

@@ -461,7 +461,7 @@ private:
 				std::string& terrain) const;
 
 		/// Sets the aLiens as having been pacified.
-		void setPacified();
+		void setPacified(bool pacified = true);
 		/// Gets whether the aLiens have been pacified yet.
 		bool getPacified() const;
 

@@ -57,7 +57,7 @@ private:
 
 
 	public:
-		/// Creates the AbortMission state.
+		/// Creates an AbortMission state.
 		AbortMissionState(
 				SavedBattleGame* const battleSave,
 				BattlescapeState* const state);

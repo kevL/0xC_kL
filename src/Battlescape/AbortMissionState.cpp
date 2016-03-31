@@ -45,7 +45,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Abort Mission window.
+ * Initializes all the elements in the AbortMission window.
  * @param battleSave	- pointer to the SavedBattleGame
  * @param state			- pointer to the BattlescapeState
  */
@@ -87,17 +87,12 @@ AbortMissionState::AbortMissionState(
 	std::string nextStage;
 	switch (_battleSave->getTacType())
 	{
-		case TCT_BASEASSAULT:	//  2
-		case TCT_BASEDEFENSE:	//  3
-		case TCT_MISSIONSITE:	//  4
-		case TCT_MARS1:			//  5
-		case TCT_MARS2:			//  6
+		case TCT_BASEASSAULT: // no check for next-stage if Ufo_Crashed or _Landed.
+		case TCT_BASEDEFENSE:
+		case TCT_MISSIONSITE:
+		case TCT_MARS1:
+		case TCT_MARS2:
 			nextStage = _game->getRuleset()->getDeployment(_battleSave->getTacticalType())->getNextStage();
-//			break;
-//		default:
-//		case TCT_DEFAULT:		// -1 init.
-//		case TCT_UFOCRASHED:	//  0
-//		case TCT_UFOLANDED:		//  1
 	}
 
 	int outsideExit (0);
@@ -109,7 +104,7 @@ AbortMissionState::AbortMissionState(
 		if ((*i)->getOriginalFaction() == FACTION_PLAYER
 			&& (*i)->isOut_t(OUT_STAT) == false)
 		{
-			if (   (nextStage.empty() == true  && (*i)->isInExitArea() == true)
+			if (   (nextStage.empty() == true  && (*i)->isInExitArea() == true) // TODO: Ability to retreat from multi-stage !noRetreat battles.
 				|| (nextStage.empty() == false && (*i)->isInExitArea(END_POINT)))
 			{
 				++_insideExit;
@@ -171,7 +166,7 @@ AbortMissionState::~AbortMissionState()
 {}
 
 /**
- * Confirms mission abort.
+ * Confirms tactical abortion.
  * @param action - pointer to an Action
  */
 void AbortMissionState::btnOkClick(Action*)

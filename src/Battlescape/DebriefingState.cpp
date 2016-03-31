@@ -892,37 +892,6 @@ void DebriefingState::prepareDebriefing() // private.
 	const bool playerWipe ((aborted == true && playerExit == 0)
 						 || playerLive == 0);
 
-/*	bool
-		missionAccomplished,
-		craftRecovered;
-
-	switch (battleSave->getTacType())
-	{
-//			case TCT_DEFAULT: //-1
-//				break;
-
-			case TCT_BASEDEFENSE:
-				missionAccomplished = (aborted == false && (playerLive != 0 || isHostileAlive == false));
-				craftRecovered = missionAccomplished;
-				break;
-
-			case TCT_MISSIONSITE:
-				missionAccomplished = (aborted == false && (playerLive != 0 || isHostileAlive == false || isCivilianAlive == true));
-				break;
-
-			case TCT_BASEASSAULT:
-			case TCT_MARS1:
-			case TCT_MARS2:
-				break;
-
-			default:
-			case TCT_UFOCRASHED:
-			case TCT_UFOLANDED:
-				missionAccomplished = (aborted == false && playerLive != 0)
-									|| ();
-	} */
-
-
 	double
 		lon (0.), // avoid vc++ linker warnings.
 		lat (0.); // avoid vc++ linker warnings.
@@ -1085,7 +1054,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 	if (found == false)
 	{
-		for (std::vector<AlienBase*>::const_iterator // Third - search for AlienBase.
+		for (std::vector<AlienBase*>::const_iterator // Third - search for aLienBase.
 				i = _gameSave->getAlienBases()->begin();
 				i != _gameSave->getAlienBases()->end();
 				++i)
@@ -1487,8 +1456,8 @@ void DebriefingState::prepareDebriefing() // private.
 				break;
 
 			case TCT_BASEASSAULT:
-			case TCT_MARS1:
-			case TCT_MARS2:
+//			case TCT_MARS1: // <- there is never any debriefing for this. Because (lose= loseGame) and (win= 2nd stage)
+//			case TCT_MARS2: // <- there is never any debriefing for this.
 				tacResult = "STR_ALIEN_BASE_DESTROYED";
 				break;
 
@@ -1521,8 +1490,8 @@ void DebriefingState::prepareDebriefing() // private.
 				break;
 
 			case TCT_BASEASSAULT:
-			case TCT_MARS1: // Note that these Mars tacticals are really Lose GAME.
-			case TCT_MARS2:
+//			case TCT_MARS1: // Note that these Mars tacticals are really Lose GAME.
+//			case TCT_MARS2: // And there is never a debriefing for this <-
 				tacResult = "STR_ALIEN_BASE_STILL_INTACT";
 				break;
 
