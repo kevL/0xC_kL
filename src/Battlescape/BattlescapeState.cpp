@@ -3723,7 +3723,7 @@ void BattlescapeState::finishBattle(
 			case TCT_BASEDEFENSE:
 			case TCT_MISSIONSITE:
 			case TCT_MARS1:
-			case TCT_MARS2:
+//			case TCT_MARS2:
 				nextStage = ruleDeploy->getNextStage();
 		}
 	}
