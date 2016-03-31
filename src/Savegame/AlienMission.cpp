@@ -832,8 +832,8 @@ void AlienMission::spawnAlienBase( // private.
 }
 
 /**
- * Sets the AlienBase associated with this mission.
- * @note Only alien supply missions care about this.
+ * Sets the aLien-base associated with this mission.
+ * @note Only aLien supply-missions care about this.
  * @param base - pointer to an AlienBase
  */
 void AlienMission::setAlienBase(const AlienBase* const base)
@@ -842,8 +842,8 @@ void AlienMission::setAlienBase(const AlienBase* const base)
 }
 
 /**
- * Gets the AlienBase associated with this mission.
- * @note Only alien supply missions ever have a valid pointer.
+ * Gets the aLien-base associated with this mission.
+ * @note Only aLien supply-missions ever have a valid pointer.
  * @return, pointer to the AlienBase for this mission (possibly nullptr)
  */
 const AlienBase* AlienMission::getAlienBase() const

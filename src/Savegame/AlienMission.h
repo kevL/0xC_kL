@@ -161,9 +161,9 @@ private:
 				const Ruleset& rules,
 				const Globe& globe);
 
-		/// Gets the alien base for this mission.
+		/// Gets the aLien-base for this mission.
 		const AlienBase* getAlienBase() const;
-		/// Sets the alien base for this mission.
+		/// Sets the aLien-base for this mission.
 		void setAlienBase(const AlienBase* const base);
 
 		/// Handles UFO lifting from the ground.

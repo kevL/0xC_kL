@@ -574,7 +574,7 @@ void NewBattleState::btnOkClick(Action*)
 		&& _craft->getQtySoldiers() == 0
 		&& _craft->getQtyVehicles() == 0)
 	{
-		// TODO: Tell Player what's missing.
+		// TODO: Popup that tells player why no-workie.
 		return;
 	}
 
@@ -597,13 +597,13 @@ void NewBattleState::btnOkClick(Action*)
 	{
 		base = nullptr;
 
-		AlienBase* const alienBase (new AlienBase());
-		alienBase->setId(1);
-		alienBase->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
-		_craft->setDestination(alienBase);
-		bGen.setAlienBase(alienBase);
+		AlienBase* const aBase (new AlienBase());
+		aBase->setId(1);
+		aBase->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
+		_craft->setDestination(aBase);
+		bGen.setAlienBase(aBase);
 
-		_game->getSavedGame()->getAlienBases()->push_back(alienBase);
+		_game->getSavedGame()->getAlienBases()->push_back(aBase);
 	}
 	else if (_craft != nullptr
 		&& _rules->getUfo(_missionTypes[_cbxMission->getSelected()]) != nullptr) // ufo assault

@@ -76,7 +76,7 @@ private:
 		* _lstSolStats;
 	Window* _window;
 
-	/// Builds the Soldier Stat increases screen.
+	/// Builds the soldier-stat-changes screen.
 	void buildSoldierStats();
 
 	/// Formats mapped input to a TextList.
@@ -86,7 +86,7 @@ private:
 
 
 	public:
-		/// Creates the DebriefExtra state.
+		/// Creates a DebriefExtra state.
 		DebriefExtraState(
 				const Base* const base,
 				std::wstring operation,

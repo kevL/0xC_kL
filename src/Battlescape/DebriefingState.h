@@ -175,7 +175,7 @@ private:
 
 
 	public:
-		/// Creates the Debriefing state.
+		/// Creates a Debriefing state.
 		DebriefingState();
 		/// Cleans up the Debriefing state.
 		~DebriefingState();

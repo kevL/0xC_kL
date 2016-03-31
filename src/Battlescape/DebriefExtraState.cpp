@@ -41,7 +41,7 @@ namespace OpenXcom
 {
 
 /**
- * DebriefExtraState cTor.
+ * Creates a DebriefExtra state.
  * @param base			- pointer to the Base that was in tactical
  * @param operation		- the operation title
  * @param itemsLost		- a map of pointers to RuleItems & ints for lost items
@@ -169,7 +169,7 @@ void DebriefExtraState::btnOkClick(Action*)
 }
 
 /**
- * Builds the Soldier Stat increases screen.
+ * Builds the soldier-stat-changes screen.
  */
 void DebriefExtraState::buildSoldierStats() // private.
 {

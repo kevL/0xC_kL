@@ -476,7 +476,7 @@ DebriefingState::~DebriefingState()
 }
 
 /**
- * Initializes the state.
+ * Initializes the State.
  */
 void DebriefingState::init()
 {
@@ -485,7 +485,8 @@ void DebriefingState::init()
 }
 
 /**
- * Returns to the previous screen.
+ * Post-tactical info- and notice-screens.
+ * @note Pops state and changes music-track.
  * @param action - pointer to an Action
  */
 void DebriefingState::btnOkClick(Action*)
@@ -497,35 +498,25 @@ void DebriefingState::btnOkClick(Action*)
 		_game->setState(new MainMenuState());
 	else
 	{
-		if (_destroyPlayerBase == false)
+		if (_destroyPlayerBase == false) // deathly silence if Base is destroyed.
 		{
 			bool playAwardMusic (false);
 
-			// Current Order:
-			// - stores overfull
-			// - containment
-			// - cannot re-equip.
-			// - soldier stats
-			// - equip't gained
-			// - property lost
-			// - promotions
-			// - ceremony
-			// - taps
-			//
-			// Ideal Order:
-			// - stores overfull
-			// - containment
-			// - promotions
-			// - ceremony
-			// - taps
-			// - soldier stats
-			// - equip't gained
-			// - property lost
-			// - cannot re-equip.
-			//
-			// NOTE: Rearranging these states would require considerable fade/playMusic adjustment.
-
 			// NOTE: These push to player in reverse order.
+			if (_missingItems.empty() == false)
+				_game->pushState(new CannotReequipState(_missingItems));
+
+			if (_base->storesOverfull() == true)
+			{
+//				_game->pushState(new SellState(_base, OPT_BATTLESCAPE));
+				_game->pushState(new ErrorMessageState(
+												tr("STR_STORAGE_EXCEEDED").arg(_base->getName(nullptr)),
+												_palette,
+												_rules->getInterface("debriefing")->getElement("errorMessage")->color,
+												_game->getResourcePack()->getRandomBackground(),
+												_rules->getInterface("debriefing")->getElement("errorPalette")->color));
+			}
+
 			if (_soldiersLost.empty() == false)
 			{
 				playAwardMusic = true;
@@ -556,17 +547,7 @@ void DebriefingState::btnOkClick(Action*)
 				_game->pushState(new PromotionsState());
 			}
 
-			_game->pushState(new DebriefExtraState(
-												_base,
-												battleSave->getOperation(),
-												_itemsLostProperty,
-												_itemsGained,
-												_soldierStatInc));
-
-			if (_missingItems.empty() == false)
-				_game->pushState(new CannotReequipState(_missingItems));
-
-			if (_alienDies == true) // TODO: These (aLiens) need to happen *after* extra-info screens.
+			if (_alienDies == true)
 				_game->pushState(new NoContainmentState());
 			else if (_manageContainment == true)
 			{
@@ -579,16 +560,12 @@ void DebriefingState::btnOkClick(Action*)
 												_rules->getInterface("debriefing")->getElement("errorPalette")->color));
 			}
 
-			if (_base->storesOverfull() == true) //_manageContainment == false &&
-			{
-//				_game->pushState(new SellState(_base, OPT_BATTLESCAPE));
-				_game->pushState(new ErrorMessageState(
-												tr("STR_STORAGE_EXCEEDED").arg(_base->getName(nullptr)),
-												_palette,
-												_rules->getInterface("debriefing")->getElement("errorMessage")->color,
-												_game->getResourcePack()->getRandomBackground(),
-												_rules->getInterface("debriefing")->getElement("errorPalette")->color));
-			}
+			_game->pushState(new DebriefExtraState(
+												_base,
+												battleSave->getOperation(),
+												_itemsLostProperty,
+												_itemsGained,
+												_soldierStatInc));
 
 			if (playAwardMusic == true)
 				_game->getResourcePack()->playMusic(
@@ -598,7 +575,8 @@ void DebriefingState::btnOkClick(Action*)
 				_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
 		}
 
-		if (_gameSave->isIronman() == true) // Autosave after mission
+
+		if (_gameSave->isIronman() == true) // save after mission
 			_game->pushState(new SaveGameState(
 											OPT_GEOSCAPE,
 											SAVE_IRONMAN,
@@ -613,8 +591,8 @@ void DebriefingState::btnOkClick(Action*)
 }								// NOTE: BattlescapeState and BattlescapeGame are still VALID here.
 
 /**
- * Adds to the debriefing stats.
- * @param type	- reference the untranslated name of the stat
+ * Adds to the debriefing-stats.
+ * @param type	- reference the untranslated type-ID of the stat
  * @param score	- the score to add
  * @param qty	- the quantity to add (default 1)
  */
@@ -640,7 +618,7 @@ void DebriefingState::addStat( // private.
 
 /**
  * *** FUNCTOR ***
- * Clears any supply missions from an aLien base.
+ * Clears any supply missions from an aLien-base.
  */
 class ClearAlienBase
 	:
@@ -651,21 +629,22 @@ private:
 	const AlienBase* _aBase;
 
 	public:
-		/// Caches a pointer to the aLien base.
+		/// Caches a pointer to the aLien-base.
 		explicit ClearAlienBase(const AlienBase* aBase)
 			:
 				_aBase(aBase)
 		{}
 
-		/// Clears the aLien Base if required.
-		void operator() (AlienMission* mission) const;
+		/// Clears the aLien-base if required.
+		void operator() (AlienMission* const mission) const;
 };
 
 /**
- * Removes the association between the alien mission and the alien base if one existed.
+ * Removes the association between the alien mission and the aLien-base if one
+ * existed.
  * @param mission - pointer to the AlienMission
  */
-void ClearAlienBase::operator() (AlienMission* mission) const
+void ClearAlienBase::operator() (AlienMission* const mission) const
 {
 	if (mission->getAlienBase() == _aBase)
 		mission->setAlienBase(nullptr);
