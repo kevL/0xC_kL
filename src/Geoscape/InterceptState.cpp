@@ -76,7 +76,7 @@ InterceptState::InterceptState(
 							320,176,
 							0 + dX, 14,
 							POPUP_HORIZONTAL);
-	_txtBase	= new Text(288, 17, 16, 24); // might do getRegion in here also.
+	_txtBase	= new Text(288, 16, 16 + dX, 24); // might do getRegion in here also.
 
 	_txtCraft	= new Text(86,  9,  16 + dX, 40);
 	_txtStatus	= new Text(53,  9, 115 + dX, 40);
@@ -126,8 +126,8 @@ InterceptState::InterceptState(
 
 	_txtStatus->setText(tr("STR_STATUS"));
 
-	_txtBase->setBig();
 	_txtBase->setText(tr("STR_INTERCEPT"));
+	_txtBase->setBig();
 
 	_txtWeapons->setText(tr("STR_WEAPONS_CREW_HWPS"));
 
