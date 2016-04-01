@@ -26,7 +26,7 @@
 
 #include "../Engine/State.h"
 
-//#include "../Ruleset/RuleItem.h"
+#include "../Ruleset/RuleItem.h"
 
 //#include "../Savegame/BattleItem.h"
 #include "../Savegame/MissionStatistics.h"
@@ -61,6 +61,15 @@ struct DebriefingStat
 };
 
 /**
+ * Container for tracking tile-part types after tactical.
+ */
+struct SpecialType
+{
+	std::string type;
+	int value;
+};
+
+/**
  * Container for tracking non-replaced items on Craft after tactical.
  */
 struct ReequipStat
@@ -68,15 +77,6 @@ struct ReequipStat
 	std::string type;
 	int qtyLost;
 	std::wstring craft;
-};
-
-/**
- * Container for tracking tile-part types after tactical.
- */
-struct SpecialType
-{
-	std::string type;
-	int value;
 };
 
 
@@ -143,7 +143,7 @@ private:
 
 	MissionStatistics* _missionStatistics;
 
-	std::map<int, SpecialType*> _specialTypes;
+	std::map<SpecialTileType, SpecialType*> _specialTypes;
 	std::map<const RuleItem*, int>
 		_clips,
 		_clipsProperty,
@@ -155,7 +155,7 @@ private:
 
 	std::vector<ReequipStat> _missingItems;
 
-	std::vector<DebriefingStat*> _stats;
+	std::vector<DebriefingStat*> _statList;
 	std::vector<Soldier*> _soldiersMedalled;
 	std::vector<SoldierDead*> _soldiersLost;
 

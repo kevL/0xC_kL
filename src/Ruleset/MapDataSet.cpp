@@ -132,8 +132,8 @@ void MapDataSet::loadData()
 
 	_loaded = true;
 
-#pragma pack(push, 1)
-	struct MCD // this struct helps to read the .MCD file format
+#pragma pack(push, 1)	// align the incoming MCD-values with 1-byte boundaries
+	struct MCD			// This struct helps to read the .MCD file format.
 	{
 		unsigned char	Frame[8];
 		unsigned char	LOFT[12];
@@ -179,36 +179,34 @@ void MapDataSet::loadData()
 		unsigned char	Xcom_Base;
 		unsigned char	u62;
 	};
-#pragma pack(pop)
+#pragma pack(pop) // revert to standard byte-alignment
 
 	MCD mcd;
 
-	// Load Terrain Data from MCD file
-	std::ostringstream oststr;
-	oststr << "TERRAIN/" << _type << ".MCD";
-
-	// Load file
-	std::ifstream mapFile ( // init.
-						CrossPlatform::getDataFile(oststr.str()).c_str(),
+	// Load Terrain Data from MCD file.
+	std::string file ("TERRAIN/" + _type + ".MCD");
+	std::ifstream mapFile ( // load file
+						CrossPlatform::getDataFile(file).c_str(),
 						std::ios::in | std::ios::binary);
 	if (mapFile.fail() == true)
 	{
-		throw Exception(oststr.str() + " not found");
+		throw Exception(file + " not found");
 	}
 
 
-	int objNumber = 0;
+	MapData* to;
+	int objNumber (0);
 	while (mapFile.read(
 					(char*)&mcd,
 					sizeof(MCD)))
 	{
-		MapData* to = new MapData(this);
+		to = new MapData(this);
 		_records.push_back(to);
 
-		// set all the terrain-object properties:
+		// Set all the terrain-part properties:
 		for (size_t
 				i = 0;
-				i != 8; // sprite-frames
+				i != 8; // sprite-frames (Battlescape tactical animations)
 				++i)
 		{
 			to->setSprite(i, (int)mcd.Frame[i]);
@@ -254,7 +252,7 @@ void MapDataSet::loadData()
 
 		for (size_t
 				loft = 0;
-				loft != 12;
+				loft != 12; // LoFT layers (each layer is doubled to give a total height of 24 voxels)
 				++loft)
 		{
 			to->setLoftId(
@@ -263,12 +261,17 @@ void MapDataSet::loadData()
 		}
 
 		// store the 2 tiles of blanks in a static - so they are accessible everywhere
-		if (_type.compare("BLANKS") == 0)
+		if ((objNumber == 0 || objNumber == 1)
+			&& _type.compare("BLANKS") == 0)
 		{
-			if (objNumber == 0)
-				MapDataSet::_blankTile = to;
-			else if (objNumber == 1)
-				MapDataSet::_scorchedTile = to;
+			switch (objNumber)
+			{
+				case 0:
+					MapDataSet::_blankTile = to;
+					break;
+				case 1:
+					MapDataSet::_scorchedTile = to;
+			}
 		}
 		++objNumber;
 	}
@@ -287,10 +290,9 @@ void MapDataSet::loadData()
 			i != _records.end();
 			++i)
 	{
-		if ((*i)->getPartType() == O_FLOOR
-			&& (*i)->getBlock(DT_HE) == 0)
+		if ((*i)->getPartType() == O_FLOOR && (*i)->getBlock(DT_HE) == 0)
 		{
-			const int armor = (*i)->getArmor();
+			const int armor ((*i)->getArmor());
 			(*i)->setBlock(
 						1,		// light
 						1,		// LoS
@@ -298,19 +300,15 @@ void MapDataSet::loadData()
 						1,		// smoke
 						1,		// fire
 						1);		// gas
-//						armor);	// gas
 
 			if ((*i)->getDieMCD() != 0)
-				_records.at(static_cast<size_t>((*i)->getDieMCD()))
-												->setBlock(
-														1,
-														1,
-														armor, // sets Death HE-block value same as orig part ... hm.
-														1,
-														1,
-														1);
-//														armor);
-
+				_records.at(static_cast<size_t>((*i)->getDieMCD()))->setBlock(
+																			1,
+																			1,
+																			armor,
+																			1,
+																			1,
+																			1);
 			if ((*i)->isGravLift() == false)
 				(*i)->setStopLOS();
 		}
@@ -318,23 +316,19 @@ void MapDataSet::loadData()
 
 	// Load terrain sprites/surfaces/PCK files into a SurfaceSet.
 	// Let extraSprites override terrain sprites.
-	std::ostringstream test;
-	test << _type << ".PCK";
-	SurfaceSet* const srt = _game->getResourcePack()->getSurfaceSet(test.str());
+	std::string test (_type + ".PCK");
+	SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet(test));
 	if (srt != nullptr)
 		_surfaceSet = srt;
 	else
 	{
-		std::ostringstream
-			oststr1,
-			oststr2;
-		oststr1 << "TERRAIN/" << _type << ".PCK";
-		oststr2 << "TERRAIN/" << _type << ".TAB";
-
+		std::string
+			test1 ("TERRAIN/" + _type + ".PCK"),
+			test2 ("TERRAIN/" + _type + ".TAB");
 		_surfaceSet = new SurfaceSet(32,40);
 		_surfaceSet->loadPck(
-						CrossPlatform::getDataFile(oststr1.str()),
-						CrossPlatform::getDataFile(oststr2.str()));
+						CrossPlatform::getDataFile(test1),
+						CrossPlatform::getDataFile(test2));
 	}
 }
 
@@ -355,9 +349,8 @@ void MapDataSet::unloadData()
 		}
 
 		// but don't delete the extraSprites for terrain!!!
-		std::ostringstream test;
-		test << _type << ".PCK";
-		const SurfaceSet* const srt = _game->getResourcePack()->getSurfaceSet(test.str());
+		std::string test (_type + ".PCK");
+		const SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet(test));
 		if (srt == nullptr)
 			delete _surfaceSet;
 
@@ -374,9 +367,7 @@ void MapDataSet::loadLoft( // static.
 		const std::string& file,
 		std::vector<Uint16>* const voxelData)
 {
-	std::ifstream mapFile( // Load file
-						file.c_str(),
-						std::ios::in | std::ios::binary);
+	std::ifstream mapFile (file.c_str(), std::ios::in | std::ios::binary); // load file
 	if (mapFile.fail() == true)
 	{
 		throw Exception(file + " not found");

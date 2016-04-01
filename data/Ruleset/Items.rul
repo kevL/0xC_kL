@@ -1027,6 +1027,9 @@ items:
     costSell: 1000 # 21500 (x ?)
     specialType: 10
     recoveryPoints: 1
+  - type: STR_RUINED_ALLOYS # fake entry for DebriefingState
+    specialType: 12
+    recoveryPoints: 1
   - type: STR_ELERIUM_115
     listOrder: 2
     size: 0.1

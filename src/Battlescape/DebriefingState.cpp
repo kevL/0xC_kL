@@ -58,7 +58,6 @@
 #include "../Ruleset/RuleCountry.h"
 //#include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleInterface.h"
-#include "../Ruleset/RuleItem.h"
 #include "../Ruleset/RuleRegion.h"
 #include "../Ruleset/Ruleset.h"
 #include "../Ruleset/RuleUfo.h"
@@ -207,8 +206,8 @@ DebriefingState::DebriefingState()
 		civiliansDead	(0);
 
 	for (std::vector<DebriefingStat*>::const_iterator
-			i = _stats.begin();
-			i != _stats.end();
+			i = _statList.begin();
+			i != _statList.end();
 			++i)
 	{
 		if ((*i)->qty != 0)
@@ -463,12 +462,12 @@ DebriefingState::~DebriefingState()
 		_gameSave->setBattleSave();
 
 	for (std::vector<DebriefingStat*>::const_iterator
-			i = _stats.begin();
-			i != _stats.end();
+			i = _statList.begin();
+			i != _statList.end();
 			++i)
 		delete *i;
 
-	for (std::map<int, SpecialType*>::const_iterator
+	for (std::map<SpecialTileType, SpecialType*>::const_iterator
 			i = _specialTypes.begin();
 			i != _specialTypes.end();
 			++i)
@@ -602,8 +601,8 @@ void DebriefingState::addStat( // private.
 		int qty)
 {
 	for (std::vector<DebriefingStat*>::const_iterator
-			i = _stats.begin();
-			i != _stats.end();
+			i = _statList.begin();
+			i != _statList.end();
 			++i)
 	{
 		if ((*i)->type == type)
@@ -673,17 +672,17 @@ void DebriefingState::prepareDebriefing() // private.
 //			case STT_NONE: //-1
 //			case TILE
 //			case START_POINT:
-			case UFO_POWER_SOURCE:
-			case UFO_NAVIGATION:
-			case UFO_CONSTRUCTION:
-			case ALIEN_FOOD:
-			case ALIEN_REPRODUCTION:
-			case ALIEN_ENTERTAINMENT:
-			case ALIEN_SURGERY:
-			case EXAM_ROOM:
-			case ALIEN_ALLOYS:
-			case ALIEN_HABITAT:
-//			case DEAD_TILE:
+			case UFO_POWER_SOURCE:		//  2
+			case UFO_NAVIGATION:		//  3
+			case UFO_CONSTRUCTION:		//  4
+			case ALIEN_FOOD:			//  5
+			case ALIEN_REPRODUCTION:	//  6
+			case ALIEN_ENTERTAINMENT:	//  7
+			case ALIEN_SURGERY:			//  8
+			case EXAM_ROOM:				//  9
+			case ALIEN_ALLOYS:			// 10
+			case ALIEN_HABITAT:			// 11
+			case DEAD_TILE:				// 12 -> give half-Alloy value for ruined alloy-tiles.
 //			case END_POINT:
 //			case MUST_DESTROY:
 				{
@@ -711,49 +710,50 @@ void DebriefingState::prepareDebriefing() // private.
 											objectiveText,
 											objectiveScore) == true)
 		{
-			_stats.push_back(new DebriefingStat(objectiveText));
+			_statList.push_back(new DebriefingStat(objectiveText));
 		}
 
 		if (ruleDeploy->getObjectiveFailedInfo(
 											objectiveFailedText,
 											objectiveFailedScore) == false)
 		{
-			_stats.push_back(new DebriefingStat(objectiveFailedText));
+			_statList.push_back(new DebriefingStat(objectiveFailedText));
 		}
 	}
 
-	_stats.push_back(new DebriefingStat("STR_ALIENS_KILLED"));
-	_stats.push_back(new DebriefingStat("STR_ALIEN_CORPSES_RECOVERED"));
-	_stats.push_back(new DebriefingStat("STR_LIVE_ALIENS_RECOVERED"));
-	_stats.push_back(new DebriefingStat("STR_ALIEN_ARTIFACTS_RECOVERED"));
-	_stats.push_back(new DebriefingStat("STR_ALIEN_BASE_CONTROL_DESTROYED"));
-	_stats.push_back(new DebriefingStat("STR_CIVILIANS_KILLED_BY_ALIENS"));
-	_stats.push_back(new DebriefingStat("STR_CIVILIANS_KILLED_BY_XCOM_OPERATIVES"));
-	_stats.push_back(new DebriefingStat("STR_CIVILIANS_SAVED"));
-	_stats.push_back(new DebriefingStat("STR_XCOM_OPERATIVES_KILLED"));
-//	_stats.push_back(new DebriefingStat("STR_XCOM_OPERATIVES_RETIRED_THROUGH_INJURY"));
-	_stats.push_back(new DebriefingStat("STR_XCOM_OPERATIVES_MISSING_IN_ACTION"));
-	_stats.push_back(new DebriefingStat("STR_TANKS_DESTROYED"));
-	_stats.push_back(new DebriefingStat("STR_XCOM_CRAFT_LOST"));
+	_statList.push_back(new DebriefingStat("STR_ALIENS_KILLED"));
+	_statList.push_back(new DebriefingStat("STR_ALIEN_CORPSES_RECOVERED"));
+	_statList.push_back(new DebriefingStat("STR_LIVE_ALIENS_RECOVERED"));
+	_statList.push_back(new DebriefingStat("STR_ALIEN_ARTIFACTS_RECOVERED"));
+	_statList.push_back(new DebriefingStat("STR_ALIEN_BASE_CONTROL_DESTROYED"));
+	_statList.push_back(new DebriefingStat("STR_CIVILIANS_KILLED_BY_ALIENS"));
+	_statList.push_back(new DebriefingStat("STR_CIVILIANS_KILLED_BY_XCOM_OPERATIVES"));
+	_statList.push_back(new DebriefingStat("STR_CIVILIANS_SAVED"));
+	_statList.push_back(new DebriefingStat("STR_XCOM_OPERATIVES_KILLED"));
+//	_statList.push_back(new DebriefingStat("STR_XCOM_OPERATIVES_RETIRED_THROUGH_INJURY"));
+	_statList.push_back(new DebriefingStat("STR_XCOM_OPERATIVES_MISSING_IN_ACTION"));
+	_statList.push_back(new DebriefingStat("STR_TANKS_DESTROYED"));
+	_statList.push_back(new DebriefingStat("STR_XCOM_CRAFT_LOST"));
 
-	for (std::map<int, SpecialType*>::const_iterator
+	for (std::map<SpecialTileType, SpecialType*>::const_iterator
 			i = _specialTypes.begin();
 			i != _specialTypes.end();
 			++i)
 	{
-		_stats.push_back(new DebriefingStat((*i).second->type, true));
+		if (i->first != DEAD_TILE)
+			_statList.push_back(new DebriefingStat((*i).second->type, true));
 	}
-	_stats.push_back(new DebriefingStat(_rules->getAlienFuelType(), true));
-/*	_stats.push_back(new DebriefingStat("STR_UFO_POWER_SOURCE", true)); // ->> SpecialTileTypes <<-|
-	_stats.push_back(new DebriefingStat("STR_UFO_NAVIGATION", true));
-	_stats.push_back(new DebriefingStat("STR_UFO_CONSTRUCTION", true));
-	_stats.push_back(new DebriefingStat("STR_ALIEN_FOOD", true));
-	_stats.push_back(new DebriefingStat("STR_ALIEN_REPRODUCTION", true));
-	_stats.push_back(new DebriefingStat("STR_ALIEN_ENTERTAINMENT", true));
-	_stats.push_back(new DebriefingStat("STR_ALIEN_SURGERY", true));
-	_stats.push_back(new DebriefingStat("STR_EXAMINATION_ROOM", true));
-	_stats.push_back(new DebriefingStat("STR_ALIEN_ALLOYS", true));
-	_stats.push_back(new DebriefingStat("STR_ALIEN_HABITAT", true)); */
+	_statList.push_back(new DebriefingStat(_rules->getAlienFuelType(), true));
+/*	_statList.push_back(new DebriefingStat("STR_UFO_POWER_SOURCE", true)); // ->> SpecialTileTypes <<-|
+	_statList.push_back(new DebriefingStat("STR_UFO_NAVIGATION", true));
+	_statList.push_back(new DebriefingStat("STR_UFO_CONSTRUCTION", true));
+	_statList.push_back(new DebriefingStat("STR_ALIEN_FOOD", true));
+	_statList.push_back(new DebriefingStat("STR_ALIEN_REPRODUCTION", true));
+	_statList.push_back(new DebriefingStat("STR_ALIEN_ENTERTAINMENT", true));
+	_statList.push_back(new DebriefingStat("STR_ALIEN_SURGERY", true));
+	_statList.push_back(new DebriefingStat("STR_EXAMINATION_ROOM", true));
+	_statList.push_back(new DebriefingStat("STR_ALIEN_ALLOYS", true));
+	_statList.push_back(new DebriefingStat("STR_ALIEN_HABITAT", true)); */
 
 	_missionStatistics->timeStat = *_gameSave->getTime();
 	_missionStatistics->type = battleSave->getTacticalType();
@@ -1497,6 +1497,8 @@ void DebriefingState::prepareDebriefing() // private.
 
 			const int parts (static_cast<int>(Tile::PARTS_TILE));
 			MapDataType partType;
+			int qtyRuinedAlloys (0);
+
 			for (size_t
 					i = 0;
 					i != battleSave->getMapSizeXYZ();
@@ -1513,17 +1515,26 @@ void DebriefingState::prepareDebriefing() // private.
 					if (battleSave->getTiles()[i]->getMapData(partType) != nullptr)
 					{
 						const SpecialTileType tileType (battleSave->getTiles()[i]->getMapData(partType)->getSpecialType());
-						if (_specialTypes.find(tileType) != _specialTypes.end())
-							addStat(
-								_specialTypes[tileType]->type,
-								_specialTypes[tileType]->value);
+
+						switch (tileType)
+						{
+							case DEAD_TILE:
+								++qtyRuinedAlloys;
+								break;
+
+							default: // TODO: Expand these using legit values above^
+								if (_specialTypes.find(tileType) != _specialTypes.end())
+									addStat(
+										_specialTypes[tileType]->type,
+										_specialTypes[tileType]->value);
+						}
 					}
 				}
 			}
 
 			for (std::vector<DebriefingStat*>::const_iterator
-					i = _stats.begin();
-					i != _stats.end();
+					i = _statList.begin();
+					i != _statList.end();
 					++i)
 			{
 				if ((*i)->type == _specialTypes[ALIEN_ALLOYS]->type)
@@ -1538,8 +1549,10 @@ void DebriefingState::prepareDebriefing() // private.
 							alloyDivisor = 15;
 					}
 
-					(*i)->qty /= alloyDivisor;
-					(*i)->score /= alloyDivisor;
+//					(*i)->qty /= alloyDivisor;
+//					(*i)->score /= alloyDivisor;
+					(*i)->qty = ((*i)->qty + qtyRuinedAlloys / 2) / alloyDivisor;
+					(*i)->score = ((*i)->score + qtyRuinedAlloys * _specialTypes[DEAD_TILE]->value / 2) / alloyDivisor;
 
 					_itemsGained[_rules->getItemRule((*i)->type)] = (*i)->qty; // NOTE: Elerium is handled in recoverItems().
 				}

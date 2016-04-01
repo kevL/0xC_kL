@@ -64,8 +64,8 @@ MapData::MapData(MapDataSet* const dataSet)
 		_isPsychedelic(0)
 {
 	//Log(LOG_INFO) << "MapData cTor dataSet = " << _dataSet->getType();
-	std::fill_n(_sprite, 8,0);
-	std::fill_n(_block, 6,0);
+	std::fill_n(_sprite,  8,0);
+	std::fill_n(_block,   6,0);
 	std::fill_n(_loftId, 12,0);
 }
 
@@ -225,15 +225,15 @@ void MapData::setFlags(
 		bool blockSmoke,
 		bool baseObject)
 {
-	_isUfoDoor = isUfoDoor;
-	_stopLOS = stopLOS;
-	_isNoFloor = isNoFloor;
-	_bigWall = static_cast<BigwallType>(bigWall);
-	_isGravLift = isGravLift;
-	_isDoor = isDoor;
-	_blockFire = blockFire;
-	_blockSmoke = blockSmoke;
-	_baseObject = baseObject;
+	_isUfoDoor	= isUfoDoor;
+	_stopLOS	= stopLOS;
+	_isNoFloor	= isNoFloor;
+	_bigWall	= static_cast<BigwallType>(bigWall);
+	_isGravLift	= isGravLift;
+	_isDoor		= isDoor;
+	_blockFire	= blockFire;
+	_blockSmoke	= blockSmoke;
+	_baseObject	= baseObject;
 }
 
 /**
@@ -250,14 +250,13 @@ int MapData::getBlock(DamageType dType) const
 		case DT_SMOKE:	return _block[3];
 		case DT_IN:		return _block[4];
 		case DT_STUN:	return _block[5]; */
-											// see setBlock() below.
+											// see setBlock() below_
 		case DT_NONE:	return _block[1];	// stop LoS: [0 or 100], was [0 or 255]
 		case DT_HE:
 		case DT_IN:
 		case DT_STUN:	return _block[2];	// HE block [int]
 		case DT_SMOKE:	return _block[3];	// block smoke: try (bool), was [0 or 256]
 	}
-
 	return 0;
 }
 
@@ -287,7 +286,7 @@ void MapData::setBlock(
 
 	_block[0] = lightBlock; // not used
 //	_block[1] = visionBlock; // kL
-//	_block[1] = visionBlock == 1? 255: 0; // <- why? kL_note. haha
+//	_block[1] = visionBlock == 1 ? 255 : 0; // <- why? kL_note. haha
 	_block[1] = visionBlock == 1 ? 100 : 0; // kL
 		// stopLoS==true needs to be a significantly large integer (only about 10+ really)
 		// so that if a directionally opposite Field of View check includes a "-1",
@@ -295,8 +294,7 @@ void MapData::setBlock(
 		// to zero (no block at all) when added to regular stopLoS by a standard wall.
 		//
 		// It would be unnecessary to use that jigger-pokery if TileEngine::
-		// horizontalBlockage() & blockage() were coded differently [verticalBlockage()
-		// too, perhaps]
+		// horizontalBlockage() & blockage() were coded differently [verticalBlockage() too, perhaps]
 	_block[2] = heBlock;
 //	_block[3] = smokeBlock == 1? 256: 0; // <- why? kL_note. I basically use visionBlock for smoke ....
 	_block[3] = smokeBlock;

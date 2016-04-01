@@ -1434,7 +1434,7 @@ alienDeployments:
     nextStage: STR_MARS_THE_FINAL_ASSAULT
     race: STR_SECTOID
     noRetreat: true
-    finalDestination: true
+    finalDestination: true # ie, Cydonia btn
     briefing:
       palette: 6
       music: GEO_BRIEF_MARS1
