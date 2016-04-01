@@ -359,7 +359,7 @@ void Window::setBackgroundFill(Uint8 color)
 }
 
 /**
- * Changes the horizontal offset of the surface in the X axis.
+ * Changes the horizontal offset of the surface in the x-axis.
  * @param dX - x-position in pixels
  */
 void Window::setDX(int dX)
@@ -368,7 +368,7 @@ void Window::setDX(int dX)
 }
 
 /**
- * Changes the vertical offset of the surface in the Y axis.
+ * Changes the vertical offset of the surface in the y-axis.
  * @param dY - y-position in pixels
  */
 void Window::setDY(int dY)

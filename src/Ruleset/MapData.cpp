@@ -323,7 +323,7 @@ int MapData::getYOffset() const
 }
 
 /**
- * Sets the offset on the Y axis for drawing this tile-part.
+ * Sets the offset on the y-axis for drawing this tile-part.
  * @param offset - the offset in pixels
  */
 void MapData::setYOffset(int offset)

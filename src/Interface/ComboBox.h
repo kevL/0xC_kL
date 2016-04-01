@@ -36,7 +36,7 @@ class Window;
 
 
 /**
- * Text button with a list dropdown when pressed.
+ * A TextButton with a TextList dropdown when pressed.
  * @note Allows selection from multiple available options.
  */
 class ComboBox final
@@ -46,7 +46,7 @@ class ComboBox final
 
 private:
 	static const int
-		MARGIN_HORIZONTAL	=  3, // was 2
+		MARGIN_HORIZONTAL	=  3,
 		MARGIN_VERTICAL		=  3,
 		ROWS_DEFAULT		= 10,
 		BUTTON_WIDTH		= 14,
@@ -73,28 +73,28 @@ private:
 
 
 	public:
-		/// Creates a combo box with the specified size and position.
+		/// Creates a ComboBox with the specified size and position.
 		ComboBox(
 				State* state,
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the combo box.
+		/// Cleans up the ComboBox.
 		~ComboBox();
 
-		/// Sets the x-position of the surface.
+		/// Sets the x-position of the Surface.
 		void setX(int x) override;
-		/// Sets the y-position of the surface.
+		/// Sets the y-position of the Surface.
 		void setY(int y) override;
 
-		/// Sets the palette of the text list.
+		/// Sets the palette of the TextList.
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
 
-		/// Initializes the resources for the text list.
+		/// Initializes the resources for the TextList.
 		void initText(
 				Font* const big,
 				Font* const small,
@@ -113,12 +113,12 @@ private:
 		/// Sets the high contrast color setting.
 		void setHighContrast(bool contrast = true);
 
-		/// Sets the arrow color of the text list.
+		/// Sets the arrow color of the TextList.
 		void setArrowColor(Uint8 color);
 
-		/// Gets the selected option in the list.
+		/// Gets the selected option in the TextList.
 		size_t getSelected() const;
-		/// Sets the selected option in the list.
+		/// Sets the selected option in the TextList.
 		void setSelected(size_t sel);
 
 		/// Sets the list of options.
@@ -138,7 +138,7 @@ private:
 		/// Toggles the combo box state.
 		void toggle(bool init = false);
 
-		/// Hook to an action handler when the content changes.
+		/// Hook to an action-handler when the content changes.
 		void onComboChange(ActionHandler handler);
 };
 

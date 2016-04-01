@@ -43,6 +43,10 @@
 namespace OpenXcom
 {
 
+const std::string NewManufactureListState::ALL_ITEMS ("STR_ALL_ITEMS");						// private/static.
+std::string NewManufactureListState::_recallCatString (NewManufactureListState::ALL_ITEMS);	// private/static.
+
+
 /**
  * List that allows player to choose what to manufacture.
  * @note Initializes all the elements in the productions list screen.
@@ -114,12 +118,9 @@ NewManufactureListState::NewManufactureListState(
 					Options::keyCancel);
 
 
-	_game->getSavedGame()->getAvailableProductions(
-											_available,
-											_base);
-	_catStrings.push_back("STR_ALL_ITEMS");
-
+	_catStrings.push_back(ALL_ITEMS); // #0
 	std::string cat;
+	_game->getSavedGame()->getAvailableProductions(_available, _base);
 	for (std::vector<const RuleManufacture*>::const_iterator
 			i = _available.begin();
 			i != _available.end();
@@ -134,10 +135,24 @@ NewManufactureListState::NewManufactureListState(
 			_catStrings.push_back(cat);
 		}
 	}
-
 	_cbxCategory->setOptions(_catStrings);
 	_cbxCategory->setBackgroundFill(58); // green <- TODO: put this in Interfaces.rul
 	_cbxCategory->onComboChange((ActionHandler)& NewManufactureListState::cbxCategoryChange);
+
+	std::vector<std::string>::iterator i (std::find( // <- std::distance(below_) does not accept a const_iterator.
+												_catStrings.begin(),
+												_catStrings.end(),
+												_recallCatString));
+	if (i != _catStrings.end())
+	{
+		const size_t j (std::distance(_catStrings.begin(), i));
+		_cbxCategory->setSelected(j);
+	}
+	else // safety.
+	{
+		_recallCatString = ALL_ITEMS;
+		_cbxCategory->setSelected(0);
+	}
 }
 
 /**
@@ -189,7 +204,7 @@ void NewManufactureListState::lstProdClick(Action*)
 			i != _available.end();
 			++i)
 	{
-		if ((*i)->getType() == _displayStrings[_lstManufacture->getSelectedRow()])
+		if ((*i)->getType() == _manfStrings[_lstManufacture->getSelectedRow()])
 		{
 			manfRule = *i;
 			break;
@@ -201,21 +216,24 @@ void NewManufactureListState::lstProdClick(Action*)
 }
 
 /**
- * Updates the production list to match the category filter.
+ * Updates the production-list to match the category-filter.
  */
 void NewManufactureListState::cbxCategoryChange(Action*)
 {
+
 	fillProductionList();
 }
 
 /**
  * Fills the list of possible productions.
  */
-void NewManufactureListState::fillProductionList()
+void NewManufactureListState::fillProductionList() // private.
 {
+	_recallCatString = _catStrings[_cbxCategory->getSelected()];
+
 	_lstManufacture->clearList();
 	_available.clear();
-	_displayStrings.clear();
+	_manfStrings.clear();
 
 	_game->getSavedGame()->getAvailableProductions(_available, _base);
 	for (std::vector<const RuleManufacture*>::const_iterator
@@ -223,14 +241,13 @@ void NewManufactureListState::fillProductionList()
 			i != _available.end();
 			++i)
 	{
-		if (_catStrings[_cbxCategory->getSelected()] == "STR_ALL_ITEMS"
-			|| (*i)->getCategory() == _catStrings[_cbxCategory->getSelected()])
+		if (_recallCatString == ALL_ITEMS || _recallCatString == (*i)->getCategory())
 		{
 			_lstManufacture->addRow(
 								2,
 								tr((*i)->getType()).c_str(),
 								tr((*i)->getCategory()).c_str());
-			_displayStrings.push_back((*i)->getType());
+			_manfStrings.push_back((*i)->getType());
 		}
 	}
 }

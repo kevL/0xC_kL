@@ -106,7 +106,7 @@ Slider::~Slider()
 }
 
 /**
- * Changes the position of the surface in the X axis.
+ * Changes the position of the surface in the x-axis.
  * @param x - x-position in pixels
  */
 void Slider::setX(int x)
@@ -125,7 +125,7 @@ void Slider::setX(int x)
 }
 
 /**
- * Changes the position of the surface in the Y axis.
+ * Changes the position of the surface in the y-axis.
  * @param y - y-position in pixels
  */
 void Slider::setY(int y)

@@ -217,7 +217,7 @@ void BattlescapeButton::blit(Surface* surface)
 }
 
 /**
- * Changes the position of the surface in the X axis.
+ * Changes the position of the surface in the x-axis.
  * @param x - x-position in pixels
  */
 void BattlescapeButton::setX(int x)
@@ -229,7 +229,7 @@ void BattlescapeButton::setX(int x)
 }
 
 /**
- * Changes the position of the surface in the Y axis.
+ * Changes the position of the surface in the y-axis.
  * @param y - y-position in pixels
  */
 void BattlescapeButton::setY(int y)

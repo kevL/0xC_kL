@@ -197,9 +197,9 @@ private:
 		/// Sets the amount of HE blockage.
 		void setHEBlock(int heBlock);
 
-		/// Gets the offset on the Y axis when drawing this object.
+		/// Gets the offset on the y-axis when drawing this object.
 		int getYOffset() const;
-		/// Sets the offset on the Y axis for drawing this object.
+		/// Sets the offset on the y-axis for drawing this object.
 		void setYOffset(int offset);
 
 		/// Gets the type of tile.

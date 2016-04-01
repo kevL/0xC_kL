@@ -47,6 +47,9 @@ class NewManufactureListState
 {
 
 private:
+	static const std::string ALL_ITEMS;
+	static std::string _recallCatString;
+
 	size_t _scroll;
 
 	Base* _base;
@@ -64,20 +67,20 @@ private:
 	std::vector<const RuleManufacture*> _available;
 	std::vector<std::string>
 		_catStrings,
-		_displayStrings;
+		_manfStrings;
+
+	/// Fills the list of possible productions.
+	void fillProductionList();
 
 
 	public:
-		/// Creates the state.
+		/// Creates a NewManufactureList state.
 		explicit NewManufactureListState(Base* const base);
 		/// dTor.
 		~NewManufactureListState();
 
 		/// Initializes state.
 		void init() override;
-
-		/// Fills the list of possible productions.
-		void fillProductionList();
 
 		/// Handler for the Costs button.
 		void btnCostsClick(Action* action);

@@ -64,6 +64,7 @@
 namespace OpenXcom
 {
 
+
 /**
  * Initializes a Base.
  * @param rule - pointer to Ruleset
@@ -2330,7 +2331,7 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
 }
 
 /**
- * Removes a base module and deals with ramifications.
+ * Removes a base-module and deals with ramifications.
  * @param pFac - an iterator reference to the facility that's destroyed
  * @return, const_iterator to the BaseFacility* that was occupied by @a pFac
  */
@@ -2592,7 +2593,8 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 }
 
 /**
- * Returns the total amount of monthly costs for maintaining the craft in this Base.
+ * Returns the total amount of monthly costs for maintaining the Craft in this
+ * Base.
  * @note Used for monthly maintenance expenditure.
  * @return, maintenance costs
  */
@@ -2619,7 +2621,8 @@ int Base::getCraftMaintenance() const
 }
 
 /**
- * Returns the total amount of monthly costs for maintaining the personnel in this Base.
+ * Returns the total amount of monthly costs for maintaining the personnel in
+ * this Base.
  * @note Used for monthly maintenance expenditure.
  * @return, maintenance costs
  */
@@ -2651,7 +2654,8 @@ int Base::getPersonnelMaintenance() const
 }
 
 /**
- * Returns the total amount of monthly costs for maintaining the facilities in this Base.
+ * Returns the total amount of monthly costs for maintaining the facilities in
+ * this Base.
  * @note Used for monthly maintenance expenditure.
  * @return, maintenance costs
  */
@@ -2680,7 +2684,7 @@ int Base::getMonthlyMaintenace() const
 }
 
 /**
- * Increases this Base's cash income amount by @a cash.
+ * Increases this Base's cash-income amount by @a cash.
  * @param cash - amount of income
  */
 void Base::setCashIncome(int cash)
@@ -2689,7 +2693,7 @@ void Base::setCashIncome(int cash)
 }
 
 /**
- * Gets this Base's current cash income value.
+ * Gets this Base's current cash-income value.
  * @return, current income value
  */
 int Base::getCashIncome() const
@@ -2698,7 +2702,7 @@ int Base::getCashIncome() const
 }
 
 /**
- * Increases this Base's cash spent amount by @a cash.
+ * Increases this Base's cash-spent amount by @a cash.
  * @param cash - amount of expenditure
  */
 void Base::setCashSpent(int cash)
@@ -2707,7 +2711,7 @@ void Base::setCashSpent(int cash)
 }
 
 /**
- * Gets this Base's current cash spent value.
+ * Gets this Base's current cash-spent value.
  * @return, current cash spent value
  */
 int Base::getCashSpent() const
@@ -2746,7 +2750,6 @@ size_t Base::getRecallRow(RecallType recallType) const
 		case REC_PURCHASE:	return _recallPurchase;
 		case REC_SELL:		return _recallSell;
 	}
-
 	return 0;
 }
 

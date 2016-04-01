@@ -303,7 +303,7 @@ int TextList::getColumnX(size_t column) const
 }
 
 /**
- * Gets the y-position of a specific text row in this TextList.
+ * Gets the y-position of a specific text-row in this TextList.
  * @param row - row number
  * @return, y-position in pixels
  */
@@ -313,7 +313,7 @@ int TextList::getRowY(size_t row) const
 }
 
 /**
- * Gets the height of a specific text row in this TextList.
+ * Gets the height of a specific text-row in this TextList.
  * @param row - row number
  * @return, height in pixels
  *
@@ -323,7 +323,7 @@ int TextList::getTextHeight(size_t row) const // myk002
 } */
 
 /**
- * Gets the number of lines of a specific text row in this TextList.
+ * Gets the number of lines of a specific text-row in this TextList.
  * @param row - row number
  * @return, number of lines
  *
@@ -333,10 +333,10 @@ int TextList::getNumTextLines(size_t row) const // myk002
 } */
 
 /**
- * Gets the quantity of text rows stored in this TextList.
+ * Gets the quantity of text-rows stored in this TextList.
  * @return, number of rows
  */
-size_t TextList::getTexts() const
+size_t TextList::getTextsQuantity() const
 {
 	return _texts.size();
 }

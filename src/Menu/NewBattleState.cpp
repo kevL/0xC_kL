@@ -272,23 +272,23 @@ void NewBattleState::load(const std::string& file)
 	{
 		try
 		{
-			YAML::Node doc = YAML::LoadFile(config);
+			YAML::Node doc (YAML::LoadFile(config));
 
 			_cbxMission->setSelected(std::min(
-									doc["mission"].as<size_t>(0),
-									_missionTypes.size() - 1));
+										doc["mission"].as<size_t>(0),
+										_missionTypes.size() - 1));
 			cbxMissionChange(nullptr);
 
 			_cbxCraft->setSelected(std::min(
-									doc["craft"].as<size_t>(0),
-									_crafts.size() - 1));
+										doc["craft"].as<size_t>(0),
+										_crafts.size() - 1));
 			_slrDarkness->setValue(doc["darkness"].as<size_t>(0));
-			_cbxTerrain->setSelected(
-									std::min(doc["terrain"].as<size_t>(0),
-									_terrainTypes.size() - 1));
+			_cbxTerrain->setSelected(std::min(
+										doc["terrain"].as<size_t>(0),
+										_terrainTypes.size() - 1));
 			_cbxAlienRace->setSelected(std::min(
-									doc["alienRace"].as<size_t>(0),
-									_alienRaces.size() - 1));
+											doc["alienRace"].as<size_t>(0),
+											_alienRaces.size() - 1));
 			_cbxDifficulty->setSelected(doc["difficulty"].as<size_t>(0));
 			_slrAlienTech->setValue(doc["alienTech"].as<size_t>(0));
 

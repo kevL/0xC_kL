@@ -169,7 +169,7 @@ private:
 //		int getNumTextLines(size_t row) const;
 
 		/// Gets the quantity of Texts in the list.
-		size_t getTexts() const;
+		size_t getTextsQuantity() const;
 		/// Gets the quantity of rows in the list.
 		size_t getRows() const;
 		/// Gets the quantity of visible rows in the list.

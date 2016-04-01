@@ -65,8 +65,8 @@
 
 /*
 Map origin is top corner (NW corner).
-- X axis goes downright (width of the Map) eastward
-- Y axis goes downleft (length of the Map) southward
+- x-axis goes downright (width of the Map) eastward
+- y-axis goes downleft (length of the Map) southward
 - Z axis goes up (height of the Map) upward
 
    0,0
