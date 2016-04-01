@@ -39,8 +39,7 @@ class Camera
 {
 
 private:
-	static const int SCROLL_DIAGONAL_EDGE = 60;
-//	static const int SCROLL_INTERVAL = 50;
+	static const int SCROLL_DIAGONAL_EDGE = 65;
 
 	bool
 		_pauseAfterShot,
@@ -76,7 +75,7 @@ private:
 
 
 	public:
-		static const int SCROLL_BORDER = 5;
+		static const int SCROLL_BORDER = 1;
 
 		/// Creates a Camera.
 		Camera(
@@ -90,18 +89,18 @@ private:
 		/// Cleans up the Camera.
 		~Camera();
 
-		/// Special handling for mouse press.
+		/// Special handling for mouse-presses.
 		void mousePress(Action* action, State* state);
-		/// Special handling for mouse release.
+		/// Special handling for mouse-releases.
 		void mouseRelease(Action* action, State* state);
-		/// Special handling for mouse over.
+		/// Special handling for mouse-overs.
 		void mouseOver(Action* action, State* state);
-		/// Special handling for key presses.
+		/// Special handling for key-presses.
 		void keyboardPress(Action* action, State* state);
-		/// Special handling for key releases.
+		/// Special handling for key-releases.
 		void keyboardRelease(Action* action, State* state);
 
-		/// Sets the camera's scroll timers.
+		/// Sets the Camera's scroll-timers.
 		void setScrollTimers(
 				Timer* const mouseTimer,
 				Timer* const keyboardTimer);
@@ -109,70 +108,70 @@ private:
 		void scrollMouse();
 		/// Scrolls the view for keyboard-scrolling.
 		void scrollKey();
-		/// Scrolls the view a certain amount.
+		/// Scrolls the view a specified amount.
 		void scrollXY(
 				int x,
 				int y,
 				bool redraw);
-		/// Jumps the view (when projectile in motion).
+		/// Handles jumping the view-port by a given deviation.
 		void jumpXY(
 				int x,
 				int y);
 
-		/// Moves map layer up.
+		/// Moves the map-layer up.
 		bool up();
-		/// Move map layer down.
+		/// Moves the map-layer down.
 		bool down();
 
-		/// Gets the map displayed level.
+		/// Gets the Map's displayed level.
 		int getViewLevel() const;
-		/// Sets the view level.
+		/// Sets the view-level.
 		void setViewLevel(int viewLevel);
 
-		/// Converts map coordinates to screen coordinates.
+		/// Converts map-coordinates to screen-coordinates.
 		void convertMapToScreen(
 				const Position& posMap,
 				Position* const posScreen) const;
-		/// Converts voxel coordinates to screen coordinates.
+		/// Converts voxel-coordinates to screen-coordinates.
 		void convertVoxelToScreen(
 				const Position& posVoxel,
 				Position* const posScreen) const;
-		/// Converts screen coordinates to map coordinates.
+		/// Converts screen-coordinates to map-coordinates.
 		void convertScreenToMap(
 				int screenX,
 				int screenY,
 				int* mapX,
 				int* mapY) const;
 
-		/// Centers map on a position.
+		/// Centers the Map on a position.
 		void centerOnPosition(
 				const Position& posMap,
 				bool redraw = true);
-		/// Gets map's center position.
+		/// Gets the Map's center-position.
 		Position getCenterPosition();
 
-		/// Gets the map size x.
+		/// Gets the Map's size-x.
 		int getMapSizeX() const;
-		/// Gets the map size y.
+		/// Gets the Map's size-y.
 		int getMapSizeY() const;
 
-		/// Gets the map x/y screen offset.
+		/// Gets the Map's x/y screen-offset.
 		Position getMapOffset() const;
-		/// Sets the map x/y screen offset.
+		/// Sets the map x/y screen-offset.
 		void setMapOffset(const Position& pos);
 
-		/// Toggles showing all map layers.
+		/// Toggles showing all map-layers.
 		bool toggleShowLayers();
-		/// Checks if the Camera is showing all map layers.
+		/// Checks if the Camera is showing all map-layers.
 		bool getShowLayers() const;
 
-		/// Checks if map coordinates X,Y,Z are on screen.
+		/// Checks if map-coordinates x/y/z are on-screen.
 		bool isOnScreen(const Position& posMap) const;
 
 		/// Resizes the viewable area.
 		void resize();
 
-		/// Stops mouse scrolling.
+		/// Stops mouse-scrolling.
 		void stopMouseScrolling();
 
 		/// Sets whether to pause the Camera before reverting its position.

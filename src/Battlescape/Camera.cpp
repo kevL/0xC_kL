@@ -170,7 +170,7 @@ void Camera::mouseRelease(Action* action, State*)
 		{
 			// A cheap hack to avoid handling this event as a click
 			// on the map when the mouse is on the scroll-border
-			action->getDetails()->button.button = 0;
+			action->getDetails()->button.button = 0u;
 		}
 	}
 }
@@ -501,9 +501,10 @@ void Camera::scrollXY(
 }
 
 /**
- * Handles jumping with given deviation.
- * @param x - X deviation
- * @param y - Y deviation
+ * Jumps the view-port for projectile-motion and when resizing the
+ * battlefield-window.
+ * @param x - x-deviation
+ * @param y - y-deviation
  */
 void Camera::jumpXY(
 		int x,
