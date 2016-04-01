@@ -174,20 +174,20 @@ private:
 		/// Gets civilians.
 		int getCivilians() const;
 
-		/// Gets the terrains for battlescape generation.
+		/// Gets the terrains for Battlescape generation.
 		const std::vector<std::string>& getDeployTerrains() const;
 
-		/// Gets the shade level for battlescape generation.
+		/// Gets the shade-level for Battlescape generation.
 		int getShade() const;
 
-		/// Gets the next stage of the mission.
+		/// Gets the next-stage of the mission.
 		const std::string& getNextStage() const;
 
-		/// Gets the alien race.
+		/// Gets the aLien-race.
 		const std::string& getRace() const;
 
-		/// Gets the script to use for this deployment.
-		const std::string& getScript() const;
+		/// Gets the script-type to use for the AlienDeployment.
+		const std::string& getScriptType() const;
 
 		/// Checks if the AlienDeployment is where to send Craft via the ConfirmCydonia btn.
 		bool isFinalDestination() const;

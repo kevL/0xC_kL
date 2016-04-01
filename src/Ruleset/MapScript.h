@@ -127,58 +127,58 @@ private:
 		/// Destructs the MapScript.
 		~MapScript();
 
-		/// Loads information from a ruleset file.
+		/// Loads information from a ruleset-file.
 		void load(const YAML::Node& node);
 
-		/// Initializes all the variables and stuff for a MapScript command.
+		/// Initializes all the variables and stuff for a MapScript directive.
 		void init();
 
-		/// Gets what type of command this is.
+		/// Gets what type of directive this is.
 		MapScriptCommand getType() const
 		{ return _type; };
 
-		/// Gets the rects, describing the areas this command applies to.
+		/// Gets the rects, describing the areas this directive applies to.
 		const std::vector<SDL_Rect*>* getRects() const
 		{ return &_rects; };
 
-		/// Gets the X size for this command.
+		/// Gets the X size for this directive.
 		int getSizeX() const
 		{ return _sizeX; };
-		/// Gets the Y size for this command.
+		/// Gets the Y size for this directive.
 		int getSizeY() const
 		{ return _sizeY; };
-		/// Gets the Z size for this command.
+		/// Gets the Z size for this directive.
 		int getSizeZ() const
 		{ return _sizeZ; };
 
-		/// Get the chances of this command executing.
+		/// Get the chances of this directive executing.
 		int chanceOfExecution() const
 		{ return _executionChance; };
 
-		/// Gets the label for this command.
+		/// Gets the label for this directive.
 		int getLabel() const
 		{ return _label; };
 
-		/// Gets how many times this command repeats (1 repeat means 2 executions)
+		/// Gets how many times this directive repeats (1 repeat means 2 executions)
 		int getExecutions() const
 		{ return _executions; };
 
-		/// Gets what conditions apply to this command.
+		/// Gets what conditions apply to this directive.
 		const std::vector<int>* getConditions() const
 		{ return &_conditions; };
 
-		/// Gets the groups vector for iteration.
+		/// Gets the groups-vector for iteration.
 		const std::vector<int>* getGroups() const
 		{ return &_groups; };
-		/// Gets the blocks vector for iteration.
+		/// Gets the blocks-vector for iteration.
 		const std::vector<int>* getBlocks() const
 		{ return &_blocks; };
 
-		/// Gets the direction this command goes (for lines and tunnels).
+		/// Gets the direction this directive goes (for lines and tunnels).
 		MapDirection getDirection() const
 		{ return _direction; };
 
-		/// Gets the MCD replacement data for tunnel replacements.
+		/// Gets the MCD-replacement-data for tunnel-replacements.
 		TunnelData* getTunnelData() const
 		{ return _tunnelData; };
 

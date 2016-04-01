@@ -287,8 +287,8 @@ const std::vector<std::string>& AlienDeployment::getDeployTerrains() const
 }
 
 /**
- * Gets the shade level for battlescape generation.
- * @return, the shade level
+ * Gets the shade-level for Battlescape generation.
+ * @return, the shade-level
  */
 int AlienDeployment::getShade() const
 {
@@ -296,8 +296,8 @@ int AlienDeployment::getShade() const
 }
 
 /**
- * Gets the next stage of the mission.
- * @return, the next stage of the mission
+ * Gets the next-stage of this AlienDeployment.
+ * @return, the next-stage of the mission
  */
 const std::string& AlienDeployment::getNextStage() const
 {
@@ -305,8 +305,8 @@ const std::string& AlienDeployment::getNextStage() const
 }
 
 /**
- * Gets the next stage's aLien race.
- * @return, the next stage's alien race
+ * Gets the next-stage's aLien race.
+ * @return, the alien race
  */
 const std::string& AlienDeployment::getRace() const
 {
@@ -314,10 +314,10 @@ const std::string& AlienDeployment::getRace() const
 }
 
 /**
- * Gets the script to use to generate a mission of this type.
- * @return, the script to use to generate a mission of this type
+ * Gets the script-type to use to generate a mission for this AlienDeployment.
+ * @return, the script-type
  */
-const std::string& AlienDeployment::getScript() const
+const std::string& AlienDeployment::getScriptType() const
 {
 	return _script;
 }

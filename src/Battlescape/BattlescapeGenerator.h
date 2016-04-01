@@ -160,21 +160,21 @@ private:
 	/// Possibly explodes ufo powersources.
 	void explodePowerSources();
 
-	/// Generates a new battlescape map.
-	void generateMap(const std::vector<MapScript*>* const script);
-	/// Generates a map from base modules.
+	/// Generates a Battlescape Map.
+	void generateMap(const std::vector<MapScript*>* const directives);
+	/// Generates a Map from base-modules.
 	void generateBaseMap();
 
-	/// Finds Alien Base start modules for Xcom equipment spawning.
+	/// Finds aLienBase start modules for xCom equipment-spawning.
 	void placeXcomProperty();
 
-	/// Clears a module from the map.
+	/// Clears a module from the Map.
 	void clearModule(
 			int x,
 			int y,
 			int sizeX,
 			int sizeY);
-	/// Load the nodes from the associated map blocks.
+	/// Load the nodes from the associated map-blocks.
 	void loadNodes();
 	/// Connects all the nodes together.
 	void attachNodeLinks();

@@ -422,7 +422,7 @@ protected:
 		RuleMissionScript* getMissionScript(const std::string& type) const;
 
 		/// Gets a list of MapScripts.
-		const std::vector<MapScript*>* getMapScript(const std::string& type) const;
+		const std::vector<MapScript*>* getMapScripts(const std::string& type) const;
 
 		/// Gets the final-research-type.
 		const std::string& getFinalResearch() const;

@@ -72,7 +72,7 @@ namespace OpenXcom
  */
 ConfirmLandingState::ConfirmLandingState(
 		Craft* const craft,
-		RuleTexture* texRule, // passes in the vector of eligible Globe Terrains for the land-poly's textureInt.
+		const RuleTexture* const texRule, // passes in the vector of eligible Globe Terrains for the land-poly's textureInt.
 		const int shade)
 	:
 		_craft(craft),
@@ -192,15 +192,15 @@ ConfirmLandingState::ConfirmLandingState(
 
 					// TODO: tie all this into WeightedOptions
 					// check for Terrains in Globe-Texture(INT) first
-/*					const RuleGlobe* const globeRule = _game->getRuleset()->getGlobe();
-					const RuleTexture* const texRule = globeRule->getTextureRule(_city->getTextureId());
+/*					const RuleGlobe* const globeRule (_game->getRuleset()->getGlobe());
+					const RuleTexture* const texRule (globeRule->getTextureRule(_city->getTextureId()));
 					terrainList = globeRule->getGlobeTerrains(texRule->getTextureDeployment());
 
 					// second, check for Terrains in AlienDeployment ...
 					if (terrainList.empty() == true)
 					{
 						// get a Terrain from AlienDeployment
-						const AlienDeployment* const ruleDeploy = site->getSiteDeployment();
+						const AlienDeployment* const ruleDeploy (site->getSiteDeployment());
 						terrainList = ruleDeploy->getDeployTerrains();
 					} */
 
@@ -298,7 +298,7 @@ ConfirmLandingState::ConfirmLandingState(
 	std::wostringstream woststr;
 	if (ufo != nullptr)
 	{
-//		const RuleUfo* const ufoRule = ufo->getRules(); if (ufoRule != nullptr)
+//		const RuleUfo* const ufoRule (ufo->getRules()); if (ufoRule != nullptr)
 		woststr << tr(ufo->getRules()->getType());
 
 		if (ufo->getHyperDetected() == true) // only ufoType shows if not hyperdetected.
@@ -343,14 +343,14 @@ void ConfirmLandingState::init()
 {
 	State::init();
 
-//	- note that Craft arriving at an xCom Base do not invoke this state, see GeoscapeState::time5Seconds()
-//	const Base* const base = dynamic_cast<Base*>(_craft->getDestination());
+//	- note that UFOs arriving at an xCom Base do not invoke this state, see GeoscapeState::time5Seconds()
+//	const Base* const base (dynamic_cast<Base*>(_craft->getDestination()));
 //	if (base == _craft->getBase())
 //		_game->popState();
 }
 
 /**
- * Enters the mission.
+ * Enters tactical.
  * @param action - pointer to an Action
  */
 void ConfirmLandingState::btnYesClick(Action*)
@@ -424,7 +424,7 @@ void ConfirmLandingState::btnNoClick(Action*)
 }
 
 /**
- * Selects a terrain type for crashed or landed UFOs.
+ * Selects a terrain-type for crashed or landed UFOs.
  * @param lat - latitude of the UFO
  *
 RuleTerrain* ConfirmLandingState::selectTerrain(const double lat)
@@ -478,7 +478,7 @@ RuleTerrain* ConfirmLandingState::selectTerrain(const double lat)
 } */
 
 /**
- * Selects a terrain type for missions at cities.
+ * Selects a terrain-type for missions at cities.
  * @param lat - latitude of the city
  *
 RuleTerrain* ConfirmLandingState::selectCityTerrain(const double lat)

@@ -94,7 +94,7 @@ private:
 		const std::vector<std::string>& getCivilianTypes() const;
 
 		/// Gets the generation script.
-		const std::string& getScript() const;
+		const std::string& getScriptType() const;
 
 		/// Gets the list of music to pick from.
 		const std::vector<std::string>& getTerrainMusics() const;

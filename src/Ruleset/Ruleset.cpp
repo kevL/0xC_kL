@@ -2468,7 +2468,7 @@ const std::map<std::string, RuleVideo*>* Ruleset::getVideos() const
 }
 
 /**
- * Gets the mission scripts.
+ * Gets the mission-scripts.
  * @return, pointer to a vector of strings of RuleMissionScript types
  */
 const std::vector<std::string>* Ruleset::getMissionScriptList() const
@@ -2477,7 +2477,7 @@ const std::vector<std::string>* Ruleset::getMissionScriptList() const
 }
 
 /**
- * Gets a specific mission script rule.
+ * Gets a specific mission-script-rule.
  * @param type - reference a mission-script type
  * @return, pointer to the RuleMissionScript
  */
@@ -2492,10 +2492,10 @@ RuleMissionScript* Ruleset::getMissionScript(const std::string& type) const
 
 /**
  * Gets the list of MapScripts.
- * @param type - reference the map-script type
+ * @param type - reference to a map-script-type
  * @return, pointer to a vector of pointers to MapScript
  */
-const std::vector<MapScript*>* Ruleset::getMapScript(const std::string& type) const
+const std::vector<MapScript*>* Ruleset::getMapScripts(const std::string& type) const
 {
 	std::map<std::string, std::vector<MapScript*>>::const_iterator i (_mapScripts.find(type));
 	if (i != _mapScripts.end())
@@ -2509,8 +2509,8 @@ const std::vector<MapScript*>* Ruleset::getMapScript(const std::string& type) co
 }
 
 /**
- * Gets the final research Id.
- * @return, final research id
+ * Gets the final-research-ID.
+ * @return, final-research-ID
  */
 const std::string& Ruleset::getFinalResearch() const
 {
@@ -2518,7 +2518,7 @@ const std::string& Ruleset::getFinalResearch() const
 }
 
 /**
- * Gets the current Game.
+ * Gets the current Game-object.
  * @return, pointer to GAME
  */
 const Game* Ruleset::getGame() const

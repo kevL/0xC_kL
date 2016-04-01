@@ -237,7 +237,7 @@ void BattlescapeGenerator::setAlienRace(const std::string& alienRace)
 }
 
 /**
- * Sets the alien item level.
+ * Sets the alien-item-level.
  * @note This is used to determine how advanced the equipment of the aliens will
  * be. It applies only to 'New Battle' games and is usually overridden by the
  * current month. This value ought be between 0 and the size of the itemLevel
@@ -251,7 +251,7 @@ void BattlescapeGenerator::setAlienItemlevel(int alienItemLevel)
 }
 
 /**
- * Starts the generator.
+ * Starts the Generator.
  * @note This fills the SavedBattleGame with data.
  */
 void BattlescapeGenerator::run()
@@ -272,7 +272,8 @@ void BattlescapeGenerator::run()
 						&_mapsize_x,
 						&_mapsize_y,
 						&_mapsize_z);
-	if (_terrainRule == nullptr)	// '_terrainRule' NOT set for Cydonia, Base assault/defense. Already set for NewBattleState ...... & UFO, & missionSite.
+
+	if (_terrainRule == nullptr) // '_terrainRule' NOT set for Cydonia, Base assault/defense. Already set for NewBattleState ...... & UFO, & missionSite.
 	{
 		_terrainRule = _rules->getTerrain(ruleDeploy->getDeployTerrains().at(RNG::pick(ruleDeploy->getDeployTerrains().size())));
 		if (_terrainRule == nullptr)
@@ -331,34 +332,36 @@ void BattlescapeGenerator::run()
 		_terrainRule = _rules->getTerrain(ruleDeploy->getDeployTerrains().at(pick));
 	} */
 
-	const std::vector<MapScript*>* script = nullptr; // alienDeployment script overrides terrain script <-
-	const std::string scriptDeploy = ruleDeploy->getScript();
-	//Log(LOG_INFO) << "bgen: scriptDeploy = " << scriptDeploy;
-	if (scriptDeploy.empty() == false)
+
+	const std::vector<MapScript*>* directives (nullptr); // alienDeployment-script overrides terrain-script <-
+
+	std::string script (ruleDeploy->getScriptType());
+	//Log(LOG_INFO) << "bgen: script = " << script;
+	if (script.empty() == false)
 	{
-		script = _rules->getMapScript(scriptDeploy);
-		if (script == nullptr) Log(LOG_WARNING) << "bGen::nextStage() - There is a Deployment script defined ["
-												<< scriptDeploy << "] but could not find its rule.";
+		directives = _rules->getMapScripts(script);
+		if (directives == nullptr) Log(LOG_WARNING) << "bGen::nextStage() - There is a Deployment script defined ["
+													<< script << "] but could not find its rule.";
 	}
 
-	if (script == nullptr)
+	if (directives == nullptr)
 	{
-		const std::string scriptTerra = _terrainRule->getScript();
-		//Log(LOG_INFO) << "bgen: scriptTerra = " << scriptTerra;
-		if (scriptTerra.empty() == false)
+		script = _terrainRule->getScriptType();
+		//Log(LOG_INFO) << "bgen: script = " << script;
+		if (script.empty() == false)
 		{
-			script = _rules->getMapScript(scriptTerra);
-			if (script == nullptr) Log(LOG_WARNING) << "bGen::nextStage() - There is a Terrain script defined ["
-													<< scriptTerra << "] but could not find its rule.";
+			directives = _rules->getMapScripts(script);
+			if (directives == nullptr) Log(LOG_WARNING) << "bGen::nextStage() - There is a Terrain script defined ["
+														<< script << "] but could not find its rule.";
 		}
 	}
 
-	if (script == nullptr)
+	if (directives == nullptr)
 	{
 		throw Exception("Map generator encountered an error: no script found. See log for detail.");
 	}
 
-	generateMap(script);							// <--| BATTLEFIELD GENERATION. <--|||
+	generateMap(directives);						// <--|| BATTLEFIELD GENERATION. <--|||
 	setupObjectives(ruleDeploy);
 
 	if (ruleDeploy->getShade() != -1)
@@ -369,18 +372,18 @@ void BattlescapeGenerator::run()
 	_battleSave->setBattleTerrain(_terrainRule->getType());
 	setTacticalSprites();
 
-	deployXcom();									// <--| XCOM DEPLOYMENT. <--|||
+	deployXcom();									// <--|| XCOM DEPLOYMENT. <--|||
 
 	const size_t qtyUnits_pre (_battleSave->getUnits()->size());
 
-	deployAliens(ruleDeploy);						// <--| ALIEN DEPLOYMENT. <--|||
+	deployAliens(ruleDeploy);						// <--|| ALIEN DEPLOYMENT. <--|||
 
 	if (qtyUnits_pre == _battleSave->getUnits()->size())
 	{
 		throw Exception("Map generator encountered an error: no alien units could be placed on the map.");
 	}
 
-	deployCivilians(ruleDeploy->getCivilians());	// <--| CIVILIAN DEPLOYMENT. <--|||
+	deployCivilians(ruleDeploy->getCivilians());	// <--|| CIVILIAN DEPLOYMENT. <--|||
 
 	if (_generateFuel == true)
 		fuelPowerSources();
@@ -606,37 +609,35 @@ void BattlescapeGenerator::nextStage()
 	_terrainRule = _rules->getTerrain(ruleDeploy->getDeployTerrains().at(RNG::pick(ruleDeploy->getDeployTerrains().size())));
 
 
-	const std::vector<MapScript*>* scripts (nullptr); // hardrule: Deployment takes priority over Terrain.
+	const std::vector<MapScript*>* directives (nullptr); // alienDeployment-script overrides terrain-script <-
 
-	std::string script (ruleDeploy->getScript());
+	std::string script (ruleDeploy->getScriptType());
+	//Log(LOG_INFO) << "bgen: script = " << script;
 	if (script.empty() == false)
 	{
-		scripts = _rules->getMapScript(script);
-		if (scripts == nullptr)
-		{
-			Log(LOG_WARNING) << "BattlescapeGenerator::nextStage() - There is a Deployment script defined ["
-							 << script << "] but could not find its rule.";
-		}
+		directives = _rules->getMapScripts(script);
+		if (directives == nullptr) Log(LOG_WARNING) << "bGen::nextStage() - There is a Deployment script defined ["
+													<< script << "] but could not find its rule.";
 	}
 
-	if (scripts == nullptr)
+	if (directives == nullptr)
 	{
-		script = _terrainRule->getScript();
+		script = _terrainRule->getScriptType();
+		//Log(LOG_INFO) << "bgen: script = " << script;
 		if (script.empty() == false)
 		{
-			scripts = _rules->getMapScript(script);
-			if (scripts == nullptr)
-				Log(LOG_WARNING) << "BattlescapeGenerator::nextStage() - There is a Terrain script defined ["
-								 << script << "] but could not find its rule.";
+			directives = _rules->getMapScripts(script);
+			if (directives == nullptr) Log(LOG_WARNING) << "bGen::nextStage() - There is a Terrain script defined ["
+														<< script << "] but could not find its rule.";
 		}
 	}
 
-	if (scripts == nullptr)
+	if (directives == nullptr)
 	{
 		throw Exception("Map generator encountered an error: no script found. See log for detail.");
 	}
 
-	generateMap(scripts); // <--| BATTLE MAP GENERATION. <--|||
+	generateMap(directives);							// <--|| BATTLE MAP GENERATION. <--|||
 	setupObjectives(ruleDeploy);
 
 	setShade(ruleDeploy->getShade()); // note: 2nd stage must have deployment-shade set, else 0 (bright).
@@ -646,7 +647,7 @@ void BattlescapeGenerator::nextStage()
 	_battleSave->setAborted(false);
 
 	bool selectDone (false);
-	for (std::vector<BattleUnit*>::const_iterator // <--| XCOM DEPLOYMENT. <--|||
+	for (std::vector<BattleUnit*>::const_iterator		// <--|| XCOM DEPLOYMENT. <--|||
 			i = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
@@ -752,14 +753,14 @@ void BattlescapeGenerator::nextStage()
 
 	const size_t qtyUnits_pre (_battleSave->getUnits()->size());
 
-	deployAliens(ruleDeploy); // <--| ALIEN DEPLOYMENT. <--|||
+	deployAliens(ruleDeploy);							// <--|| ALIEN DEPLOYMENT. <--|||
 
 	if (qtyUnits_pre == _battleSave->getUnits()->size())
 	{
 		throw Exception("Map generator encountered an error: no alien units could be placed on the map.");
 	}
 
-	deployCivilians(ruleDeploy->getCivilians()); // <--| CIVILIAN DEPLOYMENT. <--|||
+	deployCivilians(ruleDeploy->getCivilians());		// <--|| CIVILIAN DEPLOYMENT. <--|||
 
 /*	// Probly don't need this anymore; it's done via "revealedFloors" in MapScripting ... but not quite.
 	for (int i = 0; i < _battleSave->getMapSizeXYZ(); ++i)
@@ -2542,16 +2543,16 @@ void BattlescapeGenerator::runInventory(
 }
 
 /**
- * Generates a map of modules (sets of tiles) for a new Battlescape game.
- * @param script - the scripts to use to build the map
+ * Processes a set of map-modules (sets of Tiles) into a Battlescape.
+ * @param directives - the directives to use to build the Map
  */
-void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const script) // private.
+void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const directives) // private.
 {
-	//Log(LOG_INFO) << "generateMap, terraRule = " << _terrainRule->getType() << " script = " << _terrainRule->getScript();
+	//Log(LOG_INFO) << "generateMap, terraRule = " << _terrainRule->getType() << " script = " << _terrainRule->getScriptType();
 //	_error = false;
 	_testBlock = new MapBlock("testBlock");
 
-	init(); // set up map generation vars
+	init(); // set up map-generation vars
 
 	MapBlock* craftBlock (nullptr);
 	std::vector<MapBlock*> ufoBlocks;
@@ -2578,14 +2579,14 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const scri
 
 	RuleTerrain* ufoTerrain (nullptr); // generate the map now and store it inside the tile objects
 
-	if (_battleSave->getTacType() == TCT_BASEDEFENSE) // this mission-type is "hard-coded" in terms of map layout
+	if (_battleSave->getTacType() == TCT_BASEDEFENSE) // this mission-type is "hard-coded" in terms of map-layout
 		generateBaseMap();
 
 	bool success;
 
-	for (std::vector<MapScript*>::const_iterator // process script
-			i = script->begin();
-			i != script->end();
+	for (std::vector<MapScript*>::const_iterator // process script-directives
+			i = directives->begin();
+			i != directives->end();
 			++i)
 	{
 		//Log(LOG_INFO) << "do script Command type = " << (int)(*i)->getType();
@@ -2702,7 +2703,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const scri
 						// This is because serializing all the MCDs is an implementational nightmare from
 						// your perspective and modders can take care of all that manually on their end.
 						//
-						// - Warboy opus
+						// - Warboy opus (c.2015)
 						if (_rules->getUfo((*i)->getUfoType()) != nullptr)
 							ufoTerrain = _rules->getUfo((*i)->getUfoType())->getBattlescapeTerrainData();
 						else if (_ufo != nullptr)
@@ -2840,7 +2841,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const scri
 			}
 		}
 	}
-	//Log(LOG_INFO) << ". . done Commands";
+	//Log(LOG_INFO) << ". . done Directives";
 
 	if (_blocksLeft != 0)
 	{
@@ -2875,14 +2876,14 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const scri
 				++i)
 		{
 			loadMAP(
-				ufoBlocks[i],
-				static_cast<int>(_ufoPos[i].x) * 10, static_cast<int>(_ufoPos[i].y) * 10,
-				ufoTerrain,
-				blockDataSetIdOffset);
+					ufoBlocks[i],
+					static_cast<int>(_ufoPos[i].x) * 10, static_cast<int>(_ufoPos[i].y) * 10,
+					ufoTerrain,
+					blockDataSetIdOffset);
 			loadRMP(
-				ufoBlocks[i],
-				static_cast<int>(_ufoPos[i].x) * 10, static_cast<int>(_ufoPos[i].y) * 10,
-				Node::SEG_UFO);
+					ufoBlocks[i],
+					static_cast<int>(_ufoPos[i].x) * 10, static_cast<int>(_ufoPos[i].y) * 10,
+					Node::SEG_UFO);
 
 			for (int
 					j = 0;
@@ -2917,18 +2918,18 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const scri
 		}
 
 		loadMAP(
-			craftBlock,
-			static_cast<int>(_craftPos.x * 10),
-			static_cast<int>(_craftPos.y * 10),
-			_craft->getRules()->getBattlescapeTerrainData(),
-			blockDataSetIdOffset + craftDataSetIdOffset,
-			false, // was true
-			true);
+				craftBlock,
+				static_cast<int>(_craftPos.x * 10),
+				static_cast<int>(_craftPos.y * 10),
+				_craft->getRules()->getBattlescapeTerrainData(),
+				blockDataSetIdOffset + craftDataSetIdOffset,
+				false, // was true
+				true);
 		loadRMP(
-			craftBlock,
-			static_cast<int>(_craftPos.x * 10),
-			static_cast<int>(_craftPos.y * 10),
-			Node::SEG_CRAFT);
+				craftBlock,
+				static_cast<int>(_craftPos.x * 10),
+				static_cast<int>(_craftPos.y * 10),
+				Node::SEG_CRAFT);
 
 		for (int
 				i = 0;

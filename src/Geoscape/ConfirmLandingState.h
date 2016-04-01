@@ -65,15 +65,15 @@ private:
 
 
 	public:
-		/// Creates the Confirm Landing state.
+		/// Creates a ConfirmLanding state.
 		ConfirmLandingState(
 				Craft* const craft,
-				RuleTexture* texRule = nullptr,
+				const RuleTexture* const texRule = nullptr,
 				const int shade = -1);
-		/// Cleans up the Confirm Landing state.
+		/// Cleans up the ConfirmLanding state.
 		~ConfirmLandingState();
 
-		/// initialize the state, make a sanity check.
+		/// Initializes the state and makes a sanity check.
 		void init() override;
 
 		/// Handler for clicking the Yes button.
@@ -81,9 +81,9 @@ private:
 		/// Handler for clicking the No button.
 		void btnNoClick(Action* action);
 
-		/// Selects a terrain type for crashed or landed UFOs.
+		/// Selects a terrain-type for crashed or landed UFOs.
 //		RuleTerrain* selectTerrain(const double lat);
-		/// Selects a terrain type for missions at cities.
+		/// Selects a terrain-type for missions at cities.
 //		RuleTerrain* selectCityTerrain(const double lat);
 };
 

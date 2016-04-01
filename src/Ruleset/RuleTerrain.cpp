@@ -250,7 +250,7 @@ const std::vector<std::string>& RuleTerrain::getCivilianTypes() const
  * Gets the generation script.
  * @return, the script to use
  */
-const std::string& RuleTerrain::getScript() const
+const std::string& RuleTerrain::getScriptType() const
 {
 	return _script;
 }

@@ -48,7 +48,7 @@ class Position;
 
 /**
  * Represents a Terrain Map Block.
- * It contains constant info about this mapblock, like its type, dimensions, attributes...
+ * It contains constant info about this MapBlock, like its type, dimensions, attributes...
  * Map blocks are stored in RuleTerrain objects.
  * @sa http://www.ufopaedia.org/index.php?title=MAPS_Terrain
  */
@@ -72,25 +72,25 @@ private:
 	public:
 		/// Constructs a MapBlock object.
 		explicit MapBlock(const std::string& type);
-		/// Destructs this MapBlock object.
+		/// Destructs the MapBlock object.
 		~MapBlock();
 
-		/// Loads the map block from YAML.
+		/// Loads the MapBlock from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets the mapblock's type - used for MAP generation.
+		/// Gets the MapBlock's type - used for MAP generation.
 		const std::string& getType() const;
 
-		/// Gets the mapblock's x size.
+		/// Gets the MapBlock's x size.
 		int getSizeX() const;
-		/// Gets the mapblock's y size.
+		/// Gets the MapBlock's y size.
 		int getSizeY() const;
-		/// Gets the mapblock's z size.
+		/// Gets the MapBlock's z size.
 		int getSizeZ() const;
-		/// Sets the mapblock's z size.
+		/// Sets the MapBlock's z size.
 		void setSizeZ(int size_z);
 
-		/// Gets if this mapblock is from the group specified.
+		/// Gets if this MapBlock is from the group specified.
 		bool isInGroup(int group) const;
 		/// Gets if this floor should be revealed or not.
 		bool isFloorRevealed(int reveal) const;

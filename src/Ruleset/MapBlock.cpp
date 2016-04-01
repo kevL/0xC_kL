@@ -50,7 +50,7 @@ MapBlock::~MapBlock()
 {}
 
 /**
- * Loads the map block from a YAML file.
+ * Loads the MapBlock from a YAML file.
  * @param node - reference a YAML node
  */
 void MapBlock::load(const YAML::Node& node)
@@ -101,8 +101,8 @@ const std::string& MapBlock::getType() const
 }
 
 /**
- * Gets the MapBlock size x.
- * @return, x in tiles
+ * Gets the MapBlock size-x.
+ * @return, x in tile-space
  */
 int MapBlock::getSizeX() const
 {
@@ -110,8 +110,8 @@ int MapBlock::getSizeX() const
 }
 
 /**
- * Gets the MapBlock size y.
- * @return, y in tiles
+ * Gets the MapBlock size-y.
+ * @return, y in tile-space
  */
 int MapBlock::getSizeY() const
 {
@@ -119,8 +119,8 @@ int MapBlock::getSizeY() const
 }
 
 /**
- * Sets the MapBlock size z.
- * @param size_z - z in tiles
+ * Sets the MapBlock size-z.
+ * @param size_z - z in tile-space
  */
 void MapBlock::setSizeZ(int size_z)
 {
@@ -128,8 +128,8 @@ void MapBlock::setSizeZ(int size_z)
 }
 
 /**
- * Gets the MapBlock size z.
- * @return, z in tiles
+ * Gets the MapBlock size-z.
+ * @return, z in tile-space
  */
 int MapBlock::getSizeZ() const
 {
