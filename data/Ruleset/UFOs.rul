@@ -302,6 +302,21 @@ ufos:
         - type: UFO_160
           width: 30
           length: 30
+        - type: UFO_BS1
+          width: 30
+          length: 30
+        - type: UFO_BS2
+          width: 30
+          length: 30
+        - type: UFO_BS3
+          width: 30
+          length: 30
+        - type: UFO_BS4
+          width: 30
+          length: 30
+        - type: UFO_BS5
+          width: 30
+          length: 30
   - type: STR_SUPPLY_SHIP
     size: STR_LARGE
     sprite: 7

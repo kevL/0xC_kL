@@ -74,7 +74,6 @@ enum TurretType
 
 enum SpecialTileType
 {
-	STT_NONE = -1,			// -1
 	TILE,					//  0
 	START_POINT,			//  1
 	UFO_POWER_SOURCE,		//  2

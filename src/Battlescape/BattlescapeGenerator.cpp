@@ -4034,13 +4034,13 @@ bool BattlescapeGenerator::removeBlocks(const MapScript* const directive) // pri
 }
 
 /**
- * Sets up the objectives for the map.
+ * Sets up the objectives for the Map.
  * @param ruleDeploy - deployment data from which to fetch data
  */
 void BattlescapeGenerator::setupObjectives(const AlienDeployment* const ruleDeploy)
 {
-	const SpecialTileType specialType (ruleDeploy->getObjectiveType());
-	if (specialType != STT_NONE)
+	const SpecialTileType tileType (ruleDeploy->getObjectiveType());
+	if (tileType != TILE)
 	{
 		int
 			req (ruleDeploy->getObjectivesRequired()),
@@ -4061,8 +4061,8 @@ void BattlescapeGenerator::setupObjectives(const AlienDeployment* const ruleDepl
 			{
 				tile = _battleSave->getTiles()[i];
 				partType = static_cast<MapDataType>(j);
-				if (tile->getMapData(partType)
-					&& tile->getMapData(partType)->getSpecialType() == specialType)
+				if (tile->getMapData(partType) != nullptr
+					&& tile->getMapData(partType)->getSpecialType() == tileType)
 				{
 					++inSitu;
 				}
@@ -4071,7 +4071,7 @@ void BattlescapeGenerator::setupObjectives(const AlienDeployment* const ruleDepl
 
 		if (inSitu != 0)
 		{
-			_battleSave->setObjectiveType(specialType);
+			_battleSave->setObjectiveType(tileType);
 
 			if (req == 0 || inSitu < req)
 				req = inSitu;

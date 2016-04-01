@@ -149,7 +149,7 @@ AlienDeployment::AlienDeployment(const std::string& type)
 		_markerIcon(-1),
 		_durationMin(0),
 		_durationMax(0),
-		_objectiveType(STT_NONE), // -1
+		_objectiveType(TILE),
 		_objectivesReqd(0),
 		_objectiveCompleteScore(0),
 		_objectiveFailedScore(0),

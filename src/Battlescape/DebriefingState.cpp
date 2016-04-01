@@ -669,7 +669,6 @@ void DebriefingState::prepareDebriefing() // private.
 //		if (tileType > 1)
 		switch (tileType)
 		{
-//			case STT_NONE: //-1
 //			case TILE
 //			case START_POINT:
 			case UFO_POWER_SOURCE:		//  2

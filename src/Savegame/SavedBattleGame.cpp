@@ -81,7 +81,7 @@ SavedBattleGame::SavedBattleGame(
 		_debugTac(false),
 		_aborted(false),
 		_itemId(0),
-		_objectiveType(STT_NONE), // -1
+		_objectiveType(TILE),
 		_objectivesDestroyed(0),
 		_objectivesNeeded(0),
 		_unitsFalling(false),

@@ -111,7 +111,7 @@ RuleItem::RuleItem(const std::string& type)
 		_meleeAniHit(-1),
 		_meleeSound(-1),
 		_meleeSoundHit(-1),
-		_specialType(STT_NONE),
+		_specialType(TILE),
 		_canExecute(false),
 		_defusePulse(false)
 {}
