@@ -65,17 +65,21 @@ private:
 
 		heightFromCenter[11],
 
-		POWER_BLOCK = 100000,	// this is a hardblock for HE; hence it has to be higher
+		HARD_BLOCK = 100000,	// this is a hardblock for HE; hence it has to be higher
 								// than the highest HE power in the Rulesets, but it also
 								// needs to be able to add without overflowing.
 		LIGHT_FIRE	= 15,
 		LIGHT_SUN	= 15,
-		LIGHT_UNIT	= 12;
+		LIGHT_UNIT	= 12,
+
+		EYE_OFFSET	= -4;
 
 	static const size_t
 		LIGHT_LAYER_AMBIENT	= 0u,
 		LIGHT_LAYER_STATIC	= 1u,
-		LIGHT_LAYER_DYNAMIC	= 2u;
+		LIGHT_LAYER_DYNAMIC	= 2u,
+
+		LOFT_LAYERS = 12u;
 
 	bool
 //		_debug,
@@ -105,7 +109,7 @@ private:
 	int blockage(
 			const Tile* const tile,
 			const MapDataType partType,
-			const DamageType dType,
+			/*const*/ DamageType dType,
 			const int dir = -1,
 			const bool isStartTile = false,
 			const bool dirTrue = false) const;
@@ -121,7 +125,7 @@ private:
 			int strength,
 			int elevation);
 
-	/// Gets a Tile within melee range.
+	/// Gets a Tile within melee-range.
 	Tile* getVerticalTile(
 			const Position& posOrigin,
 			const Position& posTarget) const;
@@ -135,19 +139,19 @@ private:
 		/// Cleans up the TileEngine.
 		~TileEngine();
 
-		/// Calculates sun shading of the whole map.
+		/// Calculates sun-shading of the entire battlefield.
 		void calculateSunShading() const;
-		/// Calculates sun shading of a single tile.
+		/// Calculates sun-shading of a single Tile.
 		void calculateSunShading(Tile* const tile) const;
-		/// Recalculates lighting of the battlescape for terrain.
+		/// Calculates lighting of the battlefield for terrain.
 		void calculateTerrainLighting() const;
-		/// Recalculates lighting of the battlescape for units.
+		/// Calculates lighting of the battlefield for units.
 		void calculateUnitLighting() const;
 
-		/// Turn xCom units' personal lighting on or off.
+		/// Toggles xCom units' personal lighting on/off.
 		void togglePersonalLighting();
 
-		/// Calculates Field of Vision from a unit's view point.
+		/// Calculates Field of Vision from a unit's view-point.
 		bool calculateFOV(BattleUnit* const unit) const;
 		/// Calculates Field of Vision including for all units within range of Position.
 		void calculateFOV(
@@ -163,15 +167,15 @@ private:
 		/// Gets a valid target-unit given a Tile.
 		BattleUnit* getTargetUnit(const Tile* const tile) const;
 
-		/// Gets the origin voxel of a unit's eyesight.
+		/// Gets the origin-voxel of a unit's eyesight.
 		Position getSightOriginVoxel(
 				const BattleUnit* const unit,
 				const Position* pos = nullptr) const;
-		/// Gets the origin voxel of a given action.
+		/// Gets the origin-voxel of a given action.
 		Position getOriginVoxel(
 				const BattleAction& action,
 				const Tile* const tile = nullptr) const;
-		/// Checks validity for targetting a BattleUnit.
+		/// Checks validity for targeting a BattleUnit.
 		bool canTargetUnit(
 				const Position* const originVoxel,
 				const Tile* const tileTarget,
@@ -179,7 +183,7 @@ private:
 				const BattleUnit* const excludeUnit,
 				const BattleUnit* targetUnit = nullptr,
 				bool* const force = nullptr) const;
-		/// Check validity for targeting a Tile.
+		/// Checks validity for targeting a Tile.
 		bool canTargetTilepart(
 				const Position* const originVoxel,
 				const Tile* const tileTarget,
@@ -189,7 +193,7 @@ private:
 		/// Checks a unit's % exposure on a tile.
 //		int checkVoxelExposure(Position* originVoxel, Tile* tile, BattleUnit* excludeUnit, BattleUnit* excludeAllBut);
 
-		/// Checks reaction fire.
+		/// Checks reaction-fire.
 		bool checkReactionFire(
 				BattleUnit* const triggerUnit,
 				int tuSpent = 0,

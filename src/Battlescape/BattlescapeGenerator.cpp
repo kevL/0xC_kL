@@ -2712,6 +2712,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 						if (ufoTerrain != nullptr)
 						{
 							MapBlock* const ufoBlock (ufoTerrain->getMapBlockRand(999,999, 0, false));
+							Log(LOG_INFO) << "bGen:generateMap() ufo-type " << ufoBlock->getType();
 
 							SDL_Rect ufoPosTest;
 							if (addCraft(ufoBlock, *i, ufoPosTest) == true)

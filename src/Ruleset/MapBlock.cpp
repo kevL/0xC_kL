@@ -60,12 +60,10 @@ void MapBlock::load(const YAML::Node& node)
 	_size_y	= node["length"].as<int>(_size_y);
 	_size_z	= node["height"].as<int>(_size_z);
 
-	if (_size_x % 10 != 0
-		|| _size_y % 10 != 0)
+	if (_size_x % 10 != 0 || _size_y % 10 != 0)
 	{
-		std::ostringstream error;
-		error << "Error: MapBlock " << _type << ": Size must be divisible by ten";
-		throw Exception(error.str());
+		std::string error ("Error: MapBlock " + _type + ": Size must be divisible by ten");
+		throw Exception(error);
 	}
 
 	if (const YAML::Node& block = node["groups"])

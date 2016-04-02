@@ -288,13 +288,13 @@ void TileEngine::togglePersonalLighting()
 }
 
 /**
- * Adds a circular light pattern starting from @a pos and losing power
+ * Adds a circular light-pattern starting from @a pos and losing power
  * proportional to distance.
  * @param pos	- reference to the center Position in tile-space
  * @param power	- power of light
  * @param layer	- light is separated in 3 layers: Ambient, Static, and Dynamic
  */
-void TileEngine::addLight(
+void TileEngine::addLight( // private.
 		const Position& pos,
 		int power,
 		size_t layer) const
@@ -849,7 +849,7 @@ Position TileEngine::getSightOriginVoxel(
 
 	Position originVoxel (Position::toVoxelSpaceCentered(
 													*pos,
-													unit->getHeight(true) - 4
+													unit->getHeight(true) + EYE_OFFSET
 														- _battleSave->getTile(*pos)->getTerrainLevel(), // TODO: this is quadrant #1, will not be accurate in all cases.
 													unit->getArmor()->getSize()));
 	const int ceilingZ ((*pos).z * 24 + 23);
@@ -1165,22 +1165,22 @@ bool TileEngine::canTargetTilepart(
 		const BattleUnit* const excludeUnit) const
 {
 	static int
-		sliceObjectSpiral[82] =
+		sliceObjectSpiral[82]
 		{
 			8,8,  8,6, 10,6, 10,8, 10,10, 8,10,  6,10,  6,8,  6,6,											// first circle
 			8,4, 10,4, 12,4, 12,6, 12,8, 12,10, 12,12, 10,12, 8,12, 6,12, 4,12, 4,10, 4,8, 4,6, 4,4, 6,4,	// second circle
 			8,1, 12,1, 15,1, 15,4, 15,8, 15,12, 15,15, 12,15, 8,15, 4,15, 1,15, 1,12, 1,8, 1,4, 1,1, 4,1	// third circle
 		},
-		northWallSpiral[14] =
+		northWallSpiral[14]
 		{
 			7,0, 9,0, 6,0, 11,0, 4,0, 13,0, 2,0
 		},
-		westWallSpiral[14] =
+		westWallSpiral[14]
 		{
 			0,7, 0,9, 0,6, 0,11, 0,4, 0,13, 0,2
 		};
 
-	Position targetVoxel = Position::toVoxelSpace(tileTarget->getPosition());
+	Position targetVoxel (Position::toVoxelSpace(tileTarget->getPosition()));
 
 	std::vector<Position> trj;
 
@@ -1193,41 +1193,41 @@ bool TileEngine::canTargetTilepart(
 		foundMinZ,
 		foundMaxZ;
 
+	switch (tilePart)
+	{
+		case O_FLOOR:
+			spiralArray = sliceObjectSpiral;
+			spiralCount = 41;
+			foundMinZ =
+			foundMaxZ = true;
+			zMin =
+			zMax = 0;
+			break;
 
-	if (tilePart == O_OBJECT)
-	{
-		spiralArray = sliceObjectSpiral;
-		spiralCount = 41;
-		foundMinZ =
-		foundMaxZ = false;
-	}
-	else if (tilePart == O_NORTHWALL)
-	{
-		spiralArray = northWallSpiral;
-		spiralCount = 7;
-		foundMinZ =
-		foundMaxZ = false;
-	}
-	else if (tilePart == O_WESTWALL)
-	{
-		spiralArray = westWallSpiral;
-		spiralCount = 7;
-		foundMinZ =
-		foundMaxZ = false;
-	}
-	else if (tilePart == O_FLOOR)
-	{
-		spiralArray = sliceObjectSpiral;
-		spiralCount = 41;
-		foundMinZ =
-		foundMaxZ = true;
-		zMin =
-		zMax = 0;
-	}
-	else
-	{
-		//Log(LOG_INFO) << "TileEngine::canTargetTilepart() EXIT, ret False (tilePart is not a tileObject)";
-		return false;
+		case O_WESTWALL:
+			spiralArray = westWallSpiral;
+			spiralCount = 7;
+			foundMinZ =
+			foundMaxZ = false;
+			break;
+
+		case O_NORTHWALL:
+			spiralArray = northWallSpiral;
+			spiralCount = 7;
+			foundMinZ =
+			foundMaxZ = false;
+			break;
+
+		case O_OBJECT:
+			spiralArray = sliceObjectSpiral;
+			spiralCount = 41;
+			foundMinZ =
+			foundMaxZ = false;
+			break;
+
+		default:
+			//Log(LOG_INFO) << "TileEngine::canTargetTilepart() EXIT, ret False (tilePart is not a tileObject)";
+			return false;
 	}
 
 
@@ -1242,8 +1242,8 @@ bool TileEngine::canTargetTilepart(
 				++i)
 		{
 			int
-				tX = spiralArray[i * 2],
-				tY = spiralArray[i * 2 + 1];
+				tX (spiralArray[i * 2]),
+				tY (spiralArray[i * 2 + 1]);
 
 			if (detVoxelType(
 						Position(
@@ -1259,9 +1259,9 @@ bool TileEngine::canTargetTilepart(
 		}
 	}
 	//Log(LOG_INFO) << "canTargetTilepart minZ = " << zMin;
+
 	if (foundMinZ == false)
 		return false; // empty object!!!
-
 
 	for (int
 			j = 10;
@@ -1274,8 +1274,8 @@ bool TileEngine::canTargetTilepart(
 				++i)
 		{
 			int
-				tX = spiralArray[i * 2],
-				tY = spiralArray[i * 2 + 1];
+				tX (spiralArray[i * 2]),
+				tY (spiralArray[i * 2 + 1]);
 
 			if (detVoxelType(
 						Position(
@@ -1296,10 +1296,8 @@ bool TileEngine::canTargetTilepart(
 	{
 		if (zMin > zMax) zMin = zMax;
 
-		const size_t
-			zRange = static_cast<size_t>(std::min(11, zMax - zMin + 1)); // stay within bounds of heightFromCenter[].
-		const int
-			zCenter = (zMax + zMin) / 2;
+		const size_t zRange (static_cast<size_t>(std::min(11, zMax - zMin + 1))); // stay within bounds of heightFromCenter[].
+		const int zCenter ((zMax + zMin) / 2);
 
 		for (size_t
 				j = 0;
@@ -1319,12 +1317,12 @@ bool TileEngine::canTargetTilepart(
 				scanVoxel->y = targetVoxel.y + spiralArray[i * 2 + 1];
 
 				trj.clear();
-				const VoxelType voxelTest = plotLine(
+				const VoxelType voxelTest (plotLine(
 												*originVoxel,
 												*scanVoxel,
 												false,
 												&trj,
-												excludeUnit);
+												excludeUnit));
 				if (voxelTest == static_cast<VoxelType>(tilePart)								// bingo. MapDataType & VoxelType correspond
 					&& Position::toTileSpace(trj.at(0)) == Position::toTileSpace(*scanVoxel))	// so do Tiles.
 				{
@@ -2125,10 +2123,9 @@ void TileEngine::hit(
 }
 
 /**
- * Handles explosions.
+ * Handles blast-propagation of explosions.
  * @note Called from ExplosionBState.
- * @note
- * HE/ smoke/ fire explodes in a circular pattern on 1 level only.
+ * HE/smoke/fire explodes in a circular pattern on 1 level only.
  * HE however damages floor tiles of the above level. Not the units on it.
  * HE destroys an object if its power is higher than the object's armor
  * then HE blockage is applied for further propagation.
@@ -2841,7 +2838,13 @@ void TileEngine::explode(
 				i != _battleSave->getItems()->end();
 				++i)
 		{
-			(*i)->setFuse(-1);
+			switch ((*i)->getRules()->getBattleType())
+			{
+				case BT_GRENADE:
+				case BT_PROXYGRENADE:
+				case BT_FLARE:
+					(*i)->setFuse(-1);
+			}
 		}
 	}
 
@@ -2854,12 +2857,12 @@ void TileEngine::explode(
 }
 
 /**
- * Calculates the amount of power that is blocked as it passes
- * from one tile to another on the same z-level.
+ * Calculates the quantity of power that is blocked as it passes from one Tile
+ * to another on the same z-level.
  * @param tileStart	- pointer to tile where the power starts
  * @param tileStop	- pointer to adjacent tile where the power ends
  * @param dType		- type of power (RuleItem.h)
- * @return, -99 special case for Content & bigWalls to block vision and still get revealed, and for invalid tiles also
+ * @return,	-99 special case for Content & bigWalls to block vision and still get revealed, and for invalid tiles
  *			-1 hardblock power / vision (can be less than -1)
  *			 0 no block
  *			 1+ variable power blocked
@@ -2870,11 +2873,6 @@ int TileEngine::horizontalBlockage(
 		const DamageType dType) const
 {
 	//Log(LOG_INFO) << "TileEngine::horizontalBlockage()";
-	bool visLike (dType == DT_NONE
-			   || dType == DT_IN
-			   || dType == DT_STUN
-			   || dType == DT_SMOKE);
-
 	if (tileStart == nullptr // safety checks
 		|| tileStop == nullptr
 		|| tileStart->getPosition().z != tileStop->getPosition().z)
@@ -2886,9 +2884,21 @@ int TileEngine::horizontalBlockage(
 	Pathfinding::vectorToDirection(
 							tileStop->getPosition() - tileStart->getPosition(),
 							dir);
-	if (dir == -1) // tileStart == tileStop
-		return 0;
+	if (dir == -1) return 0; // tileStart == tileStop
 
+
+	bool visLike;
+	switch (dType)
+	{
+		case DT_NONE:
+		case DT_IN:
+		case DT_STUN:
+		case DT_SMOKE:
+			visLike = true;
+
+		default:
+			visLike = false;
+	}
 
 	static const Position
 		posNorth	(Position( 0,-1, 0)),
@@ -2920,7 +2930,7 @@ int TileEngine::horizontalBlockage(
 			break;
 
 		case 1: // north east
-			if (visLike)
+			if (visLike == true)
 			{
 				block = blockage( // up+right
 								tileStart,
@@ -3040,7 +3050,7 @@ int TileEngine::horizontalBlockage(
 			break;
 
 		case 3: // south east
-			if (visLike)
+			if (visLike == true)
 			{
 				block = blockage( // down+right
 								_battleSave->getTile(tileStart->getPosition() + posSouth),
@@ -3160,7 +3170,7 @@ int TileEngine::horizontalBlockage(
 			break;
 
 		case 5: // south west
-			if (visLike)
+			if (visLike == true)
 			{
 				block = blockage( // down+left
 								_battleSave->getTile(tileStart->getPosition() + posSouth),
@@ -3282,7 +3292,7 @@ int TileEngine::horizontalBlockage(
 			break;
 
 		case 7: // north west
-			if (visLike)
+			if (visLike == true)
 			{
 				block = blockage( // up+left
 								tileStart,
@@ -3403,7 +3413,7 @@ int TileEngine::horizontalBlockage(
 				return -1;
 
 			//Log(LOG_INFO) << "explode End: hardblock";
-			return POWER_BLOCK;
+			return HARD_BLOCK;
 		}
 	}
 
@@ -3412,15 +3422,17 @@ int TileEngine::horizontalBlockage(
 }
 
 /**
- * Calculates the amount of power that is blocked going from one tile to another on a different z-level.
- * Can cross more than one level (used for lighting). Only floor & object tiles are taken into account ... not really!
+ * Calculates the quantity of power that is blocked going from one tile to
+ * another on a different z-level.
+ * @note Can cross more than one level (used for lighting). Only floor- and
+ * object-parts are taken into account ... not really!
  * @param tileStart	- pointer to Tile where the power starts
  * @param tileStop	- pointer to adjacent Tile where the power ends
  * @param dType		- DamageType of power (RuleItem.h)
- * @return, (int)block	-99 special case for Content-objects to block vision, and for invalid tiles
- *						-1 hardblock power / vision (can be less than -1)
- *						 0 no block
- *						 1+ variable power blocked
+ * @return,	-99 special case for Content-objects to block vision, and for invalid tiles
+ *			-1 hardblock power / vision (can be less than -1)
+ *			 0 no block
+ *			 1+ variable power blocked
  */
 int TileEngine::verticalBlockage(
 		const Tile* const tileStart,
@@ -3551,8 +3563,8 @@ int TileEngine::verticalBlockage(
  * @param dType The type of power/damage.
  * @param skipObject
  * @return Amount of blockage of this power.
- */
-/* int TileEngine::verticalBlockage(Tile *tileStart, Tile *tileStop, DamageType dType, bool skipObject)
+ *
+int TileEngine::verticalBlockage(Tile *tileStart, Tile *tileStop, DamageType dType, bool skipObject)
 {
 	int block = 0;
 
@@ -3603,306 +3615,450 @@ int TileEngine::verticalBlockage(
 } */
 
 /**
- * Calculates the amount of power or LoS/FoV/LoF that various types of
- * walls/bigwalls or floors or object parts of a tile blocks.
+ * Calculates the quantity of power or LoS/FoV/LoF blocked by various types of
+ * walls or floors or object-parts/bigwalls of a Tile.
  * @param startTile		- pointer to tile where the power starts
  * @param partType		- the part of the tile that the power tries to go through (MapData.h)
  * @param dType			- the type of power (RuleItem.h) DT_NONE if line-of-vision
- * @param dir			- direction the power travels	-1	walls & floors (default)
+ * @param dir			- direction the power travels	-1	walls & floors (default -1)
  *														 0+	big-walls & content
  *						  Note: Think of 'dir' as the edge or side of the current Tile
  *						  (not as a direction of travel).
  * @param isStartTile	- true if the start tile is being examined for bigWalls;
- *						  used only when dir is specified (default: false)
+ *						  used only when dir is specified (default false)
  * @param isTrueDir		- for checking if dir is *really* from the direction of sight (true)
  *						  or, in the case of some bigWall determinations, perpendicular to it (false);
- *						  used only when dir is specified (default: false)
- * @return, (int)block	-99 special case for invalid tiles
- *						-1 hardblock power / vision
- *						 0 no block
- *						 1+ variable power blocked
+ *						  used only when dir is specified (default false)
+ * @return,	-99 special case for invalid tiles
+ *			-1 hardblock power / vision
+ *			 0 no block
+ *			 1+ variable power blocked
  */
-int TileEngine::blockage(
+int TileEngine::blockage( // private.
 		const Tile* const tile,
 		const MapDataType partType,
-		const DamageType dType,
+		/*const*/ DamageType dType,
 		const int dir,
 		const bool isStartTile,
 		const bool isTrueDir) const
 {
-	//if (_debug) Log(LOG_INFO) << " "; // lag to file
-	//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() dir " << dir; // lag to file
-	const bool visLike (dType == DT_NONE
-					 || dType == DT_SMOKE
-					 || dType == DT_STUN
-					 || dType == DT_IN);
+	//if (_debug) Log(LOG_INFO) << " "; // lag to file!!!
+	//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() dir " << dir;
+	if (tile == nullptr) return 0;
 
-	if (tile == nullptr || tile->isUfoDoorOpen(partType) == true)	// probably outside the map here
-	{																// open ufo doors are actually still closed behind the scenes
-		//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret ( no tile OR ufo-door open )"; // lag to file
-		return 0;
-	}
+	MapData* const part (tile->getMapData(partType));
 
-	if (tile->getMapData(partType) != nullptr)
+	if (part != nullptr && tile->isUfoDoorOpen(partType) == false)
 	{
+		if (dType == DT_STUN) dType = DT_SMOKE; // TODO: Workaround until get MapData/MapDataSets are sorted out properly.
+
+
+		bool visLike;
+		switch (dType)
+		{
+			case DT_NONE:
+			case DT_SMOKE:
+			case DT_STUN:
+			case DT_IN:
+				visLike = true;
+				break;
+
+			default:
+				visLike = false;
+		}
+
 		bool diagBigwallPass (false); // spaghetti strand #397
 
-		//if (_debug) Log(LOG_INFO) << ". dir = " << dir << " getMapData(partType) stopLOS() = " << tile->getMapData(partType)->stopLOS();
-		if (dir == -1) // regular north/west wall (not BigWall), or it's a floor, or a Content-object (incl. BigWall) vs upward-diagonal.
+		//if (_debug) Log(LOG_INFO) << ". dir = " << dir << " getMapData(partType) stopLOS() = " << part->stopLOS();
+		switch (dir)
 		{
-			if (visLike == true)
-			{
-				if ((tile->getMapData(partType)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
-							|| (dType == DT_SMOKE && tile->getMapData(partType)->getBlock(DT_SMOKE) == 1)
-							|| (dType == DT_IN && tile->getMapData(partType)->blockFire() == true))
-						&& (tile->getMapData(partType)->getPartType() == O_OBJECT // this one is for verticalBlockage() only.
-							|| tile->getMapData(partType)->getPartType() == O_NORTHWALL
-							|| tile->getMapData(partType)->getPartType() == O_WESTWALL)
-					|| tile->getMapData(partType)->getPartType() == O_FLOOR)	// all floors that block LoS should have their stopLOS flag set true if not gravLift floor.
-				{																// Might want to check hasNoFloor() flag.
-					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[0] partType = " << partType << " " << tile->getPosition();
-					return POWER_BLOCK;
-				}
-			}
-			else if (tile->getMapData(partType)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
-				&& _powerE > -1
-				&& _powerE < tile->getMapData(partType)->getArmor() * 2) // terrain absorbs 200% damage from DT_HE!
-			{
-				//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[1] partType = " << partType << " " << tile->getPosition();
-				return POWER_BLOCK;
-			}
-		}
-		else // dir > -1 -> OBJECT partType. (BigWalls & content) *always* an OBJECT-partType gets passed in through here, and *with* a direction.
-		{
-			const BigwallType bigWall (tile->getMapData(O_OBJECT)->getBigwall()); // 0..9 or, per MCD.
-			//if (_debug) Log(LOG_INFO) << ". dir = " << dir << " bigWall = " << bigWall;
-
-			if (_powerE != -1)
-			{
-				switch (dir)
+			case -1: // regular north/west wall (not BigWall), or it's a floor, or a Content-object (incl. BigWall) vs upward-diagonal.
+				if (visLike == true)
 				{
-				case 0:
-					if ((_dirRay > 134 && _dirRay < 316
-							&& bigWall == BIGWALL_NESW)
-						|| (_dirRay > 44 && _dirRay < 226
-							&& bigWall == BIGWALL_NWSE))
+					bool block;
+					switch (partType)
 					{
-						diagBigwallPass = true;
-					}
-					break;
-				case 2:
-					if ((((_dirRay > -1 && _dirRay < 136)
-								|| (_dirRay > 314 && _dirRay < 361))
-							&& bigWall == BIGWALL_NESW)
-						|| (_dirRay > 44 && _dirRay < 226
-							&& bigWall == BIGWALL_NWSE))
-					{
-						diagBigwallPass = true;
-					}
-					break;
-				case 4:
-					if ((((_dirRay > -1 && _dirRay < 136)
-								|| (_dirRay > 314 && _dirRay < 361))
-							&& bigWall == BIGWALL_NESW)
-						|| (((_dirRay > 224 && _dirRay < 361)
-								|| (_dirRay > -1 && _dirRay < 46))
-							&& bigWall == BIGWALL_NWSE))
-					{
-						diagBigwallPass = true;
-					}
-					break;
-				case 6:
-					if ((_dirRay > 134 && _dirRay < 316
-							&& bigWall == BIGWALL_NESW)
-						|| (((_dirRay > 224 && _dirRay < 361)
-								|| (_dirRay > -1 && _dirRay < 46))
-							&& bigWall == BIGWALL_NWSE))
-					{
-						diagBigwallPass = true;
-					}
-				}
-			}
+						case O_WESTWALL:
+						case O_NORTHWALL:
+						case O_OBJECT: // this one is for verticalBlockage() only.
+							switch (dType) // TODO: Needs Gas/Stun dType added.
+							{
+								default:
+								case DT_NONE:
+									if (part->stopLOS() == true)
+										block = true;
+									else
+										block = false;
+									break;
 
-			if (isStartTile == true) // the ContentOBJECT already got hit as the previous endTile ... but can still block LoS when looking down ...
-			{
-/*				bool diagStop = true; // <- superceded by ProjectileFlyBState::_prjVector ->
-				if (dType == DT_HE && _missileDirection != -1)
-				{
-					const int dirDelta = std::abs(8 + _missileDirection - dir) % 8;
-					diagStop = (dirDelta < 2 || dirDelta > 6);
-				}
-				else diagStop = true; */
+								case DT_SMOKE:
+									if (part->getBlock(DT_SMOKE) == 1)
+										block = true;
+									else
+										block = false;
+									break;
 
-				// this needs to check which side the *missile* is coming from,
-				// although grenades that land on a diagonal bigWall are exempt regardless!!!
-				if (bigWall == BIGWALL_NONE // !visLike, if (only Content-partType == true) -> all DamageTypes ok here (because, origin).
-/*					|| (diagStop == false
-						&& (bigWall == BIGWALL_NESW || bigWall == BIGWALL_NWSE)) */
-					|| (dir == Pathfinding::DIR_DOWN
-						&& tile->getMapData(O_OBJECT)->stopLOS() == false // stopLOS() should join w/ DT_NONE ...
-						&& !(dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
-						&& !(dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true)))
-				{
-					return 0;
+								case DT_IN:
+									if (part->blockFire() == true)
+										block = true;
+									else
+										block = false;
+							}
+							break;
+
+						default:
+						case O_FLOOR:		// Might want to check hasNoFloor() flags:
+							block = true;	// all floors that block LoS should have their stopLOS flag set true if not a gravLift-floor.
+					}
+					if (block == true)
+					{
+						//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[0] partType = " << partType << " " << tile->getPosition();
+						return HARD_BLOCK;
+					}
 				}
-				else if (visLike == false // diagonal BigWall blockage ...
-					&& diagBigwallPass == false
-					&& (bigWall == BIGWALL_NESW || bigWall == BIGWALL_NWSE)
-					&& tile->getMapData(O_OBJECT)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
+				else if (part->stopLOS() == true // use stopLOS to hinder explosions from propagating through BigWalls freely.
 					&& _powerE > -1
-					&& _powerE < tile->getMapData(O_OBJECT)->getArmor() * 2)
+					&& _powerE < part->getArmor() * 2) // terrain absorbs 200% damage from DT_HE!
 				{
-					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[2] partType = " << partType << " " << tile->getPosition();
-					return POWER_BLOCK;
+					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[1] partType = " << partType << " " << tile->getPosition();
+					return HARD_BLOCK;
 				}
-			}
+				break;
 
-			if (visLike == true // hardblock for visLike against non-bigWall content-object.
-				&& bigWall == BIGWALL_NONE
-				&& (tile->getMapData(O_OBJECT)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
-					|| (dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
-					|| (dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true)))
+			default: // (dir > -1) -> VALID object-part (incl. BigWalls) *always* gets passed in here and *with* a direction.
 			{
-				//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[3] partType = " << partType << " " << tile->getPosition();
-				return POWER_BLOCK;
-			}
+				MapData* const object (tile->getMapData(O_OBJECT));
+				const BigwallType bigType (object->getBigwall()); // 0..9 or per MCD.
+				//if (_debug) Log(LOG_INFO) << ". dir = " << dir << " bigWall = " << bigType;
 
-
-			switch (dir) // -> OBJECT partType. ( BigWalls & content )
-			{
-				case 0: // north
-					if (diagBigwallPass == true
-						|| bigWall == BIGWALL_WEST
-						|| bigWall == BIGWALL_EAST
-						|| bigWall == BIGWALL_SOUTH
-						|| bigWall == BIGWALL_E_S)
+				if (_powerE != -1)
+				{
+					switch (dir)
 					{
-						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 0 north )";
-						return 0; // partType By-passed.
+						case 0:
+							switch (bigType)
+							{
+								case BIGWALL_NESW:
+									if (_dirRay > 134 && _dirRay < 316)
+										diagBigwallPass = true;
+									break;
+								case BIGWALL_NWSE:
+									if (_dirRay > 44 && _dirRay < 226)
+										diagBigwallPass = true;
+							}
+							break;
+						case 2:
+							switch (bigType)
+							{
+								case BIGWALL_NESW:
+									if ((_dirRay > -1 && _dirRay < 136) || (_dirRay > 314 && _dirRay < 361))
+										diagBigwallPass = true;
+									break;
+								case BIGWALL_NWSE:
+									if (_dirRay > 44 && _dirRay < 226)
+										diagBigwallPass = true;
+							}
+							break;
+						case 4:
+							switch (bigType)
+							{
+								case BIGWALL_NESW:
+									if ((_dirRay > -1 && _dirRay < 136) || (_dirRay > 314 && _dirRay < 361))
+										diagBigwallPass = true;
+									break;
+								case BIGWALL_NWSE:
+									if ((_dirRay > 224 && _dirRay < 361) || (_dirRay > -1 && _dirRay < 46))
+										diagBigwallPass = true;
+							}
+							break;
+						case 6:
+							switch (bigType)
+							{
+								case BIGWALL_NESW:
+									if (_dirRay > 134 && _dirRay < 316)
+										diagBigwallPass = true;
+									break;
+								case BIGWALL_NWSE:
+									if ((_dirRay > 224 && _dirRay < 361) || (_dirRay > -1 && _dirRay < 46))
+										diagBigwallPass = true;
+							}
 					}
-				break;
+				}
 
-				case 1: // north east
-					if (bigWall == BIGWALL_WEST
-						|| bigWall == BIGWALL_SOUTH
-						|| (bigWall == BIGWALL_NWSE && isTrueDir == false))
-					{
-						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 1 northeast )";
+				if (isStartTile == true) // the object-part already got hit as the previous StopTile but can still block LoS when looking down.
+				{
+//					bool diagStop = true; // <- superceded by ProjectileFlyBState::_prjVector ->
+//					if (dType == DT_HE && _missileDirection != -1)
+//					{
+//						const int dirDelta = std::abs(8 + _missileDirection - dir) % 8;
+//						diagStop = (dirDelta < 2 || dirDelta > 6);
+//					}
+//					else diagStop = true;
+					// this needs to check which side the *missile* is coming from,
+					// although grenades that land on a diagonal BigWall are exempt regardless!!!
+//						|| (diagStop == false && (bigType == BIGWALL_NESW || bigType == BIGWALL_NWSE))
+
+//					if (bigType == BIGWALL_NONE
+//						|| (dir == Pathfinding::DIR_DOWN
+//							&& !(dType == DT_NONE && object->stopLOS() == true)
+//							&& !(dType == DT_SMOKE && object->getBlock(DT_SMOKE) == 1)
+//							&& !(dType == DT_IN && object->blockFire() == true))) { See 2+ scopes below_ }
+
+					if (bigType == BIGWALL_NONE) // for non-visLike ... but if (only non-BigWall object-part) no dTypes are blocked here because, origin.
 						return 0;
-					}
-				break;
 
-				case 2: // east
-					if (diagBigwallPass == true
-						|| bigWall == BIGWALL_NORTH
-						|| bigWall == BIGWALL_SOUTH
-						|| bigWall == BIGWALL_WEST
-						|| bigWall == BIGWALL_W_N)
+					if (visLike == true && dir == Pathfinding::DIR_DOWN) // check if object-part blocks visLike
 					{
-						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 2 east )";
-						return 0;
-					}
-				break;
+						switch (dType) // TODO: Needs Gas/Stun dType added.
+						{
+							case DT_NONE:
+								if (object->stopLOS() == false)
+									return 0;
+								break;
 
-				case 3: // south east
-					if (bigWall == BIGWALL_NORTH
-						|| bigWall == BIGWALL_WEST
-						|| (bigWall == BIGWALL_NESW && isTrueDir == false)
-						|| bigWall == BIGWALL_W_N)
+							case DT_SMOKE:
+								if (object->getBlock(DT_SMOKE) == 0)
+									return 0;
+								break;
+
+							case DT_IN:
+								if (object->blockFire() == false)
+									return 0;
+						}
+					}
+					else if (visLike == false && diagBigwallPass == false) // check diagonal BigWall HE blockage ...
 					{
-						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 3 southeast )";
-						return 0;
+						switch (bigType)
+						{
+							case BIGWALL_NESW:
+							case BIGWALL_NWSE:
+								if (object->stopLOS() == true // use stopLOS to hinder explosions from propagating through BigWalls freely.
+									&& _powerE > -1
+									&& _powerE < object->getArmor() * 2)
+								{
+									//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[2] partType = " << partType << " " << tile->getPosition();
+									return HARD_BLOCK;
+								}
+						}
 					}
-				break;
+				}
 
-				case 4: // south
-					if (diagBigwallPass == true
-						|| bigWall == BIGWALL_WEST
-						|| bigWall == BIGWALL_EAST
-						|| bigWall == BIGWALL_NORTH
-						|| bigWall == BIGWALL_W_N)
+				if (visLike == true && bigType == BIGWALL_NONE) // hardblock for visLike against non-BigWall object-part.
+				{
+					switch (dType) // TODO: Needs Gas/Stun dType added.
 					{
-						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 4 south )";
-						return 0;
+						case DT_NONE:
+							if (object->stopLOS() == true)
+								return HARD_BLOCK;
+							break;
+
+						case DT_SMOKE:
+							if (object->getBlock(DT_SMOKE) == 1)
+								return HARD_BLOCK;
+							break;
+
+						case DT_IN:
+							if (object->blockFire() == true)
+								return HARD_BLOCK;
+
+						//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[3] partType = " << partType << " " << tile->getPosition();
 					}
-				break;
-
-				case 5: // south west
-					if (bigWall == BIGWALL_NORTH
-						|| bigWall == BIGWALL_EAST
-						|| (bigWall == BIGWALL_NWSE && isTrueDir == false))
-					{
-						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 5 southwest )";
-						return 0;
-					}
-				break;
-
-				case 6: // west
-					if (diagBigwallPass == true
-						|| bigWall == BIGWALL_NORTH
-						|| bigWall == BIGWALL_SOUTH
-						|| bigWall == BIGWALL_EAST
-						|| bigWall == BIGWALL_E_S)
-					{
-						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 6 west )";
-						return 0;
-					}
-				break;
-
-				case 7: // north west
-					if (bigWall == BIGWALL_SOUTH
-						|| bigWall == BIGWALL_EAST
-						|| bigWall == BIGWALL_E_S
-						|| (bigWall == BIGWALL_NESW && isTrueDir == false))
-					{
-						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 7 northwest )";
-						return 0;
-					}
-				break;
-
-				case 8: // up
-				case 9: // down
-					if ((bigWall != BIGWALL_NONE			// lets content-objects Block explosions
-							&& bigWall != BIGWALL_BLOCK)	// includes stopLoS (floors handled above under non-directional condition)
-						|| (visLike == true
-							&& tile->getMapData(O_OBJECT)->stopLOS() == false // stopLOS() should join w/ DT_NONE ...
-							&& !(dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
-							&& !(dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true)))
-					{
-						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 8,9 up,down )";
-						return 0;
-					}
-				break;
-
-				default:
-					return 0; // .....
-			}
+				}
 
 
-			// might be Content-partType or remaining-bigWalls block here
-			if (tile->getMapData(O_OBJECT)->stopLOS() == true // use stopLOS to hinder explosions from propagating through bigWalls freely. // stopLOS() should join w/ DT_NONE ...
-				|| (dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
-				|| (dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true))
-			{
+				switch (dir) // -> object-part (incl. BigWalls)
+				{
+					case 0: // north
+						if (diagBigwallPass == true)
+							return 0; // partType By-passed.
+
+						switch (bigType)
+						{
+							case BIGWALL_WEST:
+							case BIGWALL_EAST:
+							case BIGWALL_SOUTH:
+							case BIGWALL_E_S:
+								//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 0 north )";
+								return 0; // partType By-passed.
+						}
+						break;
+
+					case 1: // north east
+						switch (bigType)
+						{
+							case BIGWALL_NWSE:
+								if (isTrueDir == true) break;
+							case BIGWALL_WEST:
+							case BIGWALL_SOUTH:
+								//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 1 northeast )";
+								return 0;
+						}
+						break;
+
+					case 2: // east
+						if (diagBigwallPass == true)
+							return 0;
+
+						switch (bigType)
+						{
+							case BIGWALL_NORTH:
+							case BIGWALL_SOUTH:
+							case BIGWALL_WEST:
+							case BIGWALL_W_N:
+								//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 2 east )";
+								return 0;
+						}
+						break;
+
+					case 3: // south east
+						switch (bigType)
+						{
+							case BIGWALL_NESW:
+								if (isTrueDir == true) break;
+							case BIGWALL_NORTH:
+							case BIGWALL_WEST:
+							case BIGWALL_W_N:
+								//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 3 southeast )";
+								return 0;
+						}
+						break;
+
+					case 4: // south
+						if (diagBigwallPass == true)
+							return 0;
+
+						switch (bigType)
+						{
+							case BIGWALL_WEST:
+							case BIGWALL_EAST:
+							case BIGWALL_NORTH:
+							case BIGWALL_W_N:
+								//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 4 south )";
+								return 0;
+						}
+						break;
+
+					case 5: // south west
+						switch (bigType)
+						{
+							case BIGWALL_NWSE:
+								if (isTrueDir == true) break;
+							case BIGWALL_NORTH:
+							case BIGWALL_EAST:
+								//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 5 southwest )";
+								return 0;
+						}
+						break;
+
+					case 6: // west
+						if (diagBigwallPass == true)
+							return 0;
+
+						switch (bigType)
+						{
+							case BIGWALL_NORTH:
+							case BIGWALL_SOUTH:
+							case BIGWALL_EAST:
+							case BIGWALL_E_S:
+								//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 6 west )";
+								return 0;
+						}
+						break;
+
+					case 7: // north west
+						switch (bigType)
+						{
+							case BIGWALL_NESW:
+								if (isTrueDir == true) break;
+							case BIGWALL_SOUTH:
+							case BIGWALL_EAST:
+							case BIGWALL_E_S:
+								//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 7 northwest )";
+								return 0;
+						}
+						break;
+
+					case Pathfinding::DIR_UP:	// #8 up
+					case Pathfinding::DIR_DOWN:	// #9 down
+						switch (bigType)
+						{
+//							BIGWALL_NONE		// 0 // let object-parts Block explosions
+//							BIGWALL_BLOCK		// 1 // includes stopLoS (floors handled above under non-directional condition)
+							case BIGWALL_NESW:	// 2
+							case BIGWALL_NWSE:	// 3
+							case BIGWALL_WEST:	// 4
+							case BIGWALL_NORTH:	// 5
+							case BIGWALL_EAST:	// 6
+							case BIGWALL_SOUTH:	// 7
+							case BIGWALL_E_S:	// 8
+//							case BIGWALL_W_N	// 9 NOT USED in stock UFO.
+								return 0;
+						}
+
+						if (visLike == true)
+						{
+							switch (dType) // TODO: Needs Gas/Stun dType added.
+							{
+								case DT_NONE:
+									if (object->stopLOS() == false)
+										return 0;
+									break;
+
+								case DT_SMOKE:
+									if (object->getBlock(DT_SMOKE) == 1)
+										return 0;
+									break;
+
+								case DT_IN:
+									if (object->blockFire() == true)
+										return 0;
+
+								//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 8,9 up,down )";
+							}
+						}
+//						break;
+//
+//					default:
+//						return 0; // .....
+				}
+
+
+				// could be object-part or BigWalls block here
 				if (visLike == true
 					|| (diagBigwallPass == false
 						&& _powerE > -1
-						&& _powerE < tile->getMapData(O_OBJECT)->getArmor() * 2)) // terrain absorbs 200% damage from DT_HE!
+						&& _powerE < object->getArmor() * 2)) // terrain absorbs 200% damage from DT_HE.
 				{
-					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " isTrueDir = " << isTrueDir << " Ret 1000[4] partType = " << partType << " " << tile->getPosition();
-					return POWER_BLOCK;
+					switch (dType)
+					{
+						case DT_SMOKE:
+							if (object->getBlock(DT_SMOKE) == 1)
+								return HARD_BLOCK;
+							break;
+
+						case DT_IN:
+							if (object->blockFire() == true)
+								return HARD_BLOCK;
+							break;
+
+						default: // use stopLOS to hinder explosions from propagating through BigWalls freely.
+							if (object->stopLOS() == true)
+								return HARD_BLOCK;
+
+						//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " isTrueDir = " << isTrueDir << " Ret 1000[4] partType = " << partType << " " << tile->getPosition();
+					}
 				}
 			}
 		}
 
 		if (visLike == false && diagBigwallPass == false)	// only non-visLike can get partly blocked; other damage-types
 		{													// are either completely blocked above or get a pass here
-			//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret = " << tile->getMapData(partType)->getBlock(dType);
-			return tile->getMapData(partType)->getBlock(dType);
+			//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret = " << part->getBlock(dType);
+			return part->getBlock(dType);
 		}
 	}
 
-	//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, (no valid partType) ret 0"; // lag to file
+	//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, (no tile OR no valid partType OR ufo-door open) ret 0"; // lag to file!!!
 	return 0; // no Valid [partType].
 }
 
@@ -3930,8 +4086,8 @@ int TileEngine::blockage(
  */
 void TileEngine::detonate(Tile* const tile) const
 {
-	int power (tile->getExplosive()); // <- power that hit the Tile.
-	if (power == 0) return; // no explosive applied to the Tile
+	int power (tile->getExplosive());	// <- power that hit tile.
+	if (power == 0) return;				// <- no explosive applied to tile
 
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "TileEngine::detonate() " << tile->getPosition() << " power = " << power;
@@ -3953,10 +4109,10 @@ void TileEngine::detonate(Tile* const tile) const
 										pos.x,
 										pos.y + 1,
 										pos.z));
-	tiles[3] =										// do floor
-	tiles[4] =										// do westwall
-	tiles[5] =										// do northwall
-	tiles[6] = tile;								// do object
+	tiles[3] =										// tile, do floor
+	tiles[4] =										// tile, do westwall
+	tiles[5] =										// tile, do northwall
+	tiles[6] = tile;								// tile, do object
 
 	tiles[7] = _battleSave->getTile(Position(		// tileNorth, do bigwall south
 										pos.x,
@@ -3966,7 +4122,7 @@ void TileEngine::detonate(Tile* const tile) const
 										pos.x - 1,
 										pos.y,
 										pos.z));
-	static const MapDataType parts[9] =
+	static const MapDataType parts[9]
 	{
 		O_FLOOR,		// 0 - in tileAbove
 		O_WESTWALL,		// 1 - in tileEast
@@ -3985,100 +4141,132 @@ void TileEngine::detonate(Tile* const tile) const
 		dieMCD;
 
 	MapDataType
-		partType,
+		partTest,
 		partT;
 
 	bool diagWallDestroyed (true);
 
+	Tile* tileTest;
 	for (size_t
-			i = 8;
+			i = 8u;
 			i != std::numeric_limits<size_t>::max();
 			--i)
 	{
-		if (tiles[i] == nullptr || tiles[i]->getMapData(parts[i]) == nullptr)
+		tileTest = tiles[i];
+		partTest = parts[i];
+
+		if (tileTest == nullptr || tileTest->getMapData(partTest) == nullptr)
 			continue; // no tile or no tile-part
 
-		const BigwallType bigWall (tiles[i]->getMapData(parts[i])->getBigwall());
-
-		if (i > 6
-			&& (!
-				(bigWall == BIGWALL_BLOCK
-					|| bigWall == BIGWALL_E_S
-					|| (i == 8 && bigWall == BIGWALL_EAST)
-					|| (i == 7 && bigWall == BIGWALL_SOUTH))))
-		{
+		if (diagWallDestroyed == false && partTest == O_FLOOR) // when ground shouldn't be destroyed
 			continue;
+
+		if (tile->getMapData(O_OBJECT) != nullptr) // if central tile has object-part
+		{
+			switch (tile->getMapData(O_OBJECT)->getBigwall())
+			{
+				case BIGWALL_E_S: // don't hit tileEast westwall or tileSouth northwall if s/e bigWall exists
+					if (i == 1u || i == 2u) continue;
+					break;
+
+				case BIGWALL_EAST: // don't hit tileEast westwall if eastern bigWall exists
+					if (i == 1u) continue;
+					break;
+
+				case BIGWALL_SOUTH: // don't hit tileSouth northwall if southern bigWall exists
+					if (i == 2u) continue;
+			}
 		}
 
-		if (diagWallDestroyed == false
-			&& parts[i] == O_FLOOR)
-		{
-			continue; // when ground shouldn't be destroyed
-		}
+		const BigwallType bigWall (tileTest->getMapData(partTest)->getBigwall());
 
-		// kL_begin:
-		if (tile->getMapData(O_OBJECT) != nullptr									// if tile has object
-			&& ((i == 1																// don't hit tileEast westwall
-					&& tile->getMapData(O_OBJECT)->getBigwall() == BIGWALL_EAST)	// if eastern bigWall not destroyed
-				|| (i == 2															// don't hit tileSouth northwall
-					&& tile->getMapData(O_OBJECT)->getBigwall() == BIGWALL_SOUTH)))	// if southern bigWall not destroyed
+		switch (i) // don't hit a tile-part that's not supposed to get hit in that tile.
 		{
-			continue;
-		} // kL_end.
+			case 7: // tileNorth bigwall south
+			case 8: // tileWest bigwall east
+				switch (bigWall)
+				{
+//					BIGWALL_BLOCK	// <- always hit this
+//					BIGWALL_E_S		// <- always hit this
+
+					case BIGWALL_NONE: // never hit these if (i= 7 or i= 8)
+					case BIGWALL_NESW:
+					case BIGWALL_NWSE:
+					case BIGWALL_WEST:
+					case BIGWALL_NORTH:
+//					case BIGWALL_W_N: // NOT USED in stock UFO.
+						continue;
+
+					case BIGWALL_SOUTH:
+						if (i == 7u) break;
+						continue;
+
+					case BIGWALL_EAST:
+						if (i == 8u) break;
+						continue;
+				}
+		}
 
 
 		powerTest = power;
-		partType = parts[i];
 
-		if (i == 6
-			&& (bigWall == BIGWALL_NESW || bigWall == BIGWALL_NWSE) // diagonals
-			&& tiles[i]->getMapData(partType)->getArmor() * 2 > powerTest) // not enough to destroy
+		if (i == 6u)
 		{
-			diagWallDestroyed = false;
+			switch (bigWall)
+			{
+				case BIGWALL_NESW: // diagonals
+				case BIGWALL_NWSE:
+					if (tileTest->getMapData(partTest)->getArmor() * 2 > powerTest) // not enough to destroy
+						diagWallDestroyed = false;
+			}
 		}
 
 		// iterate through tile-part armor and destroy all deathtiles if enough powerTest
-		while (tiles[i]->getMapData(partType) != nullptr
-			&& tiles[i]->getMapData(partType)->getArmor() != 255
-			&& tiles[i]->getMapData(partType)->getArmor() * 2 <= powerTest)
+		while (tileTest->getMapData(partTest) != nullptr
+			&& tileTest->getMapData(partTest)->getArmor() != 255
+			&& tileTest->getMapData(partTest)->getArmor() * 2 <= powerTest)
 		{
 			if (powerTest == power) // only once per initial part destroyed.
 			{
-				for (size_t // get a yes/no volume for the object by checking its loftemps objects.
-						j = 0;
-						j != 12;
+				for (size_t // get a yes/no volume for the object by checking its LoFT-layers.
+						j = 0u;
+						j != LOFT_LAYERS;
 						++j)
 				{
-					if (tiles[i]->getMapData(partType)->getLoftId(j) != 0)
+					if (tileTest->getMapData(partTest)->getLoftId(j) != 0)
 						++density;
 				}
 			}
 
-			powerTest -= tiles[i]->getMapData(partType)->getArmor() * 2;
+			powerTest -= tileTest->getMapData(partTest)->getArmor() * 2;
 
-			if (i == 6
-				&& (bigWall == BIGWALL_NESW || bigWall == BIGWALL_NWSE)) // diagonals for the current tile
+			if (i == 6u)
 			{
-				diagWallDestroyed = true;
+				switch (bigWall)
+				{
+					case BIGWALL_NESW: // diagonals for the central tile
+					case BIGWALL_NWSE:
+						diagWallDestroyed = true;
+				}
 			}
 
 			if (_battleSave->getTacType() == TCT_BASEDEFENSE
-				&& tiles[i]->getMapData(partType)->isBaseObject() == true)
+				&& tileTest->getMapData(partTest)->isBaseObject() == true)
 			{
 				_battleSave->baseDestruct()[tile->getPosition().x / 10]
 										   [tile->getPosition().y / 10].second--;
 			}
 
-			// this follows transformed object parts (object can become a ground - unless your MCDs are correct)
-			dieMCD = tiles[i]->getMapData(partType)->getDieMCD();
+			// this follows transformed object-parts (object can become a ground - unless your MCDs are correct)
+			dieMCD = tileTest->getMapData(partTest)->getDieMCD();
 			if (dieMCD != 0)
-				partT = tiles[i]->getMapData(partType)->getDataset()->getRecords()->at(static_cast<size_t>(dieMCD))->getPartType();
+				partT = tileTest->getMapData(partTest)->getDataset()->getRecords()->at(static_cast<size_t>(dieMCD))->getPartType();
 			else
-				partT = partType;
+				partT = partTest;
 
-			tiles[i]->destroyTilepart(partType, _battleSave); // DESTROY HERE <-|
+			tileTest->destroyTilepart(partTest, _battleSave); // DESTROY HERE <-|
 
-			partType = partT;
+			partTest = partT;
 		}
 	}
 
@@ -4254,19 +4442,18 @@ DoorResult TileEngine::unitOpensDoor(
 						{
 							case DR_WOOD_OPEN:
 								if (rtClick == true)
-								{
 									calcTu = true;
 									switch (partType)
 									{
+										default:
 										case O_WESTWALL:
 											partType = O_NORTHWALL;
 											break;
 										case O_NORTHWALL:
-										default:
 											partType = O_WESTWALL;
 									}
-								}
 								break;
+
 							case DR_UFO_OPEN:
 								openAdjacentDoors(posDoor, partType); // no break.
 							case DR_ERR_TU:
@@ -4304,15 +4491,15 @@ DoorResult TileEngine::unitOpensDoor(
 					// This seems redundant but hey maybe it removes now-unseen units from a unit's visible-units vector ....
 					//
 					// It is redundant. And instead of calcFoV for position it should be calcFoV for all.
-/*					const std::vector<BattleUnit*>* const hostileUnits = unit->getHostileUnits();
-					for (size_t
-							i = 0;
-							i != hostileUnits->size();
-							++i)
-					{
-						//Log(LOG_INFO) << "calcFoV hostile";
-						calculateFOV(hostileUnits->at(i)); // calculate FoV for all hostile units that are visible to this unit.
-					} */
+//					const std::vector<BattleUnit*>* const hostileUnits (unit->getHostileUnits());
+//					for (size_t
+//							i = 0;
+//							i != hostileUnits->size();
+//							++i)
+//					{
+//						//Log(LOG_INFO) << "calcFoV hostile";
+//						calculateFOV(hostileUnits->at(i)); // calculate FoV for all hostile units that are visible to this unit.
+//					}
 				}
 			}
 			else // not enough TU
@@ -4438,8 +4625,8 @@ DoorResult TileEngine::unitOpensDoor(
  * @param pos	- the starting position
  * @param part	- the wall to test
  * @param dir	- the direction to check out
- */
-/* bool TileEngine::testAdjacentDoor(
+ *
+bool TileEngine::testAdjacentDoor(
 		Position pos,
 		int part,
 		int dir)
@@ -4448,13 +4635,13 @@ DoorResult TileEngine::unitOpensDoor(
 	switch (dir)
 	{
 		// only Northwall-doors are handled at present
-		case 1: offset = Position( 1, 0, 0);	break;	// northwall in tile to east
-		case 3: offset = Position( 1, 1, 0);	break;	// northwall in tile to south-east
-		case 5: offset = Position(-1, 1, 0);	break;	// northwall in tile to south-west
-		case 7: offset = Position(-1, 0, 0);			// northwall in tile to west
+		case 1: offset = Position( 1, 0, 0); break;	// northwall in tile to east
+		case 3: offset = Position( 1, 1, 0); break;	// northwall in tile to south-east
+		case 5: offset = Position(-1, 1, 0); break;	// northwall in tile to south-west
+		case 7: offset = Position(-1, 0, 0);		// northwall in tile to west
 	}
 
-	const Tile* const tile = _battleSave->getTile(pos + offset);
+	const Tile* const tile (_battleSave->getTile(pos + offset));
 	if (tile != nullptr
 		&& tile->getMapData(part) != nullptr
 		&& tile->getMapData(part)->isUfoDoor() == true)
@@ -5234,7 +5421,7 @@ bool TileEngine::validMeleeRange(
 				{
 					voxelOrigin = Position::toVoxelSpaceCentered( // note this is not center of large unit, rather the center of each quadrant.
 															posOrigin,
-															actor->getHeight(true) - 4
+															actor->getHeight(true) + EYE_OFFSET
 																- tileOrigin->getTerrainLevel());
 					if (canTargetUnit(
 								&voxelOrigin,
@@ -5305,7 +5492,7 @@ Position TileEngine::getMeleePosition(const BattleUnit* const actor) const
 				{
 					voxelOrigin = Position::toVoxelSpaceCentered( // note this is not center of large unit, rather the center of each quadrant.
 															posOrigin,
-															actor->getHeight(true) - 4
+															actor->getHeight(true) + EYE_OFFSET
 																- tileOrigin->getTerrainLevel());
 					if (canTargetUnit(
 									&voxelOrigin,
@@ -5373,7 +5560,7 @@ Tile* TileEngine::getExecutionTile(const BattleUnit* const actor) const
 				{
 					voxelOrigin = Position::toVoxelSpaceCentered( // note this is not center of large unit, rather the center of each quadrant.
 															posOrigin,
-															actor->getHeight(true) - 4
+															actor->getHeight(true) + EYE_OFFSET
 																- tileOrigin->getTerrainLevel());
 					if (canTargetTilepart(
 										&voxelOrigin,
@@ -5456,7 +5643,7 @@ int TileEngine::castShadow(const Position& voxel) const
 	return ret;
 }
 
-/*
+/**
  * Traces voxel visibility.
  * @param voxel - reference the voxel coordinates
  * @return, true if visible
@@ -6092,7 +6279,7 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 
 /**
  * Gets the AI to look through a window.
- * @param pos - reference the current Position
+ * @param pos - reference to the current Position
  * @return, direction or -1 if no window found
  */
 int TileEngine::faceWindow(const Position& pos) const
@@ -6274,8 +6461,8 @@ int TileEngine::distSqr( // static.
  * @param pos1 - reference the first Position
  * @param pos2 - reference the second Position
  * @return, distance
- */
-/* double TileEngine::distancePrecise( // static.
+ *
+double TileEngine::distancePrecise( // static.
 		const Position& pos1,
 		const Position& pos2) const
 {
@@ -6308,7 +6495,7 @@ int TileEngine::getDirectionTo( // static.
 		// divide the pie in 4 thetas each at 1/8th before each quarter
 		pi_8 (M_PI / 8.),				// a circle divided into 16 sections (rads) -> 22.5 deg
 		d (0.),							// a bias toward cardinal directions. (0.1..0.12)
-		pie[4] =
+		pie[4]
 		{
 			M_PI - pi_8 - d,			// 2.7488935718910690836548129603696	-> 157.5 deg
 			M_PI * 3. / 4. - pi_8 + d,	// 1.9634954084936207740391521145497	-> 112.5 deg

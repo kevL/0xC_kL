@@ -237,7 +237,7 @@ void MapData::setFlags(
 }
 
 /**
- * Gets the amount of blockage of a certain type.
+ * Gets the quantity of blockage of a specified type.
  * @param dType - DamageType (RuleItem.h)
  * @return, the blockage (0-255)
  */
@@ -261,7 +261,7 @@ int MapData::getBlock(DamageType dType) const
 }
 
 /**
- * Sets the amount of blockage for all types.
+ * Sets the quantity of blockage for all types.
  * @param lightBlock	- light blockage			- Light_Block
  * @param visionBlock	- vision blockage			- Stop_LOS
  * @param heBlock		- high explosive blockage	- HE_Block

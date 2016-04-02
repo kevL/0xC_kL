@@ -42,7 +42,7 @@ RuleTerrain::RuleTerrain(const std::string& type)
 
 /**
  * dTor.
- * @note RuleTerrain only holds mapblocks. Map datafiles are referenced.
+ * @note RuleTerrain only holds MapBlocks. Map datafiles are referenced.
  */
 RuleTerrain::~RuleTerrain()
 {
@@ -54,9 +54,9 @@ RuleTerrain::~RuleTerrain()
 }
 
 /**
- * Loads the terrain from a YAML file.
+ * Loads the RuleTerrain from a YAML file.
  * @param node	- reference a YAML node
- * @param rules	- game's Ruleset
+ * @param rules	- pointer to Ruleset
  */
 void RuleTerrain::load(
 		const YAML::Node& node,
@@ -111,7 +111,7 @@ void RuleTerrain::load(
 }
 
 /**
- * Gets the array of mapblocks.
+ * Gets the array of MapBlocks.
  * @return, pointer to a vector of pointers as an array of MapBlocks
  */
 const std::vector<MapBlock*>* RuleTerrain::getMapBlocks()
@@ -120,7 +120,7 @@ const std::vector<MapBlock*>* RuleTerrain::getMapBlocks()
 }
 
 /**
- * Gets the array of mapdatafiles.
+ * Gets the array of MapDataSets (MCDs).
  * @return, pointer to a vector of pointers as an array of MapDataSets
  */
 const std::vector<MapDataSet*>* RuleTerrain::getMapDataSets()
@@ -129,8 +129,8 @@ const std::vector<MapDataSet*>* RuleTerrain::getMapDataSets()
 }
 
 /**
- * Gets the terrain type.
- * @return, the terrain type
+ * Gets the terrain-type.
+ * @return, the terrain-type
  */
 const std::string& RuleTerrain::getType() const
 {
@@ -138,10 +138,10 @@ const std::string& RuleTerrain::getType() const
 }
 
 /**
- * Gets a random mapblock within the given constraints.
- * @param sizeX - the maximum X size of the mapblock
- * @param sizeY - the maximum Y size of the mapblock
- * @param group - the group Type
+ * Gets a random MapBlock within the given constraints.
+ * @param sizeX - the maximum x-size of the mapblock
+ * @param sizeY - the maximum y-size of the mapblock
+ * @param group - the group-type
  * @param force - true to enforce block-size at the max-size (default true)
  * @return, pointer to a MapBlock or nullptr if none found
  */
@@ -180,7 +180,7 @@ MapBlock* RuleTerrain::getMapBlockRand(
 }
 
 /**
- * Gets a MapBlock with a given type.
+ * Gets a MapBlock of a specified type.
  * @param type - reference the type of a MapBlock
  * @return, pointer to a MapBlock or nullptr if not found
  */
@@ -194,12 +194,11 @@ MapBlock* RuleTerrain::getMapBlock(const std::string& type) const
 		if ((*i)->getType() == type)
 			return *i;
 	}
-
 	return nullptr;
 }
 
 /**
- * Gets a mapdata object.
+ * Gets a MapData object.
  * @param id			- pointer to the ID of the terrain
  * @param mapDataSetId	- pointer to the ID of the MapDataSet
  * @return, pointer to MapData object
@@ -208,9 +207,9 @@ MapData* RuleTerrain::getMapData(
 		unsigned int* id,
 		int* mapDataSetId) const
 {
-	MapDataSet* dataSet = nullptr;
+	MapDataSet* dataSet (nullptr);
 
-	std::vector<MapDataSet*>::const_iterator pDataSet = _mapDataSets.begin();
+	std::vector<MapDataSet*>::const_iterator pDataSet (_mapDataSets.begin());
 	for (
 			;
 			pDataSet != _mapDataSets.end();
@@ -238,8 +237,8 @@ MapData* RuleTerrain::getMapData(
 }
 
 /**
- * Gets the list of civilian types to use on this terrain.
- * @return, list of civilian types to use (default MALE_CIVILIAN and FEMALE_CIVILIAN)
+ * Gets the list of civilian-types to use on this terrain.
+ * @return, list of civilian-types (default MALE_CIVILIAN and FEMALE_CIVILIAN)
  */
 const std::vector<std::string>& RuleTerrain::getCivilianTypes() const
 {
@@ -247,7 +246,7 @@ const std::vector<std::string>& RuleTerrain::getCivilianTypes() const
 }
 
 /**
- * Gets the generation script.
+ * Gets the generation-script.
  * @return, the script to use
  */
 const std::string& RuleTerrain::getScriptType() const
@@ -256,8 +255,8 @@ const std::string& RuleTerrain::getScriptType() const
 }
 
 /**
- * Gets the list of musics this terrain has to choose from.
- * @return, list of track names
+ * Gets the list of music-tracks this terrain can choose from.
+ * @return, list of music-tracks
  */
 const std::vector<std::string>& RuleTerrain::getTerrainMusics() const
 {
@@ -265,10 +264,10 @@ const std::vector<std::string>& RuleTerrain::getTerrainMusics() const
 }
 
 /**
- * Gets the pyjama type.
+ * Gets the pyjama-type.
  * @note Used in BattlescapeGenerator::setTacticalSprites() to outfit soldiers
- * in camo suitable for this Terrain.
- * @return, the pyjama type
+ * in camo suitable for the RuleTerrain.
+ * @return, the pyjama-type
  */
 const std::string& RuleTerrain::getPyjamaType() const
 {
