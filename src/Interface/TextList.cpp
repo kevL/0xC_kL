@@ -370,7 +370,13 @@ void TextList::addRow(
 		...)
 {
 	va_list args; // typedef char*
-	va_start(args, cols);
+	va_start(args, cols); // avoid g++ compiler warnings.
+
+	int ncols;
+	if (cols != 0)
+		ncols = cols;
+	else
+		ncols = 1;
 
 	std::vector<Text*> txtRow;
 	int
@@ -388,7 +394,7 @@ void TextList::addRow(
 
 	for (size_t
 			i = 0;
-			i != static_cast<size_t>(cols);
+			i != static_cast<size_t>(ncols);
 			++i)
 	{
 		Text* const txt (new Text(
@@ -410,7 +416,14 @@ void TextList::addRow(
 		if (_font == _big)	txt->setBig();
 		else				txt->setSmall();
 
-		txt->setText(va_arg(args, wchar_t*));
+		if (cols != 0)
+			txt->setText(va_arg(args, wchar_t*));
+		else
+		{
+			wchar_t d[1];
+			mbstowcs(d, "", 1);
+			txt->setText(d);
+		}
 
 		// Grab this before enabling word-wrap so it can be used to calculate the total row-height below.
 		const int vertPad (_font->getHeight() - txt->getTextHeight());
