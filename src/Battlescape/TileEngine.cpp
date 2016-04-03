@@ -3646,7 +3646,7 @@ int TileEngine::blockage( // private.
 	//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() dir " << dir;
 	if (tile == nullptr) return 0;
 
-	MapData* const part (tile->getMapData(partType));
+	const MapData* const part (tile->getMapData(partType));
 
 	if (part != nullptr && tile->isUfoDoorOpen(partType) == false)
 	{
@@ -3675,7 +3675,6 @@ int TileEngine::blockage( // private.
 			case -1: // regular north/west wall (not BigWall), or it's a floor, or a Content-object (incl. BigWall) vs upward-diagonal.
 				if (visLike == true)
 				{
-					bool block;
 					switch (partType)
 					{
 						case O_WESTWALL:
@@ -3686,34 +3685,24 @@ int TileEngine::blockage( // private.
 								default:
 								case DT_NONE:
 									if (part->stopLOS() == true)
-										block = true;
-									else
-										block = false;
+										return HARD_BLOCK;
 									break;
 
 								case DT_SMOKE:
 									if (part->getBlock(DT_SMOKE) == 1)
-										block = true;
-									else
-										block = false;
+										return HARD_BLOCK;
 									break;
 
 								case DT_IN:
 									if (part->blockFire() == true)
-										block = true;
-									else
-										block = false;
+										return HARD_BLOCK;
 							}
 							break;
 
-						default:
-						case O_FLOOR:		// Might want to check hasNoFloor() flags:
-							block = true;	// all floors that block LoS should have their stopLOS flag set true if not a gravLift-floor.
-					}
-					if (block == true)
-					{
+						case O_FLOOR:			// Might want to check hasNoFloor() flags:
+							return HARD_BLOCK;	// all floors that block LoS should have their stopLOS flag set true if not a gravLift-floor.
+
 						//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[0] partType = " << partType << " " << tile->getPosition();
-						return HARD_BLOCK;
 					}
 				}
 				else if (part->stopLOS() == true // use stopLOS to hinder explosions from propagating through BigWalls freely.
@@ -3727,7 +3716,7 @@ int TileEngine::blockage( // private.
 
 			default: // (dir > -1) -> VALID object-part (incl. BigWalls) *always* gets passed in here and *with* a direction.
 			{
-				MapData* const object (tile->getMapData(O_OBJECT));
+				const MapData* const object (tile->getMapData(O_OBJECT));
 				const BigwallType bigType (object->getBigwall()); // 0..9 or per MCD.
 				//if (_debug) Log(LOG_INFO) << ". dir = " << dir << " bigWall = " << bigType;
 
@@ -3978,8 +3967,8 @@ int TileEngine::blockage( // private.
 						}
 						break;
 
-					case Pathfinding::DIR_UP:	// #8 up
-					case Pathfinding::DIR_DOWN:	// #9 down
+					case Pathfinding::DIR_UP:	// #8
+					case Pathfinding::DIR_DOWN:	// #9
 						switch (bigType)
 						{
 //							BIGWALL_NONE		// 0 // let object-parts Block explosions
@@ -4075,7 +4064,7 @@ int TileEngine::blockage( // private.
 } */
 
 /**
- * Applies the explosive power to tile parts.
+ * Applies the explosive power to tile-parts.
  * @note This is where the actual destruction takes place.
  * 9 parts are affected:
  * - 2 walls
@@ -4109,10 +4098,10 @@ void TileEngine::detonate(Tile* const tile) const
 										pos.x,
 										pos.y + 1,
 										pos.z));
-	tiles[3] =										// tile, do floor
-	tiles[4] =										// tile, do westwall
-	tiles[5] =										// tile, do northwall
-	tiles[6] = tile;								// tile, do object
+	tiles[3] =										// central tile, do floor
+	tiles[4] =										// central tile, do westwall
+	tiles[5] =										// central tile, do northwall
+	tiles[6] = tile;								// central tile, do object
 
 	tiles[7] = _battleSave->getTile(Position(		// tileNorth, do bigwall south
 										pos.x,
@@ -4127,10 +4116,10 @@ void TileEngine::detonate(Tile* const tile) const
 		O_FLOOR,		// 0 - in tileAbove
 		O_WESTWALL,		// 1 - in tileEast
 		O_NORTHWALL,	// 2 - in tileSouth
-		O_FLOOR,		// 3 - in tile
-		O_WESTWALL,		// 4 - in tile
-		O_NORTHWALL,	// 5 - in tile
-		O_OBJECT,		// 6 - in tile
+		O_FLOOR,		// 3 - in central tile
+		O_WESTWALL,		// 4 - in central tile
+		O_NORTHWALL,	// 5 - in central tile
+		O_OBJECT,		// 6 - in central tile
 		O_OBJECT,		// 7 - in tileNorth, bigwall south
 		O_OBJECT		// 8 - in tileWest, bigwall east
 	};
@@ -4146,20 +4135,20 @@ void TileEngine::detonate(Tile* const tile) const
 
 	bool diagWallDestroyed (true);
 
+	MapData* part;
+
 	Tile* tileTest;
 	for (size_t
 			i = 8u;
 			i != std::numeric_limits<size_t>::max();
 			--i)
 	{
-		tileTest = tiles[i];
-		partTest = parts[i];
-
-		if (tileTest == nullptr || tileTest->getMapData(partTest) == nullptr)
-			continue; // no tile or no tile-part
-
-		if (diagWallDestroyed == false && partTest == O_FLOOR) // when ground shouldn't be destroyed
+		if ((tileTest = tiles[i]) == nullptr
+			|| ((partTest = parts[i]) == O_FLOOR && diagWallDestroyed == false) // don't hit Floor if there's still a BigWall
+			|| (part = tileTest->getMapData(partTest)) == nullptr)
+		{
 			continue;
+		}
 
 		if (tile->getMapData(O_OBJECT) != nullptr) // if central tile has object-part
 		{
@@ -4178,7 +4167,7 @@ void TileEngine::detonate(Tile* const tile) const
 			}
 		}
 
-		const BigwallType bigWall (tileTest->getMapData(partTest)->getBigwall());
+		const BigwallType bigWall (part->getBigwall());
 
 		switch (i) // don't hit a tile-part that's not supposed to get hit in that tile.
 		{
@@ -4198,12 +4187,11 @@ void TileEngine::detonate(Tile* const tile) const
 						continue;
 
 					case BIGWALL_SOUTH:
-						if (i == 7u) break;
-						continue;
+						if (i != 7u) continue;
+						break;
 
 					case BIGWALL_EAST:
-						if (i == 8u) break;
-						continue;
+						if (i != 8u) continue;
 				}
 		}
 
@@ -4216,15 +4204,15 @@ void TileEngine::detonate(Tile* const tile) const
 			{
 				case BIGWALL_NESW: // diagonals
 				case BIGWALL_NWSE:
-					if (tileTest->getMapData(partTest)->getArmor() * 2 > powerTest) // not enough to destroy
+					if (part->getArmor() * 2 > powerTest) // not enough to destroy
 						diagWallDestroyed = false;
 			}
 		}
 
-		// iterate through tile-part armor and destroy all deathtiles if enough powerTest
-		while (tileTest->getMapData(partTest) != nullptr
-			&& tileTest->getMapData(partTest)->getArmor() != 255
-			&& tileTest->getMapData(partTest)->getArmor() * 2 <= powerTest)
+		// iterate through tile-part's armor and destroy all death-tiles if enough powerTest
+		while (part != nullptr
+			&& part->getArmor() != 255
+			&& part->getArmor() * 2 <= powerTest)
 		{
 			if (powerTest == power) // only once per initial part destroyed.
 			{
@@ -4233,12 +4221,12 @@ void TileEngine::detonate(Tile* const tile) const
 						j != LOFT_LAYERS;
 						++j)
 				{
-					if (tileTest->getMapData(partTest)->getLoftId(j) != 0)
+					if (part->getLoftId(j) != 0)
 						++density;
 				}
 			}
 
-			powerTest -= tileTest->getMapData(partTest)->getArmor() * 2;
+			powerTest -= part->getArmor() * 2;
 
 			if (i == 6u)
 			{
@@ -4251,22 +4239,21 @@ void TileEngine::detonate(Tile* const tile) const
 			}
 
 			if (_battleSave->getTacType() == TCT_BASEDEFENSE
-				&& tileTest->getMapData(partTest)->isBaseObject() == true)
+				&& part->isBaseObject() == true)
 			{
 				_battleSave->baseDestruct()[tile->getPosition().x / 10]
 										   [tile->getPosition().y / 10].second--;
 			}
 
-			// this follows transformed object-parts (object can become a ground - unless your MCDs are correct)
-			dieMCD = tileTest->getMapData(partTest)->getDieMCD();
-			if (dieMCD != 0)
-				partT = tileTest->getMapData(partTest)->getDataset()->getRecords()->at(static_cast<size_t>(dieMCD))->getPartType();
+			// This tracks dead object-parts (object-part can become a floor-part ... unless your MCDs are correct!)
+			if ((dieMCD = part->getDieMCD()) != 0)
+				partT = part->getDataset()->getRecords()->at(static_cast<size_t>(dieMCD))->getPartType();
 			else
 				partT = partTest;
 
-			tileTest->destroyTilepart(partTest, _battleSave); // DESTROY HERE <-|
+			tileTest->destroyTilepart(partTest, _battleSave); // DESTROY HERE <-|||
 
-			partTest = partT;
+			part = tileTest->getMapData(partTest = partT);
 		}
 	}
 
