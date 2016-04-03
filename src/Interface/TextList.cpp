@@ -360,8 +360,8 @@ size_t TextList::getVisibleRows() const
 }
 
 /**
- * Adds a new row of text to this TextList automatically creating the required Text
- * objects lined up where they need to be.
+ * Adds a row of text to this TextList automatically creating the required
+ * Text-objects lined up where they need to be.
  * @param cols	- number of columns
  * @param ...	- text for each cell in the new row
  */
@@ -374,20 +374,28 @@ void TextList::addRow(
 
 	std::vector<Text*> txtRow;
 	int
-		rowOffset_x	(0),
+		rowOffset_x	(0), // x/y-values are relative to the TextList's Surface
+		rowOffset_y,
 		qtyRows		(1),
 		rowHeight	(0);
+
+	if (_texts.empty() == false)
+		rowOffset_y = _texts.back().front()->getY()
+					+ _texts.back().front()->getHeight()
+					+ _font->getSpacing();
+	else
+		rowOffset_y = 0;
 
 	for (size_t
 			i = 0;
 			i != static_cast<size_t>(cols);
 			++i)
 	{
-		Text* const txt (new Text( // place text
+		Text* const txt (new Text(
 								_columns[i],
 								_font->getHeight(),
 								_margin + rowOffset_x,
-								getY()));
+								rowOffset_y));
 
 		txt->setPalette(this->getPalette());
 		txt->initText(_big, _small, _lang);
@@ -404,11 +412,10 @@ void TextList::addRow(
 
 		txt->setText(va_arg(args, wchar_t*));
 
-		// grab this before enabling word-wrap so it can be used to calculate the total row-height below
+		// Grab this before enabling word-wrap so it can be used to calculate the total row-height below.
 		const int vertPad (_font->getHeight() - txt->getTextHeight());
 
-		if (_wrap == true // wordwrap text if necessary
-			&& txt->getTextWidth() > txt->getWidth())
+		if (_wrap == true && txt->getTextWidth() > txt->getWidth())
 		{
 //			txt->setHeight(_font->getHeight() * 2 + _font->getSpacing());
 			txt->setWordWrap(true, true);
@@ -419,8 +426,7 @@ void TextList::addRow(
 		rowHeight = std::max(rowHeight,
 							 txt->getTextHeight() + vertPad);
 
-		if (_dot == true // place dots between text
-			&& i < static_cast<size_t>(cols) - 1)
+		if (_dot == true && i < static_cast<size_t>(cols) - 1)
 		{
 			std::wstring buf (txt->getText());
 
@@ -453,13 +459,11 @@ void TextList::addRow(
 			i = 0;
 			i != qtyRows;
 			++i)
-	{
 		_rows.push_back(_texts.size() - 1);
-	}
 
 
-	if (_arrowPos != -1) // place arrow-buttons
-	{
+	if (_arrowPos != -1)	// place arrow-buttons
+	{						// Position defined wrt main window - *not* the TextList's Surface.
 		ArrowShape
 			shape1,
 			shape2;

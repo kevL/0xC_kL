@@ -4209,7 +4209,7 @@ void TileEngine::detonate(Tile* const tile) const
 			}
 		}
 
-		// iterate through tile-part's armor and destroy all death-tiles if enough powerTest
+		// Check tile-part's HP then iterate through and destroy its death-tiles if enough powerTest.
 		while (part != nullptr
 			&& part->getArmor() != 255
 			&& part->getArmor() * 2 <= powerTest)
