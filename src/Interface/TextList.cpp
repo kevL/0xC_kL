@@ -362,7 +362,7 @@ size_t TextList::getVisibleRows() const
 /**
  * Adds a row of text to this TextList automatically creating the required
  * Text-objects lined up where they need to be.
- * @param cols	- number of columns
+ * @param cols	- quantity of columns
  * @param ...	- text for each cell in the new row
  */
 void TextList::addRow(
@@ -393,14 +393,14 @@ void TextList::addRow(
 		rowOffset_y = 0;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != static_cast<size_t>(ncols);
 			++i)
 	{
 		Text* const txt (new Text(
 								_columns[i],
 								_font->getHeight(),
-								_margin + rowOffset_x,
+								rowOffset_x + _margin,
 								rowOffset_y));
 
 		txt->setPalette(this->getPalette());
@@ -421,7 +421,7 @@ void TextList::addRow(
 		else
 		{
 			wchar_t d[1];
-			mbstowcs(d, "", 1);
+			std::mbstowcs(d, "", 1);
 			txt->setText(d);
 		}
 
@@ -439,7 +439,8 @@ void TextList::addRow(
 		rowHeight = std::max(rowHeight,
 							 txt->getTextHeight() + vertPad);
 
-		if (_dot == true && i < static_cast<size_t>(cols) - 1)
+		if (_dot == true
+			&& cols != 0 && i < static_cast<size_t>(cols) - 1)
 		{
 			std::wstring buf (txt->getText());
 
@@ -449,7 +450,6 @@ void TextList::addRow(
 				width += static_cast<size_t>(static_cast<int>(_font->getChar('.')->getCrop()->w) + _font->getSpacing());
 				buf += '.';
 			}
-
 			txt->setText(buf);
 		}
 
@@ -462,7 +462,7 @@ void TextList::addRow(
 	}
 
 	for (size_t // ensure all elements in this row are the same height
-			i = 0;
+			i = 0u;
 			i != static_cast<size_t>(cols);
 			++i)
 		txtRow[i]->setHeight(rowHeight);
