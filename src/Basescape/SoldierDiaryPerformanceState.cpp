@@ -98,26 +98,27 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	_txtLocation		= new Text( 92, 16,  16, 36);
 	_txtType			= new Text(114, 16, 108, 36);
 	_txtUFO				= new Text( 92, 16, 222, 36);
-	_lstLocation		= new TextList( 92, 113,  16,  52);
+	_lstLocation		= new TextList( 92, 113,  16,  52); // 14 rows
 	_lstType			= new TextList(114, 113, 108,  52);
 	_lstUFO				= new TextList( 92, 113, 222,  52);
-	_lstMissionTotals	= new TextList(288,   9,  18, 166);
+	_lstMissionTotals	= new TextList(298,   9,  16, 166);
 
 	// Kill stats
 	_txtRace			= new Text(98, 16,  16, 36);
 	_txtRank			= new Text(98, 16, 114, 36);
 	_txtWeapon			= new Text(98, 16, 212, 36);
-	_lstRace			= new TextList( 98, 113,  16,  52);
-	_lstRank			= new TextList( 98, 113, 114,  52);
-	_lstWeapon			= new TextList( 98, 113, 212,  52);
-	_lstKillTotals		= new TextList(210,   9,  18, 166);
+	_lstRace			= new TextList( 98, 97,  16,  52); // 12 rows
+	_lstRank			= new TextList( 98, 97, 114,  52);
+	_lstWeapon			= new TextList( 98, 97, 212,  52);
+	_lstKillTotals		= new TextList(234,  9,  16, 166);
+	_txtProficiency		= new Text(100, 9, 16, 156);
 
 	// Award stats
 	_txtMedalName		= new Text(90, 9,  16, 36);
 	_txtMedalLevel		= new Text(52, 9, 196, 36);
 	_txtMedalClass		= new Text(40, 9, 248, 36);
-	_lstAwards			= new TextList(240, 97, 48, 49);
-	_txtMedalInfo		= new Text(280, 25, 20, 150);
+	_lstAwards			= new TextList(240, 97, 48, 49); // 12 rows
+	_txtMedalInfo		= new Text(285, 25, 16, 150);
 
 
 	// Award sprites
@@ -157,13 +158,14 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	add(_lstMissionTotals,	"list2",	"awards");
 
 	// Kill stats
-	add(_txtRace,		"text",		"awards");
-	add(_txtRank,		"text",		"awards");
-	add(_txtWeapon,		"text",		"awards");
-	add(_lstRace,		"list",		"awards");
-	add(_lstRank,		"list",		"awards");
-	add(_lstWeapon,		"list",		"awards");
-	add(_lstKillTotals,	"list2",	"awards");
+	add(_txtRace,			"text",		"awards");
+	add(_txtRank,			"text",		"awards");
+	add(_txtWeapon,			"text",		"awards");
+	add(_lstRace,			"list",		"awards");
+	add(_lstRank,			"list",		"awards");
+	add(_lstWeapon,			"list",		"awards");
+	add(_lstKillTotals,		"list2",	"awards");
+	add(_txtProficiency,	"text",		"awards");
 
 	// Award stats
 	add(_txtMedalName,	"text",	"awards");
@@ -301,7 +303,7 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 
 //	_lstMissionTotals->setColor(YELLOW);
 //	_lstMissionTotals->setSecondaryColor(WHITE);
-	_lstMissionTotals->setColumns(4, 70,70,70,78);
+	_lstMissionTotals->setColumns(4, 78,78,78,64);
 	_lstMissionTotals->setMargin();
 
 
@@ -335,7 +337,7 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 
 //	_lstKillTotals->setColor(YELLOW);
 //	_lstKillTotals->setSecondaryColor(WHITE);
-	_lstKillTotals->setColumns(3, 70,70,70);
+	_lstKillTotals->setColumns(3, 78,78,78);
 	_lstKillTotals->setMargin();
 
 
@@ -437,6 +439,7 @@ void SoldierDiaryPerformanceState::init()
 	_lstRank		->setVisible(vis);
 	_lstWeapon		->setVisible(vis);
 	_lstKillTotals	->setVisible(vis);
+	_txtProficiency	->setVisible(vis);
 
 
 	if (_display == DIARY_MISSIONS) // set visibility for Mission stats
@@ -562,6 +565,12 @@ void SoldierDiaryPerformanceState::init()
 						wst1.c_str(),
 						wst2.c_str(),
 						wst3.c_str());
+
+	if (_diary->getProficiency() != -1)
+		_txtProficiency->setText(tr("STR_PROFICIENCY_")
+								.arg(_diary->getProficiency()).c_str());
+	else
+		_txtProficiency->setVisible(false);
 
 
 	const size_t lstCols (6);

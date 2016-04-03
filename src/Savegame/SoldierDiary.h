@@ -214,6 +214,9 @@ private:
 		/// Gets whether soldier died or went missing.
 		std::string getKiaOrMia() const;
 
+		/// Get the soldier's firing-proficiency.
+		int getProficiency() const;
+
 		/// Gets the SoldierAwards currently in the SoldierDiary.
 		std::vector<SoldierAward*>* getSoldierAwards();
 

@@ -636,20 +636,21 @@ void SoldierDiary::updateDiary(
 	_totalShotFriendlyCounter += unitStatistics->shotFriendlyCounter;
 	_longDistanceHitCounterTotal += unitStatistics->longDistanceHitCounter;
 	_lowAccuracyHitCounterTotal += unitStatistics->lowAccuracyHitCounter;
+	_shotsFiredCounterTotal += unitStatistics->shotsFiredCounter;
+	_shotsLandedCounterTotal += unitStatistics->shotsLandedCounter;
 	_mediApplicationsTotal += unitStatistics->medikitApplications;
 	_revivedUnitTotal += unitStatistics->revivedSoldier;
 
 	if (missionStatistics->valiantCrux == true)
 		++_valiantCruxTotal;
 
-	if (unitStatistics->KIA == true)
-		++_KIA;
-
-	if (unitStatistics->MIA == true)
-		++_MIA;
-
 	if (unitStatistics->nikeCross == true)
 		++_allAliensKilledTotal;
+
+	if (unitStatistics->KIA == true)
+		++_KIA;
+	else if (unitStatistics->MIA == true)
+		++_MIA;
 
 	_missionIdList.push_back(missionStatistics->id);
 
@@ -1271,7 +1272,7 @@ int SoldierDiary::getDaysWoundedTotal() const
 }
 
 /**
- * Gets whether soldier died or went missing.
+ * Gets whether the Soldier died or went missing.
  * @return, kia or mia - or an empty string if neither
  */
 std::string SoldierDiary::getKiaOrMia() const
@@ -1283,6 +1284,18 @@ std::string SoldierDiary::getKiaOrMia() const
 		return "STR_MIA";
 
 	return "";
+}
+
+/**
+ * Get the Soldier's firing-proficiency.
+ * @return, firing-proficienty as percent (-1 if no shots fired yet)
+ */
+int SoldierDiary::getProficiency() const
+{
+	if (_shotsFiredCounterTotal != 0)
+		return 100 * _shotsLandedCounterTotal / _shotsFiredCounterTotal;
+
+	return -1;
 }
 
 /**

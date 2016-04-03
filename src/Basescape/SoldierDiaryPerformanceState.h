@@ -109,7 +109,9 @@ private:
 		* _txtMedalName,
 		* _txtMedalLevel,
 		* _txtMedalClass,
-		* _txtMedalInfo;
+		* _txtMedalInfo,
+
+		* _txtProficiency;
 	TextButton
 		* _btnOk,
 		* _btnPrev,
