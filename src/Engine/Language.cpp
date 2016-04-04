@@ -19,8 +19,8 @@
 
 #include "Language.h"
 
-#include <fstream>
 //#include <cassert>
+#include <fstream>
 
 #include "CrossPlatform.h"
 #include "LanguagePlurality.h"
@@ -630,8 +630,7 @@ const LocalizedText& Language::getString(const std::string& id) const
 	const std::map<std::string, LocalizedText>::const_iterator pSt (_strings.find(id));
 	if (pSt == _strings.end())
 	{
-		Log(LOG_WARNING) << id << " not found in " << Options::language;
-		hack = LocalizedText(utf8ToWstr(id));
+		hack = getString(id, std::numeric_limits<unsigned>::max());
 		return hack;
 	}
 	return pSt->second;
@@ -651,20 +650,37 @@ LocalizedText Language::getString(
 {
 	assert(id.empty() == false);
 
+	static std::set<std::string> notFounds; // container to check errors against so log won't Hormel.
+
 	std::map<std::string, LocalizedText>::const_iterator pSt (_strings.end());
-	if (qty == 0) // Try specialized form.
+	if (qty == 0)								// Try specialized form
 		pSt = _strings.find(id + "_zero");
 
-	if (pSt == _strings.end()) // Try proper form by language
+	if (pSt == _strings.end())					// Try proper form by language
 		pSt = _strings.find(id + _handler->getSuffix(qty));
 
-	if (pSt == _strings.end()) // Try default form
+	if (pSt == _strings.end())					// Try default form
 		pSt = _strings.find(id + "_other");
 
-	if (pSt == _strings.end()) // Give up
+	if (pSt == _strings.end())					// Give up
 	{
-		Log(LOG_WARNING) << id << " not found in " << Options::language;
+		if (notFounds.find(id) == notFounds.end())
+		{
+			notFounds.insert(id);
+			Log(LOG_WARNING) << id << " not found in " << Options::language;
+		}
 		return LocalizedText(utf8ToWstr(id));
+	}
+
+	if (qty == std::numeric_limits<unsigned>::max()) // Special case, passed by getString(id) above^
+	{
+		if (notFounds.find(id) == notFounds.end())
+		{
+			notFounds.insert(id);
+			Log(LOG_WARNING) << id << " has plural format in [" << Options::language << "]. Code assumes singular format.";
+//			Hint: Change ``getstring(ID).arg(value)`` to ``getString(ID, value)`` in appropriate files.
+		}
+		return pSt->second;
 	}
 
 	std::wostringstream woststr;
@@ -705,7 +721,6 @@ const LocalizedText& Language::getString(
 		case GENDER_FEMALE:
 			genderId = id + "_FEMALE";
 	}
-
 	return getString(genderId);
 }
 
