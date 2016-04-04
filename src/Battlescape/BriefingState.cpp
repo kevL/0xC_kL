@@ -167,7 +167,7 @@ BriefingState::BriefingState(
 	std::wstring craftLabel;
 	if (craft != nullptr)
 	{
-		craftLabel = tr("STR_CRAFT_").arg(craft->getName(_game->getLanguage()));
+		craftLabel = tr("STR_CRAFT_UC_").arg(craft->getName(_game->getLanguage()));
 
 		if (craft->getDestination() != nullptr)
 		{

@@ -50,8 +50,8 @@ namespace OpenXcom
 {
 
 /**
- * Diary screen that displays/hides the several screens that document a
- * soldier's Performance.
+ * The diary-screen that displays/hides the several screens that document a
+ * Soldier's performance.
  * @param base		- pointer to the Base to get info from
  * @param soldierId	- ID of the selected soldier
  * @param overview	- pointer to SoldierDiaryOverviewState
@@ -63,22 +63,21 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 		SoldierDiaryOverviewState* const overview,
 		const SoldierDiaryDisplay display)
 	:
-		_base(base),
 		_soldierId(soldierId),
 		_overview(overview),
 		_display(display),
 		_lastScrollPos(0),
 		_diary(nullptr)
 {
-	if (_base == nullptr)
+	if (base != nullptr)
 	{
-		_listDead = _game->getSavedGame()->getDeadSoldiers();
-		_list = nullptr;
+		_list = base->getSoldiers();
+		_listDead = nullptr;
 	}
 	else
 	{
-		_list = _base->getSoldiers();
-		_listDead = nullptr;
+		_listDead = _game->getSavedGame()->getDeadSoldiers();
+		_list = nullptr;
 	}
 
 	_window				= new Window(this, 320, 200);
@@ -133,7 +132,6 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 		_srfLevel.push_back(new Surface(31, 7, 16, LIST_SPRITES_y + (i * 8)));
 	}
 
-//	setPalette(PAL_BASESCAPE);
 	setInterface("awards", true);
 
 	add(_window,		"window",	"awards");
@@ -187,74 +185,80 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	centerAllSurfaces();
 
 
-//	_window->setColor(PINK);
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK02.SCR"));
 
-//	_txtTitle->setColor(BLUE);
-	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
+	_txtTitle->setBig();
 
+	if (_list != nullptr)
+	{
+		_txtBaseLabel->setAlign(ALIGN_CENTER);
+		_txtBaseLabel->setText(base->getName());
 
-//	_btnNext->setColor(PURPLE);
-	_btnNext->setText(L">");
+		if (_list->size() > 1u)
+		{
+			_btnPrev->setText(L"<");
+			_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnPrevClick);
+			_btnPrev->onKeyboardPress(
+							(ActionHandler)& SoldierDiaryPerformanceState::btnPrevClick,
+							Options::keyBattlePrevUnit);
 
-//	_btnPrev->setColor(PURPLE);
-	_btnPrev->setText(L"<");
-
-	if (_base == nullptr)
+			_btnNext->setText(L">");
+			_btnNext->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnNextClick);
+			_btnNext->onKeyboardPress(
+							(ActionHandler)& SoldierDiaryPerformanceState::btnNextClick,
+							Options::keyBattleNextUnit);
+		}
+		else
+		{
+			_btnPrev->setVisible(false);
+			_btnNext->setVisible(false);
+		}
+	}
+	else // list is reversed in the Memorial.
 	{
 		_txtBaseLabel->setVisible(false);
 
-		_btnNext->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnPrevClick); // list is reversed in Memorial.
-		_btnNext->onKeyboardPress(
-						(ActionHandler)& SoldierDiaryPerformanceState::btnPrevClick,
-						Options::keyBattleNextUnit);
+		if (_listDead->size() > 1u)
+		{
+			_btnPrev->setText(L"<");
+			_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnNextClick);
+			_btnPrev->onKeyboardPress(
+							(ActionHandler)& SoldierDiaryPerformanceState::btnNextClick,
+							Options::keyBattlePrevUnit);
 
-		_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnNextClick);
-		_btnPrev->onKeyboardPress(
-						(ActionHandler)& SoldierDiaryPerformanceState::btnNextClick,
-						Options::keyBattlePrevUnit);
-	}
-	else
-	{
-//		_txtBaseLabel->setColor(BLUE);
-		_txtBaseLabel->setAlign(ALIGN_CENTER);
-		_txtBaseLabel->setText(_base->getName());
-
-		_btnNext->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnNextClick);
-		_btnNext->onKeyboardPress(
-						(ActionHandler)& SoldierDiaryPerformanceState::btnNextClick,
-						Options::keyBattleNextUnit);
-
-		_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnPrevClick);
-		_btnPrev->onKeyboardPress(
-						(ActionHandler)& SoldierDiaryPerformanceState::btnPrevClick,
-						Options::keyBattlePrevUnit);
+			_btnNext->setText(L">");
+			_btnNext->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnPrevClick);
+			_btnNext->onKeyboardPress(
+							(ActionHandler)& SoldierDiaryPerformanceState::btnPrevClick,
+							Options::keyBattleNextUnit);
+		}
+		else
+		{
+			_btnPrev->setVisible(false);
+			_btnNext->setVisible(false);
+		}
 	}
 
 
-//	_btnMissions->setColor(BLUE);
 	_btnMissions->setText(tr("STR_MISSIONS_UC"));
 	_btnMissions->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnMissionsToggle);
 	_btnMissions->onMouseClick(
 					(ActionHandler)& SoldierDiaryPerformanceState::btnMissionsToggle,
 					SDLK_m);
 
-//	_btnKills->setColor(BLUE);
 	_btnKills->setText(tr("STR_KILLS_UC"));
 	_btnKills->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnKillsToggle);
 	_btnKills->onMouseClick(
 					(ActionHandler)& SoldierDiaryPerformanceState::btnKillsToggle,
 					SDLK_k);
 
-//	_btnAwards->setColor(BLUE);
 	_btnAwards->setText(tr("STR_AWARDS_UC"));
 	_btnAwards->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnMedalsToggle);
 	_btnAwards->onMouseClick(
 					(ActionHandler)& SoldierDiaryPerformanceState::btnMedalsToggle,
 					SDLK_a);
 
-//	_btnOk->setColor(BLUE);
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnOkClick);
 	_btnOk->onKeyboardPress(
@@ -269,13 +273,8 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 
 
 	// Mission stats ->
-//	_txtLocation->setColor(PINK);
 	_txtLocation->setText(tr("STR_MISSIONS_BY_LOCATION"));
-
-//	_txtType->setColor(PINK);
 	_txtType->setText(tr("STR_MISSIONS_BY_TYPE"));
-
-//	_txtUFO->setColor(PINK);
 	_txtUFO->setText(tr("STR_MISSIONS_BY_UFO"));
 
 	Uint8 color		 (_game->getRuleset()->getInterface("awards")->getElement("list")->color2);
@@ -283,76 +282,48 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	_colorBtnDown	= _game->getRuleset()->getInterface("awards")->getElement("button2")->color2;
 	_color1stCol	= _game->getRuleset()->getInterface("awards")->getElement("list2")->color;
 
-//	_lstLocation->setColor(WHITE);
-//	_lstLocation->setArrowColor(PINK);
 	_lstLocation->setArrowColor(color);
 	_lstLocation->setColumns(2, 80,12);
 	_lstLocation->setMargin();
 
-//	_lstType->setColor(WHITE);
-//	_lstType->setArrowColor(PINK);
 	_lstType->setArrowColor(color);
 	_lstType->setColumns(2, 100,14);
 	_lstType->setMargin();
 
-//	_lstUFO->setColor(WHITE);
-//	_lstUFO->setArrowColor(PINK);
 	_lstUFO->setArrowColor(color);
 	_lstUFO->setColumns(2, 80,12);
 	_lstUFO->setMargin();
 
-//	_lstMissionTotals->setColor(YELLOW);
-//	_lstMissionTotals->setSecondaryColor(WHITE);
 	_lstMissionTotals->setColumns(4, 78,78,78,64);
 	_lstMissionTotals->setMargin();
 
 
 	// Kill stats ->
-//	_txtRace->setColor(PINK);
 	_txtRace->setText(tr("STR_KILLS_BY_RACE"));
-
-//	_txtRank->setColor(PINK);
 	_txtRank->setText(tr("STR_KILLS_BY_RANK"));
-
-//	_txtWeapon->setColor(PINK);
 	_txtWeapon->setText(tr("STR_KILLS_BY_WEAPON"));
 
-//	_lstRace->setColor(WHITE);
-//	_lstRace->setArrowColor(PINK);
 	_lstRace->setArrowColor(color);
 	_lstRace->setColumns(2, 80,18);
 	_lstRace->setMargin();
 
-//	_lstRank->setColor(WHITE);
-//	_lstRank->setArrowColor(PINK);
 	_lstRank->setArrowColor(color);
 	_lstRank->setColumns(2, 80,18);
 	_lstRank->setMargin();
 
-//	_lstWeapon->setColor(WHITE);
-//	_lstWeapon->setArrowColor(PINK);
 	_lstWeapon->setArrowColor(color);
 	_lstWeapon->setColumns(2, 80,18);
 	_lstWeapon->setMargin();
 
-//	_lstKillTotals->setColor(YELLOW);
-//	_lstKillTotals->setSecondaryColor(WHITE);
 	_lstKillTotals->setColumns(3, 78,78,78);
 	_lstKillTotals->setMargin();
 
 
 	// Award stats ->
-//	_txtMedalName->setColor(PINK);
 	_txtMedalName->setText(tr("STR_MEDAL_NAME"));
-
-//	_txtMedalLevel->setColor(PINK);
 	_txtMedalLevel->setText(tr("STR_MEDAL_DECOR_LEVEL"));
-
-//	_txtMedalClass->setColor(PINK);
 	_txtMedalClass->setText(tr("STR_MEDAL_DECOR_CLASS"));
 
-//	_lstAwards->setColor(WHITE);
-//	_lstAwards->setArrowColor(PINK);
 	_lstAwards->setArrowColor(color);
 	_lstAwards->setColumns(3, 148,52,40);
 	_lstAwards->setBackground(_window);
@@ -362,7 +333,6 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	_lstAwards->onMouseOut((ActionHandler)& SoldierDiaryPerformanceState::lstMouseOut);
 	_lstAwards->onMousePress((ActionHandler)& SoldierDiaryPerformanceState::handle);
 
-//	_txtMedalInfo->setColor(BROWN);
 	_txtMedalInfo->setHighContrast();
 	_txtMedalInfo->setWordWrap();
 
@@ -391,7 +361,7 @@ SoldierDiaryPerformanceState::~SoldierDiaryPerformanceState()
 {}
 
 /**
- *  Clears and reinitializes the several Performance screens for each soldier.
+ * Clears and reinitializes the several performance-screens for each Soldier.
  */
 void SoldierDiaryPerformanceState::init()
 {
@@ -406,7 +376,7 @@ void SoldierDiaryPerformanceState::init()
 		_srfLevel[i]->clear();
 	}
 
-	_lstRank			->scrollTo(); // reset scroll depth for lists
+	_lstRank			->scrollTo(); // reset scroll-depth for lists
 	_lstRace			->scrollTo();
 	_lstWeapon			->scrollTo();
 	_lstKillTotals		->scrollTo();
@@ -423,13 +393,11 @@ void SoldierDiaryPerformanceState::init()
 	if (_display == DIARY_KILLS) // set visibility for Kill stats
 	{
 		vis = true;
-//		_btnKills->setColor(YELLOW);
 		_btnKills->setColor(_colorBtnDown);
 	}
 	else
 	{
 		vis = false;
-//		_btnKills->setColor(BLUE);
 		_btnKills->setColor(_colorBtnUp);
 	}
 	_txtRace		->setVisible(vis);
@@ -445,13 +413,11 @@ void SoldierDiaryPerformanceState::init()
 	if (_display == DIARY_MISSIONS) // set visibility for Mission stats
 	{
 		vis = true;
-//		_btnMissions->setColor(YELLOW);
 		_btnMissions->setColor(_colorBtnDown);
 	}
 	else
 	{
 		vis = false;
-//		_btnMissions->setColor(BLUE);
 		_btnMissions->setColor(_colorBtnUp);
 	}
 	_txtLocation		->setVisible(vis);
@@ -468,13 +434,11 @@ void SoldierDiaryPerformanceState::init()
 	if (_display == DIARY_MEDALS) // set visibility for awarded Medals
 	{
 		vis = true;
-//		_btnAwards->setColor(YELLOW);
 		_btnAwards->setColor(_colorBtnDown);
 	}
 	else
 	{
 		vis = false;
-//		_btnAwards->setColor(BLUE);
 		_btnAwards->setColor(_colorBtnUp);
 	}
 	_txtMedalName	->setVisible(vis);
@@ -484,7 +448,7 @@ void SoldierDiaryPerformanceState::init()
 	_txtMedalInfo	->setVisible(vis);
 
 
-	_awardsListEntry	.clear();
+	_awardsListEntry	 .clear();
 	_lstKillTotals		->clearList();
 	_lstMissionTotals	->clearList();
 
@@ -496,17 +460,7 @@ void SoldierDiaryPerformanceState::init()
 	_lstUFO			->clearList();
 	_lstAwards		->clearList();
 
-	if (_base == nullptr)
-	{
-		if (_soldierId >= _listDead->size())
-			_soldierId = 0;
-
-		const SoldierDead* const deadSoldier (_listDead->at(_soldierId));
-		_diary = deadSoldier->getDiary();
-
-		_txtTitle->setText(deadSoldier->getName());
-	}
-	else
+	if (_list != nullptr)
 	{
 		if (_soldierId >= _list->size())
 			_soldierId = 0;
@@ -515,6 +469,16 @@ void SoldierDiaryPerformanceState::init()
 		_diary = soldier->getDiary();
 
 		_txtTitle->setText(soldier->getName());
+	}
+	else
+	{
+		if (_soldierId >= _listDead->size())
+			_soldierId = 0;
+
+		const SoldierDead* const deadSoldier (_listDead->at(_soldierId));
+		_diary = deadSoldier->getDiary();
+
+		_txtTitle->setText(deadSoldier->getName());
 	}
 
 
@@ -614,7 +578,6 @@ void SoldierDiaryPerformanceState::init()
 								2,
 								tr((*j).first).c_str(),
 								woststr.str().c_str());
-//				lstArray[i]->setCellColor(row++, 0, YELLOW);
 				lstArray[i]->setCellColor(row++, 0, _color1stCol);
 			}
 		}
@@ -652,7 +615,6 @@ void SoldierDiaryPerformanceState::init()
 						tr((*i)->getClassDegree()).c_str());
 
 		_awardsListEntry.push_back(woststr2.str());
-
 		drawMedals();
 	}
 }
@@ -789,19 +751,21 @@ void SoldierDiaryPerformanceState::lstMouseOut(Action*)
 }
 
 /**
- * Goes to the previous soldier.
+ * Goes to the previous Soldier.
  * @param action - pointer to an Action
  */
 void SoldierDiaryPerformanceState::btnPrevClick(Action*)
 {
-	size_t rows;
-	if (_base == nullptr)
-		rows = _listDead->size();
-	else
-		rows = _list->size();
-
 	if (_soldierId == 0)
+	{
+		size_t rows;
+		if (_list != nullptr)
+			rows = _list->size();
+		else
+			rows = _listDead->size();
+
 		_soldierId = rows - 1;
+	}
 	else
 		--_soldierId;
 
@@ -809,18 +773,18 @@ void SoldierDiaryPerformanceState::btnPrevClick(Action*)
 }
 
 /**
- * Goes to the next soldier.
+ * Goes to the next Soldier.
  * @param action - pointer to an Action
  */
 void SoldierDiaryPerformanceState::btnNextClick(Action*)
 {
 	size_t rows;
-	if (_base == nullptr)
-		rows = _listDead->size();
-	else
+	if (_list != nullptr)
 		rows = _list->size();
+	else
+		rows = _listDead->size();
 
-	if (++_soldierId >= rows)
+	if (++_soldierId == rows)
 		_soldierId = 0;
 
 	init();

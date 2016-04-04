@@ -239,7 +239,7 @@ SoldierDiary::~SoldierDiary()
 /**
  * Overloads the assignment operator.
  * @param assignThis - reference the diary to assign to this SoldierDiary
- * @return, address of the new diary
+ * @return, reference to the new diary
  */
 SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThis)
 {
@@ -618,11 +618,11 @@ void SoldierDiary::updateDiary(
 	{
 		++_terrorMissionTotal;
 
-		if (missionStatistics->shade > 8)
+		if (missionStatistics->shade >= MissionStatistics::NIGHT_SHADE)
 			++_nightTerrorMissionTotal;
 	}
 
-	if (missionStatistics->shade > 8)
+	if (missionStatistics->shade >= MissionStatistics::NIGHT_SHADE)
 		++_nightMissionTotal;
 
 	if (unitStatistics->wasUnconscious == true)
@@ -1089,7 +1089,7 @@ void SoldierDiary::awardCommendation(
 
 /**
  * Gets a vector of mission-IDs.
- * @return, address of a vector of mission-IDs
+ * @return, reference to a vector of mission-IDs
  */
 std::vector<int>& SoldierDiary::getMissionIdList()
 {
@@ -1098,7 +1098,7 @@ std::vector<int>& SoldierDiary::getMissionIdList()
 
 /**
  * Gets a vector of all kills in this SoldierDiary.
- * @return, address of a vector of pointers to BattleUnitKills
+ * @return, reference to a vector of pointers to BattleUnitKills
  */
 std::vector<BattleUnitKill*>& SoldierDiary::getKills()
 {
@@ -1107,7 +1107,7 @@ std::vector<BattleUnitKill*>& SoldierDiary::getKills()
 
 /**
  * Gets list of kills by rank.
- * @return, map of alien ranks to qty killed
+ * @return, map of alien-ranks to qty killed
  */
 std::map<std::string, int> SoldierDiary::getAlienRankTotal() const
 {
@@ -1124,7 +1124,7 @@ std::map<std::string, int> SoldierDiary::getAlienRankTotal() const
 
 /**
  * Gets list of kills by race.
- * @return, map of alien races to qty killed
+ * @return, map of alien-races to qty killed
  */
 std::map<std::string, int> SoldierDiary::getAlienRaceTotal() const
 {
@@ -1174,7 +1174,7 @@ std::map<std::string, int> SoldierDiary::getWeaponAmmoTotal() const
 
 /**
  * Gets a list of quantity of missions done by Region-type.
- * @return, address of a map of regions to missions done there
+ * @return, reference to a map of regions to missions done there
  */
 std::map<std::string, int>& SoldierDiary::getRegionTotal()
 {
@@ -1183,7 +1183,7 @@ std::map<std::string, int>& SoldierDiary::getRegionTotal()
 
 /**
  * Gets a list of quantity of missions done by Country-type.
- * @return, address of a map of countries to missions done there
+ * @return, reference to a map of countries to missions done there
  */
 std::map<std::string, int>& SoldierDiary::getCountryTotal()
 {
@@ -1192,7 +1192,7 @@ std::map<std::string, int>& SoldierDiary::getCountryTotal()
 
 /**
  * Gets a list of quantity of missions done by Tactical-type.
- * @return, address of a map of mission types to qty
+ * @return, reference to a map of mission types to qty
  */
 std::map<std::string, int>& SoldierDiary::getTypeTotal()
 {
@@ -1201,7 +1201,7 @@ std::map<std::string, int>& SoldierDiary::getTypeTotal()
 
 /**
  * Gets a list of quantity of missions done by UFO-type.
- * @return, address of a map of UFO types to qty
+ * @return, reference to a map of UFO types to qty
  */
 std::map<std::string, int>& SoldierDiary::getUfoTotal()
 {
@@ -1248,9 +1248,9 @@ int SoldierDiary::getStunTotal() const
  * Gets the current total quantity of missions.
  * @return, qty of missions
  */
-int SoldierDiary::getMissionTotal() const
+size_t SoldierDiary::getMissionTotal() const
 {
-	return static_cast<int>(_missionIdList.size());
+	return _missionIdList.size();
 }
 
 /**
@@ -1288,7 +1288,7 @@ std::string SoldierDiary::getKiaOrMia() const
 
 /**
  * Get the Soldier's firing-proficiency.
- * @return, firing-proficienty as percent (-1 if no shots fired yet)
+ * @return, firing-proficiency as percent (-1 if no shots fired yet)
  */
 int SoldierDiary::getProficiency() const
 {

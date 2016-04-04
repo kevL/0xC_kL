@@ -1559,8 +1559,6 @@ void BattlescapeGame::endTurn() // private.
  * @param hidden	- true for UFO Power Source explosions at the start of
  *					  battlescape (default false)
  * @param terrain	- true for terrain explosions (default false)
-// * @param liquidate	- true if the casualties are already unconscious and
-// *					  need insta-death only (default false)
  */
 void BattlescapeGame::checkCasualties(
 		const BattleItem* const weapon,
@@ -1573,7 +1571,7 @@ void BattlescapeGame::checkCasualties(
 
 	// If the victim was killed by the attacker's death explosion,
 	// fetch who killed the attacker and make THAT the attacker!
-	if (attacker != nullptr) //&& liquidate == false)
+	if (attacker != nullptr)
 	{
 		if (attacker->getUnitStatus() == STATUS_DEAD
 			&& attacker->getSpecialAbility() == SPECAB_EXPLODE	// TODO: Factor in tile explosions. Eg. hit a barrel -
@@ -1639,15 +1637,12 @@ void BattlescapeGame::checkCasualties(
 			{
 				if ((dead == true
 						&& defender->getUnitStatus() != STATUS_DEAD
-						&& defender->getUnitStatus() != STATUS_COLLAPSING	// kL_note: is this really needed ....
-						&& defender->getUnitStatus() != STATUS_TURNING		// kL: may be set by UnitDieBState cTor
-						&& defender->getUnitStatus() != STATUS_DISABLED)	// kL
+						&& defender->getUnitStatus() != STATUS_COLLAPSING	// is this really needed ....
+						&& defender->getUnitStatus() != STATUS_TURNING		// may be set by UnitDieBState cTor
+						&& defender->getUnitStatus() != STATUS_DISABLED)
 					|| converted == true)
 				{
-//					if (liquidate == true)
-//					if (defender->getUnitStatus() == STATUS_UNCONSCIOUS)
-//						defender->instaKill();
-					if (dead == true //&& converted == false
+					if (dead == true
 						&& defender->getUnitStatus() != STATUS_UNCONSCIOUS)
 					{
 						defender->setUnitStatus(STATUS_DISABLED);	// <- will be sent to UnitDieBState below.
@@ -1788,13 +1783,13 @@ void BattlescapeGame::checkCasualties(
 
 									(*j)->moraleChange(-moraleLoss);
 								}
-/*								if (attacker
-									&& attacker->getFaction() == FACTION_PLAYER
-									&& defender->getFaction() == FACTION_HOSTILE)
-								{
-									attacker->setExposed(); // interesting
-									//Log(LOG_INFO) << ". . . . attacker Exposed";
-								} */
+//								if (attacker
+//									&& attacker->getFaction() == FACTION_PLAYER
+//									&& defender->getFaction() == FACTION_HOSTILE)
+//								{
+//									attacker->setExposed(); // interesting
+//									//Log(LOG_INFO) << ". . . . attacker Exposed";
+//								}
 							}
 							else if ((((*j)->getOriginalFaction() == FACTION_PLAYER
 										|| (*j)->getOriginalFaction() == FACTION_NEUTRAL)
@@ -1810,7 +1805,6 @@ void BattlescapeGame::checkCasualties(
 					}
 //					}
 
-//					if (liquidate == false && converted == false)
 					if (defender->getUnitStatus() == STATUS_DISABLED)
 					{
 						DamageType dType;
@@ -1831,11 +1825,11 @@ void BattlescapeGame::checkCasualties(
 				else if (stunned == true
 					&& defender->getUnitStatus() != STATUS_DEAD
 					&& defender->getUnitStatus() != STATUS_UNCONSCIOUS
-					&& defender->getUnitStatus() != STATUS_COLLAPSING	// kL_note: is this really needed ....
-					&& defender->getUnitStatus() != STATUS_TURNING		// kL_note: may be set by UnitDieBState cTor
-					&& defender->getUnitStatus() != STATUS_DISABLED)	// kL
+					&& defender->getUnitStatus() != STATUS_COLLAPSING	// is this really needed ....
+					&& defender->getUnitStatus() != STATUS_TURNING		// may be set by UnitDieBState cTor
+					&& defender->getUnitStatus() != STATUS_DISABLED)
 				{
-					defender->setUnitStatus(STATUS_DISABLED); // kL
+					defender->setUnitStatus(STATUS_DISABLED);
 
 					if (attacker != nullptr
 						&& attacker->getGeoscapeSoldier() != nullptr
@@ -1889,29 +1883,29 @@ void BattlescapeGame::checkCasualties(
 									 && unit->isOut_t() == false);
 		}
 
-/*		if (_battleSave->getTacType() == TCT_BASEASSAULT // do this in SavedBattleGame::addDestroyedObjective()
-			&& _battleSave->getControlDestroyed() == false)
-		{
-			bool controlDestroyed = true;
-			for (size_t
-					i = 0;
-					i != _battleSave->getMapSizeXYZ();
-					++i)
-			{
-				if (_battleSave->getTiles()[i]->getMapData(O_OBJECT) != nullptr
-					&& _battleSave->getTiles()[i]->getMapData(O_OBJECT)->getSpecialType() == UFO_NAVIGATION)
-				{
-					controlDestroyed = false;
-					break;
-				}
-			}
-			if (controlDestroyed == true)
-			{
-				_battleSave->setControlDestroyed();
-				Game* const game = _parentState->getGame();
-				game->pushState(new InfoboxDialogState(game->getLanguage()->getString("STR_ALIEN_BASE_CONTROL_DESTROYED")));
-			}
-		} */
+//		if (_battleSave->getTacType() == TCT_BASEASSAULT // do this in SavedBattleGame::addDestroyedObjective()
+//			&& _battleSave->getControlDestroyed() == false)
+//		{
+//			bool controlDestroyed = true;
+//			for (size_t
+//					i = 0;
+//					i != _battleSave->getMapSizeXYZ();
+//					++i)
+//			{
+//				if (_battleSave->getTiles()[i]->getMapData(O_OBJECT) != nullptr
+//					&& _battleSave->getTiles()[i]->getMapData(O_OBJECT)->getSpecialType() == UFO_NAVIGATION)
+//				{
+//					controlDestroyed = false;
+//					break;
+//				}
+//			}
+//			if (controlDestroyed == true)
+//			{
+//				_battleSave->setControlDestroyed();
+//				Game* const game = _parentState->getGame();
+//				game->pushState(new InfoboxDialogState(game->getLanguage()->getString("STR_ALIEN_BASE_CONTROL_DESTROYED")));
+//			}
+//		}
 	}
 }
 
@@ -1942,10 +1936,11 @@ void BattlescapeGame::checkExposedByMelee(BattleUnit* const unit) const
 
 /**
  * Collects data about attacker for SoldierDiary.
+ * @note Helper for checkCasualties().
  * @param attacker	- pointer to the attacker
  * @param weapon	- pointer to the weapon used
  */
-void BattlescapeGame::diaryAttacker(
+void BattlescapeGame::diaryAttacker( // private.
 		const BattleUnit* const attacker,
 		const BattleItem* const weapon)
 {
@@ -1994,9 +1989,10 @@ void BattlescapeGame::diaryAttacker(
 
 /**
  * Collects data about defender for SoldierDiary.
+ * @note Helper for checkCasualties().
  * @param attacker - pointer to the defender
  */
-void BattlescapeGame::diaryDefender(const BattleUnit* const defender)
+void BattlescapeGame::diaryDefender(const BattleUnit* const defender) // private.
 {
 	_killStatPoints = defender->getValue();
 	switch (defender->getOriginalFaction())

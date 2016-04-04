@@ -248,11 +248,19 @@ private:
 	void liquidateUnit();
 	/// Ends the turn.
 	void endTurn();
-	/// Picks the first soldier that is panicking.
+	/// Picks the first Soldier that is panicking.
 	bool handlePanickingPlayer();
-	/// Common function for hanlding panicking units.
+	/// Common function for handling panicking units.
 	bool handlePanickingUnit(BattleUnit* const unit);
-	/// Shows the infoboxes in the queue (if any).
+
+	/// Collects data about attacker for SoldierDiary.
+	void diaryAttacker(
+			const BattleUnit* const attacker,
+			const BattleItem* const weapon);
+	/// Collects data about defender for SoldierDiary.
+	void diaryDefender(const BattleUnit* const defender);
+
+	/// Shows any infoboxes in the queue.
 	void showInfoBoxQueue();
 
 
@@ -288,7 +296,7 @@ private:
 		/// Handles unit AI.
 		void handleUnitAI(BattleUnit* const unit);
 
-		/// Handles the result of non target actions like priming a grenade.
+		/// Handles the result of non-target actions like priming a grenade.
 		void handleNonTargetAction();
 
 		/// Sets the selector according to the current action.
@@ -306,24 +314,17 @@ private:
 				BattleUnit* attacker = nullptr,
 				bool hidden = false,
 				bool terrain = false);
-//				bool liquidate = false);
 		/// Checks if a BattleUnit gets exposed after making a melee-attack.
 		void checkExposedByMelee(BattleUnit* const unit) const;
-		/// Collects data about attacker for SoldierDiary.
-		void diaryAttacker(
-				const BattleUnit* const attacker,
-				const BattleItem* const weapon);
-		/// Collects data about defender for SoldierDiary.
-		void diaryDefender(const BattleUnit* const defender);
 
-		/// Checks reserved tu.
+		/// Checks reserved TU.
 		bool checkReservedTu(
 				BattleUnit* const unit,
 				int tu) const;
 
 		/// Cancels the current action.
 		bool cancelTacticalAction(bool force = false);
-		/// Gets a pointer to access action members directly.
+		/// Gets a pointer to access action-struct directly.
 		BattleAction* getTacticalAction();
 
 		/// Determines whether there is an action currently going on.
@@ -333,7 +334,7 @@ private:
 		void primaryAction(const Position& pos);
 		/// Right click activates a secondary action.
 		void secondaryAction(const Position& pos);
-		/// Handler for the blaster launcher button.
+		/// Handler for the blaster-launcher button.
 		void launchAction();
 		/// Handler for the psi-button.
 		void psiButtonAction();

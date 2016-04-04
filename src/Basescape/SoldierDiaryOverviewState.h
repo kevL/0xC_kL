@@ -40,7 +40,7 @@ class Window;
 
 
 /**
- * Medals screen that lets the player see all the medals a soldier has.
+ * Medals screen that lets the player see all the medals that a Soldier has.
  */
 class SoldierDiaryOverviewState final
 	:
@@ -48,26 +48,21 @@ class SoldierDiaryOverviewState final
 {
 
 private:
-//	static const Uint8
-//		WHITE	= 208,
-//		BLUE	= 218,
-//		PINK	= 241,
-//		PURPLE	= 246;
-
 	size_t
 		_soldierId,
 		_curRow;
 
-	std::vector<Soldier*>* _list;
-	std::vector<SoldierDead*>* _listDead;
+	const std::vector<Soldier*>* _list;
+	const std::vector<SoldierDead*>* _listDead;
 
 	Base* _base;
-	SoldierInfoState* _soldierInfoState;
-	SoldierInfoDeadState* _soldierInfoDeadState;
+	SoldierInfoState* _soldierInfo;
+	SoldierInfoDeadState* _soldierInfoDead;
 
 	Text
 		* _txtTitle,
 		* _txtBaseLabel,
+		* _txtMissionId,
 		* _txtLocation,
 		* _txtStatus,
 		* _txtDate;
@@ -83,19 +78,19 @@ private:
 
 
 	public:
-		/// Creates the Soldier Diary state.
+		/// Creates a SoldierDiaryOverview state.
 		SoldierDiaryOverviewState(
 				Base* const base,
 				size_t soldierId,
-				SoldierInfoState* soldierInfoState,
-				SoldierInfoDeadState* soldierInfoDeadState);
-		/// Cleans up the Soldier Diary state.
+				SoldierInfoState* const soldierInfo,
+				SoldierInfoDeadState* const soldierInfoDead);
+		/// Cleans up the SoldierDiaryOverview state.
 		~SoldierDiaryOverviewState();
 
 		/// Updates the list info.
 		void init() override;
 
-		/// Sets the soldier's ID.
+		/// Sets the current Soldier's ID.
 		void setSoldierId(size_t soldierId);
 
 		/// Handler for clicking the OK button.

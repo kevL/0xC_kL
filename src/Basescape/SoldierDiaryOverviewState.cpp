@@ -54,33 +54,33 @@ namespace OpenXcom
 {
 
 /**
- * Diary screen that shows all the missions a soldier has.
- * @param base					- pointer to the Base to get info from
- * @param soldierId				- ID of the selected soldier
- * @param soldierInfoState		- pointer to the Soldier Info screen
- * @param soldierInfoDeadState	- pointer to the Dead Soldier Info screen
+ * The primary diary-screen that shows all the missions that a Soldier has.
+ * @param base				- pointer to the Base to get info from
+ * @param soldierId			- ID of the selected soldier
+ * @param soldierInfo		- pointer to the SoldierInfo screen
+ * @param soldierInfoDead	- pointer to the SoldierInfoDead screen
  */
 SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 		Base* const base,
 		size_t soldierId,
-		SoldierInfoState* soldierInfoState,
-		SoldierInfoDeadState* soldierInfoDeadState)
+		SoldierInfoState* const soldierInfo,
+		SoldierInfoDeadState* const soldierInfoDead)
 	:
 		_base(base),
 		_soldierId(soldierId),
-		_soldierInfoState(soldierInfoState),
-		_soldierInfoDeadState(soldierInfoDeadState),
+		_soldierInfo(soldierInfo),
+		_soldierInfoDead(soldierInfoDead),
 		_curRow(0)
 {
-	if (_base == nullptr)
-	{
-		_listDead = _game->getSavedGame()->getDeadSoldiers();
-		_list = nullptr;
-	}
-	else
+	if (_base != nullptr)
 	{
 		_list = _base->getSoldiers();
 		_listDead = nullptr;
+	}
+	else
+	{
+		_listDead = _game->getSavedGame()->getDeadSoldiers();
+		_list = nullptr;
 	}
 
 	_window			= new Window(this, 320, 200);
@@ -91,9 +91,10 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 	_btnPrev		= new TextButton(28, 14,   8, 8);
 	_btnNext		= new TextButton(28, 14, 284, 8);
 
-	_txtLocation	= new Text( 94, 9,  16, 36);
-	_txtStatus		= new Text(108, 9, 110, 36);
-	_txtDate		= new Text( 90, 9, 218, 36);
+	_txtMissionId	= new Text(30, 9,  16, 36);
+	_txtLocation	= new Text(74, 9,  46, 36);
+	_txtStatus		= new Text(98, 9, 120, 36);
+	_txtDate		= new Text(83, 9, 218, 36);
 
 	_lstDiary		= new TextList(285, 129, 16, 44);
 
@@ -102,7 +103,6 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 	_btnAwards		= new TextButton(70, 16, 164, 177);
 	_btnOk			= new TextButton(70, 16, 242, 177);
 
-//	setPalette(PAL_BASESCAPE);
 	setInterface("awards");
 
 	add(_window,		"window",	"awards");
@@ -112,6 +112,7 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 	add(_btnPrev,		"button",	"awards");
 	add(_btnNext,		"button",	"awards");
 
+	add(_txtMissionId,	"window",	"awards");
 	add(_txtLocation,	"window",	"awards");
 	add(_txtStatus,		"window",	"awards");
 	add(_txtDate,		"window",	"awards");
@@ -126,66 +127,71 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 	centerAllSurfaces();
 
 
-//	_window->setColor(PINK);
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK02.SCR"));
 
-//	_txtTitle->setColor(BLUE);
-	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
+	_txtTitle->setBig();
 
-	if (_base != nullptr)
+	if (_list != nullptr)
 	{
-//		_txtBaseLabel->setColor(BLUE);
 		_txtBaseLabel->setAlign(ALIGN_CENTER);
 		_txtBaseLabel->setText(_base->getName());
+
+		if (_list->size() > 1u)
+		{
+			_btnPrev->setText(L"<");
+			_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnPrevClick);
+			_btnPrev->onKeyboardPress(
+							(ActionHandler)& SoldierDiaryOverviewState::btnPrevClick,
+							Options::keyBattlePrevUnit);
+
+			_btnNext->setText(L">");
+			_btnNext->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnNextClick);
+			_btnNext->onKeyboardPress(
+							(ActionHandler)& SoldierDiaryOverviewState::btnNextClick,
+							Options::keyBattleNextUnit);
+		}
+		else
+		{
+			_btnPrev->setVisible(false);
+			_btnNext->setVisible(false);
+		}
 	}
-	else
+	else // list is reversed in the Memorial.
+	{
 		_txtBaseLabel->setVisible(false);
 
-//	_btnPrev->setColor(PURPLE);
-	_btnPrev->setText(L"<");
+		if (_listDead->size() > 1u)
+		{
+			_btnPrev->setText(L"<");
+			_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnNextClick);
+			_btnPrev->onKeyboardPress(
+								(ActionHandler)& SoldierDiaryOverviewState::btnNextClick,
+								Options::keyBattlePrevUnit);
 
-//	_btnNext->setColor(PURPLE);
-	_btnNext->setText(L">");
-
-	if (_base == nullptr)
-	{
-		_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnNextClick);
-		_btnPrev->onKeyboardPress(
-							(ActionHandler)& SoldierDiaryOverviewState::btnNextClick,
-							Options::keyBattlePrevUnit);
-		_btnNext->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnPrevClick);
-		_btnNext->onKeyboardPress(
-						(ActionHandler)& SoldierDiaryOverviewState::btnPrevClick,
-						Options::keyBattleNextUnit);
-	}
-	else
-	{
-		_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnPrevClick);
-		_btnPrev->onKeyboardPress(
-						(ActionHandler)& SoldierDiaryOverviewState::btnPrevClick,
-						Options::keyBattlePrevUnit);
-		_btnNext->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnNextClick);
-		_btnNext->onKeyboardPress(
-						(ActionHandler)& SoldierDiaryOverviewState::btnNextClick,
-						Options::keyBattleNextUnit);
+			_btnNext->setText(L">");
+			_btnNext->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnPrevClick);
+			_btnNext->onKeyboardPress(
+							(ActionHandler)& SoldierDiaryOverviewState::btnPrevClick,
+							Options::keyBattleNextUnit);
+		}
+		else
+		{
+			_btnPrev->setVisible(false);
+			_btnNext->setVisible(false);
+		}
 	}
 
+	_txtMissionId->setText(tr("STR_ID"));
 	_txtLocation->setText(tr("STR_LOCATION"));
-//	_txtLocation->setColor(PINK);
-
 	_txtStatus->setText(tr("STR_STATUS"));
-//	_txtStatus->setColor(PINK);
-
 	_txtDate->setText(tr("STR_DATE_MISSION"));
-//	_txtDate->setColor(PINK);
 
-	Uint8 color = _game->getRuleset()->getInterface("awards")->getElement("list")->color2;
+	Uint8 color (_game->getRuleset()->getInterface("awards")->getElement("list")->color2);
 
-	_lstDiary->setColumns(5, 94,108,25,22,30);
-//	_lstDiary->setColor(WHITE);
+//	_lstDiary->setColumns(5, 94,108,25,22,30);
+	_lstDiary->setColumns(6, 30,74,98,25,22,30);
 	_lstDiary->setArrowColor(color);
-//	_lstDiary->setArrowColor(PINK);
 	_lstDiary->setBackground(_window);
 	_lstDiary->setSelectable();
 	_lstDiary->setMargin();
@@ -193,21 +199,18 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 
 
 	_btnMissions->setText(tr("STR_MISSIONS_UC"));
-//	_btnMissions->setColor(BLUE);
 	_btnMissions->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnMissionsClick);
 	_btnMissions->onKeyboardPress(
 					(ActionHandler)& SoldierDiaryOverviewState::btnMissionsClick,
 					SDLK_m);
 
 	_btnKills->setText(tr("STR_KILLS_UC"));
-//	_btnKills->setColor(BLUE);
 	_btnKills->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnKillsClick);
 	_btnKills->onKeyboardPress(
 					(ActionHandler)& SoldierDiaryOverviewState::btnKillsClick,
 					SDLK_k);
 
 	_btnAwards->setText(tr("STR_AWARDS_UC"));
-//	_btnAwards->setColor(BLUE);
 //	_btnAwards->setVisible(_game->getRuleset()->getAwardsList().empty() == false); // safety.
 	_btnAwards->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnMedalsClick);
 	_btnAwards->onKeyboardPress(
@@ -215,7 +218,6 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 					SDLK_a);
 
 	_btnOk->setText(tr("STR_OK"));
-//	_btnOk->setColor(BLUE);
 	_btnOk->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnOkClick);
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& SoldierDiaryOverviewState::btnOkClick,
@@ -235,7 +237,7 @@ SoldierDiaryOverviewState::~SoldierDiaryOverviewState()
 {}
 
 /**
- * Clears and reinitializes the list of missions for the soldier.
+ * Clears and reinitializes the list of missions for each Soldier.
  */
 void SoldierDiaryOverviewState::init()
 {
@@ -243,17 +245,7 @@ void SoldierDiaryOverviewState::init()
 
 	SoldierDiary* diary (nullptr);
 
-	if (_base == nullptr)
-	{
-		if (_soldierId >= _listDead->size())
-			_soldierId = 0;
-
-		const SoldierDead* const solDead (_listDead->at(_soldierId));
-		diary = solDead->getDiary();
-
-		_txtTitle->setText(solDead->getName());
-	}
-	else
+	if (_list != nullptr)
 	{
 		if (_soldierId >= _list->size())
 			_soldierId = 0;
@@ -263,6 +255,16 @@ void SoldierDiaryOverviewState::init()
 
 		_txtTitle->setText(sol->getName());
 	}
+	else
+	{
+		if (_soldierId >= _listDead->size())
+			_soldierId = 0;
+
+		const SoldierDead* const solDead (_listDead->at(_soldierId));
+		diary = solDead->getDiary();
+
+		_txtTitle->setText(solDead->getName());
+	}
 
 
 	_lstDiary->clearList();
@@ -271,46 +273,46 @@ void SoldierDiaryOverviewState::init()
 		return;
 
 
-	const std::vector<MissionStatistics*>* const missionStatistics (_game->getSavedGame()->getMissionStatistics());
+	const std::vector<MissionStatistics*>* const stats (_game->getSavedGame()->getMissionStatistics());
 	for (std::vector<MissionStatistics*>::const_reverse_iterator
-			i = missionStatistics->rbegin();
-			i != missionStatistics->rend();
-			++i)
+			rit = stats->rbegin();
+			rit != stats->rend();
+			++rit)
 	{
-		const int missionId ((*i)->id);
+		const int missionId ((*rit)->id);
 
 		for (std::vector<int>::const_iterator
 				j = diary->getMissionIdList().begin();
 				j != diary->getMissionIdList().end();
 				++j)
 		{
-			if (*j == missionId) // This mission is in the soldier's vector of missions.
+			if (*j == missionId) // This mission is in the Soldier's vector of missions.
 			{
-				std::wostringstream
-					location,
-					status,
-					year;
+				std::wstring
+					wst1,
+					wst2;
 
-				if ((*i)->country == "STR_UNKNOWN")
-					location << tr((*i)->region);
+				if ((*rit)->country == "STR_UNKNOWN")
+					wst1 = tr((*rit)->region);
 				else
-					location << tr((*i)->country);
+					wst1 = tr((*rit)->country);
 
-				if ((*i)->success == true)
-					status << tr("STR_VICTORY");
+				if ((*rit)->success == true)
+					wst2 = tr("STR_VICTORY");
 				else
-					status << tr("STR_DEFEAT");
+					wst2 = tr("STR_DEFEAT");
 
-				status << " - " << tr((*i)->rating);
+				wst2 += L" - ";
+				wst2 += tr((*rit)->rating);
 
-				year << (*i)->timeStat.getYear();
 				_lstDiary->addRow(
-								5,
-								location.str().c_str(),
-								status.str().c_str(),
-								(*i)->timeStat.getDayString(_game->getLanguage()).c_str(),
-								tr((*i)->timeStat.getMonthString()).c_str(),
-								year.str().c_str());
+								6,
+								Text::intWide(missionId).c_str(),
+								wst1.c_str(),
+								wst2.c_str(),
+								(*rit)->timeStat.getDayString(_game->getLanguage()).c_str(),
+								tr((*rit)->timeStat.getMonthString()).c_str(),
+								Text::intWide((*rit)->timeStat.getYear()).c_str());
 				break;
 			}
 		}
@@ -320,7 +322,7 @@ void SoldierDiaryOverviewState::init()
 }
 
 /**
- * Sets the soldier's ID.
+ * Sets the current Soldier's ID.
  */
 void SoldierDiaryOverviewState::setSoldierId(size_t soldierId)
 {
@@ -333,16 +335,16 @@ void SoldierDiaryOverviewState::setSoldierId(size_t soldierId)
  */
 void SoldierDiaryOverviewState::btnOkClick(Action*)
 {
-	if (_base == nullptr)
-		_soldierInfoDeadState->setSoldierId(_soldierId);
+	if (_list != nullptr)
+		_soldierInfo->setSoldierId(_soldierId);
 	else
-		_soldierInfoState->setSoldierId(_soldierId);
+		_soldierInfoDead->setSoldierId(_soldierId);
 
 	_game->popState();
 }
 
 /**
- * Opens the soldier's Kills screen.
+ * Opens the Soldier's kills-screen.
  * @param action - pointer to an Action
  */
 void SoldierDiaryOverviewState::btnKillsClick(Action*)
@@ -356,7 +358,7 @@ void SoldierDiaryOverviewState::btnKillsClick(Action*)
 }
 
 /**
- * Opens the soldier's Missions screen.
+ * Opens the Soldier's missions-screen.
  * @param action - pointer to an Action
  */
 void SoldierDiaryOverviewState::btnMissionsClick(Action*)
@@ -370,7 +372,7 @@ void SoldierDiaryOverviewState::btnMissionsClick(Action*)
 }
 
 /**
- * Opens the soldier's Medals screen.
+ * Opens the Soldier's medals-screen.
  * @param action - pointer to an Action
  */
 void SoldierDiaryOverviewState::btnMedalsClick(Action*)
@@ -384,21 +386,23 @@ void SoldierDiaryOverviewState::btnMedalsClick(Action*)
 }
 
 /**
- * Goes to the previous soldier.
+ * Goes to the previous Soldier.
  * @param action - pointer to an Action
  */
 void SoldierDiaryOverviewState::btnPrevClick(Action*)
 {
 	_curRow = 0;
 
-	size_t rows;
-	if (_base == nullptr)
-		rows = _listDead->size();
-	else
-		rows = _list->size();
-
 	if (_soldierId == 0)
+	{
+		size_t rows;
+		if (_list != nullptr)
+			rows = _list->size();
+		else
+			rows = _listDead->size();
+
 		_soldierId = rows - 1;
+	}
 	else
 		--_soldierId;
 
@@ -406,7 +410,7 @@ void SoldierDiaryOverviewState::btnPrevClick(Action*)
 }
 
 /**
- * Goes to the next soldier.
+ * Goes to the next Soldier.
  * @param action - pointer to an Action
  */
 void SoldierDiaryOverviewState::btnNextClick(Action*)
@@ -414,26 +418,26 @@ void SoldierDiaryOverviewState::btnNextClick(Action*)
 	_curRow = 0;
 
 	size_t rows;
-	if (_base == nullptr)
-		rows = _listDead->size();
-	else
+	if (_list != nullptr)
 		rows = _list->size();
+	else
+		rows = _listDead->size();
 
-	if (++_soldierId >= rows)
+	if (++_soldierId == rows)
 		_soldierId = 0;
 
 	init();
 }
 
 /**
- * Shows the selected soldier's Mission info.
+ * Shows the selected Soldier's mission-info.
  * @param action - pointer to an Action
  */
 void SoldierDiaryOverviewState::lstMissionInfoClick(Action*)
 {
 	_curRow = _lstDiary->getScroll();
 
-	const size_t row (_lstDiary->getRows() - _lstDiary->getSelectedRow() - 1);
+	const size_t row (_lstDiary->getRows() - _lstDiary->getSelectedRow() - 1u);
 	_game->pushState(new SoldierDiaryMissionState(
 												_base,
 												_soldierId,

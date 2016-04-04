@@ -36,7 +36,7 @@ namespace OpenXcom
  */
 struct MissionStatistics
 {
-	static const int NIGHT_SHADE = 9;
+	static const int NIGHT_SHADE = 9; // cf. TileEngine::MAX_SHADE_TO_SEE_UNITS
 
 	bool
 		success,
@@ -55,7 +55,7 @@ struct MissionStatistics
 		type,
 		ufo;
 
-	std::map<int, int> injuryList;
+	std::map<int,int> injuryList;
 
 	GameTime timeStat;
 
@@ -114,7 +114,7 @@ struct MissionStatistics
 		rating		= node["rating"]		.as<std::string>(rating);
 		alienRace	= node["alienRace"]		.as<std::string>(alienRace);
 		shade		= node["shade"]			.as<int>(shade);
-		injuryList	= node["injuryList"]	.as<std::map<int, int>>(injuryList);
+		injuryList	= node["injuryList"]	.as<std::map<int,int>>(injuryList);
 		valiantCrux	= node["valiantCrux"]	.as<bool>(valiantCrux);
 	}
 

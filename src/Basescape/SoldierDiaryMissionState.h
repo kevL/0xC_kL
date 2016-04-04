@@ -27,6 +27,7 @@ namespace OpenXcom
 {
 
 class Base;
+class SoldierDiary;
 class Surface;
 class Text;
 class TextButton;
@@ -35,7 +36,7 @@ class Window;
 
 
 /**
- * A small window that shows mission details for a soldier.
+ * A small window that shows mission-details for a Soldier.
  */
 class SoldierDiaryMissionState
 	:
@@ -43,14 +44,20 @@ class SoldierDiaryMissionState
 {
 
 private:
-//	static const Uint8
-//		WHITE	= 208,
-//		YELLOW	= 213,
-//		BLUE	= 218;
+	size_t
+		_soldierId,
+		_rowEntry;
+	Uint8 _color;
 
-	Surface* _srfLine;
+	Base* _base;
+	SoldierDiary* _diary;
+
+	Surface
+		* _srfLine,
+		* _srfLineShade;
 	Text
 		* _txtTitle,
+//		* _txtMissionId,
 		* _txtScore,
 		* _txtKills,
 		* _txtMissionType,
@@ -59,20 +66,30 @@ private:
 		* _txtDaylight,
 		* _txtDaysWounded,
 		* _txtPoints;
-	TextButton* _btnOk;
+	TextButton
+		* _btnPrev,
+		* _btnNext,
+		* _btnOk;
 	TextList* _lstKills;
 	Window* _window;
 
 
 	public:
-		/// Creates the Soldier Diary Mission state.
+		/// Creates a SoldierDiaryMission state.
 		SoldierDiaryMissionState(
 				Base* const base,
 				size_t soldierId,
-				size_t entry);
-		/// Cleans up the Soldier Diary Mission state.
+				size_t rowEntry);
+		/// Cleans up the SoldierDiaryMission state.
 		~SoldierDiaryMissionState();
 
+		/// Updates the mission-info.
+		void init() override;
+
+		/// Handler for clicking the Previous button.
+		void btnPrevClick(Action* action);
+		/// Handler for clicking the Next button.
+		void btnNextClick(Action* action);
 		/// Handler for clicking the Cancel button.
 		void btnOkClick(Action* action);
 };

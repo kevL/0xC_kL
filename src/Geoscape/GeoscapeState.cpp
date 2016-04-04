@@ -2786,9 +2786,10 @@ void GeoscapeState::time1Day()
 				{
 					//Log(LOG_INFO) << "\n";
 					//Log(LOG_INFO) << ". Soldier = " << (*j)->getId() << " woundsPCT = " << chanceDeath;
-					const int lastMissionId ((*j)->getDiary()->getMissionIdList().back());
 					const std::vector<MissionStatistics*>* const missionStats (_gameSave->getMissionStatistics());
-					const int daysTotal (missionStats->at(lastMissionId)->injuryList[(*j)->getId()]);
+					const int
+						lastMissionId ((*j)->getDiary()->getMissionIdList().back()),
+						daysTotal (missionStats->at(lastMissionId)->injuryList[(*j)->getId()]);
 
 					//Log(LOG_INFO) << ". . daysTotal = " << daysTotal;
 					if (daysTotal > 0) // safety.

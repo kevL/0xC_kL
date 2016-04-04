@@ -438,22 +438,24 @@ private:
 				const std::string& region,
 				MissionObjective objective) const;
 
-		/// Locate a region containing a position.
+		/// Locates a Region containing the specified coordinates.
 		Region* locateRegion(
 				double lon,
 				double lat) const;
-		/// Locate a region containing a Target.
+		/// Locates a Region containing a Target.
 		Region* locateRegion(
 				const Target& target) const;
 
-		/// Return the month counter.
+		/// Gets the month-count.
 		int getMonthsPassed() const;
+		/// Increments the month-count.
+		void addMonth();
 
-		/// Return the GraphRegionToggles.
+		/// Gets the GraphRegionToggles.
 		const std::string& getGraphRegionToggles() const;
-		/// Return the GraphCountryToggles.
+		/// Gets the GraphCountryToggles.
 		const std::string& getGraphCountryToggles() const;
-		/// Return the GraphFinanceToggles.
+		/// Gets the GraphFinanceToggles.
 		const std::string& getGraphFinanceToggles() const;
 		/// Sets the GraphRegionToggles.
 		void setGraphRegionToggles(const std::string& value);
@@ -462,15 +464,13 @@ private:
 		/// Sets the GraphFinanceToggles.
 		void setGraphFinanceToggles(const std::string& value);
 
-		/// Increment the month counter.
-		void addMonth();
-/*		/// toggle the current state of the radar line drawing
+/*		/// Toggles the current state of the radar line drawing.
 		void toggleRadarLines();
-		/// check the current state of the radar line drawing
+		/// Gets the current state of the radar line drawing.
 		bool getRadarLines();
-		/// toggle the current state of the detail drawing
+		/// Toggles the current state of the detail drawing.
 		void toggleDetail();
-		/// check the current state of the detail drawing
+		/// Gets the current state of the detail drawing.
 		bool getDetail(); */
 
 		/// Gets the list of dead soldiers.
@@ -484,19 +484,19 @@ private:
 		/// Evaluate the score of a soldier based on all of his stats, missions and kills.
 		int getSoldierScore(Soldier* soldier);
 
-		/// Sets the last selected armour
+		/// Sets the last selected armor
 //		void setRecallArmor(const std::string& value);
-		/// Gets the last selected armour
+		/// Gets the last selected armor
 //		std::string getRecallArmor();
 
-		/// Sets a debug argument to GeoscapeState.
+		/// Sets a debug-argument to GeoscapeState.
 		void setDebugArg(const std::string& debug);
-		/// Gets a debug argument from Globe.
+		/// Gets a debug-argument from Globe.
 		std::string getDebugArg() const;
-		/// Gets if the debug argument has been set.
+		/// Gets if the debug-argument has been set.
 		bool getDebugArgDone();
 
-		/// Gets the list of missions statistics
+		/// Gets the list of missions-statistics.
 		std::vector<MissionStatistics*>* getMissionStatistics();
 
 		/// Scores points for XCom or aLiens.

@@ -61,7 +61,7 @@ private:
 		SIGHTDIST_VSp		= SIGHTDIST_TSp * 16,				// voxel-space
 		SIGHTDIST_VSp_Sqr	= SIGHTDIST_VSp * SIGHTDIST_VSp,
 
-		MAX_SHADE_TO_SEE_UNITS = 8,
+		MAX_SHADE_TO_SEE_UNITS = 8, // cf. MissionStatistics::NIGHT_SHADE
 
 		heightFromCenter[11],
 

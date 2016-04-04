@@ -61,13 +61,6 @@ class SoldierDiaryPerformanceState final
 private:
 	static const int LIST_SPRITES_y = 49;
 	static const size_t LIST_ROWS = 12;
-//	static const Uint8
-//		BROWN	= 160,
-//		WHITE	= 208,
-//		YELLOW	= 213,
-//		BLUE	= 218,
-//		PINK	= 241,
-//		PURPLE	= 246;
 
 	size_t
 		_lastScrollPos,
@@ -81,13 +74,12 @@ private:
 
 	std::vector<std::wstring> _awardsListEntry;
 
-	std::vector<Soldier*>* _list;
-	std::vector<SoldierDead*>* _listDead;
+	const std::vector<Soldier*>* _list;
+	const std::vector<SoldierDead*>* _listDead;
 	std::vector<Surface*>
 		_srfSprite,
 		_srfLevel;
 
-	Base* _base;
 	SoldierDiary* _diary;
 	SoldierDiaryOverviewState* _overview;
 
@@ -141,13 +133,13 @@ private:
 
 
 	public:
-		/// Creates the Soldier Performance state.
+		/// Creates a SoldierDiaryPerformance state.
 		SoldierDiaryPerformanceState(
 				Base* const base,
 				const size_t soldierId,
-				SoldierDiaryOverviewState* const soldierDiaryState,
+				SoldierDiaryOverviewState* const overview,
 				const SoldierDiaryDisplay display);
-		/// Cleans up the Soldier Performance state.
+		/// Cleans up the SoldierDiaryPerformance state.
 		~SoldierDiaryPerformanceState();
 
 		/// Updates the info.

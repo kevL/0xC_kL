@@ -418,12 +418,12 @@ void TextList::addRow(
 
 		if (cols != 0)
 			txt->setText(va_arg(args, wchar_t*));
-		else
-		{
-			wchar_t d[1];
-			std::mbstowcs(d, "", 1);
-			txt->setText(d);
-		}
+//		else
+//		{
+//			wchar_t d[1];
+//			std::mbstowcs(d, "", 1);
+//			txt->setText(d);
+//		}
 
 		// Grab this before enabling word-wrap so it can be used to calculate the total row-height below.
 		const int vertPad (_font->getHeight() - txt->getTextHeight());

@@ -206,7 +206,7 @@ private:
 		/// Gets the total number of stuns.
 		int getStunTotal() const;
 		/// Gets the total number of missions.
-		int getMissionTotal() const;
+		size_t getMissionTotal() const;
 		/// Gets the total number of wins.
 		int getWinTotal() const;
 		/// Gets the total number of days wounded.

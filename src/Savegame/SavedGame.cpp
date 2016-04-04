@@ -2025,7 +2025,7 @@ int SavedGame::getSoldierScore(Soldier* soldier)
 
 /**
  * Returns a list of the AlienBases.
- * @return, address of a vector of pointers to AlienBases
+ * @return, pointer to a vector of pointers to AlienBases
  */
 std::vector<AlienBase*>* SavedGame::getAlienBases()
 {
@@ -2160,7 +2160,7 @@ private:
 };
 
 /**
- * Finds the Region containing this location.
+ * Finds the Region containing the specified coordinates.
  * @param lon - the longtitude
  * @param lat - the latitude
  * @return, pointer to the region or nullptr
@@ -2180,9 +2180,9 @@ Region* SavedGame::locateRegion(
 }
 
 /**
- * Find the region containing this target.
+ * Finds the Region containing a specified Target.
  * @param target - the target to locate
- * @return, pointer to the Region or nullptr
+ * @return, pointer to the region or nullptr
  */
 Region* SavedGame::locateRegion(const Target& target) const
 {
@@ -2192,7 +2192,8 @@ Region* SavedGame::locateRegion(const Target& target) const
 }
 
 /**
- * @return, the month counter
+ * Gets the month-count.
+ * @return, the month-count
  */
 int SavedGame::getMonthsPassed() const
 {
@@ -2200,7 +2201,16 @@ int SavedGame::getMonthsPassed() const
 }
 
 /**
- * @return, address of the GraphRegionToggles
+ * Increments the month-count.
+ */
+void SavedGame::addMonth()
+{
+	++_monthsPassed;
+}
+
+/**
+ * Gets the GraphRegionToggles.
+ * @return, reference to the GraphRegionToggles
  */
 const std::string& SavedGame::getGraphRegionToggles() const
 {
@@ -2208,7 +2218,8 @@ const std::string& SavedGame::getGraphRegionToggles() const
 }
 
 /**
- * @return, address of the GraphCountryToggles
+ * Gets the GraphCountryToggles.
+ * @return, reference to the GraphCountryToggles
  */
 const std::string& SavedGame::getGraphCountryToggles() const
 {
@@ -2216,7 +2227,8 @@ const std::string& SavedGame::getGraphCountryToggles() const
 }
 
 /**
- * @return, address of the GraphFinanceToggles
+ * Gets the GraphFinanceToggles.
+ * @return, reference to the GraphFinanceToggles
  */
 const std::string& SavedGame::getGraphFinanceToggles() const
 {
@@ -2225,7 +2237,7 @@ const std::string& SavedGame::getGraphFinanceToggles() const
 
 /**
  * Sets the GraphRegionToggles.
- * @param value - reference the new value for GraphRegionToggles
+ * @param value - reference to the new value for GraphRegionToggles
  */
 void SavedGame::setGraphRegionToggles(const std::string& value)
 {
@@ -2234,7 +2246,7 @@ void SavedGame::setGraphRegionToggles(const std::string& value)
 
 /**
  * Sets the GraphCountryToggles.
- * @param value - reference the new value for GraphCountryToggles
+ * @param value - reference to the new value for GraphCountryToggles
  */
 void SavedGame::setGraphCountryToggles(const std::string& value)
 {
@@ -2243,7 +2255,7 @@ void SavedGame::setGraphCountryToggles(const std::string& value)
 
 /**
  * Sets the GraphFinanceToggles.
- * @param value - reference the new value for GraphFinanceToggles
+ * @param value - reference to the new value for GraphFinanceToggles
  */
 void SavedGame::setGraphFinanceToggles(const std::string& value)
 {
@@ -2251,35 +2263,29 @@ void SavedGame::setGraphFinanceToggles(const std::string& value)
 }
 
 /**
- * Increments the month counter.
- */
-void SavedGame::addMonth()
-{
-	++_monthsPassed;
-}
-
-/*
- * Toggles the state of the radar line drawing.
+ * Toggles the state of the radar-line drawing.
  *
 void SavedGame::toggleRadarLines()
 {
 	_radarLines = !_radarLines;
 } */
-/*
- * @return, the state of the radar line drawing.
+/**
+ * Gets the state of the radar-line drawing.
+ * @return, the state of the radar-line drawing.
  *
 bool SavedGame::getRadarLines()
 {
 	return _radarLines;
 } */
-/*
+/**
  * Toggles the state of the detail drawing.
  *
 void SavedGame::toggleDetail()
 {
 	_detail = !_detail;
 } */
-/*
+/**
+ * Gets the state of the detail drawing.
  * @return, the state of the detail drawing.
  *
 bool SavedGame::getDetail()
@@ -2288,7 +2294,7 @@ bool SavedGame::getDetail()
 } */
 
 /**
- * Returns the list of dead soldiers.
+ * Returns the list of dead Soldiers.
  * @return, pointer to a vector of pointers to SoldierDead.
  */
 std::vector<SoldierDead*>* SavedGame::getDeadSoldiers()
@@ -2296,8 +2302,8 @@ std::vector<SoldierDead*>* SavedGame::getDeadSoldiers()
 	return &_deadSoldiers;
 }
 
-/*
- * Returns the last selected player base.
+/**
+ * Returns the last selected player Base.
  * @return, pointer to base
  *
 Base* SavedGame::getRecallBase()
@@ -2308,25 +2314,25 @@ Base* SavedGame::getRecallBase()
 	else
 		return _bases.front();
 } */
-/*
- * Sets the last selected player base.
+/**
+ * Sets the last selected player Base.
  * @param base - # of the base
  *
 void SavedGame::setRecallBase(size_t base)
 {
 	_selectedBase = base;
 } */
-/*
- * Sets the last selected armour.
- * @param value - the new value for last selected armor - Armor type string
+/**
+ * Sets the last selected armor.
+ * @param value - the new value for last selected armor - armor-type string
  *
 void SavedGame::setRecallArmor(const std::string& value)
 {
 	_lastselectedArmor = value;
 } */
-/*
- * Gets the last selected armour.
- * @return, last used armor type string
+/**
+ * Gets the last selected armor.
+ * @return, last used armor-type string
  *
 std::string SavedGame::getRecallArmor()
 {
@@ -2334,7 +2340,7 @@ std::string SavedGame::getRecallArmor()
 } */
 
 /**
- * Sets a debug argument from Globe for GeoscapeState.
+ * Sets a debug-argument from Globe for GeoscapeState.
  * @param arg - debug string
  */
 void SavedGame::setDebugArg(const std::string& debug)
@@ -2344,7 +2350,7 @@ void SavedGame::setDebugArg(const std::string& debug)
 }
 
 /**
- * Gets a debug argument from Globe for GeoscapeState.
+ * Gets a debug-argument from Globe for GeoscapeState.
  * @return, debug string
  */
 std::string SavedGame::getDebugArg() const
@@ -2353,8 +2359,8 @@ std::string SavedGame::getDebugArg() const
 }
 
 /**
- * Gets if the debug argument has just been set - and resets flag if true.
- * @return, true if debug arg is ready for display
+ * Gets if the debug-argument has just been set - and resets flag if true.
+ * @return, true if debug-arg is ready for display
  */
 bool SavedGame::getDebugArgDone()
 {
@@ -2367,7 +2373,7 @@ bool SavedGame::getDebugArgDone()
 }
 
 /**
- * Gets mission statistics for soldier commendations.
+ * Gets mission-statistics for use by SoldierDiary.
  * @return, pointer to a vector of pointers to MissionStatistics
  */
 std::vector<MissionStatistics*>* SavedGame::getMissionStatistics()
