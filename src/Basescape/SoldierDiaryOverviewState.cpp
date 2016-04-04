@@ -70,17 +70,19 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 		_soldierId(soldierId),
 		_soldierInfo(soldierInfo),
 		_soldierInfoDead(soldierInfoDead),
-		_curRow(0)
+		_recall(0u)
 {
 	if (_base != nullptr)
 	{
 		_list = _base->getSoldiers();
 		_listDead = nullptr;
+		_rows = _list->size();
 	}
 	else
 	{
 		_listDead = _game->getSavedGame()->getDeadSoldiers();
 		_list = nullptr;
+		_rows = _listDead->size();
 	}
 
 	_window			= new Window(this, 320, 200);
@@ -137,7 +139,7 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 		_txtBaseLabel->setAlign(ALIGN_CENTER);
 		_txtBaseLabel->setText(_base->getName());
 
-		if (_list->size() > 1u)
+		if (_rows > 1u)
 		{
 			_btnPrev->setText(L"<");
 			_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnPrevClick);
@@ -161,7 +163,7 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 	{
 		_txtBaseLabel->setVisible(false);
 
-		if (_listDead->size() > 1u)
+		if (_rows > 1u)
 		{
 			_btnPrev->setText(L"<");
 			_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnNextClick);
@@ -189,7 +191,6 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 
 	Uint8 color (_game->getRuleset()->getInterface("awards")->getElement("list")->color2);
 
-//	_lstDiary->setColumns(5, 94,108,25,22,30);
 	_lstDiary->setColumns(6, 30,74,98,25,22,30);
 	_lstDiary->setArrowColor(color);
 	_lstDiary->setBackground(_window);
@@ -211,11 +212,11 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 					SDLK_k);
 
 	_btnAwards->setText(tr("STR_AWARDS_UC"));
-//	_btnAwards->setVisible(_game->getRuleset()->getAwardsList().empty() == false); // safety.
 	_btnAwards->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnMedalsClick);
 	_btnAwards->onKeyboardPress(
 					(ActionHandler)& SoldierDiaryOverviewState::btnMedalsClick,
 					SDLK_a);
+//	_btnAwards->setVisible(_game->getRuleset()->getAwardsList().empty() == false);
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnOkClick);
@@ -245,32 +246,26 @@ void SoldierDiaryOverviewState::init()
 
 	SoldierDiary* diary (nullptr);
 
+//	if (_soldierId >= _rows) // safety.
+//		_soldierId = 0;
+
 	if (_list != nullptr)
 	{
-		if (_soldierId >= _list->size())
-			_soldierId = 0;
-
 		const Soldier* const sol (_list->at(_soldierId));
 		diary = sol->getDiary();
-
 		_txtTitle->setText(sol->getName());
 	}
 	else
 	{
-		if (_soldierId >= _listDead->size())
-			_soldierId = 0;
-
 		const SoldierDead* const solDead (_listDead->at(_soldierId));
 		diary = solDead->getDiary();
-
 		_txtTitle->setText(solDead->getName());
 	}
 
 
 	_lstDiary->clearList();
 
-	if (diary == nullptr) // safety.
-		return;
+//	if (diary == nullptr) return; // safety.
 
 
 	const std::vector<MissionStatistics*>* const stats (_game->getSavedGame()->getMissionStatistics());
@@ -303,7 +298,7 @@ void SoldierDiaryOverviewState::init()
 					wst2 = tr("STR_DEFEAT");
 
 				wst2 += L" - ";
-				wst2 += tr((*rit)->rating);
+				wst2 += tr((*rit)->rating); // NOTE: This could take a performance hit vs. using std::wostringstream.
 
 				_lstDiary->addRow(
 								6,
@@ -318,7 +313,7 @@ void SoldierDiaryOverviewState::init()
 		}
 	}
 
-	_lstDiary->scrollTo(_curRow);
+	_lstDiary->scrollTo(_recall);
 }
 
 /**
@@ -349,7 +344,7 @@ void SoldierDiaryOverviewState::btnOkClick(Action*)
  */
 void SoldierDiaryOverviewState::btnKillsClick(Action*)
 {
-	_curRow = _lstDiary->getScroll();
+	_recall = _lstDiary->getScroll();
 	_game->pushState(new SoldierDiaryPerformanceState(
 												_base,
 												_soldierId,
@@ -363,7 +358,7 @@ void SoldierDiaryOverviewState::btnKillsClick(Action*)
  */
 void SoldierDiaryOverviewState::btnMissionsClick(Action*)
 {
-	_curRow = _lstDiary->getScroll();
+	_recall = _lstDiary->getScroll();
 	_game->pushState(new SoldierDiaryPerformanceState(
 												_base,
 												_soldierId,
@@ -377,7 +372,7 @@ void SoldierDiaryOverviewState::btnMissionsClick(Action*)
  */
 void SoldierDiaryOverviewState::btnMedalsClick(Action*)
 {
-	_curRow = _lstDiary->getScroll();
+	_recall = _lstDiary->getScroll();
 	_game->pushState(new SoldierDiaryPerformanceState(
 												_base,
 												_soldierId,
@@ -391,18 +386,10 @@ void SoldierDiaryOverviewState::btnMedalsClick(Action*)
  */
 void SoldierDiaryOverviewState::btnPrevClick(Action*)
 {
-	_curRow = 0;
+	_recall = 0u;
 
-	if (_soldierId == 0)
-	{
-		size_t rows;
-		if (_list != nullptr)
-			rows = _list->size();
-		else
-			rows = _listDead->size();
-
-		_soldierId = rows - 1;
-	}
+	if (_soldierId == 0u)
+		_soldierId = _rows - 1u;
 	else
 		--_soldierId;
 
@@ -415,16 +402,10 @@ void SoldierDiaryOverviewState::btnPrevClick(Action*)
  */
 void SoldierDiaryOverviewState::btnNextClick(Action*)
 {
-	_curRow = 0;
+	_recall = 0u;
 
-	size_t rows;
-	if (_list != nullptr)
-		rows = _list->size();
-	else
-		rows = _listDead->size();
-
-	if (++_soldierId == rows)
-		_soldierId = 0;
+	if (++_soldierId == _rows)
+		_soldierId = 0u;
 
 	init();
 }
@@ -435,7 +416,7 @@ void SoldierDiaryOverviewState::btnNextClick(Action*)
  */
 void SoldierDiaryOverviewState::lstMissionInfoClick(Action*)
 {
-	_curRow = _lstDiary->getScroll();
+	_recall = _lstDiary->getScroll();
 
 	const size_t row (_lstDiary->getRows() - _lstDiary->getSelectedRow() - 1u);
 	_game->pushState(new SoldierDiaryMissionState(

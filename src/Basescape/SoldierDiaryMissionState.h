@@ -59,7 +59,6 @@ private:
 		* _srfLineShade;
 	Text
 		* _txtTitle,
-//		* _txtMissionId,
 		* _txtScore,
 		* _txtKills,
 		* _txtMissionType,

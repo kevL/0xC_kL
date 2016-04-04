@@ -59,11 +59,12 @@ class SoldierDiaryPerformanceState final
 {
 
 private:
-	static const int LIST_SPRITES_y = 49;
-	static const size_t LIST_ROWS = 12;
+	static const size_t SPRITE_ROWS = 12u;
+	static const int SPRITES_y = 49;
 
 	size_t
-		_lastScrollPos,
+		_lastScroll,
+		_rows,
 		_soldierId;
 	Uint8
 		_colorBtnDown,

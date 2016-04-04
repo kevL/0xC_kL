@@ -70,7 +70,6 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	_window			= new Window(this, 292, 141, 14, 34, POPUP_VERTICAL);
 
 	_txtTitle		= new Text(120, 16, 100, 42);
-//	_txtMissionId	= new Text(20, 9, 288, 42); // TODO: Adjust that.
 
 	_btnPrev		= new TextButton(24, 14,  76, 42);
 	_btnNext		= new TextButton(24, 14, 220, 42);
@@ -96,7 +95,6 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 
 	add(_window,			"window",	"awardsMissionInfo");
 	add(_txtTitle,			"title",	"awardsMissionInfo");
-//	add(_txtMissionId,		"text",		"awardsMissionInfo");
 	add(_btnPrev,			"button",	"awardsMissionInfo");
 	add(_btnNext,			"button",	"awardsMissionInfo");
 	add(_txtMissionType,	"text",		"awardsMissionInfo");
@@ -209,7 +207,6 @@ void SoldierDiaryMissionState::init()
 	_btnNext->setVisible(vis);
 
 	_txtTitle->setText(tr("STR_MISSION_UC_").arg(missionId));
-//	_txtMissionId->setText(Text::intWide(static_cast<int>(missionId)));
 
 	_txtScore->setText(tr("STR_SCORE_VALUE_").arg(stats->at(missionId)->score));
 	_txtMissionType->setText(tr("STR_MISSION_TYPE_").arg(tr(stats->at(missionId)->type))); // 'type' was, getMissionTypeLowerCase()
@@ -273,21 +270,23 @@ void SoldierDiaryMissionState::init()
 			++kills;
 			points += (*i)->_points;
 
-			std::wostringstream
-				woststr1,
-				woststr2;
-
-			woststr1 << tr((*i)->_race) << L" " << tr((*i)->_rank);
+			std::wstring
+				wst1,
+				wst2;
 
 			if ((*i)->_status == STATUS_DEAD)
-				woststr2 << tr("STR_KILLED");
+				wst1 = tr("STR_KILLED");
 			else
-				woststr2 << tr("STR_STUNNED");
+				wst1 = tr("STR_STUNNED");
+
+			wst2 = tr((*i)->_race);
+			wst2 += L" ";
+			wst2 += tr((*i)->_rank); // NOTE: This could take a performance hit vs. using std::wostringstream.
 
 			_lstKills->addRow(
 							3,
-							woststr2.str().c_str(),
-							woststr1.str().c_str(),
+							wst1.c_str(),
+							wst2.c_str(),
 							tr((*i)->_weapon).c_str());
 			_lstKills->setCellColor(row++, 0, _color);
 		}
@@ -330,7 +329,7 @@ void SoldierDiaryMissionState::btnPrevClick(Action*)
  */
 void SoldierDiaryMissionState::btnNextClick(Action*)
 {
-	if (++_rowEntry >= _diary->getMissionTotal())
+	if (++_rowEntry == _diary->getMissionTotal())
 		_rowEntry = 0;
 
 	init();

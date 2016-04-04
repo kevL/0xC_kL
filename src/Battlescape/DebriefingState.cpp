@@ -1202,7 +1202,7 @@ void DebriefingState::prepareDebriefing() // private.
 				{
 					case FACTION_PLAYER:
 						if (aborted == false
-							|| ((tacType != TCT_BASEDEFENSE || _missionStatistics->success == true)
+							|| ((_missionStatistics->success == true || tacType != TCT_BASEDEFENSE)
 								&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LIMBO)))
 						{
 							++playerExit;

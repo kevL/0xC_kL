@@ -49,8 +49,9 @@ class SoldierDiaryOverviewState final
 
 private:
 	size_t
-		_soldierId,
-		_curRow;
+		_recall,
+		_rows,
+		_soldierId;
 
 	const std::vector<Soldier*>* _list;
 	const std::vector<SoldierDead*>* _listDead;

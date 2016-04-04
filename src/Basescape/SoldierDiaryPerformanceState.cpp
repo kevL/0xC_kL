@@ -66,18 +66,20 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 		_soldierId(soldierId),
 		_overview(overview),
 		_display(display),
-		_lastScrollPos(0),
+		_lastScroll(0u),
 		_diary(nullptr)
 {
 	if (base != nullptr)
 	{
 		_list = base->getSoldiers();
 		_listDead = nullptr;
+		_rows = _list->size();
 	}
 	else
 	{
 		_listDead = _game->getSavedGame()->getDeadSoldiers();
 		_list = nullptr;
+		_rows = _listDead->size();
 	}
 
 	_window				= new Window(this, 320, 200);
@@ -123,13 +125,14 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	// Award sprites
 	_srtSprite = _game->getResourcePack()->getSurfaceSet("Awards");
 	_srtDecor = _game->getResourcePack()->getSurfaceSet("AwardDecorations");
-	for (int
-			i = 0;
-			i != static_cast<int>(LIST_ROWS);
+	for (size_t
+			i = 0u;
+			i != SPRITE_ROWS;
 			++i)
 	{
-		_srfSprite.push_back(new Surface(31, 7, 16, LIST_SPRITES_y + (i * 8)));
-		_srfLevel.push_back(new Surface(31, 7, 16, LIST_SPRITES_y + (i * 8)));
+		const int offset_y (SPRITES_y + (static_cast<int>(i) * 8));
+		_srfSprite.push_back(new Surface(31, 7, 16, offset_y));
+		_srfLevel.push_back(new Surface(31, 7, 16, offset_y));
 	}
 
 	setInterface("awards", true);
@@ -175,7 +178,7 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	// Award sprites
 	for (size_t
 			i = 0;
-			i != LIST_ROWS;
+			i != SPRITE_ROWS;
 			++i)
 	{
 		add(_srfSprite[i]);
@@ -195,7 +198,7 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 		_txtBaseLabel->setAlign(ALIGN_CENTER);
 		_txtBaseLabel->setText(base->getName());
 
-		if (_list->size() > 1u)
+		if (_rows > 1u)
 		{
 			_btnPrev->setText(L"<");
 			_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnPrevClick);
@@ -219,7 +222,7 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	{
 		_txtBaseLabel->setVisible(false);
 
-		if (_listDead->size() > 1u)
+		if (_rows > 1u)
 		{
 			_btnPrev->setText(L"<");
 			_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnNextClick);
@@ -368,8 +371,8 @@ void SoldierDiaryPerformanceState::init()
 	State::init();
 
 	for (size_t // clear sprites
-			i = 0;
-			i != LIST_ROWS;
+			i = 0u;
+			i != SPRITE_ROWS;
 			++i)
 	{
 		_srfSprite[i]->clear();
@@ -385,7 +388,7 @@ void SoldierDiaryPerformanceState::init()
 	_lstUFO				->scrollTo();
 	_lstMissionTotals	->scrollTo();
 	_lstAwards			->scrollTo();
-	_lastScrollPos		= 0;
+	_lastScroll			= 0u;
 
 
 	bool vis;
@@ -429,7 +432,7 @@ void SoldierDiaryPerformanceState::init()
 	_lstMissionTotals	->setVisible(vis);
 
 
-//	_btnAwards->setVisible(_game->getRuleset()->getAwardsList().empty() == false); // safety.
+//	_btnAwards->setVisible(_game->getRuleset()->getAwardsList().empty() == false);
 
 	if (_display == DIARY_MEDALS) // set visibility for awarded Medals
 	{
@@ -460,24 +463,20 @@ void SoldierDiaryPerformanceState::init()
 	_lstUFO			->clearList();
 	_lstAwards		->clearList();
 
+
+//	if (_soldierId >= _rows) // safety.
+//		_soldierId = 0u;
+
 	if (_list != nullptr)
 	{
-		if (_soldierId >= _list->size())
-			_soldierId = 0;
-
 		const Soldier* const soldier (_list->at(_soldierId));
 		_diary = soldier->getDiary();
-
 		_txtTitle->setText(soldier->getName());
 	}
 	else
 	{
-		if (_soldierId >= _listDead->size())
-			_soldierId = 0;
-
 		const SoldierDead* const deadSoldier (_listDead->at(_soldierId));
 		_diary = deadSoldier->getDiary();
-
 		_txtTitle->setText(deadSoldier->getName());
 	}
 
@@ -492,7 +491,7 @@ void SoldierDiaryPerformanceState::init()
 		wst3,
 		wst4;
 
-	if (_diary->getMissionTotal() != 0) // Mission stats ->
+	if (_diary->getMissionTotal() != 0u) // Mission stats ->
 		wst1 = tr("STR_MISSIONS_").arg(_diary->getMissionTotal());
 	if (_diary->getWinTotal() != 0)
 		wst2 = tr("STR_WINS_").arg(_diary->getWinTotal());
@@ -537,7 +536,7 @@ void SoldierDiaryPerformanceState::init()
 		_txtProficiency->setVisible(false);
 
 
-	const size_t lstCols (6);
+	const size_t lstCols (6u);
 	TextList* const lstArray[lstCols] // Mission & Kill stats ->
 	{
 		_lstRace,
@@ -559,11 +558,11 @@ void SoldierDiaryPerformanceState::init()
 	};
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != lstCols;
 			++i)
 	{
-		size_t row (0);
+		size_t row (0u);
 		for (std::map<std::string, int>::const_iterator
 				j = mapArray[i].begin();
 				j != mapArray[i].end();
@@ -578,7 +577,7 @@ void SoldierDiaryPerformanceState::init()
 								2,
 								tr((*j).first).c_str(),
 								woststr.str().c_str());
-				lstArray[i]->setCellColor(row++, 0, _color1stCol);
+				lstArray[i]->setCellColor(row++, 0u, _color1stCol);
 			}
 		}
 	}
@@ -627,8 +626,8 @@ void SoldierDiaryPerformanceState::drawMedals() // private.
 	if (_display == DIARY_MEDALS)
 	{
 		for (size_t
-				i = 0;
-				i != LIST_ROWS;
+				i = 0u;
+				i != SPRITE_ROWS;
 				++i)
 		{
 			_srfSprite[i]->clear();
@@ -639,7 +638,7 @@ void SoldierDiaryPerformanceState::drawMedals() // private.
 		const size_t scroll (_lstAwards->getScroll());
 		int sprite;
 
-		size_t j (0);
+		size_t j (0u);
 		for (std::vector<SoldierAward*>::const_iterator
 				i = _diary->getSoldierAwards()->begin();
 				i != _diary->getSoldierAwards()->end();
@@ -648,11 +647,11 @@ void SoldierDiaryPerformanceState::drawMedals() // private.
 			if (j >= scroll // show awards that are visible on the list
 				&& j - scroll < _srfSprite.size())
 			{
-				awardRule = _game->getRuleset()->getAwardsList()[(*i)->getType()]; // handle award sprites
+				awardRule = _game->getRuleset()->getAwardsList()[(*i)->getType()]; // handle award's sprites
 				sprite = awardRule->getSprite();
 				_srtSprite->getFrame(sprite)->blit(_srfSprite[j - scroll]);
 
-				sprite = static_cast<int>((*i)->getClassLevel()); // handle award decoration sprites
+				sprite = static_cast<int>((*i)->getClassLevel()); // handle award's decoration-sprites
 				if (sprite != 0)
 					_srtDecor->getFrame(sprite)->blit(_srfLevel[j - scroll]);
 			}
@@ -733,7 +732,7 @@ void SoldierDiaryPerformanceState::lstMouseOver(Action*)
 	const size_t row (_lstAwards->getSelectedRow());
 
 	if (_awardsListEntry.empty() == true
-		|| row > _awardsListEntry.size() - 1)
+		|| row > _awardsListEntry.size() - 1u)
 	{
 		_txtMedalInfo->setText(L"");
 	}
@@ -756,16 +755,8 @@ void SoldierDiaryPerformanceState::lstMouseOut(Action*)
  */
 void SoldierDiaryPerformanceState::btnPrevClick(Action*)
 {
-	if (_soldierId == 0)
-	{
-		size_t rows;
-		if (_list != nullptr)
-			rows = _list->size();
-		else
-			rows = _listDead->size();
-
-		_soldierId = rows - 1;
-	}
+	if (_soldierId == 0u)
+		_soldierId = _rows - 1u;
 	else
 		--_soldierId;
 
@@ -778,14 +769,8 @@ void SoldierDiaryPerformanceState::btnPrevClick(Action*)
  */
 void SoldierDiaryPerformanceState::btnNextClick(Action*)
 {
-	size_t rows;
-	if (_list != nullptr)
-		rows = _list->size();
-	else
-		rows = _listDead->size();
-
-	if (++_soldierId == rows)
-		_soldierId = 0;
+	if (++_soldierId == _rows)
+		_soldierId = 0u;
 
 	init();
 }
@@ -798,9 +783,9 @@ void SoldierDiaryPerformanceState::think()
 {
 	State::think();
 
-	if (_lastScrollPos != _lstAwards->getScroll())
+	if (_lastScroll != _lstAwards->getScroll())
 	{
-		_lastScrollPos = _lstAwards->getScroll();
+		_lastScroll = _lstAwards->getScroll();
 		drawMedals();
 	}
 }
