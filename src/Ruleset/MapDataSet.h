@@ -65,37 +65,37 @@ private:
 		MapDataSet(
 				const std::string& type,
 				const Game* const game);
-		/// Destructs a MapDataSet.
+		/// Destructs the MapDataSet.
 		~MapDataSet();
 
-		/// Loads the map data set from YAML.
+		/// Loads the MapDataSet from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets the dataset type (used for MAP generation).
+		/// Gets the dataset-type used for MAP generation.
 		std::string getType() const;
 
-		/// Gets the dataset size.
+		/// Gets the dataset-size.
 		size_t getSize() const;
 
-		/// Gets the objects in this dataset.
+		/// Gets the parts in the MapDataSet.
 		std::vector<MapData*>* getRecords();
 
-		/// Gets the surfaces in this dataset.
+		/// Gets the Surfaces in the MapDataSet.
 		SurfaceSet* getSurfaceset() const;
 
-		/// Loads the objects from an MCD file.
+		/// Loads the objects from an MCD-file.
 		void loadData();
-		///	Unloads to free memory.
+		///	Unloads the dataset to free-up RAM.
 		void unloadData();
 
-		/// Loads voxeldata from a DAT file.
+		/// Loads LoFT-voxel-data from a DAT file.
 		static void loadLoft(
 				const std::string& file,
 				std::vector<Uint16>* const voxelData);
 
-		/// Gets a blank floor tile.
+		/// Gets the part's blank-floor-part.
 		static MapData* getBlankFloorTile();
-		/// Gets a scorched earth tile.
+		/// Gets the part's scorched-earth-part.
 		static MapData* getScorchedEarthTile();
 };
 

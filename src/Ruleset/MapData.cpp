@@ -475,10 +475,10 @@ void MapData::setDieMCD(int value)
  */
 int MapData::getLightSource() const
 {
-	if (_lightSource == 1)	// lamp posts have 1
-		return 15;			// but they should emit more light
+//	if (_lightSource == 1)	// lamp posts have 1
+//		return 15;			// but they should emit more light -> Fixed in MCD.
 
-	return _lightSource - 1;
+	return _lightSource;// - 1;
 }
 
 /**
@@ -547,9 +547,9 @@ void MapData::setFuel(int value)
 }
 
 /**
- * Gets the LoFT index for a certain layer.
+ * Gets the LoFT-index of a specified layer.
  * @param layer - the layer (0..11)
- * @return, the LoFT index
+ * @return, the LoFT-index
  */
 size_t MapData::getLoftId(size_t layer) const
 {
@@ -557,8 +557,8 @@ size_t MapData::getLoftId(size_t layer) const
 }
 
 /**
- * Sets the LoFT index for a certain layer.
- * @param loft	- the LoFT index
+ * Sets the LoFT-index of a specified layer.
+ * @param loft	- the LoFT-index
  * @param layer	- the layer (0..11)
  */
 void MapData::setLoftId(
@@ -601,23 +601,19 @@ DamageType MapData::getExplosiveType() const
  */
 void MapData::setExplosiveType(int value)
 {
-	switch (value) // account for (HE_Type)MCD vs. (RuleItem.h enum)DamageType mismatch
+	switch (value) // account for (HE_Type)MCD vs. (RuleItem.h)DamageType mismatch
 	{
-		case 0:
-			_explosiveType = DT_HE;
+		case 0: _explosiveType = DT_HE;
 			break;
 
 		default:
-		case 1:
-			_explosiveType = DT_SMOKE;
+		case 1: _explosiveType = DT_SMOKE;
 			break;
 
-		case 5:
-			_explosiveType = DT_IN;
+		case 5: _explosiveType = DT_IN;
 			break;
 
-		case 6:
-			_explosiveType = DT_STUN;
+		case 6: _explosiveType = DT_STUN;
 	}
 }
 

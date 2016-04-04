@@ -178,7 +178,7 @@ void TileEngine::calculateSunShading(Tile* const tile) const
 }
 
 /**
- * Recalculates lighting for the terrain: objects, items, fire.
+ * Recalculates lighting for the terrain: parts, items, fire, flares.
  */
 void TileEngine::calculateTerrainLighting() const
 {
@@ -201,7 +201,7 @@ void TileEngine::calculateTerrainLighting() const
 		tile = _battleSave->getTiles()[i];
 		pos = tile->getPosition();
 
-		if (tile->getMapData(O_FLOOR) != nullptr // add lighting of Floor-part
+		if (tile->getMapData(O_FLOOR) != nullptr					// add lighting of Floor-part
 			&& tile->getMapData(O_FLOOR)->getLightSource() != 0)
 		{
 			addLight(
@@ -210,7 +210,7 @@ void TileEngine::calculateTerrainLighting() const
 					LIGHT_LAYER_STATIC);
 		}
 
-		if (tile->getMapData(O_OBJECT) != nullptr // add lighting of Object-part
+		if (tile->getMapData(O_OBJECT) != nullptr					// add lighting of Object-part
 			&& tile->getMapData(O_OBJECT)->getLightSource() != 0)
 		{
 			addLight(
@@ -219,7 +219,7 @@ void TileEngine::calculateTerrainLighting() const
 					LIGHT_LAYER_STATIC);
 		}
 
-		if (tile->getFire() != 0) // add lighting from Tile-fire
+		if (tile->getFire() != 0)									// add lighting from Tile-fire
 			addLight(
 					pos,
 					LIGHT_FIRE,
@@ -230,7 +230,7 @@ void TileEngine::calculateTerrainLighting() const
 				j != tile->getInventory()->end();
 				++j)
 		{
-			if ((*j)->getRules()->getBattleType() == BT_FLARE // add lighting of battle-flares
+			if ((*j)->getRules()->getBattleType() == BT_FLARE		// add lighting of battle-flares
 				&& (*j)->getFuse() != -1)
 			{
 				addLight(
@@ -290,7 +290,7 @@ void TileEngine::togglePersonalLighting()
 /**
  * Adds a circular light-pattern starting from @a pos and losing power
  * proportional to distance.
- * @param pos	- reference to the center Position in tile-space
+ * @param pos	- reference to the center-position in tile-space
  * @param power	- power of light
  * @param layer	- light is separated in 3 layers: Ambient, Static, and Dynamic
  */
@@ -304,12 +304,14 @@ void TileEngine::addLight( // private.
 
 	for (int // loop through the positive quadrant only - reflect that onto the other quadrants.
 			x = 0;
-			x <= power;
+			x < power;
+//			x <= power;
 			++x)
 	{
 		for (int
 				y = 0;
-				y <= power;
+				y < power;
+//				y <= power;
 				++y)
 		{
 			for (int
@@ -362,7 +364,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 	unit->clearHostileUnits();
 //	unit->clearVisibleTiles();
 
-	if (unit->isOut_t() == true)
+	if (unit->isOut_t(OUT_STAT) == true)
 		return false;
 
 //	if (unit->getFaction() == FACTION_PLAYER)

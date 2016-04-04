@@ -68,22 +68,23 @@ enum BigwallType
 	BIGWALL_W_N		// 9 NOT USED in stock UFO.
 };
 
-/* enum TerrainHeight
-{
-	TH_FLOOR,
-	TH_THIRD,
-	TH_HALF,
-	TH_TWOTHIRD,
-	TH_CEIL
-} */
+//enum TerrainHeight
+//{
+//	TH_FLOOR,
+//	TH_THIRD,
+//	TH_HALF,
+//	TH_TWOTHIRD,
+//	TH_CEIL
+//};
 
 class MapDataSet;
 
 
 /**
- * MapData is the smallest piece of a Battlescape terrain, holding info about a
- * certain object, wall, floor, etc. THIS IS A TILEPART.
- * @note A better ident for this class would be 'TileData' or even 'PartData'.
+ * MapData is the smallest piece of a battlefield, holding info about a floor,
+ * wall, or object.
+ * @note THIS IS A TILEPART. A better ident for this class would be 'TileData'
+ * or even 'PartData'. Or just 'TilePart'.
  * @sa MapDataSet.
  */
 class MapData
@@ -129,12 +130,12 @@ private:
 
 
 	public:
-/*		static const int
-			TH_FLOOR	= 0,
-			TH_THIRD	= 8,
-			TH_HALF		= 12,
-			TH_TWOTHIRD	= 16,
-			TH_CEIL		= 24; */
+//		static const int
+//			TH_FLOOR	=  0,
+//			TH_THIRD	=  8,
+//			TH_HALF		= 12,
+//			TH_TWOTHIRD	= 16,
+//			TH_CEIL		= 24;
 
 		/// cTor.
 		explicit MapData(MapDataSet* const dataSet);
@@ -142,37 +143,37 @@ private:
 		~MapData();
 
 
-		/// Gets the dataset this object belongs to.
+		/// Gets the MapDataSet the part belongs to.
 		MapDataSet* getDataset() const;
 
-		/// Gets the sprite index for a certain frame.
+		/// Gets the sprite-index for a specified frame.
 		int getSprite(int aniFrame) const;
-		/// Sets the sprite index for a certain frame.
+		/// Sets the sprite-index for a specified frame.
 		void setSprite(
 				size_t aniFrame,
 				int id);
 
-		/// Gets whether this is an animated ufo door.
+		/// Gets whether the part is an animated ufo-door.
 		bool isUfoDoor() const;
-		/// Gets whether this stops LoS.
+		/// Gets whether the part stops LoS.
 		bool stopLOS() const;
-		/// Gets whether this is a floor.
+		/// Gets whether the part is considered a solid floor.
 		bool isNoFloor() const;
-		/// Gets whether this is a big wall.
+		/// Gets whether the part is a BigWall.
 		BigwallType getBigwall() const;
-		/// Gets whether this is a normal door.
+		/// Gets whether the part is a normal door.
 		bool isDoor() const;
-		/// Gets whether this is a grav lift.
+		/// Gets whether the part is a grav-lift.
 		bool isGravLift() const;
-		/// Gets whether this blocks smoke.
+		/// Gets whether the part blocks smoke.
 		bool blockSmoke() const;
-		/// Gets whether this blocks fire.
+		/// Gets whether the part blocks fire.
 		bool blockFire() const;
 
-		/// Sets whether this stops LoS.
+		/// Sets whether the part stops LoS.
 		void setStopLOS(bool stopLOS = true);
 
-		/// Sets all kinds of flags.
+		/// Sets a whack of flags.
 		void setFlags(
 				bool isUfoDoor,
 				bool stopLOS,
@@ -186,7 +187,7 @@ private:
 
 		/// Gets the amount of blockage of a certain type.
 		int getBlock(DamageType dType) const;
-		/// Sets the amount of blockage for all types.
+		/// Sets the amount of blockage for a bunch of types.
 		void setBlock(
 				int lightBlock,
 				int visionBlock,
@@ -197,19 +198,19 @@ private:
 		/// Sets the amount of HE blockage.
 		void setHEBlock(int heBlock);
 
-		/// Gets the offset on the y-axis when drawing this object.
+		/// Gets the offset on the y-axis when drawing the part.
 		int getYOffset() const;
-		/// Sets the offset on the y-axis for drawing this object.
+		/// Sets the offset on the y-axis for drawing the part.
 		void setYOffset(int offset);
 
-		/// Gets the type of tile.
+		/// Gets the type of the part.
 		MapDataType getPartType() const;
-		/// Sets the type of tile.
+		/// Sets the type of the part.
 		void setPartType(MapDataType type);
 
-		/// Gets info about special tile types
+		/// Gets a SpecialTileType for the part.
 		SpecialTileType getSpecialType() const;
-		/// Sets a special tile type and object type.
+		/// Sets a SpecialTileType for the part.
 		void setSpecialType(SpecialTileType type);
 
 		/// Gets the TU cost to move over the part.
@@ -220,28 +221,28 @@ private:
 				int fly,
 				int slide);
 
-		/// Adds this to the graphical Y offset of units or objects on this tile.
+		/// Gets the y-offset for units/items on the part.
 		int getTerrainLevel() const;
-		/// Sets Y offset for units/objects on this tile.
+		/// Sets the y-offset for units/items on the part.
 		void setTerrainLevel(int offset);
 
-		/// Gets the index to the footstep sound.
+		/// Gets the index of the footstep-sound.
 		int getFootstepSound() const;
-		/// Sets the index to the footstep sound.
+		/// Sets the index of the footstep-sound.
 		void setFootstepSound(int value);
 
-		/// Gets the alternative object ID.
+		/// Gets the alternate object-ID.
 		int getAltMCD() const;
-		/// Sets the alternative object ID.
+		/// Sets the alternate object-ID.
 		void setAltMCD(int value);
-		/// Gets the dead object ID.
+		/// Gets the dead-object-ID.
 		int getDieMCD() const;
-		/// Sets the dead object ID.
+		/// Sets the dead-object-ID.
 		void setDieMCD(int value);
 
-		/// Gets the amount of light the object is emitting.
+		/// Gets the amount of light the part emits.
 		int getLightSource() const;
-		/// Sets the amount of light the object is emitting.
+		/// Sets the amount of light the part emits.
 		void setLightSource(int value);
 
 		/// Gets the amount of armor.
@@ -258,9 +259,9 @@ private:
 		/// Sets the amount of fuel.
 		void setFuel(int value);
 
-		/// Gets the loft index for a certain layer.
+		/// Gets the LoFT-index of a specified layer.
 		size_t getLoftId(size_t layer) const;
-		/// Sets the loft index for a certain layer.
+		/// Sets the LoFT-index of a specified layer.
 		void setLoftId(
 				size_t loft,
 				size_t layer);
@@ -274,50 +275,46 @@ private:
 		/// Sets the type of explosive.
 		void setExplosiveType(int value);
 
-		/// Sets the MiniMap index
+		/// Sets the MiniMap index.
 		void setMiniMapIndex(unsigned short id);
-		/// Gets the MiniMap index
+		/// Gets the MiniMap index.
 		int getMiniMapIndex() const;
 
-		/// Sets the bigwall value.
+		/// Sets the BigWall value.
 		void setBigWall(int bigWall);
 
-		/// Sets the TUWalk value.
+		/// Sets the TU-walk value.
 		void setTUWalk(const int TUWalk);
-		/// Sets the TUFly value.
+		/// Sets the TU-fly value.
 		void setTUFly(const int TUFly);
-		/// Sets the TUSlide value.
+		/// Sets the TU-slide value.
 		void setTUSlide(const int TUSlide);
 
-		/// Sets this tile as not a floor.
+		/// Sets the part as not-a-floor.
 		void setNoFloor(bool isNoFloor);
 
-		/// Checks if this is an aLien-objective tile-part.
+		/// Checks if the part is an aLien-objective tile-part.
 		bool isBaseObject() const;
 
-		/// Sets if this tilepart is psychedelic.
+		/// Sets if the tile-part is psychedelic.
 		void setPsychedelic(int psycho);
-		/// Gets if this tilepart is psychedelic.
+		/// Gets if the tile-part is psychedelic.
 		int getPsychedelic() const;
 
+		/**
+		 * Converts a VoxelType into a string for readable debug-logs.
+		 */
 		static std::string debugVoxelType(VoxelType type)
 		{
 			switch (type)
 			{
-				case VOXEL_EMPTY:
-					return "-1 VOXEL_EMPTY";
-				case VOXEL_FLOOR:
-					return "0 VOXEL_FLOOR";
-				case VOXEL_WESTWALL:
-					return "1 VOXEL_WESTWALL";
-				case VOXEL_NORTHWALL:
-					return "2 VOXEL_NORTHWALL";
-				case VOXEL_OBJECT:
-					return "3 VOXEL_OBJECT";
-				case VOXEL_UNIT:
-					return "4 VOXEL_UNIT";
-				case VOXEL_OUTOFBOUNDS:
-					return "5 VOXEL_OUTOFBOUNDS";
+				case VOXEL_EMPTY:		return "-1 VOXEL_EMPTY";
+				case VOXEL_FLOOR:		return "0 VOXEL_FLOOR";
+				case VOXEL_WESTWALL:	return "1 VOXEL_WESTWALL";
+				case VOXEL_NORTHWALL:	return "2 VOXEL_NORTHWALL";
+				case VOXEL_OBJECT:		return "3 VOXEL_OBJECT";
+				case VOXEL_UNIT:		return "4 VOXEL_UNIT";
+				case VOXEL_OUTOFBOUNDS:	return "5 VOXEL_OUTOFBOUNDS";
 			}
 			return "ERROR: no VoxelType";
 		}

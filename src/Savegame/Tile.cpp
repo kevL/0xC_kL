@@ -601,7 +601,7 @@ void Tile::resetLight(size_t layer)
 
 /**
  * Adds light on this Tile.
- * @note Only add light if the current light is lower.
+ * @note Only add light if the current light-power is lower.
  * @param light - amount of light to add
  * @param layer - light is separated in 3 layers: Ambient, Static and Dynamic
  */

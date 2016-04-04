@@ -28,7 +28,6 @@
 #include "../Engine/CrossPlatform.h"
 #include "../Engine/Exception.h"
 #include "../Engine/Game.h"
-//#include "../Engine/Logger.h"
 #include "../Engine/SurfaceSet.h"
 
 #include "../Resource/ResourcePack.h"
@@ -392,8 +391,8 @@ void MapDataSet::loadLoft( // static.
 }
 
 /**
- * Gets a blank floor tile.
- * @return, pointer to blank tile MapData
+ * Gets this part's blank-floor-part.
+ * @return, pointer to a blank-part
  */
 MapData* MapDataSet::getBlankFloorTile() // static.
 {
@@ -401,8 +400,8 @@ MapData* MapDataSet::getBlankFloorTile() // static.
 }
 
 /**
- * Gets a scorched earth tile.
- * @return, pointer to scorched earth tile MapData
+ * Gets this part's scorched-earth-part.
+ * @return, pointer to scorched-earth-part
  */
 MapData* MapDataSet::getScorchedEarthTile() // static.
 {
