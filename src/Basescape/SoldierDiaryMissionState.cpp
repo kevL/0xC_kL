@@ -134,8 +134,8 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 
 	_color = _game->getRuleset()->getInterface("awardsMissionInfo")->getElement("list")->color2;
 
-	_srfLine	 ->drawLine(0,0, 120,0,  1u + _color);
-	_srfLineShade->drawLine(0,0, 120,0, 14u); // TODO: Use static Uint8 for color.
+	_srfLine	 ->drawLine(0,0, 120,0, _color + 2u);
+	_srfLineShade->drawLine(0,0, 120,0, BLACK);
 
 	_lstKills->setArrowColor(_color);
 	_lstKills->setColumns(3, 30,100,100);
@@ -208,7 +208,7 @@ void SoldierDiaryMissionState::init()
 	_btnPrev->setVisible(vis);
 	_btnNext->setVisible(vis);
 
-	_txtTitle->setText(tr("STR_MISSION_").arg(missionId));
+	_txtTitle->setText(tr("STR_MISSION_UC_").arg(missionId));
 //	_txtMissionId->setText(Text::intWide(static_cast<int>(missionId)));
 
 	_txtScore->setText(tr("STR_SCORE_VALUE_").arg(stats->at(missionId)->score));

@@ -44,6 +44,8 @@ class SoldierDiaryMissionState
 {
 
 private:
+	static const Uint8 BLACK = 14u;
+
 	size_t
 		_soldierId,
 		_rowEntry;
