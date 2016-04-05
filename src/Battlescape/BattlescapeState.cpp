@@ -1886,7 +1886,7 @@ void BattlescapeState::btnKneelClick(Action*)
 			{
 				_battleGame->getTileEngine()->calcFovPos(
 													unit->getPosition(),
-													true, false);
+													true, false); // try no tile-reveal.
 				// need that here, so that my newVis algorithm works without
 				// false positives, or true negatives as it were, when a soldier
 				// stands up and walks in one go via UnitWalkBState. Because if
