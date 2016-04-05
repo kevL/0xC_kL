@@ -167,7 +167,7 @@ void UnitTurnBState::think()
 		_parent->getMap()->cacheUnit(_unit);
 
 		const size_t antecedentOpponents (_unit->getHostileUnitsThisTurn().size());
-		const bool spot (_parent->getTileEngine()->calculateFOV(_unit));
+		const bool spot (_parent->getTileEngine()->calcFov(_unit));
 
 		if (_chargeTu == true)
 		{

@@ -388,7 +388,7 @@ void UnitDieBState::convertToBody() // private.
 
 	if (calcLights == true)
 		_parent->getTileEngine()->calculateTerrainLighting();
-	_parent->getTileEngine()->calculateFOV(pos, true); // expose any units that were hiding behind dead unit and account for possible Smoke too.
+	_parent->getTileEngine()->calcFovPos(pos, true); // expose any units that were hiding behind dead unit and account for possible Smoke too.
 //	}
 }
 

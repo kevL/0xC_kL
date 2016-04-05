@@ -306,8 +306,8 @@ void UnitWalkBState::cancel()
 }
 
 /**
- * This begins unit movement. And may end unit movement.
- * Called from think()...
+ * Begins unit movement and may also end unit movement.
+ * @note Called from think().
  * @return, true to continue moving, false to exit think()
  */
 bool UnitWalkBState::doStatusStand() // private.
@@ -367,9 +367,8 @@ bool UnitWalkBState::doStatusStand() // private.
 
 	if (visForUnits() == true)
 	{
-		//Log(LOG_INFO) << "Uh-ohh! STATUS_STANDING or PANICKING Company!";
 		//if (_unit->getFaction() == FACTION_PLAYER) Log(LOG_INFO) << ". . _newVis = TRUE, postPathProcedures";
-		//else if (_unit->getFaction() != FACTION_PLAYER) Log(LOG_INFO) << ". . _newUnitSpotted = TRUE, postPathProcedures";
+		//else Log(LOG_INFO) << ". . _newUnitSpotted = TRUE, postPathProcedures";
 
 		if (_unit->getFaction() != FACTION_PLAYER)
 			_unit->setHiding(false);
@@ -653,8 +652,8 @@ bool UnitWalkBState::doStatusStand() // private.
 }
 
 /**
- * This continues unit movement.
- * Called from think()...
+ * Continues unit movement.
+ * @note Called from think().
  * @return, true to continue moving, false to exit think()
  */
 bool UnitWalkBState::doStatusWalk() // private.
@@ -782,8 +781,8 @@ bool UnitWalkBState::doStatusWalk() // private.
 }
 
 /**
- * This function ends unit movement.
- * Called from think()...
+ * Ends unit movement.
+ * @note Called from think().
  * @return, true to continue moving, false to exit think()
  */
 bool UnitWalkBState::doStatusStand_end() // private.
@@ -863,7 +862,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 	else
 		_walkCam->setViewLevel(pos.z);
 
-	// This needs to be done *before* the calculateFOV(pos) or else any newVis will
+	// This needs to be done *before* the calcFovPos() or else any newVis will
 	// be marked Visible before visForUnits() catches the new unit that is !Visible.
 	const bool newVis (visForUnits());
 
@@ -883,7 +882,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 
 	// This calculates or 'refreshes' the Field of View of all units within
 	// maximum distance (~20 tiles) of current unit.
-	_te->calculateFOV(pos, true);
+	_te->calcFovPos(pos, true, false);
 
 	if (_parent->checkProxyGrenades(_unit) == true) // Put checkForSilacoid() here!
 	{
@@ -914,8 +913,8 @@ bool UnitWalkBState::doStatusStand_end() // private.
 }
 
 /**
- * This function turns unit during movement.
- * Called from think()
+ * Swivels unit during movement.
+ * @note Called from think().
  */
 void UnitWalkBState::doStatusTurn() // private.
 {
@@ -928,7 +927,7 @@ void UnitWalkBState::doStatusTurn() // private.
 	_unit->clearCache();
 	_parent->getMap()->cacheUnit(_unit);
 
-	// calculateFOV() is unreliable for setting the _newUnitSpotted bool as it
+	// calcFov() is unreliable for setting the _newUnitSpotted bool as it
 	// can be called from various other places in the code, ie: doors opening
 	// (& explosions/terrain destruction) and that messes up the result.
 	// But let's do it anyway! ps. Fixed
@@ -1001,8 +1000,8 @@ void UnitWalkBState::postPathProcedures() // private.
 			// put an appropriate facing direction here
 			// don't stare at a wall. Get if aggro, face closest xCom op <- might be done somewhere already.
 			// Cheat: face closest xCom op based on a percentage (perhaps alien 'value' or rank)
-			// cf. void AggroBAIState::setAggroTarget(BattleUnit *unit)
-			// and bool TileEngine::calculateFOV(BattleUnit *unit)
+			// cf. void AggroBAIState::setAggroTarget(BattleUnit* unit)
+			// and bool TileEngine::calcFov(BattleUnit* unit)
 
 			if (_parent->getTileEngine()->validMeleeRange(
 													_unit, dir,
@@ -1086,7 +1085,7 @@ void UnitWalkBState::postPathProcedures() // private.
 			while (_unit->getUnitStatus() == STATUS_TURNING)
 			{
 				_unit->turn();
-				_parent->getTileEngine()->calculateFOV(_unit);
+				_parent->getTileEngine()->calcFov(_unit);
 				// might need newVis/newUnitSpotted -> abort
 			}
 		}
@@ -1096,7 +1095,7 @@ void UnitWalkBState::postPathProcedures() // private.
 
 
 	_te->calculateUnitLighting();
-	_te->calculateFOV(_unit->getPosition(), true); // in case unit opened a door and stopped without doing Status_WALKING
+	_te->calcFovPos(_unit->getPosition(), true); // in case unit opened a door and stopped without doing Status_WALKING
 
 	_unit->clearCache();
 	_parent->getMap()->cacheUnit(_unit);
@@ -1150,18 +1149,18 @@ int UnitWalkBState::getFinalDirection() const // private.
 }
 
 /**
- * Checks visibility for new opponents.
- * @return, true if a new enemy is spotted
+ * Checks visibility against new opponents.
+ * @return, true if a new opponent is spotted
  */
 bool UnitWalkBState::visForUnits() const // private.
 {
 	if (_falling == true
-		|| _parent->playerPanicHandled() == false)	// note: _playerPanicHandled can be false only on Player's turn
-	{												// so if expression== TRUE then it's a player's turn.
+		|| _parent->playerPanicHandled() == false)	// NOTE: _playerPanicHandled can be false only on Player's
+	{												// turn so if expression== TRUE then it's a player's turn.
 		return false;
 	}
 
-	bool ret (_te->calculateFOV(_unit));
+	bool ret (_te->calcFov(_unit));
 
 	if (_unit->getFaction() != FACTION_PLAYER)
 	{
@@ -1170,7 +1169,6 @@ bool UnitWalkBState::visForUnits() const // private.
 		   && _action.desperate == false
 		   && _unit->getChargeTarget() == nullptr;
 	}
-
 	return ret;
 }
 

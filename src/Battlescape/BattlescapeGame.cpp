@@ -160,7 +160,7 @@ void BattlescapeGame::init()
 	if (_firstInit == true)
 	{
 		_firstInit = false;
-		_battleSave->getTileEngine()->recalculateFOV();
+		_battleSave->getTileEngine()->calcFovAll();
 	}
 }
 
@@ -203,7 +203,7 @@ void BattlescapeGame::think()
 				if ((_playerPanicHandled = handlePanickingPlayer()) == true)
 				{
 					//Log(LOG_INFO) << "bg:think() . panic Handled TRUE";
-					_battleSave->getTileEngine()->recalculateFOV();
+					_battleSave->getTileEngine()->calcFovAll();
 					_battleSave->getBattleState()->updateSoldierInfo(false);
 				}
 			}
@@ -554,7 +554,8 @@ void BattlescapeGame::popState()
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
 		{
 			//Log(LOG_INFO) << ". updateSoldierInfo()";
-			_parentState->updateSoldierInfo(); // although calcFoV ought have been done by now ...
+//			_parentState->updateSoldierInfo();		// although calcFoV ought have been done by now ...
+			_parentState->updateSoldierInfo(false);	// try popState w/out calcFoV.
 		}
 	}
 
@@ -680,7 +681,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 	unit->setUnitVisible(false);
 
-	_battleSave->getTileEngine()->calculateFOV(unit->getPosition());
+	_battleSave->getTileEngine()->calcFovPos(unit->getPosition());
 
 	if (unit->getAIState() == nullptr)
 	{
@@ -1246,12 +1247,12 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 						unit->spendTimeUnits(tu);
 						unit->kneelUnit(unit->isKneeled() == false);
 						// kneeling or standing up can reveal new terrain or units. I guess. -> sure can!
-						// But updateSoldierInfo() also does does calculateFOV(), so ...
-//						getTileEngine()->calculateFOV(unit);
+						// But updateSoldierInfo() also does does calcFov(), so ...
+//						getTileEngine()->calcFov(unit);
 
 						getMap()->cacheUnits();
 
-//						_parentState->updateSoldierInfo(false); // <- also does calculateFOV() !
+//						_parentState->updateSoldierInfo(false); // <- also does calcFov() !
 						// wait... shouldn't one of those calcFoV's actually trigger!! ? !
 						// Hopefully it's done after returning, in another updateSoldierInfo... or newVis check.
 						// So.. I put this in BattlescapeState::btnKneelClick() instead; updates will
@@ -2911,7 +2912,7 @@ void BattlescapeGame::dropItem(
 			&& item->getFuse() != -1)
 		{
 			getTileEngine()->calculateTerrainLighting();
-			getTileEngine()->recalculateFOV(true);
+			getTileEngine()->calcFovAll(true);
 		}
 	}
 }
@@ -2955,7 +2956,7 @@ void BattlescapeGame::dropUnitInventory(BattleUnit* const unit)
 		if (calcFoV == true)
 		{
 			getTileEngine()->calculateTerrainLighting();
-			getTileEngine()->recalculateFOV(true);
+			getTileEngine()->calcFovAll(true);
 		}
 	}
 }
@@ -3042,7 +3043,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 
 	getTileEngine()->applyGravity(conUnit->getTile());
 	getTileEngine()->calculateUnitLighting();
-	getTileEngine()->calculateFOV(conUnit->getPosition(), true);
+	getTileEngine()->calcFovPos(conUnit->getPosition(), true);
 
 	return conUnit;
 }
@@ -3640,30 +3641,30 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 	Tile* tile;
 	Position pos;
 
-	const int armorSize (unit->getArmor()->getSize() - 1);
+	const int unitSize (unit->getArmor()->getSize() - 1);
 	for (int
-			x = armorSize;
+			x = unitSize;
 			x != -1;
 			--x)
 	{
 		for (int
-				y = armorSize;
+				y = unitSize;
 				y != -1;
 				--y)
 		{
 			for (int
-					tx = -1;
-					tx != 2;
-					++tx)
+					dx = -1;
+					dx != 2;
+					++dx)
 			{
 				for (int
-						ty = -1;
-						ty != 2;
-						++ty)
+						dy = -1;
+						dy != 2;
+						++dy)
 				{
 					tile = _battleSave->getTile(unit->getPosition()
 													   + Position( x, y, 0)
-													   + Position(tx,ty, 0));
+													   + Position(dx,dy, 0));
 					if (tile != nullptr)
 					{
 						for (std::vector<BattleItem*>::const_iterator
@@ -3676,7 +3677,7 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 							{
 								int dir; // cred: animal310 - http://openxcom.org/bugs/openxcom/issues/765
 								Pathfinding::vectorToDirection(
-															Position(tx,ty,0),
+															Position(dx,dy,0),
 															dir);
 								if (_battleSave->getPathfinding()->isBlockedPath(
 																			_battleSave->getTile(unit->getPosition() + Position(x,y,0)),

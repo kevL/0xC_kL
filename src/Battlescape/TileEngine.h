@@ -47,7 +47,7 @@ struct BattleAction;
  * A utility class that handles lighting and calculations in 3D-space on the
  * battlefield - as well as opening and closing doors.
  * @note This function does not handle any graphics or sounds - except doggie
- * bark in calculateFOV().
+ * bark in calcFov().
  */
 class TileEngine
 {
@@ -151,14 +151,17 @@ private:
 		/// Toggles xCom units' personal lighting on/off.
 		void togglePersonalLighting();
 
-		/// Calculates Field of Vision from a unit's view-point.
-		bool calculateFOV(BattleUnit* const unit) const;
-		/// Calculates Field of Vision including for all units within range of Position.
-		void calculateFOV(
+		/// Calculates Field of View of a single BattleUnit.
+		bool calcFov(
+				BattleUnit* const unit,
+				bool reveal = true) const;
+		/// Calculates Field of View of all units within range of a specified Position.
+		void calcFovPos(
 				const Position& pos,
-				bool spotSound = false);
-		/// Recalculates Field of Vision of all units.
-		void recalculateFOV(bool spotSound = false);
+				bool spotSound = false,
+				bool reveal = true);
+		/// Calculates Field of View of all conscious units on the battlefield.
+		void calcFovAll(bool spotSound = false);
 
 		/// Checks visibility of a BattleUnit to a Tile.
 		bool visible(

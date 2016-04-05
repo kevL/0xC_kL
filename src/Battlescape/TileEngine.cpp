@@ -43,6 +43,7 @@
 
 #include "../Engine/Game.h"
 #include "../Engine/Language.h"
+//#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -355,12 +356,17 @@ void TileEngine::addLight( // private.
 }
 
 /**
- * Calculates Field of View for a BattleUnit.
- * @param unit - pointer to a BattleUnit
+ * Calculates FoV of a single BattleUnit.
+ * @param unit		- pointer to a BattleUnit
+ * @param reveal	- true to reveal Tiles (default true)
  * @return, true when previously concealed units are spotted
  */
-bool TileEngine::calculateFOV(BattleUnit* const unit) const
+bool TileEngine::calcFov(
+		BattleUnit* const unit,
+		bool reveal) const
 {
+	//Log(LOG_INFO) << "calcFoV id-" << unit->getId();
+//	return false; // TEST.
 	unit->clearHostileUnits();
 //	unit->clearVisibleTiles();
 
@@ -436,7 +442,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 		if (diag == false)
 		{
 			y1 = -x;
-			y2 = x;
+			y2 =  x;
 		}
 
 		for (int
@@ -516,7 +522,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 									if (unit->getFaction() == FACTION_HOSTILE
 										&& _battleSave->getSide() == FACTION_HOSTILE)
 									{
-										//Log(LOG_INFO) << "calculateFOV() id " << unit->getId() << " spots " << spottedUnit->getId();
+										//Log(LOG_INFO) << "calcFov() id " << unit->getId() << " spots " << spottedUnit->getId();
 										spottedUnit->setExposed();	// note that xCom agents can be seen by enemies but *not* become Exposed.
 																	// Only potential reactionFire should set them Exposed during xCom's turn.
 									}
@@ -524,7 +530,7 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 							}
 						}
 
-						if (unit->getFaction() == FACTION_PLAYER) // reveal extra tiles ->>
+						if (reveal == true && unit->getFaction() == FACTION_PLAYER) // reveal extra tiles ->>
 						{
 							// this sets tiles to discovered if they are in FoV -
 							// tile visibility is not calculated in voxelspace but in tilespace;
@@ -701,15 +707,17 @@ bool TileEngine::calculateFOV(BattleUnit* const unit) const
 }
 
 /**
- * Calculates line of sight of all units within range of the Position.
+ * Calculates FoV of all units within range of a specified Position.
  * @note Used when a unit is walking or terrain has changed which can reveal
  * unseen units and/or parts of terrain.
  * @param pos		- reference the position of the changed terrain
- * @param spotSound	- true to play aggro sound (default false)
+ * @param spotSound	- true to play aggro-sound (default false)
+ * @param reveal	- true to reveal Tiles (default true)
  */
-void TileEngine::calculateFOV(
+void TileEngine::calcFovPos(
 		const Position& pos,
-		bool spotSound)
+		bool spotSound,
+		bool reveal)
 {
 	_spotSound = spotSound;
 	for (std::vector<BattleUnit*>::const_iterator
@@ -717,17 +725,17 @@ void TileEngine::calculateFOV(
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		if (distSqr(pos, (*i)->getPosition(), false) <= SIGHTDIST_TSp_Sqr + 1) // +1 for ...
-			calculateFOV(*i);
+		if (distSqr(pos, (*i)->getPosition(), false) <= SIGHTDIST_TSp_Sqr) // +1 for ...
+			calcFov(*i, reveal);
 	}
 	_spotSound = true;
 }
 
 /**
- * Recalculates FOV of all conscious units on the battlefield.
+ * Calculates FoV of all conscious units on the battlefield.
  * @param spotSound - true to play aggro sound (default false)
  */
-void TileEngine::recalculateFOV(bool spotSound)
+void TileEngine::calcFovAll(bool spotSound)
 {
 	_spotSound = spotSound;
 	for (std::vector<BattleUnit*>::const_iterator
@@ -735,8 +743,8 @@ void TileEngine::recalculateFOV(bool spotSound)
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		if ((*i)->getTile() != nullptr)
-			calculateFOV(*i);
+		if ((*i)->getTile() != nullptr) // the BattleUnit must be conscious.
+			calcFov(*i);
 	}
 	_spotSound = true;
 }
@@ -2121,7 +2129,7 @@ void TileEngine::hit(
 	calculateSunShading();		// roofs could have been destroyed
 	calculateTerrainLighting();	// fires could have been started
 //	calculateUnitLighting();	// units could have collapsed <- done in UnitDieBState
-	calculateFOV(posTarget, true);
+	calcFovPos(posTarget, true);
 }
 
 /**
@@ -2854,7 +2862,7 @@ void TileEngine::explode(
 	calculateSunShading();		// roofs could have been destroyed
 	calculateTerrainLighting();	// fires could have been started
 //	calculateUnitLighting();	// units could have collapsed <- done in UnitDieBState
-	recalculateFOV(true);
+	calcFovAll(true);
 	//Log(LOG_INFO) << "TileEngine::explode() EXIT";
 }
 
@@ -4474,7 +4482,7 @@ DoorResult TileEngine::unitOpensDoor(
 					//Log(LOG_INFO) << "RMB -> calcFoV";
 					_battleSave->getBattleGame()->checkProxyGrenades(unit);
 
-					calculateFOV(unit->getPosition(), true); // calculate FoV for everyone within sight-range, incl. unit.
+					calcFovPos(unit->getPosition(), true); // calculate FoV for everyone within sight-range, incl. unit.
 
 					// look from the other side, may need to check reaction fire
 					// This seems redundant but hey maybe it removes now-unseen units from a unit's visible-units vector ....
@@ -4487,7 +4495,7 @@ DoorResult TileEngine::unitOpensDoor(
 //							++i)
 //					{
 //						//Log(LOG_INFO) << "calcFoV hostile";
-//						calculateFOV(hostileUnits->at(i)); // calculate FoV for all hostile units that are visible to this unit.
+//						calcFov(hostileUnits->at(i)); // calculate FoV for all hostile units that are visible to this unit.
 //					}
 				}
 			}
@@ -4749,7 +4757,7 @@ bool TileEngine::closeUfoDoors() const
  *			0-3 tile-part
  *			  4 unit
  *			  5 out-of-map
- *		   +/-1 special case for calculateFOV() to remove or not the last tile in the trajectory
+ *		   +/-1 special case for calcFov() to remove or not the last tile in the trajectory
  * VOXEL_EMPTY			// -1
  * VOXEL_FLOOR			//  0
  * VOXEL_WESTWALL		//  1
@@ -4764,7 +4772,7 @@ VoxelType TileEngine::plotLine(
 		const bool storeTrj,
 		std::vector<Position>* const trj,
 		const BattleUnit* const excludeUnit,
-		const bool doVoxelCheck, // false is used only for calculateFOV()
+		const bool doVoxelCheck, // false is used only for calcFov()
 		const bool onlyVisible,
 		const BattleUnit* const excludeAllBut) const
 {
@@ -4894,7 +4902,7 @@ VoxelType TileEngine::plotLine(
 			} */ // kL_TEST_end.
 
 			// TODO: These returns should be mapped to something more meaningful before passing
-			// back to calculateFOV() - which is the only call that uses this quirky bit.
+			// back to calcFov() - which is the only call that uses this quirky bit.
 			if (horiBlock < 0) // hit content-object
 			{
 				if (vertBlock < 1)
@@ -6047,7 +6055,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 						victim->setUnitStatus(STATUS_STANDING);
 
 						calculateUnitLighting();
-						calculateFOV(
+						calcFovPos(
 								victim->getPosition(),
 								true);
 

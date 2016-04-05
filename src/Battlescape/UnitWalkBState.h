@@ -63,13 +63,13 @@ private:
 	SavedBattleGame* _battleSave;
 	TileEngine* _te;
 
-	/// This function begins unit movement.
+	/// Begins unit movement and may also end unit movement..
 	bool doStatusStand();
-	/// This function continues unit movement.
+	/// Continues unit movement.
 	bool doStatusWalk();
-	/// This function ends unit movement.
+	/// Ends unit movement.
 	bool doStatusStand_end();
-	/// This function turns unit during movement.
+	/// Swivels unit during movement.
 	void doStatusTurn();
 
 	/// Resets the unit-cache, aborts the path and the State.
@@ -80,7 +80,7 @@ private:
 	/// Gets a suitable final facing direction for aLiens.
 	int getFinalDirection() const;
 
-	/// Checks visibility for new opponents.
+	/// Checks visibility against new opponents.
 	bool visForUnits() const;
 
 	/// Sets animation speed for the unit.
@@ -89,7 +89,7 @@ private:
 	/// Handles the stepping sounds.
 	void playMoveSound();
 
-	/// For determining if a flying unit turns flight off at start of movement.
+	/// For determining if a flying-unit turns flight off at start of movement.
 	void doFallCheck();
 	/// Checks if there is ground below when unit is falling.
 	bool groundCheck() const;
@@ -101,7 +101,7 @@ private:
 
 
 	public:
-		/// Creates a new UnitWalkBState class.
+		/// Creates a UnitWalkBState class.
 		UnitWalkBState(
 				BattlescapeGame* const parent,
 				BattleAction _action);

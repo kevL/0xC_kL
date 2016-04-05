@@ -632,7 +632,7 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 	_te->calculateSunShading();
 	_te->calculateTerrainLighting();
 	_te->calculateUnitLighting();
-//	_te->recalculateFOV(); // -> moved to BattlescapeGame::init()
+//	_te->calcFovAll(); // -> moved to BattlescapeGame::init()
 }
 
 /**
@@ -1447,9 +1447,9 @@ bool SavedBattleGame::endFactionTurn()
 	_te->calculateTerrainLighting();
 	_te->calculateUnitLighting(); // turn off MCed alien lighting.
 
-	// redo calculateFOV() *after* aliens & civies have been set notVisible
+	// redo calcFov() *after* aliens & civies have been set notVisible
 	// -> AND *only after* a calcLighting has been done!
-	_te->recalculateFOV();
+	_te->calcFovAll();
 
 	if (_side != FACTION_PLAYER)
 		selectNextFactionUnit();
@@ -2181,7 +2181,7 @@ void SavedBattleGame::reviveUnit(
 			unit->setRevived();
 
 			_te->calculateUnitLighting();
-			_te->calculateFOV(unit->getPosition(), true);
+			_te->calcFovPos(unit->getPosition(), true);
 			deleteBody(unit);
 
 			_battleState->hotWoundsRefresh();

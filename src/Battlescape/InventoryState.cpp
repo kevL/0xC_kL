@@ -423,7 +423,7 @@ InventoryState::~InventoryState()
 //		if (flarePower > _flarePower)
 //		{
 		te->calculateTerrainLighting();
-		te->recalculateFOV(true); // <- done in BattlescapeGame::init() -> but without 'spotSound'
+		te->calcFovAll(true); // <- done in BattlescapeGame::init() -> but without 'spotSound'
 //		}
 
 		_battleSave->getBattleGame()->getMap()->setNoDraw(false);
@@ -445,7 +445,7 @@ InventoryState::~InventoryState()
 //kL	Tile* tile = _battleSave->getSelectedUnit()->getTile();
 //kL	_battleSave->getTileEngine()->applyGravity(tile);
 //kL	_battleSave->getTileEngine()->calculateTerrainLighting(); // dropping/picking up flares
-//kL	_battleSave->getTileEngine()->recalculateFOV();
+//kL	_battleSave->getTileEngine()->calcFovAll();
 
 //	}
 //	else

@@ -441,7 +441,7 @@ void BattlescapeGenerator::run()
 	_battleSave->getTileEngine()->calculateTerrainLighting();
 	_battleSave->getTileEngine()->calculateUnitLighting();
 
-	_battleSave->getTileEngine()->recalculateFOV();
+	_battleSave->getTileEngine()->calcFovAll();
 
 	_battleSave->getShuffleUnits()->assign(
 										_battleSave->getUnits()->size(),
@@ -779,7 +779,7 @@ void BattlescapeGenerator::nextStage()
 	_battleSave->getTileEngine()->calculateTerrainLighting();
 	_battleSave->getTileEngine()->calculateUnitLighting();
 
-	_battleSave->getTileEngine()->recalculateFOV();
+	_battleSave->getTileEngine()->calcFovAll();
 
 	_battleSave->getShuffleUnits()->assign(
 										_battleSave->getUnits()->size(),

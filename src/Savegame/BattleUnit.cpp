@@ -2123,7 +2123,7 @@ bool BattleUnit::getUnitVisible() const
  * @note For aliens these are xCom and civies; for xCom these are aliens only.
  * @note _hostileUnits are currently seen - _hostileUnitsThisTurn are just that.
  * Don't confuse either of these with the '_visible' to Player flag.
- * @note Called from TileEngine::calculateFOV().
+ * @note Called from TileEngine::calcFov().
  * @param unit - pointer to a seen BattleUnit
  */
 void BattleUnit::addToHostileUnits(BattleUnit* const unit)

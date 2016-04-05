@@ -1075,7 +1075,7 @@ void BattlescapeState::init()
 	_map->draw();
 	_battleGame->init();
 
-	updateSoldierInfo();
+	updateSoldierInfo(false); // NOTE: Does not need calcFoV, done in BattlescapeGame::init(first init).
 
 //	switch (_battleSave->getBatReserved())
 //	{
@@ -1883,7 +1883,7 @@ void BattlescapeState::btnKneelClick(Action*)
 			//Log(LOG_INFO) << "BattlescapeState::btnKneelClick()";
 			if (_battleGame->kneelToggle(unit) == true)
 			{
-				_battleGame->getTileEngine()->calculateFOV(unit->getPosition(), true);
+				_battleGame->getTileEngine()->calcFovPos(unit->getPosition(), true);
 				// need that here, so that my newVis algorithm works without
 				// false positives, or true negatives as it were, when a soldier
 				// stands up and walks in one go via UnitWalkBState. Because if
@@ -2785,7 +2785,7 @@ bool BattlescapeState::playableUnitSelected()
 
 /**
  * Updates a unit's onScreen stats & info.
- * @param calcFoV - true to run calculateFOV() for the unit (default true)
+ * @param calcFoV - true to run calcFov() for the unit (default true)
  */
 void BattlescapeState::updateSoldierInfo(bool calcFoV)
 {
@@ -2876,7 +2876,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 	BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 	if (calcFoV == true)
-		_battleSave->getTileEngine()->calculateFOV(selUnit);
+		_battleSave->getTileEngine()->calcFov(selUnit);
 
 	if (_battleSave->getSide() == FACTION_PLAYER)
 		hotSqrsUpdate();
