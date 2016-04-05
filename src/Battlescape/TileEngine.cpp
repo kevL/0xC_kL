@@ -90,7 +90,6 @@ TileEngine::TileEngine(
 		_spotSound(true),
 		_trueTile(nullptr),
 		_dirRay(-1)
-//		_debug(false)
 //		_missileDirection(-1)
 {
 	_rfAction = new BattleAction();
@@ -378,7 +377,6 @@ bool TileEngine::calcFov(
 //		unit->getTile()->setTileVisible();
 //		unit->getTile()->setDiscovered(true, 2);
 //	}
-
 
 	bool ret (false);
 
@@ -2157,15 +2155,13 @@ void TileEngine::explode(
 			bool grenade,
 			bool defusePulse)
 {
-/*	int iFalse (0);
-	for (int i = 0; i < 1000; ++i)
-	{
-		int iTest (RNG::generate(0,1));
-		if (iTest == 0) ++iFalse;
-	}
-	Log(LOG_INFO) << "RNG:TEST = " << iFalse; */
-
-//	_debug = true;
+//	int iFalse (0);
+//	for (int i = 0; i < 1000; ++i)
+//	{
+//		int iTest (RNG::generate(0,1));
+//		if (iTest == 0) ++iFalse;
+//	}
+//	Log(LOG_INFO) << "RNG:TEST = " << iFalse;
 
 	//Log(LOG_INFO) << "TileEngine::explode() power = " << power << ", dType = " << (int)dType << ", radius = " << radius;
 	if (dType == DT_IN)
@@ -2801,7 +2797,6 @@ void TileEngine::explode(
 	_powerE =
 	_powerT =
 	_dirRay = -1;
-//	_debug = false;
 
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _battleSave->getUnits()->begin();
@@ -2905,6 +2900,7 @@ int TileEngine::horizontalBlockage(
 		case DT_STUN:
 		case DT_SMOKE:
 			visLike = true;
+			break;
 
 		default:
 			visLike = false;
@@ -3652,8 +3648,6 @@ int TileEngine::blockage( // private.
 		const bool isStartTile,
 		const bool isTrueDir) const
 {
-	//if (_debug) Log(LOG_INFO) << " "; // lag to file!!!
-	//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() dir " << dir;
 	if (tile == nullptr) return 0;
 
 	const MapData* const part (tile->getMapData(partType));
@@ -3683,6 +3677,7 @@ int TileEngine::blockage( // private.
 		switch (dir)
 		{
 			case -1: // regular north/west wall (not BigWall), or it's a floor, or a Content-object (incl. BigWall) vs upward-diagonal.
+				//if (_debug) Log(LOG_INFO) << ". dir -1";
 				if (visLike == true)
 				{
 					switch (partType)
@@ -3726,6 +3721,7 @@ int TileEngine::blockage( // private.
 
 			default: // (dir > -1) -> VALID object-part (incl. BigWalls) *always* gets passed in here and *with* a direction.
 			{
+				//if (_debug) Log(LOG_INFO) << ". dir= " << dir;
 				const MapData* const object (tile->getMapData(O_OBJECT));
 				const BigwallType bigType (object->getBigwall()); // 0..9 or per MCD.
 				//if (_debug) Log(LOG_INFO) << ". dir = " << dir << " bigWall = " << bigType;
@@ -3786,6 +3782,7 @@ int TileEngine::blockage( // private.
 
 				if (isStartTile == true) // the object-part already got hit as the previous StopTile but can still block LoS when looking down.
 				{
+					//if (_debug) Log(LOG_INFO) << ". . isStartTile";
 //					bool diagStop = true; // <- superceded by ProjectileFlyBState::_prjVector ->
 //					if (dType == DT_HE && _missileDirection != -1)
 //					{
@@ -3801,32 +3798,48 @@ int TileEngine::blockage( // private.
 //						|| (dir == Pathfinding::DIR_DOWN
 //							&& !(dType == DT_NONE && object->stopLOS() == true)
 //							&& !(dType == DT_SMOKE && object->getBlock(DT_SMOKE) == 1)
-//							&& !(dType == DT_IN && object->blockFire() == true))) { See 2+ scopes below_ }
-
+//							&& !(dType == DT_IN && object->blockFire() == true)))
+//					{
+//						return 0;
+//					}
 					if (bigType == BIGWALL_NONE) // for non-visLike ... but if (only non-BigWall object-part) no dTypes are blocked here because, origin.
+					{
+						//if (_debug) Log(LOG_INFO) << ". . . Bigwall_None ret 0";
 						return 0;
+					}
 
 					if (visLike == true && dir == Pathfinding::DIR_DOWN) // check if object-part blocks visLike
 					{
+						//if (_debug) Log(LOG_INFO) << ". . . visLike & Dir_Down";
 						switch (dType) // TODO: Needs Gas/Stun dType added.
 						{
 							case DT_NONE:
 								if (object->stopLOS() == false)
+								{
+									//if (_debug) Log(LOG_INFO) << ". . . . DT_None/no stopLOS ret 0";
 									return 0;
+								}
 								break;
 
 							case DT_SMOKE:
 								if (object->getBlock(DT_SMOKE) == 0)
+								{
+									//if (_debug) Log(LOG_INFO) << ". . . . DT_Smoke/no blockSmoke ret 0";
 									return 0;
+								}
 								break;
 
 							case DT_IN:
 								if (object->blockFire() == false)
+								{
+									//if (_debug) Log(LOG_INFO) << ". . . . DT_INC/no blockFire ret 0";
 									return 0;
+								}
 						}
 					}
 					else if (visLike == false && diagBigwallPass == false) // check diagonal BigWall HE blockage ...
 					{
+						//if (_debug) Log(LOG_INFO) << ". . . NOT visLike & no DiagPass";
 						switch (bigType)
 						{
 							case BIGWALL_NESW:
@@ -3835,30 +3848,49 @@ int TileEngine::blockage( // private.
 									&& _powerE > -1
 									&& _powerE < object->getArmor() * 2)
 								{
-									//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[2] partType = " << partType << " " << tile->getPosition();
+									//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " HARD_BLOCK partType = " << partType << " " << tile->getPosition();
 									return HARD_BLOCK;
 								}
 						}
 					}
 				}
 
+//				if (visLike == true // hardblock for visLike against non-bigWall content-object.
+//					&& bigType == BIGWALL_NONE
+//					&& (tile->getMapData(O_OBJECT)->stopLOS() == true
+//						|| (dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
+//						|| (dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true)))
+//				{
+//					if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[3] partType = " << partType << " " << tile->getPosition();
+//					return HARD_BLOCK;
+//				}
 				if (visLike == true && bigType == BIGWALL_NONE) // hardblock for visLike against non-BigWall object-part.
 				{
+					//if (_debug) Log(LOG_INFO) << ". . visLike & Bigwall_None";
 					switch (dType) // TODO: Needs Gas/Stun dType added.
 					{
 						case DT_NONE:
 							if (object->stopLOS() == true)
+							{
+								//if (_debug) Log(LOG_INFO) << ". . . DT_None/stopLOS ret HARD_BLOCK";
 								return HARD_BLOCK;
+							}
 							break;
 
 						case DT_SMOKE:
 							if (object->getBlock(DT_SMOKE) == 1)
+							{
+								//if (_debug) Log(LOG_INFO) << ". . . DT_Smoke/blockSmoke ret HARD_BLOCK";
 								return HARD_BLOCK;
+							}
 							break;
 
 						case DT_IN:
 							if (object->blockFire() == true)
+							{
+								//if (_debug) Log(LOG_INFO) << ". . . DT_INC/blockFire ret HARD_BLOCK";
 								return HARD_BLOCK;
+							}
 
 						//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[3] partType = " << partType << " " << tile->getPosition();
 					}
@@ -3991,6 +4023,7 @@ int TileEngine::blockage( // private.
 							case BIGWALL_SOUTH:	// 7
 							case BIGWALL_E_S:	// 8
 //							case BIGWALL_W_N	// 9 NOT USED in stock UFO.
+								//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 8/9 up/down )";
 								return 0;
 						}
 
@@ -4000,17 +4033,26 @@ int TileEngine::blockage( // private.
 							{
 								case DT_NONE:
 									if (object->stopLOS() == false)
+									{
+										//if (_debug) Log(LOG_INFO) << ". . DT_None/noStopLOS ret 0 ( dir 8/9 up/down )";
 										return 0;
+									}
 									break;
 
 								case DT_SMOKE:
 									if (object->getBlock(DT_SMOKE) == 1)
+									{
+										//if (_debug) Log(LOG_INFO) << ". . DT_Smoke/no blockSmoke ret 0 ( dir 8/9 up/down )";
 										return 0;
+									}
 									break;
 
 								case DT_IN:
 									if (object->blockFire() == true)
+									{
+										//if (_debug) Log(LOG_INFO) << ". . DT_Fire/no blockFire ret 0 ( dir 8/9 up/down )";
 										return 0;
+									}
 
 								//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 8,9 up,down )";
 							}
@@ -4032,17 +4074,26 @@ int TileEngine::blockage( // private.
 					{
 						case DT_SMOKE:
 							if (object->getBlock(DT_SMOKE) == 1)
+							{
+								//if (_debug) Log(LOG_INFO) << ". DT_Smoke/blockSmoke HARD_BLOCK";
 								return HARD_BLOCK;
+							}
 							break;
 
 						case DT_IN:
 							if (object->blockFire() == true)
+							{
+								//if (_debug) Log(LOG_INFO) << ". DT_INC/blockFire HARD_BLOCK";
 								return HARD_BLOCK;
+							}
 							break;
 
 						default: // use stopLOS to hinder explosions from propagating through BigWalls freely.
 							if (object->stopLOS() == true)
+							{
+								//if (_debug) Log(LOG_INFO) << ". default/no stopLOS HARD_BLOCK";
 								return HARD_BLOCK;
+							}
 
 						//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " isTrueDir = " << isTrueDir << " Ret 1000[4] partType = " << partType << " " << tile->getPosition();
 					}
@@ -4060,6 +4111,284 @@ int TileEngine::blockage( // private.
 	//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, (no tile OR no valid partType OR ufo-door open) ret 0"; // lag to file!!!
 	return 0; // no Valid [partType].
 }
+/*
+//	return 0; // TEST.
+
+	//if (_debug) Log(LOG_INFO) << " "; // lag to file
+	//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() dir " << dir; // lag to file
+	const bool visLike (dType == DT_NONE
+					 || dType == DT_SMOKE
+					 || dType == DT_STUN
+					 || dType == DT_IN);
+
+	if (tile == nullptr || tile->isUfoDoorOpen(partType) == true)	// probably outside the map here
+	{																// open ufo doors are actually still closed behind the scenes
+		//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret ( no tile OR ufo-door open )"; // lag to file
+		return 0;
+	}
+
+	if (tile->getMapData(partType) != nullptr)
+	{
+		bool diagBigwallPass (false); // spaghetti strand #397
+
+		//if (_debug) Log(LOG_INFO) << ". dir = " << dir << " getMapData(partType) stopLOS() = " << tile->getMapData(partType)->stopLOS();
+		if (dir == -1) // regular north/west wall (not BigWall), or it's a floor, or a Content-object (incl. BigWall) vs upward-diagonal.
+		{
+			if (visLike == true)
+			{
+				if ((tile->getMapData(partType)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
+							|| (dType == DT_SMOKE && tile->getMapData(partType)->getBlock(DT_SMOKE) == 1)
+							|| (dType == DT_IN && tile->getMapData(partType)->blockFire() == true))
+						&& (tile->getMapData(partType)->getPartType() == O_OBJECT // this one is for verticalBlockage() only.
+							|| tile->getMapData(partType)->getPartType() == O_NORTHWALL
+							|| tile->getMapData(partType)->getPartType() == O_WESTWALL)
+					|| tile->getMapData(partType)->getPartType() == O_FLOOR)	// all floors that block LoS should have their stopLOS flag set true if not gravLift floor.
+				{																// Might want to check hasNoFloor() flag.
+					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[0] partType = " << partType << " " << tile->getPosition();
+					return HARD_BLOCK;
+				}
+			}
+			else if (tile->getMapData(partType)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
+				&& _powerE > -1
+				&& _powerE < tile->getMapData(partType)->getArmor() * 2) // terrain absorbs 200% damage from DT_HE!
+			{
+				//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[1] partType = " << partType << " " << tile->getPosition();
+				return HARD_BLOCK;
+			}
+		}
+		else // dir > -1 -> OBJECT partType. (BigWalls & content) *always* an OBJECT-partType gets passed in through here, and *with* a direction.
+		{
+			const BigwallType bigWall (tile->getMapData(O_OBJECT)->getBigwall()); // 0..9 or, per MCD.
+			//if (_debug) Log(LOG_INFO) << ". dir = " << dir << " bigWall = " << bigWall;
+
+			if (_powerE != -1)
+			{
+				switch (dir)
+				{
+				case 0:
+					if ((_dirRay > 134 && _dirRay < 316
+							&& bigWall == BIGWALL_NESW)
+						|| (_dirRay > 44 && _dirRay < 226
+							&& bigWall == BIGWALL_NWSE))
+					{
+						diagBigwallPass = true;
+					}
+					break;
+				case 2:
+					if ((((_dirRay > -1 && _dirRay < 136)
+								|| (_dirRay > 314 && _dirRay < 361))
+							&& bigWall == BIGWALL_NESW)
+						|| (_dirRay > 44 && _dirRay < 226
+							&& bigWall == BIGWALL_NWSE))
+					{
+						diagBigwallPass = true;
+					}
+					break;
+				case 4:
+					if ((((_dirRay > -1 && _dirRay < 136)
+								|| (_dirRay > 314 && _dirRay < 361))
+							&& bigWall == BIGWALL_NESW)
+						|| (((_dirRay > 224 && _dirRay < 361)
+								|| (_dirRay > -1 && _dirRay < 46))
+							&& bigWall == BIGWALL_NWSE))
+					{
+						diagBigwallPass = true;
+					}
+					break;
+				case 6:
+					if ((_dirRay > 134 && _dirRay < 316
+							&& bigWall == BIGWALL_NESW)
+						|| (((_dirRay > 224 && _dirRay < 361)
+								|| (_dirRay > -1 && _dirRay < 46))
+							&& bigWall == BIGWALL_NWSE))
+					{
+						diagBigwallPass = true;
+					}
+				}
+			}
+
+			if (isStartTile == true) // the ContentOBJECT already got hit as the previous endTile ... but can still block LoS when looking down ...
+			{
+//				bool diagStop = true; // <- superceded by ProjectileFlyBState::_prjVector ->
+//				if (dType == DT_HE && _missileDirection != -1)
+//				{
+//					const int dirDelta = std::abs(8 + _missileDirection - dir) % 8;
+//					diagStop = (dirDelta < 2 || dirDelta > 6);
+//				}
+//				else diagStop = true;
+
+				// this needs to check which side the *missile* is coming from,
+				// although grenades that land on a diagonal bigWall are exempt regardless!!!
+				if (bigWall == BIGWALL_NONE // !visLike, if (only Content-partType == true) -> all DamageTypes ok here (because, origin).
+//					|| (diagStop == false
+//						&& (bigWall == BIGWALL_NESW || bigWall == BIGWALL_NWSE))
+					|| (dir == Pathfinding::DIR_DOWN
+						&& tile->getMapData(O_OBJECT)->stopLOS() == false // stopLOS() should join w/ DT_NONE ...
+						&& !(dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
+						&& !(dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true)))
+				{
+					return 0;
+				}
+				else if (visLike == false // diagonal BigWall blockage ...
+					&& diagBigwallPass == false
+					&& (bigWall == BIGWALL_NESW || bigWall == BIGWALL_NWSE)
+					&& tile->getMapData(O_OBJECT)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
+					&& _powerE > -1
+					&& _powerE < tile->getMapData(O_OBJECT)->getArmor() * 2)
+				{
+					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[2] partType = " << partType << " " << tile->getPosition();
+					return HARD_BLOCK;
+				}
+			}
+
+			if (visLike == true // hardblock for visLike against non-bigWall content-object.
+				&& bigWall == BIGWALL_NONE
+				&& (tile->getMapData(O_OBJECT)->stopLOS() == true // stopLOS() should join w/ DT_NONE ...
+					|| (dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
+					|| (dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true)))
+			{
+				//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[3] partType = " << partType << " " << tile->getPosition();
+				return HARD_BLOCK;
+			}
+
+
+			switch (dir) // -> OBJECT partType. ( BigWalls & content )
+			{
+				case 0: // north
+					if (diagBigwallPass == true
+						|| bigWall == BIGWALL_WEST
+						|| bigWall == BIGWALL_EAST
+						|| bigWall == BIGWALL_SOUTH
+						|| bigWall == BIGWALL_E_S)
+					{
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 0 north )";
+						return 0; // partType By-passed.
+					}
+				break;
+
+				case 1: // north east
+					if (bigWall == BIGWALL_WEST
+						|| bigWall == BIGWALL_SOUTH
+						|| (bigWall == BIGWALL_NWSE && isTrueDir == false))
+					{
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 1 northeast )";
+						return 0;
+					}
+				break;
+
+				case 2: // east
+					if (diagBigwallPass == true
+						|| bigWall == BIGWALL_NORTH
+						|| bigWall == BIGWALL_SOUTH
+						|| bigWall == BIGWALL_WEST
+						|| bigWall == BIGWALL_W_N)
+					{
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 2 east )";
+						return 0;
+					}
+				break;
+
+				case 3: // south east
+					if (bigWall == BIGWALL_NORTH
+						|| bigWall == BIGWALL_WEST
+						|| (bigWall == BIGWALL_NESW && isTrueDir == false)
+						|| bigWall == BIGWALL_W_N)
+					{
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 3 southeast )";
+						return 0;
+					}
+				break;
+
+				case 4: // south
+					if (diagBigwallPass == true
+						|| bigWall == BIGWALL_WEST
+						|| bigWall == BIGWALL_EAST
+						|| bigWall == BIGWALL_NORTH
+						|| bigWall == BIGWALL_W_N)
+					{
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 4 south )";
+						return 0;
+					}
+				break;
+
+				case 5: // south west
+					if (bigWall == BIGWALL_NORTH
+						|| bigWall == BIGWALL_EAST
+						|| (bigWall == BIGWALL_NWSE && isTrueDir == false))
+					{
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 5 southwest )";
+						return 0;
+					}
+				break;
+
+				case 6: // west
+					if (diagBigwallPass == true
+						|| bigWall == BIGWALL_NORTH
+						|| bigWall == BIGWALL_SOUTH
+						|| bigWall == BIGWALL_EAST
+						|| bigWall == BIGWALL_E_S)
+					{
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 6 west )";
+						return 0;
+					}
+				break;
+
+				case 7: // north west
+					if (bigWall == BIGWALL_SOUTH
+						|| bigWall == BIGWALL_EAST
+						|| bigWall == BIGWALL_E_S
+						|| (bigWall == BIGWALL_NESW && isTrueDir == false))
+					{
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 7 northwest )";
+						return 0;
+					}
+				break;
+
+				case 8: // up
+				case 9: // down
+					if ((bigWall != BIGWALL_NONE			// lets content-objects Block explosions
+							&& bigWall != BIGWALL_BLOCK)	// includes stopLoS (floors handled above under non-directional condition)
+						|| (visLike == true
+							&& tile->getMapData(O_OBJECT)->stopLOS() == false // stopLOS() should join w/ DT_NONE ...
+							&& !(dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
+							&& !(dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true)))
+					{
+						//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 8,9 up,down )";
+						return 0;
+					}
+				break;
+
+				default:
+					return 0; // .....
+			}
+
+
+			// might be Content-partType or remaining-bigWalls block here
+			if (tile->getMapData(O_OBJECT)->stopLOS() == true // use stopLOS to hinder explosions from propagating through bigWalls freely. // stopLOS() should join w/ DT_NONE ...
+				|| (dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
+				|| (dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true))
+			{
+				if (visLike == true
+					|| (diagBigwallPass == false
+						&& _powerE > -1
+						&& _powerE < tile->getMapData(O_OBJECT)->getArmor() * 2)) // terrain absorbs 200% damage from DT_HE!
+				{
+					//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " isTrueDir = " << isTrueDir << " Ret 1000[4] partType = " << partType << " " << tile->getPosition();
+					return HARD_BLOCK;
+				}
+			}
+		}
+
+		if (visLike == false && diagBigwallPass == false)	// only non-visLike can get partly blocked; other damage-types
+		{													// are either completely blocked above or get a pass here
+			//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret = " << tile->getMapData(partType)->getBlock(dType);
+			return tile->getMapData(partType)->getBlock(dType);
+		}
+	}
+
+	//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, (no valid partType) ret 0"; // lag to file
+	return 0; // no Valid [partType].
+} */
 
 /**
  * Sets the final direction from which a missile or thrown-object came;
@@ -4067,8 +4396,8 @@ int TileEngine::blockage( // private.
  * This needs to be stored because the Projectile itself is long gone
  * once ExplosionBState starts.
  * @param dir - the direction as calculated in Projectile
- */
-/* void TileEngine::setProjectileDirection(const int dir)
+ *
+void TileEngine::setProjectileDirection(const int dir)
 {
 	_missileDirection = dir;
 } */
