@@ -103,13 +103,13 @@ void UnitFallBState::think()
 		}
 
 		bool
-			fallCheck = true,
-			falling = true;
+			fallCheck (true),
+			falling   (true);
 //			onScreen = (*i)->getUnitVisible()
 //					&& _parent->getMap()->getCamera()->isOnScreen((*i)->getPosition());
 //		bool onScreen = ((*i)->getVisible() && _parent->getMap()->getCamera()->isOnScreen((*i)->getPosition(), true, size, false));
 
-		const int unitSize = (*i)->getArmor()->getSize() - 1;
+		const int unitSize ((*i)->getArmor()->getSize() - 1);
 		for (int
 				x = unitSize;
 				x != -1;
@@ -156,14 +156,12 @@ void UnitFallBState::think()
 				}
 			}
 
-			// Check each tile for units that need moving out of the way.
-			for (std::vector<Tile*>::const_iterator
+			for (std::vector<Tile*>::const_iterator // check each tile for units that need moving out of the way.
 					j = _tilesToFallInto.begin();
 					j != _tilesToFallInto.end();
 					++j)
 			{
-				unitBelow = (*j)->getTileUnit();
-				if (unitBelow != nullptr
+				if ((unitBelow = (*j)->getTileUnit()) != nullptr
 					&& *i != unitBelow	// falling units do not fall on themselves
 					&& std::find(
 							_unitsToMove.begin(),
@@ -194,10 +192,9 @@ void UnitFallBState::think()
 
 		//Log(LOG_INFO) << ". new fallCheck = " << fallCheck;
 
-		// The unit has moved from one tile to the other.
-		// kL_note: Can prob. use _tileSwitchDone around here...
-		if ((*i)->getPosition() != (*i)->getStartPosition())
-		{
+
+		if ((*i)->getPosition() != (*i)->getStartPosition())	// the unit has moved from one tile to the other.
+		{														// kL_note: Can prob. use _tileSwitchDone around here ... plus use transient tile.
 			for (int // reset tiles moved from
 					x = unitSize;
 					x != -1;
@@ -208,9 +205,8 @@ void UnitFallBState::think()
 						y != -1;
 						--y)
 				{
-					// Another falling unit might have already taken up this position so check that that unit is still there.
-					if (*i == _battleSave->getTile((*i)->getStartPosition() + Position(x,y,0))->getTileUnit())
-					{
+					if (*i == _battleSave->getTile((*i)->getStartPosition() + Position(x,y,0))->getTileUnit())	// another falling unit might have already taken up
+					{																							// this position so check that that unit is still there.
 						//Log(LOG_INFO) << ". Tile is not occupied";
 						_battleSave->getTile((*i)->getStartPosition() + Position(x,y,0))->setUnit();
 					}
@@ -235,8 +231,7 @@ void UnitFallBState::think()
 				}
 			}
 
-			// Find somewhere to move the unit(s) in danger of being squashed.
-			if (_unitsToMove.empty() == false)
+			if (_unitsToMove.empty() == false) // find somewhere to move the unit(s) in danger of being squashed.
 			{
 				//Log(LOG_INFO) << ". unitsToMove not empty";
 				std::vector<Tile*> escapeTiles;
@@ -248,10 +243,9 @@ void UnitFallBState::think()
 				{
 					//Log(LOG_INFO) << ". moving unit ID " << (*j)->getId();
 					unitBelow = *j;
-					bool escape = false;
+					bool escape (false);
 
-					// need to move all sections of unitBelow out of the way.
-					const int belowSize = unitBelow->getArmor()->getSize() - 1;
+					const int belowSize (unitBelow->getArmor()->getSize() - 1); // need to move all sections of unitBelow out of the way.
 					std::vector<Position> bodyPositions;
 					for (int
 							x = belowSize;
@@ -270,15 +264,12 @@ void UnitFallBState::think()
 
 					for (int // Check in each compass direction.
 							dir = 0;
-							dir != Pathfinding::DIR_UP
-								&& escape == false;
+							dir != Pathfinding::DIR_UP && escape == false;
 							++dir)
 					{
 						//Log(LOG_INFO) << ". . checking directions to move";
 						Position posVect;
-						Pathfinding::directionToVector(
-													dir,
-													&posVect);
+						Pathfinding::directionToVector(dir, &posVect);
 
 						for (std::vector<Position>::const_iterator
 								k = bodyPositions.begin();
@@ -291,33 +282,33 @@ void UnitFallBState::think()
 							tileBelow = _battleSave->getTile(posStart + posVect + Position(0,0,-1));
 
 							bool
-								aboutToBeOccupiedFromAbove = tile != nullptr
-														  && std::find(
+								aboutToBeOccupiedFromAbove (tile != nullptr
+														 && std::find(
 																	_tilesToFallInto.begin(),
 																	_tilesToFallInto.end(),
-																	tile) != _tilesToFallInto.end(),
-								alreadyTaken = tile != nullptr
-											&& std::find(
+																	tile) != _tilesToFallInto.end()),
+								alreadyTaken (tile != nullptr
+										   && std::find(
 													escapeTiles.begin(),
 													escapeTiles.end(),
-													tile) != escapeTiles.end(),
-								alreadyOccupied = tile != nullptr
-											   && tile->getTileUnit() != nullptr
-											   && tile->getTileUnit() != unitBelow,
-								hasFloor = tile != nullptr
-										&& tile->hasNoFloor(tileBelow) == false,
-								blocked = _battleSave->getPathfinding()->isBlockedPath(
+													tile) != escapeTiles.end()),
+								alreadyOccupied (tile != nullptr
+											  && tile->getTileUnit() != nullptr
+											  && tile->getTileUnit() != unitBelow),
+								hasFloor (tile != nullptr
+									   && tile->hasNoFloor(tileBelow) == false),
+								blocked (_battleSave->getPathfinding()->isBlockedPath(
 																					_battleSave->getTile(posStart),
 																					dir,
-																					unitBelow),
-								unitCanFly = unitBelow->getMoveTypeUnit() == MT_FLY,
-								canMoveToTile = tile != nullptr
-											 && alreadyOccupied == false
-											 && alreadyTaken == false
-											 && aboutToBeOccupiedFromAbove == false
-											 && blocked == false
-											 && (hasFloor == true
-												|| unitCanFly == true);
+																					unitBelow)),
+								unitCanFly (unitBelow->getMoveTypeUnit() == MT_FLY),
+								canMoveToTile (tile != nullptr
+											&& alreadyOccupied == false
+											&& alreadyTaken == false
+											&& aboutToBeOccupiedFromAbove == false
+											&& blocked == false
+											&& (hasFloor == true
+												|| unitCanFly == true));
 
 							if (canMoveToTile == true)
 								++k; // Check next section of the unit.
@@ -334,8 +325,7 @@ void UnitFallBState::think()
 									//Log(LOG_INFO) << ". . . . . add Falling Unit";
 									escape = true;
 
-									// Now ensure no other unit escapes here too.
-									for (int
+									for (int // now ensure no other unit escapes here too.
 											x = belowSize;
 											x != -1;
 											--x)
@@ -381,7 +371,7 @@ void UnitFallBState::think()
 			if (falling == true)
 			{
 				//Log(LOG_INFO) << ". . still falling -> startWalking()";
-				Position destination = (*i)->getPosition() + Position(0,0,-1);
+				Position destination ((*i)->getPosition() + Position(0,0,-1));
 
 				tileBelow = _battleSave->getTile(destination);
 				(*i)->startWalking(
@@ -394,7 +384,7 @@ void UnitFallBState::think()
 
 				++i;
 			}
-			else // done falling, just standing around ...
+			else // done falling just standing around ...
 			{
 				//Log(LOG_INFO) << ". . burnFloors, checkProxies, Erase.i";
 				if ((*i)->getSpecialAbility() == SPECAB_BURN) // if the unit burns floortiles, burn floortiles
@@ -402,9 +392,9 @@ void UnitFallBState::think()
 					// kL_add: Put burnedBySilacoid() here! etc
 					const int power ((*i)->getUnitRules()->getSpecabPower());
 					(*i)->getTile()->ignite(power / 10);
-					const Position targetVoxel = Position::toVoxelSpaceCentered(
+					const Position targetVoxel (Position::toVoxelSpaceCentered(
 																		(*i)->getPosition(),
-																		-(*i)->getTile()->getTerrainLevel());
+																		-(*i)->getTile()->getTerrainLevel()));
 					_parent->getTileEngine()->hit(
 												targetVoxel,
 												power,
@@ -412,12 +402,12 @@ void UnitFallBState::think()
 												*i);
 				}
 
-				_terrain->calculateUnitLighting(); // move personal lighting
+				_terrain->calculateUnitLighting();
 
 				(*i)->clearCache();
 				_parent->getMap()->cacheUnit(*i);
 
-				_terrain->calcFovPos((*i)->getPosition(), true);
+				_terrain->calcFovPos((*i)->getPosition(), true); // could try no tile-reveal here.
 
 				_parent->checkProxyGrenades(*i);
 				// kL_add: Put checkForSilacoid() here!

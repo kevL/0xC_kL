@@ -6057,7 +6057,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 						calculateUnitLighting();
 						calcFovPos(
 								victim->getPosition(),
-								true);
+								true, false); // try no tile-reveal.
 
 						// if all units from either faction are mind controlled - auto-end the mission.
 //						if (Options::battleAllowPsionicCapture == true && Options::battleAutoEnd == true && _battleSave->getSide() == FACTION_PLAYER)

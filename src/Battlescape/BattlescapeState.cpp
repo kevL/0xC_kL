@@ -1073,6 +1073,7 @@ void BattlescapeState::init()
 	_map->setFocus(true);
 	_map->cacheUnits();
 	_map->draw();
+
 	_battleGame->init();
 
 	updateSoldierInfo(false); // NOTE: Does not need calcFoV, done in BattlescapeGame::init(first init).
@@ -1883,7 +1884,9 @@ void BattlescapeState::btnKneelClick(Action*)
 			//Log(LOG_INFO) << "BattlescapeState::btnKneelClick()";
 			if (_battleGame->kneelToggle(unit) == true)
 			{
-				_battleGame->getTileEngine()->calcFovPos(unit->getPosition(), true);
+				_battleGame->getTileEngine()->calcFovPos(
+													unit->getPosition(),
+													true, false);
 				// need that here, so that my newVis algorithm works without
 				// false positives, or true negatives as it were, when a soldier
 				// stands up and walks in one go via UnitWalkBState. Because if
@@ -2123,7 +2126,7 @@ void BattlescapeState::selectNextPlayerUnit(
 																checkReselect,
 																dontReselect,
 																checkInventory));
-		updateSoldierInfo();
+		updateSoldierInfo(false); // try no calcFov()
 
 		if (unit != nullptr)
 			_map->getCamera()->centerOnPosition(unit->getPosition());
@@ -2151,7 +2154,7 @@ void BattlescapeState::selectPreviousPlayerUnit(
 																	checkReselect,
 																	dontReselect,
 																	checkInventory));
-		updateSoldierInfo();
+		updateSoldierInfo(false); // try no calcFov()
 
 		if (unit != nullptr)
 			_map->getCamera()->centerOnPosition(unit->getPosition());
@@ -2466,7 +2469,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 				if (nextSpotter != _battleSave->getSelectedUnit())
 				{
 					_battleSave->setSelectedUnit(nextSpotter);
-					updateSoldierInfo();
+					updateSoldierInfo(false); // try no calcFov()
 
 					_battleGame->cancelTacticalAction();
 					_battleGame->setupSelector();
@@ -2876,7 +2879,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 	BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 	if (calcFoV == true)
-		_battleSave->getTileEngine()->calcFov(selUnit);
+		_battleSave->getTileEngine()->calcFov(selUnit, false); // try no tile-reveal.
 
 	if (_battleSave->getSide() == FACTION_PLAYER)
 		hotSqrsUpdate();

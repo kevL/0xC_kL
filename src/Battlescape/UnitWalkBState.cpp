@@ -306,7 +306,7 @@ void UnitWalkBState::cancel()
 }
 
 /**
- * Begins unit movement and may also end unit movement.
+ * Begins unit-walk and may also end unit-walk.
  * @note Called from think().
  * @return, true to continue moving, false to exit think()
  */
@@ -358,7 +358,7 @@ bool UnitWalkBState::doStatusStand() // private.
 		else
 		{
 			//Log(LOG_INFO) << ". . don't stand: not enough TU";
-			_action.result = "STR_NOT_ENOUGH_TIME_UNITS"; // note: redundant w/ kneel() error messages ...
+			_action.result = "STR_NOT_ENOUGH_TIME_UNITS"; // NOTE: redundant w/ kneel() error messages ...
 
 			abortState(false);
 			return false;
@@ -652,7 +652,7 @@ bool UnitWalkBState::doStatusStand() // private.
 }
 
 /**
- * Continues unit movement.
+ * Continues unit-walk.
  * @note Called from think().
  * @return, true to continue moving, false to exit think()
  */
@@ -781,7 +781,7 @@ bool UnitWalkBState::doStatusWalk() // private.
 }
 
 /**
- * Ends unit movement.
+ * Ends unit-walk.
  * @note Called from think().
  * @return, true to continue moving, false to exit think()
  */
@@ -862,9 +862,10 @@ bool UnitWalkBState::doStatusStand_end() // private.
 	else
 		_walkCam->setViewLevel(pos.z);
 
-	// This needs to be done *before* the calcFovPos() or else any newVis will
-	// be marked Visible before visForUnits() catches the new unit that is !Visible.
-	const bool newVis (visForUnits());
+	// This needs to be done *before* calcFovPos() below_ or else any units
+	// spotted would be flagged-visible before a call to visForUnits() has had
+	// a chance to catch a newly spotted unit (that was not-visible).
+	const bool spot (visForUnits());
 
 /*	// debug -->
 	BattleUnit* hostile;
@@ -880,9 +881,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		}
 	} // debug_end. */
 
-	// This calculates or 'refreshes' the Field of View of all units within
-	// maximum distance (~20 tiles) of current unit.
-	_te->calcFovPos(pos, true, false);
+	_te->calcFovPos(pos, true, false); // NOTE: This should be done only for non-unit-faction units probably - ie RF.
 
 	if (_parent->checkProxyGrenades(_unit) == true) // Put checkForSilacoid() here!
 	{
@@ -890,7 +889,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		return false;
 	}
 
-	if (newVis == true)
+	if (spot == true)
 	{
 		//if (_unit->getFaction() == FACTION_PLAYER) Log(LOG_INFO) << ". . _newVis TRUE, Abort path";
 		//else if (_unit->getFaction() != FACTION_PLAYER) Log(LOG_INFO) << ". . _newUnitSpotted TRUE, Abort path";
@@ -913,7 +912,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 }
 
 /**
- * Swivels unit during movement.
+ * Swivels unit.
  * @note Called from think().
  */
 void UnitWalkBState::doStatusTurn() // private.
@@ -1095,8 +1094,8 @@ void UnitWalkBState::postPathProcedures() // private.
 
 
 	_te->calculateUnitLighting();
-	_te->calcFovPos(_unit->getPosition(), true); // in case unit opened a door and stopped without doing Status_WALKING
-
+	_te->calcFovPos(_unit->getPosition(), true);	// in case unit opened a door and stopped without doing Status_WALKING
+													// TODO: Put a clamp on that: call only if a door actually opened above^
 	_unit->clearCache();
 	_parent->getMap()->cacheUnit(_unit);
 

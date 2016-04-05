@@ -63,13 +63,13 @@ private:
 	SavedBattleGame* _battleSave;
 	TileEngine* _te;
 
-	/// Begins unit movement and may also end unit movement..
+	/// Begins unit-walk and may also end unit-walk.
 	bool doStatusStand();
-	/// Continues unit movement.
+	/// Continues unit-walk.
 	bool doStatusWalk();
-	/// Ends unit movement.
+	/// Ends unit-walk.
 	bool doStatusStand_end();
-	/// Swivels unit during movement.
+	/// Swivels unit.
 	void doStatusTurn();
 
 	/// Resets the unit-cache, aborts the path and the State.

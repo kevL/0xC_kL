@@ -1445,11 +1445,9 @@ bool SavedBattleGame::endFactionTurn()
 
 	_te->calculateSunShading();
 	_te->calculateTerrainLighting();
-	_te->calculateUnitLighting(); // turn off MCed alien lighting.
+	_te->calculateUnitLighting(); // turn off MC'd aLien-lighting.
 
-	// redo calcFov() *after* aliens & civies have been set notVisible
-	// -> AND *only after* a calcLighting has been done!
-	_te->calcFovAll();
+	_te->calcFovAll(); // do calcFov() *after* aLiens & civies have been set non-visible above^
 
 	if (_side != FACTION_PLAYER)
 		selectNextFactionUnit();
@@ -1465,7 +1463,7 @@ void SavedBattleGame::debugTac()
 	_debugTac = true;
 
 	for (size_t // reveal tiles.
-			i = 0;
+			i = 0u;
 			i != _qtyTilesTotal;
 			++i)
 	{

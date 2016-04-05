@@ -901,7 +901,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 /**
  * Selects the next AI unit.
  * @note The current AI-turn ends when no unit is eligible to select.
- * @param unit - the current unit
+ * @param unit - the current non-player unit
  */
 void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 {
@@ -918,7 +918,7 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 	if (nextUnit != nullptr)
 	{
 		centerOnUnit(nextUnit);
-		_parentState->updateSoldierInfo();
+		_parentState->updateSoldierInfo(false); // try no calcFov()
 
 		if (_battleSave->getDebugTac() == true)
 		{
@@ -1076,7 +1076,7 @@ void BattlescapeGame::handleNonTargetAction()
 		}
 
 		_tacAction.type = BA_NONE;
-		_parentState->updateSoldierInfo();
+		_parentState->updateSoldierInfo(false); // try no calcFov()
 	}
 	setupSelector();
 }
@@ -1514,7 +1514,7 @@ void BattlescapeGame::endTurn() // private.
 		if (battleComplete == false)
 		{
 			showInfoBoxQueue();
-			_parentState->updateSoldierInfo();
+			_parentState->updateSoldierInfo(false); // try no calcFov()
 
 			if (_battleSave->getSide() == FACTION_HOSTILE
 				&& _battleSave->getDebugTac() == false)
@@ -2684,7 +2684,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			if (targetUnit->getFaction() == _battleSave->getSide())
 			{
 				_battleSave->setSelectedUnit(targetUnit);
-				_parentState->updateSoldierInfo();
+				_parentState->updateSoldierInfo(false); // try no calcFov()
 
 				cancelTacticalAction();
 				_tacAction.actor = targetUnit;
