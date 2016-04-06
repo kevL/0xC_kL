@@ -820,11 +820,11 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		const Position targetVoxel (Position::toVoxelSpaceCentered(
 																pos,
 																-_unit->getTile()->getTerrainLevel()));
-		_parent->getTileEngine()->hit(
-									targetVoxel,
-									power,
-									DT_IN,
-									_unit);
+		_te->hit(
+				targetVoxel,
+				power,
+				DT_IN,
+				_unit);
 
 		if (_unit->getUnitStatus() != STATUS_STANDING)	// ie: burned a hole in the floor and fell through it
 		{												// Trace TileEngine::hit() through applyGravity() etc. to determine unit-status.
@@ -1002,9 +1002,9 @@ void UnitWalkBState::postPathProcedures() // private.
 			// cf. void AggroBAIState::setAggroTarget(BattleUnit* unit)
 			// and bool TileEngine::calcFov(BattleUnit* unit)
 
-			if (_parent->getTileEngine()->validMeleeRange(
-													_unit, dir,
-													_unit->getChargeTarget()) == true)
+			if (_te->validMeleeRange(
+								_unit, dir,
+								_unit->getChargeTarget()) == true)
 			{
 				_unit->setChargeTarget();
 
@@ -1084,7 +1084,7 @@ void UnitWalkBState::postPathProcedures() // private.
 			while (_unit->getUnitStatus() == STATUS_TURNING)
 			{
 				_unit->turn();
-				_parent->getTileEngine()->calcFov(_unit);
+				_te->calcFov(_unit);
 				// might need newVis/newUnitSpotted -> abort
 			}
 		}

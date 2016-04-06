@@ -919,7 +919,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								case BIGWALL_NWSE:
 								case BIGWALL_WEST:
 								case BIGWALL_NORTH:
-								case BIGWALL_W_N:
+//								case BIGWALL_W_N: // NOT USED in stock UFO.
 									hasObject = true;
 									sprite->blitNShade(
 											surface,

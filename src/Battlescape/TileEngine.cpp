@@ -3699,8 +3699,8 @@ int TileEngine::blockage( // private.
 					{
 						case O_WESTWALL:
 						case O_NORTHWALL:
-						case O_OBJECT: // this one is for verticalBlockage() only.
-							switch (dType) // TODO: Needs Gas/Stun dType added.
+						case O_OBJECT:		// object-part is for verticalBlockage() only.
+							switch (dType)	// TODO: Needs Gas/Stun dType added.
 							{
 								default:
 								case DT_NONE:
@@ -3809,14 +3809,6 @@ int TileEngine::blockage( // private.
 					// although grenades that land on a diagonal BigWall are exempt regardless!!!
 //						|| (diagStop == false && (bigType == BIGWALL_NESW || bigType == BIGWALL_NWSE))
 
-//					if (bigType == BIGWALL_NONE
-//						|| (dir == Pathfinding::DIR_DOWN
-//							&& !(dType == DT_NONE && object->stopLOS() == true)
-//							&& !(dType == DT_SMOKE && object->getBlock(DT_SMOKE) == 1)
-//							&& !(dType == DT_IN && object->blockFire() == true)))
-//					{
-//						return 0;
-//					}
 					if (bigType == BIGWALL_NONE) // for non-visLike ... but if (only non-BigWall object-part) no dTypes are blocked here because, origin.
 					{
 						//if (_debug) Log(LOG_INFO) << ". . . Bigwall_None ret 0";
@@ -3870,15 +3862,6 @@ int TileEngine::blockage( // private.
 					}
 				}
 
-//				if (visLike == true // hardblock for visLike against non-bigWall content-object.
-//					&& bigType == BIGWALL_NONE
-//					&& (tile->getMapData(O_OBJECT)->stopLOS() == true
-//						|| (dType == DT_SMOKE && tile->getMapData(O_OBJECT)->getBlock(DT_SMOKE) == 1)
-//						|| (dType == DT_IN && tile->getMapData(O_OBJECT)->blockFire() == true)))
-//				{
-//					if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[3] partType = " << partType << " " << tile->getPosition();
-//					return HARD_BLOCK;
-//				}
 				if (visLike == true && bigType == BIGWALL_NONE) // hardblock for visLike against non-BigWall object-part.
 				{
 					//if (_debug) Log(LOG_INFO) << ". . visLike & Bigwall_None";
@@ -3950,7 +3933,7 @@ int TileEngine::blockage( // private.
 							case BIGWALL_NORTH:
 							case BIGWALL_SOUTH:
 							case BIGWALL_WEST:
-							case BIGWALL_W_N:
+//							case BIGWALL_W_N: // NOT USED in stock UFO.
 								//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 2 east )";
 								return 0;
 						}
@@ -3963,7 +3946,7 @@ int TileEngine::blockage( // private.
 								if (isTrueDir == true) break;
 							case BIGWALL_NORTH:
 							case BIGWALL_WEST:
-							case BIGWALL_W_N:
+//							case BIGWALL_W_N: // NOT USED in stock UFO.
 								//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 3 southeast )";
 								return 0;
 						}
@@ -3978,7 +3961,7 @@ int TileEngine::blockage( // private.
 							case BIGWALL_WEST:
 							case BIGWALL_EAST:
 							case BIGWALL_NORTH:
-							case BIGWALL_W_N:
+//							case BIGWALL_W_N: // NOT USED in stock UFO.
 								//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret 0 ( dir 4 south )";
 								return 0;
 						}

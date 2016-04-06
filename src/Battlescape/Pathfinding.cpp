@@ -1509,11 +1509,11 @@ bool Pathfinding::isBlockedPath(
 }
 
 /**
- * Determines whether a certain part of a tile blocks movement.
- * @param tile			- pointer to a Tile can be nullptr
+ * Determines whether a specified part of a Tile blocks movement.
+ * @param tile			- pointer to a tile can be nullptr
  * @param partType		- part of the tile (MapData.h)
  * @param launchTarget	- pointer to targeted BattleUnit (default nullptr)
- * @param diagExclusion	- to exclude diagonal bigWalls (default BIGWALL_NONE) (Pathfinding.h)
+ * @param diagExclusion	- to exclude diagonal bigWalls (Pathfinding.h) (default BIGWALL_NONE)
  * @return, true if path is blocked
  */
 bool Pathfinding::isBlocked( // private.
@@ -1525,75 +1525,44 @@ bool Pathfinding::isBlocked( // private.
 	//Log(LOG_INFO) << "Pathfinding::isBlocked()";
 	if (tile == nullptr) return true;
 
-//	if (tile->getMapData(O_OBJECT) != nullptr
-//		&& tile->getMapData(O_OBJECT)->getBigwall() == BIGWALL_BLOCK)
-//	{
-//		return true;
-//	}
+	const MapData* part;
 
 	switch (partType)
 	{
 		case O_OBJECT:
 			//Log(LOG_INFO) << ". part is Bigwall/object " << tile->getPosition();
-/*			if (   tile->getMapData(O_OBJECT) != nullptr
-				&& tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NONE
-				&& (   tile->getMapData(O_OBJECT)->getBigwall() == BIGWALL_BLOCK
-					|| tile->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NESW
-					|| tile->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NWSE)
-				&& tile->getMapData(O_OBJECT)->getBigwall() != diagExclusion)
+			if ((part = tile->getMapData(O_OBJECT)) != nullptr)
 			{
-				return true;
-			}
-			else
-				return false; */
-/*			if (tile->getMapData(O_OBJECT) != nullptr
-				&& tile->getMapData(O_OBJECT)->getBigwall() != diagExclusion)
-			{
-				switch (tile->getMapData(O_OBJECT)->getBigwall())
+				const BigwallType bigType (part->getBigwall());
+				switch (bigType)
 				{
 					case BIGWALL_BLOCK:
 					case BIGWALL_NESW:
 					case BIGWALL_NWSE:
-						return true;
-
-					default:
-						return false;
-				}
-			} */
-			if (tile->getMapData(O_OBJECT) == nullptr)
-				return false;
-			else
-			{
-				const BigwallType type (tile->getMapData(O_OBJECT)->getBigwall());
-				switch (type)
-				{
-					case BIGWALL_BLOCK:
-					case BIGWALL_NESW:
-					case BIGWALL_NWSE:
-						if (type != diagExclusion)
+						if (bigType != diagExclusion)
 							return true;
 				}
-				return false;
 			}
+			return false;
 
 		case O_WESTWALL:
 		{
 			//Log(LOG_INFO) << ". part is Westwall";
-			if (launchTarget != nullptr						// missiles can't pathfind through closed doors.
-				&& tile->getMapData(O_WESTWALL) != nullptr	// ... neither can proxy mines.
-				&& (tile->getMapData(O_WESTWALL)->isDoor() == true
-					|| (tile->getMapData(O_WESTWALL)->isUfoDoor() == true
+			if (launchTarget != nullptr								// missiles can't pathfind through closed doors.
+				&& (part = tile->getMapData(O_WESTWALL)) != nullptr	// ... neither can proxy mines.
+				&& (part->isDoor() == true
+					|| (part->isUfoDoor() == true
 						&& tile->isUfoDoorOpen(O_WESTWALL) == false)))
 			{
 				return true;
 			}
 
-			if (tile->getMapData(O_OBJECT) != nullptr)
+			if ((part = tile->getMapData(O_OBJECT)) != nullptr)
 			{
-				switch (tile->getMapData(O_OBJECT)->getBigwall())
+				switch (part->getBigwall())
 				{
 					case BIGWALL_WEST:
-					case BIGWALL_W_N:
+//					case BIGWALL_W_N: // NOT USED in stock UFO.
 						return true;
 				}
 			}
@@ -1602,9 +1571,9 @@ bool Pathfinding::isBlocked( // private.
 			if (tileWest == nullptr)
 				return true;
 
-			if (tileWest->getMapData(O_OBJECT) != nullptr)
+			if ((part = tileWest->getMapData(O_OBJECT)) != nullptr)
 			{
-				switch (tileWest->getMapData(O_OBJECT)->getBigwall())
+				switch (part->getBigwall())
 				{
 					case BIGWALL_EAST:
 					case BIGWALL_E_S:
@@ -1617,21 +1586,21 @@ bool Pathfinding::isBlocked( // private.
 		case O_NORTHWALL:
 		{
 			//Log(LOG_INFO) << ". part is Northwall";
-			if (launchTarget != nullptr						// missiles can't pathfind through closed doors.
-				&& tile->getMapData(O_NORTHWALL) != nullptr	// ... neither can proxy mines.
-				&& (tile->getMapData(O_NORTHWALL)->isDoor() == true
-					|| (tile->getMapData(O_NORTHWALL)->isUfoDoor() == true
+			if (launchTarget != nullptr									// missiles can't pathfind through closed doors.
+				&& (part = tile->getMapData(O_NORTHWALL)) != nullptr	// ... neither can proxy mines.
+				&& (part->isDoor() == true
+					|| (part->isUfoDoor() == true
 						&& tile->isUfoDoorOpen(O_NORTHWALL) == false)))
 			{
 				return true;
 			}
 
-			if (tile->getMapData(O_OBJECT) != nullptr)
+			if ((part = tile->getMapData(O_OBJECT)) != nullptr)
 			{
-				switch (tile->getMapData(O_OBJECT)->getBigwall())
+				switch (part->getBigwall())
 				{
 					case BIGWALL_NORTH:
-					case BIGWALL_W_N:
+//					case BIGWALL_W_N: // NOT USED in stock UFO.
 						return true;
 				}
 			}
@@ -1640,9 +1609,9 @@ bool Pathfinding::isBlocked( // private.
 			if (tileNorth == nullptr)
 				return true;
 
-			if (tileNorth->getMapData(O_OBJECT) != nullptr)
+			if ((part = tileNorth->getMapData(O_OBJECT)) != nullptr)
 			{
-				switch (tileNorth->getMapData(O_OBJECT)->getBigwall())
+				switch (part->getBigwall())
 				{
 					case BIGWALL_SOUTH:
 					case BIGWALL_E_S:
@@ -1666,7 +1635,7 @@ bool Pathfinding::isBlocked( // private.
 					return false;
 				}
 
-				if (launchTarget != nullptr // == isAI
+				if (launchTarget != nullptr // <- isAI
 					&& launchTarget != blockUnit
 					&& blockUnit->getFaction() == FACTION_HOSTILE)
 				{
@@ -1686,6 +1655,8 @@ bool Pathfinding::isBlocked( // private.
 							break;
 
 						default:
+						case FACTION_HOSTILE:
+						case FACTION_NEUTRAL:
 							if (std::find(
 									_unit->getHostileUnitsThisTurn().begin(),
 									_unit->getHostileUnitsThisTurn().end(),
@@ -1707,13 +1678,10 @@ bool Pathfinding::isBlocked( // private.
 
 					if (blockUnit != nullptr && blockUnit != _unit)
 					{
-						if (_unit != nullptr // don't let large units fall on other units
-							&& _unit->getArmor()->getSize() == 2)
-						{
+						if (_unit != nullptr && _unit->getArmor()->getSize() == 2)	// don't let large units fall on other units
 							return true;
-						}
 
-						if (blockUnit != launchTarget // don't let any units fall on large units
+						if (blockUnit != launchTarget								// don't let any units fall on large units
 							&& blockUnit->isOut_t(OUT_STAT) == false
 							&& blockUnit->getArmor()->getSize() == 2)
 						{
@@ -1730,18 +1698,17 @@ bool Pathfinding::isBlocked( // private.
 		}
 	}
 
-	static const int TU_BLOCK_LARGEUNIT (6); // stop large units from going through hedges and over fences
+	static const int TU_LARGEBLOCK (6); // stop large units from going through hedges and over fences
 
 	const int tu (tile->getTuCostTile(partType, _mType));
 	if (tu == FAIL
-		|| (_unit != nullptr
-			&& _unit->getArmor()->getSize() == 2
-			&& tu > TU_BLOCK_LARGEUNIT))
+		|| (tu > TU_LARGEBLOCK
+			&& _unit != nullptr
+			&& _unit->getArmor()->getSize() == 2))
 	{
 		//Log(LOG_INFO) << "isBlocked() EXIT true, partType = " << partType << " MT = " << (int)_mType;
 		return true;
 	}
-
 	//Log(LOG_INFO) << "isBlocked() EXIT false, partType = " << partType << " MT = " << (int)_mType;
 	return false;
 }
