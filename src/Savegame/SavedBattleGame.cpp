@@ -134,7 +134,7 @@ SavedBattleGame::SavedBattleGame(
 
 	if (titles != nullptr)
 	{
-		const size_t pool = 0; //RNG::generate(0, titles->size()-1 // <- in case I want to expand this for different missionTypes. eg, Cydonia -> "Blow Hard"
+		const size_t pool (0); //RNG::generate(0, titles->size()-1 // <- in case I want to expand this for different missionTypes. eg, Cydonia -> "Blow Hard"
 		_operationTitle = titles->at(pool)->genOperation();
 	}
 }
@@ -404,7 +404,7 @@ void SavedBattleGame::load(
 	resetUnitsOnTiles(); // matches up tiles and units
 
 	Log(LOG_INFO) << ". load items";
-	static const size_t LIST_TYPE = 3;
+	static const size_t LIST_TYPE (3);
 	std::string itLists_saved[LIST_TYPE] =
 	{
 		"items",
@@ -577,7 +577,7 @@ void SavedBattleGame::load(
 }
 
 /**
- * Loads the resources required by the map in the battle save.
+ * Loads the resources required by the Map in this SavedBattleGame.
  * @param game - pointer to Game
  */
 void SavedBattleGame::loadMapResources(const Game* const game)
@@ -596,11 +596,11 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 	int
 		mapDataId,
 		mapDataSetId;
-	const int parts = static_cast<int>(Tile::PARTS_TILE);
+	const int parts (static_cast<int>(Tile::PARTS_TILE));
 	MapDataType partType;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _qtyTilesTotal;
 			++i)
 	{
@@ -669,7 +669,7 @@ YAML::Node SavedBattleGame::save() const
 
 #if 0 // <- change to '1' to save Tiles in a human-readable non-binary format.
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _qtyTilesTotal;
 			++i)
 	{
@@ -687,13 +687,13 @@ YAML::Node SavedBattleGame::save() const
 	node["tileSetIDSize"]		= Tile::serializationKey._mapDataSetId;
 	node["tileBoolFieldsSize"]	= Tile::serializationKey.boolFields;
 
-	size_t tilesDataSize = static_cast<size_t>(Tile::serializationKey.totalBytes) * _qtyTilesTotal;
+	size_t tilesDataSize (static_cast<size_t>(Tile::serializationKey.totalBytes) * _qtyTilesTotal);
 	Uint8
-		* const tilesData = static_cast<Uint8*>(calloc(tilesDataSize, 1)),
-		* writeBuffer = tilesData;
+		* const tilesData (static_cast<Uint8*>(calloc(tilesDataSize, 1))),
+		* writeBuffer (tilesData);
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _qtyTilesTotal;
 			++i)
 	{
@@ -1189,7 +1189,7 @@ BattleUnit* SavedBattleGame::selectUnit(const Position& pos)
 }
 
 /**
- * Gets the list of nodes.
+ * Gets the list of Nodes.
  * @return, pointer to a vector of pointers to the Nodes
  */
 std::vector<Node*>* SavedBattleGame::getNodes()
@@ -1198,7 +1198,7 @@ std::vector<Node*>* SavedBattleGame::getNodes()
 }
 
 /**
- * Gets the list of units.
+ * Gets the list of BattleUnits.
  * @return, pointer to a vector of pointers to the BattleUnits
  */
 std::vector<BattleUnit*>* SavedBattleGame::getUnits()
@@ -1207,7 +1207,7 @@ std::vector<BattleUnit*>* SavedBattleGame::getUnits()
 }
 
 /**
- * Gets the list of shuffled units.
+ * Gets the list of shuffled BattleUnits.
  * @return, pointer to a vector of pointers to the BattleUnits
  */
 std::vector<BattleUnit*>* SavedBattleGame::getShuffleUnits()
@@ -1216,7 +1216,7 @@ std::vector<BattleUnit*>* SavedBattleGame::getShuffleUnits()
 }
 
 /**
- * Gets the list of items.
+ * Gets the list of BattleItems.
  * @return, pointer to a vector of pointers to the BattleItems
  */
 std::vector<BattleItem*>* SavedBattleGame::getItems()
@@ -1225,7 +1225,7 @@ std::vector<BattleItem*>* SavedBattleGame::getItems()
 }
 
 /**
- * Gets the pathfinding object.
+ * Gets the Pathfinding object.
  * @return, pointer to Pathfinding
  */
 Pathfinding* SavedBattleGame::getPathfinding() const
@@ -1234,7 +1234,7 @@ Pathfinding* SavedBattleGame::getPathfinding() const
 }
 
 /**
- * Gets the terrain modifier object.
+ * Gets the terrain-modifier object.
  * @return, pointer to the TileEngine
  */
 TileEngine* SavedBattleGame::getTileEngine() const
@@ -1243,17 +1243,17 @@ TileEngine* SavedBattleGame::getTileEngine() const
 }
 
 /**
-* Gets the array of mapblocks.
-* @return, pointer to a vector of pointers to the MapDataSet
-*/
+ * Gets the array of MCDs.
+ * @return, pointer to a vector of pointers to MapDataSets
+ */
 std::vector<MapDataSet*>* SavedBattleGame::getMapDataSets()
 {
 	return &_mapDataSets;
 }
 
 /**
- * Gets the side currently playing.
- * @return, the unit faction currently playing
+ * Gets the faction-side currently playing.
+ * @return, the faction currently playing (BattleUnit.h)
  */
 UnitFaction SavedBattleGame::getSide() const
 {

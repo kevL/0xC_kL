@@ -54,6 +54,7 @@ enum MapDataType
 	O_OBJECT,		//  3
 };
 
+/*
 enum BigwallType
 {
 	BIGWALL_NONE,	// 0
@@ -66,6 +67,18 @@ enum BigwallType
 	BIGWALL_SOUTH,	// 7
 	BIGWALL_E_S		// 8
 //	BIGWALL_W_N		// 9 NOT USED in stock UFO.
+}; */
+enum BigwallType
+{
+	BIGWALL_NONE	= 0x0000,	//   0 - 0000 0000
+	BIGWALL_BLOCK	= 0x0001,	//   1 - 0000 0001
+	BIGWALL_NESW	= 0x0002,	//   2 - 0000 0010
+	BIGWALL_NWSE	= 0x0004,	//   4 - 0000 0100
+	BIGWALL_WEST	= 0x0008,	//   8 - 0000 1000
+	BIGWALL_NORTH	= 0x0010,	//  16 - 0001 0000
+	BIGWALL_EAST	= 0x0020,	//  32 - 0010 0000
+	BIGWALL_SOUTH	= 0x0040,	//  64 - 0100 0000
+	BIGWALL_E_S		= 0x0080	// 128 - 1000 0000
 };
 
 //enum TerrainHeight

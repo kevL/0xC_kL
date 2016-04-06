@@ -229,7 +229,33 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			++i)
 	{
 		//Log(LOG_INFO) << ". index = " << (i->first) << " bigWall = " << (i->second);
-		dataSet->getRecords()->at(i->first)->setBigWall(i->second);
+		int bigwall;
+		switch (i->second) // convert decimal-based patches to hexadecimal BigwallTypes.
+		{
+			default:
+			case 0: bigwall = 0x0000; // BIGWALL_NONE
+				break;
+			case 1: bigwall = 0x0001; // BIGWALL_BLOCK
+				break;
+			case 2: bigwall = 0x0002; // BIGWALL_NESW
+				break;
+			case 3: bigwall = 0x0004; // BIGWALL_NWSE
+				break;
+			case 4: bigwall = 0x0008; // BIGWALL_WEST
+				break;
+			case 5: bigwall = 0x0010; // BIGWALL_NORTH
+				break;
+			case 6: bigwall = 0x0020; // BIGWALL_EAST
+				break;
+			case 7: bigwall = 0x0040; // BIGWALL_SOUTH
+				break;
+			case 8: bigwall = 0x0080; // BIGWALL_E_S
+				break;
+//			case 9: // BIGWALL_W_N
+		}
+
+		dataSet->getRecords()->at(i->first)->setBigWall(bigwall);
+//		dataSet->getRecords()->at(i->first)->setBigWall(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator

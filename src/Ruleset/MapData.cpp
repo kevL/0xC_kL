@@ -136,8 +136,8 @@ bool MapData::isNoFloor() const
 }
 
 /**
- * Gets whether this tile-part is a big wall that blocks all surrounding
- * diagonal paths.
+ * Gets whether this tile-part is a bigwall that blocks surrounding diagonal
+ * paths.
  * @note Return value key:
  * 0: not a bigWall
  * 1: regular bigWall
@@ -148,7 +148,7 @@ bool MapData::isNoFloor() const
  * 6: acts as an east wall
  * 7: acts as a south wall
  * 8: acts as a south and east wall
- * 9: acts as a north and west wall
+ * 9: acts as a north and west wall // NOTE: Not used in UFO.
  * @return, BigwallType (MapData.h)
  */
 BigwallType MapData::getBigwall() const
@@ -245,11 +245,11 @@ int MapData::getBlock(DamageType dType) const
 {
 	switch (dType)
 	{
-/*		case DT_NONE:	return _block[1];
-		case DT_HE:		return _block[2];
-		case DT_SMOKE:	return _block[3];
-		case DT_IN:		return _block[4];
-		case DT_STUN:	return _block[5]; */
+//		case DT_NONE:	return _block[1];
+//		case DT_HE:		return _block[2];
+//		case DT_SMOKE:	return _block[3];
+//		case DT_IN:		return _block[4];
+//		case DT_STUN:	return _block[5];
 											// see setBlock() below_
 		case DT_NONE:	return _block[1];	// stop LoS: [0 or 100], was [0 or 255]
 		case DT_HE:
