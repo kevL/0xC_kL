@@ -1946,7 +1946,12 @@ void TileEngine::hit(
 		case VOXEL_NORTHWALL:
 		case VOXEL_OBJECT:
 			{
-				if (dType == DT_STUN || dType == DT_SMOKE) return; // workaround for Stunrod.
+				switch (dType)
+				{
+					case DT_STUN: // workaround for Stunrod.
+					case DT_SMOKE:
+						return;
+				}
 
 				power = RNG::generate( // 25% to 75% linear.
 									power / 4,

@@ -1521,7 +1521,7 @@ std::vector<BattleItem*>* Tile::getInventory()
 }
 
 /**
- * Sets the tile visible flag.
+ * Sets this Tile's visible-flag.
  * @note Used only by sneakyAI.
  * @param vis - true if visible (default true)
  */
@@ -1531,7 +1531,7 @@ void Tile::setTileVisible(bool vis)
 }
 
 /**
- * Gets the tile visible flag.
+ * Gets this Tile's visible-flag.
  * @note Used only by sneakyAI.
  * @return, true if visible
  */
@@ -1541,7 +1541,7 @@ bool Tile::getTileVisible() const
 }
 
 /**
- * Sets the direction of path preview arrows.
+ * Sets the direction of path-preview-arrows.
  * @param dir - a direction
  */
 void Tile::setPreviewDir(int dir)
@@ -1550,7 +1550,7 @@ void Tile::setPreviewDir(int dir)
 }
 
 /**
- * Gets the direction of path preview arrows.
+ * Gets the direction of path-preview-arrows.
  * @return, preview direction
  */
 int Tile::getPreviewDir() const
@@ -1559,8 +1559,8 @@ int Tile::getPreviewDir() const
 }
 
 /**
- * Sets a number to be displayed by pathfinding preview.
- * @param tu - # of TUs left if/when this Tile is reached
+ * Sets a number to be displayed by path-preview.
+ * @param tu - quantity of TUs left if/when this Tile is reached
  */
 void Tile::setPreviewTu(int tu)
 {
@@ -1568,8 +1568,8 @@ void Tile::setPreviewTu(int tu)
 }
 
 /**
- * Gets the number to be displayed for pathfinding preview.
- * @return, # of TUs left if/when this Tile is reached
+ * Gets the number to be displayed for path-preview.
+ * @return, quantity of TUs left if/when this Tile is reached
  */
 int Tile::getPreviewTu() const
 {
@@ -1577,7 +1577,7 @@ int Tile::getPreviewTu() const
 }
 
 /**
- * Sets the path preview marker color on this Tile.
+ * Sets the path-preview-marker- color on this Tile.
  * @param color - color of marker
  */
 void Tile::setPreviewColor(Uint8 color)
@@ -1586,7 +1586,7 @@ void Tile::setPreviewColor(Uint8 color)
 }
 
 /**
- * Gets the path preview marker color on this Tile.
+ * Gets the path-preview-marker-color on this Tile.
  * @return, color of marker
  */
 int Tile::getPreviewColor() const
@@ -1595,7 +1595,7 @@ int Tile::getPreviewColor() const
 }
 
 /**
- * Sets the danger flag on this Tile.
+ * Sets the danger-flag on this Tile.
  * @param danger - true if the AI regards the tile as dangerous (default true)
  */
 void Tile::setDangerous(bool danger)
@@ -1604,8 +1604,8 @@ void Tile::setDangerous(bool danger)
 }
 
 /**
- * Gets the danger flag on this Tile.
- * @return, true if the tile is considered dangerous to aLiens
+ * Gets the danger-flag on this Tile.
+ * @return, true if the AI regards the tile as dangerous
  */
 bool Tile::getDangerous() const
 {

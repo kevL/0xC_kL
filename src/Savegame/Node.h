@@ -95,32 +95,32 @@ private:
 		/// Cleans up the Node.
 		~Node();
 
-		/// Loads the node from YAML.
+		/// Loads the Node from YAML.
 		void load(const YAML::Node& node);
-		/// Saves the node to YAML.
+		/// Saves the Node to YAML.
 		YAML::Node save() const;
 
-		/// Gets the node's id.
+		/// Gets the Node's ID.
 		int getId() const;
 
-		/// Gets the node's paths.
+		/// Gets the Node's paths.
 		std::vector<int>* getNodeLinks();
 
-		/// Gets node's rank.
+		/// Gets the Node's rank.
 		NodeRank getNodeRank() const;
 
-		/// Gets node's priority.
+		/// Gets the Node's priority.
 		int getPriority() const;
 
-		/// Gets the node's position.
+		/// Gets the Node's position.
 		const Position& getPosition() const;
 
-		/// Gets the node's segment.
+		/// Gets the Node's segment.
 		int getSegment() const;
 
-		/// Sets the node's type. SURPRISE!! (not)
+		/// Sets the Node's type. SURPRISE!! (not)
 		void setNodeType(int type);
-		/// Gets the node's type.
+		/// Gets the Node's type.
 		int getNodeType() const;
 
 		/// Gets the 'flags' variable which is really the patrol-desirability value.
@@ -138,14 +138,14 @@ private:
 //		{	return _patrol > b.getPatrol(); };
 
 
-		/// Gets if this Node is allocated.
+		/// Checks if the Node is allocated.
 		bool isAllocated() const;
-		/// Sets this Node as allocated.
+		/// Sets the Node as allocated.
 		void allocateNode();
-		/// Sets this Node as NOT allocated.
+		/// Sets the Node as NOT allocated.
 		void freeNode();
 
-		/// Gets if this Node is suitable for an aLien to target XCOM base targets/objectives.
+		/// Gets if the Node is suitable for an aLien to target an xCom Base's targets/objective-parts.
 		bool isTarget() const;
 };
 

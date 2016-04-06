@@ -185,14 +185,13 @@ std::string SoldierDead::getRankString() const
 		case RANK_COLONEL:		return "STR_COLONEL";
 		case RANK_COMMANDER:	return "STR_COMMANDER";
 	}
-
 	return "";
 }
 
 /**
  * Returns a graphic representation of this dead soldier's military rank.
  * @note THE MEANING OF LIFE
- * @return, sprite ID of rank
+ * @return, sprite-ID of rank
  */
 int SoldierDead::getRankSprite() const
 {
@@ -201,7 +200,7 @@ int SoldierDead::getRankSprite() const
 
 /**
  * Returns this dead soldier's military rank.
- * @return, rank enum
+ * @return, rank (Soldier.h)
  */
 SoldierRank SoldierDead::getRank() const
 {
@@ -209,7 +208,7 @@ SoldierRank SoldierDead::getRank() const
 }
 
 /**
- * Returns this dead soldier's amount of missions.
+ * Returns this dead soldier's quantity of missions.
  * @return, missions
  */
 int SoldierDead::getMissions() const
@@ -218,7 +217,7 @@ int SoldierDead::getMissions() const
 }
 
 /**
- * Returns this dead soldier's amount of kills.
+ * Returns this dead soldier's quantity of kills.
  * @return, kills
  */
 int SoldierDead::getKills() const
@@ -228,7 +227,7 @@ int SoldierDead::getKills() const
 
 /**
  * Returns this dead soldier's gender.
- * @return, gender enum
+ * @return, gender (Soldier.h)
  */
 SoldierGender SoldierDead::getGender() const
 {
@@ -237,7 +236,7 @@ SoldierGender SoldierDead::getGender() const
 
 /**
  * Returns this dead soldier's look.
- * @return, look enum
+ * @return, look (Soldier.h)
  */
 SoldierLook SoldierDead::getLook() const
 {
@@ -245,7 +244,7 @@ SoldierLook SoldierDead::getLook() const
 }
 
 /**
- * Returns this dead soldier's unique ID.
+ * Returns this dead soldier's unique-ID.
  * Each dead soldier can be identified by its ID (not it's name).
  * @return, unique ID
  */
@@ -282,7 +281,7 @@ SoldierDeath* SoldierDead::getDeath() const
 }
 
 /**
- * Gets the soldier's diary.
+ * Gets this SoldierDead's SoldierDiary.
  * @return, pointer to SoldierDiary
  */
 SoldierDiary* SoldierDead::getDiary() const

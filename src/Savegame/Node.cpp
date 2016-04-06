@@ -92,7 +92,7 @@ Node::Node()
 {}
 
 /**
- * Initializes a Node on the battlescape.
+ * Initializes the Node for the battlescape.
  * @param id		- node's ID
  * @param pos		- node's Position
  * @param segment	- for linking nodes
@@ -130,7 +130,7 @@ Node::~Node()
 {}
 
 /**
- * Loads the Nodes from a YAML file.
+ * Loads this Node from a YAML file.
  * @param node - reference a YAML node
  */
 void Node::load(const YAML::Node& node)
@@ -148,7 +148,7 @@ void Node::load(const YAML::Node& node)
 }
 
 /**
- * Saves the Nodes to a YAML file.
+ * Saves this Node to a YAML file.
  * @return, YAML node
  */
 YAML::Node Node::save() const

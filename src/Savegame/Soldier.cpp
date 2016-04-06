@@ -438,7 +438,7 @@ int Soldier::getKills() const
 
 /**
  * Gets this Soldier's gender.
- * @return, gender enum
+ * @return, gender (Soldier.h)
  */
 SoldierGender Soldier::getGender() const
 {
@@ -447,7 +447,7 @@ SoldierGender Soldier::getGender() const
 
 /**
  * Gets this Soldier's look.
- * @return, look enum
+ * @return, look (Soldier.h)
  */
 SoldierLook Soldier::getLook() const
 {
