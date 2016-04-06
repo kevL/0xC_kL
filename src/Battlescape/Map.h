@@ -47,12 +47,12 @@ class Timer;
 
 enum SelectorType
 {
-	CT_NONE,		// 0
-	CT_NORMAL,		// 1
-	CT_AIM,			// 2
-	CT_PSI,			// 3
-	CT_WAYPOINT,	// 4
-	CT_THROW		// 5
+	CT_NONE,	// 0
+	CT_NORMAL,	// 1
+	CT_TARGET,	// 2
+	CT_PSI,		// 3
+	CT_LAUNCH,	// 4
+	CT_TOSS		// 5
 };
 
 
@@ -78,17 +78,17 @@ private:
 		SHADE_DOOR = 6;
 
 	static const Uint8
-		WHITE_u		=  1,
-		BLACK		= 14,
-		ORANGE		= 16,
-		ACU_ORANGE	= 18,
-		ACU_RED		= 35,
-		ACU_GREEN	= 51;
+		WHITE_u		=  1u,
+		BLACK		= 14u,
+		ORANGE		= 16u,
+		ACU_ORANGE	= 18u,
+		ACU_RED		= 35u,
+		ACU_GREEN	= 51u;
 	static const Uint32
-		SCROLL_INTERVAL	= 15,
+		SCROLL_INTERVAL	= 15u,
 
-		SCREEN_WHITE =  1,
-		SCREEN_BLACK = 15;
+		SCREEN_WHITE =  1u,
+		SCREEN_BLACK = 15u;
 
 	SelectorType _selectorType;
 
@@ -148,7 +148,7 @@ private:
 
 	/// Draws the battlefield.
 	void drawTerrain(Surface* const surface);
-	/// Draws a Soldier's rank icon above its sprite on the Map.
+	/// Draws a Soldier's rank-icon above its sprite on the Map.
 	void drawRankIcon(
 			const BattleUnit* const unit,
 			int offset_x,
@@ -211,33 +211,33 @@ private:
 				int firstcolor = 0,
 				int ncolors = 256) override;
 
-		/// Special handling for mouse press.
+		/// Special handling for mouse-presses.
 		void mousePress(Action* action, State* state) override;
-		/// Special handling for mouse release.
+		/// Special handling for mouse-releases.
 		void mouseRelease(Action* action, State* state) override;
-		/// Special handling for mouse over
+		/// Special handling for mouse-overs.
 		void mouseOver(Action* action, State* state) override;
 
-		/// Finds the current mouse position XY on the Map.
+		/// Finds the current mouse-position x/y on the Map.
 		void findMousePointer(Position& point);
 
-		/// Special handling for key presses.
+		/// Special handling for key-presses.
 		void keyboardPress(Action* action, State* state) override;
-		/// Special handling for key releases.
+		/// Special handling for key-releases.
 		void keyboardRelease(Action* action, State* state) override;
 
-		/// Cycles the frames for all tiles.
+		/// Cycles the animation-frames of all Tiles and BattleUnits.
 		void animateMap(bool redraw = true);
 
-		/// Sets the battlescape selector position relative to current mouseposition.
+		/// Sets the selector-position relative to current mouse-position.
 		void refreshSelectorPosition();
 		/// Gets the currently selected position.
 		void getSelectorPosition(Position* const pos) const;
-		/// Sets the 3D selector type.
+		/// Sets the 3D selector-type.
 		void setSelectorType(
 				SelectorType type,
 				int quads = 1);
-		/// Gets the 3D selector type.
+		/// Gets the 3D selector-type.
 		SelectorType getSelectorType() const;
 
 		/// Caches all unit-sprites.
@@ -245,30 +245,30 @@ private:
 		/// Caches a unit's sprite.
 		void cacheUnit(BattleUnit* const unit);
 
-		/// Sets projectile.
+		/// Sets a projectile.
 		void setProjectile(Projectile* const projectile = nullptr);
-		/// Gets projectile.
+		/// Gets the projectile.
 		Projectile* getProjectile() const;
 
-		/// Gets explosion set.
+		/// Gets any explosion set.
 		std::list<Explosion*>* getExplosions();
 
-		/// Gets a pointer to the camera.
+		/// Gets a pointer to the Camera.
 		Camera* getCamera();
-		/// Mouse-scrolls the camera.
+		/// Mouse-scrolls the Camera.
 		void scrollMouse();
-		/// Keyboard-scrolls the camera.
+		/// Keyboard-scrolls the Camera.
 		void scrollKey();
 
-		/// Gets waypoints vector.
+		/// Gets any waypoints-vector.
 		std::vector<Position>* getWaypoints();
 
-		/// Sets mouse-buttons' pressed state.
+		/// Sets the mouse-buttons' pressed state.
 		void setButtonsPressed(
 				Uint8 btn,
 				bool pressed);
 
-		/// Sets the unitDying flag.
+		/// Sets the unit-dying flag.
 		void setUnitDying(bool flag = true);
 
 		/// Special handling for updating Map height.
@@ -276,15 +276,15 @@ private:
 		/// Special handling for updating Map width.
 		void setWidth(int width) override;
 
-		/// Gets the vertical position of the hidden movement screen.
+		/// Gets the vertical position of the hidden-movement screen.
 		int getMessageY() const;
 
-		/// Gets the icon height.
+		/// Gets the icon-height.
 		int getIconHeight() const;
-		/// Gets the icon width.
+		/// Gets the icon-width.
 		int getIconWidth() const;
 
-		/// Converts a Map position to a sound angle.
+		/// Converts a map-position to a sound-angle.
 		int getSoundAngle(const Position& pos) const;
 
 		/// Resets the camera smoothing bool.
@@ -306,7 +306,7 @@ private:
 		/// Tells the Map to remain revealed because there's a duration-type action going down.
 		void setReveal(bool reveal = true);
 
-		/// Sets whether to draw the projectile on the Map.
+		/// Sets whether to allow drawing a projectile on the Map.
 		void showProjectile(bool show = true);
 };
 

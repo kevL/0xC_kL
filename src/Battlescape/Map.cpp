@@ -208,63 +208,63 @@ void Map::init()
 	static const Uint8
 		f (ORANGE),	// Fill
 		b (BLACK);	// Border
-	static const Uint8 pixels_stand[81] { 0, 0, b, b, b, b, b, 0, 0,
-										  0, 0, b, f, f, f, b, 0, 0,
-										  0, 0, b, f, f, f, b, 0, 0,
-										  b, b, b, f, f, f, b, b, b,
-										  b, f, f, f, f, f, f, f, b,
-										  0, b, f, f, f, f, f, b, 0,
-										  0, 0, b, f, f, f, b, 0, 0,
-										  0, 0, 0, b, f, b, 0, 0, 0,
-										  0, 0, 0, 0, b, 0, 0, 0, 0 };
+	static const Uint8 pixels_stand[81u] { 0, 0, b, b, b, b, b, 0, 0,
+										   0, 0, b, f, f, f, b, 0, 0,
+										   0, 0, b, f, f, f, b, 0, 0,
+										   b, b, b, f, f, f, b, b, b,
+										   b, f, f, f, f, f, f, f, b,
+										   0, b, f, f, f, f, f, b, 0,
+										   0, 0, b, f, f, f, b, 0, 0,
+										   0, 0, 0, b, f, b, 0, 0, 0,
+										   0, 0, 0, 0, b, 0, 0, 0, 0 };
 	_arrow = new Surface(9,9);
 	_arrow->setPalette(getPalette());
 	_arrow->lock();
 	for (size_t
-			y = 0;
-			y != 9;
+			y = 0u;
+			y != 9u;
 			++y)
 	{
 		for (size_t
-				x = 0;
-				x != 9;
+				x = 0u;
+				x != 9u;
 				++x)
 		{
 			_arrow->setPixelColor(
 							static_cast<int>(x),
 							static_cast<int>(y),
-							pixels_stand[x + (y * 9)]);
+							pixels_stand[x + (y * 9u)]);
 		}
 	}
 	_arrow->unlock();
 
-	static const Uint8 pixels_kneel[81] { 0, 0, 0, 0, 0, 0, 0, 0, 0,
-										  0, 0, 0, 0, b, 0, 0, 0, 0,
-										  0, 0, 0, b, f, b, 0, 0, 0,
-										  0, 0, b, f, f, f, b, 0, 0,
-										  0, b, f, f, f, f, f, b, 0,
-										  b, f, f, f, f, f, f, f, b,
-										  b, b, b, f, f, f, b, b, b,
-										  0, 0, b, f, f, f, b, 0, 0,
-										  0, 0, b, b, b, b, b, 0, 0 };
+	static const Uint8 pixels_kneel[81u] { 0, 0, 0, 0, 0, 0, 0, 0, 0,
+										   0, 0, 0, 0, b, 0, 0, 0, 0,
+										   0, 0, 0, b, f, b, 0, 0, 0,
+										   0, 0, b, f, f, f, b, 0, 0,
+										   0, b, f, f, f, f, f, b, 0,
+										   b, f, f, f, f, f, f, f, b,
+										   b, b, b, f, f, f, b, b, b,
+										   0, 0, b, f, f, f, b, 0, 0,
+										   0, 0, b, b, b, b, b, 0, 0 };
 
 	_arrow_kneel = new Surface(9,9);
 	_arrow_kneel->setPalette(getPalette());
 	_arrow_kneel->lock();
 	for (size_t
-			y = 0;
-			y != 9;
+			y = 0u;
+			y != 9u;
 			++y)
 	{
 		for (size_t
-				x = 0;
-				x != 9;
+				x = 0u;
+				x != 9u;
 				++x)
 		{
 			_arrow_kneel->setPixelColor(
 									static_cast<int>(x),
 									static_cast<int>(y),
-									pixels_kneel[x + (y * 9)]);
+									pixels_kneel[x + (y * 9u)]);
 		}
 	}
 	_arrow_kneel->unlock();
@@ -394,7 +394,7 @@ void Map::draw()
 			if (delayHide == true)
 			{
 				delayHide = false;
-				SDL_Delay(369);
+				SDL_Delay(369u);
 			}
 
 			_mapIsHidden = true;
@@ -752,58 +752,68 @@ void Map::drawTerrain(Surface* const surface) // private.
 						const Tile* const tileWest (_battleSave->getTile(posField + Position(-1,0,0)));
 						const BattleUnit* const unitWest (tileWest->getTileUnit());
 						if (unitWest != nullptr
-							&& unitWest->getUnitVisible() == true // don't bother checking DebugMode.
-							&& (unitWest->getUnitStatus() == STATUS_WALKING
-								|| unitWest->getUnitStatus() == STATUS_FLYING)
-							&& (unitWest->getUnitDirection() == 1
-								|| unitWest->getUnitDirection() == 5)) // && vertical dir == 0
+							&& unitWest->getUnitVisible() == true) // don't bother checking DebugMode.
 						{
-							const Tile* tileNorth (_battleSave->getTile(posField + Position(0,-1,0)));
-							const BattleUnit* unitNorth (tileNorth->getTileUnit());
-							int offsetZ_y;
-							if (unitNorth == nullptr && itZ != 0)
+							switch (unitWest->getUnitStatus())
 							{
-								tileNorth = _battleSave->getTile(posField + Position(0,-1,-1));
-								unitNorth = tileNorth->getTileUnit();
-								offsetZ_y = 24;
-							}
-							else
-								offsetZ_y = 0;
-
-							if (unitNorth == unitWest)
-							{
-								const Tile* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0)));
-								if (checkWest(tileWest, tileSouthWest, unitNorth) == true)
+								case STATUS_WALKING:
+								case STATUS_FLYING:
 								{
-									const Tile* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0)));
-									if (checkNorth(tileNorth, tileNorthEast, unitNorth) == true)
+									switch (unitWest->getUnitDirection())
 									{
-										trueLoc = isTrueLoc(unitNorth, tileNorth);
-										quadrant = getQuadrant(unitNorth, tileNorth, trueLoc);
-										sprite = unitNorth->getCache(quadrant);
-										//if (sprite != nullptr)
+										case 1: // && vertical dir == 0
+										case 5:
 										{
-											if (unitNorth->isOut_t(OUT_HLTH_STUN) == true)
-												shade = std::min(tileShade, SHADE_UNIT);
-											else
-												shade = tileShade;
-
-											calcWalkOffset(unitNorth, &walkOffset, trueLoc);
-											sprite->blitNShade(
-													surface,
-													posScreen.x + walkOffset.x + 16 - _spriteWidth_2,
-													posScreen.y + walkOffset.y -  8 + offsetZ_y,
-													shade);
-
-											if (unitNorth->getFireUnit() != 0)
+											const Tile* tileNorth (_battleSave->getTile(posField + Position(0,-1,0)));
+											const BattleUnit* unitNorth (tileNorth->getTileUnit());
+											int offsetZ_y;
+											if (unitNorth == nullptr && itZ != 0)
 											{
-												frame = 4 + (_aniFrame / 2);
-												sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
-												//if (sprite != nullptr)
-													sprite->blitNShade(
-															surface,
-															posScreen.x + walkOffset.x + 16,
-															posScreen.y + walkOffset.y -  8);
+												tileNorth = _battleSave->getTile(posField + Position(0,-1,-1));
+												unitNorth = tileNorth->getTileUnit();
+												offsetZ_y = 24;
+											}
+											else
+												offsetZ_y = 0;
+
+											if (unitNorth == unitWest)
+											{
+												const Tile* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0)));
+												if (checkWest(tileWest, tileSouthWest, unitNorth) == true)
+												{
+													const Tile* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0)));
+													if (checkNorth(tileNorth, tileNorthEast, unitNorth) == true)
+													{
+														trueLoc = isTrueLoc(unitNorth, tileNorth);
+														quadrant = getQuadrant(unitNorth, tileNorth, trueLoc);
+														sprite = unitNorth->getCache(quadrant);
+														//if (sprite != nullptr)
+														{
+															if (unitNorth->isOut_t(OUT_HLTH_STUN) == true)
+																shade = std::min(tileShade, SHADE_UNIT);
+															else
+																shade = tileShade;
+
+															calcWalkOffset(unitNorth, &walkOffset, trueLoc);
+															sprite->blitNShade(
+																	surface,
+																	posScreen.x + walkOffset.x + 16 - _spriteWidth_2,
+																	posScreen.y + walkOffset.y -  8 + offsetZ_y,
+																	shade);
+
+															if (unitNorth->getFireUnit() != 0)
+															{
+																frame = 4 + (_aniFrame / 2);
+																sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
+																//if (sprite != nullptr)
+																	sprite->blitNShade(
+																			surface,
+																			posScreen.x + walkOffset.x + 16,
+																			posScreen.y + walkOffset.y -  8);
+															}
+														}
+													}
+												}
 											}
 										}
 									}
@@ -815,33 +825,38 @@ void Map::drawTerrain(Surface* const surface) // private.
 // Draw Cursor Background
 					if (_selectorType != CT_NONE
 						&& _battleSave->getBattleState()->getMouseOverIcons() == false
-						&& _selectorX > itX - _selectorSize
-						&& _selectorY > itY - _selectorSize
+						&& _selectorX >  itX - _selectorSize
+						&& _selectorY >  itY - _selectorSize
 						&& _selectorX <= itX
 						&& _selectorY <= itY)
 					{
 						if (viewLevel == itZ)
 						{
-							if (_selectorType != CT_AIM)
+							switch (_selectorType)
 							{
-								if (hasUnit == true
-									&& (_selectorType != CT_PSI
-										|| ((_battleSave->getBattleGame()->getTacticalAction()->type == BA_PSICOURAGE
-												&& _unit->getFaction() != FACTION_HOSTILE)
-											|| (_battleSave->getBattleGame()->getTacticalAction()->type != BA_PSICOURAGE
-												&& _unit->getFaction() != FACTION_PLAYER))))
-								{
-									frame = (_aniFrame % 2);	// yellow flashing box
-								}
-								else
-									frame = 0;					// red static box
-							}
-							else // CT_AIM ->
-							{
-								if (hasUnit == true)
-									frame = 7 + (_aniFrame / 2);	// yellow animated crosshairs
-								else
-									frame = 6;						// red static crosshairs
+								case CT_TARGET:
+									if (hasUnit == true)
+										frame = 7 + (_aniFrame / 2);	// yellow animated crosshairs
+									else
+										frame = 6;						// red static crosshairs
+									break;
+
+								default:
+								case CT_NORMAL:
+								case CT_PSI:
+								case CT_LAUNCH:
+								case CT_TOSS:
+									if (hasUnit == true
+										&& (_selectorType != CT_PSI
+											|| ((_battleSave->getBattleGame()->getTacticalAction()->type == BA_PSICOURAGE
+													&& _unit->getFaction() != FACTION_HOSTILE)
+												|| (_battleSave->getBattleGame()->getTacticalAction()->type != BA_PSICOURAGE
+													&& _unit->getFaction() != FACTION_PLAYER))))
+									{
+										frame = (_aniFrame % 2);	// yellow flashing box
+									}
+									else
+										frame = 0;					// red static box
 							}
 
 							sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(frame);
@@ -1100,50 +1115,55 @@ void Map::drawTerrain(Surface* const surface) // private.
 					{
 						bool
 							halfRight (false),
-							draw (true);
+							draw      (true);
 
-						if ((_unit->getUnitStatus() == STATUS_WALKING // don't clip through north/northwest/west UFO hulls etc.
-								|| _unit->getUnitStatus() == STATUS_FLYING)
-							&& (_unit->getWalkPhase() != 0
-								|| _unit->getUnitDirection() == 4
-								|| _unit->getUnitDirection() == 1
-								|| _unit->getUnitDirection() == 2)) // weird.
+						switch (_unit->getUnitStatus()) // don't clip through north/northwest/west UFO hulls etc.
 						{
-							switch (_unit->getUnitDirection())
+							case STATUS_WALKING:
+							case STATUS_FLYING:
 							{
-								case 0:
-								case 4:
+								if (_unit->getWalkPhase() != 0
+									|| _unit->getUnitDirection() == 4
+									|| _unit->getUnitDirection() == 1
+									|| _unit->getUnitDirection() == 2) // weird.
 								{
-									const Tile
-										* const tileNorth (_battleSave->getTile(posField + Position(0,-1,0))),
-										* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0)));
-									draw = checkNorth(tileNorth, tileNorthEast);
-									break;
-								}
+									switch (_unit->getUnitDirection())
+									{
+										case 0:
+										case 4:
+										{
+											const Tile
+												* const tileNorth (_battleSave->getTile(posField + Position(0,-1,0))),
+												* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0)));
+											draw = checkNorth(tileNorth, tileNorthEast);
+											break;
+										}
 
-								case 2:
-								case 6:
-								{
-									const Tile
-										* const tileWest (_battleSave->getTile(posField + Position(-1,0,0))),
-										* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0)));
-									draw = checkWest(tileWest, tileSouthWest, nullptr, &halfRight);
-									break;
-								}
+										case 2:
+										case 6:
+										{
+											const Tile
+												* const tileWest (_battleSave->getTile(posField + Position(-1,0,0))),
+												* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0)));
+											draw = checkWest(tileWest, tileSouthWest, nullptr, &halfRight);
+											break;
+										}
 
-								case 1:
-								case 5:
-								{
-									const Tile
-										* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0))),
-										* const tileSouthSouthWest (_battleSave->getTile(posField + Position(-1,2,0)));
-									draw = checkWest(tileSouthWest, tileSouthSouthWest);
+										case 1:
+										case 5:
+										{
+											const Tile
+												* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0))),
+												* const tileSouthSouthWest (_battleSave->getTile(posField + Position(-1,2,0)));
+											draw = checkWest(tileSouthWest, tileSouthSouthWest);
 
-									const Tile
-										* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0))),
-										* const tileNorthNorthEast (_battleSave->getTile(posField + Position(1,-2,0)));
-									draw = draw
-										&& checkNorth(tileNorthEast, tileNorthNorthEast);
+											const Tile
+												* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0))),
+												* const tileNorthNorthEast (_battleSave->getTile(posField + Position(1,-2,0)));
+											draw = draw
+												&& checkNorth(tileNorthEast, tileNorthNorthEast);
+										}
+									}
 								}
 							}
 						}
@@ -1209,7 +1229,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 											// and explosion are taken into consideration, the flash lasts several
 											// engine-ticks. But currentAction=NONE makes it all go away ofc.
 										{
-											const int exposure = _unit->getExposed();
+											const int exposure (_unit->getExposed());
 											if (exposure != -1)
 											{
 												Uint8 color;
@@ -1396,7 +1416,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						{
 							switch (_selectorType)
 							{
-								case CT_AIM:
+								case CT_TARGET:
 									if (hasUnit == true)
 										frame = 7 + (_aniFrame / 2);	// yellow animated crosshairs
 									else
@@ -1404,6 +1424,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 									break;
 
 								default:
+								case CT_NORMAL:
+								case CT_PSI:
+								case CT_LAUNCH:
+								case CT_TOSS:
 									if (hasUnit == true
 										&& (_selectorType != CT_PSI
 											|| ((_battleSave->getBattleGame()->getTacticalAction()->type == BA_PSICOURAGE
@@ -1428,7 +1452,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 //							if (Options::battleUFOExtenderAccuracy == true) // -> one less condition to check
 							switch (_selectorType)
 							{
-								case CT_AIM: // indicator for Firing.
+								case CT_TARGET:
 								{
 									// draw targetUnit overtop cursor's front if Tile is blacked-out.
 									if (hasUnit == true && _tile->isRevealed(ST_CONTENT) == false)
@@ -1538,7 +1562,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									break;
 								}
 
-								case CT_THROW: // indicator for Throwing.
+								case CT_TOSS:
 								{
 									BattleAction* const action (_battleSave->getBattleGame()->getTacticalAction());
 									action->posTarget = Position(itX,itY,itZ);
@@ -1578,8 +1602,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 							switch (_selectorType)
 							{
 								case CT_PSI:
-								case CT_WAYPOINT:
-								case CT_THROW:
+								case CT_LAUNCH:
+								case CT_TOSS:
 								{
 									static const int cursorSprites[6] = {0,0,0,11,13,15};
 									sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(cursorSprites[_selectorType] + (_aniFrame / 4));
@@ -1687,44 +1711,49 @@ void Map::drawTerrain(Surface* const surface) // private.
 	{
 		_unit = _battleSave->getSelectedUnit();
 		if (_unit != nullptr
-			&& (_unit->getUnitStatus() == STATUS_STANDING
-				|| _unit->getUnitStatus() == STATUS_TURNING)
 			&& _unit->getPosition().z <= viewLevel)
 		{
-			_camera->convertMapToScreen(
-									_unit->getPosition(),
-									&posScreen);
-			posScreen += _camera->getMapOffset();
-
-			posScreen.y += getTerrainLevel(
-										_unit->getPosition(),
-										_unit->getArmor()->getSize());
-			posScreen.y += 21 - _unit->getHeight();
-
-			if (_unit->getArmor()->getSize() > 1)
+			switch (_unit->getUnitStatus())
 			{
-				posScreen.y += 10;
-				if (_unit->getFloatHeight() != 0)
-					posScreen.y -= _unit->getFloatHeight() + 1;
+				case STATUS_STANDING:
+				case STATUS_TURNING:
+				{
+					_camera->convertMapToScreen(
+											_unit->getPosition(),
+											&posScreen);
+					posScreen += _camera->getMapOffset();
+
+					posScreen.y += getTerrainLevel(
+												_unit->getPosition(),
+												_unit->getArmor()->getSize());
+					posScreen.y += 21 - _unit->getHeight();
+
+					if (_unit->getArmor()->getSize() > 1)
+					{
+						posScreen.y += 10;
+						if (_unit->getFloatHeight() != 0)
+							posScreen.y -= _unit->getFloatHeight() + 1;
+					}
+
+					posScreen.x += _spriteWidth_2;
+
+					static const int phaseCycle[8u] {0,-3,3,-2,-3,-2,0,1};
+//					const int phaseCycle (static_cast<int>(4. * std::sin(22.5 / static_cast<double>(_aniFrame + 1))));
+
+					if (_unit->isKneeled() == true)
+						_arrow_kneel->blitNShade(
+								surface,
+								posScreen.x - (_arrow_kneel->getWidth() / 2),
+								posScreen.y - _arrow_kneel->getHeight() - 4 - phaseCycle[_aniFrame]);
+//								posScreen.y - _arrow_kneel->getHeight() - 4 - phaseCycle);
+					else
+						_arrow->blitNShade(
+								surface,
+								posScreen.x - _arrow->getWidth() / 2,
+								posScreen.y - _arrow->getHeight() + phaseCycle[_aniFrame]);
+//								posScreen.y - _arrow->getHeight() + phaseCycle);
+				}
 			}
-
-			posScreen.x += _spriteWidth_2;
-
-			static const int phaseCycle[8] {0,-3,3,-2,-3,-2,0,1};
-//			const int phaseCycle (static_cast<int>(4. * std::sin(22.5 / static_cast<double>(_aniFrame + 1))));
-
-			if (_unit->isKneeled() == true)
-				_arrow_kneel->blitNShade(
-						surface,
-						posScreen.x - (_arrow_kneel->getWidth() / 2),
-						posScreen.y - _arrow_kneel->getHeight() - 4 - phaseCycle[_aniFrame]);
-//						posScreen.y - _arrow_kneel->getHeight() - 4 - phaseCycle);
-			else
-				_arrow->blitNShade(
-						surface,
-						posScreen.x - _arrow->getWidth() / 2,
-						posScreen.y - _arrow->getHeight() + phaseCycle[_aniFrame]);
-//						posScreen.y - _arrow->getHeight() + phaseCycle);
 		}
 	}
 	// end arrow.
@@ -1827,7 +1856,6 @@ void Map::drawTerrain(Surface* const surface) // private.
 				}
 			}
 		}
-
 		_numWaypoint->setBordered(false); // remove border for BL-wp's
 	}
 	// end Path Preview.
@@ -1901,7 +1929,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 }
 
 /**
- * Draws a Soldier's rank icon above its sprite on the Map.
+ * Draws a Soldier's rank-icon above its sprite on the Map.
  * @param unit		- pointer to a BattleUnit
  * @param offset_x	- how much to offset in the x-direction
  * @param offset_y	- how much to offset in the y-direction
@@ -1920,12 +1948,12 @@ void Map::drawRankIcon( // private.
 
 	if (unit->getFatalWounds() != 0)
 	{
-		_srfRookiBadge->blitNShade( // background panel for red cross icon.
+		_srfRookiBadge->blitNShade(		// background panel for red cross icon.
 							this,
 							offset_x + 2,
 							offset_y + 3);
 
-		_srfCross->blitNShade( // small gray cross, drawn RED.
+		_srfCross->blitNShade(			// small gray cross drawn RED.
 							this,
 							offset_x + 4,
 							offset_y + 4,
@@ -1978,10 +2006,11 @@ bool Map::checkWest( // private.
 				|| ((tile5->getMapData(O_NORTHWALL) == nullptr
 						|| tile5->isUfoDoorOpen(O_NORTHWALL) == true)
 					&& (tile5->getMapData(O_OBJECT) == nullptr
-						|| (tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_BLOCK
-							&& tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NESW
-							&& tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST)))));
-//							&& tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NORTH // not in UFO.
+						|| (tile5->getMapData(O_OBJECT)->getBigwall() & 0x33) == 0)))); // Block/NeSw/North/East.
+//						|| (   tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_BLOCK
+//							&& tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NESW
+//							&& tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST)))));
+//							&& tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NORTH // not technically in UFO.
 
 	if (ret == false) // unit might actually be too far away from wall to clip despite above conditions - now don't let the floor clip it
 	{
@@ -2012,20 +2041,27 @@ bool Map::checkWest( // private.
 						|| ((tileSouth->getMapData(O_NORTHWALL) == nullptr
 								|| tileSouth->isUfoDoorOpen(O_NORTHWALL) == true)
 							&& (tileSouth->getMapData(O_OBJECT) == nullptr
-								|| (tileSouth->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NESW			// all that causes clipping when the large unit moves out eastward from along the northern side
-									&& tileSouth->getMapData(O_OBJECT)->getBigwall() != BIGWALL_BLOCK))))))	// of an EW barrier but it's better than leaving a big hole in the 3rd quadrant as it moves out
+								|| (tileSouth->getMapData(O_OBJECT)->getBigwall() & 0x3) == 0))))) // Block/NeSw.
+//								|| (tileSouth->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NESW
+//									&& tileSouth->getMapData(O_OBJECT)->getBigwall() != BIGWALL_BLOCK))))))
+								// All that causes clipping when the large unit moves out eastward from along the northern side
+								// of an EW barrier but it's better than leaving a big hole in the 3rd quadrant as it moves out.
 				{
 					*halfRight = true; // but only if a wall is directly south
 				}
 			}
-			else if (unit->getUnitDirection() == 1 || unit->getUnitDirection() == 2)
+			else
 			{
-				*halfRight = true;
-				ret = true;
+				switch (unit->getUnitDirection())
+				{
+					case 1:
+					case 2:
+						*halfRight = true;
+						ret = true;
+				}
 			}
 		}
 	}
-
 	return ret;
 }
 
@@ -2059,9 +2095,10 @@ bool Map::checkNorth( // private.
 				|| ((tile1->getMapData(O_WESTWALL) == nullptr
 						|| tile1->isUfoDoorOpen(O_WESTWALL) == true)
 					&& (tile1->getMapData(O_OBJECT) == nullptr
-						|| (tile1->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NESW
-							&& tile1->getMapData(O_OBJECT)->getBigwall() != BIGWALL_BLOCK)))));
-//							&& tile1->getMapData(O_OBJECT)->getBigwall() != BIGWALL_WEST // not in UFO.
+						|| (tile1->getMapData(O_OBJECT)->getBigwall() & 0xb) == 0)))); // Block/NeSw/West.
+//						|| (   tile1->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NESW
+//							&& tile1->getMapData(O_OBJECT)->getBigwall() != BIGWALL_BLOCK)))));
+//							&& tile1->getMapData(O_OBJECT)->getBigwall() != BIGWALL_WEST // not technically in UFO.
 
 	if (ret == false) // unit might actually be too far away from wall to clip despite above conditions - now don't let the floor clip it
 	{
@@ -2075,7 +2112,6 @@ bool Map::checkNorth( // private.
 			case 5: ret = unit->getPosition() == unit->getStopPosition();
 		}
 	}
-
 	return ret;
 }
 
@@ -2180,15 +2216,16 @@ void Map::keyboardRelease(Action* action, State* state)
 }
 
 /**
- * Handles animating tiles - 8 Frames per animation [0..7].
-// * @param redraw - true to redraw the battlescape Map (default true)
+ * Animates any/all Tiles and BattleUnits that need animating.
+ * @note 8 frames per animation [0..7].
+ * @param redraw - true to redraw the battlefield (default true)
  */
 void Map::animateMap(bool redraw)
 {
  	if (++_aniFrame == 8) _aniFrame = 0;
 
-	for (size_t // animate tiles
-			i = 0;
+	for (size_t
+			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
@@ -2208,7 +2245,7 @@ void Map::animateMap(bool redraw)
 		}
 	}
 
-	if (--_fuseColor == 15) _fuseColor = 31;
+	if (--_fuseColor == 15u) _fuseColor = 31u;
 	if (redraw == true) _redraw = true;
 }
 
@@ -2456,7 +2493,7 @@ int Map::getTerrainLevel( // private.
 }
 
 /**
- * Sets the 3D selector type.
+ * Sets the 3D selector-type.
  * @param type	- SelectorType (Map.h)
  * @param quads	- size of the cursor (default 1)
  */
@@ -2471,7 +2508,7 @@ void Map::setSelectorType(
 }
 
 /**
- * Gets the 3D selector type.
+ * Gets the 3D selector-type.
  * @return, SelectorType (Map.h)
  */
 SelectorType Map::getSelectorType() const
@@ -2580,7 +2617,7 @@ Projectile* Map::getProjectile() const
 
 /**
  * Gets a list of Explosions.
- * @return, list of explosions to display
+ * @return, pointer to a list of explosions to display
  */
 std::list<Explosion*>* Map::getExplosions()
 {
@@ -2614,7 +2651,7 @@ void Map::scrollKey()
 
 /**
  * Gets a list of waypoint-positions on this Map.
- * @return, pointer to a vector of positions
+ * @return, pointer to a vector of Positions
  */
 std::vector<Position>* Map::getWaypoints()
 {
@@ -2622,7 +2659,7 @@ std::vector<Position>* Map::getWaypoints()
 }
 
 /**
- * Sets mouse-buttons' pressed state.
+ * Sets the mouse-buttons' pressed state.
  * @param button	- index of the button
  * @param pressed	- the state of the button
  */
@@ -2634,7 +2671,7 @@ void Map::setButtonsPressed(
 }
 
 /**
- * Sets the unitDying flag.
+ * Sets the unit-dying flag.
  * @note This reveals the dying unit during Hidden Movement.
  * @param flag - true if a unit is dying (default true)
  */
@@ -2672,8 +2709,8 @@ void Map::setWidth(int width)
 }
 
 /**
- * Gets the hidden movement screen's vertical position.
- * @return, the vertical position of the hidden movement window
+ * Gets the hidden-movement screen's vertical position.
+ * @return, the vertical position
  */
 int Map::getMessageY() const
 {
@@ -2681,8 +2718,8 @@ int Map::getMessageY() const
 }
 
 /**
- * Gets the icon height.
- * @return, icon panel height
+ * Gets the icon-height.
+ * @return, icon-panel height
  */
 int Map::getIconHeight() const
 {
@@ -2690,8 +2727,8 @@ int Map::getIconHeight() const
 }
 
 /**
- * Gets the icon width.
- * @return, icon panel width
+ * Gets the icon-width.
+ * @return, icon-panel width
  */
 int Map::getIconWidth() const
 {
@@ -2699,7 +2736,7 @@ int Map::getIconWidth() const
 }
 
 /**
- * Returns the angle (left/right balance) of a sound effect based on a Map position.
+ * Returns the angle (left/right balance) of a sound-effect based on a map-position.
  * @param pos - reference the Map position to calculate the sound angle from
  * @return, the angle of the sound (360 = 0 degrees center)
  */
@@ -2751,8 +2788,8 @@ bool Map::getBlastFlash() const
 }
 
 /**
- * Sets whether to draw or not.
- * @param noDraw - true to stop this Map from drawing (default true)
+ * Sets whether to redraw this Map or not.
+ * @param noDraw - true to stop the battlefield from drawing (default true)
  */
 void Map::setNoDraw(bool noDraw)
 {
@@ -2760,7 +2797,7 @@ void Map::setNoDraw(bool noDraw)
 }
 
 /**
- * Gets if the Hidden Movement screen is displayed.
+ * Gets if the Hidden Movement screen is displayed or not.
  * @return, true if hidden
  */
 bool Map::getMapHidden() const
@@ -2778,7 +2815,7 @@ SavedBattleGame* Map::getBattleSave() const
 }
 
 /**
- * Tells the Map to remain revealed because there's a duration-type action going down.
+ * Sets this Map to remain revealed because there's a duration-type action going down.
  * @param reveal - true if there is waypoint/missile/autoshot action in progress (default true)
  */
 void Map::setReveal(bool reveal)
@@ -2787,7 +2824,7 @@ void Map::setReveal(bool reveal)
 }
 
 /**
- * Sets whether to draw the projectile on the Map.
+ * Sets whether to allow drawing any Projectile on this Map.
  * @param show - true to show the projectile (default true)
  */
 void Map::showProjectile(bool show)

@@ -200,7 +200,7 @@ private:
 		/// Opens a door without checks.
 		void openDoorAuto(const MapDataType partType);
 		/**
-		 * Checks if the ufo door is open or opening.
+		 * Checks if a ufo-door is open or opening.
 		 * @note Used for visibility/light blocking checks. This function
 		 * assumes that there are never 2 doors on 1 tile or a door and another
 		 * wall on 1 tile.
@@ -211,14 +211,14 @@ private:
 		{	return _parts[partType] != nullptr
 				&& _parts[partType]->isUfoDoor() == true
 				&& _curFrame[partType] != 0; }
-		/// Closes ufo door.
+		/// Closes a ufo-door.
 		bool closeUfoDoor();
 
-		/// Sets the black fog-of-war status of a Tile-section.
+		/// Sets the black fog-of-war status of a tile-section.
 		void setRevealed(
 				SectionType section,
 				bool revealed = true);
-		/// Gets the black fog-of-war status of a Tile-section.
+		/// Gets the black fog-of-war status of a tile-section.
 		bool isRevealed(SectionType section) const;
 
 		/// Resets light to zero for the Tile.

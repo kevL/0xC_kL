@@ -5035,7 +5035,7 @@ void TileEngine::openAdjacentDoors( // private.
 }
 
 /**
- * Closes ufo doors.
+ * Closes ufo-doors.
  * @return, true if a door closed
  */
 bool TileEngine::closeUfoDoors() const
@@ -5048,26 +5048,27 @@ bool TileEngine::closeUfoDoors() const
 	const BattleUnit* unit;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
 		tile = _battleSave->getTiles()[i];
-		if (tile->getTileUnit()
-			&& tile->getTileUnit()->getArmor()->getSize() > 1)
-		{
-			unit = tile->getTileUnit();
-			tileNorth = _battleSave->getTile(tile->getPosition() + Position( 0,-1,0));
-			tileWest  = _battleSave->getTile(tile->getPosition() + Position(-1, 0,0));
 
-			if ((tile->isUfoDoorOpen(O_NORTHWALL) == true
-					&& tileNorth != nullptr
-					&& tileNorth->getTileUnit() != nullptr
-					&& tileNorth->getTileUnit() == unit)
-				|| (tile->isUfoDoorOpen(O_WESTWALL) == true
-					&& tileWest != nullptr
-					&& tileWest->getTileUnit() != nullptr
-					&& tileWest->getTileUnit() == unit))
+		if ((unit = tile->getTileUnit()) != nullptr
+			&& unit->getArmor()->getSize() == 2)
+		{
+			if (tile->isUfoDoorOpen(O_NORTHWALL) == true
+				&& (tileNorth = _battleSave->getTile(tile->getPosition() + Position( 0,-1,0))) != nullptr
+				&& tileNorth->getTileUnit() != nullptr
+				&& tileNorth->getTileUnit() == unit)
+			{
+				continue;
+			}
+
+			if (tile->isUfoDoorOpen(O_WESTWALL) == true
+				&& (tileWest = _battleSave->getTile(tile->getPosition() + Position(-1, 0,0))) != nullptr
+				&& tileWest->getTileUnit() != nullptr
+				&& tileWest->getTileUnit() == unit)
 			{
 				continue;
 			}

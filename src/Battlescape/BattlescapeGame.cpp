@@ -1169,7 +1169,7 @@ void BattlescapeGame::setupSelector()
 		switch (_tacAction.type)
 		{
 			case BA_THROW:
-				type = CT_THROW;
+				type = CT_TOSS;
 				break;
 
 			case BA_PSICONTROL:
@@ -1181,11 +1181,11 @@ void BattlescapeGame::setupSelector()
 				break;
 
 			case BA_LAUNCH:
-				type = CT_WAYPOINT;
+				type = CT_LAUNCH;
 				break;
 
 			default:
-				type = CT_AIM;
+				type = CT_TARGET;
 		}
 	}
 	else

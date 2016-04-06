@@ -515,6 +515,8 @@ DoorResult Tile::openDoor(
  */
 void Tile::openDoorAuto(const MapDataType partType)
 {
+	_curFrame[partType] = 1; // start opening door
+}
 /*	if (_parts[partType]->isDoor() == true)
 	{
 		setMapData(
@@ -526,18 +528,16 @@ void Tile::openDoorAuto(const MapDataType partType)
 		setMapData(nullptr,-1,-1, partType);
 	}
 	else if (_parts[partType]->isUfoDoor() == true) */
-	_curFrame[partType] = 1; // start opening door
-}
 
 /**
- * Closes a ufoDoor on this Tile.
+ * Closes a ufo-door on this Tile.
  * @return, true if a door closed
  */
 bool Tile::closeUfoDoor()
 {
 	int ret (false);
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != PARTS_TILE;
 			++i)
 	{
