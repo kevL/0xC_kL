@@ -135,7 +135,7 @@ NewGameState::~NewGameState()
  */
 void NewGameState::btnOkClick(Action*)
 {
-	GameDifficulty diff;
+	DifficultyLevel diff;
 
 	if (_difficulty == _btnSuperhuman)
 		diff = DIFF_SUPERHUMAN;

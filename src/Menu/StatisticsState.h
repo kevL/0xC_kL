@@ -22,6 +22,8 @@
 
 #include "../Engine/State.h"
 
+#include "../Savegame/SavedGame.h"
+
 
 namespace OpenXcom
 {
@@ -33,7 +35,7 @@ class Window;
 
 
 /**
- * Statistics window that shows up at the end of the game.
+ * Statistics window that shows the Player his/her current game-statistics.
  */
 class StatisticsState
 	:
@@ -41,12 +43,14 @@ class StatisticsState
 {
 
 private:
+	EndType _endType;
+
 	Text* _txtTitle;
 	TextButton* _btnOk;
 	TextList* _lstStats;
 	Window* _window;
 
-	/// Sums a list of numbers.
+	/// Totals a vector of integers or floating-points.
 	template <typename T>
 	T total(const std::vector<T>& vect) const;
 

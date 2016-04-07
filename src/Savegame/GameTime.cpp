@@ -25,7 +25,7 @@
 namespace OpenXcom
 {
 
-const std::string GameTime::GAME_MONTHS[12u] =
+const std::string GameTime::GAME_MONTHS[12u]
 {
 	"STR_JAN",
 	"STR_FEB",
@@ -123,7 +123,7 @@ YAML::Node GameTime::save(bool memorial) const
  */
 TimeTrigger GameTime::advance()
 {
-	int monthDays[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
+	int monthDays[12] {31,28,31,30,31,30,31,31,30,31,30,31};
 	if (_year % 4 == 0 // leap year
 		&& !(_year % 100 == 0 && _year % 400 != 0))
 	{
@@ -131,7 +131,7 @@ TimeTrigger GameTime::advance()
 	}
 
 
-	TimeTrigger trigger = TIME_1SEC;				// Volutar smooth_globe
+	TimeTrigger trigger (TIME_1SEC);				// Volutar smooth_globe
 	if (++_second % 5 == 0) trigger = TIME_5SEC;	// Volutar.
 
 	if (_second > 59)
@@ -207,7 +207,7 @@ int GameTime::getHour() const
 	return _hour;
 }
 
-/*
+/**
  * Returns the current IG weekday.
  * @return, weekday (1-7) starts on Sunday
  *
@@ -215,7 +215,7 @@ int GameTime::getWeekday() const
 {
 	return _weekday;
 } */
-/*
+/**
  * Returns a localizable-string representation of the current IG weekday.
  * @return, weekday string ID
  *
@@ -231,7 +231,6 @@ std::string GameTime::getWeekdayString() const
 		"STR_FRIDAY",
 		"STR_SATURDAY"
 	};
-
 	return weekdays[static_cast<size_t>(_weekday) - 1];
 } */
 
@@ -259,20 +258,19 @@ std::wstring GameTime::getDayString(const Language* const lang) const
 		case 21:
 		case 31:
 			st = "STR_DATE_FIRST";
-		break;
+			break;
 		case 2:
 		case 22:
 			st = "STR_DATE_SECOND";
-		break;
+			break;
 		case 3:
 		case 23:
 			st = "STR_DATE_THIRD";
-		break;
+			break;
 
 		default:
 			st = "STR_DATE_FOURTH";
 	}
-
 	return lang->getString(st).arg(_day);
 }
 

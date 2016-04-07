@@ -330,7 +330,7 @@ void SavedBattleGame::load(
 		faction		= static_cast<UnitFaction>((*i)["faction"]			.as<int>());
 		factionOrg	= static_cast<UnitFaction>((*i)["originalFaction"]	.as<int>(faction)); // .. technically, static_cast<int>(faction).
 
-		const GameDifficulty diff (gameSave->getDifficulty());
+		const DifficultyLevel diff (gameSave->getDifficulty());
 		if (id < BattleUnit::MAX_SOLDIER_ID)			// instance a BattleUnit from a geoscape-soldier
 			unit = new BattleUnit(
 							gameSave->getSoldier(id),

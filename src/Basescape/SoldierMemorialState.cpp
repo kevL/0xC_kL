@@ -26,13 +26,14 @@
 #include "../Engine/Action.h"
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
-//#include "../Engine/Music.h"
 #include "../Engine/Options.h"
 
 #include "../Interface/Text.h"
 #include "../Interface/TextButton.h"
 #include "../Interface/TextList.h"
 #include "../Interface/Window.h"
+
+#include "../Menu/StatisticsState.h"
 
 #include "../Resource/XcomResourcePack.h"
 
@@ -47,7 +48,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Soldier Memorial screen.
+ * Initializes all the elements in the SoldierMemorial screen.
  */
 SoldierMemorialState::SoldierMemorialState()
 {
@@ -62,11 +63,12 @@ SoldierMemorialState::SoldierMemorialState()
 
 	_lstSoldiers	= new TextList(285, 129, 16, 44);
 
-	_btnOk			= new TextButton(288, 16, 16, 177);
+	_btnStatistics	= new TextButton(140, 16,  16, 177);
+	_btnOk			= new TextButton(140, 16, 164, 177);
 
 	setInterface("soldierMemorial");
 
-	_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_BASE_MEMORIAL); //, "", 1); <- ie. no terrain, 1 loop
+	_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_BASE_MEMORIAL, "", 1); // no terrain, 1 loop
 
 	add(_window,		"window",	"soldierMemorial");
 	add(_txtTitle,		"text",		"soldierMemorial");
@@ -76,6 +78,7 @@ SoldierMemorialState::SoldierMemorialState()
 	add(_txtRank,		"text",		"soldierMemorial");
 	add(_txtDate,		"text",		"soldierMemorial");
 	add(_lstSoldiers,	"list",		"soldierMemorial");
+	add(_btnStatistics,	"button",	"soldierMemorial");
 	add(_btnOk,			"button",	"soldierMemorial");
 
 	centerAllSurfaces();
@@ -90,18 +93,29 @@ SoldierMemorialState::SoldierMemorialState()
 					Options::keyOk);
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& SoldierMemorialState::btnOkClick,
+					Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(
+					(ActionHandler)& SoldierMemorialState::btnOkClick,
 					Options::keyCancel);
 
-	_txtTitle->setBig();
-	_txtTitle->setAlign(ALIGN_CENTER);
+	_btnStatistics->setText(tr("STR_STATISTICS"));
+	_btnStatistics->onMouseClick((ActionHandler)& SoldierMemorialState::btnStatsClick);
+	_btnStatistics->onKeyboardPress(
+					(ActionHandler)& SoldierMemorialState::btnStatsClick,
+					SDLK_s);
+
 	_txtTitle->setText(tr("STR_MEMORIAL"));
+	_txtTitle->setAlign(ALIGN_CENTER);
+	_txtTitle->setBig();
 
 	_txtName->setText(tr("STR_NAME_UC"));
 	_txtRank->setText(tr("STR_RANK"));
 	_txtDate->setText(tr("STR_DATE_DEATH"));
 
-	const size_t lost = _game->getSavedGame()->getDeadSoldiers()->size();
-	size_t recruited = lost;
+	const size_t lost (_game->getSavedGame()->getDeadSoldiers()->size());
+	_txtLost->setText(tr("STR_SOLDIERS_LOST_").arg(lost));
+
+	size_t recruited (lost);
 	for (std::vector<Base*>::const_iterator
 			i = _game->getSavedGame()->getBases()->begin();
 			i != _game->getSavedGame()->getBases()->end();
@@ -110,7 +124,6 @@ SoldierMemorialState::SoldierMemorialState()
 		recruited += (*i)->getTotalSoldiers();
 	}
 	_txtRecruited->setText(tr("STR_SOLDIERS_RECRUITED_").arg(recruited));
-	_txtLost->setText(tr("STR_SOLDIERS_LOST_").arg(lost));
 
 	_lstSoldiers->setColumns(5, 124,70,26,23,33);
 	_lstSoldiers->setBackground(_window);
@@ -118,28 +131,18 @@ SoldierMemorialState::SoldierMemorialState()
 	_lstSoldiers->onMousePress((ActionHandler)& SoldierMemorialState::lstSoldiersPress);
 
 	for (std::vector<SoldierDead*>::const_reverse_iterator
-			i = _game->getSavedGame()->getDeadSoldiers()->rbegin();
-			i != _game->getSavedGame()->getDeadSoldiers()->rend();
-			++i)
+			rit = _game->getSavedGame()->getDeadSoldiers()->rbegin();
+			rit != _game->getSavedGame()->getDeadSoldiers()->rend();
+			++rit)
 	{
-		const SoldierDeath* const death = (*i)->getDeath();
-
-		std::wostringstream
-			day,
-			month,
-			year;
-
-		day << death->getTime()->getDayString(_game->getLanguage());
-		month << tr(death->getTime()->getMonthString());
-		year << death->getTime()->getYear();
-
+		const SoldierDeath* const death ((*rit)->getDeath());
 		_lstSoldiers->addRow(
 						5,
-						(*i)->getName().c_str(),
-						tr((*i)->getRankString()).c_str(),
-						day.str().c_str(),
-						month.str().c_str(),
-						year.str().c_str());
+						(*rit)->getName().c_str(),
+						tr((*rit)->getRankString()).c_str(),
+						death->getTime()->getDayString(_game->getLanguage()).c_str(),
+						tr(death->getTime()->getMonthString()).c_str(),
+						Text::intWide(death->getTime()->getYear()).c_str());
 	}
 }
 
@@ -162,16 +165,29 @@ void SoldierMemorialState::btnOkClick(Action*)
 }
 
 /**
- * Shows the selected soldier's info.
+ * Opens the Statistics screen.
+ * @param action - pointer to an Action
+ */
+void SoldierMemorialState::btnStatsClick(Action*)
+{
+	_game->pushState(new StatisticsState);
+}
+
+/**
+ * Shows the selected SoldierDead's info.
  * @param action - pointer to an Action
  */
 void SoldierMemorialState::lstSoldiersPress(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		|| action->getDetails()->button.button == SDL_BUTTON_RIGHT)
+	switch (action->getDetails()->button.button)
 	{
-		const size_t row = _game->getSavedGame()->getDeadSoldiers()->size() - _lstSoldiers->getSelectedRow() - 1;
-		_game->pushState(new SoldierInfoDeadState(row));
+		case SDL_BUTTON_LEFT:
+		case SDL_BUTTON_RIGHT:
+		{
+			const size_t solId (_game->getSavedGame()->getDeadSoldiers()->size()
+							  - _lstSoldiers->getSelectedRow() - 1);
+			_game->pushState(new SoldierInfoDeadState(solId));
+		}
 	}
 }
 

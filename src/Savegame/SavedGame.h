@@ -62,9 +62,9 @@ struct MissionStatistics;
 
 
 /**
- * Enumerator containing all the possible game difficulties.
+ * Enumerator containing all the possible game-difficulties.
  */
-enum GameDifficulty
+enum DifficultyLevel
 {
 	DIFF_BEGINNER,		// 0
 	DIFF_EXPERIENCED,	// 1
@@ -74,7 +74,7 @@ enum GameDifficulty
 };
 
 /**
- * Enumerator for the various save types.
+ * Enumerator for the various save-types.
  */
 enum SaveType
 {
@@ -87,9 +87,9 @@ enum SaveType
 };
 
 /**
- * Enumerator for the current game ending.
+ * Enumerator for the current game-ending.
  */
-enum GameEnding
+enum EndType
 {
 	END_NONE,	// 0
 	END_WIN,	// 1
@@ -97,7 +97,7 @@ enum GameEnding
 };
 
 /**
- * Enumerator for the save mode.
+ * Enumerator for the save-mode.
  */
 enum SaveMode
 {
@@ -170,8 +170,8 @@ private:
 		_globeLat,
 		_globeLon;
 
-	GameDifficulty _difficulty;
-	GameEnding _end;
+	DifficultyLevel _difficulty;
+	EndType _end;
 
 	AlienStrategy* _alienStrategy;
 	GameTime* _time;
@@ -254,14 +254,14 @@ private:
 		void setName(const std::wstring& name);
 
 		/// Gets the game difficulty.
-		GameDifficulty getDifficulty() const;
+		DifficultyLevel getDifficulty() const;
 		/// Sets the game difficulty.
-		void setDifficulty(GameDifficulty difficulty);
+		void setDifficulty(DifficultyLevel difficulty);
 
 		/// Gets the game ending.
-		GameEnding getEnding() const;
+		EndType getEnding() const;
 		/// Sets the game ending.
-		void setEnding(GameEnding end);
+		void setEnding(EndType end);
 
 		/// Gets if the game is in ironman mode.
 		bool isIronman() const;
@@ -304,20 +304,22 @@ private:
 		/// Gets the list of funds from previous months.
 		std::vector<int64_t>& getFundsList();
 
-		/// Returns a list of maintenance costs
+		/// Gets the list of maintenance-values.
 		std::vector<int64_t>& getMaintenanceList();
-		/// Returns the list of monthly income values.
+		/// Gets the list of monthly income-values.
 		std::vector<int64_t>& getIncomeList();
-		/// Returns the list of monthly expenditure values.
+		/// Gets the list of monthly expenditure-values.
 		std::vector<int64_t>& getExpenditureList();
 
-		/// Gets the current game time.
+		/// Gets the current GameTime.
 		GameTime* getTime() const;
-		/// Sets the current game time.
+		/// Sets the current GameTime.
 		void setTime(GameTime gt);
 
-		/// Gets an ID to assign for an object.
+		/// Gets an ID to assign for an object-type.
 		int getCanonicalId(const std::string& objectType);
+	 	/// Gets all the canonical-IDs.
+		const std::map<std::string, int>& getAllIds() const;
 		/// Resets the list of object IDs.
 //		void setCanonicalIds(const std::map<std::string, int>& ids);
 
@@ -405,7 +407,7 @@ private:
 				const std::vector<Soldier*>& participants,
 				SoldierRank soldierRank);
 
-		///  Returns the list of alien bases.
+		///  Gets the list of alien bases.
 		std::vector<AlienBase*>* getAlienBases();
 
 		/// Toggles and returns the Geoscape debug flag.
@@ -512,7 +514,7 @@ private:
 				bool isDelayed,
 				const Language* const lang) const;
 
-		/// Returns the craft corresponding to the specified unique id.
+		/// Gets the craft corresponding to the specified unique id.
 //		Craft* findCraftByUniqueId(const CraftId& craftId) const;
 };
 

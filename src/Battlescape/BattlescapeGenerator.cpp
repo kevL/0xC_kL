@@ -1867,7 +1867,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 		int aLienRank,
 		bool outside)
 {
-	const GameDifficulty diff (_gameSave->getDifficulty());
+	const DifficultyLevel diff (_gameSave->getDifficulty());
 	BattleUnit* const unit (new BattleUnit(
 										unitRule,
 										FACTION_HOSTILE,

@@ -33,7 +33,7 @@ class Window;
 
 
 /**
- * Screen that shows all the soldiers that have died throughout the game.
+ * Screen that shows all the Soldiers that have died.
  */
 class SoldierMemorialState
 	:
@@ -48,20 +48,24 @@ private:
 		* _txtRank,
 		* _txtRecruited,
 		* _txtTitle;
-	TextButton* _btnOk;
+	TextButton
+		* _btnOk,
+		* _btnStatistics;
 	TextList* _lstSoldiers;
 	Window* _window;
 
 
 	public:
-		/// Creates the Soldiers state.
+		/// Creates s SoldierMemorial state.
 		SoldierMemorialState();
-		/// Cleans up the Soldiers state.
+		/// Cleans up the SoldierMemorial state.
 		~SoldierMemorialState();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
-		/// Handler for clicking the Soldiers list.
+		/// Handler for clicking the Statistics button.
+		void btnStatsClick(Action* action);
+		/// Handler for clicking the SoldiersDead list.
 		void lstSoldiersPress(Action* action);
 };
 

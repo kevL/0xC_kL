@@ -76,7 +76,7 @@ private:
 
 	std::map<std::string, bool> _researchTriggers;
 
-	GameDifficulty _minDifficulty;
+	DifficultyLevel _minDifficulty;
 
 
 	public:
@@ -107,7 +107,7 @@ private:
 		int getTargetBaseOdds() const;
 
 		/// Gets the minimum game-difficulty the MissionScript is allowed to execute at.
-		GameDifficulty getMinDifficulty() const;
+		DifficultyLevel getMinDifficulty() const;
 
 		/// Gets the maximum number of times a directive with the MissionScript's varType is allowed to execute.
 		int getMaxRuns() const;

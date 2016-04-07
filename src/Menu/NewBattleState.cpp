@@ -646,7 +646,7 @@ void NewBattleState::btnOkClick(Action*)
 		bGen.setCraft(_craft);
 	}
 
-	_game->getSavedGame()->setDifficulty(static_cast<GameDifficulty>(_cbxDifficulty->getSelected()));
+	_game->getSavedGame()->setDifficulty(static_cast<DifficultyLevel>(_cbxDifficulty->getSelected()));
 
 	bGen.setShade(_slrDarkness->getValue());
 	bGen.setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);

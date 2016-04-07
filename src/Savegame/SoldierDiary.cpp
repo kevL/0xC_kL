@@ -49,7 +49,7 @@ SoldierDiary::SoldierDiary()
 		_pointTotal(0),
 		_killTotal(0),
 		_stunTotal(0),
-		_missionTotal(0),
+//		_missionTotal(0),
 		_winTotal(0),
 		_baseDefenseMissionTotal(0),
 		_daysWoundedTotal(0),
@@ -93,7 +93,7 @@ SoldierDiary::SoldierDiary(const SoldierDiary& copyThis)
 		_pointTotal(copyThis._pointTotal),
 		_killTotal(copyThis._killTotal),
 		_stunTotal(copyThis._stunTotal),
-		_missionTotal(copyThis._missionTotal),
+//		_missionTotal(copyThis._missionTotal),
 		_winTotal(copyThis._winTotal),
 		_daysWoundedTotal(copyThis._daysWoundedTotal),
 		_baseDefenseMissionTotal(copyThis._baseDefenseMissionTotal),
@@ -249,7 +249,7 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThis)
 		_pointTotal = assignThis._pointTotal;
 		_killTotal = assignThis._killTotal;
 		_stunTotal = assignThis._stunTotal;
-		_missionTotal = assignThis._missionTotal;
+//		_missionTotal = assignThis._missionTotal;
 		_winTotal = assignThis._winTotal;
 		_daysWoundedTotal = assignThis._daysWoundedTotal;
 		_baseDefenseMissionTotal = assignThis._baseDefenseMissionTotal;
@@ -433,7 +433,7 @@ void SoldierDiary::load(const YAML::Node& node)
 	_pointTotal						= node["pointTotal"]					.as<int>(_pointTotal);
 	_killTotal						= node["killTotal"]						.as<int>(_killTotal);
 	_stunTotal						= node["stunTotal"]						.as<int>(_stunTotal);
-	_missionTotal					= node["missionTotal"]					.as<int>(_missionTotal);
+//	_missionTotal					= node["missionTotal"]					.as<int>(_missionTotal);
 	_winTotal						= node["winTotal"]						.as<int>(_winTotal);
 	_daysWoundedTotal				= node["daysWoundedTotal"]				.as<int>(_daysWoundedTotal);
 	_baseDefenseMissionTotal		= node["baseDefenseMissionTotal"]		.as<int>(_baseDefenseMissionTotal);
@@ -501,7 +501,7 @@ YAML::Node SoldierDiary::save() const
 	if (_pointTotal)						node["pointTotal"]					= _pointTotal;
 	if (_killTotal)							node["killTotal"]					= _killTotal;
 	if (_stunTotal)							node["stunTotal"]					= _stunTotal;
-	if (_missionTotal)						node["missionTotal"]				= _missionTotal;
+//	if (_missionTotal)						node["missionTotal"]				= _missionTotal;
 	if (_winTotal)							node["winTotal"]					= _winTotal;
 	if (_daysWoundedTotal)					node["daysWoundedTotal"]			= _daysWoundedTotal;
 	if (_baseDefenseMissionTotal)			node["baseDefenseMissionTotal"]		= _baseDefenseMissionTotal;
@@ -654,7 +654,7 @@ void SoldierDiary::updateDiary(
 
 	_missionIdList.push_back(missionStatistics->id);
 
-//	_missionTotal = _missionIdList.size(); // CAN GET RID OF MISSION TOTAL
+//	_missionTotal = _missionIdList.size();
 	//Log(LOG_INFO) << "SoldierDiary::updateDiary() EXIT";
 }
 
@@ -1138,6 +1138,7 @@ std::map<std::string, int> SoldierDiary::getAlienRaceTotal() const
 	}
 	return ret;
 }
+
 /**
  * Gets list of kills by weapon.
  * @return, map of weapons to qty killed with
@@ -1272,7 +1273,7 @@ int SoldierDiary::getDaysWoundedTotal() const
 }
 
 /**
- * Gets whether the Soldier died or went missing.
+ * Gets if the Soldier died or went missing.
  * @return, kia or mia - or an empty string if neither
  */
 std::string SoldierDiary::getKiaOrMia() const
@@ -1287,7 +1288,25 @@ std::string SoldierDiary::getKiaOrMia() const
 }
 
 /**
- * Get the Soldier's firing-proficiency.
+ * Gets the total quantity of shots fired.
+ * @return, shots fired
+ */
+int SoldierDiary::getShotsFiredTotal() const
+{
+	return _shotsFiredCounterTotal;
+}
+
+/**
+ * Gets the total quantity of shots landed on target.
+ * @return, shots landed
+ */
+int SoldierDiary::getShotsLandedTotal() const
+{
+	return _shotsLandedCounterTotal;
+}
+
+/**
+ * Gets the Soldier's firing-proficiency.
  * @return, firing-proficiency as percent (-1 if no shots fired yet)
  */
 int SoldierDiary::getProficiency() const

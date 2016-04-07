@@ -45,7 +45,6 @@
 #include "../Savegame/Country.h"
 #include "../Savegame/MissionStatistics.h"
 #include "../Savegame/ResearchGeneral.h"
-#include "../Savegame/SavedGame.h"
 #include "../Savegame/SoldierDead.h"
 #include "../Savegame/SoldierDeath.h"
 #include "../Savegame/SoldierDiary.h"
@@ -58,11 +57,14 @@ namespace OpenXcom
  * Initializes all the elements in the Statistics window.
  */
 StatisticsState::StatisticsState()
+	:
+		_endType(_game->getSavedGame()->getEnding())
 {
+	Log(LOG_INFO) << "StatisticsState cTor";
 	_window		= new Window(this, 320, 200, 0, 0, POPUP_BOTH);
-	_txtTitle	= new Text(310, 25, 5, 8);
-	_lstStats	= new TextList(280, 136, 12, 36);
-	_btnOk		= new TextButton(50, 12, 135, 180);
+	_txtTitle	= new Text(320, 16, 0, 8);
+	_lstStats	= new TextList(285, 137, 16, 34);
+	_btnOk		= new TextButton(288, 16, 16, 177);
 
 	setInterface("newGameMenu");
 
@@ -81,6 +83,7 @@ StatisticsState::StatisticsState()
 
 	_lstStats->setColumns(2, 200,80);
 	_lstStats->setDot(true);
+	_lstStats->setMargin();
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick((ActionHandler)& StatisticsState::btnOkClick);
@@ -96,6 +99,7 @@ StatisticsState::StatisticsState()
 
 	listStats();
 	// TODO: Might want some music here.
+	Log(LOG_INFO) << "StatisticsState cTor EXIT";
 }
 
 /**
@@ -105,7 +109,8 @@ StatisticsState::~StatisticsState()
 {}
 
 /**
- *
+ * Totals a vector of integers or floating-points.
+ * @param vect - a vector of integers or floating-points
  */
 template <typename T>
 T StatisticsState::total(const std::vector<T>& vect) const
@@ -129,16 +134,21 @@ void StatisticsState::listStats()
 	SavedGame* const gameSave (_game->getSavedGame());
 
 	std::wostringstream woststr;
-	switch (gameSave->getEnding())
+	switch (_endType)
 	{
 		case END_WIN:
 			woststr << tr("STR_VICTORY");
 			break;
 		case END_LOSE:
 			woststr << tr("STR_DEFEAT");
+			break;
+
+		default:
+		case END_NONE:
+			woststr << tr("STR_STATISTICS");
 	}
 	const GameTime* const gt (gameSave->getTime());
-	woststr << L'\x02'
+	woststr << L" "// L'\x02'
 			<< gt->getDayString(_game->getLanguage())
 			<< L" "
 			<< tr(gt->getMonthString())
@@ -146,10 +156,10 @@ void StatisticsState::listStats()
 			<< gt->getYear();
 	_txtTitle->setText(woststr.str());
 
-	const int monthlyScore (total(gameSave->getResearchScores()) / gameSave->getResearchScores().size()); // huh. Is this total.
+	const int monthlyScore (total(gameSave->getResearchScores()) / gameSave->getResearchScores().size()); // huh. Is this total. no.
 	const int64_t
-		totalIncome (total(gameSave->getIncomeList())), // Check these also.
-		totalExpenses (total(gameSave->getExpenditureList()));
+		totalIncome (total(gameSave->getIncomeList())),			// Check these also.
+		totalExpenses (total(gameSave->getExpenditureList()));	// They are inaccurate after 12+ months (because only the latest 12 months are maintained).
 
 	int
 		missionsWin		(0),
@@ -200,11 +210,17 @@ void StatisticsState::listStats()
 		aliensKilled	(0),
 		aliensCaptured	(0),
 		friendlyKills	(0),
+		shotsFired		(0),
+		shotsLanded		(0),
 
 		daysWounded		(0),
 		longestMonths	(0);
 
-	std::map<std::string, int> weaponKills;
+	std::map<std::string, int>
+		killsByAlien,
+		killsByWeapon,
+		weaponTotal;
+
 	for (std::vector<Soldier*>::const_iterator
 			i = solLive.begin();
 			i != solLive.end();
@@ -215,19 +231,19 @@ void StatisticsState::listStats()
 		aliensKilled	+= diary->getKillTotal();
 		aliensCaptured	+= diary->getStunTotal();
 		daysWounded		+= diary->getDaysWoundedTotal();
+		shotsFired		+= diary->getShotsFiredTotal();
+		shotsLanded		+= diary->getShotsLandedTotal();
 
 		longestMonths = std::max(longestMonths,
 								 diary->getMonthsService());
 
+		weaponTotal = diary->getWeaponTotal();
 		for (std::map<std::string, int>::const_iterator
-				j = diary->getWeaponTotal().begin();
-				j != diary->getWeaponTotal().end();
+				j = weaponTotal.begin();
+				j != weaponTotal.end();
 				++j)
 		{
-			if (weaponKills.find(j->first) == weaponKills.end())
-				weaponKills[j->first] = j->second;
-			else
-				weaponKills[j->first] += j->second;
+			killsByWeapon[j->first] += j->second;
 		}
 
 		for (std::vector<BattleUnitKill*>::const_iterator
@@ -240,6 +256,10 @@ void StatisticsState::listStats()
 				case FACTION_PLAYER:
 				case FACTION_NEUTRAL:
 					++friendlyKills;
+					break;
+
+				case FACTION_HOSTILE:
+					++killsByAlien[(*j)->_race]; // TODO: Add up kills-by-rank also. Perhaps separate kills/stuns.
 			}
 		}
 	}
@@ -254,19 +274,19 @@ void StatisticsState::listStats()
 		aliensKilled	+= diary->getKillTotal();
 		aliensCaptured	+= diary->getStunTotal();
 		daysWounded		+= diary->getDaysWoundedTotal();
+		shotsFired		+= diary->getShotsFiredTotal();
+		shotsLanded		+= diary->getShotsLandedTotal();
 
 		longestMonths = std::max(longestMonths,
 								 diary->getMonthsService());
 
+		weaponTotal = diary->getWeaponTotal();
 		for (std::map<std::string, int>::const_iterator
-				j = diary->getWeaponTotal().begin();
-				j != diary->getWeaponTotal().end();
+				j = weaponTotal.begin();
+				j != weaponTotal.end();
 				++j)
 		{
-			if (weaponKills.find(j->first) == weaponKills.end())
-				weaponKills[j->first] = j->second;
-			else
-				weaponKills[j->first] += j->second;
+			killsByWeapon[j->first] += j->second;
 		}
 
 		for (std::vector<BattleUnitKill*>::const_iterator
@@ -279,6 +299,10 @@ void StatisticsState::listStats()
 				case FACTION_PLAYER:
 				case FACTION_NEUTRAL:
 					++friendlyKills;
+					break;
+
+				case FACTION_HOSTILE:
+					++killsByAlien[(*j)->_race]; // TODO: Add up kills-by-rank also. Perhaps separate kills/stuns.
 			}
 		}
 	}
@@ -288,24 +312,45 @@ void StatisticsState::listStats()
 	// - slain by aLiens
 	// - slain by xCom.
 
-	int maxWeapon (0);
-	std::string highestWeapon ("STR_NONE");
+	int accuracy;
+	if (shotsFired != 0)
+		accuracy = 100 * shotsLanded / shotsFired;
+	else
+		accuracy = 0; // TODO: -1 for no-shots-fired.
+
+	int typeWeapon (0);
+	std::string bestWeapon ("STR_NONE");
 	for (std::map<std::string, int>::const_iterator
-			i = weaponKills.begin();
-			i != weaponKills.end();
+			i = killsByWeapon.begin();
+			i != killsByWeapon.end();
 			++i)
 	{
-		if (i->second > maxWeapon)
+		if (i->second > typeWeapon)
 		{
-			maxWeapon = i->second;
-			highestWeapon = i->first;
+			typeWeapon = i->second;
+			bestWeapon = i->first;
 		}
 	}
 
+	int typeKilled (0);
+	std::string worstAlien ("STR_NONE");
+	for (std::map<std::string, int>::const_iterator
+			i = killsByAlien.begin();
+			i != killsByAlien.end();
+			++i)
+	{
+		if (i->second > typeKilled)
+		{
+			typeKilled = i->second;
+			worstAlien = i->first;
+		}
+	}
+
+	std::map<std::string, int> ids (gameSave->getAllIds());
 	const int
-		ufosDetected (gameSave->getCanonicalId("STR_UFO") - 1),
-		alienBases   (gameSave->getCanonicalId("STR_ALIEN_BASE") - 1),
-		terrorSites  (gameSave->getCanonicalId("STR_TERROR_SITE") - 1);
+		ufosDetected (ids["STR_UFO"]),
+		alienBases   (ids["STR_ALIEN_BASE"]),
+		terrorSites  (ids["STR_TERROR_SITE"]);
 
 	int totalCrafts (0);
 	for (std::vector<std::string>::const_iterator
@@ -313,7 +358,7 @@ void StatisticsState::listStats()
 			i != _game->getRuleset()->getCraftsList().end();
 			++i)
 	{
-		totalCrafts += gameSave->getCanonicalId(*i) - 1;
+		totalCrafts += ids[*i]; // TODO: Show quantity of Craft lost.
 	}
 
 	const int currentBases (gameSave->getBases()->size());
@@ -326,8 +371,8 @@ void StatisticsState::listStats()
 			i != gameSave->getBases()->end();
 			++i)
 	{
-		currentScientists += (*i)->getScientists();
-		currentEngineers += (*i)->getEngineers();
+		currentScientists += (*i)->getTotalScientists();
+		currentEngineers += (*i)->getTotalEngineers();
 	}
 
 	int countriesLost (0);
@@ -336,7 +381,7 @@ void StatisticsState::listStats()
 			i != gameSave->getCountries()->end();
 			++i)
 	{
-		if ((*i)->getPact() == true)
+		if ((*i)->getPact() == true) // TODO: Countries total. Also do percent lost.
 			++countriesLost;
 	}
 
@@ -373,7 +418,9 @@ void StatisticsState::listStats()
 	_lstStats->addRow(2, tr("STR_ALIEN_KILLS").c_str(),				Text::intWide(aliensKilled).c_str());
 	_lstStats->addRow(2, tr("STR_ALIEN_CAPTURES").c_str(),			Text::intWide(aliensCaptured).c_str());
 	_lstStats->addRow(2, tr("STR_FRIENDLY_KILLS").c_str(),			Text::intWide(friendlyKills).c_str());
-	_lstStats->addRow(2, tr("STR_WEAPON_MOST_KILLS").c_str(),		tr(highestWeapon).c_str());
+	_lstStats->addRow(2, tr("STR_AVERAGE_ACCURACY").c_str(),		Text::formatPercent(accuracy).c_str());
+	_lstStats->addRow(2, tr("STR_WEAPON_MOST_KILLS").c_str(),		tr(bestWeapon).c_str());
+	_lstStats->addRow(2, tr("STR_ALIEN_MOST_KILLS").c_str(),		tr(worstAlien).c_str());
 	_lstStats->addRow(2, tr("STR_LONGEST_SERVICE").c_str(),			Text::intWide(longestMonths).c_str());
 	_lstStats->addRow(2, tr("STR_TOTAL_DAYS_WOUNDED").c_str(),		Text::intWide(daysWounded).c_str());
 	_lstStats->addRow(2, tr("STR_TOTAL_UFOS").c_str(),				Text::intWide(ufosDetected).c_str());
@@ -393,8 +440,18 @@ void StatisticsState::listStats()
  */
 void StatisticsState::btnOkClick(Action*)
 {
-	_game->setSavedGame();
-	_game->setState(new MainMenuState);
+	switch (_endType)
+	{
+		case END_NONE:
+			_game->popState();
+			break;
+
+		default:
+		case END_WIN:
+		case END_LOSE:
+			_game->setSavedGame();
+			_game->setState(new MainMenuState);
+	}
 }
 
 }

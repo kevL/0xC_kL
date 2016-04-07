@@ -100,7 +100,7 @@ private:
 		_scoreTotal,
 		_pointTotal,
 		_killTotal,
-		_missionTotal,
+//		_missionTotal,
 		_winTotal,
 		_stunTotal,
 		_daysWoundedTotal,
@@ -201,20 +201,23 @@ private:
 		int getScoreTotal() const;
 		/// Gets the total point-value of aLiens killed or stunned.
 		int getScorePoints() const;
-		/// Gets the total number of kills.
+		/// Gets the total quantity of kills.
 		int getKillTotal() const;
-		/// Gets the total number of stuns.
+		/// Gets the total quantity of stuns.
 		int getStunTotal() const;
-		/// Gets the total number of missions.
+		/// Gets the total quantity of missions.
 		size_t getMissionTotal() const;
-		/// Gets the total number of wins.
+		/// Gets the total quantity of wins.
 		int getWinTotal() const;
-		/// Gets the total number of days wounded.
+		/// Gets the total quantity of days wounded.
 		int getDaysWoundedTotal() const;
 		/// Gets whether soldier died or went missing.
 		std::string getKiaOrMia() const;
-
-		/// Get the soldier's firing-proficiency.
+		/// Gets the total quantity of shots fired.
+		int getShotsFiredTotal() const;
+		/// Gets the total quantity of shots landed on target.
+		int getShotsLandedTotal() const;
+		/// Gets the soldier's firing-proficiency.
 		int getProficiency() const;
 
 		/// Gets the SoldierAwards currently in the SoldierDiary.

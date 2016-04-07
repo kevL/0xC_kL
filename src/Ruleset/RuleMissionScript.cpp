@@ -89,7 +89,7 @@ void RuleMissionScript::load(const YAML::Node& node)
 	_delay			= node["startDelay"]	.as<int>(_delay);
 	_conditions		= node["conditions"]	.as<std::vector<int>>(_conditions);
 
-	_minDifficulty = static_cast<GameDifficulty>(node["minDifficulty"].as<int>(_minDifficulty));
+	_minDifficulty = static_cast<DifficultyLevel>(node["minDifficulty"].as<int>(_minDifficulty));
 
 	WeightedOptions* weightOpt;
 
@@ -216,7 +216,7 @@ int RuleMissionScript::getTargetBaseOdds() const
  * Gets the minimum game-difficulty this MissionScript is allowed to execute at.
  * @return, minimum difficulty (SavedGame.h)
  */
-GameDifficulty RuleMissionScript::getMinDifficulty() const
+DifficultyLevel RuleMissionScript::getMinDifficulty() const
 {
 	return _minDifficulty;
 }

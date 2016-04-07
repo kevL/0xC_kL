@@ -68,7 +68,7 @@ namespace OpenXcom
  */
 BattleUnit::BattleUnit(
 		Soldier* const sol,
-		const GameDifficulty diff)
+		const DifficultyLevel diff)
 	:
 		_geoscapeSoldier(sol),
 		_unitRule(nullptr),
@@ -236,7 +236,7 @@ BattleUnit::BattleUnit(
 		const UnitFaction faction,
 		const int id,
 		RuleArmor* const armor,
-		const GameDifficulty diff,
+		const DifficultyLevel diff,
 		const int month,
 		BattlescapeGame* const battleGame) // for converted Units
 	:
@@ -4278,7 +4278,7 @@ bool BattleUnit::checkViewSector(const Position& pos) const
  * @param month	- the number of months that have progressed
  */
 void BattleUnit::adjustStats(
-		const GameDifficulty diff,
+		const DifficultyLevel diff,
 		const int month)
 {
 	// adjust the unit's stats according to the difficulty level.

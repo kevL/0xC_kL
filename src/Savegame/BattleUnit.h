@@ -25,7 +25,7 @@
 
 //#include <yaml-cpp/yaml.h>
 
-#include "SavedGame.h" // GameDifficulty enum
+#include "SavedGame.h" // DifficultyLevel enum
 #include "Soldier.h"
 
 #include "../Battlescape/BattlescapeGame.h"
@@ -283,14 +283,14 @@ private:
 		/// Creates a BattleUnit from a geoscape Soldier.
 		BattleUnit( // xCom operatives
 				Soldier* const sol,
-				const GameDifficulty diff); // for VictoryPts value per death.
+				const DifficultyLevel diff); // for VictoryPts value per death.
 		/// Creates a BattleUnit from a RuleUnit.
 		BattleUnit( // aLiens, civies, & Tanks
 				RuleUnit* const unitRule,
 				const UnitFaction faction,
 				const int id,
 				RuleArmor* const armor,
-				const GameDifficulty diff = DIFF_BEGINNER,
+				const DifficultyLevel diff = DIFF_BEGINNER,
 				const int month = 0, // for upping aLien-stats as time progresses.
 				BattlescapeGame* const battleGame = nullptr);
 		/// Cleans up the BattleUnit.
@@ -787,7 +787,7 @@ private:
 
 		/// Adjusts the BattleUnit's stats according to difficulty.
 		void adjustStats(
-				const GameDifficulty diff,
+				const DifficultyLevel diff,
 				const int month);
 
 		/// Sets the BattleUnit's cover-reserve TU.

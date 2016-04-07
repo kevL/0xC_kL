@@ -438,9 +438,9 @@ void SavedGame::load(
 		diff = 0;
 		Log(LOG_WARNING) << "Difficulty in the save file is negative ... loading as BEGINNER.";
 	}
-	_difficulty = static_cast<GameDifficulty>(diff);
+	_difficulty = static_cast<DifficultyLevel>(diff);
 
-	_end = static_cast<GameEnding>(doc["end"].as<int>(_end));
+	_end = static_cast<EndType>(doc["end"].as<int>(_end));
 
 	_monthsPassed			= doc["monthsPassed"]		.as<int>(_monthsPassed);
 	_warned					= doc["warned"]				.as<bool>(_warned);
@@ -814,7 +814,7 @@ void SavedGame::setName(const std::wstring& name)
  * Gets the game's difficulty setting.
  * @return, difficulty level
  */
-GameDifficulty SavedGame::getDifficulty() const
+DifficultyLevel SavedGame::getDifficulty() const
 {
 	return _difficulty;
 }
@@ -823,7 +823,7 @@ GameDifficulty SavedGame::getDifficulty() const
  * Sets the game's difficulty to a new level.
  * @param difficulty - new difficulty setting
  */
-void SavedGame::setDifficulty(GameDifficulty difficulty)
+void SavedGame::setDifficulty(DifficultyLevel difficulty)
 {
 	_difficulty = difficulty;
 }
@@ -832,7 +832,7 @@ void SavedGame::setDifficulty(GameDifficulty difficulty)
  * Gets this SavedGame's current end-type.
  * @return, end-type (SavedGame.h)
  */
-GameEnding SavedGame::getEnding() const
+EndType SavedGame::getEnding() const
 {
 	return _end;
 }
@@ -841,13 +841,13 @@ GameEnding SavedGame::getEnding() const
  * Sets this SavedGame's current end-type.
  * @param end - end-type (SavedGame.h)
  */
-void SavedGame::setEnding(GameEnding end)
+void SavedGame::setEnding(EndType end)
 {
 	_end = end;
 }
 
 /**
- * Returns if the game is set to ironman mode.
+ * Checks if the game is set to ironman mode.
  * @note Ironman games cannot be manually saved.
  * @return, Tony Stark
  */
@@ -857,7 +857,7 @@ bool SavedGame::isIronman() const
 }
 
 /**
- * Changes if the game is set to ironman mode.
+ * Sets if the game is set to ironman mode.
  * @note Ironman games cannot be manually saved.
  * @param ironman - Tony Stark
  */
@@ -867,7 +867,7 @@ void SavedGame::setIronman(bool ironman)
 }
 
 /**
- * Returns the current longitude of the Geoscape globe.
+ * Gets the current longitude of the Geoscape globe.
  * @return, longitude
  */
 double SavedGame::getGlobeLongitude() const
@@ -876,7 +876,7 @@ double SavedGame::getGlobeLongitude() const
 }
 
 /**
- * Changes the current longitude of the Geoscape globe.
+ * Sets the current longitude of the Geoscape globe.
  * @param lon - longitude
  */
 void SavedGame::setGlobeLongitude(double lon)
@@ -885,7 +885,7 @@ void SavedGame::setGlobeLongitude(double lon)
 }
 
 /**
- * Returns the current latitude of the Geoscape globe.
+ * Gets the current latitude of the Geoscape globe.
  * @return, latitude
  */
 double SavedGame::getGlobeLatitude() const
@@ -894,7 +894,7 @@ double SavedGame::getGlobeLatitude() const
 }
 
 /**
- * Changes the current latitude of the Geoscape globe.
+ * Sets the current latitude of the Geoscape globe.
  * @param lat - latitude
  */
 void SavedGame::setGlobeLatitude(double lat)
@@ -903,7 +903,7 @@ void SavedGame::setGlobeLatitude(double lat)
 }
 
 /**
- * Returns the current zoom level of the Geoscape globe.
+ * Gets the current zoom level of the Geoscape globe.
  * @return, zoom level
  */
 size_t SavedGame::getGlobeZoom() const
@@ -912,7 +912,7 @@ size_t SavedGame::getGlobeZoom() const
 }
 
 /**
- * Changes the current zoom level of the Geoscape globe.
+ * Sets the current zoom level of the Geoscape globe.
  * @param zoom - zoom level
  */
 void SavedGame::setGlobeZoom(size_t zoom)
@@ -921,7 +921,7 @@ void SavedGame::setGlobeZoom(size_t zoom)
 }
 
 /**
- * Returns the preDogfight longitude of the Geoscape globe.
+ * Gets the preDogfight longitude of the Geoscape globe.
  * @return, longitude
  */
 double SavedGame::getDfLongitude() const
@@ -930,7 +930,7 @@ double SavedGame::getDfLongitude() const
 }
 
 /**
- * Changes the preDogfight longitude of the Geoscape globe.
+ * Sets the preDogfight longitude of the Geoscape globe.
  * @param lon - longitude
  */
 void SavedGame::setDfLongitude(double lon)
@@ -939,7 +939,7 @@ void SavedGame::setDfLongitude(double lon)
 }
 
 /**
- * Returns the preDogfight latitude of the Geoscape globe.
+ * Gets the preDogfight latitude of the Geoscape globe.
  * @return, latitude
  */
 double SavedGame::getDfLatitude() const
@@ -948,7 +948,7 @@ double SavedGame::getDfLatitude() const
 }
 
 /**
- * Changes the preDogfight latitude of the Geoscape globe.
+ * Sets the preDogfight latitude of the Geoscape globe.
  * @param lat - latitude
  */
 void SavedGame::setDfLatitude(double lat)
@@ -957,7 +957,7 @@ void SavedGame::setDfLatitude(double lat)
 }
 
 /**
- * Returns the preDogfight zoom level of the Geoscape globe.
+ * Gets the preDogfight zoom level of the Geoscape globe.
  * @return, zoom level
  */
 size_t SavedGame::getDfZoom() const
@@ -966,7 +966,7 @@ size_t SavedGame::getDfZoom() const
 }
 
 /**
- * Changes the preDogfight zoom level of the Geoscape globe.
+ * Sets the preDogfight zoom level of the Geoscape globe.
  * @param zoom - zoom level
  */
 void SavedGame::setDfZoom(size_t zoom)
@@ -1031,7 +1031,7 @@ void SavedGame::monthlyFunding()
 }
 
 /**
- * Changes the player's funds to a new value.
+ * Sets the player's funds to a new value.
  * @param funds - new funds
  */
 void SavedGame::setFunds(int64_t funds)
@@ -1040,7 +1040,7 @@ void SavedGame::setFunds(int64_t funds)
 }
 
 /**
- * Returns the player's current funds.
+ * Gets the player's current funds.
  * @return, current funds
  */
 int64_t SavedGame::getFunds() const
@@ -1049,7 +1049,7 @@ int64_t SavedGame::getFunds() const
 }
 
 /**
- * Returns the player's funds for the last 12 months.
+ * Gets the player's funds for the last 12 months.
  * @return, reference a vector of funds
  */
 std::vector<int64_t>& SavedGame::getFundsList()
@@ -1058,7 +1058,7 @@ std::vector<int64_t>& SavedGame::getFundsList()
 }
 
 /**
- * Returns the list of monthly maintenance costs.
+ * Gets the list of monthly maintenance costs.
  * @return, reference a vector of maintenances
  */
 std::vector<int64_t>& SavedGame::getMaintenanceList()
@@ -1067,7 +1067,7 @@ std::vector<int64_t>& SavedGame::getMaintenanceList()
 }
 
 /**
- * Returns the list of monthly income values.
+ * Gets the list of monthly income values.
  * @return, reference a vector of incomes
  */
 std::vector<int64_t>& SavedGame::getIncomeList()
@@ -1076,7 +1076,7 @@ std::vector<int64_t>& SavedGame::getIncomeList()
 }
 
 /**
- * Returns the list of monthly expenditure values.
+ * Gets the list of monthly expenditure values.
  * @return, reference a vector of expenditures
  */
 std::vector<int64_t>& SavedGame::getExpenditureList()
@@ -1085,7 +1085,7 @@ std::vector<int64_t>& SavedGame::getExpenditureList()
 }
 
 /**
- * Returns the current time of the game.
+ * Gets the current time of the game.
  * @return, pointer to the GameTime
  */
 GameTime* SavedGame::getTime() const
@@ -1094,7 +1094,7 @@ GameTime* SavedGame::getTime() const
 }
 
 /**
- * Changes the current time of the game.
+ * Sets the current time of the game.
  * @param time - GameTime
  */
 void SavedGame::setTime(GameTime gt)
@@ -1104,9 +1104,9 @@ void SavedGame::setTime(GameTime gt)
 }
 
 /**
- * Returns the highest ID for the specified object and increases it.
+ * Gets the highest ID for the specified object and increments it.
  * @param objectType - reference an object string
- * @return, highest ID number
+ * @return, highest ID
  */
 int SavedGame::getCanonicalId(const std::string& objectType)
 {
@@ -1119,6 +1119,15 @@ int SavedGame::getCanonicalId(const std::string& objectType)
 }
 
 /**
+ * Gets all the canonical-IDs.
+ * @return, reference to a map of strings w/ ints
+ */
+const std::map<std::string, int>& SavedGame::getAllIds() const
+{
+	return _ids;
+}
+
+/**
  * Resets the list of unique object IDs.
  * @param ids - new ID list as a reference to a map of strings & ints
  *
@@ -1128,7 +1137,7 @@ void SavedGame::setCanonicalIds(const std::map<std::string, int>& ids)
 } */
 
 /**
- * Returns the list of countries in the game world.
+ * Gets the list of countries in the game world.
  * @return, pointer to a vector of pointers to the Countries
  */
 std::vector<Country*>* SavedGame::getCountries()
@@ -1154,7 +1163,7 @@ int SavedGame::getCountryFunding() const
 }
 
 /**
- * Returns the list of world regions.
+ * Gets the list of world regions.
  * @return, pointer to a vector of pointers to the Regions
  */
 std::vector<Region*>* SavedGame::getRegions()
@@ -1163,7 +1172,7 @@ std::vector<Region*>* SavedGame::getRegions()
 }
 
 /**
- * Returns the list of player bases.
+ * Gets the list of player bases.
  * @return, pointer to a vector of pointers to all Bases
  */
 std::vector<Base*>* SavedGame::getBases()
@@ -1172,7 +1181,7 @@ std::vector<Base*>* SavedGame::getBases()
 }
 
 /**
- * Returns an immutable list of player bases.
+ * Gets an immutable list of player bases.
  * @return, pointer to a vector of pointers to all Bases
  */
 const std::vector<Base*>* SavedGame::getBases() const
@@ -1198,7 +1207,7 @@ int SavedGame::getBaseMaintenances() const
 }
 
 /**
- * Returns the list of alien UFOs.
+ * Gets the list of alien UFOs.
  * @return, pointer to a vector of pointers to all Ufos
  */
 std::vector<Ufo*>* SavedGame::getUfos()
@@ -1207,7 +1216,7 @@ std::vector<Ufo*>* SavedGame::getUfos()
 }
 
 /**
- * Returns the list of craft waypoints.
+ * Gets the list of craft waypoints.
  * @return, pointer to a vector of pointers to all Waypoints
  */
 std::vector<Waypoint*>* SavedGame::getWaypoints()
@@ -1216,7 +1225,7 @@ std::vector<Waypoint*>* SavedGame::getWaypoints()
 }
 
 /**
- * Returns the list of mission sites.
+ * Gets the list of mission sites.
  * @return, pointer to a vector of pointers to all MissionSites
  */
 std::vector<MissionSite*>* SavedGame::getMissionSites()
@@ -2024,7 +2033,7 @@ int SavedGame::getSoldierScore(Soldier* soldier)
 }
 
 /**
- * Returns a list of the AlienBases.
+ * Gets a list of the AlienBases.
  * @return, pointer to a vector of pointers to AlienBases
  */
 std::vector<AlienBase*>* SavedGame::getAlienBases()
@@ -2103,7 +2112,7 @@ AlienMission* SavedGame::findAlienMission(
 }
 
 /**
- * Returns the list of research scores
+ * Gets the list of research scores
  * @return, list of research scores
  */
 std::vector<int>& SavedGame::getResearchScores()
@@ -2112,7 +2121,7 @@ std::vector<int>& SavedGame::getResearchScores()
 }
 
 /**
- * Returns if the player has been warned about poor performance.
+ * Gets if the player has been warned about poor performance.
  * @return, true if warned
  */
 bool SavedGame::getWarned() const
@@ -2294,7 +2303,7 @@ bool SavedGame::getDetail()
 } */
 
 /**
- * Returns the list of dead Soldiers.
+ * Gets the list of dead Soldiers.
  * @return, pointer to a vector of pointers to SoldierDead.
  */
 std::vector<SoldierDead*>* SavedGame::getDeadSoldiers()
@@ -2303,7 +2312,7 @@ std::vector<SoldierDead*>* SavedGame::getDeadSoldiers()
 }
 
 /**
- * Returns the last selected player Base.
+ * Gets the last selected player Base.
  * @return, pointer to base
  *
 Base* SavedGame::getRecallBase()
@@ -2473,7 +2482,7 @@ std::wstring SavedGame::formatCraftDowntime(
 }
 
 /**
- * Returns the craft corresponding to the specified ID.
+ * Gets the craft corresponding to the specified ID.
  * @param craftId - the unique craft id to look up
  * @return, the craft with the specified id, or nullptr
  *
