@@ -444,9 +444,9 @@ awards:
       killsWithCriteriaCareer: [1,2,3,4,5,6,7,8,9,10]
     killCriteria:
       -
-        1: ["STR_SECTOPOD_TERRORIST","STR_LIVE_TERRORIST","STATUS_DEAD","BT_GRENADE"]
+        1: ["STR_SECTOPOD","STR_LIVE_TERRORIST","STATUS_DEAD","BT_GRENADE"]
       -
-        1: ["STR_CYBERDISC_TERRORIST","STR_LIVE_TERRORIST","STATUS_DEAD","BT_GRENADE"]
+        1: ["STR_CYBERDISC","STR_LIVE_TERRORIST","STATUS_DEAD","BT_GRENADE"]
   - type: STR_MEDAL_MELEE_KILL_MEDAL_NAME
     description: STR_MEDAL_MELEE_KILL_MEDAL_DESCRIPTION
     sprite: 34
@@ -456,13 +456,13 @@ awards:
       -
         1: ["DT_MELEE","FACTION_HOSTILE","STATUS_DEAD"]
   - type: STR_MEDAL_SECTOPOD_KILL_MEDAL_NAME
-    description: STR_SECTOPOD_KILL_MEDAL_DESCRIPTION
+    description: STR_MEDAL_SECTOPOD_KILL_MEDAL_DESCRIPTION
     sprite: 35
     criteria:
       killsWithCriteriaCareer: [1,2,3,4,5,6,7,8,9,10]
     killCriteria:
       -
-        1: ["STR_SECTOPOD_TERRORIST","FACTION_HOSTILE","STATUS_DEAD"]
+        1: ["STR_SECTOPOD","FACTION_HOSTILE","STATUS_DEAD"]
   - type: STR_MEDAL_HEALER_NAME
     description: STR_MEDAL_HEALER_DESCRIPTION
     sprite: 36
