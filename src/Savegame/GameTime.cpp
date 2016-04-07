@@ -123,7 +123,7 @@ YAML::Node GameTime::save(bool memorial) const
  */
 TimeTrigger GameTime::advance()
 {
-	int monthDays[12] {31,28,31,30,31,30,31,31,30,31,30,31};
+	int monthDays[12u] {31,28,31,30,31,30,31,31,30,31,30,31};
 	if (_year % 4 == 0 // leap year
 		&& !(_year % 100 == 0 && _year % 400 != 0))
 	{

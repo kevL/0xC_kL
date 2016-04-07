@@ -2684,10 +2684,10 @@ int Base::getMonthlyMaintenace() const
 }
 
 /**
- * Increases this Base's cash-income amount by @a cash.
+ * Changes this Base's cash-income value by @a cash.
  * @param cash - amount of income
  */
-void Base::setCashIncome(int cash)
+void Base::addCashIncome(int cash)
 {
 	_cashIncome += cash;
 }
@@ -2702,10 +2702,19 @@ int Base::getCashIncome() const
 }
 
 /**
- * Increases this Base's cash-spent amount by @a cash.
+ * Zeros the Base's income-value.
+ * @note Used by SavedGame::monthlyFunding() for each new month.
+ */
+void Base::zeroCashIncome()
+{
+	_cashIncome = 0;
+}
+
+/**
+ * Changes this Base's cash-spent value by @a cash.
  * @param cash - amount of expenditure
  */
-void Base::setCashSpent(int cash)
+void Base::addCashSpent(int cash)
 {
 	_cashSpent += cash;
 }
@@ -2717,6 +2726,15 @@ void Base::setCashSpent(int cash)
 int Base::getCashSpent() const
 {
 	return _cashSpent;
+}
+
+/**
+ * Zeros the Base's expenditure-value.
+ * @note Used by SavedGame::monthlyFunding() for each new month.
+ */
+void Base::zeroCashSpent()
+{
+	_cashSpent = 0;
 }
 
 /**

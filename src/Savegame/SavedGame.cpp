@@ -975,8 +975,9 @@ void SavedGame::setDfZoom(size_t zoom)
 }
 
 /**
- * Gives the player his monthly funds taking in account all maintenance and
- * profit costs. Also stores monthly totals for GraphsState.
+ * Gives the player his monthly funds.
+ * @note Takes into account all maintenance and profit/expenditure costs. Also
+ * stores monthly totals for the GraphsState.
  */
 void SavedGame::monthlyFunding()
 {
@@ -992,39 +993,34 @@ void SavedGame::monthlyFunding()
 		income += (*i)->getCashIncome();
 		expenditure += (*i)->getCashSpent();
 
-		(*i)->setCashIncome(-(*i)->getCashIncome());	// zero each Base's cash income values.
-		(*i)->setCashSpent(-(*i)->getCashSpent());		// zero each Base's cash spent values.
+		(*i)->zeroCashIncome();
+		(*i)->zeroCashSpent();
 	}
 
-	// INCOME
-	_income.back() = income;
+	_income.back() = income;							// INCOME
 	_income.push_back(0);
 	if (_income.size() > 12)
 		_income.erase(_income.begin());
 
-	// EXPENDITURE
-	_expenditure.back() = expenditure;
+	_expenditure.back() = expenditure;					// EXPENDITURE
 	_expenditure.push_back(0);
 	if (_expenditure.size() > 12)
 		_expenditure.erase(_expenditure.begin());
 
 
-	// MAINTENANCE
 	const int maintenance (getBaseMaintenances());
 
-	_maintenance.back() = maintenance;
+	_maintenance.back() = maintenance;					// MAINTENANCE
 	_maintenance.push_back(0);
 	if (_maintenance.size() > 12)
 		_maintenance.erase(_maintenance.begin());
 
-	// BALANCE
-	_funds.back() += getCountryFunding() - maintenance;
+	_funds.back() += getCountryFunding() - maintenance;	// BALANCE
 	_funds.push_back(_funds.back());
 	if (_funds.size() > 12)
 		_funds.erase(_funds.begin());
 
-	// SCORE (doesn't include xCom - aLien activity)
-	_researchScores.push_back(0);
+	_researchScores.push_back(0);						// SCORE (doesn't include xCom - aLien activity)
 	if (_researchScores.size() > 12)
 		_researchScores.erase(_researchScores.begin());
 

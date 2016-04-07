@@ -183,7 +183,7 @@ void PlaceFacilityState::viewClick(Action*)
 
 		const int cost = _facRule->getBuildCost();
 		_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() - static_cast<int64_t>(cost));
-		_base->setCashSpent(cost);
+		_base->addCashSpent(cost);
 
 		_game->popState();
 	}

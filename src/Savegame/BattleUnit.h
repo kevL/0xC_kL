@@ -25,7 +25,7 @@
 
 //#include <yaml-cpp/yaml.h>
 
-#include "SavedGame.h" // DifficultyLevel enum
+#include "SavedGame.h" // DifficultyLevel
 #include "Soldier.h"
 
 #include "../Battlescape/BattlescapeGame.h"

@@ -135,7 +135,7 @@ void DismantleFacilityState::btnOkClick(Action*)
 	if (_fac->getRules()->isLift() == false)
 	{
 		gameSave->setFunds(gameSave->getFunds() + static_cast<int64_t>(_refund));
-		_base->setCashIncome(_refund);
+		_base->addCashIncome(_refund);
 
 		for (std::vector<BaseFacility*>::const_iterator
 				i = _base->getFacilities()->begin();

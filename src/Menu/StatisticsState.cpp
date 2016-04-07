@@ -60,7 +60,6 @@ StatisticsState::StatisticsState()
 	:
 		_endType(_game->getSavedGame()->getEnding())
 {
-	Log(LOG_INFO) << "StatisticsState cTor";
 	_window		= new Window(this, 320, 200, 0, 0, POPUP_BOTH);
 	_txtTitle	= new Text(320, 16, 0, 8);
 	_lstStats	= new TextList(285, 137, 16, 34);
@@ -98,8 +97,6 @@ StatisticsState::StatisticsState()
 					Options::keyCancel);
 
 	listStats();
-	// TODO: Might want some music here.
-	Log(LOG_INFO) << "StatisticsState cTor EXIT";
 }
 
 /**
@@ -358,7 +355,7 @@ void StatisticsState::listStats()
 			i != _game->getRuleset()->getCraftsList().end();
 			++i)
 	{
-		totalCrafts += ids[*i]; // TODO: Show quantity of Craft lost.
+		totalCrafts += ids[*i]; // TODO: Show quantity of Craft lost ... or sold.
 	}
 
 	const int currentBases (gameSave->getBases()->size());

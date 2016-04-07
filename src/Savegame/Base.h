@@ -305,10 +305,10 @@ private:
 				int* facQty = nullptr,
 				int* shields = nullptr) const;
 
-		/// Gets how many Grav Shields the Base has.
+		/// Gets how many grav-shields the Base has.
 		size_t getGravShields() const;
 
-		/// Gets the Base's defense value.
+		/// Gets the Base's defense-value.
 		int getDefenseTotal() const;
 		/// Sets up the Base defenses.
 		bool setupBaseDefense();
@@ -325,26 +325,30 @@ private:
 		void destroyDisconnectedFacilities();
 		/// Gets a sorted list of the facilities(=iterators) NOT connected to the Access Lift.
 		std::list<std::vector<BaseFacility*>::const_iterator> getDisconnectedFacilities(const BaseFacility* const ignoreFac = nullptr);
-		/// Destroys a facility and deals with the side effects.
+		/// Destroys a facility and deals with the side-effects.
 		std::vector<BaseFacility*>::const_iterator destroyFacility(std::vector<BaseFacility*>::const_iterator pFac);
 
-		/// Gets the Base's craft maintenance.
+		/// Gets the Base's craft-maintenance.
 		int getCraftMaintenance() const;
-		/// Gets the Base's personnel maintenance.
+		/// Gets the Base's personnel-maintenance.
 		int getPersonnelMaintenance() const;
-		/// Gets the Base's facility maintenance.
+		/// Gets the Base's facility-maintenance.
 		int getFacilityMaintenance() const;
 		/// Gets the Base's total monthly maintenance.
 		int getMonthlyMaintenace() const;
 
-		/// Increases (or decreases) the Base's total income amount.
-		void setCashIncome(int cash);
-		/// Gets the Base's total income amount.
+		/// Changes the Base's total income-value.
+		void addCashIncome(int cash);
+		/// Gets the Base's total income-value.
 		int getCashIncome() const;
-		/// Increases (or decreases) the Base's total spent amount.
-		void setCashSpent(int cash);
-		/// Gets the Base's total spent amount.
+		/// Zeros the Base's income-value.
+		void zeroCashIncome();
+		/// Changes the Base's total expenditure-value.
+		void addCashSpent(int cash);
+		/// Gets the Base's total expenditure-value.
 		int getCashSpent() const;
+		/// Zeros the Base's expenditure-value.
+		void zeroCashSpent();
 
 		/// Sets various recalls for the Base.
 		void setRecallRow(
@@ -353,9 +357,9 @@ private:
 		/// Gets various recalls for the Base.
 		size_t getRecallRow(RecallType recallType) const;
 
-		/// Calculates the bonus cost for soldiers by rank.
+		/// Calculates the bonus-expense for Soldiers by rank.
 		int calcSoldierBonuses(const Craft* const craft = nullptr) const;
-		/// Calculates a soldier's bonus pay for doing a tactical mission.
+		/// Calculates a Soldier's bonus-pay for doing a tactical mission.
 		int soldierExpense(
 				const Soldier* const sol,
 				const bool dead = false);
@@ -363,10 +367,10 @@ private:
 		int supportExpense(
 				const int quadrants,
 				const bool dead = false);
-		/// Calculates the expense of sending a transport craft on a tactical mission.
+		/// Calculates the expense of sending a transport-craft on a tactical mission.
 		int craftExpense(const Craft* const craft);
 
-		/// Sorts the soldiers according to a pre-determined algorithm.
+		/// Sorts the Base's Soldiers according to a pre-determined algorithm.
 		void sortSoldiers();
 };
 

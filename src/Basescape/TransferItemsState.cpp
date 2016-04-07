@@ -530,7 +530,7 @@ void TransferItemsState::completeTransfer()
 
 	const int eta (static_cast<int>(std::floor(6. + _distance / 10.)));
 	_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() - _costTotal);
-	_baseSource->setCashSpent(_costTotal);
+	_baseSource->addCashSpent(_costTotal);
 
 	for (size_t
 			sel = 0;

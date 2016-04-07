@@ -130,12 +130,13 @@ SoldierMemorialState::SoldierMemorialState()
 	_lstSoldiers->setSelectable();
 	_lstSoldiers->onMousePress((ActionHandler)& SoldierMemorialState::lstSoldiersPress);
 
+	const SoldierDeath* death;
 	for (std::vector<SoldierDead*>::const_reverse_iterator
 			rit = _game->getSavedGame()->getDeadSoldiers()->rbegin();
 			rit != _game->getSavedGame()->getDeadSoldiers()->rend();
 			++rit)
 	{
-		const SoldierDeath* const death ((*rit)->getDeath());
+		death = (*rit)->getDeath();
 		_lstSoldiers->addRow(
 						5,
 						(*rit)->getName().c_str(),

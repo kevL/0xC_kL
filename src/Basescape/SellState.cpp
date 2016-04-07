@@ -379,7 +379,7 @@ void SellState::btnOkClick(Action*)
 	if (_totalCost != 0)
 	{
 		_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() + _totalCost);
-		_base->setCashIncome(_totalCost);
+		_base->addCashIncome(_totalCost);
 	}
 
 	for (size_t

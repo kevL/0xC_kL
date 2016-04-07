@@ -487,7 +487,7 @@ void PurchaseState::btnOkClick(Action*)
 	if (_costTotal != 0)
 	{
 		_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() - _costTotal);
-		_base->setCashSpent(_costTotal);
+		_base->addCashSpent(_costTotal);
 	}
 
 	const Ruleset* const rules (_game->getRuleset());

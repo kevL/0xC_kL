@@ -379,7 +379,7 @@ private:
 		void getAvailableProductions(
 				std::vector<const RuleManufacture*>& availableProductions,
 				const Base* const base) const;
-		/// Gets the list of newly available ResearchProjects that appear when a project is completed.
+		/// Gets the list of newly available ResearchProjects that appear when a ResearchProject is completed.
 		void getPopupResearch(
 				std::vector<const RuleResearch*>& dependents,
 				const RuleResearch* const resRule,

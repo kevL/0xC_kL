@@ -131,7 +131,7 @@ void ConfirmNewBaseState::btnOkClick(Action*)
 	if (_game->getSavedGame()->getFunds() >= _cost)
 	{
 		_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() - _cost);
-		_base->setCashSpent(_cost);
+		_base->addCashSpent(_cost);
 
 		_game->getSavedGame()->getBases()->push_back(_base);
 		_game->pushState(new BaseNameState(_base, _globe));

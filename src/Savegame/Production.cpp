@@ -299,7 +299,7 @@ ProductionProgress Production::step(
 					{
 						const int profit (itRule->getSellCost() * i->second);
 						gameSave->setFunds(gameSave->getFunds() + profit);
-						base->setCashIncome(profit);
+						base->addCashIncome(profit);
 					}
 					else
 						base->getStorageItems()->addItem(i->first, i->second);
@@ -349,7 +349,7 @@ void Production::startProduction(
 {
 	const int cost (_manfRule->getManufactureCost());
 	gameSave->setFunds(gameSave->getFunds() - cost);
-	base->setCashSpent(cost);
+	base->addCashSpent(cost);
 
 	for (std::map<std::string,int>::const_iterator
 			i = _manfRule->getRequiredItems().begin();

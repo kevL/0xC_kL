@@ -56,7 +56,7 @@ private:
 
 
 	public:
-		/// Creates s SoldierMemorial state.
+		/// Creates a SoldierMemorial state.
 		SoldierMemorialState();
 		/// Cleans up the SoldierMemorial state.
 		~SoldierMemorialState();
