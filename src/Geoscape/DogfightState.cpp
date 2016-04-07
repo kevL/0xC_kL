@@ -193,7 +193,7 @@ DogfightState::DogfightState(
 	_btnMinimizedIcon		= new InteractiveSurface(32, 20, _minimizedIconX, _minimizedIconY);
 	_txtInterception		= new Text(150, 9, _minimizedIconX + 15, _minimizedIconY + 6);
 
-	_craftDamageAnimTimer	= new Timer(500);
+	_craftDamageAnimTimer	= new Timer(500u);
 
 	setInterface("dogfight");
 

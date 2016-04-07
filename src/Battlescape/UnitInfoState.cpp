@@ -482,7 +482,6 @@ UnitInfoState::UnitInfoState(
 	if (_mindProbe == false)
 	{
 		_btnPrev->setText(L"<");
-		_btnPrev->getTextPtr()->setX(-1);
 		_btnPrev->onMouseClick((ActionHandler)& UnitInfoState::btnPrevClick);
 		_btnPrev->onKeyboardPress(
 						(ActionHandler)& UnitInfoState::btnPrevClick,
@@ -506,7 +505,7 @@ UnitInfoState::UnitInfoState(
 						(ActionHandler)& UnitInfoState::btnNextClick,
 						SDLK_KP6);
 
-//		_timer = new Timer(300);
+//		_timer = new Timer(300u);
 //		_timer->onTimer((StateHandler)& UnitInfoState::keyRepeat);
 //		_timer->start();
 	}

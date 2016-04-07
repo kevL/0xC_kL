@@ -107,7 +107,7 @@ Map::Map(
 		_selectorY(0),
 		_mX(0),
 		_mY(0),
-		_selectorType(CT_NORMAL),
+		_selectorType(CT_CUBOID),
 		_selectorSize(1),
 		_aniFrame(0),
 		_projectile(nullptr),
@@ -761,7 +761,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								{
 									switch (unitWest->getUnitDirection())
 									{
-										case 1: // && vertical dir == 0
+										case 1:
 										case 5:
 										{
 											const Tile* tileNorth (_battleSave->getTile(posField + Position(0,-1,0)));
@@ -842,7 +842,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									break;
 
 								default:
-								case CT_NORMAL:
+								case CT_CUBOID:
 								case CT_PSI:
 								case CT_LAUNCH:
 								case CT_TOSS:
@@ -1424,7 +1424,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									break;
 
 								default:
-								case CT_NORMAL:
+								case CT_CUBOID:
 								case CT_PSI:
 								case CT_LAUNCH:
 								case CT_TOSS:
@@ -2010,7 +2010,7 @@ bool Map::checkWest( // private.
 //						|| (   tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_BLOCK
 //							&& tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NESW
 //							&& tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST)))));
-//							&& tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NORTH // not technically in UFO.
+//							&& tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NORTH // not in stock UFO.
 
 	if (ret == false) // unit might actually be too far away from wall to clip despite above conditions - now don't let the floor clip it
 	{
@@ -2028,7 +2028,7 @@ bool Map::checkWest( // private.
 		{
 			if (ret == true)
 			{
-				//if (dir != 2) *halfRight = true; // could allow this. Maybe !=1 also ...
+//				if (dir != 2) *halfRight = true; // could allow this. Maybe !=1 also ...
 
 				const Position pos (tile6->getPosition() + Position(1,0,0));
 				const Tile
@@ -2056,7 +2056,7 @@ bool Map::checkWest( // private.
 				{
 					case 1:
 					case 2:
-						*halfRight = true;
+						*halfRight =
 						ret = true;
 				}
 			}
@@ -2098,7 +2098,7 @@ bool Map::checkNorth( // private.
 						|| (tile1->getMapData(O_OBJECT)->getBigwall() & 0xb) == 0)))); // Block/NeSw/West.
 //						|| (   tile1->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NESW
 //							&& tile1->getMapData(O_OBJECT)->getBigwall() != BIGWALL_BLOCK)))));
-//							&& tile1->getMapData(O_OBJECT)->getBigwall() != BIGWALL_WEST // not technically in UFO.
+//							&& tile1->getMapData(O_OBJECT)->getBigwall() != BIGWALL_WEST // not in stock UFO.
 
 	if (ret == false) // unit might actually be too far away from wall to clip despite above conditions - now don't let the floor clip it
 	{
@@ -2501,10 +2501,20 @@ void Map::setSelectorType(
 		SelectorType type,
 		int quads)
 {
-	if ((_selectorType = type) == CT_NORMAL)
-		_selectorSize = quads;
-	else
-		_selectorSize = 1;
+	switch (_selectorType = type)
+	{
+		case CT_CUBOID:
+			_selectorSize = quads;
+			break;
+
+		default:
+//		case CT_NONE:
+//		case CT_TARGET:
+//		case CT_PSI:
+//		case CT_LAUNCH:
+//		case CT_TOSS:
+			_selectorSize = 1;
+	}
 }
 
 /**

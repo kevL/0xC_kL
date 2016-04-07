@@ -59,6 +59,7 @@ private:
 
 
 protected:
+	/// Checks if the specified button has been handled.
 	bool isButtonHandled(Uint8 btn = 0) override;
 
 

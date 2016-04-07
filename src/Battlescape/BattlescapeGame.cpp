@@ -565,7 +565,7 @@ void BattlescapeGame::popState()
 
 		if (_battleSave->getRfTriggerPosition().z != -1) // refocus the Camera back onto RF trigger-unit after a brief delay
 		{
-			SDL_Delay(336);
+			SDL_Delay(336u);
 			//Log(LOG_INFO) << "popState - STATES EMPTY - set Camera to triggerPos & clear triggerPos";
 			getMap()->getCamera()->setMapOffset(_battleSave->getRfTriggerPosition());
 			_battleSave->cacheRfTriggerPosition(Position(0,0,-1));
@@ -1190,7 +1190,7 @@ void BattlescapeGame::setupSelector()
 	}
 	else
 	{
-		type = CT_NORMAL;
+		type = CT_CUBOID;
 
 		if ((_tacAction.actor = _battleSave->getSelectedUnit()) != nullptr)
 			quads = _tacAction.actor->getArmor()->getSize();

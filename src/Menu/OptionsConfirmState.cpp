@@ -54,7 +54,7 @@ OptionsConfirmState::OptionsConfirmState(OptionsOrigin origin)
 	_btnNo		= new TextButton(50, 20, 200, 120);
 	_txtTitle	= new Text(206, 20, 57, 70);
 	_txtTimer	= new Text(206, 20, 57, 100);
-	_timer		= new Timer(1000);
+	_timer		= new Timer(1000u);
 
 	setInterface(
 			"mainMenu",

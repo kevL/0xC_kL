@@ -89,7 +89,7 @@ ScannerState::ScannerState(const BattleAction* const action)
 					(ActionHandler)& ScannerState::exitClick,
 					Options::keyOkKeypad);
 
-	_timer = new Timer(125);
+	_timer = new Timer(125u);
 	_timer->onTimer((StateHandler)& ScannerState::animate);
 	_timer->start();
 

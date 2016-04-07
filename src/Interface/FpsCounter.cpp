@@ -65,7 +65,7 @@ FpsCounter::FpsCounter(
 {
 	_visible = Options::fpsCounter;
 
-	_timer = new Timer(1000);
+	_timer = new Timer(1000u);
 	_timer->onTimer((SurfaceHandler)& FpsCounter::update);
 	_timer->start();
 

@@ -59,7 +59,7 @@ WarningMessage::WarningMessage(
 	_text->setVerticalAlign(ALIGN_MIDDLE);
 	_text->setWordWrap();
 
-	_timer = new Timer(80);
+	_timer = new Timer(80u);
 	_timer->onTimer((SurfaceHandler)& WarningMessage::fade);
 
 	setVisible(false);

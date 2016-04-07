@@ -378,7 +378,7 @@ InventoryState::InventoryState(
 	_txtPStr->setVisible(vis);
 	_txtPSkill->setVisible(vis);
 
-//	_timer = new Timer(300);
+//	_timer = new Timer(300u);
 //	_timer->onTimer((StateHandler)& InventoryState::keyRepeat);
 //	_timer->start();
 }

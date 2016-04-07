@@ -33,7 +33,7 @@ class Timer;
 
 /**
  * Editable version of Text.
- * @note Receives keyboard input to allow the player to change the text.
+ * @note Receives keyboard-input to allow the player to change the text.
  */
 class TextEdit final
 	:
@@ -64,20 +64,20 @@ private:
 
 
 	public:
-		/// Creates a new text edit with the specified size and position.
+		/// Creates a TextEdit with the specified size and position.
 		TextEdit(
 				State* state,
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the text edit.
+		/// Cleans up the TextEdit.
 		~TextEdit();
 
 		/// Handle focus.
 		void handle(Action* action, State* state) override;
 
-		/// Sets focus on this text edit.
+		/// Sets focus on the TextEdit.
 		using InteractiveSurface::setFocus;
 		void setFocus(
 				bool focus,
@@ -88,7 +88,7 @@ private:
 		/// Sets the text size to small.
 		void setSmall();
 
-		/// Initializes the text edit's resources.
+		/// Initializes the TextEdit's resources.
 		void initText(
 				Font* const big,
 				Font* const small,
@@ -106,9 +106,9 @@ private:
 		/// Sets the wordwrap setting.
 		void setWordWrap(bool wrap = true);
 
-		/// Sets the color invert setting.
+		/// Sets the color-invert setting.
 		void setInvert(bool invert = true);
-		/// Sets the high contrast color setting.
+		/// Sets the high-contrast setting.
 		void setHighContrast(bool contrast = true);
 
 		/// Sets the horizontal alignment.

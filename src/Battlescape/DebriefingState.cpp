@@ -362,26 +362,24 @@ DebriefingState::DebriefingState()
 			++i)
 	{
 		//Log(LOG_INFO) << ". iter BattleUnits";
-		sol = (*i)->getGeoscapeSoldier();
 		// NOTE: In the case of a dead soldier this pointer is Valid but points to garbage.
 		// Use that.
-		if (sol != nullptr)
+		if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 		{
 			//Log(LOG_INFO) << ". . id = " << (*i)->getId();
-			BattleUnitStatistics* const statistics ((*i)->getStatistics());
+			BattleUnitStatistics* const unitStatistics ((*i)->getStatistics());
 
 			int soldierAlienKills (0);
-
 			for (std::vector<BattleUnitKill*>::const_iterator
-					j = statistics->kills.begin();
-					j != statistics->kills.end();
+					j = unitStatistics->kills.begin();
+					j != unitStatistics->kills.end();
 					++j)
 			{
 				if ((*j)->_faction == FACTION_HOSTILE)
 					++soldierAlienKills;
 			}
 
-			// NOTE re. Nike Cross:
+			// NOTE: re. Nike Cross:
 			// This can be exploited by MC'ing a bunch of aLiens while having
 			// Option "psi-control ends battle" TRUE. ... Patched.
 			//
@@ -392,7 +390,7 @@ DebriefingState::DebriefingState()
 				&& _aliensKilled + _aliensStunned == soldierAlienKills
 				&& _missionStatistics->success == true)
 			{
-				statistics->nikeCross = true;
+				unitStatistics->nikeCross = true;
 			}
 
 
@@ -405,7 +403,6 @@ DebriefingState::DebriefingState()
 								// PS, there is no 'geoscape Soldiers list' really; it's
 								// just a variable stored in each xCom-agent/BattleUnit ....
 				SoldierDead* deadSoldier (nullptr); // avoid vc++ linker warning.
-
 				for (std::vector<SoldierDead*>::const_iterator
 						j = _gameSave->getDeadSoldiers()->begin();
 						j != _gameSave->getDeadSoldiers()->end();
@@ -418,16 +415,16 @@ DebriefingState::DebriefingState()
 					}
 				}
 
-				statistics->daysWounded = 0;
+				unitStatistics->daysWounded = 0;
 
-				// note: Safety on *deadSoldier should not be needed. see above^
-				if (statistics->KIA == true)
+				// NOTE: Safety on *deadSoldier should not be needed. see above^
+				if (unitStatistics->KIA == true)
 					_missionStatistics->injuryList[deadSoldier->getId()] = -1;
 				else // MIA
 					_missionStatistics->injuryList[deadSoldier->getId()] = -2;
 
 				deadSoldier->getDiary()->updateDiary(
-												statistics,
+												unitStatistics,
 												_missionStatistics,
 												_rules);
 				deadSoldier->getDiary()->manageAwards(_rules);
@@ -436,13 +433,13 @@ DebriefingState::DebriefingState()
 			else
 			{
 				//Log(LOG_INFO) << ". . . alive";
-				statistics->daysWounded =
-				_missionStatistics->injuryList[sol->getId()] = sol->getSickbay();
+				if ((unitStatistics->daysWounded = sol->getSickbay()) != 0)
+					_missionStatistics->injuryList[sol->getId()] = sol->getSickbay();
 
 				sol->getDiary()->updateDiary(
-											statistics,
-											_missionStatistics,
-											_rules);
+										unitStatistics,
+										_missionStatistics,
+										_rules);
 				if (sol->getDiary()->manageAwards(_rules) == true)
 					_soldiersMedalled.push_back(sol);
 			}

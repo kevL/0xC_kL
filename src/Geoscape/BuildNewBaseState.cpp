@@ -91,7 +91,7 @@ BuildNewBaseState::BuildNewBaseState(
 	_txtTitle	= new Text(180, 9, 8 + dx, 11);
 	_btnCancel	= new TextButton(54, 14, 194 + dx, 8);
 
-	_hoverTimer	= new Timer(60);
+	_hoverTimer	= new Timer(60u);
 	_hoverTimer->onTimer((StateHandler)& BuildNewBaseState::hoverRedraw);
 	_hoverTimer->start();
 

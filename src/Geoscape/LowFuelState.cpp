@@ -61,7 +61,7 @@ LowFuelState::LowFuelState(
 	_btnOk5Secs	= new TextButton(90, 18,  30, 134);
 	_btnOk		= new TextButton(90, 18, 136, 134);
 
-	_blinkTimer = new Timer(325);
+	_blinkTimer = new Timer(325u);
 	_blinkTimer->onTimer((StateHandler)& LowFuelState::blink);
 	_blinkTimer->start();
 

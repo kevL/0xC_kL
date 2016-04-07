@@ -165,10 +165,11 @@ void SoldierDiaryMissionState::init()
 {
 	State::init();
 
-	const std::vector<MissionStatistics*>* const stats (_game->getSavedGame()->getMissionStatistics());
+	const MissionStatistics* stats;
 	size_t missionId;
 	int daysWounded;
 
+	const std::vector<MissionStatistics*>* const statList (_game->getSavedGame()->getMissionStatistics());
 	if (_base != nullptr)
 	{
 		const std::vector<Soldier*>* const listLive (_base->getSoldiers());
@@ -180,10 +181,17 @@ void SoldierDiaryMissionState::init()
 		_diary = sol->getDiary();
 
 		missionId = _diary->getMissionIdList().at(_rowEntry);
-//		if (missionId > stats->size()) // safety.
+//		if (missionId > statList->size()) // safety.
 //			missionId = 0u;
 
-		daysWounded = stats->at(missionId)->injuryList[sol->getId()];
+		stats = statList->at(missionId);
+
+//		daysWounded = stats->injuryList[sol->getId()];
+		const std::map<int,int>* injured (&stats->injuryList);
+		if (injured->find(sol->getId()) != injured->end())
+			daysWounded = injured->at(sol->getId());
+		else
+			daysWounded = 0;
 	}
 	else
 	{
@@ -196,10 +204,17 @@ void SoldierDiaryMissionState::init()
 		_diary = solDead->getDiary();
 
 		missionId = _diary->getMissionIdList().at(_rowEntry);
-//		if (missionId > stats->size()) // safety.
+//		if (missionId > statList->size()) // safety.
 //			missionId = 0u;
 
-		daysWounded = stats->at(missionId)->injuryList[solDead->getId()];
+		stats = statList->at(missionId);
+
+//		daysWounded = stats->injuryList[solDead->getId()];
+		const std::map<int,int>* injured (&stats->injuryList);
+		if (injured->find(solDead->getId()) != injured->end())
+			daysWounded = injured->at(solDead->getId());
+		else
+			daysWounded = 0;
 	}
 
 	const bool vis (_diary->getMissionTotal() > 1u);
@@ -208,30 +223,30 @@ void SoldierDiaryMissionState::init()
 
 	_txtTitle->setText(tr("STR_MISSION_UC_").arg(missionId));
 
-	_txtScore->setText(tr("STR_SCORE_VALUE_").arg(stats->at(missionId)->score));
-	_txtMissionType->setText(tr("STR_MISSION_TYPE_").arg(tr(stats->at(missionId)->type))); // 'type' was, getMissionTypeLowerCase()
+	_txtScore->setText(tr("STR_SCORE_VALUE_").arg(stats->score));
+	_txtMissionType->setText(tr("STR_MISSION_TYPE_").arg(tr(stats->type))); // 'type' was, getMissionTypeLowerCase()
 
-	if (stats->at(missionId)->ufo != "NO_UFO")
+	if (stats->ufo != "NO_UFO")
 	{
 		_txtUFO->setVisible();
-		_txtUFO->setText(tr("STR_UFO_TYPE_").arg(tr(stats->at(missionId)->ufo)));
+		_txtUFO->setText(tr("STR_UFO_TYPE_").arg(tr(stats->ufo)));
 	}
 	else
 		_txtUFO->setVisible(false);
 
-	if (stats->at(missionId)->alienRace != "STR_UNKNOWN")
+	if (stats->alienRace != "STR_UNKNOWN")
 	{
 		_txtRace->setVisible();
-		_txtRace->setText(tr("STR_RACE_TYPE_").arg(tr(stats->at(missionId)->alienRace)));
+		_txtRace->setText(tr("STR_RACE_TYPE_").arg(tr(stats->alienRace)));
 	}
 	else
 		_txtRace->setVisible(false);
 
-	if (stats->at(missionId)->type != "STR_BASE_DEFENSE"
-		&& stats->at(missionId)->type != "STR_ALIEN_BASE_ASSAULT")
+	if (stats->type != "STR_BASE_DEFENSE"
+		&& stats->type != "STR_ALIEN_BASE_ASSAULT")
 	{
 		_txtDaylight->setVisible();
-		if (stats->at(missionId)->shade < MissionStatistics::NIGHT_SHADE)
+		if (stats->shade < MissionStatistics::NIGHT_SHADE)
 			_txtDaylight->setText(tr("STR_DAYLIGHT_TYPE_").arg(tr("STR_DAY")));
 		else
 			_txtDaylight->setText(tr("STR_DAYLIGHT_TYPE_").arg(tr("STR_NIGHT")));

@@ -355,7 +355,7 @@ Globe::Globe(
 								x, x + width,
 								y, y + height);
 
-	_blinkTimer = new Timer(200);
+	_blinkTimer = new Timer(200u);
 	_blinkTimer->onTimer((SurfaceHandler)& Globe::blink);
 	_blinkTimer->start();
 

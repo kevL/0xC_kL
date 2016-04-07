@@ -209,7 +209,7 @@ CraftInfoState::CraftInfoState(
 					Options::keyCancel);
 
 
-	_blinkTimer = new Timer(325);
+	_blinkTimer = new Timer(325u);
 	_blinkTimer->onTimer((StateHandler)& CraftInfoState::blinkStatus);
 }
 

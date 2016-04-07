@@ -120,7 +120,7 @@ BaseDetectionState::BaseDetectionState(const Base* const base)
 
 	if (_base->getBaseExposed() == true)
 	{
-		_blinkTimer = new Timer(325);
+		_blinkTimer = new Timer(325u);
 		_blinkTimer->onTimer((StateHandler)& BaseDetectionState::blink);
 		_blinkTimer->start();
 

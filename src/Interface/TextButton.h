@@ -107,7 +107,7 @@ protected:
 		/// Sets the TextButton's Text.
 		void setText(const std::wstring& text);
 		/// Gets the TextButton's Text.
-		std::wstring getText() const;
+//		std::wstring getText() const;
 		/// Gets a pointer to the Text.
 		Text* getTextPtr() const;
 

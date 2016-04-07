@@ -48,7 +48,7 @@ class Timer;
 enum SelectorType
 {
 	CT_NONE,	// 0
-	CT_NORMAL,	// 1
+	CT_CUBOID,	// 1
 	CT_TARGET,	// 2
 	CT_PSI,		// 3
 	CT_LAUNCH,	// 4

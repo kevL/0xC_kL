@@ -768,7 +768,7 @@ void ProjectileFlyBState::think()
 							if (_prjImpact != VOXEL_OUTOFBOUNDS)
 							{
 								//Log(LOG_INFO) << ". . delay - inBounds";
-								SDL_Delay(331); // screen-pause when shot hits target before reverting camera to shooter.
+								SDL_Delay(331u); // screen-pause when shot hits target before reverting camera to shooter.
 							}
 							//else Log(LOG_INFO) << ". . final vox OutofBounds - do NOT pause";
 						}

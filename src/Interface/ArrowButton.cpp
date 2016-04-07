@@ -50,7 +50,7 @@ ArrowButton::ArrowButton(
 		_shape(shape),
 		_list(nullptr)
 {
-	_timer = new Timer(77);
+	_timer = new Timer(77u);
 	_timer->onTimer((SurfaceHandler)& ArrowButton::scroll);
 }
 
@@ -63,13 +63,23 @@ ArrowButton::~ArrowButton()
 }
 
 /**
- *
+ * Checks if the specified button has been handled.
+ * @param btn - an SDL-button identifier (default 0)
  */
 bool ArrowButton::isButtonHandled(Uint8 btn)
 {
 	if (_list != nullptr)
-		return btn == SDL_BUTTON_LEFT
-			|| btn == SDL_BUTTON_RIGHT;
+	{
+		switch (btn)
+		{
+			case SDL_BUTTON_LEFT:
+			case SDL_BUTTON_RIGHT:
+				return true;
+
+			default:
+				return false;
+		}
+	}
 	else
 		return ImageButton::isButtonHandled(btn);
 }

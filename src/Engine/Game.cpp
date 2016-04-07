@@ -449,7 +449,7 @@ void Game::run()
 				if (_blitDelay == true)
 				{
 					_blitDelay = false;
-					SDL_Delay(369);
+					SDL_Delay(369u);
 				}
 
 				std::list<State*>::const_iterator i (_states.end());
@@ -478,12 +478,12 @@ void Game::run()
 		switch (runningState)	// Save on CPU
 		{
 			case RUNNING:
-				SDL_Delay(1);	// Save CPU from going 100%
+				SDL_Delay(1u);	// Save CPU from going 100%
 				break;
 
 			case SLOWED:
 			case PAUSED:
-				SDL_Delay(100);	// More slowing down.
+				SDL_Delay(100u);	// More slowing down.
 		}
 	}
 

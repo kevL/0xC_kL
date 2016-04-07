@@ -108,7 +108,7 @@ Inventory::Inventory(
 							(Options::baseXResolution - 320) / 2 + 48,
 							(Options::baseYResolution - 200) / 2 + 176);
 	_numStack	= new NumberText(15,15);
-	_animTimer	= new Timer(80);
+	_animTimer	= new Timer(80u);
 
 	_warning->initText(
 					_game->getResourcePack()->getFont("FONT_BIG"),

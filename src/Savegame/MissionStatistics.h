@@ -77,7 +77,7 @@ struct MissionStatistics
 		:
 			id(0),
 			timeStat(0,0,0,0,0,0),
-			region("STR_REGION_UNKNOWN"),
+			region("STR_UNKNOWN"),
 			country("STR_UNKNOWN"),
 			ufo("NO_UFO"),
 			success(false),
@@ -116,6 +116,19 @@ struct MissionStatistics
 		shade		= node["shade"]			.as<int>(shade);
 		injuryList	= node["injuryList"]	.as<std::map<int,int>>(injuryList);
 		valiantCrux	= node["valiantCrux"]	.as<bool>(valiantCrux);
+
+		// TEST:
+		for (std::map<int,int>::const_iterator
+				i = injuryList.begin();
+				i != injuryList.end();
+				)
+		{
+			if (i->second == 0)
+				i = injuryList.erase(i);
+			else
+				++i;
+		}
+		// end_TEST.
 	}
 
 	/// Saves a MissionStatistics node to YAML.
@@ -134,7 +147,9 @@ struct MissionStatistics
 		node["rating"]		= rating;
 		node["alienRace"]	= alienRace;
 		node["shade"]		= shade;
-		node["injuryList"]	= injuryList;
+
+		if (injuryList.empty() == false)
+			node["injuryList"] = injuryList;
 
 		if (valiantCrux == true)
 			 node["valiantCrux"] = valiantCrux;

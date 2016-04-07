@@ -87,7 +87,7 @@ BaseView::BaseView(
 		}
 	}
 
-	_timer = new Timer(125);
+	_timer = new Timer(125u);
 	_timer->onTimer((SurfaceHandler)& BaseView::blink);
 	_timer->start();
 }

@@ -498,7 +498,7 @@ void SoldierDiaryPerformanceState::init()
 	if (_diary->getScoreTotal() != 0)
 		wst3 = tr("STR_SCORE_VALUE_").arg(_diary->getScoreTotal());
 	if (_diary->getDaysWoundedTotal() != 0)
-		wst4 = tr("STR_DAYS_WOUNDED_").arg(_diary->getDaysWoundedTotal()).arg(L" dy");
+		wst4 = tr("STR_DAYS_WOUNDED_").arg(_diary->getDaysWoundedTotal()).arg(L" d");
 
 	_lstMissionTotals->addRow(
 						4,

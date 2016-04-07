@@ -130,7 +130,7 @@ MiniMapState::MiniMapState(
 	level << ((camera->getViewLevel() + 1) % 10);
 	_txtLevel->setText(level.str());
 
-	_timerAnimate = new Timer(125);
+	_timerAnimate = new Timer(125u);
 	_timerAnimate->onTimer((StateHandler)& MiniMapState::animate);
 	_timerAnimate->start();
 

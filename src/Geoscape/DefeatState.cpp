@@ -61,7 +61,7 @@ DefeatState::DefeatState()
 		"PICT5.LBM"
 	};
 
-//	_timer = new Timer(30000);
+//	_timer = new Timer(30000u);
 
 	_text[0] = new Text(190, 104);
 	_text[1] = new Text(200, 34, 32, 0);

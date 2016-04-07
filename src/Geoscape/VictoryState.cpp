@@ -62,7 +62,7 @@ VictoryState::VictoryState()
 		"PICT7.LBM"
 	};
 
-//	_timer = new Timer(30000);
+//	_timer = new Timer(30000u);
 
 	_text[0] = new Text(195, 56, 5, 0);
 	_text[1] = new Text(232, 64, 88, 136);

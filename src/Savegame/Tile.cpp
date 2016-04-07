@@ -515,19 +515,20 @@ DoorResult Tile::openDoor(
  */
 void Tile::openDoorAuto(const MapDataType partType)
 {
+//	if (_parts[partType]->isDoor() == true)
+//	{
+//		setMapData(
+//				_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD()),
+//				_parts[partType]->getAltMCD(),
+//				_mapDataSetId[partType],
+//				_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD())->getPartType());
+//
+//		setMapData(nullptr,-1,-1, partType);
+//	}
+//	else if (_parts[partType]->isUfoDoor() == true)
+
 	_curFrame[partType] = 1; // start opening door
 }
-/*	if (_parts[partType]->isDoor() == true)
-	{
-		setMapData(
-				_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD()),
-				_parts[partType]->getAltMCD(),
-				_mapDataSetId[partType],
-				_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD())->getPartType());
-
-		setMapData(nullptr,-1,-1, partType);
-	}
-	else if (_parts[partType]->isUfoDoor() == true) */
 
 /**
  * Closes a ufo-door on this Tile.

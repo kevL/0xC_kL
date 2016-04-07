@@ -2772,7 +2772,7 @@ void GeoscapeState::time1Day()
 			++i)
 	{
 		bool dead;
-		for (std::vector<Soldier*>::const_iterator // handle soldiers in sickbay
+		for (std::vector<Soldier*>::const_iterator // handle Soldiers in sickbay
 				j = (*i)->getSoldiers()->begin();
 				j != (*i)->getSoldiers()->end();
 				)
@@ -2786,20 +2786,18 @@ void GeoscapeState::time1Day()
 				{
 					//Log(LOG_INFO) << "\n";
 					//Log(LOG_INFO) << ". Soldier = " << (*j)->getId() << " woundsPCT = " << chanceDeath;
-					const std::vector<MissionStatistics*>* const missionStats (_gameSave->getMissionStatistics());
-					const int
-						lastMissionId ((*j)->getDiary()->getMissionIdList().back()),
-						daysTotal (missionStats->at(lastMissionId)->injuryList[(*j)->getId()]);
-
-					//Log(LOG_INFO) << ". . daysTotal = " << daysTotal;
-					if (daysTotal > 0) // safety.
+					const size_t latestMissionId (static_cast<size_t>((*j)->getDiary()->getMissionIdList().back()));
+					const std::map<int,int>* injured (&_gameSave->getMissionStatistics()->at(latestMissionId)->injuryList);
+					if (injured->find((*j)->getId()) != injured->end())
 					{
-						const float healthFactor (static_cast<float>(daysTotal) / static_cast<float>((*j)->getCurrentStats()->health));
+						const float healthFactor (static_cast<float>(injured->at((*j)->getId()))
+												/ static_cast<float>((*j)->getCurrentStats()->health));
+						//Log(LOG_INFO) << ". . daysWounded = " << injured->at((*j)->getId();
 						//Log(LOG_INFO) << ". . healthFactor = " << healthFactor;
 						chanceDeath = static_cast<int>(std::ceil(
 									  static_cast<float>(chanceDeath) * healthFactor));
 
-//						const int roll (RNG::generate(1,1000));
+						//const int roll (RNG::generate(1,1000));
 						//Log(LOG_INFO) << ". . chance to Die = " << chanceDeath << " roll = " << roll;
 						if (RNG::generate(1,1000) <= chanceDeath)
 						{

@@ -71,11 +71,11 @@ private:
 			_press,
 			_release;
 
-		/// Checks if mouse button is pressed.
+		/// Checks if mouse-button is pressed.
 		bool isButtonPressed(Uint8 btn = 0);
-		/// Checks if mouse button event handled.
+		/// Checks if mouse-button event handled.
 		virtual bool isButtonHandled(Uint8 btn = 0);
-		/// Set a mouse button's internal state.
+		/// Set a mouse-button's internal state.
 		void setButtonPressed(
 				Uint8 btn,
 				bool pressed);

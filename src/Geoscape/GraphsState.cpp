@@ -745,7 +745,7 @@ GraphsState::GraphsState()
 	centerAllSurfaces();
 
 
-	_blinkTimer = new Timer(250);
+	_blinkTimer = new Timer(250u);
 	_blinkTimer->onTimer((StateHandler)& GraphsState::blink);
 
 	initButtons();

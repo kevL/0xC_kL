@@ -65,7 +65,7 @@ MiniBaseView::MiniBaseView(
 {
 	if (_mode == MBV_STANDARD)
 	{
-		_timer = new Timer(250);
+		_timer = new Timer(250u);
 		_timer->onTimer((SurfaceHandler)& MiniBaseView::blink);
 		_timer->start();
 	}

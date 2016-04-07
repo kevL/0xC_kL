@@ -66,7 +66,7 @@ ScrollBar::ScrollBar(
 	_thumbRect.w =
 	_thumbRect.h = 0;
 
-	_timer = new Timer(122);
+	_timer = new Timer(122u);
 	_timer->onTimer((SurfaceHandler)& ScrollBar::scroll);
 }
 

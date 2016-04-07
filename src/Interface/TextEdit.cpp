@@ -29,7 +29,7 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a blank text edit with the specified size and position.
+ * Sets up a blank TextEdit with the specified size and position.
  * @param state		- pointer to state this TextEdit belongs to
  * @param width		- width in pixels
  * @param height	- height in pixels
@@ -59,10 +59,10 @@ TextEdit::TextEdit(
 
 	_text = new Text(width, height);
 
-	_timer = new Timer(100);
+	_timer = new Timer(167u);
 	_timer->onTimer((SurfaceHandler)& TextEdit::blink);
 
-	_caret = new Text(17,17);
+	_caret = new Text(5,16);
 	_caret->setText(L"|");
 }
 
@@ -143,7 +143,7 @@ void TextEdit::setFocus(
 }
 
 /**
- * Changes this TextEdit to use the big-size font.
+ * Sets this TextEdit to use the big-sized Font.
  */
 void TextEdit::setBig()
 {
@@ -152,7 +152,7 @@ void TextEdit::setBig()
 }
 
 /**
- * Changes this TextEdit to use the small-size font.
+ * Sets this TextEdit to use the small-sized Font.
  */
 void TextEdit::setSmall()
 {
@@ -161,11 +161,11 @@ void TextEdit::setSmall()
 }
 
 /**
- * Changes the various fonts for this TextEdit to use.
- * The different fonts need to be passed in advance since the
- * text size can change mid-text.
- * @param big	- pointer to large-size font
- * @param small	- pointer to small-size font
+ * Sets the various Fonts for this TextEdit to use.
+ * @note The different fonts need to be passed in advance since the text-size
+ * can change mid-text.
+ * @param big	- pointer to large-sized font
+ * @param small	- pointer to small-sized font
  * @param lang	- pointer to current language
  */
 void TextEdit::initText(
@@ -178,8 +178,8 @@ void TextEdit::initText(
 }
 
 /**
- * Changes the string displayed on screen.
- * @param text - reference the text string
+ * Sets the string displayed on screen.
+ * @param text - reference the text-string
  */
 void TextEdit::setText(const std::wstring& text)
 {
@@ -189,8 +189,8 @@ void TextEdit::setText(const std::wstring& text)
 }
 
 /**
- * Returns the string displayed on screen.
- * @return, text string
+ * Gets the string displayed on screen.
+ * @return, text-string
  */
 std::wstring TextEdit::getText() const
 {
@@ -198,9 +198,9 @@ std::wstring TextEdit::getText() const
 }
 
 /**
- * Stores the previous string value (before editing) so that it can be retrieved
+ * Stores the previous string-value (before editing) so that it can be retrieved
  * if the editing operation is cancelled.
- * @param text - reference the text string
+ * @param text - reference the text-string
  */
 void TextEdit::storeText(const std::wstring& text)
 {
@@ -208,9 +208,9 @@ void TextEdit::storeText(const std::wstring& text)
 }
 
 /**
- * Gets the previous string value so that it can be reinstated if the editing
+ * Gets the previous string-value so that it can be reinstated if the editing
  * operation is cancelled.
- * @return, text string
+ * @return, text-string
  */
 std::wstring TextEdit::getStoredText() const
 {
@@ -218,9 +218,9 @@ std::wstring TextEdit::getStoredText() const
 }
 
 /**
- * Enables/disables text wordwrapping. When enabled, lines of
- * text are automatically split to ensure they stay within the
- * drawing area, otherwise they simply go off the edge.
+ * Enables/disables wordwrapping.
+ * @note The lines of text are automatically split to ensure they stay within
+ * the drawing area if enabled; otherwise they simply go off the edge.
  * @param wrap - wordwrapping setting (default true)
  */
 void TextEdit::setWordWrap(bool wrap)
@@ -229,8 +229,8 @@ void TextEdit::setWordWrap(bool wrap)
 }
 
 /**
- * Enables/disables color inverting. Mostly used to make
- * button text look pressed along with the button.
+ * Enables/disables color-inverting.
+ * @note Mostly used to make button-text look pressed along with the button.
  * @param invert - invert setting (default true)
  */
 void TextEdit::setInvert(bool invert)
@@ -240,7 +240,8 @@ void TextEdit::setInvert(bool invert)
 }
 
 /**
- * Enables/disables high contrast color. Mostly used for Battlescape text.
+ * Enables/disables high-contrast color.
+ * @note Mostly used for Battlescape text.
  * @param contrast - high contrast setting (default true)
  */
 void TextEdit::setHighContrast(bool contrast)
@@ -250,7 +251,7 @@ void TextEdit::setHighContrast(bool contrast)
 }
 
 /**
- * Changes the way the text is aligned horizontally relative to the drawing area.
+ * Sets the way the text is aligned horizontally relative to the drawing area.
  * @param align - horizontal alignment
  */
 void TextEdit::setAlign(TextHAlign align)
@@ -259,7 +260,7 @@ void TextEdit::setAlign(TextHAlign align)
 }
 
 /**
- * Changes the way the text is aligned vertically relative to the drawing area.
+ * Sets the way the text is aligned vertically relative to the drawing area.
  * @param valign - vertical alignment
  */
 void TextEdit::setVerticalAlign(TextVAlign valign)
@@ -277,7 +278,7 @@ void TextEdit::setNumerical(bool numerical)
 }
 
 /**
- * Changes the color used to render the text.
+ * Sets the color used to render the text.
  * @note Unlike regular graphics, fonts are greyscale so they need to be
  * assigned a specific position in the palette to be displayed.
  * @param color - color value
@@ -289,7 +290,7 @@ void TextEdit::setColor(Uint8 color)
 }
 
 /**
- * Returns the color used to render the text.
+ * Gets the color used to render the text.
  * @return, color value
  */
 Uint8 TextEdit::getColor() const
@@ -298,7 +299,7 @@ Uint8 TextEdit::getColor() const
 }
 
 /**
- * Changes the secondary color used to render the text.
+ * Sets the secondary color used to render the text.
  * @note The text switches between the primary and secondary color whenever
  * there's a 0x01 in the string.
  * @param color - color value
@@ -309,7 +310,7 @@ void TextEdit::setSecondaryColor(Uint8 color)
 }
 
 /**
- * Returns the secondary color used to render the text.
+ * Gets the secondary color used to render the text.
  * @return, color value
  */
 Uint8 TextEdit::getSecondaryColor() const
@@ -379,18 +380,18 @@ void TextEdit::draw()
 				default:
 				case ALIGN_LEFT:
 					x = 0;
-				break;
+					break;
 
 				case ALIGN_CENTER:
 					x = (_text->getWidth() - _text->getTextWidth()) / 2;
-				break;
+					break;
 
 				case ALIGN_RIGHT:
 					x = _text->getWidth() - _text->getTextWidth();
 			}
 
 			for (size_t
-					i = 0;
+					i = 0u;
 					i != _caretPlace;
 					++i)
 			{
@@ -412,7 +413,7 @@ void TextEdit::draw()
  */
 bool TextEdit::exceedsMaxWidth(wchar_t fontChar) // private.
 {
-	int width = 0;
+	int width (0);
 	std::wstring wst (_edit + fontChar);
 	for (std::wstring::const_iterator
 			i = wst.begin();
@@ -426,7 +427,7 @@ bool TextEdit::exceedsMaxWidth(wchar_t fontChar) // private.
 }
 
 /**
- * Focuses this TextEdit when it's pressed on; position caret otherwise.
+ * Focuses this TextEdit when it's pressed on; positions the caret otherwise.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -444,7 +445,7 @@ void TextEdit::mousePress(Action* action, State* state)
 			double pX (static_cast<double>(_text->getLineX(0) * scale));
 			if (mX > pX)
 			{
-				size_t caret = 0;
+				size_t caret (0);
 				for (std::wstring::const_iterator
 						i = _edit.begin();
 						i != _edit.end();
@@ -533,7 +534,7 @@ void TextEdit::keyboardPress(Action* action, State* state)
 				break;
 
 			default:
-				const Uint16 keyId = action->getDetails()->key.keysym.unicode;
+				const Uint16 keyId (action->getDetails()->key.keysym.unicode);
 				if (((_numerical == true
 							&& keyId >= L'0' && keyId <= L'9')
 						|| (_numerical == false

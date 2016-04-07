@@ -61,8 +61,8 @@ InteractiveSurface::~InteractiveSurface() // virtual
 {}
 
 /**
- *
- * @param btn - (default 0)
+ * Checks if a button has been pressed.
+ * @param btn - an SDL-button identifier (default 0)
  */
 bool InteractiveSurface::isButtonPressed(Uint8 btn) // virtual.
 {
@@ -73,8 +73,8 @@ bool InteractiveSurface::isButtonPressed(Uint8 btn) // virtual.
 }
 
 /**
- *
- * @param btn - (default 0)
+ * Checks if a button has been handled.
+ * @param btn - an SDL-button identifier (default 0)
  */
 bool InteractiveSurface::isButtonHandled(Uint8 btn) // virtual
 {
@@ -91,8 +91,8 @@ bool InteractiveSurface::isButtonHandled(Uint8 btn) // virtual
 }
 
 /**
- *
- * @param btn		-
+ * Sets a button as pressed.
+ * @param btn		- an SDL-button identifier
  * @param pressed	- true if pressed
  */
 void InteractiveSurface::setButtonPressed(

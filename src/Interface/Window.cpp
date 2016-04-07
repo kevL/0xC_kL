@@ -78,7 +78,7 @@ Window::Window(
 		_colorFill(0),
 		_popProgress(POP_START)
 {
-	_timer = new Timer(15);
+	_timer = new Timer(15u);
 	_timer->onTimer((SurfaceHandler)& Window::popup);
 
 	switch (_popType)

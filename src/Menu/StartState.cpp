@@ -127,8 +127,8 @@ StartState::StartState()
 					_font->getHeight(),
 					0,0);
 
-	_timer	= new Timer(1); // for HQ graphic filters
-//	_timer	= new Timer(9);
+	_timer	= new Timer(1u); // for HQ graphic filters
+//	_timer	= new Timer(9u);
 
 	setPalette(
 			_font->getSurface()->getPalette(),

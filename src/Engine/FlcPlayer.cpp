@@ -1059,7 +1059,7 @@ void FlcPlayer::waitForNextFrame(Uint32 delay)
 				decodeAudio(1);
 				currentTick = SDL_GetTicks();
 			}
-			SDL_Delay(1);
+			SDL_Delay(1u);
 			currentTick = SDL_GetTicks();
 		}
 	}
@@ -1067,7 +1067,7 @@ void FlcPlayer::waitForNextFrame(Uint32 delay)
 	{
 		while (currentTick < newTick)
 		{
-			SDL_Delay(1);
+			SDL_Delay(1u);
 			currentTick = SDL_GetTicks();
 		}
 	}

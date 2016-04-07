@@ -193,17 +193,18 @@ void TextButton::setHighContrast(bool contrast)
 void TextButton::setText(const std::wstring& text)
 {
 	_text->setText(text);
+	if (text == L"<") _text->setX(-1); // looks better shifted left a pixel.
 	_redraw = true;
 }
 
 /**
  * Returns the Text of the button-label.
  * @return, text-string
- */
+ *
 std::wstring TextButton::getText() const
 {
 	return _text->getText();
-}
+} */
 
 /**
  * Gets a pointer to the Text.
@@ -352,14 +353,18 @@ void TextButton::mousePress(Action* action, State* state)
 
 	if (isButtonHandled(action->getDetails()->button.button) == true)
 	{
-		if (_silent == false
-//			&& soundPress != nullptr
-//			&& _group == nullptr
-			&& action->getDetails()->button.button != SDL_BUTTON_WHEELUP
-			&& action->getDetails()->button.button != SDL_BUTTON_WHEELDOWN
-			&& (_comboBox == nullptr || _comboBox->getVisible() == true))
+		if (_silent == false)
 		{
-			soundPress->play(Mix_GroupAvailable(0));
+			switch (action->getDetails()->button.button)
+			{
+				case SDL_BUTTON_WHEELUP:
+				case SDL_BUTTON_WHEELDOWN:
+					break;
+
+				default:
+					if (_comboBox == nullptr || _comboBox->getVisible() == true) //&& soundPress != nullptr && _group == nullptr
+						soundPress->play(Mix_GroupAvailable(0));
+			}
 		}
 		draw();
 	}
