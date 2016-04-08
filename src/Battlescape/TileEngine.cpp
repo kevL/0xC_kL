@@ -6205,7 +6205,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 
 		if (action->actor->getOriginalFaction() == FACTION_PLAYER)
 			action->actor->addPsiSkillExp();
-		else if (victim->getOriginalFaction() == FACTION_PLAYER) //&& Options::allowPsiStrengthImprovement == true
+		else if (victim->getOriginalFaction() == FACTION_PLAYER) //&& Options::allowPsiStrengthImprovement
 			victim->addPsiStrengthExp();
 
 		const UnitStats
