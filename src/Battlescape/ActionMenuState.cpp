@@ -71,7 +71,7 @@ ActionMenuState::ActionMenuState(
 	setPalette(PAL_BATTLESCAPE);
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != MENU_ITEMS;
 			++i)
 	{
@@ -84,7 +84,7 @@ ActionMenuState::ActionMenuState(
 
 	// Build the popup menu
 	const RuleItem* const itRule (_action->weapon->getRules());
-	size_t id (0);
+	size_t id (0u);
 
 	const bool hasHands (_action->actor->getGeoscapeSoldier() != nullptr
 					  || _action->actor->getUnitRules()->hasHands() == true
@@ -331,7 +331,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 
 	size_t btnId (MENU_ITEMS);
 	for (size_t // find out which button was pressed
-			i = 0;
+			i = 0u;
 			i != MENU_ITEMS;
 			++i)
 	{

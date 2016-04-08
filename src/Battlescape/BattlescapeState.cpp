@@ -136,9 +136,9 @@ BattlescapeState::BattlescapeState()
 		_autosave(false)
 {
 	//Log(LOG_INFO) << "Create BattlescapeState";
-	STATE_INTERVAL_XCOM		= static_cast<Uint32>(Options::battleXcomSpeed);
-	STATE_INTERVAL_XCOMDASH	= BattlescapeState::STATE_INTERVAL_XCOM * 2u / 3u;
 	STATE_INTERVAL_ALIEN	= static_cast<Uint32>(Options::battleAlienSpeed);
+	STATE_INTERVAL_XCOM		= static_cast<Uint32>(Options::battleXcomSpeed);
+	STATE_INTERVAL_XCOMDASH	= STATE_INTERVAL_XCOM * 2u / 3u;
 
 	const int
 		screenWidth		(Options::baseXResolution),
@@ -163,8 +163,8 @@ BattlescapeState::BattlescapeState()
 								iconsHeight,
 								x,y);
 
-	// Create the battlemap view
-	// The actual map height is the total height minus the height of the buttonbar
+	// Create the battlefield view
+	// The actual map-height is the total height minus the height of the buttonbar
 	_map = new Map(
 				_game,
 				screenWidth,
@@ -453,8 +453,8 @@ BattlescapeState::BattlescapeState()
 
 	add(_srfBtnBorder);
 
-	_srfBtnBorder->drawRect(0,0, 32,24, 1);
-	_srfBtnBorder->drawRect(1,1, 30,22, 0);
+	_srfBtnBorder->drawRect(0,0, 32,24, WHITE);
+	_srfBtnBorder->drawRect(1,1, 30,22, TRANSP);
 	_srfBtnBorder->setVisible(false);
 
 //	add(_txtTooltip, "textTooltip", "battlescape", _icons);
@@ -858,7 +858,7 @@ BattlescapeState::BattlescapeState()
 	_btnOptions->onMouseClick((ActionHandler)& BattlescapeState::btnBattleOptionsClick);
 	_btnOptions->onKeyboardPress(
 					(ActionHandler)& BattlescapeState::btnBattleOptionsClick,
-					Options::keyBattleOptions);
+					Options::keyBattleOptions); // = keyCancel. [Escape]
 //	_btnOptions->setTooltip("STR_OPTIONS");
 //	_btnOptions->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
 //	_btnOptions->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
@@ -1001,7 +1001,7 @@ BattlescapeState::BattlescapeState()
 
 	const Uint8 color (static_cast<Uint8>(_rules->getInterface("battlescape")->getElement("visibleUnits")->color));
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != HOTSQRS;
 			++i)
 	{
@@ -1021,7 +1021,7 @@ BattlescapeState::BattlescapeState()
 	}
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != WOUNDED;
 			++i)
 	{
@@ -1559,7 +1559,7 @@ void BattlescapeState::mapIn(Action*)
 }
 
 /**
- * Takes care of any events from the core game engine.
+ * Takes care of any events from the core-engine.
  * @param action - pointer to an Action
  */
 inline void BattlescapeState::handle(Action* action)
@@ -1567,10 +1567,34 @@ inline void BattlescapeState::handle(Action* action)
 	if (_firstInit == true)
 		return;
 
-	if (_game->getCursor()->getVisible() == true
-		|| (action->getDetails()->button.button == SDL_BUTTON_RIGHT
-			&& (action->getDetails()->type == SDL_MOUSEBUTTONDOWN
-				|| action->getDetails()->type == SDL_MOUSEBUTTONUP)))
+	bool doit;
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_RIGHT: // ... not sure what all this is on about; but here's a refactor of that.
+			switch (action->getDetails()->type)
+			{
+				case SDL_MOUSEBUTTONDOWN:
+				case SDL_MOUSEBUTTONUP:
+					doit = true;
+					break;
+
+				default:
+					doit = false;
+			}
+			break;
+
+		default:
+			if (_game->getCursor()->getVisible() == true)
+				doit = true;
+			else
+				doit = false;
+	}
+
+	if (doit == true)
+//	if (_game->getCursor()->getVisible() == true
+//		|| (action->getDetails()->button.button == SDL_BUTTON_RIGHT
+//			&& (action->getDetails()->type == SDL_MOUSEBUTTONDOWN
+//				|| action->getDetails()->type == SDL_MOUSEBUTTONUP)))
 	{
 		State::handle(action);
 
@@ -1924,18 +1948,18 @@ void BattlescapeState::btnKneelClick(Action*)
  */
 void BattlescapeState::btnInventoryClick(Action*)
 {
-/*	if (_battleSave->getDebugTac() == true) // CHEAT For debugging.
-	{
-		for (std::vector<BattleUnit*>::const_iterator
-				i = _battleSave->getUnits()->begin();
-				i != _battleSave->getUnits()->end();
-				++i)
-		{
-			if ((*i)->getFaction() == _battleSave->getSide())
-				(*i)->prepUnit();
-			updateSoldierInfo();
-		}
-	} */
+//	if (_battleSave->getDebugTac() == true) // CHEAT For debugging.
+//	{
+//		for (std::vector<BattleUnit*>::const_iterator
+//				i = _battleSave->getUnits()->begin();
+//				i != _battleSave->getUnits()->end();
+//				++i)
+//		{
+//			if ((*i)->getFaction() == _battleSave->getSide())
+//				(*i)->prepUnit();
+//			updateSoldierInfo();
+//		}
+//	}
 
 	if (playableUnitSelected() == true)
 	{
@@ -2190,11 +2214,14 @@ void BattlescapeState::setLayerValue(int level)
 
 /**
  * Shows Options.
+ * @note Acts first as a Cancel button. whee, now I can stop soldiers walking
+ * precisely where I want: use [Esc].
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnBattleOptionsClick(Action*)
 {
-	if (allowButtons(true) == true)
+	if (allowButtons(true) == true
+		&& _battleGame->cancelTacticalAction() == false)
 	{
 		_overlay->getFrame(12)->blit(_btnOptions);
 		_game->pushState(new PauseState(OPT_BATTLESCAPE));
@@ -2571,8 +2598,8 @@ void BattlescapeState::btnPsiClick(Action* action)
 /**
  * Reserves time units.
  * @param action - pointer to an Action
- */
-/* void BattlescapeState::btnReserveClick(Action* action)
+ *
+void BattlescapeState::btnReserveClick(Action* action)
 {
 	if (allowButtons())
 	{
@@ -2595,12 +2622,11 @@ void BattlescapeState::btnPsiClick(Action* action)
 		}
 	}
 } */
-
 /**
  * Reserves time units for kneeling.
  * @param action - pointer to an Action
- */
-/* void BattlescapeState::btnReserveKneelClick(Action* action)
+ *
+void BattlescapeState::btnReserveKneelClick(Action* action)
 {
 	if (allowButtons())
 	{
@@ -2622,7 +2648,6 @@ void BattlescapeState::btnPsiClick(Action* action)
 		}
 	}
 } */
-
 /**
  * Reloads a weapon in hand.
  * @note Checks right hand then left.
@@ -2725,10 +2750,10 @@ void BattlescapeState::btnConsoleToggle(Action*)
 	}
 }
 
-/*
-* Shows a tooltip for the appropriate button.
-* @param action - pointer to an Action
-*
+/**
+ * Shows a tooltip for the appropriate button.
+ * @param action - pointer to an Action
+ *
 void BattlescapeState::txtTooltipIn(Action* action)
 {
 	if (allowButtons() && Options::battleTooltips)
@@ -2737,20 +2762,15 @@ void BattlescapeState::txtTooltipIn(Action* action)
 		_txtTooltip->setText(tr(_currentTooltip));
 	}
 } */
-
-/*
-* Clears the tooltip text.
-* @param action - pointer to an Action
-*
+/**
+ * Clears the tooltip text.
+ * @param action - pointer to an Action
+ *
 void BattlescapeState::txtTooltipOut(Action* action)
 {
 	if (allowButtons() && Options::battleTooltips)
-	{
 		if (_currentTooltip == action->getSender()->getTooltip())
-		{
 			_txtTooltip->setText(L"");
-		}
-	}
 } */
 
 /**

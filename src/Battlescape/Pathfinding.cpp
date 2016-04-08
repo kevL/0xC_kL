@@ -394,9 +394,9 @@ void Pathfinding::calculatePath(
 
 /**
  * Calculates the shortest path using Brensenham path algorithm.
- * @note This only works in the X/Y plane.
- * @param origin		- reference the Position to start from
- * @param target		- reference the Position to end at
+ * @note This only works in the x/y-plane.
+ * @param origin		- reference to the Position to start from
+ * @param target		- reference to the Position to end at
  * @param launchTarget	- pointer to targeted BattleUnit
  * @param sneak			- true if unit is sneaking
  * @return, true if a path is found
@@ -506,7 +506,7 @@ bool Pathfinding::bresenhamPath( // private.
 
 		if (x != x0 || y != y0 || z != z0)
 		{
-			Position posNextReal = Position(cx,cy,cz);
+			Position posNextReal (Position(cx,cy,cz));
 			posNext = posNextReal;
 
 			// get direction
@@ -529,11 +529,8 @@ bool Pathfinding::bresenhamPath( // private.
 										launchTarget));
 			//Log(LOG_INFO) << ". TU Cost = " << tuCost;
 
-			if (sneak == true
-				&& _battleSave->getTile(posNext)->getTileVisible())
-			{
+			if (sneak == true && _battleSave->getTile(posNext)->getTileVisible())
 				return false;
-			}
 
 			// delete the following
 			const bool isDiagonal (dir & 1);
@@ -593,8 +590,8 @@ bool Pathfinding::bresenhamPath( // private.
  * Calculates the shortest path using a simple A-Star algorithm.
  * @note The unit information and movement type must have already been set. The
  * path information is set only if a valid path is found. See also findReachable().
- * @param posOrigin		- reference the position to start from
- * @param posTarget		- reference the position to end at
+ * @param posOrigin		- reference to the position to start from
+ * @param posTarget		- reference to the position to end at
  * @param launchTarget	- pointer to targeted BattleUnit
  * @param maxTuCost		- maximum time units this path can cost
  * @param sneak			- true if the unit is sneaking
@@ -676,11 +673,8 @@ bool Pathfinding::aStarPath( // private.
 			//Log(LOG_INFO) << ". dir= " << dir << " tuCost=" << tuCost;
 			if (tuCost < FAIL)
 			{
-				if (sneak == true
-					&& _battleSave->getTile(posStop)->getTileVisible() == true)
-				{
+				if (sneak == true && _battleSave->getTile(posStop)->getTileVisible() == true)
 					tuCost *= 2;
-				}
 
 				nodeStop = getNode(posStop);
 				if (nodeStop->getChecked() == false)
@@ -1721,8 +1715,8 @@ bool Pathfinding::isBlocked( // private.
 bool Pathfinding::previewPath(bool discard)
 {
 	//Log(LOG_INFO) << "Pathfinding::previewPath()";
-	if (_path.empty() == true
-		|| (discard == false && _previewed == true))
+	if (_path.empty() == true							// <- no current path
+		|| (_previewed == true && discard == false))	// <- already previewed
 	{
 		return false;
 	}
@@ -1733,7 +1727,7 @@ bool Pathfinding::previewPath(bool discard)
 	if (discard == true)
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _battleSave->getMapSizeXYZ();
 				++i)
 		{
@@ -1884,7 +1878,7 @@ bool Pathfinding::previewPath(bool discard)
 }
 
 /**
- * Unmarks the tiles used for path preview.
+ * Unmarks the tiles used for path-preview.
  * @return, true if preview gets removed
  */
 bool Pathfinding::clearPreview()
@@ -1898,7 +1892,7 @@ bool Pathfinding::clearPreview()
 }
 
 /**
- * Gets the path preview setting.
+ * Gets the path-preview setting.
  * @return, true if path is previewed
  */
 bool Pathfinding::isPathPreviewed() const

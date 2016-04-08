@@ -59,7 +59,7 @@ TextEdit::TextEdit(
 
 	_text = new Text(width, height);
 
-	_timer = new Timer(167u);
+	_timer = new Timer(166u);
 	_timer->onTimer((SurfaceHandler)& TextEdit::blink);
 
 	_caret = new Text(5,16);

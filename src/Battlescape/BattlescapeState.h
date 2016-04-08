@@ -62,24 +62,25 @@ class BattlescapeState final
 
 private:
 	static const size_t
-		HOTSQRS			= 20,
-		WOUNDED			= 10,
-		TARGET_FRAMES	=  6,
-		PULSE_FRAMES	= 22;
+		HOTSQRS			= 20u,
+		WOUNDED			= 10u,
+		TARGET_FRAMES	=  6u,
+		PULSE_FRAMES	= 22u;
 
 	static const Uint8
-		WHITE		=   2,
-		ORANGE		=  16,
-		ORANGE_D	=  20,
-		RED			=  32,
-		RED_D		=  43,
-		GREEN		=  48,
-		GREEN_D		=  52,
-		BROWN_L		=  80,
-		BLUE		= 128,
-		YELLOW		= 144,
-		YELLOW_D	= 148,
-		BROWN		= 160;
+		TRANSP		=   0u,
+		WHITE		=   2u,
+		ORANGE		=  16u,
+		ORANGE_D	=  20u,
+		RED			=  32u,
+		RED_D		=  43u,
+		GREEN		=  48u,
+		GREEN_D		=  52u,
+		BROWN_L		=  80u,
+		BLUE		= 128u,
+		YELLOW		= 144u,
+		YELLOW_D	= 148u,
+		BROWN		= 160u;
 
 	bool
 		_autosave,

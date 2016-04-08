@@ -306,11 +306,11 @@ void State::handle(Action* action) // virtual
 	{
 		InteractiveSurface* srf;
 		for (std::vector<Surface*>::const_reverse_iterator
-				i = _surfaces.rbegin();
-				i != _surfaces.rend();
-				++i)
+				rit = _surfaces.rbegin();
+				rit != _surfaces.rend();
+				++rit)
 		{
-			if ((srf = dynamic_cast<InteractiveSurface*>(*i)) != nullptr)
+			if ((srf = dynamic_cast<InteractiveSurface*>(*rit)) != nullptr)
 				srf->handle(action, this);
 		}
 	}

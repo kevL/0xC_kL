@@ -2436,12 +2436,12 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 }
 
 /**
-  * Cancels the current action the Player has selected (firing, throwing, etc).
-  * @note The return is used only by BattlescapeState::mapClick() to check if
-  * pathPreview was cancelled or walking was aborted.
-  * @param force - force the action to be cancelled (default false)
-  * @return, true if anything was cancelled
-  */
+ * Cancels the current action the Player has selected (firing, throwing, etc).
+ * @note The return is used only by BattlescapeState::mapClick() to check if
+ * pathPreview was cancelled or walking was aborted.
+ * @param force - force the action to be cancelled (default false)
+ * @return, true if anything was cancelled
+ */
 bool BattlescapeGame::cancelTacticalAction(bool force)
 {
 	if (_battleSave->getPathfinding()->clearPreview() == false
@@ -2675,8 +2675,6 @@ void BattlescapeGame::primaryAction(const Position& pos)
 	}
 	else
 	{
-		bool allowPreview (Options::battlePreviewPath != PATH_NONE);
-
 		if (targetUnit != nullptr
 			&& targetUnit != _tacAction.actor
 			&& (targetUnit->getUnitVisible() == true || _debugPlay == true))
@@ -2694,6 +2692,8 @@ void BattlescapeGame::primaryAction(const Position& pos)
 		}
 		else if (playableUnitSelected() == true)
 		{
+			bool allowPreview (Options::battlePreviewPath != PATH_NONE);
+
 			Pathfinding* const pf (_battleSave->getPathfinding());
 			pf->setPathingUnit(_tacAction.actor);
 
