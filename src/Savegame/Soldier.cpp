@@ -546,39 +546,41 @@ bool Soldier::trainPsiDay()
 //		if (_currentStats.psiSkill >= _solRule->getStatCaps().psiSkill)	// hard cap. Note this auto-caps psiStrength also
 //			return false;												// REMOVED: Allow psi to train past cap in PsiLabs.
 
-		if (_currentStats.psiSkill == 0)
+		switch (_currentStats.psiSkill)
 		{
-			if (RNG::percent(PSI_PCT) == true)
-			{
-				ret = true;
-				int psiSkill (RNG::generate(
-										_solRule->getMinStats().psiSkill,
-										_solRule->getMaxStats().psiSkill));
-				if (psiSkill < 1) psiSkill = 1;
+			case 0:
+				if (RNG::percent(PSI_PCT) == true)
+				{
+					ret = true;
+					int psiSkill (RNG::generate(
+											_solRule->getMinStats().psiSkill,
+											_solRule->getMaxStats().psiSkill));
+					if (psiSkill < 1) psiSkill = 1;
 
-				_currentStats.psiSkill =
-				_initialStats.psiSkill = psiSkill;
-			}
-		}
-		else // Psi unlocked already.
-		{
-			int pct (std::max(1,
-							  500 / _currentStats.psiSkill));
-			if (RNG::percent(pct) == true)
-			{
-				ret = true;
-				++_currentStats.psiSkill;
-			}
+					_currentStats.psiSkill =
+					_initialStats.psiSkill = psiSkill;
+				}
+				break;
 
-			if (_currentStats.psiStrength < _solRule->getStatCaps().psiStrength)
-//				&& Options::allowPsiStrengthImprovement == true)
+			default: // Psi unlocked already.
 			{
-				pct = std::max(1,
-							   500 / _currentStats.psiStrength);
+				int pct (std::max(1,
+								  500 / _currentStats.psiSkill));
 				if (RNG::percent(pct) == true)
 				{
 					ret = true;
-					++_currentStats.psiStrength;
+					++_currentStats.psiSkill;
+				}
+
+				if (_currentStats.psiStrength < _solRule->getStatCaps().psiStrength) //&& Options::allowPsiStrengthImprovement == true)
+				{
+					pct = std::max(1,
+								   500 / _currentStats.psiStrength);
+					if (RNG::percent(pct) == true)
+					{
+						ret = true;
+						++_currentStats.psiStrength;
+					}
 				}
 			}
 		}

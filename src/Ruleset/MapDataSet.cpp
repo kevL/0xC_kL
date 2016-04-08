@@ -44,7 +44,7 @@ MapData
 /**
  * MapDataSet construction.
  * @note This is a tileset.
- * @param type - reference the type of the data
+ * @param type - reference to the type of the data
  * @param game - pointer to Game
  */
 MapDataSet::MapDataSet(
@@ -55,16 +55,13 @@ MapDataSet::MapDataSet(
 		_game(game),
 		_surfaceSet(nullptr),
 		_loaded(false)
-{
-	//Log(LOG_INFO) << "MapDataSet cTor " << _type;
-}
+{}
 
 /**
  * MapDataSet destruction.
  */
 MapDataSet::~MapDataSet()
 {
-	//Log(LOG_INFO) << "MapDataSet dTor " << _type;
 	unloadData();
 }
 
@@ -78,10 +75,7 @@ void MapDataSet::load(const YAML::Node& node)
 			i = node.begin();
 			i != node.end();
 			++i)
-	{
 		_type = i->as<std::string>(_type);
-		//Log(LOG_INFO) << "MapDataSet: load() " << _type;
-	}
 }
 
 /**
@@ -204,8 +198,8 @@ void MapDataSet::loadData()
 
 		// Set all the terrain-part properties:
 		for (size_t
-				i = 0;
-				i != 8; // sprite-frames (Battlescape tactical animations)
+				i = 0u;
+				i != 8u; // sprite-frames (Battlescape tactical animations)
 				++i)
 		{
 			to->setSprite(i, (int)mcd.Frame[i]);
@@ -250,8 +244,8 @@ void MapDataSet::loadData()
 		to->setMiniMapIndex(mcd.ScanG);
 
 		for (size_t
-				loft = 0;
-				loft != 12; // LoFT layers (each layer is doubled to give a total height of 24 voxels)
+				loft = 0u;
+				loft != 12u; // LoFT layers (each layer is doubled to give a total height of 24 voxels)
 				++loft)
 		{
 			to->setLoftId(
@@ -391,8 +385,8 @@ void MapDataSet::loadLoft( // static.
 }
 
 /**
- * Gets this part's blank-floor-part.
- * @return, pointer to a blank-part
+ * Gets this part's blank-floor part.
+ * @return, pointer to a blank-floor part
  */
 MapData* MapDataSet::getBlankFloorTile() // static.
 {
@@ -400,8 +394,8 @@ MapData* MapDataSet::getBlankFloorTile() // static.
 }
 
 /**
- * Gets this part's scorched-earth-part.
- * @return, pointer to scorched-earth-part
+ * Gets this part's scorched-earth part.
+ * @return, pointer to scorched-earth part
  */
 MapData* MapDataSet::getScorchedEarthTile() // static.
 {

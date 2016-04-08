@@ -77,18 +77,18 @@ private:
 		/// Gets the dataset-size.
 		size_t getSize() const;
 
-		/// Gets the parts in the MapDataSet.
+		/// Gets the parts/entries in the MapDataSet.
 		std::vector<MapData*>* getRecords();
 
 		/// Gets the Surfaces in the MapDataSet.
 		SurfaceSet* getSurfaceset() const;
 
-		/// Loads the objects from an MCD-file.
+		/// Loads the MCD-file.
 		void loadData();
-		///	Unloads the dataset to free-up RAM.
+		///	Unloads the MapDataSet to free-up RAM.
 		void unloadData();
 
-		/// Loads LoFT-voxel-data from a DAT file.
+		/// Loads LoFT-voxel data from a DAT file.
 		static void loadLoft(
 				const std::string& file,
 				std::vector<Uint16>* const voxelData);

@@ -117,18 +117,17 @@ struct MissionStatistics
 		injuryList	= node["injuryList"]	.as<std::map<int,int>>(injuryList);
 		valiantCrux	= node["valiantCrux"]	.as<bool>(valiantCrux);
 
-		// TEST:
-		for (std::map<int,int>::const_iterator
-				i = injuryList.begin();
-				i != injuryList.end();
-				)
-		{
-			if (i->second == 0)
-				i = injuryList.erase(i);
-			else
-				++i;
-		}
-		// end_TEST.
+		// TEST: Use this to remove soldier-IDs w/ 0 injury-days from the '_injuryList'.
+//		for (std::map<int,int>::const_iterator
+//				i = injuryList.begin();
+//				i != injuryList.end();
+//				)
+//		{
+//			if (i->second == 0)
+//				i = injuryList.erase(i);
+//			else
+//				++i;
+//		} // end_TEST.
 	}
 
 	/// Saves a MissionStatistics node to YAML.

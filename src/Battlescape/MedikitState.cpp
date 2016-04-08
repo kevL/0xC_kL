@@ -234,7 +234,7 @@ MedikitState::MedikitState(BattleAction* action)
 
 	add(_bg);
 
-	std::wstring wst = tr("STR_PAIN_KILLER");
+	std::wstring wst (tr("STR_PAIN_KILLER"));
 	add(new MedikitTitle( 36, wst), "textPK",	"medikit", _bg); // not in Interfaces.rul
 	wst = tr("STR_STIMULANT");
 	add(new MedikitTitle( 72, wst), "textStim",	"medikit", _bg); // not in Interfaces.rul
@@ -331,7 +331,7 @@ void MedikitState::closeClick(Action*)
  */
 void MedikitState::healClick(Action*)
 {
-	const int healQty = _action->weapon->getHealQuantity();
+	const int healQty (_action->weapon->getHealQuantity());
 	if (healQty != 0)
 	{
 		if (_action->targetUnit->getOriginalFaction() != FACTION_HOSTILE)
@@ -341,7 +341,7 @@ void MedikitState::healClick(Action*)
 				++_action->actor->getStatistics()->medikitApplications;
 
 				_action->weapon->setHealQuantity(healQty - 1);
-				const RuleItem* const itRule = _action->weapon->getRules();
+				const RuleItem* const itRule (_action->weapon->getRules());
 				_action->targetUnit->heal(
 										_mediView->getSelectedPart(),
 										itRule->getWoundRecovery(),
@@ -379,7 +379,7 @@ void MedikitState::healClick(Action*)
  */
 void MedikitState::stimClick(Action*)
 {
-	const int stimQty = _action->weapon->getStimulantQuantity();
+	const int stimQty (_action->weapon->getStimulantQuantity());
 	if (stimQty != 0)
 	{
 		if (_action->targetUnit->getOriginalFaction() != FACTION_HOSTILE)
@@ -389,15 +389,15 @@ void MedikitState::stimClick(Action*)
 				++_action->actor->getStatistics()->medikitApplications;
 
 				_action->weapon->setStimulantQuantity(stimQty - 1);
-				const RuleItem* const itRule = _action->weapon->getRules();
-				if (_action->targetUnit->amphetamine( // if the unit has revived quit this screen automatically
+				const RuleItem* const itRule (_action->weapon->getRules());
+				if (_action->targetUnit->amphetamine(
 												itRule->getEnergyRecovery(),
 												itRule->getStunRecovery()) == true)
 				{
 					if (_action->targetUnit->getFatalWounds() != 0)
 						++_action->actor->getStatistics()->revivedSoldier;
 
-					closeClick(nullptr);
+					closeClick(nullptr); // if the unit has revived quit this screen automatically
 				}
 				else
 					update();
@@ -423,7 +423,7 @@ void MedikitState::stimClick(Action*)
  */
 void MedikitState::painClick(Action*)
 {
-	const int painQty = _action->weapon->getPainKillerQuantity();
+	const int painQty (_action->weapon->getPainKillerQuantity());
 	if (painQty != 0)
 	{
 		if (_action->targetUnit->getOriginalFaction() != FACTION_HOSTILE)
@@ -442,7 +442,7 @@ void MedikitState::painClick(Action*)
 					_action->targetUnit->setFaction(FACTION_PLAYER);
 					_action->targetUnit->prepTu();
 
-					SavedBattleGame* const battleSave = _game->getSavedGame()->getBattleSave();
+					SavedBattleGame* const battleSave (_game->getSavedGame()->getBattleSave());
 
 					battleSave->setSelectedUnit(_action->targetUnit);
 					battleSave->getBattleState()->updateSoldierInfo();
@@ -481,8 +481,8 @@ void MedikitState::update()
 	_txtHeal->setText(toString(_action->weapon->getHealQuantity()));
 
 	// Health/ Stamina/ Morale of the recipient
-	double stat = static_cast<double>(_action->targetUnit->getBattleStats()->health);
-	const int health = _action->targetUnit->getHealth();
+	double stat (static_cast<double>(_action->targetUnit->getBattleStats()->health));
+	const int health (_action->targetUnit->getHealth());
 	_numHealth->setValue(static_cast<unsigned>(health));
 	_numStun->setValue(static_cast<unsigned>(_action->targetUnit->getStun()));
 	_barHealth->setValue(std::ceil(
@@ -491,18 +491,18 @@ void MedikitState::update()
 							static_cast<double>(_action->targetUnit->getStun()) / stat * 100.));
 
 	stat = static_cast<double>(_action->targetUnit->getBattleStats()->stamina);
-	const int energy = _action->targetUnit->getEnergy();
+	const int energy (_action->targetUnit->getEnergy());
 	_numEnergy->setValue(static_cast<unsigned>(energy));
 	_barEnergy->setValue(std::ceil(
 							static_cast<double>(energy) / stat * 100.));
 
-	const int morale = _action->targetUnit->getMorale();
+	const int morale (_action->targetUnit->getMorale());
 	_numMorale->setValue(static_cast<unsigned>(morale));
 	_barMorale->setValue(static_cast<double>(morale));
 
-	// TU of the MedKit user
+	// TU of the Medikit user
 	stat = static_cast<double>(_action->actor->getBattleStats()->tu);
-	const int tu = _action->actor->getTimeUnits();
+	const int tu (_action->actor->getTimeUnits());
 	_numTimeUnits->setValue(static_cast<unsigned>(tu));
 	_barTimeUnits->setValue(std::ceil(
 							static_cast<double>(tu) / stat * 100.));

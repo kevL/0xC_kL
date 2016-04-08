@@ -6205,11 +6205,8 @@ bool TileEngine::psiAttack(BattleAction* const action)
 
 		if (action->actor->getOriginalFaction() == FACTION_PLAYER)
 			action->actor->addPsiSkillExp();
-		else if (victim->getOriginalFaction() == FACTION_PLAYER)
-//			&& Options::allowPsiStrengthImprovement == true)
-		{
+		else if (victim->getOriginalFaction() == FACTION_PLAYER) //&& Options::allowPsiStrengthImprovement == true
 			victim->addPsiStrengthExp();
-		}
 
 		const UnitStats
 			* const statsActor (action->actor->getBattleStats()),
@@ -6370,7 +6367,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 											courage = -10;
 											break;
 										} // no break;
-									case FACTION_PLAYER: // xCom and civies' Moral gain for getting Mc'd back to xCom.
+									case FACTION_PLAYER: // xCom and civies' Morale gain for getting Mc'd back to xCom.
 									{
 										courage /= 2;
 										victim->setExposed(-1);	// bonus Exposure removal.
@@ -6396,7 +6393,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 						calculateUnitLighting();
 						calcFovPos(
 								victim->getPosition(),
-								true, false); // try no tile-reveal.
+								true); // try no tile-reveal. Nope: Do Tile-reveal.
 
 						// if all units from either faction are mind controlled - auto-end the mission.
 //						if (Options::battleAllowPsionicCapture == true && Options::battleAutoEnd == true && _battleSave->getSide() == FACTION_PLAYER)
@@ -6444,7 +6441,6 @@ bool TileEngine::psiAttack(BattleAction* const action)
 				case BA_PSICONTROL:
 					info = "STR_CONTROL_";
 			}
-
 			//Log(LOG_INFO) << "te:psiAttack() success = " << success;
 			_battleSave->getBattleState()->warning(info, true, success);
 
