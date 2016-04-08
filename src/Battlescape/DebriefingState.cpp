@@ -1962,15 +1962,15 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 
 /**
  * Recovers a live aLien from the battlefield.
- * @param unit - pointer to a BattleUnit to recover the corpse of
+ * @param unit - pointer to a BattleUnit to recover
  */
-void DebriefingState::recoverLiveAlien(BattleUnit* const unit) // private.
+void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
 {
 //	std::string type;
 //	if ((*i)->getSpawnType().empty() == false)	// btw. This should never happen.
 //		type = (*i)->getSpawnType();			// Zombies can't be MC'd basically. Can't be stunned either.
 //	else										// And Soldiers should spawn into zombies ~immediately.
-//		type = (*i)->getType();					// Plus aLiens can't be zombified.
+//		type = (*i)->getType();					// Plus aLiens can't be zombified and zombies blow up if burned to death.
 
 //	if (unit->getSpawnType().empty() == false) // DON'T USE THIS IT CAN BREAK THE ITERATOR.
 //	{

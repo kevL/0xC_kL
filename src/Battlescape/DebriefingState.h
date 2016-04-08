@@ -169,7 +169,7 @@ private:
 	/// Recovers items from tactical.
 	void recoverItems(std::vector<BattleItem*>* const battleItems);
 	/// Recovers an aLien from the battlefield.
-	void recoverLiveAlien(BattleUnit* const unit);
+	void recoverLiveAlien(const BattleUnit* const unit);
 	/// Reequips a Craft after tactical.
 	void reequipCraft(Craft* const craft);
 

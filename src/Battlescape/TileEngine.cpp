@@ -511,7 +511,26 @@ bool TileEngine::calcFov(
 									}
 								}
 
-								if ((unit->getFaction() == FACTION_PLAYER
+								switch (unit->getFaction())
+								{
+									default:
+									case FACTION_NEUTRAL:
+										break;
+
+									case FACTION_PLAYER:
+										if (spottedUnit->getFaction() == FACTION_HOSTILE)
+											unit->addToHostileUnits(spottedUnit);
+										break;
+
+									case FACTION_HOSTILE:
+										if (spottedUnit->getFaction() != FACTION_HOSTILE)
+										{
+											unit->addToHostileUnits(spottedUnit);
+											if (_battleSave->getSide() == FACTION_HOSTILE)
+												spottedUnit->setExposed();
+										}
+								}
+/*								if ((unit->getFaction() == FACTION_PLAYER
 										&& spottedUnit->getFaction() == FACTION_HOSTILE)
 									|| (unit->getFaction() == FACTION_HOSTILE
 										&& spottedUnit->getFaction() != FACTION_HOSTILE))
@@ -527,7 +546,7 @@ bool TileEngine::calcFov(
 										spottedUnit->setExposed();	// note that xCom agents can be seen by enemies but *not* become Exposed.
 																	// Only potential reactionFire should set them Exposed during xCom's turn.
 									}
-								}
+								} */
 							}
 						}
 
