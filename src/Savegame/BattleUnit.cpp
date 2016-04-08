@@ -74,7 +74,7 @@ BattleUnit::BattleUnit(
 		_unitRule(nullptr),
 		_faction(FACTION_PLAYER),
 		_originalFaction(FACTION_PLAYER),
-		_killedBy(FACTION_NONE), // was, FACTION_PLAYER
+		_killerFaction(FACTION_NONE),
 		_murdererId(0),
 		_battleGame(nullptr),
 		_turretType(TRT_NONE),
@@ -245,7 +245,7 @@ BattleUnit::BattleUnit(
 		_id(id),
 		_faction(faction),
 		_originalFaction(faction),
-		_killedBy(FACTION_NONE),
+		_killerFaction(FACTION_NONE),
 		_murdererId(0),
 		_armor(armor),
 		_battleGame(battleGame),
@@ -452,13 +452,13 @@ BattleUnit::~BattleUnit()
  */
 void BattleUnit::load(const YAML::Node& node)
 {
-	_status					= static_cast<UnitStatus>(node["status"]	.as<int>(_status));
-	_killedBy				= static_cast<UnitFaction>(node["killedBy"]	.as<int>(_killedBy));
-	_faction				= static_cast<UnitFaction>(node["faction"]	.as<int>(_faction));
+	_status			= static_cast<UnitStatus>(node["status"]		.as<int>(_status));
+	_killerFaction	= static_cast<UnitFaction>(node["killerFaction"].as<int>(_killerFaction));
+	_faction		= static_cast<UnitFaction>(node["faction"]		.as<int>(_faction));
 	if (node["originalFaction"])
-		_originalFaction	= static_cast<UnitFaction>(node["originalFaction"].as<int>());
+		_originalFaction = static_cast<UnitFaction>(node["originalFaction"].as<int>());
 	else
-		_originalFaction	= _faction;
+		_originalFaction = _faction;
 
 	_id					= node["id"]					.as<int>(_id);
 	_pos				= node["position"]				.as<Position>(_pos);
@@ -493,7 +493,7 @@ void BattleUnit::load(const YAML::Node& node)
 	_activeHand = static_cast<ActiveHand>(node["activeHand"].as<int>(_activeHand));
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != PARTS_ARMOR;
 			++i)
 	{
@@ -505,7 +505,7 @@ void BattleUnit::load(const YAML::Node& node)
 		if (node["fatalWounds"])
 		{
 			for (size_t
-					i = 0;
+					i = 0u;
 					i != PARTS_BODY;
 					++i)
 			{
@@ -532,7 +532,7 @@ void BattleUnit::load(const YAML::Node& node)
 	{
 		const std::vector<int> spotted (node["spottedUnits"].as<std::vector<int>>());
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != spotted.size();
 				++i)
 		{
@@ -542,12 +542,12 @@ void BattleUnit::load(const YAML::Node& node)
 	// Convert those (int)id's into pointers to BattleUnits during
 	// SavedBattleGame loading *after* all BattleUnits have loaded.
 
-/*	if (const YAML::Node& p = node["recolor"])
-	{
-		_recolor.clear();
-		for (size_t i = 0; i != p.size(); ++i)
-			_recolor.push_back(std::make_pair(p[i][0].as<uint8_t>(), p[i][1].as<uint8_t>()));
-	} */
+//	if (const YAML::Node& p = node["recolor"])
+//	{
+//		_recolor.clear();
+//		for (size_t i = 0; i != p.size(); ++i)
+//			_recolor.push_back(std::make_pair(p[i][0].as<uint8_t>(), p[i][1].as<uint8_t>()));
+//	}
 }
 
 /**
@@ -557,7 +557,7 @@ void BattleUnit::load(const YAML::Node& node)
 void BattleUnit::loadSpotted(SavedBattleGame* const battleSave)
 {
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _spotted.size();
 			++i)
 	{
@@ -615,17 +615,17 @@ YAML::Node BattleUnit::save() const
 	node["turnsExposed"]	= _turnsExposed;
 	node["rankInt"]			= _rankInt;
 
-	if (_morale != 100)				node["morale"]			= _morale;
-	if (_floating == true)			node["floating"]		= _floating;
-	if (_fire != 0)					node["fire"]			= _fire;
-	if (_turretType != TRT_NONE)	node["turretType"]		= static_cast<int>(_turretType); // TODO: use unitRule to get turretType.
-	if (_visible == true)			node["visible"]			= _visible;
-	if (_killedBy != FACTION_NONE)	node["killedBy"]		= static_cast<int>(_killedBy);
-	if (_motionPoints != 0)			node["motionPoints"]	= _motionPoints;
-	if (_kills != 0)				node["kills"]			= _kills;
-	if (_drugDose != 0)				node["drugDose"]		= _drugDose;
-	if (_murdererId != 0)			node["murdererId"]		= _murdererId;
-	if (_hasBeenStunned == true)	node["beenStunned"]		= _hasBeenStunned;
+	if (_morale != 100)					node["morale"]			= _morale;
+	if (_floating == true)				node["floating"]		= _floating;
+	if (_fire != 0)						node["fire"]			= _fire;
+	if (_turretType != TRT_NONE)		node["turretType"]		= static_cast<int>(_turretType); // TODO: use unitRule to get turretType.
+	if (_visible == true)				node["visible"]			= _visible;
+	if (_killerFaction != FACTION_NONE)	node["killerFaction"]	= static_cast<int>(_killerFaction);
+	if (_motionPoints != 0)				node["motionPoints"]	= _motionPoints;
+	if (_kills != 0)					node["kills"]			= _kills;
+	if (_drugDose != 0)					node["drugDose"]		= _drugDose;
+	if (_murdererId != 0)				node["murdererId"]		= _murdererId;
+	if (_hasBeenStunned == true)		node["beenStunned"]		= _hasBeenStunned;
 
 	node["activeHand"] = static_cast<int>(_activeHand);
 
@@ -644,7 +644,7 @@ YAML::Node BattleUnit::save() const
 		node["spawnType"] = _spawnType;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != PARTS_ARMOR;
 			++i)
 	{
@@ -654,7 +654,7 @@ YAML::Node BattleUnit::save() const
 	if (_geoscapeSoldier != nullptr)
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != PARTS_BODY;
 				++i)
 		{
@@ -690,7 +690,7 @@ YAML::Node BattleUnit::save() const
 		&& isOut_t(OUT_STAT) == false)
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _hostileUnitsThisTurn.size();
 				++i)
 		{
@@ -737,7 +737,7 @@ void BattleUnit::setRecolor(
 	};
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != GROUPS;
 			++i)
 	{
@@ -3966,8 +3966,8 @@ bool BattleUnit::hasFirstKill() const
 }
 
 /**
- * Gets if this BattleUnit is in the awkward phase between getting killed or stunned
- * and the end of its collapse-sequence.
+ * Gets if this BattleUnit is in the awkward phase between getting killed or
+ * stunned and the end of its collapse-sequence.
  * @return, true if about to die
  */
 bool BattleUnit::getAboutToCollapse() const
@@ -4009,7 +4009,8 @@ void BattleUnit::putDown()
 	_hasBeenStunned = true;
 	_energy = 0;
 
-	_aboutToFall = false;
+	_kneeled = // don't get hunkerdown bonus against HE detonations
+	_aboutToFall =
 	_hasCried = false;
 
 	_hostileUnits.clear();
@@ -4051,7 +4052,6 @@ void BattleUnit::putDown()
 
 
 	_faction = _originalFaction;
-	_kneeled = false;	// don't get hunkerdown bonus against HE detonations
 
 	if (_spawnType.empty() == true) // else convertUnit() will take care of it.
 		_visible = false;
@@ -4084,20 +4084,20 @@ int BattleUnit::getAggroSound() const
 
 /**
  * Gets the faction this BattleUnit was killed by.
- * @return, UnitFaction
+ * @return, UnitFaction (BattleUnit.h)
  */
-UnitFaction BattleUnit::killedBy() const
+UnitFaction BattleUnit::killerFaction() const
 {
-	return _killedBy;
+	return _killerFaction;
 }
 
 /**
  * Sets the faction this BattleUnit was killed by.
- * @param faction - UnitFaction
+ * @param faction - UnitFaction (BattleUnit.h)
  */
-void BattleUnit::killedBy(UnitFaction faction)
+void BattleUnit::killerFaction(UnitFaction faction)
 {
-	_killedBy = faction;
+	_killerFaction = faction;
 }
 
 /**
@@ -4119,14 +4119,13 @@ BattleUnit* BattleUnit::getChargeTarget() const
 }
 
 /**
- * Gets this BattleUnit's carried weight in strength units.
+ * Gets this BattleUnit's carried weight in strength-units.
  * @param dragItem - item to ignore
  * @return, weight
  */
 int BattleUnit::getCarriedWeight(const BattleItem* const dragItem) const
 {
-	int weight = _armor->getWeight();
-
+	int weight (_armor->getWeight());
 	for (std::vector<BattleItem*>::const_iterator
 			i = _inventory.begin();
 			i != _inventory.end();
@@ -4135,15 +4134,10 @@ int BattleUnit::getCarriedWeight(const BattleItem* const dragItem) const
 		if (*i != dragItem)
 		{
 			weight += (*i)->getRules()->getWeight();
-
-			if ((*i)->getAmmoItem() != nullptr
-				&& (*i)->getAmmoItem() != *i)
-			{
+			if ((*i)->getAmmoItem() != nullptr && (*i)->getAmmoItem() != *i)
 				weight += (*i)->getAmmoItem()->getRules()->getWeight();
-			}
 		}
 	}
-
 	return std::max(0, weight);
 }
 
@@ -4173,7 +4167,7 @@ int BattleUnit::getExposed() const
 void BattleUnit::invalidateCache()
 {
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != PARTS_ARMOR;
 			++i)
 	{
@@ -4216,12 +4210,6 @@ void BattleUnit::deriveRank()
 		case RANK_COLONEL:		_rankInt = 4; break;
 		case RANK_COMMANDER:	_rankInt = 5;
 	}
-/*	if		(_rank == "STR_COMMANDER")	_rankInt = 5;
-	else if (_rank == "STR_COLONEL")	_rankInt = 4;
-	else if (_rank == "STR_CAPTAIN")	_rankInt = 3;
-	else if (_rank == "STR_SERGEANT")	_rankInt = 2;
-	else if (_rank == "STR_SQUADDIE")	_rankInt = 1;
-	else if (_rank == "STR_ROOKIE")		_rankInt = 0; */
 }
 
 /**
@@ -4297,7 +4285,7 @@ void BattleUnit::adjustStats(
 		_stats.firing /= 2;
 
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != PARTS_ARMOR;
 				++i)
 		{
@@ -4352,7 +4340,7 @@ int BattleUnit::getCoverReserve() const
 }
 
 /**
- * Initializes a death spin.
+ * Initializes a death-spin.
  */
 void BattleUnit::initDeathSpin()
 {
@@ -4362,7 +4350,7 @@ void BattleUnit::initDeathSpin()
 }
 
 /**
- * Continues a death spin.
+ * Continues a death-spin.
  * _spinPhases:
  *				-1 = no spin
  *				 0 = start spin

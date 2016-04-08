@@ -1162,8 +1162,8 @@ void Tile::hitTileInventory(SavedBattleGame* const battleSave)
 							{
 								//Log(LOG_INFO) << ". . . dead";
 								unit->instaKill();
-								unit->killedBy(unit->getFaction()); // killed by self ....
-								//Log(LOG_INFO) << "Tile::hitTileInventory() " << unit->getId() << " killedBy = " << (int)unit->getFaction();
+								unit->killerFaction(unit->getFaction()); // killed by self ....
+								//Log(LOG_INFO) << "Tile::hitTileInventory() " << unit->getId() << " killedByFaction = " << (int)unit->getFaction();
 							}
 						}
 

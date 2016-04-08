@@ -1654,8 +1654,8 @@ void BattlescapeGame::checkCasualties(
 					// attacker's Morale Bonus & diary ->
 					if (attacker != nullptr)
 					{
-						defender->killedBy(attacker->getFaction()); // used in DebriefingState.
-						//Log(LOG_INFO) << "BSG::checkCasualties() " << defender->getId() << " killedBy = " << (int)attacker->getFaction();
+						defender->killerFaction(attacker->getFaction()); // used in DebriefingState.
+						//Log(LOG_INFO) << "BSG::checkCasualties() " << defender->getId() << " killedByFaction = " << (int)attacker->getFaction();
 
 						if (attacker->getGeoscapeSoldier() != nullptr)
 						{
@@ -1749,6 +1749,8 @@ void BattlescapeGame::checkCasualties(
 							break;
 
 						default:
+						case FACTION_PLAYER:
+						case FACTION_NEUTRAL:
 							aTeam = _battleSave->getMoraleModifier(nullptr, false);
 							bTeam = _battleSave->getMoraleModifier();
 					}

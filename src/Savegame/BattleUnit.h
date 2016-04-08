@@ -208,7 +208,7 @@ private:
 	UnitFaction
 		_faction,
 		_originalFaction,
-		_killedBy;
+		_killerFaction;
 	UnitStatus _status;
 	ActiveHand _activeHand;
 
@@ -751,9 +751,9 @@ private:
 		void setSpawnUnit(const std::string& spawnType);
 
 		/// Gets the faction that killed the BattleUnit.
-		UnitFaction killedBy() const;
+		UnitFaction killerFaction() const;
 		/// Sets the faction that killed the BattleUnit.
-		void killedBy(UnitFaction faction);
+		void killerFaction(UnitFaction faction);
 
 		/// Sets the BattleUnits that the BattleUnit is charging towards.
 		void setChargeTarget(BattleUnit* const chargeTarget = nullptr);

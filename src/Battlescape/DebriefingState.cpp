@@ -1117,7 +1117,7 @@ void DebriefingState::prepareDebriefing() // private.
 				switch (orgFaction)
 				{
 					case FACTION_HOSTILE:
-						if ((*i)->killedBy() == FACTION_PLAYER)
+						if ((*i)->killerFaction() == FACTION_PLAYER)
 						{
 							//Log(LOG_INFO) << ". . killed by xCom";
 							addStat(
@@ -1182,7 +1182,7 @@ void DebriefingState::prepareDebriefing() // private.
 					}
 
 					case FACTION_NEUTRAL:
-						if ((*i)->killedBy() == FACTION_PLAYER)
+						if ((*i)->killerFaction() == FACTION_PLAYER)
 							addStat(
 								"STR_CIVILIANS_KILLED_BY_XCOM_OPERATIVES",
 								-(value * 2));

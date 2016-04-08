@@ -2123,7 +2123,7 @@ void TileEngine::hit(
 						&& (antecedentWounds < targetUnit->getFatalWounds()
 							|| targetUnit->isOut_t(OUT_HEALTH) == true)) // .. just do this here and bDone with it. Regularly done in BattlescapeGame::checkCasualties()
 					{
-						targetUnit->killedBy(attacker->getFaction());
+						targetUnit->killerFaction(attacker->getFaction());
 					}
 					// kL_note: Not so sure that's been setup right (cf. other kill-credit code as well as DebriefingState)
 					// I mean, shouldn't that be checking that the thing actually DIES?
@@ -2571,8 +2571,8 @@ void TileEngine::explode(
 //												bu->instaKill(); // TODO: Log the kill in Soldier's Diary.
 												if (attacker != nullptr)
 												{
-													bu->killedBy(attacker->getFaction());
-													//Log(LOG_INFO) << "TE::explode() " << bu->getId() << " killedBy = " << (int)attacker->getFaction();
+													bu->killerFaction(attacker->getFaction());
+													//Log(LOG_INFO) << "TE::explode() " << bu->getId() << " killedByFaction = " << (int)attacker->getFaction();
 												}
 
 												if (bu->getGeoscapeSoldier() != nullptr // send Death notice.
@@ -2755,8 +2755,8 @@ void TileEngine::explode(
 //												bu->instaKill(); // TODO: Log the kill in Soldier's Diary.
 												if (attacker != nullptr)
 												{
-													bu->killedBy(attacker->getFaction());
-													//Log(LOG_INFO) << "TE::explode() " << bu->getId() << " killedBy = " << (int)attacker->getFaction();
+													bu->killerFaction(attacker->getFaction());
+													//Log(LOG_INFO) << "TE::explode() " << bu->getId() << " killedByFaction = " << (int)attacker->getFaction();
 												}
 
 												if (bu->getGeoscapeSoldier() != nullptr // send Death notice.
@@ -2811,8 +2811,8 @@ void TileEngine::explode(
 							if (targetUnit->isOut_t(OUT_HEALTH) == true
 								|| wounds < targetUnit->getFatalWounds())
 							{
-								targetUnit->killedBy(attacker->getFaction()); // kL .. just do this here and bDone with it. Normally done in BattlescapeGame::checkCasualties()
-								//Log(LOG_INFO) << "TE::explode() " << targetUnit->getId() << " killedBy = " << (int)attacker->getFaction();
+								targetUnit->killerFaction(attacker->getFaction()); // kL .. just do this here and bDone with it. Normally done in BattlescapeGame::checkCasualties()
+								//Log(LOG_INFO) << "TE::explode() " << targetUnit->getId() << " killedByFaction = " << (int)attacker->getFaction();
 							}
 
 							if (takenXp == false
