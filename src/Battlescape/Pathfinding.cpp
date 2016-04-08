@@ -1883,12 +1883,12 @@ bool Pathfinding::previewPath(bool discard)
  */
 bool Pathfinding::clearPreview()
 {
-	if (_previewed == true)
+	if (_previewed == true)	// something smells ...
 	{
-		previewPath(true);
+		previewPath(true);	// ... redundant here
 		return true;
 	}
-	return false;
+	return false;			// Ie. is this function any different than "return previewPath(true)"
 }
 
 /**

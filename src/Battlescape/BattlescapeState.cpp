@@ -2214,8 +2214,8 @@ void BattlescapeState::setLayerValue(int level)
 
 /**
  * Shows Options.
- * @note Acts first as a Cancel button. whee, now I can stop soldiers walking
- * precisely where I want: use [Esc].
+ * @note Acts first as a Cancel button. whee, now I can cancel unit-walk
+ * precisely where I want: use [Escape].
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnBattleOptionsClick(Action*)

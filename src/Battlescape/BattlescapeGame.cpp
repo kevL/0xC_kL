@@ -2437,8 +2437,10 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 
 /**
  * Cancels the current action the Player has selected (firing, throwing, etc).
- * @note The return is used only by BattlescapeState::mapClick() to check if
- * pathPreview was cancelled or walking was aborted.
+ * @note The return is used by BattlescapeState::mapClick() to check if
+ * pathPreview was cancelled or walking was aborted and by
+ * BattlescapeState::btnBattleOptionsClick() to let the Esc-key remove
+ * pathPreview or cancel walking/targeting.
  * @param force - force the action to be cancelled (default false)
  * @return, true if anything was cancelled
  */
