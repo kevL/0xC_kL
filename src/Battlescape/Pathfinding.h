@@ -82,15 +82,15 @@ private:
 	bool bresenhamPath(
 			const Position& origin,
 			const Position& target,
-			const BattleUnit* const launchTarget,
-			bool sneak);
+			const BattleUnit* const launchTarget);
+//			bool sneak);
 	/// Tries to find a path between two positions.
 	bool aStarPath(
 			const Position& posOrigin,
 			const Position& posTarget,
 			const BattleUnit* const launchTarget,
-			int maxTuCost,
-			bool sneak);
+			int maxTuCost);
+//			bool sneak);
 
 	/// Gets the (Pathfinding) node at a (tile) Position.
 	PathfindingNode* getNode(const Position& pos);

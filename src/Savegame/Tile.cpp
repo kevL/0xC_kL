@@ -1525,21 +1525,21 @@ std::vector<BattleItem*>* Tile::getInventory()
  * Sets this Tile's visible-flag.
  * @note Used only by sneakyAI.
  * @param vis - true if visible (default true)
- */
+ *
 void Tile::setTileVisible(bool vis)
 {
 	_visible = vis;
-}
+} */
 
 /**
  * Gets this Tile's visible-flag.
  * @note Used only by sneakyAI.
  * @return, true if visible
- */
+ *
 bool Tile::getTileVisible() const
 {
 	return _visible;
-}
+} */
 
 /**
  * Sets the direction of path-preview-arrows.

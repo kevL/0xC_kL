@@ -330,15 +330,15 @@ void Pathfinding::calculatePath(
 			   && std::abs(posStop.x - posStart.x) < 2
 			   && std::abs(posStop.y - posStart.y) < 2;
 
-		const bool sneak (Options::sneakyAI == true
-					   && unit->getFaction() == FACTION_HOSTILE);
+//		const bool sneak (Options::sneakyAI == true
+//					   && unit->getFaction() == FACTION_HOSTILE);
 
 		if (posStart.z == posStop.z
 			&& bresenhamPath(
 						posStart,
 						posStop,
-						launchTarget,
-						sneak) == true)
+						launchTarget) == true)
+//						sneak) == true)
 		{
 			std::reverse(
 					_path.begin(),
@@ -351,8 +351,8 @@ void Pathfinding::calculatePath(
 						posStart,
 						posStop,
 						launchTarget,
-						maxTuCost,
-						sneak) == false)
+						maxTuCost) == false)
+//						sneak) == false)
 			{
 				abortPath();
 			}
@@ -398,14 +398,14 @@ void Pathfinding::calculatePath(
  * @param origin		- reference to the Position to start from
  * @param target		- reference to the Position to end at
  * @param launchTarget	- pointer to targeted BattleUnit
- * @param sneak			- true if unit is sneaking
+// * @param sneak		- true if unit is sneaking
  * @return, true if a path is found
  */
 bool Pathfinding::bresenhamPath( // private.
 		const Position& origin,
 		const Position& target,
-		const BattleUnit* const launchTarget,
-		bool sneak)
+		const BattleUnit* const launchTarget)
+//		bool sneak)
 {
 	//Log(LOG_INFO) << "Pathfinding::bresenhamPath()";
 	static const int
@@ -529,8 +529,8 @@ bool Pathfinding::bresenhamPath( // private.
 										launchTarget));
 			//Log(LOG_INFO) << ". TU Cost = " << tuCost;
 
-			if (sneak == true && _battleSave->getTile(posNext)->getTileVisible())
-				return false;
+//			if (sneak == true && _battleSave->getTile(posNext)->getTileVisible())
+//				return false;
 
 			// delete the following
 			const bool isDiagonal (dir & 1);
@@ -594,15 +594,15 @@ bool Pathfinding::bresenhamPath( // private.
  * @param posTarget		- reference to the position to end at
  * @param launchTarget	- pointer to targeted BattleUnit
  * @param maxTuCost		- maximum time units this path can cost
- * @param sneak			- true if the unit is sneaking
+// * @param sneak		- true if the unit is sneaking
  * @return, true if a path is found
  */
 bool Pathfinding::aStarPath( // private.
 		const Position& posOrigin,
 		const Position& posTarget,
 		const BattleUnit* const launchTarget,
-		int maxTuCost,
-		bool sneak)
+		int maxTuCost)
+//		bool sneak)
 {
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "Pathfinding::aStarPath()";
@@ -673,8 +673,8 @@ bool Pathfinding::aStarPath( // private.
 			//Log(LOG_INFO) << ". dir= " << dir << " tuCost=" << tuCost;
 			if (tuCost < FAIL)
 			{
-				if (sneak == true && _battleSave->getTile(posStop)->getTileVisible() == true)
-					tuCost *= 2;
+//				if (sneak == true && _battleSave->getTile(posStop)->getTileVisible() == true)
+//					tuCost *= 2;
 
 				nodeStop = getNode(posStop);
 				if (nodeStop->getChecked() == false)

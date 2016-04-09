@@ -320,9 +320,9 @@ private:
 		std::vector<BattleItem*>* getInventory();
 
 		/// Sets the Tile visible flag.
-		void setTileVisible(bool vis = true);
+//		void setTileVisible(bool vis = true);
 		/// Gets the Tile visible flag.
-		bool getTileVisible() const;
+//		bool getTileVisible() const;
 
 		/// Sets the direction of path preview arrows.
 		void setPreviewDir(int dir);

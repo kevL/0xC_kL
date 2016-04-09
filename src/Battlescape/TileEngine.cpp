@@ -486,7 +486,7 @@ bool TileEngine::calcFov(
 								if (unit->getFaction() == FACTION_PLAYER)
 								{
 									spottedUnit->setUnitVisible();
-									spottedUnit->getTile()->setTileVisible(); // Used only by sneakyAI.
+//									spottedUnit->getTile()->setTileVisible(); // Used only by sneakyAI.
 
 									if (preBattle == false
 										&& _spotSound == true
@@ -609,7 +609,7 @@ bool TileEngine::calcFov(
 
 										// mark every tile of line as visible (this is needed because of bresenham narrow stroke).
 										tile = _battleSave->getTile(posTrj);
-										tile->setTileVisible();			// used only by sneakyAI.
+//										tile->setTileVisible();			// used only by sneakyAI.
 										tile->setRevealed(ST_CONTENT);	// sprite caching for floor+content, ergo + west & north walls.
 
 										// walls to the east or south of a visible tile, reveal that too
