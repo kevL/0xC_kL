@@ -56,7 +56,7 @@ const double Projectile::PCT = 0.01;
 
 
 /**
- * Creates a Projectile on the battle map and calculates its trajectory.
+ * Creates a Projectile on the battlefield and calculates its trajectory.
  * @param res			- pointer to ResourcePack
  * @param battleSave	- pointer to SavedBattleGame
  * @param action		- reference the BattleAction (BattlescapeGame.h)
@@ -146,9 +146,9 @@ Projectile::~Projectile()
 
 /**
  * Calculates the trajectory for a straight/line path.
- * @note Accuracy affects the VoxelType result.
- * @note This is a wrapper for calculateShot() below - it calculates and
- * passes on the acting unit's originVoxel.
+ * @note Accuracy affects the VoxelType result. This is a wrapper for
+ * calculateShot() below - it calculates and passes on the acting unit's
+ * originVoxel.
  * @param accuracy - accuracy of the projectile's trajectory (a battleunit's accuracy)
  * @return, VoxelType (MapData.h) see calculateShot() below_
  */
@@ -163,9 +163,8 @@ VoxelType Projectile::calculateShot(double accuracy)
 
 /**
  * Calculates the trajectory for a straight/line path.
- * @note Accuracy affects the VoxelType result.
- * @note First determines if there is LoF then calculates and stores a modified
- * trajectory that is actually pathed.
+ * @note Accuracy affects the VoxelType result. First determines if there is LoF
+ * then calculates and stores a modified trajectory that is actually pathed.
  * @param accuracy		- accuracy of the projectile's trajectory (a BattleUnit's accuracy)
  * @param originVoxel	- for Blaster launch; ie trajectories that start at a position other than unit's
  * @param useExclude	- true for normal shots; false for BL-waypoints (default true)
@@ -516,17 +515,17 @@ void Projectile::applyAccuracy( // private.
 			if (_action.actor->getGeoscapeSoldier() != nullptr)
 				perfect = static_cast<double>(_battleSave->getBattleGame()->getRuleset()->getSoldier("STR_SOLDIER")->getStatCaps().firing);
 			else
-				perfect = 150.; // higher value makes aLien less accurate at spitting/arcing shot.
+				perfect = 150.; // higher value makes non-Soldiers less accurate at spitting/arcing shot.
 		}
 		else // Throw
 		{
 			if (_action.actor->getGeoscapeSoldier() != nullptr)
 				perfect = static_cast<double>(_battleSave->getBattleGame()->getRuleset()->getSoldier("STR_SOLDIER")->getStatCaps().throwing);
 			else
-				perfect = 150.; // higher value makes aLien less accurate at throwing.
+				perfect = 150.; // higher value makes non-Soldiers less accurate at throwing.
 		}
 
-		accuracy = accuracy * 50. + 69.3; // arbitrary adjustment.
+		accuracy = accuracy * 50. + 73.1; // arbitrary adjustment.
 
 		double deviation (perfect - accuracy);
 		deviation = std::max(ACU_MIN,
@@ -611,7 +610,7 @@ void Projectile::applyAccuracy( // private.
 		} */
 
 /**
- * Gets distance modifier to accuracy.
+ * Gets distance-modifier to accuracy.
  * @param itRule	- pointer to RuleItem of weapon
  * @param dist		- distance to target in tilespace
  * @return, linear accuracy modification

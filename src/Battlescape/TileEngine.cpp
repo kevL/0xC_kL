@@ -391,8 +391,8 @@ bool TileEngine::calcFov(
 	const bool swapXY (dir == 0 || dir == 4);
 
 	static const int
-		sign_x[8] = { 1, 1, 1, 1,-1,-1,-1,-1},
-		sign_y[8] = {-1,-1, 1, 1, 1, 1,-1,-1};
+		sign_x[8] { 1, 1, 1, 1,-1,-1,-1,-1},
+		sign_y[8] {-1,-1, 1, 1, 1, 1,-1,-1};
 
 	int
 		y1 (0),
@@ -425,6 +425,12 @@ bool TileEngine::calcFov(
 	const MapData
 		* object,
 		* objectEdge;
+
+	int soundId;
+	if (_spotSound == true)
+		soundId = unit->getAggroSound();
+	else
+		soundId = -1;
 
 	BattleUnit* spottedUnit;
 
@@ -488,11 +494,11 @@ bool TileEngine::calcFov(
 									spottedUnit->setUnitVisible();
 //									spottedUnit->getTile()->setTileVisible(); // Used only by sneakyAI.
 
-									if (preBattle == false
-										&& _spotSound == true
+									if (soundId != -1
 										&& ret == true // play aggro sound if non-MC'd xCom unit spots a not-previously-visible hostile.
 //										&& unit->getOriginalFaction() == FACTION_PLAYER
-										&& spottedUnit->getFaction() == FACTION_HOSTILE)
+										&& spottedUnit->getFaction() == FACTION_HOSTILE
+										&& preBattle == false)
 									{
 										const std::vector<BattleUnit*> previouslySpottedUnits (unit->getHostileUnitsThisTurn());
 										if (std::find(
@@ -500,13 +506,10 @@ bool TileEngine::calcFov(
 													previouslySpottedUnits.end(),
 													spottedUnit) == previouslySpottedUnits.end())
 										{
-											const int soundId (unit->getAggroSound());
-											if (soundId != -1)
-											{
-												const BattlescapeGame* const battle (_battleSave->getBattleGame());
-												battle->getResourcePack()->getSound("BATTLE.CAT", soundId)
-																			->play(-1, battle->getMap()->getSoundAngle(unit->getPosition()));
-											}
+											const BattlescapeGame* const battle (_battleSave->getBattleGame());
+											battle->getResourcePack()->getSound("BATTLE.CAT", soundId)
+																		->play(-1, battle->getMap()->getSoundAngle(unit->getPosition()));
+											soundId = -1; // play once only.
 										}
 									}
 								}
@@ -601,7 +604,7 @@ bool TileEngine::calcFov(
 									}
 
 									for (size_t
-											i = 0;
+											i = 0u;
 											i != trjLength;
 											++i)
 									{
@@ -829,7 +832,7 @@ bool TileEngine::visible(
 		const Tile* scanTile (_battleSave->getTile(unit->getPosition()));
 
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != trj.size();
 				++i)
 		{
