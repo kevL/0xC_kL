@@ -141,7 +141,7 @@ UnitStats* RuleUnit::getStats()
 }
 
 /**
- * Returns the unit's height at standing.
+ * Returns the unit's height when standing.
  * @return, the unit's height
  */
 int RuleUnit::getStandHeight() const
@@ -150,7 +150,7 @@ int RuleUnit::getStandHeight() const
 }
 
 /**
- * Returns the unit's height at kneeling.
+ * Returns the unit's height when kneeling.
  * @return, the unit's kneeling height
  */
 int RuleUnit::getKneelHeight() const
@@ -204,8 +204,8 @@ int RuleUnit::getValue() const
 }
 
 /**
- * Gets the unit's death sound.
- * @return, the ID of the unit's death sound
+ * Gets the unit's death-sound.
+ * @return, the ID of the unit's death-sound
  */
 int RuleUnit::getDeathSound() const
 {
@@ -213,8 +213,8 @@ int RuleUnit::getDeathSound() const
 }
 
 /**
- * Gets the unit's move sound.
- * @return, the ID of the unit's movement sound
+ * Gets the unit's move-sound.
+ * @return, the ID of the unit's move-sound
  */
 int RuleUnit::getMoveSound() const
 {
@@ -222,8 +222,8 @@ int RuleUnit::getMoveSound() const
 }
 
 /**
- * Gets the unit's war cry.
- * @return, the ID of the unit's aggro sound
+ * Gets the unit's war-cry.
+ * @return, the ID of the unit's aggro-sound
  */
 int RuleUnit::getAggroSound() const
 {
@@ -231,7 +231,8 @@ int RuleUnit::getAggroSound() const
 }
 
 /**
- * Gets the intelligence. This is the number of turns the AI remembers your troop positions.
+ * Gets the intelligence.
+ * @note This is the number of turns the AI remembers player's unit-positions.
  * @return, the unit's intelligence
  */
 int RuleUnit::getIntelligence() const
@@ -240,7 +241,8 @@ int RuleUnit::getIntelligence() const
 }
 
 /**
- * Gets the aggression. Determines the chance of revenge and taking cover.
+ * Gets the aggression.
+ * @note Determines the chance of revenge and taking cover.
  * @return, the unit's aggression
  */
 int RuleUnit::getAggression() const

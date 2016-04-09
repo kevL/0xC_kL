@@ -547,6 +547,7 @@ units:
     kneelHeight: 16
     value: 20
     deathSound: 48
+    aggroSound: 48
     intelligence: 2
     aggression: 2
     energyRecovery: 80

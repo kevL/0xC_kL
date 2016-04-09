@@ -491,7 +491,7 @@ bool TileEngine::calcFov(
 									if (preBattle == false
 										&& _spotSound == true
 										&& ret == true // play aggro sound if non-MC'd xCom unit spots a not-previously-visible hostile.
-										&& unit->getOriginalFaction() == FACTION_PLAYER
+//										&& unit->getOriginalFaction() == FACTION_PLAYER
 										&& spottedUnit->getFaction() == FACTION_HOSTILE)
 									{
 										const std::vector<BattleUnit*> previouslySpottedUnits (unit->getHostileUnitsThisTurn());
