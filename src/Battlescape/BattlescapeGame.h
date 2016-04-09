@@ -68,6 +68,15 @@ enum BattleActionType
 	BA_LIQUIDATE	// 18
 };
 
+enum DropType
+{
+	DROP_STANDARD,		// 0
+	DROP_CLEAROWNER,	// 1
+	DROP_FROMINVENTORY,	// 2
+	DROP_CREATE			// 3
+};
+
+
 /**
  * Object that holds relevant battle action data in one container.
  */
@@ -351,7 +360,7 @@ private:
 		void dropItem(
 				BattleItem* const item,
 				const Position& pos,
-				int dropType = 0);
+				DropType dropType = DROP_STANDARD);
 		/// Drops all items in a specific BattleUnit's inventory to the ground.
 		void dropUnitInventory(BattleUnit* const unit);
 

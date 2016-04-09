@@ -1047,7 +1047,7 @@ void BattlescapeGame::handleNonTargetAction()
 					_tacAction.actor->clearCache();
 
 					const Position pos (_tacAction.actor->getPosition());
-					dropItem(_tacAction.weapon, pos, 2);
+					dropItem(_tacAction.weapon, pos, DROP_FROMINVENTORY);
 					getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)
 										->play(-1, getMap()->getSoundAngle(pos));
 				}
@@ -1323,7 +1323,7 @@ void BattlescapeGame::endTurn() // private.
 //	if (_endTurnProcessed == false)
 //	{
 	for (size_t // check for hot grenades on the ground
-			i = 0;
+			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
@@ -2245,195 +2245,200 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 {
 	//Log(LOG_INFO) << "bg::handlePanickingUnit() - " << unit->getId();
 	const UnitStatus status (unit->getUnitStatus());
-
-	if (status == STATUS_PANICKING || status == STATUS_BERSERK)
+	switch (status)
 	{
-		_parentState->getMap()->setSelectorType(CT_NONE);
-		_battleSave->setSelectedUnit(unit);
+		case STATUS_PANICKING:
+		case STATUS_BERSERK:
+			_parentState->getMap()->setSelectorType(CT_NONE);
+			_battleSave->setSelectedUnit(unit);
 
-		if (Options::battleAlienPanicMessages == true
-			|| unit->getUnitVisible() == true)
-		{
-			//Log(LOG_INFO) << "bg: panic id-" << unit->getId();
-			centerOnUnit(unit, true);
-
-			Game* const game (_parentState->getGame());
-			std::string st;
-			if (status == STATUS_PANICKING)
-				st = "STR_HAS_PANICKED";
-			else
-				st = "STR_HAS_GONE_BERSERK";
-
-			game->pushState(new InfoboxState(
-										game->getLanguage()->getString(st, unit->getGender())
-																.arg(unit->getName(game->getLanguage()))));
-		}
-
-		if (unit->getAIState() != nullptr)
-		{
-			if (unit->getOriginalFaction() == FACTION_PLAYER)
-				unit->setAIState();
-			else
-				unit->getAIState()->resetAI();
-		}
-
-		unit->setUnitStatus(STATUS_STANDING);
-		BattleAction action;
-		action.actor = unit;
-		int tu (unit->getTimeUnits());
-
-		switch (status)
-		{
-			case STATUS_PANICKING:
+			if (Options::battleAlienPanicMessages == true
+				|| unit->getUnitVisible() == true)
 			{
-				//Log(LOG_INFO) << ". PANIC";
-				BattleItem* item;
-				if (RNG::percent(75) == true)
+				//Log(LOG_INFO) << "bg: panic id-" << unit->getId();
+				centerOnUnit(unit, true);
+
+				Game* const game (_parentState->getGame());
+				std::string st;
+				switch (status)
 				{
-					item = unit->getItem(ST_RIGHTHAND);
-					if (item != nullptr)
-						dropItem(item, unit->getPosition(), 2);
+					default:
+					case STATUS_PANICKING:
+						st = "STR_HAS_PANICKED";
+						break;
+					case STATUS_BERSERK:
+						st = "STR_HAS_GONE_BERSERK";
 				}
 
-				if (RNG::percent(75) == true)
-				{
-					item = unit->getItem(ST_LEFTHAND);
-					if (item != nullptr)
-						dropItem(item, unit->getPosition(), 2);
-				}
-
-				unit->clearCache();
-
-				Pathfinding* const pf (_battleSave->getPathfinding());
-				pf->setPathingUnit(unit);
-
-				const std::vector<size_t> reachable (pf->findReachable(unit, tu));
-				const size_t tileId (reachable[RNG::pick(reachable.size())]); // <-- WARNING: no Safety on size !
-
-				_battleSave->tileCoords(
-									tileId,
-									&action.posTarget.x,
-									&action.posTarget.y,
-									&action.posTarget.z);
-				pf->calculatePath(
-							action.actor,
-							action.posTarget,
-							tu);
-
-				if (pf->getStartDirection() != -1)
-				{
-					action.actor->setDashing();
-					action.dash = true;
-					action.type = BA_MOVE;
-					statePushBack(new UnitWalkBState(this, action));
-				}
+				game->pushState(new InfoboxState(
+											game->getLanguage()->getString(st, unit->getGender())
+																	.arg(unit->getName(game->getLanguage()))));
 			}
-			break;
 
-			case STATUS_BERSERK:
+			if (unit->getAIState() != nullptr)
 			{
-				//Log(LOG_INFO) << ". BERSERK";
-				action.type = BA_TURN;
-				const int pivotQty (RNG::generate(2,5));
-				for (int
-						i = 0;
-						i != pivotQty;
-						++i)
+				if (unit->getOriginalFaction() == FACTION_PLAYER)
+					unit->setAIState();
+				else
+					unit->getAIState()->resetAI();
+			}
+
+			unit->setUnitStatus(STATUS_STANDING);
+			BattleAction action;
+			action.actor = unit;
+			int tu (unit->getTimeUnits());
+
+			switch (status)
+			{
+				case STATUS_PANICKING:
 				{
-					action.posTarget = Position(
-									unit->getPosition().x + RNG::generate(-5,5),
-									unit->getPosition().y + RNG::generate(-5,5),
-									unit->getPosition().z);
-					statePushBack(new UnitTurnBState(this, action, false));
+					//Log(LOG_INFO) << ". PANIC";
+					BattleItem* item;
+					if (RNG::percent(75) == true)
+					{
+						item = unit->getItem(ST_RIGHTHAND);
+						if (item != nullptr)
+							dropItem(item, unit->getPosition(), DROP_FROMINVENTORY);
+					}
+
+					if (RNG::percent(75) == true)
+					{
+						item = unit->getItem(ST_LEFTHAND);
+						if (item != nullptr)
+							dropItem(item, unit->getPosition(), DROP_FROMINVENTORY);
+					}
+
+					unit->clearCache();
+
+					Pathfinding* const pf (_battleSave->getPathfinding());
+					pf->setPathingUnit(unit);
+
+					const std::vector<size_t> reachable (pf->findReachable(unit, tu));
+					const size_t tileId (reachable[RNG::pick(reachable.size())]); // <-- WARNING: no Safety on size !
+
+					_battleSave->tileCoords(
+										tileId,
+										&action.posTarget.x,
+										&action.posTarget.y,
+										&action.posTarget.z);
+					pf->calculatePath(
+								action.actor,
+								action.posTarget,
+								tu);
+
+					if (pf->getStartDirection() != -1)
+					{
+						action.actor->setDashing();
+						action.dash = true;
+						action.type = BA_MOVE;
+						statePushBack(new UnitWalkBState(this, action));
+					}
+					break;
 				}
 
-				action.weapon = unit->getRangedWeapon(true);	// unit->getMainHandWeapon(true); unit->getMeleeWeapon();
-				if (action.weapon == nullptr)					// TODO: implement Charge + Melee against nearest unit.
-					action.weapon = unit->getGrenade();
-
-				if (action.weapon != nullptr)
+				case STATUS_BERSERK:
 				{
-					switch (action.weapon->getRules()->getBattleType())
+					//Log(LOG_INFO) << ". BERSERK";
+					action.type = BA_TURN;
+					const int pivotQty (RNG::generate(2,5));
+					for (int
+							i = 0;
+							i != pivotQty;
+							++i)
 					{
-						case BT_FIREARM:
-							action.posTarget = _battleSave->getTiles()[RNG::pick(_battleSave->getMapSizeXYZ())]->getPosition();
-							if (_battleSave->getTile(action.posTarget) != nullptr)
-							{
-								statePushBack(new UnitTurnBState(this, action, false));
-
-								action.type = BA_SNAPSHOT;
-								if (action.weapon->getAmmoItem() == nullptr
-									|| action.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
-								{
-									action.posCamera = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
-								}
-								else
-									action.posCamera = Position(0,0,-1);
-
-								const int actionTu (action.actor->getActionTu(action.type, action.weapon));
-								int shots; // tabulate how many shots can be fired before unit runs out of TUs
-								if (actionTu != 0)
-									shots = tu / actionTu;
-								else
-									shots = 0;
-
-								for (int
-										i = 0;
-										i != shots;
-										++i)
-								{
-									statePushBack(new ProjectileFlyBState(this, action));
-								}
-							}
-							break;
-
-						case BT_GRENADE:
-							if (action.weapon->getFuse() == -1)
-								action.weapon->setFuse(0); // yeh set timer even if throw is invalid.
-
-							for (int // try a few times to get a tile to throw to.
-									i = 0;
-									i != 50;
-									++i)
-							{
-								action.posTarget = Position(
-												unit->getPosition().x + RNG::generate(-20,20),
-												unit->getPosition().y + RNG::generate(-20,20),
+						action.posTarget = Position(
+												unit->getPosition().x + RNG::generate(-5,5),
+												unit->getPosition().y + RNG::generate(-5,5),
 												unit->getPosition().z);
+						statePushBack(new UnitTurnBState(this, action, false));
+					}
 
+					action.weapon = unit->getRangedWeapon(true);	// unit->getMainHandWeapon(true); unit->getMeleeWeapon();
+					if (action.weapon == nullptr)					// TODO: implement Charge + Melee against nearest unit.
+						action.weapon = unit->getGrenade();
+
+					if (action.weapon != nullptr)
+					{
+						switch (action.weapon->getRules()->getBattleType())
+						{
+							case BT_FIREARM:
+								action.posTarget = _battleSave->getTiles()[RNG::pick(_battleSave->getMapSizeXYZ())]->getPosition();
 								if (_battleSave->getTile(action.posTarget) != nullptr)
 								{
 									statePushBack(new UnitTurnBState(this, action, false));
 
-									const Position
-										originVoxel (_battleSave->getTileEngine()->getOriginVoxel(action)),
-										targetVoxel (Position::toVoxelSpaceCentered(
-																				action.posTarget,
-																				2 - _battleSave->getTile(action.posTarget)->getTerrainLevel())); // LoFT of floor is typically 2 voxels thick.
-
-									if (_battleSave->getTileEngine()->validateThrow(
-																				action,
-																				originVoxel,
-																				targetVoxel) == true)
+									action.type = BA_SNAPSHOT;
+									if (action.weapon->getAmmoItem() == nullptr
+										|| action.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
 									{
-										action.type = BA_THROW;
 										action.posCamera = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
+									}
+									else
+										action.posCamera = Position(0,0,-1);
+
+									const int actionTu (action.actor->getActionTu(action.type, action.weapon));
+									int shots; // tabulate how many shots can be fired before unit runs out of TUs
+									if (actionTu != 0)
+										shots = tu / actionTu;
+									else
+										shots = 0;
+
+									for (int
+											i = 0;
+											i != shots;
+											++i)
+									{
 										statePushBack(new ProjectileFlyBState(this, action));
-										break;
 									}
 								}
-							}
+								break;
+
+							case BT_GRENADE:
+								if (action.weapon->getFuse() == -1)
+									action.weapon->setFuse(0); // yeh set timer even if throw is invalid.
+
+								for (int // try a few times to get a tile to throw to.
+										i = 0;
+										i != 50;
+										++i)
+								{
+									action.posTarget = Position(
+															unit->getPosition().x + RNG::generate(-20,20),
+															unit->getPosition().y + RNG::generate(-20,20),
+															unit->getPosition().z);
+
+									if (_battleSave->getTile(action.posTarget) != nullptr)
+									{
+										statePushBack(new UnitTurnBState(this, action, false));
+
+										const Position
+											originVoxel (_battleSave->getTileEngine()->getOriginVoxel(action)),
+											targetVoxel (Position::toVoxelSpaceCentered(
+																					action.posTarget,
+																					2 - _battleSave->getTile(action.posTarget)->getTerrainLevel())); // LoFT of floor is typically 2 voxels thick.
+
+										if (_battleSave->getTileEngine()->validateThrow(
+																					action,
+																					originVoxel,
+																					targetVoxel) == true)
+										{
+											action.type = BA_THROW;
+											action.posCamera = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
+											statePushBack(new ProjectileFlyBState(this, action));
+											break;
+										}
+									}
+								}
+						}
 					}
+
+					action.type = BA_NONE;
 				}
-
-				action.type = BA_NONE;
 			}
-		}
 
-		statePushBack(new UnitPanicBState(this, unit));
-		return true;
+			statePushBack(new UnitPanicBState(this, unit));
+			return true;
 	}
-
 	return false;
 }
 
@@ -2879,7 +2884,7 @@ void BattlescapeGame::requestEndTurn()
  * if it's a light-source.
  * @param item		- pointer to a BattleItem
  * @param pos		- reference to a Position to place the item
- * @param dropType	- how to handle this drop (default 0)
+ * @param dropType	- how to handle this drop (BattlescapeGame.h) (default DROP_STANDARD)
  *					  0 - do nothing special here
  *					  1 - clear the owner (not used currently)
  *					  2 - clear the owner & remove the item from dropper's inventory
@@ -2889,7 +2894,7 @@ void BattlescapeGame::requestEndTurn()
 void BattlescapeGame::dropItem(
 		BattleItem* const item,
 		const Position& pos,
-		int dropType)
+		DropType dropType)
 {
 	if (_battleSave->getTile(pos) != nullptr
 		&& item->getRules()->isFixed() == false)
@@ -2902,11 +2907,13 @@ void BattlescapeGame::dropItem(
 
 		switch (dropType)
 		{
-			case 1: item->setOwner();
+//			case DROP_STANDARD:
+//				break;
+			case DROP_CLEAROWNER: item->setOwner();
 				break;
-			case 2: item->changeOwner();
+			case DROP_FROMINVENTORY: item->changeOwner();
 				break;
-			case 3: _battleSave->getItems()->push_back(item);
+			case DROP_CREATE: _battleSave->getItems()->push_back(item);
 		}
 
 		if (pos.z != 0)
@@ -2995,7 +3002,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
 	dropUnitInventory(unit);
 
 	unit->setTile();
-	_battleSave->getTile(unit->getPosition())->setUnit();
+	_battleSave->getTile(unit->getPosition())->setUnit(); // NOTE: This could, theoretically, be a large unit.
 
 
 	std::string st (unit->getSpawnType());

@@ -1524,18 +1524,18 @@ void SavedBattleGame::resetUnitsOnTiles()
 	{
 		if ((*i)->isOut_t(OUT_STAT) == false)
 		{
-			const int armorSize = (*i)->getArmor()->getSize() - 1;
+			const int unitSize ((*i)->getArmor()->getSize() - 1);
 
 			if ((*i)->getTile() != nullptr // remove unit from its current tile
 				&& (*i)->getTile()->getTileUnit() == *i) // wtf, is this super-safety ......
 			{
 				for (int
-						x = armorSize;
+						x = unitSize;
 						x != -1;
 						--x)
 				{
 					for (int
-							y = armorSize;
+							y = unitSize;
 							y != -1;
 							--y)
 					{
@@ -1545,12 +1545,12 @@ void SavedBattleGame::resetUnitsOnTiles()
 			}
 
 			for (int // set unit onto its proper tile
-					x = armorSize;
+					x = unitSize;
 					x != -1;
 					--x)
 			{
 				for (int
-						y = armorSize;
+						y = unitSize;
 						y != -1;
 						--y)
 				{
@@ -1611,9 +1611,12 @@ void SavedBattleGame::distributeEquipment(Tile* const tile)
  * Upon removal the pointer to the item is kept in the '_toDelete' vector which
  * is flushed and destroyed in the SavedBattleGame dTor.
  * @param item - pointer to an item to remove
+ * @return, const_iterator to the next item in the BattleItems list
  */
-void SavedBattleGame::toDeleteItem(BattleItem* const item)
+std::vector<BattleItem*>::const_iterator SavedBattleGame::toDeleteItem(BattleItem* const item)
 {
+	_toDelete.push_back(item);
+
 	Tile* const tile (item->getTile());
 	if (tile != nullptr)
 	{
@@ -1651,14 +1654,9 @@ void SavedBattleGame::toDeleteItem(BattleItem* const item)
 			i != _items.end();
 			++i)
 	{
-		if (*i == item)
-		{
-			_items.erase(i);
-			break;
-		}
+		if (*i == item) return _items.erase(i);
 	}
-
-	_toDelete.push_back(item);
+	return _items.end();
 }
 
 /**
@@ -2201,9 +2199,8 @@ void SavedBattleGame::deleteBody(const BattleUnit* const unit)
 	{
 		if ((*i)->getUnit() == unit)
 		{
-			toDeleteItem(*i);
+			i = toDeleteItem(*i);
 			if (--quadrants == 0) return;
-			--i; // not the best idea.
 		}
 	}
 }

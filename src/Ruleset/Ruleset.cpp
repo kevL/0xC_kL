@@ -1116,8 +1116,7 @@ SavedGame* Ruleset::createSave() const
 
 	SavedGame* const gameSave (new SavedGame(this));
 
-	// Setup research generals.
-	for (std::vector<std::string>::const_iterator
+	for (std::vector<std::string>::const_iterator // Setup research generals.
 			i = _researchIndex.begin();
 			i != _researchIndex.end();
 			++i)
@@ -1125,8 +1124,7 @@ SavedGame* Ruleset::createSave() const
 		gameSave->getResearchGenerals().push_back(new ResearchGeneral(getResearch(*i)));
 	}
 
-	// Add countries.
-	for (std::vector<std::string>::const_iterator
+	for (std::vector<std::string>::const_iterator // Add countries.
 			i = _countriesIndex.begin();
 			i != _countriesIndex.end();
 			++i)
@@ -1136,9 +1134,8 @@ SavedGame* Ruleset::createSave() const
 			gameSave->getCountries()->push_back(new Country(country, true));
 	}
 
-	// Adjust funding to total $6M.
 //	int missing = ((_initialFunding - gameSave->getCountryFunding() / 1000) / (int)gameSave->getCountries()->size()) * 1000;
-	for (std::vector<Country*>::const_iterator
+	for (std::vector<Country*>::const_iterator // Adjust funding to total $6-million.
 			i = gameSave->getCountries()->begin();
 			i != gameSave->getCountries()->end();
 			++i)
@@ -1155,8 +1152,7 @@ SavedGame* Ruleset::createSave() const
 
 	gameSave->setFunds(gameSave->getCountryFunding());
 
-	// Add regions.
-	for (std::vector<std::string>::const_iterator
+	for (std::vector<std::string>::const_iterator // Add regions.
 			i = _regionsIndex.begin();
 			i != _regionsIndex.end();
 			++i)
@@ -1166,12 +1162,12 @@ SavedGame* Ruleset::createSave() const
 			gameSave->getRegions()->push_back(new Region(region));
 	}
 
-	// Set up starting base.
-	Base* const base (new Base(this));
+	Base* const base (new Base(this)); // Set up starting base.
 	base->load(_startingBase, gameSave, true);
 
-	// Correct IDs.
-	for (std::vector<Craft*>::const_iterator
+	gameSave->getBases()->push_back(base);
+
+	for (std::vector<Craft*>::const_iterator // Correct IDs.
 			i = base->getCrafts()->begin();
 			i != base->getCrafts()->end();
 			++i)
@@ -1179,8 +1175,7 @@ SavedGame* Ruleset::createSave() const
 		gameSave->getCanonicalId((*i)->getRules()->getType());
 	}
 
-	// Determine starting transport craft
-/*	Craft* transportCraft (nullptr);
+/*	Craft* transportCraft (nullptr); // Determine starting transport craft.
 	for (std::vector<Craft*>::const_iterator
 			i = base->getCrafts()->begin();
 			i != base->getCrafts()->end();
@@ -1193,15 +1188,14 @@ SavedGame* Ruleset::createSave() const
 		}
 	} */
 
-	// Determine starting soldier types
-	std::vector<std::string> soldierTypes (_soldiersIndex);
+	std::vector<std::string> allSoldiers (_soldiersIndex); // Determine starting soldier types.
 	for (std::vector<std::string>::const_iterator
-			i = soldierTypes.begin();
-			i != soldierTypes.end();
+			i = allSoldiers.begin();
+			i != allSoldiers.end();
 			)
 	{
 		if (getSoldier(*i)->getRequirements().empty() == false)
-			i = soldierTypes.erase(i);
+			i = allSoldiers.erase(i);
 		else
 			++i;
 	}
@@ -1210,12 +1204,12 @@ SavedGame* Ruleset::createSave() const
 	std::vector<std::string> solTypes;
 	if (node)
 	{
-		if (node.IsMap() == true) // Starting soldiers specified by type
+		if (node.IsMap() == true) // Starting soldiers specified by type.
 		{
-			std::map<std::string, int> randSoldiers (node.as<std::map<std::string, int>>(std::map<std::string, int>()));
+			std::map<std::string, int> soldiers (node.as<std::map<std::string, int>>(std::map<std::string, int>()));
 			for (std::map<std::string, int>::const_iterator
-					i = randSoldiers.begin();
-					i != randSoldiers.end();
+					i = soldiers.begin();
+					i != soldiers.end();
 					++i)
 			{
 				for (int
@@ -1227,21 +1221,20 @@ SavedGame* Ruleset::createSave() const
 				}
 			}
 		}
-		else if (node.IsScalar() == true) // Starting soldiers specified by amount
+		else if (node.IsScalar() == true) // Starting soldiers specified by amount.
 		{
-			const int randSoldiers (node.as<int>(0));
+			const int soldiers (node.as<int>(0));
 			for (int
 					i = 0;
-					i != randSoldiers;
+					i != soldiers;
 					++i)
 			{
-				solTypes.push_back(soldierTypes[RNG::pick(soldierTypes.size())]);
+				solTypes.push_back(allSoldiers[RNG::pick(allSoldiers.size())]);
 			}
 		}
 
-		// Generate soldiers
-		for (size_t
-				i = 0;
+		for (size_t // Generate soldiers
+				i = 0u;
 				i != solTypes.size();
 				++i)
 		{
@@ -1252,13 +1245,11 @@ SavedGame* Ruleset::createSave() const
 
 			base->getSoldiers()->push_back(sol);
 
-			// Award each Soldier the special Original Eight award.
-			SoldierDiary* const diary (sol->getDiary());
+			SoldierDiary* const diary (sol->getDiary()); // Award each Soldier the special Original Eight award.
 			diary->awardOriginalEight();
 		}
 	}
 
-	gameSave->getBases()->push_back(base);
 	gameSave->getAlienStrategy().init(this); // Setup aLien strategy.
 	gameSave->setTime(_startingTime);
 
@@ -2224,15 +2215,11 @@ void Ruleset::sortLists()
 	std::sort( // sort by listOrder first
 			_ufopaediaIndex.begin(),
 			_ufopaediaIndex.end(),
-			compareRule<ArticleDefinition>(
-										this,
-										true));
-/*	std::sort( // sort by sectionOrder second
-			_ufopaediaIndex.begin(),
-			_ufopaediaIndex.end(),
-			compareRule<ArticleDefinition>(
-										this,
-										false)); */
+			compareRule<ArticleDefinition>(this, true));
+//	std::sort( // sort by sectionOrder second
+//			_ufopaediaIndex.begin(),
+//			_ufopaediaIndex.end(),
+//			compareRule<ArticleDefinition>(this, false));
 }
 
 /**
@@ -2245,9 +2232,9 @@ std::vector<std::string> Ruleset::getPsiRequirements() const
 } */
 
 /**
- * Creates a new randomly-generated Soldier.
+ * Creates a randomly-generated Soldier.
  * @param gameSave	- pointer to SavedGame
- * @param type		- the soldier type to generate (default "")
+ * @param type		- the soldier-type to generate (default "")
  * @return, pointer to the newly generated Soldier
  */
 Soldier* Ruleset::genSoldier(

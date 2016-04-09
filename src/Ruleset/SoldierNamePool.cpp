@@ -48,11 +48,11 @@ SoldierNamePool::~SoldierNamePool()
 
 /**
  * Loads the pool from a YAML file.
- * @param filename - reference a YAML file
+ * @param file - reference a YAML file
  */
-void SoldierNamePool::load(const std::string& filename)
+void SoldierNamePool::load(const std::string& file)
 {
-	const std::string st = CrossPlatform::getDataFile("SoldierName/" + filename + ".nam");
+	const std::string st (CrossPlatform::getDataFile("SoldierName/" + file + ".nam"));
 	YAML::Node doc = YAML::LoadFile(st);
 
 	for (YAML::const_iterator
@@ -60,7 +60,7 @@ void SoldierNamePool::load(const std::string& filename)
 			i != doc["maleFirst"].end();
 			++i)
 	{
-		const std::wstring name = Language::utf8ToWstr(i->as<std::string>());
+		const std::wstring name (Language::utf8ToWstr(i->as<std::string>()));
 		_maleFirst.push_back(name);
 	}
 
@@ -69,7 +69,7 @@ void SoldierNamePool::load(const std::string& filename)
 			i != doc["femaleFirst"].end();
 			++i)
 	{
-		const std::wstring name = Language::utf8ToWstr(i->as<std::string>());
+		const std::wstring name (Language::utf8ToWstr(i->as<std::string>()));
 		_femaleFirst.push_back(name);
 	}
 
@@ -78,7 +78,7 @@ void SoldierNamePool::load(const std::string& filename)
 			i != doc["maleLast"].end();
 			++i)
 	{
-		const std::wstring name = Language::utf8ToWstr(i->as<std::string>());
+		const std::wstring name (Language::utf8ToWstr(i->as<std::string>()));
 		_maleLast.push_back(name);
 	}
 
@@ -87,11 +87,14 @@ void SoldierNamePool::load(const std::string& filename)
 			i != doc["femaleLast"].end();
 			++i)
 	{
-		const std::wstring name = Language::utf8ToWstr(i->as<std::string>());
+		const std::wstring name (Language::utf8ToWstr(i->as<std::string>()));
 		_femaleLast.push_back(name);
 	}
 
-	if (_femaleLast.empty())
+	if (_femaleFirst.empty() == true)
+		_femaleFirst = _maleFirst;
+
+	if (_femaleLast.empty() == true)
 		_femaleLast = _maleLast;
 
 	_lookWeights = doc["lookWeights"].as<std::vector<int>>(_lookWeights);

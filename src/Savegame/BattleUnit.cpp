@@ -2121,8 +2121,8 @@ bool BattleUnit::getUnitVisible() const
 /**
  * Adds a unit to this BattleUnit's visible and/or recently spotted hostile units.
  * @note For aliens these are xCom and civies; for xCom these are aliens only.
- * @note _hostileUnits are currently seen - _hostileUnitsThisTurn are just that.
- * Don't confuse either of these with the '_visible' to Player flag.
+ * '_hostileUnits' are currently seen - '_hostileUnitsThisTurn' are just that;
+ * don't confuse either of these with the '_visible' to Player flag.
  * @note Called from TileEngine::calcFov().
  * @param unit - pointer to a seen BattleUnit
  */
@@ -2179,7 +2179,6 @@ void BattleUnit::clearHostileUnitsThisTurn()
 {
 	_hostileUnitsThisTurn.clear();
 } */
-
 /**
  * Adds a tile to the list of visible tiles.
  * @param tile - pointer to a tile to add
@@ -2190,7 +2189,6 @@ bool BattleUnit::addToVisibleTiles(Tile* const tile)
 	_visibleTiles.push_back(tile);
 	return true;
 } */
-
 /**
  * Gets the pointer to the vector of visible tiles.
  * @return, pointer to a vector of pointers to visible tiles
@@ -2199,7 +2197,6 @@ std::vector<Tile*>* BattleUnit::getVisibleTiles()
 {
 	return &_visibleTiles;
 } */
-
 /**
  * Clears visible tiles.
  *

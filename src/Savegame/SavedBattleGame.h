@@ -321,8 +321,8 @@ private:
 		/// Moves all the leftover items to random locations in the storage-tiles vector.
 		void distributeEquipment(Tile* const tile);
 
-		/// Removes an item from the game.
-		void toDeleteItem(BattleItem* const item);
+		/// Removes an item from the battlefield.
+		std::vector<BattleItem*>::const_iterator toDeleteItem(BattleItem* const item);
 		/// Gives read-only access to the deleted-items vector.
 		const std::vector<BattleItem*>& getDeletedItems() const;
 

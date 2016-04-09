@@ -421,7 +421,8 @@ bool TileEngine::calcFov(
 
 	Tile
 		* tile,
-		* tileEdge;
+		* tileEdge,
+		* tileTest;
 	const MapData
 		* object,
 		* objectEdge;
@@ -473,47 +474,17 @@ bool TileEngine::calcFov(
 					posTest.x = posUnit.x + (sign_x[dir] * (swapXY ? y : x)); //deltaPos_x;
 					posTest.y = posUnit.y + (sign_y[dir] * (swapXY ? x : y)); //deltaPos_y;
 
-					if (_battleSave->getTile(posTest) != nullptr)
+					if ((tileTest = _battleSave->getTile(posTest)) != nullptr)
 					{
 						const bool preBattle (_battleSave->getBattleGame() == nullptr);
 
 						if (preBattle == true
 							|| _battleSave->getBattleGame()->playerPanicHandled() == true) // spot units ->>
 						{
-							if ((spottedUnit = _battleSave->getTile(posTest)->getTileUnit()) != nullptr
-								&& spottedUnit->isOut_t(OUT_STAT) == false
-								&& visible(
-										unit,
-										_battleSave->getTile(posTest)) == true)
+							if ((spottedUnit = tileTest->getTileUnit()) != nullptr
+//								&& spottedUnit->isOut_t(OUT_STAT) == false // <- out units have no Tile-ptr
+								&& visible(unit, tileTest) == true)
 							{
-								if (spottedUnit->getUnitVisible() == false)
-									ret = true;
-
-								if (unit->getFaction() == FACTION_PLAYER)
-								{
-									spottedUnit->setUnitVisible();
-//									spottedUnit->getTile()->setTileVisible(); // Used only by sneakyAI.
-
-									if (soundId != -1
-										&& ret == true // play aggro sound if non-MC'd xCom unit spots a not-previously-visible hostile.
-//										&& unit->getOriginalFaction() == FACTION_PLAYER
-										&& spottedUnit->getFaction() == FACTION_HOSTILE
-										&& preBattle == false)
-									{
-										const std::vector<BattleUnit*> previouslySpottedUnits (unit->getHostileUnitsThisTurn());
-										if (std::find(
-													previouslySpottedUnits.begin(),
-													previouslySpottedUnits.end(),
-													spottedUnit) == previouslySpottedUnits.end())
-										{
-											const BattlescapeGame* const battle (_battleSave->getBattleGame());
-											battle->getResourcePack()->getSound("BATTLE.CAT", soundId)
-																		->play(-1, battle->getMap()->getSoundAngle(unit->getPosition()));
-											soundId = -1; // play once only.
-										}
-									}
-								}
-
 								switch (unit->getFaction())
 								{
 									default:
@@ -521,35 +492,52 @@ bool TileEngine::calcFov(
 										break;
 
 									case FACTION_PLAYER:
+										if (spottedUnit->getUnitVisible() == false)
+										{
+											ret = true; // NOTE: This will halt a player's moving-unit when spotting a new Civie even.
+											spottedUnit->setUnitVisible();
+										}
+//										spottedUnit->getTile()->setTileVisible(); // Used only by sneakyAI.
+
 										if (spottedUnit->getFaction() == FACTION_HOSTILE)
-											unit->addToHostileUnits(spottedUnit);
+										{
+//											const std::vector<BattleUnit*> previouslySpottedUnits (unit->getHostileUnitsThisTurn());
+//											if (std::find(
+//														previouslySpottedUnits.begin(),
+//														previouslySpottedUnits.end(),
+//														spottedUnit) == previouslySpottedUnits.end())
+//											{
+//											}
+
+											unit->addToHostileUnits(spottedUnit); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
+//											unit->addToVisibleTiles(spottedUnit->getTile());
+
+											if (soundId != -1
+//												&& ret == true // play aggro sound if non-MC'd xCom unit spots a not-previously-visible hostile.
+												&& preBattle == false
+												&& unit->getHostileUnitsThisTurn().size() > antecedentOpponents)
+//												&& unit->getOriginalFaction() == FACTION_PLAYER	// NOTE: Mind-control zhing clashes with aggroSound; put
+											{													// that back to prevent it or pass in isMC-reveal somehow.
+												const BattlescapeGame* const battle (_battleSave->getBattleGame());
+												battle->getResourcePack()->getSound("BATTLE.CAT", soundId)
+																			->play(-1, battle->getMap()->getSoundAngle(unit->getPosition()));
+												soundId = -1; // play once only.
+											}
+										}
 										break;
 
 									case FACTION_HOSTILE:
 										if (spottedUnit->getFaction() != FACTION_HOSTILE)
 										{
-											unit->addToHostileUnits(spottedUnit);
-											if (_battleSave->getSide() == FACTION_HOSTILE)
-												spottedUnit->setExposed();
-										}
-								}
-/*								if ((unit->getFaction() == FACTION_PLAYER
-										&& spottedUnit->getFaction() == FACTION_HOSTILE)
-									|| (unit->getFaction() == FACTION_HOSTILE
-										&& spottedUnit->getFaction() != FACTION_HOSTILE))
-								{
-									// adds spottedUnit to _hostileUnits *and* to _hostileUnitsThisTurn:
-									unit->addToHostileUnits(spottedUnit);
-//									unit->addToVisibleTiles(spottedUnit->getTile());
+											unit->addToHostileUnits(spottedUnit); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
+//											unit->addToVisibleTiles(spottedUnit->getTile());
 
-									if (unit->getFaction() == FACTION_HOSTILE
-										&& _battleSave->getSide() == FACTION_HOSTILE)
-									{
-										//Log(LOG_INFO) << "calcFov() id " << unit->getId() << " spots " << spottedUnit->getId();
-										spottedUnit->setExposed();	// note that xCom agents can be seen by enemies but *not* become Exposed.
-																	// Only potential reactionFire should set them Exposed during xCom's turn.
-									}
-								} */
+											if (_battleSave->getSide() == FACTION_HOSTILE)
+												spottedUnit->setExposed();	// note that xCom agents can be seen by enemies but *not* become Exposed.
+										}									// Only potential reactionFire should set them Exposed during xCom's turn.
+
+									//Log(LOG_INFO) << "calcFov() id " << unit->getId() << " spots " << spottedUnit->getId();
+								}
 							}
 						}
 
@@ -724,7 +712,7 @@ bool TileEngine::calcFov(
 		default:
 		case FACTION_HOSTILE:
 		case FACTION_NEUTRAL:
-			if (unit->getHostileUnits().empty() == false
+			if (unit->getHostileUnits().empty() == false // <- not so sure that this one is needed.
 				&& unit->getHostileUnitsThisTurn().size() > antecedentOpponents)
 			{
 				return true;

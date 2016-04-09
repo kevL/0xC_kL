@@ -56,7 +56,7 @@ private:
 		~SoldierNamePool();
 
 		/// Loads the pool from YAML.
-		void load(const std::string& filename);
+		void load(const std::string& file);
 
 		/// Generates a new name from the pool.
 		std::wstring genName(SoldierGender* const gender) const;

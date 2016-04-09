@@ -49,6 +49,8 @@ namespace OpenXcom
 
 /**
  * Creates a UnitDieBState.
+ * @note If a unit is already unconscious when it dies then it should never get
+ * sent through this state; handle it more simply with instaKill() or whatever.
  * @param parent	- pointer to BattlescapeGame
  * @param unit		- pointer to a dying BattleUnit
  * @param dType		- type of damage that caused the death (RuleItem.h)
@@ -235,19 +237,20 @@ void UnitDieBState::think()
 															.arg(_unit->getName(lang))));
 			}
 		}
-/*		// if all units from either faction are killed - auto-end the mission.
-		if (Options::battleAutoEnd == true && _battleSave->getSide() == FACTION_PLAYER)
-		{
-			int liveHostile, livePlayer;
-			_parent->tallyUnits(liveHostile, livePlayer);
 
-			if (liveHostile == 0 || livePlayer == 0)
-			{
-				_battleSave->setSelectedUnit(nullptr);
-				_parent->cancelTacticalAction(true);
-				_parent->requestEndTurn();
-			}
-		} */
+		// if all units from either faction are killed - auto-end the mission.
+//		if (Options::battleAutoEnd == true && _battleSave->getSide() == FACTION_PLAYER)
+//		{
+//			int liveHostile, livePlayer;
+//			_parent->tallyUnits(liveHostile, livePlayer);
+//
+//			if (liveHostile == 0 || livePlayer == 0)
+//			{
+//				_battleSave->setSelectedUnit(nullptr);
+//				_parent->cancelTacticalAction(true);
+//				_parent->requestEndTurn();
+//			}
+//		}
 	}
 // #4
 	else if (_unit->isOut_t(OUT_STAT) == true) // and this ought be Status_Dead OR _Unconscious.
@@ -275,47 +278,20 @@ void UnitDieBState::think()
 /**
  * Converts a BattleUnit to a body-item.
  * @note Dead or Unconscious units get a nullptr-Tile but keep track of the
- * Position of their body.
+ * Position of their body. Also, the true Status of the unit is valid here.
  */
 void UnitDieBState::convertToBody() // private.
 {
+	_unit->setTile();
 	_battleSave->getBattleState()->showPsiButton(false);
 
-	const int unitSize (_unit->getArmor()->getSize());
-
-	const Position pos (_unit->getPosition());
-	const bool carried (pos == Position(-1,-1,-1));
-	if (carried == false)
+	if (Options::battleWeaponSelfDestruction == false
+		|| _unit->getOriginalFaction() != FACTION_HOSTILE
+		|| _unit->getUnitStatus() == STATUS_UNCONSCIOUS)
 	{
-		_battleSave->deleteBody(_unit);
-
-		if (unitSize == 1
-			&& (Options::battleWeaponSelfDestruction == false
-				|| _unit->getOriginalFaction() != FACTION_HOSTILE
-				|| _unit->getUnitStatus() == STATUS_UNCONSCIOUS))
-		{
-			_parent->dropUnitInventory(_unit);
-		}
-		_unit->setTile();
+		_parent->dropUnitInventory(_unit);
 	}
 
-
-//	if (carried == true)
-//	{
-//		for (std::vector<BattleItem*>::const_iterator
-//				i = _battleSave->getItems()->begin();
-//				i != _battleSave->getItems()->end();
-//				++i)
-//		{
-//			if ((*i)->getUnit() == _unit)
-//			{
-//				(*i)->changeRule(_parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[0]));
-//				break;
-//			}
-//		}
-//	}
-//	else
-//	{
 	Tile
 		* tile,
 		* tileExpl,
@@ -323,8 +299,11 @@ void UnitDieBState::convertToBody() // private.
 	bool
 		playSound (true),
 		calcLights (false);
+
+	const int unitSize (_unit->getArmor()->getSize());
 	size_t quadrants (static_cast<size_t>(unitSize * unitSize));
 
+	const Position pos (_unit->getPosition());
 	for (int
 			y = unitSize - 1;
 			y != -1;
@@ -374,15 +353,18 @@ void UnitDieBState::convertToBody() // private.
 				tile->addSmoke(RNG::generate(0,2));
 			}
 
+			if (tile != nullptr && tile->getTileUnit() == _unit)	// safety. had a CTD when ethereal dies on water.
+				tile->setUnit();									// TODO: iterate over all mapTiles searching for the unit-item and
+																	// null-ing all tile-links to it. cf. SavedBattleGame::deleteBody().
+
 			BattleItem* const body (new BattleItem(
 											_parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[--quadrants]),
 											_battleSave->getCanonicalBattleId()));
 			body->setUnit(_unit);
-
-			if (tile != nullptr && tile->getTileUnit() == _unit)	// safety. had a CTD when ethereal dies on water.
-				tile->setUnit();									// TODO: iterate over all mapTiles searching for the unit-item and
-																	// null-ing all tile-links to it. cf. SavedBattleGame::deleteBody().
-			_parent->dropItem(body, pos + Position(x,y,0), 3);
+			_parent->dropItem(
+							body,
+							pos + Position(x,y,0),
+							DROP_CREATE);
 		}
 	}
 

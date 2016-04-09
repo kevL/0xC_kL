@@ -116,18 +116,19 @@ Soldier::Soldier(
 
 //		if (names->empty() == false)
 //		{
-//			size_t nationality = RNG::generate(0, names->size() - 1);
+//			size_t nationality (RNG::generate(0, names->size() - 1));
 //			_name = names->at(nationality)->genName(&_gender, _solRule->getFemaleFrequency());
 //
-//			// Once we add the ability to mod in extra looks, this will
-//			// need to reference the ruleset for the maximum amount of looks.
+//			// Once the ability to mod in extra looks is added this will need to
+//			// reference the ruleset for a max-quantity of look-types.
 //			_look = (SoldierLook)names->at(nationality)->genLook(4);
 //		}
 //		else
 //		{
-//			_name = L"";
 //			_gender = (RNG::percent(_solRule->getFemaleFrequency()) ? GENDER_FEMALE : GENDER_MALE);
 //			_look = (SoldierLook)RNG::generate(0, 3);
+//			_name = (_gender == GENDER_FEMALE) ? L"Astrid" : L"Rupert";
+//			_name += L" Hutzinger";
 //		}
 	}
 }
