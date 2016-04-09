@@ -609,8 +609,8 @@ bool TileEngine::calcFov(
 
 										// mark every tile of line as visible (this is needed because of bresenham narrow stroke).
 										tile = _battleSave->getTile(posTrj);
-//										tile->setTileVisible();			// used only by sneakyAI.
 										tile->setRevealed(ST_CONTENT);	// sprite caching for floor+content, ergo + west & north walls.
+//										tile->setTileVisible();			// Used only by sneakyAI.
 
 										// walls to the east or south of a visible tile, reveal that too
 										// NOTE: yeh, If there's walls or an appropriate BigWall object!
@@ -625,60 +625,48 @@ bool TileEngine::calcFov(
 										//		#2 - floor + content (reveals both walls also)
 
 										if ((object = tile->getMapData(O_OBJECT)) == nullptr
-											|| (object->getBigwall() & 0xa1) == 0)
-//											|| (   object->getBigwall() != BIGWALL_BLOCK
-//												&& object->getBigwall() != BIGWALL_EAST
-//												&& object->getBigwall() != BIGWALL_E_S))
+											|| (object->getBigwall() & 0xa1) == 0)				// [0xa1 = Block/East/ES]
 										{
-											tileEdge = _battleSave->getTile(Position(		// show Tile EAST
+											tileEdge = _battleSave->getTile(Position(			// show Tile EAST
 																				posTrj.x + 1,
 																				posTrj.y,
 																				posTrj.z));
 											if (tileEdge != nullptr)
 											{
 												if ((objectEdge = tileEdge->getMapData(O_OBJECT)) != nullptr
-													&& (objectEdge->getBigwall() & 0x9) != 0)
-//													&& (   objectEdge->getBigwall() == BIGWALL_BLOCK
-//														|| objectEdge->getBigwall() == BIGWALL_WEST))
+													&& (objectEdge->getBigwall() & 0x9) != 0)	// [0x9 = Block/West]
 												{
-													tileEdge->setRevealed(ST_CONTENT);		// reveal entire TileEast
+													tileEdge->setRevealed(ST_CONTENT);			// reveal entire TileEast
 												}
 												else if (tileEdge->getMapData(O_WESTWALL) != nullptr)
-													tileEdge->setRevealed(ST_WEST);			// reveal only westwall
+													tileEdge->setRevealed(ST_WEST);				// reveal only westwall
 											}
 										}
 
 										if (object == nullptr
-											|| (object->getBigwall() & 0xc1) == 0)
-//											|| (   object->getBigwall() != BIGWALL_BLOCK
-//												&& object->getBigwall() != BIGWALL_SOUTH
-//												&& object->getBigwall() != BIGWALL_E_S))
+											|| (object->getBigwall() & 0xc1) == 0)				// [0xc1 = Block/South/ES]
 										{
-											tileEdge = _battleSave->getTile(Position(		// show Tile SOUTH
+											tileEdge = _battleSave->getTile(Position(			// show Tile SOUTH
 																				posTrj.x,
 																				posTrj.y + 1,
 																				posTrj.z));
 											if (tileEdge != nullptr)
 											{
 												if ((objectEdge = tileEdge->getMapData(O_OBJECT)) != nullptr
-													&& (objectEdge->getBigwall() & 0x11) != 0)
-//													&& (   objectEdge->getBigwall() == BIGWALL_BLOCK
-//														|| objectEdge->getBigwall() == BIGWALL_NORTH))
+													&& (objectEdge->getBigwall() & 0x11) != 0)	// [0x11 = Block/North]
 												{
-													tileEdge->setRevealed(ST_CONTENT);		// reveal entire TileSouth
+													tileEdge->setRevealed(ST_CONTENT);			// reveal entire TileSouth
 												}
 												else if (tileEdge->getMapData(O_NORTHWALL) != nullptr)
-													tileEdge->setRevealed(ST_NORTH);		// reveal only northwall
+													tileEdge->setRevealed(ST_NORTH);			// reveal only northwall
 											}
 										}
 
 										if (tile->getMapData(O_WESTWALL) == nullptr
 											&& (object == nullptr
-												|| (object->getBigwall() & 0x9) == 0))
-//												|| (   object->getBigwall() != BIGWALL_BLOCK
-//													&& object->getBigwall() != BIGWALL_WEST)))
+												|| (object->getBigwall() & 0x9) == 0))			// [0x9 = Block/West]
 										{
-											tileEdge = _battleSave->getTile(Position(		// show Tile WEST
+											tileEdge = _battleSave->getTile(Position(			// show Tile WEST
 																				posTrj.x - 1,
 																				posTrj.y,
 																				posTrj.z));
@@ -690,18 +678,16 @@ bool TileEngine::calcFov(
 													case BIGWALL_BLOCK:
 													case BIGWALL_EAST:
 													case BIGWALL_E_S:
-														tileEdge->setRevealed(ST_CONTENT);	// reveal entire TileWest
+														tileEdge->setRevealed(ST_CONTENT);		// reveal entire TileWest
 												}
 											}
 										}
 
 										if (tile->getMapData(O_NORTHWALL) == nullptr
 											&& (object == nullptr
-												|| (object->getBigwall() & 0x11) == 0))
-//												|| (   object->getBigwall() != BIGWALL_BLOCK
-//													&& object->getBigwall() != BIGWALL_NORTH)))
+												|| (object->getBigwall() & 0x11) == 0))			// [0x11 = Block/North]
 										{
-											tileEdge = _battleSave->getTile(Position(		// show Tile NORTH
+											tileEdge = _battleSave->getTile(Position(			// show Tile NORTH
 																				posTrj.x,
 																				posTrj.y - 1,
 																				posTrj.z));
@@ -713,7 +699,7 @@ bool TileEngine::calcFov(
 													case BIGWALL_BLOCK:
 													case BIGWALL_SOUTH:
 													case BIGWALL_E_S:
-														tileEdge->setRevealed(ST_CONTENT);	// reveal entire TileNorth
+														tileEdge->setRevealed(ST_CONTENT);		// reveal entire TileNorth
 												}
 											}
 										}
