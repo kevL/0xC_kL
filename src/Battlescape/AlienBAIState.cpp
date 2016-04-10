@@ -169,7 +169,6 @@ void AlienBAIState::think(BattleAction* const action)
 		switch (itRule->getBattleType())
 		{
 			case BT_FIREARM:
-			{
 				//Log(LOG_INFO) << ". . weapon is Firearm";
 				if (itRule->isWaypoints() != 0
 					&& _targetsExposed > _targetsVisible) // else let BL fallback to aimed shot
@@ -189,23 +188,18 @@ void AlienBAIState::think(BattleAction* const action)
 												action->weapon);
 				}
 				break;
-			}
 
 			case BT_MELEE:
-			{
 				//Log(LOG_INFO) << ". . melee TRUE";
 				_melee = true;
 				tuReserve = _unit->getTimeUnits()
 						  - _unit->getActionTu(BA_MELEE, action->weapon);
 				break;
-			}
+
 //			case BT_GRENADE:
-//			{
 //				Log(LOG_INFO) << ". . grenade TRUE";
 //				_grenade = true; // <- this is no longer useful since getMainHandWeapon() does not return grenades.
-//			}
 		}
-
 	}
 	//else Log(LOG_INFO) << ". . weapon is NULL";
 //	else if () // kL_add -> Give the invisible 'meleeWeapon' param a try ....

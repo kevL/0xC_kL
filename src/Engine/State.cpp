@@ -271,7 +271,7 @@ void State::init() // virtual
 			++i)
 	{
 		if ((window = dynamic_cast<Window*>(*i)) != nullptr)
-			window->invalidate(true);
+			window->invalidate();
 	}
 }
 

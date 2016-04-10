@@ -35,6 +35,8 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the No Containment screen.
+ * @note This can be replaced by invoking ErrorMessageState instead; cf.
+ * pop-repo, DebriefingState::init() & ::btnOkClick().
  */
 NoContainmentState::NoContainmentState()
 {

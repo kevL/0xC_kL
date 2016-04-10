@@ -25,7 +25,8 @@ namespace OpenXcom
 
 /**
  * Default plurality rules.
- * Provide rules for languages where 1 is singular and everything else is plural.
+ * @note Provide rules for languages where 1 is singular and everything else is
+ * plural.
  * @note one = 1; other = ...
  */
 class OneSingular
@@ -43,16 +44,21 @@ public:
 
 const char* OneSingular::getSuffix(unsigned n) const
 {
-	if (n == 1)
-		return "_one";
+	switch (n)
+	{
+		case 1:
+			return "_one";
 
-	return "_other";
+		default:
+			return "_other";
+	}
 }
 
 
 /**
  * Plurality rules where 0 is also singular.
- * Provide rules for languages where 0 and 1 are singular and everything else is plural.
+ * @note Provide rules for languages where 0 and 1 are singular and everything
+ * else is plural.
  * @note one = 0-1; other = ...
  */
 class ZeroOneSingular
@@ -70,16 +76,21 @@ public:
 
 const char* ZeroOneSingular::getSuffix(unsigned n) const
 {
-	if (n == 0 || n == 1)
-		return "_one";
+	switch (n)
+	{
+		case 0:
+		case 1:
+			return "_one";
 
-	return "_other";
+		default:
+			return "_other";
+	}
 }
 
 
 /**
  * Plurality rules where there is no singular.
- * Provide rules for languages where everything is plural.
+ * @note Provide rules for languages where everything is plural.
  * @note other = ...
  */
 class NoSingular
@@ -120,16 +131,18 @@ public:
 
 const char* CyrillicPlurality::getSuffix(unsigned n) const
 {
-	if (n %10 == 1 && n %100 != 11)
+	if (n % 10 == 1 && n % 100 != 11)
 		return "_one";
-	else if ((n %10 >= 2 && n %10 <= 4)
-		&& !(n %100 >= 12 && n %100 <= 14))
+
+	if ((     n %  10 >=  2 && n %  10 <=  4)
+		&& !( n % 100 >= 12 && n % 100 <= 14))
 	{
 		return "_few";
 	}
-	else if (n %10 == 0
-		|| (n %10 >= 5 && n %10 <= 9)
-		|| (n %100 >= 11 && n %100 <= 14))
+
+	if (    n %  10 ==  0
+		|| (n %  10 >=  5 && n %  10 <=  9)
+		|| (n % 100 >= 11 && n % 100 <= 14))
 	{
 		return "_many";
 	}
@@ -156,12 +169,19 @@ public:
 
 const char* CzechPlurality::getSuffix(unsigned n) const
 {
-	if (n == 1)
-		return "_one";
-	else if (n >= 2 && n <= 4)
-		return "_few";
+	switch (n)
+	{
+		case 1:
+			return "_one";
 
-	return "_other";
+		case 2:
+		case 3:
+		case 4:
+			return "_few";
+
+		default:
+			return "_other";
+	}
 }
 
 
@@ -186,14 +206,16 @@ const char* PolishPlurality::getSuffix(unsigned n) const
 {
 	if (n == 1)
 		return "_one";
-	else if ((n %10 >= 2 && n %10 <= 4)
-		&& !(n %100 >= 12 && n %100 <= 14))
+
+	if ((    n %  10 >=  2 && n %  10 <=  4)
+		&& !(n % 100 >= 12 && n % 100 <= 14))
 	{
 		return "_few";
 	}
-	else if ((n %10 <= 1)
-		|| (n %10 >= 5 && n %10 <= 9)
-		|| (n %100 >= 12 && n %100 <= 14))
+
+	if ((   n %  10 <=  1)
+		|| (n %  10 >=  5 && n %  10 <=  9)
+		|| (n % 100 >= 12 && n % 100 <= 14))
 	{
 		return "_many";
 	}
@@ -223,8 +245,9 @@ const char* RomanianPlurality::getSuffix(unsigned n) const
 {
 	if (n == 1)
 		return "_one";
-	else if (n == 0
-		|| (n %100 >= 1 && n %100 <= 19))
+
+	if (n == 0
+		|| (n % 100 >= 1 && n % 100 <= 19))
 	{
 		return "_few";
 	}
@@ -251,10 +274,11 @@ public:
 
 const char* CroatianPlurality::getSuffix(unsigned n) const
 {
-	if (n %10 == 1 && n %100 != 11)
+	if (n % 10 == 1 && n % 100 != 11)
 		return "_one";
-	else if ((n %10 >= 2 && n %10 <= 4)
-		&& !(n %100 >= 12 && n %100 <= 14))
+
+	if ((    n %  10 >=  2 && n %  10 <=  4)
+		&& !(n % 100 >= 12 && n % 100 <= 14))
 	{
 		return "_few";
 	}
@@ -262,25 +286,27 @@ const char* CroatianPlurality::getSuffix(unsigned n) const
 	return "_other";
 }
 
-/** A mapping of language to plurality rules.
- * It is populated the first time plurality rules are requested.
+/**
+ * A mapping of language to plurality rules.
+ * @note It is populated the first time plurality rules are requested.
  * @see LanguagePlurality::create
  */
 std::map<std::string, LanguagePlurality::PFCreate> LanguagePlurality::s_factoryFunctions;
 
 /**
  * Search and create a handler for the plurality rules of @a language.
- * If the language was not found, a default with the same rules as English is returned.
- * @param language The target language.
- * @return A newly created LanguagePlurality instance for the given language.
- * @internal The first time this is called, we populate the language => rules mapping.
+ * @note If the language was not found a default with the same rules as English
+ * is returned.
+ * @param language - reference to the target-language.
+ * @return, pointer to a newly created LanguagePlurality-instance for the given language.
+ * @internal Populate the [language => rules] mapping the first time this is called.
  */
 LanguagePlurality* LanguagePlurality::create(const std::string& language)
 {
-	// Populate factory the first time we are called.
-	if (s_factoryFunctions.empty() == true)
+	if (s_factoryFunctions.empty() == true) // Populate factory the first time it's called.
 	{
 		s_factoryFunctions.insert(std::make_pair("fr",		&ZeroOneSingular::create));
+		s_factoryFunctions.insert(std::make_pair("fr-CA",	&ZeroOneSingular::create));
 		s_factoryFunctions.insert(std::make_pair("hu",		&NoSingular::create));
 		s_factoryFunctions.insert(std::make_pair("tr",		&NoSingular::create));
 		s_factoryFunctions.insert(std::make_pair("cs",		&CzechPlurality::create));
@@ -296,12 +322,10 @@ LanguagePlurality* LanguagePlurality::create(const std::string& language)
 		s_factoryFunctions.insert(std::make_pair("hr",		&CroatianPlurality::create));
 	}
 
-	PFCreate creator = &OneSingular::create;
-	const std::map<std::string, PFCreate>::const_iterator found = s_factoryFunctions.find(language);
+	PFCreate creator (&OneSingular::create);
+	const std::map<std::string, PFCreate>::const_iterator found (s_factoryFunctions.find(language));
 	if (found != s_factoryFunctions.end())
-	{
 		creator = found->second;
-	}
 
 	return (*creator)();
 }
