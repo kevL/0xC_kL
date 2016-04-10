@@ -230,8 +230,8 @@ std::wstring Text::getText() const
  * @param indent	- true to indent wrapped text (default false)
  */
 void Text::setWordWrap(
-		const bool wrap,
-		const bool indent)
+		bool wrap,
+		bool indent)
 {
 	if (_wrap != wrap || indent != _indent)
 	{
@@ -247,18 +247,18 @@ void Text::setWordWrap(
  * @note Mostly used to make button text look pressed along with the button.
  * @param invert - true to invert text (default true)
  */
-void Text::setInvert(const bool invert)
+void Text::setInvert(bool invert)
 {
 	_invert = invert;
 	_redraw = true;
 }
 
 /**
- * Enables/disables high contrast color.
+ * Enables/disables high-contrast color.
  * @note Mostly used for Battlescape UI.
- * @param contrast - true to set high contrast (default true)
+ * @param contrast - true for high-contrast (default true)
  */
-void Text::setHighContrast(const bool contrast)
+void Text::setHighContrast(bool contrast)
 {
 	if (contrast == true)	_contrast = 3;
 	else					_contrast = 1;

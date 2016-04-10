@@ -59,7 +59,7 @@ namespace
 {
 
 /**
- * Helper function counting pitch in bytes with 16byte padding.
+ * Helper function counting pitch in bytes with 16-byte padding.
  * @param bpp	- bytes per pixel
  * @param width	- number of pixel in row
  * @return, pitch in bytes
@@ -130,7 +130,7 @@ inline void DeleteAligned(void* buffer)
 
 
 /**
- * Sets up a blank 8bpp surface with the specified size and position with pure
+ * Sets up a blank 8-bpp surface with the specified size and position with pure
  * black as the transparent color.
  * @note Surfaces don't have to fill the whole size since their
  * background is transparent, specially subclasses with their own

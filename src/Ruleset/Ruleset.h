@@ -78,7 +78,7 @@ class RuleUnit;
 class RuleVideo;
 class SavedGame;
 class Soldier;
-class SoldierNamePool;
+//class SoldierNamePool;
 //class SoundDefinition;
 //class StatString;
 class UfoTrajectory;
@@ -155,7 +155,7 @@ protected:
 	std::vector<std::vector<int>> _alienItemLevels;
 
 	std::vector<OperationPool*> _operationTitles;
-	std::vector<SoldierNamePool*> _names;
+//	std::vector<SoldierNamePool*> _names;
 //	std::vector<StatString*> _statStrings;
 
 	std::map<std::string, AlienDeployment*>		_alienDeployments;
@@ -229,7 +229,7 @@ protected:
 		SavedGame* createSave() const;
 
 		/// Gets the pool list for Soldier names.
-		const std::vector<SoldierNamePool*>& getPools() const;
+//		const std::vector<SoldierNamePool*>& getPools() const;
 		/// Gets the pool list for Operation titles.
 		const std::vector<OperationPool*>& getOperations() const;
 

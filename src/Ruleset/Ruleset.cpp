@@ -114,17 +114,17 @@ Ruleset::Ruleset(const Game* const game)
 
 	const std::string path (CrossPlatform::getDataFolder("SoldierName/")); // Check in which data dir the folder is stored
 
-	const std::vector<std::string> nation (CrossPlatform::getFolderContents(path, "nam")); // add Soldier names
-	for (std::vector<std::string>::const_iterator
-			i = nation.begin();
-			i != nation.end();
-			++i)
-	{
-		SoldierNamePool* const pool (new SoldierNamePool());
-		pool->load(CrossPlatform::noExt(*i));
-
-		_names.push_back(pool);
-	}
+//	const std::vector<std::string> nation (CrossPlatform::getFolderContents(path, "nam")); // add Soldier names
+//	for (std::vector<std::string>::const_iterator
+//			i = nation.begin();
+//			i != nation.end();
+//			++i)
+//	{
+//		SoldierNamePool* const pool (new SoldierNamePool());
+//		pool->load(CrossPlatform::noExt(*i));
+//
+//		_names.push_back(pool);
+//	}
 
 	const std::vector<std::string> operations (CrossPlatform::getFolderContents(path, "opr")); // add Operation Title words
 	for (std::vector<std::string>::const_iterator
@@ -146,11 +146,11 @@ Ruleset::~Ruleset()
 {
 	delete _globe;
 
-	for (std::vector<SoldierNamePool*>::const_iterator
-			i = _names.begin();
-			i != _names.end();
-			++i)
-		delete *i;
+//	for (std::vector<SoldierNamePool*>::const_iterator
+//			i = _names.begin();
+//			i != _names.end();
+//			++i)
+//		delete *i;
 
 	for (std::vector<OperationPool*>::const_iterator
 			i = _operationTitles.begin();
@@ -1175,18 +1175,18 @@ SavedGame* Ruleset::createSave() const
 		gameSave->getCanonicalId((*i)->getRules()->getType());
 	}
 
-/*	Craft* transportCraft (nullptr); // Determine starting transport craft.
-	for (std::vector<Craft*>::const_iterator
-			i = base->getCrafts()->begin();
-			i != base->getCrafts()->end();
-			++i)
-	{
-		if ((*i)->getRules()->getSoldiers() != 0)
-		{
-			transportCraft = *i;
-			break;
-		}
-	} */
+//	Craft* transportCraft (nullptr); // Determine starting transport craft.
+//	for (std::vector<Craft*>::const_iterator
+//			i = base->getCrafts()->begin();
+//			i != base->getCrafts()->end();
+//			++i)
+//	{
+//		if ((*i)->getRules()->getSoldiers() != 0)
+//		{
+//			transportCraft = *i;
+//			break;
+//		}
+//	}
 
 	std::vector<std::string> allSoldiers (_soldiersIndex); // Determine starting soldier types.
 	for (std::vector<std::string>::const_iterator
@@ -1259,11 +1259,11 @@ SavedGame* Ruleset::createSave() const
 /**
  * Returns the list of soldier name pools.
  * @return, reference to a vector of SoldierNamePool pointers
- */
+ *
 const std::vector<SoldierNamePool*>& Ruleset::getPools() const
 {
 	return _names;
-}
+} */
 
 /**
  * Returns the list of operation title pools.
@@ -2247,7 +2247,7 @@ Soldier* Ruleset::genSoldier(
 	return new Soldier(
 					getSoldier(type),
 					getArmor(getSoldier(type)->getArmor()),
-					&_names,
+//					&_names,
 					gameSave->getCanonicalId("STR_SOLDIER"));
 }
 /*	Soldier* soldier = nullptr;

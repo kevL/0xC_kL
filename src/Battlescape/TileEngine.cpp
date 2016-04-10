@@ -419,10 +419,10 @@ bool TileEngine::calcFov(
 		pos,
 		posTrj;
 
+	const Tile* tileTest;
 	Tile
 		* tile,
-		* tileEdge,
-		* tileTest;
+		* tileEdge;
 	const MapData
 		* object,
 		* objectEdge;

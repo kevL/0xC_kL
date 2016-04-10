@@ -329,8 +329,12 @@ protected:
 		/// Sets the secondary color of the Surface.
 		virtual void setSecondaryColor(Uint8 /*color*/)
 		{};
-		/// Sets the border color of the Surface.
+		/// Sets the border-color of the Surface.
 		virtual void setBorderColor(Uint8 /*color*/)
+		{};
+
+		/// Sets the high-contrast color of the Surface.
+		virtual void setHighContrast(bool contrast = true)
 		{};
 };
 

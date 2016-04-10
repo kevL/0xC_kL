@@ -63,11 +63,11 @@ class RuleSoldier;
 class SavedGame;
 class SoldierDiary;
 class SoldierLayout;
-class SoldierNamePool;
+//class SoldierNamePool;
 
 
 /**
- * Represents a soldier hired by the player.
+ * Represents a Soldier hired by the player.
  * @note Soldiers have a wide variety of stats that affect their performance
  * during battles.
  */
@@ -104,23 +104,23 @@ private:
 
 
 	public:
-		/// Creates a new soldier.
+		/// Creates a Soldier.
 		Soldier(
 				const RuleSoldier* const solRule,
 				const RuleArmor* const armorRule = nullptr,
-				const std::vector<SoldierNamePool*>* const names = nullptr,
+//				const std::vector<SoldierNamePool*>* const names = nullptr,
 				int id = 0);
-		/// Cleans up the soldier.
+		/// Cleans up the Soldier.
 		~Soldier();
 
-		/// Loads the soldier from YAML.
+		/// Loads the Soldier from YAML.
 		void load(
 				const YAML::Node& node,
 				const Ruleset* const rules);
-		/// Saves the soldier to YAML.
+		/// Saves the Soldier to YAML.
 		YAML::Node save() const;
 
-		/// Gets soldier rules.
+		/// Gets Soldier rules.
 		const RuleSoldier* getRules() const;
 
 		/// Gets a pointer to initial stats.
@@ -128,79 +128,79 @@ private:
 		/// Gets a pointer to current stats.
 		UnitStats* getCurrentStats();
 
-		/// Gets the soldier's unique ID.
+		/// Gets the Soldier's unique-ID.
 		int getId() const;
 
-		/// Gets the soldier's name.
+		/// Gets the Soldier's name.
 		std::wstring getName() const;
 //		std::wstring getName(bool statstring = false, size_t maxLength = 20) const;
-		/// Sets the soldier's name.
+		/// Sets the Soldier's name.
 		void setName(const std::wstring& name);
 
-		/// Gets the soldier's craft.
+		/// Gets the Soldier's Craft.
 		Craft* getCraft() const;
-		/// Sets the soldier's craft.
+		/// Sets the Soldier's Craft.
 		void setCraft(Craft* const craft = nullptr);
-		/// Gets the soldier's craft string.
+		/// Gets the Soldier's craft-string.
 		std::wstring getCraftString(const Language* const lang) const;
 
-		/// Gets a string version of the soldier's rank.
+		/// Gets a string version of the Soldier's rank.
 		std::string getRankString() const;
-		/// Gets a sprite version of the soldier's rank.
+		/// Gets a sprite version of the Soldier's rank.
 		int getRankSprite() const;
-		/// Gets the soldier's rank.
+		/// Gets the Soldier's rank.
 		SoldierRank getRank() const;
-		/// Increase the soldier's military rank.
+		/// Increase the Soldier's military rank.
 		void promoteRank();
 
 		/// Adds kills and a mission to this Soldier's stats.
 		void postTactical(int kills);
-		/// Gets the soldier's missions.
+		/// Gets the Soldier's missions.
 		int getMissions() const;
-		/// Gets the soldier's kills.
+		/// Gets the Soldier's kills.
 		int getKills() const;
 
-		/// Gets the soldier's gender.
+		/// Gets the Soldier's gender.
 		SoldierGender getGender() const;
-		/// Gets the soldier's look.
+		/// Gets the Soldier's look.
 		SoldierLook getLook() const;
 
 		/// Get whether the unit was recently promoted.
 		bool isPromoted();
 
-		/// Gets the soldier armor.
+		/// Gets the Soldier armor.
 		const RuleArmor* getArmor() const;
-		/// Sets the soldier armor.
+		/// Sets the Soldier armor.
 		void setArmor(RuleArmor* const armor);
 
-		/// Gets the soldier's wound recovery time.
+		/// Gets the Soldier's wound recovery time.
 		int getSickbay() const;
-		/// Sets the soldier's wound recovery time.
+		/// Sets the Soldier's wound recovery time.
 		void setRecovery(int recovery);
-		/// Gets a soldier's wounds as a percent.
+		/// Gets a Soldier's wounds as a percent.
 		int getRecoveryPct() const;
 		/// Heals wound recoveries.
 		void heal();
 
-		/// Gets the soldier's equipment-layout.
+		/// Gets the Soldier's equipment-layout.
 		std::vector<SoldierLayout*>* getLayout();
 
-		/// Trains a soldier's psionic abilities.
+		/// Trains a Soldier's psionic abilities.
 		bool trainPsiDay();
 		/// Returns whether the unit is in psi training or not
 		bool inPsiTraining() const;
 		/// Sets the psi training status
 		void togglePsiTraining();
 
-		/// Kills the soldier and sends it to the dead soldiers' bin.
+		/// Kills the Soldier and sends it to the dead soldiers' bin.
 		void die(SavedGame* const gameSave);
 
-		/// Gets the soldier's diary.
+		/// Gets the Soldier's diary.
 		SoldierDiary* getDiary() const;
 
 		/// Calculates a statString.
 //		void calcStatString(const std::vector<StatString*>& statStrings, bool psiStrengthEval);
-		/// Automatically renames the soldier according to his/her current statistics.
+		/// Automatically renames the Soldier according to his/her current statistics.
 		void autoStat();
 };
 

@@ -263,6 +263,16 @@ void State::init() // virtual
 
 	if (_game->getResourcePack() != nullptr)
 		_game->getResourcePack()->setPalette(_palette);
+
+	Window* window;
+	for (std::vector<Surface*>::const_iterator
+			i = _surfaces.begin();
+			i != _surfaces.end();
+			++i)
+	{
+		if ((window = dynamic_cast<Window*>(*i)) != nullptr)
+			window->invalidate(true);
+	}
 }
 
 /**
@@ -424,77 +434,26 @@ void State::lowerAllSurfaces()
  */
 void State::applyBattlescapeTheme()
 {
-	const Element* const element (_game->getRuleset()->getInterface("mainMenu")->getElement("battlescapeTheme"));
+	const Element* const el (_game->getRuleset()->getInterface("mainMenu")->getElement("battlescapeTheme"));
+
+	Window* window;
+	TextList* textList;
+	ComboBox* combo;
 
 	for (std::vector<Surface*>::const_iterator
 			i = _surfaces.begin();
 			i != _surfaces.end();
 			++i)
 	{
-		Window* const window (dynamic_cast<Window*>(*i));
-		if (window != nullptr)
-		{
-			window->setColor(static_cast<Uint8>(element->color));
-			window->setHighContrast();
+		(*i)->setColor(static_cast<Uint8>(el->color));
+		(*i)->setHighContrast();
+
+		if ((window = dynamic_cast<Window*>(*i)) != nullptr)
 			window->setBackground(_game->getResourcePack()->getSurface("Diehard"));
-			continue;
-		}
-
-		Text* const text (dynamic_cast<Text*>(*i));
-		if (text != nullptr)
-		{
-			text->setColor(static_cast<Uint8>(element->color));
-			text->setHighContrast();
-			continue;
-		}
-
-		TextButton* const btn (dynamic_cast<TextButton*>(*i));
-		if (btn != nullptr)
-		{
-			btn->setColor(static_cast<Uint8>(element->color));
-			btn->setHighContrast();
-			continue;
-		}
-
-		TextEdit* const edit (dynamic_cast<TextEdit*>(*i));
-		if (edit != nullptr)
-		{
-			edit->setColor(static_cast<Uint8>(element->color));
-			edit->setHighContrast();
-			continue;
-		}
-
-		TextList* const textList (dynamic_cast<TextList*>(*i));
-		if (textList != nullptr)
-		{
-			textList->setColor(static_cast<Uint8>(element->color));
-			textList->setArrowColor(static_cast<Uint8>(element->border));
-			textList->setHighContrast();
-			continue;
-		}
-
-		ArrowButton* const arrow (dynamic_cast<ArrowButton*>(*i));
-		if (arrow != nullptr)
-		{
-			arrow->setColor(static_cast<Uint8>(element->border));
-			continue;
-		}
-
-		Slider* const slider (dynamic_cast<Slider*>(*i));
-		if (slider != nullptr)
-		{
-			slider->setColor(static_cast<Uint8>(element->color));
-			slider->setHighContrast();
-			continue;
-		}
-
-		ComboBox* const combo (dynamic_cast<ComboBox*>(*i));
-		if (combo != nullptr)
-		{
-			combo->setColor(static_cast<Uint8>(element->color));
-			combo->setArrowColor(static_cast<Uint8>(element->border));
-			combo->setHighContrast();
-		}
+		else if ((textList = dynamic_cast<TextList*>(*i)) != nullptr)
+			textList->setArrowColor(static_cast<Uint8>(el->border));
+		else if ((combo = dynamic_cast<ComboBox*>(*i)) != nullptr)
+			combo->setArrowColor(static_cast<Uint8>(el->border));
 	}
 }
 
@@ -508,15 +467,10 @@ void State::redrawText()
 			i != _surfaces.end();
 			++i)
 	{
-		const Text* const text (dynamic_cast<Text*>(*i));
-		const TextButton* const btn (dynamic_cast<TextButton*>(*i));
-		const TextEdit* const edit (dynamic_cast<TextEdit*>(*i));
-		const TextList* const list (dynamic_cast<TextList*>(*i));
-
-		if (   text != nullptr
-			|| btn  != nullptr
-			|| edit != nullptr
-			|| list != nullptr)
+		if (   dynamic_cast<Text*>(*i) != nullptr
+			|| dynamic_cast<TextButton*>(*i) != nullptr
+			|| dynamic_cast<TextList*>(*i) != nullptr
+			|| dynamic_cast<TextEdit*>(*i) != nullptr)
 		{
 			(*i)->draw();
 		}

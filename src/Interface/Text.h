@@ -133,14 +133,14 @@ private:
 
 		/// Sets the Text's wordwrap setting.
 		void setWordWrap(
-				const bool wrap = true,
-				const bool indent = false);
+				bool wrap = true,
+				bool indent = false);
 
-		/// Sets the Text's color invert setting.
-		void setInvert(const bool invert = true);
+		/// Sets the Text's color-invert setting.
+		void setInvert(bool invert = true);
 
-		/// Sets the Text's high contrast color setting.
-		void setHighContrast(const bool contrast = true);
+		/// Sets the Text's high-contrast setting.
+		void setHighContrast(bool contrast = true);
 		/// Gets if the Text is using high contrast color.
 		bool getHighContrast() const;
 
