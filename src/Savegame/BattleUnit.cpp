@@ -2037,7 +2037,7 @@ int BattleUnit::getActionTu(
 	}
 
 	if (cost != 0
-		&& ((itRule != nullptr && itRule->getFlatRate() == false) // it's a percentage, apply to TUs
+		&& ((itRule != nullptr && itRule->isFlatRate() == false) // it's a percentage, apply to TUs
 			|| bat == BA_THROW))
 	{
 		return std::max(1,

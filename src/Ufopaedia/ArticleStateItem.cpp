@@ -92,99 +92,105 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 	const std::vector<std::string>* const ammo_data (itRule->getCompatibleAmmo());
 
 	// SHOT STATS TABLE (for firearms only)
-	if (itRule->getBattleType() == BT_FIREARM)
+	switch (itRule->getBattleType())
 	{
-		_txtShotType = new Text(100, 17, 8, 66);
-		add(_txtShotType);
-		_txtShotType->setText(tr("STR_SHOT_TYPE"));
-		_txtShotType->setColor(uPed_BLUE_SLATE);
-
-		_txtAccuracy = new Text(52, 17, 108, 66);
-		add(_txtAccuracy);
-		_txtAccuracy->setText(tr("STR_ACCURACY_UC"));
-		_txtAccuracy->setColor(uPed_BLUE_SLATE);
-
-		_txtTuCost = new Text(52, 17, 160, 66);
-		add(_txtTuCost);
-		_txtTuCost->setText(tr("STR_TIME_UNIT_COST"));
-		_txtTuCost->setColor(uPed_BLUE_SLATE);
-
-		_lstInfo = new TextList(204, 57, 8, 82);
-		add(_lstInfo);
-		_lstInfo->setColor(uPed_GREEN_SLATE); // color for %-data!
-		_lstInfo->setColumns(3, 100,52,52);
-		_lstInfo->setMargin(0);
-		_lstInfo->setBig();
-
-
-		std::wstring tu;
-
-		int current_row (0);
-		if (itRule->getAutoTu() != 0)
+		case BT_FIREARM:
 		{
-			if (itRule->getFlatRate() == true)
-				tu = Text::intWide(itRule->getAutoTu());
-			else
-				tu = Text::formatPercent(itRule->getAutoTu());
+			_txtShotType = new Text(100, 17, 8, 66);
+			add(_txtShotType);
+			_txtShotType->setText(tr("STR_SHOT_TYPE"));
+			_txtShotType->setColor(uPed_BLUE_SLATE);
 
-			_lstInfo->addRow(
-							3,
-							tr("STR_SHOT_TYPE_AUTO").c_str(),
-							Text::intWide(itRule->getAccuracyAuto()).c_str(),
-							tu.c_str());
-			_lstInfo->setCellColor(current_row++, 0, uPed_BLUE_SLATE);
+			_txtAccuracy = new Text(52, 17, 108, 66);
+			add(_txtAccuracy);
+			_txtAccuracy->setText(tr("STR_ACCURACY_UC"));
+			_txtAccuracy->setColor(uPed_BLUE_SLATE);
+
+			_txtTuCost = new Text(52, 17, 160, 66);
+			add(_txtTuCost);
+			_txtTuCost->setText(tr("STR_TIME_UNIT_COST"));
+			_txtTuCost->setColor(uPed_BLUE_SLATE);
+
+			_lstInfo = new TextList(204, 57, 8, 82);
+			add(_lstInfo);
+			_lstInfo->setColor(uPed_GREEN_SLATE); // color for %-data!
+			_lstInfo->setColumns(3, 100,52,52);
+			_lstInfo->setMargin();
+			_lstInfo->setBig();
+
+
+			const bool flatRate (itRule->isFlatRate() == true);
+			std::wstring tu;
+
+			size_t current_row (0u);
+			if (itRule->getAutoTu() != 0)
+			{
+				if (flatRate == true)
+					tu = Text::intWide(itRule->getAutoTu());
+				else
+					tu = Text::formatPercent(itRule->getAutoTu());
+
+				_lstInfo->addRow(
+								3,
+								tr("STR_SHOT_TYPE_AUTO").c_str(),
+								Text::intWide(itRule->getAccuracyAuto()).c_str(),
+								tu.c_str());
+				_lstInfo->setCellColor(current_row++, 0u, uPed_BLUE_SLATE);
+			}
+
+			if (itRule->getSnapTu() != 0)
+			{
+				if (flatRate == true)
+					tu = Text::intWide(itRule->getSnapTu());
+				else
+					tu = Text::formatPercent(itRule->getSnapTu());
+
+				_lstInfo->addRow(
+								3,
+								tr("STR_SHOT_TYPE_SNAP").c_str(),
+								Text::intWide(itRule->getAccuracySnap()).c_str(),
+								tu.c_str());
+				_lstInfo->setCellColor(current_row++, 0u, uPed_BLUE_SLATE);
+			}
+
+			if (itRule->getAimedTu() != 0)
+			{
+				if (flatRate == true)
+					tu = Text::intWide(itRule->getAimedTu());
+				else
+					tu = Text::formatPercent(itRule->getAimedTu());
+
+				_lstInfo->addRow(
+								3,
+								tr("STR_SHOT_TYPE_AIMED").c_str(),
+								Text::intWide(itRule->getAccuracyAimed()).c_str(),
+								tu.c_str());
+				_lstInfo->setCellColor(current_row++, 0u, uPed_BLUE_SLATE);
+			}
+
+			if (itRule->getLaunchTu() != 0)
+			{
+				if (flatRate == true)
+					tu = Text::intWide(itRule->getLaunchTu());
+				else
+					tu = Text::formatPercent(itRule->getLaunchTu());
+
+				_lstInfo->addRow(
+								3,
+								tr("STR_SHOT_TYPE_LAUNCH").c_str(),
+								L"",
+								tu.c_str());
+				_lstInfo->setCellColor(current_row, 0u, uPed_BLUE_SLATE);
+			}
+
+			// text_info is BELOW the info table
+			_txtInfo = new Text((ammo_data->size() < 3u ? 300 : 180), 56, 8, 138);
+			break;
 		}
 
-		if (itRule->getSnapTu() != 0)
-		{
-			if (itRule->getFlatRate() == true)
-				tu = Text::intWide(itRule->getSnapTu());
-			else
-				tu = Text::formatPercent(itRule->getSnapTu());
-
-			_lstInfo->addRow(
-							3,
-							tr("STR_SHOT_TYPE_SNAP").c_str(),
-							Text::intWide(itRule->getAccuracySnap()).c_str(),
-							tu.c_str());
-			_lstInfo->setCellColor(current_row++, 0, uPed_BLUE_SLATE);
-		}
-
-		if (itRule->getAimedTu() != 0)
-		{
-			if (itRule->getFlatRate() == true)
-				tu = Text::intWide(itRule->getAimedTu());
-			else
-				tu = Text::formatPercent(itRule->getAimedTu());
-
-			_lstInfo->addRow(
-							3,
-							tr("STR_SHOT_TYPE_AIMED").c_str(),
-							Text::intWide(itRule->getAccuracyAimed()).c_str(),
-							tu.c_str());
-			_lstInfo->setCellColor(current_row++, 0, uPed_BLUE_SLATE);
-		}
-
-		if (itRule->getLaunchTu() != 0)
-		{
-			if (itRule->getFlatRate() == true)
-				tu = Text::intWide(itRule->getLaunchTu());
-			else
-				tu = Text::formatPercent(itRule->getLaunchTu());
-
-			_lstInfo->addRow(
-							3,
-							tr("STR_SHOT_TYPE_LAUNCH").c_str(),
-							L"",
-							tu.c_str());
-			_lstInfo->setCellColor(current_row, 0, uPed_BLUE_SLATE);
-		}
-
-		// text_info is BELOW the info table
-		_txtInfo = new Text((ammo_data->size() < 3 ? 300 : 180), 56, 8, 138);
+		default: // text_info is larger and starts on top
+			_txtInfo = new Text(300, 125, 8, 67);
 	}
-	else // text_info is larger and starts on top
-		_txtInfo = new Text(300, 125, 8, 67);
 
 	add(_txtInfo);
 	_txtInfo->setText(tr(defs->text));
@@ -193,8 +199,8 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 
 
 	for (size_t // AMMO column
-			i = 0;
-			i != 3;
+			i = 0u;
+			i != 3u;
 			++i)
 	{
 		_txtAmmoType[i] = new Text(90, 9, 189, 24 + (static_cast<int>(i) * 49));
@@ -233,23 +239,20 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 
 			if (ammo_data->empty() == true)
 			{
-				_txtAmmoType[0]->setText(tr(getDamageTypeText(itRule->getDamageType())));
+				_txtAmmoType[0u]->setText(tr(getDamageTypeText(itRule->getDamageType())));
 
-				woststr.str(L"");
-				woststr.clear();
 				woststr << itRule->getPower();
 				if (itRule->getShotgunPellets() != 0)
 					woststr << L"x" << itRule->getShotgunPellets();
 
-				_txtAmmoDamage[0]->setText(woststr.str());
+				_txtAmmoDamage[0u]->setText(woststr.str());
 			}
 			else
 			{
-				const size_t AMMO_TYPES (std::min(
-												ammo_data->size(),
-												static_cast<size_t>(3))); // yeh right.
+				const size_t AMMO_TYPES (std::min(ammo_data->size(),
+												  3u)); // yeh right.
 				for (size_t
-						i = 0;
+						i = 0u;
 						i != AMMO_TYPES;
 						++i)
 				{
@@ -261,8 +264,8 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 						const RuleItem* const ammo_rule (_game->getRuleset()->getItemRule((*ammo_data)[i]));
 						_txtAmmoType[i]->setText(tr(getDamageTypeText(ammo_rule->getDamageType())));
 
-						woststr.str(L"");
-						woststr.clear();
+						if (i != 0u) woststr.str(L"");
+//						woststr.clear();
 						woststr << ammo_rule->getPower();
 						if (ammo_rule->getShotgunPellets() != 0)
 							woststr << L"x" << ammo_rule->getShotgunPellets();
@@ -287,12 +290,10 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 //			_txtDamage->setAlign(ALIGN_CENTER);
 //			_txtDamage->setText(tr("STR_DAMAGE_UC"));
 
-			_txtAmmoType[0]->setText(tr(getDamageTypeText(itRule->getDamageType())));
+			_txtAmmoType[0u]->setText(tr(getDamageTypeText(itRule->getDamageType())));
 
-			woststr.str(L"");
-			woststr.clear();
 			woststr << itRule->getPower();
-			_txtAmmoDamage[0]->setText(woststr.str());
+			_txtAmmoDamage[0u]->setText(woststr.str());
 	}
 
 	centerAllSurfaces();

@@ -99,7 +99,7 @@ Projectile::Projectile(
 		else // ba_SHOOT!! or hit, or spit
 		{
 			//Log(LOG_INFO) << "Create Projectile -> not BA_THROW";
-			if (_action.weapon->getRules()->getArcingShot() == true)
+			if (_action.weapon->getRules()->isArcingShot() == true)
 				_speed /= 2;
 
 			const BattleItem* const bullet (_action.weapon->getAmmoItem()); // the weapon itself if not-req'd. eg, lasers/melee
@@ -370,7 +370,7 @@ void Projectile::applyAccuracy( // private.
 
 	const RuleItem* const itRule (_action.weapon->getRules()); // <- after reading up, 'const' is basically worthless & wordy waste of effort.
 	if (_action.type != BA_THROW
-		&& itRule->getArcingShot() == false)
+		&& itRule->isArcingShot() == false)
 	{
 		if (_action.autoShotCount == 1)
 		{
@@ -501,7 +501,7 @@ void Projectile::applyAccuracy( // private.
 	{
 		double perfect;
 
-		if (itRule->getArcingShot() == true)
+		if (itRule->isArcingShot() == true)
 		{
 			accuracy += rangeAccuracy(
 									itRule,

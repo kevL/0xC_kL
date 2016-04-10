@@ -123,10 +123,10 @@ RuleItem::~RuleItem()
 {}
 
 /**
- * Loads this Item from a YAML file.
+ * Loads this RuleItem from a YAML file.
  * @param node		- reference the YAML node
  * @param modIndex	- offsets the sounds and sprite values to avoid conflicts
- * @param listOrder	- the list weight for this item
+ * @param listOrder	- the list weight of the item
  */
 void RuleItem::load(
 		const YAML::Node& node,
@@ -293,7 +293,7 @@ void RuleItem::load(
 }
 
 /**
- * Gets this Item's type.
+ * Gets the Item's type.
  * @note Each Item has a unique type.
  * @return, the item-type
  */
@@ -303,7 +303,7 @@ const std::string& RuleItem::getType() const
 }
 
 /**
- * Gets the language string that names this item.
+ * Gets the string that names the Item.
  * @note This is not necessarily unique. Currently used only to differentiate
  * corpses from their respective battlefield parts.
  * @return, the item's name
@@ -314,7 +314,7 @@ const std::string& RuleItem::getName() const
 }
 
 /**
- * Gets the list of research required to use this item.
+ * Gets the list of research required to use the Item.
  * @return, the list of research IDs
  */
 const std::vector<std::string>& RuleItem::getRequirements() const
@@ -323,7 +323,7 @@ const std::vector<std::string>& RuleItem::getRequirements() const
 }
 
 /**
- * Gets the amount of space this item takes up in a storage facility.
+ * Gets the amount of space the Item takes up in a storage facility.
  * @return, the storage size
  */
 double RuleItem::getStoreSize() const
@@ -332,7 +332,7 @@ double RuleItem::getStoreSize() const
 }
 
 /**
- * Gets the amount of money this item costs to purchase (0 if not purchasable).
+ * Gets the amount of money the Item costs to purchase (0 if not purchasable).
  * @return, the buy cost
  */
 int RuleItem::getBuyCost() const
@@ -341,7 +341,7 @@ int RuleItem::getBuyCost() const
 }
 
 /**
- * Gets the amount of money this item is worth to sell.
+ * Gets the amount of money the Item is worth to sell.
  * @return, the sell cost
  */
 int RuleItem::getSellCost() const
@@ -350,7 +350,7 @@ int RuleItem::getSellCost() const
 }
 
 /**
- * Gets the amount of time this item takes to arrive at a base.
+ * Gets the amount of time the Item takes to arrive at a base.
  * @return, the time in hours
  */
 int RuleItem::getTransferTime() const
@@ -359,7 +359,7 @@ int RuleItem::getTransferTime() const
 }
 
 /**
- * Gets the weight of this Item.
+ * Gets the weight of the Item.
  * @return, the weight in strength units
  */
 int RuleItem::getWeight() const
@@ -395,7 +395,7 @@ int RuleItem::getHandSprite() const
 }
 
 /**
- * Returns whether the Item is held with two hands.
+ * Checks if the Item is held with two hands.
  * @return, true if Item is two-handed
  */
 bool RuleItem::isTwoHanded() const
@@ -404,8 +404,8 @@ bool RuleItem::isTwoHanded() const
 }
 
 /**
- * Gets if this Item is a launcher and if so how many waypoints it can set.
- * @return, maximum waypoints for the Item
+ * Checks if the Item is a launcher and if so how many waypoints it can set.
+ * @return, maximum quantity of waypoints
  */
 size_t RuleItem::isWaypoints() const
 {
@@ -413,9 +413,9 @@ size_t RuleItem::isWaypoints() const
 }
 
 /**
- * Returns whether the Item is a fixed weapon.
- * You can't move/throw/drop fixed weapons - e.g. HWP turrets.
- * @return, true if a fixed weapon
+ * Checks if the Item is a fixed-weapon.
+ * @note Fixed-weapons can't be moved/thrown/dropped - e.g. HWP-turrets.
+ * @return, true if fixed-weapon
  */
 bool RuleItem::isFixed() const
 {
@@ -549,8 +549,8 @@ int RuleItem::getMeleeTu() const
 }
 
 /**
- * Gets the number of Time Units needed to use this item.
- * @return, the number of TU needed to use this item
+ * Gets the number of Time Units needed to use the Item.
+ * @return, the TU
  */
 int RuleItem::getUseTu() const
 {
@@ -558,8 +558,8 @@ int RuleItem::getUseTu() const
 }
 
 /**
- * Gets the number of Time Units needed to reload this item.
- * @return, the number of TU needed to reload this item
+ * Gets the number of Time Units needed to reload the Item.
+ * @return, the TU
  */
 int RuleItem::getReloadTu() const
 {
@@ -567,8 +567,8 @@ int RuleItem::getReloadTu() const
 }
 
 /**
- * Gets the number of Time Units needed to unload this item.
- * @return, the number of TU needed to unload this item
+ * Gets the number of Time Units needed to unload the Item.
+ * @return, the TU
  */
 int RuleItem::getUnloadTu() const
 {
@@ -576,8 +576,8 @@ int RuleItem::getUnloadTu() const
 }
 
 /**
- * Gets the number of Time Units needed to prime this item.
- * @return, the number of TU needed to prime this item
+ * Gets the number of Time Units needed to prime the Item.
+ * @return, the TU
  */
 int RuleItem::getPrimeTu() const
 {
@@ -585,8 +585,8 @@ int RuleItem::getPrimeTu() const
 }
 
 /**
- * Gets the number of Time Units needed to defuse this item.
- * @return, the number of TU needed to defuse this item
+ * Gets the number of Time Units needed to defuse the Item.
+ * @return, the TU
  */
 int RuleItem::getDefuseTu() const
 {
@@ -736,7 +736,7 @@ int RuleItem::getStunRecovery() const
 }
 
 /**
- * Returns the Item's max explosion radius.
+ * Gets the Item's explosion-radius.
  * @note Small explosions don't have a restriction. Larger explosions are
  * restricted using a formula with a maximum of radius 10 no matter how large
  * the explosion. kL_note: nah...
@@ -760,7 +760,7 @@ int RuleItem::getExplosionRadius() const
 }
 
 /**
- * Returns the Item's recovery points.
+ * Gets the Item's recovery points.
  * @note This is used during the battlescape debriefing score calculation.
  * @return, the recovery points
  */
@@ -770,7 +770,7 @@ int RuleItem::getRecoveryPoints() const
 }
 
 /**
- * Returns this Item's armor-value.
+ * Gets the Item's armor-value.
  * @note The item is destroyed when an explosive power higher than its armor
  * hits it.
  * @return, the armor-value
@@ -781,7 +781,7 @@ int RuleItem::getArmor() const
 }
 
 /**
- * Returns if the Item is recoverable from the battlefield.
+ * Checks if the Item is recoverable from the battlefield.
  * @return, true if recoverable
  */
 bool RuleItem::isRecoverable() const
@@ -790,7 +790,7 @@ bool RuleItem::isRecoverable() const
 }
 
 /**
- * Returns the Item's turret-type.
+ * Gets the Item's turret-type.
  * @return, the TurretType (RuleItem.h)
  */
 TurretType RuleItem::getTurretType() const
@@ -799,7 +799,7 @@ TurretType RuleItem::getTurretType() const
 }
 
 /**
- * Returns if this is a live alien.
+ * Checks if this is a live-alien.
  * @return, true if live alien
  */
 bool RuleItem::isLiveAlien() const
@@ -808,26 +808,26 @@ bool RuleItem::isLiveAlien() const
 }
 
 /**
- * Returns whether this item charges a flat TU rate.
- * @return, true if this item charges a flat TU rate
+ * Gets whether the Item charges a flat TU rate.
+ * @return, true if flat TU rate
  */
-bool RuleItem::getFlatRate() const
+bool RuleItem::isFlatRate() const
 {
 	return _flatRate;
 }
 
 /**
- * Returns if this weapon uses arcing shots.
+ * Checks if the Item uses arcing-shots.
  * @return, true if parabola-trajectory
  */
-bool RuleItem::getArcingShot() const
+bool RuleItem::isArcingShot() const
 {
 	return _arcingShot;
 }
 
 /**
- * Gets the attraction-value for this item (for AI).
- * @return, the attraction value
+ * Gets the attraction-value for the Item (used by AI).
+ * @return, the attraction-value
  */
 int RuleItem::getAttraction() const
 {
@@ -836,7 +836,7 @@ int RuleItem::getAttraction() const
 
 /**
  * Gets the list-weight for this research item
- * @return, the list weight
+ * @return, the list-weight
  */
 int RuleItem::getListOrder() const
 {
@@ -844,8 +844,8 @@ int RuleItem::getListOrder() const
 }
 
 /**
- * Gets the maximum range of this weapon
- * @return, the maximum range
+ * Gets the maximum range of the Item.
+ * @return, the range in tile-space
  */
 int RuleItem::getMaxRange() const
 {
@@ -853,8 +853,8 @@ int RuleItem::getMaxRange() const
 }
 
 /**
- * Gets the maximum effective range of this weapon when using Aimed Shot.
- * @return, the maximum range
+ * Gets the maximum effective range of the Item when using Aimed Shot.
+ * @return, the range in tile-space
  */
 int RuleItem::getAimRange() const
 {
@@ -862,8 +862,8 @@ int RuleItem::getAimRange() const
 }
 
 /**
- * Gets the maximim effective range of this weapon for Snap Shot.
- * @return, the maximum range
+ * Gets the maximim effective range of the Item for Snap Shot.
+ * @return, the range in tile-space
  */
 int RuleItem::getSnapRange() const
 {
@@ -871,8 +871,8 @@ int RuleItem::getSnapRange() const
 }
 
 /**
- * Gets the maximim effective range of this weapon for Auto Shot.
- * @return, the maximum range
+ * Gets the maximim effective range of the Item for Auto Shot.
+ * @return, the range in tile-space
  */
 int RuleItem::getAutoRange() const
 {
@@ -880,8 +880,8 @@ int RuleItem::getAutoRange() const
 }
 
 /**
- * Gets the minimum effective range of this weapon.
- * @return, the minimum effective range
+ * Gets the minimum effective range of the Item.
+ * @return, the range in tile-space
  */
 int RuleItem::getMinRange() const
 {
@@ -889,7 +889,7 @@ int RuleItem::getMinRange() const
 }
 
 /**
- * Gets the accuracy dropoff value of this weapon.
+ * Gets the accuracy dropoff value of the Item.
  * @return, the per-tile dropoff
  */
 int RuleItem::getDropoff() const
@@ -898,7 +898,7 @@ int RuleItem::getDropoff() const
 }
 
 /**
- * Gets the speed at which this bullet travels.
+ * Gets the speed at which the Item travels as a projectile.
  * @return, the speed
  */
 int RuleItem::getBulletSpeed() const
@@ -907,7 +907,7 @@ int RuleItem::getBulletSpeed() const
 }
 
 /**
- * Gets the speed at which this bullet explodes.
+ * Gets the speed at which the Item explodes as a projectile.
  * @return, the speed
  */
 int RuleItem::getExplosionSpeed() const
@@ -916,8 +916,8 @@ int RuleItem::getExplosionSpeed() const
 }
 
 /**
-* Gets the amount of auto shots fired by this weapon.
-* @return, the shots
+* Gets the quantity of auto-shots fired by the Item.
+* @return, the quantity of shots
 */
 int RuleItem::getAutoShots() const
 {
@@ -925,7 +925,7 @@ int RuleItem::getAutoShots() const
 }
 
 /**
- * Gets the kick this weapon does on autoshot.
+ * Gets the kick that the Item does on auto-shot.
  */
 int RuleItem::getAutoKick() const
 {
@@ -933,7 +933,7 @@ int RuleItem::getAutoKick() const
 }
 
 /**
-* Gets if this item is a rifle.
+* Gets if the Item is a rifle.
 * @return, true if rifle
 */
 bool RuleItem::isRifle() const
@@ -944,7 +944,7 @@ bool RuleItem::isRifle() const
 }
 
 /**
-* Gets if this item is a pistol.
+* Gets if the Item is a pistol.
 * @return, true if pistol
 */
 bool RuleItem::isPistol() const
@@ -955,7 +955,7 @@ bool RuleItem::isPistol() const
 }
 
 /**
- * Gets if this item is a grenade.
+ * Gets if the Item is a grenade.
  * @return, true if grenade
  */
 bool RuleItem::isGrenade() const
@@ -992,8 +992,8 @@ const std::string& RuleItem::getZombieUnit() const
 }
 
 /**
- * Used to determine if a unit's strength is added to melee damage.
- * @return, true if strength is added to melee damage
+ * Used to determine if a unit's strength is added to melee-damage.
+ * @return, true if added
  */
 bool RuleItem::isStrengthApplied() const
 {
@@ -1001,9 +1001,9 @@ bool RuleItem::isStrengthApplied() const
 }
 
 /**
- * Used to determine if skill is applied to the accuracy of this weapon.
- * This applies only to melee weapons.
- * @return, true if skill is applied to accuracy
+ * Checks if skill is applied to the accuracy of the Item.
+ * @note This applies only to melee-weapons.
+ * @return, true if applied
  */
 bool RuleItem::isSkillApplied() const
 {
@@ -1011,7 +1011,7 @@ bool RuleItem::isSkillApplied() const
 }
 
 /**
- * Used to determine if a weapon is capable of Reaction Fire.
+ * Checks if the Item is capable of reaction-fire.
  * @return, true if a weapon can react during opponent's turn
  */
 bool RuleItem::canReactionFire() const
@@ -1020,7 +1020,7 @@ bool RuleItem::canReactionFire() const
 }
 
 /**
- * The sound the weapon makes when you swing it at someone.
+ * The sound that the Item makes when you swing it at someone.
  * @return, the melee-attack sound-ID
  */
 int RuleItem::getMeleeSound() const
@@ -1029,7 +1029,7 @@ int RuleItem::getMeleeSound() const
 }
 
 /**
- * The sound the weapon makes when you punch someone in the face with it.
+ * The sound that the Item makes when you hit someone in the face with it.
  * @return, the melee-hit sound-ID
  */
 int RuleItem::getMeleeHitSound() const
@@ -1038,8 +1038,8 @@ int RuleItem::getMeleeHitSound() const
 }
 
 /**
- * The damage the weapon does when you punch someone in the face with it.
- * @return, the melee power
+ * The damage that the Item does when you hit someone in the face with it.
+ * @return, the melee-power
  */
 int RuleItem::getMeleePower() const
 {
@@ -1074,7 +1074,7 @@ bool RuleItem::isLosRequired() const
 }
 
 /**
- * Gets the associated special type of this item.
+ * Gets the associated special type of the Item.
  * @note Type 14 is the alien brain and types 0 and 1 are "regular tile" and
  * "starting point" so try not to use those ones.
  * @return, special type
@@ -1137,39 +1137,39 @@ BattleActionType RuleItem::getDefaultAction(bool isPrimed) const
 }
 
 /**
- * Checks if an item is exempt from research.
+ * Checks if the Item is exempt from research.
  * @note Currently this is used to exclude SHADICS ARMORS from getting marked
  * as unresearched in various lists, such as Stores & Transfers ...
  * This boolean should be set in the Rulesets under these ITEMS respectively.
  * and then the checks both here and in those lists ought be simplified.
  * @note Put in Ruleset done.
- * @return, true if this item shows in lists without being researched
+ * @return, true if the item shows in lists without being researched
  */
 bool RuleItem::isResearchExempt() const
 {
 	return _noResearch;
-/*	if (getType() == "STR_BLACKSUIT_ARMOR"
-		|| getType() == "STR_BLUESUIT_ARMOR"
-		|| getType() == "STR_GREENSUIT_ARMOR"
-		|| getType() == "STR_ORANGESUIT_ARMOR"
-		|| getType() == "STR_PINKSUIT_ARMOR"
-		|| getType() == "STR_PURPLESUIT_ARMOR"
-		|| getType() == "STR_REDSUIT_ARMOR"
-		|| getType() == "STR_BLACK_ARMOR"
-		|| getType() == "STR_BLUE_ARMOR"
-		|| getType() == "STR_GREEN_ARMOR"
-		|| getType() == "STR_ORANGE_ARMOR"
-		|| getType() == "STR_PINK_ARMOR"
-		|| getType() == "STR_PURPLE_ARMOR"
-		|| getType() == "STR_RED_ARMOR")
-	{
-		return true;
-	}
-	return false; */
+//	if (   getType() == "STR_BLACKSUIT_ARMOR"
+//		|| getType() == "STR_BLUESUIT_ARMOR"
+//		|| getType() == "STR_GREENSUIT_ARMOR"
+//		|| getType() == "STR_ORANGESUIT_ARMOR"
+//		|| getType() == "STR_PINKSUIT_ARMOR"
+//		|| getType() == "STR_PURPLESUIT_ARMOR"
+//		|| getType() == "STR_REDSUIT_ARMOR"
+//		|| getType() == "STR_BLACK_ARMOR"
+//		|| getType() == "STR_BLUE_ARMOR"
+//		|| getType() == "STR_GREEN_ARMOR"
+//		|| getType() == "STR_ORANGE_ARMOR"
+//		|| getType() == "STR_PINK_ARMOR"
+//		|| getType() == "STR_PURPLE_ARMOR"
+//		|| getType() == "STR_RED_ARMOR")
+//	{
+//		return true;
+//	}
+//	return false;
 }
 
 /**
- * Checks if this item is capable of executing a BattleUnit.
+ * Checks if the Item is capable of executing a BattleUnit.
  * @return, true if executable
  */
 bool RuleItem::canExecute() const

@@ -754,11 +754,9 @@ void Globe::setupRadii( // private.
  */
 void Globe::setZoom(size_t zoom) // private.
 {
-	_zoom = std::min(
-				_zoomRadii.size() - 1,
-				std::max(
-						static_cast<size_t>(0), // go f*cking figure.
-						zoom));
+	_zoom = std::min(_zoomRadii.size() - 1,
+					 std::max(0u, //static_cast<size_t>(0), // go f*cking figure.
+							  zoom));
 
 	_zoomTexture = (2 - static_cast<size_t>(std::floor(static_cast<double>(_zoom) / 2.)))
 				 * (_texture->getTotalFrames() / 3);

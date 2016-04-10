@@ -247,7 +247,7 @@ private:
 
 		/// Gets if the item is two-handed.
 		bool isTwoHanded() const;
-		/// Gets if the item is a launcher and if so how many waypoints can be set.
+		/// Gets if the item is a launcher and if so how many waypoints it can set.
 		size_t isWaypoints() const;
 		/// Gets if the item is fixed.
 		bool isFixed() const;
@@ -349,10 +349,10 @@ private:
 		bool isLiveAlien() const;
 
 		/// Gets if the rated TU-cost is a flat rate.
-		bool getFlatRate() const;
+		bool isFlatRate() const;
 
 		/// Gets if the weapon fires an arcing shot-trajectory.
-		bool getArcingShot() const;
+		bool isArcingShot() const;
 
 		/// How much do aliens want this thing?
 		int getAttraction() const;

@@ -43,7 +43,7 @@ class ArticleStateItem
 protected:
 	Surface
 		*_image,
-		*_imageAmmo[3];
+		*_imageAmmo[3u];
 	Text
 		* _txtTitle,
 		* _txtTwoHand,
@@ -53,8 +53,8 @@ protected:
 		* _txtTuCost,
 		* _txtDamage,
 		* _txtAmmo,
-		* _txtAmmoType[3],
-		* _txtAmmoDamage[3];
+		* _txtAmmoType[3u],
+		* _txtAmmoDamage[3u];
 	TextList* _lstInfo;
 
 

@@ -532,7 +532,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 				return false;
 		}
 	}
-	else if (_action.weapon->getRules()->getArcingShot() == true) // special code for the "spit" trajectory
+	else if (_action.weapon->getRules()->isArcingShot() == true) // special code for the "spit" trajectory
 	{
 		_prjImpact = prj->calculateThrow(_unit->getAccuracy(_action)); // this should probly be TE:validateThrow() - cf. else(error) below_
 		//Log(LOG_INFO) << ". acid spit, part = " << (int)_prjImpact;

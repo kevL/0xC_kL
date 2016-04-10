@@ -52,7 +52,7 @@
 #include "RuleTerrain.h"
 #include "RuleUfo.h"
 #include "RuleVideo.h"
-#include "SoldierNamePool.h"
+//#include "SoldierNamePool.h"
 //#include "SoundDefinition.h"
 //#include "StatString.h"
 #include "UfoTrajectory.h"

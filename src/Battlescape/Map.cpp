@@ -507,7 +507,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 				if (offScreen_final == true
 					|| ((_projectile->getThrowItem() != nullptr
-							|| action->weapon->getRules()->getArcingShot() == true)
+							|| action->weapon->getRules()->isArcingShot() == true)
 						&& TileEngine::distance(
 											action->actor->getPosition(),
 											posFinal) > DIST_ARC_SMOOTH)) // no smoothing unless throw > 8 tiles
@@ -524,7 +524,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 			if (_smoothingEngaged == true
 				|| posFinal.z != action->actor->getPosition().z
 				|| _projectile->getThrowItem() != nullptr
-				|| action->weapon->getRules()->getArcingShot() == true)
+				|| action->weapon->getRules()->isArcingShot() == true)
 			{
 				const int posBullet_z ((_projectile->getPosition().z) / 24);
 				if (posBullet_z != viewLevel)
