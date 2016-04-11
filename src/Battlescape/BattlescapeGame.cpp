@@ -2531,7 +2531,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 		switch (_tacAction.type)
 		{
 			case BA_LAUNCH:
-				if (_tacAction.waypoints.size() < _tacAction.weapon->getRules()->isWaypoints())
+				if (static_cast<int>(_tacAction.waypoints.size()) < _tacAction.weapon->getRules()->isWaypoints())
 				{
 					_parentState->showLaunchButton();
 					_tacAction.waypoints.push_back(pos);

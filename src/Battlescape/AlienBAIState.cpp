@@ -254,7 +254,7 @@ void AlienBAIState::think(BattleAction* const action)
 	{
 		default:
 		case AI_PATROL:
-			if (_spottersOrigin != 0
+			if (   _spottersOrigin != 0
 				|| _targetsVisible != 0
 				|| _targetsExposed != 0)
 //				|| RNG::percent(9) == true)
@@ -269,7 +269,7 @@ void AlienBAIState::think(BattleAction* const action)
 			break;
 
 		case AI_AMBUSH:
-			if (_rifle == false
+			if (   _rifle == false
 				|| _tuAmbush == -1
 				|| _targetsVisible != 0)
 			{
@@ -278,7 +278,7 @@ void AlienBAIState::think(BattleAction* const action)
 			break;
 
 		case AI_ESCAPE:
-			if (_spottersOrigin == 0
+			if (   _spottersOrigin == 0
 				|| _targetsExposed == 0)
 			{
 				evaluate = true;
@@ -825,7 +825,7 @@ void AlienBAIState::setupEscape() // private.
 	else
 		distAggroOrigin = 0;
 
-	Tile* tile;
+	const Tile* tile;
 	int
 		score (ESCAPE_FAIL),
 		scoreTest;
@@ -1083,16 +1083,12 @@ void AlienBAIState::evaluateAiMode() // private.
 				break;
 
 			default:
-				combatOdds *= std::max(
-									0.1f,
-									std::min(
-											2.f,
-											1.2f + (static_cast<float>(_unit->getAggression()) / 10.f)));
-				escapeOdds *= std::min(
-									2.f,
-									std::max(
-											0.1f,
-											0.9f - (static_cast<float>(_unit->getAggression()) / 10.f)));
+				combatOdds *= std::max(0.1f,
+									   std::min(2.f,
+												1.2f + (static_cast<float>(_unit->getAggression()) / 10.f)));
+				escapeOdds *= std::min(2.f,
+									   std::max(0.1f,
+												0.9f - (static_cast<float>(_unit->getAggression()) / 10.f)));
 		}
 
 		if (_AIMode == AI_COMBAT)
@@ -1761,8 +1757,9 @@ bool AlienBAIState::pathWaypoints(const BattleUnit* const unit) // private.
 
 		// pathing done & wp's have been positioned:
 		//Log(LOG_INFO) << ". . qty WP's = " << _attackAction->waypoints.size() << " / max WP's = " << _attackAction->weapon->getRules()->isWaypoints();
-		if (_attackAction->waypoints.size() != 0
-			&& _attackAction->waypoints.size() <= _attackAction->weapon->getRules()->isWaypoints())
+		if (_attackAction->waypoints.size() != 0u
+			&& static_cast<int>(_attackAction->waypoints.size())
+							 <= _attackAction->weapon->getRules()->isWaypoints() + _attackAction->diff - static_cast<int>(DIFF_SUPERHUMAN))
 		{
 			//Log(LOG_INFO) << ". path valid, ret TRUE";
 			return true;
@@ -2307,7 +2304,6 @@ void AlienBAIState::enter()
 {
 	Log(LOG_INFO) << "AlienBAIState::enter() ROOOAARR !";
 } */
-
 /**
  * Exits the current AI state.
  *
@@ -2315,7 +2311,6 @@ void AlienBAIState::exit()
 {
 	Log(LOG_INFO) << "AlienBAIState::exit()";
 } */
-
 /**
  * Gets the currently targeted unit.
  * @return, pointer to a BattleUnit
@@ -2324,7 +2319,6 @@ BattleUnit* AlienBAIState::getTarget()
 {
 	return _unitAggro;
 }*/
-
 /**
  * Checks nearby nodes to see if they'd make good grenade targets.
  * @param action - pointer to BattleAction struct;
@@ -2401,7 +2395,6 @@ bool AlienBAIState::getNodeOfBestEfficacy(BattleAction* action)
 
 	return (bestScore > 2);
 } */
-
 /**
  * Sets the "was hit" flag to true.
  * @param attacker - pointer to a BattleUnit
@@ -2411,7 +2404,6 @@ void AlienBAIState::setWasHitBy(BattleUnit* attacker)
 	if (attacker->getFaction() != _unit->getFaction() && !getWasHitBy(attacker->getId()))
 		_wasHitBy.push_back(attacker->getId());
 } */
-
 /**
  * Gets whether the unit was hit.
  * @return, true if unit was hit

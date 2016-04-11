@@ -158,6 +158,7 @@ private:
 
 		_blastRadius,
 		_fullClip,
+		_waypoint,
 
 		_accuracyAimed,
 		_accuracyAuto,
@@ -185,8 +186,6 @@ private:
 		_floorSprite,
 		_handSprite,
 		_bulletSprite;
-
-	size_t _waypoint;
 
 	double _size;
 
@@ -248,7 +247,7 @@ private:
 		/// Gets if the item is two-handed.
 		bool isTwoHanded() const;
 		/// Gets if the item is a launcher and if so how many waypoints it can set.
-		size_t isWaypoints() const;
+		int isWaypoints() const;
 		/// Gets if the item is fixed.
 		bool isFixed() const;
 

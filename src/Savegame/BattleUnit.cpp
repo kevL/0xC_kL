@@ -2898,9 +2898,9 @@ ActiveHand BattleUnit::getActiveHand()
  * Gets the 'main hand weapon' of this BattleUnit.
  * @note A call to this function also sets the Active-hand.
  * @param quickest	- true to choose the quickest weapon (default false)
- * @param inclMelee	- true to include check for melee weapon (default true)
- * @param checkFist	- true to include a check for the universalFist (default false)
- *					  false to bypass Fist, or to engage handleUnitAI() -> pickupItem().
+ * @param inclMelee	- true to include check for melee-weapon (default true)
+ * @param checkFist	- true to include a check for the universal-fist (default false)
+ *					  false to bypass Fist or to engage handleUnitAI() -> pickupItem().
  * @return, pointer to a BattleItem or nullptr
  */
 BattleItem* BattleUnit::getMainHandWeapon(
@@ -2910,8 +2910,8 @@ BattleItem* BattleUnit::getMainHandWeapon(
 {
 	//Log(LOG_INFO) << "BattleUnit::getMainHandWeapon()";
 	BattleItem
-		* const rtWeapon (getItem(ST_RIGHTHAND)),
-		* const ltWeapon (getItem(ST_LEFTHAND));
+		* const rtWeapon (getItem(ST_RIGHTHAND)),	// TODO: Prioritize blasters (the AI currently relies
+		* const ltWeapon (getItem(ST_LEFTHAND));	// on any blaster being in the aLien RH-slot, iirc).
 	//if (rtWeapon != nullptr) Log(LOG_INFO) << "right weapon " << rtWeapon->getRules()->getType();
 	//if (ltWeapon != nullptr) Log(LOG_INFO) << "left weapon " << ltWeapon->getRules()->getType();
 
@@ -3124,7 +3124,7 @@ BattleItem* BattleUnit::getRangedWeapon(bool quickest) const
 			if ((ltTU = itRule->getAimedTu()) == 0)
 				if ((ltTU = itRule->getLaunchTu()) == 0)
 					ltTU = itRule->getMeleeTu();
-	// note: Should probly account for 'noReaction' weapons ... before reaction-algorhithm fizzles.
+	// note: Should probly account for 'noReaction' weapons ... before reaction-algorithm fizzles.
 
 	if (quickest == true) // rtTU && ltTU
 	{
