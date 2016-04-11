@@ -670,13 +670,13 @@ items:
     bigSprite: 33
     floorSprite: 32
     handSprite: 88
-    meleeSoundHit: 36
+    meleeSoundHit: 75 #was 36
     meleeAniHit: 0
     battleType: 9
     twoHanded: true
     invWidth: 1
     invHeight: 3
-    tuUse: 45
+    tuUse: 43
     flatRate: true
   - type: STR_STUN_ROD
     size: 0.2

@@ -168,7 +168,7 @@ struct BattleAction
 	 * @param type - the BattleActionType (BattlescapeGame.h)
 	 * @return, the action-type as a string
 	 */
-	static std::string debugActionType(const BattleActionType type)
+	static std::string debugBat(const BattleActionType type)
 	{
 		switch (type)
 		{
@@ -226,7 +226,7 @@ private:
 		_killStatPoints;
 
 
-	BattleAction _tacAction; // for Player, aLiens use their own individual actions w/ handleUnitAI()
+	BattleAction _tacAction; // for Player, aLiens get their own unique actions w/ handleUnitAI()
 
 	BattleItem
 		* _alienPsi,

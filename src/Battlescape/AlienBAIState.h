@@ -137,12 +137,12 @@ private:
 		/// Cleans up the AlienBAIState.
 		~AlienBAIState();
 
-		/// Loads the BAI state from YAML.
+		/// Loads the BAI-state from YAML.
 		void load(const YAML::Node& node) override;
-		/// Saves the BAI state to YAML.
+		/// Saves the BAI-state to YAML.
 		YAML::Node save() const override;
 
-		/// Runs state functionality every AI cycle.
+		/// Runs state functionality every AI-cycle.
 		void think(BattleAction* const action) override;
 
 		/// Decides if it's okay to create an explosion.
@@ -153,7 +153,7 @@ private:
 				const int diff) const;
 //				bool grenade = false) const;
 
-		/// Gets the TU reservation setting.
+		/// Gets the TU-reservation setting.
 		BattleActionType getReservedAiAction() const;
 
 		/// Enters the state.

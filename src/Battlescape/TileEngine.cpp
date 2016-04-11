@@ -1725,7 +1725,7 @@ bool TileEngine::reactionShot(
 		|| _rfAction->weapon->getAmmoItem() == nullptr
 		|| _rfAction->weapon->getRules()->canReactionFire() == false
 		|| (_rfAction->actor->getFaction() != FACTION_HOSTILE
-			&& _battleSave->getGeoscapeSave()->isResearched(_rfAction->weapon->getRules()->getRequirements()) == false))
+			&& _battleSave->getSavedGame()->isResearched(_rfAction->weapon->getRules()->getRequirements()) == false))
 	{
 		return false;
 	}

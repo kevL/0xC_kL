@@ -421,7 +421,7 @@ private:
 		void calcBaseDestruct();
 
 		/// Gets a pointer to the Geoscape save.
-		SavedGame* getGeoscapeSave() const;
+		SavedGame* getSavedGame() const;
 
 		/// Gets the list of items guaranteed to be recovered.
 		std::vector<BattleItem*>* guaranteedItems();

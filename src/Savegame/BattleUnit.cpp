@@ -2912,6 +2912,8 @@ BattleItem* BattleUnit::getMainHandWeapon(
 	BattleItem
 		* const rtWeapon (getItem(ST_RIGHTHAND)),	// TODO: Prioritize blasters (the AI currently relies
 		* const ltWeapon (getItem(ST_LEFTHAND));	// on any blaster being in the aLien RH-slot, iirc).
+													// ooth, it relies on any blaster having more TU than another held weapon;
+													// co-relatively that's how the AI switches to a (faster) pistol for reaction-fire.
 	//if (rtWeapon != nullptr) Log(LOG_INFO) << "right weapon " << rtWeapon->getRules()->getType();
 	//if (ltWeapon != nullptr) Log(LOG_INFO) << "left weapon " << ltWeapon->getRules()->getType();
 

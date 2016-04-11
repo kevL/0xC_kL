@@ -658,12 +658,14 @@ void BattlescapeGame::centerOnUnit( // private.
 
 /**
  * Handles the processing of the AI states of a unit.
- * Called by BattlescapeGame::think().
+ * @note Called by BattlescapeGame::think().
  * @param unit - pointer to a BattleUnit
  */
 void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 {
-	if (Options::traceAI == true)
+	bool debug = false;// (unit->getId() == 1000023);
+
+	if (Options::traceAI != 0)
 		resetTraceTiles();
 
 	if (unit != _battleSave->getWalkUnit())
@@ -699,35 +701,46 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 	BattleAction action;
 	action.actor = unit;
+ 	action.type = BA_THINK;
 	action.AIcount = _AIActionCounter;
-	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "BATTLESCAPE::handleUnitAI id-" << unit->getId();
-	//Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [in] = " << _AIActionCounter;
+	if (debug)
+	{
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << "BATTLESCAPE::handleUnitAI id-" << unit->getId();
+		Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [in] = " << action.AIcount;
+	}
 	unit->think(&action);
-	//Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat [1] " << BattleAction::debugActionType(action.type);
-	//Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [out] = " << action.AIcount;
+	if (debug)
+	{
+		Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat = " << BattleAction::debugBat(action.type);
+		Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [out] = " << action.AIcount;
+	}
 
 	if (action.type == BA_THINK)
 	{
-		//Log(LOG_INFO) << "";
-		//Log(LOG_INFO) << ". BATTLESCAPE: Re-Think id-" << unit->getId();
-		//Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [in] = " << action.AIcount;
+		if (debug)
+		{
+			Log(LOG_INFO) << "";
+			Log(LOG_INFO) << ". BATTLESCAPE: Re-Think id-" << unit->getId();
+			Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [in] = " << action.AIcount;
+		}
 		unit->think(&action);
-		//Log(LOG_INFO) << ". BATTLESCAPE: id-" << unit->getId() << " bat [2] " << BattleAction::debugActionType(action.type);
-		//Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [out] = " << action.AIcount;
+		if (debug)
+		{
+			Log(LOG_INFO) << ". BATTLESCAPE: id-" << unit->getId() << " bat = " << BattleAction::debugBat(action.type);
+			Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [out] = " << action.AIcount;
+		}
 	}
-
 	_AIActionCounter = action.AIcount;
-	//Log(LOG_INFO) << "BATTLESCAPE: AIActionCount = " << _AIActionCounter;
 
 	if (unit->getFaction() == FACTION_HOSTILE // pickup Item ->
 		&& unit->getMainHandWeapon() == nullptr
 		&& unit->getRankString() != "STR_LIVE_TERRORIST" // TODO: new funct. hasFixedWeapon().
 		&& pickupItem(&action) == true)
 	{
-		//Log(LOG_INFO) << ". pickup Weapon ...";
+		if (debug) Log(LOG_INFO) << ". pickup Weapon ...";
 		if (_battleSave->getDebugTac() == true) // <- order matters.
 		{
 			_parentState->updateSoldierInfo(false);
@@ -747,27 +760,28 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 	std::wstring wst (Language::cpToWstr(BattleAIState::debugAiMode(unit->getAIState()->getAIMode())));
 	_parentState->printDebug(wst + L"> " + Text::intWide(unit->getId()));
-//	Log(LOG_INFO)
-//			<< "\n"
-//			<< "type = "			<< BattleAction::debugActionType(action.type) << "\n"
-//			<< "actor = "			<< (action.actor ? std::to_string(action.actor->getId()) : "NONE") << "\n"
-//			<< "targetUnit = "		<< (action.targetUnit ? std::to_string(action.targetUnit->getId()) : "NONE") << "\n"
-//			<< "weapon = "			<< (action.weapon ? action.weapon->getRules()->getType() : "NONE") << "\n"
-//			<< "TU = "				<< action.TU << "\n"
-//			<< "targeting = "		<< action.targeting << "\n"
-//			<< "value = "			<< action.value << "\n"
-//			<< "result = "			<< action.result << "\n"
-//			<< "strafe = "			<< action.strafe << "\n"
-//			<< "dash = "			<< action.dash << "\n"
-//			<< "diff = "			<< action.diff << "\n"
-//			<< "autoShotCount = "	<< action.autoShotCount << "\n"
-//			<< "posCamera = "		<< action.posCamera << "\n"
-//			<< "desperate = "		<< action.desperate << "\n"
-//			<< "finalFacing = "		<< action.finalFacing << "\n"
-//			<< "finalAction = "		<< action.finalAction << "\n"
-//			<< "AIcount = "			<< action.AIcount << "\n"
-//			<< "takenXp = "			<< action.takenXp << "\n"
-//			<< "waypoints = "		<< action.waypoints.size();
+	if (debug) Log(LOG_INFO)
+			<< "\n"
+			<< "type = "			<< BattleAction::debugBat(action.type) << "\n"
+			<< "actor = "			<< (action.actor ? std::to_string(action.actor->getId()) : "NONE") << "\n"
+			<< "targetUnit = "		<< (action.targetUnit ? std::to_string(action.targetUnit->getId()) : "NONE") << "\n"
+			<< "posTarget = "		<< action.posTarget << "\n"
+			<< "weapon = "			<< (action.weapon ? action.weapon->getRules()->getType() : "NONE") << "\n"
+			<< "TU = "				<< action.TU << "\n"
+			<< "targeting = "		<< action.targeting << "\n"
+			<< "value = "			<< action.value << "\n"
+			<< "result = "			<< action.result << "\n"
+			<< "strafe = "			<< action.strafe << "\n"
+			<< "dash = "			<< action.dash << "\n"
+			<< "diff = "			<< action.diff << "\n"
+			<< "autoShotCount = "	<< action.autoShotCount << "\n"
+			<< "posCamera = "		<< action.posCamera << "\n"
+			<< "desperate = "		<< action.desperate << "\n"
+			<< "finalFacing = "		<< action.finalFacing << "\n"
+			<< "finalAction = "		<< action.finalAction << "\n"
+			<< "AIcount = "			<< action.AIcount << "\n"
+			<< "takenXp = "			<< action.takenXp << "\n"
+			<< "waypoints = "		<< action.waypoints.size();
 
 	switch (action.type)
 	{
@@ -782,7 +796,6 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 				if (pf->getStartDirection() != -1)
 					statePushBack(new UnitWalkBState(this, action));	// TODO: If action.desperate use 'dash' interval-speed.
 			}
-
 			break;
 		}
 
@@ -807,6 +820,46 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 				default:
 					statePushBack(new UnitTurnBState(this, action));
+					// NOTE: See below_ for (action.type == BA_MELEE).
+			}
+
+			if (debug) Log(LOG_INFO) << "BATTLESCAPE: Attack action.type = " << BattleAction::debugBat(action.type)
+									 << " action.posTarget = " << action.posTarget
+									 << " action.weapon = " << action.weapon->getRules()->getName().c_str();
+			statePushBack(new ProjectileFlyBState(this, action));
+
+			switch (action.type)
+			{
+				case BA_PSIPANIC:
+				case BA_PSICONTROL:
+					if (_battleSave->getTileEngine()->psiAttack(&action) == true)
+					{
+						const BattleUnit* const psiVictim (_battleSave->getTile(action.posTarget)->getTileUnit());
+						Language* const lang (_parentState->getGame()->getLanguage());
+						std::wstring wst;
+						switch (action.type)
+						{
+							default:
+							case BA_PSIPANIC:
+								wst = lang->getString("STR_PSI_PANIC_SUCCESS")
+														.arg(action.value);
+								break;
+							case BA_PSICONTROL:
+								wst = lang->getString("STR_IS_UNDER_ALIEN_CONTROL", psiVictim->getGender())
+														.arg(psiVictim->getName(lang))
+														.arg(action.value);
+						}
+						_parentState->getGame()->pushState(new InfoboxState(wst));
+					}
+			}
+			break;
+
+		default:
+		case BA_NONE:
+			selectNextAiUnit(unit);
+	}
+}
+					// NOTE: See above^ for (action.type == BA_MELEE).
 /*					if (action.type == BA_MELEE)
 					{
 						const std::string meleeWeapon (unit->getMeleeWeapon());
@@ -859,47 +912,9 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 						}
 						return;
 					} */
-			}
-
-//			Log(LOG_INFO) << "BATTLESCAPE: Attack action.Type = " << BattleAction::debugActionType(action.type)
-//						  << " action.Target = " << action.target
-//						  << " action.Weapon = " << action.weapon->getRules()->getName().c_str();
-			statePushBack(new ProjectileFlyBState(this, action));
-
-			switch (action.type)
-			{
-				case BA_PSIPANIC:
-				case BA_PSICONTROL:
-					if (_battleSave->getTileEngine()->psiAttack(&action) == true)
-					{
-						const BattleUnit* const psiVictim (_battleSave->getTile(action.posTarget)->getTileUnit());
-						Language* const lang (_parentState->getGame()->getLanguage());
-						std::wstring wst;
-						switch (action.type)
-						{
-							default:
-							case BA_PSIPANIC:
-								wst = lang->getString("STR_PSI_PANIC_SUCCESS")
-														.arg(action.value);
-								break;
-							case BA_PSICONTROL:
-								wst = lang->getString("STR_IS_UNDER_ALIEN_CONTROL", psiVictim->getGender())
-														.arg(psiVictim->getName(lang))
-														.arg(action.value);
-						}
-						_parentState->getGame()->pushState(new InfoboxState(wst));
-					}
-			}
-			break;
-
-		default:
-		case BA_NONE:
-			selectNextAiUnit(unit);
-	}
-}
 
 /**
- * Selects the next AI unit.
+ * Selects the next AI-unit.
  * @note The current AI-turn ends when no unit is eligible to select.
  * @param unit - the current non-player unit
  */
@@ -918,7 +933,7 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 	if (nextUnit != nullptr)
 	{
 		centerOnUnit(nextUnit);
-		_parentState->updateSoldierInfo(false); // try no calcFov()
+		_parentState->updateSoldierInfo(/*false*/); // try no calcFov() ...
 
 		if (_battleSave->getDebugTac() == true)
 		{
@@ -1947,7 +1962,7 @@ void BattlescapeGame::diaryAttacker( // private.
 		const BattleUnit* const attacker,
 		const BattleItem* const weapon)
 {
-	_killStatMission = _battleSave->getGeoscapeSave()->getMissionStatistics()->size();
+	_killStatMission = _battleSave->getSavedGame()->getMissionStatistics()->size();
 	_killStatTurn = _battleSave->getTurn() * 3 + static_cast<int>(_battleSave->getSide());
 
 	if (weapon != nullptr)

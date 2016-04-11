@@ -68,6 +68,8 @@ AlienBAIState::AlienBAIState(
 		_distClosest(1000),
 		_reserve(BA_NONE)
 {
+//	_traceAI &= unit->getId() == 1000023;
+
 	//Log(LOG_INFO) << "Create AlienBAIState";
 	_escapeAction	= new BattleAction();
 	_patrolAction	= new BattleAction();
@@ -91,7 +93,7 @@ AlienBAIState::~AlienBAIState()
 }
 
 /**
- * Loads the AI state from a YAML file.
+ * Loads the AI-state from a YAML file.
  * @param node - reference a YAML node
  */
 void AlienBAIState::load(const YAML::Node& node)
@@ -101,7 +103,7 @@ void AlienBAIState::load(const YAML::Node& node)
 }
 
 /**
- * Saves the AI state to a YAML file.
+ * Saves the AI-state to a YAML file.
  * @return, YAML node
  */
 YAML::Node AlienBAIState::save() const
@@ -111,19 +113,20 @@ YAML::Node AlienBAIState::save() const
 }
 
 /**
- * Runs any code the state needs to keep updating every AI cycle.
+ * Runs any code the state needs to keep updating every AI-cycle.
  * @param action - pointer to AI BattleAction to execute
  */
 void AlienBAIState::think(BattleAction* const action)
 {
-	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "AlienBAIState::think(), id-" << _unit->getId() << " pos " << _unit->getPosition();
+	if (_traceAI)
+	{
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << "AlienBAIState::think(), id-" << _unit->getId() << " pos " << _unit->getPosition();
+	}
 
 	_pf = _battleSave->getPathfinding();
 	_te = _battleSave->getTileEngine();
-
- 	action->type = BA_THINK;
 
 	if (_unit->getChargeTarget() != nullptr
 		&& _unit->getChargeTarget()->isOut_t(OUT_STAT) == true)
@@ -142,7 +145,7 @@ void AlienBAIState::think(BattleAction* const action)
 //		action->weapon = _unit->getMeleeWeapon(); // will get Melee OR Fist
 
 	_attackAction->weapon = action->weapon;
-	_attackAction->diff = static_cast<int>(_battleSave->getBattleState()->getGame()->getSavedGame()->getDifficulty());
+	_attackAction->diff = static_cast<int>(_battleSave->getSavedGame()->getDifficulty()); // for grenade-efficacy and blaster-waypoints.
 
 //	_attackAction->AIcount = action->AIcount;
 //	_escapeAction->AIcount = action->AIcount;
@@ -151,36 +154,38 @@ void AlienBAIState::think(BattleAction* const action)
 	_targetsExposed = tallyTargets();
 	_targetsVisible = selectNearestTarget(); // sets _unitAggro.
 
-	//Log(LOG_INFO) << "_spottersOrigin = " << _spottersOrigin;
-	//Log(LOG_INFO) << "_targetsExposed = " << _targetsExposed;
-	//Log(LOG_INFO) << "_targetsVisible = " << _targetsVisible;
-	//Log(LOG_INFO) << "_AIMode = " << BattleAIState::debugAiMode(_AIMode);
+	if (_traceAI)
+	{
+		Log(LOG_INFO) << "_spottersOrigin = " << _spottersOrigin;
+		Log(LOG_INFO) << "_targetsExposed = " << _targetsExposed;
+		Log(LOG_INFO) << "_targetsVisible = " << _targetsVisible;
+		Log(LOG_INFO) << "_AIMode = " << BattleAIState::debugAiMode(_AIMode);
+	}
 
 	_pf->setPathingUnit(_unit);
-
 	_reachable = _pf->findReachable(_unit, _unit->getTimeUnits());
 
 	int tuReserve (-1);
 	if (action->weapon != nullptr)
 	{
 		const RuleItem* const itRule (action->weapon->getRules());
-		//Log(LOG_INFO) << ". weapon " << itRule->getType();
+		if (_traceAI) Log(LOG_INFO) << ". weapon " << itRule->getType();
 
 		switch (itRule->getBattleType())
 		{
 			case BT_FIREARM:
-				//Log(LOG_INFO) << ". . weapon is Firearm";
+				if (_traceAI) Log(LOG_INFO) << ". . weapon is Firearm";
 				if (itRule->isWaypoints() != 0
 					&& _targetsExposed > _targetsVisible) // else let BL fallback to aimed shot
 				{
-					//Log(LOG_INFO) << ". . blaster TRUE";
+					if (_traceAI) Log(LOG_INFO) << ". . . blaster TRUE";
 					_blaster = true;
 					tuReserve = _unit->getTimeUnits()
 							  - _unit->getActionTu(BA_LAUNCH, action->weapon);
 				}
 				else
 				{
-					//Log(LOG_INFO) << ". . rifle TRUE";
+					if (_traceAI) Log(LOG_INFO) << ". . . rifle TRUE";
 					_rifle = true;
 					tuReserve = _unit->getTimeUnits()
 							  - _unit->getActionTu(
@@ -190,7 +195,7 @@ void AlienBAIState::think(BattleAction* const action)
 				break;
 
 			case BT_MELEE:
-				//Log(LOG_INFO) << ". . melee TRUE";
+				if (_traceAI) Log(LOG_INFO) << ". . melee TRUE";
 				_melee = true;
 				tuReserve = _unit->getTimeUnits()
 						  - _unit->getActionTu(BA_MELEE, action->weapon);
@@ -201,7 +206,7 @@ void AlienBAIState::think(BattleAction* const action)
 //				_grenade = true; // <- this is no longer useful since getMainHandWeapon() does not return grenades.
 		}
 	}
-	//else Log(LOG_INFO) << ". . weapon is NULL";
+	else if (_traceAI) Log(LOG_INFO) << ". weapon is NULL";
 //	else if () // kL_add -> Give the invisible 'meleeWeapon' param a try ....
 //	{}
 
@@ -212,43 +217,43 @@ void AlienBAIState::think(BattleAction* const action)
 
 
 	// NOTE: These setups probly have an order: Escape, Ambush, Attack, Patrol.
-	//Log(LOG_INFO) << ". . . setupPatrol()";
+	if (_traceAI) Log(LOG_INFO) << ". . . setupPatrol()";
 	setupPatrol();
-	//Log(LOG_INFO) << "";
+	if (_traceAI) Log(LOG_INFO) << "";
 
-	//Log(LOG_INFO) << ". . . setupAttack()";
+	if (_traceAI) Log(LOG_INFO) << ". . . setupAttack()";
 	setupAttack();
-	//Log(LOG_INFO) << "";
+	if (_traceAI) Log(LOG_INFO) << "";
 
 	if (_targetsExposed != 0 && _tuAmbush == -1 && _melee == false)
 	{
-		//Log(LOG_INFO) << ". . . setupAmbush()";
+		if (_traceAI) Log(LOG_INFO) << ". . . setupAmbush()";
 		setupAmbush();
-		//Log(LOG_INFO) << "";
+		if (_traceAI) Log(LOG_INFO) << "";
 	}
 
 	if (_spottersOrigin != 0 && _tuEscape == -1)
 	{
-		//Log(LOG_INFO) << ". . . setupEscape()";
+		if (_traceAI) Log(LOG_INFO) << ". . . setupEscape()";
 		setupEscape();
-		//Log(LOG_INFO) << "";
+		if (_traceAI) Log(LOG_INFO) << "";
 	}
 
 	if (_hasPsiBeenSet == false && _psiAction->type != BA_NONE)
 	{
-		//Log(LOG_INFO) << ". . psi TRUE";
+		if (_traceAI) Log(LOG_INFO) << ". . psi TRUE";
 		_hasPsiBeenSet = true;
 
 		action->type = _psiAction->type;
 		action->posTarget = _psiAction->posTarget;
 		action->AIcount -= 1;
 
-		//Log(LOG_INFO) << "AlienBAIState::think() EXIT, Psi";
+		if (_traceAI) Log(LOG_INFO) << "AlienBAIState::think() EXIT, Psi";
 		return;
 	}
 	_hasPsiBeenSet = false;
 
-	//Log(LOG_INFO) << ". evaluate [1] " << BattleAIState::debugAiMode(_AIMode);
+	if (_traceAI) Log(LOG_INFO) << ". evaluate [1] " << BattleAIState::debugAiMode(_AIMode);
 	bool evaluate (false);
 	switch (_AIMode)
 	{
@@ -284,7 +289,7 @@ void AlienBAIState::think(BattleAction* const action)
 				evaluate = true;
 			}
 	}
-	//Log(LOG_INFO) << ". do Evaluate = " << evaluate;
+	if (_traceAI) Log(LOG_INFO) << ". do Evaluate = " << evaluate;
 
 	if (evaluate == true
 		|| (_spottersOrigin > 1
@@ -294,12 +299,12 @@ void AlienBAIState::think(BattleAction* const action)
 			|| (_battleSave->isCheating() == true
 				&& _AIMode != AI_COMBAT)));
 	{
-		//Log(LOG_INFO) << ". . AIMode pre-Evaluate = " << BattleAIState::debugAiMode(_AIMode);
+		if (_traceAI) Log(LOG_INFO) << ". . AIMode pre-Evaluate = " << BattleAIState::debugAiMode(_AIMode);
 		evaluateAiMode();
-		//Log(LOG_INFO) << ". . AIMode post-Evaluate = " << BattleAIState::debugAiMode(_AIMode);
+		if (_traceAI) Log(LOG_INFO) << ". . AIMode post-Evaluate = " << BattleAIState::debugAiMode(_AIMode);
 	}
 
-	//Log(LOG_INFO) << ". evaluate [2] " << BattleAIState::debugAiMode(_AIMode);
+	if (_traceAI) Log(LOG_INFO) << ". evaluate [2] " << BattleAIState::debugAiMode(_AIMode);
 	_reserve = BA_NONE;
 	switch (_AIMode)
 	{
@@ -320,6 +325,7 @@ void AlienBAIState::think(BattleAction* const action)
 
 			action->type = _patrolAction->type;
 			action->posTarget = _patrolAction->posTarget;
+			if (_traceAI) Log(LOG_INFO) << ". . ActionType = " << BattleAction::debugBat(action->type);
 			break;
 
 		case AI_COMBAT:
@@ -327,14 +333,14 @@ void AlienBAIState::think(BattleAction* const action)
 			action->posTarget = _attackAction->posTarget;
 			action->weapon = _attackAction->weapon;
 
-			//Log(LOG_INFO) << ". . ActionType = " << BattleAction::debugActionType(action->type);
+			if (_traceAI) Log(LOG_INFO) << ". . ActionType = " << BattleAction::debugBat(action->type);
 			switch (action->type)
 			{
 				case BA_THROW:
 					if (action->weapon != nullptr // TODO: Ensure this was done already ....
 						&& action->weapon->getRules()->getBattleType() == BT_GRENADE)
 					{
-						//Log(LOG_INFO) << ". . Throw grenade - spend Tu for COMBAT";
+						if (_traceAI) Log(LOG_INFO) << ". . Throw grenade - spend Tu for COMBAT";
 						int costTu (action->weapon->getInventorySection()
 										->getCost(_battleSave->getBattleGame()->getRuleset()->getInventoryRule(ST_RIGHTHAND)));
 
@@ -348,16 +354,16 @@ void AlienBAIState::think(BattleAction* const action)
 				case BA_MOVE:
 					if (_rifle == true
 						&& _unit->getTimeUnits() > _unit->getActionTu(
-																BA_SNAPSHOT, // TODO: Hook this into _reserve.
+																BA_SNAPSHOT, // TODO: Hook this into _reserve/ selectFireMethod().
 																action->weapon))
 					{
-						//Log(LOG_INFO) << ". . Move w/ rifle + tu for COMBAT";
+						if (_traceAI) Log(LOG_INFO) << ". . Move w/ rifle + tu for COMBAT";
 						action->AIcount -= 1;
 					}
 					break;
 
 				case BA_LAUNCH:
-					//Log(LOG_INFO) << ". . Launch - copy waypoints for COMBAT";
+					if (_traceAI) Log(LOG_INFO) << ". . Launch - copy waypoints for COMBAT";
 					action->waypoints = _attackAction->waypoints;
 			}
 
@@ -376,6 +382,7 @@ void AlienBAIState::think(BattleAction* const action)
 			action->finalAction = true;
 			action->finalFacing = _ambushAction->finalFacing;
 
+			if (_traceAI) Log(LOG_INFO) << ". . ActionType = " << BattleAction::debugBat(action->type);
 			break;
 
 		case AI_ESCAPE:
@@ -387,20 +394,21 @@ void AlienBAIState::think(BattleAction* const action)
 //			action->AIcount = 3; // <- CivilianBAI uses this instead of finalAction= true <--
 			action->desperate = true;
 
+			if (_traceAI) Log(LOG_INFO) << ". . ActionType = " << BattleAction::debugBat(action->type);
 			_unit->setHiding(); // used by UnitWalkBState::postPathProcedures()
 	}
 
 	if (action->type == BA_MOVE)
 	{
-		//Log(LOG_INFO) << ". BA_MOVE";
+		if (_traceAI) Log(LOG_INFO) << ". BA_MOVE";
 		if (action->posTarget == _unit->getPosition())
 		{
-			//Log(LOG_INFO) << ". . Stay put";
+			if (_traceAI) Log(LOG_INFO) << ". . Stay put";
 			action->type = BA_NONE;
 		}
 		else
 		{
-			//Log(LOG_INFO) << ". . Move";
+			if (_traceAI) Log(LOG_INFO) << ". . Move";
 			_tuAmbush =
 			_tuEscape = -1; // if moving re-evaluate Ambush/Escape target.
 		}
@@ -555,69 +563,88 @@ void AlienBAIState::setupPatrol() // private.
  */
 void AlienBAIState::setupAttack() // private.
 {
-	//Log(LOG_INFO) << "AlienBAIState::setupAttack() id-" << _unit->getId();
+	if (_traceAI) Log(LOG_INFO) << "AlienBAIState::setupAttack() id-" << _unit->getId();
 	_attackAction->type = BA_THINK;
 	_psiAction->type = BA_NONE;
 
+	if (_traceAI) Log(LOG_INFO) << ". _targetsExposed = " << _targetsExposed;
 	if (_targetsExposed != 0 && RNG::percent(PSI_OR_BLASTER_PCT) == true)
 	{
-		//Log(LOG_INFO) << ". _targetsExposed = " << _targetsExposed;
-		if (psiAction() == true
+		if (_traceAI) Log(LOG_INFO) << ". . Run psiAction() OR wayPointAction()";
+		const bool psi (psiAction());
+		if (psi == true
 			|| (_blaster == true && wayPointAction() == true))
 		{
+			if (_traceAI)
+			{
+				if (psi) Log(LOG_INFO) << ". . . psi action";
+				else Log(LOG_INFO) << ". . . blaster action";
+			}
 			return;
 		}
+		else if (_traceAI) Log(LOG_INFO) << ". . . no psi OR wayPoint action";
 	}
 	else
+	{
+		if (_traceAI) Log(LOG_INFO) << ". . no psi OR wayPoint action";
 		_blaster = false;
+	}
 
-	//Log(LOG_INFO) << ". selectNearestTarget()";
+	//if (_traceAI) Log(LOG_INFO) << ". selectNearestTarget()";
 //	if (selectNearestTarget() != 0)
+	if (_traceAI) Log(LOG_INFO) << ". _targetsVisible = " << _targetsVisible;
 	if (_targetsVisible != 0)
 	{
-		//Log(LOG_INFO) << ". _targetsVisible = " << _targetsVisible;
-		//Log(LOG_INFO) << ". . Run grenadeAction()";
+		if (_traceAI) Log(LOG_INFO) << ". . Call grenadeAction()";
 		if (grenadeAction() == false)
 		{
-			//Log(LOG_INFO) << ". . . try rifle Or melee";
+			if (_traceAI) Log(LOG_INFO) << ". . . try rifle Or melee";
 			if (_rifle == true && _melee == true)
 			{
-				//Log(LOG_INFO) << ". . Melee & Rifle are TRUE, chooseMeleeOrRanged()";
+				if (_traceAI) Log(LOG_INFO) << ". . Melee & Rifle are TRUE, Call chooseMeleeOrRanged()";
 				chooseMeleeOrRanged();
 			}
 
 			if (_rifle == true)
 			{
-				//Log(LOG_INFO) << ". . Run rifleAction()";
+				if (_traceAI) Log(LOG_INFO) << ". . Call rifleAction()";
 				rifleAction();
-				//Log(LOG_INFO) << "";
+				if (_traceAI) Log(LOG_INFO) << "";
 			}
 			else if (_melee == true)
 			{
-				//Log(LOG_INFO) << ". . Run meleeAction()";
+				if (_traceAI) Log(LOG_INFO) << ". . Call meleeAction()";
 				meleeAction();
-				//Log(LOG_INFO) << "";
+				if (_traceAI) Log(LOG_INFO) << "";
 			}
 		}
-		//else Log(LOG_INFO) << ". . grenadeAction() TRUE";
+		else if (_traceAI) Log(LOG_INFO) << ". . grenadeAction() TRUE";
 	}
-	//Log(LOG_INFO) << ". selectNearestTarget() DONE";
+	//if (_traceAI) Log(LOG_INFO) << ". selectNearestTarget() DONE";
 
-	//Log(LOG_INFO) << ". Attack bat = " << BattleAction::debugActionType(_attackAction->type);
-
-	//if		(_attackAction->type == BA_MOVE)	Log(LOG_INFO) << ". . walk to " << _attackAction->target;
-	//else if	(_attackAction->type != BA_THINK)	Log(LOG_INFO) << ". . shoot at " << _attackAction->target;
+	if (_traceAI)
+	{
+		Log(LOG_INFO) << ". Attack bat = " << BattleAction::debugBat(_attackAction->type);
+		if		(_attackAction->type == BA_MOVE)	Log(LOG_INFO) << ". . walk to " << _attackAction->posTarget;
+		else if	(_attackAction->type != BA_THINK)	Log(LOG_INFO) << ". . shoot/throw at " << _attackAction->posTarget;
+	}
 
 	if (_attackAction->type == BA_THINK
-		|| _spottersOrigin != 0
-		|| RNG::generate(0, _unit->getAggression()) < _unit->getAggression())
+		&& (_spottersOrigin != 0
+			|| RNG::generate(0, _unit->getAggression()) < _unit->getAggression()))
 	{
-		findFirePosition();
-		//if (findFirePosition() == true) Log(LOG_INFO) << ". . findFirePosition TRUE " << _attackAction->target;
-		//else Log(LOG_INFO) << ". . findFirePosition FAILED";
+		bool debugFound = findFirePosition();
+		if (_traceAI)
+		{
+			if (debugFound) Log(LOG_INFO) << ". . findFirePosition TRUE " << _attackAction->posTarget;
+			else Log(LOG_INFO) << ". . findFirePosition FAILED";
+		}
 	}
-	//Log(LOG_INFO) << "AlienBAIState::setupAttack() EXIT";
-	//Log(LOG_INFO) << "";
+	if (_traceAI)
+	{
+		Log(LOG_INFO) << "AlienBAIState::setupAttack() EXIT";
+		Log(LOG_INFO) << "";
+	}
 }
 
 /**
@@ -645,21 +672,21 @@ void AlienBAIState::setupAmbush() // private.
 
 		std::vector<int> targetPath;
 
-/*		for (std::vector<Node*>::const_iterator			// use node positions for this since it gives map makers a good
-				i = _battleSave->getNodes()->begin();	// degree of control over how the units will use the environment.
-				i != _battleSave->getNodes()->end();	// Is that why ambushes work so crappy.
-				++i)
-		{
-			pos = (*i)->getPosition();
-			if ((tile = _battleSave->getTile(pos)) != nullptr
-				&& tile->getDangerous() == false
-				&& pos.z == _unit->getPosition().z
-				&& TileEngine::distSqr(pos, _unit->getPosition()) < static_cast<int>(SavedBattleGame::SEARCH_SIZE)
-				&& std::find(
-						_reachableAttack.begin(),
-						_reachableAttack.end(),
-						_battleSave->getTileIndex(pos)) != _reachableAttack.end())
-			{ */
+//		for (std::vector<Node*>::const_iterator			// use node positions for this since it gives map makers a good
+//				i = _battleSave->getNodes()->begin();	// degree of control over how the units will use the environment.
+//				i != _battleSave->getNodes()->end();	// Is that why ambushes work so crappy.
+//				++i)
+//		{
+//			pos = (*i)->getPosition();
+//			if ((tile = _battleSave->getTile(pos)) != nullptr
+//				&& tile->getDangerous() == false
+//				&& pos.z == _unit->getPosition().z
+//				&& TileEngine::distSqr(pos, _unit->getPosition()) < static_cast<int>(SavedBattleGame::SEARCH_SIZE)
+//				&& std::find(
+//						_reachableAttack.begin(),
+//						_reachableAttack.end(),
+//						_battleSave->getTileIndex(pos)) != _reachableAttack.end())
+//			{
 		Tile* tile;
 
 		Position
@@ -965,12 +992,15 @@ void AlienBAIState::setupEscape() // private.
  */
 void AlienBAIState::evaluateAiMode() // private.
 {
-	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "AlienBAIState::evaluateAiMode() id-" << _unit->getId();
+	if (_traceAI)
+	{
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << "AlienBAIState::evaluateAiMode() id-" << _unit->getId();
+	}
 	if (_unit->getChargeTarget() != nullptr
 		&& _attackAction->type != BA_THINK)
 	{
-		//Log(LOG_INFO) << ". chargeTarget NOT Think - return COMBAT";
+		if (_traceAI) Log(LOG_INFO) << ". chargeTarget NOT Think - return COMBAT";
 		_AIMode = AI_COMBAT;
 		return;
 	}
@@ -981,12 +1011,12 @@ void AlienBAIState::evaluateAiMode() // private.
 		|| _blaster == true)	// The two (_blaster== true) checks in this function ought obviate the entire re-evaluate thing!
 								// Note there is a valid targetPosition but targetUnit is NOT at that Pos if blaster=TRUE ....
 	{
-		//Log(LOG_INFO) << ". chargeTarget Or waypoints Or blaster - set COMBAT";
+		if (_traceAI) Log(LOG_INFO) << ". chargeTarget Or waypoints Or blaster - set COMBAT";
 		_AIMode = AI_COMBAT;
 	}
 	else
 	{
-		//Log(LOG_INFO) << ". Evaluate ...";
+		if (_traceAI) Log(LOG_INFO) << ". Evaluate ...";
 		float
 			patrolOdds (28.f),
 			combatOdds (23.f),
@@ -1121,14 +1151,17 @@ void AlienBAIState::evaluateAiMode() // private.
 			ambushOdds *= 0.5f;
 		}
 
-		//Log(LOG_INFO) << "patrolOdds = " << patrolOdds;
-		//Log(LOG_INFO) << "combatOdds = " << combatOdds;
-		//Log(LOG_INFO) << "ambushOdds = " << ambushOdds;
-		//Log(LOG_INFO) << "escapeOdds = " << escapeOdds;
+		if (_traceAI)
+		{
+			Log(LOG_INFO) << "patrolOdds = " << patrolOdds;
+			Log(LOG_INFO) << "combatOdds = " << combatOdds;
+			Log(LOG_INFO) << "ambushOdds = " << ambushOdds;
+			Log(LOG_INFO) << "escapeOdds = " << escapeOdds;
+		}
 
 		const float decision (RNG::generate(0.f, patrolOdds + combatOdds + ambushOdds + escapeOdds));
 
-		//Log(LOG_INFO) << "decision Pre = " << decision;
+		if (_traceAI) Log(LOG_INFO) << "decision Pre = " << decision;
 		if (decision <= patrolOdds)
 			_AIMode = AI_PATROL;
 		else if (decision <= patrolOdds + combatOdds)
@@ -1137,7 +1170,7 @@ void AlienBAIState::evaluateAiMode() // private.
 			_AIMode = AI_AMBUSH;
 		else
 			_AIMode = AI_ESCAPE;
-		//Log(LOG_INFO) << "decision Post = " << BattleAIState::debugAiMode(_AIMode);
+		if (_traceAI) Log(LOG_INFO) << "decision Post = " << BattleAIState::debugAiMode(_AIMode);
 	}
 
 	// TODO: These fallbacks should go in accord with the Odds above^
@@ -1148,13 +1181,13 @@ void AlienBAIState::evaluateAiMode() // private.
 	// 4) Escape
 	if (_AIMode == AI_PATROL && _stopNode == nullptr)
 	{
-		//Log(LOG_INFO) << ". fallback COMBAT";
+		if (_traceAI) Log(LOG_INFO) << ". fallback COMBAT";
 		_AIMode = AI_COMBAT;
 	}
 
 	if (_AIMode == AI_COMBAT)
 	{
-		//Log(LOG_INFO) << ". AI_COMBAT _blaster = " << (int)_blaster;
+		if (_traceAI) Log(LOG_INFO) << ". AI_COMBAT _blaster = " << (int)_blaster;
 //		if (_unitAggro)
 		if (_attackAction->type == BA_LAUNCH
 //		if (_blaster == true // note: Blaster-wielding units should go for an AimedShot ... costs less TU.
@@ -1162,35 +1195,35 @@ void AlienBAIState::evaluateAiMode() // private.
 			|| (_battleSave->getTile(_attackAction->posTarget) != nullptr
 				&& _battleSave->getTile(_attackAction->posTarget)->getTileUnit() != nullptr))
 		{
-			//Log(LOG_INFO) << ". . try rifle Or do blaster Action";
+			if (_traceAI) Log(LOG_INFO) << ". . try rifle Or do blaster Action";
 			if (_attackAction->type != BA_THINK || findFirePosition() == true)
 			{
-				//Log(LOG_INFO) << ". . . NOT Think Or findFirePosition() TRUE - ret COMBAT";
+				if (_traceAI) Log(LOG_INFO) << ". . . NOT Think Or findFirePosition() TRUE - ret COMBAT";
 				return;
 			}
 		}
 		else if (selectTarget() == true && findFirePosition() == true)
 		{
-			//Log(LOG_INFO) << ". . selectTarget() TRUE And findFirePosition() TRUE - ret COMBAT";
+			if (_traceAI) Log(LOG_INFO) << ". . selectTarget() TRUE And findFirePosition() TRUE - ret COMBAT";
 			return;
 		}
 
-		//Log(LOG_INFO) << ". fallback AMBUSH";
+		if (_traceAI) Log(LOG_INFO) << ". fallback AMBUSH";
 		_AIMode = AI_AMBUSH;
 	}
 
 	if (_AIMode == AI_AMBUSH && _tuAmbush == -1)
 	{
-		//Log(LOG_INFO) << ". fallback ESCAPE";
+		if (_traceAI) Log(LOG_INFO) << ". fallback ESCAPE";
 		_AIMode = AI_ESCAPE;
 	}
 
 	if (_AIMode == AI_ESCAPE && _tuEscape == -1)
 	{
-		//Log(LOG_INFO) << ". fallback PATROL -> Error: Nothing To Do.";
+		if (_traceAI) Log(LOG_INFO) << ". fallback PATROL -> Error: Nothing To Do.";
 		_AIMode = AI_PATROL;
 	}
-	//Log(LOG_INFO) << " Final decision = " << BattleAIState::debugAiMode(_AIMode);
+	if (_traceAI) Log(LOG_INFO) << " Final decision = " << BattleAIState::debugAiMode(_AIMode);
 }
 
 /**
@@ -1301,26 +1334,26 @@ int AlienBAIState::selectNearestTarget() // private.
 											&target,
 											_unit);
 				}
-/*				if (_rifle == true || _melee == false) // -> is ambiguity like that required.
-				{
-					origin = _te->getOriginVoxel(action);
-					canTarget = _te->canTargetUnit(
-											&origin,
-											(*i)->getTile(),
-											&target,
-											_unit);
-				}
-				else if (findMeleePosition(*i, _unit->getTimeUnits()) == true)
-				{
-					dir = TileEngine::getDirectionTo(
-												_attackAction->target,
-												(*i)->getPosition());
-					canTarget = _te->validMeleeRange( // this appears to be done already in findMeleePosition() ...
-												_attackAction->target,
-												dir,
-												_unit,
-												*i);
-				} */
+//				if (_rifle == true || _melee == false) // -> is ambiguity like that required.
+//				{
+//					origin = _te->getOriginVoxel(action);
+//					canTarget = _te->canTargetUnit(
+//											&origin,
+//											(*i)->getTile(),
+//											&target,
+//											_unit);
+//				}
+//				else if (findMeleePosition(*i, _unit->getTimeUnits()) == true)
+//				{
+//					dir = TileEngine::getDirectionTo(
+//												_attackAction->target,
+//												(*i)->getPosition());
+//					canTarget = _te->validMeleeRange( // this appears to be done already in findMeleePosition() ...
+//												_attackAction->target,
+//												dir,
+//												_unit,
+//												*i);
+//				}
 
 				if (canTarget == true)
 				{
@@ -1343,6 +1376,12 @@ int AlienBAIState::selectNearestTarget() // private.
  */
 bool AlienBAIState::selectPlayerTarget() // private.
 {
+	if (_traceAI)
+	{
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << "selectPlayerTarget()";
+	}
+
 	_unitAggro = nullptr;
 	int
 		dist (1000000),
@@ -1365,7 +1404,13 @@ bool AlienBAIState::selectPlayerTarget() // private.
 			}
 		}
 	}
+	if (_traceAI && _unitAggro != nullptr)
+	{
+		Log(LOG_INFO) << ". dist = " << std::sqrt(dist);
+		Log(LOG_INFO) << ". unitAggro id-" << _unitAggro->getId();
+	}
 
+	if (_traceAI) Log(LOG_INFO) << "";
 	return (_unitAggro != nullptr);
 }
 
@@ -1409,6 +1454,12 @@ bool AlienBAIState::selectTarget() // private.
  */
 bool AlienBAIState::findFirePosition() // private.
 {
+	if (_traceAI)
+	{
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << "findFirePosition()";
+	}
+
 	if (selectPlayerTarget() == true) // sets _unitAggro.
 	{
 		_attackAction->type = BA_THINK;
@@ -1474,16 +1525,24 @@ bool AlienBAIState::findFirePosition() // private.
 
 		if (score > BASE_SUCCESS)
 		{
-			//if (_traceAI) Log(LOG_INFO) << "Firepoint found at " << _attackAction->target << " with a score of " << score;
 //			if (_unit->getPosition() != _attackAction->target)
 			_attackAction->type = BA_MOVE;
 //			else chooseFireMethod() & setup the action for handleUnitAI()
 
+			if (_traceAI)
+			{
+				Log(LOG_INFO) << ". success " << _attackAction->posTarget << " score = " << score;
+				Log(LOG_INFO) << "";
+			}
 			return true;
 		}
 	}
 
-	//if (_traceAI) Log(LOG_INFO) << "Firepoint failed: best estimation was " << _attackAction->target << " with a score of " << score;
+	if (_traceAI)
+	{
+		Log(LOG_INFO) << "Firepoint failed";//: best estimation was " << _attackAction->posTarget << " with a score of " << score;
+		Log(LOG_INFO) << "";
+	}
 	return false;
 }
 
@@ -1642,7 +1701,7 @@ void AlienBAIState::faceMelee() // private.
 }
 
 /**
- * Tries to trace a waypoint projectile.
+ * Tries to trace a waypoint-projectile.
  * @return, true if blaster
  */
 bool AlienBAIState::wayPointAction() // private.
@@ -1713,7 +1772,7 @@ bool AlienBAIState::wayPointAction() // private.
 }
 
 /**
- * Constructs a waypoint path for a guided projectile.
+ * Constructs a waypoint-path for a guided projectile.
  * @note Helper for wayPointAction().
  * @param unit - pointer to a BattleUnit to path at
  * @return, true if waypoints get positioned
@@ -1759,7 +1818,9 @@ bool AlienBAIState::pathWaypoints(const BattleUnit* const unit) // private.
 		//Log(LOG_INFO) << ". . qty WP's = " << _attackAction->waypoints.size() << " / max WP's = " << _attackAction->weapon->getRules()->isWaypoints();
 		if (_attackAction->waypoints.size() != 0u
 			&& static_cast<int>(_attackAction->waypoints.size())
-							 <= _attackAction->weapon->getRules()->isWaypoints() + _attackAction->diff - static_cast<int>(DIFF_SUPERHUMAN))
+							 <= _attackAction->weapon->getRules()->isWaypoints()
+																+ _attackAction->diff
+																- static_cast<int>(DIFF_SUPERHUMAN))
 		{
 			//Log(LOG_INFO) << ". path valid, ret TRUE";
 			return true;
@@ -1922,8 +1983,8 @@ bool AlienBAIState::grenadeAction() // private.
 				const Position
 					originVoxel (_battleSave->getTileEngine()->getSightOriginVoxel(_unit)),
 					targetVoxel (Position::toVoxelSpaceCentered(
-															action.posTarget,
-															2 - _battleSave->getTile(action.posTarget)->getTerrainLevel())); // LoFT of floor is typically 2 voxels thick.
+															action.posTarget, // LoFT of floor is typically 2 voxels thick.
+															2 - _battleSave->getTile(action.posTarget)->getTerrainLevel()));
 
 				if (_battleSave->getTileEngine()->validateThrow(action, originVoxel, targetVoxel) == true)
 				{
@@ -2062,7 +2123,6 @@ bool AlienBAIState::explosiveEfficacy(
 			}
 		}
 	}
-
 	return (RNG::percent(pct) == true);
 }
 
@@ -2075,7 +2135,11 @@ bool AlienBAIState::explosiveEfficacy(
  */
 bool AlienBAIState::psiAction() // private.
 {
-	//Log(LOG_INFO) << "AlienBAIState::psiAction() ID = " << _unit->getId();
+	if (_traceAI)
+	{
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << "AlienBAIState::psiAction() ID = " << _unit->getId();
+	}
 	if (_unit->getBattleStats()->psiSkill != 0
 		&& _hasPsiBeenSet == false
 		&& _unit->isMindControlled() == false)
@@ -2085,12 +2149,12 @@ bool AlienBAIState::psiAction() // private.
 		int tuCost (_unit->getActionTu(BA_PSIPANIC, itRule));
 		if (_tuEscape != -1)
 			tuCost += _tuEscape;
-		//Log(LOG_INFO) << "AlienBAIState::psiAction() tuCost = " << tuCost;
+		if (_traceAI) Log(LOG_INFO) << ". tuCost = " << tuCost;
 		if (_unit->getTimeUnits() >= tuCost)
 		{
 			const int attack (static_cast<int>(static_cast<float>(
 							 _unit->getBattleStats()->psiStrength * _unit->getBattleStats()->psiSkill) / 50.f));
-			//Log(LOG_INFO) << ". . attack = " << attack;
+			if (_traceAI) Log(LOG_INFO) << ". . attack = " << attack;
 
 			BattleUnit* unitTarget (nullptr);
 			int
@@ -2153,15 +2217,16 @@ bool AlienBAIState::psiAction() // private.
 
 			if (unitTarget != nullptr && choice - los > PSI_CUTOFF)
 			{
-/*				if (_targetsVisible
-					&& _attackAction->weapon
-					&& _attackAction->weapon->getAmmoItem())
-				{
-					if (_attackAction->weapon->getAmmoItem()->getRules()->getPower() > chance)
-						return false;
-				}
-				else if (RNG::generate(35, 155) > chance)
-					return false; */
+				if (_traceAI) Log(LOG_INFO) << ". . . target Valid - acceptable Prob.";
+//				if (_targetsVisible
+//					&& _attackAction->weapon
+//					&& _attackAction->weapon->getAmmoItem())
+//				{
+//					if (_attackAction->weapon->getAmmoItem()->getRules()->getPower() > chance)
+//						return false;
+//				}
+//				else if (RNG::generate(35, 155) > chance)
+//					return false;
 
 				_unitAggro = unitTarget;
 				_psiAction->posTarget = unitTarget->getPosition();
@@ -2197,10 +2262,15 @@ bool AlienBAIState::psiAction() // private.
 				_psiAction->type = BA_PSICONTROL;
 				return true;
 			}
+			else if (_traceAI) Log(LOG_INFO) << ". . . target NOT Valid or unacceptable Prob.";
 		}
 	}
 
-	//Log(LOG_INFO) << "AlienBAIState::psiAction() EXIT, False";
+	if (_traceAI)
+	{
+		Log(LOG_INFO) << "AlienBAIState::psiAction() EXIT, False";
+		Log(LOG_INFO) << "";
+	}
 	return false;
 }
 
@@ -2287,7 +2357,7 @@ void AlienBAIState::chooseMeleeOrRanged() // private.
 }
 
 /**
- * Gets the TU reservation setting.
+ * Gets the TU-reservation setting.
  * @return, the reserved BattleActionType (BattlescapeGame.h)
  */
 BattleActionType AlienBAIState::getReservedAiAction() const

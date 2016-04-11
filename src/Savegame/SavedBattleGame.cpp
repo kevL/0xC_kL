@@ -2732,10 +2732,10 @@ void SavedBattleGame::calcBaseDestruct()
 }
 
 /**
- * Gets a pointer to the geoscape save.
+ * Gets a pointer to the Geoscape save.
  * @return, pointer to SavedGame
  */
-SavedGame* SavedBattleGame::getGeoscapeSave() const
+SavedGame* SavedBattleGame::getSavedGame() const
 {
 	return _battleState->getGame()->getSavedGame();
 }

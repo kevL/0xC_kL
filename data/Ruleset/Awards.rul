@@ -150,7 +150,7 @@ extraStrings:
       STR_MISSION_TYPE_: "type> {ALT}{0}"
       STR_UFO_TYPE_: "ufo> {ALT}{0}"
       STR_RACE_TYPE_: "race> {ALT}{0}"
-      STR_DAYLIGHT_TYPE_: "time> {ALT}{0}"
+      STR_DAYLIGHT_TYPE_: "light> {ALT}{0}"
       STR_DAY: "Day"
       STR_NIGHT: "Night"
       STR_DAYS_WOUNDED_: "injured> {ALT}{0}{1}"

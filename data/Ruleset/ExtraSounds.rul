@@ -63,6 +63,7 @@ extraSounds:
       72: Resources/Sounds/extra/death_snakeman.ogg
       73: Resources/Sounds/extra/b_cannon_hit.ogg
       74: Resources/Sounds/extra/place.ogg
+      75: Resources/Sounds/extra/psy_attack.ogg
       101: Resources/Sounds/Tactical/sFx_voice/death/f/vs_fx0huskf_hit2.wav
       102: Resources/Sounds/Tactical/sFx_voice/death/f/vs_nnwgrdf2_hit1.wav
       103: Resources/Sounds/Tactical/sFx_voice/death/f/vs_nprostf2_hit2.wav

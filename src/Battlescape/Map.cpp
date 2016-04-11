@@ -131,7 +131,7 @@ Map::Map(
 	_iconWidth = _game->getRuleset()->getInterface("battlescape")->getElement("icons")->w;
 	_iconHeight = _game->getRuleset()->getInterface("battlescape")->getElement("icons")->h;
 
-	if (Options::traceAI == true) // turn everything on to see the markers.
+	if (Options::traceAI != 0) // turn everything on to see the markers.
 		_previewSetting = PATH_FULL;
 	else
 		_previewSetting	= Options::battlePreviewPath;
@@ -1759,7 +1759,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 	// end arrow.
 
 	if (_battleSave->getPathfinding()->isPathPreviewed() == true
-		|| Options::traceAI == true)
+		|| Options::traceAI != 0)
 	{
 		_numWaypoint->setBordered(); // make a border for the pathPreview display
 

@@ -86,7 +86,7 @@ void create()
 	_info.push_back(OptionInfo("audioBuffer1k", &audioBuffer1k, 2));
 #endif
 
-	_info.push_back(OptionInfo("traceAI", &traceAI, false));
+	_info.push_back(OptionInfo("traceAI", &traceAI, 0));
 	_info.push_back(OptionInfo("verboseLogging", &verboseLogging, false));
 	_info.push_back(OptionInfo("StereoSound", &StereoSound, true));
 	_info.push_back(OptionInfo("baseXResolution", &baseXResolution, Screen::ORIGINAL_WIDTH));

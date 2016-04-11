@@ -39,8 +39,8 @@ OPT SDLKey keyGeoLeft, keyGeoRight, keyGeoUp, keyGeoDown, keyGeoZoomIn, keyGeoZo
 // Battlescape options
 OPT ScrollType battleEdgeScroll;
 OPT PathPreview battlePreviewPath;
-OPT int battleScrollSpeed, battleDragScrollButton, battleFireSpeed, battleXcomSpeed, battleAlienSpeed, battleExplosionHeight, battlescapeScale;
-OPT bool traceAI, battleInstantGrenade, battleNotifyDeath, battleTooltips, battleHairBleach, battleAutoEnd, //sneakyAI
+OPT int battleScrollSpeed, battleDragScrollButton, battleFireSpeed, battleXcomSpeed, battleAlienSpeed, battleExplosionHeight, battlescapeScale, traceAI;
+OPT bool battleInstantGrenade, battleNotifyDeath, battleTooltips, battleHairBleach, battleAutoEnd, //sneakyAI
 	battleStrafe, battleForceFire, battleAllowPsionicCapture, battleDragScrollInvert, battleWeaponSelfDestruction,
 	battleUFOExtenderAccuracy, battleSmoothCamera, battleTFTDDamage, battleRangeBasedAccuracy, battleAlienPanicMessages, battleAlienBleeding;
 OPT SDLKey keyBattleLeft, keyBattleRight, keyBattleUp, keyBattleDown, keyBattleLevelUp, keyBattleLevelDown, keyBattleCenterUnit,

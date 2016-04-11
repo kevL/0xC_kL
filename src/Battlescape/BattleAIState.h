@@ -85,10 +85,9 @@ protected:
 		TRACE_BROWN		= 11,
 		TRACE_PURPLE	= 13;
 
-	bool _traceAI;
-
 	int
 		_spottersOrigin,
+		_traceAI,
 		_tuEscape;
 
 	BattleUnit
@@ -107,7 +106,7 @@ protected:
 
 
 	public:
-		/// Creates a new BattleAIState linked to the SavedBattleGame and a certain BattleUnit.
+		/// Creates a BattleAIState linked to the SavedBattleGame and a specific BattleUnit.
 		BattleAIState(
 				SavedBattleGame* const battleSave,
 				BattleUnit* const unit,
@@ -115,16 +114,16 @@ protected:
 		/// Cleans up the BattleAIState.
 		virtual ~BattleAIState();
 
-		/// Loads the AI state from YAML.
+		/// Loads the AI-state from YAML.
 		virtual void load(const YAML::Node& node);
-		/// Saves the AI state to YAML.
+		/// Saves the AI-state to YAML.
 		virtual YAML::Node save() const;
 
 		/// Enters the state.
 //		virtual void enter();
 		/// Exits the state.
 //		virtual void exit();
-		/// Runs state functionality every AI cycle.
+		/// Runs state functionality every AI-cycle.
 		virtual void think(BattleAction* const action);
 
 		/// Resets the unit's saved parameters.

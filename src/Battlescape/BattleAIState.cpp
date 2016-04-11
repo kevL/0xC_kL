@@ -151,7 +151,6 @@ std::string BattleAIState::debugAiMode(AIMode mode) // static.
 		case AI_COMBAT: return "COMBAT";
 		case AI_ESCAPE: return "ESCAPE";
 	}
-
 	return "error - no AI Mode";
 }
 
