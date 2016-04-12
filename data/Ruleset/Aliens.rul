@@ -2109,7 +2109,7 @@ armors:
       - 0.0 #smoke
     loftSet: [2]
   - type: SECTOID_ARMOR2 #commander
-    spriteSheet: SECTOID.PCK
+    spriteSheet: SectoidCdr #SECTOID.PCK
     corpseBattle:
       - STR_SECTOID_CORPSE
     frontArmor: 12

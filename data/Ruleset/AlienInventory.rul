@@ -4,7 +4,7 @@ armors:
   - type: SECTOID_ARMOR1
     spriteInv: sectoidInventoryImage
   - type: SECTOID_ARMOR2
-    spriteInv: sectoidInventoryImage
+    spriteInv: sectoidCdrInventoryImage
   - type: CYBERDISC_ARMOR
     spriteInv: cyberdiscInventoryImage
   - type: FLOATER_ARMOR0
@@ -52,6 +52,12 @@ armors:
   - type: CIVF_ARMOR
     spriteInv: civilianFInventoryImage
 extraSprites:
+  - type: sectoidCdrInventoryImage
+    width: 320
+    height: 200
+    singleImage: true
+    files:
+      0: Resources/AlienInventory/sectoidcdr.png
   - type: sectoidInventoryImage
     width: 320
     height: 200
