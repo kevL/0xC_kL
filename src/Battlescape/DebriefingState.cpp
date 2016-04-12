@@ -1985,8 +1985,11 @@ void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
 		const std::string type (unit->getType());
 
 		int value;
-		if (_rules->getResearch(type) && _gameSave->isResearched(type) == false)
+		if (_rules->getResearch(type) != nullptr
+			&& _gameSave->isResearched(type) == false)
+		{
 			value = unit->getValue() * 2;
+		}
 		else
 			value = unit->getValue();
 

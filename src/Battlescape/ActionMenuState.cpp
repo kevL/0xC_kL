@@ -260,7 +260,7 @@ ActionMenuState::~ActionMenuState()
 {}
 
 /**
- * Adds a menu-item for a battle-action-type.
+ * Adds a menu-item for a battle-action type.
  * @param bat	- action type (BattlescapeGame.h)
  * @param desc	- reference the action-description
  * @param id	- pointer to the item-action-ID
@@ -321,7 +321,7 @@ void ActionMenuState::handle(Action* action)
 }
 
 /**
- * Executes the battle-action corresponding to this ActionMenuItem.
+ * Executes the battle-action corresponding to an ActionMenuItem.
  * @param action - pointer to an Action
  */
 void ActionMenuState::btnActionMenuClick(Action* action)
@@ -329,7 +329,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 	_game->getSavedGame()->getBattleSave()->getPathfinding()->clearPreview();
 
 	size_t btnId (MENU_ITEMS);
-	for (size_t // find out which button was pressed
+	for (size_t // find out which ActionMenuItem was clicked
 			i = 0u;
 			i != MENU_ITEMS;
 			++i)
