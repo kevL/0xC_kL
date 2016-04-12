@@ -574,9 +574,9 @@ void BattlescapeGame::popState()
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
 		{
 			//Log(LOG_INFO) << ". states Empty, re-enable cursor";
+			_parentState->getGame()->getCursor()->setHidden(false);
 			_parentState->refreshMousePosition(); // update tile data on the HUD
 			setupSelector();
-			_parentState->getGame()->getCursor()->setHidden(false);
 		}
 	}
 	//Log(LOG_INFO) << "BattlescapeGame::popState() EXIT";

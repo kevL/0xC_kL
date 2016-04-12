@@ -2334,7 +2334,7 @@ void BattlescapeState::btnStatsClick(Action* action)
 
 /**
  * Shows an ActionMenu popup.
- * @note Creates the battle-action when an entry is clicked.
+ * @note Creates a tactical battle-action when an entry is clicked.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnLeftHandLeftClick(Action*)
@@ -2374,7 +2374,7 @@ void BattlescapeState::btnLeftHandRightClick(Action*)
 
 /**
  * Shows an ActionMenu popup.
- * @note Creates the battle-action when an entry is clicked.
+ * @note Creates a tactical battle-action when an entry is clicked.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnRightHandLeftClick(Action*)
@@ -2413,8 +2413,8 @@ void BattlescapeState::btnRightHandRightClick(Action*)
 }
 
 /**
- * LMB centers on the unit corresponding to the button.
- * RMB cycles through spotters of the unit corresponding to the button.
+ * LMB centers on the hotile-unit corresponding to the button clicked.
+ * RMB cycles through player's spotters of that unit.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnHostileUnitPress(Action* action)
@@ -2428,7 +2428,8 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 			btnMapUpPress(nullptr);
 			break;
 
-		default:
+		case SDL_BUTTON_LEFT:
+		case SDL_BUTTON_RIGHT:
 		{
 			size_t i; // find out which button was pressed
 			for (

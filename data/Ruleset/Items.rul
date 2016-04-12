@@ -709,8 +709,8 @@ items:
     power: 15
     battleType: 10
     armor: 8
-    tuPrime: 2
-    tuDefuse: 2
+    tuPrime: 3
+    tuDefuse: 3
     flatRate: true
   - type: STR_CORPSE
     weight: 28
