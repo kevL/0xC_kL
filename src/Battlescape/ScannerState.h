@@ -26,11 +26,10 @@
 namespace OpenXcom
 {
 
+class BattleUnit;
 class ScannerView;
 class Surface;
 class Timer;
-
-struct BattleAction;
 
 
 /**
@@ -59,7 +58,7 @@ private:
 
 	public:
 		/// Creates a ScannerState.
-		explicit ScannerState(const BattleAction* const action);
+		explicit ScannerState(const BattleUnit* const selUnit);
 		/// dTor.
 		~ScannerState();
 

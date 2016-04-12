@@ -32,7 +32,7 @@ class ActionMenuItem;
 
 
 /**
- * A menu popup that allows player to select a battlescape action.
+ * A menu-popup that allows player to select a Battlescape action.
  */
 class ActionMenuState
 	:
@@ -46,29 +46,29 @@ private:
 	BattleAction* _action;
 
 
-	/// Adds a new menu item for an action.
+	/// Adds a menu-item for a battle-action.
 	void addItem(
 			const BattleActionType bat,
 			const std::string& desc,
 			size_t* id);
-	/// Checks if there is a viable execution target nearby.
+	/// Checks if there is a viable execution-target nearby.
 	bool canExecuteTarget();
 
 
 	public:
-		/// Creates the Action Menu state.
+		/// Creates an ActionMenu state.
 		ActionMenuState(
 				BattleAction* const action,
 				int x,
 				int y,
 				bool injured);
-		/// Cleans up the Action Menu state.
+		/// Cleans up the ActionMenu state.
 		~ActionMenuState();
 
 		/// Handler for right-clicking anything.
 		void handle(Action* action) override;
 
-		/// Handler for clicking an action menu item.
+		/// Handler for clicking an ActionMenuItem.
 		void btnActionMenuClick(Action* action);
 
 		/// Updates the resolution settings - just resized the window.

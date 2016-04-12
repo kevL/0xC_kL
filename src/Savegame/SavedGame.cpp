@@ -1813,7 +1813,7 @@ bool SavedGame::isResearched(const std::vector<std::string>& resTypes) const
 }
 
 /**
- * Gets the soldier matching an ID.
+ * Gets the Soldier matching an ID.
  * @note Used to instance BattleUnits from Soldiers when re-loading tactical.
  * @param id - a soldier's unique id
  * @return, pointer to the Soldier

@@ -30,19 +30,17 @@
 
 #include "../Resource/ResourcePack.h"
 
-#include "../Savegame/BattleUnit.h"
-#include "../Savegame/SavedBattleGame.h"
-#include "../Savegame/SavedGame.h"
+//#include "../Savegame/BattleUnit.h"
 
 
 namespace OpenXcom
 {
 
 /**
- * Initializes the ScannerState.
+ * Initializes the Scanner state.
  * @param action - pointer to an Action
  */
-ScannerState::ScannerState(const BattleAction* const action)
+ScannerState::ScannerState(const BattleUnit* const selUnit)
 {
 /*	if (Options::maximizeInfoScreens)
 	{
@@ -57,7 +55,7 @@ ScannerState::ScannerState(const BattleAction* const action)
 								152,152,
 								56,24,
 								_game,
-								action->actor);
+								selUnit);
 
 	if (_game->getScreen()->getDY() > 50)
 		_fullScreen = false;

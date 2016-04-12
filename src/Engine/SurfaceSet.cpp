@@ -30,7 +30,7 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a new empty SurfaceSet for frames of the specified size.
+ * Sets up an empty SurfaceSet for frames of the specified size.
  * @param width		- frame width in pixels
  * @param height	- frame height in pixels
  */
@@ -69,9 +69,7 @@ SurfaceSet::~SurfaceSet()
 			i = _frames.begin();
 			i != _frames.end();
 			++i)
-	{
 		delete i->second;
-	}
 }
 
 /**
@@ -99,10 +97,8 @@ void SurfaceSet::loadPck(
 		}
 
 		std::streampos
-			start,
+			start (offsetFile.tellg()),
 			stop;
-
-		start = offsetFile.tellg();
 
 		int offset;
 		offsetFile.read(
@@ -111,8 +107,7 @@ void SurfaceSet::loadPck(
 		offsetFile.seekg(0, std::ios::end);
 
 		stop = offsetFile.tellg();
-
-		const size_t tabSize = static_cast<size_t>(stop - start);
+		const size_t tabSize (static_cast<size_t>(stop - start));
 
 		if (offset != 0)
 			qtyFrames = tabSize / 2; // 16-bit offsets
@@ -122,7 +117,7 @@ void SurfaceSet::loadPck(
 		offsetFile.close();
 
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != qtyFrames;
 				++i)
 		{
@@ -147,7 +142,7 @@ void SurfaceSet::loadPck(
 		x,y;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != qtyFrames;
 			++i)
 	{
@@ -157,7 +152,7 @@ void SurfaceSet::loadPck(
 		_frames[i]->lock();
 		imgFile.read((char*)&value, 1);
 		for (Uint8
-				j = 0;
+				j = 0u;
 				j != value;
 				++j)
 		{
@@ -177,7 +172,7 @@ void SurfaceSet::loadPck(
 			{
 				imgFile.read((char*)&value, 1);
 				for (Uint8
-						j = 0;
+						j = 0u;
 						j != value;
 						++j)
 				{
@@ -211,14 +206,14 @@ void SurfaceSet::loadDat(const std::string& file)
 	}
 
 	imgFile.seekg(0, std::ios::end);
-	std::streamoff datSize = imgFile.tellg();
+	std::streamoff datSize (imgFile.tellg());
 	imgFile.seekg(0, std::ios::beg);
 
-	size_t qtyFrames = static_cast<size_t>(static_cast<int>(datSize) / (_width * _height));
+	size_t qtyFrames (static_cast<size_t>(static_cast<int>(datSize) / (_width * _height)));
 	//Log(LOG_INFO) << "loadDat total = " << qtyFrames;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != qtyFrames;
 			++i)
 	{
@@ -227,9 +222,9 @@ void SurfaceSet::loadDat(const std::string& file)
 
 	Uint8 value;
 	int
-		x = 0,
-		y = 0;
-	size_t i = 0;
+		x (0),
+		y (0);
+	size_t i (0u);
 
 	_frames[i]->lock();
 	while (imgFile.read((char*)&value, 1))
@@ -241,7 +236,8 @@ void SurfaceSet::loadDat(const std::string& file)
 			_frames[i]->unlock();
 
 			++i;
-			x = y = 0;
+			x =
+			y = 0;
 
 			if (i >= qtyFrames)
 				break;
@@ -273,10 +269,7 @@ Surface* SurfaceSet::getFrame(const int i)
  */
 Surface* SurfaceSet::addFrame(const int i)
 {
-	_frames[i] = new Surface(
-						_width,
-						_height);
-
+	_frames[i] = new Surface(_width, _height);
 	return _frames[i];
 }
 

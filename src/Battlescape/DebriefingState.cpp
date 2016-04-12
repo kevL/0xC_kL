@@ -1970,7 +1970,7 @@ void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
 //	if ((*i)->getSpawnType().empty() == false)	// btw. This should never happen.
 //		type = (*i)->getSpawnType();			// Zombies can't be MC'd basically. Can't be stunned either.
 //	else										// And Soldiers should spawn into zombies ~immediately.
-//		type = (*i)->getType();					// Plus aLiens can't be zombified and zombies blow up if burned to death.
+//		type = (*i)->getType();					// Plus aLiens can't be zombified and zombies blow up if burned to death anyway.
 
 //	if (unit->getSpawnType().empty() == false) // DON'T USE THIS IT CAN BREAK THE ITERATOR.
 //	{
@@ -1979,13 +1979,13 @@ void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
 //		return;
 //	}
 
-	if (_base->hasContainment() == true)
+	if (_base->hasContainment() == true || _isQuickBattle == true)
 	{
 		//Log(LOG_INFO) << ". . . alienLive = " << unit->getType() << " id-" << unit->getId();
 		const std::string type (unit->getType());
 
 		int value;
-		if (_gameSave->isResearched(type) == false)
+		if (_rules->getResearch(type) && _gameSave->isResearched(type) == false)
 			value = unit->getValue() * 2;
 		else
 			value = unit->getValue();

@@ -319,7 +319,7 @@ void ListGamesState::sortList(SaveSort order)
  */
 void ListGamesState::updateList() // virtual.
 {
-	size_t row (0);
+	size_t row (0u);
 	Uint8 color (_lstSaves->getSecondaryColor());
 
 	for (std::vector<SaveInfo>::const_iterator

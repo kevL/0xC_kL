@@ -52,7 +52,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Action Menu window.
+ * Initializes all the elements in the ActionMenu window.
  * @param action	- pointer to the BattleAction (BattlescapeGame.h)
  * @param x			- position on the x-axis
  * @param y			- position on the y-axis
@@ -82,15 +82,14 @@ ActionMenuState::ActionMenuState(
 		_menuSelect[i]->onMouseClick((ActionHandler)& ActionMenuState::btnActionMenuClick);
 	}
 
-	// Build the popup menu
-	const RuleItem* const itRule (_action->weapon->getRules());
+	const RuleItem* const itRule (_action->weapon->getRules()); // Build the popup menu
 	size_t id (0u);
 
 	const bool hasHands (_action->actor->getGeoscapeSoldier() != nullptr
 					  || _action->actor->getUnitRules()->hasHands() == true
 					  || _action->weapon->getRules()->isFixed() == true);
 
-	if (itRule->isFixed() == false) // Throw & Drop (if not a fixed weapon)
+	if (itRule->isFixed() == false) // throw & drop (if not a fixed weapon)
 	{
 		addItem(
 				BA_DROP,
@@ -255,16 +254,16 @@ ActionMenuState::ActionMenuState(
 }
 
 /**
- * Deletes the ActionMenuState.
+ * Deletes this ActionMenuState.
  */
 ActionMenuState::~ActionMenuState()
 {}
 
 /**
- * Adds a new menu item for an action.
+ * Adds a menu-item for a battle-action-type.
  * @param bat	- action type (BattlescapeGame.h)
- * @param desc	- reference the action description
- * @param id	- pointer to the new item-action ID
+ * @param desc	- reference the action-description
+ * @param id	- pointer to the item-action-ID
  */
 void ActionMenuState::addItem( // private.
 		const BattleActionType bat,
@@ -304,7 +303,7 @@ void ActionMenuState::addItem( // private.
 }
 
 /**
- * Closes the window on click.
+ * Closes the window on click or cancel.
  * @param action - pointer to an Action
  */
 void ActionMenuState::handle(Action* action)
@@ -322,7 +321,7 @@ void ActionMenuState::handle(Action* action)
 }
 
 /**
- * Executes the action corresponding to this ActionMenu item.
+ * Executes the battle-action corresponding to this ActionMenuItem.
  * @param action - pointer to an Action
  */
 void ActionMenuState::btnActionMenuClick(Action* action)
@@ -403,7 +402,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 						if (_action->actor->spendTimeUnits(_action->TU) == true)
 						{
 							_game->popState();
-							_game->pushState(new ScannerState(_action));
+							_game->pushState(new ScannerState(_action->actor));
 						}
 						else
 						{
@@ -454,7 +453,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 }
 
 /**
- * Checks if there is a viable execution target nearby.
+ * Checks if there is a viable execution-target nearby.
  * @return, true if can execute
  */
 bool ActionMenuState::canExecuteTarget() // private.

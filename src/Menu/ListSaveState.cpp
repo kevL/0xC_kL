@@ -43,7 +43,7 @@ namespace OpenXcom
  */
 ListSaveState::ListSaveState(OptionsOrigin origin)
 	:
-		ListGamesState(origin, 1, false),
+		ListGamesState(origin, 1u, false),
 		_selected(-1),
 		_selectedPre(-1)
 {
@@ -62,7 +62,7 @@ ListSaveState::ListSaveState(OptionsOrigin origin)
 //		_btnCancel->setX(180);
 
 	// Tactical: selected SaveSlot for Battlescape is grayscaled.
-	_edtSave->setColor(Palette::blockOffset(10)); // geo:SLATE
+	_edtSave->setColor(Palette::blockOffset(10u)); // geo:SLATE
 	_edtSave->setHighContrast();
 	_edtSave->setVisible(false);
 	_edtSave->onKeyboardPress((ActionHandler)& ListSaveState::keySavePress);
@@ -89,7 +89,7 @@ void ListSaveState::updateList()
 	_lstSaves->addRow(1, tr("STR_NEW_SAVED_GAME_SLOT").c_str());
 
 	if (_origin != OPT_BATTLESCAPE)
-		_lstSaves->setRowColor(0, _lstSaves->getSecondaryColor());
+		_lstSaves->setRowColor(0u, _lstSaves->getSecondaryColor());
 
 	ListGamesState::updateList();
 }
@@ -119,7 +119,7 @@ void ListSaveState::lstSavesPress(Action* action)
 				_lstSaves->setScrollable(false);
 
 				_selectedPre = _selected;
-				_selected = _lstSaves->getSelectedRow();
+				_selected = static_cast<int>(_lstSaves->getSelectedRow());
 
 				switch (_selectedPre)
 				{
@@ -127,19 +127,19 @@ void ListSaveState::lstSavesPress(Action* action)
 						break;
 
 					case 0:
-						_lstSaves->setCellText(_selectedPre, 0, tr("STR_NEW_SAVED_GAME_SLOT"));
+						_lstSaves->setCellText(static_cast<size_t>(_selectedPre), 0u, tr("STR_NEW_SAVED_GAME_SLOT"));
 						break;
 
 					default:
-						_lstSaves->setCellText(_selectedPre, 0, _label);
+						_lstSaves->setCellText(static_cast<size_t>(_selectedPre), 0u, _label);
 				}
 
-				_label = _lstSaves->getCellText(_lstSaves->getSelectedRow(), 0);
-				_lstSaves->setCellText(_lstSaves->getSelectedRow(), 0, L"");
+				_label = _lstSaves->getCellText(_lstSaves->getSelectedRow(), 0u);
+				_lstSaves->setCellText(_lstSaves->getSelectedRow(), 0u, L"");
 
 				_edtSave->storeText(_label);
 
-				if (_lstSaves->getSelectedRow() == 0)
+				if (_lstSaves->getSelectedRow() == 0u)
 					_label = L"";
 
 				_edtSave->setText(_label);
@@ -182,7 +182,7 @@ void ListSaveState::keySavePress(Action* action)
 
 			_lstSaves->setCellText(
 								_lstSaves->getSelectedRow(),
-								0,
+								0u,
 								_edtSave->getStoredText());
 		}
 	}

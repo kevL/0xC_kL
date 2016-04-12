@@ -45,7 +45,7 @@ namespace OpenXcom
  */
 ListLoadState::ListLoadState(OptionsOrigin origin)
 	:
-		ListGamesState(origin, 0, true)
+		ListGamesState(origin, 0u, true)
 {
 	_txtTitle->setText(tr("STR_SELECT_GAME_TO_LOAD"));
 
@@ -68,7 +68,7 @@ void ListLoadState::lstSavesPress(Action* action)
 	{
 		case SDL_BUTTON_LEFT:
 		{
-			kL_curBase = 0;
+			kL_curBase = 0u;
 
 			bool fade;
 			switch (_origin)
