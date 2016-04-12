@@ -39,12 +39,10 @@ namespace OpenXcom
 {
 
 /**
- * Initializes the Scanner State.
+ * Initializes the ScannerState.
  * @param action - pointer to an Action
  */
 ScannerState::ScannerState(const BattleAction* const action)
-	:
-		_action(action)
 {
 /*	if (Options::maximizeInfoScreens)
 	{
@@ -59,7 +57,7 @@ ScannerState::ScannerState(const BattleAction* const action)
 								152,152,
 								56,24,
 								_game,
-								_action->actor);
+								action->actor);
 
 	if (_game->getScreen()->getDY() > 50)
 		_fullScreen = false;
@@ -120,24 +118,24 @@ void ScannerState::handle(Action* action)
 }
 
 /**
- * Updates scanner state.
- */
-/*void ScannerState::update() // private.
+ * Updates the Scanner state.
+ *
+void ScannerState::update() // private.
 {
 	_scanView->draw();
 } */
 
 /**
- * Updates the minimap view animation.
-*/
+ * Cycles the radar-blob animations.
+ */
 void ScannerState::animate() // private.
 {
 	_scanView->animate();
 }
 
 /**
- * Handles timers.
-*/
+ * Handles the Timer.
+ */
 void ScannerState::think()
 {
 	State::think();
@@ -160,7 +158,6 @@ void ScannerState::exitClick(Action*) // private.
 						true);
 		_game->getScreen()->resetDisplay(false);
 	} */
-
 	_game->popState();
 }
 

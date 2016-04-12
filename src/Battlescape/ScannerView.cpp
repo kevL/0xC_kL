@@ -35,13 +35,13 @@ namespace OpenXcom
 {
 
 /**
- * Initializes the Scanner view.
- * @param w		- the ScannerView width
- * @param h		- the ScannerView height
- * @param x		- the ScannerView x origin
- * @param y		- the ScannerView y origin
- * @param game	- pointer to the core Game
- * @param unit	- the current BattleUnit
+ * Initializes the ScannerView.
+ * @param w			- the width
+ * @param h			- the height
+ * @param x			- the x-origin
+ * @param y			- the y-origin
+ * @param game		- pointer to the core Game
+ * @param selUnit	- pointer to the currently selected BattleUnit
  */
 ScannerView::ScannerView(
 		int w,
@@ -49,13 +49,13 @@ ScannerView::ScannerView(
 		int x,
 		int y,
 		const Game* const game,
-		const BattleUnit* const unit)
+		const BattleUnit* const selUnit)
 	:
 		InteractiveSurface(
 			w,h,
 			x,y),
 		_game(game),
-		_unit(unit),
+		_selUnit(selUnit),
 		_frame(0),
 		_dotsDone(false)
 {
@@ -63,11 +63,11 @@ ScannerView::ScannerView(
 }
 
 /**
- * Draws a Scanner.
+ * Draws this ScannerView.
  */
 void ScannerView::draw()
 {
-	SurfaceSet* const srt = _game->getResourcePack()->getSurfaceSet("DETBLOB.DAT");
+	SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet("DETBLOB.DAT"));
 	Surface* srf;
 
 	clear();
@@ -77,8 +77,8 @@ void ScannerView::draw()
 		xPos,
 		yPos;
 
-	SavedBattleGame* const battleSave = _game->getSavedGame()->getBattleSave();
-	std::vector<std::pair<int,int>>& scanDots = battleSave->scannerDots();
+	SavedBattleGame* const battleSave (_game->getSavedGame()->getBattleSave());
+	std::vector<std::pair<int,int>>& scanDots (battleSave->scannerDots());
 
 	this->lock();
 	for (int
@@ -96,17 +96,16 @@ void ScannerView::draw()
 					z != battleSave->getMapSizeZ();
 					++z)
 			{
-				xPos = _unit->getPosition().x + x;
-				yPos = _unit->getPosition().y + y;
+				xPos = _selUnit->getPosition().x + x;
+				yPos = _selUnit->getPosition().y + y;
 
-				tile = battleSave->getTile(Position(xPos,yPos,z));
-				if (tile != nullptr
+				if ((tile = battleSave->getTile(Position(xPos,yPos,z))) != nullptr
 					&& tile->getTileUnit() != nullptr
 					&& tile->getTileUnit()->getMotionPoints() != 0)
 				{
 					if (_dotsDone == false)
 					{
-						std::pair<int,int> dot = std::make_pair(xPos,yPos);
+						std::pair<int,int> dot (std::make_pair(xPos,yPos));
 						if (std::find(
 									scanDots.begin(),
 									scanDots.end(),
@@ -116,7 +115,7 @@ void ScannerView::draw()
 						}
 					}
 
-					int frame = (tile->getTileUnit()->getMotionPoints() / 5);
+					int frame (tile->getTileUnit()->getMotionPoints() / 5);
 					if (frame > -1)
 					{
 						if (frame > 5) frame = 5;
@@ -132,10 +131,9 @@ void ScannerView::draw()
 			}
 		}
 	}
-
 	_dotsDone = true;
 
-	srf = srt->getFrame(_unit->getUnitDirection() + 7); // the arrow in the direction the unit is pointed
+	srf = srt->getFrame(_selUnit->getUnitDirection() + 7); // draw arrow in the direction that selUnit is faced
 	srf->blitNShade(
 				this,
 				Surface::getX() + (9 * 8) - 4,
@@ -145,20 +143,19 @@ void ScannerView::draw()
 }
 
 /**
- * Handles clicks on the scanner view.
- * @param action - pointer to an Action
- * @param state - state that the ActionHandlers belong to
+ * Handles clicks on this ScannerView.
+ * @param action	- pointer to an Action
+ * @param state		- State that the ActionHandlers belong to
  */
 void ScannerView::mouseClick(Action*, State*)
 {}
 
 /**
- * Updates the scanner animation.
-*/
+ * Cycles the scanner-animation.
+ */
 void ScannerView::animate()
 {
-	if (++_frame == 2)
-		_frame = 0;
+	if (++_frame == 2) _frame = 0;
 
 	_redraw = true;
 }

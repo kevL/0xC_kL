@@ -31,7 +31,8 @@ class Game;
 
 
 /**
- * Displays a view of units movement.
+ * Displays a radar-like view of units within range that have moved during the
+ * current turn.
  */
 class ScannerView
 	:
@@ -42,7 +43,7 @@ private:
 	bool _dotsDone;
 	int _frame;
 
-	const BattleUnit* _unit;
+	const BattleUnit* _selUnit;
 	const Game* _game;
 
 	///
@@ -50,18 +51,18 @@ private:
 
 
 	public:
-		/// Create a ScannerView.
+		/// Creates a ScannerView.
 		ScannerView(
 				int w,
 				int h,
 				int x,
 				int y,
 				const Game* const game,
-				const BattleUnit* const unit);
+				const BattleUnit* const selUnit);
 
-		/// Draw the scanner.
+		/// Draws the ScannerView.
 		void draw() override;
-		/// Animate the blobs.
+		/// Animates the ScannerView's radar-blobs.
 		void animate();
 };
 

@@ -42,15 +42,15 @@ class ScannerState
 {
 
 private:
-	const BattleAction* _action;
-	InteractiveSurface* _bg;
 	ScannerView* _scanView;
+
+	InteractiveSurface* _bg;
 	Surface* _scan;
 	Timer* _timer;
 
-	/// Updates scanner interface.
+	/// Updates the Scanner interface.
 //	void update();
-	/// Handles Minimap animation.
+	/// Handles the radar-blob animations.
 	void animate();
 
 	/// Handler for exiting the state.
@@ -58,7 +58,7 @@ private:
 
 
 	public:
-		/// Creates the ScannerState.
+		/// Creates a ScannerState.
 		explicit ScannerState(const BattleAction* const action);
 		/// dTor.
 		~ScannerState();
@@ -66,7 +66,7 @@ private:
 		/// Handler for right-clicking anything.
 		void handle(Action* action) override;
 
-		/// Handles timers.
+		/// Handles the Timer.
 		void think() override;
 };
 
