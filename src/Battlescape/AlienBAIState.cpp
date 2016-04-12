@@ -25,7 +25,7 @@
 #include "../fmath.h"
 
 #include "../Engine/Game.h"
-//#include "../Engine/Logger.h"
+#include "../Engine/Logger.h"
 
 #include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleItem.h"
@@ -176,7 +176,7 @@ void AlienBAIState::think(BattleAction* const action)
 			case BT_FIREARM:
 				if (_traceAI) Log(LOG_INFO) << ". . weapon is Firearm";
 				if (itRule->isWaypoints() != 0
-					&& _targetsExposed > _targetsVisible) // else let BL fallback to aimed shot
+					&& _targetsExposed > _targetsVisible) // else let BL fallback to aimed-shot
 				{
 					if (_traceAI) Log(LOG_INFO) << ". . . blaster TRUE";
 					_blaster = true;
@@ -216,25 +216,25 @@ void AlienBAIState::think(BattleAction* const action)
 		_reachableAttack.clear();
 
 
-	// NOTE: These setups probly have an order: Escape, Ambush, Attack, Patrol.
-	if (_traceAI) Log(LOG_INFO) << ". . . setupPatrol()";
+	// NOTE: These setups could have an order: Escape, Ambush, Attack, Patrol.
+	if (_traceAI) Log(LOG_INFO) << ". setupPatrol()";
 	setupPatrol();
 	if (_traceAI) Log(LOG_INFO) << "";
 
-	if (_traceAI) Log(LOG_INFO) << ". . . setupAttack()";
+	if (_traceAI) Log(LOG_INFO) << ". setupAttack()";
 	setupAttack();
 	if (_traceAI) Log(LOG_INFO) << "";
 
 	if (_targetsExposed != 0 && _tuAmbush == -1 && _melee == false)
 	{
-		if (_traceAI) Log(LOG_INFO) << ". . . setupAmbush()";
+		if (_traceAI) Log(LOG_INFO) << ". setupAmbush()";
 		setupAmbush();
 		if (_traceAI) Log(LOG_INFO) << "";
 	}
 
 	if (_spottersOrigin != 0 && _tuEscape == -1)
 	{
-		if (_traceAI) Log(LOG_INFO) << ". . . setupEscape()";
+		if (_traceAI) Log(LOG_INFO) << ". setupEscape()";
 		setupEscape();
 		if (_traceAI) Log(LOG_INFO) << "";
 	}
@@ -1816,14 +1816,17 @@ bool AlienBAIState::pathWaypoints(const BattleUnit* const unit) // private.
 
 		// pathing done & wp's have been positioned:
 		//Log(LOG_INFO) << ". . qty WP's = " << _attackAction->waypoints.size() << " / max WP's = " << _attackAction->weapon->getRules()->isWaypoints();
-		if (_attackAction->waypoints.size() != 0u
-			&& static_cast<int>(_attackAction->waypoints.size())
-							 <= _attackAction->weapon->getRules()->isWaypoints()
-																+ _attackAction->diff
-																- static_cast<int>(DIFF_SUPERHUMAN))
+		if (_attackAction->waypoints.size() != 0u)
 		{
-			//Log(LOG_INFO) << ". path valid, ret TRUE";
-			return true;
+			int wp (_attackAction->weapon->getRules()->isWaypoints()
+														+ _attackAction->diff
+														- static_cast<int>(DIFF_SUPERHUMAN));
+			if (wp < 1) wp = 1;
+			if (static_cast<int>(_attackAction->waypoints.size()) <= wp)
+			{
+				//Log(LOG_INFO) << ". path valid, ret TRUE";
+				return true;
+			}
 		}
 		//Log(LOG_INFO) << ". . too many WP's !!";
 	}

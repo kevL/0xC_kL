@@ -1708,23 +1708,22 @@ bool Pathfinding::isBlocked( // private.
 }
 
 /**
- * Marks Tiles with pathfinding info for the path-preview.
+ * Marks Tiles with pathfinding-info for the path-preview.
  * @param discard - true removes preview (default false)
- * @return, true if the preview is created or discarded; false if nothing happens
+ * @return,	true if the preview is created or discarded even if non-previewed;
+ *			false if there is no path or an existing preview remains static
  */
 bool Pathfinding::previewPath(bool discard)
 {
 	//Log(LOG_INFO) << "Pathfinding::previewPath()";
-	if (_path.empty() == true							// <- no current path
-		|| (_previewed == true && discard == false))	// <- already previewed
+	if (_path.empty() == true							// <- no current path at all
+		|| (_previewed == true && discard == false))	// <- already previewed; won't change the preview (preview must be discarded before calling funct.)
 	{
 		return false;
 	}
-	_previewed = !discard;
-
 
 	Tile* tile;
-	if (discard == true)
+	if ((_previewed = !discard) == false)
 	{
 		for (size_t
 				i = 0u;
@@ -1878,7 +1877,7 @@ bool Pathfinding::previewPath(bool discard)
 }
 
 /**
- * Unmarks the tiles used for path-preview.
+ * Clears the tiles used for path-preview.
  * @return, true if preview gets removed
  */
 bool Pathfinding::clearPreview()

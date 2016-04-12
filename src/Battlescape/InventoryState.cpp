@@ -682,7 +682,7 @@ void InventoryState::updateWounds() // private.
 	unsigned wound;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != BattleUnit::PARTS_BODY;
 			++i)
 	{
@@ -692,7 +692,7 @@ void InventoryState::updateWounds() // private.
 		switch (bodyPart)
 		{
 			case BODYPART_HEAD:
-				if (wound != 0)
+				if (wound != 0u)
 				{
 					_wndHead->setValue(wound);
 					_wndHead->setVisible();
@@ -702,7 +702,7 @@ void InventoryState::updateWounds() // private.
 				break;
 
 			case BODYPART_TORSO:
-				if (wound != 0)
+				if (wound != 0u)
 				{
 					_wndTorso->setValue(wound);
 					_wndTorso->setVisible();
@@ -712,7 +712,7 @@ void InventoryState::updateWounds() // private.
 				break;
 
 			case BODYPART_RIGHTARM:
-				if (wound != 0)
+				if (wound != 0u)
 				{
 					_wndRightArm->setValue(wound);
 					_wndRightArm->setVisible();
@@ -722,7 +722,7 @@ void InventoryState::updateWounds() // private.
 				break;
 
 			case BODYPART_LEFTARM:
-				if (wound != 0)
+				if (wound != 0u)
 				{
 					_wndLeftArm->setValue(wound);
 					_wndLeftArm->setVisible();
@@ -732,7 +732,7 @@ void InventoryState::updateWounds() // private.
 				break;
 
 			case BODYPART_RIGHTLEG:
-				if (wound != 0)
+				if (wound != 0u)
 				{
 					_wndRightLeg->setValue(wound);
 					_wndRightLeg->setVisible();
@@ -742,7 +742,7 @@ void InventoryState::updateWounds() // private.
 				break;
 
 			case BODYPART_LEFTLEG:
-				if (wound != 0)
+				if (wound != 0u)
 				{
 					_wndLeftLeg->setValue(wound);
 					_wndLeftLeg->setVisible();
@@ -792,7 +792,7 @@ void InventoryState::btnOkClick(Action*)
 }
 
 /**
- * Selects the previous soldier.
+ * Selects the previous eligible unit.
  * @param action - pointer to an Action
  */
 void InventoryState::btnPrevClick(Action*)
@@ -809,7 +809,7 @@ void InventoryState::btnPrevClick(Action*)
 }
 
 /**
- * Selects the next soldier.
+ * Selects the next eligible unit.
  * @param action - pointer to an Action
  */
 void InventoryState::btnNextClick(Action*)
@@ -826,7 +826,7 @@ void InventoryState::btnNextClick(Action*)
 }
 
 /**
- * Unloads the selected weapon or saves soldier's equipment layout.
+ * Unloads the selected weapon or saves a Soldier's equipment-layout.
  * @param action - pointer to an Action
  */
 void InventoryState::btnUnloadClick(Action*)
@@ -851,7 +851,7 @@ void InventoryState::btnUnloadClick(Action*)
 }
 
 /**
- * Saves all Soldiers' equipment layouts in pre-battle.
+ * Saves all Soldiers' equipment-layouts in pre-battle.
  * @param action - pointer to an Action
  */
 void InventoryState::btnSaveLayouts(Action*)
@@ -865,7 +865,7 @@ void InventoryState::btnSaveLayouts(Action*)
 }
 
 /**
- * Saves all Soldiers' equipment layouts.
+ * Saves all Soldiers' equipment-layouts.
  * @note Helper for btnSaveLayouts().
  * @return, true if a layout is saved
  */
@@ -1291,26 +1291,27 @@ void InventoryState::setExtraInfo(const BattleItem* const selOver) // private.
 			{
 				int tu;
 				std::string actionType;
-				if (itRule->getBattleType() == BT_AMMO)
+				switch (itRule->getBattleType())
 				{
-					tu = itRule->getReloadTu();
-					actionType = "STR_RELOAD_";
-				}
-				else
-				{
-					tu = selUnit->getActionTu(bat, selOver);
-					switch (bat)
-					{
-						case BA_LAUNCH:		actionType = "STR_LAUNCH_";	break;
-						case BA_SNAPSHOT:	actionType = "STR_SNAP_";	break;
-						case BA_AUTOSHOT:	actionType = "STR_BURST_";	break;
-						case BA_AIMEDSHOT:	actionType = "STR_SCOPE_";	break;
-						case BA_PRIME:		actionType = "STR_PRIME_";	break;
-						case BA_DEFUSE:		actionType = "STR_DEFUSE_";	break;
-						case BA_USE:		actionType = "STR_USE_";	break;
-						case BA_PSIPANIC:	actionType = "STR_PSI_";	break;
-						case BA_MELEE:		actionType = "STR_ATTACK_";
-					}
+					case BT_AMMO:
+						tu = itRule->getReloadTu();
+						actionType = "STR_RELOAD_";
+						break;
+
+					default:
+						tu = selUnit->getActionTu(bat, selOver);
+						switch (bat)
+						{
+							case BA_LAUNCH:		actionType = "STR_LAUNCH_";	break;
+							case BA_SNAPSHOT:	actionType = "STR_SNAP_";	break;
+							case BA_AUTOSHOT:	actionType = "STR_BURST_";	break;
+							case BA_AIMEDSHOT:	actionType = "STR_SCOPE_";	break;
+							case BA_PRIME:		actionType = "STR_PRIME_";	break;
+							case BA_DEFUSE:		actionType = "STR_DEFUSE_";	break;
+							case BA_USE:		actionType = "STR_USE_";	break;
+							case BA_PSIPANIC:	actionType = "STR_PSI_";	break;
+							case BA_MELEE:		actionType = "STR_ATTACK_";
+						}
 				}
 				_txtUseTU->setText(tr(actionType).arg(tu));
 			}
@@ -1332,7 +1333,6 @@ void InventoryState::txtTooltipIn(Action* action)
 		_txtItem->setText(tr(_currentTooltip));
 	}
 } */
-
 /**
  * Clears the tooltip text.
  * @param action - pointer to an Action
@@ -1380,7 +1380,6 @@ void InventoryState::_updateTemplateButtons(bool isVisible)
 		_btnClearInventory->clear();
 	}
 } */
-
 /**
  *
  *
@@ -1423,7 +1422,6 @@ void InventoryState::btnCreateTemplateClick(Action*)
 											ResourcePack::ITEM_DROP)->play();
 	refreshMouse();
 } */
-
 /**
  *
  *

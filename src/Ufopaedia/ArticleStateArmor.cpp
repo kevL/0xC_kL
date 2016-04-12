@@ -51,26 +51,23 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 		ArticleState(defs->id),
 		_row(0)
 {
-	const RuleArmor* const armorRule (_game->getRuleset()->getArmor(defs->id));
-
-	_txtTitle = new Text(300, 17, 5, 24);
-
 	setPalette(PAL_BATTLEPEDIA);
-
 	ArticleState::initLayout();
-
-	add(_txtTitle);
 
 	_btnOk->setColor(uPed_ORANGE);
 	_btnPrev->setColor(uPed_ORANGE);
 	_btnNext->setColor(uPed_ORANGE);
 
+	_txtTitle = new Text(300, 17, 5, 24);
+	add(_txtTitle);
 	_txtTitle->setText(tr(defs->title));
 	_txtTitle->setColor(uPed_BLUE_SLATE);
 	_txtTitle->setBig();
 
 	_image = new Surface(320, 200);
 	add(_image);
+
+	const RuleArmor* const armorRule (_game->getRuleset()->getArmor(defs->id));
 
 	std::string look (armorRule->getSpriteInventory());
 	look += "M0.SPK";
@@ -88,7 +85,7 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 	_lstInfo->setColor(uPed_BLUE_SLATE);
 	_lstInfo->setDot();
 
-	_txtInfo = new Text(300, 56, 8, 150);
+	_txtInfo = new Text(300, 49, 8, 150);
 	add(_txtInfo);
 	_txtInfo->setText(tr(defs->text));
 	_txtInfo->setColor(uPed_BLUE_SLATE);
@@ -106,7 +103,7 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != RuleArmor::DAMAGE_TYPES;
 			++i)
 	{
@@ -147,7 +144,7 @@ ArticleStateArmor::~ArticleStateArmor() // virtual.
  *
  * @param stLabel	-
  * @param iStat		-
- * @param addSign	-
+ * @param addSign	- (default false)
  */
 void ArticleStateArmor::addStat( // private.
 		const std::string& stLabel,
@@ -165,7 +162,7 @@ void ArticleStateArmor::addStat( // private.
 						2,
 						tr(stLabel).c_str(),
 						woststr.str().c_str());
-		_lstInfo->setCellColor(_row++, 1, uPed_GREEN_SLATE);
+		_lstInfo->setCellColor(_row++, 1u, uPed_GREEN_SLATE);
 	}
 }
 
@@ -182,7 +179,7 @@ void ArticleStateArmor::addStat( // private.
 					2,
 					tr(stLabel).c_str(),
 					wstStat.c_str());
-	_lstInfo->setCellColor(_row++, 1, uPed_GREEN_SLATE);
+	_lstInfo->setCellColor(_row++, 1u, uPed_GREEN_SLATE);
 }
 
 }

@@ -51,8 +51,8 @@ protected:
 		* _txtShotType,
 		* _txtAccuracy,
 		* _txtTuCost,
-		* _txtDamage,
-		* _txtAmmo,
+//		* _txtDamage,
+//		* _txtAmmo,
 		* _txtAmmoType[3u],
 		* _txtAmmoDamage[3u];
 	TextList* _lstInfo;

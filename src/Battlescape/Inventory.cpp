@@ -451,7 +451,7 @@ void Inventory::blit(Surface* surface)
 }
 
 /**
- * Handles the cursor over.
+ * Handles the cursor-over.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -496,7 +496,8 @@ void Inventory::mouseOver(Action* action, State* state)
 }
 
 /**
- * Handles the cursor click. Picks up / drops an item.
+ * Handles the cursor-click.
+ * @note Picks up or drops an item.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -504,371 +505,16 @@ void Inventory::mouseClick(Action* action, State* state)
 {
 	int soundId (-1);
 
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		if (_selItem == nullptr) // Pickup or Move item.
-		{
-			int
-				x (static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX()),
-				y (static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY());
-
-			const RuleInventory* const inRule (getSlotAtCursor(&x,&y));
-			if (inRule != nullptr)
-			{
-				if (inRule->getCategory() == IC_GROUND)
-					x += _grdOffset;
-
-				BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
-				if (overItem != nullptr)
-				{
-					if ((SDL_GetModState() & KMOD_CTRL) != 0) // Move item.
-					{
-						bool
-							placed (false),
-							toGround (true);
-
-						const RuleInventory* targetSection (nullptr);
-
-						if (inRule->getCategory() == IC_HAND
-							|| (inRule->getCategory() != IC_GROUND
-								&& (_tuMode == false
-									|| _selUnit->getOriginalFaction() != FACTION_PLAYER))) // aLien units drop-to-ground on Ctrl+LMB
-						{
-							targetSection = _game->getRuleset()->getInventoryRule(ST_GROUND);
-						}
-						else
-						{
-							if (_selUnit->getItem(ST_RIGHTHAND) == nullptr)
-							{
-								toGround = false;
-								targetSection = _game->getRuleset()->getInventoryRule(ST_RIGHTHAND);
-							}
-							else if (_selUnit->getItem(ST_LEFTHAND) == nullptr)
-							{
-								toGround = false;
-								targetSection = _game->getRuleset()->getInventoryRule(ST_LEFTHAND);
-							}
-							else if (inRule->getCategory() != IC_GROUND)
-								targetSection = _game->getRuleset()->getInventoryRule(ST_GROUND);
-						}
-
-						if (targetSection != nullptr)
-						{
-							if (toGround == true)
-							{
-								if (_tuMode == false
-									|| _selUnit->spendTimeUnits(overItem->getInventorySection()->getCost(targetSection)) == true)
-								{
-									placed = true;
-									moveItem(overItem, targetSection);
-									arrangeGround();
-
-									soundId = ResourcePack::ITEM_DROP;
-								}
-								else
-									_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
-							}
-							else
-							{
-								_stackLevel[static_cast<size_t>(overItem->getSlotX())]
-										   [static_cast<size_t>(overItem->getSlotY())] -= 1;
-
-								if (fitItem(targetSection, overItem) == true)
-									placed = true;
-								else
-									_stackLevel[static_cast<size_t>(overItem->getSlotX())]
-											   [static_cast<size_t>(overItem->getSlotY())] += 1;
-							}
-
-							if (placed == true)
-							{
-								_overItem = nullptr; // remove cursor info 'cause item is no longer under the cursor
-								mouseOver(action, state);
-							}
-						}
-					}
-					else // Pickup item.
-					{
-						setSelectedItem(overItem);
-
-						const int explTurn (overItem->getFuse());
-						if (explTurn > -1)
-						{
-							std::wstring activated;
-							if (explTurn > 0) activated = Text::intWide(explTurn) + L" ";
-							activated += _game->getLanguage()->getString("STR_GRENADE_ACTIVATED");
-							if (explTurn > 0) activated += L" " + Text::intWide(explTurn);
-							_warning->showMessage(activated);
-						}
-					}
-				}
-			}
-		}
-		else // item on cursor, Drop item or Load weapon with it.
-		{
-			int
-				x (_srfGrab->getX()
-						+ (RuleInventory::HAND_W - _selItem->getRules()->getInventoryWidth())
-							* RuleInventory::SLOT_W / 2
-						+ RuleInventory::SLOT_W / 2),
-				y (_srfGrab->getY()
-						+ (RuleInventory::HAND_H - _selItem->getRules()->getInventoryHeight())
-							* RuleInventory::SLOT_H / 2
-						+ RuleInventory::SLOT_H / 2);
-
-			RuleInventory* inRule (getSlotAtCursor(&x,&y));
-
-			if (inRule != nullptr)
-			{
-				if (inRule->getCategory() == IC_GROUND)
-					x += _grdOffset;
-
-				BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
-
-				const bool stack (inRule->getCategory() == IC_GROUND
-							   && canStack(overItem, _selItem) == true);
-
-				if (overItem == _selItem	// put item back where it came from
-					|| overItem == nullptr	// put item in empty slot
-					|| stack == true)		// stack item
-				{
-					if (isOverlap(
-								_selUnit,
-								_selItem,
-								inRule,
-								x,y) == false
-						&& inRule->fitItemInSlot(_selItem->getRules(), x,y) == true)
-					{
-						if (_tuMode == false
-							|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
-						{
-							_tuCost = -1;
-
-							moveItem(_selItem, inRule, x,y);
-
-							if (inRule->getCategory() == IC_GROUND)
-								_stackLevel[static_cast<size_t>(x)]
-										   [static_cast<size_t>(y)] += 1;
-							setSelectedItem();
-
-							soundId = ResourcePack::ITEM_DROP;
-						}
-						else
-							_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
-					}
-					else if (stack == true)
-					{
-						if (_tuMode == false
-							|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
-						{
-							_tuCost = -1;
-
-							moveItem(
-									_selItem,
-									inRule,
-									overItem->getSlotX(),
-									overItem->getSlotY());
-							_stackLevel[static_cast<size_t>(overItem->getSlotX())]
-									   [static_cast<size_t>(overItem->getSlotY())] += 1;
-							setSelectedItem();
-
-							soundId = ResourcePack::ITEM_DROP;
-						}
-						else
-							_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
-					}
-				}
-				else if (overItem->getRules()->getCompatibleAmmo()->empty() == false // Put item in weapon.
-					&& (_tuMode == false || overItem->getInventorySection()->getCategory() == IC_HAND))
-				{
-					if (overItem->getAmmoItem() != nullptr)
-						_warning->showMessage(_game->getLanguage()->getString("STR_WEAPON_IS_ALREADY_LOADED"));
-					else
-					{
-						bool fail (true);
-						for (std::vector<std::string>::const_iterator
-								i = overItem->getRules()->getCompatibleAmmo()->begin();
-								i != overItem->getRules()->getCompatibleAmmo()->end();
-								++i)
-						{
-							if (*i == _selItem->getRules()->getType())
-							{
-								fail = false;
-								break;
-							}
-						}
-
-						if (fail == true)
-							_warning->showMessage(_game->getLanguage()->getString("STR_WRONG_AMMUNITION_FOR_THIS_WEAPON"));
-						else if (_tuMode == true
-							&& _selUnit->getItem(ST_RIGHTHAND) != nullptr
-							&& _selUnit->getItem(ST_RIGHTHAND) != _selItem
-							&& _selUnit->getItem(ST_LEFTHAND) != nullptr
-							&& _selUnit->getItem(ST_LEFTHAND) != _selItem)
-						{
-							_warning->showMessage(_game->getLanguage()->getString("STR_BOTH_HANDS_MUST_BE_EMPTY")); // TODO: "one hand must be empty"
-						}
-						else
-						{
-							int tuReload;
-							if (_tuMode == true)
-							{
-								tuReload = overItem->getRules()->getReloadTu();
-								if (_selItem->getInventorySection()->getCategory() != IC_HAND)
-								{
-									InventorySection toHand;
-									if (_selUnit->getItem(ST_RIGHTHAND) == nullptr)
-										toHand = ST_RIGHTHAND;
-									else
-										toHand = ST_LEFTHAND;
-									const RuleInventory* const handRule (_game->getRuleset()->getInventoryRule(toHand));
-									tuReload += _selItem->getInventorySection()->getCost(handRule);
-								}
-							}
-							else
-								tuReload = 0; // safety, not used.
-
-							if (_tuMode == false
-								|| _selUnit->spendTimeUnits(tuReload) == true)
-							{
-								_tuCost = -1;
-
-								if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
-								{
-									_selUnit->getTile()->removeItem(_selItem);
-									arrangeGround();
-								}
-
-								overItem->setAmmoItem(_selItem);
-								setSelectedItem();
-
-								soundId = ResourcePack::ITEM_RELOAD;
-							}
-							else
-								_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
-						}
-					}
-				}
-				// else swap the item positions ...
-			}
-			else
-			{
-				// try again using the position of the mouse cursor not the item (slightly more intuitive for stacking)
-				x = static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX();
-				y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
-
-				inRule = getSlotAtCursor(&x,&y);
-				if (inRule != nullptr && inRule->getCategory() == IC_GROUND)
-				{
-					x += _grdOffset;
-
-					BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
-					if (canStack(overItem, _selItem) == true)
-					{
-						if (_tuMode == false
-							|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
-						{
-							moveItem(
-									_selItem,
-									inRule,
-									overItem->getSlotX(),
-									overItem->getSlotY());
-							_stackLevel[static_cast<size_t>(overItem->getSlotX())]
-									   [static_cast<size_t>(overItem->getSlotY())] += 1;
-							setSelectedItem();
-
-							soundId = ResourcePack::ITEM_DROP;
-						}
-						else
-							_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
-					}
-				}
-			}
-		}
-	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-	{
-		_tuCost = -1;
-
-		if (_selItem == nullptr)
-		{
-			if ((SDL_GetModState() & KMOD_CTRL) == 0)
-			{
-				if (Options::includePrimeStateInSavedLayout == true
-					|| _atBase == false) // Priming is allowed only on the field or in pre-battle, or if fuse-state can save to Layouts.
-				{
-					if (_tuMode == false)
-					{
-						int
-							x (static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX()),
-							y (static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY());
-
-						const RuleInventory* const inRule (getSlotAtCursor(&x,&y));
-						if (inRule != nullptr)
-						{
-							if (inRule->getCategory() == IC_GROUND)
-								x += _grdOffset;
-
-							BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
-							if (overItem != nullptr)
-							{
-								const RuleItem* const itRule (overItem->getRules());
-								switch (itRule->getBattleType())
-								{
-									case BT_GRENADE:
-									case BT_PROXYGRENADE:
-									case BT_FLARE:
-										if (overItem->getFuse() == -1) // Prime that grenade!
-										{
-											switch (itRule->getBattleType())
-											{
-												case BT_PROXYGRENADE:
-												case BT_FLARE:
-													overItem->setFuse(0);
-													arrangeGround();
-													_warning->showMessage(_game->getLanguage()->getString("STR_GRENADE_ACTIVATED"));
-													break;
-
-												default: // This is where activation warning for nonProxy preBattle grenades goes.
-													_game->pushState(new PrimeGrenadeState(nullptr, true, overItem, this));
-											}
-										}
-										else // deFuse grenade
-										{
-											_warning->showMessage(_game->getLanguage()->getString("STR_GRENADE_DEACTIVATED"));
-											overItem->setFuse(-1);
-											arrangeGround();
-										}
-										break;
-
-									default:
-										if (inRule->getCategory() != IC_GROUND) // move item to Ground
-										{
-											moveItem(
-													overItem,
-													_game->getRuleset()->getInventoryRule(ST_GROUND));
-
-											arrangeGround();
-											soundId = ResourcePack::ITEM_DROP;
-
-											_overItem = nullptr; // remove cursor info 'cause item is no longer under the cursor
-											mouseOver(action, state);
-										}
-								}
-							}
-						}
-					}
-					else
-						_game->popState(); // Close the inventory window on right-click if not in preBattle equip screen!
-				}
-			}
-			else // Open Ufopaedia article.
+		case SDL_BUTTON_LEFT:
+			if (_selItem == nullptr) // Pickup or Move item.
 			{
 				int
 					x (static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX()),
 					y (static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY());
 
-				RuleInventory* const inRule (getSlotAtCursor(&x,&y));
+				const RuleInventory* const inRule (getSlotAtCursor(&x,&y));
 				if (inRule != nullptr)
 				{
 					if (inRule->getCategory() == IC_GROUND)
@@ -877,21 +523,377 @@ void Inventory::mouseClick(Action* action, State* state)
 					BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
 					if (overItem != nullptr)
 					{
-						std::string article (overItem->getRules()->getType()); // strip const. yay,
-						Ufopaedia::openArticle(_game, article);
+						if ((SDL_GetModState() & KMOD_CTRL) != 0) // Move item.
+						{
+							bool
+								placed (false),
+								toGround (true);
+
+							const RuleInventory* targetSection (nullptr);
+
+							if (inRule->getCategory() == IC_HAND
+								|| (inRule->getCategory() != IC_GROUND
+									&& (_tuMode == false
+										|| _selUnit->getOriginalFaction() != FACTION_PLAYER))) // aLien units drop-to-ground on Ctrl+LMB
+							{
+								targetSection = _game->getRuleset()->getInventoryRule(ST_GROUND);
+							}
+							else
+							{
+								if (_selUnit->getItem(ST_RIGHTHAND) == nullptr)
+								{
+									toGround = false;
+									targetSection = _game->getRuleset()->getInventoryRule(ST_RIGHTHAND);
+								}
+								else if (_selUnit->getItem(ST_LEFTHAND) == nullptr)
+								{
+									toGround = false;
+									targetSection = _game->getRuleset()->getInventoryRule(ST_LEFTHAND);
+								}
+								else if (inRule->getCategory() != IC_GROUND)
+									targetSection = _game->getRuleset()->getInventoryRule(ST_GROUND);
+							}
+
+							if (targetSection != nullptr)
+							{
+								if (toGround == true)
+								{
+									if (_tuMode == false
+										|| _selUnit->spendTimeUnits(overItem->getInventorySection()->getCost(targetSection)) == true)
+									{
+										placed = true;
+										moveItem(overItem, targetSection);
+										arrangeGround();
+
+										soundId = ResourcePack::ITEM_DROP;
+									}
+									else
+										_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+								}
+								else
+								{
+									_stackLevel[static_cast<size_t>(overItem->getSlotX())]
+											   [static_cast<size_t>(overItem->getSlotY())] -= 1;
+
+									if (fitItem(targetSection, overItem) == true)
+										placed = true;
+									else
+										_stackLevel[static_cast<size_t>(overItem->getSlotX())]
+												   [static_cast<size_t>(overItem->getSlotY())] += 1;
+								}
+
+								if (placed == true)
+								{
+									_overItem = nullptr; // remove cursor info 'cause item is no longer under the cursor
+									mouseOver(action, state);
+								}
+							}
+						}
+						else // Pickup item.
+						{
+							setSelectedItem(overItem);
+
+							const int explTurn (overItem->getFuse());
+							if (explTurn > -1)
+							{
+								std::wstring activated;
+								if (explTurn > 0) activated = Text::intWide(explTurn) + L" ";
+								activated += _game->getLanguage()->getString("STR_GRENADE_ACTIVATED");
+								if (explTurn > 0) activated += L" " + Text::intWide(explTurn);
+								_warning->showMessage(activated);
+							}
+						}
 					}
 				}
 			}
-		}
-		else // RMB w/ item on cursor
-		{
-			if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
-				_stackLevel[static_cast<size_t>(_selItem->getSlotX())]
-						   [static_cast<size_t>(_selItem->getSlotY())] += 1;
+			else // item on cursor, Drop item or Load weapon with it.
+			{
+				int
+					x (_srfGrab->getX()
+							+ (RuleInventory::HAND_W - _selItem->getRules()->getInventoryWidth())
+								* RuleInventory::SLOT_W / 2
+							+ RuleInventory::SLOT_W / 2),
+					y (_srfGrab->getY()
+							+ (RuleInventory::HAND_H - _selItem->getRules()->getInventoryHeight())
+								* RuleInventory::SLOT_H / 2
+							+ RuleInventory::SLOT_H / 2);
 
-			setSelectedItem(); // Return item to original position.
-			soundId = ResourcePack::ITEM_DROP;
-		}
+				RuleInventory* inRule (getSlotAtCursor(&x,&y));
+
+				if (inRule != nullptr)
+				{
+					if (inRule->getCategory() == IC_GROUND)
+						x += _grdOffset;
+
+					BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
+
+					const bool stack (inRule->getCategory() == IC_GROUND
+								   && canStack(overItem, _selItem) == true);
+
+					if (overItem == _selItem	// put item back where it came from
+						|| overItem == nullptr	// put item in empty slot
+						|| stack == true)		// stack item
+					{
+						if (isOverlap(
+									_selUnit,
+									_selItem,
+									inRule,
+									x,y) == false
+							&& inRule->fitItemInSlot(_selItem->getRules(), x,y) == true)
+						{
+							if (_tuMode == false
+								|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
+							{
+								_tuCost = -1;
+
+								moveItem(_selItem, inRule, x,y);
+
+								if (inRule->getCategory() == IC_GROUND)
+									_stackLevel[static_cast<size_t>(x)]
+											   [static_cast<size_t>(y)] += 1;
+								setSelectedItem();
+
+								soundId = ResourcePack::ITEM_DROP;
+							}
+							else
+								_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+						}
+						else if (stack == true)
+						{
+							if (_tuMode == false
+								|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
+							{
+								_tuCost = -1;
+
+								moveItem(
+										_selItem,
+										inRule,
+										overItem->getSlotX(),
+										overItem->getSlotY());
+								_stackLevel[static_cast<size_t>(overItem->getSlotX())]
+										   [static_cast<size_t>(overItem->getSlotY())] += 1;
+								setSelectedItem();
+
+								soundId = ResourcePack::ITEM_DROP;
+							}
+							else
+								_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+						}
+					}
+					else if (overItem->getRules()->getCompatibleAmmo()->empty() == false // Put item in weapon.
+						&& (_tuMode == false || overItem->getInventorySection()->getCategory() == IC_HAND))
+					{
+						if (overItem->getAmmoItem() != nullptr)
+							_warning->showMessage(_game->getLanguage()->getString("STR_WEAPON_IS_ALREADY_LOADED"));
+						else
+						{
+							bool fail (true);
+							for (std::vector<std::string>::const_iterator
+									i = overItem->getRules()->getCompatibleAmmo()->begin();
+									i != overItem->getRules()->getCompatibleAmmo()->end();
+									++i)
+							{
+								if (*i == _selItem->getRules()->getType())
+								{
+									fail = false;
+									break;
+								}
+							}
+
+							if (fail == true)
+								_warning->showMessage(_game->getLanguage()->getString("STR_WRONG_AMMUNITION_FOR_THIS_WEAPON"));
+							else if (_tuMode == true
+								&& _selUnit->getItem(ST_RIGHTHAND) != nullptr
+								&& _selUnit->getItem(ST_RIGHTHAND) != _selItem
+								&& _selUnit->getItem(ST_LEFTHAND) != nullptr
+								&& _selUnit->getItem(ST_LEFTHAND) != _selItem)
+							{
+								_warning->showMessage(_game->getLanguage()->getString("STR_BOTH_HANDS_MUST_BE_EMPTY")); // TODO: "one hand must be empty"
+							}
+							else
+							{
+								int tuReload;
+								if (_tuMode == true)
+								{
+									tuReload = overItem->getRules()->getReloadTu();
+									if (_selItem->getInventorySection()->getCategory() != IC_HAND)
+									{
+										InventorySection toHand;
+										if (_selUnit->getItem(ST_RIGHTHAND) == nullptr)
+											toHand = ST_RIGHTHAND;
+										else
+											toHand = ST_LEFTHAND;
+										const RuleInventory* const handRule (_game->getRuleset()->getInventoryRule(toHand));
+										tuReload += _selItem->getInventorySection()->getCost(handRule);
+									}
+								}
+								else
+									tuReload = 0; // safety, not used.
+
+								if (_tuMode == false
+									|| _selUnit->spendTimeUnits(tuReload) == true)
+								{
+									_tuCost = -1;
+
+									if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
+									{
+										_selUnit->getTile()->removeItem(_selItem);
+										arrangeGround();
+									}
+
+									overItem->setAmmoItem(_selItem);
+									setSelectedItem();
+
+									soundId = ResourcePack::ITEM_RELOAD;
+								}
+								else
+									_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+							}
+						}
+					}
+					// else swap the item positions ...
+				}
+				else
+				{
+					// try again using the position of the mouse cursor not the item (slightly more intuitive for stacking)
+					x = static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX();
+					y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
+
+					inRule = getSlotAtCursor(&x,&y);
+					if (inRule != nullptr && inRule->getCategory() == IC_GROUND)
+					{
+						x += _grdOffset;
+
+						BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
+						if (canStack(overItem, _selItem) == true)
+						{
+							if (_tuMode == false
+								|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
+							{
+								moveItem(
+										_selItem,
+										inRule,
+										overItem->getSlotX(),
+										overItem->getSlotY());
+								_stackLevel[static_cast<size_t>(overItem->getSlotX())]
+										   [static_cast<size_t>(overItem->getSlotY())] += 1;
+								setSelectedItem();
+
+								soundId = ResourcePack::ITEM_DROP;
+							}
+							else
+								_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+						}
+					}
+				}
+			}
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			_tuCost = -1;
+
+			if (_selItem == nullptr)
+			{
+				if ((SDL_GetModState() & KMOD_CTRL) == 0)
+				{
+					if (Options::includePrimeStateInSavedLayout == true
+						|| _atBase == false) // Priming is allowed only on the field or in pre-battle, or if fuse-state can save to Layouts.
+					{
+						if (_tuMode == false)
+						{
+							int
+								x (static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX()),
+								y (static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY());
+
+							const RuleInventory* const inRule (getSlotAtCursor(&x,&y));
+							if (inRule != nullptr)
+							{
+								if (inRule->getCategory() == IC_GROUND)
+									x += _grdOffset;
+
+								BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
+								if (overItem != nullptr)
+								{
+									const RuleItem* const itRule (overItem->getRules());
+									switch (itRule->getBattleType())
+									{
+										case BT_GRENADE:
+										case BT_PROXYGRENADE:
+										case BT_FLARE:
+											if (overItem->getFuse() == -1) // Prime that grenade!
+											{
+												switch (itRule->getBattleType())
+												{
+													case BT_PROXYGRENADE:
+													case BT_FLARE:
+														overItem->setFuse(0);
+														arrangeGround();
+														_warning->showMessage(_game->getLanguage()->getString("STR_GRENADE_ACTIVATED"));
+														break;
+
+													default: // This is where activation warning for nonProxy preBattle grenades goes.
+														_game->pushState(new PrimeGrenadeState(nullptr, true, overItem, this));
+												}
+											}
+											else // deFuse grenade
+											{
+												_warning->showMessage(_game->getLanguage()->getString("STR_GRENADE_DEACTIVATED"));
+												overItem->setFuse(-1);
+												arrangeGround();
+											}
+											break;
+
+										default:
+											if (inRule->getCategory() != IC_GROUND) // move item to Ground
+											{
+												moveItem(
+														overItem,
+														_game->getRuleset()->getInventoryRule(ST_GROUND));
+
+												arrangeGround();
+												soundId = ResourcePack::ITEM_DROP;
+
+												_overItem = nullptr; // remove cursor info 'cause item is no longer under the cursor
+												mouseOver(action, state);
+											}
+									}
+								}
+							}
+						}
+						else
+							_game->popState(); // Close the inventory window on right-click if not in preBattle equip screen!
+					}
+				}
+				else // Open Ufopaedia article.
+				{
+					int
+						x (static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX()),
+						y (static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY());
+
+					RuleInventory* const inRule (getSlotAtCursor(&x,&y));
+					if (inRule != nullptr)
+					{
+						if (inRule->getCategory() == IC_GROUND)
+							x += _grdOffset;
+
+						BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
+						if (overItem != nullptr)
+						{
+							std::string article (overItem->getRules()->getType()); // strip const. yay,
+							Ufopaedia::openArticle(_game, article);
+						}
+					}
+				}
+			}
+			else // RMB w/ item on cursor
+			{
+				if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
+					_stackLevel[static_cast<size_t>(_selItem->getSlotX())]
+							   [static_cast<size_t>(_selItem->getSlotY())] += 1;
+
+				setSelectedItem(); // Return item to original position.
+				soundId = ResourcePack::ITEM_DROP;
+			}
 	}
 
 	if (soundId != -1)

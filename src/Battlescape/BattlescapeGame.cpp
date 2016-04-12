@@ -47,7 +47,7 @@
 
 #include "../Engine/Game.h"
 #include "../Engine/Language.h"
-//#include "../Engine/Logger.h"
+#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -482,7 +482,7 @@ void BattlescapeGame::popState()
 							if (_battleStates.empty() == true // nothing left for Actor to do
 								&& _battleSave->selectNextFactionUnit(true) == nullptr)
 							{
-								endAiTurn(); // NOTE: This is probly handled just as well by think().
+								endAiTurn(); // NOTE: This is probly handled just as well in think().
 							}
 
 							if ((selUnit = _battleSave->getSelectedUnit()) != nullptr)
@@ -574,9 +574,9 @@ void BattlescapeGame::popState()
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
 		{
 			//Log(LOG_INFO) << ". states Empty, re-enable cursor";
+			_parentState->refreshMousePosition(); // update tile data on the HUD
 			setupSelector();
 			_parentState->getGame()->getCursor()->setHidden(false);
-			_parentState->refreshMousePosition(); // update tile data on the HUD
 		}
 	}
 	//Log(LOG_INFO) << "BattlescapeGame::popState() EXIT";
@@ -933,7 +933,7 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 	if (nextUnit != nullptr)
 	{
 		centerOnUnit(nextUnit);
-		_parentState->updateSoldierInfo(/*false*/); // try no calcFov() ...
+		_parentState->updateSoldierInfo(false); // try no calcFov() ... calcFoV(pos) is going to happen in handleUnitAI() before AI-battlestate-think.
 
 		if (_battleSave->getDebugTac() == true)
 		{
@@ -1172,7 +1172,7 @@ void BattlescapeGame::liquidateUnit() // private.
 /**
  * Sets the selector according to the current action.
  */
-void BattlescapeGame::setupSelector()
+void BattlescapeGame::setupSelector() // NOTE: This might not be needed when called right after cancelTacticalAction(false).
 {
 	getMap()->refreshSelectorPosition();
 
@@ -2468,8 +2468,8 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
  */
 bool BattlescapeGame::cancelTacticalAction(bool force)
 {
-	if (_battleSave->getPathfinding()->clearPreview() == false
-		|| Options::battlePreviewPath == PATH_NONE)
+	if (Options::battlePreviewPath == PATH_NONE
+		|| _battleSave->getPathfinding()->clearPreview() == false)
 	{
 		if (_battleStates.empty() == true || force == true)
 		{
@@ -2507,7 +2507,6 @@ bool BattlescapeGame::cancelTacticalAction(bool force)
 		else
 			return false;
 	}
-
 	return true;
 }
 
@@ -2697,7 +2696,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				statePushFront(new UnitTurnBState(this, _tacAction));
 		}
 	}
-	else
+	else // (action.actor = null) OR (action.targeting = false)
 	{
 		if (targetUnit != nullptr
 			&& targetUnit != _tacAction.actor

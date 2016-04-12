@@ -803,19 +803,19 @@ BattlescapeState::BattlescapeState()
 					(ActionHandler)& BattlescapeState::btnNextUnitPress,
 					Options::keyBattleNextUnit);
 
-	_btnNextUnit->onMousePress(
-					(ActionHandler)& BattlescapeState::btnPrevUnitPress,
-					SDL_BUTTON_RIGHT);
-	_btnNextUnit->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnPrevUnitPress,
-					Options::keyBattlePrevUnit);
-
 	_btnNextUnit->onMouseRelease(
 					(ActionHandler)& BattlescapeState::btnNextUnitRelease,
 					SDL_BUTTON_LEFT);
 	_btnNextUnit->onKeyboardRelease(
 					(ActionHandler)& BattlescapeState::btnNextUnitRelease,
 					Options::keyBattleNextUnit);
+
+	_btnNextUnit->onMousePress(
+					(ActionHandler)& BattlescapeState::btnPrevUnitPress,
+					SDL_BUTTON_RIGHT);
+	_btnNextUnit->onKeyboardPress(
+					(ActionHandler)& BattlescapeState::btnPrevUnitPress,
+					Options::keyBattlePrevUnit);
 
 	_btnNextUnit->onMouseRelease(
 					(ActionHandler)& BattlescapeState::btnPrevUnitRelease,
@@ -833,9 +833,6 @@ BattlescapeState::BattlescapeState()
 	_btnNextStop->onKeyboardPress(
 					(ActionHandler)& BattlescapeState::btnNextStopPress,
 					Options::keyBattleDeselectUnit);
-	_btnNextStop->onMousePress(
-					(ActionHandler)& BattlescapeState::btnPrevStopPress,
-					SDL_BUTTON_RIGHT);
 
 	_btnNextStop->onMouseRelease(
 					(ActionHandler)& BattlescapeState::btnNextStopRelease,
@@ -843,6 +840,10 @@ BattlescapeState::BattlescapeState()
 	_btnNextStop->onKeyboardRelease(
 					(ActionHandler)& BattlescapeState::btnNextStopRelease,
 					Options::keyBattleDeselectUnit);
+
+	_btnNextStop->onMousePress( // NOTE: There's no option for 'keyBattleDeselectPrevUnit'.
+					(ActionHandler)& BattlescapeState::btnPrevStopPress,
+					SDL_BUTTON_RIGHT);
 	_btnNextStop->onMouseRelease(
 					(ActionHandler)& BattlescapeState::btnPrevStopRelease,
 					SDL_BUTTON_RIGHT);
@@ -1942,8 +1943,8 @@ void BattlescapeState::btnKneelClick(Action*)
 }
 
 /**
- * Goes to the inventory screen.
- * @note Additionally resets TUs for current side in debug mode.
+ * Goes to the Inventory screen.
+// * @note Additionally resets TUs for current side in debug mode.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnInventoryClick(Action*)
@@ -1978,6 +1979,7 @@ void BattlescapeState::btnInventoryClick(Action*)
 			}
 
 			_battleGame->cancelTacticalAction(true);
+			_battleGame->setupSelector();
 //			_overlay->getFrame(3)->blit(_btnInventory); // clear() not implemented @ InventoryState.
 			_game->pushState(new InventoryState(
 											true, //_battleSave->getDebugTac() == false, // CHEAT For debugging.
@@ -2046,7 +2048,8 @@ void BattlescapeState::btnCenterRelease(Action*)
  */
 void BattlescapeState::btnNextUnitPress(Action*)
 {
-	if (allowButtons() == true)
+	if (_battleGame->getTacticalAction()->type == BA_NONE
+		&& allowButtons() == true)
 	{
 		_overlay->getFrame(4)->blit(_btnNextUnit);
 		selectNextPlayerUnit(true);
@@ -2069,7 +2072,8 @@ void BattlescapeState::btnNextUnitRelease(Action*)
  */
 void BattlescapeState::btnNextStopPress(Action*)
 {
-	if (allowButtons() == true)
+	if (_battleGame->getTacticalAction()->type == BA_NONE
+		&& allowButtons() == true)
 	{
 		_overlay->getFrame(11)->blit(_btnNextStop);
 		selectNextPlayerUnit(true, true);
@@ -2092,7 +2096,8 @@ void BattlescapeState::btnNextStopRelease(Action*)
  */
 void BattlescapeState::btnPrevUnitPress(Action*)
 {
-	if (allowButtons() == true)
+	if (_battleGame->getTacticalAction()->type == BA_NONE
+		&& allowButtons() == true)
 	{
 		_overlay->getFrame(4)->blit(_btnNextUnit);
 		selectPreviousPlayerUnit(true);
@@ -2115,7 +2120,8 @@ void BattlescapeState::btnPrevUnitRelease(Action*)
  */
 void BattlescapeState::btnPrevStopPress(Action*)
 {
-	if (allowButtons() == true)
+	if (_battleGame->getTacticalAction()->type == BA_NONE
+		&& allowButtons() == true)
 	{
 		_overlay->getFrame(11)->blit(_btnNextStop);
 		selectPreviousPlayerUnit(true, true);
@@ -2134,58 +2140,58 @@ void BattlescapeState::btnPrevStopRelease(Action*)
 
 /**
  * Selects the player's next BattleUnit.
- * @param checkReselect		- don't select a unit that has been previously flagged
- * @param dontReselect		- flag the current unit first
- * @param checkInventory	- don't select a unit that has no inventory
+ * @param checkReselect		- don't select a unit that has been previously flagged (default false)
+ * @param dontReselect		- flag the current unit first (default false)
+ * @param checkInventory	- don't select a unit that has no inventory (default false)
  */
 void BattlescapeState::selectNextPlayerUnit(
 		bool checkReselect,
 		bool dontReselect,
 		bool checkInventory)
 {
-	if (allowButtons() == true
-		&& _battleGame->getTacticalAction()->type == BA_NONE)
-	{
-		BattleUnit* const unit (_battleSave->selectNextFactionUnit(
-																checkReselect,
-																dontReselect,
-																checkInventory));
-		updateSoldierInfo(false); // try no calcFov()
+//	if (allowButtons() == true)
+//		&& _battleGame->getTacticalAction()->type == BA_NONE)
+//	{
+	BattleUnit* const unit (_battleSave->selectNextFactionUnit(
+															checkReselect,
+															dontReselect,
+															checkInventory));
+	updateSoldierInfo(false); // try no calcFov()
 
-		if (unit != nullptr)
-			_map->getCamera()->centerOnPosition(unit->getPosition());
+	if (unit != nullptr)
+		_map->getCamera()->centerOnPosition(unit->getPosition());
 
-		_battleGame->cancelTacticalAction();
-		_battleGame->setupSelector();
-	}
+	_battleGame->cancelTacticalAction();
+	_battleGame->setupSelector();
+//	}
 }
 
 /**
  * Selects the player's previous BattleUnit.
- * @param checkReselect		- don't select a unit that has been previously flagged
- * @param dontReselect		- flag the current unit first
- * @param checkInventory	- don't select a unit that has no inventory
+ * @param checkReselect		- don't select a unit that has been previously flagged (default false)
+ * @param dontReselect		- flag the current unit first (default false)
+ * @param checkInventory	- don't select a unit that has no inventory (default false)
  */
 void BattlescapeState::selectPreviousPlayerUnit(
 		bool checkReselect,
 		bool dontReselect,
 		bool checkInventory)
 {
-	if (allowButtons() == true
-		&& _battleGame->getTacticalAction()->type == BA_NONE)
-	{
-		BattleUnit* const unit (_battleSave->selectPreviousFactionUnit(
-																	checkReselect,
-																	dontReselect,
-																	checkInventory));
-		updateSoldierInfo(false); // try no calcFov()
+//	if (allowButtons() == true)
+//		&& _battleGame->getTacticalAction()->type == BA_NONE)
+//	{
+	BattleUnit* const unit (_battleSave->selectPreviousFactionUnit(
+																checkReselect,
+																dontReselect,
+																checkInventory));
+	updateSoldierInfo(false); // try no calcFov()
 
-		if (unit != nullptr)
-			_map->getCamera()->centerOnPosition(unit->getPosition());
+	if (unit != nullptr)
+		_map->getCamera()->centerOnPosition(unit->getPosition());
 
-		_battleGame->cancelTacticalAction();
-		_battleGame->setupSelector();
-	}
+	_battleGame->cancelTacticalAction();
+	_battleGame->setupSelector();
+//	}
 }
 /**
  * Shows/hides all map layers.
@@ -2307,8 +2313,8 @@ void BattlescapeState::btnStatsClick(Action* action)
 						&& posY > 0)
 				|| posY > (_map->getHeight() - Camera::SCROLL_BORDER) * action->getYScale())
 			{
-				edge = true;	// To avoid handling this event as a click on the stats
-			}					// button when the mouse is on the scroll-border
+				edge = true;	// To avoid handling a mouse-release event as a click on the stats-button
+			}					// when the cursor is on the scroll-border if trigger-scroll is enabled.
 		}
 
 		if (_battleGame->getTacticalAction()->type == BA_LAUNCH) // clean up the waypoints
@@ -2327,7 +2333,8 @@ void BattlescapeState::btnStatsClick(Action* action)
 }
 
 /**
- * Shows an action popup menu. Creates the action when clicked.
+ * Shows an ActionMenu popup.
+ * @note Creates the battle-action when an entry is clicked.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnLeftHandLeftClick(Action*)
@@ -2348,7 +2355,7 @@ void BattlescapeState::btnLeftHandLeftClick(Action*)
 }
 
 /**
- * Sets left hand as Active Hand.
+ * Sets left-hand as the Active Hand.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnLeftHandRightClick(Action*)
@@ -2366,7 +2373,8 @@ void BattlescapeState::btnLeftHandRightClick(Action*)
 }
 
 /**
- * Shows an action popup menu. Creates the action when clicked.
+ * Shows an ActionMenu popup.
+ * @note Creates the battle-action when an entry is clicked.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnRightHandLeftClick(Action*)
@@ -2387,7 +2395,7 @@ void BattlescapeState::btnRightHandLeftClick(Action*)
 }
 
 /**
- * Sets right hand as Active Hand.
+ * Sets right-hand as the Active Hand.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnRightHandRightClick(Action*)
@@ -2411,102 +2419,111 @@ void BattlescapeState::btnRightHandRightClick(Action*)
  */
 void BattlescapeState::btnHostileUnitPress(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-		btnMapDownPress(nullptr);
-	else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-		btnMapUpPress(nullptr);
-	else
+	switch (action->getDetails()->button.button)
 	{
-		size_t i; // find out which button was pressed
-		for (
-				i = 0;
-				i != HOTSQRS;
-				++i)
-		{
-			if (_btnHostileUnit[i] == action->getSender())
-				break;
-		}
+		case SDL_BUTTON_WHEELUP:
+			btnMapDownPress(nullptr);
+			break;
+		case SDL_BUTTON_WHEELDOWN:
+			btnMapUpPress(nullptr);
+			break;
 
-		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+		default:
 		{
-			// *** cppCheck false positive ***
-			// kL_note: Invoke cppCheck w/ "--inline-suppr BattlescapeState.cpp"
-			// it says this is going to try accessing _hostileUnit[] at index=HOTSQRS.
-			// cppcheck-suppress arrayIndexOutOfBounds
-			_map->getCamera()->centerOnPosition(_hostileUnit[i]->getPosition());
-			// (but note that it makes no such burp against _hostileUnit[] below_)
-
-			_srfTargeter->setVisible();
-			_targeterFrame = 0;
-		}
-		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		{
-			BattleUnit* nextSpotter (nullptr);
-			size_t curIter (0);
-
-			for (std::vector<BattleUnit*>::const_iterator
-				j = _battleSave->getUnits()->begin();
-				j != _battleSave->getUnits()->end();
-				++j)
+			size_t i; // find out which button was pressed
+			for (
+					i = 0u;
+					i != HOTSQRS;
+					++i)
 			{
-				++curIter;
-				if (*j == _battleSave->getSelectedUnit())
+				if (_btnHostileUnit[i] == action->getSender())
 					break;
 			}
 
-			for (std::vector<BattleUnit*>::const_iterator
-				j = _battleSave->getUnits()->begin() + curIter;
-				j != _battleSave->getUnits()->end();
-				++j)
+			switch (action->getDetails()->button.button)
 			{
-				if ((*j)->getFaction() == FACTION_PLAYER
-					&& (*j)->isOut_t(OUT_STAT) == false
-					&& std::find(
-							(*j)->getHostileUnits().begin(),
-							(*j)->getHostileUnits().end(),
-							_hostileUnit[i]) != (*j)->getHostileUnits().end())
-				{
-					nextSpotter = *j;
-					break;
-				}
-			}
+				case SDL_BUTTON_LEFT:
+					// *** cppCheck false positive ***
+					// kL_note: Invoke cppCheck w/ "--inline-suppr BattlescapeState.cpp"
+					// it says this is going to try accessing _hostileUnit[] at index=HOTSQRS.
+					// cppcheck-suppress arrayIndexOutOfBounds
+					_map->getCamera()->centerOnPosition(_hostileUnit[i]->getPosition());
+					// (but note that it makes no such burp against _hostileUnit[] below_)
 
-			if (nextSpotter == nullptr)
-			{
-				for (std::vector<BattleUnit*>::const_iterator
-					j = _battleSave->getUnits()->begin();
-					j != _battleSave->getUnits()->end() - _battleSave->getUnits()->size() + curIter;
-					++j)
+					_srfTargeter->setVisible();
+					_targeterFrame = 0;
+					break;
+
+				case SDL_BUTTON_RIGHT:
 				{
-					if ((*j)->getFaction() == FACTION_PLAYER
-						&& (*j)->isOut_t(OUT_STAT) == false
-						&& std::find(
-								(*j)->getHostileUnits().begin(),
-								(*j)->getHostileUnits().end(),
-								_hostileUnit[i]) != (*j)->getHostileUnits().end())
+					BattleUnit* nextSpotter (nullptr);
+					size_t curIter (0u);
+
+					for (std::vector<BattleUnit*>::const_iterator
+						j = _battleSave->getUnits()->begin();
+						j != _battleSave->getUnits()->end();
+						++j)
 					{
-						nextSpotter = *j;
-						break;
+						++curIter;
+						if (*j == _battleSave->getSelectedUnit())
+							break;
 					}
-				}
-			}
 
-			if (nextSpotter != nullptr)
-			{
-				if (nextSpotter != _battleSave->getSelectedUnit())
-				{
-					_battleSave->setSelectedUnit(nextSpotter);
-					updateSoldierInfo(false); // try no calcFov()
+					for (std::vector<BattleUnit*>::const_iterator
+						j = _battleSave->getUnits()->begin() + curIter;
+						j != _battleSave->getUnits()->end();
+						++j)
+					{
+						if ((*j)->getFaction() == FACTION_PLAYER
+							&& (*j)->isOut_t(OUT_STAT) == false
+							&& std::find(
+									(*j)->getHostileUnits().begin(),
+									(*j)->getHostileUnits().end(),
+									_hostileUnit[i]) != (*j)->getHostileUnits().end())
+						{
+							nextSpotter = *j;
+							break;
+						}
+					}
 
-					_battleGame->cancelTacticalAction();
-					_battleGame->setupSelector();
-				}
+					if (nextSpotter == nullptr)
+					{
+						for (std::vector<BattleUnit*>::const_iterator
+							j = _battleSave->getUnits()->begin();
+							j != _battleSave->getUnits()->end() - _battleSave->getUnits()->size() + curIter;
+							++j)
+						{
+							if ((*j)->getFaction() == FACTION_PLAYER
+								&& (*j)->isOut_t(OUT_STAT) == false
+								&& std::find(
+										(*j)->getHostileUnits().begin(),
+										(*j)->getHostileUnits().end(),
+										_hostileUnit[i]) != (*j)->getHostileUnits().end())
+							{
+								nextSpotter = *j;
+								break;
+							}
+						}
+					}
 
-				Camera* const camera (_map->getCamera());
-				if (camera->isOnScreen(nextSpotter->getPosition()) == false
-					|| camera->getViewLevel() != nextSpotter->getPosition().z)
-				{
-					camera->centerOnPosition(nextSpotter->getPosition());
+					if (nextSpotter != nullptr)
+					{
+						if (nextSpotter != _battleSave->getSelectedUnit())
+						{
+							_battleSave->setSelectedUnit(nextSpotter);
+							updateSoldierInfo(false); // try no calcFov()
+
+							_battleGame->cancelTacticalAction();
+							_battleGame->setupSelector();
+						}
+
+						Camera* const camera (_map->getCamera());
+						if (camera->isOnScreen(nextSpotter->getPosition()) == false
+							|| camera->getViewLevel() != nextSpotter->getPosition().z)
+						{
+							camera->centerOnPosition(nextSpotter->getPosition());
+						}
+					}
 				}
 			}
 		}
@@ -2526,7 +2543,6 @@ void BattlescapeState::btnWoundedPress(Action* action)
 		case SDL_BUTTON_WHEELUP:
 			btnMapDownPress(nullptr);
 			break;
-
 		case SDL_BUTTON_WHEELDOWN:
 			btnMapUpPress(nullptr);
 			break;
@@ -2535,7 +2551,7 @@ void BattlescapeState::btnWoundedPress(Action* action)
 		case SDL_BUTTON_RIGHT:
 		{
 			for (size_t
-					i = 0;
+					i = 0u;
 					i != WOUNDED;
 					++i)
 			{
@@ -2557,21 +2573,22 @@ void BattlescapeState::btnWoundedPress(Action* action)
  */
 void BattlescapeState::btnLaunchPress(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		_srfBtnBorder->setY(20);
-		_srfBtnBorder->setVisible();
+		case SDL_BUTTON_LEFT:
+			_srfBtnBorder->setY(20);
+			_srfBtnBorder->setVisible();
 
-		_battleGame->launchAction();
-	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-	{
-		_battleGame->getTacticalAction()->waypoints.clear();
-		_map->getWaypoints()->clear();
-		_btnLaunch->setVisible(false);
+			_battleGame->launchAction();
+			break;
 
-		_battleGame->cancelTacticalAction(true);
-		_battleGame->setupSelector();
+		case SDL_BUTTON_RIGHT:
+			_battleGame->getTacticalAction()->waypoints.clear();
+			_map->getWaypoints()->clear();
+			_btnLaunch->setVisible(false);
+
+			_battleGame->cancelTacticalAction(true);
+			_battleGame->setupSelector();
 	}
 
 	action->getDetails()->type = SDL_NOEVENT; // consume the event

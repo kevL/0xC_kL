@@ -286,30 +286,6 @@ ufopaedia: # types 1,3,7,8 use Research palette; types 2,4,5,6 use Battlescape (
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_ELECTRO_FLARE_UFOPEDIA
-  - id: STR_HEAVY_PLASMA
-    type_id: 4
-    section: STR_ALIEN_ARTIFACTS
-    required:
-      - STR_HEAVY_PLASMA
-    text: STR_HEAVY_PLASMA_UFOPEDIA
-  - id: STR_HEAVY_PLASMA_CLIP
-    type_id: 4
-    section: STR_ALIEN_ARTIFACTS
-    required:
-      - STR_HEAVY_PLASMA_CLIP
-    text: STR_HEAVY_PLASMA_CLIP_UFOPEDIA
-  - id: STR_PLASMA_RIFLE
-    type_id: 4
-    section: STR_ALIEN_ARTIFACTS
-    required:
-      - STR_PLASMA_RIFLE
-    text: STR_PLASMA_RIFLE_UFOPEDIA
-  - id: STR_PLASMA_RIFLE_CLIP
-    type_id: 4
-    section: STR_ALIEN_ARTIFACTS
-    required:
-      - STR_PLASMA_RIFLE_CLIP
-    text: STR_PLASMA_RIFLE_CLIP_UFOPEDIA
   - id: STR_PLASMA_PISTOL
     type_id: 4
     section: STR_ALIEN_ARTIFACTS
@@ -322,6 +298,30 @@ ufopaedia: # types 1,3,7,8 use Research palette; types 2,4,5,6 use Battlescape (
     required:
       - STR_PLASMA_PISTOL_CLIP
     text: STR_PLASMA_PISTOL_CLIP_UFOPEDIA
+  - id: STR_PLASMA_RIFLE
+    type_id: 4
+    section: STR_ALIEN_ARTIFACTS
+    required:
+      - STR_PLASMA_RIFLE
+    text: STR_PLASMA_RIFLE_UFOPEDIA
+  - id: STR_PLASMA_RIFLE_CLIP
+    type_id: 4
+    section: STR_ALIEN_ARTIFACTS
+    required:
+      - STR_PLASMA_RIFLE_CLIP
+    text: STR_PLASMA_RIFLE_CLIP_UFOPEDIA
+  - id: STR_HEAVY_PLASMA
+    type_id: 4
+    section: STR_ALIEN_ARTIFACTS
+    required:
+      - STR_HEAVY_PLASMA
+    text: STR_HEAVY_PLASMA_UFOPEDIA
+  - id: STR_HEAVY_PLASMA_CLIP
+    type_id: 4
+    section: STR_ALIEN_ARTIFACTS
+    required:
+      - STR_HEAVY_PLASMA_CLIP
+    text: STR_HEAVY_PLASMA_CLIP_UFOPEDIA
   - id: STR_BLASTER_LAUNCHER
     type_id: 4
     section: STR_ALIEN_ARTIFACTS

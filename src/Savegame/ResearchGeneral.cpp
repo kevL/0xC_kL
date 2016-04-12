@@ -28,7 +28,7 @@ namespace OpenXcom
 /**
  * Constructs a ResearchGeneral project.
  * @param type - pointer to research-type
- * @param done - true to consider research completed (for skirmish)
+ * @param done - true to consider research completed for quick-battles (default false)
  */
 ResearchGeneral::ResearchGeneral(
 		const RuleResearch* const resRule,

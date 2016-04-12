@@ -111,9 +111,9 @@ private:
 	/// Shows woundage values.
 	void updateWounds();
 
-	/// Saves all soldiers' equipment-layouts.
+	/// Saves all Soldiers' equipment-layouts.
 	bool saveAllLayouts() const;
-	/// Saves a soldier's equipment-layout.
+	/// Saves a Soldier's equipment-layout.
 	bool saveLayout(BattleUnit* const unit) const;
 
 /*	/// Clears current unit's inventory. (was static)
@@ -126,14 +126,14 @@ private:
 
 
 	public:
-		/// Creates the Inventory state.
+		/// Creates an Inventory state.
 		InventoryState(
 				bool tuMode = false,
 				BattlescapeState* const parent = nullptr);
 		/// Cleans up the Inventory state.
 		~InventoryState();
 
-		/// Updates all soldier info.
+		/// Updates all unit-info.
 		void init() override;
 		/// Runs the timer.
 //		void think();

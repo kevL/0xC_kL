@@ -322,7 +322,7 @@ void ActionMenuState::handle(Action* action)
 }
 
 /**
- * Executes the action corresponding to this action menu item.
+ * Executes the action corresponding to this ActionMenu item.
  * @param action - pointer to an Action
  */
 void ActionMenuState::btnActionMenuClick(Action* action)

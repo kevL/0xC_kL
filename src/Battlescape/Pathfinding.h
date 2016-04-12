@@ -179,22 +179,22 @@ private:
 
 		/// Previews the path.
 		bool previewPath(bool discard = false);
-		/// Removes the path preview.
+		/// Clears the path-preview.
 		bool clearPreview();
-		/// Gets the path preview setting.
+		/// Gets the path-preview setting.
 		bool isPathPreviewed() const;
 
-		/// Gets the CTRL modifier setting.
+		/// Gets the CTRL-modifier setting.
 		bool isModCtrl() const;
-		/// Gets the ALT modifier setting.
+		/// Gets the ALT-modifier setting.
 		bool isModAlt() const;
-		/// Gets the zPath modifier setting.
+		/// Gets the zPath-modifier setting.
 		bool isZPath() const;
 
 		/// Gets the current MoveType.
 		MoveType getMoveTypePf() const;
 
-		/// Gets TU cost for opening a door.
+		/// Gets TU-cost for opening a door.
 		int getOpenDoor() const;
 
 		/// Checks whether a path is ready and returns the direction.

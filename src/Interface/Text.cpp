@@ -622,8 +622,8 @@ struct PaletteShift
 
 
 /**
- * Draws all the characters in this Text with a really nasty complex gritty text
- * rendering algorithmic logic-stuff.
+ * Draws all the characters in this Text with really nasty complex gritty
+ * text-rendering algorithmic logic-stuff formatting.
  */
 void Text::draw()
 {

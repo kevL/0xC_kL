@@ -203,7 +203,7 @@ OptionsBattlescapeState::~OptionsBattlescapeState()
 {}
 
 /**
- * Changes the Edge Scroll option.
+ * Changes the edge-scroll option.
  * @param action - pointer to an Action
  */
 void OptionsBattlescapeState::cbxEdgeScrollChange(Action*)
@@ -212,7 +212,7 @@ void OptionsBattlescapeState::cbxEdgeScrollChange(Action*)
 }
 
 /**
- * Changes the Drag Scroll option.
+ * Changes the drag-scroll option.
  * @param action - pointer to an Action
  */
 void OptionsBattlescapeState::cbxDragScrollChange(Action*)
@@ -221,7 +221,7 @@ void OptionsBattlescapeState::cbxDragScrollChange(Action*)
 }
 
 /**
- * Updates the scroll speed.
+ * Updates the scroll-speed.
  * @param action - pointer to an Action
  */
 void OptionsBattlescapeState::slrScrollSpeedChange(Action*)
@@ -230,7 +230,7 @@ void OptionsBattlescapeState::slrScrollSpeedChange(Action*)
 }
 
 /**
- * Updates the fire speed.
+ * Updates the fire-speed.
  * @param action - pointer to an Action
  */
 void OptionsBattlescapeState::slrFireSpeedChange(Action*)
@@ -239,7 +239,7 @@ void OptionsBattlescapeState::slrFireSpeedChange(Action*)
 }
 
 /**
- * Updates the X-COM movement speed.
+ * Updates the X-COM movement-speed.
  * @param action - pointer to an Action
  */
 void OptionsBattlescapeState::slrXcomSpeedChange(Action*)
@@ -248,7 +248,7 @@ void OptionsBattlescapeState::slrXcomSpeedChange(Action*)
 }
 
 /**
- * Updates the alien movement speed.
+ * Updates the alien movement-speed.
  * @param action - pointer to an Action
  */
 void OptionsBattlescapeState::slrAlienSpeedChange(Action*)
@@ -257,12 +257,12 @@ void OptionsBattlescapeState::slrAlienSpeedChange(Action*)
 }
 
 /**
- * Updates the path preview options.
+ * Updates the path-preview options.
  * @param action - pointer to an Action
  */
 void OptionsBattlescapeState::btnPathPreviewClick(Action*)
 {
-	int mode = PATH_NONE;
+	int mode (static_cast<int>(PATH_NONE));
 
 	if (_btnArrows->getPressed() == true)
 		mode |= PATH_ARROWS;

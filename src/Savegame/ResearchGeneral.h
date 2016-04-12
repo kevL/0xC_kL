@@ -30,9 +30,9 @@ enum ResearchStatus
 {
 	RS_HIDDEN,		// 0
 	RS_AVAILABLE,	// 1
-	RS_COMPLETED	// 3
-//	RS_PROJECT,		// 4
-//	RS_OFFLINE,		// 5
+	RS_COMPLETED	// 2
+//	RS_PROJECT,		// 3
+//	RS_OFFLINE,		// 4
 };
 
 class RuleResearch;

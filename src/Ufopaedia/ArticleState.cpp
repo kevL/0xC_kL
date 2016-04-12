@@ -103,8 +103,8 @@ std::string ArticleState::getDamageTypeText(DamageType dType) // static.
 }
 
 /**
- * Set captions and event handlers for the common control elements.
- * @param contrast - true to set buttons to high contrast (default true)
+ * Set Text and ActionHandlers for derived ui-elements.
+ * @param contrast - true to set buttons to high-contrast (default true)
  */
 void ArticleState::initLayout(bool contrast) // protected.
 {
