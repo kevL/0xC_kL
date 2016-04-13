@@ -225,7 +225,7 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 		{
 			_txtShotType = new Text(100, 9, 8, 66);
 			add(_txtShotType);
-			_txtShotType->setText(tr("STR_SHOT_TYPE_"));
+			_txtShotType->setText(tr("STR_SHOT_TYPE_").arg(L""));
 			_txtShotType->setColor(uPed_BLUE_SLATE);
 
 			_txtAccuracy = new Text(52, 9, 108, 66);
