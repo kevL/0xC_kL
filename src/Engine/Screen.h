@@ -69,7 +69,7 @@ private:
 	OpenGL _glOutput;
 	SDL_Color _deferredPalette[256];
 
-	/// Sets the '_flags' and '_bpp' and base-resolution variables.
+	/// Sets the '_flags' and '_bpp' and base-resolution variables etc.
 	void setVideoFlags();
 
 

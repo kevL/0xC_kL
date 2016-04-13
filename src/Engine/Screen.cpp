@@ -76,17 +76,13 @@ Screen::~Screen()
 }
 
 /**
- * Sets up all the internal display flags depending on current video settings.
+ * Sets up all the internal display-flags depending on current video-settings.
  */
 void Screen::setVideoFlags() // private.
 {
-//	_flags = SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_HWPALETTE;
-//	if (Options::asyncBlit == true)
-//		_flags |= SDL_ASYNCBLIT;
-
 	if (isOpenGLEnabled() == true)
 	{
-		_flags = SDL_OPENGL; // NOTE: This overwrites the flags set above^. Let's make that explicit below_
+		_flags = SDL_OPENGL;
 
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
@@ -102,32 +98,15 @@ void Screen::setVideoFlags() // private.
 			_flags |= SDL_ASYNCBLIT;
 	}
 
-	if (Options::allowResize == true)
-		_flags |= SDL_RESIZABLE;
-
-	// Handle window positioning
-	if (   Options::windowedModePositionX != -1
+	if (   Options::windowedModePositionX != -1 // handle window positioning
 		|| Options::windowedModePositionY != -1)
 	{
 		std::ostringstream oststr;
 		oststr << "SDL_VIDEO_WINDOW_POS=" << std::dec << Options::windowedModePositionX << "," << Options::windowedModePositionY;
 		SDL_putenv(const_cast<char*>(oststr.str().c_str()));
-		SDL_putenv(const_cast<char*>("SDL_VIDEO_CENTERED="));
-	}
-	else if (Options::borderless == true)
-	{
-		SDL_putenv(const_cast<char*>("SDL_VIDEO_WINDOW_POS="));
-		SDL_putenv(const_cast<char*>("SDL_VIDEO_CENTERED=center"));
 	}
 	else
-	{
 		SDL_putenv(const_cast<char*>("SDL_VIDEO_WINDOW_POS="));
-		SDL_putenv(const_cast<char*>("SDL_VIDEO_CENTERED="));
-	}
-
-	// Handle display mode
-	if (Options::fullscreen == true)
-		_flags |= SDL_FULLSCREEN;
 
 	if (Options::borderless == true)
 	{
@@ -136,6 +115,12 @@ void Screen::setVideoFlags() // private.
 	}
 	else
 		SDL_putenv(const_cast<char*>("SDL_VIDEO_CENTERED="));
+
+	if (Options::fullscreen == true) // handle display mode
+		_flags |= SDL_FULLSCREEN;
+
+	if (Options::allowResize == true)
+		_flags |= SDL_RESIZABLE;
 
 	_bpp = (is32bitEnabled() == true || isOpenGLEnabled() == true) ? 32 : 8;
 
