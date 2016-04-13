@@ -566,7 +566,7 @@ void IntroState::endVideo()
 	//Log(LOG_INFO) << "intro: endVideo()";
 	//Log(LOG_INFO) << ". playing Music= " << Mix_PlayingMusic();
 
-	// Fades can be done only in 8-bpp otherwise instantly end it.
+	// These fades can be done only in 8-bpp otherwise instantly black it.
 	// NOTE: See also Ufopaedia/UfopaediaStartState cTor.
 	// This algorithm should be consolidated in Screen. And there should be
 	// some sort of corresponding fade-in function also.

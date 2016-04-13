@@ -62,86 +62,84 @@ std::string strGLError(GLenum glErr);
 class OpenGL
 {
 
-public:
-	static bool checkErrors;
-
-	bool
-		linear,
-		shader_support;
-	unsigned
-		iwidth,
-		iheight,
-		iformat,
-		ibpp;
-
-	uint32_t* buffer;
-
-	GLuint
-		gltexture,
-		glprogram,
-		fragmentshader,
-		vertexshader;
-
-	Surface* buffer_surface;
-
-	/// call to resize internal buffer; internal use
+private:
+	/// call to resize internal buffer
 	void resize(
 			unsigned width,
 			unsigned height);
 
-	/// actually returns pointer to data buffer where one is to write the image
-	bool lock(
-			uint32_t* &data,
-			unsigned &pitch);
 
-	/// make all the pixels go away
-	void clear();
-	/// make the buffer show up on screen
-	void refresh(
-			bool smooth,
-			unsigned inwidth,
-			unsigned inheight,
-			unsigned outwidth,
-			unsigned outheight,
-			int topBlackBand,
-			int bottomBlackBand,
-			int leftBlackBand,
-			int rightBlackBand);
+	public:
+		static bool checkErrors;
 
-	/// set a shader! but what kind?
-	void set_shader(const char* source);
-	/// same but for fragment shader?
-	void set_fragment_shader(const char* source);
-	/// and vertex?
-	void set_vertex_shader(const char* source);
+		bool
+			linear,
+			shader_support;
+		unsigned
+			iwidth,
+			iheight,
+			iformat,
+			ibpp;
 
-	/// init(), because we're too cool to initialize everything in the constructor
-	void init(
-			int width,
-			int height);
-	/// more like exit, because destructors are for uncool people
-	void term();
+		uint32_t* buffer;
 
-	/// Try to set VSync!
-	void setVSync(bool sync);
+		GLuint
+			gltexture,
+			glprogram,
+			fragmentshader,
+			vertexshader;
 
-	/// constructor -- like we said, we're too cool to actually construct things
-	OpenGL();
-	/// dTor
-	~OpenGL();
+		Surface* buffer_surface;
+
+		/// actually sets a pointer to a data-buffer where the image is written to
+		bool lock(
+				uint32_t* &data,
+				unsigned &pitch);
+
+		/// make all the pixels go away
+		void clear();
+		/// make the buffer show up on screen
+		void refresh(
+				bool smooth,
+				unsigned inwidth,
+				unsigned inheight,
+				unsigned outwidth,
+				unsigned outheight,
+				int topBlackBand,
+				int bottomBlackBand,
+				int leftBlackBand,
+				int rightBlackBand);
+
+		/// set a shader!
+		void set_shader(const char* source);
+		/// same but for fragment shader
+		void set_fragment_shader(const char* source);
+		/// and vertex
+		void set_vertex_shader(const char* source);
+
+		/// because you're too cool to initialize everything in the constructor
+		void init(
+				int width,
+				int height);
+		/// exit because destructors are uncool for people
+		void terminate();
+
+		/// Try to set VSync! decidedly uncool if it doesn't work.
+		void setVSync(bool sync);
+
+		/// constructor ... like we said you're too cool to actually construct things
+		OpenGL();
+		/// dTor
+		~OpenGL();
 };
 
 }
 
 #else // __NO_OPENGL
-
 namespace OpenXcom
 {
-
 class OpenGL{};
-
 }
-
 #endif
 
 #endif

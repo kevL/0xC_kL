@@ -29,7 +29,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a new sound effect.
+ * Initializes a sound-effect.
  */
 Sound::Sound()
 	:
@@ -37,7 +37,7 @@ Sound::Sound()
 {}
 
 /**
- * Deletes the loaded sound content.
+ * Deletes the loaded sound-effect content.
  */
 Sound::~Sound()
 {
@@ -45,43 +45,38 @@ Sound::~Sound()
 }
 
 /**
- * Loads a sound file from a specified file.
- * @param file - reference to name of the sound file
+ * Loads the sound-effect from a specified file.
+ * @param file - reference to name of the sound-file
  */
 void Sound::load(const std::string& file)
 {
-	// SDL only takes UTF-8 filenames
-	// so here's an ugly hack to match this ugly reasoning
-	const std::string utf8 = Language::wstrToUtf8(Language::fsToWstr(file));
-	_sound = Mix_LoadWAV(utf8.c_str());
-
-	if (_sound == nullptr)
+	// SDL only takes UTF-8 filenames so here's an ugly hack to match that ugly.
+	const std::string utf8 (Language::wstrToUtf8(Language::fsToWstr(file)));
+	if ((_sound = Mix_LoadWAV(utf8.c_str())) == nullptr)
 	{
-		const std::string err = file + ":" + Mix_GetError();
+		const std::string err (file + ": " + Mix_GetError());
 		throw Exception(err);
 	}
 }
 
 /**
- * Loads a sound file from a specified memory chunk.
- * @param data	- pointer to the sound file in memory
+ * Loads the sound-file from a specified memory chunk.
+ * @param data	- pointer to the sound-file in memory
  * @param bytes	- size of the sound file in bytes
  */
 void Sound::load(
 		const void* data,
 		unsigned int bytes)
 {
-	SDL_RWops* const rw = SDL_RWFromConstMem(data, bytes);
-	_sound = Mix_LoadWAV_RW(rw, 1);
-
-	if (_sound == nullptr)
+	SDL_RWops* const rw (SDL_RWFromConstMem(data, bytes));
+	if ((_sound = Mix_LoadWAV_RW(rw, 1)) == nullptr)
 	{
 		throw Exception(Mix_GetError());
 	}
 }
 
 /**
- * Plays the contained sound effect.
+ * Plays the sound-effect.
  * @param channel	- use specified channel (default -1 any channel)
  * @param angle		- stereo (default 0)
  * @param distance	- stereo (default 0)
@@ -94,26 +89,22 @@ void Sound::play(
 	if (Options::mute == false
 		&& _sound != nullptr)
 	{
-		const int chan = Mix_PlayChannel(channel, _sound, 0);
+		const int chan (Mix_PlayChannel(channel, _sound, 0));
 		if (chan == -1)
-		{
 			Log(LOG_WARNING) << Mix_GetError();
-		}
-		else if (Options::StereoSound == true)
-		{
-			if (Mix_SetPosition(
+		else if (Options::stereoSound == true
+			&& Mix_SetPosition(
 							chan,
 							static_cast<Sint16>(angle),
 							static_cast<Uint8>(distance)) == 0)
-			{
-				Log(LOG_WARNING) << Mix_GetError();
-			}
+		{
+			Log(LOG_WARNING) << Mix_GetError();
 		}
 	}
 }
 
 /**
- * Stops all sounds playing.
+ * Stops all sound-effects playing.
  */
 void Sound::stop()
 {
@@ -122,8 +113,8 @@ void Sound::stop()
 }
 
 /**
- * Plays the contained sound effect repeatedly on the reserved ambience channel.
- */
+ * Plays the sound-effect repeatedly on the pre-set ambience-channel.
+ *
 void Sound::loop()
 {
 	if (Options::mute == false
@@ -133,15 +124,14 @@ void Sound::loop()
 	{
 		Log(LOG_WARNING) << Mix_GetError();
 	}
-}
-
+} */
 /**
  * Stops the contained sound from looping.
- */
+ *
 void Sound::stopLoop()
 {
 	if (Options::mute == false)
 		Mix_HaltChannel(3);
-}
+} */
 
 }

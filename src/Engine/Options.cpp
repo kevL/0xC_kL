@@ -88,7 +88,7 @@ void create()
 
 	_info.push_back(OptionInfo("traceAI", &traceAI, 0));
 	_info.push_back(OptionInfo("verboseLogging", &verboseLogging, false));
-	_info.push_back(OptionInfo("StereoSound", &StereoSound, true));
+	_info.push_back(OptionInfo("stereoSound", &stereoSound, true));
 	_info.push_back(OptionInfo("baseXResolution", &baseXResolution, Screen::ORIGINAL_WIDTH));
 	_info.push_back(OptionInfo("baseYResolution", &baseYResolution, Screen::ORIGINAL_HEIGHT));
 	_info.push_back(OptionInfo("baseXGeoscape", &baseXGeoscape, Screen::ORIGINAL_WIDTH));
@@ -299,10 +299,10 @@ void create()
 
 #ifdef __MORPHOS__
 	_info.push_back(OptionInfo("FPS", &FPS, 15, "STR_FPS_LIMIT", "STR_GENERAL"));
-	_info.push_back(OptionInfo("FPSInactive", &FPSInactive, 15, "STR_FPS_INACTIVE_LIMIT", "STR_GENERAL"));
+	_info.push_back(OptionInfo("FPSUnfocused", &FPSUnfocused, 15, "STR_FPS_UNFOCUSED_LIMIT", "STR_GENERAL"));
 #else
 	_info.push_back(OptionInfo("FPS", &FPS, 60, "STR_FPS_LIMIT", "STR_GENERAL"));
-	_info.push_back(OptionInfo("FPSInactive", &FPSInactive, 30, "STR_FPS_INACTIVE_LIMIT", "STR_GENERAL"));
+	_info.push_back(OptionInfo("FPSUnfocused", &FPSUnfocused, 30, "STR_FPS_UNFOCUSED_LIMIT", "STR_GENERAL"));
 #endif
 }
 

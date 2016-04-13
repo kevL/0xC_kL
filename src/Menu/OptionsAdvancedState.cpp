@@ -229,7 +229,7 @@ void OptionsAdvancedState::lstOptionsClick(Action* action)
 			int increment = (button == SDL_BUTTON_LEFT) ? 1 : -1; // left-click increases, right-click decreases
 			if (   i == &Options::changeValueByMouseWheel
 				|| i == &Options::FPS
-				|| i == &Options::FPSInactive)
+				|| i == &Options::FPSUnfocused)
 			{
 				increment *= 10;
 			}
@@ -254,7 +254,7 @@ void OptionsAdvancedState::lstOptionsClick(Action* action)
 				minVal = 0;
 				maxVal = 120;
 			}
-			else if (i == &Options::FPSInactive)
+			else if (i == &Options::FPSUnfocused)
 			{
 				minVal = 10;
 				maxVal = 120;

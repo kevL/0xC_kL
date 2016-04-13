@@ -74,13 +74,13 @@ UfopaediaStartState::UfopaediaStartState(bool tactical)
 	{
 		offset_x = 0;
 
-		// NOTE: See also Menu/IntroState::endVideo()
+		// NOTE: See also Menu/IntroState::endVideo().
 		// This algorithm should be consolidated in Screen. And there should be
 		// some sort of corresponding fade-in function also.
-		if (_game->getScreen()->getSurface()->getSurface()->format->BitsPerPixel == 8) // fades can be done only in 8-bpp.
+		if (_game->getScreen()->getSurface()->getSurface()->format->BitsPerPixel == 8) // these fades can be done only in 8-bpp.
 		{
 			const Uint32 FADE_DELAY (20u);
-			const Uint8 FADE_STEPS (25u);
+			const Uint8 FADE_STEPS (20u);
 
 			SDL_Color
 				pal[256u],

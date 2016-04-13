@@ -192,7 +192,7 @@ Game::~Game()
 }
 
 /**
- * The state machine takes care of passing all the events from SDL to the
+ * The state-machine takes care of passing all the events from SDL to the
  * active state, running any code within and blitting all the states and
  * cursor to the screen. This is run indefinitely until the game quits.
  */
@@ -200,25 +200,25 @@ void Game::run()
 {
 	enum ApplicationState
 	{
-		RUNNING,	// 0
+		STANDARD,	// 0
 		SLOWED,		// 1
 		PAUSED		// 2
-	} runningState = RUNNING;
+	} runState = STANDARD;
 
-	static const ApplicationState kbFocusRun[4] =
+	static const ApplicationState keyboardFocusLost[4]
 	{
-		RUNNING,	// 0
-		RUNNING,	// 0
-		SLOWED,		// 1
-		PAUSED		// 2
+		STANDARD,	// 0
+		STANDARD,	// 1
+		SLOWED,		// 2
+		PAUSED		// 3
 	};
 
-	static const ApplicationState stateRun[4] =
+	static const ApplicationState appFocusLost[4]
 	{
-		SLOWED,		// 1
+		SLOWED,		// 0
+		PAUSED,		// 1
 		PAUSED,		// 2
-		PAUSED,		// 2
-		PAUSED		// 2
+		PAUSED		// 3
 	};
 
 	// This will avoid processing SDL's resize event on startup, workaround for the heap allocation error it causes.
@@ -226,20 +226,20 @@ void Game::run()
 
 	while (_quit == false)
 	{
-		while (_deleted.empty() == false) // Clean up states
+		while (_deleted.empty() == false)	// clean up states
 		{
 			delete _deleted.back();
 			_deleted.pop_back();
 		}
 
 
-		if (_init == false) // Initialize active state
+		if (_init == false)					// initialize active state
 		{
 			_init = true;
 			_states.back()->init();
-			_states.back()->resetAll(); // Unpress buttons
+			_states.back()->resetAll();		// unpress buttons
 
-			SDL_Event event; // Update mouse position
+			SDL_Event event;				// update mouse position
 			int
 				x,y;
 			SDL_GetMouseState(&x,&y);
@@ -255,12 +255,12 @@ void Game::run()
 			_states.back()->handle(&action);
 		}
 
-		while (SDL_PollEvent(&_event) == 1) // Process SDL input events
+		while (SDL_PollEvent(&_event) == 1)	// process SDL input events
 		{
 			if (_inputActive == false // kL->
 				&& _event.type != SDL_MOUSEMOTION)
 			{
-//				_event.type = SDL_IGNORE; // discard buffered events
+//				_event.type = SDL_IGNORE;	// discard buffered events
 				continue;
 			}
 
@@ -270,7 +270,8 @@ void Game::run()
 			switch (_event.type)
 			{
 //				case SDL_IGNORE:
-//				break;
+//					break;
+
 				case SDL_QUIT:
 					quit();
 					break;
@@ -278,13 +279,13 @@ void Game::run()
 				case SDL_ACTIVEEVENT:
 					switch (reinterpret_cast<SDL_ActiveEvent*>(&_event)->state)
 					{
-						case SDL_APPACTIVE:
-							runningState = reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain ? RUNNING : stateRun[Options::pauseMode];
+						case SDL_APPACTIVE:		// 0xC app is minimized or restored
+							runState = (reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain == 1u) ? STANDARD : appFocusLost[Options::pauseMode];
 							break;
-						case SDL_APPINPUTFOCUS:
-							runningState = reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain ? RUNNING : kbFocusRun[Options::pauseMode];
+						case SDL_APPINPUTFOCUS:	// 0xC app loses or gains focus
+							runState = (reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain == 1u) ? STANDARD : keyboardFocusLost[Options::pauseMode];
 //							break;
-//						case SDL_APPMOUSEFOCUS: // sub-Consciously ignore it.
+//						case SDL_APPMOUSEFOCUS: // 0xC app gains or loses mouse-over; sub-Consciously ignore it.
 //							break;
 					}
 					break;
@@ -349,17 +350,17 @@ void Game::run()
 				case SDL_MOUSEMOTION:
 				case SDL_MOUSEBUTTONDOWN:
 				case SDL_MOUSEBUTTONUP:
-//					if (_inputActive == false) // Skip [ie. postpone] mouse events if they're disabled. Moved below_
+//					if (_inputActive == false) // Skip [ie. postpone] mouse-events if they're disabled. Moved below_
 //						continue;
-					runningState = RUNNING;	// re-gain focus on mouse-over or keypress.
-											// Go on, feed the event to others ->>>
+					runState = STANDARD;	// re-gain focus on mouse-over or mouse-press. no break;
+											// feed the event to others ->>>
 				default:
-					Action action = Action(
+					Action action (Action(
 										&_event,
 										_screen->getXScale(),
 										_screen->getYScale(),
 										_screen->getCursorTopBlackBand(),
-										_screen->getCursorLeftBlackBand());
+										_screen->getCursorLeftBlackBand()));
 					_screen->handle(&action);
 					_cursor->handle(&action);
 					_fpsCounter->handle(&action);
@@ -421,27 +422,31 @@ void Game::run()
 		_inputActive = true;
 
 
-		if (runningState != PAUSED) // Process rendering
+		if (runState != PAUSED)						// process rendering
 		{
-			_states.back()->think(); // Process logic
+			_states.back()->think();				// process logic
 			_fpsCounter->think();
 
-			if (!(Options::useOpenGL && Options::vSyncForOpenGL)
-				&& Options::FPS > 0)
-			{
-				// Update FPS-delay-time based on the time of the last draw.
-				int fps ((SDL_GetAppState() & SDL_APPINPUTFOCUS) ? Options::FPS : Options::FPSInactive);
-				if (fps < 1) fps = 1;
+			if (Options::FPS != 0
+				&& (Options::useOpenGL == false || Options::vSyncForOpenGL == false))
+			{										// update FPS-delay-time based on the time of the last draw
+				int userFPS;
+				if ((SDL_GetAppState() & SDL_APPINPUTFOCUS))
+					userFPS = Options::FPS;
+				else
+					userFPS = Options::FPSUnfocused;
+
+//				if (userFPS < 1) userFPS = 1; // safety.
 				_ticksTillNextSlice = static_cast<int>(
-										1000.f / static_cast<float>(fps)
-										- static_cast<float>(SDL_GetTicks() - _tickOfLastSlice));
+									  1000.f / static_cast<float>(userFPS)
+									  - static_cast<float>(SDL_GetTicks() - _tickOfLastSlice));
 			}
 			else
 				_ticksTillNextSlice = 0;
 
 			if (_ticksTillNextSlice < 1 && _init == true)
 			{
-				_tickOfLastSlice = SDL_GetTicks(); // store when this slice occurred.
+				_tickOfLastSlice = SDL_GetTicks();	// store when this slice occurred.
 				_fpsCounter->addFrame();
 
 				_screen->clear();
@@ -455,7 +460,7 @@ void Game::run()
 				std::list<State*>::const_iterator i (_states.end());
 				do
 				{
-					--i; // find top underlying fullscreen state,
+					--i;							// find top underlying fullscreen state
 				}
 				while (i != _states.begin() && (*i)->isFullScreen() == false);
 
@@ -464,7 +469,7 @@ void Game::run()
 						i != _states.end();
 						++i)
 				{
-					(*i)->blit(); // blit top underlying fullscreen state and those on top of it.
+					(*i)->blit();					// blit top underlying fullscreen state and those on top of it
 				}
 
 				_fpsCounter->blit(_screen->getSurface());
@@ -475,15 +480,15 @@ void Game::run()
 		}
 
 
-		switch (runningState)	// Save on CPU
+		switch (runState)			// save on CPU
 		{
-			case RUNNING:
-				SDL_Delay(1u);	// Save CPU from going 100%
+			case STANDARD:
+				SDL_Delay(1u);		// save CPU from going 100%
 				break;
 
 			case SLOWED:
 			case PAUSED:
-				SDL_Delay(100u);	// More slowing down.
+				SDL_Delay(100u);	// more slowing down
 		}
 	}
 

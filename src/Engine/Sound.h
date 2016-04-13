@@ -29,7 +29,7 @@ namespace OpenXcom
 {
 
 /**
- * Container for sound effects.
+ * Container for sound-effects.
  * @note Handles loading and playing various formats through SDL_mixer.
  */
 class Sound
@@ -40,30 +40,30 @@ private:
 
 
 	public:
-		/// Creates a blank sound effect.
+		/// Creates a sound-effect.
 		Sound();
-		/// Cleans up the sound effect.
+		/// Cleans up the sound-effect.
 		~Sound();
 
-		/// Loads sound from the specified file.
+		/// Loads a sound-effect from a specified file.
 		void load(const std::string& file);
-		/// Loads sound from a chunk of memory.
+		/// Loads a sound-effect from a chunk of memory.
 		void load(
 				const void* data,
 				unsigned int bytes);
 
-		/// Plays the sound.
+		/// Plays the sound-effect.
 		void play(
 				int channel = -1,
 				int angle = 0,
 				int distance = 0) const;
-		/// Stops all sounds.
+		/// Stops all sound-effects.
 		static void stop();
 
-		/// Plays the sound repeatedly.
-		void loop();
-		/// Stops the looping sound effect.
-		void stopLoop();
+		/// Plays the sound-effect repeatedly.
+//		void loop();
+		/// Stops the looping sound-effect.
+//		void stopLoop();
 };
 
 }

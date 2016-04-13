@@ -75,23 +75,23 @@ inline static GenericFunctionPointer glGetProcAddress(const char* name)
 }
 
 #ifndef __APPLE__
-PFNGLCREATEPROGRAMPROC glCreateProgram				= 0;
-PFNGLUSEPROGRAMPROC glUseProgram					= 0;
-PFNGLCREATESHADERPROC glCreateShader				= 0;
-PFNGLDELETESHADERPROC glDeleteShader				= 0;
-PFNGLSHADERSOURCEPROC glShaderSource				= 0;
-PFNGLCOMPILESHADERPROC glCompileShader				= 0;
-PFNGLATTACHSHADERPROC glAttachShader				= 0;
-PFNGLDETACHSHADERPROC glDetachShader				= 0;
-PFNGLLINKPROGRAMPROC glLinkProgram					= 0;
-PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation	= 0;
-PFNGLUNIFORM1IPROC glUniform1i						= 0;
-PFNGLUNIFORM2FVPROC glUniform2fv					= 0;
-PFNGLUNIFORM4FVPROC glUniform4fv					= 0;
+PFNGLCREATEPROGRAMPROC glCreateProgram				= nullptr;
+PFNGLUSEPROGRAMPROC glUseProgram					= nullptr;
+PFNGLCREATESHADERPROC glCreateShader				= nullptr;
+PFNGLDELETESHADERPROC glDeleteShader				= nullptr;
+PFNGLSHADERSOURCEPROC glShaderSource				= nullptr;
+PFNGLCOMPILESHADERPROC glCompileShader				= nullptr;
+PFNGLATTACHSHADERPROC glAttachShader				= nullptr;
+PFNGLDETACHSHADERPROC glDetachShader				= nullptr;
+PFNGLLINKPROGRAMPROC glLinkProgram					= nullptr;
+PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation	= nullptr;
+PFNGLUNIFORM1IPROC glUniform1i						= nullptr;
+PFNGLUNIFORM2FVPROC glUniform2fv					= nullptr;
+PFNGLUNIFORM4FVPROC glUniform4fv					= nullptr;
 #endif
 
-void* (APIENTRYP glXGetCurrentDisplay)() = 0;
-Uint32 (APIENTRYP glXGetCurrentDrawable)() = 0;
+void* (APIENTRYP glXGetCurrentDisplay)()	= nullptr;
+Uint32 (APIENTRYP glXGetCurrentDrawable)()	= nullptr;
 
 void (APIENTRYP glXSwapIntervalEXT)(
 								void* display,
@@ -103,11 +103,11 @@ Uint32 (APIENTRYP wglSwapIntervalEXT)(int interval);
 /**
  *
  */
-void OpenGL::resize(
+void OpenGL::resize( // private.
 		unsigned width,
 		unsigned height)
 {
-	if (gltexture == 0)
+	if (gltexture == 0u)
 		glGenTextures(1, &gltexture);
 
 	glErrorCheck();
@@ -118,11 +118,10 @@ void OpenGL::resize(
 	if (buffer_surface)
 		delete buffer_surface;
 
-	buffer_surface = new Surface( // use OpenXcom's Surface class to get an aligned buffer with bonus SDL_Surface
+	buffer_surface = new Surface( // use OpenXcom's Surface class to get an aligned-buffer with bonus SDL_Surface
 								iwidth,
 								iheight,
-								0,
-								0,
+								0,0,
 								ibpp);
 
 	buffer = static_cast<uint32_t*>(buffer_surface->getSurface()->pixels);
@@ -156,7 +155,6 @@ bool OpenGL::lock(
 		unsigned &pitch)
 {
 	pitch = iwidth * ibpp;
-
 	return (data = buffer) != nullptr; // kL_adj.
 }
 
@@ -165,13 +163,8 @@ bool OpenGL::lock(
  */
 void OpenGL::clear()
 {
-//	memset(
-//		buffer,
-//		0,
-//		iwidth * iheight * ibpp);
-
+//	memset(buffer, 0, iwidth * iheight * ibpp);
 	glClearColor(0.f,0.f,0.f,1.f);
-
 	glClear(GL_COLOR_BUFFER_BIT);
 	glFlush();
 
@@ -197,13 +190,12 @@ void OpenGL::refresh(
 	clear();
 
 	if (shader_support
-		&& (fragmentshader
-			|| vertexshader))
+		&& (fragmentshader || vertexshader))
 	{
 		glUseProgram(glprogram);
 		GLint location;
 
-		float inputSize[2] =
+		float inputSize[2]
 		{
 			static_cast<float>(inwidth),
 			static_cast<float>(inheight)
@@ -215,7 +207,7 @@ void OpenGL::refresh(
 					1,
 					inputSize);
 
-		float outputSize[2] =
+		float outputSize[2]
 		{
 			static_cast<float>(outwidth),
 			static_cast<float>(outheight)
@@ -227,7 +219,7 @@ void OpenGL::refresh(
 					1,
 					outputSize);
 
-		float textureSize[2] =
+		float textureSize[2]
 		{
 			static_cast<float>(iwidth),
 			static_cast<float>(iheight)
@@ -264,15 +256,11 @@ void OpenGL::refresh(
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(
-			0,
-			outwidth,
-			0,
-			outheight,
-			-1.0,
-			1.0);
+			0, outwidth,
+			0, outheight,
+			-1., 1.);
 	glViewport(
-			0,
-			0,
+			0,0,
 			outwidth,
 			outheight);
 
@@ -303,13 +291,13 @@ void OpenGL::refresh(
 	// texture range = x1:0.0, y1:0.0, x2:1.0, y2:1.0
 	// vertex range = x1:0, y1:0, x2:width, y2:height
 	double
-		w = double(inwidth)  / double(iwidth),
-		h = double(inheight) / double(iheight);
+		w (double(inwidth)  / double(iwidth)),
+		h (double(inheight) / double(iheight));
 	int
-		u1 = leftBlackBand,
-		u2 = outwidth - rightBlackBand,
-		v1 = outheight - topBlackBand,
-		v2 = bottomBlackBand;
+		u1 (leftBlackBand),
+		u2 (outwidth - rightBlackBand),
+		v1 (outheight - topBlackBand),
+		v2 (bottomBlackBand);
 
 	glBegin(GL_TRIANGLE_STRIP);
 	glTexCoord2f(0, 0); glVertex3i(u1, v1, 0);
@@ -324,10 +312,8 @@ void OpenGL::refresh(
 
 	glErrorCheck();
 
-	if (shader_support)
-	{
-		glUseProgram(0);
-	}
+	if (shader_support == true)
+		glUseProgram(0u);
 }
 
 /**
@@ -335,59 +321,58 @@ void OpenGL::refresh(
  */
 void OpenGL::set_shader(const char* source_yaml_filename)
 {
-	if (!shader_support)
-		return;
-
-	if (fragmentshader)
+	if (shader_support == true)
 	{
-		glDetachShader(
-					glprogram,
-					fragmentshader);
-		glDeleteShader(fragmentshader);
-		fragmentshader = 0;
-	}
-
-	if (vertexshader)
-	{
-		glDetachShader(
-					glprogram,
-					vertexshader);
-		glDeleteShader(vertexshader);
-		vertexshader = 0;
-	}
-
-	if (source_yaml_filename
-		&& strlen(source_yaml_filename))
-	{
-		try
+		if (fragmentshader != 0u)
 		{
-			YAML::Node document (YAML::LoadFile(source_yaml_filename));
+			glDetachShader(
+						glprogram,
+						fragmentshader);
+			glDeleteShader(fragmentshader);
+			fragmentshader = 0u;
+		}
 
-			bool is_glsl;
-			std::string language (document["language"].as<std::string>());
-			is_glsl = (language == "GLSL");
+		if (vertexshader != 0u)
+		{
+			glDetachShader(
+						glprogram,
+						vertexshader);
+			glDeleteShader(vertexshader);
+			vertexshader = 0u;
+		}
 
-
-			linear = document["linear"].as<bool>(false); // some shaders want texture linear interpolation and some don't
-			std::string fragment_source	(document["fragment"]	.as<std::string>(""));
-			std::string vertex_source	(document["vertex"]		.as<std::string>(""));
-
-			if (is_glsl)
+		if (source_yaml_filename != nullptr
+			&& std::strlen(source_yaml_filename) != 0u)
+		{
+			try
 			{
-				if (fragment_source.empty() == false)
-					set_fragment_shader(fragment_source.c_str());
+				YAML::Node document (YAML::LoadFile(source_yaml_filename));
 
-				if (vertex_source.empty() == false)
-					set_vertex_shader(vertex_source.c_str());
+				const std::string language (document["language"].as<std::string>());
+				const bool is_glsl (language == "GLSL");
+
+
+				linear = document["linear"].as<bool>(false); // some shaders want texture linear interpolation and some don't
+				const std::string fragment_source	(document["fragment"]	.as<std::string>(""));
+				const std::string vertex_source		(document["vertex"]		.as<std::string>(""));
+
+				if (is_glsl == true)
+				{
+					if (fragment_source.empty() == false)
+						set_fragment_shader(fragment_source.c_str());
+
+					if (vertex_source.empty() == false)
+						set_vertex_shader(vertex_source.c_str());
+				}
+			}
+			catch (YAML::Exception &e)
+			{
+				Log(LOG_ERROR) << source_yaml_filename << ": " << e.what();
 			}
 		}
-		catch (YAML::Exception &e)
-		{
-			Log(LOG_ERROR) << source_yaml_filename << ": " << e.what();
-		}
-	}
 
-	glLinkProgram(glprogram);
+		glLinkProgram(glprogram);
+	}
 }
 
 /**
@@ -444,115 +429,124 @@ void OpenGL::init(
 
 	// bind shader functions
 #ifndef __APPLE__
-	glCreateProgram			= (PFNGLCREATEPROGRAMPROC)glGetProcAddress("glCreateProgram");
-	glUseProgram			= (PFNGLUSEPROGRAMPROC)glGetProcAddress("glUseProgram");
-	glCreateShader			= (PFNGLCREATESHADERPROC)glGetProcAddress("glCreateShader");
-	glDeleteShader			= (PFNGLDELETESHADERPROC)glGetProcAddress("glDeleteShader");
-	glShaderSource			= (PFNGLSHADERSOURCEPROC)glGetProcAddress("glShaderSource");
-	glCompileShader			= (PFNGLCOMPILESHADERPROC)glGetProcAddress("glCompileShader");
-	glAttachShader			= (PFNGLATTACHSHADERPROC)glGetProcAddress("glAttachShader");
-	glDetachShader			= (PFNGLDETACHSHADERPROC)glGetProcAddress("glDetachShader");
-	glLinkProgram			= (PFNGLLINKPROGRAMPROC)glGetProcAddress("glLinkProgram");
-	glGetUniformLocation	= (PFNGLGETUNIFORMLOCATIONPROC)glGetProcAddress("glGetUniformLocation");
-	glUniform1i				= (PFNGLUNIFORM1IPROC)glGetProcAddress("glUniform1i");
-	glUniform2fv			= (PFNGLUNIFORM2FVPROC)glGetProcAddress("glUniform2fv");
-	glUniform4fv			= (PFNGLUNIFORM4FVPROC)glGetProcAddress("glUniform4fv");
+	glCreateProgram			= (PFNGLCREATEPROGRAMPROC)					glGetProcAddress("glCreateProgram");
+	glUseProgram			= (PFNGLUSEPROGRAMPROC)						glGetProcAddress("glUseProgram");
+	glCreateShader			= (PFNGLCREATESHADERPROC)					glGetProcAddress("glCreateShader");
+	glDeleteShader			= (PFNGLDELETESHADERPROC)					glGetProcAddress("glDeleteShader");
+	glShaderSource			= (PFNGLSHADERSOURCEPROC)					glGetProcAddress("glShaderSource");
+	glCompileShader			= (PFNGLCOMPILESHADERPROC)					glGetProcAddress("glCompileShader");
+	glAttachShader			= (PFNGLATTACHSHADERPROC)					glGetProcAddress("glAttachShader");
+	glDetachShader			= (PFNGLDETACHSHADERPROC)					glGetProcAddress("glDetachShader");
+	glLinkProgram			= (PFNGLLINKPROGRAMPROC)					glGetProcAddress("glLinkProgram");
+	glGetUniformLocation	= (PFNGLGETUNIFORMLOCATIONPROC)				glGetProcAddress("glGetUniformLocation");
+	glUniform1i				= (PFNGLUNIFORM1IPROC)						glGetProcAddress("glUniform1i");
+	glUniform2fv			= (PFNGLUNIFORM2FVPROC)						glGetProcAddress("glUniform2fv");
+	glUniform4fv			= (PFNGLUNIFORM4FVPROC)						glGetProcAddress("glUniform4fv");
 #endif
-	glXGetCurrentDisplay	= (void* (APIENTRYP)())glGetProcAddress("glXGetCurrentDisplay");
-	glXGetCurrentDrawable	= (Uint32 (APIENTRYP)())glGetProcAddress("glXGetCurrentDrawable");
-	glXSwapIntervalEXT		= (void (APIENTRYP)(void*, Uint32, int))glGetProcAddress("glXSwapIntervalEXT");
+	glXGetCurrentDisplay	= (void* (APIENTRYP)())						glGetProcAddress("glXGetCurrentDisplay");
+	glXGetCurrentDrawable	= (Uint32 (APIENTRYP)())					glGetProcAddress("glXGetCurrentDrawable");
+	glXSwapIntervalEXT		= (void (APIENTRYP)(void*, Uint32, int))	glGetProcAddress("glXSwapIntervalEXT");
 
-	wglSwapIntervalEXT		= (Uint32 (APIENTRYP)(int))glGetProcAddress("wglSwapIntervalEXT");
+	wglSwapIntervalEXT		= (Uint32 (APIENTRYP)(int))					glGetProcAddress("wglSwapIntervalEXT");
+	// kL_note: f*ck I hate re-direction.
 
 
-	shader_support = glCreateProgram
-				  && glUseProgram
-				  && glCreateShader
-				  && glDeleteShader
-				  && glShaderSource
-				  && glCompileShader
-				  && glAttachShader
-				  && glDetachShader
-				  && glLinkProgram
-				  && glGetUniformLocation
-				  && glUniform1i
-				  && glUniform2fv
-				  && glUniform4fv;
+	shader_support = glCreateProgram		!= nullptr
+				  && glUseProgram			!= nullptr
+				  && glCreateShader			!= nullptr
+				  && glDeleteShader			!= nullptr
+				  && glShaderSource			!= nullptr
+				  && glCompileShader		!= nullptr
+				  && glAttachShader			!= nullptr
+				  && glDetachShader			!= nullptr
+				  && glLinkProgram			!= nullptr
+				  && glGetUniformLocation	!= nullptr
+				  && glUniform1i			!= nullptr
+				  && glUniform2fv			!= nullptr
+				  && glUniform4fv			!= nullptr;
 
-	if (shader_support)
+	if (shader_support == true)
 		glprogram = glCreateProgram();
 
 	// create surface texture
-	resize(w,h);
+	resize(static_cast<unsigned>(w), static_cast<unsigned>(h));
 }
 
 /**
- *
+ * Tries to set VSync.
+ * @note Currently not working in Battlescape ... or it is but doesn't get set.
+ * Or I'm using hardware or software or this or that or double-buffering or
+ * SDL with OpenGL or SDL without OpenGL or OpenGL without SDL ... anyway my
+ * screen tears. I don't like it.
  */
 void OpenGL::setVSync(bool sync)
 {
-	const int interval = sync ? 1 : 0;
+	//Log(LOG_INFO) << "OpenGL::setVSync()";
+	int interval;
+	if (sync == true)	interval = 1;
+	else				interval = 0;
 
-	if (glXGetCurrentDisplay
-		&& glXGetCurrentDrawable
-		&& glXSwapIntervalEXT)
+	if (   glXGetCurrentDisplay		!= nullptr
+		&& glXGetCurrentDrawable	!= nullptr
+		&& glXSwapIntervalEXT		!= nullptr)
 	{
-		void* dpy = glXGetCurrentDisplay();
-		Uint32 drawable = glXGetCurrentDrawable();
+		//Log(LOG_INFO) << ". function-ptrs Okay";
+		void* dpy (glXGetCurrentDisplay());
 
-		if (drawable)
+		const Uint32 drawable (glXGetCurrentDrawable());
+		if (drawable != 0)
 		{
 			glXSwapIntervalEXT(
 							dpy,
 							drawable,
 							interval);
-			//Log(LOG_INFO) << "Made an attempt to set vsync via GLX.";
+			//Log(LOG_INFO) << ". . Made an attempt to set vsync via GLX.";
 		}
 	}
-	else if (wglSwapIntervalEXT)
+	else if (wglSwapIntervalEXT != 0u)
 	{
-		wglSwapIntervalEXT(interval);
-		//Log(LOG_INFO) << "Made an attempt to set vsync via WGL.";
+		wglSwapIntervalEXT(interval); //SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1); //SDL_GL_SetSwapInterval(0)
+		//Log(LOG_INFO) << ". Made an attempt to set vsync via WGL.";
 	}
 }
 
 /**
- *
+ * Helps the destructor.
  */
-void OpenGL::term()
+void OpenGL::terminate()
 {
-	if (gltexture)
+	if (gltexture != 0u)
 	{
 		glDeleteTextures(1, &gltexture);
-		gltexture = 0;
+		gltexture = 0u;
 	}
 
-	if (buffer)
+	if (buffer != nullptr)
 	{
-		buffer	= 0;
-		iwidth	= 0;
-		iheight	= 0;
+		buffer	= nullptr;
+		iwidth	=
+		iheight	= 0u;
 	}
 
 	delete buffer_surface;
 }
 
 /**
- * cTor
+ * Creates OpenXcom's GL-interface layer.
  */
 OpenGL::OpenGL()
 	:
-		gltexture(0),
-		glprogram(0),
-		fragmentshader(0),
+		gltexture(0u),
+		glprogram(0u),
+		fragmentshader(0u),
 		linear(false),
-		vertexshader(0),
+		vertexshader(0u),
 		buffer(nullptr),
 		buffer_surface(nullptr),
-		iwidth(0),
-		iheight(0),
+		iwidth(0u),
+		iheight(0u),
 		iformat(GL_UNSIGNED_INT_8_8_8_8_REV),	// this didn't seem to be set anywhere before...
-		ibpp(32)								// ...nor this
+		ibpp(32u)								// ...nor this
 {}
 
 /**
@@ -560,7 +554,7 @@ OpenGL::OpenGL()
  */
 OpenGL::~OpenGL()
 {
-	term();
+	terminate();
 }
 
 }

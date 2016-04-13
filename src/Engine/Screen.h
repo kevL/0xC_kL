@@ -1,4 +1,4 @@
-	/*
+/*
  * Copyright 2010-2016 OpenXcom Developers.
  *
  * This file is part of OpenXcom.
@@ -34,11 +34,11 @@ class Surface;
 
 
 /**
- * A display screen - handles rendering onto the game window.
+ * A display Screen - handles rendering onto the game window.
  * @note In SDL a Screen is treated like a Surface so this is just a specialized
  * version of a Surface with functionality more relevant for display screens.
  * Contains a Surface buffer where all the contents are kept so any filters or
- * conversions can be applied before rendering the screen.
+ * conversions can be applied before rendering the Screen.
  */
 class Screen
 {
@@ -69,8 +69,8 @@ private:
 	OpenGL _glOutput;
 	SDL_Color _deferredPalette[256];
 
-	/// Sets the '_flags' and '_bpp' variables based on game options.
-	void makeVideoFlags();
+	/// Sets the '_flags' and '_bpp' and base-resolution variables.
+	void setVideoFlags();
 
 
 	public:
@@ -78,9 +78,9 @@ private:
 			ORIGINAL_WIDTH	= 320,
 			ORIGINAL_HEIGHT	= 200;
 
-		/// Creates a new display screen.
+		/// Creates a display Screen.
 		Screen();
-		/// Cleans up the display screen.
+		/// Cleans up the display Screen.
 		~Screen();
 
 		/// Gets horizontal offset.
@@ -94,41 +94,41 @@ private:
 		/// Handles keyboard events.
 		void handle(Action* action);
 
-		/// Renders the screen onto the game window.
+		/// Renders the Screen onto the game window.
 		void flip();
-		/// Clears the screen.
+		/// Clears the Screen.
 		void clear();
 
-		/// Sets the screen's 8bpp palette.
+		/// Sets the Screen's 8-bpp palette.
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256,
 				bool immediately = false);
-		/// Gets the screen's 8bpp palette.
+		/// Gets the Screen's 8-bpp palette.
 		SDL_Color* getPalette() const;
 
-		/// Gets the screen's width.
+		/// Gets the Screen's width.
 		int getWidth() const;
-		/// Gets the screen's height.
+		/// Gets the Screen's height.
 		int getHeight() const;
-		/// Resets the screen display.
+		/// Resets the Screen display.
 		void resetDisplay(bool resetVideo = true);
 
-		/// Gets the screen's X scale.
+		/// Gets the Screen's x-scale.
 		double getXScale() const;
-		/// Gets the screen's Y scale.
+		/// Gets the Screen's y-scale.
 		double getYScale() const;
 
-		/// Gets the screen's top black forbidden to cursor band's height.
+		/// Gets the Screen's top black forbidden-to-cursor band's height.
 		int getCursorTopBlackBand() const;
-		/// Gets the screen's left black forbidden to cursor band's width.
+		/// Gets the Screen's left black forbidden-to-cursor band's width.
 		int getCursorLeftBlackBand() const;
 
 		/// Takes a screenshot.
 		void screenshot(const std::string& file) const;
 
-		/// Checks whether a 32bit scaler is requested and works for the selected resolution.
+		/// Checks whether a 32-bit scaler is requested and works for the selected resolution.
 		static bool is32bitEnabled();
 		/// Checks whether OpenGL output is requested.
 		static bool isOpenGLEnabled();
