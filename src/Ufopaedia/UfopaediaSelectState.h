@@ -38,7 +38,8 @@ class Window;
 
 
 /**
- * UfopaediaSelectState is the screen that lists articles of a given type.
+ * UfopaediaSelectState is the screen that lists articles of a specified
+ * section-type.
  */
 class UfopaediaSelectState
 	:
@@ -61,19 +62,19 @@ protected:
 	/// Handler for clicking the selection list.
 	void lstSelectionClick(Action* action);
 
-	/// load available articles into the selection list
+	/// Loads available articles into the selection-list.
 	void loadSelectionList();
 
 
 	public:
-		///
+		/// Creates a UfopaediaSelect state.
 		UfopaediaSelectState(
 				const std::string& section,
 				bool tactical);
-		///
+		/// Destroys the state.
 		virtual ~UfopaediaSelectState();
 
-		///
+		/// Initializes the state.
 		void init() override;
 };
 

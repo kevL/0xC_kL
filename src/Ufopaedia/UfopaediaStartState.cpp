@@ -19,6 +19,7 @@
 
 #include "UfopaediaStartState.h"
 
+#include "ArticleStateItem.h" // reset
 #include "UfopaediaSelectState.h"
 
 #include "../Engine/Action.h"
@@ -38,7 +39,7 @@
 namespace OpenXcom
 {
 
-const std::string UfopaediaStartState::ped_TITLES[] =
+const std::string UfopaediaStartState::ped_TITLES[]
 {
 	UFOPAEDIA_XCOM_CRAFT_ARMAMENT,
 	UFOPAEDIA_HEAVY_WEAPONS_PLATFORMS,
@@ -86,7 +87,7 @@ UfopaediaStartState::UfopaediaStartState(bool tactical)
 
 	int y = 37;
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != ped_SECTIONS;
 			++i)
 	{
@@ -141,6 +142,8 @@ void UfopaediaStartState::btnOkClick(Action*)
 	kL_geoMusicPlaying = false;
 	kL_geoMusicReturnState = true;
 
+	ArticleStateItem::resetFirearmInfo();
+
 	_game->popState();
 
 	if (_tactical == false)
@@ -154,7 +157,7 @@ void UfopaediaStartState::btnOkClick(Action*)
 void UfopaediaStartState::btnSectionClick(Action* action)
 {
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != ped_SECTIONS;
 			++i)
 	{

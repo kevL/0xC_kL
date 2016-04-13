@@ -45,7 +45,7 @@ class UfopaediaStartState
 {
 
 protected:
-	static const size_t ped_SECTIONS = 10;
+	static const size_t ped_SECTIONS = 10u;
 	static const std::string ped_TITLES[ped_SECTIONS];
 
 	bool _tactical;

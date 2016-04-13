@@ -120,35 +120,35 @@ void ArticleState::initLayout(bool contrast) // protected.
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick((ActionHandler)& ArticleState::btnOkClick);
 	_btnOk->onKeyboardPress(
-					(ActionHandler)& ArticleState::btnOkClick,
-					Options::keyOk);
+			(ActionHandler)& ArticleState::btnOkClick,
+			Options::keyOk);
 	_btnOk->onKeyboardPress(
-					(ActionHandler)& ArticleState::btnOkClick,
-					Options::keyOkKeypad);
+			(ActionHandler)& ArticleState::btnOkClick,
+			Options::keyOkKeypad);
 	_btnOk->onKeyboardPress(
-					(ActionHandler)& ArticleState::btnOkClick,
-					Options::keyCancel);
+			(ActionHandler)& ArticleState::btnOkClick,
+			Options::keyCancel);
 	_btnOk->onKeyboardPress(
-					(ActionHandler)& ArticleState::btnOkClick,
-					Options::keyGeoUfopedia);
+			(ActionHandler)& ArticleState::btnOkClick,
+			Options::keyGeoUfopedia);
 
 	_btnPrev->setText(L"<");
 	_btnPrev->onMouseClick((ActionHandler)& ArticleState::btnPrevClick);
 	_btnPrev->onKeyboardPress(
-					(ActionHandler)& ArticleState::btnPrevClick,
-					Options::keyGeoLeft);
+			(ActionHandler)& ArticleState::btnPrevClick,
+			Options::keyGeoLeft);
 	_btnPrev->onKeyboardPress(
-					(ActionHandler)& ArticleState::btnPrevClick,
-					SDLK_KP4);
+			(ActionHandler)& ArticleState::btnPrevClick,
+			SDLK_KP4);
 
 	_btnNext->setText(L">");
 	_btnNext->onMouseClick((ActionHandler)& ArticleState::btnNextClick);
 	_btnNext->onKeyboardPress(
-					(ActionHandler)& ArticleState::btnNextClick,
-					Options::keyGeoRight);
+			(ActionHandler)& ArticleState::btnNextClick,
+			Options::keyGeoRight);
 	_btnNext->onKeyboardPress(
-					(ActionHandler)& ArticleState::btnNextClick,
-					SDLK_KP6);
+			(ActionHandler)& ArticleState::btnNextClick,
+			SDLK_KP6);
 
 	if (contrast == true)
 	{

@@ -125,7 +125,7 @@ void UfopaediaSelectState::btnOkClick(Action*) // private.
 }
 
 /**
- *
+ * Opens an article.
  * @param action - pointer to an Action
  */
 void UfopaediaSelectState::lstSelectionClick(Action*) // private.
@@ -136,7 +136,7 @@ void UfopaediaSelectState::lstSelectionClick(Action*) // private.
 }
 
 /**
- *
+ * Fills the selection-list with ArticleDefinitions.
  */
 void UfopaediaSelectState::loadSelectionList() // private.
 {

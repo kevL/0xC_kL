@@ -37,7 +37,7 @@ class Timer;
 
 
 /**
- * UfopaediaArticle is the base class for all articles of various types.
+ * ArticleState is the base class for all articles of various types.
  * @note It encapsulates the common characteristics.
  */
 

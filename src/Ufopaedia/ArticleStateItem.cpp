@@ -25,6 +25,7 @@
 #include "Ufopaedia.h"
 
 #include "../Engine/Game.h"
+#include "../Engine/InteractiveSurface.h"
 #include "../Engine/LocalizedText.h"
 #include "../Engine/Palette.h"
 //#include "../Engine/Surface.h"
@@ -42,6 +43,9 @@
 
 namespace OpenXcom
 {
+
+FirearmInfo ArticleStateItem::_infoMode = MODE_SHOT; // static.
+
 
 /**
  * cTor.
@@ -94,8 +98,25 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 		{
 			_txtShotType = new Text(100, 9, 8, 66);
 			add(_txtShotType);
-			_txtShotType->setText(tr("STR_SHOT_TYPE"));
 			_txtShotType->setColor(uPed_BLUE_SLATE);
+			if (itRule->getMeleeTu() != 0)
+			{
+				_txtShotType->setText(tr("STR_SHOT_TYPE_").arg(L"*"));
+
+				_isfMode = new InteractiveSurface(204, 9, 8, 66);
+				add(_isfMode);
+				_isfMode->onMouseClick((ActionHandler)& ArticleStateItem::toggleTable);
+
+				_lstInfoMelee = new TextList(204, 64, 8, 78);
+				add(_lstInfoMelee);
+				_lstInfoMelee->setColor(uPed_GREEN_SLATE); // color for %-data!
+				_lstInfoMelee->setColumns(3, 100,52,52);
+				_lstInfoMelee->setMargin();
+				_lstInfoMelee->setBig();
+				_lstInfoMelee->setVisible(_infoMode == MODE_MELEE);
+			}
+			else
+				_txtShotType->setText(tr("STR_SHOT_TYPE_").arg(L""));
 
 			_txtAccuracy = new Text(52, 9, 108, 66);
 			add(_txtAccuracy);
@@ -113,6 +134,7 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 			_lstInfo->setColumns(3, 100,52,52);
 			_lstInfo->setMargin();
 			_lstInfo->setBig();
+			_lstInfo->setVisible(itRule->getMeleeTu() == 0 || _infoMode == MODE_SHOT);
 
 
 			const bool flatRate (itRule->isFlatRate() == true);
@@ -179,6 +201,21 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 				_lstInfo->setCellColor(current_row, 0u, uPed_BLUE_SLATE);
 			}
 
+			if (itRule->getMeleeTu() != 0)
+			{
+				if (flatRate == true)
+					tu = Text::intWide(itRule->getMeleeTu());
+				else
+					tu = Text::formatPercent(itRule->getMeleeTu());
+
+				_lstInfoMelee->addRow(
+									3,
+									tr("STR_HIT_MELEE").c_str(),
+									Text::intWide(itRule->getAccuracyMelee()).c_str(),
+									tu.c_str());
+				_lstInfoMelee->setCellColor(0u,0u, uPed_BLUE_SLATE);
+			}
+
 			// text_info goes BELOW the info-table
 			_txtInfo = new Text((ammo_data->size() < 3u ? 304 : 200), 57, 8, 136);
 			break;
@@ -188,7 +225,7 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 		{
 			_txtShotType = new Text(100, 9, 8, 66);
 			add(_txtShotType);
-			_txtShotType->setText(tr("STR_SHOT_TYPE"));
+			_txtShotType->setText(tr("STR_SHOT_TYPE_"));
 			_txtShotType->setColor(uPed_BLUE_SLATE);
 
 			_txtAccuracy = new Text(52, 9, 108, 66);
@@ -365,5 +402,35 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
  */
 ArticleStateItem::~ArticleStateItem() // virtual.
 {}
+
+/**
+ * Switches the info-table for Firearms between displaying shot-or-melee data.
+ * @param action - pointer to an Action
+ */
+void ArticleStateItem::toggleTable(Action*) // private.
+{
+	switch (_infoMode)
+	{
+		case MODE_SHOT:
+			_infoMode = MODE_MELEE;
+			_lstInfo->setVisible(false);
+			_lstInfoMelee->setVisible();
+			break;
+
+		case MODE_MELEE:
+			_infoMode = MODE_SHOT;
+			_lstInfo->setVisible();
+			_lstInfoMelee->setVisible(false);
+			break;
+	}
+}
+
+/**
+ * Resets the FirearmInfo enumerator.
+ */
+void ArticleStateItem::resetFirearmInfo() // static.
+{
+	_infoMode = MODE_SHOT;
+}
 
 }

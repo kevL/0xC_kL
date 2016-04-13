@@ -52,7 +52,6 @@ static const std::string
 	UFOPAEDIA_UFOS						= "STR_UFOS",
 	UFOPAEDIA_AWARDS					= "STR_AWARDS",
 	UFOPAEDIA_NOT_AVAILABLE				= "STR_NOT_AVAILABLE";
-
 // The last section is meant for articles that have to be activated but have no
 // entry in a list. E.g. Ammunition items. Maybe others as well that should just
 // not be selectable.
@@ -111,7 +110,7 @@ protected:
 		/// Article navigation to previous article.
 		static void prev(Game* const game);
 
-		/// Loads a vector with article ids that are currently visible of a given section.
+		/// Loads a vector with article-ids that are currently visible in a specified Ufopaedia section.
 		static void list(
 				const SavedGame* const gameSave,
 				const Ruleset* const rules,

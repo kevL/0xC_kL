@@ -26,7 +26,16 @@
 namespace OpenXcom
 {
 
+/// For the info to display on the table of a firearm.
+enum FirearmInfo
+{
+	MODE_SHOT,	// 0
+	MODE_MELEE	// 1
+};
+
+
 class ArticleDefinitionItem;
+class InteractiveSurface;
 class Surface;
 class Text;
 class TextList;
@@ -40,29 +49,43 @@ class ArticleStateItem
 		public ArticleState
 {
 
-protected:
-	Surface
-		*_image,
-		*_imageAmmo[3u];
-	Text
-		* _txtTitle,
-		* _txtTwoHand,
-		* _txtInfo,
-		* _txtShotType,
-		* _txtAccuracy,
-		* _txtTuCost,
-//		* _txtDamage,
-//		* _txtAmmo,
-		* _txtAmmoType[3u],
-		* _txtAmmoDamage[3u];
-	TextList* _lstInfo;
+private:
+	/// Retains whether to display shot-info or melee-info for firearms.
+	static FirearmInfo _infoMode;
+
+	/// Switches the info-table for Firearms between displaying shot-or-melee data.
+	void toggleTable(Action* action);
 
 
-	public:
-		/// cTor.
-		explicit ArticleStateItem(const ArticleDefinitionItem* const defs);
-		/// dTor.
-		virtual ~ArticleStateItem();
+	protected:
+		InteractiveSurface* _isfMode;
+		Surface
+			*_image,
+			*_imageAmmo[3u];
+		Text
+			* _txtTitle,
+			* _txtTwoHand,
+			* _txtInfo,
+			* _txtShotType,
+			* _txtAccuracy,
+			* _txtTuCost,
+//			* _txtDamage,
+//			* _txtAmmo,
+			* _txtAmmoType[3u],
+			* _txtAmmoDamage[3u];
+		TextList
+			* _lstInfo,
+			* _lstInfoMelee;
+
+
+		public:
+			/// cTor.
+			explicit ArticleStateItem(const ArticleDefinitionItem* const defs);
+			/// dTor.
+			virtual ~ArticleStateItem();
+
+			/// Resets the FirearmInfo enumerator.
+			static void resetFirearmInfo();
 };
 
 }
