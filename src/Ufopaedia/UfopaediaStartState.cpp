@@ -19,13 +19,14 @@
 
 #include "UfopaediaStartState.h"
 
-#include "ArticleStateItem.h" // reset
+#include "ArticleStateItem.h" // reset FirearmInfo.
 #include "UfopaediaSelectState.h"
 
 #include "../Engine/Action.h"
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
 #include "../Engine/Options.h"
+#include "../Engine/Screen.h" // background-graphic fade for Battlescape.
 
 #include "../Geoscape/GeoscapeState.h"
 
@@ -55,57 +56,116 @@ const std::string UfopaediaStartState::ped_TITLES[]
 
 
 /**
- * cTor.
+ * Constructs a UfopaediaStartState that lists all sections/topics.
  * @param tactical - true if opening UfoPaedia from battlescape (default false)
  */
 UfopaediaStartState::UfopaediaStartState(bool tactical)
 	:
 		_tactical(tactical)
 {
-	int dX; // x - 32 to center on Globe
+	int offset_x; // x - 32 to center on Globe
 	if (_tactical == false)
 	{
 		_fullScreen = false;
 //		if (Options::baseXResolution > 320 + 32)
-		dX = -32;
+		offset_x = -32;
 	}
-	else
-		dX = 0;
+	else // in Battlescape ->
+	{
+		offset_x = 0;
 
-	_window = new Window( // note, this is almost too tall for 320x200.
+		// NOTE: See also Menu/IntroState::endVideo()
+		// This algorithm should be consolidated in Screen. And there should be
+		// some sort of corresponding fade-in function also.
+		if (_game->getScreen()->getSurface()->getSurface()->format->BitsPerPixel == 8) // fades can be done only in 8-bpp.
+		{
+			const Uint32 FADE_DELAY (20u);
+			const Uint8 FADE_STEPS (25u);
+
+			SDL_Color
+				pal[256u],
+				pal2[256u];
+
+			std::memcpy(
+					pal,
+					_game->getScreen()->getPalette(),
+					sizeof(SDL_Color) * 256);
+
+			for (Uint8
+					i = FADE_STEPS;
+					i != 0u;
+					--i)
+			{
+				for (size_t
+						j = 0u;
+						j != 256u;
+						++j)
+				{
+					pal2[j].r = pal[j].r * i / FADE_STEPS;
+					pal2[j].g = pal[j].g * i / FADE_STEPS;
+					pal2[j].b = pal[j].b * i / FADE_STEPS;
+					pal2[j].unused = pal[j].unused;
+				}
+
+				_game->getScreen()->setPalette(
+											pal2,
+											0,
+											256,
+											true);
+				_game->getScreen()->flip();
+
+				SDL_Delay(FADE_DELAY);
+			}
+		}
+		else // not really needed ->
+		{
+			_game->getScreen()->clear();
+			_game->getScreen()->flip();
+		}
+	}
+
+	_window = new Window( // NOTE: this is almost too tall for 320x200.
 					this,
 					256,194,
-					32 + dX, 6,
+					offset_x + 32, 6,
 					POPUP_BOTH,
 					_tactical == false);
-	_txtTitle = new Text(224, 17, 48 + dX, 16);
+	_txtTitle = new Text(
+					224,17,
+					offset_x + 48, 16);
 
 	setInterface("ufopaedia");
 
 	add(_window,	"window",	"ufopaedia");
 	add(_txtTitle,	"text",		"ufopaedia");
 
-	int y = 37;
+	int offset_y (37);
 	for (size_t
 			i = 0u;
 			i != ped_SECTIONS;
 			++i)
 	{
-		_btnSection[i] = new TextButton(224, 12, 48 + dX, y);
+		_btnSection[i] = new TextButton(
+									224,12,
+									offset_x + 48,
+									offset_y);
 		add(_btnSection[i], "button1", "ufopaedia");
 		_btnSection[i]->setText(tr(ped_TITLES[i]));
 		_btnSection[i]->onMouseClick((ActionHandler)& UfopaediaStartState::btnSectionClick);
 
-		y += 13;
+		offset_y += 13;
 	}
 
-	_btnOk = new TextButton(112, 16, 104 + dX, y + 4);
+	_btnOk = new TextButton(
+						112,16,
+						offset_x + 104,
+						offset_y + 4);
 	add(_btnOk, "button1", "ufopaedia");
 
 	centerAllSurfaces();
 
 
-	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"), dX);
+	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"), offset_x);
 
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);

@@ -100,12 +100,12 @@ ArticleDefinitionList Ufopaedia::getAvailableArticles( // protected/static.
 		const SavedGame* const gameSave,
 		const Ruleset* const rules)
 {
-	const std::vector<std::string>& allPedia (rules->getUfopaediaList());
+	const std::vector<std::string>& allUfopaedia (rules->getUfopaediaList());
 	ArticleDefinitionList articles;
 
 	for (std::vector<std::string>::const_iterator
-			i = allPedia.begin();
-			i != allPedia.end();
+			i = allUfopaedia.begin();
+			i != allUfopaedia.end();
 			++i)
 	{
 		ArticleDefinition* const article (rules->getUfopaediaArticle(*i));
@@ -115,13 +115,12 @@ ArticleDefinitionList Ufopaedia::getAvailableArticles( // protected/static.
 			articles.push_back(article);
 		}
 	}
-
 	return articles;
 }
 
 /**
- * Creates a new article State dependent on the given ArticleDefinition.
- * @param article - pointer to ArticleDefinition to create from
+ * Creates an Article state dependent on a specified ArticleDefinition.
+ * @param article - pointer to an ArticleDefinition to create
  * @return, pointer to ArticleState object if created or nullptr otherwise
  */
 ArticleState* Ufopaedia::createArticleState(ArticleDefinition* const article) // protected/static.
@@ -162,9 +161,9 @@ ArticleState* Ufopaedia::createArticleState(ArticleDefinition* const article) //
 }
 
 /**
- * Checks if an article has already been released.
+ * Checks if a Ufopaedia article is accessible.
  * @param gameSave	- pointer to SavedGame
- * @param article	- ArticleDefinition to release
+ * @param article	- pointer to an ArticleDefinition to check
  * @return, true if the article is available
  */
 bool Ufopaedia::isArticleAvailable( // static.
@@ -175,9 +174,9 @@ bool Ufopaedia::isArticleAvailable( // static.
 }
 
 /**
- * Sets UPSaved index and opens the new state.
- * @param game		- pointer to actual Game
- * @param article	- pointer to ArticleDefinition of the article to open
+ * Sets the Ufopaedia index and opens a specified article by pointer.
+ * @param game		- pointer to core Game
+ * @param article	- pointer to an ArticleDefinition to open
  */
 void Ufopaedia::openArticle( // static.
 		Game* const game,
@@ -192,9 +191,9 @@ void Ufopaedia::openArticle( // static.
 }
 
 /**
- * Checks if selected article_id is available -> if yes, open it.
- * @param game			- pointer to actual Game
- * @param article_id	- reference the article id to find
+ * Sets the Ufopaedia index and opens a specified article by string.
+ * @param game			- pointer to core Game
+ * @param article_id	- reference to the article-type to find
  */
 void Ufopaedia::openArticle( // static.
 		Game* const game,
@@ -206,13 +205,13 @@ void Ufopaedia::openArticle( // static.
 								article_id);
 	if (_current_index != -1)
 	{
-		ArticleDefinition* const article = game->getRuleset()->getUfopaediaArticle(article_id);
+		ArticleDefinition* const article (game->getRuleset()->getUfopaediaArticle(article_id));
 		game->pushState(createArticleState(article));
 	}
 }
 
 /**
- * Opens Ufopaedia start state presenting the section selection buttons.
+ * Opens UfopaediaStartState presenting the topical selection-buttons.
  * @param game		- pointer to the Game
  * @param tactical	- true if opening Ufopaedia from battlescape (default false)
  */

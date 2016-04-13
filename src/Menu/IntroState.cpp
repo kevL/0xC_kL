@@ -47,7 +47,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Intro screen.
+ * Initializes all the elements in the Intro video.
  * @param wasLetterBoxed - true if the game was letterboxed
  */
 IntroState::IntroState(const bool wasLetterBoxed)
@@ -216,6 +216,7 @@ static introSoundEffect introSoundTrack[]
 	{    0,   0x200}, // inserting this to keep the code simple
 	{  149,    0x11}, // searchlight *whoosh*
 	{  150,    0x11}, // kL, doubling
+	{  151,    0x11}, // kL, tripling
 	{  173,    0x0C},
 	{  183,    0x0E},
 	{  205,    0x15},
@@ -349,7 +350,7 @@ static introSoundEffect introSoundTrack[]
 	{  845,    0x0F},
 	{  855,   0x407},
 	{  879,    0x0C},
-	{65535, 0x0FFFF}
+	{65535,  0xFFFF}
 };
 
 /**
@@ -368,7 +369,7 @@ FlcPlayer* _flcPlayer;
 
 
 /**
- *
+ * Contructs an AudioSequence.
  */
 AudioSequence(
 		const ResourcePack* const res,
@@ -382,7 +383,7 @@ AudioSequence(
 {}
 
 /**
- * Overloads operator()
+ * Overloads operator().
  */
 void operator()()
 {
@@ -430,10 +431,7 @@ void operator()()
 				const soundInFile* const sf ((*sounds) + soundTrigger);
 				Log(LOG_DEBUG) << "playing: " << sf->catFile << ":" << sf->sound << " for index " << soundTrigger;
 
-				pSound = rp->getSound(
-									sf->catFile,
-									sf->sound);
-				if (pSound != nullptr)
+				if ((pSound = rp->getSound(sf->catFile, sf->sound)) != nullptr)
 				{
 					pSound->play(-1); // kL
 //					int channel = trackPosition %4; // use at most four channels to play sound effects
@@ -454,7 +452,7 @@ void operator()()
 
 
 /**
- *
+ * c++ magic-syntax
  */
 static void audioHandler()
 {
@@ -567,7 +565,11 @@ void IntroState::endVideo()
 {
 	//Log(LOG_INFO) << "intro: endVideo()";
 	//Log(LOG_INFO) << ". playing Music= " << Mix_PlayingMusic();
-	// Fades can be done only in 8bpp otherwise instantly end it.
+
+	// Fades can be done only in 8-bpp otherwise instantly end it.
+	// NOTE: See also Ufopaedia/UfopaediaStartState cTor.
+	// This algorithm should be consolidated in Screen. And there should be
+	// some sort of corresponding fade-in function also.
 	if (_game->getScreen()->getSurface()->getSurface()->format->BitsPerPixel == 8)
 	{
 		//Log(LOG_INFO) << ". 8bpp TRUE";
