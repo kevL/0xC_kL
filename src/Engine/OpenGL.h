@@ -63,10 +63,21 @@ class OpenGL
 {
 
 private:
-	/// call to resize internal buffer
+	/// Exits - because destructors are uncool for people.
+	void terminate();
+
+	/// Makes all the pixels go away.
+	void clear();
+
+	/// Resizes the internal buffer.
 	void resize(
 			unsigned width,
 			unsigned height);
+
+	/// Sets a fragment-shader.
+	void set_fragment_shader(const char* source);
+	/// Sets a vertex-shader.
+	void set_vertex_shader(const char* source);
 
 
 	public:
@@ -91,14 +102,17 @@ private:
 
 		Surface* buffer_surface;
 
-		/// actually sets a pointer to a data-buffer where the image is written to
-		bool lock(
-				uint32_t* &data,
-				unsigned &pitch);
+		/// Constructor ... like we said you're too cool to actually construct things.
+		OpenGL();
+		/// dTor.
+		~OpenGL();
 
-		/// make all the pixels go away
-		void clear();
-		/// make the buffer show up on screen
+		/// Because you're too cool to initialize everything in the constructor.
+		void init(
+				int width,
+				int height);
+
+		/// Makes the buffer show up on-screen.
 		void refresh(
 				bool smooth,
 				unsigned inwidth,
@@ -110,36 +124,23 @@ private:
 				int leftBlackBand,
 				int rightBlackBand);
 
-		/// set a shader!
-		void set_shader(const char* source);
-		/// same but for fragment shader
-		void set_fragment_shader(const char* source);
-		/// and vertex
-		void set_vertex_shader(const char* source);
+		/// Sets a shader!
+		void set_shader(const char* source_yaml_filename);
 
-		/// because you're too cool to initialize everything in the constructor
-		void init(
-				int width,
-				int height);
-		/// exit because destructors are uncool for people
-		void terminate();
-
-		/// Try to set VSync! decidedly uncool if it doesn't work.
+		/// Tries to set VSync! decidedly uncool if it doesn't work.
 		void setVSync(bool sync);
 
-		/// constructor ... like we said you're too cool to actually construct things
-		OpenGL();
-		/// dTor
-		~OpenGL();
+		/// Sets a pointer to a data-buffer where the image-data is written.
+//		bool lock(uint32_t* &data, unsigned &pitch);
 };
 
 }
 
-#else // __NO_OPENGL
+#else // !__NO_OPENGL
 namespace OpenXcom
 {
 class OpenGL{};
 }
-#endif
+#endif // !__NO_OPENGL
 
 #endif

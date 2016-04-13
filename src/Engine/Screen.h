@@ -83,21 +83,19 @@ private:
 		/// Cleans up the display Screen.
 		~Screen();
 
-		/// Gets horizontal offset.
-		int getDX() const;
-		/// Gets vertical offset.
-		int getDY() const;
-
 		/// Gets the internal buffer.
 		Surface* getSurface();
 
-		/// Handles keyboard events.
+		/// Handles keyboard-events.
 		void handle(Action* action);
 
-		/// Renders the Screen onto the game window.
+		/// Renders the Screen to the video-card's output.
 		void flip();
 		/// Clears the Screen.
 		void clear();
+
+		/// Resets the Screen's display.
+		void resetDisplay(bool resetVideo = true);
 
 		/// Sets the Screen's 8-bpp palette.
 		void setPalette(
@@ -112,13 +110,16 @@ private:
 		int getWidth() const;
 		/// Gets the Screen's height.
 		int getHeight() const;
-		/// Resets the Screen display.
-		void resetDisplay(bool resetVideo = true);
 
 		/// Gets the Screen's x-scale.
 		double getXScale() const;
 		/// Gets the Screen's y-scale.
 		double getYScale() const;
+
+		/// Gets the horizontal-offset.
+		int getDX() const;
+		/// Gets the vertical-offset.
+		int getDY() const;
 
 		/// Gets the Screen's top black forbidden-to-cursor band's height.
 		int getCursorTopBlackBand() const;

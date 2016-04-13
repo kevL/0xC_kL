@@ -44,6 +44,38 @@ namespace OpenXcom
 {
 
 /**
+ * Creates the display-screen to which the engine will render graphical contents.
+ * @note The Screen is initialized based on the current options.
+ */
+Screen::Screen()
+	:
+		_baseWidth(ORIGINAL_WIDTH),
+		_baseHeight(ORIGINAL_HEIGHT),
+		_scaleX(1.),
+		_scaleY(1.),
+		_flags(0),
+		_numColors(0),
+		_firstColor(0),
+		_pushPalette(false),
+		_surface(nullptr)
+{
+	resetDisplay();
+	std::memset(
+			_deferredPalette,
+			0,
+			256 * sizeof(SDL_Color));
+}
+
+/**
+ * Deletes the buffer from memory.
+ * @note The display Screen itself is automatically freed once SDL shuts down.
+ */
+Screen::~Screen()
+{
+	delete _surface;
+}
+
+/**
  * Sets up all the internal display flags depending on current video settings.
  */
 void Screen::setVideoFlags() // private.
@@ -111,43 +143,10 @@ void Screen::setVideoFlags() // private.
 	_baseHeight = Options::baseYResolution;
 }
 
-
 /**
- * Creates the display Screen for the engine to render contents to.
- * @note The Screen is initialized based on the current options.
- */
-Screen::Screen()
-	:
-		_baseWidth(ORIGINAL_WIDTH),
-		_baseHeight(ORIGINAL_HEIGHT),
-		_scaleX(1.),
-		_scaleY(1.),
-		_flags(0),
-		_numColors(0),
-		_firstColor(0),
-		_pushPalette(false),
-		_surface(nullptr)
-{
-	resetDisplay();
-	std::memset(
-			_deferredPalette,
-			0,
-			256 * sizeof(SDL_Color));
-}
-
-/**
- * Deletes the buffer from memory.
- * @note The display Screen itself is automatically freed once SDL shuts down.
- */
-Screen::~Screen()
-{
-	delete _surface;
-}
-
-/**
- * Gets this Screen's internal buffer surface.
- * @note Any contents that need to be shown will be blitted to this.
- * @return, pointer to the buffer surface
+ * Gets this Screen's internal buffer-surface.
+ * @note Any contents that need to be shown will be blitted to the Surface.
+ * @return, pointer to the buffer-surface
  */
 Surface* Screen::getSurface()
 {
@@ -156,7 +155,7 @@ Surface* Screen::getSurface()
 }
 
 /**
- * Handles this Screen's key-shortcuts.
+ * Handles this Screen's keyboard-shortcuts.
  * @param action - pointer to an Action
  */
 void Screen::handle(Action* action)
@@ -288,103 +287,7 @@ void Screen::clear()
 }
 
 /**
- * Sets the 8-bpp palette used to render this Screen's contents.
- * @param colors		- pointer to the set of colors
- * @param firstcolor	- offset of the first color to replace
- * @param ncolors		- quantity of colors to replace
- * @param immediately	- apply palette changes immediately otherwise wait for next blit
- */
-void Screen::setPalette(
-		SDL_Color* const colors,
-		int firstcolor,
-		int ncolors,
-		bool immediately)
-{
-	if (_numColors != 0
-		&& _numColors != ncolors
-		&& _firstColor != firstcolor)
-	{
-		// an initial palette setup has not been committed to the screen yet
-		// just update it with whatever colors are being sent now
-		std::memmove(
-				&(_deferredPalette[firstcolor]),
-				colors,
-				sizeof(SDL_Color) * ncolors);
-		_numColors = 256; // all the use cases are just a full palette with 16-color follow-ups
-		_firstColor = 0;
-	}
-	else
-	{
-		std::memmove(
-				&(_deferredPalette[firstcolor]),
-				colors,
-				sizeof(SDL_Color) * ncolors);
-		_numColors = ncolors;
-		_firstColor = firstcolor;
-	}
-
-	_surface->setPalette(
-					colors,
-					firstcolor,
-					ncolors);
-
-	// defer actual update of screen until SDL_Flip()
-	if (immediately == true
-		&& _screen->format->BitsPerPixel == 8
-		&& SDL_SetColors(
-					_screen,
-					colors,
-					firstcolor,
-					ncolors) == 0)
-	{
-		Log(LOG_DEBUG) << "Display palette doesn't match requested palette";
-	}
-
-	// Sanity check
-//	SDL_Color* newcolors (_screen->format->palette->colors);
-//	for (int i = firstcolor, j = 0; i < firstcolor + ncolors; i++, j++)
-//	{
-//		Log(LOG_DEBUG) << (int)newcolors[i].r << " - " << (int)newcolors[i].g << " - " << (int)newcolors[i].b;
-//		Log(LOG_DEBUG) << (int)colors[j].r << " + " << (int)colors[j].g << " + " << (int)colors[j].b;
-//		if (newcolors[i].r != colors[j].r ||
-//			newcolors[i].g != colors[j].g ||
-//			newcolors[i].b != colors[j].b)
-//		{
-//			Log(LOG_ERROR) << "Display palette doesn't match requested palette";
-//			break;
-//		}
-//	}
-}
-
-/**
- * Gets this Screen's 8-bpp palette.
- * @return, pointer to the palette's colors
- */
-SDL_Color* Screen::getPalette() const
-{
-	return const_cast<SDL_Color*>(_deferredPalette);
-}
-
-/**
- * Gets the width of this Screen.
- * @return, width in pixels
- */
-int Screen::getWidth() const
-{
-	return _screen->w;
-}
-
-/**
- * Gets the height of this Screen.
- * @return, height in pixels
- */
-int Screen::getHeight() const
-{
-	return _screen->h;
-}
-
-/**
- * Resets this Screen's surfaces based on the current display options since they
+ * Resets this Screen's surfaces based on the current display-options since they
  * don't automatically take effect.
  * @param resetVideo - true to reset display surface (default true)
  */
@@ -565,6 +468,102 @@ void Screen::resetDisplay(bool resetVideo)
 }
 
 /**
+ * Sets the 8-bpp palette used to render this Screen's contents.
+ * @param colors		- pointer to the set of colors
+ * @param firstcolor	- offset of the first color to replace
+ * @param ncolors		- quantity of colors to replace
+ * @param immediately	- apply palette changes immediately otherwise wait for next blit
+ */
+void Screen::setPalette(
+		SDL_Color* const colors,
+		int firstcolor,
+		int ncolors,
+		bool immediately)
+{
+	if (_numColors != 0
+		&& _numColors != ncolors
+		&& _firstColor != firstcolor)
+	{
+		// an initial palette setup has not been committed to the screen yet
+		// just update it with whatever colors are being sent now
+		std::memmove(
+				&(_deferredPalette[firstcolor]),
+				colors,
+				sizeof(SDL_Color) * ncolors);
+		_numColors = 256; // all the use cases are just a full palette with 16-color follow-ups
+		_firstColor = 0;
+	}
+	else
+	{
+		std::memmove(
+				&(_deferredPalette[firstcolor]),
+				colors,
+				sizeof(SDL_Color) * ncolors);
+		_numColors = ncolors;
+		_firstColor = firstcolor;
+	}
+
+	_surface->setPalette(
+					colors,
+					firstcolor,
+					ncolors);
+
+	// defer actual update of screen until SDL_Flip()
+	if (immediately == true
+		&& _screen->format->BitsPerPixel == 8
+		&& SDL_SetColors(
+					_screen,
+					colors,
+					firstcolor,
+					ncolors) == 0)
+	{
+		Log(LOG_DEBUG) << "Display palette doesn't match requested palette";
+	}
+
+	// Sanity check
+//	SDL_Color* newcolors (_screen->format->palette->colors);
+//	for (int i = firstcolor, j = 0; i < firstcolor + ncolors; i++, j++)
+//	{
+//		Log(LOG_DEBUG) << (int)newcolors[i].r << " - " << (int)newcolors[i].g << " - " << (int)newcolors[i].b;
+//		Log(LOG_DEBUG) << (int)colors[j].r << " + " << (int)colors[j].g << " + " << (int)colors[j].b;
+//		if (newcolors[i].r != colors[j].r ||
+//			newcolors[i].g != colors[j].g ||
+//			newcolors[i].b != colors[j].b)
+//		{
+//			Log(LOG_ERROR) << "Display palette doesn't match requested palette";
+//			break;
+//		}
+//	}
+}
+
+/**
+ * Gets this Screen's 8-bpp palette.
+ * @return, pointer to the palette's colors
+ */
+SDL_Color* Screen::getPalette() const
+{
+	return const_cast<SDL_Color*>(_deferredPalette);
+}
+
+/**
+ * Gets the width of this Screen.
+ * @return, width in pixels
+ */
+int Screen::getWidth() const
+{
+	return _screen->w;
+}
+
+/**
+ * Gets the height of this Screen.
+ * @return, height in pixels
+ */
+int Screen::getHeight() const
+{
+	return _screen->h;
+}
+
+/**
  * Gets this Screen's x-scale.
  * @return, x-scale factor
  */
@@ -580,6 +579,24 @@ double Screen::getXScale() const
 double Screen::getYScale() const
 {
 	return _scaleY;
+}
+
+/**
+ * Gets the horizontal-offset from the mid-point of this Screen in pixels.
+ * @return, horizontal-offset
+ */
+int Screen::getDX() const
+{
+	return (_baseWidth - ORIGINAL_WIDTH) / 2;
+}
+
+/**
+ * Gets the vertical-offset from the mid-point of this Screen in pixels.
+ * @return, vertical-offset
+ */
+int Screen::getDY() const
+{
+	return (_baseHeight - ORIGINAL_HEIGHT) / 2;
 }
 
 /**
@@ -696,24 +713,6 @@ bool Screen::isOpenGLEnabled() // static.
 #else
 	return Options::useOpenGL;
 #endif
-}
-
-/**
- * Gets the horizontal-offset from the mid-point of this Screen in pixels.
- * @return, horizontal-offset
- */
-int Screen::getDX() const
-{
-	return (_baseWidth - ORIGINAL_WIDTH) / 2;
-}
-
-/**
- * Gets the vertical-offset from the mid-point of this Screen in pixels.
- * @return, vertical-offset
- */
-int Screen::getDY() const
-{
-	return (_baseHeight - ORIGINAL_HEIGHT) / 2;
 }
 
 /**

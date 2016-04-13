@@ -277,8 +277,8 @@ void FlcPlayer::SDLPolling()
 // G++ linker wants it this way ...
 #ifdef _DEBUG
 					const int
-						screenWidth = Screen::ORIGINAL_WIDTH,
-						screenHeight = Screen::ORIGINAL_HEIGHT;
+						screenWidth (Screen::ORIGINAL_WIDTH),
+						screenHeight (Screen::ORIGINAL_HEIGHT);
 
 					Options::newDisplayWidth =
 					Options::displayWidth = std::max(screenWidth,
@@ -286,14 +286,14 @@ void FlcPlayer::SDLPolling()
 					Options::newDisplayHeight =
 					Options::displayHeight = std::max(screenHeight,
 													  event.resize.h);
-#else
+#else // _DEBUG
 					Options::newDisplayWidth =
 					Options::displayWidth = std::max(Screen::ORIGINAL_WIDTH,
 													 event.resize.w);
 					Options::newDisplayHeight =
 					Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
 													  event.resize.h);
-#endif
+#endif // _DEBUG
 
 					if (_mainScreen != _realScreen->getSurface()->getSurface())
 						_realScreen->resetDisplay();

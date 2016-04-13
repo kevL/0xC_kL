@@ -32,31 +32,24 @@ std::string strGLError(GLenum glErr)
 	std::string err;
 	switch (glErr)
 	{
-		case GL_INVALID_ENUM:		err = "GL_INVALID_ENUM";
-			break;
-		case GL_INVALID_VALUE:		err = "GL_INVALID_VALUE";
-			break;
-		case GL_INVALID_OPERATION:	err = "GL_INVALID_OPERATION";
-			break;
-		case GL_STACK_OVERFLOW:		err = "GL_STACK_OVERFLOW";
-			break;
-		case GL_STACK_UNDERFLOW:	err = "GL_STACK_UNDERFLOW";
-			break;
-		case GL_OUT_OF_MEMORY:		err = "GL_OUT_OF_MEMORY";
-			break;
-		case GL_NO_ERROR:			err = "No error! How did you even reach this code?";
-			break;
+		case GL_INVALID_ENUM:		err = "GL_INVALID_ENUM";		break;
+		case GL_INVALID_VALUE:		err = "GL_INVALID_VALUE";		break;
+		case GL_INVALID_OPERATION:	err = "GL_INVALID_OPERATION";	break;
+		case GL_STACK_OVERFLOW:		err = "GL_STACK_OVERFLOW";		break;
+		case GL_STACK_UNDERFLOW:	err = "GL_STACK_UNDERFLOW";		break;
+		case GL_OUT_OF_MEMORY:		err = "GL_OUT_OF_MEMORY";		break;
 
-		default:
-			err = "Unknown error code!";
+		case GL_NO_ERROR:			err = "No error! How did you even reach this code.";
+			break;
+		default:					err = "Unknown error code!";
 	}
 	return err;
 }
 
 /**
- * Helper types to convert between object pointers and function pointers.
- * Although ignored by some compilers, this conversion is an extension
- * and not guaranteed to be sane for every architecture.
+ * Helper types to convert between object-pointers and function-pointers.
+ * @note Although ignored by some compilers this conversion is an extension and
+ * not guaranteed to be sane for all architectures.
  */
 typedef void (*GenericFunctionPointer)();
 
@@ -75,342 +68,59 @@ inline static GenericFunctionPointer glGetProcAddress(const char* name)
 }
 
 #ifndef __APPLE__
-PFNGLCREATEPROGRAMPROC glCreateProgram				= nullptr;
-PFNGLUSEPROGRAMPROC glUseProgram					= nullptr;
-PFNGLCREATESHADERPROC glCreateShader				= nullptr;
-PFNGLDELETESHADERPROC glDeleteShader				= nullptr;
-PFNGLSHADERSOURCEPROC glShaderSource				= nullptr;
-PFNGLCOMPILESHADERPROC glCompileShader				= nullptr;
-PFNGLATTACHSHADERPROC glAttachShader				= nullptr;
-PFNGLDETACHSHADERPROC glDetachShader				= nullptr;
-PFNGLLINKPROGRAMPROC glLinkProgram					= nullptr;
-PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation	= nullptr;
-PFNGLUNIFORM1IPROC glUniform1i						= nullptr;
-PFNGLUNIFORM2FVPROC glUniform2fv					= nullptr;
-PFNGLUNIFORM4FVPROC glUniform4fv					= nullptr;
-#endif
+PFNGLCREATEPROGRAMPROC		glCreateProgram			= nullptr;
+PFNGLUSEPROGRAMPROC			glUseProgram			= nullptr;
+PFNGLCREATESHADERPROC		glCreateShader			= nullptr;
+PFNGLDELETESHADERPROC		glDeleteShader			= nullptr;
+PFNGLSHADERSOURCEPROC		glShaderSource			= nullptr;
+PFNGLCOMPILESHADERPROC		glCompileShader			= nullptr;
+PFNGLATTACHSHADERPROC		glAttachShader			= nullptr;
+PFNGLDETACHSHADERPROC		glDetachShader			= nullptr;
+PFNGLLINKPROGRAMPROC		glLinkProgram			= nullptr;
+PFNGLGETUNIFORMLOCATIONPROC	glGetUniformLocation	= nullptr;
+PFNGLUNIFORM1IPROC			glUniform1i				= nullptr;
+PFNGLUNIFORM2FVPROC			glUniform2fv			= nullptr;
+PFNGLUNIFORM4FVPROC			glUniform4fv			= nullptr;
+#endif // !__APPLE__
 
-void* (APIENTRYP glXGetCurrentDisplay)()	= nullptr;
+void*  (APIENTRYP glXGetCurrentDisplay)()	= nullptr;
 Uint32 (APIENTRYP glXGetCurrentDrawable)()	= nullptr;
-
-void (APIENTRYP glXSwapIntervalEXT)(
-								void* display,
-								Uint32 GLXDrawable,
-								int interval);
+void   (APIENTRYP glXSwapIntervalEXT)(
+									void* display,
+									Uint32 GLXDrawable,
+									int interval);
 
 Uint32 (APIENTRYP wglSwapIntervalEXT)(int interval);
 
+
 /**
- *
+ * Creates OpenXcom's GL-interface layer.
  */
-void OpenGL::resize( // private.
-		unsigned width,
-		unsigned height)
+OpenGL::OpenGL()
+	:
+		gltexture(0u),
+		glprogram(0u),
+		fragmentshader(0u),
+		linear(false),
+		vertexshader(0u),
+		buffer(nullptr),
+		buffer_surface(nullptr),
+		iwidth(0u),
+		iheight(0u),
+		iformat(GL_UNSIGNED_INT_8_8_8_8_REV),	// this didn't seem to be set anywhere before...
+		ibpp(32u)								// ...nor this
+{}
+
+/**
+ * dTor
+ */
+OpenGL::~OpenGL()
 {
-	if (gltexture == 0u)
-		glGenTextures(1, &gltexture);
-
-	glErrorCheck();
-
-	iwidth = width;
-	iheight = height;
-
-	if (buffer_surface)
-		delete buffer_surface;
-
-	buffer_surface = new Surface( // use OpenXcom's Surface class to get an aligned-buffer with bonus SDL_Surface
-								iwidth,
-								iheight,
-								0,0,
-								ibpp);
-
-	buffer = static_cast<uint32_t*>(buffer_surface->getSurface()->pixels);
-
-	glBindTexture(
-				GL_TEXTURE_2D,
-				gltexture);
-	glErrorCheck();
-	glPixelStorei(
-				GL_UNPACK_ROW_LENGTH,
-				iwidth);
-	glErrorCheck();
-	glTexImage2D(
-			GL_TEXTURE_2D,
-			/* mip-map level = */ 0,
-			/* internal format = */ GL_RGB16_EXT,
-			width,
-			height,
-			/* border = */ 0,
-			/* format = */ GL_BGRA,
-			iformat,
-			buffer);
-	glErrorCheck();
+	terminate();
 }
 
 /**
- *
- */
-bool OpenGL::lock(
-		uint32_t* &data,
-		unsigned &pitch)
-{
-	pitch = iwidth * ibpp;
-	return (data = buffer) != nullptr; // kL_adj.
-}
-
-/**
- *
- */
-void OpenGL::clear()
-{
-//	memset(buffer, 0, iwidth * iheight * ibpp);
-	glClearColor(0.f,0.f,0.f,1.f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glFlush();
-
-	glErrorCheck();
-}
-
-/**
- *
- */
-void OpenGL::refresh(
-			bool smooth,
-			unsigned inwidth,
-			unsigned inheight,
-			unsigned outwidth,
-			unsigned outheight,
-			int topBlackBand,
-			int bottomBlackBand,
-			int leftBlackBand,
-			int rightBlackBand)
-{
-	while (glGetError() != GL_NO_ERROR); // clear possible error from who knows where
-
-	clear();
-
-	if (shader_support
-		&& (fragmentshader || vertexshader))
-	{
-		glUseProgram(glprogram);
-		GLint location;
-
-		float inputSize[2]
-		{
-			static_cast<float>(inwidth),
-			static_cast<float>(inheight)
-		};
-
-		location = glGetUniformLocation(glprogram, "rubyInputSize");
-		glUniform2fv(
-					location,
-					1,
-					inputSize);
-
-		float outputSize[2]
-		{
-			static_cast<float>(outwidth),
-			static_cast<float>(outheight)
-		};
-
-		location = glGetUniformLocation(glprogram, "rubyOutputSize");
-		glUniform2fv(
-					location,
-					1,
-					outputSize);
-
-		float textureSize[2]
-		{
-			static_cast<float>(iwidth),
-			static_cast<float>(iheight)
-		};
-
-		location = glGetUniformLocation(glprogram, "rubyTextureSize");
-		glUniform2fv(
-					location,
-					1,
-					textureSize);
-	}
-
-	glErrorCheck();
-
-	glTexParameteri(
-				GL_TEXTURE_2D,
-				GL_TEXTURE_WRAP_S,
-				GL_CLAMP_TO_BORDER);
-	glTexParameteri(
-				GL_TEXTURE_2D,
-				GL_TEXTURE_WRAP_T,
-				GL_CLAMP_TO_BORDER);
-	glTexParameteri(
-				GL_TEXTURE_2D,
-				GL_TEXTURE_MAG_FILTER,
-				smooth? GL_LINEAR: GL_NEAREST);
-	glTexParameteri(
-				GL_TEXTURE_2D,
-				GL_TEXTURE_MIN_FILTER,
-				smooth? GL_LINEAR: GL_NEAREST);
-
-	glErrorCheck();
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(
-			0, outwidth,
-			0, outheight,
-			-1., 1.);
-	glViewport(
-			0,0,
-			outwidth,
-			outheight);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glErrorCheck();
-
-	glPixelStorei(
-				GL_UNPACK_ROW_LENGTH,
-				buffer_surface->getSurface()->pitch / buffer_surface->getSurface()->format->BytesPerPixel);
-
-	glErrorCheck();
-
-	glTexSubImage2D(
-				GL_TEXTURE_2D,
-				/* mip-map level = */ 0,
-				/* x = */ 0,
-				/* y = */ 0,
-				iwidth,
-				iheight,
-				GL_BGRA,
-				iformat,
-				buffer);
-
-	// OpenGL projection sets 0,0 as *bottom-left* of screen.
-	// therefore, below vertices flip image to support top-left source.
-	// texture range = x1:0.0, y1:0.0, x2:1.0, y2:1.0
-	// vertex range = x1:0, y1:0, x2:width, y2:height
-	double
-		w (double(inwidth)  / double(iwidth)),
-		h (double(inheight) / double(iheight));
-	int
-		u1 (leftBlackBand),
-		u2 (outwidth - rightBlackBand),
-		v1 (outheight - topBlackBand),
-		v2 (bottomBlackBand);
-
-	glBegin(GL_TRIANGLE_STRIP);
-	glTexCoord2f(0, 0); glVertex3i(u1, v1, 0);
-	glTexCoord2f(static_cast<float>(w), 0); glVertex3i(u2, v1, 0); // kL: casting here.
-	glTexCoord2f(0, static_cast<float>(h)); glVertex3i(u1, v2, 0);
-	glTexCoord2f(static_cast<float>(w), static_cast<float>(h)); glVertex3i(u2, v2, 0);
-	glEnd();
-
-	glErrorCheck();
-
-	glFlush();
-
-	glErrorCheck();
-
-	if (shader_support == true)
-		glUseProgram(0u);
-}
-
-/**
- *
- */
-void OpenGL::set_shader(const char* source_yaml_filename)
-{
-	if (shader_support == true)
-	{
-		if (fragmentshader != 0u)
-		{
-			glDetachShader(
-						glprogram,
-						fragmentshader);
-			glDeleteShader(fragmentshader);
-			fragmentshader = 0u;
-		}
-
-		if (vertexshader != 0u)
-		{
-			glDetachShader(
-						glprogram,
-						vertexshader);
-			glDeleteShader(vertexshader);
-			vertexshader = 0u;
-		}
-
-		if (source_yaml_filename != nullptr
-			&& std::strlen(source_yaml_filename) != 0u)
-		{
-			try
-			{
-				YAML::Node document (YAML::LoadFile(source_yaml_filename));
-
-				const std::string language (document["language"].as<std::string>());
-				const bool is_glsl (language == "GLSL");
-
-
-				linear = document["linear"].as<bool>(false); // some shaders want texture linear interpolation and some don't
-				const std::string fragment_source	(document["fragment"]	.as<std::string>(""));
-				const std::string vertex_source		(document["vertex"]		.as<std::string>(""));
-
-				if (is_glsl == true)
-				{
-					if (fragment_source.empty() == false)
-						set_fragment_shader(fragment_source.c_str());
-
-					if (vertex_source.empty() == false)
-						set_vertex_shader(vertex_source.c_str());
-				}
-			}
-			catch (YAML::Exception &e)
-			{
-				Log(LOG_ERROR) << source_yaml_filename << ": " << e.what();
-			}
-		}
-
-		glLinkProgram(glprogram);
-	}
-}
-
-/**
- *
- */
-void OpenGL::set_fragment_shader(const char* source)
-{
-	fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(
-				fragmentshader,
-				1,
-				&source,
-				0);
-	glCompileShader(fragmentshader);
-	glAttachShader(
-				glprogram,
-				fragmentshader);
-}
-
-/**
- *
- */
-void OpenGL::set_vertex_shader(const char* source)
-{
-	vertexshader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(
-				vertexshader,
-				1,
-				&source,
-				0);
-	glCompileShader(vertexshader);
-	glAttachShader(
-				glprogram,
-				vertexshader);
-}
-
-/**
- *
+ * Because you're too cool to initialize everything in the constructor.
  */
 void OpenGL::init(
 		int w,
@@ -473,47 +183,10 @@ void OpenGL::init(
 }
 
 /**
- * Tries to set VSync.
- * @note Currently not working in Battlescape ... or it is but doesn't get set.
- * Or I'm using hardware or software or this or that or double-buffering or
- * SDL with OpenGL or SDL without OpenGL or OpenGL without SDL ... anyway my
- * screen tears. I don't like it.
+ * Exits - because destructors are uncool for people.
+ * @note Helps the destructor.
  */
-void OpenGL::setVSync(bool sync)
-{
-	//Log(LOG_INFO) << "OpenGL::setVSync()";
-	int interval;
-	if (sync == true)	interval = 1;
-	else				interval = 0;
-
-	if (   glXGetCurrentDisplay		!= nullptr
-		&& glXGetCurrentDrawable	!= nullptr
-		&& glXSwapIntervalEXT		!= nullptr)
-	{
-		//Log(LOG_INFO) << ". function-ptrs Okay";
-		void* dpy (glXGetCurrentDisplay());
-
-		const Uint32 drawable (glXGetCurrentDrawable());
-		if (drawable != 0)
-		{
-			glXSwapIntervalEXT(
-							dpy,
-							drawable,
-							interval);
-			//Log(LOG_INFO) << ". . Made an attempt to set vsync via GLX.";
-		}
-	}
-	else if (wglSwapIntervalEXT != 0u)
-	{
-		wglSwapIntervalEXT(interval); //SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1); //SDL_GL_SetSwapInterval(0)
-		//Log(LOG_INFO) << ". Made an attempt to set vsync via WGL.";
-	}
-}
-
-/**
- * Helps the destructor.
- */
-void OpenGL::terminate()
+void OpenGL::terminate() // private.
 {
 	if (gltexture != 0u)
 	{
@@ -532,30 +205,351 @@ void OpenGL::terminate()
 }
 
 /**
- * Creates OpenXcom's GL-interface layer.
+ * Makes all the pixels go away.
  */
-OpenGL::OpenGL()
-	:
-		gltexture(0u),
-		glprogram(0u),
-		fragmentshader(0u),
-		linear(false),
-		vertexshader(0u),
-		buffer(nullptr),
-		buffer_surface(nullptr),
-		iwidth(0u),
-		iheight(0u),
-		iformat(GL_UNSIGNED_INT_8_8_8_8_REV),	// this didn't seem to be set anywhere before...
-		ibpp(32u)								// ...nor this
-{}
+void OpenGL::clear() // private.
+{
+//	memset(buffer, 0, iwidth * iheight * ibpp);
+	glClearColor(0.f,0.f,0.f,1.f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glFlush();
+
+	glErrorCheck();
+}
 
 /**
- * dTor
+ * Makes the buffer show up on-screen.
  */
-OpenGL::~OpenGL()
+void OpenGL::refresh(
+		bool smooth,
+		unsigned inwidth,
+		unsigned inheight,
+		unsigned outwidth,
+		unsigned outheight,
+		int topBlackBand,
+		int bottomBlackBand,
+		int leftBlackBand,
+		int rightBlackBand)
 {
-	terminate();
+	while (glGetError() != GL_NO_ERROR); // clear possible error from Lord knows where
+
+	clear();
+
+	if (shader_support == true
+		&& (fragmentshader != 0u || vertexshader != 0u))
+	{
+		glUseProgram(glprogram);
+		GLint location;
+
+		float inputSize[2]
+		{
+			static_cast<float>(inwidth),
+			static_cast<float>(inheight)
+		};
+
+		location = glGetUniformLocation(glprogram, "rubyInputSize");
+		glUniform2fv(
+					location,
+					1,
+					inputSize);
+
+		float outputSize[2]
+		{
+			static_cast<float>(outwidth),
+			static_cast<float>(outheight)
+		};
+
+		location = glGetUniformLocation(glprogram, "rubyOutputSize");
+		glUniform2fv(
+					location,
+					1,
+					outputSize);
+
+		float textureSize[2]
+		{
+			static_cast<float>(iwidth),
+			static_cast<float>(iheight)
+		};
+
+		location = glGetUniformLocation(glprogram, "rubyTextureSize");
+		glUniform2fv(
+					location,
+					1,
+					textureSize);
+	}
+
+	glErrorCheck();
+
+	glTexParameteri(
+				GL_TEXTURE_2D,
+				GL_TEXTURE_WRAP_S,
+				GL_CLAMP_TO_BORDER);
+	glTexParameteri(
+				GL_TEXTURE_2D,
+				GL_TEXTURE_WRAP_T,
+				GL_CLAMP_TO_BORDER);
+	glTexParameteri(
+				GL_TEXTURE_2D,
+				GL_TEXTURE_MAG_FILTER,
+				(smooth == true) ? GL_LINEAR : GL_NEAREST);
+	glTexParameteri(
+				GL_TEXTURE_2D,
+				GL_TEXTURE_MIN_FILTER,
+				(smooth == true) ? GL_LINEAR : GL_NEAREST);
+
+	glErrorCheck();
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(
+			0., static_cast<double>(outwidth),
+			0., static_cast<double>(outheight),
+			-1., 1.);
+	glViewport(
+			0,0,
+			outwidth,
+			outheight);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glErrorCheck();
+
+	glPixelStorei(
+				GL_UNPACK_ROW_LENGTH,
+				buffer_surface->getSurface()->pitch / buffer_surface->getSurface()->format->BytesPerPixel);
+
+	glErrorCheck();
+
+	glTexSubImage2D(
+				GL_TEXTURE_2D,
+				/* mip-map level = */ 0,
+				/* x = */ 0,
+				/* y = */ 0,
+				iwidth, iheight,
+				GL_BGRA,
+				iformat,
+				buffer);
+
+	// OpenGL projection sets 0,0 as *bottom-left* of screen.
+	// therefore, below vertices flip image to support top-left source.
+	// texture range = x1:0.0, y1:0.0, x2:1.0, y2:1.0
+	// vertex range = x1:0, y1:0, x2:width, y2:height
+	const float
+		w (static_cast<float>(inwidth)  / static_cast<float>(iwidth)),
+		h (static_cast<float>(inheight) / static_cast<float>(iheight));
+	const int
+		u1 (leftBlackBand),
+		u2 (outwidth - rightBlackBand),
+		v1 (outheight - topBlackBand),
+		v2 (bottomBlackBand);
+
+	glBegin(GL_TRIANGLE_STRIP);
+
+	glTexCoord2f(0.f, 0.f);
+	glVertex3i(u1, v1, 0);
+
+	glTexCoord2f(w, 0);
+	glVertex3i(u2, v1, 0);
+
+	glTexCoord2f(0.f, h);
+	glVertex3i(u1, v2, 0);
+
+	glTexCoord2f(w, h);
+	glVertex3i(u2, v2, 0);
+
+	glEnd();
+
+	glErrorCheck();
+
+	glFlush();
+
+	glErrorCheck();
+
+	if (shader_support == true)
+		glUseProgram(0u);
 }
+
+/**
+ * Resizes the internal buffer.
+ */
+void OpenGL::resize( // private.
+		unsigned width,
+		unsigned height)
+{
+	if (gltexture == 0u)
+		glGenTextures(1, &gltexture);
+
+	glErrorCheck();
+
+	iwidth = width;
+	iheight = height;
+
+	if (buffer_surface)
+		delete buffer_surface;
+
+	buffer_surface = new Surface( // use OpenXcom's Surface class to get an aligned-buffer with bonus SDL_Surface
+								iwidth,
+								iheight,
+								0,0,
+								ibpp);
+
+	buffer = static_cast<uint32_t*>(buffer_surface->getSurface()->pixels);
+
+	glBindTexture(
+				GL_TEXTURE_2D,
+				gltexture);
+	glErrorCheck();
+	glPixelStorei(
+				GL_UNPACK_ROW_LENGTH,
+				iwidth);
+	glErrorCheck();
+	glTexImage2D(
+				GL_TEXTURE_2D,
+				/* mip-map level = */ 0,
+				/* internal format = */ GL_RGB16_EXT,
+				width,
+				height,
+				/* border = */ 0,
+				/* format = */ GL_BGRA,
+				iformat,
+				buffer);
+	glErrorCheck();
+}
+
+/**
+ * Sets a shader!
+ */
+void OpenGL::set_shader(const char* source_yaml_filename)
+{
+	if (shader_support == true)
+	{
+		if (fragmentshader != 0u)
+		{
+			glDetachShader(
+						glprogram,
+						fragmentshader);
+			glDeleteShader(fragmentshader);
+			fragmentshader = 0u;
+		}
+
+		if (vertexshader != 0u)
+		{
+			glDetachShader(
+						glprogram,
+						vertexshader);
+			glDeleteShader(vertexshader);
+			vertexshader = 0u;
+		}
+
+		if (source_yaml_filename != nullptr
+			&& std::strlen(source_yaml_filename) != 0u)
+		{
+			try
+			{
+				YAML::Node document (YAML::LoadFile(source_yaml_filename));
+
+				linear = document["linear"].as<bool>(false); // some shaders want texture-linear-interpolation and some don't
+
+				if (document["language"].as<std::string>() == "GLSL")
+				{
+					const std::string
+						fragment_source	(document["fragment"]	.as<std::string>()),
+						vertex_source	(document["vertex"]		.as<std::string>());
+
+					if (fragment_source.empty() == false)
+						set_fragment_shader(fragment_source.c_str());
+
+					if (vertex_source.empty() == false)
+						set_vertex_shader(vertex_source.c_str());
+				}
+			}
+			catch (YAML::Exception &e)
+			{
+				Log(LOG_ERROR) << source_yaml_filename << ": " << e.what();
+			}
+		}
+
+		glLinkProgram(glprogram);
+	}
+}
+
+/**
+ * Sets a fragment-shader.
+ */
+void OpenGL::set_fragment_shader(const char* source) // private.
+{
+	fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(
+				fragmentshader,
+				1,
+				&source,
+				0);
+	glCompileShader(fragmentshader);
+	glAttachShader(
+				glprogram,
+				fragmentshader);
+}
+
+/**
+ * Sets a vertex-shader.
+ */
+void OpenGL::set_vertex_shader(const char* source) // private.
+{
+	vertexshader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(
+				vertexshader,
+				1,
+				&source,
+				0);
+	glCompileShader(vertexshader);
+	glAttachShader(
+				glprogram,
+				vertexshader);
+}
+
+/**
+ * Tries to set VSync.
+ * @note Currently not working in Battlescape ... or it is but doesn't get set.
+ * Or I'm using hardware or software or this or that or double-buffering or
+ * SDL with OpenGL or SDL without OpenGL or OpenGL without SDL ... anyway my
+ * screen tears. I don't like it.
+ */
+void OpenGL::setVSync(bool sync)
+{
+	int interval;
+	if (sync == true)	interval = 1;
+	else				interval = 0;
+
+	if (   glXGetCurrentDisplay		!= nullptr
+		&& glXGetCurrentDrawable	!= nullptr
+		&& glXSwapIntervalEXT		!= nullptr)
+	{
+		void* dpy (glXGetCurrentDisplay());
+
+		const Uint32 drawable (glXGetCurrentDrawable());
+		if (drawable != 0u)
+			glXSwapIntervalEXT(
+							dpy,
+							drawable,
+							interval);
+	}
+	else if (wglSwapIntervalEXT != 0u)
+		wglSwapIntervalEXT(interval);	// Other:
+										// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
+										// SDL_GL_SetSwapInterval(0)
+}
+
+/**
+ * Sets a pointer to a data-buffer where the image-data is written.
+ *
+bool OpenGL::lock(
+		uint32_t* &data,
+		unsigned &pitch)
+{
+	pitch = iwidth * ibpp;
+	return (data = buffer) != nullptr;
+} */
 
 }
 
