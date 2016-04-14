@@ -19,6 +19,8 @@
 
 #include "UfopaediaStartState.h"
 
+#include <cstring>
+
 #include "ArticleStateItem.h" // reset FirearmInfo.
 #include "UfopaediaSelectState.h"
 
@@ -89,7 +91,7 @@ UfopaediaStartState::UfopaediaStartState(bool tactical)
 			std::memcpy(
 					pal,
 					_game->getScreen()->getPalette(),
-					sizeof(SDL_Color) * 256);
+					sizeof(SDL_Color) * 256u);
 
 			for (Uint8
 					i = FADE_STEPS;

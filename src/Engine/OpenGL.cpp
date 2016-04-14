@@ -12,6 +12,7 @@
 
 #include "OpenGL.h"
 
+#include <cstring>
 //#include <fstream>
 
 #include <yaml-cpp/yaml.h>
@@ -454,8 +455,8 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 				if (document["language"].as<std::string>() == "GLSL")
 				{
 					const std::string
-						fragment_source	(document["fragment"]	.as<std::string>()),
-						vertex_source	(document["vertex"]		.as<std::string>());
+						fragment_source	(document["fragment"]	.as<std::string>("")), // NOTE: YAML needs those quotes here.
+						vertex_source	(document["vertex"]		.as<std::string>(""));
 
 					if (fragment_source.empty() == false)
 						set_fragment_shader(fragment_source.c_str());

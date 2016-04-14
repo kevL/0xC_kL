@@ -239,7 +239,7 @@ void Screen::flip()
 						_firstColor,
 						_numColors) == 0)
 		{
-			Log(LOG_INFO) << "Display palette doesn't match requested palette";
+			Log(LOG_INFO) << "Display palette doesn't match requested palette.";
 		}
 
 		_numColors = 0;
@@ -502,7 +502,7 @@ void Screen::setPalette(
 					firstcolor,
 					ncolors) == 0)
 	{
-		Log(LOG_DEBUG) << "Display palette doesn't match requested palette";
+		Log(LOG_DEBUG) << "Display palette doesn't match requested palette.";
 	}
 
 	// Sanity check
