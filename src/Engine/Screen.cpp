@@ -152,7 +152,7 @@ void Screen::handle(Action* action)
 			case SDLK_F8: // && Options::debug == true
 #ifdef _WIN32
 				MessageBeep(MB_OK);
-#endif
+#endif // _WIN32
 				switch (Timer::coreInterval)
 				{
 					case 1: Timer::coreInterval =  6u; break;
@@ -176,7 +176,7 @@ void Screen::handle(Action* action)
 				{
 #ifdef _WIN32
 					MessageBeep(MB_ICONASTERISK); // start ->
-#endif
+#endif // _WIN32
 					std::ostringstream oststr;
 /*					int i = 0;
 					do {
@@ -190,7 +190,7 @@ void Screen::handle(Action* action)
 					screenshot(oststr.str());
 #ifdef _WIN32
 					MessageBeep(MB_OK); // end.
-#endif
+#endif // _WIN32
 /*					std::ostringstream oststr;
 					int i = 0;
 					do
@@ -290,7 +290,7 @@ void Screen::resetDisplay(bool resetVideo)
 
 #ifdef __linux__
 	Uint32 oldFlags (_flags);
-#endif
+#endif // __linux__
 
 	setVideoFlags();
 
@@ -334,7 +334,7 @@ void Screen::resetDisplay(bool resetVideo)
 			SDL_WM_SetCaption(title.c_str(), 0);
 			SDL_SetCursor(SDL_CreateCursor(&cursor, &cursor, 1,1,0,0));
 		}
-#endif
+#endif // __linux__
 
 		Log(LOG_INFO) << "Attempting to set display to " << width << "x" << height << "x" << _bpp << " ...";
 		_screen = SDL_SetVideoMode(
@@ -441,18 +441,20 @@ void Screen::resetDisplay(bool resetVideo)
 	if (isOpenGLEnabled() == true)
 	{
 		_glOutput.init(_baseWidth, _baseHeight);
-		_glOutput.linear = Options::useOpenGLSmoothing; // the setting in the shader-file will override this though
-		_glOutput.setVSync(Options::vSyncForOpenGL);
 
 #	ifdef _DEBUG
-		_glOutput.set_shader(CrossPlatform::getDataFile("Shaders/Raw.OpenGL.shader").c_str());
-#	else
+//		_glOutput.set_shader(CrossPlatform::getDataFile("Shaders/Raw.OpenGL.shader").c_str());
+		_glOutput.set_shader(CrossPlatform::getDataFile(nullptr).c_str());
+#	else // _DEBUG
 		_glOutput.set_shader(CrossPlatform::getDataFile(Options::openGLShader).c_str());
-#	endif
+#	endif // _DEBUG
+
+		_glOutput.linear = Options::useOpenGLSmoothing; // the setting in the shader-file will override this though. So put it after the shader-invocation.
+		_glOutput.setVSync(Options::vSyncForOpenGL);
 
 		OpenGL::checkErrors = Options::checkOpenGLErrors;
 	}
-#endif
+#endif // !__NO_OPENGL
 
 	if (_screen->format->BitsPerPixel == 8)
 		setPalette(getPalette());
@@ -643,9 +645,8 @@ void Screen::screenshot(const std::string& file) const
 					GL_UNSIGNED_BYTE,
 					static_cast<Uint8*>(screenshot->pixels) + y * screenshot->pitch);
 		}
-
 		glErrorCheck();
-#endif
+#endif // !__NO_OPENGL
 	}
 	else
 		SDL_BlitSurface(
@@ -660,10 +661,8 @@ void Screen::screenshot(const std::string& file) const
 								getWidth() - getWidth() % 4,
 								getHeight(),
 								LCT_RGB));
-	if (error != 0)
-	{
+	if (error != 0u)
 		Log(LOG_ERROR) << "Saving to PNG failed: " << lodepng_error_text(error);
-	}
 
 	SDL_FreeSurface(screenshot);
 }
@@ -682,15 +681,10 @@ bool Screen::is32bitEnabled() // static.
 		baseH (Options::baseYResolution);
 
 	return ((Options::useHQXFilter == true || Options::useXBRZFilter == true)
-			&& ((	   w == baseW * 2
-					&& h == baseH * 2)
-				|| (   w == baseW * 3
-					&& h == baseH * 3)
-				|| (   w == baseW * 4
-					&& h == baseH * 4)
-				|| (   w == baseW * 5
-					&& h == baseH * 5
-					&& Options::useXBRZFilter == true)));
+		&& ((	w == baseW * 2 && h == baseH * 2)
+			|| (w == baseW * 3 && h == baseH * 3)
+			|| (w == baseW * 4 && h == baseH * 4)
+			|| (w == baseW * 5 && h == baseH * 5 && Options::useXBRZFilter == true)));
 }
 
 /**
@@ -701,17 +695,17 @@ bool Screen::isOpenGLEnabled() // static.
 {
 #ifdef __NO_OPENGL
 	return false;
-#else
+#else // __NO_OPENGL
 	return Options::useOpenGL;
-#endif
+#endif // __NO_OPENGL
 }
 
 /**
  * Changes a given scale and if necessary switches the current base-resolution.
  * @param type		- reference which scale option is in use (Battlescape or Geoscape)
- * @param selection	- the new scale level
- * @param width		- reference which x scale to adjust
- * @param height	- reference which y scale to adjust
+ * @param selection	- the new scale-level
+ * @param width		- reference which x-scale to adjust
+ * @param height	- reference which y-scale to adjust
  * @param change	- true to change the current scale
  */
 void Screen::updateScale( // static.
@@ -771,12 +765,12 @@ void Screen::updateScale( // static.
 					 screenWidth);
 	height = std::max(height,
 					  screenHeight);
-#else
+#else // _DEBUG
 	width = std::max(width,
 					 Screen::ORIGINAL_WIDTH);
 	height = std::max(height,
 					  Screen::ORIGINAL_HEIGHT);
-#endif
+#endif // _DEBUG
 
 	if (change == true
 		&& (   Options::baseXResolution != width

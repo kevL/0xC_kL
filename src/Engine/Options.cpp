@@ -727,13 +727,16 @@ void backupDisplay()
 {
 	Options::newDisplayWidth		= Options::displayWidth;
 	Options::newDisplayHeight		= Options::displayHeight;
-	Options::newBattlescapeScale	= Options::battlescapeScale;
+
 	Options::newGeoscapeScale		= Options::geoscapeScale;
-	Options::newOpenGL				= Options::useOpenGL;
+	Options::newBattlescapeScale	= Options::battlescapeScale;
+
 	Options::newScaleFilter			= Options::useScaleFilter;
 	Options::newHQXFilter			= Options::useHQXFilter;
-	Options::newOpenGLShader		= Options::openGLShader;
 	Options::newXBRZFilter			= Options::useXBRZFilter;
+	Options::newOpenGL				= Options::useOpenGL;
+
+	Options::newOpenGLShader		= Options::openGLShader;
 }
 
 /**
@@ -743,13 +746,16 @@ void switchDisplay()
 {
 	std::swap(displayWidth,		newDisplayWidth);
 	std::swap(displayHeight,	newDisplayHeight);
-	std::swap(useOpenGL,		newOpenGL);
-	std::swap(useScaleFilter,	newScaleFilter);
-	std::swap(battlescapeScale,	newBattlescapeScale);
+
 	std::swap(geoscapeScale,	newGeoscapeScale);
+	std::swap(battlescapeScale,	newBattlescapeScale);
+
+	std::swap(useScaleFilter,	newScaleFilter);
 	std::swap(useHQXFilter,		newHQXFilter);
-	std::swap(openGLShader,		newOpenGLShader);
 	std::swap(useXBRZFilter,	newXBRZFilter);
+	std::swap(useOpenGL,		newOpenGL);
+
+	std::swap(openGLShader,		newOpenGLShader);
 }
 
 }

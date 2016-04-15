@@ -980,8 +980,7 @@ bool naturalCompare(
 			i != a.end() && j != b.end() && tolower(*i) == tolower(*j);
 			i++, j++);
 
-	return (i != a.end()
-			&& j != b.end()
+	return (i != a.end() && j != b.end()
 			&& tolower(*i) < tolower(*j));
 #endif
 }

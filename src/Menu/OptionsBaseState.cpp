@@ -259,9 +259,10 @@ void OptionsBaseState::btnOkClick(Action*)
 		_game->setState(new StartState());
 	else if (  Options::displayWidth	!= Options::newDisplayWidth // confirm any video-option changes ->
 			|| Options::displayHeight	!= Options::newDisplayHeight
-			|| Options::useOpenGL		!= Options::newOpenGL
 			|| Options::useScaleFilter	!= Options::newScaleFilter
 			|| Options::useHQXFilter	!= Options::newHQXFilter
+			|| Options::useXBRZFilter	!= Options::newXBRZFilter // kL
+			|| Options::useOpenGL		!= Options::newOpenGL
 			|| Options::openGLShader	!= Options::newOpenGLShader)
 	{
 		_game->pushState(new OptionsConfirmState(_origin));
@@ -303,7 +304,7 @@ void OptionsBaseState::btnCancelClick(Action*)
 }
 
 /**
- * Restores the Options to default settings.
+ * Restores the Options to default-settings.
  * @param action - pointer to an Action
  */
 void OptionsBaseState::btnDefaultClick(Action*)

@@ -324,7 +324,8 @@ void OpenGL::refresh(
 
 	glPixelStorei(
 				GL_UNPACK_ROW_LENGTH,
-				buffer_surface->getSurface()->pitch / buffer_surface->getSurface()->format->BytesPerPixel);
+				static_cast<int>(buffer_surface->getSurface()->pitch)
+			  / static_cast<int>(buffer_surface->getSurface()->format->BytesPerPixel));
 
 	glErrorCheck();
 
@@ -356,7 +357,7 @@ void OpenGL::refresh(
 	glTexCoord2f(0.f, 0.f);
 	glVertex3i(u1, v1, 0);
 
-	glTexCoord2f(w, 0);
+	glTexCoord2f(w, 0.f);
 	glVertex3i(u2, v1, 0);
 
 	glTexCoord2f(0.f, h);

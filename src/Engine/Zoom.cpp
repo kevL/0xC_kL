@@ -670,13 +670,13 @@ bool Zoom::haveSSE2() // static.
  * @param glOut				- pointer to OpenGL output.
  */
 void Zoom::flipWithZoom( // static.
-		SDL_Surface* src,
-		SDL_Surface* dst,
+		SDL_Surface* const src,
+		SDL_Surface* const dst,
 		int topBlackBand,
 		int bottomBlackBand,
 		int leftBlackBand,
 		int rightBlackBand,
-		OpenGL* glOut)
+		OpenGL* const glOut)
 {
 	if (Screen::isOpenGLEnabled() == true)
 	{
@@ -769,22 +769,21 @@ void Zoom::flipWithZoom( // static.
  * @return, 0 for success or -1 for error.
  */
 int Zoom::_zoomSurfaceY( // static.
-		SDL_Surface* src,
-		SDL_Surface* dst,
+		SDL_Surface* const src,
+		SDL_Surface* const dst,
 		int flipx,
 		int flipy)
 {
 	int
-		x,y;
+		x,y,
+		csx,csy,
+		dgap;
 	static Uint32
-		*sax,*say;
+		* sax,* say;
 	Uint32
-		*csax,*csay;
-	int
-		csx,csy;
+		* csax,* csay;
 	Uint8
-		*sp,*dp,*csp;
-	int dgap;
+		* sp,* dp,* csp;
 
 	static bool proclaimed (false);
 
@@ -792,18 +791,18 @@ int Zoom::_zoomSurfaceY( // static.
 	{
 		if (Options::useXBRZFilter == true)
 		{
-			// check the resolution to see which scale is needed
-			for (size_t
+			for (size_t // check the resolution to see which scale is needed
 					factor = 2u;
-					factor <= 5u;
+					factor != 6u;
 					++factor)
 			{
-				if (dst->w == src->w * (int)factor && dst->h == src->h * (int)factor)
+				if (   dst->w == src->w * static_cast<int>(factor)
+					&& dst->h == src->h * static_cast<int>(factor))
 				{
 					xbrz::scale(
 							factor,
-							(uint32_t*)src->pixels,
-							(uint32_t*)dst->pixels,
+							static_cast<uint32_t*>(src->pixels),
+							static_cast<uint32_t*>(dst->pixels),
 							src->w, src->h);
 					return 0;
 				}
@@ -822,35 +821,38 @@ int Zoom::_zoomSurfaceY( // static.
 
 			// HQX_API void HQX_CALLCONV hq2x_32_rb( uint32_t * src, uint32_t src_rowBytes, uint32_t * dest, uint32_t dest_rowBytes, int width, int height );
 
-			if (dst->w == src->w * 2 && dst->h == src->h * 2)
+			if (   dst->w == src->w * 2
+				&& dst->h == src->h * 2)
 			{
 				hq2x_32_rb(
-						(uint32_t*)src->pixels,
-						src->pitch,
-						(uint32_t*)dst->pixels,
-						dst->pitch,
+						static_cast<uint32_t*>(src->pixels),
+						static_cast<uint32_t>(src->pitch),
+						static_cast<uint32_t*>(dst->pixels),
+						static_cast<uint32_t>(dst->pitch),
 						src->w, src->h);
 				return 0;
 			}
 
-			if (dst->w == src->w * 3 && dst->h == src->h * 3)
+			if (   dst->w == src->w * 3
+				&& dst->h == src->h * 3)
 			{
 				hq3x_32_rb(
-						(uint32_t*)src->pixels,
-						src->pitch,
-						(uint32_t*)dst->pixels,
-						dst->pitch,
+						static_cast<uint32_t*>(src->pixels),
+						static_cast<uint32_t>(src->pitch),
+						static_cast<uint32_t*>(dst->pixels),
+						static_cast<uint32_t>(dst->pitch),
 						src->w, src->h);
 				return 0;
 			}
 
-			if (dst->w == src->w * 4 && dst->h == src->h * 4)
+			if (   dst->w == src->w * 4
+				&& dst->h == src->h * 4)
 			{
 				hq4x_32_rb(
-						(uint32_t*)src->pixels,
-						src->pitch,
-						(uint32_t*)dst->pixels,
-						dst->pitch,
+						static_cast<uint32_t*>(src->pixels),
+						static_cast<uint32_t>(src->pitch),
+						static_cast<uint32_t*>(dst->pixels),
+						static_cast<uint32_t>(dst->pitch),
 						src->w, src->h);
 				return 0;
 			}
@@ -859,23 +861,28 @@ int Zoom::_zoomSurfaceY( // static.
 
 	if (Options::useScaleFilter == true)
 	{
-		// check the resolution to see which of scale2x, scale3x, etc. we need
-		for (size_t
+		for (unsigned // check the resolution to see which of scale2x, scale3x, etc. it needs
 				factor = 2u;
-				factor <= 4u;
+				factor != 5u;
 				++factor)
 		{
-			if (dst->w == src->w * (int)factor && dst->h == src->h * (int)factor
-				&& scale_precondition(factor, src->format->BytesPerPixel, src->w, src->h) == 0)
+			if (   dst->w == src->w * static_cast<int>(factor)
+				&& dst->h == src->h * static_cast<int>(factor)
+				&& scale_precondition(
+									factor,
+									static_cast<unsigned>(src->format->BytesPerPixel),
+									static_cast<unsigned>(src->w),
+									static_cast<unsigned>(src->h)) == 0)
 			{
 				scale(
-					factor,
-					dst->pixels,
-					dst->pitch,
-					src->pixels,
-					src->pitch,
-					src->format->BytesPerPixel,
-					src->w, src->h);
+						factor,
+						dst->pixels,
+						dst->pitch,
+						src->pixels,
+						src->pitch,
+						src->format->BytesPerPixel,
+						static_cast<unsigned>(src->w),
+						static_cast<unsigned>(src->h));
 				return 0;
 			}
 		}
@@ -934,30 +941,32 @@ int Zoom::_zoomSurfaceY( // static.
 		proclaimed = true;
 	}
 
-	// Allocate memory for row increments
-	if ((sax = (Uint32*)realloc(sax, (dst->w + 1) * sizeof(Uint32))) == nullptr)
+	// Allocate memory for row increments.
+	if ((sax = static_cast<Uint32*>(realloc(sax, (dst->w + 1) * sizeof(Uint32)))) == nullptr)
 	{
-		sax = 0;
+		sax = nullptr;
 		return -1;
 	}
 
-	if ((say = (Uint32*)realloc(say, (dst->h + 1) * sizeof(Uint32))) == nullptr)
+	if ((say = static_cast<Uint32*>(realloc(say, (dst->h + 1) * sizeof(Uint32)))) == nullptr)
 	{
-		say = 0;
+		say = nullptr;
 		//free(sax);
 		return -1;
 	}
 
-	// Pointer setup
+	// Pointer setup.
 	sp =
-	csp = (Uint8*)src->pixels;
-	dp = (Uint8*)dst->pixels;
-	dgap = dst->pitch - dst->w;
+	csp = static_cast<Uint8*>(src->pixels);
+	dp  = static_cast<Uint8*>(dst->pixels);
+	dgap = static_cast<int>(dst->pitch) - dst->w;
 
-	if (flipx != 0) csp += (src->w-1);
-	if (flipy != 0) csp = ((Uint8*)csp + src->pitch*(src->h-1));
+	if (flipx != 0) csp += (src->w - 1);
+	if (flipy != 0) csp  = ((Uint8*)csp + src->pitch * (src->h - 1)); // okay ... so what's the proper C++ cast for that.
+//	if (flipy != 0) csp  = (static_cast<Uint8*>(csp + static_cast<int>(src->pitch) * (src->h - 1)));
+//	if (flipy != 0) csp  = (static_cast<Uint8*>(csp) + static_cast<int>(src->pitch) * (src->h - 1));
 
-	// Precalculate row increments
+	// Precalculate row increments.
 	csx = 0;
 	csax = sax;
 	for (x = 0; x < dst->w; ++x)
@@ -986,7 +995,7 @@ int Zoom::_zoomSurfaceY( // static.
 		(*csay) *= src->pitch * ((flipy != 0) ? -1 : 1);
 		++csay;
 	}
-	// Draw
+	// Draw.
 	csay = say;
 	for (y = 0; y < dst->h; ++y)
 	{
@@ -994,22 +1003,22 @@ int Zoom::_zoomSurfaceY( // static.
 		sp = csp;
 		for (x = 0; x < dst->w; ++x)
 		{
-			// Draw
+			// Draw.
 			*dp = *sp;
-			// Advance source pointers
+			// Advance source pointers.
 			sp += (*csax);
 			++csax;
-			// Advance destination pointer
+			// Advance destination pointer.
 			++dp;
 		}
-		// Advance source pointer (for row)
+		// Advance source pointer (for row).
 		csp += (*csay);
 		++csay;
-		// Advance destination pointers
+		// Advance destination pointers.
 		dp += dgap;
 	}
 
-	// Never remove temp arrays
+	// Never remove temp arrays.
 //	free(sax);
 //	free(say);
 

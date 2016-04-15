@@ -429,9 +429,9 @@ void Game::run()
 
 			if (_init == true)
 			{
-				if (Options::FPS != 0
+				if (Options::FPS != 0				// update slice-delay-time based on the time of the last draw
 					&& (Options::useOpenGL == false || Options::vSyncForOpenGL == false))
-				{										// update FPS-delay-time based on the time of the last draw
+				{
 					int userFPS;
 					if ((SDL_GetAppState() & SDL_APPINPUTFOCUS))
 						userFPS = Options::FPS;

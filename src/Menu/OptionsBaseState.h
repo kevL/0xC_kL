@@ -35,22 +35,6 @@ enum OptionsOrigin
 	OPT_BATTLESCAPE	// 2
 };
 
-enum DisplayMode
-{
-	FULLSCREEN,				// 0
-	WINDOWED_STATIC,		// 1
-	WINDOWED_BORDERLESS,	// 2
-	WINDOWED_RESIZEABLE		// 3
-};
-
-enum DisplayFilter
-{
-	FILTER_SHADER,	// 0
-	FILTER_SCALE,	// 1
-	FILTER_HQX,		// 2
-	FILTER_XBRZ		// 3
-};
-
 
 class Text;
 class TextButton;

@@ -464,38 +464,38 @@ void OptionsVideoState::cbxFilterChange(Action*)
 	switch (_cbxFilter->getSelected())
 	{
 		case 0: // none
-			Options::newOpenGL		= false;
 			Options::newScaleFilter	= false;
 			Options::newHQXFilter	= false;
 			Options::newXBRZFilter	= false;
+			Options::newOpenGL		= false;
 			break;
 
 		case 1: // scale
-			Options::newOpenGL		= false;
 			Options::newScaleFilter	= true;
 			Options::newHQXFilter	= false;
 			Options::newXBRZFilter	= false;
+			Options::newOpenGL		= false;
 			break;
 
 		case 2: // HQx
-			Options::newOpenGL		= false;
 			Options::newScaleFilter	= false;
 			Options::newHQXFilter	= true;
 			Options::newXBRZFilter	= false;
+			Options::newOpenGL		= false;
 			break;
 
 		case 3: // xBRZ
-			Options::newOpenGL		= false;
 			Options::newScaleFilter	= false;
 			Options::newHQXFilter	= false;
 			Options::newXBRZFilter	= true;
+			Options::newOpenGL		= false;
 			break;
 
 		default: // OpenGL
-			Options::newOpenGL		= true;
 			Options::newScaleFilter	= false;
 			Options::newHQXFilter	= false;
 			Options::newXBRZFilter	= false;
+			Options::newOpenGL		= true;
 
 			Options::newOpenGLShader = _filters[_cbxFilter->getSelected()];
 	}
@@ -507,7 +507,7 @@ void OptionsVideoState::cbxFilterChange(Action*)
  */
 void OptionsVideoState::updateDisplayMode(Action*)
 {
-	switch(_cbxDisplayMode->getSelected())
+	switch (_cbxDisplayMode->getSelected())
 	{
 		case FULLSCREEN:
 			Options::fullscreen		= true;
