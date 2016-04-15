@@ -166,17 +166,24 @@ OptionsBaseState::~OptionsBaseState()
 
 void OptionsBaseState::restart(OptionsOrigin origin)
 {
-	if (origin == OPT_MENU)
-		_game->setState(new MainMenuState());
-	else if (origin == OPT_GEOSCAPE)
-		_game->setState(new GeoscapeState());
-	else if (origin == OPT_BATTLESCAPE)
+	switch (origin)
 	{
-		_game->setState(new GeoscapeState());
+		case OPT_MENU:
+			_game->setState(new MainMenuState());
+			break;
 
-		BattlescapeState* bs = new BattlescapeState();
-		_game->pushState(bs);
-		_game->getSavedGame()->getBattleSave()->setBattleState(bs);
+		case OPT_GEOSCAPE:
+			_game->setState(new GeoscapeState());
+			break;
+
+		case OPT_BATTLESCAPE:
+		{
+			_game->setState(new GeoscapeState());
+
+			BattlescapeState* const bs (new BattlescapeState());
+			_game->pushState(bs);
+			_game->getSavedGame()->getBattleSave()->setBattleState(bs);
+		}
 	}
 }
 
@@ -192,10 +199,10 @@ void OptionsBaseState::init()
 }
 
 /**
- * Handles the pressed-button state for the category buttons.
+ * Handles the pressed-button state for the category-buttons.
  * @param button Button to press.
  */
-void OptionsBaseState::setCategory(TextButton* button)
+void OptionsBaseState::setCategory(TextButton* const button)
 {
 	_group = button;
 
@@ -209,14 +216,14 @@ void OptionsBaseState::setCategory(TextButton* button)
 }
 
 /**
- * Saves the new options and returns to the proper origin screen.
+ * Saves the new options and returns to the proper origin-screen.
  * @param action - pointer to an Action
  */
 void OptionsBaseState::btnOkClick(Action*)
 {
 	int
-		dX = Options::baseXResolution,
-		dY = Options::baseYResolution;
+		dX (Options::baseXResolution),
+		dY (Options::baseYResolution);
 
 	Screen::updateScale(
 					Options::battlescapeScale,
@@ -248,26 +255,19 @@ void OptionsBaseState::btnOkClick(Action*)
 				Options::soundVolume,
 				Options::uiVolume);
 
-	if (Options::reload
-		&& _origin == OPT_MENU)
-	{
+	if (Options::reload && _origin == OPT_MENU)
 		_game->setState(new StartState());
+	else if (  Options::displayWidth	!= Options::newDisplayWidth // confirm any video-option changes ->
+			|| Options::displayHeight	!= Options::newDisplayHeight
+			|| Options::useOpenGL		!= Options::newOpenGL
+			|| Options::useScaleFilter	!= Options::newScaleFilter
+			|| Options::useHQXFilter	!= Options::newHQXFilter
+			|| Options::openGLShader	!= Options::newOpenGLShader)
+	{
+		_game->pushState(new OptionsConfirmState(_origin));
 	}
 	else
-	{
-		// Confirm any video option changes
-		if (Options::displayWidth != Options::newDisplayWidth
-			|| Options::displayHeight != Options::newDisplayHeight
-			|| Options::useOpenGL != Options::newOpenGL
-			|| Options::useScaleFilter != Options::newScaleFilter
-			|| Options::useHQXFilter != Options::newHQXFilter
-			|| Options::useOpenGLShader != Options::newOpenGLShader)
-		{
-			_game->pushState(new OptionsConfirmState(_origin));
-		}
-		else
-			restart(_origin);
-	}
+		restart(_origin);
 }
 
 /**
@@ -308,9 +308,7 @@ void OptionsBaseState::btnCancelClick(Action*)
  */
 void OptionsBaseState::btnDefaultClick(Action*)
 {
-	_game->pushState(new OptionsDefaultsState(
-											_origin,
-											this));
+	_game->pushState(new OptionsDefaultsState(_origin, this));
 }
 
 /**
@@ -319,7 +317,7 @@ void OptionsBaseState::btnDefaultClick(Action*)
  */
 void OptionsBaseState::btnGroupPress(Action* action)
 {
-	const Surface* const sender = action->getSender();
+	const Surface* const sender (action->getSender());
 //	if (sender != _group)
 //	{
 	_game->popState();

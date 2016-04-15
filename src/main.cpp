@@ -51,8 +51,8 @@ using namespace OpenXcom;
 
 Game* ptrGame = nullptr;
 
-// If you can't tell what the main() is for you
-// should have your programming license revoked ...
+// If you can't tell what the main() is for you should have your programming
+// license revoked ...
 int main(
 		int argc,
 		char* argv[])
@@ -64,9 +64,9 @@ int main(
 	try
 	{
 		Logger::reportingLevel() = LOG_INFO;
-#else
+#else // !_DEBUG
 		Logger::reportingLevel() = LOG_DEBUG;
-#endif
+#endif // !_DEBUG
 
 		if (Options::init(argc, argv) == false)
 			return EXIT_SUCCESS;
@@ -96,7 +96,7 @@ int main(
 		CrossPlatform::showError(e.what());
 		exit(EXIT_FAILURE);
 	}
-#endif
+#endif // !_DEBUG
 
 //	Options::save();	// -> wtf keeps rewriting my options.cfg .....
 						// yet it works fine in Game::run() before quitting.
@@ -113,4 +113,4 @@ int main(
 
 #ifdef __MORPHOS__
 	const char Version[] = "$VER: OpenXCom " OPENXCOM_VERSION_SHORT " (" __AMIGADATE__  ")";
-#endif
+#endif // __MORPHOS__

@@ -26,7 +26,9 @@ namespace OpenXcom
 bool OpenGL::checkErrors = true;
 
 /**
- *
+ * Returns an OpenGL error-string.
+ * @param glErr - GL-error enumerated key
+ * @return, error-string
  */
 std::string strGLError(GLenum glErr)
 {
@@ -48,23 +50,28 @@ std::string strGLError(GLenum glErr)
 }
 
 /**
- * Helper types to convert between object-pointers and function-pointers.
+ * Helper typedefs to convert between object-pointers and function-pointers.
  * @note Although ignored by some compilers this conversion is an extension and
  * not guaranteed to be sane for all architectures.
  */
 typedef void (*GenericFunctionPointer)();
 
+/**
+ *
+ */
 typedef union
 {
 	GenericFunctionPointer FunctionPointer;
 	void* ObjectPointer;
 } UnsafePointerContainer;
 
-
-inline static GenericFunctionPointer glGetProcAddress(const char* name)
+/**
+ *
+ */
+inline static GenericFunctionPointer glGetProcAddress(const char* label)
 {
 	UnsafePointerContainer pc;
-	pc.ObjectPointer = SDL_GL_GetProcAddress(name);
+	pc.ObjectPointer = SDL_GL_GetProcAddress(label);
 	return pc.FunctionPointer;
 }
 
@@ -210,7 +217,6 @@ void OpenGL::terminate() // private.
  */
 void OpenGL::clear() // private.
 {
-//	memset(buffer, 0, iwidth * iheight * ibpp);
 	glClearColor(0.f,0.f,0.f,1.f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glFlush();

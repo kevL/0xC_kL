@@ -31,18 +31,19 @@ namespace OpenXcom
 {
 
 /**
- * Generic purpose functions that need different implementations for different platforms.
+ * Generic-purpose functions that need different implementations for different
+ * platforms.
  */
 namespace CrossPlatform
 {
-	/// Displays an error message.
+	/// Displays an error-message.
 	void showError(const std::string& error);
 
-	/// Finds the game's data folders in the system.
+	/// Finds the game's data-folders in the system.
 	std::vector<std::string> findDataFolders();
-	/// Finds the game's user folders in the system.
+	/// Finds the game's user-folders in the system.
 	std::vector<std::string> findUserFolders();
-	/// Finds the game's config folder in the system.
+	/// Finds the game's config-folder in the system.
 	std::string findConfigFolder();
 
 	/// Tries to find a file.
@@ -54,9 +55,9 @@ namespace CrossPlatform
 			const std::string& base,
 			const std::string& path);
 
-	/// Gets the path for a data file.
+	/// Gets the path for a data-file.
 	std::string getDataFile(const std::string& file);
-	/// Gets the path for a data folder
+	/// Gets the path for a data-folder
 	std::string getDataFolder(const std::string& folder);
 
 	/// Creates a folder.
@@ -69,7 +70,7 @@ namespace CrossPlatform
 	std::vector<std::string> getFolderContents(
 			const std::string& path,
 			const std::string& ext = "");
-	/// Returns the list of files in a data folder.
+	/// Returns the list of files in a data-folder.
 	std::vector<std::string> getDataContents(
 			const std::string& path,
 			const std::string& ext = "");
@@ -93,10 +94,10 @@ namespace CrossPlatform
 	/// Removes the extension from a file.
 	std::string noExt(const std::string& file);
 
-	/// Gets the system locale.
+	/// Gets the system-locale.
 	std::string getLocale();
 
-	/// Checks if an event is a quit shortcut.
+	/// Checks if an event is a quit-shortcut.
 	bool isQuitShortcut(const SDL_Event& ev);
 
 	/// Gets the modified date of a file.
@@ -112,7 +113,7 @@ namespace CrossPlatform
 			const std::wstring& a,
 			const std::wstring& b);
 
-	/// Move/rename a file between paths.
+	/// Moves/renames a file between paths.
 	bool moveFile(
 			const std::string& src,
 			const std::string& dest);
@@ -123,13 +124,13 @@ namespace CrossPlatform
 	/// Gets the DOS-style executable path.
 	std::string getDosPath();
 
-	/// Sets the window icon for _WIN32 build configuration.
+	/// Sets the window-icon for _WIN32 build-configuration.
 #ifdef _WIN32
 	void setWindowIcon(int winResource);
-#else
-	/// Sets the window icon if not _WIN32 build.
+#else // _WIN32
+	/// Sets the window-icon if not _WIN32 build.
 	void setWindowIcon(const std::string& unixPath);
-#endif
+#endif // _WIN32
 }
 
 }

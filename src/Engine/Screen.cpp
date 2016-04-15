@@ -147,54 +147,60 @@ void Screen::handle(Action* action)
 {
 	if (action->getDetails()->type == SDL_KEYDOWN)
 	{
-		if (action->getDetails()->key.keysym.sym == SDLK_F8) // && Options::debug == true
+		switch (action->getDetails()->key.keysym.sym)
 		{
+			case SDLK_F8: // && Options::debug == true
 #ifdef _WIN32
-			MessageBeep(MB_OK);
+				MessageBeep(MB_OK);
 #endif
-			switch (Timer::coreInterval)
-			{
-				case 1: Timer::coreInterval =  6u; break;
-				case 6: Timer::coreInterval = 14u; break;
+				switch (Timer::coreInterval)
+				{
+					case 1: Timer::coreInterval =  6u; break;
+					case 6: Timer::coreInterval = 14u; break;
 
-				default:
-					Timer::coreInterval = 1u;
-			}
-		}
-		else if (action->getDetails()->key.keysym.sym == SDLK_RETURN
-			&& (SDL_GetModState() & KMOD_ALT) != 0)
-		{
-			Options::fullscreen = !Options::fullscreen;
-			resetDisplay();
-		}
-		else if (action->getDetails()->key.keysym.sym == Options::keyScreenshot)
-		{
+					default:
+						Timer::coreInterval = 1u;
+				}
+				break;
+
+			case SDLK_RETURN:
+				if ((SDL_GetModState() & KMOD_ALT) != 0)
+				{
+					Options::fullscreen = !Options::fullscreen;
+					resetDisplay();
+				}
+				break;
+
+			default:
+				if (action->getDetails()->key.keysym.sym == Options::keyScreenshot)
+				{
 #ifdef _WIN32
-			MessageBeep(MB_ICONASTERISK); // start ->
+					MessageBeep(MB_ICONASTERISK); // start ->
 #endif
-			std::ostringstream oststr;
-/*			int i = 0;
-			do {
-				oststr.str("");
-				oststr << Options::getPictureFolder() << "oxc_" << CrossPlatform::timeString() << "_" << i << ".png";
-				++i; }
-			while (CrossPlatform::fileExists(oststr.str()) == true); */
-			// ... too slow to take & write more than one screenshot per second @ 1920x1080 ...
-			// Skip the do-while Loop:
-			oststr << Options::getPictureFolder() << "0xC_kL_" << CrossPlatform::timeString() << ".png";
-			screenshot(oststr.str());
+					std::ostringstream oststr;
+/*					int i = 0;
+					do {
+						oststr.str("");
+						oststr << Options::getPictureFolder() << "oxc_" << CrossPlatform::timeString() << "_" << i << ".png";
+						++i; }
+					while (CrossPlatform::fileExists(oststr.str()) == true); */
+					// ... too slow to take & write more than one screenshot per second @ 1920x1080 ...
+					// Skip the do-while Loop:
+					oststr << Options::getPictureFolder() << "0xC_kL_" << CrossPlatform::timeString() << ".png";
+					screenshot(oststr.str());
 #ifdef _WIN32
-			MessageBeep(MB_OK); // end.
+					MessageBeep(MB_OK); // end.
 #endif
-/*			std::ostringstream oststr;
-			int i = 0;
-			do
-			{
-				oststr.str("");
-				oststr << Options::getUserFolder() << "screen" << std::setfill('0') << std::setw(3) << i << ".png";
-				++i;
-			} while (CrossPlatform::fileExists(oststr.str()) == true);
-			screenshot(oststr.str()); */
+/*					std::ostringstream oststr;
+					int i = 0;
+					do
+					{
+						oststr.str("");
+						oststr << Options::getUserFolder() << "screen" << std::setfill('0') << std::setw(3) << i << ".png";
+						++i;
+					} while (CrossPlatform::fileExists(oststr.str()) == true);
+					screenshot(oststr.str()); */
+				}
 		}
 	}
 }
@@ -435,13 +441,13 @@ void Screen::resetDisplay(bool resetVideo)
 	if (isOpenGLEnabled() == true)
 	{
 		_glOutput.init(_baseWidth, _baseHeight);
-		_glOutput.linear = Options::useOpenGLSmoothing; // setting from shader file will override this, though
+		_glOutput.linear = Options::useOpenGLSmoothing; // the setting in the shader-file will override this though
 		_glOutput.setVSync(Options::vSyncForOpenGL);
 
 #	ifdef _DEBUG
 		_glOutput.set_shader(CrossPlatform::getDataFile("Shaders/Raw.OpenGL.shader").c_str());
 #	else
-		_glOutput.set_shader(CrossPlatform::getDataFile(Options::useOpenGLShader).c_str());
+		_glOutput.set_shader(CrossPlatform::getDataFile(Options::openGLShader).c_str());
 #	endif
 
 		OpenGL::checkErrors = Options::checkOpenGLErrors;

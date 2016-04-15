@@ -102,7 +102,7 @@ void create()
 	_info.push_back(OptionInfo("useXBRZFilter", &useXBRZFilter, false));
 	_info.push_back(OptionInfo("useOpenGL", &useOpenGL, false));
 	_info.push_back(OptionInfo("checkOpenGLErrors", &checkOpenGLErrors, false));
-	_info.push_back(OptionInfo("useOpenGLShader", &useOpenGLShader, "Shaders/Raw.OpenGL.shader"));
+	_info.push_back(OptionInfo("openGLShader", &openGLShader, "Shaders/Raw.OpenGL.shader"));
 	_info.push_back(OptionInfo("vSyncForOpenGL", &vSyncForOpenGL, true));
 	_info.push_back(OptionInfo("useOpenGLSmoothing", &useOpenGLSmoothing, true));
 	_info.push_back(OptionInfo("debug", &debug, false));
@@ -307,7 +307,7 @@ void create()
 }
 
 /**
- * Resets the options back to their defaults.
+ * Resets the options back to defaults.
  */
 void resetDefault()
 {
@@ -326,63 +326,68 @@ void resetDefault()
 }
 
 /**
- * Loads options from a set of command line arguments in the format "-option value".
- * @param argc - number of arguments
- * @param argv - array of argument strings
+ * Loads options from a set of command-line arguments.
+ * @note Accepted formats:
+ *	"-option value"
+ *	"--option value"
+ *	"/option value"
+ * @param argc - quantity of arguments
+ * @param argv - pointer to an array of argument-strings
  */
 void loadArgs(
 		int argc,
 		char* argv[])
 {
-	for (int
-			i = 1;
-			i < argc;
+	std::string arg;
+	const size_t argc_t (static_cast<size_t>(argc));
+	for (size_t
+			i = 1u;
+			i != argc_t;
 			++i)
 	{
-		const std::string arg = argv[i];
-		if ((arg[0] == '-'
-				|| arg[0] == '/')
-			&& arg.length() > 1)
+		arg = argv[i];
+
+		if ((arg[0u] == '-' || arg[0u] == '/')
+			&& arg.length() > 1u)
 		{
-			std::string argname;
-			if (arg[1] == '-'
-				&& arg.length() > 2)
+			if (arg[1u] == '-'
+				&& arg.length() > 2u)
 			{
-				argname = arg.substr(2, arg.length() - 1);
+				arg = arg.substr(2u, arg.length() - 1u);
 			}
 			else
-				argname = arg.substr(1, arg.length() - 1);
+				arg = arg.substr(1u, arg.length() - 1u);
 
 			std::transform(
-						argname.begin(),
-						argname.end(),
-						argname.begin(),
+						arg.begin(),
+						arg.end(),
+						arg.begin(),
 						::tolower);
 
-			if (argc > i + 1)
+			if (argc_t > i + 1u)
 			{
-				if (argname == "data")
-					_dataFolder = CrossPlatform::endPath(argv[i + 1]);
-				else if (argname == "user")
-					_userFolder = CrossPlatform::endPath(argv[i + 1]);
-				else if (argname == "cfg")
-					_configFolder = CrossPlatform::endPath(argv[i + 1]);
-				else if (argname == "pic")
-					_picFolder = CrossPlatform::endPath(argv[i + 1]);
+				if (arg == "data")
+					_dataFolder = CrossPlatform::endPath(argv[i + 1u]);
+				else if (arg == "user")
+					_userFolder = CrossPlatform::endPath(argv[i + 1u]);
+				else if (arg == "cfg")
+					_configFolder = CrossPlatform::endPath(argv[i + 1u]);
+				else if (arg == "pic")
+					_picFolder = CrossPlatform::endPath(argv[i + 1u]);
 				else
 					// save this command line option for now, we will apply it later
-					_commandLine[argname] = argv[i + 1];
+					_commandLine[arg] = argv[i + 1u];
 			}
 			else
-				Log(LOG_WARNING) << "Unknown option: " << argname;
+				Log(LOG_WARNING) << "Unknown option: " << arg;
 		}
 	}
 }
 
 /**
  * Displays command-line help when appropriate.
- * @param argc - number of arguments
- * @param argv - array of argument strings
+ * @param argc - quantity of arguments
+ * @param argv - pointer to an array of argument-strings
  * @return, true if help shown
  */
 bool showHelp(
@@ -395,59 +400,58 @@ bool showHelp(
 	help << OPENXCOM_VERSION_GIT << " " << Version::getBuildDate() << std::endl;
 	help << "Usage: openxcom [OPTION] ..." << std::endl << std::endl;
 	help << "-data PATH" << std::endl;
-	help << "    use PATH as the default Data Folder instead of auto-detecting" << std::endl << std::endl;
+	help << " use PATH as the default Data Folder instead of auto-detecting" << std::endl << std::endl;
 	help << "-user PATH" << std::endl;
-	help << "    use PATH as the default User Folder instead of auto-detecting" << std::endl << std::endl;
+	help << " use PATH as the default User Folder instead of auto-detecting" << std::endl << std::endl;
 	help << "-cfg PATH" << std::endl;
-	help << "    use PATH as the default Config Folder instead of auto-detecting" << std::endl << std::endl;
+	help << " use PATH as the default Config Folder instead of auto-detecting" << std::endl << std::endl;
 	help << "-KEY VALUE" << std::endl;
-	help << "    set option KEY to VALUE instead of default/loaded value (eg. -displayWidth 640)" << std::endl << std::endl;
+	help << " set option KEY to VALUE instead of default/loaded value (eg. -displayWidth 640)" << std::endl << std::endl;
 	help << "-help" << std::endl;
 	help << "-?" << std::endl;
-	help << "    show command-line help" << std::endl;
+	help << " show command-line help" << std::endl;
 
-	for (int
-			i = 1;
-			i < argc;
+	std::string arg;
+	const size_t argc_t (static_cast<size_t>(argc));
+	for (size_t
+			i = 1u;
+			i != argc_t;
 			++i)
 	{
-		const std::string arg = argv[i];
-		if ((arg[0] == '-'
-				|| arg[0] == '/')
-			&& arg.length() > 1)
+		arg = argv[i];
+
+		if ((arg[0u] == '-' || arg[0u] == '/')
+			&& arg.length() > 1u)
 		{
-			std::string argname;
-			if (arg[1] == '-'
-				&& arg.length() > 2)
+			if (arg[1u] == '-'
+				&& arg.length() > 2u)
 			{
-				argname = arg.substr(2, arg.length() - 1);
+				arg = arg.substr(2u, arg.length() - 1u);
 			}
 			else
-				argname = arg.substr(1, arg.length() - 1);
+				arg = arg.substr(1u, arg.length() - 1u);
 
 			std::transform(
-						argname.begin(),
-						argname.end(),
-						argname.begin(),
+						arg.begin(),
+						arg.end(),
+						arg.begin(),
 						::tolower);
 
-			if (argname == "help"
-				|| argname == "?")
+			if (arg == "help" || arg == "?")
 			{
 				std::cout << help.str();
 				return true;
 			}
 		}
 	}
-
 	return false;
 }
 
 /**
- * Handles the initialization of setting up default options and finding and
+ * Handles the initialization of setting up default-options and finding and
  * loading any existing ones.
- * @param argc - number of arguments
- * @param argv - array of argument strings
+ * @param argc - quantity of arguments
+ * @param argv - pointer to an array of argument-strings
  * @return, true if initialization happened
  */
 bool init(
@@ -463,15 +467,13 @@ bool init(
 	setFolders();
 	updateOptions();
 
-	std::string st = getUserFolder();
-	st += "openxcom.log";
+	const std::string st (getUserFolder() + "openxcom.log");
 	Logger::logFile() = st;
-	FILE* const file = std::fopen(
+	FILE* const file (std::fopen(
 								Logger::logFile().c_str(),
-								"w");
+								"w"));
 	if (file == nullptr)
 	{
-		std::fclose(file); // kL
 		throw Exception(st + " not found");
 	}
 
@@ -493,16 +495,13 @@ bool init(
 	Log(LOG_INFO) << "Picture folder: " << _picFolder;
 	Log(LOG_INFO) << "Options loaded.";
 
-	// pick up stuff in common
-//	FileMap::load("common", CrossPlatform::searchDataFolder("common"), true); // uh, no.
-
 	return true;
 }
 
 /**
- * Sets up the game's Data folder from which the data files are loaded and the
- * User folder and Config folder where saves and settings are stored.
- * @note As well as the Picture folder for screenshots.
+ * Sets up the game's data-folder from which the data-files are loaded and the
+ * user-folder and config-folder where saves and settings are stored.
+ * @note As well as the picture-folder for screenshots.
  */
 void setFolders()
 {
@@ -514,22 +513,22 @@ void setFolders()
 
 	if (_userFolder.empty() == true)
 	{
-		const std::vector<std::string> user = CrossPlatform::findUserFolders();
+		const std::vector<std::string> user (CrossPlatform::findUserFolders());
 		_configFolder = CrossPlatform::findConfigFolder();
 
-		for (std::vector<std::string>::const_reverse_iterator // Look for an existing user folder
-				i = user.rbegin();
-				i != user.rend();
-				++i)
+		for (std::vector<std::string>::const_reverse_iterator // look for an existing user-folder
+				rit = user.rbegin();
+				rit != user.rend();
+				++rit)
 		{
-			if (CrossPlatform::folderExists(*i) == true)
+			if (CrossPlatform::folderExists(*rit) == true)
 			{
-				_userFolder = *i;
+				_userFolder = *rit;
 				break;
 			}
 		}
 
-		if (_userFolder.empty() == true) // Set up user folder
+		if (_userFolder.empty() == true) // set up user-folder
 		{
 			for (std::vector<std::string>::const_iterator
 					i = user.begin();
@@ -545,7 +544,7 @@ void setFolders()
 		}
 	}
 
-	if (_picFolder.empty() == true) // set up Picture folder
+	if (_picFolder.empty() == true) // set up picture-folder
 	{
 		_picFolder = _userFolder + "pic\\";
 		if (CrossPlatform::folderExists(_picFolder) == false)
@@ -558,7 +557,7 @@ void setFolders()
 
 /**
  * Updates the game's options with those in the configuration file if it exists
- * yet plus any options supplied on the command line.
+ * yet plus any options supplied on the command-line.
  */
 void updateOptions()
 {
@@ -592,10 +591,10 @@ void updateOptions()
  */
 void load(const std::string& file)
 {
-	const std::string st = _configFolder + file + ".cfg";
+	const std::string st (_configFolder + file + ".cfg");
 	try
 	{
-		const YAML::Node doc = YAML::LoadFile(st);
+		const YAML::Node doc (YAML::LoadFile(st));
 		for (std::vector<OptionInfo>::const_iterator
 				i = _info.begin();
 				i != _info.end();
@@ -617,9 +616,9 @@ void load(const std::string& file)
  */
 void save(const std::string& file)
 {
-	const std::string st = _configFolder + file + ".cfg";
-	std::ofstream save(st.c_str());
-	if (save.fail() == true)
+	const std::string st (_configFolder + file + ".cfg");
+	std::ofstream ofstr (st.c_str());
+	if (ofstr.fail() == true)
 	{
 		Log(LOG_WARNING) << "Failed to save " << file << ".cfg";
 		return;
@@ -645,18 +644,18 @@ void save(const std::string& file)
 		doc["rulesets"]	= rulesets;
 		output << doc;
 
-		save << output.c_str();
+		ofstr << output.c_str();
 	}
 	catch (YAML::Exception& e)
 	{
 		Log(LOG_WARNING) << e.what();
 	}
 
-	save.close();
+	ofstr.close();
 }
 
 /**
- * Returns the game's current Data folder where resources and X-Com files are
+ * Gets the game's current data-folder where resources and X-Com files are
  * loaded from.
  * @return, full path to Data folder
  */
@@ -666,9 +665,9 @@ std::string getDataFolder()
 }
 
 /**
- * Changes the game's current Data folder where resources and X-Com files are
+ * Sets the game's current data-folder where resources and X-Com files are
  * loaded from.
- * @param folder - reference full path to Data folder
+ * @param folder - reference to the full path to data-folder
  */
 void setDataFolder(const std::string& folder)
 {
@@ -676,8 +675,8 @@ void setDataFolder(const std::string& folder)
 }
 
 /**
- * Returns the game's list of possible Data folders.
- * @return, reference to a vector of a list of Data paths
+ * Gets the game's list of possible data-folders.
+ * @return, reference to a vector of a list of data-paths
  */
 const std::vector<std::string>& getDataList()
 {
@@ -685,8 +684,8 @@ const std::vector<std::string>& getDataList()
 }
 
 /**
- * Returns the game's User folder where saves are stored.
- * @return, full path to User folder
+ * Gets the game's user-folder where saves are stored.
+ * @return, full path to user-folder
  */
 std::string getUserFolder()
 {
@@ -694,8 +693,8 @@ std::string getUserFolder()
 }
 
 /**
- * Returns the game's Picture folder where screenshots are stored.
- * @return, full path to Picture folder
+ * Gets the game's picture-folder where screenshots are stored.
+ * @return, full path to picture-folder
  */
 std::string getPictureFolder()
 {
@@ -703,9 +702,9 @@ std::string getPictureFolder()
 }
 
 /**
- * Returns the game's Config folder where settings are stored.
- * @note Normally the same as the User folder.
- * @return, full path to Config folder
+ * Gets the game's config-folder where settings are stored.
+ * @note Normally the same as the user-folder.
+ * @return, full path to config-folder
  */
 std::string getConfigFolder()
 {
@@ -713,7 +712,7 @@ std::string getConfigFolder()
 }
 
 /**
- * Returns the game's list of all available option information.
+ * Gets the game's list of all available option-information.
  * @return, reference to a vector of OptionInfo's
  */
 const std::vector<OptionInfo>& getOptionInfo()
@@ -722,7 +721,7 @@ const std::vector<OptionInfo>& getOptionInfo()
 }
 
 /**
- * Saves display settings temporarily to be able to revert to old ones.
+ * Saves display-settings temporarily to be able to revert to old ones.
  */
 void backupDisplay()
 {
@@ -733,12 +732,12 @@ void backupDisplay()
 	Options::newOpenGL				= Options::useOpenGL;
 	Options::newScaleFilter			= Options::useScaleFilter;
 	Options::newHQXFilter			= Options::useHQXFilter;
-	Options::newOpenGLShader		= Options::useOpenGLShader;
+	Options::newOpenGLShader		= Options::openGLShader;
 	Options::newXBRZFilter			= Options::useXBRZFilter;
 }
 
 /**
- * Switches old/new display options for temporarily testing a new display setup.
+ * Switches old/new display-options for temporarily testing a new display-setup.
  */
 void switchDisplay()
 {
@@ -749,7 +748,7 @@ void switchDisplay()
 	std::swap(battlescapeScale,	newBattlescapeScale);
 	std::swap(geoscapeScale,	newGeoscapeScale);
 	std::swap(useHQXFilter,		newHQXFilter);
-	std::swap(useOpenGLShader,	newOpenGLShader);
+	std::swap(openGLShader,		newOpenGLShader);
 	std::swap(useXBRZFilter,	newXBRZFilter);
 }
 

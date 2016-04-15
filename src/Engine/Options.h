@@ -29,7 +29,7 @@ namespace OpenXcom
 {
 
 /**
- * Battlescape drag scrolling types.
+ * Battlescape drag-scrolling modes.
  */
 enum ScrollType
 {
@@ -39,7 +39,7 @@ enum ScrollType
 };
 
 /**
- * Keyboard input modes.
+ * Keyboard-input modes.
  */
 enum KeyboardType
 {
@@ -49,7 +49,7 @@ enum KeyboardType
 };
 
 /**
- * Savegame sorting modes.
+ * Savegame-sorting modes.
  */
 enum SaveSort
 {
@@ -60,7 +60,7 @@ enum SaveSort
 };
 
 /**
- * Music format preferences.
+ * Music-format preferences.
  */
 enum MusicFormat
 {
@@ -75,7 +75,7 @@ enum MusicFormat
 };
 
 /**
- * Sound format preferences.
+ * Sound-format preferences.
  */
 enum SoundFormat
 {
@@ -85,7 +85,7 @@ enum SoundFormat
 };
 
 /**
- * Path Preview Modes for the battlefield.
+ * Path-preview Modes for the battlefield.
  * @note Can be OR'd together.
  */
 enum PathPreview
@@ -97,7 +97,7 @@ enum PathPreview
 };
 
 /**
- * Screen scaling modes.
+ * Screen-scaling modes.
  */
 enum ScaleType
 {
@@ -111,7 +111,7 @@ enum ScaleType
 
 
 /**
- * Container for all the various global game options and customizable settings.
+ * Container for all the various global game-options and customizable settings.
  */
 namespace Options
 {
@@ -120,21 +120,21 @@ namespace Options
 #include "Options.inc.h"
 #undef OPT
 
-	/// Creates the options info.
+	/// Creates the OptionsInfo.
 	void create();
-	/// Restores default options.
+	/// Restores default-options.
 	void resetDefault();
 
-	/// Loads arguments from the commandline.
+	/// Loads arguments from the command-line.
 	void loadArgs(
 			int argc,
 			char* argv[]);
-	/// Shows help from the commandline.
+	/// Shows help from the command-line.
 	bool showHelp(
 			int argc,
 			char* argv[]);
 
-	/// Initializes the options settings.
+	/// Initializes the option-settings.
 	bool init(
 			int argc,
 			char* argv[]);
@@ -144,31 +144,31 @@ namespace Options
 	/// Saves options to YAML.
 	void save(const std::string& file = "options");
 
-	/// Gets the game's data folder.
+	/// Gets the game's data-folder.
 	std::string getDataFolder();
-	/// Sets the game's data folder.
+	/// Sets the game's data-folder.
 	void setDataFolder(const std::string& folder);
-	/// Gets the game's data list.
+	/// Gets the game's data-list.
 	const std::vector<std::string>& getDataList();
-	/// Gets the game's user folder.
+	/// Gets the game's user-folder.
 	std::string getUserFolder();
-	/// Returns the game's Picture folder where screenshots are stored.
+	/// Returns the game's picture-folder where screenshots are stored.
 	std::string getPictureFolder();
-	/// Gets the game's config folder.
+	/// Gets the game's config-folder.
 	std::string getConfigFolder();
 
 	/// Gets the game's options.
 	const std::vector<OptionInfo>& getOptionInfo();
 
-	/// Sets the game's data, user and config folders.
+	/// Sets the game's data-, user- and config-folders.
 	void setFolders();
 
-	/// Update game options from config file and command line.
+	/// Updates game-options from config-file and command-line.
 	void updateOptions();
 
-	/// Backup display options.
+	/// Backups display-options.
 	void backupDisplay();
-	/// Switches display options.
+	/// Switches display-options.
 	void switchDisplay();
 }
 

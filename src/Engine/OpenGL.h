@@ -43,8 +43,10 @@ class Surface;
 	extern PFNGLUNIFORM4FVPROC			glUniform4fv;
 #endif
 
+/// Returns an OpenGL error-string.
 std::string strGLError(GLenum glErr);
 
+// GL-error checker.
 #define glErrorCheck() { \
 	static bool reported = false; \
 	GLenum glErr; \
@@ -138,9 +140,7 @@ private:
 
 #else // !__NO_OPENGL
 namespace OpenXcom
-{
-class OpenGL{};
-}
+{ class OpenGL{}; }
 #endif // !__NO_OPENGL
 
 #endif

@@ -3176,8 +3176,9 @@ const Ruleset* BattlescapeGame::getRuleset() const
 }
 
 /**
- * Tries to find an item and pick it up if possible.
- * @param action - pointer to the current BattleAction struct
+ * Tries to find a BattleItem and pick it up if possible.
+ * @note Called by handleUnitAI().
+ * @param action - pointer to an AI-BattleAction struct
  * @return, true if an item was actually picked up
  */
 bool BattlescapeGame::pickupItem(BattleAction* const action) const
@@ -3211,10 +3212,10 @@ bool BattlescapeGame::pickupItem(BattleAction* const action) const
 }
 
 /**
- * Searches through items on the Map that were dropped on an alien turn and
- * picks the most attractive one.
+ * Searches through BattleItems on the Map [that were dropped on an alien turn]
+ * and picks the most attractive one.
  * @param unit - pointer to the BattleUnit looking for an item
- * @return, the BattleItem to go for
+ * @return, the item to go for
  */
 BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 {
@@ -3232,10 +3233,8 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 		{
 			//Log(LOG_INFO) << ". " << (*i)->getRules()->getType();
 			//Log(LOG_INFO) << ". . grd attr = " << (*i)->getRules()->getAttraction();
-			tile = (*i)->getTile();
-			if (tile != nullptr
-				&& (tile->getTileUnit() == nullptr
-					|| tile->getTileUnit() == unit)
+			if ((tile = (*i)->getTile()) != nullptr
+				&& (tile->getTileUnit() == nullptr || tile->getTileUnit() == unit)
 				&& tile->getTuCostTile(O_FLOOR, MT_WALK) != 255 // TODO:: pathfind.
 				&& tile->getTuCostTile(O_OBJECT, MT_WALK) != 255
 				&& worthTaking(*i, unit) == true)
@@ -3289,7 +3288,7 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 }
 
 /**
- * Assesses whether an item is worth trying to pick up.
+ * Assesses whether a BattleItem is worth trying to pick up.
  * @param item - pointer to a BattleItem to go for
  * @param unit - pointer to the BattleUnit looking for an item
  * @return, true if the item is worth going for
@@ -3336,29 +3335,29 @@ bool BattlescapeGame::worthTaking(
 			case BT_FIREARM:
 				//Log(LOG_INFO) << ". Firearm ret TRUE";
 				return true;
-/*				if (item->getAmmoItem() == nullptr) // not loaded
-				{
-					for (std::vector<BattleItem*>::const_iterator
-							i = unit->getInventory()->begin();
-							i != unit->getInventory()->end();
-							++i)
-					{
-						if ((*i)->getRules()->getBattleType() == BT_AMMO)
-						{
-							for (std::vector<std::string>::const_iterator
-									j = item->getRules()->getCompatibleAmmo()->begin();
-									j != item->getRules()->getCompatibleAmmo()->end();
-									++j)
-							{
-								if (*j == (*i)->getRules()->getName())
-								{
-									//Log(LOG_INFO) << ". ret [2] TRUE";
-									return true;
-								}
-							}
-						}
-					}
-				} */
+//				if (item->getAmmoItem() == nullptr) // not loaded
+//				{
+//					for (std::vector<BattleItem*>::const_iterator
+//							i = unit->getInventory()->begin();
+//							i != unit->getInventory()->end();
+//							++i)
+//					{
+//						if ((*i)->getRules()->getBattleType() == BT_AMMO)
+//						{
+//							for (std::vector<std::string>::const_iterator
+//									j = item->getRules()->getCompatibleAmmo()->begin();
+//									j != item->getRules()->getCompatibleAmmo()->end();
+//									++j)
+//							{
+//								if (*j == (*i)->getRules()->getName())
+//								{
+//									//Log(LOG_INFO) << ". ret [2] TRUE";
+//									return true;
+//								}
+//							}
+//						}
+//					}
+//				}
 
 			case BT_AMMO:
 				//Log(LOG_INFO) << ". ammo";
@@ -3423,7 +3422,7 @@ bool BattlescapeGame::takeItemFromGround(
 }
 
 /**
- * Tries to fit an item into the unit's inventory.
+ * Tries to fit an item into a BattleUnit's inventory.
  * @param item - pointer to a BattleItem to go for
  * @param unit - pointer to the BattleUnit looking for an item
  * @return, true if @a item was successfully retrieved
@@ -3626,7 +3625,6 @@ void BattlescapeGame::setReservedAction(BattleActionType bat)
 {
 	_battleSave->setBatReserved(bat);
 } */
-
 /**
  * Returns the action type that is reserved.
  * @return, the BattleActionType that is reserved
@@ -3635,7 +3633,6 @@ BattleActionType BattlescapeGame::getReservedAction() const
 {
 	return _battleSave->getBatReserved();
 } */
-
 /**
  * Sets the kneel reservation setting.
  * @param reserved - true to reserve an extra 4 TUs to kneel
@@ -3644,7 +3641,6 @@ void BattlescapeGame::setKneelReserved(bool reserved) const
 {
 	_battleSave->setKneelReserved(reserved);
 } */
-
 /**
  * Gets the kneel reservation setting.
  * @return, kneel reservation setting

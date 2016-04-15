@@ -55,7 +55,7 @@ namespace OpenXcom
 inline std::string now();
 
 /**
- * Defines the various severity levels of information logged by the game.
+ * Defines the various severity-levels of information logged by the game.
  */
 enum SeverityLevel
 {
@@ -67,6 +67,7 @@ enum SeverityLevel
 	LOG_VERBOSE     // 5 - Extra details that even Planck wouldn't have cared about 90% of the time.
 };
 
+
 /**
  * A basic logging and debugging class.
  * @note Prints output to stdout/files and can capture stack traces of fatal
@@ -77,9 +78,9 @@ class Logger
 {
 
 private:
-	/// Logger copy constructor
+	/// Logger copy-constructor.
 	Logger(const Logger&);
-	/// Logger assignment operator
+	/// Logger assignment-operator.
 	Logger& operator= (const Logger&);
 
 
@@ -113,6 +114,7 @@ inline Logger::Logger()
 
 /**
  *
+ * @param level - the severity-level (default LOG_INFO)
  */
 inline std::ostringstream& Logger::get(SeverityLevel level)
 {
@@ -123,23 +125,25 @@ inline std::ostringstream& Logger::get(SeverityLevel level)
 /**
  *
  */
-inline Logger::~Logger() // virtual.
+inline Logger::~Logger() // virtual. NOTE: This need not be virtual.
 {
 	_oststr << std::endl;
-	if (reportingLevel() == LOG_DEBUG || reportingLevel() == LOG_VERBOSE)
+	switch (reportingLevel())
 	{
-		// FIX: Print to console is not working as expected in MinGW-w64.
-		std::fprintf(
-					stdout, // was 'stderr'
-					"%s",
-					_oststr.str().c_str());
-
-		std::fflush(stdout); // was 'stderr'
+		case LOG_DEBUG:
+		case LOG_VERBOSE:
+		{
+			std::fprintf( // FIX: Print to console is not working as expected in MinGW-w64.
+						stdout, // was 'stderr'
+						"%s",
+						_oststr.str().c_str());
+			std::fflush(stdout); // was 'stderr'
+		}
 	}
 
 	std::ostringstream oststr;
 	oststr << "[" << now() << "]" << "\t" << _oststr.str();
-	FILE* file = std::fopen(logFile().c_str(), "a");
+	FILE* const file (std::fopen(logFile().c_str(), "a"));
 	std::fprintf(
 				file,
 				"%s",
@@ -154,25 +158,29 @@ inline Logger::~Logger() // virtual.
  */
 inline SeverityLevel& Logger::reportingLevel() // static.
 {
-	static SeverityLevel reportingLevel = LOG_DEBUG;
+	static SeverityLevel reportingLevel (LOG_DEBUG);
 	return reportingLevel;
 }
 
+
 /**
- *
+ * Returns the log-file string.
+ * @return, filename + extension
  */
 inline std::string& Logger::logFile() // static.
 {
-	static std::string logFile = "openxcom.log";
+	static std::string logFile ("openxcom.log");
 	return logFile;
 }
 
 /**
- *
+ * Converts a severity enumerator-key to a string.
+ * @param level - the severity-level (default LOG_INFO)
+ * @return, severity-level as a string
  */
 inline std::string Logger::toString(SeverityLevel level) // static.
 {
-	static const char* const buffer[] =
+	static const char* const buffer[]
 	{
 		"FATAL",	// 0 - LOG_FATAL
 		"ERROR",	// 1 - LOG_ERROR
@@ -181,30 +189,30 @@ inline std::string Logger::toString(SeverityLevel level) // static.
 		"DEBUG",	// 4 - LOG_DEBUG
 		"VERBOSE"	// 5 - LOG_VERBOSE
 	};
-
 	return buffer[level];
 }
 
+// macro: Log
 #define Log(level) if (level > Logger::reportingLevel()) ; else Logger().get(level)
 
 /**
- *
+ * Outputs the current date and time.
  */
 inline std::string now()
 {
 	const int
-		MAX_LEN = 25,
-		MAX_RESULT = 80;
+		MAX_LEN (25),
+		MAX_RESULT (80);
 #ifdef _WIN32
 	char
-		date[MAX_LEN],
-		tyme[MAX_LEN];
+		d[MAX_LEN],
+		t[MAX_LEN];
 
 	if (GetDateFormatA(
 					LOCALE_INVARIANT,
 					0, nullptr,
 					"dd'-'MM'-'yyyy",
-					date,
+					d,
 					MAX_LEN) == 0)
 	{
 		return "Error in Now() [1]";
@@ -215,19 +223,18 @@ inline std::string now()
 					TIME_FORCE24HOURFORMAT,
 					nullptr,
 					"HH':'mm':'ss",
-					tyme,
+					t,
 					MAX_LEN) == 0)
 	{
 		return "Error in Now() [2]";
 	}
 
-	char result[MAX_RESULT] = {0};
+	char result[MAX_RESULT] {0};
 	std::sprintf(
 				result,
 				"%s %s",
-				date,
-				tyme);
-#else
+				d, t);
+#else // _WIN32
 	char buffer[MAX_LEN];
 	time_t rawtime;
 	struct tm* timeinfo;
@@ -243,7 +250,7 @@ inline std::string now()
 				result,
 				"%s",
 				buffer);
-#endif
+#endif // _WIN32
 
 	return result;
 }

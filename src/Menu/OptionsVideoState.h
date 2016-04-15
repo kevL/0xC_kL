@@ -101,9 +101,9 @@ private:
 
 
 	public:
-		/// Creates the Options state.
+		/// Creates an OptionsVideo state.
 		explicit OptionsVideoState(OptionsOrigin origin);
-		/// Cleans up the Options state.
+		/// Cleans up the OptionsVideo state.
 		~OptionsVideoState();
 
 		/// Handler for clicking the Next Resolution button.
@@ -129,7 +129,7 @@ private:
 		/// Handler for updating the selected geoscape scale.
 		void updateGeoscapeScale(Action* action);
 
-		/// Update the resolution settings, we just resized the window.
+		/// Update the resolution settings, they just resized the window.
 		void resize(
 				int&,
 				int&) override;

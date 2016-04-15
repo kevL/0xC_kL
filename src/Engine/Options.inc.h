@@ -19,7 +19,7 @@ OPT bool fullscreen, asyncBlit, useScaleFilter, useHQXFilter, useXBRZFilter, use
 	allowResize, borderless, debug, debugUi, fpsCounter, reSeedOnLoad, keepAspectRatio, nonSquarePixelRatio,
 	cursorInBlackBandsInFullscreen, cursorInBlackBandsInWindow, cursorInBlackBandsInBorderlessWindow, maximizeInfoScreens,
 	playIntro, autosave, musicAlwaysLoop, stereoSound, verboseLogging;
-OPT std::string language, useOpenGLShader;
+OPT std::string language, openGLShader;
 OPT KeyboardType keyboardMode;
 OPT SaveSort saveOrder;
 OPT MusicFormat preferredMusic;

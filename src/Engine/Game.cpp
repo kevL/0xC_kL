@@ -427,55 +427,58 @@ void Game::run()
 			_states.back()->think();				// process logic
 			_fpsCounter->think();
 
-			if (Options::FPS != 0
-				&& (Options::useOpenGL == false || Options::vSyncForOpenGL == false))
-			{										// update FPS-delay-time based on the time of the last draw
-				int userFPS;
-				if ((SDL_GetAppState() & SDL_APPINPUTFOCUS))
-					userFPS = Options::FPS;
-				else
-					userFPS = Options::FPSUnfocused;
-
-//				if (userFPS < 1) userFPS = 1; // safety.
-				_ticksTillNextSlice = static_cast<int>(
-									  1000.f / static_cast<float>(userFPS)
-									  - static_cast<float>(SDL_GetTicks() - _tickOfLastSlice));
-			}
-			else
-				_ticksTillNextSlice = 0;
-
-			if (_ticksTillNextSlice < 1 && _init == true)
+			if (_init == true)
 			{
-				_tickOfLastSlice = SDL_GetTicks();	// store when this slice occurred.
-				_fpsCounter->addFrame();
+				if (Options::FPS != 0
+					&& (Options::useOpenGL == false || Options::vSyncForOpenGL == false))
+				{										// update FPS-delay-time based on the time of the last draw
+					int userFPS;
+					if ((SDL_GetAppState() & SDL_APPINPUTFOCUS))
+						userFPS = Options::FPS;
+					else
+						userFPS = Options::FPSUnfocused;
 
-				_screen->clear();
-
-				if (_blitDelay == true)
-				{
-					_blitDelay = false;
-					SDL_Delay(369u);
+//					if (userFPS < 1) userFPS = 1; // safety.
+					_ticksTillNextSlice = static_cast<int>(
+										  1000.f / static_cast<float>(userFPS)
+										  - static_cast<float>(SDL_GetTicks() - _tickOfLastSlice));
 				}
+				else
+					_ticksTillNextSlice = 0;
 
-				std::list<State*>::const_iterator i (_states.end());
-				do
+				if (_ticksTillNextSlice < 1)
 				{
-					--i;							// find top underlying fullscreen state
+					_tickOfLastSlice = SDL_GetTicks();	// store when this slice occurred.
+					_fpsCounter->addFrame();
+
+					_screen->clear();
+
+					if (_blitDelay == true)
+					{
+						_blitDelay = false;
+						SDL_Delay(369u);
+					}
+
+					std::list<State*>::const_iterator i (_states.end());
+					do
+					{
+						--i;							// find top underlying fullscreen state
+					}
+					while (i != _states.begin() && (*i)->isFullScreen() == false);
+
+					for (
+							;
+							i != _states.end();
+							++i)
+					{
+						(*i)->blit();					// blit top underlying fullscreen state and those on top of it
+					}
+
+					_fpsCounter->blit(_screen->getSurface());
+					_cursor->blit(_screen->getSurface());
+
+					_screen->flip();
 				}
-				while (i != _states.begin() && (*i)->isFullScreen() == false);
-
-				for (
-						;
-						i != _states.end();
-						++i)
-				{
-					(*i)->blit();					// blit top underlying fullscreen state and those on top of it
-				}
-
-				_fpsCounter->blit(_screen->getSurface());
-				_cursor->blit(_screen->getSurface());
-
-				_screen->flip();
 			}
 		}
 

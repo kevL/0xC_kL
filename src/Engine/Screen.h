@@ -34,7 +34,7 @@ class Surface;
 
 
 /**
- * A display Screen - handles rendering onto the game window.
+ * A display Screen - handles rendering onto the game-window.
  * @note In SDL a Screen is treated like a Surface so this is just a specialized
  * version of a Surface with functionality more relevant for display screens.
  * Contains a Surface buffer where all the contents are kept so any filters or

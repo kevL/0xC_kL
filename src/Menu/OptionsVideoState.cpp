@@ -43,8 +43,8 @@ const std::string
 
 
 /**
- * Initializes all the elements in the Video Options screen.
- * @param origin Game section that originated this state.
+ * Initializes all the elements in the VideoOptions screen.
+ * @param origin - game-section that originated this state (OptionsBaseState.h)
  */
 OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 	:
@@ -84,14 +84,13 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 	_btnLetterbox				= new ToggleTextButton(104, 16, 206, 92);
 	_btnLockMouse				= new ToggleTextButton(104, 16, 206, 110);
 
-	// Get available fullscreen modes
-	_res = SDL_ListModes(nullptr, SDL_FULLSCREEN);
+	_res = SDL_ListModes(nullptr, SDL_FULLSCREEN); // get available fullscreen modes
 	if (   _res != (SDL_Rect**)-1
 		&& _res != (SDL_Rect**) 0)
 	{
 		_resCurrent = -1;
 
-		int i = 0;
+		int i (0);
 		for (
 				i = 0;
 				_res[i];
@@ -105,7 +104,6 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 				_resCurrent = i;
 			}
 		}
-
 		_resAmount = i;
 	}
 	else
@@ -114,34 +112,34 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 		_resAmount = 0;
 		_btnDisplayResolutionDown->setVisible(false);
 		_btnDisplayResolutionUp->setVisible(false);
-		Log(LOG_WARNING) << "Couldn't get display resolutions";
+		Log(LOG_WARNING) << "Couldn't get display resolutions.";
 	}
 
 	add(_displaySurface);
-	add(_txtDisplayResolution, "text", "videoMenu");
-	add(_edtDisplayWidth, "resolution", "videoMenu");
-	add(_txtDisplayX, "resolution", "videoMenu");
-	add(_edtDisplayHeight, "resolution", "videoMenu");
-	add(_btnDisplayResolutionUp, "button", "videoMenu");
-	add(_btnDisplayResolutionDown, "button", "videoMenu");
+	add(_txtDisplayResolution,		"text",			"videoMenu");
+	add(_edtDisplayWidth,			"resolution",	"videoMenu");
+	add(_txtDisplayX,				"resolution",	"videoMenu");
+	add(_edtDisplayHeight,			"resolution",	"videoMenu");
+	add(_btnDisplayResolutionUp,	"button",		"videoMenu");
+	add(_btnDisplayResolutionDown,	"button",		"videoMenu");
 
-	add(_txtLanguage, "text", "videoMenu");
-	add(_txtFilter, "text", "videoMenu");
+	add(_txtLanguage,	"text", "videoMenu");
+	add(_txtFilter,		"text", "videoMenu");
 
 	add(_txtMode, "text", "videoMenu");
 
-	add(_txtOptions, "text", "videoMenu");
-	add(_btnLetterbox, "button", "videoMenu");
-	add(_btnLockMouse, "button", "videoMenu");
+	add(_txtOptions,	"text",		"videoMenu");
+	add(_btnLetterbox,	"button",	"videoMenu");
+	add(_btnLockMouse,	"button",	"videoMenu");
 
-	add(_cbxFilter, "button", "videoMenu");
-	add(_cbxDisplayMode, "button", "videoMenu");
+	add(_cbxFilter,			"button", "videoMenu");
+	add(_cbxDisplayMode,	"button", "videoMenu");
 
-	add(_txtBattleScale, "text", "videoMenu");
-	add(_cbxBattleScale, "button", "videoMenu");
+	add(_txtBattleScale, "text",	"videoMenu");
+	add(_cbxBattleScale, "button",	"videoMenu");
 
-	add(_txtGeoScale, "text", "videoMenu");
-	add(_cbxGeoScale, "button", "videoMenu");
+	add(_txtGeoScale, "text",	"videoMenu");
+	add(_cbxGeoScale, "button",	"videoMenu");
 
 	add(_cbxLanguage, "button", "videoMenu");
 
@@ -159,9 +157,9 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 	_edtDisplayWidth->setNumerical(true);
 	_edtDisplayWidth->onTextChange((ActionHandler)& OptionsVideoState::txtDisplayWidthChange);
 
+	_txtDisplayX->setText(L"x");
 	_txtDisplayX->setAlign(ALIGN_CENTER);
 	_txtDisplayX->setBig();
-	_txtDisplayX->setText(L"x");
 
 	_edtDisplayHeight->setAlign(ALIGN_CENTER);
 	_edtDisplayHeight->setBig();
@@ -203,7 +201,7 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 	Language::getList(_langs, languages);
 	_cbxLanguage->setOptions(languages);
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != languages.size();
 			++i)
 	{
@@ -218,57 +216,57 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 //	_cbxLanguage->onMouseIn((ActionHandler)& OptionsVideoState::txtTooltipIn);
 //	_cbxLanguage->onMouseOut((ActionHandler)& OptionsVideoState::txtTooltipOut);
 
-	std::vector<std::wstring> filterNames;
-	filterNames.push_back(tr("STR_DISABLED"));
-	filterNames.push_back(L"Scale");
-	filterNames.push_back(L"HQx");
-	filterNames.push_back(L"xBRZ");
-	_filters.push_back("");
-	_filters.push_back("");
-	_filters.push_back("");
-	_filters.push_back("");
+	std::vector<std::wstring> filterLabels;
+	filterLabels.push_back(tr("STR_DISABLED"));
+	filterLabels.push_back(L"Scale");
+	filterLabels.push_back(L"HQx");
+	filterLabels.push_back(L"xBRZ");
+	_filters.push_back(""); // 0 - none
+	_filters.push_back(""); // 1 - scale
+	_filters.push_back(""); // 2 - HQx
+	_filters.push_back(""); // 3 - xBRZ
 
 #ifndef __NO_OPENGL
-	const std::vector<std::string> filters (CrossPlatform::getFolderContents(CrossPlatform::getDataFolder(GL_FOLDER), GL_EXT));
+	std::string file;
+	const std::vector<std::string> shaders (CrossPlatform::getFolderContents(CrossPlatform::getDataFolder(GL_FOLDER), GL_EXT));
 	for (std::vector<std::string>::const_iterator
-			i = filters.begin();
-			i != filters.end();
+			i = shaders.begin();
+			i != shaders.end();
 			++i)
 	{
-		const std::string
-			file (*i),
-			path (GL_FOLDER + file),
-			name (file.substr(0, file.length() - GL_EXT.length() - 1) + GL_STRING);
-		filterNames.push_back(Language::fsToWstr(name));
-		_filters.push_back(path);
+		file = *i;
+		_filters.push_back(GL_FOLDER + file); // 4+ OpenGL shader-filters
+		filterLabels.push_back(Language::fsToWstr(file.substr(0u, file.length() - GL_EXT.length() - 1u) + GL_STRING));
 	}
-#endif
+#endif // __NO_OPENGL
 
-	size_t selFilter = 0;
+	size_t selFilter (0u);
 	if (Screen::isOpenGLEnabled() == true)
 	{
 #ifndef __NO_OPENGL
-		const std::string path = Options::useOpenGLShader;
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _filters.size();
 				++i)
 		{
-			if (_filters[i] == path)
+			if (_filters[i] == Options::openGLShader)
+			{
 				selFilter = i;
+				break;
+			}
 		}
-#endif
+#endif // __NO_OPENGL
 	}
 	else if (Options::useScaleFilter == true)
-		selFilter = 1;
+		selFilter = 1u;
 	else if (Options::useHQXFilter == true)
-		selFilter = 2;
+		selFilter = 2u;
 	else if (Options::useXBRZFilter == true)
-		selFilter = 3;
+		selFilter = 3u;
 
 	_txtFilter->setText(tr("STR_DISPLAY_FILTER"));
 
-	_cbxFilter->setOptions(filterNames);
+	_cbxFilter->setOptions(filterLabels);
 	_cbxFilter->setSelected(selFilter);
 	_cbxFilter->onComboChange((ActionHandler)& OptionsVideoState::cbxFilterChange);
 //	_cbxFilter->setTooltip("STR_DISPLAY_FILTER_DESC");
@@ -281,15 +279,15 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 	displayModes.push_back("STR_BORDERLESS");
 	displayModes.push_back("STR_RESIZABLE");
 
-	int displayMode;
+	DisplayMode displayMode;
 	if (Options::fullscreen == true)
-		displayMode = 1;
+		displayMode = FULLSCREEN;
 	else if (Options::borderless == true)
-		displayMode = 2;
+		displayMode = WINDOWED_BORDERLESS;
 	else if (Options::allowResize == true)
-		displayMode = 3;
+		displayMode = WINDOWED_RESIZEABLE;
 	else
-		displayMode = 0;
+		displayMode = WINDOWED_STATIC;
 
 	_cbxDisplayMode->setOptions(displayModes);
 	_cbxDisplayMode->setSelected(displayMode);
@@ -388,19 +386,19 @@ void OptionsVideoState::updateDisplayResolution() // private.
  */
 void OptionsVideoState::txtDisplayWidthChange(Action*)
 {
-	int width = 0;
+	int width;
 	std::wstringstream wststr;
 	wststr << std::dec << _edtDisplayWidth->getText();
 	wststr >> std::dec >> width;
 	Options::newDisplayWidth = width;
 
 	// Update resolution mode
-	if (_res != (SDL_Rect**)-1
-		&& _res != (SDL_Rect**)0)
+	if (   _res != (SDL_Rect**)-1
+		&& _res != (SDL_Rect**) 0)
 	{
 		_resCurrent = -1;
 		for (size_t
-				i = 0;
+				i = 0u;
 				_res[i];
 				++i)
 		{
@@ -421,19 +419,19 @@ void OptionsVideoState::txtDisplayWidthChange(Action*)
  */
 void OptionsVideoState::txtDisplayHeightChange(Action*)
 {
-	int height = 0;
+	int height;
 	std::wstringstream wststr;
 	wststr << std::dec << _edtDisplayHeight->getText();
 	wststr >> std::dec >> height;
 	Options::newDisplayHeight = height;
 
 	// Update resolution mode
-	if (_res != (SDL_Rect**)-1
-		&& _res != (SDL_Rect**)0)
+	if (   _res != (SDL_Rect**)-1
+		&& _res != (SDL_Rect**) 0)
 	{
 		_resCurrent = -1;
 		for (size_t
-				i = 0;
+				i = 0u;
 				_res[i];
 				++i)
 		{
@@ -465,31 +463,35 @@ void OptionsVideoState::cbxFilterChange(Action*)
 {
 	switch (_cbxFilter->getSelected())
 	{
-		case 0:
+		case 0: // none
 			Options::newOpenGL		= false;
 			Options::newScaleFilter	= false;
 			Options::newHQXFilter	= false;
 			Options::newXBRZFilter	= false;
 			break;
-		case 1:
+
+		case 1: // scale
 			Options::newOpenGL		= false;
 			Options::newScaleFilter	= true;
 			Options::newHQXFilter	= false;
 			Options::newXBRZFilter	= false;
 			break;
-		case 2:
+
+		case 2: // HQx
 			Options::newOpenGL		= false;
 			Options::newScaleFilter	= false;
 			Options::newHQXFilter	= true;
 			Options::newXBRZFilter	= false;
 			break;
-		case 3:
+
+		case 3: // xBRZ
 			Options::newOpenGL		= false;
 			Options::newScaleFilter	= false;
 			Options::newHQXFilter	= false;
 			Options::newXBRZFilter	= true;
 			break;
-		default:
+
+		default: // OpenGL
 			Options::newOpenGL		= true;
 			Options::newScaleFilter	= false;
 			Options::newHQXFilter	= false;
@@ -507,22 +509,25 @@ void OptionsVideoState::updateDisplayMode(Action*)
 {
 	switch(_cbxDisplayMode->getSelected())
 	{
-		case 0:
-			Options::fullscreen		= false;
-			Options::borderless		= false;
-			Options::allowResize	= false;
-			break;
-		case 1:
+		case FULLSCREEN:
 			Options::fullscreen		= true;
 			Options::borderless		= false;
 			Options::allowResize	= false;
 			break;
-		case 2:
+
+		case WINDOWED_STATIC:
+			Options::fullscreen		= false;
+			Options::borderless		= false;
+			Options::allowResize	= false;
+			break;
+
+		case WINDOWED_BORDERLESS:
 			Options::fullscreen		= false;
 			Options::borderless		= true;
 			Options::allowResize	= false;
 			break;
-		case 3:
+
+		case WINDOWED_RESIZEABLE:
 			Options::fullscreen		= false;
 			Options::borderless		= false;
 			Options::allowResize	= true;
@@ -587,7 +592,7 @@ void OptionsVideoState::resize(
 }
 
 /**
- * Takes care of any events from the core game engine.
+ * Takes care of any events from the core engine.
  * @param action - pointer to an Action
  */
 void OptionsVideoState::handle(Action* action)
