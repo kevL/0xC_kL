@@ -82,7 +82,7 @@ Game::Game(const std::string& title)
 		_init(false),
 		_inputActive(true),
 		_ticksTillNextSlice(0),
-		_tickOfLastSlice(0),
+		_tickOfLastSlice(0u),
 		_debugCycle(-1),
 		_debugCycle_b(-1),
 		_blitDelay(false)
@@ -111,11 +111,11 @@ Game::Game(const std::string& title)
 	else
 		initAudio();
 
-	// trap the mouse inside the window (if *not* _DEBUG)
-#ifndef _DEBUG
-	SDL_WM_GrabInput(Options::captureMouse);
+#ifdef _DEBUG
+	SDL_WM_GrabInput(SDL_GRAB_OFF);
 #else
-	SDL_WM_GrabInput(static_cast<SDL_GrabMode>(false));
+	// trap the mouse inside the window (if *not* _DEBUG)
+	SDL_WM_GrabInput(Options::captureMouse);
 #endif
 
 	// Set the window icon
@@ -147,7 +147,7 @@ Game::Game(const std::string& title)
 	// Create invisible hardware cursor to workaround bug with absolute positioning pointing devices
 //	SDL_ShowCursor(SDL_ENABLE);
 	SDL_ShowCursor(SDL_DISABLE); // kL
-	Uint8 cursor (0);
+	Uint8 cursor (0u);
 	SDL_SetCursor(SDL_CreateCursor(
 								&cursor, &cursor,
 								1,1,0,0));
@@ -198,31 +198,31 @@ Game::~Game()
  */
 void Game::run()
 {
-	enum ApplicationState
-	{
-		STANDARD,	// 0
-		SLOWED,		// 1
-		PAUSED		// 2
-	} runState = STANDARD;
-
-	static const ApplicationState keyboardFocusLost[4]
-	{
-		STANDARD,	// 0
-		STANDARD,	// 1
-		SLOWED,		// 2
-		PAUSED		// 3
-	};
-
-	static const ApplicationState appFocusLost[4]
-	{
-		SLOWED,		// 0
-		PAUSED,		// 1
-		PAUSED,		// 2
-		PAUSED		// 3
-	};
+//	enum ApplicationState
+//	{
+//		STANDARD,	// 0
+//		SLOWED,		// 1
+//		PAUSED		// 2
+//	} runState = STANDARD;
+//
+//	static const ApplicationState appFocusLost[4u]
+//	{
+//		STANDARD,	// 0
+//		SLOWED,		// 1
+//		PAUSED,		// 2
+//		PAUSED,		// 3
+//	};
+//
+//	static const ApplicationState keyboardFocusLost[4u]
+//	{
+//		STANDARD,	// 0
+//		STANDARD,	// 1
+//		SLOWED,		// 2
+//		PAUSED		// 3
+//	};
 
 	// This will avoid processing SDL's resize event on startup, workaround for the heap allocation error it causes.
-	bool startupEvent (Options::allowResize);
+	bool startupEvent (Options::allowResize == true);
 
 	while (_quit == false)
 	{
@@ -246,12 +246,12 @@ void Game::run()
 			event.type = SDL_MOUSEMOTION;
 			event.motion.x = static_cast<Uint16>(x);
 			event.motion.y = static_cast<Uint16>(y);
-			Action action = Action(
+			Action action (Action(
 								&event,
 								_screen->getXScale(),
 								_screen->getYScale(),
 								_screen->getCursorTopBlackBand(),
-								_screen->getCursorLeftBlackBand());
+								_screen->getCursorLeftBlackBand()));
 			_states.back()->handle(&action);
 		}
 
@@ -276,20 +276,6 @@ void Game::run()
 					quit();
 					break;
 
-				case SDL_ACTIVEEVENT:
-					switch (reinterpret_cast<SDL_ActiveEvent*>(&_event)->state)
-					{
-						case SDL_APPACTIVE:		// 0xC app is minimized or restored
-							runState = (reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain == 1u) ? STANDARD : appFocusLost[Options::pauseMode];
-							break;
-						case SDL_APPINPUTFOCUS:	// 0xC app loses or gains focus
-							runState = (reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain == 1u) ? STANDARD : keyboardFocusLost[Options::pauseMode];
-//							break;
-//						case SDL_APPMOUSEFOCUS: // 0xC app gains or loses mouse-over; sub-Consciously ignore it.
-//							break;
-					}
-					break;
-
 				case SDL_VIDEORESIZE:
 					if (Options::allowResize == true)
 					{
@@ -298,8 +284,8 @@ void Game::run()
 // G++ linker wants it this way ...
 #ifdef _DEBUG
 							const int
-								screenWidth = Screen::ORIGINAL_WIDTH,
-								screenHeight = Screen::ORIGINAL_HEIGHT;
+								screenWidth  (Screen::ORIGINAL_WIDTH),
+								screenHeight (Screen::ORIGINAL_HEIGHT);
 
 							Options::newDisplayWidth =
 							Options::displayWidth = std::max(screenWidth,
@@ -347,12 +333,28 @@ void Game::run()
 					}
 					break;
 
-				case SDL_MOUSEMOTION:
-				case SDL_MOUSEBUTTONDOWN:
-				case SDL_MOUSEBUTTONUP:
+/*				case SDL_ACTIVEEVENT:
+					switch (reinterpret_cast<SDL_ActiveEvent*>(&_event)->state) // NOTE: Neither of these will *re-gain* focus.
+					{
+						case SDL_APPACTIVE:		// 0xC app is minimized or restored NOTE: Getting a response from this only when the taskbar's context menu is open for this app.
+							runState = (reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain) ? STANDARD : appFocusLost[Options::pauseMode];
+							break;
+
+						case SDL_APPINPUTFOCUS:	// 0xC app loses or gains focus NOTE: This seems reversed w/ SDL_APPACTIVE.
+							runState = (reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain) ? STANDARD : keyboardFocusLost[Options::pauseMode];
+//							break;
+//
+//						case SDL_APPMOUSEFOCUS: // 0xC app gains or loses mouse-over; sub-Consciously ignore it.
+//							break;
+					}
+					break; */ // NOTE: That's just bad news.
+
+//				case SDL_MOUSEBUTTONDOWN:
+//				case SDL_MOUSEBUTTONUP:
+//				case SDL_MOUSEMOTION:
 //					if (_inputActive == false) // Skip [ie. postpone] mouse-events if they're disabled. Moved below_
 //						continue;
-					runState = STANDARD;	// re-gain focus on mouse-over or mouse-press. no break;
+//					runState = STANDARD;	// re-gain focus on mouse-over or mouse-press. no break;
 											// feed the event to others ->>>
 				default:
 					Action action (Action(
@@ -422,77 +424,79 @@ void Game::run()
 		_inputActive = true;
 
 
-		if (runState != PAUSED)						// process rendering
-		{
-			_states.back()->think();				// process logic
-			_fpsCounter->think();
+//		if (runState != PAUSED)
+//		{
+		_states.back()->think();					// process logic
+		_fpsCounter->think();
 
-			if (_init == true)
+		if (_init == true)
+		{
+			if (Options::FPS != 0					// update slice-delay-time based on the time of the last draw
+				&& (Options::useOpenGL == false || Options::vSyncForOpenGL == false))
 			{
-				if (Options::FPS != 0				// update slice-delay-time based on the time of the last draw
-					&& (Options::useOpenGL == false || Options::vSyncForOpenGL == false))
-				{
-					int userFPS;
-					if ((SDL_GetAppState() & SDL_APPINPUTFOCUS))
-						userFPS = Options::FPS;
-					else
-						userFPS = Options::FPSUnfocused;
+				int userFPS;
+				if ((SDL_GetAppState() & SDL_APPINPUTFOCUS))
+					userFPS = Options::FPS;
+				else
+					userFPS = Options::FPSUnfocused;
 
 //					if (userFPS < 1) userFPS = 1; // safety.
-					_ticksTillNextSlice = static_cast<int>(
-										  1000.f / static_cast<float>(userFPS)
-										  - static_cast<float>(SDL_GetTicks() - _tickOfLastSlice));
-				}
-				else
-					_ticksTillNextSlice = 0;
+				_ticksTillNextSlice = static_cast<int>(
+									  1000.f / static_cast<float>(userFPS)
+									  - static_cast<float>(SDL_GetTicks() - _tickOfLastSlice));
+			}
+			else
+				_ticksTillNextSlice = 0;
 
-				if (_ticksTillNextSlice < 1)
+			if (_ticksTillNextSlice < 1)			// process rendering
+			{
+				_tickOfLastSlice = SDL_GetTicks();	// store when this slice occurred.
+				_fpsCounter->addFrame();
+
+				_screen->clear();
+
+				if (_blitDelay == true)
 				{
-					_tickOfLastSlice = SDL_GetTicks();	// store when this slice occurred.
-					_fpsCounter->addFrame();
-
-					_screen->clear();
-
-					if (_blitDelay == true)
-					{
-						_blitDelay = false;
-						SDL_Delay(369u);
-					}
-
-					std::list<State*>::const_iterator i (_states.end());
-					do
-					{
-						--i;							// find top underlying fullscreen state
-					}
-					while (i != _states.begin() && (*i)->isFullScreen() == false);
-
-					for (
-							;
-							i != _states.end();
-							++i)
-					{
-						(*i)->blit();					// blit top underlying fullscreen state and those on top of it
-					}
-
-					_fpsCounter->blit(_screen->getSurface());
-					_cursor->blit(_screen->getSurface());
-
-					_screen->flip();
+					_blitDelay = false;
+					SDL_Delay(369u);
 				}
+
+				std::list<State*>::const_iterator i (_states.end());
+				do
+				{
+					--i;							// find top underlying fullscreen state
+				}
+				while (i != _states.begin() && (*i)->isFullScreen() == false);
+
+				for (
+						;
+						i != _states.end();
+						++i)
+				{
+					(*i)->blit();					// blit top underlying fullscreen state and those on top of it
+				}
+
+				_fpsCounter->blit(_screen->getSurface());
+				_cursor->blit(_screen->getSurface());
+
+				_screen->flip();
 			}
 		}
+//		}
 
-
-		switch (runState)			// save on CPU
+/*		switch (runState)			// save on CPU
 		{
-			case STANDARD:
-				SDL_Delay(1u);		// save CPU from going 100%
-				break;
+//			case STANDARD:
+//				SDL_Delay(1u);		// save CPU from going 100% ... CPU doesn't go to 100%.
+//				break;
 
 			case SLOWED:
-			case PAUSED:
 				SDL_Delay(100u);	// more slowing down
-		}
+				break;
+
+			case PAUSED:
+				SDL_Delay(233u);	// real slow.
+		} */
 	}
 
 //	Options::save();	// kL_note: why this work here but not in main() EXIT,

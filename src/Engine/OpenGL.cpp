@@ -533,12 +533,12 @@ void OpenGL::setVSync(bool sync)
 		&& glXGetCurrentDrawable	!= nullptr
 		&& glXSwapIntervalEXT		!= nullptr)
 	{
-		void* dpy (glXGetCurrentDisplay());
+		void* display (glXGetCurrentDisplay());
 
 		const Uint32 drawable (glXGetCurrentDrawable());
 		if (drawable != 0u)
 			glXSwapIntervalEXT(
-							dpy,
+							display,
 							drawable,
 							interval);
 	}
