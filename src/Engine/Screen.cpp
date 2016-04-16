@@ -294,16 +294,16 @@ void Screen::clear()
 {
 	_surface->clear();
 
-	if (_screen->flags & SDL_SWSURFACE) // NOTE: SDL_SWSURFACE= 0x0 ... so that means (if any *other flags* are set 1).
-		std::memset(
-				_screen->pixels,
-				0,
-				static_cast<size_t>(_screen->h * static_cast<int>(_screen->pitch)));
-	else
-		SDL_FillRect(
-				_screen,
-				&_clear,
-				0u);
+//	if (_screen->flags & SDL_SWSURFACE)	// NOTE: SDL_SWSURFACE= 0x0 ... so that means (if *no flags* are set).
+//		std::memset(					// ... This never runs. cf, Surface::clear()
+//				_screen->pixels,
+//				0,
+//				static_cast<size_t>(_screen->h) * static_cast<size_t>(_screen->pitch));
+//	else
+	SDL_FillRect(
+			_screen,
+			&_clear,
+			0u);
 }
 
 /**

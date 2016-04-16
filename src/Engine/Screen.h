@@ -63,6 +63,7 @@ private:
 	Uint32 _flags;
 
 	SDL_Rect _clear;
+
 	SDL_Surface* _screen;
 	Surface* _surface;
 
@@ -78,9 +79,9 @@ private:
 			ORIGINAL_WIDTH	= 320,
 			ORIGINAL_HEIGHT	= 200;
 
-		/// Creates a display Screen.
+		/// Creates a display-screen.
 		Screen();
-		/// Cleans up the display Screen.
+		/// Cleans up the display-screen.
 		~Screen();
 
 		/// Gets the internal buffer.

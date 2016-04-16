@@ -130,7 +130,7 @@ private:
 		void set_shader(const char* source_yaml_filename);
 
 		/// Tries to set VSync! decidedly uncool if it doesn't work.
-		void setVSync(bool sync);
+//		void setVSync(bool sync);
 
 		/// Sets a pointer to a data-buffer where an image is stored.
 //		bool lock(

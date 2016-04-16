@@ -547,21 +547,21 @@ void Surface::loadBdy(const std::string& file)
  */
 void Surface::clear(Uint32 color)
 {
-	if (_surface->flags & SDL_SWSURFACE)
-		std::memset(
-				_surface->pixels,
-				static_cast<int>(color),
-				static_cast<size_t>(_surface->h) * static_cast<size_t>(_surface->pitch));
-	else
-		SDL_FillRect(
-				_surface,
-				&_clear,
-				color);
+//	if (_surface->flags & SDL_SWSURFACE)	// NOTE: SDL_SWSURFACE= 0x0 ... so that means (if *no flags* are set).
+//		std::memset(						// ... This never runs. cf, Screen::clear()
+//				_surface->pixels,
+//				static_cast<int>(color),
+//				static_cast<size_t>(_surface->h) * static_cast<size_t>(_surface->pitch));
+//	else
+	SDL_FillRect(
+			_surface,
+			&_clear,
+			color);
 }
 
 /**
  * Shifts all the colors in this Surface by a specified amount.
- * @note This is a common method in 8-bpp games to simulate color effects for
+ * @note This is a common method in 8-bpp games to simulate color-effects for
  * cheap.
  * @param shift		- shift
  * @param colorLow	- lowest color-value to shift to (default -1)

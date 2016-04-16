@@ -56,7 +56,9 @@ protected:
 	SDL_Rect
 		_crop,
 		_clear;
+
 	SDL_Surface* _surface;
+
 	void* _alignedBuffer;
 
 	///
@@ -88,7 +90,7 @@ protected:
 		void loadImage(const std::string& file);
 
 		/// Clears the Surface's contents with a specified color.
-		void clear(Uint32 color = 0);
+		void clear(Uint32 color = 0u);
 		/// Offsets the Surface's colors by a set amount.
 		void offset(
 				int shift,
@@ -112,7 +114,7 @@ protected:
 		/// Copies a portion of another Surface into this one.
 		void copy(Surface* surface);
 
-		/// Initializes the Surface's various text resources.
+		/// Initializes the Surface's various text-resources.
 		virtual void initText(
 				Font*,
 				Font*,
