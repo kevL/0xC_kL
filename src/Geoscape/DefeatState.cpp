@@ -63,11 +63,11 @@ DefeatState::DefeatState()
 
 //	_timer = new Timer(30000u);
 
-	_text[0] = new Text(190, 104);
-	_text[1] = new Text(200, 34, 32, 0);
+	_text[0u] = new Text(190, 104);
+	_text[1u] = new Text(200,  34, 32, 0);
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != SCREENS;
 			++i)
 	{
@@ -86,7 +86,7 @@ DefeatState::DefeatState()
 		_bg[i]->onKeyboardPress((ActionHandler)& DefeatState::screenPress);
 
 		std::ostringstream oststr;
-		oststr << "STR_GAME_OVER_" << static_cast<int>(i) + 1;
+		oststr << "STR_GAME_OVER_" << static_cast<int>(i + 1u);
 		_text[i]->setText(tr(oststr.str()));
 		_text[i]->setWordWrap();
 		_text[i]->setVisible(false);
@@ -104,8 +104,8 @@ DefeatState::DefeatState()
 
 	if (_game->getSavedGame()->isIronman() == true) // Ironman is over, rambo
 	{
-		const std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_game->getSavedGame()->getName())) + ".sav");
-		CrossPlatform::deleteFile(Options::getUserFolder() + file);
+		const std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_game->getSavedGame()->getName())));
+		CrossPlatform::deleteFile(Options::getUserFolder() + file + ".sav");
 	}
 }
 

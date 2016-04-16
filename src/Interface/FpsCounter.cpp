@@ -44,11 +44,11 @@ namespace OpenXcom
 {
 
 /**
- * Creates a FPS counter of the specified size.
+ * Creates the FpsCounter with a specified size.
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- x-position in pixels
- * @param y			- y-position in pixels
+ * @param x			- x-position in pixels (default 0)
+ * @param y			- y-position in pixels (default 0)
  */
 FpsCounter::FpsCounter(
 		int width,
@@ -61,7 +61,7 @@ FpsCounter::FpsCounter(
 			height,
 			x + 1,
 			y + 30),
-		_frames(0)
+		_frames(0u)
 {
 	_visible = Options::fpsCounter;
 
@@ -73,7 +73,7 @@ FpsCounter::FpsCounter(
 }
 
 /**
- * Deletes FPS counter content.
+ * Deletes this FpsCounter.
  */
 FpsCounter::~FpsCounter()
 {
@@ -82,7 +82,7 @@ FpsCounter::~FpsCounter()
 }
 
 /**
- * Replaces a certain amount of colors in the FPS counter palette.
+ * Replaces a certain amount of colors in this FpsCounter's palette.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- amount of colors to replace (default 256)
@@ -97,8 +97,8 @@ void FpsCounter::setPalette(
 }
 
 /**
- * Sets the text color of the counter.
- * @param color - the color to set
+ * Sets the text-color of this FpsCounter.
+ * @param color - the color
  */
 void FpsCounter::setColor(Uint8 color)
 {
@@ -106,7 +106,7 @@ void FpsCounter::setColor(Uint8 color)
 }
 
 /**
- * Shows / hides the FPS counter.
+ * Shows/hides this FpsCounter.
  * @param action - pointer to an Action
  */
 void FpsCounter::handle(Action* action)
@@ -123,27 +123,27 @@ void FpsCounter::handle(Action* action)
 }
 
 /**
- * Advances frame counter.
+ * Calls update on schedule
  */
 void FpsCounter::think()
 {
-	_timer->think(0, this);
+	_timer->think(nullptr, this);
 }
 
 /**
- * Updates the amount of Frames per Second.
+ * Updates the Frames per Second.
  */
 void FpsCounter::update()
 {
-	const Uint32 fps = static_cast<int>(std::floor(static_cast<double>(_frames * 1000 / _timer->getTimerElapsed())));
+	const Uint32 fps (static_cast<int>(std::floor(static_cast<double>(_frames * 1000 / _timer->getTimerElapsed()))));
 	_text->setValue(static_cast<unsigned>(fps));
 
-	_frames = 0;
+	_frames = 0u;
 	_redraw = true;
 }
 
 /**
- * Draws the FPS counter.
+ * Draws this FpsCounter.
  */
 void FpsCounter::draw()
 {
@@ -152,7 +152,7 @@ void FpsCounter::draw()
 }
 
 /**
- *
+ * Adds to the frame-count.
  */
 void FpsCounter::addFrame()
 {

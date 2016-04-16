@@ -1526,17 +1526,14 @@ void GeoscapeState::time5Seconds()
 							}
 						}
 
-
 						if (detected != (*i)->getDetected()
-							&& (*i)->getFollowers()->empty() == false)
-						{
-							if (!
+							&& (*i)->getFollowers()->empty() == false
+							&& !
 								((*i)->getTrajectory().getId() == UfoTrajectory::RETALIATION_ASSAULT_RUN
 									&& (*i)->getUfoStatus() == Ufo::LANDED))
-							{
-								resetTimer();
-								popup(new UfoLostState((*i)->getName(_game->getLanguage())));
-							}
+						{
+							resetTimer();
+							popup(new UfoLostState((*i)->getName(_game->getLanguage())));
 						}
 
 						if (qtySites < _gameSave->getMissionSites()->size()) // new MissionSite appeared when UFO reached waypoint, above^
@@ -1639,7 +1636,6 @@ void GeoscapeState::time5Seconds()
 							++k;
 					}
 				}
-
 				delete *j;
 				j = (*i)->getCrafts()->erase(j);
 			}
@@ -1656,28 +1652,43 @@ void GeoscapeState::time5Seconds()
 						if (ufo->getDetected() == false	// lost radar contact
 							&& ufo != ufoExpired)		// <- ie. not recently shot down while trying to outrun interceptor but it crashed into the sea instead Lol
 						{
-							if (ufo->getTrajectory().getId() == UfoTrajectory::RETALIATION_ASSAULT_RUN
-								&& (ufo->getUfoStatus() == Ufo::LANDED // base defense
-									|| ufo->getUfoStatus() == Ufo::DESTROYED))
+							switch (ufo->getUfoStatus())
 							{
-								(*j)->returnToBase();
-							}
-							else
-							{
-								Waypoint* const wp (new Waypoint());		// Waypoint is for reconnaissance target-destination;
-								wp->setLongitude((*j)->getMeetLongitude());	// it also flags GeoscapeCraftState as a special instance.
-								wp->setLatitude((*j)->getMeetLatitude());
+								case Ufo::LANDED: // base defense
+								case Ufo::DESTROYED:
+									if (ufo->getTrajectory().getId() == UfoTrajectory::RETALIATION_ASSAULT_RUN)
+									{
+										(*j)->returnToBase();
+										break;
+									}
+									// no break;
+								default:
+								{
+									Waypoint* const wp (new Waypoint());
+									wp->setLongitude((*j)->getMeetLongitude());
+									wp->setLatitude((*j)->getMeetLatitude());
 
-								resetTimer();
-								popup(new GeoscapeCraftState(*j, this, wp));
+									// NOTE: The Waypoint is the reconnaissance destination-target;
+									// it also flags GeoscapeCraftState as a special instance.
+									// NOTE: Do not null the Craft's destination; its dest-coords
+									// will be used to position the targeter in GeoscapeCraftState.
+
+									resetTimer();
+									popup(new GeoscapeCraftState(*j, this, wp));
+								}
 							}
 						}
-						else if (ufo->getUfoStatus() == Ufo::DESTROYED
-							|| (ufo->getUfoStatus() == Ufo::CRASHED	// http://openxcom.org/forum/index.php?topic=2406.0
-								&& (*j)->getQtySoldiers() == 0))	// Actually should set this on the UFO-crash event
-//								&& (*j)->getQtyVehicles() == 0))	// so that crashed-ufos can still be targeted for Patrols.
+						else
 						{
-							(*j)->returnToBase();
+							switch (ufo->getUfoStatus())
+							{
+								case Ufo::CRASHED:
+									if ((*j)->getQtySoldiers() != 0) break;
+//									if ((*j)->getQtyVehicles() != 0) break;
+									// no break;
+								case Ufo::DESTROYED:
+									(*j)->returnToBase();	// TODO: Should set this once-only on the UFO-crash event so
+							}								// that crashed-UFOs can still be used as a destination-target.
 						}
 					}
 					else
@@ -4562,8 +4573,8 @@ void GeoscapeState::btnUfoBlobPress(Action* action) // private.
 
 /**
  * Updates the scale.
- * @param dX - reference to delta of X
- * @param dY - reference to delta of Y
+ * @param dX - reference to x-delta
+ * @param dY - reference to y-delta
  */
 void GeoscapeState::resize(
 		int& dX,

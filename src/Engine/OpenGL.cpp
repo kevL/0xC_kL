@@ -522,12 +522,32 @@ void OpenGL::set_vertex_shader(const char* source) // private.
  * Or I'm using hardware or software or this or that or double-buffering or
  * SDL with OpenGL or SDL without OpenGL or OpenGL without SDL ... anyway my
  * screen tears. I don't like it.
+ *
+ * Later: It's not v-sync per se. The tearing is caused elsewhere, and appears
+ * related to CPU and/or code-flow-looping-agorithic complications. Eg,
+ * horizontal scrolling over the top-level of a battleship (with increased
+ * looping-over-tiles inside the UFO, but lower frame-rates) causes more tearing;
+ * while horizontal scrolling on the ground-level (less tiles to loop over) shows
+ * no tearing (although frame-rates then exceed monitor-refresh rate, supposedly
+ * the only time that tearing can occur). Similarly, using edge-scroll (with lots
+ * of event-calls) causes more tearing for respective levels than drag-scroll.
+ *
+ * And/or it's just my danged video-card(s). It strikes as sort of a
+ * RAM-bottleneck, whether video-RAM or system-RAM .... Changing the nVidia
+ * settings "Vertical sync" and/or "Maximum pre-rendered frames" doesn't affect
+ * it; only a few initial jitters after changing values but then things settle
+ * down to a baseline.
+ *
+ * btw, this setVSync() option doesn't affect it either; on the other hand the
+ * tearing *is a lot worse* if not using OpenGL at all.
+ *
+ * Even later: I'd say definitely CPU: it gets worse when the lexer is parsing @ 80%.
  */
 void OpenGL::setVSync(bool sync)
 {
 	int interval;
-	if (sync == true)	interval = 1;
-	else				interval = 0;
+	if (sync == true) interval = 1;
+	else			  interval = 0;
 
 	if (   glXGetCurrentDisplay		!= nullptr
 		&& glXGetCurrentDrawable	!= nullptr
@@ -546,14 +566,18 @@ void OpenGL::setVSync(bool sync)
 		wglSwapIntervalEXT(interval);	// Other:
 										// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 										// SDL_GL_SetSwapInterval(0)
+										// cf. Screen::setVideoFlags()
 }
 
 /**
- * Sets a pointer to a data-buffer where the image-data is written.
+ * Sets a pointer to a data-buffer where an image is stored.
+ * @param data	- reference to a pointer to data
+ * @param pitch	- reference to pitch
+ * @return, true or false
  *
 bool OpenGL::lock(
-		uint32_t* &data,
-		unsigned &pitch)
+		uint32_t*& data,
+		unsigned& pitch)
 {
 	pitch = iwidth * ibpp;
 	return (data = buffer) != nullptr;

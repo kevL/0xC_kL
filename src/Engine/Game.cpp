@@ -66,9 +66,9 @@ const double Game::VOLUME_GRADIENT = 10.; // static.
 
 
 /**
- * Starts up SDL with all the subsystems and SDL_mixer for audio processing,
- * creates the display screen and sets up the cursor.
- * @param title - reference the title of the game window
+ * Starts up SDL with all the subsystems and SDL_mixer for audio-processing,
+ * creates the display-screen and sets up the cursor.
+ * @param title - reference to the title of the app-window
  */
 Game::Game(const std::string& title)
 	:
@@ -81,8 +81,8 @@ Game::Game(const std::string& title)
 		_quit(false),
 		_init(false),
 		_inputActive(true),
-		_ticksTillNextSlice(0),
-		_tickOfLastSlice(0u),
+//		_ticksTillNextSlice(0),
+//		_tickOfLastSlice(0u),
 		_debugCycle(-1),
 		_debugCycle_b(-1),
 		_blitDelay(false)
@@ -94,14 +94,14 @@ Game::Game(const std::string& title)
 	Options::mute = false;
 #endif
 
-	// Initialize SDL
+	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		throw Exception(SDL_GetError());
 	}
 	Log(LOG_INFO) << "SDL initialized.";
 
-	// Initialize SDL_mixer
+	// Initialize SDL_mixer.
 	if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0)
 	{
 		Log(LOG_ERROR) << SDL_GetError();
@@ -118,7 +118,7 @@ Game::Game(const std::string& title)
 	SDL_WM_GrabInput(Options::captureMouse);
 #endif
 
-	// Set the window icon
+	// Set the app-icon.
 #ifdef _WIN32
 	CrossPlatform::setWindowIcon(2);
 #else
@@ -130,7 +130,7 @@ Game::Game(const std::string& title)
 
 	SDL_EnableUNICODE(1);
 
-	// Create display
+	// Create display.
 	_screen = new Screen();
 /*	Screen::BASE_WIDTH = Options::getInt("baseXResolution");
 	Screen::BASE_HEIGHT = Options::getInt("baseYResolution");
@@ -141,10 +141,9 @@ Game::Game(const std::string& title)
 			Options::getInt("windowedModePositionX"),
 			Options::getInt("windowedModePositionY")); */ // kL
 
-	// Create cursor
+	// Create cursor.
 	_cursor = new Cursor(9,13);
-
-	// Create invisible hardware cursor to workaround bug with absolute positioning pointing devices
+	// Create invisible hardware cursor to workaround bug with absolute positioning pointing devices.
 //	SDL_ShowCursor(SDL_ENABLE);
 	SDL_ShowCursor(SDL_DISABLE); // kL
 	Uint8 cursor (0u);
@@ -152,16 +151,16 @@ Game::Game(const std::string& title)
 								&cursor, &cursor,
 								1,1,0,0));
 
-	// Create fps counter
-	_fpsCounter = new FpsCounter(15,5,0,0);
+	// Create FPS-counter.
+	_fpsCounter = new FpsCounter(15,5);
 
-	// Create blank language
+	// Create blank Language.
 	_lang = new Language();
 }
 
 /**
- * Deletes the display screen, cursor, states, etc etc etc, and shuts down all
- * the SDL subsystems.
+ * Deletes the display-screen, cursor, states, etc etc etc, and shuts down all
+ * the SDL-subsystems.
  */
 Game::~Game()
 {
@@ -221,7 +220,8 @@ void Game::run()
 //		PAUSED		// 3
 //	};
 
-	// This will avoid processing SDL's resize event on startup, workaround for the heap allocation error it causes.
+	// This will avoid processing SDL's resize-event on startup, a workaround
+	// for the heap-allocation-error it causes.
 	bool startupEvent (Options::allowResize == true);
 
 	while (_quit == false)
@@ -232,14 +232,13 @@ void Game::run()
 			_deleted.pop_back();
 		}
 
-
 		if (_init == false)					// initialize active state
 		{
 			_init = true;
 			_states.back()->init();
 			_states.back()->resetAll();		// unpress buttons
 
-			SDL_Event event;				// update mouse position
+			SDL_Event event;				// update mouse-position
 			int
 				x,y;
 			SDL_GetMouseState(&x,&y);
@@ -255,7 +254,7 @@ void Game::run()
 			_states.back()->handle(&action);
 		}
 
-		while (SDL_PollEvent(&_event) == 1)	// process SDL input events
+		while (SDL_PollEvent(&_event) == 1)	// process SDL input-events
 		{
 			if (_inputActive == false // kL->
 				&& _event.type != SDL_MOUSEMOTION)
@@ -301,10 +300,6 @@ void Game::run()
 							Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
 															 _event.resize.h);
 #endif
-							int
-								dX (0),
-								dY (0);
-
 							Screen::updateScale(
 											Options::battlescapeScale,
 											Options::battlescapeScale,
@@ -317,14 +312,14 @@ void Game::run()
 											Options::baseXGeoscape,
 											Options::baseYGeoscape,
 											false);
-
+							int
+								dX (0),
+								dY (0);
 							for (std::list<State*>::const_iterator
 									i = _states.begin();
 									i != _states.end();
 									++i)
-							{
 								(*i)->resize(dX, dY);
-							}
 
 							_screen->resetDisplay();
 						}
@@ -347,15 +342,15 @@ void Game::run()
 //						case SDL_APPMOUSEFOCUS: // 0xC app gains or loses mouse-over; sub-Consciously ignore it.
 //							break;
 					}
-					break; */ // NOTE: That's just bad news.
+					break; */ // NOTE: That's just bad news. On WinXP here.
 
 //				case SDL_MOUSEBUTTONDOWN:
 //				case SDL_MOUSEBUTTONUP:
 //				case SDL_MOUSEMOTION:
-//					if (_inputActive == false) // Skip [ie. postpone] mouse-events if they're disabled. Moved below_
+//					if (_inputActive == false)	// Skip [ie. postpone] mouse-events if they're disabled. Moved below_
 //						continue;
-//					runState = STANDARD;	// re-gain focus on mouse-over or mouse-press. no break;
-											// feed the event to others ->>>
+//					runState = STANDARD;		// re-gain focus on mouse-over or mouse-press. no break;
+												// feed the event to others ->>>
 				default:
 					Action action (Action(
 										&_event,
@@ -368,57 +363,72 @@ void Game::run()
 					_fpsCounter->handle(&action);
 					_states.back()->handle(&action);
 
-					if ((SDL_GetModState() & KMOD_CTRL) != 0
-						&& action.getDetails()->type == SDL_KEYDOWN)
+					if (action.getDetails()->type == SDL_KEYDOWN
+						&& (SDL_GetModState() & KMOD_CTRL) != 0)
 					{
-						if (action.getDetails()->key.keysym.sym == SDLK_g)			// "ctrl-g" grab input
+						const SDLKey key (action.getDetails()->key.keysym.sym);
+						switch (key)
 						{
-							Options::captureMouse = static_cast<SDL_GrabMode>(!Options::captureMouse);
-							SDL_WM_GrabInput(Options::captureMouse);
-						}
-						else if (Options::debug == true)
-						{
-//							if (action.getDetails()->key.keysym.sym == SDLK_t)		// "ctrl-t" engage TestState
-//								setState(new TestState());
-//							else
-							if (action.getDetails()->key.keysym.sym == SDLK_u)		// "ctrl-u" debug UI
-							{
+							case SDLK_g: // "ctrl-g" grab input
+								Options::captureMouse = static_cast<SDL_GrabMode>(!Options::captureMouse);
+								SDL_WM_GrabInput(Options::captureMouse);
+								break;
+
+							case SDLK_u: // "ctrl-u" debug UI
 								Options::debugUi = !Options::debugUi;
 								_states.back()->redrawText();
-							}
-							else if (_gameSave != nullptr
-								&& _gameSave->getBattleSave() == nullptr			// TODO: Merge w/ GeoscapeState::handle() in Geoscape.
-								&& _gameSave->getDebugGeo() == true)				// kL-> note: 'c' doubles as CreateInventoryTemplate (remarked @ InventoryState).
-							{
-								switch (action.getDetails()->key.keysym.sym)
+								break;
+
+							default:
+//								if (Options::debug == true)
+//								{
+//									switch (key)
+//									{
+//										case SDLK_t: // "ctrl-t" engage TestState
+//											setState(new TestState());
+//											break;
+
+//										default:
+								if (Options::debug == true
+									&& _gameSave != nullptr
+									&& _gameSave->getBattleSave() == nullptr	// TODO: Merge w/ GeoscapeState::handle() in Geoscape.
+									&& _gameSave->getDebugGeo() == true)		// kL-> note: 'c' doubles as CreateInventoryTemplate (remarked @ InventoryState).
 								{
-									case SDLK_c:									// ctrl+c is also handled in GeoscapeState::handle()
-									{												// where decisions are made about what info to show.
-										// "ctrl-c"									- increment to show next area's boundaries
-										// "ctrl-shift-c"							- decrement to show previous area's boundaries
-										// "ctrl-alt-c"								- toggles between show all areas' boundaries & show current area's boundaries (roughly)
-										if ((SDL_GetModState() & KMOD_ALT) != 0)
-											std::swap(_debugCycle, _debugCycle_b);
-										else if ((SDL_GetModState() & KMOD_SHIFT) != 0)
-										{
-											if (_debugCycle != -1)
-												--_debugCycle;
+									switch (key)
+									{
+										case SDLK_c: // "ctrl+c" is also handled in GeoscapeState::handle() where decisions are made about what info to show.
+											// "ctrl-c"			- increment to show next area's boundaries
+											// "ctrl-shift-c"	- decrement to show previous area's boundaries
+											// "ctrl-alt-c"		- toggles between show all areas' boundaries & show current area's boundaries (roughly)
+											if ((SDL_GetModState() & KMOD_ALT) != 0)
+												std::swap(_debugCycle, _debugCycle_b);
+											else if ((SDL_GetModState() & KMOD_SHIFT) != 0)
+											{
+												switch (_debugCycle)
+												{
+													case -1:
+														_debugCycle_b = -1; // semi-convenient reset for Cycle_b .... hey, at least there *is* one.
+														break;
+
+													default:
+														--_debugCycle;
+												}
+											}
 											else
-												_debugCycle_b = -1;					// semi-convenient reset for Cycle_b .... hey, at least there *is* one.
-										}
-										else
-											++_debugCycle;
-										break;
+												++_debugCycle;
+											break;
+
+										case SDLK_l: // "ctrl-l" reload country lines
+											if (_rules != nullptr)
+												_rules->reloadCountryLines();
 									}
-									case SDLK_l:									// "ctrl-l" reload country lines
-										if (_rules != nullptr)
-											_rules->reloadCountryLines();
 								}
-							}
+//									}
+//								}
 						}
 					}
-			}
-		}
+			} // end event-type switch.
+		} // end polling loop.
 
 //		if (_inputActive == false) // kL->
 		_inputActive = true;
@@ -431,18 +441,18 @@ void Game::run()
 
 		if (_init == true)
 		{
-			if (Options::FPS != 0					// update slice-delay-time based on the time of the last draw
-				&& (Options::useOpenGL == false || Options::vSyncForOpenGL == false))
+/*			if (Options::FPS != 0					// update slice-delay-time based on the time of the last draw
+				&& !(Options::useOpenGL == true))// && Options::vSyncForOpenGL == true))
 			{
-				int userFPS;
-				if ((SDL_GetAppState() & SDL_APPINPUTFOCUS))
-					userFPS = Options::FPS;
-				else
-					userFPS = Options::FPSUnfocused;
+//				int userFPS;
+//				if ((SDL_GetAppState() & SDL_APPINPUTFOCUS))
+//					userFPS = Options::FPS;
+//				else
+//					userFPS = Options::FPSUnfocused;
 
-//					if (userFPS < 1) userFPS = 1; // safety.
+//				if (userFPS < 1) userFPS = 1; // safety.
 				_ticksTillNextSlice = static_cast<int>(
-									  1000.f / static_cast<float>(userFPS)
+									  1000.f / static_cast<float>(Options::FPS) //userFPS
 									  - static_cast<float>(SDL_GetTicks() - _tickOfLastSlice));
 			}
 			else
@@ -450,54 +460,53 @@ void Game::run()
 
 			if (_ticksTillNextSlice < 1)			// process rendering
 			{
-				_tickOfLastSlice = SDL_GetTicks();	// store when this slice occurred.
-				_fpsCounter->addFrame();
+				_tickOfLastSlice = SDL_GetTicks();	// store when this slice occurred. */
+			_fpsCounter->addFrame();
 
-				_screen->clear();
+			_screen->clear();
 
-				if (_blitDelay == true)
-				{
-					_blitDelay = false;
-					SDL_Delay(369u);
-				}
-
-				std::list<State*>::const_iterator i (_states.end());
-				do
-				{
-					--i;							// find top underlying fullscreen state
-				}
-				while (i != _states.begin() && (*i)->isFullScreen() == false);
-
-				for (
-						;
-						i != _states.end();
-						++i)
-				{
-					(*i)->blit();					// blit top underlying fullscreen state and those on top of it
-				}
-
-				_fpsCounter->blit(_screen->getSurface());
-				_cursor->blit(_screen->getSurface());
-
-				_screen->flip();
+			if (_blitDelay == true)
+			{
+				_blitDelay = false;
+				SDL_Delay(369u);
 			}
+
+			std::list<State*>::const_iterator i (_states.end());
+			do
+			{
+				--i;							// find top underlying fullscreen state
+			}
+			while (i != _states.begin() && (*i)->isFullScreen() == false);
+
+			for (
+					;
+					i != _states.end();
+					++i)
+			{
+				(*i)->blit();					// blit top underlying fullscreen state and those on top of it
+			}
+
+			_fpsCounter->blit(_screen->getSurface());
+			_cursor->blit(_screen->getSurface());
+
+			_screen->flip();
+//			}
 		}
 //		}
 
+		SDL_Delay(1u);
 /*		switch (runState)			// save on CPU
 		{
 //			case STANDARD:
 //				SDL_Delay(1u);		// save CPU from going 100% ... CPU doesn't go to 100%.
 //				break;
-
 			case SLOWED:
 				SDL_Delay(100u);	// more slowing down
 				break;
-
 			case PAUSED:
-				SDL_Delay(233u);	// real slow.
+				SDL_Delay(1000u);	// real slow.
 		} */
-	}
+	} // end run loop.
 
 //	Options::save();	// kL_note: why this work here but not in main() EXIT,
 						// where it clears & rewrites my options.cfg
@@ -506,113 +515,52 @@ void Game::run()
 }
 
 /**
- * Stops the state machine and the game is shut down.
- * @param force - true to force Quit after an error message (default false)
+ * Stops the state-machine and this Game is shut down.
+ * @param force - true to force-quit after an error-message (default false)
  */
 void Game::quit(bool force)
 {
 	if (force == false
-		&& _gameSave != nullptr // Always save ironman
+		&& _gameSave != nullptr // always save ironman
 		&& _gameSave->isIronman() == true
 		&& _gameSave->getName().empty() == false)
 	{
-		const std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_gameSave->getName())) + ".sav");
-		_gameSave->save(file);
+		const std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_gameSave->getName())));
+		_gameSave->save(file + ".sav");
 	}
-
 	_quit = true;
 }
 
 /**
- * Changes the audio volume of the music and sound effect channels.
- * @note Range is from 0 to MIX_MAX_VOLUME.
- * @param music	- music volume
- * @param sound	- sound volume
- * @param ui	- ui volume (default -1)
+ * Checks if the game is quitting.
+ * @return, true if the game is in the process of shutting down
  */
-void Game::setVolume(
-		int music,
-		int sound,
-		int ui)
+bool Game::isQuitting() const
 {
-	if (Options::mute == false)
-	{
-		if (music != -1)
-		{
-			music = static_cast<int>(volExp(music) * static_cast<double>(SDL_MIX_MAXVOLUME));
-			Mix_VolumeMusic(music);
-//			func_set_music_volume(music);
-		}
-
-		if (sound != -1)
-		{
-			sound = static_cast<int>(volExp(sound) * static_cast<double>(SDL_MIX_MAXVOLUME));
-			Mix_Volume(-1, sound);		// sets volume on *all channels*
-			Mix_Volume(3, sound / 2);	// channel 3: reserved for ambient sound effect (not used in UFO).
-		}
-
-		if (ui != -1)
-		{
-			ui = static_cast<int>(volExp(ui) * static_cast<double>(SDL_MIX_MAXVOLUME));
-			// ... they use channels #1 & #2 btw. and group them accordingly in initAudio() below_
-			Mix_Volume(0, ui); // this sets channel-0 to ui-Volume
-			Mix_Volume(1, ui); // and this sets channel-1 to ui-Volume!
-			Mix_Volume(2, ui); // and this sets channel-2 to ui-Volume!
-		}
-	}
+	return _quit;
 }
 
 /**
- * Adjusts a linear volume level to an exponential one.
- * @param vol - volume to adjust
- * @return, adjusted volume
+ * Sets whether SDL-input is activated.
+ * @note All input events are processed if true otherwise only mouse-motion is
+ * handled.
+ * @param active - true if SDL-input is active/responsive
  */
-double Game::volExp(int vol)
+void Game::setInputActive(bool active)
 {
-	return (std::exp(std::log(Game::VOLUME_GRADIENT + 1.) * static_cast<double>(vol) / static_cast<double>(SDL_MIX_MAXVOLUME)) - 1.)
-		   / Game::VOLUME_GRADIENT;
-}
-// VOLUME_GRADIENT   = 10.
-// SDL_MIX_MAXVOLUME = 128
-//
-// if vol=256, out = 0.70267954037450624769969098909243 <- overMax in
-// if vol=128, out = 0.18331599679059886217106240983842
-// if vol= 64, out = 0.068319932506699533244707537053418
-// if vol= 32, out = 0.029738171910467249825497157272772
-// if vol= 16, out = 0.0139026654255585231541758004438
-// if vol=  8, out = 0.0067251916960370341756990957283772
-// if vol=  4, out = 0.0033078853215169796293706980006635
-// if vol=  2, out = 0.0038177854627124397781279131961105
-
-/**
- * Returns the display screen used by the game.
- * @return, pointer to the Screen
- */
-Screen* Game::getScreen() const
-{
-	return _screen;
+	_inputActive = active;
 }
 
 /**
- * Returns the mouse cursor used by the game.
- * @return, pointer to the Cursor
+ * Causes the engine to delay blitting the top state.
  */
-Cursor* Game::getCursor() const
+void Game::delayBlit()
 {
-	return _cursor;
+	_blitDelay = true;
 }
 
 /**
- * Returns the FpsCounter used by the game.
- * @return, pointer to the FpsCounter
- */
-FpsCounter* Game::getFpsCounter() const
-{
-	return _fpsCounter;
-}
-
-/**
- * Pops all the states currently in stack and pushes in the new state.
+ * Pops all the states currently in the state-stack and pushes in a new state.
  * @note A shortcut for cleaning up all the old states when they're not
  * necessary like in one-way transitions.
  * @param state - pointer to the new State
@@ -628,8 +576,8 @@ void Game::setState(State* const state)
 }
 
 /**
- * Pushes a new state into the top of the stack and initializes it.
- * @note The new state will be used once the next game cycle starts.
+ * Pushes a new state into the top of the state-stack and initializes it.
+ * @note The new state will be used once the next run-cycle starts.
  * @param state - pointer to the new State
  */
 void Game::pushState(State* const state)
@@ -639,10 +587,10 @@ void Game::pushState(State* const state)
 }
 
 /**
- * Pops the last state from the top of the stack.
+ * Pops the last state from the top of the state-stack.
  * @note Since states can't actually be deleted mid-cycle it's moved into a
  * separate queue which is cleared at the start of every cycle so the transition
- * is seamless.
+ * should be seamless.
  */
 void Game::popState()
 {
@@ -673,9 +621,9 @@ int Game::getQtyStates() const
 }
 
 /**
- * Returns whether current state is *state
- * @param state - pointer to a State to test against the stack state
- * @return, true if *state is the current state
+ * Returns whether a state is the curent state.
+ * @param state - pointer to a State to test against the stack-state
+ * @return, true if current
  */
 bool Game::isState(State* const state) const
 {
@@ -684,27 +632,154 @@ bool Game::isState(State* const state) const
 }
 
 /**
- * Checks if the game is currently quitting.
- * @return, true if the game is in the process of shutting down
+ * Initializes the audio-subsystem.
  */
-bool Game::isQuitting() const
+void Game::initAudio()
 {
-	return _quit;
+	Uint16 audioFormat;
+	if (Options::audioBitDepth == 8)
+		audioFormat = AUDIO_S8;
+	else
+		audioFormat = AUDIO_S16SYS;
+
+	const int coefBuffer (std::max(1,
+								   Options::audioBuffer1k));
+	if (Mix_OpenAudio(
+				Options::audioSampleRate,
+				audioFormat,
+				2,
+				1024 * coefBuffer) != 0)
+	{
+		Log(LOG_WARNING) << "No sound device detected, audio disabled.";
+		Log(LOG_ERROR) << Mix_GetError();
+		Options::mute = true;
+	}
+	else
+	{
+		Mix_AllocateChannels(16);
+//		Mix_ReserveChannels(4);	// 4th channel (#3) is for ambient-sFx, not channel-grouped, not even by
+		Mix_GroupChannels(		// default channel-group #-1; #3-channel must be specified explicitly to be used.
+						0,		// low-channel
+						2,		// high-channel
+						0);		// channel-group
+
+		setVolume(
+				Options::musicVolume,
+				Options::soundVolume,
+				Options::uiVolume);
+		Log(LOG_INFO) << "SDL_mixer initialized.";
+	}
 }
 
 /**
- * Returns the Language currently in use by the game.
- * @return, pointer to the Language
+ * Changes the audio-volume of the music and sound-effects channels.
+ * @note Range is from 0 to MIX_MAX_VOLUME.
+ * @param music	- music-volume
+ * @param sound	- sound-volume
+ * @param ui	- ui-volume (default -1)
  */
-Language* Game::getLanguage() const
+void Game::setVolume(
+		int music,
+		int sound,
+		int ui)
 {
-	return _lang;
+	if (Options::mute == false)
+	{
+		if (music != -1)
+		{
+			music = static_cast<int>(volExp(music) * static_cast<double>(SDL_MIX_MAXVOLUME));
+			Mix_VolumeMusic(music);
+//			func_set_music_volume(music);
+		}
+
+		if (sound != -1)
+		{
+			sound = static_cast<int>(volExp(sound) * static_cast<double>(SDL_MIX_MAXVOLUME));
+			Mix_Volume(-1, sound);		// sets volume on *all channels*
+//			Mix_Volume(3, sound / 2);	// channel 3: reserved for ambient sound-effect (not used in UFO).
+		}
+
+		if (ui != -1)
+		{
+			ui = static_cast<int>(volExp(ui) * static_cast<double>(SDL_MIX_MAXVOLUME));
+			Mix_Volume(0, ui); // channel-0 to ui-Volume
+			Mix_Volume(1, ui); // channel-1 to ui-Volume
+			Mix_Volume(2, ui); // channel-2 to ui-Volume
+		}
+	}
 }
 
 /**
-* Changes the Language currently in use by the game.
-* @param file - reference the name of the language file
-*/
+ * Adjusts a linear volume-level to an exponential one.
+ * @param vol - volume to adjust
+ * @return, adjusted volume
+ */
+double Game::volExp(int vol)
+{
+	return (std::exp(std::log(Game::VOLUME_GRADIENT + 1.) * static_cast<double>(vol) / static_cast<double>(SDL_MIX_MAXVOLUME)) - 1.)
+		   / Game::VOLUME_GRADIENT;
+}
+// VOLUME_GRADIENT   = 10.
+// SDL_MIX_MAXVOLUME = 128
+//
+// if vol=256, out = 0.70267954037450624769969098909243 <- overMax in
+// if vol=128, out = 0.18331599679059886217106240983842
+// if vol= 64, out = 0.068319932506699533244707537053418
+// if vol= 32, out = 0.029738171910467249825497157272772
+// if vol= 16, out = 0.0139026654255585231541758004438
+// if vol=  8, out = 0.0067251916960370341756990957283772
+// if vol=  4, out = 0.0033078853215169796293706980006635
+// if vol=  2, out = 0.0038177854627124397781279131961105
+
+/**
+ * Loads the most appropriate Language for the current options and
+ * operating-system.
+ */
+void Game::defaultLanguage()
+{
+	const std::string defaultLang ("en-US");
+
+	if (Options::language.empty() == true) // No language set, detect based on OS.
+	{
+		const std::string
+			local (CrossPlatform::getLocale()),
+			lang (local.substr(
+							0u,
+							local.find_first_of('-')));
+
+		try // Try to load full locale
+		{
+			loadLanguage(local);
+		}
+		catch (std::exception)
+		{
+			try // Try to load language locale
+			{
+				loadLanguage(lang);
+			}
+			catch (std::exception) // Give up, use default
+			{
+				loadLanguage(defaultLang);
+			}
+		}
+	}
+	else
+	{
+		try // Use options' language
+		{
+			loadLanguage(Options::language);
+		}
+		catch (std::exception) // Language not found, use default
+		{
+			loadLanguage(defaultLang);
+		}
+	}
+}
+
+/**
+ * Changes the Language currently in use by this Game.
+ * @param file - reference to the name of the language-file
+ */
 void Game::loadLanguage(const std::string& file)
 {
 	std::ostringstream oststr;
@@ -739,12 +814,12 @@ void Game::loadLanguage(const std::string& file)
 }
 
 /**
- * Gets the ResourcePack currently in use by this Game.
- * @return, pointer to the ResourcePack
+ * Returns the Language currently in use by this Game.
+ * @return, pointer to the Language
  */
-ResourcePack* Game::getResourcePack() const
+Language* Game::getLanguage() const
 {
-	return _res;
+	return _lang;
 }
 
 /**
@@ -758,31 +833,12 @@ void Game::setResourcePack(ResourcePack* const res)
 }
 
 /**
- * Gets the SavedGame currently in use by this Game.
- * @return, pointer to the SavedGame
+ * Gets the ResourcePack currently in use by this Game.
+ * @return, pointer to the ResourcePack
  */
-SavedGame* Game::getSavedGame() const
+ResourcePack* Game::getResourcePack() const
 {
-	return _gameSave;
-}
-
-/**
- * Sets a SavedGame for this Game to use.
- * @param gameSave - pointer to the SavedGame (default nullptr)
- */
-void Game::setSavedGame(SavedGame* const gameSave)
-{
-	delete _gameSave;
-	_gameSave = gameSave;
-}
-
-/**
- * Gets the Ruleset currently in use by this Game.
- * @return, pointer to the Ruleset
- */
-Ruleset* Game::getRuleset() const
-{
-	return _rules;
+	return _res;
 }
 
 /**
@@ -853,103 +909,63 @@ void Game::loadRuleset()
 }
 
 /**
- * Sets whether SDL input is activated.
- * @note All input events are processed if true otherwise only mouse motion is
- * handled.
- * @param active - true if SDL input is active
+ * Gets the Ruleset currently in use by this Game.
+ * @return, pointer to the Ruleset
  */
-void Game::setInputActive(bool active)
+Ruleset* Game::getRuleset() const
 {
-	_inputActive = active;
+	return _rules;
 }
 
 /**
- * Loads the most appropriate language given current system and game options.
+ * Sets a SavedGame for this Game to use.
+ * @param gameSave - pointer to the SavedGame (default nullptr)
  */
-void Game::defaultLanguage()
+void Game::setSavedGame(SavedGame* const gameSave)
 {
-	const std::string defaultLang ("en-US");
-
-	if (Options::language.empty() == true) // No language set, detect based on system
-	{
-		const std::string
-			local (CrossPlatform::getLocale()),
-			lang (local.substr(
-							0,
-							local.find_first_of('-')));
-
-		try // Try to load full locale
-		{
-			loadLanguage(local);
-		}
-		catch (std::exception)
-		{
-			try // Try to load language locale
-			{
-				loadLanguage(lang);
-			}
-			catch (std::exception) // Give up, use default
-			{
-				loadLanguage(defaultLang);
-			}
-		}
-	}
-	else
-	{
-		try // Use options language
-		{
-			loadLanguage(Options::language);
-		}
-		catch (std::exception) // Language not found, use default
-		{
-			loadLanguage(defaultLang);
-		}
-	}
+	delete _gameSave;
+	_gameSave = gameSave;
 }
 
 /**
- * Initializes the audio subsystem.
+ * Gets the SavedGame currently in use by this Game.
+ * @return, pointer to the SavedGame
  */
-void Game::initAudio()
+SavedGame* Game::getSavedGame() const
 {
-	Uint16 audioFormat;
-	if (Options::audioBitDepth == 8)
-		audioFormat = AUDIO_S8;
-	else
-		audioFormat = AUDIO_S16SYS;
-
-	const int coefBuffer (std::max(1,
-								   Options::audioBuffer1k));
-	if (Mix_OpenAudio(
-				Options::audioSampleRate,
-				audioFormat,
-				2,
-				1024 * coefBuffer) != 0)
-	{
-		Log(LOG_WARNING) << "No sound device detected, audio disabled.";
-		Log(LOG_ERROR) << Mix_GetError();
-		Options::mute = true;
-	}
-	else
-	{
-		Mix_AllocateChannels(16);
-		Mix_ReserveChannels(4); // 4th channel (#3) is for ambient sFx (not channel-grouped, not even by default channel-group #-1; channel must be specified explicitly to be used)
-		Mix_GroupChannels(
-						0,	// low channel
-						2,	// high channel
-						0);	// channel-group #
-
-		setVolume(
-				Options::musicVolume,
-				Options::soundVolume,
-				Options::uiVolume);
-		Log(LOG_INFO) << "SDL_mixer initialized.";
-	}
+	return _gameSave;
 }
 
 /**
- * Gets the country cycle for debugging country regions.
- * @return, the current country cycle setting
+ * Returns the display-screen used by this Game.
+ * @return, pointer to the Screen
+ */
+Screen* Game::getScreen() const
+{
+	return _screen;
+}
+
+/**
+ * Returns the mouse-cursor used by this Game.
+ * @return, pointer to the Cursor
+ */
+Cursor* Game::getCursor() const
+{
+	return _cursor;
+}
+
+/**
+ * Returns the FpsCounter used by this Game.
+ * @return, pointer to the FpsCounter
+ */
+FpsCounter* Game::getFpsCounter() const
+{
+	return _fpsCounter;
+}
+
+/**
+ * Gets the country-cycle for debugging country-zones.
+ * @return, the current country-cycle value
  */
 int Game::getDebugCycle() const
 {
@@ -957,20 +973,12 @@ int Game::getDebugCycle() const
 }
 
 /**
- * Sets the country cycle for debugging country regions.
- * @param cycle - the country cycle to set
+ * Sets the country-cycle for debugging country-zones.
+ * @param cycle - the country-cycle value to set
  */
 void Game::setDebugCycle(const int cycle)
 {
 	_debugCycle = cycle;
-}
-
-/**
- * Causes the engine to delay blitting top state.
- */
-void Game::delayBlit()
-{
-	_blitDelay = true;
 }
 
 }

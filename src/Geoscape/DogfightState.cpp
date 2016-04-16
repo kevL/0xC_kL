@@ -1155,7 +1155,7 @@ void DogfightState::updateDogfight()
 	{
 		if (_ufoBreakingOff == true)
 		{
-			_ufo->moveTarget();
+			_ufo->stepTarget();
 			_craft->setDestination(_ufo);
 		}
 

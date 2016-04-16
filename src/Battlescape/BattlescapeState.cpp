@@ -3988,8 +3988,8 @@ bool BattlescapeState::getMouseOverIcons() const
 
 /**
  * Updates the scale.
- * @param dX - reference the delta of X
- * @param dY - referenne the delta of Y
+ * @param dX - reference to the x-delta
+ * @param dY - reference to the y-delta
  */
 void BattlescapeState::resize(
 		int& dX,
@@ -4028,7 +4028,7 @@ void BattlescapeState::resize(
 // G++ linker wants it this way ...
 #ifdef _DEBUG
 	const int
-		screenWidth (Screen::ORIGINAL_WIDTH),
+		screenWidth  (Screen::ORIGINAL_WIDTH),
 		screenHeight (Screen::ORIGINAL_HEIGHT);
 
 	Options::baseXResolution = std::max(screenWidth,

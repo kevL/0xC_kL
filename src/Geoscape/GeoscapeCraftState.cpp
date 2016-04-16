@@ -170,15 +170,24 @@ GeoscapeCraftState::GeoscapeCraftState(
 	_btnCancel->onMouseClick((ActionHandler)& GeoscapeCraftState::btnCancelClick); // NOTE: This doubles as the Redirect btn.
 	if (_waypoint != nullptr) // can Redirect
 	{
+		_txtRedirect->setText(tr("STR_REDIRECT_CRAFT"));
+		_txtRedirect->setAlign(ALIGN_CENTER);
+		_txtRedirect->setBig();
+
 		_btnPatrol->onKeyboardPress(
 						(ActionHandler)& GeoscapeCraftState::btnPatrolClick,
 						Options::keyCancel);
+
+		_btnCancel->setText(tr("STR_GO_TO_LAST_KNOWN_UFO_POSITION"));
 		_btnCancel->onKeyboardPress(
 						(ActionHandler)& GeoscapeCraftState::btnCancelClick,
 						SDLK_r);
 	}
 	else
 	{
+		_txtRedirect->setVisible(false);
+
+		_btnCancel->setText(tr("STR_CANCEL_UC"));
 		_btnCancel->onKeyboardPress(
 						(ActionHandler)& GeoscapeCraftState::btnCancelClick,
 						Options::keyCancel);
@@ -207,7 +216,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 		missionComplete (_craft->getTacticalReturn());
 	int speed (_craft->getSpeed());
 
-	// note: Could add "DAMAGED - Return to Base" around here.
+	// NOTE: Could add "DAMAGED - Return to Base" around here.
 	if (stat != CS_OUT)
 		status = tr("STR_BASED");
 	else if (lowFuel == true)
@@ -225,7 +234,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 		{
 			if (_craft->inDogfight() == true)
 			{
-				speed = ufo->getSpeed(); // THIS DOES NOT CHANGE THE SPEED of the xCom CRAFT for Fuel usage. (ie. it should)
+				speed = ufo->getSpeed(); // THIS DOES NOT CHANGE THE SPEED of the xCom CRAFT for Fuel usage (ie. it should).
 				status = tr("STR_TAILING_UFO").arg(ufo->getId());
 			}
 			else if (ufo->getUfoStatus() == Ufo::FLYING)
@@ -247,10 +256,15 @@ GeoscapeCraftState::GeoscapeCraftState(
 							.arg(_craft->getRules()->getMaxSpeed()));
 
 	std::string alt;
-	if (stat != CS_OUT)
-		alt = "STR_GROUND";
-	else
-		alt = _craft->getAltitude();
+	switch (stat)
+	{
+		case CS_OUT:
+			alt = _craft->getAltitude();
+			break;
+
+		default:
+			alt = "STR_GROUND";
+	}
 
 	_txtAltitude->setText(tr("STR_ALTITUDE_").arg(tr(alt)));
 
@@ -314,46 +328,33 @@ GeoscapeCraftState::GeoscapeCraftState(
 	}
 
 
-	if (_waypoint == nullptr)
-	{
-		_txtRedirect->setVisible(false);
-		_btnCancel->setText(tr("STR_CANCEL_UC"));
-	}
-	else
-	{
-		_txtRedirect->setText(tr("STR_REDIRECT_CRAFT"));
-		_txtRedirect->setAlign(ALIGN_CENTER);
-		_txtRedirect->setBig();
-		_btnCancel->setText(tr("STR_GO_TO_LAST_KNOWN_UFO_POSITION"));
-	}
+	// NOTE: These could be set above^ where status was set.
+	const bool occupied (lowFuel == true
+					  || missionComplete == true
+					  || _craft->getTakeoff() == false);
 
-	// set Base button visibility FALSE for already-Based crafts.
-	// note these could be set up there where status was set.....
-	if (stat != CS_OUT
-		|| lowFuel == true
-		|| missionComplete == true
-		|| _craft->getTakeoff() == false)
+	if (stat != CS_OUT || occupied == true)
 	{
 		_btnRebase->setVisible(false);
 		_btnPatrol->setVisible(false);
 
-		if (   stat == CS_REPAIRS
-			|| stat == CS_REFUELLING
-			|| stat == CS_REARMING
-			|| lowFuel == true
-			|| missionComplete == true
-			|| _craft->getTakeoff() == false)
+		switch (stat)
 		{
-			_btnTarget->setVisible(false);
+			case CS_REPAIRS:
+			case CS_REFUELLING:
+			case CS_REARMING:
+				_btnTarget->setVisible(false);
+				break;
+
+			case CS_OUT:
+				if (occupied == true)
+					_btnTarget->setVisible(false);
 		}
 	}
 	else if (_craft->getDestination() == dynamic_cast<Target*>(_craft->getBase()))
 		_btnRebase->setVisible(false);
 	else if (_craft->getDestination() == nullptr)
-//		&& _waypoint == nullptr) // <- not needed anymore. Craft w/ redirect/_waypoint still have a destination-UFO.
-	{
 		_btnPatrol->setVisible(false);
-	}
 
 	SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet("INTICON.PCK"));
 	const int craftSprite (_craft->getRules()->getSprite());
@@ -373,7 +374,7 @@ GeoscapeCraftState::~GeoscapeCraftState()
 {}
 
 /**
- * Centers the Craft on the globe.
+ * Centers the Craft on the Globe.
  * @param action - pointer to an Action
  */
 void GeoscapeCraftState::btnCenterClick(Action*)
@@ -414,7 +415,7 @@ void GeoscapeCraftState::btnCenterClick(Action*)
 }
 
 /**
- * Returns the Craft back to its base.
+ * Returns the Craft back to its Base.
  * @param action - pointer to an Action
  */
 void GeoscapeCraftState::btnBaseClick(Action*)

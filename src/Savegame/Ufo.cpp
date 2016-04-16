@@ -569,7 +569,7 @@ void Ufo::think()
 	switch (_status)
 	{
 		case FLYING:
-			moveTarget();
+			stepTarget();
 			if (reachedDestination() == true)
 				setSpeed(0);
 			break;

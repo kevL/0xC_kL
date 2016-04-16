@@ -78,7 +78,7 @@ private:
 		static void deleteStaticSurfaces();
 
 		/// Sets the NumberText's value.
-		void setValue(unsigned value = 0);
+		void setValue(unsigned value = 0u);
 		/// Gets the NumberText's value.
 		unsigned getValue() const;
 

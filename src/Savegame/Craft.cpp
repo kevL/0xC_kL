@@ -860,7 +860,7 @@ void Craft::think()
 	}
 	else
 	{
-		moveTarget();
+		stepTarget();
 
 		if (reachedDestination() == true
 			&& _dest == dynamic_cast<Target*>(_base))

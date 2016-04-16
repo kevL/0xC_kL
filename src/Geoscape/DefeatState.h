@@ -40,7 +40,7 @@ class DefeatState final
 {
 
 private:
-	static const size_t SCREENS = 2;
+	static const size_t SCREENS = 2u;
 
 	size_t _curScreen;
 

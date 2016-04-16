@@ -132,8 +132,10 @@ private:
 		/// Tries to set VSync! decidedly uncool if it doesn't work.
 		void setVSync(bool sync);
 
-		/// Sets a pointer to a data-buffer where the image-data is written.
-//		bool lock(uint32_t* &data, unsigned &pitch);
+		/// Sets a pointer to a data-buffer where an image is stored.
+//		bool lock(
+//				uint32_t*& data,
+//				unsigned& pitch);
 };
 
 }

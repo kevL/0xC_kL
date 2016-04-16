@@ -54,7 +54,7 @@ protected:
 
 	/// Calculates a new speed-vector to a destination.
 	virtual void calculateSpeed();
-	/// Calculates a meeting-point with a destination-target.
+	/// Calculates a meet-point with a destination-target.
 	void calculateMeetPoint();
 
 	/// Creates a MovingTarget.
@@ -65,29 +65,30 @@ protected:
 		/// Cleans up the MovingTarget.
 		virtual ~MovingTarget();
 
-		/// Loads the MovingTarget from YAML.
-		virtual void load(const YAML::Node& node) override;
 		/// Saves the MovingTarget to YAML.
 		virtual YAML::Node save() const override;
+		/// Loads the MovingTarget from YAML.
+		virtual void load(const YAML::Node& node) override;
 
-		/// Gets the MovingTarget's destination.
-		Target* getDestination() const;
 		/// Sets the MovingTarget's destination.
 		virtual void setDestination(Target* const dest = nullptr);
+		/// Gets the MovingTarget's destination.
+		Target* getDestination() const;
 
-		/// Gets the MovingTarget's speed.
-		int getSpeed() const;
 		/// Sets the MovingTarget's speed.
 		void setSpeed(const int speed);
+		/// Gets the MovingTarget's speed.
+		int getSpeed() const;
+
+		/// Moves toward the destination.
+		void stepTarget();
 
 		/// Checks if the MovingTarget has reached its destination.
 		bool reachedDestination() const;
-		/// Moves toward the destination.
-		void moveTarget();
 
-		/// Returns the latitude of a meeting-point.
+		/// Returns the latitude of a meet-point.
 		double getMeetLatitude() const;
-		/// Returns the longitude of a meeting-point.
+		/// Returns the longitude of a meet-point.
 		double getMeetLongitude() const;
 };
 

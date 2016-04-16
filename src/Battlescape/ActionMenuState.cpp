@@ -462,15 +462,15 @@ bool ActionMenuState::canExecuteTarget() // private.
 	const Position pos (_action->actor->getPosition());
 	const Tile* tile (battleSave->getTile(pos));
 
-	const int armorSize (_action->actor->getArmor()->getSize());
+	const int unitSize (_action->actor->getArmor()->getSize());
 	for (int
 			x = 0;
-			x != armorSize;
+			x != unitSize;
 			++x)
 	{
 		for (int
 				y = 0;
-				y != armorSize;
+				y != unitSize;
 				++y)
 		{
 			tile = battleSave->getTile(pos + Position(x,y,0));
@@ -487,8 +487,8 @@ bool ActionMenuState::canExecuteTarget() // private.
 
 /**
  * Updates the scale.
- * @param dX - delta of X
- * @param dY - delta of Y
+ * @param dX - x-delta
+ * @param dY - y-delta
  */
 void ActionMenuState::resize(
 		int& dX,

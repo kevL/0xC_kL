@@ -578,8 +578,8 @@ SDL_Color* State::getPalette()
 /**
  * Each State will probably need its own resize handling so this space is
  * intentionally left blank.
- * @param dX - reference the delta of X
- * @param dY - reference the delta of Y
+ * @param dX - reference to the x-delta
+ * @param dY - reference to the y-delta
  */
 void State::resize(
 		int& dX,
@@ -590,8 +590,8 @@ void State::resize(
 
 /**
  * Re-orients all the Surfaces in the State.
- * @param dX - delta of X
- * @param dY - delta of Y
+ * @param dX - x-delta
+ * @param dY - y-delta
  */
 void State::recenter(
 		int dX,

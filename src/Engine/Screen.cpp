@@ -84,14 +84,45 @@ void Screen::setVideoFlags() // private.
 	{
 		_flags = SDL_OPENGL;
 
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE,	 5);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,	 5);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,	 5);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,	16);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+		// NOTE: The call to OpenGL::setVSync() has hereby been officially
+		// bypassed in resetDisplay().
+
+
+		// ideas to turn V-sync on:
+//		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1); // Windows only.
+
+		// or for nVidia:
+		//SDL_putenv("__GL_SYNC_TO_VBLANK=1");
+		// - https://forums.libsdl.org/viewtopic.php?p=16324&sid=b285f9d54e9c24e83437a318f9e68375#16324
+
+		// another Example:
+//		SDL_GL_SetAttribute(SDL_GL_RED_SIZE,     8);
+//		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,   8);
+//		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,    8);
+//		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,   8);
+//		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,  24);
+//		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+//		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
+//		SDL_Surface* screen = SDL_SetVideoMode(w, h, 32, SDL_OPENGL);
+//		if (screen == nullptr)
+//		{
+//			printf("Unable to set %ix%i video: %s\n", w, h, SDL_GetError());
+//			return 1;
+//		}
+		// - http://www.gamedev.net/topic/482099-vsync-with-linux-sdlgl/#entry4155154
 	}
 	else
 	{
+		// regarding V-sync:
+		//SDL_SetVideoMode(yourWidth, yourHeight, yourBpp, SDL_HWSURFACE  | SDL_DOUBLEBUF | SDL_FULLSCREEN);
+		// - https://forums.libsdl.org/viewtopic.php?p=29281&sid=0bdb64bf03813e4dd13a4584b5c64210#29281
+
 		_flags = SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_HWPALETTE;
 
 		if (Options::asyncBlit == true)
@@ -157,7 +188,6 @@ void Screen::handle(Action* action)
 				{
 					case 1: Timer::coreInterval =  6u; break;
 					case 6: Timer::coreInterval = 14u; break;
-
 					default:
 						Timer::coreInterval = 1u;
 				}
@@ -233,15 +263,14 @@ void Screen::flip()
 				_screen,
 				nullptr);
 
-	// perform any requested palette update
-	if (_pushPalette == true
+	if (_pushPalette == true // perform any requested palette update
 		&& _numColors != 0
-		&& _screen->format->BitsPerPixel == 8)
+		&& _screen->format->BitsPerPixel == 8u)
 	{
-		if (_screen->format->BitsPerPixel == 8
+		if (_screen->format->BitsPerPixel == 8u
 			&& SDL_SetColors(
 						_screen,
-						&(_deferredPalette[_firstColor]),
+						&(_deferredPalette[static_cast<size_t>(_firstColor)]),
 						_firstColor,
 						_numColors) == 0)
 		{
@@ -265,16 +294,16 @@ void Screen::clear()
 {
 	_surface->clear();
 
-	if (_screen->flags & SDL_SWSURFACE)
+	if (_screen->flags & SDL_SWSURFACE) // NOTE: SDL_SWSURFACE= 0x0 ... so that means (if any *other flags* are set 1).
 		std::memset(
 				_screen->pixels,
 				0,
-				_screen->h * _screen->pitch);
+				static_cast<size_t>(_screen->h * static_cast<int>(_screen->pitch)));
 	else
 		SDL_FillRect(
 				_screen,
 				&_clear,
-				0);
+				0u);
 }
 
 /**
@@ -308,13 +337,13 @@ void Screen::resetDisplay(bool resetVideo)
 							0,0,
 							Screen::is32bitEnabled() ? 32 : 8);
 
-		if (_surface->getSurface()->format->BitsPerPixel == 8)
+		if (_surface->getSurface()->format->BitsPerPixel == 8u)
 			_surface->setPalette(_deferredPalette);
 	}
 
-	SDL_SetColorKey( // turn off color key!
+	SDL_SetColorKey( // turn off color-key!
 				_surface->getSurface(),
-				0,0);
+				0u,0u);
 
 	if (resetVideo == true
 		|| _screen->format->BitsPerPixel != _bpp)
@@ -338,15 +367,15 @@ void Screen::resetDisplay(bool resetVideo)
 
 		Log(LOG_INFO) << "Attempting to set display to " << width << "x" << height << "x" << _bpp << " ...";
 		_screen = SDL_SetVideoMode(
-								width, height,
-								_bpp, _flags);
+								width, height, _bpp,
+								_flags);
 		if (_screen == nullptr)
 		{
 			Log(LOG_ERROR) << SDL_GetError();
 			Log(LOG_INFO) << "Attempting to set display to default resolution [640x400x" << _bpp << "] ...";
 			_screen = SDL_SetVideoMode(
-									640,400,
-									_bpp, _flags);
+									640, 400, _bpp,
+									_flags);
 			if (_screen == nullptr)
 			{
 				throw Exception(SDL_GetError());
@@ -450,13 +479,13 @@ void Screen::resetDisplay(bool resetVideo)
 #	endif // _DEBUG
 
 		_glOutput.linear = Options::useOpenGLSmoothing; // the setting in the shader-file will override this though. So put it after the shader-invocation.
-		_glOutput.setVSync(Options::vSyncForOpenGL);
+//		_glOutput.setVSync(Options::vSyncForOpenGL);
 
 		OpenGL::checkErrors = Options::checkOpenGLErrors;
 	}
 #endif // !__NO_OPENGL
 
-	if (_screen->format->BitsPerPixel == 8)
+	if (_screen->format->BitsPerPixel == 8u)
 		setPalette(getPalette());
 }
 
@@ -674,6 +703,9 @@ void Screen::screenshot(const std::string& file) const
  */
 bool Screen::is32bitEnabled() // static.
 {
+//	return true; // why would anyone use 8-bpp instead of 32. It's 2-thousand-fuckin-16. already.
+	// Good fuckinGod I hate hardware.
+
 	const int
 		w (Options::displayWidth),
 		h (Options::displayHeight),
@@ -702,10 +734,10 @@ bool Screen::isOpenGLEnabled() // static.
 
 /**
  * Changes a given scale and if necessary switches the current base-resolution.
- * @param type		- reference which scale option is in use (Battlescape or Geoscape)
+ * @param type		- reference to which scale option is in use (Battlescape or Geoscape)
  * @param selection	- the new scale-level
- * @param width		- reference which x-scale to adjust
- * @param height	- reference which y-scale to adjust
+ * @param width		- reference to which x-scale to adjust
+ * @param height	- reference to which y-scale to adjust
  * @param change	- true to change the current scale
  */
 void Screen::updateScale( // static.
@@ -758,7 +790,7 @@ void Screen::updateScale( // static.
 // G++ linker wants it this way ...
 #ifdef _DEBUG
 	const int
-		screenWidth (Screen::ORIGINAL_WIDTH),
+		screenWidth  (Screen::ORIGINAL_WIDTH),
 		screenHeight (Screen::ORIGINAL_HEIGHT);
 
 	width = std::max(width,

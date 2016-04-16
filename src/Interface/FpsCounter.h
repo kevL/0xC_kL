@@ -26,13 +26,14 @@
 namespace OpenXcom
 {
 
+class Action;
 class NumberText;
 class Timer;
-class Action;
 
 
 /**
- * Counts the amount of frames each second and displays them in a NumberText surface.
+ * Counts the quantity of frames each second and displays them in a NumberText
+ * surface.
  */
 class FpsCounter final
 	:
@@ -47,31 +48,35 @@ private:
 
 
 	public:
-		/// Creates a new FPS counter linked to a game.
+		/// Creates an FpsCounter.
 		FpsCounter(
 				int width,
 				int height,
-				int x,
-				int y);
-		/// Cleans up all the FPS counter resources.
+				int x = 0,
+				int y = 0);
+		/// Cleans up the FpsCounter.
 		~FpsCounter();
 
-		/// Sets the FPS counter's palette.
+		/// Sets the FpsCounter's palette.
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
 		/// Sets the FpsCounter's color.
 		void setColor(Uint8 color) override;
-		/// Handles keyboard events.
+
+		/// Handles keyboard-events.
 		void handle(Action* action);
-		/// Advances frame counter.
+
+		/// Calls update on schedule.
 		void think() override;
-		/// Updates FPS counter.
+		/// Updates the FPS-value.
 		void update();
-		/// Draws the FPS counter.
+
+		/// Draws the FpsCounter.
 		void draw() override;
-		///
+
+		/// Adds a tick.
 		void addFrame();
 };
 

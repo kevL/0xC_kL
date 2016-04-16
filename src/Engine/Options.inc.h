@@ -11,12 +11,11 @@ OPT int displayWidth, displayHeight,
 	baseXResolution, baseYResolution, baseXGeoscape, baseYGeoscape, baseXBattlescape, baseYBattlescape,
 	windowedModePositionX, windowedModePositionY,
 	soundVolume, musicVolume, uiVolume, audioSampleRate, audioBitDepth, audioBuffer1k,
-	pauseMode, autosaveFrequency,
-	FPS, FPSUnfocused,
-	changeValueByMouseWheel, mousewheelSpeed,
-	dragScrollTimeTolerance, dragScrollPixelTolerance;
-OPT bool fullscreen, asyncBlit, useScaleFilter, useHQXFilter, useXBRZFilter, useOpenGL, checkOpenGLErrors, vSyncForOpenGL, useOpenGLSmoothing,
-	allowResize, borderless, debug, debugUi, fpsCounter, reSeedOnLoad, keepAspectRatio, nonSquarePixelRatio,
+	autosaveFrequency, changeValueByMouseWheel, mousewheelSpeed, FPS, //FPSUnfocused
+	dragScrollTimeTolerance, dragScrollPixelTolerance; //pauseMode
+OPT bool fullscreen, borderless, allowResize, asyncBlit, useScaleFilter, useHQXFilter, useXBRZFilter,
+	useOpenGL, checkOpenGLErrors, useOpenGLSmoothing, //vSyncForOpenGL
+	debug, debugUi, fpsCounter, reSeedOnLoad, keepAspectRatio, nonSquarePixelRatio,
 	cursorInBlackBandsInFullscreen, cursorInBlackBandsInWindow, cursorInBlackBandsInBorderlessWindow, maximizeInfoScreens,
 	playIntro, autosave, musicAlwaysLoop, stereoSound, verboseLogging;
 OPT std::string language, openGLShader;

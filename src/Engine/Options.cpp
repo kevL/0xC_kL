@@ -103,7 +103,7 @@ void create()
 	_info.push_back(OptionInfo("useOpenGL", &useOpenGL, false));
 	_info.push_back(OptionInfo("checkOpenGLErrors", &checkOpenGLErrors, false));
 	_info.push_back(OptionInfo("openGLShader", &openGLShader, "Shaders/Raw.OpenGL.shader"));
-	_info.push_back(OptionInfo("vSyncForOpenGL", &vSyncForOpenGL, true));
+//	_info.push_back(OptionInfo("vSyncForOpenGL", &vSyncForOpenGL, true));
 	_info.push_back(OptionInfo("useOpenGLSmoothing", &useOpenGLSmoothing, true));
 	_info.push_back(OptionInfo("debug", &debug, false));
 	_info.push_back(OptionInfo("debugUi", &debugUi, false));
@@ -127,7 +127,7 @@ void create()
 	_info.push_back(OptionInfo("globeAllRadarsOnBaseBuild", &globeAllRadarsOnBaseBuild, true));
 	_info.push_back(OptionInfo("audioSampleRate", &audioSampleRate, 22050));
 	_info.push_back(OptionInfo("audioBitDepth", &audioBitDepth, 16));
-	_info.push_back(OptionInfo("pauseMode", &pauseMode, 0));
+//	_info.push_back(OptionInfo("pauseMode", &pauseMode, 0));
 	_info.push_back(OptionInfo("battleNotifyDeath", &battleNotifyDeath, false));
 	_info.push_back(OptionInfo("showFundsOnGeoscape", &showFundsOnGeoscape, false));
 	_info.push_back(OptionInfo("allowResize", &allowResize, false));
@@ -299,10 +299,10 @@ void create()
 
 #ifdef __MORPHOS__
 	_info.push_back(OptionInfo("FPS", &FPS, 15, "STR_FPS_LIMIT", "STR_GENERAL"));
-	_info.push_back(OptionInfo("FPSUnfocused", &FPSUnfocused, 15, "STR_FPS_UNFOCUSED_LIMIT", "STR_GENERAL"));
+//	_info.push_back(OptionInfo("FPSUnfocused", &FPSUnfocused, 15, "STR_FPS_UNFOCUSED_LIMIT", "STR_GENERAL"));
 #else
 	_info.push_back(OptionInfo("FPS", &FPS, 60, "STR_FPS_LIMIT", "STR_GENERAL"));
-	_info.push_back(OptionInfo("FPSUnfocused", &FPSUnfocused, 30, "STR_FPS_UNFOCUSED_LIMIT", "STR_GENERAL"));
+//	_info.push_back(OptionInfo("FPSUnfocused", &FPSUnfocused, 30, "STR_FPS_UNFOCUSED_LIMIT", "STR_GENERAL"));
 #endif
 }
 

@@ -217,8 +217,7 @@ void ListSaveState::saveGame()
 
 	if (_selected > 0)
 	{
-		fileOld = _saves[_selected - 1].file;
-		if (fileOld != file + ".sav")
+		if ((fileOld = _saves[_selected - 1].file) != file + ".sav")
 		{
 			while (CrossPlatform::fileExists(Options::getUserFolder() + file + ".sav") == true)
 				file += "_";

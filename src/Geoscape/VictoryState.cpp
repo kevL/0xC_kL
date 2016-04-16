@@ -64,15 +64,15 @@ VictoryState::VictoryState()
 
 //	_timer = new Timer(30000u);
 
-	_text[0] = new Text(195, 56, 5, 0);
-	_text[1] = new Text(232, 64, 88, 136);
-	_text[2] = new Text(254, 48, 66, 152);
-	_text[3] = new Text(300, 200, 5, 0);
-	_text[4] = new Text(310, 42, 5, 158);
+	_text[0] = new Text(195,  56,  5,   0);
+	_text[1] = new Text(232,  64, 88, 136);
+	_text[2] = new Text(254,  48, 66, 152);
+	_text[3] = new Text(300, 200,  5,   0);
+	_text[4] = new Text(310,  42,  5, 158);
 
 	for (size_t
-			i = 0;
-			i < SCREENS;
+			i = 0u;
+			i != SCREENS;
 			++i)
 	{
 		Surface* const screen (_game->getResourcePack()->getSurface(files[i]));
@@ -90,7 +90,7 @@ VictoryState::VictoryState()
 		_bg[i]->onKeyboardPress((ActionHandler)& VictoryState::screenPress);
 
 		std::ostringstream oststr;
-		oststr << "STR_VICTORY_" << static_cast<int>(i + 1);
+		oststr << "STR_VICTORY_" << static_cast<int>(i + 1u);
 		_text[i]->setText(tr(oststr.str()));
 		_text[i]->setWordWrap();
 		_text[i]->setVisible(false);
@@ -108,8 +108,8 @@ VictoryState::VictoryState()
 
 	if (_game->getSavedGame()->isIronman() == true) // Ironman is over, rambo
 	{
-		const std::string filename = CrossPlatform::sanitizeFilename(Language::wstrToFs(_game->getSavedGame()->getName())) + ".sav";
-		CrossPlatform::deleteFile(Options::getUserFolder() + filename);
+		const std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_game->getSavedGame()->getName())));
+		CrossPlatform::deleteFile(Options::getUserFolder() + file + ".sav");
 	}
 }
 

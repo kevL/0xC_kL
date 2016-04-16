@@ -40,7 +40,7 @@ class VictoryState final
 {
 
 private:
-	static const size_t SCREENS = 5;
+	static const size_t SCREENS = 5u;
 
 	size_t _curScreen;
 

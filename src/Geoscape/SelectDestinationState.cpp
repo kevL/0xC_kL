@@ -356,8 +356,8 @@ void SelectDestinationState::btnCydoniaClick(Action*)
 
 /**
  * Updates the scale.
- * @param dX - delta of X
- * @param dY - delta of Y
+ * @param dX - x-delta
+ * @param dY - y-delta
  */
 void SelectDestinationState::resize(
 		int& dX,
