@@ -109,7 +109,7 @@ private:
 		/// Gets the quantity of currently running states.
 		int getQtyStates() const;
 		/// Returns whether a state is the current state.
-		bool isState(State* const state) const;
+		bool isState(const State* const state) const;
 
 		/// Sets up the audio.
 		void initAudio();

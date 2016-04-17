@@ -53,7 +53,7 @@ Screen::Screen()
 		_baseHeight(ORIGINAL_HEIGHT),
 		_scaleX(1.),
 		_scaleY(1.),
-		_flags(0),
+		_flags(0u),
 		_numColors(0),
 		_firstColor(0),
 		_pushPalette(false),
@@ -63,7 +63,7 @@ Screen::Screen()
 	std::memset(
 			_deferredPalette,
 			0,
-			256 * sizeof(SDL_Color));
+			sizeof(SDL_Color) * 256u);
 }
 
 /**
@@ -91,7 +91,7 @@ void Screen::setVideoFlags() // private.
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 		// NOTE: The call to OpenGL::setVSync() has hereby been officially
-		// bypassed in resetDisplay().
+		// bypassed in resetDisplay(). ... not.
 
 
 		// ideas to turn V-sync on:

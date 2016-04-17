@@ -226,21 +226,22 @@ void Game::run()
 
 	if (Options::engineLooper == "roadrunner")
 	{
+		//Log(LOG_INFO) << ". roadrunner";
 		while (_quit == false)
 		{
-			while (_deleted.empty() == false)	// clean up states
+			while (_deleted.empty() == false) // clean up states
 			{
 				delete _deleted.back();
 				_deleted.pop_back();
 			}
 
-			if (_init == false)					// initialize active state
+			if (_init == false) // initialize active state
 			{
 				_init = true;
 				_states.back()->init();
-				_states.back()->resetAll();		// unpress buttons
+				_states.back()->resetAll(); // unpress buttons
 
-				SDL_Event event;				// update mouse-position
+				SDL_Event event; // update mouse-position
 				int
 					x,y;
 				SDL_GetMouseState(&x,&y);
@@ -256,11 +257,11 @@ void Game::run()
 				_states.back()->handle(&action);
 			}
 
-			while (SDL_PollEvent(&_event) == 1)	// process SDL input-events
+			while (SDL_PollEvent(&_event) == 1) // process SDL input-events
 			{
 				if (_inputActive == false && _event.type != SDL_MOUSEMOTION)
 				{
-//					_event.type = SDL_IGNORE;	// discard buffered events
+//					_event.type = SDL_IGNORE; // discard buffered events
 					continue;
 				}
 
@@ -269,12 +270,8 @@ void Game::run()
 
 				switch (_event.type)
 				{
-//					case SDL_IGNORE:
-//						break;
-
-					case SDL_QUIT:
-						quit();
-						break;
+//					case SDL_IGNORE: break;
+					case SDL_QUIT: quit(); break;
 
 					case SDL_VIDEORESIZE:
 						if (Options::allowResize == true)
@@ -401,7 +398,7 @@ void Game::run()
 			_states.back()->think(); // process logic
 			_fpsCounter->think();
 
-			if (_init == true)
+			if (_init == true) // process rendering
 			{
 				_fpsCounter->addFrame();
 
@@ -439,21 +436,22 @@ void Game::run()
 	}
 	else // anything other than Options::engineLooper= "roadrunner"
 	{
+		//Log(LOG_INFO) << ". NOT roadrunner";
 		while (_quit == false)
 		{
-			while (_deleted.empty() == false)	// clean up states
+			while (_deleted.empty() == false) // clean up states
 			{
 				delete _deleted.back();
 				_deleted.pop_back();
 			}
 
-			if (_init == false)					// initialize active state
+			if (_init == false) // initialize active state
 			{
 				_init = true;
 				_states.back()->init();
-				_states.back()->resetAll();		// unpress buttons
+				_states.back()->resetAll(); // unpress buttons
 
-				SDL_Event event;				// update mouse-position
+				SDL_Event event; // update mouse-position
 				int
 					x,y;
 				SDL_GetMouseState(&x,&y);
@@ -469,12 +467,12 @@ void Game::run()
 				_states.back()->handle(&action);
 			}
 
-			while (SDL_PollEvent(&_event) == 1)	// process SDL input-events
+			while (SDL_PollEvent(&_event) == 1) // process SDL input-events
 			{
 				if (_inputActive == false // kL->
 					&& _event.type != SDL_MOUSEMOTION)
 				{
-//					_event.type = SDL_IGNORE;	// discard buffered events
+//					_event.type = SDL_IGNORE; // discard buffered events
 					continue;
 				}
 
@@ -483,12 +481,8 @@ void Game::run()
 
 				switch (_event.type)
 				{
-//					case SDL_IGNORE:
-//						break;
-
-					case SDL_QUIT:
-						quit();
-						break;
+//					case SDL_IGNORE: break;
+					case SDL_QUIT: quit(); break;
 
 					case SDL_VIDEORESIZE:
 						if (Options::allowResize == true)
@@ -649,12 +643,12 @@ void Game::run()
 
 			if (runState != PAUSED)
 			{
-				_states.back()->think();					// process logic
+				_states.back()->think(); // process logic
 				_fpsCounter->think();
 
-				if (_init == true)
+				if (_init == true) // process rendering
 				{
-					if (Options::FPS != 0					// update slice-delay-time based on the time of the last draw
+					if (Options::FPS != 0 // update slice-delay-time based on the time of the last draw
 						&& !(Options::useOpenGL == true && Options::vSyncForOpenGL == true))
 					{
 						int fpsUser;
@@ -671,9 +665,9 @@ void Game::run()
 					else
 						_ticksTillNextSlice = 0;
 
-					if (_ticksTillNextSlice < 1)			// process rendering
+					if (_ticksTillNextSlice < 1)
 					{
-						_tickOfLastSlice = SDL_GetTicks();	// store when this slice occurred.
+						_tickOfLastSlice = SDL_GetTicks(); // store when this slice occurred.
 						_fpsCounter->addFrame();
 
 						_screen->clear();
@@ -687,7 +681,7 @@ void Game::run()
 						std::list<State*>::const_iterator i (_states.end());
 						do
 						{
-							--i;							// find top underlying fullscreen state
+							--i; // find top underlying fullscreen state
 						}
 						while (i != _states.begin() && (*i)->isFullScreen() == false);
 
@@ -696,7 +690,7 @@ void Game::run()
 								i != _states.end();
 								++i)
 						{
-							(*i)->blit();					// blit top underlying fullscreen state and those on top of it
+							(*i)->blit(); // blit top underlying fullscreen state and those on top of it
 						}
 
 						_fpsCounter->blit(_screen->getSurface());
@@ -707,14 +701,14 @@ void Game::run()
 				}
 			}
 
-			switch (runState)			// save on CPU
+			switch (runState) // save on CPU
 			{
 				case STANDARD:
-					SDL_Delay(1u);		// save CPU from going 100%
+					SDL_Delay(1u); // save CPU from going 100%
 					break;
 				case SLOWED:
 				case PAUSED:
-					SDL_Delay(100u);	// more slowing down
+					SDL_Delay(100u); // more slowing down
 			}
 		} // end run loop.
 	}
@@ -836,7 +830,7 @@ int Game::getQtyStates() const
  * @param state - pointer to a State to test against the stack-state
  * @return, true if current
  */
-bool Game::isState(State* const state) const
+bool Game::isState(const State* const state) const
 {
 	return _states.empty() == false
 		&& _states.back() == state;

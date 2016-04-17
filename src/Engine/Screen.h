@@ -68,7 +68,7 @@ private:
 	Surface* _surface;
 
 	OpenGL _glOutput;
-	SDL_Color _deferredPalette[256];
+	SDL_Color _deferredPalette[256u];
 
 	/// Sets the '_flags' and '_bpp' and base-resolution variables etc.
 	void setVideoFlags();

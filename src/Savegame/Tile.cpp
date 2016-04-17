@@ -580,7 +580,8 @@ void Tile::setRevealed(
 
 /**
  * Gets the black fog-of-war/revealed status of this Tile.
- * @param section - 0 westwall
+ * @param section - the SectionType (Tile.h)
+ *					0 westwall
  *					1 northwall
  *					2 object+floor
  * @return, true if revealed
