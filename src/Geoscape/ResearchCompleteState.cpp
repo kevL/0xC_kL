@@ -39,14 +39,17 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the ResearchComplete screen.
- * @param resRule	- pointer to the completed RuleResearch
- * @param gofRule	- pointer to bonus completed RuleResearch
+ * @param resRulePedia	- pointer to the completed RuleResearch
+ *						  or nullptr if the ufopedia-article shouldn't popup again
+ * @param gofRule		- pointer to bonus completed RuleResearch
+ * @param resRule		- pointer to the originating RuleResearch
  */
 ResearchCompleteState::ResearchCompleteState(
-		const RuleResearch* const resRule,
-		const RuleResearch* const gofRule)
+		const RuleResearch* const resRulePedia,
+		const RuleResearch* const gofRule,
+		const RuleResearch* const resRule)
 	:
-		_resRule(resRule),
+		_resRulePedia(resRulePedia),
 		_gofRule(gofRule)
 {
 	_fullScreen = false;
@@ -82,7 +85,7 @@ ResearchCompleteState::ResearchCompleteState(
 					(ActionHandler)& ResearchCompleteState::btnOkClick,
 					Options::keyCancel);
 
-	if (_resRule != nullptr || _gofRule != nullptr)
+	if (_resRulePedia != nullptr || _gofRule != nullptr)
 	{
 		_btnReport->setText(tr("STR_VIEW_REPORTS"));
 		_btnReport->onMouseClick((ActionHandler)& ResearchCompleteState::btnReportClick);
@@ -105,9 +108,9 @@ ResearchCompleteState::ResearchCompleteState(
 						Options::keyOkKeypad);
 	}
 
-	if (_resRule != nullptr)
+	if (resRule != nullptr)
 	{
-		_txtResearch->setText(tr(_resRule->getType()));
+		_txtResearch->setText(tr(resRule->getType()));
 		_txtResearch->setAlign(ALIGN_CENTER);
 		_txtResearch->setBig();
 	}
@@ -138,16 +141,16 @@ void ResearchCompleteState::btnReportClick(Action*)
 {
 	_game->popState();
 
+	if (_resRulePedia != nullptr)
+	{
+		std::string resType (_resRulePedia->getUfopaediaEntry()); // strip const.
+		Ufopaedia::openArticle(_game, resType);
+	}
+
 	if (_gofRule != nullptr)
 	{
 		std::string gofType (_gofRule->getUfopaediaEntry()); // strip const.
 		Ufopaedia::openArticle(_game, gofType);
-	}
-
-	if (_resRule != nullptr)
-	{
-		std::string resType (_resRule->getUfopaediaEntry()); // strip const.
-		Ufopaedia::openArticle(_game, resType);
 	}
 }
 

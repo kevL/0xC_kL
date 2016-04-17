@@ -2770,10 +2770,11 @@ void GenerateSupplyMission::operator() (const AlienBase* const base) const
 void GeoscapeState::time1Day()
 {
 	//Log(LOG_INFO) << "GeoscapeState::time1Day()";
-	// Create a vector of pending events for this base so a slightly
-	// different dialog layout can be shown for the last event of each type.
-	std::vector<ProductionCompleteInfo> prodEvents;
+	// Create vectors of pending-events integrated for all Bases so that
+	// slightly different dialog-layouts can be shown for the last event of each
+	// type.
 	std::vector<State*> resEvents;
+	std::vector<ProductionCompleteInfo> prodEvents;
 	std::vector<NewPossibleResearchInfo> newResEvents;
 	std::vector<NewPossibleManufactureInfo> newProdEvents;
 
@@ -2814,17 +2815,17 @@ void GeoscapeState::time1Day()
 						{
 							//Log(LOG_INFO) << "he's dead, Jim!!";
 							resetTimer();
-							if ((*j)->getArmor()->isBasic() == false) // return soldier's armor to Stores
+							if ((*j)->getArmor()->isBasic() == false) // return ex-Soldier's armor to Stores
 								(*i)->getStorageItems()->addItem((*j)->getArmor()->getStoreItem());
 
 							popup(new SoldierDiedState(
 													(*j)->getName(),
 													(*i)->getName()));
 
-							(*j)->die(_gameSave); // holy * This copies the Diary-object
-							// so to delete Soldier-instance I need to use a CopyConstructor
+							(*j)->die(_gameSave); // holy * This copies the SoldierDiary-object
+							// so to delete Soldier-instance I need to use a copy-constructor
 							// on either or both of SoldierDiary and SoldierAward.
-							// Oh, and maybe an operator= assignment overload also.
+							// Oh, and maybe an operator= assignment-overload also.
 							// Learning C++ is like standing around while 20 people constantly
 							// throw cow's dung at you. (But don't mention "const" or they'll throw
 							// twice as fast.) i miss you, Alan Turing ....
@@ -2836,11 +2837,9 @@ void GeoscapeState::time1Day()
 						}
 					}
 				}
-
 				if (dead == false)
 					(*j)->heal();
 			}
-
 			if (dead == false)
 				++j;
 		}
@@ -2865,7 +2864,7 @@ void GeoscapeState::time1Day()
 		}
 
 
-		for (std::vector<BaseFacility*>::const_iterator // handle facility construction
+		for (std::vector<BaseFacility*>::const_iterator // handle BaseFacility construction
 				j = (*i)->getFacilities()->begin();
 				j != (*i)->getFacilities()->end();
 				++j)
@@ -2907,9 +2906,9 @@ void GeoscapeState::time1Day()
 			const std::string& resType (resRule->getType());
 
 			const bool liveAlien (_rules->getUnitRule(resType) != nullptr);
-			(*i)->removeResearch(*j, liveAlien == true); // interrogation of aLien Unit complete.
+			(*i)->removeResearch(*j, liveAlien == true); // interrogation of aLien-unit complete.
 
-			if (liveAlien == true // if the live alien is "researched" its corpse is sent to stores.
+			if (liveAlien == true // if the live aLien is "researched" its corpse is sent to stores.
 				&& resRule->needsItem() == true
 				&& Options::spendResearchedItems == true)
 			{
@@ -2936,34 +2935,33 @@ void GeoscapeState::time1Day()
 			if (gofCrack == true
 				&& resRule->getGetOneFree().empty() == false)
 			{
-				std::vector<std::string> gofChoices;
+				std::vector<std::string> gofList;
 				for (std::vector<std::string>::const_iterator
 						k = resRule->getGetOneFree().begin();
 						k != resRule->getGetOneFree().end();
 						++k)
 				{
 					if (_gameSave->searchResearch(*k) == false)
-						gofChoices.push_back(*k);
+						gofList.push_back(*k);
 				}
 
-				if (gofChoices.empty() == false)
+				if (gofList.empty() == false)
 				{
-					gofRule = _rules->getResearch(gofChoices.at(RNG::pick(gofChoices.size())));
+					gofRule = _rules->getResearch(gofList.at(RNG::pick(gofList.size())));
 					_gameSave->setResearchStatus(gofRule);
 				}
 			}
 
 
-			const RuleResearch* resRule0;
+			const RuleResearch* resRulePedia;
 			if (_gameSave->isResearched(resRule->getUfopaediaEntry()) == false)
-				resRule0 = resRule;
+				resRulePedia = resRule;
 			else
-				resRule0 = nullptr;
+				resRulePedia = nullptr;
 
+			resEvents.push_back(new ResearchCompleteState(resRulePedia, gofRule, resRule));
 
 			_gameSave->setResearchStatus(resRule);
-
-			resEvents.push_back(new ResearchCompleteState(resRule0, gofRule));
 
 
 			std::vector<const RuleResearch*> popupResearch;
@@ -2992,9 +2990,9 @@ void GeoscapeState::time1Day()
 										popupManufacture,
 										resRule);
 
-			if (resRule0 != nullptr) // check for need to research the clip before the weapon itself is allowed to be manufactured.
+			if (resRulePedia != nullptr) // check for need to research the clip before the weapon itself is allowed to be manufactured.
 			{
-				const RuleItem* const itRule (_rules->getItemRule(resRule0->getType()));
+				const RuleItem* const itRule (_rules->getItemRule(resRulePedia->getType()));
 				if (itRule != nullptr
 					&& itRule->getBattleType() == BT_FIREARM
 					&& itRule->getCompatibleAmmo()->empty() == false)

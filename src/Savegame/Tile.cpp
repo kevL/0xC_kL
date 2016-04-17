@@ -568,7 +568,7 @@ void Tile::setRevealed(
 	{
 		_revealed[section] = revealed;
 
-		if (revealed == true && section == ST_CONTENT)
+		if (revealed == true && section == ST_CONTENT) // TODO: Try no-reveal (walls) if content is diag BigWall.
 		{
 			_revealed[ST_WEST] = // if object+floor is revealed set west & north walls revealed also.
 			_revealed[ST_NORTH] = true;
