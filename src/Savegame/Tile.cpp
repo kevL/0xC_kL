@@ -568,10 +568,14 @@ void Tile::setRevealed(
 	{
 		_revealed[section] = revealed;
 
-		if (revealed == true && section == ST_CONTENT) // TODO: Try no-reveal (walls) if content is diag BigWall.
+		if (revealed == true && section == ST_CONTENT) // NOTE: Try no-reveal (walls) if content is diag BigWall.
 		{
-			_revealed[ST_WEST] = // if object+floor is revealed set west & north walls revealed also.
-			_revealed[ST_NORTH] = true;
+			if (_parts[O_OBJECT] == nullptr
+				|| (_parts[O_OBJECT]->getBigwall() & 0x6) == 0) // NeSw, NwSe
+			{
+				_revealed[ST_WEST] = // if object+floor is revealed set west- & north-walls revealed also.
+				_revealed[ST_NORTH] = true;
+			}
 		}
 
 		if (_unit != nullptr) _unit->clearCache();
@@ -593,7 +597,7 @@ bool Tile::isRevealed(SectionType section) const
 
 /**
  * Sets the light on this Tile to zero.
- * @note This is done before a light level recalculation.
+ * @note This is done before a light-power recalculation.
  * @param layer - light is separated in 3 layers: Ambient, Static and Dynamic
  */
 void Tile::resetLight(size_t layer)
@@ -626,7 +630,7 @@ int Tile::getShade() const
 {
 	int light (0);
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != LIGHTLAYERS;
 			++i)
 	{

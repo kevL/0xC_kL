@@ -70,7 +70,7 @@ SavedBattleGame::SavedBattleGame(
 		_mapsize_x(0),
 		_mapsize_y(0),
 		_mapsize_z(0),
-		_qtyTilesTotal(0),
+		_qtyTilesTotal(0u),
 		_selectedUnit(nullptr),
 		_lastSelectedUnit(nullptr),
 		_pf(nullptr),
@@ -110,7 +110,7 @@ SavedBattleGame::SavedBattleGame(
 
 	_tileSearch.resize(SEARCH_SIZE);
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != SEARCH_SIZE;
 			++i)
 	{
@@ -134,7 +134,7 @@ SavedBattleGame::SavedBattleGame(
 
 	if (titles != nullptr)
 	{
-		const size_t pool (0); //RNG::generate(0, titles->size()-1 // <- in case I want to expand this for different missionTypes. eg, Cydonia -> "Blow Hard"
+		const size_t pool (0u); //RNG::generate(0, titles->size()-1 // <- in case I want to expand this for different missionTypes. eg, Cydonia -> "Blow Hard"
 		_operationTitle = titles->at(pool)->genOperation();
 	}
 }
@@ -147,7 +147,7 @@ SavedBattleGame::~SavedBattleGame()
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "Delete SavedBattleGame";
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _qtyTilesTotal;
 			++i)
 		delete _tiles[i];
@@ -239,7 +239,7 @@ void SavedBattleGame::load(
 
 	if (!node["tileTotalBytesPer"]) // binary tile data not found, load old-style text tiles :(
 	{
-		Log(LOG_INFO) << ". load tiles [1]";
+		Log(LOG_INFO) << ". load tiles [text]";
 		for (YAML::const_iterator
 				i = node["tiles"].begin();
 				i != node["tiles"].end();
@@ -251,7 +251,7 @@ void SavedBattleGame::load(
 	}
 	else // load binary Tiles.
 	{
-		Log(LOG_INFO) << ". load tiles [2]";
+		Log(LOG_INFO) << ". load tiles [binary]";
 		// load key to how the tile data was saved
 		Tile::SerializationKey serKey;
 		// WARNING: Don't trust extracting integers from YAML as anything other than 'int' ...
@@ -386,12 +386,12 @@ void SavedBattleGame::load(
 	}
 
 	for (size_t // load _hostileUnitsThisTurn here
-			i = 0;
+			i = 0u;
 			i != _units.size();
 			++i)
 	{
 		if (_units.at(i)->isOut_t(OUT_STAT) == false)
-			_units.at(i)->loadSpotted(this); // convert unitID's into pointers to BattleUnits
+			_units.at(i)->loadSpotted(this); // convert unit-ID's into pointers to BattleUnits
 	}
 
 	_shuffleUnits.assign(
@@ -399,24 +399,24 @@ void SavedBattleGame::load(
 					nullptr);
 
 
-
 	Log(LOG_INFO) << ". reset tiles";
 	resetUnitsOnTiles(); // matches up tiles and units
 
 	Log(LOG_INFO) << ". load items";
-	static const size_t LIST_TYPE (3);
-	std::string itLists_saved[LIST_TYPE] =
+	static const size_t LIST_TYPE (3u);
+	static const std::string itList_saved[LIST_TYPE]
 	{
 		"items",
 		"recoverConditional",
 		"recoverGuaranteed"
 	};
-	std::vector<BattleItem*>* itLists_battle[LIST_TYPE] =
+	std::vector<BattleItem*>* const itList_battle[LIST_TYPE]
 	{
 		&_items,
 		&_recoverConditional,
 		&_recoverGuaranteed
 	};
+
 	std::string st;
 	int
 		owner,
@@ -426,13 +426,13 @@ void SavedBattleGame::load(
 	BattleItem* item;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != LIST_TYPE;
 			++i)
 	{
 		for (YAML::const_iterator
-				j = node[itLists_saved[i]].begin();
-				j != node[itLists_saved[i]].end();
+				j = node[itList_saved[i]].begin();
+				j != node[itList_saved[i]].end();
 				++j)
 		{
 			st = (*j)["type"].as<std::string>();
@@ -492,7 +492,7 @@ void SavedBattleGame::load(
 						pos = Position(0,0,-1); // cf. BattleItem::save()
 				}
 
-				itLists_battle[i]->push_back(item);
+				itList_battle[i]->push_back(item);
 			}
 			else Log(LOG_ERROR) << "Failed to load item " << st;
 		}
@@ -818,7 +818,7 @@ void SavedBattleGame::initMap(
 	{
 		_qtyTilesTotal = static_cast<size_t>(_mapsize_x * _mapsize_y * _mapsize_z);
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _qtyTilesTotal;
 				++i)
 		{
@@ -848,7 +848,7 @@ void SavedBattleGame::initMap(
 
 	Position pos;
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _qtyTilesTotal;
 			++i)
 	{
@@ -863,7 +863,7 @@ void SavedBattleGame::initMap(
 }
 
 /**
- * Initializes the map utilities.
+ * Initializes the map-utilities.
  * @param res - pointer to ResourcePack
  */
 void SavedBattleGame::initUtilities(const ResourcePack* const res)

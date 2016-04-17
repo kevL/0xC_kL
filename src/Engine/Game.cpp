@@ -206,8 +206,8 @@ void Game::run()
 
 	static const ApplicationState appFocusLost[4u]
 	{
-		SLOWED,		// 0
-		PAUSED,		// 1
+		SLOWED,		// 0 - could change to STANDARD
+		PAUSED,		// 1 - could change to SLOWED
 		PAUSED,		// 2
 		PAUSED,		// 3
 	};

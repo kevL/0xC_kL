@@ -69,14 +69,14 @@ class Tile
 {
 
 	public:
-		static const size_t PARTS_TILE = 4;
+		static const size_t PARTS_TILE = 4u;
 
 private:
 	static const int LIGHT_FULL = 15;
 
 	static const size_t
-		LIGHTLAYERS	= 3,
-		SECTIONS	= 3;
+		LIGHTLAYERS	= 3u,
+		SECTIONS	= 3u;
 
 	bool
 		_danger,
