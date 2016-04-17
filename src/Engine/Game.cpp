@@ -50,7 +50,7 @@
 #include "../Interface/FpsCounter.h"
 #include "../Interface/NumberText.h"
 
-#include "../Menu/TestState.h"
+//#include "../Menu/TestState.h"
 
 #include "../Resource/ResourcePack.h"
 
@@ -81,8 +81,8 @@ Game::Game(const std::string& title)
 		_quit(false),
 		_init(false),
 		_inputActive(true),
-//		_ticksTillNextSlice(0),
-//		_tickOfLastSlice(0u),
+		_ticksTillNextSlice(0),
+		_tickOfLastSlice(0u),
 		_debugCycle(-1),
 		_debugCycle_b(-1),
 		_blitDelay(false)
@@ -197,316 +197,527 @@ Game::~Game()
  */
 void Game::run()
 {
-//	enum ApplicationState
-//	{
-//		STANDARD,	// 0
-//		SLOWED,		// 1
-//		PAUSED		// 2
-//	} runState = STANDARD;
-//
-//	static const ApplicationState appFocusLost[4u]
-//	{
-//		STANDARD,	// 0
-//		SLOWED,		// 1
-//		PAUSED,		// 2
-//		PAUSED,		// 3
-//	};
-//
-//	static const ApplicationState keyboardFocusLost[4u]
-//	{
-//		STANDARD,	// 0
-//		STANDARD,	// 1
-//		SLOWED,		// 2
-//		PAUSED		// 3
-//	};
+	enum ApplicationState
+	{
+		STANDARD,	// 0
+		SLOWED,		// 1
+		PAUSED		// 2
+	} runState = STANDARD;
+
+	static const ApplicationState appFocusLost[4u]
+	{
+		SLOWED,		// 0
+		PAUSED,		// 1
+		PAUSED,		// 2
+		PAUSED,		// 3
+	};
+
+	static const ApplicationState keyboardFocusLost[4u]
+	{
+		STANDARD,	// 0
+		STANDARD,	// 1
+		SLOWED,		// 2
+		PAUSED		// 3
+	};
 
 	// This will avoid processing SDL's resize-event on startup, a workaround
 	// for the heap-allocation-error it causes.
 	bool startupEvent (Options::allowResize == true);
 
-	while (_quit == false)
+	if (Options::engineLooper == "roadrunner")
 	{
-		while (_deleted.empty() == false)	// clean up states
+		while (_quit == false)
 		{
-			delete _deleted.back();
-			_deleted.pop_back();
-		}
-
-		if (_init == false)					// initialize active state
-		{
-			_init = true;
-			_states.back()->init();
-			_states.back()->resetAll();		// unpress buttons
-
-			SDL_Event event;				// update mouse-position
-			int
-				x,y;
-			SDL_GetMouseState(&x,&y);
-			event.type = SDL_MOUSEMOTION;
-			event.motion.x = static_cast<Uint16>(x);
-			event.motion.y = static_cast<Uint16>(y);
-			Action action (Action(
-								&event,
-								_screen->getXScale(),
-								_screen->getYScale(),
-								_screen->getCursorTopBlackBand(),
-								_screen->getCursorLeftBlackBand()));
-			_states.back()->handle(&action);
-		}
-
-		while (SDL_PollEvent(&_event) == 1)	// process SDL input-events
-		{
-			if (_inputActive == false // kL->
-				&& _event.type != SDL_MOUSEMOTION)
+			while (_deleted.empty() == false)	// clean up states
 			{
-//				_event.type = SDL_IGNORE;	// discard buffered events
-				continue;
+				delete _deleted.back();
+				_deleted.pop_back();
 			}
 
-			if (CrossPlatform::isQuitShortcut(_event) == true)
-				_event.type = SDL_QUIT;
-
-			switch (_event.type)
+			if (_init == false)					// initialize active state
 			{
-//				case SDL_IGNORE:
-//					break;
+				_init = true;
+				_states.back()->init();
+				_states.back()->resetAll();		// unpress buttons
 
-				case SDL_QUIT:
-					quit();
-					break;
+				SDL_Event event;				// update mouse-position
+				int
+					x,y;
+				SDL_GetMouseState(&x,&y);
+				event.type = SDL_MOUSEMOTION;
+				event.motion.x = static_cast<Uint16>(x);
+				event.motion.y = static_cast<Uint16>(y);
+				Action action (Action(
+									&event,
+									_screen->getXScale(),
+									_screen->getYScale(),
+									_screen->getCursorTopBlackBand(),
+									_screen->getCursorLeftBlackBand()));
+				_states.back()->handle(&action);
+			}
 
-				case SDL_VIDEORESIZE:
-					if (Options::allowResize == true)
-					{
-						if (startupEvent == false)
+			while (SDL_PollEvent(&_event) == 1)	// process SDL input-events
+			{
+				if (_inputActive == false && _event.type != SDL_MOUSEMOTION)
+				{
+//					_event.type = SDL_IGNORE;	// discard buffered events
+					continue;
+				}
+
+				if (CrossPlatform::isQuitShortcut(_event) == true)
+					_event.type = SDL_QUIT;
+
+				switch (_event.type)
+				{
+//					case SDL_IGNORE:
+//						break;
+
+					case SDL_QUIT:
+						quit();
+						break;
+
+					case SDL_VIDEORESIZE:
+						if (Options::allowResize == true)
 						{
+							if (startupEvent == true)
+								startupEvent = false;
+							else
+							{
 // G++ linker wants it this way ...
 #ifdef _DEBUG
-							const int
-								screenWidth  (Screen::ORIGINAL_WIDTH),
-								screenHeight (Screen::ORIGINAL_HEIGHT);
+								const int
+									screenWidth  (Screen::ORIGINAL_WIDTH),
+									screenHeight (Screen::ORIGINAL_HEIGHT);
 
-							Options::newDisplayWidth =
-							Options::displayWidth = std::max(screenWidth,
-															_event.resize.w);
-							Options::newDisplayHeight =
-							Options::displayHeight = std::max(screenHeight,
-															 _event.resize.h);
+								Options::newDisplayWidth =
+								Options::displayWidth = std::max(screenWidth,
+																_event.resize.w);
+								Options::newDisplayHeight =
+								Options::displayHeight = std::max(screenHeight,
+																 _event.resize.h);
 #else
-							Options::newDisplayWidth =
-							Options::displayWidth = std::max(Screen::ORIGINAL_WIDTH,
-															_event.resize.w);
-							Options::newDisplayHeight =
-							Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
-															 _event.resize.h);
+								Options::newDisplayWidth =
+								Options::displayWidth = std::max(Screen::ORIGINAL_WIDTH,
+																_event.resize.w);
+								Options::newDisplayHeight =
+								Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
+																 _event.resize.h);
 #endif
-							Screen::updateScale(
-											Options::battlescapeScale,
-											Options::battlescapeScale,
-											Options::baseXBattlescape,
-											Options::baseYBattlescape,
-											false);
-							Screen::updateScale(
-											Options::geoscapeScale,
-											Options::geoscapeScale,
-											Options::baseXGeoscape,
-											Options::baseYGeoscape,
-											false);
-							int
-								dX (0),
-								dY (0);
-							for (std::list<State*>::const_iterator
-									i = _states.begin();
-									i != _states.end();
-									++i)
-								(*i)->resize(dX, dY);
+								Screen::updateScale(
+												Options::battlescapeScale,
+												Options::battlescapeScale,
+												Options::baseXBattlescape,
+												Options::baseYBattlescape,
+												false);
+								Screen::updateScale(
+												Options::geoscapeScale,
+												Options::geoscapeScale,
+												Options::baseXGeoscape,
+												Options::baseYGeoscape,
+												false);
+								int
+									dX (0),
+									dY (0);
+								for (std::list<State*>::const_iterator
+										i = _states.begin();
+										i != _states.end();
+										++i)
+									(*i)->resize(dX, dY);
 
-							_screen->resetDisplay();
+								_screen->resetDisplay();
+							}
 						}
-						else
-							startupEvent = false;
-					}
-					break;
+						break;
 
-/*				case SDL_ACTIVEEVENT:
-					switch (reinterpret_cast<SDL_ActiveEvent*>(&_event)->state) // NOTE: Neither of these will *re-gain* focus.
-					{
-						case SDL_APPACTIVE:		// 0xC app is minimized or restored NOTE: Getting a response from this only when the taskbar's context menu is open for this app.
-							runState = (reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain) ? STANDARD : appFocusLost[Options::pauseMode];
-							break;
+					default:
+						Action action (Action(
+											&_event,
+											_screen->getXScale(),
+											_screen->getYScale(),
+											_screen->getCursorTopBlackBand(),
+											_screen->getCursorLeftBlackBand()));
+						_screen->handle(&action);
+						_cursor->handle(&action);
+						_fpsCounter->handle(&action);
+						_states.back()->handle(&action);
 
-						case SDL_APPINPUTFOCUS:	// 0xC app loses or gains focus NOTE: This seems reversed w/ SDL_APPACTIVE.
-							runState = (reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain) ? STANDARD : keyboardFocusLost[Options::pauseMode];
-//							break;
-//
-//						case SDL_APPMOUSEFOCUS: // 0xC app gains or loses mouse-over; sub-Consciously ignore it.
-//							break;
-					}
-					break; */ // NOTE: That's just bad news. On WinXP here.
-
-//				case SDL_MOUSEBUTTONDOWN:
-//				case SDL_MOUSEBUTTONUP:
-//				case SDL_MOUSEMOTION:
-//					if (_inputActive == false)	// Skip [ie. postpone] mouse-events if they're disabled. Moved below_
-//						continue;
-//					runState = STANDARD;		// re-gain focus on mouse-over or mouse-press. no break;
-												// feed the event to others ->>>
-				default:
-					Action action (Action(
-										&_event,
-										_screen->getXScale(),
-										_screen->getYScale(),
-										_screen->getCursorTopBlackBand(),
-										_screen->getCursorLeftBlackBand()));
-					_screen->handle(&action);
-					_cursor->handle(&action);
-					_fpsCounter->handle(&action);
-					_states.back()->handle(&action);
-
-					if (action.getDetails()->type == SDL_KEYDOWN
-						&& (SDL_GetModState() & KMOD_CTRL) != 0)
-					{
-						const SDLKey key (action.getDetails()->key.keysym.sym);
-						switch (key)
+						if (action.getDetails()->type == SDL_KEYDOWN
+							&& (SDL_GetModState() & KMOD_CTRL) != 0)
 						{
-							case SDLK_g: // "ctrl-g" grab input
-								Options::captureMouse = static_cast<SDL_GrabMode>(!Options::captureMouse);
-								SDL_WM_GrabInput(Options::captureMouse);
-								break;
+							const SDLKey key (action.getDetails()->key.keysym.sym);
+							switch (key)
+							{
+								case SDLK_g: // "ctrl-g" grab input
+									Options::captureMouse = static_cast<SDL_GrabMode>(!Options::captureMouse);
+									SDL_WM_GrabInput(Options::captureMouse);
+									break;
 
-							case SDLK_u: // "ctrl-u" debug UI
-								Options::debugUi = !Options::debugUi;
-								_states.back()->redrawText();
-								break;
+								case SDLK_u: // "ctrl-u" debug UI
+									Options::debugUi = !Options::debugUi;
+									_states.back()->redrawText();
+									break;
 
-							default:
-//								if (Options::debug == true)
-//								{
-//									switch (key)
-//									{
-//										case SDLK_t: // "ctrl-t" engage TestState
-//											setState(new TestState());
-//											break;
-
-//										default:
-								if (Options::debug == true
-									&& _gameSave != nullptr
-									&& _gameSave->getBattleSave() == nullptr	// TODO: Merge w/ GeoscapeState::handle() in Geoscape.
-									&& _gameSave->getDebugGeo() == true)		// kL-> note: 'c' doubles as CreateInventoryTemplate (remarked @ InventoryState).
-								{
-									switch (key)
+								default:
+									if (Options::debug == true
+										&& _gameSave != nullptr
+										&& _gameSave->getBattleSave() == nullptr	// TODO: Merge w/ GeoscapeState::handle() in Geoscape.
+										&& _gameSave->getDebugGeo() == true)		// kL-> note: 'c' doubles as CreateInventoryTemplate (remarked @ InventoryState).
 									{
-										case SDLK_c: // "ctrl+c" is also handled in GeoscapeState::handle() where decisions are made about what info to show.
-											// "ctrl-c"			- increment to show next area's boundaries
-											// "ctrl-shift-c"	- decrement to show previous area's boundaries
-											// "ctrl-alt-c"		- toggles between show all areas' boundaries & show current area's boundaries (roughly)
-											if ((SDL_GetModState() & KMOD_ALT) != 0)
-												std::swap(_debugCycle, _debugCycle_b);
-											else if ((SDL_GetModState() & KMOD_SHIFT) != 0)
-											{
-												switch (_debugCycle)
+										switch (key)
+										{
+											case SDLK_c: // <-- also handled in GeoscapeState::handle() where decisions are made about what info to show.
+												// "ctrl-c"			- increment to show next area's boundaries
+												// "ctrl-shift-c"	- decrement to show previous area's boundaries
+												// "ctrl-alt-c"		- toggles between show all areas' boundaries & show current area's boundaries (roughly)
+												if ((SDL_GetModState() & KMOD_ALT) != 0)
+													std::swap(_debugCycle, _debugCycle_b);
+												else if ((SDL_GetModState() & KMOD_SHIFT) != 0)
 												{
-													case -1:
-														_debugCycle_b = -1; // semi-convenient reset for Cycle_b .... hey, at least there *is* one.
-														break;
-
-													default:
-														--_debugCycle;
+													switch (_debugCycle)
+													{
+														case -1:
+															_debugCycle_b = -1; // semi-convenient reset for Cycle_b .... hey, at least there *is* one.
+															break;
+														default:
+															--_debugCycle;
+													}
 												}
-											}
-											else
-												++_debugCycle;
-											break;
+												else
+													++_debugCycle;
+												break;
 
-										case SDLK_l: // "ctrl-l" reload country lines
-											if (_rules != nullptr)
-												_rules->reloadCountryLines();
+											case SDLK_l: // "ctrl-l" reload country lines
+												if (_rules != nullptr)
+													_rules->reloadCountryLines();
+										}
 									}
-								}
-//									}
-//								}
+							}
 						}
+				} // end event-type switch.
+			} // end polling loop.
+
+			_inputActive = true;
+
+			_states.back()->think(); // process logic
+			_fpsCounter->think();
+
+			if (_init == true)
+			{
+				_fpsCounter->addFrame();
+
+				_screen->clear();
+
+				if (_blitDelay == true)
+				{
+					_blitDelay = false;
+					SDL_Delay(369u);
+				}
+
+				std::list<State*>::const_iterator i (_states.end());
+				do
+				{
+					--i; // find top underlying fullscreen state
+				}
+				while (i != _states.begin() && (*i)->isFullScreen() == false);
+
+				for (
+						;
+						i != _states.end();
+						++i)
+				{
+					(*i)->blit(); // blit top underlying fullscreen state and those on top of it
+				}
+
+				_fpsCounter->blit(_screen->getSurface());
+				_cursor->blit(_screen->getSurface());
+
+				_screen->flip();
+			}
+
+			SDL_Delay(1u);
+		} // end run loop.
+	}
+	else // anything other than Options::engineLooper= "roadrunner"
+	{
+		while (_quit == false)
+		{
+			while (_deleted.empty() == false)	// clean up states
+			{
+				delete _deleted.back();
+				_deleted.pop_back();
+			}
+
+			if (_init == false)					// initialize active state
+			{
+				_init = true;
+				_states.back()->init();
+				_states.back()->resetAll();		// unpress buttons
+
+				SDL_Event event;				// update mouse-position
+				int
+					x,y;
+				SDL_GetMouseState(&x,&y);
+				event.type = SDL_MOUSEMOTION;
+				event.motion.x = static_cast<Uint16>(x);
+				event.motion.y = static_cast<Uint16>(y);
+				Action action (Action(
+									&event,
+									_screen->getXScale(),
+									_screen->getYScale(),
+									_screen->getCursorTopBlackBand(),
+									_screen->getCursorLeftBlackBand()));
+				_states.back()->handle(&action);
+			}
+
+			while (SDL_PollEvent(&_event) == 1)	// process SDL input-events
+			{
+				if (_inputActive == false // kL->
+					&& _event.type != SDL_MOUSEMOTION)
+				{
+//					_event.type = SDL_IGNORE;	// discard buffered events
+					continue;
+				}
+
+				if (CrossPlatform::isQuitShortcut(_event) == true)
+					_event.type = SDL_QUIT;
+
+				switch (_event.type)
+				{
+//					case SDL_IGNORE:
+//						break;
+
+					case SDL_QUIT:
+						quit();
+						break;
+
+					case SDL_VIDEORESIZE:
+						if (Options::allowResize == true)
+						{
+							if (startupEvent == true)
+								startupEvent = false;
+							else
+							{
+// G++ linker wants it this way ...
+#ifdef _DEBUG
+								const int
+									screenWidth  (Screen::ORIGINAL_WIDTH),
+									screenHeight (Screen::ORIGINAL_HEIGHT);
+
+								Options::newDisplayWidth =
+								Options::displayWidth = std::max(screenWidth,
+																_event.resize.w);
+								Options::newDisplayHeight =
+								Options::displayHeight = std::max(screenHeight,
+																 _event.resize.h);
+#else
+								Options::newDisplayWidth =
+								Options::displayWidth = std::max(Screen::ORIGINAL_WIDTH,
+																_event.resize.w);
+								Options::newDisplayHeight =
+								Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
+																 _event.resize.h);
+#endif
+								Screen::updateScale(
+												Options::battlescapeScale,
+												Options::battlescapeScale,
+												Options::baseXBattlescape,
+												Options::baseYBattlescape,
+												false);
+								Screen::updateScale(
+												Options::geoscapeScale,
+												Options::geoscapeScale,
+												Options::baseXGeoscape,
+												Options::baseYGeoscape,
+												false);
+								int
+									dX (0),
+									dY (0);
+								for (std::list<State*>::const_iterator
+										i = _states.begin();
+										i != _states.end();
+										++i)
+									(*i)->resize(dX, dY);
+
+								_screen->resetDisplay();
+							}
+						}
+						break;
+
+					case SDL_ACTIVEEVENT:
+						switch (reinterpret_cast<SDL_ActiveEvent*>(&_event)->state) // NOTE: Neither of these always want to *re-gain* focus.
+						{
+							case SDL_APPACTIVE:		// 0xC app is minimized or restored NOTE: Getting a response from this only when the taskbar's context menu is open for this app.
+								runState = (reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain) ? STANDARD : appFocusLost[Options::pauseMode];
+								break;
+
+							case SDL_APPINPUTFOCUS:	// 0xC app loses or gains focus NOTE: This seems reversed w/ SDL_APPACTIVE.
+								runState = (reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain) ? STANDARD : keyboardFocusLost[Options::pauseMode];
+//								break;
+
+//							case SDL_APPMOUSEFOCUS: // 0xC app gains or loses mouse-over; sub-Consciously ignore it.
+//								break;
+						}
+						break; // NOTE: That's just bad news. On WinXP here.
+
+					case SDL_MOUSEBUTTONDOWN:
+					case SDL_MOUSEBUTTONUP:
+					case SDL_MOUSEMOTION:
+//						if (_inputActive == false)	// Skip [ie. postpone] mouse-events if they're disabled. Moved below_
+//							continue;
+						runState = STANDARD;		// re-gain focus on mouse-over or mouse-press. no break;
+													// feed the event to others ->>>
+					default:
+						Action action (Action(
+											&_event,
+											_screen->getXScale(),
+											_screen->getYScale(),
+											_screen->getCursorTopBlackBand(),
+											_screen->getCursorLeftBlackBand()));
+						_screen->handle(&action);
+						_cursor->handle(&action);
+						_fpsCounter->handle(&action);
+						_states.back()->handle(&action);
+
+						if (action.getDetails()->type == SDL_KEYDOWN
+							&& (SDL_GetModState() & KMOD_CTRL) != 0)
+						{
+							const SDLKey key (action.getDetails()->key.keysym.sym);
+							switch (key)
+							{
+								case SDLK_g: // "ctrl-g" grab input
+									Options::captureMouse = static_cast<SDL_GrabMode>(!Options::captureMouse);
+									SDL_WM_GrabInput(Options::captureMouse);
+									break;
+
+								case SDLK_u: // "ctrl-u" debug UI
+									Options::debugUi = !Options::debugUi;
+									_states.back()->redrawText();
+									break;
+
+								default:
+									if (Options::debug == true)
+									{
+										switch (key)
+										{
+//											case SDLK_t: // "ctrl-t" engage TestState
+//												setState(new TestState());
+//												break;
+
+											default:
+												if (_gameSave != nullptr
+													&& _gameSave->getBattleSave() == nullptr	// TODO: Merge w/ GeoscapeState::handle() in Geoscape.
+													&& _gameSave->getDebugGeo() == true)		// kL-> note: 'c' doubles as CreateInventoryTemplate (remarked @ InventoryState).
+												{
+													switch (key)
+													{
+														case SDLK_c: // <-- also handled in GeoscapeState::handle() where decisions are made about what info to show.
+															// "ctrl-c"			- increment to show next area's boundaries
+															// "ctrl-shift-c"	- decrement to show previous area's boundaries
+															// "ctrl-alt-c"		- toggles between show all areas' boundaries & show current area's boundaries (roughly)
+															if ((SDL_GetModState() & KMOD_ALT) != 0)
+																std::swap(_debugCycle, _debugCycle_b);
+															else if ((SDL_GetModState() & KMOD_SHIFT) != 0)
+															{
+																switch (_debugCycle)
+																{
+																	case -1:
+																		_debugCycle_b = -1; // semi-convenient reset for Cycle_b .... hey, at least there *is* one.
+																		break;
+																	default:
+																		--_debugCycle;
+																}
+															}
+															else
+																++_debugCycle;
+															break;
+
+														case SDLK_l: // "ctrl-l" reload country lines
+															if (_rules != nullptr)
+																_rules->reloadCountryLines();
+													}
+												}
+										}
+									}
+							}
+						}
+				} // end event-type switch.
+			} // end polling loop.
+
+//			if (_inputActive == false)
+			_inputActive = true;
+
+
+			if (runState != PAUSED)
+			{
+				_states.back()->think();					// process logic
+				_fpsCounter->think();
+
+				if (_init == true)
+				{
+					if (Options::FPS != 0					// update slice-delay-time based on the time of the last draw
+						&& !(Options::useOpenGL == true && Options::vSyncForOpenGL == true))
+					{
+						int fpsUser;
+						if ((SDL_GetAppState() & SDL_APPINPUTFOCUS))
+							fpsUser = Options::FPS;
+						else
+							fpsUser = Options::FPSUnfocused;
+
+						if (fpsUser < 1) fpsUser = 1; // safety.
+						_ticksTillNextSlice = static_cast<int>(
+											  1000.f / static_cast<float>(fpsUser)
+											  - static_cast<float>(SDL_GetTicks() - _tickOfLastSlice));
 					}
-			} // end event-type switch.
-		} // end polling loop.
+					else
+						_ticksTillNextSlice = 0;
 
-//		if (_inputActive == false) // kL->
-		_inputActive = true;
+					if (_ticksTillNextSlice < 1)			// process rendering
+					{
+						_tickOfLastSlice = SDL_GetTicks();	// store when this slice occurred.
+						_fpsCounter->addFrame();
 
+						_screen->clear();
 
-//		if (runState != PAUSED)
-//		{
-		_states.back()->think();					// process logic
-		_fpsCounter->think();
+						if (_blitDelay == true)
+						{
+							_blitDelay = false;
+							SDL_Delay(369u);
+						}
 
-		if (_init == true)
-		{
-/*			if (Options::FPS != 0					// update slice-delay-time based on the time of the last draw
-				&& !(Options::useOpenGL == true))// && Options::vSyncForOpenGL == true))
-			{
-//				int userFPS;
-//				if ((SDL_GetAppState() & SDL_APPINPUTFOCUS))
-//					userFPS = Options::FPS;
-//				else
-//					userFPS = Options::FPSUnfocused;
+						std::list<State*>::const_iterator i (_states.end());
+						do
+						{
+							--i;							// find top underlying fullscreen state
+						}
+						while (i != _states.begin() && (*i)->isFullScreen() == false);
 
-//				if (userFPS < 1) userFPS = 1; // safety.
-				_ticksTillNextSlice = static_cast<int>(
-									  1000.f / static_cast<float>(Options::FPS) //userFPS
-									  - static_cast<float>(SDL_GetTicks() - _tickOfLastSlice));
-			}
-			else
-				_ticksTillNextSlice = 0;
+						for (
+								;
+								i != _states.end();
+								++i)
+						{
+							(*i)->blit();					// blit top underlying fullscreen state and those on top of it
+						}
 
-			if (_ticksTillNextSlice < 1)			// process rendering
-			{
-				_tickOfLastSlice = SDL_GetTicks();	// store when this slice occurred. */
-			_fpsCounter->addFrame();
+						_fpsCounter->blit(_screen->getSurface());
+						_cursor->blit(_screen->getSurface());
 
-			_screen->clear();
-
-			if (_blitDelay == true)
-			{
-				_blitDelay = false;
-				SDL_Delay(369u);
+						_screen->flip();
+					}
+				}
 			}
 
-			std::list<State*>::const_iterator i (_states.end());
-			do
+			switch (runState)			// save on CPU
 			{
-				--i;							// find top underlying fullscreen state
+				case STANDARD:
+					SDL_Delay(1u);		// save CPU from going 100%
+					break;
+				case SLOWED:
+				case PAUSED:
+					SDL_Delay(100u);	// more slowing down
 			}
-			while (i != _states.begin() && (*i)->isFullScreen() == false);
-
-			for (
-					;
-					i != _states.end();
-					++i)
-			{
-				(*i)->blit();					// blit top underlying fullscreen state and those on top of it
-			}
-
-			_fpsCounter->blit(_screen->getSurface());
-			_cursor->blit(_screen->getSurface());
-
-			_screen->flip();
-//			}
-		}
-//		}
-
-		SDL_Delay(1u);
-/*		switch (runState)			// save on CPU
-		{
-//			case STANDARD:
-//				SDL_Delay(1u);		// save CPU from going 100% ... CPU doesn't go to 100%.
-//				break;
-			case SLOWED:
-				SDL_Delay(100u);	// more slowing down
-				break;
-			case PAUSED:
-				SDL_Delay(1000u);	// real slow.
-		} */
-	} // end run loop.
+		} // end run loop.
+	}
 
 //	Options::save();	// kL_note: why this work here but not in main() EXIT,
 						// where it clears & rewrites my options.cfg
@@ -526,7 +737,7 @@ void Game::quit(bool force)
 		&& _gameSave->getName().empty() == false)
 	{
 		const std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_gameSave->getName())));
-		_gameSave->save(file + ".sav");
+		_gameSave->save(file + SavedGame::SAVE_EXT);
 	}
 	_quit = true;
 }
@@ -643,7 +854,7 @@ void Game::initAudio()
 		audioFormat = AUDIO_S16SYS;
 
 	const int coefBuffer (std::max(1,
-								   Options::audioBuffer1k));
+								   Options::audioBuffer));
 	if (Mix_OpenAudio(
 				Options::audioSampleRate,
 				audioFormat,

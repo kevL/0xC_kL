@@ -59,9 +59,9 @@ private:
 		_quit;
 	int
 		_debugCycle,	// for debugging country-zones.
-		_debugCycle_b;	// for debugging country-zones.
-//		_ticksTillNextSlice;
-//	Uint32 _tickOfLastSlice;
+		_debugCycle_b,	// for debugging country-zones.
+		_ticksTillNextSlice;
+	Uint32 _tickOfLastSlice;
 
 	Cursor* _cursor;
 	FpsCounter* _fpsCounter;

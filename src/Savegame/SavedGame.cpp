@@ -72,7 +72,8 @@ namespace OpenXcom
 const std::string
 	SavedGame::AUTOSAVE_GEOSCAPE	= "_autogeo_.asav",
 	SavedGame::AUTOSAVE_BATTLESCAPE	= "_autobattle_.asav",
-	SavedGame::QUICKSAVE			= "_quick_.asav";
+	SavedGame::QUICKSAVE			= "_quick_.asav",
+	SavedGame::SAVE_EXT				= ".sav";
 
 
 /// *** FUNCTOR ***

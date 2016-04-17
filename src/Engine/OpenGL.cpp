@@ -542,7 +542,7 @@ void OpenGL::set_vertex_shader(const char* source) // private.
  * tearing *is a lot worse* if not using OpenGL at all.
  *
  * Even later: I'd say definitely CPU: it gets worse when the lexer is parsing @ 80%.
- *
+ */
 void OpenGL::setVSync(bool sync)
 {
 	int interval;
@@ -567,7 +567,7 @@ void OpenGL::setVSync(bool sync)
 										// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 										// SDL_GL_SetSwapInterval(0)
 										// cf. Screen::setVideoFlags()
-} */
+}
 
 /**
  * Sets a pointer to a data-buffer where an image is stored.

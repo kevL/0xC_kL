@@ -479,7 +479,7 @@ void Screen::resetDisplay(bool resetVideo)
 #	endif // _DEBUG
 
 		_glOutput.linear = Options::useOpenGLSmoothing; // the setting in the shader-file will override this though. So put it after the shader-invocation.
-//		_glOutput.setVSync(Options::vSyncForOpenGL);
+		_glOutput.setVSync(Options::vSyncForOpenGL);
 
 		OpenGL::checkErrors = Options::checkOpenGLErrors;
 	}

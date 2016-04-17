@@ -29,11 +29,11 @@ namespace OpenXcom
 
 /**
  * Creates info for a boolean option.
- * @param id		- reference the string ID used in serializing
+ * @param id		- reference to the string ID used in serializing
  * @param option	- pointer to the Option
  * @param def		- default option value (bool)
- * @param desc		- reference the Language ID for the option description (if any)
- * @param cat		- reference the Language ID for the option category (if any)
+ * @param desc		- reference to the Language ID for the option description (if any)
+ * @param cat		- reference to the Language ID for the option category (if any)
  */
 OptionInfo::OptionInfo(
 		const std::string& id,
@@ -53,11 +53,11 @@ OptionInfo::OptionInfo(
 
 /**
  * Creates info for an integer option.
- * @param id		- reference the string ID used in serializing
+ * @param id		- reference to the string ID used in serializing
  * @param option	- pointer to the Option
  * @param def		- default option value (int)
- * @param desc		- reference the Language ID for the option description (if any)
- * @param cat		- reference the Language ID for the option category (if any)
+ * @param desc		- reference to the Language ID for the option description (if any)
+ * @param cat		- reference to the Language ID for the option category (if any)
  */
 OptionInfo::OptionInfo(
 		const std::string& id,
@@ -77,11 +77,11 @@ OptionInfo::OptionInfo(
 
 /**
  * Creates info for a keyboard shortcut option.
- * @param id		- reference the string ID used in serializing
+ * @param id		- reference to the string ID used in serializing
  * @param option	- pointer to the Option
  * @param def		- default option value (SDLKey)
- * @param desc		- reference the Language ID for the option description (if any)
- * @param cat		- reference the Language ID for the option category (if any)
+ * @param desc		- reference to the Language ID for the option description (if any)
+ * @param cat		- reference to the Language ID for the option category (if any)
  */
 OptionInfo::OptionInfo(
 		const std::string& id,
@@ -101,11 +101,11 @@ OptionInfo::OptionInfo(
 
 /**
  * Creates info for a string option.
- * @param id		- reference the string ID used in serializing
+ * @param id		- reference to the string ID used in serializing
  * @param option	- pointer to the Option
  * @param def		- default option value (string)
- * @param desc		- reference the Language ID for the option description (if any)
- * @param cat		- reference the Language ID for the option category (if any)
+ * @param desc		- reference to the Language ID for the option description (if any)
+ * @param cat		- reference to the Language ID for the option category (if any)
  */
 OptionInfo::OptionInfo(
 		const std::string& id,
@@ -125,7 +125,7 @@ OptionInfo::OptionInfo(
 
 /**
  * Loads an option value from the corresponding YAML.
- * @param node - reference the Options YAML node
+ * @param node - reference to the Options YAML node
  */
 void OptionInfo::load(const YAML::Node& node) const
 {
@@ -133,13 +133,13 @@ void OptionInfo::load(const YAML::Node& node) const
 	{
 		case OPTION_BOOL:
 			*(_ref.b) = node[_id].as<bool>(_def.b);
-		break;
+			break;
 		case OPTION_INT:
 			*(_ref.i) = node[_id].as<int>(_def.i);
-		break;
+			break;
 		case OPTION_KEY:
 			*(_ref.k) = (SDLKey)node[_id].as<int>(_def.k);
-		break;
+			break;
 		case OPTION_STRING:
 			*(_ref.s) = node[_id].as<std::string>(_def.s);
 	}
@@ -147,20 +147,20 @@ void OptionInfo::load(const YAML::Node& node) const
 
 /**
  * Loads an option value from the corresponding map (eg. for command-line options).
- * @param optionsMap - reference the Options map (string,string)
+ * @param optionsMap - reference to the Options map (string,string)
  */
 void OptionInfo::load(const std::map<std::string, std::string>& optionsMap) const
 {
-	std::string id = _id;
+	std::string id (_id);
 	std::transform(
 				id.begin(),
 				id.end(),
 				id.begin(),
 				::tolower);
-	std::map<std::string, std::string>::const_iterator it = optionsMap.find(id);
+	std::map<std::string, std::string>::const_iterator it (optionsMap.find(id));
 	if (it != optionsMap.end())
 	{
-		std::string value = it->second;
+		std::string value (it->second);
 		std::stringstream ststr;
 		bool b;
 		int i;
@@ -170,17 +170,17 @@ void OptionInfo::load(const std::map<std::string, std::string>& optionsMap) cons
 				ststr << std::boolalpha << value;
 				ststr >> std::boolalpha >> b;
 				*(_ref.b) = b;
-			break;
+				break;
 			case OPTION_INT:
 				ststr << std::dec << value;
 				ststr >> std::dec >> i;
 				*(_ref.i) = i;
-			break;
+				break;
 			case OPTION_KEY:
 				ststr << std::dec << value;
 				ststr >> std::dec >> i;
-				*(_ref.k) = (SDLKey)i;
-			break;
+				*(_ref.k) = static_cast<SDLKey>(i);
+				break;
 			case OPTION_STRING:
 				*(_ref.s) = value;
 		}
@@ -197,13 +197,13 @@ void OptionInfo::save(YAML::Node& node) const
 	{
 		case OPTION_BOOL:
 			node[_id] = *(_ref.b);
-		break;
+			break;
 		case OPTION_INT:
 			node[_id] = *(_ref.i);
-		break;
+			break;
 		case OPTION_KEY:
 			node[_id] = (int)*(_ref.k);
-		break;
+			break;
 		case OPTION_STRING:
 			node[_id] = *(_ref.s);
 	}
@@ -218,13 +218,13 @@ void OptionInfo::reset() const
 	{
 		case OPTION_BOOL:
 			*(_ref.b) = _def.b;
-		break;
+			break;
 		case OPTION_INT:
 			*(_ref.i) = _def.i;
-		break;
+			break;
 		case OPTION_KEY:
 			*(_ref.k) = _def.k;
-		break;
+			break;
 		case OPTION_STRING:
 			*(_ref.s) = _def.s;
 	}

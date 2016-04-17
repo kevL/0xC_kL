@@ -217,23 +217,23 @@ void ListSaveState::saveGame()
 
 	if (_selected > 0)
 	{
-		if ((fileOld = _saves[_selected - 1].file) != file + ".sav")
+		if ((fileOld = _saves[_selected - 1].file) != file + SavedGame::SAVE_EXT)
 		{
-			while (CrossPlatform::fileExists(Options::getUserFolder() + file + ".sav") == true)
+			while (CrossPlatform::fileExists(Options::getUserFolder() + file + SavedGame::SAVE_EXT) == true)
 				file += "_";
 
 			CrossPlatform::moveFile(
 								Options::getUserFolder() + fileOld,
-								Options::getUserFolder() + file + ".sav");
+								Options::getUserFolder() + file + SavedGame::SAVE_EXT);
 		}
 	}
 	else
 	{
-		while (CrossPlatform::fileExists(Options::getUserFolder() + file + ".sav") == true)
+		while (CrossPlatform::fileExists(Options::getUserFolder() + file + SavedGame::SAVE_EXT) == true)
 			file += "_";
 	}
 
-	file += ".sav";
+	file += SavedGame::SAVE_EXT;
 	_game->pushState(new SaveGameState(_origin, file, _palette));
 }
 

@@ -92,7 +92,7 @@ SaveGameState::SaveGameState(
 
 		case SAVE_IRONMAN:
 		case SAVE_IRONMAN_END:
-			_file = CrossPlatform::sanitizeFilename(Language::wstrToFs(_game->getSavedGame()->getName())) + ".sav";
+			_file = CrossPlatform::sanitizeFilename(Language::wstrToFs(_game->getSavedGame()->getName())) + SavedGame::SAVE_EXT;
 	}
 
 	buildUi(palette, true);
@@ -132,13 +132,18 @@ void SaveGameState::buildUi(
 
 	setPalette(palette);
 
-	if (_origin == OPT_BATTLESCAPE)
+	switch (_origin)
 	{
-		add(_txtStatus, "textLoad", "battlescape");
-		_txtStatus->setHighContrast();
+		default:
+		case OPT_GEOSCAPE:
+		case OPT_MENU:
+			add(_txtStatus, "textLoad", "geoscape");
+			break;
+
+		case OPT_BATTLESCAPE:
+			add(_txtStatus, "textLoad", "battlescape");
+			_txtStatus->setHighContrast();
 	}
-	else
-		add(_txtStatus, "textLoad", "geoscape");
 
 	centerAllSurfaces();
 

@@ -229,7 +229,8 @@ private:
 		static const std::string
 			AUTOSAVE_GEOSCAPE,
 			AUTOSAVE_BATTLESCAPE,
-			QUICKSAVE;
+			QUICKSAVE,
+			SAVE_EXT;
 
 		/// Creates a new saved game.
 		explicit SavedGame(const Ruleset* const rules);
