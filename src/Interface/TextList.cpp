@@ -55,17 +55,16 @@ TextList::TextList(
 		int y)
 	:
 		InteractiveSurface(
-			width,
-			height,
+			width, height,
 			x,y),
 		_big(nullptr),
 		_small(nullptr),
 		_font(nullptr),
-		_scroll(0),
-		_visibleRows(0),
-		_selRow(0),
-		_color(0),
-		_color2(0),
+		_scroll(0u),
+		_visibleRows(0u),
+		_selRow(0u),
+		_color(0u),
+		_color2(0u),
 		_dot(false),
 		_selectable(false),
 		_condensed(false),

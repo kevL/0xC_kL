@@ -47,27 +47,29 @@ ScrollBar::ScrollBar(
 		int y)
 	:
 		InteractiveSurface(
-			width,
-			height,
-			x,
-			y),
+			width, height,
+			x,y),
 		_list(0),
-		_color(0),
+		_color(0u),
 		_pressed(false),
 		_contrast(false),
 		_offset(0),
-		_bg(0)
+		_bg(0),
+		_scrollDir(MSCROLL_NONE)
 {
-	_track = new Surface(width - 2, height, x,y);
-	_thumb = new Surface(width, height, x,y);
+	_track	= new Surface(width - 2, height, x,y);
+	_btn	= new Surface(width,     height, x,y);
 
-	_thumbRect.x =
-	_thumbRect.y = 0;
-	_thumbRect.w =
-	_thumbRect.h = 0;
+	_rect.x =
+	_rect.y = 0;
+	_rect.w =
+	_rect.h = 0u;
 
-	_timer = new Timer(122u);
-	_timer->onTimer((SurfaceHandler)& ScrollBar::scroll);
+	_timerScrollKey = new Timer(122u);
+	_timerScrollKey->onTimer((SurfaceHandler)& ScrollBar::keyScroll);
+
+	_timerScrollMouse = new Timer(122u);
+	_timerScrollMouse->onTimer((SurfaceHandler)& ScrollBar::mouseScroll);
 }
 
 /**
@@ -76,8 +78,8 @@ ScrollBar::ScrollBar(
 ScrollBar::~ScrollBar()
 {
 	delete _track;
-	delete _thumb;
-	delete _timer;
+	delete _btn;
+	delete _timerScrollKey;
 }
 
 /**
@@ -89,7 +91,7 @@ void ScrollBar::setX(int x)
 	Surface::setX(x);
 
 	_track->setX(x + 1);
-	_thumb->setX(x);
+	_btn->setX(x);
 }
 
 /**
@@ -101,7 +103,7 @@ void ScrollBar::setY(int y)
 	Surface::setY(y);
 
 	_track->setY(y);
-	_thumb->setY(y);
+	_btn->setY(y);
 }
 
 /**
@@ -113,7 +115,7 @@ void ScrollBar::setHeight(int height)
 	Surface::setHeight(height);
 
 	_track->setHeight(height);
-	_thumb->setHeight(height);
+	_btn->setHeight(height);
 
 	_redraw = true;
 }
@@ -139,7 +141,7 @@ Uint8 ScrollBar::getColor() const
 /**
  * Enables/disables high-contrast-color.
  * @note Mostly used for Battlescape text.
- * @param contrast - true for high-contrast
+ * @param contrast - true for high-contrast (default true)
  */
 void ScrollBar::setHighContrast(bool contrast)
 {
@@ -151,7 +153,7 @@ void ScrollBar::setHighContrast(bool contrast)
  * @note This makes the button scroll that list.
  * @param textList - pointer to TextList
  */
-void ScrollBar::setTextList(TextList* textList)
+void ScrollBar::setTextList(TextList* const textList)
 {
 	_list = textList;
 }
@@ -179,7 +181,24 @@ void ScrollBar::setPalette(
 	Surface::setPalette(colors, firstcolor, ncolors);
 
 	_track->setPalette(colors, firstcolor, ncolors);
-	_thumb->setPalette(colors, firstcolor, ncolors);
+	_btn->setPalette(colors, firstcolor, ncolors);
+}
+
+/**
+ * Blits this ScrollBar.
+ * @param surface - pointer to a Surface to blit to
+ */
+void ScrollBar::blit(Surface* surface)
+{
+	Surface::blit(surface);
+
+	if (_visible == true && _hidden == false)
+	{
+		_track->blit(surface);
+		_btn->blit(surface);
+
+		invalidate();
+	}
 }
 
 /**
@@ -189,42 +208,25 @@ void ScrollBar::setPalette(
  */
 void ScrollBar::handle(Action* action, State* state)
 {
-	InteractiveSurface::handle(action, state); // kL_note: screw it. Okay, try it again ... nah Screw it.
+	InteractiveSurface::handle(action, state);
 
 	if (_pressed == true)
 	{
 		switch (action->getDetails()->type)
 		{
 			case SDL_MOUSEMOTION:
-			case SDL_MOUSEBUTTONDOWN:
 			{
-				const int y (std::min(getHeight() - static_cast<int>(_thumbRect.h) + 1,
-									  std::max(0,
-											   static_cast<int>(action->getAbsoluteYMouse()) - getY() + _offset)));
-
-				const double scale (static_cast<double>(_list->getRows()) / static_cast<double>(getHeight()));
-				const size_t scroll (static_cast<size_t>(Round(static_cast<double>(y) * scale)));
+				const double
+					scale	(static_cast<double>(_list->getRows()) / static_cast<double>(_surface->h)),
+					track_y	(static_cast<double>(std::min(_surface->h - static_cast<int>(_rect.h) + 1,
+														  std::max(0,
+																   static_cast<int>(action->getAbsoluteYMouse()) - getY() + _offset))));
+				const size_t scroll (static_cast<size_t>(Round(track_y * scale)));
 
 				_list->scrollTo(scroll);
+				break;
 			}
 		}
-	}
-}
-
-/**
- * Blits this ScrollBar.
- * @param surface - pointer to a Surface to blit onto
- */
-void ScrollBar::blit(Surface* surface)
-{
-	Surface::blit(surface);
-
-	if (_visible == true && _hidden == false)
-	{
-		_track->blit(surface);
-		_thumb->blit(surface);
-
-		invalidate();
 	}
 }
 
@@ -239,27 +241,45 @@ void ScrollBar::mousePress(Action* action, State* state)
 
 	switch (action->getDetails()->button.button)
 	{
-		case SDL_BUTTON_LEFT:
-		{
-			_pressed = true;
-
-			const int cursorY (static_cast<int>(action->getAbsoluteYMouse()) - getY());
-			if (cursorY >= static_cast<int>(_thumbRect.y)
-				&& cursorY < static_cast<int>(_thumbRect.y) + static_cast<int>(_thumbRect.h))
-			{
-				_offset = static_cast<int>(_thumbRect.y) - cursorY;
-			}
-			else
-				_offset = -(static_cast<int>(_thumbRect.h) / 2);
-			break;
-		}
-
 		case SDL_BUTTON_WHEELUP:
 			_list->scrollUp(false, true);
 			break;
 
 		case SDL_BUTTON_WHEELDOWN:
 			_list->scrollDown(false, true);
+			break;
+
+		case SDL_BUTTON_LEFT:
+		{
+			const int cursor_y (static_cast<int>(action->getAbsoluteYMouse()) - getY());
+			if (cursor_y < static_cast<int>(_rect.y))
+			{
+				_scrollDir = MSCROLL_UP;
+				_list->scrollTo(_list->getScroll() - _list->getVisibleRows());
+				_timerScrollMouse->start();
+			}
+			else if (cursor_y >= static_cast<int>(_rect.y) + static_cast<int>(_rect.h))
+			{
+				_scrollDir = MSCROLL_DOWN;
+				_list->scrollTo(_list->getScroll() + _list->getVisibleRows());
+				_timerScrollMouse->start();
+			}
+			else
+			{
+				_pressed = true;
+				_offset = static_cast<int>(_rect.y) - cursor_y;
+			}
+			break;
+		}
+
+		case SDL_BUTTON_RIGHT:
+		{
+			const int cursor_y (static_cast<int>(action->getAbsoluteYMouse()) - getY());
+			if (cursor_y < static_cast<int>(_rect.y))
+				_list->scrollUp(true);
+			else if (cursor_y >= static_cast<int>(_rect.y) + static_cast<int>(_rect.h))
+				_list->scrollDown(true);
+		}
 	}
 }
 
@@ -274,34 +294,20 @@ void ScrollBar::mouseRelease(Action* action, State* state)
 
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
-		_pressed = false;
-		_offset = 0;
+		switch (_scrollDir)
+		{
+			default:
+			case MSCROLL_NONE:
+				_pressed = false;
+				_offset = 0;
+				break;
+
+			case MSCROLL_UP:
+			case MSCROLL_DOWN:
+				_scrollDir = MSCROLL_NONE;
+				_timerScrollMouse->stop();
+		}
 	}
-}
-
-/**
- * Passes ticks to keyboard-actions.
- */
-void ScrollBar::think()
-{
-	InteractiveSurface::think();
-	_timer->think(nullptr, this);
-}
-
-/**
- * Scrolls the list.
- */
-void ScrollBar::scroll()
-{
-	const Uint8* const keystate (SDL_GetKeyState(nullptr));
-	if (keystate[SDLK_UP] == 1 || keystate[SDLK_KP8] == 1)
-		_list->scrollUp();												// up 1 line
-	else if (keystate[SDLK_DOWN] == 1 || keystate[SDLK_KP2] == 1)
-		_list->scrollDown();											// down 1 line
-	else if (keystate[SDLK_PAGEUP] == 1 || keystate[SDLK_KP9] == 1)
-		_list->scrollTo(_list->getScroll() - _list->getVisibleRows());	// up 1 page
-	else if (keystate[SDLK_PAGEDOWN] == 1 || keystate[SDLK_KP3] == 1)
-		_list->scrollTo(_list->getScroll() + _list->getVisibleRows());	// down 1 page
 }
 
 /**
@@ -329,25 +335,25 @@ void ScrollBar::keyboardPress(Action* action, State* state)
 
 			case SDLK_UP:		// up 1 line
 			case SDLK_KP8:
-				_timer->start();
+				_timerScrollKey->start();
 				_list->scrollUp();
 				break;
 
 			case SDLK_DOWN:		// down 1 line
 			case SDLK_KP2:
-				_timer->start();
+				_timerScrollKey->start();
 				_list->scrollDown();
 				break;
 
 			case SDLK_PAGEUP:	// up 1 page
 			case SDLK_KP9:
-				_timer->start();
+				_timerScrollKey->start();
 				_list->scrollTo(_list->getScroll() - _list->getVisibleRows());
 				break;
 
 			case SDLK_PAGEDOWN:	// down 1 page
 			case SDLK_KP3:
-				_timer->start();
+				_timerScrollKey->start();
 				_list->scrollTo(_list->getScroll() + _list->getVisibleRows());
 		}
 	}
@@ -361,24 +367,67 @@ void ScrollBar::keyboardPress(Action* action, State* state)
 void ScrollBar::keyboardRelease(Action* action, State* state)
 {
 	InteractiveSurface::keyboardRelease(action, state);
-	_timer->stop();
+	_timerScrollKey->stop();
 }
 
 /**
- * Updates the thumb according to the current list-position.
+ * Passes ticks to keyboard-actions.
+ */
+void ScrollBar::think()
+{
+	InteractiveSurface::think();
+
+	_timerScrollMouse->think(nullptr, this);
+	_timerScrollKey->think(nullptr, this);
+}
+
+/**
+ * Scrolls the list with the keyboard.
+ */
+void ScrollBar::keyScroll()
+{
+	const Uint8* const keystate (SDL_GetKeyState(nullptr));
+	if (keystate[SDLK_UP] == 1 || keystate[SDLK_KP8] == 1)
+		_list->scrollUp();												// 1 line up
+	else if (keystate[SDLK_DOWN] == 1 || keystate[SDLK_KP2] == 1)
+		_list->scrollDown();											// 1 line down
+	else if (keystate[SDLK_PAGEUP] == 1 || keystate[SDLK_KP9] == 1)
+		_list->scrollTo(_list->getScroll() - _list->getVisibleRows());	// 1 page up
+	else if (keystate[SDLK_PAGEDOWN] == 1 || keystate[SDLK_KP3] == 1)
+		_list->scrollTo(_list->getScroll() + _list->getVisibleRows());	// 1 page down
+}
+
+/**
+ * Scrolls the list with the mouse.
+ */
+void ScrollBar::mouseScroll()
+{
+	switch (_scrollDir)
+	{
+		case MSCROLL_UP:
+			_list->scrollTo(_list->getScroll() - _list->getVisibleRows());
+			break;
+
+		case MSCROLL_DOWN:
+			_list->scrollTo(_list->getScroll() + _list->getVisibleRows());
+	}
+}
+
+/**
+ * Updates the scroll-button according to the current list-position.
  */
 void ScrollBar::draw()
 {
 	Surface::draw();
 
 	drawTrack();
-	drawThumb();
+	drawButton();
 }
 
 /**
- * Draws the track (background-bar) semi-transparent.
+ * Draws the background-track semi-transparent.
  */
-void ScrollBar::drawTrack()
+void ScrollBar::drawTrack() // private.
 {
 	if (_bg != nullptr)
 	{
@@ -392,86 +441,83 @@ void ScrollBar::drawTrack()
 }
 
 /**
- * Draws the thumb (button) as a hollow square.
+ * Draws the scroll-button as a hollowed rectangle.
  */
-void ScrollBar::drawThumb()
+void ScrollBar::drawButton() // private.
 {
-	const double scale (static_cast<double>(getHeight()) / static_cast<double>(_list->getRows()));
+	static const Uint16 MIN_HEIGHT (4u);
 
-	_thumbRect.x = 0;
-	_thumbRect.y = static_cast<Sint16>(std::floor(static_cast<double>(_list->getScroll()) * scale));
-	_thumbRect.w = static_cast<Uint16>(_thumb->getWidth());
-	_thumbRect.h = static_cast<Uint16>(std::ceil(static_cast<double>(_list->getVisibleRows()) * scale));
+	const double scale (static_cast<double>(_surface->h) / static_cast<double>(_list->getRows()));
 
-	_thumb->clear();
+	_rect.x = 0;
+	_rect.w = static_cast<Uint16>(_btn->getWidth());
 
-	_thumb->lock();
-	SDL_Rect rect (_thumbRect); // draw filled button
-	Uint8 color (_color + 2);
+	_rect.y = static_cast<Sint16>(std::floor(static_cast<double>(_list->getScroll()) * scale));
+	_rect.h = static_cast<Uint16>(std::ceil(static_cast<double>(_list->getVisibleRows()) * scale));
+	if (_rect.h < MIN_HEIGHT) _rect.h = MIN_HEIGHT;
+
+	_btn->clear();
+
+	_btn->lock();
+	SDL_Rect rect (_rect); // draw filled button
 
 	--rect.w;
 	--rect.h;
-	_thumb->drawRect(&rect, color);
+	_btn->drawRect(&rect, _color + 2u);
 
 	++rect.x;
 	++rect.y;
-	color = _color + 5;
-	_thumb->drawRect(&rect, color);
+	_btn->drawRect(&rect, _color + 5u);
 
 	--rect.w;
 	--rect.h;
-	color = _color + 4;
-	_thumb->drawRect(&rect, color);
+	_btn->drawRect(&rect, _color + 4u);
 
 
-	_thumb->setPixelColor(
-					static_cast<int>(_thumbRect.x),
-					static_cast<int>(_thumbRect.y),
-					_color + 1);
-	_thumb->setPixelColor(
-					static_cast<int>(_thumbRect.x),
-					static_cast<int>(_thumbRect.y) + static_cast<int>(_thumbRect.h) - 1,
-					_color + 4);
-	_thumb->setPixelColor(
-					static_cast<int>(_thumbRect.x) + static_cast<int>(_thumbRect.w) - 1,
-					static_cast<int>(_thumbRect.y),
-					_color + 4);
+	_btn->setPixelColor(
+					static_cast<int>(_rect.x),
+					static_cast<int>(_rect.y),
+					_color + 1u);
+	_btn->setPixelColor(
+					static_cast<int>(_rect.x),
+					static_cast<int>(_rect.y) + static_cast<int>(_rect.h) - 1,
+					_color + 4u);
+	_btn->setPixelColor(
+					static_cast<int>(_rect.x) + static_cast<int>(_rect.w) - 1,
+					static_cast<int>(_rect.y),
+					_color + 4u);
 
-	if (static_cast<int>(rect.h) - 4 > 0)
+	if (_rect.h - MIN_HEIGHT != 0u) // hollow it out
 	{
-		color = _color + 5; // hollow it out
+		++rect.x;
+		++rect.y;
+		rect.w -= 3u;
+		rect.h -= 3u;
+		_btn->drawRect(&rect, _color + 5u);
 
 		++rect.x;
 		++rect.y;
-		rect.w -= 3;
-		rect.h -= 3;
-		_thumb->drawRect(&rect, color);
-
-		++rect.x;
-		++rect.y;
-		color = _color + 2;
-		_thumb->drawRect(&rect, color);
+		_btn->drawRect(&rect, _color + 2u);
 
 		--rect.w;
 		--rect.h;
-		color = 0;
-		_thumb->drawRect(&rect, color);
+		_btn->drawRect(&rect, 0u);
 
 
-		_thumb->setPixelColor(
-						static_cast<int>(_thumbRect.x) + 2 + static_cast<int>(_thumbRect.w) - 1 - 4,
-						static_cast<int>(_thumbRect.y) + 2 + static_cast<int>(_thumbRect.h) - 1 - 4,
-						_color + 1);
-		_thumb->setPixelColor(
-						static_cast<int>(_thumbRect.x) + 2,
-						static_cast<int>(_thumbRect.y) + 2 + static_cast<int>(_thumbRect.h) - 1 - 4,
-						_color + 4);
-		_thumb->setPixelColor(
-						static_cast<int>(_thumbRect.x) + 2 + static_cast<int>(_thumbRect.w) - 1 - 4,
-						static_cast<int>(_thumbRect.y) + 2,
-						_color + 4);
+		_btn->setPixelColor(
+						static_cast<int>(_rect.x) + static_cast<int>(_rect.w) - 3,
+						static_cast<int>(_rect.y) + static_cast<int>(_rect.h) - 3,
+						_color + 1u);
+		_btn->setPixelColor(
+						static_cast<int>(_rect.x) + 2,
+						static_cast<int>(_rect.y) + static_cast<int>(_rect.h) - 3,
+						_color + 4u);
+		_btn->setPixelColor(
+						static_cast<int>(_rect.x) + static_cast<int>(_rect.w) - 3,
+						static_cast<int>(_rect.y) + 2,
+						_color + 4u);
 	}
-	_thumb->unlock();
+	_btn->unlock();
 }
 
 }

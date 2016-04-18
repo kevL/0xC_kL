@@ -346,7 +346,7 @@ void StatisticsState::listStats()
 	std::map<std::string, int> ids (gameSave->getAllIds());
 	const int
 		ufosDetected (ids["STR_UFO"]),
-		alienBases   (ids["STR_ALIEN_BASE"]),
+		alienBases   (ids["STR_ALIEN_BASE"]), // detected only.
 		terrorSites  (ids["STR_TERROR_SITE"]);
 
 	int totalCrafts (0);

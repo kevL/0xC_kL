@@ -258,7 +258,7 @@ void State::init() // virtual
 	_game->getCursor()->draw();
 
 	_game->getFpsCounter()->setPalette(_palette);
-	_game->getFpsCounter()->setColor(_cursorColor);
+	_game->getFpsCounter()->setColor(_cursorColor + 2u);
 	_game->getFpsCounter()->draw();
 
 	if (_game->getResourcePack() != nullptr)
@@ -276,7 +276,7 @@ void State::init() // virtual
 }
 
 /**
- * Runs any code this State needs to keep updating every game-cycle like timers
+ * Runs any code this State needs to keep updating every game-cycle like Timers
  * and other real-time elements.
  */
 void State::think() // virtual
