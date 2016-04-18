@@ -2538,8 +2538,8 @@ void Globe::mouseOver(Action* action, State* state)
 		if (Options::geoDragScrollInvert == true) // scroll. I don't use inverted scrolling.
 		{
 			const double
-				newLon ((static_cast<double>(_totalMouseMoveX) / action->getXScale()) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1) / 2.),
-				newLat ((static_cast<double>(_totalMouseMoveY) / action->getYScale()) * ROTATE_LATITUDE  / static_cast<double>(_zoom + 1) / 2.);
+				newLon ((static_cast<double>(_totalMouseMoveX) / action->getScaleX()) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1) / 2.),
+				newLat ((static_cast<double>(_totalMouseMoveY) / action->getScaleY()) * ROTATE_LATITUDE  / static_cast<double>(_zoom + 1) / 2.);
 			center(
 				_lonPreMouseScroll + newLon / static_cast<double>(Options::geoScrollSpeed),
 				_latPreMouseScroll + newLat / static_cast<double>(Options::geoScrollSpeed));

@@ -155,17 +155,12 @@ Surface::Surface(
 		_redraw(false),
 		_alignedBuffer(nullptr)
 {
-	_alignedBuffer = NewAligned(
-							bpp,
-							width,
-							height);
+	_alignedBuffer = NewAligned(bpp, width, height);
 	_surface = SDL_CreateRGBSurfaceFrom(
 									_alignedBuffer,
-									width,
-									height,
-									bpp,
+									width, height, bpp,
 									GetPitch(bpp, width),
-									0,0,0,0);
+									0u,0u,0u,0u);
 
 	if (_surface == nullptr)
 	{
@@ -175,12 +170,12 @@ Surface::Surface(
 	SDL_SetColorKey(
 				_surface,
 				SDL_SRCCOLORKEY,
-				0);
+				0u);
 
 	_crop.x =
 	_crop.y = 0;
 	_crop.w =
-	_crop.h = 0;
+	_crop.h = 0u;
 
 	_clear.x =
 	_clear.y = 0;
@@ -190,7 +185,7 @@ Surface::Surface(
 
 /**
  * Performs a deep copy of an existing surface.
- * @param other - reference to a Surface to copy from
+ * @param other - reference to a Surface to copy
  */
 Surface::Surface(const Surface& other)
 {
@@ -547,7 +542,7 @@ void Surface::loadBdy(const std::string& file)
  */
 void Surface::clear(Uint32 color)
 {
-//	if (_surface->flags & SDL_SWSURFACE)	// NOTE: SDL_SWSURFACE= 0x0 ... so that means (if *no flags* are set).
+//	if (_surface->flags & SDL_SWSURFACE)	// NOTE: SDL_SWSURFACE= 0x0 ... so that means (if 0 != 0).
 //		std::memset(						// ... This never runs. cf, Screen::clear()
 //				_surface->pixels,
 //				static_cast<int>(color),
@@ -598,7 +593,7 @@ void Surface::offset(
 			if (colorPre > 0)
 				setPixelIterative(&x,&y, static_cast<Uint8>(colorPost));
 			else
-				setPixelIterative(&x,&y, 0);
+				setPixelIterative(&x,&y, 0u);
 		}
 		unlock();
 	}
@@ -643,7 +638,7 @@ void Surface::offsetBlock(
 			if (colorPre > 0)
 				setPixelIterative(&x,&y, static_cast<Uint8>(colorPost));
 			else
-				setPixelIterative(&x,&y, 0);
+				setPixelIterative(&x,&y, 0u);
 		}
 		unlock();
 	}
@@ -665,7 +660,6 @@ void Surface::invert(Uint8 mid)
 		Uint8 color (getPixelColor(x,y));
 		if (color != 0)
 			color = static_cast<Uint8>(color + (mid - color) * 2);
-//			color += static_cast<Uint8>((static_cast<int>(mid) - static_cast<int>(color))) * 2;
 
 		setPixelIterative(&x,&y, color);
 	}

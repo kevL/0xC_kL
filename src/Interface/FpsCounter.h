@@ -28,12 +28,13 @@ namespace OpenXcom
 
 class Action;
 class NumberText;
+class Screen;
 class Timer;
 
 
 /**
- * Counts the quantity of frames each second and displays them in a NumberText
- * surface.
+ * Counts the quantity of graphic-slices per second and displays them with a
+ * NumberText Surface.
  */
 class FpsCounter final
 	:

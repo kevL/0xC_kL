@@ -441,7 +441,7 @@ void TextEdit::mousePress(Action* action, State* state)
 		{
 			const double
 				mX (action->getRelativeXMouse()),
-				scale (action->getXScale());
+				scale (action->getScaleX());
 			double pX (static_cast<double>(_text->getLineX(0) * scale));
 			if (mX > pX)
 			{

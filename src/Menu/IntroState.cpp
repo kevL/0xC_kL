@@ -550,7 +550,7 @@ void IntroState::init()
 	// I can't get a real refresh/update to work here or on forward to MainMenu,
 	// unfortunately. So this ensures merely that the cursor appears centered.
 	SDL_WarpMouse(
-			static_cast<Uint16>(_game->getScreen()->getWidth() / 2),
+			static_cast<Uint16>(_game->getScreen()->getWidth()  / 2),
 			static_cast<Uint16>(_game->getScreen()->getHeight() / 2));
 
 	_game->setState(new MainMenuState());
@@ -570,7 +570,7 @@ void IntroState::endVideo()
 	// NOTE: See also Ufopaedia/UfopaediaStartState cTor.
 	// This algorithm should be consolidated in Screen. And there should be
 	// some sort of corresponding fade-in function also.
-	if (_game->getScreen()->getSurface()->getSurface()->format->BitsPerPixel == 8)
+	if (_game->getScreen()->getSurface()->getSurface()->format->BitsPerPixel == 8u)
 	{
 		//Log(LOG_INFO) << ". 8bpp TRUE";
 		const Uint32 FADE_DELAY (45u);
@@ -612,7 +612,7 @@ void IntroState::endVideo()
 		std::memcpy(
 				pal,
 				_game->getScreen()->getPalette(),
-				sizeof(SDL_Color) * 256);
+				sizeof(SDL_Color) * 256u);
 
 		for (Uint8
 				i = FADE_STEPS;

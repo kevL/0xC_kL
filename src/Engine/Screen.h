@@ -113,9 +113,9 @@ private:
 		int getHeight() const;
 
 		/// Gets the Screen's x-scale.
-		double getXScale() const;
+		double getScaleX() const;
 		/// Gets the Screen's y-scale.
-		double getYScale() const;
+		double getScaleY() const;
 
 		/// Gets the horizontal-offset.
 		int getDX() const;

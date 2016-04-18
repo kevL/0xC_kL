@@ -71,6 +71,7 @@
 #include "../Interface/Bar.h"
 #include "../Interface/BattlescapeButton.h"
 #include "../Interface/Cursor.h"
+#include "../Interface/FpsCounter.h"
 #include "../Interface/NumberText.h"
 #include "../Interface/Text.h"
 #include "../Interface/TextList.h"
@@ -1039,6 +1040,8 @@ BattlescapeState::BattlescapeState()
 	_btnReserveAimed->setGroup(&_reserve);
 	_btnReserveAuto->setGroup(&_reserve); */
 
+	_game->getFpsCounter()->setY(screenHeight - 9);
+
 	_aniTimer = new Timer(STATE_INTERVAL_TILE); // setStateInterval() does NOT change this <-
 	_aniTimer->onTimer((StateHandler)& BattlescapeState::animate);
 
@@ -1217,18 +1220,16 @@ void BattlescapeState::mapOver(Action* action)
 		if (Options::battleDragScrollInvert == true) // scroll. I don't use inverted scrolling.
 		{
 			_map->getCamera()->scrollXY(
-									static_cast<int>(static_cast<double>(-action->getDetails()->motion.xrel) / action->getXScale()),
-									static_cast<int>(static_cast<double>(-action->getDetails()->motion.yrel) / action->getYScale()),
+									static_cast<int>(static_cast<double>(-action->getDetails()->motion.xrel) / action->getScaleX()),
+									static_cast<int>(static_cast<double>(-action->getDetails()->motion.yrel) / action->getScaleY()),
 									false);
 			_map->setSelectorType(CT_NONE);
 		}
 		else
-		{
 			_map->getCamera()->scrollXY(
-									static_cast<int>(static_cast<double>(action->getDetails()->motion.xrel) * 3.62 / action->getXScale()),
-									static_cast<int>(static_cast<double>(action->getDetails()->motion.yrel) * 3.62 / action->getYScale()),
+									static_cast<int>(static_cast<double>(action->getDetails()->motion.xrel) * 3.62 / action->getScaleX()),
+									static_cast<int>(static_cast<double>(action->getDetails()->motion.yrel) * 3.62 / action->getScaleY()),
 									false);
-		}
 
 		_game->getCursor()->handle(action);
 	}
@@ -2297,38 +2298,33 @@ void BattlescapeState::btnStatsClick(Action* action)
 {
 	if (playableUnitSelected() == true)
 	{
-		bool edge (false);
-
-		if (Options::battleEdgeScroll == SCROLL_TRIGGER
+		if (Options::battleEdgeScroll == SCROLL_TRIGGER // NOTE: This is just ... code-for-the-sake-of-code.
 			&& action->getDetails()->type == SDL_MOUSEBUTTONUP
 			&& action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		{
 			const int
-				posX (action->getXMouse()),
-				posY (action->getYMouse());
-			if ((posX < Camera::SCROLL_BORDER * action->getXScale()
-					&& posX > 0)
-				|| posX > (_map->getWidth() - Camera::SCROLL_BORDER) * action->getXScale()
-				|| (posY < (Camera::SCROLL_BORDER * action->getYScale())
-						&& posY > 0)
-				|| posY > (_map->getHeight() - Camera::SCROLL_BORDER) * action->getYScale())
+				posX (action->getMouseX()),
+				posY (action->getMouseY());
+			if (   (posX > 0 && posX < Camera::SCROLL_BORDER * action->getScaleX())
+				||  posX > (_map->getWidth() - Camera::SCROLL_BORDER) * action->getScaleX()
+				|| (posY > 0 && posY < Camera::SCROLL_BORDER * action->getScaleY())
+				||  posY > (_map->getHeight() - Camera::SCROLL_BORDER) * action->getScaleY())
 			{
-				edge = true;	// To avoid handling a mouse-release event as a click on the stats-button
-			}					// when the cursor is on the scroll-border if trigger-scroll is enabled.
+				return;	// To avoid handling a mouse-release event as a click on the stats-button
+			}			// when the cursor is on the scroll-border if trigger-scroll is enabled.
 		}
 
-		if (_battleGame->getTacticalAction()->type == BA_LAUNCH) // clean up the waypoints
-		{
-			_battleGame->getTacticalAction()->waypoints.clear();
+		if (_battleGame->getTacticalAction()->type == BA_LAUNCH)	// clean up any BL-waypoints
+		{															// probly handled in cancelTacticalAction() below_
+			_battleGame->getTacticalAction()->waypoints.clear();	// but i don't want to look it up atm.
 			_map->getWaypoints()->clear();
 			_btnLaunch->setVisible(false);
 		}
 
 		_battleGame->cancelTacticalAction(true);
-		if (edge == false)
-			popup(new UnitInfoState(
-								_battleSave->getSelectedUnit(),
-								this));
+		popup(new UnitInfoState(
+							_battleSave->getSelectedUnit(),
+							this));
 	}
 }
 

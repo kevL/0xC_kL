@@ -136,8 +136,8 @@ void MedikitView::mouseClick(Action* action, State*)
 	const Surface* srf;
 
 	const int
-		x = static_cast<int>(action->getRelativeXMouse() / action->getXScale()),
-		y = static_cast<int>(action->getRelativeYMouse() / action->getYScale());
+		x = static_cast<int>(action->getRelativeXMouse() / action->getScaleX()),
+		y = static_cast<int>(action->getRelativeYMouse() / action->getScaleY());
 
 	for (size_t
 			i = 0;

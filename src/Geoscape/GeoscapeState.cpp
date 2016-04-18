@@ -3341,8 +3341,8 @@ void GeoscapeState::resetTimer()
 	ev.button.button = SDL_BUTTON_LEFT;
 	Action act( // TODO: 0.0,0.0, 0,0
 			&ev,
-			_game->getScreen()->getXScale(),
-			_game->getScreen()->getYScale(),
+			_game->getScreen()->getScaleX(),
+			_game->getScreen()->getScaleY(),
 			_game->getScreen()->getCursorTopBlackBand(),
 			_game->getScreen()->getCursorLeftBlackBand());
 

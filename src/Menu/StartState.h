@@ -72,7 +72,7 @@ private:
 		static std::string error;
 		static bool kL_ready;
 
-		/// Creates the Start state.
+		/// Creates a Start state.
 		StartState();
 		/// Cleans up the Start state.
 		~StartState();

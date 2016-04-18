@@ -530,7 +530,8 @@ void OpenGL::set_vertex_shader(const char* source) // private.
  * while horizontal scrolling on the ground-level (less tiles to loop over) shows
  * no tearing (although frame-rates then exceed monitor-refresh rate, supposedly
  * the only time that tearing can occur). Similarly, using edge-scroll (with lots
- * of event-calls) causes more tearing for respective levels than drag-scroll.
+ * of event-callbacks) causes more tearing for respective levels than drag-scroll
+ * does.
  *
  * And/or it's just my danged video-card(s). It strikes as sort of a
  * RAM-bottleneck, whether video-RAM or system-RAM .... Changing the nVidia
@@ -542,6 +543,19 @@ void OpenGL::set_vertex_shader(const char* source) // private.
  * tearing *is a lot worse* if not using OpenGL at all.
  *
  * Even later: I'd say definitely CPU: it gets worse when the lexer is parsing @ 80%.
+ *
+ * Even later later: Updated nVidia drivers to 340. Not sure if it made the
+ * difference but I noticed FPS get clamped to 60 although the IG code and
+ * options leave it uncapped. Looks better but there's still tearing.
+ *
+ * Fiddling with the nVidia control-panel appears to change things between
+ * better or worse regardless of what its settings actually are.
+ *
+ * Did i mention I hate hardware. Looks like the 340 nVidia driver forces the
+ * refresh-rate to 60fps, ipso facto, tested on GT8500 card w/ OpenGL under
+ * WinXP SP3.
+ *
+ * YMMV. /haha
  */
 void OpenGL::setVSync(bool sync)
 {

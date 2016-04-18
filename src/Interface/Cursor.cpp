@@ -71,11 +71,11 @@ void Cursor::handle(Action* action)
 			setX(static_cast<int>(
 				 static_cast<double>(
 				 static_cast<int>(action->getDetails()->motion.x) - action->getLeftBlackBand())
-					/ action->getXScale()));
+					/ action->getScaleX()));
 			setY(static_cast<int>(
 				 static_cast<double>(
 				 static_cast<int>(action->getDetails()->motion.y) - action->getTopBlackBand())
-					/ action->getYScale()));
+					/ action->getScaleY()));
 		}
 		else
 			_fakeMotion = false;

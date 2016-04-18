@@ -92,12 +92,10 @@ void Screen::setVideoFlags() // private.
 
 		// NOTE: The call to OpenGL::setVSync() has hereby been officially
 		// bypassed in resetDisplay(). ... not.
-
-
 		// ideas to turn V-sync on:
 //		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1); // Windows only.
 
-		// or for nVidia:
+		// or for nVidia .. on Linux ...:
 		//SDL_putenv("__GL_SYNC_TO_VBLANK=1");
 		// - https://forums.libsdl.org/viewtopic.php?p=16324&sid=b285f9d54e9c24e83437a318f9e68375#16324
 
@@ -244,8 +242,8 @@ void Screen::handle(Action* action)
 void Screen::flip()
 {
 	if (isOpenGLEnabled() == true
-		|| getWidth() != _baseWidth
-		|| getHeight() != _baseHeight)
+		|| _screen->w != _baseWidth
+		|| _screen->h != _baseHeight)
 	{
 		Zoom::flipWithZoom(
 					_surface->getSurface(),
@@ -294,7 +292,7 @@ void Screen::clear()
 {
 	_surface->clear();
 
-//	if (_screen->flags & SDL_SWSURFACE)	// NOTE: SDL_SWSURFACE= 0x0 ... so that means (if *no flags* are set).
+//	if (_screen->flags & SDL_SWSURFACE)	// NOTE: SDL_SWSURFACE= 0x0 ... so that means (if 0 != 0).
 //		std::memset(					// ... This never runs. cf, Surface::clear()
 //				_screen->pixels,
 //				0,
@@ -314,7 +312,7 @@ void Screen::clear()
 void Screen::resetDisplay(bool resetVideo)
 {
 	const int
-		width (Options::displayWidth),
+		width  (Options::displayWidth),
 		height (Options::displayHeight);
 
 #ifdef __linux__
@@ -349,11 +347,10 @@ void Screen::resetDisplay(bool resetVideo)
 		|| _screen->format->BitsPerPixel != _bpp)
 	{
 #ifdef __linux__
-		// Workaround for segfault when switching to opengl
-		if (!(oldFlags & SDL_OPENGL) && (_flags & SDL_OPENGL))
+		if (!(oldFlags & SDL_OPENGL) && (_flags & SDL_OPENGL)) // Workaround for segfault when switching to OpenGL.
 		{
-			Uint8 cursor = 0;
-			char* _oldtitle = 0;
+			Uint8 cursor (0);
+			char* _oldtitle (0);
 			SDL_WM_GetCaption(&_oldtitle, nullptr);
 			std::string title(_oldtitle);
 			SDL_QuitSubSystem(SDL_INIT_VIDEO);
@@ -381,21 +378,21 @@ void Screen::resetDisplay(bool resetVideo)
 				throw Exception(SDL_GetError());
 			}
 		}
-		Log(LOG_INFO) << "Display set to " << getWidth() << "x" << getHeight() << "x" << (int)_screen->format->BitsPerPixel << ".";
+		Log(LOG_INFO) << "Display set to " << _screen->w << "x" << _screen->h << "x" << (int)_screen->format->BitsPerPixel << ".";
 	}
 	else
 		clear();
 
-	Options::displayWidth  = getWidth();
-	Options::displayHeight = getHeight();
+	Options::displayWidth  = _screen->w;
+	Options::displayHeight = _screen->h;
 
-	_scaleX = static_cast<double>(getWidth()) / static_cast<double>(_baseWidth);
-	_scaleY = static_cast<double>(getHeight()) / static_cast<double>(_baseHeight);
+	_scaleX = static_cast<double>(_screen->w) / static_cast<double>(_baseWidth);
+	_scaleY = static_cast<double>(_screen->h) / static_cast<double>(_baseHeight);
 
 	_clear.x =
 	_clear.y = 0;
-	_clear.w = static_cast<Uint16>(getWidth());
-	_clear.h = static_cast<Uint16>(getHeight());
+	_clear.w = static_cast<Uint16>(_screen->w);
+	_clear.h = static_cast<Uint16>(_screen->h);
 
 	double pixelRatioY;
 	if (Options::nonSquarePixelRatio && Options::allowResize == false)
@@ -421,10 +418,10 @@ void Screen::resetDisplay(bool resetVideo)
 
 			_topBlackBand =
 			_bottomBlackBand = 0;
-			_leftBlackBand = (getWidth() - targetWidth) / 2;
+			_leftBlackBand = (_screen->w - targetWidth) / 2;
 			if (_leftBlackBand < 0) _leftBlackBand = 0;
 
-			_rightBlackBand = getWidth() - targetWidth - _leftBlackBand;
+			_rightBlackBand = _screen->w - targetWidth - _leftBlackBand;
 			_cursorTopBlackBand = 0;
 
 			if (cursorInBlackBands == true)
@@ -439,10 +436,10 @@ void Screen::resetDisplay(bool resetVideo)
 		{
 			const int targetHeight (static_cast<int>(std::floor(_scaleX * static_cast<double>(_baseHeight) * pixelRatioY)));
 
-			_topBlackBand = (getHeight() - targetHeight) / 2;
+			_topBlackBand = (_screen->h - targetHeight) / 2;
 			if (_topBlackBand < 0) _topBlackBand = 0;
 
-			_bottomBlackBand = getHeight() - targetHeight - _topBlackBand;
+			_bottomBlackBand = _screen->h - targetHeight - _topBlackBand;
 			if (_bottomBlackBand < 0) _bottomBlackBand = 0;
 
 			_leftBlackBand =
@@ -492,9 +489,9 @@ void Screen::resetDisplay(bool resetVideo)
 /**
  * Sets the 8-bpp palette used to render this Screen's contents.
  * @param colors		- pointer to the set of colors
- * @param firstcolor	- offset of the first color to replace
- * @param ncolors		- quantity of colors to replace
- * @param immediately	- apply palette changes immediately otherwise wait for next blit
+ * @param firstcolor	- offset of the first color to replace (default 0)
+ * @param ncolors		- quantity of colors to replace (default 256)
+ * @param immediately	- apply palette changes immediately otherwise wait for next blit (false)
  */
 void Screen::setPalette(
 		SDL_Color* const colors,
@@ -509,18 +506,18 @@ void Screen::setPalette(
 		// an initial palette setup has not been committed to the screen yet
 		// just update it with whatever colors are being sent now
 		std::memmove(
-				&(_deferredPalette[firstcolor]),
+				&(_deferredPalette[static_cast<size_t>(firstcolor)]),
 				colors,
-				sizeof(SDL_Color) * ncolors);
+				sizeof(SDL_Color) * static_cast<size_t>(ncolors));
 		_numColors = 256; // all the use cases are just a full palette with 16-color follow-ups
 		_firstColor = 0;
 	}
 	else
 	{
 		std::memmove(
-				&(_deferredPalette[firstcolor]),
+				&(_deferredPalette[static_cast<size_t>(firstcolor)]),
 				colors,
-				sizeof(SDL_Color) * ncolors);
+				sizeof(SDL_Color) * static_cast<size_t>(ncolors));
 		_numColors = ncolors;
 		_firstColor = firstcolor;
 	}
@@ -532,7 +529,7 @@ void Screen::setPalette(
 
 	// defer actual update of screen until SDL_Flip()
 	if (immediately == true
-		&& _screen->format->BitsPerPixel == 8
+		&& _screen->format->BitsPerPixel == 8u
 		&& SDL_SetColors(
 					_screen,
 					colors,
@@ -589,7 +586,7 @@ int Screen::getHeight() const
  * Gets this Screen's x-scale.
  * @return, x-scale factor
  */
-double Screen::getXScale() const
+double Screen::getScaleX() const
 {
 	return _scaleX;
 }
@@ -598,7 +595,7 @@ double Screen::getXScale() const
  * Gets this Screen's y-scale.
  * @return, y-scale factor
  */
-double Screen::getYScale() const
+double Screen::getScaleY() const
 {
 	return _scaleY;
 }
@@ -646,14 +643,14 @@ int Screen::getCursorLeftBlackBand() const
 void Screen::screenshot(const std::string& file) const
 {
 	SDL_Surface* const screenshot (SDL_AllocSurface(
-												0,
-												getWidth() - getWidth() % 4,
-												getHeight(),
-												24,
-												0xff,
-												0xff00,
-												0xff0000,
-												0));
+												0u,								// flags
+												_screen->w - _screen->w % 4,	// width
+												_screen->h,						// height
+												24,								// depth
+												0xffu,							// r-mask
+												0xff00u,						// g-mask
+												0xff0000u,						// b-mask
+												0u));							// a-mask
 
 	if (isOpenGLEnabled() == true)
 	{
@@ -662,13 +659,13 @@ void Screen::screenshot(const std::string& file) const
 
 		for (int
 				y = 0;
-				y != getHeight();
+				y != _screen->h;
 				++y)
 		{
 			glReadPixels(
 					0,
-					getHeight() - (y + 1),
-					getWidth() - getWidth() % 4,
+					_screen->h - (y + 1),
+					_screen->w - _screen->w % 4,
 					1,
 					screenFormat,
 					GL_UNSIGNED_BYTE,
@@ -687,8 +684,8 @@ void Screen::screenshot(const std::string& file) const
 	unsigned error (lodepng::encode(
 								file,
 								(const unsigned char*)(screenshot->pixels),
-								getWidth() - getWidth() % 4,
-								getHeight(),
+								_screen->w - _screen->w % 4,
+								_screen->h,
 								LCT_RGB));
 	if (error != 0u)
 		Log(LOG_ERROR) << "Saving to PNG failed: " << lodepng_error_text(error);

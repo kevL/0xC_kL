@@ -30,7 +30,7 @@ class InteractiveSurface;
 
 
 /**
- * Container for all the information associated with a given user Action like
+ * Container for all the information associated with a specified user-event like
  * mouse-clicks, key-presses, etc.
  * @note Called Action because Event is reserved. And don't confuse this with a
  * BattleAction either.
@@ -55,7 +55,7 @@ private:
 
 
 	public:
-		/// Creates an Action with given event data.
+		/// Creates an Action with given event-data.
 		Action(
 				SDL_Event* const event,
 				double scaleX,
@@ -65,29 +65,29 @@ private:
 		/// Cleans up the Action.
 		~Action();
 
-		/// Gets the screen's X scale.
-		double getXScale() const;
-		/// Gets the screen's Y scale.
-		double getYScale() const;
+		/// Gets the Screen's x-scale.
+		double getScaleX() const;
+		/// Gets the Screen's y-scale.
+		double getScaleY() const;
 
-		/// Sets the Action as a mouse action.
+		/// Sets the Action as a mouse-action.
 		void setMouseAction(
-				int mouseX,
-				int mouseY,
+				int mX,
+				int mY,
 				int surfaceX,
 				int surfaceY);
-		/// Gets if the Action is a mouse action.
+		/// Gets if the Action is a mouse-action.
 		bool isMouseAction() const;
 
-		/// Gets the top black band height.
+		/// Gets the top-black-band's height.
 		int getTopBlackBand() const;
-		/// Gets the left black band width.
+		/// Gets the left-black-band's width.
 		int getLeftBlackBand() const;
 
 		/// Gets the mouse's x-position.
-		int getXMouse() const;
+		int getMouseX() const;
 		/// Gets the mouse's y-position.
-		int getYMouse() const;
+		int getMouseY() const;
 		/// Gets the mouse's absolute x-position.
 		double getAbsoluteXMouse() const;
 		/// Gets the mouse's absolute y-position.
@@ -97,12 +97,12 @@ private:
 		/// Gets the mouse's relative y-position.
 		double getRelativeYMouse() const;
 
+		/// Sets the sender of the Action.
+		void setSender(InteractiveSurface* const sender);
 		/// Gets the sender of the Action.
 		InteractiveSurface* getSender() const;
-		/// Sets the sender of the Action.
-		void setSender(InteractiveSurface* sender);
 
-		/// Gets the details of the Action.
+		/// Gets the SDL-details of the Action.
 		SDL_Event* getDetails() const;
 };
 

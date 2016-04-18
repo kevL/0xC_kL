@@ -158,15 +158,15 @@ void Camera::mouseRelease(Action* action, State*)
 		_scrollTrigger = false;
 
 		int
-			posX (action->getXMouse()),
-			posY (action->getYMouse());
+			posX (action->getMouseX()),
+			posY (action->getMouseY());
 
 		if ((posX > 0
-				&& posX < SCROLL_BORDER * action->getXScale())
-			|| posX > (_screenWidth - SCROLL_BORDER) * action->getXScale()
+				&& posX < SCROLL_BORDER * action->getScaleX())
+			|| posX > (_screenWidth - SCROLL_BORDER) * action->getScaleX()
 			|| (posY > 0
-				&& posY < SCROLL_BORDER * action->getYScale())
-			|| posY > (_screenHeight - SCROLL_BORDER) * action->getYScale())
+				&& posY < SCROLL_BORDER * action->getScaleY())
+			|| posY > (_screenHeight - SCROLL_BORDER) * action->getScaleY())
 		{
 			// A cheap hack to avoid handling this event as a click
 			// on the map when the mouse is on the scroll-border
@@ -187,30 +187,30 @@ void Camera::mouseOver(Action* action, State*)
 			|| _scrollTrigger == true))
 	{
 		int
-			posX (action->getXMouse()),
-			posY (action->getYMouse()),
+			posX (action->getMouseX()),
+			posY (action->getMouseY()),
 			scrollSpeed (Options::battleScrollSpeed);
 
-		if (posX < SCROLL_BORDER * action->getXScale()) // left scroll
+		if (posX < SCROLL_BORDER * action->getScaleX()) // left scroll
 		{
 			_scrollMouseX = scrollSpeed;
 
 			// if close to top or bottom, also scroll diagonally
-			if (posY < SCROLL_DIAGONAL_EDGE * action->getYScale()) // down left
+			if (posY < SCROLL_DIAGONAL_EDGE * action->getScaleY()) // down left
 				_scrollMouseY = scrollSpeed / 2;
-			else if (posY > (_screenHeight - SCROLL_DIAGONAL_EDGE) * action->getYScale()) // up left
+			else if (posY > (_screenHeight - SCROLL_DIAGONAL_EDGE) * action->getScaleY()) // up left
 				_scrollMouseY = -scrollSpeed / 2;
 			else
 				_scrollMouseY = 0;
 		}
-		else if (posX > (_screenWidth - SCROLL_BORDER) * action->getXScale()) // right scroll
+		else if (posX > (_screenWidth - SCROLL_BORDER) * action->getScaleX()) // right scroll
 		{
 			_scrollMouseX = -scrollSpeed;
 
 			// if close to top or bottom, also scroll diagonally
-			if (posY < SCROLL_DIAGONAL_EDGE * action->getYScale()) // down right
+			if (posY < SCROLL_DIAGONAL_EDGE * action->getScaleY()) // down right
 				_scrollMouseY = scrollSpeed / 2;
-			else if (posY > (_screenHeight - SCROLL_DIAGONAL_EDGE) * action->getYScale()) // up right
+			else if (posY > (_screenHeight - SCROLL_DIAGONAL_EDGE) * action->getScaleY()) // up right
 				_scrollMouseY = -scrollSpeed / 2;
 			else
 				_scrollMouseY = 0;
@@ -218,33 +218,33 @@ void Camera::mouseOver(Action* action, State*)
 		else if (posX != 0)
 			_scrollMouseX = 0;
 
-		if (posY < SCROLL_BORDER * action->getYScale()) // up scroll
+		if (posY < SCROLL_BORDER * action->getScaleY()) // up scroll
 		{
 			_scrollMouseY = scrollSpeed;
 
 			// if close to left or right edge, also scroll diagonally
-			if (posX < SCROLL_DIAGONAL_EDGE * action->getXScale()) // up left
+			if (posX < SCROLL_DIAGONAL_EDGE * action->getScaleX()) // up left
 			{
 				_scrollMouseX = scrollSpeed;
 				_scrollMouseY /= 2;
 			}
-			else if (posX > (_screenWidth - SCROLL_DIAGONAL_EDGE) * action->getXScale()) // up right
+			else if (posX > (_screenWidth - SCROLL_DIAGONAL_EDGE) * action->getScaleX()) // up right
 			{
 				_scrollMouseX = -scrollSpeed;
 				_scrollMouseY /= 2;
 			}
 		}
-		else if (posY > (_screenHeight - SCROLL_BORDER) * action->getYScale()) // down scroll
+		else if (posY > (_screenHeight - SCROLL_BORDER) * action->getScaleY()) // down scroll
 		{
 			_scrollMouseY = -scrollSpeed;
 
 			// if close to left or right edge, also scroll diagonally
-			if (posX < SCROLL_DIAGONAL_EDGE * action->getXScale()) // down left
+			if (posX < SCROLL_DIAGONAL_EDGE * action->getScaleX()) // down left
 			{
 				_scrollMouseX = scrollSpeed;
 				_scrollMouseY /= 2;
 			}
-			else if (posX > (_screenWidth - SCROLL_DIAGONAL_EDGE) * action->getXScale()) // down right
+			else if (posX > (_screenWidth - SCROLL_DIAGONAL_EDGE) * action->getScaleX()) // down right
 			{
 				_scrollMouseX = -scrollSpeed;
 				_scrollMouseY /= 2;

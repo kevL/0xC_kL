@@ -37,6 +37,7 @@
 
 #include "../Engine/Action.h"
 #include "../Engine/Options.h"
+#include "../Engine/Screen.h"
 #include "../Engine/Timer.h"
 
 
@@ -57,10 +58,8 @@ FpsCounter::FpsCounter(
 		int y)
 	:
 		Surface(
-			width,
-			height,
-			x + 1,
-			y + 30),
+			width, height,
+			x + 1, y),
 		_frames(0u)
 {
 	_visible = Options::fpsCounter;
@@ -69,7 +68,7 @@ FpsCounter::FpsCounter(
 	_timer->onTimer((SurfaceHandler)& FpsCounter::update);
 	_timer->start();
 
-	_text = new NumberText(width, height, x, y);
+	_text = new NumberText(width, height, x,y);
 }
 
 /**
@@ -117,8 +116,8 @@ void FpsCounter::handle(Action* action)
 #ifdef _WIN32
 		MessageBeep(MB_OK);
 #endif
+		Options::fpsCounter =
 		_visible = !_visible;
-		Options::fpsCounter = _visible;
 	}
 }
 

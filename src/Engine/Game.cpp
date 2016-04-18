@@ -132,18 +132,19 @@ Game::Game(const std::string& title)
 
 	// Create display.
 	_screen = new Screen();
-/*	Screen::BASE_WIDTH = Options::getInt("baseXResolution");
+/*	Screen::BASE_WIDTH  = Options::getInt("baseXResolution");
 	Screen::BASE_HEIGHT = Options::getInt("baseYResolution");
 	_screen = new Screen(
-			Options::getInt("displayWidth"),
-			Options::getInt("displayHeight"), 0,
-			Options::getBool("fullscreen"),
-			Options::getInt("windowedModePositionX"),
-			Options::getInt("windowedModePositionY")); */ // kL
+					Options::getInt("displayWidth"),
+					Options::getInt("displayHeight"), 0,
+					Options::getBool("fullscreen"),
+					Options::getInt("windowedModePositionX"),
+					Options::getInt("windowedModePositionY")); */ // kL
 
 	// Create cursor.
 	_cursor = new Cursor(9,13);
-	// Create invisible hardware cursor to workaround bug with absolute positioning pointing devices.
+	// Create invisible hardware-cursor to workaround a bug with absolute
+	// positioning pointing devices.
 //	SDL_ShowCursor(SDL_ENABLE);
 	SDL_ShowCursor(SDL_DISABLE); // kL
 	Uint8 cursor (0u);
@@ -226,7 +227,7 @@ void Game::run()
 
 	if (Options::engineLooper == "roadrunner")
 	{
-		//Log(LOG_INFO) << ". roadrunner";
+		Log(LOG_INFO) << "Starting roadrunner engine.";
 		while (_quit == false)
 		{
 			while (_deleted.empty() == false) // clean up states
@@ -250,8 +251,8 @@ void Game::run()
 				event.motion.y = static_cast<Uint16>(y);
 				Action action (Action(
 									&event,
-									_screen->getXScale(),
-									_screen->getYScale(),
+									_screen->getScaleX(),
+									_screen->getScaleY(),
 									_screen->getCursorTopBlackBand(),
 									_screen->getCursorLeftBlackBand()));
 				_states.back()->handle(&action);
@@ -329,8 +330,8 @@ void Game::run()
 					default:
 						Action action (Action(
 											&_event,
-											_screen->getXScale(),
-											_screen->getYScale(),
+											_screen->getScaleX(),
+											_screen->getScaleY(),
 											_screen->getCursorTopBlackBand(),
 											_screen->getCursorLeftBlackBand()));
 						_screen->handle(&action);
@@ -436,7 +437,7 @@ void Game::run()
 	}
 	else // anything other than Options::engineLooper= "roadrunner"
 	{
-		//Log(LOG_INFO) << ". NOT roadrunner";
+		Log(LOG_INFO) << "Starting wilecoyote engine.";
 		while (_quit == false)
 		{
 			while (_deleted.empty() == false) // clean up states
@@ -460,8 +461,8 @@ void Game::run()
 				event.motion.y = static_cast<Uint16>(y);
 				Action action (Action(
 									&event,
-									_screen->getXScale(),
-									_screen->getYScale(),
+									_screen->getScaleX(),
+									_screen->getScaleY(),
 									_screen->getCursorTopBlackBand(),
 									_screen->getCursorLeftBlackBand()));
 				_states.back()->handle(&action);
@@ -563,8 +564,8 @@ void Game::run()
 					default:
 						Action action (Action(
 											&_event,
-											_screen->getXScale(),
-											_screen->getYScale(),
+											_screen->getScaleX(),
+											_screen->getScaleY(),
 											_screen->getCursorTopBlackBand(),
 											_screen->getCursorLeftBlackBand()));
 						_screen->handle(&action);
