@@ -28,7 +28,6 @@ namespace OpenXcom
 
 class Action;
 class NumberText;
-class Screen;
 class Timer;
 
 

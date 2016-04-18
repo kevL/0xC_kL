@@ -1040,7 +1040,7 @@ BattlescapeState::BattlescapeState()
 	_btnReserveAimed->setGroup(&_reserve);
 	_btnReserveAuto->setGroup(&_reserve); */
 
-	_game->getFpsCounter()->setY(screenHeight - 9);
+	_game->getFpsCounter()->setY(screenHeight - 6);
 
 	_aniTimer = new Timer(STATE_INTERVAL_TILE); // setStateInterval() does NOT change this <-
 	_aniTimer->onTimer((StateHandler)& BattlescapeState::animate);
