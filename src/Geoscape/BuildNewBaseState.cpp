@@ -211,8 +211,8 @@ void BuildNewBaseState::handle(Action* action)
  */
 void BuildNewBaseState::globeHover(Action* action)
 {
-	_mX = static_cast<int>(std::floor(action->getAbsoluteXMouse()));
-	_mY = static_cast<int>(std::floor(action->getAbsoluteYMouse()));
+	_mX = static_cast<int>(std::floor(action->getAbsoluteMouseX()));
+	_mY = static_cast<int>(std::floor(action->getAbsoluteMouseY()));
 
 	if (_hoverTimer->isRunning() == false)
 		_hoverTimer->start();
@@ -251,10 +251,10 @@ void BuildNewBaseState::hoverRedraw()
  */
 void BuildNewBaseState::globeClick(Action* action)
 {
-	const int mouseY (static_cast<int>(std::floor(action->getAbsoluteYMouse())));
+	const int mouseY (static_cast<int>(std::floor(action->getAbsoluteMouseY())));
 	if (mouseY > _window->getY() + _window->getHeight())
 	{
-		const int mouseX (static_cast<int>(std::floor(action->getAbsoluteXMouse())));
+		const int mouseX (static_cast<int>(std::floor(action->getAbsoluteMouseX())));
 		double
 			lon,lat;
 		_globe->cartToPolar(

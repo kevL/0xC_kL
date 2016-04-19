@@ -149,8 +149,8 @@ void Camera::mousePress(Action* action, State*)
  */
 void Camera::mouseRelease(Action* action, State*)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		&& Options::battleEdgeScroll == SCROLL_TRIGGER)
+	if (Options::battleEdgeScroll == SCROLL_TRIGGER
+		&& action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		_scrollMouseX =
 		_scrollMouseY = 0;
@@ -161,17 +161,13 @@ void Camera::mouseRelease(Action* action, State*)
 			posX (action->getMouseX()),
 			posY (action->getMouseY());
 
-		if ((posX > 0
-				&& posX < SCROLL_BORDER * action->getScaleX())
-			|| posX > (_screenWidth - SCROLL_BORDER) * action->getScaleX()
-			|| (posY > 0
-				&& posY < SCROLL_BORDER * action->getScaleY())
-			|| posY > (_screenHeight - SCROLL_BORDER) * action->getScaleY())
+		if (   (posX > 0 && posX < SCROLL_BORDER * action->getScaleX())		// NOTE: I think that (x/y= 0) should be included there.
+			||  posX > (_screenWidth - SCROLL_BORDER) * action->getScaleX()	// But then i don't use Scroll_Trigger .....
+			|| (posY > 0 && posY < SCROLL_BORDER * action->getScaleY())
+			||  posY > (_screenHeight - SCROLL_BORDER) * action->getScaleY())
 		{
-			// A cheap hack to avoid handling this event as a click
-			// on the map when the mouse is on the scroll-border
-			action->getDetails()->button.button = 0u;
-		}
+			action->getDetails()->button.button = 0u;	// do not handle this mouse-release as a map-event
+		}												// if the cursor is within the Scroll_Trigger border.
 	}
 }
 

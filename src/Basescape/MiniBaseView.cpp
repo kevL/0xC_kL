@@ -310,7 +310,7 @@ void MiniBaseView::draw()
 void MiniBaseView::mouseOver(Action* action, State* state)
 {
 	_hoverBase = static_cast<size_t>(std::floor(
-				 action->getRelativeXMouse()) / (static_cast<double>(MINI_SIZE + 2) * action->getScaleX()));
+				 action->getRelativeMouseX()) / (static_cast<double>(MINI_SIZE + 2) * action->getScaleX()));
 
 	if (_hoverBase > Base::MAX_BASES - 1)
 		_hoverBase = Base::MAX_BASES - 1;

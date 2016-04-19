@@ -498,8 +498,8 @@ void AlienContainmentState::lstItemsMousePress(Action* action)
 		_timerInc->stop();
 		_timerDec->stop();
 
-		if (action->getAbsoluteXMouse() >= _lstAliens->getArrowsLeftEdge()
-			&& action->getAbsoluteXMouse() <= _lstAliens->getArrowsRightEdge())
+		if (action->getAbsoluteMouseX() >= _lstAliens->getArrowsLeftEdge()
+			&& action->getAbsoluteMouseX() <= _lstAliens->getArrowsRightEdge())
 		{
 			increaseByValue(Options::changeValueByMouseWheel);
 		}
@@ -509,8 +509,8 @@ void AlienContainmentState::lstItemsMousePress(Action* action)
 		_timerInc->stop();
 		_timerDec->stop();
 
-		if (action->getAbsoluteXMouse() >= _lstAliens->getArrowsLeftEdge()
-			&& action->getAbsoluteXMouse() <= _lstAliens->getArrowsRightEdge())
+		if (action->getAbsoluteMouseX() >= _lstAliens->getArrowsLeftEdge()
+			&& action->getAbsoluteMouseX() <= _lstAliens->getArrowsRightEdge())
 		{
 			decreaseByValue(Options::changeValueByMouseWheel);
 		}

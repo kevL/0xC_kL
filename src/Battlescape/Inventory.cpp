@@ -458,8 +458,8 @@ void Inventory::blit(Surface* surface)
 void Inventory::mouseOver(Action* action, State* state)
 {
 	int
-		x (static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX()),
-		y (static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY());
+		x (static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX()),
+		y (static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY());
 
 	RuleInventory* const inRule (getSlotAtCursor(&x,&y));
 	if (inRule != nullptr)
@@ -488,9 +488,9 @@ void Inventory::mouseOver(Action* action, State* state)
 	}
 
 	_srfGrab->setX(static_cast<int>(std::floor(
-					action->getAbsoluteXMouse())) - getX() - _srfGrab->getWidth() / 2);
+					action->getAbsoluteMouseX())) - getX() - _srfGrab->getWidth() / 2);
 	_srfGrab->setY(static_cast<int>(std::floor(
-					action->getAbsoluteYMouse())) - getY() - _srfGrab->getHeight() / 2);
+					action->getAbsoluteMouseY())) - getY() - _srfGrab->getHeight() / 2);
 
 	InteractiveSurface::mouseOver(action, state);
 }
@@ -511,8 +511,8 @@ void Inventory::mouseClick(Action* action, State* state)
 			if (_selItem == nullptr) // Pickup or Move item.
 			{
 				int
-					x (static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX()),
-					y (static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY());
+					x (static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX()),
+					y (static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY());
 
 				const RuleInventory* const inRule (getSlotAtCursor(&x,&y));
 				if (inRule != nullptr)
@@ -756,8 +756,8 @@ void Inventory::mouseClick(Action* action, State* state)
 				else
 				{
 					// try again using the position of the mouse cursor not the item (slightly more intuitive for stacking)
-					x = static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX();
-					y = static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY();
+					x = static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX();
+					y = static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY();
 
 					inRule = getSlotAtCursor(&x,&y);
 					if (inRule != nullptr && inRule->getCategory() == IC_GROUND)
@@ -802,8 +802,8 @@ void Inventory::mouseClick(Action* action, State* state)
 						if (_tuMode == false)
 						{
 							int
-								x (static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX()),
-								y (static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY());
+								x (static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX()),
+								y (static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY());
 
 							const RuleInventory* const inRule (getSlotAtCursor(&x,&y));
 							if (inRule != nullptr)
@@ -867,8 +867,8 @@ void Inventory::mouseClick(Action* action, State* state)
 				else // Open Ufopaedia article.
 				{
 					int
-						x (static_cast<int>(std::floor(action->getAbsoluteXMouse())) - getX()),
-						y (static_cast<int>(std::floor(action->getAbsoluteYMouse())) - getY());
+						x (static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX()),
+						y (static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY());
 
 					RuleInventory* const inRule (getSlotAtCursor(&x,&y));
 					if (inRule != nullptr)

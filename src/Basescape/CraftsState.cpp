@@ -274,7 +274,7 @@ void CraftsState::btnOkClick(Action*)
  */
 void CraftsState::lstCraftsPress(Action* action)
 {
-	const double mX (action->getAbsoluteXMouse());
+	const double mX (action->getAbsoluteMouseX());
 	if (   mX >= _lstCrafts->getArrowsLeftEdge()
 		&& mX < _lstCrafts->getArrowsRightEdge())
 	{

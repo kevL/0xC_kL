@@ -373,7 +373,7 @@ void SoldiersState::btnAutoStatClick(Action*)
  */
 void SoldiersState::lstSoldiersPress(Action* action)
 {
-	const double mx = action->getAbsoluteXMouse();
+	const double mx = action->getAbsoluteMouseX();
 	if (mx >= _lstSoldiers->getArrowsLeftEdge()
 		&& mx < _lstSoldiers->getArrowsRightEdge())
 	{

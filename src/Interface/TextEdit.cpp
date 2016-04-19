@@ -91,10 +91,10 @@ void TextEdit::handle(Action* action, State* state)
 	if (_isFocused == true
 		&& _modal == true
 		&& action->getDetails()->type == SDL_MOUSEBUTTONDOWN
-		&& (   action->getAbsoluteXMouse() <  getX()
-			|| action->getAbsoluteXMouse() >= getX() + getWidth()
-			|| action->getAbsoluteYMouse() <  getY()
-			|| action->getAbsoluteYMouse() >= getY() + getHeight()))
+		&& (   action->getAbsoluteMouseX() <  getX()
+			|| action->getAbsoluteMouseX() >= getX() + getWidth()
+			|| action->getAbsoluteMouseY() <  getY()
+			|| action->getAbsoluteMouseY() >= getY() + getHeight()))
 	{
 		setFocus(false, true);
 	}
@@ -440,7 +440,7 @@ void TextEdit::mousePress(Action* action, State* state)
 		else
 		{
 			const double
-				mX (action->getRelativeXMouse()),
+				mX (action->getRelativeMouseX()),
 				scale (action->getScaleX());
 			double pX (static_cast<double>(_text->getLineX(0) * scale));
 			if (mX > pX)

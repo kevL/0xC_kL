@@ -716,8 +716,8 @@ void CraftEquipmentState::lstEquipmentMousePress(Action* action)
 		_timerRight->stop();
 		_timerLeft->stop();
 
-		if (action->getAbsoluteXMouse() >= _lstEquipment->getArrowsLeftEdge()
-			&& action->getAbsoluteXMouse() <= _lstEquipment->getArrowsRightEdge())
+		if (action->getAbsoluteMouseX() >= _lstEquipment->getArrowsLeftEdge()
+			&& action->getAbsoluteMouseX() <= _lstEquipment->getArrowsRightEdge())
 		{
 			moveRightByValue(Options::changeValueByMouseWheel);
 		}
@@ -727,8 +727,8 @@ void CraftEquipmentState::lstEquipmentMousePress(Action* action)
 		_timerRight->stop();
 		_timerLeft->stop();
 
-		if (action->getAbsoluteXMouse() >= _lstEquipment->getArrowsLeftEdge()
-			&& action->getAbsoluteXMouse() <= _lstEquipment->getArrowsRightEdge())
+		if (action->getAbsoluteMouseX() >= _lstEquipment->getArrowsLeftEdge()
+			&& action->getAbsoluteMouseX() <= _lstEquipment->getArrowsRightEdge())
 		{
 			moveLeftByValue(Options::changeValueByMouseWheel);
 		}

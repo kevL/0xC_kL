@@ -2499,8 +2499,8 @@ void Globe::mouseOver(Action* action, State* state)
 	double
 		lon,lat;
 	cartToPolar(
-			static_cast<Sint16>(std::floor(action->getAbsoluteXMouse())),
-			static_cast<Sint16>(std::floor(action->getAbsoluteYMouse())),
+			static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
+			static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
 			&lon,&lat);
 
 	if (_isMouseScrolling == true
@@ -2572,8 +2572,8 @@ void Globe::mousePress(Action* action, State* state)
 	double
 		lon,lat;
 	cartToPolar(
-			static_cast<Sint16>(std::floor(action->getAbsoluteXMouse())),
-			static_cast<Sint16>(std::floor(action->getAbsoluteYMouse())),
+			static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
+			static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
 			&lon,&lat);
 
 	if (action->getDetails()->button.button == Options::geoDragScrollButton)
@@ -2605,8 +2605,8 @@ void Globe::mouseRelease(Action* action, State* state)
 	double
 		lon,lat;
 	cartToPolar(
-			static_cast<Sint16>(std::floor(action->getAbsoluteXMouse())),
-			static_cast<Sint16>(std::floor(action->getAbsoluteYMouse())),
+			static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
+			static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
 			&lon,&lat);
 
 	if (isNaNorInf(lon,lat) == false)
@@ -2634,8 +2634,8 @@ void Globe::mouseClick(Action* action, State* state)
 	double
 		lon,lat;
 	cartToPolar(
-			static_cast<Sint16>(std::floor(action->getAbsoluteXMouse())),
-			static_cast<Sint16>(std::floor(action->getAbsoluteYMouse())),
+			static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
+			static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
 			&lon,&lat);
 
 	// What follows is a workaround for a rare problem where sometimes the

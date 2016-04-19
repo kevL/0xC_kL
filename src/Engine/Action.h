@@ -89,13 +89,13 @@ private:
 		/// Gets the mouse's y-position.
 		int getMouseY() const;
 		/// Gets the mouse's absolute x-position.
-		double getAbsoluteXMouse() const;
+		double getAbsoluteMouseX() const;
 		/// Gets the mouse's absolute y-position.
-		double getAbsoluteYMouse() const;
+		double getAbsoluteMouseY() const;
 		/// Gets the mouse's relative x-position.
-		double getRelativeXMouse() const;
+		double getRelativeMouseX() const;
 		/// Gets the mouse's relative y-position.
-		double getRelativeYMouse() const;
+		double getRelativeMouseY() const;
 
 		/// Sets the sender of the Action.
 		void setSender(InteractiveSurface* const sender);

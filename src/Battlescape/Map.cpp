@@ -2177,8 +2177,8 @@ void Map::mouseOver(Action* action, State* state)
 	InteractiveSurface::mouseOver(action, state);
 	_camera->mouseOver(action, state);
 
-	_mX = static_cast<int>(action->getAbsoluteXMouse());
-	_mY = static_cast<int>(action->getAbsoluteYMouse());
+	_mX = static_cast<int>(action->getAbsoluteMouseX());
+	_mY = static_cast<int>(action->getAbsoluteMouseY());
 	refreshSelectorPosition();
 }
 

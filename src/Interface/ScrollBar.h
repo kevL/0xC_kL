@@ -111,7 +111,7 @@ private:
 		/// Blits the ScrollBar onto another Surface.
 		void blit(Surface* surface) override;
 
-		/// Moves the ScrollBar.
+		/// Moves the TextList on mouse-drag.
 		void handle(Action* action, State* state) override;
 		/// Special handling for mouse-presses.
 		void mousePress(Action* action, State* state) override;
@@ -122,7 +122,7 @@ private:
 		/// Handles keyboard-releases.
 		void keyboardRelease(Action* action, State* state) override;
 
-		/// Gives ticks to keyboard-press.
+		/// Gives ticks to mouse- and keyboard-events.
 		void think() override;
 		/// Scrolls the TextList with the keyboard.
 		void keyScroll();

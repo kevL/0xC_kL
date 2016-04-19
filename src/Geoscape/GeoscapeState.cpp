@@ -3385,8 +3385,8 @@ Globe* GeoscapeState::getGlobe() const
 void GeoscapeState::globeClick(Action* action)
 {
 	const int
-		mX (static_cast<int>(std::floor(action->getAbsoluteXMouse()))),
-		mY (static_cast<int>(std::floor(action->getAbsoluteYMouse())));
+		mX (static_cast<int>(std::floor(action->getAbsoluteMouseX()))),
+		mY (static_cast<int>(std::floor(action->getAbsoluteMouseY())));
 
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{

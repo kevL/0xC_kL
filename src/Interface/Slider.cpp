@@ -227,7 +227,7 @@ void Slider::handle(Action* action, State* state)
 		&& (action->getDetails()->type == SDL_MOUSEMOTION
 			|| action->getDetails()->type == SDL_MOUSEBUTTONDOWN))
 	{
-		const int cursorX = static_cast<int>(action->getAbsoluteXMouse());
+		const int cursorX = static_cast<int>(action->getAbsoluteMouseX());
 		const double buttonX = static_cast<double>(std::min(
 														_maxX,
 														std::max(
@@ -322,7 +322,7 @@ void Slider::mousePress(Action* action, State* state)
 	{
 		_pressed = true;
 
-		const int cursorX = static_cast<int>(action->getAbsoluteXMouse());
+		const int cursorX = static_cast<int>(action->getAbsoluteMouseX());
 		if (cursorX >= _button->getX()
 			&& cursorX < _button->getX() + _button->getWidth())
 		{

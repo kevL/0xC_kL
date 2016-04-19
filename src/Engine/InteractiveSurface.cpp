@@ -154,10 +154,10 @@ void InteractiveSurface::handle( // virtual
 
 		if (action->isMouseAction() == true)
 		{
-			if (   action->getAbsoluteXMouse() >= getX()
-				&& action->getAbsoluteXMouse() <  getX() + getWidth()
-				&& action->getAbsoluteYMouse() >= getY()
-				&& action->getAbsoluteYMouse() <  getY() + getHeight())
+			if (   action->getAbsoluteMouseX() >= getX()
+				&& action->getAbsoluteMouseX() <  getX() + getWidth()
+				&& action->getAbsoluteMouseY() >= getY()
+				&& action->getAbsoluteMouseY() <  getY() + getHeight())
 			{
 				if (_isHovered == false)
 				{

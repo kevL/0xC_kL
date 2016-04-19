@@ -272,7 +272,7 @@ void CraftSoldiersState::btnUnloadClick(Action*)
  */
 void CraftSoldiersState::lstSoldiersPress(Action* action)
 {
-	const double mx = action->getAbsoluteXMouse();
+	const double mx = action->getAbsoluteMouseX();
 	if (mx >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge())
 		&& mx < static_cast<double>(_lstSoldiers->getArrowsRightEdge()))
 	{

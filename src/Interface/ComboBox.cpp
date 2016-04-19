@@ -401,10 +401,10 @@ void ComboBox::handle(Action* action, State* state)
 
 	if (_window->getVisible() == true
 		&& action->getDetails()->type == SDL_MOUSEBUTTONDOWN
-		&& (   action->getAbsoluteXMouse() <  getX()
-			|| action->getAbsoluteXMouse() >= getX() + getWidth()
-			|| action->getAbsoluteYMouse() <  getY()
-			|| action->getAbsoluteYMouse() >= getY() + getHeight() + _window->getHeight()))
+		&& (   action->getAbsoluteMouseX() <  getX()
+			|| action->getAbsoluteMouseX() >= getX() + getWidth()
+			|| action->getAbsoluteMouseY() <  getY()
+			|| action->getAbsoluteMouseY() >= getY() + getHeight() + _window->getHeight()))
 	{
 		toggle();
 	}

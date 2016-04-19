@@ -238,7 +238,7 @@ void SelectDestinationState::handle(Action* action)
 	//Log(LOG_INFO) << "SelectDestinationState::handle()";
 	State::handle(action);
 
-	if (static_cast<int>(std::floor(action->getAbsoluteYMouse())) > _window->getY() + _window->getHeight()) // ignore window clicks
+	if (static_cast<int>(std::floor(action->getAbsoluteMouseY())) > _window->getY() + _window->getHeight()) // ignore window clicks
 		_globe->handle(action, this);
 }
 
@@ -250,7 +250,7 @@ void SelectDestinationState::handle(Action* action)
 void SelectDestinationState::globeClick(Action* action)
 {
 	//Log(LOG_INFO) << "SelectDestinationState::globeClick()";
-	const int mY (static_cast<int>(std::floor(action->getAbsoluteYMouse())));
+	const int mY (static_cast<int>(std::floor(action->getAbsoluteMouseY())));
 	if (mY > _window->getY() + _window->getHeight()) // ignore window clicks
 	{
 //		const Uint8 btnId (action->getDetails()->button.button);
@@ -271,7 +271,7 @@ void SelectDestinationState::globeClick(Action* action)
 
 //		if (btnId == SDL_BUTTON_LEFT) // set a Waypoint. This is called only on LMB.
 //		{
-		const int mX (static_cast<int>(std::floor(action->getAbsoluteXMouse())));
+		const int mX (static_cast<int>(std::floor(action->getAbsoluteMouseX())));
 		double
 			lon,lat;
 		_globe->cartToPolar(

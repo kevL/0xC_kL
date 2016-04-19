@@ -308,7 +308,7 @@ int TextList::getColumnX(size_t column) const
  */
 int TextList::getRowY(size_t row) const
 {
-	return getY() + _texts[row][0]->getY();
+	return getY() + _texts[row][0u]->getY();
 }
 
 /**
@@ -439,7 +439,7 @@ void TextList::addRow(
 							 txt->getTextHeight() + vertPad);
 
 		if (_dot == true
-			&& cols != 0 && i < static_cast<size_t>(cols) - 1)
+			&& cols != 0 && i < static_cast<size_t>(cols) - 1u)
 		{
 			std::wstring buf (txt->getText());
 
@@ -471,7 +471,7 @@ void TextList::addRow(
 			i = 0;
 			i != qtyRows;
 			++i)
-		_rows.push_back(_texts.size() - 1);
+		_rows.push_back(_texts.size() - 1u);
 
 
 	if (_arrowPos != -1)	// place arrow-buttons
@@ -737,13 +737,13 @@ void TextList::setAlign(
 	if (col == -1)
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _columns.size();
 				++i)
 			_align[i] = align;
 	}
 	else
-		_align[col] = align;
+		_align[static_cast<size_t>(col)] = align;
 }
 
 /**
@@ -816,7 +816,7 @@ void TextList::setCondensed(bool condensed)
  */
 size_t TextList::getSelectedRow() const
 {
-	if (_rows.empty() == true || _selRow > _rows.size() - 1)
+	if (_rows.empty() == true || _selRow > _rows.size() - 1u)
 		return std::numeric_limits<size_t>::max();
 
 	return _rows[_selRow];
@@ -887,7 +887,7 @@ void TextList::onLeftArrowClick(ActionHandler handler)
 			i = _arrowLeft.begin();
 			i != _arrowLeft.end();
 			++i)
-		(*i)->onMouseClick(handler, 0);
+		(*i)->onMouseClick(handler, 0u);
 }
 
 /**
@@ -929,7 +929,7 @@ void TextList::onRightArrowClick(ActionHandler handler)
 			i = _arrowRight.begin();
 			i != _arrowRight.end();
 			++i)
-		(*i)->onMouseClick(handler, 0);
+		(*i)->onMouseClick(handler, 0u);
 }
 
 /**
@@ -997,7 +997,7 @@ void TextList::scrollUp(
 		bool wheel)
 {
 	if (_scrollable == true
-		&& _scroll > 0 && _rows.size() > _visibleRows)
+		&& _scroll > 0u && _rows.size() > _visibleRows)
 	{
 		if (full == true)
 			scrollTo();
@@ -1005,7 +1005,7 @@ void TextList::scrollUp(
 			scrollTo(_scroll - std::min(_scroll,
 										static_cast<size_t>(Options::mousewheelSpeed)));
 		else
-			scrollTo(_scroll - 1);
+			scrollTo(_scroll - 1u);
 	}
 }
 
@@ -1026,7 +1026,7 @@ void TextList::scrollDown(
 		else if (wheel == true)
 			scrollTo(_scroll + static_cast<size_t>(Options::mousewheelSpeed));
 		else
-			scrollTo(_scroll + 1);
+			scrollTo(_scroll + 1u);
 	}
 }
 
@@ -1070,7 +1070,7 @@ void TextList::updateArrows() // private.
  */
 void TextList::updateVisible() // private.
 {
-	_visibleRows = 0;
+	_visibleRows = 0u;
 
 	const int delta_y (_font->getHeight() + _font->getSpacing());
 	for (int
@@ -1081,7 +1081,7 @@ void TextList::updateVisible() // private.
 		++_visibleRows;
 	}
 
-	if (getHeight() > static_cast<int>(_visibleRows - 1) * delta_y)
+	if (getHeight() > static_cast<int>(_visibleRows - 1u) * delta_y)
 		--_visibleRows;
 
 	updateArrows();
@@ -1103,7 +1103,7 @@ void TextList::draw()
 		// so that the correct row appears at the top
 		for (size_t
 				row = _scroll;
-				row != 0 && _rows[row] == _rows[row - 1];
+				row != 0u && _rows[row] == _rows[row - 1u];
 				--row)
 		{
 			y -= _font->getHeight() + _font->getSpacing();
@@ -1114,7 +1114,7 @@ void TextList::draw()
 				i != _texts.size() && i != _rows[_scroll] + _visibleRows;
 				++i)
 		{
-			if (i == _texts.size() - 1 || i == _rows[_scroll] + _visibleRows - 1)
+			if (i == _texts.size() - 1u || i == _rows[_scroll] + _visibleRows - 1u)
 				addPixel = true; // add px_Y under last row
 
 			for (std::vector<Text*>::const_iterator
@@ -1155,7 +1155,7 @@ void TextList::blit(Surface* surface)
 			int y (getY());
 			for (size_t
 					row = _scroll;
-					row != 0 && _rows[row] == _rows[row - 1];
+					row != 0u && _rows[row] == _rows[row - 1u];
 					--row)
 			{
 				y -= _font->getHeight() + _font->getSpacing();
@@ -1205,20 +1205,20 @@ void TextList::handle(Action* action, State* state)
 	if (_arrowPos != -1 && _rows.empty() == false)
 	{
 		size_t startId (_rows[_scroll]);
-		if (_scroll > 0 && _rows[_scroll] == _rows[_scroll - 1])
+		if (_scroll > 0u && _rows[_scroll] == _rows[_scroll - 1u])
 			++startId; // arrows for first partly-visible line of text are offscreen - so don't process them
 
 		size_t
-			endId (_rows[_scroll] + 1),
+			endId (_rows[_scroll] + 1u),
 			endRow (std::min(_rows.size(),
 							 _scroll + _visibleRows));
 
 		for (size_t
-				i = _scroll + 1;
+				i = _scroll + 1u;
 				i != endRow;
 				++i)
 		{
-			if (_rows[i] != _rows[i - 1])
+			if (_rows[i] != _rows[i - 1u])
 				++endId;
 		}
 
@@ -1267,8 +1267,8 @@ void TextList::mousePress(Action* action, State* state)
 	bool allowScroll;
 	if (Options::changeValueByMouseWheel == true)
 	{
-		allowScroll = (action->getAbsoluteXMouse() < _arrowsLeftEdge
-					|| action->getAbsoluteXMouse() > _arrowsRightEdge);
+		allowScroll = (action->getAbsoluteMouseX() < _arrowsLeftEdge
+					|| action->getAbsoluteMouseX() > _arrowsRightEdge);
 	}
 	else
 		allowScroll = true;
@@ -1346,14 +1346,14 @@ void TextList::mouseOver(Action* action, State* state)
 	if (_selectable == true)
 	{
 		int h (_font->getHeight() + _font->getSpacing());
-		_selRow = std::max(
-						0,
-						static_cast<int>(_scroll)
-						+ static_cast<int>(std::floor(action->getRelativeYMouse() / (static_cast<double>(h) * action->getScaleY()))));
+		_selRow = std::max(0,
+						   static_cast<int>(_scroll)
+						 + static_cast<int>(std::floor(action->getRelativeMouseY()
+						/ (static_cast<double>(h) * action->getScaleY()))));
 
 		if (_selRow < _texts.size()
 			&& _selRow < _scroll + _visibleRows
-			&& _texts[_selRow][0]->getText().empty() == false)	// kL_add. Don't highlight rows w/out text in first column.
+			&& _texts[_selRow][0u]->getText().empty() == false)	// kL_add. Don't highlight rows w/out text in first column.
 		{														// This is currently only a special case in Battlescape/CeremonyState(cTor)
 																// due to the quirky way it adds titleRows, then lists soldierNames & Awards
 																// and finally fills the titleRow w/ the relevant awardName; the last titleRow
@@ -1428,7 +1428,7 @@ void TextList::scrollTo(size_t scroll)
 {
 	if (_scrollable == true)
 	{
-		_scroll = static_cast<size_t>(std::max(0,
+		_scroll = static_cast<size_t>(std::max(0, // super-safety and it works.
 											   std::min(static_cast<int>(_rows.size() - _visibleRows),
 														static_cast<int>(scroll))));
 

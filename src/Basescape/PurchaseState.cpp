@@ -948,8 +948,8 @@ void PurchaseState::lstItemsMousePress(Action* action)
 		_timerInc->stop();
 		_timerDec->stop();
 
-		if (static_cast<int>(action->getAbsoluteXMouse()) >= _lstItems->getArrowsLeftEdge()
-			&& static_cast<int>(action->getAbsoluteXMouse()) <= _lstItems->getArrowsRightEdge())
+		if (static_cast<int>(action->getAbsoluteMouseX()) >= _lstItems->getArrowsLeftEdge()
+			&& static_cast<int>(action->getAbsoluteMouseX()) <= _lstItems->getArrowsRightEdge())
 		{
 			increaseByValue(Options::changeValueByMouseWheel);
 		}
@@ -959,8 +959,8 @@ void PurchaseState::lstItemsMousePress(Action* action)
 		_timerInc->stop();
 		_timerDec->stop();
 
-		if (static_cast<int>(action->getAbsoluteXMouse()) >= _lstItems->getArrowsLeftEdge()
-			&& static_cast<int>(action->getAbsoluteXMouse()) <= _lstItems->getArrowsRightEdge())
+		if (static_cast<int>(action->getAbsoluteMouseX()) >= _lstItems->getArrowsLeftEdge()
+			&& static_cast<int>(action->getAbsoluteMouseX()) <= _lstItems->getArrowsRightEdge())
 		{
 			decreaseByValue(Options::changeValueByMouseWheel);
 		}

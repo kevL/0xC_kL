@@ -211,7 +211,7 @@ void PsiTrainingState::btnOkClick(Action*)
  */
 void PsiTrainingState::lstSoldiersPress(Action* action)
 {
-	const double mX (action->getAbsoluteXMouse());
+	const double mX (action->getAbsoluteMouseX());
 	if (mX >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge())
 		&& mX < static_cast<double>(_lstSoldiers->getArrowsRightEdge()))
 	{
