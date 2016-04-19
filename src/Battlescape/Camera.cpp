@@ -122,7 +122,7 @@ void Camera::intMinMax( // private.
 void Camera::mousePress(Action* action, State*)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		&& Options::battleEdgeScroll == SCROLL_TRIGGER)
+		&& Options::battleEdgeScroll == MAP_SCROLL_TRIGGER)
 	{
 		_scrollTrigger = true;
 		mouseOver(action, nullptr);
@@ -149,7 +149,7 @@ void Camera::mousePress(Action* action, State*)
  */
 void Camera::mouseRelease(Action* action, State*)
 {
-	if (Options::battleEdgeScroll == SCROLL_TRIGGER
+	if (Options::battleEdgeScroll == MAP_SCROLL_TRIGGER
 		&& action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		_scrollMouseX =
@@ -179,7 +179,7 @@ void Camera::mouseRelease(Action* action, State*)
 void Camera::mouseOver(Action* action, State*)
 {
 	if (_map->getSelectorType() != CT_NONE
-		&& (Options::battleEdgeScroll == SCROLL_AUTO
+		&& (Options::battleEdgeScroll == MAP_SCROLL_AUTO
 			|| _scrollTrigger == true))
 	{
 		int

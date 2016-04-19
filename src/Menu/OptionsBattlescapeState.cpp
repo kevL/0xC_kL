@@ -208,7 +208,7 @@ OptionsBattlescapeState::~OptionsBattlescapeState()
  */
 void OptionsBattlescapeState::cbxEdgeScrollChange(Action*)
 {
-	Options::battleEdgeScroll = (ScrollType)_cbxEdgeScroll->getSelected();
+	Options::battleEdgeScroll = static_cast<ScrollType>(_cbxEdgeScroll->getSelected());
 }
 
 /**

@@ -2298,7 +2298,7 @@ void BattlescapeState::btnStatsClick(Action* action)
 {
 	if (playableUnitSelected() == true)
 	{
-		if (Options::battleEdgeScroll == SCROLL_TRIGGER // NOTE: This is just ... code-for-the-sake-of-code.
+		if (Options::battleEdgeScroll == MAP_SCROLL_TRIGGER // NOTE: This is just ... code-for-the-sake-of-code.
 			&& action->getDetails()->type == SDL_MOUSEBUTTONUP
 			&& action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		{

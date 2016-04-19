@@ -33,9 +33,9 @@ namespace OpenXcom
  */
 enum ScrollType
 {
-	SCROLL_NONE,	// 0
-	SCROLL_TRIGGER,	// 1
-	SCROLL_AUTO		// 2
+	MAP_SCROLL_NONE,	// 0
+	MAP_SCROLL_TRIGGER,	// 1
+	MAP_SCROLL_AUTO		// 2
 };
 
 /**
