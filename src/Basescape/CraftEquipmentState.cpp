@@ -72,8 +72,8 @@ CraftEquipmentState::CraftEquipmentState(
 		_base(base),
 		_craft(base->getCrafts()->at(craftId)),
 		_rules(_game->getRuleset()),
-		_sel(0),
-		_selUnitId(0)
+		_sel(0u),
+		_selUnitId(0u)
 {
 	_window			= new Window(this, 320, 200);
 
@@ -175,7 +175,7 @@ CraftEquipmentState::CraftEquipmentState(
 	_lstEquipment->onRightArrowClick((ActionHandler)& CraftEquipmentState::lstEquipmentRightArrowClick);
 
 
-	size_t row (0);
+	size_t row (0u);
 	std::wostringstream woststr;
 	std::wstring wst;
 	int
@@ -216,7 +216,7 @@ CraftEquipmentState::CraftEquipmentState(
 				wst = tr(*i);
 				if (itRule->getBattleType() == BT_AMMO) // weapon clips
 				{
-					wst.insert(0, L"  ");
+					wst.insert(0u, L"  ");
 					if ((clip = itRule->getFullClip()) > 1)
 						wst += (L" (" + Text::intWide(clip) + L")");
 				}
@@ -331,15 +331,18 @@ void CraftEquipmentState::lstEquipmentLeftArrowRelease(Action* action)
  */
 void CraftEquipmentState::lstEquipmentLeftArrowClick(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		moveLeftByValue(1);
+		case SDL_BUTTON_LEFT:
+			moveLeftByValue(1);
 
-		_timerRight->setInterval(Timer::SCROLL_SLOW);
-		_timerLeft->setInterval(Timer::SCROLL_SLOW);
+			_timerRight->setInterval(Timer::SCROLL_SLOW);
+			_timerLeft->setInterval(Timer::SCROLL_SLOW);
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			moveLeftByValue(std::numeric_limits<int>::max());
 	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		moveLeftByValue(std::numeric_limits<int>::max());
 }
 
 /**
@@ -373,15 +376,18 @@ void CraftEquipmentState::lstEquipmentRightArrowRelease(Action* action)
  */
 void CraftEquipmentState::lstEquipmentRightArrowClick(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		moveRightByValue(1);
+		case SDL_BUTTON_LEFT:
+			moveRightByValue(1);
 
-		_timerRight->setInterval(Timer::SCROLL_SLOW);
-		_timerLeft->setInterval(Timer::SCROLL_SLOW);
+			_timerRight->setInterval(Timer::SCROLL_SLOW);
+			_timerLeft->setInterval(Timer::SCROLL_SLOW);
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			moveRightByValue(std::numeric_limits<int>::max());
 	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		moveRightByValue(std::numeric_limits<int>::max());
 }
 
 /**
@@ -657,7 +663,7 @@ void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 void CraftEquipmentState::btnUnloadCraftClick(Action*)
 {
 	for (
-			_sel = 0;
+			_sel = 0u;
 			_sel != _items.size();
 			++_sel)
 	{
@@ -703,7 +709,7 @@ void CraftEquipmentState::displayExtraButtons() const // private.
 						  && _game->getSavedGame()->getMonthsPassed() != -1);
 }
 
-/*
+/**
  * Handles the mouse-wheels on the arrow-buttons.
  * @param action, Pointer to an action.
  *

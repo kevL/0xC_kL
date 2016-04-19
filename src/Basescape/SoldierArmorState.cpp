@@ -144,7 +144,6 @@ SoldierArmorState::SoldierArmorState(
 			}
 		}
 	}
-
 	_lstArmor->onMouseClick((ActionHandler)& SoldierArmorState::lstArmorClick);
 }
 

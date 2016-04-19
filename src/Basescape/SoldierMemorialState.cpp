@@ -186,7 +186,7 @@ void SoldierMemorialState::lstSoldiersPress(Action* action)
 		case SDL_BUTTON_RIGHT:
 		{
 			const size_t solId (_game->getSavedGame()->getDeadSoldiers()->size()
-							  - _lstSoldiers->getSelectedRow() - 1);
+							  - _lstSoldiers->getSelectedRow() - 1u);
 			_game->pushState(new SoldierInfoDeadState(solId));
 		}
 	}

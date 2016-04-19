@@ -35,7 +35,7 @@ class Window;
 
 
 /**
- * Equip Craft screen that lets the player manage all the crafts in a base.
+ * Screen that lets the player manage all the Crafts at a Base.
  */
 class CraftsState final
 	:
@@ -44,11 +44,11 @@ class CraftsState final
 
 private:
 	static const Uint8
-		GREEN		=  48,
-		LAVENDER	=  64,
-		YELLOW		=  96,
-		BROWN		= 112,
-		BLUE		= 128;
+		GREEN		=  48u,
+		LAVENDER	=  64u,
+		YELLOW		=  96u,
+		BROWN		= 112u,
+		BLUE		= 128u;
 
 	Uint8 _cellColor;
 

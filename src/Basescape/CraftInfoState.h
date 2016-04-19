@@ -46,10 +46,10 @@ class CraftInfoState
 
 private:
 	static const Uint8
-		RED		=  32, // repairing
-		GREEN	=  48, // ready
-		ORANGE	=  96, // rearming
-		YELLOW	= 144; // refueling
+		RED		=  32u, // repairing
+		GREEN	=  48u, // ready
+		ORANGE	=  96u, // rearming
+		YELLOW	= 144u; // refueling
 
 	size_t _craftId;
 	std::wstring _defaultName;
@@ -91,14 +91,14 @@ private:
 
 
 	public:
-		/// Creates the Craft Info state.
+		/// Creates a CraftInfo state.
 		CraftInfoState(
 				Base* base,
 				size_t craftId);
-		/// Cleans up the Craft Info state.
+		/// Cleans up the CraftInfo state.
 		~CraftInfoState();
 
-		/// Updates the craft info.
+		/// Updates the craft-info.
 		void init() override;
 		/// Runs the blink timer.
 		void think() override;
@@ -107,20 +107,20 @@ private:
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
-		/// Handler for clicking the 1 button.
+		/// Handler for clicking the weapon-1 button.
 		void btnW1Click(Action* action);
-		/// Handler for clicking the 2 button.
+		/// Handler for clicking the weapon-2 button.
 		void btnW2Click(Action* action);
-		/// Handler for clicking the Crew button.
+		/// Handler for clicking the crew button.
 		void btnCrewClick(Action* action);
-		/// Handler for clicking the Equipment button.
+		/// Handler for clicking the equipment button.
 		void btnEquipClick(Action* action);
-		/// Handler for clicking the Armor button.
+		/// Handler for clicking the armor button.
 		void btnArmorClick(Action* action);
-		/// Handler for clicking the Inventory button.
+		/// Handler for clicking the inventory button.
 		void btnInventoryClick(Action* action);
 
-		/// Handler for changing the text on the Name edit.
+		/// Handler for changing the text on the name-edit.
 		void edtCraftChange(Action* action);
 };
 

@@ -43,9 +43,9 @@ class CraftArmorState final
 
 private:
 	static const Uint8
-		GREEN	= 48,
-		ORANGE	= 96,
-		YELLOW	= 144;
+		GREEN	=  48u,
+		ORANGE	=  96u,
+		YELLOW	= 144u;
 
 	size_t _craftId;
 
@@ -65,7 +65,7 @@ private:
 		/// Creates the Craft Armor state.
 		CraftArmorState(
 				Base* const base,
-				size_t craftId = 0);
+				size_t craftId = 0u);
 		/// Cleans up the Craft Armor state.
 		~CraftArmorState();
 

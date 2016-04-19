@@ -38,7 +38,7 @@ class Window;
 
 
 /**
- * Select Armament window for changing the weapon equipped on a craft.
+ * Selection window for changing the weapon equipped on a Craft.
  */
 class CraftWeaponsState
 	:

@@ -178,7 +178,7 @@ void CraftSoldiersState::init()
 
 	_lstSoldiers->clearList();
 
-	size_t row = 0;
+	size_t row (0u);
 	Uint8 color;
 
 	for (std::vector<Soldier*>::const_iterator
@@ -206,15 +206,12 @@ void CraftSoldiersState::init()
 
 		if ((*i)->getSickbay() != 0)
 		{
-			const int pct = (*i)->getRecoveryPct();
-			if (pct > 50)
-				color = ORANGE;
-			else if (pct > 10)
-				color = YELLOW;
-			else
-				color = GREEN;
+			const int pct ((*i)->getRecoveryPct());
+			if		(pct > 50)	color = ORANGE;
+			else if	(pct > 10)	color = YELLOW;
+			else				color = GREEN;
 
-			_lstSoldiers->setCellColor(row, 2, color, true);
+			_lstSoldiers->setCellColor(row, 2u, color, true);
 		}
 	}
 
@@ -272,70 +269,74 @@ void CraftSoldiersState::btnUnloadClick(Action*)
  */
 void CraftSoldiersState::lstSoldiersPress(Action* action)
 {
-	const double mx = action->getAbsoluteMouseX();
-	if (mx >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge())
-		&& mx < static_cast<double>(_lstSoldiers->getArrowsRightEdge()))
+	const double mX (action->getAbsoluteMouseX());
+	if (   mX >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge())
+		&& mX <  static_cast<double>(_lstSoldiers->getArrowsRightEdge()))
 	{
 		return;
 	}
 
-	const size_t row = _lstSoldiers->getSelectedRow();
-
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		Soldier* const sol = _base->getSoldiers()->at(_lstSoldiers->getSelectedRow());
-
-		if (sol->getSickbay() != 0
-			|| (sol->getCraft() != nullptr
-				&& sol->getCraft()->getCraftStatus() == CS_OUT))
+		case SDL_BUTTON_LEFT:
 		{
-			return;
-		}
+			Soldier* const sol (_base->getSoldiers()->at(_lstSoldiers->getSelectedRow()));
 
-		Uint8 color;
-		if (sol->getCraft() == nullptr
-			&& _craft->getSpaceAvailable() != 0
-			&& _craft->getLoadCapacity() - _craft->calcLoadCurrent() > 9)
-		{
-			sol->setCraft(_craft);
-			color = _lstSoldiers->getSecondaryColor();
-			_lstSoldiers->setCellText(
-									row, 2,
-									_craft->getName(_game->getLanguage()));
-		}
-		else
-		{
-			color = _lstSoldiers->getColor();
-
-			if (sol->getCraft() != nullptr
-				&& sol->getCraft()->getCraftStatus() != CS_OUT)
+			if (sol->getSickbay() == 0
+				&& (sol->getCraft() == nullptr
+					|| sol->getCraft()->getCraftStatus() != CS_OUT))
 			{
-				sol->setCraft();
-				_lstSoldiers->setCellText(
-										row, 2,
-										tr("STR_NONE_UC"));
+				const size_t row (_lstSoldiers->getSelectedRow());
+
+				Uint8 color;
+				if (sol->getCraft() == nullptr
+					&& _craft->getSpaceAvailable() != 0
+					&& _craft->getLoadCapacity() - _craft->calcLoadCurrent() > 9)
+				{
+					color = _lstSoldiers->getSecondaryColor();
+
+					sol->setCraft(_craft);
+					_lstSoldiers->setCellText(
+											row, 2u,
+											_craft->getName(_game->getLanguage()));
+				}
+				else
+				{
+					color = _lstSoldiers->getColor();
+
+					if (sol->getCraft() != nullptr
+						&& sol->getCraft()->getCraftStatus() != CS_OUT)
+					{
+						sol->setCraft();
+						_lstSoldiers->setCellText(
+												row, 2u,
+												tr("STR_NONE_UC"));
+					}
+				}
+				_lstSoldiers->setRowColor(row, color);
+
+				_txtSpace->setText(tr("STR_SPACE_CREW_HWP_FREE_")
+								.arg(_craft->getQtySoldiers())
+								.arg(_craft->getQtyVehicles())
+								.arg(_craft->getSpaceAvailable()));
+				_txtLoad->setText(tr("STR_LOAD_CAPACITY_FREE_")
+								.arg(_craft->getLoadCapacity())
+								.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
+
+				displayExtraButtons();
+				calculateTacticalCost();
 			}
+			break;
 		}
-		_lstSoldiers->setRowColor(row, color);
 
-		_txtSpace->setText(tr("STR_SPACE_CREW_HWP_FREE_")
-						.arg(_craft->getQtySoldiers())
-						.arg(_craft->getQtyVehicles())
-						.arg(_craft->getSpaceAvailable()));
-		_txtLoad->setText(tr("STR_LOAD_CAPACITY_FREE_")
-						.arg(_craft->getLoadCapacity())
-						.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
-
-		displayExtraButtons();
-		calculateTacticalCost();
-	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-	{
-		_base->setRecallRow(
-						REC_SOLDIER,
-						_lstSoldiers->getScroll());
-		_game->pushState(new SoldierInfoState(_base, row));
-		kL_soundPop->play(Mix_GroupAvailable(0));
+		case SDL_BUTTON_RIGHT:
+			_base->setRecallRow(
+							REC_SOLDIER,
+							_lstSoldiers->getScroll());
+			_game->pushState(new SoldierInfoState(
+											_base,
+											_lstSoldiers->getSelectedRow()));
+			kL_soundPop->play(Mix_GroupAvailable(0));
 	}
 }
 
@@ -349,44 +350,42 @@ void CraftSoldiersState::lstLeftArrowClick(Action* action)
 					REC_SOLDIER,
 					_lstSoldiers->getScroll());
 
-	const size_t row = _lstSoldiers->getSelectedRow();
-	if (row > 0)
+	const size_t row (_lstSoldiers->getSelectedRow());
+	if (row > 0u)
 	{
-		Soldier* const sol = _base->getSoldiers()->at(row);
-
-		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+		switch (action->getDetails()->button.button)
 		{
-			_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row - 1);
-			_base->getSoldiers()->at(row - 1) = sol;
+			case SDL_BUTTON_LEFT:
+				_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row - 1);
+				_base->getSoldiers()->at(row - 1u) = _base->getSoldiers()->at(row);
 
-			if (row != _lstSoldiers->getScroll())
-			{
-				SDL_WarpMouse(
-						static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
-						static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
-												- static_cast<int>(8. * action->getScaleY())));
-			}
-			else
-			{
+				if (row != _lstSoldiers->getScroll())
+					SDL_WarpMouse(
+							static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
+							static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
+													- static_cast<int>(8. * action->getScaleY())));
+				else
+				{
+					_base->setRecallRow(
+									REC_SOLDIER,
+									_lstSoldiers->getScroll() - 1u);
+					_lstSoldiers->scrollUp();
+				}
+
+				init();
+				break;
+
+			case SDL_BUTTON_RIGHT:
 				_base->setRecallRow(
 								REC_SOLDIER,
-								_lstSoldiers->getScroll() - 1);
-				_lstSoldiers->scrollUp();
-			}
-		}
-		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		{
-			_base->setRecallRow(
-							REC_SOLDIER,
-							_lstSoldiers->getScroll() + 1);
+								_lstSoldiers->getScroll() + 1u);
 
-			_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
-			_base->getSoldiers()->insert(
-									_base->getSoldiers()->begin(),
-									sol);
+				_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
+				_base->getSoldiers()->insert(
+										_base->getSoldiers()->begin(),
+										_base->getSoldiers()->at(row));
+				init();
 		}
-
-		init();
 	}
 }
 
@@ -400,44 +399,42 @@ void CraftSoldiersState::lstRightArrowClick(Action* action)
 					REC_SOLDIER,
 					_lstSoldiers->getScroll());
 
-	const size_t
-		qtySoldiers = _base->getSoldiers()->size(),
-		row = _lstSoldiers->getSelectedRow();
-
-	if (qtySoldiers != 0
-		&& row < qtySoldiers - 1)
+	const size_t qtySoldiers (_base->getSoldiers()->size());
+	if (qtySoldiers != 0u)
 	{
-		Soldier* const sol = _base->getSoldiers()->at(row);
-
-		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+		const size_t row (_lstSoldiers->getSelectedRow());
+		if (row < qtySoldiers - 1u)
 		{
-			_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row + 1);
-			_base->getSoldiers()->at(row + 1) = sol;
+			switch (action->getDetails()->button.button)
+			{
+				case SDL_BUTTON_LEFT:
+					_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row + 1u);
+					_base->getSoldiers()->at(row + 1u) = _base->getSoldiers()->at(row);
 
-			if (row != _lstSoldiers->getVisibleRows() - 1 + _lstSoldiers->getScroll())
-			{
-				SDL_WarpMouse(
-						static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
-						static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
-												+ static_cast<int>(8. * action->getScaleY())));
-			}
-			else
-			{
-				_base->setRecallRow(
-								REC_SOLDIER,
-								_lstSoldiers->getScroll() + 1);
-				_lstSoldiers->scrollDown();
+					if (row != _lstSoldiers->getVisibleRows() - 1u + _lstSoldiers->getScroll())
+						SDL_WarpMouse(
+								static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
+								static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
+														+ static_cast<int>(8. * action->getScaleY())));
+					else
+					{
+						_base->setRecallRow(
+										REC_SOLDIER,
+										_lstSoldiers->getScroll() + 1u);
+						_lstSoldiers->scrollDown();
+					}
+
+					init();
+					break;
+
+				case SDL_BUTTON_RIGHT:
+					_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
+					_base->getSoldiers()->insert(
+											_base->getSoldiers()->end(),
+											_base->getSoldiers()->at(row));
+					init();
 			}
 		}
-		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		{
-			_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
-			_base->getSoldiers()->insert(
-									_base->getSoldiers()->end(),
-									sol);
-		}
-
-		init();
 	}
 }
 
@@ -456,8 +453,6 @@ void CraftSoldiersState::btnInventoryClick(Action*)
 
 	BattlescapeGenerator bGen = BattlescapeGenerator(_game);
 	bGen.runInventory(_craft);
-//	unfortunately this would rely on the list of battleSoldiers *not* changing when entering/cancelling InventoryState
-//	bGen.runInventory(_craft, nullptr, _selUnitId);
 
 	_game->getScreen()->clear();
 	_game->pushState(new InventoryState());

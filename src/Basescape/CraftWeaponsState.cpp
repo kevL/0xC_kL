@@ -156,7 +156,6 @@ CraftWeaponsState::CraftWeaponsState(
 							woststr2.str().c_str());
 		}
 	}
-
 	_lstWeapons->onMouseClick((ActionHandler)& CraftWeaponsState::lstWeaponsClick);
 }
 

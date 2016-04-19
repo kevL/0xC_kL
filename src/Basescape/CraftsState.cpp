@@ -141,7 +141,7 @@ void CraftsState::init()
 
 	const RuleCraft* craftRule;
 
-	size_t row = 0;
+	size_t row (0u);
 	for (std::vector<Craft*>::const_iterator
 			i = _base->getCrafts()->begin();
 			i != _base->getCrafts()->end();
@@ -179,7 +179,7 @@ void CraftsState::init()
 						woststr3.str().c_str());
 		_lstCrafts->setCellColor(
 								row,
-								1,
+								1u,
 								_cellColor,
 								true);
 	}
@@ -275,29 +275,32 @@ void CraftsState::btnOkClick(Action*)
 void CraftsState::lstCraftsPress(Action* action)
 {
 	const double mX (action->getAbsoluteMouseX());
-	if (   mX >= _lstCrafts->getArrowsLeftEdge()
-		&& mX < _lstCrafts->getArrowsRightEdge())
+	if (   mX >= static_cast<double>(_lstCrafts->getArrowsLeftEdge())
+		&& mX <  static_cast<double>(_lstCrafts->getArrowsRightEdge()))
 	{
 		return;
 	}
 
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		if (_base->getCrafts()->at(_lstCrafts->getSelectedRow())->getCraftStatus() != CS_OUT)
-			_game->pushState(new CraftInfoState(
-											_base,
-											_lstCrafts->getSelectedRow()));
-	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-	{
-		const Craft* const craft (_base->getCrafts()->at(_lstCrafts->getSelectedRow()));
-		_game->getSavedGame()->setGlobeLongitude(craft->getLongitude());
-		_game->getSavedGame()->setGlobeLatitude(craft->getLatitude());
+		case SDL_BUTTON_LEFT:
+			if (_base->getCrafts()->at(_lstCrafts->getSelectedRow())->getCraftStatus() != CS_OUT)
+				_game->pushState(new CraftInfoState(
+												_base,
+												_lstCrafts->getSelectedRow()));
+			break;
 
-		kL_reCenter = true;
+		case SDL_BUTTON_RIGHT:
+		{
+			const Craft* const craft (_base->getCrafts()->at(_lstCrafts->getSelectedRow()));
+			_game->getSavedGame()->setGlobeLongitude(craft->getLongitude());
+			_game->getSavedGame()->setGlobeLatitude(craft->getLatitude());
 
-		_game->popState(); // close Crafts window.
-		_game->popState(); // close Basescape view.
+			kL_reCenter = true;
+
+			_game->popState(); // close Crafts window.
+			_game->popState(); // close Basescape view.
+		}
 	}
 }
 
@@ -308,34 +311,32 @@ void CraftsState::lstCraftsPress(Action* action)
 void CraftsState::lstLeftArrowClick(Action* action)
 {
 	const size_t row (_lstCrafts->getSelectedRow());
-	if (row > 0)
+	if (row > 0u)
 	{
-		Craft* const craft (_base->getCrafts()->at(row));
-
-		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+		switch (action->getDetails()->button.button)
 		{
-			_base->getCrafts()->at(row) = _base->getCrafts()->at(row - 1);
-			_base->getCrafts()->at(row - 1) = craft;
+			case SDL_BUTTON_LEFT:
+				_base->getCrafts()->at(row) = _base->getCrafts()->at(row - 1u);
+				_base->getCrafts()->at(row - 1u) = _base->getCrafts()->at(row);
 
-			if (row != _lstCrafts->getScroll())
-			{
-				SDL_WarpMouse(
-						static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
-						static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
-												- static_cast<int>(8. * action->getScaleY())));
-			}
-			else
-				_lstCrafts->scrollUp();
-		}
-		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		{
-			_base->getCrafts()->erase(_base->getCrafts()->begin() + row);
-			_base->getCrafts()->insert(
-									_base->getCrafts()->begin(),
-									craft);
-		}
+				if (row != _lstCrafts->getScroll())
+					SDL_WarpMouse(
+							static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
+							static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
+													- static_cast<int>(8. * action->getScaleY())));
+				else
+					_lstCrafts->scrollUp();
 
-		init();
+				init();
+				break;
+
+			case SDL_BUTTON_RIGHT:
+				_base->getCrafts()->erase(_base->getCrafts()->begin() + row);
+				_base->getCrafts()->insert(
+										_base->getCrafts()->begin(),
+										_base->getCrafts()->at(row));
+				init();
+		}
 	}
 }
 
@@ -345,39 +346,37 @@ void CraftsState::lstLeftArrowClick(Action* action)
  */
 void CraftsState::lstRightArrowClick(Action* action)
 {
-	const size_t
-		qtyCrafts (_base->getCrafts()->size()),
-		row (_lstCrafts->getSelectedRow());
-
-	if (qtyCrafts > 0
-		&& row < qtyCrafts - 1)
+	const size_t qtyCrafts (_base->getCrafts()->size());
+	if (qtyCrafts != 0u)
 	{
-		Craft* const craft (_base->getCrafts()->at(row));
-
-		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+		const size_t row (_lstCrafts->getSelectedRow());
+		if (row < qtyCrafts - 1u)
 		{
-			_base->getCrafts()->at(row) = _base->getCrafts()->at(row + 1);
-			_base->getCrafts()->at(row + 1) = craft;
-
-			if (row != _lstCrafts->getVisibleRows() - 1 + _lstCrafts->getScroll())
+			switch (action->getDetails()->button.button)
 			{
-				SDL_WarpMouse(
-						static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
-						static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
-												+ static_cast<int>(8. * action->getScaleY())));
-			}
-			else
-				_lstCrafts->scrollDown();
-		}
-		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		{
-			_base->getCrafts()->erase(_base->getCrafts()->begin() + row);
-			_base->getCrafts()->insert(
-									_base->getCrafts()->end(),
-									craft);
-		}
+				case SDL_BUTTON_LEFT:
+					_base->getCrafts()->at(row) = _base->getCrafts()->at(row + 1u);
+					_base->getCrafts()->at(row + 1u) = _base->getCrafts()->at(row);
 
-		init();
+					if (row != _lstCrafts->getVisibleRows() - 1u + _lstCrafts->getScroll())
+						SDL_WarpMouse(
+								static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
+								static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
+														+ static_cast<int>(8. * action->getScaleY())));
+					else
+						_lstCrafts->scrollDown();
+
+					init();
+					break;
+
+				case SDL_BUTTON_RIGHT:
+					_base->getCrafts()->erase(_base->getCrafts()->begin() + row);
+					_base->getCrafts()->insert(
+											_base->getCrafts()->end(),
+											_base->getCrafts()->at(row));
+					init();
+			}
+		}
 	}
 }
 

@@ -44,9 +44,9 @@ class CraftSoldiersState final
 
 private:
 	static const Uint8
-		GREEN	=  48,
-		ORANGE	=  96,
-		YELLOW	= 144;
+		GREEN	=  48u,
+		ORANGE	=  96u,
+		YELLOW	= 144u;
 
 	Base* _base;
 	Craft* _craft;
@@ -73,11 +73,11 @@ private:
 
 
 	public:
-		/// Creates the Craft Soldiers state.
+		/// Creates a CraftSoldiers state.
 		CraftSoldiersState(
 				Base* base,
 				size_t craftId);
-		/// Cleans up the Craft Soldiers state.
+		/// Cleans up the CraftSoldiers state.
 		~CraftSoldiersState();
 
 		/// Updates the soldiers list.
@@ -91,9 +91,9 @@ private:
 		/// Handler for clicking the Soldiers list.
 		void lstSoldiersPress(Action* action);
 
-		/// Handler for clicking the Soldiers reordering button.
+		/// Handler for clicking the soldier-reordering button.
 		void lstLeftArrowClick(Action* action);
-		/// Handler for clicking the Soldiers reordering button.
+		/// Handler for clicking the soldiers-reordering button.
 		void lstRightArrowClick(Action* action);
 
 		/// Handler for clicking the Inventory button.

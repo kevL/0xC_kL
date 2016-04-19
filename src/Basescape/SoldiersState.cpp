@@ -225,7 +225,7 @@ void SoldiersState::init()
 
 	_lstSoldiers->clearList();
 
-	size_t row = 0;
+	size_t row (0u);
 	for (std::vector<Soldier*>::const_iterator
 			i = _base->getSoldiers()->begin();
 			i != _base->getSoldiers()->end();
@@ -246,15 +246,12 @@ void SoldiersState::init()
 			if ((*i)->getSickbay() != 0)
 			{
 				Uint8 color;
-				const int pct = (*i)->getRecoveryPct();
-				if (pct > 50)
-					color = ORANGE;
-				else if (pct > 10)
-					color = YELLOW;
-				else
-					color = GREEN;
+				const int pct ((*i)->getRecoveryPct());
+				if		(pct > 50)	color = ORANGE;
+				else if	(pct > 10)	color = YELLOW;
+				else				color = GREEN;
 
-				_lstSoldiers->setCellColor(row, 2, color, true);
+				_lstSoldiers->setCellColor(row, 2u, color, true);
 			}
 		}
 	}
@@ -363,38 +360,38 @@ void SoldiersState::btnAutoStatClick(Action*)
 	{
 		(*i)->autoStat();
 	}
-
 	init();
 }
 
 /**
- * Shows the selected soldier's info.
+ * Shows the selected Soldier's info.
  * @param action - pointer to an Action
  */
 void SoldiersState::lstSoldiersPress(Action* action)
 {
-	const double mx = action->getAbsoluteMouseX();
-	if (mx >= _lstSoldiers->getArrowsLeftEdge()
-		&& mx < _lstSoldiers->getArrowsRightEdge())
+	const double mX (action->getAbsoluteMouseX());
+	if (   mX >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge())
+		&& mX <  static_cast<double>(_lstSoldiers->getArrowsRightEdge()))
 	{
 		return;
 	}
 
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		|| action->getDetails()->button.button == SDL_BUTTON_RIGHT)
+	switch (action->getDetails()->button.button)
 	{
-		_base->setRecallRow(
-						REC_SOLDIER,
-						_lstSoldiers->getScroll());
-		_game->pushState(new SoldierInfoState(
-											_base,
-											_lstSoldiers->getSelectedRow()));
-		kL_soundPop->play(Mix_GroupAvailable(0));
+		case SDL_BUTTON_LEFT:
+		case SDL_BUTTON_RIGHT:
+			_base->setRecallRow(
+							REC_SOLDIER,
+							_lstSoldiers->getScroll());
+			_game->pushState(new SoldierInfoState(
+												_base,
+												_lstSoldiers->getSelectedRow()));
+			kL_soundPop->play(Mix_GroupAvailable(0));
 	}
 }
 
 /**
- * Reorders a soldier up.
+ * Reorders a Soldier up.
  * @param action - pointer to an Action
  */
 void SoldiersState::lstLeftArrowClick(Action* action)
@@ -403,49 +400,47 @@ void SoldiersState::lstLeftArrowClick(Action* action)
 					REC_SOLDIER,
 					_lstSoldiers->getScroll());
 
-	const size_t row = _lstSoldiers->getSelectedRow();
-	if (row > 0)
+	const size_t row (_lstSoldiers->getSelectedRow());
+	if (row > 0u)
 	{
-		Soldier* const soldier = _base->getSoldiers()->at(row);
-
-		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+		switch (action->getDetails()->button.button)
 		{
-			_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row - 1);
-			_base->getSoldiers()->at(row - 1) = soldier;
+			case SDL_BUTTON_LEFT:
+				_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row - 1u);
+				_base->getSoldiers()->at(row - 1u) = _base->getSoldiers()->at(row);
 
-			if (row != _lstSoldiers->getScroll())
-			{
-				SDL_WarpMouse(
-						static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
-						static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
-												- static_cast<int>(8. * action->getScaleY())));
-			}
-			else
-			{
+				if (row != _lstSoldiers->getScroll())
+					SDL_WarpMouse(
+							static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
+							static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
+													- static_cast<int>(8. * action->getScaleY())));
+				else
+				{
+					_base->setRecallRow(
+									REC_SOLDIER,
+									_lstSoldiers->getScroll() - 1u);
+					_lstSoldiers->scrollUp();
+				}
+
+				init();
+				break;
+
+			case SDL_BUTTON_RIGHT:
 				_base->setRecallRow(
 								REC_SOLDIER,
-								_lstSoldiers->getScroll() - 1);
-				_lstSoldiers->scrollUp();
-			}
-		}
-		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		{
-			_base->setRecallRow(
-							REC_SOLDIER,
-							_lstSoldiers->getScroll() + 1);
+								_lstSoldiers->getScroll() + 1u);
 
-			_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
-			_base->getSoldiers()->insert(
-									_base->getSoldiers()->begin(),
-									soldier);
+				_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
+				_base->getSoldiers()->insert(
+										_base->getSoldiers()->begin(),
+										_base->getSoldiers()->at(row));
+				init();
 		}
 	}
-
-	init();
 }
 
 /**
- * Reorders a soldier down.
+ * Reorders a Soldier down.
  * @param action - pointer to an Action
  */
 void SoldiersState::lstRightArrowClick(Action* action)
@@ -454,45 +449,43 @@ void SoldiersState::lstRightArrowClick(Action* action)
 					REC_SOLDIER,
 					_lstSoldiers->getScroll());
 
-	const size_t
-		qtySoldiers = _base->getSoldiers()->size(),
-		row = _lstSoldiers->getSelectedRow();
-
-	if (qtySoldiers > 0
-		&& row < qtySoldiers - 1)
+	const size_t qtySoldiers (_base->getSoldiers()->size());
+	if (qtySoldiers > 0u)
 	{
-		Soldier* const soldier = _base->getSoldiers()->at(row);
-
-		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+		const size_t row (_lstSoldiers->getSelectedRow());
+		if (row < qtySoldiers - 1u)
 		{
-			_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row + 1);
-			_base->getSoldiers()->at(row + 1) = soldier;
+			switch (action->getDetails()->button.button)
+			{
+				case SDL_BUTTON_LEFT:
+					_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row + 1u);
+					_base->getSoldiers()->at(row + 1u) = _base->getSoldiers()->at(row);
 
-			if (row != _lstSoldiers->getVisibleRows() - 1 + _lstSoldiers->getScroll())
-			{
-				SDL_WarpMouse(
-						static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
-						static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
-												+ static_cast<int>(8. * action->getScaleY())));
+					if (row != _lstSoldiers->getVisibleRows() - 1u + _lstSoldiers->getScroll())
+						SDL_WarpMouse(
+								static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
+								static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
+														+ static_cast<int>(8. * action->getScaleY())));
+					else
+					{
+						_base->setRecallRow(
+										REC_SOLDIER,
+										_lstSoldiers->getScroll() + 1u);
+						_lstSoldiers->scrollDown();
+					}
+
+					init();
+					break;
+
+				case SDL_BUTTON_RIGHT:
+					_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
+					_base->getSoldiers()->insert(
+											_base->getSoldiers()->end(),
+											_base->getSoldiers()->at(row));
+					init();
 			}
-			else
-			{
-				_base->setRecallRow(
-								REC_SOLDIER,
-								_lstSoldiers->getScroll() + 1);
-				_lstSoldiers->scrollDown();
-			}
-		}
-		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		{
-			_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
-			_base->getSoldiers()->insert(
-									_base->getSoldiers()->end(),
-									soldier);
 		}
 	}
-
-	init();
 }
 
 }

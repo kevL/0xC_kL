@@ -510,7 +510,7 @@ void ScrollBar::drawButton() // private.
 					static_cast<int>(_rect.y),
 					_color + 4u);
 
-	if (_rect.h - BTN_HEIGHT_MIN != 0u) // hollow it out
+	if (_rect.h > BTN_HEIGHT_MIN) // hollow it out
 	{
 		++rect.x;
 		++rect.y;

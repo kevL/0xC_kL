@@ -235,15 +235,15 @@ void CraftInfoState::init()
 		_craft->setTactical(false);
 	}
 
-	const bool skirmish (_game->getSavedGame()->getMonthsPassed() == -1);
+	const bool isQuickBattle (_game->getSavedGame()->getMonthsPassed() == -1);
 
 	_btnInventory->setVisible(_craft->getQtySoldiers() != 0
 						   && _craft->getCraftItems()->getTotalQuantity() != 0
-						   && skirmish == false);
+						   && isQuickBattle == false);
 
 	_edtCraft->setText(_craft->getName(_game->getLanguage()));
 
-	if (skirmish == true)
+	if (isQuickBattle == true)
 		_txtStatus->setText(L"");
 	else
 	{
@@ -289,7 +289,7 @@ void CraftInfoState::init()
 		woststr1, // fuel
 		woststr2; // hull
 
-	if (skirmish == true)
+	if (isQuickBattle == true)
 		_craft->setFuel(crRule->getMaxFuel()); // top up Craft for insta-Battle mode.
 
 	woststr1 << tr("STR_FUEL").arg(Text::formatPercent(_craft->getFuelPct()));
@@ -353,7 +353,7 @@ void CraftInfoState::init()
 					bit = baseBits->getFrame(71);
 				else if ((*i)->getArmor()->getMoveTypeArmor() != MT_FLY)
 					bit = baseBits->getFrame(72);
-				else //if ((*i)->getArmor()->getMoveTypeArmor() == MT_FLY)
+				else // MT_FLY
 					bit = baseBits->getFrame(73);
 
 				bit->setX(x);
@@ -392,7 +392,7 @@ void CraftInfoState::init()
 			bit->blit(_equip);
 		}
 
-		if (skirmish == false)
+		if (isQuickBattle == false)
 			calculateTacticalCost();
 		else
 			_txtCost->setVisible(false);
@@ -413,7 +413,7 @@ void CraftInfoState::init()
 
 	if (crRule->getWeapons() > 0)
 	{
-		cw = _craft->getWeapons()->at(0);
+		cw = _craft->getWeapons()->at(0u);
 		if (cw != nullptr)
 		{
 			cwRule = cw->getRules();
@@ -460,7 +460,7 @@ void CraftInfoState::init()
 
 	if (crRule->getWeapons() > 1)
 	{
-		cw = _craft->getWeapons()->at(1);
+		cw = _craft->getWeapons()->at(1u);
 		if (cw != nullptr)
 		{
 			cwRule = cw->getRules();
@@ -547,7 +547,7 @@ void CraftInfoState::btnOkClick(Action*)
 void CraftInfoState::btnW1Click(Action*)
 {
 	if (_edtCraft->isFocused() == false)
-		_game->pushState(new CraftWeaponsState(_base, _craftId, 0));
+		_game->pushState(new CraftWeaponsState(_base, _craftId, 0u));
 }
 
 /**
@@ -557,7 +557,7 @@ void CraftInfoState::btnW1Click(Action*)
 void CraftInfoState::btnW2Click(Action*)
 {
 	if (_edtCraft->isFocused() == false)
-		_game->pushState(new CraftWeaponsState(_base, _craftId, 1));
+		_game->pushState(new CraftWeaponsState(_base, _craftId, 1u));
 }
 
 /**

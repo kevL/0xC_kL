@@ -43,9 +43,9 @@ class SoldiersState final
 
 private:
 	static const Uint8
-		GREEN	= 48,
-		ORANGE	= 96,
-		YELLOW	= 144;
+		GREEN	=  48u,
+		ORANGE	=  96u,
+		YELLOW	= 144u;
 
 	Base* _base;
 	Text
