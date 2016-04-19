@@ -45,10 +45,10 @@ class CeremonyState
 
 private:
 	static const Uint8
-		CYAN	= 133,
-		OLIVE	= 138,
-		SLATE	= 160,
-		GREEN	= 239;
+		CYAN	= 133u,
+		OLIVE	= 138u,
+		SLATE	= 160u,
+		GREEN	= 239u;
 
 	Text
 		* _txtMedalInfo,
@@ -61,7 +61,7 @@ private:
 
 
 	public:
-		/// Creates the Ceremony state.
+		/// Creates a Ceremony state.
 		explicit CeremonyState(std::vector<Soldier*> soldiers);
 		/// Cleans up the Ceremony state.
 		~CeremonyState();

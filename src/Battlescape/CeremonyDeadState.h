@@ -45,10 +45,10 @@ class CeremonyDeadState
 
 private:
 	static const Uint8
-		CYAN	= 133,
-		BROWN	= 144,
-		SLATE	= 160,
-		GREEN	= 239;
+		CYAN	= 133u,
+		BROWN	= 144u,
+		SLATE	= 160u,
+		GREEN	= 239u;
 
 	Text
 		* _txtMedalInfo,
@@ -59,21 +59,21 @@ private:
 		* _lstSoldiers;
 	Window* _window;
 
-	std::map<size_t, std::string> _titleRows; // for mouseOver info.
+	std::map<size_t, std::string> _titleRows; // for mouse-over info.
 
 
 	public:
-		/// Creates the Medals state.
+		/// Creates a CeremonyDead state.
 		explicit CeremonyDeadState(std::vector<SoldierDead*> soldiersLost);
-		/// Cleans up the Medals state.
+		/// Cleans up the CeremonyDead state.
 		~CeremonyDeadState();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
 
-		/// Handler for moving the mouse over a medal title.
+		/// Handler for moving the mouse over an Award title.
 		void lstInfoMouseOver(Action* action);
-		/// Handler for moving the mouse outside the medals list.
+		/// Handler for moving the mouse outside the Awards list.
 		void lstInfoMouseOut(Action* action);
 };
 

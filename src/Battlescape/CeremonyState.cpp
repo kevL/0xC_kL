@@ -102,7 +102,7 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 		titleChosen (true),
 		qualifiedAward;
 	size_t
-		row (0),
+		row (0u),
 		titleRow;
 
 	std::map<std::string, RuleAward*> awardsList (_game->getRuleset()->getAwardsList());
@@ -121,7 +121,7 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 		}
 
 		titleChosen = false;
-		titleRow = row - 1;
+		titleRow = row - 1u;
 
 		for (std::vector<Soldier*>::const_iterator
 				j = soldiersMedalled.begin();
@@ -155,13 +155,13 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 						lastInt (-2),
 						thisInt;
 
-					size_t nextLevel (0);
+					size_t nextLevel (0u);
 					for (std::vector<int>::const_iterator
 							l = (*i).second->getCriteria()->begin()->second.begin();
 							l != (*i).second->getCriteria()->begin()->second.end();
 							++l)
 					{
-						if (nextLevel == (*k)->getClassLevel() + 1)
+						if (nextLevel == (*k)->getClassLevel() + 1u)
 							break;
 
 						thisInt = *l;
@@ -183,15 +183,15 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 			}
 		}
 
-		if (titleRow != row - 1)
+		if (titleRow != row - 1u)
 		{
 			if (qualifiedAward == true)
 				_lstSoldiers->setCellText(
-										titleRow, 0,
+										titleRow, 0u,
 										tr((*i).first).arg(tr(qualifier)));
 			else
 				_lstSoldiers->setCellText(
-										titleRow, 0,
+										titleRow, 0u,
 										tr((*i).first));
 
 			_lstSoldiers->setRowColor(titleRow, GREEN);
@@ -235,7 +235,7 @@ void CeremonyState::btnOkClick(Action*)
  */
 void CeremonyState::lstInfoMouseOver(Action*)
 {
-	const size_t row = _lstSoldiers->getSelectedRow();
+	const size_t row (_lstSoldiers->getSelectedRow());
 	if (_titleRows.find(row) != _titleRows.end())
 		_txtMedalInfo->setText(tr(_titleRows[row]));
 	else

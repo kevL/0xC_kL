@@ -70,7 +70,7 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 	_window->setColor(GREEN);
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
-	if (soldiersLost.size() == 1)
+	if (soldiersLost.size() == 1u)
 		_txtTitle->setText(tr("STR_LOST"));
 	else
 		_txtTitle->setText(tr("STR_LOST_PL"));
@@ -109,7 +109,7 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 
 
 	const int rowsLost (std::min(8, // the soldiersLost list has maximum 8 rows so that there's room below it for the awards List
-								static_cast<int>(soldiersLost.size())));
+								 static_cast<int>(soldiersLost.size())));
 	_lstLost->setHeight(rowsLost * 8 + 1);
 
 	_lstSoldiers->setY(_lstSoldiers->getY() + (rowsLost - 1) * 8);
@@ -133,7 +133,7 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 		titleChosen (true),
 		qualifiedAward;
 	size_t
-		row (0),
+		row (0u),
 		titleRow;
 
 	std::map<std::string, RuleAward*> awardList (_game->getRuleset()->getAwardsList());
@@ -152,7 +152,7 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 		}
 
 		titleChosen = false;
-		titleRow = row - 1;
+		titleRow = row - 1u;
 
 		for (std::vector<SoldierDead*>::const_iterator
 				j = soldiersLost.begin();
@@ -186,13 +186,13 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 						lastInt (-2),
 						thisInt;
 
-					size_t nextLevel (0);
+					size_t nextLevel (0u);
 					for (std::vector<int>::const_iterator
 							l = (*i).second->getCriteria()->begin()->second.begin();
 							l != (*i).second->getCriteria()->begin()->second.end();
 							++l)
 					{
-						if (nextLevel == (*k)->getClassLevel() + 1)
+						if (nextLevel == (*k)->getClassLevel() + 1u)
 							break;
 
 						thisInt = *l;
@@ -214,15 +214,15 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 			}
 		}
 
-		if (titleRow != row - 1)
+		if (titleRow != row - 1u)
 		{
 			if (qualifiedAward == true)
 				_lstSoldiers->setCellText(
-										titleRow, 0,
+										titleRow, 0u,
 										tr((*i).first).arg(tr(qualifier)));
 			else
 				_lstSoldiers->setCellText(
-										titleRow, 0,
+										titleRow, 0u,
 										tr((*i).first));
 
 			_lstSoldiers->setRowColor(titleRow, BROWN, true);
