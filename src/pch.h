@@ -55,7 +55,7 @@
 
 #include <sys/stat.h>	// CrossPlatform
 #include <sys/types.h>	// dirent.h
-#include <dirent.h>		// note this is prob. not "dirent.h"
+#include <dirent.h>		// note this is not "dirent.h"
 
 #include "lodepng.h"
 
