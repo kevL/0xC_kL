@@ -41,7 +41,7 @@ namespace OpenXcom
 {
 
 /// How many bytes various fields use in a serialized tile. See header.
-Tile::SerializationKey Tile::serializationKey =
+Tile::SerializationKey Tile::serializationKey
 {
 	4, // index
 	2, // _mapDataSetId, four of these
@@ -68,14 +68,14 @@ Tile::Tile(const Position& pos)
 		_unit(nullptr),
 		_animOffset(0),
 		_visible(false),
-		_previewColor(0),
+		_previewColor(0u),
 		_previewDir(-1),
 		_previewTu(-1),
 		_danger(false)
 {
 	size_t i;
 	for (
-			i = 0;
+			i = 0u;
 			i != PARTS_TILE;
 			++i)
 	{
@@ -86,7 +86,7 @@ Tile::Tile(const Position& pos)
 	}
 
 	for (
-			i = 0;
+			i = 0u;
 			i != SECTIONS;
 			++i)
 	{
@@ -94,7 +94,7 @@ Tile::Tile(const Position& pos)
 	}
 
 	for (
-			i = 0;
+			i = 0u;
 			i != LIGHTLAYERS;
 			++i)
 	{
@@ -117,7 +117,7 @@ Tile::~Tile()
 void Tile::load(const YAML::Node& node)
 {
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != PARTS_TILE;
 			++i)
 	{
@@ -132,7 +132,7 @@ void Tile::load(const YAML::Node& node)
 	if (node["discovered"])
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != SECTIONS;
 				++i)
 		{
@@ -141,10 +141,10 @@ void Tile::load(const YAML::Node& node)
 	}
 
 	if (node["openDoorWest"])
-		_curFrame[1] = 7;
+		_curFrame[1u] = 7;
 
 	if (node["openDoorNorth"])
-		_curFrame[2] = 7;
+		_curFrame[2u] = 7;
 }
 
 /**
@@ -196,7 +196,7 @@ YAML::Node Tile::save() const
 	node["position"] = _pos;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != PARTS_TILE;
 			++i)
 	{
@@ -213,7 +213,7 @@ YAML::Node Tile::save() const
 		|| _revealed[ST_CONTENT]	== true)
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != SECTIONS;
 				++i)
 		{
@@ -437,7 +437,6 @@ int Tile::getFootstepSound(const Tile* const tileBelow) const
 	{
 		return tileBelow->getMapData(O_OBJECT)->getFootstepSound();
 	}
-
 	return 0;
 }
 
@@ -784,7 +783,7 @@ int Tile::getFlammability() const
 {
 	int burn (255); // not burnable. <- lower is better :)
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != PARTS_TILE;
 			++i)
 	{
@@ -841,7 +840,7 @@ int Tile::getFuel(MapDataType partType) const
 	{
 		int fuel (0);
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != PARTS_TILE;
 				++i)
 		{
@@ -1206,7 +1205,7 @@ void Tile::animateTile()
 {
 	int nextFrame;
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != PARTS_TILE;
 			++i)
 	{
@@ -1535,7 +1534,6 @@ void Tile::setTileVisible(bool vis)
 {
 	_visible = vis;
 } */
-
 /**
  * Gets this Tile's visible-flag.
  * @note Used only by sneakyAI.

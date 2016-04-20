@@ -46,8 +46,8 @@ class CeremonyDeadState
 private:
 	static const Uint8
 		CYAN	= 133u,
-//		BROWN	= 144u,
-//		SLATE	= 160u,
+		BROWN	= 144u,
+		SLATE	= 160u,
 		GREEN	= 239u;
 
 	Text

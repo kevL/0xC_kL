@@ -62,7 +62,7 @@ protected:
 		* _uiRule,
 		* _uiRuleParent;
 
-	SDL_Color _palette[256];
+	SDL_Color _palette[256u];
 
 	std::vector<Surface*> _surfaces;
 
@@ -127,14 +127,14 @@ protected:
 		static void setGamePtr(Game* game);
 
 		/// Sets a modal Surface.
-		void setModal(InteractiveSurface* srf);
+		void setModal(InteractiveSurface* const srf);
 
 		/// Changes a set of colors on the State's 8-bpp Palette.
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256,
-				bool immediately = true);
+				bool apply = true);
 		/// Changes the State's 8-bpp Palette with certain resources.
 		void setPalette(
 				const PaletteType pal,

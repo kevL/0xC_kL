@@ -50,13 +50,13 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 {
 	_window				= new Window(this, 320, 200);
 	_txtTitle			= new Text(300, 16, 10, 8);
-	_lstSoldiersLost	= new TextList(285, 145, 16, 26); // 18 rows.
+	_lstSoldiersLost	= new TextList(285, 145, 16, 28); // 18 rows.
 //	_lstSoldiersLost	= new TextList(285,   9, 16, 26);
 //	_lstAwards			= new TextList(285, 113, 16, 36);
 //	_txtMedalInfo		= new Text(280, 25, 20, 150);
 	_btnOk				= new TextButton(288, 16, 16, 177);
 
-	setPalette(PAL_GEOSCAPE, 0);
+	setPalette(PAL_GEOSCAPE, 5); // dk.red
 
 	add(_window);
 	add(_txtTitle);
@@ -79,10 +79,12 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_lstSoldiersLost->setColor(CYAN);
-	_lstSoldiersLost->setColumns(2, 200,77);
-	_lstSoldiersLost->setBackground(_window);
-	_lstSoldiersLost->setSelectable();
+	_lstSoldiersLost->setColor(BROWN);
+	_lstSoldiersLost->setHighContrast(true);
+	_lstSoldiersLost->setColumns(2, 180,50);
+	_lstSoldiersLost->setMargin(16);
+//	_lstSoldiersLost->setBackground(_window);
+//	_lstSoldiersLost->setSelectable();
 
 //	_lstAwards->setColor(GREEN); // note, is Olive in CeremonyState
 //	_lstAwards->setColumns(2, 200,77);
@@ -117,15 +119,17 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 //	_lstAwards->setHeight(_lstAwards->getHeight() - (rowsLost - 1) * 8);
 
 
+	size_t row (0u);
 	for (std::vector<SoldierDead*>::const_iterator
 			i = soldiersLost.begin();
 			i != soldiersLost.end();
-			++i)
+			++i, ++row)
 	{
 		_lstSoldiersLost->addRow(
 							2,
 							(*i)->getName().c_str(),
 							tr((*i)->getDiary()->getKiaOrMia()).c_str());
+		_lstSoldiersLost->setCellColor(row, 1u, SLATE, true);
 	}
 
 

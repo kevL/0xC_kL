@@ -467,10 +467,10 @@ void State::redrawText()
 			i != _surfaces.end();
 			++i)
 	{
-		if (   dynamic_cast<Text*>(*i) != nullptr
-			|| dynamic_cast<TextButton*>(*i) != nullptr
-			|| dynamic_cast<TextList*>(*i) != nullptr
-			|| dynamic_cast<TextEdit*>(*i) != nullptr)
+		if (   dynamic_cast<Text*>(*i)			!= nullptr
+			|| dynamic_cast<TextButton*>(*i)	!= nullptr
+			|| dynamic_cast<TextList*>(*i)		!= nullptr
+			|| dynamic_cast<TextEdit*>(*i)		!= nullptr)
 		{
 			(*i)->draw();
 		}
@@ -483,7 +483,7 @@ void State::redrawText()
  * is used when an element needs to take priority over everything else, eg. focus.
  * @param srf - pointer to modal Surface; nullptr for no modal in this State
  */
-void State::setModal(InteractiveSurface* srf)
+void State::setModal(InteractiveSurface* const srf)
 {
 	_modal = srf;
 }
@@ -493,21 +493,21 @@ void State::setModal(InteractiveSurface* srf)
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- amount of colors to replace (default 256)
- * @param immediately	- apply changes immediately otherwise wait in case of multiple setPalettes (default true)
+ * @param apply	- apply changes immediately otherwise wait in case of multiple setPalettes (default true)
  */
 void State::setPalette(
 		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors,
-		bool immediately)
+		bool apply)
 {
 	if (colors != nullptr)
 		std::memcpy(
 				_palette + firstcolor,
 				colors,
-				ncolors * sizeof(SDL_Color));
+				sizeof(SDL_Color) * static_cast<size_t>(ncolors));
 
-	if (immediately == true)
+	if (apply == true)
 	{
 		_game->getCursor()->setPalette(_palette);
 		_game->getCursor()->draw();
@@ -521,8 +521,8 @@ void State::setPalette(
 }
 
 /**
- * Loads palettes from the game resources into the state.
- * @param pal		- reference the string ID of the palette to load
+ * Loads palettes from the ResourcePack into the state.
+ * @param pal		- reference the string-ID of the palette to load
  * @param backpal	- BACKPALS.DAT offset to use (default -1)
  */
 void State::setPalette(

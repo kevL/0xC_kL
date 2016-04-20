@@ -556,6 +556,11 @@ void OpenGL::set_vertex_shader(const char* source) // private.
  * WinXP SP3.
  *
  * YMMV. /haha
+ *
+ * Later later later: So the settings in my nVidia Control Panel work, it
+ * requires a reboot to take effect though. I settled on Adaptive vSync,
+ * triple-buffered, with Maximum pre-rendered frames set to 1. 0xC recognizes
+ * the FPS at 60 surprisingly and it looks pretty good.
  */
 void OpenGL::setVSync(bool sync)
 {
