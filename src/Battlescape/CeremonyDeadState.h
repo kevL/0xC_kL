@@ -46,20 +46,20 @@ class CeremonyDeadState
 private:
 	static const Uint8
 		CYAN	= 133u,
-		BROWN	= 144u,
-		SLATE	= 160u,
+//		BROWN	= 144u,
+//		SLATE	= 160u,
 		GREEN	= 239u;
 
 	Text
-		* _txtMedalInfo,
+//		* _txtMedalInfo,
 		* _txtTitle;
 	TextButton* _btnOk;
 	TextList
-		* _lstLost,
-		* _lstSoldiers;
+//		* _lstAwards,
+		* _lstSoldiersLost;
 	Window* _window;
 
-	std::map<size_t, std::string> _titleRows; // for mouse-over info.
+//	std::map<size_t, std::string> _titleRows; // for mouse-over info.
 
 
 	public:
@@ -72,9 +72,9 @@ private:
 		void btnOkClick(Action* action);
 
 		/// Handler for moving the mouse over an Award title.
-		void lstInfoMouseOver(Action* action);
+//		void lstInfoMouseOver(Action* action);
 		/// Handler for moving the mouse outside the Awards list.
-		void lstInfoMouseOut(Action* action);
+//		void lstInfoMouseOut(Action* action);
 };
 
 }
