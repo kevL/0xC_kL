@@ -33,8 +33,8 @@ namespace OpenXcom
  */
 Palette::Palette()
 	:
-		_colors(0),
-		_count(0)
+		_colors(nullptr),
+		_count(0u)
 {}
 
 /**
@@ -82,19 +82,19 @@ void Palette::loadDat(
 	// Move pointer to proper palette
 	palFile.seekg(offset, std::ios::beg);
 
-	Uint8 value[3];
+	Uint8 value[3u];
 
 	for (size_t // Correct X-Com colors to RGB colors
-			i = 0;
+			i = 0u;
 			i < _count && palFile.read((char*)value, 3);
 			++i)
 	{
-		_colors[i].r = static_cast<Uint8>(value[0] * 4);
-		_colors[i].g = static_cast<Uint8>(value[1] * 4);
-		_colors[i].b = static_cast<Uint8>(value[2] * 4);
-		_colors[i].unused = 255;
+		_colors[i].r = static_cast<Uint8>(value[0u] * 4);
+		_colors[i].g = static_cast<Uint8>(value[1u] * 4);
+		_colors[i].b = static_cast<Uint8>(value[2u] * 4);
+		_colors[i].unused = 255u;
 	}
-	_colors[0].unused = 0;
+	_colors[0u].unused = 0u;
 
 	palFile.close();
 }
@@ -117,10 +117,13 @@ SDL_Color* Palette::getColors(int offset) const
  * @return, hexadecimal RGBA value
  */
 Uint32 Palette::getRGBA(
-		SDL_Color* pal,
+		const SDL_Color* const pal,
 		Uint8 color)
 {
-	return ((Uint32)pal[color].r << 24) | ((Uint32)pal[color].g << 16) | ((Uint32)pal[color].b << 8) | (Uint32)0xFF;
+	return (static_cast<Uint32>(pal[color].r) << 24)
+		 | (static_cast<Uint32>(pal[color].g) << 16)
+		 | (static_cast<Uint32>(pal[color].b) <<  8)
+		 | (static_cast<Uint32>(0xff));
 }
 
 /**

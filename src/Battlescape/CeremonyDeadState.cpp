@@ -50,13 +50,13 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 {
 	_window				= new Window(this, 320, 200);
 	_txtTitle			= new Text(300, 16, 10, 8);
-	_lstSoldiersLost	= new TextList(285, 145, 16, 28); // 18 rows.
+	_lstSoldiersLost	= new TextList(285, 145, 16, 29); // 18 rows.
 //	_lstSoldiersLost	= new TextList(285,   9, 16, 26);
 //	_lstAwards			= new TextList(285, 113, 16, 36);
 //	_txtMedalInfo		= new Text(280, 25, 20, 150);
 	_btnOk				= new TextButton(288, 16, 16, 177);
 
-	setPalette(PAL_GEOSCAPE, 5); // dk.red
+	setPalette(PAL_GEOSCAPE, BACKPAL_RED_D);
 
 	add(_window);
 	add(_txtTitle);

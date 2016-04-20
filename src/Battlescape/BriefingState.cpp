@@ -88,13 +88,13 @@ BriefingState::BriefingState(
 		description (type + "_BRIEFING"),
 		track,	// default defined in Ruleset/AlienDeployment.h: OpenXcom::res_MUSIC_GEO_BRIEFING,
 		bg;		// default defined in Ruleset/AlienDeployment.h: "BACK16.SCR",
-	int bgColor;
+	BackPals backpal;
 
 	if (ruleDeploy == nullptr) // should never happen
 	{
 		Log(LOG_WARNING) << "No deployment rule for Briefing: " << type;
 		bg = "BACK16.SCR";
-		bgColor = _game->getRuleset()->getInterface("briefing")->getElement("backpal")->color;
+		backpal = static_cast<BackPals>(_game->getRuleset()->getInterface("briefing")->getElement("backpal")->color);
 		track = OpenXcom::res_MUSIC_GEO_BRIEFING;
 	}
 	else
@@ -102,7 +102,7 @@ BriefingState::BriefingState(
 		const BriefingData dataBrief (ruleDeploy->getBriefingData());
 
 		bg = dataBrief.background;
-		bgColor = dataBrief.palette;
+		backpal = static_cast<BackPals>(dataBrief.palette);
 
 		switch (_game->getSavedGame()->getBattleSave()->getTacType())
 		{
@@ -133,7 +133,7 @@ BriefingState::BriefingState(
 	kL_geoMusicPlaying = false;	// otherwise the Briefing music switches back to Geoscape
 								// music when on high time-compression (eg, BaseDefense);
 								// although Geoscape::init() *should not even run* after this ......
-	setPalette(PAL_GEOSCAPE, bgColor);
+	setPalette(PAL_GEOSCAPE, backpal);
 	_window->setBackground(_game->getResourcePack()->getSurface(bg));
 
 	add(_window,		"window",	"briefing");

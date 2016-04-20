@@ -42,7 +42,6 @@ class SoldierDiedState
 {
 
 private:
-	static const int BGPAL_RED = 5;
 	static const Uint8 CYAN = 133;
 
 	Text

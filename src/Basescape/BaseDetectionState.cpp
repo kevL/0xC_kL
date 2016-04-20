@@ -69,7 +69,7 @@ BaseDetectionState::BaseDetectionState(const Base* const base)
 
 	_btnOk			= new TextButton(168, 16, 76, 125);
 
-	setPalette(PAL_BASESCAPE, 6);
+	setPalette(PAL_BASESCAPE, BACKPAL_ORANGE);
 
 	add(_window);
 	add(_txtTitle);

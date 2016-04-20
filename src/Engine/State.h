@@ -138,7 +138,7 @@ protected:
 		/// Changes the State's 8-bpp Palette with certain resources.
 		void setPalette(
 				const PaletteType pal,
-				int backpal = -1);
+				BackPals backpal = BACKPAL_NONE);
 		/// Gets the State's 8-bpp Palette.
 		SDL_Color* getPalette();
 

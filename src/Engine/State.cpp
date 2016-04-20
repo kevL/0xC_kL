@@ -95,8 +95,8 @@ void State::setInterface(
 		bool alterPal,
 		bool tactical)
 {
-	int backpalColor (-1);
 	PaletteType palType (PAL_NONE);
+	BackPals backpal (BACKPAL_NONE);
 
 	if ((_uiRule = _game->getRuleset()->getInterface(category)) != nullptr)
 	{
@@ -119,14 +119,14 @@ void State::setInterface(
 			else					color = elBackpal->color;
 
 			if (color != std::numeric_limits<int>::max())
-				backpalColor = color;
+				backpal = static_cast<BackPals>(color);
 		}
 	}
 
-	if (tactical == true)			palType = PAL_BATTLESCAPE;
-	else if (palType == PAL_NONE)	palType = PAL_GEOSCAPE;
+	if		(tactical == true)		palType = PAL_BATTLESCAPE;
+	else if	(palType == PAL_NONE)	palType = PAL_GEOSCAPE;
 
-	setPalette(palType, backpalColor);
+	setPalette(palType, backpal);
 }
 
 /**
@@ -493,7 +493,8 @@ void State::setModal(InteractiveSurface* const srf)
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- amount of colors to replace (default 256)
- * @param apply	- apply changes immediately otherwise wait in case of multiple setPalettes (default true)
+ * @param apply			- true to apply changes immediately, false to wait in
+ *						  case of multiple setPalettes (default true)
  */
 void State::setPalette(
 		SDL_Color* const colors,
@@ -523,11 +524,11 @@ void State::setPalette(
 /**
  * Loads palettes from the ResourcePack into the state.
  * @param pal		- reference the string-ID of the palette to load
- * @param backpal	- BACKPALS.DAT offset to use (default -1)
+ * @param backpal	- BACKPALS.DAT offset to use (State.h) (default BACKPAL_NONE)
  */
 void State::setPalette(
 		const PaletteType pal,
-		int backpal)
+		BackPals backpal)
 {
 	setPalette(
 			_game->getResourcePack()->getPalette(pal)->getColors(),
@@ -555,7 +556,7 @@ void State::setPalette(
 	}
 
 
-	if (backpal != -1)
+	if (backpal != BACKPAL_NONE)
 		setPalette(
 				_game->getResourcePack()->getPalette(PAL_BACKPALS)
 						->getColors(static_cast<int>(Palette::blockOffset(static_cast<Uint8>(backpal)))),

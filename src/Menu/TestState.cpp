@@ -26,7 +26,7 @@
 //#include "../Engine/Exception.h"
 #include "../Engine/Game.h"
 //#include "../Engine/LocalizedText.h"
-#include "../Engine/Palette.h"
+//#include "../Engine/Palette.h"
 #include "../Engine/Screen.h"
 #include "../Engine/Surface.h"
 #include "../Engine/SurfaceSet.h"
@@ -61,7 +61,7 @@ TestState::TestState()
 	_set = _game->getResourcePack()->getSurfaceSet("BASEBITS.PCK");
 	_set->getFrame(1);
 
-	setPalette(PAL_BASESCAPE, 2);
+	setPalette(PAL_BASESCAPE, BACKPAL_RED_L);
 
 	add(_window);
 	add(_button);

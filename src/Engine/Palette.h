@@ -40,9 +40,22 @@ enum PaletteType
 	PAL_UFOPAEDIA		//  6
 };
 
+enum BackPals
+{
+	BACKPAL_NONE = -1,	// -1
+	BACKPAL_OLIVE,		//  0
+	BACKPAL_RUSSET,		//  1
+	BACKPAL_RED_L,		//  2
+	BACKPAL_RUST,		//  3
+	BACKPAL_SEAGREEN,	//  4
+	BACKPAL_RED_D,		//  5
+	BACKPAL_ORANGE,		//  6
+	BACKPAL_BLUE		//  7
+};
+
 
 /**
- * Container for palettes (sets of 8bpp colors).
+ * Container for palettes (sets of 8-bpp colors).
  * Works as an encapsulation for SDL's SDL_Color struct and
  * provides shortcuts for common tasks to make code more readable.
  */
@@ -74,7 +87,7 @@ private:
 
 		/// Converts a given color into a RGBA color value.
 		static Uint32 getRGBA(
-				SDL_Color* pal,
+				const SDL_Color* const pal,
 				Uint8 color);
 
 		/// Gets the position of a given palette.
