@@ -51,11 +51,11 @@ ScrollBar::ScrollBar(
 			x,y),
 		_list(0),
 		_color(0u),
-		_pressed(false),
 		_contrast(false),
-		_offset(0),
+		_offset(-1),
 		_bg(0),
-		_scrollDir(MSCROLL_NONE)
+		_scrollDir(MSCROLL_NONE),
+		_useScalePad(false)
 {
 	_track	= new Surface(width - 2, height, x,y);
 	_btn	= new Surface(width,     height, x,y);
@@ -210,27 +210,20 @@ void ScrollBar::handle(Action* action, State* state)
 {
 	InteractiveSurface::handle(action, state);
 
-	if (_pressed == true)
+	if (_offset != -1)
 	{
 		switch (action->getDetails()->type)
 		{
 			case SDL_MOUSEMOTION:
 			{
-				const double
-					scale	(static_cast<double>(_list->getRows()) / static_cast<double>(_surface->h)),
-					track_y (static_cast<double>(static_cast<int>(action->getAbsoluteMouseY()) - getY() + _offset));
+				const double track_y (static_cast<double>(static_cast<int>(action->getAbsoluteMouseY()) - getY() - _offset));
+				double scale;
+				if (_useScalePad == true)
+					scale = static_cast<double>(_list->getRows()) / static_cast<double>(_surface->h - _rect.h);
+				else
+					scale = static_cast<double>(_list->getRows()) / static_cast<double>(_surface->h);
 
-				const size_t scroll (static_cast<size_t>(Round(track_y * scale)));
-				// TODO: Two quirks could/should be addressed:
-				// When dragging the scroll-button for a huge-long list with a
-				// short vertical track:
-				// 1. the cursor creeps ever-so-slightly vertically relative to
-				//	  the scroll-button;
-				// 2. the scroll-button warps upward when initially grabbed AND
-				//	  this mouse-motion event is registered.
-				// Both/either effect(s) are slight and the first is negligible.
-
-				_list->scrollTo(scroll);
+				_list->scrollTo(static_cast<size_t>(Round(track_y * scale)));
 			}
 		}
 	}
@@ -271,10 +264,7 @@ void ScrollBar::mousePress(Action* action, State* state)
 				_timerScrollMouse->start();
 			}
 			else
-			{
-				_pressed = true;
-				_offset = static_cast<int>(_rect.y) - cursor_y;
-			}
+				_offset = cursor_y - static_cast<int>(_rect.y);
 			break;
 		}
 
@@ -286,10 +276,7 @@ void ScrollBar::mousePress(Action* action, State* state)
 			else if (cursor_y >= static_cast<int>(_rect.y) + static_cast<int>(_rect.h))
 				_list->scrollDown(true);
 			else
-			{
-				_pressed = true;
 				_offset = static_cast<int>(_rect.y) - cursor_y;
-			}
 		}
 	}
 }
@@ -311,8 +298,7 @@ void ScrollBar::mouseRelease(Action* action, State* state)
 			{
 				default:
 				case MSCROLL_NONE:
-					_pressed = false;
-//					_offset = 0;
+					_offset = -1;
 					break;
 
 				case MSCROLL_UP:
@@ -346,25 +332,25 @@ void ScrollBar::keyboardPress(Action* action, State* state)
 				_list->scrollDown(true);
 				break;
 
-			case SDLK_UP:		// up 1 line
+			case SDLK_UP:		// 1 line up
 			case SDLK_KP8:
 				_list->scrollUp();
 				_timerScrollKey->start();
 				break;
 
-			case SDLK_DOWN:		// down 1 line
+			case SDLK_DOWN:		// 1 line down
 			case SDLK_KP2:
 				_list->scrollDown();
 				_timerScrollKey->start();
 				break;
 
-			case SDLK_PAGEUP:	// up 1 page
+			case SDLK_PAGEUP:	// 1 page up
 			case SDLK_KP9:
 				_list->scrollTo(_list->getScroll() - _list->getVisibleRows());
 				_timerScrollKey->start();
 				break;
 
-			case SDLK_PAGEDOWN:	// down 1 page
+			case SDLK_PAGEDOWN:	// 1 page down
 			case SDLK_KP3:
 				_list->scrollTo(_list->getScroll() + _list->getVisibleRows());
 				_timerScrollKey->start();
@@ -398,7 +384,7 @@ void ScrollBar::think()
 /**
  * Scrolls the list with the keyboard.
  */
-void ScrollBar::keyScroll()
+void ScrollBar::keyScroll() // private.
 {
 	const Uint8* const keystate (SDL_GetKeyState(nullptr));
 
@@ -418,7 +404,7 @@ void ScrollBar::keyScroll()
 /**
  * Scrolls the list with the mouse.
  */
-void ScrollBar::mouseScroll()
+void ScrollBar::mouseScroll() // private.
 {
 	switch (_scrollDir)
 	{
@@ -463,7 +449,6 @@ void ScrollBar::drawTrack() // private.
  */
 void ScrollBar::drawButton() // private.
 {
-//	_rect.x = 0;
 	_rect.w = static_cast<Uint16>(_btn->getWidth());
 
 	const double scale (static_cast<double>(_surface->h) / static_cast<double>(_list->getRows()));
@@ -473,6 +458,7 @@ void ScrollBar::drawButton() // private.
 	static const Uint16 BTN_HEIGHT_MIN (4u);
 	if (_rect.h < BTN_HEIGHT_MIN)
 	{
+		_useScalePad = true;
 		_rect.h = BTN_HEIGHT_MIN;
 		const double padFactor (static_cast<double>(BTN_HEIGHT_MIN) / static_cast<double>(_surface->h));
 		_rect.y -= static_cast<Sint16>(static_cast<double>(_rect.y) * padFactor);

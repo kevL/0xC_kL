@@ -49,7 +49,7 @@ class ScrollBar final
 private:
 	bool
 		_contrast,
-		_pressed;
+		_useScalePad;
 	int _offset;
 	Uint8 _color;
 
@@ -65,6 +65,11 @@ private:
 		* _timerScrollMouse;
 
 	ScrollDirection _scrollDir;
+
+	/// Scrolls the TextList with the keyboard.
+	void keyScroll();
+	/// Scrolls the TextList with the mouse.
+	void mouseScroll();
 
 	/// Draws the ScrollBar track.
 	void drawTrack();
@@ -124,10 +129,6 @@ private:
 
 		/// Gives ticks to mouse- and keyboard-events.
 		void think() override;
-		/// Scrolls the TextList with the keyboard.
-		void keyScroll();
-		/// Scrolls the TextList with the mouse.
-		void mouseScroll();
 
 		/// Draws the ScrollBar.
 		void draw() override;
