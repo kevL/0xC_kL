@@ -991,19 +991,18 @@ bool TileEngine::canTargetUnit(
 		Log(LOG_INFO) << ". offsetY = " << offsetY;
 	} */
 
-	size_t radius; // radius = LoFT-id
+	float radius; // radius = LoFT-id
 	if (targetUnit->getArmor()->getSize() == 1)
-		radius = targetUnit->getLoft();
-//		radius = targetUnit->getLoft() * 2 + 1;
+		radius = static_cast<float>(targetUnit->getLoft());
+//		radius = static_cast<float>(targetUnit->getLoft() * 2u + 1u); // <- this is the actual voxel-dimension in the LoFT.
 	else
-		radius = 3u;
+		radius = 3.f;
 	//if (debug) Log(LOG_INFO) << ". radius= " << radius;
 
 	const Position
 		targetVoxel (Position::toVoxelSpaceCentered(tileTarget->getPosition())),
 		relVoxel (targetVoxel - *originVoxel);
-	const float theta (static_cast<float>(radius)
-					 / std::sqrt(static_cast<float>(relVoxel.x * relVoxel.x + relVoxel.y * relVoxel.y)));
+	const float theta (radius / std::sqrt(static_cast<float>(relVoxel.x * relVoxel.x + relVoxel.y * relVoxel.y)));
 	const int
 //		relX (static_cast<int>(Round(static_cast<float>( relVoxel.y) * theta))),
 //		relY (static_cast<int>(Round(static_cast<float>(-relVoxel.x) * theta))),
@@ -1203,11 +1202,11 @@ bool TileEngine::canTargetTilepart(
 
 	std::vector<Position> trj;
 
-	const int* spiralArray;
+	const int* spiral;
 	int
 		zMin,
 		zMax;
-	size_t spiralCount;
+	size_t spiralSize;
 	bool
 		foundMinZ,
 		foundMaxZ;
@@ -1215,8 +1214,8 @@ bool TileEngine::canTargetTilepart(
 	switch (tilePart)
 	{
 		case O_FLOOR:
-			spiralArray = objectSpiral;
-			spiralCount = 41u;
+			spiral = objectSpiral;
+			spiralSize = 41u;
 			foundMinZ =
 			foundMaxZ = true;
 			zMin =
@@ -1224,22 +1223,22 @@ bool TileEngine::canTargetTilepart(
 			break;
 
 		case O_WESTWALL:
-			spiralArray = westSpiral;
-			spiralCount = 7u;
+			spiral = westSpiral;
+			spiralSize = 7u;
 			foundMinZ =
 			foundMaxZ = false;
 			break;
 
 		case O_NORTHWALL:
-			spiralArray = northSpiral;
-			spiralCount = 7u;
+			spiral = northSpiral;
+			spiralSize = 7u;
 			foundMinZ =
 			foundMaxZ = false;
 			break;
 
 		case O_OBJECT:
-			spiralArray = objectSpiral;
-			spiralCount = 41u;
+			spiral = objectSpiral;
+			spiralSize = 41u;
 			foundMinZ =
 			foundMaxZ = false;
 			break;
@@ -1257,12 +1256,12 @@ bool TileEngine::canTargetTilepart(
 	{
 		for (size_t
 				i = 0u;
-				i != spiralCount && foundMinZ == false;
+				i != spiralSize && foundMinZ == false;
 				++i)
 		{
 			int
-				tX (spiralArray[i * 2u]),
-				tY (spiralArray[i * 2u + 1u]);
+				tX (spiral[i * 2u]),
+				tY (spiral[i * 2u + 1u]);
 
 			if (detVoxelType(
 						Position(
@@ -1289,12 +1288,12 @@ bool TileEngine::canTargetTilepart(
 	{
 		for (size_t
 				i = 0u;
-				i != spiralCount && foundMaxZ == false;
+				i != spiralSize && foundMaxZ == false;
 				++i)
 		{
 			int
-				tX (spiralArray[i * 2u]),
-				tY (spiralArray[i * 2u + 1u]);
+				tX (spiral[i * 2u]),
+				tY (spiral[i * 2u + 1u]);
 
 			if (detVoxelType(
 						Position(
@@ -1330,11 +1329,11 @@ bool TileEngine::canTargetTilepart(
 
 			for (size_t
 					i = 0u;
-					i != spiralCount;
+					i != spiralSize;
 					++i)
 			{
-				scanVoxel->x = targetVoxel.x + spiralArray[i * 2u];
-				scanVoxel->y = targetVoxel.y + spiralArray[i * 2u + 1u];
+				scanVoxel->x = targetVoxel.x + spiral[i * 2u];
+				scanVoxel->y = targetVoxel.y + spiral[i * 2u + 1u];
 
 				trj.clear();
 				const VoxelType voxelTest (plotLine(
