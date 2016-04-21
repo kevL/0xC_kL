@@ -186,7 +186,7 @@ public:
 	static Position toVoxelSpaceCentered(
 			const Position& pos,
 			int lift = 0,
-			int armorSize = 1);
+			int unitSize = 1);
 };
 
 ///

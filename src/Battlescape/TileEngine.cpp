@@ -62,7 +62,7 @@
 namespace OpenXcom
 {
 
-const int TileEngine::heightFromCenter[11]
+const int TileEngine::scanOffsetZ[11u] // static.
 {
 		  0,
 	 -2,  2,
@@ -111,7 +111,7 @@ void TileEngine::calculateSunShading() const
 {
 	Tile* tile;
 	for (size_t // reset and re-calculate sunlight.
-			i = 0;
+			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
@@ -183,7 +183,7 @@ void TileEngine::calculateSunShading(Tile* const tile) const
 void TileEngine::calculateTerrainLighting() const
 {
 	for (size_t // reset.
-			i = 0;
+			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
@@ -194,7 +194,7 @@ void TileEngine::calculateTerrainLighting() const
 	Position pos;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
@@ -248,7 +248,7 @@ void TileEngine::calculateTerrainLighting() const
 void TileEngine::calculateUnitLighting() const
 {
 	for (size_t // reset all light to 0 first
-			i = 0;
+			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
@@ -391,8 +391,8 @@ bool TileEngine::calcFov(
 	const bool swapXY (dir == 0 || dir == 4);
 
 	static const int
-		sign_x[8] { 1, 1, 1, 1,-1,-1,-1,-1},
-		sign_y[8] {-1,-1, 1, 1, 1, 1,-1,-1};
+		sign_x[8u] { 1, 1, 1, 1,-1,-1,-1,-1},
+		sign_y[8u] {-1,-1, 1, 1, 1, 1,-1,-1};
 
 	int
 		y1 (0),
@@ -844,8 +844,8 @@ bool TileEngine::visible(
  * @param tile - pointer to a tile
  * @return, pointer to a unit (nullptr if none)
  */
-BattleUnit* TileEngine::getTargetUnit(const Tile* const tile) const
-{
+const BattleUnit* TileEngine::getTargetUnit(const Tile* const tile) const	// now I love const; it does absolutely nothing other than
+{																			// cause problems and make a pretty blue color in the IDE.
 	if (tile->getTileUnit() != nullptr) // warning: Careful not to use this when UnitWalkBState has transient units placed.
 		return tile->getTileUnit();
 
@@ -919,7 +919,7 @@ Position TileEngine::getOriginVoxel(
 	originVoxel.y += dirYshift[dir] * action.actor->getArmor()->getSize(); */
 
 /**
- * Checks for another unit available for targetting and what particular voxel.
+ * Checks for a BattleUnit available for targeting and at what particular voxel.
  * @param originVoxel	- pointer to voxel of trace origin (eg. gun's barrel)
  * @param tileTarget	- pointer to Tile to check against
  * @param scanVoxel		- pointer to voxel that is returned coordinate of hit
@@ -944,17 +944,17 @@ bool TileEngine::canTargetUnit(
 	bool debug;
 	if (debugged == false
 		&& _battleSave->getTile(Position::toTileSpace(*originVoxel))->getTileUnit() != nullptr
-		&& _battleSave->getTile(Position::toTileSpace(*originVoxel))->getTileUnit()->getId() == 189
+		&& _battleSave->getTile(Position::toTileSpace(*originVoxel))->getTileUnit()->getId() == 388
 //		&& _battleSave->getSelectedUnit() != nullptr
 //		&& _battleSave->getSelectedUnit()->getId() == 189
-		&& tileTarget->getPosition() == Position(38,13,0))
+		&& tileTarget->getPosition() == Position(28,18,0))
 	{
-		debugged = true;
+		debugged =
 		debug = true;
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << "TileEngine::canTargetUnit() shooter id-" << _battleSave->getSelectedUnit()->getId();
 	}
-	else debug = false;
-	if (debug) Log(LOG_INFO) << "";
-	if (debug) Log(LOG_INFO) << "TileEngine::canTargetUnit() shooter id-" << _battleSave->getSelectedUnit()->getId(); */
+	else debug = false; */
 
 	int
 		offsetX,
@@ -964,8 +964,7 @@ bool TileEngine::canTargetUnit(
 	if (targetUnit == nullptr)
 	{
 		hypothetical = false;
-		targetUnit = tileTarget->getTileUnit();
-		if (targetUnit == nullptr)
+		if ((targetUnit = tileTarget->getTileUnit()) == nullptr)
 		{
 			//if (debug) Log(LOG_INFO) << ". no Unit, ret FALSE";
 			return false; // no unit in the tileTarget even if it's elevated and appearing in it.
@@ -986,35 +985,31 @@ bool TileEngine::canTargetUnit(
 		return false;
 	}
 
-	const Position targetVoxel (Position::toVoxelSpaceCentered(tileTarget->getPosition()));
-	const int
-		targetLow (targetVoxel.z
-				 - tileTarget->getTerrainLevel()
-				 + targetUnit->getFloatHeight()),
-		unitSize (targetUnit->getArmor()->getSize() - 1);
-	int
-		targetHigh (targetLow),
-		targetMid,
-		height;
-
-	//if (debug) Log(LOG_INFO) << ". unitSize = " << unitSize;
-	//if (debug) Log(LOG_INFO) << ". offsetX = " << offsetX;
-	//if (debug) Log(LOG_INFO) << ". offsetY = " << offsetY;
+/*	if (debug)
+	{
+		Log(LOG_INFO) << ". offsetX = " << offsetX;
+		Log(LOG_INFO) << ". offsetY = " << offsetY;
+	} */
 
 	size_t radius; // radius = LoFT-id
-	if (unitSize == 0)
+	if (targetUnit->getArmor()->getSize() == 1)
 		radius = targetUnit->getLoft();
+//		radius = targetUnit->getLoft() * 2 + 1;
 	else
-		radius = 3;
-	//if (debug) Log(LOG_INFO) << ". radius = " << radius;
+		radius = 3u;
+	//if (debug) Log(LOG_INFO) << ". radius= " << radius;
 
-	const Position relVoxel (targetVoxel - *originVoxel);
+	const Position
+		targetVoxel (Position::toVoxelSpaceCentered(tileTarget->getPosition())),
+		relVoxel (targetVoxel - *originVoxel);
 	const float theta (static_cast<float>(radius)
-					 / std::sqrt(static_cast<float>((relVoxel.x * relVoxel.x) + (relVoxel.y * relVoxel.y))));
+					 / std::sqrt(static_cast<float>(relVoxel.x * relVoxel.x + relVoxel.y * relVoxel.y)));
 	const int
-		relX (static_cast<int>(Round(static_cast<float>( relVoxel.y) * theta))),
-		relY (static_cast<int>(Round(static_cast<float>(-relVoxel.x) * theta))),
-		targetSlices[10]
+//		relX (static_cast<int>(Round(static_cast<float>( relVoxel.y) * theta))),
+//		relY (static_cast<int>(Round(static_cast<float>(-relVoxel.x) * theta))),
+		relX (static_cast<int>(std::ceil(static_cast<float>( relVoxel.y) * theta))),
+		relY (static_cast<int>(std::ceil(static_cast<float>(-relVoxel.x) * theta))),
+		scanOffsetXY[10u]
 		{
 			 0,		 0,
 			 relX,	 relY,
@@ -1025,30 +1020,38 @@ bool TileEngine::canTargetUnit(
 
 /*	if (debug)
 	{
-		Log(LOG_INFO) << ". originVoxel = " << *originVoxel << " originTile-space " << ((*originVoxel) / Position(16,16,24));
-		Log(LOG_INFO) << ". targetVoxel = " << targetVoxel << " targetTile-space " << (targetVoxel / Position(16,16,24));
-		Log(LOG_INFO) << ". relVoxel = " << relVoxel << " relTile-space " << (relVoxel / Position(16,16,24));
-		Log(LOG_INFO) << ". theta = " << theta;
-		Log(LOG_INFO) << ". relX = " << relX;
-		Log(LOG_INFO) << ". relY = " << relY;
+		Log(LOG_INFO) << ". originVoxel " << *originVoxel << " ts " << (*originVoxel / Position(16,16,24));
+		Log(LOG_INFO) << ". targetVoxel " << targetVoxel << " ts " << (targetVoxel / Position(16,16,24));
+		Log(LOG_INFO) << ". relVoxel " << relVoxel << " ts " << (relVoxel / Position(16,16,24));
+		Log(LOG_INFO) << ". theta= " << theta;
+		Log(LOG_INFO) << ". relX= " << relX;
+		Log(LOG_INFO) << ". relY= " << relY;
 	} */
 
-	if (targetUnit->isOut_t(OUT_STAT) == false) // whats this even for.
+	const int
+		targetLow (targetVoxel.z
+				 - tileTarget->getTerrainLevel()
+				 + targetUnit->getFloatHeight());
+	int
+		targetHigh (targetLow),
+		targetMid,
+		height;
+
+	if (targetUnit->isOut_t(OUT_STAT) == false)
 		height = targetUnit->getHeight();
 	else
-		height = 12;
+		height = 12; // whats this even for.
 
 	targetHigh += (height - 1);
 	targetMid = (targetHigh + targetLow) / 2;
-	height /= 2;
-	if (height > 11) height = 11;
+	height = std::min(11, height / 2); // don't exceed array-size of scanOffsetZ[]
 
 /*	if (debug)
 	{
-		Log(LOG_INFO) << ". targetLow = " << targetLow;
-		Log(LOG_INFO) << ". targetHigh = " << targetHigh;
-		Log(LOG_INFO) << ". targetMid = " << targetMid;
-		Log(LOG_INFO) << ". height = " << height;
+		Log(LOG_INFO) << ". height= " << height;
+		Log(LOG_INFO) << ". targetHigh= " << targetHigh;
+		Log(LOG_INFO) << ". targetMid= " << targetMid;
+		Log(LOG_INFO) << ". targetLow= " << targetLow;
 	} */
 
 	std::vector<Position> trj;
@@ -1057,92 +1060,83 @@ bool TileEngine::canTargetUnit(
 		targetable_y,
 		targetable_z;
 
-	for (int // scan from center point up and down using heightFromCenter[]
-			i = 0;
-			i < height;
+	for (size_t // scan from a horizontal center-line up and down using scanOffsetZ[]
+			i = 0u;
+			i != static_cast<size_t>(height);
 			++i)
 	{
-		scanVoxel->z = targetMid + heightFromCenter[static_cast<size_t>(i)];
-/*		if (debug)
+		if ((scanVoxel->z = targetMid + scanOffsetZ[i]) > -1) // account for probable truncation of (int)'targetMid'.
 		{
-			Log(LOG_INFO) << "";
-			Log(LOG_INFO) << ". . i = " << i << " scan.Z = " << scanVoxel->z << " (" << (scanVoxel->z / 24) << ")";
-		} */
-
-		for (size_t // scan from vertical centerline outwards left and right using targetSlices[]
-				j = 0;
-				j != 5;
-				++j)
-		{
-			scanVoxel->x = targetVoxel.x + targetSlices[j * 2];
-			scanVoxel->y = targetVoxel.y + targetSlices[j * 2 + 1];
 /*			if (debug)
 			{
-				Log(LOG_INFO) << ". . . j = " << j;
-				Log(LOG_INFO) << ". . . scan.X = " << scanVoxel->x << " (" << (scanVoxel->x / 16) << ")";
-				Log(LOG_INFO) << ". . . scan.Y = " << scanVoxel->y << " (" << (scanVoxel->y / 16) << ")";
+				Log(LOG_INFO) << "";
+				Log(LOG_INFO) << ". . i= " << i << " scan.Z= " << scanVoxel->z << " (" << (scanVoxel->z / 24) << ")";
 			} */
 
-			trj.clear();
-
-			const VoxelType testVoxel (plotLine(
-											*originVoxel,
-											*scanVoxel,
-											false,
-											&trj,
-											excludeUnit));
-/*			if (debug)
+			for (size_t // scan from vertical center-line outwards left and right using scanOffsetXY[]
+					j = 0u;
+					j != 5u;
+					++j)
 			{
-				if (trj.empty() == false) Log(LOG_INFO) << ". . . . test " << trj.at(0);
-				std::string st;
+				scanVoxel->x = targetVoxel.x + scanOffsetXY[j * 2u];
+				scanVoxel->y = targetVoxel.y + scanOffsetXY[j * 2u + 1u];
+/*				if (debug)
+				{
+					Log(LOG_INFO) << ". . . j= " << j;
+					Log(LOG_INFO) << ". . . scan.X= " << scanVoxel->x << " (" << (scanVoxel->x >> 4) << ")";
+					Log(LOG_INFO) << ". . . scan.Y= " << scanVoxel->y << " (" << (scanVoxel->y >> 4) << ")";
+				} */
+
+				trj.clear();
+
+				const VoxelType testVoxel (plotLine(
+												*originVoxel,
+												*scanVoxel,
+												false,
+												&trj,
+												excludeUnit));
+/*				if (debug)
+				{
+					if (trj.empty() == false) Log(LOG_INFO) << ". . . . impact " << trj.at(0u) << " ts " << (trj.at(0u) / Position(16,16,24));
+					Log(LOG_INFO) << ". . . . impactType= " << MapData::debugVoxelType(testVoxel);
+				} */
+
 				switch (testVoxel)
 				{
-					case VOXEL_EMPTY:		st = "VOXEL_EMPTY";			break;	// -1
-					case VOXEL_FLOOR:		st = "VOXEL_FLOOR";			break;	//  0
-					case VOXEL_WESTWALL:	st = "VOXEL_WESTWALL";		break;	//  1
-					case VOXEL_NORTHWALL:	st = "VOXEL_NORTHWALL";		break;	//  2
-					case VOXEL_OBJECT:		st = "VOXEL_OBJECT";		break;	//  3
-					case VOXEL_UNIT:		st = "VOXEL_UNIT";			break;	//  4
-					case VOXEL_OUTOFBOUNDS:	st = "VOXEL_OUTOFBOUNDS";			//  5
-				}
-				Log(LOG_INFO) << ". . . . testLine = " << st;
-			} */
-
-			switch (testVoxel)
-			{
-				case VOXEL_UNIT:
-//					for (int // voxel of hit must be inside of scanned tileTarget(s)
-//							x = 0;
-//							x <= unitSize;
-//							++x)
-//					{
-//						if (debug) Log(LOG_INFO) << ". . . . iterate x-Size";
-//						for (int
-//								y = 0;
-//								y <= unitSize;
-//								++y)
-//					{
+					case VOXEL_UNIT:
+//						for (int // voxel of hit must be inside of scanned tileTarget(s)
+//								x = 0;
+//								x <= unitSize;
+//								++x)
+//						{
+//							if (debug) Log(LOG_INFO) << ". . . . iterate x-Size";
+//							for (int
+//									y = 0;
+//									y <= unitSize;
+//									++y)
+//						{
 //							if (debug) Log(LOG_INFO) << ". . . . . iterate y-Size";
-					if (   (trj.at(0).x >> 4) == (scanVoxel->x >> 4) /*+ x*/ + offsetX
-						&& (trj.at(0).y >> 4) == (scanVoxel->y >> 4) /*+ y*/ + offsetY
-						&&  trj.at(0).z >= targetLow
-						&&  trj.at(0).z <= targetHigh)
-					{
-						//if (debug) Log(LOG_INFO) << ". . . . . . TargetUnit found @ scanVoxel " << (*scanVoxel);
-						targetable_x.push_back(scanVoxel->x);
-						targetable_y.push_back(scanVoxel->y);
-						targetable_z.push_back(scanVoxel->z);
-					}
+						if (   (trj.at(0u).x >> 4) == (scanVoxel->x >> 4) /*+ x*/ + offsetX
+							&& (trj.at(0u).y >> 4) == (scanVoxel->y >> 4) /*+ y*/ + offsetY
+							&&  trj.at(0u).z >= targetLow
+							&&  trj.at(0u).z <= targetHigh)
+						{
+							//if (debug) Log(LOG_INFO) << ". . . . . . TargetUnit found @ scanVoxel " << (*scanVoxel);
+							targetable_x.push_back(scanVoxel->x);
+							targetable_y.push_back(scanVoxel->y);
+							targetable_z.push_back(scanVoxel->z);
+						}
+//							}
 //						}
-//					}
-					break;
+						break;
 
-				case VOXEL_EMPTY:
-					if (hypothetical == true && trj.empty() == false)
-					{
-						//if (debug) Log(LOG_INFO) << ". . . hypothetical Found, ret TRUE";
-						return true;
-					}
+					case VOXEL_EMPTY:
+						if (hypothetical == true && trj.empty() == false)
+						{
+							//if (debug) Log(LOG_INFO) << ". . . hypothetical Found, ret TRUE";
+							return true;
+						}
+				}
 			}
 		}
 	}
@@ -1165,7 +1159,7 @@ bool TileEngine::canTargetUnit(
 		*scanVoxel = Position(target_x, target_y, target_z);
 		if (force != nullptr) *force = true;
 
-		//if (debug) Log(LOG_INFO) << ". scanVoxel RET " << (*scanVoxel) << " " << ((*scanVoxel) / Position(16,16,24)) << " area=" << targetable_x.size();
+		//if (debug) Log(LOG_INFO) << ". scanVoxel RET " << (*scanVoxel) << " " << (*scanVoxel / Position(16,16,24)) << " area=" << targetable_x.size();
 		return true;
 	}
 
@@ -1189,18 +1183,18 @@ bool TileEngine::canTargetTilepart(
 		Position* const scanVoxel,
 		const BattleUnit* const excludeUnit) const
 {
-	static int
-		sliceObjectSpiral[82]
+	static const int
+		objectSpiral[82u]
 		{
 			8,8,  8,6, 10,6, 10,8, 10,10, 8,10,  6,10,  6,8,  6,6,											// first circle
 			8,4, 10,4, 12,4, 12,6, 12,8, 12,10, 12,12, 10,12, 8,12, 6,12, 4,12, 4,10, 4,8, 4,6, 4,4, 6,4,	// second circle
 			8,1, 12,1, 15,1, 15,4, 15,8, 15,12, 15,15, 12,15, 8,15, 4,15, 1,15, 1,12, 1,8, 1,4, 1,1, 4,1	// third circle
 		},
-		northWallSpiral[14]
+		northSpiral[14u]
 		{
 			7,0, 9,0, 6,0, 11,0, 4,0, 13,0, 2,0
 		},
-		westWallSpiral[14]
+		westSpiral[14u]
 		{
 			0,7, 0,9, 0,6, 0,11, 0,4, 0,13, 0,2
 		};
@@ -1209,8 +1203,8 @@ bool TileEngine::canTargetTilepart(
 
 	std::vector<Position> trj;
 
+	const int* spiralArray;
 	int
-		* spiralArray,
 		zMin,
 		zMax;
 	size_t spiralCount;
@@ -1221,8 +1215,8 @@ bool TileEngine::canTargetTilepart(
 	switch (tilePart)
 	{
 		case O_FLOOR:
-			spiralArray = sliceObjectSpiral;
-			spiralCount = 41;
+			spiralArray = objectSpiral;
+			spiralCount = 41u;
 			foundMinZ =
 			foundMaxZ = true;
 			zMin =
@@ -1230,28 +1224,28 @@ bool TileEngine::canTargetTilepart(
 			break;
 
 		case O_WESTWALL:
-			spiralArray = westWallSpiral;
-			spiralCount = 7;
+			spiralArray = westSpiral;
+			spiralCount = 7u;
 			foundMinZ =
 			foundMaxZ = false;
 			break;
 
 		case O_NORTHWALL:
-			spiralArray = northWallSpiral;
-			spiralCount = 7;
+			spiralArray = northSpiral;
+			spiralCount = 7u;
 			foundMinZ =
 			foundMaxZ = false;
 			break;
 
 		case O_OBJECT:
-			spiralArray = sliceObjectSpiral;
-			spiralCount = 41;
+			spiralArray = objectSpiral;
+			spiralCount = 41u;
 			foundMinZ =
 			foundMaxZ = false;
 			break;
 
 		default:
-			//Log(LOG_INFO) << "TileEngine::canTargetTilepart() EXIT, ret False (tilePart is not a tileObject)";
+			//Log(LOG_INFO) << "TileEngine::canTargetTilepart() EXIT, ret False (tilePart is O_NULPART)";
 			return false;
 	}
 
@@ -1262,13 +1256,13 @@ bool TileEngine::canTargetTilepart(
 			++j)
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != spiralCount && foundMinZ == false;
 				++i)
 		{
 			int
-				tX (spiralArray[i * 2]),
-				tY (spiralArray[i * 2 + 1]);
+				tX (spiralArray[i * 2u]),
+				tY (spiralArray[i * 2u + 1u]);
 
 			if (detVoxelType(
 						Position(
@@ -1294,13 +1288,13 @@ bool TileEngine::canTargetTilepart(
 			--j)
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != spiralCount && foundMaxZ == false;
 				++i)
 		{
 			int
-				tX (spiralArray[i * 2]),
-				tY (spiralArray[i * 2 + 1]);
+				tX (spiralArray[i * 2u]),
+				tY (spiralArray[i * 2u + 1u]);
 
 			if (detVoxelType(
 						Position(
@@ -1321,25 +1315,26 @@ bool TileEngine::canTargetTilepart(
 	{
 		if (zMin > zMax) zMin = zMax;
 
-		const size_t zRange (static_cast<size_t>(std::min(11, zMax - zMin + 1))); // stay within bounds of heightFromCenter[].
+		const size_t zRange (static_cast<size_t>(std::min(11, // stay within bounds of scanOffsetZ[].
+														  zMax - zMin + 1)));
 		const int zCenter ((zMax + zMin) / 2);
 
 		for (size_t
-				j = 0;
+				j = 0u;
 				j != zRange;
 				++j)
 		{
-			scanVoxel->z = targetVoxel.z + zCenter + heightFromCenter[j];
-			//Log(LOG_INFO) << "j=" << j << " targetVoxel.z = " << targetVoxel.z << " zCenter = " << zCenter << " heightCenter = " << heightFromCenter[j];
+			scanVoxel->z = targetVoxel.z + zCenter + scanOffsetZ[j];
+			//Log(LOG_INFO) << "j=" << j << " targetVoxel.z = " << targetVoxel.z << " zCenter = " << zCenter << " heightCenter = " << scanOffsetZ[j];
 			//Log(LOG_INFO) << "scanVoxel.z = " << scanVoxel->z;
 
 			for (size_t
-					i = 0;
+					i = 0u;
 					i != spiralCount;
 					++i)
 			{
-				scanVoxel->x = targetVoxel.x + spiralArray[i * 2];
-				scanVoxel->y = targetVoxel.y + spiralArray[i * 2 + 1];
+				scanVoxel->x = targetVoxel.x + spiralArray[i * 2u];
+				scanVoxel->y = targetVoxel.y + spiralArray[i * 2u + 1u];
 
 				trj.clear();
 				const VoxelType voxelTest (plotLine(
@@ -1349,7 +1344,7 @@ bool TileEngine::canTargetTilepart(
 												&trj,
 												excludeUnit));
 				if (voxelTest == static_cast<VoxelType>(tilePart)								// bingo. MapDataType & VoxelType correspond
-					&& Position::toTileSpace(trj.at(0)) == Position::toTileSpace(*scanVoxel))	// so do Tiles.
+					&& Position::toTileSpace(trj.at(0u)) == Position::toTileSpace(*scanVoxel))	// so do Tiles.
 				{
 					//Log(LOG_INFO) << "ret TRUE";
 					return true;
@@ -2004,8 +1999,8 @@ void TileEngine::hit(
 						&& tile->getMapData(O_OBJECT)->isBaseObject() == true
 						&& tile->getMapData(O_OBJECT)->getArmor() <= power)
 					{
-						_battleSave->baseDestruct()[(targetVoxel.x / 16) / 10]
-												   [(targetVoxel.y / 16) / 10].second--;
+						_battleSave->baseDestruct()[(targetVoxel.x >> 4) / 10]
+												   [(targetVoxel.y >> 4) / 10].second--;
 					}
 					tile->hitTile(partType, power, _battleSave);
 				}
@@ -2062,7 +2057,7 @@ void TileEngine::hit(
 
 				const int
 					power1 (static_cast<int>(std::floor(static_cast<double>(power) * (100. - delta) / 100.)) + 1),
-					power2 (static_cast<int>(std::ceil(static_cast<double>(power) * (100. + delta) / 100.)));
+					power2 (static_cast<int>(std::ceil (static_cast<double>(power) * (100. + delta) / 100.)));
 
 				int extraPower (0);
 				if (attacker != nullptr) // bonus to damage per Accuracy (TODO: use ranks also for xCom or aLien)
@@ -2090,20 +2085,20 @@ void TileEngine::hit(
 				power = targetUnit->takeDamage(
 											relationalVoxel,
 											power, dType,
-											dType == DT_STUN || dType == DT_SMOKE);	// stun ignores armor... does now! UHM.... note it still gets Vuln.modifier, but not armorReduction.
-
+											dType == DT_STUN || dType == DT_SMOKE);	// stun ignores armor... does now! UHM.... note it
+																					// still gets Vuln.modifier, but not armorReduction.
 				if (shotgun == true) targetUnit->hasCried(true);
 
 				if (power != 0)
 				{
 					if (attacker != nullptr
 						&& (antecedentWounds < targetUnit->getFatalWounds()
-							|| targetUnit->isOut_t(OUT_HEALTH) == true)) // .. just do this here and bDone with it. Regularly done in BattlescapeGame::checkCasualties()
-					{
+							|| targetUnit->isOut_t(OUT_HEALTH) == true))	// ... just do this here and bDone with it.
+					{														// Regularly done in BattlescapeGame::checkCasualties()
 						targetUnit->killerFaction(attacker->getFaction());
 					}
-					// kL_note: Not so sure that's been setup right (cf. other kill-credit code as well as DebriefingState)
-					// I mean, shouldn't that be checking that the thing actually DIES?
+					// NOTE: Not so sure that's been setup right (cf. other kill-credit code as well as DebriefingState)
+					// I mean, shouldn't that be checking that the thing actually DIES.
 					// And, probly don't have to state if killed by aLiens: probly assumed in DebriefingState.
 
 					if (targetUnit->getSpecialAbility() == SPECAB_EXPLODE // cyberdiscs, usually. Also, cybermites ... (and Zombies, on fire).
@@ -4429,33 +4424,33 @@ void TileEngine::detonate(Tile* const tile) const
 
 	const Position pos (tile->getPosition());
 
-	Tile* tiles[9];
-	tiles[0] = _battleSave->getTile(Position(		// tileAbove, do floor
+	Tile* tiles[9u];
+	tiles[0u] = _battleSave->getTile(Position(		// tileAbove, do floor
 										pos.x,
 										pos.y,
 										pos.z + 1));
-	tiles[1] = _battleSave->getTile(Position(		// tileEast, do westwall
+	tiles[1u] = _battleSave->getTile(Position(		// tileEast, do westwall
 										pos.x + 1,
 										pos.y,
 										pos.z));
-	tiles[2] = _battleSave->getTile(Position(		// tileSouth, do northwall
+	tiles[2u] = _battleSave->getTile(Position(		// tileSouth, do northwall
 										pos.x,
 										pos.y + 1,
 										pos.z));
-	tiles[3] =										// central tile, do floor
-	tiles[4] =										// central tile, do westwall
-	tiles[5] =										// central tile, do northwall
-	tiles[6] = tile;								// central tile, do object
+	tiles[3u] =										// central tile, do floor
+	tiles[4u] =										// central tile, do westwall
+	tiles[5u] =										// central tile, do northwall
+	tiles[6u] = tile;								// central tile, do object
 
-	tiles[7] = _battleSave->getTile(Position(		// tileNorth, do bigwall south
+	tiles[7u] = _battleSave->getTile(Position(		// tileNorth, do bigwall south
 										pos.x,
 										pos.y - 1,
 										pos.z));
-	tiles[8] = _battleSave->getTile(Position(		// tileWest, do bigwall east
+	tiles[8u] = _battleSave->getTile(Position(		// tileWest, do bigwall east
 										pos.x - 1,
 										pos.y,
 										pos.z));
-	static const MapDataType parts[9]
+	static const MapDataType parts[9u]
 	{
 		O_FLOOR,		// 0 - in tileAbove
 		O_WESTWALL,		// 1 - in tileEast
@@ -4515,8 +4510,8 @@ void TileEngine::detonate(Tile* const tile) const
 
 		switch (i) // don't hit a tile-part that's not supposed to get hit in that tile.
 		{
-			case 7: // tileNorth bigwall south
-			case 8: // tileWest bigwall east
+			case 7u: // tileNorth bigwall south
+			case 8u: // tileWest bigwall east
 				switch (bigWall)
 				{
 //					BIGWALL_BLOCK	// <- always hit this
@@ -5002,7 +4997,7 @@ void TileEngine::openAdjacentDoors( // private.
 			;
 			++i)
 	{
-		offset = westSide ? Position(0,i,0) : Position(i,0,0);
+		offset = (westSide == true) ? Position(0,i,0) : Position(i,0,0);
 		if ((tile = _battleSave->getTile(pos + offset)) != nullptr
 			&& tile->getMapData(partType) != nullptr
 			&& tile->getMapData(partType)->isUfoDoor() == true)
@@ -5018,7 +5013,7 @@ void TileEngine::openAdjacentDoors( // private.
 			;
 			--i)
 	{
-		offset = westSide ? Position(0,i,0) : Position(i,0,0);
+		offset = (westSide == true) ? Position(0,i,0) : Position(i,0,0);
 		if ((tile = _battleSave->getTile(pos + offset)) != nullptr
 			&& tile->getMapData(partType) != nullptr
 			&& tile->getMapData(partType)->isUfoDoor() == true)
@@ -5573,7 +5568,7 @@ bool TileEngine::validateThrow(
 			if (   impactTest == VOXEL_OUTOFBOUNDS
 				|| impactTest == VOXEL_WESTWALL
 				|| impactTest == VOXEL_NORTHWALL
-				|| Position::toTileSpace(trj.at(0)) != posTarget)
+				|| Position::toTileSpace(trj.at(0u)) != posTarget)
 			{
 				//Log(LOG_INFO) << ". . . stop[2] TRUE";
 				break;
@@ -5668,7 +5663,6 @@ int TileEngine::getThrowDistance( // private/static.
 		if (dZ <= -2.) // become falling
 			break;
 	}
-
 	return ret;
 }
 
@@ -5789,19 +5783,19 @@ Position TileEngine::getMeleePosition(const BattleUnit* const actor) const
 		voxelTarget; // not used.
 
 	const int
-		armorSize (actor->getArmor()->getSize()),
+		unitSize (actor->getArmor()->getSize()),
 		dir (actor->getUnitDirection());
 
 	Pathfinding::directionToVector(dir, &posVector);
 
 	for (int
 			x = 0;
-			x != armorSize;
+			x != unitSize;
 			++x)
 	{
 		for (int
 				y = 0;
-				y != armorSize;
+				y != unitSize;
 				++y)
 		{
 			posOrigin = pos + Position(x,y,0);
@@ -5861,19 +5855,19 @@ Tile* TileEngine::getExecutionTile(const BattleUnit* const actor) const
 		voxelTarget; // not used.
 
 	const int
-		armorSize (actor->getArmor()->getSize()),
+		unitSize (actor->getArmor()->getSize()),
 		dir (actor->getUnitDirection());
 
 	Pathfinding::directionToVector(dir, &posVector);
 
 	for (int
 			x = 0;
-			x != armorSize;
+			x != unitSize;
 			++x)
 	{
 		for (int
 				y = 0;
-				y != armorSize;
+				y != unitSize;
 				++y)
 		{
 			posOrigin = pos + Position(x,y,0);
@@ -6012,7 +6006,7 @@ bool TileEngine::isVoxelVisible(const Position& voxel) const
 
 /**
  * Checks for a target in voxel-space.
- * @param targetVoxel		- reference the Position to check in voxel-space
+ * @param targetVoxel		- reference to the Position to check in voxel-space
  * @param excludeUnit		- pointer to unit NOT to do checks for (default nullptr)
  * @param excludeAllUnits	- true to NOT do checks on any unit (default false)
  * @param onlyVisible		- true to consider only visible units (default false)
@@ -6039,7 +6033,7 @@ VoxelType TileEngine::detVoxelType(
 {
 	//Log(LOG_INFO) << "TileEngine::detVoxelType()"; // massive lag-to-file, Do not use.
 	const Tile
-		* tile (_battleSave->getTile(Position::toTileSpace(targetVoxel))),
+		* const tile (_battleSave->getTile(Position::toTileSpace(targetVoxel))),
 		* tileBelow;
 	//Log(LOG_INFO) << ". tile " << tile->getPosition();
 	// check if we are out of the map <- we. It's a voxel-check, not a 'we'.
@@ -6087,7 +6081,7 @@ VoxelType TileEngine::detVoxelType(
 	MapDataType partType;
 	const MapData* partData;
 	size_t
-		layer ((static_cast<size_t>(targetVoxel.z) % 24) / 2),
+		layer ((static_cast<size_t>(targetVoxel.z) % 24) >> 1),
 		loftId,
 		x (15 - static_cast<size_t>(targetVoxel.x) % 16);		// x-axis is reversed for tileParts, standard for battleUnit.
 	const size_t y (static_cast<size_t>(targetVoxel.y) % 16);	// y-axis is standard
@@ -6126,12 +6120,9 @@ VoxelType TileEngine::detVoxelType(
 				targetUnit = tileBelow->getTileUnit();
 		}
 
-		if (targetUnit != nullptr
-			&& targetUnit != excludeUnit
-			&& (excludeAllBut == nullptr
-				|| targetUnit == excludeAllBut)
-			&& (onlyVisible == false
-				|| targetUnit->getUnitVisible() == true))
+		if (targetUnit != nullptr && targetUnit != excludeUnit
+			&& (excludeAllBut == nullptr || targetUnit == excludeAllBut)
+			&& (onlyVisible == false || targetUnit->getUnitVisible() == true))
 		{
 			const Position posUnit (targetUnit->getPosition());
 			const int target_z (posUnit.z * 24 // get foot-level voxel
@@ -6139,9 +6130,9 @@ VoxelType TileEngine::detVoxelType(
 							  - tile->getTerrainLevel());
 
 			if (targetVoxel.z > target_z
-				&& targetVoxel.z <= target_z + targetUnit->getHeight()) // if hit is between foot- and hair-level voxel layers (z-axis)
+				&& targetVoxel.z <= target_z + targetUnit->getHeight()) // if hit is between foot- and hair-level voxel-layers (z-axis)
 			{
-				if (targetUnit->getArmor()->getSize() > 1) // for large units...
+				if (targetUnit->getArmor()->getSize() == 2) // for large units...
 				{
 					const Position posTile (tile->getPosition());
 					layer = static_cast<size_t>(posTile.x - posUnit.x) + ((posTile.y - posUnit.y) * 2);
@@ -6650,8 +6641,8 @@ int TileEngine::faceWindow(const Position& pos) const
 	{
 		if (pos.y != _battleSave->getMapSizeY() - 1)
 			return 4;
-		else
-			return -1;
+//		else
+//			return -1;
 	}
 
 	return -1;
@@ -6659,9 +6650,9 @@ int TileEngine::faceWindow(const Position& pos) const
 
 /**
  * Marks a region of the map as "dangerous to aliens" for a turn.
- * @param pos		- reference the epicenter of the explosion in tilespace
+ * @param pos		- reference to the epicenter of the explosion in tile-space
  * @param radius	- how far to spread out
- * @param unit		- pointer to the BattleUnit that is triggering this action
+ * @param unit		- pointer to the BattleUnit that triggered this battle-action
  */
 void TileEngine::setDangerZone(
 		const Position& pos,
@@ -6718,7 +6709,7 @@ void TileEngine::setDangerZone(
 										false,
 										unit) == VOXEL_EMPTY)
 							{
-								if (trajectory.size() != 0
+								if (trajectory.size() != 0u
 									&& Position::toTileSpace(trajectory.back()) == posTest)
 								{
 									tile->setDangerous();
@@ -6734,8 +6725,8 @@ void TileEngine::setDangerZone(
 
 /**
  * Calculates the distance between 2 points rounded to nearest integer.
- * @param pos1 - reference the first Position
- * @param pos2 - reference the second Position
+ * @param pos1 - reference to the first Position
+ * @param pos2 - reference to the second Position
  * @param considerZ	- true to consider the z coordinate (default true)
  * @return, distance
  */
@@ -6760,9 +6751,10 @@ int TileEngine::distance( // static.
 
 /**
  * Calculates the distance squared between 2 points.
- * No sqrt() no floating point math and sometimes it's all you need.
- * @param pos1		- reference the first Position
- * @param pos2		- reference the second Position
+ * @note No square-root and no floating-point math and sometimes it's all that's
+ * really needed.
+ * @param pos1		- to reference the first Position
+ * @param pos2		- to reference the second Position
  * @param considerZ	- true to consider the z coordinate (default true)
  * @return, distance
  */
@@ -6804,8 +6796,8 @@ double TileEngine::distancePrecise( // static.
 
 /**
  * Returns the direction from origin to target.
- * @param posOrigin - reference to the origin point of the action
- * @param posTarget - reference to the target point of the action
+ * @param posOrigin - reference to the origin-point of the action
+ * @param posTarget - reference to the target-point of the action
  * @return, direction
  */
 int TileEngine::getDirectionTo( // static.
@@ -6821,14 +6813,14 @@ int TileEngine::getDirectionTo( // static.
 						static_cast<double>(posTarget.x - posOrigin.x))),
 
 		// divide the pie in 4 thetas each at 1/8th before each quarter
-		pi_8 (M_PI / 8.),				// a circle divided into 16 sections (rads) -> 22.5 deg
-		d (0.),							// a bias toward cardinal directions. (0.1..0.12)
-		pie[4]
+		pi_8 (M_PI / 8.),				// a circle divided into 16 sections (rads)-> 22.5 deg
+		d (0.),							// a bias toward cardinal directions. (~0.1)
+		pie[4u]
 		{
 			M_PI - pi_8 - d,			// 2.7488935718910690836548129603696	-> 157.5 deg
 			M_PI * 3. / 4. - pi_8 + d,	// 1.9634954084936207740391521145497	-> 112.5 deg
-			M_PI_2 - pi_8 - d,			// 1.1780972450961724644234912687298	-> 67.5 deg
-			pi_8 + d					// 0.39269908169872415480783042290994	-> 22.5 deg
+			M_PI_2 - pi_8 - d,			// 1.1780972450961724644234912687298	->  67.5 deg
+			pi_8 + d					// .39269908169872415480783042290994	->  22.5 deg
 		};
 
 	if (theta > pie[0] || theta < -pie[0])

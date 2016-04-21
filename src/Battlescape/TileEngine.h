@@ -63,7 +63,7 @@ private:
 
 		MAX_SHADE_TO_SEE_UNITS = 8, // cf. MissionStatistics::NIGHT_SHADE
 
-		heightFromCenter[11],
+		scanOffsetZ[11u],
 
 		HARD_BLOCK = 100000,	// this is a hardblock for HE; hence it has to be higher
 								// than the highest HE power in the Rulesets, but it also
@@ -167,17 +167,17 @@ private:
 				const BattleUnit* const unit,
 				const Tile* const tile) const;
 		/// Gets a valid target-unit given a Tile.
-		BattleUnit* getTargetUnit(const Tile* const tile) const;
+		const BattleUnit* getTargetUnit(const Tile* const tile) const;
 
-		/// Gets the origin-voxel of a unit's eyesight.
+		/// Gets the origin-voxel of a specified BattleUnit's sight.
 		Position getSightOriginVoxel(
 				const BattleUnit* const unit,
 				const Position* pos = nullptr) const;
-		/// Gets the origin-voxel of a given action.
+		/// Gets the origin-voxel of a specified battle-action.
 		Position getOriginVoxel(
 				const BattleAction& action,
 				const Tile* const tile = nullptr) const;
-		/// Checks validity for targeting a BattleUnit.
+		/// Gets the validity of targeting a BattleUnit by voxel-type.
 		bool canTargetUnit(
 				const Position* const originVoxel,
 				const Tile* const tileTarget,
@@ -185,7 +185,7 @@ private:
 				const BattleUnit* const excludeUnit,
 				const BattleUnit* targetUnit = nullptr,
 				bool* const force = nullptr) const;
-		/// Checks validity for targeting a Tile.
+		/// Gets the validity of targeting a tile-part by voxel-type.
 		bool canTargetTilepart(
 				const Position* const originVoxel,
 				const Tile* const tileTarget,

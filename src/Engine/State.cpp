@@ -524,7 +524,7 @@ void State::setPalette(
 /**
  * Loads palettes from the ResourcePack into the state.
  * @param pal		- reference the string-ID of the palette to load
- * @param backpal	- BACKPALS.DAT offset to use (State.h) (default BACKPAL_NONE)
+ * @param backpal	- BACKPALS.DAT offset to use (Palette.h) (default BACKPAL_NONE)
  */
 void State::setPalette(
 		const PaletteType pal,

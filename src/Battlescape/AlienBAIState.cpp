@@ -2165,8 +2165,8 @@ bool AlienBAIState::psiAction() // private.
 				dist,
 				los,
 				losTest,
-				choice (0),
-				choiceTest;
+				weight (0),
+				weightTest;
 			Position
 				originVoxel,
 				targetVoxel; // placeholder.
@@ -2202,23 +2202,23 @@ bool AlienBAIState::psiAction() // private.
 					//Log(LOG_INFO) << ". . . currentMood = " << currentMood;
 					//Log(LOG_INFO) << ". . . hasSight = " << hasSight;
 
-					choiceTest = attack // Note that this is NOT a true calculation of Success.
+					weightTest = attack // Note that this is NOT a true calculation of Success.
 							   - defense
 							   - dist
 							   + losTest
 							   + RNG::generate(0, PSI_SWITCH_TARGET);
-					//Log(LOG_INFO) << ". . . choiceTest = " << choiceTest;
+					//Log(LOG_INFO) << ". . . weightTest = " << weightTest;
 
-					if (choiceTest > choice || unitTarget == nullptr)
+					if (weightTest > weight || unitTarget == nullptr)
 					{
-						choice = choiceTest;
+						weight = weightTest;
 						los = losTest;
 						unitTarget = *i;
 					}
 				}
 			}
 
-			if (unitTarget != nullptr && choice - los > PSI_CUTOFF)
+			if (unitTarget != nullptr && weight - los > PSI_CUTOFF)
 			{
 				if (_traceAI) Log(LOG_INFO) << ". . . target Valid - acceptable Prob.";
 //				if (_targetsVisible
@@ -2235,7 +2235,7 @@ bool AlienBAIState::psiAction() // private.
 				_psiAction->posTarget = unitTarget->getPosition();
 
 				const int morale (unitTarget->getMorale());
-				if (morale > 0) //&& choice < 30 // panicAtk is valid since target has morale to chew away esp. if aLien atkStr is low
+				if (morale > 0) //&& weight < 30 // panicAtk is valid since target has morale to chew away esp. if aLien atkStr is low
 				{
 					//Log(LOG_INFO) << ". . test if MC or Panic";
 					const int bravery (unitTarget->getBattleStats()->bravery);
@@ -2243,12 +2243,9 @@ bool AlienBAIState::psiAction() // private.
 					const int moraleResult (morale - panicOdds);
 					//Log(LOG_INFO) << ". . panicOdds_1 = " << panicOdds;
 
-					if (moraleResult < 0)
-						panicOdds -= bravery / 2;
-					else if (moraleResult < 50)
-						panicOdds -= bravery;
-					else
-						panicOdds -= bravery * 2;
+					if		(moraleResult <  0)	panicOdds -= bravery / 2;
+					else if	(moraleResult < 50)	panicOdds -= bravery;
+					else						panicOdds -= bravery * 2;
 
 					//Log(LOG_INFO) << ". . panicOdds_2 = " << panicOdds;
 					panicOdds += (RNG::generate(51,100) - (attack / 5));
