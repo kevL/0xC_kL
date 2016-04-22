@@ -124,7 +124,7 @@ Map::Map(
 		_showProjectile(true),
 		_battleSave(game->getSavedGame()->getBattleSave()),
 		_res(game->getResourcePack()),
-		_fuseColor(31),
+		_fuseColor(31u),
 		_tile(nullptr),
 		_unit(nullptr)
 {
@@ -136,7 +136,7 @@ Map::Map(
 	else
 		_previewSetting	= Options::battlePreviewPath;
 
-	_spriteWidth = _res->getSurfaceSet("BLANKS.PCK")->getFrame(0)->getWidth();
+	_spriteWidth  = _res->getSurfaceSet("BLANKS.PCK")->getFrame(0)->getWidth();
 	_spriteHeight = _res->getSurfaceSet("BLANKS.PCK")->getFrame(0)->getHeight();
 	_spriteWidth_2 = _spriteWidth / 2;
 
@@ -208,15 +208,19 @@ void Map::init()
 	static const Uint8
 		f (ORANGE),	// Fill
 		b (BLACK);	// Border
-	static const Uint8 pixels_stand[81u] { 0, 0, b, b, b, b, b, 0, 0,
-										   0, 0, b, f, f, f, b, 0, 0,
-										   0, 0, b, f, f, f, b, 0, 0,
-										   b, b, b, f, f, f, b, b, b,
-										   b, f, f, f, f, f, f, f, b,
-										   0, b, f, f, f, f, f, b, 0,
-										   0, 0, b, f, f, f, b, 0, 0,
-										   0, 0, 0, b, f, b, 0, 0, 0,
-										   0, 0, 0, 0, b, 0, 0, 0, 0 };
+	static const Uint8 pixels_stand[81u]
+	{
+		0u, 0u,  b,  b,  b,  b,  b, 0u, 0u,
+		0u, 0u,  b,  f,  f,  f,  b, 0u, 0u,
+		0u, 0u,  b,  f,  f,  f,  b, 0u, 0u,
+		 b,  b,  b,  f,  f,  f,  b,  b,  b,
+		 b,  f,  f,  f,  f,  f,  f,  f,  b,
+		0u,  b,  f,  f,  f,  f,  f,  b, 0u,
+		0u, 0u,  b,  f,  f,  f,  b, 0u, 0u,
+		0u, 0u, 0u,  b,  f,  b, 0u, 0u, 0u,
+		0u, 0u, 0u, 0u,  b, 0u, 0u, 0u, 0u
+	};
+
 	_arrow = new Surface(9,9);
 	_arrow->setPalette(getPalette());
 	_arrow->lock();
@@ -238,15 +242,18 @@ void Map::init()
 	}
 	_arrow->unlock();
 
-	static const Uint8 pixels_kneel[81u] { 0, 0, 0, 0, 0, 0, 0, 0, 0,
-										   0, 0, 0, 0, b, 0, 0, 0, 0,
-										   0, 0, 0, b, f, b, 0, 0, 0,
-										   0, 0, b, f, f, f, b, 0, 0,
-										   0, b, f, f, f, f, f, b, 0,
-										   b, f, f, f, f, f, f, f, b,
-										   b, b, b, f, f, f, b, b, b,
-										   0, 0, b, f, f, f, b, 0, 0,
-										   0, 0, b, b, b, b, b, 0, 0 };
+	static const Uint8 pixels_kneel[81u]
+	{
+		0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+		0u, 0u, 0u, 0u,  b, 0u, 0u, 0u, 0u,
+		0u, 0u, 0u,  b,  f,  b, 0u, 0u, 0u,
+		0u, 0u,  b,  f,  f,  f,  b, 0u, 0u,
+		0u,  b,  f,  f,  f,  f,  f,  b, 0u,
+		 b,  f,  f,  f,  f,  f,  f,  f,  b,
+		 b,  b,  b,  f,  f,  f,  b,  b,  b,
+		0u, 0u,  b,  f,  f,  f,  b, 0u, 0u,
+		0u, 0u,  b,  b,  b,  b,  b, 0u, 0u
+	};
 
 	_arrow_kneel = new Surface(9,9);
 	_arrow_kneel->setPalette(getPalette());
@@ -526,7 +533,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 				|| _projectile->getThrowItem() != nullptr
 				|| action->weapon->getRules()->isArcingShot() == true)
 			{
-				const int posBullet_z ((_projectile->getPosition().z) / 24);
+				const int posBullet_z (_projectile->getPosition().z / 24);
 				if (posBullet_z != viewLevel)
 					_camera->setViewLevel(viewLevel = posBullet_z);
 			}
@@ -743,73 +750,72 @@ void Map::drawTerrain(Surface* const surface) // private.
 								}
 							}
 						} */ // kL_end.
-					} // end draw floor
 
 // Redraw unitNorth moving NE/SW to stop current-Floor from clipping feet.
-					if (itX != 0 && itY != 0
-						&& hasFloor == true)
-					{
-						const Tile* const tileWest (_battleSave->getTile(posField + Position(-1,0,0)));
-						const BattleUnit* const unitWest (tileWest->getTileUnit());
-						if (unitWest != nullptr
-							&& unitWest->getUnitVisible() == true) // don't bother checking DebugMode.
+						if (itX != 0 && itY != 0) //&& hasFloor == true
 						{
-							switch (unitWest->getUnitStatus())
+							const Tile* const tileWest (_battleSave->getTile(posField + Position(-1,0,0)));
+							const BattleUnit* const unitWest (tileWest->getTileUnit());
+							if (unitWest != nullptr
+								&& unitWest->getUnitVisible() == true) // don't bother checking DebugMode.
 							{
-								case STATUS_WALKING:
-								case STATUS_FLYING:
+								switch (unitWest->getUnitStatus())
 								{
-									switch (unitWest->getUnitDirection())
+									case STATUS_WALKING:
+									case STATUS_FLYING:
 									{
-										case 1:
-										case 5:
+										switch (unitWest->getUnitDirection())
 										{
-											const Tile* tileNorth (_battleSave->getTile(posField + Position(0,-1,0)));
-											const BattleUnit* unitNorth (tileNorth->getTileUnit());
-											int offsetZ_y;
-											if (unitNorth == nullptr && itZ != 0)
+											case 1:
+											case 5:
 											{
-												tileNorth = _battleSave->getTile(posField + Position(0,-1,-1));
-												unitNorth = tileNorth->getTileUnit();
-												offsetZ_y = 24;
-											}
-											else
-												offsetZ_y = 0;
-
-											if (unitNorth == unitWest)
-											{
-												const Tile* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0)));
-												if (checkWest(tileWest, tileSouthWest, unitNorth) == true)
+												const Tile* tileNorth (_battleSave->getTile(posField + Position(0,-1,0)));
+												const BattleUnit* unitNorth (tileNorth->getTileUnit());
+												int offsetZ_y;
+												if (unitNorth == nullptr && itZ != 0)
 												{
-													const Tile* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0)));
-													if (checkNorth(tileNorth, tileNorthEast, unitNorth) == true)
+													tileNorth = _battleSave->getTile(posField + Position(0,-1,-1));
+													unitNorth = tileNorth->getTileUnit();
+													offsetZ_y = 24;
+												}
+												else
+													offsetZ_y = 0;
+
+												if (unitNorth == unitWest)
+												{
+													const Tile* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0)));
+													if (checkWest(tileWest, tileSouthWest, unitNorth) == true)
 													{
-														trueLoc = isTrueLoc(unitNorth, tileNorth);
-														quadrant = getQuadrant(unitNorth, tileNorth, trueLoc);
-														sprite = unitNorth->getCache(quadrant);
-														//if (sprite != nullptr)
+														const Tile* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0)));
+														if (checkNorth(tileNorth, tileNorthEast, unitNorth) == true)
 														{
-															if (unitNorth->isOut_t(OUT_HLTH_STUN) == true)
-																shade = std::min(tileShade, SHADE_UNIT);
-															else
-																shade = tileShade;
-
-															calcWalkOffset(unitNorth, &walkOffset, trueLoc);
-															sprite->blitNShade(
-																	surface,
-																	posScreen.x + walkOffset.x + 16 - _spriteWidth_2,
-																	posScreen.y + walkOffset.y -  8 + offsetZ_y,
-																	shade);
-
-															if (unitNorth->getFireUnit() != 0)
+															trueLoc = isTrueLoc(unitNorth, tileNorth);
+															quadrant = getQuadrant(unitNorth, tileNorth, trueLoc);
+															sprite = unitNorth->getCache(quadrant);
+															//if (sprite != nullptr)
 															{
-																frame = 4 + (_aniFrame / 2);
-																sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
-																//if (sprite != nullptr)
-																	sprite->blitNShade(
-																			surface,
-																			posScreen.x + walkOffset.x + 16,
-																			posScreen.y + walkOffset.y -  8);
+																if (unitNorth->isOut_t(OUT_HLTH_STUN) == true)
+																	shade = std::min(tileShade, SHADE_UNIT);
+																else
+																	shade = tileShade;
+
+																calcWalkOffset(unitNorth, &walkOffset, trueLoc);
+																sprite->blitNShade(
+																		surface,
+																		posScreen.x + walkOffset.x + 16 - _spriteWidth_2,
+																		posScreen.y + walkOffset.y -  8 + offsetZ_y,
+																		shade);
+
+																if (unitNorth->getFireUnit() != 0)
+																{
+																	frame = 4 + (_aniFrame / 2);
+																	sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
+																	//if (sprite != nullptr)
+																		sprite->blitNShade(
+																				surface,
+																				posScreen.x + walkOffset.x + 16,
+																				posScreen.y + walkOffset.y -  8);
+																}
 															}
 														}
 													}
@@ -820,7 +826,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								}
 							}
 						}
-					}
+					} // end draw floor
 
 // Draw Cursor Background
 					if (_selectorType != CT_NONE
@@ -1572,8 +1578,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 									const Position
 										originVoxel (_battleSave->getTileEngine()->getOriginVoxel(*action)),
 										targetVoxel (Position::toVoxelSpaceCentered( // TODO: conform this to ProjectileFlyBState (modifier keys) & Projectile::_targetVoxel
-																				Position(itX,itY,itZ),
-																				2 - _battleSave->getTile(action->posTarget)->getTerrainLevel())); // LoFT of floor is typically 2 voxels thick.
+																				Position(itX,itY,itZ), // LoFT of floor is typically 2 voxels thick.
+																				2 - _battleSave->getTile(action->posTarget)->getTerrainLevel()));
 									if (hasFloor == true
 										&& _battleSave->getTileEngine()->validateThrow(
 																					*action,
@@ -2007,10 +2013,6 @@ bool Map::checkWest( // private.
 						|| tile5->isUfoDoorOpen(O_NORTHWALL) == true)
 					&& (tile5->getMapData(O_OBJECT) == nullptr
 						|| (tile5->getMapData(O_OBJECT)->getBigwall() & 0x33) == 0)))); // Block/NeSw/North/East.
-//						|| (   tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_BLOCK
-//							&& tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NESW
-//							&& tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST)))));
-//							&& tile5->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NORTH // not in stock UFO.
 
 	if (ret == false) // unit might actually be too far away from wall to clip despite above conditions - now don't let the floor clip it
 	{
@@ -2042,10 +2044,9 @@ bool Map::checkWest( // private.
 								|| tileSouth->isUfoDoorOpen(O_NORTHWALL) == true)
 							&& (tileSouth->getMapData(O_OBJECT) == nullptr
 								|| (tileSouth->getMapData(O_OBJECT)->getBigwall() & 0x3) == 0))))) // Block/NeSw.
-//								|| (tileSouth->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NESW
-//									&& tileSouth->getMapData(O_OBJECT)->getBigwall() != BIGWALL_BLOCK))))))
-								// All that causes clipping when the large unit moves out eastward from along the northern side
-								// of an EW barrier but it's better than leaving a big hole in the 3rd quadrant as it moves out.
+					// All that causes clipping when the large unit moves out eastward from along the northern side
+					// of an EW barrier but it's better than leaving a big hole in the 3rd quadrant as it moves out.
+					// And anything is better than re-drawing tile-parts.
 				{
 					*halfRight = true; // but only if a wall is directly south
 				}
@@ -2093,12 +2094,10 @@ bool Map::checkNorth( // private.
 				|| tile0->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST)
 			&& (tile1 == nullptr
 				|| ((tile1->getMapData(O_WESTWALL) == nullptr
+						|| tile1->getMapData(O_WESTWALL)->getTuCostPart(MT_WALK) == 0 // <- darn those UFO-westwall-pillars.
 						|| tile1->isUfoDoorOpen(O_WESTWALL) == true)
 					&& (tile1->getMapData(O_OBJECT) == nullptr
 						|| (tile1->getMapData(O_OBJECT)->getBigwall() & 0xb) == 0)))); // Block/NeSw/West.
-//						|| (   tile1->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NESW
-//							&& tile1->getMapData(O_OBJECT)->getBigwall() != BIGWALL_BLOCK)))));
-//							&& tile1->getMapData(O_OBJECT)->getBigwall() != BIGWALL_WEST // not in stock UFO.
 
 	if (ret == false) // unit might actually be too far away from wall to clip despite above conditions - now don't let the floor clip it
 	{
