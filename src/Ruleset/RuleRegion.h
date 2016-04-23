@@ -204,10 +204,10 @@ struct convert<OpenXcom::MissionArea>
 			return false;
 		}
 
-		rhs.lonMin = node[0].as<double>() * M_PI / 180.;
-		rhs.lonMax = node[1].as<double>() * M_PI / 180.;
-		rhs.latMin = node[2].as<double>() * M_PI / 180.;
-		rhs.latMax = node[3].as<double>() * M_PI / 180.;
+		rhs.lonMin = node[0u].as<double>() * M_PI / 180.;
+		rhs.lonMax = node[1u].as<double>() * M_PI / 180.;
+		rhs.latMin = node[2u].as<double>() * M_PI / 180.;
+		rhs.latMax = node[3u].as<double>() * M_PI / 180.;
 
 		// safeties ->
 //		if (rhs.lonMin > rhs.lonMax)
@@ -215,10 +215,10 @@ struct convert<OpenXcom::MissionArea>
 //		if (rhs.latMin > rhs.latMax)
 //			std::swap(rhs.latMin, rhs.latMax);
 
-		if (node.size() > 4)
-			rhs.texture	= node[4].as<int>();
-		if (node.size() > 5)
-			rhs.site	= node[5].as<std::string>();
+		if (node.size() > 4u)
+			rhs.texture	= node[4u].as<int>();
+		if (node.size() > 5u)
+			rhs.site	= node[5u].as<std::string>();
 
 		// TODO: needs entries #7, #8; labelTop & showNameAtZoomLevel
 

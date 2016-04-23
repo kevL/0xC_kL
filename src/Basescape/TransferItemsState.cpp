@@ -74,7 +74,7 @@ TransferItemsState::TransferItemsState(
 		_baseSource(baseSource),
 		_baseTarget(baseTarget),
 
-		_sel(0),
+		_sel(0u),
 		_costTotal(0),
 
 		_qtyPersonnel(0),
@@ -82,8 +82,8 @@ TransferItemsState::TransferItemsState(
 		_qtyAlien(0),
 		_storeSize(0.),
 
-		_hasSci(0),
-		_hasEng(0),
+		_hasSci(0u),
+		_hasEng(0u),
 
 		_distance(0.),
 
@@ -299,7 +299,7 @@ void TransferItemsState::init()
 
 	if (_baseSource->getScientists() != 0)
 	{
-		_hasSci = 1;
+		_hasSci = 1u;
 		_transferQty.push_back(0);
 		_baseQty.push_back(_baseSource->getScientists());
 		_destQty.push_back(_baseTarget->getTotalScientists());
@@ -314,7 +314,7 @@ void TransferItemsState::init()
 
 	if (_baseSource->getEngineers() != 0)
 	{
-		_hasEng = 1;
+		_hasEng = 1u;
 		_transferQty.push_back(0);
 		_baseQty.push_back(_baseSource->getEngineers());
 		_destQty.push_back(_baseTarget->getTotalEngineers());
@@ -436,10 +436,10 @@ void TransferItemsState::init()
 				|| (itRule->getBattleType() == BT_NONE && itRule->getFullClip() != 0))
 			{
 				color = _colorAmmo;
-				item.insert(0, L"  ");
+				item.insert(0u, L"  ");
 				if (itRule->getBattleType() == BT_AMMO
 					&& (clip = itRule->getFullClip()) > 1
-					&& itRule->getType().substr(0,8) != "STR_HWP_") // *cuckoo** weapon clips
+					&& itRule->getType().substr(0u,8u) != "STR_HWP_") // *cuckoo** weapon clips
 				{
 					item += (L" (" + Text::intWide(clip) + L")");
 				}
@@ -471,7 +471,7 @@ void TransferItemsState::init()
 							Text::intWide(baseQty).c_str(),
 							L"0",
 							Text::intWide(destQty).c_str());
-			_lstItems->setRowColor(_baseQty.size() - 1, color);
+			_lstItems->setRowColor(_baseQty.size() - 1u, color);
 		}
 	}
 
@@ -533,7 +533,7 @@ void TransferItemsState::completeTransfer()
 	_baseSource->addCashSpent(_costTotal);
 
 	for (size_t
-			sel = 0;
+			sel = 0u;
 			sel != _transferQty.size();
 			++sel)
 	{
@@ -646,17 +646,20 @@ void TransferItemsState::lstItemsLeftArrowRelease(Action* action)
  */
 void TransferItemsState::lstItemsLeftArrowClick(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		increaseByValue(std::numeric_limits<int>::max());
-	else if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		if ((SDL_GetModState() & KMOD_CTRL) != 0)
-			increaseByValue(10);
-		else
-			increaseByValue(1);
+		case SDL_BUTTON_RIGHT:
+			increaseByValue(std::numeric_limits<int>::max());
+			break;
 
-		_timerInc->setInterval(Timer::SCROLL_SLOW);
-		_timerDec->setInterval(Timer::SCROLL_SLOW);
+		case SDL_BUTTON_LEFT:
+			if ((SDL_GetModState() & KMOD_CTRL) != 0)
+				increaseByValue(10);
+			else
+				increaseByValue(1);
+
+			_timerInc->setInterval(Timer::SCROLL_SLOW);
+			_timerDec->setInterval(Timer::SCROLL_SLOW);
 	}
 }
 
@@ -691,17 +694,20 @@ void TransferItemsState::lstItemsRightArrowRelease(Action* action)
  */
 void TransferItemsState::lstItemsRightArrowClick(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		decreaseByValue(std::numeric_limits<int>::max());
-	else if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		if ((SDL_GetModState() & KMOD_CTRL) != 0)
-			decreaseByValue(10);
-		else
-			decreaseByValue(1);
+		case SDL_BUTTON_RIGHT:
+			decreaseByValue(std::numeric_limits<int>::max());
+			break;
 
-		_timerInc->setInterval(Timer::SCROLL_SLOW);
-		_timerDec->setInterval(Timer::SCROLL_SLOW);
+		case SDL_BUTTON_LEFT:
+			if ((SDL_GetModState() & KMOD_CTRL) != 0)
+				decreaseByValue(10);
+			else
+				decreaseByValue(1);
+
+			_timerInc->setInterval(Timer::SCROLL_SLOW);
+			_timerDec->setInterval(Timer::SCROLL_SLOW);
 	}
 }
 
@@ -800,9 +806,8 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 						qtyAllowed = std::numeric_limits<double>::max();
 
 					qtyDelta = std::min(qtyDelta,
-										std::min(
-												static_cast<int>(qtyAllowed),
-												getSourceQuantity() - _transferQty[_sel]));
+										std::min(static_cast<int>(qtyAllowed),
+												 getSourceQuantity() - _transferQty[_sel]));
 					_storeSize += static_cast<double>(qtyDelta) * storesPerItem;
 					_baseQty[_sel] -= qtyDelta;
 					_destQty[_sel] += qtyDelta;
@@ -936,9 +941,9 @@ void TransferItemsState::decreaseByValue(int qtyDelta)
  */
 void TransferItemsState::update() // private.
 {
-	_lstItems->setCellText(_sel, 1, Text::intWide(_baseQty[_sel]));
-	_lstItems->setCellText(_sel, 2, Text::intWide(_transferQty[_sel]));
-	_lstItems->setCellText(_sel, 3, Text::intWide(_destQty[_sel]));
+	_lstItems->setCellText(_sel, 1u, Text::intWide(_baseQty[_sel]));
+	_lstItems->setCellText(_sel, 2u, Text::intWide(_transferQty[_sel]));
+	_lstItems->setCellText(_sel, 3u, Text::intWide(_destQty[_sel]));
 
 	Uint8 color;
 
@@ -1032,12 +1037,12 @@ double TransferItemsState::getDistance() const // private.
 {
 	const double r (51.2); // kL_note: what's this conversion factor is it right
 	double
-		x[3],y[3],z[3];
+		x[3u],y[3u],z[3u];
 
 	const Base* base (_baseSource);
 	for (size_t
-			i = 0;
-			i != 2;
+			i = 0u;
+			i != 2u;
 			++i)
 	{
 		x[i] = r *  std::cos(base->getLatitude()) * std::cos(base->getLongitude());
@@ -1047,11 +1052,11 @@ double TransferItemsState::getDistance() const // private.
 		base = _baseTarget;
 	}
 
-	x[2] = x[1] - x[0];
-	y[2] = y[1] - y[0];
-	z[2] = z[1] - z[0];
+	x[2u] = x[1u] - x[0u];
+	y[2u] = y[1u] - y[0u];
+	z[2u] = z[1u] - z[0u];
 
-	return std::sqrt((x[2] * x[2]) + (y[2] * y[2]) + (z[2] * z[2]));
+	return std::sqrt((x[2u] * x[2u]) + (y[2u] * y[2u]) + (z[2u] * z[2u]));
 }
 
 /**
@@ -1102,6 +1107,8 @@ size_t TransferItemsState::getCraftIndex(size_t sel) const // private.
 	return sel - _soldiers.size();
 }
 
+}
+
 /**
  * Handles the mouse-wheels on the arrow-buttons.
  * @param action - pointer to an Action
@@ -1136,5 +1143,3 @@ void TransferItemsState::lstItemsMousePress(Action* action)
 		}
 	}
 } */
-
-}

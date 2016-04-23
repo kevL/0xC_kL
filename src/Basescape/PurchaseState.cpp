@@ -68,7 +68,7 @@ namespace OpenXcom
 PurchaseState::PurchaseState(Base* const base)
 	:
 		_base(base),
-		_sel(0),
+		_sel(0u),
 		_costTotal(0),
 		_qtyPersonnel(0),
 		_qtyCraft(0),
@@ -211,23 +211,23 @@ PurchaseState::PurchaseState(Base* const base)
 
 
 	// Add craft-types to purchase list.
-	const RuleCraft* crftRule;
+	const RuleCraft* crfRule;
 	const std::vector<std::string>& craftList (rules->getCraftsList());
 	for (std::vector<std::string>::const_iterator
 			i = craftList.begin();
 			i != craftList.end();
 			++i)
 	{
-		crftRule = rules->getCraft(*i);
-		if (crftRule->getBuyCost() != 0
-			&& _game->getSavedGame()->isResearched(crftRule->getRequirements()) == true)
+		crfRule = rules->getCraft(*i);
+		if (crfRule->getBuyCost() != 0
+			&& _game->getSavedGame()->isResearched(crfRule->getRequirements()) == true)
 		{
 			_orderQty.push_back(0);
 			_crafts.push_back(*i);
 			_lstItems->addRow(
 						4,
 						tr(*i).c_str(),
-						Text::formatCurrency(crftRule->getBuyCost()).c_str(),
+						Text::formatCurrency(crfRule->getBuyCost()).c_str(),
 						Text::intWide(_base->getCraftCount(*i)).c_str(),
 						L"0");
 		}
@@ -329,14 +329,14 @@ PurchaseState::PurchaseState(Base* const base)
 			if ((clip = clRule->getFullClip()) > 1)
 				item += (L"s (" + Text::intWide(clip) + L")");
 
-			item.insert(0, L"  ");
+			item.insert(0u, L"  ");
 			_lstItems->addRow(
 							4,
 							item.c_str(),
 							Text::formatCurrency(clRule->getBuyCost()).c_str(),
 							Text::intWide(baseQty).c_str(),
 							L"0");
-			_lstItems->setRowColor(_orderQty.size() - 1, _colorAmmo);
+			_lstItems->setRowColor(_orderQty.size() - 1u, _colorAmmo);
 
 			for (std::vector<std::string>::const_iterator
 					j = purchaseList.begin();
@@ -422,10 +422,10 @@ PurchaseState::PurchaseState(Base* const base)
 //						&& itRule->getClipSize() != 0))
 			{
 				doColor = true;
-				item.insert(0, L"  ");
+				item.insert(0u, L"  ");
 
 				if ((clip = itRule->getFullClip()) > 1
-					&& itRule->getType().substr(0,8) != "STR_HWP_") // *cuckoo** weapon clips
+					&& itRule->getType().substr(0u,8u) != "STR_HWP_") // *cuckoo** weapon clips
 				{
 					item += (L" (" + Text::intWide(clip) + L")");
 				}
@@ -443,7 +443,7 @@ PurchaseState::PurchaseState(Base* const base)
 							Text::intWide(baseQty).c_str(),
 							L"0");
 			if (doColor == true)
-				_lstItems->setRowColor(_orderQty.size() - 1, _colorAmmo);
+				_lstItems->setRowColor(_orderQty.size() - 1u, _colorAmmo);
 		}
 	}
 
@@ -493,7 +493,7 @@ void PurchaseState::btnOkClick(Action*)
 	const Ruleset* const rules (_game->getRuleset());
 
 	for (size_t
-			sel = 0;
+			sel = 0u;
 			sel != _orderQty.size();
 			++sel)
 	{
@@ -607,17 +607,20 @@ void PurchaseState::lstItemsLeftArrowRelease(Action* action)
  */
 void PurchaseState::lstItemsLeftArrowClick(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		increaseByValue(std::numeric_limits<int>::max());
-	else if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		if ((SDL_GetModState() & KMOD_CTRL) != 0)
-			increaseByValue(10);
-		else
-			increaseByValue(1);
+		case SDL_BUTTON_RIGHT:
+			increaseByValue(std::numeric_limits<int>::max());
+			break;
 
-		_timerInc->setInterval(Timer::SCROLL_SLOW);
-		_timerDec->setInterval(Timer::SCROLL_SLOW);
+		case SDL_BUTTON_LEFT:
+			if ((SDL_GetModState() & KMOD_CTRL) != 0)
+				increaseByValue(10);
+			else
+				increaseByValue(1);
+
+			_timerInc->setInterval(Timer::SCROLL_SLOW);
+			_timerDec->setInterval(Timer::SCROLL_SLOW);
 	}
 }
 
@@ -652,17 +655,20 @@ void PurchaseState::lstItemsRightArrowRelease(Action* action)
  */
 void PurchaseState::lstItemsRightArrowClick(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		decreaseByValue(std::numeric_limits<int>::max());
-	else if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		if ((SDL_GetModState() & KMOD_CTRL) != 0)
-			decreaseByValue(10);
-		else
-			decreaseByValue(1);
+		case SDL_BUTTON_RIGHT:
+			decreaseByValue(std::numeric_limits<int>::max());
+			break;
 
-		_timerInc->setInterval(Timer::SCROLL_SLOW);
-		_timerDec->setInterval(Timer::SCROLL_SLOW);
+		case SDL_BUTTON_LEFT:
+			if ((SDL_GetModState() & KMOD_CTRL) != 0)
+				decreaseByValue(10);
+			else
+				decreaseByValue(1);
+
+			_timerInc->setInterval(Timer::SCROLL_SLOW);
+			_timerDec->setInterval(Timer::SCROLL_SLOW);
 	}
 }
 
@@ -756,25 +762,22 @@ void PurchaseState::increaseByValue(int qtyDelta)
 	}
 	else
 	{
-		qtyDelta = std::min(
-						qtyDelta,
-						(static_cast<int>(_game->getSavedGame()->getFunds()) - _costTotal) / getPrice()); // note: (int)cast renders int64_t useless.
+		qtyDelta = std::min(qtyDelta,
+						   (static_cast<int>(_game->getSavedGame()->getFunds()) - _costTotal) / getPrice()); // note: (int)cast renders int64_t useless.
 
 		switch (getPurchaseType(_sel))
 		{
 			case PST_SOLDIER:
 			case PST_SCIENTIST:
 			case PST_ENGINEER:
-				qtyDelta = std::min(
-								qtyDelta,
-								_base->getFreeQuarters() - _qtyPersonnel);
+				qtyDelta = std::min(qtyDelta,
+									_base->getFreeQuarters() - _qtyPersonnel);
 				_qtyPersonnel += qtyDelta;
 				break;
 
 			case PST_CRAFT:
-				qtyDelta = std::min(
-								qtyDelta,
-								_base->getFreeHangars() - _qtyCraft);
+				qtyDelta = std::min(qtyDelta,
+									_base->getFreeHangars() - _qtyCraft);
 				_qtyCraft += qtyDelta;
 				break;
 
@@ -856,7 +859,7 @@ void PurchaseState::update() // private.
 	_txtPurchases->setText(tr("STR_COST_OF_PURCHASES_")
 							.arg(Text::formatCurrency(_costTotal)));
 
-	_lstItems->setCellText(_sel, 3, Text::intWide(_orderQty[_sel]));
+	_lstItems->setCellText(_sel, 3u, Text::intWide(_orderQty[_sel]));
 
 	if (_orderQty[_sel] > 0)
 		_lstItems->setRowColor(_sel, _lstItems->getSecondaryColor());
@@ -919,7 +922,7 @@ PurchaseSellTransferType PurchaseState::getPurchaseType(size_t sel) const // pri
  */
 size_t PurchaseState::getItemIndex(size_t sel) const // private.
 {
-	return sel - _soldiers.size() - _crafts.size() - 2;
+	return sel - _soldiers.size() - _crafts.size() - 2u;
 }
 
 /**
@@ -929,7 +932,9 @@ size_t PurchaseState::getItemIndex(size_t sel) const // private.
  */
 size_t PurchaseState::getCraftIndex(size_t sel) const // private.
 {
-	return sel - _soldiers.size() - 2;
+	return sel - _soldiers.size() - 2u;
+}
+
 }
 
 /**
@@ -966,5 +971,3 @@ void PurchaseState::lstItemsMousePress(Action* action)
 		}
 	}
 } */
-
-}

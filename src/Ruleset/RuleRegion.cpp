@@ -37,7 +37,7 @@ RuleRegion::RuleRegion(const std::string& type)
 	:
 		_type(type),
 		_buildCost(0),
-		_regionWeight(0)
+		_regionWeight(0u)
 {}
 
 /**
@@ -63,14 +63,14 @@ void RuleRegion::load(const YAML::Node& node)
 
 	std::vector<std::vector<double>> areas (node["areas"].as<std::vector<std::vector<double>>>());
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != areas.size();
 			++i)
 	{
-		_lonMin.push_back(areas[i][0] * M_PI / 180.); // converts degrees to radians ->
-		_lonMax.push_back(areas[i][1] * M_PI / 180.);
-		_latMin.push_back(areas[i][2] * M_PI / 180.);
-		_latMax.push_back(areas[i][3] * M_PI / 180.);
+		_lonMin.push_back(areas[i][0u] * M_PI / 180.); // converts degrees to radians ->
+		_lonMax.push_back(areas[i][1u] * M_PI / 180.);
+		_latMin.push_back(areas[i][2u] * M_PI / 180.);
+		_latMax.push_back(areas[i][3u] * M_PI / 180.);
 
 		// safeties ->
 //		if (_lonMin.back() > _lonMax.back())
@@ -161,7 +161,7 @@ bool RuleRegion::insideRegion(
 		double lat) const
 {
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _lonMin.size();
 			++i)
 	{
@@ -306,6 +306,8 @@ MissionArea RuleRegion::getMissionPoint(
 	return MissionArea();
 }
 
+}
+
 /**
  * Gets the area-data for the random mission-point in the RuleRegion.
  * @return, a MissionArea from which to extract coordinates, textures, or any other pertinent information
@@ -335,5 +337,3 @@ MissionArea RuleRegion::getRandomMissionPoint(size_t zone) const
 //	assert(0 && "Invalid zone number");
 	return MissionArea();
 } */
-
-}

@@ -48,7 +48,7 @@ class PurchaseState
 {
 
 private:
-	static const Uint8 WHITE = 208;
+	static const Uint8 WHITE = 208u;
 
 	int
 		_qtyCraft,
