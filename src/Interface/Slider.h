@@ -34,7 +34,7 @@ class Text;
 
 
 /**
- * Horizontal slider control to select from a range of values.
+ * Horizontal slider-control to select from a range of values.
  */
 class Slider final
 	:
@@ -61,57 +61,57 @@ private:
 		* _txtPlus;
 	TextButton *_button;
 
-	/// Sets the slider's position.
+	/// Sets the Slider's position.
 	void setPosition(double pos);
 
 
 	public:
-		/// Creates a new slider with the specified size and position.
+		/// Creates a Slider with the specified size and position.
 		Slider(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the slider.
+		/// Cleans up the Slider.
 		~Slider();
 
-		/// Sets the x-position of the surface.
+		/// Sets the x-position of the Surface.
 		void setX(int x) override;
-		/// Sets the y-position of the surface.
+		/// Sets the y-position of the Surface.
 		void setY(int y) override;
-		/// Initializes the slider's resources.
+		/// Initializes the Slider's resources.
 		void initText(
 				Font* const big,
 				Font* const small,
 				const Language* const lang) override;
-		/// Sets the slider's high contrast color setting.
-		void setHighContrast(bool contrast = true);
-		/// Sets the slider's color.
+		/// Sets the Slider's high-contrast color setting.
+		void setHighContrast(bool contrast = true) override;
+		/// Sets the Slider's color.
 		void setColor(Uint8 color) override;
-		/// Gets the slider's color.
+		/// Gets the Slider's color.
 		Uint8 getColor() const;
-		/// Sets the slider's palette.
+		/// Sets the Slider's palette.
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
-		/// Sets the slider's range.
+		/// Sets the Slider's range.
 		void setRange(
 				int min,
 				int max);
-		/// Sets the slider's value.
+		/// Sets the Slider's value.
 		void setValue(int value);
-		/// Gets the slider's value.
+		/// Gets the Slider's value.
 		int getValue() const;
-		/// Blits the slider onto another surface.
-		void blit(Surface* surface) override;
-		/// Moves the slider.
+		/// Blits the Slider onto another Surface.
+		void blit(const Surface* const srf) override;
+		/// Moves the Slider.
 		void handle(Action* action, State* state) override;
-		/// Special handling for mouse presses.
+		/// Special handling for mouse-presses.
 		void mousePress(Action* action, State* state) override;
-		/// Special handling for mouse releases.
+		/// Special handling for mouse-releases.
 		void mouseRelease(Action* action, State* state) override;
-		/// Hooks an action handler to when the slider changes.
+		/// Hooks an action-handler to when the Slider changes.
 		void onSliderChange(ActionHandler handler);
 };
 

@@ -88,7 +88,7 @@ private:
 
 
 	public:
-		static Sound* soundPopup[3];
+		static Sound* soundPopup[3u];
 
 		/// Creates a new window with the specified size and position.
 		Window(State* state,
@@ -109,13 +109,13 @@ private:
 		/// Draws the window.
 		void draw() override;
 
-		/// Sets the border color.
+		/// Sets the border-color.
 		void setColor(Uint8 color) override;
-		/// Gets the border color.
+		/// Gets the border-color.
 		Uint8 getColor() const;
 
-		/// Sets the high contrast color setting.
-		void setHighContrast(bool contrast = true);
+		/// Sets the high-contrast color setting.
+		void setHighContrast(bool contrast = true) override;
 
 		/// Sets the background surface.
 		void setBackground(
@@ -125,9 +125,9 @@ private:
 		/// Sets the background to a solid color instead of transparent.
 		void setBackgroundFill(Uint8 color);
 
-		/// Sets the X delta.
+		/// Sets the x-delta.
 		void setDX(int dX);
-		/// Sets the Y delta.
+		/// Sets the y-delta.
 		void setDY(int dY);
 
 		/// Give this window a thin border.

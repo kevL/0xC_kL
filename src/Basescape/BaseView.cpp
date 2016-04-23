@@ -44,7 +44,7 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a base view with the specified size and position.
+ * Sets up the BaseView with the specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
  * @param x			- x-position in pixels (default 0)
@@ -69,17 +69,17 @@ BaseView::BaseView(
 		_lang(nullptr),
 		_gridX(0),
 		_gridY(0),
-		_selSize(0),
+		_selSize(0u),
 		_selector(nullptr),
 		_blink(true)
 {
 	for (size_t
-			x1 = 0;
+			x1 = 0u;
 			x1 != Base::BASE_SIZE;
 			++x1)
 	{
 		for (size_t
-				y1 = 0;
+				y1 = 0u;
 				y1 != Base::BASE_SIZE;
 				++y1)
 		{
@@ -129,12 +129,12 @@ void BaseView::setBase(Base* const base)
 	_selFacility = nullptr;
 
 	for (size_t
-			x = 0;
+			x = 0u;
 			x != Base::BASE_SIZE;
 			++x)
 	{
 		for (size_t
-				y = 0;
+				y = 0u;
 				y != Base::BASE_SIZE;
 				++y)
 		{
@@ -232,13 +232,13 @@ int BaseView::getGridY() const
 }
 
 /**
- * If enabled the base view will highlight the selected facility.
+ * If enabled this BaseView will highlight the selected facility.
  * @param facSize - X/Y dimension in pixels (0 to disable)
  */
 void BaseView::setSelectable(size_t facSize)
 {
 	_selSize = facSize;
-	if (_selSize != 0)
+	if (_selSize != 0u)
 	{
 		_selector = new Surface(
 							facSize * GRID_SIZE,
@@ -256,10 +256,10 @@ void BaseView::setSelectable(size_t facSize)
 		++rect.x;
 		++rect.y;
 //		rect.w = static_cast<Uint16>(static_cast<int>(rect.w) - 2); // Holy F*cking shoot-me-in-the-head-to-avoid-a-Wconversion-warning, batman!
-		rect.w -= 2;
-		rect.h -= 2;
+		rect.w -= 2u;
+		rect.h -= 2u;
 
-		_selector->drawRect(&rect, 0);
+		_selector->drawRect(&rect, 0u);
 		_selector->setVisible(false);
 	}
 	else
@@ -287,12 +287,12 @@ bool BaseView::isPlaceable(const RuleBaseFacility* const facRule) const
 		facSize (facRule->getSize());
 
 	for (size_t // check for overlaps
-			x = 0;
+			x = 0u;
 			x != facSize;
 			++x)
 	{
 		for (size_t
-				y = 0;
+				y = 0u;
 				y != facSize;
 				++y)
 		{
@@ -303,26 +303,26 @@ bool BaseView::isPlaceable(const RuleBaseFacility* const facRule) const
 
 	const bool allowQ (Options::allowBuildingQueue);
 	for (size_t // check for a facility to connect to
-			i = 0;
+			i = 0u;
 			i != facSize;
 			++i)
 	{
-		if ((	   gridX != 0							// check left
+		if ((	   gridX != 0u							// check left
 				&& gridY + i < Base::BASE_SIZE
-				&& _facilities[gridX - 1]
+				&& _facilities[gridX - 1u]
 							  [gridY + i] != nullptr
 				&& (allowQ == true
-					|| _facilities[gridX - 1]
+					|| _facilities[gridX - 1u]
 								  [gridY + i]
 							->buildFinished() == true))
 
 			|| (   gridX + i < Base::BASE_SIZE			// check top
-				&& gridY != 0
+				&& gridY != 0u
 				&& _facilities[gridX + i]
-							  [gridY - 1] != nullptr
+							  [gridY - 1u] != nullptr
 				&& (allowQ == true
 					|| _facilities[gridX + i]
-								  [gridY - 1]
+								  [gridY - 1u]
 							->buildFinished() == true))
 
 			|| (   gridX + facSize < Base::BASE_SIZE	// check right
@@ -363,24 +363,24 @@ bool BaseView::isQueuedBuilding(const RuleBaseFacility* const facRule) const
 		facSize (facRule->getSize());
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != facSize;
 			++i)
 	{
-		if ((	   gridX != 0							// check left
+		if ((	   gridX != 0u							// check left
 				&& gridY + i < Base::BASE_SIZE
-				&& _facilities[gridX - 1]
+				&& _facilities[gridX - 1u]
 							  [gridY + i] != nullptr
-				&& _facilities[gridX - 1]
+				&& _facilities[gridX - 1u]
 							  [gridY + i]
 						->buildFinished() == true)
 
 			|| (   gridX + i < Base::BASE_SIZE			// check top
-				&& gridY != 0
+				&& gridY != 0u
 				&& _facilities[gridX + i]
-							  [gridY - 1] != nullptr
+							  [gridY - 1u] != nullptr
 				&& _facilities[gridX + i]
-							  [gridY - 1]
+							  [gridY - 1u]
 						->buildFinished() == true)
 
 			|| (   gridX + facSize < Base::BASE_SIZE	// check right
@@ -454,21 +454,21 @@ void BaseView::reCalcQueuedBuildings()
 		facSize = fac->getRules()->getSize();
 
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != facSize;
 				++i)
 		{
-			if (x != 0)
+			if (x != 0u)
 				updateNeighborFacilityBuildTime(
 											fac,
-											_facilities[x - 1]
+											_facilities[x - 1u]
 													   [y + i]);
 
-			if (y != 0)
+			if (y != 0u)
 				updateNeighborFacilityBuildTime(
 											fac,
 											_facilities[x + i]
-													   [y - 1]);
+													   [y - 1u]);
 
 			if (x + facSize < Base::BASE_SIZE)
 				updateNeighborFacilityBuildTime(
@@ -486,7 +486,7 @@ void BaseView::reCalcQueuedBuildings()
 }
 
 /**
- * Updates the neighborFacility's build time.
+ * Updates a neighboring BaseFacility's build-time.
  * @note This is for internal use only by reCalcQueuedBuildings().
  * @param facility - pointer to a BaseFacility
  * @param neighbor - pointer to a neighboring BaseFacility
@@ -498,9 +498,9 @@ void BaseView::updateNeighborFacilityBuildTime( // private.
 	if (facility != nullptr && neighbor != nullptr)
 	{
 		const int
-			facBuild = facility->getBuildTime(),
-			borBuild = neighbor->getBuildTime(),
-			borTotal = neighbor->getRules()->getBuildTime();
+			facBuild (facility->getBuildTime()),
+			borBuild (neighbor->getBuildTime()),
+			borTotal (neighbor->getRules()->getBuildTime());
 
 		if (borBuild > borTotal
 			&& facBuild + borTotal < borBuild)
@@ -511,7 +511,7 @@ void BaseView::updateNeighborFacilityBuildTime( // private.
 }
 
 /**
- * Keeps the animation timers running.
+ * Keeps the animation Timers running.
  */
 void BaseView::think()
 {
@@ -519,13 +519,13 @@ void BaseView::think()
 }
 
 /**
- * Makes the facility selector blink.
+ * Makes the facility-selector blink.
  */
 void BaseView::blink()
 {
 	_blink = !_blink;
 
-	if (_selSize != 0)
+	if (_selSize != 0u)
 	{
 		SDL_Rect rect;
 
@@ -539,8 +539,8 @@ void BaseView::blink()
 
 			++rect.x;
 			++rect.y;
-			rect.w -= 2;
-			rect.h -= 2;
+			rect.w -= 2u;
+			rect.h -= 2u;
 			_selector->drawRect(&rect, 0);
 		}
 		else
@@ -549,7 +549,7 @@ void BaseView::blink()
 			rect.y = 0;
 			rect.w = static_cast<Uint16>(_selector->getWidth());
 			rect.h = static_cast<Uint16>(_selector->getHeight());
-			_selector->drawRect(&rect, 0);
+			_selector->drawRect(&rect, 0u);
 		}
 	}
 }
@@ -738,12 +738,12 @@ void BaseView::draw()
 		posDog_y;
 
 	for (size_t
-			y = 0;
+			y = 0u;
 			y != Base::BASE_SIZE;
 			++y)
 	{
 		for (size_t
-				x = 0;
+				x = 0u;
 				x != Base::BASE_SIZE;
 				++x)
 		{
@@ -792,15 +792,15 @@ void BaseView::draw()
 }
 
 /**
- * Blits the base view and selector.
- * @param surface - pointer to a Surface to blit onto
+ * Blits this BaseView and its selector.
+ * @param srf - pointer to a Surface to blit to
  */
-void BaseView::blit(Surface* surface)
+void BaseView::blit(const Surface* const srf)
 {
-	Surface::blit(surface);
+	Surface::blit(srf);
 
 	if (_selector != nullptr)
-		_selector->blit(surface);
+		_selector->blit(srf);
 }
 
 /**
@@ -821,7 +821,7 @@ void BaseView::mouseOver(Action* action, State* state)
 		&& _gridY < static_cast<int>(Base::BASE_SIZE))
 	{
 		_selFacility = _facilities[static_cast<size_t>(_gridX)][static_cast<size_t>(_gridY)];
-		if (_selSize != 0)
+		if (_selSize != 0u)
 		{
 			if (   static_cast<size_t>(_gridX) + _selSize <= Base::BASE_SIZE
 				&& static_cast<size_t>(_gridY) + _selSize <= Base::BASE_SIZE)
@@ -837,7 +837,7 @@ void BaseView::mouseOver(Action* action, State* state)
 	else
 	{
 		_selFacility = nullptr;
-		if (_selSize != 0)
+		if (_selSize != 0u)
 			_selector->setVisible(false);
 	}
 
@@ -852,7 +852,7 @@ void BaseView::mouseOver(Action* action, State* state)
 void BaseView::mouseOut(Action* action, State* state)
 {
 	_selFacility = nullptr;
-	if (_selSize != 0)
+	if (_selSize != 0u)
 		_selector->setVisible(false);
 
 	InteractiveSurface::mouseOut(action, state);

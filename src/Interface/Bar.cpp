@@ -28,7 +28,7 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a blank bar with the specified size and position.
+ * Sets up a blank Bar with the specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
  * @param x			- x-position in pixels (default 0)
@@ -44,9 +44,9 @@ Bar::Bar(
 			width,
 			height,
 			x,y),
-		_color(0),
-		_color2(0),
-		_borderColor(0),
+		_color(0u),
+		_color2(0u),
+		_borderColor(0u),
 		_scale(1.),
 		_maxVal(100.),
 		_value(0.),
@@ -63,7 +63,7 @@ Bar::~Bar()
 {}
 
 /**
- * Changes the color used to draw the border and contents.
+ * Sets the color used to draw the border and contents.
  * @param color - color value
  */
 void Bar::setColor(Uint8 color)
@@ -73,7 +73,7 @@ void Bar::setColor(Uint8 color)
 }
 
 /**
- * Returns the color used to draw the bar.
+ * Gets the color used to draw this Bar.
  * @return, color value
  */
 Uint8 Bar::getColor() const
@@ -82,7 +82,7 @@ Uint8 Bar::getColor() const
 }
 
 /**
- * Changes the color used to draw the second contents.
+ * Sets the color used to draw the second contents.
  * @param color - color value
  */
 void Bar::setSecondaryColor(Uint8 color)
@@ -92,7 +92,7 @@ void Bar::setSecondaryColor(Uint8 color)
 }
 
 /**
- * Returns the second color used to draw the bar.
+ * Gets the second color used to draw this Bar.
  * @return, color value
  */
 Uint8 Bar::getSecondaryColor() const
@@ -101,7 +101,7 @@ Uint8 Bar::getSecondaryColor() const
 }
 
 /**
- * Changes the scale factor used to draw the bar values.
+ * Sets the scale-factor used to draw this Bar's values.
  * @param scale - scale in pixels/unit (default 1.0)
  */
 void Bar::setScale(double scale)
@@ -111,7 +111,7 @@ void Bar::setScale(double scale)
 }
 
 /**
- * Returns the scale factor used to draw the bar values.
+ * Gets the scale-factor used to draw this Bar's values.
  * @return, scale in pixels/unit
  */
 double Bar::getScale() const
@@ -120,7 +120,7 @@ double Bar::getScale() const
 }
 
 /**
- * Changes the maximum value used to draw the outer border.
+ * Sets the maximum value used to draw the outer border.
  * @param maxVal - maximum value (default 100.)
  */
 void Bar::setMaxValue(double maxVal)
@@ -130,16 +130,16 @@ void Bar::setMaxValue(double maxVal)
 }
 
 /**
- * Returns the maximum value used to draw the outer border.
+ * Gets the maximum value used to draw the outer border.
  * @return, maximum value
- */
-/* double Bar::getMax() const
+ *
+double Bar::getMax() const
 {
 	return _maxVal;
 } */
 
 /**
- * Changes the value used to draw the inner contents.
+ * Sets the value used to draw the inner contents.
  * @param value - current value
  */
 void Bar::setValue(double value)
@@ -151,7 +151,7 @@ void Bar::setValue(double value)
 }
 
 /**
- * Returns the value used to draw the inner contents.
+ * Gets the value used to draw the inner contents.
  * @return, current value
  */
 double Bar::getValue() const
@@ -160,7 +160,7 @@ double Bar::getValue() const
 }
 
 /**
- * Changes the value used to draw the second inner contents.
+ * Sets the value used to draw the second inner contents.
  * @param value - current value
  */
 void Bar::setValue2(double value)
@@ -172,7 +172,7 @@ void Bar::setValue2(double value)
 }
 
 /**
- * Returns the value used to draw the second inner contents.
+ * Gets the value used to draw the second inner contents.
  * @return, current value
  */
 double Bar::getValue2() const
@@ -190,7 +190,7 @@ void Bar::setSecondValueOnTop(bool onTop)
 }
 
 /**
- * Offsets y-value of second bar.
+ * Offsets y-value of second Bar.
  * @note Only works if second is on top.
  * @param y - amount of y to offset by
  */
@@ -211,7 +211,7 @@ void Bar::setInvert(bool invert)
 }
 
 /**
- * Draws the bordered bar filled according to its values.
+ * Draws the bordered Bar filled according to its values.
  */
 void Bar::draw()
 {
@@ -220,28 +220,24 @@ void Bar::draw()
 	SDL_Rect rect;
 	rect.x =
 	rect.y = 0;
-	rect.w = static_cast<Uint16>(Round(_scale * _maxVal)) + 1;
+	rect.w = static_cast<Uint16>(Round(_scale * _maxVal)) + 1u;
 	rect.h = static_cast<Uint16>(getHeight());
 
 	if (_invert == true)
 		drawRect(&rect, _color);
+	else if (_borderColor != 0u)
+		drawRect(&rect, _borderColor);
 	else
-	{
-		if (_borderColor != 0)
-			drawRect(&rect, _borderColor);
-		else
-			drawRect(&rect, _color + 6); // was +4 but red is wonky.
-	}
+		drawRect(&rect, _color + 6u); // was +4 but red is wonky.
 
 	++rect.y;
 	--rect.w;
-	rect.h -= 2;
-
-	drawRect(&rect, 0);
+	rect.h -= 2u;
+	drawRect(&rect, 0u);
 
 	double
-		width = _scale * _value,
-		width2 = _scale * _value2;
+		width  (_scale * _value),
+		width2 (_scale * _value2);
 
 	if (width > 0. && width < 1.) // these ensure that miniscule amounts still show up.
 		width = 1.;
@@ -253,19 +249,19 @@ void Bar::draw()
 		if (_secondOnTop == true)
 		{
 			rect.w = static_cast<Uint16>(Round(width));
-			drawRect(&rect, _color + 4);
+			drawRect(&rect, _color + 4u);
 
 			rect.w = static_cast<Uint16>(Round(width2));
 			rect.y += static_cast<Sint16>(_offSecond_y);
-			drawRect(&rect, _color2 + 4);
+			drawRect(&rect, _color2 + 4u);
 		}
 		else
 		{
 			rect.w = static_cast<Uint16>(Round(width2));
-			drawRect(&rect, _color2 + 4);
+			drawRect(&rect, _color2 + 4u);
 
 			rect.w = static_cast<Uint16>(Round(width));
-			drawRect(&rect, _color + 4);
+			drawRect(&rect, _color + 4u);
 		}
 	}
 	else
@@ -291,7 +287,7 @@ void Bar::draw()
 }
 
 /**
- * Sets the border color for the bar.
+ * Sets the border-color for this Bar.
  * @note Will use base color+4 if none is defined here.
  * @param color - the color for the outline of the bar
  */

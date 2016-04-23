@@ -50,9 +50,9 @@ TextEdit::TextEdit(
 		_blink(true),
 		_modal(true),
 		_ascii(L'A'),
-		_caretPlace(0),
+		_caretPlace(0u),
 		_numerical(false),
-		_change(0),
+		_change(nullptr),
 		_state(state)
 {
 	_isFocused = false;
@@ -242,7 +242,7 @@ void TextEdit::setInvert(bool invert)
 /**
  * Enables/disables high-contrast color.
  * @note Mostly used for Battlescape text.
- * @param contrast - high contrast setting (default true)
+ * @param contrast - high-contrast setting (default true)
  */
 void TextEdit::setHighContrast(bool contrast)
 {
@@ -422,7 +422,6 @@ bool TextEdit::exceedsMaxWidth(wchar_t fontChar) // private.
 	{
 		width += _text->getFont()->getCharSize(*i).w;
 	}
-
 	return (width > getWidth());
 }
 
@@ -445,7 +444,7 @@ void TextEdit::mousePress(Action* action, State* state)
 			double pX (static_cast<double>(_text->getLineX(0) * scale));
 			if (mX > pX)
 			{
-				size_t caret (0);
+				size_t caret (0u);
 				for (std::wstring::const_iterator
 						i = _edit.begin();
 						i != _edit.end();
@@ -460,7 +459,7 @@ void TextEdit::mousePress(Action* action, State* state)
 				_caretPlace = caret;
 			}
 			else
-				_caretPlace = 0;
+				_caretPlace = 0u;
 		}
 	}
 
@@ -490,8 +489,8 @@ void TextEdit::keyboardPress(Action* action, State* state)
 					_ascii = L'~';
 				break;
 			case SDLK_LEFT:
-				if (_edit.length() > 0)
-					_edit.resize(_edit.length() - 1);
+				if (_edit.length() > 0u)
+					_edit.resize(_edit.length() - 1u);
 				break;
 			case SDLK_RIGHT:
 				if (exceedsMaxWidth(_ascii) == false)
@@ -503,7 +502,7 @@ void TextEdit::keyboardPress(Action* action, State* state)
 		switch (action->getDetails()->key.keysym.sym)
 		{
 			case SDLK_LEFT:
-				if (_caretPlace > 0)
+				if (_caretPlace > 0u)
 					--_caretPlace;
 				break;
 			case SDLK_RIGHT:
@@ -511,21 +510,21 @@ void TextEdit::keyboardPress(Action* action, State* state)
 					++_caretPlace;
 				break;
 			case SDLK_HOME:
-				_caretPlace = 0;
+				_caretPlace = 0u;
 				break;
 			case SDLK_END:
 				_caretPlace = _edit.length();
 				break;
 			case SDLK_BACKSPACE:
-				if (_caretPlace > 0)
+				if (_caretPlace > 0u)
 				{
-					_edit.erase(_caretPlace - 1, 1);
+					_edit.erase(_caretPlace - 1u, 1u);
 					--_caretPlace;
 				}
 				break;
 			case SDLK_DELETE:
 				if (_caretPlace < _edit.length())
-					_edit.erase(_caretPlace, 1);
+					_edit.erase(_caretPlace, 1u);
 				break;
 			case SDLK_RETURN:
 			case SDLK_KP_ENTER:
@@ -539,12 +538,12 @@ void TextEdit::keyboardPress(Action* action, State* state)
 							&& keyId >= L'0' && keyId <= L'9')
 						|| (_numerical == false
 							&& ((keyId >= L' ' && keyId <= L'~')
-								|| keyId >= 160)))
+								|| keyId >= 160u)))
 					&& exceedsMaxWidth(static_cast<wchar_t>(keyId)) == false)
 				{
 					_edit.insert(
 								_caretPlace,
-								1,
+								1u,
 								static_cast<wchar_t>(action->getDetails()->key.keysym.unicode));
 					++_caretPlace;
 				}

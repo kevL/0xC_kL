@@ -26,7 +26,7 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a battlescape button with the specified size and position.
+ * Sets up the BattlescapeButton with the specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
  * @param x			- x-position in pixels (default 0)
@@ -58,8 +58,8 @@ BattlescapeButton::~BattlescapeButton() // virtual.
 }
 
 /**
- * Changes the color for the battlescape button.
- * @param color - color value
+ * Changes the color of this BattlescapeButton.
+ * @param color - color
  */
 void BattlescapeButton::setColor(Uint8 color)
 {
@@ -67,8 +67,8 @@ void BattlescapeButton::setColor(Uint8 color)
 }
 
 /**
- * Returns the color for the battlescape button.
- * @return, color value
+ * Returns the color of this BattlescapeButton.
+ * @return, color
  */
 Uint8 BattlescapeButton::getColor() const
 {
@@ -76,8 +76,9 @@ Uint8 BattlescapeButton::getColor() const
 }
 
 /**
- * Changes the button group this battlescape button belongs to.
- * @param group - oointer to the pressed button pointer in the group; nullptr makes it a regular button
+ * Changes the button-group that this BattlescapeButton belongs to.
+ * @param group - pointer to the pressed button pointer in the group,
+ *				  nullptr makes it a regular button
  */
 void BattlescapeButton::setGroup(BattlescapeButton** group)
 {
@@ -91,8 +92,8 @@ void BattlescapeButton::setGroup(BattlescapeButton** group)
 }
 
 /**
- * Sets the button as the pressed button if it's part of a group and inverts the
- * colors when pressed.
+ * Sets this BattlescapeButton as the pressed button if it's part of a group and
+ * inverts the colors when pressed.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -107,7 +108,7 @@ void BattlescapeButton::mousePress(Action* action, State* state)
 			_inverted = true;
 		}
 	}
-	else if (_toggleMode == INVERT_CLICK // || _tftdMode)
+	else if (_toggleMode == INVERT_CLICK
 		&& _inverted == false
 		&& isButtonPressed() == true
 		&& isButtonHandled(action->getDetails()->button.button) == true)
@@ -119,7 +120,7 @@ void BattlescapeButton::mousePress(Action* action, State* state)
 }
 
 /**
- * Sets the button as the released button if it's part of a group.
+ * Sets this BattlescapeButton as the released button if it's part of a group.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -135,18 +136,14 @@ void BattlescapeButton::mouseRelease(Action* action, State* state)
 }
 
 /**
- * Invert a button explicitly either ON or OFF and keep track of the state using
- * internal variables.
+ * Inverts this BattlescapeButton explicitly either ON or OFF and keeps track of
+ * state using internal variables.
  * @param press - true to set this button as pressed
  */
 void BattlescapeButton::toggle(bool press)
 {
-	if (_toggleMode == INVERT_TOGGLE
-		|| _inverted == true)
-//		|| _tftdMode)
-	{
+	if (_toggleMode == INVERT_TOGGLE || _inverted == true)
 		_inverted = press;
-	}
 }
 
 /**
@@ -166,13 +163,12 @@ void BattlescapeButton::allowClickInversion()
 }
 
 /**
- * Initializes the alternate surface for swapping out as needed.
- * @note [Performs a color swap for TFTD style buttons and]
- * @note Performs a palette inversion for colored buttons. Use two separate
- * surfaces because it's easier to keep track of whether or not this surface is
- * inverted.
+ * Initializes the alternate Surface for swapping out as needed.
+ * @note Performs a palette-inversion for colored buttons. Uses two separate
+ * surfaces because that makes it easy to keep track of whether or not the
+ * surface is inverted.
  */
-void BattlescapeButton::initSurfaces()
+void BattlescapeButton::altSurface()
 {
 	delete _altSurface;
 
@@ -184,36 +180,34 @@ void BattlescapeButton::initSurfaces()
 
 	_altSurface->lock();
 	for (int
-			x = 0,
-				y = 0;
-			x < getWidth()
-				&& y < getHeight();
+			x = 0, y = 0;
+			x < getWidth() && y < getHeight();
 			)
 	{
-		const Uint8 pixel = getPixelColor(x,y);
-		if (pixel > 0)
+		const Uint8 pixel (getPixelColor(x,y));
+		if (pixel != 0u)
 			_altSurface->setPixelIterative(
 										&x,&y,
-										pixel + 2 * (_color + 3 - pixel));
+										pixel + 2u * (_color + 3u - pixel));
 		else
 			_altSurface->setPixelIterative(
 										&x,&y,
-										0);
+										0u);
 	}
 	_altSurface->unlock();
 }
 
 /**
- * Blits this surface or the alternate surface onto another one depending on
+ * Blits this surface or the alternate Surface onto another one depending on
  * whether the button is depressed or not.
- * @param surface - pointer to a Surface to blit onto
+ * @param srf - pointer to a Surface to blit to
  */
-void BattlescapeButton::blit(Surface* surface)
+void BattlescapeButton::blit(const Surface* const srf)
 {
 	if (_inverted == true)
-		_altSurface->blit(surface);
+		_altSurface->blit(srf);
 	else
-		Surface::blit(surface);
+		Surface::blit(srf);
 }
 
 /**

@@ -114,7 +114,7 @@ private:
 				int ncolors = 256) override;
 
 		/// Blits the ScrollBar onto another Surface.
-		void blit(Surface* surface) override;
+		void blit(const Surface* const srf) override;
 
 		/// Moves the TextList on mouse-drag.
 		void handle(Action* action, State* state) override;

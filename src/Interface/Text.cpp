@@ -58,8 +58,8 @@ Text::Text(
 		_indent(false),
 		_align(ALIGN_LEFT),
 		_valign(ALIGN_TOP),
-		_color(0),
-		_color2(0)
+		_color(0u),
+		_color2(0u)
 {}
 
 /**
@@ -96,7 +96,7 @@ std::wstring Text::formatInt( // static.
 {
 	std::wostringstream woststr;
 
-	const bool neg = (val < 0);
+	const bool neg (val < 0);
 	if (neg == true)
 		woststr << -val;
 	else
@@ -109,7 +109,7 @@ std::wstring Text::formatInt( // static.
 		const std::wstring thousands (L"'");
 
 		size_t place (ret.size() - 3u);
-		while (place > 0 && place < ret.size())
+		while (place > 0u && place < ret.size())
 		{
 			ret.insert(place, thousands);
 			place -= 3u;
@@ -117,10 +117,10 @@ std::wstring Text::formatInt( // static.
 	}
 
 	if (glyf.empty() == false)
-		ret.insert(0, glyf);
+		ret.insert(0u, glyf);
 
 	if (neg == true)
-		ret.insert(0, L"-");
+		ret.insert(0u, L"-");
 
 	return ret;
 }
@@ -207,7 +207,7 @@ void Text::setText(const std::wstring& text)
 
 	if (_font == _big // if big Font won't fit the space try small Font
 		&& (getTextWidth() > getWidth() || getTextHeight() > getHeight())
-		&& _text[_text.size() - 1] != L'.')
+		&& _text[_text.size() - 1u] != L'.')
 	{
 		setSmall();
 	}
@@ -267,8 +267,8 @@ void Text::setHighContrast(bool contrast)
 }
 
 /**
- * Gets if this Text is using high contrast color.
- * @return, true if high contrast
+ * Gets if this Text is using high-contrast color.
+ * @return, true if high-contrast
  */
 bool Text::getHighContrast() const
 {
@@ -379,7 +379,6 @@ int Text::getTextWidth(int line) const
 		}
 		return width;
 	}
-
 	return _lineWidth[line];
 }
 
@@ -403,7 +402,6 @@ int Text::getTextHeight(int line) const
 		}
 		return height;
 	}
-
 	return _lineHeight[line];
 }
 
@@ -414,7 +412,7 @@ int Text::getTextHeight(int line) const
 void Text::addTextHeight(int pad)
 {
 	if (_lineHeight.empty() == false)
-		_lineHeight[_lineHeight.size() - 1] += pad;
+		_lineHeight[_lineHeight.size() - 1u] += pad;
 }
 
 /**
@@ -442,15 +440,15 @@ void Text::processText() // private.
 			width (0),
 			word  (0);
 		size_t
-			space (0),
-			textIndentation (0);
+			space (0u),
+			textIndentation (0u);
 
 		Font* font (_font);
 
 		for (size_t // go through the text character by character
-			i = 0;
-			i <= wst->size();
-			++i)
+				i = 0u;
+				i <= wst->size();
+				++i)
 		{
 			if (i == wst->size() // end of the line
 				|| Font::isLinebreak((*wst)[i]) == true)
@@ -517,15 +515,15 @@ void Text::processText() // private.
 						width -= charWidth;
 					}
 
-					if (textIndentation != 0) // keep initial indentation of text
+					if (textIndentation != 0u) // keep initial indentation of text
 					{
-						wst->insert(indentLocation + 1, L" \xA0", textIndentation);
+						wst->insert(indentLocation + 1u, L" \xA0", textIndentation);
 						indentLocation += textIndentation;
 					}
 
 					if (_indent == true) // indent due to word wrap
 					{
-						wst->insert(indentLocation + 1, L" \xA0");
+						wst->insert(indentLocation + 1u, L" \xA0");
 						width += font->getCharSize(L' ').w + font->getCharSize(L'\xA0').w;
 					}
 
@@ -605,7 +603,7 @@ struct PaletteShift
 			int mult,
 			int mid)
 	{
-		if (src != 0)
+		if (src != 0u)
 		{
 			int inverseOffset;
 			if (mid != 0)
@@ -639,13 +637,13 @@ void Text::draw()
 		rect.y = 0;
 		rect.w = static_cast<Uint16>(getWidth());
 		rect.h = static_cast<Uint16>(getHeight());
-		this->drawRect(&rect, 5);
+		this->drawRect(&rect, 5u);
 
 		++rect.x;
 		++rect.y;
 		rect.w -= 2;
 		rect.h -= 2;
-		this->drawRect(&rect, 0);
+		this->drawRect(&rect, 0u);
 	}
 
 	int
@@ -653,9 +651,9 @@ void Text::draw()
 		x		(getLineX(line)),
 		y		(0),
 		height	(0),
-		color	(_color),
 		dir		(1),
 		mid		(0);
+	Uint8 color (_color);
 
 	const std::wstring* wst;
 	if (_wrap == true)	wst = &_wrappedText;
@@ -711,8 +709,8 @@ void Text::draw()
 		}
 		else if (*i == L'\x01') // switch to alternate color or back to original
 		{
-			if (color == _color)	color = _color2;
-			else					color = _color;
+			if (color == _color) color = _color2;
+			else				 color = _color;
 		}
 		else
 		{
@@ -725,7 +723,7 @@ void Text::draw()
 			ShaderDraw<PaletteShift>(
 								ShaderSurface(this, 0,0),
 								ShaderCrop(srfChar),
-								ShaderScalar(color),
+								ShaderScalar(static_cast<int>(color)),
 								ShaderScalar(_contrast),
 								ShaderScalar(mid));
 

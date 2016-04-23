@@ -44,7 +44,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Prime Grenade window.
+ * Initializes all the elements in the PrimeGrenade window.
  * @param action			- pointer to the BattleAction (BattlescapeGame.h)
  * @param inInventoryView	- true if called from inventory
  * @param grenade			- pointer to associated grenade
@@ -73,8 +73,8 @@ PrimeGrenadeState::PrimeGrenadeState(
 		y = 92;
 
 	for (size_t
-			i = 0;
-			i != 16;
+			i = 0u;
+			i != 16u;
 			++i)
 	{
 		_isfBtn[i] = new InteractiveSurface(
@@ -89,7 +89,7 @@ PrimeGrenadeState::PrimeGrenadeState(
 
 	setPalette(PAL_BATTLESCAPE);
 
-	const Element* const bgElem = _game->getRuleset()->getInterface("battlescape")->getElement("grenadeBackground");
+	const Element* const bgElem (_game->getRuleset()->getInterface("battlescape")->getElement("grenadeBackground"));
 
 	add(_srfBG);
 	_srfBG->drawRect(
@@ -137,8 +137,8 @@ PrimeGrenadeState::PrimeGrenadeState(
 	}
 
 	for (size_t
-			i = 0;
-			i != 16;
+			i = 0u;
+			i != 16u;
 			++i)
 	{
 		add(_isfBtn[i]);
@@ -156,16 +156,14 @@ PrimeGrenadeState::PrimeGrenadeState(
 
 		++rect.x; // inside fill
 		++rect.y;
-		rect.w -= 2;
-		rect.h -= 2;
+		rect.w -= 2u;
+		rect.h -= 2u;
 		_isfBtn[i]->drawRect(
 						&rect,
 						static_cast<Uint8>(bgElem->color2));
 
 		add(_txtTurn[i], "grenadeMenu", "battlescape");
-		std::wostringstream wost;
-		wost << i + 1;
-		_txtTurn[i]->setText(wost.str());
+		_txtTurn[i]->setText(Text::intWide(static_cast<int>(i) + 1));
 		_txtTurn[i]->setHighContrast();
 		_txtTurn[i]->setAlign(ALIGN_CENTER);
 		_txtTurn[i]->setVerticalAlign(ALIGN_MIDDLE);
@@ -227,10 +225,9 @@ void PrimeGrenadeState::btnClick(Action* action)
 		btnId = 0;
 	else
 	{
-		for (size_t // got to find out which button was pressed
-				i = 0;
-				i != 16
-					&& btnId == -1;
+		for (size_t // find out which button was pressed
+				i = 0u;
+				i != 16u && btnId == -1;
 				++i)
 		{
 			if (action->getSender() == _isfBtn[i])

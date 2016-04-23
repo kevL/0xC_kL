@@ -54,7 +54,7 @@ Slider::Slider(
 		_min(0),
 		_max(100),
 		_pressed(false),
-		_change(0),
+		_change(nullptr),
 		_offsetX(0)
 {
 	_thickness = 5;
@@ -160,8 +160,8 @@ void Slider::initText(
 }
 
 /**
- * Enables/disables high contrast color. Mostly used for Battlescape.
- * @param contrast - high contrast setting
+ * Enables/disables high-contrast color. Mostly used for Battlescape.
+ * @param contrast - high-contrast setting
  */
 void Slider::setHighContrast(bool contrast)
 {
@@ -173,7 +173,7 @@ void Slider::setHighContrast(bool contrast)
 }
 
 /**
- * Changes the color used to render the slider.
+ * Changes the color used to render this Slider.
  * @param color - color value
  */
 void Slider::setColor(Uint8 color)
@@ -186,7 +186,7 @@ void Slider::setColor(Uint8 color)
 }
 
 /**
- * Returns the color used to render the slider.
+ * Returns the color used to render this Slider.
  * @return, color value
  */
 Uint8 Slider::getColor() const
@@ -195,7 +195,7 @@ Uint8 Slider::getColor() const
 }
 
 /**
- * Replaces a certain amount of colors in the slider's palette.
+ * Replaces a certain amount of colors in this Slider's palette.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace
  * @param ncolors		- amount of colors to replace
@@ -215,45 +215,52 @@ void Slider::setPalette(
 }
 
 /**
- * Automatically updates the slider when the mouse moves.
+ * Automatically updates this Slider when the mouse moves.
  * @param action - pointer to an Action
  * @param state - state that the ActionHandlers belong to
  */
 void Slider::handle(Action* action, State* state)
 {
 	InteractiveSurface::handle(action, state);
-//	_button->handle(action, state);
-	if (_pressed == true
-		&& (action->getDetails()->type == SDL_MOUSEMOTION
-			|| action->getDetails()->type == SDL_MOUSEBUTTONDOWN))
-	{
-		const int cursorX = static_cast<int>(action->getAbsoluteMouseX());
-		const double buttonX = static_cast<double>(std::min(
-														_maxX,
-														std::max(
-																_minX,
-																cursorX + _offsetX)));
-		const double pos = (buttonX - static_cast<double>(_minX)) / static_cast<double>(_maxX - _minX);
-		const int value = _min + static_cast<int>(Round(static_cast<double>(_max - _min) * pos));
-		setValue(value);
 
-		if (_change)
-			(state->*_change)(action);
+//	_button->handle(action, state);
+
+	if (_pressed == true)
+	{
+		switch (action->getDetails()->type)
+		{
+			case SDL_MOUSEMOTION:
+			case SDL_MOUSEBUTTONDOWN:
+			{
+				const int cursorX (static_cast<int>(action->getAbsoluteMouseX()));
+				const double
+					buttonX (static_cast<double>(std::min(_maxX,
+														  std::max(_minX,
+																   cursorX + _offsetX)))),
+					pos ((buttonX - static_cast<double>(_minX)) / static_cast<double>(_maxX - _minX));
+
+				setValue(_min + static_cast<int>(Round(static_cast<double>(_max - _min) * pos)));
+
+				if (_change != nullptr)
+					(state->*_change)(action);
+			}
+		}
 	}
 }
 
 /**
- * Moves the slider to the new value position.
+ * Moves this Slider to the new value position.
  * @param value - new value
  */
 void Slider::setPosition(double pos)
 {
 	_pos = pos;
-	_button->setX(static_cast<int>(std::floor(static_cast<double>(_minX) + static_cast<double>(_maxX - _minX) * _pos)));
+	_button->setX(static_cast<int>(std::floor(
+				  static_cast<double>(_minX) + static_cast<double>(_maxX - _minX) * _pos)));
 }
 
 /**
- * Changes the range of values the slider can contain.
+ * Changes the range of values this Slider can contain.
  * @param minVal - minimum value
  * @param maxVal - maximum value
  */
@@ -268,7 +275,7 @@ void Slider::setRange(
 }
 
 /**
- * Changes the current value of the slider and positions it appropriately.
+ * Changes the current value of this Slider and positions it appropriately.
  * @param value - new value
  */
 void Slider::setValue(int value)
@@ -278,12 +285,11 @@ void Slider::setValue(int value)
 	else
 		_value = std::min(std::max(_max, value), _min);
 
-	const double pos = static_cast<double>(_value - _min) / static_cast<double>(_max - _min);
-	setPosition(pos);
+	setPosition(static_cast<double>(_value - _min) / static_cast<double>(_max - _min));
 }
 
 /**
-* Returns the current value of the slider.
+* Returns the current value of this Slider.
 * @return, value
 */
 int Slider::getValue() const
@@ -292,20 +298,20 @@ int Slider::getValue() const
 }
 
 /**
- * Blits the slider contents.
- * @param surface - pointer to a Surface to blit onto
+ * Blits this Slider's contents.
+ * @param srf - pointer to a Surface to blit to
  */
-void Slider::blit(Surface* surface)
+void Slider::blit(const Surface* const srf)
 {
-	Surface::blit(surface);
+	Surface::blit(srf);
 
 	if (_visible == true && _hidden == false)
 	{
-		_txtMinus->blit(surface);
-		_txtPlus->blit(surface);
+		_txtMinus->blit(srf);
+		_txtPlus->blit(srf);
 
-		_frame->blit(surface);
-		_button->blit(surface);
+		_frame->blit(srf);
+		_button->blit(srf);
 	}
 }
 
@@ -322,9 +328,9 @@ void Slider::mousePress(Action* action, State* state)
 	{
 		_pressed = true;
 
-		const int cursorX = static_cast<int>(action->getAbsoluteMouseX());
-		if (cursorX >= _button->getX()
-			&& cursorX < _button->getX() + _button->getWidth())
+		const int cursorX (static_cast<int>(action->getAbsoluteMouseX()));
+		if (   cursorX >= _button->getX()
+			&& cursorX <  _button->getX() + _button->getWidth())
 		{
 			_offsetX = _button->getX() - cursorX;
 		}
@@ -350,7 +356,7 @@ void Slider::mouseRelease(Action* action, State* state)
 }
 
 /**
- * Sets a function to be called every time the slider's value changes.
+ * Sets a function to be called every time this Slider's value changes.
  * @param handler - ActionHandler
  */
 void Slider::onSliderChange(ActionHandler handler)

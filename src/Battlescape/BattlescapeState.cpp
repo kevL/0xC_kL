@@ -506,11 +506,11 @@ BattlescapeState::BattlescapeState()
 		_srfTitle->drawLine( // left line shadow
 						x_left + 1, y_high + 1,
 						x_left + 1, y_low + 1,
-						14);//ORANGE_D);
+						14u);//ORANGE_D);
 		_srfTitle->drawLine( // right line shadow
 						x_right + 1, y_high + 1,
 						x_right + 1, y_low + 1,
-						14);//ORANGE_D);
+						14u);//ORANGE_D);
 	}
 	else
 		_txtOperationTitle->setVisible(false);

@@ -50,9 +50,9 @@ private:
 		CYCLE		=  2,
 		RED			=  3,
 		YELLOW		= 10;
-	static const Uint8 WHITE = 1;
+	static const Uint8 WHITE = 1u;
 
-	static const Uint32 SCROLL_INTERVAL	= 63;
+	static const Uint32 SCROLL_INTERVAL	= 63u;
 
 	bool
 		_isMouseScrolled,

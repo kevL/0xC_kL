@@ -75,7 +75,7 @@ private:
 	public:
 		/// Creates a ComboBox with the specified size and position.
 		ComboBox(
-				State* state,
+				State* const state,
 				int width,
 				int height,
 				int x = 0,
@@ -105,15 +105,15 @@ private:
 		/// Sets the color to fill the background.
 		void setBackgroundFill(Uint8 color);
 
-		/// Sets the border color.
+		/// Sets the border-color.
 		void setColor(Uint8 color) override;
-		/// Gets the border color.
+		/// Gets the border-color.
 		Uint8 getColor() const;
 
-		/// Sets the high contrast color setting.
-		void setHighContrast(bool contrast = true);
+		/// Sets the high-contrast color setting.
+		void setHighContrast(bool contrast = true) override;
 
-		/// Sets the arrow color of the TextList.
+		/// Sets the arrow-color of the TextList.
 		void setArrowColor(Uint8 color);
 
 		/// Gets the selected option in the TextList.
@@ -126,8 +126,8 @@ private:
 		/// Sets the list of options.
 		void setOptions(const std::vector<std::wstring>& options);
 
-		/// Blits the combo box onto another surface.
-		void blit(Surface* surface) override;
+		/// Blits the ComboBox onto another surface.
+		void blit(const Surface* const srf) override;
 
 		/// Thinks arrow buttons.
 		void think() override;
@@ -135,7 +135,7 @@ private:
 		/// Handle arrow buttons.
 		void handle(Action* action, State* state) override;
 
-		/// Toggles the combo box state.
+		/// Toggles the ComboBox dropdown.
 		void toggle(bool init = false);
 
 		/// Hook to an action-handler when the content changes.

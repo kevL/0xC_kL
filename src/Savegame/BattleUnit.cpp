@@ -43,7 +43,7 @@
 #include "../Battlescape/TileEngine.h"
 
 #include "../Engine/Language.h"
-#include "../Engine/Logger.h"
+//#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -794,8 +794,8 @@ Soldier* BattleUnit::getGeoscapeSoldier() const
 }
 
 /**
- * Changes this BattleUnit's position.
- * @param pos			- reference to new position
+ * Sets this BattleUnit's Position.
+ * @param pos			- reference to a position
  * @param updateLast	- true to update old position (default true)
  */
 void BattleUnit::setPosition(
@@ -1275,7 +1275,7 @@ SoldierGender BattleUnit::getGender() const
 }
 
 /**
- * Returns this BattleUnit's faction.
+ * Gets this BattleUnit's faction.
  * @return, UnitFaction enum (player, hostile or neutral)
  */
 UnitFaction BattleUnit::getFaction() const
@@ -1346,8 +1346,8 @@ bool BattleUnit::getCacheInvalid() const
 
 /**
  * Gets values used for re-coloring sprites.
- * @return, pairs of values where first is the colorgroup to replace and the
- * second is the new colorgroup with shade
+ * @return, pairs of values where first is the colorGroup to replace and the
+ *			second is the new colorGroup with shade
  */
 const std::vector<std::pair<Uint8, Uint8>>& BattleUnit::getRecolor() const
 {
@@ -1399,7 +1399,7 @@ void BattleUnit::aim(bool aim)
 }
 
 /**
- * Returns the soldier's current time units.
+ * Gets this BattleUnit's current TU.
  * @return, current time units
  */
 int BattleUnit::getTimeUnits() const
@@ -1408,7 +1408,7 @@ int BattleUnit::getTimeUnits() const
 }
 
 /**
- * Returns the soldier's current energy.
+ * Gets this BattleUnit's current energy.
  * @return, current stamina
  */
 int BattleUnit::getEnergy() const
@@ -1417,7 +1417,7 @@ int BattleUnit::getEnergy() const
 }
 
 /**
- * Returns the soldier's current health.
+ * Gets this BattleUnit's current health.
  * @return, current health
  */
 int BattleUnit::getHealth() const
@@ -1426,7 +1426,7 @@ int BattleUnit::getHealth() const
 }
 
 /**
- * Returns the soldier's current morale.
+ * Gets this BattleUnit's current morale.
  * @return, current morale
  */
 int BattleUnit::getMorale() const
@@ -1832,7 +1832,7 @@ void BattleUnit::keepCollapsing()
 }
 
 /**
- * Returns the phase of the collapsing sequence.
+ * Gets the phase of the collapsing sequence.
  * @return, phase
  */
 int BattleUnit::getCollapsingPhase() const
@@ -1889,7 +1889,7 @@ void BattleUnit::setAimingPhase(int phase)
 }
 
 /**
- * Returns whether this BattleUnit is out of combat - eg, dead or unconscious.
+ * Checks whether this BattleUnit is out of combat - eg, dead or unconscious.
  * @note A unit that is 'out' cannot perform any actions and cannot be selected
  * but it's still a valid unit.
  * @param test - what to check for (default OUT_ALL) (BattleUnit.h)
@@ -2049,7 +2049,7 @@ int BattleUnit::getActionTu(
 }
 
 /**
- * Spends time units if it can. Returns false if it can't.
+ * Spends time units if it can, returns false if it can't.
  * @param tu - the TU to check & spend
  * @return, true if this unit could spend the time units
  */
@@ -2064,7 +2064,7 @@ bool BattleUnit::spendTimeUnits(int tu)
 }
 
 /**
- * Spends energy if it can. Returns false if it can't.
+ * Spends energy if it can, returns false if it can't.
  * @param energy - the stamina to check & expend
  * @return, true if this unit could expend the stamina
  */
@@ -2661,7 +2661,7 @@ void BattleUnit::setAIState(BattleAIState* const aiState)
 }
 
 /**
- * Returns the current AI state.
+ * Gets the current AI-state.
  * @return, pointer to this BattleUnit's AI state
  */
 BattleAIState* BattleUnit::getAIState() const

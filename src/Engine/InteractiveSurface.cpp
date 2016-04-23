@@ -66,10 +66,10 @@ InteractiveSurface::~InteractiveSurface() // virtual
  */
 bool InteractiveSurface::isButtonPressed(Uint8 btn) // virtual.
 {
-	if (btn != 0)
+	if (btn != 0u)
 		return (_buttonsPressed & SDL_BUTTON(btn)) != 0;
 
-	return (_buttonsPressed != 0);
+	return (_buttonsPressed != 0u);
 }
 
 /**
@@ -78,11 +78,11 @@ bool InteractiveSurface::isButtonPressed(Uint8 btn) // virtual.
  */
 bool InteractiveSurface::isButtonHandled(Uint8 btn) // virtual
 {
-	bool handled = (_click.find(0) != _click.end()
-				|| _press.find(0) != _press.end()
-				|| _release.find(0) != _release.end());
+	bool handled = (_click.find(0u) != _click.end()
+				|| _press.find(0u) != _press.end()
+				|| _release.find(0u) != _release.end());
 
-	if (handled == false && btn != 0)
+	if (handled == false && btn != 0u)
 		handled = (_click.find(btn) != _click.end()
 				|| _press.find(btn) != _press.end()
 				|| _release.find(btn) != _release.end());
@@ -170,7 +170,7 @@ void InteractiveSurface::handle( // virtual
 				{
 					_buttonsPressed = SDL_GetMouseState(nullptr, nullptr);
 					for (Uint8
-							i = 1;
+							i = 1u;
 							i <= NUM_BUTTONS;
 							++i)
 					{
@@ -195,7 +195,7 @@ void InteractiveSurface::handle( // virtual
 						&& action->getDetails()->type == SDL_MOUSEMOTION)
 					{
 						for (Uint8
-								i = 1;
+								i = 1u;
 								i <= NUM_BUTTONS;
 								++i)
 						{
@@ -275,7 +275,7 @@ void InteractiveSurface::unpress(State* state) // virtual
 {
 	if (isButtonPressed() == true)
 	{
-		_buttonsPressed = 0;
+		_buttonsPressed = 0u;
 
 		SDL_Event event;
 		event.type = SDL_MOUSEBUTTONUP;
@@ -286,81 +286,81 @@ void InteractiveSurface::unpress(State* state) // virtual
 }
 
 /**
- * Called every time there's a mouse press over this Surface.
- * @note Allows this Surface to have custom functionality for this action and can
- * be called externally to simulate the action.
+ * Called every time there's a mouse-press over this Surface.
+ * @note Allows this Surface to have custom functionality for this action and
+ * can be called externally to simulate the action.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
 void InteractiveSurface::mousePress(Action* action, State* state) // virtual
 {
-	std::map<Uint8, ActionHandler>::const_iterator allHandler = _press.find(0);
+	std::map<Uint8, ActionHandler>::const_iterator allHandler (_press.find(0u));
 	if (allHandler != _press.end())
 	{
-		ActionHandler handler = allHandler->second;
+		ActionHandler handler (allHandler->second);
 		(state->*handler)(action);
 	}
 
-	std::map<Uint8, ActionHandler>::const_iterator oneHandler = _press.find(action->getDetails()->button.button);
+	std::map<Uint8, ActionHandler>::const_iterator oneHandler (_press.find(action->getDetails()->button.button));
 	if (oneHandler != _press.end())
 	{
-		ActionHandler handler = oneHandler->second;
+		ActionHandler handler (oneHandler->second);
 		(state->*handler)(action);
 	}
 }
 
 /**
- * Called every time there's a mouse release over this Surface.
- * @note Allows this Surface to have custom functionality for this action and can
- * be called externally to simulate the action.
+ * Called every time there's a mouse-release over this Surface.
+ * @note Allows this Surface to have custom functionality for this action and
+ * can be called externally to simulate the action.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
 void InteractiveSurface::mouseRelease(Action* action, State* state) // virtual
 {
-	std::map<Uint8, ActionHandler>::const_iterator allHandler = _release.find(0);
+	std::map<Uint8, ActionHandler>::const_iterator allHandler (_release.find(0u));
 	if (allHandler != _release.end())
 	{
-		ActionHandler handler = allHandler->second;
+		ActionHandler handler (allHandler->second);
 		(state->*handler)(action);
 	}
 
-	std::map<Uint8, ActionHandler>::const_iterator oneHandler = _release.find(action->getDetails()->button.button);
+	std::map<Uint8, ActionHandler>::const_iterator oneHandler (_release.find(action->getDetails()->button.button));
 	if (oneHandler != _release.end())
 	{
-		ActionHandler handler = oneHandler->second;
+		ActionHandler handler (oneHandler->second);
 		(state->*handler)(action);
 	}
 }
 
 /**
  * Called every time there's a mouse click on this Surface.
- * @note Allows this Surface to have custom functionality for this action and can
- * be called externally to simulate the action.
+ * @note Allows this Surface to have custom functionality for this action and
+ * can be called externally to simulate the action.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
 void InteractiveSurface::mouseClick(Action* action, State* state) // virtual
 {
-	std::map<Uint8, ActionHandler>::const_iterator allHandler = _click.find(0);
+	std::map<Uint8, ActionHandler>::const_iterator allHandler (_click.find(0u));
 	if (allHandler != _click.end())
 	{
-		ActionHandler handler = allHandler->second;
+		ActionHandler handler (allHandler->second);
 		(state->*handler)(action);
 	}
 
-	std::map<Uint8, ActionHandler>::const_iterator oneHandler = _click.find(action->getDetails()->button.button);
+	std::map<Uint8, ActionHandler>::const_iterator oneHandler (_click.find(action->getDetails()->button.button));
 	if (oneHandler != _click.end())
 	{
-		ActionHandler handler = oneHandler->second;
+		ActionHandler handler (oneHandler->second);
 		(state->*handler)(action);
 	}
 }
 
 /**
  * Called every time the mouse moves into this Surface.
- * @note Allows this Surface to have custom functionality for this action and can
- * be called externally to simulate the action.
+ * @note Allows this Surface to have custom functionality for this action and
+ * can be called externally to simulate the action.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -372,8 +372,8 @@ void InteractiveSurface::mouseIn(Action* action, State* state) // virtual
 
 /**
  * Called every time the mouse moves over this Surface.
- * @note Allows this Surface to have custom functionality for this action and can
- * be called externally to simulate the action.
+ * @note Allows this Surface to have custom functionality for this action and
+ * can be called externally to simulate the action.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -385,8 +385,8 @@ void InteractiveSurface::mouseOver(Action* action, State* state) // virtual
 
 /**
  * Called every time the mouse moves out of this Surface.
- * @note Allows this Surface to have custom functionality for this action and can
- * be called externally to simulate the action.
+ * @note Allows this Surface to have custom functionality for this action and
+ * can be called externally to simulate the action.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -398,60 +398,60 @@ void InteractiveSurface::mouseOut(Action* action, State* state) // virtual
 
 /**
  * Called every time there's a keyboard press when this Surface is focused.
- * @note Allows this Surface to have custom functionality for this action and can
- * be called externally to simulate the action.
+ * @note Allows this Surface to have custom functionality for this action and
+ * can be called externally to simulate the action.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
 void InteractiveSurface::keyboardPress(Action* action, State* state) // virtual
 {
-	std::map<SDLKey, ActionHandler>::const_iterator allHandler = _keyPress.find(SDLK_ANY);
+	std::map<SDLKey, ActionHandler>::const_iterator allHandler (_keyPress.find(SDLK_ANY));
 	if (allHandler != _keyPress.end())
 	{
-		ActionHandler handler = allHandler->second;
+		ActionHandler handler (allHandler->second);
 		(state->*handler)(action);
 	}
 
 	// Check if Ctrl, Alt and Shift are pressed
-	std::map<SDLKey, ActionHandler>::const_iterator oneHandler = _keyPress.find(action->getDetails()->key.keysym.sym);
+	std::map<SDLKey, ActionHandler>::const_iterator oneHandler (_keyPress.find(action->getDetails()->key.keysym.sym));
 	if (oneHandler != _keyPress.end()
 		&& (action->getDetails()->key.keysym.mod & (KMOD_CTRL | KMOD_ALT | KMOD_SHIFT)) == 0)
 	{
-		ActionHandler handler = oneHandler->second;
+		ActionHandler handler (oneHandler->second);
 		(state->*handler)(action);
 	}
 }
 
 /**
  * Called every time there's a keyboard release over this Surface.
- * @note Allows this Surface to have custom functionality for this action and can
- * be called externally to simulate the action.
+ * @note Allows this Surface to have custom functionality for this action and
+ * can be called externally to simulate the action.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
 void InteractiveSurface::keyboardRelease(Action* action, State* state) // virtual
 {
-	std::map<SDLKey, ActionHandler>::const_iterator allHandler = _keyRelease.find(SDLK_ANY);
+	std::map<SDLKey, ActionHandler>::const_iterator allHandler (_keyRelease.find(SDLK_ANY));
 	if (allHandler != _keyRelease.end())
 	{
-		ActionHandler handler = allHandler->second;
+		ActionHandler handler (allHandler->second);
 		(state->*handler)(action);
 	}
 
 	// Check if Ctrl, Alt and Shift are pressed
-	std::map<SDLKey, ActionHandler>::const_iterator oneHandler = _keyRelease.find(action->getDetails()->key.keysym.sym);
+	std::map<SDLKey, ActionHandler>::const_iterator oneHandler (_keyRelease.find(action->getDetails()->key.keysym.sym));
 	if (oneHandler != _keyRelease.end()
 		&& (action->getDetails()->key.keysym.mod & (KMOD_CTRL | KMOD_ALT | KMOD_SHIFT)) == 0)
 	{
-		ActionHandler handler = oneHandler->second;
+		ActionHandler handler (oneHandler->second);
 		(state->*handler)(action);
 	}
 }
 
 /**
- * Sets a function to be called every time this Surface is mouse clicked.
+ * Sets a function to be called every time this Surface is mouse-clicked.
  * @param handler	- ActionHandler
- * @param btn		- mouse button to check for; set to 0 for any button (default SDL_BUTTON_LEFT=1)
+ * @param btn		- mouse button to check for, set to 0 for any button (default SDL_BUTTON_LEFT=1)
  */
 void InteractiveSurface::onMouseClick(
 		ActionHandler handler,
@@ -464,9 +464,9 @@ void InteractiveSurface::onMouseClick(
 }
 
 /**
- * Sets a function to be called every time this Surface is mouse pressed.
+ * Sets a function to be called every time this Surface is mouse-pressed.
  * @param handler	- ActionHandler
- * @param btn		- mouse button to check for; set to 0 for any button (default 0)
+ * @param btn		- mouse button to check for, set to 0 for any button (default 0)
  */
 void InteractiveSurface::onMousePress(
 		ActionHandler handler,
@@ -479,9 +479,9 @@ void InteractiveSurface::onMousePress(
 }
 
 /**
- * Sets a function to be called every time this Surface is mouse released.
+ * Sets a function to be called every time this Surface is mouse-released.
  * @param handler	- ActionHandler
- * @param btn		- mouse button to check for; set to 0 for any button (default 0)
+ * @param btn		- mouse button to check for, set to 0 for any button (default 0)
  */
 void InteractiveSurface::onMouseRelease(
 		ActionHandler handler,
@@ -524,10 +524,10 @@ void InteractiveSurface::onMouseOut(ActionHandler handler)
  * Sets a function to be called every time a key is pressed.
  * @note The Surface must be focused.
  * @param handler	- ActionHandler
- * @param keyPress	- keyboard key to check for (note: ignores modifiers)
- *					  Set to 0 for any key (default SDLK_ANY)
+ * @param keyPress	- keyboard key to check for (note: ignores modifiers),
+ *					  set to 0 for any key (default SDLK_ANY)
  */
-void InteractiveSurface::onKeyboardPress( // Note: this fires somehow on mouse button also ....
+void InteractiveSurface::onKeyboardPress( // Note: this fires somehow on mouse-button also ....
 		ActionHandler handler,
 		SDLKey keyPress)
 {
@@ -541,8 +541,8 @@ void InteractiveSurface::onKeyboardPress( // Note: this fires somehow on mouse b
  * Sets a function to be called every time a key is released.
  * @note The Surface must be focused.
  * @param handler		- ActionHandler
- * @param keyRelease	- keyboard key to check for (note: ignores modifiers)
- *						  Set to 0 for any key (default SDLK_ANY)
+ * @param keyRelease	- keyboard key to check for (note: ignores modifiers),
+ *						  set to 0 for any key (default SDLK_ANY)
  */
 void InteractiveSurface::onKeyboardRelease(
 		ActionHandler handler,

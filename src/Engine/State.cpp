@@ -206,7 +206,7 @@ void State::add(
 	if (tacBtn != nullptr)
 	{
 		tacBtn->copy(parent);
-		tacBtn->initSurfaces();
+		tacBtn->altSurface();
 	}
 
 	if (_game->getLanguage() != nullptr

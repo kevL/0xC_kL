@@ -75,8 +75,8 @@ private:
 				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
-		/// Blits the warning message.
-		void blit(Surface* surface) override;
+		/// Blits the BattlescapeMessage.
+		void blit(const Surface* const srf) override;
 
 		/// Special handling for setting the height of the BattlescapeMessage.
 		void setHeight(int height) override;

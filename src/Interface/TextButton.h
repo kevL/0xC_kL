@@ -65,7 +65,7 @@ private:
 
 
 protected:
-	bool isButtonHandled(Uint8 btn = 0) override;
+	bool isButtonHandled(Uint8 btn = 0u) override;
 
 
 	public:
@@ -101,8 +101,8 @@ protected:
 				Font* const small,
 				const Language* const lang) override;
 
-		/// Sets the TextButton's high contrast color setting.
-		void setHighContrast(bool contrast = true);
+		/// Sets the TextButton's high-contrast color setting.
+		void setHighContrast(bool contrast = true) override;
 
 		/// Sets the TextButton's Text.
 		void setText(const std::wstring& text);

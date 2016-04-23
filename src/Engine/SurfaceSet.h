@@ -33,9 +33,9 @@ class Surface;
 
 
 /**
- * Container of a set of Surfaces.
- * @note Used to manage single images that contain series of frames inside like
- * animated sprites, making them easier to access without constant cropping.
+ * Container for a set of Surfaces.
+ * @note Used to manage single images that contain a series of frames inside
+ * like animated sprites, making them easier to access without constant cropping.
  */
 class SurfaceSet
 {

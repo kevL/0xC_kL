@@ -39,8 +39,8 @@ class Timer;
 
 
 /**
- * Interactive view of a base.
- * @note Takes a Base and displays all its facilities and status.
+ * Interactive view of a player's Base.
+ * @note Takes a Base and displays all its facilities and stuff.
  */
 class BaseView
 	:
@@ -74,23 +74,23 @@ private:
 	SurfaceSet* _texture;
 	Timer* _timer;
 
-	/// Updates the neighborFacility's build time. This is for internal use only (reCalcQueuedBuildings()).
+	/// Updates a neighboring BaseFacility's build-time.
 	void updateNeighborFacilityBuildTime(
 			const BaseFacility* const facility,
 			BaseFacility* const neighbor);
 
 
 	public:
-		/// Creates a new base view at the specified position and size.
+		/// Creates a BaseView at the specified position and size.
 		BaseView(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the base view.
+		/// Cleans up the BaseView.
 		~BaseView();
 
-		/// Initializes the base view's various resources.
+		/// Initializes the BaseView's various resources.
 		void initText(
 				Font* const big,
 				Font* const small,
@@ -99,9 +99,9 @@ private:
 		/// Sets the base to display.
 		void setBase(Base* const base);
 
-		/// Sets the texture for this base view.
+		/// Sets the sprites for this BaseView.
 		void setTexture(SurfaceSet* const texture);
-		/// Sets the dog for this base view.
+		/// Sets the dog for this BaseView.
 		void setDog(Surface* const dog);
 
 		/// Gets the currently selected facility.
@@ -114,7 +114,7 @@ private:
 		/// Gets the y-position of the currently selected square.
 		int getGridY() const;
 
-		/// Sets whether the base view is selectable.
+		/// Sets whether the BaseView is selectable.
 		void setSelectable(size_t facSize);
 
 		/// Checks if a facility can be placed.
@@ -128,10 +128,10 @@ private:
 		void think() override;
 		/// Blinks the selector.
 		void blink();
-		/// Draws the base view.
+		/// Draws the BaseView.
 		void draw() override;
-		/// Blits the base view onto another surface.
-		void blit(Surface* surface) override;
+		/// Blits the BaseView onto another Surface.
+		void blit(const Surface* const srf) override;
 
 		/// Special handling for mouse hovers.
 		void mouseOver(Action* action, State* state) override;

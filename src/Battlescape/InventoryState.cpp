@@ -1079,9 +1079,9 @@ void InventoryState::inClick(Action*)
 
 						++rect.x;
 						++rect.y;
-						rect.w -= 2;
-						rect.h -= 2;
-						_srfAmmo->drawRect(&rect, 15);
+						rect.w -= 2u;
+						rect.h -= 2u;
+						_srfAmmo->drawRect(&rect, 15u);
 
 						aItem->getRules()->drawHandSprite(
 													_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
@@ -1161,9 +1161,9 @@ void InventoryState::inMouseOver(Action*)
 
 							++rect.x;
 							++rect.y;
-							rect.w -= 2;
-							rect.h -= 2;
-							_srfAmmo->drawRect(&rect, 15);
+							rect.w -= 2u;
+							rect.h -= 2u;
+							_srfAmmo->drawRect(&rect, 15u);
 
 							aItem->getRules()->drawHandSprite(
 														_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
@@ -1369,9 +1369,9 @@ void InventoryState::_updateTemplateButtons(bool isVisible)
 			_game->getResourcePack()->getSurface("InvPaste")->blit(_btnApplyTemplate);
 		}
 
-		_btnCreateTemplate->initSurfaces();
-		_btnApplyTemplate->initSurfaces();
-		_btnClearInventory->initSurfaces();
+		_btnCreateTemplate->altSurface();
+		_btnApplyTemplate->altSurface();
+		_btnClearInventory->altSurface();
 	}
 	else
 	{

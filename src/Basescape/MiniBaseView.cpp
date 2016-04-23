@@ -59,8 +59,8 @@ MiniBaseView::MiniBaseView(
 			x,y),
 		_mode(mode),
 		_texture(nullptr),
-		_baseId(0),
-		_hoverBase(0),
+		_baseId(0u),
+		_hoverBase(0u),
 		_blink(false)
 {
 	if (_mode == MBV_STANDARD)
@@ -133,7 +133,7 @@ void MiniBaseView::draw()
 	Uint8 color;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != Base::MAX_BASES;
 			++i)
 	{
@@ -190,30 +190,30 @@ void MiniBaseView::draw()
 				rect.y = static_cast<Sint16>(2 + (*j)->getY() * 2);
 				rect.w =
 				rect.h = static_cast<Uint16>((*j)->getRules()->getSize() * 2);
-				drawRect(&rect, color + 3);
+				drawRect(&rect, color + 3u);
 
 				++rect.x;
 				++rect.y;
 				--rect.w;
 				--rect.h;
-				drawRect(&rect, color + 5);
+				drawRect(&rect, color + 5u);
 
 				--rect.x;
 				--rect.y;
-				drawRect(&rect, color + 2);
+				drawRect(&rect, color + 2u);
 
 				++rect.x;
 				++rect.y;
 				--rect.w;
 				--rect.h;
-				drawRect(&rect, color + 3);
+				drawRect(&rect, color + 3u);
 
 				--rect.x;
 				--rect.y;
 				setPixelColor(
 							rect.x,
 							rect.y,
-							color + 1);
+							color + 1u);
 			}
 			unlock();
 
@@ -273,7 +273,7 @@ void MiniBaseView::draw()
 									y,
 									color);
 
-						if (craftRule->getWeapons() > 0
+						if (craftRule->getWeapons() != 0
 							&& craftRule->getWeapons() == (*j)->getQtyWeapons())
 						{
 							setPixelColor(
@@ -282,13 +282,13 @@ void MiniBaseView::draw()
 										BLUE);
 						}
 
-						if (craftRule->getSoldiers() > 0)
+						if (craftRule->getSoldiers() != 0)
 							setPixelColor(
 										x + 8,
 										y,
 										BROWN);
 
-						if (craftRule->getVehicles() > 0)
+						if (craftRule->getVehicles() != 0)
 							setPixelColor(
 										x + 6,
 										y,
@@ -312,8 +312,8 @@ void MiniBaseView::mouseOver(Action* action, State* state)
 	_hoverBase = static_cast<size_t>(std::floor(
 				 action->getRelativeMouseX()) / (static_cast<double>(MINI_SIZE + 2) * action->getScaleX()));
 
-	if (_hoverBase > Base::MAX_BASES - 1)
-		_hoverBase = Base::MAX_BASES - 1;
+	if (_hoverBase > Base::MAX_BASES - 1u)
+		_hoverBase = Base::MAX_BASES - 1u;
 
 	InteractiveSurface::mouseOver(action, state);
 }
@@ -352,7 +352,7 @@ void MiniBaseView::blink()
 	Uint8 color;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _baseList->size();
 			++i)
 	{
@@ -368,7 +368,7 @@ void MiniBaseView::blink()
 			if (_blink == true)
 				color = RED_L;
 			else
-				color = 0;
+				color = 0u;
 
 			setPixelColor(
 						x + 2,
@@ -408,7 +408,7 @@ void MiniBaseView::blink()
 						}
 					}
 					else
-						color = 0;
+						color = 0u;
 
 					setPixelColor(
 								x + 14,
@@ -417,13 +417,13 @@ void MiniBaseView::blink()
 				}
 
 				craftRule = (*j)->getRules();
-				if (craftRule->getWeapons() > 0 // craft needs Weapons mounted.
+				if (craftRule->getWeapons() != 0 // craft needs Weapons mounted.
 					&& craftRule->getWeapons() != (*j)->getQtyWeapons())
 				{
 					if (_blink == true)
 						color = BLUE;
 					else
-						color = 0;
+						color = 0u;
 
 					setPixelColor(
 								x + 10,

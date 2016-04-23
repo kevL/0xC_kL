@@ -108,9 +108,9 @@ protected:
 		/// Draws the Surface's graphic.
 		virtual void draw();
 		/// Blits the Surface onto another one.
-		virtual void blit(Surface* surface);
+		virtual void blit(const Surface* const srf);
 		/// Copies a portion of another Surface into this one.
-		void copy(Surface* surface);
+		void copy(const Surface* const srf);
 
 		/// Initializes the Surface's various text-resources.
 		virtual void initText(
@@ -121,7 +121,7 @@ protected:
 
 		/// Draws a filled rectangle on the Surface.
 		void drawRect(
-				SDL_Rect* rect,
+				SDL_Rect* const rect,
 				Uint8 color);
 		/// Draws a filled rectangle on the Surface.
 		void drawRect(
@@ -144,11 +144,11 @@ protected:
 				Sint16 r,
 				Uint8 color);
 		/// Draws a filled polygon on the Surface.
-		void drawPolygon(
+/*		void drawPolygon(
 				const Sint16* const x,
 				const Sint16* const y,
 				size_t n,
-				Uint8 color);
+				Uint8 color); */
 		/// Draws a textured polygon on the Surface.
 		void drawTexturedPolygon(
 				const Sint16* const x,
@@ -158,11 +158,11 @@ protected:
 				int dx,
 				int dy);
 		/// Draws a string on the Surface.
-		void drawString(
+/*		void drawString(
 				Sint16 x,
 				Sint16 y,
 				const char* const st,
-				Uint8 color);
+				Uint8 color); */
 
 		/// Sets the Surface's palette.
 		virtual void setPalette(

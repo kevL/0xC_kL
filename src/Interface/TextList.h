@@ -208,7 +208,7 @@ private:
 		Uint8 getSecondaryColor() const;
 
 		/// Sets the TextList's high-contrast setting.
-		void setHighContrast(bool contrast = true);
+		void setHighContrast(bool contrast = true) override;
 		/// Sets the TextList's wordwrap setting.
 		void setWordWrap(bool wrap = true);
 
@@ -281,7 +281,7 @@ private:
 		/// Draws the text onto the TextList.
 		void draw() override;
 		/// Blits the TextList onto another Surface.
-		void blit(Surface* surface) override;
+		void blit(const Surface* const srf) override;
 		/// Thinks the arrow-buttons.
 		void think() override;
 

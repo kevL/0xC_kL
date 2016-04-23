@@ -68,17 +68,17 @@ class GeoscapeState final
 private:
 	static const int FAST_GEO_INTERVAL = 20;
 	static const size_t
-		UFO_HOTBLOBS = 16,
-		BLOBSIZE	 = 13;
+		UFO_HOTBLOBS = 16u,
+		BLOBSIZE	 = 13u;
 
 	static const Uint8
-		BROWN		=  53,
-		GREEN		= 112,
-		RED			= 133,
-		SLATE		= 164,
-		SLATE_D		= 170,
-		GREEN_SEA	= 242,
-		PURPLE_D	= 249;
+		BROWN		=  53u,
+		GREEN		= 112u,
+		RED			= 133u,
+		SLATE		= 164u,
+		SLATE_D		= 170u,
+		GREEN_SEA	= 242u,
+		PURPLE_D	= 249u;
 
 	bool
 		_dfCenterCurrentCoords,
@@ -191,7 +191,7 @@ private:
 
 
 	public:
-		static const int _ufoBlobs[8][13][13]; // used also by DogfightState
+		static const int _ufoBlobs[8u][13u][13u]; // used also by DogfightState
 
 		/// Creates the Geoscape state.
 		GeoscapeState();

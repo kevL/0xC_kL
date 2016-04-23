@@ -136,7 +136,7 @@
 namespace OpenXcom
 {
 
-size_t kL_curBase = 0;
+size_t kL_curBase = 0u;
 bool
 	kL_geoMusicPlaying		= false,
 	kL_geoMusicReturnState	= false;
@@ -148,7 +148,7 @@ const double
 
 
 // UFO blobs graphics ...
-const int GeoscapeState::_ufoBlobs[8][BLOBSIZE][BLOBSIZE] =
+const int GeoscapeState::_ufoBlobs[8u][BLOBSIZE][BLOBSIZE] =
 {
 	{
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 0 - STR_VERY_SMALL
@@ -351,7 +351,7 @@ GeoscapeState::GeoscapeState()
 		_dfCenterCurrentCoords(false),
 		_dfCCC_lon(0.),
 		_dfCCC_lat(0.),
-		_dfMinimized(0),
+		_dfMinimized(0u),
 		_day(-1),
 		_month(-1),
 		_year(-1),
@@ -440,7 +440,7 @@ GeoscapeState::GeoscapeState()
 		offset_x,
 		offset_y;
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != UFO_HOTBLOBS;
 			++i)
 	{
@@ -512,7 +512,7 @@ GeoscapeState::GeoscapeState()
 	add(_ufoDetected);
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != UFO_HOTBLOBS;
 			++i)
 	{
@@ -548,7 +548,7 @@ GeoscapeState::GeoscapeState()
 					0,0,
 					static_cast<Sint16>(_sideBlack->getWidth()),
 					static_cast<Sint16>(_sideBlack->getHeight()),
-					15); // black
+					15u); // black
 
 /*	_btnIntercept->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
 //	_btnIntercept->setColor(Palette::blockOffset(15)+6);
@@ -1178,7 +1178,7 @@ void GeoscapeState::think()
 
 	if (Options::debug == true
 		&& _gameSave->getDebugArgDone() == true // ie. do not write info until Globe actually sets it.
-		&& _stDebug.compare(0,5, "DEBUG") == 0)
+		&& _stDebug.compare(0u,5u, "DEBUG") == 0)
 	{
 		const std::string stDebug (_stDebug + _gameSave->getDebugArg());
 		_txtDebug->setText(Language::cpToWstr(stDebug));
@@ -1196,7 +1196,7 @@ void GeoscapeState::think()
 	else
 	{
 		if (_dogfights.empty() == false
-			|| _dfMinimized != 0)
+			|| _dfMinimized != 0u)
 		{
 			if (_dogfights.size() == _dfMinimized) // if all dogfights are minimized rotate the globe, etc.
 			{
@@ -1221,7 +1221,7 @@ void GeoscapeState::think()
 void GeoscapeState::drawUfoBlobs()
 {
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != UFO_HOTBLOBS;
 			++i)
 	{
@@ -1231,7 +1231,7 @@ void GeoscapeState::drawUfoBlobs()
 	}
 
 	size_t
-		j (0),
+		j (0u),
 		ufoSize;
 	Uint8
 		color,
@@ -1270,17 +1270,17 @@ void GeoscapeState::drawUfoBlobs()
 			}
 
 			for (size_t
-					y = 0;
+					y = 0u;
 					y != BLOBSIZE;
 					++y)
 			{
 				for (size_t
-						x = 0;
+						x = 0u;
 						x != BLOBSIZE;
 						++x)
 				{
 					color = static_cast<Uint8>(_ufoBlobs[ufoSize][y][x]);
-					if (color != 0)
+					if (color != 0u)
 						_isfUfoBlobs[j]->setPixelColor(
 													static_cast<int>(x),
 													static_cast<int>(y),
@@ -1289,7 +1289,7 @@ void GeoscapeState::drawUfoBlobs()
 						_isfUfoBlobs[j]->setPixelColor(
 													static_cast<int>(x),
 													static_cast<int>(y),
-													0);
+													0u);
 				}
 			}
 			++j;
@@ -1307,7 +1307,7 @@ void GeoscapeState::updateTimeDisplay()
 
 	if (_gameSave->getMonthsPassed() != -1) // update Player's current score
 	{
-		const size_t id (_gameSave->getFundsList().size() - 1); // use fundsList to determine which entries in other vectors to use for the current month.
+		const size_t id (_gameSave->getFundsList().size() - 1u); // use fundsList to determine which entries in other vectors to use for the current month.
 
 		int score (_gameSave->getResearchScores().at(id));
 		for (std::vector<Region*>::const_iterator
@@ -1346,7 +1346,7 @@ void GeoscapeState::updateTimeDisplay()
 	else
 	{
 		const int sec (_gameSave->getTime()->getSecond());
-		_txtSec->setVisible(sec % 15 > 9);
+		_txtSec->setVisible(sec % 15u > 9);
 //		_txtSec->setVisible(_gameSave->getTime()->getSecond() % 15 == 0);
 	}
 
@@ -1434,8 +1434,8 @@ void GeoscapeState::timeAdvance()
 
 		timeLapse *= 5; // true one-second intervals. based on Volutar's smoothGlobe.
 
-		timeLap_t = ((_timeCache + timeLapse) * 4) / Options::geoClockSpeed;
-		_timeCache = ((_timeCache + timeLapse) * 4) % Options::geoClockSpeed;
+		timeLap_t  = ((_timeCache + timeLapse) << 2) / Options::geoClockSpeed;
+		_timeCache = ((_timeCache + timeLapse) << 2) % Options::geoClockSpeed;
 
 		if (timeLap_t != 0)
 		{
@@ -1713,7 +1713,7 @@ void GeoscapeState::time5Seconds()
 						switch (ufo->getUfoStatus())
 						{
 							case Ufo::FLYING:
-								if (_dogfights.size() + _dogfightsToStart.size() < 4) // Not more than 4 interceptions at a time. _note: I thought orig could do up to 6.
+								if (_dogfights.size() + _dogfightsToStart.size() < 4u) // Not more than 4 interceptions at a time. _note: I thought orig could do up to 6.
 								{
 									if ((*j)->inDogfight() == false
 										&& AreSame((*j)->getDistance(ufo), 0.)) // craft ran into a UFO
@@ -3451,7 +3451,7 @@ void GeoscapeState::btnBasesClick(Action*)
 
 	if (_gameSave->getBases()->empty() == false)
 	{
-		if (kL_curBase == 0
+		if (kL_curBase == 0u
 			|| kL_curBase >= _gameSave->getBases()->size())
 		{
 			_game->pushState(new BasescapeState(
@@ -3767,7 +3767,7 @@ bool GeoscapeState::getDfCCC() const
  */
 size_t GeoscapeState::getMinimizedDfCount() const
 {
-	size_t ret (0);
+	size_t ret (0u);
 	for (std::list<DogfightState*>::const_iterator
 			i = _dogfights.begin();
 			i != _dogfights.end();
@@ -3795,7 +3795,7 @@ void GeoscapeState::thinkDogfights()
 	}
 
 
-	_dfMinimized = 0;
+	_dfMinimized = 0u;
 	bool resetPorts = false;
 
 	pDf = _dogfights.begin();
@@ -3851,7 +3851,7 @@ void GeoscapeState::thinkDogfights()
  */
 void GeoscapeState::startDogfight() // private.
 {
-	if (_globe->getZoom() < _globe->getZoomLevels() - 1)
+	if (_globe->getZoom() < _globe->getZoomLevels() - 1u)
 	{
 		if (_dfZoomInTimer->isRunning() == false)
 		{
@@ -3885,7 +3885,7 @@ void GeoscapeState::startDogfight() // private.
  */
 void GeoscapeState::resetInterceptPorts()
 {
-	const size_t dfQty = _dogfights.size();
+	const size_t dfQty (_dogfights.size());
 	for (std::list<DogfightState*>::const_iterator
 			i = _dogfights.begin();
 			i != _dogfights.end();
@@ -3895,7 +3895,7 @@ void GeoscapeState::resetInterceptPorts()
 	}
 
 	const size_t dfOpenTotal (dfQty - getMinimizedDfCount());
-	size_t dfOpen (0);
+	size_t dfOpen (0u);
 	for (std::list<DogfightState*>::const_iterator
 			i = _dogfights.begin();
 			i != _dogfights.end();
@@ -3914,7 +3914,7 @@ void GeoscapeState::resetInterceptPorts()
  */
 size_t GeoscapeState::getOpenDfSlot() const
 {
-	size_t slot (1);
+	size_t slot (1u);
 	for (std::list<DogfightState*>::const_iterator
 			i = _dogfights.begin();
 			i != _dogfights.end();
@@ -4086,7 +4086,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 		const std::vector<std::string> missions (directive->getMissionTypes(month));
 		size_t
 			missionsTotal (missions.size()),
-			testMission (0);
+			testMission (0u);
 
 		for (
 				;
@@ -4100,7 +4100,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 		std::vector<std::pair<std::string, size_t>> validAreas;
 
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != missionsTotal;
 				++i)
 		{
@@ -4118,7 +4118,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 					j != regions.end();
 					)
 			{
-				bool processThisRegion = true;
+				bool processThisRegion (true);
 				for (std::vector<AlienMission*>::const_iterator
 						k = _gameSave->getAlienMissions().begin();
 						k != _gameSave->getAlienMissions().end();
@@ -4137,7 +4137,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 					const RuleRegion* const regionRule (_rules->getRegion(*j));
 					if (regionRule->getMissionZones().size() > targetZone)
 					{
-						size_t testZone (0);
+						size_t testZone (0u);
 						const std::vector<MissionArea> areas (regionRule->getMissionZones()[targetZone].areas);
 						for (std::vector<MissionArea>::const_iterator
 								k = areas.begin();
@@ -4165,8 +4165,8 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 
 			if (validAreas.empty() == true)
 			{
-				if (missionsTotal > 1 && ++testMission == missionsTotal)
-					testMission = 0;
+				if (missionsTotal > 1u && ++testMission == missionsTotal)
+					testMission = 0u;
 
 				missionType = missions[testMission];
 			}
@@ -4256,7 +4256,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 				id (RNG::pick(typesTotal));
 
 			for (size_t
-					i = 0;
+					i = 0u;
 					i != typesTotal;
 					++i)
 			{
@@ -4289,8 +4289,8 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 					break;
 				}
 
-				if (typesTotal > 1 && ++id == typesTotal)
-					id = 0;
+				if (typesTotal > 1u && ++id == typesTotal)
+					id = 0u;
 			}
 		}
 	}
@@ -4347,9 +4347,9 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 	}
 
 
-	AlienMission* const mission = new AlienMission(
+	AlienMission* const mission (new AlienMission(
 												*missionRule,
-												*_gameSave);
+												*_gameSave));
 	mission->setRace(raceType);
 	mission->setId(_gameSave->getCanonicalId("ALIEN_MISSIONS"));
 	mission->setRegion(targetRegion, *_rules);
@@ -4546,26 +4546,30 @@ void GeoscapeState::btnPauseClick(Action*) // private.
 void GeoscapeState::btnUfoBlobPress(Action* action) // private.
 {
 	for (size_t // find out which button was pressed
-			i = 0;
+			i = 0u;
 			i != UFO_HOTBLOBS;
 			++i)
 	{
 		if (_isfUfoBlobs[i] == action->getSender())
 		{
-			if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-				_globe->center(
-							_hostileUfos[i]->getLongitude(),
-							_hostileUfos[i]->getLatitude());
-			else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-				_game->pushState(new UfoDetectedState(
-												_hostileUfos[i],
-												this,
-												false,
-												_hostileUfos[i]->getHyperDetected()));
+			switch (action->getDetails()->button.button)
+			{
+				case SDL_BUTTON_LEFT:
+					_globe->center(
+								_hostileUfos[i]->getLongitude(),
+								_hostileUfos[i]->getLatitude());
+					break;
+
+				case SDL_BUTTON_RIGHT:
+					_game->pushState(new UfoDetectedState(
+													_hostileUfos[i],
+													this,
+													false,
+													_hostileUfos[i]->getHyperDetected()));
+			}
 			break;
 		}
 	}
-
 	action->getDetails()->type = SDL_NOEVENT; // consume the event
 }
 
@@ -4594,42 +4598,38 @@ void GeoscapeState::resize(
 	{
 		case SCALE_SCREEN_DIV_3:
 			divisor = 3;
-		break;
+			break;
 
 		case SCALE_SCREEN_DIV_2:
 			divisor = 2;
-		break;
+			break;
 
 		case SCALE_SCREEN:
-		break;
+			break;
 
 		default:
 			dX =
 			dY = 0;
-		return;
+			return;
 	}
 
 // G++ linker wants it this way ...
 #ifdef _DEBUG
 	const int
-		screenWidth = Screen::ORIGINAL_WIDTH,
+		screenWidth  = Screen::ORIGINAL_WIDTH,
 		screenHeight = Screen::ORIGINAL_HEIGHT;
 
-	Options::baseXResolution = std::max(
-									screenWidth,
-									Options::displayWidth / divisor);
-	Options::baseYResolution = std::max(
-									screenHeight,
-									static_cast<int>(static_cast<double>(Options::displayHeight)
-										/ pixelRatioY / static_cast<double>(divisor)));
+	Options::baseXResolution = std::max(screenWidth,
+										Options::displayWidth / divisor);
+	Options::baseYResolution = std::max(screenHeight,
+										static_cast<int>(static_cast<double>(Options::displayHeight)
+											/ pixelRatioY / static_cast<double>(divisor)));
 #else
-	Options::baseXResolution = std::max(
-									Screen::ORIGINAL_WIDTH,
-									Options::displayWidth / divisor);
-	Options::baseYResolution = std::max(
-									Screen::ORIGINAL_HEIGHT,
-									static_cast<int>(static_cast<double>(Options::displayHeight)
-										/ pixelRatioY / static_cast<double>(divisor)));
+	Options::baseXResolution = std::max(Screen::ORIGINAL_WIDTH,
+										Options::displayWidth / divisor);
+	Options::baseYResolution = std::max(Screen::ORIGINAL_HEIGHT,
+										static_cast<int>(static_cast<double>(Options::displayHeight)
+											/ pixelRatioY / static_cast<double>(divisor)));
 #endif
 
 	dX = Options::baseXResolution - dX;

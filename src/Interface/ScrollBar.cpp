@@ -186,16 +186,16 @@ void ScrollBar::setPalette(
 
 /**
  * Blits this ScrollBar.
- * @param surface - pointer to a Surface to blit to
+ * @param srf - pointer to a Surface to blit to
  */
-void ScrollBar::blit(Surface* surface)
+void ScrollBar::blit(const Surface* const srf)
 {
-	Surface::blit(surface);
+	Surface::blit(srf);
 
 	if (_visible == true && _hidden == false)
 	{
-		_track->blit(surface);
-		_btn->blit(surface);
+		_track->blit(srf);
+		_btn->blit(srf);
 
 		invalidate();
 	}

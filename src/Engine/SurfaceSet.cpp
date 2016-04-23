@@ -71,7 +71,7 @@ SurfaceSet::~SurfaceSet()
 }
 
 /**
- * Loads the contents of an X-Com set of PCK/TAB image files into this SurfaceSet.
+ * Loads the contents of an X-Com set of PCK/TAB image-files into this SurfaceSet.
  * The PCK file contains an RLE compressed image while the TAB file contains
  * the offsets to each frame in the image.
  * @param pck - reference to filename of the PCK image
@@ -83,40 +83,39 @@ void SurfaceSet::loadPck(
 		const std::string& tab)
 {
 	//Log(LOG_INFO) << "SurfaceSet::loadPck() " << pck;
-	size_t qtyFrames;
+	size_t q;
 
-	// Load TAB and get image offsets
-	if (tab.empty() == false)
+	if (tab.empty() == false) // Load TAB and get image-offsets
 	{
-		std::ifstream offsetFile (tab.c_str(), std::ios::in | std::ios::binary);
-		if (offsetFile.fail() == true)
+		std::ifstream ifstr (tab.c_str(), std::ios::in | std::ios::binary);
+		if (ifstr.fail() == true)
 		{
 			throw Exception(tab + " not found");
 		}
 
 		std::streampos
-			start (offsetFile.tellg()),
+			start (ifstr.tellg()),
 			stop;
 
 		int offset;
-		offsetFile.read(
-					reinterpret_cast<char*>(&offset),
-					sizeof(offset));
-		offsetFile.seekg(0, std::ios::end);
+		ifstr.read(
+				reinterpret_cast<char*>(&offset),
+				sizeof(offset));
+		ifstr.seekg(0, std::ios::end);
 
-		stop = offsetFile.tellg();
+		stop = ifstr.tellg();
 		const size_t tabSize (static_cast<size_t>(stop - start));
 
 		if (offset != 0)
-			qtyFrames = tabSize >> 1u; // 16-bit offsets
+			q = tabSize >> 1u; // 16-bit offsets
 		else
-			qtyFrames = tabSize >> 2u; // 32-bit offsets
+			q = tabSize >> 2u; // 32-bit offsets
 
-		offsetFile.close();
+		ifstr.close();
 
 		for (size_t
 				i = 0u;
-				i != qtyFrames;
+				i != q;
 				++i)
 		{
 			_frames[i] = new Surface(_width, _height);
@@ -124,34 +123,33 @@ void SurfaceSet::loadPck(
 	}
 	else
 	{
-		qtyFrames = 1u;
+		q = 1u;
 		_frames[0u] = new Surface(_width, _height);
 	}
 
-	// Load PCK and put pixels in surfaces
-	std::ifstream imgFile (pck.c_str(), std::ios::in | std::ios::binary);
-	if (imgFile.fail() == true)
+	std::ifstream ifstr (pck.c_str(), std::ios::in | std::ios::binary); // Load PCK and put pixels in surfaces
+	if (ifstr.fail() == true)
 	{
 		throw Exception(pck + " not found");
 	}
 
-	Uint8 value;
+	Uint8 val;
 	int
 		x,y;
 
 	for (size_t
 			i = 0u;
-			i != qtyFrames;
+			i != q;
 			++i)
 	{
 		x =
 		y = 0;
 
 		_frames[i]->lock();
-		imgFile.read(reinterpret_cast<char*>(&value), 1);
+		ifstr.read(reinterpret_cast<char*>(&val), 1);
 		for (Uint8
 				j = 0u;
-				j != value;
+				j != val;
 				++j)
 		{
 			for (int
@@ -159,92 +157,91 @@ void SurfaceSet::loadPck(
 					k != _width;
 					++k)
 			{
-				_frames[i]->setPixelIterative(&x,&y, 0);
+				_frames[i]->setPixelIterative(&x,&y, 0u);
 			}
 		}
 
-		while (imgFile.read((char*)&value, 1)
-			&& value != 255u)
+		while (ifstr.read(reinterpret_cast<char*>(&val), 1)
+			&& val != 255u)
 		{
-			if (value == 254u)
+			if (val == 254u)
 			{
-				imgFile.read((char*)&value, 1);
+				ifstr.read(reinterpret_cast<char*>(&val), 1);
 				for (Uint8
 						j = 0u;
-						j != value;
+						j != val;
 						++j)
 				{
 					_frames[i]->setPixelIterative(&x,&y, 0u);
 				}
 			}
 			else
-				_frames[i]->setPixelIterative(&x,&y, value);
+				_frames[i]->setPixelIterative(&x,&y, val);
 		}
 		_frames[i]->unlock();
 	}
 
-	imgFile.close();
+	ifstr.close();
 }
 
 /**
- * Loads the contents of an X-Com DAT image file into this SurfaceSet.
+ * Loads the contents of an X-Com DAT image-file into this SurfaceSet.
  * Unlike the PCK, a DAT file is an uncompressed image with no
  * offsets so these have to be figured out manually, usually
  * by splitting the image into equal portions.
- * @param file - reference the filename of the DAT image
+ * @param file - reference to the filename of the DAT image
  * @sa http://www.ufopaedia.org/index.php?title=Image_Formats#SCR_.26_DAT
  */
 void SurfaceSet::loadDat(const std::string& file)
 {
 	// Load file and put pixels in surface
-	std::ifstream imgFile (file.c_str(), std::ios::in | std::ios::binary);
-	if (imgFile.fail() == true)
+	std::ifstream ifstr (file.c_str(), std::ios::in | std::ios::binary);
+	if (ifstr.fail() == true)
 	{
 		throw Exception(file + " not found");
 	}
 
-	imgFile.seekg(0, std::ios::end);
-	std::streamoff datSize (imgFile.tellg());
-	imgFile.seekg(0, std::ios::beg);
+	ifstr.seekg(0, std::ios::end);
+	std::streamoff datSize (ifstr.tellg());
+	ifstr.seekg(0, std::ios::beg);
 
-	size_t qtyFrames (static_cast<size_t>(static_cast<int>(datSize) / (_width * _height)));
-	//Log(LOG_INFO) << "loadDat total = " << qtyFrames;
+	size_t q (static_cast<size_t>(static_cast<int>(datSize) / (_width * _height)));
+	//Log(LOG_INFO) << "loadDat total = " << q;
 
 	for (size_t
 			i = 0u;
-			i != qtyFrames;
+			i != q;
 			++i)
 	{
 		_frames[i] = new Surface(_width, _height);
 	}
 
-	Uint8 value;
+	Uint8 val;
 	int
 		x (0),
 		y (0);
 	size_t i (0u);
 
 	_frames[i]->lock();
-	while (imgFile.read(reinterpret_cast<char*>(&value), 1))
+	while (ifstr.read(reinterpret_cast<char*>(&val), 1))
 	{
-		_frames[i]->setPixelIterative(&x,&y, value);
+		_frames[i]->setPixelIterative(&x,&y, val);
 
 		if (y >= _height)
 		{
 			_frames[i]->unlock();
 
-			++i;
 			x =
 			y = 0;
 
-			if (i >= qtyFrames)
-				break;
-			else
+			if (++i < q)
 				_frames[i]->lock();
+			else
+				break;
 		}
 	}
 
-	imgFile.close();
+	ifstr.close();
 }
 
 /**

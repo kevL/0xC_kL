@@ -42,8 +42,8 @@ Frame::Frame(
 			width,
 			height,
 			x,y),
-		_color(0),
-		_bg(0),
+		_color(0u),
+		_bg(0u),
 		_thickness(5),
 		_contrast(1)
 {}
@@ -105,8 +105,8 @@ Uint8 Frame::getSecondaryColor() const
 }
 
 /**
- * Enables/disables high contrast color. Mostly used for Battlescape UI.
- * @param contrast - high contrast setting (default true)
+ * Enables/disables high-contrast color. Mostly used for Battlescape UI.
+ * @param contrast - high-contrast setting (default true)
  */
 void Frame::setHighContrast(bool contrast)
 {
@@ -133,14 +133,14 @@ void Frame::draw()
 {
 	Surface::draw();
 
-	SDL_Rect square;
-	square.x =
-	square.y = 0;
-	square.w = static_cast<Uint16>(getWidth());
-	square.h = static_cast<Uint16>(getHeight());
+	SDL_Rect rect;
+	rect.x =
+	rect.y = 0;
+	rect.w = static_cast<Uint16>(getWidth());
+	rect.h = static_cast<Uint16>(getHeight());
 
 	Uint8
-		darkest = Palette::blockOffset(_color / 16) + 15,
+		darkest = Palette::blockOffset(_color >> 4u) + 15u,
 		color = _color;
 
 	for (int
@@ -148,36 +148,30 @@ void Frame::draw()
 			i != _thickness;
 			++i)
 	{
-		if ((_thickness > 1
-				&& i == _thickness - 1)
-			|| color / 16 != _color / 16)
+		if ((_thickness > 1 && i == _thickness - 1)
+			|| (color >> 4u) != (_color >> 4u))
 		{
 			color = darkest;
 		}
 		else
-			color = _color + static_cast<Uint8>(std::abs(i - _thickness / 2) * _contrast);
+			color = _color + static_cast<Uint8>(std::abs(i - (_thickness >> 1u)) * _contrast);
 
-		drawRect(
-				&square,
-				color);
+		drawRect(&rect, color);
 
-		++square.x;
-		++square.y;
+		++rect.x;
+		++rect.y;
 
-		if (square.w > 1)
-			square.w -= 2;
+		if (rect.w > 1u)
+			rect.w -= 2u;
 		else
-			square.w = 1;
+			rect.w = 1u;
 
-		if (square.h > 1)
-			square.h -= 2;
+		if (rect.h > 1u)
+			rect.h -= 2u;
 		else
-			square.h = 1;
+			rect.h = 1u;
 	}
-
-	drawRect(
-			&square,
-			_bg);
+	drawRect(&rect, _bg);
 }
 
 }

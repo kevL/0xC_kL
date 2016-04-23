@@ -44,7 +44,7 @@ namespace OpenXcom
  * @param y			- y-position in pixels (default 0)
  */
 ComboBox::ComboBox(
-		State* state,
+		State* const state,
 		int width,
 		int height,
 		int x,
@@ -54,11 +54,12 @@ ComboBox::ComboBox(
 			width,
 			height,
 			x,y),
-		_change(0),
-		_sel(0),
+		_change(nullptr),
+		_sel(0u),
 		_state(state),
-		_lang(0),
-		_toggled(false)
+		_lang(nullptr),
+		_toggled(false),
+		_color(0u)
 {
 	_button = new TextButton(width,height, x,y);
 	_arrow	= new Surface(
@@ -213,46 +214,46 @@ void ComboBox::drawArrow() // private.
 {
 	_arrow->clear();
 
-	SDL_Rect square;
-
 	Uint8 color;
-	if (_color == 255)
-		color = 1;
+	if (_color == 255u) // TODO: Not sure that is necessary.
+		color = 1u;
 	else
-		color = _color + 1;
+		color = _color + 1u;
 
-	square.x = 1; // draw arrow triangle 1
-	square.y = 2;
-	square.w = 9;
-	square.h = 1;
+	SDL_Rect rect;
 
-	for (
-			;
-			square.w > 1;
-			square.w -= 2)
-	{
-		_arrow->drawRect(&square, color + 2);
-		++square.x;
-		++square.y;
-	}
-	_arrow->drawRect(&square, color + 2);
-
-	square.x = // draw arrow triangle 2
-	square.y = 2;
-	square.w = 7;
-	square.h = 1;
+	rect.x = 1; // draw arrow triangle 1
+	rect.y = 2;
+	rect.w = 9u;
+	rect.h = 1u;
 
 	for (
 			;
-			square.w > 1;
-			square.w -= 2)
+			rect.w > 1u;
+			rect.w -= 2u)
 	{
-		_arrow->drawRect(&square, color);
-		++square.x;
-		++square.y;
+		_arrow->drawRect(&rect, color + 2u);
+		++rect.x;
+		++rect.y;
+	}
+	_arrow->drawRect(&rect, color + 2u);
+
+	rect.x = // draw arrow triangle 2
+	rect.y = 2;
+	rect.w = 7u;
+	rect.h = 1u;
+
+	for (
+			;
+			rect.w > 1u;
+			rect.w -= 2u)
+	{
+		_arrow->drawRect(&rect, color);
+		++rect.x;
+		++rect.y;
 	}
 
-	_arrow->drawRect(&square, color);
+	_arrow->drawRect(&rect, color);
 }
 
 /**
@@ -294,7 +295,7 @@ void ComboBox::setSelected(size_t sel)
 	_sel = sel;
 
 	if (_sel < _list->getTextsQuantity())
-		_button->setText(_list->getCellText(_sel, 0));
+		_button->setText(_list->getCellText(_sel, 0u));
 }
 
 /**
@@ -304,10 +305,10 @@ void ComboBox::setSelected(size_t sel)
  */
 void ComboBox::setDropdown(int rows) // private.
 {
-	int
-//		rows = std::min(rows, ROWS_DEFAULT),
-		h = _button->getFont()->getHeight() + _button->getFont()->getSpacing(),
-		dY = (Options::baseYResolution - 200) / 2;
+//	rows = std::min(rows, ROWS_DEFAULT);
+	const int
+		h (_button->getFont()->getHeight() + _button->getFont()->getSpacing()),
+		dY ((Options::baseYResolution - 200) / 2);
 
 	while (_window->getY() + rows * h + MARGIN_VERTICAL * 2 > 200 + dY)
 		--rows;
@@ -318,7 +319,7 @@ void ComboBox::setDropdown(int rows) // private.
 
 /**
  * Changes the list of available options to choose from.
- * @param options - reference to a vector of string IDs
+ * @param options - reference to a vector of string-IDs
  */
 void ComboBox::setOptions(const std::vector<std::string>& options)
 {
@@ -359,19 +360,20 @@ void ComboBox::setOptions(const std::vector<std::wstring>& options)
 
 /**
  * Blits this ComboBox's components.
- * @param surface - pointer to a Surface to blit onto
+ * @param srf - pointer to a Surface to blit to
  */
-void ComboBox::blit(Surface* surface)
+void ComboBox::blit(const Surface* const srf)
 {
-	Surface::blit(surface);
+	Surface::blit(srf);
+
 	_list->invalidate();
 
 	if (_visible == true && _hidden == false)
 	{
-		_button->blit(surface);
-		_arrow->blit(surface);
-		_window->blit(surface);
-		_list->blit(surface);
+		_button->blit(srf);
+		_arrow->blit(srf);
+		_window->blit(srf);
+		_list->blit(srf);
 	}
 }
 

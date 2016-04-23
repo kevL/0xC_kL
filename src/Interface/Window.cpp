@@ -36,7 +36,7 @@ namespace OpenXcom
 // like 0.076f.
 const float Window::POPUP_SPEED = 0.135f; // larger is faster step.
 
-Sound* Window::soundPopup[3] = {0,0,0}; // static.
+Sound* Window::soundPopup[3u] = {0,0,0}; // static.
 
 
 /**
@@ -68,14 +68,14 @@ Window::Window(
 		_bg(nullptr),
 		_dX(-x),
 		_dY(-y),
-		_color(0),
+		_color(0u),
 		_popStep(0.f),
 		_contrast(false),
 		_fullScreen(false),
 		_thinBorder(false),
 		_bgX(0),
 		_bgY(0),
-		_colorFill(0),
+		_colorFill(0u),
 		_popProgress(POP_START)
 {
 	_timer = new Timer(16u);
@@ -216,10 +216,10 @@ void Window::draw()
 		color,
 		gradient;
 
-	if (_contrast == true)	gradient = 2;
-	else					gradient = 1;
+	if (_contrast == true)	gradient = 2u;
+	else					gradient = 1u;
 
-	color = _color + (gradient * 3);
+	color = _color + (gradient * 3u);
 
 	if (_thinBorder == true)
 	{
@@ -229,10 +229,10 @@ void Window::draw()
 				i != 5;
 				++i)
 		{
-			if (rect.w > 0 && rect.h > 0)
+			if (rect.w > 0u && rect.h > 0u)
 				drawRect(&rect, color);
 
-			if (i % 2 == 0)
+			if ((i & 1) == 0)
 			{
 				++rect.x;
 				++rect.y;
@@ -243,18 +243,18 @@ void Window::draw()
 			switch (i)
 			{
 				case 0:
-					color = _color + (gradient * 5);
-					setPixelColor(rect.w, 0, color);
+					color = _color + (gradient * 5u);
+					setPixelColor(static_cast<int>(rect.w), 0, color);
 					break;
 				case 1:
-					color = _color + (gradient * 2);
+					color = _color + (gradient * 2u);
 					break;
 				case 2:
-					color = _color + (gradient * 4);
-					setPixelColor(rect.w + 1, 1, color);
+					color = _color + (gradient * 4u);
+					setPixelColor(static_cast<int>(rect.w) + 1, 1, color);
 					break;
 				case 3:
-					color = _color + (gradient * 3);
+					color = _color + (gradient * 3u);
 			}
 		}
 	}
@@ -265,7 +265,7 @@ void Window::draw()
 				i != 5;
 				++i)
 		{
-			if (rect.w > 0 && rect.h > 0)
+			if (rect.w > 0u && rect.h > 0u)
 				drawRect(&rect, color);
 
 			if (i < 2)	color -= gradient;
@@ -274,15 +274,15 @@ void Window::draw()
 			++rect.x;
 			++rect.y;
 
-			if (rect.w > 1)	rect.w -= 2;
-			else			rect.w = 0;
+			if (rect.w > 1u) rect.w -= 2u;
+			else			 rect.w = 0u;
 
-			if (rect.h > 1)	rect.h -= 2;
-			else			rect.h = 0;
+			if (rect.h > 1u) rect.h -= 2u;
+			else			 rect.h = 0u;
 		}
 	}
 
-	if (rect.w != 0 && rect.h != 0)
+	if (rect.w != 0u && rect.h != 0u)
 	{
 		if (_bg != nullptr)
 		{
@@ -321,9 +321,9 @@ Uint8 Window::getColor() const
 }
 
 /**
- * Enables/disables high contrast color.
+ * Enables/disables high-contrast color.
  * @note Mostly used for Battlescape UI.
- * @param contrast - high contrast setting (default true)
+ * @param contrast - high-contrast setting (default true)
  */
 void Window::setHighContrast(bool contrast)
 {

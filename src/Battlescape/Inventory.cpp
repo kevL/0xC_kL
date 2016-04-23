@@ -88,7 +88,7 @@ Inventory::Inventory(
 		_tuMode(true),
 		_atBase(atBase),
 		_grdOffset(0),
-		_fuseFrame(0),
+		_fuseFrame(0u),
 		_prime(-1),
 		_tuCost(-1)
 {
@@ -210,9 +210,9 @@ void Inventory::drawGrids() // private.
 
 					++rect.x;
 					++rect.y;
-					rect.w -= 2;
-					rect.h -= 2;
-					_srfGrid->drawRect(&rect, 0);
+					rect.w -= 2u;
+					rect.h -= 2u;
+					_srfGrid->drawRect(&rect, 0u);
 				}
 				break;
 
@@ -226,9 +226,9 @@ void Inventory::drawGrids() // private.
 
 				++rect.x;
 				++rect.y;
-				rect.w -= 2;
-				rect.h -= 2;
-				_srfGrid->drawRect(&rect, 0);
+				rect.w -= 2u;
+				rect.h -= 2u;
+				_srfGrid->drawRect(&rect, 0u);
 				break;
 
 			default:
@@ -236,7 +236,7 @@ void Inventory::drawGrids() // private.
 				{
 					doLabel = false;
 					const int
-						width (i->second->getX() + RuleInventory::SLOT_W * RuleInventory::GROUND_W),
+						width  (i->second->getX() + RuleInventory::SLOT_W * RuleInventory::GROUND_W),
 						height (i->second->getY() + RuleInventory::SLOT_H * RuleInventory::GROUND_H);
 
 					for (int
@@ -257,9 +257,9 @@ void Inventory::drawGrids() // private.
 
 							++rect.x;
 							++rect.y;
-							rect.w -= 2;
-							rect.h -= 2;
-							_srfGrid->drawRect(&rect, 0);
+							rect.w -= 2u;
+							rect.h -= 2u;
+							_srfGrid->drawRect(&rect, 0u);
 						}
 					}
 				}
@@ -413,10 +413,10 @@ void Inventory::think()
  */
 void Inventory::drawPrimers() // private.
 {
-	static const int pulse[22] { 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,
+	static const int pulse[22u] { 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,
 								13,12,11,10, 9, 8, 7, 6, 5, 4, 3};
 
-	if (_fuseFrame == 22) _fuseFrame = 0;
+	if (_fuseFrame == 22u) _fuseFrame = 0u;
 
 	static Surface* const srf (_game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(9));
 	for (std::vector<std::pair<int,int>>::const_iterator
@@ -436,9 +436,9 @@ void Inventory::drawPrimers() // private.
 
 /**
  * Blits the inventory elements.
- * @param surface - pointer to Surface to blit onto
+ * @param srf - pointer to Surface to blit to
  */
-void Inventory::blit(Surface* surface)
+void Inventory::blit(const Surface* const srf)
 {
 	clear();
 
@@ -447,7 +447,7 @@ void Inventory::blit(Surface* surface)
 	_srfGrab->blit(this);
 	_warning->blit(this);
 
-	Surface::blit(surface);
+	Surface::blit(srf);
 }
 
 /**

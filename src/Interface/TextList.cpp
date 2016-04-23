@@ -223,7 +223,7 @@ void TextList::unpress(State* state)
  * @param row		- row number
  * @param column	- column number
  * @param color		- text color
- * @param contrast	- true for high contrast (default false)
+ * @param contrast	- true for high-contrast (default false)
  */
 void TextList::setCellColor(
 		size_t row,
@@ -243,7 +243,7 @@ void TextList::setCellColor(
  * Sets the text-color of a whole row in this TextList.
  * @param row		- row number
  * @param color		- text color
- * @param contrast	- true for high contrast (default false)
+ * @param contrast	- true for high-contrast (default false)
  */
 void TextList::setRowColor(
 		size_t row,
@@ -692,8 +692,8 @@ Uint8 TextList::getSecondaryColor() const
 }
 
 /**
- * Enables/disables high contrast color. Mostly used for Battlescape text.
- * @param contrast - high contrast setting (default true)
+ * Enables/disables high-contrast color. Mostly used for Battlescape text.
+ * @param contrast - high-contrast setting (default true)
  */
 void TextList::setHighContrast(bool contrast)
 {
@@ -1139,14 +1139,14 @@ void TextList::draw()
 
 /**
  * Blits the TextList and selector.
- * @param surface - pointer to a surface to blit onto
+ * @param srf - pointer to a Surface to blit to
  */
-void TextList::blit(Surface* surface)
+void TextList::blit(const Surface* const srf)
 {
 	if (_visible == true && _hidden == false)
-		_selector->blit(surface);
+		_selector->blit(srf);
 
-	Surface::blit(surface);
+	Surface::blit(srf);
 
 	if (_visible == true && _hidden == false)
 	{
@@ -1172,8 +1172,8 @@ void TextList::blit(Surface* surface)
 
 				if (y >= getY()) // only blit arrows that belong to texts that have their first row on-screen
 				{
-					_arrowLeft[i]->blit(surface);
-					_arrowRight[i]->blit(surface);
+					_arrowLeft[i]->blit(srf);
+					_arrowRight[i]->blit(srf);
 				}
 
 				if (_texts[i].empty() == false)
@@ -1183,9 +1183,9 @@ void TextList::blit(Surface* surface)
 			}
 		}
 
-		_up->blit(surface);
-		_down->blit(surface);
-		_scrollbar->blit(surface);
+		_up->blit(srf);
+		_down->blit(srf);
+		_scrollbar->blit(srf);
 	}
 }
 

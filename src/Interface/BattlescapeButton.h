@@ -37,7 +37,8 @@ enum InversionType
  * Regular image that works like a button.
  * @note Unlike the TextButton this button doesn't draw anything on its own. It
  * takes an existing graphic and treats it as a button and inverts colors when
- * necessary. This is necessary for special buttons like in the Geoscape.
+ * necessary. This is necessary for special buttons like in the Geoscape. Hence
+ * the name, "BattlescapeButton".
  */
 class BattlescapeButton final
 	:
@@ -55,42 +56,42 @@ protected:
 
 
 	public:
-		/// Creates a new image button with the specified size and position.
+		/// Creates a BattlescapeButton with the specified size and position.
 		BattlescapeButton(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the image button.
+		/// Cleans up the BattlescapeButton.
 		virtual ~BattlescapeButton();
 
-		/// Sets the image button's color.
+		/// Sets the BattlescapeButton's color.
 		void setColor(Uint8 color) override;
-		/// Gets the image button's color.
+		/// Gets the BattlescapeButton's color.
 		Uint8 getColor() const;
 
-		/// Sets the image button's group.
+		/// Sets the BattlescapeButton's group.
 		void setGroup(BattlescapeButton** group);
-		/// Special handling for mouse presses.
+		/// Special handling for mouse-presses.
 		void mousePress(Action* action, State* state) override;
-		/// Special handling for mouse releases.
+		/// Special handling for mouse-releases.
 		void mouseRelease(Action* action, State* state) override;
 
 		/// Invert a button explicitly either ON or OFF.
 		void toggle(bool invert);
-		/// Allows this button to be toggled on/off with a click.
+		/// Allows this BattlescapeButton to be toggled on/off with a click.
 		void allowToggleInversion();
-		/// Allows this button to be toggled on when clicked and off when released.
+		/// Allows this BattlescapeButton to be toggled on when clicked and off when released.
 		void allowClickInversion();
 
 		/// Sets up the "pressed" surface.
-		void initSurfaces();
-		/// Blits this surface onto another one.
-		void blit(Surface* surface) override;
+		void altSurface();
+		/// Blits this Surface onto another one.
+		void blit(const Surface* const srf) override;
 
-		/// Alters both versions of the button's X pos.
+		/// Alters both versions of the button's x-pos.
 		void setX(int x) override;
-		/// Alters both versions of the button's Y pos.
+		/// Alters both versions of the button's y-pos.
 		void setY(int y) override;
 };
 

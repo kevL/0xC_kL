@@ -55,18 +55,18 @@ class MiniBaseView final
 private:
 	static const int MINI_SIZE = 14;
 	static const Uint8
-		WHITE		=   1,
-		RED_L		=  33,
-		RED_D		=  37,
-		GREEN		=  50,
-		LAVENDER_L	=  69,
-		LAVENDER_D	=  72,
-		ORANGE_L	=  96,
-		ORANGE_D	=  98,
-		BLUE		= 130,
-		YELLOW_L	= 145,
-		YELLOW_D	= 153,
-		BROWN		= 161;
+		WHITE		=   1u,
+		RED_L		=  33u,
+		RED_D		=  37u,
+		GREEN		=  50u,
+		LAVENDER_L	=  69u,
+		LAVENDER_D	=  72u,
+		ORANGE_L	=  96u,
+		ORANGE_D	=  98u,
+		BLUE		= 130u,
+		YELLOW_L	= 145u,
+		YELLOW_D	= 153u,
+		BROWN		= 161u;
 
 	bool _blink;
 	size_t

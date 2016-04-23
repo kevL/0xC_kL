@@ -1270,7 +1270,7 @@ void Globe::drawOcean()
 void Globe::drawLand()
 {
 	Sint16
-		x[4],y[4];
+		x[4u],y[4u];
 
 	for (std::list<Polygon*>::const_iterator
 			i = _cacheLand.begin();
@@ -1278,7 +1278,7 @@ void Globe::drawLand()
 			++i)
 	{
 		for (size_t // Convert coordinates
-				j = 0;
+				j = 0u;
 				j != (*i)->getPoints();
 				++j)
 		{
@@ -2479,7 +2479,7 @@ void Globe::clearCrosshair()
  * Blits this Globe and its sub-elements onto another Surface.
  * @param srf - pointer to a surface
  */
-void Globe::blit(Surface* const srf)
+void Globe::blit(const Surface* const srf)
 {
 	Surface::blit(srf);
 

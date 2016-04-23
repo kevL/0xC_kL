@@ -65,7 +65,7 @@ BattlescapeMessage::BattlescapeMessage(
 }
 
 /**
- * Deletes surfaces.
+ * Deletes Surfaces.
  */
 BattlescapeMessage::~BattlescapeMessage()
 {
@@ -74,9 +74,9 @@ BattlescapeMessage::~BattlescapeMessage()
 }
 
 /**
-* Changes the position of the surface in the x-axis.
-* @param x - x-position in pixels
-*/
+ * Changes the position of this BattlescapeMessage in the x-axis.
+ * @param x - x-position in pixels
+ */
 void BattlescapeMessage::setX(int x)
 {
 	Surface::setX(x);
@@ -85,9 +85,9 @@ void BattlescapeMessage::setX(int x)
 }
 
 /**
-* Changes the position of the surface in the y-axis.
-* @param y - y-position in pixels
-*/
+ * Changes the position of this BattlescapeMessage in the y-axis.
+ * @param y - y-position in pixels
+ */
 void BattlescapeMessage::setY(int y)
 {
 	Surface::setY(y);
@@ -96,7 +96,7 @@ void BattlescapeMessage::setY(int y)
 }
 
 /**
- * Changes the message background.
+ * Changes this BattlescapeMessage's background.
  * @param background - pointer to background surface
  */
 void BattlescapeMessage::setBackground(Surface* const bg)
@@ -105,7 +105,7 @@ void BattlescapeMessage::setBackground(Surface* const bg)
 }
 
 /**
- * Changes the message text.
+ * Changes this BattlescapeMessage's text.
  * @param message - reference the Message string
  */
 void BattlescapeMessage::setText(const std::wstring& message)
@@ -131,7 +131,7 @@ void BattlescapeMessage::initText(
 }
 
 /**
- * Replaces a certain amount of colors in the surface's palette.
+ * Replaces a certain amount of colors in this Surface's palette.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- amount of colors to replace (default 256)
@@ -148,29 +148,31 @@ void BattlescapeMessage::setPalette(
 
 /**
  * Blits the battlescape message.
- * @param surface - pointer to a Surface
+ * @param srf - pointer to a Surface
  */
-void BattlescapeMessage::blit(Surface* surface)
+void BattlescapeMessage::blit(const Surface* const srf)
 {
-	Surface::blit(surface);
-	_window->blit(surface);
-	_text->blit(surface);
+	Surface::blit(srf);
+
+	_window->blit(srf);
+	_text->blit(srf);
 }
 
 /**
- * Special handling for setting the height of the battlescape message.
- * @param height - the new height
+ * Special handling for setting the height of this BattlescapeMessage.
+ * @param height - the height
  */
 void BattlescapeMessage::setHeight(int height)
 {
 	Surface::setHeight(height);
+
 	_window->setHeight(height);
 	_text->setHeight(height);
 }
 
 /**
- * Sets the text color of the battlescape message.
- * @param color - the new color
+ * Sets the text-color of this BattlescapeMessage.
+ * @param color - the color
  */
 void BattlescapeMessage::setTextColor(Uint8 color)
 {

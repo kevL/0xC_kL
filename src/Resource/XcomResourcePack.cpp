@@ -142,7 +142,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 						256,
 						Palette::palOffset(4));
 
-	SDL_Color gradient[] // last 16 colors are a steel-grayish gradient
+	const SDL_Color gradient[] // last 16 colors are a steel-grayish gradient
 	{
 		{140u, 152u, 148u, 255u},
 		{132u, 136u, 140u, 255u},

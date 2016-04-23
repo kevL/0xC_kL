@@ -625,11 +625,11 @@ void Surface::draw() // virtual.
 
 /**
  * Blits this Surface onto another one with its position relative to the
- * top-left corner of the target surface.
+ * top-left corner of the target-surface.
  * @note The cropping rectangle controls the area that is blitted.
  * @param surface - pointer to Surface to blit onto
  */
-void Surface::blit(Surface* surface) // virtual.
+void Surface::blit(const Surface* const srf) // virtual.
 {
 	if (_visible == true && _hidden == false)
 	{
@@ -650,7 +650,7 @@ void Surface::blit(Surface* surface) // virtual.
 		SDL_BlitSurface(
 					_surface,
 					crop,
-					surface->getSurface(),
+					srf->getSurface(),
 					&target);
 	}
 }
@@ -660,9 +660,9 @@ void Surface::blit(Surface* surface) // virtual.
  * @note Only the content that would overlap both surfaces is copied in
  * accordance with their positions. This is handy for applying effects over
  * another surface without modifying the original.
- * @param surface - pointer to a Surface to copy from
+ * @param srf - pointer to a Surface to copy from
  */
-void Surface::copy(Surface* surface)
+void Surface::copy(const Surface* const srf)
 {
 /*	SDL_BlitSurface uses color matching, and is therefore unreliable
 	as a means to copy the contents of one surface to another; instead
@@ -671,17 +671,17 @@ void Surface::copy(Surface* surface)
 	SDL_Rect from;
 	from.w = getWidth();
 	from.h = getHeight();
-	from.x = getX() - surface->getX();
-	from.y = getY() - surface->getY();
+	from.x = getX() - srf->getX();
+	from.y = getY() - srf->getY();
 
 	SDL_BlitSurface(
-				surface->getSurface(),
+				srf->getSurface(),
 				&from,
 				_surface,
 				nullptr); */
 	const int
-		src_x (_x - surface->getX()),
-		src_y (_y - surface->getY());
+		src_x (_x - srf->getX()),
+		src_y (_y - srf->getY());
 	Uint8 pixel;
 
 	lock();
@@ -690,7 +690,7 @@ void Surface::copy(Surface* surface)
 			x < _surface->w && y < _surface->h;
 			)
 	{
-		pixel = surface->getPixelColor(
+		pixel = srf->getPixelColor(
 									src_x + x,
 									src_y + y);
 		setPixelIterative(&x,&y, pixel);
@@ -701,10 +701,10 @@ void Surface::copy(Surface* surface)
 /**
  * Draws a filled rectangle on this Surface.
  * @param rect	- pointer to SDL_Rect
- * @param color	- color of the rectangle
+ * @param color	- fill-color
  */
 void Surface::drawRect(
-		SDL_Rect* rect,
+		SDL_Rect* const rect,
 		Uint8 color)
 {
 	SDL_FillRect(
@@ -789,7 +789,7 @@ void Surface::drawCircle(
  * @param y		- pointer to (an array of) y-coordinate(s)
  * @param n		- number of points
  * @param color	- color of the polygon
- */
+ *
 void Surface::drawPolygon(
 		const Sint16* const x,
 		const Sint16* const y,
@@ -801,7 +801,7 @@ void Surface::drawPolygon(
 					x,y,
 					static_cast<int>(n),
 					Palette::getRGBA(getPalette(), color));
-}
+} */
 
 /**
  * Draws a textured polygon on this Surface.
@@ -834,7 +834,7 @@ void Surface::drawTexturedPolygon(
  * @param y		- y-coordinate in pixels
  * @param st	- pointer to a string of char's to render
  * @param color	- color of string
- */
+ *
 void Surface::drawString(
 		Sint16 x,
 		Sint16 y,
@@ -846,7 +846,7 @@ void Surface::drawString(
 			x,y,
 			st,
 			Palette::getRGBA(getPalette(), color));
-}
+} */
 
 /**
  * Sets the position of this Surface in the x-axis.

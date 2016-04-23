@@ -46,7 +46,7 @@ class InteractiveSurface
 {
 
 private:
-	static const Uint8 NUM_BUTTONS = 7;
+	static const Uint8 NUM_BUTTONS = 7u;
 	static const SDLKey SDLK_ANY;
 
 	Uint8 _buttonsPressed;
@@ -72,9 +72,9 @@ private:
 			_release;
 
 		/// Checks if mouse-button is pressed.
-		bool isButtonPressed(Uint8 btn = 0);
+		bool isButtonPressed(Uint8 btn = 0u);
 		/// Checks if mouse-button event handled.
-		virtual bool isButtonHandled(Uint8 btn = 0);
+		virtual bool isButtonHandled(Uint8 btn = 0u);
 		/// Set a mouse-button's internal state.
 		void setButtonPressed(
 				Uint8 btn,
@@ -107,36 +107,36 @@ private:
 			/// Unpresses the Surface.
 			virtual void unpress(State* state);
 
-			/// Processes a mouse button press event.
+			/// Processes a mouse-button-press event.
 			virtual void mousePress(Action* action, State* state);
-			/// Processes a mouse button release event.
+			/// Processes a mouse-button-release event.
 			virtual void mouseRelease(Action* action, State* state);
-			/// Processes a mouse click event.
+			/// Processes a mouse-click event.
 			virtual void mouseClick(Action* action, State* state);
-			/// Processes a mouse hover in event.
+			/// Processes a mouse-hover-in event.
 			virtual void mouseIn(Action* action, State* state);
-			/// Processes a mouse hover event.
+			/// Processes a mouse-hover-over event.
 			virtual void mouseOver(Action* action, State* state);
-			/// Processes a mouse hover out event.
+			/// Processes a mouse-hover-out event.
 			virtual void mouseOut(Action* action, State* state);
 
-			/// Processes a keyboard key press event.
+			/// Processes a keyboard-press event.
 			virtual void keyboardPress(Action* action, State* state);
-			/// Processes a keyboard key release event.
+			/// Processes a keyboard-release event.
 			virtual void keyboardRelease(Action* action, State* state);
 
-			/// Hooks an ActionHandler to a mouse click on the Surface.
+			/// Hooks an ActionHandler to a mouse-click on the Surface.
 			void onMouseClick(
 					ActionHandler handler,
 					Uint8 btn = SDL_BUTTON_LEFT);
-			/// Hooks an ActionHandler to a mouse press over the Surface.
+			/// Hooks an ActionHandler to a mouse-press over the Surface.
 			void onMousePress(
 					ActionHandler handler,
-					Uint8 btn = 0);
-			/// Hooks an ActionHandler to a mouse release over the Surface.
+					Uint8 btn = 0u);
+			/// Hooks an ActionHandler to a mouse-release over the Surface.
 			void onMouseRelease(
 					ActionHandler handler,
-					Uint8 btn = 0);
+					Uint8 btn = 0u);
 			/// Hooks an ActionHandler to moving the mouse into the Surface.
 			void onMouseIn(ActionHandler handler);
 			/// Hooks an ActionHandler to moving the mouse over the Surface.

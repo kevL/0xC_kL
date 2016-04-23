@@ -51,7 +51,7 @@ class Timer;
 
 
 /**
- * Interactive globe view of the world.
+ * Interactive globe-view of the world.
  * @note Takes a flat world map made out of land polygons with polar coordinates
  * and renders it as a 3D-looking globe with cartesian coordinates that the
  * player can interact with.
@@ -116,12 +116,13 @@ private:
 		* _blinkTimer,
 		* _rotTimer;
 
+	/// cache of geographical textures
 	std::list<Polygon*> _cacheLand;
-	/// normal of each pixel in earth globe per zoom level
+	/// normal of each pixel per zoom-level
 	std::vector<std::vector<Cord>> _earthData;
-	/// data sample used for noise in shading
+	/// data-sample used for noise in terminator-shadow
 	std::vector<Sint16> _terminatorFluxions;
-	/// list of dimension of earth on screen per zoom level
+	/// list of zoom-level dimensions on-screen
 	std::vector<double> _zoomRadii;
 
 	DebugTypeGlobe _debugType;
@@ -131,10 +132,10 @@ private:
 	void setupRadii(
 			int width,
 			int height);
-	/// Sets the globe zoom factor.
+	/// Sets the Globe's zoom-factor.
 	void setZoom(size_t zoom);
 
-	/// Checks if a point is behind the globe.
+	/// Checks if a point is behind the Globe.
 	bool pointBack(
 			double lon,
 			double lat) const;
@@ -162,7 +163,7 @@ private:
 	Cord getSunDirection(
 			double lon,
 			double lat) const;
-	/// Draws a globe range circle.
+	/// Draws a Globe range-circle.
 	void drawGlobeCircle(
 			double lat,
 			double lon,
@@ -229,7 +230,7 @@ private:
 			C_OCEAN,
 			C_BLACK;
 
-		/// Creates a new globe at the specified position and size.
+		/// Creates a Globe with the specified position and size.
 		Globe(
 				Game* const game,
 				int cenX,
@@ -238,7 +239,7 @@ private:
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the globe.
+		/// Cleans up the Globe.
 		~Globe();
 
 		/// Converts polar coordinates to cartesian coordinates.
@@ -260,19 +261,19 @@ private:
 				double* lon,
 				double* lat) const;
 
-		/// Starts rotating the globe left.
+		/// Starts rotating the Globe left.
 		void rotateLeft();
-		/// Starts rotating the globe right.
+		/// Starts rotating the Globe right.
 		void rotateRight();
-		/// Starts rotating the globe up.
+		/// Starts rotating the Globe up.
 		void rotateUp();
-		/// Starts rotating the globe down.
+		/// Starts rotating the Globe down.
 		void rotateDown();
-		/// Stops rotating the globe.
+		/// Stops rotating the Globe.
 		void rotateStop();
-		/// Stops longitude rotation of the globe.
+		/// Stops longitudinal rotation of the Globe.
 		void rotateStopLon();
-		/// Stops latitude rotation of the globe.
+		/// Stops latitudinal rotation of the Globe.
 		void rotateStopLat();
 
 		/// Gets the current zoom.
@@ -280,21 +281,21 @@ private:
 		/// Gets the number of zoom levels available.
 		size_t getZoomLevels() const;
 
-		/// Zooms the globe in.
+		/// Zooms the Globe in.
 		void zoomIn();
-		/// Zooms the globe out.
+		/// Zooms the Globe out.
 		void zoomOut();
-		/// Zooms the globe minimum.
+		/// Zooms the Globe minimum.
 //		void zoomMin();
-		/// Zooms the globe maximum.
+		/// Zooms the Globe maximum.
 //		void zoomMax();
 
-		/// Zooms the globe in for dogfights.
+		/// Zooms the Globe in for dogfights.
 		bool zoomDogfightIn();
-		/// Zooms the globe out for dogfights.
+		/// Zooms the Globe out for dogfights.
 		bool zoomDogfightOut();
 
-		/// Centers the globe on a point.
+		/// Centers the Globe on a point.
 		void center(
 				double lon,
 				double lat);
@@ -329,28 +330,28 @@ private:
 		void blink();
 		/// Toggles blinking.
 		void toggleBlink();
-		/// Rotates the globe.
+		/// Rotates the Globe.
 		void rotate();
 
-		/// Draws the whole globe.
+		/// Draws the whole Globe.
 		void draw() override;
-		/// Draws the ocean of the globe.
+		/// Draws the ocean of the Globe.
 		void drawOcean();
-		/// Draws the land of the globe.
+		/// Draws the land of the Globe.
 		void drawLand();
 		/// Draws the 3d bevel around the continents.
 		void drawBevel();
-		/// Draws the shadow.
+		/// Draws the shadow-terminator.
 		void drawShadow();
-		/// Draws the radar ranges of the globe.
+		/// Draws the radar-ranges of the Globe.
 		void drawRadars();
-		/// Draws the flight paths of the globe.
+		/// Draws the flight-paths of the Globe.
 		void drawFlightPaths();
-		/// Draws the country details of the globe.
+		/// Draws the country-details of the Globe.
 		void drawDetail();
 		/// Gets the current debugType for Geoscape.
 		DebugTypeGlobe getDebugType() const;
-		/// Draws all the markers over the globe.
+		/// Draws all the markers over the Globe.
 		void drawMarkers();
 		/// Sets the co-ordinates to draw a crosshair at.
 		void setCrosshair(
@@ -358,8 +359,8 @@ private:
 				const double lat);
 		/// Hides the crosshair.
 		void clearCrosshair();
-		/// Blits the globe onto another surface.
-		void blit(Surface* const srf) override;
+		/// Blits the Globe onto another Surface.
+		void blit(const Surface* const srf) override;
 
 		/// Special handling for mouse hover.
 		void mouseOver(Action* action, State* state) override;

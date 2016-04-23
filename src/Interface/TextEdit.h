@@ -109,7 +109,7 @@ private:
 		/// Sets the color-invert setting.
 		void setInvert(bool invert = true);
 		/// Sets the high-contrast setting.
-		void setHighContrast(bool contrast = true);
+		void setHighContrast(bool contrast = true) override;
 
 		/// Sets the horizontal alignment.
 		void setAlign(TextHAlign align);

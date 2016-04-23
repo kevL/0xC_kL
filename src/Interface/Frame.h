@@ -53,9 +53,9 @@ private:
 		/// Cleans up the Frame.
 		~Frame();
 
-		/// Sets the border color.
+		/// Sets the border-color.
 		void setColor(Uint8 color) override;
-		/// Gets the border color.
+		/// Gets the border-color.
 		Uint8 getColor() const;
 
 		///
@@ -66,8 +66,8 @@ private:
 		/// Gets the background color.
 		Uint8 getSecondaryColor() const;
 
-		/// Sets the high contrast color setting.
-		void setHighContrast(bool contrast = true);
+		/// Sets the high-contrast color setting.
+		void setHighContrast(bool contrast = true) override;
 
 		/// Sets the border thickness.
 		void setThickness(int thickness = 5);

@@ -46,9 +46,9 @@ class PrimeGrenadeState
 
 private:
 	static const Uint8
-		BLACK	= 15,
-		ORANGE	= 108,
-		BLUE	= 132;
+		BLACK	=  15u,
+		ORANGE	= 108u,
+		BLUE	= 132u;
 
 	bool _inInventoryView;
 
@@ -57,24 +57,24 @@ private:
 	Frame* _fraTop;
 	InteractiveSurface
 		* _isfBtn0,
-		* _isfBtn[24];
+		* _isfBtn[24u];
 	Inventory* _inventory;
 	Surface
 		* _srfBG;
 	Text
 		* _txtTurn0,
-		* _txtTurn[24],
+		* _txtTurn[24u],
 		* _txtTitle;
 
 
 	public:
-		/// Creates the Prime Grenade state.
+		/// Creates a PrimeGrenade state.
 		PrimeGrenadeState(
 				BattleAction* action,
 				bool inInventoryView,
 				BattleItem* grenade,
 				Inventory* inventory = nullptr);
-		/// Cleans up the Prime Grenade state.
+		/// Cleans up the PrimeGrenade state.
 		~PrimeGrenadeState();
 
 		/// Handler for right-clicking anything.

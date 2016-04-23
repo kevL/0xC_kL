@@ -115,7 +115,7 @@ void MiniMapView::draw()
 		0,0,
 		static_cast<Sint16>(width),
 		static_cast<Sint16>(height),
-		0);
+		0u);
 
 	if (_set != nullptr)
 	{

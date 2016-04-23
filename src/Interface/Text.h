@@ -140,8 +140,8 @@ private:
 		void setInvert(bool invert = true);
 
 		/// Sets the Text's high-contrast setting.
-		void setHighContrast(bool contrast = true);
-		/// Gets if the Text is using high contrast color.
+		void setHighContrast(bool contrast = true) override;
+		/// Gets if the Text is using high-contrast color.
 		bool getHighContrast() const;
 
 		/// Sets the Text's horizontal alignment.

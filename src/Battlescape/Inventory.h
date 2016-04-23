@@ -39,7 +39,7 @@ class WarningMessage;
 
 
 /**
- * Interactive view of an inventory.
+ * Interactive view of an Inventory.
  * @note Lets the player view and manage a soldier's equipment.
  */
 class Inventory final
@@ -74,9 +74,9 @@ private:
 	std::vector<std::pair<int,int>> _fusePairs;
 
 
-	/// Draws the inventory grids.
+	/// Draws the Inventory's grids.
 	void drawGrids();
-	/// Draws the inventory items.
+	/// Draws the Inventory's items.
 	void drawItems();
 	/// Shows priming warnings on grenades.
 	void drawPrimers();
@@ -103,7 +103,7 @@ private:
 
 
 	public:
-		/// Creates a new inventory view at the specified position and size.
+		/// Creates an inventory-view with the specified position and size.
 		Inventory(
 				Game* game,
 				int width,
@@ -111,47 +111,47 @@ private:
 				int x = 0,
 				int y = 0,
 				bool atBase = false);
-		/// Cleans up the inventory.
+		/// Cleans up the Inventory.
 		~Inventory();
 
-		/// Sets the inventory's palette.
+		/// Sets the Inventory's palette.
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
 
-		/// Draws the inventory.
+		/// Draws the Inventory.
 		void draw() override;
-		/// Handles timers.
+		/// Handles Timers.
 		void think() override;
-		/// Blits the inventory onto another surface.
-		void blit(Surface* surface) override;
+		/// Blits the Inventory onto another Surface.
+		void blit(const Surface* const srf) override;
 
-		/// Special handling for mouse hovers.
+		/// Special handling for mouse-hovers.
 		void mouseOver(Action* action, State* state) override;
-		/// Special handling for mouse clicks.
+		/// Special handling for mouse-clicks.
 		void mouseClick(Action* action, State* state) override;
 
-		/// Sets the inventory's Time Unit mode.
+		/// Sets the Inventory's TU-mode.
 		void setTuMode(bool tu);
 
-		/// Sets the inventory's selected unit.
+		/// Sets the Inventory's selected-unit.
 		void setSelectedUnitInventory(BattleUnit* const unit);
 
-		/// Sets the currently selected item.
+		/// Sets the currently selected-item.
 		void setSelectedItem(BattleItem* const item = nullptr);
-		/// Gets the currently selected item.
+		/// Gets the currently selected-item.
 		BattleItem* getSelectedItem() const;
 
-		/// Sets the mouse over item.
+		/// Sets the mouse-over item.
 		void setMouseOverItem(BattleItem* const item = nullptr);
-		/// Gets the mouse over item.
+		/// Gets the mouse-over item.
 		BattleItem* getMouseOverItem() const;
 
 		/// Arranges items on the ground.
 		void arrangeGround(int dir = 0);
 
-		/// Checks for item overlap.
+		/// Checks for item-overlap.
 		static bool isOverlap(
 				BattleUnit* const unit,
 				const BattleItem* const item,
@@ -159,15 +159,15 @@ private:
 				int x = 0,
 				int y = 0);
 
-		/// Unloads the selected weapon.
+		/// Unloads the selected-item.
 		bool unload();
 
-		/// Sets grenade to show a warning in Inventory.
+		/// Sets grenade to show a warning.
 		void setPrimeGrenade(int turn);
 		/// Shows a warning message.
 		void showWarning(const std::wstring& wst);
 
-		/// Gets the TU cost for moving items around.
+		/// Gets TU-cost for moving items around.
 		int getTuCostInventory() const;
 };
 

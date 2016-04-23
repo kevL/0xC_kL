@@ -53,9 +53,9 @@ TextButton::TextButton(
 			width,
 			height,
 			x,y),
-		_color(0),
+		_color(0u),
 		_group(nullptr),
-		_contrast(1),
+		_contrast(1u),
 //		_geoscapeButton(false),
 		_silent(false),
 		_comboBox(nullptr)
@@ -181,7 +181,7 @@ void TextButton::initText(
  */
 void TextButton::setHighContrast(bool contrast)
 {
-	_contrast = contrast ? 2 : 1;
+	_contrast = contrast ? 2u : 1u;
 	_text->setHighContrast(contrast);
 	_redraw = true;
 }
@@ -267,11 +267,11 @@ void TextButton::draw()
 	{
 //		if (color > topColor) color = topColor;
 		if (i == 0)
-			color = _color + (_contrast * 5);
+			color = _color + (_contrast * 5u);
 
 		drawRect(&rect, color);
 
-		if (i % 2 == 0)
+		if ((i & 1) == 0)
 		{
 			++rect.x;
 			++rect.y;
@@ -291,11 +291,11 @@ void TextButton::draw()
 				break;
 
 			case 1:
-				color = _color + (_contrast * 2);
+				color = _color + (_contrast * 2u);
 				break;
 
 			case 2:
-				color = _color + (_contrast * 4);
+				color = _color + (_contrast * 4u);
 //				if (color > topColor) color = topColor;
 				setPixelColor(
 						static_cast<int>(rect.w) + 1,
@@ -304,7 +304,7 @@ void TextButton::draw()
 				break;
 
 			case 3:
-				color = _color + (_contrast * 3);
+				color = _color + (_contrast * 3u);
 //				break;
 //
 //			case 4:
@@ -325,9 +325,9 @@ void TextButton::draw()
 	if (press == true)
 	{
 //		if (_geoscapeButton == true)
-//			this->invert(_color + (_contrast * 2));
+//			this->invert(_color + (_contrast * 2u));
 //		else
-		this->invert(_color + (_contrast * 3));
+		this->invert(_color + (_contrast * 3u));
 	}
 
 	_text->setInvert(press);
@@ -344,7 +344,7 @@ void TextButton::mousePress(Action* action, State* state)
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
 		&& _group != nullptr)
 	{
-		TextButton* pre (*_group);
+		TextButton* const pre (*_group);
 		*_group = this;
 
 		if (pre != nullptr) pre->draw();

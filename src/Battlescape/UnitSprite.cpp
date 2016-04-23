@@ -1223,7 +1223,7 @@ void UnitSprite::drawRoutine5() // private.
 		case STATUS_WALKING:
 			quad = _unitSet->getFrame((_unit->getUnitDirection() << 4u)
 									+ (_quad << 2u)
-									+ (_unit->getWalkPhase() >> 1) % 4u
+									+ (_unit->getWalkPhase() >> 1u) % 4u
 									+ walk);
 			break;
 

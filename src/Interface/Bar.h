@@ -53,55 +53,55 @@ private:
 
 
 	public:
-		/// Creates a new bar with the specified size and position.
+		/// Creates a Bar with the specified size and position.
 		Bar(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the bar.
+		/// Cleans up the Bar.
 		~Bar();
 
-		/// Sets the bar's color.
+		/// Sets the Bar's color.
 		void setColor(Uint8 color) override;
-		/// Gets the bar's color.
+		/// Gets the Bar's color.
 		Uint8 getColor() const;
-		/// Sets the bar's second color.
+		/// Sets the Bar's second color.
 		void setSecondaryColor(Uint8 color) override;
-		/// Gets the bar's second color.
+		/// Gets the Bar's second color.
 		Uint8 getSecondaryColor() const;
 
-		/// Sets the bar's scale.
+		/// Sets the Bar's scale.
 		void setScale(double scale = 1.);
-		/// Gets the bar's scale.
+		/// Gets the Bar's scale.
 		double getScale() const;
 
-		/// Sets the bar's maximum value.
+		/// Sets the Bar's maximum value.
 		void setMaxValue(double maxVal = 100.);
-		/// Gets the bar's maximum value.
+		/// Gets the Bar's maximum value.
 //		double getMax() const;
 
-		/// Sets the bar's current value.
+		/// Sets the Bar's current value.
 		void setValue(double value);
-		/// Gets the bar's current value.
+		/// Gets the Bar's current value.
 		double getValue() const;
-		/// Sets the bar's second current value.
+		/// Sets the Bar's second current value.
 		void setValue2(double value);
-		/// Gets the bar's second current value.
+		/// Gets the Bar's second current value.
 		double getValue2() const;
 
 		/// Defines whether the second value should be drawn on top.
 		void setSecondValueOnTop(bool onTop = true);
-		/// Offsets y-value of second bar.
+		/// Offsets y-value of second Bar.
 		void offsetSecond(int y);
 
-		/// Sets the bar's color invert setting.
+		/// Sets the Bar's color-invert setting.
 		void setInvert(bool invert = true);
 
-		/// Draws the bar.
+		/// Draws the Bar.
 		void draw() override;
 
-		/// set the outline color for the bar.
+		/// Sets the outline color for the Bar.
 		void setBorderColor(Uint8 color) override;
 };
 
