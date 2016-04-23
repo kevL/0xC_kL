@@ -43,7 +43,7 @@
 #include "../Battlescape/TileEngine.h"
 
 #include "../Engine/Language.h"
-//#include "../Engine/Logger.h"
+#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -1167,7 +1167,8 @@ void BattleUnit::keepWalking(
 }
 
 /**
- * Calculates the half- and full-phases for unit-movement.
+ * Calculates and stores the half- and full-phase cutoffs for this BattleUnit's
+ * sprite-drawing.
  */
 void BattleUnit::cacheWalkPhases()
 {
@@ -1221,7 +1222,7 @@ void BattleUnit::flagStrafeBackwards()
 
 /**
  * Checks if this BattleUnit is strafing in a backwards-ish direction.
- * @return, true if strafing in a backwards direction
+ * @return, true if backwards
  */
 bool BattleUnit::isStrafeBackwards() const
 {
@@ -1302,10 +1303,10 @@ UnitFaction BattleUnit::getOriginalFaction() const
 }
 
 /**
- * Check if this BattleUnit is still cached in the Map cache.
- * @note When the unit needs to animate it needs to be re-cached.
+ * Gets this BattleUnit's sprite-cache.
+ * @note When the unit animates it needs to be re-cached.
  * @param quadrant - quadrant to check (default 0)
- * @return, pointer to the cache Surface used
+ * @return, pointer to the Surface
  */
 Surface* BattleUnit::getCache(int quadrant) const
 {
@@ -1313,10 +1314,10 @@ Surface* BattleUnit::getCache(int quadrant) const
 }
 
 /**
- * Sets this BattleUnit's cache flag.
- * @note Set to true when the unit has to be redrawn from scratch.
- * @param cache		- pointer to cache surface to use
- * @param quadrant	- unit quadrant to cache (default 0)
+ * Sets this BattleUnit's sprite-cached flag.
+ * @note Set to true when the unit needs to be redrawn.
+ * @param cache		- pointer to a Surface
+ * @param quadrant	- unit quadrant to update (default 0)
  */
 void BattleUnit::setCache(
 		Surface* const cache,
@@ -1327,9 +1328,9 @@ void BattleUnit::setCache(
 }
 
 /**
- * Clears this BattleUnit's sprite-cache flag.
+ * Clears this BattleUnit's sprite-cached flag.
  */
-void BattleUnit::clearCache()
+void BattleUnit::flagCache()
 {
 	_cacheInvalid = true;
 }
@@ -1344,9 +1345,9 @@ bool BattleUnit::getCacheInvalid() const
 }
 
 /**
- * Gets values used for recoloring sprites.
+ * Gets values used for re-coloring sprites.
  * @return, pairs of values where first is the colorgroup to replace and the
- * second is the new colorgroup with a shade
+ * second is the new colorgroup with shade
  */
 const std::vector<std::pair<Uint8, Uint8>>& BattleUnit::getRecolor() const
 {
@@ -2595,7 +2596,7 @@ void BattleUnit::takeFire()
 {
 	if (_fire != 0)
 	{
-		float vulnr = _armor->getDamageModifier(DT_SMOKE);
+		float vulnr (_armor->getDamageModifier(DT_SMOKE));
 		if (vulnr > 0.f) // try to knock _unit out.
 			takeDamage(
 					Position(0,0,0),
@@ -2607,7 +2608,7 @@ void BattleUnit::takeFire()
 		if (vulnr > 0.f)
 			takeDamage(
 					Position(0,0,0),
-					static_cast<int>(static_cast<float>(RNG::generate(2.,6.)) * vulnr),
+					static_cast<int>(RNG::generate(2.f,6.f) * vulnr),
 					DT_IN,
 					true);
 	}
@@ -2631,10 +2632,14 @@ void BattleUnit::think(BattleAction* const action)
 {
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "BattleUnit::think() id-" << _id;
+
 	//Log(LOG_INFO) << ". checkReload()";
-	checkReload();
+	if (checkReload() == true)
+		_cacheInvalid = true; // <- reloading a weapon could switch a unit's preferred weapon-hand.
+
 	//Log(LOG_INFO) << ". _unitAIState->think()";
 	_unitAIState->think(action);
+
 	//Log(LOG_INFO) << "BattleUnit::think() EXIT";
 	//Log(LOG_INFO) << "";
 }
@@ -2665,9 +2670,9 @@ BattleAIState* BattleUnit::getAIState() const
 }
 
 /**
- * Sets the tile that this BattleUnit occupies.
- * @param tile		- pointer to a Tile (default nullptr)
- * @param tileBelow	- pointer to the Tile below (default nullptr)
+ * Sets the Tile that this BattleUnit occupies.
+ * @param tile		- pointer to a tile (default nullptr)
+ * @param tileBelow	- pointer to any tile-below (default nullptr)
  */
 void BattleUnit::setTile(
 		Tile* const tile,
@@ -2707,8 +2712,8 @@ void BattleUnit::setTile(
 }
 
 /**
- * Gets this BattleUnit's current tile.
- * @return, pointer to Tile
+ * Gets this BattleUnit's current Tile.
+ * @return, pointer to the tile or nullptr
  */
 Tile* BattleUnit::getTile() const
 {
@@ -2775,9 +2780,8 @@ BattleItem* BattleUnit::getItem(
 				i != _inventory.end();
 				++i)
 		{
-			if (//(*i)->getInventorySection() != nullptr && // <- if section is NULL something went wrong upstream ->
-				(*i)->getInventorySection()->getInventoryType() == type
-				&& (*i)->occupiesSlot(x,y) == true)
+			if ((*i)->getInventorySection()->getInventoryType() == type	//(*i)->getInventorySection() != nullptr &&
+				&& (*i)->occupiesSlot(x,y) == true)						// <- if section is NULL something went wrong upstream ->
 			{
 				return *i;
 			}
@@ -2790,8 +2794,7 @@ BattleItem* BattleUnit::getItem(
 				i != _tile->getInventory()->end();
 				++i)
 		{
-			if (//(*i)->getInventorySection() != nullptr &&
-				(*i)->occupiesSlot(x,y) == true)
+			if ((*i)->occupiesSlot(x,y) == true) //(*i)->getInventorySection() != nullptr &&
 			{
 				return *i;
 			}
@@ -2819,8 +2822,7 @@ BattleItem* BattleUnit::getItem(
 				i != _inventory.end();
 				++i)
 		{
-			if (//(*i)->getInventorySection() != nullptr &&
-				(*i)->getInventorySection()->getSectionType() == section
+			if ((*i)->getInventorySection()->getSectionType() == section //(*i)->getInventorySection() != nullptr &&
 				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
@@ -2834,8 +2836,7 @@ BattleItem* BattleUnit::getItem(
 				i != _tile->getInventory()->end();
 				++i)
 		{
-			if (//(*i)->getInventorySection() != nullptr &&
-				(*i)->occupiesSlot(x,y) == true)
+			if ((*i)->occupiesSlot(x,y) == true) //(*i)->getInventorySection() != nullptr &&
 			{
 				return *i;
 			}
@@ -2845,48 +2846,69 @@ BattleItem* BattleUnit::getItem(
 }
 
 /**
- * Sets this BattleUnit's active hand and re-caches sprites.
+ * Sets this BattleUnit's active-hand.
  * @ note This is used for (a) sprite drawing when dual-wielding, and (b)
  * choosing a weapon during faction-player RF, TileEngine::reactionShot().
  * @param hand - the ActiveHand (BattleUnit.h)
  */
 void BattleUnit::setActiveHand(ActiveHand hand)
 {
+/*	bool debug;
+	if (_id == 1000013) debug = true;
+	else debug = false;
+	if (debug)
+		Log(LOG_INFO) << "setActiveHand current= " << (int)_activeHand; */
+
 	if (_activeHand != hand)
 	{
-		_activeHand = hand;
 		_cacheInvalid = true;
+		_activeHand = hand;
+		//if (debug) Log(LOG_INFO) << ". switch= " << (int)_activeHand;
 	}
 }
 
 /**
- * Gets this BattleUnit's active hand.
+ * Gets this BattleUnit's active-hand.
  * @note Must have an item in that hand else switch to other hand or use
  * righthand by default. Ergo this effectively sets Active-hand.
  * @return, the ActiveHand (BattleUnit.h)
  */
 ActiveHand BattleUnit::getActiveHand()
 {
+/*	bool debug;
+	if (_id == 1000013) debug = true;
+	else debug = false;
+	if (debug)
+		Log(LOG_INFO) << "getActiveHand current= " << (int)_activeHand; */
+
 	switch (_activeHand)
 	{
 		case AH_RIGHT:
 			if (getItem(ST_RIGHTHAND) != nullptr)
+			{
+				//if (debug) Log(LOG_INFO) << ". ret= " << (int)_activeHand;
 				return AH_RIGHT;
+			}
 			break;
 
 		case AH_LEFT:
 			if (getItem(ST_LEFTHAND) != nullptr)
+			{
+				//if (debug) Log(LOG_INFO) << ". ret= " << (int)_activeHand;
 				return AH_LEFT;
+			}
 	}
 
 	if (getItem(ST_RIGHTHAND) != nullptr)
 	{
+		//if (debug) Log(LOG_INFO) << ". set= " << (int)AH_RIGHT;
 		_cacheInvalid = true;
 		return (_activeHand = AH_RIGHT);
 	}
 
 	if (getItem(ST_LEFTHAND) != nullptr)
 	{
+		//if (debug) Log(LOG_INFO) << ". set= " << (int)AH_LEFT;
 		_cacheInvalid = true;
 		return (_activeHand = AH_LEFT);
 	}
@@ -2895,7 +2917,7 @@ ActiveHand BattleUnit::getActiveHand()
 }
 
 /**
- * Gets the 'main hand weapon' of this BattleUnit.
+ * Gets the main-hand-weapon of this BattleUnit.
  * @note A call to this function also sets the Active-hand.
  * @param quickest	- true to choose the quickest weapon (default false)
  * @param inclMelee	- true to include check for melee-weapon (default true)
@@ -2908,6 +2930,9 @@ BattleItem* BattleUnit::getMainHandWeapon(
 		bool inclMelee,
 		bool checkFist)
 {
+//	if (_id == 1000013)
+//		Log(LOG_INFO) << "getMainHandWeapon";
+
 	//Log(LOG_INFO) << "BattleUnit::getMainHandWeapon()";
 	BattleItem
 		* const rtWeapon (getItem(ST_RIGHTHAND)),	// TODO: Prioritize blasters (the AI currently relies
@@ -3151,7 +3176,7 @@ BattleItem* BattleUnit::getRangedWeapon(bool quickest) const
 }
 
 /**
- * Check if this BattleUnit has ammo and if so reload weapon.
+ * Checks if this BattleUnit has ammo and if so reloads its weapon.
  * @note Used by the AI only - Player has much stricter reloading requirements
  * that are handled by the Inventory.
  * @return, true if unit loads its weapon
@@ -3174,35 +3199,30 @@ bool BattleUnit::checkReload()
 	const int tuReload (weapon->getRules()->getReloadTu());
 	if (_tu >= tuReload)
 	{
-		BattleItem* load (nullptr);
 		for (std::vector<BattleItem*>::const_iterator
 				i = getInventory()->begin();
-				i != getInventory()->end() && load == nullptr;
+				i != getInventory()->end();
 				++i)
 		{
 			for (std::vector<std::string>::const_iterator
 					j = weapon->getRules()->getCompatibleAmmo()->begin();
-					j != weapon->getRules()->getCompatibleAmmo()->end() && load == nullptr;
+					j != weapon->getRules()->getCompatibleAmmo()->end();
 					++j)
 			{
 				if (*j == (*i)->getRules()->getType())
-					load = *i;
+				{
+					weapon->setAmmoItem(*i);
+					_tu -= tuReload;
+					return true;
+				}
 			}
 		}
-
-		if (load != nullptr)
-		{
-			_tu -= tuReload;
-			weapon->setAmmoItem(load);
-			return true;
-		}
 	}
-
 	return false;
 }
 
 /**
- * Check if this BattleUnit is in an exit-area.
+ * Checks if this BattleUnit is in an exit-area.
  * @param tileType - type of exit-tile to check for (RuleItem.h) (default START_POINT)
  * @return, true if unit is in a designated exit-area
  */
@@ -4225,36 +4245,28 @@ bool BattleUnit::checkViewSector(const Position& pos) const
 	switch (_dir)
 	{
 		case 0:
-			if (dx + dy > -1 && dy - dx > -1)
-				return true;
+			if (dx + dy > -1 && dy - dx > -1) return true;
 			break;
 		case 1:
-			if (dx > -1 && dy > -1)
-				return true;
+			if (dx > -1 && dy > -1) return true;
 			break;
 		case 2:
-			if (dx + dy > -1 && dy - dx < 1)
-				return true;
+			if (dx + dy > -1 && dy - dx < 1) return true;
 			break;
 		case 3:
-			if (dy < 1 && dx > -1)
-				return true;
+			if (dy < 1 && dx > -1) return true;
 			break;
 		case 4:
-			if (dx + dy < 1 && dy - dx < 1)
-				return true;
+			if (dx + dy < 1 && dy - dx < 1) return true;
 			break;
 		case 5:
-			if (dx < 1 && dy < 1)
-				return true;
+			if (dx < 1 && dy < 1) return true;
 			break;
 		case 6:
-			if (dx + dy < 1 && dy - dx > -1)
-				return true;
+			if (dx + dy < 1 && dy - dx > -1) return true;
 			break;
 		case 7:
-			if (dy > -1 && dx < 1)
-				return true;
+			if (dy > -1 && dx < 1) return true;
 	}
 	return false;
 }
@@ -4268,8 +4280,7 @@ void BattleUnit::adjustStats(
 		const DifficultyLevel diff,
 		const int month)
 {
-	// adjust the unit's stats according to the difficulty level.
-	_stats.tu			+= 4 * diff * _stats.tu / 100;
+	_stats.tu			+= 4 * diff * _stats.tu / 100; // adjust the unit's stats according to the difficulty level.
 	_stats.stamina		+= 4 * diff * _stats.stamina / 100;
 	_stats.reactions	+= 6 * diff * _stats.reactions / 100;
 	_stats.firing		+= 6 * diff * _stats.firing / 100;
@@ -4438,17 +4449,19 @@ void BattleUnit::setSpinPhase(int spinphase)
 }
 
 /**
- * Stops this BattleUnit from shooting/throwing if it spots a new opponent while turning.
+ * Sets this BattleUnit to stop shooting/throwing if it spots a new opponent
+ * while auto-turning.
  * @param stop - true to stop everything and refund TU (default true)
  */
-void BattleUnit::setStopShot(const bool stop)
+void BattleUnit::setStopShot(bool stop)
 {
 	_stopShot = stop;
 }
 
 /**
- * Gets if this BattleUnit spotted a new opponent while turning + shooting/thowing.
- * @return, true if a new hostile has been seen
+ * Gets if this BattleUnit spotted a new opponent while auto-turning before
+ * shooting/thowing.
+ * @return, true if a new hostile was spotted
  */
 bool BattleUnit::getStopShot() const
 {
@@ -4456,7 +4469,8 @@ bool BattleUnit::getStopShot() const
 }
 
 /**
- * Sets this BattleUnit as dashing - reduces chance of getting hit.
+ * Sets this BattleUnit as dashing.
+ * @note Reduces chance of getting hit during reaction-fire.
  * @param dash - true to dash (default true)
  */
 void BattleUnit::setDashing(bool dash)

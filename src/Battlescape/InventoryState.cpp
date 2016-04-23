@@ -518,7 +518,7 @@ void InventoryState::init()
 
 //	if (_parent) _parent->getMap()->getCamera()->centerOnPosition(unit->getPosition(), false);
 
-	unit->clearCache();
+	unit->flagCache();
 
 	_paper->clear();
 	_btnRank->clear();

@@ -3005,7 +3005,8 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 					{
 						tuSnap = selUnit->getActionTu(BA_MELEE, rtItem);
 					}
-				} break;
+				}
+				break;
 
 			case AH_LEFT:
 				itRule = ltItem->getRules();
@@ -3085,12 +3086,9 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 						else
 							clip = aItem->getRules()->getFullClip();
 
-						if (load == clip)
-							color = GREEN_D;
-						else if (load >= clip / 2)
-							color = YELLOW_D;
-						else
-							color = ORANGE_D;
+						if		(load == clip)		color = GREEN_D;
+						else if	(load >= clip / 2)	color = YELLOW_D;
+						else						color = ORANGE_D;
 
 						_numAmmoR->setColor(color);
 					}
@@ -3154,12 +3152,9 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 						else
 							clip = aItem->getRules()->getFullClip();
 
-						if (load == clip)
-							color = GREEN_D;
-						else if (load >= clip / 2)
-							color = YELLOW_D;
-						else
-							color = ORANGE_D;
+						if		(load == clip)		color = GREEN_D;
+						else if	(load >= clip / 2)	color = YELLOW_D;
+						else						color = ORANGE_D;
 
 						_numAmmoL->setColor(color);
 					}
@@ -3200,7 +3195,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 void BattlescapeState::hotSqrsClear()
 {
 	for (size_t // hide target indicators & clear targets
-			i = 0;
+			i = 0u;
 			i != HOTSQRS;
 			++i)
 	{
@@ -3215,7 +3210,7 @@ void BattlescapeState::hotSqrsClear()
  */
 void BattlescapeState::hotSqrsUpdate()
 {
-	size_t j (0);
+	size_t j (0u);
 	for (std::vector<BattleUnit*>::const_iterator
 		i = _battleSave->getUnits()->begin();
 		i != _battleSave->getUnits()->end() && j != HOTSQRS;
@@ -3240,7 +3235,7 @@ void BattlescapeState::hotWoundsRefresh()
 	static Surface* const srfBadge (_game->getResourcePack()->getSurface("RANK_ROOKIE"));
 
 	for (size_t // hide target indicators & clear tiles
-			i = 0;
+			i = 0u;
 			i != WOUNDED;
 			++i)
 	{
@@ -3254,7 +3249,7 @@ void BattlescapeState::hotWoundsRefresh()
 	const BattleUnit* unit;
 	Tile* tile;
 	for (size_t
-			i = 0, k = 0;
+			i = 0u, k = 0u;
 			i != _battleSave->getMapSizeXYZ() && k != WOUNDED;
 			++i)
 	{
@@ -3310,7 +3305,7 @@ void BattlescapeState::flashMedic() // private.
 	static Surface* const srfCross (_game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(11)); // gray cross
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != WOUNDED;
 			++i)
 	{
@@ -3411,11 +3406,11 @@ void BattlescapeState::animate()
 void BattlescapeState::cycleFuses(BattleUnit* const selUnit) // private.
 {
 	static Surface* const srf (_game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(9)); // plus sign
-	static const int pulse[PULSE_FRAMES] { 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,
-										  13,12,11,10, 9, 8, 7, 6, 5, 4, 3};
+	static const int pulse[PULSE_FRAMES] { 2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
+										  13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3 };
 
 	if (_fuseFrame == PULSE_FRAMES)
-		_fuseFrame = 0;
+		_fuseFrame = 0u;
 
 	const BattleItem* item (selUnit->getItem(ST_LEFTHAND));
 	if (item != nullptr && item->getFuse() != -1)
@@ -3429,7 +3424,7 @@ void BattlescapeState::cycleFuses(BattleUnit* const selUnit) // private.
 				srf->blitNShade(
 							_btnLeftHandItem,
 							_btnLeftHandItem->getX() + 27,
-							_btnLeftHandItem->getY() - 1,
+							_btnLeftHandItem->getY() -  1,
 							pulse[_fuseFrame],
 							false, 3); // red
 				_btnLeftHandItem->unlock();
@@ -3447,7 +3442,7 @@ void BattlescapeState::cycleFuses(BattleUnit* const selUnit) // private.
 				srf->blitNShade(
 							_btnRightHandItem,
 							_btnRightHandItem->getX() + 27,
-							_btnRightHandItem->getY() - 1,
+							_btnRightHandItem->getY() -  1,
 							pulse[_fuseFrame],
 							false, 3); // red
 				_btnRightHandItem->unlock();
@@ -3463,16 +3458,16 @@ void BattlescapeState::cycleFuses(BattleUnit* const selUnit) // private.
 void BattlescapeState::hotSqrsCycle(BattleUnit* const selUnit) // private.
 {
 	static int
-		delta			  (1),
-		colorRed		 (34), // currently selected unit sees other unit
-		colorBlue		(114), // another unit can see other unit
-		color_border	 (15); // dark.gray
+		delta		  (1),
+		colorRed	 (34), // currently selected unit sees other unit
+		colorBlue	(114), // another unit can see other unit
+		color_border (15); // dark.gray
 
 	Uint8 color;
 	bool isSpotted;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != HOTSQRS;
 			++i)
 	{
@@ -3499,20 +3494,17 @@ void BattlescapeState::hotSqrsCycle(BattleUnit* const selUnit) // private.
 				}
 			}
 
-			if (isSpotted == true)
-			{
-				if (std::find(
+			if (isSpotted == false)
+				color = GREEN_D; // hostile unit is visible but not currently in LoS of friendly units; ergo do not cycle colors.
+			else if (std::find(
 							selUnit->getHostileUnits().begin(),
 							selUnit->getHostileUnits().end(),
 							_hostileUnit[i]) != selUnit->getHostileUnits().end())
-				{
-					color = static_cast<Uint8>(colorRed);
-				}
-				else
-					color = static_cast<Uint8>(colorBlue);
+			{
+				color = static_cast<Uint8>(colorRed);
 			}
 			else
-				color = GREEN_D; // hostile unit is visible but not currently viewed by friendly units; ergo do not cycle colors.
+				color = static_cast<Uint8>(colorBlue);
 
 			_btnHostileUnit[i]->drawRect(0,0, 15,13, static_cast<Uint8>(color_border));
 			_btnHostileUnit[i]->drawRect(1,1, 13,11, color);
@@ -3567,7 +3559,7 @@ void BattlescapeState::liquidationExplosion() // private.
 
 				BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 				selUnit->aim(false);
-				selUnit->clearCache();
+				selUnit->flagCache();
 				_battleGame->getMap()->cacheUnits();
 
 				return;
@@ -3702,17 +3694,15 @@ void BattlescapeState::printDebug(const std::wstring& wst)
 
 /**
  * Shows a warning message.
- * @note Currently uses 'arg' only to show Psi pct & Fuse timer.
- * @param st		- reference a message-string usually a warning
- * @param useArg	- true to show @a arg (default false)
- * @param arg		- the argument as an integer (default 0)
+ * @note Currently uses 'arg' only to show psi-percent & fuse-timer.
+ * @param st	- reference to a message-string usually a warning
+ * @param arg	- the argument to show as an integer (default INT_MAX)
  */
 void BattlescapeState::warning(
 		const std::string& st,
-		bool useArg,
 		int arg)
 {
-	if (useArg == false)
+	if (arg == std::numeric_limits<int>::max())
 		_warning->showMessage(tr(st));
 	else
 		_warning->showMessage(tr(st).arg(arg));

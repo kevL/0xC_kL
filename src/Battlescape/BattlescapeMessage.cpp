@@ -56,7 +56,7 @@ BattlescapeMessage::BattlescapeMessage(
 	_window->setHighContrast();
 
 	_text = new Text( // "Hidden Movement" text
-					width - 26,
+					width  - 28,
 					height - 12,
 					x, y + 14);
 	_text->setAlign(ALIGN_CENTER);
@@ -115,7 +115,7 @@ void BattlescapeMessage::setText(const std::wstring& message)
 
 /**
  * Changes the various resources needed for text-rendering.
- * The different fonts need to be passed in advance since the text-size
+ * @note The different fonts need to be passed in advance since the text-size
  * can change mid-text and the language affects how the Text is rendered.
  * @param big	- pointer to large-size Font
  * @param small	- pointer to small-size Font

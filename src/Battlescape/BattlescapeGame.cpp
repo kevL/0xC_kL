@@ -300,9 +300,8 @@ void BattlescapeGame::statePushBack(BattleState* const battleState)
  * Post-procedures for the most recent BattleState.
  * @note This is a very important function. It is called by a BattleState
  * (WalkB, ProjectileFlyB, ExplosionB, etc.) at the moment that state has
- * finished the current BattleAction. Check the result of that BattleAction
- * here and do all the aftermath. The state is then popped off the '_battleStates'
- * list.
+ * finished its BattleAction. Check the result of that BattleAction here and do
+ * all the aftermath. The state is then popped off the '_battleStates' list.
  */
 void BattlescapeGame::popState()
 {
@@ -475,7 +474,7 @@ void BattlescapeGame::popState()
 
 							if (selUnit != nullptr)
 							{
-								selUnit->clearCache();
+								selUnit->flagCache();
 								getMap()->cacheUnit(selUnit);
 							}
 
@@ -657,7 +656,7 @@ void BattlescapeGame::centerOnUnit( // private.
 }
 
 /**
- * Handles the processing of the AI states of a unit.
+ * Handles the processing of the AI-state of a non-player BattleUnit.
  * @note Called by BattlescapeGame::think().
  * @param unit - pointer to a BattleUnit
  */
@@ -1059,7 +1058,7 @@ void BattlescapeGame::handleNonTargetAction()
 					showWarning = 1;
 				else
 				{
-					_tacAction.actor->clearCache();
+					_tacAction.actor->flagCache();
 
 					const Position pos (_tacAction.actor->getPosition());
 					dropItem(_tacAction.weapon, pos, DROP_FROMINVENTORY);
@@ -1085,7 +1084,6 @@ void BattlescapeGame::handleNonTargetAction()
 			case 2:
 				_parentState->warning(
 									_tacAction.result,
-									true,
 									_tacAction.value);
 				_tacAction.result.clear();
 		}
@@ -1102,7 +1100,7 @@ void BattlescapeGame::handleNonTargetAction()
 void BattlescapeGame::liquidateUnit() // private.
 {
 	_tacAction.actor->aim();
-	_tacAction.actor->clearCache();
+	_tacAction.actor->flagCache();
 	getMap()->cacheUnit(_tacAction.actor);
 
 	const RuleItem* const itRule (_tacAction.weapon->getRules());
@@ -2323,7 +2321,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 							dropItem(item, unit->getPosition(), DROP_FROMINVENTORY);
 					}
 
-					unit->clearCache();
+					unit->flagCache();
 
 					Pathfinding* const pf (_battleSave->getPathfinding());
 					pf->setPathingUnit(unit);
@@ -3713,7 +3711,7 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 																	(*i)->getPriorOwner()));
 									_battleSave->toDeleteItem(*i); // does/should this even be done (also done at end of ExplosionBState) -> causes a double-explosion if remarked here.
 
-									unit->clearCache();
+									unit->flagCache();
 									getMap()->cacheUnit(unit);
 									return true;
 								}

@@ -577,7 +577,7 @@ void Tile::setRevealed(
 			}
 		}
 
-		if (_unit != nullptr) _unit->clearCache();
+		if (_unit != nullptr) _unit->flagCache();
 	}
 }
 

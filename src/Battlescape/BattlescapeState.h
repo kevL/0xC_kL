@@ -446,8 +446,7 @@ private:
 		/// Show warning message.
 		void warning(
 				const std::string& st,
-				bool useArg = false,
-				int arg = 0);
+				int arg = std::numeric_limits<int>::max());
 
 		/// Displays a popup window.
 		void popup(State* state);

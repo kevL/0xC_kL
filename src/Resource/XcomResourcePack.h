@@ -85,7 +85,7 @@ static const std::string // = 'type' in Music Rules file
 
 
 /**
- * Resource pack for the X-Com: UFO Defense game.
+ * Resource pack for the "X-Com: UFO Defense" game.
  */
 class XcomResourcePack
 	:
@@ -93,18 +93,18 @@ class XcomResourcePack
 {
 
 	public:
-		/// Creates the X-Com Resource Pack.
+		/// Creates an X-Com ResourcePack.
 		explicit XcomResourcePack(const Ruleset* const rules);
-		/// Cleans up the X-Com Resource Pack.
+		/// Cleans up the X-Com ResourcePack.
 		~XcomResourcePack();
 
-		/// Loads battlescape specific resources
+		/// Loads battlescape-specific resources.
 		void loadBattlescapeResources();
 
-		/// Checks if an extension is a valid image file.
+		/// Checks if an extension is a valid image-file.
 		bool isImageFile(std::string extension);
 
-		/// Loads a specified music file.
+		/// Loads a specified music-file.
 /*		Music* loadMusic(
 				MusicFormat fmt,
 				const std::string& file,

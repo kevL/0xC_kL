@@ -47,8 +47,8 @@ WarningMessage::WarningMessage(
 			width,
 			height,
 			x,y),
-		_color(0),
-		_fade(0)
+		_color(0u),
+		_fade(0u)
 {
 	_text = new Text(
 					width,
@@ -130,7 +130,7 @@ void WarningMessage::setPalette(
 void WarningMessage::showMessage(const std::wstring& msg)
 {
 	_text->setText(msg);
-	_fade = 0;
+	_fade = 0u;
 	_redraw = true;
 
 	setVisible();
@@ -153,7 +153,7 @@ void WarningMessage::fade()
 	_redraw = true;
 
 	++_fade;
-	if (_fade == 15)
+	if (_fade == 15u)
 	{
 		setVisible(false);
 		_timer->stop();
@@ -167,25 +167,25 @@ void WarningMessage::draw()
 {
 	Surface::draw();
 
-	Uint8 color = static_cast<Uint8>(_color + 1 + _fade);
-	if (_fade == 15)
-		color = static_cast<Uint8>(color - 1);
+	Uint8 color = static_cast<Uint8>(_color + 1u + _fade);
+	if (_fade == 15u)
+		color = static_cast<Uint8>(color - 1u);
 
 	drawRect(
 			0,0,
 			static_cast<Sint16>(getWidth()),
 			static_cast<Sint16>(getHeight()),
-			6);
+			6u);
 	drawRect(
 			1,1,
 			static_cast<Sint16>(getWidth() - 2),
 			static_cast<Sint16>(getHeight() - 2),
-			10);
+			10u);
 	drawRect(
 			2,2,
 			static_cast<Sint16>(getWidth() - 3),
 			static_cast<Sint16>(getHeight() - 3),
-			15);
+			15u);
 	drawRect(
 			2,2,
 			static_cast<Sint16>(getWidth() - 4),

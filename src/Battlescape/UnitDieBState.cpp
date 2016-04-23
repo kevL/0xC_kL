@@ -271,7 +271,7 @@ void UnitDieBState::think()
 			convertToBody();
 	}
 
-	_unit->clearCache();
+	_unit->flagCache();
 	_parent->getMap()->cacheUnit(_unit);
 }
 

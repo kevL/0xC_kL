@@ -502,7 +502,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 				}
 
 				_prjItem->changeOwner();
-				_unit->clearCache();
+				_unit->flagCache();
 				_parent->getMap()->cacheUnit(_unit);
 
 				soundId = ResourcePack::ITEM_THROW;
@@ -563,7 +563,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 							*_action.weapon);
 
 			_unit->startAiming();
-			_unit->clearCache();
+			_unit->flagCache();
 			_parent->getMap()->cacheUnit(_unit);
 
 			// lift-off
@@ -639,7 +639,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 			}
 
 			_unit->aim();
-			_unit->clearCache();
+			_unit->flagCache();
 			_parent->getMap()->cacheUnit(_unit);
 
 			// lift-off
@@ -992,7 +992,7 @@ void ProjectileFlyBState::think()
 					_parent->getMap()->setReveal(false);
 
 					_unit->aim(false);
-					_unit->clearCache();
+					_unit->flagCache();
 					_parent->getMap()->cacheUnits();
 				}
 
@@ -1140,7 +1140,7 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 {
 	//Log(LOG_INFO) << "flyB:performMeleeAttack() " << _unit->getId();
 	_unit->aim();
-	_unit->clearCache();
+	_unit->flagCache();
 	_parent->getMap()->cacheUnit(_unit);
 
 	_action.posTarget = _battleSave->getTileEngine()->getMeleePosition(_unit);

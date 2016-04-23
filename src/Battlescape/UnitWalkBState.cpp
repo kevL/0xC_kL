@@ -226,14 +226,14 @@ void UnitWalkBState::think()
 									_unit->getFaceDirection(),
 									false);
 
-//				_unit->clearCache(); // might play around with Strafe anim's ......
+//				_unit->flagCache(); // might play around with Strafe anim's ......
 				_parent->getMap()->cacheUnit(_unit);
 				_unit->setUnitDirection(dirStrafe, false);
 			}
 			else
 			{
 				//Log(LOG_INFO) << ". WALKING no strafe, cacheUnit()";
-				_unit->clearCache(); // might play around with non-Strafe anim's ......
+				_unit->flagCache(); // might play around with non-Strafe anim's ......
 				_parent->getMap()->cacheUnit(_unit);
 			}
 		}
@@ -345,7 +345,7 @@ bool UnitWalkBState::doStatusStand() // private.
 		if (_parent->kneelToggle(_unit) == true)
 		{
 			//Log(LOG_INFO) << ". . Stand up";
-//			_unit->clearCache();					// <- These are handled by BattleUnit::kneel() [invalidate cache]
+//			_unit->flagCache();					// <- These are handled by BattleUnit::kneel() [invalidate cache]
 //			_parent->getMap()->cacheUnit(_unit);	// <- and BattlescapeGame::kneel() [cache units]
 
 			if (_te->checkReactionFire(_unit) == true) // unit got fired upon - stop.
@@ -373,7 +373,7 @@ bool UnitWalkBState::doStatusStand() // private.
 		if (_unit->getFaction() != FACTION_PLAYER)
 			_unit->setHiding(false);
 
-		_unit->clearCache();
+		_unit->flagCache();
 		_parent->getMap()->cacheUnit(_unit);
 
 		postPathProcedures();
@@ -518,7 +518,7 @@ bool UnitWalkBState::doStatusStand() // private.
 		&& _parent->checkReservedTu(_unit, tuCost) == false)				// Only player's units will *bypass* abortPath() due to panicking ....
 	{																		// Tbh, other code should have rendered the playerPanicHandled() redundant.
 		//Log(LOG_INFO) << ". . checkReservedTu(_unit, tuCost) == false";	// That is to say this should kick in *only* when player has actively
-		_unit->clearCache();												// clicked to move but tries to go further than TUs allow; because
+		_unit->flagCache();												// clicked to move but tries to go further than TUs allow; because
 		_parent->getMap()->cacheUnit(_unit);								// either the AI or the panic-code should not try to
 		_pf->abortPath();													// move a unit farther than its [reserved] TUs would allow
 		return false;
@@ -531,7 +531,7 @@ bool UnitWalkBState::doStatusStand() // private.
 		//Log(LOG_INFO) << ". . dir != _unit->getUnitDirection() -> turn";
 		_unit->setDirectionTo(dir);
 
-		_unit->clearCache();
+		_unit->flagCache();
 		_parent->getMap()->cacheUnit(_unit);
 		return false;
 	}
@@ -831,7 +831,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 //			_action.TU = 0;
 
 			_pf->abortPath();
-//			_unit->clearCache();
+//			_unit->flagCache();
 //			_parent->getMap()->cacheUnit(_unit);
 //			_parent->popState();
 			return false;
@@ -923,7 +923,7 @@ void UnitWalkBState::doStatusTurn() // private.
 
 	_unit->turn();
 
-	_unit->clearCache();
+	_unit->flagCache();
 	_parent->getMap()->cacheUnit(_unit);
 
 	// calcFov() is unreliable for setting the _newUnitSpotted bool as it
@@ -966,7 +966,7 @@ void UnitWalkBState::abortState(bool recache) // private.
 {
 	if (recache == true)
 	{
-		_unit->clearCache();
+		_unit->flagCache();
 		_parent->getMap()->cacheUnit(_unit);
 	}
 	_pf->abortPath();
@@ -1096,7 +1096,7 @@ void UnitWalkBState::postPathProcedures() // private.
 	_te->calculateUnitLighting();
 	_te->calcFovPos(_unit->getPosition(), true);	// in case unit opened a door and stopped without doing Status_WALKING
 													// TODO: Put a clamp on that: call only if a door actually opened above^
-	_unit->clearCache();
+	_unit->flagCache();
 	_parent->getMap()->cacheUnit(_unit);
 
 	if (_falling == false)

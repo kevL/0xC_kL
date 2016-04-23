@@ -180,7 +180,7 @@ void UnitFallBState::think()
 			//Log(LOG_INFO) << ". . call keepWalking()";
 			(*i)->keepWalking(tileBelow, true);	// advances the phase
 
-			(*i)->clearCache();					// kL
+			(*i)->flagCache();					// kL
 			_parent->getMap()->cacheUnit(*i);	// make sure the fallUnit sprites are up to date
 		}
 
@@ -379,7 +379,7 @@ void UnitFallBState::think()
 								destination,
 								tileBelow);
 
-				(*i)->clearCache();
+				(*i)->flagCache();
 				_parent->getMap()->cacheUnit(*i);
 
 				++i;
@@ -404,7 +404,7 @@ void UnitFallBState::think()
 
 				_terrain->calculateUnitLighting();
 
-				(*i)->clearCache();
+				(*i)->flagCache();
 				_parent->getMap()->cacheUnit(*i);
 
 				_terrain->calcFovPos((*i)->getPosition(), true); // could try no tile-reveal here.

@@ -84,8 +84,6 @@ protected:
 		void loadScr(const std::string& file);
 		/// Loads an X-Com SPK graphic.
 		void loadSpk(const std::string& file);
-		/// Loads a TFTD BDY graphic.
-//		void loadBdy(const std::string& file);
 		/// Loads a general image file.
 		void loadImage(const std::string& file);
 
@@ -147,14 +145,14 @@ protected:
 				Uint8 color);
 		/// Draws a filled polygon on the Surface.
 		void drawPolygon(
-				Sint16* x,
-				Sint16* y,
+				const Sint16* const x,
+				const Sint16* const y,
 				size_t n,
 				Uint8 color);
 		/// Draws a textured polygon on the Surface.
 		void drawTexturedPolygon(
-				Sint16* x,
-				Sint16* y,
+				const Sint16* const x,
+				const Sint16* const y,
 				size_t n,
 				Surface* texture,
 				int dx,
@@ -163,7 +161,7 @@ protected:
 		void drawString(
 				Sint16 x,
 				Sint16 y,
-				const char* s,
+				const char* const st,
 				Uint8 color);
 
 		/// Sets the Surface's palette.
@@ -239,8 +237,8 @@ protected:
 		 * @param color	- color for the pixel
 		 */
 		void setPixelIterative( // setPixelColorIterative
-				int* x,
-				int* y,
+				int* const x,
+				int* const y,
 				Uint8 color)
 		{
 			setPixelColor(*x,*y, color);
@@ -307,7 +305,7 @@ protected:
 		/// Unlocks the Surface.
 		void unlock();
 
-		/// Specific blit function to blit battlescape terrain data in different shades in a fast way.
+		/// Specific blit function to blit battlescape sprites.
 		void blitNShade(
 				Surface* surface,
 				int x,
@@ -317,7 +315,7 @@ protected:
 				int colorGroup = 0,
 				bool halfLeft = false);
 
-		/// Invalidates the Surface which forces it to be redrawn
+		/// Invalidates the Surface which forces it to be redrawn.
 		void invalidate(bool redraw = true);
 
 		/// Gets the tooltip of the Surface.

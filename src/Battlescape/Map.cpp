@@ -752,7 +752,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						} */ // kL_end.
 
 // Redraw unitNorth moving NE/SW to stop current-Floor from clipping feet.
-						if (itX != 0 && itY != 0) //&& hasFloor == true
+						if (itX != 0 && itY != 0)
 						{
 							const Tile* const tileWest (_battleSave->getTile(posField + Position(-1,0,0)));
 							const BattleUnit* const unitWest (tileWest->getTileUnit());
@@ -2094,7 +2094,7 @@ bool Map::checkNorth( // private.
 				|| tile0->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST)
 			&& (tile1 == nullptr
 				|| ((tile1->getMapData(O_WESTWALL) == nullptr
-						|| tile1->getMapData(O_WESTWALL)->getTuCostPart(MT_WALK) == 0 // <- darn those UFO-westwall-pillars.
+						|| tile1->getMapData(O_WESTWALL)->getTuCostPart(MT_WALK) == 0 // <- darn those UFO-westwall-struts.
 						|| tile1->isUfoDoorOpen(O_WESTWALL) == true)
 					&& (tile1->getMapData(O_OBJECT) == nullptr
 						|| (tile1->getMapData(O_OBJECT)->getBigwall() & 0xb) == 0)))); // Block/NeSw/West.
@@ -2239,7 +2239,7 @@ void Map::animateMap(bool redraw)
 		if ((*i)->isOut_t(OUT_STAT) == false
 			&& (*i)->getArmor()->getConstantAnimation() == true)
 		{
-			(*i)->clearCache();
+			(*i)->flagCache();
 			cacheUnit(*i);
 		}
 	}
@@ -2591,6 +2591,7 @@ void Map::cacheUnit(BattleUnit* const unit)
 							_res->getSurfaceSet("HANDOB.PCK"),
 							_res->getSurfaceSet("HANDOB2.PCK"));
 			sprite->setAnimationFrame(_aniFrame);
+
 			cache->clear();
 			sprite->blit(cache);
 

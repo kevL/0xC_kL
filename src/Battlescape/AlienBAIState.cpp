@@ -687,7 +687,7 @@ void AlienBAIState::setupAmbush() // private.
 //						_reachableAttack.end(),
 //						_battleSave->getTileIndex(pos)) != _reachableAttack.end())
 //			{
-		Tile* tile;
+		const Tile* tile;
 
 		Position
 			originVoxel (_te->getSightOriginVoxel(_unitAggro)),
@@ -789,7 +789,7 @@ void AlienBAIState::setupAmbush() // private.
 			Position posNext;
 
 			size_t t (targetPath.size());
-			while (t-- != 0)
+			while (t-- != 0u)
 			{
 				//Log(LOG_INFO) << ". . . walk hypoTarget";
 
@@ -865,13 +865,13 @@ void AlienBAIState::setupEscape() // private.
 	bool
 		coverFound (false),
 		first (true);
-	size_t i (SavedBattleGame::SEARCH_SIZE);
-	while (coverFound == false && i <= SavedBattleGame::SEARCH_SIZE)
+	size_t t (SavedBattleGame::SEARCH_SIZE);
+	while (coverFound == false && t <= SavedBattleGame::SEARCH_SIZE)
 	{
 		if (first == true)
 		{
 			first = false;
-			i = 0;
+			t = 0u;
 
 			scoreTest = 0;
 
@@ -880,13 +880,13 @@ void AlienBAIState::setupEscape() // private.
 			else
 				_escapeAction->posTarget = _unit->getPosition();
 		}
-		else if (i++ < SavedBattleGame::SEARCH_SIZE)
+		else if (t++ < SavedBattleGame::SEARCH_SIZE)
 		{
 			scoreTest = BASE_SUCCESS_SYSTEMATIC;
 
 			_escapeAction->posTarget = _unit->getPosition();
-			_escapeAction->posTarget.x += tileSearch[i].x;
-			_escapeAction->posTarget.y += tileSearch[i].y;
+			_escapeAction->posTarget.x += tileSearch[t].x;
+			_escapeAction->posTarget.y += tileSearch[t].y;
 
 			if (_escapeAction->posTarget == _unit->getPosition())
 			{

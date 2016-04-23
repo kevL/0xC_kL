@@ -277,14 +277,14 @@ private:
 		static bool _debugPlay;
 
 
-		/// Creates the BattlescapeGame state.
+		/// Creates the BattlescapeGame.
 		BattlescapeGame(
 				SavedBattleGame* const battleSave,
 				BattlescapeState* const parentState);
-		/// Cleans up the BattlescapeGame state.
+		/// Cleans up the BattlescapeGame.
 		~BattlescapeGame();
 
-		/// Initializes the Battlescape game.
+		/// Initializes the BattlescapeGame.
 		void init();
 		/// Checks for units panicking or falling and so on.
 		void think();
@@ -297,27 +297,27 @@ private:
 		void statePushNext(BattleState* const battleState);
 		/// Pushes a BattleState to the back of the list.
 		void statePushBack(BattleState* const battleState = nullptr);
-		/// Removes the current BattleState.
+		/// Pops the current BattleState and handles any after-effects.
 		void popState();
-		/// Sets the BattleState think interval.
+		/// Sets the BattleState->think() interval.
 		void setStateInterval(Uint32 interval);
 
-		/// Handles unit AI.
+		/// Handles non-player BattleUnit AI.
 		void handleUnitAI(BattleUnit* const unit);
 
-		/// Handles the result of non-target actions like priming a grenade.
+		/// Handles the result of non-target battle-actions like priming a grenade.
 		void handleNonTargetAction();
 
-		/// Sets the selector according to the current action.
+		/// Sets the selector according to the current battle-action.
 		void setupSelector();
 
 		/// Determines whether a playable unit is selected.
 		bool playableUnitSelected();
 
-		/// Handles kneeling action.
+		/// Handles kneeling and/or standing.
 		bool kneelToggle(BattleUnit* const unit);
 
-		/// Checks for casualties in battle.
+		/// Checks for casualties.
 		void checkCasualties(
 				const BattleItem* const weapon = nullptr,
 				BattleUnit* attacker = nullptr,
@@ -326,17 +326,17 @@ private:
 		/// Checks if a BattleUnit gets exposed after making a melee-attack.
 		void checkExposedByMelee(BattleUnit* const unit) const;
 
-		/// Checks reserved TU.
+		/// Checks reserved-TU.
 		bool checkReservedTu(
 				BattleUnit* const unit,
 				int tu) const;
 
-		/// Cancels the current action.
+		/// Cancels the current battle-action.
 		bool cancelTacticalAction(bool force = false);
-		/// Gets a pointer to access action-struct directly.
+		/// Gets a pointer for access to the battle-action-struct directly.
 		BattleAction* getTacticalAction();
 
-		/// Determines whether there is an action currently going on.
+		/// Determines whether there is a battle-action currently going on.
 		bool isBusy() const;
 
 		/// Left click activates a primary action.
@@ -353,7 +353,7 @@ private:
 				const BattleUnit* const unit,
 				int dir);
 
-		/// Requests the end of the turn.
+		/// Requests the end of the turns.
 		void requestEndTurn();
 
 		/// Drops an item and affects it with gravity.

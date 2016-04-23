@@ -990,7 +990,7 @@ size_t SavedBattleGame::getMapSizeXYZ() const
 
 /**
  * Sets the terrain-type string.
- * @param terrain - the terrain
+ * @param terrain - the terrain-type
  */
 void SavedBattleGame::setBattleTerrain(const std::string& terrain)
 {
@@ -998,8 +998,8 @@ void SavedBattleGame::setBattleTerrain(const std::string& terrain)
 }
 
 /**
- * Gets the terrainType string.
- * @return, the terrain
+ * Gets the terrain-type string.
+ * @return, the terrain-type
  */
 std::string SavedBattleGame::getBattleTerrain() const
 {
@@ -1007,11 +1007,11 @@ std::string SavedBattleGame::getBattleTerrain() const
 }
 
 /**
- * Converts a tile index to coordinates.
+ * Converts a tile-index to coordinates.
  * @param index	- the unique tileindex
- * @param x		- pointer to the X coordinate
- * @param y		- pointer to the Y coordinate
- * @param z		- pointer to the Z coordinate
+ * @param x		- pointer to the x-coordinate
+ * @param y		- pointer to the y-coordinate
+ * @param z		- pointer to the z-coordinate
  */
 void SavedBattleGame::tileCoords(
 		size_t index,
@@ -2170,7 +2170,7 @@ void SavedBattleGame::reviveUnit(
 					unit->setExposed(-1);
 			}
 
-			unit->clearCache();
+			unit->flagCache();
 			unit->setUnitDirection(RNG::generate(0,7));
 			unit->setTimeUnits(0);
 			unit->setEnergy(0);

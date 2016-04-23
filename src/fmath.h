@@ -32,7 +32,7 @@
 
 
 /**
- * Returns true if two floating point values are within epsilon.
+ * Returns true if two floating-point values are within epsilon.
  */
 template<class _Tx>
 inline bool AreSame(
@@ -44,7 +44,7 @@ inline bool AreSame(
 
 
 /**
- * Rounds a floating point value up or down to its nearest whole value.
+ * Rounds a floating-point value up or down to its nearest whole value.
  * @note The standard library functions ceil() and floor() expect doubles.
  */
 template<class _Tx>
@@ -85,7 +85,6 @@ inline bool isNaNorInf(
 	{
 		return true;
 	}
-
 	return false;
 }
 

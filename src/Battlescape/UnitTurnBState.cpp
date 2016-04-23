@@ -163,7 +163,7 @@ void UnitTurnBState::think()
 	else if (_unit->spendTimeUnits(_tu) == true)
 	{
 		_unit->turn(_turret); // -> STATUS_STANDING if done
-		_unit->clearCache();
+		_unit->flagCache();
 		_parent->getMap()->cacheUnit(_unit);
 
 		const size_t antecedentOpponents (_unit->getHostileUnitsThisTurn().size());

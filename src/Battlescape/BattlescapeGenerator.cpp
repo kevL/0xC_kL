@@ -694,10 +694,12 @@ void BattlescapeGenerator::nextStage()
 		}
 	}
 
-	if (_battleSave->getSelectedUnit() == nullptr
-		|| _battleSave->getSelectedUnit()->getFaction() != FACTION_PLAYER)
+	const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
+	if (selUnit == nullptr
+		|| selUnit->isOut_t(OUT_STAT) == true
+		|| selUnit->getFaction() != FACTION_PLAYER)
 	{
-		_battleSave->selectNextFactionUnit();
+		_battleSave->selectNextFactionUnit(); // NOTE: This runs only if the only player-unit still conscious is a support-unit.
 	}
 
 	const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));

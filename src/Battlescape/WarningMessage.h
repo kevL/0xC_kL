@@ -32,7 +32,7 @@ class Timer;
 
 
 /**
- * Coloured box with text inside that fades out after it is displayed.
+ * Colored box with text inside that fades out after it is displayed.
  * @note Used to display warning/error messages on the Battlescape.
  */
 class WarningMessage final

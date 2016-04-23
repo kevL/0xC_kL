@@ -476,7 +476,7 @@ void ExplosionBState::explode() // private.
 			if (_unit->isOut_t() == false)
 			{
 				_unit->aim(false);
-				_unit->clearCache();
+				_unit->flagCache();
 			}
 
 			if (_unit->getGeoscapeSoldier() != nullptr
@@ -600,7 +600,7 @@ void ExplosionBState::explode() // private.
 		&& _lowerWeapon == true)
 	{
 		_unit->aim(false);
-		_unit->clearCache();
+		_unit->flagCache();
 	}
 
 	_parent->getMap()->cacheUnits();

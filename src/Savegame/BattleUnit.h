@@ -402,7 +402,7 @@ private:
 				Surface* const cache,
 				int quadrant = 0);
 		/// Clears the BattleUnit's sprite-cache flag.
-		void clearCache();
+		void flagCache();
 		/// Gets if the BattleUnit's sprite-cache is invalid.
 		bool getCacheInvalid() const;
 
@@ -600,10 +600,10 @@ private:
 
 		/// Sets the hand the BattleUnit has active.
 		void setActiveHand(ActiveHand hand);
-		/// Gets the BattleUnit's active hand.
+		/// Gets the BattleUnit's active-hand.
 		ActiveHand getActiveHand();
 
-		/// Gets the item in the BattleUnit's main hand.
+		/// Gets the item in the BattleUnit's main-hand.
 		BattleItem* getMainHandWeapon(
 				bool quickest = false,
 				bool inclMelee = true,
@@ -701,7 +701,7 @@ private:
 		int getKneelHeight() const;
 
 		/// Gets the BattleUnit's loft ID.
-		size_t getLoft(size_t layer = 0) const;
+		size_t getLoft(size_t layer = 0u) const;
 
 		/// Gets the BattleUnit's victory point value.
 		int getValue() const;
@@ -804,9 +804,9 @@ private:
 		/// Sets the spinPhase of the BattleUnit.
 		void setSpinPhase(int spinphase);
 
-		/// To stop a unit from firing/throwing if it spots a new opponent during turning.
-		void setStopShot(const bool stop = true);
-		/// To stop a unit from firing/throwing if it spots a new opponent during turning.
+		/// Sets whether to stop a unit from firing/throwing if it spots a new opponent during auto-turning.
+		void setStopShot(bool stop = true);
+		/// Gets whether to stop a unit from firing/throwing if it spots a new opponent during auto-turning.
 		bool getStopShot() const;
 
 		/// Sets the BattleUnit as dashing.

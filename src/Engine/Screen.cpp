@@ -371,7 +371,7 @@ void Screen::resetDisplay(bool resetVideo)
 			Log(LOG_ERROR) << SDL_GetError();
 			Log(LOG_INFO) << "Attempting to set display to default resolution [640x400x" << _bpp << "] ...";
 			_screen = SDL_SetVideoMode(
-									640, 400, _bpp,
+									640,400, _bpp,
 									_flags);
 			if (_screen == nullptr)
 			{
@@ -469,18 +469,17 @@ void Screen::resetDisplay(bool resetVideo)
 		_glOutput.init(_baseWidth, _baseHeight);
 
 #	ifdef _DEBUG
-//		_glOutput.set_shader(CrossPlatform::getDataFile("Shaders/Raw.OpenGL.shader").c_str());
-		_glOutput.set_shader(CrossPlatform::getDataFile(nullptr).c_str());
-#	else // _DEBUG
+		_glOutput.set_shader(CrossPlatform::getDataFile("Shaders/Raw.OpenGL.shader").c_str());
+#	else
 		_glOutput.set_shader(CrossPlatform::getDataFile(Options::openGLShader).c_str());
-#	endif // _DEBUG
+#	endif
 
 		_glOutput.linear = Options::useOpenGLSmoothing; // the setting in the shader-file will override this though. So put it after the shader-invocation.
 		_glOutput.setVSync(Options::vSyncForOpenGL);
 
 		OpenGL::checkErrors = Options::checkOpenGLErrors;
 	}
-#endif // !__NO_OPENGL
+#endif
 
 	if (_screen->format->BitsPerPixel == 8u)
 		setPalette(getPalette());

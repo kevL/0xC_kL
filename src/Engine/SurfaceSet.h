@@ -49,26 +49,26 @@ private:
 
 
 	public:
-		/// Creates a surface set with frames of the specified size.
+		/// Creates a SurfaceSet with frames of the specified size.
 		SurfaceSet(
 				int width,
 				int height);
-		/// Creates a surface set from an existing one.
+		/// Creates a SurfaceSet from an existing one (copy-constructor).
 		SurfaceSet(const SurfaceSet& other);
-		/// Cleans up the surface set.
+		/// Cleans up the SurfaceSet.
 		~SurfaceSet();
 
-		/// Loads an X-Com set of PCK/TAB image files.
+		/// Loads an X-Com set of PCK/TAB image-files.
 		void loadPck(
 				const std::string& pck,
 				const std::string& tab = "");
-		/// Loads an X-Com DAT image file.
+		/// Loads an X-Com DAT image-file.
 		void loadDat(const std::string& file);
 
-		/// Gets a particular frame from the set.
-		Surface* getFrame(const int i);
-		/// Creates a new surface and returns a pointer to it.
-		Surface* addFrame(const int i);
+		/// Gets a particular Surface from the set.
+		Surface* getFrame(int i);
+		/// Creates a Surface in the set and returns a pointer to it.
+		Surface* addFrame(int i);
 
 		/// Gets the width of all frames.
 		int getWidth() const;
@@ -78,13 +78,13 @@ private:
 		/// Gets the total frames in the set.
 		size_t getTotalFrames() const;
 
-		/// Sets the surface set's palette.
+		/// Sets the SurfaceSet's Palette.
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256);
 
-		/// Gets a map of the frames in this SurfaceSet.
+		/// Gets a map of the frames in the SurfaceSet.
 		std::map<int, Surface*>* getFrames();
 };
 

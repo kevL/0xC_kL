@@ -86,11 +86,11 @@ private:
 	/// Sorts two-handed sprites out.
 	void sortHandObjects();
 	/// Draws surface with changed colors.
-	void drawRecolored(Surface* src);
+	void drawRecolored(Surface* const src);
 
 
 	public:
-		/// Creates a new UnitSprite at the specified position and size.
+		/// Creates a UnitSprite with the specified position and size.
 		UnitSprite(
 				int width,
 				int height,
