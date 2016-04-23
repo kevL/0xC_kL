@@ -476,7 +476,7 @@ void ExplosionBState::explode() // private.
 			if (_unit->isOut_t() == false)
 			{
 				_unit->aim(false);
-				_unit->flagCache();
+//				_unit->flagCache();
 			}
 
 			if (_unit->getGeoscapeSoldier() != nullptr
@@ -595,12 +595,12 @@ void ExplosionBState::explode() // private.
 	}
 
 
-	if (_unit != nullptr // if this hit/explosion was caused by a unit put the weapon down
-		&& _unit->isOut_t(OUT_STAT) == false
-		&& _lowerWeapon == true)
+	if (_lowerWeapon == true // if this hit/explosion was caused by a unit put the weapon down
+		&& _unit != nullptr
+		&& _unit->isOut_t(OUT_STAT) == false)
 	{
 		_unit->aim(false);
-		_unit->flagCache();
+//		_unit->flagCache();
 	}
 
 	_parent->getMap()->cacheUnits();

@@ -1394,8 +1394,8 @@ void BattleUnit::aim(bool aim)
 	else
 		_status = STATUS_STANDING;
 
-	if (_visible == true)
-		_cacheInvalid = true;
+//	if (_visible == true)
+	_cacheInvalid = true;
 }
 
 /**

@@ -219,12 +219,7 @@ void BriefingState::btnOkClick(Action*)
 	_game->getResourcePack()->fadeMusic(_game, 335);
 	_game->popState();
 
-	Options::baseXResolution = Options::baseXBattlescape;
-	Options::baseYResolution = Options::baseYBattlescape;
-	_game->getScreen()->resetDisplay(false);
-
 	BattlescapeState* const battleState (new BattlescapeState()); // <- ah there it is!
-
 	int
 		liveHostile,
 		livePlayer;
@@ -233,6 +228,9 @@ void BriefingState::btnOkClick(Action*)
 										livePlayer);
 	if (liveHostile != 0)
 	{
+		Options::baseXResolution = Options::baseXBattlescape;
+		Options::baseYResolution = Options::baseYBattlescape;
+
 		_game->pushState(battleState);
 		_game->getSavedGame()->getBattleSave()->setBattleState(battleState);
 		_game->pushState(new NextTurnState(
@@ -246,11 +244,12 @@ void BriefingState::btnOkClick(Action*)
 	{
 		Options::baseXResolution = Options::baseXGeoscape;
 		Options::baseYResolution = Options::baseYGeoscape;
-		_game->getScreen()->resetDisplay(false);;
 
 		delete battleState;
 		_game->pushState(new AliensCrashState());
 	}
+
+	_game->getScreen()->resetDisplay(false);
 }
 
 }

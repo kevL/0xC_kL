@@ -80,7 +80,7 @@ inline bool isNaNorInf(
 		const _Tx& x,
 		const _Tx& y)
 {
-	if (std::isnan(x) || std::isnan(y)
+	if (   std::isnan(x) || std::isnan(y)
 		|| std::isinf(x) || std::isinf(y))
 	{
 		return true;

@@ -638,9 +638,11 @@ bool ProjectileFlyBState::createProjectile() // private.
 									*_action.weapon);
 			}
 
-			_unit->aim();
-			_unit->flagCache();
-			_parent->getMap()->cacheUnit(_unit);
+			if (_originVoxel.z == -1) // not a BL-waypoint
+			{
+				_unit->aim();
+				_parent->getMap()->cacheUnit(_unit);
+			}
 
 			// lift-off
 			soundId = _ammo->getRules()->getFireSound();
@@ -991,9 +993,13 @@ void ProjectileFlyBState::think()
 				{
 					_parent->getMap()->setReveal(false);
 
-					_unit->aim(false);
-					_unit->flagCache();
-					_parent->getMap()->cacheUnits();
+					if (_prjImpact == VOXEL_OUTOFBOUNDS) // else ExplosionBState will lower weapon above^
+					{
+						_unit->aim(false);
+//						_unit->flagCache();
+//						_parent->getMap()->cacheUnits(); // NOTE: Is that needed for like the unit(s) that got hit or something. no, Out_of_Bounds here.
+						_parent->getMap()->cacheUnit(_unit);
+					}
 				}
 
 
@@ -1014,7 +1020,7 @@ void ProjectileFlyBState::think()
 						const double
 							spread (static_cast<double>(pelletsLeft * _ammo->getRules()->getShotgunPattern()) * 0.005), // pellet spread.
 							accuracy (std::max(0.,
-											_unit->getAccuracy(_action) - spread));
+											   _unit->getAccuracy(_action) - spread));
 
 						_prjImpact = prj->calculateShot(accuracy);
 						if (_prjImpact != VOXEL_EMPTY && _prjImpact != VOXEL_OUTOFBOUNDS) // insert an explosion and hit
@@ -1140,7 +1146,7 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 {
 	//Log(LOG_INFO) << "flyB:performMeleeAttack() " << _unit->getId();
 	_unit->aim();
-	_unit->flagCache();
+//	_unit->flagCache();
 	_parent->getMap()->cacheUnit(_unit);
 
 	_action.posTarget = _battleSave->getTileEngine()->getMeleePosition(_unit);

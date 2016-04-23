@@ -1100,7 +1100,7 @@ void BattlescapeGame::handleNonTargetAction()
 void BattlescapeGame::liquidateUnit() // private.
 {
 	_tacAction.actor->aim();
-	_tacAction.actor->flagCache();
+//	_tacAction.actor->flagCache();
 	getMap()->cacheUnit(_tacAction.actor);
 
 	const RuleItem* const itRule (_tacAction.weapon->getRules());
@@ -1263,7 +1263,8 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 						// But updateSoldierInfo() also does does calcFov(), so ...
 //						getTileEngine()->calcFov(unit);
 
-						getMap()->cacheUnits();
+//						getMap()->cacheUnits();
+						getMap()->cacheUnit(unit);
 
 //						_parentState->updateSoldierInfo(false); // <- also does calcFov() !
 						// wait... shouldn't one of those calcFoV's actually trigger!! ? !
@@ -1302,7 +1303,8 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 				unit->spendEnergy(energyCost);
 
 				unit->kneelUnit(false);
-				getMap()->cacheUnits();
+//				getMap()->cacheUnits();
+				getMap()->cacheUnit(unit);
 
 				return true;
 			}

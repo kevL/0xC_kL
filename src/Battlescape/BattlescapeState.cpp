@@ -2338,12 +2338,13 @@ void BattlescapeState::btnLeftHandLeftClick(Action*)
 	if (playableUnitSelected() == true)
 	{
 		_battleGame->cancelTacticalAction();
-		_battleSave->getSelectedUnit()->setActiveHand(AH_LEFT);
 
-		_map->cacheUnits();
+		BattleUnit* const unit (_battleSave->getSelectedUnit());
+		unit->setActiveHand(AH_LEFT);
+
+		_map->cacheUnit(unit);
 		_map->draw();
 
-		const BattleUnit* const unit (_battleSave->getSelectedUnit());
 		handAction(
 				unit->getItem(ST_LEFTHAND),
 				unit->getFatalWound(BODYPART_LEFTARM) != 0);
@@ -2360,10 +2361,11 @@ void BattlescapeState::btnLeftHandRightClick(Action*)
 	{
 		_battleGame->cancelTacticalAction();
 
-		_battleSave->getSelectedUnit()->setActiveHand(AH_LEFT);
+		BattleUnit* const unit (_battleSave->getSelectedUnit());
+		unit->setActiveHand(AH_LEFT);
 		updateSoldierInfo(false);
 
-		_map->cacheUnits();
+		_map->cacheUnit(unit);
 		_map->draw();
 	}
 }
@@ -2378,12 +2380,13 @@ void BattlescapeState::btnRightHandLeftClick(Action*)
 	if (playableUnitSelected() == true)
 	{
 		_battleGame->cancelTacticalAction();
-		_battleSave->getSelectedUnit()->setActiveHand(AH_RIGHT);
 
-		_map->cacheUnits();
+		BattleUnit* const unit (_battleSave->getSelectedUnit());
+		unit->setActiveHand(AH_RIGHT);
+
+		_map->cacheUnit(unit);
 		_map->draw();
 
-		const BattleUnit* const unit (_battleSave->getSelectedUnit());
 		handAction(
 				unit->getItem(ST_RIGHTHAND),
 				unit->getFatalWound(BODYPART_LEFTARM) != 0);
@@ -2400,10 +2403,11 @@ void BattlescapeState::btnRightHandRightClick(Action*)
 	{
 		_battleGame->cancelTacticalAction();
 
-		_battleSave->getSelectedUnit()->setActiveHand(AH_RIGHT);
+		BattleUnit* const unit (_battleSave->getSelectedUnit());
+		unit->setActiveHand(AH_RIGHT);
 		updateSoldierInfo(false);
 
-		_map->cacheUnits();
+		_map->cacheUnit(unit);
 		_map->draw();
 	}
 }
@@ -3544,23 +3548,24 @@ void BattlescapeState::hostileTargeter() // private.
 void BattlescapeState::liquidationExplosion() // private.
 {
 	for (std::list<Explosion*>::const_iterator
-			i = _battleGame->getMap()->getExplosions()->begin();
-			i != _battleGame->getMap()->getExplosions()->end();
+			i = _map->getExplosions()->begin();
+			i != _map->getExplosions()->end();
 			)
 	{
 		if ((*i)->animate() == false) // done.
 		{
 			delete *i;
-			i = _battleGame->getMap()->getExplosions()->erase(i);
+			i = _map->getExplosions()->erase(i);
 
-			if (_battleGame->getMap()->getExplosions()->empty() == true)
+			if (_map->getExplosions()->empty() == true)
 			{
 				_battleGame->endLiquidate();
 
 				BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 				selUnit->aim(false);
-				selUnit->flagCache();
-				_battleGame->getMap()->cacheUnits();
+//				selUnit->flagCache();
+//				_map->cacheUnits();
+				_map->cacheUnit(selUnit);
 
 				return;
 			}
@@ -3576,16 +3581,16 @@ void BattlescapeState::liquidationExplosion() // private.
 void BattlescapeState::shotgunExplosion() // private.
 {
 	for (std::list<Explosion*>::const_iterator
-			i = _battleGame->getMap()->getExplosions()->begin();
-			i != _battleGame->getMap()->getExplosions()->end();
+			i = _map->getExplosions()->begin();
+			i != _map->getExplosions()->end();
 			)
 	{
 		if ((*i)->animate() == false) // done.
 		{
 			delete *i;
-			i = _battleGame->getMap()->getExplosions()->erase(i);
+			i = _map->getExplosions()->erase(i);
 
-			if (_battleGame->getMap()->getExplosions()->empty() == true)
+			if (_map->getExplosions()->empty() == true)
 				_battleGame->setShotgun(false);
 		}
 		else

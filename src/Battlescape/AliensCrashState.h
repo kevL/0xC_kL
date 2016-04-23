@@ -32,7 +32,7 @@ class Window;
 
 
 /**
- * Screen shown when all aliens died during a crash site.
+ * Screen shown when all aliens died at a crash site.
  */
 class AliensCrashState
 	:
@@ -46,9 +46,9 @@ private:
 
 
 	public:
-		/// Creates the Aliens Crash state.
+		/// Creates an AliensCrash state.
 		AliensCrashState();
-		/// Cleans up the Aliens Crash state.
+		/// Cleans up the AliensCrash state.
 		~AliensCrashState();
 
 		/// Handler for clicking the OK button.
