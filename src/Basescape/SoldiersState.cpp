@@ -406,8 +406,11 @@ void SoldiersState::lstLeftArrowClick(Action* action)
 		switch (action->getDetails()->button.button)
 		{
 			case SDL_BUTTON_LEFT:
+			{
+				Soldier* const sol (_base->getSoldiers()->at(row));
+
 				_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row - 1u);
-				_base->getSoldiers()->at(row - 1u) = _base->getSoldiers()->at(row);
+				_base->getSoldiers()->at(row - 1u) = sol;
 
 				if (row != _lstSoldiers->getScroll())
 					SDL_WarpMouse(
@@ -424,17 +427,22 @@ void SoldiersState::lstLeftArrowClick(Action* action)
 
 				init();
 				break;
+			}
 
 			case SDL_BUTTON_RIGHT:
+			{
 				_base->setRecallRow(
 								REC_SOLDIER,
 								_lstSoldiers->getScroll() + 1u);
 
+				Soldier* const sol (_base->getSoldiers()->at(row));
+
 				_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
 				_base->getSoldiers()->insert(
 										_base->getSoldiers()->begin(),
-										_base->getSoldiers()->at(row));
+										sol);
 				init();
+			}
 		}
 	}
 }
@@ -458,8 +466,11 @@ void SoldiersState::lstRightArrowClick(Action* action)
 			switch (action->getDetails()->button.button)
 			{
 				case SDL_BUTTON_LEFT:
+				{
+					Soldier* const sol (_base->getSoldiers()->at(row));
+
 					_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row + 1u);
-					_base->getSoldiers()->at(row + 1u) = _base->getSoldiers()->at(row);
+					_base->getSoldiers()->at(row + 1u) = sol;
 
 					if (row != _lstSoldiers->getVisibleRows() - 1u + _lstSoldiers->getScroll())
 						SDL_WarpMouse(
@@ -476,13 +487,18 @@ void SoldiersState::lstRightArrowClick(Action* action)
 
 					init();
 					break;
+				}
 
 				case SDL_BUTTON_RIGHT:
+				{
+					Soldier* const sol (_base->getSoldiers()->at(row));
+
 					_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
 					_base->getSoldiers()->insert(
 											_base->getSoldiers()->end(),
-											_base->getSoldiers()->at(row));
+											sol);
 					init();
+				}
 			}
 		}
 	}

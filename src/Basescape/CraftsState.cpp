@@ -316,8 +316,11 @@ void CraftsState::lstLeftArrowClick(Action* action)
 		switch (action->getDetails()->button.button)
 		{
 			case SDL_BUTTON_LEFT:
+			{
+				Craft* const craft (_base->getCrafts()->at(row));
+
 				_base->getCrafts()->at(row) = _base->getCrafts()->at(row - 1u);
-				_base->getCrafts()->at(row - 1u) = _base->getCrafts()->at(row);
+				_base->getCrafts()->at(row - 1u) = craft;
 
 				if (row != _lstCrafts->getScroll())
 					SDL_WarpMouse(
@@ -329,13 +332,18 @@ void CraftsState::lstLeftArrowClick(Action* action)
 
 				init();
 				break;
+			}
 
 			case SDL_BUTTON_RIGHT:
+			{
+				Craft* const craft (_base->getCrafts()->at(row));
+
 				_base->getCrafts()->erase(_base->getCrafts()->begin() + row);
 				_base->getCrafts()->insert(
 										_base->getCrafts()->begin(),
-										_base->getCrafts()->at(row));
+										craft);
 				init();
+			}
 		}
 	}
 }
@@ -355,8 +363,11 @@ void CraftsState::lstRightArrowClick(Action* action)
 			switch (action->getDetails()->button.button)
 			{
 				case SDL_BUTTON_LEFT:
+				{
+					Craft* const craft (_base->getCrafts()->at(row));
+
 					_base->getCrafts()->at(row) = _base->getCrafts()->at(row + 1u);
-					_base->getCrafts()->at(row + 1u) = _base->getCrafts()->at(row);
+					_base->getCrafts()->at(row + 1u) = craft;
 
 					if (row != _lstCrafts->getVisibleRows() - 1u + _lstCrafts->getScroll())
 						SDL_WarpMouse(
@@ -368,13 +379,18 @@ void CraftsState::lstRightArrowClick(Action* action)
 
 					init();
 					break;
+				}
 
 				case SDL_BUTTON_RIGHT:
+				{
+					Craft* const craft (_base->getCrafts()->at(row));
+
 					_base->getCrafts()->erase(_base->getCrafts()->begin() + row);
 					_base->getCrafts()->insert(
 											_base->getCrafts()->end(),
-											_base->getCrafts()->at(row));
+											craft);
 					init();
+				}
 			}
 		}
 	}

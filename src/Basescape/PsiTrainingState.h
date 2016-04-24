@@ -44,7 +44,6 @@ class PsiTrainingState final
 
 private:
 	int _labSpace;
-	size_t _sel;
 
 	Base* _base;
 	Text
@@ -64,7 +63,7 @@ private:
 
 	public:
 		/// Creates a PsiTraining state.
-		explicit PsiTrainingState(Base* base);
+		explicit PsiTrainingState(Base* const base);
 		/// Cleans up the PsiTraining state.
 		~PsiTrainingState();
 
