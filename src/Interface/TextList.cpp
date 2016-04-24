@@ -692,6 +692,26 @@ Uint8 TextList::getSecondaryColor() const
 }
 
 /**
+ * Sets the border-color.
+ * @param color - border-color
+ */
+void TextList::setBorderColor(Uint8 color)
+{
+	_up->setColor(color);
+	_down->setColor(color);
+	_scrollbar->setColor(color);
+}
+
+/**
+ * Gets the scrollbar-color.
+ * @return, scrollbar-color
+ */
+Uint8 TextList::getScrollbarColor() const
+{
+	return _scrollbar->getColor();
+}
+
+/**
  * Enables/disables high-contrast color. Mostly used for Battlescape text.
  * @param contrast - high-contrast setting (default true)
  */
@@ -1047,6 +1067,32 @@ void TextList::setScrollable(
 		_up->setX(getX() + getWidth() + _scrollPos);
 		_down->setX(getX() + getWidth() + _scrollPos);
 		_scrollbar->setX(getX() + getWidth() + _scrollPos);
+	}
+}
+
+/**
+ * Gets the scroll-depth.
+ * @return, scroll-depth
+ */
+size_t TextList::getScroll()
+{
+	return _scroll;
+}
+
+/**
+ * Sets the scroll-depth.
+ * @param scroll - scroll-depth (default 0)
+ */
+void TextList::scrollTo(size_t scroll)
+{
+	if (_scrollable == true)
+	{
+		_scroll = static_cast<size_t>(std::max(0, // super-safety and it works.
+											   std::min(static_cast<int>(_rows.size() - _visibleRows),
+														static_cast<int>(scroll))));
+
+		draw(); // can't just set '_redraw' here because Reasons!
+		updateArrows();
 	}
 }
 
@@ -1412,32 +1458,6 @@ void TextList::mouseOut(Action* action, State* state)
 }
 
 /**
- * Gets the scroll-depth.
- * @return, scroll-depth
- */
-size_t TextList::getScroll()
-{
-	return _scroll;
-}
-
-/**
- * Sets the scroll-depth.
- * @param scroll - scroll-depth (default 0)
- */
-void TextList::scrollTo(size_t scroll)
-{
-	if (_scrollable == true)
-	{
-		_scroll = static_cast<size_t>(std::max(0, // super-safety and it works.
-											   std::min(static_cast<int>(_rows.size() - _visibleRows),
-														static_cast<int>(scroll))));
-
-		draw(); // can't just set '_redraw' here because Reasons!
-		updateArrows();
-	}
-}
-
-/**
  * Hooks up the button to work as part of an existing ComboBox updating the
  * selection when it's pressed.
  * @param box - pointer to a ComboBox
@@ -1454,26 +1474,6 @@ void TextList::setComboBox(ComboBox* box)
 ComboBox* TextList::getComboBox() const
 {
 	return _comboBox;
-}
-
-/**
- * Sets the border-color.
- * @param color - border-color
- */
-void TextList::setBorderColor(Uint8 color)
-{
-	_up->setColor(color);
-	_down->setColor(color);
-	_scrollbar->setColor(color);
-}
-
-/**
- * Gets the scrollbar-color.
- * @return, scrollbar-color
- */
-Uint8 TextList::getScrollbarColor() const
-{
-	return _scrollbar->getColor();
 }
 
 }

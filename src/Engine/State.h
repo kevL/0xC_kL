@@ -80,9 +80,9 @@ protected:
 				bool tactical = false);
 
 		/// Adds a child-element to the State.
-		void add(Surface* surface);
+		void add(Surface* const srf);
 		void add(
-				Surface* const surface,
+				Surface* const srf,
 				const std::string& id,
 				const std::string& category,
 				Surface* const parent = nullptr);

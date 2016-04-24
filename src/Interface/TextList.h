@@ -207,6 +207,11 @@ private:
 		/// Gets the secondary color of the TextList.
 		Uint8 getSecondaryColor() const;
 
+		/// Sets the border-color.
+		void setBorderColor(Uint8 color) override;
+		/// Gets the scrollbar-color.
+		Uint8 getScrollbarColor() const;
+
 		/// Sets the TextList's high-contrast setting.
 		void setHighContrast(bool contrast = true) override;
 		/// Sets the TextList's wordwrap setting.
@@ -278,6 +283,12 @@ private:
 				bool scrollable = true,
 				int scrollPos = 0);
 
+		/// Gets the current scroll-depth.
+		size_t getScroll();
+		/// Sets the scroll-depth.
+		void scrollTo(size_t scroll = 0u);
+
+
 		/// Draws the text onto the TextList.
 		void draw() override;
 		/// Blits the TextList onto another Surface.
@@ -298,20 +309,10 @@ private:
 		/// Special handling for mouse-hovering out.
 		void mouseOut(Action* action, State* state) override;
 
-		/// Gets the current scroll-depth.
-		size_t getScroll();
-		/// Sets the scroll-depth.
-		void scrollTo(size_t scroll = 0u);
-
 		/// Attaches a button to a ComboBox.
 		void setComboBox(ComboBox* box);
 		/// Checks for a ComboBox.
 		ComboBox* getComboBox() const;
-
-		/// Sets the border-color.
-		void setBorderColor(Uint8 color) override;
-		/// Gets the border-color.
-		Uint8 getScrollbarColor() const;
 };
 
 }

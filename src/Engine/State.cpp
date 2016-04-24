@@ -136,19 +136,19 @@ void State::setInterface(
  * @note Once associated the State handles all of the Surface's behavior and
  * management automatically. Since visible elements can overlap they have to be
  * added in ascending Z-Order to be blitted correctly onto the screen.
- * @param surface - child surface
+ * @param srf - pointer to child Surface
  */
-void State::add(Surface* surface)
+void State::add(Surface* const srf)
 {
-	surface->setPalette(_palette);
+	srf->setPalette(_palette);
 
 	if (_game->getLanguage() != nullptr && _game->getResourcePack() != nullptr)
-		surface->initText(
+		srf->initText(
 					_game->getResourcePack()->getFont("FONT_BIG"),
 					_game->getResourcePack()->getFont("FONT_SMALL"),
 					_game->getLanguage());
 
-	_surfaces.push_back(surface);
+	_surfaces.push_back(srf);
 }
 
 /**
@@ -156,51 +156,51 @@ void State::add(Surface* surface)
  * the ruleset.
  * @note that this function REQUIRES the ruleset to have been loaded prior to
  * use. If no parent is defined the element will not be moved.
- * @param surface	- pointer to child Surface
+ * @param srf		- pointer to child Surface
  * @param id		- reference the ID of the element defined in the ruleset if any
  * @param category	- reference the category of elements the Interface is associated with
  * @param parent	- pointer to the Surface to base the coordinates of this element off (default nullptr)
  */
 void State::add(
-		Surface* const surface,
+		Surface* const srf,
 		const std::string& id,
 		const std::string& category,
 		Surface* const parent)
 {
-	surface->setPalette(_palette);
+	srf->setPalette(_palette);
 
-	BattlescapeButton* const tacBtn (dynamic_cast<BattlescapeButton*>(surface));
+	BattlescapeButton* const tacBtn (dynamic_cast<BattlescapeButton*>(srf));
 
 	if (_game->getRuleset()->getInterface(category) != nullptr)
 	{
-		const Element* const element (_game->getRuleset()->getInterface(category)->getElement(id));
-		if (element != nullptr)
+		const Element* const el (_game->getRuleset()->getInterface(category)->getElement(id));
+		if (el != nullptr)
 		{
 			if (parent != nullptr)
 			{
-				if (element->x != std::numeric_limits<int>::max()
-					&& element->y != std::numeric_limits<int>::max())
+				if (   el->x != std::numeric_limits<int>::max()
+					&& el->y != std::numeric_limits<int>::max())
 				{
-					surface->setX(parent->getX() + element->x);
-					surface->setY(parent->getY() + element->y);
+					srf->setX(parent->getX() + el->x);
+					srf->setY(parent->getY() + el->y);
 				}
 
-				if (element->w != -1
-					&& element->h != -1)
+				if (   el->w != -1
+					&& el->h != -1)
 				{
-					surface->setWidth(element->w);
-					surface->setHeight(element->h);
+					srf->setWidth(el->w);
+					srf->setHeight(el->h);
 				}
 			}
 
-			if (element->color != -1)
-				surface->setColor(static_cast<Uint8>(element->color));
+			if (el->color != -1)
+				srf->setColor(static_cast<Uint8>(el->color));
 
-			if (element->color2 != -1)
-				surface->setSecondaryColor(static_cast<Uint8>(element->color2));
+			if (el->color2 != -1)
+				srf->setSecondaryColor(static_cast<Uint8>(el->color2));
 
-			if (element->border != -1)
-				surface->setBorderColor(static_cast<Uint8>(element->border));
+			if (el->border != -1)
+				srf->setBorderColor(static_cast<Uint8>(el->border));
 		}
 	}
 
@@ -213,12 +213,12 @@ void State::add(
 	if (_game->getLanguage() != nullptr
 		&& _game->getResourcePack() != nullptr)
 	{
-		surface->initText(
+		srf->initText(
 					_game->getResourcePack()->getFont("FONT_BIG"),
 					_game->getResourcePack()->getFont("FONT_SMALL"),
 					_game->getLanguage());
 	}
-	_surfaces.push_back(surface);
+	_surfaces.push_back(srf);
 }
 
 /**

@@ -142,14 +142,11 @@ void PsiTrainingState::init()
 	_lstSoldiers->clearList();
 
 	size_t row (0u);
-
 	for (std::vector<Soldier*>::const_iterator
 			i = _base->getSoldiers()->begin();
 			i != _base->getSoldiers()->end();
 			++i, ++row)
 	{
-		_soldiers.push_back(*i);
-
 		std::wostringstream
 			woststr1, // strength
 			woststr2; // skill
@@ -204,8 +201,8 @@ void PsiTrainingState::btnOkClick(Action*)
 }
 
 /**
- * LMB assigns & removes a soldier from Psi Training.
- * RMB shows soldier info.
+ * LMB assigns & removes a Soldier from psi-training.
+ * RMB shows Soldier info.
  * @param action - pointer to an Action
  */
 void PsiTrainingState::lstSoldiersPress(Action* action)
@@ -227,26 +224,26 @@ void PsiTrainingState::lstSoldiersPress(Action* action)
 			{
 				if (_base->getUsedPsiLabs() < _base->getTotalPsiLabs())
 				{
+					_base->getSoldiers()->at(row)->togglePsiTraining();
+					_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(--_labSpace));
 					_lstSoldiers->setCellText(
 											row, 3u,
 											tr("STR_YES"));
 					_lstSoldiers->setRowColor(
 											row,
 											_lstSoldiers->getSecondaryColor());
-					_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(--_labSpace));
-					_base->getSoldiers()->at(row)->togglePsiTraining();
 				}
 			}
 			else
 			{
+				_base->getSoldiers()->at(row)->togglePsiTraining();
+				_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(++_labSpace));
 				_lstSoldiers->setCellText(
 										row, 3u,
 										tr("STR_NO"));
 				_lstSoldiers->setRowColor(
 										row,
 										_lstSoldiers->getColor());
-				_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(++_labSpace));
-				_base->getSoldiers()->at(row)->togglePsiTraining();
 			}
 			break;
 		}

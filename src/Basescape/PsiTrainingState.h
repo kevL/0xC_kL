@@ -58,8 +58,6 @@ private:
 	TextList* _lstSoldiers;
 	Window* _window;
 
-	std::vector<Soldier*> _soldiers;
-
 
 	public:
 		/// Creates a PsiTraining state.

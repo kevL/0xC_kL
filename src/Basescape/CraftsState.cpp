@@ -305,7 +305,7 @@ void CraftsState::lstCraftsPress(Action* action)
 }
 
 /**
- * Reorders a craft - moves craft-slot up.
+ * Reorders a Craft up.
  * @param action - pointer to an Action
  */
 void CraftsState::lstLeftArrowClick(Action* action)
@@ -349,7 +349,7 @@ void CraftsState::lstLeftArrowClick(Action* action)
 }
 
 /**
- * Reorders a craft - moves craft-slot down.
+ * Reorders a Craft down.
  * @param action - pointer to an Action
  */
 void CraftsState::lstRightArrowClick(Action* action)
