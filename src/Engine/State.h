@@ -76,7 +76,7 @@ protected:
 		/// Sets the Interface rule.
 		void setInterface(
 				const std::string& category,
-				bool alterPal = false,
+				bool altBackpal = false,
 				bool tactical = false);
 
 		/// Adds a child-element to the State.

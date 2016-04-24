@@ -61,7 +61,7 @@ private:
 		/// Cleans up the StatisticsState.
 		~StatisticsState();
 
-		/// Gets the statistics.
+		/// Displays the statistics.
 		void listStats();
 
 		/// Handler for clicking the Ok button.

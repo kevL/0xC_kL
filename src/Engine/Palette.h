@@ -55,9 +55,9 @@ enum BackPals
 
 
 /**
- * Container for palettes (sets of 8-bpp colors).
- * Works as an encapsulation for SDL's SDL_Color struct and
- * provides shortcuts for common tasks to make code more readable.
+ * Container for Palettes (sets of 8-bpp colors).
+ * @note Works as an encapsulation for SDL's SDL_Color struct and provides
+ * shortcuts for common tasks to make code more readable.
  */
 class Palette
 {
@@ -68,44 +68,47 @@ private:
 
 
 	public:
-		/// Position of the background colors block in an X-Com palette (used for background images in screens).
+		/// Position of the background-colors block in the Palette.
 		static const int PAL_bgID = 224;
 
-		/// Creates a blank palette.
+		/// Creates a Palette.
 		Palette();
-		/// Cleans up the palette.
+		/// Cleans up the Palette.
 		~Palette();
 
-		/// Loads the colors from an X-Com palette.
+		/// Loads the colors from a 6-bit X-Com palette.
 		void loadDat(
 				const std::string& file,
 				int qColors,
 				int offset = 0);
 
-		/// Gets a certain color from the palette.
+		/// Gets a certain color from the Palette.
 		SDL_Color* getColors(int offset = 0) const;
 
-		/// Converts a given color into a RGBA color value.
+		/// Converts a specified color into a hexadecimal RGBA color-value.
 		static Uint32 getRGBA(
 				const SDL_Color* const pal,
 				Uint8 color);
 
-		/// Gets the position of a given palette.
+		/// Gets the position of a specified X-Com palette.
 		/**
-		 * Returns the position of a palette inside an X-Com palette file (each is a 768-byte chunks).
-		 * Handy for loading the palettes from the game files.
+		 * Returns the position of a palette inside an X-Com palette-file.
+		 * @note Each X-Com palette-file is 768-byte chunks. Handy for loading
+		 * the palettes from the game-files.
 		 * @param palette - requested palette
 		 * @return, palette position in bytes
 		 */
 		static inline int palOffset(int palette)
 		{ return palette * (768 + 6); }
 
-		/// Gets the position of a certain color block in a palette.
+		/// Gets the position of a certain color block in the Palette.
 		/**
-		 * Returns the position of a certain color block in an X-Com palette (they're usually split in 16-color gradients).
-		 * Makes setting element colors a lot easier than determining the exact color position.
+		 * Returns the position of a certain color block in the Palette.
+		 * @note They're usually split into sections of 16 colors as gradients.
+		 * This function makes setting color(s) a lot easier than counting to
+		 * a color's exact position.
 		 * @param block - requested block
-		 * @return, color position
+		 * @return, start-position of a color-section
 		 */
 		static inline Uint8 blockOffset(Uint8 block)
 		{ return (static_cast<Uint8>(block << 4)); }

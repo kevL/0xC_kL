@@ -65,12 +65,12 @@ StatisticsState::StatisticsState()
 	_lstStats	= new TextList(285, 137, 16, 34);
 	_btnOk		= new TextButton(288, 16, 16, 177);
 
-	setInterface("newGameMenu");
+	setInterface("gameStatistics");
 
-	add(_window,	"window",	"saveMenus");
-	add(_btnOk,		"button",	"saveMenus");
-	add(_txtTitle,	"text",		"saveMenus");
-	add(_lstStats,	"list",		"saveMenus");
+	add(_window,	"window",	"gameStatistics");
+	add(_btnOk,		"button",	"gameStatistics");
+	add(_txtTitle,	"text",		"gameStatistics");
+	add(_lstStats,	"list",		"gameStatistics");
 
 	centerAllSurfaces();
 
@@ -108,12 +108,13 @@ StatisticsState::~StatisticsState()
 /**
  * Totals a vector of integers or floating-points.
  * @param vect - a vector of integers or floating-points
+ * @return, the total
  */
-template <typename T>
-T StatisticsState::total(const std::vector<T>& vect) const
+template <typename _Tx>
+_Tx StatisticsState::total(const std::vector<_Tx>& vect) const
 {
-	T total (0);
-	for (typename std::vector<T>::const_iterator
+	_Tx total (static_cast<_Tx>(0));
+	for (typename std::vector<_Tx>::const_iterator
 			i = vect.begin();
 			i != vect.end();
 			++i)
@@ -200,8 +201,8 @@ void StatisticsState::listStats()
 	const std::vector<SoldierDead*>* const solDead (gameSave->getDeadSoldiers());
 
 	const int
-		soldiersRecruited (solLive.size() + solDead->size()),
-		soldiersLost (solDead->size());
+		soldiersLost (static_cast<int>(solDead->size())),
+		soldiersRecruited (static_cast<int>(solLive.size()) + soldiersLost);
 
 	int
 		aliensKilled	(0),

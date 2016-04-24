@@ -40,7 +40,7 @@ Sound* Window::soundPopup[3u] = {0,0,0}; // static.
 
 
 /**
- * Sets up a blank window with the specified size and position.
+ * Creates a blank Window with the specified size and position.
  * @param state		- pointer to State the window belongs to
  * @param width		- width in pixels
  * @param height	- height in pixels
@@ -101,7 +101,7 @@ Window::Window(
 }
 
 /**
- * Deletes timer.
+ * Deletes the Timer.
  */
 Window::~Window()
 {
@@ -109,7 +109,7 @@ Window::~Window()
 }
 
 /**
- * Keeps the animation timers running.
+ * Keeps the Timers running during any popup-animation.
  */
 void Window::think()
 {
@@ -122,7 +122,7 @@ void Window::think()
 }
 
 /**
- * Plays the window popup animation.
+ * Plays this Window's popup-animation.
  */
 void Window::popup() // private.
 {
@@ -151,7 +151,7 @@ void Window::popup() // private.
 }
 
 /**
- * Gets if this window has finished popping up.
+ * Gets if this Window has finished popping up.
  * @return, true if popup is finished
  */
 bool Window::isPopupDone() const
@@ -160,9 +160,10 @@ bool Window::isPopupDone() const
 }
 
 /**
- * Draws the bordered window with a graphic background.
- * @note The background never moves with the window; it's always aligned to the
- * top-left corner of the screen and cropped to fit inside the area.
+ * Draws this Window.
+ * @note The background never pops with the window; it's always aligned to the
+ * top-left corner of the screen and cropped to fit inside the area. But an
+ * offset for the background has been added.
  */
 void Window::draw()
 {
@@ -302,7 +303,7 @@ void Window::draw()
 }
 
 /**
- * Changes the color used to draw the shaded border.
+ * Sets the color used to draw the shaded border.
  * @param color - color value
  */
 void Window::setColor(Uint8 color)
@@ -312,7 +313,7 @@ void Window::setColor(Uint8 color)
 }
 
 /**
- * Returns the color used to draw the shaded border.
+ * Gets the color used to draw the shaded border.
  * @return, color value
  */
 Uint8 Window::getColor() const
@@ -332,8 +333,8 @@ void Window::setHighContrast(bool contrast)
 }
 
 /**
- * Sets the surface used to draw the background of the window.
- * @param bg - background
+ * Sets the Surface used to draw the background of this Window.
+ * @param bg - pointer to a surface
  * @param dX - x offset (default 0)
  * @param dY - y offset (default 0)
  */
@@ -343,8 +344,10 @@ void Window::setBackground(
 		int dY)
 {
 	_bg = bg;
+
 	_bgX = dX;
 	_bgY = dY;
+
 	_redraw = true;
 }
 
@@ -359,7 +362,7 @@ void Window::setBackgroundFill(Uint8 color)
 }
 
 /**
- * Changes the horizontal offset of the surface in the x-axis.
+ * Sets the horizontal offset of this Surface in the x-axis.
  * @param dX - x-position in pixels
  */
 void Window::setDX(int dX)
@@ -368,7 +371,7 @@ void Window::setDX(int dX)
 }
 
 /**
- * Changes the vertical offset of the surface in the y-axis.
+ * Sets the vertical offset of this Surface in the y-axis.
  * @param dY - y-position in pixels
  */
 void Window::setDY(int dY)
@@ -377,7 +380,7 @@ void Window::setDY(int dY)
 }
 
 /**
- * Changes the window to have a thin border.
+ * Sets this Window to have a thin border.
  */
 void Window::setThinBorder()
 {

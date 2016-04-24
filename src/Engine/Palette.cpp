@@ -46,9 +46,9 @@ Palette::~Palette()
 }
 
 /**
- * Loads an X-Com palette from a file. X-Com palettes are just a set
- * of RGB colors in a row, on a 0-63 scale, which have to be adjusted
- * for modern computers (0-255 scale).
+ * Loads an X-Com palette from a file.
+ * @note X-Com palettes are just a set of RGB colors in a row, on a 0-63 scale,
+ * which have to be adjusted for modern computers (0-255 scale).
  * @param file		- reference the filename of the palette
  * @param qColors	- number of colors in the palette
  * @param offset	- position of the palette in the file in bytes (default 0)
@@ -72,31 +72,29 @@ void Palette::loadDat(
 			0,
 			sizeof(SDL_Color) * _count);
 
-	// Load file and put colors in palette
-	std::ifstream palFile (file.c_str(), std::ios::in | std::ios::binary);
-	if (palFile.fail() == true)
+	std::ifstream ifstr (file.c_str(), std::ios::in | std::ios::binary);
+	if (ifstr.fail() == true)
 	{
 		throw Exception(file + " not found");
 	}
 
-	// Move pointer to proper palette
-	palFile.seekg(offset, std::ios::beg);
+	ifstr.seekg(offset, std::ios::beg);
 
-	Uint8 value[3u];
+	Uint8 val[3u];
 
-	for (size_t // Correct X-Com colors to RGB colors
+	for (size_t // correct the 6-bit X-Com colors to 8-bit RGB colors
 			i = 0u;
-			i < _count && palFile.read((char*)value, 3);
+			i != _count && ifstr.read(reinterpret_cast<char*>(val), 3);
 			++i)
 	{
-		_colors[i].r = static_cast<Uint8>(value[0u] * 4);
-		_colors[i].g = static_cast<Uint8>(value[1u] * 4);
-		_colors[i].b = static_cast<Uint8>(value[2u] * 4);
+		_colors[i].r = val[0u] << 2u;
+		_colors[i].g = val[1u] << 2u;
+		_colors[i].b = val[2u] << 2u;
 		_colors[i].unused = 255u;
 	}
 	_colors[0u].unused = 0u;
 
-	palFile.close();
+	ifstr.close();
 }
 
 /**
@@ -111,7 +109,8 @@ SDL_Color* Palette::getColors(int offset) const
 
 /**
  * Converts an SDL_Color struct into an hexadecimal RGBA color value.
- * Mostly used for operations with SDL_gfx that require colors in this format.
+ * @note Mostly used for operations with SDL_gfx that require colors in this
+ * format.
  * @param pal	- pointer to requested palette
  * @param color	- requested color in the palette
  * @return, hexadecimal RGBA value
@@ -120,10 +119,12 @@ Uint32 Palette::getRGBA(
 		const SDL_Color* const pal,
 		Uint8 color)
 {
-	return (static_cast<Uint32>(pal[color].r) << 24)
-		 | (static_cast<Uint32>(pal[color].g) << 16)
-		 | (static_cast<Uint32>(pal[color].b) <<  8)
-		 | (static_cast<Uint32>(0xff));
+	return (static_cast<Uint32>(pal[color].r) << 24u)
+		 | (static_cast<Uint32>(pal[color].g) << 16u)
+		 | (static_cast<Uint32>(pal[color].b) <<  8u)
+		 | (static_cast<Uint32>(0xffu));
+}
+
 }
 
 /**
@@ -157,10 +158,13 @@ void Palette::setColors(
 			&& _colors[i].g == _colors[0].g
 			&& _colors[i].b == _colors[0].b)
 		{
-			// SDL "optimizes" surfaces by using RGB colour matching to reassign pixels to an "earlier" matching colour in the palette,
-			// meaning any pixels in a surface that are meant to be black will be reassigned as colour 0, rendering them transparent.
-			// avoid this eventuality by altering the "later" colours just enough to disambiguate them without causing them to look significantly different.
-			// SDL 2.0 has some functionality that should render this hack unnecessary.
+			// SDL "optimizes" surfaces by using RGB color matching to reassign
+			// pixels to an "earlier" matching color in the palette, meaning any
+			// pixels in a surface that are meant to be black will be reassigned
+			// as color 0, rendering them transparent. Avoid this eventuality by
+			// altering the "later" colors just enough to disambiguate them
+			// without causing them to look significantly different. SDL 2.0 has
+			// some functionality that should render this hack unnecessary.
 			++_colors[i].r;
 			++_colors[i].g;
 			++_colors[i].b;
@@ -175,7 +179,7 @@ void Palette::setColors(
  *
 void Palette::savePal(const std::string& file) const
 {
-	std::ofstream palFile (file.c_str(), std::ios::out | std::ios::binary); // init.
+	std::ofstream palFile (file.c_str(), std::ios::out | std::ios::binary);
 	short qColors = static_cast<short>(_count);
 
 	palFile << "RIFF"; // RIFF header
@@ -202,5 +206,3 @@ void Palette::savePal(const std::string& file) const
 	}
 	palFile.close();
 } */
-
-}

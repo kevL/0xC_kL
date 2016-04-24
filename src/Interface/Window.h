@@ -83,14 +83,14 @@ private:
 
 	PopupType _popType;
 
-	/// Popups the window.
+	/// Popups the Window.
 	void popup();
 
 
 	public:
 		static Sound* soundPopup[3u];
 
-		/// Creates a new window with the specified size and position.
+		/// Creates a Window with the specified size and position.
 		Window(State* state,
 				int width,
 				int height,
@@ -98,39 +98,39 @@ private:
 				int y = 0,
 				PopupType popType = POPUP_NONE,
 				bool toggle = true);
-		/// Cleans up the window.
+		/// Cleans up the Sindow.
 		~Window();
 
-		/// Handles the timers.
+		/// Handles the Timer.
 		void think() override;
-		/// Gets if this window has finished popping up.
+		/// Gets if the Window has finished popping up.
 		bool isPopupDone() const;
 
-		/// Draws the window.
+		/// Draws the Window.
 		void draw() override;
 
-		/// Sets the border-color.
+		/// Sets the Window's border-color.
 		void setColor(Uint8 color) override;
-		/// Gets the border-color.
+		/// Gets the Window's border-color.
 		Uint8 getColor() const;
 
-		/// Sets the high-contrast color setting.
+		/// Sets the Window's high-contrast color setting.
 		void setHighContrast(bool contrast = true) override;
 
-		/// Sets the background surface.
+		/// Sets the Window's background Surface.
 		void setBackground(
 				Surface* const bg,
 				int dX = 0,
 				int dY = 0);
-		/// Sets the background to a solid color instead of transparent.
+		/// Sets the Window's background to a solid color instead of transparent.
 		void setBackgroundFill(Uint8 color);
 
-		/// Sets the x-delta.
+		/// Sets the Window's x-delta.
 		void setDX(int dX);
-		/// Sets the y-delta.
+		/// Sets the Window's y-delta.
 		void setDY(int dY);
 
-		/// Give this window a thin border.
+		/// Give the Window a thin border.
 		void setThinBorder();
 };
 

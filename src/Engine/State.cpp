@@ -86,13 +86,13 @@ State::~State()
 /**
  * Sets the User Interface data from a ruleset.
  * @note Also sets the Palette for the State.
- * @param category - reference the category of the interface from an Interfaces ruleset
- * @param alterPal - true to swap out the backpal-colors (default false)
- * @param tactical - true to use Battlescape Palette (applies only to options screens) (default false)
+ * @param category		- reference the category of the interface from an Interfaces ruleset
+ * @param altBackpal	- true to swap out the backpal-colors (default false)
+ * @param tactical		- true to use Battlescape Palette (applies only to options screens) (default false)
  */
 void State::setInterface(
 		const std::string& category,
-		bool alterPal,
+		bool altBackpal,
 		bool tactical)
 {
 	PaletteType palType (PAL_NONE);
@@ -108,6 +108,7 @@ void State::setInterface(
 		{
 			if (palType == PAL_NONE)
 				palType = _uiRuleParent->getPalette();
+
 			if (elBackpal == nullptr)
 				elBackpal = _uiRuleParent->getElement("backpal");
 		}
@@ -115,7 +116,7 @@ void State::setInterface(
 		if (elBackpal != nullptr && tactical == false)
 		{
 			int color;
-			if (alterPal == true)	color = elBackpal->color2;
+			if (altBackpal == true)	color = elBackpal->color2;
 			else					color = elBackpal->color;
 
 			if (color != std::numeric_limits<int>::max())
