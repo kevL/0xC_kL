@@ -4019,7 +4019,6 @@ void BattleUnit::putDown()
 				setAIState();
 				break;
 
-			default:
 			case STATUS_UNCONSCIOUS:
 				_unitAIState->resetAI();
 		}

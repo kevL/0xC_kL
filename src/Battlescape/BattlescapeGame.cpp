@@ -105,7 +105,7 @@ BattlescapeGame::BattlescapeGame(
 	_debugPlay = false;
 
 	cancelTacticalAction();
-	checkCasualties(nullptr, nullptr, true);
+	checkCasualties(nullptr, nullptr, true); // ... aLien power-source explosions.
 
 //	_tacAction.actor = nullptr;
 //	_tacAction.type = BA_NONE;
@@ -1589,7 +1589,8 @@ void BattlescapeGame::checkCasualties(
 	// killed the attacker and make THAT the attacker!
 	if (attacker != nullptr)
 	{
-		if (attacker->getUnitStatus() == STATUS_DEAD
+		if (attacker->getGeoscapeSoldier() == nullptr
+			&& attacker->getUnitStatus() == STATUS_DEAD
 			&& attacker->getSpecialAbility() == SPECAB_EXPLODE	// TODO: Factor in tile explosions. Eg. hit a barrel -
 			&& attacker->getMurdererId() != 0)					// it explodes and transfers any kills to a shooter.
 		{
@@ -1610,16 +1611,14 @@ void BattlescapeGame::checkCasualties(
 		// NOTE: Useful only after Melee attacks. Firearms & explosives handle
 		// things differently ... see note in TileEngine::checkReactionFire().
 		checkExposedByMelee(attacker);
-	}
 
-	if (attacker != nullptr && attacker->getGeoscapeSoldier() != nullptr)
-		diaryAttacker(attacker, weapon);
+		if (attacker->getGeoscapeSoldier() != nullptr)
+			diaryAttacker(attacker, weapon);
+	}
 
 	bool
 		dead,
-		stunned,
-		converted,
-		bypass;
+		converted;
 	std::vector<BattleUnit*> convertedUnits;
 	BattleUnit* defender;
 
@@ -1630,44 +1629,34 @@ void BattlescapeGame::checkCasualties(
 	{
 		defender = *i; // <- a helpful label for ptrIterator.
 
-		if (defender->getUnitStatus() != STATUS_DEAD
-			&& defender->getUnitStatus() != STATUS_LIMBO) // kL_tentative.
+		switch (defender->getUnitStatus())
 		{
-			dead = defender->isOut_t(OUT_HEALTH);
-			stunned = defender->isOut_t(OUT_STUNNED);
-			converted =
-			bypass = false;
+			case STATUS_DEAD:
+			case STATUS_LIMBO:
+				break;
 
-			if (dead == false) // for converting infected units that aren't dead. Dead-conversions are handled in UnitDieBState.
-			{
-				if (defender->getSpawnType() == "STR_ZOMBIE") // human->zombie (nobody cares about zombie->chryssalid)
-				{
-					converted = true; // do morale-changes and SoldierDiary but not collapsing animations.
-					convertedUnits.push_back(defender);
-				}
-				else if (stunned == false)
-					bypass = true;
-			}
+			case STATUS_UNCONSCIOUS:
+				if (defender->getHealth() != 0) break;
+				// no break;
 
-			if (bypass == false)
-			{
-				if ((dead == true
-						&& defender->getUnitStatus() != STATUS_DEAD
-						&& defender->getUnitStatus() != STATUS_COLLAPSING	// is this really needed ....
-						&& defender->getUnitStatus() != STATUS_TURNING		// may be set by UnitDieBState cTor
-						&& defender->getUnitStatus() != STATUS_DISABLED)
-					|| converted == true)
+			default:
+				dead = defender->getHealth() == 0;
+				converted = false;
+
+				if (dead == false) // for converting infected units that aren't dead. Dead-conversions are handled in UnitDieBState.
 				{
-					if (dead == true
-						&& defender->getUnitStatus() != STATUS_UNCONSCIOUS)
+					if (defender->getSpawnType() == "STR_ZOMBIE") // human->zombie (nobody cares about zombie->chryssalid)
 					{
-						defender->setUnitStatus(STATUS_DISABLED);	// <- will be sent to UnitDieBState below.
+						converted = true; // do morale-changes and SoldierDiary but not collapsing animations.
+						convertedUnits.push_back(defender);
 					}
-					else
-						defender->instaKill();						// <- will NOT be sent to UnitDieBState
+					else if (defender->getHealth() > defender->getStun())
+						break;
+				}
 
-					// attacker's Morale Bonus & diary ->
-					if (attacker != nullptr)
+				if (dead == true || converted == true)
+				{
+					if (attacker != nullptr) // attacker's Morale Bonus & diary ->
 					{
 						defender->killerFaction(attacker->getFaction()); // used in DebriefingState.
 						//Log(LOG_INFO) << "BSG::checkCasualties() " << defender->getId() << " killedByFaction = " << (int)attacker->getFaction();
@@ -1696,7 +1685,9 @@ void BattlescapeGame::checkCasualties(
 //					if (defender->getFaction() != FACTION_NEUTRAL)	// civie deaths now affect other Factions.
 					factionMorale(defender, converted);				// cycle through units and do all faction
 
-					if (defender->getUnitStatus() == STATUS_DISABLED)
+					if (defender->getUnitStatus() == STATUS_UNCONSCIOUS || converted == true)
+						defender->instaKill();
+					else
 					{
 						DamageType dType;
 						if (weapon != nullptr)
@@ -1713,15 +1704,8 @@ void BattlescapeGame::checkCasualties(
 													hidden));
 					}
 				}
-				else if (stunned == true
-					&& defender->getUnitStatus() != STATUS_DEAD
-					&& defender->getUnitStatus() != STATUS_UNCONSCIOUS
-					&& defender->getUnitStatus() != STATUS_COLLAPSING	// is this really needed ....
-					&& defender->getUnitStatus() != STATUS_TURNING		// may be set by UnitDieBState cTor
-					&& defender->getUnitStatus() != STATUS_DISABLED)
+				else // recently stunned.
 				{
-					defender->setUnitStatus(STATUS_DISABLED);
-
 					if (attacker != nullptr
 						&& attacker->getGeoscapeSoldier() != nullptr
 						&& defender->beenStunned() == false) // credit first stunner only.
@@ -1748,7 +1732,6 @@ void BattlescapeGame::checkCasualties(
 												DT_STUN,
 												true));
 				}
-			}
 		}
 	}
 
@@ -1981,7 +1964,7 @@ void BattlescapeGame::attackerMorale( // private.
 /**
  * Adjusts morale of units by faction when a BattleUnit dies.
  * @note Helper for checkCasualties().
- * @param defender	- pointer to the BattleUnit that died
+ * @param defender	- pointer to a BattleUnit that died
  * @param converted	- true if unit was converted to another lifeform
  */
 void BattlescapeGame::factionMorale( // private.
@@ -3009,89 +2992,85 @@ void BattlescapeGame::dropUnitInventory(BattleUnit* const unit)
 
 /**
  * Converts a BattleUnit into a different type of BattleUnit.
- * @param unit - pointer to a BattleUnit to convert
+ * @param potato - pointer to a BattleUnit to convert
  * @return, pointer to the converted BattleUnit
  */
-BattleUnit* BattlescapeGame::convertUnit(BattleUnit* const unit)
+BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 {
 	//Log(LOG_INFO) << "BattlescapeGame::convertUnit() " << conType;
-	const bool wasVisible (unit->getUnitVisible());
+	const bool wasVisible (potato->getUnitVisible());
 
 	_battleSave->getBattleState()->showPsiButton(false);
 
-	switch (unit->getUnitStatus())
+	switch (potato->getUnitStatus())
 	{
 		case STATUS_UNCONSCIOUS:
-			unit->setUnitStatus(STATUS_DEAD);
-			unit->setHealth(0); // no break;
+			potato->setUnitStatus(STATUS_DEAD);
+			potato->setHealth(0); // no break;
 		case STATUS_DEAD:
-			_battleSave->deleteBody(unit);
+			_battleSave->deleteBody(potato);
 			break;
 
 		default:
-			unit->instaKill();
+			potato->instaKill();
 	}
 
-	unit->setSpecialAbility(SPECAB_NONE);
+	potato->setSpecialAbility(SPECAB_NONE);
 
-	dropUnitInventory(unit);
+	dropUnitInventory(potato);
 
-	unit->setTile();
-	_battleSave->getTile(unit->getPosition())->setUnit(); // NOTE: This could, theoretically, be a large unit.
+	potato->setTile();
+	_battleSave->getTile(potato->getPosition())->setUnit(); // NOTE: This could, theoretically, be a large potato.
 
 
-	std::string st (unit->getSpawnType());
-	RuleUnit* const unitRule (getRuleset()->getUnitRule(st));
+	RuleUnit* const unitRule (getRuleset()->getUnitRule(potato->getSpawnType()));
+	const Position pos (potato->getPosition());
+	potato = new BattleUnit(
+						unitRule,
+						FACTION_HOSTILE,
+						_battleSave->getUnits()->back()->getId() + 1,
+						getRuleset()->getArmor(unitRule->getArmorType()),
+						_parentState->getGame()->getSavedGame()->getDifficulty(),
+						_parentState->getGame()->getSavedGame()->getMonthsPassed(),
+						this);
 
-	st = unitRule->getArmorType();
-	BattleUnit* const conUnit (new BattleUnit(
-											unitRule,
-											FACTION_HOSTILE,
-											_battleSave->getUnits()->back()->getId() + 1,
-											getRuleset()->getArmor(st),
-											_parentState->getGame()->getSavedGame()->getDifficulty(),
-											_parentState->getGame()->getSavedGame()->getMonthsPassed(),
-											this));
-
-	const Position pos (unit->getPosition());
 	_battleSave->getTile(pos)->setUnit(
-									conUnit,
+									potato,
 									_battleSave->getTile(pos + Position(0,0,-1)));
-	conUnit->setPosition(pos);
+	potato->setPosition(pos);
 
 	int dir;
-	if (conUnit->isZombie() == true)
-		dir = RNG::generate(0,7); // or, (unit->getUnitDirection())
+	if (potato->isZombie() == true)
+		dir = RNG::generate(0,7); // or, (potato->getUnitDirection())
 	else
 		dir = 3;
-	conUnit->setUnitDirection(dir);
-	conUnit->setTimeUnits(0);
+	potato->setUnitDirection(dir);
+	potato->setTimeUnits(0);
 
-	_battleSave->getUnits()->push_back(conUnit);
+	_battleSave->getUnits()->push_back(potato);
 
-	conUnit->setAIState(new AlienBAIState(_battleSave, conUnit));
+	potato->setAIState(new AlienBAIState(_battleSave, potato));
 
-	st = unitRule->getRace().substr(4) + "_WEAPON";
-	const RuleItem* const itRule (getRuleset()->getItemRule(st));
+	const RuleItem* const itRule (getRuleset()->getItemRule(unitRule->getRace().substr(4u) + "_WEAPON"));
 	if (itRule != nullptr)
 	{
 		BattleItem* const weapon (new BattleItem(
 											itRule,
 											_battleSave->getCanonicalBattleId()));
-		weapon->changeOwner(conUnit);
+		weapon->changeOwner(potato);
 		weapon->setInventorySection(getRuleset()->getInventoryRule(ST_RIGHTHAND));
 
 		_battleSave->getItems()->push_back(weapon);
 	}
 
-	getMap()->cacheUnit(conUnit);
-	conUnit->setUnitVisible(wasVisible);
+	getMap()->cacheUnit(potato);
+	potato->setUnitVisible(wasVisible);
 
-	getTileEngine()->applyGravity(conUnit->getTile());
+	getTileEngine()->applyGravity(potato->getTile());
 	getTileEngine()->calculateUnitLighting();
-	getTileEngine()->calcFovPos(conUnit->getPosition(), true);
+	getTileEngine()->calcFovPos(potato->getPosition(), true);
 
-	return conUnit;
+	return potato;
 }
 
 /**

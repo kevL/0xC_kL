@@ -4613,21 +4613,22 @@ void TileEngine::detonate(Tile* const tile) const
 
 /**
  * Checks for chained explosions.
- * Chained explosions are explosions which occur after an explosive map object is destroyed.
- * May be due a direct hit, other explosion or fire.
+ * @note Chained explosions are explosions which occur after an explosive object
+ * is destroyed. May be due a direct hit, other explosion or fire.
  * @return, tile on which an explosion occurred
  */
 Tile* TileEngine::checkForTerrainExplosions() const
 {
+	Tile* tile;
 	for (size_t
 			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
-		if (_battleSave->getTiles()[i]->getExplosive() != 0)
-			return _battleSave->getTiles()[i];
+		tile = _battleSave->getTiles()[i];
+		if (tile->getExplosive() != 0)
+			return tile;
 	}
-
 	return nullptr;
 }
 

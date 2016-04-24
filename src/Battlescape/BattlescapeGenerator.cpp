@@ -2406,7 +2406,7 @@ void BattlescapeGenerator::fuelPowerSources() // private.
 }
 
 /**
- * When a UFO crashes there is a chance for each powersource to explode.
+ * When a UFO crashes there is a chance for each aLien power-source to explode.
  */
 void BattlescapeGenerator::explodePowerSources() // private.
 {
@@ -2414,7 +2414,7 @@ void BattlescapeGenerator::explodePowerSources() // private.
 	Position voxel;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
