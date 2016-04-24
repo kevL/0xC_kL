@@ -1734,7 +1734,7 @@ bool BattleUnit::hasCried() const
 }
 
 /**
- * Sets this BattleUnit's health level.
+ * Sets this BattleUnit's health-level.
  * @param health - the health to set
  */
 void BattleUnit::setHealth(int health)
@@ -1743,7 +1743,7 @@ void BattleUnit::setHealth(int health)
 }
 
 /**
- * Does an amount of stun recovery.
+ * Does an amount of stun-recovery.
  * @param power - stun to recover
  * @return, true if unit revives
  */
@@ -1759,8 +1759,8 @@ bool BattleUnit::healStun(int power)
 }
 
 /**
- * Gets the amount of stun damage this BattleUnit has.
- * @return, stun level
+ * Gets the amount of stun-damage this BattleUnit has.
+ * @return, stun-level
  */
 int BattleUnit::getStun() const
 {
@@ -1768,7 +1768,7 @@ int BattleUnit::getStun() const
 }
 
 /**
- * Sets this BattleUnit's stun level.
+ * Sets this BattleUnit's stun-level.
  */
 void BattleUnit::setStun(int stun)
 {
@@ -1776,21 +1776,19 @@ void BattleUnit::setStun(int stun)
 }
 
 /**
- * Raises a unit's stun level sufficiently so that this BattleUnit is ready to become
- * unconscious.
- * @note Used when another unit falls on top of this unit. Zombified units first
- * convert to their spawn unit.
+ * Raises this BattleUnit's stun-level sufficiently so that it's ready to go
+ * to Status_Unconscious.
+ * @note Units convert to their spawn-unit.
  */
 void BattleUnit::knockOut()
 {
 	if (_spawnType.empty() == false)
 	{
-		BattleUnit* const conUnit (_battleGame->convertUnit(this));
-		conUnit->knockOut();
+		BattleUnit* const unit (_battleGame->convertUnit(this));
+		unit->knockOut();
 	}
 	else if (_unitRule != nullptr
-		&& (_unitRule->isMechanical() == true
-			|| _isZombie == true))
+		&& (_unitRule->isMechanical() == true || _isZombie == true))
 	{
 		_health = 0;
 	}
@@ -1823,10 +1821,15 @@ void BattleUnit::keepCollapsing()
 	{
 		--_fallPhase;
 
-		if (_health == 0)
-			_status = STATUS_DEAD;
-		else
-			_status = STATUS_UNCONSCIOUS;
+		switch (_health)
+		{
+			case 0:
+				_status = STATUS_DEAD;
+				break;
+
+			default:
+				_status = STATUS_UNCONSCIOUS;
+		}
 	}
 	_cacheInvalid = true;
 }

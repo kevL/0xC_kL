@@ -43,8 +43,9 @@ class UnitDieBState
 
 private:
 	bool
-		_init,
 		_doneScream,
+		_init,
+		_hidden,
 		_noScream;
 	int _extraTicks;
 
@@ -53,10 +54,10 @@ private:
 
 	DamageType _dType;
 
-	/// Converts a BattleUnit to a body-item.
+	/// Converts the BattleUnit to a body-item.
 	void convertToBody();
-	/// Centers Camera on a collapsing BattleUnit.
-	void centerOnUnitDeath();
+	/// Centers the Camera on the collapsing unit.
+	void centerOnDeath();
 
 
 	public:
@@ -65,7 +66,8 @@ private:
 				BattlescapeGame* const parent,
 				BattleUnit* const unit,
 				const DamageType dType,
-				const bool noScream = false);
+				const bool noScream = false,
+				const bool hidden = false);
 		/// Cleans up the UnitDieBState.
 		~UnitDieBState();
 

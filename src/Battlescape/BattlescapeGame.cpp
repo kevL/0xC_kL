@@ -1701,6 +1701,7 @@ void BattlescapeGame::checkCasualties(
 													this,
 													defender,
 													dType,
+													hidden,
 													hidden));
 					}
 				}

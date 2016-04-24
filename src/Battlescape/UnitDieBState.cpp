@@ -54,70 +54,76 @@ namespace OpenXcom
  * @param parent	- pointer to BattlescapeGame
  * @param unit		- pointer to a dying BattleUnit
  * @param dType		- type of damage that caused the death (RuleItem.h)
- * @param noScream	- true to disable the death sound for pre-battle powersource
- *					  explosions as well as for stunned units (default false)
+ * @param noScream	- true to disable death-sound of stunned units (default false)
+ * @param hidden	- true to speed things along through pre-battle powersource
+ *					  explosions (default false)
  */
 UnitDieBState::UnitDieBState(
 		BattlescapeGame* const parent,
 		BattleUnit* const unit,
 		const DamageType dType,
-		const bool noScream)
+		const bool noScream,
+		const bool hidden)
 	:
 		BattleState(parent),
 		_unit(unit),
 		_dType(dType),
 		_noScream(noScream),
+		_hidden(hidden),
 		_battleSave(parent->getBattleSave()),
 		_doneScream(false),
 		_extraTicks(-1),
 		_init(true)
 {
+	// TODO: '_noScream' and '_hidden' even '_extraTicks' can be combined into
+	// an int-var or an enum: DeathPhase or DeathMode or similar. Do straighten
+	// this hodge-podge out ...!
 //	_unit->clearVisibleTiles();
 //	_unit->clearHostileUnits();
 
-	if (_noScream == false)			// NOT a pre-battle hidden power-source explosion death; needed here to stop Camera CTD.
+	if (_hidden == false)
 	{
-		_unit->setUnitVisible();	// Has side-effect of keeping stunned (noScream) victims non-revealed if not already visible. See think() also.
+		_unit->setUnitVisible();
+		centerOnDeath();
 
-		if (_unit->getFaction() == FACTION_HOSTILE)
+		switch (_unit->getFaction())
 		{
-			const std::vector<Node*>* const nodeList (_battleSave->getNodes());
-			if (nodeList != nullptr) // this had better happen.
+			case FACTION_HOSTILE:
 			{
-				for (std::vector<Node*>::const_iterator
-						i = nodeList->begin();
-						i != nodeList->end();
-						++i)
+				const std::vector<Node*>* const nodeList (_battleSave->getNodes());
+				if (nodeList != nullptr) // this had better happen.
 				{
-					if (TileEngine::distance(
-										(*i)->getPosition(),
-										_unit->getPosition()) < 3)
+					for (std::vector<Node*>::const_iterator
+							i = nodeList->begin();
+							i != nodeList->end();
+							++i)
 					{
-						(*i)->setNodeType((*i)->getNodeType() | Node::TYPE_DANGEROUS);
+						if (TileEngine::distance(
+											(*i)->getPosition(),
+											_unit->getPosition()) < 3)
+						{
+							(*i)->setNodeType((*i)->getNodeType() | Node::TYPE_DANGEROUS);
+						}
 					}
 				}
+				break;
 			}
+
+			case FACTION_PLAYER:
+				_parent->getMap()->setUnitDying();
 		}
-	}
-
-	if (_unit->getUnitVisible() == true)
-	{
-		centerOnUnitDeath();
-
-		if (_unit->getFaction() == FACTION_PLAYER)
-			_parent->getMap()->setUnitDying();
 
 		if (_unit->getSpawnType().empty() == false)
 			_unit->setDirectionTo(3); // -> STATUS_TURNING if not facing correctly. Else STATUS_STANDING
 		else
 			_unit->initDeathSpin(); // -> STATUS_TURNING
 	}
-	else // pre-battle hidden power-source explosion death or a stunned non-visible unit
+	else // pre-battle hidden power-source explosion death
 	{
-		if (_unit->isOut_t(OUT_HEALTH) == true)
+		if (_unit->getHealth() == 0)
 			_unit->instaKill();
 		else
-			_unit->knockOut(); // convert if has a "spawnType" set. Else sets health0 / stun=health
+			_unit->knockOut(); // convert if has a "spawnType" set. Else sets health=0 / stun=health.
 	}
 }
 
@@ -135,17 +141,18 @@ UnitDieBState::~UnitDieBState()
 /**
  * Runs state functionality every cycle.
  * @note Progresses the death sequence, displays any messages, checks if the
- * mission is over, etc.
+ * mission is over, etc. This routine gets an award for the klunkiest ever
+ * written. TODO: Fix that.
  */
 void UnitDieBState::think()
 {
-// #0 TODO: Separate _noSound (ie. unconscious) from _hiddenExplosions.
-	if (_noScream == false)	// Has side-effect of not Centering on stunned victims. See cTor also.
+//	#0 TODO: Separate _noSound (ie. unconscious) from _hiddenExplosions.
+	if (_noScream == false)
 	{
 		if (_init == true)
 		{
 			_init = false;
-			centerOnUnitDeath();
+			centerOnDeath();
 		}
 
 		if (_doneScream == false
@@ -158,7 +165,7 @@ void UnitDieBState::think()
 		}
 	}
 
-// #1
+//	#1
 	if (_unit->getUnitStatus() == STATUS_TURNING)
 	{
 		if (_unit->getSpinPhase() != -1)
@@ -170,13 +177,13 @@ void UnitDieBState::think()
 		else // spawn conversion is going to happen
 			_unit->turn(); // -> STATUS_STANDING
 	}
-// #3
+//	#3
 	else if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
 		_unit->keepCollapsing(); // -> STATUS_DEAD or STATUS_UNCONSCIOUS ie. isOut_t()
 	}
-// #2
-	else if (_unit->isOut_t(OUT_STAT) == false) // this ought be Status_Standing/Disabled also.
+//	#2
+	else if (_unit->isOut_t(OUT_STAT) == false)
 	{
 		//Log(LOG_INFO) << "unitDieB: think() set interval = " << BattlescapeState::STATE_INTERVAL_STANDARD;
 		_parent->setStateInterval(BattlescapeState::STATE_INTERVAL_STANDARD);
@@ -189,7 +196,7 @@ void UnitDieBState::think()
 		}
 	}
 
-// #5 - finish.
+//	#5 - finish.
 	if (--_extraTicks == 0)
 	{
 		bool moreDead (false);
@@ -216,18 +223,21 @@ void UnitDieBState::think()
 		if (_unit->getGeoscapeSoldier() != nullptr)
 		{
 			std::string stInfo;
-			if (_unit->getUnitStatus() == STATUS_DEAD)
+			switch (_unit->getUnitStatus())
 			{
-				if (_dType == DT_NONE
-					&& _unit->getSpawnType().empty() == true)
-				{
-					stInfo = "STR_HAS_DIED_FROM_A_FATAL_WOUND"; // ... or a Morphine overdose.
-				}
-				else if (Options::battleNotifyDeath == true)
-					stInfo = "STR_HAS_BEEN_KILLED";
+				case STATUS_DEAD:
+					if (_dType == DT_NONE
+						&& _unit->getSpawnType().empty() == true)
+					{
+						stInfo = "STR_HAS_DIED_FROM_A_FATAL_WOUND"; // ... or a Morphine overdose.
+					}
+					else if (Options::battleNotifyDeath == true)
+						stInfo = "STR_HAS_BEEN_KILLED";
+					break;
+
+				case STATUS_UNCONSCIOUS:
+					stInfo = "STR_HAS_BECOME_UNCONSCIOUS";
 			}
-			else
-				stInfo = "STR_HAS_BECOME_UNCONSCIOUS";
 
 			if (stInfo.empty() == false)
 			{
@@ -252,7 +262,7 @@ void UnitDieBState::think()
 //			}
 //		}
 	}
-// #4
+//	#4
 	else if (_unit->isOut_t(OUT_STAT) == true) // and this ought be Status_Dead OR _Unconscious.
 	{
 		_extraTicks = 1;
@@ -263,28 +273,36 @@ void UnitDieBState::think()
 			_unit->instaKill();
 		}
 		else
-			_unit->putDown();
+			_unit->putDown(); // TODO: Straighten these out vis-a-vis the cTor, knockOut().
 
 		if (_unit->getSpawnType().empty() == false)
 			_parent->convertUnit(_unit);
 		else
 			convertToBody();
+
+		if (_hidden == true)
+			_parent->popState();
 	}
 
-	_unit->flagCache();
-	_parent->getMap()->cacheUnit(_unit);
+	if (_hidden == false)
+	{
+		_unit->flagCache();
+		_parent->getMap()->cacheUnit(_unit);
+	}
 }
 
 /**
- * Converts a BattleUnit to a body-item.
+ * Converts the BattleUnit to a body-item.
  * @note Dead or Unconscious units get a nullptr-Tile but keep track of the
  * Position of their body. Also, the true Status of the unit is valid here.
  */
 void UnitDieBState::convertToBody() // private.
 {
 	_unit->setTile();
-	_battleSave->getBattleState()->showPsiButton(false);
 
+	if (_hidden == false)
+		_battleSave->getBattleState()->showPsiButton(false);	// ... why is this here ...
+																// any reason it's not in, say, the cTor or init()
 	if (Options::battleWeaponSelfDestruction == false
 		|| _unit->getOriginalFaction() != FACTION_HOSTILE
 		|| _unit->getUnitStatus() == STATUS_UNCONSCIOUS)
@@ -371,15 +389,13 @@ void UnitDieBState::convertToBody() // private.
 	if (calcLights == true)
 		_parent->getTileEngine()->calculateTerrainLighting();
 
-	_parent->getTileEngine()->calcFovPos(pos,			// expose any units that were hiding behind dead unit and account for possible Smoke too.
-										true, false);	// try no tile-reveal.
-//	}
+	_parent->getTileEngine()->calcFovPos(pos, true, false); // expose any units that were hiding behind dead unit and account for possible Smoke too.
 }
 
 /**
- * Centers Camera on the collapsing BattleUnit.
+ * Centers the Camera on the collapsing unit.
  */
-void UnitDieBState::centerOnUnitDeath() // private.
+void UnitDieBState::centerOnDeath() // private.
 {
 	Camera* const deathCam (_parent->getMap()->getCamera());
 	if (deathCam->isOnScreen(_unit->getPosition()) == false)
