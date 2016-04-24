@@ -19,8 +19,6 @@
 
 #include "Zoom.h"
 
-//#include <cstddef> // nullptr (for NB code-assistant only)
-
 #include "Logger.h"
 #include "Options.h"
 #include "Screen.h"

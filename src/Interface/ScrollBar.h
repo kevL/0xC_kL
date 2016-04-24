@@ -66,10 +66,10 @@ private:
 
 	ScrollDirection _scrollDir;
 
-	/// Scrolls the TextList with the keyboard.
-	void keyScroll();
 	/// Scrolls the TextList with the mouse.
 	void mouseScroll();
+	/// Scrolls the TextList with the keyboard.
+	void keyScroll();
 
 	/// Draws the ScrollBar track.
 	void drawTrack();

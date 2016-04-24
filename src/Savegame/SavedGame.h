@@ -320,7 +320,7 @@ private:
 		/// Gets an ID to assign for an object-type.
 		int getCanonicalId(const std::string& objectType);
 	 	/// Gets all the canonical-IDs.
-		const std::map<std::string, int>& getAllIds() const;
+		const std::map<std::string, int>& getObjectIds() const;
 		/// Resets the list of object-IDs.
 //		void setCanonicalIds(const std::map<std::string, int>& ids);
 

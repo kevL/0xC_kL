@@ -25,7 +25,6 @@
 
 //#include <algorithm>
 //#include <cmath>
-//#include <cstddef> // nullptr (for NB code-assistant only)
 #include <cstring>
 #include <iomanip>
 //#include <sstream>
@@ -964,6 +963,7 @@ BattlescapeState::BattlescapeState()
 	_btnLogo->onKeyboardPress(
 					(ActionHandler)& BattlescapeState::btnZeroTuClick,
 					Options::keyBattleZeroTUs);
+
 	_btnLogo->onMouseClick(
 					(ActionHandler)& BattlescapeState::btnUfoPaediaClick,
 					SDL_BUTTON_RIGHT);
@@ -987,19 +987,19 @@ BattlescapeState::BattlescapeState()
 					Options::keyBattleConsole);
 
 
-/*	const SDLKey buttons[] =
-	{
-		Options::keyBattleCenterEnemy1,
-		Options::keyBattleCenterEnemy2,
-		Options::keyBattleCenterEnemy3,
-		Options::keyBattleCenterEnemy4,
-		Options::keyBattleCenterEnemy5,
-		Options::keyBattleCenterEnemy6,
-		Options::keyBattleCenterEnemy7,
-		Options::keyBattleCenterEnemy8,
-		Options::keyBattleCenterEnemy9,
-		Options::keyBattleCenterEnemy10
-	}; */
+//	const SDLKey buttons[]
+//	{
+//		Options::keyBattleCenterEnemy1,
+//		Options::keyBattleCenterEnemy2,
+//		Options::keyBattleCenterEnemy3,
+//		Options::keyBattleCenterEnemy4,
+//		Options::keyBattleCenterEnemy5,
+//		Options::keyBattleCenterEnemy6,
+//		Options::keyBattleCenterEnemy7,
+//		Options::keyBattleCenterEnemy8,
+//		Options::keyBattleCenterEnemy9,
+//		Options::keyBattleCenterEnemy10
+//	};
 
 	const Uint8 color (static_cast<Uint8>(_rules->getInterface("battlescape")->getElement("visibleUnits")->color));
 	for (size_t
@@ -1265,7 +1265,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 	{
 		showInfo = false;
 
-		size_t row (0);
+		size_t row (0u);
 		std::wostringstream
 			woststr,	// test
 			woststr1,	// Console #1
@@ -1278,8 +1278,8 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 		int qty (1);
 
 		for (size_t
-				i = 0;
-				i != tile->getInventory()->size() + 1;
+				i = 0u;
+				i != tile->getInventory()->size() + 1u;
 				++i)
 		{
 			wst1 = L"> ";
@@ -1291,24 +1291,28 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 
 				if (item->getUnit() != nullptr)
 				{
-					if (item->getUnit()->getType().compare(0,11, "STR_FLOATER") == 0) // See medikit w/ Autopsy OR inventory w/ Autopsy+Race research.
+					if (item->getUnit()->getType().compare(0u,11u, "STR_FLOATER") == 0) // See medikit w/ Autopsy OR inventory w/ Autopsy+Race research.
 					{
 						wst1 += tr("STR_FLOATER");
 //						wst1 += L" (status doubtful)";
 					}
-					else if (item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
-					{
-						wst1 += item->getUnit()->getName(_game->getLanguage());
-
-						if (item->getUnit()->getGeoscapeSoldier() != nullptr)
-							wst1 += L" (" + Text::intWide(item->getUnit()->getHealth() - item->getUnit()->getStun() - 1) + L")";
-					}
 					else
 					{
-						wst1 += tr(itRule->getType());
+						switch (item->getUnit()->getUnitStatus())
+						{
+							case STATUS_UNCONSCIOUS:
+								wst1 += item->getUnit()->getName(_game->getLanguage());
 
-						if (item->getUnit()->getGeoscapeSoldier() != nullptr)
-							wst1 += L" (" + item->getUnit()->getName(_game->getLanguage()) + L")";
+								if (item->getUnit()->getGeoscapeSoldier() != nullptr)
+									wst1 += L" (" + Text::intWide(item->getUnit()->getHealth() - item->getUnit()->getStun() - 1) + L")";
+								break;
+
+							case STATUS_DEAD:
+								wst1 += tr(itRule->getType());
+
+								if (item->getUnit()->getGeoscapeSoldier() != nullptr)
+									wst1 += L" (" + item->getUnit()->getName(_game->getLanguage()) + L")";
+						}
 					}
 				}
 				else if (_gameSave->isResearched(itRule->getRequirements()) == true)
@@ -1373,9 +1377,9 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 			wst3 =
 			wst2 = wst1;
 
-			if (row < 26) // Console #1
+			if (row < 26u) // Console #1
 			{
-				if (row == 25)
+				if (row == 25u)
 				{
 					woststr << L"> ";
 					++row;
@@ -1384,12 +1388,12 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 				woststr1.str(L"");
 				woststr1 << woststr.str();
 
-				if (row == 26)
+				if (row == 26u)
 				{
 					if (wst1 == L"> ")
 					{
 						wst = woststr1.str();
-						wst.erase(wst.length() - 2);
+						wst.erase(wst.length() - 2u);
 						woststr1.str(L"");
 						woststr1 << wst;
 					}
@@ -1402,18 +1406,18 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 			}
 			else // row > 25 // Console #2
 			{
-				if (row == 50)
+				if (row == 50u)
 					woststr << L"> ";
 
 				woststr2.str(L"");
 				woststr2 << woststr.str();
 
-				if (row == 51)
+				if (row == 51u)
 				{
 					if (wst1 == L"> ")
 					{
 						wst = woststr2.str();
-						wst.erase(wst.length() - 2);
+						wst.erase(wst.length() - 2u);
 						woststr2.str(L"");
 						woststr2 << wst;
 					}
@@ -1682,12 +1686,12 @@ inline void BattlescapeState::handle(Action* action)
 				{
 					switch (action->getDetails()->key.keysym.sym)
 					{
-						case SDLK_F10:													// f10 - voxel-map dump.
-							beep = true;
-							saveVoxelMap();
-							break;
+//						case SDLK_F10:													// f10 - voxel-map dump. - moved below_
+//							beep = true;
+//							saveVoxelMap();
+//							break;
 
-						case SDLK_F9:													// f9 - ai dump.
+						case SDLK_F9:													// f9 - ai dump. TODO: Put in Options.
 							beep = true;
 							saveAIMap();
 					}
@@ -1698,6 +1702,11 @@ inline void BattlescapeState::handle(Action* action)
 			{
 				beep = true;
 				saveVoxelView();
+			}
+			else if (action->getDetails()->key.keysym.sym == SDLK_F10)					// f10 - voxel-map dump. - from above^ TODO: Put in Options.
+			{
+				beep = true;
+				saveVoxelMap();
 			}
 			else if (_gameSave->isIronman() == false)
 			{

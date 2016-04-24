@@ -116,8 +116,8 @@ protected:
 		_researchListOrder,
 		_ufopaediaListOrder;
 
-	GameTime _startingTime;
-	YAML::Node _startingBase;
+	GameTime _startTime;
+	YAML::Node _startBase;
 
 	const Game* const _game;
 	RuleGlobe* _globe;
@@ -216,13 +216,13 @@ protected:
 		/// Cleans up the Ruleset.
 		~Ruleset();
 
-		/// Reloads the country lines.
+		/// Reloads the country-lines.
 		void reloadCountryLines() const;
 
 		/// Checks to ensure MissionScripts are okay.
 		void validateMissions() const;
 
-		/// Loads the Ruleset from a given source.
+		/// Loads the Ruleset from a specified source.
 		void load(const std::string& src);
 
 		/// Generates a starting SavedGame.

@@ -961,7 +961,7 @@ units:
     psiBlock: true
     hasHands: false
     dog: true
-startingBase:
+startBase:
     facilities:
       - type: STR_ACCESS_LIFT
         x: 2
@@ -990,7 +990,7 @@ startingBase:
       - type: STR_SMALL_RADAR_SYSTEM
         x: 1
         y: 3
-    randomSoldiers: 8
+    soldiers: 8
     crafts:
       - type: STR_SKYRANGER
         id: 1
@@ -1032,7 +1032,7 @@ startingBase:
       STR_ELECTRO_FLARE: 10
     scientists: 10
     engineers: 10
-startingTime:
+startTime:
   second: 0
   minute: 0
   hour: 12

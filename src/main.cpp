@@ -19,7 +19,6 @@
 
 //#define SDL_MAIN_HANDLED (valid for SDL2 only)
 
-//#include <cstddef> // nullptr (for NB code-assistant only)
 #include <exception>
 #include <sstream>
 

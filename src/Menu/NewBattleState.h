@@ -107,7 +107,7 @@ private:
 		/// Handler for clicking the Cancel button.
 		void btnCancelClick(Action* action);
 		/// Handler for clicking the Randomize button.
-		void btnRandomClick(Action* action);
+		void btnRandClick(Action* action);
 		/// Handler for clicking the Equip Craft button.
 		void btnEquipClick(Action* action);
 		/// Handler for changing the Mission combobox.

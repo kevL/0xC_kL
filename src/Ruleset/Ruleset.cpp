@@ -95,8 +95,8 @@ Ruleset::Ruleset(const Game* const game)
 		_costScientist(0),
 		_timePersonnel(0),
 //		_initialFunding(0), // 6'000(000)
-//		_startingTime(6,1,1,1999,12,0,0),
-		_startingTime(1,1,1999,12,0,0),
+//		_startTime(6,1,1,1999,12,0,0),
+		_startTime(1,1,1999,12,0,0),
 		_modIndex(0),
 		_facilityListOrder(0),
 		_craftListOrder(0),
@@ -782,20 +782,20 @@ void Ruleset::loadFile(const std::string& file) // protected.
 	}
 
 	// Bases can't be copied so for savegame purposes store the node instead
-	const YAML::Node base = doc["startingBase"];
-	if (base != 0)
+	const YAML::Node base (doc["startBase"]);
+	if (base != nullptr)
 	{
 		for (YAML::const_iterator
 				i = base.begin();
 				i != base.end();
 				++i)
 		{
-			_startingBase[i->first.as<std::string>()] = YAML::Node(i->second);
+			_startBase[i->first.as<std::string>()] = YAML::Node(i->second);
 		}
 	}
 
-	if (doc["startingTime"])
-		_startingTime.load(doc["startingTime"]);
+	if (doc["startTime"] != nullptr)
+		_startTime.load(doc["startTime"]);
 
 	_costEngineer	= doc["costEngineer"]	.as<int>(_costEngineer);
 	_costScientist	= doc["costScientist"]	.as<int>(_costScientist);
@@ -1112,19 +1112,21 @@ T* Ruleset::loadRule( // protected.
  */
 SavedGame* Ruleset::createSave() const
 {
+	//Log(LOG_INFO) << "Ruleset::createSave()";
 	RNG::setSeed(0);
 
 	SavedGame* const gameSave (new SavedGame(this));
 
-	for (std::vector<std::string>::const_iterator // Setup research generals.
+	for (std::vector<std::string>::const_iterator // setup ResearchGenerals.
 			i = _researchIndex.begin();
 			i != _researchIndex.end();
 			++i)
 	{
 		gameSave->getResearchGenerals().push_back(new ResearchGeneral(getResearch(*i)));
 	}
+	//Log(LOG_INFO) << ". research generals DONE";
 
-	for (std::vector<std::string>::const_iterator // Add countries.
+	for (std::vector<std::string>::const_iterator // add Countries.
 			i = _countriesIndex.begin();
 			i != _countriesIndex.end();
 			++i)
@@ -1133,6 +1135,7 @@ SavedGame* Ruleset::createSave() const
 		if (country->getLonMin().empty() == false) // safety.
 			gameSave->getCountries()->push_back(new Country(country, true));
 	}
+	//Log(LOG_INFO) << ". countries DONE";
 
 //	int missing = ((_initialFunding - gameSave->getCountryFunding() / 1000) / (int)gameSave->getCountries()->size()) * 1000;
 	for (std::vector<Country*>::const_iterator // Adjust funding to total $6-million.
@@ -1151,8 +1154,9 @@ SavedGame* Ruleset::createSave() const
 	}
 
 	gameSave->setFunds(gameSave->getCountryFunding());
+	//Log(LOG_INFO) << ". funding DONE";
 
-	for (std::vector<std::string>::const_iterator // Add regions.
+	for (std::vector<std::string>::const_iterator // add Regions.
 			i = _regionsIndex.begin();
 			i != _regionsIndex.end();
 			++i)
@@ -1161,21 +1165,27 @@ SavedGame* Ruleset::createSave() const
 		if (region->getLonMin().empty() == false) // safety.
 			gameSave->getRegions()->push_back(new Region(region));
 	}
+	//Log(LOG_INFO) << ". regions DONE";
 
-	Base* const base (new Base(this)); // Set up starting base.
-	base->load(_startingBase, gameSave, true);
 
+	//Log(LOG_INFO) << ". create Base";
+	Base* const base (new Base(this)); // setup start Base.
+	//Log(LOG_INFO) << ". load Base";
+	base->load(_startBase, gameSave, true);
+	//Log(LOG_INFO) << ". add Base";
 	gameSave->getBases()->push_back(base);
+	//Log(LOG_INFO) << ". base DONE";
 
-	for (std::vector<Craft*>::const_iterator // Correct IDs.
+	for (std::vector<Craft*>::const_iterator // correct IDs.
 			i = base->getCrafts()->begin();
 			i != base->getCrafts()->end();
 			++i)
 	{
 		gameSave->getCanonicalId((*i)->getRules()->getType());
 	}
+	//Log(LOG_INFO) << ". craft-ids DONE";
 
-//	Craft* transportCraft (nullptr); // Determine starting transport craft.
+//	Craft* transportCraft (nullptr); // determine start transport Craft.
 //	for (std::vector<Craft*>::const_iterator
 //			i = base->getCrafts()->begin();
 //			i != base->getCrafts()->end();
@@ -1188,7 +1198,7 @@ SavedGame* Ruleset::createSave() const
 //		}
 //	}
 
-	std::vector<std::string> allSoldiers (_soldiersIndex); // Determine starting soldier types.
+	std::vector<std::string> allSoldiers (_soldiersIndex); // determine start Soldier types.
 	for (std::vector<std::string>::const_iterator
 			i = allSoldiers.begin();
 			i != allSoldiers.end();
@@ -1199,12 +1209,14 @@ SavedGame* Ruleset::createSave() const
 		else
 			++i;
 	}
+	//Log(LOG_INFO) << ". soldier-types DONE";
 
-	const YAML::Node& node (_startingBase["randomSoldiers"]);
-	std::vector<std::string> solTypes;
-	if (node)
+	const YAML::Node& node (_startBase["soldiers"]);
+	if (node != nullptr)
 	{
-		if (node.IsMap() == true) // Starting soldiers specified by type.
+		std::vector<std::string> solTypes;
+
+		if (node.IsMap() == true) // start Soldiers specified by type.
 		{
 			std::map<std::string, int> soldiers (node.as<std::map<std::string, int>>(std::map<std::string, int>()));
 			for (std::map<std::string, int>::const_iterator
@@ -1221,7 +1233,7 @@ SavedGame* Ruleset::createSave() const
 				}
 			}
 		}
-		else if (node.IsScalar() == true) // Starting soldiers specified by amount.
+		else if (node.IsScalar() == true) // start Soldiers specified by amount.
 		{
 			const int soldiers (node.as<int>(0));
 			for (int
@@ -1245,14 +1257,16 @@ SavedGame* Ruleset::createSave() const
 
 			base->getSoldiers()->push_back(sol);
 
-			SoldierDiary* const diary (sol->getDiary()); // Award each Soldier the special Original Eight award.
+			SoldierDiary* const diary (sol->getDiary()); // award each Soldier the special Original Eight award.
 			diary->awardOriginalEight();
 		}
 	}
+	//Log(LOG_INFO) << ". soldiers DONE";
 
-	gameSave->getAlienStrategy().init(this); // Setup aLien strategy.
-	gameSave->setTime(_startingTime);
+	gameSave->getAlienStrategy().init(this); // setup ALienStrategy.
+	gameSave->setTime(_startTime);
 
+	////Log(LOG_INFO) << "Ruleset::createSave() EXIT";
 	return gameSave;
 }
 
@@ -1762,8 +1776,8 @@ int Ruleset::detHighTuInventoryCost() const
 	} */
 
 /**
- * Returns the rules for the specified research project.
- * @param id - reference a research project type
+ * Returns the rules for a specified research-project.
+ * @param id - reference a research-project-type
  * @return, pointer to RuleResearch
  */
 const RuleResearch* Ruleset::getResearch(const std::string& id) const
@@ -1776,8 +1790,8 @@ const RuleResearch* Ruleset::getResearch(const std::string& id) const
 }
 
 /**
- * Returns the list of research projects.
- * @return, reference to a vector of strings as the list of research projects
+ * Returns the list of research-projects.
+ * @return, reference to a vector of strings as the list of research-projects
  */
 const std::vector<std::string>& Ruleset::getResearchList() const
 {
@@ -1785,8 +1799,8 @@ const std::vector<std::string>& Ruleset::getResearchList() const
 }
 
 /**
- * Returns the rules for the specified manufacture project.
- * @param id - reference the manufacture project type
+ * Returns the rules for the specified manufacture-project.
+ * @param id - reference to the manufacture-project-type
  * @return, pointer to RuleManufacture
  */
 RuleManufacture* Ruleset::getManufacture(const std::string& id) const
@@ -1799,8 +1813,8 @@ RuleManufacture* Ruleset::getManufacture(const std::string& id) const
 }
 
 /**
- * Returns the list of manufacture projects.
- * @return, reference to a vector of strings as the list of manufacture projects
+ * Returns the list of manufacture-projects.
+ * @return, reference to a vector of strings as the list of manufacture-projects
  */
 const std::vector<std::string>& Ruleset::getManufactureList() const
 {
@@ -1808,10 +1822,10 @@ const std::vector<std::string>& Ruleset::getManufactureList() const
 }
 
 /**
- * Generates and returns a list of facilities for custom bases.
- * @note The list contains all the facilities that are listed in the
- * 'startingBase' part of the ruleset.
- * @return, vector of pointers to RuleBaseFacility as the list of facilities for custom bases
+ * Generates and returns a list of facilities for custom-bases.
+ * @note The list contains all the facilities that are listed in the 'startBase'
+ * part of the ruleset.
+ * @return, vector of pointers to RuleBaseFacility as the list of facilities for custom-bases
  */
 std::vector<RuleBaseFacility*> Ruleset::getCustomBaseFacilities() const
 {
@@ -1820,8 +1834,8 @@ std::vector<RuleBaseFacility*> Ruleset::getCustomBaseFacilities() const
 	RuleBaseFacility* fac;
 
 	for (YAML::const_iterator
-			i = _startingBase["facilities"].begin();
-			i != _startingBase["facilities"].end();
+			i = _startBase["facilities"].begin();
+			i != _startBase["facilities"].end();
 			++i)
 	{
 		type = (*i)["type"].as<std::string>();
@@ -1829,14 +1843,13 @@ std::vector<RuleBaseFacility*> Ruleset::getCustomBaseFacilities() const
 		if (fac->isLift() == false)
 			placeList.push_back(fac);
 	}
-
 	return placeList;
 }
 
 /**
- * Returns the data for the specified ufo trajectory.
- * @param id - reference the UfoTrajectory id
- * @return, a pointer to the data in specified UfoTrajectory
+ * Returns the data for a specified ufo-trajectory.
+ * @param id - reference the UfoTrajectory ID
+ * @return, a pointer to data in UfoTrajectory
  */
 const UfoTrajectory* Ruleset::getUfoTrajectory(const std::string& id) const
 {
@@ -1849,9 +1862,9 @@ const UfoTrajectory* Ruleset::getUfoTrajectory(const std::string& id) const
 }
 
 /**
- * Returns the rules for the specified alien mission.
- * @param id - alien mission type
- * @return, pointer to Rules for the AlienMission
+ * Returns the rules for a specified AlienMission.
+ * @param id - AlienMission type
+ * @return, pointer to RuleAlienMission
  */
 const RuleAlienMission* Ruleset::getAlienMission(const std::string& id) const
 {
@@ -1863,8 +1876,8 @@ const RuleAlienMission* Ruleset::getAlienMission(const std::string& id) const
 }
 
 /**
- * Returns the rules for a random alien mission based on a specific objective.
- * @param objective		- alien mission objective
+ * Returns the rules for a random AlienMission based on a specified objective.
+ * @param objective		- AlienMission objective (RuleAlienMission.h)
  * @param monthsPassed	- the number of months since game start
  * @return, pointer to RuleAlienMission
  */
@@ -1925,7 +1938,7 @@ const std::vector<std::vector<int>>& Ruleset::getAlienItemLevels() const
  */
 const YAML::Node& Ruleset::getStartingBase() const
 {
-	return _startingBase;
+	return _startBase;
 }
 
 /**
@@ -1934,7 +1947,7 @@ const YAML::Node& Ruleset::getStartingBase() const
  */
 const GameTime& Ruleset::getStartingTime() const
 {
-	return _startingTime;
+	return _startTime;
 }
 
 /**

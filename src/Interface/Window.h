@@ -98,7 +98,7 @@ private:
 				int y = 0,
 				PopupType popType = POPUP_NONE,
 				bool toggle = true);
-		/// Cleans up the Sindow.
+		/// Cleans up the Window.
 		~Window();
 
 		/// Handles the Timer.

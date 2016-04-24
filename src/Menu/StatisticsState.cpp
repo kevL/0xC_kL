@@ -19,7 +19,7 @@
 
 #include "StatisticsState.h"
 
-//#include <algorithm>
+#include <algorithm>
 #include <map>
 #include <sstream>
 #include <string>
@@ -82,7 +82,7 @@ StatisticsState::StatisticsState()
 
 	_lstStats->setColumns(2, 200,80);
 	_lstStats->setDot(true);
-	_lstStats->setMargin();
+	_lstStats->setMargin(16);
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick((ActionHandler)& StatisticsState::btnOkClick);
@@ -344,11 +344,11 @@ void StatisticsState::listStats()
 		}
 	}
 
-	std::map<std::string, int> ids (gameSave->getAllIds());
+	std::map<std::string, int> ids (gameSave->getObjectIds());
 	const int
-		ufosDetected (ids["STR_UFO"]),
-		alienBases   (ids["STR_ALIEN_BASE"]), // detected only.
-		terrorSites  (ids["STR_TERROR_SITE"]);
+		ufosDetected (std::max(0, ids["STR_UFO"] - 1)),
+		alienBases   (std::max(0, ids["STR_ALIEN_BASE"] - 1)), // detected only.
+		terrorSites  (std::max(0, ids["STR_TERROR_SITE"] - 1));
 
 	int totalCrafts (0);
 	for (std::vector<std::string>::const_iterator
@@ -356,7 +356,8 @@ void StatisticsState::listStats()
 			i != _game->getRuleset()->getCraftsList().end();
 			++i)
 	{
-		totalCrafts += ids[*i]; // TODO: Show quantity of Craft lost ... or sold.
+		if (ids.find(*i) != ids.end())
+			totalCrafts += ids[*i] - 1; // TODO: Show quantity of Craft lost ... or sold.
 	}
 
 	const int currentBases (gameSave->getBases()->size());

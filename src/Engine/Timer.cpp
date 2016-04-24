@@ -19,8 +19,6 @@
 
 #include "Timer.h"
 
-//#include <cstddef> // nullptr (for NB code-assistant only)
-
 //#include "Game.h"
 //#include "Logger.h"
 

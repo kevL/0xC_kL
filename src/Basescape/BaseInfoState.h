@@ -119,22 +119,22 @@ private:
 
 
 	public:
-		/// Creates the Base Info state.
+		/// Creates a BaseInfo state.
 		BaseInfoState(
 				Base* const base,
 				BasescapeState* const state);
-		/// Cleans up the Base Info state.
+		/// Cleans up the BaseInfo state.
 		~BaseInfoState();
 
-		/// Updates the base stats.
+		/// Updates the Base's stats.
 		void init() override;
 
 		/// Handler for changing the text on the Name edit.
 		void edtLabelChange(Action* action);
 
-		/// Handler for selecting bases.
+		/// Handler for selecting Bases.
 		void handleKeyPress(Action* action);
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Transfers button.
 		void btnTransfersClick(Action* action);
@@ -143,11 +143,11 @@ private:
 		/// Handler for clicking the Monthly Costs button.
 		void btnMonthlyCostsClick(Action* action);
 
-		/// Handler for clicking the MiniBase view.
+		/// Handler for clicking the MiniBaseView.
 		void miniClick(Action* action);
-		/// Handler for hovering the MiniBase view.
+		/// Handler for hovering the MiniBaseView.
 		void viewMouseOver(Action* action);
-		/// Handler for hovering out of the MiniBase view.
+		/// Handler for hovering out of the MiniBaseView.
 		void viewMouseOut(Action* action);
 };
 

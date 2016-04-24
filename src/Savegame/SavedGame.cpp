@@ -1101,7 +1101,7 @@ void SavedGame::setTime(GameTime gt)
 
 /**
  * Gets the highest ID for the specified object and increments it.
- * @param objectType - reference an object string
+ * @param objectType - reference to an object-type
  * @return, highest ID
  */
 int SavedGame::getCanonicalId(const std::string& objectType)
@@ -1118,7 +1118,7 @@ int SavedGame::getCanonicalId(const std::string& objectType)
  * Gets all the canonical-IDs.
  * @return, reference to a map of strings w/ ints
  */
-const std::map<std::string, int>& SavedGame::getAllIds() const
+const std::map<std::string, int>& SavedGame::getObjectIds() const
 {
 	return _ids;
 }

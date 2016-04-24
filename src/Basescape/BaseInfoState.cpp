@@ -42,6 +42,8 @@
 #include "../Interface/TextButton.h"
 #include "../Interface/TextEdit.h"
 
+#include "../Menu/StatisticsState.h"
+
 #include "../Resource/ResourcePack.h"
 
 #include "../Ruleset/RuleRegion.h"
@@ -219,7 +221,7 @@ BaseInfoState::BaseInfoState(
 	_mini->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
 	_mini->setBases(_baseList);
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _baseList->size();
 			++i)
 	{
@@ -249,7 +251,8 @@ BaseInfoState::BaseInfoState(
 					(ActionHandler)& BaseInfoState::btnOkClick,
 					Options::keyOkKeypad);
 
-	_btnTransfers->setText(tr("STR_TRANSFERS"));
+//	_btnTransfers->setText(tr("STR_TRANSFERS"));
+	_btnTransfers->setText(tr("STR_STATISTICS"));
 	_btnTransfers->onMouseClick((ActionHandler)& BaseInfoState::btnTransfersClick);
 	_btnTransfers->onKeyboardPress(
 					(ActionHandler)& BaseInfoState::btnOkClick,
@@ -339,7 +342,7 @@ void BaseInfoState::init()
 		}
 	}
 
-	_btnTransfers->setVisible(_base->getTransfers()->empty() == false);
+//	_btnTransfers->setVisible(_base->getTransfers()->empty() == false);
 	_btnStores->setVisible(_base->getStorageItems()->getTotalQuantity() != 0);
 
 	std::wostringstream woststr;
@@ -612,7 +615,8 @@ void BaseInfoState::btnOkClick(Action*)
  */
 void BaseInfoState::btnTransfersClick(Action*)
 {
-	_game->pushState(new TransfersState(_base));
+//	_game->pushState(new TransfersState(_base));
+	_game->pushState(new StatisticsState);
 }
 
 /**

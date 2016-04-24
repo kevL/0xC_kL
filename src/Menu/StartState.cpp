@@ -19,8 +19,6 @@
 
 #include "StartState.h"
 
-//#include <cstddef> // nullptr (for NB code-assistant only)
-
 //#include <SDL_mixer.h>
 //#include <SDL_thread.h>
 

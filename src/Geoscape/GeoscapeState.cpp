@@ -25,7 +25,6 @@
 
 //#include <algorithm>
 //#include <cmath>
-//#include <cstddef> // nullptr (for NB code-assistant only)
 //#include <functional>
 #include <iomanip>
 //#include <sstream>

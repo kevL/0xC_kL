@@ -393,7 +393,7 @@ void BasescapeState::init()
 void BasescapeState::setBase(Base* const base)
 {
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _baseList->size();
 			++i)
 	{
@@ -405,7 +405,7 @@ void BasescapeState::setBase(Base* const base)
 		}
 	}
 	_base = _baseList->front();
-	_mini->setSelectedBase(0);
+	_mini->setSelectedBase(0u);
 }
 
 /**
@@ -768,7 +768,7 @@ void BasescapeState::miniLeftClick(Action*)
 			init();
 		}
 		else if (baseId == _baseList->size()
-			&& baseId < Base::MAX_BASES - 1)
+			&& baseId < Base::MAX_BASES - 1u)
 		{
 			kL_geoMusicPlaying = false;
 			kL_geoMusicReturnState = true;
@@ -834,7 +834,7 @@ void BasescapeState::handleKeyPress(Action* action)
  */
 size_t BasescapeState::getKeyedBaseId(SDLKey keyId) const
 {
-	static const SDLKey baseKeys[Base::MAX_BASES] =	// note that 'static' means these keys will not be
+	static const SDLKey baseKeys[Base::MAX_BASES]	// note that 'static' means these keys will not be
 	{												// changed (in Options) while the program is running.
 		Options::keyBaseSelect1,
 		Options::keyBaseSelect2,
@@ -846,7 +846,7 @@ size_t BasescapeState::getKeyedBaseId(SDLKey keyId) const
 		Options::keyBaseSelect8
 	};
 
-	size_t baseId (0);
+	size_t baseId (0u);
 	for (std::vector<Base*>::const_iterator
 			i = _baseList->begin();
 			i != _baseList->end();

@@ -210,22 +210,16 @@ void ScrollBar::handle(Action* action, State* state)
 {
 	InteractiveSurface::handle(action, state);
 
-	if (_offset != -1)
+	if (_offset != -1 && action->getDetails()->type == SDL_MOUSEMOTION)
 	{
-		switch (action->getDetails()->type)
-		{
-			case SDL_MOUSEMOTION:
-			{
-				const double track_y (static_cast<double>(static_cast<int>(action->getAbsoluteMouseY()) - getY() - _offset));
-				double scale;
-				if (_useScalePad == true)
-					scale = static_cast<double>(_list->getRows()) / static_cast<double>(_surface->h - _rect.h);
-				else
-					scale = static_cast<double>(_list->getRows()) / static_cast<double>(_surface->h);
+		const double track_y (static_cast<double>(static_cast<int>(action->getAbsoluteMouseY()) - getY() - _offset));
+		double scale;
+		if (_useScalePad == true)
+			scale = static_cast<double>(_list->getRows()) / static_cast<double>(_surface->h - _rect.h);
+		else
+			scale = static_cast<double>(_list->getRows()) / static_cast<double>(_surface->h);
 
-				_list->scrollTo(static_cast<size_t>(Round(track_y * scale)));
-			}
-		}
+		_list->scrollTo(static_cast<size_t>(Round(track_y * scale)));
 	}
 }
 
@@ -250,7 +244,7 @@ void ScrollBar::mousePress(Action* action, State* state)
 
 		case SDL_BUTTON_LEFT:
 		{
-			const int cursor_y (static_cast<int>(action->getAbsoluteMouseY()) - getY()); // ie, how far down the cursor is from the top of the track.
+			const int cursor_y (static_cast<int>(action->getAbsoluteMouseY()) - getY());
 			if (cursor_y < static_cast<int>(_rect.y))
 			{
 				_scrollDir = MSCROLL_UP;
@@ -276,7 +270,7 @@ void ScrollBar::mousePress(Action* action, State* state)
 			else if (cursor_y >= static_cast<int>(_rect.y) + static_cast<int>(_rect.h))
 				_list->scrollDown(true);
 			else
-				_offset = static_cast<int>(_rect.y) - cursor_y;
+				_offset = cursor_y - static_cast<int>(_rect.y);
 		}
 	}
 }
@@ -382,26 +376,6 @@ void ScrollBar::think()
 }
 
 /**
- * Scrolls the list with the keyboard.
- */
-void ScrollBar::keyScroll() // private.
-{
-	const Uint8* const keystate (SDL_GetKeyState(nullptr));
-
-	if (keystate[SDLK_UP] == 1 || keystate[SDLK_KP8] == 1)
-		_list->scrollUp();												// 1 line up
-
-	else if (keystate[SDLK_DOWN] == 1 || keystate[SDLK_KP2] == 1)
-		_list->scrollDown();											// 1 line down
-
-	else if (keystate[SDLK_PAGEUP] == 1 || keystate[SDLK_KP9] == 1)
-		_list->scrollTo(_list->getScroll() - _list->getVisibleRows());	// 1 page up
-
-	else if (keystate[SDLK_PAGEDOWN] == 1 || keystate[SDLK_KP3] == 1)
-		_list->scrollTo(_list->getScroll() + _list->getVisibleRows());	// 1 page down
-}
-
-/**
  * Scrolls the list with the mouse.
  */
 void ScrollBar::mouseScroll() // private.
@@ -415,6 +389,23 @@ void ScrollBar::mouseScroll() // private.
 		case MSCROLL_DOWN:
 			_list->scrollTo(_list->getScroll() + _list->getVisibleRows());
 	}
+}
+
+/**
+ * Scrolls the list with the keyboard.
+ */
+void ScrollBar::keyScroll() // private.
+{
+	const Uint8* const keystate (SDL_GetKeyState(nullptr));
+
+	if (keystate[SDLK_UP] == 1u || keystate[SDLK_KP8] == 1u)
+		_list->scrollUp();												// 1 line up
+	else if (keystate[SDLK_DOWN] == 1u || keystate[SDLK_KP2] == 1u)
+		_list->scrollDown();											// 1 line down
+	else if (keystate[SDLK_PAGEUP] == 1u || keystate[SDLK_KP9] == 1u)
+		_list->scrollTo(_list->getScroll() - _list->getVisibleRows());	// 1 page up
+	else if (keystate[SDLK_PAGEDOWN] == 1u || keystate[SDLK_KP3] == 1u)
+		_list->scrollTo(_list->getScroll() + _list->getVisibleRows());	// 1 page down
 }
 
 /**

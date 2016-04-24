@@ -1435,7 +1435,7 @@ void BattlescapeGame::endTurn() // private.
 	if (_battleSave->endFactionTurn() == true) // <- This rolls over Faction-turns. TRUE means FullTurn has ended.
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _battleSave->getMapSizeXYZ();
 				++i)
 		{

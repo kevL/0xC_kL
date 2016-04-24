@@ -21,7 +21,6 @@
 
 //#define _USE_MATH_DEFINES
 //#include <cmath>
-//#include <cstddef> // nullptr (for NB code-assistant only)
 //#include <fstream>
 
 #include "../fmath.h"

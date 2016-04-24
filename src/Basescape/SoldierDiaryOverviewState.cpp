@@ -19,7 +19,6 @@
 
 #include "SoldierDiaryOverviewState.h"
 
-//#include <cstddef> // nullptr (for NB code-assistant only)
 //#include <string>
 //#include <vector>
 

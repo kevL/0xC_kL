@@ -21,7 +21,6 @@
 
 //#include <algorithm>
 //#include <cmath>
-//#include <cstddef> // nullptr (for NB code-assistant only)
 #include <fstream>
 //#include <yaml-cpp/yaml.h>
 
@@ -221,7 +220,7 @@ NewBattleState::NewBattleState()
 	_btnEquip->onMouseClick((ActionHandler)& NewBattleState::btnEquipClick);
 
 	_btnRandom->setText(tr("STR_RANDOMIZE"));
-	_btnRandom->onMouseClick((ActionHandler)& NewBattleState::btnRandomClick);
+	_btnRandom->onMouseClick((ActionHandler)& NewBattleState::btnRandClick);
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick((ActionHandler)& NewBattleState::btnOkClick);
@@ -404,12 +403,12 @@ void NewBattleState::save(const std::string& file)
  */
 void NewBattleState::initPlay()
 {
-	RNG::setSeed(0);
+	RNG::setSeed(0u);
 
 	SavedGame* const gameSave (new SavedGame(_rules)); // uh do these get deleted anywhere
 	Base* const base (new Base(_rules));
 
-	const YAML::Node& node = _rules->getStartingBase();
+	const YAML::Node& node (_rules->getStartingBase());
 	base->load(
 			node,
 			gameSave,
@@ -451,7 +450,7 @@ void NewBattleState::initPlay()
 	UnitStats* stats;
 
 	bool
-		hasCdr = false,
+		hasCdr (false),
 		hasRookieStats;
 
 	for (int
@@ -678,7 +677,7 @@ void NewBattleState::btnCancelClick(Action*)
  * Randomize the state
  * @param action - pointer to an Action
  */
-void NewBattleState::btnRandomClick(Action*)
+void NewBattleState::btnRandClick(Action*)
 {
 	initPlay();
 

@@ -136,8 +136,8 @@ private:
 		void load(
 				const YAML::Node& node,
 				SavedGame* const gameSave,
-				bool firstBase = false,
-				bool skirmish = false);
+				bool isFirstBase = false,
+				bool isQuickBattle = false);
 		/// Saves the Base to YAML.
 		YAML::Node save() const override;
 		/// Saves the Base's unique-ID to YAML.

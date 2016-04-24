@@ -47,7 +47,7 @@ Target::Target()
 Target::~Target() // virtual.
 {
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _followers.size();
 			++i)
 	{
@@ -58,7 +58,7 @@ Target::~Target() // virtual.
 }
 
 /**
- * Loads the Target from a YAML file.
+ * Loads this Target from a YAML file.
  * @param node - YAML node
  */
 void Target::load(const YAML::Node& node) // virtual.
@@ -68,7 +68,7 @@ void Target::load(const YAML::Node& node) // virtual.
 }
 
 /**
- * Saves the Target to a YAML file.
+ * Saves this Target to a YAML file.
  * @return, YAML node
  */
 YAML::Node Target::save() const // virtual.
@@ -82,7 +82,7 @@ YAML::Node Target::save() const // virtual.
 }
 
 /**
- * Saves the Target's unique identifiers to a YAML file.
+ * Saves this Target's unique identifiers to a YAML file.
  * @return, YAML node
  */
 YAML::Node Target::saveId() const // virtual.
@@ -96,7 +96,7 @@ YAML::Node Target::saveId() const // virtual.
 }
 
 /**
- * Returns the longitude coordinate of the Target.
+ * Returns the longitude coordinate of this Target.
  * @return, longitude in radians
  */
 double Target::getLongitude() const
@@ -105,7 +105,7 @@ double Target::getLongitude() const
 }
 
 /**
- * Changes the longitude coordinate of the Target.
+ * Changes the longitude coordinate of this Target.
  * @param lon - longitude in radians
  */
 void Target::setLongitude(double lon)
@@ -120,7 +120,7 @@ void Target::setLongitude(double lon)
 }
 
 /**
- * Returns the latitude coordinate of the Target.
+ * Returns the latitude coordinate of this Target.
  * @return, latitude in radians
  */
 double Target::getLatitude() const
@@ -129,7 +129,7 @@ double Target::getLatitude() const
 }
 
 /**
- * Changes the latitude coordinate of the Target.
+ * Changes the latitude coordinate of this Target.
  * @param lat - latitude in radians
  */
 void Target::setLatitude(double lat)

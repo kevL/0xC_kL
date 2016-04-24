@@ -36,7 +36,8 @@ class TextEdit;
 
 
 /**
- * Basescape screen that shows a base's layout and lets the player manage bases.
+ * Basescape screen that shows a Base's layout and lets the player manage
+ * his/her Bases.
  */
 class BasescapeState final
 	:
@@ -126,15 +127,15 @@ private:
 		void viewLeftClick(Action* action);
 		/// Handler for right-clicking the BaseView.
 		void viewRightClick(Action* action);
-		/// Handler for hovering the BaseView & MiniBase.
+		/// Handler for hovering the BaseView & MiniBaseView.
 		void viewMouseOver(Action* action);
-		/// Handler for hovering out of the BaseView & MiniBase.
+		/// Handler for hovering out of the BaseView & MiniBaseView.
 		void viewMouseOut(Action* action);
-		/// Handler for left-clicking the MiniBase view.
+		/// Handler for left-clicking the MiniBaseView.
 		void miniLeftClick(Action* action);
-		/// Handler for right-clicking the MiniBase view.
+		/// Handler for right-clicking the MiniBaseView.
 		void miniRightClick(Action* action);
-		/// Handler for pressing a base selection hotkey.
+		/// Handler for pressing a Base selection hotkey.
 		void handleKeyPress(Action* action);
 		/// Returns the baseId for a keypress.
 		size_t getKeyedBaseId(SDLKey keyId) const;
