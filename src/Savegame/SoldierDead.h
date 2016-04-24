@@ -38,7 +38,7 @@ class SoldierDeath;
  * Dead Soldiers have a wide variety of stats that affect
  * our memory of their heroic, and not so heroic battles.
  */
-class SoldierDead // no copy cTor.
+class SoldierDead
 {
 
 private:

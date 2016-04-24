@@ -58,9 +58,9 @@ private:
 
 
 	public:
-		/// Creates the New Game state.
+		/// Creates a NewGame state.
 		NewGameState();
-		/// Cleans up the New Game state.
+		/// Cleans up the NewGame state.
 		~NewGameState();
 
 		/// Handler for clicking the Ok button.

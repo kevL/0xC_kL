@@ -31,7 +31,7 @@ namespace OpenXcom
  * Polylines constitute the detail portions of the X-Com
  * globe and typically represent borders and rivers.
  */
-class Polyline // no copy cTor.
+class Polyline
 {
 
 private:

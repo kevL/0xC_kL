@@ -71,7 +71,7 @@ class SoldierLayout;
  * @note Soldiers have a wide variety of stats that affect their performance
  * during battles.
  */
-class Soldier // no copy cTor.
+class Soldier
 {
 
 private:

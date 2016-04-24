@@ -148,7 +148,6 @@ void TileEngine::calculateSunShading(Tile* const tile) const
 //			block = 0,
 //			x = tile->getPosition().x,
 //			y = tile->getPosition().y;
-//
 //		for (int
 //				z = _save->getMapSizeZ() - 1;
 //				z > tile->getPosition().z;
@@ -164,7 +163,6 @@ void TileEngine::calculateSunShading(Tile* const tile) const
 //							DT_NONE,
 //							Pathfinding::DIR_DOWN);
 //		}
-//
 //		if (block > 0)
 		{
 			light -= 2;

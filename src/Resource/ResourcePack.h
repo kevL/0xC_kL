@@ -49,7 +49,7 @@ class SurfaceSet;
  * @note The game is still hardcoded to X-Com resources so for now this just
  * serves to load all the files in one place.
  */
-class ResourcePack // no copy cTor.
+class ResourcePack
 {
 
 private:

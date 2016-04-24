@@ -62,7 +62,7 @@ struct MissionStatistics;
 
 
 /**
- * Enumerator containing all the possible game-difficulties.
+ * Enumerator containing all the possible difficulty-levels.
  */
 enum DifficultyLevel
 {
@@ -87,7 +87,7 @@ enum SaveType
 };
 
 /**
- * Enumerator for the current game-ending.
+ * Enumerator for the End.
  */
 enum EndType
 {
@@ -97,7 +97,7 @@ enum EndType
 };
 
 /**
- * Enumerator for the save-mode.
+ * Enumerator for the current save-mode.
  */
 enum SaveMode
 {
@@ -124,7 +124,7 @@ struct SaveInfo
 };
 
 /**
- * Container for Promotion info.
+ * Container for soldier-promotion-info.
  */
 struct PromotionInfo
 {
@@ -146,11 +146,11 @@ struct PromotionInfo
 
 
 /**
- * The game data that gets written to disk when the game is saved.
- * @note A saved game holds all the variable info in a game like funds, game
- * time, current bases and contents, world activities, score, etc.
+ * The game-data that gets written to disk when the game is saved.
+ * @note A saved game holds all the variable info in the current game like
+ * funds, game-time, current bases and contents, world activities, score, etc.
  */
-class SavedGame // no copy cTor.
+class SavedGame
 {
 
 private:
@@ -232,9 +232,9 @@ private:
 			QUICKSAVE,
 			SAVE_EXT;
 
-		/// Creates a new saved game.
+		/// Creates a SavedGame.
 		explicit SavedGame(const Ruleset* const rules);
-		/// Cleans up the saved game.
+		/// Cleans up the SavedGame.
 		~SavedGame();
 
 		/// Gets list of saves in the user directory.
@@ -242,60 +242,60 @@ private:
 				const Language* const lang,
 				bool autoquick);
 
-		/// Loads a saved game from YAML.
+		/// Loads the SavedGame from YAML.
 		void load(
 				const std::string& file,
 				Ruleset* const rules);
-		/// Saves a saved game to YAML.
+		/// Saves the SavedGame to YAML.
 		void save(const std::string& file) const;
 
-		/// Gets the game name.
+		/// Gets the SavedGame's name.
 		std::wstring getName() const;
-		/// Sets the game name.
+		/// Sets the SavedGame's name.
 		void setName(const std::wstring& name);
 
-		/// Gets the game difficulty.
+		/// Gets the SavedGame's difficulty.
 		DifficultyLevel getDifficulty() const;
-		/// Sets the game difficulty.
+		/// Sets the SavedGame's difficulty.
 		void setDifficulty(DifficultyLevel difficulty);
 
-		/// Gets the game ending.
+		/// Gets the SavedGame's ending-type.
 		EndType getEnding() const;
-		/// Sets the game ending.
+		/// Sets the SavedGame's ending-type.
 		void setEnding(EndType end);
 
-		/// Gets if the game is in ironman mode.
+		/// Gets if the SavedGame is in ironman-mode.
 		bool isIronman() const;
-		/// Sets if the game is in ironman mode.
+		/// Sets if the SavedGame is in ironman-mode.
 		void setIronman(bool ironman);
 
-		/// Gets the current globe longitude.
+		/// Gets the current Globe longitude.
 		double getGlobeLongitude() const;
-		/// Sets the new globe longitude.
+		/// Sets a new Globe longitude.
 		void setGlobeLongitude(double lon);
-		/// Gets the current globe latitude.
+		/// Gets the current Globe latitude.
 		double getGlobeLatitude() const;
-		/// Sets the new globe latitude.
+		/// Sets a new Globe latitude.
 		void setGlobeLatitude(double lat);
-		/// Gets the current globe zoom.
+		/// Gets the current Globe zoom.
 		size_t getGlobeZoom() const;
-		/// Sets the new globe zoom.
+		/// Sets a new Globe zoom.
 		void setGlobeZoom(size_t zoom);
 
-		/// Gets the preDogfight globe longitude.
+		/// Gets the preDogfight Globe longitude.
 		double getDfLongitude() const;
-		/// Sets the preDogfight globe longitude.
+		/// Sets a preDogfight Globe longitude.
 		void setDfLongitude(double lon);
-		/// Gets the preDogfight globe latitude.
+		/// Gets the preDogfight Globe latitude.
 		double getDfLatitude() const;
-		/// Sets the preDogfight globe latitude.
+		/// Sets a preDogfight Globe latitude.
 		void setDfLatitude(double lat);
-		/// Gets the preDogfight globe zoom.
+		/// Gets the preDogfight Globe zoom.
 		size_t getDfZoom() const;
-		/// Sets the preDogfight globe zoom.
+		/// Sets a preDogfight Globe zoom.
 		void setDfZoom(size_t zoom);
 
-		/// Handles monthly funding.
+		/// Handles player's monthly funding.
 		void monthlyFunding();
 
 		/// Sets new funds.
@@ -305,7 +305,7 @@ private:
 		/// Gets the list of funds from previous months.
 		std::vector<int64_t>& getFundsList();
 
-		/// Gets the list of maintenance-values.
+		/// Gets the list of monthly maintenance-values.
 		std::vector<int64_t>& getMaintenanceList();
 		/// Gets the list of monthly income-values.
 		std::vector<int64_t>& getIncomeList();
@@ -321,28 +321,28 @@ private:
 		int getCanonicalId(const std::string& objectType);
 	 	/// Gets all the canonical-IDs.
 		const std::map<std::string, int>& getAllIds() const;
-		/// Resets the list of object IDs.
+		/// Resets the list of object-IDs.
 //		void setCanonicalIds(const std::map<std::string, int>& ids);
 
-		/// Gets the list of countries.
+		/// Gets the list of Countries.
 		std::vector<Country*>* getCountries();
-		/// Gets the total country funding.
+		/// Gets the total country-funding.
 		int getCountryFunding() const;
-		/// Gets the list of regions.
+		/// Gets the list of Regions.
 		std::vector<Region*>* getRegions();
-		/// Gets the list of bases.
+		/// Gets the list of Bases.
 		std::vector<Base*>* getBases();
-		/// Gets the list of bases.
+		/// Gets the list of Bases const.
 		const std::vector<Base*>* getBases() const;
 
-		/// Gets the total base maintenance.
+		/// Gets the total base-maintenance.
 		int getBaseMaintenances() const;
 
-		/// Gets the list of UFOs.
+		/// Gets the list of current UFOs.
 		std::vector<Ufo*>* getUfos();
-		/// Gets the list of waypoints.
+		/// Gets the list of current waypoints.
 		std::vector<Waypoint*>* getWaypoints();
-		/// Gets the list of mission sites.
+		/// Gets the list of current mission-sites.
 		std::vector<MissionSite*>* getMissionSites();
 
 		/// Gets the current SavedBattleGame.
@@ -391,32 +391,32 @@ private:
 				const RuleResearch* const resRule) const;
 		/// Checks if a ResearchProject is discovered.
 		bool isResearched(const std::string& resType) const;
-		/// Checks if a list of ResearchProjects is discovered.
+		/// Checks if a list of ResearchProjects is all discovered.
 		bool isResearched(const std::vector<std::string>& resTypes) const;
 
 		/// Gets the Soldier matching an ID.
 		Soldier* getSoldier(int id) const;
-		/// Handles the higher promotions.
+		/// Handles promotions above Squaddie.
 		bool handlePromotions(std::vector<Soldier*>& participants);
-		/// Processes a soldier for promotion.
+		/// Processes a Soldier for promotion.
 		void processSoldier(
 				const Soldier* const soldier,
 				PromotionInfo& promoData);
-		/// Checks how many Soldiers of a rank exist and which one has the highest score for promotion.
+		/// Checks how many Soldiers of a rank exist and which one has the highest score.
 		Soldier* inspectSoldiers(
 				const std::vector<Soldier*>& soldiers,
 				const std::vector<Soldier*>& participants,
 				SoldierRank soldierRank);
 
-		///  Gets the list of alien bases.
+		///  Gets the list of AlienBases.
 		std::vector<AlienBase*>* getAlienBases();
 
-		/// Toggles and returns the Geoscape debug flag.
+		/// Toggles and returns the Geoscape debug-flag.
 		bool toggleDebugActive();
-		/// Gets the current Geoscape debug flag.
+		/// Gets the current state of the Geoscape debug-flag.
 		bool getDebugGeo() const;
 
-		/// Gets the list of research scores.
+		/// Gets the list of research-scores.
 		std::vector<int>& getResearchScores();
 
 		/// Gets whether or not the player has been warned.
@@ -424,19 +424,19 @@ private:
 		/// Sets whether or not the player has been warned.
 		void setWarned(bool warned = true);
 
-		/// Full access to the alien strategy data.
+		/// Full access to the AlienStrategy data.
 		AlienStrategy& getAlienStrategy()
 		{ return *_alienStrategy; }
-		/// Read-only access to the alien strategy data.
+		/// Read-only access to the AlienStrategy data.
 		const AlienStrategy& getAlienStrategy() const
 		{ return *_alienStrategy; }
-		/// Full access to the current alien missions.
+		/// Full access to the current AlienMissions.
 		std::vector<AlienMission*>& getAlienMissions()
 		{ return _activeMissions; }
-		/// Read-only access to the current alien missions.
+		/// Read-only access to the current AlienMissions.
 		const std::vector<AlienMission*>& getAlienMissions() const
 		{ return _activeMissions; }
-		/// Finds a mission by region and objective.
+		/// Finds an AlienMission by Region and objective-type.
 		AlienMission* findAlienMission(
 				const std::string& region,
 				MissionObjective objective) const;
@@ -467,55 +467,55 @@ private:
 		/// Sets the GraphFinanceToggles.
 		void setGraphFinanceToggles(const std::string& value);
 
-/*		/// Toggles the current state of the radar line drawing.
+/*		/// Toggles the current state of the radar-line drawing.
 		void toggleRadarLines();
-		/// Gets the current state of the radar line drawing.
+		/// Gets the current state of the radar-line drawing.
 		bool getRadarLines();
 		/// Toggles the current state of the detail drawing.
 		void toggleDetail();
 		/// Gets the current state of the detail drawing.
 		bool getDetail(); */
 
-		/// Gets the list of dead soldiers.
+		/// Gets the list of dead-soldiers.
 		std::vector<SoldierDead*>* getDeadSoldiers();
 
-		/// Gets the last selected player base.
+		/// Gets the last selected player-base.
 //		Base* getRecallBase();
-		/// Set the last selected player base.
+		/// Set the last selected player-base.
 //		void setRecallBase(size_t base);
 
-		/// Evaluate the score of a soldier based on all of his stats, missions and kills.
-		int getSoldierScore(Soldier* soldier);
+		/// Evaluate the score of a Soldier based on all of his stats, missions and kills.
+		int getSoldierScore(Soldier* const soldier);
 
 		/// Sets the last selected armor
 //		void setRecallArmor(const std::string& value);
 		/// Gets the last selected armor
 //		std::string getRecallArmor();
 
-		/// Sets a debug-argument to GeoscapeState.
+		/// Sets a debug-arg for GeoscapeState.
 		void setDebugArg(const std::string& debug);
-		/// Gets a debug-argument from Globe.
+		/// Gets a debug-arg from Globe.
 		std::string getDebugArg() const;
-		/// Gets if the debug-argument has been set.
+		/// Gets if a debug-arg has been set.
 		bool getDebugArgDone();
 
-		/// Gets the list of missions-statistics.
+		/// Gets the list of MissionStatistics.
 		std::vector<MissionStatistics*>* getMissionStatistics();
 
-		/// Scores points for XCom or aLiens.
+		/// Scores points for xCom or aLiens.
 		void scorePoints(
 				double lon,
 				double lat,
 				int pts,
 				bool aLien) const;
 
-		/// Formats hours into days/hours for Craft refurbishing.
+		/// Formats hours into days+hours for Craft refurbishing.
 		std::wstring formatCraftDowntime(
 				int hrsTotal,
 				bool isDelayed,
 				const Language* const lang) const;
 
-		/// Gets the craft corresponding to the specified unique id.
+		/// Gets the Craft corresponding to a specified unique-ID.
 //		Craft* findCraftByUniqueId(const CraftId& craftId) const;
 };
 

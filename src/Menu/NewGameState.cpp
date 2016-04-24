@@ -42,7 +42,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the new-game Difficulty window.
+ * Initializes all the elements in the new-game window.
  */
 NewGameState::NewGameState()
 {
@@ -145,12 +145,12 @@ void NewGameState::btnOkClick(Action*)
 		diff = DIFF_VETERAN;
 	else if (_difficulty == _btnExperienced)
 		diff = DIFF_EXPERIENCED;
-	else //if (_difficulty == _btnBeginner)
+	else // _btnBeginner
 		diff = DIFF_BEGINNER;
 
 	SavedGame* const gameSave (_game->getRuleset()->createSave());
 	gameSave->setDifficulty(diff);
-	gameSave->setIronman(_btnIronman->getPressed());
+	gameSave->setIronman(_btnIronman->getPressed() == true);
 	_game->setSavedGame(gameSave);
 
 	GeoscapeState* const geo (new GeoscapeState());

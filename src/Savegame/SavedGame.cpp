@@ -132,10 +132,10 @@ SavedGame::SavedGame(const Ruleset* const rules)
 		_ironman(false),
 		_globeLon(0.),
 		_globeLat(0.),
-		_globeZoom(0),
+		_globeZoom(0u),
 		_dfLon(0.),
 		_dfLat(0.),
-		_dfZoom(0),
+		_dfZoom(0u),
 		_battleSave(nullptr),
 		_debugGeo(false),
 		_warned(false),
@@ -240,7 +240,7 @@ SavedGame::~SavedGame()
  * Gets all the info of the saves found in the user folder.
  * @param lang		- pointer to the loaded Language
  * @param autoquick	- true to include autosaves and quicksaves
- * @return, vector of SavesInfo structs (SavedGame.h)
+ * @return, vector of SaveInfo structs (SavedGame.h)
  */
 std::vector<SaveInfo> SavedGame::getList( // static.
 		const Language* const lang,
@@ -350,10 +350,8 @@ SaveInfo SavedGame::getSaveInfo( // private/static.
 
 	std::wostringstream details;
 	if (doc["base"])
-	{
 		details << Language::utf8ToWstr(doc["base"].as<std::string>())
 				<< L" - ";
-	}
 
 	GameTime gt (GameTime(1,1,1999,12,0,0));
 	gt.load(doc["time"]);
@@ -370,12 +368,10 @@ SaveInfo SavedGame::getSaveInfo( // private/static.
 			<< gt.getMinute();
 
 	if (doc["turn"])
-	{
 		details << L" - "
 				<< lang->getString(doc["mission"].as<std::string>())
 				<< L" "
 				<< lang->getString("STR_TURN").arg(doc["turn"].as<int>());
-	}
 
 	if (doc["ironman"].as<bool>(false))
 		details << L" "
@@ -399,7 +395,7 @@ SaveInfo SavedGame::getSaveInfo( // private/static.
  */
 void SavedGame::load(
 		const std::string& file,
-		Ruleset* const rules) // <- used only to obviate const if loading battleSave.
+		Ruleset* const rules) // <- used only to obviate const if loading a battleSave.
 {
 	//Log(LOG_INFO) << "SavedGame::load()";
 	std::string type (Options::getUserFolder() + file);
@@ -409,21 +405,25 @@ void SavedGame::load(
 		throw Exception(file + " is not a valid save file");
 	}
 
-	YAML::Node brief (nodes[0]); // Get brief save info
+	YAML::Node brief (nodes[0u]); // get data from brief-info section
 
-/*	std::string version = brief["version"].as<std::string>();
-	if (version != OPENXCOM_VERSION_SHORT)
-	{
-		throw Exception("Version mismatch");
-	} */
+//	std::string version (brief["version"].as<std::string>());
+//	if (version != OPENXCOM_VERSION_SHORT)
+//	{
+//		throw Exception("Version mismatch");
+//	}
 
 	_time->load(brief["time"]);
+
 	if (brief["name"])
 		_name = Language::utf8ToWstr(brief["name"].as<std::string>());
 	else
 		_name = Language::fsToWstr(file);
 
-	YAML::Node doc = nodes[1]; // Get full save data
+	_ironman = brief["ironman"].as<bool>(_ironman);
+
+
+	YAML::Node doc (nodes[1u]); // get data from non-brief section
 
 	if (doc["rng"]
 		&& (Options::reSeedOnLoad == false || _ironman == true))
@@ -431,9 +431,9 @@ void SavedGame::load(
 		RNG::setSeed(doc["rng"].as<uint64_t>());
 	}
 	else
-		RNG::setSeed(0);
+		RNG::setSeed(0u);
 
-	int diff = doc["difficulty"].as<int>(_difficulty);
+	int diff (doc["difficulty"].as<int>(_difficulty));
 	if (diff < 0) // safety.
 	{
 		diff = 0;
@@ -494,8 +494,7 @@ void SavedGame::load(
 		else Log(LOG_ERROR) << "Failed to load region " << type;
 	}
 
-	// Alien bases must be loaded before alien missions
-	Log(LOG_INFO) << ". load alien bases";
+	Log(LOG_INFO) << ". load alien bases"; // AlienBases must be loaded before AlienMissions.
 	for (YAML::const_iterator
 			i = doc["alienBases"].begin();
 			i != doc["alienBases"].end();
@@ -506,8 +505,7 @@ void SavedGame::load(
 		_alienBases.push_back(aBase);
 	}
 
-	Log(LOG_INFO) << ". load missions";
-	// Missions must be loaded before UFOs.
+	Log(LOG_INFO) << ". load missions"; // AlienMissions must be loaded before Ufos.
 	const YAML::Node& missions (doc["alienMissions"]);
 	for (YAML::const_iterator
 			i = missions.begin();
@@ -525,7 +523,7 @@ void SavedGame::load(
 		else Log(LOG_ERROR) << "Failed to load mission " << type;
 	}
 
-	Log(LOG_INFO) << ". load ufos";
+	Log(LOG_INFO) << ". load ufos"; // Ufos must be loaded after AlienMissions.
 	for (YAML::const_iterator
 			i = doc["ufos"].begin();
 			i != doc["ufos"].end();
@@ -656,15 +654,16 @@ void SavedGame::save(const std::string& file) const
 	}
 
 	YAML::Emitter emit;
-	YAML::Node brief; // Saves the brief game info used in the saves list
+
+	YAML::Node brief; // the brief-info used for the saves list
 
 	brief["name"]		= Language::wstrToUtf8(_name);
 	brief["edition"]	= OPENXCOM_VERSION_GIT;
 //	brief["version"]	= OPENXCOM_VERSION_SHORT;
 
-//	std::string git_sha = OPENXCOM_VERSION_GIT;
-//	if (git_sha.empty() == false && git_sha[0] ==  '.')
-//		git_sha.erase(0,1);
+//	std::string git_sha (OPENXCOM_VERSION_GIT);
+//	if (git_sha.empty() == false && git_sha[0u] ==  '.')
+//		git_sha.erase(0u,1u);
 //	brief["build"] = git_sha;
 
 	brief["build"]		= Version::getBuildDate(false);
@@ -683,15 +682,18 @@ void SavedGame::save(const std::string& file) const
 	else
 		brief["mode"]		= static_cast<int>(SM_GEOSCAPE);
 
-	brief["rulesets"] = Options::rulesets;
+	brief["rulesets"]		= Options::rulesets;
+
+	if (_ironman == true)
+		brief["ironman"]	= _ironman;
 
 	emit << brief;
-	emit << YAML::BeginDoc; // Saves the full game data to the save
+	emit << YAML::BeginDoc; // saves the full game-data to the save
 
 	YAML::Node node;
 
-	node["rng"]					= RNG::getSeed();
-	node["difficulty"]			= static_cast<int>(_difficulty);
+	node["rng"]			= RNG::getSeed();
+	node["difficulty"]	= static_cast<int>(_difficulty);
 
 	if (_end != END_NONE)		node["end"]				= static_cast<int>(_end);
 	if (_monthsPassed != -1)	node["monthsPassed"]	= _monthsPassed;
@@ -744,22 +746,19 @@ void SavedGame::save(const std::string& file) const
 			++i)
 		node["missionSites"].push_back((*i)->save());
 
-	// Alien bases must be saved before alien missions.
-	for (std::vector<AlienBase*>::const_iterator
+	for (std::vector<AlienBase*>::const_iterator // AlienBases must be saved before AlienMissions.
 			i = _alienBases.begin();
 			i != _alienBases.end();
 			++i)
 		node["alienBases"].push_back((*i)->save());
 
-	// Missions must be saved before UFOs but after alien bases.
-	for (std::vector<AlienMission*>::const_iterator
+	for (std::vector<AlienMission*>::const_iterator // AlienMissions must be saved before Ufos but after AlienBases.
 			i = _activeMissions.begin();
 			i != _activeMissions.end();
 			++i)
 		node["alienMissions"].push_back((*i)->save());
 
-	// UFOs must be after missions.
-	for (std::vector<Ufo*>::const_iterator
+	for (std::vector<Ufo*>::const_iterator // Ufos must be saved after AlienMissions.
 			i = _ufos.begin();
 			i != _ufos.end();
 			++i)
@@ -794,8 +793,8 @@ void SavedGame::save(const std::string& file) const
 }
 
 /**
- * Gets the game's name shown in Save screens.
- * @return, save name
+ * Gets this SavedGame's name shown in save-screens.
+ * @return, name-string
  */
 std::wstring SavedGame::getName() const
 {
@@ -803,8 +802,8 @@ std::wstring SavedGame::getName() const
 }
 
 /**
- * Sets the game's name shown in Save screens.
- * @param name - reference to the new save name
+ * Sets this SavedGame's name shown in save-screens.
+ * @param name - reference to the name-string
  */
 void SavedGame::setName(const std::wstring& name)
 {
@@ -812,8 +811,8 @@ void SavedGame::setName(const std::wstring& name)
 }
 
 /**
- * Gets the game's difficulty setting.
- * @return, difficulty level
+ * Gets this SavedGame's difficulty setting.
+ * @return, difficulty-level
  */
 DifficultyLevel SavedGame::getDifficulty() const
 {
@@ -821,8 +820,8 @@ DifficultyLevel SavedGame::getDifficulty() const
 }
 
 /**
- * Sets the game's difficulty to a new level.
- * @param difficulty - new difficulty setting
+ * Sets this SavedGame's difficulty-level.
+ * @param difficulty - difficulty setting
  */
 void SavedGame::setDifficulty(DifficultyLevel difficulty)
 {
@@ -848,7 +847,7 @@ void SavedGame::setEnding(EndType end)
 }
 
 /**
- * Checks if the game is set to ironman mode.
+ * Checks if this SavedGame is set to ironman-mode.
  * @note Ironman games cannot be manually saved.
  * @return, Tony Stark
  */
@@ -858,7 +857,7 @@ bool SavedGame::isIronman() const
 }
 
 /**
- * Sets if the game is set to ironman mode.
+ * Sets if this SavedGame is set to ironman-mode.
  * @note Ironman games cannot be manually saved.
  * @param ironman - Tony Stark
  */
@@ -958,7 +957,7 @@ void SavedGame::setDfLatitude(double lat)
 }
 
 /**
- * Gets the preDogfight zoom level of the Geoscape globe.
+ * Gets the preDogfight zoom-level of the Geoscape globe.
  * @return, zoom level
  */
 size_t SavedGame::getDfZoom() const
@@ -967,7 +966,7 @@ size_t SavedGame::getDfZoom() const
 }
 
 /**
- * Sets the preDogfight zoom level of the Geoscape globe.
+ * Sets the preDogfight zoom-level of the Geoscape globe.
  * @param zoom - zoom level
  */
 void SavedGame::setDfZoom(size_t zoom)
@@ -976,7 +975,7 @@ void SavedGame::setDfZoom(size_t zoom)
 }
 
 /**
- * Gives the player his monthly funds.
+ * Gives the player his/her monthly funds.
  * @note Takes into account all maintenance and profit/expenditure costs. Also
  * stores monthly totals for the GraphsState.
  */
@@ -1000,12 +999,12 @@ void SavedGame::monthlyFunding()
 
 	_income.back() = income;							// INCOME
 	_income.push_back(0);
-	if (_income.size() > 12)
+	if (_income.size() > 12u)
 		_income.erase(_income.begin());
 
 	_expenditure.back() = expenditure;					// EXPENDITURE
 	_expenditure.push_back(0);
-	if (_expenditure.size() > 12)
+	if (_expenditure.size() > 12u)
 		_expenditure.erase(_expenditure.begin());
 
 
@@ -1013,7 +1012,7 @@ void SavedGame::monthlyFunding()
 
 	_maintenance.back() = maintenance;					// MAINTENANCE
 	_maintenance.push_back(0);
-	if (_maintenance.size() > 12)
+	if (_maintenance.size() > 12u)
 		_maintenance.erase(_maintenance.begin());
 
 	_funds.back() += getCountryFunding() - maintenance;	// BALANCE
@@ -1022,7 +1021,7 @@ void SavedGame::monthlyFunding()
 		_funds.erase(_funds.begin());
 
 	_researchScores.push_back(0);						// SCORE (doesn't include xCom - aLien activity)
-	if (_researchScores.size() > 12)
+	if (_researchScores.size() > 12u)
 		_researchScores.erase(_researchScores.begin());
 
 }
@@ -1082,7 +1081,7 @@ std::vector<int64_t>& SavedGame::getExpenditureList()
 }
 
 /**
- * Gets the current time of the game.
+ * Gets the current time of this SavedGame.
  * @return, pointer to the GameTime
  */
 GameTime* SavedGame::getTime() const
@@ -1091,7 +1090,7 @@ GameTime* SavedGame::getTime() const
 }
 
 /**
- * Sets the current time of the game.
+ * Sets the current time of this SavedGame.
  * @param time - GameTime
  */
 void SavedGame::setTime(GameTime gt)
@@ -1125,7 +1124,7 @@ const std::map<std::string, int>& SavedGame::getAllIds() const
 }
 
 /**
- * Resets the list of unique object IDs.
+ * Resets the list of unique object-IDs.
  * @param ids - new ID list as a reference to a map of strings & ints
  *
 void SavedGame::setCanonicalIds(const std::map<std::string, int>& ids)
@@ -1134,8 +1133,8 @@ void SavedGame::setCanonicalIds(const std::map<std::string, int>& ids)
 } */
 
 /**
- * Gets the list of countries in the game world.
- * @return, pointer to a vector of pointers to the Countries
+ * Gets the list of Countries in this SavedGame's world.
+ * @return, pointer to a vector of pointers to the countries
  */
 std::vector<Country*>* SavedGame::getCountries()
 {
@@ -1143,7 +1142,7 @@ std::vector<Country*>* SavedGame::getCountries()
 }
 
 /**
- * Adds up the monthly funding of all the countries.
+ * Adds up the monthly funding of all the Countries.
  * @return, total funding
  */
 int SavedGame::getCountryFunding() const
@@ -1160,8 +1159,8 @@ int SavedGame::getCountryFunding() const
 }
 
 /**
- * Gets the list of world regions.
- * @return, pointer to a vector of pointers to the Regions
+ * Gets the list of world Regions.
+ * @return, pointer to a vector of pointers to the regions
  */
 std::vector<Region*>* SavedGame::getRegions()
 {
@@ -1169,8 +1168,8 @@ std::vector<Region*>* SavedGame::getRegions()
 }
 
 /**
- * Gets the list of player bases.
- * @return, pointer to a vector of pointers to all Bases
+ * Gets the list of player's current Bases.
+ * @return, pointer to a vector of pointers to all player-bases
  */
 std::vector<Base*>* SavedGame::getBases()
 {
@@ -1178,8 +1177,8 @@ std::vector<Base*>* SavedGame::getBases()
 }
 
 /**
- * Gets an immutable list of player bases.
- * @return, pointer to a vector of pointers to all Bases
+ * Gets an read-only list of player-bases.
+ * @return, pointer to a vector of pointers to all player-bases
  */
 const std::vector<Base*>* SavedGame::getBases() const
 {
@@ -1187,7 +1186,7 @@ const std::vector<Base*>* SavedGame::getBases() const
 }
 
 /**
- * Adds up the monthly maintenance of all the bases.
+ * Adds up the monthly maintenance of all the Bases.
  * @return, total maintenance
  */
 int SavedGame::getBaseMaintenances() const
@@ -1204,8 +1203,8 @@ int SavedGame::getBaseMaintenances() const
 }
 
 /**
- * Gets the list of alien UFOs.
- * @return, pointer to a vector of pointers to all Ufos
+ * Gets the list of current aLien UFOs.
+ * @return, pointer to a vector of pointers to all ufos
  */
 std::vector<Ufo*>* SavedGame::getUfos()
 {
@@ -1213,7 +1212,7 @@ std::vector<Ufo*>* SavedGame::getUfos()
 }
 
 /**
- * Gets the list of craft waypoints.
+ * Gets the list of current Craft waypoints.
  * @return, pointer to a vector of pointers to all Waypoints
  */
 std::vector<Waypoint*>* SavedGame::getWaypoints()
@@ -1222,8 +1221,8 @@ std::vector<Waypoint*>* SavedGame::getWaypoints()
 }
 
 /**
- * Gets the list of mission sites.
- * @return, pointer to a vector of pointers to all MissionSites
+ * Gets the list of current MissionSites.
+ * @return, pointer to a vector of pointers to all mission-sites
  */
 std::vector<MissionSite*>* SavedGame::getMissionSites()
 {
@@ -1232,7 +1231,7 @@ std::vector<MissionSite*>* SavedGame::getMissionSites()
 
 /**
  * Get pointer to the SavedBattleGame object.
- * @return, pointer to the SavedBattleGame object
+ * @return, pointer to the SavedBattleGame
  */
 SavedBattleGame* SavedGame::getBattleSave()
 {
@@ -1241,7 +1240,7 @@ SavedBattleGame* SavedGame::getBattleSave()
 
 /**
  * Set SavedBattleGame object.
- * @param battleSave - pointer to a SavedBattleGame object (default nullptr)
+ * @param battleSave - pointer to a SavedBattleGame (default nullptr)
  */
 void SavedGame::setBattleSave(SavedBattleGame* const battleSave)
 {
@@ -1251,7 +1250,7 @@ void SavedGame::setBattleSave(SavedBattleGame* const battleSave)
 
 /**
  * Gets the ResearchGenerals.
- * @return, reference to a vector of pointers to the ResearchGenerals
+ * @return, reference to a vector of pointers to the research-generals
  */
 std::vector<ResearchGeneral*>& SavedGame::getResearchGenerals()
 {
@@ -2002,31 +2001,29 @@ Soldier* SavedGame::inspectSoldiers(
 }
 
 /**
- * Evaluate the score of a soldier based on all of his stats, missions and kills.
+ * Evaluate the score of a Soldier based on all of his/her stats, missions and
+ * kills.
  * @param soldier - pointer to the soldier to get a score for
- * @return, the soldier's score
+ * @return, the score
  */
-int SavedGame::getSoldierScore(Soldier* soldier)
+int SavedGame::getSoldierScore(Soldier* const soldier)
 {
 	const UnitStats* const stats (soldier->getCurrentStats());
-	int score (stats->health * 2
-			 + stats->stamina * 2
-			 + stats->reactions * 4
-			 + stats->bravery * 4
-			 + (stats->tu + stats->firing * 2) * 3
-			 + stats->melee
-			 + stats->throwing
-			 + stats->strength
-			 + stats->psiStrength * 4	// kL_add. Include these even if not yet revealed.
-			 + stats->psiSkill * 2);	// kL_add.
+	const int score (  stats->health * 2
+					+  stats->stamina * 2
+					+  stats->reactions * 4
+					+  stats->bravery * 4
+					+ (stats->tu + stats->firing * 2) * 3
+					+  stats->melee
+					+  stats->throwing
+					+  stats->strength
+					+  stats->psiStrength * 4	// include psi even if not revealed.
+					+  stats->psiSkill * 2);	// include psi even if not revealed.
 
 //	if (stats->psiSkill > 0)
-//		score += stats->psiStrength
-//			   + stats->psiSkill * 2;
+//		score += stats->psiStrength + stats->psiSkill * 2;
 
-	score += (soldier->getMissions() + soldier->getKills()) * 10;
-
-	return score;
+	return (score + (soldier->getMissions() + soldier->getKills()) * 8);
 }
 
 /**
@@ -2039,7 +2036,7 @@ std::vector<AlienBase*>* SavedGame::getAlienBases()
 }
 
 /**
- * Toggles and returns the Geoscape debug flag.
+ * Toggles and returns the Geoscape debug-flag.
  * @return, true if debug active
  */
 bool SavedGame::toggleDebugActive()
@@ -2048,7 +2045,7 @@ bool SavedGame::toggleDebugActive()
 }
 
 /**
- * Gets the current Geoscape debug flag.
+ * Gets the current state of the Geoscape debug-flag.
  * @return, true if debug active
  */
 bool SavedGame::getDebugGeo() const
@@ -2059,8 +2056,8 @@ bool SavedGame::getDebugGeo() const
 
 /**
  * *** FUNCTOR ***
- * @brief Match a mission based on region and type.
- * This function object will match alien missions based on region and type.
+ * @brief Match a mission based on Region and objective-type.
+ * This function object will match AlienMissions based on Region and objective-type.
  */
 class matchRegionAndType
 	:

@@ -124,7 +124,7 @@ enum ActiveHand
  * This holds info about a mobile object in the Battlescape whether controlled
  * by player or AI.
  */
-class BattleUnit // no copy cTor.
+class BattleUnit
 {
 
 	public:
