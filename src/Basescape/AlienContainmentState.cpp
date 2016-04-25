@@ -63,7 +63,7 @@ AlienContainmentState::AlienContainmentState(
 	:
 		_base(base),
 		_origin(origin),
-		_sel(0),
+		_sel(0u),
 		_fishFood(0),
 		_totalSpace(base->getTotalContainment()),
 		_usedSpace(base->getUsedContainment())
@@ -105,15 +105,18 @@ AlienContainmentState::AlienContainmentState(
 
 
 	std::string st;
-	if (_origin == OPT_BATTLESCAPE)
+	switch (_origin)
 	{
-		_window->setBackground(_game->getResourcePack()->getSurface("BACK04.SCR"));
-		st = "STR_LIQUIDATE";
-	}
-	else
-	{
-		_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));
-		st = "STR_REMOVE_SELECTED";
+		case OPT_BATTLESCAPE:
+			_window->setBackground(_game->getResourcePack()->getSurface("BACK04.SCR"));
+			st = "STR_LIQUIDATE";
+			break;
+
+		default:
+		case OPT_MENU:
+		case OPT_GEOSCAPE:
+			_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));
+			st = "STR_REMOVE_SELECTED";
 	}
 	_btnOk->setText(tr(st));
 	_btnOk->onMouseClick((ActionHandler)& AlienContainmentState::btnOkClick);
@@ -185,7 +188,7 @@ AlienContainmentState::AlienContainmentState(
 		_txtInResearch->setVisible(false);
 
 	int qtyAliens;
-	size_t row (0);
+	size_t row (0u);
 
 	const std::vector<std::string>& allItems (_game->getRuleset()->getItemsList());
 	for (std::vector<std::string>::const_iterator
@@ -196,17 +199,16 @@ AlienContainmentState::AlienContainmentState(
 		itRule = _game->getRuleset()->getItemRule(*i);
 		if (itRule->isLiveAlien() == true)
 		{
-			qtyAliens = _base->getStorageItems()->getItemQuantity(*i); // get Qty of each aLien-type at this base
-			if (qtyAliens != 0)
+			if ((qtyAliens = _base->getStorageItems()->getItemQuantity(*i)) != 0) // get Qty of each aLien-type at this base
 			{
 				_qty.push_back(0);		// put it in the _qty <vector> as (int)
 				_aliens.push_back(*i);	// put its name in the _aliens <vector> as (string)
 
 				std::wstring rpQty;
-				std::vector<std::string>::const_iterator j (std::find(
-																	interrogations.begin(),
-																	interrogations.end(),
-																	*i));
+				const std::vector<std::string>::const_iterator j (std::find(
+																		interrogations.begin(),
+																		interrogations.end(),
+																		*i));
 				if (j != interrogations.end())
 				{
 					rpQty = tr("STR_YES");
@@ -242,7 +244,7 @@ AlienContainmentState::AlienContainmentState(
 						L"0",L"0",
 						tr("STR_YES").c_str());
 		_lstAliens->setRowColor(
-							_qty.size() - 1,
+							_qty.size() - 1u,
 							_lstAliens->getSecondaryColor());
 	}
 
@@ -280,16 +282,16 @@ void AlienContainmentState::think()
 void AlienContainmentState::btnOkClick(Action*)
 {
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _qty.size();
 			++i)
 	{
-		if (_qty[i] > 0)
+		if (_qty[i] != 0)
 		{
 			_base->getStorageItems()->removeItem(_aliens[i], _qty[i]);
 			_base->getStorageItems()->addItem(
-									_game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(_aliens[i])->getArmorType())->getCorpseGeoscape(),
-									_qty[i]);
+										_game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(_aliens[i])->getArmorType())->getCorpseGeoscape(),
+										_qty[i]);
 		}
 	}
 	_game->popState();
@@ -311,7 +313,6 @@ void AlienContainmentState::btnCancelClick(Action*)
 void AlienContainmentState::lstItemsRightArrowPress(Action* action)
 {
 	_sel = _lstAliens->getSelectedRow();
-
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
 		&& _timerInc->isRunning() == false)
 	{
@@ -336,15 +337,17 @@ void AlienContainmentState::lstItemsRightArrowRelease(Action* action)
  */
 void AlienContainmentState::lstItemsRightArrowClick(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		increaseByValue(1);
+		case SDL_BUTTON_LEFT:
+			increaseByValue(1);
+			_timerInc->setInterval(Timer::SCROLL_SLOW);
+			_timerDec->setInterval(Timer::SCROLL_SLOW);
+			break;
 
-		_timerInc->setInterval(Timer::SCROLL_SLOW);
-		_timerDec->setInterval(Timer::SCROLL_SLOW);
+		case SDL_BUTTON_RIGHT:
+			increaseByValue(std::numeric_limits<int>::max());
 	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		increaseByValue(std::numeric_limits<int>::max());
 }
 
 /**
@@ -354,7 +357,6 @@ void AlienContainmentState::lstItemsRightArrowClick(Action* action)
 void AlienContainmentState::lstItemsLeftArrowPress(Action* action)
 {
 	_sel = _lstAliens->getSelectedRow();
-
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
 		&& _timerDec->isRunning() == false)
 	{
@@ -379,15 +381,18 @@ void AlienContainmentState::lstItemsLeftArrowRelease(Action* action)
  */
 void AlienContainmentState::lstItemsLeftArrowClick(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		decreaseByValue(1);
+		case SDL_BUTTON_LEFT:
+			decreaseByValue(1);
 
-		_timerInc->setInterval(Timer::SCROLL_SLOW);
-		_timerDec->setInterval(Timer::SCROLL_SLOW);
+			_timerInc->setInterval(Timer::SCROLL_SLOW);
+			_timerDec->setInterval(Timer::SCROLL_SLOW);
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			decreaseByValue(std::numeric_limits<int>::max());
 	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		decreaseByValue(std::numeric_limits<int>::max());
 }
 
 /**
@@ -406,7 +411,6 @@ void AlienContainmentState::increase()
 {
 	_timerDec->setInterval(Timer::SCROLL_FAST);
 	_timerInc->setInterval(Timer::SCROLL_FAST);
-
 	increaseByValue(1);
 }
 
@@ -437,7 +441,6 @@ void AlienContainmentState::decrease()
 {
 	_timerInc->setInterval(Timer::SCROLL_FAST);
 	_timerDec->setInterval(Timer::SCROLL_FAST);
-
 	decreaseByValue(1);
 }
 
@@ -452,7 +455,6 @@ void AlienContainmentState::decreaseByValue(int change)
 		change = std::min(change, _qty[_sel]);
 		_qty[_sel] -= change;
 		_fishFood -= change;
-
 		update();
 	}
 }
@@ -471,8 +473,8 @@ void AlienContainmentState::update() // private.
 	else
 		color = _lstAliens->getColor();
 
-	_lstAliens->setCellText(_sel, 1, Text::intWide(getQuantity() - _qty[_sel]));	// qty still in Containment
-	_lstAliens->setCellText(_sel, 2, Text::intWide(_qty[_sel]));					// qty to torture
+	_lstAliens->setCellText(_sel, 1u, Text::intWide(getQuantity() - _qty[_sel]));	// qty still in Containment
+	_lstAliens->setCellText(_sel, 2u, Text::intWide(_qty[_sel]));					// qty to torture
 	_lstAliens->setRowColor(_sel, color);
 
 
@@ -483,6 +485,8 @@ void AlienContainmentState::update() // private.
 
 	_btnOk->setVisible(_fishFood > 0 && freeSpace > -1);
 	_btnCancel->setVisible(_totalSpace - _usedSpace > -1);
+}
+
 }
 
 /**
@@ -516,5 +520,3 @@ void AlienContainmentState::lstItemsMousePress(Action* action)
 		}
 	}
 } */
-
-}

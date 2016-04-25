@@ -221,6 +221,9 @@ void ManufactureInfoState::buildUi() // private.
 
 	_btnStop->setText(tr("STR_STOP_PRODUCTION"));
 	_btnStop->onMouseClick((ActionHandler)& ManufactureInfoState::btnStopClick);
+	_btnStop->onKeyboardPress(
+					(ActionHandler)& ManufactureInfoState::btnStopClick,
+					Options::keyCancel);
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick((ActionHandler)& ManufactureInfoState::btnOkClick);
@@ -230,9 +233,6 @@ void ManufactureInfoState::buildUi() // private.
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& ManufactureInfoState::btnOkClick,
 					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ManufactureInfoState::btnOkClick,
-					Options::keyCancel);
 
 	if (_production == nullptr)
 	{
@@ -342,12 +342,13 @@ void ManufactureInfoState::btnSellClick(Action*)
  */
 void ManufactureInfoState::btnSellRelease(Action* action) // private.
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		|| action->getDetails()->button.button == SDL_BUTTON_RIGHT)
+	switch (action->getDetails()->button.button)
 	{
-		_production->setAutoSales(_btnSell->getPressed() == true);
-		setAssignedEngineer();
-//		updateTimeTotal();
+		case SDL_BUTTON_LEFT:
+		case SDL_BUTTON_RIGHT:
+			_production->setAutoSales(_btnSell->getPressed() == true);
+			setAssignedEngineer();
+//			updateTimeTotal();
 	}
 }
 
@@ -468,7 +469,6 @@ void ManufactureInfoState::setAssignedEngineer() // private.
 
 	_btnOk->setVisible(_production->getTotalQuantity() > 0
 					|| _production->getInfinite() == true);
-
 	updateTimeTotal();
 }
 
@@ -503,14 +503,11 @@ void ManufactureInfoState::moreEngineer(int change) // private.
 
 		if (availableEngineers > 0 && availableWorkSpace > 0)
 		{
-			change = std::min(
-							change,
-							std::min(
-									availableEngineers,
-									availableWorkSpace));
+			change = std::min(change,
+							  std::min(availableEngineers,
+									   availableWorkSpace));
 			_production->setAssignedEngineers(_production->getAssignedEngineers() + change);
 			_base->setEngineers(_base->getEngineers() - change);
-
 			setAssignedEngineer();
 		}
 	}
@@ -545,10 +542,15 @@ void ManufactureInfoState::moreEngineerRelease(Action* action) // private.
  */
 void ManufactureInfoState::moreEngineerClick(Action* action) // private.
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-		moreEngineer(getQty());
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		moreEngineer(std::numeric_limits<int>::max());
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_LEFT:
+			moreEngineer(stepDelta());
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			moreEngineer(std::numeric_limits<int>::max());
+	}
 }
 
 /**
@@ -562,12 +564,9 @@ void ManufactureInfoState::lessEngineer(int change) // private.
 		const int assigned (_production->getAssignedEngineers());
 		if (assigned > 0)
 		{
-			change = std::min(
-							change,
-							assigned);
+			change = std::min(change, assigned);
 			_production->setAssignedEngineers(assigned - change);
 			_base->setEngineers(_base->getEngineers() + change);
-
 			setAssignedEngineer();
 		}
 	}
@@ -602,10 +601,15 @@ void ManufactureInfoState::lessEngineerRelease(Action* action) // private.
  */
 void ManufactureInfoState::lessEngineerClick(Action* action) // private.
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-		lessEngineer(getQty());
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		lessEngineer(std::numeric_limits<int>::max());
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_LEFT:
+			lessEngineer(stepDelta());
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			lessEngineer(std::numeric_limits<int>::max());
+	}
 }
 
 /**
@@ -630,16 +634,13 @@ void ManufactureInfoState::moreUnit(int change) // private.
 		else
 		{
 			const int units (_production->getTotalQuantity());
-			change = std::min(
-							change,
-							std::numeric_limits<int>::max() - units);
+			change = std::min(change,
+							  std::numeric_limits<int>::max() - units);
 
 			if (_production->getRules()->isCraft() == true)
-				change = std::min(
-								change,
-								_base->getFreeHangars());
+				change = std::min(change,
+								  _base->getFreeHangars());
 			_production->setTotalQuantity(units + change);
-
 			setAssignedEngineer();
 		}
 	}
@@ -672,33 +673,28 @@ void ManufactureInfoState::moreUnitRelease(Action* action) // private.
 }
 
 /**
- * Increases the units to produce, in the case of a right-click, to infinite, and 1 on left-click.
+ * Increases the units to produce by 1 LMB or to infinite RMB.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::moreUnitClick(Action* action) // private.
 {
 	if (_production->getInfinite() == false) // We can't increase over infinite :) [cf. Cantor]
 	{
-		if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
+		switch (action->getDetails()->button.button)
 		{
-			if (_production->getRules()->isCraft() == true)
-			{
-				moreUnit(std::numeric_limits<int>::max()); // kL_note: RMB won't start the timer ....
-//				_game->pushState(new ErrorMessageState(
-//													tr("STR_NO_FREE_HANGARS_FOR_CRAFT_PRODUCTION"),
-//													_palette,
-//													Palette::blockOffset(15)+1,
-//													"BACK17.SCR",
-//													6));
-			}
-			else
-			{
-				_production->setInfinite(true);
-				setAssignedEngineer();
-			}
+			case SDL_BUTTON_RIGHT:
+				if (_production->getRules()->isCraft() == true)
+					moreUnit(std::numeric_limits<int>::max());
+				else
+				{
+					_production->setInfinite(true);
+					setAssignedEngineer();
+				}
+				break;
+
+			case SDL_BUTTON_LEFT:
+				moreUnit(stepDelta());
 		}
-		else if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-			moreUnit(getQty());
 	}
 }
 
@@ -711,11 +707,9 @@ void ManufactureInfoState::lessUnit(int change) // private.
 	if (change > 0)
 	{
 		const int units (_production->getTotalQuantity());
-		change = std::min(
-						change,
-						units - (_production->getProducedQuantity() + 1));
+		change = std::min(change,
+						  units - (_production->getProducedQuantity() + 1));
 		_production->setTotalQuantity(units - change);
-
 		setAssignedEngineer();
 	}
 }
@@ -749,15 +743,32 @@ void ManufactureInfoState::lessUnitRelease(Action* action) // private.
  */
 void ManufactureInfoState::lessUnitClick(Action* action) // private.
 {
-	_production->setInfinite(false);
-
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-		lessUnit(getQty());
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT
-		|| _production->getTotalQuantity() <= _production->getProducedQuantity())
+	const int btnId (action->getDetails()->button.button);
+	switch (btnId)
 	{
-		_production->setTotalQuantity(_production->getProducedQuantity() + 1);
-		setAssignedEngineer();
+		case SDL_BUTTON_LEFT:
+		case SDL_BUTTON_RIGHT:
+			_production->setInfinite(false);
+
+			const int qtyProduced (_production->getProducedQuantity());
+			if (_production->getTotalQuantity() <= qtyProduced)
+			{
+				_production->setTotalQuantity(qtyProduced + 1);
+				setAssignedEngineer();
+			}
+			else
+			{
+				switch (btnId)
+				{
+					case SDL_BUTTON_LEFT:
+						lessUnit(stepDelta());
+						break;
+
+					case SDL_BUTTON_RIGHT:
+						_production->setTotalQuantity(qtyProduced + 1);
+						setAssignedEngineer();
+				}
+			}
 	}
 }
 
@@ -767,7 +778,7 @@ void ManufactureInfoState::lessUnitClick(Action* action) // private.
 void ManufactureInfoState::onMoreEngineer() // private.
 {
 	_timerMoreEngineer->setInterval(Timer::SCROLL_FAST);
-	moreEngineer(getQty());
+	moreEngineer(stepDelta());
 }
 
 /**
@@ -776,20 +787,8 @@ void ManufactureInfoState::onMoreEngineer() // private.
 void ManufactureInfoState::onLessEngineer() // private.
 {
 	_timerLessEngineer->setInterval(Timer::SCROLL_FAST);
-	lessEngineer(getQty());
+	lessEngineer(stepDelta());
 }
-
-/**
- * Increases or decreases the Engineers according the mouse-wheel used.
- * @param action - pointer to an Action
- *
-void ManufactureInfoState::handleWheelEngineer(Action* action)
-{
-	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-		moreEngineer(Options::changeValueByMouseWheel);
-	else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-		lessEngineer(Options::changeValueByMouseWheel);
-} */
 
 /**
  * Builds one more unit.
@@ -797,7 +796,7 @@ void ManufactureInfoState::handleWheelEngineer(Action* action)
 void ManufactureInfoState::onMoreUnit() // private.
 {
 	_timerMoreUnit->setInterval(Timer::SCROLL_FAST);
-	moreUnit(getQty());
+	moreUnit(stepDelta());
 }
 
 /**
@@ -806,7 +805,7 @@ void ManufactureInfoState::onMoreUnit() // private.
 void ManufactureInfoState::onLessUnit() // private.
 {
 	_timerLessUnit->setInterval(Timer::SCROLL_FAST);
-	lessUnit(getQty());
+	lessUnit(stepDelta());
 }
 
 /**
@@ -814,25 +813,13 @@ void ManufactureInfoState::onLessUnit() // private.
  * @note what were these guys smokin'
  * @return, 10 if CTRL is pressed else 1
  */
-int ManufactureInfoState::getQty() const // private.
+int ManufactureInfoState::stepDelta() const // private.
 {
 	if ((SDL_GetModState() & KMOD_CTRL) == 0)
 		return 1;
 
 	return 10;
 }
-
-/**
- * Increases or decreases the Units to produce according the mouse-wheel used.
- * @param action - pointer to an Action
- */
-/* void ManufactureInfoState::handleWheelUnit(Action* action)
-{
-	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-		moreUnit(Options::changeValueByMouseWheel);
-	else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-		lessUnit(Options::changeValueByMouseWheel);
-} */
 
 /**
  * Runs state functionality every cycle - updates the timer.
@@ -849,3 +836,26 @@ void ManufactureInfoState::think() // private.
 }
 
 }
+
+/**
+ * Increases or decreases the Engineers according the mouse-wheel used.
+ * @param action - pointer to an Action
+ *
+void ManufactureInfoState::handleWheelEngineer(Action* action)
+{
+	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
+		moreEngineer(Options::changeValueByMouseWheel);
+	else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
+		lessEngineer(Options::changeValueByMouseWheel);
+} */
+/**
+ * Increases or decreases the Units to produce according the mouse-wheel used.
+ * @param action - pointer to an Action
+ */
+/* void ManufactureInfoState::handleWheelUnit(Action* action)
+{
+	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
+		moreUnit(Options::changeValueByMouseWheel);
+	else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
+		lessUnit(Options::changeValueByMouseWheel);
+} */

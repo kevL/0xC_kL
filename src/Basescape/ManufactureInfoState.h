@@ -150,7 +150,7 @@ private:
 	void onLessUnit();
 
 	/// Gets quantity to change by.
-	int getQty() const;
+	int stepDelta() const;
 
 	/// Handler for using the mouse wheel on the Unit-part of the screen.
 //	void handleWheelUnit(Action* action);

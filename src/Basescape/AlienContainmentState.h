@@ -40,7 +40,8 @@ class Window;
 
 
 /**
- * AlienContainment screen that lets the player manage aLiens in a particular base.
+ * AlienContainment screen that lets the player manage aLiens in a particular
+ * Base.
  */
 class AlienContainmentState
 	:
@@ -48,7 +49,7 @@ class AlienContainmentState
 {
 
 private:
-	static const Uint8 YELLOW = 213;
+	static const Uint8 YELLOW = 213u;
 
 	int
 		_fishFood,
@@ -87,17 +88,17 @@ private:
 
 
 	public:
-		/// Creates the AlienContainment state.
+		/// Creates an AlienContainment state.
 		AlienContainmentState(
 				Base* const base,
 				OptionsOrigin origin);
 		/// Cleans up the AlienContainment state.
 		~AlienContainmentState();
 
-		/// Runs the timers.
+		/// Runs the Timers.
 		void think() override;
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Cancel button.
 		void btnCancelClick(Action* action);
@@ -116,13 +117,13 @@ private:
 		/// Handler for pressing-down a mouse-button in the list.
 //		void lstItemsMousePress(Action* action);
 
-		/// Increases the quantity of an alien by one.
+		/// Increases the quantity of an aLien by one.
 		void increase();
-		/// Increases the quantity of an alien by the given value.
+		/// Increases the quantity of an aLien by the given value.
 		void increaseByValue(int change);
-		/// Decreases the quantity of an alien by one.
+		/// Decreases the quantity of an aLien by one.
 		void decrease();
-		/// Decreases the quantity of an alien by the given value.
+		/// Decreases the quantity of an aLien by the given value.
 		void decreaseByValue(int change);
 };
 
