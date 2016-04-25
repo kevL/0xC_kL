@@ -19,8 +19,6 @@
 
 #include "BuildNewBaseState.h"
 
-//#include <cmath>
-
 //#include "../fmath.h"
 
 #include "BaseNameState.h"

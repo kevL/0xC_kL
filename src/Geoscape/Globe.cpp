@@ -17,14 +17,9 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include "Globe.h"
 
 //#include <algorithm>
-//#include <cmath>
 
 //#include "../fmath.h"
 
@@ -473,6 +468,7 @@ void Globe::cartToPolar( // Orthographic Projection
 
 	while (*lon < 0.) // keep between 0 and 2xPI
 		*lon += M_PI * 2.;
+
 	while (*lon > M_PI * 2.)
 		*lon -= M_PI * 2.;
 }
@@ -505,9 +501,10 @@ double Globe::lastVisibleLat(double lon) const
 } */
 
 /**
- *
+ * Gets the Polygon at specified coordinates.
  * @param lon	- longitude of a point
  * @param lat	- latitude of a point
+ * @return, pointer to the Polygon
  */
 Polygon* Globe::getPolygonAtCoord( // private.
 		double lon,
@@ -530,7 +527,7 @@ Polygon* Globe::getPolygonAtCoord( // private.
 
 		bool pass (false);
 		for (size_t
-				j = 0;
+				j = 0u;
 				j != (*i)->getPoints();
 				++j)
 		{
@@ -545,25 +542,25 @@ Polygon* Globe::getPolygonAtCoord( // private.
 
 		bool odd (false);
 
-		cLat = (*i)->getLatitude(0); // initial point
-		cLon = (*i)->getLongitude(0);
+		cLat = (*i)->getLatitude(0u); // initial point
+		cLon = (*i)->getLongitude(0u);
 
 		x = cos(cLat) * sin(cLon - lon);
 		y = cosLat * sin(cLat) - sinLat * cos(cLat) * cos(cLon - lon);
 
 		for (size_t
-				j = 0;
+				j = 0u;
 				j != (*i)->getPoints();
 				++j)
 		{
-			const size_t theSpot ((j + 1) % (*i)->getPoints()); // index of next point in poly
-			cLat = (*i)->getLatitude(theSpot);
-			cLon = (*i)->getLongitude(theSpot);
+			const size_t id ((j + 1u) % (*i)->getPoints()); // index of next point in poly
+			cLat = (*i)->getLatitude(id);
+			cLon = (*i)->getLongitude(id);
 
 			x2 = cos(cLat) * sin(cLon - lon);
 			y2 = cosLat * sin(cLat) - sinLat * cos(cLat) * cos(cLon - lon);
 
-			if (((y > 0) != (y2 > 0)) && (0 < (x2 - x) * (0 - y) / (y2 - y) + x))
+			if (((y > 0.) != (y2 > 0.)) && (0. < (x2 - x) * (0. - y) / (y2 - y) + x))
 				odd = !odd;
 
 			x = x2;
@@ -573,7 +570,6 @@ Polygon* Globe::getPolygonAtCoord( // private.
 		if (odd == true)
 			return *i;
 	}
-
 	return nullptr;
 }
 
@@ -1345,9 +1341,9 @@ Cord Globe::getSunDirection( // private.
 			monthDays1[] {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365},
 			monthDays2[] {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366},
 
-			year (_game->getSavedGame()->getTime()->getYear()),
-			month (_game->getSavedGame()->getTime()->getMonth() - 1),
-			day (_game->getSavedGame()->getTime()->getDay() - 1);
+			year	(_game->getSavedGame()->getTime()->getYear()),
+			month	(_game->getSavedGame()->getTime()->getMonth() - 1),
+			day		(_game->getSavedGame()->getTime()->getDay() - 1);
 
 		const double
 			tm (static_cast<double>( // day fraction is also taken into account
@@ -1357,10 +1353,10 @@ Cord Globe::getSunDirection( // private.
 						/ 86400.);
 
 		double today;
-		if (year % 4 == 0 // spring equinox (start of astronomic year)
+		if (year % 4u == 0 // spring equinox (start of astronomic year)
 			&& !
-				(year % 100 == 0
-					&& year % 400 != 0))
+				(year % 100u == 0
+					&& year % 400u != 0))
 		{
 			today = (static_cast<double>(monthDays2[month] + day) + tm) / 366. - 0.219;
 		}
@@ -1380,12 +1376,12 @@ Cord Globe::getSunDirection( // private.
 						std::sin(rot + lon) * -std::sin(lat),
 						std::sin(rot + lon) *  std::cos(lat));
 
-	if (sun > 0)
+	if (sun > 0.)
 		 sun_direction *= 1. - sun;
 	else
 		 sun_direction *= 1. + sun;
 
-	Cord pole (0,
+	Cord pole (0.,
 			   std::cos(lat),
 			   std::sin(lat));
 	pole *= sun;
@@ -1819,7 +1815,8 @@ void Globe::drawVHLine( // private.
 }
 
 /**
- * Draws the details of the countries on this Globe based on the current zoom-level.
+ * Draws the details of the countries on this Globe based on the current
+ * zoom-level.
  */
 void Globe::drawDetail()
 {
@@ -1829,12 +1826,12 @@ void Globe::drawDetail()
 		lon,lat;
 
 	if (Options::globeDetail == true // draw the Country borders
-		&& _zoom > 0)
+		&& _zoom > 0u)
 	{
 		double
 			lon1,lat1;
 		Sint16
-			x[2],y[2];
+			x[2u],y[2u];
 
 		_countries->lock();
 		for (std::list<Polyline*>::const_iterator
@@ -1842,29 +1839,29 @@ void Globe::drawDetail()
 				i != _rules->getPolylines()->end();
 				++i)
 		{
-			for (int
-					j = 0;
-					j != (*i)->getPoints() - 1;
+			for (size_t
+					j = 0u;
+					j != (*i)->getPoints() - 1u;
 					++j)
 			{
 				lon = (*i)->getLongitude(j),
 				lat = (*i)->getLatitude(j);
-				lon1 = (*i)->getLongitude(j + 1),
-				lat1 = (*i)->getLatitude(j + 1);
+				lon1 = (*i)->getLongitude(j + 1u),
+				lat1 = (*i)->getLatitude(j + 1u);
 
 				if (pointBack(lon,lat) == false
 					&& pointBack(lon1,lat1) == false)
 				{
 					polarToCart(
 							lon,lat,
-							&x[0],&y[0]);
+							&x[0u],&y[0u]);
 					polarToCart(
 							lon1,lat1,
-							&x[1],&y[1]);
+							&x[1u],&y[1u]);
 
 					_countries->drawLine(
-									x[0],y[0],
-									x[1],y[1],
+									x[0u],y[0u],
+									x[1u],y[1u],
 									C_LINE);
 				}
 			}
@@ -1875,7 +1872,7 @@ void Globe::drawDetail()
 	Sint16
 		x,y;
 
-	if (_zoom > 1) // draw the City markers
+	if (_zoom > 1u) // draw the City markers
 	{
 		for (std::vector<Region*>::const_iterator
 				i = _game->getSavedGame()->getRegions()->begin();
@@ -1903,7 +1900,7 @@ void Globe::drawDetail()
 					_game->getLanguage());
 		label->setAlign(ALIGN_CENTER);
 
-		if (_zoom > 2)
+		if (_zoom > 2u)
 		{
 			label->setColor(C_LBLCOUNTRY); // draw the Country labels
 
@@ -2027,7 +2024,7 @@ void Globe::drawDetail()
 					{
 						color += 10;
 						for (size_t
-								j = 0;
+								j = 0u;
 								j != (*i)->getRules()->getLonMin().size();
 								++j)
 						{
@@ -2070,7 +2067,7 @@ void Globe::drawDetail()
 					{
 						color += 10;
 						for (size_t
-								j = 0;
+								j = 0u;
 								j != (*i)->getRules()->getLatMax().size();
 								++j)
 						{

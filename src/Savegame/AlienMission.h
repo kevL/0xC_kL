@@ -22,6 +22,8 @@
 
 //#include <string>
 
+#include "../fmath.h"
+
 #include <yaml-cpp/yaml.h>
 
 

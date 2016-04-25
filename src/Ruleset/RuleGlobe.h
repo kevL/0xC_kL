@@ -54,7 +54,7 @@ class RuleTexture;
 
 
 /**
- * Represents the contents of the Geoscape globe such as world polygons, polylines, etc.
+ * Represents the contents of the geoscape Globe such as Polygons, Polylines, etc.
  * @sa Globe
  */
 class RuleGlobe
@@ -68,25 +68,25 @@ private:
 
 
 	public:
-		/// Creates a blank globe ruleset.
+		/// Creates a Globe ruleset.
 		RuleGlobe();
-		/// Cleans up the globe ruleset.
+		/// Cleans up the Globe ruleset.
 		~RuleGlobe();
 
-		/// Loads the globe from YAML.
+		/// Loads the Globe ruleset from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets the list of world polygons.
+		/// Gets the list of Polygons.
 		std::list<Polygon*>* getPolygons();
-		/// Gets the list of world polylines.
+		/// Gets the list of Polylines.
 		std::list<Polyline*>* getPolylines();
 
-		/// Loads a set of polygons from a DAT file.
-		void loadDat(const std::string& filename);
+		/// Loads a set of Polygons from a DAT-file.
+		void loadDat(const std::string& file);
 
-		/// Gets a specific world texture.
-		RuleTexture* getTextureRule(int id) const;
-		/// Gets the eligible terrains for an AlienDeployment rule.
+		/// Gets a RuleTexture from a specified texture-ID.
+		RuleTexture* getTextureRule(int tex) const;
+		/// Gets the eligible terrains for an AlienDeployment type.
 		std::vector<std::string> getGlobeTerrains(const std::string& deployType = "") const;
 };
 

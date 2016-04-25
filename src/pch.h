@@ -8,15 +8,17 @@
 
 // c++ headers
 //
-// note: Something before <cmath>/<math.h> has defined M_PI along with
+// NOTE: Something before <cmath>/<math.h> has defined M_PI along with
 // _MATH_DEFINES_DEFINED, so M_PI_2 etc. does not get defined. Or maybe somebody
 // merely jacked off all over their keyboard without using a keyboard-guard
 // somewhere. Also,
-// NOTE that the math-constants are defined *outside* the header-guard in
+// NOTE: That the math-constants are defined *outside* the header-guard in
 // 'math.h' ....
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
+//#ifndef _USE_MATH_DEFINES
+//#	define _USE_MATH_DEFINES
+//#endif
+// NOTE: Define _USE_MATH_DEFINES in the IDE's pre-processor def'ns. and
+// Makefile's CXXFLAGS variables and be done w/ it.
 
 #include <algorithm>	// min/max
 #include <cassert>		// asserts

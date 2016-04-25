@@ -146,7 +146,7 @@ UnitDieBState::~UnitDieBState()
  */
 void UnitDieBState::think()
 {
-//	#0 TODO: Separate _noSound (ie. unconscious) from _hiddenExplosions.
+//	#0
 	if (_noScream == false)
 	{
 		if (_init == true)
@@ -286,7 +286,7 @@ void UnitDieBState::think()
 
 	if (_hidden == false)
 	{
-		_unit->flagCache();
+//		_unit->flagCache(); // <- set in startCollapsing() and keepCollapsing()
 		_parent->getMap()->cacheUnit(_unit);
 	}
 }

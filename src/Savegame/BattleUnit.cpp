@@ -17,13 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include "BattleUnit.h"
 
-#include <cmath>
 //#include <sstream>
 
 #include "../fmath.h"
@@ -1913,7 +1908,7 @@ bool BattleUnit::isOut_t(OutCheck test) const
 			{
 				case STATUS_DEAD:
 				case STATUS_UNCONSCIOUS:
-				case STATUS_LIMBO:
+				case STATUS_LATENT:
 					return true;
 			}
 
@@ -1926,7 +1921,7 @@ bool BattleUnit::isOut_t(OutCheck test) const
 			{
 				case STATUS_DEAD:
 				case STATUS_UNCONSCIOUS:
-				case STATUS_LIMBO:
+				case STATUS_LATENT:
 					return true;
 			}
 			break;

@@ -20,8 +20,6 @@
 #ifndef OPENXCOM_CORD_H
 #define	OPENXCOM_CORD_H
 
-//#include <cmath>
-
 #include "../fmath.h"
 
 
@@ -127,7 +125,7 @@ struct Cord
 	///
 	inline Cord& operator/= (double d)
 	{
-		const double re = 1. / d;
+		const double re (1. / d);
 		x *= re;
 		y *= re;
 		z *= re;
@@ -185,7 +183,7 @@ inline Cord::Cord(const CordPolar& pol)
  */
 inline CordPolar::CordPolar(const Cord& c)
 {
-	const double inv = 1. / c.norm();
+	const double inv (1. / c.norm());
 	lat = std::asin(c.y * inv);
 	lon = std::atan2(c.x, c.z);
 }

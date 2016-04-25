@@ -474,7 +474,7 @@ void BattlescapeGenerator::nextStage()
 				++aliensAlive;
 			}
 
-			(*i)->setUnitStatus(STATUS_LIMBO);
+			(*i)->setUnitStatus(STATUS_LATENT);
 		}
 
 		if ((*i)->getTile() != nullptr)
@@ -687,7 +687,7 @@ void BattlescapeGenerator::nextStage()
 			}
 			else
 			{
-				(*i)->setUnitStatus(STATUS_LIMBO);
+				(*i)->setUnitStatus(STATUS_LATENT);
 				Log(LOG_WARNING) << "BattlescapeGenerator::nextStage() - Could not place xCom unit ["
 								 << (*i)->getId() << "] Send to Limbo.";
 			}

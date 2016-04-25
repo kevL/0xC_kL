@@ -1399,7 +1399,7 @@ bool SavedBattleGame::endFactionTurn()
 			i != _units.end();
 			++i)
 	{
-		if ((*i)->getUnitStatus() != STATUS_LIMBO)
+		if ((*i)->getUnitStatus() != STATUS_LATENT)
 		{
 			if ((*i)->isOut_t(OUT_HEALTH) == false)
 			{

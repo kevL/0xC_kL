@@ -17,10 +17,6 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include "RuleGlobe.h"
 
 #include <cmath>
@@ -42,7 +38,7 @@ namespace OpenXcom
 {
 
 /**
- * Creates a blank ruleset for globe contents.
+ * Creates the RuleGlobe.
  */
 RuleGlobe::RuleGlobe()
 {}
@@ -56,29 +52,23 @@ RuleGlobe::~RuleGlobe()
 			i = _polygons.begin();
 			i != _polygons.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::list<Polyline*>::const_iterator
 			i = _polylines.begin();
 			i != _polylines.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	for (std::map<int, RuleTexture*>::const_iterator
 			i = _textures.begin();
 			i != _textures.end();
 			++i)
-	{
 		delete i->second;
-	}
 }
 
 /**
- * Loads the globe from a YAML file.
+ * Loads this RuleGlobe from a YAML file.
  * @param node - reference a YAML node
  */
 void RuleGlobe::load(const YAML::Node& node)
@@ -108,12 +98,13 @@ void RuleGlobe::load(const YAML::Node& node)
 		}
 		_polygons.clear();
 
+		Polygon* polygon;
 		for (YAML::const_iterator
 				i = node["polygons"].begin();
 				i != node["polygons"].end();
 				++i)
 		{
-			Polygon* const polygon = new Polygon(3);
+			polygon = new Polygon(3u);
 			polygon->load(*i);
 			_polygons.push_back(polygon);
 		}
@@ -130,12 +121,13 @@ void RuleGlobe::load(const YAML::Node& node)
 		}
 		_polylines.clear();
 
+		Polyline* polyline;
 		for (YAML::const_iterator
 				i = node["polylines"].begin();
 				i != node["polylines"].end();
 				++i)
 		{
-			Polyline* const polyline = new Polyline(3);
+			polyline = new Polyline(3u);
 			polyline->load(*i);
 			_polylines.push_back(polyline);
 		}
@@ -148,10 +140,10 @@ void RuleGlobe::load(const YAML::Node& node)
 	{
 		if ((*i)["id"])
 		{
-			const int id = (*i)["id"].as<int>();
+			const int id ((*i)["id"].as<int>());
 			RuleTexture* texture;
 
-			std::map<int, RuleTexture*>::const_iterator j = _textures.find(id);
+			const std::map<int, RuleTexture*>::const_iterator j (_textures.find(id));
 			if (j != _textures.end())
 				texture = j->second;
 			else
@@ -163,35 +155,33 @@ void RuleGlobe::load(const YAML::Node& node)
 		}
 		else if ((*i)["delete"])
 		{
-			const int id = (*i)["delete"].as<int>();
-			std::map<int, RuleTexture*>::const_iterator j = _textures.find(id);
+			const int id ((*i)["delete"].as<int>());
+			const std::map<int, RuleTexture*>::const_iterator j (_textures.find(id));
 			if (j != _textures.end())
 				_textures.erase(j);
 		}
 	}
-/*	if (node["textures"])
-	{
-		for (std::map<int, RuleTexture*>::const_iterator
-				i = _textures.begin();
-				i != _textures.end();
-				++i)
-		{
-			delete i->second;
-		}
-
-		_textures.clear();
-
-		for (YAML::const_iterator
-				i = node["textures"].begin();
-				i != node["textures"].end();
-				++i)
-		{
-			int id = (*i)["id"].as<int>();
-			RuleTexture* texture = new RuleTexture(id);
-			texture->load(*i);
-			_textures[id] = texture;
-		}
-	} */
+//	if (node["textures"])
+//	{
+//		for (std::map<int, RuleTexture*>::const_iterator
+//				i = _textures.begin();
+//				i != _textures.end();
+//				++i)
+//		{
+//			delete i->second;
+//		}
+//		_textures.clear();
+//		for (YAML::const_iterator
+//				i = node["textures"].begin();
+//				i != node["textures"].end();
+//				++i)
+//		{
+//			int id = (*i)["id"].as<int>();
+//			RuleTexture* texture = new RuleTexture(id);
+//			texture->load(*i);
+//			_textures[id] = texture;
+//		}
+//	}
 
 	Globe::C_LBLBASE	= static_cast<Uint8>(node["baseColor"]		.as<int>(Globe::C_LBLBASE));
 	Globe::C_LBLCITY	= static_cast<Uint8>(node["cityColor"]		.as<int>(Globe::C_LBLCITY));
@@ -222,45 +212,44 @@ std::list<Polyline*>* RuleGlobe::getPolylines()
 }
 
 /**
- * Loads a series of map polar coordinates in X-Com format,
- * converts them and stores them in a set of polygons.
- * @param filename - filename of DAT file
+ * Loads a series of polar-coordinates in X-Com format, converts them and stores
+ * them in a set of Polygons.
+ * @param file - filename of a DAT-file
  * @sa http://www.ufopaedia.org/index.php?title=WORLD.DAT
  */
-void RuleGlobe::loadDat(const std::string& filename)
+void RuleGlobe::loadDat(const std::string& file)
 {
-	// Load file
-	std::ifstream mapFile (filename.c_str(), std::ios::in | std::ios::binary);
-	if (mapFile.fail() == true)
+	std::ifstream ifstr (file.c_str(), std::ios::in | std::ios::binary);
+	if (ifstr.fail() == true)
 	{
-		throw Exception(filename + " not found");
+		throw Exception(file + " not found");
 	}
 
-	short value[10];
+	short value[10u];
 
-	while (mapFile.read((char*)&value, sizeof(value)))
+	while (ifstr.read(reinterpret_cast<char*>(&value), sizeof(value)))
 	{
 		Polygon* poly;
 		size_t points;
 
 		for (size_t
-				i = 0;
-				i != 10;
+				i = 0u;
+				i != 10u;
 				++i)
 		{
 			value[i] = SDL_SwapLE16(value[i]);
 		}
 
-		if (value[6] != -1)
-			points = 4;
+		if (value[6u] != -1)
+			points = 4u;
 		else
-			points = 3;
+			points = 3u;
 
 		poly = new Polygon(points);
 
-		size_t j = 0;
+		size_t j (0u);
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != points;
 				++i)
 		{
@@ -272,26 +261,26 @@ void RuleGlobe::loadDat(const std::string& filename)
 			poly->setLatitude(i, latRad);
 		}
 
-		poly->setPolyTexture(value[8]);
+		poly->setPolyTexture(value[8u]);
 		_polygons.push_back(poly);
 	}
 
-	if (mapFile.eof() == false)
+	if (ifstr.eof() == false)
 	{
 		throw Exception("Invalid globe map");
 	}
 
-	mapFile.close();
+	ifstr.close();
 }
 
 /**
- * Returns the rule for a Texture.
- * @param id - texture ID
+ * Gets a RuleTexture from a specified texture-ID.
+ * @param id - texture-ID
  * @return, rule for a Texture
  */
 RuleTexture* RuleGlobe::getTextureRule(int id) const
 {
-	std::map<int, RuleTexture*>::const_iterator i = _textures.find(id);
+	std::map<int, RuleTexture*>::const_iterator i (_textures.find(id));
 	if (i != _textures.end())
 		return i->second;
 
@@ -299,10 +288,10 @@ RuleTexture* RuleGlobe::getTextureRule(int id) const
 }
 
 /**
- * Returns a list of all globe terrains associated with a specific AlienDeployment.
- * @note If a blank string is passed in then terrains that are not associated
- * with any AlienDeployment are returned.
- * @param deployType - reference the deployment name (eg. "STR_TERROR_MISSION") (default "" for now ...)
+ * Gets a list of all Terrains associated with a specified AlienDeployment type.
+ * @note If a blank-string is passed in then terrains that are not associated
+ * with any AlienDeployment type are returned.
+ * @param deployType - reference to the deployment type (eg. "STR_TERROR_MISSION") (default "")
  * @return, vector of terrain-types as strings
  */
 std::vector<std::string> RuleGlobe::getGlobeTerrains(const std::string& deployType) const

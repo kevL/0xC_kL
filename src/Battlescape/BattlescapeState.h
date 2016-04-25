@@ -449,7 +449,7 @@ private:
 				int arg = std::numeric_limits<int>::max());
 
 		/// Displays a popup window.
-		void popup(State* state);
+		void popup(State* const state);
 
 		/// Finishes tactical battle.
 		void finishBattle(

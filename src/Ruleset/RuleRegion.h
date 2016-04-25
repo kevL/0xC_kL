@@ -20,17 +20,12 @@
 #ifndef OPENXCOM_RULEREGION_H
 #define OPENXCOM_RULEREGION_H
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
-#include <cmath>
 #include <string>
 #include <vector>
 
-#include <yaml-cpp/yaml.h>
-
 #include "../fmath.h"
+
+#include <yaml-cpp/yaml.h>
 
 #include "../Savegame/WeightedOptions.h"
 

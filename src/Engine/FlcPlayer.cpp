@@ -25,9 +25,9 @@
 
 //#include <algorithm>
 //#include <cassert>
+//#include <cmath>
 #include <cstring>
 #include <fstream>
-//#include <math.h>
 //#include <string.h>
 
 #include <SDL_mixer.h>

@@ -19,15 +19,12 @@
 
 #include "Projectile.h"
 
-//#define _USE_MATH_DEFINES
-//#include <cmath>
+#include "../fmath.h"
 
 #include "Map.h"
 #include "Camera.h"
 #include "Pathfinding.h"
 #include "TileEngine.h"
-
-#include "../fmath.h"
 
 //#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"

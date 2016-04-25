@@ -17,10 +17,6 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include "DebriefingState.h"
 
 //#include <algorithm>
@@ -1200,7 +1196,7 @@ void DebriefingState::prepareDebriefing() // private.
 					case FACTION_PLAYER:
 						if (aborted == false
 							|| ((_missionStatistics->success == true || tacType != TCT_BASEDEFENSE)
-								&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LIMBO)))
+								&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LATENT)))
 						{
 							++playerExit;
 							recoverItems((*i)->getInventory());
@@ -1885,7 +1881,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 							{
 								if (itRule->isRecoverable() == true
 									&& (unit->getUnitStatus() == STATUS_DEAD
-										|| (unit->getUnitStatus() == STATUS_LIMBO // kL_tentative.
+										|| (unit->getUnitStatus() == STATUS_LATENT // kL_tentative.
 											&& unit->isOut_t(OUT_HEALTH) == true)))
 								{
 									//Log(LOG_INFO) << ". . corpse = " << type << " id-" << unit->getId();
@@ -1901,7 +1897,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 									}
 								}
 								else if (unit->getUnitStatus() == STATUS_UNCONSCIOUS
-									|| (unit->getUnitStatus() == STATUS_LIMBO
+									|| (unit->getUnitStatus() == STATUS_LATENT
 										&& unit->isOut_t(OUT_STUNNED) == true)) // kL_tentative.
 								{
 									switch (unit->getOriginalFaction()) // TODO: Add captured alien-types to a DebriefExtra screen.

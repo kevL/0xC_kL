@@ -17,14 +17,9 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include "GeoscapeState.h"
 
 //#include <algorithm>
-//#include <cmath>
 //#include <functional>
 #include <iomanip>
 //#include <sstream>

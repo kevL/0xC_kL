@@ -17,17 +17,10 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include "AlienMission.h"
 
-//#include <cmath>
 //#include <algorithm>
 //#include <assert.h>
-
-//#include "../fmath.h"
 
 #include "AlienBase.h"
 #include "Base.h"

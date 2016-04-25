@@ -141,25 +141,25 @@ private:
 			double lat) const;
 	/// Returns latitude of last visible-to-player point on given longitude.
 //	double lastVisibleLat(double lon) const;
-	/// Gets polygon pointer (Volutar)
+	/// Gets the Polygon at specified coordinates (Volutar).
 	Polygon* getPolygonAtCoord(
 			double lon,
 			double lat) const;
-	/// Checks if a point is inside a polygon.
+	/// Checks if a point is inside a Polygon.
 //	bool insidePolygon( // obsolete, see getPolygonAtCoord()
 //			double lon,
 //			double lat,
 //			const Polygon* const poly) const;
-	/// Checks if a target is near a point.
+	/// Checks if a Target is near a point.
 	bool targetNear(
 			const Target* const target,
 			int x,
 			int y) const;
-	/// Caches a set of polygons.
+	/// Caches a set of Polygons.
 	void cache(
 			std::list<Polygon*>* const polygons,
 			std::list<Polygon*>* const cache);
-	/// Gets position of sun relative to given position in polar cords and date.
+	/// Gets position of sun relative to given position in polar-coords and date.
 	Cord getSunDirection(
 			double lon,
 			double lat) const;

@@ -29,9 +29,9 @@ namespace OpenXcom
 {
 
 /**
- * Represents a polygon in the world map.
- * @note Polygons constitute the textured land portions of the X-Com globe and
- * typically have 3-4 points.
+ * Represents a Polygon on the Globe.
+ * @note Polygons constitute the textured land portions of the Globe and
+ * typically have 3 or 4 points.
  */
 class Polygon
 {
@@ -49,14 +49,14 @@ private:
 
 
 	public:
-		/// Creates a polygon with a number of points.
+		/// Creates a Polygon with a quantity of points.
 		explicit Polygon(size_t points);
-		/// Creates a new polygon from an existing one.
+		/// Creates a Polygon from an existing one (copy-constructor).
 		Polygon(const Polygon& other);
-		/// Cleans up the polygon.
+		/// Cleans up the Polygon.
 		~Polygon();
 
-		/// Loads the polygon from YAML.
+		/// Loads the Polygon from YAML.
 		void load(const YAML::Node& node);
 
 		/// Gets the latitude of a point.
@@ -72,25 +72,25 @@ private:
 				size_t i,
 				double lon);
 
-		/// Gets the X coordinate of a point.
+		/// Gets the x-coordinate of a point.
 		Sint16 getX(size_t i) const;
-		/// Sets the X coordinate of a point.
+		/// Sets the x-coordinate of a point.
 		void setX(
 				size_t i,
 				Sint16 x);
-		/// Gets the Y coordinate of a point.
+		/// Gets the y-coordinate of a point.
 		Sint16 getY(size_t i) const;
-		/// Sets the Y coordinate of a point.
+		/// Sets the y-coordinate of a point.
 		void setY(
 				size_t i,
 				Sint16 y);
 
-		/// Gets the texture of the polygon.
+		/// Gets the texture-ID of the Polygon.
 		size_t getPolyTexture() const;
-		/// Sets the texture of the polygon.
+		/// Sets the texture-ID of the Polygon.
 		void setPolyTexture(size_t tex);
 
-		/// Gets the number of points of the polygon.
+		/// Gets the quantity of points in the Polygon.
 		size_t getPoints() const;
 };
 

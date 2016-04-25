@@ -17,12 +17,9 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#define _USE_MATH_DEFINES
-
 #include "Base.h"
 
 //#include <algorithm>
-//#include <cmath>
 #include <stack>
 
 //#include "../fmath.h"

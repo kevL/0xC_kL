@@ -20,10 +20,6 @@
 #ifndef OPENXCOM_FUNDINGSTATE_H
 #define OPENXCOM_FUNDINGSTATE_H
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include "../Engine/State.h"
 
 
@@ -46,7 +42,7 @@ class FundingState
 {
 
 private:
-	static const Uint8 BROWN = 143;
+	static const Uint8 BROWN = 143u;
 
 	Text
 		* _txtChange,

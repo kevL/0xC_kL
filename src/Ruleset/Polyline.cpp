@@ -17,10 +17,6 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include "Polyline.h"
 
 #include <cmath>
@@ -30,19 +26,19 @@ namespace OpenXcom
 {
 
 /**
- * Initializes the polyline with arrays to store each point's coordinates.
- * @param points Number of points.
+ * Initializes the Polyline with arrays that store each point's coordinates.
+ * @param points - quantity of points
  */
-Polyline::Polyline(int points)
+Polyline::Polyline(size_t points)
 	:
 		_points(points)
 {
-	_lat = new double[points];
-	_lon = new double[points];
+	_lat = new double[_points];
+	_lon = new double[_points];
 }
 
 /**
- * Deletes the arrays from memory.
+ * Deletes this Polyline's arrays from memory.
  */
 Polyline::~Polyline()
 {
@@ -51,81 +47,81 @@ Polyline::~Polyline()
 }
 
 /**
- * Loads the polyline from a YAML file.
- * @param node YAML node.
+ * Loads this Polyline from a YAML file.
+ * @param node - reference a YAML node
  */
 void Polyline::load(const YAML::Node& node)
 {
 	delete[] _lat;
 	delete[] _lon;
 
-	std::vector<double> coords = node.as<std::vector<double>>();
-	_points = coords.size() / 2;
+	const std::vector<double> coords (node.as<std::vector<double>>());
+	_points = coords.size() >> 1u;
 
 	_lat = new double[_points];
 	_lon = new double[_points];
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i < coords.size();
-			i += 2)
+			i += 2u)
 	{
-		size_t j = i / 2;
+		size_t j (i >> 1u);
 
 		_lon[j] = coords[i] * M_PI / 180.;
-		_lat[j] = coords[i + 1] * M_PI / 180.;
+		_lat[j] = coords[i + 1u] * M_PI / 180.;
 	}
 }
 
 /**
- * Returns the latitude (X) of a given point.
- * @param i Point number (0-max).
- * @return Point's latitude.
+ * Gets the latitude of a given point.
+ * @param i - point (0 to max)
+ * @return, the point's latitude
  */
-double Polyline::getLatitude(int i) const
+double Polyline::getLatitude(size_t i) const
 {
 	return _lat[i];
 }
 
 /**
- * Changes the latitude of a given point.
- * @param i Point number (0-max).
- * @param lat Point's latitude.
- */
+ * Sets the latitude of a given point.
+ * @param i		- point (0 to max)
+ * @param lat	- the point's latitude
+ *
 void Polyline::setLatitude(
-		int i,
+		size_t i,
 		double lat)
 {
 	_lat[i] = lat;
-}
+} */
 
 /**
- * Returns the longitude (Y) of a given point.
- * @param i Point number (0-max).
- * @return Point's longitude.
+ * Gets the longitude of a given point.
+ * @param i - point (0 to max)
+ * @return, the point's longitude
  */
-double Polyline::getLongitude(int i) const
+double Polyline::getLongitude(size_t i) const
 {
 	return _lon[i];
 }
 
 /**
- * Changes the latitude of a given point.
- * @param i Point number (0-max).
- * @param lon Point's longitude.
- */
+ * Sets the latitude of a given point.
+ * @param i		- point (0 to max)
+ * @param lon	- the point's longitude
+ *
 void Polyline::setLongitude(
-		int i,
+		size_t i,
 		double lon)
 {
 	_lon[i] = lon;
-}
+} */
 
 /**
- * Returns the number of points (vertexes) that make up the polyline.
- * @return Number of points.
+ * Gets the quantity of points (vertexes) that make up this Polyline.
+ * @return, quantity of points
  */
-int Polyline::getPoints() const
+size_t Polyline::getPoints() const
 {
 	return _points;
 }

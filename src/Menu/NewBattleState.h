@@ -95,9 +95,9 @@ private:
 
 		/// Resets state.
 		void init() override;
-		/// Loads New Battle settings.
+		/// Loads NewBattle settings.
 		void load(const std::string& file = "battle");
-		/// Saves New Battle settings.
+		/// Saves NewBattle settings.
 		void save(const std::string& file = "battle");
 		/// Initializes a blank savegame.
 		void initPlay();
@@ -114,8 +114,6 @@ private:
 		void cbxMissionChange(Action* action);
 		/// Handler for changing the Craft combobox.
 		void cbxCraftChange(Action* action);
-		/// Updates the depth slider accordingly when terrain selection changes.
-//		void cbxTerrainChange(Action* action);
 };
 
 }

@@ -20,10 +20,6 @@
 #ifndef OPENXCOM_RULESET_H
 #define OPENXCOM_RULESET_H
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include <cmath>
 #include <map>
 #include <string>

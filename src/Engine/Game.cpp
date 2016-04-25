@@ -747,7 +747,7 @@ bool Game::isQuitting() const
 
 /**
  * Sets whether SDL-input is activated.
- * @note All input events are processed if true otherwise only mouse-motion is
+ * @note All input-events are processed if true otherwise only mouse-motion is
  * handled.
  * @param active - true if SDL-input is active/responsive
  */
@@ -776,7 +776,6 @@ void Game::setState(State* const state)
 		popState();
 
 	pushState(state);
-
 	_init = false;
 }
 

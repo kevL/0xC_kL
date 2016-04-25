@@ -19,7 +19,6 @@
 
 #include "BattlescapeGame.h"
 
-//#define _USE_MATH_DEFINES
 //#include <cmath>
 #include <sstream>
 
@@ -1632,7 +1631,7 @@ void BattlescapeGame::checkCasualties(
 		switch (defender->getUnitStatus())
 		{
 			case STATUS_DEAD:
-			case STATUS_LIMBO:
+			case STATUS_LATENT:
 				break;
 
 			case STATUS_UNCONSCIOUS:

@@ -25,7 +25,7 @@
 // I changed them to standard types, and might have to revert to the old types,
 // against an earlier version of this file. See 'fmopl.h'
 
-#include <math.h>
+#include <cmath>
 #include <memory.h>
 #include <stdint.h>
 

@@ -19,7 +19,6 @@
 
 #include "Camera.h"
 
-//#define _USE_MATH_DEFINES
 //#include <cmath>
 //#include <fstream>
 

@@ -17,13 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include "MovingTarget.h"
-
-//#include <cmath>
 
 #include "../fmath.h"
 

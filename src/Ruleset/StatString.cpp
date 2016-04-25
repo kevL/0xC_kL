@@ -17,11 +17,9 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#define _USE_MATH_DEFINES
+#include "StatString.h"
 
 //#include <vector>
-
-#include "StatString.h"
 
 
 namespace OpenXcom

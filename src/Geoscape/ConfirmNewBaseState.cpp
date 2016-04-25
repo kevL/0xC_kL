@@ -17,10 +17,6 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include "ConfirmNewBaseState.h"
 
 #include "BaseNameState.h"

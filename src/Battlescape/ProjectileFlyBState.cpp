@@ -20,8 +20,8 @@
 #include "ProjectileFlyBState.h"
 
 //#include <algorithm>
-//#define _USE_MATH_DEFINES
-//#include <cmath>
+
+#include "../fmath.h"
 
 #include "AlienBAIState.h"
 #include "BattlescapeState.h"
@@ -32,8 +32,6 @@
 #include "Pathfinding.h"
 #include "Projectile.h"
 #include "TileEngine.h"
-
-#include "../fmath.h"
 
 //#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"

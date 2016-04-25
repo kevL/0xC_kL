@@ -20,10 +20,6 @@
 #ifndef OPENXCOM_RULETEXTURE_H
 #define OPENXCOM_RULETEXTURE_H
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include <cmath>
 
 //#include <string>

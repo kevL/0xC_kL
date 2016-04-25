@@ -17,10 +17,6 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include "SavedGame.h"
 
 //#include <cmath>
@@ -28,6 +24,9 @@
 #include <fstream>
 #include <iomanip>
 //#include <sstream>
+
+#include "../version.h"
+
 //#include <yaml-cpp/yaml.h>
 
 #include "AlienBase.h"
@@ -49,8 +48,6 @@
 #include "Transfer.h"
 #include "Ufo.h"
 #include "Waypoint.h"
-
-#include "../version.h"
 
 #include "../Engine/CrossPlatform.h"
 #include "../Engine/Exception.h"

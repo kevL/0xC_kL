@@ -185,8 +185,6 @@ NewBattleState::NewBattleState()
 
 	_slrDarkness->setRange(0,15);
 
-//	_cbxTerrain->onComboChange((ActionHandler)& NewBattleState::cbxTerrainChange);
-
 	std::vector<std::string> difficulty;
 	difficulty.push_back("STR_1_BEGINNER");
 	difficulty.push_back("STR_2_EXPERIENCED");
@@ -690,7 +688,6 @@ void NewBattleState::btnRandClick(Action*)
 	_slrDarkness->setValue(RNG::generate(0,15));
 
 	_cbxTerrain->setSelected(RNG::pick(_terrainTypes.size()));
-//	cbxTerrainChange(nullptr);
 
 	_cbxAlienRace->setSelected(RNG::pick(_alienRaces.size()));
 
@@ -802,7 +799,6 @@ void NewBattleState::cbxMissionChange(Action*)
 	_cbxTerrain->setOptions(terrainOptions);
 	_cbxTerrain->setSelected(0);
 
-//	cbxTerrainChange(nullptr);
 	Log(LOG_INFO) << "NewBattleState::cbxMissionChange() EXIT";
 }
 
@@ -831,41 +827,5 @@ void NewBattleState::cbxCraftChange(Action*)
 		}
 	}
 }
-
-/**
- * Updates the depth slider accordingly when terrain selection changes.
- * @param action - pointer to an Action
- */
-/* void NewBattleState::cbxTerrainChange(Action*)
-{
-	const AlienDeployment* const ruleDeploy = _rules->getDeployment(_missionTypes[_cbxMission->getSelected()]);
-
-	int
-		minDepth,
-		maxDepth;
-
-	if (ruleDeploy->getMaxDepth() > 0)
-	{
-		minDepth = ruleDeploy->getMinDepth();
-		maxDepth = ruleDeploy->getMaxDepth();
-	}
-	else if (ruleDeploy->getDeployTerrains().empty() == false)
-	{
-		minDepth = _rules->getTerrain(ruleDeploy->getDeployTerrains().front())->getMinDepth();
-		maxDepth = _rules->getTerrain(ruleDeploy->getDeployTerrains().front())->getMaxDepth();
-	}
-	else
-	{
-		minDepth = _rules->getTerrain(_terrainTypes.at(_cbxTerrain->getSelected()))->getMinDepth();
-		maxDepth = _rules->getTerrain(_terrainTypes.at(_cbxTerrain->getSelected()))->getMaxDepth();
-	}
-
-	_txtDepth->setVisible(minDepth != maxDepth
-						  && maxDepth != 0);
-	_slrDepth->setVisible(minDepth != maxDepth
-						  && maxDepth != 0);
-	_slrDepth->setRange(minDepth, maxDepth);
-	_slrDepth->setValue(minDepth);
-} */
 
 }

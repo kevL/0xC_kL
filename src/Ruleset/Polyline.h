@@ -27,44 +27,44 @@ namespace OpenXcom
 {
 
 /**
- * Represents a polyline in the world map.
- * Polylines constitute the detail portions of the X-Com
- * globe and typically represent borders and rivers.
+ * Represents a polyline on the Globe.
+ * @note Polylines constitute the detailed portions of the Globe and typically
+ * represent borders and rivers.
  */
 class Polyline
 {
 
 private:
-	int _points;
+	size_t _points;
 	double
 		* _lat,
 		* _lon;
 
 
 	public:
-		/// Creates a polyline with a number of points.
-		explicit Polyline(int points);
-		/// Cleans up the polyline.
+		/// Creates a Polyline with a specified quantity of points.
+		explicit Polyline(size_t points);
+		/// Cleans up the Polyline.
 		~Polyline();
 
-		/// Loads the polyline from YAML.
+		/// Loads the Polyline from YAML.
 		void load(const YAML::Node& node);
 
 		/// Gets the latitude of a point.
-		double getLatitude(int i) const;
+		double getLatitude(size_t i) const;
 		/// Sets the latitude of a point.
-		void setLatitude(
-				int i,
-				double lat);
+/*		void setLatitude(
+				size_t i,
+				double lat); */
 		/// Gets the longitude of a point.
-		double getLongitude(int i) const;
+		double getLongitude(size_t i) const;
 		/// Sets the longitude of a point.
-		void setLongitude(
-				int i,
-				double lon);
+/*		void setLongitude(
+				size_t i,
+				double lon); */
 
-		/// Gets the number of points of the polyline.
-		int getPoints() const;
+		/// Gets the quantity of points in the Polyline.
+		size_t getPoints() const;
 };
 
 }

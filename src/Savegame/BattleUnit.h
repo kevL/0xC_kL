@@ -71,7 +71,7 @@ enum UnitStatus
 	STATUS_UNCONSCIOUS,	//  7
 	STATUS_PANICKING,	//  8
 	STATUS_BERSERK,		//  9
-	STATUS_LIMBO,		// 10 won't participate in a 'next stage' battle.
+	STATUS_LATENT,		// 10 won't participate in a 'next stage' battle.
 };
 
 enum UnitFaction

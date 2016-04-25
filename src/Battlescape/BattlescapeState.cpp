@@ -17,14 +17,9 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include "BattlescapeState.h"
 
 //#include <algorithm>
-//#include <cmath>
 #include <cstring>
 #include <iomanip>
 //#include <sstream>
@@ -1141,8 +1136,8 @@ void BattlescapeState::init()
 }
 
 /**
- * Runs the timers and handles popups.
- * @note Called by the engine core.
+ * Runs the Timers and handles popups.
+ * @note Called by the engine-core.
  */
 void BattlescapeState::think()
 {
@@ -3723,10 +3718,11 @@ void BattlescapeState::warning(
 }
 
 /**
- * Adds a new popup-window to the queue (this prevents popups from overlapping).
+ * Adds a new popup-window to the popups-queue.
+ * @note This prevents popups from overlapping.
  * @param state - pointer to popup State
  */
-void BattlescapeState::popup(State* state)
+void BattlescapeState::popup(State* const state)
 {
 	_popups.push_back(state);
 }

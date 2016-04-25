@@ -17,14 +17,9 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include "TileEngine.h"
 
 //#include <climits>
-//#include <cmath>
 //#include <set>
 //#include <assert.h>
 //#include <SDL.h>
@@ -6822,19 +6817,19 @@ int TileEngine::getDirectionTo( // static.
 			pi_8 + d					// .39269908169872415480783042290994	->  22.5 deg
 		};
 
-	if (theta > pie[0] || theta < -pie[0])
+	if (theta > pie[0u] || theta < -pie[0u])
 		return 6;
-	if (theta > pie[1])
+	if (theta > pie[1u])
 		return 7;
-	if (theta > pie[2])
+	if (theta > pie[2u])
 		return 0;
-	if (theta > pie[3])
+	if (theta > pie[3u])
 		return 1;
-	if (theta < -pie[1])
+	if (theta < -pie[1u])
 		return 5;
-	if (theta < -pie[2])
+	if (theta < -pie[2u])
 		return 4;
-	if (theta < -pie[3])
+	if (theta < -pie[3u])
 		return 3;
 	return 2;
 }

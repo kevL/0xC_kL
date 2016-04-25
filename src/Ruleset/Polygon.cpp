@@ -17,10 +17,6 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USE_MATH_DEFINES
-#	define _USE_MATH_DEFINES
-#endif
-
 #include "Polygon.h"
 
 #include <cmath>
@@ -30,13 +26,13 @@ namespace OpenXcom
 {
 
 /**
- * Initializes the polygon with arrays to store each point's coordinates.
- * @param points - number of points
+ * Initializes the Polygon with arrays that store each point's coordinates.
+ * @param points - quantity of points
  */
 Polygon::Polygon(size_t points)
 	:
 		_points(points),
-		_texture(0)
+		_texture(0u)
 {
 	_lat = new double[_points];
 	_lon = new double[_points];
@@ -44,7 +40,7 @@ Polygon::Polygon(size_t points)
 	_y = new Sint16[_points];
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _points;
 			++i)
 	{
@@ -56,8 +52,8 @@ Polygon::Polygon(size_t points)
 }
 
 /**
- * Performs a deep copy of an existing polygon.
- * @param other - reference another Polygon to copy
+ * Performs a deep copy of an existing Polygon.
+ * @param other - reference to another Polygon to copy
  */
 Polygon::Polygon(const Polygon& other)
 {
@@ -68,7 +64,7 @@ Polygon::Polygon(const Polygon& other)
 	_y = new Sint16[_points];
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _points;
 			++i)
 	{
@@ -82,7 +78,7 @@ Polygon::Polygon(const Polygon& other)
 }
 
 /**
- * Deletes the arrays from memory.
+ * Deletes this Polygon's arrays from memory.
  */
 Polygon::~Polygon()
 {
@@ -93,7 +89,7 @@ Polygon::~Polygon()
 }
 
 /**
- * Loads the polygon from a YAML file.
+ * Loads this Polygon from a YAML file.
  * @param node - reference a YAML node
  */
 void Polygon::load(const YAML::Node& node)
@@ -103,8 +99,8 @@ void Polygon::load(const YAML::Node& node)
 	delete[] _x;
 	delete[] _y;
 
-	std::vector<double> coords = node.as<std::vector<double>>();
-	_points = (coords.size() - 1) / 2;
+	const std::vector<double> coords (node.as<std::vector<double>>());
+	_points = (coords.size() - 1u) >> 1u;
 
 	_lat = new double[_points];
 	_lon = new double[_points];
@@ -112,17 +108,17 @@ void Polygon::load(const YAML::Node& node)
 	_x = new Sint16[_points];
 	_y = new Sint16[_points];
 
-	_texture = static_cast<size_t>(coords[0]);
+	_texture = static_cast<size_t>(coords[0u]);
 
 	for (size_t
-			i = 1;
+			i = 1u;
 			i < coords.size();
-			i += 2)
+			i += 2u)
 	{
-		size_t j = (i - 1) / 2;
+		size_t j ((i - 1u) >> 1u);
 
 		_lon[j] = coords[i] * M_PI / 180.;
-		_lat[j] = coords[i + 1] * M_PI / 180.;
+		_lat[j] = coords[i + 1u] * M_PI / 180.;
 
 		_x[j] =
 		_y[j] = 0;
@@ -130,9 +126,9 @@ void Polygon::load(const YAML::Node& node)
 }
 
 /**
- * Returns the latitude of a given point.
- * @param i - point number (0-max)
- * @return, point's latitude
+ * Gets the latitude of a given point.
+ * @param i - point (0 to max)
+ * @return, the point's latitude
  */
 double Polygon::getLatitude(size_t i) const
 {
@@ -140,9 +136,9 @@ double Polygon::getLatitude(size_t i) const
 }
 
 /**
- * Changes the latitude of a given point.
- * @param i		- point number (0-max)
- * @param lat	- point's latitude
+ * Sets the latitude of a given point.
+ * @param i		- point (0 to max)
+ * @param lat	- the point's latitude
  */
 void Polygon::setLatitude(
 		size_t i,
@@ -152,9 +148,9 @@ void Polygon::setLatitude(
 }
 
 /**
- * Returns the longitude of a given point.
- * @param i - point number (0-max)
- * @return, point's longitude
+ * Gets the longitude of a given point.
+ * @param i - point (0 to max)
+ * @return, the point's longitude
  */
 double Polygon::getLongitude(size_t i) const
 {
@@ -163,8 +159,8 @@ double Polygon::getLongitude(size_t i) const
 
 /**
  * Changes the latitude of a given point.
- * @param i		- point number (0-max)
- * @param lon	- point's longitude
+ * @param i		- point (0 to max)
+ * @param lon	- the point's longitude
  */
 void Polygon::setLongitude(
 		size_t i,
@@ -174,9 +170,9 @@ void Polygon::setLongitude(
 }
 
 /**
- * Returns the X coordinate of a given point.
- * @param i - point number (0-max)
- * @return, point's X coordinate
+ * Gets the x-coordinate of a given point.
+ * @param i - point (0 to max)
+ * @return, the point's x-coordinate
  */
 Sint16 Polygon::getX(size_t i) const
 {
@@ -184,9 +180,9 @@ Sint16 Polygon::getX(size_t i) const
 }
 
 /**
- * Changes the X coordinate of a given point.
- * @param i - point number (0-max)
- * @param x - point's X coordinate
+ * Sets the x-coordinate of a given point.
+ * @param i - point (0 to max)
+ * @param x - the point's x-coordinate
  */
 void Polygon::setX(
 		size_t i,
@@ -196,9 +192,9 @@ void Polygon::setX(
 }
 
 /**
- * Returns the Y coordinate of a given point.
- * @param i - point number (0-max)
- * @return, point's Y coordinate
+ * Gets the y-coordinate of a given point.
+ * @param i - point (0 to max)
+ * @return, the point's y-coordinate
  */
 Sint16 Polygon::getY(size_t i) const
 {
@@ -206,9 +202,9 @@ Sint16 Polygon::getY(size_t i) const
 }
 
 /**
- * Changes the Y coordinate of a given point.
- * @param i - point number (0-max)
- * @param y - point's Y coordinate
+ * Sets the y-coordinate of a given point.
+ * @param i - point (0 to max)
+ * @param y - the point's y-coordinate
  */
 void Polygon::setY(
 		size_t i,
@@ -218,8 +214,9 @@ void Polygon::setY(
 }
 
 /**
- * Returns the texture used to draw the polygon - textures are stored in a set.
- * @return, texture sprite number
+ * Gets the texture used to draw this Polygon.
+ * @note Textures are stored in a set.
+ * @return, texture sprite-ID
  */
 size_t Polygon::getPolyTexture() const
 {
@@ -227,8 +224,8 @@ size_t Polygon::getPolyTexture() const
 }
 
 /**
- * Changes the texture used to draw the polygon.
- * @param tex - texture sprite number
+ * Sets the texture used to draw this Polygon.
+ * @param tex - texture sprite-ID
  */
 void Polygon::setPolyTexture(size_t tex)
 {
@@ -236,8 +233,8 @@ void Polygon::setPolyTexture(size_t tex)
 }
 
 /**
- * Returns the number of points (vertexes) that make up the polygon.
- * @return, number of points
+ * Gets the quantity of points (vertexes) that make up this Polygon.
+ * @return, quantity of points
  */
 size_t Polygon::getPoints() const
 {
