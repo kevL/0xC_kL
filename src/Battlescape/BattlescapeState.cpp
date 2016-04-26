@@ -346,7 +346,7 @@ BattlescapeState::BattlescapeState()
 
 
 	add(_icons);
-	Surface* const icons (_game->getResourcePack()->getSurface("ICONS"));
+	Surface* const icons (_game->getResourcePack()->getSurface("TacIcons"));
 	if (_game->getResourcePack()->getSurface("Logo") != nullptr)
 	{
 		Surface* const logo (_game->getResourcePack()->getSurface("Logo"));
@@ -356,7 +356,7 @@ BattlescapeState::BattlescapeState()
 	}
 	icons->blit(_icons);
 
-	_overlay = _game->getResourcePack()->getSurfaceSet("ICONS_OVERLAY");
+	_overlay = _game->getResourcePack()->getSurfaceSet("TacIconsOverlay");
 
 
 	add(_srfRank,			"rank",					"battlescape", _icons);

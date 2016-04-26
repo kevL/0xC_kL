@@ -459,7 +459,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 				i != sizeof(catsId) / sizeof(catsId[0u]);
 				++i)
 		{
-			SoundSet* sound = nullptr;
+			SoundSet* sound (nullptr);
 
 			for (size_t
 					j = 0u;
@@ -877,8 +877,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 			//Log(LOG_VERBOSE) << "Creating new sound set: " << st << ", this will likely have no in-game use.";
 			_sounds[st] = new SoundSet();
 		}
-		else
-			//Log(LOG_VERBOSE) << "Adding/Replacing items in sound set: " << st;
+		//else Log(LOG_VERBOSE) << "Adding/Replacing items in sound set: " << st;
 
 		for (std::map<int, std::string>::const_iterator
 				j = soundPack->getSounds()->begin();
@@ -1090,7 +1089,7 @@ void XcomResourcePack::loadBattlescapeResources()
 //		"TAC01.SCR",	// -> "Inventory"
 		"DETBORD.PCK",
 		"DETBORD2.PCK",
-//		"ICONS.PCK",	// -> "ICONS"
+//		"ICONS.PCK",	// -> "TacIcons"
 		"MEDIBORD.PCK",
 //		"SCANBORD.PCK",	// -> "Scanbord"
 		"UNIBORD.PCK"
@@ -1232,8 +1231,7 @@ bool XcomResourcePack::isImageFile(std::string extension)
  * @param aintrocat	- pointer to AINTRO.CAT if available
  * @param gmcat		- pointer to GM.CAT if available
  * @return, pointer to the music file, or nullptr if it couldn't be loaded
- */
-/*
+ *
 Music* XcomResourcePack::loadMusic(
 		MusicFormat fmt,
 		const std::string& file,

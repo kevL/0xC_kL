@@ -37,7 +37,7 @@ class TextEdit;
 
 
 /**
- * Base Info screen that shows all the stats of a Base.
+ * BaseInfo screen that shows all the stats of a Base.
  */
 class BaseInfoState final
 	:
@@ -129,7 +129,7 @@ private:
 		/// Updates the Base's stats.
 		void init() override;
 
-		/// Handler for changing the text on the Name edit.
+		/// Handler for changing the text on the name-edit.
 		void edtLabelChange(Action* action);
 
 		/// Handler for selecting Bases.

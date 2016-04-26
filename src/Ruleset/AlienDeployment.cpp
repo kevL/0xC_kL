@@ -197,17 +197,11 @@ void AlienDeployment::load(const YAML::Node& node)
 
 	if (node["duration"])
 	{
-		_durationMin = node["duration"][0].as<int>(_durationMin);
-		_durationMax = node["duration"][1].as<int>(_durationMax);
+		_durationMin = node["duration"][0u].as<int>(_durationMin);
+		_durationMax = node["duration"][1u].as<int>(_durationMax);
 	}
 
-	for (YAML::const_iterator
-			i = node["music"].begin();
-			i != node["music"].end();
-			++i)
-	{
-		_musics.push_back((*i).as<std::string>()); // NOTE: might not be compatible w/ sza_MusicRules.
-	}
+	_musics = node["music"].as<std::vector<std::string>>(_musics); // NOTE: might not be compatible w/ sza_MusicRules.
 
 	_objectiveType = static_cast<SpecialTileType>(node["objectiveType"].as<int>(_objectiveType));
 	_objectivesReqd	= node["objectivesReqd"].as<int>(_objectivesReqd);
@@ -218,19 +212,19 @@ void AlienDeployment::load(const YAML::Node& node)
 
 	if (node["objectiveComplete"])
 	{
-		_objectiveCompleteText	= node["objectiveComplete"][0].as<std::string>(_objectiveCompleteText);
-		_objectiveCompleteScore	= node["objectiveComplete"][1].as<int>(_objectiveCompleteScore);
+		_objectiveCompleteText	= node["objectiveComplete"][0u].as<std::string>(_objectiveCompleteText);
+		_objectiveCompleteScore	= node["objectiveComplete"][1u].as<int>(_objectiveCompleteScore);
 	}
 
 	if (node["objectiveFailed"])
 	{
-		_objectiveFailedText	= node["objectiveFailed"][0].as<std::string>(_objectiveFailedText);
-		_objectiveFailedScore	= node["objectiveFailed"][1].as<int>(_objectiveFailedScore);
+		_objectiveFailedText	= node["objectiveFailed"][0u].as<std::string>(_objectiveFailedText);
+		_objectiveFailedScore	= node["objectiveFailed"][1u].as<int>(_objectiveFailedScore);
 	}
 
-	_turnLimit = node["turnLimit"].as<int>(_turnLimit);
-	_chronoResult = static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
-	_cheatTurn = node["cheatTurn"].as<int>(_cheatTurn);
+	_cheatTurn		= node["cheatTurn"].as<int>(_cheatTurn);
+	_turnLimit		= node["turnLimit"].as<int>(_turnLimit);
+	_chronoResult	= static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
 }
 
 /**

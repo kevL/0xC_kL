@@ -152,15 +152,15 @@ private:
 	SpecialTileType _objectiveType;
 
 	public:
-		/// Creates a blank Alien Deployment ruleset.
+		/// Creates a blank AlienDeployment ruleset.
 		explicit AlienDeployment(const std::string& type);
-		/// Cleans up the Alien Deployment ruleset.
+		/// Cleans up the AlienDeployment ruleset.
 		~AlienDeployment();
 
-		/// Loads Alien Deployment data from YAML.
+		/// Loads AlienDeployment data from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets the Alien Deployment's type.
+		/// Gets the AlienDeployment's type.
 		const std::string& getType() const;
 		/// Gets a pointer to the data.
 		const std::vector<DeploymentData>* getDeploymentData() const;

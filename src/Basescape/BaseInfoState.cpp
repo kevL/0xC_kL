@@ -19,6 +19,7 @@
 
 #include "BaseInfoState.h"
 
+//#include <cmath>
 //#include <sstream>
 
 #include "BasescapeState.h"
@@ -670,7 +671,9 @@ void BaseInfoState::viewMouseOver(Action*)
 		if (hoverBase != _base)
 		{
 			clearText = false;
+
 			_txtHoverBase->setText(hoverBase->getName().c_str());
+
 			for (std::vector<Region*>::const_iterator
 					i = _game->getSavedGame()->getRegions()->begin();
 					i != _game->getSavedGame()->getRegions()->end();
@@ -678,7 +681,7 @@ void BaseInfoState::viewMouseOver(Action*)
 			{
 				if ((*i)->getRules()->insideRegion(
 												hoverBase->getLongitude(),
-												hoverBase->getLatitude()))
+												hoverBase->getLatitude()) == true)
 				{
 					_txtHoverRegion->setText(tr((*i)->getRules()->getType()));
 					break;

@@ -585,7 +585,7 @@ void InventoryState::init()
 	}
 	else
 	{
-		Surface* const dolphins (_game->getResourcePack()->getSurface("DOLPHINS"));
+		Surface* const dolphins (_game->getResourcePack()->getSurface("Dolphins"));
 		dolphins->blit(_btnRank);
 
 		Surface* const srfPaper (_game->getResourcePack()->getSurface(unit->getArmor()->getSpriteInventory()));
