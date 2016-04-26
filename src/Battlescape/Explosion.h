@@ -47,15 +47,15 @@ class Explosion
 
 private:
 	static const int
-		FRAMES_AOE		=  8,
-		FRAMES_BULLET	= 10,
-		FRAMES_MELEEPSI	=  4,
-		FRAMES_TORCH	=  6,
-		START_FUSION	= 88;
+		FRAMES_AOE			=  8,
+		FRAMES_BULLET		= 10,
+		FRAMES_MELEE_PSI	=  4,
+		FRAMES_TORCH		=  6,
+		START_FUSION		= 88;
 
 	int
-		_currentAni,
-		_startAni,
+		_currentSprite,
+		_startSprite,
 		_startDelay;
 
 	const ExplosionType _type;
@@ -67,7 +67,7 @@ private:
 		Explosion(
 				const ExplosionType type,
 				const Position pos,
-				int startAni,
+				int startSprite,
 				int startDelay = 0);
 		/// Cleans up the Explosion.
 		~Explosion();

@@ -58,6 +58,7 @@ extraSounds:
       52: Resources/Sounds/52_rocketshot.WAV
       53: Resources/Sounds/53_blasterlaunch.WAV
       54: Resources/Sounds/54_stunrod.WAV
+      67: Resources/CombatKnife/KnifeSlice.wav
       70: Resources/Sounds/extra/move_hover.ogg
       71: Resources/Sounds/extra/death_sectoid.ogg
       72: Resources/Sounds/extra/death_snakeman.ogg
@@ -101,6 +102,7 @@ extraSounds:
       150: Resources/Sounds/Tactical/sFx_voice/hit/m/vs_NRANGEM1_hit1.wav
       151: Resources/Sounds/Tactical/sFx_voice/hit/m/vs_nwizarm1_hit2.wav
       255: Resources/Sounds/extra/255_silence.wav
+      260: Resources/Sounds/Tactical/hit_plasma_big.ogg
   - type: GEO.CAT
     files:
       0: Resources/Sounds/Geo/00_btn1.WAV

@@ -85,7 +85,7 @@ items:
     transferTime: 48
     weight: 0
     fireSoundHit: 13
-    fireHitAni: 26
+    fireHitAni: 0
     power: 92
     damageType: 1
     fullClip: 1 #kL
@@ -137,7 +137,7 @@ items:
     bulletSprite: 5
     fireSound: 11
     fireSoundHit: 19
-    fireHitAni: 36
+    fireHitAni: 10
     power: 186
     damageType: 4
     accuracySnap: 56
@@ -163,7 +163,7 @@ items:
     fireSoundHit: 19
     power: 127
     damageType: 5
-    fireHitAni: 46
+    fireHitAni: 20
     accuracySnap: 83
     accuracyAimed: 110
     tuSnap: 33
@@ -241,7 +241,7 @@ items:
     bigSprite: 4
     floorSprite: 4
     fireSoundHit: 22
-    fireHitAni: 26
+    fireHitAni: 0
     power: 25
     damageType: 1
     fullClip: 9
@@ -278,7 +278,7 @@ items:
     bigSprite: 2
     floorSprite: 2
     fireSoundHit: 22
-    fireHitAni: 26
+    fireHitAni: 0
     power: 36
     damageType: 1
     fullClip: 18
@@ -314,7 +314,7 @@ items:
     bigSprite: 12
     floorSprite: 12
     fireSoundHit: 13
-    fireHitAni: 26
+    fireHitAni: 0
     power: 73
     damageType: 1
     fullClip: 6
@@ -388,7 +388,7 @@ items:
     bigSprite: 8
     floorSprite: 8
     fireSoundHit: 13
-    fireHitAni: 26
+    fireHitAni: 0
     power: 53
     damageType: 1
     fullClip: 12
@@ -512,7 +512,7 @@ items:
     bulletSprite: 5
     fireSound: 11
     fireSoundHit: 19
-    fireHitAni: 36
+    fireHitAni: 10
     power: 43
     damageType: 4
     accuracyAuto: 23
@@ -536,7 +536,7 @@ items:
     bulletSprite: 6
     fireSound: 11
     fireSoundHit: 19
-    fireHitAni: 36
+    fireHitAni: 10
     power: 62
     damageType: 4
     accuracyAuto: 43
@@ -561,7 +561,7 @@ items:
     bulletSprite: 7
     fireSound: 11
     fireSoundHit: 19
-    fireHitAni: 36
+    fireHitAni: 10
     power: 119
     damageType: 4
     accuracySnap: 72
@@ -752,7 +752,7 @@ items:
     bigSprite: 30
     floorSprite: 29
     handSprite: 40
-    bulletSprite: 8
+    bulletSprite: 17 #8 stock
     fireSound: 18
     compatibleAmmo:
       - STR_HEAVY_PLASMA_CLIP
@@ -778,7 +778,7 @@ items:
     bigSprite: 25
     floorSprite: 33
     fireSoundHit: 19
-    fireHitAni: 46
+    fireHitAni: 20
     power: 109
     damageType: 5
     fullClip: 11
@@ -794,7 +794,7 @@ items:
     bigSprite: 31
     floorSprite: 30
     handSprite: 48
-    bulletSprite: 8
+    bulletSprite: 18 #8 stock
     fireSound: 18
     compatibleAmmo:
       - STR_PLASMA_RIFLE_CLIP
@@ -821,7 +821,7 @@ items:
     bigSprite: 41
     floorSprite: 33
     fireSoundHit: 19
-    fireHitAni: 46
+    fireHitAni: 20
     power: 86
     damageType: 5
     fullClip: 13
@@ -837,7 +837,7 @@ items:
     bigSprite: 32
     floorSprite: 31
     handSprite: 104
-    bulletSprite: 8
+    bulletSprite: 19 #8 stock
     fireSound: 18
     compatibleAmmo:
       - STR_PLASMA_PISTOL_CLIP
@@ -863,7 +863,7 @@ items:
     bigSprite: 34
     floorSprite: 33
     fireSoundHit: 19
-    fireHitAni: 46
+    fireHitAni: 20
     power: 57
     damageType: 5
     fullClip: 19
@@ -1341,7 +1341,7 @@ items:
     bulletSprite: 8
     fireSound: 18
     fireSoundHit: 19
-    fireHitAni: 46
+    fireHitAni: 20
     power: 147
     damageType: 5
     accuracySnap: 76
@@ -1401,7 +1401,7 @@ items:
     bulletSprite: 8
     fireSound: 51
     fireSoundHit: 19
-    fireHitAni: 46
+    fireHitAni: 20
     power: 144
     damageType: 8
     accuracySnap: 68
@@ -1440,8 +1440,8 @@ items:
     floorSprite: 31
     handSprite: 104
     fireSound: 18
-    fireSoundHit: 19
-    fireHitAni: 46
+    fireSoundHit: 260 #19 stock
+    fireHitAni: 30
     power: 123
     damageType: 5
     accuracyAuto: 47
@@ -1455,7 +1455,7 @@ items:
     invWidth: 2
     invHeight: 3
     fullClip: -1
-    bulletSprite: 8
+    bulletSprite: 16 #8 stock
     recover: false
   - type: ZOMBIE_WEAPON
     weight: 3

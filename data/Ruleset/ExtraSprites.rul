@@ -1,18 +1,25 @@
 extraSprites:
   - type: Pathfinding
-    files:
-      0: Resources/UI/Pathfinding.png
     width: 384
     height: 80
     subX: 32
     subY: 40
+    files:
+      0: Resources/UI/Pathfinding.png
   - type: Projectiles
     width: 105
-    height: 48
+    height: 60
     subX: 3
     subY: 3
     files:
       0: Resources/BulletSprites/BulletSprites.png
+  - type: ProjectileHits
+    width: 320
+    height: 280
+    subX: 32
+    subY: 40
+    files:
+      0: Resources/Sprites/ufograph/smoke/bullet_impact.png
 #  - type: TFTDReserve
 #    width: 59
 #    height: 24
@@ -76,9 +83,9 @@ extraSprites:
 #    files:
 #      0: Resources/Sprites/ufograph/statusbar/statusbar.png
   - type: Cygnus_BG
-    singleImage: true
     width: 640
     height: 360
+    singleImage: true
     files:
       0: Resources/Sprites/ig271_cygnus_02_640px.png
 #    width: 480

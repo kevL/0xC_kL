@@ -632,7 +632,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 		walkOffset;
 
 	int
-		frame,
+		spriteId,
 		tileShade,
 		shade,
 		aniOffset,
@@ -805,8 +805,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 																if (unitNorth->getFireUnit() != 0)
 																{
-																	frame = 4 + (_aniFrame / 2);
-																	sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
+																	sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniFrame >> 1u));
 																	//if (sprite != nullptr)
 																		sprite->blitNShade(
 																				surface,
@@ -839,9 +838,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 							{
 								case CT_TARGET:
 									if (hasUnit == true)
-										frame = 7 + (_aniFrame / 2);	// yellow animated crosshairs
+										spriteId = 7 + (_aniFrame >> 1u);	// yellow animated crosshairs
 									else
-										frame = 6;						// red static crosshairs
+										spriteId = 6;						// red static crosshairs
 									break;
 
 								default:
@@ -856,13 +855,13 @@ void Map::drawTerrain(Surface* const surface) // private.
 												|| (_battleSave->getBattleGame()->getTacticalAction()->type != BA_PSICOURAGE
 													&& _unit->getFaction() != FACTION_PLAYER))))
 									{
-										frame = (_aniFrame % 2);	// yellow flashing box
+										spriteId = (_aniFrame & 1);	// yellow flashing box
 									}
 									else
-										frame = 0;					// red static box
+										spriteId = 0;				// red static box
 							}
 
-							sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(frame);
+							sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(spriteId);
 							//if (sprite != nullptr)
 								sprite->blitNShade(
 										surface,
@@ -949,8 +948,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 // Draw Corpse + Item on Floor if any
 						bool var;
-						int spriteId (_tile->getCorpseSprite(&var));
-						if (spriteId != -1)
+						if ((spriteId = _tile->getCorpseSprite(&var)) != -1)
 						{
 							sprite = _res->getSurfaceSet("FLOOROB.PCK")->getFrame(spriteId);
 							//if (sprite != nullptr)
@@ -962,8 +960,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 							if (var == true && _tile->isRevealed(ST_CONTENT) == true)
 							{
-								frame = 4 + (_aniFrame / 2);
-								sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
+								sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniFrame >> 1u));
 								//if (sprite != nullptr)
 									sprite->blitNShade(
 											surface,
@@ -972,8 +969,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							}
 						}
 
-						spriteId = _tile->getTopSprite(&var);
-						if (spriteId != -1)
+						if ((spriteId = _tile->getTopSprite(&var)) != -1)
 						{
 							sprite = _res->getSurfaceSet("FLOOROB.PCK")->getFrame(spriteId);
 							//if (sprite != nullptr)
@@ -1192,7 +1188,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 								if (_unit->getFireUnit() != 0)
 								{
-									sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniFrame / 2));
+									sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniFrame >> 1u));
 									//if (sprite != nullptr)
 										sprite->blitNShade(
 												surface,
@@ -1236,10 +1232,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 											if (exposure != -1)
 											{
 												Uint8 color;
-												if (_aniFrame < 4)
-													color = WHITE_u;
-												else
-													color = BLACK;
+												if (_aniFrame < 4)	color = WHITE_u;
+												else				color = BLACK;
 
 												_numExposed->setValue(static_cast<unsigned>(exposure));
 												_numExposed->setColor(color);
@@ -1268,16 +1262,14 @@ void Map::drawTerrain(Surface* const surface) // private.
 												posScreen.x,
 												posScreen.y);
 							int color;
-							if (hurt == 2)
-								color = RED;	// wounded unconscious soldier
-							else
-								color = WHITE;	// unconscious soldier here
+							if (hurt == 2)	color = RED;	// wounded unconscious soldier
+							else			color = WHITE;	// unconscious soldier here
 
 							_srfCross->blitNShade( // small gray cross
 											surface,
 											posScreen.x + 2,
 											posScreen.y + 1,
-											_aniFrame * 2,
+											(_aniFrame << 1u),
 											false, color);
 						}
 					}
@@ -1313,8 +1305,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 									if (unitBelow->getFireUnit() != 0)
 									{
-										frame = 4 + (_aniFrame / 2);
-										sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
+										sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniFrame >> 1u));
 										//if (sprite != nullptr)
 											sprite->blitNShade(
 													surface,
@@ -1327,33 +1318,36 @@ void Map::drawTerrain(Surface* const surface) // private.
 					}
 
 // Draw SMOKE & FIRE
-					if (_tile->isRevealed(ST_CONTENT) == true
-						&& (_tile->getSmoke() != 0 || _tile->getFire() != 0))
+					if (_tile->isRevealed(ST_CONTENT) == true)
 					{
-						if (_tile->getFire() == 0)
+						if (_tile->getFire() != 0) // check & draw fire first.
 						{
-							frame = ResourcePack::SMOKE_OFFSET;
-							frame += (_tile->getSmoke() + 1) / 2;
+							spriteId =
+							shade = 0;
+						}
+						else if (_tile->getSmoke() != 0)
+						{
+							spriteId = ResourcePack::SMOKE_OFFSET + ((_tile->getSmoke() + 1) >> 1u);
 							shade = tileShade;
 						}
 						else
+							spriteId = -1;
+
+						if (spriteId != -1)
 						{
-							frame =
-							shade = 0;
+							aniOffset = (_aniFrame >> 1u) + _tile->getAnimationOffset();
+							if (aniOffset > 3) aniOffset -= 4;
+							spriteId += aniOffset;
+
+							sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(spriteId);
+							//if (sprite != nullptr)
+								sprite->blitNShade(
+										surface,
+										posScreen.x,
+										posScreen.y + _tile->getTerrainLevel(),
+										shade);
 						}
-
-						aniOffset = _aniFrame / 2 + _tile->getAnimationOffset();
-						if (aniOffset > 3) aniOffset -= 4;
-						frame += aniOffset;
-
-						sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(frame);
-						//if (sprite != nullptr)
-							sprite->blitNShade(
-									surface,
-									posScreen.x,
-									posScreen.y + _tile->getTerrainLevel(),
-									shade);
-					} // end Smoke & Fire
+					}// end Smoke & Fire
 
 // Draw pathPreview (arrows solid)
 					if ((_previewSetting & PATH_ARROWS)
@@ -1421,9 +1415,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 							{
 								case CT_TARGET:
 									if (hasUnit == true)
-										frame = 7 + (_aniFrame / 2);	// yellow animated crosshairs
+										spriteId = 7 + (_aniFrame >> 1u);	// yellow animated crosshairs
 									else
-										frame = 6;						// red static crosshairs
+										spriteId = 6;						// red static crosshairs
 									break;
 
 								default:
@@ -1438,13 +1432,13 @@ void Map::drawTerrain(Surface* const surface) // private.
 												|| (_battleSave->getBattleGame()->getTacticalAction()->type != BA_PSICOURAGE
 													&& _unit->getFaction() != FACTION_PLAYER))))
 									{
-										frame = 3 + (_aniFrame % 2);	// yellow flashing box
+										spriteId = 3 + (_aniFrame & 1);	// yellow flashing box
 									}
 									else
-										frame = 3;						// red static box
+										spriteId = 3;					// red static box
 							}
 
-							sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(frame);
+							sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(spriteId);
 							sprite->blitNShade(
 									surface,
 									posScreen.x,
@@ -1608,8 +1602,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 								case CT_LAUNCH:
 								case CT_TOSS:
 								{
-									static const int cursorSprites[6] = {0,0,0,11,13,15};
-									sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(cursorSprites[_selectorType] + (_aniFrame / 4));
+									static const int cursorSprites[6u] {0,0,0,11,13,15};
+									sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(cursorSprites[_selectorType] + (_aniFrame >> 2u));
 									sprite->blitNShade(
 											surface,
 											posScreen.x,
@@ -1624,7 +1618,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 					int
 						offset_x (2),
 						offset_y (2);
-					unsigned wpVal (1);
+					unsigned wpVal (1u);
 
 					for (std::vector<Position>::const_iterator
 							i = _waypoints.begin();
@@ -1635,7 +1629,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						{
 							if (offset_x == 2 && offset_y == 2)
 							{
-								sprite = _res->getSurfaceSet("TARGET.PCK")->getFrame(0); // was "CURSOR.PCK" frame= 7
+								sprite = _res->getSurfaceSet("Targeter")->getFrame(0); // was "CURSOR.PCK" spriteId= 7
 								sprite->blitNShade(
 										surface,
 										posScreen.x,
@@ -1649,7 +1643,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									posScreen.x + offset_x,
 									posScreen.y + offset_y);
 
-							if (wpVal > 9)	offset_x += 8;
+							if (wpVal > 9u)	offset_x += 8;
 							else			offset_x += 6;
 
 							if (offset_x > 25)
@@ -1746,15 +1740,15 @@ void Map::drawTerrain(Surface* const surface) // private.
 					if (_unit->isKneeled() == true)
 						_arrow_kneel->blitNShade(
 								surface,
-								posScreen.x - (_arrow_kneel->getWidth() / 2),
-								posScreen.y - _arrow_kneel->getHeight() - 4 - phaseCycle[_aniFrame]);
-//								posScreen.y - _arrow_kneel->getHeight() - 4 - phaseCycle);
+								posScreen.x - (_arrow_kneel->getWidth() >> 1u),
+								posScreen.y -  _arrow_kneel->getHeight() - 4 - phaseCycle[_aniFrame]);
+//								posScreen.y -  _arrow_kneel->getHeight() - 4 - phaseCycle);
 					else
 						_arrow->blitNShade(
 								surface,
-								posScreen.x - _arrow->getWidth() / 2,
-								posScreen.y - _arrow->getHeight() + phaseCycle[_aniFrame]);
-//								posScreen.y - _arrow->getHeight() + phaseCycle);
+								posScreen.x - (_arrow->getWidth() >> 1u),
+								posScreen.y -  _arrow->getHeight() + phaseCycle[_aniFrame]);
+//								posScreen.y -  _arrow->getHeight() + phaseCycle);
 				}
 			}
 		}
@@ -1878,7 +1872,6 @@ void Map::drawTerrain(Surface* const surface) // private.
 			}
 		}
 		else { */
-		int spriteId;
 		for (std::list<Explosion*>::const_iterator
 				i = _explosions.begin();
 				i != _explosions.end();
@@ -1895,13 +1888,13 @@ void Map::drawTerrain(Surface* const surface) // private.
 						sprite = _res->getSurfaceSet("X1.PCK")->getFrame(spriteId);
 						sprite->blitNShade(
 								surface,
-								bullet.x - (sprite->getWidth() / 2),
-								bullet.y - (sprite->getHeight() / 2));
+								bullet.x - (sprite->getWidth()  >> 1u),
+								bullet.y - (sprite->getHeight() >> 1u));
 						break;
 
 					case ET_BULLET: // Bullet-hits, http://ufopaedia.org/index.php?title=SMOKE.PCK
 					case ET_TORCH:
-						sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(spriteId);
+						sprite = _res->getSurfaceSet("ProjectileHits")->getFrame(spriteId); // was "SMOKE.PCK" w/ different sprite-offsets.
 						sprite->blitNShade(
 								surface,
 								bullet.x - 15,
@@ -1960,13 +1953,13 @@ void Map::drawRankIcon( // private.
 							this,
 							offset_x + 4,
 							offset_y + 4,
-							_aniFrame * 2,
+							(_aniFrame << 1u),
 							false, RED);
 	}
 	else
 	{
 		std::string solRank (unit->getRankString()); // eg. STR_COMMANDER -> RANK_COMMANDER
-		solRank = "RANK" + solRank.substr(3, solRank.length() - 3);
+		solRank = "RANK" + solRank.substr(3u, solRank.length() - 3u);
 
 		Surface* const sprite (_res->getSurface(solRank));
 		if (sprite != nullptr)

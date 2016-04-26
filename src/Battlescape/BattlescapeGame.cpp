@@ -170,7 +170,7 @@ void BattlescapeGame::init()
 void BattlescapeGame::think()
 {
 	//Log(LOG_INFO) << "BattlescapeGame::think()";
-	if (_battleStates.empty() == true) // nothing is happening - see if they need some alien AI or units panicking or what have you
+	if (_battleStates.empty() == true) // nothing is happening - see if they need some aLien AI or units panicking or what have you
 	{
 		if (_battleSave->getSide() != FACTION_PLAYER) // it's a non-player turn - ALIENS or CIVILIANS
 		{
@@ -1580,7 +1580,6 @@ void BattlescapeGame::checkCasualties(
 		BattleUnit* attacker,
 		bool hidden,
 		bool terrain)
-//		bool liquidate)
 {
 	//Log(LOG_INFO) << "BattlescapeGame::checkCasualties()"; if (attacker != nullptr) Log(LOG_INFO) << ". id-" << attacker->getId();
 
@@ -1635,7 +1634,7 @@ void BattlescapeGame::checkCasualties(
 				break;
 
 			case STATUS_UNCONSCIOUS:
-				if (defender->getHealth() != 0) break;
+				if (defender->getHealth() != 0) break; // never send an unconscious unit that hasn't died back to UnitDieBState.
 				// no break;
 
 			default:
@@ -1732,8 +1731,8 @@ void BattlescapeGame::checkCasualties(
 												DT_STUN,
 												true));
 				}
-		}
-	}
+		} // end defender-Status switch.
+	} // end BattleUnits loop.
 
 	for (std::vector<BattleUnit*>::const_iterator
 			i = convertedUnits.begin();

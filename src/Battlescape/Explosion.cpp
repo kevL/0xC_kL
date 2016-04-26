@@ -27,19 +27,19 @@ namespace OpenXcom
  * Sets up an Explosion sprite to animate at a specified position.
  * @param type			- the ExplosionType (Explosion.h)
  * @param pos			- explosion's center position in voxel-space
- * @param startAni		- used to offset different explosions to different frames on its spritesheet
+ * @param startSprite	- used to offset different explosions to different frames on its spritesheet
  * @param startDelay	- used to delay the start of explosion (default 0)
  */
 Explosion::Explosion(
 		const ExplosionType type,
 		const Position pos,
-		int startAni,
+		int startSprite,
 		int startDelay)
 	:
 		_type(type),
 		_pos(pos),
-		_startAni(startAni),
-		_currentAni(startAni),
+		_startSprite(startSprite),
+		_currentSprite(startSprite),
 		_startDelay(startDelay)
 {}
 
@@ -59,7 +59,7 @@ bool Explosion::animate()
 {
 	if (_startDelay == 0)
 	{
-		++_currentAni;
+		++_currentSprite;
 		switch (_type)
 		{
 			case ET_TORCH: // special handling for Fusion Torch - it has 6 frames that cycle 6 times
@@ -71,28 +71,28 @@ bool Explosion::animate()
 					return false;
 				}
 
-				if (_currentAni == _startAni + FRAMES_TORCH - 1)
+				if (_currentSprite == _startSprite + FRAMES_TORCH - 1)
 				{
-					_currentAni = START_FUSION;
+					_currentSprite = START_FUSION;
 					++torchCycle;
 				}
 				break;
 			}
 
 			case ET_AOE:
-				if (_currentAni == _startAni + FRAMES_AOE)
+				if (_currentSprite == _startSprite + FRAMES_AOE)
 					return false;
 				break;
 
 			case ET_BULLET:
-				if (_currentAni == _startAni + FRAMES_BULLET)
+				if (_currentSprite == _startSprite + FRAMES_BULLET)
 					return false;
 				break;
 
 			case ET_MELEE_ATT:
 			case ET_MELEE_HIT:
 			case ET_PSI:
-				if (_currentAni == _startAni + FRAMES_MELEEPSI)
+				if (_currentSprite == _startSprite + FRAMES_MELEE_PSI)
 					return false;
 		}
 	}
@@ -104,7 +104,7 @@ bool Explosion::animate()
 
 /**
  * Gets this Explosion's position in voxel-space.
- * @return, position in voxel space
+ * @return, position in voxel-space
  */
 const Position Explosion::getPosition() const
 {
@@ -117,7 +117,7 @@ const Position Explosion::getPosition() const
  */
 int Explosion::getCurrentSprite() const
 {
-	if (_startDelay == 0) return _currentAni;
+	if (_startDelay == 0) return _currentSprite;
 
 	return -1;
 }

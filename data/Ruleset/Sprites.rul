@@ -139,13 +139,13 @@ extraSprites:
     files:
       0: Resources/Sprites/geograph/textures/textures.png
 # -------- UFOGRAPH -------- #
-  - type: ICONS # ICONS.PCK
+  - type: TacIcons #ICONS.PCK
     width: 320
     height: 56
     singleImage: true
     files:
       0: Resources/Sprites/ufograph/icons_kL.png
-  - type: ICONS_OVERLAY
+  - type: TacIconsOverlay
     width: 224
     height: 32
     subX: 32
@@ -158,19 +158,19 @@ extraSprites:
     singleImage: true
     files:
       0: Resources/Sprites/ufograph/logo.png
-  - type: Scanbord # SCANBORD.PCK
+  - type: Scanbord #SCANBORD.PCK
     width: 320
     height: 200
     singleImage: true
     files:
       0: Resources/Sprites/ufograph/scanbord.png
-  - type: Diehard # TAC00.SCR
+  - type: Diehard #TAC00.SCR
     width: 320
     height: 200
     singleImage: true
     files:
       0: Resources/Sprites/ufograph/tac00.png
-  - type: Inventory # TAC01.SCR
+  - type: Inventory #TAC01.SCR
     width: 320
     height: 200
     singleImage: true
@@ -189,12 +189,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/aniMelee/Sword.png
-  - type: ClawTooth
-    width: 128
-    height: 40
-    subX: 32
-    subY: 40
-    files:
+      4: Resources/aniMelee/AttackMelee_luna.png
       8: Resources/aniMelee/Claws.png
   - type: MEDIBITS.DAT
     width: 312
@@ -203,12 +198,12 @@ extraSprites:
     subY: 58
     files:
       0: Resources/Sprites/ufograph/medibits/medibits.png
-  - type: DOLPHINS
+  - type: Dolphins
     width: 26
     height: 23
     singleImage: true
     files:
-      0: Resources/Sprites/ufograph/misc/rank5alter.png
+      0: Resources/Sprites/ufograph/misc/dolphins.png
   - type: DETBORD.PCK
     width: 320
     height: 200
@@ -236,8 +231,8 @@ extraSprites:
     files:
       0: Resources/Sprites/ufograph/smoke/smoke.png
   - type: SMOKE.PCK
-    height: 40
     width: 384
+    height: 40
     subX: 32
     subY: 40
     files:
@@ -285,7 +280,7 @@ extraSprites:
     subY: 24
     files:
       0: Resources/Sprites/ufograph/spicons/spicons.png
-  - type: TARGET.PCK
+  - type: Targeter
     files:
       0: Resources/Sprites/ufograph/target/
   - type: X1.PCK

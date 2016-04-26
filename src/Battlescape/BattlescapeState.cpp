@@ -3539,7 +3539,7 @@ void BattlescapeState::hostileTargeter() // private.
 {
 	static const int cursorFrames[TARGET_FRAMES] {0,1,2,3,4,0}; // note: does not show the last frame.
 
-	Surface* const targetCursor (_game->getResourcePack()->getSurfaceSet("TARGET.PCK")->getFrame(cursorFrames[_targeterFrame]));
+	Surface* const targetCursor (_game->getResourcePack()->getSurfaceSet("Targeter")->getFrame(cursorFrames[_targeterFrame]));
 	targetCursor->blit(_srfTargeter);
 
 	if (++_targeterFrame == TARGET_FRAMES)

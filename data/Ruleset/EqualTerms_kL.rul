@@ -39,7 +39,7 @@ items:
     bigSprite: 4
     floorSprite: 4
     bulletSprite: 1
-    fireHitAni: 26
+    fireHitAni: 0
     fireSoundHit: 22
     power: 30
     damageType: 1
@@ -81,7 +81,7 @@ items:
     bigSprite: 503
     floorSprite: 503
     bulletSprite: 15
-    fireHitAni: 26
+    fireHitAni: 0
     fireSoundHit: 22
     power: 42
     damageType: 1
@@ -128,7 +128,7 @@ items:
     floorSprite: 505
 #    handSprite: 32 #stock, AC
     bulletSprite: 14
-    fireHitAni: 26
+    fireHitAni: 0
     fireSoundHit: 22
     power: 25
     damageType: 1
@@ -176,7 +176,7 @@ items:
     bigSprite: 507
     floorSprite: 507
     bulletSprite: 2
-    fireHitAni: 26
+    fireHitAni: 0
     fireSoundHit: 22
     power: 45
     damageType: 1
@@ -219,7 +219,7 @@ items:
     floorSprite: 509
 #    handSprite: 32 #stock, AC
     bulletSprite: 15
-    fireHitAni: 26
+    fireHitAni: 0
     fireSoundHit: 22
     power: 55
     damageType: 1
@@ -263,7 +263,7 @@ items:
     bigSprite: 511
     floorSprite: 511
     bulletSprite: 15
-    fireHitAni: 26
+    fireHitAni: 0
     fireSoundHit: 13
     power: 83
     damageType: 1
@@ -311,7 +311,7 @@ items:
     bigSprite: 513
     floorSprite: 513
     bulletSprite: 2
-    fireHitAni: 26
+    fireHitAni: 0
     fireSoundHit: 13
     power: 39
     damageType: 1
@@ -381,7 +381,7 @@ items:
     bigSprite: 516
     floorSprite: 516
     bulletSprite: 2
-    fireHitAni: 26
+    fireHitAni: 0
     fireSoundHit: 22
     power: 16
     damageType: 1
@@ -398,7 +398,7 @@ items:
     bigSprite: 517
     floorSprite: 517
     bulletSprite: 2
-    fireHitAni: 26
+    fireHitAni: 0
     fireSoundHit: 22
     power: 26
     damageType: 1
@@ -417,7 +417,7 @@ items:
     bigSprite: 518
     floorSprite: 518
     bulletSprite: 2
-    fireHitAni: 26
+    fireHitAni: 0
     fireSoundHit: 22
     power: 36
     damageType: 1

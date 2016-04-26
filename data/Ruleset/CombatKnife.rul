@@ -45,17 +45,6 @@ extraSprites:
     subY: 40
     files:
       144: Resources/CombatKnife/HandCombatKnife.png
-  - type: ClawTooth
-    width: 128
-    height: 40
-    subX: 32
-    subY: 40
-    files:
-      4: Resources/aniMelee/AttackMelee_luna.png
-extraSounds:
-  - type: BATTLE.CAT
-    files:
-      67: Resources/CombatKnife/KnifeSlice.wav
 extraStrings:
   - type: en-US
     strings:

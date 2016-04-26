@@ -30,7 +30,7 @@ items:
     floorSprite: 88
     bulletSprite: 14
     fireSoundHit: 22
-    fireHitAni: 26
+    fireHitAni: 0
     power: 26
     damageType: 1
     fullClip: 30
