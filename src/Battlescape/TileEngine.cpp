@@ -372,7 +372,7 @@ bool TileEngine::calcFov(
 //	}
 
 	bool
-		spot		  (false),
+		spotByPlayer  (false),
 		spotByHostile (false);
 
 //	const size_t antecedentOpponents (unit->getHostileUnitsThisTurn().size());
@@ -488,7 +488,7 @@ bool TileEngine::calcFov(
 									case FACTION_PLAYER:
 										if (spottedUnit->getUnitVisible() == false)
 										{
-											spot = true; // NOTE: This will halt a player's moving-unit when spotting a new Civie even.
+											spotByPlayer = true; // NOTE: This will halt a player's moving-unit when spotting a new Civie even.
 											spottedUnit->setUnitVisible();
 										}
 //										spottedUnit->getTile()->setTileVisible(); // Used only by sneakyAI.
@@ -508,7 +508,7 @@ bool TileEngine::calcFov(
 
 											if (soundId != -1
 												&& preBattle == false
-												&& spot == true) // play aggro-sound if non-MC'd [huh] xCom unit spots a not-previously-visible hostile.
+												&& spotByPlayer == true) // play aggro-sound if non-MC'd [huh] xCom unit spots a not-previously-visible hostile.
 //												&& unit->getHostileUnitsThisTurn().size() > antecedentOpponents)
 //												&& unit->getOriginalFaction() == FACTION_PLAYER	// NOTE: Mind-control zhing clashes with aggroSound; put
 											{													// that back to prevent it or pass in isMC-reveal somehow.
@@ -697,7 +697,7 @@ bool TileEngine::calcFov(
 	switch (unit->getFaction())
 	{
 		case FACTION_PLAYER:
-			return spot;
+			return spotByPlayer;
 
 		default:
 		case FACTION_HOSTILE:

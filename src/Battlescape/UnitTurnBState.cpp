@@ -151,18 +151,20 @@ void UnitTurnBState::init()
  */
 void UnitTurnBState::think()
 {
+	bool pop;
+
 	if (_chargeTu == true
 		&& _action.targeting == false
 		&& _unit->getFaction() != FACTION_PLAYER // <- no Reserve tolerance.
 		&& _parent->checkReservedTu(_unit, _tu) == false)
 	{
 		_unit->setUnitStatus(STATUS_STANDING);
-		_unit->clearTurnDirection();
-		_parent->popState();
+		pop = true;
 	}
 	else if (_unit->spendTimeUnits(_tu) == true)
 	{
-		_unit->turn(_turret); // -> STATUS_STANDING if done
+		_unit->turn(_turret); // done-> STATUS_STANDING
+
 		_unit->flagCache();
 		_parent->getMap()->cacheUnit(_unit);
 
@@ -178,13 +180,13 @@ void UnitTurnBState::think()
 						_unit->setUnitStatus(STATUS_STANDING);
 
 						if (_action.targeting == true)
-							_unit->setStopShot(); // NOTE: keep this for Faction_Player only till I figure out the AI better.
+							_unit->setStopShot(); // NOTE: keep this for Faction_Player only till I intuit the AI better.
 					break;
 
 				case FACTION_HOSTILE:
 				case FACTION_NEUTRAL:
 					if (_action.type == BA_NONE && spot == true)
-//						&& _unit->getHostileUnitsThisTurn().size() > antecedentOpponents) // NOTE: This should be roughly the same as 'spot'.
+//						&& _unit->getHostileUnitsThisTurn().size() > antecedentOpponents) // NOTE: This should be the same as 'spot'.
 					{
 						_unit->setUnitStatus(STATUS_STANDING);
 					}
@@ -194,12 +196,11 @@ void UnitTurnBState::think()
 		switch (_unit->getUnitStatus())
 		{
 			case STATUS_STANDING:
-				_unit->clearTurnDirection();
-				_parent->popState();
+				pop = true;
 				break;
 
-			case FACTION_HOSTILE:
-			case FACTION_NEUTRAL:
+			default:
+				pop = false;
 				if (_chargeTu == true && _parent->getBattleSave()->getSide() == FACTION_PLAYER)
 				{
 					_parent->getBattlescapeState()->hotSqrsClear();
@@ -211,6 +212,11 @@ void UnitTurnBState::think()
 	{
 		_action.result = "STR_NOT_ENOUGH_TIME_UNITS";
 		_unit->setUnitStatus(STATUS_STANDING);
+		pop = true;
+	}
+
+	if (pop == true)
+	{
 		_unit->clearTurnDirection();
 		_parent->popState();
 	}

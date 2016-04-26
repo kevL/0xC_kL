@@ -48,7 +48,7 @@ private:
 
 
 	public:
-		/// Creates a new UnitTurnBState class
+		/// Creates a UnitTurnBState.
 		UnitTurnBState(
 				BattlescapeGame* const parent,
 				BattleAction action,
