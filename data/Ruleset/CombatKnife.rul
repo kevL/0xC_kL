@@ -12,7 +12,7 @@ items:
     handSprite: 144
     meleeSound: 39
     meleeSoundHit: 67
-    meleeAni: 4
+    meleeAni: 4 #sword_luna
     meleeAniHit: 0
     power: 30
     strengthApplied: true

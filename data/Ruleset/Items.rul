@@ -687,6 +687,7 @@ items:
     floorSprite: 26
     handSprite: 80
     meleeSound: 54
+    meleeAni: 24 #sword_orange
     meleeAniHit: 0
     power: 65
     damageType: 6
@@ -1360,7 +1361,7 @@ items:
     floorSprite: 31
     handSprite: 104
     meleeSound: 48
-    meleeAni: 8
+    meleeAni: 20 #reaper_jaws
     meleeAniHit: 0
     fullClip: -1
     strengthApplied: true
@@ -1379,7 +1380,7 @@ items:
     floorSprite: 31
     handSprite: 104
     meleeSound: 49
-#    meleeAni: #not implemented yet
+    meleeAni: 12 #claws_green
     meleeAniHit: 0
     fullClip: -1
     strengthApplied: true
@@ -1421,7 +1422,7 @@ items:
     floorSprite: 31
     handSprite: 104
     meleeSound: 50
-    meleeAni: 8
+    meleeAni: 8 #claws_red
     meleeAniHit: 0
     strengthApplied: true
     damageType: 7
@@ -1461,7 +1462,7 @@ items:
     weight: 3
     bigSprite: -5
     meleeSound: 48
-#    meleeAni: #not implemented yet
+    meleeAni: 16 #claws_white
     meleeAniHit: 0
     strengthApplied: true
     damageType: 7
@@ -1634,8 +1635,9 @@ items:
     bigSprite: 56 #temp: Elerium
     meleeSound: 39 # swish
     meleeSoundHit: 38 # thock
+    meleeAni: 0 #sword
     meleeAniHit: 0
-    power: 18
+    power: 17
     strengthApplied: true
     damageType: 6
     blastRadius: -2 #to bypass auto-explRadius-calc for DT_STUN

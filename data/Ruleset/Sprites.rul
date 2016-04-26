@@ -188,9 +188,13 @@ extraSprites:
     subX: 32
     subY: 40
     files:
-      0: Resources/aniMelee/Sword.png
-      4: Resources/aniMelee/AttackMelee_luna.png
-      8: Resources/aniMelee/Claws.png
+      0: Resources/aniMelee/sword.png
+      4: Resources/aniMelee/sword_luna.png
+      8: Resources/aniMelee/claws_red.png
+      12: Resources/aniMelee/claws_green.png
+      16: Resources/aniMelee/claws_white.png
+      20: Resources/aniMelee/reaper_jaws.png
+      24: Resources/aniMelee/sword_orange.png
   - type: MEDIBITS.DAT
     width: 312
     height: 58
