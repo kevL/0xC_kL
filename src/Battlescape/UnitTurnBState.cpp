@@ -121,10 +121,11 @@ void UnitTurnBState::init()
 					&& _action.strafe == false			// but not swivelling turret
 					&& _action.targeting == false)		// and not taking a shot at something...
 				{
-					if (_unit->getMoveTypeUnit() == MT_FLY)
-						_tu = 2;						// hover vehicles cost 2 per facing change
-					else
-						_tu = 3;						// large tracked vehicles cost 3 per facing change
+					switch (_unit->getMoveTypeUnit())
+					{
+						case MT_FLY: _tu = 2; break;	// hover vehicles cost 2 per facing change
+						default:	 _tu = 3;			// large tracked vehicles cost 3 per facing change
+					}
 				}
 				else
 					_tu = 1;							// one tu per facing change
@@ -201,7 +202,7 @@ void UnitTurnBState::think()
 
 			default:
 				pop = false;
-				if (_chargeTu == true && _parent->getBattleSave()->getSide() == FACTION_PLAYER)
+				if (_chargeTu == true && _unit->getFaction() /*_parent->getBattleSave()->getSide()*/ == FACTION_PLAYER)
 				{
 					_parent->getBattlescapeState()->hotSqrsClear();
 					_parent->getBattlescapeState()->hotSqrsUpdate();
