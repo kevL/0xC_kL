@@ -2124,17 +2124,10 @@ bool BattleUnit::getUnitVisible() const
  * don't confuse either of these with the '_visible' to Player flag.
  * @note Called from TileEngine::calcFov().
  * @param unit - pointer to a seen BattleUnit
+ * @return, true if a hostile unit is freshly spotted on the current turn
  */
-void BattleUnit::addToHostileUnits(BattleUnit* const unit)
+bool BattleUnit::addToHostileUnits(BattleUnit* const unit)
 {
-	if (std::find(
-			_hostileUnitsThisTurn.begin(),
-			_hostileUnitsThisTurn.end(),
-			unit) == _hostileUnitsThisTurn.end())
-	{
-		_hostileUnitsThisTurn.push_back(unit); // <- don't think I even use this anymore .... Maybe for AI .... doggie barks.
-	}
-
 	if (std::find(
 			_hostileUnits.begin(),
 			_hostileUnits.end(),
@@ -2142,6 +2135,17 @@ void BattleUnit::addToHostileUnits(BattleUnit* const unit)
 	{
 		_hostileUnits.push_back(unit);
 	}
+
+	bool spot (false);
+	if (std::find(
+			_hostileUnitsThisTurn.begin(),
+			_hostileUnitsThisTurn.end(),
+			unit) == _hostileUnitsThisTurn.end())
+	{
+		_hostileUnitsThisTurn.push_back(unit);	// <- don't think I even use this anymore ....
+		spot = true;							// Maybe for AI .... doggie barks. unseen blocking units ...
+	}
+	return spot;
 }
 
 /**

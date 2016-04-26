@@ -355,7 +355,7 @@ void TileEngine::addLight( // private.
  */
 bool TileEngine::calcFov(
 		BattleUnit* const unit,
-		bool reveal) const
+		bool revealTiles) const
 {
 	//Log(LOG_INFO) << "calcFoV id-" << unit->getId();
 //	return false; // TEST.
@@ -371,9 +371,11 @@ bool TileEngine::calcFov(
 //		unit->getTile()->setDiscovered(true, 2);
 //	}
 
-	bool ret (false);
+	bool
+		spot		  (false),
+		spotByHostile (false);
 
-	const size_t antecedentOpponents (unit->getHostileUnitsThisTurn().size());
+//	const size_t antecedentOpponents (unit->getHostileUnitsThisTurn().size());
 
 	int dir;
 	if (unit->getTurretType() != TRT_NONE) // && Options::battleStrafe == true
@@ -409,7 +411,6 @@ bool TileEngine::calcFov(
 	Position
 		posUnit (unit->getPosition()),
 		posTest,
-		pos,
 		posTrj;
 
 	const Tile* tileTest;
@@ -481,13 +482,13 @@ bool TileEngine::calcFov(
 								switch (unit->getFaction())
 								{
 									default:
-									case FACTION_NEUTRAL:
+									case FACTION_NEUTRAL: // duh. help me ... BOOM!
 										break;
 
 									case FACTION_PLAYER:
 										if (spottedUnit->getUnitVisible() == false)
 										{
-											ret = true; // NOTE: This will halt a player's moving-unit when spotting a new Civie even.
+											spot = true; // NOTE: This will halt a player's moving-unit when spotting a new Civie even.
 											spottedUnit->setUnitVisible();
 										}
 //										spottedUnit->getTile()->setTileVisible(); // Used only by sneakyAI.
@@ -506,9 +507,9 @@ bool TileEngine::calcFov(
 //											unit->addToVisibleTiles(spottedUnit->getTile());
 
 											if (soundId != -1
-//												&& ret == true // play aggro sound if non-MC'd xCom unit spots a not-previously-visible hostile.
 												&& preBattle == false
-												&& unit->getHostileUnitsThisTurn().size() > antecedentOpponents)
+												&& spot == true) // play aggro-sound if non-MC'd [huh] xCom unit spots a not-previously-visible hostile.
+//												&& unit->getHostileUnitsThisTurn().size() > antecedentOpponents)
 //												&& unit->getOriginalFaction() == FACTION_PLAYER	// NOTE: Mind-control zhing clashes with aggroSound; put
 											{													// that back to prevent it or pass in isMC-reveal somehow.
 												const BattlescapeGame* const battle (_battleSave->getBattleGame());
@@ -522,7 +523,7 @@ bool TileEngine::calcFov(
 									case FACTION_HOSTILE:
 										if (spottedUnit->getFaction() != FACTION_HOSTILE)
 										{
-											unit->addToHostileUnits(spottedUnit); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
+											spotByHostile = unit->addToHostileUnits(spottedUnit); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
 //											unit->addToVisibleTiles(spottedUnit->getTile());
 
 											if (_battleSave->getSide() == FACTION_HOSTILE)
@@ -534,30 +535,26 @@ bool TileEngine::calcFov(
 							}
 						}
 
-						if (reveal == true && unit->getFaction() == FACTION_PLAYER) // reveal extra tiles ->>
+						if (revealTiles == true && unit->getFaction() == FACTION_PLAYER) // reveal extra tiles ->>
 						{
 							// this sets tiles to discovered if they are in FoV -
 							// Tile visibility is not calculated in voxel-space but in tile-space;
 							// large units have "4 pair of eyes"
 							unitSize = unit->getArmor()->getSize();
 							for (int
-									size_x = 0;
-									size_x != unitSize;
-									++size_x)
+									dX = 0;
+									dX != unitSize;
+									++dX)
 							{
 								for (int
-										size_y = 0;
-										size_y != unitSize;
-										++size_y)
+										dY = 0;
+										dY != unitSize;
+										++dY)
 								{
 									trj.clear();
 
-									pos = posUnit + Position(
-															size_x,
-															size_y,
-															0);
 									blockType = plotLine(
-														pos,
+														posUnit + Position(dX,dY, 0),
 														posTest,
 														true,
 														&trj,
@@ -700,32 +697,43 @@ bool TileEngine::calcFov(
 	switch (unit->getFaction())
 	{
 		case FACTION_PLAYER:
-			return ret;
+			return spot;
 
 		default:
 		case FACTION_HOSTILE:
 		case FACTION_NEUTRAL:
-			if (unit->getHostileUnits().empty() == false // <- not so sure that this one is needed.
-				&& unit->getHostileUnitsThisTurn().size() > antecedentOpponents)
-			{
-				return true;
-			}
+			return spotByHostile;
+//			if (//unit->getHostileUnits().empty() == false &&					// <- not so sure that this one is needed.
+//				unit->getHostileUnitsThisTurn().size() > antecedentOpponents)	// because it seems unlikely that a hostileUnitThisTurn can be added
+//			{																	// without it being currently in sight. As per this very function.
+//				return true;
+//			}
 	}
-	return false;
+//	return false;
 }
 
 /**
- * Calculates FoV of all units within range of a specified Position.
+ * Calculates FoV of all conscious units within range of a specified Position.
  * @note Used when a unit is walking or terrain has changed which can reveal
- * unseen units and/or parts of terrain.
- * @param pos		- reference the position of the changed terrain
- * @param spotSound	- true to play aggro-sound (default false)
- * @param reveal	- true to reveal Tiles (default true)
+ * unseen units and/or parts of terrain. Spotsound triggers:
+ * - convert unit
+ * - kneel click
+ * - hit changes unit/terrain
+ * - door opened
+ * - psi-control
+ * - unit dies
+ * - fallBstate
+ * - walkBstate end
+ * - walkBstate post-path
+ * - unit revives
+ * @param pos			- reference to the position of the changed unit/terrain
+ * @param spotSound		- true to play aggro-sound (default false)
+ * @param revealTiles	- true to reveal Tiles (default false)
  */
 void TileEngine::calcFovPos(
 		const Position& pos,
 		bool spotSound,
-		bool reveal)
+		bool revealTiles)
 {
 	_spotSound = spotSound;
 	for (std::vector<BattleUnit*>::const_iterator
@@ -733,17 +741,26 @@ void TileEngine::calcFovPos(
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		if (distSqr(pos, (*i)->getPosition(), false) <= SIGHTDIST_TSp_Sqr) // +1 for ...
-			calcFov(*i, reveal);
+		if ((*i)->getTile() != nullptr // the BattleUnit must be conscious.
+			&& distSqr(pos, (*i)->getPosition(), false) <= SIGHTDIST_TSp_Sqr) // +1 for ...
+		{
+			calcFov(*i, revealTiles);
+		}
 	}
 	_spotSound = true;
 }
 
 /**
  * Calculates FoV of all conscious units on the battlefield.
+ * @note Spotsound triggers:
+ * - drop an item
+ * - explosion changes unit/terrain
  * @param spotSound - true to play aggro sound (default false)
+ * @param revealTiles	- true to reveal Tiles (default false)
  */
-void TileEngine::calcFovAll(bool spotSound)
+void TileEngine::calcFovAll(
+		bool spotSound,
+		bool revealTiles)
 {
 	_spotSound = spotSound;
 	for (std::vector<BattleUnit*>::const_iterator
@@ -752,7 +769,7 @@ void TileEngine::calcFovAll(bool spotSound)
 			++i)
 	{
 		if ((*i)->getTile() != nullptr) // the BattleUnit must be conscious.
-			calcFov(*i);
+			calcFov(*i, revealTiles);
 	}
 	_spotSound = true;
 }
@@ -2136,7 +2153,7 @@ void TileEngine::hit(
 	calculateSunShading();		// roofs could have been destroyed
 	calculateTerrainLighting();	// fires could have been started
 //	calculateUnitLighting();	// units could have collapsed <- done in UnitDieBState
-	calcFovPos(posTarget, true);
+	calcFovPos(posTarget, true, true);
 }
 
 /**
@@ -2858,7 +2875,7 @@ void TileEngine::explode(
 				case BT_GRENADE:
 				case BT_PROXYGRENADE:
 				case BT_FLARE:
-					(*i)->setFuse(-1);
+					(*i)->setFuse(-1); // TODO: Grenades and proxies EXPLODE.
 			}
 		}
 	}
@@ -4804,7 +4821,9 @@ DoorResult TileEngine::unitOpensDoor(
 					//Log(LOG_INFO) << "RMB -> calcFoV";
 					_battleSave->getBattleGame()->checkProxyGrenades(unit);
 
-					calcFovPos(unit->getPosition(), true); // calculate FoV for everyone within sight-range, incl. unit.
+					calcFovPos(
+							unit->getPosition(),
+							true, true); // calculate FoV for everyone within sight-range, incl. unit.
 
 					// look from the other side, may need to check reaction fire
 					// This seems redundant but hey maybe it removes now-unseen units from a unit's visible-units vector ....
@@ -6373,7 +6392,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 					calculateUnitLighting();
 					calcFovPos(
 							victim->getPosition(),
-							true); // try no tile-reveal. Nope: Do Tile-reveal.
+							true, true);
 
 					// if all units from either faction are mind controlled - auto-end the mission.
 //						if (Options::battleAllowPsionicCapture == true && Options::battleAutoEnd == true && _battleSave->getSide() == FACTION_PLAYER)

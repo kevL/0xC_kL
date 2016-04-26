@@ -594,36 +594,35 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 	}
 
 	int
-		mapDataId,
-		mapDataSetId;
-	const int parts (static_cast<int>(Tile::PARTS_TILE));
+		dataId,
+		dataSetId;
 	MapDataType partType;
 
+	Tile* tile;
 	for (size_t
 			i = 0u;
 			i != _qtyTilesTotal;
 			++i)
 	{
-		for (int
-				j = 0;
-				j != parts;
+		for (size_t
+				j = 0u;
+				j != Tile::PARTS_TILE;
 				++j)
 		{
 			partType = static_cast<MapDataType>(j);
-			_tiles[i]->getMapData(
-								&mapDataId,
-								&mapDataSetId,
-								partType);
 
-			if (mapDataId != -1
-				&& mapDataSetId != -1)
-			{
-				_tiles[i]->setMapData(
-								_mapDataSets[static_cast<size_t>(mapDataSetId)]->getRecords()->at(static_cast<size_t>(mapDataId)),
-								mapDataId,
-								mapDataSetId,
-								partType);
-			}
+			tile = _tiles[i];
+			tile->getMapData(
+						&dataId,
+						&dataSetId,
+						partType);
+
+			if (dataId != -1 && dataSetId != -1)
+				tile->setMapData(
+							_mapDataSets[static_cast<size_t>(dataSetId)]->getRecords()->at(static_cast<size_t>(dataId)),
+							dataId,
+							dataSetId,
+							partType);
 		}
 	}
 
@@ -632,7 +631,6 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 	_te->calculateSunShading();
 	_te->calculateTerrainLighting();
 	_te->calculateUnitLighting();
-//	_te->calcFovAll(); // -> moved to BattlescapeGame::init()
 }
 
 /**
@@ -1328,12 +1326,12 @@ bool SavedBattleGame::endFactionTurn()
 		}
 	}
 
-	bool ret;
+	bool playerTurn;
 	switch (_side)
 	{
 		case FACTION_PLAYER: // end of Player turn.
 			_side = FACTION_HOSTILE;
-			ret = false;
+			playerTurn = false;
 
 			if (_selectedUnit != nullptr
 				&& _selectedUnit->isMindControlled() == false)
@@ -1351,18 +1349,18 @@ bool SavedBattleGame::endFactionTurn()
 		case FACTION_HOSTILE: // end of Alien turn.
 			_side = FACTION_NEUTRAL;
 			if (selectNextFactionUnit() == nullptr)
-				ret = true;
+				playerTurn = true;
 			else
-				ret = false;
+				playerTurn = false;
 			break;
 
 		default:
 		case FACTION_NEUTRAL: // end of Civilian turn.
 			//Log(LOG_INFO) << ". end Neutral phase -> PLAYER";
-			ret = true;
+			playerTurn = true;
 	}
 
-	if (ret == true)
+	if (playerTurn == true)
 		prepPlayerTurn();
 
 	// ** _side HAS ADVANCED to next faction after here!!! ** //
@@ -1452,7 +1450,7 @@ bool SavedBattleGame::endFactionTurn()
 	if (_side != FACTION_PLAYER)
 		selectNextFactionUnit();
 
-	return ret;
+	return playerTurn;
 }
 
 /**
@@ -2177,7 +2175,9 @@ void SavedBattleGame::reviveUnit(
 			unit->setRevived();
 
 			_te->calculateUnitLighting();
-			_te->calcFovPos(unit->getPosition(), true);
+			_te->calcFovPos(
+						unit->getPosition(),
+						true);
 			deleteBody(unit);
 
 			_battleState->hotWoundsRefresh();

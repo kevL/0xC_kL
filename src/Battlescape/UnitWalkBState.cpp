@@ -67,7 +67,7 @@ UnitWalkBState::UnitWalkBState(
 		_battleSave(parent->getBattleSave()),
 		_falling(false),
 		_preStepTurn(false),
-		_antecedentOpponents(0),
+//		_antecedentOpponents(0),
 		_preStepCost(0),
 		_tileSwitchDone(false),
 		_isVisible(false),
@@ -108,7 +108,7 @@ void UnitWalkBState::init()
 	}
 
 	// This is used only for aLiens:
-	_antecedentOpponents = _unit->getHostileUnitsThisTurn().size();
+//	_antecedentOpponents = _unit->getHostileUnitsThisTurn().size();
 
 	_pf->setPathingUnit(_unit);
 	_dirStart = _pf->getStartDirection();
@@ -881,7 +881,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		}
 	} // debug_end. */
 
-	_te->calcFovPos(pos, true, false); // NOTE: This should be done only for non-unit-faction units probably - ie RF.
+	_te->calcFovPos(pos, true); // NOTE: This should be done only for non-unit-faction units probably - ie RF.
 
 	if (_parent->checkProxyGrenades(_unit) == true) // Put checkForSilacoid() here!
 	{
@@ -947,7 +947,6 @@ void UnitWalkBState::doStatusTurn() // private.
 			_unit->setHiding(false);
 
 		_unit->setUnitStatus(STATUS_STANDING);
-
 		abortState(false);
 	}
 	else if (_parent->getBattleSave()->getSide() == FACTION_PLAYER
@@ -1163,10 +1162,11 @@ bool UnitWalkBState::visForUnits() const // private.
 
 	if (_unit->getFaction() != FACTION_PLAYER)
 	{
-		ret = ret
-		   && _unit->getHostileUnitsThisTurn().size() > _antecedentOpponents
-		   && _action.desperate == false
-		   && _unit->getChargeTarget() == nullptr;
+//		ret = ret
+//		   && _unit->getHostileUnitsThisTurn().size() > _antecedentOpponents
+//		   && _action.desperate == false
+//		   && _unit->getChargeTarget() == nullptr;
+		ret &= (_action.desperate == false && _unit->getChargeTarget() == nullptr);
 	}
 	return ret;
 }

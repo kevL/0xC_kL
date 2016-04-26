@@ -166,39 +166,45 @@ void UnitTurnBState::think()
 		_unit->flagCache();
 		_parent->getMap()->cacheUnit(_unit);
 
-		const size_t antecedentOpponents (_unit->getHostileUnitsThisTurn().size());
+//		const size_t antecedentOpponents (_unit->getHostileUnitsThisTurn().size());
 		const bool spot (_parent->getTileEngine()->calcFov(_unit));
 
 		if (_chargeTu == true)
 		{
-			if (_unit->getFaction() == FACTION_PLAYER)
+			switch (_unit->getFaction())
 			{
-				if (spot == true)
+				case FACTION_PLAYER:
+					if (spot == true)
+						_unit->setUnitStatus(STATUS_STANDING);
+
+						if (_action.targeting == true)
+							_unit->setStopShot(); // NOTE: keep this for Faction_Player only till I figure out the AI better.
+					break;
+
+				case FACTION_HOSTILE:
+				case FACTION_NEUTRAL:
+					if (_action.type == BA_NONE && spot == true)
+//						&& _unit->getHostileUnitsThisTurn().size() > antecedentOpponents) // NOTE: This should be roughly the same as 'spot'.
+					{
+						_unit->setUnitStatus(STATUS_STANDING);
+					}
+			}
+		}
+
+		switch (_unit->getUnitStatus())
+		{
+			case STATUS_STANDING:
+				_unit->clearTurnDirection();
+				_parent->popState();
+				break;
+
+			case FACTION_HOSTILE:
+			case FACTION_NEUTRAL:
+				if (_chargeTu == true && _parent->getBattleSave()->getSide() == FACTION_PLAYER)
 				{
-					_unit->setUnitStatus(STATUS_STANDING);
-
-					// keep this for Faction_Player only till I figure out the AI better:
-					if (_action.targeting == true)
-						_unit->setStopShot();
+					_parent->getBattlescapeState()->hotSqrsClear();
+					_parent->getBattlescapeState()->hotSqrsUpdate();
 				}
-			}
-			else if (_action.type == BA_NONE
-				&& _unit->getHostileUnitsThisTurn().size() > antecedentOpponents)
-			{
-				_unit->setUnitStatus(STATUS_STANDING);
-			}
-		}
-
-		if (_unit->getUnitStatus() == STATUS_STANDING)
-		{
-			_unit->clearTurnDirection();
-			_parent->popState();
-		}
-		else if (_chargeTu == true
-			&& _parent->getBattleSave()->getSide() == FACTION_PLAYER)
-		{
-			_parent->getBattlescapeState()->hotSqrsClear();
-			_parent->getBattlescapeState()->hotSqrsUpdate();
 		}
 	}
 	else

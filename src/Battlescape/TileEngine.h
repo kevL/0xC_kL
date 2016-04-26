@@ -153,14 +153,16 @@ private:
 		/// Calculates Field of View of a single BattleUnit.
 		bool calcFov(
 				BattleUnit* const unit,
-				bool reveal = true) const;
-		/// Calculates Field of View of all units within range of a specified Position.
+				bool revealTiles = true) const;
+		/// Calculates Field of View of all conscious units within range of a specified Position.
 		void calcFovPos(
 				const Position& pos,
 				bool spotSound = false,
-				bool reveal = true);
+				bool revealTiles = false);
 		/// Calculates Field of View of all conscious units on the battlefield.
-		void calcFovAll(bool spotSound = false);
+		void calcFovAll(
+				bool spotSound = false,
+				bool revealTiles = false);
 
 		/// Checks visibility of a BattleUnit to a Tile.
 		bool visible(
@@ -202,13 +204,13 @@ private:
 				bool autoSpot = true);
 		/// Creates a vector of units that can spot this unit.
 		std::vector<BattleUnit*> getSpottingUnits(const BattleUnit* const unit);
-		/// Given a vector of spotters, and a unit, picks the spotter with the highest reaction score.
+		/// Given a vector of spotters, and a unit, picks the spotter with the highest reaction-score.
 		BattleUnit* getReactor(
 				std::vector<BattleUnit*> spotters,
 				BattleUnit* const defender,
 				const int tuSpent = 0,
 				bool autoSpot = true) const;
-		/// Fires off a reaction-shot if possible.
+		/// Fires a reaction-shot if possible.
 		bool reactionShot(
 				BattleUnit* const unit,
 				const BattleUnit* const targetUnit);
@@ -237,12 +239,12 @@ private:
 				BattleUnit* const attacker = nullptr,
 				bool grenade = false,
 				bool defusePulse = false);
-		/// Checks the horizontal blockage of a tile.
+		/// Checks the horizontal blockage of a Tile.
 		int horizontalBlockage(
 				const Tile* const tileStart,
 				const Tile* const tileStop,
 				const DamageType dType) const;
-		/// Checks the vertical blockage of a tile.
+		/// Checks the vertical blockage of a Tile.
 		int verticalBlockage(
 				const Tile* const tileStart,
 				const Tile* const tileStop,
@@ -259,7 +261,7 @@ private:
 				BattleUnit* const unit,
 				const bool rtClick = true,
 				int dir = -1);
-		/// Checks for a door connected to this wall at this position.
+		/// Checks for a door connected to a wall at the specified position.
 /*		bool TileEngine::testAdjacentDoor(
 				Position pos,
 				int part,

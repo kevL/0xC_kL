@@ -55,7 +55,7 @@ private:
 	int
 		_preStepCost,
 		_dirStart;
-	size_t _antecedentOpponents;
+//	size_t _antecedentOpponents;
 
 	BattleUnit* _unit;
 	Camera* _walkCam;

@@ -1183,40 +1183,39 @@ void XcomResourcePack::loadBattlescapeResources()
 }
 
 /**
- * Determines if an image file is an acceptable format for the game.
- * @param extension - image file extension
+ * Determines if an image-file is of an acceptable format for the game.
+ * @param ext - image-file extension
  * @return, true if extension is considered valid
  */
-bool XcomResourcePack::isImageFile(std::string extension)
+bool XcomResourcePack::isImageFile(std::string ext)
 {
 	std::transform(
-				extension.begin(),
-				extension.end(),
-				extension.begin(),
+				ext.begin(),
+				ext.end(),
+				ext.begin(),
 				::toupper);
 
-	return extension == ".BMP"
-		|| extension == ".LBM"
-		|| extension == ".IFF"
-		|| extension == ".PCX"
-		|| extension == ".GIF"
-		|| extension == ".PNG"
-		|| extension == ".TGA"
-		|| extension == ".TIF";
-
-//		|| extension == "TIFF"; // why not .TIFF (because only the last 4 chars are passed in)
-	/* // arbitrary limitation: let's not use these ones (although they're officially supported by sdl)
-	extension == ".ICO"
-	extension == ".CUR"
-	extension == ".PNM"
-	extension == ".PPM"
-	extension == ".PGM"
-	extension == ".PBM"
-	extension == ".XPM"
-	extension == "ILBM"
-	// excluding jpeg to avoid inevitable issues due to compression
-	extension == ".JPG"
-	extension == "JPEG" */
+	return ext == ".BMP"
+		|| ext == ".LBM"
+		|| ext == ".IFF"
+		|| ext == ".PCX"
+		|| ext == ".GIF"
+		|| ext == ".PNG"
+		|| ext == ".TGA"
+		|| ext == ".TIF";
+//		|| ext == "TIFF"; // why not .TIFF -- because only the last 4 chars are passed in
+		// arbitrary limitation: let's not use these ones although they're officially supported by SDL
+//		|| ext == ".ICO"
+//		|| ext == ".CUR"
+//		|| ext == ".PNM"
+//		|| ext == ".PPM"
+//		|| ext == ".PGM"
+//		|| ext == ".PBM"
+//		|| ext == ".XPM"
+//		|| ext == "ILBM"
+		// excluding jpeg to avoid inevitable issues due to compression
+//		|| ext == ".JPG"
+//		|| ext == "JPEG"
 }
 
 }

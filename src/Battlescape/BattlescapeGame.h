@@ -83,7 +83,7 @@ enum DropType
 struct BattleAction
 {
 	bool
-		desperate, // ignoring newly-spotted units
+		desperate, // ignore any newly-spotted units
 		finalAction,
 		dash,
 //		pauseAfterShot,
@@ -208,14 +208,14 @@ private:
 //		_endTurnProcessed,
 		_endTurnRequested,
 		_executeProgress,
-		_firstInit,
+		_init,
 		_playedAggroSound,
 		_playerPanicHandled,
 		_shotgunProgress;
 	int _AIActionCounter;
 
-	// SoldierDiary killStat info ->
-	std::string
+
+	std::string // SoldierDiary killStat info ->
 		_killStatRace,
 		_killStatRank,
 		_killStatWeapon,
@@ -240,11 +240,11 @@ private:
 	std::vector<InfoboxDialogState*> _infoboxQueue;
 
 
-	/// Determines whether there are any actions pending for the given unit.
+	/// Checks that there are no actions pending for the specified unit.
 	bool noActionsPending(const BattleUnit* const unit) const;
 	/// Clears the trace-AI markers on all battlefield Tiles.
 	void resetTraceTiles();
-	/// Centers the battlefield camera on a BattleUnit.
+	/// Centers the battlefield Camera on a BattleUnit.
 	void centerOnUnit(
 			const BattleUnit* const unit,
 			bool draw = false) const;

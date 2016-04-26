@@ -19,6 +19,7 @@
 
 #include "CraftInfoState.h"
 
+//#include <cmath>
 //#include <sstream>
 
 #include "CraftArmorState.h"

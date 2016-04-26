@@ -441,7 +441,7 @@ void BattlescapeGenerator::run()
 	_battleSave->getTileEngine()->calculateTerrainLighting();
 	_battleSave->getTileEngine()->calculateUnitLighting();
 
-	_battleSave->getTileEngine()->calcFovAll();
+	_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGame::init(). Are both needed.
 
 	_battleSave->getShuffleUnits()->assign(
 										_battleSave->getUnits()->size(),
@@ -781,7 +781,7 @@ void BattlescapeGenerator::nextStage()
 	_battleSave->getTileEngine()->calculateTerrainLighting();
 	_battleSave->getTileEngine()->calculateUnitLighting();
 
-	_battleSave->getTileEngine()->calcFovAll();
+	_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGame::init(). Are both needed.
 
 	_battleSave->getShuffleUnits()->assign(
 										_battleSave->getUnits()->size(),

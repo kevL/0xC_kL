@@ -499,7 +499,7 @@ private:
 		/// Gets whether the BattleUnit is visible.
 		bool getUnitVisible() const;
 		/// Adds a unit to the BattleUnit's visible and/or recently spotted hostile units.
-		void addToHostileUnits(BattleUnit* const unit);
+		bool addToHostileUnits(BattleUnit* const unit);
 		/// Gets the BattleUnit's list of visible hostile units.
 		std::vector<BattleUnit*>& getHostileUnits();
 		/// Clears visible hostile units.

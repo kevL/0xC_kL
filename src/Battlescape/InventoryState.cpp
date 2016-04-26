@@ -423,7 +423,7 @@ InventoryState::~InventoryState()
 //		if (flarePower > _flarePower)
 //		{
 		te->calculateTerrainLighting();
-		te->calcFovAll(true); // <- done in BattlescapeGame::init() -> but without 'spotSound'
+		te->calcFovAll(true);
 //		}
 
 		_battleSave->getBattleGame()->getMap()->setNoDraw(false);
@@ -487,7 +487,7 @@ void InventoryState::keyRepeat() // private.
 } */
 
 /**
- * Updates all soldier stats when the soldier changes.
+ * Updates displayed stats when the current-unit changes.
  * @note parent BattlescapeState is invalid @ BaseEquip screen
  */
 void InventoryState::init()

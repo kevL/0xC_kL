@@ -92,7 +92,7 @@ BattlescapeGame::BattlescapeGame(
 		_AISecondMove(false),
 		_playedAggroSound(false),
 		_endTurnRequested(false),
-		_firstInit(true),
+		_init(true),
 		_executeProgress(false),
 		_shotgunProgress(false),
 		_killStatMission(0),
@@ -156,10 +156,10 @@ BattlescapeGame::~BattlescapeGame()
 void BattlescapeGame::init()
 {
 	//Log(LOG_INFO) << "bg: init()";
-	if (_firstInit == true)
+	if (_init == true)
 	{
-		_firstInit = false;
-		_battleSave->getTileEngine()->calcFovAll();
+		_init = false;
+		_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGenerator::run() & nextState().
 	}
 }
 
@@ -1634,7 +1634,7 @@ void BattlescapeGame::checkCasualties(
 				break;
 
 			case STATUS_UNCONSCIOUS:
-				if (defender->getHealth() != 0) break; // never send an unconscious unit that hasn't died back to UnitDieBState.
+				if (defender->getHealth() != 0) break; // bypass unconscious units that aren't died yet.
 				// no break;
 
 			default:
@@ -1684,7 +1684,7 @@ void BattlescapeGame::checkCasualties(
 					factionMorale(defender, converted);				// cycle through units and do all faction
 
 					if (defender->getUnitStatus() == STATUS_UNCONSCIOUS || converted == true)
-						defender->instaKill();
+						defender->instaKill(); // never send an unconscious/converted unit through UnitDieBState.
 					else
 					{
 						DamageType dType;

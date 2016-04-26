@@ -407,7 +407,9 @@ void UnitFallBState::think()
 				(*i)->flagCache();
 				_parent->getMap()->cacheUnit(*i);
 
-				_terrain->calcFovPos((*i)->getPosition(), true); // could try no tile-reveal here.
+				_terrain->calcFovPos(
+								(*i)->getPosition(),
+								true, true);
 
 				_parent->checkProxyGrenades(*i);
 				// kL_add: Put checkForSilacoid() here!

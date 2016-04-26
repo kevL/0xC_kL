@@ -101,8 +101,8 @@ class XcomResourcePack
 		/// Loads battlescape-specific resources.
 		void loadBattlescapeResources();
 
-		/// Checks if an extension is a valid image-file.
-		bool isImageFile(std::string extension);
+		/// Checks if an image-file is valid by its extension.
+		bool isImageFile(std::string ext);
 
 		/// Loads a specified music-file.
 /*		Music* loadMusic(
