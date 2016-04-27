@@ -1902,9 +1902,9 @@ bool Pathfinding::isPathPreviewed() const
 /**
  * Checks if large units can fall down a level.
  * @note Wrapper for canFallDown(Tile*).
- * @param tile		- pointer to the current Tile
- * @param unitSize	- the size of the unit
- * @return, true if a large unit on @a tile can fall to a lower level
+ * @param tile		- pointer to a tile
+ * @param unitSize	- size of the unit
+ * @return, true if unit on @a tile can fall to a lower level
  */
 bool Pathfinding::canFallDown( // private
 		const Tile* const tile,
@@ -1929,8 +1929,8 @@ bool Pathfinding::canFallDown( // private
 
 /**
  * Checks if a unit can fall down a level.
- * @param tile - pointer to the current Tile
- * @return, true if a unit on @a tile can fall to a lower level
+ * @param tile - pointer to a tile
+ * @return, true if unit on @a tile can fall to a lower level
  */
 bool Pathfinding::canFallDown(const Tile* const tile) const // private
 {
@@ -2037,8 +2037,8 @@ bool Pathfinding::isZPath() const
 }
 
 /**
- * Gets the current movementType.
- * @return, the currently pathing unit's movementType (MapData.h)
+ * Gets the current movement-type.
+ * @return, the currently pathing unit's MoveType (MapData.h)
  */
 MoveType Pathfinding::getMoveTypePf() const
 {
@@ -2046,9 +2046,9 @@ MoveType Pathfinding::getMoveTypePf() const
 }
 
 /**
- * Tracks TU cost if opening a door.
- * @note Used to conform TU costs in UnitWalkBState.
- * @return, TU cost for opening a specific door
+ * Tracks TU-cost if opening a door.
+ * @note Used to conform TU-costs in UnitWalkBState.
+ * @return, TU-cost for opening a door
  */
 int Pathfinding::getOpenDoor() const
 {
@@ -2068,7 +2068,7 @@ int Pathfinding::getStartDirection()
 }
 
 /**
- * Dequeues the next path direction and returns that direction.
+ * Dequeues the next path-direction and returns that direction.
  * @return, direction where the unit needs to go next, -1 if it's the end of the path
  */
 int Pathfinding::dequeuePath()
@@ -2083,7 +2083,7 @@ int Pathfinding::dequeuePath()
 }
 
 /**
- * Gets a reference to the current path.
+ * Gets a read-only reference to the current path.
  * @return, reference to a vector of directions
  */
 const std::vector<int>& Pathfinding::getPath() const
@@ -2092,7 +2092,7 @@ const std::vector<int>& Pathfinding::getPath() const
 }
 
 /**
- * Copies the current path.
+ * Gets a copy of the current path.
  * @return, copy of the path
  */
 std::vector<int> Pathfinding::copyPath() const

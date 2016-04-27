@@ -75,16 +75,16 @@ private:
 
 	std::vector<PathfindingNode> _nodes;
 
-	/// Sets the movement type for the path.
+	/// Sets the movement-type.
 	void setMoveType();
 
-	/// Tries to find a straight line path between two positions.
+	/// Tries to find a straight-line path between two Positions.
 	bool bresenhamPath(
 			const Position& origin,
 			const Position& target,
 			const BattleUnit* const launchTarget);
 //			bool sneak);
-	/// Tries to find a path between two positions.
+	/// Tries to find a path between two Positions.
 	bool aStarPath(
 			const Position& posOrigin,
 			const Position& posTarget,
@@ -92,21 +92,21 @@ private:
 			int maxTuCost);
 //			bool sneak);
 
-	/// Gets the (Pathfinding) node at a (tile) Position.
+	/// Gets the PathfindingNode at a specified Position.
 	PathfindingNode* getNode(const Position& pos);
 
-	/// Determines whether a tile blocks a movementType.
+	/// Determines whether a specified Tile blocks a movement-type.
 	bool isBlocked(
 			const Tile* const tile,
 			const MapDataType partType,
 			const BattleUnit* const launchTarget = nullptr,
 			const BigwallType diagExclusion = BIGWALL_NONE) const;
 
-	/// Determines whether a unit can fall down from this tile.
+	/// Determines whether a unit can fall down from a specified Tile.
 	bool canFallDown(
 			const Tile* const tile,
 			int armorSize) const;
-	/// Determines whether a unit can fall down from this tile.
+	/// Determines whether a unit can fall down from a specified Tile.
 	bool canFallDown(const Tile* const tile) const;
 
 
