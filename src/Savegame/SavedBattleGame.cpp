@@ -1754,7 +1754,7 @@ bool SavedBattleGame::allObjectivesDestroyed() const
 void SavedBattleGame::setCanonicalBattleId()
 {
 	int
-		id = -1,
+		id (-1),
 		idTest;
 
 	for (std::vector<BattleItem*>::const_iterator
@@ -1778,11 +1778,11 @@ int* SavedBattleGame::getCanonicalBattleId()
 }
 
 /**
- * Finds a fitting node where a unit can spawn.
+ * Finds a suitable Node where a specified BattleUnit can spawn.
  * @note bgen.addAlien() uses a fallback mechanism to test assorted nodeRanks.
  * @param unitRank	- rank of the unit attempting to spawn
  * @param unit		- pointer to the unit (to test-set its position)
- * @return, pointer to the chosen node
+ * @return, pointer to the Node or nullptr
  */
 Node* SavedBattleGame::getSpawnNode(
 		int unitRank,
@@ -1824,7 +1824,7 @@ Node* SavedBattleGame::getSpawnNode(
 }
 
 /**
- * Finds a fitting node where a given unit can patrol to.
+ * Finds a suitable Node where a specified BattleUnit can patrol to.
  * @param scout		- true if the unit is scouting
  * @param unit		- pointer to a BattleUnit
  * @param startNode	- pointer to the node that unit is currently at
@@ -1850,7 +1850,7 @@ Node* SavedBattleGame::getPatrolNode(
 		qtyNodes = startNode->getNodeLinks()->size();
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != qtyNodes;
 			++i)
 	{
@@ -1888,7 +1888,7 @@ Node* SavedBattleGame::getPatrolNode(
 
 					if (scout == false
 						&& node->getNodeRank() == Node::nodeRank[static_cast<size_t>(unit->getRankInt())]
-																[0]) // high-class node here.
+																[0u]) // high-class node here.
 					{
 						officerNodes.push_back(node);
 					}
@@ -1904,7 +1904,6 @@ Node* SavedBattleGame::getPatrolNode(
 //			return Sectopod::CTD();
 			return getPatrolNode(true, unit, startNode);
 		}
-
 		return nullptr;
 	}
 
@@ -1914,16 +1913,15 @@ Node* SavedBattleGame::getPatrolNode(
 	{
 		return scoutNodes[RNG::pick(scoutNodes.size())];
 	}
-
 	return officerNodes[RNG::pick(officerNodes.size())];
 }
 
 /**
- * Gets the node considered nearest to a BattleUnit.
- * @note Assume closest node is on same level to avoid strange things.
- * @note The node has to match unit size or the AI will freeze.
+ * Gets a Node considered nearest to a specified BattleUnit.
+ * @note Assume closest node is on same level to avoid strange things. The node
+ * has to match unit-size or the AI will freeze.
  * @param unit - pointer to a BattleUnit
- * @return, the nearest node
+ * @return, the nearest Node
  */
 Node* SavedBattleGame::getNearestNode(const BattleUnit* const unit) const
 {
@@ -1951,12 +1949,11 @@ Node* SavedBattleGame::getNearestNode(const BattleUnit* const unit) const
 			}
 		}
 	}
-
 	return node;
 }
 
 /**
- * Gets if a BattleUnit can use a particular Node.
+ * Gets if a specified BattleUnit can use a specified Node.
  * @note Small units are allowed to use Large nodes and flying units are
  * allowed to use nonFlying nodes.
  * @param node - pointer to a node
@@ -1999,7 +1996,7 @@ void SavedBattleGame::tileVolatiles()
 
 	Tile* tile;
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _qtyTilesTotal;
 			++i)
 	{
@@ -2021,9 +2018,7 @@ void SavedBattleGame::tileVolatiles()
 	{
 		(*i)->decreaseFire();
 
-		var = (*i)->getFire() << 4;
-
-		if (var != 0)
+		if ((var = (*i)->getFire() << 4u) != 0)
 		{
 			for (int
 					dir = 0;
@@ -2032,10 +2027,12 @@ void SavedBattleGame::tileVolatiles()
 			{
 				Position spreadPos;
 				Pathfinding::directionToVector(dir, &spreadPos);
-				tile = getTile((*i)->getPosition() + spreadPos);
 
-				if (tile != nullptr && _te->horizontalBlockage(*i, tile, DT_IN) == 0)
+				if ((tile = getTile((*i)->getPosition() + spreadPos)) != nullptr
+					&& _te->horizontalBlockage(*i, tile, DT_IN) == 0)
+				{
 					tile->ignite(var);
+				}
 			}
 		}
 		else
@@ -2057,7 +2054,6 @@ void SavedBattleGame::tileVolatiles()
 					(*i)->destroyTilepart(O_FLOOR, this);
 				}
 			}
-
 			_te->applyGravity(*i);
 		}
 	}
@@ -2069,26 +2065,29 @@ void SavedBattleGame::tileVolatiles()
 	{
 		(*i)->decreaseSmoke();
 
-		var = (*i)->getSmoke() >> 1;
-
-		if (var > 1)
+		if ((var = (*i)->getSmoke() >> 1u) > 1)
 		{
-			tile = getTile((*i)->getPosition() + Position(0,0,1));
-			if (tile != nullptr && tile->hasNoFloor(*i) == true) // TODO: use verticalBlockage() instead
+			if ((tile = getTile((*i)->getPosition() + Position(0,0,1))) != nullptr
+				&& tile->hasNoFloor(*i) == true) // TODO: Use verticalBlockage() instead.
+			{
 				tile->addSmoke(var / 3);
+			}
 
 			for (int
 					dir = 0;
 					dir != 8;
 					dir += 2)
 			{
-				if (RNG::percent(var * 8) == true)
+				if (RNG::percent(var << 3u) == true)
 				{
 					Position posSpread;
 					Pathfinding::directionToVector(dir, &posSpread);
-					tile = getTile((*i)->getPosition() + posSpread);
-					if (tile != nullptr && _te->horizontalBlockage(*i, tile, DT_SMOKE) == 0)
-						tile->addSmoke(var >> 1);
+
+					if ((tile = getTile((*i)->getPosition() + posSpread)) != nullptr
+						&& _te->horizontalBlockage(*i, tile, DT_SMOKE) == 0)
+					{
+						tile->addSmoke(var >> 1u);
+					}
 				}
 			}
 		}
@@ -2149,12 +2148,12 @@ void SavedBattleGame::reviveUnit(
 		}
 
 		const Tile* const tile (getTile(pos));
-		bool largeUnit (tile != nullptr
-					 && tile->getTileUnit() != nullptr
-					 && tile->getTileUnit() != unit
-					 && tile->getTileUnit()->getArmor()->getSize() == 2);
+		bool isLargeUnit (tile != nullptr
+					   && tile->getTileUnit() != nullptr
+					   && tile->getTileUnit() != unit
+					   && tile->getTileUnit()->getArmor()->getSize() == 2);
 
-		if (placeUnitNearPosition(unit, pos, largeUnit) == true)
+		if (placeUnitNearPosition(unit, pos, isLargeUnit) == true)
 		{
 			unit->setUnitStatus(STATUS_STANDING);
 
@@ -2325,25 +2324,25 @@ bool SavedBattleGame::setUnitPosition(
 
 /**
  * Places a unit on or near a specified Position.
- * @param unit		- pointer to a BattleUnit to place
- * @param pos		- reference to the position around which to attempt to place @a unit
- * @param isLarge	- true if @a unit is large
+ * @param unit			- pointer to a BattleUnit to place
+ * @param pos			- reference to the position around which to attempt to place @a unit
+ * @param isLargeUnit	- true if @a unit is large
  * @return, true if placed
  */
 bool SavedBattleGame::placeUnitNearPosition(
 		BattleUnit* const unit,
 		const Position& pos,
-		bool isLarge) const
+		bool isLargeUnit) const
 {
-	if (unit == nullptr
-		|| setUnitPosition(unit, pos) == true)
-	{
+	if (unit == nullptr)
+		return false;
+
+	if (setUnitPosition(unit, pos) == true)
 		return true;
-	}
 
 	int
 		size1 (0 - unit->getArmor()->getSize()),
-		size2 (isLarge ? 2 : 1),
+		size2 ((isLargeUnit == true) ? 2 : 1),
 		xArray[8u] {    0, size2, size2, size2,     0, size1, size1, size1},
 		yArray[8u] {size1, size1,     0, size2, size2, size2,     0, size1};
 

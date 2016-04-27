@@ -385,7 +385,7 @@ private:
 		bool placeUnitNearPosition(
 				BattleUnit* const unit,
 				const Position& pos,
-				bool isLarge) const;
+				bool isLargeUnit) const;
 
 		/// Adds this unit to the list of falling BattleUnits.
 		bool addFallingUnit(BattleUnit* const unit);
