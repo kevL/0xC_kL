@@ -803,9 +803,9 @@ private:
 		/// Sets the spinPhase of the BattleUnit.
 		void setSpinPhase(int spinphase);
 
-		/// Sets whether to stop a unit from firing/throwing if it spots a new opponent during auto-turning.
+		/// Sets whether to stop a unit from firing/throwing.
 		void setStopShot(bool stop = true);
-		/// Gets whether to stop a unit from firing/throwing if it spots a new opponent during auto-turning.
+		/// Gets whether to stop a unit from firing/throwing.
 		bool getStopShot() const;
 
 		/// Sets the BattleUnit as dashing.

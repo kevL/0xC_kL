@@ -159,7 +159,7 @@ void BattlescapeGame::init()
 	if (_init == true)
 	{
 		_init = false;
-		_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGenerator::run() & nextState(). done.
+		_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGenerator::run() & nextState(). done & done.
 	}
 }
 

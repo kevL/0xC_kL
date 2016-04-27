@@ -178,10 +178,12 @@ void UnitTurnBState::think()
 			{
 				case FACTION_PLAYER:
 					if (spot == true)
+					{
 						_unit->setUnitStatus(STATUS_STANDING);
 
 						if (_action.targeting == true)
 							_unit->setStopShot(); // NOTE: keep this for Faction_Player only till I intuit the AI better.
+					}
 					break;
 
 				case FACTION_HOSTILE:

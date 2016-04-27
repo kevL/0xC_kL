@@ -763,7 +763,7 @@ void InventoryState::btnOkClick(Action*)
 	{
 		_game->popState();
 
-		if (_tuMode == false && _parent != nullptr) // pre-Battle but going into Battlescape!
+		if (_tuMode == false && _parent != nullptr) // pre-battle but going into tactical!
 		{
 			_battleSave->resetUnitsOnTiles();
 
