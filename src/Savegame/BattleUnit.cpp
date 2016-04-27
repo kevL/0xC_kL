@@ -834,9 +834,9 @@ const Position& BattleUnit::getStopPosition() const
 
 /**
  * Sets this BattleUnit's horizontal direction.
- * @note Used for initial unit placement and for positioning soldier when revived.
+ * @note Used for initial unit placement and for positioning revived Soldiers.
  * @param dir		- new horizontal direction
- * @param turret	- true to set the turret direction also
+ * @param turret	- true to set the turret-direction also (default true)
  */
 void BattleUnit::setUnitDirection(
 		int dir,
@@ -4182,7 +4182,8 @@ int BattleUnit::getExposed() const
 }
 
 /**
- * Invalidates cache; call after copying object :(
+ * Invalidates this BattleUnit's sprite-cache.
+ * @note Call after copying object :(
  */
 void BattleUnit::invalidateCache()
 {
@@ -4197,7 +4198,7 @@ void BattleUnit::invalidateCache()
 }
 
 /**
- * Sets the numeric version of a unit's rank.
+ * Sets the numeric version of this BattleUnit's rank.
  * @param rankInt - unit rank (0 = xCom lowest/aLien highest) TODO: straighten that out ...
  */
 void BattleUnit::setRankInt(int rankInt)
@@ -4206,7 +4207,7 @@ void BattleUnit::setRankInt(int rankInt)
 }
 
 /**
- * Gets the numeric version of a unit's rank.
+ * Gets the numeric version of this BattleUnit's rank.
  * @return, unit rank (0 = xCom lowest/aLien highest) TODO: straighten that out ...
  */
 int BattleUnit::getRankInt() const
@@ -4215,8 +4216,8 @@ int BattleUnit::getRankInt() const
 }
 
 /**
- * Derives a numeric unit rank from a string rank.
- * @note This is for xCom-soldier units only - alien ranks are opposite.
+ * Derives the numeric unit-rank from this BattleUnit's string-rank.
+ * @note This is for xCom-soldier units only - alien-ranks are inverted.
  */
 void BattleUnit::deriveRank()
 {
@@ -4233,74 +4234,76 @@ void BattleUnit::deriveRank()
 }
 
 /**
- * Checks if a tile is in a unit's facing-quadrant. Using maths!
- * @param pos - the Position to check against
+ * Checks if a specified Position is in this BattleUnit's facing-quadrant.
+ * @note Using maths!
+ * @param pos - the position to check against
  * @return, whatever the maths decide
  */
 bool BattleUnit::checkViewSector(const Position& pos) const
 {
 	const int
-		dx (pos.x - _pos.x),
-		dy (_pos.y - pos.y);
+		dx ( pos.x - _pos.x),
+		dy (_pos.y -  pos.y);
 
 	switch (_dir)
 	{
 		case 0:
-			if (dx + dy > -1 && dy - dx > -1) return true;
+			if (dx + dy > -1 && dy - dx > -1)	return true;
 			break;
 		case 1:
-			if (dx > -1 && dy > -1) return true;
+			if (dx > -1 && dy > -1)				return true;
 			break;
 		case 2:
-			if (dx + dy > -1 && dy - dx < 1) return true;
+			if (dx + dy > -1 && dy - dx < 1)	return true;
 			break;
 		case 3:
-			if (dy < 1 && dx > -1) return true;
+			if (dy < 1 && dx > -1)				return true;
 			break;
 		case 4:
-			if (dx + dy < 1 && dy - dx < 1) return true;
+			if (dx + dy < 1 && dy - dx < 1)		return true;
 			break;
 		case 5:
-			if (dx < 1 && dy < 1) return true;
+			if (dx < 1 && dy < 1)				return true;
 			break;
 		case 6:
-			if (dx + dy < 1 && dy - dx > -1) return true;
+			if (dx + dy < 1 && dy - dx > -1)	return true;
 			break;
 		case 7:
-			if (dy > -1 && dx < 1) return true;
+			if (dy > -1 && dx < 1)				return true;
 	}
 	return false;
 }
 
 /**
- * Adjusts a unit's stats according to difficulty setting (used by aLiens only).
- * @param diff	- the current game's difficulty setting
- * @param month	- the number of months that have progressed
+ * Adjusts this BattleUnit's stats according to the current difficulty-level
+ * setting (used by aLiens only).
+ * @param diff	- the difficulty-level
+ * @param month	- the quantity of months that have been played
  */
 void BattleUnit::adjustStats(
 		const DifficultyLevel diff,
 		const int month)
 {
-	_stats.tu			+= 4 * diff * _stats.tu / 100; // adjust the unit's stats according to the difficulty level.
-	_stats.stamina		+= 4 * diff * _stats.stamina / 100;
-	_stats.reactions	+= 6 * diff * _stats.reactions / 100;
-	_stats.firing		+= 6 * diff * _stats.firing / 100;
-	_stats.throwing		+= 4 * diff * _stats.throwing / 100;
-	_stats.melee		+= 4 * diff * _stats.melee / 100;
-	_stats.strength		+= 2 * diff * _stats.strength / 100;
-	_stats.psiStrength	+= 4 * diff * _stats.psiStrength / 100;
-	_stats.psiSkill		+= 4 * diff * _stats.psiSkill / 100;
+	_stats.tu			+= 4 * diff * _stats.tu				/ 100;
+	_stats.stamina		+= 4 * diff * _stats.stamina		/ 100;
+	_stats.reactions	+= 6 * diff * _stats.reactions		/ 100;
+	_stats.firing		+= 6 * diff * _stats.firing			/ 100;
+	_stats.throwing		+= 4 * diff * _stats.throwing		/ 100;
+	_stats.melee		+= 4 * diff * _stats.melee			/ 100;
+	_stats.strength		+= 2 * diff * _stats.strength		/ 100;
+	_stats.psiStrength	+= 4 * diff * _stats.psiStrength	/ 100;
+	_stats.psiSkill		+= 4 * diff * _stats.psiSkill		/ 100;
 
 	if (diff == DIFF_BEGINNER)
 	{
-		_stats.firing /= 2;
+		_stats.firing >>= 1u;
 
 		for (size_t
 				i = 0u;
 				i != PARTS_ARMOR;
 				++i)
 		{
-			_armorHp[i] /= 2;
+			_armorHp[i] >>= 1u;
 		}
 	}
 
@@ -4310,9 +4313,10 @@ void BattleUnit::adjustStats(
 		if (_stats.firing > 0)		_stats.firing		+= month;
 		if (_stats.throwing > 0)	_stats.throwing		+= month;
 		if (_stats.melee > 0)		_stats.melee		+= month;
-		if (_stats.psiStrength > 0)	_stats.psiStrength	+= month * 2;
+		if (_stats.psiStrength > 0)	_stats.psiStrength	+= (month << 1u);
+		if (_stats.psiSkill > 0)	_stats.psiSkill		+= (month >> 1u);
 
-		_stats.health += (month / 2);
+		_stats.health += (month >> 1u);
 
 //		_stats.tu += month;
 //		_stats.stamina += month;
@@ -4355,8 +4359,8 @@ int BattleUnit::getCoverReserve() const
  */
 void BattleUnit::initDeathSpin()
 {
-	_status = STATUS_TURNING;
 	_spinPhase = 0;
+	_status = STATUS_TURNING;
 	_cacheInvalid = true;
 }
 
@@ -4372,61 +4376,55 @@ void BattleUnit::initDeathSpin()
  */
 void BattleUnit::contDeathSpin()
 {
-	int dir = _dir;
-	if (dir == 3)	// when facing player, 1 rotation left;
-					// unless started facing player, in which case 2 rotations left
-	{
+	if (_dir == 3)	// when facing player, 1 rotation left
+	{				// unless start-dir faces player, in which case 2 rotations left
 		switch (_spinPhase)
 		{
-			case 0:				// remove this clause to use only 1 rotation when start-dir faces player.
-				_spinPhase = 2;	// CCW 2 spins.
+			case 0: //_spinPhase = 2; break; // CCW 2 spins.		- remove this clause to use only 1 rotation when start-dir faces player.
+			case 1: //_spinPhase = 3; break; // CW rotation 2nd		- CW rotation
+			case 2: //_spinPhase = 4; break; // CCW rotation 2nd	- CCW rotation
+				_spinPhase += 2;
 				break;
-
-			case 1:				// CW rotation
-				_spinPhase = 3;	// CW rotation 2nd
-				break;
-
-			case 2:				// CCW rotation
-				_spinPhase = 4;	// CCW rotation 2nd
-				break;
-
-			case 3:				 // end.
+			case 3:
 			case 4:
-				 _spinPhase = -1;
-				_status = STATUS_STANDING;
-				 return;
+				_spinPhase = -1;
+				_status = STATUS_STANDING; // end.
+				return;
 		}
 	}
 
-	if (_spinPhase == 0) // start!
+	if (_spinPhase == 0) // Start here! unless start was facing player above^
 	{
-		if (dir > -1 && dir < 4)
+		switch (_dir >> 2u)
 		{
-			if (dir == 3)
-				_spinPhase = 3; // only 1 CW rotation to go ...
-			else
-				_spinPhase = 1; // 1st CW rotation of 2
-		}
-		else
-		{
-			if (dir == 3)
-				_spinPhase = 4; // only 1 CCW rotation to go ...
-			else
-				_spinPhase = 2; // 1st CCW rotation of 2
+			case 0:
+				switch (_dir)
+				{
+					case 3:  _spinPhase = 3; break;	// only 1 CW rotation to go ...
+					default: _spinPhase = 1;		// 1st CW rotation of 2
+				}
+				break;
+
+			case 1:
+			{
+				switch (_dir)
+				{
+					case 3:  _spinPhase = 4; break;	// only 1 CCW rotation to go ...
+					default: _spinPhase = 2;		// 1st CCW rotation of 2
+				}
+			}
 		}
 	}
 
-	switch (_spinPhase)
+	int dir (_dir);
+	switch (_spinPhase & 1u)
 	{
-		case 1:
-		case 3:
-			if (++dir == 8) dir = 0;
-			break;
-
-		default:
+		case 0:
 			if (--dir == -1) dir = 7;
+			break;
+		case 1:
+			if (++dir == 8) dir = 0;
 	}
-
 	setUnitDirection(dir);
 	_cacheInvalid = true;
 }

@@ -1315,11 +1315,12 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 			}
 		}
 	}
-	else if (_craft != nullptr // Transport craft deployments (Lightning & Avenger)
+	else if (_craft != nullptr // Transport Craft deployments (Lightning & Avenger)
 		&& _craft->getRules()->getCraftDeployment().empty() == false
 		&& _baseEquiptMode == false)
 	{
 		//Log(LOG_INFO) << ". Craft valid - use Deployment";
+		int unitSize;
 		for (std::vector<std::vector<int>>::const_iterator
 				i = _craft->getRules()->getCraftDeployment().begin();
 				i != _craft->getRules()->getCraftDeployment().end();
@@ -1327,18 +1328,19 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 		{
 			//Log(LOG_INFO) << ". getCraftDeployment()";
 			const Position pos (Position(
-									(*i)[0] + (_craftPos.x * 10),
-									(*i)[1] + (_craftPos.y * 10),
-									(*i)[2] + _craftZ));
+									(*i)[0u] + (_craftPos.x * 10),
+									(*i)[1u] + (_craftPos.y * 10),
+									(*i)[2u] + _craftZ));
 			bool canPlace (true);
+			unitSize = unit->getArmor()->getSize();
 			for (int
 					x = 0;
-					x != unit->getArmor()->getSize() && canPlace == true;
+					x != unitSize && canPlace == true;
 					++x)
 			{
 				for (int
 						y = 0;
-						y != unit->getArmor()->getSize() && canPlace == true;
+						y != unitSize && canPlace == true;
 						++y)
 				{
 					canPlace = canPlacePlayerUnit(_battleSave->getTile(pos + Position(x,y,0)));
@@ -1352,7 +1354,7 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 				{
 					//Log(LOG_INFO) << ". setUnitPosition()";
 					_battleSave->getUnits()->push_back(unit); // add unit to vector of Units.
-					unit->setUnitDirection((*i)[3]);
+					unit->setUnitDirection((*i)[3u]);
 					return unit;
 				}
 			}
@@ -1364,7 +1366,7 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 		Tile* tile;
 		int tankOrder (0);
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _battleSave->getMapSizeXYZ();
 				++i)
 		{

@@ -781,7 +781,7 @@ private:
 		/// Derives a rank integer based on rank string (for xcom soldiers ONLY)
 		void deriveRank();
 
-		/// This function checks if a tile is visible using maths.
+		/// This function checks if a Position is visible using maths.
 		bool checkViewSector(const Position& pos) const;
 
 		/// Adjusts the BattleUnit's stats according to difficulty.

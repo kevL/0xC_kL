@@ -6174,6 +6174,7 @@ VoxelType TileEngine::detVoxelType(
 /**
  * Performs a psionic BattleAction.
  * @param action - pointer to a BattleAction (BattlescapeGame.h)
+ * @return, true if attack succeeds
  */
 bool TileEngine::psiAttack(BattleAction* const action)
 {
