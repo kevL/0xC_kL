@@ -37,7 +37,7 @@ class TextButton;
 
 
 /**
- * Unit Info screen that shows all the info of a specific unit.
+ * UnitInfo screen that shows the tactical-info of a specified unit.
  */
 class UnitInfoState final
 	:
@@ -45,6 +45,10 @@ class UnitInfoState final
 {
 
 private:
+	static const Uint8
+		WHITE	=  1u,
+		BROWN_L	= 80u;
+
 	bool
 		_fromInventory,
 		_mindProbe,
@@ -134,22 +138,22 @@ private:
 
 
 	public:
-		/// Creates the Unit Info state.
+		/// Creates a UnitInfo state.
 		UnitInfoState(
 				const BattleUnit* const unit,
 				BattlescapeState* const parent,
 				const bool fromInventory = false,
 				const bool mindProbe = false,
 				const bool preBattle = false);
-		/// Cleans up the Unit Info state.
+		/// Cleans up the UnitInfo state.
 		~UnitInfoState();
 
-		/// Updates the unit info.
+		/// Updates unit-info.
 		void init() override;
-		/// Runs the timer.
+		/// Runs the Timer.
 //		void think();
 
-		/// Handler for clicking the button.
+		/// Handler for clicking stuff.
 		void handle(Action* action) override;
 
 		/// Handler for clicking the Previous button.

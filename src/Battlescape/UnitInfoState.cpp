@@ -21,10 +21,10 @@
 
 //#include <sstream>
 
+#include "../fmath.h"
+
 #include "BattlescapeGame.h"
 #include "BattlescapeState.h"
-
-#include "../fmath.h"
 
 #include "../Engine/Action.h"
 #include "../Engine/Game.h"
@@ -55,8 +55,8 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Unit Info screen.
- * @param unit			- pointer to the selected unit
+ * Initializes all the elements in the UnitInfo screen.
+ * @param unit			- pointer to the selected BattleUnit
  * @param parent		- pointer to parent Battlescape
  * @param fromInventory	- true if player is here from the inventory (default false)
  * @param mindProbe		- true if player is using a Mind Probe (default false)
@@ -303,14 +303,14 @@ UnitInfoState::UnitInfoState(
 					Options::keyBattleStats);
 
 	Uint8
-		color (static_cast<Uint8>(_game->getRuleset()->getInterface("stats")->getElement("text")->color)),
+		color  (static_cast<Uint8>(_game->getRuleset()->getInterface("stats")->getElement("text")->color)),
 		color2 (static_cast<Uint8>(_game->getRuleset()->getInterface("stats")->getElement("text")->color2));
 
 	_txtName->setAlign(ALIGN_CENTER);
 	_txtName->setBig();
 	_txtName->setHighContrast();
 
-	_numOrder->setColor(1);
+	_numOrder->setColor(WHITE);
 	_numOrder->setVisible(false);
 
 	_txtTimeUnits->setText(tr("STR_TIME_UNITS"));
@@ -338,7 +338,7 @@ UnitInfoState::UnitInfoState(
 	_numHealth->setColor(color2);
 	_numHealth->setHighContrast();
 
-	_numStun->setColor(80); // brown
+	_numStun->setColor(BROWN_L);
 	_numStun->setHighContrast();
 	_numStun->setAlign(ALIGN_RIGHT);
 //	_barHealth->setScale();
@@ -520,7 +520,7 @@ UnitInfoState::~UnitInfoState()
 }
 
 /**
- * Hits the think timer.
+ * Hits the think-timer.
  *
 void UnitInfoState::think()
 {
@@ -550,7 +550,7 @@ void UnitInfoState::keyRepeat() // private.
 } */
 
 /**
- * Updates unit info which can change after going into other screens.
+ * Updates unit-info which changes when advancing or regressing through units.
  */
 void UnitInfoState::init()
 {
@@ -566,7 +566,7 @@ void UnitInfoState::init()
 		woststr << tr(_unit->getRankString())
 				<< L" ";
 
-		Surface* gender = nullptr;
+		Surface* gender;
 		switch (sol->getGender())
 		{
 			default:
@@ -579,8 +579,8 @@ void UnitInfoState::init()
 		}
 		gender->blit(_gender);
 
-		const size_t order (_unit->getBattleOrder());
-		if (order < 10)
+		const unsigned order (_unit->getBattleOrder());
+		if (order < 10u)
 			_numOrder->setX(_btnNext->getX() - 6);
 		else
 			_numOrder->setX(_btnNext->getX() - 10);
@@ -655,11 +655,22 @@ void UnitInfoState::init()
 		_barBravery->setVisible(false);
 	}
 	_numBravery->setText(woststr.str());
-	// note: Let Morale show until further tested to ensure it never goes down
-	// for units w/ 110 Bravery. (I think it might/should when they get damaged.)
-	stat = _unit->getMorale();
-	_barMorale->setValue(static_cast<double>(stat));
-	_numMorale->setText(Text::intWide(stat));
+
+	woststr.str(L"");
+	if (_unit->isMoralable() == true)
+	{
+		stat = _unit->getMorale();
+		woststr << stat;
+
+		_barMorale->setValue(static_cast<double>(stat));
+		_barMorale->setVisible();
+	}
+	else
+	{
+		woststr << L"oo";
+		_barMorale->setVisible(false);
+	}
+	_numMorale->setText(woststr.str());
 
 	// Primary Abilities ->
 	const double acuModi (_unit->getAccuracyModifier());
