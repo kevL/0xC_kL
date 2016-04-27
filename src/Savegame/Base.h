@@ -318,6 +318,8 @@ private:
 		void setDefenseResult(int result);
 		/// Gets the result of the Base's defense against aLien attacks.
 		int getDefenseResult() const;
+		/// Clears the result of the Base's defense against aLien attacks.
+		void clearDefenseResult();
 		/// Gets a list of defensive Facilities.
 		std::vector<BaseFacility*>* getDefenses();
 

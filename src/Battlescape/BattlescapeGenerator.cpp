@@ -1767,9 +1767,8 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const ruleDeploy)
 		if (_base != nullptr
 			&& _base->getDefenseResult() != 0)
 		{
-			qty = std::max(
-						qty / 2,
-						qty - (qty * _base->getDefenseResult() / 100));
+			qty = std::max(qty >> 1u,
+						   qty - (qty * _base->getDefenseResult() / 100));
 		}
 
 		for (int
@@ -1790,37 +1789,31 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const ruleDeploy)
 
 			if (unit != nullptr)
 			{
-/*				// Built in weapons: the unit has this weapon regardless of loadout or what have you.
-				if (unitRule->getBuiltInWeapons().empty() == false)
-				{
-					for (std::vector<std::string>::const_iterator
-							j = unitRule->getBuiltInWeapons().begin();
-							j != unitRule->getBuiltInWeapons().end();
-							++j)
-					{
-						itRule = _rules->getItemRule(*j);
-						if (itRule != nullptr)
-						{
-							item = new BattleItem(
-												itRule,
-												_battleSave->getCanonicalBattleId());
-							if (placeGeneric(item, unit) == false)
-							{
-								Log(LOG_WARNING) << "BattlescapeGenerator could not add ["
-												 << itRule->getType() << "] to " << unit->getType();
-								delete item;
-							}
-						}
-					}
-				} */
+				// Built in weapons: the unit has this weapon regardless of loadout or what have you.
+//				if (unitRule->getBuiltInWeapons().empty() == false)
+//				{
+//					for (std::vector<std::string>::const_iterator
+//							j = unitRule->getBuiltInWeapons().begin();
+//							j != unitRule->getBuiltInWeapons().end();
+//							++j)
+//					{
+//						if ((itRule = _rules->getItemRule(*j)) != nullptr)
+//						{
+//							item = new BattleItem(itRule, _battleSave->getCanonicalBattleId());
+//							if (placeGeneric(item, unit) == false)
+//							{
+//								Log(LOG_WARNING) << "BattlescapeGenerator could not add ["
+//												 << itRule->getType() << "] to " << unit->getType();
+//								delete item;
+//							}
+//						}
+//					}
+//				}
 
 				if (unitRule->isLivingWeapon() == true)
 				{
-					std::string terrorWeapon (unitRule->getRace().substr(4));
-					terrorWeapon += "_WEAPON";
-
-					itRule = _rules->getItemRule(terrorWeapon);
-					if (itRule != nullptr)
+					const std::string terrorWeapon (unitRule->getRace().substr(4) + "_WEAPON");
+					if ((itRule = _rules->getItemRule(terrorWeapon)) != nullptr)
 					{
 						item = new BattleItem( // terror aLiens add their weapons
 											itRule,
@@ -1843,25 +1836,24 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const ruleDeploy)
 					}
 
 					itemLevel = static_cast<size_t>(_rules->getAlienItemLevels().at(static_cast<size_t>(month)).at(RNG::generate(0,9)));
-					if (itemLevel > (*data).itemSets.size() - 1)
-						itemLevel = (*data).itemSets.size() - 1;
+					if (itemLevel > (*data).itemSets.size() - 1u)
+						itemLevel = (*data).itemSets.size() - 1u;
 					// Relax item level requirements
 					// <- Yankes; https://github.com/Yankes/OpenXcom/commit/4c252470aa2e261b0f449a56aaea5d5b0cb2229c
-/*					if (itemLevel > (*data).itemSets.size() - 1)
-					{
-						std::ostringstream ststr;
-						ststr	<< "Unit generator encountered an error: not enough item sets defined, expected: "
-								<< (itemLevel+1) << " found: " << (*data).itemSets.size();
-						throw Exception(ststr.str());
-					} */
+//					if (itemLevel > (*data).itemSets.size() - 1u)
+//					{
+//						std::ostringstream ststr;
+//						ststr	<< "Unit generator encountered an error: not enough item sets defined, expected: "
+//								<< (itemLevel+1) << " found: " << (*data).itemSets.size();
+//						throw Exception(ststr.str());
+//					}
 
 					for (std::vector<std::string>::const_iterator
 							setItem = (*data).itemSets.at(itemLevel).items.begin();
 							setItem != (*data).itemSets.at(itemLevel).items.end();
 							++setItem)
 					{
-						itRule = _rules->getItemRule(*setItem);
-						if (itRule != nullptr)
+						if ((itRule = _rules->getItemRule(*setItem)) != nullptr)
 						{
 							item = new BattleItem( // aLiens add items
 												itRule,
@@ -1880,7 +1872,7 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const ruleDeploy)
 	}
 
 	if (_base != nullptr)
-		_base->setDefenseResult(0);
+		_base->clearDefenseResult();
 }
 
 /**
@@ -1917,12 +1909,12 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 	else
 		node = nullptr;
 
-	const size_t ranks_2 ((sizeof(Node::nodeRank) / sizeof(Node::nodeRank[0][0]))
-						/ (sizeof(Node::nodeRank) / sizeof(Node::nodeRank[0])));
+	const size_t ranks_2 ((sizeof(Node::nodeRank) / sizeof(Node::nodeRank[0u][0u]))
+						/ (sizeof(Node::nodeRank) / sizeof(Node::nodeRank[0u])));
 	if (node == nullptr) // ie. if not spawning on a Civ-Scout node
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != ranks_2 && node == nullptr; // =8, 2nd dimension of nodeRank[][], ref Node.cpp
 				++i)
 		{
@@ -1944,7 +1936,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 										node));
 		unit->setRankInt(aLienRank);
 
-		const Position posCraft (_battleSave->getUnits()->at(0)->getPosition()); // aLiens face Craft
+		const Position posCraft (_battleSave->getUnits()->at(0u)->getPosition()); // aLiens face Craft
 		int dir;
 		if (RNG::percent((diff + 1) * 20) == true
 			&& TileEngine::distance(
@@ -1980,7 +1972,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 }
 
 /**
- * Places a unit near a friendly unit.
+ * Places a specified BattleUnit near a friendly unit.
  * @param unit - pointer to the BattleUnit in question
  * @return, true if @a unit was successfully placed
  */
@@ -2019,9 +2011,9 @@ void BattlescapeGenerator::deployCivilians(int civilians) // private.
 	if (civilians != 0)
 	{
 		const int qty (std::max(1,
-							RNG::generate(
-										civilians / 2,
-										civilians)));
+								RNG::generate(
+											civilians >> 1u,
+											civilians)));
 		for (int
 				i = 0;
 				i != qty;
@@ -2065,13 +2057,13 @@ void BattlescapeGenerator::addCivilian(RuleUnit* const unitRule) // private.
 /**
  * Loads a MAP file into the tiles of the BattleGame.
  * @param block				- pointer to MapBlock
- * @param offset_x			- Mapblock offset in X direction
- * @param offset_y			- Mapblock offset in Y direction
+ * @param offset_x			- Mapblock offset in x-direction
+ * @param offset_y			- Mapblock offset in y-direction
  * @param terraRule			- pointer to RuleTerrain
  * @param dataSetIdOffset	- (default 0)
  * @param revealed			- true if this MapBlock is revealed (eg. landingsite of the Skyranger) (default false)
  * @param craft				- true if xCom Craft has landed on the MAP (default false)
- * @return, height of the loaded Mapblock (needed for spawnpoint calculation)
+ * @return, height of the loaded Mapblock (needed for spawn-point calculation)
  * @sa http://www.ufopaedia.org/index.php?title=MAPS
  * @note Y-axis is in reverse order.
  */
@@ -2086,35 +2078,36 @@ int BattlescapeGenerator::loadMAP( // private.
 {
 	std::ostringstream file;
 	file << "MAPS/" << block->getType() << ".MAP";
-	std::ifstream mapFile ( // load file
+	std::ifstream ifstr (
 						CrossPlatform::getDataFile(file.str()).c_str(),
 						std::ios::in | std::ios::binary);
-	if (mapFile.fail() == true)
+	if (ifstr.fail() == true)
 	{
 		throw Exception(file.str() + " not found");
 	}
 
-	char array_Map[3];
-	mapFile.read(
-			(char*)&array_Map,
+	char array_Map[3u];
+	ifstr.read(
+			reinterpret_cast<char*>(&array_Map),
 			sizeof(array_Map));
 	const int
-		size_x (static_cast<int>(array_Map[1])), // note X-Y switch!
-		size_y (static_cast<int>(array_Map[0])), // note X-Y switch!
-		size_z (static_cast<int>(array_Map[2]));
+		size_x (static_cast<int>(array_Map[1u])), // note X-Y switch!
+		size_y (static_cast<int>(array_Map[0u])), // note X-Y switch!
+		size_z (static_cast<int>(array_Map[2u]));
 
 	block->setSizeZ(size_z);
 
 	std::ostringstream oststr;
 	if (size_z > _battleSave->getMapSizeZ())
 	{
-		oststr << "Height of map " + file.str() + " too big for this mission, block is " << size_z << ", expected: " << _battleSave->getMapSizeZ();
+		oststr << "Height of map " + file.str() + " too big for this mission, block is "
+			   << size_z << ", expected: " << _battleSave->getMapSizeZ();
 		throw Exception(oststr.str());
 	}
-	else if (size_x != block->getSizeX()
-		|| size_y != block->getSizeY())
+	else if (size_x != block->getSizeX() || size_y != block->getSizeY())
 	{
-		oststr << "Map block is not of the size specified " + file.str() + " is " << size_x << "x" << size_y << " , expected: " << block->getSizeX() << "x" << block->getSizeY();
+		oststr << "Map block is not of the size specified " + file.str() + " is "
+			   << size_x << "x" << size_y << " , expected: " << block->getSizeX() << "x" << block->getSizeY();
 		throw Exception(oststr.str());
 	}
 
@@ -2149,30 +2142,30 @@ int BattlescapeGenerator::loadMAP( // private.
 	unsigned partId;
 
 	bool revealDone;
-	while (mapFile.read(
-					(char*)&array_Parts,
+	while (ifstr.read(
+					reinterpret_cast<char*>(&array_Parts),
 					sizeof(array_Parts)))
 	{
 		revealDone = false;
 
 		for (size_t
-				partType = 0;
-				partType != Tile::PARTS_TILE;
-				++partType)
+				i = 0u;
+				i != Tile::PARTS_TILE;
+				++i)
 		{
-			partId = static_cast<unsigned>(array_Parts[partType]);
+			partId = static_cast<unsigned>(array_Parts[i]);
 
 			// Remove natural terrain that is inside Craft or Ufo.
-			if (partType != 0				// not if it's a floor since Craft/Ufo part will overwrite it anyway
-				&& partId == 0			// and only if no Craft/Ufo part would overwrite the part
-				&& array_Parts[0] != 0)	// but only if there *is* a floor-part to the Craft/Ufo so it would (have) be(en) inside the Craft/Ufo
+			if (i != 0u						// not if it's a floor since Craft/Ufo part will overwrite it anyway
+				&& partId == 0u				// and only if no Craft/Ufo part would overwrite the part
+				&& array_Parts[0u] != 0u)	// but only if there *is* a floor-part to the Craft/Ufo so it would (have) be(en) inside the Craft/Ufo
 			{
-				_battleSave->getTile(Position(x,y,z))->setMapData(nullptr,-1,-1, static_cast<MapDataType>(partType));
+				_battleSave->getTile(Position(x,y,z))->setMapData(nullptr,-1,-1, static_cast<MapDataType>(i));
 			}
 
 			// Then overwrite previous terrain with Craft or Ufo terrain.
 			// nb. See sequence of map-loading in generateMap() (1st terrain, 2nd Ufo, 3rd Craft) <- preMapScripting.
-			if (partId > 0)
+			if (partId > 0u)
 			{
 				unsigned int dataId (partId);
 				int dataSetId (dataSetIdOffset);
@@ -2185,18 +2178,16 @@ int BattlescapeGenerator::loadMAP( // private.
 																data,
 																static_cast<int>(dataId),
 																dataSetId,
-																static_cast<MapDataType>(partType));
+																static_cast<MapDataType>(i));
 			}
 
 			// If the part is not a floor and is empty, remove it; this prevents growing grass in UFOs.
 			// note: And outside UFOs. so remark it
 //			if (part == 3 && partId == 0)
-//			{
 //				_battleSave->getTile(Position(x,y,z))->setMapData(nullptr,-1,-1, part);
-//			}
 
 			if (craft == true // Reveal only tiles inside the Craft.
-				&& partId != 0
+				&& partId != 0u
 				&& z != _craftZ)
 			{
 				revealDone = true;
@@ -2214,9 +2205,7 @@ int BattlescapeGenerator::loadMAP( // private.
 			_battleSave->getTile(Position(x,y,z))->setRevealed(
 															ST_CONTENT,
 															revealed == true || block->isFloorRevealed(z) == true);
-		++x;
-
-		if (x == size_x + offset_x)
+		if (++x == size_x + offset_x)
 		{
 			x = offset_x;
 			++y;
@@ -2229,12 +2218,12 @@ int BattlescapeGenerator::loadMAP( // private.
 		}
 	}
 
-	if (mapFile.eof() == false)
+	if (ifstr.eof() == false)
 	{
 		throw Exception("Invalid MAP file: " + file.str());
 	}
 
-	mapFile.close();
+	ifstr.close();
 
 	if (_generateFuel == true) // if one of the mapBlocks has an items array defined, don't deploy fuel algorithmically
 		_generateFuel = (block->getItems()->empty() == true);
@@ -2263,15 +2252,14 @@ int BattlescapeGenerator::loadMAP( // private.
 			_battleSave->getItems()->push_back(item);
 		}
 	}
-
 	return size_z;
 }
 
 /**
  * Loads an XCom format RMP file as battlefield Nodes.
  * @param block		- pointer to MapBlock
- * @param offset_x	- Mapblock offset in X direction
- * @param offset_y	- Mapblock offset in Y direction
+ * @param offset_x	- Mapblock offset in x-direction
+ * @param offset_y	- Mapblock offset in y-direction
  * @param segment	- Mapblock segment
  * @sa http://www.ufopaedia.org/index.php?title=ROUTES
  */
@@ -2281,15 +2269,15 @@ void BattlescapeGenerator::loadRMP( // private.
 		int offset_y,
 		int segment)
 {
-	char dataArray[24];
+	char dataArray[24u];
 
 	std::ostringstream file;
 	file << "ROUTES/" << block->getType() << ".RMP";
 
-	std::ifstream mapFile ( // load file
-					CrossPlatform::getDataFile(file.str()).c_str(),
-					std::ios::in | std::ios::binary);
-	if (mapFile.fail() == true)
+	std::ifstream ifstr (
+						CrossPlatform::getDataFile(file.str()).c_str(),
+						std::ios::in | std::ios::binary);
+	if (ifstr.fail() == true)
 	{
 		throw Exception(file.str() + " not found");
 	}
@@ -2312,13 +2300,13 @@ void BattlescapeGenerator::loadRMP( // private.
 	Node* node;
 	Position pos;
 
-	while (mapFile.read(
-					(char*)&dataArray,
+	while (ifstr.read(
+					reinterpret_cast<char*>(&dataArray),
 					sizeof(dataArray)))
 	{
-		pos_x = static_cast<int>(dataArray[1]); // note: Here is where x-y values get reversed
-		pos_y = static_cast<int>(dataArray[0]); // vis-a-vis values in .RMP files vs. loaded values.
-		pos_z = static_cast<int>(dataArray[2]);
+		pos_x = static_cast<int>(dataArray[1u]); // note: Here is where x-y values get reversed
+		pos_y = static_cast<int>(dataArray[0u]); // vis-a-vis values in .RMP files vs. loaded values.
+		pos_z = static_cast<int>(dataArray[2u]);
 
 		if (   pos_x < block->getSizeX()
 			&& pos_y < block->getSizeY()
@@ -2329,11 +2317,11 @@ void BattlescapeGenerator::loadRMP( // private.
 						offset_y + pos_y,
 						block->getSizeZ() - pos_z - 1);
 
-			unitType		= static_cast<int>(dataArray[19]); // -> Any=0; Flying=1; Small=2; FlyingLarge=3; Large=4
-			nodeRank		= static_cast<int>(dataArray[20]);
-			ptrlPriority	= static_cast<int>(dataArray[21]);
-			aLienObject		= static_cast<int>(dataArray[22]);
-			spPriority		= static_cast<int>(dataArray[23]);
+			unitType		= static_cast<int>(dataArray[19u]); // -> Any=0; Flying=1; Small=2; FlyingLarge=3; Large=4
+			nodeRank		= static_cast<int>(dataArray[20u]);
+			ptrlPriority	= static_cast<int>(dataArray[21u]);
+			aLienObject		= static_cast<int>(dataArray[22u]);
+			spPriority		= static_cast<int>(dataArray[23u]);
 
 			// TYPE_FLYING		= 0x01 -> ref Savegame/Node.h
 			// TYPE_SMALL		= 0x02
@@ -2357,11 +2345,11 @@ void BattlescapeGenerator::loadRMP( // private.
 						spPriority);
 
 			for (size_t // create nodeLinks ->
-					j = 0;
-					j != 5; // Max links that a node can have.
+					j = 0u;
+					j != 5u; // Max links that a node can have.
 					++j)
 			{
-				linkId = static_cast<int>(dataArray[(j * 3) + 4]); // <- 4[5,6],7[8,9],10[11,12],13[14,15],16[17,18] -> [unitType & distance of linked nodes are not used]
+				linkId = static_cast<int>(dataArray[(j * 3u) + 4u]); // <- 4[5,6],7[8,9],10[11,12],13[14,15],16[17,18] -> [unitType & distance of linked nodes are not used]
 
 				if (linkId < 251) // do not offset special values; ie. links to N,S,E,West, or none.
 					linkId += nodeOffset;
@@ -2383,7 +2371,6 @@ void BattlescapeGenerator::loadRMP( // private.
 
 				nodeLinks->push_back(linkId);
 			}
-
 			_battleSave->getNodes()->push_back(node);
 		}
 		else
@@ -2393,16 +2380,14 @@ void BattlescapeGenerator::loadRMP( // private.
 							 << " node #" << nodeVal << " is outside map boundaries at"
 							 << " (" << pos_x << "," << pos_y << "," << pos_z << ")";
 		}
-
 		++nodeVal;
 	}
 
-	if (mapFile.eof() == false)
+	if (ifstr.eof() == false)
 	{
 		throw Exception("Invalid RMP file: " + file.str());
 	}
-
-	mapFile.close();
+	ifstr.close();
 }
 
 /**
@@ -2413,7 +2398,7 @@ void BattlescapeGenerator::fuelPowerSources() // private.
 	BattleItem* alienFuel;
 	const Tile* tile;
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
@@ -2518,7 +2503,7 @@ void BattlescapeGenerator::runInventory(
 	Tile* tile;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
@@ -2552,7 +2537,7 @@ void BattlescapeGenerator::runInventory(
 		&& selUnitId != 0
 		&& static_cast<int>(selUnitId) <= qtySoldiers)
 	{
-		size_t j (0);
+		size_t j (0u);
 		for (std::vector<BattleUnit*>::const_iterator
 				i = _battleSave->getUnits()->begin();
 				i != _battleSave->getUnits()->end();
@@ -2565,7 +2550,6 @@ void BattlescapeGenerator::runInventory(
 			}
 		}
 	}
-
 	delete data;
 	delete dataSet;
 }

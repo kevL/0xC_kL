@@ -266,7 +266,7 @@ void Node::freeNode()
 }
 
 /**
- * Gets if this Node is suitable for an aLien to target xCom base targets/objectives.
+ * Gets if this Node is suitable for an aLien to target xCom-base targets/objectives.
  * @return, true if this is a Destroy-XCOM Base node
  */
 bool Node::isTarget() const

@@ -1955,7 +1955,8 @@ Node* SavedBattleGame::getNearestNode(const BattleUnit* const unit) const
 /**
  * Gets if a specified BattleUnit can use a specified Node.
  * @note Small units are allowed to use Large nodes and flying units are
- * allowed to use nonFlying nodes.
+ * allowed to use nonFlying nodes. The basic node-types are set in
+ * BattlescapeGenerator::loadRMP().
  * @param node - pointer to a node
  * @param unit - pointer to a unit trying to use the node
  * @return, true if unit can use node
@@ -1965,22 +1966,27 @@ bool SavedBattleGame::isNodeType(
 		const BattleUnit* const unit) const
 {
 	const int type (node->getNodeType());
-	if (type == 0)
-		return true;
 
-	if (type & Node::TYPE_DANGEROUS)
-		return false;
+	if (type & Node::TYPE_DANGEROUS)					// +16	Only Type_Dangerous is ever added to a
+		return false;									//		stock nodeType in the code currently.
 
-	if (type & Node::TYPE_FLYING)
-		return unit->getMoveTypeUnit() == MT_FLY
-			&& unit->getArmor()->getSize() == 1;
+	switch (type)
+	{
+		case Node::TYPE_FLYING:							// 1
+			return unit->getMoveTypeUnit() == MT_FLY
+				&& unit->getArmor()->getSize() == 1;
 
-	if (type & Node::TYPE_SMALL)
-		return unit->getArmor()->getSize() == 1;
+		case Node::TYPE_SMALL:							// 2
+			return unit->getArmor()->getSize() == 1;
 
-	if (type & Node::TYPE_LARGEFLYING)
-		return unit->getMoveTypeUnit() == MT_FLY;
+		case Node::TYPE_LARGEFLYING:					// 4
+			return unit->getMoveTypeUnit() == MT_FLY;
 
+//		case 0:											// Any.
+//			break;
+//		case Node::TYPE_LARGE:							// 8 All units can use Type_Large.
+//			break;
+	}
 	return true;
 }
 

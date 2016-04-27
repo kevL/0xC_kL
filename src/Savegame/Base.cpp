@@ -2106,6 +2106,14 @@ int Base::getDefenseResult() const
 }
 
 /**
+ * Clears the result of the Base's defense against aLien attacks.
+ */
+void Base::clearDefenseResult()
+{
+	_defenseResult = 0;
+}
+
+/**
  * Gets the Facilities for this Base's defense.
  * @return, pointer to a vector of pointers to BaseFacility
  */
