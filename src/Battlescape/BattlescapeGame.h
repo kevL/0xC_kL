@@ -199,7 +199,7 @@ struct BattleAction
 /**
  * Battlescape Game - the core class of the tactical battlefield.
  */
-class BattlescapeGame // * no copy cTor.
+class BattlescapeGame
 {
 
 private:
@@ -294,6 +294,8 @@ private:
 
 		/// Initializes the BattlescapeGame.
 		void init();
+		/// Sets a flag to re-initialize the Battlescape Game.
+		void reinit();
 		/// Checks for units panicking or falling and so on.
 		void think();
 

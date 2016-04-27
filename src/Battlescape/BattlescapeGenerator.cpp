@@ -441,7 +441,7 @@ void BattlescapeGenerator::run()
 	_battleSave->getTileEngine()->calculateTerrainLighting();
 	_battleSave->getTileEngine()->calculateUnitLighting();
 
-	_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGame::init(). Are both needed.
+//	_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGame::init(). Are both needed.
 
 	_battleSave->getShuffleUnits()->assign(
 										_battleSave->getUnits()->size(),
@@ -473,25 +473,49 @@ void BattlescapeGenerator::nextStage()
 			{
 				++aliensAlive;
 			}
-
 			(*i)->setUnitStatus(STATUS_LATENT);
 		}
 
-		if ((*i)->getTile() != nullptr)
-			(*i)->getTile()->setUnit();		// break old Tile's link to unit.
+		if ((*i)->getTile() != nullptr) // break Tiles' link to unit.
+		{
+			const int unitSize ((*i)->getArmor()->getSize());
+			switch (unitSize)
+			{
+				case 1:
+					(*i)->getTile()->setUnit();
+					break;
 
-		(*i)->setTile();					// break unit's link to all Tiles.
-		(*i)->setPosition(posBogus, false);	// and give it a bogus Position
+				case 2:
+				{
+					const Position pos ((*i)->getPosition());
+					for (int
+							x = 0;
+							x != unitSize;
+							++x)
+					{
+						for (int
+								y = 0;
+								y != unitSize;
+								++y)
+						{
+							_battleSave->getTile(pos + Position(x,y,0))->setUnit();
+						}
+					}
+				}
+			}
+		}
+		(*i)->setTile();					// break unit's link to Tile.
+		(*i)->setPosition(posBogus, false);	// and give unit a bogus Position
 	}
 
-	// Remove all items not belonging to soldiers from the map.
+	// Remove all items not belonging to player-units from the map.
 	// Sort items into two categories:
 	// - the ones that are guaranteed to be able to take home barring complete failure - ie: stuff on the transport craft
 	// - and those that are scattered about on the ground that will be recovered ONLY on success.
-	// This does not include items in soldiers' hands.
+	// This does not include items in player-units' hands.
 	std::vector<BattleItem*>
-		* itemsGuaranteed (_battleSave->guaranteedItems()),
-		* itemsConditional (_battleSave->conditionalItems()),
+		* const itemsGuaranteed (_battleSave->guaranteedItems()),
+		* const itemsConditional (_battleSave->conditionalItems()),
 		passToNextStage,
 		carryToNextStage,
 		removeFromGame;
@@ -640,7 +664,7 @@ void BattlescapeGenerator::nextStage()
 	generateMap(directives);							// <--|| BATTLE MAP GENERATION. <--|||
 	setupObjectives(ruleDeploy);
 
-	setShade(ruleDeploy->getShade()); // note: 2nd stage must have deployment-shade set, else 0 (bright).
+	setShade(ruleDeploy->getShade()); // NOTE: 2nd stage must have deployment-shade set, else 0 (bright).
 	_battleSave->setTacticalShade(_shade);
 	_battleSave->setBattleTerrain(_terrainRule->getType());
 //	setTacticalSprites();
@@ -781,7 +805,7 @@ void BattlescapeGenerator::nextStage()
 	_battleSave->getTileEngine()->calculateTerrainLighting();
 	_battleSave->getTileEngine()->calculateUnitLighting();
 
-	_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGame::init(). Are both needed.
+//	_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGame::init(). Are both needed.
 
 	_battleSave->getShuffleUnits()->assign(
 										_battleSave->getUnits()->size(),

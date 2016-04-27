@@ -19,6 +19,7 @@
 
 #include "DogfightState.h"
 
+//#include <cmath>
 //#include <cstdlib>
 //#include <sstream>
 

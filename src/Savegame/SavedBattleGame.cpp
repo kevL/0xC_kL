@@ -100,6 +100,7 @@ SavedBattleGame::SavedBattleGame(
 		_turnLimit(0),
 		_chronoResult(FORCE_LOSE),
 		_cheatTurn(CHEAT_DEFAULT)
+//		_preBattle(true)
 //		_dragInvert(false),
 //		_dragTimeTolerance(0),
 //		_dragPixelTolerance(0)
@@ -876,8 +877,8 @@ void SavedBattleGame::initUtilities(const ResourcePack* const res)
 }
 
 /**
- * Sets the TacticalType based on the battle Type.
- * @param type - reference the battle type
+ * Sets the TacticalType based on the mission-type.
+ * @param type - reference the mission-type
  */
 void SavedBattleGame::setTacType(const std::string& type) // private.
 {
@@ -912,8 +913,8 @@ TacticalType SavedBattleGame::getTacType() const
 }
 
 /**
- * Sets the mission type.
- * @param type - reference a mission type
+ * Sets the mission-type.
+ * @param type - reference to a mission-type
  */
 void SavedBattleGame::setTacticalType(const std::string& type)
 {
@@ -921,11 +922,11 @@ void SavedBattleGame::setTacticalType(const std::string& type)
 }
 
 /**
- * Gets the mission type.
- * @note This should return a const ref
- * except perhaps when there's a nextStage that deletes this SavedBattleGame ...
- * and creates a new one wherein the ref is no longer valid.
- * @return, the mission type
+ * Gets the mission-type.
+ * @note This should return a const ref except perhaps when there's a nextStage
+ * that deletes this SavedBattleGame ... and creates a new one wherein the ref
+ * is no longer valid.
+ * @return, the mission-type
  */
 std::string SavedBattleGame::getTacticalType() const
 {
@@ -951,8 +952,8 @@ int SavedBattleGame::getTacticalShade() const
 }
 
 /**
- * Gets the map width.
- * @return, the map width (Size X) in tiles
+ * Gets the map-width.
+ * @return, the map-width (Size X) in tiles
  */
 int SavedBattleGame::getMapSizeX() const
 {
@@ -960,8 +961,8 @@ int SavedBattleGame::getMapSizeX() const
 }
 
 /**
- * Gets the map length.
- * @return, the map length (Size Y) in tiles
+ * Gets the map-length.
+ * @return, the map-length (Size Y) in tiles
  */
 int SavedBattleGame::getMapSizeY() const
 {
@@ -969,8 +970,8 @@ int SavedBattleGame::getMapSizeY() const
 }
 
 /**
- * Gets the map height.
- * @return, the map height (Size Z) in layers
+ * Gets the map-height.
+ * @return, the map-height (Size Z) in layers
  */
 int SavedBattleGame::getMapSizeZ() const
 {
@@ -1454,7 +1455,7 @@ bool SavedBattleGame::endFactionTurn()
 }
 
 /**
- * Turns on debug mode.
+ * Turns on tactical debug-mode.
  */
 void SavedBattleGame::debugTac()
 {
@@ -1470,7 +1471,7 @@ void SavedBattleGame::debugTac()
 }
 
 /**
- * Gets the current debug mode.
+ * Gets the current tactical debug-mode setting.
  * @return, debug mode
  */
 bool SavedBattleGame::getDebugTac() const
@@ -1503,15 +1504,15 @@ BattlescapeState* SavedBattleGame::getBattleState() const
 
 /**
  * Sets the BattlescapeState.
- * @param bs - pointer to the BattlescapeState
+ * @param battleState - pointer to the BattlescapeState
  */
-void SavedBattleGame::setBattleState(BattlescapeState* bs)
+void SavedBattleGame::setBattleState(BattlescapeState* const battleState)
 {
-	_battleState = bs;
+	_battleState = battleState;
 }
 
 /**
- * Resets all the units to their current standing tile(s).
+ * Sets all BattleUnits onto their start Tile(s) at the end of pre-battle equip.
  */
 void SavedBattleGame::resetUnitsOnTiles()
 {
@@ -1524,8 +1525,8 @@ void SavedBattleGame::resetUnitsOnTiles()
 		{
 			const int unitSize ((*i)->getArmor()->getSize() - 1);
 
-			if ((*i)->getTile() != nullptr // remove unit from its current tile
-				&& (*i)->getTile()->getTileUnit() == *i) // wtf, is this super-safety ......
+			if ((*i)->getTile() != nullptr // clear Tile's link to its current unit
+				&& (*i)->getTile()->getTileUnit() == *i)
 			{
 				for (int
 						x = unitSize;
@@ -1542,7 +1543,8 @@ void SavedBattleGame::resetUnitsOnTiles()
 				}
 			}
 
-			for (int // set unit onto its proper tile
+			Tile* tile;
+			for (int // set Tile's link to its current unit
 					x = unitSize;
 					x != -1;
 					--x)
@@ -1552,7 +1554,7 @@ void SavedBattleGame::resetUnitsOnTiles()
 						y != -1;
 						--y)
 				{
-					Tile* const tile = getTile((*i)->getPosition() + Position(x,y,0));
+					tile = getTile((*i)->getPosition() + Position(x,y,0));
 					tile->setUnit(
 								*i,
 								getTile(tile->getPosition() + Position(0,0,-1)));
@@ -1563,6 +1565,8 @@ void SavedBattleGame::resetUnitsOnTiles()
 		if ((*i)->getFaction() == FACTION_PLAYER)
 			(*i)->setUnitVisible();
 	}
+	_battleState->getBattleGame()->reinit();
+//	_preBattle = false; // gtg.
 }
 
 /**
@@ -2445,7 +2449,7 @@ const BattleUnit* SavedBattleGame::getHighestRanked(
 		bool isXcom) const
 {
 	//Log(LOG_INFO) << "SavedBattleGame::getHighestRanked() xcom = " << xcom;
-	const BattleUnit* leader = nullptr;
+	const BattleUnit* leader (nullptr);
 	qtyAllies = 0;
 
 	for (std::vector<BattleUnit*>::const_iterator
@@ -2463,11 +2467,8 @@ const BattleUnit* SavedBattleGame::getHighestRanked(
 				{
 					++qtyAllies;
 
-					if (leader == nullptr
-						|| (*i)->getRankInt() > leader->getRankInt())
-					{
+					if (leader == nullptr || (*i)->getRankInt() > leader->getRankInt())
 						leader = *i;
-					}
 				}
 			}
 			else if ((*i)->getFaction() == FACTION_HOSTILE
@@ -2476,15 +2477,11 @@ const BattleUnit* SavedBattleGame::getHighestRanked(
 				//Log(LOG_INFO) << "SavedBattleGame::getHighestRanked(), side is aLien";
 				++qtyAllies;
 
-				if (leader == nullptr
-					|| (*i)->getRankInt() < leader->getRankInt())
-				{
+				if (leader == nullptr || (*i)->getRankInt() < leader->getRankInt())
 					leader = *i;
-				}
 			}
 		}
 	}
-
 	//if (leader) Log(LOG_INFO) << ". leaderID = " << leader->getId();
 	//else Log(LOG_INFO) << ". leaderID = 0";
 	return leader;
@@ -2503,56 +2500,48 @@ int SavedBattleGame::getMoraleModifier( // note: Add bonus to aLiens for Cydonia
 		bool isXcom) const
 {
 	//Log(LOG_INFO) << "SavedBattleGame::getMoraleModifier()";
-	if (unit != nullptr
-		&& unit->getOriginalFaction() == FACTION_NEUTRAL)
-	{
-		return 100;
-	}
+	int ret (100);
 
-	int ret = 100;
-
-	if (unit != nullptr) // morale Loss when 'unit' slain
+	if (unit != nullptr) // morale Loss if 'unit' is slain
 	{
 		//Log(LOG_INFO) << "SavedBattleGame::getMoraleModifier(), unit slain Penalty";
-		if (unit->getOriginalFaction() == FACTION_PLAYER) // xCom dies. MC'd or not
+		switch (unit->getOriginalFaction())
 		{
-			switch (unit->getRankInt())
-			{
-				case 5:			// commander
-					ret += 30;	// 200
-				case 4:			// colonel
-					ret += 25;	// 170
-				case 3:			// captain
-					ret += 20;	// 145
-				case 2:			// sergeant
-					ret += 10;	// 125
-				case 1:			// squaddie
-					ret += 15;	// 115
-			}
-			//Log(LOG_INFO) << ". . xCom lossModifi = " << ret;
-		}
-		else if (unit->getFaction() == FACTION_HOSTILE) // aLien dies. MC'd aliens return 100, or 50 on Mars
-		{
-			switch (unit->getRankInt()) // soldiers are rank #5, terrorists are ranks #6 and #7
-			{
-				case 0:			// commander
-					ret += 30;	// 200
-				case 1:			// leader
-					ret += 25;	// 170
-				case 2:			// engineer
-					ret += 20;	// 145
-				case 3:			// medic
-					ret += 10;	// 125
-				case 4:			// navigator
-					ret += 15;	// 115
-			}
+			case FACTION_NEUTRAL:
+				return ret;
 
-			if (_tacticalType == "STR_MARS_CYDONIA_LANDING"
-				|| _tacticalType == "STR_MARS_THE_FINAL_ASSAULT")
-			{
-				ret /= 2; // less hit for losing a unit on Cydonia.
-			}
-			//Log(LOG_INFO) << ". . aLien lossModifi = " << ret;
+			case FACTION_PLAYER: // xCom dies. MC'd or not
+				switch (unit->getRankInt())
+				{
+					case 5: ret += 30; // 200 commander
+					case 4: ret += 25; // 170 colonel
+					case 3: ret += 20; // 145 captain
+					case 2: ret += 10; // 125 sergeant
+					case 1: ret += 15; // 115 squaddie
+					//Log(LOG_INFO) << ". . xCom lossModifi = " << ret;
+				}
+				break;
+
+			case FACTION_HOSTILE:
+				if (unit->isMindControlled() == false) // aLien dies. MC'd aliens return 100 or 50 on Mars
+				{
+					switch (unit->getRankInt()) // soldiers are rank #5, terrorists are ranks #6 and #7
+					{
+						case 0: ret += 30;	// 200 commander
+						case 1: ret += 25;	// 170 leader
+						case 2: ret += 20;	// 145 engineer
+						case 3: ret += 10;	// 125 medic
+						case 4: ret += 15;	// 115 navigator
+					}
+
+					switch (_tacType)
+					{
+						case TCT_MARS1:	// "STR_MARS_CYDONIA_LANDING"
+						case TCT_MARS2:	// "STR_MARS_THE_FINAL_ASSAULT"
+							ret /= 2;	// less hit for losing a unit on Cydonia.
+					}
+				}
+				//Log(LOG_INFO) << ". . aLien lossModifi = " << ret;
 		}
 	}
 	else // leadership Bonus
@@ -2563,67 +2552,51 @@ int SavedBattleGame::getMoraleModifier( // note: Add bonus to aLiens for Cydonia
 
 		if (isXcom == true)
 		{
-			leader = getHighestRanked(qtyAllies);
-
-			if (leader != nullptr)
+			if ((leader = getHighestRanked(qtyAllies)) != nullptr)
 			{
 				switch (leader->getRankInt())
 				{
-					case 5:			// commander
-						ret += 15;	// 135, was 150
-					case 4:			// colonel
-						ret += 5;	// 120, was 125
-					case 3:			// captain
-						ret += 5;	// 115
-					case 2:			// sergeant
-						ret += 10;	// 110
-					case 1:			// squaddie
-						ret += 15;	// 100
-					case 0:			// rookies...
-						ret -= 15;	// 85
+					case 5: ret += 15; // 135, was 150	// commander
+					case 4: ret +=  5; // 120, was 125	// colonel
+					case 3: ret +=  5; // 115			// captain
+					case 2: ret += 10; // 110			// sergeant
+					case 1: ret += 15; // 100			// squaddie
+					case 0: ret -= 15; //  85			// rookies ...
 				}
 			}
 			//Log(LOG_INFO) << ". . xCom leaderModifi = " << ret;
 		}
 		else // aLien
 		{
-			leader = getHighestRanked(qtyAllies, false);
-			if (leader != nullptr)
+			if ((leader = getHighestRanked(qtyAllies, false)) != nullptr)
 			{
 				switch (leader->getRankInt()) // terrorists are ranks #6 and #7
 				{
-					case 0:			// commander
-						ret += 25;	// 150
-					case 1:			// leader
-						ret += 10;	// 125
-					case 2:			// engineer
-						ret += 5;	// 115
-					case 3:			// medic
-						ret += 10;	// 110
-					case 4:			// navigator
-						ret += 10;	// 100
-					case 5:			// soldiers...
-						ret -= 10;	// 90
+					case 0: ret += 25; // 150 commander
+					case 1: ret += 10; // 125 leader
+					case 2: ret +=  5; // 115 engineer
+					case 3: ret += 10; // 110 medic
+					case 4: ret += 10; // 100 navigator
+					case 5: ret -= 10; //  90 soldiers ...
 				}
 			}
 
-			if (_tacticalType == "STR_TERROR_MISSION"
-				|| _tacticalType == "STR_ALIEN_BASE_ASSAULT"
-				|| _tacticalType == "STR_BASE_DEFENSE")
+			switch (_tacType)
 			{
-				ret += 50; // higher morale.
-			}
-			else if (_tacticalType == "STR_MARS_CYDONIA_LANDING"
-						|| _tacticalType == "STR_MARS_THE_FINAL_ASSAULT")
-			{
-				ret += 100; // higher morale.
+				case TCT_MISSIONSITE:	// "STR_TERROR_MISSION"
+				case TCT_BASEASSAULT:	// "STR_ALIEN_BASE_ASSAULT"
+				case TCT_BASEDEFENSE:	// "STR_BASE_DEFENSE"
+					ret += 50;			// higher morale.
+					break;
+
+				case TCT_MARS1:	// "STR_MARS_CYDONIA_LANDING"
+				case TCT_MARS2:	// "STR_MARS_THE_FINAL_ASSAULT"
+					ret += 100;	// higher morale.
 			}
 			//Log(LOG_INFO) << ". . aLien leaderModifi = " << ret;
 		}
-
 		ret += qtyAllies - 9; // use 9 allies as Unity.
 	}
-
 	//Log(LOG_INFO) << ". totalModifier = " << ret;
 	return ret;
 }
@@ -2636,6 +2609,7 @@ void SavedBattleGame::resetTurnCounter()
 	_turn = 1;
 	_cheatAI = false;
 	_side = FACTION_PLAYER;
+//	_preBattle = true;
 }
 
 /**
@@ -2644,7 +2618,7 @@ void SavedBattleGame::resetTurnCounter()
 void SavedBattleGame::blackTiles()
 {
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _qtyTilesTotal;
 			++i)
 	{
@@ -3041,6 +3015,15 @@ void SavedBattleGame::setCheatTurn(int turn)
 {
 	_cheatTurn = turn;
 }
+
+/**
+ * Checks if tactical has yet to start.
+ * @return, true if pre-battle
+ *
+bool SavedBattleGame::preBattle() const
+{
+	return _preBattle;
+} */
 
 }
 

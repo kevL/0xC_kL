@@ -32,8 +32,8 @@ class Ruleset;
 
 
 /**
- * Represents a craft weapon equipped by a craft.
- * @note Contains variable info about a craft weapon like ammo.
+ * Represents a CraftWeapon equipped by a craft.
+ * @note Contains variable info about a CraftWeapon like ammo.
  * @sa RuleCraftWeapon
  */
 class CraftWeapon
@@ -49,42 +49,42 @@ private:
 
 
 	public:
-		/// Creates a craft weapon of the specified type.
+		/// Creates a CraftWeapon of the specified type.
 		CraftWeapon(
 				const RuleCraftWeapon* const cwRule,
 				int ammo = 0);
-		/// Cleans up the craft weapon.
+		/// Cleans up the CraftWeapon.
 		~CraftWeapon();
 
-		/// Loads the craft weapon from YAML.
+		/// Loads the CraftWeapon from YAML.
 		void load(const YAML::Node& node);
-		/// Saves the craft weapon to YAML.
+		/// Saves the CraftWeapon to YAML.
 		YAML::Node save() const;
 
-		/// Gets the craft weapon's ruleset.
+		/// Gets the CraftWeapon's ruleset.
 		const RuleCraftWeapon* getRules() const;
 
-		/// Gets the craft weapon's ammo.
+		/// Gets the CraftWeapon's ammo.
 		int getAmmo() const;
-		/// Sets the craft weapon's ammo.
+		/// Sets the CraftWeapon's ammo.
 		bool setAmmo(int ammo);
-		/// Gets the craft weapon's rearming status.
+		/// Gets the CraftWeapon's rearming status.
 		bool getRearming() const;
-		/// Sets the craft weapon's rearming status
+		/// Sets the CraftWeapon's rearming status
 		void setRearming(bool rearming = true);
-		/// Rearms the craft weapon.
+		/// Rearms the CraftWeapon.
 		int rearm(
 				int baseClips = 0,
 				int clipSize = 0);
-		/// Gets this CraftWeapon's cantLoad status - no stock in Base Stores.
+		/// Gets the CraftWeapon's cantLoad status - no stock in Base Stores.
 		bool getCantLoad() const;
-		/// Sets this CraftWeapon's cantLoad status - no stock in Base Stores.
+		/// Sets the CraftWeapon's cantLoad status - no stock in Base Stores.
 		void setCantLoad(bool cantLoad = true);
 
-		/// Fires the craft weapon - used during dogfights.
+		/// Fires the CraftWeapon - used during dogfights.
 		CraftWeaponProjectile* fire() const;
 
-		/// Gets how many clips are loaded into this weapon.
+		/// Gets how many clips are loaded into the CraftWeapon.
 		int getClipsLoaded(const Ruleset* const rules) const;
 };
 

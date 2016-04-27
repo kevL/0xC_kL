@@ -164,6 +164,16 @@ void BattlescapeGame::init()
 }
 
 /**
+ * Sets a flag to re-initialize the Battlescape Game.
+ * @note Used by BattlescapeGenerator::nextStage() or by InventoryState::btnOkClick()
+ * or by SavedBattleGame::resetUnitsOnTiles(). I haven't decided yet.
+ */
+void BattlescapeGame::reinit()
+{
+	_init = true;
+}
+
+/**
  * Checks for units panicking or falling and so on.
  * @note Called by BattlescapeState::think().
  */
@@ -172,45 +182,47 @@ void BattlescapeGame::think()
 	//Log(LOG_INFO) << "BattlescapeGame::think()";
 	if (_battleStates.empty() == true) // nothing is happening - see if they need some aLien AI or units panicking or what have you
 	{
-		if (_battleSave->getSide() != FACTION_PLAYER) // it's a non-player turn - ALIENS or CIVILIANS
+		switch (_battleSave->getSide())
 		{
-			if (_debugPlay == false)
-			{
-				BattleUnit* const selUnit (_battleSave->getSelectedUnit());
-				if (selUnit != nullptr)
+			case FACTION_PLAYER:
+				if (_playerPanicHandled == false) // not all panicking units have been handled
 				{
-					_parentState->printDebug(Text::intWide(selUnit->getId()));
-					if (handlePanickingUnit(selUnit) == false)
+					//Log(LOG_INFO) << "bg:think() . panic Handled is FALSE";
+					if ((_playerPanicHandled = handlePanickingPlayer()) == true)
 					{
-						//Log(LOG_INFO) << "BattlescapeGame::think() call handleUnitAI() " << selUnit->getId();
-						handleUnitAI(selUnit);
+						//Log(LOG_INFO) << "bg:think() . panic Handled TRUE";
+						_battleSave->getTileEngine()->calcFovAll();
+						_battleSave->getBattleState()->updateSoldierInfo(false);
 					}
 				}
-				else if (_battleSave->selectNextFactionUnit(
-														true,
-														_AISecondMove == true) == nullptr) // find 1st AI-unit else endTurn
+				else
 				{
-					endAiTurn();
+					//Log(LOG_INFO) << "bg:think() . panic Handled is TRUE";
+					_parentState->updateExperienceInfo();
 				}
-			}
-		}
-		else // it's a player turn
-		{
-			if (_playerPanicHandled == false) // not all panicking units have been handled
-			{
-				//Log(LOG_INFO) << "bg:think() . panic Handled is FALSE";
-				if ((_playerPanicHandled = handlePanickingPlayer()) == true)
+				break;
+
+			case FACTION_HOSTILE:
+			case FACTION_NEUTRAL:
+				if (_debugPlay == false)
 				{
-					//Log(LOG_INFO) << "bg:think() . panic Handled TRUE";
-					_battleSave->getTileEngine()->calcFovAll();
-					_battleSave->getBattleState()->updateSoldierInfo(false);
+					BattleUnit* const selUnit (_battleSave->getSelectedUnit());
+					if (selUnit != nullptr)
+					{
+						_parentState->printDebug(Text::intWide(selUnit->getId()));
+						if (handlePanickingUnit(selUnit) == false)
+						{
+							//Log(LOG_INFO) << "BattlescapeGame::think() call handleUnitAI() " << selUnit->getId();
+							handleUnitAI(selUnit);
+						}
+					}
+					else if (_battleSave->selectNextFactionUnit(
+															true,
+															_AISecondMove == true) == nullptr) // find 1st AI-unit else endTurn
+					{
+						endAiTurn();
+					}
 				}
-			}
-			else
-			{
-				//Log(LOG_INFO) << "bg:think() . panic Handled is TRUE";
-				_parentState->updateExperienceInfo();
-			}
 		}
 
 		if (_battleSave->getUnitsFalling() == true)

@@ -1241,7 +1241,9 @@ SavedBattleGame* SavedGame::getBattleSave()
  */
 void SavedGame::setBattleSave(SavedBattleGame* const battleSave)
 {
-	if (_battleSave != nullptr) delete _battleSave;
+	if (_battleSave != nullptr)
+		delete _battleSave;
+
 	_battleSave = battleSave;
 }
 

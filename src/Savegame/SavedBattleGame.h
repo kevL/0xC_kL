@@ -69,7 +69,7 @@ class SavedBattleGame
 {
 
 private:
-	static const size_t SEARCH_DIST = 11;
+	static const size_t SEARCH_DIST = 11u;
 	static const int CHEAT_DEFAULT = 20;
 
 	bool
@@ -79,6 +79,7 @@ private:
 		_debugTac,
 //		_kneelReserved,
 		_pacified,
+//		_preBattle,
 		_unitsFalling;
 	int
 		_cheatTurn,
@@ -311,9 +312,9 @@ private:
 		/// Gets a pointer to the BattlescapeState.
 		BattlescapeState* getBattleState() const;
 		/// Sets the pointer to the BattlescapeState.
-		void setBattleState(BattlescapeState* bs);
+		void setBattleState(BattlescapeState* const battleState);
 
-		/// Resets tiles units are standing on
+		/// Resets Tiles that BattleUnits are standing on for start of next-stage.
 		void resetUnitsOnTiles();
 
 		/// Gives access to the storage-tiles vector.
@@ -342,21 +343,21 @@ private:
 		/// Checks if all the objectives are destroyed.
 		bool allObjectivesDestroyed() const;
 
-		/// Sets the next available item ID value.
+		/// Sets the next available item-ID value.
 		void setCanonicalBattleId();
-		/// Gets the next available item ID value.
+		/// Gets the next available item-ID value.
 		int* getCanonicalBattleId();
 
-		/// Gets a spawn node.
+		/// Gets a spawn-node.
 		Node* getSpawnNode(
 				int unitRank,
 				BattleUnit* const unit);
-		/// Gets a patrol node.
+		/// Gets a patrol-node.
 		Node* getPatrolNode(
 				bool scout,
 				BattleUnit* const unit,
 				Node* startNode);
-		/// Gets the node considered nearest to a BattleUnit.
+		/// Gets the Node considered nearest to a BattleUnit.
 		Node* getNearestNode(const BattleUnit* const unit) const;
 		/// Gets if a BattleUnit can use a particular Node.
 		bool isNodeType(
@@ -493,6 +494,9 @@ private:
 
 		/// Sets the turn for the AI to start the cheating aLiens.
 		void setCheatTurn(int turn);
+
+		/// Checks if tactical has yet to start.
+//		bool preBattle() const;
 
 		/// Gets the reserved fire mode.
 //		BattleActionType getBatReserved() const;

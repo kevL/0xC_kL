@@ -470,10 +470,10 @@ bool TileEngine::calcFov(
 
 					if ((tileTest = _battleSave->getTile(posTest)) != nullptr)
 					{
-						const bool preBattle (_battleSave->getBattleGame() == nullptr);
+//						const bool preBattle (_battleSave->getBattleGame() == nullptr);
 
-						if (preBattle == true
-							|| _battleSave->getBattleGame()->playerPanicHandled() == true) // spot units ->>
+//						if (preBattle == true ||
+						if (_battleSave->getBattleGame()->playerPanicHandled() == true) // spot units ->>
 						{
 							if ((spottedUnit = tileTest->getTileUnit()) != nullptr
 //								&& spottedUnit->isOut_t(OUT_STAT) == false // <- out units have no Tile-ptr
@@ -507,7 +507,7 @@ bool TileEngine::calcFov(
 //											unit->addToVisibleTiles(spottedUnit->getTile());
 
 											if (soundId != -1
-												&& preBattle == false
+//												&& preBattle == false
 												&& spotByPlayer == true) // play aggro-sound if non-MC'd [huh] xCom unit spots a not-previously-visible hostile.
 //												&& unit->getHostileUnitsThisTurn().size() > antecedentOpponents)
 //												&& unit->getOriginalFaction() == FACTION_PLAYER	// NOTE: Mind-control zhing clashes with aggroSound; put
@@ -6017,7 +6017,7 @@ bool TileEngine::isVoxelVisible(const Position& voxel) const
 } */
 
 /**
- * Checks for a target in voxel-space.
+ * Checks for a voxel-type in voxel-space.
  * @param targetVoxel		- reference to the Position to check in voxel-space
  * @param excludeUnit		- pointer to unit NOT to do checks for (default nullptr)
  * @param excludeAllUnits	- true to NOT do checks on any unit (default false)
@@ -6043,6 +6043,14 @@ VoxelType TileEngine::detVoxelType(
 		const bool onlyVisible,
 		const BattleUnit* const excludeAllBut) const
 {
+//	if (_battleSave->preBattle() == true)
+//		excludeAllUnits = true;	// don't start unit spotting before pre-game inventory stuff since
+								// large units on the craftInventory-tile will cause a crash if they're "spotted"
+								// but I wouldn't be surprised if this is simply more code-bloat
+								// after the changes made herein to calcFov.
+								// TODO: Trace that because this function gets called 50-bazillion times a second.
+								// And if any voxel-checks *are* being done during pre-battle, stop it back there.
+
 	//Log(LOG_INFO) << "TileEngine::detVoxelType()"; // massive lag-to-file, Do not use.
 	const Tile
 		* const tile (_battleSave->getTile(Position::toTileSpace(targetVoxel))),
@@ -6059,44 +6067,38 @@ VoxelType TileEngine::detVoxelType(
 	}
 
 	if (tile->isVoid(false, false) == true
-		&& tile->getTileUnit() == nullptr) // TODO: tie this into the boolean-input parameters
+		&& tile->getTileUnit() == nullptr // TODO: tie this into the boolean-input parameters
+		&& ((tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1))) == nullptr
+			|| tileBelow->getTileUnit() == nullptr))
 	{
-		tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1));
-		if (tileBelow == nullptr || tileBelow->getTileUnit() == nullptr)
-		{
-			//Log(LOG_INFO) << ". vC() ret VOXEL_EMPTY";
-			return VOXEL_EMPTY;
-		}
+		//Log(LOG_INFO) << ". vC() ret VOXEL_EMPTY";
+		return VOXEL_EMPTY;
 	}
 
-	// kL_note: should allow items to be thrown through a gravLift down to the floor below
-	if (targetVoxel.z % 24 < 2
+	if (targetVoxel.z % 24 < 2 // NOTE: This should allow items to be thrown through a gravLift down to the floor below.
 		&& tile->getMapData(O_FLOOR) != nullptr
 		&& tile->getMapData(O_FLOOR)->isGravLift() == true)
 	{
 		//Log(LOG_INFO) << "detVoxelType() isGravLift";
 		//Log(LOG_INFO) << ". level = " << tile->getPosition().z;
-		if (tile->getPosition().z == 0)
-			return VOXEL_FLOOR;
-
-		tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1));
-		if (tileBelow != nullptr
-			&& tileBelow->getMapData(O_FLOOR) != nullptr
-			&& tileBelow->getMapData(O_FLOOR)->isGravLift() == false)
+		if (tile->getPosition().z == 0
+			|| ((tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1))) != nullptr
+				&& tileBelow->getMapData(O_FLOOR) != nullptr
+				&& tileBelow->getMapData(O_FLOOR)->isGravLift() == false))
 		{
 			//Log(LOG_INFO) << ". vC() ret VOXEL_FLOOR";
 			return VOXEL_FLOOR;
 		}
 	}
 
-	// first check TERRAIN tile/voxel data
+	// first check tile-part voxel-data
 	MapDataType partType;
 	const MapData* partData;
 	size_t
-		layer ((static_cast<size_t>(targetVoxel.z) % 24) >> 1),
 		loftId,
-		x (15 - static_cast<size_t>(targetVoxel.x) % 16);		// x-axis is reversed for tileParts, standard for battleUnit.
-	const size_t y (static_cast<size_t>(targetVoxel.y) % 16);	// y-axis is standard
+		layer ((static_cast<size_t>(targetVoxel.z) % 24u) >> 1u),
+		x (15u - static_cast<size_t>(targetVoxel.x) % 16u);		// x-axis is reversed for tileParts, standard for battleUnit.
+	const size_t y (static_cast<size_t>(targetVoxel.y) % 16u);	// y-axis is standard
 
 	int parts (static_cast<int>(Tile::PARTS_TILE)); // terrain parts [0=floor, 1/2=walls, 3=content-object]
 	for (int
@@ -6104,32 +6106,26 @@ VoxelType TileEngine::detVoxelType(
 			i != parts;
 			++i)
 	{
-		partType = static_cast<MapDataType>(i);
-		if (tile->isUfoDoorOpen(partType) == false)
+		if (tile->isUfoDoorOpen(partType = static_cast<MapDataType>(i)) == false
+			&& (partData = tile->getMapData(partType)) != nullptr
+			&& (loftId = (partData->getLoftId(layer) << 4u) + y) < _voxelData->size() // davide, http://openxcom.org/forum/index.php?topic=2934.msg32146#msg32146 (x2 _below)
+			&& (_voxelData->at(loftId) & (1 << x))) // if the voxelData at loftId is "1" solid:
 		{
-			partData = tile->getMapData(partType);
-			if (partData != nullptr)
-			{
-				loftId = (partData->getLoftId(layer) << 4) + y;
-				if (loftId < _voxelData->size() // davide, http://openxcom.org/forum/index.php?topic=2934.msg32146#msg32146 (x2 _below)
-					&& _voxelData->at(loftId) & (1 << x)) // if the voxelData at loftId is "1" solid:
-				{
-					//Log(LOG_INFO) << ". vC() ret = " << i;
-					return static_cast<VoxelType>(partType); // Note MapDataType & VoxelType correspond.
-				}
-			}
+			//Log(LOG_INFO) << ". vC() ret = " << i;
+			return static_cast<VoxelType>(partType); // NOTE: MapDataType & VoxelType correspond.
 		}
 	}
 
+	// second check UNIT voxel-data
 	if (excludeAllUnits == false)
 	{
 		const BattleUnit* targetUnit (tile->getTileUnit());
+
 		if (targetUnit == nullptr
-			&& tile->hasNoFloor() == true)
+			&& tile->hasNoFloor() == true
+			&& (tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1))) != nullptr)
 		{
-			tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1));
-			if (tileBelow != nullptr)
-				targetUnit = tileBelow->getTileUnit();
+			targetUnit = tileBelow->getTileUnit();
 		}
 
 		if (targetUnit != nullptr && targetUnit != excludeUnit
@@ -6144,24 +6140,27 @@ VoxelType TileEngine::detVoxelType(
 			if (targetVoxel.z > target_z
 				&& targetVoxel.z <= target_z + targetUnit->getHeight()) // if hit is between foot- and hair-level voxel-layers (z-axis)
 			{
-				if (targetUnit->getArmor()->getSize() == 2) // for large units...
+				switch (targetUnit->getArmor()->getSize())
 				{
-					const Position posTile (tile->getPosition());
-					layer = static_cast<size_t>(posTile.x - posUnit.x) + ((posTile.y - posUnit.y) * 2);
-					//Log(LOG_INFO) << ". vC, large unit, LoFT entry = " << layer;
+					case 2: // for large units...
+					{
+						const Position posTile (tile->getPosition());
+						layer = static_cast<size_t>(posTile.x - posUnit.x + ((posTile.y - posUnit.y) << 1u));
+						//Log(LOG_INFO) << ". vC, large unit, LoFT entry = " << layer;
+						break;
+					}
+
+					case 1: layer = 0u;
 				}
-				else
-					layer = 0;
 
 //				if (layer > -1)
 //				{
 				x = targetVoxel.x % 16;
 				// That should be (8,8,10) as per BattlescapeGame::handleNonTargetAction() if (_tacAction.type == BA_MELEE)
 
-				loftId = (targetUnit->getLoft(layer) << 4) + y;
 				//Log(LOG_INFO) << "loftId = " << loftId << " vD-size = " << (int)_voxelData->size();
-				if (loftId < _voxelData->size() // davide, http://openxcom.org/forum/index.php?topic=2934.msg32146#msg32146 (x2 ^above)
-					&& _voxelData->at(loftId) & (1 << x)) // if the voxelData at loftId is "1" solid:
+				if ((loftId = (targetUnit->getLoft(layer) << 4u) + y) < _voxelData->size() // davide, http://openxcom.org/forum/index.php?topic=2934.msg32146#msg32146 (x2 ^above)
+					&& (_voxelData->at(loftId) & (1 << x))) // if the voxelData at loftId is "1" solid:
 				{
 					//Log(LOG_INFO) << ". vC() ret VOXEL_UNIT";
 					return VOXEL_UNIT;

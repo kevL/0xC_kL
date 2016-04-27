@@ -131,7 +131,7 @@ private:
 
 
 	public:
-		/// Creates a TileEngine class.
+		/// Creates a TileEngine.
 		TileEngine(
 				SavedBattleGame* const battleSave,
 				const std::vector<Uint16>* const voxelData);
@@ -341,7 +341,7 @@ private:
 
 		/// Checks the visibility of a given voxel.
 //		bool isVoxelVisible(const Position& voxel) const;
-		/// Checks what type of voxel occupies targetVoxel.
+		/// Checks what type of voxel occupies a specified voxel.
 		VoxelType detVoxelType(
 				const Position& targetVoxel,
 				const BattleUnit* const excludeUnit = nullptr,

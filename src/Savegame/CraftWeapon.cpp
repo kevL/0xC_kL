@@ -32,7 +32,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a craft weapon of the specified type.
+ * Initializes the CraftWeapon with a specified rule.
  * @param cwRule	- pointer to RuleCraftWeapon
  * @param ammo		- initial ammo quantity (default 0)
  */
@@ -53,7 +53,7 @@ CraftWeapon::~CraftWeapon()
 {}
 
 /**
- * Loads the craft weapon from a YAML file.
+ * Loads this CraftWeapon from a YAML file.
  * @param node - reference a YAML node
  */
 void CraftWeapon::load(const YAML::Node& node)
@@ -64,7 +64,7 @@ void CraftWeapon::load(const YAML::Node& node)
 }
 
 /**
- * Saves the base to a YAML file.
+ * Saves this CraftWeapon to a YAML file.
  * @return, YAML node
  */
 YAML::Node CraftWeapon::save() const
@@ -82,7 +82,7 @@ YAML::Node CraftWeapon::save() const
 }
 
 /**
- * Gets the ruleset for a craft weapon's type.
+ * Gets the ruleset for this CraftWeapon.
  * @return, pointer to RuleCraftWeapon
  */
 const RuleCraftWeapon* CraftWeapon::getRules() const
@@ -91,8 +91,8 @@ const RuleCraftWeapon* CraftWeapon::getRules() const
 }
 
 /**
- * Gets the amount of ammo contained in this craft weapon.
- * @return, amount of ammo
+ * Gets the quantity of ammo contained in this CraftWeapon.
+ * @return, quantity of ammo
  */
 int CraftWeapon::getAmmo() const
 {
@@ -100,16 +100,14 @@ int CraftWeapon::getAmmo() const
 }
 
 /**
- * Sets the amount of ammo contained in this craft weapon.
- * Also maintains min/max levels.
- * @param ammo - amount of ammo
+ * Sets the quantity of ammo contained in this CraftWeapon.
+ * @note Maintains min/max levels.
+ * @param ammo - quantity of ammo
  * @return, true if there was enough ammo to fire a round off
  */
 bool CraftWeapon::setAmmo(int ammo)
 {
-	_ammo = ammo;
-
-	if (_ammo < 0)
+	if (_ammo = ammo < 0)
 	{
 		_ammo = 0;
 		return false;
@@ -122,7 +120,7 @@ bool CraftWeapon::setAmmo(int ammo)
 }
 
 /**
- * Gets whether this craft weapon needs rearming.
+ * Gets whether this CraftWeapon needs rearming.
  * @return, rearming status
  */
 bool CraftWeapon::getRearming() const
@@ -131,7 +129,7 @@ bool CraftWeapon::getRearming() const
 }
 
 /**
- * Sets whether this craft weapon needs rearming - in case there's no more ammo.
+ * Sets whether this CraftWeapon needs rearming - in case there's no more ammo.
  * @param rearming - rearming status (default true)
  */
 void CraftWeapon::setRearming(bool rearming)
@@ -140,10 +138,10 @@ void CraftWeapon::setRearming(bool rearming)
 }
 
 /**
- * Rearms this craft weapon's ammo.
- * @param baseClips	- the amount of clips available at the Base (default 0)
- * @param clipSize	- the amount of rounds in a clip (default 0)
- * @return, the amount of clips used (negative if not enough clips at Base)
+ * Rearms this CraftWeapon.
+ * @param baseClips	- the quantity of clips available at the Base (default 0)
+ * @param clipSize	- the quantity of rounds in a clip (default 0)
+ * @return, the quantity of clips used (negative if not enough clips at Base)
  */
 int CraftWeapon::rearm(
 		int baseClips,
@@ -159,10 +157,9 @@ int CraftWeapon::rearm(
 		clipsRequested;
 
 	if (clipSize > 0)
-		clipsRequested = std::min( // round up int ->
-							rateQty + clipSize - 1,
-							fullQty - _ammo + clipSize - 1)
-						/ clipSize;
+		clipsRequested = std::min(rateQty + clipSize - 1, // round up int ->
+								  fullQty - _ammo + clipSize - 1)
+								/ clipSize;
 	else
 		clipsRequested = 0;
 

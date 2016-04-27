@@ -947,7 +947,7 @@ XcomResourcePack::~XcomResourcePack()
  */
 void XcomResourcePack::loadBattlescapeResources()
 {
-	std::ostringstream // Load Battlescape ICONS
+	std::ostringstream // Load Battlescape graphics
 		oststr1,
 		oststr2;
 

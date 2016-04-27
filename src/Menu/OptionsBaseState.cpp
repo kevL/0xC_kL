@@ -164,6 +164,10 @@ OptionsBaseState::OptionsBaseState(OptionsOrigin origin)
 OptionsBaseState::~OptionsBaseState()
 {}
 
+/**
+ *
+ * @param origin -
+ */
 void OptionsBaseState::restart(OptionsOrigin origin)
 {
 	switch (origin)
@@ -180,9 +184,9 @@ void OptionsBaseState::restart(OptionsOrigin origin)
 		{
 			_game->setState(new GeoscapeState());
 
-			BattlescapeState* const bs (new BattlescapeState());
-			_game->pushState(bs);
-			_game->getSavedGame()->getBattleSave()->setBattleState(bs);
+			BattlescapeState* const battleState (new BattlescapeState());
+			_game->pushState(battleState);
+			_game->getSavedGame()->getBattleSave()->setBattleState(battleState);
 		}
 	}
 }
