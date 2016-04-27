@@ -2227,14 +2227,14 @@ bool SavedBattleGame::setUnitPosition(
 //		_pf->setPathingUnit(unit); // <- this is not valid when doing base equip.
 		Position posTest (pos); // strip const.
 
-		const int armorSize (unit->getArmor()->getSize() - 1);
+		const int unitSize (unit->getArmor()->getSize() - 1);
 		for (int
-				x = armorSize;
+				x = unitSize;
 				x != -1;
 				--x)
 		{
 			for (int
-					y = armorSize;
+					y = unitSize;
 					y != -1;
 					--y)
 			{
@@ -2245,7 +2245,7 @@ bool SavedBattleGame::setUnitPosition(
 					{
 						posTest += Position(0,0,1);
 						x =
-						y = armorSize + 1; // start over.
+						y = unitSize + 1; // start over.
 
 						break;
 					}
@@ -2272,8 +2272,7 @@ bool SavedBattleGame::setUnitPosition(
 						}
 					}
 
-					// TODO: check for ceiling also.
-					const Tile* const tileAbove (getTile(posTest + Position(x,y,1)));
+					const Tile* const tileAbove (getTile(posTest + Position(x,y,1))); // TODO: check for ceiling also.
 					if (tileAbove != nullptr
 						&& tileAbove->getTileUnit() != nullptr
 						&& tileAbove->getTileUnit() != unit
@@ -2287,7 +2286,7 @@ bool SavedBattleGame::setUnitPosition(
 			}
 		}
 
-		if (armorSize != 0) // -> however, large units never use base equip, so _pf is valid here.
+		if (unitSize != 0) // -> however, large units never use base equip, so _pf is valid here.
 		{
 			_pf->setPathingUnit(unit);
 			for (int
@@ -2304,12 +2303,12 @@ bool SavedBattleGame::setUnitPosition(
 		{
 			unit->setPosition(posTest);
 			for (int
-					x = armorSize;
+					x = unitSize;
 					x != -1;
 					--x)
 			{
 				for (int
-						y = armorSize;
+						y = unitSize;
 						y != -1;
 						--y)
 				{
@@ -2325,69 +2324,63 @@ bool SavedBattleGame::setUnitPosition(
 }
 
 /**
- * Places a unit on or near a position.
+ * Places a unit on or near a specified Position.
  * @param unit		- pointer to a BattleUnit to place
- * @param pos		- reference the position around which to attempt to place @a unit
+ * @param pos		- reference to the position around which to attempt to place @a unit
  * @param isLarge	- true if @a unit is large
- * @return, true if unit is placed
+ * @return, true if placed
  */
 bool SavedBattleGame::placeUnitNearPosition(
 		BattleUnit* const unit,
 		const Position& pos,
 		bool isLarge) const
 {
-	if (unit == nullptr)
-		return false;
-
-	if (setUnitPosition(unit, pos) == true)
+	if (unit == nullptr
+		|| setUnitPosition(unit, pos) == true)
+	{
 		return true;
-
+	}
 
 	int
-		size1 = 0 - unit->getArmor()->getSize(),
-		size2 = isLarge ? 2 : 1,
-		xArray[8] = {    0, size2, size2, size2,     0, size1, size1, size1},
-		yArray[8] = {size1, size1,     0, size2, size2, size2,     0, size1};
+		size1 (0 - unit->getArmor()->getSize()),
+		size2 (isLarge ? 2 : 1),
+		xArray[8u] {    0, size2, size2, size2,     0, size1, size1, size1},
+		yArray[8u] {size1, size1,     0, size2, size2, size2,     0, size1};
 
 	const Tile* tile;
-	const int dir = RNG::generate(0,7);
-	for (int
+	const unsigned dir (static_cast<unsigned>(RNG::generate(0,7)));
+	for (unsigned
 			i = dir;
-			i != dir + 8;
+			i != dir + 8u;
 			++i)
 	{
-		Position posOffset = Position(
-									xArray[i % 8],
-									yArray[i % 8],
-									0);
-//		getPathfinding()->directionToVector(
-//										i % 8,
-//										&posOffset);
+		Position posOffset (Position(
+									xArray[i % 8u],
+									yArray[i % 8u],
+									0));
+//		getPathfinding()->directionToVector(i % 8, &posOffset);
 
-		tile = getTile(pos + (posOffset / 2));
 //		tile = getTile(pos + posOffset);
-		if (tile != nullptr
-			&& getPathfinding()->isBlockedPath(tile, dir, nullptr) == false
+		if ((tile = getTile(pos + (posOffset / 2))) != nullptr
+			&& getPathfinding()->isBlockedPath(tile, dir) == false
 //			&& getPathfinding()->isBlockedPath(getTile(pos), i) == false
 			&& setUnitPosition(unit, pos + posOffset) == true)
 		{
 			return true;
 		}
 	}
-
-/*	if (unit->getMovementType() == MT_FLY) // uhh no.
-	{
-		Tile* tile = getTile(pos + Position(0,0,1));
-		if (tile
-			&& tile->hasNoFloor(getTile(pos))
-			&& setUnitPosition(unit, pos + Position(0,0,1)))
-		{
-			return true;
-		}
-	} */
-
 	return false;
 }
+//	if (unit->getMovementType() == MT_FLY) // uhh no.
+//	{
+//		Tile* tile = getTile(pos + Position(0,0,1));
+//		if (tile
+//			&& tile->hasNoFloor(getTile(pos))
+//			&& setUnitPosition(unit, pos + Position(0,0,1)))
+//		{
+//			return true;
+//		}
+//	}
 
 /**
  * Adds this unit to the vector of falling units if it doesn't already exist there.
@@ -2735,9 +2728,9 @@ std::vector<BattleItem*>* SavedBattleGame::conditionalItems()
 }
 
 /**
- * Sets the battlescape inventory tile when BattlescapeGenerator runs.
- * For use in base missions to randomize item locations.
- * @param equiptTile - pointer to the Tile where tactical equip't should be
+ * Sets the player's inventory-tile when BattlescapeGenerator runs.
+ * @note For use in base-missions to randomize item locations.
+ * @param equiptTile - pointer to the Tile where tactical equip't goes
  */
 void SavedBattleGame::setBattleInventory(Tile* const equiptTile)
 {
@@ -2745,7 +2738,7 @@ void SavedBattleGame::setBattleInventory(Tile* const equiptTile)
 }
 
 /**
- * Gets the inventory tile for preBattle InventoryState OK click.
+ * Gets the player's inventory-tile for preBattle InventoryState Ok-click.
  * @return, pointer to the tactical equip't Tile
  */
 Tile* SavedBattleGame::getBattleInventory() const
@@ -2754,8 +2747,8 @@ Tile* SavedBattleGame::getBattleInventory() const
 }
 
 /**
- * Sets the aLien race for this battle.
- * @note Currently used only for Base Defense missions but should fill for other
+ * Sets the aLien-race for this SavedBattleGame.
+ * @note Currently used only for BaseDefense missions but should fill for other
  * missions also.
  * @param alienRace - reference to an alien-race string
  */
@@ -2765,9 +2758,9 @@ void SavedBattleGame::setAlienRace(const std::string& alienRace)
 }
 
 /**
- * Gets the aLien race participating in this battle.
- * @note Currently used only to get the aLien race for SoldierDiary statistics
- * after a Base Defense mission.
+ * Gets the aLien-race participating in this SavedBattleGame.
+ * @note Currently used only to get the aLien-race for SoldierDiary statistics
+ * after a BaseDefense mission.
  * @return, reference to the alien-race string
  */
 const std::string& SavedBattleGame::getAlienRace() const
@@ -2776,8 +2769,8 @@ const std::string& SavedBattleGame::getAlienRace() const
 }
 
 /**
- * Sets the ground level.
- * @param level - ground level as determined in BattlescapeGenerator
+ * Sets ground-level.
+ * @param level - ground-level as determined in BattlescapeGenerator
  */
 void SavedBattleGame::setGroundLevel(const int level)
 {
@@ -2785,8 +2778,8 @@ void SavedBattleGame::setGroundLevel(const int level)
 }
 
 /**
- * Gets the ground level.
- * @return, ground level
+ * Gets ground-level.
+ * @return, ground-level
  */
 int SavedBattleGame::getGroundLevel() const
 {
@@ -2794,7 +2787,7 @@ int SavedBattleGame::getGroundLevel() const
 }
 
 /**
- * Gets the operation title of the mission.
+ * Gets the operation-title of this SavedBattleGame.
  * @return, reference to the title
  */
 const std::wstring& SavedBattleGame::getOperation() const
@@ -2803,7 +2796,7 @@ const std::wstring& SavedBattleGame::getOperation() const
 }
 
 /**
- * Tells player that an aLienBase control has been destroyed.
+ * Tells player that an aLienBase-control has been destroyed.
  *
 void SavedBattleGame::setControlDestroyed()
 {
@@ -2811,7 +2804,7 @@ void SavedBattleGame::setControlDestroyed()
 } */
 
 /**
- * Gets if an aLienBase control has been destroyed.
+ * Gets if an aLienBase-control has been destroyed.
  * @return, true if destroyed
  */
 bool SavedBattleGame::getControlDestroyed() const
@@ -2820,7 +2813,7 @@ bool SavedBattleGame::getControlDestroyed() const
 }
 
 /**
- * Gets the music track for the current battle.
+ * Gets the music-track for the current battle.
  * @return, address of the title of the music track
  *
 std::string& SavedBattleGame::getMusic()
@@ -2829,9 +2822,9 @@ std::string& SavedBattleGame::getMusic()
 } */
 
 /**
- * Sets the music track for this battle.
+ * Sets the music-track for this SavedBattleGame.
  * @note The track-string is const but I don't want to deal with it.
- * @param track - reference the track's name
+ * @param track - reference to the track's type
  */
 void SavedBattleGame::setMusic(std::string& track)
 {
@@ -2839,7 +2832,7 @@ void SavedBattleGame::setMusic(std::string& track)
 }
 
 /**
- * Sets variables for what music to play in a particular terrain or lack thereof.
+ * Sets variables for what music to play in a specified terrain or lack thereof.
  * @note The music-string and terrain-string are both const but I don't want to
  * deal with it.
  * @param music		- reference the music category to play
@@ -3035,7 +3028,6 @@ BattleActionType SavedBattleGame::getBatReserved() const
 {
 	return _batReserved;
 } */
-
 /**
  * Sets the TU reserved type.
  * @param reserved - a BattleActionType
@@ -3044,7 +3036,6 @@ void SavedBattleGame::setBatReserved(BattleActionType reserved)
 {
 	_batReserved = reserved;
 } */
-
 /**
  * Gets the kneel reservation setting.
  * @return, true if an extra 4 TUs should be reserved to kneel
@@ -3053,7 +3044,6 @@ bool SavedBattleGame::getKneelReserved() const
 {
 	return _kneelReserved;
 } */
-
 /**
  * Sets the kneel reservation setting.
  * @param reserved - true if an extra 4 TUs should be reserved to kneel

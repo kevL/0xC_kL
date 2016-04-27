@@ -33,7 +33,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a new pool with blank lists of titles.
+ * Initializes an OperationPool with blank lists of titles.
  */
 OperationPool::OperationPool()
 {}
@@ -46,55 +46,43 @@ OperationPool::~OperationPool()
 
 /**
  * Loads the pool from a YAML file.
- * @param filename - reference a YAML file
+ * @param file - reference a YAML file
  */
-void OperationPool::load(const std::string& filename)
+void OperationPool::load(const std::string& file)
 {
-	const std::string st = CrossPlatform::getDataFile("SoldierName/" + filename + ".opr");
+	const std::string st = CrossPlatform::getDataFile("SoldierName/" + file + ".opr");
 	const YAML::Node doc = YAML::LoadFile(st);
 
 	for (YAML::const_iterator
 			i = doc["operaFirst"].begin();
 			i != doc["operaFirst"].end();
 			++i)
-	{
-		const std::wstring adj = Language::utf8ToWstr(i->as<std::string>());
-		_operaFirst.push_back(adj);
-	}
+		_operaFirst.push_back(Language::utf8ToWstr(i->as<std::string>()));
 
 	for (YAML::const_iterator
 			i = doc["operaLast"].begin();
 			i != doc["operaLast"].end();
 			++i)
-	{
-		const std::wstring noun = Language::utf8ToWstr(i->as<std::string>());
-		_operaLast.push_back(noun);
-	}
+		_operaLast.push_back(Language::utf8ToWstr(i->as<std::string>()));
 }
 
 /**
- * Returns a new random title (adj + noun) from the lists of words contained within.
- * @return, the operation title
+ * Generates an operation-title (adj + noun) from the lists of words.
+ * @return, the operation-title
  */
 std::wstring OperationPool::genOperation() const
 {
 	std::wostringstream title;
 
 	if (_operaFirst.empty() == false)
-	{
-		const size_t adj = RNG::pick(_operaFirst.size());
-		title << _operaFirst[adj];
-	}
+		title << _operaFirst[RNG::pick(_operaFirst.size())];
 	else
 		title << L"oper";
 
 	if (_operaLast.empty() == false)
-	{
-		const size_t noun = RNG::pick(_operaLast.size());
-		title << L" " << _operaLast[noun];
-	}
+		title << L" " << _operaLast[RNG::pick(_operaLast.size())];
 	else
-		title << L"-ation";
+		title << L".ation";
 
 	return title.str();
 }

@@ -381,15 +381,15 @@ private:
 				BattleUnit* const unit,
 				const Position& pos,
 				bool test = false) const;
-		/// Attempts to place a unit on or near Position pos.
+		/// Attempts to place a unit on or near a specified Position.
 		bool placeUnitNearPosition(
 				BattleUnit* const unit,
 				const Position& pos,
 				bool isLarge) const;
 
-		/// Adds this unit to the list of falling units.
+		/// Adds this unit to the list of falling BattleUnits.
 		bool addFallingUnit(BattleUnit* const unit);
-		/// Gets the list of falling units.
+		/// Gets the list of falling BattleUnits.
 		std::list<BattleUnit*>* getFallingUnits();
 		/// Toggles the flag that says "there are units falling - start the fall state".
 		void setUnitsFalling(bool fall);
@@ -405,23 +405,23 @@ private:
 				const BattleUnit* const unit = nullptr,
 				bool isXcom = true) const;
 
-		/// Resets the turn counter.
+		/// Resets the turn-counter.
 		void resetTurnCounter();
-		/// Resets the visibility of all tiles on the map.
+		/// Resets the visibility of all tiles on the battlefield.
 		void blackTiles();
 
-		/// Gets an 11x11 grid of positions (-10 to +10 x/y).
+		/// Gets an 11x11 grid of Positions (-10 to +10 x/y).
 		const std::vector<Position> getTileSearch();
 
-		/// Checks if the AI has engaged cheat mode.
+		/// Checks if the AI has engaged cheat-mode.
 		bool isCheating();
 
-		/// Gets a reference to the baseModules map.
+		/// Gets a reference to xCom's base-modules.
 		std::vector<std::vector<std::pair<int, int>>>& baseDestruct();
-		/// Calculates the number of map modules remaining
+		/// Calculates the number of xCom's base-modules remaining.
 		void calcBaseDestruct();
 
-		/// Gets a pointer to the Geoscape save.
+		/// Gets a pointer to the SavedGame.
 		SavedGame* getSavedGame() const;
 
 		/// Gets the list of items guaranteed to be recovered.
@@ -429,22 +429,22 @@ private:
 		/// Gets the list of items that MIGHT get recovered.
 		std::vector<BattleItem*>* conditionalItems();
 
-		/// Sets the inventory tile when BattlescapeGenerator runs.
+		/// Sets the player's inventory-tile when BattlescapeGenerator runs.
 		void setBattleInventory(Tile* const equiptTile);
-		/// Gets the inventory tile for preBattle InventoryState OK click.
+		/// Gets the player's inventory-tile for preBattle InventoryState Ok-click.
 		Tile* getBattleInventory() const;
 
-		/// Sets the alien race for this battle game.
+		/// Sets the alien-race for the SavedBattleGame.
 		void setAlienRace(const std::string& alienRace);
-		/// Gets the alien race participating in this battle game.
+		/// Gets the alien-race participating in the SavedBattleGame.
 		const std::string& getAlienRace() const;
 
-		/// Sets the ground level.
+		/// Sets ground-level.
 		void setGroundLevel(const int level);
-		/// Gets the ground level.
+		/// Gets ground-level.
 		int getGroundLevel() const;
 
-		/// Gets the operation title of the mission.
+		/// Gets the operation-title of the SavedBattleGame.
 		const std::wstring& getOperation() const;
 
 		/// Tells player that an aLienBase control has been destroyed.
@@ -452,11 +452,11 @@ private:
 		/// Gets if an aLienBase control has been destroyed.
 		bool getControlDestroyed() const;
 
-		/// Get the name of the music track.
+		/// Get the name of the music-track to play.
 //		std::string& getMusic();
-		/// Set the name of the music track.
+		/// Set the name of the music-track to play.
 		void setMusic(std::string& track);
-		/// Sets variables for what music to play in a particular terrain.
+		/// Sets variables for what music-track to play in a specified terrain.
 		void calibrateMusic(
 				std::string& music,
 				std::string& terrain) const;

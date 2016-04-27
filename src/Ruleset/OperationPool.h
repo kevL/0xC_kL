@@ -28,10 +28,11 @@ namespace OpenXcom
 {
 
 /**
- * Pool of operation names to generate random mission operation titles.
- * Each pool contains a set of first and last words.
- * The first word defines the operation's adjective and are randomly associated
- * with a last word that defines the operation's noun.
+ * A pool of adjectives and nouns from which to generate randomized
+ * operation-titles for tactical.
+ * @note Each pool contains a set of first and last words. The first word
+ * defines the operation's adjective and are randomly associated with a last
+ * word that defines the operation's noun.
  */
 class OperationPool
 {
@@ -43,15 +44,15 @@ private:
 
 
 	public:
-		/// Creates a blank pool.
+		/// Creates a blank OperationPool.
 		OperationPool();
-		/// Cleans up the pool.
+		/// Cleans up the OperationPool.
 		~OperationPool();
 
-		/// Loads the pool from YAML.
-		void load(const std::string& filename);
+		/// Loads the OperationPool from YAML.
+		void load(const std::string& file);
 
-		/// Generates a new operation title from the pool.
+		/// Generates an operation-title from the OperationPool.
 		std::wstring genOperation() const;
 };
 
