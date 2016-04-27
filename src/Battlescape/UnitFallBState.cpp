@@ -19,6 +19,9 @@
 
 #include "UnitFallBState.h"
 
+//#include <algorithm>	// std::find()
+//#include <list>		// std::list
+
 #include "BattlescapeState.h"
 #include "Camera.h"
 #include "Map.h"

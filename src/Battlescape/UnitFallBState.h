@@ -20,6 +20,8 @@
 #ifndef OPENXCOM_UNITFALLBSTATE_H
 #define OPENXCOM_UNITFALLBSTATE_H
 
+//#include <vector> // std::vector
+
 #include "BattleState.h"
 
 

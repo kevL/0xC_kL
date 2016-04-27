@@ -19,7 +19,7 @@
 
 #include "MapBlock.h"
 
-//#include <sstream>
+//#include <algorithm> // std::find()
 
 #include "../Battlescape/Position.h"
 
@@ -31,7 +31,7 @@ namespace OpenXcom
 
 /**
  * This is MapBlock construction.
- * @param type - reference the type of the MapBlock
+ * @param type - reference to the type of the MapBlock
  */
 MapBlock::MapBlock(const std::string& type)
 	:

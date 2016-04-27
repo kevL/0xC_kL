@@ -19,13 +19,14 @@
 
 #include "Pathfinding.h"
 
-//#include <list>
-
-#include "PathfindingOpenSet.h"
+//#include <algorithm>	// std::copy(), std::find(), std::min(), std::max(), std::min_element(), std::max_element(), std::reverse(), std::sort(), std::swap()
+//#include <cstdlib>	// std::abs()
+//#include <cmath>		// std::ceil()
 
 #include "../fmath.h"
 
-#include "../Battlescape/BattlescapeGame.h"
+#include "BattlescapeGame.h"
+#include "PathfindingOpenSet.h"
 
 #include "../Engine/Options.h"
 

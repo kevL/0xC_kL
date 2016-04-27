@@ -19,6 +19,10 @@
 
 #include "ListLoadState.h"
 
+//#include <algorithm>	// std::find()
+//#include <string>		// std::string
+//#include <vector>		// std::vector
+
 #include "ConfirmLoadState.h"
 #include "LoadGameState.h"
 

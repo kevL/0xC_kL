@@ -20,7 +20,7 @@
 #ifndef OPENXCOM_PATHFINDING_H
 #define OPENXCOM_PATHFINDING_H
 
-//#include <vector>
+//#include <vector> // std::vector
 
 #include "PathfindingNode.h"
 #include "Position.h"

@@ -20,9 +20,9 @@
 #ifndef OPENXCOM_LANGUAGE_H
 #define OPENXCOM_LANGUAGE_H
 
-#include <map>
-#include <string>
-#include <vector>
+#include <map>		// std::map
+#include <string>	// std::string, std::wstring
+#include <vector>	// std::vector
 
 #include "LocalizedText.h"
 

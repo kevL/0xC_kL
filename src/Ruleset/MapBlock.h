@@ -20,8 +20,9 @@
 #ifndef OPENXCOM_MAPBLOCK_H
 #define OPENXCOM_MAPBLOCK_H
 
-//#include <string>
-//#include <vector>
+//#include <map>	// std::map
+//#include <string>	// std::string
+//#include <vector>	// std::vector
 
 #include <yaml-cpp/yaml.h>
 
@@ -48,8 +49,8 @@ class Position;
 
 /**
  * Represents a Terrain Map Block.
- * It contains constant info about this MapBlock, like its type, dimensions, attributes...
- * Map blocks are stored in RuleTerrain objects.
+ * @note It contains constant info about this MapBlock, like its type,
+ * dimensions, attributes .... Map blocks are stored in RuleTerrain objects.
  * @sa http://www.ufopaedia.org/index.php?title=MAPS_Terrain
  */
 class MapBlock

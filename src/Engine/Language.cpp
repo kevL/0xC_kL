@@ -19,8 +19,12 @@
 
 #include "Language.h"
 
-//#include <cassert>
-#include <fstream>
+//#include <algorithm>	// std::find()
+//#include <cassert>	// assert
+//#include <limits>		// std::numeric_limits
+//#include <map>		// std::map
+//#include <set>		// std::set
+//#include <sstream>	// std::wostringstream
 
 #include "CrossPlatform.h"
 #include "LanguagePlurality.h"
@@ -125,7 +129,7 @@ Language::~Language()
  * UTF-8.
  * @note Adapted from
  * http://stackoverflow.com/questions/148403/utf8-to-from-wide-char-conversion-in-stl
- * @param src - reference a wide-character string
+ * @param src - reference to a wide-character string
  * @return, UTF-8 string
  */
 std::string Language::wstrToUtf8(const std::wstring& src) // static.
@@ -134,49 +138,42 @@ std::string Language::wstrToUtf8(const std::wstring& src) // static.
 		return "";
 
 #ifdef _WIN32
-	int bytes = WideCharToMultiByte(
+	int bytes (WideCharToMultiByte(
 								CP_UTF8,
 								0,
-								&src[0],
+								&src[0u],
 								static_cast<int>(src.size()),
 								nullptr,
 								0,
 								nullptr,
-								nullptr);
+								nullptr));
 	std::string st (bytes, 0);
 	WideCharToMultiByte(
 					CP_UTF8,
 					0,
-					&src[0],
+					&src[0u],
 					static_cast<int>(src.size()),
-					&st[0],
+					&st[0u],
 					bytes,
 					nullptr,
 					nullptr);
-
 	return st;
 #else
 	std::string out;
-	unsigned int codepoint = 0;
+	unsigned codepoint (0);
 
 	for (std::wstring::const_iterator
 			i = src.begin();
 			i != src.end();
 			++i)
 	{
-		wchar_t ch = *i;
-		if (ch >= 0xd800
-			&& ch <= 0xdbff)
-		{
+		wchar_t ch (*i);
+		if (ch >= 0xd800 && ch <= 0xdbff)
 			codepoint = ((ch - 0xd800) << 10) + 0x10000;
-		}
 		else
 		{
-			if (ch >= 0xdc00
-				&& ch <= 0xdfff)
-			{
+			if (ch >= 0xdc00 && ch <= 0xdfff)
 				codepoint |= ch - 0xdc00;
-			}
 			else
 				codepoint = ch;
 
@@ -200,11 +197,9 @@ std::string Language::wstrToUtf8(const std::wstring& src) // static.
 				out.append(1, static_cast<char>(0x80 | ((codepoint >> 6) & 0x3f)));
 				out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
 			}
-
 			codepoint = 0;
 		}
 	}
-
 	return out;
 #endif
 }
@@ -212,7 +207,7 @@ std::string Language::wstrToUtf8(const std::wstring& src) // static.
 /**
  * Takes a wide-character string and converts it to an 8-bit string encoded in
  * the current system codepage.
- * @param src - reference a wide-character string
+ * @param src - reference to a wide-character string
  * @return, codepage string
  */
 std::string Language::wstrToCp(const std::wstring& src) // static.
@@ -221,42 +216,33 @@ std::string Language::wstrToCp(const std::wstring& src) // static.
 		return "";
 
 #ifdef _WIN32
-	int bytes = WideCharToMultiByte(
+	int bytes (WideCharToMultiByte(
 								CP_ACP,
 								0,
-								&src[0],
+								&src[0u],
 								static_cast<int>(src.size()),
 								nullptr,
 								0,
 								nullptr,
-								nullptr);
+								nullptr));
 	std::string st (bytes, 0);
 	WideCharToMultiByte(
 					CP_ACP,
 					0,
-					&src[0],
+					&src[0u],
 					static_cast<int>(src.size()),
-					&st[0],
+					&st[0u],
 					bytes,
 					nullptr,
 					nullptr);
-
 	return st;
 #else
-	const int MAX = 500;
+	const int MAX (500);
 	char buffer[MAX];
-	setlocale(
-			LC_ALL,
-			"");
-	wcstombs(
-			buffer,
-			src.c_str(),
-			MAX);
-	setlocale(
-			LC_ALL,
-			"C");
+	setlocale(LC_ALL, "");
+	wcstombs(buffer, src.c_str(), MAX);
+	setlocale(LC_ALL, "C");
 	std::string st(buffer);
-
 	return st;
 #endif
 }
@@ -264,7 +250,7 @@ std::string Language::wstrToCp(const std::wstring& src) // static.
 /**
  * Takes a wide-character string and converts it to an 8-bit string with the
  * filesystem encoding.
- * @param src - reference a wide-character string
+ * @param src - reference to a wide-character string
  * @return, filesystem string
  */
 std::string Language::wstrToFs(const std::wstring& src) // static.
@@ -281,7 +267,7 @@ std::string Language::wstrToFs(const std::wstring& src) // static.
  * string.
  * @note Adapted from
  * http://stackoverflow.com/questions/148403/utf8-to-from-wide-char-conversion-in-stl
- * @param src - reference a UTF-8 string
+ * @param src - reference to a UTF-8 string
  * @return, wide-character string
  */
 std::wstring Language::utf8ToWstr(const std::string& src) // static.
@@ -290,34 +276,33 @@ std::wstring Language::utf8ToWstr(const std::string& src) // static.
 		return L"";
 
 #ifdef _WIN32
-	int bytes = MultiByteToWideChar(
+	int bytes (MultiByteToWideChar(
 								CP_UTF8,
 								0,
-								&src[0],
+								&src[0u],
 								static_cast<int>(src.size()),
 								nullptr,
-								0);
+								0));
 	std::wstring wst (bytes, 0);
 	MultiByteToWideChar(
 					CP_UTF8,
 					0,
-					&src[0],
+					&src[0u],
 					static_cast<int>(src.size()),
-					&wst[0],
+					&wst[0u],
 					bytes);
-
 	return wst;
 #else
 	std::wstring out;
-	unsigned int codepoint = 0;
-	int following = 0;
+	unsigned codepoint (0);
+	int following (0);
 
 	for (std::string::const_iterator
 			i = src.begin();
 			i != src.end();
 			++i)
 	{
-		unsigned char ch = *i;
+		unsigned char ch (*i);
 		if (ch <= 0x7f)
 		{
 			codepoint = ch;
@@ -359,7 +344,6 @@ std::wstring Language::utf8ToWstr(const std::string& src) // static.
 			codepoint = 0;
 		}
 	}
-
 	return out;
 #endif
 }
@@ -367,7 +351,7 @@ std::wstring Language::utf8ToWstr(const std::string& src) // static.
 /**
  * Takes an 8-bit string encoded in the current system codepage and converts it
  * to a wide-character string.
- * @param src - reference a codepage string
+ * @param src - reference to a codepage string
  * @return, wide-character string
  */
 std::wstring Language::cpToWstr(const std::string& src) // static.
@@ -417,7 +401,7 @@ std::wstring Language::cpToWstr(const std::string& src) // static.
 /**
  * Takes an 8-bit string with the filesystem encoding and converts it to a
  * wide-character string.
- * @param src - reference a filesystem string
+ * @param src - reference to a filesystem string
  * @return, wide-character string
  */
 std::wstring Language::fsToWstr(const std::string& src) // static.
@@ -431,9 +415,9 @@ std::wstring Language::fsToWstr(const std::string& src) // static.
 
 /**
  * Replaces every instance of a substring.
- * @param st		- reference the string to modify
- * @param stPre		- reference the substring to find
- * @param stPost	- reference the substring to replace it with
+ * @param st		- reference to the string to modify
+ * @param stPre		- reference to the substring to find
+ * @param stPost	- reference to the substring to replace it with
  */
 void Language::replace( // static.
 		std::string& st,
@@ -456,9 +440,9 @@ void Language::replace( // static.
 
 /**
  * Replaces every instance of a substring.
- * @param wst		- reference the string to modify
- * @param wstPre	- reference the substring to find
- * @param wstPost	- reference the substring to replace it with
+ * @param wst		- reference to the string to modify
+ * @param wstPre	- reference to the substring to find
+ * @param wstPost	- reference to the substring to replace it with
  */
 void Language::replace( // static.
 		std::wstring& wst,
@@ -515,7 +499,7 @@ void Language::getList( // static.
  * @note Not that this has anything to do with Ruby but since it's a
  * widely-supported format and we already have YAML it was convenient.
  * @param file		- reference a YAML file
- * @param extras	- pointer to extra strings from that ruleset
+ * @param extras	- pointer to extra-strings from that ruleset
  */
 void Language::load(
 		const std::string& file,
@@ -585,8 +569,8 @@ void Language::load(
 /**
 * Replaces all special string markers with the appropriate characters and
 * converts the string encoding.
-* @param stIn - reference the original UTF-8 string
-* @return, new widechar string
+* @param stIn - reference to the original UTF-8 string
+* @return, new widechar-string
 */
 std::wstring Language::loadString(const std::string& stIn) const // private.
 {
@@ -610,7 +594,7 @@ std::string Language::getId() const
 
 /**
  * Returns the Language's name in its native language.
- * @return, Language translation
+ * @return, translation as a wide-string
  */
 std::wstring Language::getName() const
 {
@@ -620,8 +604,8 @@ std::wstring Language::getName() const
 /**
  * Returns the LocalizedText of the specified ID.
  * @note If not found return the ID itself.
- * @param id - ID of the string
- * @return, reference to LocalizedText (widestring) of the requested ID
+ * @param id - reference to the string-ID
+ * @return, reference to LocalizedText (wide-string) of the requested ID
  */
 const LocalizedText& Language::getString(const std::string& id) const
 {
@@ -646,7 +630,7 @@ const LocalizedText& Language::getString(const std::string& id) const
  * Returns the LocalizedText with the specified ID in the proper form for @a qty.
  * @note The substitution of @a qty has already happened in the returned
  * LocalizedText. If not found return the ID itself.
- * @param id	- ID of the string
+ * @param id	- reference to the string-ID
  * @param qty	- number to use to decide the proper form
  * @return, LocalizedText (widestring) of the requested ID
  */
