@@ -28,7 +28,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes an MCD Patch.
+ * Initializes the MCDPatch.
  */
 MCDPatch::MCDPatch()
 {
@@ -44,26 +44,25 @@ MCDPatch::~MCDPatch()
 }
 
 /**
- * Loads an MCD Patch from a YAML file.
- * TODO: fill this out with more data.
- * @param node - YAML node
+ * Loads the MCDPatch from a YAML file.
+ * @param node - reference a YAML node
  */
-void MCDPatch::load(const YAML::Node& node)
+void MCDPatch::load(const YAML::Node& node) // TODO: fill this out with more data as needed.
 {
 	//Log(LOG_INFO) << "MCDPatch: load()";
-	YAML::Node data = node["data"];
+	YAML::Node data (node["data"]);
 
 	for (YAML::const_iterator
 			i = data.begin();
 			i != data.end();
 			++i)
 	{
-		const size_t mcdIndex = (*i)["MCDIndex"].as<size_t>();
+		const size_t mcdIndex ((*i)["MCDIndex"].as<size_t>());
 		//Log(LOG_INFO) << ". index = " << mcdIndex;
 
 		if ((*i)["bigWall"])
 		{
-			const int bigWall = (*i)["bigWall"].as<int>();
+			const int bigWall ((*i)["bigWall"].as<int>());
 			//Log(LOG_INFO) << ". . bigWall = " << bigWall;
 			_bigWalls.push_back(std::make_pair(
 											mcdIndex,
@@ -72,7 +71,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["TUWalk"])
 		{
-			const int tuWalk = (*i)["TUWalk"].as<int>();
+			const int tuWalk ((*i)["TUWalk"].as<int>());
 			_tuWalks.push_back(std::make_pair(
 											mcdIndex,
 											tuWalk));
@@ -80,7 +79,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["TUFly"])
 		{
-			const int tuFly = (*i)["TUFly"].as<int>();
+			const int tuFly ((*i)["TUFly"].as<int>());
 			_tuFlys.push_back(std::make_pair(
 										mcdIndex,
 										tuFly));
@@ -88,7 +87,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["TUSlide"])
 		{
-			const int tuSlide = (*i)["TUSlide"].as<int>();
+			const int tuSlide ((*i)["TUSlide"].as<int>());
 			_tuSlides.push_back(std::make_pair(
 											mcdIndex,
 											tuSlide));
@@ -96,7 +95,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["deathTile"])
 		{
-			const int deathTile = (*i)["deathTile"].as<int>();
+			const int deathTile ((*i)["deathTile"].as<int>());
 			_deathTiles.push_back(std::make_pair(
 											mcdIndex,
 											deathTile));
@@ -104,7 +103,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["terrainHeight"])
 		{
-			const int terrainHeight = (*i)["terrainHeight"].as<int>();
+			const int terrainHeight ((*i)["terrainHeight"].as<int>());
 			_terrainHeight.push_back(std::make_pair(
 												mcdIndex,
 												terrainHeight));
@@ -112,7 +111,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["explosive"])
 		{
-			const int explosive = (*i)["explosive"].as<int>();
+			const int explosive ((*i)["explosive"].as<int>());
 			_explosives.push_back(std::make_pair(
 											mcdIndex,
 											explosive));
@@ -120,7 +119,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["armor"])
 		{
-			const int armor = (*i)["armor"].as<int>();
+			const int armor ((*i)["armor"].as<int>());
 			_armors.push_back(std::make_pair(
 										mcdIndex,
 										armor));
@@ -128,7 +127,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["flammability"])
 		{
-			const int flammability = (*i)["flammability"].as<int>();
+			const int flammability ((*i)["flammability"].as<int>());
 			_flammabilities.push_back(std::make_pair(
 												mcdIndex,
 												flammability));
@@ -136,7 +135,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["fuel"])
 		{
-			const int fuel = (*i)["fuel"].as<int>();
+			const int fuel ((*i)["fuel"].as<int>());
 			_fuels.push_back(std::make_pair(
 										mcdIndex,
 										fuel));
@@ -144,7 +143,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["footstepSound"])
 		{
-			const int footstepSound = (*i)["footstepSound"].as<int>();
+			const int footstepSound ((*i)["footstepSound"].as<int>());
 			_footstepSounds.push_back(std::make_pair(
 												mcdIndex,
 												footstepSound));
@@ -152,7 +151,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["HEBlock"])
 		{
-			const int HEBlock = (*i)["HEBlock"].as<int>();
+			const int HEBlock ((*i)["HEBlock"].as<int>());
 			_heBlocks.push_back(std::make_pair(
 											mcdIndex,
 											HEBlock));
@@ -160,7 +159,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["noFloor"])
 		{
-			const bool noFloor = (*i)["noFloor"].as<bool>();
+			const bool noFloor ((*i)["noFloor"].as<bool>());
 			_noFloors.push_back(std::make_pair(
 											mcdIndex,
 											noFloor));
@@ -168,7 +167,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["stopLOS"])
 		{
-			const bool stopLOS = (*i)["stopLOS"].as<bool>();
+			const bool stopLOS ((*i)["stopLOS"].as<bool>());
 			_stopLOSes.push_back(std::make_pair(
 											mcdIndex,
 											stopLOS));
@@ -176,7 +175,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["LOFTS"])
 		{
-			const std::vector<size_t> lofts = (*i)["LOFTS"].as<std::vector<size_t>>();
+			const std::vector<size_t> lofts ((*i)["LOFTS"].as<std::vector<size_t>>());
 			_lofts.push_back(std::make_pair(
 										mcdIndex,
 										lofts));
@@ -184,7 +183,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["objectType"])
 		{
-			const MapDataType objectType = static_cast<MapDataType>((*i)["objectType"].as<int>());
+			const MapDataType objectType (static_cast<MapDataType>((*i)["objectType"].as<int>()));
 			_objectTypes.push_back(std::make_pair(
 												mcdIndex,
 												objectType));
@@ -192,7 +191,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["specialType"])
 		{
-			const SpecialTileType specialType = static_cast<SpecialTileType>((*i)["specialType"].as<int>());
+			const SpecialTileType specialType (static_cast<SpecialTileType>((*i)["specialType"].as<int>()));
 			_specialTypes.push_back(std::make_pair(
 												mcdIndex,
 												specialType));
@@ -200,7 +199,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["scanG"])
 		{
-			const int scanG = (*i)["scanG"].as<int>();
+			const int scanG ((*i)["scanG"].as<int>());
 			_scanG.push_back(std::make_pair(
 										mcdIndex,
 										scanG));
@@ -208,7 +207,7 @@ void MCDPatch::load(const YAML::Node& node)
 
 		if ((*i)["psycho"])
 		{
-			const int psychedelic = (*i)["psycho"].as<int>();
+			const int psychedelic ((*i)["psycho"].as<int>());
 			_psychedelic.push_back(std::make_pair(
 												mcdIndex,
 												psychedelic));
@@ -233,27 +232,18 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 		switch (i->second) // convert decimal-based patches to hexadecimal BigwallTypes.
 		{
 			default:
-			case 0: bigwall = 0x0000; // BIGWALL_NONE
-				break;
-			case 1: bigwall = 0x0001; // BIGWALL_BLOCK
-				break;
-			case 2: bigwall = 0x0002; // BIGWALL_NESW
-				break;
-			case 3: bigwall = 0x0004; // BIGWALL_NWSE
-				break;
-			case 4: bigwall = 0x0008; // BIGWALL_WEST
-				break;
-			case 5: bigwall = 0x0010; // BIGWALL_NORTH
-				break;
-			case 6: bigwall = 0x0020; // BIGWALL_EAST
-				break;
-			case 7: bigwall = 0x0040; // BIGWALL_SOUTH
-				break;
-			case 8: bigwall = 0x0080; // BIGWALL_E_S
-				break;
-//			case 9: // BIGWALL_W_N
-		}
+			case 0: bigwall = 0x0000; break;	// BIGWALL_NONE
+			case 1: bigwall = 0x0001; break;	// BIGWALL_BLOCK
+			case 2: bigwall = 0x0002; break;	// BIGWALL_NESW
+			case 3: bigwall = 0x0004; break;	// BIGWALL_NWSE
+			case 4: bigwall = 0x0008; break;	// BIGWALL_WEST
+			case 5: bigwall = 0x0010; break;	// BIGWALL_NORTH
+			case 6: bigwall = 0x0020; break;	// BIGWALL_EAST
+			case 7: bigwall = 0x0040; break;	// BIGWALL_SOUTH
+			case 8: bigwall = 0x0080;			// BIGWALL_E_S
 
+//			case 9:								// BIGWALL_W_N - not used in stock UFO.
+		}
 		dataSet->getRecords()->at(i->first)->setBigWall(bigwall);
 //		dataSet->getRecords()->at(i->first)->setBigWall(i->second);
 	}
@@ -367,7 +357,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _lofts.end();
 			++i)
 	{
-		size_t layer = 0;
+		size_t layer (0u);
 		for (std::vector<size_t>::const_iterator
 				j = i->second.begin();
 				j != i->second.end();

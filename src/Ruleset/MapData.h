@@ -116,7 +116,7 @@ private:
 	int
 		_armor,
 		_altMCD,
-		_block[6],
+		_block[6u],
 		_dieMCD,
 		_explosive,
 		_flammable,
@@ -125,14 +125,14 @@ private:
 		_isPsychedelic,
 		_lightSource,
 		_miniMapIndex,
-		_sprite[8],
+		_sprite[8u],
 		_terrainLevel,
 		_tuWalk,
 		_tuFly,
 		_tuSlide,
 		_yOffset;
 
-	size_t _loftId[12];
+	size_t _loftId[12u];
 
 	MapDataSet* _dataSet;
 

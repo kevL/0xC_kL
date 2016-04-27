@@ -63,15 +63,15 @@ private:
 
 
 	public:
-		/// Creates an MCD Patch.
+		/// Creates an MCDPatch.
 		MCDPatch();
-		/// Cleans up the MCD Patch.
+		/// Cleans up the MCDPatch.
 		~MCDPatch();
 
-		/// Loads the MCD Patch from YAML.
+		/// Loads the MCDPatch from YAML.
 		void load(const YAML::Node& node);
 
-		/// Applies an MCD patch to a MapDataSet/Tileset.
+		/// Applies the MCDPatch to a MapDataSet/Tileset.
 		void modifyData(MapDataSet* const dataSet) const;
 };
 
