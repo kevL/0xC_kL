@@ -294,7 +294,7 @@ private:
 
 		/// Initializes the BattlescapeGame.
 		void init();
-		/// Sets a flag to re-initialize the Battlescape Game.
+		/// Sets a flag to re-initialize the BattlescapeGame.
 		void reinit();
 		/// Checks for units panicking or falling and so on.
 		void think();

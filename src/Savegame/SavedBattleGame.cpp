@@ -878,7 +878,7 @@ void SavedBattleGame::initUtilities(const ResourcePack* const res)
 
 /**
  * Sets the TacticalType based on the mission-type.
- * @param type - reference the mission-type
+ * @param type - reference to a mission-type
  */
 void SavedBattleGame::setTacType(const std::string& type) // private.
 {

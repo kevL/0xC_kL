@@ -4412,7 +4412,7 @@ void BattlescapeState::saveAIMap()
 
 	SDL_Surface* const img (SDL_AllocSurface(
 										0u,
-										w * 8, h * 8, 24,
+										w << 3u, h << 3u, 24,
 										0xffu,
 										0xff00u,
 										0xff0000u,
@@ -4591,8 +4591,8 @@ void BattlescapeState::saveAIMap()
 	unsigned error (lodepng::encode(
 								oststr.str(),
 								static_cast<const unsigned char*>(img->pixels),
-								img->w,
-								img->h,
+								static_cast<unsigned>(img->w),
+								static_cast<unsigned>(img->h),
 								LCT_RGB));
 	if (error != 0u)
 		Log(LOG_ERROR) << "Saving to PNG failed: " << lodepng_error_text(error);
@@ -4682,8 +4682,8 @@ void BattlescapeState::saveVoxelView()
 				case 4:
 				case 5:
 					tile = _battleSave->getTile(Position(
-													trj.at(0u).x >> 4,
-													trj.at(0u).y >> 4,
+													trj.at(0u).x >> 4u,
+													trj.at(0u).y >> 4u,
 													trj.at(0u).z / 24));
 //					if (debugTac == true
 //						|| (tile->isRevealed(ST_WEST) && voxelTest == 2)
@@ -4735,8 +4735,8 @@ void BattlescapeState::saveVoxelView()
 							else // check tileBelow.
 							{
 								tile = _battleSave->getTile(Position(
-																trj.at(0u).x >> 4,
-																trj.at(0u).y >> 4,
+																trj.at(0u).x >> 4u,
+																trj.at(0u).y >> 4u,
 																trj.at(0u).z / 24 - 1));
 								if (tile != nullptr && tile->getTileUnit() != nullptr)
 								{
@@ -4811,7 +4811,7 @@ void BattlescapeState::saveVoxelView()
 	unsigned error (lodepng::encode(
 								oststr.str(),
 								pic,
-								512,512,
+								512u,512u,
 								LCT_RGB));
 	if (error != 0u)
 		Log(LOG_ERROR) << "bs::saveVoxelView() Saving to PNG failed: " << lodepng_error_text(error);
@@ -4848,8 +4848,6 @@ void BattlescapeState::saveVoxelView()
 		}
 	}
 #endif
-
-	return;
 }
 
 /**
@@ -4884,17 +4882,15 @@ void BattlescapeState::saveVoxelMap()
 
 		for (int
 				y = 0;
-				y < (_battleSave->getMapSizeY() << 4);
+				y < (_battleSave->getMapSizeY() << 4u);
 				++y)
 		{
 			for (int
 					x = 0;
-					x < (_battleSave->getMapSizeX() << 4);
+					x < (_battleSave->getMapSizeX() << 4u);
 					++x)
 			{
-				int voxelTest (static_cast<int>(_battleSave->getTileEngine()->detVoxelType(
-																						Position(x,y,z * 2),
-																						0,0)) + 1);
+				int voxelTest (static_cast<int>(_battleSave->getTileEngine()->detVoxelType(Position(x,y,z << 1u))) + 1);
 				float dist (1.f);
 
 				if (x % 16 == 15)
@@ -4906,8 +4902,8 @@ void BattlescapeState::saveVoxelMap()
 				if (voxelTest == 5) // Unit.
 				{
 					tile = _battleSave->getTile(Position(
-														x >> 4,
-														y >> 4,
+														x >> 4u,
+														y >> 4u,
 														z / 12));
 					if (tile->getTileUnit() != nullptr)
 					{
@@ -4923,8 +4919,8 @@ void BattlescapeState::saveVoxelMap()
 					else // check tileBelow.
 					{
 						tile = _battleSave->getTile(Position(
-															x >> 4,
-															y >> 4,
+															x >> 4u,
+															y >> 4u,
 															z / 12 - 1));
 						if (tile != nullptr && tile->getTileUnit() != nullptr)
 						{
@@ -4952,10 +4948,10 @@ void BattlescapeState::saveVoxelMap()
 		unsigned error (lodepng::encode(
 									oststr.str(),
 									image,
-									_battleSave->getMapSizeX() * 16,
-									_battleSave->getMapSizeY() * 16,
+									_battleSave->getMapSizeX() << 4u,
+									_battleSave->getMapSizeY() << 4u,
 									LCT_RGB));
-		if (error != 0)
+		if (error != 0u)
 			Log(LOG_ERROR) << "Saving to PNG failed: " << lodepng_error_text(error);
 	}
 }

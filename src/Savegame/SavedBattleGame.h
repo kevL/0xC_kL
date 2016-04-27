@@ -314,7 +314,7 @@ private:
 		/// Sets the pointer to the BattlescapeState.
 		void setBattleState(BattlescapeState* const battleState);
 
-		/// Resets Tiles that BattleUnits are standing on for start of next-stage.
+		/// Sets all BattleUnits onto their start Tile(s) at the end of pre-battle equip.
 		void resetUnitsOnTiles();
 
 		/// Gives access to the storage-tiles vector.

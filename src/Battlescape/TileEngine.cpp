@@ -1940,10 +1940,7 @@ void TileEngine::hit(
 	if (melee == true)
 		voxelType = VOXEL_UNIT;
 	else
-		voxelType = detVoxelType(
-							targetVoxel,
-							attacker,
-							false, false, nullptr);
+		voxelType = detVoxelType(targetVoxel, attacker);
 
 	switch (voxelType)
 	{
@@ -1951,70 +1948,70 @@ void TileEngine::hit(
 		case VOXEL_WESTWALL:
 		case VOXEL_NORTHWALL:
 		case VOXEL_OBJECT:
+		{
+			switch (dType)
 			{
-				switch (dType)
-				{
-					case DT_STUN: // workaround for Stunrod.
-					case DT_SMOKE:
-						return;
-				}
+				case DT_STUN: // workaround for Stunrod.
+				case DT_SMOKE:
+					return;
+			}
 
-				power = RNG::generate( // 25% to 75% linear.
-									power / 4,
-									power * 3 / 4);
-				// This is where to adjust damage based on effectiveness of weapon vs Terrain!
-				// DT_NONE,		// 0
-				// DT_AP,		// 1
-				// DT_IN,		// 2
-				// DT_HE,		// 3
-				// DT_LASER,	// 4
-				// DT_PLASMA,	// 5
-				// DT_STUN,		// 6
-				// DT_MELEE,	// 7
-				// DT_ACID,		// 8
-				// DT_SMOKE		// 9
-				const MapDataType partType (static_cast<MapDataType>(voxelType)); // Note that MapDataType & VoxelType correspond.
+			power = RNG::generate( // 25% to 75% linear.
+								power / 4,
+								power * 3 / 4);
+			// This is where to adjust damage based on effectiveness of weapon vs Terrain!
+			// DT_NONE,		// 0
+			// DT_AP,		// 1
+			// DT_IN,		// 2
+			// DT_HE,		// 3
+			// DT_LASER,	// 4
+			// DT_PLASMA,	// 5
+			// DT_STUN,		// 6
+			// DT_MELEE,	// 7
+			// DT_ACID,		// 8
+			// DT_SMOKE		// 9
+			const MapDataType partType (static_cast<MapDataType>(voxelType)); // Note that MapDataType & VoxelType correspond.
 
-				switch (dType) // round up.
-				{
-					case DT_AP:
-						power = ((power * 3) + 19) / 20;	// 15%
-						break;
-					case DT_LASER:
-						if (tile->getMapData(partType)->getSpecialType() != ALIEN_ALLOYS)
-							power = (power + 4) / 5;		// 20% // problem: Fusion Torch; fixed, heh.
-						break;
-					case DT_IN:
-						power = (power + 3) / 4;			// 25%
-						break;
-					case DT_PLASMA:
-						power = (power + 2) / 3;			// 33%
-						break;
-					case DT_MELEE:							// TODO: define 2 terrain types, Soft & Hard; so that edged weapons do good vs. Soft, blunt weapons do good vs. Hard
-						power = (power + 1) / 2;			// 50% TODO: allow melee attacks vs. objects.
-						break;
-					case DT_HE:								// question: do HE & IN ever get in here - hit() or explode() below
-						power += power / 10;				// 110%
-//						break;
-//					case DT_ACID: // 100% damage
-//					default: // [DT_NONE],[DT_STUN,DT_SMOKE]
-//						return nullptr;
-				}
+			switch (dType) // round up.
+			{
+				case DT_AP:
+					power = ((power * 3) + 19) / 20;	// 15%
+					break;
+				case DT_LASER:
+					if (tile->getMapData(partType)->getSpecialType() != ALIEN_ALLOYS)
+						power = (power + 4) / 5;		// 20% // problem: Fusion Torch; fixed, heh.
+					break;
+				case DT_IN:
+					power = (power + 3) / 4;			// 25%
+					break;
+				case DT_PLASMA:
+					power = (power + 2) / 3;			// 33%
+					break;
+				case DT_MELEE:							// TODO: define 2 terrain types, Soft & Hard; so that edged weapons do good vs. Soft, blunt weapons do good vs. Hard
+					power = (power + 1) / 2;			// 50% TODO: allow melee attacks vs. objects.
+					break;
+				case DT_HE:								// question: do HE & IN ever get in here - hit() or explode() below
+					power += power / 10;				// 110%
+//					break;
+//				case DT_ACID: // 100% damage
+//				default: // [DT_NONE],[DT_STUN,DT_SMOKE]
+//					return nullptr;
+			}
 
-				if (power > 0)
+			if (power > 0)
+			{
+				if (partType == O_OBJECT
+					&& _battleSave->getTacType() == TCT_BASEDEFENSE
+					&& tile->getMapData(O_OBJECT)->isBaseObject() == true
+					&& tile->getMapData(O_OBJECT)->getArmor() <= power)
 				{
-					if (partType == O_OBJECT
-						&& _battleSave->getTacType() == TCT_BASEDEFENSE
-						&& tile->getMapData(O_OBJECT)->isBaseObject() == true
-						&& tile->getMapData(O_OBJECT)->getArmor() <= power)
-					{
-						_battleSave->baseDestruct()[(targetVoxel.x >> 4) / 10]
-												   [(targetVoxel.y >> 4) / 10].second--;
-					}
-					tile->hitTile(partType, power, _battleSave);
+					_battleSave->baseDestruct()[(targetVoxel.x >> 4) / 10]
+											   [(targetVoxel.y >> 4) / 10].second--;
 				}
+				tile->hitTile(partType, power, _battleSave);
 			}
 			break;
+		}
 
 		case VOXEL_UNIT: // battleunit voxelType HIT SUCCESS.
 		{
@@ -6100,10 +6097,9 @@ VoxelType TileEngine::detVoxelType(
 		x (15u - static_cast<size_t>(targetVoxel.x) % 16u);		// x-axis is reversed for tileParts, standard for battleUnit.
 	const size_t y (static_cast<size_t>(targetVoxel.y) % 16u);	// y-axis is standard
 
-	int parts (static_cast<int>(Tile::PARTS_TILE)); // terrain parts [0=floor, 1/2=walls, 3=content-object]
-	for (int
-			i = 0;
-			i != parts;
+	for (size_t
+			i = 0u; // terrain parts [0=floor, 1/2=walls, 3=content-object]
+			i != Tile::PARTS_TILE;
 			++i)
 	{
 		if (tile->isUfoDoorOpen(partType = static_cast<MapDataType>(i)) == false
