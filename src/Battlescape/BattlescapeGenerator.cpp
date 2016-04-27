@@ -806,6 +806,8 @@ void BattlescapeGenerator::nextStage()
 	_battleSave->getTileEngine()->calculateUnitLighting();
 
 //	_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGame::init(). Are both needed.
+//	if (_battleSave->getBattleGame() != nullptr) // safety. Should be valid for nextStage() start here.
+	_battleSave->getBattleGame()->reinit();
 
 	_battleSave->getShuffleUnits()->assign(
 										_battleSave->getUnits()->size(),

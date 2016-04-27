@@ -1482,7 +1482,7 @@ bool SavedBattleGame::getDebugTac() const
 /**
  * Gets the BattlescapeGame.
  * @note There can be cases when BattlescapeGame is valid but BattlescapeState
- * is not; during battlescape generation for example -> CTD. So fix it ....
+ * is not; during battlescape-generation for example -> CTD. So fix it ....
  * @return, pointer to the BattlescapeGame
  */
 BattlescapeGame* SavedBattleGame::getBattleGame() const
@@ -1565,7 +1565,7 @@ void SavedBattleGame::resetUnitsOnTiles()
 		if ((*i)->getFaction() == FACTION_PLAYER)
 			(*i)->setUnitVisible();
 	}
-	_battleState->getBattleGame()->reinit();
+//	_battleState->getBattleGame()->reinit(); // -> BattlescapeGame is not valid yet for SavedBattleGame::load()
 //	_preBattle = false; // gtg.
 }
 

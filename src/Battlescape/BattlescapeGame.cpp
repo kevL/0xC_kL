@@ -159,14 +159,13 @@ void BattlescapeGame::init()
 	if (_init == true)
 	{
 		_init = false;
-		_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGenerator::run() & nextState().
+		_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGenerator::run() & nextState(). done.
 	}
 }
 
 /**
- * Sets a flag to re-initialize the Battlescape Game.
- * @note Used by BattlescapeGenerator::nextStage() or by InventoryState::btnOkClick()
- * or by SavedBattleGame::resetUnitsOnTiles(). I haven't decided yet.
+ * Sets a flag to re-initialize this BattlescapeGame.
+ * @note Called by BattlescapeGenerator::nextStage() to reveal Tiles.
  */
 void BattlescapeGame::reinit()
 {
