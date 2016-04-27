@@ -2876,10 +2876,14 @@ void BattlescapeGame::moveUpDown(
 {
 	_tacAction.posTarget = unit->getPosition();
 
-	if (dir == Pathfinding::DIR_UP)
-		++_tacAction.posTarget.z;
-	else
-		--_tacAction.posTarget.z;
+	switch (dir)
+	{
+		case Pathfinding::DIR_UP:
+			++_tacAction.posTarget.z;
+			break;
+		case Pathfinding::DIR_DOWN:
+			--_tacAction.posTarget.z;
+	}
 
 	getMap()->setSelectorType(CT_NONE);
 	_parentState->getGame()->getCursor()->setHidden();

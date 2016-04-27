@@ -40,9 +40,9 @@ namespace OpenXcom
 {
 
 Uint8 // static not const.
-	Pathfinding::red	=  3, // defaults ->
-	Pathfinding::green	=  4, // overridden by Interfaces.rul when BattlescapeState loads
-	Pathfinding::yellow	= 10;
+	Pathfinding::red	=  3u, // defaults ->
+	Pathfinding::green	=  4u, // overridden by Interfaces.rul when BattlescapeState loads
+	Pathfinding::yellow	= 10u;
 
 
 /**
@@ -71,7 +71,7 @@ Pathfinding::Pathfinding(SavedBattleGame* const battleSave)
 
 	Position pos;
 	for (size_t // initialize one node per tile.
-			i = 0;
+			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{

@@ -118,6 +118,7 @@ private:
 			TU_STAND		= 10,
 			EN_STAND		=  5,
 
+			DIR_VERT_NONE	=  0, // be careful w/ that, it's not a real direction; should be used only for '_dirVertical' in BattleUnit class.
 			DIR_UP			=  8,
 			DIR_DOWN		=  9,
 			CLIP_HEIGHT		= 26;

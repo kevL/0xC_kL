@@ -2342,11 +2342,11 @@ void Map::calcWalkOffset( // private.
 		case STATUS_FLYING:
 		{
 			static const int
-				offsetX[8] {1, 1, 1, 0,-1,-1,-1, 0},
-				offsetY[8] {1, 0,-1,-1,-1, 0, 1, 1},
+				offsetX[8u] {1, 1, 1, 0,-1,-1,-1, 0},
+				offsetY[8u] {1, 0,-1,-1,-1, 0, 1, 1},
 
-				offsetFalseX[8] {16, 32, 16,  0,-16,-32,-16,  0}, // for duplicate drawing units from their transient
-				offsetFalseY[8] {-8,  0,  8, 16,  8,  0, -8,-16}, // destination & last positions. See UnitWalkBState.
+				offsetFalseX[8u] {16, 32, 16,  0,-16,-32,-16,  0}, // for duplicate drawing units from their transient
+				offsetFalseY[8u] {-8,  0,  8, 16,  8,  0, -8,-16}, // destination & last positions. See UnitWalkBState.
 				offsetFalseVert (24);
 			const int
 				dir (unit->getUnitDirection()),			// 0..7
@@ -2382,10 +2382,14 @@ void Map::calcWalkOffset( // private.
 
 			if (start == true)
 			{
-				if (dirVert == Pathfinding::DIR_UP)
-					offset->y += (trueLoc == true) ? 0 : offsetFalseVert;
-				else if (dirVert == Pathfinding::DIR_DOWN)
-					offset->y += (trueLoc == true) ? 0 : -offsetFalseVert;
+				switch (dirVert)
+				{
+					case Pathfinding::DIR_UP:
+						offset->y += (trueLoc == true) ? 0 : offsetFalseVert;
+						break;
+					case Pathfinding::DIR_DOWN:
+						offset->y += (trueLoc == true) ? 0 : -offsetFalseVert;
+				}
 
 				levelStop = getTerrainLevel(
 										unit->getStopPosition(),
@@ -2410,10 +2414,14 @@ void Map::calcWalkOffset( // private.
 			}
 			else
 			{
-				if (dirVert == Pathfinding::DIR_UP)
-					offset->y += (trueLoc == true) ? 0 : -offsetFalseVert;
-				else if (dirVert == Pathfinding::DIR_DOWN)
-					offset->y += (trueLoc == true) ? 0 : offsetFalseVert;
+				switch (dirVert)
+				{
+					case Pathfinding::DIR_UP:
+						offset->y += (trueLoc == true) ? 0 : -offsetFalseVert;
+						break;
+					case Pathfinding::DIR_DOWN:
+						offset->y += (trueLoc == true) ? 0 : offsetFalseVert;
+				}
 
 				levelStart = getTerrainLevel(
 										unit->getStartPosition(),

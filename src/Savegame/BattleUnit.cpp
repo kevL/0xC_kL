@@ -81,7 +81,7 @@ BattleUnit::BattleUnit(
 		_dirTo(0),
 		_dirTurret(0),
 		_dirToTurret(0),
-		_dirVertical(0),
+		_dirVertical(Pathfinding::DIR_VERT_NONE),
 		_dirFace(-1),
 		_status(STATUS_STANDING),
 		_walkPhase(0),
@@ -254,7 +254,7 @@ BattleUnit::BattleUnit(
 		_dirTo(0),
 		_dirTurret(0),
 		_dirToTurret(0),
-		_dirVertical(0),
+		_dirVertical(Pathfinding::DIR_VERT_NONE),
 		_dirFace(-1),
 		_status(STATUS_STANDING),
 		_walkPhase(0),
@@ -834,7 +834,6 @@ const Position& BattleUnit::getStopPosition() const
 
 /**
  * Sets this BattleUnit's horizontal direction.
- * @note Used for initial unit placement and for positioning revived Soldiers.
  * @param dir		- new horizontal direction
  * @param turret	- true to set the turret-direction also (default true)
  */
@@ -859,8 +858,8 @@ int BattleUnit::getUnitDirection() const
 }
 
 /**
- * Looks at a point.
- * @param pos		- reference the position to look at
+ * Looks at a specified Position.
+ * @param pos		- reference to the position to look toward
  * @param turret	- true to turn the turret (default false to turn the unit)
  */
 void BattleUnit::setDirectionTo(
@@ -1074,7 +1073,7 @@ int BattleUnit::getWalkPhaseTrue() const
  */
 int BattleUnit::getWalkPhase() const
 {
-	return _walkPhase % 8;
+	return _walkPhase % 8u;
 }
 
 /**
@@ -1093,28 +1092,30 @@ void BattleUnit::startWalking(
 	_posStart = _pos;
 	_posStop = posStop;
 
-	if (dir >= Pathfinding::DIR_UP)
+	switch (dir)
 	{
-		_status = STATUS_FLYING; // controls walking sound in UnitWalkBState, what else
-		_dirVertical = dir;
-		_floating = _tile->getMapData(O_FLOOR) == nullptr
-				 || _tile->getMapData(O_FLOOR)->isGravLift() == false;
-	}
-	else
-	{
-		_dir = dir;
-		if (_tile->hasNoFloor(tileBelow) == true)
-		{
-			_status = STATUS_FLYING;
-			_floating = true;
-			_kneeled = false;
-		}
-		else
-		{
-			_status = STATUS_WALKING;
-			_floating =
-			_kneeled = false;
-		}
+		case Pathfinding::DIR_UP:
+		case Pathfinding::DIR_DOWN:
+			_status = STATUS_FLYING; // controls walking sound in UnitWalkBState, what else
+			_dirVertical = dir;
+			_floating = _tile->getMapData(O_FLOOR) == nullptr
+					 || _tile->getMapData(O_FLOOR)->isGravLift() == false;
+			break;
+
+		default:
+			_dir = dir;
+			if (_tile->hasNoFloor(tileBelow) == true)
+			{
+				_status = STATUS_FLYING;
+				_floating = true;
+				_kneeled = false;
+			}
+			else
+			{
+				_status = STATUS_WALKING;
+				_floating =
+				_kneeled = false;
+			}
 	}
 	cacheWalkPhases();
 }
@@ -1135,9 +1136,9 @@ void BattleUnit::keepWalking(
 
 	if (_walkPhase == _walkPhaseFull) // officially reached the destination tile
 	{
+		_walkPhase = 0;
 		_status = STATUS_STANDING;
-		_walkPhase =
-		_dirVertical = 0;
+		_dirVertical = Pathfinding::DIR_VERT_NONE;
 
 		if (_floating == true && _tile->hasNoFloor(tileBelow) == false)
 			_floating = false;
@@ -1149,14 +1150,17 @@ void BattleUnit::keepWalking(
 			_walkBackwards = false;
 		}
 
-		if (_armor->getSize() == 2) // motion points calculation for motion-scanner blips
-			_motionPoints += 30;
-		else
+		switch (_armor->getSize())
 		{
-			if (_standHeight > 16)	// sectoids actually have less motion points but instead of creating
-				_motionPoints += 4;	// yet another variable use the height of the unit instead
-			else
-				_motionPoints += 3;
+			case 2: // motion points calculation for motion-scanner blips
+				_motionPoints += 30;
+				break;
+
+			case 1:
+				if (_standHeight > 16)	// sectoids actually have less motion points but instead of creating
+					_motionPoints += 4;	// yet another variable use the height of the unit instead
+				else
+					_motionPoints += 3;
 		}
 	}
 }
@@ -1167,43 +1171,45 @@ void BattleUnit::keepWalking(
  */
 void BattleUnit::cacheWalkPhases()
 {
-	if (_dirVertical != 0)
+	switch (_dirVertical)
 	{
-		_walkPhaseHalf = 4;
-		_walkPhaseFull = 8;
-	}
-	else
-	{
-		_walkPhaseFull = 8 + 8 * (_dir % 2); // diagonal walking takes double the steps
-		switch (_armor->getSize())
-		{
-			case 1:
-				_walkPhaseHalf = _walkPhaseFull / 2;
-				break;
+		case Pathfinding::DIR_VERT_NONE:
+			_walkPhaseFull = 8 + (8 * (_dir & 1u)); // diagonal walking takes double the steps
+			switch (_armor->getSize())
+			{
+				case 1:
+					_walkPhaseHalf = (_walkPhaseFull >> 1u);
+					break;
 
-			case 2:
-				switch (_dir)
-				{
-					case 0:
-					case 6:
-					case 7:
-						_walkPhaseHalf = _walkPhaseFull;
-						break;
+				case 2:
+					switch (_dir)
+					{
+						case 0:
+						case 6:
+						case 7:
+							_walkPhaseHalf = _walkPhaseFull;
+							break;
 
-					case 1:
-						_walkPhaseHalf = 5;
-						break;
+						case 1:
+							_walkPhaseHalf = 5;
+							break;
 
-					case 2:
-					case 3:
-					case 4:
-						_walkPhaseHalf = 1;
-						break;
+						case 2:
+						case 3:
+						case 4:
+							_walkPhaseHalf = 1;
+							break;
 
-					case 5:
-						_walkPhaseHalf = 12;
-				}
-		}
+						case 5:
+							_walkPhaseHalf = 12;
+					}
+			}
+			break;
+
+		case Pathfinding::DIR_UP:
+		case Pathfinding::DIR_DOWN:
+			_walkPhaseHalf = 4;
+			_walkPhaseFull = 8;
 	}
 }
 
@@ -2680,9 +2686,7 @@ void BattleUnit::setTile(
 		Tile* const tile,
 		const Tile* const tileBelow)
 {
-	_tile = tile;
-
-	if (_tile != nullptr)
+	if ((_tile = tile) != nullptr)
 	{
 		switch (_status)
 		{
@@ -2690,17 +2694,17 @@ void BattleUnit::setTile(
 				if (_mType == MT_FLY
 					&& _tile->hasNoFloor(tileBelow) == true)
 				{
-					_floating = true;
 					_status = STATUS_FLYING;
+					_floating = true;
 				}
 				break;
 
 			case STATUS_FLYING:
-				if (_dirVertical == 0
+				if (_dirVertical == Pathfinding::DIR_VERT_NONE
 					&& _tile->hasNoFloor(tileBelow) == false)
 				{
-					_floating = false;
 					_status = STATUS_WALKING;
+					_floating = false;
 				}
 				break;
 
