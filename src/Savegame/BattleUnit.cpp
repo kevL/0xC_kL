@@ -1445,15 +1445,15 @@ int BattleUnit::getStrength() const
 }
 
 /**
- * Does an amount of damage.
- * TODO: This should be in Battlegame instead of each unit having its own damage routine.
- * @param relVoxel		- reference a position in voxel-space that defines which
- *						  part of armor and/or body gets hit
- * @param power			- the amount of damage to inflict
+ * Does an quantity of damage to this BattleUnit.
+ * @note The return-value is used only to determine who gets credit for a kill
+ * in the case of antecedentWoundage, in TileEngine::hit().
+ * @param relVoxel		- reference to a Position in voxel-space that defines
+ *						  which part of armor and/or body gets hit
+ * @param power			- the quantity of pain to inflict
  * @param dType			- the DamageType being inflicted (RuleItem.h)
  * @param ignoreArmor	- true for stun & smoke & inc damage; no armor reduction
  *						  although vulnerability is still factored in
- * @return, damage done to this BattleUnit after adjustments
  */
 int BattleUnit::takeDamage(
 		const Position& relVoxel,
@@ -2604,16 +2604,16 @@ void BattleUnit::takeFire()
 {
 	if (_fire != 0)
 	{
-		float vulnr (_armor->getDamageModifier(DT_SMOKE));
-		if (vulnr > 0.f) // try to knock _unit out.
+		float vulnr;
+
+		if ((vulnr = _armor->getDamageModifier(DT_SMOKE)) > 0.f)
 			takeDamage(
 					Position(0,0,0),
 					static_cast<int>(3.f * vulnr),
 					DT_SMOKE, // -> DT_STUN
 					true);
 
-		vulnr = _armor->getDamageModifier(DT_IN);
-		if (vulnr > 0.f)
+		if (vulnr = _armor->getDamageModifier(DT_IN) > 0.f)
 			takeDamage(
 					Position(0,0,0),
 					static_cast<int>(RNG::generate(2.f,6.f) * vulnr),

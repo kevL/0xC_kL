@@ -173,6 +173,6 @@ MCDPatches:
   - type: U_WALL02
     data:
       - MCDIndex: 31 #scanner wall north, interior UFO
-        psycho: 1
+        psycho: 2
       - MCDIndex: 32 #scanner wall west, interior UFO
-        psycho: 1
+        psycho: 2

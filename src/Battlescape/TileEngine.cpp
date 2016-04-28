@@ -1957,8 +1957,8 @@ void TileEngine::hit(
 			}
 
 			power = RNG::generate( // 25% to 75% linear.
-								power / 4,
-								power * 3 / 4);
+								(power		>> 2u),
+								(power * 3)	>> 2u);
 			// This is where to adjust damage based on effectiveness of weapon vs Terrain!
 			// DT_NONE,		// 0
 			// DT_AP,		// 1
@@ -2035,8 +2035,8 @@ void TileEngine::hit(
 					{
 						int fire (attacker->getUnitRules()->getSpecabPower());
 						fire = RNG::generate(
-										fire / 8,
-										fire * 3 / 8);
+										(fire	   >> 3u),
+										(fire * 3) >> 3u);
 						const int burn (RNG::generate(0, static_cast<int>(Round(vulnr * 5.f))));
 
 						targetUnit->takeDamage(
@@ -2189,7 +2189,7 @@ void TileEngine::explode(
 	//Log(LOG_INFO) << "TileEngine::explode() power = " << power << ", dType = " << (int)dType << ", radius = " << radius;
 	if (dType == DT_IN)
 	{
-		power /= 2;
+		power >>= 1u;
 		//Log(LOG_INFO) << ". DT_IN power = " << power;
 	}
 
@@ -2368,8 +2368,7 @@ void TileEngine::explode(
 					{
 						if (horiBlock > 0) // only !visLike will return > 0 for these breaks here.
 						{
-							_powerT -= horiBlock; // terrain takes 200% power to destruct. <- But this isn't for destruction.
-							if (_powerT < 1)
+							if ((_powerT -= horiBlock) < 1) // terrain takes 200% power to destruct. <- But this isn't for destruction.
 							{
 								//Log(LOG_INFO) << ". horiBlock BREAK " << Position(tileX, tileY, tileZ) << "\n";
 								break;
@@ -2378,8 +2377,7 @@ void TileEngine::explode(
 
 						if (vertBlock > 0) // only !visLike will return > 0 for these breaks here.
 						{
-							_powerT -= vertBlock; // terrain takes 200% power to destruct. <- But this isn't for destruction.
-							if (_powerT < 1)
+							if ((_powerT -= vertBlock) < 1) // terrain takes 200% power to destruct. <- But this isn't for destruction.
 							{
 								//Log(LOG_INFO) << ". vertBlock BREAK " << Position(tileX, tileY, tileZ) << "\n";
 								break;
@@ -2402,14 +2400,13 @@ void TileEngine::explode(
 
 				// ** DAMAGE begins w/ _powerE ***
 
-				tilePair = tilesAffected.insert(tileStop); // check if this tile was hit already
-				if (tilePair.second == true) // true if a new tile was inserted.
+				tilePair = tilesAffected.insert(tileStop);	// check if this tile was hit already
+				if (tilePair.second == true)				// true if a new tile was inserted.
 				{
 					//Log(LOG_INFO) << ". > tile TRUE : tileStart " << tileStart->getPosition() << " tileStop " << tileStop->getPosition() << " _powerE = " << _powerE << " r = " << r;
 					//Log(LOG_INFO) << ". > _powerE = " << _powerE;
 
-					targetUnit = tileStop->getTileUnit();
-					if (targetUnit != nullptr
+					if ((targetUnit = tileStop->getTileUnit()) != nullptr
 						&& targetUnit->getTakenExpl() == true) // hit large units only once ... stop experience exploitation near the end of this loop, also. Lulz
 					{
 						//Log(LOG_INFO) << ". . targetUnit ID " << targetUnit->getId() << ", set Unit = nullptr";
@@ -2417,11 +2414,13 @@ void TileEngine::explode(
 					}
 
 					int
-						powerUnit (0),
-						wounds (0);
+						power_OnUnit,
+						antecedentWounds;
 
 					if (attacker != nullptr && targetUnit != nullptr)
-						wounds = targetUnit->getFatalWounds();
+						antecedentWounds = targetUnit->getFatalWounds();
+					else
+						antecedentWounds = 0;
 
 					switch (dType)
 					{
@@ -2429,11 +2428,11 @@ void TileEngine::explode(
 						{
 							if (targetUnit != nullptr)
 							{
-								powerUnit = RNG::generate(1, _powerE * 2) // bell curve
-										  + RNG::generate(1, _powerE * 2);
-								powerUnit /= 2;
-								//Log(LOG_INFO) << ". . . powerUnit = " << powerUnit << " DT_STUN";
-								targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_STUN, true);
+								power_OnUnit = RNG::generate(1, _powerE << 1u) // bell curve
+											 + RNG::generate(1, _powerE << 1u);
+								power_OnUnit >>= 1u;
+								//Log(LOG_INFO) << ". . . power_OnUnit = " << power_OnUnit << " DT_STUN";
+								targetUnit->takeDamage(Position(0,0,0), power_OnUnit, DT_STUN, true);
 							}
 
 							BattleUnit* bu;
@@ -2447,11 +2446,11 @@ void TileEngine::explode(
 									&& bu->getTakenExpl() == false)
 								{
 									bu->setTakenExpl();
-									powerUnit = RNG::generate(1, _powerE * 2) // bell curve
-											  + RNG::generate(1, _powerE * 2);
-									powerUnit /= 2;
-									//Log(LOG_INFO) << ". . . . powerUnit (corpse) = " << powerUnit << " DT_STUN";
-									bu->takeDamage(Position(0,0,0), powerUnit, DT_STUN, true);
+									power_OnUnit = RNG::generate(1, _powerE << 1u) // bell curve
+												 + RNG::generate(1, _powerE << 1u);
+									power_OnUnit >>= 1u;
+									//Log(LOG_INFO) << ". . . . power_OnUnit (corpse) = " << power_OnUnit << " DT_STUN";
+									bu->takeDamage(Position(0,0,0), power_OnUnit, DT_STUN, true);
 								}
 							}
 							break;
@@ -2468,12 +2467,12 @@ void TileEngine::explode(
 									power1 (power0 * 0.5),
 									power2 (power0 * 1.5);
 
-								powerUnit = static_cast<int>(RNG::generate(power1, power2)) // bell curve
-										  + static_cast<int>(RNG::generate(power1, power2));
-								powerUnit /= 2;
-								//Log(LOG_INFO) << ". . DT_HE = " << powerUnit; // << ", vs ID " << targetUnit->getId();
+								power_OnUnit = static_cast<int>(RNG::generate(power1, power2)) // bell curve
+											 + static_cast<int>(RNG::generate(power1, power2));
+								power_OnUnit >>= 1u;
+								//Log(LOG_INFO) << ". . DT_HE = " << power_OnUnit; // << ", vs ID " << targetUnit->getId();
 
-								if (powerUnit > 0)
+								if (power_OnUnit > 0)
 								{
 									Position relVoxel;	// units above the explosion will be hit in the legs
 									if (distance(		// units lateral to or below will be hit in the torso
@@ -2483,31 +2482,31 @@ void TileEngine::explode(
 														centerY,
 														centerZ)) < 2)
 									{
-										//Log(LOG_INFO) << ". . . powerUnit = " << powerUnit << " DT_HE, GZ";
+										//Log(LOG_INFO) << ". . . power_OnUnit = " << power_OnUnit << " DT_HE, GZ";
 										relVoxel = Position(0,0,0); // Ground zero effect is in effect
 										if (targetUnit->isKneeled() == true)
 										{
-											powerUnit = powerUnit * 17 / 20; // 85% damage
-											//Log(LOG_INFO) << ". . . powerUnit(kneeled) = " << powerUnit << " DT_HE, GZ";
+											power_OnUnit = power_OnUnit * 17 / 20; // 85% damage
+											//Log(LOG_INFO) << ". . . power_OnUnit(kneeled) = " << power_OnUnit << " DT_HE, GZ";
 										}
 									}
 									else
 									{
-										//Log(LOG_INFO) << ". . . powerUnit = " << powerUnit << " DT_HE, not GZ";
+										//Log(LOG_INFO) << ". . . power_OnUnit = " << power_OnUnit << " DT_HE, not GZ";
 										relVoxel = Position( // Directional damage relative to explosion position.
-														(centerX << 4) - (tileStop->getPosition().x << 4),
-														(centerY << 4) - (tileStop->getPosition().y << 4),
-														(centerZ * 24) - (tileStop->getPosition().z * 24));
+														(centerX << 4u) - (tileStop->getPosition().x << 4u),
+														(centerY << 4u) - (tileStop->getPosition().y << 4u),
+														(centerZ *  24) - (tileStop->getPosition().z *  24));
 										if (targetUnit->isKneeled() == true)
 										{
-											powerUnit = powerUnit * 7 / 10; // 70% damage
-											//Log(LOG_INFO) << ". . . powerUnit(kneeled) = " << powerUnit << " DT_HE, not GZ";
+											power_OnUnit = power_OnUnit * 7 / 10; // 70% damage
+											//Log(LOG_INFO) << ". . . power_OnUnit(kneeled) = " << power_OnUnit << " DT_HE, not GZ";
 										}
 									}
 
-									if (powerUnit > 0)
+									if (power_OnUnit > 0)
 									{
-										targetUnit->takeDamage(relVoxel, powerUnit, DT_HE);
+										targetUnit->takeDamage(relVoxel, power_OnUnit, DT_HE);
 										//Log(LOG_INFO) << ". . . realDamage = " << damage << " DT_HE";
 									}
 								}
@@ -2532,16 +2531,17 @@ void TileEngine::explode(
 									{
 										//Log(LOG_INFO) << ". . . vs Unit unconscious";
 										bu->setTakenExpl();
+
 										const double
 											power0 (static_cast<double>(_powerE)),
 											power1 (power0 * 0.5),
 											power2 (power0 * 1.5);
 
-										powerUnit = static_cast<int>(RNG::generate(power1, power2)) // bell curve
-												  + static_cast<int>(RNG::generate(power1, power2));
-										powerUnit /= 2;
-										//Log(LOG_INFO) << ". . . INVENTORY: power = " << powerUnit;
-										bu->takeDamage(Position(0,0,0), powerUnit, DT_HE);
+										power_OnUnit = static_cast<int>(RNG::generate(power1, power2)) // bell curve
+													 + static_cast<int>(RNG::generate(power1, power2));
+										power_OnUnit >>= 1u;
+										//Log(LOG_INFO) << ". . . INVENTORY: power = " << power_OnUnit;
+										bu->takeDamage(Position(0,0,0), power_OnUnit, DT_HE);
 										//Log(LOG_INFO) << ". . . INVENTORY: damage = " << dam;
 
 										if (bu->isOut_t(OUT_HEALTH) == true)
@@ -2567,8 +2567,7 @@ void TileEngine::explode(
 									}
 									else if (_powerE > (*i)->getRules()->getArmor()
 										&& (bu == nullptr
-											|| (bu->getUnitStatus() == STATUS_DEAD
-												&& bu->getTakenExpl() == false)))
+											|| (bu->getUnitStatus() == STATUS_DEAD && bu->getTakenExpl() == false)))
 									{
 										//Log(LOG_INFO) << ". . . vs Item armor";
 										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
@@ -2578,20 +2577,20 @@ void TileEngine::explode(
 											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
 											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
 																										_battleSave->getBattleGame(),
-																										explVoxel, *i, attacker));
+																										explVoxel,
+																										*i,
+																										attacker));
 										}
 										else if ((*i)->getFuse() != -2)
 										{
 											//Log(LOG_INFO) << ". . . . INVENTORY: removeItem = " << (*i)->getRules()->getType();
 											_battleSave->toDeleteItem(*i);
 											break;
-//											--i; // "vector iterator not decrementable" - yeesh.
 										}
 									}
 									//else Log(LOG_INFO) << ". . . INVENTORY: bypass item = " << (*i)->getRules()->getType();
 
-									++i; // "vector iterator not incrementable" - yeesh.
-									done = (i == tileStop->getInventory()->end());
+									done = (++i == tileStop->getInventory()->end());
 								}
 							}
 							break;
@@ -2608,10 +2607,10 @@ void TileEngine::explode(
 
 							if (targetUnit != nullptr)
 							{
-								powerUnit = RNG::generate( // 10% to 20%
+								power_OnUnit = RNG::generate( // 10% to 20%
 														_powerE / 10,
 														_powerE / 5);
-								targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_SMOKE, true);
+								targetUnit->takeDamage(Position(0,0,0), power_OnUnit, DT_SMOKE, true);
 								//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
 							}
 
@@ -2626,10 +2625,10 @@ void TileEngine::explode(
 									&& bu->getTakenExpl() == false)
 								{
 									bu->setTakenExpl();
-									powerUnit = RNG::generate( // 10% to 20%
+									power_OnUnit = RNG::generate( // 10% to 20%
 															_powerE / 10,
 															_powerE / 5);
-									bu->takeDamage(Position(0,0,0), powerUnit, DT_SMOKE, true);
+									bu->takeDamage(Position(0,0,0), power_OnUnit, DT_SMOKE, true);
 								}
 							}
 							break;
@@ -2640,10 +2639,10 @@ void TileEngine::explode(
 							if (targetUnit != nullptr)
 							{
 								targetUnit->setTakenExpl();
-								powerUnit = RNG::generate( // 25% - 75%
-														_powerE / 4,
-														_powerE * 3 / 4);
-								targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_IN, true);
+								power_OnUnit = RNG::generate( // 25% - 75%
+														(_powerE	  >> 2u),
+														(_powerE * 3) >> 2u);
+								targetUnit->takeDamage(Position(0,0,0), power_OnUnit, DT_IN, true);
 								//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
 
 								const float vulnr (targetUnit->getArmor()->getDamageModifier(DT_IN));
@@ -2680,23 +2679,23 @@ void TileEngine::explode(
 
 							if (fireTile != nullptr) // safety.
 							{
-								const int powerFire (std::max(1,
-															  static_cast<int>(std::ceil(
-															 (static_cast<float>(_powerE) / static_cast<float>(power)) * 10.))));
-								fireTile->addFire(powerFire + fireTile->getFuel() + 2 / 3);
+								const int fire (std::max(1,
+														 static_cast<int>(std::ceil(
+														(static_cast<float>(_powerE) / static_cast<float>(power)) * 10.))));
+								fireTile->addFire(fire + fireTile->getFuel() + 2 / 3);
 								fireTile->addSmoke(std::max(
-														powerFire + fireTile->getFuel(),
-														powerFire + ((fireTile->getFlammability() + 9) / 10)));
+														fire + fireTile->getFuel(),
+														fire + ((fireTile->getFlammability() + 9) / 10)));
 							}
 //							}
 
 							if ((targetUnit = fireTile->getTileUnit()) != nullptr
 								&& targetUnit->getTakenExpl() == false)
 							{
-								powerUnit = RNG::generate( // 25% - 75%
-														_powerE / 4,
-														_powerE * 3 / 4);
-								targetUnit->takeDamage(Position(0,0,0), powerUnit, DT_IN, true);
+								power_OnUnit = RNG::generate( // 25% - 75%
+														(_powerE	  >> 2u),
+														(_powerE * 3) >> 2u);
+								targetUnit->takeDamage(Position(0,0,0), power_OnUnit, DT_IN, true);
 								//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
 
 								const float vulnr (targetUnit->getArmor()->getDamageModifier(DT_IN));
@@ -2724,10 +2723,10 @@ void TileEngine::explode(
 										&& bu->getTakenExpl() == false)
 									{
 										bu->setTakenExpl();
-										powerUnit = RNG::generate( // 25% - 75%
-																_powerE / 4,
-																_powerE * 3 / 4);
-										bu->takeDamage(Position(0,0,0), powerUnit, DT_IN, true);
+										power_OnUnit = RNG::generate( // 25% - 75%
+																(_powerE	  >> 2u),
+																(_powerE * 3) >> 2u);
+										bu->takeDamage(Position(0,0,0), power_OnUnit, DT_IN, true);
 
 										if (bu->isOut_t(OUT_HEALTH) == true)
 										{
@@ -2751,8 +2750,7 @@ void TileEngine::explode(
 									}
 									else if (_powerE > (*i)->getRules()->getArmor()
 										&& (bu == nullptr
-											|| (bu->getUnitStatus() == STATUS_DEAD
-												&& bu->getTakenExpl() == false)))
+											|| (bu->getUnitStatus() == STATUS_DEAD && bu->getTakenExpl() == false)))
 									{
 										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
 										{
@@ -2760,18 +2758,17 @@ void TileEngine::explode(
 											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
 											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
 																										_battleSave->getBattleGame(),
-																										explVoxel, *i, attacker));
+																										explVoxel,
+																										*i,
+																										attacker));
 										}
 										else if ((*i)->getFuse() != -2)
 										{
 											_battleSave->toDeleteItem(*i);
 											break;
-//											--i; // "vector iterator not decrementable" - yeesh.
 										}
 									}
-
-									++i; // "vector iterator not incrementable" - yeesh.
-									done = (i == tileStop->getInventory()->end());
+									done = (++i == tileStop->getInventory()->end());
 								}
 							}
 						}
@@ -2788,7 +2785,7 @@ void TileEngine::explode(
 						{
 //							if (targetUnit->getHealth() == 0
 							if (targetUnit->isOut_t(OUT_HEALTH) == true
-								|| wounds < targetUnit->getFatalWounds())
+								|| antecedentWounds < targetUnit->getFatalWounds())
 							{
 								targetUnit->killerFaction(attacker->getFaction()); // kL .. just do this here and bDone with it. Normally done in BattlescapeGame::checkCasualties()
 								//Log(LOG_INFO) << "TE::explode() " << targetUnit->getId() << " killedByFaction = " << (int)attacker->getFaction();
