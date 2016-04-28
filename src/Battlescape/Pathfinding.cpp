@@ -20,8 +20,7 @@
 #include "Pathfinding.h"
 
 //#include <algorithm>	// std::copy(), std::find(), std::min(), std::max(), std::min_element(), std::max_element(), std::reverse(), std::sort(), std::swap()
-//#include <cstdlib>	// std::abs()
-//#include <cmath>		// std::ceil()
+//#include <cmath>		// std::abs(), std::ceil()
 
 #include "../fmath.h"
 

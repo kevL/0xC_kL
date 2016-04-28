@@ -20,9 +20,9 @@
 #ifndef OPENXCOM_SOLDIERDIARY_H
 #define OPENXCOM_SOLDIERDIARY_H
 
-//#include <map>
-//#include <string>
-//#include <vector>
+//#include <map>	// std::map
+//#include <string>	// std::string
+//#include <vector>	// std::vector
 
 //#include <yaml-cpp/yaml.h>
 
@@ -93,8 +93,8 @@ class SoldierDiary
 
 private:
 	static const size_t
-		BATS = 13,
-		DATS = 11;
+		BATS = 13u,
+		DATS = 11u;
 
 	int
 		_scoreTotal,

@@ -19,7 +19,7 @@
 
 #include "SoldierDiary.h"
 
-//#include <algorithm>
+//#include <sstream> // std::ostringstream
 
 #include "BattleUnitStatistics.h"
 #include "MissionStatistics.h"
@@ -127,7 +127,7 @@ SoldierDiary::SoldierDiary(const SoldierDiary& copyThis)
 		_MIA(copyThis._MIA)
 {
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != copyThis._missionIdList.size();
 			++i)
 	{
@@ -170,7 +170,7 @@ SoldierDiary::SoldierDiary(const SoldierDiary& copyThis)
 
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != copyThis._solAwards.size();
 			++i)
 	{
@@ -185,7 +185,7 @@ SoldierDiary::SoldierDiary(const SoldierDiary& copyThis)
 	}
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != copyThis._killList.size();
 			++i)
 	{
@@ -346,7 +346,7 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThis)
 		}
 
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != assignThis._solAwards.size();
 				++i)
 		{
@@ -361,7 +361,7 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThis)
 		}
 
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != assignThis._killList.size();
 				++i)
 		{
@@ -889,8 +889,8 @@ bool SoldierDiary::manageAwards(const Ruleset* const rules)
 							{
 								//Log(LOG_INFO) << ". . . . . . . [6] iter DETAIL = " << (*detail);
 								size_t
-									bType (0),
-									dType (0);
+									bType (0u),
+									dType (0u);
 
 								static const std::string
 									bType_array[BATS]
@@ -1376,7 +1376,7 @@ SoldierAward::SoldierAward(
 		_type(type),
 		_qual(qualifier),
 		_recent(recent),
-		_level(0)
+		_level(0u)
 {}
 
 /**
