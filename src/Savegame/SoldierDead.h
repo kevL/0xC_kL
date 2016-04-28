@@ -34,9 +34,9 @@ class SoldierDeath;
 
 
 /**
- * Represents a dead soldier.
- * Dead Soldiers have a wide variety of stats that affect
- * our memory of their heroic, and not so heroic battles.
+ * Represents a dead Soldier.
+ * @note SoldierDeads have a wide variety of stats that affect our memory of
+ * their heroic and/or not so heroic battles.
  */
 class SoldierDead
 {
@@ -61,11 +61,11 @@ private:
 
 
 	public:
-		/// Creates a new dead soldier. Used for Soldiers dying IG.
+		/// Creates a SoldierDead. Used for Soldiers dying IG.
 		SoldierDead(
 				const std::wstring& name,
 				const int id,
-				const SoldierRank unitRank,
+				const SoldierRank rank,
 				const SoldierGender gender,
 				const SoldierLook look,
 				const int missions,
@@ -74,11 +74,11 @@ private:
 				const UnitStats& initialStats,
 				const UnitStats& currentStats,
 				SoldierDiary diary); // + Base if I want to...
-		/// Creates a new dead soldier without a diary. Used for loading a SaveGame.
+		/// Creates a SoldierDead without a diary. Used for loading a SaveGame.
 		SoldierDead(
 				const std::wstring& name,
 				const int id,
-				const SoldierRank unitRank,
+				const SoldierRank rank,
 				const SoldierGender gender,
 				const SoldierLook look,
 				const int missions,
@@ -86,46 +86,46 @@ private:
 				SoldierDeath* const death,
 				const UnitStats& initialStats,
 				const UnitStats& currentStats);
-		/// Cleans up the dead soldier.
+		/// Cleans up the SoldierDead.
 		~SoldierDead();
 
-		/// Loads the dead soldier from YAML.
+		/// Loads the SoldierDead from YAML.
 		void load(const YAML::Node& node);
-		/// Saves the dead soldier to YAML.
+		/// Saves the SoldierDead to YAML.
 		YAML::Node save() const;
 
-		/// Gets the dead soldier's name.
+		/// Gets the SoldierDead's name.
 		std::wstring getName() const;
 
-		/// Gets a string version of the dead soldier's rank.
+		/// Gets a string version of the SoldierDead's rank.
 		std::string getRankString() const;
-		/// Gets a sprite version of the dead soldier's rank.
+		/// Gets a sprite version of the SoldierDead's rank.
 		int getRankSprite() const;
-		/// Gets the dead soldier's rank.
+		/// Gets the SoldierDead's rank.
 		SoldierRank getRank() const;
 
-		/// Gets the dead soldier's missions.
+		/// Gets the SoldierDead's missions.
 		int getMissions() const;
-		/// Gets the dead soldier's kills.
+		/// Gets the SoldierDead's kills.
 		int getKills() const;
 
-		/// Gets the dead soldier's gender.
+		/// Gets the SoldierDead's gender.
 		SoldierGender getGender() const;
-		/// Gets the dead soldier's look.
+		/// Gets the SoldierDead's look.
 		SoldierLook getLook() const;
 
-		/// Gets the dead soldier's unique ID.
+		/// Gets the SoldierDead's unique ID.
 		int getId() const;
 
-		/// Get pointer to initial stats.
+		/// Gets the SoldierDead's initial stats.
 		UnitStats* getInitStats();
-		/// Get pointer to current stats.
+		/// Gets the SoldierDead current stats.
 		UnitStats* getCurrentStats();
 
-		/// Gets the dead soldier's time of death.
+		/// Gets the SoldierDead's time of death.
 		SoldierDeath* getDeath() const;
 
-		/// Gets the soldier's diary.
+		/// Gets the SoldierDead's SoldierDiary.
 		SoldierDiary* getDiary() const;
 };
 

@@ -1109,7 +1109,7 @@ void Tile::hitTileInventory(SavedBattleGame* const battleSave)
 			}
 		}
 
-		if (powerFire != 0)
+		if (powerFire != 0) // TODO: Cook-off grenades (question: primed or not). Cf, TileEngine::explode() case: DT_IN.
 		{
 			bool done (false);
 			while (done == false && _inventory.empty() == false) // handle items including unconscious or dead units on this Tile vs. DT_IN

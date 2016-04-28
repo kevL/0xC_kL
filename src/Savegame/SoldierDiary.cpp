@@ -32,16 +32,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a new diary entry from YAML.
- * @param node - YAML node
- */
-SoldierDiary::SoldierDiary(const YAML::Node& node)
-{
-	load(node);
-}
-
-/**
- * Initializes a new blank diary.
+ * Creates the SoldierDiary.
  */
 SoldierDiary::SoldierDiary()
 	:
@@ -74,95 +65,105 @@ SoldierDiary::SoldierDiary()
 		_reactionFireTotal(0),
 		_timesWoundedTotal(0),
 		_valiantCruxTotal(0),
-		_KIA(0),
 		_trapKillTotal(0),
 		_alienBaseAssaultTotal(0),
 		_allAliensKilledTotal(0),
 		_mediApplicationsTotal(0),
 		_revivedUnitTotal(0),
+		_KIA(0),
 		_MIA(0)
 {}
 
 /**
- * Constructs a copy of a SoldierDiary.
- * @param copyThis - reference the diary to copy to this SoldierDiary
+ * Creates the SoldierDiary from YAML.
+ * @param node - reference a YAML node
+ *
+SoldierDiary::SoldierDiary(const YAML::Node& node)
+{
+	load(node);
+} */
+
+/**
+ * Constructs the SoldierDiary from a copy of another diary.
+ * @note I think there's a C++11 operator that does this *way* easier: "&&".
+ * @param copyThis - reference to a SoldierDiary to copy into this diary
  */
-SoldierDiary::SoldierDiary(const SoldierDiary& copyThis)
+SoldierDiary::SoldierDiary(const SoldierDiary& copyThat)
 	:
-		_scoreTotal(copyThis._scoreTotal),
-		_pointTotal(copyThis._pointTotal),
-		_killTotal(copyThis._killTotal),
-		_stunTotal(copyThis._stunTotal),
-//		_missionTotal(copyThis._missionTotal),
-		_winTotal(copyThis._winTotal),
-		_daysWoundedTotal(copyThis._daysWoundedTotal),
-		_baseDefenseMissionTotal(copyThis._baseDefenseMissionTotal),
-		_totalShotByFriendlyCounter(copyThis._totalShotByFriendlyCounter),
-		_totalShotFriendlyCounter(copyThis._totalShotFriendlyCounter),
-		_loneSurvivorTotal(copyThis._loneSurvivorTotal),
-		_terrorMissionTotal(copyThis._terrorMissionTotal),
-		_nightMissionTotal(copyThis._nightMissionTotal),
-		_nightTerrorMissionTotal(copyThis._nightTerrorMissionTotal),
-		_monthsService(copyThis._monthsService),
-		_unconsciousTotal(copyThis._unconsciousTotal),
-		_shotAtCounterTotal(copyThis._shotAtCounterTotal),
-		_hitCounterTotal(copyThis._hitCounterTotal),
-		_ironManTotal(copyThis._ironManTotal),
-		_importantMissionTotal(copyThis._importantMissionTotal),
-		_longDistanceHitCounterTotal(copyThis._longDistanceHitCounterTotal),
-		_lowAccuracyHitCounterTotal(copyThis._lowAccuracyHitCounterTotal),
-		_shotsFiredCounterTotal(copyThis._shotsFiredCounterTotal),
-		_shotsLandedCounterTotal(copyThis._shotsLandedCounterTotal),
-		_shotAtCounter10in1Mission(copyThis._shotAtCounter10in1Mission),
-		_hitCounter5in1Mission(copyThis._hitCounter5in1Mission),
-		_reactionFireTotal(copyThis._reactionFireTotal),
-		_timesWoundedTotal(copyThis._timesWoundedTotal),
-		_valiantCruxTotal(copyThis._valiantCruxTotal),
-		_KIA(copyThis._KIA),
-		_trapKillTotal(copyThis._trapKillTotal),
-		_alienBaseAssaultTotal(copyThis._alienBaseAssaultTotal),
-		_allAliensKilledTotal(copyThis._allAliensKilledTotal),
-		_mediApplicationsTotal(copyThis._mediApplicationsTotal),
-		_revivedUnitTotal(copyThis._revivedUnitTotal),
-		_MIA(copyThis._MIA)
+		_scoreTotal(copyThat._scoreTotal),
+		_pointTotal(copyThat._pointTotal),
+		_killTotal(copyThat._killTotal),
+		_stunTotal(copyThat._stunTotal),
+//		_missionTotal(copyThat._missionTotal),
+		_winTotal(copyThat._winTotal),
+		_daysWoundedTotal(copyThat._daysWoundedTotal),
+		_baseDefenseMissionTotal(copyThat._baseDefenseMissionTotal),
+		_totalShotByFriendlyCounter(copyThat._totalShotByFriendlyCounter),
+		_totalShotFriendlyCounter(copyThat._totalShotFriendlyCounter),
+		_loneSurvivorTotal(copyThat._loneSurvivorTotal),
+		_terrorMissionTotal(copyThat._terrorMissionTotal),
+		_nightMissionTotal(copyThat._nightMissionTotal),
+		_nightTerrorMissionTotal(copyThat._nightTerrorMissionTotal),
+		_monthsService(copyThat._monthsService),
+		_unconsciousTotal(copyThat._unconsciousTotal),
+		_shotAtCounterTotal(copyThat._shotAtCounterTotal),
+		_hitCounterTotal(copyThat._hitCounterTotal),
+		_ironManTotal(copyThat._ironManTotal),
+		_importantMissionTotal(copyThat._importantMissionTotal),
+		_longDistanceHitCounterTotal(copyThat._longDistanceHitCounterTotal),
+		_lowAccuracyHitCounterTotal(copyThat._lowAccuracyHitCounterTotal),
+		_shotsFiredCounterTotal(copyThat._shotsFiredCounterTotal),
+		_shotsLandedCounterTotal(copyThat._shotsLandedCounterTotal),
+		_shotAtCounter10in1Mission(copyThat._shotAtCounter10in1Mission),
+		_hitCounter5in1Mission(copyThat._hitCounter5in1Mission),
+		_reactionFireTotal(copyThat._reactionFireTotal),
+		_timesWoundedTotal(copyThat._timesWoundedTotal),
+		_valiantCruxTotal(copyThat._valiantCruxTotal),
+		_trapKillTotal(copyThat._trapKillTotal),
+		_alienBaseAssaultTotal(copyThat._alienBaseAssaultTotal),
+		_allAliensKilledTotal(copyThat._allAliensKilledTotal),
+		_mediApplicationsTotal(copyThat._mediApplicationsTotal),
+		_revivedUnitTotal(copyThat._revivedUnitTotal),
+		_KIA(copyThat._KIA),
+		_MIA(copyThat._MIA)
 {
 	for (size_t
 			i = 0u;
-			i != copyThis._missionIdList.size();
+			i != copyThat._missionIdList.size();
 			++i)
 	{
-//		if (copyThis._missionIdList.at(i) != nullptr) // Bzzzt.
-		_missionIdList.push_back(copyThis._missionIdList.at(i));
+//		if (copyThat._missionIdList.at(i) != nullptr) // Bzzzt.
+		_missionIdList.push_back(copyThat._missionIdList.at(i));
 	}
 
 	std::map<std::string, int>::const_iterator pCopy;
 	for (
-			pCopy = copyThis._regionTotal.begin();
-			pCopy != copyThis._regionTotal.end();
+			pCopy = copyThat._regionTotal.begin();
+			pCopy != copyThat._regionTotal.end();
 			++pCopy)
 	{
 		_regionTotal[(*pCopy).first] = (*pCopy).second;
 	}
 
 	for (
-			pCopy = copyThis._countryTotal.begin();
-			pCopy != copyThis._countryTotal.end();
+			pCopy = copyThat._countryTotal.begin();
+			pCopy != copyThat._countryTotal.end();
 			++pCopy)
 	{
 		_countryTotal[(*pCopy).first] = (*pCopy).second;
 	}
 
 	for (
-			pCopy = copyThis._typeTotal.begin();
-			pCopy != copyThis._typeTotal.end();
+			pCopy = copyThat._typeTotal.begin();
+			pCopy != copyThat._typeTotal.end();
 			++pCopy)
 	{
 		_typeTotal[(*pCopy).first] = (*pCopy).second;
 	}
 
 	for (
-			pCopy = copyThis._ufoTotal.begin();
-			pCopy != copyThis._ufoTotal.end();
+			pCopy = copyThat._ufoTotal.begin();
+			pCopy != copyThat._ufoTotal.end();
 			++pCopy)
 	{
 		_ufoTotal[(*pCopy).first] = (*pCopy).second;
@@ -171,38 +172,38 @@ SoldierDiary::SoldierDiary(const SoldierDiary& copyThis)
 
 	for (size_t
 			i = 0u;
-			i != copyThis._solAwards.size();
+			i != copyThat._solAwards.size();
 			++i)
 	{
-		if (copyThis._solAwards.at(i) != nullptr)
+		if (copyThat._solAwards.at(i) != nullptr)
 		{
 			std::string
-				type (copyThis._solAwards.at(i)->getType()),
-				noun (copyThis._solAwards.at(i)->getQualifier());
+				type (copyThat._solAwards.at(i)->getType()),
+				qual (copyThat._solAwards.at(i)->getQualifier());
 
-			_solAwards.push_back(new SoldierAward(type, noun));
+			_solAwards.push_back(new SoldierAward(type, qual));
 		}
 	}
 
 	for (size_t
 			i = 0u;
-			i != copyThis._killList.size();
+			i != copyThat._killList.size();
 			++i)
 	{
-		if (copyThis._killList.at(i) != nullptr)
+		if (copyThat._killList.at(i) != nullptr)
 		{
 			std::string
-				unitRank (copyThis._killList.at(i)->_rank),
-				race (copyThis._killList.at(i)->_race),
-				weapon (copyThis._killList.at(i)->_weapon),
-				weaponAmmo (copyThis._killList.at(i)->_weaponAmmo);
+				unitRank (copyThat._killList.at(i)->_rank),
+				race (copyThat._killList.at(i)->_race),
+				weapon (copyThat._killList.at(i)->_weapon),
+				weaponAmmo (copyThat._killList.at(i)->_weaponAmmo);
 			int
-				mission (copyThis._killList.at(i)->_mission),
-				turn (copyThis._killList.at(i)->_turn),
-				points (copyThis._killList.at(i)->_points);
+				mission (copyThat._killList.at(i)->_mission),
+				turn (copyThat._killList.at(i)->_turn),
+				points (copyThat._killList.at(i)->_points);
 
-			UnitFaction faction (copyThis._killList.at(i)->_faction);
-			UnitStatus status (copyThis._killList.at(i)->_status);
+			UnitFaction faction (copyThat._killList.at(i)->_faction);
+			UnitStatus status (copyThat._killList.at(i)->_status);
 
 			_killList.push_back(new BattleUnitKill(
 												unitRank,
@@ -238,54 +239,54 @@ SoldierDiary::~SoldierDiary()
 
 /**
  * Overloads the assignment operator.
- * @param assignThis - reference the diary to assign to this SoldierDiary
- * @return, reference to the new diary
+ * @param assignThat - reference to a SoldierDiary to assign to this diary
+ * @return, reference to the fresh diary
  */
-SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThis)
+SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThat)
 {
-	if (this != &assignThis)
+	if (this != &assignThat)
 	{
-		_scoreTotal = assignThis._scoreTotal;
-		_pointTotal = assignThis._pointTotal;
-		_killTotal = assignThis._killTotal;
-		_stunTotal = assignThis._stunTotal;
-//		_missionTotal = assignThis._missionTotal;
-		_winTotal = assignThis._winTotal;
-		_daysWoundedTotal = assignThis._daysWoundedTotal;
-		_baseDefenseMissionTotal = assignThis._baseDefenseMissionTotal;
-		_totalShotByFriendlyCounter = assignThis._totalShotByFriendlyCounter;
-		_totalShotFriendlyCounter = assignThis._totalShotFriendlyCounter;
-		_loneSurvivorTotal = assignThis._loneSurvivorTotal;
-		_terrorMissionTotal = assignThis._terrorMissionTotal;
-		_nightMissionTotal = assignThis._nightMissionTotal;
-		_nightTerrorMissionTotal = assignThis._nightTerrorMissionTotal;
-		_monthsService = assignThis._monthsService;
-		_unconsciousTotal = assignThis._unconsciousTotal;
-		_shotAtCounterTotal = assignThis._shotAtCounterTotal;
-		_hitCounterTotal = assignThis._hitCounterTotal;
-		_ironManTotal = assignThis._ironManTotal;
-		_importantMissionTotal = assignThis._importantMissionTotal;
-		_longDistanceHitCounterTotal = assignThis._longDistanceHitCounterTotal;
-		_lowAccuracyHitCounterTotal = assignThis._lowAccuracyHitCounterTotal;
-		_shotsFiredCounterTotal = assignThis._shotsFiredCounterTotal;
-		_shotsLandedCounterTotal = assignThis._shotsLandedCounterTotal;
-		_shotAtCounter10in1Mission = assignThis._shotAtCounter10in1Mission;
-		_hitCounter5in1Mission = assignThis._hitCounter5in1Mission;
-		_reactionFireTotal = assignThis._reactionFireTotal;
-		_timesWoundedTotal = assignThis._timesWoundedTotal;
-		_valiantCruxTotal = assignThis._valiantCruxTotal;
-		_KIA = assignThis._KIA;
-		_trapKillTotal = assignThis._trapKillTotal;
-		_alienBaseAssaultTotal = assignThis._alienBaseAssaultTotal;
-		_allAliensKilledTotal = assignThis._allAliensKilledTotal;
-		_mediApplicationsTotal = assignThis._mediApplicationsTotal;
-		_revivedUnitTotal = assignThis._revivedUnitTotal;
-		_MIA = assignThis._MIA;
+		_scoreTotal = assignThat._scoreTotal;
+		_pointTotal = assignThat._pointTotal;
+		_killTotal = assignThat._killTotal;
+		_stunTotal = assignThat._stunTotal;
+//		_missionTotal = assignThat._missionTotal;
+		_winTotal = assignThat._winTotal;
+		_daysWoundedTotal = assignThat._daysWoundedTotal;
+		_baseDefenseMissionTotal = assignThat._baseDefenseMissionTotal;
+		_totalShotByFriendlyCounter = assignThat._totalShotByFriendlyCounter;
+		_totalShotFriendlyCounter = assignThat._totalShotFriendlyCounter;
+		_loneSurvivorTotal = assignThat._loneSurvivorTotal;
+		_terrorMissionTotal = assignThat._terrorMissionTotal;
+		_nightMissionTotal = assignThat._nightMissionTotal;
+		_nightTerrorMissionTotal = assignThat._nightTerrorMissionTotal;
+		_monthsService = assignThat._monthsService;
+		_unconsciousTotal = assignThat._unconsciousTotal;
+		_shotAtCounterTotal = assignThat._shotAtCounterTotal;
+		_hitCounterTotal = assignThat._hitCounterTotal;
+		_ironManTotal = assignThat._ironManTotal;
+		_importantMissionTotal = assignThat._importantMissionTotal;
+		_longDistanceHitCounterTotal = assignThat._longDistanceHitCounterTotal;
+		_lowAccuracyHitCounterTotal = assignThat._lowAccuracyHitCounterTotal;
+		_shotsFiredCounterTotal = assignThat._shotsFiredCounterTotal;
+		_shotsLandedCounterTotal = assignThat._shotsLandedCounterTotal;
+		_shotAtCounter10in1Mission = assignThat._shotAtCounter10in1Mission;
+		_hitCounter5in1Mission = assignThat._hitCounter5in1Mission;
+		_reactionFireTotal = assignThat._reactionFireTotal;
+		_timesWoundedTotal = assignThat._timesWoundedTotal;
+		_valiantCruxTotal = assignThat._valiantCruxTotal;
+		_trapKillTotal = assignThat._trapKillTotal;
+		_alienBaseAssaultTotal = assignThat._alienBaseAssaultTotal;
+		_allAliensKilledTotal = assignThat._allAliensKilledTotal;
+		_mediApplicationsTotal = assignThat._mediApplicationsTotal;
+		_revivedUnitTotal = assignThat._revivedUnitTotal;
+		_KIA = assignThat._KIA;
+		_MIA = assignThat._MIA;
 
 		_missionIdList.clear();
 		for (std::vector<int>::const_iterator
-				i = assignThis._missionIdList.begin();
-				i != assignThis._missionIdList.end();
+				i = assignThat._missionIdList.begin();
+				i != assignThat._missionIdList.end();
 				++i)
 		{
 			_missionIdList.push_back(*i);
@@ -294,8 +295,8 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThis)
 		_regionTotal.clear();
 		std::map<std::string, int>::const_iterator pCopy;
 		for (
-				pCopy = assignThis._regionTotal.begin();
-				pCopy != assignThis._regionTotal.end();
+				pCopy = assignThat._regionTotal.begin();
+				pCopy != assignThat._regionTotal.end();
 				++pCopy)
 		{
 			_regionTotal[(*pCopy).first] = (*pCopy).second;
@@ -303,8 +304,8 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThis)
 
 		_countryTotal.clear();
 		for (
-				pCopy = assignThis._countryTotal.begin();
-				pCopy != assignThis._countryTotal.end();
+				pCopy = assignThat._countryTotal.begin();
+				pCopy != assignThat._countryTotal.end();
 				++pCopy)
 		{
 			_countryTotal[(*pCopy).first] = (*pCopy).second;
@@ -312,8 +313,8 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThis)
 
 		_typeTotal.clear();
 		for (
-				pCopy = assignThis._typeTotal.begin();
-				pCopy != assignThis._typeTotal.end();
+				pCopy = assignThat._typeTotal.begin();
+				pCopy != assignThat._typeTotal.end();
 				++pCopy)
 		{
 			_typeTotal[(*pCopy).first] = (*pCopy).second;
@@ -321,8 +322,8 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThis)
 
 		_ufoTotal.clear();
 		for (
-				pCopy = assignThis._ufoTotal.begin();
-				pCopy != assignThis._ufoTotal.end();
+				pCopy = assignThat._ufoTotal.begin();
+				pCopy != assignThat._ufoTotal.end();
 				++pCopy)
 		{
 			_ufoTotal[(*pCopy).first] = (*pCopy).second;
@@ -347,38 +348,38 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThis)
 
 		for (size_t
 				i = 0u;
-				i != assignThis._solAwards.size();
+				i != assignThat._solAwards.size();
 				++i)
 		{
-			if (assignThis._solAwards.at(i) != nullptr)
+			if (assignThat._solAwards.at(i) != nullptr)
 			{
 				std::string
-					type (assignThis._solAwards.at(i)->getType()),
-					noun (assignThis._solAwards.at(i)->getQualifier());
+					type (assignThat._solAwards.at(i)->getType()),
+					qual (assignThat._solAwards.at(i)->getQualifier());
 
-				_solAwards.push_back(new SoldierAward(type, noun));
+				_solAwards.push_back(new SoldierAward(type, qual));
 			}
 		}
 
 		for (size_t
 				i = 0u;
-				i != assignThis._killList.size();
+				i != assignThat._killList.size();
 				++i)
 		{
-			if (assignThis._killList.at(i) != nullptr)
+			if (assignThat._killList.at(i) != nullptr)
 			{
 				std::string
-					unitRank (assignThis._killList.at(i)->_rank),
-					race (assignThis._killList.at(i)->_race),
-					weapon (assignThis._killList.at(i)->_weapon),
-					weaponAmmo (assignThis._killList.at(i)->_weaponAmmo);
+					unitRank (assignThat._killList.at(i)->_rank),
+					race (assignThat._killList.at(i)->_race),
+					weapon (assignThat._killList.at(i)->_weapon),
+					weaponAmmo (assignThat._killList.at(i)->_weaponAmmo);
 				int
-					mission (assignThis._killList.at(i)->_mission),
-					turn (assignThis._killList.at(i)->_turn),
-					points (assignThis._killList.at(i)->_points);
+					mission (assignThat._killList.at(i)->_mission),
+					turn (assignThat._killList.at(i)->_turn),
+					points (assignThat._killList.at(i)->_points);
 
-				UnitFaction faction (assignThis._killList.at(i)->_faction);
-				UnitStatus status (assignThis._killList.at(i)->_status);
+				UnitFaction faction (assignThat._killList.at(i)->_faction);
+				UnitStatus status (assignThat._killList.at(i)->_status);
 
 				_killList.push_back(new BattleUnitKill(
 													unitRank,
@@ -464,8 +465,7 @@ void SoldierDiary::load(const YAML::Node& node)
 	_mediApplicationsTotal			= node["mediApplicationsTotal"]			.as<int>(_mediApplicationsTotal);
 	_revivedUnitTotal				= node["revivedUnitTotal"]				.as<int>(_revivedUnitTotal);
 
-	_KIA =
-	_MIA = 0;
+	_KIA = _MIA = 0;
 }
 
 /**
@@ -648,9 +648,9 @@ void SoldierDiary::updateDiary(
 		++_allAliensKilledTotal;
 
 	if (unitStatistics->KIA == true)
-		++_KIA;
+		_KIA = 1;
 	else if (unitStatistics->MIA == true)
-		++_MIA;
+		_MIA = 1;
 
 	_missionIdList.push_back(missionStatistics->id);
 
@@ -746,7 +746,7 @@ bool SoldierDiary::manageAwards(const Ruleset* const rules)
 					|| (criteriaType == "totalFellUnconscious"		&& _unconsciousTotal < val)
 					|| (criteriaType == "totalShotAt10Times"		&& _shotAtCounter10in1Mission < val)
 					|| (criteriaType == "totalHit5Times"			&& _hitCounter5in1Mission < val)
-					|| (criteriaType == "totalFriendlyFired"		&& (_totalShotByFriendlyCounter < val || _KIA != 0 || _MIA != 0)) // didn't survive ......
+					|| (criteriaType == "totalFriendlyFired"		&& (_totalShotByFriendlyCounter < val || _KIA == 1 || _MIA == 1)) // didn't survive ......
 					|| (criteriaType == "totalLoneSurvivor"			&& _loneSurvivorTotal < val)
 					|| (criteriaType == "totalIronMan"				&& _ironManTotal < val)
 					|| (criteriaType == "totalImportantMissions"	&& _importantMissionTotal < val)

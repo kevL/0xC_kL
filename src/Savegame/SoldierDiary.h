@@ -126,12 +126,12 @@ private:
 		_reactionFireTotal,
 		_timesWoundedTotal,
 		_valiantCruxTotal,
-		_KIA,
 		_trapKillTotal,
 		_alienBaseAssaultTotal,
 		_allAliensKilledTotal,
 		_mediApplicationsTotal,
 		_revivedUnitTotal,
+		_KIA,
 		_MIA;
 
 	std::vector<int> _missionIdList;
@@ -157,17 +157,17 @@ private:
 
 
 	public:
-		/// Creates a SoldierDiary and loads its contents from YAML.
-		explicit SoldierDiary(const YAML::Node& node);
 		/// Creates a SoldierDiary.
 		SoldierDiary();
-		/// Constructs a copy of the SoldierDiary.
-		SoldierDiary(const SoldierDiary& copyThis);
+		/// Creates a SoldierDiary and loads its contents from YAML.
+//		explicit SoldierDiary(const YAML::Node& node);
+		/// Constructs a copy of a SoldierDiary.
+		SoldierDiary(const SoldierDiary& copyThat);
 		/// Deconstructs the SoldierDiary.
 		~SoldierDiary();
 
 		/// Overloads the SoldierDiary's assignment-operator.
-		SoldierDiary& operator= (const SoldierDiary& assignThis);
+		SoldierDiary& operator= (const SoldierDiary& assignThat);
 
 		/// Loads the SoldierDiary from YAML.
 		void load(const YAML::Node& node);

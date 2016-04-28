@@ -61,14 +61,14 @@ Soldier::Soldier(
 		_armorRule(armorRule),
 		_id(id),
 		_rank(RANK_ROOKIE),
-		_gender(GENDER_MALE),
-		_look(LOOK_BLONDE),
 		_craft(nullptr),
 		_missions(0),
 		_kills(0),
 		_recovery(0),
 		_psiTraining(false),
 		_recentlyPromoted(false)
+//		_gender(GENDER_MALE),
+//		_look(LOOK_BLONDE),
 {
 	_diary = new SoldierDiary();
 
@@ -94,8 +94,8 @@ Soldier::Soldier(
 	_currentStats = _initialStats;
 
 	_look = static_cast<SoldierLook>(RNG::generate(0,3));
-//		_gender = (SoldierGender)RNG::generate(0, 1);
 
+//	_gender = (SoldierGender)RNG::generate(0, 1);
 	// gender Ratios
 	const RuleGender* const gRatio (_solRule->getGenderRatio());
 	const double
@@ -196,7 +196,7 @@ void Soldier::load(
 	}
 
 	//Log(LOG_INFO) << ". load diary";
-	if (node["diary"])
+	if (node["diary"] != nullptr)
 	{
 		//Log(LOG_INFO) << ". . diary exists";
 		_diary->load(node["diary"]);
