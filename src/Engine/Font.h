@@ -46,8 +46,8 @@ class Font
 
 private:
 	static std::wstring _index;
-	static SDL_Color _palette[6];
-	static SDL_Color _terminal[2];
+	static SDL_Color _palette[6u];
+	static SDL_Color _terminal[2u];
 
 	bool _monospace;
 	int
@@ -61,9 +61,9 @@ private:
 
 
 	public:
-		/// Creates a blank font.
+		/// Creates a Font.
 		Font();
-		/// Cleans up the font.
+		/// Cleans up the Font.
 		~Font();
 
 		/// Checks if a character is a linebreak.
@@ -79,24 +79,24 @@ private:
 		static inline bool isNonBreakableSpace(wchar_t c)
 		{ return (c == L'\xA0'); }
 
-		/// Sets the character index for every font.
+		/// Sets the index for every character.
 		static void setIndex(const std::wstring& index);
 
-		/// Loads the font from YAML.
+		/// Loads the Font from YAML.
 		void load(const YAML::Node& node);
 
-		/// Generate the terminal font.
+		/// Generates the terminal Font.
 		void loadTerminal();
 
-		/// Determines the size and position of each character in the font.
+		/// Determines the size and position of each character in the Font.
 		void init();
 
-		/// Gets a particular character from the font with its real size.
+		/// Gets a particular character from the Font with its real size.
 		Surface* getChar(wchar_t fontChar);
 
-		/// Gets the font's character width.
+		/// Gets the Font's character width.
 		int getWidth() const;
-		/// Gets the font's character height.
+		/// Gets the Font's character height.
 		int getHeight() const;
 
 		/// Gets the spacing between characters.
@@ -105,7 +105,7 @@ private:
 		/// Gets the size of a particular character.
 		SDL_Rect getCharSize(wchar_t fontChar);
 
-		/// Gets the font's surface.
+		/// Gets the Font's Surface.
 		Surface* getSurface() const;
 };
 

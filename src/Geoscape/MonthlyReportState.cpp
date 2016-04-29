@@ -397,8 +397,8 @@ void MonthlyReportState::btnOkClick(Action*)
 	{
 		_game->popState();
 
-		if (_soldiersMedalled.empty() == false)
-			_game->pushState(new CeremonyState(_soldiersMedalled));
+		if (_soldiersFeted.empty() == false)
+			_game->pushState(new CeremonyState(_soldiersFeted));
 
 		if (_gameSave->isIronman() == true)
 			_game->pushState(new SaveGameState(
@@ -501,8 +501,12 @@ void MonthlyReportState::awards() // private.
 
 			//Log(LOG_INFO) << "";
 			//Log(LOG_INFO) << "end MONTH report: " << Language::wstrToCp((*j)->getName());
-			if ((*j)->getDiary()->manageAwards(_game->getRuleset()) == true)
-				_soldiersMedalled.push_back(*j);
+			if ((*j)->getDiary()->manageAwards(
+											_game->getRuleset(),
+											_gameSave->getMissionStatistics()) == true)
+			{
+				_soldiersFeted.push_back(*j);
+			}
 		}
 	}
 }

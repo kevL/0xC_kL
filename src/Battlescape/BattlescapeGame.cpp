@@ -552,12 +552,16 @@ void BattlescapeGame::popState()
 		}
 
 
-		if (_battleSave->getSelectedUnit() == nullptr // selected unit died or became unconscious or disappeared inexplicably
-			|| _battleSave->getSelectedUnit()->isOut_t() == true)
+		if (_battleSave->getSelectedUnit() == nullptr)
 		{
-			//Log(LOG_INFO) << ". unit incapacitated: cancelAction & deSelect)";
+			//Log(LOG_INFO) << ". selUnit invalid: cancelAction";
 			cancelTacticalAction();
-			_battleSave->setSelectedUnit(nullptr);
+		}
+		else if (_battleSave->getSelectedUnit()->isOut_t() == true)
+		{
+			//Log(LOG_INFO) << ". selUnit incapacitated: cancelAction & deSelect";
+			cancelTacticalAction();
+			_battleSave->setSelectedUnit();
 		}
 
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)

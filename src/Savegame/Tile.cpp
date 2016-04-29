@@ -55,8 +55,8 @@ Tile::SerializationKey Tile::serializationKey
 
 
 /**
- * Creates a Tile.
- * @param pos - reference to a Position
+ * Creates the Tile at a specified Position.
+ * @param pos - reference to a position
  */
 Tile::Tile(const Position& pos)
 	:
@@ -111,7 +111,7 @@ Tile::~Tile()
 }
 
 /**
- * Load this Tile from a YAML node.
+ * Loads this Tile from a YAML node.
  * @param node - reference a YAML node
  */
 void Tile::load(const YAML::Node& node)
@@ -148,7 +148,7 @@ void Tile::load(const YAML::Node& node)
 }
 
 /**
- * Load the tile from binary.
+ * Loads this Tile from binary.
  * @param buffer - pointer to buffer
  * @param serKey - reference the serialization key
  */
@@ -186,7 +186,7 @@ void Tile::loadBinary(
 }
 
 /**
- * Saves the tile to a YAML node.
+ * Saves this Tile to a YAML node.
  * @return, YAML node
  */
 YAML::Node Tile::save() const
@@ -230,7 +230,7 @@ YAML::Node Tile::save() const
 }
 
 /**
- * Saves the tile to binary.
+ * Saves this Tile to binary.
  * @param buffer - pointer to pointer to buffer
  */
 void Tile::saveBinary(Uint8** buffer) const
@@ -441,7 +441,7 @@ int Tile::getFootstepSound(const Tile* const tileBelow) const
 }
 
 /**
- * Open a door on this Tile.
+ * Opens a door on this Tile.
  * @param partType		- a tile-part type (MapData.h)
  * @param unit			- pointer to a BattleUnit (default nullptr)
 // * @param reserved	- BattleActionType (BattlescapeGame.h) (default BA_NONE)
@@ -1156,7 +1156,7 @@ void Tile::hitTileInventory(SavedBattleGame* const battleSave)
 }
 
 /**
- * Animate the tile.
+ * Animates the tile.
  * @note This means to advance the current frame for every part. Ufo-doors are a
  * bit special - they animate only when triggered; when ufo-doors are on frame 0
  * (closed) or frame 7 (open) they are not animated further. A ufo-door on an
@@ -1210,7 +1210,7 @@ void Tile::animateTile()
 }
 
 /**
- * Get the number of frames the fire or smoke animation is off-sync.
+ * Gets the number of frames the fire or smoke animation is off-sync.
  * @note To void fire and smoke animations of different tiles moving nice in
  * sync - that'd look fake.
  * @return, offset
@@ -1221,7 +1221,7 @@ int Tile::getAnimationOffset() const
 }
 
 /**
- * Get the sprite of a certain part of this Tile.
+ * Gets the sprite of a certain part of this Tile.
  * @param partType - tile-part to get a sprite for
  * @return, pointer to the sprite
  */
@@ -1371,7 +1371,7 @@ int Tile::getCorpseSprite(bool* fired) const
 }
 
 /**
- * Get the topmost item sprite to draw on the battlefield.
+ * Gets the topmost item sprite to draw on the battlefield.
  * @param primed - pointer to set primed true
  * @return, sprite ID in floorobs (-1 none)
  */

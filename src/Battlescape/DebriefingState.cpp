@@ -114,27 +114,27 @@ DebriefingState::DebriefingState()
 	// BattlescapeGame is really dTor'd and not reLoaded ...... uh, i guess.
 	_gameSave->getBattleSave()->getBattleGame()->cleanBattleStates();
 
-	_missionStatistics	= new MissionStatistics();
+	_tactical		= new MissionStatistics();
 
-	_window				= new Window(this, 320, 200);
+	_window			= new Window(this, 320, 200);
 
-	_txtTitle			= new Text(280, 16,  16, 8);
-	_txtBaseLabel		= new Text( 80,  9, 216, 8);
+	_txtTitle		= new Text(280, 16,  16, 8);
+	_txtBaseLabel	= new Text( 80,  9, 216, 8);
 
-	_txtItem			= new Text(184, 9,  16, 24);
-	_txtQuantity		= new Text( 60, 9, 200, 24);
-	_txtScore			= new Text( 36, 9, 260, 24);
+	_txtItem		= new Text(184, 9,  16, 24);
+	_txtQuantity	= new Text( 60, 9, 200, 24);
+	_txtScore		= new Text( 36, 9, 260, 24);
 
-	_lstStats			= new TextList(288, 81, 16, 32);
+	_lstStats		= new TextList(288, 81, 16, 32);
 
-	_lstRecovery		= new TextList(288, 81, 16, 32);
-	_txtRecovery		= new Text(180, 9, 16, 60);
+	_lstRecovery	= new TextList(288, 81, 16, 32);
+	_txtRecovery	= new Text(180, 9, 16, 60);
 
-	_lstTotal			= new TextList(288, 9, 16, 12);
+	_lstTotal		= new TextList(288, 9, 16, 12);
 
-	_txtCost			= new Text(76, 9, 16, 180);
-	_btnOk				= new TextButton(136, 16, 92, 177);
-	_txtRating			= new Text(76, 9, 228, 180);
+	_txtCost		= new Text(76, 9, 16, 180);
+	_btnOk			= new TextButton(136, 16, 92, 177);
+	_txtRating		= new Text(76, 9, 228, 180);
 
 	setInterface("debriefing");
 
@@ -249,13 +249,13 @@ DebriefingState::DebriefingState()
 		}
 	}
 
-	_missionStatistics->score = total;
+	_tactical->score = total;
 
 	if (civiliansDead == 0
 		&& civiliansSaved != 0
-		&& _missionStatistics->success == true)
+		&& _tactical->success == true)
 	{
-		_missionStatistics->valiantCrux = true;
+		_tactical->valiantCrux = true;
 	}
 
 	std::wostringstream woststr;
@@ -345,12 +345,13 @@ DebriefingState::DebriefingState()
 	// Soldier Diary ->
 	SavedBattleGame* const battleSave (_gameSave->getBattleSave());
 
-	_missionStatistics->rating = rating;
-	_missionStatistics->id = _gameSave->getMissionStatistics()->size();
-	_missionStatistics->shade = battleSave->getTacticalShade();
+	_tactical->rating = rating;
+	_tactical->id = _gameSave->getMissionStatistics()->size();
+	_tactical->shade = battleSave->getTacticalShade();
 
 	//Log(LOG_INFO) << "DebriefingState::cTor";
 	Soldier* sol;
+	std::vector<MissionStatistics*>* const tacticals (_game->getSavedGame()->getMissionStatistics());
 
 	for (std::vector<BattleUnit*>::const_iterator
 			i = battleSave->getUnits()->begin();
@@ -363,12 +364,12 @@ DebriefingState::DebriefingState()
 		if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 		{
 			//Log(LOG_INFO) << ". . id = " << (*i)->getId();
-			BattleUnitStatistics* const unitStatistics ((*i)->getStatistics());
+			BattleUnitStatistics* const diaryStats ((*i)->getStatistics());
 
 			int soldierAlienKills (0);
 			for (std::vector<BattleUnitKill*>::const_iterator
-					j = unitStatistics->kills.begin();
-					j != unitStatistics->kills.end();
+					j = diaryStats->kills.begin();
+					j != diaryStats->kills.end();
 					++j)
 			{
 				if ((*j)->_faction == FACTION_HOSTILE)
@@ -384,9 +385,9 @@ DebriefingState::DebriefingState()
 			if (_aliensControlled == 0
 				&& _aliensKilled + _aliensStunned > 3 + _diff
 				&& _aliensKilled + _aliensStunned == soldierAlienKills
-				&& _missionStatistics->success == true)
+				&& _tactical->success == true)
 			{
-				unitStatistics->nikeCross = true;
+				diaryStats->nikeCross = true;
 			}
 
 
@@ -411,38 +412,38 @@ DebriefingState::DebriefingState()
 					}
 				}
 
-				unitStatistics->daysWounded = 0;
+				diaryStats->daysWounded = 0;
 
-				// NOTE: Safety on *deadSoldier should not be needed. see above^
-				if (unitStatistics->KIA == true)
-					_missionStatistics->injuryList[deadSoldier->getId()] = -1;
+				// NOTE: Safety on *deadSoldier shall not be needed. see above^
+				if (diaryStats->KIA == true)
+					_tactical->injuryList[deadSoldier->getId()] = -1;
 				else // MIA
-					_missionStatistics->injuryList[deadSoldier->getId()] = -2;
+					_tactical->injuryList[deadSoldier->getId()] = -2;
 
 				deadSoldier->getDiary()->updateDiary(
-												unitStatistics,
-												_missionStatistics,
+												diaryStats,
+												_tactical,
 												_rules);
-				deadSoldier->getDiary()->manageAwards(_rules);
+				deadSoldier->getDiary()->manageAwards(_rules, tacticals);
 				_soldiersLost.push_back(deadSoldier);
 			}
 			else
 			{
 				//Log(LOG_INFO) << ". . . alive";
-				if ((unitStatistics->daysWounded = sol->getSickbay()) != 0)
-					_missionStatistics->injuryList[sol->getId()] = sol->getSickbay();
+				if ((diaryStats->daysWounded = sol->getSickbay()) != 0)
+					_tactical->injuryList[sol->getId()] = diaryStats->daysWounded;
 
 				sol->getDiary()->updateDiary(
-										unitStatistics,
-										_missionStatistics,
+										diaryStats,
+										_tactical,
 										_rules);
-				if (sol->getDiary()->manageAwards(_rules) == true)
-					_soldiersMedalled.push_back(sol);
+				if (sol->getDiary()->manageAwards(_rules, tacticals) == true)
+					_soldiersFeted.push_back(sol);
 			}
 		}
 	}
 
-	_gameSave->getMissionStatistics()->push_back(_missionStatistics);
+	_gameSave->getMissionStatistics()->push_back(_tactical);
 	// Soldier Diary_end.
 }
 
@@ -515,10 +516,10 @@ void DebriefingState::btnOkClick(Action*)
 				_game->pushState(new CeremonyDeadState(_soldiersLost));
 			}
 
-			if (_soldiersMedalled.empty() == false)
+			if (_soldiersFeted.empty() == false)
 			{
 				playAwardMusic = true;
-				_game->pushState(new CeremonyState(_soldiersMedalled));
+				_game->pushState(new CeremonyState(_soldiersFeted));
 			}
 
 			SavedBattleGame* const battleSave (_gameSave->getBattleSave());
@@ -747,15 +748,15 @@ void DebriefingState::prepareDebriefing() // private.
 	_statList.push_back(new DebriefingStat("STR_ALIEN_ALLOYS", true));
 	_statList.push_back(new DebriefingStat("STR_ALIEN_HABITAT", true)); */
 
-	_missionStatistics->timeStat = *_gameSave->getTime();
-	_missionStatistics->type = battleSave->getTacticalType();
+	_tactical->timeStat = *_gameSave->getTime();
+	_tactical->type = battleSave->getTacticalType();
 
 	if (_isQuickBattle == false) // Do all aLienRace types here for SoldierDiary stat.
 	{
 		if (battleSave->getAlienRace().empty() == false) // safety.
-			_missionStatistics->alienRace = battleSave->getAlienRace();
+			_tactical->alienRace = battleSave->getAlienRace();
 		else
-			_missionStatistics->alienRace = "STR_UNKNOWN";
+			_tactical->alienRace = "STR_UNKNOWN";
 	}
 
 	int
@@ -856,9 +857,9 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 
-//	_missionStatistics->success = (aborted == false && (playerLive != 0 || isHostileAlive == false))
+//	_tactical->success = (aborted == false && (playerLive != 0 || isHostileAlive == false))
 //								|| battleSave->allObjectivesDestroyed() == true;
-	_missionStatistics->success = isHostileAlive == false
+	_tactical->success = isHostileAlive == false
 							   || battleSave->allObjectivesDestroyed() == true;
 	const bool playerWipe ((aborted == true && playerExit == 0)
 						 || playerLive == 0);
@@ -900,7 +901,7 @@ void DebriefingState::prepareDebriefing() // private.
 			}
 			else if ((*j)->getDestination() != nullptr)
 			{
-				if (_missionStatistics->success == true)
+				if (_tactical->success == true)
 				{
 					const Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getDestination()));
 					if (ufo != nullptr && ufo->getTactical() == true)
@@ -922,7 +923,7 @@ void DebriefingState::prepareDebriefing() // private.
 			lat = _base->getLatitude();
 
 //			if (aborted == false && playerLive != 0)
-			if (_missionStatistics->success == true)
+			if (_tactical->success == true)
 			{
 				_base->setTactical(false);
 
@@ -958,7 +959,7 @@ void DebriefingState::prepareDebriefing() // private.
 		if ((*i)->getRules()->insideRegion(lon, lat) == true)
 		{
 			_region = *i;
-			_missionStatistics->region = _region->getRules()->getType();
+			_tactical->region = _region->getRules()->getType();
 			break;
 		}
 	}
@@ -971,7 +972,7 @@ void DebriefingState::prepareDebriefing() // private.
 		if ((*i)->getRules()->insideCountry(lon, lat) == true)
 		{
 			_country = *i;
-			_missionStatistics->country = _country->getRules()->getType();
+			_tactical->country = _country->getRules()->getType();
 			break;
 		}
 	}
@@ -988,10 +989,10 @@ void DebriefingState::prepareDebriefing() // private.
 		{
 			found = true;
 			_txtRecovery->setText(tr("STR_UFO_RECOVERY"));
-			_missionStatistics->ufo = (*i)->getRules()->getType();
+			_tactical->ufo = (*i)->getRules()->getType();
 
 //			if (aborted == false && playerLive != 0)
-			if (_missionStatistics->success == true)
+			if (_tactical->success == true)
 			{
 				delete *i;
 				_gameSave->getUfos()->erase(i);
@@ -1034,7 +1035,7 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				_txtRecovery->setText(tr("STR_ALIEN_BASE_RECOVERY"));
 
-				if (_missionStatistics->success == true)
+				if (_tactical->success == true)
 				{
 					if (objectiveText.empty() == false)
 					{
@@ -1195,7 +1196,7 @@ void DebriefingState::prepareDebriefing() // private.
 				{
 					case FACTION_PLAYER:
 						if (aborted == false
-							|| ((_missionStatistics->success == true || tacType != TCT_BASEDEFENSE)
+							|| ((_tactical->success == true || tacType != TCT_BASEDEFENSE)
 								&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LATENT)))
 						{
 							++playerExit;
@@ -1340,7 +1341,7 @@ void DebriefingState::prepareDebriefing() // private.
 						break;
 
 					case FACTION_NEUTRAL:
-						if (_missionStatistics->success == true && isHostileAlive == false
+						if (_tactical->success == true && isHostileAlive == false
 							|| (aborted == true && (*i)->isInExitArea() == true))
 						{
 							addStat(
@@ -1395,7 +1396,7 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 //	if (aborted == true && tacType == TCT_BASEDEFENSE)
-	if (_missionStatistics->success == false && tacType == TCT_BASEDEFENSE)
+	if (_tactical->success == false && tacType == TCT_BASEDEFENSE)
 	{
 		for (std::vector<Craft*>::const_iterator
 				i = _base->getCrafts()->begin();
@@ -1410,7 +1411,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 
 	std::string tacResult;
-	if (_missionStatistics->success == true)
+	if (_tactical->success == true)
 	{
 		switch (tacType)
 		{

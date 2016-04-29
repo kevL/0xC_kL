@@ -116,18 +116,6 @@ struct MissionStatistics
 		shade		= node["shade"]			.as<int>(shade);
 		injuryList	= node["injuryList"]	.as<std::map<int,int>>(injuryList);
 		valiantCrux	= node["valiantCrux"]	.as<bool>(valiantCrux);
-
-		// TEST: Use this to remove soldier-IDs w/ 0 injury-days from the '_injuryList'.
-//		for (std::map<int,int>::const_iterator
-//				i = injuryList.begin();
-//				i != injuryList.end();
-//				)
-//		{
-//			if (i->second == 0)
-//				i = injuryList.erase(i);
-//			else
-//				++i;
-//		} // end_TEST.
 	}
 
 	/// Saves a MissionStatistics node to YAML.
@@ -155,8 +143,34 @@ struct MissionStatistics
 
 		return node;
 	}
-};
 
+	/// Checks if these MissionStatistics are for an AlienBase tactical.
+	bool isAlienBase() const
+	{
+		if (type == "STR_ALIEN_BASE_ASSAULT")
+			return true;
+
+		return false;
+	}
+
+	/// Checks if these MissionStatistics are for a BaseDefense tactical.
+	bool isBaseDefense() const
+	{
+		if (type == "STR_BASE_DEFENSE")
+			return true;
+
+		return false;
+	}
+
+	/// Checks if these MissionStatistics are for a UFO tactical.
+	bool isUfoMission() const
+	{
+		if (ufo != "NO_UFO")
+			return true;
+
+		return false;
+	}
+};
 
 }
 

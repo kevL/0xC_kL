@@ -280,30 +280,30 @@ private:
 		/// Ends the Tile's turn. Units catch on fire.
 		void hitTileInventory(SavedBattleGame* const battleSave = nullptr);
 
-		/// Animates the tile parts.
+		/// Animates the tile-parts.
 		void animateTile();
-		/// Gets fire and smoke animation offset.
+		/// Gets fire and smoke animation-offset.
 		int getAnimationOffset() const;
 
-		/// Gets object sprites.
+		/// Gets sprites.
 		Surface* getSprite(MapDataType partType) const;
 
-		/// Sets a unit on the Tile.
+		/// Sets a specified BattleUnit on the Tile.
 		void setUnit(
 				BattleUnit* const unit = nullptr,
 				const Tile* const tileBelow = nullptr);
-		/// Sets a unit transitorily on the Tile.
+		/// Sets a specified BattleUnit transitorily on the Tile.
 		void setTransitUnit(BattleUnit* const unit);
 		/**
-		 * Gets the (alive) unit on the Tile.
+		 * Gets the (conscious) BattleUnit on the Tile.
 		 * @return, pointer to a BattleUnit
 		 */
 		BattleUnit* getTileUnit() const
 		{ return _unit; }
 
-		/// Adds item
+		/// Adds a specified BattleItem to the Tile.
 		void addItem(BattleItem* const item);
-		/// Removes item
+		/// Removes a sepcified BattleItem from the Tile.
 		void removeItem(BattleItem* const item);
 
 		/// Gets corpse-sprite.

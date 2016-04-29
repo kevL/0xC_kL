@@ -225,7 +225,7 @@ void SoldierDiaryMissionState::init()
 	_txtScore->setText(tr("STR_SCORE_VALUE_").arg(stats->score));
 	_txtMissionType->setText(tr("STR_MISSION_TYPE_").arg(tr(stats->type))); // 'type' was, getMissionTypeLowerCase()
 
-	if (stats->ufo != "NO_UFO")
+	if (stats->isUfoMission() == true)
 	{
 		_txtUFO->setVisible();
 		_txtUFO->setText(tr("STR_UFO_TYPE_").arg(tr(stats->ufo)));
@@ -241,8 +241,7 @@ void SoldierDiaryMissionState::init()
 	else
 		_txtRace->setVisible(false);
 
-	if (stats->type != "STR_BASE_DEFENSE"
-		&& stats->type != "STR_ALIEN_BASE_ASSAULT")
+	if (stats->isBaseDefense() == false && stats->isAlienBase() == false)
 	{
 		_txtDaylight->setVisible();
 		if (stats->shade < MissionStatistics::NIGHT_SHADE)

@@ -45,17 +45,17 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a new soldier - either blank or randomly generated.
+ * Creates a brand new Soldier from scratch.
  * @param solRule	- pointer to RuleSoldier
- * @param armorRule	- pointer to RuleArmor (default nullptr)
+ * @param armorRule	- pointer to RuleArmor
+ * @param id		- unique-ID from soldier-generation
 // * @param names	- pointer to a vector of pointers to SoldierNamePool (default nullptr)
- * @param id		- unique soldier ID for soldier generation (default 0)
  */
 Soldier::Soldier(
 		const RuleSoldier* const solRule,
 		const RuleArmor* const armorRule,
-//		const std::vector<SoldierNamePool*>* const names,
 		int id)
+//		const std::vector<SoldierNamePool*>* const names,
 	:
 		_solRule(solRule),
 		_armorRule(armorRule),
@@ -70,12 +70,12 @@ Soldier::Soldier(
 //		_gender(GENDER_MALE),
 //		_look(LOOK_BLONDE),
 {
-	_diary = new SoldierDiary();
+	_diary = new SoldierDiary(); // diary remains default-initialized.
 
 //	if (names != nullptr)
 //	{
 	const UnitStats
-		statsLow (_solRule->getMinStats()),
+		statsLow  (_solRule->getMinStats()),
 		statsHigh (_solRule->getMaxStats());
 
 	_initialStats.tu			= RNG::generate(statsLow.tu,			statsHigh.tu);
@@ -92,6 +92,7 @@ Soldier::Soldier(
 	_initialStats.psiSkill = 0;
 
 	_currentStats = _initialStats;
+
 
 	_look = static_cast<SoldierLook>(RNG::generate(0,3));
 
@@ -133,6 +134,32 @@ Soldier::Soldier(
 }
 
 /**
+ * Creates a Soldier to be filled w/ YAML data.
+ * @note I believe this will finally resolve that RNG-reloading discrepancy. And
+ * cause faster loading generally.
+ * @param solRule - pointer to RuleSoldier
+ */
+Soldier::Soldier(const RuleSoldier* const solRule)
+	:
+		_solRule(solRule),
+		_armorRule(nullptr),
+		_id(0),
+		_rank(RANK_ROOKIE),
+		_gender(GENDER_MALE),
+		_look(LOOK_BLONDE),
+		_craft(nullptr),
+		_missions(0),
+		_kills(0),
+		_recovery(0),
+		_psiTraining(false),
+		_recentlyPromoted(false),
+		_initialStats(UnitStats()),
+		_currentStats(UnitStats())
+{
+	_diary = new SoldierDiary(); // empty diary. Shall fill by YAML.
+}
+
+/**
  * dTor.
  */
 Soldier::~Soldier()
@@ -147,7 +174,7 @@ Soldier::~Soldier()
 }
 
 /**
- * Loads the soldier from a YAML file.
+ * Loads this Soldier from a YAML file.
  * @param node	- reference a YAML node
  * @param rules	- pointer to the Ruleset
  */
@@ -156,21 +183,22 @@ void Soldier::load(
 		const Ruleset* const rules)
 {
 	//Log(LOG_INFO) << "Soldier::load()";
-	_rank	= static_cast<SoldierRank>(node["rank"]		.as<int>());
-	_gender	= static_cast<SoldierGender>(node["gender"]	.as<int>());
-	_look	= static_cast<SoldierLook>(node["look"]		.as<int>());
-
-	_name = Language::utf8ToWstr(node["name"].as<std::string>());
+	_name = Language::utf8ToWstr(node["name"].as<std::string>(""));
 
 	_id				= node["id"]			.as<int>(_id);
-	_initialStats	= node["initialStats"]	.as<UnitStats>(_initialStats);
-	_currentStats	= node["currentStats"]	.as<UnitStats>(_currentStats);
 	_missions		= node["missions"]		.as<int>(_missions);
 	_kills			= node["kills"]			.as<int>(_kills);
 	_recovery		= node["recovery"]		.as<int>(_recovery);
 	_psiTraining	= node["psiTraining"]	.as<bool>(_psiTraining);
 
-	_armorRule = rules->getArmor(node["armor"].as<std::string>());
+	_rank	= static_cast<SoldierRank>(node["rank"]		.as<int>(0));
+	_gender	= static_cast<SoldierGender>(node["gender"]	.as<int>(0));
+	_look	= static_cast<SoldierLook>(node["look"]		.as<int>(0));
+
+	_initialStats = node["initialStats"].as<UnitStats>(_initialStats);
+	_currentStats = node["currentStats"].as<UnitStats>(_currentStats);
+
+	_armorRule = rules->getArmor(node["armor"].as<std::string>(""));
 	//if (_armorRule != nullptr) Log(LOG_INFO) << ". armor [1] = " << _armorRule->getType();
 	if (_armorRule == nullptr)
 	{
@@ -209,32 +237,33 @@ void Soldier::load(
 }
 
 /**
- * Saves the soldier to a YAML file.
+ * Saves this Soldier to a YAML file.
  * @return, YAML node
  */
 YAML::Node Soldier::save() const
 {
 	YAML::Node node;
 
-	node["type"]			= _solRule->getType();
-	node["rank"]			= static_cast<int>(_rank);
-	node["gender"]			= static_cast<int>(_gender);
-	node["look"]			= static_cast<int>(_look);
+	node["name"]	= Language::wstrToUtf8(_name);
 
-	node["id"]				= _id;
-	node["name"]			= Language::wstrToUtf8(_name);
-	node["initialStats"]	= _initialStats;
-	node["currentStats"]	= _currentStats;
-	node["missions"]		= _missions;
-	node["kills"]			= _kills;
-	node["armor"]			= _armorRule->getType();
+	node["type"]	= _solRule->getType();
+	node["id"]		= _id;
 
-	if (_craft != nullptr)
-		node["craft"]		= _craft->saveId();
-	if (_recovery != 0)
-		node["recovery"]	= _recovery;
-	if (_psiTraining)
-		node["psiTraining"]	= _psiTraining;
+	if (_missions != 0)			node["missions"]	= _missions;
+	if (_kills != 0)			node["kills"]		= _kills;
+	if (_recovery != 0)			node["recovery"]	= _recovery;
+	if (_psiTraining == true)	node["psiTraining"]	= _psiTraining;
+
+	if (_rank != RANK_ROOKIE)	node["rank"]	= static_cast<int>(_rank);
+	if (_gender != GENDER_MALE)	node["gender"]	= static_cast<int>(_gender);
+	if (_look != LOOK_BLONDE)	node["look"]	= static_cast<int>(_look);
+
+	node["initialStats"] = _initialStats;
+	node["currentStats"] = _currentStats;
+
+	node["armor"] = _armorRule->getType();
+
+	if (_craft != nullptr) node["craft"] = _craft->saveId();
 
 	if (_layout.empty() == false)
 	{
@@ -611,8 +640,8 @@ void Soldier::togglePsiTraining()
  */
 void Soldier::die(SavedGame* const gameSave)
 {
-	SoldierDeath* const deathTime (new SoldierDeath());
-	deathTime->setTime(*gameSave->getTime());
+	SoldierDeath* const death (new SoldierDeath());
+	death->setTime(*gameSave->getTime());
 
 	SoldierDead* const deadSoldier (new SoldierDead(
 												_name,
@@ -622,10 +651,10 @@ void Soldier::die(SavedGame* const gameSave)
 												_look,
 												_missions,
 												_kills,
-												deathTime,
+												death,
 												_initialStats,
 												_currentStats,
-												*_diary)); // base if I want to...
+												*_diary)); // base if I want to ... TODO: Use "&&" operator.
 	gameSave->getDeadSoldiers()->push_back(deadSoldier);
 }
 

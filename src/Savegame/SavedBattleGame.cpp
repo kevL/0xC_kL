@@ -1038,7 +1038,7 @@ BattleUnit* SavedBattleGame::getSelectedUnit() const
 
 /**
  * Sets the currently selected BattleUnit.
- * @param unit - pointer to a BattleUnit
+ * @param unit - pointer to a BattleUnit (default nullptr)
  */
 void SavedBattleGame::setSelectedUnit(BattleUnit* const unit)
 {

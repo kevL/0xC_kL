@@ -31,7 +31,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a mission site.
+ * Creates the MissionSite.
  */
 MissionSite::MissionSite(
 		const RuleAlienMission* const missionRule,
@@ -54,7 +54,7 @@ MissionSite::~MissionSite()
 {}
 
 /**
- * Loads the mission site from a YAML file.
+ * Loads this MissionSite from a YAML file.
  * @param node - reference a YAML node
  */
 void MissionSite::load(const YAML::Node& node)
@@ -72,7 +72,7 @@ void MissionSite::load(const YAML::Node& node)
 }
 
 /**
- * Saves the mission site to a YAML file.
+ * Saves this MissionSite to a YAML file.
  * @return, YAML node
  */
 YAML::Node MissionSite::save() const
@@ -93,7 +93,7 @@ YAML::Node MissionSite::save() const
 }
 
 /**
- * Saves the mission site's unique identifiers to a YAML file.
+ * Saves this MissionSite's unique identifiers to a YAML file.
  * @return, YAML node
  */
 YAML::Node MissionSite::saveId() const
@@ -107,7 +107,7 @@ YAML::Node MissionSite::saveId() const
 }
 
 /**
- * Returns the ruleset for the mission's type.
+ * Gets the rule for this MissionSite's type.
  * @return, pointer to RuleAlienMission
  */
 const RuleAlienMission* MissionSite::getRules() const
@@ -116,8 +116,8 @@ const RuleAlienMission* MissionSite::getRules() const
 }
 
 /**
- * Returns the ruleset for the mission's deployment.
- * @return, pointer to AlienDeployment rules
+ * Gets the rule for this MissionSite's deployment.
+ * @return, pointer to AlienDeployment rule
  */
 const AlienDeployment* MissionSite::getSiteDeployment() const
 {
@@ -125,8 +125,8 @@ const AlienDeployment* MissionSite::getSiteDeployment() const
 }
 
 /**
- * Returns the mission site's unique ID.
- * @return, unique ID
+ * Gets this MissionSite's unique-ID.
+ * @return, unique-ID
  */
 int MissionSite::getId() const
 {
@@ -134,8 +134,8 @@ int MissionSite::getId() const
 }
 
 /**
- * Changes the mission site's unique ID.
- * @param id - unique ID
+ * Sets this MissionSite's unique-ID.
+ * @param id - unique-ID
  */
 void MissionSite::setId(const int id)
 {
@@ -143,7 +143,7 @@ void MissionSite::setId(const int id)
 }
 
 /**
- * Returns the mission site's unique identifying name.
+ * Gets this MissionSite's unique identifying name.
  * @param lang - pointer to Language to get strings from
  * @return, full name
  */
@@ -153,7 +153,7 @@ std::wstring MissionSite::getName(const Language* const lang) const
 }
 
 /**
- * Returns the globe marker for the mission site (default 5 if no marker is specified).
+ * Gets the globe marker for this MissionSite (default 5 if no marker is specified).
  * @return, marker sprite #5 (or special Deployment icon)
  */
 int MissionSite::getMarker() const
@@ -169,7 +169,7 @@ int MissionSite::getMarker() const
 }
 
 /**
- * Returns the number of seconds remaining before the mission site expires.
+ * Gets the number of seconds remaining before this MissionSite expires.
  * @return, seconds remaining
  */
 int MissionSite::getSecondsLeft() const
@@ -178,7 +178,7 @@ int MissionSite::getSecondsLeft() const
 }
 
 /**
- * Changes the number of seconds before the mission site expires.
+ * Sets the number of seconds before this MissionSite expires.
  * @param sec - time in seconds
  */
 void MissionSite::setSecondsLeft(int sec)
@@ -205,8 +205,8 @@ void MissionSite::setTactical(bool tactical)
 }
 
 /**
- * Returns the alien race currently residing in the mission site.
- * @return, alien race
+ * Gets the alien-race currently residing in this MissionSite.
+ * @return, alien-race
  */
 std::string MissionSite::getAlienRace() const
 {
@@ -214,8 +214,8 @@ std::string MissionSite::getAlienRace() const
 }
 
 /**
- * Changes the alien race currently residing in the mission site.
- * @param race - reference the alien race string
+ * Sets the alien-race currently residing in this MissionSite.
+ * @param race - reference to the alien-race-string
  */
 void MissionSite::setAlienRace(const std::string& race)
 {
@@ -223,8 +223,8 @@ void MissionSite::setAlienRace(const std::string& race)
 }
 
 /**
- * Gets this MissionSite's terrainType.
- * @return, terrain type string
+ * Gets this MissionSite's terrain-type.
+ * @return, terrain-type-string
  */
 std::string MissionSite::getSiteTerrainType() const
 {
@@ -232,8 +232,8 @@ std::string MissionSite::getSiteTerrainType() const
 }
 
 /**
- * Sets this MissionSite's terrainType.
- * @param terrain - reference the terrain string
+ * Sets this MissionSite's terrain-type.
+ * @param terrain - reference to the terrain-type-string
  */
 void MissionSite::setSiteTerrainType(const std::string& terrain)
 {
@@ -241,8 +241,8 @@ void MissionSite::setSiteTerrainType(const std::string& terrain)
 }
 
 /**
- * Gets the mission site's associated texture.
- * @return, the texture ID
+ * Gets this MissionSite's associated texture.
+ * @return, the texture-ID
  */
 int MissionSite::getSiteTextureId() const
 {
@@ -250,8 +250,8 @@ int MissionSite::getSiteTextureId() const
 }
 
 /**
- * Sets the mission site's associated texture.
- * @param texture - the texture ID
+ * Sets this MissionSite's associated texture.
+ * @param texture - the texture-ID
  */
 void MissionSite::setSiteTextureId(int texture)
 {
@@ -259,8 +259,8 @@ void MissionSite::setSiteTextureId(int texture)
 }
 
 /**
- * Gets the mission site's associated City if any.
- * @return, string ID for the city; "" if none
+ * Gets this MissionSite's associated City if any.
+ * @return, string-ID for the city, "" if none
  */
 std::string MissionSite::getCity() const
 {
@@ -268,8 +268,8 @@ std::string MissionSite::getCity() const
 }
 
 /**
- * Sets the mission site's associated City if any.
- * @param city - reference the string ID for a city; "" if none
+ * Sets this MissionSite's associated City if any.
+ * @param city - reference to the string-ID for a city, "" if none
  */
 void MissionSite::setCity(const std::string& city)
 {
@@ -277,7 +277,7 @@ void MissionSite::setCity(const std::string& city)
 }
 
 /**
- * Gets the detection state for this mission site.
+ * Gets the detection state for this MissionSite.
  * @note Used for popups of sites spawned directly rather than by UFOs.
  * @return, true if this site has been detected
  */
@@ -287,7 +287,7 @@ bool MissionSite::getDetected() const
 }
 
 /**
- * Sets the mission site's detection state.
+ * Sets the detection state for this MissionSite.
  * @param detected - true to show on the geoscape (default true)
  */
 void MissionSite::setDetected(bool detected)

@@ -376,7 +376,7 @@ protected:
 
 		/// Generates a Soldier.
 		Soldier* genSoldier(
-				SavedGame* const save,
+				SavedGame* const gameSave,
 				std::string type = "") const;
 
 		/// Gets the item-type to be used as fuel for UFOs.

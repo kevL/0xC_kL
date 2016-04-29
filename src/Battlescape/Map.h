@@ -186,7 +186,7 @@ private:
 
 
 	public:
-		/// Creates a new Map at the specified position and size.
+		/// Creates a Map at the specified position and size.
 		Map(
 				const Game* const game,
 				int width,
@@ -199,12 +199,12 @@ private:
 
 		/// Initializes the Map.
 		void init();
-		/// Handles timers.
+		/// Handles Timers.
 		void think() override;
-		/// Draws the surface.
+		/// Draws the Surface.
 		void draw() override;
 
-		/// Sets the palette.
+		/// Sets the Palette.
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,

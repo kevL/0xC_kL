@@ -59,69 +59,69 @@ private:
 
 
 	public:
-		/// Creates this MissionSite.
+		/// Creates a MissionSite.
 		MissionSite(
 				const RuleAlienMission* const missionRule,
 				const AlienDeployment* const ruleDeploy);
-		/// Cleans up this MissionSite.
+		/// Cleans up the MissionSite.
 		~MissionSite();
 
-		/// Loads this MissionSite from YAML.
+		/// Loads the MissionSite from YAML.
 		void load(const YAML::Node& node) override;
-		/// Saves this MissionSite to YAML.
+		/// Saves the MissionSite to YAML.
 		YAML::Node save() const override;
-		/// Saves this MissionSite's unique-ID to YAML.
+		/// Saves the MissionSite's unique-ID to YAML.
 		YAML::Node saveId() const override;
 
-		/// Gets this MissionSite's ruleset.
+		/// Gets the MissionSite's ruleset.
 		const RuleAlienMission* getRules() const;
-		/// Gets this MissionSite's deployment.
+		/// Gets the MissionSite's deployment.
 		const AlienDeployment* getSiteDeployment() const;
 
-		/// Gets this MissionSite's ID.
+		/// Gets the MissionSite's ID.
 		int getId() const;
-		/// Sets this MissionSite's ID.
+		/// Sets the MissionSite's ID.
 		void setId(const int id);
 
-		/// Gets this MissionSite's name.
+		/// Gets the MissionSite's name.
 		std::wstring getName(const Language* const lang) const override;
 
-		/// Gets this MissionSite site's marker.
+		/// Gets the MissionSite site's marker.
 		int getMarker() const override;
 
-		/// Gets the seconds until this MissionSite expires.
+		/// Gets the seconds until the MissionSite expires.
 		int getSecondsLeft() const;
-		/// Sets the seconds until this MissionSite expires.
+		/// Sets the seconds until the MissionSite expires.
 		void setSecondsLeft(int sec);
 
-		/// Sets this MissionSite's battlescape status.
+		/// Sets the MissionSite's battlescape status.
 		void setTactical(bool tactical = true);
-		/// Gets if this MissionSite is in battlescape.
+		/// Gets if the MissionSite is in battlescape.
 		bool getTactical() const;
 
-		/// Gets this MissionSite's alien race.
+		/// Gets the MissionSite's alien race.
 		std::string getAlienRace() const;
-		/// Sets this MissionSite's alien race.
+		/// Sets the MissionSite's alien race.
 		void setAlienRace(const std::string& race);
 
-		/// Gets this MissionSite's terrainType.
+		/// Gets the MissionSite's terrainType.
 		std::string getSiteTerrainType() const;
-		/// Sets this MissionSite's terrainType.
+		/// Sets the MissionSite's terrainType.
 		void setSiteTerrainType(const std::string& terrain);
 
-		/// Gets this MissionSite's texture.
+		/// Gets the MissionSite's texture.
 		int getSiteTextureId() const;
-		/// Sets this MissionSite's texture.
+		/// Sets the MissionSite's texture.
 		void setSiteTextureId(int texture);
 
-		/// Gets this MissionSite's city.
+		/// Gets the MissionSite's city.
 		std::string getCity() const;
-		/// Sets this MissionSite's city.
+		/// Sets the MissionSite's city.
 		void setCity(const std::string& city);
 
-		/// Gets the mission site's detected state.
+		/// Gets the MissionSite's detected state.
 		bool getDetected() const;
-		/// Sets the mission site's detected state.
+		/// Sets the MissionSite's detected state.
 		void setDetected(bool detected = true);
 };
 

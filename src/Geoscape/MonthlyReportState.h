@@ -69,7 +69,7 @@ private:
 		_pactList,
 		_sadList;
 
-	std::vector<Soldier*> _soldiersMedalled;
+	std::vector<Soldier*> _soldiersFeted;
 
 	/// Builds a country list string.
 	std::wstring countryList(
@@ -89,7 +89,7 @@ private:
 		~MonthlyReportState();
 
 		/// Updates palettes.
-		void init();
+		void init() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

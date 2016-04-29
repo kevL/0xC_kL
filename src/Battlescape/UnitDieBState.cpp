@@ -256,7 +256,7 @@ void UnitDieBState::think()
 //
 //			if (liveHostile == 0 || livePlayer == 0)
 //			{
-//				_battleSave->setSelectedUnit(nullptr);
+//				_battleSave->setSelectedUnit();
 //				_parent->cancelTacticalAction(true);
 //				_parent->requestEndTurn();
 //			}
@@ -267,8 +267,8 @@ void UnitDieBState::think()
 	{
 		_extraTicks = 1;
 
-		if (_unit->getUnitStatus() == STATUS_UNCONSCIOUS
-			&& _unit->getSpecialAbility() == SPECAB_EXPLODE)
+		if (_unit->getSpecialAbility() == SPECAB_EXPLODE
+			&& _unit->getUnitStatus() == STATUS_UNCONSCIOUS)
 		{
 			_unit->instaKill();
 		}
@@ -281,7 +281,7 @@ void UnitDieBState::think()
 			convertToBody();
 
 		if (_hidden == true)
-			_parent->popState();
+			_parent->popState(); // NOTE: If unit was selected it will be de-selected in popState().
 	}
 
 	if (_hidden == false)
@@ -294,7 +294,7 @@ void UnitDieBState::think()
 /**
  * Converts the BattleUnit to a body-item.
  * @note Dead or Unconscious units get a nullptr-Tile but keep track of the
- * Position of their body. Also, the true Status of the unit is valid here.
+ * Position of their body. Also, the updated UnitStatus is valid here.
  */
 void UnitDieBState::convertToBody() // private.
 {
@@ -303,9 +303,10 @@ void UnitDieBState::convertToBody() // private.
 	if (_hidden == false)
 		_battleSave->getBattleState()->showPsiButton(false);	// ... why is this here ...
 																// any reason it's not in, say, the cTor or init()
-	if (Options::battleWeaponSelfDestruction == false
-		|| _unit->getOriginalFaction() != FACTION_HOSTILE
-		|| _unit->getUnitStatus() == STATUS_UNCONSCIOUS)
+	if (_unit->hasInventory() == true
+		&& (Options::battleWeaponSelfDestruction == false
+			|| _unit->getOriginalFaction() != FACTION_HOSTILE
+			|| _unit->getUnitStatus() == STATUS_UNCONSCIOUS))
 	{
 		_parent->dropUnitInventory(_unit);
 	}
@@ -318,17 +319,18 @@ void UnitDieBState::convertToBody() // private.
 		playSound (true),
 		calcLights (false);
 
-	const int unitSize (_unit->getArmor()->getSize());
+	int unitSize (_unit->getArmor()->getSize());
 	size_t quadrants (static_cast<size_t>(unitSize * unitSize));
+	--unitSize;
 
 	const Position pos (_unit->getPosition());
 	for (int
-			y = unitSize - 1;
+			y = unitSize;
 			y != -1;
 			--y)
 	{
 		for (int
-				x = unitSize - 1;
+				x = unitSize;
 				x != -1;
 				--x)
 		{
@@ -389,8 +391,8 @@ void UnitDieBState::convertToBody() // private.
 	if (calcLights == true)
 		_parent->getTileEngine()->calculateTerrainLighting();
 
-	_parent->getTileEngine()->calcFovPos(pos, true); // expose any units that were hiding behind dead unit and account for possible Smoke too.
-}
+	_parent->getTileEngine()->calcFovPos(pos, true);	// expose any units that were hiding behind dead unit
+}														// and account for possible obscuring effects too.
 
 /**
  * Centers the Camera on the collapsing unit.

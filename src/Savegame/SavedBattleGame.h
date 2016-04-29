@@ -263,7 +263,7 @@ private:
 		/// Gets the currently selected BattleUnit.
 		BattleUnit* getSelectedUnit() const;
 		/// Sets the currently selected BattleUnit.
-		void setSelectedUnit(BattleUnit* const unit);
+		void setSelectedUnit(BattleUnit* const unit = nullptr);
 		/// Selects the next BattleUnit.
 		BattleUnit* selectNextFactionUnit(
 				bool checkReselect = false,

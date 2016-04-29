@@ -484,6 +484,7 @@ void SoldierDiaryPerformanceState::init()
 	if (_diary == nullptr) // safety.
 		return;
 
+	std::vector<MissionStatistics*>* tacticals (_game->getSavedGame()->getMissionStatistics());
 
 	std::wstring
 		wst1,
@@ -493,10 +494,10 @@ void SoldierDiaryPerformanceState::init()
 
 	if (_diary->getMissionTotal() != 0u) // Mission stats ->
 		wst1 = tr("STR_MISSIONS_").arg(_diary->getMissionTotal());
-	if (_diary->getWinTotal() != 0)
-		wst2 = tr("STR_WINS_").arg(_diary->getWinTotal());
-	if (_diary->getScoreTotal() != 0)
-		wst3 = tr("STR_SCORE_VALUE_").arg(_diary->getScoreTotal());
+	if (_diary->getWinTotal(tacticals) != 0)
+		wst2 = tr("STR_WINS_").arg(_diary->getWinTotal(tacticals));
+	if (_diary->getScoreTotal(tacticals) != 0)
+		wst3 = tr("STR_SCORE_VALUE_").arg(_diary->getScoreTotal(tacticals));
 	if (_diary->getDaysWoundedTotal() != 0)
 		wst4 = tr("STR_DAYS_WOUNDED_").arg(_diary->getDaysWoundedTotal()).arg(L" d");
 
@@ -552,9 +553,9 @@ void SoldierDiaryPerformanceState::init()
 		_diary->getAlienRaceTotal(),
 		_diary->getAlienRankTotal(),
 		_diary->getWeaponTotal(),
-		_diary->getRegionTotal(),
-		_diary->getTypeTotal(),
-		_diary->getUfoTotal()
+		_diary->getRegionTotal(tacticals),
+		_diary->getTypeTotal(tacticals),
+		_diary->getUfoTotal(tacticals)
 	};
 
 	for (size_t

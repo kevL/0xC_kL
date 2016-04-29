@@ -67,38 +67,31 @@ SoldierDead::SoldierDead(
 		_initialStats(initialStats),
 		_currentStats(currentStats)
 {
-	_diary = new SoldierDiary();
-	*_diary = diary; // copy diary from previous owner ....
+	// via assignment-operator
+//	_diary = new SoldierDiary();
+//	*_diary = diary; // copy diary from previous owner ....
+	// via copy-constructor
+	_diary = new SoldierDiary(diary);
 }
 
 /**
  * Creates the SoldierDead without a pre-existing SoldierDiary.
  * @note Used when loading a saved game.
  */
-SoldierDead::SoldierDead(
-		const std::wstring& name,
-		const int id,
-		const SoldierRank rank,
-		const SoldierGender gender,
-		const SoldierLook look,
-		const int missions,
-		const int kills,
-		SoldierDeath* const death,
-		const UnitStats& initialStats,
-		const UnitStats& currentStats)
+SoldierDead::SoldierDead()
 	:
-		_name(name),
-		_id(id),
-		_rank(rank),
-		_gender(gender),
-		_look(look),
-		_missions(missions),
-		_kills(kills),
-		_death(death),
-		_initialStats(initialStats),
-		_currentStats(currentStats)
+		_name(L""),
+		_id(0),
+		_rank(RANK_ROOKIE),
+		_gender(GENDER_MALE),
+		_look(LOOK_BLONDE),
+		_missions(0),
+		_kills(0),
+		_death(nullptr),
+		_initialStats(UnitStats()),
+		_currentStats(UnitStats())
 {
-	_diary = new SoldierDiary(); // empty diary. Should fill up from YAML save.
+	_diary = new SoldierDiary(); // empty diary. Shall fill by YAML.
 }
 
 /**
@@ -116,17 +109,18 @@ SoldierDead::~SoldierDead()
  */
 void SoldierDead::load(const YAML::Node& node)
 {
-	_rank	= static_cast<SoldierRank>(node["rank"]		.as<int>());
-	_gender	= static_cast<SoldierGender>(node["gender"]	.as<int>());
-	_look	= static_cast<SoldierLook>(node["look"]		.as<int>());
+	_name = Language::utf8ToWstr(node["name"].as<std::string>(""));
 
-	_name = Language::utf8ToWstr(node["name"].as<std::string>());
+	_id			= node["id"]		.as<int>(_id);
+	_missions	= node["missions"]	.as<int>(_missions);
+	_kills		= node["kills"]		.as<int>(_kills);
 
-	_id				= node["id"]						.as<int>(_id);
-	_initialStats	= node["initialStats"]				.as<UnitStats>(_initialStats);
-	_currentStats	= node["currentStats"]				.as<UnitStats>(_currentStats);
-	_missions		= node["missions"]					.as<int>(_missions);
-	_kills			= node["kills"]						.as<int>(_kills);
+	_rank	= static_cast<SoldierRank>(node["rank"]		.as<int>(0));
+	_gender	= static_cast<SoldierGender>(node["gender"]	.as<int>(0));
+	_look	= static_cast<SoldierLook>(node["look"]		.as<int>(0));
+
+	_initialStats = node["initialStats"].as<UnitStats>(_initialStats);
+	_currentStats = node["currentStats"].as<UnitStats>(_currentStats);
 
 	_death = new SoldierDeath();
 	_death->load(node["death"]);
@@ -144,14 +138,17 @@ YAML::Node SoldierDead::save() const
 	YAML::Node node;
 
 	node["name"]			= Language::wstrToUtf8(_name);
+
 	node["id"]				= _id;
-	node["initialStats"]	= _initialStats;
-	node["currentStats"]	= _currentStats;
+	node["missions"]		= _missions;
+	node["kills"]			= _kills;
+
 	node["rank"]			= static_cast<int>(_rank);
 	node["gender"]			= static_cast<int>(_gender);
 	node["look"]			= static_cast<int>(_look);
-	node["missions"]		= _missions;
-	node["kills"]			= _kills;
+
+	node["initialStats"]	= _initialStats;
+	node["currentStats"]	= _currentStats;
 
 	node["death"]			= _death->save();
 

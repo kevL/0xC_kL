@@ -75,17 +75,7 @@ private:
 				const UnitStats& currentStats,
 				SoldierDiary diary); // + Base if I want to...
 		/// Creates a SoldierDead without a diary. Used for loading a SaveGame.
-		SoldierDead(
-				const std::wstring& name,
-				const int id,
-				const SoldierRank rank,
-				const SoldierGender gender,
-				const SoldierLook look,
-				const int missions,
-				const int kills,
-				SoldierDeath* const death,
-				const UnitStats& initialStats,
-				const UnitStats& currentStats);
+		SoldierDead();
 		/// Cleans up the SoldierDead.
 		~SoldierDead();
 

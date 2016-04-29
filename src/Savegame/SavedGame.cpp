@@ -604,14 +604,7 @@ void SavedGame::load(
 			i != doc["deadSoldiers"].end();
 			++i)
 	{
-		SoldierDead* const solDead (new SoldierDead(
-												L"", 0,
-												RANK_ROOKIE,
-												GENDER_MALE,
-												LOOK_BLONDE,
-												0,0, nullptr,
-												UnitStats(),
-												UnitStats()));
+		SoldierDead* const solDead (new SoldierDead());
 		solDead->load(*i);
 		_deadSoldiers.push_back(solDead);
 	}
@@ -622,9 +615,9 @@ void SavedGame::load(
 			i != doc["missionStatistics"].end();
 			++i)
 	{
-		MissionStatistics* const missionStats (new MissionStatistics());
-		missionStats->load(*i);
-		_missionStatistics.push_back(missionStats);
+		MissionStatistics* const tacticalStats (new MissionStatistics());
+		tacticalStats->load(*i);
+		_missionStatistics.push_back(tacticalStats);
 	}
 
 	if (const YAML::Node& battle = doc["battleGame"])

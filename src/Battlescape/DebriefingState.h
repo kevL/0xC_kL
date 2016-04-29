@@ -141,7 +141,7 @@ private:
 		* _lstTotal;
 	Window* _window;
 
-	MissionStatistics* _missionStatistics;
+	MissionStatistics* _tactical;
 
 	std::map<SpecialTileType, SpecialType*> _specialTypes;
 	std::map<const RuleItem*, int>
@@ -156,7 +156,7 @@ private:
 	std::vector<ReequipStat> _missingItems;
 
 	std::vector<DebriefingStat*> _statList;
-	std::vector<Soldier*> _soldiersMedalled;
+	std::vector<Soldier*> _soldiersFeted;
 	std::vector<SoldierDead*> _soldiersLost;
 
 	/// Adds a DebriefingStat.
