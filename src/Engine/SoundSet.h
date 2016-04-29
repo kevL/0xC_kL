@@ -30,8 +30,8 @@ namespace OpenXcom
 class Sound;
 
 /**
- * Container of a set of sounds.
- * @note Used to manage file sets that contain a pack of sounds inside.
+ * Container for a set of sounds.
+ * @note Used to manage file-sets that contain a pack of sounds inside.
  */
 class SoundSet
 {
@@ -44,17 +44,17 @@ private:
 
 
 	public:
-		/// Creates a sound set.
+		/// Creates a SoundSet.
 		SoundSet();
-		/// Cleans up the sound set.
+		/// Cleans up the SoundSet.
 		~SoundSet();
 
-		/// Loads an X-Com CAT set of sound files.
+		/// Loads an X-Com CAT set of sound-files.
 		void loadCat(
 				const std::string& file,
 				bool wav = true);
 
-		/// Gets a particular sound from the set.
+		/// Gets a specified entry in the SoundSet.
 		Sound* getSound(size_t id);
 		/// Creates a new sound and returns a pointer to it.
 		Sound* addSound(size_t id);

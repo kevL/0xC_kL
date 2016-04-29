@@ -259,12 +259,12 @@ std::vector<SaveInfo> SavedGame::getList( // static.
 			{
 				info.push_back(getSaveInfo(*i, lang));
 			}
-			catch (Exception &e)
+			catch (Exception& e)
 			{
 				Log(LOG_ERROR) << e.what();
 				continue;
 			}
-			catch (YAML::Exception &e)
+			catch (YAML::Exception& e)
 			{
 				Log(LOG_ERROR) << e.what();
 				continue;
@@ -284,12 +284,12 @@ std::vector<SaveInfo> SavedGame::getList( // static.
 		{
 			info.push_back(getSaveInfo(*i, lang));
 		}
-		catch (Exception &e)
+		catch (Exception& e)
 		{
 			Log(LOG_ERROR) << e.what();
 			continue;
 		}
-		catch (YAML::Exception &e)
+		catch (YAML::Exception& e)
 		{
 			Log(LOG_ERROR) << e.what();
 			continue;

@@ -31,13 +31,13 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a new empty sound set.
+ * Sets up the empty SoundSet.
  */
 SoundSet::SoundSet()
 {}
 
 /**
- * Deletes the sounds from memory.
+ * Deletes the Sounds from memory.
  */
 SoundSet::~SoundSet()
 {
@@ -51,8 +51,8 @@ SoundSet::~SoundSet()
 }
 
 /**
- * Loads the contents of an X-Com CAT file which usually contains a set of sound
- * files.
+ * Loads the contents of an X-Com CAT file which usually contains a set of
+ * sound-files.
  * @note The CAT starts with an index of the offset and size of every file
  * contained within. Each file consists of a filename followed by its contents.
  * @param file	- reference filename of the CAT set
@@ -64,7 +64,7 @@ void SoundSet::loadCat(
 		bool wav)
 {
 	// Load CAT file
-	CatFile sndFile (file.c_str()); // init.
+	CatFile sndFile (file.c_str());
 	if (!sndFile)
 	{
 		throw Exception(file + " not found");
@@ -77,17 +77,17 @@ void SoundSet::loadCat(
 			++i)
 	{
 		// Read WAV chunk
-		unsigned char* sound = (unsigned char*)sndFile.load(i);
-		unsigned int bytes = sndFile.getObjectSize(i);
+		unsigned char* sound (reinterpret_cast<unsigned char*>(sndFile.load(i)));
+		unsigned int bytes (sndFile.getObjectSize(i));
 
 		// If there's no WAV header (44 bytes), add it
 		// Assuming sounds are 8-bit 8000Hz (DOS version)
-		unsigned char* newsound = nullptr;
+		unsigned char* newsound (nullptr);
 		if (wav == false)
 		{
-			if (bytes != 0)
+			if (bytes != 0u)
 			{
-				char header[] =
+				char header[]
 				{
 					'R','I','F','F',
 					0x00,0x00,0x00,0x00,
@@ -103,57 +103,54 @@ void SoundSet::loadCat(
 				};
 
 				for (unsigned int
-						j = 0;
+						j = 0u;
 						j != bytes;
 						++j)
 				{
 					sound[j] *= 4; // scale to 8 bits
 				}
 
-				if (bytes > 5) // skip 5 garbage name bytes at beginning
-					bytes -= 5;
+				if (bytes > 5u) // skip 5 garbage name bytes at beginning
+					bytes -= 5u;
 
-				if (bytes > 0) // omit trailing null byte
+				if (bytes > 0u) // omit trailing null byte
 					--bytes;
 
-				int headersize = bytes + 36;
+				int headersize (bytes + 36u);
 				std::memcpy(
 						header + 4,
 						&headersize,
 						sizeof(headersize));
 
-				int soundsize = bytes;
+				int soundsize (bytes);
 				std::memcpy(
 						header + 40,
 						&soundsize,
 						sizeof(soundsize));
 
-				newsound = new unsigned char[44 + bytes * 2];
+				newsound = new unsigned char[44u + bytes * 2u];
 				std::memcpy(
 						newsound,
 						header,
-						44);
+						44u);
 
-				if (bytes > 0)
+				if (bytes > 0u)
 					std::memcpy(
-							newsound + 44,
-							sound + 5,
+							newsound + 44u,
+							sound + 5u,
 							bytes);
 
-				const Uint32 step16 = (8000 << 16) / 11025;
-				Uint8* wet = newsound + 44;
-				int newsize = 0;
+				const Uint32 step16 ((8000 << 16) / 11025);
+				Uint8* wet (newsound + 44u);
+				int newsize (0);
 
 				for (Uint32
-						offset16 = 0;
-						(offset16 >> 16) < bytes;
-						offset16 += step16,
-							++wet,
-							++newsize)
+						offset16 = 0u;
+						(offset16 >> 16u) < bytes;
+						offset16 += step16, ++wet, ++newsize)
 				{
-					*wet = sound[5 + (offset16 >> 16)];
+					*wet = sound[5u + (offset16 >> 16u)];
 				}
-
 				bytes = newsize + 44;
 			}
 		}
@@ -163,7 +160,7 @@ void SoundSet::loadCat(
 			&& 0x00 == sound[0x1B])
 		{
 			// so it's WAV, but in 8 khz, we have to convert it to 11 khz sound
-			unsigned char* const sound2 = new unsigned char[bytes * 2];
+			unsigned char* const sound2 (new unsigned char[bytes * 2u]);
 
 			// rewrite the samplerate in the header to 11 khz
 			sound[0x18] = 0x11;
@@ -177,21 +174,19 @@ void SoundSet::loadCat(
 					sound,
 					bytes);
 
-			const Uint32 step16 = (8000 << 16) / 11025;
-			Uint8* wet = sound2 + 44;
-			int newsize = 0;
+			const Uint32 step16 ((8000 << 16) / 11025);
+			Uint8* wet (sound2 + 44u);
+			int newsize (0);
 
 			for (Uint32
-					offset16 = 0;
-					(offset16 >> 16) < bytes - 44;
-					offset16 += step16,
-						++wet,
-						++newsize)
+					offset16 = 0u;
+					(offset16 >> 16u) < bytes - 44u;
+					offset16 += step16, ++wet, ++newsize)
 			{
-				*wet = sound[44 + (offset16 >> 16)];
+				*wet = sound[44u + (offset16 >> 16u)];
 			}
 
-			bytes = newsize + 44;
+			bytes = static_cast<unsigned>(newsize) + 44u;
 
 			// Rewrite the number of samples in the WAV file
 			std::memcpy(
@@ -205,23 +200,23 @@ void SoundSet::loadCat(
 			sound = sound2;
 		}
 
-		Sound* const ptrSound = new Sound();
+		Sound* const pSound (new Sound());
 		try
 		{
-			if (bytes == 0)
+			if (bytes == 0u)
 			{
 				throw Exception("Invalid sound file");
 			}
 
 			if (wav == true)
-				ptrSound->load(sound, bytes);
+				pSound->load(sound, bytes);
 			else
-				ptrSound->load(newsound, bytes);
+				pSound->load(newsound, bytes);
 		}
 		catch (Exception)
 		{ /* ignore junk in the file */ }
 
-		_sounds[i] = ptrSound;
+		_sounds[i] = pSound;
 
 		delete[] sound;
 
@@ -231,9 +226,9 @@ void SoundSet::loadCat(
 }
 
 /**
- * Returns a particular wave from the sound set.
- * @param id - sound number in the set
- * @return, pointer to the respective sound
+ * Gets a particular wave from this SoundSet.
+ * @param id - ID in the set
+ * @return, pointer to the Sound
  */
 Sound* SoundSet::getSound(size_t id)
 {
@@ -245,9 +240,9 @@ Sound* SoundSet::getSound(size_t id)
 
 
 /**
- * Creates and returns a particular wave in the sound set.
- * @param id - sound number in the set
- * @return, pointer to the respective sound
+ * Creates and returns a particular wave in the SoundSet.
+ * @param id - ID in the set
+ * @return, pointer to the Sound
  */
 Sound* SoundSet::addSound(size_t id)
 {
@@ -256,8 +251,8 @@ Sound* SoundSet::addSound(size_t id)
 	return _sounds[id];
 }
 
-/*
- * Returns the total amount of sounds currently stored in the set.
+/**
+ * Gets the total amount of sounds currently stored in the set.
  * @return, number of sounds
  *
 size_t SoundSet::getTotalSounds() const // private.
@@ -265,7 +260,7 @@ size_t SoundSet::getTotalSounds() const // private.
 	return _sounds.size();
 } */
 
-/*
+/**
  * Loads individual contents of a TFTD CAT file by index.
  * @note A set of sound files. The CAT starts with an index of the offset and
  * size of every file contained within. Each file consists of a filename

@@ -697,7 +697,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 
 								++offset;
 							}
-							catch (Exception &e)
+							catch (Exception& e)
 							{
 								Log(LOG_WARNING) << e.what();
 							}
@@ -904,14 +904,14 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 					{
 						oststr2.str("");
 						oststr2 << oststr.str() << CrossPlatform::getDataFile(*k);
-						if (_sounds[st]->getSound(offset))
-							_sounds[st]->getSound(offset)->load(oststr2.str());
+						if (_sounds[st]->getSound(static_cast<size_t>(offset)) != nullptr)
+							_sounds[st]->getSound(static_cast<size_t>(offset))->load(oststr2.str());
 						else
-							_sounds[st]->addSound(offset + soundPack->getModIndex())->load(oststr2.str());
+							_sounds[st]->addSound(static_cast<size_t>(offset + soundPack->getModIndex()))->load(oststr2.str());
 
 						++offset;
 					}
-					catch (Exception &e)
+					catch (Exception& e)
 					{
 						Log(LOG_WARNING) << e.what();
 					}
@@ -921,15 +921,15 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 			{
 				oststr2.str("");
 				oststr2 << CrossPlatform::getDataFile(st2);
-				if (_sounds[st]->getSound(start))
+				if (_sounds[st]->getSound(static_cast<size_t>(start)) != nullptr)
 				{
 					//Log(LOG_VERBOSE) << "Replacing index: " << start;
-					_sounds[st]->getSound(start)->load(oststr2.str());
+					_sounds[st]->getSound(static_cast<size_t>(start))->load(oststr2.str());
 				}
 				else
 				{
 					//Log(LOG_VERBOSE) << "Adding index: " << start;
-					_sounds[st]->addSound(start + soundPack->getModIndex())->load(oststr2.str());
+					_sounds[st]->addSound(static_cast<size_t>(start + soundPack->getModIndex()))->load(oststr2.str());
 				}
 			}
 		}
@@ -1312,7 +1312,7 @@ Music* XcomResourcePack::loadMusic(
 			}
 		}
 	}
-	catch (Exception &e)
+	catch (Exception& e)
 	{
 		Log(LOG_INFO) << e.what();
 		if (music)

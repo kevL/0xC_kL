@@ -472,7 +472,7 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 						set_vertex_shader(vertex_source.c_str());
 				}
 			}
-			catch (YAML::Exception &e)
+			catch (YAML::Exception& e)
 			{
 				Log(LOG_ERROR) << source_yaml_filename << ": " << e.what();
 			}

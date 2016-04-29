@@ -216,7 +216,7 @@ void ListGamesState::init()
 		_lstSaves->clearList();
 		sortList(Options::saveOrder);
 	}
-	catch (Exception &e)
+	catch (Exception& e)
 	{
 		Log(LOG_ERROR) << e.what();
 	}

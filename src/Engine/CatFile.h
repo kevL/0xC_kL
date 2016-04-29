@@ -48,7 +48,7 @@ private:
 
 		/// Inherit operator.
 		bool operator! () const
-		{ return std::ifstream::operator! (); }
+		{ return std::ifstream::operator! (); } // *cough
 
 		/// Get amount of objects.
 		int getAmount() const

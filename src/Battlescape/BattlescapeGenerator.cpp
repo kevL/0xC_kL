@@ -2310,9 +2310,9 @@ void BattlescapeGenerator::loadRMP( // private.
 		pos_y = static_cast<int>(dataArray[0u]); // vis-a-vis values in .RMP files vs. loaded values.
 		pos_z = static_cast<int>(dataArray[2u]);
 
-		if (   pos_x < block->getSizeX()
-			&& pos_y < block->getSizeY()
-			&& pos_z < _mapsize_z)
+		if (   pos_x > -1 && pos_x < block->getSizeX()
+			&& pos_y > -1 && pos_y < block->getSizeY()
+			&& pos_z > -1 && pos_z < _mapsize_z)
 		{
 			pos = Position(
 						offset_x + pos_x,

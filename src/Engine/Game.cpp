@@ -1009,7 +1009,7 @@ void Game::loadLanguage(const std::string& file)
 	{
 		_lang->load(path, extras);
 	}
-	catch (YAML::Exception &e)
+	catch (YAML::Exception& e)
 	{
 		throw Exception(path + ": " + std::string(e.what()));
 	}
