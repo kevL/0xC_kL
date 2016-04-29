@@ -36,7 +36,6 @@ namespace OpenXcom
  */
 SoldierDiary::SoldierDiary()
 	:
-		_pointTotal(0),
 		_daysWoundedTotal(0),
 		_monthsService(0),
 		_unconsciousTotal(0),
@@ -76,7 +75,6 @@ SoldierDiary::SoldierDiary(const YAML::Node& node)
  */
 SoldierDiary::SoldierDiary(const SoldierDiary& copyThat)
 	:
-		_pointTotal(copyThat._pointTotal),
 		_daysWoundedTotal(copyThat._daysWoundedTotal),
 		_totalShotByFriendlyCounter(copyThat._totalShotByFriendlyCounter),
 		_totalShotFriendlyCounter(copyThat._totalShotFriendlyCounter),
@@ -184,7 +182,6 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThat)
 {
 	if (this != &assignThat)
 	{
-		_pointTotal = assignThat._pointTotal;
 		_daysWoundedTotal = assignThat._daysWoundedTotal;
 		_totalShotByFriendlyCounter = assignThat._totalShotByFriendlyCounter;
 		_totalShotFriendlyCounter = assignThat._totalShotFriendlyCounter;
@@ -312,7 +309,6 @@ void SoldierDiary::load(const YAML::Node& node)
 	}
 
 	_missionIdList					= node["missionIdList"]					.as<std::vector<int>>(_missionIdList);
-	_pointTotal						= node["pointTotal"]					.as<int>(_pointTotal);
 	_daysWoundedTotal				= node["daysWoundedTotal"]				.as<int>(_daysWoundedTotal);
 	_totalShotByFriendlyCounter		= node["totalShotByFriendlyCounter"]	.as<int>(_totalShotByFriendlyCounter);
 	_totalShotFriendlyCounter		= node["totalShotFriendlyCounter"]		.as<int>(_totalShotFriendlyCounter);
@@ -362,7 +358,6 @@ YAML::Node SoldierDiary::save() const
 	}
 
 	if (_missionIdList.empty() == false)	node["missionIdList"]				= _missionIdList;
-	if (_pointTotal)						node["pointTotal"]					= _pointTotal;
 	if (_daysWoundedTotal)					node["daysWoundedTotal"]			= _daysWoundedTotal;
 	if (_totalShotByFriendlyCounter)		node["totalShotByFriendlyCounter"]	= _totalShotByFriendlyCounter;
 	if (_totalShotFriendlyCounter)			node["totalShotFriendlyCounter"]	= _totalShotFriendlyCounter;
@@ -408,7 +403,6 @@ void SoldierDiary::updateDiary(
 	{
 		(*i)->makeTurnUnique();
 		_killList.push_back(*i);
-		_pointTotal += (*i)->_points; // TODO: This should be halved if hostile unit was MC'd.
 	}
 
 	if (tactical->success == true)
@@ -535,7 +529,7 @@ bool SoldierDiary::manageAwards(
 					|| (criteriaType == "totalMissions"				&& static_cast<int>(_missionIdList.size()) < val)
 					|| (criteriaType == "totalWins"					&& getWinTotal(tacticals) < val)
 					|| (criteriaType == "totalScore"				&& getScoreTotal(tacticals) < val)
-					|| (criteriaType == "totalPoints"				&& _pointTotal < val)
+					|| (criteriaType == "totalPoints"				&& getPointsTotal() < val)
 					|| (criteriaType == "totalStuns"				&& getStunTotal() < val)
 					|| (criteriaType == "totalBaseDefenseMissions"	&& getBaseDefenseMissionTotal(tacticals) < val)
 					|| (criteriaType == "totalTerrorMissions"		&& getTerrorMissionTotal(tacticals) < val)
@@ -1051,9 +1045,17 @@ int SoldierDiary::getScoreTotal(const std::vector<MissionStatistics*>* const tac
  * Gets the current total points-value of units killed or stunned.
  * @return, sum points for all aliens killed or stunned
  */
-int SoldierDiary::getScorePoints() const
+int SoldierDiary::getPointsTotal() const
 {
-	return _pointTotal;
+	int ret (0);
+	for (std::vector<BattleUnitKill*>::const_iterator
+			i = _killList.begin();
+			i != _killList.end();
+			++i)
+	{
+		ret += (*i)->_points;
+	}
+	return ret;
 }
 
 /**

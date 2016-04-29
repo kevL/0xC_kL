@@ -1734,7 +1734,7 @@ void BattlescapeGame::checkCasualties(
 																				STATUS_UNCONSCIOUS,
 																				_killStatMission,
 																				_killStatTurn,
-																				_killStatPoints));
+																				_killStatPoints >> 1u)); // half pts. for stun
 					}
 
 					if (defender->getGeoscapeSoldier() != nullptr)

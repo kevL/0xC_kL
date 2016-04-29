@@ -860,7 +860,7 @@ void DebriefingState::prepareDebriefing() // private.
 //	_tactical->success = (aborted == false && (playerLive != 0 || isHostileAlive == false))
 //								|| battleSave->allObjectivesDestroyed() == true;
 	_tactical->success = isHostileAlive == false
-							   || battleSave->allObjectivesDestroyed() == true;
+					  || battleSave->allObjectivesDestroyed() == true;
 	const bool playerWipe ((aborted == true && playerExit == 0)
 						 || playerLive == 0);
 

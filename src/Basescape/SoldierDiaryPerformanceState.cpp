@@ -519,8 +519,8 @@ void SoldierDiaryPerformanceState::init()
 	else
 		wst2 = L"";
 
-	if (_diary->getScorePoints() != 0)
-		wst3 = tr("STR_SCORE_VALUE_").arg(_diary->getScorePoints());
+	if (_diary->getPointsTotal() != 0)
+		wst3 = tr("STR_SCORE_VALUE_").arg(_diary->getPointsTotal());
 	else
 		wst3 = L"";
 

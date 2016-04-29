@@ -97,7 +97,6 @@ private:
 		DATS = 11u;
 
 	int
-		_pointTotal,
 		_daysWoundedTotal,
 		_totalShotByFriendlyCounter,
 		_totalShotFriendlyCounter,
@@ -178,7 +177,7 @@ private:
 		/// Gets the total score.
 		int getScoreTotal(const std::vector<MissionStatistics*>* const tacticals) const;
 		/// Gets the total point-value of aLiens killed or stunned.
-		int getScorePoints() const;
+		int getPointsTotal() const;
 		/// Gets the total quantity of kills.
 		int getKillTotal() const;
 		/// Gets the total quantity of stuns.
