@@ -602,7 +602,7 @@ bool UnitWalkBState::doStatusStand() // private.
 						&& unitBlock != _unit)
 					|| (unitBlockBelow != nullptr
 						&& unitBlockBelow != _unit
-						&& unitBlockBelow->getHeight(true) - tileBelowDest->getTerrainLevel() > Pathfinding::CLIP_HEIGHT))) // cf. Pathfinding::getTuCostPf()
+						&& unitBlockBelow->getHeight(true) - tileBelowDest->getTerrainLevel() > Pathfinding::UNIT_HEIGHT))) // cf. Pathfinding::getTuCostPf()
 			{
 				//Log(LOG_INFO) << ". . . obstacle(unit) -> abortPath()";
 //				_action.TU = 0;

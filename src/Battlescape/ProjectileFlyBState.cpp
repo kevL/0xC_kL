@@ -271,7 +271,7 @@ void ProjectileFlyBState::init()
 		_targetVoxel.y += 8;
 
 		if (_action.type == BA_THROW)
-			_targetVoxel.z -= tileTarget->getTerrainLevel() - 2; // LoFT of floor is typically 2 voxels thick.
+			_targetVoxel.z += 2 - tileTarget->getTerrainLevel(); // LoFT of floor is typically 2 voxels thick.
 		else if (_targetFloor == false)
 			_targetVoxel.z += 16;
 	}
@@ -1179,9 +1179,9 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 
 
 	const BattleUnit* const targetUnit (_battleSave->getTile(_action.posTarget)->getTileUnit());
-	const int height (targetUnit->getHeight() / 2
-					+ targetUnit->getFloatHeight()
-					- _battleSave->getTile(_action.posTarget)->getTerrainLevel());
+	const int height ((targetUnit->getHeight() >> 1u)
+					 + targetUnit->getFloatHeight()
+					 - _battleSave->getTile(_action.posTarget)->getTerrainLevel());
 
 	Position hitVoxel;
 	Pathfinding::directionToVector(

@@ -967,7 +967,7 @@ int Pathfinding::getTuCostPf(
 				&& tileStopBelow != nullptr
 				&& tileStopBelow->getTileUnit() != nullptr
 				&& tileStopBelow->getTileUnit() != _unit
-				&& tileStopBelow->getTileUnit()->getHeight(true) - tileStopBelow->getTerrainLevel() > CLIP_HEIGHT) // cf. UnitWalkBState::doStatusStand()
+				&& tileStopBelow->getTileUnit()->getHeight(true) - tileStopBelow->getTerrainLevel() > UNIT_HEIGHT) // cf. UnitWalkBState::doStatusStand()
 			{
 				return FAIL;
 			}

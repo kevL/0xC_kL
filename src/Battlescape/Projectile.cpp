@@ -540,20 +540,20 @@ void Projectile::applyAccuracy( // private.
 		//Log(LOG_INFO) << "Proj: applyAccuracy target[2] " << *targetVoxel;
 
 		targetVoxel->x = std::max(0,
-							std::min((_battleSave->getMapSizeX() << 4) + 15,
-									  targetVoxel->x));
+								  std::min((_battleSave->getMapSizeX() << 4) + 15,
+											targetVoxel->x));
 		targetVoxel->y = std::max(0,
-							std::min((_battleSave->getMapSizeY() << 4) + 15,
-									  targetVoxel->y));
+								  std::min((_battleSave->getMapSizeY() << 4) + 15,
+											targetVoxel->y));
 		targetVoxel->z = std::max(0,
-							std::min(_battleSave->getMapSizeZ() * 24 + 23,
-									  targetVoxel->z));
+								  std::min(_battleSave->getMapSizeZ() * 24 + 23,
+											targetVoxel->z));
 
 		if (_action.type == BA_THROW)
 		{
 			const Tile* const tile (_battleSave->getTile(Position::toTileSpace(*targetVoxel)));
-			targetVoxel->x = (targetVoxel->x & 0xFFF0) + 8;
-			targetVoxel->y = (targetVoxel->y & 0xFFF0) + 8;
+			targetVoxel->x = (targetVoxel->x & 0xfff0) + 8;
+			targetVoxel->y = (targetVoxel->y & 0xfff0) + 8;
 			targetVoxel->z = (targetVoxel->z / 24 * 24) - tile->getTerrainLevel();
 		}
 		//Log(LOG_INFO) << "Proj: applyAccuracy target[3] " << *targetVoxel;

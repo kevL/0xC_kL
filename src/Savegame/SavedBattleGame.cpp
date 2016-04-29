@@ -2281,7 +2281,7 @@ bool SavedBattleGame::setUnitPosition(
 					if (tileAbove != nullptr
 						&& tileAbove->getTileUnit() != nullptr
 						&& tileAbove->getTileUnit() != unit
-						&& unit->getHeight(true) - tile->getTerrainLevel() > 26) // don't stuck yer head up someone's flying arse.
+						&& unit->getHeight(true) - tile->getTerrainLevel() > Pathfinding::UNIT_HEIGHT) // don't stuck yer head up someone's flying arse.
 					{
 						return false;
 					}

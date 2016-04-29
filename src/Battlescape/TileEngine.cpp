@@ -429,10 +429,10 @@ bool TileEngine::calcFov(
 
 	BattleUnit* spottedUnit;
 
-	if (unit->getHeight(true) - _battleSave->getTile(posUnit)->getTerrainLevel() > 27)
+	if (unit->getHeight(true) - _battleSave->getTile(posUnit)->getTerrainLevel() > Pathfinding::UNIT_HEIGHT)
 	{
 		const Tile* const tileAbove (_battleSave->getTile(posUnit + Position(0,0,1)));
-		if (tileAbove != nullptr && tileAbove->hasNoFloor())
+		if (tileAbove != nullptr && tileAbove->hasNoFloor() == true)
 			++posUnit.z;
 	}
 
@@ -527,7 +527,7 @@ bool TileEngine::calcFov(
 //											unit->addToVisibleTiles(spottedUnit->getTile());
 
 											if (_battleSave->getSide() == FACTION_HOSTILE)
-												spottedUnit->setExposed();	// note that xCom agents can be seen by enemies but *not* become Exposed.
+												spottedUnit->setExposed();	// NOTE: xCom agents can be seen by enemies but *not* become Exposed.
 										}									// Only potential reactionFire should set them Exposed during xCom's turn.
 
 									//Log(LOG_INFO) << "calcFov() id " << unit->getId() << " spots " << spottedUnit->getId();
@@ -2051,7 +2051,9 @@ void TileEngine::hit(
 				const Position
 					centerUnitVoxel (Position::toVoxelSpaceCentered(
 																targetUnit->getPosition(),
-																targetUnit->getHeight() / 2 + targetUnit->getFloatHeight() - tile->getTerrainLevel(),
+																(targetUnit->getHeight() >> 1u)
+																	+ targetUnit->getFloatHeight()
+																	- tile->getTerrainLevel(),
 																targetUnit->getArmor()->getSize())),
 					relationalVoxel (targetVoxel - centerUnitVoxel);
 
@@ -5623,9 +5625,9 @@ bool TileEngine::validThrowRange( // static.
 	int dist ((getThrowDistance(
 							weight,
 							action->actor->getStrength(),
-							deltaZ) + 8) >> 4); // center & convert to tile-space.
+							deltaZ) + 8) >> 4u); // center & convert to tile-space.
 	if (action->actor->isKneeled() == true)
-		dist = dist * 3 / 4;
+		dist = (dist * 3) >> 2u;
 
 	return (distThrow <= dist);
 }
@@ -5673,7 +5675,7 @@ int TileEngine::getThrowDistance( // private/static.
 }
 
 /**
- * Validates the melee range between two BattleUnits.
+ * Validates the melee-range between two BattleUnits.
  * @note Wrapper for validMeleeRange().
  * @param actor			- pointer to acting unit
  * @param dir			- direction of action (default -1)
@@ -5696,7 +5698,7 @@ bool TileEngine::validMeleeRange(
 }
 
 /**
- * Validates the melee range between a Position and a BattleUnit.
+ * Validates the melee-range between a Position and a BattleUnit.
  * @param pos			- reference the position of action
  * @param dir			- direction to check
  * @param actor			- pointer to acting unit

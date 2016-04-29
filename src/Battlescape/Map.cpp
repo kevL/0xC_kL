@@ -1275,7 +1275,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 					}
 					// end unconscious soldier icon.
 
-// Draw unitBelow if it is on raised ground & there is no Floor above.
+// re-Draw unitBelow if it is on raised ground & there is no Floor above.
 					if (itZ > 0 && _tile->hasNoFloor(tileBelow) == true)
 					{
 						const int tLevel (tileBelow->getTerrainLevel());
@@ -1284,7 +1284,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							const BattleUnit* const unitBelow (tileBelow->getTileUnit());
 							if (unitBelow != nullptr
 								&& unitBelow->getUnitVisible() == true // don't bother checking DebugMode
-								&& unitBelow->getHeight(true) - tLevel > 23) // head sticks up, probly more like 26 or 28 before clipping background walls above occurs
+								&& unitBelow->getHeight(true) - tLevel > Pathfinding::UNIT_HEIGHT)
 							{
 								trueLoc = isTrueLoc(unitBelow, tileBelow);
 								quadrant = getQuadrant(unitBelow, tileBelow, trueLoc);
@@ -1725,7 +1725,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 												_unit->getArmor()->getSize());
 					posScreen.y += 21 - _unit->getHeight();
 
-					if (_unit->getArmor()->getSize() > 1)
+					if (_unit->getArmor()->getSize() == 2)
 					{
 						posScreen.y += 10;
 						if (_unit->getFloatHeight() != 0)
@@ -2456,16 +2456,16 @@ void Map::calcWalkOffset( // private.
 }
 
 /**
-  * Terrainlevel goes from 0 to -24 (bottom to top).
-  * @note For a large sized unit pick the highest terrain level which is the
-  * lowest number.
-  * @param pos			- reference the Position
-  * @param armorSize	- size of the unit at @a pos
-  * @return, terrain height
-  */
+ * Terrainlevel goes from 0 to -24 (bottom to top).
+ * @note For a large sized unit pick the highest terrain level which is the
+ * lowest number.
+ * @param pos		- reference to a Position
+ * @param unitSize	- size of the unit at @a pos
+ * @return, terrain height
+ */
 int Map::getTerrainLevel( // private.
 		const Position& pos,
-		int armorSize) const
+		int unitSize) const
 {
 	int
 		lowLevel (0),
@@ -2473,12 +2473,12 @@ int Map::getTerrainLevel( // private.
 
 	for (int
 			x = 0;
-			x != armorSize;
+			x != unitSize;
 			++x)
 	{
 		for (int
 				y = 0;
-				y != armorSize;
+				y != unitSize;
 				++y)
 		{
 			lowTest = _battleSave->getTile(pos + Position(x,y,0))->getTerrainLevel();

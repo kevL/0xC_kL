@@ -182,7 +182,7 @@ private:
 	///
 	int getTerrainLevel(
 			const Position& pos,
-			int armorSize) const;
+			int unitSize) const;
 
 
 	public:

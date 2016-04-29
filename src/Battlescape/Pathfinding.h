@@ -121,7 +121,7 @@ private:
 			DIR_VERT_NONE	=  0, // be careful w/ that, it's not a real direction; should be used only for '_dirVertical' in BattleUnit class.
 			DIR_UP			=  8,
 			DIR_DOWN		=  9,
-			CLIP_HEIGHT		= 26;
+			UNIT_HEIGHT		= 26;
 
 		static Uint8
 			red,

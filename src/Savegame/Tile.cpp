@@ -360,8 +360,7 @@ int Tile::getTuCostTile(
 bool Tile::hasNoFloor(const Tile* const tileBelow) const
 {
 	if (_pos.z == 0
-		|| (tileBelow != nullptr
-			&& tileBelow->getTerrainLevel() == -24))
+		|| (tileBelow != nullptr && tileBelow->getTerrainLevel() == -24))
 	{
 		return false;
 	}
@@ -385,8 +384,8 @@ bool Tile::isBigWall() const
 } */
 
 /**
- * Gets the terrain level of this Tile.
- * @note For graphical Y offsets etc. Terrain level starts and 0 and goes
+ * Gets the terrain-level of this Tile.
+ * @note For graphical Y offsets etc. Terrain-level starts and 0 and goes
  * upwards to -24; negative values are higher.
  * @return, the level in pixels
  */
@@ -404,9 +403,9 @@ int Tile::getTerrainLevel() const
 }
 
 /**
- * Gets this Tile's footstep sound.
+ * Gets this Tile's footstep-sound.
  * @param tileBelow - pointer to the Tile below this Tile
- * @return, sound ID
+ * @return, sound-ID
  *			0 - none
  *			1 - metal
  *			2 - wood/stone

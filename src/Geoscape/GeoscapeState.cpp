@@ -2877,23 +2877,23 @@ void GeoscapeState::time1Day()
 			}
 		}
 
-		std::vector<ResearchProject*> projectsComplete; // handle science projects - Research.
+		std::vector<ResearchProject*> researchComplete; // handle science projects - Research.
 		for (std::vector<ResearchProject*>::const_iterator
 				j = (*i)->getResearch().begin();
 				j != (*i)->getResearch().end();
 				++j)
 		{
 			if ((*j)->stepProject() == true)
-				projectsComplete.push_back(*j);
+				researchComplete.push_back(*j);
 		}
 
-		if (projectsComplete.empty() == false)
+		if (researchComplete.empty() == false)
 			resetTimer();
 
 
 		for (std::vector<ResearchProject*>::const_iterator
-				j = projectsComplete.begin();
-				j != projectsComplete.end();
+				j = researchComplete.begin();
+				j != researchComplete.end();
 				++j)
 		{
 			const RuleResearch* const resRule ((*j)->getRules());
@@ -2922,7 +2922,7 @@ void GeoscapeState::time1Day()
 			else
 			{
 				gofCrack =
-				forcesCrack = true;
+				forcesCrack = true; // <- not implemented yet.
 			}
 
 			const RuleResearch* gofRule (nullptr);
