@@ -62,7 +62,7 @@ namespace OpenXcom
 	// 8:Misc2
 // see Node.h, enum NodeRank ->
 
-const int Node::nodeRank[8][8] =
+const int Node::nodeRank[8u][8u]
 {
 	{ NR_LEADER,	NR_NAVIGATOR,	NR_ENGINEER,	NR_SOLDIER,		NR_MEDIC,		NR_MISC2,	NR_MISC1, NR_SCOUT },	// commander
 	{ NR_LEADER,	NR_NAVIGATOR,	NR_ENGINEER,	NR_SOLDIER,		NR_MEDIC,		NR_MISC2,	NR_MISC1, NR_SCOUT },	// leader

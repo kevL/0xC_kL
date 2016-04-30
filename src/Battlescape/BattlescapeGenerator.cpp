@@ -149,7 +149,7 @@ void BattlescapeGenerator::init() // private.
 }
 
 /**
- * Sets the XCom craft involved in the battle.
+ * Sets the xCom Craft involved in the battle.
  * @param craft - pointer to Craft
  */
 void BattlescapeGenerator::setCraft(Craft* const craft)
@@ -159,7 +159,7 @@ void BattlescapeGenerator::setCraft(Craft* const craft)
 }
 
 /**
- * Sets the ufo involved in the battle.
+ * Sets the UFO involved in the battle.
  * @param ufo - pointer to Ufo
  */
 void BattlescapeGenerator::setUfo(Ufo* const ufo)
@@ -169,7 +169,7 @@ void BattlescapeGenerator::setUfo(Ufo* const ufo)
 }
 
 /**
- * Sets the XCom base involved in the battle.
+ * Sets the xCom Base involved in the battle.
  * @param base - pointer to Base
  */
 void BattlescapeGenerator::setBase(Base* const base)
@@ -179,7 +179,7 @@ void BattlescapeGenerator::setBase(Base* const base)
 }
 
 /**
- * Sets the mission site involved in the battle.
+ * Sets the aLien MissionSite involved in the battle.
  * @param site - pointer to MissionSite
  */
 void BattlescapeGenerator::setMissionSite(MissionSite* const site)
@@ -189,7 +189,7 @@ void BattlescapeGenerator::setMissionSite(MissionSite* const site)
 }
 
 /**
- * Sets the alien base involved in the battle.
+ * Sets the AlienBase involved in the battle.
  * @param base - pointer to AlienBase
  */
 void BattlescapeGenerator::setAlienBase(AlienBase* const base)
@@ -199,8 +199,8 @@ void BattlescapeGenerator::setAlienBase(AlienBase* const base)
 }
 
 /**
- * Sets the terrain of where a ufo crashed/landed as per ConfirmLandingState
- * or nextStage().
+ * Sets the terrain-rule based on where a UFO crashed/landed as per
+ * ConfirmLandingState or nextStage().
  * @param texture - pointer to RuleTerrain
  */
 void BattlescapeGenerator::setTerrain(RuleTerrain* const terrain)
@@ -209,9 +209,9 @@ void BattlescapeGenerator::setTerrain(RuleTerrain* const terrain)
 }
 
 /**
- * Sets the world shade where a ufo crashed or landed.
+ * Sets the tactical shade based on where a UFO crashed or landed.
  * @note This is used to determine the Battlescape light-level.
- * @param shade - shade of the polygon on the globe
+ * @param shade - current shade of a Polygon on the Globe
  */
 void BattlescapeGenerator::setShade(int shade)
 {
@@ -219,9 +219,9 @@ void BattlescapeGenerator::setShade(int shade)
 }
 
 /**
- * Sets the alien race on the mission.
- * @note This is used to determine the various alien types to spawn.
- * @param alienRace - reference the alien race family
+ * Sets the alien-race for tactical.
+ * @note This is used to determine the various alien-types to spawn.
+ * @param alienRace - reference the alien-race family
  */
 void BattlescapeGenerator::setAlienRace(const std::string& alienRace)
 {
@@ -3092,7 +3092,7 @@ void BattlescapeGenerator::generateBaseMap() // private.
 								// use only every other tile, giving a "checkerboard" pattern
 								if ((k + l) % 2 == 0)
 								{
-									Tile
+									const Tile
 										* const tile (_battleSave->getTile(Position(
 																				k,
 																				l,

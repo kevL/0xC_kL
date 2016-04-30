@@ -149,7 +149,7 @@ std::wstring Text::formatPercent(int val) // static.
 }
 
 /**
- * Changes this Text to use the big-size Font.
+ * Sets this Text to use the big-size Font.
  */
 void Text::setBig()
 {
@@ -158,7 +158,7 @@ void Text::setBig()
 }
 
 /**
- * Changes this Text to use the small-size Font.
+ * Sets this Text to use the small-size Font.
  */
 void Text::setSmall()
 {
@@ -167,7 +167,7 @@ void Text::setSmall()
 }
 
 /**
- * Returns the Font currently used by this Text.
+ * Gets the Font currently used by this Text.
  * @return, pointer to Font
  */
 Font* Text::getFont() const
@@ -176,7 +176,7 @@ Font* Text::getFont() const
 }
 
 /**
- * Changes the various resources needed for text rendering.
+ * Sets the various resources needed for text rendering.
  * @note The different fonts need to be passed in advance since the text-size
  * can change mid-text and the language affects how this Text is rendered.
  * @param big	- pointer to large-size Font
@@ -196,7 +196,7 @@ void Text::initText(
 }
 
 /**
- * Changes the string displayed on screen.
+ * Sets the string displayed on screen.
  * @param text - reference a text-string
  */
 void Text::setText(const std::wstring& text)
@@ -214,7 +214,7 @@ void Text::setText(const std::wstring& text)
 }
 
 /**
- * Returns the string displayed on screen.
+ * Gets the string displayed on screen.
  * @return, text string
  */
 std::wstring Text::getText() const
@@ -276,7 +276,7 @@ bool Text::getHighContrast() const
 }
 
 /**
- * Changes the way this Text is aligned horizontally relative to the drawing area.
+ * Sets the way this Text is aligned horizontally relative to the drawing area.
  * @param align - horizontal alignment (Text.h)
  */
 void Text::setAlign(TextHAlign align)
@@ -286,7 +286,7 @@ void Text::setAlign(TextHAlign align)
 }
 
 /**
- * Returns the way this Text is aligned horizontally relative to the drawing area.
+ * Gets the way this Text is aligned horizontally relative to the drawing area.
  * @return, horizontal alignment (Text.h)
  */
 TextHAlign Text::getAlign() const
@@ -295,7 +295,7 @@ TextHAlign Text::getAlign() const
 }
 
 /**
- * Changes the way this Text is aligned vertically relative to the drawing area.
+ * Sets the way this Text is aligned vertically relative to the drawing area.
  * @param valign - vertical alignment (Text.h)
  */
 void Text::setVerticalAlign(TextVAlign valign)
@@ -305,7 +305,7 @@ void Text::setVerticalAlign(TextVAlign valign)
 }
 
 /**
- * Returns the way this Text is aligned vertically relative to the drawing area.
+ * Gets the way this Text is aligned vertically relative to the drawing area.
  * @return, vertical alignment (Text.h)
  */
 TextVAlign Text::getVerticalAlign() const
@@ -314,7 +314,7 @@ TextVAlign Text::getVerticalAlign() const
 }
 
 /**
- * Changes the color used to render this Text.
+ * Sets the color used to render this Text.
  * @note Unlike regular graphics Fonts are greyscale so they need to be
  * assigned a specific position in the palette to be displayed.
  * @param color - color value
@@ -327,7 +327,7 @@ void Text::setColor(Uint8 color)
 }
 
 /**
- * Returns the color used to render this Text.
+ * Gets the color used to render this Text.
  * @return, color value
  */
 Uint8 Text::getColor() const
@@ -336,7 +336,7 @@ Uint8 Text::getColor() const
 }
 
 /**
- * Changes the secondary color used to render this Text.
+ * Sets the secondary color used to render this Text.
  * @note The text switches between the primary and secondary color whenever
  * there's a '0x01' in the string.
  * @param color - color value
@@ -348,7 +348,7 @@ void Text::setSecondaryColor(Uint8 color)
 }
 
 /**
- * Returns the secondary color used to render this Text.
+ * Gets the secondary color used to render this Text.
  * @return, color value
  */
 Uint8 Text::getSecondaryColor() const

@@ -116,7 +116,7 @@ void MapScript::load(const YAML::Node& node)
 				++i)
 		{
 			SDL_Rect* const rect (new SDL_Rect());
-			rect->x = static_cast<Sint16>((*i)[0u].as<int>()); // note: not sure if YAML can do a cast to S/Uint16's
+			rect->x = static_cast<Sint16>((*i)[0u].as<int>()); // NOTE: not sure if YAML can do a cast to S/Uint16's.
 			rect->y = static_cast<Sint16>((*i)[1u].as<int>());
 			rect->w = static_cast<Uint16>((*i)[2u].as<int>());
 			rect->h = static_cast<Uint16>((*i)[3u].as<int>());
@@ -381,9 +381,9 @@ int MapScript::getBlockNumber() // private.
 }
 
 /**
- * Gets a random MapBlock from a given terrain using either the groups or the
- * blocks defined.
- * @param terrainRule - pointer to the RuleTerrain to pick a block from
+ * Gets a random MapBlock from a specified terrain using either the groups or
+ * the blocks defined.
+ * @param terrainRule - pointer to the RuleTerrain from which to pick a block
  * @return, pointer to a randomly chosen MapBlock given the options available in this MapScript
  */
 MapBlock* MapScript::getNextBlock(const RuleTerrain* const terrainRule)
@@ -404,8 +404,8 @@ MapBlock* MapScript::getNextBlock(const RuleTerrain* const terrainRule)
 }
 
 /**
- * Gets the type of the UFO for the case of "setUFO".
- * @return, UFO-type
+ * Gets the ufo-type for the ADD-UFO directive.
+ * @return, ufo-type
  */
 const std::string& MapScript::getUfoType() const
 {

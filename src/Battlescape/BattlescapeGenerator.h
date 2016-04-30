@@ -214,28 +214,28 @@ private:
 		/// Cleans up the BattlescapeGenerator.
 		~BattlescapeGenerator();
 
-		/// Sets the XCom craft.
+		/// Sets the xCom Craft.
 		void setCraft(Craft* const craft);
-		/// Sets the ufo.
+		/// Sets the UFO.
 		void setUfo(Ufo* const ufo);
-		/// Sets the XCom base.
+		/// Sets the xCom Base.
 		void setBase(Base* const base);
-		/// Sets the mission-site.
+		/// Sets the aLien MissionSite.
 		void setMissionSite(MissionSite* const site);
-		/// Sets the alien base
+		/// Sets the AlienBase
 		void setAlienBase(AlienBase* const base);
-		/// Sets the terrain.
+		/// Sets the terrain-rule.
 		void setTerrain(RuleTerrain* const terrain);
-		/// Sets the polygon shade.
+		/// Sets the tactical shade.
 		void setShade(int shade);
-		/// Sets the alien race.
+		/// Sets the alien-race.
 		void setAlienRace(const std::string& alienRace);
-		/// Sets the alien item level.
+		/// Sets the alien-item-level.
 		void setAlienItemlevel(int alienItemLevel);
 
-		/// Runs the generator.
+		/// Runs the Generator.
 		void run();
-		/// Sets up the next stage (for Cydonia/TFTD missions).
+		/// Sets up the next stage (for Cydonia/2-stage missions).
 		void nextStage();
 
 		/// Generates a fake battlescape for Craft & Base soldier-inventory.

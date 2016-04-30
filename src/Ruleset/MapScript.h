@@ -54,7 +54,7 @@ struct TunnelData
 	}
 };
 
-enum MapScriptCommand
+enum MapScriptDirective
 {
 	MSC_UNDEFINED = -1,	// -1
 	MSC_ADDBLOCK,		//  0
@@ -99,7 +99,7 @@ private:
 	TunnelData* _tunnelData;
 
 	MapDirection _direction;
-	MapScriptCommand _type;
+	MapScriptDirective _type;
 
 	std::string _ufoType;
 
@@ -134,7 +134,7 @@ private:
 		void init();
 
 		/// Gets what type of directive this is.
-		MapScriptCommand getType() const
+		MapScriptDirective getType() const
 		{ return _type; };
 
 		/// Gets the rects, describing the areas this directive applies to.
@@ -182,10 +182,10 @@ private:
 		TunnelData* getTunnelData() const
 		{ return _tunnelData; };
 
-		/// Randomly generates a MapBlock from within either the array of groups or blocks.
+		/// Gets a MapBlock from an array of either groups or blocks.
 		MapBlock* getNextBlock(const RuleTerrain* const terrainRule);
 
-		/// Gets the UFO's type (for setUFO).
+		/// Gets the ufo-type for the ADD-UFO directive.
 		const std::string& getUfoType() const;
 };
 

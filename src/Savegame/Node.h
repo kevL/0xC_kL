@@ -52,13 +52,13 @@ class Node
 private:
 	bool _allocated;
 	int
-		_patrol,	// desirability of patrolling to - "flags" in .RMP
 		_id,		// unique identifier
-		_priority,	// desirability of spawning at - "spawn" in .RMP
+		_type,		// usable by small/large/flying units.
 		_rank,		// aLien rank that can spawn or path here
-		_destruct,	// something to do with shooting objectives in BaseDefense missions
-		_segment,	// something to do with nodeLinks; see BattlescapeGenerator::attachNodeLinks()
-		_type;		// usable by small/large/flying units.
+		_patrol,	// desirability of patrolling to - "flags" in .RMP
+		_priority,	// desirability of spawning at - "spawn" in .RMP
+		_segment,	// something to do with nodeLinks; see BattlescapeGenerator::attachNodeLinks() etc.
+		_destruct;	// something to do with shooting objectives in BaseDefense missions
 
 	Position _pos;
 
