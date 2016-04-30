@@ -383,113 +383,117 @@ bool TileEngine::calcFov(
 
 //	const size_t antecedentOpponents (unit->getHostileUnitsThisTurn().size());
 
+	// start Test.
 	const Position posSelf (unit->getPosition());	// TODO: Check from all four quadrants if unit is large.
 													// See BattleUnit::checkViewSector(). Also visible() and its callers. ETC.
 
 	// NOTE: Lift by terrain-level hasn't bee done yet; see before tile-reveals below_
 
-	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
-			i != _battleSave->getUnits()->end();
-			++i)
+	if (_battleSave->getBattleGame()->playerPanicHandled() == true)
 	{
-		if ((*i)->isOut_t() == false)
+		for (std::vector<BattleUnit*>::const_iterator
+				i = _battleSave->getUnits()->begin();
+				i != _battleSave->getUnits()->end();
+				++i)
 		{
-			switch (unit->getFaction())
+			if ((*i)->isOut_t() == false)
 			{
-				case FACTION_NEUTRAL:
-					break;
+				switch (unit->getFaction())
+				{
+					case FACTION_NEUTRAL:
+						break;
 
-				case FACTION_PLAYER:
-					if ((*i)->getFaction() != FACTION_PLAYER)
-					{
-						const Position posOther ((*i)->getPosition());
-
-						if (distSqr(posSelf, posOther, false) <= SIGHTDIST_TSp_Sqr)
+					case FACTION_PLAYER:
+						if ((*i)->getFaction() != FACTION_PLAYER)
 						{
-							const int unitSize ((*i)->getArmor()->getSize());
-							for (int
-									x = 0;
-									x != unitSize;
-									++x)
+							const Position posOther ((*i)->getPosition());
+
+							if (distSqr(posSelf, posOther, false) <= SIGHTDIST_TSp_Sqr)
 							{
+								const int unitSize ((*i)->getArmor()->getSize());
 								for (int
-										y = 0;
-										y != unitSize;
-										++y)
+										x = 0;
+										x != unitSize;
+										++x)
 								{
-									const Position pos (posOther + Position(x,y,0));
-									if (unit->checkViewSector(pos) == true
-										&& visible(unit, _battleSave->getTile(pos)) == true)
+									for (int
+											y = 0;
+											y != unitSize;
+											++y)
 									{
-										if ((*i)->getUnitVisible() == false)
+										const Position pos (posOther + Position(x,y,0));
+										if (unit->checkViewSector(pos) == true
+											&& visible(unit, _battleSave->getTile(pos)) == true)
 										{
-											spotByPlayer = true; // NOTE: This will halt a player's moving-unit when spotting a new Civie even.
-											(*i)->setUnitVisible();
-										}
-
-										if ((*i)->getFaction() == FACTION_HOSTILE)
-										{
-											unit->addToHostileUnits((*i)); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
-
-											if (soundId != -1
-												&& spotByPlayer == true) // play aggro-sound if non-MC'd [huh] xCom unit spots a not-previously-visible hostile.
-//												&& unit->getOriginalFaction() == FACTION_PLAYER	// NOTE: Mind-control zhing clashes with aggroSound; put
-											{													// that back to prevent it or pass in isMC-reveal somehow.
-												const BattlescapeGame* const battle (_battleSave->getBattleGame());
-												battle->getResourcePack()->getSound("BATTLE.CAT", soundId)
-																			->play(-1, battle->getMap()->getSoundAngle(unit->getPosition()));
-												soundId = -1; // play once only.
+											if ((*i)->getUnitVisible() == false)
+											{
+												spotByPlayer = true; // NOTE: This will halt a player's moving-unit when spotting a new Civie even.
+												(*i)->setUnitVisible();
 											}
+
+											if ((*i)->getFaction() == FACTION_HOSTILE)
+											{
+												unit->addToHostileUnits((*i)); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
+
+												if (soundId != -1
+													&& spotByPlayer == true) // play aggro-sound if non-MC'd [huh] xCom unit spots a not-previously-visible hostile.
+//													&& unit->getOriginalFaction() == FACTION_PLAYER	// NOTE: Mind-control zhing clashes with aggroSound; put
+												{													// that back to prevent it or pass in isMC-reveal somehow.
+													const BattlescapeGame* const battle (_battleSave->getBattleGame());
+													battle->getResourcePack()->getSound("BATTLE.CAT", soundId)
+																				->play(-1, battle->getMap()->getSoundAngle(unit->getPosition()));
+													soundId = -1; // play once only.
+												}
+											}
+
+											x =
+											y = unitSize - 1; // stop.
 										}
-
-										x =
-										y = unitSize; // stop.
 									}
 								}
 							}
 						}
-					}
-					break;
+						break;
 
-				case FACTION_HOSTILE:
-					if ((*i)->getFaction() != FACTION_HOSTILE)
-					{
-						const Position posOther ((*i)->getPosition());
-
-						if (distSqr(posSelf, posOther, false) <= SIGHTDIST_TSp_Sqr)
+					case FACTION_HOSTILE:
+						if ((*i)->getFaction() != FACTION_HOSTILE)
 						{
-							const int unitSize ((*i)->getArmor()->getSize());
-							for (int
-									x = 0;
-									x != unitSize;
-									++x)
+							const Position posOther ((*i)->getPosition());
+
+							if (distSqr(posSelf, posOther, false) <= SIGHTDIST_TSp_Sqr)
 							{
+								const int unitSize ((*i)->getArmor()->getSize());
 								for (int
-										y = 0;
-										y != unitSize;
-										++y)
+										x = 0;
+										x != unitSize;
+										++x)
 								{
-									const Position pos (posOther + Position(x,y,0));
-									if (unit->checkViewSector(pos) == true
-										&& visible(unit, _battleSave->getTile(pos)) == true)
+									for (int
+											y = 0;
+											y != unitSize;
+											++y)
 									{
-										spotByHostile = unit->addToHostileUnits(*i); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
+										const Position pos (posOther + Position(x,y,0));
+										if (unit->checkViewSector(pos) == true
+											&& visible(unit, _battleSave->getTile(pos)) == true)
+										{
+											spotByHostile = unit->addToHostileUnits(*i); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
 
-										if (_battleSave->getSide() == FACTION_HOSTILE)
-											(*i)->setExposed();	// NOTE: xCom agents can be seen by enemies but *not* become Exposed.
-																// Only potential reactionFire should set them Exposed during xCom's turn.
+											if (_battleSave->getSide() == FACTION_HOSTILE)
+												(*i)->setExposed();	// NOTE: xCom agents can be seen by enemies but *not* become Exposed.
+																	// Only potential reactionFire should set them Exposed during xCom's turn.
 
-										x =
-										y = unitSize; // stop.
+											x =
+											y = unitSize - 1; // stop.
+										}
 									}
 								}
 							}
 						}
-					}
+				}
 			}
 		}
-	}
+	}// end Test.
 
 	// start Test.
 	if (revealTiles == true && unit->getFaction() == FACTION_PLAYER) // reveal extra tiles ->>
@@ -499,9 +503,10 @@ bool TileEngine::calcFov(
 	{
 		case TRT_NONE: dir = unit->getUnitDirection(); break;
 		default:
-//			if (Options::battleStrafe == true)
+//			if (Options::battleStrafe == false)
+//				dir = unit->getUnitDirection();
+//			else
 			dir = unit->getTurretDirection();
-//			else dir = unit->getUnitDirection();
 	}
 
 	const bool swapXY (dir == 0 || dir == 4);
