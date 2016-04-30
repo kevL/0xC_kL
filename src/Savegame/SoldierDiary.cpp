@@ -385,7 +385,7 @@ YAML::Node SoldierDiary::save() const
  * Updates this SoldierDiary's statistics.
  * @note BattleUnitKill is a substruct of BattleUnitStatistics.
  * @param diaryStats	- pointer to BattleUnitStatistics for info on a Soldier's
- *						- current tactical performance at DebriefingState.
+ *						  current tactical performance ala DebriefingState.
  * @param tacticals		- pointer to latest MissionStatistics
  * @param rules			- pointer to the Ruleset
  */
@@ -923,7 +923,8 @@ std::map<std::string, int> SoldierDiary::getWeaponAmmoTotal() const
 
 /**
  * Gets a list of quantities of tacticals done by Region-type.
- * @return, reference to a map of regions to tacticals done there
+ * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @return, map of regions to tacticals done there
  */
 std::map<std::string, int> SoldierDiary::getRegionTotal(const std::vector<MissionStatistics*>* const tacticals) const
 {
@@ -947,7 +948,8 @@ std::map<std::string, int> SoldierDiary::getRegionTotal(const std::vector<Missio
 
 /**
  * Gets a list of quantities of tacticals done by Country-type.
- * @return, reference to a map of countries to tacticals done there
+ * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @return, map of countries to tacticals done there
  */
 std::map<std::string, int> SoldierDiary::getCountryTotal(const std::vector<MissionStatistics*>* const tacticals) const
 {
@@ -971,7 +973,8 @@ std::map<std::string, int> SoldierDiary::getCountryTotal(const std::vector<Missi
 
 /**
  * Gets a list of quantities of tacticals done by Tactical-type.
- * @return, reference to a map of mission types to qty
+ * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @return, map of mission-types to qty of
  */
 std::map<std::string, int> SoldierDiary::getTypeTotal(const std::vector<MissionStatistics*>* const tacticals) const
 {
@@ -995,7 +998,8 @@ std::map<std::string, int> SoldierDiary::getTypeTotal(const std::vector<MissionS
 
 /**
  * Gets a list of quantities of tacticals done by UFO-type.
- * @return, reference to a map of UFO types to qty
+ * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @return, map of UFO-types to qty of
  */
 std::map<std::string, int> SoldierDiary::getUfoTotal(const std::vector<MissionStatistics*>* const tacticals) const
 {
@@ -1019,7 +1023,8 @@ std::map<std::string, int> SoldierDiary::getUfoTotal(const std::vector<MissionSt
 
 /**
  * Gets the current total-score.
- * @return, sum score of all tacticals engaged
+ * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @return, score of all tacticals engaged
  */
 int SoldierDiary::getScoreTotal(const std::vector<MissionStatistics*>* const tacticals) const
 {
@@ -1043,7 +1048,7 @@ int SoldierDiary::getScoreTotal(const std::vector<MissionStatistics*>* const tac
 
 /**
  * Gets the current total points-value of units killed or stunned.
- * @return, sum points for all aliens killed or stunned
+ * @return, points for all aliens killed or stunned
  */
 int SoldierDiary::getPointsTotal() const
 {
@@ -1105,6 +1110,7 @@ size_t SoldierDiary::getMissionTotal() const
 
 /**
  * Gets the current total quantity of successful tacticals.
+ * @param tacticals - pointer to a vector of pointers to MissionStatistics
  * @return, qty of successful tacticals
  */
 int SoldierDiary::getWinTotal(const std::vector<MissionStatistics*>* const tacticals) const
@@ -1184,6 +1190,7 @@ int SoldierDiary::getProficiency() const
 /**
  * Gets trap kills total.
  * @param rules - pointer to the Ruleset
+ * @return, total trap kills
  */
 int SoldierDiary::getTrapKillTotal(const Ruleset* const rules) const
 {
@@ -1215,6 +1222,7 @@ int SoldierDiary::getTrapKillTotal(const Ruleset* const rules) const
 /**
  * Gets reaction kill total.
  * @param rules - pointer to the Ruleset
+ * @return, total reaction-fire kills
  */
  int SoldierDiary::getReactionFireKillTotal(const Ruleset* const rules) const
  {
@@ -1246,7 +1254,8 @@ int SoldierDiary::getTrapKillTotal(const Ruleset* const rules) const
 
 /**
  * Gets the total of terror tacticals.
- * @param Mission Statistics
+ * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @return, total terror missions
  */
 int SoldierDiary::getTerrorMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const
 {
@@ -1275,7 +1284,8 @@ int SoldierDiary::getTerrorMissionTotal(const std::vector<MissionStatistics*>* c
 
 /**
  * Gets the total of night tacticals.
- * @param Mission Statistics
+ * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @return, total night missions
  */
 int SoldierDiary::getNightMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const
 {
@@ -1304,7 +1314,8 @@ int SoldierDiary::getNightMissionTotal(const std::vector<MissionStatistics*>* co
 
 /**
  * Gets the total of night terror tacticals.
- * @param Mission Statistics
+ * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @return, total night terror missions
  */
 int SoldierDiary::getNightTerrorMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const
 {
@@ -1334,7 +1345,8 @@ int SoldierDiary::getNightTerrorMissionTotal(const std::vector<MissionStatistics
 
 /**
  * Gets the total of base defense tacticals.
- * @param Mission Statistics
+ * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @return, total base defense tacticals
  */
 int SoldierDiary::getBaseDefenseMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const
 {
@@ -1361,7 +1373,8 @@ int SoldierDiary::getBaseDefenseMissionTotal(const std::vector<MissionStatistics
 
 /**
  * Gets the total of alien base assaults.
- * @param Mission Statistics
+ * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @return, total alien base assaults
  */
 int SoldierDiary::getAlienBaseAssaultTotal(const std::vector<MissionStatistics*>* const tacticals) const
 {
@@ -1388,7 +1401,8 @@ int SoldierDiary::getAlienBaseAssaultTotal(const std::vector<MissionStatistics*>
 
 /**
  * Gets the total of important tacticals.
- * @param Mission Statistics
+ * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @return, total important missions
  */
 int SoldierDiary::getImportantMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const
 {
@@ -1415,7 +1429,8 @@ int SoldierDiary::getImportantMissionTotal(const std::vector<MissionStatistics*>
 
 /**
  * Gets the Valient Crux total.
- * @param Mission Statistics
+ * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @return, total valiant crutches
  */
 int SoldierDiary::getValiantCruxTotal(const std::vector<MissionStatistics*>* const tacticals) const
 {
