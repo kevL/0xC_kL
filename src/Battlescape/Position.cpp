@@ -25,31 +25,31 @@ namespace OpenXcom
 
 /**
  * Converts voxel-space to tile-space.
- * @param pos - reference a position
+ * @param pos - reference to a position
  */
 Position Position::toTileSpace(const Position& pos)
 {
 	return Position(
-				pos.x >> 4,
-				pos.y >> 4,
-				pos.z / 24);
+				pos.x >> 4u,
+				pos.y >> 4u,
+				pos.z  / 24);
 }
 
 /**
  * Converts tile-space to voxel-space.
- * @param pos - reference a position
+ * @param pos - reference to a position
  */
 Position Position::toVoxelSpace(const Position& pos)
 {
 	return Position(
-				pos.x << 4,
-				pos.y << 4,
-				pos.z * 24);
+				pos.x << 4u,
+				pos.y << 4u,
+				pos.z  * 24);
 }
 
 /**
  * Converts tile-space to voxel-space and centers the voxel in its Tile.
- * @param pos		- reference a position
+ * @param pos		- reference to a position
  * @param lift		- how many voxels to elevate along the z-axis (default 0)
  * @param unitSize	- tilesize of unit armor if applicable (default 1)
  */
@@ -60,9 +60,9 @@ Position Position::toVoxelSpaceCentered(
 {
 	const int voxelOffset (unitSize * 8);
 	return Position(
-				(pos.x << 4) + voxelOffset,
-				(pos.y << 4) + voxelOffset,
-				(pos.z * 24) + lift);
+				(pos.x << 4u) + voxelOffset,
+				(pos.y << 4u) + voxelOffset,
+				(pos.z  * 24) + lift);
 }
 
 }

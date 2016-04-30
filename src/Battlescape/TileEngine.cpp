@@ -383,7 +383,10 @@ bool TileEngine::calcFov(
 
 //	const size_t antecedentOpponents (unit->getHostileUnitsThisTurn().size());
 
-	const Position posSelf (unit->getPosition());
+	const Position posSelf (unit->getPosition());	// TODO: Check from all four quadrants if unit is large.
+													// See BattleUnit::checkViewSector(). Also visible() and its callers. ETC.
+
+	// NOTE: Lift by terrain-level hasn't bee done yet; see before tile-reveals below_
 
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _battleSave->getUnits()->begin();
@@ -493,10 +496,14 @@ bool TileEngine::calcFov(
 	if (revealTiles == true && unit->getFaction() == FACTION_PLAYER) // reveal extra tiles ->>
 	{
 	int dir;
-	if (unit->getTurretType() != TRT_NONE) // && Options::battleStrafe == true
-		dir = unit->getTurretDirection();
-	else
-		dir = unit->getUnitDirection();
+	switch (unit->getTurretType())
+	{
+		case TRT_NONE: dir = unit->getUnitDirection(); break;
+		default:
+//			if (Options::battleStrafe == true)
+			dir = unit->getTurretDirection();
+//			else dir = unit->getUnitDirection();
+	}
 
 	const bool swapXY (dir == 0 || dir == 4);
 

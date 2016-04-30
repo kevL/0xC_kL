@@ -4240,7 +4240,7 @@ void BattleUnit::deriveRank()
 /**
  * Checks if a specified Position is in this BattleUnit's facing-quadrant.
  * @note Using maths!
- * @param pos - the position to check against
+ * @param pos - reference to the position to check against
  * @return, whatever the maths decide
  */
 bool BattleUnit::checkViewSector(const Position& pos) const
@@ -4249,31 +4249,26 @@ bool BattleUnit::checkViewSector(const Position& pos) const
 		dx ( pos.x - _pos.x),
 		dy (_pos.y -  pos.y);
 
-	switch (_dir)
+	int dir;
+	switch (_turretType)
 	{
-		case 0:
-			if (dx + dy > -1 && dy - dx > -1)	return true;
-			break;
-		case 1:
-			if (dx > -1 && dy > -1)				return true;
-			break;
-		case 2:
-			if (dx + dy > -1 && dy - dx < 1)	return true;
-			break;
-		case 3:
-			if (dy < 1 && dx > -1)				return true;
-			break;
-		case 4:
-			if (dx + dy < 1 && dy - dx < 1)		return true;
-			break;
-		case 5:
-			if (dx < 1 && dy < 1)				return true;
-			break;
-		case 6:
-			if (dx + dy < 1 && dy - dx > -1)	return true;
-			break;
-		case 7:
-			if (dy > -1 && dx < 1)				return true;
+		case TRT_NONE: dir = _dir; break;
+		default:
+//			if (Options::battleStrafe == true)
+			dir = _dirTurret;
+//			else dir = _dir;
+	}
+
+	switch (dir)
+	{
+		case 0: if (dx + dy > -1 && dy - dx > -1)	return true; break;
+		case 1: if (dx > -1 && dy > -1)				return true; break;
+		case 2: if (dx + dy > -1 && dy - dx < 1)	return true; break;
+		case 3: if (dy < 1 && dx > -1)				return true; break;
+		case 4: if (dx + dy < 1 && dy - dx < 1)		return true; break;
+		case 5: if (dx < 1 && dy < 1)				return true; break;
+		case 6: if (dx + dy < 1 && dy - dx > -1)	return true; break;
+		case 7: if (dy > -1 && dx < 1)				return true;
 	}
 	return false;
 }

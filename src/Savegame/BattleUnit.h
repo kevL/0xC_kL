@@ -127,10 +127,10 @@ class BattleUnit
 {
 
 	public:
-		static const size_t PARTS_BODY = 6;
+		static const size_t PARTS_BODY = 6u;
 
 private:
-	static const size_t PARTS_ARMOR = 5; // doubles as both armorValues and sprites' cache
+	static const size_t PARTS_ARMOR = 5u; // doubles as both armorValues and sprites' cache
 	static const int DOSE_LETHAL = 3;
 //	static const int SPEC_WEAPON_MAX = 3;
 
@@ -196,7 +196,7 @@ private:
 	BattleItem* _fist;
 	BattlescapeGame* _battleGame;
 	BattleUnit* _charging;
-	Surface* _cache[5];
+	Surface* _cache[PARTS_ARMOR];
 	Tile* _tile;
 
 	Position
