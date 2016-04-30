@@ -274,7 +274,7 @@ YAML::Node Ufo::saveId() const
 }
 
 /**
- * Returns the ruleset for the UFO's type.
+ * Gets the ruleset for the UFO's type.
  * @return, pointer to RuleUfo
  */
 const RuleUfo* Ufo::getRules() const
@@ -283,7 +283,7 @@ const RuleUfo* Ufo::getRules() const
 }
 
 /**
- * Changes the ruleset for the UFO's type.
+ * Changes the rule for the UFO's type.
  * @warning ONLY FOR NEW BATTLE USE!
  * @param ufoRule - pointer to RuleUfo
  */
@@ -293,8 +293,8 @@ void Ufo::changeRules(const RuleUfo* const ufoRule)
 }
 
 /**
- * Changes the UFO's unique ID.
- * @param id - unique ID
+ * Sets the UFO's unique-ID.
+ * @param id - unique-ID
  */
 void Ufo::setId(int id)
 {
@@ -302,7 +302,7 @@ void Ufo::setId(int id)
 }
 
 /**
- * Returns the UFO's unique ID.
+ * Gets the UFO's unique-ID.
  * @note If it's 0 this UFO has never been detected.
  * @return, unique ID
  */
@@ -312,9 +312,9 @@ int Ufo::getId() const
 }
 
 /**
- * Returns the UFO's unique identifying name.
+ * Gets the UFO's unique identifier.
  * @param lang - pointer to Language to get strings from
- * @return, full name
+ * @return, label
  */
 std::wstring Ufo::getName(const Language* const lang) const
 {
@@ -334,7 +334,7 @@ std::wstring Ufo::getName(const Language* const lang) const
 }
 
 /**
- * Returns the globe marker for the UFO.
+ * Gets the globe-marker for the UFO.
  * @return, marker sprite #2,3,4 (-1 if not detected)
  */
 int Ufo::getMarker() const
@@ -351,12 +351,11 @@ int Ufo::getMarker() const
 			case Ufo::CRASHED:	return Globe::GLM_UFO_CRASHED;
 		}
 	}
-
 	return -1;
 }
 
 /**
- * Changes the amount of damage this UFO has taken.
+ * Sets the quantity of damage this UFO has taken.
  * @param damage - amount of damage
  */
 void Ufo::setUfoDamage(int damage)
@@ -370,7 +369,7 @@ void Ufo::setUfoDamage(int damage)
 }
 
 /**
- * Returns the amount of damage this UFO has taken.
+ * Gets the quantity of damage this UFO has taken.
  * @return, amount of damage
  */
 int Ufo::getUfoDamage() const
@@ -379,7 +378,7 @@ int Ufo::getUfoDamage() const
 }
 
 /**
- * Returns the ratio between the amount of damage this UFO
+ * Gets the ratio between the amount of damage this UFO
  * has taken and the total it can take before it's destroyed.
  * @return, damage percent
  */
@@ -390,7 +389,7 @@ int Ufo::getUfoDamagePct() const
 }
 
 /**
- * Changes whether this UFO has been detected by radars.
+ * Sets whether this UFO has been detected by radars.
  * @param detected - true if detected (default true)
  */
 void Ufo::setDetected(bool detected)
@@ -399,7 +398,7 @@ void Ufo::setDetected(bool detected)
 }
 
 /**
- * Returns whether this UFO has been detected by radars.
+ * Gets whether this UFO has been detected by radars.
  * @return, true if detected
  */
 bool Ufo::getDetected() const
@@ -408,7 +407,7 @@ bool Ufo::getDetected() const
 }
 
 /**
- * Changes whether this Ufo has been detected by hyper-wave.
+ * Sets whether this Ufo has been detected by hyper-wave.
  * @param hyperdetected - true if hyperwave-detected (default true)
  */
 void Ufo::setHyperDetected(bool hyperdetected)
@@ -417,7 +416,7 @@ void Ufo::setHyperDetected(bool hyperdetected)
 }
 
 /**
- * Returns whether this Ufo has been detected by hyper-wave.
+ * Gets whether this Ufo has been detected by hyper-wave.
  * @return, true if hyperwave-detected
  */
 bool Ufo::getHyperDetected() const
@@ -426,7 +425,7 @@ bool Ufo::getHyperDetected() const
 }
 
 /**
- * Changes the amount of remaining seconds the UFO has left on the ground.
+ * Sets the amount of remaining seconds the UFO has left on the ground.
  * @note After this many seconds this Ufo will take off if landed or disappear
  * if crashed.
  * @param sec - time in seconds
@@ -437,7 +436,7 @@ void Ufo::setSecondsLeft(int sec)
 }
 
 /**
- * Returns the amount of remaining seconds the UFO has left on the ground.
+ * Gets the amount of remaining seconds the UFO has left on the ground.
  * @note After this many seconds this Ufo will take off if landed or disappear
  * if crashed.
  * @return, amount of seconds
@@ -448,7 +447,7 @@ int Ufo::getSecondsLeft() const
 }
 
 /**
- * Changes the current altitude and status of the UFO.
+ * Sets the current altitude and status of the UFO.
  * @param altitude - altitude
  */
 void Ufo::setAltitude(const std::string& altitude)
@@ -464,7 +463,7 @@ void Ufo::setAltitude(const std::string& altitude)
 }
 
 /**
- * Returns the current altitude of the UFO.
+ * Gets the current altitude of the UFO.
  * @return, altitude
  */
 std::string Ufo::getAltitude() const
@@ -473,7 +472,7 @@ std::string Ufo::getAltitude() const
 }
 
 /**
- * Returns the current direction the UFO is headed.
+ * Gets the current direction the UFO is headed.
  * @return, direction
  */
 std::string Ufo::getDirection() const
@@ -482,16 +481,16 @@ std::string Ufo::getDirection() const
 }
 
 /**
- * Returns if this Ufo took enough damage to cause it to crash.
+ * Gets if this Ufo took enough damage to cause it to crash.
  * @return, true if crashed
  */
 bool Ufo::isCrashed() const
 {
-	return _damage >= _ufoRule->getMaxDamage() / 2;
+	return _damage >= (_ufoRule->getMaxDamage() >> 1u);
 }
 
 /**
- * Returns if this Ufo took enough damage to destroy it.
+ * Gets if this Ufo took enough damage to destroy it.
  * @return, true if destroyed
  */
 bool Ufo::isDestroyed() const
@@ -601,7 +600,7 @@ bool Ufo::getTactical() const
 }
 
 /**
- * Returns the alien race currently residing in the UFO.
+ * Gets the alien race currently residing in the UFO.
  * @return, address of aLien race
  */
 const std::string& Ufo::getAlienRace() const
@@ -716,12 +715,12 @@ int Ufo::getDetectors() const
 }
 
 /**
- * Sets the mission information of this Ufo.
- * @note The UFO will start at the first point of the trajectory. The actual UFO
- * information is not changed here; this only sets the information kept on
+ * Sets the mission-information of this Ufo.
+ * @note The UFO will start at the first point of the trajectory. The actual
+ * information is not changed here; this only sets the information on
  * behalf of the mission.
- * @param mission		- pointer to the actual mission object
- * @param trajectory	- pointer to the actual mission trajectory
+ * @param mission		- pointer to the actual mission-object
+ * @param trajectory	- pointer to the actual mission-trajectory
  */
 void Ufo::setUfoMissionInfo(
 		AlienMission* const mission,
@@ -737,9 +736,9 @@ void Ufo::setUfoMissionInfo(
 }
 
 /**
- * Returns the mission type of this Ufo.
- * @note Used only for hyperwave decoder info; has been superceded by
- * getAlienMission()->getRules().getObjective()
+ * Gets the mission-type of this Ufo.
+ * @note Used only for hyperwave decoder info and has been superceded by
+ * getAlienMission()->getRules().getObjective().
  * @return, reference to the type
  */
 const std::string& Ufo::getUfoMissionType() const
@@ -748,7 +747,7 @@ const std::string& Ufo::getUfoMissionType() const
 }
 
 /**
- * Handle destination changes and delete old Waypoint destinations.
+ * Handles destination changes and deletes old Waypoint destinations.
  * @param dest - pointer to a new destination (default nullptr)
  */
 void Ufo::setDestination(Target* const dest)
@@ -760,8 +759,8 @@ void Ufo::setDestination(Target* const dest)
 }
 
 /**
- * Sets the intercept window this Ufo is shooting at in a dogfight.
- * @param target - interception number
+ * Sets the intercept-port this Ufo is shooting at during a Dogfight.
+ * @param target - interception-port-ID
  */
 void Ufo::setShootingAt(const size_t target)
 {
@@ -769,8 +768,8 @@ void Ufo::setShootingAt(const size_t target)
 }
 
 /**
- * Gets the intercept window this Ufo is shooting at in a dogfight.
- * @return, interception number
+ * Gets the intercept-port this Ufo is shooting at during a Dogfight.
+ * @return, interception-port-ID
  */
 size_t Ufo::getShootingAt() const
 {
@@ -778,8 +777,8 @@ size_t Ufo::getShootingAt() const
 }
 
 /**
- * Sets this Ufo's landing site ID.
- * @param id - landing-site ID
+ * Sets this Ufo's landing-site-ID.
+ * @param id - landing-site-ID
  */
 void Ufo::setLandId(int id)
 {
@@ -787,8 +786,8 @@ void Ufo::setLandId(int id)
 }
 
 /**
- * Gets this Ufo's landing site ID.
- * @return, landing-site ID
+ * Gets this Ufo's landing-site-ID.
+ * @return, landing-site-ID
  */
 int Ufo::getLandId() const
 {
@@ -796,8 +795,8 @@ int Ufo::getLandId() const
 }
 
 /**
- * Sets this Ufo's crash site ID.
- * @param id - crash-site ID
+ * Sets this Ufo's crash-site-ID.
+ * @param id - crash-site-ID
  */
 void Ufo::setCrashId(int id)
 {
@@ -805,8 +804,8 @@ void Ufo::setCrashId(int id)
 }
 
 /**
- * Gets this Ufo's crash site ID.
- * @return, crash-site ID
+ * Gets this Ufo's crash-site-ID.
+ * @return, crash-site-ID
  */
 int Ufo::getCrashId() const
 {
@@ -814,8 +813,8 @@ int Ufo::getCrashId() const
 }
 
 /**
- * Sets this Ufo's hit frame.
- * @param frame - hit frame
+ * Sets this Ufo's hit-frame.
+ * @param frame - hit-frame
  */
 void Ufo::setHitFrame(int frame)
 {
@@ -823,8 +822,8 @@ void Ufo::setHitFrame(int frame)
 }
 
 /**
- * Gets this Ufo's hit frame.
- * @return, hit frame
+ * Gets this Ufo's hit-frame.
+ * @return, hit-frame
  */
 int Ufo::getHitFrame() const
 {
@@ -832,17 +831,19 @@ int Ufo::getHitFrame() const
 }
 
 /**
- * Sets the countdown ticks for escaping a dogfight.
- * @param time - how many ticks until the ship attempts to escape
+ * Sets the remaining countdown-ticks before this Ufo attempts to escape from
+ * its Dogfights.
+ * @param ticks - ticks remaining
  */
-void Ufo::setEscapeCountdown(int timeLeft)
+void Ufo::setEscapeCountdown(int ticks)
 {
-	_escapeCountdown = timeLeft;
+	_escapeCountdown = ticks;
 }
 
 /**
- * Gets the remaining escape ticks for dogfights.
- * @return, how many ticks until the ship tries to leave
+ * Gets the remaining countdown-ticks before this Ufo attempts to escape from
+ * its Dogfights.
+ * @return, ticks remaining
  */
 int Ufo::getEscapeCountdown() const
 {
@@ -850,17 +851,17 @@ int Ufo::getEscapeCountdown() const
 }
 
 /**
- * Sets the number of ticks until this Ufo fires its weapon.
- * @param time - number of ticks until refire
+ * Sets the remaining countdown-ticks before this Ufo fires its weapon.
+ * @param ticks - ticks remaining
  */
-void Ufo::setFireCountdown(int timeLeft)
+void Ufo::setFireCountdown(int ticks)
 {
-	_fireCountdown = timeLeft;
+	_fireCountdown = ticks;
 }
 
 /**
- * Gets the number of ticks until this Ufo is ready to fire.
- * @return, ticks until weapon is ready
+ * Gets the remaining countdown-ticks before this Ufo fires its weapon.
+ * @return, ticks remaining
  */
 int Ufo::getFireCountdown() const
 {
@@ -868,23 +869,24 @@ int Ufo::getFireCountdown() const
 }
 
 /**
- * Sets a flag denoting that this ufo has had its timers decremented.
+ * Sets a flag denoting that this Ufo has had its fire- and escape-counters
+ * decremented.
  * @note Prevents multiple interceptions from decrementing or resetting an
- * already running timer. This flag is reset in advance each time the geoscape
- * processes the dogfights.
- * @param done - true if the timers have been processed (default true)
+ * already running counter. This flag is reset in advance every time Geoscape
+ * processes Dogfights.
+ * @param done - true if the counters have been processed (default true)
  */
-void Ufo::setTimerTicked(bool done)
+void Ufo::setTicked(bool done)
 {
 	_processedIntercept = done;
 }
 
 /**
- * Gets if this Ufo has had its timers decremented on this cycle of interception
+ * Gets if this Ufo has had its counters decremented on a cycle of Dogfight
  * updates.
- * @return, true if the ufo has already been processed
+ * @return, true if the counters have already been processed
  */
-bool Ufo::getTimerTicked() const
+bool Ufo::getTicked() const
 {
 	return _processedIntercept;
 }

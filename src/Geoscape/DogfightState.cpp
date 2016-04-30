@@ -556,7 +556,7 @@ DogfightState::~DogfightState()
 		_craft->inDogfight(false);
 
 	if (_ufo != nullptr) // frees the ufo for the next engagement
-		_ufo->setTimerTicked(false);
+		_ufo->setTicked(false);
 }
 
 /**
@@ -764,9 +764,9 @@ void DogfightState::updateDogfight()
 
 		if (_ufo->isCrashed() == false
 			&& _craft->isDestroyed() == false
-			&& _ufo->getTimerTicked() == false)
+			&& _ufo->getTicked() == false)
 		{
-			_ufo->setTimerTicked();
+			_ufo->setTicked();
 
 			int escapeTicks (_ufo->getEscapeCountdown());
 			if (escapeTicks > 0)

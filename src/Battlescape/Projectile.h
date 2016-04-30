@@ -116,7 +116,7 @@ private:
 		void skipTrajectory();
 
 		/// Gets the Projectile's current position in voxel-space.
-		Position getPosition(int offsetId = 0) const;
+		Position getPosition(int offset = 0) const;
 		/// Gets an ID for the Projectile's current surface.
 		int getBulletSprite(int id) const;
 		/// Gets the thrown item.

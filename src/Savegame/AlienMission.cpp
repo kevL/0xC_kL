@@ -1061,7 +1061,7 @@ std::pair<double, double> AlienMission::getLandPoint(
 }
 
 /**
- * Adds alien points to the country and region at the coordinates specified.
+ * Adds alien points to the country and region at the specified coordinates.
  * @param lon - longitudinal coordinate to check
  * @param lat - latitudinal coordinate to check
  */

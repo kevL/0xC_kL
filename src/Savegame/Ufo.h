@@ -231,17 +231,17 @@ private:
 		int getHitFrame() const;
 
 		/// Sets the time left before the Ufo can fire in a Dogfight.
-		void setFireCountdown(int timeLeft);
+		void setFireCountdown(int ticks);
 		/// Gets the time left before the Ufo can fire in a Dogfight.
 		int getFireCountdown() const;
 		/// Sets the time left before the Ufo attempts to escape a Dogfight.
-		void setEscapeCountdown(int timeLeft);
+		void setEscapeCountdown(int ticks);
 		/// Gets the time left before the Ufo attempts to escape a Dogfight.
 		int getEscapeCountdown() const;
 		/// Sets whether or not the Ufo has had Dogfight info processed.
-		void setTimerTicked(bool done = true);
+		void setTicked(bool done = true);
 		/// Gets whether or not the Ufo has had Dogfight info processed.
-		bool getTimerTicked() const;
+		bool getTicked() const;
 
 		/// Sets a crashed or landed Ufo's terrainType.
 		void setUfoTerrainType(const std::string& terrainType = "");

@@ -1246,7 +1246,7 @@ void GeoscapeState::drawUfoBlobs()
 
 			ufoSize = (*i)->getRules()->getRadius();
 
-			if ((*i)->getTimerTicked() == true)
+			if ((*i)->getTicked() == true)
 				colorBasic = RED; // TODO: blink
 			else
 			{
@@ -3785,7 +3785,7 @@ void GeoscapeState::thinkDogfights()
 			pDf != _dogfights.end();
 			++pDf)
 	{
-		(*pDf)->getUfo()->setTimerTicked(false);
+		(*pDf)->getUfo()->setTicked(false);
 	}
 
 

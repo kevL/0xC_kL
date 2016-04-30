@@ -72,7 +72,7 @@ Projectile::Projectile(
 		_posOrigin(posOrigin),
 		_targetVoxel(targetVoxel),
 		_forced(false),
-		_trjId(0),
+		_trjId(0u),
 		_bulletSprite(-1)
 {
 	//Log(LOG_INFO) << "";
@@ -91,13 +91,13 @@ Projectile::Projectile(
 		{
 			//Log(LOG_INFO) << "Create Projectile -> BA_THROW";
 			_throwSprite = res->getSurfaceSet("FLOOROB.PCK")->getFrame(_action.weapon->getRules()->getFloorSprite());
-			_speed /= 2;
+			_speed >>= 1u;
 		}
 		else // ba_SHOOT!! or hit, or spit
 		{
 			//Log(LOG_INFO) << "Create Projectile -> not BA_THROW";
 			if (_action.weapon->getRules()->isArcingShot() == true)
-				_speed /= 2;
+				_speed >>= 1u;
 
 			const BattleItem* const bullet (_action.weapon->getAmmoItem()); // the weapon itself if not-req'd. eg, lasers/melee
 			if (bullet != nullptr) // try to get the required info from the bullet
@@ -540,10 +540,10 @@ void Projectile::applyAccuracy( // private.
 		//Log(LOG_INFO) << "Proj: applyAccuracy target[2] " << *targetVoxel;
 
 		targetVoxel->x = std::max(0,
-								  std::min((_battleSave->getMapSizeX() << 4) + 15,
+								  std::min((_battleSave->getMapSizeX() << 4u) + 15,
 											targetVoxel->x));
 		targetVoxel->y = std::max(0,
-								  std::min((_battleSave->getMapSizeY() << 4) + 15,
+								  std::min((_battleSave->getMapSizeY() << 4u) + 15,
 											targetVoxel->y));
 		targetVoxel->z = std::max(0,
 								  std::min(_battleSave->getMapSizeZ() * 24 + 23,
@@ -786,19 +786,19 @@ void Projectile::skipTrajectory()
 
 /**
  * Gets the current position of this Projectile in voxel space.
- * @param offsetId - ID offset (default 0)
+ * @param offset - offset of the trajectory-vector entry (default 0)
  * @return, position in voxel-space
  */
-Position Projectile::getPosition(int offsetId) const
+Position Projectile::getPosition(int offset) const
 {
-	if (offsetId == 0) return _trj.at(_trjId);
+	if (offset == 0) return _trj.at(_trjId);
 
-	offsetId = std::max(0,
-						std::min(
-							static_cast<int>(_trjId) + offsetId,
+	offset = std::max(0,
+					  std::min(
+							static_cast<int>(_trjId) + offset,
 							static_cast<int>(_trj.size() - 1u)));
 
-	return _trj.at(static_cast<size_t>(offsetId));
+	return _trj.at(static_cast<size_t>(offset));
 }
 
 /**

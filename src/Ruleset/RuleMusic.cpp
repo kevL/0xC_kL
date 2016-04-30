@@ -26,7 +26,7 @@ namespace OpenXcom
 /**
  * cTor
  */
-RuleMusic::RuleMusic() // TODO: put in normalization, take out MIDI stuff. See pop-code.
+RuleMusic::RuleMusic() // TODO: put in normalization, take out MIDI stuff. See pop code.
 	:
 		_midiIndex(-1)
 {}
