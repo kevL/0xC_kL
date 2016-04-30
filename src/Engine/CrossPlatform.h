@@ -127,10 +127,10 @@ namespace CrossPlatform
 	/// Sets the window-icon for _WIN32 build-configuration.
 #ifdef _WIN32
 	void setWindowIcon(int winResource);
-#else // _WIN32
+#else
 	/// Sets the window-icon if not _WIN32 build.
 	void setWindowIcon(const std::string& unixPath);
-#endif // _WIN32
+#endif
 }
 
 }

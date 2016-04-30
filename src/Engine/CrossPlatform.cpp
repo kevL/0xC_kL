@@ -87,9 +87,9 @@ namespace CrossPlatform
 
 #ifdef _WIN32
 	const char PATH_SEPARATOR = '\\';
-#else // _WIN32
+#else
 	const char PATH_SEPARATOR = '/';
-#endif // _WIN32
+#endif
 
 /**
  * Displays a message-box with an error-message.
@@ -103,9 +103,9 @@ void showError(const std::string& error)
 			error.c_str(),
 			"OpenXcom Error",
 			MB_ICONERROR | MB_OK);
-#else // _WIN32
+#else
 	std::cerr << error << std::endl;
-#endif // _WIN32
+#endif
 
 	Log(LOG_FATAL) << error;
 }
@@ -125,7 +125,7 @@ static char* const getHome()
 	}
 	return home;
 }
-#endif // !_WIN32
+#endif
 
 /**
  * Builds a list of predefined paths for the data-folder according to the
@@ -139,7 +139,7 @@ std::vector<std::string> findDataFolders()
 #ifdef __MORPHOS__
 	pathList.push_back("PROGDIR:data/");
 	return pathList;
-#endif // __MORPHOS__
+#endif
 
 #ifdef _WIN32
 	char path[MAX_PATH];
@@ -178,11 +178,11 @@ std::vector<std::string> findDataFolders()
 				"data\\");
 		pathList.push_back(path);
 	}
-#else // _WIN32
+#else
 	char const* home (getHome());
 #	ifdef __HAIKU__
 	pathList.push_back("/boot/apps/OpenXcom/data/");
-#	endif // __HAIKU__
+#	endif
 
 	char path[MAXPATHLEN];
 
@@ -192,9 +192,9 @@ std::vector<std::string> findDataFolders()
 	else
 #	ifdef __APPLE__
 		snprintf(path, MAXPATHLEN, "%s/Library/Application Support/OpenXcom/data/", home);
-#	else // __APPLE__
+#	else
 		snprintf(path, MAXPATHLEN, "%s/.local/share/openxcom/data/", home);
-#	endif // __APPLE__
+#	endif
 
 	pathList.push_back(path);
 
@@ -213,22 +213,22 @@ std::vector<std::string> findDataFolders()
 #	ifdef __APPLE__
 	snprintf(path, MAXPATHLEN, "%s/Users/Shared/OpenXcom/data/", home);
 	pathList.push_back(path);
-#	else // __APPLE__
+#	else
 	pathList.push_back("/usr/local/share/openxcom/data/");
 
 #		ifndef __FreeBSD__
 	pathList.push_back("/usr/share/openxcom/data/");
-#		endif // !__FreeBSD__
+#		endif
 
 #		ifdef DATADIR
 	snprintf(path, MAXPATHLEN, "%s/data/", DATADIR);
 	pathList.push_back(path);
-#		endif // DATADIR
-#	endif // __APPLE__
+#		endif
+#	endif
 
 	// Get working directory
 	pathList.push_back("./data/");
-#endif // _WIN32
+#endif
 
 	return pathList;
 }
@@ -245,7 +245,7 @@ std::vector<std::string> findUserFolders()
 #ifdef __MORPHOS__
 	pathList.push_back("PROGDIR:");
 	return pathList;
-#endif // __MORPHOS__
+#endif
 
 #ifdef _WIN32
 	char path[MAX_PATH];
@@ -284,10 +284,10 @@ std::vector<std::string> findUserFolders()
 				"user\\");
 		pathList.push_back(path);
 	}
-#else // _WIN32
+#else
 #	ifdef __HAIKU__
 	pathList.push_back("/boot/apps/OpenXcom/");
-#	endif // __HAIKU__
+#	endif
 
 	char const* home (getHome());
 	char path[MAXPATHLEN];
@@ -298,9 +298,9 @@ std::vector<std::string> findUserFolders()
 	else
 #	ifdef __APPLE__
 		snprintf(path, MAXPATHLEN, "%s/Library/Application Support/OpenXcom/", home);
-#	else // __APPLE__
+#	else
 		snprintf(path, MAXPATHLEN, "%s/.local/share/openxcom/", home);
-#	endif // __APPLE__
+#	endif
 
 	pathList.push_back(path);
 
@@ -310,7 +310,7 @@ std::vector<std::string> findUserFolders()
 
 	// Get working directory
 	pathList.push_back("./user/");
-#endif // _WIN32
+#endif
 
 	return pathList;
 }
@@ -323,13 +323,13 @@ std::string findConfigFolder()
 {
 #ifdef __MORPHOS__
 	return "PROGDIR:";
-#endif // __MORPHOS__
+#endif
 
 #if defined(_WIN32) || defined(__APPLE__)
 	return "";
 #elif defined (__HAIKU__)
 	return "/boot/home/config/settings/openxcom/";
-#else // _WIN32 | __APPLE__ | __HAIKU__
+#else
 	char const* home (getHome());
 	char path[MAXPATHLEN];
 
@@ -343,7 +343,7 @@ std::string findConfigFolder()
 		snprintf(path, MAXPATHLEN, "%s/.config/openxcom/", home);
 		return path;
 	}
-#endif // _WIN32 | __APPLE__ | __HAIKU__
+#endif
 }
 
 /**
@@ -444,7 +444,7 @@ std::string getDataFile(const std::string& file)
 			st.end(),
 			'/',
 			PATH_SEPARATOR);
-#endif // _WIN32
+#endif
 
 	std::string path (caseInsensitive(
 									Options::getDataFolder(),
@@ -483,7 +483,7 @@ std::string getDataFolder(const std::string& folder)
 			st.end(),
 			'/',
 			PATH_SEPARATOR);
-#endif // _WIN32
+#endif
 
 	std::string path (caseInsensitiveFolder(
 										Options::getDataFolder(),
@@ -522,13 +522,13 @@ bool createFolder(const std::string& path)
 		return false;
 
 	return true;
-#else // _WIN32
+#else
 	mode_t process_mask (umask(0));
 	const int result (mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH));
 	umask(process_mask);
 	if (result == 0) return true;
 	return false;
-#endif // _WIN32
+#endif
 }
 
 /**
@@ -569,10 +569,10 @@ std::vector<std::string> getFolderContents(
 	{
 	#ifdef __MORPHOS__
 		return files;
-	#else // __MORPHOS__
+	#else
 		std::string errorMessage("Failed to open directory: " + path);
 		throw Exception(errorMessage);
-	#endif // __MORPHOS__
+	#endif
 	}
 
 	struct dirent* pDirent;
@@ -676,10 +676,10 @@ bool folderExists(const std::string& path)
 		return 1;
 	}
 	return 0;
-#else // _WIN32 | __MORPHOS__
+#else
 	struct stat info;
 	return (stat(path.c_str(), &info) == 0 && S_ISDIR(info.st_mode));
-#endif // _WIN32 | __MORPHOS__
+#endif
 }
 
 /**
@@ -699,10 +699,10 @@ bool fileExists(const std::string& path)
 		return 1;
 	}
 	return 0;
-#else // _WIN32 | __MORPHOS__
+#else
 	struct stat info;
 	return (stat(path.c_str(), &info) == 0 && S_ISREG(info.st_mode));
-#endif // _WIN32 | __MORPHOS__
+#endif
 }
 
 /**
@@ -714,9 +714,9 @@ bool deleteFile(const std::string& path)
 {
 #ifdef _WIN32
 	return (DeleteFileA(path.c_str()) != 0);
-#else // _WIN32
+#else
 	return (remove(path.c_str()) == 0);
-#endif // _WIN32
+#endif
 }
 
 /**
@@ -817,7 +817,7 @@ std::string getLocale()
 	LCIDToLocaleName(GetUserDefaultUILanguage(), local, LOCALE_NAME_MAX_LENGTH, 0);
 
 	return Language::wstrToUtf8(local); */
-#else // _WIN32
+#else
 	std::locale l;
 	try
 	{
@@ -845,7 +845,7 @@ std::string getLocale()
 	}
 	else
 		return name + "-";
-#endif // _WIN32
+#endif
 }
 
 /**
@@ -861,11 +861,11 @@ bool isQuitShortcut(const SDL_Event& ev)
 #elif __APPLE__
 	// Command + Q
 	return (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_q && ev.key.keysym.mod & KMOD_LMETA);
-#else // _WIN32 | __APPLE__
+#else
 	// TODO: Add other OSs shortcuts.
 	(void)ev;
 	return false;
-#endif // _WIN32 | __APPLE__
+#endif
 }
 
 /**
@@ -904,8 +904,8 @@ time_t getDateModified(const std::string& path)
 std::pair<std::wstring, std::wstring> timeToString(time_t timeIn)
 {
 	wchar_t
-		localDate[25],
-		localTime[25];
+		localDate[25u],
+		localTime[25u];
 /*
 #ifdef _WIN32
 	LARGE_INTEGER li;
@@ -1000,7 +1000,7 @@ bool moveFile(
 					src.c_str(),
 					dest.c_str(),
 					MOVEFILE_REPLACE_EXISTING) != 0);
-#else // _WIN32
+#else
 //	return (rename(src.c_str(), dest.c_str()) == 0);
 	std::ifstream srcStream;
 	std::ofstream destStream;
@@ -1019,7 +1019,7 @@ bool moveFile(
 		return false;
 	}
 	return deleteFile(src);
-#endif // _WIN32
+#endif
 }
 
 /**
@@ -1036,7 +1036,7 @@ void flashWindow()
 		HWND hwnd (wminfo.window);
 		FlashWindow(hwnd, true);
 	}
-#endif // _WIN32
+#endif
 }
 
 /**
@@ -1092,9 +1092,9 @@ std::string getDosPath()
 		path = "c:\\games\\OpenXcom";
 
 	return path; */
-#else // _WIN32
+#else
 	return "c:\\games\\OpenXcom";
-#endif // _WIN32
+#endif
 }
 
 #ifdef _WIN32
@@ -1120,7 +1120,7 @@ void setWindowIcon(int winResource)
 					reinterpret_cast<LONG_PTR>(icon));
 	}
 }
-#else // _WIN32
+#else
 /**
  * Sets the window-icon if not _WIN32 build.
  * @param unixPath - path to PNG-icon for Unix
@@ -1136,7 +1136,7 @@ void setWindowIcon(const std::string& unixPath)
 		SDL_FreeSurface(icon);
 	}
 }
-#endif // _WIN32
+#endif
 
 }
 
