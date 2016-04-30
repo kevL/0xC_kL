@@ -297,7 +297,6 @@ RuleTexture* RuleGlobe::getTextureRule(int id) const
 std::vector<std::string> RuleGlobe::getGlobeTerrains(const std::string& deployType) const
 {
 	std::vector<std::string> terrains;
-
 	for (std::map<int, RuleTexture*>::const_iterator
 			i = _textures.begin();
 			i != _textures.end();
@@ -315,7 +314,6 @@ std::vector<std::string> RuleGlobe::getGlobeTerrains(const std::string& deployTy
 			}
 		}
 	}
-
 	return terrains;
 }
 

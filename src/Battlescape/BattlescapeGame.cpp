@@ -1233,7 +1233,7 @@ void BattlescapeGame::setupSelector() // NOTE: This might not be needed when cal
  * @note Is used to see if stats can be displayed and action buttons will work.
  * @return, true if a playable unit is selected
  */
-bool BattlescapeGame::playableUnitSelected()
+bool BattlescapeGame::playableUnitSelected() const
 {
 	return _battleSave->getSelectedUnit() != nullptr
 		&& (_battleSave->getSide() == FACTION_PLAYER

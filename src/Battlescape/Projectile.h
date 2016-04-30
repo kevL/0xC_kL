@@ -138,7 +138,7 @@ private:
 		/// Stores the final direction of a missile or thrown-object.
 //		void storeProjectileDirection() const;
 		/// Gets the Position of origin for the Projectile.
-//		Position getOrigin();
+//		Position getOrigin() const;
 		/// Gets the INTENDED target-position for the Projectile.
 //		Position getTarget() const;
 		/// Gets if this the Projectile is being drawn back-to-front or front-to-back.

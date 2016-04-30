@@ -58,7 +58,7 @@ void RuleTexture::load(const YAML::Node& node)
  * Returns the list of TextureDetail's associated with this RuleTexture.
  * @return, pointer to a vector of TextureDetail's
  */
-std::vector<TextureDetail>* RuleTexture::getTextureDetail()
+const std::vector<TextureDetail>* RuleTexture::getTextureDetail() const
 {
 	return &_details;
 }
@@ -67,7 +67,7 @@ std::vector<TextureDetail>* RuleTexture::getTextureDetail()
  * Returns a map of weighted deployments associated with this RuleTexture.
  * @return, reference to a map of deployment types & weights
  */
-const std::map<std::string, int>& RuleTexture::getTextureDeployments()
+const std::map<std::string, int>& RuleTexture::getTextureDeployments() const
 {
 	return _deployTypes;
 }
@@ -83,7 +83,7 @@ std::string RuleTexture::getTextureDeployment() const
 		return "";
 
 	std::map<std::string, int>::const_iterator i (_deployTypes.begin());
-	if (_deployTypes.size() == 1)
+	if (_deployTypes.size() == 1u)
 		return i->first;
 
 	int totalWeight (0);
@@ -97,7 +97,7 @@ std::string RuleTexture::getTextureDeployment() const
 
 	if (totalWeight != 0)
 	{
-		int pick = RNG::generate(1, totalWeight);
+		int pick (RNG::generate(1, totalWeight));
 		for (
 				i = _deployTypes.begin();
 				i != _deployTypes.end();
@@ -134,7 +134,7 @@ std::string RuleTexture::getTextureTerrain(const Target* const target) const
 		Log(LOG_INFO) << ". terrainType = " << i->type;
 		if (i->weight != 0)
 		{
-			bool insideArea = false;
+			bool insideArea (false);
 			if (target != nullptr)
 			{
 				lon = target->getLongitude();
@@ -161,7 +161,7 @@ std::string RuleTexture::getTextureTerrain(const Target* const target) const
 
 	if (totalWeight != 0)
 	{
-		const int pick = RNG::generate(1, totalWeight);
+		const int pick (RNG::generate(1, totalWeight));
 		for (std::map<int, std::string>::const_iterator
 				i = eligibleTerrains.begin();
 				i != eligibleTerrains.end();

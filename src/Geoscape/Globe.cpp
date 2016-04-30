@@ -76,15 +76,15 @@ const double
 	Globe::ROTATE_LATITUDE	= 0.176;
 
 Uint8 // these are only fallbacks for Geography.rul->globe
-	Globe::C_LBLBASE	= 100,	// Palette::blockOffset(6)+4;	// stock 133;
-	Globe::C_LBLCITY	= 167,	// Palette::blockOffset(10)+7;	// stock 138
-	Globe::C_LBLCOUNTRY	= 227,	// Palette::blockOffset(14)+3;	// stock 239
-	Globe::C_LINE		= 162,	// Palette::blockOffset(10)+2;	// light gray
+	Globe::C_LBLBASE	= 100u,	// Palette::blockOffset(6)+4;	// stock 133;
+	Globe::C_LBLCITY	= 167u,	// Palette::blockOffset(10)+7;	// stock 138
+	Globe::C_LBLCOUNTRY	= 227u,	// Palette::blockOffset(14)+3;	// stock 239
+	Globe::C_LINE		= 162u,	// Palette::blockOffset(10)+2;	// light gray
 //	Globe::C_RADAR1		=		// let base radars do its own thing in XuLine()
-	Globe::C_RADAR2		= 150,	// Palette::blockOffset(9)+6;	// brown
-	Globe::C_FLIGHT		= 166,	// Palette::blockOffset(10)+6;	// steel gray
-	Globe::C_OCEAN		= 192,	// Palette::blockOffset(12),	// blue ofc.
-	Globe::C_BLACK		=  15;
+	Globe::C_RADAR2		= 150u,	// Palette::blockOffset(9)+6;	// brown
+	Globe::C_FLIGHT		= 166u,	// Palette::blockOffset(10)+6;	// steel gray
+	Globe::C_OCEAN		= 192u,	// Palette::blockOffset(12),	// blue ofc.
+	Globe::C_BLACK		=  15u;
 
 
 namespace
@@ -94,7 +94,7 @@ namespace
 struct GlobeStaticData
 {
 	/// array of shading gradient
-	Sint16 shade_gradient[240];
+	Sint16 shade_gradient[240u];
 	/// size of x & y of noise surface
 	const int random_surf_size;
 
@@ -107,7 +107,7 @@ struct GlobeStaticData
 	 * @param y		- cord of point where we getting this vector
 	 * @return, normal vector of sphere surface
 	 */
-	inline Cord circle_norm(
+	static inline Cord circle_norm(
 			double ox,
 			double oy,
 			double r,
@@ -219,7 +219,7 @@ struct CreateShadow
 		else if (temp.x > 120.)
 			temp.x = 50.;
 		else
-			temp.x = static_cast<double>(static_data.shade_gradient[static_cast<Sint16>(temp.x) + 120]);
+			temp.x = static_cast<double>(static_data.shade_gradient[static_cast<size_t>(temp.x) + 120u]);
 
 		temp.x -= static_cast<double>(noise);
 
@@ -229,21 +229,21 @@ struct CreateShadow
 			Uint8 val;
 
 			if (temp.x > 31.)
-				val = 31;
+				val = 31u;
 			else
 				val = static_cast<Uint8>(temp.x);
 
-			if (d == Globe::C_OCEAN
-				|| d == Globe::C_OCEAN + 16)
+			if (   d == Globe::C_OCEAN
+				|| d == Globe::C_OCEAN + 16u)
 			{
 				return Globe::C_OCEAN + val; // this pixel is ocean
 			}
 			else
 			{
-				if (dest == 0)
+				if (dest == 0u)
 					return val; // this pixel is land
 
-				const Uint8 e (dest + (val / 3));
+				const Uint8 e (dest + (val / 3u));
 				if (e > (d + helper::ColorShade))
 					return d + helper::ColorShade;
 
@@ -253,8 +253,8 @@ struct CreateShadow
 		else
 		{
 			const Uint8 d (dest & helper::ColorGroup);
-			if (d == Globe::C_OCEAN
-				|| d == Globe::C_OCEAN + 16)
+			if (   d == Globe::C_OCEAN
+				|| d == Globe::C_OCEAN + 16u)
 			{
 				return Globe::C_OCEAN; // this pixel is ocean
 			}
@@ -271,7 +271,7 @@ struct CreateShadow
 			const Sint16& noise,
 			const int&) // whots this
 	{
-		if (dest != 0
+		if (dest != 0u
 			&& AreSame(earth.z, 0.) == false)
 		{
 			dest = getShadowValue(
@@ -281,7 +281,7 @@ struct CreateShadow
 								noise);
 		}
 		else
-			dest = 0;
+			dest = 0u;
 	}
 };
 

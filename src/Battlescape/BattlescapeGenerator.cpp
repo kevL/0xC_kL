@@ -123,36 +123,29 @@ void BattlescapeGenerator::init() // private.
 {
 	_blocks.clear();
 	_landingzone.clear();
-	_segments.clear();
+	_seg.clear();
 	_drillMap.clear();
 
 	_blocks.resize(
-				_mapsize_x / 10,
-				std::vector<MapBlock*>(_mapsize_y / 10));
+			_mapsize_x / 10,
+			std::vector<MapBlock*>(_mapsize_y / 10));
 	_landingzone.resize(
-					_mapsize_x / 10,
-					std::vector<bool>(
-								_mapsize_y / 10,
-								false));
-	_segments.resize(
-				_mapsize_x / 10,
-				std::vector<int>(
-							_mapsize_y / 10,
-							0));
+			_mapsize_x / 10,
+			std::vector<bool>(_mapsize_y / 10, false));
+	_seg.resize(
+			_mapsize_x / 10,
+			std::vector<int>(_mapsize_y / 10, 0));
 	_drillMap.resize(
-				_mapsize_x / 10,
-				std::vector<int>(
-							_mapsize_y / 10,
-							MD_NONE));
+			_mapsize_x / 10,
+			std::vector<int>(_mapsize_y / 10, MD_NONE));
 
 	_blocksLeft = (_mapsize_x / 10) * (_mapsize_y / 10);
-	//Log(LOG_INFO) << "bgen: _blocksLeft = " << _blocksLeft;
 
-	_battleSave->initMap( // creates the tile objects
+	_battleSave->initMap(
 					_mapsize_x,
 					_mapsize_y,
-					_mapsize_z);
-	_battleSave->initUtilities(_res);
+					_mapsize_z);		// creates the tile-parts
+	_battleSave->initUtilities(_res);	// creates Pathfinding and TileEngine.
 }
 
 /**
@@ -2292,7 +2285,7 @@ void BattlescapeGenerator::loadRMP( // private.
 		unitType,
 		nodeRank,
 		ptrlPriority,
-		aLienObject,
+		aLienTarget,
 		spPriority,
 
 		linkId,
@@ -2322,7 +2315,7 @@ void BattlescapeGenerator::loadRMP( // private.
 			unitType		= static_cast<int>(dataArray[19u]); // -> Any=0; Flying=1; Small=2; FlyingLarge=3; Large=4
 			nodeRank		= static_cast<int>(dataArray[20u]);
 			ptrlPriority	= static_cast<int>(dataArray[21u]);
-			aLienObject		= static_cast<int>(dataArray[22u]);
+			aLienTarget		= static_cast<int>(dataArray[22u]);
 			spPriority		= static_cast<int>(dataArray[23u]);
 
 			// TYPE_FLYING		= 0x01 -> ref Savegame/Node.h
@@ -2334,7 +2327,7 @@ void BattlescapeGenerator::loadRMP( // private.
 			else if (unitType == 4) unitType = 8;
 
 			if (_battleSave->getTacType() != TCT_BASEDEFENSE)
-				aLienObject = 0; // ensure these get zero'd for nonBaseDefense battles; cf. Node::isTarget()
+				aLienTarget = 0; // ensure these get zero'd for nonBaseDefense battles; cf. Node::isAlienTarget()
 
 			node = new Node(
 						_battleSave->getNodes()->size(),
@@ -2343,7 +2336,7 @@ void BattlescapeGenerator::loadRMP( // private.
 						unitType,
 						nodeRank,
 						ptrlPriority,
-						aLienObject,
+						aLienTarget,
 						spPriority);
 
 			for (size_t // create nodeLinks ->
@@ -2362,7 +2355,7 @@ void BattlescapeGenerator::loadRMP( // private.
 									// 252 -> -4 = south
 									// 251 -> -5 = west
 
-				std::vector<int>* nodeLinks = node->getNodeLinks();
+				std::vector<int>* const nodeLinks (node->getNodeLinks());
 				if (std::find(
 							nodeLinks->rbegin(),
 							nodeLinks->rend(),
@@ -2886,7 +2879,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 		}
 
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != ufoBlocks.size();
 				++i)
 		{
@@ -2910,8 +2903,8 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 						k != ufoBlocks[i]->getSizeY() / 10;
 						++k)
 				{
-					_segments[static_cast<size_t>(_ufoPos[i].x) + static_cast<size_t>(j)]
-							 [static_cast<size_t>(_ufoPos[i].y) + static_cast<size_t>(k)] = Node::SEG_UFO;
+					_seg[static_cast<size_t>(_ufoPos[i].x) + static_cast<size_t>(j)]
+						[static_cast<size_t>(_ufoPos[i].y) + static_cast<size_t>(k)] = Node::SEG_UFO;
 				}
 			}
 		}
@@ -2956,8 +2949,8 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 					j != craftBlock->getSizeY() / 10;
 					++j)
 			{
-				_segments[static_cast<size_t>(_craftPos.x) + static_cast<size_t>(i)]
-						 [static_cast<size_t>(_craftPos.y) + static_cast<size_t>(j)] = Node::SEG_CRAFT;
+				_seg[static_cast<size_t>(_craftPos.x) + static_cast<size_t>(i)]
+					[static_cast<size_t>(_craftPos.y) + static_cast<size_t>(j)] = Node::SEG_CRAFT;
 			}
 		}
 
@@ -3172,19 +3165,19 @@ void BattlescapeGenerator::placeXcomProperty() // private.
 		ySize (static_cast<size_t>(_mapsize_y / 10));
 
 	for (size_t
-			y = 0;
+			y = 0u;
 			y != ySize;
 			++y)
 	{
 		for (size_t
-				x = 0;
+				x = 0u;
 				x != xSize;
 				++x)
 		{
 			if (_blocks[x][y]->isInGroup(MBT_START) == true)
 				_battleSave->getStorageSpace().push_back(Position(
-																x * 10 + 5,
-																y * 10 + 5,
+																static_cast<int>(x) * 10 + 5,
+																static_cast<int>(y) * 10 + 5,
 																1));
 		}
 	}
@@ -3221,7 +3214,7 @@ void BattlescapeGenerator::clearModule( // private.
 			{
 				tile = _battleSave->getTile(Position(dx,dy,z));
 				for (size_t
-						partType = 0;
+						partType = 0u;
 						partType != Tile::PARTS_TILE;
 						++partType)
 				{
@@ -3237,23 +3230,23 @@ void BattlescapeGenerator::clearModule( // private.
  */
 void BattlescapeGenerator::loadNodes() // private.
 {
-	int segment (0);
+	int segOffset (0);
 
 	const size_t
 		blocks_x (static_cast<size_t>(_mapsize_x / 10)),
 		blocks_y (static_cast<size_t>(_mapsize_y / 10));
 
 	for (size_t
-			y = 0;
+			y = 0u;
 			y != blocks_y;
 			++y)
 	{
 		for (size_t
-				x = 0;
+				x = 0u;
 				x != blocks_x;
 				++x)
 		{
-			_segments[x][y] = segment;
+			_seg[x][y] = segOffset;
 
 			if (_blocks[x][y] != nullptr && _blocks[x][y] != _testBlock)
 			{
@@ -3264,7 +3257,7 @@ void BattlescapeGenerator::loadNodes() // private.
 						_blocks[x][y],
 						static_cast<int>(x) * 10,
 						static_cast<int>(y) * 10,
-						segment++);
+						segOffset++);
 				}
 			}
 		}
@@ -3273,45 +3266,45 @@ void BattlescapeGenerator::loadNodes() // private.
 
 /**
  * Attaches all the nodes together in an intimate web of C++.
+ * @note I'd suppose this attaches the N/E/S/W node-links to other MapBlocks.
  */
 void BattlescapeGenerator::attachNodeLinks() // private.
 {
+	const int
+		borDirs[4u]			{-2,-3,-4,-5},
+		borDirs_invert[4u]	{-4,-5,-2,-3};
+	int borSegs[4u];
+
+	size_t
+		x,y;
+
 	for (std::vector<Node*>::const_iterator
 			i = _battleSave->getNodes()->begin();
 			i != _battleSave->getNodes()->end();
 			++i)
 	{
-		const size_t
-			segX ((*i)->getPosition().x / 10),
-			segY ((*i)->getPosition().y / 10);
-		const int
-			borDirs[4]			{-2,-3,-4,-5},
-			borDirs_invert[4]	{-4,-5,-2,-3};
-		int borSegs[4];
+		x = static_cast<size_t>((*i)->getPosition().x / 10),
+		y = static_cast<size_t>((*i)->getPosition().y / 10);
 
-		if (static_cast<int>(segX) == (_mapsize_x / 10) - 1)
-			borSegs[0] = -1;
+		if (static_cast<int>(x) == (_mapsize_x / 10) - 1)
+			borSegs[0u] = -1;
 		else
-			borSegs[0] = _segments[segX + 1]
-								  [segY];
+			borSegs[0u] = _seg[x + 1][y];
 
-		if (static_cast<int>(segY) == (_mapsize_y / 10) - 1)
-			borSegs[1] = -1;
+		if (static_cast<int>(y) == (_mapsize_y / 10) - 1)
+			borSegs[1u] = -1;
 		else
-			borSegs[1] = _segments[segX]
-								  [segY + 1];
+			borSegs[1u] = _seg[x][y + 1];
 
-		if (segX == 0)
-			borSegs[2] = -1;
+		if (x == 0u)
+			borSegs[2u] = -1;
 		else
-			borSegs[2] = _segments[segX - 1]
-								  [segY];
+			borSegs[2u] = _seg[x - 1][y];
 
-		if (segY == 0)
-			borSegs[3] = -1;
+		if (y == 0u)
+			borSegs[3u] = -1;
 		else
-			borSegs[3] = _segments[segX]
-								  [segY - 1];
+			borSegs[3u] = _seg[x][y - 1];
 
 		for (std::vector<int>::iterator
 				j = (*i)->getNodeLinks()->begin();
@@ -3319,8 +3312,8 @@ void BattlescapeGenerator::attachNodeLinks() // private.
 				++j)
 		{
 			for (size_t
-					dir = 0;
-					dir != 4;
+					dir = 0u;
+					dir != 4u;
 					++dir)
 			{
 				if (*j == borDirs[dir])

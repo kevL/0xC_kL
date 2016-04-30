@@ -124,8 +124,8 @@ private:
 		int getNodeType() const;
 
 		/// Gets the 'flags' variable which is really the patrol-desirability value.
-		int getPatrol()
-		{	return _patrol; }
+		int getPatrol() const
+		{ return _patrol; }
 
 		// kL_note: in SavedBattleGame::getPatrolNodes() I changed less-than to greater-than ...
 		// wonder if that matters here. So: REVERTED.
@@ -146,7 +146,7 @@ private:
 		void freeNode();
 
 		/// Gets if the Node is suitable for an aLien to target an xCom Base's targets/objective-parts.
-		bool isTarget() const;
+		bool isAlienTarget() const;
 };
 
 }

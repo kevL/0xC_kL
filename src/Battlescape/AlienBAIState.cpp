@@ -450,7 +450,7 @@ void AlienBAIState::setupPatrol() // private.
 	if (_battleSave->getTacType() == TCT_BASEDEFENSE	// aLiens attacking XCOM Base are always on scout.
 		&& _unit->getArmor()->getSize() == 1)			// In base defense missions the non-large aliens walk towards target nodes - or
 	{													// once there shoot objects thereabouts so scan the room for objects to destroy.
-		if (_startNode->isTarget() == true
+		if (_startNode->isAlienTarget() == true
 			&& _attackAction->weapon != nullptr
 			&& _attackAction->weapon->getAmmoItem() != nullptr
 			&& _attackAction->weapon->getAmmoItem()->getRules()->getDamageType() != DT_HE
@@ -500,7 +500,7 @@ void AlienBAIState::setupPatrol() // private.
 					i != _battleSave->getNodes()->end();
 					++i)
 			{
-				if ((*i)->isTarget() == true && (*i)->isAllocated() == false)
+				if ((*i)->isAlienTarget() == true && (*i)->isAllocated() == false)
 				{
 					distTest = TileEngine::distSqr(
 												_unit->getPosition(),

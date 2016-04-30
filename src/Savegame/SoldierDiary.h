@@ -226,9 +226,9 @@ private:
 		void awardHonoraryMedal();
 
 		/// Gets the mission-ID list.
-		std::vector<int>& getMissionIdList();
+		const std::vector<int>& getMissionIdList() const;
 		/// Gets the kills-list.
-		std::vector<BattleUnitKill*>& getKills();
+		const std::vector<BattleUnitKill*>& getKills() const;
 };
 
 }

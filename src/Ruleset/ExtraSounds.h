@@ -53,7 +53,7 @@ private:
 		std::map<int, std::string>* getSounds();
 
 		/// Gets the mod index for this external sound set.
-		int getModIndex();
+		int getModIndex() const;
 };
 
 }

@@ -63,7 +63,7 @@ std::map<int, std::string>* ExtraSounds::getSounds()
  * Gets the mod index for this external sounds set.
  * @return, the mod index for this external sounds set
  */
-int ExtraSounds::getModIndex()
+int ExtraSounds::getModIndex() const
 {
 	return _modIndex;
 }

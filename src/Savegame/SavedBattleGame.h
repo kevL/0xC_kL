@@ -411,10 +411,10 @@ private:
 		void blackTiles();
 
 		/// Gets an 11x11 grid of Positions (-10 to +10 x/y).
-		const std::vector<Position> getTileSearch();
+		const std::vector<Position>& getTileSearch() const;
 
 		/// Checks if the AI has engaged cheat-mode.
-		bool isCheating();
+		bool isCheating() const;
 
 		/// Gets a reference to xCom's base-modules.
 		std::vector<std::vector<std::pair<int, int>>>& baseDestruct();

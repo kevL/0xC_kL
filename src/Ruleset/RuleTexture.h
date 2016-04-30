@@ -44,10 +44,10 @@ struct TextureDetail
 	TextureDetail()
 		:
 			weight(10),
-			lonMin(0.),
+			lonMin(  0.),
 			lonMax(360.),
 			latMin(-90.),
-			latMax(90.)
+			latMax( 90.)
 	{}
 };
 
@@ -76,10 +76,10 @@ private:
 		void load(const YAML::Node& node);
 
 		/// Gets the list of terrain criteria.
-		std::vector<TextureDetail>* getTextureDetail();
+		const std::vector<TextureDetail>* getTextureDetail() const;
 
 		/// Gets the alien deployments for this Texture.
-		const std::map<std::string, int>& getTextureDeployments();
+		const std::map<std::string, int>& getTextureDeployments() const;
 
 		/// Gets a random deployment.
 		std::string getTextureDeployment() const;

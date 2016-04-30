@@ -169,7 +169,7 @@ private:
 			double lon,
 			double radius,
 			int segments,
-			Uint8 color = 0);
+			Uint8 color = 0u);
 	/// Special "transparent" line.
 	void XuLine(
 			Surface* surface,
@@ -179,7 +179,7 @@ private:
 			double x2,
 			double y2,
 			int shade,
-			Uint8 color = 0);
+			Uint8 color = 0u);
 	// Draws a "VH" line.
 	void drawVHLine(
 			Surface* surface,
@@ -187,7 +187,7 @@ private:
 			double lat1,
 			double lon2,
 			double lat2,
-			Uint8 color = 0);
+			Uint8 color = 0u);
 	/// Draws a flight path.
 	void drawPath(
 			Surface* surface,

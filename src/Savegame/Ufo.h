@@ -92,160 +92,160 @@ private:
 
 
 	public:
-		/// Creates a UFO of the specified type.
+		/// Creates a Ufo of the specified type.
 		explicit Ufo(const RuleUfo* const ufoRule);
-		/// Cleans up the UFO.
+		/// Cleans up the Ufo.
 		~Ufo();
 
-		/// Loads the UFO from YAML.
+		/// Loads the Ufo from YAML.
 		using MovingTarget::load;
 		void load(
 				const YAML::Node& node,
 				const Ruleset& rules,
 				SavedGame& game);
-		/// Saves the UFO to YAML.
+		/// Saves the Ufo to YAML.
 		using MovingTarget::save;
 		YAML::Node save(bool skirmish) const;
-		/// Saves the UFO's unique-ID to YAML.
+		/// Saves the Ufo's unique-ID to YAML.
 		YAML::Node saveId() const override;
 
-		/// Gets the UFO's ruleset.
+		/// Gets the Ufo's ruleset.
 		const RuleUfo* getRules() const;
-		/// Sets the UFO's ruleset.
+		/// Sets the Ufo's ruleset.
 		void changeRules(const RuleUfo* const ufoRule);
 
-		/// Handles UFO logic.
+		/// Handles Ufo logic.
 		void think();
 
-		/// Sets the UFO's ID.
+		/// Sets the Ufo's ID.
 		void setId(int id);
-		/// Gets the UFO's ID.
+		/// Gets the Ufo's ID.
 		int getId() const;
-		/// Gets the UFO's name.
+		/// Gets the Ufo's name.
 		std::wstring getName(const Language* const lang) const override;
 
-		/// Gets the UFO's marker.
+		/// Gets the Ufo's marker.
 		int getMarker() const override;
 
-		/// Sets the UFO's amount of damage.
+		/// Sets the Ufo's amount of damage.
 		void setUfoDamage(int damage);
-		/// Gets the UFO's amount of damage.
+		/// Gets the Ufo's amount of damage.
 		int getUfoDamage() const;
-		/// Gets the UFO's percentage of damage.
+		/// Gets the Ufo's percentage of damage.
 		int getUfoDamagePct() const;
 
-		/// Sets the UFO's detection status.
+		/// Sets the Ufo's detection status.
 		void setDetected(bool detected = true);
-		/// Gets the UFO's detection status.
+		/// Gets the Ufo's detection status.
 		bool getDetected() const;
-		/// Sets the UFO's hyper detection status.
+		/// Sets the Ufo's hyper detection status.
 		void setHyperDetected(bool hyperdetected = true);
-		/// Gets the UFO's hyper detection status.
+		/// Gets the Ufo's hyper detection status.
 		bool getHyperDetected() const;
 
-		/// Sets the UFO's seconds left on the ground.
+		/// Sets the Ufo's seconds left on the ground.
 		void setSecondsLeft(int sec);
-		/// Gets the UFO's seconds left on the ground.
+		/// Gets the Ufo's seconds left on the ground.
 		int getSecondsLeft() const;
 
-		/// Sets the UFO's altitude and status.
+		/// Sets the Ufo's altitude and status.
 		void setAltitude(const std::string& altitude);
-		/// Gets the UFO's altitude.
+		/// Gets the Ufo's altitude.
 		std::string getAltitude() const;
-		/// Gets the UFO's direction.
+		/// Gets the Ufo's direction.
 		std::string getDirection() const;
 
-		/// Gets the UFO status.
+		/// Gets the Ufo status.
 		UfoStatus getUfoStatus() const
 		{ return _status; }
-		/// Set the UFO's status.
+		/// Set the Ufo's status.
 		void setUfoStatus(UfoStatus status)
 		{ _status = status; }
 
-		/// Gets if the UFO has crashed.
+		/// Gets if the Ufo has crashed.
 		bool isCrashed() const;
-		/// Gets if the UFO has been destroyed.
+		/// Gets if the Ufo has been destroyed.
 		bool isDestroyed() const;
 
-		/// Sets the UFO's battlescape status.
+		/// Sets the Ufo's battlescape status.
 		void setTactical(bool tactical = true);
-		/// Gets if the UFO is in battlescape.
+		/// Gets if the Ufo is in battlescape.
 		bool getTactical() const;
 
-		/// Gets the UFO's alien race.
+		/// Gets the Ufo's alien-race.
 		const std::string& getAlienRace() const;
 
-		/// Sets the ID of the Craft that shot down the UFO.
+		/// Sets the ID of the Craft that shot down the Ufo.
 		void setShotDownByCraftId(const CraftId& craftId);
-		/// Gets the ID of the Craft that shot down the UFO.
+		/// Gets the ID of the Craft that shot down the Ufo.
 		CraftId getShotDownByCraftId() const;
 
 		/// Gets the scare-factor of UFOs for activity on the Graphs.
 		int getVictoryPoints() const;
 
-		/// Gets the UFO's visibility.
+		/// Gets the Ufo's visibility.
 		int getVisibility() const;
-		/// Gets a UFO's detect-xCom-base ability.
+		/// Gets a Ufo's detect-xCom-base ability.
 		int getDetectors() const;
 
-		/// Sets the UFO's mission information.
+		/// Sets the Ufo's mission information.
 		void setUfoMissionInfo(
 				AlienMission* const mission,
 				const UfoTrajectory* const trajectory);
-		/// Gets the UFO's Mission type.
+		/// Gets the Ufo's Mission type.
 		const std::string& getUfoMissionType() const;
-		/// Gets the UFO's mission object.
+		/// Gets the Ufo's mission object.
 		AlienMission* getAlienMission() const
 		{ return _mission; }
 
-		/// Gets the UFO's progress on the trajectory track.
+		/// Gets the Ufo's progress on the trajectory track.
 		size_t getTrajectoryPoint() const
 		{ return _trajectoryPoint; }
-		/// Sets the UFO's progress on the trajectory track.
+		/// Sets the Ufo's progress on the trajectory track.
 		void setTrajectoryPoint(size_t pt)
 		{ _trajectoryPoint = pt; }
-		/// Gets the UFO's trajectory.
+		/// Gets the Ufo's trajectory.
 		const UfoTrajectory& getTrajectory() const
 		{ return *_trajectory; }
 
-		/// Sets the UFO's destination.
+		/// Sets the Ufo's destination.
 		void setDestination(Target* const dest = nullptr) override;
 
-		/// Sets the interceptor engaging this Ufo.
+		/// Sets the interceptor engaging the Ufo.
 		void setShootingAt(const size_t target);
-		/// Gets the interceptor engaging this Ufo.
+		/// Gets the interceptor engaging the Ufo.
 		size_t getShootingAt() const;
 
-		/// Sets the UFO's landing site ID.
+		/// Sets the Ufo's landing site ID.
 		void setLandId(int id);
-		/// Gets the UFO's landing site ID.
+		/// Gets the Ufo's landing site ID.
 		int getLandId() const;
-		/// Sets the UFO's crash site ID.
+		/// Sets the Ufo's crash site ID.
 		void setCrashId(int id);
-		/// Gets the UFO's crash site ID.
+		/// Gets the Ufo's crash site ID.
 		int getCrashId() const;
 
-		/// Sets the UFO's hit frame.
+		/// Sets the Ufo's hit frame.
 		void setHitFrame(int frame);
-		/// Gets the UFO's hit frame.
+		/// Gets the Ufo's hit frame.
 		int getHitFrame() const;
 
-		/// Sets the time left before this Ufo can fire in a Dogfight.
+		/// Sets the time left before the Ufo can fire in a Dogfight.
 		void setFireCountdown(int timeLeft);
-		/// Gets the time left before this Ufo can fire in a Dogfight.
+		/// Gets the time left before the Ufo can fire in a Dogfight.
 		int getFireCountdown() const;
-		/// Sets the time left before this Ufo attempts to escape a Dogfight.
+		/// Sets the time left before the Ufo attempts to escape a Dogfight.
 		void setEscapeCountdown(int timeLeft);
-		/// Gets the time left before this Ufo attempts to escape a Dogfight.
+		/// Gets the time left before the Ufo attempts to escape a Dogfight.
 		int getEscapeCountdown() const;
-		/// Sets whether or not this Ufo has had Dogfight info processed.
+		/// Sets whether or not the Ufo has had Dogfight info processed.
 		void setTimerTicked(bool done = true);
-		/// Gets whether or not this Ufo has had Dogfight info processed.
+		/// Gets whether or not the Ufo has had Dogfight info processed.
 		bool getTimerTicked() const;
 
-		/// Sets a crashed or landed UFO's terrainType.
+		/// Sets a crashed or landed Ufo's terrainType.
 		void setUfoTerrainType(const std::string& terrainType = "");
-		/// Gets a crashed or landed UFO's terrainType.
+		/// Gets a crashed or landed Ufo's terrainType.
 		std::string getUfoTerrainType() const;
 };
 

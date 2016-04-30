@@ -74,9 +74,9 @@ BattleUnit::BattleUnit(
 		_battleGame(nullptr),
 		_turretType(TRT_NONE),
 		_tile(nullptr),
-		_pos(Position()),
-		_posStart(Position()),
-		_posStop(Position()),
+//		_pos(Position()),
+//		_posStart(Position()),
+//		_posStop(Position()),
 		_dir(0),
 		_dirTo(0),
 		_dirTurret(0),
@@ -246,9 +246,9 @@ BattleUnit::BattleUnit(
 		_battleGame(battleGame),
 		_rankInt(5), // aLien soldier, this includes Civies.
 		_turretType(TRT_NONE),
-		_pos(Position()),
-		_posStart(Position()),
-		_posStop(Position()),
+//		_pos(Position()),
+//		_posStart(Position()),
+//		_posStop(Position()),
 		_tile(nullptr),
 		_dir(0),
 		_dirTo(0),
@@ -3404,7 +3404,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 		if (_expBravery > RNG::generate(0,8))
 		{
 			stats->bravery += 10;
-			statIncs[0] = 10;
+			statIncs[0u] = 10;
 		}
 	}
 
@@ -3414,7 +3414,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 	{
 		inc = improveStat(_expFiring);
 		stats->firing += inc;
-		statIncs[1] = inc;
+		statIncs[1u] = inc;
 
 		// add a touch of reactions if good firing .....
 		if (_expFiring - 2 > 0
@@ -3429,7 +3429,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 	{
 		inc = improveStat(_expReactions);
 		stats->reactions += inc;
-		statIncs[2] = inc;
+		statIncs[2u] = inc;
 	}
 
 	if (_expMelee != 0
@@ -3437,7 +3437,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 	{
 		inc = improveStat(_expMelee);
 		stats->melee += inc;
-		statIncs[3] = inc;
+		statIncs[3u] = inc;
 	}
 
 	if (_expPsiSkill != 0
@@ -3445,7 +3445,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 	{
 		inc = improveStat(_expPsiSkill);
 		stats->psiSkill += inc;
-		statIncs[4] = inc;
+		statIncs[4u] = inc;
 	}
 
 	if ((_expPsiStrength /= 3) != 0
@@ -3453,7 +3453,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 	{
 		inc = improveStat(_expPsiStrength);
 		stats->psiStrength += inc;
-		statIncs[5] = inc;
+		statIncs[5u] = inc;
 	}
 
 	if (_expThrowing != 0
@@ -3461,7 +3461,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 	{
 		inc = improveStat(_expThrowing);
 		stats->throwing += inc;
-		statIncs[6] = inc;
+		statIncs[6u] = inc;
 	}
 
 
@@ -3484,7 +3484,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 			{
 				inc = RNG::generate(0, (delta / 10) + 2) - 1;
 				stats->tu += inc;
-				statIncs[7] = inc;
+				statIncs[7u] = inc;
 			}
 
 			delta = caps.health - stats->health;
@@ -3492,7 +3492,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 			{
 				inc = RNG::generate(0, (delta / 10) + 2) - 1;
 				stats->health += inc;
-				statIncs[8] = inc;
+				statIncs[8u] = inc;
 			}
 
 			delta = caps.strength - stats->strength;
@@ -3500,7 +3500,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 			{
 				inc = RNG::generate(0, (delta / 10) + 2) - 1;
 				stats->strength += inc;
-				statIncs[9] = inc;
+				statIncs[9u] = inc;
 			}
 
 			delta = caps.stamina - stats->stamina;
@@ -3508,7 +3508,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 			{
 				inc = RNG::generate(0, (delta / 10) + 2) - 1;
 				stats->stamina += inc;
-				statIncs[10] = inc;
+				statIncs[10u] = inc;
 			}
 		}
 	}
@@ -3521,7 +3521,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
  * @param exp - experience count from battle mission
  * @return, stat increase
  */
-int BattleUnit::improveStat(int xp) // private.
+int BattleUnit::improveStat(int xp) const // private.
 {
 	int tier;
 
@@ -3530,7 +3530,7 @@ int BattleUnit::improveStat(int xp) // private.
 	else if (xp >  2) tier = 2;
 	else			  tier = 1;
 
-	return (tier / 2 + RNG::generate(0, tier));
+	return ((tier >> 1u) + RNG::generate(0, tier));
 }
 
 /**

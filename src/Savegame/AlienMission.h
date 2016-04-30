@@ -94,7 +94,7 @@ private:
 	/// Handles Points for mission successes.
 	void addScore(
 			const double lon,
-			const double lat);
+			const double lat) const;
 
 
 	public:
@@ -150,7 +150,7 @@ private:
 		/// Gets if this mission over.
 		bool isOver() const;
 		/// Initializes with values from rules.
-		void start(size_t countdown = 0);
+		void start(size_t countdown = 0u);
 
 		/// Handles UFO spawning for the mission.
 		void think(

@@ -100,7 +100,7 @@ private:
 		/// Gets a race based on the game-time and the racial distribution.
 		std::string generateRace(size_t monthsPassed) const;
 		/// Gets the most likely race based on the game-time and the racial distribution.
-//		std::string getTopRace(const size_t monthsPassed) const;
+//		std::string getTopRace(size_t monthsPassed) const;
 
 		/// Gets the mission's type-ID.
 		const std::string& getType() const
@@ -128,7 +128,7 @@ private:
 		{ return _specialZone; }
 
 		/// Gets the chances of this mission based on the game-time.
-		int getWeight(const size_t monthsPassed) const;
+		int getWeight(size_t monthsPassed) const;
 
 		/// Gets the basic odds of this mission spawning a retaliation mission.
 		int getRetaliation() const;

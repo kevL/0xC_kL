@@ -54,8 +54,8 @@ private:
 		_civilianTypes,
 		_musics;
 
-	std::vector<MapBlock*> _mapBlocks;
-	std::vector<MapDataSet*> _mapDataSets;
+	std::vector<MapBlock*> _blocks;
+	std::vector<MapDataSet*> _dataSets;
 
 
 	public:
@@ -73,9 +73,9 @@ private:
 		const std::string& getType() const;
 
 		/// Gets the terrain's mapblocks.
-		const std::vector<MapBlock*>* getMapBlocks();
+		const std::vector<MapBlock*>* getMapBlocks() const;
 		/// Gets the terrain's mapdatafiles.
-		const std::vector<MapDataSet*>* getMapDataSets();
+		const std::vector<MapDataSet*>* getMapDataSets() const;
 
 		/// Gets a random mapblock.
 		MapBlock* getMapBlockRand(

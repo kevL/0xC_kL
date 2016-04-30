@@ -45,7 +45,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a UFO of the specified type.
+ * Creates the Ufo from a specified ufo-rule.
  * @param ufoRule - pointer to RuleUfo
  */
 Ufo::Ufo(const RuleUfo* const ufoRule)
@@ -850,7 +850,7 @@ int Ufo::getEscapeCountdown() const
 }
 
 /**
- * Sets the number of ticks until the ufo fires its weapon.
+ * Sets the number of ticks until this Ufo fires its weapon.
  * @param time - number of ticks until refire
  */
 void Ufo::setFireCountdown(int timeLeft)
@@ -859,7 +859,7 @@ void Ufo::setFireCountdown(int timeLeft)
 }
 
 /**
- * Gets the number of ticks until the ufo is ready to fire.
+ * Gets the number of ticks until this Ufo is ready to fire.
  * @return, ticks until weapon is ready
  */
 int Ufo::getFireCountdown() const
@@ -880,8 +880,9 @@ void Ufo::setTimerTicked(bool done)
 }
 
 /**
- * Gets if the ufo has had its timers decremented on this cycle of interception updates.
- * @return, true if this ufo has already been processed
+ * Gets if this Ufo has had its timers decremented on this cycle of interception
+ * updates.
+ * @return, true if the ufo has already been processed
  */
 bool Ufo::getTimerTicked() const
 {

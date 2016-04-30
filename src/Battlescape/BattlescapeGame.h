@@ -322,7 +322,7 @@ private:
 		void setupSelector();
 
 		/// Determines whether a playable unit is selected.
-		bool playableUnitSelected();
+		bool playableUnitSelected() const;
 
 		/// Handles kneeling and/or standing.
 		bool kneelToggle(BattleUnit* const unit);

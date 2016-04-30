@@ -112,7 +112,7 @@ Node::Node(
 		int destruct,
 		int priority)
 	:
-		_id(id),
+		_id(static_cast<int>(id)),
 		_pos(pos),
 		_segment(segment),
 		_type(type),
@@ -216,7 +216,7 @@ int Node::getSegment() const
 
 /**
  * Gets this Node's linked Nodes for pathing.
- * @return, pointer to a vector of nodeIDs
+ * @return, pointer to a vector of node-IDs
  */
 std::vector<int>* Node::getNodeLinks()
 {
@@ -269,7 +269,7 @@ void Node::freeNode()
  * Gets if this Node is suitable for an aLien to target xCom-base targets/objectives.
  * @return, true if this is a Destroy-XCOM Base node
  */
-bool Node::isTarget() const
+bool Node::isAlienTarget() const
 {
 	return (_destruct != 0);
 }

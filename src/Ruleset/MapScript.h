@@ -182,11 +182,11 @@ private:
 		TunnelData* getTunnelData() const
 		{ return _tunnelData; };
 
-		/// Randomly generate a MapBlock from within either the array of groups or blocks.
-		MapBlock* getNextBlock(RuleTerrain* const terrainRule);
+		/// Randomly generates a MapBlock from within either the array of groups or blocks.
+		MapBlock* getNextBlock(const RuleTerrain* const terrainRule);
 
 		/// Gets the UFO's type (for setUFO).
-		const std::string& getUfoType();
+		const std::string& getUfoType() const;
 };
 
 }

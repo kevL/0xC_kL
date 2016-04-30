@@ -264,7 +264,7 @@ private:
 
 
 	/// Converts an amount of experience to a stat increase.
-	int improveStat(int xp);
+	int improveStat(int xp) const;
 
 	/// Helper function initing recolor vector.
 	void setRecolor(

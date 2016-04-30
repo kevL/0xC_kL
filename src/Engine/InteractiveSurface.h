@@ -72,7 +72,7 @@ private:
 			_release;
 
 		/// Checks if mouse-button is pressed.
-		bool isButtonPressed(Uint8 btn = 0u);
+		bool isButtonPressed(Uint8 btn = 0u) const;
 		/// Checks if mouse-button event handled.
 		virtual bool isButtonHandled(Uint8 btn = 0u);
 		/// Set a mouse-button's internal state.

@@ -47,8 +47,8 @@ RuleTerrain::RuleTerrain(const std::string& type)
 RuleTerrain::~RuleTerrain()
 {
 	for (std::vector<MapBlock*>::const_iterator
-			i = _mapBlocks.begin();
-			i != _mapBlocks.end();
+			i = _blocks.begin();
+			i != _blocks.end();
 			++i)
 		delete *i;
 }
@@ -67,19 +67,19 @@ void RuleTerrain::load(
 
 	if (const YAML::Node& mapDataSets = node["mapDataSets"])
 	{
-		_mapDataSets.clear();
+		_dataSets.clear();
 		for (YAML::const_iterator
 				i = mapDataSets.begin();
 				i != mapDataSets.end();
 				++i)
 		{
-			_mapDataSets.push_back(rules->getMapDataSet(i->as<std::string>()));
+			_dataSets.push_back(rules->getMapDataSet(i->as<std::string>()));
 		}
 	}
 
 	if (const YAML::Node& mapBlocks = node["mapBlocks"])
 	{
-		_mapBlocks.clear();
+		_blocks.clear();
 		for (YAML::const_iterator
 				i = mapBlocks.begin();
 				i != mapBlocks.end();
@@ -87,7 +87,7 @@ void RuleTerrain::load(
 		{
 			MapBlock* const mapBlock (new MapBlock((*i)["type"].as<std::string>()));
 			mapBlock->load(*i);
-			_mapBlocks.push_back(mapBlock);
+			_blocks.push_back(mapBlock);
 		}
 	}
 
@@ -114,18 +114,18 @@ void RuleTerrain::load(
  * Gets the array of MapBlocks.
  * @return, pointer to a vector of pointers as an array of MapBlocks
  */
-const std::vector<MapBlock*>* RuleTerrain::getMapBlocks()
+const std::vector<MapBlock*>* RuleTerrain::getMapBlocks() const
 {
-	return &_mapBlocks;
+	return &_blocks;
 }
 
 /**
  * Gets the array of MapDataSets (MCDs).
  * @return, pointer to a vector of pointers as an array of MapDataSets
  */
-const std::vector<MapDataSet*>* RuleTerrain::getMapDataSets()
+const std::vector<MapDataSet*>* RuleTerrain::getMapDataSets() const
 {
-	return &_mapDataSets;
+	return &_dataSets;
 }
 
 /**
@@ -156,8 +156,8 @@ MapBlock* RuleTerrain::getMapBlockRand(
 	std::vector<MapBlock*> blocks;
 
 	for (std::vector<MapBlock*>::const_iterator
-			i = _mapBlocks.begin();
-			i != _mapBlocks.end();
+			i = _blocks.begin();
+			i != _blocks.end();
 			++i)
 	{
 		//Log(LOG_INFO) << ". try [" << (*i)->getType() << "]";
@@ -181,14 +181,14 @@ MapBlock* RuleTerrain::getMapBlockRand(
 
 /**
  * Gets a MapBlock of a specified type.
- * @param type - reference the type of a MapBlock
+ * @param type - reference to the type of a MapBlock
  * @return, pointer to a MapBlock or nullptr if not found
  */
 MapBlock* RuleTerrain::getMapBlock(const std::string& type) const
 {
 	for (std::vector<MapBlock*>::const_iterator
-			i = _mapBlocks.begin();
-			i != _mapBlocks.end();
+			i = _blocks.begin();
+			i != _blocks.end();
 			++i)
 	{
 		if ((*i)->getType() == type)
@@ -207,12 +207,12 @@ MapData* RuleTerrain::getMapData(
 		unsigned int* id,
 		int* mapDataSetId) const
 {
-	MapDataSet* dataSet (nullptr);
+	MapDataSet* dataSet;
 
-	std::vector<MapDataSet*>::const_iterator pDataSet (_mapDataSets.begin());
+	std::vector<MapDataSet*>::const_iterator pDataSet (_dataSets.begin());
 	for (
 			;
-			pDataSet != _mapDataSets.end();
+			pDataSet != _dataSets.end();
 			++pDataSet)
 	{
 		dataSet = *pDataSet;
@@ -224,12 +224,10 @@ MapData* RuleTerrain::getMapData(
 		++(*mapDataSetId);
 	}
 
-	if (pDataSet == _mapDataSets.end())
+	if (pDataSet == _dataSets.end()) // Set this broken tile-reference to BLANKS 0.
 	{
-		// oops! someone at microprose made an error in the map!
-		// set this broken tile reference to BLANKS 0.
-		dataSet = _mapDataSets.front();
-		*id = 0;
+		dataSet = _dataSets.front();
+		*id = 0u;
 		*mapDataSetId = 0;
 	}
 

@@ -175,7 +175,7 @@ private:
 		/// Checks if the movement is valid, for the up/down button.
 		UpDownCheck validateUpDown(
 				const Position& posStart,
-				const int dir);
+				const int dir) const;
 //				const bool launch = false);
 
 		/// Previews the path.
@@ -199,7 +199,7 @@ private:
 		int getOpenDoor() const;
 
 		/// Checks whether a path is ready and returns the direction.
-		int getStartDirection();
+		int getStartDirection() const;
 		/// Dequeues a path and returns the direction.
 		int dequeuePath();
 		/// Gets the path.
@@ -209,7 +209,7 @@ private:
 
 		/// Converts direction to a unit-vector.
 		static void directionToVector(
-				const int dir,
+				int dir,
 				Position* const posVect);
 		/// Converts a unit-vector to a direction.
 		static void vectorToDirection(

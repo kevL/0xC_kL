@@ -703,7 +703,7 @@ bool Projectile::verifyTarget( // private.
 	//Log(LOG_INFO) << ". isTrj = " << (int)(_trj.empty() == false);
 	if (voxelType != VOXEL_EMPTY && _trj.empty() == false)
 	{
-		Position posTest (Position::toTileSpace(_trj.at(0)));
+		Position posTest (Position::toTileSpace(_trj.at(0u)));
 		//Log(LOG_INFO) << ". posTest " << posTest << " posTarget" << _action.target;
 
 //		if (voxelType == VOXEL_UNIT) // <- moved below ->
@@ -773,7 +773,6 @@ bool Projectile::traceProjectile()
 			return false;
 		}
 	}
-
 	return true;
 }
 
@@ -782,7 +781,7 @@ bool Projectile::traceProjectile()
  */
 void Projectile::skipTrajectory()
 {
-	_trjId = _trj.size() - 1;
+	_trjId = _trj.size() - 1u;
 }
 
 /**
@@ -797,7 +796,7 @@ Position Projectile::getPosition(int offsetId) const
 	offsetId = std::max(0,
 						std::min(
 							static_cast<int>(_trjId) + offsetId,
-							static_cast<int>(_trj.size() - 1)));
+							static_cast<int>(_trj.size() - 1u)));
 
 	return _trj.at(static_cast<size_t>(offsetId));
 }
@@ -865,11 +864,11 @@ Position Projectile::getStrikeVector() const
 	Position posVect; // inits to Position(0,0,0)
 
 	const size_t trjSize (_trj.size());
-	if (trjSize > 2)
+	if (trjSize > 2u)
 	{
 		const Position
 			posFinal (_trj.back()),
-			posPre (_trj.at(trjSize - 3));
+			posPre (_trj.at(trjSize - 3u));
 
 		int
 			x,y;
@@ -958,7 +957,7 @@ void Projectile::storeProjectileDirection() const
  * to a tile position - this is a workaround for large units.
  * @return, origin as a tile position
  *
-Position Projectile::getOrigin()
+Position Projectile::getOrigin() const
 {
 	return _trj.front() / Position(16,16,24); // returning this by const& might be okay due to 'extended temporaries' in C++
 } */

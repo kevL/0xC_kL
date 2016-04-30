@@ -30,7 +30,7 @@
 namespace OpenXcom
 {
 
-enum MapBlockType // These define 'groups'
+enum MapBlockType // These define 'groups' ... more or less.
 {
 	MBT_UNDEFINED = -1,	// -1
 	MBT_DEFAULT,		//  0
@@ -48,7 +48,7 @@ class Position;
 
 
 /**
- * Represents a Terrain Map Block.
+ * Represents a battlefield MapBlock.
  * @note It contains constant info about this MapBlock, like its type,
  * dimensions, attributes .... Map blocks are stored in RuleTerrain objects.
  * @sa http://www.ufopaedia.org/index.php?title=MAPS_Terrain
@@ -82,21 +82,21 @@ private:
 		/// Gets the MapBlock's type - used for MAP generation.
 		const std::string& getType() const;
 
-		/// Gets the MapBlock's x size.
+		/// Gets the MapBlock's x-size.
 		int getSizeX() const;
-		/// Gets the MapBlock's y size.
+		/// Gets the MapBlock's y-size.
 		int getSizeY() const;
-		/// Gets the MapBlock's z size.
+		/// Gets the MapBlock's z-size.
 		int getSizeZ() const;
-		/// Sets the MapBlock's z size.
+		/// Sets the MapBlock's z-size.
 		void setSizeZ(int size_z);
 
-		/// Gets if this MapBlock is from the group specified.
+		/// Gets if the MapBlock is from the group specified.
 		bool isInGroup(int group) const;
-		/// Gets if this floor should be revealed or not.
+		/// Gets if the MapBlock's floor-tiles should be revealed or not.
 		bool isFloorRevealed(int reveal) const;
 
-		/// Gets the layout for any items that belong in this map block.
+		/// Gets the layout for any items that belong in the MapBlock.
 		std::map<std::string, std::vector<Position>>* getItems();
 };
 

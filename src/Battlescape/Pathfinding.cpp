@@ -1948,7 +1948,7 @@ bool Pathfinding::canFallDown(const Tile* const tile) const // private
  */
 UpDownCheck Pathfinding::validateUpDown(
 		const Position& posStart,
-		const int dir)
+		const int dir) const
 //		const bool launch)	// <- not so sure this is needed.
 {							// ie, AI Blaster Launches have found holes in floor just fine so far.
 	Position posStop;
@@ -1957,7 +1957,7 @@ UpDownCheck Pathfinding::validateUpDown(
 
 	const Tile
 		* const startTile (_battleSave->getTile(posStart)),
-		* const stopTile (_battleSave->getTile(posStop));
+		* const stopTile  (_battleSave->getTile(posStop));
 
 	if (stopTile == nullptr) return FLY_BLOCKED;
 
@@ -2059,7 +2059,7 @@ int Pathfinding::getOpenDoor() const
  * Checks whether a path is ready and returns the first direction.
  * @return, direction where the unit needs to go next, -1 if it's the end of the path
  */
-int Pathfinding::getStartDirection()
+int Pathfinding::getStartDirection() const
 {
 	if (_path.empty() == false)
 		return _path.back();
@@ -2107,13 +2107,13 @@ std::vector<int> Pathfinding::copyPath() const
  * @param posVect	- pointer to a Position
  */
 void Pathfinding::directionToVector( // static.
-		const int dir,
+		int dir,
 		Position* const posVect)
 {
 	static const int
-		x[10] { 0, 1, 1, 1, 0,-1,-1,-1, 0, 0},
-		y[10] {-1,-1, 0, 1, 1, 1, 0,-1, 0, 0},
-		z[10] { 0, 0, 0, 0, 0, 0, 0, 0, 1,-1};
+		x[10u] { 0, 1, 1, 1, 0,-1,-1,-1, 0, 0},
+		y[10u] {-1,-1, 0, 1, 1, 1, 0,-1, 0, 0},
+		z[10u] { 0, 0, 0, 0, 0, 0, 0, 0, 1,-1};
 
 	posVect->x = x[dir];
 	posVect->y = y[dir];
@@ -2131,12 +2131,12 @@ void Pathfinding::vectorToDirection( // static.
 		int& dir)
 {
 	static const int
-		x[8] { 0, 1, 1, 1, 0,-1,-1,-1},
-		y[8] {-1,-1, 0, 1, 1, 1, 0,-1};
+		x[8u] { 0, 1, 1, 1, 0,-1,-1,-1},
+		y[8u] {-1,-1, 0, 1, 1, 1, 0,-1};
 
 	for (size_t
-			i = 0;
-			i != 8;
+			i = 0u;
+			i != 8u;
 			++i)
 	{
 		if (   x[i] == posVect.x

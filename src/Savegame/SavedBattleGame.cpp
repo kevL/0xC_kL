@@ -2630,7 +2630,7 @@ void SavedBattleGame::blackTiles()
  * Gets an 11x11 grid of positions (-10 to +10 x/y).
  * @return, the tilesearch vector for use in AI functions
  */
-const std::vector<Position> SavedBattleGame::getTileSearch()
+const std::vector<Position>& SavedBattleGame::getTileSearch() const
 {
 	return _tileSearch;
 }
@@ -2639,7 +2639,7 @@ const std::vector<Position> SavedBattleGame::getTileSearch()
  * Gets if the AI has started to cheat.
  * @return, true if AI is cheating
  */
-bool SavedBattleGame::isCheating()
+bool SavedBattleGame::isCheating() const
 {
 	return _cheatAI;
 }

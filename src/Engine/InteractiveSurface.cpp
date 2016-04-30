@@ -45,10 +45,10 @@ InteractiveSurface::InteractiveSurface(
 			width,
 			height,
 			x,y),
-		_buttonsPressed(0),
-		_in(0),
-		_over(0),
-		_out(0),
+		_buttonsPressed(0u),
+		_in(nullptr),
+		_over(nullptr),
+		_out(nullptr),
 		_isHovered(false),
 		_isFocused(true),
 		_listButton(false)
@@ -64,10 +64,10 @@ InteractiveSurface::~InteractiveSurface() // virtual
  * Checks if a button has been pressed.
  * @param btn - an SDL-button identifier (default 0)
  */
-bool InteractiveSurface::isButtonPressed(Uint8 btn) // virtual.
+bool InteractiveSurface::isButtonPressed(Uint8 btn) const
 {
 	if (btn != 0u)
-		return (_buttonsPressed & SDL_BUTTON(btn)) != 0;
+		return (_buttonsPressed & SDL_BUTTON(btn)) != 0u;
 
 	return (_buttonsPressed != 0u);
 }

@@ -487,7 +487,6 @@ bool TileEngine::calcFov(
 							}
 						}
 					}
-					break;
 			}
 		}
 	}

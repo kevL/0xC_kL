@@ -116,10 +116,10 @@ void MapScript::load(const YAML::Node& node)
 				++i)
 		{
 			SDL_Rect* const rect (new SDL_Rect());
-			rect->x = static_cast<Sint16>((*i)[0].as<int>()); // note: not sure if YAML can do a cast to S/Uint16's
-			rect->y = static_cast<Sint16>((*i)[1].as<int>());
-			rect->w = static_cast<Uint16>((*i)[2].as<int>());
-			rect->h = static_cast<Uint16>((*i)[3].as<int>());
+			rect->x = static_cast<Sint16>((*i)[0u].as<int>()); // note: not sure if YAML can do a cast to S/Uint16's
+			rect->y = static_cast<Sint16>((*i)[1u].as<int>());
+			rect->w = static_cast<Uint16>((*i)[2u].as<int>());
+			rect->h = static_cast<Uint16>((*i)[3u].as<int>());
 
 			_rects.push_back(rect);
 		}
@@ -159,24 +159,19 @@ void MapScript::load(const YAML::Node& node)
 	{
 		if (subnode.Type() == YAML::NodeType::Sequence)
 		{
-			int
-				entry (0),
-				*sizes[3] =
-				{
-					&_sizeX,
-					&_sizeY,
-					&_sizeZ
-				};
+			int* sizes[3u]
+			{
+				&_sizeX,
+				&_sizeY,
+				&_sizeZ
+			};
 
+			size_t j (0u);
 			for (YAML::const_iterator
 					i = subnode.begin();
-					i != subnode.end();
-					++i)
-			{
-				*sizes[entry] = (*i).as<int>(1);
-				if (++entry == 3)
-					break;
-			}
+					i != subnode.end() && j != 3u;
+					++i, ++j)
+				*sizes[j] = (*i).as<int>(1);
 		}
 		else
 			_sizeX =
@@ -223,46 +218,36 @@ void MapScript::load(const YAML::Node& node)
 	{
 		if (subnode.Type() == YAML::NodeType::Sequence)
 		{
-			size_t entry (0);
+			size_t j (0u);
 			for (YAML::const_iterator
 					i = subnode.begin();
-					i != subnode.end();
-					++i)
-			{
-				if (entry == selectionSize)
-					break;
-
-				_frequencies.at(entry++) = (*i).as<int>(1);
-			}
+					i != subnode.end() && j != selectionSize;
+					++i, ++j)
+				_frequencies.at(j) = (*i).as<int>(1);
 		}
 		else
-			_frequencies.at(0) = subnode.as<int>(1);
+			_frequencies.at(0u) = subnode.as<int>(1);
 	}
 
 	if (const YAML::Node& subnode = node["maxUses"])
 	{
 		if (subnode.Type() == YAML::NodeType::Sequence)
 		{
-			size_t entry (0);
+			size_t j (0u);
 			for (YAML::const_iterator
 					i = subnode.begin();
-					i != subnode.end();
-					++i)
-			{
-				if (entry == selectionSize)
-					break;
-
-				_maxUses.at(entry++) = (*i).as<int>(-1);
-			}
+					i != subnode.end() && j != selectionSize;
+					++i, ++j)
+				_maxUses.at(j) = (*i).as<int>(-1);
 		}
 		else
-			_maxUses.at(0) = subnode.as<int>(-1);
+			_maxUses.at(0u) = subnode.as<int>(-1);
 	}
 
 	if (const YAML::Node& subnode = node["direction"])
 	{
 		std::string dir (subnode.as<std::string>());
-		dir = dir.substr(0,1);
+		dir = dir.substr(0u,1u);
 		if (dir == "v")
 			_direction = MD_VERTICAL;
 		else if (dir == "h")
@@ -305,9 +290,7 @@ void MapScript::init()
 			i = _frequencies.begin();
 			i != _frequencies.end();
 			++i)
-	{
 		_cumulativeFrequency += *i;
-	}
 
 	_blocksTemp = _blocks;
 	_groupsTemp = _groups;
@@ -316,15 +299,16 @@ void MapScript::init()
 }
 
 /**
- * Gets a random group number from the array accounting for frequencies and max uses.
+ * Gets a random group number from the array accounting for frequencies and
+ * max-uses.
  * @note If no groups or blocks are defined this will return the default group;
- * if all the max uses are used up it will return undefined.
+ * if all the max-uses are used up it will return undefined.
  * @return, group number
  */
 int MapScript::getGroupNumber() // private.
 {
-	if (_groups.size() == 0)
-		return MBT_DEFAULT;
+	if (_groups.size() == 0u)
+		return 0;// MBT_DEFAULT; // NOTE: Returning a MapBlockType is ... misleading.
 
 	if (_cumulativeFrequency > 0)
 	{
@@ -332,7 +316,7 @@ int MapScript::getGroupNumber() // private.
 								_cumulativeFrequency - 1));
 
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _groupsTemp.size();
 				++i)
 		{
@@ -354,12 +338,12 @@ int MapScript::getGroupNumber() // private.
 			pick -= _frequenciesTemp.at(i);
 		}
 	}
-
-	return MBT_UNDEFINED;
+	return -1;// MBT_UNDEFINED; // NOTE: Returning a MapBlockType is ... misleading.
 }
 
 /**
- * Gets a random block number from the array accounting for frequencies and max uses.
+ * Gets a random block number from the array accounting for frequencies and
+ * max-uses.
  * @note If no blocks are defined it will use a group instead.
  * @return, block number
  */
@@ -371,7 +355,7 @@ int MapScript::getBlockNumber() // private.
 								_cumulativeFrequency - 1));
 
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _blocksTemp.size();
 				++i)
 		{
@@ -393,7 +377,7 @@ int MapScript::getBlockNumber() // private.
 			pick -= _frequenciesTemp.at(i);
 		}
 	}
-	return MBT_UNDEFINED;
+	return -1;// MBT_UNDEFINED; // NOTE: Returning a MapBlockType is ... misleading.
 }
 
 /**
@@ -402,7 +386,7 @@ int MapScript::getBlockNumber() // private.
  * @param terrainRule - pointer to the RuleTerrain to pick a block from
  * @return, pointer to a randomly chosen MapBlock given the options available in this MapScript
  */
-MapBlock* MapScript::getNextBlock(RuleTerrain* const terrainRule)
+MapBlock* MapScript::getNextBlock(const RuleTerrain* const terrainRule)
 {
 	if (_blocks.empty() == true)
 		return terrainRule->getMapBlockRand(
@@ -410,20 +394,20 @@ MapBlock* MapScript::getNextBlock(RuleTerrain* const terrainRule)
 										_sizeY * 10,
 										getGroupNumber());
 
-	const int result (getBlockNumber());
-	if (result < static_cast<int>(terrainRule->getMapBlocks()->size())
-		&& result != MBT_UNDEFINED)
+	const int blockId (getBlockNumber());
+	if (blockId != -1// MBT_UNDEFINED) // NOTE: Comparing 'blockId' with a MapBlockType is ... misleading.
+		&& blockId < static_cast<int>(terrainRule->getMapBlocks()->size()))
 	{
-		return terrainRule->getMapBlocks()->at(static_cast<size_t>(result));
+		return terrainRule->getMapBlocks()->at(static_cast<size_t>(blockId));
 	}
 	return nullptr;
 }
 
 /**
  * Gets the type of the UFO for the case of "setUFO".
- * @return, UFO type
+ * @return, UFO-type
  */
-const std::string& MapScript::getUfoType()
+const std::string& MapScript::getUfoType() const
 {
 	return _ufoType;
 }

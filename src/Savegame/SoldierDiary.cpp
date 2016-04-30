@@ -836,24 +836,6 @@ bool SoldierDiary::manageAwards(
 }
 
 /**
- * Gets a vector of mission-IDs.
- * @return, reference to a vector of mission-IDs
- */
-std::vector<int>& SoldierDiary::getMissionIdList()
-{
-	return _missionIdList;
-}
-
-/**
- * Gets a vector of all kills in this SoldierDiary.
- * @return, reference to a vector of pointers to BattleUnitKill
- */
-std::vector<BattleUnitKill*>& SoldierDiary::getKills()
-{
-	return _killList;
-}
-
-/**
  * Gets list of kills by rank.
  * @return, map of alien-ranks to qty killed
  */
@@ -1489,6 +1471,24 @@ void SoldierDiary::awardHonoraryMedal()
 									"STR_MEDAL_HONOR_CROSS_NAME",
 									"noQual",
 									false));
+}
+
+/**
+ * Gets a vector of mission-IDs.
+ * @return, reference to a vector of mission-IDs
+ */
+const std::vector<int>& SoldierDiary::getMissionIdList() const
+{
+	return _missionIdList;
+}
+
+/**
+ * Gets a vector of all kills in this SoldierDiary.
+ * @return, reference to a vector of pointers to BattleUnitKill
+ */
+const std::vector<BattleUnitKill*>& SoldierDiary::getKills() const
+{
+	return _killList;
 }
 
 

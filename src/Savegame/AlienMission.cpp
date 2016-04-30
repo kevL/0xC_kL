@@ -1061,13 +1061,13 @@ std::pair<double, double> AlienMission::getLandPoint(
 }
 
 /**
- * Adds alien points to the country and region at the coordinates given.
+ * Adds alien points to the country and region at the coordinates specified.
  * @param lon - longitudinal coordinate to check
  * @param lat - latitudinal coordinate to check
  */
 void AlienMission::addScore( // private.
 		const double lon,
-		const double lat)
+		const double lat) const
 {
 	int aLienPts (_missionRule.getPoints());
 	if (aLienPts != 0)
@@ -1080,16 +1080,16 @@ void AlienMission::addScore( // private.
 			case alm_INFILT:
 			case alm_BASE:
 				aLienPts += static_cast<int>(_gameSave.getDifficulty()) * 20	// TODO: Instead of '20' use a UFO-size modifier. 'Cause this
-						 + _gameSave.getMonthsPassed() * 2;						// is gonna rack up *huge pts* in ufoLifting() as it is now.
+						 + (_gameSave.getMonthsPassed() << 1u);					// is gonna rack up *huge pts* in ufoLifting() as it is now.
 				break;
 
 			case alm_SUPPLY:
 				aLienPts += static_cast<int>(_gameSave.getDifficulty()) * 10
-						 + _gameSave.getMonthsPassed() / 2;
+						 + (_gameSave.getMonthsPassed() >> 1u);
 				break;
 
 			case alm_SCORE:
-				aLienPts += static_cast<int>(_gameSave.getDifficulty()) * 2
+				aLienPts += (static_cast<int>(_gameSave.getDifficulty()) << 1u)
 						 + _gameSave.getMonthsPassed();
 		}
 		_gameSave.scorePoints(lon,lat, aLienPts, true);
