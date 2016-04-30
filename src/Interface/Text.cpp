@@ -19,8 +19,8 @@
 
 #include "Text.h"
 
-//#include <cmath>
-//#include <sstream>
+//#include <cmath>		// std::ceil()
+//#include <sstream>	// std::wostringstream
 
 #include "../Engine/Font.h"
 #include "../Engine/Language.h"
@@ -277,7 +277,7 @@ bool Text::getHighContrast() const
 
 /**
  * Changes the way this Text is aligned horizontally relative to the drawing area.
- * @param align - horizontal alignment (enum Text.h)
+ * @param align - horizontal alignment (Text.h)
  */
 void Text::setAlign(TextHAlign align)
 {
@@ -287,7 +287,7 @@ void Text::setAlign(TextHAlign align)
 
 /**
  * Returns the way this Text is aligned horizontally relative to the drawing area.
- * @return, horizontal alignment (enum Text.h)
+ * @return, horizontal alignment (Text.h)
  */
 TextHAlign Text::getAlign() const
 {
@@ -296,12 +296,21 @@ TextHAlign Text::getAlign() const
 
 /**
  * Changes the way this Text is aligned vertically relative to the drawing area.
- * @param valign - vertical alignment (enum Text.h)
+ * @param valign - vertical alignment (Text.h)
  */
 void Text::setVerticalAlign(TextVAlign valign)
 {
 	_valign = valign;
 	_redraw = true;
+}
+
+/**
+ * Returns the way this Text is aligned vertically relative to the drawing area.
+ * @return, vertical alignment (Text.h)
+ */
+TextVAlign Text::getVerticalAlign() const
+{
+	return _valign;
 }
 
 /**

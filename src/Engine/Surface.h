@@ -20,9 +20,9 @@
 #ifndef OPENXCOM_SURFACE_H
 #define OPENXCOM_SURFACE_H
 
-#include <string>
+#include <string>	// std::string
 
-#include <SDL.h>
+#include <SDL.h>	// typedefs, functions
 
 
 namespace OpenXcom

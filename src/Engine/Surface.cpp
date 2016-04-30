@@ -19,13 +19,10 @@
 
 #include "Surface.h"
 
-#include <cstring>
-#include <fstream>
+#include <cstring>	// std::memset(), std::memcpy()
+#include <fstream>	// std::ifstream
+//#include <vector>	// std::vector
 
-//#include <vector>
-//#include <stdlib.h>
-
-//#include <SDL_endian.h>
 #include <SDL_gfxPrimitives.h>
 #include <SDL_image.h>
 
@@ -67,10 +64,12 @@ namespace
 inline int GetPitch(
 		int bpp,
 		int width)
-{ return ((bpp / 8) * width + 15) & ~0xF; }
+{
+	return ((bpp >> 3u) * width + 15) & ~0xf;
+}
 
 /**
- * Helper function creating aligned buffer
+ * Helper function creating aligned buffer.
  * @param bpp		- bytes per pixel
  * @param width		- number of pixel in row
  * @param height	- number of rows
@@ -80,7 +79,8 @@ inline void* NewAligned(
 		int bpp,
 		int width,
 		int height)
-{	const int
+{
+	const int
 		pitch (GetPitch(bpp, width)),
 		total (pitch * height);
 	void* buffer (nullptr);
@@ -110,21 +110,25 @@ inline void* NewAligned(
 			0,
 			static_cast<size_t>(total));
 
-	return buffer; }
+	return buffer;
+}
 
 /**
- * Helper function releases aligned memory
+ * Helper function releases aligned memory.
  * @param buffer - buffer to delete
  */
 inline void DeleteAligned(void* buffer)
-{	if (buffer != nullptr)
+{
+	if (buffer != nullptr)
 	{
 #ifdef _WIN32
 		_aligned_free(buffer);
 #else
 		free(buffer);
 #endif
-	} }
+	}
+}
+
 }
 
 

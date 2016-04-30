@@ -20,9 +20,8 @@
 #ifndef OPENXCOM_TEXT_H
 #define OPENXCOM_TEXT_H
 
-//#include <string>
-#include <vector>
-//#include <stdint.h>
+//#include <string>	// std::wstring
+#include <vector>	// std::vector
 
 #include "../Engine/Surface.h"
 
@@ -150,6 +149,8 @@ private:
 		TextHAlign getAlign() const;
 		/// Sets the Text's vertical alignment.
 		void setVerticalAlign(TextVAlign valign);
+		/// Gets the Text's vertical alignment.
+		TextVAlign getVerticalAlign() const;
 
 		/// Sets the Text's color.
 		void setColor(Uint8 color) override;

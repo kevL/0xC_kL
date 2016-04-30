@@ -374,7 +374,9 @@ void TextEdit::draw()
 	{
 		if (_isFocused == true && _blink == true)
 		{
-			int x;
+			int
+				x,y;
+
 			switch (_text->getAlign())
 			{
 				default:
@@ -383,7 +385,7 @@ void TextEdit::draw()
 					break;
 
 				case ALIGN_CENTER:
-					x = (_text->getWidth() - _text->getTextWidth()) / 2;
+					x = (_text->getWidth() - _text->getTextWidth()) >> 1u;
 					break;
 
 				case ALIGN_RIGHT:
@@ -398,7 +400,23 @@ void TextEdit::draw()
 				x += _text->getFont()->getCharSize(_edit[i]).w;
 			}
 
+			switch (_text->getVerticalAlign())
+			{
+				default:
+				case ALIGN_TOP:
+					y = 0;
+					break;
+
+				case ALIGN_MIDDLE:
+					y = (getHeight() - _text->getTextHeight() + 1) >> 1u; // round up.
+					break;
+
+				case ALIGN_BOTTOM:
+					y = getHeight() - _text->getTextHeight();
+			}
+
 			_caret->setX(x);
+			_caret->setY(y);
 			_caret->blit(this);
 		}
 	}
