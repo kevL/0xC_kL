@@ -81,12 +81,12 @@ const int Node::nodeRank[8u][8u]
 Node::Node()
 	:
 		_id(0),
-		_segment(0),
 		_type(0),
 		_rank(0),
 		_patrol(0),
-		_destruct(0),
 		_priority(0),
+		_segment(0),
+		_destruct(0),
 		_allocated(false)
 //		_pos(Position(-1,-1,-1)) // kL <- just let Position.h do (0,0,0)
 {}

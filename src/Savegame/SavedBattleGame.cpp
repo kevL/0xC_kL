@@ -1314,6 +1314,10 @@ void SavedBattleGame::prepPlayerTurn() // private.
 bool SavedBattleGame::endFactionTurn()
 {
 	//Log(LOG_INFO) << "sbg:endFactionTurn()";
+	int
+		alienIntel (0),
+		alienIntelTest;
+
 	for (std::vector<BattleUnit*>::const_iterator // -> would it be safe to exclude Dead & Unconscious units
 			i = _units.begin();
 			i != _units.end();
@@ -1324,6 +1328,13 @@ bool SavedBattleGame::endFactionTurn()
 			(*i)->setRevived(false);
 			if (_side == FACTION_PLAYER)
 				(*i)->dontReselect();
+		}
+
+		if ((*i)->getOriginalFaction() == FACTION_HOSTILE	// set non-aLien units not-Exposed if their current
+			&& (*i)->isOut_t(OUT_STAT) == false				// exposure exceeds aLien's max-intel. See below_
+			&& (alienIntelTest = (*i)->getIntelligence()) > alienIntel)
+		{
+			alienIntel = alienIntelTest;
 		}
 	}
 
@@ -1369,7 +1380,7 @@ bool SavedBattleGame::endFactionTurn()
 
 	if (_cheatAI == false // pseudo the Turn-20 / less-than-3-aliens-left Reveal rule.
 		&& _side == FACTION_HOSTILE
-		&& _turn > _cheatTurn / 4)
+		&& _turn > (_cheatTurn >> 2u))
 	{
 		for (std::vector<BattleUnit*>::const_iterator
 				i = _units.begin();
@@ -1382,8 +1393,7 @@ bool SavedBattleGame::endFactionTurn()
 			{
 				const int r (RNG::generate(0,5));
 				if (_turn > _cheatTurn - 3 + r
-					|| (_turn > (_cheatTurn / 4)
-						&& _battleState->getBattleGame()->tallyHostiles() < r - 1))
+					|| _battleState->getBattleGame()->tallyHostiles() < r - 1)
 				{
 					_cheatAI = true;
 				}
@@ -1400,7 +1410,7 @@ bool SavedBattleGame::endFactionTurn()
 	{
 		if ((*i)->getUnitStatus() != STATUS_LATENT)
 		{
-			if ((*i)->isOut_t(OUT_HEALTH) == false)
+			if ((*i)->getUnitStatus() != STATUS_DEAD) //getHealth() != 0) //isOut_t(OUT_HEALTH) == false)
 			{
 				(*i)->setDashing(false);	// Safety. no longer dashing; dash is effective
 											// vs. Reaction Fire only and is/ought be
@@ -1425,10 +1435,16 @@ bool SavedBattleGame::endFactionTurn()
 				{
 					(*i)->setExposed();
 				}
-				else if ((*i)->getExposed() != -1
-					&& _side == FACTION_PLAYER)
+				else if (_side == FACTION_PLAYER)
 				{
-					(*i)->setExposed((*i)->getExposed() + 1);
+					const int exposure ((*i)->getExposed());
+					if (exposure != -1)
+					{
+						if (exposure > alienIntel)
+							(*i)->setExposed(-1);
+						else
+							(*i)->setExposed(exposure + 1);
+					}
 				}
 
 				if ((*i)->getFaction() != FACTION_PLAYER)

@@ -6431,13 +6431,13 @@ bool TileEngine::psiAttack(BattleAction* const action)
 						default:
 						case FACTION_HOSTILE:
 						case FACTION_NEUTRAL:
-							moraleLoss += statsActor->psiStrength / 2;		// 50% effect on non-Player units.
+							moraleLoss += (statsActor->psiStrength >> 1u);		// 50% effect on non-Player units.
 							break;
 
 						case FACTION_PLAYER:
-							moraleLoss += statsActor->psiStrength * 2 / 3;	// 66% effect on Player's units.
+							moraleLoss += (statsActor->psiStrength << 1u) / 3;	// 66% effect on Player's units.
 					}
-					moraleLoss -= statsVictim->bravery * 3 / 2;
+					moraleLoss -= ((statsVictim->bravery * 3) >> 1u);
 					//Log(LOG_INFO) << ". . . moraleLoss reduction = " << moraleLoss;
 					if (moraleLoss > 0)
 						victim->moraleChange(-moraleLoss);
@@ -6463,7 +6463,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 						case FACTION_HOSTILE:
 							{
 								courage = std::min(0,
-												  (_battleSave->getMoraleModifier() / 10) + (courage / 2) - 110);
+												  (_battleSave->getMoraleModifier() / 10) + (courage >> 1u) - 110);
 
 								int // store a representation of the aLien's psyche in its victim.
 									str (statsActor->psiStrength),
@@ -6479,7 +6479,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 								default:
 								case FACTION_HOSTILE: // aLien Morale loss for getting Mc'd by Player.
 									courage = std::min(0,
-													  (_battleSave->getMoraleModifier(nullptr, false) / 10) + (courage * 3 / 4) - 110);
+													  (_battleSave->getMoraleModifier(nullptr, false) / 10) + ((courage * 3) >> 2u) - 110);
 									break;
 
 								case FACTION_NEUTRAL: // Morale change for civies (-10) unless already Mc'd by aLiens.
@@ -6490,7 +6490,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 									} // no break;
 								case FACTION_PLAYER: // xCom and civies' Morale gain for getting Mc'd back to xCom.
 								{
-									courage /= 2;
+									courage >>= 1u;
 									victim->setExposed(-1);	// bonus Exposure removal.
 								}
 							}
@@ -6568,13 +6568,15 @@ bool TileEngine::psiAttack(BattleAction* const action)
 
 			if (victim->getOriginalFaction() == FACTION_PLAYER)
 			{
-				int xpResist;
-				if (action->actor->getFaction() == FACTION_HOSTILE)
-					xpResist = 2; // xCom resisted an aLien
-				else
-					xpResist = 1; // xCom resisted an xCom attempt
+				switch (action->actor->getFaction())
+				{
+					case FACTION_HOSTILE:
+						victim->addPsiStrengthExp(2); // xCom resisted an aLien
+						break;
 
-				victim->addPsiStrengthExp(xpResist);
+					case FACTION_PLAYER:
+						victim->addPsiStrengthExp(1); // xCom resisted an xCom attempt
+				}
 			}
 		}
 	}

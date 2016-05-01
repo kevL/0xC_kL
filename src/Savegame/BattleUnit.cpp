@@ -2427,7 +2427,7 @@ void BattleUnit::prepUnit(bool full)
 	bool hasPanicked (false);
 	if (full == true) // don't do damage or panic when transitioning between stages
 	{
-		if (_fire > 0)
+		if (_fire != 0)
 			--_fire;
 
 		_health -= getFatalWounds(); // suffer from fatal wounds
@@ -2447,7 +2447,7 @@ void BattleUnit::prepUnit(bool full)
 
 		if (_status != STATUS_UNCONSCIOUS)
 		{
-			const int panicPct (100 - (2 * getMorale()));
+			const int panicPct (100 - (getMorale() << 1u));
 			if (RNG::percent(panicPct) == true)
 			{
 				hasPanicked = true;
