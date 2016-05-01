@@ -67,7 +67,7 @@ ProjectileFlyBState::ProjectileFlyBState(
 		BattleState(parent, action),
 		_posOrigin(posOrigin),
 		_battleSave(parent->getBattleSave()),
-		_originVoxel(0,0,-1),
+		_originVoxel( 0, 0,-1),
 		_targetVoxel(-1,-1,-1),
 		_forced(false),
 		_unit(nullptr),

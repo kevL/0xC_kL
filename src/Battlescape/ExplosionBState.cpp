@@ -123,13 +123,13 @@ void ExplosionBState::init()
 				&& (itRule->getBattleType() == BT_MELEE
 					|| _buttHurt == true))
 			{
-				int extraPower (_unit->getStrength() / 2);
+				int extraPower (_unit->getStrength() >> 1u);
 
 				if (_buttHurt == true)
-					extraPower /= 2; // pistolwhipping adds only 1/2 extraPower.
+					extraPower >>= 1u; // pistolwhipping adds only 1/2 extraPower.
 
 				if (_unit->isKneeled() == true)
-					extraPower /= 2; // kneeled units further half extraPower.
+					extraPower >>= 1u; // kneeled units further half extraPower.
 
 				_power += RNG::generate( // add 10% to 100% of extPower
 									(extraPower + 9) / 10,
@@ -150,17 +150,17 @@ void ExplosionBState::init()
 	{
 		_power = _parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseGeoscape())->getPower();
 		const int
-			power1 (_power * 2 / 3),
-			power2 (_power * 3 / 2);
+			power1 ((_power << 1u) / 3),
+			power2 ((_power * 3) >> 1u);
 		_power = RNG::generate(power1, power2)
 			   + RNG::generate(power1, power2);
-		_power /= 2;
+		_power >>= 1u;
 	}
 	else // unhandled cyberdisc!!!
 	{
 		_power = RNG::generate(67, 137)
 			   + RNG::generate(67, 137);
-		_power /= 2;
+		_power >>= 1u;
 	}
 
 
@@ -195,7 +195,7 @@ void ExplosionBState::init()
 				{
 					case DT_SMOKE:
 					case DT_STUN:
-						qty = qty * 2 / 3; // smoke & stun bombs do fewer anims.
+						qty = (qty << 1u) / 3; // smoke & stun bombs do fewer anims.
 				}
 			}
 			else
@@ -465,7 +465,7 @@ void ExplosionBState::explode() // private.
 	else
 		itRule = nullptr;
 
-	// Note: melee Hit success/failure, and hit/miss sound-FX, are determined in ProjectileFlyBState.
+	// NOTE: melee Hit success/failure, and hit/miss sound-FX, are determined in ProjectileFlyBState.
 
 	if (_melee == true)
 	{
@@ -483,15 +483,22 @@ void ExplosionBState::explode() // private.
 				&& _unit->isMindControlled() == false)
 			{
 				const BattleUnit* const targetUnit (_battleSave->getTile(Position::toTileSpace(_centerVoxel))->getTileUnit());
-				if (targetUnit != nullptr && targetUnit->getFaction() != FACTION_PLAYER)
+				if (targetUnit != nullptr) // safety.
 				{
-					int xpMelee;
-					if (_meleeSuccess == true)
-						xpMelee = 2;
-					else
-						xpMelee = 1;
+					switch (targetUnit->getFaction())
+					{
+						case FACTION_HOSTILE:
+							if (_meleeSuccess == true)
+								_unit->addMeleeExp(2);
+							else
+								_unit->addMeleeExp(1);
+							break;
 
-					_unit->addMeleeExp(xpMelee);
+						case FACTION_PLAYER:
+						case FACTION_NEUTRAL:
+							if (_meleeSuccess == true)
+								_unit->addMeleeExp(1);
+					}
 				}
 			}
 		}
