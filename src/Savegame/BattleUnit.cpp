@@ -105,7 +105,7 @@ BattleUnit::BattleUnit(
 		_expPsiSkill(0),
 		_expPsiStrength(0),
 		_expMelee(0),
-		_kills(0),
+		_takedowns(0),
 		_motionPoints(0),
 		_coverReserve(0),
 		_charging(nullptr),
@@ -278,7 +278,7 @@ BattleUnit::BattleUnit(
 		_expPsiSkill(0),
 		_expPsiStrength(0),
 		_expMelee(0),
-		_kills(0),
+		_takedowns(0),
 		_motionPoints(0),
 		_coverReserve(0),
 		_charging(nullptr),
@@ -473,7 +473,7 @@ void BattleUnit::load(const YAML::Node& node)
 	_visible			= node["visible"]				.as<bool>(_visible);
 	_turnsExposed		= node["turnsExposed"]			.as<int>(_turnsExposed);
 	_rankInt			= node["rankInt"]				.as<int>(_rankInt);
-	_kills				= node["kills"]					.as<int>(_kills);
+	_takedowns			= node["takedowns"]				.as<int>(_takedowns);
 	_dontReselect		= node["dontReselect"]			.as<bool>(_dontReselect);
 	_motionPoints		= node["motionPoints"]			.as<int>(_motionPoints);
 	_spawnType			= node["spawnType"]				.as<std::string>(_spawnType);
@@ -617,7 +617,7 @@ YAML::Node BattleUnit::save() const
 	if (_visible == true)				node["visible"]			= _visible;
 	if (_killerFaction != FACTION_NONE)	node["killerFaction"]	= static_cast<int>(_killerFaction);
 	if (_motionPoints != 0)				node["motionPoints"]	= _motionPoints;
-	if (_kills != 0)					node["kills"]			= _kills;
+	if (_takedowns != 0)				node["takedowns"]		= _takedowns;
 	if (_drugDose != 0)					node["drugDose"]		= _drugDose;
 	if (_murdererId != 0)				node["murdererId"]		= _murdererId;
 	if (_hasBeenStunned == true)		node["beenStunned"]		= _hasBeenStunned;
@@ -3382,14 +3382,14 @@ void BattleUnit::addPsiStrengthExp(int qty)
  */
 std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 {
-	_geoscapeSoldier->postTactical(_kills);
+	_geoscapeSoldier->postTactical(_takedowns);
 
 	UnitStats* const stats (_geoscapeSoldier->getCurrentStats());
 	if (dead == false && stats->health > _health)
 	{
 		const int recovery (stats->health - _health);
 		_geoscapeSoldier->setRecovery(RNG::generate(
-												(recovery + 1) / 2,
+												(recovery + 1) >> 1u,
 												 recovery));
 	}
 
@@ -3474,7 +3474,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 		|| _expPsiSkill != 0
 		|| _expPsiStrength != 0)
 	{
-		if (hasFirstKill() == true)
+		if (hasFirstTakedown() == true)
 			_geoscapeSoldier->promoteRank();
 
 		if (expPri == true)
@@ -3973,21 +3973,29 @@ void BattleUnit::setSpawnUnit(const std::string& spawnType)
 }
 
 /**
- * Add a kill to the counter.
+ * Adds a takedown to the counter.
  */
-void BattleUnit::addKillCount()
+void BattleUnit::addTakedown()
 {
-	++_kills;
+	++_takedowns;
 }
 
 /**
- * Gets if this is a Rookie and has made his/her first kill.
+ * Gets the quantity of kills/stuns the BattleUnit currently has.
+ * @return, quantity of takedowns
+ */
+int BattleUnit::getTakedowns() const
+{
+	return _takedowns;
+}
+
+/**
+ * Gets if this is a Rookie and has made his/her first takedown.
  * @return, true if rookie has at least one kill or stun vs. Hostile
  */
-bool BattleUnit::hasFirstKill() const
+bool BattleUnit::hasFirstTakedown() const
 {
-	return _rankInt == 0
-		&& _statistics->hasTakedown() == true; // || _kills > 0 // redundant, but faster
+	return _rankInt == 0 && _takedowns != 0;
 }
 
 /**

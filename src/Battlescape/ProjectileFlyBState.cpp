@@ -1167,11 +1167,6 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 		_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
 									->play(-1, _parent->getMap()->getSoundAngle(_action.posTarget));
 
-//	if (_action.weapon->getRules()->getBattleType() == BT_MELEE) // ie. don't spendBullet() if rifle-butting.
-//		_ammo->spendBullet(
-//						*_battleSave,
-//						*_action.weapon); // -> Melee don't have bullets.
-
 	if (_unit->getSpecialAbility() == SPECAB_BURN)
 		_battleSave->getTile(_action.posTarget)->ignite(_unit->getUnitRules()->getSpecabPower() / 10);
 

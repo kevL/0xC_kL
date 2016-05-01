@@ -6546,37 +6546,35 @@ bool TileEngine::psiAttack(BattleAction* const action)
 			//Log(LOG_INFO) << "TileEngine::psiAttack() ret TRUE";
 			return true;
 		}
-		else // psi Fail.
+
+		std::string info;  // psi Fail. ->
+		switch (action->type)
 		{
-			std::string info;
-			switch (action->type)
+			default:
+			case BA_PSIPANIC:
+				info = "STR_PANIC_";
+				break;
+
+			case BA_PSICONFUSE:
+				info = "STR_CONFUSE_";
+				break;
+
+			case BA_PSICONTROL:
+				info = "STR_CONTROL_";
+		}
+		//Log(LOG_INFO) << "te:psiAttack() success = " << success;
+		_battleSave->getBattleState()->warning(info, success);
+
+		if (victim->getOriginalFaction() == FACTION_PLAYER)
+		{
+			switch (action->actor->getFaction())
 			{
-				default:
-				case BA_PSIPANIC:
-					info = "STR_PANIC_";
+				case FACTION_HOSTILE:
+					victim->addPsiStrengthExp(2); // xCom resisted an aLien
 					break;
 
-				case BA_PSICONFUSE:
-					info = "STR_CONFUSE_";
-					break;
-
-				case BA_PSICONTROL:
-					info = "STR_CONTROL_";
-			}
-			//Log(LOG_INFO) << "te:psiAttack() success = " << success;
-			_battleSave->getBattleState()->warning(info, success);
-
-			if (victim->getOriginalFaction() == FACTION_PLAYER)
-			{
-				switch (action->actor->getFaction())
-				{
-					case FACTION_HOSTILE:
-						victim->addPsiStrengthExp(2); // xCom resisted an aLien
-						break;
-
-					case FACTION_PLAYER:
-						victim->addPsiStrengthExp(1); // xCom resisted an xCom attempt
-				}
+				case FACTION_PLAYER:
+					victim->addPsiStrengthExp(1); // xCom resisted an xCom attempt
 			}
 		}
 	}

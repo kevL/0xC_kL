@@ -1434,7 +1434,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 
 	_txtOrder->setVisible(showInfo);
 	_lstSoldierInfo->setVisible(showInfo);
-	_srfAlienIcon->setVisible(showInfo && allowAlienIcon());
+	_srfAlienIcon->setVisible(showInfo && allowAlienIcons());
 	_showSoldierData = showInfo;
 }
 
@@ -2762,7 +2762,7 @@ void BattlescapeState::btnConsoleToggle(Action*)
 
 				_txtOrder->setVisible();
 				_lstSoldierInfo->setVisible();
-				_srfAlienIcon->setVisible(allowAlienIcon());
+				_srfAlienIcon->setVisible(allowAlienIcons());
 				_showSoldierData = true;
 		}
 
@@ -3957,7 +3957,7 @@ void BattlescapeState::mouseInIcons(Action*)
 
 	_txtOrder->setVisible();
 	_lstSoldierInfo->setVisible();
-	_srfAlienIcon->setVisible(allowAlienIcon());
+	_srfAlienIcon->setVisible(allowAlienIcons());
 	_showSoldierData = true;
 
 	_lstTileInfo->setVisible(false);
@@ -4101,7 +4101,7 @@ void BattlescapeState::toggleIcons(bool vis)
 
 	_txtOrder->setVisible(vis);
 	_lstSoldierInfo->setVisible(vis);
-	_srfAlienIcon->setVisible(vis && allowAlienIcon());
+	_srfAlienIcon->setVisible(vis && allowAlienIcons());
 	_showSoldierData = vis;
 
 //	_txtControlDestroyed->setVisible(vis);
@@ -4163,49 +4163,41 @@ Bar* BattlescapeState::getEnergyBar() const
 }
 
 /**
- * Checks if it's okay to show a rookie's kill/stun alien icon.
- * @return, true if okay to show icon
+ * Checks if it's okay to show the aLien-icons for a Soldier's kills/stuns.
+ * @return, true if okay to show icons
  */
-bool BattlescapeState::allowAlienIcon() const // private.
+bool BattlescapeState::allowAlienIcons() const // private.
 {
 	_srfAlienIcon->clear();
-
-	bool ret (false);
 
 	const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 	if (selUnit != nullptr
 		&& selUnit->getGeoscapeSoldier() != nullptr)
 	{
-		const BattleUnitStatistics* const statistics (selUnit->getStatistics());
-		if (statistics->kills.empty() == false)
+		const int takedowns (selUnit->getTakedowns());
+		if (takedowns != 0)
 		{
 			static const int ICONS (30);
 			int
-				x,y,
-				j (0);
-			for (std::vector<BattleUnitKill*>::const_iterator
-					i = statistics->kills.begin();
-					i != statistics->kills.end() && j != ICONS;
-					++i)
+				x,y;
+
+			for (int
+					i = 0, j = 0;
+					i != takedowns && j != ICONS;
+					++i, ++j)
 			{
-				if ((*i)->_faction == FACTION_HOSTILE) // draw icons
-				{
-					//Log(LOG_INFO) << "Icon id-" << selUnit->getId() << " j= " << j;
-					ret = true;
-					x = (j % 3) * 10;
-					y = (j / 3) * 12;
+				x = (j % 3) * 10;
+				y = (j / 3) * 12;
 
-					Surface* const srfAlien (_game->getResourcePack()->getSurface("AlienIcon"));
-					srfAlien->setX(x);
-					srfAlien->setY(y);
-					srfAlien->blit(_srfAlienIcon);
-
-					++j;
-				}
+				Surface* const srfAlien (_game->getResourcePack()->getSurface("AlienIcon"));
+				srfAlien->setX(x);
+				srfAlien->setY(y);
+				srfAlien->blit(_srfAlienIcon);
 			}
+			return true;
 		}
 	}
-	return ret;
+	return false;
 }
 
 /**
@@ -4222,7 +4214,7 @@ void BattlescapeState::updateExperienceInfo()
 		if (selUnit != nullptr
 			&& selUnit->getGeoscapeSoldier() != nullptr)
 		{
-			_srfAlienIcon->setVisible(allowAlienIcon());
+			_srfAlienIcon->setVisible(allowAlienIcons());
 
 			// keep this consistent ...
 			std::vector<std::wstring> xpType;
@@ -4271,7 +4263,7 @@ void BattlescapeState::updateExperienceInfo()
 }
 
 /**
- * Updates tile-info for the tile under mouseover.
+ * Updates tile-info for mouse-overs.
  * @param tile - pointer to a Tile
  */
 void BattlescapeState::updateTileInfo(const Tile* const tile) // private.

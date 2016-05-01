@@ -271,11 +271,13 @@ private:
 	/// Adjusts a BattleUnit's morale for making a kill.
 	void attackerMorale(
 			BattleUnit* const attacker,
-			const BattleUnit* const defender) const;
+			const BattleUnit* const defender,
+			bool half = false) const;
 	/// Adjusts morale of units by faction when a BattleUnit dies.
 	void factionMorale(
 			const BattleUnit* const defender,
-			bool converted) const;
+			bool converted,
+			bool half = false) const;
 
 	/// Shows any infoboxes in the queue.
 	void showInfoBoxQueue();

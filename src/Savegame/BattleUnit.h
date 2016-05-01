@@ -176,7 +176,7 @@ private:
 		_fire,
 		_health,
 		_id,
-		_kills,
+		_takedowns,
 		_morale,
 		_motionPoints,
 		_drugDose,
@@ -731,10 +731,12 @@ private:
 		/// Sets the BattleUnit's special ability.
 		void setSpecialAbility(const SpecialAbility specab);
 
-		/// Adds a kill to the BattleUnit's kill-counter.
-		void addKillCount();
-		/// Gets if this is a Rookie and has made his/her first kill.
-		bool hasFirstKill() const;
+		/// Adds a takedown.
+		void addTakedown();
+		/// Gets the quantity of kills/stuns the BattleUnit currently has.
+		int getTakedowns() const;
+		/// Gets if the BattleUnit is a Rookie and has made his/her first takedown.
+		bool hasFirstTakedown() const;
 
 		/// Gets if the BattleUnit is about to die.
 		bool getAboutToCollapse() const;

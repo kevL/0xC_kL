@@ -241,9 +241,9 @@ private:
 			BattleItem* const item,
 			bool injured = false);
 
-	/// Checks if it's okay to show a rookie's kill/stun alien icon.
-	bool allowAlienIcon() const;
-	/// Updates tile info for the tile under mouseover.
+	/// Checks if it's okay to show the aLien-icons for a Soldier's kills/stuns.
+	bool allowAlienIcons() const;
+	/// Updates tile-info for mouse-overs.
 	void updateTileInfo(const Tile* const tile);
 
 

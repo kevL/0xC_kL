@@ -317,20 +317,6 @@ struct BattleUnitStatistics
 		return false;
 	}
 
-	/// Gets if unit has killed or stunned a hostile.
-	bool hasTakedown() const
-	{
-		for (std::vector<BattleUnitKill*>::const_iterator
-				i = kills.begin();
-				i != kills.end();
-				++i)
-		{
-			if ((*i)->_faction == FACTION_HOSTILE)
-				return true;
-		}
-		return false;
-	}
-
 }; // end BattleUnitStatistics.
 
 }
