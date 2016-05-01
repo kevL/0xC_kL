@@ -1330,11 +1330,18 @@ bool SavedBattleGame::endFactionTurn()
 				(*i)->dontReselect();
 		}
 
-		if ((*i)->getOriginalFaction() == FACTION_HOSTILE	// set non-aLien units not-Exposed if their current
-			&& (*i)->isOut_t(OUT_STAT) == false				// exposure exceeds aLien's max-intel. See below_
-			&& (alienIntelTest = (*i)->getIntelligence()) > alienIntel)
-		{
-			alienIntel = alienIntelTest;
+		switch ((*i)->getUnitStatus())	// set non-aLien units not-Exposed if their current
+		{								// exposure exceeds aLien's max-intel. See below_
+			case STATUS_DEAD:
+			case STATUS_LATENT:
+				break;					// NOTE: Status_Unconscious does not break exposure. psycho aLiens!
+
+			default:
+				if ((*i)->getOriginalFaction() == FACTION_HOSTILE
+					&& (alienIntelTest = (*i)->getIntelligence()) > alienIntel)
+				{
+					alienIntel = alienIntelTest;
+				}
 		}
 	}
 
