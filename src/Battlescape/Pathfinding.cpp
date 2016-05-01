@@ -64,7 +64,7 @@ Pathfinding::Pathfinding(SavedBattleGame* const battleSave)
 		_alt(false),
 		_zPath(false),
 		_mType(MT_WALK),
-		_openDoor(0)
+		_doorCost(0)
 {
 	//Log(LOG_INFO) << "Create Pathfinding";
 	_nodes.reserve(_battleSave->getMapSizeXYZ()); // reserve one node per tactical tile.
@@ -648,7 +648,7 @@ bool Pathfinding::aStarPath( // private.
 				&& _unit->getUnitRules() != nullptr
 				&& _unit->getUnitRules()->isMechanical() == true)
 			{
-				const int delta (std::abs((_path.back() + 4) % 8 - _unit->getUnitDirection()));
+				const int delta (std::abs((_path.back() + 4) % 8u - _unit->getUnitDirection()));
 				if (delta > 1 && delta < 7)
 				{
 					_strafe =
@@ -846,12 +846,12 @@ int Pathfinding::getTuCostPf(
 		costTotal (0),
 
 		wallTu,
-		wallTotal,
-		edges;
+		wallTuTotal,
+		walls;
 
-	_openDoor = 0;
+	_doorCost = 0;
 
-	Tile
+	const Tile
 		* tileStart,
 		* tileStartBelow,
 		* tileStop,
@@ -1079,127 +1079,127 @@ int Pathfinding::getTuCostPf(
 
 //				if (posOffsetVertical.z > 0) ++cost;
 
-				wallTotal =	// walking over rubble walls
-				wallTu =	// differentiates wall-Total from wall-current and keeps the '_openDoor' value straight
-				edges = 0;	// quantity of walls crossed if moving diagonally
+				wallTuTotal =	// walking over rubble walls
+				wallTu =		// differentiates wall-Total from wall-current and keeps the '_doorCost' value straight
+				walls = 0;		// quantity of walls crossed if moving diagonally
 
-				if (   dir == 7 // && !fall
-					|| dir == 0
-					|| dir == 1)
+				switch (dir)
 				{
-					//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
-					wallTu = tileStart->getTuCostTile(O_NORTHWALL, _mType); // ( 'walkover' bigWalls not incl. -- none exists )
-					if (wallTu > 0)
-					{
-//						if (dir & 1) // would use this to increase diagonal wall-crossing by +50%
-//							wallTu += wallTu / 2;
-
-						wallTotal += wallTu;
-						++edges;
-
-						if (tileStart->getMapData(O_NORTHWALL)->isDoor() == true
-							|| tileStart->getMapData(O_NORTHWALL)->isUfoDoor() == true)
+					case 7: // && !fall
+					case 0:
+					case 1:
+						//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
+						if ((wallTu = tileStart->getTuCostTile(O_NORTHWALL, _mType)) > 0) // NOTE: 'walkover' bigWalls not incl. -- none exists.
 						{
-							//Log(LOG_INFO) << ". . . _openDoor[N] = TRUE, wallTu = " << wallTu;
-							if (wallTu > _openDoor) // don't let large unit parts reset _openDoor prematurely
-								_openDoor = wallTu;
+//							if (dir & 1) // would use this to increase diagonal wall-crossing by +50%
+//								wallTu += wallTu / 2;
+
+							wallTuTotal += wallTu;
+							++walls;
+
+							if (   tileStart->getMapData(O_NORTHWALL)->isDoor() == true
+								|| tileStart->getMapData(O_NORTHWALL)->isUfoDoor() == true)
+							{
+								//Log(LOG_INFO) << ". . . _doorCost[N] = TRUE, wallTu = " << wallTu;
+								if (wallTu > _doorCost) // don't let large unit parts reset _doorCost prematurely
+									_doorCost = wallTu;
+							}
 						}
-					}
 				}
 
-				if (   dir == 1 // && !fall
-					|| dir == 2
-					|| dir == 3)
+				switch (dir)
 				{
-					//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
-					if (tileStart->getPosition().z > tileStop->getPosition().z) // don't count wallCost if it's on the floor below.
-						tileStopTest = _battleSave->getTile(tileStop->getPosition() + Position(0,0,1)); // no safety req'd.
-					else
-						tileStopTest = tileStop;
+					case 1: // && !fall
+					case 2:
+					case 3:
+						//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
+						if (tileStart->getPosition().z > tileStop->getPosition().z) // don't count wallCost if it's on the floor below.
+							tileStopTest = _battleSave->getTile(tileStop->getPosition() + Position(0,0,1)); // no safety req'd.
+						else
+							tileStopTest = tileStop;
 
-					wallTu = tileStopTest->getTuCostTile(O_WESTWALL, _mType);
-					if (wallTu > 0)
-					{
-						wallTotal += wallTu;
-						++edges;
-
-						if (tileStopTest->getMapData(O_WESTWALL)->isDoor() == true
-							|| tileStopTest->getMapData(O_WESTWALL)->isUfoDoor() == true)
+						if ((wallTu = tileStopTest->getTuCostTile(O_WESTWALL, _mType)) > 0)
 						{
-							if (wallTu > _openDoor)
-								_openDoor = wallTu;
+							wallTuTotal += wallTu;
+							++walls;
+
+							if (   tileStopTest->getMapData(O_WESTWALL)->isDoor() == true
+								|| tileStopTest->getMapData(O_WESTWALL)->isUfoDoor() == true)
+							{
+								if (wallTu > _doorCost)
+									_doorCost = wallTu;
+							}
 						}
-					}
 				}
 
-				if (   dir == 3 // && !fall
-					|| dir == 4
-					|| dir == 5)
+				switch (dir)
 				{
-					//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
-					if (tileStart->getPosition().z > tileStop->getPosition().z) // don't count wallCost if it's on the floor below.
-						tileStopTest = _battleSave->getTile(tileStop->getPosition() + Position(0,0,1)); // no safety req'd.
-					else
-						tileStopTest = tileStop;
+					case 3: // && !fall
+					case 4:
+					case 5:
+						//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
+						if (tileStart->getPosition().z > tileStop->getPosition().z) // don't count wallCost if it's on the floor below.
+							tileStopTest = _battleSave->getTile(tileStop->getPosition() + Position(0,0,1)); // no safety req'd.
+						else
+							tileStopTest = tileStop;
 
-					wallTu = tileStopTest->getTuCostTile(O_NORTHWALL, _mType);
-					if (wallTu > 0)
-					{
-						wallTotal += wallTu;
-						++edges;
-
-						if (tileStopTest->getMapData(O_NORTHWALL)->isDoor() == true
-							|| tileStopTest->getMapData(O_NORTHWALL)->isUfoDoor() == true)
+						if ((wallTu = tileStopTest->getTuCostTile(O_NORTHWALL, _mType)) > 0)
 						{
-							//Log(LOG_INFO) << ". . . _openDoor[S] = TRUE, wallTu = " << wallTu;
-							if (wallTu > _openDoor)
-								_openDoor = wallTu;
+							wallTuTotal += wallTu;
+							++walls;
+
+							if (   tileStopTest->getMapData(O_NORTHWALL)->isDoor() == true
+								|| tileStopTest->getMapData(O_NORTHWALL)->isUfoDoor() == true)
+							{
+								//Log(LOG_INFO) << ". . . _doorCost[S] = TRUE, wallTu = " << wallTu;
+								if (wallTu > _doorCost)
+									_doorCost = wallTu;
+							}
 						}
-					}
 				}
 
-				if (   dir == 5
-					|| dir == 6
-					|| dir == 7)
+				switch (dir)
 				{
-					//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
-					wallTu = tileStart->getTuCostTile(O_WESTWALL, _mType); // ( bigWalls not incl. yet )
-					if (wallTu > 0)
-					{
-						wallTotal += wallTu;
-						++edges;
-
-						if (tileStart->getMapData(O_WESTWALL)->isDoor() == true
-							|| tileStart->getMapData(O_WESTWALL)->isUfoDoor() == true)
+					case 5:
+					case 6:
+					case 7:
+						//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
+						if (wallTu = tileStart->getTuCostTile(O_WESTWALL, _mType) > 0)
 						{
-							//Log(LOG_INFO) << ". . . _openDoor[W] = TRUE, wallTu = " << wallTu;
-							if (wallTu > _openDoor)
-								_openDoor = wallTu;
+							wallTuTotal += wallTu;
+							++walls;
+
+							if (   tileStart->getMapData(O_WESTWALL)->isDoor() == true
+								|| tileStart->getMapData(O_WESTWALL)->isUfoDoor() == true)
+							{
+								//Log(LOG_INFO) << ". . . _doorCost[W] = TRUE, wallTu = " << wallTu;
+								if (wallTu > _doorCost)
+									_doorCost = wallTu;
+							}
 						}
-					}
 				}
 
 				// diagonal walking (uneven directions) costs 50% more tu's
 				// kL_note: this is moved up so that objects don't cost +150% tu;
 				// instead, let them keep a flat +100% to step onto
 				// -- note that Walls also do not take +150 tu to step over diagonally....
-				if (dir & 1)
+				if ((dir & 1) == 1)
 				{
 					cost = static_cast<int>(static_cast<float>(cost) * 1.5f);
 
-					if (wallTotal > 0 && _openDoor == 0)
+					if (wallTuTotal > 0 && _doorCost == 0)
 					{
-						if (edges > 0)
-							wallTotal /= edges; // average of the walls crossed
+						if (walls > 0)
+							wallTuTotal /= walls; // average of the walls crossed
 
-						if ((wallTotal - edges) % 2 == 1) // round wallCost up.
-							wallTotal += 1;
+						if (((wallTuTotal - walls) & 1) == 1) // round wallCost up.
+							wallTuTotal += 1;
 					}
 				}
 
-				//Log(LOG_INFO) << ". wallTotal = " << wallTotal;
+				//Log(LOG_INFO) << ". wallTuTotal = " << wallTuTotal;
 				//Log(LOG_INFO) << ". cost[0] = " << cost;
-				cost += wallTotal;
+				cost += wallTuTotal;
 				//Log(LOG_INFO) << ". cost[1] = " << cost;
 			}
 
@@ -1218,7 +1218,7 @@ int Pathfinding::getTuCostPf(
 				// Extra TU for strafe-moves ->	1 0 1
 				//								2 ^ 2
 				//								3 2 3
-				int delta (std::abs((dir + 4) % 8 - _unit->getUnitDirection()));
+				int delta (std::abs((dir + 4) % 8u - _unit->getUnitDirection()));
 
 				if (delta > 1 && delta < 7
 					&& _unit->getUnitRules() != nullptr
@@ -1805,13 +1805,11 @@ bool Pathfinding::previewPath(bool discard)
 
 					if (_pathAction->dash == true)
 					{
-						tuCost -= _openDoor;
-						unitEnergy -= tuCost * 3 / 2;
-
-						tuCost = (tuCost * 3 / 4) + _openDoor;
+						unitEnergy -= (((tuCost -= _doorCost) * 3) >> 1u);
+						tuCost = ((tuCost * 3) >> 2u) + _doorCost;
 					}
 					else
-						unitEnergy += _openDoor - tuCost;
+						unitEnergy -= tuCost - _doorCost;
 
 					unitEnergy += agility;
 
@@ -2050,9 +2048,9 @@ MoveType Pathfinding::getMoveTypePf() const
  * @note Used to conform TU-costs in UnitWalkBState.
  * @return, TU-cost for opening a door
  */
-int Pathfinding::getOpenDoor() const
+int Pathfinding::getDoorCost() const
 {
-	return _openDoor;
+	return _doorCost;
 }
 
 /**

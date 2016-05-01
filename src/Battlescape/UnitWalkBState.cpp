@@ -330,7 +330,7 @@ bool UnitWalkBState::doStatusStand() // private.
 	const Tile* const tile (_battleSave->getTile(pos));
 	const bool gravLift (dir >= Pathfinding::DIR_UP // Assumes tops & bottoms of gravLifts always have floors/ceilings.
 					  && tile->getMapData(O_FLOOR) != nullptr
-					  && tile->getMapData(O_FLOOR)->isGravLift());
+					  && tile->getMapData(O_FLOOR)->isGravLift() == true);
 	setWalkSpeed(gravLift);
 
 	if (dir != -1
@@ -415,14 +415,14 @@ bool UnitWalkBState::doStatusStand() // private.
 		}
 		else
 		{
-			const int dirStrafe ((_dirStart + 4) % 8);
+			const int dirStrafe ((_dirStart + 4) % 8u);
 			_unit->setFaceDirection(dirStrafe);
 			//Log(LOG_INFO) << ". STANDING strafeTank, setFaceDirection() -> " << dirStrafe;
 
 			if (_unit->getTurretType() != TRT_NONE)
 			{
 				const int dirTurret (_unit->getTurretDirection() - _unit->getUnitDirection());
-				_unit->setTurretDirection((dirTurret + dirStrafe) % 8);
+				_unit->setTurretDirection((dirTurret + dirStrafe) % 8u);
 				//Log(LOG_INFO) << ". STANDING strafeTank, setTurretDirection() -> " << (turretOffset + dirStrafe);
 			}
 		}
@@ -434,7 +434,7 @@ bool UnitWalkBState::doStatusStand() // private.
 	int
 		tuCost (_pf->getTuCostPf(pos, dir, &posStop)), // gets tu cost but also sets the destination position.
 		tuTest,
-		staCost;
+		enCost;
 	//Log(LOG_INFO) << ". tuCost = " << tuCost;
 
 	Tile* const destTile (_battleSave->getTile(posStop));
@@ -455,39 +455,39 @@ bool UnitWalkBState::doStatusStand() // private.
 		//Log(LOG_INFO) << ". . falling, set tuCost 0";
 		tuCost =
 		tuTest =
-		staCost = 0;
+		enCost = 0;
 	}
 	else
 	{
 		tuTest =
-		staCost = tuCost;
+		enCost = tuCost;
 
 		if (gravLift == false)
 		{
 			if (_action.dash == true // allow dash when moving vertically 1 tile (or more).
 				|| (_action.strafe == true && dir >= Pathfinding::DIR_UP))
 			{
-				tuCost -= _pf->getOpenDoor();
-				tuCost = (tuCost * 3 / 4) + _pf->getOpenDoor();
+				tuCost -= _pf->getDoorCost();
+				tuCost = ((tuCost * 3) >> 2u) + _pf->getDoorCost();
 
-				staCost -= _pf->getOpenDoor();
-				staCost = staCost * 3 / 2;
+				enCost -= _pf->getDoorCost();
+				enCost = ((enCost * 3) >> 1u);
 			}
 
-			staCost -= _unit->getArmor()->getAgility();
-			if (staCost < 0) staCost = 0;
+			enCost -= _unit->getArmor()->getAgility();
+			if (enCost < 0) enCost = 0;
 		}
 		else // gravLift
 		{
 			//Log(LOG_INFO) << ". . using GravLift";
-			staCost = 0;
+			enCost = 0;
 		}
 	}
 
 	//Log(LOG_INFO) << ". check tuCost + stamina, etc. TU = " << tuCost;
 	//Log(LOG_INFO) << ". unit->TU = " << _unit->getTimeUnits();
 	static const int FAIL (255);
-	if (tuCost - _pf->getOpenDoor() > _unit->getTimeUnits())
+	if (tuCost - _pf->getDoorCost() > _unit->getTimeUnits())
 	{
 		//Log(LOG_INFO) << ". . tuCost > _unit->TU()";
 		if (_unit->getFaction() == FACTION_PLAYER
@@ -501,9 +501,9 @@ bool UnitWalkBState::doStatusStand() // private.
 		return false;
 	}
 
-	if (staCost > _unit->getEnergy())
+	if (enCost - _pf->getDoorCost() > _unit->getEnergy())
 	{
-		//Log(LOG_INFO) << ". . staCost > _unit->getEnergy()";
+		//Log(LOG_INFO) << ". . enCost > _unit->getEnergy()";
 		if (_unit->getFaction() == FACTION_PLAYER
 			&& _parent->playerPanicHandled() == true)
 		{
@@ -574,14 +574,14 @@ bool UnitWalkBState::doStatusStand() // private.
 	}
 
 	//Log(LOG_INFO) << ". check size for obstacles";
-	const int armorSize (_unit->getArmor()->getSize() - 1);
+	const int unitSize (_unit->getArmor()->getSize() - 1);
 	for (int
-			x = armorSize;
+			x = unitSize;
 			x != -1;
 			--x)
 	{
 		for (int
-				y = armorSize;
+				y = unitSize;
 				y != -1;
 				--y)
 		{
@@ -623,7 +623,7 @@ bool UnitWalkBState::doStatusStand() // private.
 	//Log(LOG_INFO) << ". dequeuePath() dir[1] = " << dir;
 
 	if (_unit->spendTimeUnits(tuCost) == true
-		&& _unit->spendEnergy(staCost) == true)
+		&& _unit->spendEnergy(enCost) == true)
 	{
 		//Log(LOG_INFO) << ". . WalkBState: spend TU & Energy -> establish tile-links";
 		_preStepTurn =
@@ -1072,7 +1072,7 @@ void UnitWalkBState::postPathProcedures() // private.
 			_unit->setHiding(false);
 			_unit->dontReselect();
 			dir = RNG::generate(0,7);
-//			dir = (_unit->getUnitDirection() + 4) % 8;
+//			dir = (_unit->getUnitDirection() + 4) % 8u;
 		}
 		else if ((dir = _action.finalFacing) == -1) // set by AlienBAIState::setupAmbush() & findFirePosition()
 			dir = getFinalDirection();
@@ -1246,10 +1246,10 @@ void UnitWalkBState::playMoveSound() // private.
 							switch (walkPhase)
 							{
 								case 3:
-									soundId = stepSound * 2 + ResourcePack::WALK_OFFSET + 1;
+									soundId = (stepSound << 1u) + ResourcePack::WALK_OFFSET + 1;
 									break;
 								case 7:
-									soundId = stepSound * 2 + ResourcePack::WALK_OFFSET;
+									soundId = (stepSound << 1u) + ResourcePack::WALK_OFFSET;
 							}
 						}
 					}

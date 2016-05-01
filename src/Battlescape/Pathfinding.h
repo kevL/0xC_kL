@@ -61,7 +61,7 @@ private:
 		_strafe,
 		_zPath;
 	int
-		_openDoor, // to get an accurate preview when dashing through doors.
+		_doorCost, // to get an accurate preview when dashing through doors etc.
 		_tuCostTotal;
 
 	BattleUnit* _unit;
@@ -196,7 +196,7 @@ private:
 		MoveType getMoveTypePf() const;
 
 		/// Gets TU-cost for opening a door.
-		int getOpenDoor() const;
+		int getDoorCost() const;
 
 		/// Checks whether a path is ready and returns the direction.
 		int getStartDirection() const;
