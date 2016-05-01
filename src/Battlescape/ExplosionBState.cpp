@@ -282,38 +282,39 @@ void ExplosionBState::init()
 
 		if (_melee == true)
 		{
-			if (itRule->getBattleType() != BT_PSIAMP)
+			switch (itRule->getBattleType())
 			{
-				explType_att = ET_MELEE_ATT;
-				explType_hit = ET_MELEE_HIT;
+				default:
+					explType_att = ET_MELEE_ATT;
+					explType_hit = ET_MELEE_HIT;
 
-				if (_buttHurt == true)
-				{
-					aniStart_att = -1;
-					if (_meleeSuccess == true)
+					if (_buttHurt == true)
 					{
-						soundId = itRule->getMeleeHitSound();
-						aniStart_hit = itRule->getMeleeHitAnimation();
+						aniStart_att = -1;
+						if (_meleeSuccess == true)
+						{
+							soundId = itRule->getMeleeHitSound();
+							aniStart_hit = itRule->getMeleeHitAnimation();
+						}
+						else
+							soundId = aniStart_hit = -1;
 					}
 					else
-						soundId = aniStart_hit = -1;
-				}
-				else
-				{
+					{
+						soundId = itRule->getMeleeHitSound();
+						aniStart_att = itRule->getMeleeAnimation();
+						if (_meleeSuccess == true)
+							aniStart_hit = itRule->getMeleeHitAnimation();
+						else
+							aniStart_hit = -1;
+					}
+					break;
+
+				case BT_PSIAMP:
+					explType_hit = explType_att = ET_PSI;
 					soundId = itRule->getMeleeHitSound();
-					aniStart_att = itRule->getMeleeAnimation();
-					if (_meleeSuccess == true)
-						aniStart_hit = itRule->getMeleeHitAnimation();
-					else
-						aniStart_hit = -1;
-				}
-			}
-			else
-			{
-				explType_hit = explType_att = ET_PSI;
-				soundId = itRule->getMeleeHitSound();
-				aniStart_hit = itRule->getMeleeHitAnimation();
-				aniStart_att = -1;
+					aniStart_hit = itRule->getMeleeHitAnimation();
+					aniStart_att = -1;
 			}
 		}
 		else

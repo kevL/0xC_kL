@@ -1158,8 +1158,8 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 		success = false;
 
 	int soundId;
-	if (success == false || _ammo->getRules()->getMeleeHitSound() == -1)
-		soundId = _ammo->getRules()->getMeleeSound();
+	if (success == false || _action.weapon->getRules()->getMeleeHitSound() == -1)
+		soundId = _action.weapon->getRules()->getMeleeSound();
 	else
 		soundId = -1;
 
