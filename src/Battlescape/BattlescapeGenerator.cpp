@@ -3007,7 +3007,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 }
 
 /**
- * Generates a map based on the base's layout.
+ * Generates a battlefield based on the Base's layout.
  * @note This doesn't drill or fill with dirt - the script must do that.
  */
 void BattlescapeGenerator::generateBaseMap() // private.
@@ -3041,12 +3041,12 @@ void BattlescapeGenerator::generateBaseMap() // private.
 					const std::string mapname ((*i)->getRules()->getMapName());
 					std::ostringstream newname;
 					newname << mapname.substr(
-											0,
-											mapname.size() - 2); // strip off last 2 digits
+											0u,
+											mapname.size() - 2u); // strip off last 2 digits
 
 					int mapnum (std::atoi(mapname.substr( // get number
-														mapname.size() - 2,
-														2).c_str()));
+														mapname.size() - 2u,
+														2u).c_str()));
 					mapnum += num;
 					if (mapnum < 10)
 						newname << 0;
@@ -3090,7 +3090,7 @@ void BattlescapeGenerator::generateBaseMap() // private.
 									++l)
 							{
 								// use only every other tile, giving a "checkerboard" pattern
-								if ((k + l) % 2 == 0)
+								if (((k + l) & 1) == 0)
 								{
 									const Tile
 										* const tile (_battleSave->getTile(Position(

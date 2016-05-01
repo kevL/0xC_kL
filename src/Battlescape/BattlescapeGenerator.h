@@ -160,9 +160,9 @@ private:
 	/// Possibly explodes ufo powersources.
 	void explodePowerSources();
 
-	/// Generates a Battlescape Map.
+	/// Generates the tactical Map of a battlefield.
 	void generateMap(const std::vector<MapScript*>* const directives);
-	/// Generates a Map from base-modules.
+	/// Generates the tactical Map of a battlefield based on player's Base.
 	void generateBaseMap();
 
 	/// Finds aLienBase start modules for xCom equipment-spawning.
@@ -209,7 +209,7 @@ private:
 
 
 	public:
-		/// Creates a BattlescapeGenerator class
+		/// Creates a BattlescapeGenerator class.
 		explicit BattlescapeGenerator(Game* const game);
 		/// Cleans up the BattlescapeGenerator.
 		~BattlescapeGenerator();
@@ -222,7 +222,7 @@ private:
 		void setBase(Base* const base);
 		/// Sets the aLien MissionSite.
 		void setMissionSite(MissionSite* const site);
-		/// Sets the AlienBase
+		/// Sets the AlienBase.
 		void setAlienBase(AlienBase* const base);
 		/// Sets the terrain-rule.
 		void setTerrain(RuleTerrain* const terrain);
@@ -242,7 +242,7 @@ private:
 		void runInventory(
 				Craft* const craft,
 				Base* const base = nullptr,
-				size_t selUnitId = 0);
+				size_t selUnitId = 0u);
 
 		/// Sets up the objectives for the map.
 		void setupObjectives(const AlienDeployment* const ruleDeploy);

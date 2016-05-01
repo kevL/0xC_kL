@@ -964,6 +964,7 @@ void InventoryState::btnUnequipUnitClick(Action*)
 					i != equipt->end();
 					++i)
 			{
+				(*i)->setFuse(-1);
 				(*i)->setOwner();
 				(*i)->setInventorySection(grdRule);
 				tile->addItem(*i);
@@ -978,8 +979,8 @@ void InventoryState::btnUnequipUnitClick(Action*)
 }
 /* void InventoryState::btnUnequipUnitClick(Action*)
 {
-	if (_tuMode == true						// don't accept clicks in battlescape
-		&& _inventoryPanel->getSelectedItem() == nullptr) // or when moving items
+	if (_tuMode == true										// don't accept clicks in battlescape
+		&& _inventoryPanel->getSelectedItem() == nullptr)	// or when moving items
 	{
 		BattleUnit* const unit = _battleSave->getSelectedUnit();
 		std::vector<BattleItem*>* const unitInv = unit->getInventory();
