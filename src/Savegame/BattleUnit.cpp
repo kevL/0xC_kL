@@ -3873,11 +3873,12 @@ int BattleUnit::getMoveSound() const
  */
 bool BattleUnit::isWoundable() const
 {
-	return _status != STATUS_DEAD
-			&& (_geoscapeSoldier != nullptr
-				|| (Options::battleAlienBleeding == true
-					&& _unitRule->isMechanical() == false
-					&& _isZombie == false));
+	return _status != STATUS_LATENT
+		&& _status != STATUS_DEAD
+		&& (_geoscapeSoldier != nullptr
+			|| (Options::battleAlienBleeding == true
+				&& _unitRule->isMechanical() == false
+				&& _isZombie == false));
 }
 
 /**
@@ -3886,11 +3887,12 @@ bool BattleUnit::isWoundable() const
  */
 bool BattleUnit::isMoralable() const
 {
-	return _status != STATUS_DEAD
-			&& _status != STATUS_UNCONSCIOUS
-			&& (_geoscapeSoldier != nullptr
-				|| (_unitRule->isMechanical() == false
-					&& _isZombie == false));
+	return _status != STATUS_LATENT
+		&& _status != STATUS_DEAD
+		&& _status != STATUS_UNCONSCIOUS
+		&& (_geoscapeSoldier != nullptr
+			|| (_unitRule->isMechanical() == false
+				&& _isZombie == false));
 }
 
 /**
@@ -3899,10 +3901,11 @@ bool BattleUnit::isMoralable() const
  */
 bool BattleUnit::isHealable() const
 {
-	return _status != STATUS_DEAD
-			&& (_geoscapeSoldier != nullptr
-				|| (_unitRule->isMechanical() == false
-					&& _isZombie == false));
+	return _status != STATUS_LATENT
+		&& _status != STATUS_DEAD
+		&& (_geoscapeSoldier != nullptr
+			|| (_unitRule->isMechanical() == false
+				&& _isZombie == false));
 }
 
 /**
@@ -3912,10 +3915,10 @@ bool BattleUnit::isHealable() const
 bool BattleUnit::isRevivable() const
 {
 	return _status == STATUS_UNCONSCIOUS
-			&& (_geoscapeSoldier != nullptr
-				|| (_unitRule->isMechanical() == false
-					&& _armor->getSize() == 1
-					&& _isZombie == false));
+		&& (_geoscapeSoldier != nullptr
+			|| (_unitRule->isMechanical() == false
+				&& _armor->getSize() == 1
+				&& _isZombie == false));
 }
 
 /**

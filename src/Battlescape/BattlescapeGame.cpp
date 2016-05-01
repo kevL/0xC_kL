@@ -2034,8 +2034,7 @@ void BattlescapeGame::factionMorale( // private.
 			j != _battleSave->getUnits()->end();
 			++j)
 	{
-		if ((*j)->isMoralable() == true
-			&& (*j)->isOut_t() == false)
+		if ((*j)->isMoralable() == true)
 		{
 			if ((*j)->getOriginalFaction() == defender->getOriginalFaction()
 				|| (defender->getOriginalFaction() == FACTION_NEUTRAL			// for civie-death,
