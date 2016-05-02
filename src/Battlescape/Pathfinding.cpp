@@ -175,7 +175,8 @@ void Pathfinding::abortPath()
  * @param unit				- pointer to a BattleUnit
  * @param posStop			- destination Position
  * @param maxTuCost			- maximum time units this path can cost (default TU_INFINITE)
- * @param launchTarget		- pointer to a targeted BattleUnit (default nullptr)
+ * @param launchTarget		- pointer to a targeted BattleUnit, used only by
+ *							  AlienBAIState::pathWaypoints() (default nullptr)
  * @param strafeRejected	- true if path needs to be recalculated w/out strafe (default false)
  */
 void Pathfinding::calculatePath(
@@ -199,6 +200,10 @@ void Pathfinding::calculatePath(
 		return;
 	}
 
+	// WARNING: If the AI ever needs to path a guided-missile that's fired by a
+	// large unit the 'unitSize' would need to be forced to "1" above^ and below_.
+
+
 	abortPath();
 
 	if (launchTarget != nullptr)
@@ -212,25 +217,41 @@ void Pathfinding::calculatePath(
 	if (unit->getFaction() != FACTION_PLAYER)
 		strafeRejected = true;
 
-	// NOTE: Is this check even necessary since it's done again below.
-	const Tile* tileStop (_battleSave->getTile(posStop));
-	if (isBlocked( // TODO: Check all quadrants.
-				tileStop,
-				O_FLOOR,
-				launchTarget) == true
-		|| isBlocked(
-				tileStop,
-				O_OBJECT,
-				launchTarget) == true)
+	const Tile* tileStop;
+	for (int // NOTE: Is this code-block even necessary since it's done basically again below_.
+			x = 0;
+			x != unitSize;
+			++x)
 	{
-		return;
+		for (int
+				y = 0;
+				y != unitSize;
+				++y)
+		{
+			if ((tileStop = _battleSave->getTile(posStop + Position(x,y,0))) != nullptr)
+			{
+				if (isBlocked(
+							tileStop,
+							O_FLOOR,
+							launchTarget) == true
+					|| isBlocked(
+							tileStop,
+							O_OBJECT,
+							launchTarget) == true
+					|| tileStop->getTuCostTile(O_OBJECT, _mType) == FAIL)
+				{
+					return;
+				}
+			}
+			else
+				return; // <- probly also done again below_ Pertains only to large units.
+		}
 	}
-
 
 	static Position posStop_cache; // for keeping things straight if strafeRejected happens.
 	posStop_cache = posStop;
 
-
+	tileStop = _battleSave->getTile(posStop);
 	while (tileStop->getTerrainLevel() == -24
 		&& posStop.z != _battleSave->getMapSizeZ())
 	{
@@ -248,7 +269,7 @@ void Pathfinding::calculatePath(
 	}
 
 
-	if (isBlocked( // TODO: Check all quadrants.
+	if (isBlocked( // TODO: Check all quadrants. See above^.
 			tileStop,
 			O_FLOOR,
 			launchTarget) == false
@@ -262,7 +283,7 @@ void Pathfinding::calculatePath(
 			const Tile* tileTest;
 			const BattleUnit* unitTest;
 
-			static const int dir[3] {4,2,3};
+			static const int dir[3u] {4,2,3};
 
 			size_t i (0);
 			for (int
@@ -408,16 +429,16 @@ bool Pathfinding::bresenhamPath( // private.
 //		bool sneak)
 {
 	//Log(LOG_INFO) << "Pathfinding::bresenhamPath()";
+	static const size_t DIR_TOTAL (8u);
 	static const int
-		D_TOTAL (8),
-		stock_xd[D_TOTAL]	{ 0, 1, 1, 1, 0,-1,-1,-1}, // stock values
-		stock_yd[D_TOTAL]	{-1,-1, 0, 1, 1, 1, 0,-1},
-		alt_xd[D_TOTAL]		{ 0,-1,-1,-1, 0, 1, 1, 1}, // alt values
-		alt_yd[D_TOTAL]		{ 1, 1, 0,-1,-1,-1, 0, 1};
+		stock_xd[DIR_TOTAL]	{ 0, 1, 1, 1, 0,-1,-1,-1}, // stock values
+		stock_yd[DIR_TOTAL]	{-1,-1, 0, 1, 1, 1, 0,-1},
+		alt_xd[DIR_TOTAL]	{ 0,-1,-1,-1, 0, 1, 1, 1}, // alt values
+		alt_yd[DIR_TOTAL]	{ 1, 1, 0,-1,-1,-1, 0, 1};
 
 	int
-		xd[D_TOTAL],
-		yd[D_TOTAL];
+		xd[DIR_TOTAL],
+		yd[DIR_TOTAL];
 	if (_zPath == false)
 	{
 		//std::copy(std::begin(src), std::end(src), std::begin(dest));
@@ -440,11 +461,14 @@ bool Pathfinding::bresenhamPath( // private.
 
 		cx,cy,cz,
 
-		dir,
 		tuCostLast (-1);
 
-	Position posLast (origin);
-	Position posNext;
+	size_t dir;
+
+	Position
+		posStart (origin),
+		posStop,
+		posStopTest;
 
 //	_tuCostTotal = 0;
 
@@ -453,7 +477,7 @@ bool Pathfinding::bresenhamPath( // private.
 	y0 = origin.y; y1 = target.y;
 	z0 = origin.z; z1 = target.z;
 
-	// 'steep' xy Line, make longest delta x plane
+	// 'steep' x/y Line, make longest delta x-plane
 	swap_xy = std::abs(y1 - y0) > std::abs(x1 - x0);
 	if (swap_xy)
 	{
@@ -461,7 +485,7 @@ bool Pathfinding::bresenhamPath( // private.
 		std::swap(x1,y1);
 	}
 
-	// do same for xz
+	// do same for x/z
 	swap_xz = std::abs(z1 - z0) > std::abs(x1 - x0);
 	if (swap_xz)
 	{
@@ -476,8 +500,8 @@ bool Pathfinding::bresenhamPath( // private.
 
 	// drift controls when to step in 'shallow' planes
 	// starting value keeps Line centred
-	drift_xy = (delta_x / 2);
-	drift_xz = (delta_x / 2);
+	drift_xy = delta_x >> 1u;
+	drift_xz = delta_x >> 1u;
 
 	// direction of line
 	step_x =
@@ -506,50 +530,50 @@ bool Pathfinding::bresenhamPath( // private.
 
 		if (x != x0 || y != y0 || z != z0)
 		{
-			Position posNextReal (Position(cx,cy,cz));
-			posNext = posNextReal;
+			posStopTest =
+			posStop = Position(cx,cy,cz);
 
 			// get direction
 			for (
 					dir = 0;
-					dir != D_TOTAL;
+					dir != DIR_TOTAL;
 					++dir)
 			{
-				if (   xd[dir] == cx - posLast.x
-					&& yd[dir] == cy - posLast.y)
+				if (   xd[dir] == cx - posStart.x
+					&& yd[dir] == cy - posStart.y)
 				{
 					break;
 				}
 			}
 
 			const int tuCost (getTuCostPf(
-										posLast,
-										dir,
-										&posNext,
+										posStart,
+										static_cast<int>(dir),
+										&posStop,
 										launchTarget));
 			//Log(LOG_INFO) << ". TU Cost = " << tuCost;
 
-//			if (sneak == true && _battleSave->getTile(posNext)->getTileVisible())
+//			if (sneak == true && _battleSave->getTile(posStop)->getTileVisible())
 //				return false;
 
 			// delete the following
-			const bool isDiagonal (dir & 1);
+			const bool isDiagonal ((dir & 1u) == 1u);
 			const int
-				tuCostLastDiagonal (tuCostLast + tuCostLast / 2),
-				tuCostDiagonal (tuCost + tuCost / 2);
+				tuCostDiagonalLast (tuCostLast + (tuCostLast >> 1u)),
+				tuCostDiagonal (tuCost + (tuCost >> 1u));
 
-			if (posNext == posNextReal
+			if (posStopTest == posStop
 				&& tuCost < FAIL
 				&& (tuCost == tuCostLast
-					|| (isDiagonal == true && tuCost == tuCostLastDiagonal)
-					|| (isDiagonal == false && tuCostDiagonal == tuCostLast)
+					|| (isDiagonal == true  && tuCost == tuCostDiagonalLast)
+					|| (isDiagonal == false && tuCostLast == tuCostDiagonal)
 					|| tuCostLast == -1)
 				&& isBlockedPath(
-							_battleSave->getTile(posLast),
-							dir,
+							_battleSave->getTile(posStart),
+							static_cast<int>(dir),
 							launchTarget) == false)
 			{
-				_path.push_back(dir);
+				_path.push_back(static_cast<int>(dir));
 				//Log(LOG_INFO) << ". " << dir;
 			}
 			else
@@ -561,7 +585,7 @@ bool Pathfinding::bresenhamPath( // private.
 				_tuCostTotal += tuCost;
 			}
 
-			posLast = Position(cx,cy,cz);
+			posStart = Position(cx,cy,cz);
 		}
 
 		// update progress in other planes
@@ -1274,7 +1298,7 @@ int Pathfinding::getTuCostPf(
 				* const lrTile (_battleSave->getTile(*posStop + Position(1,1,0))),
 				* const llTile (_battleSave->getTile(*posStop + Position(0,1,0)));
 			const int
-				levels[4]
+				levels[4u]
 				{
 					ulTile->getTerrainLevel(),
 					urTile->getTerrainLevel(),
@@ -1537,7 +1561,7 @@ bool Pathfinding::isBlocked( // private.
 							return true;
 				}
 			}
-			return false;
+			return false; // NOTE: I know this is here for a good reason but it keeps getting in my way.
 
 		case O_WESTWALL:
 		{
@@ -1743,7 +1767,7 @@ bool Pathfinding::previewPath(bool discard)
 			agility (_unit->getArmor()->getAgility());
 		int
 			unitTu (_unit->getTimeUnits()),
-			unitEnergy (_unit->getEnergy()),
+			unitEn (_unit->getEnergy()),
 			tuCost,			// cost per tile
 			tuTally (0),	// only for soldiers reserving TUs
 			energyLimit,
@@ -1781,7 +1805,7 @@ bool Pathfinding::previewPath(bool discard)
 							&posStop);
 			//Log(LOG_INFO) << ". tuCost= " << tuCost;
 
-			energyLimit = unitEnergy;
+			energyLimit = unitEn;
 
 			falling = _mType != MT_FLY
 				   && canFallDown(
@@ -1800,21 +1824,21 @@ bool Pathfinding::previewPath(bool discard)
 						hathStood = true;
 						tuTally += TU_STAND;
 						unitTu -= TU_STAND;
-						unitEnergy -= std::max(0, EN_STAND - agility);
+						unitEn -= std::max(0, EN_STAND - agility);
 					}
 
 					if (_pathAction->dash == true)
 					{
-						unitEnergy -= (((tuCost -= _doorCost) * 3) >> 1u);
+						unitEn -= (((tuCost -= _doorCost) * 3) >> 1u);
 						tuCost = ((tuCost * 3) >> 2u) + _doorCost;
 					}
 					else
-						unitEnergy -= tuCost - _doorCost;
+						unitEn -= tuCost - _doorCost;
 
-					unitEnergy += agility;
+					unitEn += agility;
 
-					if (unitEnergy > energyLimit)
-						unitEnergy = energyLimit;
+					if (unitEn > energyLimit)
+						unitEn = energyLimit;
 				}
 
 				unitTu -= tuCost;
@@ -1844,8 +1868,7 @@ bool Pathfinding::previewPath(bool discard)
 					if (unitSize == 1 || (x == 1 && y == 1))
 						tile->setPreviewTu(unitTu);
 
-					tileAbove = _battleSave->getTile(posStart + Position(x,y,1));
-					if (tileAbove != nullptr
+					if ((tileAbove = _battleSave->getTile(posStart + Position(x,y,1))) != nullptr
 						&& tileAbove->getPreviewDir() == 0
 						&& tuCost == 0
 						&& _mType != MT_FLY) // unit fell down
@@ -1854,7 +1877,7 @@ bool Pathfinding::previewPath(bool discard)
 						tileAbove->setPreviewDir(DIR_DOWN);	// retroactively set tileAbove's direction
 					}
 
-					if (unitTu > -1 && unitEnergy > -1)
+					if (unitTu > -1 && unitEn > -1)
 					{
 						if (reserveOk == true)
 							color = Pathfinding::green;
