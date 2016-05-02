@@ -55,7 +55,7 @@ ScannerView::ScannerView(
 			x,y),
 		_game(game),
 		_selUnit(selUnit),
-		_frame(0),
+		_cycle(0),
 		_dotsDone(false)
 {
 	_redraw = true;
@@ -114,18 +114,13 @@ void ScannerView::draw()
 						}
 					}
 
-					int frame (tile->getTileUnit()->getMotionPoints() / 5);
-					if (frame > -1)
-					{
-						if (frame > 5) frame = 5;
-
-						srf = srt->getFrame(_frame + frame);
-						srf->blitNShade(
-									this,
-									Surface::getX() + ((9 + x) * 8) - 4,
-									Surface::getY() + ((9 + y) * 8) - 4,
-									0);
-					}
+					int blobId (std::min(tile->getTileUnit()->getMotionPoints() / 5, 5));
+					srf = srt->getFrame(blobId + _cycle);
+					srf->blitNShade(
+								this,
+								Surface::getX() + ((9 + x) << 3u) - 4,
+								Surface::getY() + ((9 + y) << 3u) - 4,
+								0);
 				}
 			}
 		}
@@ -135,8 +130,8 @@ void ScannerView::draw()
 	srf = srt->getFrame(_selUnit->getUnitDirection() + 7); // draw arrow in the direction that selUnit is faced
 	srf->blitNShade(
 				this,
-				Surface::getX() + (9 * 8) - 4,
-				Surface::getY() + (9 * 8) - 4,
+				Surface::getX() + 68, //(9 * 8) - 4,
+				Surface::getY() + 68, //(9 * 8) - 4,
 				0);
 	this->unlock();
 }
@@ -154,7 +149,7 @@ void ScannerView::mouseClick(Action*, State*)
  */
 void ScannerView::animate()
 {
-	if (++_frame == 2) _frame = 0;
+	if (++_cycle == 2) _cycle = 0;
 
 	_redraw = true;
 }

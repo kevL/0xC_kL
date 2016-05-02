@@ -3007,7 +3007,9 @@ void TileEngine::explode(
 	calculateSunShading();		// roofs could have been destroyed
 	calculateTerrainLighting();	// fires could have been started
 //	calculateUnitLighting();	// units could have collapsed <- done in UnitDieBState
-	calcFovAll(true);
+
+	if (_battleSave->getBattleGame() != nullptr)	// don't let pre-battle Power Source explosions CTD
+		calcFovAll(true);							// on the call to BattlescapeGame::playerPanicHandled().
 	//Log(LOG_INFO) << "TileEngine::explode() EXIT";
 }
 

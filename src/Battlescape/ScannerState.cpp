@@ -141,7 +141,7 @@ void ScannerState::think()
 }
 
 /**
- * Exits the screen.
+ * Exits the state.
  * @param action - pointer to an Action (default nullptr)
  */
 void ScannerState::exitClick(Action*) // private.

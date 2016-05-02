@@ -683,8 +683,10 @@ private:
 		/// Gets if the BattleUnit has overdosed on morphine.
 		bool getOverDose() const;
 
-		/// Gets motion points of the BattleUnit for the motion scanner.
+		/// Gets motion-points of the BattleUnit for the motion-scanner.
 		int getMotionPoints() const;
+		/// Calculates arbitrary pre-battle TU and motion-points.
+		void preBattleMotion();
 
 		/// Gets the BattleUnit's name.
 		std::wstring getName(

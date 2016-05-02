@@ -159,6 +159,11 @@ void BattlescapeGame::init()
 	if (_init == true)
 	{
 		_init = false;
+																	// done in one of
+//		_battleSave->getTileEngine()->calculateSunShading();		// (a) BattlescapeGenerator::run()
+//		_battleSave->getTileEngine()->calculateTerrainLighting();	// (b) BattlescapeGenerator::nextStage()
+//		_battleSave->getTileEngine()->calculateUnitLighting();		// (c) SavedBattleGame::loadMapResources()
+
 		_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGenerator::run() & nextStage(). done & done.
 	}
 }

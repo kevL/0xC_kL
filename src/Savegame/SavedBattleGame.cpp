@@ -635,7 +635,7 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 }
 
 /**
- * Saves the saved battle game to a YAML file.
+ * Saves this SavedBattleGame to a YAML file.
  * @return, YAML node
  */
 YAML::Node SavedBattleGame::save() const
@@ -794,7 +794,7 @@ YAML::Node SavedBattleGame::save() const
 }
 
 /**
- * Gets the array of tiles.
+ * Gets the array of Tiles.
  * @return, pointer to a pointer to the Tile array
  */
 Tile** SavedBattleGame::getTiles() const
@@ -803,7 +803,7 @@ Tile** SavedBattleGame::getTiles() const
 }
 
 /**
- * Deletes the old and initializes a new array of tiles.
+ * Deletes the old and initializes a new array of Tiles.
  * @param mapsize_x -
  * @param mapsize_y -
  * @param mapsize_z -

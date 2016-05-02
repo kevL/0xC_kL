@@ -799,7 +799,8 @@ void BattlescapeGenerator::nextStage()
 	_battleSave->getTileEngine()->calculateUnitLighting();
 
 //	_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGame::init(). Are both needed.
-//	if (_battleSave->getBattleGame() != nullptr) // safety. Should be valid for nextStage() start here.
+
+//	if (_battleSave->getBattleGame() != nullptr) // safety. Shall be valid for nextStage() start here.
 	_battleSave->getBattleGame()->reinit();
 
 	_battleSave->getShuffleUnits()->assign(
@@ -1947,10 +1948,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 			dir = RNG::generate(0,7);
 		unit->setUnitDirection(dir);
 
-		int tu (unit->getTimeUnits());
-		tu = static_cast<int>(ceil(
-			 static_cast<double>(tu) * RNG::generate(0.,1.)));
-		unit->setTimeUnits(tu);
+		unit->preBattleMotion();
 
 		_battleSave->getUnits()->push_back(unit);
 	}

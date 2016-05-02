@@ -33,7 +33,7 @@ class Timer;
 
 
 /**
- * The Scanner User Interface.
+ * The Scanner UI.
  */
 class ScannerState
 	:

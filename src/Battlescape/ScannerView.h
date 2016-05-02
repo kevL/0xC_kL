@@ -41,7 +41,7 @@ class ScannerView
 
 private:
 	bool _dotsDone;
-	int _frame;
+	int _cycle;
 
 	const BattleUnit* _selUnit;
 	const Game* _game;

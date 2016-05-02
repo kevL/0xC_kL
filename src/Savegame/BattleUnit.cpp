@@ -3701,6 +3701,29 @@ int BattleUnit::getMotionPoints() const
 }
 
 /**
+ * Calculates arbitrary pre-battle TU and motion-points.
+ * @sa keepWalking()
+ */
+void BattleUnit::preBattleMotion()
+{
+	_tu = static_cast<int>(ceil(
+		  static_cast<double>(_stats.tu) * RNG::generate(0.,1.)));
+
+	switch (_armor->getSize())
+	{
+		case 2:
+			_motionPoints = ((_stats.tu - _tu) * 30) >> 2u;
+			break;
+
+		case 1:
+			if (_standHeight > 16)
+				_motionPoints = (_stats.tu - _tu);
+			else
+				_motionPoints = ((_stats.tu - _tu) * 3) >> 2u;
+	}
+}
+
+/**
  * Gets this BattleUnit's armor.
  * @return, pointer to Armor
  */
