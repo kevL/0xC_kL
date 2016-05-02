@@ -234,13 +234,13 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/ufograph/smoke/smoke.png
-  - type: SMOKE.PCK
+  - type: SmokeCloud
     width: 384
     height: 40
     subX: 32
     subY: 40
     files:
-      8: Resources/Sprites/ufograph/smoke/smoke_cloud_kL.png
+      0: Resources/Sprites/ufograph/smoke/smoke_cloud.png #was 8 in SMOKE.PCK
   - type: RANK_ROOKIE
     width: 9
     height: 7

@@ -83,10 +83,10 @@ private:
 		public:
 			static size_t // TODO: relabel these identifiers w/ appropriate prefixes, eg. sfx_GRAVLIFT, gfx_SMOKE ... See ResourcePack.cpp
 				BUTTON_PRESS,
-				WINDOW_POPUP[3],
+				WINDOW_POPUP[3u],
 
 				EXPLOSION_OFFSET,
-				SMOKE_OFFSET,
+//				SMOKE_OFFSET,
 
 				SMALL_EXPLOSION,
 				DOOR_OPEN,
@@ -101,8 +101,8 @@ private:
 				WALK_OFFSET,
 				ITEM_DROP,
 				ITEM_THROW,
-				MALE_SCREAM[3],
-				FEMALE_SCREAM[3],
+				MALE_SCREAM[3u],
+				FEMALE_SCREAM[3u],
 
 				UFO_FIRE,
 				UFO_HIT,
@@ -118,18 +118,18 @@ private:
 				GRAPHS_CURSOR;
 
 
-			/// Create a new resource pack with a folder's contents.
+			/// Creates a ResourcePack with a folder's contents.
 			ResourcePack();
-			/// Cleans up the resource pack.
+			/// Cleans up the ResourcePack.
 			virtual ~ResourcePack();
 
-			/// Gets a particular font.
-			Font* getFont(const std::string& name) const;
+			/// Gets a particular Font.
+			Font* getFont(const std::string& type) const;
 
-			/// Gets a particular surface.
-			Surface* getSurface(const std::string& name) const;
-			/// Gets a particular surface set.
-			SurfaceSet* getSurfaceSet(const std::string& name) const;
+			/// Gets a particular Surface.
+			Surface* getSurface(const std::string& type) const;
+			/// Gets a particular SurfaceSet.
+			SurfaceSet* getSurfaceSet(const std::string& type) const;
 
 			/// Gets a particular music.
 			Music* getMusic(const std::string& trackType) const;
@@ -167,13 +167,13 @@ private:
 
 			/// Gets a particular palette by PaletteType.
 			Palette* getPalette(const PaletteType palType) const;
-			/// Sets a new palette.
+			/// Sets a the colors of a Palette.
 			void setPalette(
 					SDL_Color* const colors,
 					int firstcolor = 0,
 					int ncolors = 256);
 
-			/// Gets list of voxel data.
+			/// Gets list of voxel-data.
 			const std::vector<Uint16>* getVoxelData() const;
 
 			/// Gets a random background.

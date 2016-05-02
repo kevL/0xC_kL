@@ -1109,7 +1109,7 @@ int Pathfinding::getTuCostPf(
 
 				switch (dir)
 				{
-					case 7: // && !fall
+					case 7:
 					case 0:
 					case 1:
 						//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
@@ -1133,7 +1133,7 @@ int Pathfinding::getTuCostPf(
 
 				switch (dir)
 				{
-					case 1: // && !fall
+					case 1:
 					case 2:
 					case 3:
 						//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
@@ -1158,7 +1158,7 @@ int Pathfinding::getTuCostPf(
 
 				switch (dir)
 				{
-					case 3: // && !fall
+					case 3:
 					case 4:
 					case 5:
 						//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
@@ -1188,7 +1188,7 @@ int Pathfinding::getTuCostPf(
 					case 6:
 					case 7:
 						//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
-						if (wallTu = tileStart->getTuCostTile(O_WESTWALL, _mType) > 0)
+						if ((wallTu = tileStart->getTuCostTile(O_WESTWALL, _mType)) > 0)
 						{
 							wallTuTotal += wallTu;
 							++walls;
@@ -1716,11 +1716,11 @@ bool Pathfinding::isBlocked( // private.
 		}
 	}
 
-	static const int TU_LARGEBLOCK (6); // stop large units from going through hedges and over fences
+	static const int TU_LARGEBLOCK (5); // stop large units from going through hedges and over fences
 
-	const int tu (tile->getTuCostTile(partType, _mType));
-	if (tu == FAIL
-		|| (tu > TU_LARGEBLOCK
+	const int partCost (tile->getTuCostTile(partType, _mType));
+	if (partCost == FAIL
+		|| (partCost > TU_LARGEBLOCK
 			&& _unit != nullptr
 			&& _unit->getArmor()->getSize() == 2))
 	{

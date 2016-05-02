@@ -2519,7 +2519,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 							updateSoldierInfo(false); // try no calcFov()
 
 							_battleGame->cancelTacticalAction();
-//							_battleGame->getTacticalAction()->actor = nextSpotter;
+							_battleGame->getTacticalAction()->actor = nextSpotter;
 
 							_battleGame->setupSelector();
 						}
@@ -2576,7 +2576,7 @@ void BattlescapeState::btnWoundedPress(Action* action)
 							updateSoldierInfo(false); // try no calcFov()
 
 							_battleGame->cancelTacticalAction();
-//							_battleGame->getTacticalAction()->actor = unit;
+							_battleGame->getTacticalAction()->actor = unit;
 
 							_battleGame->setupSelector();
 						}
@@ -3621,8 +3621,7 @@ void BattlescapeState::shotgunExplosion() // private.
 }
 
 /**
- * Pops up a context sensitive list of actions the player can choose from.
- * @note Some actions result in a change of gamestate.
+ * Popups a context-sensitive-list of battle-actions for the player.
  * @param item		- pointer to the BattleItem (righthand/lefthand)
  * @param injured	- true if the arm using @a item is injured (default false)
  */

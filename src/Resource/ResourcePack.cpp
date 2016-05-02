@@ -39,45 +39,45 @@ namespace OpenXcom
 {
 
 size_t // TODO: relabel these identifiers w/ appropriate prefixes, eg. sfx_GRAVLIFT, gfx_SMOKE ... See ResourcePack.h
-	ResourcePack::BUTTON_PRESS			= 0,
-	ResourcePack::WINDOW_POPUP[3]		= {1,2,3},
+	ResourcePack::BUTTON_PRESS			=   0u,
+	ResourcePack::WINDOW_POPUP[3u]		=  {1u,2u,3u},
 
-	ResourcePack::EXPLOSION_OFFSET		= 0,
-	ResourcePack::SMOKE_OFFSET			= 7,
+	ResourcePack::EXPLOSION_OFFSET		=   0u,
+//	ResourcePack::SMOKE_OFFSET			=   7u,
 
-	ResourcePack::SMALL_EXPLOSION		= 2,
-	ResourcePack::DOOR_OPEN				= 3,
-	ResourcePack::LARGE_EXPLOSION		= 5,
-	ResourcePack::FLYING_SOUND			= 15,
-	ResourcePack::FLYING_SOUND_HQ		= 70,
-	ResourcePack::ITEM_RELOAD			= 17,
-	ResourcePack::ITEM_UNLOAD_HQ		= 74,
-	ResourcePack::SLIDING_DOOR_OPEN		= 20,
-	ResourcePack::SLIDING_DOOR_CLOSE	= 21,
-	ResourcePack::GRAVLIFT_SOUND		= 40,
-	ResourcePack::WALK_OFFSET			= 22,
-	ResourcePack::ITEM_DROP				= 38,
-	ResourcePack::ITEM_THROW			= 39,
-	ResourcePack::MALE_SCREAM[3]		= {41,42,43},
-	ResourcePack::FEMALE_SCREAM[3]		= {44,45,46},
+	ResourcePack::SMALL_EXPLOSION		=   2u,
+	ResourcePack::DOOR_OPEN				=   3u,
+	ResourcePack::LARGE_EXPLOSION		=   5u,
+	ResourcePack::FLYING_SOUND			=  15u,
+	ResourcePack::FLYING_SOUND_HQ		=  70u,
+	ResourcePack::ITEM_RELOAD			=  17u,
+	ResourcePack::ITEM_UNLOAD_HQ		=  74u,
+	ResourcePack::SLIDING_DOOR_OPEN		=  20u,
+	ResourcePack::SLIDING_DOOR_CLOSE	=  21u,
+	ResourcePack::GRAVLIFT_SOUND		=  40u,
+	ResourcePack::WALK_OFFSET			=  22u,
+	ResourcePack::ITEM_DROP				=  38u,
+	ResourcePack::ITEM_THROW			=  39u,
+	ResourcePack::MALE_SCREAM[3u]		= {41u,42u,43u},
+	ResourcePack::FEMALE_SCREAM[3u]		= {44u,45u,46u},
 
-	ResourcePack::UFO_FIRE				= 9,
-	ResourcePack::UFO_HIT				= 12,
-	ResourcePack::UFO_CRASH				= 11,
-	ResourcePack::UFO_EXPLODE			= 11,
-	ResourcePack::INTERCEPTOR_HIT		= 10,
-	ResourcePack::INTERCEPTOR_EXPLODE	= 13,
+	ResourcePack::UFO_FIRE				=   9u,
+	ResourcePack::UFO_HIT				=  12u,
+	ResourcePack::UFO_CRASH				=  11u,
+	ResourcePack::UFO_EXPLODE			=  11u,
+	ResourcePack::INTERCEPTOR_HIT		=  10u,
+	ResourcePack::INTERCEPTOR_EXPLODE	=  13u,
 
-	ResourcePack::GEOSCAPE_CURSOR		= 252,
-	ResourcePack::BASESCAPE_CURSOR		= 252,
-	ResourcePack::BATTLESCAPE_CURSOR	= 144,
-	ResourcePack::UFOPAEDIA_CURSOR		= 252,
-	ResourcePack::GRAPHS_CURSOR			= 252;
+	ResourcePack::GEOSCAPE_CURSOR		= 252u,
+	ResourcePack::BASESCAPE_CURSOR		= 252u,
+	ResourcePack::BATTLESCAPE_CURSOR	= 144u,
+	ResourcePack::UFOPAEDIA_CURSOR		= 252u,
+	ResourcePack::GRAPHS_CURSOR			= 252u;
 
 
 
 /**
- * Initializes a blank resource set pointing to a folder.
+ * Creates the ResourcePack.
  */
 ResourcePack::ResourcePack()
 {
@@ -97,67 +97,53 @@ ResourcePack::~ResourcePack()
 			i = _fonts.begin();
 			i != _fonts.end();
 			++i)
-	{
 		delete i->second;
-	}
 
 	for (std::map<std::string, Surface*>::const_iterator
 			i = _surfaces.begin();
 			i != _surfaces.end();
 			++i)
-	{
 		delete i->second;
-	}
 
 	for (std::map<std::string, SurfaceSet*>::const_iterator
 			i = _sets.begin();
 			i != _sets.end();
 			++i)
-	{
 		delete i->second;
-	}
 
 	for (std::map<std::string, Palette*>::const_iterator
 			i = _palettes.begin();
 			i != _palettes.end();
 			++i)
-	{
 		delete i->second;
-	}
 
 	for (std::map<std::string, Music*>::const_iterator
 			i = _musics.begin();
 			i != _musics.end();
 			++i)
-	{
 		delete i->second;
-	}
 
 	for (std::map<std::string, Music*>::const_iterator // sza_MusicRules
 			i = _musicFile.begin();
 			i != _musicFile.end();
 			++i)
-	{
 		delete i->second;
-	}
 
 	for (std::map<std::string, SoundSet*>::const_iterator
 			i = _sounds.begin();
 			i != _sounds.end();
 			++i)
-	{
 		delete i->second;
-	}
 }
 
 /**
- * Returns a specific font from the resource set.
- * @param name - reference the name of a Font
- * @return, pointer to the Font
+ * Gets a specific Font from this ResourcePack.
+ * @param type - reference to the type of a font
+ * @return, pointer to the font
  */
-Font* ResourcePack::getFont(const std::string& name) const
+Font* ResourcePack::getFont(const std::string& type) const
 {
-	const std::map<std::string, Font*>::const_iterator i = _fonts.find(name);
+	const std::map<std::string, Font*>::const_iterator i (_fonts.find(type));
 
 	if (i != _fonts.end())
 		return i->second;
@@ -166,13 +152,13 @@ Font* ResourcePack::getFont(const std::string& name) const
 }
 
 /**
- * Returns a specific surface from the resource set.
- * @param name - reference to name of a Surface
- * @return, pointer to the Surface
+ * Gets a specific Surface from this ResourcePack.
+ * @param type - reference to type of a surface
+ * @return, pointer to the surface
  */
-Surface* ResourcePack::getSurface(const std::string& name) const
+Surface* ResourcePack::getSurface(const std::string& type) const
 {
-	const std::map<std::string, Surface*>::const_iterator i = _surfaces.find(name);
+	const std::map<std::string, Surface*>::const_iterator i (_surfaces.find(type));
 	if (i != _surfaces.end())
 		return i->second;
 
@@ -180,13 +166,13 @@ Surface* ResourcePack::getSurface(const std::string& name) const
 }
 
 /**
- * Returns a specific surface set from the resource set.
- * @param name - reference name of a SurfaceSet
- * @return, pointer to the SurfaceSet
+ * Gets a specific SurfaceSet from this ResourcePack.
+ * @param type - reference to the type of a surface-set
+ * @return, pointer to the surface-set
  */
-SurfaceSet* ResourcePack::getSurfaceSet(const std::string& name) const
+SurfaceSet* ResourcePack::getSurfaceSet(const std::string& type) const
 {
-	const std::map<std::string, SurfaceSet*>::const_iterator i = _sets.find(name);
+	const std::map<std::string, SurfaceSet*>::const_iterator i (_sets.find(type));
 	if (i != _sets.end())
 		return i->second;
 
@@ -194,10 +180,10 @@ SurfaceSet* ResourcePack::getSurfaceSet(const std::string& name) const
 }
 
 /**
- * Returns a specific music from the resource set.
+ * Gets a specific Music from this ResourcePack.
  * @note This has become redundant w/ getMusicRand() below.
- * @param trackType - reference the track of a Music
- * @return, pointer to the Music
+ * @param trackType - reference to the track of a Music
+ * @return, pointer to the music
  */
 Music* ResourcePack::getMusic(const std::string& trackType) const
 {
@@ -209,7 +195,7 @@ Music* ResourcePack::getMusic(const std::string& trackType) const
 
 /**
  * Checks if a particular music-track is playing.
- * @param trackType - reference the track to check for
+ * @param trackType - reference to the track to check for
  * @return, true if playing
  */
 bool ResourcePack::isMusicPlaying(const std::string& trackType) const
@@ -219,9 +205,9 @@ bool ResourcePack::isMusicPlaying(const std::string& trackType) const
 }
 
 /**
- * Plays the specified track if it's not already playing.
- * @param trackType		- reference the track of a Music
- * @param terrainType	- reference the RuleTerrain type (default "")
+ * Plays a specified music-track if it's not already playing.
+ * @param trackType		- reference to the track-type
+ * @param terrainType	- reference to the terrain-type (default "")
  * @param loops			- number of times to play the track (default -1 infinite)
  */
 void ResourcePack::playMusic(
@@ -287,10 +273,10 @@ void ResourcePack::fadeMusic(
 }
 
 /**
- * Returns a random music from the resource set.
- * @param trackType		- reference the track of a Music to pick from
- * @param terrainType	- reference the RuleTerrain type
- * @return, pointer to the Music
+ * Gets a random Music from this ResourcePack.
+ * @param trackType		- reference to the track-type
+ * @param terrainType	- reference to the terrain-type
+ * @return, pointer to the music
  */
 Music* ResourcePack::getMusicRand( // private.
 		const std::string& trackType,
@@ -325,9 +311,9 @@ Music* ResourcePack::getMusicRand( // private.
 }
 
 /**
- * Clear a music assignment.
- * @param trackType		- reference the track of a Music
- * @param terrainType	- reference the RuleTerrain type
+ * Clears a music-assignment.
+ * @param trackType		- reference to the track-type
+ * @param terrainType	- reference top the terrain-type
  */
 void ResourcePack::clearMusicAssignment(
 		const std::string& trackType,
@@ -343,11 +329,11 @@ void ResourcePack::clearMusicAssignment(
 }
 
 /**
- * Make a music assignment.
- * @param trackType		- reference the track of a Music
- * @param terrainType	- reference the RuleTerrain type
- * @param files			- reference a vector of filenames
- * @param midiIdc		- reference a vector of indices
+ * Makes a music-assignment.
+ * @param trackType		- reference to the track-type
+ * @param terrainType	- reference to the terrain-type
+ * @param files			- reference to a vector of music-files
+ * @param midiIdc		- reference to a vector of midi-indices
  */
 void ResourcePack::makeMusicAssignment(
 		const std::string& trackType,
@@ -363,7 +349,7 @@ void ResourcePack::makeMusicAssignment(
 						[terrainType] = std::vector<std::pair<std::string, int>>();
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != files.size();
 			++i)
 	{
@@ -375,8 +361,8 @@ void ResourcePack::makeMusicAssignment(
 }
 
 /**
- * Returns a specific sound from the resource set.
- * @param set		- reference the name of a Sound set
+ * Gets a specific Sound from this ResourcePack.
+ * @param set		- reference to the type of a SoundSet
  * @param soundId	- ID of the Sound
  * @return, pointer to the Sound
  */
@@ -388,7 +374,7 @@ Sound* ResourcePack::getSound(
 		return _muteSound;
 	else
 	{
-		const std::map<std::string, SoundSet*>::const_iterator i = _sounds.find(soundSet);
+		const std::map<std::string, SoundSet*>::const_iterator i (_sounds.find(soundSet));
 		if (i != _sounds.end())
 			return i->second->getSound(soundId);
 	}
@@ -397,8 +383,8 @@ Sound* ResourcePack::getSound(
 }
 
 /**
- * Plays a sound effect in stereo.
- * @param soundId		- sound to play
+ * Plays a sound-effect in stereo.
+ * @param soundId	- sound to play
  * @param randAngle	- true to randomize the sound angle (default false to center it)
  */
 void ResourcePack::playSoundFX(
@@ -406,22 +392,19 @@ void ResourcePack::playSoundFX(
 		const bool randAngle) const
 {
 	int dir = 360; // stereo center
-
 	if (randAngle == true)
 	{
-		const int var = 67; // maximum deflection left or right
-		dir += (RNG::seedless(-var, var)
-			  + RNG::seedless(-var, var))
-			/ 2;
+		const int var (67); // maximum deflection left or right
+		dir += ((RNG::seedless(-var, var)
+			   + RNG::seedless(-var, var)) >> 1u);
 	}
-
 	getSound("GEO.CAT", soundId)->play(-1, dir);
 }
 
 /**
- * Returns a specific palette from the resource set by PaletteType.
+ * Gets a specific Palette from this ResourcePack.
  * @param palType - a PaletteType (Palettes.h)
- * @return, pointer to the corresponding Palette
+ * @return, pointer to the palette
  */
 Palette* ResourcePack::getPalette(const PaletteType palType) const
 {
@@ -429,7 +412,7 @@ Palette* ResourcePack::getPalette(const PaletteType palType) const
 }
 
 /**
- * Changes the palette of all the graphics in the resource set.
+ * Sets the Palette of all the graphics in this ResourcePack.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace
  * @param ncolors		- amount of colors to replace
@@ -452,7 +435,7 @@ void ResourcePack::setPalette(
 			i != _surfaces.end();
 			++i)
 	{
-		if (i->first.substr(i->first.length() - 3, i->first.length()) != "LBM")
+		if (i->first.substr(i->first.length() - 3u, i->first.length()) != "LBM")
 			i->second->setPalette(colors, firstcolor, ncolors);
 	}
 
@@ -466,8 +449,8 @@ void ResourcePack::setPalette(
 }
 
 /**
- * Returns the list of voxeldata in the resource set.
- * @return, pointer to a vector containing the voxeldata
+ * Gets the voxel-data in this ResourcePack.
+ * @return, pointer to a vector containing the voxel-data
  */
 const std::vector<Uint16>* ResourcePack::getVoxelData() const
 {
@@ -481,7 +464,7 @@ const std::vector<Uint16>* ResourcePack::getVoxelData() const
  */
 const std::string& ResourcePack::getRandomBackground() const
 {
-	static const std::string bg[10] =
+	static const std::string bg[10u]
 	{
 		"BACK01.SCR",	// main
 		"BACK02.SCR",	// bad boy

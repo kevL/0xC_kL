@@ -901,12 +901,12 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		_awards[type] = award.release();
 	}
 
-/*	for (YAML::const_iterator i = doc["statStrings"].begin(); i != doc["statStrings"].end(); ++i)
-	{
-		StatString* const statString = new StatString();
-		statString->load(*i);
-		_statStrings.push_back(statString);
-	} */
+//	for (YAML::const_iterator i = doc["statStrings"].begin(); i != doc["statStrings"].end(); ++i)
+//	{
+//		StatString* const statString = new StatString();
+//		statString->load(*i);
+//		_statStrings.push_back(statString);
+//	}
 
 	for (YAML::const_iterator
 			i = doc["interfaces"].begin();
@@ -925,68 +925,68 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["constants"].end();
 			++i)
 	{
-		ResourcePack::EXPLOSION_OFFSET		= (*i)["explosionOffset"]	.as<int>(ResourcePack::EXPLOSION_OFFSET);
-		ResourcePack::SMALL_EXPLOSION		= (*i)["smallExplosion"]	.as<int>(ResourcePack::SMALL_EXPLOSION);
-		ResourcePack::DOOR_OPEN				= (*i)["doorSound"]			.as<int>(ResourcePack::DOOR_OPEN);
-		ResourcePack::LARGE_EXPLOSION		= (*i)["largeExplosion"]	.as<int>(ResourcePack::LARGE_EXPLOSION);
-		ResourcePack::FLYING_SOUND			= (*i)["flyingSound"]		.as<int>(ResourcePack::FLYING_SOUND);
-		ResourcePack::ITEM_RELOAD			= (*i)["itemReload"]		.as<int>(ResourcePack::ITEM_RELOAD);
-		ResourcePack::SLIDING_DOOR_OPEN		= (*i)["slidingDoorSound"]	.as<int>(ResourcePack::SLIDING_DOOR_OPEN);
-		ResourcePack::SLIDING_DOOR_CLOSE	= (*i)["slidingDoorClose"]	.as<int>(ResourcePack::SLIDING_DOOR_CLOSE);
-		ResourcePack::WALK_OFFSET			= (*i)["walkOffset"]		.as<int>(ResourcePack::WALK_OFFSET);
-		ResourcePack::ITEM_DROP				= (*i)["itemDrop"]			.as<int>(ResourcePack::ITEM_DROP);
-		ResourcePack::ITEM_THROW			= (*i)["itemThrow"]			.as<int>(ResourcePack::ITEM_THROW);
-		ResourcePack::SMOKE_OFFSET			= (*i)["smokeOffset"]		.as<int>(ResourcePack::SMOKE_OFFSET);
+		ResourcePack::EXPLOSION_OFFSET		= (*i)["explosionOffset"]	.as<size_t>(ResourcePack::EXPLOSION_OFFSET);
+		ResourcePack::SMALL_EXPLOSION		= (*i)["smallExplosion"]	.as<size_t>(ResourcePack::SMALL_EXPLOSION);
+		ResourcePack::DOOR_OPEN				= (*i)["doorSound"]			.as<size_t>(ResourcePack::DOOR_OPEN);
+		ResourcePack::LARGE_EXPLOSION		= (*i)["largeExplosion"]	.as<size_t>(ResourcePack::LARGE_EXPLOSION);
+		ResourcePack::FLYING_SOUND			= (*i)["flyingSound"]		.as<size_t>(ResourcePack::FLYING_SOUND);
+		ResourcePack::ITEM_RELOAD			= (*i)["itemReload"]		.as<size_t>(ResourcePack::ITEM_RELOAD);
+		ResourcePack::SLIDING_DOOR_OPEN		= (*i)["slidingDoorSound"]	.as<size_t>(ResourcePack::SLIDING_DOOR_OPEN);
+		ResourcePack::SLIDING_DOOR_CLOSE	= (*i)["slidingDoorClose"]	.as<size_t>(ResourcePack::SLIDING_DOOR_CLOSE);
+		ResourcePack::WALK_OFFSET			= (*i)["walkOffset"]		.as<size_t>(ResourcePack::WALK_OFFSET);
+		ResourcePack::ITEM_DROP				= (*i)["itemDrop"]			.as<size_t>(ResourcePack::ITEM_DROP);
+		ResourcePack::ITEM_THROW			= (*i)["itemThrow"]			.as<size_t>(ResourcePack::ITEM_THROW);
+//		ResourcePack::SMOKE_OFFSET			= (*i)["smokeOffset"]		.as<size_t>(ResourcePack::SMOKE_OFFSET);
 
 		if ((*i)["maleScream"])
 		{
-			int id (0);
+			size_t id (0u);
 			for (YAML::const_iterator
 					j = (*i)["maleScream"].begin();
-					j != (*i)["maleScream"].end() && id != 3;
+					j != (*i)["maleScream"].end() && id != 3u;
 					++j, ++id)
 			{
-				ResourcePack::MALE_SCREAM[id] = (*j).as<int>(ResourcePack::MALE_SCREAM[id]);
+				ResourcePack::MALE_SCREAM[id] = (*j).as<size_t>(ResourcePack::MALE_SCREAM[id]);
 			}
 		}
 
 		if ((*i)["femaleScream"])
 		{
-			int id (0);
+			size_t id (0u);
 			for (YAML::const_iterator
 					j = (*i)["femaleScream"].begin();
-					j != (*i)["femaleScream"].end() && id != 3;
+					j != (*i)["femaleScream"].end() && id != 3u;
 					++j, ++id)
 			{
-				ResourcePack::FEMALE_SCREAM[id] = (*j).as<int>(ResourcePack::FEMALE_SCREAM[id]);
+				ResourcePack::FEMALE_SCREAM[id] = (*j).as<size_t>(ResourcePack::FEMALE_SCREAM[id]);
 			}
 		}
 
-		ResourcePack::BUTTON_PRESS = (*i)["buttonPress"].as<int>(ResourcePack::BUTTON_PRESS);
+		ResourcePack::BUTTON_PRESS = (*i)["buttonPress"].as<size_t>(ResourcePack::BUTTON_PRESS);
 		if ((*i)["windowPopup"])
 		{
-			int id (0);
+			size_t id (0u);
 			for (YAML::const_iterator
 					j = (*i)["windowPopup"].begin();
-					j != (*i)["windowPopup"].end() && id != 3;
+					j != (*i)["windowPopup"].end() && id != 3u;
 					++j, ++id)
 			{
-				ResourcePack::WINDOW_POPUP[id] = (*j).as<int>(ResourcePack::WINDOW_POPUP[id]);
+				ResourcePack::WINDOW_POPUP[id] = (*j).as<size_t>(ResourcePack::WINDOW_POPUP[id]);
 			}
 		}
 
-		ResourcePack::UFO_FIRE				= (*i)["ufoFire"]			.as<int>(ResourcePack::UFO_FIRE);
-		ResourcePack::UFO_HIT				= (*i)["ufoHit"]			.as<int>(ResourcePack::UFO_HIT);
-		ResourcePack::UFO_CRASH				= (*i)["ufoCrash"]			.as<int>(ResourcePack::UFO_CRASH);
-		ResourcePack::UFO_EXPLODE			= (*i)["ufoExplode"]		.as<int>(ResourcePack::UFO_EXPLODE);
-		ResourcePack::INTERCEPTOR_HIT		= (*i)["interceptorHit"]	.as<int>(ResourcePack::INTERCEPTOR_HIT);
-		ResourcePack::INTERCEPTOR_EXPLODE	= (*i)["interceptorExplode"].as<int>(ResourcePack::INTERCEPTOR_EXPLODE);
+		ResourcePack::UFO_FIRE				= (*i)["ufoFire"]			.as<size_t>(ResourcePack::UFO_FIRE);
+		ResourcePack::UFO_HIT				= (*i)["ufoHit"]			.as<size_t>(ResourcePack::UFO_HIT);
+		ResourcePack::UFO_CRASH				= (*i)["ufoCrash"]			.as<size_t>(ResourcePack::UFO_CRASH);
+		ResourcePack::UFO_EXPLODE			= (*i)["ufoExplode"]		.as<size_t>(ResourcePack::UFO_EXPLODE);
+		ResourcePack::INTERCEPTOR_HIT		= (*i)["interceptorHit"]	.as<size_t>(ResourcePack::INTERCEPTOR_HIT);
+		ResourcePack::INTERCEPTOR_EXPLODE	= (*i)["interceptorExplode"].as<size_t>(ResourcePack::INTERCEPTOR_EXPLODE);
 
-		ResourcePack::GEOSCAPE_CURSOR		= (*i)["geoscapeCursor"]	.as<int>(ResourcePack::GEOSCAPE_CURSOR);
-		ResourcePack::BASESCAPE_CURSOR		= (*i)["basescapeCursor"]	.as<int>(ResourcePack::BASESCAPE_CURSOR);
-		ResourcePack::BATTLESCAPE_CURSOR	= (*i)["battlescapeCursor"]	.as<int>(ResourcePack::BATTLESCAPE_CURSOR);
-		ResourcePack::UFOPAEDIA_CURSOR		= (*i)["ufopaediaCursor"]	.as<int>(ResourcePack::UFOPAEDIA_CURSOR);
-		ResourcePack::GRAPHS_CURSOR			= (*i)["graphsCursor"]		.as<int>(ResourcePack::GRAPHS_CURSOR);
+		ResourcePack::GEOSCAPE_CURSOR		= (*i)["geoscapeCursor"]	.as<size_t>(ResourcePack::GEOSCAPE_CURSOR);
+		ResourcePack::BASESCAPE_CURSOR		= (*i)["basescapeCursor"]	.as<size_t>(ResourcePack::BASESCAPE_CURSOR);
+		ResourcePack::BATTLESCAPE_CURSOR	= (*i)["battlescapeCursor"]	.as<size_t>(ResourcePack::BATTLESCAPE_CURSOR);
+		ResourcePack::UFOPAEDIA_CURSOR		= (*i)["ufopaediaCursor"]	.as<size_t>(ResourcePack::UFOPAEDIA_CURSOR);
+		ResourcePack::GRAPHS_CURSOR			= (*i)["graphsCursor"]		.as<size_t>(ResourcePack::GRAPHS_CURSOR);
 	}
 
 	std::string terrainType; // NOTE: MapScripts are not loaded w/ loadRule(keyId=type).
@@ -1065,11 +1065,11 @@ void Ruleset::loadFile(const std::string& file) // protected.
 template<typename T>
 T* Ruleset::loadRule( // protected.
 		const YAML::Node& node,
-		std::map<std::string, T*>* types,
-		std::vector<std::string>* index,
+		std::map<std::string, T*>* const types,
+		std::vector<std::string>* const index,
 		const std::string& keyId)
 {
-	T* rule = nullptr;
+	T* rule (nullptr);
 
 	if (node[keyId])
 	{
@@ -1113,7 +1113,7 @@ T* Ruleset::loadRule( // protected.
 SavedGame* Ruleset::createSave() const
 {
 	//Log(LOG_INFO) << "Ruleset::createSave()";
-	RNG::setSeed(0);
+	RNG::setSeed(0u);
 
 	SavedGame* const gameSave (new SavedGame(this));
 

@@ -236,7 +236,7 @@ private:
 	/// Draws a shotgun blast explosion on the Map.
 	void shotgunExplosion();
 
-	/// Popups a context sensitive list of actions the player can choose from.
+	/// Popups a context-sensitive-list of battle-actions for the player.
 	void handAction(
 			BattleItem* const item,
 			bool injured = false);
@@ -250,11 +250,11 @@ private:
 	public:
 //		static const Uint32 STATE_INTERVAL_STANDARD = 90; // for fast shaders - Raw, Quillez, etc.
 		static const Uint32
-			STATE_INTERVAL_STANDARD		=  76, // for slow shaders - 4xHQX & above. TODO: Ruleset.
-			STATE_INTERVAL_FAST			=  15,
-			STATE_INTERVAL_DEATHSPIN	=  21,
-			STATE_INTERVAL_EXPLOSION	= 100,
-			STATE_INTERVAL_TILE			=  87;
+			STATE_INTERVAL_STANDARD		=  76u, // for slow shaders - 4xHQX & above. TODO: Ruleset.
+			STATE_INTERVAL_FAST			=  15u,
+			STATE_INTERVAL_DEATHSPIN	=  21u,
+			STATE_INTERVAL_EXPLOSION	= 100u,
+			STATE_INTERVAL_TILE			=  87u;
 		Uint32
 			STATE_INTERVAL_XCOM,
 			STATE_INTERVAL_XCOMDASH,

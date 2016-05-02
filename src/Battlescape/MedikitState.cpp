@@ -448,7 +448,7 @@ void MedikitState::painClick(Action*)
 					battleSave->getBattleState()->updateSoldierInfo();
 
 					battleSave->getBattleGame()->cancelTacticalAction();
-//					_action->actor = _action->targetUnit;
+					_action->actor = _action->targetUnit;
 
 					battleSave->getBattleGame()->setupSelector();
 

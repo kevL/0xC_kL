@@ -1327,7 +1327,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						}
 						else if (_tile->getSmoke() != 0)
 						{
-							spriteId = ResourcePack::SMOKE_OFFSET + ((_tile->getSmoke() + 1) >> 1u);
+							spriteId = ((_tile->getSmoke() + 1) >> 1u); //+ ResourcePack::SMOKE_OFFSET
 							shade = tileShade;
 						}
 						else
@@ -1339,7 +1339,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							if (aniOffset > 3) aniOffset -= 4;
 							spriteId += aniOffset;
 
-							sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(spriteId);
+							sprite = _res->getSurfaceSet("SmokeCloud")->getFrame(spriteId); // was "SMOKE.PCK"
 							//if (sprite != nullptr)
 								sprite->blitNShade(
 										surface,
