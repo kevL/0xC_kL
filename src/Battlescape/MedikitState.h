@@ -46,9 +46,9 @@ class MedikitState
 
 private:
 	static const Uint8
-		WHITE	=   0,
-		RED		=  35,
-		LIME	= 255;
+		WHITE	=   0u,
+		RED		=  35u,
+		LIME	= 255u;
 
 	Bar
 		* _barEnergy,
@@ -93,7 +93,7 @@ private:
 
 	public:
 		/// Creates the MedikitState.
-		explicit MedikitState(BattleAction* action);
+		explicit MedikitState(BattleAction* const action);
 
 		/// Handler for right-clicking anything.
 		void handle(Action* action) override;

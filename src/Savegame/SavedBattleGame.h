@@ -274,7 +274,7 @@ private:
 				bool checkReselect = false,
 				bool dontReselect = false,
 				bool checkInventory = false);
-		/// Selects the BattleUnit at a Position.
+		/// Selects the BattleUnit at a specified Position.
 		BattleUnit* selectUnit(const Position& pos);
 
 		/// Gets a pointer to the list of nodes.

@@ -148,7 +148,7 @@ MedikitButton::MedikitButton(int y)
  * Initializes the Medikit State.
  * @param action - pointer to BattleAction (BattlescapeGame.h)
  */
-MedikitState::MedikitState(BattleAction* action)
+MedikitState::MedikitState(BattleAction* const action)
 	:
 		_action(action)
 {
@@ -448,6 +448,8 @@ void MedikitState::painClick(Action*)
 					battleSave->getBattleState()->updateSoldierInfo();
 
 					battleSave->getBattleGame()->cancelTacticalAction();
+//					_action->actor = _action->targetUnit;
+
 					battleSave->getBattleGame()->setupSelector();
 
 					battleSave->getBattleGame()->getMap()->getCamera()->centerOnPosition(_action->targetUnit->getPosition());

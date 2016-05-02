@@ -135,11 +135,11 @@ void MediTargetState::init()
 
 	bool
 		addToList,
-		actorFound = false; // adds actor to top of MediTargetList.
+		actorFound (false); // adds actor to top of MediTargetList.
 
-	SavedBattleGame* const battleSave = _game->getSavedGame()->getBattleSave();
+	SavedBattleGame* const battleSave (_game->getSavedGame()->getBattleSave());
 
-	const std::vector<BattleUnit*>* const targetUnits = battleSave->getUnits();
+	const std::vector<BattleUnit*>* const targetUnits (battleSave->getUnits());
 	for (std::vector<BattleUnit*>::const_iterator
 			i = targetUnits->begin();
 			i != targetUnits->end();
@@ -195,7 +195,7 @@ void MediTargetState::init()
 								Text::intWide(_targetUnits.back()->getMorale()).c_str());
 
 				if (actorFound == false)
-					_lstTarget->setRowColor(0, ORANGE, true);
+					_lstTarget->setRowColor(0u, ORANGE, true);
 			}
 		}
 
@@ -208,10 +208,10 @@ void MediTargetState::init()
 			++i;
 	}
 
-	if (_targetUnits.size() == 1)
+	if (_targetUnits.size() == 1u)
 	{
-		_action->posTarget = _targetUnits[0]->getPosition(); // jic.
-		_action->targetUnit = _targetUnits[0];
+		_action->posTarget = _targetUnits[0u]->getPosition(); // jic.
+		_action->targetUnit = _targetUnits[0u];
 
 		_game->popState();
 		_game->pushState(new MedikitState(_action));
@@ -228,7 +228,7 @@ void MediTargetState::lstTargetPress(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
-		BattleUnit* const targetUnit = _targetUnits[_lstTarget->getSelectedRow()];
+		BattleUnit* const targetUnit (_targetUnits[_lstTarget->getSelectedRow()]);
 		_action->posTarget = targetUnit->getPosition(); // jic.
 		_action->targetUnit = targetUnit;
 

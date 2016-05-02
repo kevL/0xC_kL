@@ -2519,6 +2519,8 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 							updateSoldierInfo(false); // try no calcFov()
 
 							_battleGame->cancelTacticalAction();
+//							_battleGame->getTacticalAction()->actor = nextSpotter;
+
 							_battleGame->setupSelector();
 						}
 
@@ -2538,12 +2540,13 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 }
 
 /**
- * Centers on a wounded soldier.
+ * Centers on a wounded Soldier.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnWoundedPress(Action* action)
 {
-	switch (action->getDetails()->button.button)
+	const Uint8 btnId (action->getDetails()->button.button);
+	switch (btnId)
 	{
 		case SDL_BUTTON_WHEELUP:
 			btnMapDownPress(nullptr);
@@ -2563,6 +2566,21 @@ void BattlescapeState::btnWoundedPress(Action* action)
 				if (_btnWounded[i] == action->getSender())
 				{
 					_map->getCamera()->centerOnPosition(_tileWounded[i]->getPosition());
+
+					if (btnId == SDL_BUTTON_LEFT)
+					{
+						BattleUnit* const unit (_tileWounded[i]->getTileUnit());
+						if (unit != nullptr && unit != _battleSave->getSelectedUnit())
+						{
+							_battleSave->setSelectedUnit(unit);
+							updateSoldierInfo(false); // try no calcFov()
+
+							_battleGame->cancelTacticalAction();
+//							_battleGame->getTacticalAction()->actor = unit;
+
+							_battleGame->setupSelector();
+						}
+					}
 					break;
 				}
 			}
