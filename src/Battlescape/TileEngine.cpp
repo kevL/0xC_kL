@@ -6233,7 +6233,7 @@ VoxelType TileEngine::detVoxelType(
 		if (tile->isUfoDoorOpen(partType = static_cast<MapDataType>(i)) == false
 			&& (partData = tile->getMapData(partType)) != nullptr
 			&& (loftId = (partData->getLoftId(layer) << 4u) + y) < _voxelData->size() // davide, http://openxcom.org/forum/index.php?topic=2934.msg32146#msg32146 (x2 _below)
-			&& (_voxelData->at(loftId) & (1 << x))) // if the voxelData at loftId is "1" solid:
+			&& (_voxelData->at(loftId) & (1u << x))) // if the voxelData at loftId is "1" solid:
 		{
 			//Log(LOG_INFO) << ". vC() ret = " << i;
 			return static_cast<VoxelType>(partType); // NOTE: MapDataType & VoxelType correspond.
@@ -6284,7 +6284,7 @@ VoxelType TileEngine::detVoxelType(
 
 				//Log(LOG_INFO) << "loftId = " << loftId << " vD-size = " << (int)_voxelData->size();
 				if ((loftId = (targetUnit->getLoft(layer) << 4u) + y) < _voxelData->size() // davide, http://openxcom.org/forum/index.php?topic=2934.msg32146#msg32146 (x2 ^above)
-					&& (_voxelData->at(loftId) & (1 << x))) // if the voxelData at loftId is "1" solid:
+					&& (_voxelData->at(loftId) & (1u << x))) // if the voxelData at loftId is "1" solid:
 				{
 					//Log(LOG_INFO) << ". vC() ret VOXEL_UNIT";
 					return VOXEL_UNIT;
@@ -6319,9 +6319,9 @@ bool TileEngine::psiAttack(BattleAction* const action)
 	{
 		if (action->type == BA_PSICOURAGE)
 		{
-			const int moraleGain (10 + RNG::generate(0,20) + (action->actor->getBattleStats()->psiSkill / 10));
-			action->value = moraleGain;
-			victim->moraleChange(moraleGain);
+			const int morale (10 + RNG::generate(0,20) + (action->actor->getBattleStats()->psiSkill / 10));
+			action->value = morale;
+			victim->moraleChange(morale);
 
 			return true;
 		}
@@ -6427,22 +6427,22 @@ bool TileEngine::psiAttack(BattleAction* const action)
 				case BA_PSIPANIC:
 				{
 					//Log(LOG_INFO) << ". . . action->type == BA_PSIPANIC";
-					int moraleLoss (100);
+					int morale (100);
 					switch (action->actor->getOriginalFaction())
 					{
 						default:
 						case FACTION_HOSTILE:
 						case FACTION_NEUTRAL:
-							moraleLoss += (statsActor->psiStrength >> 1u);		// 50% effect on non-Player units.
+							morale += (statsActor->psiStrength >> 1u);		// 50% effect on non-Player units.
 							break;
 
 						case FACTION_PLAYER:
-							moraleLoss += (statsActor->psiStrength << 1u) / 3;	// 66% effect on Player's units.
+							morale += (statsActor->psiStrength << 1u) / 3;	// 66% effect on Player's units.
 					}
-					moraleLoss -= ((statsVictim->bravery * 3) >> 1u);
-					//Log(LOG_INFO) << ". . . moraleLoss reduction = " << moraleLoss;
-					if (moraleLoss > 0)
-						victim->moraleChange(-moraleLoss);
+					morale -= ((statsVictim->bravery * 3) >> 1u);
+					//Log(LOG_INFO) << ". . . morale reduction = " << morale;
+					if (morale > 0)
+						victim->moraleChange(-morale);
 					//Log(LOG_INFO) << ". . . victim morale[1] = " << victim->getMorale();
 					break;
 				}
@@ -6458,14 +6458,14 @@ bool TileEngine::psiAttack(BattleAction* const action)
 						return false;
 					}
 
-					int courage (statsVictim->bravery);
+					int morale (statsVictim->bravery);
 					switch (action->actor->getFaction())
 					{
 						default:
 						case FACTION_HOSTILE:
 							{
-								courage = std::min(0,
-												  (_battleSave->getMoraleModifier() / 10) + (courage >> 1u) - 110);
+								morale = std::min(0,
+												 (_battleSave->getMoraleModifier() / 10) + (morale >> 1u) - 110);
 
 								int // store a representation of the aLien's psyche in its victim.
 									str (statsActor->psiStrength),
@@ -6480,24 +6480,24 @@ bool TileEngine::psiAttack(BattleAction* const action)
 							{
 								default:
 								case FACTION_HOSTILE: // aLien Morale loss for getting Mc'd by Player.
-									courage = std::min(0,
-													  (_battleSave->getMoraleModifier(nullptr, false) / 10) + ((courage * 3) >> 2u) - 110);
+									morale = std::min(0,
+													 (_battleSave->getMoraleModifier(nullptr, false) / 10) + ((morale * 3) >> 2u) - 110);
 									break;
 
 								case FACTION_NEUTRAL: // Morale change for civies (-10) unless already Mc'd by aLiens.
 									if (victim->isMindControlled() == false)
 									{
-										courage = -10;
+										morale = -10;
 										break;
 									} // no break;
 								case FACTION_PLAYER: // xCom and civies' Morale gain for getting Mc'd back to xCom.
 								{
-									courage >>= 1u;
+									morale >>= 1u;
 									victim->setExposed(-1);	// bonus Exposure removal.
 								}
 							}
 					}
-					victim->moraleChange(courage);
+					victim->moraleChange(morale);
 					//Log(LOG_INFO) << ". . . victim morale[2] = " << victim->getMorale();
 
 					if (victim->getAIState() != nullptr)

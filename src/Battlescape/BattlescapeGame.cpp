@@ -1917,7 +1917,7 @@ void BattlescapeGame::diaryDefender(const BattleUnit* const defender) // private
 			break;
 
 		case FACTION_NEUTRAL:
-			_killStatPoints = -_killStatPoints << 1u;
+			_killStatPoints = -(_killStatPoints << 1u);
 			_killStatRace = "STR_HUMAN";
 			_killStatRank = "STR_CIVILIAN";
 	}
@@ -1971,15 +1971,15 @@ void BattlescapeGame::attackerMorale( // private.
 	else if (defender->getOriginalFaction() == FACTION_PLAYER
 		&& attacker->getOriginalFaction() == FACTION_PLAYER)
 	{
-		int chagrin;
+		int morale;
 		if (defender->getGeoscapeSoldier() != nullptr)
-			chagrin = 5000 / bonus;
+			morale = 5000 / bonus;
 		else
-			chagrin = 2500 / bonus;
+			morale = 2500 / bonus;
 
-		if (half == true) chagrin >>= 1u;
+		if (half == true) morale >>= 1u;
 
-		attacker->moraleChange(-chagrin);
+		attacker->moraleChange(-morale);
 	}
 	else if (defender->getOriginalFaction() == FACTION_NEUTRAL)
 	{
@@ -2042,32 +2042,32 @@ void BattlescapeGame::factionMorale( // private.
 		if ((*j)->isMoralable() == true)
 		{
 			if ((*j)->getOriginalFaction() == defender->getOriginalFaction()
+				|| (defender->getOriginalFaction() == FACTION_PLAYER			// for death of xCom unit,
+					&& (*j)->getOriginalFaction() == FACTION_NEUTRAL)			// civies take hit.
 				|| (defender->getOriginalFaction() == FACTION_NEUTRAL			// for civie-death,
 					&& (*j)->getFaction() == FACTION_PLAYER						// non-Mc'd xCom takes hit
-					&& (*j)->getOriginalFaction() != FACTION_HOSTILE)			// but not Mc'd aLiens
-				|| (defender->getOriginalFaction() == FACTION_PLAYER			// for death of xCom unit,
-					&& (*j)->getOriginalFaction() == FACTION_NEUTRAL))			// civies take hit.
+					&& (*j)->getOriginalFaction() != FACTION_HOSTILE))			// but not Mc'd aLiens
 			{
 				// losing team(s) all get a morale loss
 				// based on their individual Bravery & rank of unit that was killed
-				int moraleLoss ((110 - (*j)->getBattleStats()->bravery) / 10);
-				if (moraleLoss > 0) // pure safety, ain't gonna happen really.
+				int morale ((110 - (*j)->getBattleStats()->bravery) / 10);
+				if (morale > 0) // pure safety, ain't gonna happen really.
 				{
-					moraleLoss = ((moraleLoss * loss) << 1u) / bTeam;
+					morale = ((morale * loss) << 1u) / bTeam;
 					if (converted == true)
-						moraleLoss = (moraleLoss * 5 + 3) >> 2u; // extra loss if xCom or civie turns into a Zombie.
+						morale = (morale * 5 + 3) >> 2u; // extra loss if xCom or civie turns into a Zombie.
 					else if (defender->getUnitRules() != nullptr)
 					{
 						if (defender->getUnitRules()->isMechanical() == true)
-							moraleLoss >>= 2u;
+							morale >>= 2u;
 						else
-							moraleLoss >>= 1u;
+							morale >>= 1u;
 					}
 
 					if (half == false)
-						(*j)->moraleChange(-moraleLoss);
+						(*j)->moraleChange(-morale);
 					else
-						(*j)->moraleChange(-moraleLoss >> 1u);
+						(*j)->moraleChange(-(morale >> 1u));
 				}
 //				if (attacker
 //					&& attacker->getFaction() == FACTION_PLAYER
