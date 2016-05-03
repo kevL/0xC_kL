@@ -102,45 +102,47 @@ void ExplosionBState::init()
 	if (_item != nullptr)
 	{
 		const RuleItem* const itRule (_item->getRules());
-		if (itRule->getBattleType() == BT_PSIAMP) // pass by. Let cTor initialization handle it. Except '_areaOfEffect' value
-			_areaOfEffect = false;
-		else
+		switch (itRule->getBattleType())
 		{
-			// getTacticalAction() only works for player actions: aliens cannot melee attack with rifle butts.
-			_buttHurt = _unit != nullptr
-					 && _unit->getFaction() == FACTION_PLAYER
-					 && itRule->getBattleType() != BT_MELEE
-					 && _parent->getTacticalAction()->type == BA_MELEE;
+			case BT_PSIAMP: // pass by. Let cTor initialization handle it. Except '_areaOfEffect' value
+				_areaOfEffect = false;
+				break;
 
-			if (_buttHurt == true)
-				_power = itRule->getMeleePower();
-			else
-				_power = itRule->getPower();
-
-			// since melee aliens don't use a conventional weapon type use their strength instead.
-			if (_unit != nullptr
-				&& itRule->isStrengthApplied() == true
-				&& (itRule->getBattleType() == BT_MELEE
-					|| _buttHurt == true))
-			{
-				int extraPower (_unit->getStrength() >> 1u);
+			default:
+				// getTacticalAction() only works for player actions: aliens cannot melee attack with rifle butts.
+				_buttHurt = _unit != nullptr
+						 && _unit->getFaction() == FACTION_PLAYER
+						 && itRule->getBattleType() != BT_MELEE
+						 && _parent->getTacticalAction()->type == BA_MELEE;
 
 				if (_buttHurt == true)
-					extraPower >>= 1u; // pistolwhipping adds only 1/2 extraPower.
+					_power = itRule->getMeleePower();
+				else
+					_power = itRule->getPower();
 
-				if (_unit->isKneeled() == true)
-					extraPower >>= 1u; // kneeled units further half extraPower.
+				// since melee aliens don't use a conventional weapon type use their strength instead.
+				if (_unit != nullptr
+					&& itRule->isStrengthApplied() == true
+					&& (itRule->getBattleType() == BT_MELEE || _buttHurt == true))
+				{
+					int extraPower (_unit->getStrength() >> 1u);
 
-				_power += RNG::generate( // add 10% to 100% of extPower
-									(extraPower + 9) / 10,
-									 extraPower);
-			}
+					if (_buttHurt == true)
+						extraPower >>= 1u;		// pistolwhipping adds only 1/2 extraPower.
 
-			// HE, incendiary, smoke or stun bombs create AOE explosions;
-			// all the rest hits one point: AP, melee (stun or AP), laser, plasma, acid
-			_areaOfEffect = _buttHurt == false
-						 && itRule->getBattleType() != BT_MELEE
-						 && itRule->getExplosionRadius() != -1;
+					if (_unit->isKneeled() == true)
+						extraPower >>= 1u;		// kneeled units further half extraPower.
+
+					_power += RNG::generate(	// add 10% to 100% of extPower
+										(extraPower + 9) / 10,
+										 extraPower);
+				}
+
+				// HE, incendiary, smoke or stun bombs create AOE explosions;
+				// all the rest hits one point: AP, melee (stun or AP), laser, plasma, acid
+				_areaOfEffect = _buttHurt == false
+							 && itRule->getBattleType() != BT_MELEE
+							 && itRule->getExplosionRadius() != -1;
 		}
 	}
 	else if (_tile != nullptr)

@@ -6433,13 +6433,13 @@ bool TileEngine::psiAttack(BattleAction* const action)
 						default:
 						case FACTION_HOSTILE:
 						case FACTION_NEUTRAL:
-							morale += (statsActor->psiStrength >> 1u);		// 50% effect on non-Player units.
+							morale += statsActor->psiStrength >> 1u;		// 50% effect on non-Player units.
 							break;
 
 						case FACTION_PLAYER:
 							morale += (statsActor->psiStrength << 1u) / 3;	// 66% effect on Player's units.
 					}
-					morale -= ((statsVictim->bravery * 3) >> 1u);
+					morale -= (statsVictim->bravery * 3) >> 1u;
 					//Log(LOG_INFO) << ". . . morale reduction = " << morale;
 					if (morale > 0)
 						victim->moraleChange(-morale);
