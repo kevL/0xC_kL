@@ -62,9 +62,9 @@ static uint64_t
  */
 uint64_t next_x()
 {
-	x ^= x >> 12; // a
-	x ^= x << 25; // b
-	x ^= x >> 27; // c
+	x ^= x >> 12u; // a
+	x ^= x << 25u; // b
+	x ^= x >> 27u; // c
 
 	//Log(LOG_INFO) << "RNG x = " << x;
 	//if (x == 10741543760283835424) Log(LOG_INFO) << "stop";
@@ -78,9 +78,9 @@ uint64_t next_x()
  */
 uint64_t next_y()
 {
-	y ^= y >> 12; // a
-	y ^= y << 25; // b
-	y ^= y >> 27; // c
+	y ^= y >> 12u; // a
+	y ^= y << 25u; // b
+	y ^= y >> 27u; // c
 
 	//Log(LOG_INFO) << "RNG y = " << y;
 	return y * 2685821657736338717uLL;
@@ -103,7 +103,7 @@ void setSeed(uint64_t seed)
 {
 	y = static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count());
 
-	if (seed == 0)
+	if (seed == 0u)
 		x = y + 1uLL;
 	else
 		x = seed;

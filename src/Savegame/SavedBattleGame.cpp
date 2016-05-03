@@ -560,11 +560,9 @@ void SavedBattleGame::load(
 //	_kneelReserved = node["kneelReserved"].as<bool>(_kneelReserved);
 
 //	_batReserved = static_cast<BattleActionType>(node["batReserved"].as<int>(_batReserved));
-	_operationTitle = Language::utf8ToWstr(node["operationTitle"].as<std::string>());
+	_operationTitle = Language::utf8ToWstr(node["operationTitle"].as<std::string>(""));
 
-
-	if (node["controlDestroyed"])
-		_controlDestroyed = node["controlDestroyed"].as<bool>();
+	_controlDestroyed = node["controlDestroyed"].as<bool>(_controlDestroyed);
 
 	_music = node["music"].as<std::string>(_music);
 
@@ -774,12 +772,15 @@ YAML::Node SavedBattleGame::save() const
 //	node["batReserved"]		= static_cast<int>(_batReserved);
 //	node["kneelReserved"]	= _kneelReserved;
 	node["alienRace"]		= _alienRace;
-	node["operationTitle"]	= Language::wstrToUtf8(_operationTitle);
+
+	if (_operationTitle.empty() == false)
+		node["operationTitle"] = Language::wstrToUtf8(_operationTitle);
 
 	if (_controlDestroyed == true)
 		node["controlDestroyed"] = _controlDestroyed;
 
-	node["music"] = _music;
+	if (_music.empty() == false)
+		node["music"] = _music;
 
 	if (_turnLimit != 0)
 	{
@@ -1503,9 +1504,18 @@ bool SavedBattleGame::getDebugTac() const
 }
 
 /**
+ * Gets a pointer to the Geoscape save.
+ * @note During battlescape-generation BattlescapeState is not valid yet.
+ * @return, pointer to SavedGame
+ */
+SavedGame* SavedBattleGame::getSavedGame() const
+{
+	return _battleState->getGame()->getSavedGame();
+}
+
+/**
  * Gets the BattlescapeGame.
- * @note There can be cases when BattlescapeGame is valid but BattlescapeState
- * is not; during battlescape-generation for example -> CTD. So fix it ....
+ * @note During battlescape-generation BattlescapeState is not valid yet.
  * @return, pointer to the BattlescapeGame
  */
 BattlescapeGame* SavedBattleGame::getBattleGame() const
@@ -2724,15 +2734,6 @@ void SavedBattleGame::calcBaseDestruct()
 			}
 		}
 	}
-}
-
-/**
- * Gets a pointer to the Geoscape save.
- * @return, pointer to SavedGame
- */
-SavedGame* SavedBattleGame::getSavedGame() const
-{
-	return _battleState->getGame()->getSavedGame();
 }
 
 /**

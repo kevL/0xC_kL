@@ -50,8 +50,8 @@ OperationPool::~OperationPool()
  */
 void OperationPool::load(const std::string& file)
 {
-	const std::string st = CrossPlatform::getDataFile("SoldierName/" + file + ".opr");
-	const YAML::Node doc = YAML::LoadFile(st);
+	const std::string st (CrossPlatform::getDataFile("SoldierName/" + file + ".opr"));
+	const YAML::Node doc (YAML::LoadFile(st));
 
 	for (YAML::const_iterator
 			i = doc["operaFirst"].begin();

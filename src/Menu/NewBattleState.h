@@ -48,6 +48,8 @@ class NewBattleState
 {
 
 private:
+	static const Uint8 BROWN_D = 58u;
+
 	ComboBox
 		* _cbxMission,
 		* _cbxCraft,

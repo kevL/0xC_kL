@@ -143,8 +143,8 @@ DogfightState::DogfightState(
 		_craftHeight(0),
 		_craftHeight_pre(0),
 //		_currentCraftDamageColor(14),
-		_slot(0),
-		_totalIntercepts(0),
+		_slot(0u),
+		_totalIntercepts(0u),
 		_x(0),
 		_y(0),
 		_minimizedIconX(0),
@@ -375,14 +375,13 @@ DogfightState::DogfightState(
 		maxY;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != static_cast<size_t>(_craft->getRules()->getWeapons());
 			++i)
 	{
-		cw = _craft->getWeapons()->at(i);
-		if (cw != nullptr)
+		if ((cw = _craft->getWeapons()->at(i)) != nullptr)
 		{
-			if (i == 0)
+			if (i == 0u)
 			{
 				weapon = _weapon1;
 				range = _range1;
@@ -472,21 +471,17 @@ DogfightState::DogfightState(
 		_ufo->setFireCountdown(0); // UFO is ready to Fire pronto.
 
 		int escape (_ufo->getRules()->getEscapeTime());
-		escape += RNG::generate(
-							0,
-							escape);
+		escape += RNG::generate(0, escape);
 //		escape -= _diff * 30;
 		escape /= _diff + 1;
-
 		if (escape < 1) escape = 1;
-
 		_ufo->setEscapeCountdown(escape);
 	}
 
 	if (_craft->getRules()->getWeapons() > 0
-		&& _craft->getWeapons()->at(0) != nullptr)
+		&& _craft->getWeapons()->at(0u) != nullptr)
 	{
-		_w1FireInterval = _craft->getWeapons()->at(0)->getRules()->getStandardReload();
+		_w1FireInterval = _craft->getWeapons()->at(0u)->getRules()->getStandardReload();
 		_weapon1->onMouseClick((ActionHandler)& DogfightState::weapon1Click);
 	}
 	else
@@ -497,9 +492,9 @@ DogfightState::DogfightState(
 	}
 
 	if (_craft->getRules()->getWeapons() > 1
-		&& _craft->getWeapons()->at(1) != nullptr)
+		&& _craft->getWeapons()->at(1u) != nullptr)
 	{
-		_w2FireInterval = _craft->getWeapons()->at(1)->getRules()->getStandardReload();
+		_w2FireInterval = _craft->getWeapons()->at(1u)->getRules()->getStandardReload();
 		_weapon2->onMouseClick((ActionHandler)& DogfightState::weapon2Click);
 	}
 	else
@@ -616,49 +611,49 @@ void DogfightState::drawCraftDamage(bool init)
 		int rowsToColor (static_cast<int>(std::floor(
 						 static_cast<float>(_craftHeight * pct) / 100.f)));
 
-		if (rowsToColor == 0)
-			return;
-		else if (pct > 99)
-			++rowsToColor;
-
-		Uint8
-			color,
-			testColor;
-
-		if (init == true)
-			color = _colors[DAMAGE_MAX];
-		else
-			color = _colors[DAMAGE_MIN];
-
-		for (int
-				y = _craftHeight_pre;
-				y != _craftHeight_pre + rowsToColor;
-				++y)
+		if (rowsToColor != 0)
 		{
+			if (pct > 99) ++rowsToColor;
+
+			Uint8
+				color,
+				testColor;
+
+			if (init == true)
+				color = _colors[DAMAGE_MAX];
+			else
+				color = _colors[DAMAGE_MIN];
+
 			for (int
-					x = 1;
-					x != 23;
-					++x)
+					y = _craftHeight_pre;
+					y != _craftHeight_pre + rowsToColor;
+					++y)
 			{
-				testColor = _damage->getPixelColor(x,y);
-
-				if (testColor > _colors[CRAFT_MIN] - 1
-					&& testColor < _colors[CRAFT_MAX])
+				for (int
+						x = 1;
+						x != 23;
+						++x)
 				{
-					_damage->setPixelColor(x,y, color);
-				}
-				else if (testColor == _colors[DAMAGE_MIN])
-					_damage->setPixelColor(
-										x,y,
-										_colors[DAMAGE_MAX]);
+					testColor = _damage->getPixelColor(x,y);
 
-//				if ((testColor > _colors[DAMAGE_MIN] - 1
-//						&& testColor < _colors[DAMAGE_MAX] + 1)
-//					|| (testColor > _colors[CRAFT_MIN] - 1
-//						&& testColor < _colors[CRAFT_MAX]))
-//				{
-//					_damage->setPixelColor(x,y, _currentCraftDamageColor);
-//				}
+					if (   testColor >= _colors[CRAFT_MIN]
+						&& testColor <  _colors[CRAFT_MAX])
+					{
+						_damage->setPixelColor(x,y, color);
+					}
+					else if (testColor == _colors[DAMAGE_MIN])
+						_damage->setPixelColor(
+											x,y,
+											_colors[DAMAGE_MAX]);
+
+//					if ((testColor > _colors[DAMAGE_MIN] - 1
+//							&& testColor < _colors[DAMAGE_MAX] + 1)
+//						|| (testColor > _colors[CRAFT_MIN] - 1
+//							&& testColor < _colors[CRAFT_MAX]))
+//					{
+//						_damage->setPixelColor(x,y, _currentCraftDamageColor);
+//					}
+				}
 			}
 		}
 	}
@@ -680,11 +675,11 @@ void DogfightState::animate()
 				++y)
 		{
 			Uint8 color (_window->getPixelColor(x,y));
-			if (color > _colors[RADAR_MIN] - 1
-				&& color < _colors[RADAR_MAX])
+			if (   color >= _colors[RADAR_MIN]
+				&& color <  _colors[RADAR_MAX])
 			{
-				if (++color > _colors[RADAR_MAX] - 1)
-					color = _colors[RADAR_MIN];
+				if (++color >= _colors[RADAR_MAX])
+					color    = _colors[RADAR_MIN];
 
 				_window->setPixelColor(x,y, color);
 			}
@@ -832,9 +827,7 @@ void DogfightState::updateDogfight()
 				if (_ufo->isCrashed() == false
 					&& _craft->isDestroyed() == false)
 				{
-					delta = std::max(
-								2,
-								8 + accel);
+					delta = std::max(2, 8 + accel);
 
 					if (_dist < _desired)		// Craft vs UFO receding
 					{
@@ -904,7 +897,7 @@ void DogfightState::updateDogfight()
 					{
 						power = RNG::generate(
 										((*i)->getPower() + 1) / 2, // Round up.
-										(*i)->getPower());
+										 (*i)->getPower());
 						if (power != 0)
 						{
 							_ufo->setUfoDamage(_ufo->getUfoDamage() + power);
@@ -1033,14 +1026,14 @@ void DogfightState::updateDogfight()
 
 		const CraftWeapon* cw;
 		for (size_t // Handle weapons and craft distance.
-				i = 0;
+				i = 0u;
 				i != static_cast<size_t>(_craft->getRules()->getWeapons());
 				++i)
 		{
 			if ((cw = _craft->getWeapons()->at(i)) != nullptr)
 			{
 				int fireCountdown;
-				if (i == 0)
+				if (i == 0u)
 					fireCountdown = _w1FireCountdown;
 				else
 					fireCountdown = _w2FireCountdown;
@@ -1053,20 +1046,14 @@ void DogfightState::updateDogfight()
 					&& _ufo->isCrashed() == false
 					&& _craft->isDestroyed() == false)
 				{
-					if (i == 0)
-					{
-						if (_w1Enabled == true)
-							fireWeapon1();
-					}
+					if (i == 0u)
+						if (_w1Enabled == true) fireWeapon1();
 					else
-					{
-						if (_w2Enabled == true)
-							fireWeapon2();
-					}
+						if (_w2Enabled == true) fireWeapon2();
 				}
 				else if (fireCountdown > 0)
 				{
-					if (i == 0)
+					if (i == 0u)
 						--_w1FireCountdown;
 					else
 						--_w2FireCountdown;
@@ -1091,11 +1078,11 @@ void DogfightState::updateDogfight()
 				&& (_dist > ufoWRange
 					|| _craft->isDestroyed() == true)))
 		{
-			_ufo->setShootingAt(0);
+			_ufo->setShootingAt(0u);
 		}
 		else if (_ufo->isCrashed() == false // UFO is gtg.
 			&& _ufo->getFireCountdown() == 0
-			&& (_ufo->getShootingAt() == 0
+			&& (_ufo->getShootingAt() == 0u
 				|| _ufo->getShootingAt() == _slot))
 		{
 			if (_dist <= ufoWRange
@@ -1125,7 +1112,7 @@ void DogfightState::updateDogfight()
 				}
 				else //if (altIntercepts.size() > 0)
 				{
-					int noSwitch (static_cast<int>(Round(100. / static_cast<double>(altIntercepts.size() + 1)))); // +1 for this->craft.
+					int noSwitch (static_cast<int>(Round(100. / static_cast<double>(altIntercepts.size() + 1u)))); // +1 for this->craft.
 
 					if (_ufo->getShootingAt() == _slot)
 						noSwitch += 18; // arbitrary increase for UFO to continue shooting at this->craft.
@@ -1140,7 +1127,7 @@ void DogfightState::updateDogfight()
 				}
 			}
 			else
-				_ufo->setShootingAt(0);
+				_ufo->setShootingAt(0u);
 		}
 	}
 
@@ -1187,7 +1174,7 @@ void DogfightState::updateDogfight()
 
 			finalRun =
 			_destroyCraft = true;
-			_ufo->setShootingAt(0);
+			_ufo->setShootingAt(0u);
 		}
 		else if (_ufo->isCrashed() == true) // End dogfight if UFO is crashed or destroyed.
 		{
@@ -1272,7 +1259,7 @@ void DogfightState::updateDogfight()
 			}
 
 			if (pts != 0)
-				_gameSave->scorePoints(lon, lat, pts, false);
+				_gameSave->scorePoints(lon,lat, pts, false);
 
 			if (_ufo->getShotDownByCraftId() != _craft->getUniqueId())
 				_ufo->setHitFrame(3);
@@ -1299,7 +1286,7 @@ void DogfightState::updateDogfight()
 		{
 			_timeout *= 2;
 			finalRun = true;
-			_ufo->setShootingAt(0);
+			_ufo->setShootingAt(0u);
 		}
 	}
 
@@ -1373,7 +1360,7 @@ void DogfightState::ufoFireWeapon()
 	prj->setPower(_ufo->getRules()->getWeaponPower());
 	prj->setDirection(PD_DOWN);
 	prj->setHorizontalPosition(PH_CENTER);
-	prj->setPosition(_dist - (_ufoSize >> 1u));
+	prj->setPosition(_dist - (_ufoSize / 2));
 	_projectiles.push_back(prj);
 
 	_game->getResourcePack()->playSoundFx(
@@ -1383,8 +1370,8 @@ void DogfightState::ufoFireWeapon()
 
 	int reload (_ufo->getRules()->getWeaponReload());
 	reload += RNG::generate(0,
-							reload >> 1u);
-	reload -= _diff << 1u;
+							reload / 2);
+	reload -= _diff * 2;
 	if (reload < 1) reload = 1;
 
 	_ufo->setFireCountdown(reload);
@@ -1412,7 +1399,7 @@ void DogfightState::maximumDistance()
 	if (dist == 0)
 		_desired = DST_STANDOFF;
 	else
-		_desired = dist << 3u;
+		_desired = dist * 8;
 }
 
 /**
@@ -1437,7 +1424,7 @@ void DogfightState::minimumDistance()
 	if (dist == 1000)
 		_desired = DST_STANDOFF;
 	else
-		_desired = dist << 3u;
+		_desired = dist * 8;
 }
 
 /**
@@ -1821,8 +1808,8 @@ void DogfightState::drawUfo()
 	if (_ufoSize > -1) //&& _ufo->isDestroyed() == false
 	{
 		const int
-			ufo_x ((_battleScope->getWidth() >> 1u) - 6),
-			ufo_y (_battleScope->getHeight() - (_dist >> 3u) - 6);
+			ufo_x ((_battleScope->getWidth() / 2) - 6),
+			ufo_y (_battleScope->getHeight() - (_dist / 8) - 6);
 		Uint8 color;
 
 		for (int
@@ -1841,7 +1828,7 @@ void DogfightState::drawUfo()
 				if (color != 0u)
 				{
 					if (_ufo->isCrashed() == true || _ufo->getHitFrame() != 0)
-						color <<= 1u;
+						color *= 2;
 
 					color = _window->getPixelColor(
 												ufo_x + x + 3,
@@ -1867,7 +1854,7 @@ void DogfightState::drawUfo()
  */
 void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 {
-	int posX ((_battleScope->getWidth() >> 1u) + (prj->getHorizontalPosition() << 2u));
+	int posX ((_battleScope->getWidth() / 2) + (prj->getHorizontalPosition() * 4));
 	Uint8
 		color,
 		colorOffset;
@@ -1877,7 +1864,7 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 		case PGT_MISSILE:
 		{
 			--posX;
-			const int posY (_battleScope->getHeight() - (prj->getPosition() >> 3u));
+			const int posY (_battleScope->getHeight() - (prj->getPosition() / 8));
 			for (int
 					x = 0;
 					x != 3;
@@ -1915,7 +1902,7 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 			colorOffset = static_cast<Uint8>(prj->getBeamPhase());
 			const int
 				stop  (_battleScope->getHeight() - 2),
-				start (_battleScope->getHeight() - (_dist >> 3u));
+				start (_battleScope->getHeight() - (_dist / 8));
 
 			for (int
 					y = stop;

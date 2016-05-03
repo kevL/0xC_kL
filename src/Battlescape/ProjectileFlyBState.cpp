@@ -823,8 +823,8 @@ void ProjectileFlyBState::think()
 			{
 //				_parent->getMap()->resetCameraSmoothing();
 				Position
-					throwVoxel = _parent->getMap()->getProjectile()->getPosition(-1), // <- beware of 'offset -1'
-					pos = Position::toTileSpace(throwVoxel);
+					throwVoxel (_parent->getMap()->getProjectile()->getPosition(-1)), // <- beware of 'offset -1'
+					pos (Position::toTileSpace(throwVoxel));
 
 				if (pos.x > _battleSave->getMapSizeX()) // note: Bounds-checking is also done better in Projectile::applyAccuracy()
 					--pos.x;
@@ -861,7 +861,7 @@ void ProjectileFlyBState::think()
 			}
 			else if (_action.type == BA_LAUNCH
 				&& _prjImpact == VOXEL_EMPTY
-				&& _action.waypoints.size() > 1)
+				&& _action.waypoints.size() > 1u)
 			{
 				_posOrigin = _action.waypoints.front();
 				_action.waypoints.pop_front();

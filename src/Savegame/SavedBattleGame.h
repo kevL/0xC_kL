@@ -307,6 +307,9 @@ private:
 		/// Gets debug mode.
 		bool getDebugTac() const;
 
+		/// Gets a pointer to the SavedGame.
+		SavedGame* getSavedGame() const;
+
 		/// Gets a pointer to the BattlescapeGame.
 		BattlescapeGame* getBattleGame() const;
 		/// Gets a pointer to the BattlescapeState.
@@ -420,9 +423,6 @@ private:
 		std::vector<std::vector<std::pair<int, int>>>& baseDestruct();
 		/// Calculates the number of xCom's base-modules remaining.
 		void calcBaseDestruct();
-
-		/// Gets a pointer to the SavedGame.
-		SavedGame* getSavedGame() const;
 
 		/// Gets the list of items guaranteed to be recovered.
 		std::vector<BattleItem*>* guaranteedItems();

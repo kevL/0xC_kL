@@ -867,14 +867,9 @@ int Pathfinding::getTuCostPf(
 		partsGoingDown	(0),
 		partsFalling	(0),
 		partsOnAir		(0),
-//		partsChangingHeight	(0), // jeez.
 
 		cost,
 		costTotal (0);
-
-//		wallTu,
-//		wallTuTotal,
-//		walls;
 
 	_doorCost = 0;
 
@@ -884,7 +879,6 @@ int Pathfinding::getTuCostPf(
 		* tileStop,
 		* tileStopBelow,
 		* tileStopAbove;
-//		* tileStopTest;
 
 	Position posOffset;
 
@@ -1113,7 +1107,9 @@ int Pathfinding::getTuCostPf(
 
 			if (tileStop->getFire() != 0)
 			{
-				cost += 2;
+				if (_unit->getSpecialAbility() != SPECAB_BURN)
+					cost += 2 + (dir & 1);
+
 				if (_unit->avoidsFire() == true)
 					cost += TU_FIRE_AVOID;	// cf. UnitWalkBState::doStatusStand() - this gets subtracted.
 			}
@@ -1131,7 +1127,7 @@ int Pathfinding::getTuCostPf(
 					&& _unit->getUnitRules() != nullptr
 					&& _unit->getUnitRules()->isMechanical() == true)
 				{
-					if (bresenh == true)
+					if (bresenh == true) // NOTE: A* happily denies an illegal tank-strafe completely.
 					{
 						_strafe = false; // illegal direction for tank-strafe.
 						_pathAction->strafe = false;
@@ -1196,11 +1192,7 @@ int Pathfinding::getTuCostPf(
 				return FAIL;
 		}
 
-//		if (partsChangingHeight == 1)
-//			return FAIL;
-
-		costTotal = static_cast<int>(Round(std::ceil( // round those tanks up!
-					static_cast<double>(costTotal) / static_cast<double>(quadrants))));
+		costTotal = (costTotal + quadrants - 1) / quadrants; // round up.
 	} // largeUnits_end.
 
 	//Log(LOG_INFO) << ". costTotal= " << costTotal;

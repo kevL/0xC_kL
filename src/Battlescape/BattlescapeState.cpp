@@ -472,7 +472,7 @@ BattlescapeState::BattlescapeState()
 
 	if (_battleSave->getOperation().empty() == false)
 	{
-		_txtOperationTitle->setText(_battleSave->getOperation().c_str());
+		_txtOperationTitle->setText(_battleSave->getOperation());
 		_txtOperationTitle->setHighContrast();
 		_txtOperationTitle->setAlign(ALIGN_CENTER);
 		_txtOperationTitle->setBig();
@@ -545,7 +545,7 @@ BattlescapeState::BattlescapeState()
 			}
 		}
 	}
-	_txtBaseLabel->setText(tr("STR_SQUAD_").arg(baseLabel.c_str())); // there'd better be a baseLabel ... or else. Pow! To the moon!!!
+	_txtBaseLabel->setText(tr("STR_SQUAD_").arg(baseLabel)); // there'd better be a baseLabel ... or else. Pow! To the moon!!!
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
 	_txtBaseLabel->setHighContrast();
 
@@ -602,7 +602,7 @@ BattlescapeState::BattlescapeState()
 	if (missionLabel.empty() == true)
 		missionLabel = tr(_battleSave->getTacticalType());
 
-	_txtMissionLabel->setText(missionLabel.c_str()); // there'd better be a missionLabel ... or else. Pow! To the moon!!!
+	_txtMissionLabel->setText(missionLabel); // there'd better be a missionLabel ... or else. Pow! To the moon!!!
 	_txtMissionLabel->setAlign(ALIGN_CENTER);
 	_txtMissionLabel->setHighContrast();
 
@@ -4366,7 +4366,7 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 
 				std::wstring value;
 				if (info[i] != 0)
-					value = Text::intWide(info[i]).c_str();
+					value = Text::intWide(info[i]);
 				else
 					value = L"";
 
@@ -4381,7 +4381,7 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 
 				std::wstring cost;
 				if (info[i] < 255)
-					cost = Text::intWide(info[i]).c_str();
+					cost = Text::intWide(info[i]);
 				else
 					cost = L"-";
 

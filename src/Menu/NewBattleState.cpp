@@ -167,7 +167,7 @@ NewBattleState::NewBattleState()
 
 	_missionTypes = _rules->getDeploymentsList();
 	_cbxMission->setOptions(_missionTypes);
-	_cbxMission->setBackgroundFill(58); // dk.brown <- TODO: put this in Interfaces.rul
+	_cbxMission->setBackgroundFill(BROWN_D);
 	_cbxMission->onComboChange((ActionHandler)& NewBattleState::cbxMissionChange);
 
 	const std::vector<std::string>& allCraft (_rules->getCraftsList());
@@ -180,7 +180,7 @@ NewBattleState::NewBattleState()
 			_crafts.push_back(*i);
 	}
 	_cbxCraft->setOptions(_crafts);
-	_cbxCraft->setBackgroundFill(58); // dk.brown <- TODO: put this in Interfaces.rul
+	_cbxCraft->setBackgroundFill(BROWN_D);
 	_cbxCraft->onComboChange((ActionHandler)& NewBattleState::cbxCraftChange);
 
 	_slrDarkness->setRange(0,15);
@@ -192,7 +192,7 @@ NewBattleState::NewBattleState()
 	difficulty.push_back("STR_4_GENIUS");
 	difficulty.push_back("STR_5_SUPERHUMAN");
 	_cbxDifficulty->setOptions(difficulty);
-	_cbxDifficulty->setBackgroundFill(58); // dk.brown <- TODO: put this in Interfaces.rul
+	_cbxDifficulty->setBackgroundFill(BROWN_D);
 
 	_alienRaces = _rules->getAlienRacesList();
 	for (std::vector<std::string>::const_iterator
@@ -206,13 +206,13 @@ NewBattleState::NewBattleState()
 			++i;
 	}
 	_cbxAlienRace->setOptions(_alienRaces);
-	_cbxAlienRace->setBackgroundFill(58); // dk.brown <- TODO: put this in Interfaces.rul
+	_cbxAlienRace->setBackgroundFill(BROWN_D);
 
 	_slrAlienTech->setRange(
 						0,
-						static_cast<int>(_rules->getAlienItemLevels().size()) - 1);
+						static_cast<int>(_rules->getAlienItemLevels().size()) - 1u);
 
-	_cbxTerrain->setBackgroundFill(58); // dk.brown <- TODO: put this in Interfaces.rul
+	_cbxTerrain->setBackgroundFill(BROWN_D);
 
 	_btnEquip->setText(tr("STR_EQUIP_CRAFT"));
 	_btnEquip->onMouseClick((ActionHandler)& NewBattleState::btnEquipClick);
@@ -273,19 +273,19 @@ void NewBattleState::load(const std::string& file)
 
 			_cbxMission->setSelected(std::min(
 										doc["mission"].as<size_t>(0),
-										_missionTypes.size() - 1));
+										_missionTypes.size() - 1u));
 			cbxMissionChange(nullptr);
 
 			_cbxCraft->setSelected(std::min(
 										doc["craft"].as<size_t>(0),
-										_crafts.size() - 1));
+										_crafts.size() - 1u));
 			_slrDarkness->setValue(doc["darkness"].as<size_t>(0));
 			_cbxTerrain->setSelected(std::min(
 										doc["terrain"].as<size_t>(0),
-										_terrainTypes.size() - 1));
+										_terrainTypes.size() - 1u));
 			_cbxAlienRace->setSelected(std::min(
 											doc["alienRace"].as<size_t>(0),
-											_alienRaces.size() - 1));
+											_alienRaces.size() - 1u));
 			_cbxDifficulty->setSelected(doc["difficulty"].as<size_t>(0));
 			_slrAlienTech->setValue(doc["alienTech"].as<size_t>(0));
 
@@ -397,7 +397,7 @@ void NewBattleState::save(const std::string& file)
 }
 
 /**
- * Initializes a new savegame with everything available.
+ * Initializes a SavedGame with everything available.
  */
 void NewBattleState::initPlay()
 {
@@ -575,7 +575,9 @@ void NewBattleState::btnOkClick(Action*)
 		return;
 	}
 
-	SavedBattleGame* const battleSave (new SavedBattleGame(&_rules->getOperations(), _rules));
+	SavedBattleGame* const battleSave (new SavedBattleGame(
+														nullptr, // &_rules->getOperations(),
+														_rules));
 	_game->getSavedGame()->setBattleSave(battleSave);
 	battleSave->setTacticalType(_missionTypes[_cbxMission->getSelected()]);
 
@@ -694,7 +696,7 @@ void NewBattleState::btnRandClick(Action*)
 	_cbxDifficulty->setSelected(static_cast<size_t>(RNG::generate(0,4)));
 
 	_slrAlienTech->setValue(RNG::generate(0,
-							static_cast<int>(_rules->getAlienItemLevels().size()) - 1));
+							static_cast<int>(_rules->getAlienItemLevels().size()) - 1u));
 }
 
 /**
@@ -705,7 +707,7 @@ void NewBattleState::btnEquipClick(Action*)
 {
 	_game->pushState(new CraftInfoState(
 									_game->getSavedGame()->getBases()->front(),
-									0));
+									0u));
 }
 
 /**
@@ -792,12 +794,12 @@ void NewBattleState::cbxMissionChange(Action*)
 	_txtDarkness->setVisible(vis);
 	_slrDarkness->setVisible(vis);
 
-	vis = _terrainTypes.size() > 1;
+	vis = _terrainTypes.size() > 1u;
 	_txtTerrain->setVisible(vis);
 	_cbxTerrain->setVisible(vis);
 
 	_cbxTerrain->setOptions(terrainOptions);
-	_cbxTerrain->setSelected(0);
+	_cbxTerrain->setSelected(0u);
 
 	Log(LOG_INFO) << "NewBattleState::cbxMissionChange() EXIT";
 }
