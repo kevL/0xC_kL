@@ -381,7 +381,7 @@ void Pathfinding::calculatePath(
 
 		if (_path.empty() == false)
 		{
-			if (_path.size() > 2 && _strafe == true)
+			if (_path.size() > 2u && _strafe == true)
 			{
 				calculatePath( // iterate this function ONCE ->
 							unit,
@@ -394,7 +394,7 @@ void Pathfinding::calculatePath(
 				&& _ctrl == true
 				&& unit->getGeoscapeSoldier() != nullptr
 				&& (_strafe == false
-					|| (_path.size() == 1
+					|| (_path.size() == 1u
 						&& unit->getUnitDirection() == _path.front())))
 			{
 				_strafe =
@@ -428,6 +428,9 @@ bool Pathfinding::bresenhamPath( // private.
 		const BattleUnit* const launchTarget)
 //		bool sneak)
 {
+	return false; // TEST.
+
+
 	//Log(LOG_INFO) << "Pathfinding::bresenhamPath()";
 	static const size_t DIR_TOTAL (8u);
 	static const int
@@ -556,7 +559,7 @@ bool Pathfinding::bresenhamPath( // private.
 //			if (sneak == true && _battleSave->getTile(posStop)->getTileVisible())
 //				return false;
 
-			// delete the following
+			// delete the following <- wtf does that stand for. Apart from the fact that this is an extremely kludgy approximation of wall-costs:
 			const bool isDiagonal ((dir & 1u) == 1u);
 			const int
 				tuCostDiagonalLast (tuCostLast + (tuCostLast >> 1u)),
@@ -683,7 +686,7 @@ bool Pathfinding::aStarPath( // private.
 			return true;
 		}
 
-		for (int
+		for (int // TODO: Reverse the loop-iter for zPath.
 				dir = 0;
 				dir != 10;
 				++dir)
@@ -867,11 +870,11 @@ int Pathfinding::getTuCostPf(
 //		partsChangingHeight	(0), // jeez.
 
 		cost,
-		costTotal (0),
+		costTotal (0);
 
-		wallTu,
-		wallTuTotal,
-		walls;
+//		wallTu,
+//		wallTuTotal,
+//		walls;
 
 	_doorCost = 0;
 
@@ -880,8 +883,8 @@ int Pathfinding::getTuCostPf(
 		* tileStartBelow,
 		* tileStop,
 		* tileStopBelow,
-		* tileStopAbove,
-		* tileStopTest;
+		* tileStopAbove;
+//		* tileStopTest;
 
 	Position posOffset;
 
@@ -901,8 +904,8 @@ int Pathfinding::getTuCostPf(
 // first, CHECK FOR BLOCKAGE ->> then calc TU cost after.
 			posOffset = Position(x,y,0);
 
-			if ((  tileStart = _battleSave->getTile(posStart + posOffset)) == nullptr
-				|| (tileStop = _battleSave->getTile(*posStop + posOffset)) == nullptr)
+			if (   (tileStart = _battleSave->getTile(posStart + posOffset)) == nullptr
+				|| (tileStop  = _battleSave->getTile(*posStop + posOffset)) == nullptr)
 			{
 				return FAIL;
 			}
@@ -1096,137 +1099,17 @@ int Pathfinding::getTuCostPf(
 				if (stairs == false && tileStop->getMapData(O_OBJECT) != nullptr)
 					cost += tileStop->getTuCostTile(O_OBJECT, _mType);
 
+				if ((dir & 1) == 1)
+					cost += (cost + 1) >> 1u;
+
 				// TODO: Early-exit if cost>FAIL.
 //				if (cost >= FAIL) return FAIL; // quick outs ->
 //				else if (launchTarget != nullptr) return 0; // <- provided walls have actually been blocked already, not based on TU > FAIL
 
-
 //				if (posOffsetVertical.z > 0) ++cost;
 
-				wallTuTotal =	// walking over rubble walls
-				wallTu =		// differentiates wall-Total from wall-current and keeps the '_doorCost' value straight
-				walls = 0;		// quantity of walls crossed if moving diagonally
-
-				switch (dir)
-				{
-					case 7:
-					case 0:
-					case 1:
-						//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
-						if ((wallTu = tileStart->getTuCostTile(O_NORTHWALL, _mType)) > 0) // NOTE: 'walkover' bigWalls not incl. -- none exists.
-						{
-//							if (dir & 1) // would use this to increase diagonal wall-crossing by +50%
-//								wallTu += wallTu / 2;
-
-							wallTuTotal += wallTu;
-							++walls;
-
-							if (   tileStart->getMapData(O_NORTHWALL)->isDoor() == true
-								|| tileStart->getMapData(O_NORTHWALL)->isUfoDoor() == true)
-							{
-								//Log(LOG_INFO) << ". . . _doorCost[N] = TRUE, wallTu = " << wallTu;
-								if (wallTu > _doorCost) // don't let large unit parts reset _doorCost prematurely
-									_doorCost = wallTu;
-							}
-						}
-				}
-
-				switch (dir)
-				{
-					case 1:
-					case 2:
-					case 3:
-						//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
-						if (tileStart->getPosition().z > tileStop->getPosition().z) // don't count wallCost if it's on the floor below.
-							tileStopTest = _battleSave->getTile(tileStop->getPosition() + Position(0,0,1)); // no safety req'd.
-						else
-							tileStopTest = tileStop;
-
-						if ((wallTu = tileStopTest->getTuCostTile(O_WESTWALL, _mType)) > 0)
-						{
-							wallTuTotal += wallTu;
-							++walls;
-
-							if (   tileStopTest->getMapData(O_WESTWALL)->isDoor() == true
-								|| tileStopTest->getMapData(O_WESTWALL)->isUfoDoor() == true)
-							{
-								if (wallTu > _doorCost)
-									_doorCost = wallTu;
-							}
-						}
-				}
-
-				switch (dir)
-				{
-					case 3:
-					case 4:
-					case 5:
-						//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
-						if (tileStart->getPosition().z > tileStop->getPosition().z) // don't count wallCost if it's on the floor below.
-							tileStopTest = _battleSave->getTile(tileStop->getPosition() + Position(0,0,1)); // no safety req'd.
-						else
-							tileStopTest = tileStop;
-
-						if ((wallTu = tileStopTest->getTuCostTile(O_NORTHWALL, _mType)) > 0)
-						{
-							wallTuTotal += wallTu;
-							++walls;
-
-							if (   tileStopTest->getMapData(O_NORTHWALL)->isDoor() == true
-								|| tileStopTest->getMapData(O_NORTHWALL)->isUfoDoor() == true)
-							{
-								//Log(LOG_INFO) << ". . . _doorCost[S] = TRUE, wallTu = " << wallTu;
-								if (wallTu > _doorCost)
-									_doorCost = wallTu;
-							}
-						}
-				}
-
-				switch (dir)
-				{
-					case 5:
-					case 6:
-					case 7:
-						//Log(LOG_INFO) << ". from " << tileStart->getPosition() << " to " << tileStop->getPosition() << " dir = " << dir;
-						if ((wallTu = tileStart->getTuCostTile(O_WESTWALL, _mType)) > 0)
-						{
-							wallTuTotal += wallTu;
-							++walls;
-
-							if (   tileStart->getMapData(O_WESTWALL)->isDoor() == true
-								|| tileStart->getMapData(O_WESTWALL)->isUfoDoor() == true)
-							{
-								//Log(LOG_INFO) << ". . . _doorCost[W] = TRUE, wallTu = " << wallTu;
-								if (wallTu > _doorCost)
-									_doorCost = wallTu;
-							}
-						}
-				}
-
-				// diagonal walking (uneven directions) costs 50% more tu's
-				// kL_note: this is moved up so that objects don't cost +150% tu;
-				// instead, let them keep a flat +100% to step onto
-				// -- note that Walls also do not take +150 tu to step over diagonally....
-				if ((dir & 1) == 1)
-				{
-					cost = static_cast<int>(static_cast<float>(cost) * 1.5f);
-
-					if (wallTuTotal > 0 && _doorCost == 0)
-					{
-						if (walls > 0)
-							wallTuTotal /= walls; // average of the walls crossed
-
-						if (((wallTuTotal - walls) & 1) == 1) // round wallCost up.
-							wallTuTotal += 1;
-					}
-				}
-
-				//Log(LOG_INFO) << ". wallTuTotal = " << wallTuTotal;
-				//Log(LOG_INFO) << ". cost[0] = " << cost;
-				cost += wallTuTotal;
-				//Log(LOG_INFO) << ". cost[1] = " << cost;
+				cost += getWallTuCost(dir, tileStart, tileStop);
 			}
-
 
 			if (tileStop->getFire() != 0)
 			{
@@ -1322,6 +1205,338 @@ int Pathfinding::getTuCostPf(
 
 	//Log(LOG_INFO) << ". costTotal= " << costTotal;
 	return costTotal;
+}
+
+/**
+ * Gets the TU-cost for crossing over walls.
+ * @note Helper for getTuCostPf().
+ * @param dir		- direction of travel
+ * @param tileStart	- pointer to a startTile
+ * @param tileStop	- pointer to a stopTile
+ * @return, TU-cost for crossing over walls
+ */
+int Pathfinding::getWallTuCost( // private.
+		int dir,
+		const Tile* const tileStart,
+		const Tile* const tileStop)
+{
+	int
+		tuTotal	 (0), // walking over fences, hedges, and rubble walls
+		partCost (0), // differentiates wall-Total from wall-current and keeps the '_doorCost' value straight
+		walls	 (0); // quantity of walls crossed if moving diagonally
+
+	const Tile* tile;
+
+	switch (dir)
+	{
+		case 0:
+			if (tileStart->getPosition().z < tileStop->getPosition().z) // don't count wallCosts on the floor below.
+				tile = _battleSave->getTile(tileStart->getPosition() + Position(0,0,1));
+			else
+				tile = tileStart;
+
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+
+				if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
+					|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost; // don't let large unit parts reset _doorCost prematurely.
+				}
+			}
+			break;
+
+		case 1:
+			tile = tileStart;
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
+					|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			tile = _battleSave->getTile(tileStart->getPosition() + Position(1,0,0)); // tileEast
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
+					|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_WESTWALL)->isDoor() == true
+					|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			tile = tileStop; //_battleSave->getTile(tileStart->getPosition() + Position(1,-1,0)); // tileNorthEast
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_WESTWALL)->isDoor() == true
+					|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			if (walls != 0) // && _doorCost == 0
+				tuTotal = ((tuTotal + (tuTotal >> 1u)) + walls - 1) / walls; // add 50% and round up.
+			break;
+
+		case 2:
+			if (tileStart->getPosition().z > tileStop->getPosition().z)
+				tile = _battleSave->getTile(tileStop->getPosition() + Position(0,0,1));
+			else
+				tile = tileStop;
+
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+
+				if (   tile->getMapData(O_WESTWALL)->isDoor() == true
+					|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+			break;
+
+		case 3:
+			tile = _battleSave->getTile(tileStart->getPosition() + Position(1,0,0)); // tileEast
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_WESTWALL)->isDoor() == true
+					|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			tile = tileStop; //_battleSave->getTile(tileStart->getPosition() + Position(1,1,0)); // tileSouthEast
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_WESTWALL)->isDoor() == true
+					|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
+					|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			tile = _battleSave->getTile(tileStart->getPosition() + Position(0,1,0)); // tileSouth
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
+					|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			if (walls != 0)
+				tuTotal = ((tuTotal + (tuTotal >> 1u)) + walls - 1) / walls;
+			break;
+
+		case 4:
+			if (tileStart->getPosition().z > tileStop->getPosition().z)
+				tile = _battleSave->getTile(tileStop->getPosition() + Position(0,0,1));
+			else
+				tile = tileStop;
+
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+
+				if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
+					|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+			break;
+
+		case 5:
+			tile = tileStart;
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_WESTWALL)->isDoor() == true
+					|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			tile = _battleSave->getTile(tileStart->getPosition() + Position(0,1,0)); // tileSouth
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_WESTWALL)->isDoor() == true
+					|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
+					|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			tile = tileStop; //_battleSave->getTile(tileStart->getPosition() + Position(-1,1,0)); // tileSouthWest
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
+					|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			if (walls != 0)
+				tuTotal = ((tuTotal + (tuTotal >> 1u)) + walls - 1) / walls;
+			break;
+
+		case 6:
+			if (tileStart->getPosition().z < tileStop->getPosition().z)
+				tile = _battleSave->getTile(tileStart->getPosition() + Position(0,0,1));
+			else
+				tile = tileStart;
+
+			if ((partCost = tileStart->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+
+				if (   tileStart->getMapData(O_WESTWALL)->isDoor() == true
+					|| tileStart->getMapData(O_WESTWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+			break;
+
+		case 7:
+			tile = tileStart;
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_WESTWALL)->isDoor() == true
+					|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
+					|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			tile = _battleSave->getTile(tileStart->getPosition() + Position(-1,0,0)); // tileWest
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
+					|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			tile = _battleSave->getTile(tileStart->getPosition() + Position(0,-1,0)); // tileNorth
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (   tile->getMapData(O_WESTWALL)->isDoor() == true
+					|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
+				{
+					if (partCost > _doorCost) _doorCost = partCost;
+				}
+			}
+
+			if (walls != 0)
+				tuTotal = ((tuTotal + (tuTotal >> 1u)) + walls - 1) / walls;
+	}
+
+//	if ((dir & 1) == 1)
+//	{
+//		if (tuTotal != 0 && _doorCost == 0)
+//		{
+//			if (walls != 0)
+//				tuTotal /= walls; // average of the walls crossed
+//
+//			if (((tuTotal - walls) & 1) == 1) // round wallCost up.
+//				++tuTotal;
+//		}
+//	}
+	return tuTotal;
 }
 
 /**

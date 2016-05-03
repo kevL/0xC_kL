@@ -95,6 +95,12 @@ private:
 	/// Gets the PathfindingNode at a specified Position.
 	PathfindingNode* getNode(const Position& pos);
 
+	/// Gets the TU-cost for crossing over walls.
+	int getWallTuCost(
+			int dir,
+			const Tile* const tileStart,
+			const Tile* const tileStop);
+
 	/// Determines whether a specified Tile blocks a movement-type.
 	bool isBlocked(
 			const Tile* const tile,

@@ -2745,27 +2745,25 @@ int Map::getIconWidth() const
 
 /**
  * Returns the angle (left/right balance) of a sound-effect based on a map-position.
- * @param pos - reference the Map position to calculate the sound angle from
+ * @param pos - reference to the map-position to calculate a sound-angle from
  * @return, the angle of the sound (360 = 0 degrees center)
  */
 int Map::getSoundAngle(const Position& pos) const
 {
-	const int midPoint (getWidth() / 2);
+	const int midPoint (getWidth() >> 1u);
 
 	Position screenPos;
 	_camera->convertMapToScreen(pos, &screenPos);
 
 	// cap the position to the screen edges relative to the center,
 	// negative values indicating a left-shift, and positive values shifting to the right.
-	screenPos.x = std::max(
-						-midPoint,
-						std::min(
-								midPoint,
-								screenPos.x + _camera->getMapOffset().x - midPoint));
+	screenPos.x = std::max(-midPoint,
+							std::min(midPoint,
+									 screenPos.x + _camera->getMapOffset().x - midPoint));
 
 	// Convert the relative distance left or right to a relative angle off-center.
 	// Since Mix_SetPosition() uses modulo 360 can't feed it a negative number so add 360.
-	// The integer-factor below is the allowable maximum deflection from center
+	// The integer-factor below is the allowable maximum deflection from center.
 	return (screenPos.x * 35 / midPoint) + 360;
 }
 

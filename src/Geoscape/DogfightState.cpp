@@ -1373,7 +1373,7 @@ void DogfightState::ufoFireWeapon()
 	prj->setPower(_ufo->getRules()->getWeaponPower());
 	prj->setDirection(PD_DOWN);
 	prj->setHorizontalPosition(PH_CENTER);
-	prj->setPosition(_dist - (_ufoSize >>1u));
+	prj->setPosition(_dist - (_ufoSize >> 1u));
 	_projectiles.push_back(prj);
 
 	_game->getResourcePack()->playSoundFx(
