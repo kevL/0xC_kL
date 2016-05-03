@@ -188,7 +188,7 @@ void BaseDefenseState::nextStep() // private.
 						_timer->setInterval(TI_MEDIUM);
 					}
 
-					_game->getResourcePack()->playSoundFX(ResourcePack::UFO_EXPLODE, true);
+					_game->getResourcePack()->playSoundFx(ResourcePack::UFO_EXPLODE, true);
 
 					if (++_explosionCount == 3)
 						_action = BD_END;
@@ -267,7 +267,7 @@ void BaseDefenseState::nextStep() // private.
 											tr("STR_FIRING"));
 //					_lstDefenses->setCellColor(_row - 1, 1, 160, /* slate */ true);
 
-					_game->getResourcePack()->playSoundFX(
+					_game->getResourcePack()->playSoundFx(
 													fac->getRules()->getFireSound(),
 													true);
 					_action = BD_RESOLVE;
@@ -278,7 +278,7 @@ void BaseDefenseState::nextStep() // private.
 				case BD_RESOLVE:
 					if (RNG::percent(fac->getRules()->getHitRatio()) == true)
 					{
-						_game->getResourcePack()->playSoundFX(fac->getRules()->getHitSound());
+						_game->getResourcePack()->playSoundFx(fac->getRules()->getHitSound());
 
 						int power (fac->getRules()->getDefenseValue());
 						power = RNG::generate( // vary power between 75% and 133% ( stock is 50..150% )

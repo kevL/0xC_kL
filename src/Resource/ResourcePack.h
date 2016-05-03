@@ -161,7 +161,7 @@ private:
 					const std::string& soundSet,
 					size_t soundId) const;
 			/// Plays a sound effect in stereo.
-			void playSoundFX(
+			void playSoundFx(
 					const int sound,
 					const bool randAngle = false) const;
 

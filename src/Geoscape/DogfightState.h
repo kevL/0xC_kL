@@ -68,12 +68,12 @@ class DogfightState final
 
 private:
 	static const int
-		_projectileBlobs[4][6][3],
+		_projectileBlobs[4u][6u][3u],
 
 		DST_ENGAGE		= 635,
 		DST_STANDOFF	= 595,
-		DST_CLOSE		= 64,
-		MSG_TIMEOUT		= 25;
+		DST_CLOSE		=  64,
+		MSG_TIMEOUT		=  25;
 
 
 	bool
@@ -109,7 +109,7 @@ private:
 	size_t
 		_slot,
 		_totalIntercepts;
-	Uint8 _colors[11]; // see ColorDf enum above^
+	Uint8 _colors[11u]; // see ColorDf enum above^
 //		_currentCraftDamageColor;
 
 	std::vector<CraftWeaponProjectile*> _projectiles;

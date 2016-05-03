@@ -384,19 +384,19 @@ Sound* ResourcePack::getSound(
 
 /**
  * Plays a sound-effect in stereo.
- * @param soundId	- sound to play
- * @param randAngle	- true to randomize the sound angle (default false to center it)
+ * @param soundId	- sound-ID to play
+ * @param randAngle	- true to randomize the sound-angle (default false to center it)
  */
-void ResourcePack::playSoundFX(
+void ResourcePack::playSoundFx(
 		const int soundId,
 		const bool randAngle) const
 {
-	int dir = 360; // stereo center
+	int dir (360); // stereo center
 	if (randAngle == true)
 	{
-		const int var (67); // maximum deflection left or right
-		dir += ((RNG::seedless(-var, var)
-			   + RNG::seedless(-var, var)) >> 1u);
+		static const int var (67); // maximum deflection left or right
+		dir += (RNG::seedless(-var, var)
+			  + RNG::seedless(-var, var)) >> 1u;
 	}
 	getSound("GEO.CAT", soundId)->play(-1, dir);
 }

@@ -82,64 +82,64 @@ private:
 
 
 	public:
-		/// cTor.
+		/// Creates a CraftWeaponProjectile.
 		CraftWeaponProjectile();
 		/// dTor.
 		~CraftWeaponProjectile();
 
-		/// Sets projectile type. This determines its speed.
+		/// Sets the CraftWeaponProjectile's type. This determines its speed.
 		void setType(CwpType type);
-		/// Returns projectile type.
+		/// Gets the CraftWeaponProjectile's type.
 		CwpType getType() const;
-		/// Returns projectile global type.
+		/// Gets the CraftWeaponProjectile's GlobalType.
 		CwpGlobal getGlobalType() const;
 
-		/// Sets projectile direction. This determines its initial position.
+		/// Sets the CraftWeaponProjectile's direction. This determines its initial position.
 		void setDirection(CwpDirection dir);
-		/// Gets projectile direction.
+		/// Gets the CraftWeaponProjectile's direction.
 		CwpDirection getDirection() const;
 
-		/// Moves projectile in '_dir' with '_speed'.
+		/// Moves the CraftWeaponProjectile in direction '_dir' with speed '_speed'.
 		void moveProjectile();
 
-		/// Sets projectile position.
+		/// Sets the CraftWeaponProjectile's y-position.
 		void setPosition(int pos);
-		/// Gets projectile position.
+		/// Gets the CraftWeaponProjectile's y-position.
 		int getPosition() const;
-		/// Sets horizontal position. This determines from which weapon projectile has been fired.
+		/// Sets the CraftWeaponProjectile's horizontal position. This determines from which weapon it has been fired.
 		void setHorizontalPosition(int pos);
-		/// Gets horizontal position.
+		/// Gets the CraftWeaponProjectile's horizontal position.
 		int getHorizontalPosition() const;
 
-		/// Marks projectile to be removed.
+		/// Flags the CraftWeaponProjectile to be removed.
 		void removeProjectile();
-		/// Returns true if the projectile should be removed.
+		/// Checks if the CraftWeaponProjectile should be removed.
 		bool toBeRemoved() const;
 
-		/// Returns state of the beam.
+		/// Gets the state of beam-type CraftWeaponProjectile.
 		int getBeamPhase() const;
 
-		/// Sets power of the projectile.
+		/// Sets the power of the CraftWeaponProjectile.
 		void setPower(int power);
-		/// Gets power of the projectile.
+		/// Gets the power of the CraftWeaponProjectile.
 		int getPower() const;
 
-		/// Sets accuracy of the projectile.
+		/// Sets the accuracy of the CraftWeaponProjectile.
 		void setAccuracy(int accuracy);
-		/// Gets accuracy of the projectile.
+		/// Gets the accuracy of the CraftWeaponProjectile.
 		int getAccuracy() const;
 
-		/// Sets the projectile to missed status.
+		/// Sets the CraftWeaponProjectile to a 'missed' status.
 		void setMissed(bool missed = true);
-		/// Gets the projectile missed status.
+		/// Gets the CraftWeaponProjectile's 'missed' status.
 		bool getMissed() const;
 
-		/// Sets maximum range of projectile.
+		/// Sets the maximum range of the CraftWeaponProjectile.
 		void setRange(int range);
-		/// Gets maximum range of projectile.
+		/// Gets the maximum range of the CraftWeaponProjectile.
 		int getRange() const;
 
-		/// Sets the speed of a missile type projectile.
+		/// Sets the speed of a missile-type CraftWeaponProjectile.
 		void setSpeed(const int speed);
 };
 

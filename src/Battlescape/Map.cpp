@@ -1327,7 +1327,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						}
 						else if (_tile->getSmoke() != 0)
 						{
-							spriteId = ((_tile->getSmoke() + 1) >> 1u); //+ ResourcePack::SMOKE_OFFSET
+							spriteId = (_tile->getSmoke() + 1) >> 1u; //+ ResourcePack::SMOKE_OFFSET
 							shade = tileShade;
 						}
 						else
