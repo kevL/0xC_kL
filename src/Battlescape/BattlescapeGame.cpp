@@ -385,7 +385,7 @@ void BattlescapeGame::popState()
 		_battleStates.pop_front();
 
 
-		if (action.actor != nullptr // handle the end of the acting unit's actions
+		if (action.actor != nullptr // handle the end of the acting BattleUnit's actions
 			&& noActionsPending(action.actor) == true)
 		{
 			//Log(LOG_INFO) << ". noActionsPending for state actor";
@@ -418,61 +418,41 @@ void BattlescapeGame::popState()
 							//
 							// wtf, now RF works fine. NO IT DOES NOT.
 							//Log(LOG_INFO) << ". . ID " << action.actor->getId() << " currentTU = " << action.actor->getTimeUnits() << " spent TU = " << action.TU;
-							if (action.type == BA_USE
-								&& action.weapon->getRules()->getBattleType() == BT_PSIAMP
-								&& action.actor->getTimeUnits() < action.actor->getActionTu(BA_USE, action.weapon))
+
+							if (_battleSave->getSide() == FACTION_PLAYER) // is NOT reaction-fire
 							{
-								cancelTacticalAction();
-							}
-						}
+								//Log(LOG_INFO) << ". side -> Faction_Player";
+								// After throwing the cursor returns to default cursor;
+								// after shooting it stays in targeting mode and the player
+								// can shoot again in the same mode (autoshot/snap/aimed)
+								// unless he/she/it is out of ammo and/or TUs.
+								const int tuActor (action.actor->getTimeUnits());
+								switch (action.type)
+								{
+									case BA_USE: // NOTE: Only Psiamp is a targeting-action w/ type BA_USE.
+									case BA_PSICONTROL:
+									case BA_PSIPANIC:
+									case BA_PSICONFUSE:
+									case BA_PSICOURAGE:
+										if (tuActor < action.actor->getActionTu(action.type, action.weapon))
+											cancelTacticalAction();
+										break;
 
-						if (_battleSave->getSide() == FACTION_PLAYER) // is NOT reaction-fire
-						{
-							//Log(LOG_INFO) << ". side -> Faction_Player";
-							// After throwing the cursor returns to default cursor;
-							// after shooting it stays in targeting mode and the player
-							// can shoot again in the same mode (autoshot/snap/aimed)
-							// unless he/she/it is out of ammo and/or TUs.
-							const int tuActor (action.actor->getTimeUnits());
-							switch (action.type)
-							{
-								case BA_LAUNCH:
-									_tacAction.waypoints.clear(); // no break;
-								case BA_THROW:
-									cancelTacticalAction(true);
-									break;
+									case BA_LAUNCH:
+										_tacAction.waypoints.clear(); // no break;
+									case BA_THROW:
+										cancelTacticalAction(true); // NOTE: Not sure if these needs to be 'forced' ->
+										break;
 
-								case BA_SNAPSHOT:
-									//Log(LOG_INFO) << ". SnapShot, TU percent = " << (float)action.weapon->getRules()->getSnapTu();
-									if (action.weapon->getAmmoItem() == nullptr
-										|| tuActor < action.actor->getActionTu(
-																		BA_SNAPSHOT,
-																		action.weapon))
-									{
-										cancelTacticalAction(true);
-									}
-									break;
-
-								case BA_AUTOSHOT:
-									//Log(LOG_INFO) << ". AutoShot, TU percent = " << (float)action.weapon->getRules()->getAutoTu();
-									if (action.weapon->getAmmoItem() == nullptr
-										|| tuActor < action.actor->getActionTu(
-																		BA_AUTOSHOT,
-																		action.weapon))
-									{
-										cancelTacticalAction(true);
-									}
-									break;
-
-								case BA_AIMEDSHOT:
-									//Log(LOG_INFO) << ". AimedShot, TU percent = " << (float)action.weapon->getRules()->getAimedTu();
-									if (action.weapon->getAmmoItem() == nullptr
-										|| tuActor < action.actor->getActionTu(
-																		BA_AIMEDSHOT,
-																		action.weapon))
-									{
-										cancelTacticalAction(true);
-									}
+									case BA_SNAPSHOT:
+									case BA_AUTOSHOT:
+									case BA_AIMEDSHOT:
+										if (action.weapon->getAmmoItem() == nullptr
+											|| tuActor < action.actor->getActionTu(action.type, action.weapon))
+										{
+											cancelTacticalAction(true);
+										}
+								}
 							}
 						}
 					}
