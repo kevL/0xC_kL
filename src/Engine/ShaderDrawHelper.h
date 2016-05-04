@@ -255,11 +255,12 @@ protected:
 
 	public:
 		///copy constructor
-		inline ShaderBase(const ShaderBase& s):
-			_orgin(s.ptr()),
-			_range_base(s.getBaseDomain()),
-			_range_domain(s.getDomain()),
-			_pitch(s.pitch())
+		inline ShaderBase(const ShaderBase& s)
+			:
+				_orgin(s.ptr()),
+				_range_base(s.getBaseDomain()),
+				_range_domain(s.getDomain()),
+				_pitch(s.pitch())
 		{}
 
 		/**

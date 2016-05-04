@@ -20,6 +20,8 @@
 #ifndef OPENXCOM_WEAPONPROJECTILE_H
 #define OPENXCOM_WEAPONPROJECTILE_H
 
+#include <SDL.h> // Uint8
+
 
 namespace OpenXcom
 {

@@ -272,9 +272,7 @@ void CraftWeaponProjectile::setRange(
 		int range,
 		bool convert)
 {
-	if (convert == true)
-		range <<= 3u;
-
+	if (convert == true) range <<= 3u;
 	_range = range;
 }
 

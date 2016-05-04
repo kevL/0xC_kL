@@ -4752,8 +4752,8 @@ std::list<BattleUnit*>* BattleUnit::getRfSpotters()
 /**
  * Sets or Gets the Psi strength and skill of an aLien who successfully
  * mind-controls this BattleUnit.
- * @note These values are used if Player tries to re-control a hostile xCom or
- * civilian unit.
+ * @note These values are used if Player tries to re-control a hostile xCom (or
+ * civilian) unit. (But the AI doesn't do civies.)
  * @param strength	- psi strength
  * @param skill		- psi skill
  */
