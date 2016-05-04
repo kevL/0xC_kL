@@ -361,9 +361,9 @@ DogfightState::DogfightState(
 
 	const CraftWeapon* cw;
 	Surface
-		* weapon,
-		* range;
-	Text* ammo;
+		* srfWeapon,
+		* srfRange;
+	Text* txtLoad;
 	int
 		x1,x2,
 		rangeY, // 1 km = 1 pixel
@@ -378,41 +378,43 @@ DogfightState::DogfightState(
 	{
 		if ((cw = _craft->getWeapons()->at(i)) != nullptr)
 		{
-			if (i == 0u)
+			switch (i)
 			{
-				weapon = _weapon1;
-				range = _range1;
-				ammo = _txtAmmo1;
-				x1 = 2;
-				x2 = 0;
-			}
-			else
-			{
-				weapon = _weapon2;
-				range = _range2;
-				ammo = _txtAmmo2;
-				x1 = 0;
-				x2 = 18;
+				default:
+				case 0u:
+					srfWeapon	= _weapon1;
+					srfRange	= _range1;
+					txtLoad		= _txtAmmo1;
+					x1			= 2;
+					x2			= 0;
+					break;
+
+				case 1u:
+					srfWeapon	= _weapon2;
+					srfRange	= _range2;
+					txtLoad		= _txtAmmo2;
+					x1			= 0;
+					x2			= 18;
 			}
 
 			srf = srtInticon->getFrame(cw->getRules()->getSprite() + 5);
 //			srf->setX(0);
 //			srf->setY(0);
-			srf->blit(weapon);
+			srf->blit(srfWeapon);
 
 			woststr.str(L"");
 			woststr << cw->getAmmo();
-			ammo->setText(woststr.str());
+			txtLoad->setText(woststr.str());
 
-			range->lock();
-			rangeY = range->getHeight() - cw->getRules()->getRange();
+			srfRange->lock();
+			rangeY = srfRange->getHeight() - cw->getRules()->getRange();
 
 			for (int
 					x = x1;
 					x < x1 + 19;
 					x += 2)
 			{
-				range->setPixelColor(
+				srfRange->setPixelColor(
 								x, rangeY,
 								_colors[RANGE_METER]);
 			}
@@ -436,7 +438,7 @@ DogfightState::DogfightState(
 					y != maxY + 1;
 					++y)
 			{
-				range->setPixelColor(
+				srfRange->setPixelColor(
 								x1 + x2, y,
 								_colors[RANGE_METER]);
 			}
@@ -446,11 +448,11 @@ DogfightState::DogfightState(
 					x != x2 + 3;
 					++x)
 			{
-				range->setPixelColor(
+				srfRange->setPixelColor(
 								x, connectY,
 								_colors[RANGE_METER]);
 			}
-			range->unlock();
+			srfRange->unlock();
 		}
 	}
 
@@ -817,29 +819,29 @@ void DogfightState::updateDogfight()
 				if (_ufo->isCrashed() == false
 					&& _craft->isDestroyed() == false)
 				{
-					delta = std::max(2, 8 + accel);
+					delta = std::max(2,
+									 8 + accel);
 
-					if (_dist < _desired)		// Craft vs UFO receding
+					if (_dist < _desired)			// Craft vs UFO receding
 					{
 						if (_dist + delta > _desired)
 							delta = _desired - _dist;
 					}
-					else if (_dist > _desired)	// Craft vs UFO closing
+					else //if (_dist > _desired)	// Craft vs UFO closing
 						delta = -delta;
 				}
 				else
 					delta = 0;
 
-				for (std::vector<CraftWeaponProjectile*>::const_iterator
-						i = _projectiles.begin();
-						i != _projectiles.end();
-						++i)
+				if (delta > 0)
 				{
-					if ((*i)->getGlobalType() != PGT_BEAM
-						&& (*i)->getDirection() == PD_UP)
+					for (std::vector<CraftWeaponProjectile*>::const_iterator
+							i = _projectiles.begin();
+							i != _projectiles.end();
+							++i)
 					{
-						if (delta > 0)
-							(*i)->setRange((*i)->getRange() + delta); // Don't let interceptor mystically push or pull its fired projectiles.
+						if ((*i)->getGlobalType() == PGT_MISSILE) //&& (*i)->getDirection() == PD_UP)
+							(*i)->setRange((*i)->getRange() + delta); // Don't let interceptor mystically push or pull its fired projectiles. Sorta ....
 					}
 				}
 			}
@@ -847,11 +849,8 @@ void DogfightState::updateDogfight()
 				delta = 0;
 		}
 		else // _ufoBreakingOff== true
-		{
-			delta = std::max(6, 12 + accel);
-			// UFOs can try to outrun the missiles; don't adjust projectile positions here.
-			// If UFOs ever fire anything but beams those positions need to be adjusted here though.
-		}
+			delta = std::max(6,				// UFOs can try to outrun the missiles; don't adjust projectile positions here.
+							 12 + accel);	// If UFOs ever fire anything but beams those positions need to be adjusted here though.
 
 		_dist += delta;
 
@@ -864,7 +863,7 @@ void DogfightState::updateDogfight()
 				i != _projectiles.end();
 				++i)
 		{
-			(*i)->moveProjectile();
+			(*i)->stepProjectile();
 			int
 				hitprob,
 				power;
@@ -934,7 +933,7 @@ void DogfightState::updateDogfight()
 
 					if ((*i)->getGlobalType() == PGT_MISSILE) // Check if projectile passed its maximum range.
 					{
-						if (((*i)->getPosition() >> 3u) >= (*i)->getRange())
+						if ((*i)->getPosition() >= (*i)->getRange())
 							(*i)->endProjectile();
 						else if (_ufo->isCrashed() == false)
 							prjInFlight = true;
@@ -1040,7 +1039,7 @@ void DogfightState::updateDogfight()
 				switch (fireCountdown)
 				{
 					case 0: // Handle weapon firing.
-						if (_dist <= (cw->getRules()->getRange() << 3u)
+						if (_dist <= (cw->getRules()->getRange() << 3u) // <- convert ruleset-value to IG Dogfight distance.
 							&& cw->getAmmo() > 0
 							&& _craftStance != _btnStandoff
 							&& _craftStance != _btnDisengage
@@ -1077,7 +1076,7 @@ void DogfightState::updateDogfight()
 			}
 		}
 
-		const int ufoWRange (_ufo->getRules()->getWeaponRange() << 3u); // Handle UFO firing.
+		const int ufoWRange (_ufo->getRules()->getWeaponRange()); // Handle UFO firing.
 
 		if (_ufo->isCrashed() == true
 			|| (_ufo->getShootingAt() == _slot // this Craft out of range and/or destroyed.
@@ -1378,8 +1377,8 @@ void DogfightState::ufoFireWeapon()
 
 	int reload (_ufo->getRules()->getWeaponReload());
 	reload += RNG::generate(0,
-							reload / 2);
-	reload -= _diff * 2;
+							reload >> 1u);
+	reload -= _diff << 1u;
 	if (reload < 1) reload = 1;
 
 	_ufo->setFireCountdown(reload);
@@ -1404,10 +1403,13 @@ void DogfightState::maximumDistance()
 		}
 	}
 
-	if (dist == 0)
-		_desired = DST_STANDOFF;
-	else
-		_desired = dist << 3u;
+	switch (dist)
+	{
+		case 0:
+			_desired = DST_STANDOFF; break;
+		default:
+			_desired = dist << 3u; // <- convert ruleset-value to IG Dogfight distance.
+	}
 }
 
 /**
@@ -1429,10 +1431,13 @@ void DogfightState::minimumDistance()
 		}
 	}
 
-	if (dist == 1000)
-		_desired = DST_STANDOFF;
-	else
-		_desired = dist << 3u;
+	switch (dist)
+	{
+		case 1000:
+			_desired = DST_STANDOFF; break;
+		default:
+			_desired = dist << 3u; // <- convert ruleset-value to IG Dogfight distance.
+	}
 }
 
 /**
@@ -1855,14 +1860,16 @@ void DogfightState::drawUfo()
 }
 
 /**
- * Draws projectiles on the radar screen.
+ * Draws projectiles on the Craft's radar-screen.
  * @note Its shape will be different depending on what type of projectile it is.
- * @note Currently works for original sized blobs 3 x 6 pixels.
- * @param prj - pointer to CraftWeaponProjectile
+ * Currently works for original-sized blobs 3x6 pixels. Positions are plotted in
+ * ruleset-kilometers, not the larger [x8] Dogfight-values. yeh, how did that
+ * make it past Quality Assurance.
+ * @param prj - pointer to a CraftWeaponProjectile
  */
 void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 {
-	int posX ((_battleScope->getWidth() >> 1u) + (prj->getHorizontalPosition() << 2u));
+	int pos_x ((_battleScope->getWidth() >> 1u) + (prj->getHorizontalPosition() << 2u));
 	Uint8
 		color,
 		colorOffset;
@@ -1871,8 +1878,8 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 	{
 		case PGT_MISSILE:
 		{
-			--posX;
-			const int posY (_battleScope->getHeight() - (prj->getPosition() >> 3u));
+			--pos_x;
+			const int pos_y (_battleScope->getHeight() - (prj->getPosition() >> 3u));
 			for (int
 					x = 0;
 					x != 3;
@@ -1889,15 +1896,15 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 					if (colorOffset != 0u)
 					{
 						color = _window->getPixelColor(
-													posX + x + 3, // +3 'cause of the window frame
-													posY + y + 3);
+													pos_x + x + 3, // +3 'cause of the window frame
+													pos_y + y + 3);
 						color -= colorOffset;
 						if (color < _colors[BLOB_MIN])
 							color = _colors[BLOB_MIN];
 
 						_battleScope->setPixelColor(
-												posX + x,
-												posY + y,
+												pos_x + x,
+												pos_y + y,
 												color);
 					}
 				}
@@ -1907,7 +1914,7 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 
 		case PGT_BEAM:
 		{
-			colorOffset = static_cast<Uint8>(prj->getBeamPhase());
+			colorOffset = prj->getBeamPhase();
 			const int
 				stop  (_battleScope->getHeight() - 2),
 				start (_battleScope->getHeight() - (_dist >> 3u));
@@ -1921,7 +1928,7 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 				{
 					case PD_UP:
 						color = _window->getPixelColor(
-													posX + 3,
+													pos_x + 3,
 													y + 3);
 						color -= colorOffset;
 						if (color < _colors[BLOB_MIN])
@@ -1932,14 +1939,14 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 					case PD_DOWN:
 						color = 128u; // red
 				}
-				_battleScope->setPixelColor(posX, y, color);
+				_battleScope->setPixelColor(pos_x, y, color);
 			}
 		}
 	}
 }
 
 /**
- * Toggles usage of weapon number 1.
+ * Toggles usage of weapon-1.
  * @param action - pointer to an Action
  */
 void DogfightState::weapon1Click(Action*)
@@ -1949,7 +1956,7 @@ void DogfightState::weapon1Click(Action*)
 }
 
 /**
- * Toggles usage of weapon number 2.
+ * Toggles usage of weapon-2.
  * @param action - pointer to an Action
  */
 void DogfightState::weapon2Click(Action*)
@@ -1961,52 +1968,52 @@ void DogfightState::weapon2Click(Action*)
 /**
  * Changes the colors of craft's weapon icons, range indicators, and ammo texts
  * based on current weapon state.
- * @param hardPt - craft weapon to change colors of
- * @param enable - true if weapon is enabled
+ * @param hardPoint	- craft-weapon to change color
+ * @param enabled	- true if weapon is enabled
  */
 void DogfightState::recolor(
-		const int hardPt,
-		const bool enable)
+		const int hardPoint,
+		const bool enabled)
 {
-	InteractiveSurface* weapon;
-	Text* ammo;
-	Surface* range;
+	InteractiveSurface* isfWeapon;
+	Surface* srfWeapon;
+	Text* txtLoad;
 
-	switch (hardPt)
+	switch (hardPoint)
 	{
 		case 0:
-			weapon = _weapon1;
-			ammo = _txtAmmo1;
-			range = _range1;
+			isfWeapon	= _weapon1;
+			srfWeapon	= _range1;
+			txtLoad		= _txtAmmo1;
 			break;
 
 		case 1:
-			weapon = _weapon2;
-			ammo = _txtAmmo2;
-			range = _range2;
+			isfWeapon	= _weapon2;
+			srfWeapon	= _range2;
+			txtLoad		= _txtAmmo2;
 			break;
 
 		default:
 			return;
 	}
 
-	if (enable == true)
+	if (enabled == true)
 	{
-		weapon->offset(-_colors[DISABLED_WEAPON]);
-		ammo->offset(-_colors[DISABLED_AMMO]);
-		range->offset(-_colors[DISABLED_RANGE]);
+		isfWeapon	->offset(-_colors[DISABLED_WEAPON]);
+		txtLoad		->offset(-_colors[DISABLED_AMMO]);
+		srfWeapon	->offset(-_colors[DISABLED_RANGE]);
 	}
 	else
 	{
-		weapon->offset(_colors[DISABLED_WEAPON]);
-		ammo->offset(_colors[DISABLED_AMMO]);
-		range->offset(_colors[DISABLED_RANGE]);
+		isfWeapon	->offset(_colors[DISABLED_WEAPON]);
+		txtLoad		->offset(_colors[DISABLED_AMMO]);
+		srfWeapon	->offset(_colors[DISABLED_RANGE]);
 	}
 }
 
 /**
- * Gets this Dogfight's interception slot.
- * @return, interception number
+ * Gets this Dogfight's interception-slot.
+ * @return, slot-ID
  */
 size_t DogfightState::getInterceptSlot() const
 {
@@ -2014,8 +2021,8 @@ size_t DogfightState::getInterceptSlot() const
 }
 
 /**
- * Sets this Dogfight's interception slot.
- * @param intercept - #ID
+ * Sets this Dogfight's interception-slot.
+ * @param intercept - slot-ID
  */
 void DogfightState::setInterceptSlot(const size_t intercept)
 {
@@ -2023,9 +2030,9 @@ void DogfightState::setInterceptSlot(const size_t intercept)
 }
 
 /**
- * Sets total interceptions count.
- * @note Used to properly position the window.
- * @param intercepts - amount of interception windows
+ * Sets the total-interceptions quantity.
+ * @note Used to properly position the port.
+ * @param intercepts - quantity of interception ports
  */
 void DogfightState::setTotalIntercepts(const size_t intercepts)
 {
@@ -2033,9 +2040,9 @@ void DogfightState::setTotalIntercepts(const size_t intercepts)
 }
 
 /**
- * Calculates dogfight window position according to number of active interceptions.
+ * Calculates dogfight-port position according to quantity of active Dogfights.
  * @param dfOpen		- current iteration
- * @param dfOpenTotal	- total quantity of open dogfight windows
+ * @param dfOpenTotal	- total quantity of open dogfight-ports
  */
 void DogfightState::resetInterceptPort(
 		size_t dfOpen,
@@ -2083,7 +2090,7 @@ void DogfightState::resetInterceptPort(
 						break;
 
 					case 3:
-						_x = 320 - _window->getWidth(); // 160;
+						_x = 320 - _window->getWidth();  // 160;
 						_y = 201 - _window->getHeight(); // 96;
 				}
 				break;
@@ -2107,7 +2114,7 @@ void DogfightState::resetInterceptPort(
 						break;
 
 					case 4:
-						_x = 320 - _window->getWidth(); // 160;
+						_x = 320 - _window->getWidth();  // 160;
 						_y = 201 - _window->getHeight(); // 96;
 				}
 		}
@@ -2120,8 +2127,8 @@ void DogfightState::resetInterceptPort(
 }
 
 /**
- * Relocates all dogfight window elements to calculated position.
- * @note This is used when multiple interceptions are running.
+ * Relocates all dogfight-port elements to a calculated position.
+ * @note This is used when multiple Dogfights are active.
  */
 void DogfightState::placePort() // private.
 {

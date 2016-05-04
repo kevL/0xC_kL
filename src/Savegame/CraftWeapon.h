@@ -32,7 +32,7 @@ class Ruleset;
 
 
 /**
- * Represents a CraftWeapon equipped by a craft.
+ * Represents a CraftWeapon equipped by a Craft.
  * @note Contains variable info about a CraftWeapon like ammo.
  * @sa RuleCraftWeapon
  */

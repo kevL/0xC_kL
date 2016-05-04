@@ -71,12 +71,11 @@ YAML::Node CraftWeapon::save() const
 {
 	YAML::Node node;
 
-	node["type"]			= _cwRule->getType();
-	node["ammo"]			= _ammo;
-	if (_rearming)
-		node["rearming"]	= _rearming;
-	if (_cantLoad)
-		node["cantLoad"]	= _cantLoad;
+	node["type"] = _cwRule->getType();
+	node["ammo"] = _ammo;
+
+	if (_rearming) node["rearming"] = _rearming;
+	if (_cantLoad) node["cantLoad"] = _cantLoad;
 
 	return node;
 }
@@ -221,7 +220,7 @@ CraftWeaponProjectile* CraftWeapon::fire() const
 	prj->setSpeed(_cwRule->getProjectileSpeed());
 	prj->setAccuracy(_cwRule->getAccuracy());
 	prj->setPower(_cwRule->getPower());
-	prj->setRange(_cwRule->getRange());
+	prj->setRange(_cwRule->getRange(), true);
 
 	return prj;
 }

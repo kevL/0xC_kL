@@ -59,22 +59,24 @@ class CraftWeaponProjectile
 
 private:
 	bool
-		_missed,
-		_done;
+		_done,
+		_missed;
 	int
 		_accuracy,
-		_pos,	// relative to interceptor, apparently, which is a problem
-				// when the interceptor disengages while projectile is in flight.
+		_dist,		// large #
+		_pos,		// large #
+					// relative to interceptor, apparently, which is a problem
+					// when the interceptor disengages while projectile is in flight.
 
-				// kL_note: also, something screws with when a missile is launched
-				// but UFO is downed, by other weapon, before it hits; the missile
-				// is then not removed from the craft's ordnance.
-		_power,
-		_dist,
+					// kL_note: also, something screws with when a missile is launched
+					// but UFO is downed, by other weapon, before it hits; the missile
+					// is then not removed from the craft's ordnance.
 		_posHori,
-		_range,
-		_speed,
-		_beamPhase;
+		_power,
+		_range,		// small #
+		_speed;		// large #
+
+	Uint8 _beamPhase;
 
 	CwpDirection _dir;
 	CwpGlobal _globalType;
@@ -100,7 +102,7 @@ private:
 		CwpDirection getDirection() const;
 
 		/// Moves the CraftWeaponProjectile in direction '_dir' with speed '_speed'.
-		void moveProjectile();
+		void stepProjectile();
 
 		/// Sets the CraftWeaponProjectile's y-position.
 		void setPosition(int pos);
@@ -117,7 +119,7 @@ private:
 		bool isFinished() const;
 
 		/// Gets the state of beam-type CraftWeaponProjectile.
-		int getBeamPhase() const;
+		Uint8 getBeamPhase() const;
 
 		/// Sets the power of the CraftWeaponProjectile.
 		void setPower(int power);
@@ -135,7 +137,9 @@ private:
 		bool getMissed() const;
 
 		/// Sets the maximum range of the CraftWeaponProjectile.
-		void setRange(int range);
+		void setRange(
+				int range,
+				bool convert = false);
 		/// Gets the maximum range of the CraftWeaponProjectile.
 		int getRange() const;
 

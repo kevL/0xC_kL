@@ -229,8 +229,8 @@ private:
 
 		/// Changes colors of weapon stuffs.
 		void recolor(
-				const int hardPt,
-				const bool enable);
+				const int hardPoint,
+				const bool enabled);
 
 		/// Gets interception slot.
 		size_t getInterceptSlot() const;

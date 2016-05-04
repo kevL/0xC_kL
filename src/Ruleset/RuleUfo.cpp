@@ -201,7 +201,7 @@ int RuleUfo::getWeaponPower() const
  */
 int RuleUfo::getWeaponRange() const
 {
-	return _range;
+	return _range << 3u; // convert from "kilometers" ... to Dogfight distance.
 }
 
 /**

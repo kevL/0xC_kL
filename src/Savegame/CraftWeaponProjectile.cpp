@@ -34,7 +34,7 @@ CraftWeaponProjectile::CraftWeaponProjectile()
 		_dir(PD_NONE),
 		_pos(0),
 		_posHori(PH_CENTER),
-		_beamPhase(0),
+		_beamPhase(8u),
 		_accuracy(0),
 		_power(0),
 		_range(0),
@@ -62,7 +62,6 @@ void CraftWeaponProjectile::setType(CwpType type)
 		case PT_LASER_BEAM:
 		case PT_PLASMA_BEAM:
 			_globalType = PGT_BEAM;
-			_beamPhase = 8;
 	}
 }
 
@@ -107,28 +106,24 @@ CwpDirection CraftWeaponProjectile::getDirection() const
  * Moves this CraftWeaponProjectile according to its speed or changes the phase
  * of its beam animation as applicable to its GlobalType.
  */
-void CraftWeaponProjectile::moveProjectile()
+void CraftWeaponProjectile::stepProjectile()
 {
 	switch (_globalType)
 	{
 		case PGT_MISSILE:
 		{
-			if (_dist > (_range << 3u)) // check if projectile passed its max-range on previous tick
+			if (_dist > _range) // check if projectile passed its max-range on previous tick
 				_missed = true;
 
 			int delta; // check if projectile will reach its max-range this tick
 
-			const int range8 (_range << 3u);
-			if (   range8 >  _dist
-				&& range8 <= _dist + _speed)
-			{
-				delta = range8 - _dist;
-			}
+			if (_range > _dist && _range <= _dist + _speed)
+				delta = _range - _dist;
 			else
 				delta = _speed;
 
-//			switch (_dir) // -> at present there are no PGT_MISSILE w/ PD_DOWN for UFOs.
-//			{
+//			switch (_dir)	// -> at present there are no PGT_MISSILE w/ PD_DOWN for UFOs, which fire PGT_BREAM exclusively;
+//			{				// in fact I don't think the Dogfight code even accounts for such a case currently.
 //				case PD_UP:
 			_pos += delta; //break;
 //				case PD_DOWN:
@@ -207,7 +202,7 @@ bool CraftWeaponProjectile::isFinished() const
  * Gets the animation-phase of this CraftWeaponProjectile if beam-type.
  * @return, the phase
  */
-int CraftWeaponProjectile::getBeamPhase() const
+Uint8 CraftWeaponProjectile::getBeamPhase() const
 {
 	return _beamPhase;
 }
@@ -270,10 +265,16 @@ bool CraftWeaponProjectile::getMissed() const
 
 /**
  * Sets the maximum range of this CraftWeaponProjectile.
- * @param range - the range
+ * @param range		- the range
+ * @param convert	- true to convert from "kilometers" to Dogfight distance (default false)
  */
-void CraftWeaponProjectile::setRange(int range)
+void CraftWeaponProjectile::setRange(
+		int range,
+		bool convert)
 {
+	if (convert == true)
+		range <<= 3u;
+
 	_range = range;
 }
 
