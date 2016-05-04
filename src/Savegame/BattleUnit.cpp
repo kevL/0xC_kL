@@ -4752,7 +4752,8 @@ std::list<BattleUnit*>* BattleUnit::getRfSpotters()
 /**
  * Sets or Gets the Psi strength and skill of an aLien who successfully
  * mind-controls this BattleUnit.
- * @note These values are used if Player tries to re-control a hostile xCom unit.
+ * @note These values are used if Player tries to re-control a hostile xCom or
+ * civilian unit.
  * @param strength	- psi strength
  * @param skill		- psi skill
  */
@@ -4760,18 +4761,19 @@ void BattleUnit::hostileMcValues(
 		int& strength,
 		int& skill)
 {
-	if (skill == 0) // get params
+	switch (skill)
 	{
-		strength = _mcStrength;
-		skill = _mcSkill;
-	}
-	else // set params
-	{
-		_mcStrength = strength - ((_stats.psiStrength + 2) / 3);
-		_mcSkill = skill - ((_stats.psiSkill + 2) / 3);
+		case 0: // get params
+			strength = _mcStrength;
+			skill = _mcSkill;
+			break;
 
-		if (_mcStrength < 0) _mcStrength = 0;
-		if (_mcSkill < 0) _mcSkill = 0;
+		default: // set params
+			_mcStrength	= strength - ((_stats.psiStrength + 2) / 3);
+			_mcSkill	= skill - ((_stats.psiSkill + 2) / 3);
+
+			if (_mcStrength < 0) _mcStrength = 0;
+			if (_mcSkill < 0) _mcSkill = 0;
 	}
 }
 

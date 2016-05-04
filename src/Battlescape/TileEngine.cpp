@@ -6322,7 +6322,6 @@ bool TileEngine::psiAttack(BattleAction* const action)
 			const int morale (10 + RNG::generate(0,20) + (action->actor->getBattleStats()->psiSkill / 10));
 			action->value = morale;
 			victim->moraleChange(morale);
-
 			return true;
 		}
 
@@ -6330,6 +6329,15 @@ bool TileEngine::psiAttack(BattleAction* const action)
 			action->actor->addPsiSkillExp();
 		else if (victim->getOriginalFaction() == FACTION_PLAYER) //&& Options::allowPsiStrengthImprovement
 			victim->addPsiStrengthExp();
+
+		if (action->type == BA_PSICONTROL
+			&& victim->getOriginalFaction() == FACTION_HOSTILE // aLiens should be reduced to 50- Morale before MC.
+			&& RNG::percent(victim->getMorale() - 50) == true)
+		{
+			//Log(LOG_INFO) << ". . . . RESIST vs " << (victim->getMorale() - 50);
+			_battleSave->getBattleState()->warning("STR_PSI_RESIST");
+			return false;
+		}
 
 		const UnitStats
 			* const statsActor (action->actor->getBattleStats()),
@@ -6450,14 +6458,6 @@ bool TileEngine::psiAttack(BattleAction* const action)
 				case BA_PSICONTROL:
 				{
 					//Log(LOG_INFO) << ". . . action->type == BA_PSICONTROL";
-					if (victim->getOriginalFaction() == FACTION_HOSTILE // aLiens should be reduced to 50- Morale before MC.
-						&& RNG::percent(victim->getMorale() - 50) == true)
-					{
-						//Log(LOG_INFO) << ". . . . RESIST vs " << (victim->getMorale() - 50);
-						_battleSave->getBattleState()->warning("STR_PSI_RESIST");
-						return false;
-					}
-
 					int morale (statsVictim->bravery);
 					switch (action->actor->getFaction())
 					{
