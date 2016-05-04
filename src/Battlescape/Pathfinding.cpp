@@ -647,15 +647,15 @@ bool Pathfinding::aStarPath( // private.
 
 	nodeStart->linkNode(0, nullptr, 0, posTarget);
 
-	PathfindingOpenSet testNodes;
-	testNodes.addNode(nodeStart);
+	PathfindingOpenSet nodes;
+	nodes.addNode(nodeStart);
 
 	Position posStop;
 	int tuCost;
 
-	while (testNodes.isNodeSetEmpty() == false)
+	while (nodes.isNodeSetEmpty() == false)
 	{
-		nodeStart = testNodes.getNode();
+		nodeStart = nodes.getNode();
 		const Position& posStart (nodeStart->getPosition());
 		//Log(LOG_INFO) << ". posStart " << (nodeStart->getPosition());
 		nodeStart->setChecked();
@@ -686,7 +686,7 @@ bool Pathfinding::aStarPath( // private.
 			return true;
 		}
 
-		for (int // TODO: Reverse the loop-iter for zPath.
+		for (int
 				dir = 0;
 				dir != 10;
 				++dir)
@@ -718,8 +718,7 @@ bool Pathfinding::aStarPath( // private.
 										nodeStart,
 										dir,
 										posTarget);
-
-						testNodes.addNode(nodeStop);
+						nodes.addNode(nodeStop);
 					}
 				}
 			}
@@ -733,8 +732,8 @@ bool Pathfinding::aStarPath( // private.
  * @note Uses Dijkstra's algorithm. See also aStarPath().
  * @param unit		- pointer to a BattleUnit
  * @param maxTuCost	- the maximum cost of the path to each tile
- * @return, vector of reachable tile indices sorted in ascending order of cost;
- *			the first tile is the start location itself
+ * @return, vector of reachable tile-indices sorted in ascending order of cost;
+ *			the first tile is the start-location itself
  */
 std::vector<size_t> Pathfinding::findReachable(
 		const BattleUnit* const unit,
@@ -754,19 +753,19 @@ std::vector<size_t> Pathfinding::findReachable(
 
 	nodeStart->linkNode(0, nullptr, 0);
 
-	PathfindingOpenSet testNodes;
-	testNodes.addNode(nodeStart);
+	PathfindingOpenSet nodes;
+	nodes.addNode(nodeStart);
 
-	std::vector<PathfindingNode*> nodes; // note these are not route-nodes perse: *every Tile* is a PathfindingNode.
+	std::vector<PathfindingNode*> set; // note these are not route-nodes perse: *every Tile* is a PathfindingNode.
 
 	Position posStop;
 	int
 		tuCost,
 		tuCostTotal;
 
-	while (testNodes.isNodeSetEmpty() == false)
+	while (nodes.isNodeSetEmpty() == false)
 	{
-		nodeStart = testNodes.getNode();
+		nodeStart = nodes.getNode();
 		const Position& posStart (nodeStart->getPosition());
 
 		for (int
@@ -782,7 +781,7 @@ std::vector<size_t> Pathfinding::findReachable(
 			if (tuCost < FAIL)
 			{
 				tuCostTotal = nodeStart->getTuCostNode() + tuCost;
-				if (tuCostTotal <= maxTuCost
+				if (   tuCostTotal <= maxTuCost
 					&& tuCostTotal <= unit->getEnergy())
 				{
 					nodeStop = getNode(posStop);
@@ -795,8 +794,7 @@ std::vector<size_t> Pathfinding::findReachable(
 											tuCostTotal,
 											nodeStart,
 											dir);
-
-							testNodes.addNode(nodeStop);
+							nodes.addNode(nodeStop);
 						}
 					}
 				}
@@ -804,25 +802,25 @@ std::vector<size_t> Pathfinding::findReachable(
 		}
 
 		nodeStart->setChecked();
-		nodes.push_back(nodeStart);
+		set.push_back(nodeStart);
 	}
 
 	std::sort(
-			nodes.begin(),
-			nodes.end(),
+			set.begin(),
+			set.end(),
 			MinNodeCosts());
 
-	std::vector<size_t> tileIndices;
-	tileIndices.reserve(nodes.size());
+	std::vector<size_t> tileIds;
+	tileIds.reserve(set.size());
 	for (std::vector<PathfindingNode*>::const_iterator
-			i = nodes.begin();
-			i != nodes.end();
+			i = set.begin();
+			i != set.end();
 			++i)
 	{
 		//Log(LOG_INFO) << "pf: " << _battleSave->getTileIndex((*i)->getPosition());
-		tileIndices.push_back(_battleSave->getTileIndex((*i)->getPosition()));
+		tileIds.push_back(_battleSave->getTileIndex((*i)->getPosition()));
 	}
-	return tileIndices;
+	return tileIds;
 }
 
 /**

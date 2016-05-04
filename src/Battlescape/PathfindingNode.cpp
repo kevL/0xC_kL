@@ -127,8 +127,8 @@ void PathfindingNode::linkNode(
 	{
 		Position pos (target - _pos);
 		pos *= pos;
-		_tuGuess = 4 * static_cast<int>(std::ceil(std::sqrt(
-					   static_cast<double>(pos.x + pos.y + pos.z))));
+		_tuGuess = (static_cast<int>(std::ceil(std::sqrt(
+					static_cast<double>(pos.x + pos.y + pos.z))))) << 2u;
 	}
 }
 

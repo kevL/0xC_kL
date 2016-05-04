@@ -418,6 +418,12 @@ void BattlescapeGame::popState()
 							//
 							// wtf, now RF works fine. NO IT DOES NOT.
 							//Log(LOG_INFO) << ". . ID " << action.actor->getId() << " currentTU = " << action.actor->getTimeUnits() << " spent TU = " << action.TU;
+							if (action.type == BA_USE
+								&& action.weapon->getRules()->getBattleType() == BT_PSIAMP
+								&& action.actor->getTimeUnits() < action.actor->getActionTu(BA_USE, action.weapon))
+							{
+								cancelTacticalAction();
+							}
 						}
 
 						if (_battleSave->getSide() == FACTION_PLAYER) // is NOT reaction-fire

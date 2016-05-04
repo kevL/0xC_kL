@@ -32,7 +32,7 @@ struct OpenSetEntry;
 
 
 /**
- * A class that holds pathfinding info for a node on the map.
+ * A class that holds pathfinding-info for a Position on the battlefield.
  */
 class PathfindingNode
 {
@@ -53,7 +53,7 @@ private:
 
 
 	public:
-		/// Creates a new PathfindingNode class.
+		/// Creates a PathfindingNode.
 		explicit PathfindingNode(Position pos);
 		/// Cleans up the PathfindingNode.
 		~PathfindingNode();
@@ -72,7 +72,7 @@ private:
 
 		/// Gets the Node's TU cost.
 		int getTuCostNode(bool missile = false) const;
-		/// Gets the approximate cost to reach the target position.
+		/// Gets the approximate cost to reach the target-position.
 		int getTuGuess() const
 		{ return _tuGuess; }
 
@@ -104,7 +104,7 @@ private:
 
 
 /**
- * Helper struct to compare PathfindingNodes based on TU cost.
+ * Helper struct to compare PathfindingNodes based on TU-cost.
  */
 struct MinNodeCosts
 {
