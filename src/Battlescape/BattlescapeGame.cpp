@@ -426,16 +426,19 @@ void BattlescapeGame::popState()
 								// after shooting it stays in targeting mode and the player
 								// can shoot again in the same mode (autoshot/snap/aimed)
 								// unless he/she/it is out of ammo and/or TUs.
-								const int tuActor (action.actor->getTimeUnits());
 								switch (action.type)
 								{
-									case BA_USE: // NOTE: Only Psiamp is a targeting-action w/ type BA_USE.
+									case BA_USE: // NOTE: Only MindProbe is a targeting-action w/ type BA_USE.
 									case BA_PSICONTROL:
 									case BA_PSIPANIC:
 									case BA_PSICONFUSE:
 									case BA_PSICOURAGE:
-										if (tuActor < action.actor->getActionTu(action.type, action.weapon))
+										if (action.actor->getTimeUnits() < action.actor->getActionTu(
+																								action.type,
+																								action.weapon))
+										{
 											cancelTacticalAction();
+										}
 										break;
 
 									case BA_LAUNCH:
@@ -448,7 +451,9 @@ void BattlescapeGame::popState()
 									case BA_AUTOSHOT:
 									case BA_AIMEDSHOT:
 										if (action.weapon->getAmmoItem() == nullptr
-											|| tuActor < action.actor->getActionTu(action.type, action.weapon))
+											|| action.actor->getTimeUnits() < action.actor->getActionTu(
+																									action.type,
+																									action.weapon))
 										{
 											cancelTacticalAction(true);
 										}

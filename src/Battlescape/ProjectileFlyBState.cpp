@@ -1137,8 +1137,7 @@ void ProjectileFlyBState::cancel()
 }
 
 /**
- * Peforms a melee attack.
- * @note Removed after cosmetic surgery.
+ * Peforms a melee-attack.
  */
 void ProjectileFlyBState::performMeleeAttack() // private.
 {

@@ -2173,7 +2173,7 @@ void TileEngine::hit(
 						if (targetUnit->getFireUnit() < burn)
 							targetUnit->setFireUnit(burn); // catch fire and burn
 					}
-				} // kL_end.
+				}
 
 				const Position
 					centerUnitVoxel (Position::toVoxelSpaceCentered(

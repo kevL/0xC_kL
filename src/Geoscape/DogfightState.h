@@ -156,7 +156,7 @@ private:
 	/// Ends the dogfight.
 	void endDogfight();
 	/// Gets the globe texture icon to display for the interception.
-	const std::string getTextureIcon();
+	const std::string& getTextureIcon() const;
 
 
 	public:

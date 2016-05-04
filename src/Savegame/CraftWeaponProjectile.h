@@ -111,10 +111,10 @@ private:
 		/// Gets the CraftWeaponProjectile's horizontal position.
 		int getHorizontalPosition() const;
 
-		/// Flags the CraftWeaponProjectile to be removed.
-		void removeProjectile();
+		/// Flags the CraftWeaponProjectile for removal.
+		void endProjectile();
 		/// Checks if the CraftWeaponProjectile should be removed.
-		bool toBeRemoved() const;
+		bool isFinished() const;
 
 		/// Gets the state of beam-type CraftWeaponProjectile.
 		int getBeamPhase() const;

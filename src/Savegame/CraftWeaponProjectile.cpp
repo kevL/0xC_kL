@@ -113,24 +113,27 @@ void CraftWeaponProjectile::moveProjectile()
 	{
 		case PGT_MISSILE:
 		{
-			// Check if projectile would reach its maximum range this tick.
-			int delta;
-			if (_range > (_dist >> 3u)
-				&& _range <= ((_dist + _speed) >> 3u))
+			if (_dist > (_range << 3u)) // check if projectile passed its max-range on previous tick
+				_missed = true;
+
+			int delta; // check if projectile will reach its max-range this tick
+
+			const int range8 (_range << 3u);
+			if (   range8 >  _dist
+				&& range8 <= _dist + _speed)
 			{
-				delta = (_range << 3u) - _dist;
+				delta = range8 - _dist;
 			}
 			else
 				delta = _speed;
 
-			// Check if projectile passed its maximum range on previous tick.
-			if (_range <= (_dist >> 3u))
-				_missed = true;
-
-			if (_dir == PD_UP)
-				_pos += delta;
-			else if (_dir == PD_DOWN)
-				_pos -= delta;
+//			switch (_dir) // -> at present there are no PGT_MISSILE w/ PD_DOWN for UFOs.
+//			{
+//				case PD_UP:
+			_pos += delta; //break;
+//				case PD_DOWN:
+//					_pos -= delta;
+//			}
 
 			_dist += delta;
 			break;
@@ -186,7 +189,7 @@ int CraftWeaponProjectile::getHorizontalPosition() const
 /**
  * Flags this CraftWeaponProjectile for removal.
  */
-void CraftWeaponProjectile::removeProjectile()
+void CraftWeaponProjectile::endProjectile()
 {
 	_done = true;
 }
@@ -195,7 +198,7 @@ void CraftWeaponProjectile::removeProjectile()
  * Checks if this CraftWeaponProjectile should be removed.
  * @return, true to remove
  */
-bool CraftWeaponProjectile::toBeRemoved() const
+bool CraftWeaponProjectile::isFinished() const
 {
 	return _done;
 }
