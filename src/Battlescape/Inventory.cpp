@@ -79,8 +79,8 @@ Inventory::Inventory(
 		InteractiveSurface(
 			Options::baseXResolution,
 			Options::baseYResolution,
-			x - (Options::baseXResolution - 320) / 2,
-			y - (Options::baseYResolution - 200) / 2),
+			x - ((Options::baseXResolution - 320) >> 1u),
+			y - ((Options::baseYResolution - 200) >> 1u)),
 		_game(game),
 		_selUnit(nullptr),
 		_selItem(nullptr),
@@ -105,8 +105,8 @@ Inventory::Inventory(
 							RuleInventory::HAND_H * RuleInventory::SLOT_H);
 	_warning	= new WarningMessage(
 							224,24,
-							(Options::baseXResolution - 320) / 2 + 48,
-							(Options::baseYResolution - 200) / 2 + 176);
+							((Options::baseXResolution - 320) >> 1u) + 48,
+							((Options::baseYResolution - 200) >> 1u) + 176);
 	_numStack	= new NumberText(15,15);
 	_animTimer	= new Timer(80u);
 
@@ -286,6 +286,7 @@ void Inventory::drawItems() // private.
 
 	SurfaceSet* const bigobs (_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"));
 	Surface* sprite;
+
 	const RuleInventory* inRule;
 
 	std::vector<BattleItem*>* list (_selUnit->getInventory());
@@ -294,11 +295,11 @@ void Inventory::drawItems() // private.
 			i != list->end();
 			++i)
 	{
-		if (*i != _selItem)
+		if (*i != _selItem
+			&& (inRule = (*i)->getInventorySection()) != nullptr) // not a recent load.
 		{
 			if ((sprite = bigobs->getFrame((*i)->getRules()->getBigSprite())) != nullptr) // safety.
 			{
-				inRule = (*i)->getInventorySection();
 				switch (inRule->getCategory())
 				{
 					case IC_SLOT:
@@ -309,10 +310,10 @@ void Inventory::drawItems() // private.
 					case IC_HAND:
 						sprite->setX(inRule->getX()
 								+ (RuleInventory::HAND_W - (*i)->getRules()->getInventoryWidth())
-									* RuleInventory::SLOT_W / 2);
+									* RuleInventory::SLOT_W_2);
 						sprite->setY(inRule->getY()
 								+ (RuleInventory::HAND_H - (*i)->getRules()->getInventoryHeight())
-									* RuleInventory::SLOT_H / 2);
+									* RuleInventory::SLOT_H_2);
 				}
 				sprite->blit(_srfItems);
 
@@ -329,7 +330,7 @@ void Inventory::drawItems() // private.
 
 	static const Uint8
 		color (static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")->getElement("numStack")->color)),
-		RED (37);
+		RED (37u);
 
 	inRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
 	list = _selUnit->getTile()->getInventory();
@@ -343,8 +344,7 @@ void Inventory::drawItems() // private.
 //			&& (*i)->getRules()->getInventoryHeight() != 0
 //			&& (*i)->getSlotX() >= _grdOffset				// && < _grdOffset + RuleInventory::GROUND_W ... or so.
 		{
-			sprite = bigobs->getFrame((*i)->getRules()->getBigSprite());
-			if (sprite != nullptr) // safety.
+			if ((sprite = bigobs->getFrame((*i)->getRules()->getBigSprite())) != nullptr) // safety.
 			{
 				sprite->setX(inRule->getX()
 						  + ((*i)->getSlotX() - _grdOffset) * RuleInventory::SLOT_W);
@@ -354,7 +354,9 @@ void Inventory::drawItems() // private.
 				sprite->blit(_srfItems);
 
 				if ((*i)->getFuse() > -1) // grenade primer indicators
-					_fusePairs.push_back(std::make_pair(sprite->getX(), sprite->getY()));
+					_fusePairs.push_back(std::make_pair(
+													sprite->getX(),
+													sprite->getY()));
 			}
 			else Log(LOG_WARNING) << "Inventory::drawItems() bigob not found[2] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
 
@@ -488,9 +490,9 @@ void Inventory::mouseOver(Action* action, State* state)
 	}
 
 	_srfGrab->setX(static_cast<int>(std::floor(
-					action->getAbsoluteMouseX())) - getX() - _srfGrab->getWidth() / 2);
+					action->getAbsoluteMouseX())) - getX() - (_srfGrab->getWidth() >> 1u));
 	_srfGrab->setY(static_cast<int>(std::floor(
-					action->getAbsoluteMouseY())) - getY() - _srfGrab->getHeight() / 2);
+					action->getAbsoluteMouseY())) - getY() - (_srfGrab->getHeight() >> 1u));
 
 	InteractiveSurface::mouseOver(action, state);
 }
@@ -611,12 +613,12 @@ void Inventory::mouseClick(Action* action, State* state)
 				int
 					x (_srfGrab->getX()
 							+ (RuleInventory::HAND_W - _selItem->getRules()->getInventoryWidth())
-								* RuleInventory::SLOT_W / 2
-							+ RuleInventory::SLOT_W / 2),
+								* RuleInventory::SLOT_W_2
+							+ RuleInventory::SLOT_W_2),
 					y (_srfGrab->getY()
 							+ (RuleInventory::HAND_H - _selItem->getRules()->getInventoryHeight())
-								* RuleInventory::SLOT_H / 2
-							+ RuleInventory::SLOT_H / 2);
+								* RuleInventory::SLOT_H_2
+							+ RuleInventory::SLOT_H_2);
 
 				RuleInventory* inRule (getSlotAtCursor(&x,&y));
 
@@ -1317,7 +1319,8 @@ bool Inventory::unload()
 			i != _selUnit->getInventory()->end();
 			++i)
 	{
-		if ((*i)->getInventorySection()->getCategory() == IC_HAND
+		if ((*i)->getInventorySection() != nullptr
+			&& (*i)->getInventorySection()->getCategory() == IC_HAND
 			&& *i != _selItem)
 		{
 			_warning->showMessage(_game->getLanguage()->getString("STR_BOTH_HANDS_MUST_BE_EMPTY"));

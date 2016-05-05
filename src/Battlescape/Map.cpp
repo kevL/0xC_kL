@@ -2491,17 +2491,17 @@ int Map::getTerrainLevel( // private.
 
 /**
  * Sets the 3D selector-type.
- * @param type	- SelectorType (Map.h)
- * @param quads	- size of the cursor (default 1)
+ * @param type		- SelectorType (Map.h)
+ * @param sideSize	- size of the cursor (default 1)
  */
 void Map::setSelectorType(
 		SelectorType type,
-		int quads)
+		int sideSize)
 {
 	switch (_selectorType = type)
 	{
 		case CT_CUBOID:
-			_selectorSize = quads;
+			_selectorSize = sideSize;
 			break;
 
 		default:

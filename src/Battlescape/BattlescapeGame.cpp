@@ -437,14 +437,14 @@ void BattlescapeGame::popState()
 																								action.type,
 																								action.weapon))
 										{
-											cancelTacticalAction();
+											cancelTacticalAction(true); // NOTE: Not sure if these needs to be 'forced' ->
 										}
 										break;
 
 									case BA_LAUNCH:
 										_tacAction.waypoints.clear(); // no break;
 									case BA_THROW:
-										cancelTacticalAction(true); // NOTE: Not sure if these needs to be 'forced' ->
+										cancelTacticalAction(true);
 										break;
 
 									case BA_SNAPSHOT:
@@ -1185,7 +1185,7 @@ void BattlescapeGame::setupSelector() // NOTE: This might not be needed when cal
 	getMap()->refreshSelectorPosition();
 
 	SelectorType type;
-	int quads = 1;
+	int sideSize (1);
 
 	if (_tacAction.targeting == true)
 	{
@@ -1216,10 +1216,10 @@ void BattlescapeGame::setupSelector() // NOTE: This might not be needed when cal
 		type = CT_CUBOID;
 
 		if ((_tacAction.actor = _battleSave->getSelectedUnit()) != nullptr)
-			quads = _tacAction.actor->getArmor()->getSize();
+			sideSize = _tacAction.actor->getArmor()->getSize();
 	}
 
-	getMap()->setSelectorType(type, quads);
+	getMap()->setSelectorType(type, sideSize);
 }
 
 /**
@@ -2575,7 +2575,7 @@ bool BattlescapeGame::isBusy() const
 
 /**
  * Left-click activates a primary action.
- * @param pos - reference a Position on the Map
+ * @param pos - reference to a Position on the Map
  */
 void BattlescapeGame::primaryAction(const Position& pos)
 {
@@ -2677,28 +2677,17 @@ void BattlescapeGame::primaryAction(const Position& pos)
 							{
 								if (getTileEngine()->psiAttack(&_tacAction) == true)
 								{
-									Game* const game (_parentState->getGame());
-									std::wstring wst;
+									std::string st;
 									switch (_tacAction.type)
 									{
 										default:
-										case BA_PSIPANIC:
-											wst = game->getLanguage()->getString("STR_PSI_PANIC_SUCCESS")
-																			.arg(_tacAction.value);
-											break;
-										case BA_PSICONTROL:
-											wst = game->getLanguage()->getString("STR_PSI_CONTROL_SUCCESS")
-																			.arg(_tacAction.value);
-											break;
-										case BA_PSICONFUSE:
-											wst = game->getLanguage()->getString("STR_PSI_CONFUSE_SUCCESS")
-																			.arg(_tacAction.value);
-											break;
-										case BA_PSICOURAGE:
-											wst = game->getLanguage()->getString("STR_PSI_COURAGE_SUCCESS")
-																			.arg(_tacAction.value);
+										case BA_PSIPANIC:	st = "STR_PSI_PANIC_SUCCESS";	break;
+										case BA_PSICONTROL:	st = "STR_PSI_CONTROL_SUCCESS";	break;
+										case BA_PSICONFUSE:	st = "STR_PSI_CONFUSE_SUCCESS";	break;
+										case BA_PSICOURAGE:	st = "STR_PSI_COURAGE_SUCCESS";
 									}
-									game->pushState(new InfoboxState(wst));
+									Game* const game (_parentState->getGame());
+									game->pushState(new InfoboxState(game->getLanguage()->getString(st).arg(_tacAction.value)));
 
 									_parentState->updateSoldierInfo(false);
 								}
@@ -2721,6 +2710,10 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				}
 				break;
 
+			case BA_AUTOSHOT:
+			case BA_SNAPSHOT:
+			case BA_AIMEDSHOT:
+			case BA_THROW:
 			default:
 				getMap()->setSelectorType(CT_NONE);
 				_parentState->getGame()->getCursor()->setHidden();

@@ -71,7 +71,7 @@ ProjectileFlyBState::ProjectileFlyBState(
 		_targetVoxel(-1,-1,-1),
 		_forced(false),
 		_unit(nullptr),
-		_ammo(nullptr),
+		_load(nullptr),
 		_prjItem(nullptr),
 		_prjImpact(VOXEL_FLOOR),
 		_prjVector(0,0,-1),
@@ -118,7 +118,7 @@ void ProjectileFlyBState::init()
 		|| _parent->playerPanicHandled() == false
 		|| _unit->getFaction() != FACTION_PLAYER)
 	{
-		_ammo = _action.weapon->getAmmoItem();
+		_load = _action.weapon->getAmmoItem();
 
 		bool fireValid;
 		if (_unit->getFaction() != _battleSave->getSide()) // reaction fire
@@ -127,7 +127,7 @@ void ProjectileFlyBState::init()
 			fireValid = targetUnit != nullptr
 					 && targetUnit->isOut_t() == false
 					 && targetUnit == _battleSave->getSelectedUnit()
-					 && _ammo != nullptr;
+					 && _load != nullptr;
 		}
 		else
 			fireValid = true;
@@ -183,13 +183,13 @@ void ProjectileFlyBState::init()
 		case BA_AIMEDSHOT:
 		case BA_LAUNCH:
 			//Log(LOG_INFO) << ". . BA_SNAPSHOT, AIMEDSHOT, AUTOSHOT, or LAUNCH";
-			if (_ammo == nullptr)
+			if (_load == nullptr)
 			{
 				//Log(LOG_INFO) << ". . . no ammo, EXIT";
 				_action.result = "STR_NO_AMMUNITION_LOADED";
 				popThis = true;
 			}
-//			else if (_ammo->getAmmoQuantity() == 0)
+//			else if (_load->getAmmoQuantity() == 0)
 //			{
 //				//Log(LOG_INFO) << ". . . no ammo Quantity, EXIT";
 //				_action.result = "STR_NO_ROUNDS_LEFT";
@@ -537,11 +537,11 @@ bool ProjectileFlyBState::createProjectile() // private.
 
 		if (_prjImpact != VOXEL_OUTOFBOUNDS
 			&& (_prjImpact != VOXEL_EMPTY
-				|| _ammo->getRules()->getExplosionRadius() != -1)) // <- midair explosion
+				|| _load->getRules()->getExplosionRadius() != -1)) // <- midair explosion
 		{
 			//Log(LOG_INFO) << ". . spit/arcing shot";
 			if (_prjImpact == VOXEL_OBJECT
-				&& _ammo->getRules()->getExplosionRadius() != -1)
+				&& _load->getRules()->getExplosionRadius() != -1)
 			{
 				const Tile* const tile (_battleSave->getTile(_parent->getMap()->getProjectile()->getFinalPosition()));
 //				if (tile != nullptr && tile->getMapData(O_OBJECT) != nullptr) // safety. Should be unnecessary because _prjImpact=VOXEL_OBJECT ....
@@ -556,7 +556,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 				}
 			}
 
-			_ammo->spendBullet(
+			_load->spendBullet(
 							*_battleSave,
 							*_action.weapon);
 
@@ -565,7 +565,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 			_parent->getMap()->cacheUnit(_unit);
 
 			// lift-off
-			soundId = _ammo->getRules()->getFireSound();
+			soundId = _load->getRules()->getFireSound();
 			if (soundId == -1)
 				soundId = _action.weapon->getRules()->getFireSound();
 		}
@@ -607,7 +607,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 		{
 			//Log(LOG_INFO) << ". . _prjImpact AIM";
 			if (_prjImpact == VOXEL_OBJECT
-				&& _ammo->getRules()->getExplosionRadius() > 0)
+				&& _load->getRules()->getExplosionRadius() > 0)
 			{
 				const Tile* const tile (_battleSave->getTile(_parent->getMap()->getProjectile()->getFinalPosition()));
 //				if (tile != nullptr && tile->getMapData(O_OBJECT) != nullptr) // safety. Should be unnecessary because _prjImpact=VOXEL_OBJECT ....
@@ -631,7 +631,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 				case BA_AUTOSHOT:
 					_parent->getMap()->setReveal(); // no break;
 				default:
-					_ammo->spendBullet(
+					_load->spendBullet(
 									*_battleSave,
 									*_action.weapon);
 			}
@@ -643,7 +643,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 			}
 
 			// lift-off
-			soundId = _ammo->getRules()->getFireSound();
+			soundId = _load->getRules()->getFireSound();
 			if (soundId == -1)
 				soundId = _action.weapon->getRules()->getFireSound();
 		}
@@ -783,21 +783,27 @@ void ProjectileFlyBState::think()
 				}
 			}
 
-			if (_unit->getFaction() == _battleSave->getSide()
-				&& _action.type != BA_PSIPANIC
-				&& _action.type != BA_PSICONFUSE
-				&& _action.type != BA_PSICOURAGE
-				&& _action.type != BA_PSICONTROL
-				&& _battleSave->getUnitsFalling() == false)
+			switch (_action.type)
 			{
-				//Log(LOG_INFO) << "ProjectileFlyBState::think() CALL te::checkReactionFire()";
-				//	<< " id-" << _unit->getId()
-				//	<< " action.type = " << _action.type
-				//	<< " action.TU = " << _action.TU;
-				_parent->getTileEngine()->checkReactionFire(		// note: I don't believe that smoke obscuration gets accounted
-														_unit,		// for by this call if the current projectile caused cloud.
-														_action.TU,	// But that's kinda ok.
-														_action.type != BA_MELEE);
+				case BA_PSIPANIC:
+				case BA_PSICONFUSE:
+				case BA_PSICOURAGE:
+				case BA_PSICONTROL:
+					break;
+
+				default:
+					if (_unit->getFaction() == _battleSave->getSide()
+						&& _battleSave->getUnitsFalling() == false)
+					{
+						//Log(LOG_INFO) << "ProjectileFlyBState::think() CALL te::checkReactionFire()";
+						//	<< " id-" << _unit->getId()
+						//	<< " action.type = " << _action.type
+						//	<< " action.TU = " << _action.TU;
+						_parent->getTileEngine()->checkReactionFire(		// note: I don't believe that smoke obscuration gets accounted
+																_unit,		// for by this call if the current projectile caused cloud.
+																_action.TU,	// But that's kinda ok.
+																_action.type != BA_MELEE);
+					}
 			}
 
 			if (_unit->isOut_t() == false && _action.type != BA_MELEE)
@@ -810,8 +816,8 @@ void ProjectileFlyBState::think()
 	{
 		//Log(LOG_INFO) << "ProjectileFlyBState::think() -> move Projectile";
 		if (_action.type != BA_THROW
-			&& _ammo != nullptr
-			&& _ammo->getRules()->getShotgunPellets() != 0)
+			&& _load != nullptr
+			&& _load->getRules()->getShotgunPellets() != 0)
 		{
 			// shotgun pellets move to their terminal location instantly as fast as possible
 			_parent->getMap()->getProjectile()->skipTrajectory(); // skip trajectory of 1st pellet; the rest are not even added to Map.
@@ -885,7 +891,7 @@ void ProjectileFlyBState::think()
 					case BA_LAUNCH:
 						_prjImpact = VOXEL_OBJECT;				// Launch explodes at final waypoint.
 						_parent->getMap()->setReveal(false);	// Reveal-action is complete.
-						_ammo->spendBullet(						// ... why not spendBullet() in createProjectile() like regular weapons ...
+						_load->spendBullet(						// ... why not spendBullet() in createProjectile() like regular weapons ...
 										*_battleSave,
 										*_action.weapon);
 						break;
@@ -903,8 +909,8 @@ void ProjectileFlyBState::think()
 					}
 				}
 
-//				if (_action.type == BA_LAUNCH) //&& _ammo != nullptr) //&& _battleSave->getDebugTac() == false
-//					_ammo->spendBullet(*_battleSave, *_action.weapon);
+//				if (_action.type == BA_LAUNCH) //&& _load != nullptr) //&& _battleSave->getDebugTac() == false
+//					_load->spendBullet(*_battleSave, *_action.weapon);
 
 				std::vector<Position> posContacts; // stores tile-positions of all Voxel_Unit hits.
 
@@ -912,8 +918,8 @@ void ProjectileFlyBState::think()
 				{
 					//Log(LOG_INFO) << "FlyB: *not* OoB";
 					int trjOffset; // explosions impact not inside the voxel but two steps back;
-					if (_ammo != nullptr
-						&& _ammo->getRules()->getExplosionRadius() != -1
+					if (_load != nullptr
+						&& _load->getRules()->getExplosionRadius() != -1
 						&& _prjImpact != VOXEL_UNIT)
 					{
 						trjOffset = -2; // step back a bit so tileExpl isn't behind a wall.
@@ -938,7 +944,7 @@ void ProjectileFlyBState::think()
 					_parent->statePushFront(new ExplosionBState(
 															_parent,
 															explVoxel,
-															_ammo,
+															_load,
 															_unit,
 															nullptr,
 															_action.type != BA_AUTOSHOT // final projectile -> stop Aiming.
@@ -1002,11 +1008,11 @@ void ProjectileFlyBState::think()
 
 
 				// Special Shotgun Behaviour: determine *extra* projectile paths and add bullet hits at their termination points.
-				if (_ammo != nullptr)
+				if (_load != nullptr)
 				{
 					Position shotVoxel;
 
-					int pelletsLeft (_ammo->getRules()->getShotgunPellets() - 1); // shotgun pellets after 1st
+					int pelletsLeft (_load->getRules()->getShotgunPellets() - 1); // shotgun pellets after 1st
 					while (pelletsLeft > 0)
 					{
 						Projectile* const prj (new Projectile(
@@ -1016,7 +1022,7 @@ void ProjectileFlyBState::think()
 															_posOrigin,
 															_targetVoxel));
 						const double
-							spread (static_cast<double>(pelletsLeft * _ammo->getRules()->getShotgunPattern()) * 0.005), // pellet spread.
+							spread (static_cast<double>(pelletsLeft * _load->getRules()->getShotgunPattern()) * 0.005), // pellet spread.
 							accuracy (std::max(0.,
 											   _unit->getAccuracy(_action) - spread));
 
@@ -1037,7 +1043,7 @@ void ProjectileFlyBState::think()
 								}
 							}
 
-							const int aniStart (_ammo->getRules()->getFireHitAnimation());
+							const int aniStart (_load->getRules()->getFireHitAnimation());
 							if (aniStart != -1)
 							{
 								Explosion* const explosion (new Explosion(
@@ -1049,13 +1055,13 @@ void ProjectileFlyBState::think()
 
 								Uint32 interval (static_cast<Uint32>(
 												 std::max(1,
-														static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION) - _ammo->getRules()->getExplosionSpeed())));
+														  static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION) - _load->getRules()->getExplosionSpeed())));
 								_parent->setStateInterval(interval);
 							}
 							_battleSave->getTileEngine()->hit(
 															shotVoxel,
-															_ammo->getRules()->getPower(),
-															_ammo->getRules()->getDamageType(),
+															_load->getRules()->getPower(),
+															_load->getRules()->getDamageType(),
 															_unit,
 															false, true);
 						}

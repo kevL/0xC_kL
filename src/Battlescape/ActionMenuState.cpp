@@ -206,26 +206,26 @@ ActionMenuState::ActionMenuState(
 						break;
 
 					case BT_FIREARM:
-						if (_action->weapon->getAmmoItem() != nullptr)
-						{
-							if (itRule->getAccuracySnap() != 0)
-								addItem(
-										BA_SNAPSHOT,
-										"STR_SNAP_SHOT",
-										&id);
+//						if (_action->weapon->getAmmoItem() != nullptr) // <- I want to see accuracy and TU whether it's loaded or not.
+//						{
+						if (itRule->getAccuracySnap() != 0)
+							addItem(
+									BA_SNAPSHOT,
+									"STR_SNAP_SHOT",
+									&id);
 
-							if (itRule->getAccuracyAuto() != 0)
-								addItem(
-										BA_AUTOSHOT,
-										"STR_AUTO_SHOT",
-										&id);
+						if (itRule->getAccuracyAuto() != 0)
+							addItem(
+									BA_AUTOSHOT,
+									"STR_AUTO_SHOT",
+									&id);
 
-							if (itRule->getAccuracyAimed() != 0)
-								addItem(
-										BA_AIMEDSHOT,
-										"STR_AIMED_SHOT",
-										&id);
-						}
+						if (itRule->getAccuracyAimed() != 0)
+							addItem(
+									BA_AIMEDSHOT,
+									"STR_AIMED_SHOT",
+									&id);
+//						}
 
 						if (itRule->isWaypoints() != 0
 							|| (_action->weapon->getAmmoItem() != nullptr
@@ -412,16 +412,23 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 						break;
 
 					case BT_MINDPROBE:
-						_action->targeting = true;
+						if (_action->TU > _action->actor->getTimeUnits())
+							_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+						else
+							_action->targeting = true;
+
 						_game->popState();
 				}
 				break;
 
+//			case BA_AUTOSHOT:	// NOTE: These shot-modes here would obviate a bunch of crap
+//			case BA_SNAPSHOT:	// in ProjectileFlyBState, popState(), etc etc etc.
+//			case BA_AIMEDSHOT:	// But I want to see the targeting percentages etc.
 			case BA_LAUNCH:
-				if (_action->TU > _action->actor->getTimeUnits())
-					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
-				else if (_action->weapon->getAmmoItem() == nullptr)
+				if (_action->weapon->getAmmoItem() == nullptr)
 					_action->result = "STR_NO_AMMUNITION_LOADED";
+				else if (_action->TU > _action->actor->getTimeUnits())
+					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
 				else
 					_action->targeting = true;
 
@@ -429,13 +436,13 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 				break;
 
 			case BA_MELEE:
-				if (_action->TU > _action->actor->getTimeUnits())
-					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
-				else if (_game->getSavedGame()->getBattleSave()->getTileEngine()
+				if (_game->getSavedGame()->getBattleSave()->getTileEngine()
 									->validMeleeRange(_action->actor) == false)
 				{
 					_action->result = "STR_THERE_IS_NO_ONE_THERE";
 				}
+				else if (_action->TU > _action->actor->getTimeUnits())
+					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
 
 				_game->popState();
 				break;
@@ -445,7 +452,20 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 				_game->pushState(new ExecuteState(_action));
 				break;
 
-			default: // shoot, throw, psi-attack
+			case BA_PSICONTROL: // TODO: Check for TU here.
+			case BA_PSIPANIC:
+			case BA_PSICONFUSE:
+			case BA_PSICOURAGE:
+				if (_action->TU > _action->actor->getTimeUnits())
+					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+				else
+					_action->targeting = true;
+
+				_game->popState();
+				break;
+
+			case BA_THROW:
+			default:
 				_action->targeting = true;
 				_game->popState();
 		}

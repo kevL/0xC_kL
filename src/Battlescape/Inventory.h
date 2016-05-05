@@ -40,7 +40,7 @@ class WarningMessage;
 
 /**
  * Interactive view of an Inventory.
- * @note Lets the player view and manage a soldier's equipment.
+ * @note Lets the player view and manage a unit's equipment.
  */
 class Inventory final
 	:

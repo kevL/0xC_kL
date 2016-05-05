@@ -235,7 +235,7 @@ private:
 		/// Sets the 3D selector-type.
 		void setSelectorType(
 				SelectorType type,
-				int quads = 1);
+				int sideSize = 1);
 		/// Gets the 3D selector-type.
 		SelectorType getSelectorType() const;
 

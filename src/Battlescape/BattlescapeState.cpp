@@ -2726,6 +2726,8 @@ void BattlescapeState::btnZeroTuClick(Action* action)
 			_battleSave->getSelectedUnit()->setTimeUnits(0);
 			_numTimeUnits->setValue(0u);
 			_barTimeUnits->setValue(0.);
+
+			_battleGame->cancelTacticalAction();
 		}
 	}
 }

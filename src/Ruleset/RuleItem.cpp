@@ -621,7 +621,7 @@ BattleType RuleItem::getBattleType() const
 }
 
 /**
- * Gets the Item's width in a soldier's inventory.
+ * Gets the Item's width in an Inventory.
  * @return, the width
  */
 int RuleItem::getInventoryWidth() const
@@ -630,7 +630,7 @@ int RuleItem::getInventoryWidth() const
 }
 
 /**
- * Gets the Item's height in a soldier's inventory.
+ * Gets the Item's height in an Inventory.
  * @return, the height
  */
 int RuleItem::getInventoryHeight() const
@@ -639,9 +639,9 @@ int RuleItem::getInventoryHeight() const
 }
 
 /**
- * Gets the Item's ammo clip size.
+ * Gets the Item's clip-size.
  * @note Melee and other self-powered items have fullClip= -1.
- * @return, the ammo clip size
+ * @return, the clip-size
  */
 int RuleItem::getFullClip() const
 {
@@ -649,7 +649,7 @@ int RuleItem::getFullClip() const
 }
 
 /**
- * Draws and centers the hand sprite on a surface according to its dimensions.
+ * Draws and centers the hand-sprite on a Surface according to its dimensions.
  * @param set		- pointer to the SurfaceSet to get the sprite
  * @param surface	- pointer to the Surface on which to draw
  */
@@ -661,11 +661,9 @@ void RuleItem::drawHandSprite(
 	if (sprite != nullptr) // safety.
 	{
 		sprite->setX(
-				(RuleInventory::HAND_W - _invWidth)
-			   * RuleInventory::SLOT_W / 2);
+				(RuleInventory::HAND_W - _invWidth)  * RuleInventory::SLOT_W_2);
 		sprite->setY(
-				(RuleInventory::HAND_H - _invHeight)
-			   * RuleInventory::SLOT_H / 2);
+				(RuleInventory::HAND_H - _invHeight) * RuleInventory::SLOT_H_2);
 
 		set->getFrame(_bigSprite)->blit(surface);
 	}

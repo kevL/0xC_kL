@@ -96,6 +96,8 @@ private:
 		static const int
 			SLOT_W		= 16,
 			SLOT_H		= 16,
+			SLOT_W_2	=  8,
+			SLOT_H_2	=  8,
 			HAND_W		=  2,
 			HAND_H		=  3,
 			GROUND_W	= 20,

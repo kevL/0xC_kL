@@ -52,7 +52,7 @@ private:
 	int _initUnitAni;
 
 	BattleItem
-		* _ammo,
+		* _load,
 		* _prjItem;
 	BattleUnit* _unit;
 	SavedBattleGame* _battleSave;

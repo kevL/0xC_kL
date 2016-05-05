@@ -2769,7 +2769,7 @@ BattleItem* BattleUnit::getItem(
 /**
  * Checks if there's an item in the specified inventory position.
  * @note Used only in BattlescapeGenerator::placeLayout()
- * @param type	- reference to an inventory type
+ * @param type	- reference to an inventory-type
  * @param x		- x-position in section (default 0)
  * @param y		- y-position in section (default 0)
  * @return, pointer to BattleItem or nullptr if none
@@ -2786,8 +2786,9 @@ BattleItem* BattleUnit::getItem(
 				i != _inventory.end();
 				++i)
 		{
-			if ((*i)->getInventorySection()->getInventoryType() == type	//(*i)->getInventorySection() != nullptr &&
-				&& (*i)->occupiesSlot(x,y) == true)						// <- if section is NULL something went wrong upstream ->
+			if ((*i)->getInventorySection() != nullptr // not load.
+				&& (*i)->getInventorySection()->getInventoryType() == type
+				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
 			}
@@ -2800,10 +2801,8 @@ BattleItem* BattleUnit::getItem(
 				i != _tile->getInventory()->end();
 				++i)
 		{
-			if ((*i)->occupiesSlot(x,y) == true) //(*i)->getInventorySection() != nullptr &&
-			{
+			if ((*i)->occupiesSlot(x,y) == true) //&& (*i)->getInventorySection() != nullptr
 				return *i;
-			}
 		}
 	}
 	return nullptr;
@@ -2828,7 +2827,8 @@ BattleItem* BattleUnit::getItem(
 				i != _inventory.end();
 				++i)
 		{
-			if ((*i)->getInventorySection()->getSectionType() == section //(*i)->getInventorySection() != nullptr &&
+			if ((*i)->getInventorySection() != nullptr // not load.
+				&& (*i)->getInventorySection()->getSectionType() == section
 				&& (*i)->occupiesSlot(x,y) == true)
 			{
 				return *i;
@@ -2842,10 +2842,8 @@ BattleItem* BattleUnit::getItem(
 				i != _tile->getInventory()->end();
 				++i)
 		{
-			if ((*i)->occupiesSlot(x,y) == true) //(*i)->getInventorySection() != nullptr &&
-			{
+			if ((*i)->occupiesSlot(x,y) == true) //&& (*i)->getInventorySection() != nullptr
 				return *i;
-			}
 		}
 	}
 	return nullptr;

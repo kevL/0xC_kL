@@ -1229,17 +1229,18 @@ void InventoryState::handle(Action* action)
  */
 void InventoryState::setExtraInfo(const BattleItem* const selOver) // private.
 {
-	const RuleItem* const itRule (selOver->getRules());
-	std::wostringstream label;
 	bool isArt;
+	std::wostringstream label;
 
-	if (selOver->getRules()->getBattleType() == BT_CORPSE)
+	const RuleItem* const itRule (selOver->getRules());
+	if (itRule->getBattleType() == BT_CORPSE)
 	{
 		isArt = false;
+
 		const BattleUnit* const corpseUnit (selOver->getUnit());
 		if (corpseUnit != nullptr)
 		{
-			if (corpseUnit->getType().compare(0,11, "STR_FLOATER") == 0 // special handling for Floaters.
+			if (corpseUnit->getType().compare(0u,11u, "STR_FLOATER") == 0 // special handling for Floaters.
 				&& (_game->getSavedGame()->isResearched("STR_FLOATER") == false
 					|| _game->getSavedGame()->isResearched("STR_FLOATER_AUTOPSY") == false))
 			{
@@ -1270,8 +1271,8 @@ void InventoryState::setExtraInfo(const BattleItem* const selOver) // private.
 	}
 	else
 	{
-		label << tr("STR_ALIEN_ARTIFACT");
 		isArt = true;
+		label << tr("STR_ALIEN_ARTIFACT");
 	}
 
 	int weight (itRule->getWeight());
