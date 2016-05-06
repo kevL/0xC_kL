@@ -161,19 +161,19 @@ void Inventory::setPalette(
 
 /**
  * Draws the inventory elements.
- */
+ *
 void Inventory::draw()
 {
 	drawGrids();
 	drawItems();
-}
+} */
 
 /**
  * Draws the inventory grids for item placement.
  */
-void Inventory::drawGrids() // private.
+void Inventory::drawGrids()
 {
-	_srfGrid->clear();
+//	_srfGrid->clear();
 
 	Text text (Text(16,9));
 	text.setPalette(_srfGrid->getPalette());

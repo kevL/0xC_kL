@@ -360,9 +360,9 @@ InventoryState::InventoryState(
 	else
 		_updateTemplateButtons(true); */
 
-	_inventoryPanel->setSelectedUnitInventory(_battleSave->getSelectedUnit());
+//	_inventoryPanel->setSelectedUnitInventory(_battleSave->getSelectedUnit());
+	_inventoryPanel->drawGrids();
 	_inventoryPanel->setTuMode(_tuMode);
-	_inventoryPanel->draw();
 	_inventoryPanel->onMouseClick((ActionHandler)& InventoryState::inClick, 0);
 	_inventoryPanel->onMouseOver((ActionHandler)& InventoryState::inMouseOver);
 	_inventoryPanel->onMouseOut((ActionHandler)& InventoryState::inMouseOut);
