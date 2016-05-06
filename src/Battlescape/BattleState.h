@@ -53,7 +53,7 @@ protected:
 		/// Runs state functionality every cycle.
 		virtual void think();
 
-		/// Gets a copy of the action.
+		/// Gets a copy of the BattleAction.
 		BattleAction getAction() const;
 };
 

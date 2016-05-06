@@ -26,7 +26,7 @@ namespace OpenXcom
 /**
  * Sets up a BattleState.
  * @param parent - pointer to parent BattlescapeGame
- * @param action - struct containing info about current BattleAction
+ * @param action - struct containing info about the current BattleAction
  */
 BattleState::BattleState(
 		BattlescapeGame* const parent,
@@ -61,9 +61,8 @@ void BattleState::think() // virtual.
 {}
 
 /**
- * Gets the action result.
- * @note Returns an error message or else an empty string if everything went fine.
- * @return, a BattleAction struct (BattlescapeGame.h)
+ * Gets a copy of the BattleAction.
+ * @return, the BattleAction struct (BattlescapeGame.h)
  */
 BattleAction BattleState::getAction() const
 {

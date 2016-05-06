@@ -997,7 +997,12 @@ void BattlescapeGame::handleNonTargetAction()
 	{
 		_tacAction.posCamera = Position(0,0,-1);
 
-		int showWarning (0);
+		static const int
+			WARN_NONE	(0),
+			WARN		(1),
+			WARN_ARG	(2);
+
+		int showWarning (WARN_NONE);
 
 		// NOTE: These actions are done partly in ActionMenuState::btnActionMenuClick() and
 		// this subsequently handles a greater or lesser proportion of the resultant niceties.
@@ -1009,33 +1014,34 @@ void BattlescapeGame::handleNonTargetAction()
 				if (_tacAction.actor->spendTimeUnits(_tacAction.TU) == false)
 				{
 					_tacAction.result = "STR_NOT_ENOUGH_TIME_UNITS";
-					showWarning = 1;
+					showWarning = WARN;
 				}
 				else
 				{
 					_tacAction.weapon->setFuse(_tacAction.value);
 
-					if (_tacAction.value == -1)
+					switch (_tacAction.value)
 					{
-						_tacAction.result = "STR_GRENADE_DEACTIVATED";
-						showWarning = 1;
-					}
-					else if (_tacAction.value == 0)
-					{
-						_tacAction.result = "STR_GRENADE_ACTIVATED";
-						showWarning = 1;
-					}
-					else
-					{
-						_tacAction.result = "STR_GRENADE_ACTIVATED_";
-						showWarning = 2;
+						case -1:
+							_tacAction.result = "STR_GRENADE_DEACTIVATED";
+							showWarning = WARN;
+							break;
+
+						case 0:
+							_tacAction.result = "STR_GRENADE_ACTIVATED";
+							showWarning = WARN;
+							break;
+
+						default:
+							_tacAction.result = "STR_GRENADE_ACTIVATED_";
+							showWarning = WARN_ARG;
 					}
 				}
 				break;
 
 			case BA_USE:
 				if (_tacAction.result.empty() == false)
-					showWarning = 1;
+					showWarning = WARN;
 				else if (_tacAction.targetUnit != nullptr)
 				{
 					_battleSave->reviveUnit(_tacAction.targetUnit);
@@ -1045,16 +1051,16 @@ void BattlescapeGame::handleNonTargetAction()
 
 			case BA_LAUNCH:
 				if (_tacAction.result.empty() == false)
-					showWarning = 1;
+					showWarning = WARN;
 				break;
 
 			case BA_MELEE:
 				if (_tacAction.result.empty() == false)
-					showWarning = 1;
+					showWarning = WARN;
 				else if (_tacAction.actor->spendTimeUnits(_tacAction.TU) == false)
 				{
 					_tacAction.result = "STR_NOT_ENOUGH_TIME_UNITS";
-					showWarning = 1;
+					showWarning = WARN;
 				}
 				else
 				{
@@ -1065,7 +1071,7 @@ void BattlescapeGame::handleNonTargetAction()
 
 			case BA_DROP:
 				if (_tacAction.result.empty() == false)
-					showWarning = 1;
+					showWarning = WARN;
 				else
 				{
 					_tacAction.actor->flagCache();
@@ -1079,19 +1085,27 @@ void BattlescapeGame::handleNonTargetAction()
 
 			case BA_LIQUIDATE:
 				if (_tacAction.result.empty() == false)
-					showWarning = 1;
+					showWarning = WARN;
 				else if (_tacAction.targetUnit != nullptr)
 					liquidateUnit();
+				break;
+
+			case BA_PSICOURAGE: // one more way to cook a goose.
+			case BA_PSICONFUSE:
+			case BA_PSIPANIC:
+			case BA_PSICONTROL:
+				if (_tacAction.result.empty() == false)
+					showWarning = WARN;
 		}
 
 		switch (showWarning)
 		{
-			case 1:
+			case WARN:
 				_parentState->warning(_tacAction.result);
 				_tacAction.result.clear();
 				break;
 
-			case 2:
+			case WARN_ARG:
 				_parentState->warning(
 									_tacAction.result,
 									_tacAction.value);

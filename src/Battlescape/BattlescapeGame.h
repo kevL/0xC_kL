@@ -98,7 +98,7 @@ struct BattleAction
 		TU,
 		value;
 
-	std::string result;
+	std::string result; // an error message or else an empty string if everything went fine.
 
 	BattleActionType type;
 	BattleItem* weapon;

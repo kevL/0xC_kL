@@ -449,12 +449,12 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 				_game->pushState(new ExecuteState(_action));
 				break;
 
-			case BA_PSICONTROL: // TODO: Check for TU here.
+			case BA_PSICONTROL:
 			case BA_PSIPANIC:
 			case BA_PSICONFUSE:
 			case BA_PSICOURAGE:
 				if (_action->TU > _action->actor->getTimeUnits())
-					_action->result = "STR_NOT_ENOUGH_TIME_UNITS"; // TODO: Can't see why it works for MindProbe but not here.
+					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
 				else
 					_action->targeting = true;
 
