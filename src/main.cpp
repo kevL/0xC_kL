@@ -63,9 +63,9 @@ int main(
 	try
 	{
 		Logger::reportingLevel() = LOG_INFO;
-#else // !_DEBUG
+#else
 		Logger::reportingLevel() = LOG_DEBUG;
-#endif // !_DEBUG
+#endif
 
 		if (Options::init(argc, argv) == false)
 			return EXIT_SUCCESS;
@@ -95,7 +95,7 @@ int main(
 		CrossPlatform::showError(e.what());
 		exit(EXIT_FAILURE);
 	}
-#endif // !_DEBUG
+#endif
 
 //	Options::save();	// -> wtf keeps rewriting my options.cfg .....
 						// yet it works fine in Game::run() before quitting.
@@ -111,5 +111,5 @@ int main(
 
 
 #ifdef __MORPHOS__
-	const char Version[] = "$VER: OpenXCom " OPENXCOM_VERSION_SHORT " (" __AMIGADATE__  ")";
+const char Version[] = "$VER: OpenXCom " OPENXCOM_VERSION_SHORT " (" __AMIGADATE__  ")";
 #endif // __MORPHOS__

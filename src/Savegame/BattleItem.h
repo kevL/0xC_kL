@@ -121,7 +121,7 @@ private:
 		/// Gets the BattleItem's previous owner.
 		BattleUnit* getPriorOwner() const;
 		/// Clears the BattleItem from its previous owner and gives it to a different BattleUnit.
-		void changeOwner(BattleUnit* const toUnit = nullptr);
+		void changeOwner(BattleUnit* const unit = nullptr);
 
 		/// Gets the BattleItem's current Inventory section.
 		const RuleInventory* getInventorySection() const;

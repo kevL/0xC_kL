@@ -421,7 +421,6 @@ void ArticleStateItem::toggleTable(Action*) // private.
 			_infoMode = MODE_SHOT;
 			_lstInfo->setVisible();
 			_lstInfoMelee->setVisible(false);
-			break;
 	}
 }
 

@@ -309,10 +309,10 @@ private:
 		/// Gets the ammo amount.
 		int getFullClip() const;
 
-		/// Draws the item's hand sprite onto a surface.
+		/// Draws the item's hand sprite onto a Surface.
 		void drawHandSprite(
-				SurfaceSet* const set,
-				Surface* const surface) const;
+				SurfaceSet* const srt,
+				Surface* const srf) const;
 
 		/// Gets the medikit heal quantity.
 		int getHealQuantity() const;

@@ -357,6 +357,7 @@ BattlescapeState::BattlescapeState()
 	icons->blit(_icons);
 
 	_overlay = _game->getResourcePack()->getSurfaceSet("TacIconsOverlay");
+	_bigobs  = _game->getResourcePack()->getSurfaceSet("BIGOBS.PCK");
 
 
 	add(_srfRank,			"rank",					"battlescape", _icons);
@@ -3084,7 +3085,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	{
 		itRule = rtItem->getRules();
 		itRule->drawHandSprite(
-							_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
+							_bigobs,
 							_btnRightHandItem);
 		_btnRightHandItem->setVisible();
 
@@ -3150,7 +3151,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	{
 		itRule = ltItem->getRules();
 		itRule->drawHandSprite(
-							_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
+							_bigobs,
 							_btnLeftHandItem);
 		_btnLeftHandItem->setVisible();
 

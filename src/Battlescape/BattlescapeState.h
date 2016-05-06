@@ -184,7 +184,9 @@ private:
 		* _srfRank,
 		* _srfTargeter,
 		* _srfTitle;
-	SurfaceSet* _overlay;
+	SurfaceSet
+		* _bigobs,
+		* _overlay;
 	Tile* _tileWounded[WOUNDED];
 	Text
 		* _txtBaseLabel,

@@ -1029,7 +1029,7 @@ void InventoryState::btnRankClick(Action*)
 }
 
 /**
- * Updates item info.
+ * Updates item-info.
  * @param action - pointer to an Action
  */
 void InventoryState::inClick(Action*)
@@ -1097,7 +1097,7 @@ void InventoryState::inClick(Action*)
 }
 
 /**
- * Shows item info.
+ * Shows item-info.
  * @param action - pointer to an Action
  */
 void InventoryState::inMouseOver(Action*)
@@ -1188,7 +1188,7 @@ void InventoryState::inMouseOver(Action*)
 }
 
 /**
- * Hides item info.
+ * Hides item-info.
  * @param action - pointer to an Action
  */
 void InventoryState::inMouseOut(Action*)

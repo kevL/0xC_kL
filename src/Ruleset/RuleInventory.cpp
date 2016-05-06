@@ -47,13 +47,13 @@ struct convert<OpenXcom::RuleSlot>
 	static bool decode(const Node& node, OpenXcom::RuleSlot& rhs)
 	{
 		if (node.IsSequence() == false
-			|| node.size() != 2)
+			|| node.size() != 2u)
 		{
 			return false;
 		}
 
-		rhs.x = node[0].as<int>();
-		rhs.y = node[1].as<int>();
+		rhs.x = node[0u].as<int>();
+		rhs.y = node[1u].as<int>();
 
 		return true;
 	}
@@ -100,8 +100,8 @@ void RuleInventory::load(
 	_slots		= node["slots"]		.as<std::vector<RuleSlot>>(_slots);
 	_listOrder	= node["listOrder"]	.as<int>(listOrder);
 
-	_x += (Options::baseXResolution - 320) / 2;
-	_y += (Options::baseYResolution - 200) / 2 - 20; // See Inventory if you want to.
+	_x += ((Options::baseXResolution - 320) >> 1u);
+	_y += ((Options::baseYResolution - 200) >> 1u) - 20; // See Inventory if you want to.
 
 	_cat = static_cast<InventoryCategory>(node["category"].as<int>(_cat));
 
@@ -159,16 +159,16 @@ std::map<InventorySection, int> RuleInventory::assignCosts(std::map<std::string,
 {
 	std::map<InventorySection, int> ret;
 
-	if (costs["STR_GROUND"] != 0)			ret[ST_GROUND] = costs["STR_GROUND"];
-	if (costs["STR_RIGHT_HAND"] != 0)		ret[ST_RIGHTHAND] = costs["STR_RIGHT_HAND"];
-	if (costs["STR_LEFT_HAND"] != 0)		ret[ST_LEFTHAND] = costs["STR_LEFT_HAND"];
-	if (costs["STR_BELT"] != 0)				ret[ST_BELT] = costs["STR_BELT"];
-	if (costs["STR_RIGHT_LEG"] != 0)		ret[ST_RIGHTLEG] = costs["STR_RIGHT_LEG"];
-	if (costs["STR_LEFT_LEG"] != 0)			ret[ST_LEFTLEG] = costs["STR_LEFT_LEG"];
-	if (costs["STR_RIGHT_SHOULDER"] != 0)	ret[ST_RIGHTSHOULDER] = costs["STR_RIGHT_SHOULDER"];
-	if (costs["STR_LEFT_SHOULDER"] != 0)	ret[ST_LEFTSHOULDER] = costs["STR_LEFT_SHOULDER"];
-	if (costs["STR_BACK_PACK"] != 0)		ret[ST_BACKPACK] = costs["STR_BACK_PACK"];
-	if (costs["STR_QUICK_DRAW"] != 0)		ret[ST_QUICKDRAW] = costs["STR_QUICK_DRAW"];
+	if (costs["STR_GROUND"]			!= 0) ret[ST_GROUND]		= costs["STR_GROUND"];
+	if (costs["STR_RIGHT_HAND"]		!= 0) ret[ST_RIGHTHAND]		= costs["STR_RIGHT_HAND"];
+	if (costs["STR_LEFT_HAND"]		!= 0) ret[ST_LEFTHAND]		= costs["STR_LEFT_HAND"];
+	if (costs["STR_BELT"]			!= 0) ret[ST_BELT]			= costs["STR_BELT"];
+	if (costs["STR_RIGHT_LEG"]		!= 0) ret[ST_RIGHTLEG]		= costs["STR_RIGHT_LEG"];
+	if (costs["STR_LEFT_LEG"]		!= 0) ret[ST_LEFTLEG]		= costs["STR_LEFT_LEG"];
+	if (costs["STR_RIGHT_SHOULDER"]	!= 0) ret[ST_RIGHTSHOULDER]	= costs["STR_RIGHT_SHOULDER"];
+	if (costs["STR_LEFT_SHOULDER"]	!= 0) ret[ST_LEFTSHOULDER]	= costs["STR_LEFT_SHOULDER"];
+	if (costs["STR_BACK_PACK"]		!= 0) ret[ST_BACKPACK]		= costs["STR_BACK_PACK"];
+	if (costs["STR_QUICK_DRAW"]		!= 0) ret[ST_QUICKDRAW]		= costs["STR_QUICK_DRAW"];
 
 	return ret;
 }
@@ -304,55 +304,57 @@ bool RuleInventory::fitItemInSlot(
 	switch (_cat)
 	{
 		case IC_GROUND:
-			{
-				int xOffset (0);
-				while (x >= xOffset + GROUND_W)
-					xOffset += GROUND_W;
+		{
+			int xOffset (0);
+			while (x >= xOffset + GROUND_W)
+				xOffset += GROUND_W;
 
+			for (int
+					find_x = x;
+					find_x != x + item->getInventoryWidth();
+					++find_x)
+			{
 				for (int
-						find_x = x;
-						find_x != x + item->getInventoryWidth();
-						++find_x)
+						find_y = y;
+						find_y != y + item->getInventoryHeight();
+						++find_y)
 				{
-					for (int
-							find_y = y;
-							find_y != y + item->getInventoryHeight();
-							++find_y)
+					if (!
+							(  find_x >= xOffset
+							&& find_x <  xOffset + GROUND_W
+							&& find_y > -1
+							&& find_y < GROUND_H))
 					{
-						if (!
-								(  find_x >= xOffset
-								&& find_x <  xOffset + GROUND_W
-								&& find_y > -1
-								&& find_y < GROUND_H))
-						{
-							return false;
-						}
+						return false;
 					}
 				}
-			} // no break;
+			}
+		} // no break;
+
 		case IC_HAND:
 			return true;
 
+		case IC_SLOT:
 		default:
-			{
-				const int slotsTotal (item->getInventoryWidth() * item->getInventoryHeight());
-				int slotsFound (0);
+		{
+			const int slotsTotal (item->getInventoryWidth() * item->getInventoryHeight());
+			int slotsFound (0);
 
-				for (std::vector<RuleSlot>::const_iterator
-						i = _slots.begin();
-						i != _slots.end() && slotsFound < slotsTotal;
-						++i)
+			for (std::vector<RuleSlot>::const_iterator
+					i = _slots.begin();
+					i != _slots.end() && slotsFound < slotsTotal;
+					++i)
+			{
+				if (   i->x >= x
+					&& i->x <  x + item->getInventoryWidth()
+					&& i->y >= y
+					&& i->y <  y + item->getInventoryHeight())
 				{
-					if (   i->x >= x
-						&& i->x <  x + item->getInventoryWidth()
-						&& i->y >= y
-						&& i->y <  y + item->getInventoryHeight())
-					{
-						++slotsFound;
-					}
+					++slotsFound;
 				}
-				return (slotsFound == slotsTotal);
 			}
+			return (slotsFound == slotsTotal);
+		}
 	}
 }
 

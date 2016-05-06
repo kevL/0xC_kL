@@ -34,6 +34,8 @@ class BattleUnit;
 class Game;
 class NumberText;
 class RuleInventory;
+//class Surface;
+class SurfaceSet;
 class Timer;
 class WarningMessage;
 
@@ -67,6 +69,7 @@ private:
 		* _srfGrid,
 		* _srfItems,
 		* _srfGrab;
+	SurfaceSet* _srtBigobs;
 	Timer* _animTimer;
 	WarningMessage* _warning;
 

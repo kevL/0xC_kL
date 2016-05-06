@@ -379,32 +379,31 @@ BattleUnit* BattleItem::getPriorOwner() const
 /**
  * Removes this BattleItem from a previous owner if applicable and moves it to
  * another owner if applicable.
- * @param toUnit - pointer to a BattleUnit (default nullptr)
+ * @param unit - pointer to a BattleUnit (default nullptr)
  */
-void BattleItem::changeOwner(BattleUnit* const toUnit)
+void BattleItem::changeOwner(BattleUnit* const unit)
 {
 	if (_owner != nullptr)
-		_ownerPre = _owner;
-	else
-		_ownerPre = toUnit;
-
-	if ((_owner = toUnit) != nullptr)
-		_owner->getInventory()->push_back(this);
-
-	if (_ownerPre != nullptr && _ownerPre != _owner)
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = _ownerPre->getInventory()->begin();
-				i != _ownerPre->getInventory()->end();
+				i = _owner->getInventory()->begin();
+				i != _owner->getInventory()->end();
 				++i)
 		{
 			if (*i == this)
 			{
-				_ownerPre->getInventory()->erase(i);
+				_owner->getInventory()->erase(i);
 				break;
 			}
 		}
+
+		_ownerPre = _owner;
 	}
+	else
+		_ownerPre = unit;
+
+	if ((_owner = unit) != nullptr)
+		_owner->getInventory()->push_back(this);
 }
 
 /**

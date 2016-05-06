@@ -21,7 +21,7 @@
 
 #include "RuleInventory.h"
 
-#include "../Engine/Logger.h"
+//#include "../Engine/Logger.h"
 #include "../Engine/Surface.h"
 #include "../Engine/SurfaceSet.h"
 
@@ -650,14 +650,14 @@ int RuleItem::getFullClip() const
 
 /**
  * Draws and centers the hand-sprite on a Surface according to its dimensions.
- * @param set		- pointer to the SurfaceSet to get the sprite
- * @param surface	- pointer to the Surface on which to draw
+ * @param srt - pointer to the SurfaceSet of a bigob-sprite
+ * @param srf - pointer to the Surface on which to draw it
  */
 void RuleItem::drawHandSprite(
-		SurfaceSet* const set,
-		Surface* const surface) const
+		SurfaceSet* const srt,
+		Surface* const srf) const
 {
-	Surface* const sprite (set->getFrame(_bigSprite));
+	Surface* const sprite (srt->getFrame(_bigSprite));
 	if (sprite != nullptr) // safety.
 	{
 		sprite->setX(
@@ -665,9 +665,9 @@ void RuleItem::drawHandSprite(
 		sprite->setY(
 				(RuleInventory::HAND_H - _invHeight) * RuleInventory::SLOT_H_2);
 
-		set->getFrame(_bigSprite)->blit(surface);
+		sprite->blit(srf);
 	}
-	else Log(LOG_WARNING) << "RuleItem::drawHandSprite() bigob not found #" << _bigSprite; // also in Inventory object.
+//	else Log(LOG_WARNING) << "RuleItem::drawHandSprite() bigob not found #" << _bigSprite; // also in Inventory.
 }
 
 /**
