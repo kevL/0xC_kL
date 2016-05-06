@@ -75,8 +75,8 @@ namespace
 struct HairXCOM1
 {
 	static const Uint8
-		Hair = 9 << 4u,
-		Face = 6 << 4u;
+		Hair = 9u << 4u,
+		Face = 6u << 4u;
 
 	///
 	static inline void func(
@@ -96,8 +96,8 @@ struct HairXCOM1
 
 
 /**
- * Initializes the resource pack by loading all the resources contained in the
- * original game folder.
+ * Initializes the resource-pack by loading all pseudo-necessary resources
+ * contained in the original "X-Com: UFO Defense" folders.
  * @param rules - pointer to the Ruleset
  */
 XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
@@ -512,8 +512,8 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 	// define GUI sound Fx
 	TextButton::soundPress		= getSound("GEO.CAT", ResourcePack::BUTTON_PRESS);		// #0 bleep
 	kL_soundPop					= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[0u]);	// wahahahah <- global.
-	Window::soundPopup[0u]		= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[0u]);	// #1 wahahahah // not used - but leave it. The sound itself is also defined as 'kL_soundPop' above^
-	Window::soundPopup[1u]		= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[1u]);	// #2 swish1
+	Window::soundPopup[0u]		= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[0u]);	// #1 wahahahah	// not used - but leave it:
+	Window::soundPopup[1u]		= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[1u]);	// #2 swish1	// The sound itself is also defined as 'kL_soundPop' above^
 	Window::soundPopup[2u]		= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[2u]);	// #3 swish2
 
 	/* BATTLESCAPE RESOURCES */
@@ -1130,7 +1130,7 @@ void XcomResourcePack::loadBattlescapeResources()
 		_surfaces[*i]->loadSpk(path);
 	}
 
-	if (Options::battleHairBleach == true) // "fix" of color index in original soldier sprites
+	if (Options::battleHairBleach == true) // "fix" of color-index in original soldier-sprites
 	{
 		const std::string armorSheet ("XCOM_1.PCK"); // personal armor
 
@@ -1185,7 +1185,7 @@ void XcomResourcePack::loadBattlescapeResources()
 /**
  * Determines if an image-file is of an acceptable format for the game.
  * @param ext - image-file extension
- * @return, true if extension is considered valid
+ * @return, true if extension is considered usable
  */
 bool XcomResourcePack::isImageFile(std::string ext)
 {

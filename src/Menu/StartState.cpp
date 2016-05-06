@@ -488,12 +488,12 @@ void StartState::addCursor_kL()
 
 /**
  * Loads game-data and updates loading-status accordingly.
- * @param ptrGame - pointer to Game!
+ * @param ptrG - pointer to Game!
  * @return, thread-status 0= okay
  */
-int StartState::load(void* ptrGame)
+int StartState::load(void* ptrG)
 {
-	Game* const game (static_cast<Game*>(ptrGame));
+	Game* const game (static_cast<Game*>(ptrG));
 	try
 	{
 		Log(LOG_INFO) << "Loading ruleset ...";

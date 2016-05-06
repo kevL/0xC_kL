@@ -506,7 +506,7 @@ void DebriefingState::btnOkClick(Action*)
 												tr("STR_STORAGE_EXCEEDED").arg(_base->getName(nullptr)),
 												_palette,
 												_rules->getInterface("debriefing")->getElement("errorMessage")->color,
-												_game->getResourcePack()->getRandomBackground(),
+												_game->getResourcePack()->getBackgroundRand(),
 												_rules->getInterface("debriefing")->getElement("errorPalette")->color));
 			}
 

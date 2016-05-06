@@ -67,7 +67,7 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 
 
 	const ResourcePack* const rp (_game->getResourcePack());
-	_window->setBackground(rp->getSurface(rp->getRandomBackground()));
+	_window->setBackground(rp->getSurface(rp->getBackgroundRand()));
 	_window->setColor(uPed_PINK);
 
 	_btnExit->setText(tr("STR_OK"));

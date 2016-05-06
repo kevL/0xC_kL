@@ -86,16 +86,16 @@ namespace CrossPlatform
 {
 
 #ifdef _WIN32
-	const char PATH_SEPARATOR = '\\';
+const char PATH_SEPARATOR = '\\';
 #else
-	const char PATH_SEPARATOR = '/';
+const char PATH_SEPARATOR = '/';
 #endif
 
 /**
  * Displays a message-box with an error-message.
- * @param error - error-message
+ * @param error - reference to an error-message
  */
-void showError(const std::string& error)
+void showFatalError(const std::string& error)
 {
 #ifdef _WIN32
 	MessageBoxA(

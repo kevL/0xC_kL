@@ -37,21 +37,22 @@
  * @mainpage
  * @author OpenXcom Developers
  *
- * OpenXcom is an open-source clone of the original X-Com written entirely in
- * C++ and SDL. This documentation contains info on every class contained in the
- * source code and its public methods. The code itself also contains in-line
- * comments for more complicated code blocks. Hopefully all of this will make
- * the code a lot more readable for you in case you wish to learn or make use of
- * it in your own projects - though note that all the source code is licensed
- * under the GNU General Public License. Enjoy!!!!
+ * OpenXcom/0xC is an open-source clone of the original X-Com written entirely
+ * in C++ and SDL. This documentation contains info on every class contained in
+ * the source code and its public methods. The code itself also contains in-line
+ * comments for more complicated code-blocks. Hopefully all of this will make
+ * the code a lot more readable for you in case you wish to learn or fork or
+ * make use of it in your own projects - though note that all the orginal
+ * source-code is licensed under the GNU General Public License. Enjoy!!!!
  */
 
 using namespace OpenXcom;
 
-Game* ptrGame = nullptr;
+Game* ptrG (nullptr);
 
 // If you can't tell what the main() is for you should have your programming
-// license revoked ...
+// license revoked ... and be stripped naked, covered with cream, and tied down
+// in a room full of kittens. See "entry point".
 int main(
 		int argc,
 		char* argv[])
@@ -81,18 +82,18 @@ int main(
 		std::ostringstream title;
 		title << OPENXCOM_VERSION_GIT << " " << Version::getBuildDate();
 
-		ptrGame = new Game(title.str());
+		ptrG = new Game(title.str());
 
-		State::setGamePtr(ptrGame);
+		State::setGamePtr(ptrG);
 
-		ptrGame->setState(new StartState());
-		ptrGame->run();
+		ptrG->setState(new StartState());
+		ptrG->run();
 
 #ifndef _DEBUG
 	}
 	catch (std::exception& e)
 	{
-		CrossPlatform::showError(e.what());
+		CrossPlatform::showFatalError(e.what());
 		exit(EXIT_FAILURE);
 	}
 #endif
@@ -103,7 +104,7 @@ int main(
 						// ... now they both fuck up. BYE!
 
 	// Comment this for faster exit.
-	delete ptrGame;
+	delete ptrG;
 
 	Log(LOG_INFO) << "0xC_kL is shutting down.";
 	return EXIT_SUCCESS;

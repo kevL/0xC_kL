@@ -1699,11 +1699,11 @@ void BattleUnit::playDeathSound(bool fleshWound) const
 			{
 				default:
 				case GENDER_MALE:
-					soundId = ResourcePack::MALE_SCREAM[RNG::generate(0,2)];
+					soundId = static_cast<int>(ResourcePack::MALE_SCREAM[static_cast<size_t>(RNG::generate(0,2))]);
 					break;
 
 				case GENDER_FEMALE:
-					soundId = ResourcePack::FEMALE_SCREAM[RNG::generate(0,2)];
+					soundId = static_cast<int>(ResourcePack::FEMALE_SCREAM[static_cast<size_t>(RNG::generate(0,2))]);
 			}
 		}
 		else

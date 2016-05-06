@@ -36,101 +36,103 @@ namespace OpenXcom
  */
 namespace CrossPlatform
 {
-	/// Displays an error-message.
-	void showError(const std::string& error);
 
-	/// Finds the game's data-folders in the system.
-	std::vector<std::string> findDataFolders();
-	/// Finds the game's user-folders in the system.
-	std::vector<std::string> findUserFolders();
-	/// Finds the game's config-folder in the system.
-	std::string findConfigFolder();
+/// Displays an error-message.
+void showFatalError(const std::string& error);
 
-	/// Tries to find a file.
-	std::string caseInsensitive(
-			const std::string& base,
-			const std::string& path);
-	/// Tries to find a folder.
-	std::string caseInsensitiveFolder(
-			const std::string& base,
-			const std::string& path);
+/// Finds the game's data-folders in the system.
+std::vector<std::string> findDataFolders();
+/// Finds the game's user-folders in the system.
+std::vector<std::string> findUserFolders();
+/// Finds the game's config-folder in the system.
+std::string findConfigFolder();
 
-	/// Gets the path for a data-file.
-	std::string getDataFile(const std::string& file);
-	/// Gets the path for a data-folder
-	std::string getDataFolder(const std::string& folder);
+/// Tries to find a file.
+std::string caseInsensitive(
+		const std::string& base,
+		const std::string& path);
+/// Tries to find a folder.
+std::string caseInsensitiveFolder(
+		const std::string& base,
+		const std::string& path);
 
-	/// Creates a folder.
-	bool createFolder(const std::string& path);
+/// Gets the path for a data-file.
+std::string getDataFile(const std::string& file);
+/// Gets the path for a data-folder
+std::string getDataFolder(const std::string& folder);
 
-	/// Terminates a path.
-	std::string endPath(const std::string& path);
+/// Creates a folder.
+bool createFolder(const std::string& path);
 
-	/// Returns the list of files in a folder.
-	std::vector<std::string> getFolderContents(
-			const std::string& path,
-			const std::string& ext = "");
-	/// Returns the list of files in a data-folder.
-	std::vector<std::string> getDataContents(
-			const std::string& path,
-			const std::string& ext = "");
+/// Terminates a path.
+std::string endPath(const std::string& path);
 
-	/// Checks if the path is an existing folder.
-	bool folderExists(const std::string& path);
-	/// Checks if the path is an existing file.
-	bool fileExists(const std::string& path);
+/// Returns the list of files in a folder.
+std::vector<std::string> getFolderContents(
+		const std::string& path,
+		const std::string& ext = "");
+/// Returns the list of files in a data-folder.
+std::vector<std::string> getDataContents(
+		const std::string& path,
+		const std::string& ext = "");
 
-	/// Deletes the specified file.
-	bool deleteFile(const std::string& path);
+/// Checks if the path is an existing folder.
+bool folderExists(const std::string& path);
+/// Checks if the path is an existing file.
+bool fileExists(const std::string& path);
 
-	/// Gets the basename of a file.
-	std::string baseFilename(
-			const std::string& path,
-			int(*transform)(int) = nullptr);
+/// Deletes the specified file.
+bool deleteFile(const std::string& path);
 
-	/// Sanitizes the characters in a filename.
-	std::string sanitizeFilename(const std::string& file);
+/// Gets the basename of a file.
+std::string baseFilename(
+		const std::string& path,
+		int(*transform)(int) = nullptr);
 
-	/// Removes the extension from a file.
-	std::string noExt(const std::string& file);
+/// Sanitizes the characters in a filename.
+std::string sanitizeFilename(const std::string& file);
 
-	/// Gets the system-locale.
-	std::string getLocale();
+/// Removes the extension from a file.
+std::string noExt(const std::string& file);
 
-	/// Checks if an event is a quit-shortcut.
-	bool isQuitShortcut(const SDL_Event& ev);
+/// Gets the system-locale.
+std::string getLocale();
 
-	/// Gets the modified date of a file.
-	time_t getDateModified(const std::string& path);
+/// Checks if an event is a quit-shortcut.
+bool isQuitShortcut(const SDL_Event& ev);
 
-	/// Converts a timestamp to a pair of widestrings.
-	std::pair<std::wstring, std::wstring> timeToString(time_t timeIn);
-	/// Converts the time into a string.
-	std::string timeString();
+/// Gets the modified date of a file.
+time_t getDateModified(const std::string& path);
 
-	/// Compares two strings by natural order.
-	bool naturalCompare(
-			const std::wstring& a,
-			const std::wstring& b);
+/// Converts a timestamp to a pair of widestrings.
+std::pair<std::wstring, std::wstring> timeToString(time_t timeIn);
+/// Converts the time into a string.
+std::string timeString();
 
-	/// Moves/renames a file between paths.
-	bool moveFile(
-			const std::string& src,
-			const std::string& dest);
+/// Compares two strings by natural order.
+bool naturalCompare(
+		const std::wstring& a,
+		const std::wstring& b);
 
-	/// Flashes the game window.
-	void flashWindow();
+/// Moves/renames a file between paths.
+bool moveFile(
+		const std::string& src,
+		const std::string& dest);
 
-	/// Gets the DOS-style executable path.
-	std::string getDosPath();
+/// Flashes the game window.
+void flashWindow();
 
-	/// Sets the window-icon for _WIN32 build-configuration.
+/// Gets the DOS-style executable path.
+std::string getDosPath();
+
+/// Sets the window-icon for _WIN32 build-configuration.
 #ifdef _WIN32
-	void setWindowIcon(int winResource);
+void setWindowIcon(int winResource);
 #else
-	/// Sets the window-icon if not _WIN32 build.
-	void setWindowIcon(const std::string& unixPath);
+/// Sets the window-icon if not _WIN32 build.
+void setWindowIcon(const std::string& unixPath);
 #endif
+
 }
 
 }

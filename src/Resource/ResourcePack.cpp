@@ -38,42 +38,9 @@
 namespace OpenXcom
 {
 
-size_t // TODO: relabel these identifiers w/ appropriate prefixes, eg. sfx_GRAVLIFT, gfx_SMOKE ... See ResourcePack.h
-	ResourcePack::BUTTON_PRESS			=   0u,
-	ResourcePack::WINDOW_POPUP[3u]		=  {1u,2u,3u},
-
-	ResourcePack::EXPLOSION_OFFSET		=   0u,
-//	ResourcePack::SMOKE_OFFSET			=   7u,
-
-	ResourcePack::SMALL_EXPLOSION		=   2u,
-	ResourcePack::DOOR_OPEN				=   3u,
-	ResourcePack::LARGE_EXPLOSION		=   5u,
-	ResourcePack::FLYING_SOUND			=  15u,
-	ResourcePack::FLYING_SOUND_HQ		=  70u,
-	ResourcePack::ITEM_RELOAD			=  17u,
-	ResourcePack::ITEM_UNLOAD_HQ		=  74u,
-	ResourcePack::SLIDING_DOOR_OPEN		=  20u,
-	ResourcePack::SLIDING_DOOR_CLOSE	=  21u,
-	ResourcePack::GRAVLIFT_SOUND		=  40u,
-	ResourcePack::WALK_OFFSET			=  22u,
-	ResourcePack::ITEM_DROP				=  38u,
-	ResourcePack::ITEM_THROW			=  39u,
-	ResourcePack::MALE_SCREAM[3u]		= {41u,42u,43u},
-	ResourcePack::FEMALE_SCREAM[3u]		= {44u,45u,46u},
-
-	ResourcePack::UFO_FIRE				=   9u,
-	ResourcePack::UFO_HIT				=  12u,
-	ResourcePack::UFO_CRASH				=  11u,
-	ResourcePack::UFO_EXPLODE			=  11u,
-	ResourcePack::INTERCEPTOR_HIT		=  10u,
-	ResourcePack::INTERCEPTOR_EXPLODE	=  13u,
-
-	ResourcePack::GEOSCAPE_CURSOR		= 252u,
-	ResourcePack::BASESCAPE_CURSOR		= 252u,
-	ResourcePack::BATTLESCAPE_CURSOR	= 144u,
-	ResourcePack::UFOPAEDIA_CURSOR		= 252u,
-	ResourcePack::GRAPHS_CURSOR			= 252u;
-
+constexpr size_t
+	ResourcePack::MALE_SCREAM[3u],		// Good Lord, c++
+	ResourcePack::FEMALE_SCREAM[3u];	// I won't even ask why/how WINDOW_POPUP[] doesn't require this jiggery.
 
 
 /**
@@ -462,7 +429,7 @@ const std::vector<Uint16>* ResourcePack::getVoxelData() const
  * @note This is mainly used in error messages.
  * @return, reference to a random background screen (.SCR file)
  */
-const std::string& ResourcePack::getRandomBackground() const
+const std::string& ResourcePack::getBackgroundRand() const
 {
 	static const std::string bg[10u]
 	{

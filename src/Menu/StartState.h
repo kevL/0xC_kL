@@ -97,7 +97,7 @@ private:
 		void addCursor_kL();
 
 		/// Loads the game resources.
-		static int load(void* ptrGame);
+		static int load(void* ptrG);
 };
 
 }

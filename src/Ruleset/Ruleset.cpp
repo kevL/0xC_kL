@@ -920,7 +920,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 	if (doc["globe"])
 		_globe->load(doc["globe"]);
 
-	for (YAML::const_iterator
+/*	for (YAML::const_iterator // All these are now constexpr's -> See ResourcePack.h ->
 			i = doc["constants"].begin();
 			i != doc["constants"].end();
 			++i)
@@ -936,7 +936,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		ResourcePack::WALK_OFFSET			= (*i)["walkOffset"]		.as<size_t>(ResourcePack::WALK_OFFSET);
 		ResourcePack::ITEM_DROP				= (*i)["itemDrop"]			.as<size_t>(ResourcePack::ITEM_DROP);
 		ResourcePack::ITEM_THROW			= (*i)["itemThrow"]			.as<size_t>(ResourcePack::ITEM_THROW);
-//		ResourcePack::SMOKE_OFFSET			= (*i)["smokeOffset"]		.as<size_t>(ResourcePack::SMOKE_OFFSET);
+		ResourcePack::SMOKE_OFFSET			= (*i)["smokeOffset"]		.as<size_t>(ResourcePack::SMOKE_OFFSET);
 
 		if ((*i)["maleScream"])
 		{
@@ -987,7 +987,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		ResourcePack::BATTLESCAPE_CURSOR	= (*i)["battlescapeCursor"]	.as<size_t>(ResourcePack::BATTLESCAPE_CURSOR);
 		ResourcePack::UFOPAEDIA_CURSOR		= (*i)["ufopaediaCursor"]	.as<size_t>(ResourcePack::UFOPAEDIA_CURSOR);
 		ResourcePack::GRAPHS_CURSOR			= (*i)["graphsCursor"]		.as<size_t>(ResourcePack::GRAPHS_CURSOR);
-	}
+	} */
 
 	std::string terrainType; // NOTE: MapScripts are not loaded w/ loadRule(keyId=type).
 	for (YAML::const_iterator

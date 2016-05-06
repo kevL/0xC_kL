@@ -377,7 +377,7 @@ void BasescapeState::init()
 										tr("STR_STORAGE_EXCEEDED").arg(_base->getName(nullptr)).c_str(),
 										_palette,
 										_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
-										_game->getResourcePack()->getRandomBackground(),
+										_game->getResourcePack()->getBackgroundRand(),
 										_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
 	}
 }
@@ -686,14 +686,14 @@ void BasescapeState::viewRightClick(Action*)
 												tr("STR_FACILITY_IN_USE"),
 												_palette,
 												_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
-												_game->getResourcePack()->getRandomBackground(),
+												_game->getResourcePack()->getBackgroundRand(),
 												_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
 			else if (_base->getDisconnectedFacilities(fac).empty() == false)
 				_game->pushState(new ErrorMessageState(
 												tr("STR_CANNOT_DISMANTLE_FACILITY"),
 												_palette,
 												_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
-												_game->getResourcePack()->getRandomBackground(),
+												_game->getResourcePack()->getBackgroundRand(),
 												_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
 			else
 				_game->pushState(new DismantleFacilityState(_base, _view, fac));

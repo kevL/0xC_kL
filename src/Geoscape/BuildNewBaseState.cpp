@@ -286,7 +286,7 @@ void BuildNewBaseState::globeClick(Action* action)
 											tr("STR_XCOM_BASE_CANNOT_BE_BUILT"),
 											_palette,
 											_game->getRuleset()->getInterface("geoscape")->getElement("genericWindow")->color,
-											_game->getResourcePack()->getRandomBackground(),
+											_game->getResourcePack()->getBackgroundRand(),
 											_game->getRuleset()->getInterface("geoscape")->getElement("backpal")->color));
 //		}
 	}

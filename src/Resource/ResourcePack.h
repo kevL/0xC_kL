@@ -45,9 +45,9 @@ class SurfaceSet;
 /**
  * Packs of external game media.
  * @note Resource packs contain all the game media that's loaded externally like
- * graphics, fonts, languages, audio and globe data.
- * @note The game is still hardcoded to X-Com resources so for now this just
- * serves to load all the files in one place.
+ * graphics, fonts, languages, audio and globe data. The game is still hardcoded
+ * to X-Com resources so for now this just serves to load all the files in one
+ * place.
  */
 class ResourcePack
 {
@@ -81,41 +81,41 @@ private:
 
 
 		public:
-			static size_t // TODO: relabel these identifiers w/ appropriate prefixes, eg. sfx_GRAVLIFT, gfx_SMOKE ... See ResourcePack.cpp
-				BUTTON_PRESS,
-				WINDOW_POPUP[3u],
+			static constexpr size_t // TODO: relabel these identifiers w/ appropriate prefixes, eg. sfx_GRAVLIFT, gfx_SMOKE ... See ResourcePack.cpp
+				BUTTON_PRESS		=   0u,
+				WINDOW_POPUP[3u]	=  {1u,2u,3u},
 
-				EXPLOSION_OFFSET,
-//				SMOKE_OFFSET,
+				EXPLOSION_OFFSET	=   0u,
+//				SMOKE_OFFSET		=   7u, // replaced w/ external resource file
 
-				SMALL_EXPLOSION,
-				DOOR_OPEN,
-				LARGE_EXPLOSION,
-				FLYING_SOUND,
-				FLYING_SOUND_HQ,
-				ITEM_RELOAD,
-				ITEM_UNLOAD_HQ,
-				SLIDING_DOOR_OPEN,
-				SLIDING_DOOR_CLOSE,
-				GRAVLIFT_SOUND,
-				WALK_OFFSET,
-				ITEM_DROP,
-				ITEM_THROW,
-				MALE_SCREAM[3u],
-				FEMALE_SCREAM[3u],
+				SMALL_EXPLOSION		=   2u,
+				DOOR_OPEN			=   3u,
+				LARGE_EXPLOSION		=   5u,
+				FLYING_SOUND		=  15u,
+				FLYING_SOUND_HQ		=  70u,
+				ITEM_RELOAD			=  17u,
+				ITEM_UNLOAD_HQ		=  74u,
+				SLIDING_DOOR_OPEN	=  20u,
+				SLIDING_DOOR_CLOSE	=  21u,
+				GRAVLIFT_SOUND		=  40u,
+				WALK_OFFSET			=  22u,
+				ITEM_DROP			=  38u,
+				ITEM_THROW			=  39u,
+				MALE_SCREAM[3u]		= {41u,42u,43u},
+				FEMALE_SCREAM[3u]	= {44u,45u,46u},
 
-				UFO_FIRE,
-				UFO_HIT,
-				UFO_CRASH,
-				UFO_EXPLODE,
-				INTERCEPTOR_HIT,
-				INTERCEPTOR_EXPLODE,
+				UFO_FIRE			=   9u,
+				UFO_HIT				=  12u,
+				UFO_CRASH			=  11u,
+				UFO_EXPLODE			=  11u,
+				INTERCEPTOR_HIT		=  10u,
+				INTERCEPTOR_EXPLODE	=  13u,
 
-				GEOSCAPE_CURSOR,
-				BASESCAPE_CURSOR,
-				BATTLESCAPE_CURSOR,
-				UFOPAEDIA_CURSOR,
-				GRAPHS_CURSOR;
+				GEOSCAPE_CURSOR		= 252u,
+				BASESCAPE_CURSOR	= 252u,
+				BATTLESCAPE_CURSOR	= 144u,
+				UFOPAEDIA_CURSOR	= 252u,
+				GRAPHS_CURSOR		= 252u;
 
 
 			/// Creates a ResourcePack with a folder's contents.
@@ -177,7 +177,7 @@ private:
 			const std::vector<Uint16>* getVoxelData() const;
 
 			/// Gets a random background.
-			const std::string& getRandomBackground() const;
+			const std::string& getBackgroundRand() const;
 };
 
 }
