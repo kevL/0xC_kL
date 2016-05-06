@@ -184,7 +184,7 @@ void BattlescapeGame::reinit()
 void BattlescapeGame::think()
 {
 	//Log(LOG_INFO) << "BattlescapeGame::think()";
-	if (_battleStates.empty() == true) // nothing is happening - see if they need some aLien AI or units panicking or what have you
+	if (_battleStates.empty() == true) // nothing is happening -> see if they need some aLien AI or units panicking or whatever
 	{
 		switch (_battleSave->getSide())
 		{
@@ -255,7 +255,7 @@ void BattlescapeGame::handleState()
 		else
 		{
 			_battleStates.front()->think();
-			getMap()->draw();		// old code!! Less clunky when scrolling the battlemap.
+			getMap()->draw();		// old code!! Less clunky when scrolling the battlefield.
 //			getMap()->invalidate();	// redraw map
 		}
 	}
@@ -320,7 +320,8 @@ void BattlescapeGame::statePushBack(BattleState* const battleState)
  */
 void BattlescapeGame::popState()
 {
-	//Log(LOG_INFO) << "BattlescapeGame::popState() qtyStates = " << (int)_battleStates.size();
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << "BattlescapeGame::popState() qtyStates = " << (int)_battleStates.size();
 //	if (Options::traceAI)
 //		Log(LOG_INFO) << "BattlescapeGame::popState() "
 //					  << "id-" << (_tacAction.actor ? std::to_string(_tacAction.actor->getId()) : " Actor NONE")
@@ -335,7 +336,7 @@ void BattlescapeGame::popState()
 
 	if (_battleStates.empty() == false)
 	{
-		//Log(LOG_INFO) << ". states NOT Empty";
+		Log(LOG_INFO) << ". states NOT Empty";
 		const BattleAction action (_battleStates.front()->getAction());
 
 		bool actionFail;
@@ -345,7 +346,7 @@ void BattlescapeGame::popState()
 			&& action.actor->getFaction() == FACTION_PLAYER
 			&& _playerPanicHandled == true)
 		{
-			//Log(LOG_INFO) << ". actionFail";
+			Log(LOG_INFO) << ". . actionFail";
 			actionFail = true;
 			_parentState->warning(action.result);
 
@@ -381,14 +382,14 @@ void BattlescapeGame::popState()
 
 		//Log(LOG_INFO) << ". move Front-state to _deletedStates.";
 		_deletedStates.push_back(_battleStates.front());
-		//Log(LOG_INFO) << ". states.Popfront";
+		Log(LOG_INFO) << ". states.Popfront";
 		_battleStates.pop_front();
 
 
 		if (action.actor != nullptr // handle the end of the acting BattleUnit's actions
 			&& noActionsPending(action.actor) == true)
 		{
-			//Log(LOG_INFO) << ". noActionsPending for state actor";
+			Log(LOG_INFO) << ". noActionsPending for state actor";
 			switch (action.actor->getFaction())
 			{
 				case FACTION_PLAYER:
@@ -411,7 +412,7 @@ void BattlescapeGame::popState()
 						if (action.targeting == true
 							&& _battleSave->getSelectedUnit() != nullptr)
 						{
-							//Log(LOG_INFO) << ". . ID " << action.actor->getId() << " currentTU = " << action.actor->getTimeUnits();
+							Log(LOG_INFO) << ". . id-" << action.actor->getId() << " tu= " << action.actor->getTimeUnits();
 							action.actor->spendTimeUnits(action.TU);
 							// kL_query: Does this happen **before** ReactionFire/getReactor()?
 							// no. not for shooting, but for throwing it does; actually no it doesn't.
@@ -592,11 +593,11 @@ void BattlescapeGame::popState()
 }
 
 /**
- * Determines whether there are any actions pending for a given unit.
+ * Determines whether there are any actions pending for a specified BattleUnit.
  * @param unit - pointer to a BattleUnit
  * @return, true if there are no actions pending
  */
-bool BattlescapeGame::noActionsPending(const BattleUnit* const unit) const // private
+bool BattlescapeGame::noActionsPending(const BattleUnit* const unit) const
 {
 	if (_battleStates.empty() == false)
 	{
@@ -609,7 +610,6 @@ bool BattlescapeGame::noActionsPending(const BattleUnit* const unit) const // pr
 				return false;
 		}
 	}
-
 	return true;
 }
 
@@ -629,12 +629,12 @@ void BattlescapeGame::resetTraceTiles() // private.
 {
 	Tile* tile;
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
 		tile = _battleSave->getTiles()[i];
-		tile->setPreviewColor(0);
+		tile->setPreviewColor(0u);
 		tile->setPreviewDir(-1);
 		tile->setPreviewTu(-1);
 	}
@@ -2624,7 +2624,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 									_parentState->getGame()->pushState(new UnitInfoState(
 																					targetUnit,
 																					_parentState,
-																					false,true));
+																					false, true));
 								}
 								else
 								{
@@ -2669,12 +2669,12 @@ void BattlescapeGame::primaryAction(const Position& pos)
 											_tacAction.actor->getPosition(),
 											_tacAction.posTarget) <= _tacAction.weapon->getRules()->getMaxRange())
 						{
-							_tacAction.posCamera = Position(0,0,-1);
-
-							statePushBack(new ProjectileFlyBState(this, _tacAction));
-
 							if (_tacAction.actor->getTimeUnits() >= _tacAction.TU) // WAIT, check this *before* all the stuff above!!!
 							{
+								_tacAction.posCamera = Position(0,0,-1);
+
+								statePushBack(new ProjectileFlyBState(this, _tacAction)); // TODO: Clear out the redundancy that occurs in ProjFlyB::init().
+
 								if (getTileEngine()->psiAttack(&_tacAction) == true)
 								{
 									std::string st;

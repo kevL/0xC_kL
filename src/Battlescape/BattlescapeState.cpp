@@ -2707,7 +2707,7 @@ void BattlescapeState::btnReloadClick(Action*)
 
 /**
  * Zeroes TU of the currently selected BattleUnit.
- * @note Requires CTRL-key down.
+ * @note Requires CTRL-key down and BattleStates inactive.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnZeroTuClick(Action* action)
@@ -2715,16 +2715,18 @@ void BattlescapeState::btnZeroTuClick(Action* action)
 	if ((SDL_GetModState() & KMOD_CTRL) != 0
 		&& allowButtons() == true)
 	{
-		SDL_Event ev;
-		ev.type = SDL_MOUSEBUTTONDOWN;
-		ev.button.button = SDL_BUTTON_LEFT;
-
-		Action a = Action(&ev, 0.,0.,0,0);
-		action->getSender()->mousePress(&a, this); // why mouse event, for keyboard press?
-
-		if (_battleSave->getSelectedUnit() != nullptr) // why mouse event even possible if no selUnit?
+		BattleUnit* const unit (_battleSave->getSelectedUnit());
+		if (unit != nullptr
+			&& _battleGame->noActionsPending(unit) == true)
 		{
-			_battleSave->getSelectedUnit()->setTimeUnits(0);
+			SDL_Event ev;
+			ev.type = SDL_MOUSEBUTTONDOWN;
+			ev.button.button = SDL_BUTTON_LEFT;
+
+			Action a (Action(&ev, 0.,0.,0,0));
+			action->getSender()->mousePress(&a, this); // why mouse event, for keyboard-press perhaps
+
+			unit->setTimeUnits(0);
 			_numTimeUnits->setValue(0u);
 			_barTimeUnits->setValue(0.);
 

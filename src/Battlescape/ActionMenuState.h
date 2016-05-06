@@ -40,7 +40,7 @@ class ActionMenuState
 {
 
 private:
-	static const size_t MENU_ITEMS = 8;
+	static const size_t MENU_ITEMS = 8u;
 
 	ActionMenuItem* _menuSelect[MENU_ITEMS];
 	BattleAction* _action;

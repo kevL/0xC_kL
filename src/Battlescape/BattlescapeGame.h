@@ -240,8 +240,6 @@ private:
 	std::vector<InfoboxDialogState*> _infoboxQueue;
 
 
-	/// Checks that there are no actions pending for the specified unit.
-	bool noActionsPending(const BattleUnit* const unit) const;
 	/// Clears the trace-AI markers on all battlefield Tiles.
 	void resetTraceTiles();
 	/// Centers the battlefield Camera on a BattleUnit.
@@ -311,6 +309,8 @@ private:
 		void statePushBack(BattleState* const battleState = nullptr);
 		/// Pops the current BattleState and handles any after-effects.
 		void popState();
+		/// Checks that there are no BattleStates pending for a specified actor.
+		bool noActionsPending(const BattleUnit* const unit) const;
 		/// Sets the BattleState->think() interval.
 		void setStateInterval(Uint32 interval);
 

@@ -31,7 +31,7 @@
 #include "../Engine/Font.h"
 #include "../Engine/Game.h"
 #include "../Engine/Language.h"
-#include "../Engine/Logger.h"
+//#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 #include "../Engine/Sound.h"
 #include "../Engine/SurfaceSet.h"
@@ -296,12 +296,11 @@ void Inventory::drawItems() // private.
 			i != list->end();
 			++i)
 	{
-		if (*i != _selItem
-			&& (inRule = (*i)->getInventorySection()) != nullptr) // not a recent load.
-//			&& inRule->getCategory() != IC_GROUND)
+		if (*i != _selItem)
 		{
 			if ((sprite = _srtBigobs->getFrame((*i)->getRules()->getBigSprite())) != nullptr) // safety.
 			{
+				inRule = (*i)->getInventorySection();
 				switch (inRule->getCategory())
 				{
 					case IC_SLOT:
@@ -529,32 +528,39 @@ void Inventory::mouseClick(Action* action, State* state)
 					{
 						if ((SDL_GetModState() & KMOD_CTRL) != 0) // auto-Move item.
 						{
-							const RuleInventory* targetSection (nullptr);
+							InventorySection toType;
 
 							if (inRule->getCategory() == IC_HAND
 								|| (inRule->getCategory() != IC_GROUND
 									&& (_tuMode == false
 										|| _selUnit->getOriginalFaction() != FACTION_PLAYER))) // Mc'd aLien units drop-to-ground on Ctrl+LMB
 							{
-								targetSection = _game->getRuleset()->getInventoryRule(ST_GROUND);
+								toType = ST_GROUND;
 							}
 							else if (_selUnit->getItem(ST_RIGHTHAND) == nullptr)
-								targetSection = _game->getRuleset()->getInventoryRule(ST_RIGHTHAND);
+								toType = ST_RIGHTHAND;
 							else if (_selUnit->getItem(ST_LEFTHAND) == nullptr)
-								targetSection = _game->getRuleset()->getInventoryRule(ST_LEFTHAND);
+								toType = ST_LEFTHAND;
 							else if (inRule->getCategory() != IC_GROUND)
-								targetSection = _game->getRuleset()->getInventoryRule(ST_GROUND);
+								toType = ST_GROUND;
+							else
+								toType = ST_NONE;
 
-							if (targetSection != nullptr)
+							bool placed;
+							switch (toType)
 							{
-								bool placed;
-								if (targetSection == _game->getRuleset()->getInventoryRule(ST_GROUND))
+								case ST_NONE:
+									placed = false;
+									break;
+
+								case ST_GROUND:
 								{
+									const RuleInventory* const toSection (_game->getRuleset()->getInventoryRule(ST_GROUND));
 									if (_tuMode == false
-										|| _selUnit->spendTimeUnits(overItem->getInventorySection()->getCost(targetSection)) == true)
+										|| _selUnit->spendTimeUnits(overItem->getInventorySection()->getCost(toSection)) == true)
 									{
 										placed = true;
-										moveItem(overItem, targetSection);
+										moveItem(overItem, toSection);
 										arrangeGround();
 										drawItems();
 
@@ -565,15 +571,20 @@ void Inventory::mouseClick(Action* action, State* state)
 										placed = false;
 										_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
 									}
+									break;
 								}
-								else // from Ground
-									placed = fitItem(targetSection, overItem);
 
-								if (placed == true)
+								default: // from Ground
 								{
-									_overItem = nullptr; // remove item-info 'cause item is no longer under the cursor
-									mouseOver(action, state);
+									const RuleInventory* const toSection (_game->getRuleset()->getInventoryRule(toType));
+									placed = fitItem(toSection, overItem);
 								}
+							}
+
+							if (placed == true)
+							{
+								_overItem = nullptr; // remove item-info 'cause item is no longer under the cursor
+								mouseOver(action, state);
 							}
 						}
 						else // Pickup item.

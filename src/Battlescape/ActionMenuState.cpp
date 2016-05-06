@@ -312,7 +312,7 @@ void ActionMenuState::handle(Action* action)
 
 	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT
 		|| (action->getDetails()->type == SDL_KEYDOWN
-			&& (action->getDetails()->key.keysym.sym == Options::keyCancel
+			&& (   action->getDetails()->key.keysym.sym == Options::keyCancel
 				|| action->getDetails()->key.keysym.sym == Options::keyBattleUseLeftHand
 				|| action->getDetails()->key.keysym.sym == Options::keyBattleUseRightHand)))
 	{
@@ -436,11 +436,8 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 				break;
 
 			case BA_MELEE:
-				if (_game->getSavedGame()->getBattleSave()->getTileEngine()
-									->validMeleeRange(_action->actor) == false)
-				{
+				if (_game->getSavedGame()->getBattleSave()->getTileEngine()->validMeleeRange(_action->actor) == false)
 					_action->result = "STR_THERE_IS_NO_ONE_THERE";
-				}
 				else if (_action->TU > _action->actor->getTimeUnits())
 					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
 
@@ -457,7 +454,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 			case BA_PSICONFUSE:
 			case BA_PSICOURAGE:
 				if (_action->TU > _action->actor->getTimeUnits())
-					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+					_action->result = "STR_NOT_ENOUGH_TIME_UNITS"; // TODO: Can't see why it works for MindProbe but not here.
 				else
 					_action->targeting = true;
 
