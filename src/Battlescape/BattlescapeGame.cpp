@@ -320,8 +320,8 @@ void BattlescapeGame::statePushBack(BattleState* const battleState)
  */
 void BattlescapeGame::popState()
 {
-	Log(LOG_INFO) << "";
-	Log(LOG_INFO) << "BattlescapeGame::popState() qtyStates = " << (int)_battleStates.size();
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "BattlescapeGame::popState() qtyStates = " << (int)_battleStates.size();
 //	if (Options::traceAI)
 //		Log(LOG_INFO) << "BattlescapeGame::popState() "
 //					  << "id-" << (_tacAction.actor ? std::to_string(_tacAction.actor->getId()) : " Actor NONE")
@@ -336,7 +336,7 @@ void BattlescapeGame::popState()
 
 	if (_battleStates.empty() == false)
 	{
-		Log(LOG_INFO) << ". states NOT Empty";
+		//Log(LOG_INFO) << ". states NOT Empty";
 		const BattleAction action (_battleStates.front()->getAction());
 
 		bool actionFail;
@@ -346,7 +346,7 @@ void BattlescapeGame::popState()
 			&& action.actor->getFaction() == FACTION_PLAYER
 			&& _playerPanicHandled == true)
 		{
-			Log(LOG_INFO) << ". . actionFail";
+			//Log(LOG_INFO) << ". . actionFail";
 			actionFail = true;
 			_parentState->warning(action.result);
 
@@ -382,14 +382,14 @@ void BattlescapeGame::popState()
 
 		//Log(LOG_INFO) << ". move Front-state to _deletedStates.";
 		_deletedStates.push_back(_battleStates.front());
-		Log(LOG_INFO) << ". states.Popfront";
+		//Log(LOG_INFO) << ". states.Popfront";
 		_battleStates.pop_front();
 
 
 		if (action.actor != nullptr // handle the end of the acting BattleUnit's actions
 			&& noActionsPending(action.actor) == true)
 		{
-			Log(LOG_INFO) << ". noActionsPending for state actor";
+			//Log(LOG_INFO) << ". noActionsPending for state actor";
 			switch (action.actor->getFaction())
 			{
 				case FACTION_PLAYER:
@@ -412,7 +412,7 @@ void BattlescapeGame::popState()
 						if (action.targeting == true
 							&& _battleSave->getSelectedUnit() != nullptr)
 						{
-							Log(LOG_INFO) << ". . id-" << action.actor->getId() << " tu= " << action.actor->getTimeUnits();
+							//Log(LOG_INFO) << ". . id-" << action.actor->getId() << " tu= " << action.actor->getTimeUnits();
 							action.actor->spendTimeUnits(action.TU);
 							// kL_query: Does this happen **before** ReactionFire/getReactor()?
 							// no. not for shooting, but for throwing it does; actually no it doesn't.
