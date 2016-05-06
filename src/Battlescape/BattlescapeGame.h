@@ -284,6 +284,8 @@ private:
 	public:
 		static bool _debugPlay;
 
+		static const char* const PLAYER_ERROR[11u];
+
 
 		/// Creates the BattlescapeGame.
 		BattlescapeGame(

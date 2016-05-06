@@ -179,7 +179,7 @@ void ExecuteState::lstTargetPress(Action* action)
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		if (_action->TU > _action->actor->getTimeUnits())
-			_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+			_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 		else
 		{
 			BattleUnit* const targetUnit (_targetUnits[_lstTarget->getSelectedRow()]);

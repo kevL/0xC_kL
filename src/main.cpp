@@ -51,8 +51,8 @@ using namespace OpenXcom;
 Game* ptrG (nullptr);
 
 // If you can't tell what the main() is for you should have your programming
-// license revoked ... and be stripped naked, covered with cream, and tied down
-// in a room full of kittens. See "entry point".
+// license revoked ... and be stripped naked, slathered with ice-cream, and tied
+// down in the middle of a room full of kittens. See "entry point".
 int main(
 		int argc,
 		char* argv[])

@@ -360,13 +360,13 @@ void MedikitState::healClick(Action*)
 			}
 			else
 			{
-				_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+				_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 //				closeClick(nullptr);
 			}
 		}
 		else
 		{
-			_action->result = "STR_ACTION_NOT_ALLOWED_ALIEN";
+			_action->result = BattlescapeGame::PLAYER_ERROR[4u];
 //			closeClick(nullptr);
 		}
 	}
@@ -404,13 +404,13 @@ void MedikitState::stimClick(Action*)
 			}
 			else
 			{
-				_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+				_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 //				closeClick(nullptr);
 			}
 		}
 		else
 		{
-			_action->result = "STR_ACTION_NOT_ALLOWED_ALIEN";
+			_action->result = BattlescapeGame::PLAYER_ERROR[4u];
 //			closeClick(nullptr);
 		}
 	}
@@ -461,13 +461,13 @@ void MedikitState::painClick(Action*)
 			}
 			else
 			{
-				_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+				_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 //				closeClick(nullptr);
 			}
 		}
 		else
 		{
-			_action->result = "STR_ACTION_NOT_ALLOWED_ALIEN";
+			_action->result = BattlescapeGame::PLAYER_ERROR[4u];
 //			closeClick(nullptr);
 		}
 	}

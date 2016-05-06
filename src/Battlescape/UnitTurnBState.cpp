@@ -95,7 +95,7 @@ void UnitTurnBState::init()
 						soundId = ResourcePack::SLIDING_DOOR_OPEN;
 						break;
 					case DR_ERR_TU:
-						_action.result = "STR_NOT_ENOUGH_TIME_UNITS";
+						_action.result = BattlescapeGame::PLAYER_ERROR[0u];
 						soundId = -1;
 						break;
 					case DR_ERR_RESERVE:
@@ -213,7 +213,7 @@ void UnitTurnBState::think()
 	}
 	else
 	{
-		_action.result = "STR_NOT_ENOUGH_TIME_UNITS";
+		_action.result = BattlescapeGame::PLAYER_ERROR[0u];
 		_unit->setUnitStatus(STATUS_STANDING);
 		pop = true;
 	}

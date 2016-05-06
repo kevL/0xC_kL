@@ -74,7 +74,7 @@ namespace
  */
 struct HairXCOM1
 {
-	static const Uint8
+	static constexpr Uint8
 		Hair = 9u << 4u,
 		Face = 6u << 4u;
 
@@ -1130,7 +1130,7 @@ void XcomResourcePack::loadBattlescapeResources()
 		_surfaces[*i]->loadSpk(path);
 	}
 
-	if (Options::battleHairBleach == true) // "fix" of color-index in original soldier-sprites
+	if (Options::battleHairBleach == true) // "fix" of color-index of original soldier-sprites
 	{
 		const std::string armorSheet ("XCOM_1.PCK"); // personal armor
 

@@ -358,7 +358,7 @@ bool UnitWalkBState::doStatusStand() // private.
 		else
 		{
 			//Log(LOG_INFO) << ". . don't stand: not enough TU";
-			_action.result = "STR_NOT_ENOUGH_TIME_UNITS"; // NOTE: redundant w/ kneel() error messages ...
+			_action.result = BattlescapeGame::PLAYER_ERROR[0u]; // NOTE: redundant w/ kneel() error messages ...
 
 			abortState(false);
 			return false;
@@ -495,7 +495,7 @@ bool UnitWalkBState::doStatusStand() // private.
 			&& tuTest < FAIL)
 		{
 			//Log(LOG_INFO) << ". send warning: not enough TU";
-			_action.result = "STR_NOT_ENOUGH_TIME_UNITS";
+			_action.result = BattlescapeGame::PLAYER_ERROR[0u];
 		}
 		abortState();
 		return false;
@@ -507,7 +507,7 @@ bool UnitWalkBState::doStatusStand() // private.
 		if (_unit->getFaction() == FACTION_PLAYER
 			&& _parent->playerPanicHandled() == true)
 		{
-			_action.result = "STR_NOT_ENOUGH_ENERGY";
+			_action.result = BattlescapeGame::PLAYER_ERROR[1u];
 		}
 		abortState();
 		return false;

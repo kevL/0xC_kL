@@ -81,7 +81,7 @@ private:
 
 
 		public:
-			static constexpr size_t // TODO: relabel these identifiers w/ appropriate prefixes, eg. sfx_GRAVLIFT, gfx_SMOKE ... See ResourcePack.cpp
+			static constexpr size_t // TODO: relabel these identifiers w/ appropriate prefixes, eg. sfx_GRAVLIFT, gfx_SMOKE, etc.
 				BUTTON_PRESS		=   0u,
 				WINDOW_POPUP[3u]	=  {1u,2u,3u},
 

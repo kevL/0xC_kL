@@ -140,7 +140,7 @@ void ProjectileFlyBState::init()
 	}
 	else // no TU.
 	{
-		_action.result = "STR_NOT_ENOUGH_TIME_UNITS";
+		_action.result = BattlescapeGame::PLAYER_ERROR[0u];
 		popThis = true;
 	}
 
@@ -186,7 +186,7 @@ void ProjectileFlyBState::init()
 			if (_load == nullptr)
 			{
 				//Log(LOG_INFO) << ". . . no ammo, EXIT";
-				_action.result = "STR_NO_AMMUNITION_LOADED";
+				_action.result = BattlescapeGame::PLAYER_ERROR[2u];
 				popThis = true;
 			}
 //			else if (_load->getAmmoQuantity() == 0)
@@ -200,7 +200,7 @@ void ProjectileFlyBState::init()
 									_action.posTarget) > _action.weapon->getRules()->getMaxRange())
 			{
 				//Log(LOG_INFO) << ". . . out of range, EXIT";
-				_action.result = "STR_OUT_OF_RANGE";
+				_action.result = BattlescapeGame::PLAYER_ERROR[5u];
 				popThis = true;
 			}
 			break;
@@ -224,7 +224,7 @@ void ProjectileFlyBState::init()
 			else
 			{
 				//Log(LOG_INFO) << ". . . not valid throw range, EXIT";
-				_action.result = "STR_OUT_OF_RANGE";
+				_action.result = BattlescapeGame::PLAYER_ERROR[5u];
 				popThis = true;
 			}
 			break;
@@ -575,7 +575,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 			delete prj;
 			_parent->getMap()->setProjectile();
 
-			_action.result = "STR_NO_LINE_OF_FIRE";
+			_action.result = BattlescapeGame::PLAYER_ERROR[6u];
 			_action.TU = 0;
 			_unit->setUnitStatus(STATUS_STANDING);
 
@@ -653,7 +653,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 			delete prj;
 			_parent->getMap()->setProjectile();
 
-			_action.result = "STR_NO_LINE_OF_FIRE";
+			_action.result = BattlescapeGame::PLAYER_ERROR[6u];
 			_action.TU = 0;
 			_unit->setUnitStatus(STATUS_STANDING);
 

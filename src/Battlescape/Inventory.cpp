@@ -569,7 +569,7 @@ void Inventory::mouseClick(Action* action, State* state)
 									else
 									{
 										placed = false;
-										_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+										_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[0u]));
 									}
 									break;
 								}
@@ -662,7 +662,7 @@ void Inventory::mouseClick(Action* action, State* state)
 								soundId = ResourcePack::ITEM_DROP;
 							}
 							else
-								_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+								_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[0u]));
 						}
 						else if (stack == true)
 						{
@@ -688,14 +688,14 @@ void Inventory::mouseClick(Action* action, State* state)
 								soundId = ResourcePack::ITEM_DROP;
 							}
 							else
-								_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+								_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[0u]));
 						}
 					}
 					else if (overItem->getRules()->getCompatibleAmmo()->empty() == false // Put item in weapon.
 						&& (_tuMode == false || overItem->getInventorySection()->getCategory() == IC_HAND))
 					{
 						if (overItem->getAmmoItem() != nullptr)
-							_warning->showMessage(_game->getLanguage()->getString("STR_WEAPON_IS_ALREADY_LOADED"));
+							_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[8u]));
 						else
 						{
 							bool fail (true);
@@ -712,14 +712,14 @@ void Inventory::mouseClick(Action* action, State* state)
 							}
 
 							if (fail == true)
-								_warning->showMessage(_game->getLanguage()->getString("STR_WRONG_AMMUNITION_FOR_THIS_WEAPON"));
+								_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[9u]));
 							else if (_tuMode == true
 								&& _selUnit->getItem(ST_RIGHTHAND) != nullptr
 								&& _selUnit->getItem(ST_RIGHTHAND) != _selItem
 								&& _selUnit->getItem(ST_LEFTHAND) != nullptr
 								&& _selUnit->getItem(ST_LEFTHAND) != _selItem)
 							{
-								_warning->showMessage(_game->getLanguage()->getString("STR_BOTH_HANDS_MUST_BE_EMPTY")); // TODO: "one hand must be empty"
+								_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[10u])); // TODO: "one hand must be empty"
 							}
 							else
 							{
@@ -769,7 +769,7 @@ void Inventory::mouseClick(Action* action, State* state)
 									soundId = ResourcePack::ITEM_RELOAD;
 								}
 								else
-									_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+									_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[0u]));
 							}
 						}
 					}
@@ -807,7 +807,7 @@ void Inventory::mouseClick(Action* action, State* state)
 								soundId = ResourcePack::ITEM_DROP;
 							}
 							else
-								_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+								_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[0u]));
 						}
 					}
 				}
@@ -1058,7 +1058,7 @@ bool Inventory::fitItem( // private.
 					}
 					else
 					{
-						_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+						_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[0u]));
 						return false;
 					}
 				}
@@ -1340,7 +1340,7 @@ bool Inventory::unload()
 	if (load == nullptr)
 	{
 		if (_selItem->getRules()->getCompatibleAmmo()->empty() == false)
-			_warning->showMessage(_game->getLanguage()->getString("STR_NO_AMMUNITION_LOADED"));
+			_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[2u]));
 
 		return false;
 	}
@@ -1354,7 +1354,7 @@ bool Inventory::unload()
 			&& (*i)->getInventorySection() != nullptr
 			&& (*i)->getInventorySection()->getCategory() == IC_HAND)
 		{
-			_warning->showMessage(_game->getLanguage()->getString("STR_BOTH_HANDS_MUST_BE_EMPTY"));
+			_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[10u]));
 			return false;
 		}
 	}
@@ -1362,7 +1362,7 @@ bool Inventory::unload()
 	if (_tuMode == true
 		&& _selUnit->spendTimeUnits(_selItem->getRules()->getUnloadTu()) == false)
 	{
-		_warning->showMessage(_game->getLanguage()->getString("STR_NOT_ENOUGH_TIME_UNITS"));
+		_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[0u]));
 		return false;
 	}
 

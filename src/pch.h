@@ -18,7 +18,7 @@
 //#	define _USE_MATH_DEFINES
 //#endif
 // NOTE: Define _USE_MATH_DEFINES in the IDE's pre-processor def'ns. and
-// Makefile's CXXFLAGS variables and be done w/ it.
+// Makefile's CXXFLAGS variable and be done w/ it.
 
 #include <algorithm>	// min/max
 #include <cassert>		// asserts

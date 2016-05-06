@@ -345,7 +345,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 	{
 		const RuleItem* const itRule (_action->weapon->getRules());
 
-		_action->TU = _menuSelect[btnId]->getMenuActionTu();
+		_action->TU   = _menuSelect[btnId]->getMenuActionTu();
 		_action->type = _menuSelect[btnId]->getMenuActionType();
 
 		switch (_action->type)
@@ -385,7 +385,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 				if (_action->actor->spendTimeUnits(_action->TU) == true)
 					_action->actor->setActiveHand(_action->actor->getActiveHand());
 				else
-					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+					_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 
 				_game->popState();
 				break;
@@ -406,14 +406,14 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 						}
 						else
 						{
-							_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+							_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 							_game->popState();
 						}
 						break;
 
 					case BT_MINDPROBE:
 						if (_action->TU > _action->actor->getTimeUnits())
-							_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+							_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 						else
 							_action->targeting = true;
 
@@ -426,9 +426,9 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 //			case BA_AIMEDSHOT:	// But I want to see the targeting percentages etc.
 			case BA_LAUNCH:
 				if (_action->weapon->getAmmoItem() == nullptr)
-					_action->result = "STR_NO_AMMUNITION_LOADED";
+					_action->result = BattlescapeGame::PLAYER_ERROR[2u];
 				else if (_action->TU > _action->actor->getTimeUnits())
-					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+					_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 				else
 					_action->targeting = true;
 
@@ -437,9 +437,9 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 
 			case BA_MELEE:
 				if (_game->getSavedGame()->getBattleSave()->getTileEngine()->validMeleeRange(_action->actor) == false)
-					_action->result = "STR_THERE_IS_NO_ONE_THERE";
+					_action->result = BattlescapeGame::PLAYER_ERROR[7u];
 				else if (_action->TU > _action->actor->getTimeUnits())
-					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+					_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 
 				_game->popState();
 				break;
@@ -454,7 +454,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 			case BA_PSICONFUSE:
 			case BA_PSICOURAGE:
 				if (_action->TU > _action->actor->getTimeUnits())
-					_action->result = "STR_NOT_ENOUGH_TIME_UNITS";
+					_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 				else
 					_action->targeting = true;
 

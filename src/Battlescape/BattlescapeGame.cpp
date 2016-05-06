@@ -75,6 +75,23 @@ namespace OpenXcom
 
 bool BattlescapeGame::_debugPlay; // static.
 
+const char* const BattlescapeGame::PLAYER_ERROR[11u] // static.
+{
+	"STR_NOT_ENOUGH_TIME_UNITS",			//  0
+	"STR_NOT_ENOUGH_ENERGY",				//  1
+	"STR_NO_AMMUNITION_LOADED",				//  2
+	"STR_ACTION_NOT_ALLOWED_FLOAT",			//  3
+	"STR_ACTION_NOT_ALLOWED_ALIEN",			//  4
+	"STR_OUT_OF_RANGE",						//  5
+	"STR_NO_LINE_OF_FIRE",					//  6
+	"STR_THERE_IS_NO_ONE_THERE",			//  7
+	"STR_WEAPON_IS_ALREADY_LOADED",			//  8
+	"STR_WRONG_AMMUNITION_FOR_THIS_WEAPON",	//  9
+	"STR_BOTH_HANDS_MUST_BE_EMPTY"			// 10
+//	"STR_TUS_RESERVED"
+//	"STR_NO_ROUNDS_LEFT"
+};
+
 
 /**
  * Initializes all the elements in the Battlescape screen.
@@ -351,9 +368,9 @@ void BattlescapeGame::popState()
 			_parentState->warning(action.result);
 
 			// remove action.Cursor if error.Message (eg, not enough TUs)
-			if (   action.result.compare("STR_NOT_ENOUGH_TIME_UNITS") == 0
-				|| action.result.compare("STR_NO_AMMUNITION_LOADED") == 0
-				|| action.result.compare("STR_NO_ROUNDS_LEFT") == 0)
+			if (   action.result.compare(BattlescapeGame::PLAYER_ERROR[0u]) == 0
+				|| action.result.compare(BattlescapeGame::PLAYER_ERROR[2u]) == 0)
+//				|| action.result.compare("STR_NO_ROUNDS_LEFT") == 0) // <- removed from ProjectileFlyBState, clips are deleted at 0-rounds.
 			{
 				switch (action.type)
 				{
@@ -1013,7 +1030,7 @@ void BattlescapeGame::handleNonTargetAction()
 			case BA_DEFUSE:
 				if (_tacAction.actor->spendTimeUnits(_tacAction.TU) == false)
 				{
-					_tacAction.result = "STR_NOT_ENOUGH_TIME_UNITS";
+					_tacAction.result = BattlescapeGame::PLAYER_ERROR[0u];
 					showWarning = WARN;
 				}
 				else
@@ -1059,7 +1076,7 @@ void BattlescapeGame::handleNonTargetAction()
 					showWarning = WARN;
 				else if (_tacAction.actor->spendTimeUnits(_tacAction.TU) == false)
 				{
-					_tacAction.result = "STR_NOT_ENOUGH_TIME_UNITS";
+					_tacAction.result = BattlescapeGame::PLAYER_ERROR[0u];
 					showWarning = WARN;
 				}
 				else
@@ -1307,13 +1324,13 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 						_parentState->warning("STR_NOT_ENOUGH_ENERGY");
 				}
 				else
-					_parentState->warning("STR_NOT_ENOUGH_TIME_UNITS");
+					_parentState->warning(BattlescapeGame::PLAYER_ERROR[0u]);
 //				}
 //				else // note that checkReservedTu() sends its own warnings ....
 //					_parentState->warning("STR_TIME_UNITS_RESERVED");
 			}
 			else
-				_parentState->warning("STR_ACTION_NOT_ALLOWED_FLOAT");
+				_parentState->warning(BattlescapeGame::PLAYER_ERROR[3u]);
 		}
 		else //if (unit->getGeoscapeSoldier() != nullptr) // MC'd xCom agent, trying to stand & walk by AI.
 		{
@@ -1335,7 +1352,7 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 		}
 	}
 	else
-		_parentState->warning("STR_ACTION_NOT_ALLOWED_ALIEN"); // TODO: change to "not a Soldier, can't kneel".
+		_parentState->warning(BattlescapeGame::PLAYER_ERROR[4u]); // TODO: change to "not a Soldier, can't kneel".
 
 	return false;
 }
@@ -2487,8 +2504,8 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 										const Position
 											originVoxel (_battleSave->getTileEngine()->getOriginVoxel(action)),
 											targetVoxel (Position::toVoxelSpaceCentered(
-																					action.posTarget,
-																					2 - _battleSave->getTile(action.posTarget)->getTerrainLevel())); // LoFT of floor is typically 2 voxels thick.
+																					action.posTarget, // LoFT of floor is typically 2 voxels thick.
+																					2 - _battleSave->getTile(action.posTarget)->getTerrainLevel()));
 
 										if (_battleSave->getTileEngine()->validateThrow(
 																					action,
@@ -2643,14 +2660,14 @@ void BattlescapeGame::primaryAction(const Position& pos)
 								else
 								{
 									cancelTacticalAction();
-									_parentState->warning("STR_NOT_ENOUGH_TIME_UNITS");
+									_parentState->warning(BattlescapeGame::PLAYER_ERROR[0u]);
 								}
 							}
 							else
-								_parentState->warning("STR_OUT_OF_RANGE");
+								_parentState->warning(BattlescapeGame::PLAYER_ERROR[5u]);
 						}
 						else
-							_parentState->warning("STR_NO_LINE_OF_FIRE");
+							_parentState->warning(BattlescapeGame::PLAYER_ERROR[6u]);
 					}
 				}
 				break;
@@ -2709,14 +2726,14 @@ void BattlescapeGame::primaryAction(const Position& pos)
 							else
 							{
 								cancelTacticalAction();
-								_parentState->warning("STR_NOT_ENOUGH_TIME_UNITS");
+								_parentState->warning(BattlescapeGame::PLAYER_ERROR[0u]);
 							}
 						}
 						else
-							_parentState->warning("STR_OUT_OF_RANGE");
+							_parentState->warning(BattlescapeGame::PLAYER_ERROR[5u]);
 					}
 					else
-						_parentState->warning("STR_NO_LINE_OF_FIRE");
+						_parentState->warning(BattlescapeGame::PLAYER_ERROR[6u]);
 
 
 					if (aLienPsi == true)
