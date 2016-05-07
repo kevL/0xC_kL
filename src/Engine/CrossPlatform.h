@@ -20,9 +20,8 @@
 #ifndef OPENXCOM_CROSSPLATFORM_H
 #define OPENXCOM_CROSSPLATFORM_H
 
-#include <string>
-//#include <utility>
-#include <vector>
+#include <string> // std::string, std::wstring
+#include <vector> // std::vector
 
 #include <SDL_events.h>
 
@@ -108,6 +107,8 @@ time_t getDateModified(const std::string& path);
 std::pair<std::wstring, std::wstring> timeToString(time_t timeIn);
 /// Converts the time into a string.
 std::string timeString();
+/// Gets the current/local time as a string.
+std::string now();
 
 /// Compares two strings by natural order.
 bool naturalCompare(

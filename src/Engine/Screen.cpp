@@ -19,13 +19,12 @@
 
 #include "Screen.h"
 
-//#include <algorithm>
-//#include <cmath>
-#include <cstring>
-//#include <iomanip>
-//#include <sstream>
-//#include <limits.h>
-//#include <SDL.h>
+//#include <algorithm>	// std::max()
+//#include <cmath>		// std::floor()
+#include <cstring>		// std::memmove(), std::memset()
+//#include <iomanip>	// std::setfill(), std::setw()
+//#include <ios>		// std::dec()
+//#include <sstream>	// std::ostringstream
 
 #include "../lodepng.h"
 
@@ -180,7 +179,7 @@ void Screen::handle(Action* action)
 			case SDLK_F8: // && Options::debug == true
 #ifdef _WIN32
 				MessageBeep(MB_OK);
-#endif // _WIN32
+#endif
 				switch (Timer::coreInterval)
 				{
 					case 1: Timer::coreInterval =  6u; break;
@@ -203,7 +202,7 @@ void Screen::handle(Action* action)
 				{
 #ifdef _WIN32
 					MessageBeep(MB_ICONASTERISK); // start ->
-#endif // _WIN32
+#endif
 					std::ostringstream oststr;
 /*					int i = 0;
 					do {
@@ -217,7 +216,7 @@ void Screen::handle(Action* action)
 					screenshot(oststr.str());
 #ifdef _WIN32
 					MessageBeep(MB_OK); // end.
-#endif // _WIN32
+#endif
 /*					std::ostringstream oststr;
 					int i = 0;
 					do
@@ -316,7 +315,7 @@ void Screen::resetDisplay(bool resetVideo)
 
 #ifdef __linux__
 	Uint32 oldFlags (_flags);
-#endif // __linux__
+#endif
 
 	setVideoFlags();
 
@@ -359,7 +358,7 @@ void Screen::resetDisplay(bool resetVideo)
 			SDL_WM_SetCaption(title.c_str(), 0);
 			SDL_SetCursor(SDL_CreateCursor(&cursor, &cursor, 1,1,0,0));
 		}
-#endif // __linux__
+#endif
 
 		Log(LOG_INFO) << "Attempting to set display to " << width << "x" << height << "x" << _bpp << " ...";
 		_screen = SDL_SetVideoMode(
@@ -604,7 +603,7 @@ double Screen::getScaleY() const
  */
 int Screen::getDX() const
 {
-	return (_baseWidth - ORIGINAL_WIDTH) / 2;
+	return (_baseWidth - ORIGINAL_WIDTH) >> 1u;
 }
 
 /**
@@ -613,7 +612,7 @@ int Screen::getDX() const
  */
 int Screen::getDY() const
 {
-	return (_baseHeight - ORIGINAL_HEIGHT) / 2;
+	return (_baseHeight - ORIGINAL_HEIGHT) >> 1u;
 }
 
 /**
@@ -670,7 +669,7 @@ void Screen::screenshot(const std::string& file) const
 					static_cast<Uint8*>(screenshot->pixels) + y * screenshot->pitch);
 		}
 		glErrorCheck();
-#endif // !__NO_OPENGL
+#endif
 	}
 	else
 		SDL_BlitSurface(
@@ -722,9 +721,9 @@ bool Screen::isOpenGLEnabled() // static.
 {
 #ifdef __NO_OPENGL
 	return false;
-#else // __NO_OPENGL
+#else
 	return Options::useOpenGL;
-#endif // __NO_OPENGL
+#endif
 }
 
 /**
@@ -792,12 +791,12 @@ void Screen::updateScale( // static.
 					 screenWidth);
 	height = std::max(height,
 					  screenHeight);
-#else // _DEBUG
+#else
 	width = std::max(width,
 					 Screen::ORIGINAL_WIDTH);
 	height = std::max(height,
 					  Screen::ORIGINAL_HEIGHT);
-#endif // _DEBUG
+#endif
 
 	if (change == true
 		&& (   Options::baseXResolution != width

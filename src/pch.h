@@ -61,7 +61,7 @@
 
 #include "lodepng.h"
 
-/*
+
 #ifdef _WIN32
 #	ifndef NOMINMAX
 #		define NOMINMAX
@@ -72,7 +72,7 @@
 #	endif
 
 #	include <windows.h>
-#endif */
+#endif
 
 
 
@@ -123,7 +123,7 @@
 //#include <wchar.h>
 */
 
-// see also: Engine/CrossPlatform.cpp & Engine/Language.cpp & Engine/Logger.h
+// see also: Engine/CrossPlatform.cpp & Engine/Language.cpp
 /*
 #ifdef _WIN32
 #	ifndef NOMINMAX

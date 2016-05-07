@@ -17,6 +17,18 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef _WIN32 // see also: pch.h ... & Engine/Language.cpp
+#	ifndef NOMINMAX
+#		define NOMINMAX
+#	endif
+
+#	ifndef WIN32_LEAN_AND_MEAN
+#		define WIN32_LEAN_AND_MEAN
+#	endif
+
+#	include <windows.h>
+#endif
+
 #include "SaveGameState.h"
 
 //#include <sstream>

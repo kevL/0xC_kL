@@ -26,14 +26,7 @@
 //#include <set>		// std::set
 //#include <sstream>	// std::wostringstream
 
-#include "CrossPlatform.h"
-#include "LanguagePlurality.h"
-#include "Logger.h"
-#include "Options.h"
-
-#include "../Ruleset/ExtraStrings.h"
-
-#ifdef _WIN32 // see also: pch.h ... & Engine/CrossPlatform.cpp & Engine/Logger.h
+#ifdef _WIN32 // see also: pch.h ... & Engine/CrossPlatform.cpp
 #	ifndef NOMINMAX
 #		define NOMINMAX
 #	endif
@@ -44,6 +37,13 @@
 
 #	include <windows.h>
 #endif
+
+#include "CrossPlatform.h"
+#include "LanguagePlurality.h"
+#include "Logger.h"
+#include "Options.h"
+
+#include "../Ruleset/ExtraStrings.h"
 
 
 namespace OpenXcom
@@ -360,20 +360,20 @@ std::wstring Language::cpToWstr(const std::string& src) // static.
 		return L"";
 
 #ifdef _WIN32
-	int bytes = MultiByteToWideChar(
+	int bytes (MultiByteToWideChar(
 								CP_ACP,
 								0,
-								&src[0],
+								&src[0u],
 								static_cast<int>(src.size()),
 								nullptr,
-								0);
+								0));
 	std::wstring wst (bytes, 0);
 	MultiByteToWideChar(
 					CP_ACP,
 					0,
-					&src[0],
+					&src[0u],
 					static_cast<int>(src.size()),
-					&wst[0],
+					&wst[0u],
 					bytes);
 
 	return wst;
@@ -593,7 +593,7 @@ std::string Language::getId() const
 }
 
 /**
- * Returns the Language's name in its native language.
+ * Returns this Language's name in its native language.
  * @return, translation as a wide-string
  */
 std::wstring Language::getName() const
@@ -692,9 +692,9 @@ LocalizedText Language::getString(
  * Returns the LocalizedText with the specified ID in the proper form for the
  * gender.
  * @note If not found return the ID itself.
- * @param id		- reference ID of the string
+ * @param id		- reference to the string-ID
  * @param gender	- current soldier gender
- * @return, reference to LocalizedText (widestring) of the requested ID
+ * @return, reference to LocalizedText (widestring)
  */
 const LocalizedText& Language::getString(
 		const std::string& id,
@@ -749,7 +749,7 @@ void Language::toHtml(const std::string& file) const
 
 /**
  * Returns the direction to use for rendering text in this Language.
- * @return, text direction
+ * @return, text-direction
  */
 TextDirection Language::getTextDirection() const
 {
@@ -758,7 +758,7 @@ TextDirection Language::getTextDirection() const
 
 /**
  * Returns the wrapping rules to use for rendering text in this Language.
- * @return, text wrapping
+ * @return, text-wrapping
  */
 TextWrapping Language::getTextWrapping() const
 {

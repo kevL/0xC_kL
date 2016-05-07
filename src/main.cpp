@@ -19,8 +19,8 @@
 
 //#define SDL_MAIN_HANDLED (valid for SDL2 only)
 
-#include <exception>
-#include <sstream>
+#include <exception>	// std::exception
+#include <sstream>		// std::ostringstream
 
 #include "version.h"
 

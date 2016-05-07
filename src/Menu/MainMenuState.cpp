@@ -146,7 +146,7 @@ MainMenuState::MainMenuState()
 	_txtTitle->setText(title.str());
 
 	_txtBuild->setAlign(ALIGN_CENTER);
-	_txtBuild->setText(Language::cpToWstr(Version::getBuildDate()));
+	_txtBuild->setText(Language::fsToWstr(Version::getBuildDate()));
 
 
 	_game->getResourcePack()->playMusic(

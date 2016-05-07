@@ -20,39 +20,16 @@
 #ifndef OPENXCOM_LOGGER_H
 #define OPENXCOM_LOGGER_H
 
-#include <sstream>
-//#include <string>
-//#include <stdio.h>
+//#include <cstdio>		// std::fprintf(), std::fflush(), std::fopen(), std::fclose()
+//#include <ostream>	// std::endl
+//#include <string>		// std::string
+#include <sstream>		// std::ostringstream
 
-#ifdef _WIN32 // see also: pch.h ... & Engine/Language.cpp & Engine/CrossPlatform.cpp
-#	ifndef NOMINMAX
-#		define NOMINMAX
-#	endif
-
-#	ifndef WIN32_LEAN_AND_MEAN
-#		define WIN32_LEAN_AND_MEAN
-#	endif
-
-#	include <windows.h>
-
-	// the following macros interfere with std::max and std::min as used throughout ...
-	// Should be taken care of by NOMINMAX above^
-//	#undef min
-//	#undef max
-
-#	ifndef LOCALE_INVARIANT
-#		define LOCALE_INVARIANT 0x007f
-#	endif
-#else
-#	include <time.h>
-#endif
+#include "CrossPlatform.h"
 
 
 namespace OpenXcom
 {
-
-///
-inline std::string now();
 
 /**
  * Defines the various severity-levels of information logged by the game.
@@ -113,7 +90,7 @@ inline Logger::Logger()
 {}
 
 /**
- *
+ * Converts the SeverityLevel-type to a string.
  * @param level - the severity-level (default LOG_INFO)
  */
 inline std::ostringstream& Logger::get(SeverityLevel level)
@@ -123,7 +100,7 @@ inline std::ostringstream& Logger::get(SeverityLevel level)
 }
 
 /**
- *
+ * dTor.
  */
 inline Logger::~Logger() // virtual. NOTE: This need not be virtual.
 {
@@ -142,7 +119,7 @@ inline Logger::~Logger() // virtual. NOTE: This need not be virtual.
 	}
 
 	std::ostringstream oststr;
-	oststr << "[" << now() << "]" << "\t" << _oststr.str();
+	oststr << "[" << CrossPlatform::now() << "]" << "\t" << _oststr.str();
 	FILE* const file (std::fopen(logFile().c_str(), "a"));
 	std::fprintf(
 				file,
@@ -154,14 +131,14 @@ inline Logger::~Logger() // virtual. NOTE: This need not be virtual.
 }
 
 /**
- *
+ * Gets/Sets the maximum SeverityLevel.
+ * @return, reference to the current maximum SeverityLevel
  */
 inline SeverityLevel& Logger::reportingLevel() // static.
 {
 	static SeverityLevel reportingLevel (LOG_DEBUG);
 	return reportingLevel;
 }
-
 
 /**
  * Returns the log-file string.
@@ -194,66 +171,6 @@ inline std::string Logger::toString(SeverityLevel level) // static.
 
 // macro: Log
 #define Log(level) if (level > Logger::reportingLevel()) ; else Logger().get(level)
-
-/**
- * Outputs the current date and time.
- */
-inline std::string now()
-{
-	const int
-		MAX_LEN (25),
-		MAX_RESULT (80);
-#ifdef _WIN32
-	char
-		d[MAX_LEN],
-		t[MAX_LEN];
-
-	if (GetDateFormatA(
-					LOCALE_INVARIANT,
-					0, nullptr,
-					"dd'-'MM'-'yyyy",
-					d,
-					MAX_LEN) == 0)
-	{
-		return "Error in Now() [1]";
-	}
-
-	if (GetTimeFormatA(
-					LOCALE_INVARIANT,
-					TIME_FORCE24HOURFORMAT,
-					nullptr,
-					"HH':'mm':'ss",
-					t,
-					MAX_LEN) == 0)
-	{
-		return "Error in Now() [2]";
-	}
-
-	char result[MAX_RESULT] {0};
-	std::sprintf(
-				result,
-				"%s %s",
-				d, t);
-#else // _WIN32
-	char buffer[MAX_LEN];
-	time_t rawtime;
-	struct tm* timeinfo;
-	std::time(&rawtime);
-	timeinfo = std::localtime(&rawtime);
-	std::strftime(
-				buffer,
-				MAX_LEN,
-				"%d-%m-%Y %H:%M:%S",
-				timeinfo);
-	char result[MAX_RESULT] = {0};
-	std::sprintf(
-				result,
-				"%s",
-				buffer);
-#endif // _WIN32
-
-	return result;
-}
 
 }
 

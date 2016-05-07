@@ -1404,7 +1404,7 @@ void TextList::mouseOver(Action* action, State* state)
 																// due to the quirky way it adds titleRows, then lists soldierNames & Awards
 																// and finally fills the titleRow w/ the relevant awardName; the last titleRow
 																// is added, but there are no soldiers nor awards for it.
-			//Log(LOG_INFO) << ". text at [" << _selRow << "] = " << Language::wstrToCp(_texts[_selRow][0]->getText());
+			//Log(LOG_INFO) << ". text at [" << _selRow << "] = " << Language::wstrToFs(_texts[_selRow][0]->getText());
 			const Text* const selText (_texts[_rows[_selRow]].front());
 			int y (getY() + selText->getY());
 			h = selText->getHeight() + _font->getSpacing();

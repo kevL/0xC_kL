@@ -4832,7 +4832,7 @@ void BattlescapeState::saveVoxelView()
 #ifdef _WIN32
 	else
 	{
-		std::wstring wst (Language::cpToWstr("\"C:\\Program Files\\IrfanView\\i_view32.exe\" \"" + oststr.str() + "\""));
+		std::wstring wst (Language::fsToWstr("\"C:\\Program Files\\IrfanView\\i_view32.exe\" \"" + oststr.str() + "\""));
 
 		STARTUPINFO si;
 		ZeroMemory(&si, sizeof(si));

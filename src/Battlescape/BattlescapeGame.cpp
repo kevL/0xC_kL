@@ -784,7 +784,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 								->play(-1, getMap()->getSoundAngle(unit->getPosition()));
 	}
 
-	std::wstring wst (Language::cpToWstr(BattleAIState::debugAiMode(unit->getAIState()->getAIMode())));
+	std::wstring wst (Language::fsToWstr(BattleAIState::debugAiMode(unit->getAIState()->getAIMode())));
 	_parentState->printDebug(wst + L"> " + Text::intWide(unit->getId()));
 	if (debug) Log(LOG_INFO)
 			<< "\n"

@@ -21,6 +21,7 @@
 #define OPENXCOM__SAVEGAMESTATE
 
 //#include <string>
+
 //#include <SDL.h>
 
 #include "OptionsBaseState.h"

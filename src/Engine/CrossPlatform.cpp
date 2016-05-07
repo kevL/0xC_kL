@@ -19,14 +19,20 @@
 
 #include "CrossPlatform.h"
 
-#include <algorithm>
-#include <ctime>
-#include <set>
-//#include <fstream>
-//#include <locale>
-#include <sstream>
-//#include <stdint.h>
-#include <sys/stat.h>
+#include <algorithm>	// std::replace(), std::sort(), std::transform()
+#include <ctime>		// std::localtime(), std::time(), std::strftime(), std::wcsftime(), std::time_t
+//#include <fstream>	// std::ifstream, std::ofstream, [std::ifstream::failbit, std::ifstream::badbit]
+//#include <ios>		// std::fstream::failure, std::ios::binary
+//#include <iostream>	// std::cerr()
+//#include <iterator>	// std::string::iterator
+//#include <locale>		// std::locale()
+//#include <ostream>	// std::endl
+#include <set>			// std::set
+#include <sstream>		// std::ostringstream
+//#include <stdexcept>	// std::runtime_error
+//#include <utility>	// std::pair, std::make_pair()
+
+#include <sys/stat.h>	// stat()
 
 #include <SDL_image.h>
 #include <SDL_syswm.h>
@@ -38,7 +44,11 @@
 #include "Logger.h"
 #include "Options.h"
 
-#ifdef _WIN32 // see also: pch.h ... & Engine/Language.cpp & Engine/Logger.h
+#ifdef _WIN32 // see also: pch.h ... & Engine/Language.cpp
+#	ifdef _MSC_VER
+#		define _CRT_SECURE_NO_WARNINGS
+#	endif
+
 #	ifndef NOMINMAX
 #		define NOMINMAX
 #	endif
@@ -47,10 +57,8 @@
 #		define WIN32_LEAN_AND_MEAN
 #	endif
 
-//#	include <direct.h>
 #	include <shlobj.h>
 #	include <shlwapi.h>
-//#	include <windows.h>
 
 #	ifndef SHGFP_TYPE_CURRENT
 #		define SHGFP_TYPE_CURRENT 0
@@ -62,9 +70,6 @@
 #		pragma comment(lib, "shlwapi.lib")
 #	endif
 #else
-//#	include "Language.h"
-//#	include <iostream>
-//#	include <SDL_image.h>
 #	include <cstdio>
 #	include <cstdlib>
 #	include <cstring>
@@ -74,9 +79,6 @@
 #	include <sys/param.h>
 #	include <sys/types.h>
 #endif
-
-//#include <SDL.h>
-//#include <SDL_syswm.h>
 
 
 namespace OpenXcom
@@ -707,8 +709,8 @@ bool fileExists(const std::string& path)
 
 /**
  * Removes a file from the specified path.
- * @param path Full path to file.
- * @return True if the operation succeeded, False otherwise.
+ * @param path - reference to a file-path
+ * @return, true if the operation succeeded
  */
 bool deleteFile(const std::string& path)
 {
@@ -747,15 +749,15 @@ std::string baseFilename(
 
 /**
  * Replaces invalid file-system characters with an underscore "_".
- * @param file - reference to the original filename
+ * @param file - reference to a filename
  * @return, filename without invalid characters
  */
 std::string sanitizeFilename(const std::string& file)
 {
-	std::string newFile (file);
+	std::string fileOut (file);
 	for (std::string::iterator
-			i = newFile.begin();
-			i != newFile.end();
+			i = fileOut.begin();
+			i != fileOut.end();
 			++i)
 	{
 		if (   *i == '<'
@@ -769,12 +771,12 @@ std::string sanitizeFilename(const std::string& file)
 			*i = '_';
 		}
 	}
-	return newFile;
+	return fileOut;
 }
 
 /**
  * Removes the extension from a filename.
- * @param file - original filename
+ * @param file - reference to a filename
  * @return, filename without the extension
  */
 std::string noExt(const std::string& file)
@@ -873,7 +875,7 @@ bool isQuitShortcut(const SDL_Event& ev)
  * @param path - full path to file
  * @return, the timestamp in integral format
  */
-time_t getDateModified(const std::string& path)
+std::time_t getDateModified(const std::string& path)
 {
 /*
 #ifdef _WIN32
@@ -897,11 +899,11 @@ time_t getDateModified(const std::string& path)
 }
 
 /**
- * Converts a date/time into a human-readable string using the ISO 8601 standard.
+ * Converts a date/time into a human-readable string using the ISO-8601 standard.
  * @param timeIn - value in timestamp format
  * @return, string pair with date and time
  */
-std::pair<std::wstring, std::wstring> timeToString(time_t timeIn)
+std::pair<std::wstring, std::wstring> timeToString(std::time_t timeIn)
 {
 	wchar_t
 		localDate[25u],
@@ -939,14 +941,14 @@ std::pair<std::wstring, std::wstring> timeToString(time_t timeIn)
 }
 
 /**
- * Gets a date/time in a human-readable string using the ISO 8601 standard.
+ * Gets a date/time in a human-readable string using the ISO-8601 standard.
  * @return, string of Time
  */
 std::string timeString()
 {
 	char curTime[13u];
 
-	time_t timeOut (std::time(nullptr));
+	std::time_t timeOut (std::time(nullptr));
 	struct tm* const timeInfo (std::localtime(&timeOut));
 	std::strftime(
 				curTime,
@@ -954,6 +956,52 @@ std::string timeString()
 				"%y%m%d%H%M%S",
 				timeInfo);
 	return curTime;
+}
+
+/**
+ * Generates a time-string of the current time.
+ * @return String in D-M-Y_H-M-S format.
+ */
+std::string now()
+{
+	const size_t
+		MAX_LEN    (25u),
+		MAX_RESULT (80u);
+
+	char result[MAX_RESULT] {0};
+
+#ifdef _WIN32
+	char
+		date[MAX_LEN],
+		time[MAX_LEN];
+
+	if (GetDateFormatA(
+					LOCALE_INVARIANT,
+					0, nullptr,
+					"dd'-'MM'-'yyyy", date,
+					static_cast<int>(MAX_LEN)) == 0)
+		return "00-00-0000";
+
+	if (GetTimeFormatA(
+					LOCALE_INVARIANT,
+					TIME_FORCE24HOURFORMAT, nullptr,
+					"HH'-'mm'-'ss", time,
+					static_cast<int>(MAX_LEN)) == 0)
+		return "00-00-00";
+
+	sprintf(result, "%s_%s", date, time);
+
+#else
+	char buffer[MAX_LEN];
+	std::time_t rawtime;
+	struct tm* timeinfo;
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+	strftime(buffer, MAX_LEN, "%d-%m-%Y_%H-%M-%S", timeinfo);
+	sprintf(result, "%s", buffer);
+#endif
+
+	return result;
 }
 
 /**
@@ -973,8 +1021,7 @@ bool naturalCompare(
 #else
 	// sorry unix users you get ASCII sort
 	std::wstring::const_iterator
-		i,
-		j;
+		i,j;
 	for (
 			i = a.begin(), j = b.begin();
 			i != a.end() && j != b.end() && tolower(*i) == tolower(*j);

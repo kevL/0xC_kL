@@ -20,8 +20,9 @@
 #ifndef OPENXCOM_SCREEN_H
 #define OPENXCOM_SCREEN_H
 
-//#include <SDL.h>
 //#include <string>
+
+//#include <SDL.h>
 
 #include "OpenGL.h"
 

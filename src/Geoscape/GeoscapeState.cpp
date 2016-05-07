@@ -1175,7 +1175,7 @@ void GeoscapeState::think()
 		&& _stDebug.compare(0u,5u, "DEBUG") == 0)
 	{
 		const std::string stDebug (_stDebug + _gameSave->getDebugArg());
-		_txtDebug->setText(Language::cpToWstr(stDebug));
+		_txtDebug->setText(Language::fsToWstr(stDebug));
 	}
 
 	if (_popups.empty() == true
