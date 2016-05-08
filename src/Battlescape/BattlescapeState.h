@@ -401,12 +401,17 @@ private:
 		void btnZeroTuClick(Action* action);
 		/// Handler for clicking the UfoPaedia button.
 		void btnUfoPaediaClick(Action* action);
+
 		/// Handler for clicking the lighting button.
 		void btnPersonalLightingClick(Action* action);
+
 		/// Handler for toggling the console.
 		void btnConsoleToggle(Action* action);
-		/// Handler for showing tooltip.
 
+		/// Handler for turning a selected BattleUnit with the keyboard.
+		void btnPivotUnit(Action* action);
+
+		/// Handler for showing tooltip.
 //		void txtTooltipIn(Action* action);
 		/// Handler for hiding tooltip.
 //		void txtTooltipOut(Action* action);

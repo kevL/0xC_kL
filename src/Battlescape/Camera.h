@@ -75,7 +75,7 @@ private:
 
 
 	public:
-		static const int SCROLL_BORDER = 1;
+		static const int SCROLL_BORDER = 2;
 
 		/// Creates a Camera.
 		Camera(

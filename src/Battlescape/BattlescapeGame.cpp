@@ -2882,7 +2882,7 @@ void BattlescapeGame::secondaryAction(const Position& pos)
 						 && (SDL_GetModState() & KMOD_CTRL) != 0
 						 && Options::battleStrafe == true;
 
-		statePushBack(new UnitTurnBState(this, _tacAction)); // open door or rotate turret.
+		statePushBack(new UnitTurnBState(this, _tacAction)); // turn, rotate turret, or open door
 	}
 	else
 		_parentState->btnKneelClick(nullptr); // could put just about anything here Orelly.

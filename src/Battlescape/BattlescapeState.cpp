@@ -43,6 +43,7 @@
 #include "Pathfinding.h"
 #include "TileEngine.h"
 #include "UnitInfoState.h"
+#include "UnitTurnBState.h"
 #include "WarningMessage.h"
 
 #include "../Engine/Action.h"
@@ -133,7 +134,7 @@ BattlescapeState::BattlescapeState()
 	//Log(LOG_INFO) << "Create BattlescapeState";
 	STATE_INTERVAL_ALIEN	= static_cast<Uint32>(Options::battleAlienSpeed);
 	STATE_INTERVAL_XCOM		= static_cast<Uint32>(Options::battleXcomSpeed);
-	STATE_INTERVAL_XCOMDASH	= STATE_INTERVAL_XCOM * 2u / 3u;
+	STATE_INTERVAL_XCOMDASH	= (STATE_INTERVAL_XCOM << 1u) / 3u;
 
 	const int
 		screenWidth		(Options::baseXResolution),
@@ -141,7 +142,7 @@ BattlescapeState::BattlescapeState()
 		iconsWidth		(_rules->getInterface("battlescape")->getElement("icons")->w), // 320
 		iconsHeight		(_rules->getInterface("battlescape")->getElement("icons")->h), // 56
 		playableHeight	(screenHeight - iconsHeight),
-		x				((screenWidth - iconsWidth) / 2),
+		x				((screenWidth - iconsWidth) >> 1u),
 		y				(screenHeight - iconsHeight);
 
 	_txtBaseLabel			= new Text(120, 9, screenWidth - 121, 0);
@@ -221,8 +222,8 @@ BattlescapeState::BattlescapeState()
 
 	_srfTargeter = new Surface(
 							32,40,
-							screenWidth / 2 - 16,
-							playableHeight / 2);
+							(screenWidth >> 1u) - 16,
+							playableHeight >> 1u);
 
 	std::fill_n(
 			_hostileUnit,
@@ -231,7 +232,7 @@ BattlescapeState::BattlescapeState()
 
 	int offsetX (0);
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != HOTSQRS;
 			++i)
 	{
@@ -248,7 +249,7 @@ BattlescapeState::BattlescapeState()
 	}
 
 	for (size_t // center 10+ on buttons
-			i = 9;
+			i = 9u;
 			i != HOTSQRS;
 			++i)
 	{
@@ -262,7 +263,7 @@ BattlescapeState::BattlescapeState()
 			static_cast<Tile*>(nullptr));
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != WOUNDED;
 			++i)
 	{
@@ -324,17 +325,17 @@ BattlescapeState::BattlescapeState()
 	_lstSoldierInfo	= new TextList(25, 57, 1, 47);
 	_srfAlienIcon	= new Surface(29, 119, 1, 105); // each icon is 9x11 px. so this can contain 3x10 alien-heads = 30.
 
-	_txtConsole1	= new Text(screenWidth / 2, y, 0, 0);
-	_txtConsole2	= new Text(screenWidth / 2, y, screenWidth / 2, 0);
+	_txtConsole1	= new Text(screenWidth >> 1u, y, 0, 0);
+	_txtConsole2	= new Text(screenWidth >> 1u, y, screenWidth >> 1u, 0);
 
 	setPalette(PAL_BATTLESCAPE);
 
 	if (_rules->getInterface("battlescape")->getElement("pathfinding") != nullptr)
 	{
-		const Element* const path (_rules->getInterface("battlescape")->getElement("pathfinding"));
-		Pathfinding::green	= static_cast<Uint8>(path->color);
-		Pathfinding::yellow	= static_cast<Uint8>(path->color2);
-		Pathfinding::red	= static_cast<Uint8>(path->border);
+		const Element* const el (_rules->getInterface("battlescape")->getElement("pathfinding"));
+		Pathfinding::green	= static_cast<Uint8>(el->color);
+		Pathfinding::yellow	= static_cast<Uint8>(el->color2);
+		Pathfinding::red	= static_cast<Uint8>(el->border);
 	}
 
 	add(_map);
@@ -418,7 +419,7 @@ BattlescapeState::BattlescapeState()
 	_srfTargeter->setVisible(false);
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != HOTSQRS;
 			++i)
 	{
@@ -427,7 +428,7 @@ BattlescapeState::BattlescapeState()
 	}
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != WOUNDED;
 			++i)
 	{
@@ -480,7 +481,7 @@ BattlescapeState::BattlescapeState()
 
 		const Sint16
 			text_width	(static_cast<Sint16>(_txtOperationTitle->getTextWidth()) + 14),
-			x_left		((static_cast<Sint16>(screenWidth) - text_width) / 2),
+			x_left		((static_cast<Sint16>(screenWidth) - text_width) >> 1u),
 			x_right		(x_left + text_width),
 			y_high		(static_cast<Sint16>(_srfTitle->getY()) + 1),
 			y_low		(static_cast<Sint16>(_srfTitle->getHeight()) - 2);
@@ -971,7 +972,7 @@ BattlescapeState::BattlescapeState()
 //	_btnZeroTUs->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 //	_btnZeroTUs->allowClickInversion();
 
-	// shortcuts without a specific surface button graphic.
+	// NOTE: The following shortcuts do not have a specific surface-button graphic.
 //	_btnStats->onKeyboardPress( // NOTE: Reloading uses advanced requirements in the Inventory.
 //					(ActionHandler)& BattlescapeState::btnReloadClick,
 //					Options::keyBattleReload);
@@ -982,6 +983,12 @@ BattlescapeState::BattlescapeState()
 					(ActionHandler)& BattlescapeState::btnConsoleToggle,
 					Options::keyBattleConsole);
 
+	_btnStats->onKeyboardPress(
+					(ActionHandler)& BattlescapeState::btnPivotUnit,
+					SDLK_COMMA);
+	_btnStats->onKeyboardPress(
+					(ActionHandler)& BattlescapeState::btnPivotUnit,
+					SDLK_PERIOD);
 
 //	const SDLKey buttons[]
 //	{
@@ -2758,7 +2765,7 @@ void BattlescapeState::btnPersonalLightingClick(Action*)
 }
 
 /**
- * Handler for toggling the console.
+ * Toggles the display-state of the console.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnConsoleToggle(Action*)
@@ -2794,6 +2801,37 @@ void BattlescapeState::btnConsoleToggle(Action*)
 		_txtConsole1->setVisible(_showConsole > 0);
 		_txtConsole2->setVisible(_showConsole > 1);
 		refreshMousePosition();
+	}
+}
+
+/**
+ * Pivots the selected BattleUnit if any clockwise or counter-clockwise.
+ * @param action - pointer to an Action
+ */
+void BattlescapeState::btnPivotUnit(Action* action)
+{
+	if (playableUnitSelected() == true
+		&& action->getDetails()->type == SDL_KEYDOWN)
+	{
+		BattleAction* const tacAction (_battleGame->getTacticalAction());
+		tacAction->actor = _battleSave->getSelectedUnit();
+		tacAction->targeting = false;
+		tacAction->strafe = false; // TODO: unless Turreted ...
+
+		int dir;
+		switch (action->getDetails()->key.keysym.sym)
+		{
+			default:
+			case SDLK_COMMA:  dir = -1; break;	// pivot unit counter-clockwise
+			case SDLK_PERIOD: dir = +1;			// pivot unit clockwise
+		}
+		dir = (tacAction->actor->getUnitDirection() + dir + 8) % 8;
+		Pathfinding::directionToVector(
+									dir,
+									&tacAction->posTarget);
+		tacAction->posTarget += tacAction->actor->getPosition();
+
+		_battleGame->statePushBack(new UnitTurnBState(_battleGame, *tacAction));
 	}
 }
 

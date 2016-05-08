@@ -81,63 +81,63 @@ void UnitTurnBState::init()
 			_unit->setDirectionTo(_action.posTarget, _turret); // -> STATUS_TURNING
 		}
 
-		if (_unit->getUnitStatus() != STATUS_TURNING) // try to open a door
+		switch (_unit->getUnitStatus())
 		{
-			if (_chargeTu == true && _action.type == BA_NONE)
-			{
-				int soundId;
-				switch (_parent->getTileEngine()->unitOpensDoor(_unit))
+			case STATUS_TURNING:
+				if (_chargeTu == true)						// reaction fire & panic permit free turning
 				{
-					case DR_WOOD_OPEN:
-						soundId = ResourcePack::DOOR_OPEN;
-						break;
-					case DR_UFO_OPEN:
-						soundId = ResourcePack::SLIDING_DOOR_OPEN;
-						break;
-					case DR_ERR_TU:
-						_action.result = BattlescapeGame::PLAYER_ERROR[0u];
-						soundId = -1;
-						break;
-					case DR_ERR_RESERVE:
-						_action.result = "STR_TUS_RESERVED"; // no break;
-
-					default:
-						soundId = -1;
-				}
-
-				if (soundId != -1)
-					_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
-												->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
-			}
-
-			_unit->clearTurnDirection();
-			_parent->popState();
-		}
-		else
-		{
-			if (_chargeTu == true)						// reaction fire & panic permit free turning
-			{
-				if (_unit->getTurretType() != TRT_NONE	// if turreted vehicle
-					&& _action.strafe == false			// but not swivelling turret
-					&& _action.targeting == false)		// and not taking a shot at something...
-				{
-					switch (_unit->getMoveTypeUnit())
+					if (_unit->getTurretType() != TRT_NONE	// if turreted vehicle
+						&& _action.strafe == false			// but not swivelling turret
+						&& _action.targeting == false)		// and not taking a shot at something...
 					{
-						case MT_FLY: _tu = 2; break;	// hover vehicles cost 2 per facing change
-						default:	 _tu = 3;			// large tracked vehicles cost 3 per facing change
+						switch (_unit->getMoveTypeUnit())
+						{
+							case MT_FLY: _tu = 2; break;	// hover vehicles cost 2 per facing change
+							default:	 _tu = 3;			// large tracked vehicles cost 3 per facing change
+						}
 					}
+					else
+						_tu = 1;							// one tu per facing change
 				}
+
+				Uint32 interval;
+				if (_unit->getFaction() == FACTION_PLAYER)
+					interval = _parent->getBattlescapeState()->STATE_INTERVAL_XCOM;
 				else
-					_tu = 1;							// one tu per facing change
-			}
+					interval = _parent->getBattlescapeState()->STATE_INTERVAL_ALIEN;
 
-			Uint32 interval;
-			if (_unit->getFaction() == FACTION_PLAYER)
-				interval = _parent->getBattlescapeState()->STATE_INTERVAL_XCOM;
-			else
-				interval = _parent->getBattlescapeState()->STATE_INTERVAL_ALIEN;
+				_parent->setStateInterval(interval);
+				break;
 
-			_parent->setStateInterval(interval);
+			default: // try to open a door
+				if (_chargeTu == true && _action.type == BA_NONE)
+				{
+					int soundId;
+					switch (_parent->getTileEngine()->unitOpensDoor(_unit))
+					{
+						case DR_WOOD_OPEN:
+							soundId = ResourcePack::DOOR_OPEN;
+							break;
+						case DR_UFO_OPEN:
+							soundId = ResourcePack::SLIDING_DOOR_OPEN;
+							break;
+						case DR_ERR_TU:
+							_action.result = BattlescapeGame::PLAYER_ERROR[0u];
+							soundId = -1;
+							break;
+						case DR_ERR_RESERVE:
+							_action.result = "STR_TUS_RESERVED"; // no break;
+
+						default:
+							soundId = -1;
+					}
+
+					if (soundId != -1)
+						_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
+													->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
+				}
+				_unit->clearTurnDirection();
+				_parent->popState();
 		}
 	}
 	else
