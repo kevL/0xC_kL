@@ -460,6 +460,8 @@ void Inventory::blit(const Surface* const srf)
  */
 void Inventory::mouseOver(Action* action, State* state)
 {
+	if (_selUnit == nullptr) return;
+
 	int
 		x (static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX()),
 		y (static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY());
@@ -506,6 +508,8 @@ void Inventory::mouseOver(Action* action, State* state)
  */
 void Inventory::mouseClick(Action* action, State* state)
 {
+	if (_selUnit == nullptr) return;
+
 	int soundId (-1);
 
 	switch (action->getDetails()->button.button)
