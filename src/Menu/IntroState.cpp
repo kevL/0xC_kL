@@ -574,7 +574,7 @@ void IntroState::endVideo()
 	{
 		//Log(LOG_INFO) << ". 8bpp TRUE";
 		const Uint8 FADE_STEPS (10u);
-		const Uint32 FADE_DELAY (50u);
+		const Uint32 FADE_DELAY (45u);
 /*
 		const int fadeDur (static_cast<int>(FADE_DELAY) * static_cast<int>(FADE_STEPS));
 

@@ -21,10 +21,10 @@
 
 //#include <algorithm>
 
+#include "../fmath.h"
+
 #include "BattleItem.h"
 #include "SerializationHelper.h"
-
-#include "../fmath.h"
 
 #include "../Battlescape/Pathfinding.h"
 
@@ -44,8 +44,8 @@ namespace OpenXcom
 Tile::SerializationKey Tile::serializationKey
 {
 	4, // index
-	2, // _mapDataSetId, four of these
-	2, // _mapDataId, four of these
+	2, // _partSetId, four of these
+	2, // _partId, four of these
 	1, // _fire
 	1, // _smoke
 	1, // _animOffset
@@ -79,10 +79,10 @@ Tile::Tile(const Position& pos)
 			i != PARTS_TILE;
 			++i)
 	{
-		_parts[i]			=  nullptr;
-		_mapDataId[i]		= -1;
-		_mapDataSetId[i]	= -1;
-		_curFrame[i]		=  0;
+		_parts[i]		=  nullptr;
+		_partId[i]		= -1;
+		_partSetId[i]	= -1;
+		_curFrame[i]	=  0;
 	}
 
 	for (
@@ -121,8 +121,8 @@ void Tile::load(const YAML::Node& node)
 			i != PARTS_TILE;
 			++i)
 	{
-		_mapDataId[i]		= node["mapDataID"][i]		.as<int>(_mapDataId[i]);
-		_mapDataSetId[i]	= node["mapDataSetID"][i]	.as<int>(_mapDataSetId[i]);
+		_partId[i]		= node["mapDataID"][i]		.as<int>(_partId[i]);
+		_partSetId[i]	= node["mapDataSetID"][i]	.as<int>(_partSetId[i]);
 	}
 
 	_fire		= node["fire"]		.as<int>(_fire);
@@ -156,15 +156,15 @@ void Tile::loadBinary(
 		Uint8* buffer,
 		Tile::SerializationKey& serKey)
 {
-	_mapDataId[O_FLOOR]		= unserializeInt(&buffer, serKey._mapDataId);
-	_mapDataId[O_WESTWALL]	= unserializeInt(&buffer, serKey._mapDataId);
-	_mapDataId[O_NORTHWALL]	= unserializeInt(&buffer, serKey._mapDataId);
-	_mapDataId[O_OBJECT]	= unserializeInt(&buffer, serKey._mapDataId);
+	_partId[O_FLOOR]		= unserializeInt(&buffer, serKey._partId);
+	_partId[O_WESTWALL]		= unserializeInt(&buffer, serKey._partId);
+	_partId[O_NORTHWALL]	= unserializeInt(&buffer, serKey._partId);
+	_partId[O_OBJECT]		= unserializeInt(&buffer, serKey._partId);
 
-	_mapDataSetId[O_FLOOR]		= unserializeInt(&buffer, serKey._mapDataSetId);
-	_mapDataSetId[O_WESTWALL]	= unserializeInt(&buffer, serKey._mapDataSetId);
-	_mapDataSetId[O_NORTHWALL]	= unserializeInt(&buffer, serKey._mapDataSetId);
-	_mapDataSetId[O_OBJECT]		= unserializeInt(&buffer, serKey._mapDataSetId);
+	_partSetId[O_FLOOR]		= unserializeInt(&buffer, serKey._partSetId);
+	_partSetId[O_WESTWALL]	= unserializeInt(&buffer, serKey._partSetId);
+	_partSetId[O_NORTHWALL]	= unserializeInt(&buffer, serKey._partSetId);
+	_partSetId[O_OBJECT]	= unserializeInt(&buffer, serKey._partSetId);
 
 	_smoke		= unserializeInt(&buffer, serKey._smoke);
 	_fire		= unserializeInt(&buffer, serKey._fire);
@@ -182,7 +182,7 @@ void Tile::loadBinary(
 	_curFrame[O_NORTHWALL]	= (boolFields & 0x10) ? 7 : 0;
 
 //	if (_fire || _smoke)
-//		_animationOffset = std::rand() %4;
+//		_animationOffset = std::rand() % 4;
 }
 
 /**
@@ -200,8 +200,8 @@ YAML::Node Tile::save() const
 			i != PARTS_TILE;
 			++i)
 	{
-		node["mapDataID"].push_back(_mapDataId[i]);
-		node["mapDataSetID"].push_back(_mapDataSetId[i]);
+		node["mapDataID"].push_back(_partId[i]);
+		node["mapDataSetID"].push_back(_partSetId[i]);
 	}
 
 	if (_smoke != 0)		node["smoke"]		= _smoke;
@@ -235,15 +235,15 @@ YAML::Node Tile::save() const
  */
 void Tile::saveBinary(Uint8** buffer) const
 {
-	serializeInt(buffer, serializationKey._mapDataId, _mapDataId[O_FLOOR]);
-	serializeInt(buffer, serializationKey._mapDataId, _mapDataId[O_WESTWALL]);
-	serializeInt(buffer, serializationKey._mapDataId, _mapDataId[O_NORTHWALL]);
-	serializeInt(buffer, serializationKey._mapDataId, _mapDataId[O_OBJECT]);
+	serializeInt(buffer, serializationKey._partId, _partId[O_FLOOR]);
+	serializeInt(buffer, serializationKey._partId, _partId[O_WESTWALL]);
+	serializeInt(buffer, serializationKey._partId, _partId[O_NORTHWALL]);
+	serializeInt(buffer, serializationKey._partId, _partId[O_OBJECT]);
 
-	serializeInt(buffer, serializationKey._mapDataSetId, _mapDataSetId[O_FLOOR]);
-	serializeInt(buffer, serializationKey._mapDataSetId, _mapDataSetId[O_WESTWALL]);
-	serializeInt(buffer, serializationKey._mapDataSetId, _mapDataSetId[O_NORTHWALL]);
-	serializeInt(buffer, serializationKey._mapDataSetId, _mapDataSetId[O_OBJECT]);
+	serializeInt(buffer, serializationKey._partSetId, _partSetId[O_FLOOR]);
+	serializeInt(buffer, serializationKey._partSetId, _partSetId[O_WESTWALL]);
+	serializeInt(buffer, serializationKey._partSetId, _partSetId[O_NORTHWALL]);
+	serializeInt(buffer, serializationKey._partSetId, _partSetId[O_OBJECT]);
 
 	serializeInt(buffer, serializationKey._smoke,		_smoke);
 	serializeInt(buffer, serializationKey._fire,		_fire);
@@ -262,35 +262,35 @@ void Tile::saveBinary(Uint8** buffer) const
 
 /**
  * Sets the MapData references of parts 0 to 3.
- * @param data		- pointer to MapData
- * @param dataId	- dataID
- * @param dataSetId	- dataSetID
- * @param partType	- the part type (MapData.h)
+ * @param part		- pointer to MapData
+ * @param partId	- dataID
+ * @param partSetId	- dataSetID
+ * @param partType	- the part-type (MapData.h)
  */
 void Tile::setMapData(
-		MapData* const data,
-		const int dataId,
-		const int dataSetId,
+		MapData* const part,
+		const int partId,
+		const int partSetId,
 		const MapDataType partType)
 {
-	_parts[partType] = data;
-	_mapDataId[partType] = dataId;
-	_mapDataSetId[partType] = dataSetId;
+	_parts[partType] = part;
+	_partId[partType] = partId;
+	_partSetId[partType] = partSetId;
 }
 
 /**
  * Gets the MapData references of parts 0 to 3.
- * @param dataId	- pointer to dataID
- * @param dataSetId	- pointer to dataSetID
- * @param partType	- the part type (MapData.h)
+ * @param partId	- pointer to dataID
+ * @param partSetId	- pointer to dataSetID
+ * @param partType	- the part-type (MapData.h)
  */
 void Tile::getMapData(
-		int* dataId,
-		int* dataSetId,
+		int* partId,
+		int* partSetId,
 		MapDataType partType) const
 {
-	*dataId = _mapDataId[partType];
-	*dataSetId = _mapDataSetId[partType];
+	*partId = _partId[partType];
+	*partSetId = _partSetId[partType];
 }
 
 /**
@@ -477,7 +477,7 @@ DoorResult Tile::openDoor(
 			setMapData(
 					_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD()),
 					_parts[partType]->getAltMCD(),
-					_mapDataSetId[partType],
+					_partSetId[partType],
 					_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD())->getPartType());
 
 			setMapData(nullptr,-1,-1, partType);
@@ -518,7 +518,7 @@ void Tile::openDoorAuto(const MapDataType partType)
 //		setMapData(
 //				_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD()),
 //				_parts[partType]->getAltMCD(),
-//				_mapDataSetId[partType],
+//				_partSetId[partType],
 //				_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD())->getPartType());
 //
 //		setMapData(nullptr,-1,-1, partType);
@@ -646,41 +646,43 @@ int Tile::getShade() const
  * trigger a chained explosion.
  * @param partType		- this Tile's part for destruction (MapData.h)
  * @param battleSave	- pointer to the SavedBattleGame
+ * @param obliterate	- true to bypass the death-part (default false)
  */
 void Tile::destroyTilepart(
 		MapDataType partType,
-		SavedBattleGame* const battleSave)
+		SavedBattleGame* const battleSave,
+		bool obliterate)
 {
 	int tLevel (0);
 
-	if (_parts[partType] != nullptr)
+	const MapData* const data (_parts[partType]);
+	if (data != nullptr)
 	{
-		if (_parts[partType]->isGravLift() == true
-			|| _parts[partType]->getArmor() == 255) // <- set to 255 in MCD for Truly Indestructability.
+		if (data->isGravLift() == true
+			|| data->getArmor() == 255) // <- set to 255 in MCD for Truly Indestructability.
 		{
 			return;
 		}
 
+		if (data->getSpecialType() == battleSave->getObjectiveType())
+			battleSave->addDestroyedObjective();
+
 		if (partType == O_OBJECT)
 			tLevel = _parts[O_OBJECT]->getTerrainLevel();
 
-		if (_parts[partType]->getSpecialType() == battleSave->getObjectiveType())
-			battleSave->addDestroyedObjective();
-
-		const MapData* const data (_parts[partType]);
-		const int dataSetId (_mapDataSetId[partType]);
-
-		setMapData(nullptr,-1,-1, partType);
-
-		if (data->getDieMCD() != 0)
+		const int deadId (data->getDieMCD());
+		if (deadId != 0 && obliterate == false)
 		{
-			MapData* const dataDead (data->getDataset()->getRecords()->at(data->getDieMCD()));
+			MapData* const partDead (data->getDataset()->getRecords()->at(deadId));
 			setMapData(
-					dataDead,
-					data->getDieMCD(),
-					dataSetId,
-					dataDead->getPartType());
+					partDead,
+					deadId,
+					_partSetId[partType],
+					partDead->getPartType());
 		}
+		else
+			setMapData(nullptr,-1,-1, partType);
+
 
 		if (data->getExplosive() != 0)
 			setExplosive(
@@ -688,30 +690,30 @@ void Tile::destroyTilepart(
 					data->getExplosiveType());
 	}
 
-	if (partType == O_FLOOR) // check if the floor on the lowest level is gone.
+	if (partType == O_FLOOR) // check if the floor-part on the lowest level is gone.
 	{
 		if (_pos.z == 0 && _parts[O_FLOOR] == nullptr)
 			setMapData( // replace with scorched earth
 					MapDataSet::getScorchedEarthTile(),
 					1,0, O_FLOOR);
 
-		if (_parts[O_OBJECT] != nullptr // destroy the object if floor is gone.
+		if (_parts[O_OBJECT] != nullptr // destroy object-part if the floor-part is gone.
 			&& _parts[O_OBJECT]->getBigwall() == BIGWALL_NONE)
 		{
 
-			destroyTilepart(O_OBJECT, battleSave); // stop floating haybales.
+			destroyTilepart(O_OBJECT, battleSave, true); // stop floating haybales.
 		}
 	}
 
-	if (tLevel == -24) // destroy the object-above if its support is gone.
+	if (tLevel == -24) // destroy the object-part above if its supports are gone.
 	{
-		const Tile* const tileAbove (battleSave->getTile(_pos + Position(0,0,1)));
+		Tile* const tileAbove (battleSave->getTile(_pos + Position(0,0,1)));
 		if (tileAbove != nullptr
 			&& tileAbove->getMapData(O_FLOOR) == nullptr
 			&& tileAbove->getMapData(O_OBJECT) != nullptr
 			&& tileAbove->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NONE)
 		{
-			destroyTilepart(O_OBJECT, battleSave); // stop floating lampposts.
+			tileAbove->destroyTilepart(O_OBJECT, battleSave, true); // stop floating lampposts.
 		}
 	}
 }
@@ -820,8 +822,8 @@ int Tile::convertBurnToPct(int burn) const // private.
 	burn = 255 - burn;
 	burn = std::max(1,
 					std::min(100,
-							static_cast<int>(std::ceil(
-							static_cast<double>(burn) / 255. * 100.))));
+							 static_cast<int>(std::ceil(
+							 static_cast<double>(burn) / 255. * 100.))));
 
 	return burn;
 }
@@ -856,9 +858,9 @@ int Tile::getFuel(MapDataType partType) const
 
 /**
  * Tries to start fire on this Tile.
- * @note If true it will add its fuel as turns to burn.
- * @note Called by floor-burning Silacoids and fire spreading @ turnovers and
- * by TileEngine::detonate() after HE explosions.
+ * @note If true it will add its fuel as turns-to-burn. Called by floor-burning
+ * Silacoids and fire spreading @ turnovers and by TileEngine::detonateTile()
+ * after HE explosions.
  * @param power - rough chance to get things going
  * @return, true if tile catches fire
  */

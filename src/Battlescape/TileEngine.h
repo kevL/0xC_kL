@@ -252,7 +252,7 @@ private:
 		/// Sets the final direction from which a missile or thrown-object came.
 		void setProjectileDirection(const int dir);
 		/// Blows a Tile up.
-		void detonate(Tile* const tile) const;
+		void detonateTile(Tile* const tile) const;
 		/// Checks if a destroyed Tile starts an explosion.
 		Tile* checkForTerrainExplosions() const;
 

@@ -2347,8 +2347,8 @@ void TileEngine::explode(
 		* tileStop (nullptr);
 
 	int // convert voxel-space to tile-space
-		centerX (targetVoxel.x >> 4),
-		centerY (targetVoxel.y >> 4),
+		centerX (targetVoxel.x >> 4u),
+		centerY (targetVoxel.y >> 4u),
 		centerZ (targetVoxel.z / 24),
 
 		tileX,
@@ -2963,7 +2963,7 @@ void TileEngine::explode(
 		if (_trueTile != nullptr)	// special case for when a diagonal bigwall is directly targetted.
 		{							// The explosion is moved out a tile so give a full-power hit to the true target-tile.
 			_trueTile->setExplosive(power, DT_HE);
-			detonate(_trueTile);	// I doubt this needs any *further* consideration ...
+			detonateTile(_trueTile);	// I doubt this needs any *further* consideration ...
 		}							// although it would be nice to have the explosion 'kick in' a bit.
 
 		//Log(LOG_INFO) << ". explode Tiles, size = " << tilesAffected.size();
@@ -2974,7 +2974,7 @@ void TileEngine::explode(
 		{
 			if (*i != _trueTile)
 			{
-				detonate(*i);
+				detonateTile(*i);
 				applyGravity(*i);
 				Tile* const tileAbove (_battleSave->getTile((*i)->getPosition() + Position(0,0,1)));
 				if (tileAbove != nullptr)
@@ -4545,14 +4545,14 @@ void TileEngine::setProjectileDirection(const int dir)
  * - plus the content-object in the center
  * @param tile - pointer to Tile affected
  */
-void TileEngine::detonate(Tile* const tile) const
+void TileEngine::detonateTile(Tile* const tile) const
 {
 	int power (tile->getExplosive());	// <- power that hit tile.
 	if (power == 0) return;				// <- no explosive applied to tile
 
 	//bool debug (tile->getPosition() == Position(20,30,3));
 	//Log(LOG_INFO) << "";
-	//if (debug) Log(LOG_INFO) << "TileEngine::detonate() " << tile->getPosition() << " power = " << power;
+	//if (debug) Log(LOG_INFO) << "TileEngine::detonateTile() " << tile->getPosition() << " power = " << power;
 	tile->setExplosive(0, DT_NONE, true); // reset Tile's '_explosive' value to 0
 
 
@@ -4677,7 +4677,7 @@ void TileEngine::detonate(Tile* const tile) const
 			{
 				case BIGWALL_NESW: // diagonals
 				case BIGWALL_NWSE:
-					if (part->getArmor() * 2 > powerTest) // not enough to destroy
+					if ((part->getArmor() << 1u) > powerTest) // not enough to destroy
 						diagWallDestroyed = false;
 			}
 		}
@@ -4685,7 +4685,7 @@ void TileEngine::detonate(Tile* const tile) const
 		// Check tile-part's HP then iterate through and destroy its death-tiles if enough powerTest.
 		while (part != nullptr
 			&& part->getArmor() != 255
-			&& part->getArmor() * 2 <= powerTest)
+			&& (part->getArmor() << 1u) <= powerTest)
 		{
 			if (powerTest == power) // only once per initial part destroyed.
 			{
@@ -4699,7 +4699,7 @@ void TileEngine::detonate(Tile* const tile) const
 				}
 			}
 
-			powerTest -= part->getArmor() * 2;
+			powerTest -= part->getArmor() << 1u;
 
 			if (i == 6u)
 			{

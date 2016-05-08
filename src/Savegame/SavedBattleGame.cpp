@@ -265,14 +265,14 @@ void SavedBattleGame::load(
 				sizeof(Tile::SerializationKey));
 
 		// WARNING: Don't trust extracting integers from YAML as anything other than 'int' ...
-		serKey.index			= node["tileIndexSize"]		.as<Uint8>(serKey.index);
-		serKey.totalBytes		= node["tileTotalBytesPer"]	.as<Uint32>(serKey.totalBytes);
-		serKey._fire			= node["tileFireSize"]		.as<Uint8>(serKey._fire);
-		serKey._smoke			= node["tileSmokeSize"]		.as<Uint8>(serKey._smoke);
-		serKey._animOffset		= node["tileOffsetSize"]	.as<Uint8>(serKey._animOffset);
-		serKey._mapDataId		= node["tileIDSize"]		.as<Uint8>(serKey._mapDataId);
-		serKey._mapDataSetId	= node["tileSetIDSize"]		.as<Uint8>(serKey._mapDataSetId);
-		serKey.boolFields		= node["tileBoolFieldsSize"].as<Uint8>(1); // boolean flags used to be stored in an unmentioned byte (Uint8) :|
+		serKey.index		= node["tileIndexSize"]		.as<Uint8>(serKey.index);
+		serKey.totalBytes	= node["tileTotalBytesPer"]	.as<Uint32>(serKey.totalBytes);
+		serKey._fire		= node["tileFireSize"]		.as<Uint8>(serKey._fire);
+		serKey._smoke		= node["tileSmokeSize"]		.as<Uint8>(serKey._smoke);
+		serKey._animOffset	= node["tileOffsetSize"]	.as<Uint8>(serKey._animOffset);
+		serKey._partId		= node["tileIDSize"]		.as<Uint8>(serKey._partId);
+		serKey._partSetId	= node["tileSetIDSize"]		.as<Uint8>(serKey._partSetId);
+		serKey.boolFields	= node["tileBoolFieldsSize"].as<Uint8>(1u); // boolean flags used to be stored in an unmentioned byte (Uint8) :|
 
 		// load binary tile data!
 		const YAML::Binary binTiles (node["binTiles"].as<YAML::Binary>());
@@ -680,8 +680,8 @@ YAML::Node SavedBattleGame::save() const
 	node["tileFireSize"]		= Tile::serializationKey._fire;
 	node["tileSmokeSize"]		= Tile::serializationKey._smoke;
 	node["tileOffsetSize"]		= Tile::serializationKey._animOffset;
-	node["tileIDSize"]			= Tile::serializationKey._mapDataId;
-	node["tileSetIDSize"]		= Tile::serializationKey._mapDataSetId;
+	node["tileIDSize"]			= Tile::serializationKey._partId;
+	node["tileSetIDSize"]		= Tile::serializationKey._partSetId;
 	node["tileBoolFieldsSize"]	= Tile::serializationKey.boolFields;
 
 	size_t tilesDataSize (static_cast<size_t>(Tile::serializationKey.totalBytes) * _qtyTilesTotal);

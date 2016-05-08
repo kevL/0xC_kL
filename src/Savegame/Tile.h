@@ -88,8 +88,8 @@ private:
 		_explosive,
 		_fire,
 		_light[LIGHTLAYERS],
-		_mapDataId[PARTS_TILE],
-		_mapDataSetId[PARTS_TILE],
+		_partId[PARTS_TILE],
+		_partSetId[PARTS_TILE],
 		_previewDir,
 		_previewTu,
 		_smoke;
@@ -118,8 +118,8 @@ private:
 		{
 			// how many bytes to store for each variable or each member of array of the same name
 			Uint8 index; // for indexing the actual tile array
-			Uint8 _mapDataSetId;
-			Uint8 _mapDataId;
+			Uint8 _partSetId;
+			Uint8 _partId;
 			Uint8 _smoke;
 			Uint8 _fire;
 			Uint8 _animOffset;
@@ -153,14 +153,14 @@ private:
 
 		/// Sets the pointer to the mapdata for a specific part of the Tile.
 		void setMapData(
-				MapData* const data,
-				const int dataID,
-				const int dataSetID,
+				MapData* const part,
+				const int partID,
+				const int partSetID,
 				const MapDataType partType);
 		/// Gets the IDs of the mapdata for a specific part of the Tile.
 		void getMapData(
-				int* dataID,
-				int* dataSetID,
+				int* partID,
+				int* partSetID,
 				MapDataType partType) const;
 
 		/// Gets whether the Tile has no objects
@@ -233,7 +233,8 @@ private:
 		/// Destroys a tile-part.
 		void destroyTilepart(
 				MapDataType partType,
-				SavedBattleGame* const battleSave);
+				SavedBattleGame* const battleSave,
+				bool obliterate = false);
 		/// Damages a tile-part.
 		void hitTile(
 				MapDataType partType,
