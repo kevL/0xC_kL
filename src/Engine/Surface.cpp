@@ -438,7 +438,7 @@ void Surface::loadSpk(const std::string& file)
 
 			for (Uint16
 					i = 0u;
-					i != flag * 2u;
+					i != flag << 1u;
 					++i)
 			{
 				setPixelIterative(&x,&y, 0u);
@@ -453,7 +453,7 @@ void Surface::loadSpk(const std::string& file)
 
 			for (Uint16
 					i = 0u;
-					i != flag * 2u;
+					i != flag << 1u;
 					++i)
 			{
 				ifstr.read(
@@ -601,7 +601,7 @@ void Surface::invert(Uint8 mid)
 	{
 		Uint8 color (getPixelColor(x,y));
 		if (color != 0u)
-			color = static_cast<Uint8>(color + (mid - color) * 2);
+			color = static_cast<Uint8>(color + ((mid - color) << 1u));
 
 		setPixelIterative(&x,&y, color);
 	}

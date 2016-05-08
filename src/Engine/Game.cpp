@@ -19,18 +19,12 @@
 
 #include "Game.h"
 
-// kL_begin: Old
-/*
-#ifdef _WIN32
-#	define WIN32_LEAN_AND_MEAN
-#	include <windows.h>
-#	include <SDL_syswm.h>
-#endif
-*/ // kL_end.
-
-//#include <algorithm>
-//#include <cmath>
-//#include <sstream>
+//#include <algorithm>	// std::max(), std::swap()
+//#include <cmath>		// std::exp(), std::log()
+//#include <exception>	// std::exception
+//#include <map>		// std::map
+//#include <sstream>	// std::ostringstream
+//#include <vector>		// std::vector
 
 #include <SDL_mixer.h>
 
@@ -89,8 +83,6 @@ Game::Game(const std::string& title)
 	Options::reload = false;
 #ifdef _DEBUG
 	Options::mute = true;
-#else
-	Options::mute = false;
 #endif
 
 	// Initialize SDL.
@@ -281,25 +273,25 @@ void Game::run()
 							else
 							{
 // G++ linker wants it this way ...
-#ifdef _DEBUG
+//#ifdef _DEBUG
 								const int
 									screenWidth  (Screen::ORIGINAL_WIDTH),
 									screenHeight (Screen::ORIGINAL_HEIGHT);
 
 								Options::newDisplayWidth =
-								Options::displayWidth = std::max(screenWidth,
-																_event.resize.w);
+								Options::displayWidth  = std::max(screenWidth,
+																 _event.resize.w);
 								Options::newDisplayHeight =
 								Options::displayHeight = std::max(screenHeight,
 																 _event.resize.h);
-#else
-								Options::newDisplayWidth =
-								Options::displayWidth = std::max(Screen::ORIGINAL_WIDTH,
-																_event.resize.w);
-								Options::newDisplayHeight =
-								Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
-																 _event.resize.h);
-#endif
+//#else
+//								Options::newDisplayWidth =
+//								Options::displayWidth  = std::max(Screen::ORIGINAL_WIDTH,
+//																 _event.resize.w);
+//								Options::newDisplayHeight =
+//								Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
+//																 _event.resize.h);
+//#endif
 								Screen::updateScale(
 												Options::battlescapeScale,
 												Options::battlescapeScale,
@@ -400,6 +392,10 @@ void Game::run()
 
 			if (_init == true) // process rendering
 			{
+#ifdef _DEBUG
+				if (false) { Log(LOG_INFO) << "go fucking figure."; } // The player's ActionMenu won't blit/draw/flip without this.
+#endif
+
 				_fpsCounter->addFrame();
 
 				_screen->clear();
@@ -492,25 +488,25 @@ void Game::run()
 							else
 							{
 // G++ linker wants it this way ...
-#ifdef _DEBUG
+//#ifdef _DEBUG
 								const int
 									screenWidth  (Screen::ORIGINAL_WIDTH),
 									screenHeight (Screen::ORIGINAL_HEIGHT);
 
 								Options::newDisplayWidth =
-								Options::displayWidth = std::max(screenWidth,
-																_event.resize.w);
+								Options::displayWidth  = std::max(screenWidth,
+																 _event.resize.w);
 								Options::newDisplayHeight =
 								Options::displayHeight = std::max(screenHeight,
 																 _event.resize.h);
-#else
-								Options::newDisplayWidth =
-								Options::displayWidth = std::max(Screen::ORIGINAL_WIDTH,
-																_event.resize.w);
-								Options::newDisplayHeight =
-								Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
-																 _event.resize.h);
-#endif
+//#else
+//								Options::newDisplayWidth =
+//								Options::displayWidth  = std::max(Screen::ORIGINAL_WIDTH,
+//																 _event.resize.w);
+//								Options::newDisplayHeight =
+//								Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
+//																 _event.resize.h);
+//#endif
 								Screen::updateScale(
 												Options::battlescapeScale,
 												Options::battlescapeScale,
@@ -649,7 +645,7 @@ void Game::run()
 				if (_init == true) // process rendering
 				{
 					if (Options::FPS != 0 // update slice-delay-time based on the time of the last draw
-						&& !(Options::useOpenGL == true && Options::vSyncForOpenGL == true))
+						&& !(Options::useOpenGL == true && Options::vSyncForOpenGL == true)) // if not using OpenGL, or if you are you're not using OpenGL vSync
 					{
 						int fpsUser;
 						if ((SDL_GetAppState() & SDL_APPINPUTFOCUS))

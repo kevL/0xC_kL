@@ -55,7 +55,8 @@ Screen::Screen()
 		_numColors(0),
 		_firstColor(0),
 		_pushPalette(false),
-		_surface(nullptr)
+		_surface(nullptr),
+		_screen(nullptr)
 {
 	resetDisplay();
 	std::memset(
@@ -263,8 +264,8 @@ void Screen::flip()
 		&& _numColors != 0
 		&& _screen->format->BitsPerPixel == 8u)
 	{
-		if (_screen->format->BitsPerPixel == 8u
-			&& SDL_SetColors(
+//		if (_screen->format->BitsPerPixel == 8u // <- always TRUE
+		if (SDL_SetColors(
 						_screen,
 						&(_deferredPalette[static_cast<size_t>(_firstColor)]),
 						_firstColor,
@@ -488,7 +489,7 @@ void Screen::resetDisplay(bool resetVideo)
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- quantity of colors to replace (default 256)
- * @param immediately	- apply palette changes immediately otherwise wait for next blit (false)
+ * @param immediately	- apply palette changes immediately otherwise wait for next blit (default false)
  */
 void Screen::setPalette(
 		SDL_Color* const colors,
@@ -782,21 +783,21 @@ void Screen::updateScale( // static.
 	}
 
 // G++ linker wants it this way ...
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	const int
 		screenWidth  (Screen::ORIGINAL_WIDTH),
 		screenHeight (Screen::ORIGINAL_HEIGHT);
 
-	width = std::max(width,
-					 screenWidth);
+	width  = std::max(width,
+					  screenWidth);
 	height = std::max(height,
 					  screenHeight);
-#else
-	width = std::max(width,
-					 Screen::ORIGINAL_WIDTH);
-	height = std::max(height,
-					  Screen::ORIGINAL_HEIGHT);
-#endif
+//#else
+//	width  = std::max(width,
+//					  Screen::ORIGINAL_WIDTH);
+//	height = std::max(height,
+//					  Screen::ORIGINAL_HEIGHT);
+//#endif
 
 	if (change == true
 		&& (   Options::baseXResolution != width
@@ -804,6 +805,67 @@ void Screen::updateScale( // static.
 	{
 		Options::baseXResolution = width;
 		Options::baseYResolution = height;
+	}
+}
+
+/**
+ * Fades the Screen.
+ * @param steps - quantity of steps in the fade (default 20)
+ * @param delay - duration of each step in milliseconds (default 20)
+ */
+void Screen::fadeScreen(
+		Uint8 steps,
+		Uint32 delay)
+{
+	// NOTE: See also Menu/IntroState::endVideo().
+	// TODO: There should be some sort of corresponding fade-in function.
+//	if (getSurface()->getSurface()->format->BitsPerPixel == 8u) // these fades can be done only in 8-bpp.
+	if (_surface->getSurface()->format->BitsPerPixel == 8u) // these fades can be done only in 8-bpp.
+	{
+		Log(LOG_INFO) << "fadeScreen";
+		if (steps == 0u) steps = 1u;
+
+		SDL_Color
+			src[256u],
+			dst[256u];
+
+		std::memcpy(
+				src,
+				_deferredPalette, //getPalette(),
+				sizeof(SDL_Color) * 256u);
+
+		for (Uint8
+				i = steps;
+				i != 0u;
+				--i)
+		{
+			for (size_t
+					j = 0u;
+					j != 256u;
+					++j)
+			{
+				dst[j].r = src[j].r * i / steps;
+				dst[j].g = src[j].g * i / steps;
+				dst[j].b = src[j].b * i / steps;
+
+				dst[j].unused = src[j].unused;
+			}
+
+			setPalette(
+					dst,
+					0,
+					256,
+					true);
+			flip();
+
+			SDL_Delay(delay);
+		}
+	}
+	else // not really needed -> or wanted.
+	{
+		Log(LOG_INFO) << "flip Screen";
+		clear();
+		flip();
 	}
 }
 

@@ -579,14 +579,19 @@ void UnitInfoState::init()
 		}
 		gender->blit(_gender);
 
-		const unsigned order (_unit->getBattleOrder());
-		if (order < 10u)
-			_numOrder->setX(_btnNext->getX() - 6);
-		else
-			_numOrder->setX(_btnNext->getX() - 10);
+		if (_mindProbe == false)
+		{
+			const unsigned order (_unit->getBattleOrder());
+			if (order < 10u)
+				_numOrder->setX(_btnNext->getX() - 6);
+			else
+				_numOrder->setX(_btnNext->getX() - 10);
 
-		_numOrder->setValue(order);
-		_numOrder->setVisible();
+			_numOrder->setValue(order);
+			_numOrder->setVisible();
+		}
+		else
+			_numOrder->setVisible(false);
 	}
 	else
 		_numOrder->setVisible(false);

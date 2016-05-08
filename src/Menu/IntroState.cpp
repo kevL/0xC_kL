@@ -573,8 +573,8 @@ void IntroState::endVideo()
 	if (_game->getScreen()->getSurface()->getSurface()->format->BitsPerPixel == 8u)
 	{
 		//Log(LOG_INFO) << ". 8bpp TRUE";
-		const Uint32 FADE_DELAY (45u);
-		const Uint8 FADE_STEPS (20u);
+		const Uint8 FADE_STEPS (10u);
+		const Uint32 FADE_DELAY (50u);
 /*
 		const int fadeDur (static_cast<int>(FADE_DELAY) * static_cast<int>(FADE_STEPS));
 

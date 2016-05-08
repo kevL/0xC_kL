@@ -95,7 +95,6 @@ FlcPlayer::FlcPlayer()
 		_playingState(PLAYING),
 		_hasAudio(false),
 		_videoDelay(0)
-//		_audioVideoSync(nullptr)
 {}
 
 /**
@@ -108,14 +107,14 @@ FlcPlayer::~FlcPlayer()
 
 /**
  * Initializes data structures needed buy the player and read the whole file into memory.
- * @param filename		- video file name
+ * @param file			- video filename
  * @param frameCallback	- function to call each video frame
  * @param game			- pointer to the Game instance
- * @param dx			- an offset on the x axis for the video to be rendered
- * @param dy			- an offset on the y axis for the video to be rendered
+ * @param dx			- an offset on the x-axis for the video to be rendered
+ * @param dy			- an offset on the y-axis for the video to be rendered
  */
 bool FlcPlayer::init(
-		const char* filename,
+		const char* file,
 		void (*frameCallBack)(),
 		Game* game,
 		int dx,
@@ -134,37 +133,34 @@ bool FlcPlayer::init(
 	_dx = dx;
 	_dy = dy;
 
-	_fileSize = 0;
-	_frameCount = 0;
-	_audioFrameData = nullptr;
+	_fileSize = 0u;
+	_frameCount = 0u;
 	_hasAudio = false;
-	_audioData.loadingBuffer = nullptr;
+	_audioFrameData = nullptr;
+	_audioData.loadingBuffer =
 	_audioData.playingBuffer = nullptr;
 
-	std::ifstream file;
-	file.open(filename, std::ifstream::in | std::ifstream::binary | std::ifstream::ate);
-	if (file.is_open() == false)
+	std::ifstream ifstr;
+	ifstr.open(file, std::ifstream::in | std::ifstream::binary | std::ifstream::ate);
+	if (ifstr.is_open() == false)
 	{
-		Log(LOG_ERROR) << "Could not open FLI/FLC file: " << filename;
+		Log(LOG_ERROR) << "Could not open FLI/FLC file: " << file;
 		return false;
 	}
 
-	const std::streamoff streamSize (file.tellg());
-	file.seekg(0, std::ifstream::beg);
+	const std::streamoff streamSize (ifstr.tellg());
+	ifstr.seekg(0, std::ifstream::beg);
 
-	// TODO: substitute with a cross-platform memory mapped file.
-	_fileBuf = new Uint8[static_cast<Uint32>(streamSize)];
+	_fileBuf = new Uint8[static_cast<size_t>(streamSize)]; // TODO: substitute with a cross-platform memory mapped file.
 	_fileSize = static_cast<Uint32>(streamSize);
-	file.read((char*)_fileBuf, streamSize);
-	file.close();
+	ifstr.read(reinterpret_cast<char*>(_fileBuf), streamSize);
+	ifstr.close();
 
 	_audioFrameData = _fileBuf + 128;
 
-	// read the first 128 bytes
-	readFileHeader();
+	readFileHeader(); // read the first 128 bytes
 
-	// if it's a FLC or FLI file it's gtg.
-	switch (_headerType)
+	switch (_headerType) // if it's a FLC or FLI file it's gtg.
 	{
 		case SDL_SwapLE16(FLI_TYPE):
 		case SDL_SwapLE16(FLC_TYPE):
@@ -179,14 +175,14 @@ bool FlcPlayer::init(
 			return false;
 	}
 
-	if (_realScreen->getSurface()->getSurface()->format->BitsPerPixel == 8)	// if the current surface used is at 8bpp use it
+	if (_realScreen->getSurface()->getSurface()->format->BitsPerPixel == 8u)	// if the current surface used is at 8-bpp use it
 		_mainScreen = _realScreen->getSurface()->getSurface();
-	else																	// otherwise create a new one
+	else																		// otherwise create a new one
 		_mainScreen = SDL_AllocSurface(
 									SDL_SWSURFACE,
 									_realScreen->getSurface()->getWidth(),
 									_realScreen->getSurface()->getHeight(),
-									8,0,0,0,0);
+									8,0u,0u,0u,0u);
 	return true;
 }
 
@@ -217,12 +213,10 @@ void FlcPlayer::play(bool skipLastFrame)
 {
 	_playingState = PLAYING;
 
-	// vertically center the video
-	_dy = (_mainScreen->h - _headerHeight) / 2;
+	_dy = (_mainScreen->h - _headerHeight) / 2; // vertically center the video
 	_offset = (_dy * _mainScreen->pitch) + (_dx * _mainScreen->format->BytesPerPixel);
 
-	// skip file header
-	_videoFrameData = _fileBuf + 128;
+	_videoFrameData = _fileBuf + 128; // skip file header
 	_audioFrameData = _videoFrameData;
 
 	while (shouldQuit() == false)
@@ -274,25 +268,25 @@ void FlcPlayer::SDLPolling()
 				if (Options::allowResize == true)
 				{
 // G++ linker wants it this way ...
-#ifdef _DEBUG
+//#ifdef _DEBUG
 					const int
-						screenWidth (Screen::ORIGINAL_WIDTH),
+						screenWidth  (Screen::ORIGINAL_WIDTH),
 						screenHeight (Screen::ORIGINAL_HEIGHT);
 
 					Options::newDisplayWidth =
-					Options::displayWidth = std::max(screenWidth,
-													 event.resize.w);
+					Options::displayWidth  = std::max(screenWidth,
+													  event.resize.w);
 					Options::newDisplayHeight =
 					Options::displayHeight = std::max(screenHeight,
 													  event.resize.h);
-#else // _DEBUG
-					Options::newDisplayWidth =
-					Options::displayWidth = std::max(Screen::ORIGINAL_WIDTH,
-													 event.resize.w);
-					Options::newDisplayHeight =
-					Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
-													  event.resize.h);
-#endif // _DEBUG
+//#else
+//					Options::newDisplayWidth =
+//					Options::displayWidth = std::max(Screen::ORIGINAL_WIDTH,
+//													 event.resize.w);
+//					Options::newDisplayHeight =
+//					Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
+//													  event.resize.h);
+//#endif
 
 					if (_mainScreen != _realScreen->getSurface()->getSurface())
 						_realScreen->resetDisplay();
@@ -329,13 +323,13 @@ bool FlcPlayer::shouldQuit()
  */
 void FlcPlayer::readFileHeader()
 {
-	readU32(_headerSize, _fileBuf);
-	readU16(_headerType, _fileBuf + 4);
-	readU16(_headerFrames, _fileBuf + 6);
-	readU16(_headerWidth, _fileBuf + 8);
-	readU16(_headerHeight, _fileBuf + 10);
-	readU16(_headerDepth, _fileBuf + 12);
-	readU16(_headerSpeed, _fileBuf + 16);
+	readU32(_headerSize,	_fileBuf);
+	readU16(_headerType,	_fileBuf +  4);
+	readU16(_headerFrames,	_fileBuf +  6);
+	readU16(_headerWidth,	_fileBuf +  8);
+	readU16(_headerHeight,	_fileBuf + 10);
+	readU16(_headerDepth,	_fileBuf + 12);
+	readU16(_headerSpeed,	_fileBuf + 16);
 }
 
 /**
@@ -428,12 +422,11 @@ void FlcPlayer::decodeVideo(bool skipLastFrame)
 
 				waitForNextFrame(delay);
 
-				// skip the frame header, not interested in the rest
-				_chunkData = _videoFrameData + 16;
+				_chunkData = _videoFrameData + 16; // skip the frame header, not interested in the rest
 
 				_videoFrameData += _videoFrameSize;
-				// if this frame is the last one don't play it
-				if (isEndOfFile(_videoFrameData) == true)
+
+				if (isEndOfFile(_videoFrameData) == true) // if this frame is the last one don't play it
 					_playingState = FINISHED;
 
 				if (shouldQuit() == false || skipLastFrame == false)
@@ -488,8 +481,7 @@ void FlcPlayer::playVideoFrame()
 
 	SDL_UnlockSurface(_mainScreen);
 
-	// TODO: Track which rectangles have really changed.
-	if (_mainScreen != _realScreen->getSurface()->getSurface())
+	if (_mainScreen != _realScreen->getSurface()->getSurface()) // TODO: Track which rectangles have really changed.
 		SDL_BlitSurface(
 					_mainScreen,
 					nullptr,
@@ -813,9 +805,9 @@ void FlcPlayer::color64()
 				i != qtyColors;
 				++i)
 		{
-			_colors[i].r = *(pSrc++) << 2;
-			_colors[i].g = *(pSrc++) << 2;
-			_colors[i].b = *(pSrc++) << 2;
+			_colors[i].r = *(pSrc++) << 2u;
+			_colors[i].g = *(pSrc++) << 2u;
+			_colors[i].b = *(pSrc++) << 2u;
 		}
 
 		if (_mainScreen != _realScreen->getSurface()->getSurface())

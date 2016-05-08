@@ -49,6 +49,7 @@
 #include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 #include "../Engine/RNG.h"
+#include "../Engine/Screen.h"
 #include "../Engine/Sound.h"
 
 #include "../Interface/Cursor.h"
@@ -2656,6 +2657,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 																					targetUnit,
 																					_parentState,
 																					false, true));
+									_parentState->getGame()->getScreen()->fadeScreen();
 								}
 								else
 								{

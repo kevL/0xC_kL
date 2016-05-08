@@ -34,14 +34,14 @@ namespace OpenXcom
 {
 
 /**
- * Sets up an Action menu item.
- * @param id	- the unique identifier of the menu item
+ * Sets up the ActionMenuItem.
+ * @param id	- the unique identifier of the menu-item
  * @param game	- pointer to the core Game
  * @param x		- position on the x-axis
  * @param y		- Position on the y-axis
  */
 ActionMenuItem::ActionMenuItem(
-		size_t id,
+		int id,
 		const Game* const game,
 		int x,
 		int y)
@@ -50,19 +50,11 @@ ActionMenuItem::ActionMenuItem(
 			272,
 			40,
 			x + 24,
-			y - (static_cast<int>(id) * 40)),
-		_highlighted(false),
-		_highlightModifier(5),
+			y - 40 * id),
+		_highlightModifier(5u),
 		_bat(BA_NONE),
 		_tu(0)
 {
-	Font
-		* const big = game->getResourcePack()->getFont("FONT_BIG"),
-		* const small = game->getResourcePack()->getFont("FONT_SMALL");
-	Language* const lang = game->getLanguage();
-
-	const Element* const actionMenu = game->getRuleset()->getInterface("battlescape")->getElement("actionMenu");
-
 	_frame		= new Frame(
 						getWidth(),
 						getHeight());
@@ -70,23 +62,30 @@ ActionMenuItem::ActionMenuItem(
 	_txtAcc		= new Text( 63, 20, 151, 13);
 	_txtTU		= new Text( 50, 20, 214, 13);
 
-	_frame->setColor(static_cast<Uint8>(actionMenu->border));
-	_frame->setSecondaryColor(static_cast<Uint8>(actionMenu->color2));
+	Font
+		* const big   (game->getResourcePack()->getFont("FONT_BIG")),
+		* const small (game->getResourcePack()->getFont("FONT_SMALL"));
+	Language* const lang (game->getLanguage());
+
+	const Element* const el (game->getRuleset()->getInterface("battlescape")->getElement("actionMenu"));
+
+	_frame->setColor(static_cast<Uint8>(el->border));
+	_frame->setSecondaryColor(static_cast<Uint8>(el->color2));
 	_frame->setHighContrast();
 	_frame->setThickness(8);
 
 	_txtDesc->initText(big, small, lang);
-	_txtDesc->setColor(static_cast<Uint8>(actionMenu->color));
+	_txtDesc->setColor(static_cast<Uint8>(el->color));
 	_txtDesc->setHighContrast();
 	_txtDesc->setBig();
 
 	_txtAcc->initText(big, small, lang);
-	_txtAcc->setColor(static_cast<Uint8>(actionMenu->color));
+	_txtAcc->setColor(static_cast<Uint8>(el->color));
 	_txtAcc->setHighContrast();
 	_txtAcc->setBig();
 
 	_txtTU->initText(big, small, lang);
-	_txtTU->setColor(static_cast<Uint8>(actionMenu->color));
+	_txtTU->setColor(static_cast<Uint8>(el->color));
 	_txtTU->setHighContrast();
 	_txtTU->setBig();
 }
@@ -176,14 +175,13 @@ void ActionMenuItem::draw()
 }
 
 /**
- * Processes a mouse hover in event.
+ * Highlights the box when the cursor moves into its area.
  * @param action	- pointer to an Action
  * @param state		- pointer to a State
  */
 void ActionMenuItem::mouseIn(Action* action, State* state)
 {
-	_highlighted = true;
-	_frame->setSecondaryColor(static_cast<Uint8>(_frame->getSecondaryColor() - _highlightModifier));
+	_frame->setSecondaryColor(static_cast<Uint8>(_frame->getSecondaryColor()) - _highlightModifier);
 
 	draw();
 	InteractiveSurface::mouseIn(action, state);
@@ -191,14 +189,13 @@ void ActionMenuItem::mouseIn(Action* action, State* state)
 
 
 /**
- * Processes a mouse hover out event.
+ * De-highlights the box when the cursor moves out of its area.
  * @param action	- pointer to an Action
  * @param state		- pointer to a State
  */
 void ActionMenuItem::mouseOut(Action* action, State* state)
 {
-	_highlighted = false;
-	_frame->setSecondaryColor(static_cast<Uint8>(_frame->getSecondaryColor() + _highlightModifier));
+	_frame->setSecondaryColor(static_cast<Uint8>(_frame->getSecondaryColor()) + _highlightModifier);
 
 	draw();
 	InteractiveSurface::mouseOut(action, state);

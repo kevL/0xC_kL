@@ -28,7 +28,7 @@
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
 #include "../Engine/Options.h"
-#include "../Engine/Screen.h" // background-graphic fade for Battlescape.
+#include "../Engine/Screen.h"
 
 #include "../Geoscape/GeoscapeState.h"
 
@@ -42,7 +42,7 @@
 namespace OpenXcom
 {
 
-const std::string UfopaediaStartState::ped_TITLES[]
+const std::string UfopaediaStartState::ped_TITLES[ped_SECTIONS]
 {
 	UFOPAEDIA_XCOM_CRAFT_ARMAMENT,
 	UFOPAEDIA_HEAVY_WEAPONS_PLATFORMS,
@@ -75,55 +75,7 @@ UfopaediaStartState::UfopaediaStartState(bool tactical)
 	else // in Battlescape ->
 	{
 		offset_x = 0;
-
-		// NOTE: See also Menu/IntroState::endVideo().
-		// This algorithm should be consolidated in Screen. And there should be
-		// some sort of corresponding fade-in function also.
-		if (_game->getScreen()->getSurface()->getSurface()->format->BitsPerPixel == 8) // these fades can be done only in 8-bpp.
-		{
-			const Uint32 FADE_DELAY (20u);
-			const Uint8 FADE_STEPS (20u);
-
-			SDL_Color
-				pal[256u],
-				pal2[256u];
-
-			std::memcpy(
-					pal,
-					_game->getScreen()->getPalette(),
-					sizeof(SDL_Color) * 256u);
-
-			for (Uint8
-					i = FADE_STEPS;
-					i != 0u;
-					--i)
-			{
-				for (size_t
-						j = 0u;
-						j != 256u;
-						++j)
-				{
-					pal2[j].r = pal[j].r * i / FADE_STEPS;
-					pal2[j].g = pal[j].g * i / FADE_STEPS;
-					pal2[j].b = pal[j].b * i / FADE_STEPS;
-					pal2[j].unused = pal[j].unused;
-				}
-
-				_game->getScreen()->setPalette(
-											pal2,
-											0,
-											256,
-											true);
-				_game->getScreen()->flip();
-
-				SDL_Delay(FADE_DELAY);
-			}
-		}
-		else // not really needed ->
-		{
-			_game->getScreen()->clear();
-			_game->getScreen()->flip();
-		}
+		_game->getScreen()->fadeScreen();
 	}
 
 	_window = new Window( // NOTE: this is almost too tall for 320x200.

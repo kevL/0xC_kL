@@ -143,6 +143,11 @@ private:
 				int& x,
 				int& y,
 				bool change);
+
+		/// Fades the Screen.
+		void fadeScreen(
+				Uint8 steps = 20u,
+				Uint32 delay = 10u);
 };
 
 }

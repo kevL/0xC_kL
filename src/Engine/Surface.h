@@ -273,7 +273,7 @@ protected:
 
 		/**
 		 * Gets the internal SDL_Surface for SDL calls.
-		 * @return, pointer to the Surface
+		 * @return, pointer to the SDL_Surface
 		 */
 		SDL_Surface* getSurface() const
 		{ return _surface; }
@@ -295,9 +295,9 @@ protected:
 		/// Sets the height of the Surface.
 		virtual void setHeight(int height); // should be Unit16
 
-		/// Sets the Surface's special hidden flag.
+		/// Sets the Surface's special 'hidden' flag.
 		void setHidden(bool hidden = true); // note: is not virtual.
-		/// Gets the Surface's special hidden flag.
+		/// Gets the Surface's special 'hidden' flag.
 		bool getHidden() const;
 
 		/// Locks the Surface.

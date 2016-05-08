@@ -33,11 +33,10 @@ class Text;
 
 
 /**
- * A class that represents a single box in the action popup menu on the
- * battlescape.
- * @note It shows the possible actions of an item along with the TU cost and
- * accuracy. Mouse over highlights the action and when clicked the action is
- * sent to the parent state.
+ * A class that represents a single box in the ActionMenu popup.
+ * @note It shows the possible battle-actions of an item along with the TU-cost
+ * and accuracy. Mouse over highlights the action and when clicked the event is
+ * sent to the parent-state.
  */
 class ActionMenuItem final
 	:
@@ -45,9 +44,9 @@ class ActionMenuItem final
 {
 
 private:
-	bool _highlighted;
-	int _tu;
 	Uint8 _highlightModifier;
+
+	int _tu;
 
 	BattleActionType _bat;
 
@@ -59,38 +58,38 @@ private:
 
 
 	public:
-		/// Creates a new ActionMenuItem.
+		/// Creates an ActionMenuItem.
 		ActionMenuItem(
-				size_t id,
+				int id,
 				const Game* const game,
 				int x,
 				int y);
 		/// Cleans up the ActionMenuItem.
 		~ActionMenuItem();
 
-		/// Assigns an action to the menu-item.
+		/// Assigns battle-action details to the ActionMenuItem.
 		void setAction(
 				BattleActionType baType,
 				const std::wstring& desc,
 				const std::wstring& acu,
 				const std::wstring& tu,
 				int tuCost);
-		/// Gets the assigned BattleActionType.
+		/// Gets the ActionMenuItem's assigned BattleActionType.
 		BattleActionType getMenuActionType() const;
-		/// Gets the assigned action TUs.
+		/// Gets the ActionMenuItem" assigned TU-cost.
 		int getMenuActionTu() const;
 
-		/// Sets the palettes.
+		/// Sets the Palette.
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor,
 				int ncolors) override;
-		/// Redraws it.
+		/// Draws the ActionMenuItem.
 		void draw() override;
 
-		/// Processes a mouse hover in event.
+		/// Handles a mouse-in event.
 		void mouseIn(Action* action, State* state) override;
-		/// Processes a mouse hover out event.
+		/// Handles a mouse-out event.
 		void mouseOut(Action* action, State* state) override;
 };
 

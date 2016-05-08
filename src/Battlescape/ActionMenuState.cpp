@@ -56,7 +56,7 @@ namespace OpenXcom
  * @param action	- pointer to the BattleAction (BattlescapeGame.h)
  * @param x			- position on the x-axis
  * @param y			- position on the y-axis
- * @param injured	- true if the arm using the item is injured
+ * @param injured	- true if the arm trying to use the item is injured
  */
 ActionMenuState::ActionMenuState(
 		BattleAction* const action,
@@ -75,14 +75,17 @@ ActionMenuState::ActionMenuState(
 			i != MENU_ITEMS;
 			++i)
 	{
-		_menuSelect[i] = new ActionMenuItem(i, _game, x,y);
+		_menuSelect[i] = new ActionMenuItem(
+										static_cast<int>(i),
+										_game,
+										x,y);
 		add(_menuSelect[i]);
 
 		_menuSelect[i]->setVisible(false);
 		_menuSelect[i]->onMouseClick((ActionHandler)& ActionMenuState::btnActionMenuClick);
 	}
 
-	const RuleItem* const itRule (_action->weapon->getRules()); // Build the popup menu
+	const RuleItem* const itRule (_action->weapon->getRules());
 	size_t id (0u);
 
 	const bool hasHands (_action->actor->getGeoscapeSoldier() != nullptr
@@ -288,7 +291,7 @@ void ActionMenuState::addItem( // private.
 
 	var = _action->actor->getActionTu(bat, _action->weapon);
 
-	if (bat != BA_NONE) // ie. everything but doggie bark
+	if (bat != BA_NONE) // ie. bypass doggie bark
 		wst2 = tr("STR_TIME_UNITS_SHORT").arg(var);
 
 	_menuSelect[*id]->setAction(

@@ -72,7 +72,7 @@ private:
 
 	SDL_Surface* _mainScreen;
 	Screen* _realScreen;
-	SDL_Color _colors[256];
+	SDL_Color _colors[256u];
 	int _screenWidth;
 	int _screenHeight;
 	int _screenDepth;
@@ -144,14 +144,14 @@ private:
 
 		/// Opens FLC or FLI file, read header, prepare to play it.
 		bool init(
-				const char* filename,
+				const char* file,
 				void (*frameCallBack)(),
 				Game* game,
 				int dx,
 				int dy);
 		/// Plays the loaded file; set flc.mainScreen first!
 		void play(bool skipLastFrame);
-		/// Frees memory, free love, etc.
+		/// Free memory, free love, etc.
 		void deInit();
 		/// Stops FLC Player.
 		void stop();

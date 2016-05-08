@@ -20,8 +20,8 @@
 #ifndef OPENXCOM_GAME_H
 #define OPENXCOM_GAME_H
 
-#include <list>
-#include <string>
+#include <list>		// std::list
+#include <string>	// std::string
 
 #include <SDL.h>
 

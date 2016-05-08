@@ -31,14 +31,14 @@
 #include "Adlib/fmopl.h"
 
 
-extern FM_OPL* opl[2];
+extern FM_OPL* opl[2u];
 
 
 namespace OpenXcom
 {
 
-int AdlibMusic::delay	= 0;
-int AdlibMusic::rate	= 0;
+int AdlibMusic::delay = 0;
+int AdlibMusic::rate  = 0;
 
 std::map<int, int> AdlibMusic::delayRates;
 
@@ -68,7 +68,7 @@ AdlibMusic::AdlibMusic(float volume)
 						3579545,
 						rate);
 
-	// magic value - length of 1 tick per samplerate
+	// magical value - length of 1 tick per sample-rate
 	if (delayRates.empty())
 	{
 		delayRates[8000]	= 114 * 4;
@@ -152,10 +152,8 @@ void AdlibMusic::play(int /*loop*/) const
 	if (Options::mute == false)
 	{
 		stop();
-//kL		func_setup_music((unsigned char*)_data, _size);
-//kL		func_set_music_volume(127 * _volume);
-		func_setup_music(reinterpret_cast<unsigned char*>(_data), static_cast<int>(_size));	// kL
-		func_set_music_volume(static_cast<int>(127.f * _volume));							// kL
+		func_setup_music(reinterpret_cast<unsigned char*>(_data), static_cast<int>(_size));
+		func_set_music_volume(static_cast<int>(127.f * _volume));
 		Mix_HookMusic(player, (void*)this);
 	}
 #endif
@@ -225,11 +223,12 @@ void AdlibMusic::player(
 bool AdlibMusic::isPlaying()
 {
 #ifndef __NO_MUSIC
-	if (!Options::mute)
+	if (Options::mute == false)
 	{
 		return func_is_music_playing();
 	}
 #endif
 	return false;
 }
+
 }
