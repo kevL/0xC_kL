@@ -264,7 +264,6 @@ void Screen::flip()
 		&& _numColors != 0
 		&& _screen->format->BitsPerPixel == 8u)
 	{
-//		if (_screen->format->BitsPerPixel == 8u // <- always TRUE
 		if (SDL_SetColors(
 						_screen,
 						&(_deferredPalette[static_cast<size_t>(_firstColor)]),
@@ -809,9 +808,9 @@ void Screen::updateScale( // static.
 }
 
 /**
- * Fades the Screen.
+ * Fades this Screen.
  * @param steps - quantity of steps in the fade (default 20)
- * @param delay - duration of each step in milliseconds (default 20)
+ * @param delay - duration of each step in milliseconds (default 10)
  */
 void Screen::fadeScreen(
 		Uint8 steps,
@@ -819,10 +818,9 @@ void Screen::fadeScreen(
 {
 	// NOTE: See also Menu/IntroState::endVideo().
 	// TODO: There should be some sort of corresponding fade-in function.
-//	if (getSurface()->getSurface()->format->BitsPerPixel == 8u) // these fades can be done only in 8-bpp.
+//	if (getSurface()->getSurface()->format->BitsPerPixel == 8u)
 	if (_surface->getSurface()->format->BitsPerPixel == 8u) // these fades can be done only in 8-bpp.
 	{
-		Log(LOG_INFO) << "fadeScreen";
 		if (steps == 0u) steps = 1u;
 
 		SDL_Color
@@ -863,7 +861,6 @@ void Screen::fadeScreen(
 	}
 	else // not really needed -> or wanted.
 	{
-		Log(LOG_INFO) << "flip Screen";
 		clear();
 		flip();
 	}
