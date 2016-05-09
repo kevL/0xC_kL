@@ -81,10 +81,9 @@ MiniMapView::MiniMapView(
 		_scrollKeyY(0),
 		_totalMouseMoveX(0),
 		_totalMouseMoveY(0),
-		_mouseOverThreshold(false)
+		_mouseOverThreshold(false),
+		_set(game->getResourcePack()->getSurfaceSet("SCANG.DAT"))
 {
-	_set = game->getResourcePack()->getSurfaceSet("SCANG.DAT");
-
 	_timerScroll = new Timer(SCROLL_INTERVAL);
 	_timerScroll->onTimer((SurfaceHandler)& MiniMapView::keyScroll);
 }
@@ -107,8 +106,8 @@ void MiniMapView::draw()
 	const int
 		width  (getWidth()),
 		height (getHeight()),
-		startX (_camera->getCenterPosition().x - (width  / 2 / CELL_WIDTH)),
-		startY (_camera->getCenterPosition().y - (height / 2 / CELL_HEIGHT)),
+		startX (_camera->getCenterPosition().x - ((width  >> 1u) / CELL_WIDTH)),
+		startY (_camera->getCenterPosition().y - ((height >> 1u) / CELL_HEIGHT)),
 		camera_Z (_camera->getCenterPosition().z);
 
 	drawRect(
@@ -224,8 +223,7 @@ void MiniMapView::draw()
 							}
 						}
 
-						unit = tile->getTileUnit();
-						if (unit != nullptr && unit->getUnitVisible() == true) // alive visible units
+						if ((unit = tile->getTileUnit()) != nullptr && unit->getUnitVisible() == true) // alive visible units
 						{
 							const int
 								armorSize (unit->getArmor()->getSize()),
@@ -305,32 +303,32 @@ void MiniMapView::draw()
 
 	// looks like the crosshairs for the MiniMap
 	const Sint16
-		centerX (static_cast<Sint16>(width  / 2 + 2)),
-		centerY (static_cast<Sint16>(height / 2 + 2)),
-		xOffset (static_cast<Sint16>(CELL_WIDTH  / 2)),
-		yOffset (static_cast<Sint16>(CELL_HEIGHT / 2));
+		centerX (static_cast<Sint16>((width  >> 1u) + 2)),
+		centerY (static_cast<Sint16>((height >> 1u) + 2)),
+		xOffset (static_cast<Sint16>(CELL_WIDTH  >> 1u)),
+		yOffset (static_cast<Sint16>(CELL_HEIGHT >> 1u));
 
-//	const Uint8 color = static_cast<Uint8>(WHITE + _cycle * 3); // <- if you actually want the crosshair to blink.
-	drawLine( // top left
-			centerX - static_cast<Sint16>(CELL_WIDTH),
+//	const Uint8 color = static_cast<Uint8>(WHITE + _cycle * 3); // <- if you really want the crosshair to blink.
+	drawLine(
+			centerX - static_cast<Sint16>(CELL_WIDTH),	// top left
 			centerY - static_cast<Sint16>(CELL_HEIGHT),
 			centerX - xOffset,
 			centerY - yOffset,
 			WHITE);
-	drawLine( // top right
-			centerX + xOffset,
+	drawLine(
+			centerX + xOffset,							// top right
 			centerY - yOffset,
 			centerX + static_cast<Sint16>(CELL_WIDTH),
 			centerY - static_cast<Sint16>(CELL_HEIGHT),
 			WHITE);
-	drawLine( // bottom left
-			centerX - static_cast<Sint16>(CELL_WIDTH),
+	drawLine(
+			centerX - static_cast<Sint16>(CELL_WIDTH),	// bottom left
 			centerY + static_cast<Sint16>(CELL_HEIGHT),
 			centerX - xOffset,
 			centerY + yOffset,
 			WHITE);
-	drawLine( // bottom right
-			centerX + static_cast<Sint16>(CELL_WIDTH),
+	drawLine(
+			centerX + static_cast<Sint16>(CELL_WIDTH),	 // bottom right
 			centerY + static_cast<Sint16>(CELL_HEIGHT),
 			centerX + xOffset,
 			centerY + yOffset,
@@ -492,7 +490,7 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 		// missed the release event then this won't work.
 		//
 		// This part handles the release if it's missed and another button is used.
-		if ((SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
+		if ((SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
 		{
 			if (_mouseOverThreshold == false
 				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))

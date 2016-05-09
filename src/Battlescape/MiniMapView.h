@@ -99,7 +99,7 @@ private:
 
 
 	public:
-		/// Creates the MiniMapView.
+		/// Creates a MiniMapView.
 		MiniMapView(
 				int w,
 				int h,

@@ -26,7 +26,7 @@
 namespace OpenXcom
 {
 
-class BattlescapeButton;
+//class BattlescapeButton;
 class Camera;
 class MiniMapView;
 class SavedBattleGame;
@@ -35,8 +35,8 @@ class Timer;
 
 
 /**
- * The MiniMap is an overhead representation of the Battlescape map;
- * a strategic view that allows you to see more of the map.
+ * The MiniMap is an overhead representation of the battlefield, a strategic
+ * view that allows the player to see more of the Map.
  */
 class MiniMapState
 	:
@@ -44,13 +44,13 @@ class MiniMapState
 {
 
 private:
-	BattlescapeButton
-		* _btnLvlDown,
-		* _btnLvlUp,
-		* _btnOk;
+//	BattlescapeButton
+//		* _btnLvlDown,
+//		* _btnLvlUp,
+//		* _btnOk;
 	MiniMapView* _miniView;
 	Surface* _bg;
-	Text* _txtLevel;
+//	Text* _txtLevel;
 	Timer* _timerAnimate;
 
 	/// Handles Minimap animation.
