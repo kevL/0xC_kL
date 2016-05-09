@@ -146,7 +146,7 @@ private:
 
 		/// Fades the Screen.
 		void fadeScreen(
-				Uint8 steps = 20u,
+				Uint8 steps = 10u,
 				Uint32 delay = 10u);
 };
 

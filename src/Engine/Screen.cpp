@@ -809,7 +809,7 @@ void Screen::updateScale( // static.
 
 /**
  * Fades this Screen.
- * @param steps - quantity of steps in the fade (default 20)
+ * @param steps - quantity of steps in the fade (default 10)
  * @param delay - duration of each step in milliseconds (default 10)
  */
 void Screen::fadeScreen(
