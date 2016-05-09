@@ -983,12 +983,9 @@ BattlescapeState::BattlescapeState()
 					(ActionHandler)& BattlescapeState::btnConsoleToggle,
 					Options::keyBattleConsole);
 
-	_btnStats->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnPivotUnit,
-					SDLK_COMMA);
-	_btnStats->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnPivotUnit,
-					SDLK_PERIOD);
+	// NOTE: Can't use a specific SDLKey on these because it can require CTRL.
+	// InteractiveSurface handlers do not like that ....
+	_btnStats->onKeyboardPress((ActionHandler)& BattlescapeState::btnPivotUnit);
 
 //	const SDLKey buttons[]
 //	{
@@ -2722,11 +2719,10 @@ void BattlescapeState::btnReloadClick(Action*)
 void BattlescapeState::btnZeroTuClick(Action* action)
 {
 	if ((SDL_GetModState() & KMOD_CTRL) != 0
-		&& allowButtons() == true)
+		&& playableUnitSelected() == true)
 	{
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
-		if (unit != nullptr
-			&& _battleGame->noActionsPending(unit) == true)
+		if (_battleGame->noActionsPending(unit) == true)
 		{
 			SDL_Event ev;
 			ev.type = SDL_MOUSEBUTTONDOWN;
@@ -2810,28 +2806,40 @@ void BattlescapeState::btnConsoleToggle(Action*)
  */
 void BattlescapeState::btnPivotUnit(Action* action)
 {
-	if (playableUnitSelected() == true
-		&& action->getDetails()->type == SDL_KEYDOWN)
+	switch (action->getDetails()->key.keysym.sym)
 	{
-		BattleAction* const tacAction (_battleGame->getTacticalAction());
-		tacAction->actor = _battleSave->getSelectedUnit();
-		tacAction->targeting = false;
-		tacAction->strafe = false; // TODO: unless Turreted ...
+		case SDLK_COMMA:
+		case SDLK_PERIOD:
+			if (playableUnitSelected() == true)
+			{
+				BattleAction* const tacAction (_battleGame->getTacticalAction());
+				tacAction->actor = _battleSave->getSelectedUnit();
+				tacAction->targeting = false;
 
-		int dir;
-		switch (action->getDetails()->key.keysym.sym)
-		{
-			default:
-			case SDLK_COMMA:  dir = -1; break;	// pivot unit counter-clockwise
-			case SDLK_PERIOD: dir = +1;			// pivot unit clockwise
-		}
-		dir = (tacAction->actor->getUnitDirection() + dir + 8) % 8;
-		Pathfinding::directionToVector(
-									dir,
-									&tacAction->posTarget);
-		tacAction->posTarget += tacAction->actor->getPosition();
+				int dir;
+				switch (action->getDetails()->key.keysym.sym)
+				{
+					case SDLK_COMMA:  dir = -1; break;	// pivot unit counter-clockwise
+					case SDLK_PERIOD: dir = +1; break;	// pivot unit clockwise
 
-		_battleGame->statePushBack(new UnitTurnBState(_battleGame, *tacAction));
+					default: dir = 0;					// should never happen.
+				}
+
+				if (tacAction->actor->getTurretType() != TRT_NONE
+					&& (SDL_GetModState() & KMOD_CTRL) != 0)
+				{
+					tacAction->strafe = true;
+					dir += tacAction->actor->getTurretDirection();
+				}
+				else
+				{
+					tacAction->strafe = false;
+					dir += tacAction->actor->getUnitDirection();
+				}
+				tacAction->value = (dir + 8) % 8;
+
+				_battleGame->statePushBack(new UnitTurnBState(_battleGame, *tacAction));
+			}
 	}
 }
 

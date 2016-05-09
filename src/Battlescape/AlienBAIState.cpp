@@ -1686,11 +1686,10 @@ void AlienBAIState::meleeAction() // private.
  */
 void AlienBAIState::faceMelee() // private.
 {
-	_unit->setDirectionTo(
-			_unitAggro->getPosition() + Position(
-											_unit->getArmor()->getSize() - 1,
-											_unit->getArmor()->getSize() - 1,
-											0));
+	_unit->setDirectionTo(_unitAggro->getPosition() + Position(
+															_unit->getArmor()->getSize() - 1,
+															_unit->getArmor()->getSize() - 1,
+															0));
 
 	while (_unit->getUnitStatus() == STATUS_TURNING)
 		_unit->turn();

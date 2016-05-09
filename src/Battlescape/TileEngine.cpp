@@ -1924,6 +1924,7 @@ bool TileEngine::reactionShot(
 		//Log(LOG_INFO) << "rf by Actor " << _rfAction->actor->getId() << " RfTriggerPos " << _battleSave->getBattleGame()->getMap()->getCamera()->getMapOffset();
 		_battleSave->cacheRfTriggerPosition(_battleSave->getBattleGame()->getMap()->getCamera()->getMapOffset());
 		_rfAction->TU = 0;
+		_rfAction->value = -1;
 
 		_battleSave->getBattleGame()->statePushBack(new UnitTurnBState(
 																_battleSave->getBattleGame(),

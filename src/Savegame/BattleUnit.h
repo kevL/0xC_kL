@@ -338,7 +338,7 @@ private:
 		/// Looks in a certain direction.
 		void setDirectionTo(
 				int dir,
-				bool force = false);
+				bool turret = false);
 		/// Sets the BattleUnit's face direction - only used by strafing moves.
 		void setFaceDirection(int dir);
 		/// Gets the BattleUnit's face direction - only used by strafing moves.
@@ -348,7 +348,7 @@ private:
 		/// Gets the BattleUnit's turret direction.
 		int getTurretDirection() const;
 		/// Gets the BattleUnit's turret To direction.
-		int getTurretToDirection() const;
+//		int getTurretToDirection() const;
 		/// Gets the BattleUnit's vertical direction.
 		int getVerticalDirection() const;
 

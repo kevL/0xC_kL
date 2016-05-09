@@ -75,10 +75,18 @@ void UnitTurnBState::init()
 		_turret = _unit->getTurretType() != TRT_NONE
 			   && (_action.strafe == true || _action.targeting == true);
 
-		if (   _unit->getPosition().x != _action.posTarget.x
-			|| _unit->getPosition().y != _action.posTarget.y)
+		switch (_action.value)
 		{
-			_unit->setDirectionTo(_action.posTarget, _turret); // -> STATUS_TURNING
+			case -1:
+				if (   _unit->getPosition().x != _action.posTarget.x
+					|| _unit->getPosition().y != _action.posTarget.y)
+				{
+					_unit->setDirectionTo(_action.posTarget, _turret); // -> STATUS_TURNING
+				}
+				break;
+
+			default:
+				_unit->setDirectionTo(_action.value, _turret); // -> STATUS_TURNING
 		}
 
 		switch (_unit->getUnitStatus())
@@ -109,7 +117,7 @@ void UnitTurnBState::init()
 				_parent->setStateInterval(interval);
 				break;
 
-			default: // try to open a door
+			case STATUS_STANDING: // try to open a door
 				if (_chargeTu == true && _action.type == BA_NONE)
 				{
 					int soundId;
@@ -135,7 +143,9 @@ void UnitTurnBState::init()
 					if (soundId != -1)
 						_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
 													->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
-				}
+				} // no break;
+
+			default: // safety.
 				_unit->clearTurnDirection();
 				_parent->popState();
 		}

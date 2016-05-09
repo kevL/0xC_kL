@@ -334,7 +334,7 @@ void InteractiveSurface::mouseRelease(Action* action, State* state) // virtual
 }
 
 /**
- * Called every time there's a mouse click on this Surface.
+ * Called every time there's a mouse-click on this Surface.
  * @note Allows this Surface to have custom functionality for this action and
  * can be called externally to simulate the action.
  * @param action	- pointer to an Action
@@ -397,7 +397,7 @@ void InteractiveSurface::mouseOut(Action* action, State* state) // virtual
 }
 
 /**
- * Called every time there's a keyboard press when this Surface is focused.
+ * Called every time there's a keyboard-press when this Surface is focused.
  * @note Allows this Surface to have custom functionality for this action and
  * can be called externally to simulate the action.
  * @param action	- pointer to an Action
@@ -412,7 +412,9 @@ void InteractiveSurface::keyboardPress(Action* action, State* state) // virtual
 		(state->*handler)(action);
 	}
 
-	// Check if Ctrl, Alt and Shift are pressed
+	// Check if Ctrl, Alt or Shift are pressed and if TRUE then disallow.
+	// This creates problems but ensures that CTRL+key etc. are reserved for
+	// usage elsehow. I guess, haven't looked into it.
 	std::map<SDLKey, ActionHandler>::const_iterator oneHandler (_keyPress.find(action->getDetails()->key.keysym.sym));
 	if (oneHandler != _keyPress.end()
 		&& (action->getDetails()->key.keysym.mod & (KMOD_CTRL | KMOD_ALT | KMOD_SHIFT)) == 0)
@@ -423,7 +425,7 @@ void InteractiveSurface::keyboardPress(Action* action, State* state) // virtual
 }
 
 /**
- * Called every time there's a keyboard release over this Surface.
+ * Called every time there's a keyboard-release over this Surface.
  * @note Allows this Surface to have custom functionality for this action and
  * can be called externally to simulate the action.
  * @param action	- pointer to an Action
@@ -438,7 +440,9 @@ void InteractiveSurface::keyboardRelease(Action* action, State* state) // virtua
 		(state->*handler)(action);
 	}
 
-	// Check if Ctrl, Alt and Shift are pressed
+	// Check if Ctrl, Alt or Shift are pressed and if TRUE then disallow.
+	// This creates problems but ensures that CTRL+key etc. are reserved for
+	// usage elsehow. I guess, haven't looked into it.
 	std::map<SDLKey, ActionHandler>::const_iterator oneHandler (_keyRelease.find(action->getDetails()->key.keysym.sym));
 	if (oneHandler != _keyRelease.end()
 		&& (action->getDetails()->key.keysym.mod & (KMOD_CTRL | KMOD_ALT | KMOD_SHIFT)) == 0)
@@ -524,7 +528,7 @@ void InteractiveSurface::onMouseOut(ActionHandler handler)
  * Sets a function to be called every time a key is pressed.
  * @note The Surface must be focused.
  * @param handler	- ActionHandler
- * @param keyPress	- keyboard key to check for (note: ignores modifiers),
+ * @param keyPress	- keyboard-key to check for (note: ignores modifiers)
  *					  set to 0 for any key (default SDLK_ANY)
  */
 void InteractiveSurface::onKeyboardPress( // Note: this fires somehow on mouse-button also ....
@@ -541,7 +545,7 @@ void InteractiveSurface::onKeyboardPress( // Note: this fires somehow on mouse-b
  * Sets a function to be called every time a key is released.
  * @note The Surface must be focused.
  * @param handler		- ActionHandler
- * @param keyRelease	- keyboard key to check for (note: ignores modifiers),
+ * @param keyRelease	- keyboard-key to check for (note: ignores modifiers)
  *						  set to 0 for any key (default SDLK_ANY)
  */
 void InteractiveSurface::onKeyboardRelease(

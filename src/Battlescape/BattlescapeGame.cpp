@@ -846,6 +846,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 					action.TU = unit->getActionTu(action.type, action.weapon); // no break;
 
 				default:
+					action.value = -1;
 					statePushBack(new UnitTurnBState(this, action));
 					// NOTE: See below_ for (action.type == BA_MELEE).
 			}
@@ -2437,6 +2438,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 							i != pivotQty;
 							++i)
 					{
+						action.value = -1;
 						action.posTarget = Position(
 												unit->getPosition().x + RNG::generate(-5,5),
 												unit->getPosition().y + RNG::generate(-5,5),
@@ -2456,6 +2458,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 								action.posTarget = _battleSave->getTiles()[RNG::pick(_battleSave->getMapSizeXYZ())]->getPosition();
 								if (_battleSave->getTile(action.posTarget) != nullptr)
 								{
+									action.value = -1;
 									statePushBack(new UnitTurnBState(this, action, false));
 
 									action.type = BA_SNAPSHOT;
@@ -2500,6 +2503,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 
 									if (_battleSave->getTile(action.posTarget) != nullptr)
 									{
+										action.value = -1;
 										statePushBack(new UnitTurnBState(this, action, false));
 
 										const Position
@@ -2763,6 +2767,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 
 				_battleStates.push_back(new ProjectileFlyBState(this, _tacAction));	// TODO: should check for valid LoF/LoT *before* invoking this
 																					// instead of the (flakey) checks in that state. Then conform w/ AI ...
+				_tacAction.value = -1;
 				statePushFront(new UnitTurnBState(this, _tacAction));
 		}
 	}
@@ -2823,10 +2828,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				else
 					_tacAction.actor->setTurnDirection(+1);
 
-				Pathfinding::directionToVector(
-										(_tacAction.actor->getUnitDirection() + 4) % 8,
-										&_tacAction.posTarget);
-				_tacAction.posTarget += pos;
+				_tacAction.value = (_tacAction.actor->getUnitDirection() + 4) % 8;
 
 				statePushBack(new UnitTurnBState(this, _tacAction));
 			}
@@ -2877,6 +2879,7 @@ void BattlescapeGame::secondaryAction(const Position& pos)
 	_tacAction.actor = _battleSave->getSelectedUnit();
 	if (_tacAction.actor->getPosition() != pos)
 	{
+		_tacAction.value = -1;
 		_tacAction.posTarget = pos;
 		_tacAction.strafe = _tacAction.actor->getTurretType() != TRT_NONE
 						 && (SDL_GetModState() & KMOD_CTRL) != 0
@@ -2902,6 +2905,7 @@ void BattlescapeGame::launchAction()
 	_parentState->getGame()->getCursor()->setHidden();
 
 //	_tacAction.posCamera = getMap()->getCamera()->getMapOffset();
+	_tacAction.value = -1;
 
 	_battleStates.push_back(new ProjectileFlyBState(this, _tacAction));
 	statePushFront(new UnitTurnBState(this, _tacAction));

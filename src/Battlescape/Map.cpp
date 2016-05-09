@@ -2135,7 +2135,7 @@ void Map::setPalette(
 }
 
 /**
- * Handles mouse presses on the Map.
+ * Handles mouse-presses on this Map.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -2146,7 +2146,7 @@ void Map::mousePress(Action* action, State* state)
 }
 
 /**
- * Handles mouse releases on the Map.
+ * Handles mouse-releases on this Map.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -2157,7 +2157,7 @@ void Map::mouseRelease(Action* action, State* state)
 }
 
 /**
- * Handles mouse over events on the Map.
+ * Handles mouse-over events on this Map.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -2172,18 +2172,18 @@ void Map::mouseOver(Action* action, State* state)
 }
 
 /**
- * Finds the current mouse position XY on this Map.
- * @param point - reference the mouse position
+ * Finds the current mouse-position x/y on this Map.
+ * @param pos - reference to the mouse-position
  */
-void Map::findMousePointer(Position& point)
+void Map::findMousePointer(Position& pos)
 {
-	point.x = _mX;
-	point.y = _mY;
-	point.z = 0;
+	pos.x = _mX;
+	pos.y = _mY;
+	pos.z = 0;
 }
 
 /**
- * Handles keyboard presses on the Map.
+ * Handles keyboard-presses on this Map.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -2194,7 +2194,7 @@ void Map::keyboardPress(Action* action, State* state)
 }
 
 /**
- * Handles keyboard releases on the Map.
+ * Handles keyboard-releases on this Map.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -2249,7 +2249,7 @@ void Map::refreshSelectorPosition()
 
 	_camera->convertScreenToMap(
 							_mX,
-							_mY + _spriteHeight / 4,
+							_mY + (_spriteHeight >> 2u),
 							&_selectorX,
 							&_selectorY);
 

@@ -714,7 +714,7 @@ void BattleUnit::setRecolor(
 		int utileLook,
 		int rankLook)
 {
-	static const size_t GROUPS (4);
+	static const size_t GROUPS (4u);
 	std::pair<int,int> colors[GROUPS] =
 	{
 		std::make_pair(
@@ -738,13 +738,13 @@ void BattleUnit::setRecolor(
 	{
 		if (colors[i].first > 0 && colors[i].second > 0)
 			_recolor.push_back(std::make_pair(
-										colors[i].first << 4,
+										colors[i].first << 4u,
 										colors[i].second));
 	}
 }
 
 /**
- * Gets this BattleUnit's unique ID.
+ * Gets this BattleUnit's unique-ID.
  * @return, the unique ID
  */
 int BattleUnit::getId() const
@@ -762,7 +762,7 @@ std::string BattleUnit::getType() const
 }
 
 /**
- * Gets this BattleUnit's rank string.
+ * Gets this BattleUnit's rank-string.
  * @return, rank
  */
 std::string BattleUnit::getRankString() const
@@ -771,7 +771,7 @@ std::string BattleUnit::getRankString() const
 }
 
 /**
- * Gets this BattleUnit's race string.
+ * Gets this BattleUnit's race-string.
  * @return, race
  */
 std::string BattleUnit::getRaceString() const
@@ -780,7 +780,7 @@ std::string BattleUnit::getRaceString() const
 }
 
 /**
- * Gets the geoscape-soldier object.
+ * Gets this BattleUnit's geoscape-soldier-object if any.
  * @return, pointer to Soldier
  */
 Soldier* BattleUnit::getGeoscapeSoldier() const
@@ -860,47 +860,41 @@ int BattleUnit::getUnitDirection() const
 /**
  * Looks at a specified Position.
  * @param pos		- reference to the position to look toward
- * @param turret	- true to turn the turret (default false to turn the unit)
+ * @param turret	- true to turn the turret, false to turn the whole unit (default false)
  */
 void BattleUnit::setDirectionTo(
 		const Position& pos,
 		bool turret)
 {
-	const int dir (TileEngine::getDirectionTo(_pos, pos));
-	if (turret == true)
-	{
-		if (dir != _dirTurret)
-		{
-			_dirToTurret = dir;
-			_status = STATUS_TURNING;
-		}
-	}
-	else if (dir != _dir)
-	{
-		_dirTo = dir;
-		_status = STATUS_TURNING;
-	}
+	setDirectionTo(
+				TileEngine::getDirectionTo(_pos, pos),
+				turret);
 }
 
 /**
  * Look a direction.
- * @param dir	- direction to look
- * @param force	- true to instantly set direction (default false to animate)
+ * @param dir		- direction to look
+ * @param turret	- true to turn the turret, false to turn the whole unit (default false)
  */
 void BattleUnit::setDirectionTo(
 		int dir,
-		bool force)
+		bool turret)
 {
-	if (dir != _dir
-		&& dir > -1 && dir < 8)
+	if (dir > -1 && dir < 8)
 	{
-		if (force == false)
+		if (turret == true)
+		{
+			if (dir != _dirTurret)
+			{
+				_dirToTurret = dir;
+				_status = STATUS_TURNING;
+			}
+		}
+		else if (dir != _dir)
 		{
 			_dirTo = dir;
 			_status = STATUS_TURNING;
 		}
-		else
-			_dirTo = _dir = dir;
 	}
 }
 
@@ -945,11 +939,11 @@ int BattleUnit::getTurretDirection() const
 /**
  * Gets this BattleUnit's turret To direction.
  * @return, toDirectionTurret
- */
+ *
 int BattleUnit::getTurretToDirection() const
 {
 	return _dirToTurret;
-}
+} */
 
 /**
  * Gets this BattleUnit's vertical direction.
