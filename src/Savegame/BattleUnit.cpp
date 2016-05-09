@@ -780,7 +780,7 @@ std::string BattleUnit::getRaceString() const
 }
 
 /**
- * Gets this BattleUnit's geoscape-soldier-object if any.
+ * Gets this BattleUnit's geoscape-soldier if any.
  * @return, pointer to Soldier
  */
 Soldier* BattleUnit::getGeoscapeSoldier() const

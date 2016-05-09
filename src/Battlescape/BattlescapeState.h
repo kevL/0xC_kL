@@ -397,19 +397,23 @@ private:
 
 		/// Handler for clicking the reload button.
 //		void btnReloadClick(Action* action);
+
 		/// Handler for clicking the expend all TUs button.
 		void btnZeroTuClick(Action* action);
+		/// Handler for pressing the expend all TUs key.
+		void keyZeroTuPress(Action* action);
+
 		/// Handler for clicking the UfoPaedia button.
 		void btnUfoPaediaClick(Action* action);
 
 		/// Handler for clicking the lighting button.
-		void btnPersonalLightingClick(Action* action);
+		void keyUnitLight(Action* action);
 
 		/// Handler for toggling the console.
-		void btnConsoleToggle(Action* action);
+		void keyConsoleToggle(Action* action);
 
 		/// Handler for turning a selected BattleUnit with the keyboard.
-		void btnPivotUnit(Action* action);
+		void keyTurnUnit(Action* action);
 
 		/// Handler for showing tooltip.
 //		void txtTooltipIn(Action* action);

@@ -526,12 +526,13 @@ void InteractiveSurface::onMouseOut(ActionHandler handler)
 
 /**
  * Sets a function to be called every time a key is pressed.
- * @note The Surface must be focused.
+ * @note The Surface must be focused and key-modifiers are NOT allowed unless
+ * @a keyRelease is left at default SDLK_ANY. Any repercussions of that need to
+ * be handled in the final functions.
  * @param handler	- ActionHandler
- * @param keyPress	- keyboard-key to check for (note: ignores modifiers)
- *					  set to 0 for any key (default SDLK_ANY)
+ * @param keyPress	- keyboard-key to check for, set to 0 for any key (default SDLK_ANY)
  */
-void InteractiveSurface::onKeyboardPress( // Note: this fires somehow on mouse-button also ....
+void InteractiveSurface::onKeyboardPress(
 		ActionHandler handler,
 		SDLKey keyPress)
 {
@@ -543,10 +544,11 @@ void InteractiveSurface::onKeyboardPress( // Note: this fires somehow on mouse-b
 
 /**
  * Sets a function to be called every time a key is released.
- * @note The Surface must be focused.
+ * @note The Surface must be focused and key-modifiers are NOT allowed unless
+ * @a keyRelease is left at default SDLK_ANY. Any repercussions of that need to
+ * be handled in the final functions.
  * @param handler		- ActionHandler
- * @param keyRelease	- keyboard-key to check for (note: ignores modifiers)
- *						  set to 0 for any key (default SDLK_ANY)
+ * @param keyRelease	- keyboard-key to check for, set to 0 for any key (default SDLK_ANY)
  */
 void InteractiveSurface::onKeyboardRelease(
 		ActionHandler handler,

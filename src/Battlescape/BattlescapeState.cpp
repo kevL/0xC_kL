@@ -957,9 +957,9 @@ BattlescapeState::BattlescapeState()
 	_btnLogo->onMouseClick(
 					(ActionHandler)& BattlescapeState::btnZeroTuClick,
 					SDL_BUTTON_LEFT);
-	_btnLogo->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnZeroTuClick,
-					Options::keyBattleZeroTUs);
+	// NOTE: Can't use a specific SDLKey on this because it requires CTRL.
+	// InteractiveSurface handlers do not like that ....
+	_btnLogo->onKeyboardPress((ActionHandler)& BattlescapeState::keyZeroTuPress);
 
 	_btnLogo->onMouseClick(
 					(ActionHandler)& BattlescapeState::btnUfoPaediaClick,
@@ -977,15 +977,17 @@ BattlescapeState::BattlescapeState()
 //					(ActionHandler)& BattlescapeState::btnReloadClick,
 //					Options::keyBattleReload);
 	_btnStats->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnPersonalLightingClick,
+					(ActionHandler)& BattlescapeState::keyUnitLight,
 					Options::keyBattlePersonalLighting);
 	_btnStats->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnConsoleToggle,
+					(ActionHandler)& BattlescapeState::keyConsoleToggle,
 					Options::keyBattleConsole);
 
-	// NOTE: Can't use a specific SDLKey on these because it can require CTRL.
+	// NOTE: Can't use a specific SDLKey on this because it can require CTRL.
 	// InteractiveSurface handlers do not like that ....
-	_btnStats->onKeyboardPress((ActionHandler)& BattlescapeState::btnPivotUnit);
+	_btnStats->onKeyboardPress((ActionHandler)& BattlescapeState::keyTurnUnit);
+
+
 
 //	const SDLKey buttons[]
 //	{
@@ -2712,7 +2714,7 @@ void BattlescapeState::btnReloadClick(Action*)
 } */
 
 /**
- * Zeroes TU of the currently selected BattleUnit.
+ * Zeroes TU of the currently selected BattleUnit w/ mouse-click.
  * @note Requires CTRL-key down and BattleStates inactive.
  * @param action - pointer to an Action
  */
@@ -2724,13 +2726,36 @@ void BattlescapeState::btnZeroTuClick(Action* action)
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
 		if (_battleGame->noActionsPending(unit) == true)
 		{
-			SDL_Event ev;
-			ev.type = SDL_MOUSEBUTTONDOWN;
-			ev.button.button = SDL_BUTTON_LEFT;
+//			SDL_Event ev;
+//			ev.type = SDL_MOUSEBUTTONDOWN;
+//			ev.button.button = SDL_BUTTON_LEFT;
+//			Action a (Action(&ev, 0.,0.,0,0));
+//			action->getSender()->mousePress(&a, this); // why mouse event, for keyboard-press perhaps
 
-			Action a (Action(&ev, 0.,0.,0,0));
-			action->getSender()->mousePress(&a, this); // why mouse event, for keyboard-press perhaps
+			unit->setTimeUnits(0);
+			_numTimeUnits->setValue(0u);
+			_barTimeUnits->setValue(0.);
 
+			_battleGame->cancelTacticalAction();
+		}
+	}
+}
+
+/**
+ * Zeroes TU of the currently selected BattleUnit w/ key-press.
+ * @note Requires CTRL-key down and BattleStates inactive.
+ * @param action - pointer to an Action
+ */
+void BattlescapeState::keyZeroTuPress(Action* action)
+{
+	if ((SDL_GetModState() & KMOD_CTRL) != 0
+		&& (action->getDetails()->key.keysym.sym == Options::keyBattleZeroTUs
+			|| action->getDetails()->key.keysym.sym == SDLK_KP_PERIOD)
+		&& playableUnitSelected() == true)
+	{
+		BattleUnit* const unit (_battleSave->getSelectedUnit());
+		if (_battleGame->noActionsPending(unit) == true)
+		{
 			unit->setTimeUnits(0);
 			_numTimeUnits->setValue(0u);
 			_barTimeUnits->setValue(0.);
@@ -2754,7 +2779,7 @@ void BattlescapeState::btnUfoPaediaClick(Action*)
  * Toggles soldier's personal lighting (purely cosmetic).
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnPersonalLightingClick(Action*)
+void BattlescapeState::keyUnitLight(Action*)
 {
 	if (allowButtons() == true)
 		_battleSave->getTileEngine()->togglePersonalLighting();
@@ -2764,7 +2789,7 @@ void BattlescapeState::btnPersonalLightingClick(Action*)
  * Toggles the display-state of the console.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnConsoleToggle(Action*)
+void BattlescapeState::keyConsoleToggle(Action*)
 {
 	if (allowButtons() == true)
 	{
@@ -2804,7 +2829,7 @@ void BattlescapeState::btnConsoleToggle(Action*)
  * Pivots the selected BattleUnit if any clockwise or counter-clockwise.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnPivotUnit(Action* action)
+void BattlescapeState::keyTurnUnit(Action* action)
 {
 	switch (action->getDetails()->key.keysym.sym)
 	{

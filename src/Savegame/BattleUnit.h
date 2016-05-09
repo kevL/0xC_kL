@@ -311,7 +311,7 @@ private:
 		/// Gets the BattleUnit's race string.
 		std::string getRaceString() const;
 
-		/// Gets the BattleUnit's geoscape Soldier object.
+		/// Gets the BattleUnit's geoscape Soldier.
 		Soldier* getGeoscapeSoldier() const;
 
 		/// Sets the BattleUnit's position.
