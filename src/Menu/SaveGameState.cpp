@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef _WIN32 // see also: pch.h ... & Engine/Language.cpp
+#ifdef _WIN32
 #	ifndef NOMINMAX
 #		define NOMINMAX
 #	endif

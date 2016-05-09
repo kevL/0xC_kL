@@ -14,11 +14,21 @@
 // somewhere. Also,
 // NOTE: That the math-constants are defined *outside* the header-guard in
 // 'math.h' ....
-//#ifndef _USE_MATH_DEFINES
-//#	define _USE_MATH_DEFINES
-//#endif
+#ifndef _USE_MATH_DEFINES
+#	define _USE_MATH_DEFINES
+#endif
 // NOTE: Define _USE_MATH_DEFINES in the IDE's pre-processor def'ns. and
 // Makefile's CXXFLAGS variable and be done w/ it.
+
+#ifdef _MSC_VER
+#	ifndef _CRT_SECURE_NO_WARNINGS
+#		define _CRT_SECURE_NO_WARNINGS
+#	endif
+
+#	ifndef _SCL_SECURE_NO_WARNINGS
+#		define _SCL_SECURE_NO_WARNINGS
+#	endif
+#endif
 
 #include <algorithm>	// min/max
 #include <cassert>		// asserts
@@ -123,7 +133,6 @@
 //#include <wchar.h>
 */
 
-// see also: Engine/CrossPlatform.cpp & Engine/Language.cpp
 /*
 #ifdef _WIN32
 #	ifndef NOMINMAX

@@ -17,6 +17,12 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef _MSC_VER
+#	ifndef _CRT_SECURE_NO_WARNINGS
+#		define _CRT_SECURE_NO_WARNINGS
+#	endif
+#endif
+
 #include "CrossPlatform.h"
 
 #include <algorithm>	// std::replace(), std::sort(), std::transform()
@@ -44,11 +50,7 @@
 #include "Logger.h"
 #include "Options.h"
 
-#ifdef _WIN32 // see also: pch.h ... & Engine/Language.cpp
-#	ifdef _MSC_VER
-#		define _CRT_SECURE_NO_WARNINGS
-#	endif
-
+#ifdef _WIN32
 #	ifndef NOMINMAX
 #		define NOMINMAX
 #	endif
@@ -130,7 +132,7 @@ static char* const getHome()
 #endif
 
 /**
- * Builds a list of predefined paths for the data-folder according to the
+ * Builds a list of predefined paths for the data-folders according to the
  * operating-system.
  * @return, list of data-paths
  */

@@ -20,6 +20,12 @@
 #ifndef OPENXCOM_LOGGER_H
 #define OPENXCOM_LOGGER_H
 
+#ifdef _MSC_VER
+#	ifndef _CRT_SECURE_NO_WARNINGS
+#		define _CRT_SECURE_NO_WARNINGS
+#	endif
+#endif
+
 //#include <cstdio>		// std::fprintf(), std::fflush(), std::fopen(), std::fclose()
 //#include <ostream>	// std::endl
 //#include <string>		// std::string
@@ -105,29 +111,35 @@ inline std::ostringstream& Logger::get(SeverityLevel level)
 inline Logger::~Logger() // virtual. NOTE: This need not be virtual.
 {
 	_oststr << std::endl;
-	switch (reportingLevel())
-	{
-		case LOG_DEBUG:
-		case LOG_VERBOSE:
-		{
-			std::fprintf( // FIX: Print to console is not working as expected in MinGW-w64.
-						stdout, // was 'stderr'
-						"%s",
-						_oststr.str().c_str());
-			std::fflush(stdout); // was 'stderr'
-		}
-	}
 
 	std::ostringstream oststr;
 	oststr << "[" << CrossPlatform::now() << "]" << "\t" << _oststr.str();
 	FILE* const file (std::fopen(logFile().c_str(), "a"));
-	std::fprintf(
-				file,
-				"%s",
-				oststr.str().c_str());
+	if (file != nullptr)
+	{
+		std::fprintf(
+					file,
+					"%s",
+					oststr.str().c_str());
 
-	std::fflush(file);
-	std::fclose(file);
+		std::fflush(file);
+		std::fclose(file);
+	}
+
+	switch (reportingLevel())
+	{
+		default:
+			if (file != nullptr) break;
+			// no break;
+
+		case LOG_DEBUG:
+		case LOG_VERBOSE:
+			std::fprintf(			// FIX: Print to console is not working as expected in MinGW-w64.
+						stdout,		// was 'stderr'
+						"%s",
+						_oststr.str().c_str());
+			std::fflush(stdout);	// was 'stderr'
+	}
 }
 
 /**

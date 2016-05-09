@@ -2776,7 +2776,7 @@ void BattlescapeState::btnUfoPaediaClick(Action*)
 }
 
 /**
- * Toggles soldier's personal lighting (purely cosmetic).
+ * Toggles unit's personal lighting (purely cosmetic).
  * @param action - pointer to an Action
  */
 void BattlescapeState::keyUnitLight(Action*)

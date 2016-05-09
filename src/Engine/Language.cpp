@@ -26,7 +26,7 @@
 //#include <set>		// std::set
 //#include <sstream>	// std::wostringstream
 
-#ifdef _WIN32 // see also: pch.h ... & Engine/CrossPlatform.cpp
+#ifdef _WIN32
 #	ifndef NOMINMAX
 #		define NOMINMAX
 #	endif

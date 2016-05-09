@@ -372,10 +372,8 @@ void TextList::addRow(
 	va_start(args, cols); // avoid g++ compiler warnings.
 
 	int ncols;
-	if (cols != 0)
-		ncols = cols;
-	else
-		ncols = 1;
+	if (cols != 0)	ncols = cols;
+	else			ncols = 1;
 
 	std::vector<Text*> txtRow;
 	int
