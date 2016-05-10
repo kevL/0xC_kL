@@ -34,7 +34,7 @@
 //#include "../Engine/LocalizedText.h"
 //#include "../Engine/Options.h"
 //#include "../Engine/Palette.h"
-//#include "../Engine/Screen.h"
+#include "../Engine/Screen.h"
 #include "../Engine/Timer.h"
 
 //#include "../Interface/BattlescapeButton.h"
@@ -202,8 +202,9 @@ void MiniMapState::btnOkClick(Action* action)
 
 	BattlescapeState* const battleState (_game->getSavedGame()->getBattleSave()->getBattleState());
 	battleState->getMap()->setNoDraw(false);
-//	battleState->clearShowMapBtn();
+//	battleState->clearMinimapBtn();
 
+	_game->getScreen()->fadeScreen();
 	_game->popState();
 
 	action->getDetails()->type = SDL_NOEVENT; // consume the event

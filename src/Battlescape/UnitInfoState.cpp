@@ -31,7 +31,7 @@
 #include "../Engine/InteractiveSurface.h"
 #include "../Engine/LocalizedText.h"
 #include "../Engine/Options.h"
-//#include "../Engine/Screen.h"
+#include "../Engine/Screen.h"
 
 #include "../Interface/Bar.h"
 #include "../Interface/NumberText.h"
@@ -852,6 +852,8 @@ void UnitInfoState::btnNextClick(Action*)
  */
 void UnitInfoState::exitPress(Action*) const // private.
 {
+	_game->getScreen()->fadeScreen();
+
 	if (_mindProbe == true)
 	{
 		const BattleUnit* const unit (_battleSave->getSelectedUnit());

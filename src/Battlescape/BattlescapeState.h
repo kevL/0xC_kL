@@ -114,7 +114,7 @@ private:
 		* _btnUnitDown,
 		* _btnMapUp,
 		* _btnMapDown,
-		* _btnShowMap,
+		* _btnMiniMap,
 		* _btnKneel,
 		* _btnInventory,
 		* _btnCenter,
@@ -302,10 +302,10 @@ private:
 		/// Handler for releasing the Map Down button.
 		void btnMapDownRelease(Action* action);
 
-		/// Handler for clicking the Show Map button.
-		void btnShowMapClick(Action* action);
-		/// Clears the ShowMap btn.
-//		void clearShowMapBtn();
+		/// Handler for clicking the MiniMap button.
+		void btnMinimapClick(Action* action);
+		/// Clears the MiniMap btn.
+//		void clearMinimapBtn();
 
 		/// Handler for clicking the Kneel button.
 		void btnKneelClick(Action* action);

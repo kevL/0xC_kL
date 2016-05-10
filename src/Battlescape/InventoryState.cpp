@@ -34,7 +34,7 @@
 #include "../Engine/LocalizedText.h"
 //#include "../Engine/Options.h"
 //#include "../Engine/Palette.h"
-//#include "../Engine/Screen.h"
+#include "../Engine/Screen.h"
 #include "../Engine/Sound.h"
 #include "../Engine/SurfaceSet.h"
 
@@ -428,6 +428,8 @@ InventoryState::~InventoryState()
 
 		_battleSave->getBattleGame()->getMap()->setNoDraw(false);
 	}
+
+	_game->getScreen()->fadeScreen();
 }
 //	if (_battleSave->getTileEngine())
 //	{
@@ -1021,11 +1023,14 @@ void InventoryState::clearInventory( // private.
 void InventoryState::btnRankClick(Action*)
 {
 	if (_inventoryPanel->getSelectedItem() == nullptr)
+	{
 		_game->pushState(new UnitInfoState(
 										_battleSave->getSelectedUnit(),
 										_parent,
 										true, false,
 										_tuMode == false));
+		_game->getScreen()->fadeScreen();
+	}
 }
 
 /**

@@ -179,7 +179,7 @@ BattlescapeState::BattlescapeState()
 	_btnUnitDown		= new BattlescapeButton(32,  16, x +  48, y + 16);
 	_btnMapUp			= new BattlescapeButton(32,  16, x +  80, y);
 	_btnMapDown			= new BattlescapeButton(32,  16, x +  80, y + 16);
-	_btnShowMap			= new BattlescapeButton(32,  16, x + 112, y);
+	_btnMiniMap			= new BattlescapeButton(32,  16, x + 112, y);
 	_btnKneel			= new BattlescapeButton(32,  16, x + 112, y + 16);
 	_btnInventory		= new BattlescapeButton(32,  16, x + 144, y);
 	_btnCenter			= new BattlescapeButton(32,  16, x + 144, y + 16);
@@ -366,7 +366,7 @@ BattlescapeState::BattlescapeState()
 	add(_btnUnitDown,		"buttonUnitDown",		"battlescape", _icons);
 	add(_btnMapUp,			"buttonMapUp",			"battlescape", _icons);
 	add(_btnMapDown,		"buttonMapDown",		"battlescape", _icons);
-	add(_btnShowMap,		"buttonShowMap",		"battlescape", _icons);
+	add(_btnMiniMap,		"buttonShowMap",		"battlescape", _icons);
 	add(_btnKneel,			"buttonKneel",			"battlescape", _icons);
 	add(_btnInventory,		"buttonInventory",		"battlescape", _icons);
 	add(_btnCenter,			"buttonCenter",			"battlescape", _icons);
@@ -746,13 +746,13 @@ BattlescapeState::BattlescapeState()
 //	_btnMapDown->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
 //	_btnMapDown->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnShowMap->onMouseClick((ActionHandler)& BattlescapeState::btnShowMapClick);
-	_btnShowMap->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnShowMapClick,
+	_btnMiniMap->onMouseClick((ActionHandler)& BattlescapeState::btnMinimapClick);
+	_btnMiniMap->onKeyboardPress(
+					(ActionHandler)& BattlescapeState::btnMinimapClick,
 					Options::keyBattleMap);
-//	_btnShowMap->setTooltip("STR_MINIMAP");
-//	_btnShowMap->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnShowMap->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
+//	_btnMiniMap->setTooltip("STR_MINIMAP");
+//	_btnMiniMap->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
+//	_btnMiniMap->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
 	_btnKneel->onMouseClick((ActionHandler)& BattlescapeState::btnKneelClick);
 	_btnKneel->onKeyboardPress(
@@ -1884,17 +1884,18 @@ void BattlescapeState::btnMapDownRelease(Action*)
 }
 
 /**
- * Shows the minimap.
+ * Shows the MiniMap.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnShowMapClick(Action*)
+void BattlescapeState::btnMinimapClick(Action*)
 {
 	if (allowButtons() == true)
 	{
-//		_overlay->getFrame(2)->blit(_btnShowMap); // -> hidden by MiniMap atm.
+//		_overlay->getFrame(2)->blit(_btnMiniMap); // -> hidden by MiniMap atm.
 		_game->pushState(new MiniMapState(
 										_map->getCamera(),
 										_battleSave));
+		_game->getScreen()->fadeScreen();
 	}
 }
 
@@ -1902,9 +1903,9 @@ void BattlescapeState::btnShowMapClick(Action*)
  * Clears the ShowMap btn.
  * @note To be called from MiniMapState::btnOkClick()
  *
-void BattlescapeState::clearShowMapBtn()
+void BattlescapeState::clearMinimapBtn()
 {
-	_btnShowMap->clear();
+	_btnMiniMap->clear();
 } */
 
 /**
@@ -4183,7 +4184,7 @@ void BattlescapeState::toggleIcons(bool vis)
 	_btnUnitDown->setVisible(vis);
 	_btnMapUp->setVisible(vis);
 	_btnMapDown->setVisible(vis);
-	_btnShowMap->setVisible(vis);
+	_btnMiniMap->setVisible(vis);
 	_btnKneel->setVisible(vis);
 	_btnInventory->setVisible(vis);
 	_btnCenter->setVisible(vis);
