@@ -37,10 +37,10 @@
 #include "../Engine/Screen.h"
 #include "../Engine/Timer.h"
 
-//#include "../Interface/BattlescapeButton.h"
-//#include "../Interface/Text.h"
+#include "../Interface/BattlescapeButton.h"
+#include "../Interface/Text.h"
 
-//#include "../Resource/ResourcePack.h"
+#include "../Resource/ResourcePack.h"
 
 #include "../Savegame/SavedBattleGame.h"
 #include "../Savegame/SavedGame.h"
@@ -63,21 +63,22 @@ MiniMapState::MiniMapState(
 		Options::baseYResolution = Screen::ORIGINAL_HEIGHT;
 		_game->getScreen()->resetDisplay(false);
 	} */
-//	static const int // these center the Scanbord better in relation to the crosshairs.
-//		scanbordOffsetX =  3,
+	static const int
+//		scanbordOffsetX =  3, // these center the original Scanbord better in relation to the crosshairs.
 //		scanbordOffsetY = 12;
+		bgOffsetX = -((Options::baseXResolution - Screen::ORIGINAL_WIDTH)  >> 1u),
+		bgOffsetY = -((Options::baseYResolution - Screen::ORIGINAL_HEIGHT) >> 1u);
 
 	_bg			= new InteractiveSurface(
 									Options::baseXResolution,
 									Options::baseYResolution,
-									0,0);
+									bgOffsetX, bgOffsetY);
 //									scanbordOffsetX, scanbordOffsetY);
 	_miniView	= new MiniMapView(
-//								223, 150, 47, 15,
+//								223,150, 47,15,
 								Options::baseXResolution,
 								Options::baseYResolution,
-								-((Options::baseXResolution - 320) >> 1u),
-								-((Options::baseYResolution - 200) >> 1u),
+								bgOffsetX, bgOffsetY,
 								_game,
 								camera,
 								battleSave);
@@ -85,7 +86,6 @@ MiniMapState::MiniMapState(
 //	_btnLvlUp	= new BattlescapeButton(18, 20,  24 + scanbordOffsetX,  62 + scanbordOffsetY);
 //	_btnLvlDown	= new BattlescapeButton(18, 20,  24 + scanbordOffsetX,  88 + scanbordOffsetY);
 //	_btnOk		= new BattlescapeButton(32, 32, 275 + scanbordOffsetX, 145 + scanbordOffsetY);
-
 //	_txtLevel	= new Text(28, 16, 281 + scanbordOffsetX, 73 + scanbordOffsetY);
 
 	setPalette(PAL_BATTLESCAPE);
@@ -93,26 +93,31 @@ MiniMapState::MiniMapState(
 	add(_miniView); // put miniView *under* the background.
 	add(_bg);
 
-//	_game->getResourcePack()->getSurface("Scanbord")->blit(_bg);
-
-//	add(_btnLvlUp,		"buttonUp",		"minimap", _bg);
-//	add(_btnLvlDown,	"buttonDown",	"minimap", _bg);
-//	add(_btnOk,			"buttonOK",		"minimap", _bg);
-//	add(_txtLevel,		"textLevel",	"minimap", _bg);
+	Surface* const srf (_game->getResourcePack()->getSurface("Scanbord_640")); // "Scanbord" original 320px
+	srf->blit(_bg);
 
 	centerAllSurfaces();
 
+	_btnLvlUp	= new BattlescapeButton(36, 39,  15, 121); // do not 'center' these ->
+	_btnLvlDown	= new BattlescapeButton(36, 39,  15, 171);
+	_btnOk		= new BattlescapeButton(55, 55, 551, 287);
+	_txtLevel	= new Text(25, 16, 556, 147);
+	add(_btnLvlUp,		"buttonUp",		"minimap", _bg);
+	add(_btnLvlDown,	"buttonDown",	"minimap", _bg);
+	add(_btnOk,			"buttonOK",		"minimap", _bg);
+	add(_txtLevel,		"textLevel",	"minimap", _bg);
 
-//	_btnLvlUp->onMouseClick((ActionHandler)& MiniMapState::btnLevelUpClick);
+
+	_btnLvlUp->onMouseClick((ActionHandler)& MiniMapState::btnLevelUpClick);
 //	_btnLvlUp->onKeyboardPress(
 //					(ActionHandler)& MiniMapState::btnLevelUpClick,
 //					Options::keyBattleLevelUp);
-//	_btnLvlDown->onMouseClick((ActionHandler)& MiniMapState::btnLevelDownClick);
+	_btnLvlDown->onMouseClick((ActionHandler)& MiniMapState::btnLevelDownClick);
 //	_btnLvlDown->onKeyboardPress(
 //					(ActionHandler)& MiniMapState::btnLevelDownClick,
 //					Options::keyBattleLevelDown);
 //
-//	_btnOk->onMouseClick((ActionHandler)& MiniMapState::btnOkClick);
+	_btnOk->onMouseClick((ActionHandler)& MiniMapState::btnOkClick);
 //	_btnOk->onKeyboardPress(
 //					(ActionHandler)& MiniMapState::btnOkClick,
 //					Options::keyOk);
@@ -126,11 +131,12 @@ MiniMapState::MiniMapState(
 //					(ActionHandler)& MiniMapState::btnOkClick,
 //					Options::keyBattleMap);
 //
-//	_txtLevel->setBig();
-//	_txtLevel->setHighContrast();
-//	std::wostringstream level;
-//	level << ((camera->getViewLevel() + 1) % 10);
-//	_txtLevel->setText(level.str());
+	_txtLevel->setHighContrast();
+	_txtLevel->setBig();
+	_txtLevel->setAlign(ALIGN_CENTER);
+	std::wostringstream level;
+	level << ((camera->getViewLevel() + 1) /*% 10*/);
+	_txtLevel->setText(level.str());
 
 	_miniView->onKeyboardPress(
 					(ActionHandler)& MiniMapState::btnOkClick,
@@ -138,6 +144,12 @@ MiniMapState::MiniMapState(
 	_miniView->onKeyboardPress(
 					(ActionHandler)& MiniMapState::btnOkClick,
 					Options::keyCancel);
+	_miniView->onKeyboardPress(
+					(ActionHandler)& MiniMapState::btnOkClick,
+					Options::keyOk);
+	_miniView->onKeyboardPress(
+					(ActionHandler)& MiniMapState::btnOkClick,
+					Options::keyOkKeypad);
 
 	_miniView->onKeyboardPress(
 					(ActionHandler)& MiniMapState::btnLevelUpClick,
@@ -216,10 +228,8 @@ void MiniMapState::btnOkClick(Action* action)
  */
 void MiniMapState::btnLevelUpClick(Action* action)
 {
-	_miniView->up();
-//	std::wostringstream level;
-//	level << ((_miniView->up() + 1) % 10);
-//	_txtLevel->setText(level.str());
+//	_miniView->up();
+	_txtLevel->setText(Text::intWide((_miniView->up() + 1) /*% 10*/));
 
 	action->getDetails()->type = SDL_NOEVENT; // consume the event
 }
@@ -230,10 +240,8 @@ void MiniMapState::btnLevelUpClick(Action* action)
  */
 void MiniMapState::btnLevelDownClick(Action* action)
 {
-	_miniView->down();
-//	std::wostringstream level;
-//	level << ((_miniView->down() + 1) % 10);
-//	_txtLevel->setText(level.str());
+//	_miniView->down();
+	_txtLevel->setText(Text::intWide((_miniView->down() + 1) /*% 10*/));
 
 	action->getDetails()->type = SDL_NOEVENT; // consume the event
 }

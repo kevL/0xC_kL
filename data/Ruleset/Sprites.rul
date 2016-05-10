@@ -158,12 +158,18 @@ extraSprites:
     singleImage: true
     files:
       0: Resources/Sprites/ufograph/logo.png
-  - type: Scanbord #SCANBORD.PCK
-    width: 320
-    height: 200
+#  - type: Scanbord #SCANBORD.PCK
+#    width: 320
+#    height: 200
+#    singleImage: true
+#    files:
+#      0: Resources/Sprites/ufograph/scanbord.png
+  - type: Scanbord_640
+    width: 640
+    height: 360
     singleImage: true
     files:
-      0: Resources/Sprites/ufograph/scanbord.png
+      0: Resources/Sprites/ufograph/scanbord_640_oiled5.png
   - type: Diehard #TAC00.SCR
     width: 320
     height: 200

@@ -1009,6 +1009,9 @@ bool Tile::allowSmoke() const // private.
  */
 bool Tile::allowFire() const // private.
 {
+	if (_parts[O_FLOOR] == nullptr && _parts[O_OBJECT] == nullptr)
+		return false;
+
 	if (_parts[O_FLOOR] != nullptr
 		&& _parts[O_FLOOR]->blockFire() == true)
 	{
@@ -1019,6 +1022,8 @@ bool Tile::allowFire() const // private.
 	{
 		switch (_parts[O_OBJECT]->getBigwall())
 		{
+			case BIGWALL_NONE:
+			case BIGWALL_BLOCK:
 			case BIGWALL_NESW:
 			case BIGWALL_NWSE:
 				if (_parts[O_OBJECT]->blockFire() == true)

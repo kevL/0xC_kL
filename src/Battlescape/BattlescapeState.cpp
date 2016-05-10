@@ -1891,7 +1891,7 @@ void BattlescapeState::btnMinimapClick(Action*)
 {
 	if (allowButtons() == true)
 	{
-//		_overlay->getFrame(2)->blit(_btnMiniMap); // -> hidden by MiniMap atm.
+//		_overlay->getFrame(2)->blit(_btnMiniMap); // -> hidden by MiniMap itself atm.
 		_game->pushState(new MiniMapState(
 										_map->getCamera(),
 										_battleSave));

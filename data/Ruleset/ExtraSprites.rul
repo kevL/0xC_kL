@@ -87,7 +87,7 @@ extraSprites:
     height: 360
     singleImage: true
     files:
-      0: Resources/Sprites/ig271_cygnus_02_640px.png
+      0: Resources/Sprites/ig271_cygnus_02_640_oiled5.png
 #    width: 480
 #    height: 270
 #    files:

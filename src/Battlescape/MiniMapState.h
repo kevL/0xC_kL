@@ -26,7 +26,7 @@
 namespace OpenXcom
 {
 
-//class BattlescapeButton;
+class BattlescapeButton;
 class Camera;
 class MiniMapView;
 class SavedBattleGame;
@@ -44,13 +44,13 @@ class MiniMapState
 {
 
 private:
-//	BattlescapeButton
-//		* _btnLvlDown,
-//		* _btnLvlUp,
-//		* _btnOk;
+	BattlescapeButton
+		* _btnLvlDown,
+		* _btnLvlUp,
+		* _btnOk;
 	MiniMapView* _miniView;
 	Surface* _bg;
-//	Text* _txtLevel;
+	Text* _txtLevel;
 	Timer* _timerAnimate;
 
 	/// Handles Minimap animation.

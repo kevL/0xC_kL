@@ -1320,13 +1320,16 @@ void Map::drawTerrain(Surface* const surface) // private.
 // Draw SMOKE & FIRE
 					if (_tile->isRevealed(ST_CONTENT) == true)
 					{
+						std::string st;
 						if (_tile->getFire() != 0) // check & draw fire first.
 						{
+							st = "SMOKE.PCK";
 							spriteId =
 							shade = 0;
 						}
 						else if (_tile->getSmoke() != 0)
 						{
+							st = "SmokeCloud";
 							spriteId = _tile->getSmoke() >> 1u; //+ ResourcePack::SMOKE_OFFSET
 							shade = tileShade;
 						}
@@ -1339,7 +1342,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							if (aniOffset > 3) aniOffset -= 4;
 							spriteId += aniOffset;
 
-							sprite = _res->getSurfaceSet("SmokeCloud")->getFrame(spriteId); // was "SMOKE.PCK"
+							sprite = _res->getSurfaceSet(st)->getFrame(spriteId);
 							//if (sprite != nullptr)
 								sprite->blitNShade(
 										surface,
