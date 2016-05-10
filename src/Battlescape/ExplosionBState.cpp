@@ -54,6 +54,7 @@ namespace OpenXcom
  * @param lowerWeapon	- true to tell the unit causing this explosion to lower their weapon (default false)
  * @param meleeSuccess	- true if the (melee) attack was succesful (default false)
  * @param forceCamera	- forces Camera to center on the explosion (default false)
+ * @param isLaunched	- true if shot by a Launcher (default false)
  */
 ExplosionBState::ExplosionBState(
 		BattlescapeGame* const parent,
@@ -63,7 +64,8 @@ ExplosionBState::ExplosionBState(
 		Tile* const tile,
 		bool lowerWeapon,
 		bool meleeSuccess,
-		bool forceCamera)
+		bool forceCamera,
+		bool isLaunched)
 	:
 		BattleState(parent),
 		_centerVoxel(centerVoxel),
@@ -73,6 +75,7 @@ ExplosionBState::ExplosionBState(
 		_lowerWeapon(lowerWeapon),
 		_meleeSuccess(meleeSuccess),
 		_forceCamera(forceCamera),
+		_isLaunched(isLaunched),
 		_battleSave(parent->getBattleSave()),
 		_power(0),
 		_areaOfEffect(true),
@@ -533,7 +536,8 @@ void ExplosionBState::explode() // private.
 					itRule->getExplosionRadius(),
 					_unit,
 					itRule->isGrenade() == true,
-					itRule->defusePulse() == true);
+					itRule->defusePulse() == true,
+					_isLaunched);
 		}
 		else
 		{

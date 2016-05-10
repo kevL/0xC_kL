@@ -2298,15 +2298,17 @@ void TileEngine::hit(
  * @param attacker		- pointer to a unit that caused explosion (default nullptr)
  * @param grenade		- true if explosion is caused by a grenade for throwing XP (default false)
  * @param defusePulse	- true if explosion item caused an electo-magnetic pulse that defuses primed grenades (default false)
+ * @param isLaunched	- true if shot by a Launcher (default false)
  */
 void TileEngine::explode(
-			const Position& targetVoxel,
-			int power,
-			DamageType dType,
-			int radius,
-			BattleUnit* const attacker,
-			bool grenade,
-			bool defusePulse)
+		const Position& targetVoxel,
+		int power,
+		DamageType dType,
+		int radius,
+		BattleUnit* const attacker,
+		bool grenade,
+		bool defusePulse,
+		bool isLaunched)
 {
 //	int iFalse (0);
 //	for (int i = 0; i < 1000; ++i)
@@ -2931,7 +2933,7 @@ void TileEngine::explode(
 								takenXp = true;
 								if (grenade == true)
 									attacker->addThrowingExp();
-								else
+								else if (isLaunched == false)
 									attacker->addFiringExp();
 							}
 						}

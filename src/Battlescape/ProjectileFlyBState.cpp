@@ -80,7 +80,7 @@ ProjectileFlyBState::ProjectileFlyBState(
 		_initUnitAni(0)
 {
 	if (_posOrigin.z == -1)
-		_posOrigin = action.actor->getPosition();
+		_posOrigin = _action.actor->getPosition();
 }
 
 /**
@@ -949,7 +949,9 @@ void ProjectileFlyBState::think()
 															nullptr,
 															_action.type != BA_AUTOSHOT // final projectile -> stop Aiming.
 																|| _action.autoShotCount == _action.weapon->getRules()->getAutoShots()
-																|| _action.weapon->getAmmoItem() == nullptr));
+																|| _action.weapon->getAmmoItem() == nullptr,
+															false, false,
+															_action.type == BA_LAUNCH));
 
 					if (_prjImpact == VOXEL_UNIT)	// note that Diary Statistics require direct hit by an explosive
 					{								// projectile for it to be considered as a 'been hit' shot.

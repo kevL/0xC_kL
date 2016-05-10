@@ -134,9 +134,7 @@ MiniMapState::MiniMapState(
 	_txtLevel->setHighContrast();
 	_txtLevel->setBig();
 	_txtLevel->setAlign(ALIGN_CENTER);
-	std::wostringstream level;
-	level << ((camera->getViewLevel() + 1) /*% 10*/);
-	_txtLevel->setText(level.str());
+	_txtLevel->setText(Text::intWide((camera->getViewLevel() + 1) /*% 10*/));
 
 	_miniView->onKeyboardPress(
 					(ActionHandler)& MiniMapState::btnOkClick,

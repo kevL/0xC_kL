@@ -238,7 +238,8 @@ private:
 				int radius,
 				BattleUnit* const attacker = nullptr,
 				bool grenade = false,
-				bool defusePulse = false);
+				bool defusePulse = false,
+				bool isLaunched = false);
 		/// Checks the horizontal blockage of a Tile.
 		int horizontalBlockage(
 				const Tile* const tileStart,

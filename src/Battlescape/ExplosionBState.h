@@ -48,6 +48,7 @@ private:
 		_areaOfEffect,
 		_buttHurt,
 		_forceCamera,
+		_isLaunched,
 		_lowerWeapon,
 		_melee,
 		_meleeSuccess;
@@ -76,7 +77,8 @@ private:
 				Tile* const tile = nullptr,
 				bool lowerWeapon = false,
 				bool meleeSuccess = false,
-				bool forceCamera = false);
+				bool forceCamera = false,
+				bool isLaunched = false);
 		/// Cleans up the ExplosionBState.
 		~ExplosionBState();
 
