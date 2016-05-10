@@ -1302,7 +1302,7 @@ void TextList::think()
 }
 
 /**
- * Ignores any mouse clicks that aren't on a row.
+ * Ignores any mouse-clicks that aren't on a row.
  * @param action	- pointer to an Action
  * @param state		- state that the ActionHandlers belong to
  */
@@ -1340,7 +1340,7 @@ void TextList::mousePress(Action* action, State* state)
 }
 
 /**
- * Ignores any mouse clicks that aren't on a row.
+ * Ignores any mouse-clicks that aren't on a row.
  * @param action	- pointer to an Action
  * @param state		- state that the ActionHandlers belong to
  */
@@ -1356,7 +1356,7 @@ void TextList::mouseRelease(Action* action, State* state)
 }
 
 /**
- * Ignores any mouse clicks that aren't on a row.
+ * Ignores any mouse-clicks that aren't on a row.
  * @param action	- pointer to an Action
  * @param state		- state that the ActionHandlers belong to
  */

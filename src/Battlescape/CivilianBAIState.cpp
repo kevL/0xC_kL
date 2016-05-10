@@ -219,9 +219,9 @@ void CivilianBAIState::setupEscape() // private.
 	const int tuHalf (_unit->getTimeUnits() / 2);
 	_reachable = _pf->findReachable(_unit, tuHalf);
 
-	bool coverFound (false);
+//	bool coverFound (false);
 	size_t i (0);
-	while (coverFound == false && i <= SavedBattleGame::SEARCH_SIZE)
+	while (/*coverFound == false &&*/ i <= SavedBattleGame::SEARCH_SIZE)
 	{
 		_escapeAction->posTarget = _unit->getPosition();
 
@@ -309,8 +309,8 @@ void CivilianBAIState::setupEscape() // private.
 				}
 				_pf->abortPath();
 
-				if (score > FAST_PASS_THRESHOLD)
-					coverFound = true;
+//				if (score > FAST_PASS_THRESHOLD)
+//					coverFound = true;
 			}
 		}
 	}

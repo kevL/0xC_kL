@@ -52,6 +52,7 @@ private:
 		_melee,
 		_rifle;
 	int
+		_aggression,
 		_distClosest,
 		_targetsExposed,
 		_targetsVisible,

@@ -55,10 +55,10 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Save Game screen.
+ * Initializes all the elements in the SaveGame screen.
  * @param origin	- game section that originated this state
  * @param file		- reference to name of the save-file without extension
- * @param palette	- pointer to parent state palette
+ * @param palette	- pointer to parent-state palette
  */
 SaveGameState::SaveGameState(
 		OptionsOrigin origin,
@@ -74,10 +74,10 @@ SaveGameState::SaveGameState(
 }
 
 /**
- * Initializes all the elements in the Save Game screen.
+ * Initializes all the elements in the SaveGame screen.
  * @param origin	- game section that originated this state
  * @param type		- type of auto-save being used
- * @param palette	- pointer to parent state palette
+ * @param palette	- pointer to parent-state palette
  */
 SaveGameState::SaveGameState(
 		OptionsOrigin origin,
@@ -122,7 +122,7 @@ SaveGameState::~SaveGameState()
 
 /**
  * Builds the interface.
- * @param palette	- pointer to parent state palette
+ * @param palette	- pointer to parent-state palette
  * @param dropText	- true if saving without a window (eg. quicksave)
  */
 void SaveGameState::buildUi(
@@ -135,10 +135,9 @@ void SaveGameState::buildUi(
 	_fullScreen = false;
 
 	int y;
-	if (dropText == true)
-		y = 92;
-	else
-		y = -18;
+//	if (dropText == true)	y = 92;
+//	else					y = -18;
+	y = 92; // bypass above^ cf. LoadGameState.
 
 	_txtStatus = new Text(320, 17, 0, y);
 

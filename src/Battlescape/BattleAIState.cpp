@@ -45,7 +45,9 @@ BattleAIState::BattleAIState(
 		_spottersOrigin(0),
 		_tuEscape(-1),
 		_traceAI(Options::traceAI)
-{}
+{
+	if (_traceAI) Log(LOG_INFO) << "Create BattleAIState id-" << _unit->getId();
+}
 
 /**
  * Deletes the BattleAIState.
@@ -105,7 +107,6 @@ YAML::Node BattleAIState::save() const // virtual.
  * Enters the current AI state.
  */
 //void BattleAIState::enter(){}
-
 /**
  * Exits the current AI state.
  */
@@ -140,7 +141,7 @@ AIMode BattleAIState::getAIMode()
 
 /**
  * Converts an AIMode into a string for debugging.
- * @return, AI Mode as string
+ * @return, AIMode as string
  */
 std::string BattleAIState::debugAiMode(AIMode mode) // static.
 {
@@ -156,30 +157,31 @@ std::string BattleAIState::debugAiMode(AIMode mode) // static.
 
 /**
  * Gets a color representative of AI-movement calculations.
- * @param val - value to represent
+ * @param chosen	- true to color the tile as 'chosen'
+ * @param score		- the value to display
  * @return, color
  */
 Uint8 BattleAIState::debugTraceColor( // static
-		bool valid,
+		bool chosen,
 		int score)
 {
 	if (score < 0)
 	{
-		if (valid == true)
+		if (chosen == true)
 			return TRACE_ORANGE;
 		return TRACE_RED;
 	}
 
-	if (score < FAST_PASS_THRESHOLD / 2)
+	if (score < (FAST_PASS_THRESHOLD >> 1u))
 	{
-		if (valid == true)
+		if (chosen == true)
 			return TRACE_BROWN;
 		return TRACE_BLUE;
 	}
 
 	if (score < FAST_PASS_THRESHOLD)
 	{
-		if (valid == true)
+		if (chosen == true)
 			return TRACE_GREEN;
 		return TRACE_YELLOW;
 	}

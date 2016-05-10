@@ -2462,7 +2462,7 @@ void BattlescapeGenerator::explodePowerSources() // private.
 }
 
 /**
- * Creates a mini-battle-save for managing inventory from the Geoscape's
+ * Creates a mini-battlesave for managing inventory from the Geoscape's
  * CraftEquip or BaseEquip and some other screens.
  * @note kids, don't try this at home! yer tellin' me.
  * @param craft		- pointer to Craft to handle

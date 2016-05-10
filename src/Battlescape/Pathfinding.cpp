@@ -729,7 +729,8 @@ bool Pathfinding::aStarPath( // private.
 
 /**
  * Locates all tiles reachable to @a unit with a TU cost no more than @a maxTuCost.
- * @note Uses Dijkstra's algorithm. See also aStarPath().
+ * @note Uses Dijkstra's algorithm.
+ * @sa aStarPath().
  * @param unit		- pointer to a BattleUnit
  * @param maxTuCost	- the maximum cost of the path to each tile
  * @return, vector of reachable tile-indices sorted in ascending order of cost;

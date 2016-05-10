@@ -281,7 +281,7 @@ void Inventory::drawGrids()
 /**
  * Draws the items contained in the unit's inventory.
  */
-void Inventory::drawItems() // private.
+void Inventory::drawItems()
 {
 	_srfItems->clear();
 	_fusePairs.clear();
@@ -651,16 +651,13 @@ void Inventory::mouseClick(Action* action, State* state)
 								_tuCost = -1;
 
 								moveItem(_selItem, inRule, x,y);
-
 								setSelectedItem();
-
 								if (inRule->getCategory() == IC_GROUND)
 								{
 //									_stackLevel[static_cast<size_t>(x)]
 //											   [static_cast<size_t>(y)] += 1;
 									arrangeGround();
 								}
-
 								drawItems();
 
 								soundId = ResourcePack::ITEM_DROP;
@@ -682,11 +679,8 @@ void Inventory::mouseClick(Action* action, State* state)
 										overItem->getSlotY());
 //								_stackLevel[static_cast<size_t>(overItem->getSlotX())]
 //										   [static_cast<size_t>(overItem->getSlotY())] += 1;
-
 								setSelectedItem();
-
 								arrangeGround();
-
 								drawItems();
 
 								soundId = ResourcePack::ITEM_DROP;
@@ -764,10 +758,7 @@ void Inventory::mouseClick(Action* action, State* state)
 									overItem->setAmmoItem(_selItem);
 
 									setSelectedItem();
-
-									if (doGround == true)
-										arrangeGround();
-
+									if (doGround == true) arrangeGround();
 									drawItems();
 
 									soundId = ResourcePack::ITEM_RELOAD;
@@ -803,10 +794,9 @@ void Inventory::mouseClick(Action* action, State* state)
 										overItem->getSlotY());
 //								_stackLevel[static_cast<size_t>(overItem->getSlotX())]
 //										   [static_cast<size_t>(overItem->getSlotY())] += 1;
-
 								setSelectedItem();
-
 								arrangeGround();
+								drawItems();
 
 								soundId = ResourcePack::ITEM_DROP;
 							}
@@ -880,7 +870,6 @@ void Inventory::mouseClick(Action* action, State* state)
 												moveItem(
 														overItem,
 														_game->getRuleset()->getInventoryRule(ST_GROUND));
-
 												arrangeGround();
 												drawItems();
 												soundId = ResourcePack::ITEM_DROP;
@@ -920,14 +909,12 @@ void Inventory::mouseClick(Action* action, State* state)
 			else // RMB w/ item on cursor
 			{
 				setSelectedItem(); // Return item to original position.
-
 				if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
 				{
 //					_stackLevel[static_cast<size_t>(_selItem->getSlotX())]
 //							   [static_cast<size_t>(_selItem->getSlotY())] += 1;
 					arrangeGround();
 				}
-
 				drawItems();
 
 				soundId = ResourcePack::ITEM_DROP;
@@ -1052,9 +1039,7 @@ bool Inventory::fitItem( // private.
 //								   [static_cast<size_t>(item->getSlotY())] -= 1;
 
 						moveItem(item, inRule, x,y);
-
 						arrangeGround();
-
 						drawItems();
 
 						_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)->play();
@@ -1383,12 +1368,8 @@ bool Inventory::unload()
 		inRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
 
 	moveItem(load, inRule);
-
 	setSelectedItem();
-
-	if (_tuMode == false)
-		arrangeGround();
-
+	if (_tuMode == false) arrangeGround();
 	drawItems();
 
 	return true;

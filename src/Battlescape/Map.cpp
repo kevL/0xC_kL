@@ -135,7 +135,7 @@ Map::Map(
 
 	_spriteWidth  = _res->getSurfaceSet("BLANKS.PCK")->getFrame(0)->getWidth();
 	_spriteHeight = _res->getSurfaceSet("BLANKS.PCK")->getFrame(0)->getHeight();
-	_spriteWidth_2 = _spriteWidth / 2;
+	_spriteWidth_2 = _spriteWidth >> 1u;
 
 	_camera = new Camera(
 					_spriteWidth,

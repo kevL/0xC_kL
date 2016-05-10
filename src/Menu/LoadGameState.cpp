@@ -122,10 +122,9 @@ void LoadGameState::buildUi(
 	_fullScreen = false;
 
 	int y;
-	if (dropText == true)
-		y = 92;
-	else
-		y = -18;
+//	if (dropText == true)	y = 92;
+//	else					y = -18;
+	y = 92; // bypass above^ cf. SaveGameState.
 
 	_txtStatus = new Text(320, 17, 0, y);
 

@@ -76,14 +76,14 @@ protected:
 		TRACE_DIR				= 10;
 
 	static const Uint8
-		TRACE_RED		=  3,
-		TRACE_GREEN		=  4,
-		TRACE_LIME		=  5,
-		TRACE_ORANGE	=  7,
-		TRACE_BLUE		=  8,
-		TRACE_YELLOW	= 10,
-		TRACE_BROWN		= 11,
-		TRACE_PURPLE	= 13;
+		TRACE_RED		=  3u,
+		TRACE_GREEN		=  4u,
+		TRACE_LIME		=  5u,
+		TRACE_ORANGE	=  7u,
+		TRACE_BLUE		=  8u,
+		TRACE_YELLOW	= 10u,
+		TRACE_BROWN		= 11u,
+		TRACE_PURPLE	= 13u;
 
 	int
 		_spottersOrigin,

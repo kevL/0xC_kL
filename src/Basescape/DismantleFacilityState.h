@@ -63,12 +63,12 @@ private:
 
 
 	public:
-		/// Creates the Dismantle Facility state.
+		/// Creates a DismantleFacility state.
 		DismantleFacilityState(
 				Base* const base,
 				BaseView* const view,
 				const BaseFacility* const fac);
-		/// Cleans up the Dismantle Facility state.
+		/// Cleans up the DismantleFacility state.
 		~DismantleFacilityState();
 
 		/// Handler for clicking the OK button.

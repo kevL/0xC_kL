@@ -77,8 +77,6 @@ private:
 	std::vector<std::pair<int,int>> _fusePairs;
 
 
-	/// Draws the Inventory's items.
-	void drawItems();
 	/// Shows priming warnings on grenades.
 	void drawPrimers();
 
@@ -125,6 +123,9 @@ private:
 //		void draw() override;
 		/// Draws the Inventory's grids.
 		void drawGrids();
+		/// Draws the Inventory's items.
+		void drawItems();
+
 		/// Handles Timers.
 		void think() override;
 		/// Blits the Inventory onto another Surface.

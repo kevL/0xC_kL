@@ -152,8 +152,10 @@ private:
 		void btnSaveLayouts(Action* action);
 
 		/// Handler for clicking the Ground button.
-		void btnGroundClick(Action* action);
-		/// Handler for right-clicking the Ground button.
+//		void btnGroundClick(Action* action);
+		/// Handler for pressing either Ground button.
+		void btnGroundPress(Action* action);
+		/// Handler for right-clicking either Ground button.
 		void btnUnequipUnitClick(Action* action);
 
 		/// Handler for clicking the Rank button.

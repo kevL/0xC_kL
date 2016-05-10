@@ -68,9 +68,15 @@ AlienBAIState::AlienBAIState(
 		_distClosest(1000),
 		_reserve(BA_NONE)
 {
-//	_traceAI &= unit->getId() == 1000023;
+	_traceAI = _traceAI != 0
+			&& _unit->getId() == 399;
+	//Log(LOG_INFO) << "Create AlienBAIState.2 traceAI= " << _traceAI;
 
-	//Log(LOG_INFO) << "Create AlienBAIState";
+	if (_unit->getOriginalFaction() != FACTION_HOSTILE)
+		_aggression = 10;
+	else
+		_aggression = _unit->getAggression();
+
 	_escapeAction	= new BattleAction();
 	_patrolAction	= new BattleAction();
 	_ambushAction	= new BattleAction();
@@ -122,7 +128,8 @@ void AlienBAIState::think(BattleAction* const action)
 	{
 		Log(LOG_INFO) << "";
 		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << "AlienBAIState::think(), id-" << _unit->getId() << " pos " << _unit->getPosition();
+		Log(LOG_INFO) << "AlienBAIState::think(), id-" << _unit->getId() << " pos" << _unit->getPosition();
+		Log(LOG_INFO) << ". agression= " << _aggression;
 	}
 
 	_pf = _battleSave->getPathfinding();
@@ -314,7 +321,7 @@ void AlienBAIState::think(BattleAction* const action)
 			if (action->weapon != nullptr
 				&& action->weapon->getRules()->getBattleType() == BT_FIREARM)
 			{
-				switch (_unit->getAggression())
+				switch (_aggression)
 				{
 					case 0: _reserve = BA_AIMEDSHOT;	break;
 					case 1: _reserve = BA_AUTOSHOT;		break;
@@ -520,13 +527,9 @@ void AlienBAIState::setupPatrol() // private.
 		&& (_battleSave->getTile(_unit->getPosition()) == nullptr // <- shouldn't be necessary.
 			|| _battleSave->getTile(_unit->getPosition())->getFire() == 0)
 		&& (_battleSave->isCheating() == false
-			|| RNG::percent(_unit->getAggression() * 25) == false))
+			|| RNG::percent(_aggression * 25) == false))
 	{
-		// After turn 20 or if the morale is low aLiens move out of the UFO to scout.
-		// kL_note: That, above is wrong. Orig behavior depends on "aggression" setting;
-		// determines whether aliens come out of UFO to scout/search (attack, actually).
-		// Also anyone standing in fire should also probably move ....
-			scout = false;
+		scout = false;
 	}
 
 	if (_stopNode == nullptr)
@@ -631,7 +634,7 @@ void AlienBAIState::setupAttack() // private.
 
 	if (_attackAction->type == BA_THINK
 		&& (_spottersOrigin != 0
-			|| RNG::generate(0, _unit->getAggression()) < _unit->getAggression()))
+			|| RNG::generate(0, _aggression) < _aggression))
 	{
 		bool debugFound = findFirePosition();
 		if (_traceAI)
@@ -687,7 +690,7 @@ void AlienBAIState::setupAmbush() // private.
 //						_reachableAttack.end(),
 //						_battleSave->getTileIndex(pos)) != _reachableAttack.end())
 //			{
-		const Tile* tile;
+		Tile* tile;
 
 		Position
 			originVoxel (_te->getSightOriginVoxel(_unitAggro)),
@@ -712,12 +715,12 @@ void AlienBAIState::setupAmbush() // private.
 						_battleSave->getTileIndex(pos)) != _reachableAttack.end())
 			{
 				//Log(LOG_INFO) << ". . . reachable w/ Attack " << pos;
-//				if (_traceAI)
-//				{
-//					tile->setPreviewColor(TRACE_YELLOW);
-//					tile->setPreviewDir(TRACE_DIR);
-//					tile->setPreviewTu(485); // "4m8u5h"
-//				}
+				if (_traceAI)
+				{
+					tile->setPreviewColor(TRACE_YELLOW);
+					tile->setPreviewDir(TRACE_DIR);
+					tile->setPreviewTu(485); // "4m8u5h"
+				}
 
 				int debugSpotters = tallySpotters(pos);
 				//Log(LOG_INFO) << ". . . spotters = " << debugSpotters;
@@ -764,11 +767,11 @@ void AlienBAIState::setupAmbush() // private.
 								//Log(LOG_INFO) << ". . . . . . . pos " << pos;
 								//Log(LOG_INFO) << ". . . . . . . tu = " << tu;
 
-								if (score > FAST_PASS_THRESHOLD - 20)
-								{
+//								if (score > FAST_PASS_THRESHOLD - 20)
+//								{
 									//Log(LOG_INFO) << ". . . . . . . . Beats (FAST_PASS_THRESHOLD - 20) break";
-									break;
-								}
+//									break;
+//								}
 							}
 						}
 					}
@@ -805,12 +808,12 @@ void AlienBAIState::setupAmbush() // private.
 									_unit,
 									_unitAggro) == true)
 				{
-//					if (_traceAI)
-//					{
-//						tile->setPreviewColor(TRACE_RED);
-//						tile->setPreviewDir(TRACE_DIR);
-//						tile->setPreviewTu(485); // "4m8u5h"
-//					}
+					if (_traceAI)
+					{
+						tile->setPreviewColor(TRACE_RED);
+						tile->setPreviewDir(TRACE_DIR);
+						tile->setPreviewTu(485); // "4m8u5h"
+					}
 					_ambushAction->finalFacing = TileEngine::getDirectionTo(_ambushAction->posTarget, pos);
 					//Log(LOG_INFO) << ". . . . finalFacing = " << _ambushAction->finalFacing;
 					break;
@@ -818,13 +821,13 @@ void AlienBAIState::setupAmbush() // private.
 			}
 		}
 
-//		if (_traceAI)
-//		{
-//			tile = _battleSave->getTile(_ambushAction->target);
-//			tile->setPreviewColor(TRACE_PURPLE);
-//			tile->setPreviewDir(TRACE_DIR);
-//			tile->setPreviewTu(485); // "4m8u5h"
-//		}
+		if (_traceAI)
+		{
+			tile = _battleSave->getTile(_ambushAction->posTarget);
+			tile->setPreviewColor(TRACE_PURPLE);
+			tile->setPreviewDir(TRACE_DIR);
+			tile->setPreviewTu(485); // "4m8u5h"
+		}
 	}
 	//Log(LOG_INFO) << "AlienBAIState::setupAmbush() EXIT";
 	//Log(LOG_INFO) << "";
@@ -852,7 +855,7 @@ void AlienBAIState::setupEscape() // private.
 	else
 		distAggroOrigin = 0;
 
-	const Tile* tile;
+	Tile* tile;
 	int
 		score (ESCAPE_FAIL),
 		scoreTest;
@@ -863,10 +866,10 @@ void AlienBAIState::setupEscape() // private.
 	_pf->setPathingUnit(_unit);
 
 	bool
-		coverFound (false),
+//		coverFound (false),
 		first (true);
 	size_t t (SavedBattleGame::SEARCH_SIZE);
-	while (coverFound == false && t <= SavedBattleGame::SEARCH_SIZE)
+	while (/*coverFound == false &&*/ t <= SavedBattleGame::SEARCH_SIZE)
 	{
 		if (first == true)
 		{
@@ -941,12 +944,12 @@ void AlienBAIState::setupEscape() // private.
 			if (tile->getDangerous() == true)
 				scoreTest -= BASE_SUCCESS_SYSTEMATIC;
 
-//			if (_traceAI)
-//			{
-//				tile->setPreviewColor(BattleAIState::debugTraceColor(false, scoreTest));
-//				tile->setPreviewDir(TRACE_DIR);
-//				tile->setPreviewTu(scoreTest);
-//			}
+			if (_traceAI)
+			{
+				tile->setPreviewColor(BattleAIState::debugTraceColor(false, scoreTest));
+				tile->setPreviewDir(TRACE_DIR);
+				tile->setPreviewTu(scoreTest);
+			}
 
 			if (scoreTest > score)
 			{
@@ -958,17 +961,17 @@ void AlienBAIState::setupEscape() // private.
 					score = scoreTest;
 					_tuEscape = _pf->getTuCostTotalPf();
 
-//					if (_traceAI)
-//					{
-//						tile->setPreviewColor(BattleAIState::debugTraceColor(true, scoreTest));
-//						tile->setPreviewDir(TRACE_DIR);
-//						tile->setPreviewTu(score);
-//					}
+					if (_traceAI)
+					{
+						tile->setPreviewColor(BattleAIState::debugTraceColor(true, scoreTest));
+						tile->setPreviewDir(TRACE_DIR);
+						tile->setPreviewTu(score);
+					}
 				}
 				_pf->abortPath();
 
-				if (score > FAST_PASS_THRESHOLD)
-					coverFound = true;
+//				if (score > FAST_PASS_THRESHOLD)
+//					coverFound = true;
 			}
 		}
 	}
@@ -1023,7 +1026,7 @@ void AlienBAIState::evaluateAiMode() // private.
 			ambushOdds (13.f),
 			escapeOdds (13.f);
 
-		if (_unit->getTimeUnits() > _unit->getBattleStats()->tu / 2
+		if (_unit->getTimeUnits() > (_unit->getBattleStats()->tu >> 1u)
 			|| _unit->getChargeTarget() != nullptr)
 		{
 			escapeOdds = 5.f;
@@ -1089,7 +1092,7 @@ void AlienBAIState::evaluateAiMode() // private.
 			combatOdds *= 0.6f;
 			ambushOdds *= 0.7f;
 		}
-		else if (_unit->getHealth() < _unit->getBattleStats()->health * 2 / 3)
+		else if (_unit->getHealth() < (_unit->getBattleStats()->health << 1u) / 3)
 		{
 			escapeOdds *= 1.5f;
 			combatOdds *= 0.8f;
@@ -1098,7 +1101,7 @@ void AlienBAIState::evaluateAiMode() // private.
 		else if (_unit->getHealth() < _unit->getBattleStats()->health)
 			escapeOdds *= 1.2f;
 
-		switch (_unit->getAggression())
+		switch (_aggression)
 		{
 			case 0:
 				escapeOdds *= 1.5f;
@@ -1115,10 +1118,10 @@ void AlienBAIState::evaluateAiMode() // private.
 			default:
 				combatOdds *= std::max(0.1f,
 									   std::min(2.f,
-												1.2f + (static_cast<float>(_unit->getAggression()) / 10.f)));
+												1.2f + (static_cast<float>(_aggression) / 10.f)));
 				escapeOdds *= std::min(2.f,
 									   std::max(0.1f,
-												0.9f - (static_cast<float>(_unit->getAggression()) / 10.f)));
+												0.9f - (static_cast<float>(_aggression) / 10.f)));
 		}
 
 		if (_AIMode == AI_COMBAT)
@@ -1505,7 +1508,7 @@ bool AlienBAIState::findFirePosition() // private.
 						scoreTest += _unit->getTimeUnits() - _pf->getTuCostTotalPf();
 
 						if (_unitAggro->checkViewSector(pos) == false)
-							scoreTest += 10;
+							scoreTest += 15;
 
 						if (scoreTest > score)
 						{
@@ -1514,9 +1517,8 @@ bool AlienBAIState::findFirePosition() // private.
 							_attackAction->finalFacing = TileEngine::getDirectionTo(
 																				pos,
 																				_unitAggro->getPosition());
-
-							if (score > FAST_PASS_THRESHOLD + 25)
-								break;
+//							if (score > FAST_PASS_THRESHOLD + 25)
+//								break;
 						}
 					}
 				}
@@ -1642,7 +1644,7 @@ void AlienBAIState::meleeAction() // private.
 										BA_MELEE,
 										_attackAction->weapon));
 	int
-		dist (tuReserve / 4 + 1),
+		dist ((tuReserve >> 2u) + 1),
 		distTest;
 
 	_unitAggro = nullptr;
@@ -1686,10 +1688,8 @@ void AlienBAIState::meleeAction() // private.
  */
 void AlienBAIState::faceMelee() // private.
 {
-	_unit->setDirectionTo(_unitAggro->getPosition() + Position(
-															_unit->getArmor()->getSize() - 1,
-															_unit->getArmor()->getSize() - 1,
-															0));
+	const int offset (_unit->getArmor()->getSize() - 1);
+	_unit->setDirectionTo(_unitAggro->getPosition() + Position(offset, offset, 0));
 
 	while (_unit->getUnitStatus() == STATUS_TURNING)
 		_unit->turn();
@@ -1873,7 +1873,7 @@ void AlienBAIState::chooseFireMethod() // private.
 
 	int tuReserve (_unit->getTimeUnits());
 	if (_tuEscape != -1
-		&& RNG::generate(0,_unit->getAggression()) == 0)
+		&& RNG::generate(0,_aggression) == 0)
 	{
 		tuReserve -= _tuEscape;
 	}
@@ -2058,7 +2058,7 @@ bool AlienBAIState::explosiveEfficacy(
 				pct += 56;
 		}
 
-		pct += diff * 2;
+		pct += diff << 1u;
 
 		const BattleUnit* const targetUnit (_battleSave->getTile(pos)->getTileUnit());
 
@@ -2140,7 +2140,7 @@ bool AlienBAIState::psiAction() // private.
 	if (_traceAI)
 	{
 		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << "AlienBAIState::psiAction() ID = " << _unit->getId();
+		Log(LOG_INFO) << "AlienBAIState::psiAction() id-" << _unit->getId();
 	}
 	if (_unit->getBattleStats()->psiSkill != 0
 		&& _hasPsiBeenSet == false
@@ -2242,9 +2242,9 @@ bool AlienBAIState::psiAction() // private.
 					const int moraleResult (morale - panicOdds);
 					//Log(LOG_INFO) << ". . panicOdds_1 = " << panicOdds;
 
-					if		(moraleResult <  0)	panicOdds -= bravery / 2;
+					if		(moraleResult <  0)	panicOdds -= bravery >> 1u;
 					else if	(moraleResult < 50)	panicOdds -= bravery;
-					else						panicOdds -= bravery * 2;
+					else						panicOdds -= bravery << 1u;
 
 					//Log(LOG_INFO) << ". . panicOdds_2 = " << panicOdds;
 					panicOdds += (RNG::generate(51,100) - (attack / 5));
@@ -2312,7 +2312,7 @@ void AlienBAIState::chooseMeleeOrRanged() // private.
 		return;
 	}
 
-	if (_unit->getHealth() > _unit->getBattleStats()->health * 2 / 3) // is over 2/3 health
+	if (_unit->getHealth() > (_unit->getBattleStats()->health << 1u) / 3) // is over 2/3 health
 	{
 		const RuleItem* const itRule (_unit->getMeleeWeapon()->getRules());
 		if (itRule != nullptr)
@@ -2327,17 +2327,21 @@ void AlienBAIState::chooseMeleeOrRanged() // private.
 					static_cast<float>(power) * _unitAggro->getArmor()->getDamageModifier(itRule->getDamageType())));
 
 			if (power > 50)
-				meleeOdds += (power - 50) / 2;
+				meleeOdds += (power - 50) >> 1u;
 
 			if (_targetsVisible > 1)
 				meleeOdds -= 15 * (_targetsVisible - 1);
 
 			if (meleeOdds > 0)
 			{
-				if (_unit->getAggression() == 0)
-					meleeOdds -= 20;
-				else if (_unit->getAggression() > 1)
-					meleeOdds += 10 * _unit->getAggression();
+				switch (_aggression)
+				{
+					case 0:
+						meleeOdds -= 20;
+						break;
+					default:
+						meleeOdds += 10 * _aggression;
+				}
 
 				if (RNG::percent(meleeOdds) == true)
 				{

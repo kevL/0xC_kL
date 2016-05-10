@@ -42,7 +42,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in a Dismantle Facility window.
+ * Initializes all the elements in the DismantleFacility window.
  * @param base	- pointer to the Base to get info from
  * @param view	- pointer to the baseview to update
  * @param fac	- pointer to the facility to dismantle
@@ -166,7 +166,6 @@ void DismantleFacilityState::btnOkClick(Action*)
 			{
 				gameSave->getBases()->erase(i);
 				delete _base;
-
 				break;
 			}
 		}
@@ -186,13 +185,14 @@ void DismantleFacilityState::btnCancelClick(Action*)
 
 /**
  * Calculates the refund value.
+ * TODO: Zero refund if Base is currently targeted by a UFO Retaliation Run.
  */
 void DismantleFacilityState::calcRefund() // private.
 {
 	const int buildCost (_fac->getRules()->getBuildCost());
 	if (_fac->buildFinished() == false)
 	{
-		if (_fac->getBuildTime() > _fac->getRules()->getBuildTime())
+		if (_fac->getBuildTime() > _fac->getRules()->getBuildTime()) // queued facilities
 			_refund = buildCost;
 		else
 		{
@@ -200,12 +200,12 @@ void DismantleFacilityState::calcRefund() // private.
 							  / static_cast<float>(_fac->getRules()->getBuildTime()));
 			_refund = static_cast<int>(ceil(
 					  static_cast<float>(buildCost) * factor));
-			if (_refund < buildCost * 10 / 100)
-				_refund = buildCost * 10 / 100;
+			if (_refund < buildCost / 10)
+				_refund = buildCost / 10;
 		}
 	}
 	else
-		_refund = buildCost * 10 / 100;
+		_refund = buildCost / 10;
 }
 
 }

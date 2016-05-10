@@ -690,9 +690,8 @@ void BattlescapeGame::centerOnUnit( // private.
  */
 void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 {
-	bool debug = false;// (unit->getId() == 1000023);
-
-	if (Options::traceAI != 0)
+	bool debug;// (unit->getId() == 1000023);
+	if ((debug = Options::traceAI) != 0)
 		resetTraceTiles();
 
 	if (unit != _battleSave->getWalkUnit())
@@ -851,9 +850,13 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 					// NOTE: See below_ for (action.type == BA_MELEE).
 			}
 
-			if (debug) Log(LOG_INFO) << "BATTLESCAPE: Attack action.type = " << BattleAction::debugBat(action.type)
-									 << " action.posTarget = " << action.posTarget
-									 << " action.weapon = " << action.weapon->getRules()->getName().c_str();
+			if (debug)
+			{
+				Log(LOG_INFO) << "BATTLESCAPE: Attack:";
+				Log(LOG_INFO) << ". action.type = " << BattleAction::debugBat(action.type);
+				Log(LOG_INFO) << ". action.posTarget = " << action.posTarget;
+				Log(LOG_INFO) << ". action.weapon = " << action.weapon->getRules()->getName().c_str();
+			}
 			statePushBack(new ProjectileFlyBState(this, action));
 
 			switch (action.type)
