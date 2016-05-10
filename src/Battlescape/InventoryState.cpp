@@ -299,22 +299,18 @@ InventoryState::InventoryState(
 //	_btnUnload->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
 //	_btnUnload->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
-	_btnGroundL->onMousePress((ActionHandler)& InventoryState::btnGroundPress);
-	_btnGroundR->onMousePress((ActionHandler)& InventoryState::btnGroundPress);
+	_inventoryPanel->onMousePress((ActionHandler)& InventoryState::btnGroundPress);
 
-/*	_btnGroundL->onMouseClick(
-					(ActionHandler)& InventoryState::btnGroundClick,
-					SDL_BUTTON_LEFT);
+	_btnGroundL->onMouseClick((ActionHandler)& InventoryState::btnGroundClick);
 	_btnGroundL->onMouseClick(
 					(ActionHandler)& InventoryState::btnUnequipUnitClick,
 					SDL_BUTTON_RIGHT);
 
-	_btnGroundR->onMouseClick(
-					(ActionHandler)& InventoryState::btnGroundClick,
-					SDL_BUTTON_LEFT);
+	_btnGroundR->onMouseClick((ActionHandler)& InventoryState::btnGroundClick);
 	_btnGroundR->onMouseClick(
 					(ActionHandler)& InventoryState::btnUnequipUnitClick,
-					SDL_BUTTON_RIGHT); */
+					SDL_BUTTON_RIGHT);
+
 	_btnGroundR->onKeyboardPress(
 					(ActionHandler)& InventoryState::btnUnequipUnitClick,
 					Options::keyInvClear);
@@ -936,20 +932,6 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 }
 
 /**
- * Shows more ground items / rearranges them.
- * @param action - pointer to an Action
- *
-void InventoryState::btnGroundClick(Action* action)
-{
-	if (action->getSender() == dynamic_cast<InteractiveSurface*>(_btnGroundR))
-		_inventoryPanel->arrangeGround(+1);
-	else
-		_inventoryPanel->arrangeGround(-1);
-
-	_inventoryPanel->drawItems();
-} */
-
-/**
  * Shifts ground-items.
  * @param action - pointer to an Action
  */
@@ -957,20 +939,26 @@ void InventoryState::btnGroundPress(Action* action)
 {
 	switch (action->getDetails()->button.button)
 	{
-		case SDL_BUTTON_LEFT:
-		case SDL_BUTTON_RIGHT:
-			if (action->getSender() == dynamic_cast<InteractiveSurface*>(_btnGroundR))
-				_inventoryPanel->arrangeGround(+1);
-			else
-				_inventoryPanel->arrangeGround(-1);
-			break;
-
 		case SDL_BUTTON_WHEELDOWN:
 			_inventoryPanel->arrangeGround(+1);
 			break;
 		case SDL_BUTTON_WHEELUP:
 			_inventoryPanel->arrangeGround(-1);
 	}
+	_inventoryPanel->drawItems();
+}
+
+/**
+ * Shows more ground items / rearranges them.
+ * @param action - pointer to an Action
+ */
+void InventoryState::btnGroundClick(Action* action)
+{
+	if (action->getSender() == dynamic_cast<InteractiveSurface*>(_btnGroundR))
+		_inventoryPanel->arrangeGround(+1);
+	else
+		_inventoryPanel->arrangeGround(-1);
+
 	_inventoryPanel->drawItems();
 }
 

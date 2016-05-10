@@ -185,7 +185,7 @@ void DismantleFacilityState::btnCancelClick(Action*)
 
 /**
  * Calculates the refund value.
- * TODO: Zero refund if Base is currently targeted by a UFO Retaliation Run.
+ * TODO: Zero refund if Base is currently targeted by a UFO Retaliation run.
  */
 void DismantleFacilityState::calcRefund() // private.
 {

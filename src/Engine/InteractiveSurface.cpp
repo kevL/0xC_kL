@@ -267,7 +267,7 @@ bool InteractiveSurface::isFocused() const
 }
 
 /**
- * Simulates a "mouse button release".
+ * Simulates a mouse-button-release.
  * @note Used in circumstances where this Surface is unpressed without user input.
  * @param state - pointer to running State
  */
@@ -455,7 +455,7 @@ void InteractiveSurface::keyboardRelease(Action* action, State* state) // virtua
 /**
  * Sets a function to be called every time this Surface is mouse-clicked.
  * @param handler	- ActionHandler
- * @param btn		- mouse button to check for, set to 0 for any button (default SDL_BUTTON_LEFT=1)
+ * @param btn		- mouse-button to check for, set to 0 for any button (default SDL_BUTTON_LEFT=1)
  */
 void InteractiveSurface::onMouseClick(
 		ActionHandler handler,
@@ -470,7 +470,7 @@ void InteractiveSurface::onMouseClick(
 /**
  * Sets a function to be called every time this Surface is mouse-pressed.
  * @param handler	- ActionHandler
- * @param btn		- mouse button to check for, set to 0 for any button (default 0)
+ * @param btn		- mouse-button to check for, set to 0 for any button (default 0)
  */
 void InteractiveSurface::onMousePress(
 		ActionHandler handler,
@@ -485,7 +485,7 @@ void InteractiveSurface::onMousePress(
 /**
  * Sets a function to be called every time this Surface is mouse-released.
  * @param handler	- ActionHandler
- * @param btn		- mouse button to check for, set to 0 for any button (default 0)
+ * @param btn		- mouse-button to check for, set to 0 for any button (default 0)
  */
 void InteractiveSurface::onMouseRelease(
 		ActionHandler handler,

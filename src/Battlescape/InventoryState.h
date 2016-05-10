@@ -151,10 +151,10 @@ private:
 		/// Handler for right-clicking the Unload button.
 		void btnSaveLayouts(Action* action);
 
-		/// Handler for clicking the Ground button.
-//		void btnGroundClick(Action* action);
-		/// Handler for pressing either Ground button.
+		/// Handler for mouse-wheel to shift ground-items.
 		void btnGroundPress(Action* action);
+		/// Handler for left-clicking either Ground button.
+		void btnGroundClick(Action* action);
 		/// Handler for right-clicking either Ground button.
 		void btnUnequipUnitClick(Action* action);
 

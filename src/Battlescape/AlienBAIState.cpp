@@ -70,7 +70,7 @@ AlienBAIState::AlienBAIState(
 {
 	_traceAI = _traceAI != 0
 			&& _unit->getId() == 399;
-	//Log(LOG_INFO) << "Create AlienBAIState.2 traceAI= " << _traceAI;
+	//Log(LOG_INFO) << "Create AlienBAIState traceAI= " << _traceAI;
 
 	if (_unit->getOriginalFaction() != FACTION_HOSTILE)
 		_aggression = 10;
@@ -634,7 +634,7 @@ void AlienBAIState::setupAttack() // private.
 
 	if (_attackAction->type == BA_THINK
 		&& (_spottersOrigin != 0
-			|| RNG::generate(0, _aggression) < _aggression))
+			|| RNG::generate(0, _aggression) != 0))
 	{
 		bool debugFound = findFirePosition();
 		if (_traceAI)
