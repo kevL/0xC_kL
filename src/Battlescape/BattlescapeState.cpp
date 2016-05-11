@@ -36,7 +36,7 @@
 #include "BriefingState.h"
 #include "Camera.h"
 #include "DebriefingState.h"
-#include "Explosion.h" // Execute.
+#include "Explosion.h"
 #include "InventoryState.h"
 #include "Map.h"
 #include "MiniMapState.h"
@@ -317,9 +317,9 @@ BattlescapeState::BattlescapeState()
 	_txtDebug		= new Text(145, 9, screenWidth - 145, screenHeight - 9);
 //	_txtTooltip		= new Text(300, 10, x + 2, y - 10);
 
-	_txtTerrain		= new Text(150, 9, 1,  0);
-	_txtShade		= new Text( 50, 9, 1, 10);
-	_txtTurn		= new Text( 50, 9, 1, 20);
+	_txtTerrain		= new Text(150,  9, 1,  0);
+	_txtShade		= new Text( 50,  9, 1, 10);
+	_txtTurn		= new Text(100, 16, 1, 20);
 
 	_txtOrder		= new Text(55, 9, 1, 37);
 	_lstSoldierInfo	= new TextList(25, 57, 1, 47);
@@ -673,6 +673,7 @@ BattlescapeState::BattlescapeState()
 	_txtShade->setText(tr("STR_SHADE_").arg(_battleSave->getTacticalShade()));
 
 	_txtTurn->setHighContrast();
+	_txtTurn->setBig();
 	_txtTurn->setText(tr("STR_TURN").arg(_battleSave->getTurn()));
 
 	_txtOrder->setHighContrast();

@@ -1027,7 +1027,7 @@ Position TileEngine::getSightOriginVoxel(
 
 /**
  * Gets the origin-voxel of a shot/throw or missile.
- * @param action	- reference the BattleAction
+ * @param action	- reference to a BattleAction
  * @param tile		- pointer to a start-tile (default nullptr)
  * @return, position of the origin in voxel-space
  */
@@ -1043,8 +1043,8 @@ Position TileEngine::getOriginVoxel(
 		else
 			pos = action.actor->getTile()->getPosition();
 
-		if (action.actor->getPosition() != pos)				// don't consider unit height or terrain level if the
-			return Position::toVoxelSpaceCentered(pos, 16);	// prj is not being launched - ie. is from a waypoint
+		if (action.actor->getPosition() != pos)				// NOTE: Don't consider unit height or terrain-level if the Prj
+			return Position::toVoxelSpaceCentered(pos, 16);	// is not being launched - ie, if it originates from a waypoint.
 	}
 
 	return getSightOriginVoxel(action.actor);
