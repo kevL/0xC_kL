@@ -60,7 +60,7 @@ OptionsControlsState::OptionsControlsState(OptionsOrigin origin)
 	_lstControls->setWordWrap();
 	_lstControls->setSelectable();
 	_lstControls->setBackground(_window);
-	_lstControls->onMouseClick((ActionHandler)& OptionsControlsState::lstControlsClick, 0);
+	_lstControls->onMouseClick((ActionHandler)& OptionsControlsState::lstControlsClick, 0u);
 	_lstControls->onKeyboardPress((ActionHandler)& OptionsControlsState::lstControlsKeyPress);
 	_lstControls->setFocus(true);
 //	_lstControls->setTooltip("STR_CONTROLS_DESC");

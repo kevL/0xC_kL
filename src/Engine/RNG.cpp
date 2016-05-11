@@ -92,6 +92,7 @@ uint64_t next_y()
  */
 uint64_t getSeed()
 {
+	//Log(LOG_INFO) << "GET x = " << x;
 	return x;
 }
 

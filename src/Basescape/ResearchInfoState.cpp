@@ -167,11 +167,11 @@ void ResearchInfoState::buildUi()
 
 	_btnMore->onMousePress((ActionHandler)& ResearchInfoState::morePress);
 	_btnMore->onMouseRelease((ActionHandler)& ResearchInfoState::moreRelease);
-	_btnMore->onMouseClick((ActionHandler)& ResearchInfoState::moreClick, 0);
+	_btnMore->onMouseClick((ActionHandler)& ResearchInfoState::moreClick, 0u);
 
 	_btnLess->onMousePress((ActionHandler)& ResearchInfoState::lessPress);
 	_btnLess->onMouseRelease((ActionHandler)& ResearchInfoState::lessRelease);
-	_btnLess->onMouseClick((ActionHandler)& ResearchInfoState::lessClick, 0);
+	_btnLess->onMouseClick((ActionHandler)& ResearchInfoState::lessClick, 0u);
 
 	_timerMore = new Timer(Timer::SCROLL_SLOW);
 	_timerMore->onTimer((StateHandler)& ResearchInfoState::moreSci);

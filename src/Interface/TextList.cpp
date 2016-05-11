@@ -499,7 +499,7 @@ void TextList::addRow(
 		a1->setListButton();
 		a1->setPalette(this->getPalette());
 		a1->setColor(_up->getColor());
-		a1->onMouseClick(_leftClick, 0);
+		a1->onMouseClick(_leftClick, 0u);
 		a1->onMousePress(_leftPress);
 		a1->onMouseRelease(_leftRelease);
 		_arrowLeft.push_back(a1);
@@ -512,7 +512,7 @@ void TextList::addRow(
 		a2->setListButton();
 		a2->setPalette(this->getPalette());
 		a2->setColor(_up->getColor());
-		a2->onMouseClick(_rightClick, 0);
+		a2->onMouseClick(_rightClick, 0u);
 		a2->onMousePress(_rightPress);
 		a2->onMouseRelease(_rightRelease);
 		_arrowRight.push_back(a2);

@@ -61,11 +61,11 @@ enum BattleActionType
 	BA_PSICONTROL,	// 11
 	BA_PSIPANIC,	// 12
 	BA_THINK,		// 13
-	BA_DEFUSE,		// 14, kL_add ->>
+	BA_DEFUSE,		// 14 -> kL_add ->>
 	BA_DROP,		// 15
-	BA_PSICONFUSE,	// 16 reduces victim's TU
-	BA_PSICOURAGE,	// 17 increases morale of ally
-	BA_LIQUIDATE	// 18
+	BA_PSICONFUSE,	// 16 - reduces a victim's TU
+	BA_PSICOURAGE,	// 17 - increases morale of an ally
+	BA_LIQUIDATE	// 18 - executes an unconscious unit
 };
 
 enum DropType

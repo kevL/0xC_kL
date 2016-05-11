@@ -690,9 +690,8 @@ void BattlescapeGame::centerOnUnit( // private.
  */
 void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 {
-	bool debug;// (unit->getId() == 1000023);
-	if ((debug = Options::traceAI) != 0)
-		resetTraceTiles();
+	bool debug (Options::traceAI);
+	if (debug > 1) resetTraceTiles();
 
 	if (unit != _battleSave->getWalkUnit())
 		centerOnUnit(unit); // if you're going to reveal the map at least center the first aLien.
@@ -887,6 +886,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 		default:
 		case BA_NONE:
+		case BA_THINK:
 			selectNextAiUnit(unit);
 	}
 }

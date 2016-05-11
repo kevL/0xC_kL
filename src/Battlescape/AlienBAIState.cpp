@@ -68,8 +68,8 @@ AlienBAIState::AlienBAIState(
 		_distClosest(1000),
 		_reserve(BA_NONE)
 {
-	_traceAI = _traceAI != 0
-			&& _unit->getId() == 399;
+	if (_unit->getId() != 399) _traceAI = 0;
+
 	//Log(LOG_INFO) << "Create AlienBAIState traceAI= " << _traceAI;
 
 	if (_unit->getOriginalFaction() != FACTION_HOSTILE)
@@ -246,9 +246,8 @@ void AlienBAIState::think(BattleAction* const action)
 		if (_traceAI) Log(LOG_INFO) << "";
 	}
 
-	if (_hasPsiBeenSet == false && _psiAction->type != BA_NONE)
+	if (_psiAction->type != BA_NONE && _hasPsiBeenSet == false)
 	{
-		if (_traceAI) Log(LOG_INFO) << ". . psi TRUE";
 		_hasPsiBeenSet = true;
 
 		action->type = _psiAction->type;
@@ -300,7 +299,7 @@ void AlienBAIState::think(BattleAction* const action)
 
 	if (evaluate == true
 		|| (_spottersOrigin > 1
-			|| _unit->getHealth() < _unit->getBattleStats()->health * 2 / 3
+			|| _unit->getHealth() < (_unit->getBattleStats()->health << 1u) / 3
 			|| (_unitAggro != nullptr
 				&& _unitAggro->getExposed() > _unit->getIntelligence())
 			|| (_battleSave->isCheating() == true
@@ -715,7 +714,7 @@ void AlienBAIState::setupAmbush() // private.
 						_battleSave->getTileIndex(pos)) != _reachableAttack.end())
 			{
 				//Log(LOG_INFO) << ". . . reachable w/ Attack " << pos;
-				if (_traceAI)
+				if (_traceAI > 1)
 				{
 					tile->setPreviewColor(TRACE_YELLOW);
 					tile->setPreviewDir(TRACE_DIR);
@@ -808,7 +807,7 @@ void AlienBAIState::setupAmbush() // private.
 									_unit,
 									_unitAggro) == true)
 				{
-					if (_traceAI)
+					if (_traceAI > 1)
 					{
 						tile->setPreviewColor(TRACE_RED);
 						tile->setPreviewDir(TRACE_DIR);
@@ -821,7 +820,7 @@ void AlienBAIState::setupAmbush() // private.
 			}
 		}
 
-		if (_traceAI)
+		if (_traceAI > 1)
 		{
 			tile = _battleSave->getTile(_ambushAction->posTarget);
 			tile->setPreviewColor(TRACE_PURPLE);
@@ -944,7 +943,7 @@ void AlienBAIState::setupEscape() // private.
 			if (tile->getDangerous() == true)
 				scoreTest -= BASE_SUCCESS_SYSTEMATIC;
 
-			if (_traceAI)
+			if (_traceAI > 1)
 			{
 				tile->setPreviewColor(BattleAIState::debugTraceColor(false, scoreTest));
 				tile->setPreviewDir(TRACE_DIR);
@@ -961,7 +960,7 @@ void AlienBAIState::setupEscape() // private.
 					score = scoreTest;
 					_tuEscape = _pf->getTuCostTotalPf();
 
-					if (_traceAI)
+					if (_traceAI > 1)
 					{
 						tile->setPreviewColor(BattleAIState::debugTraceColor(true, scoreTest));
 						tile->setPreviewDir(TRACE_DIR);

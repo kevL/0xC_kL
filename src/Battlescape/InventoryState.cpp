@@ -288,9 +288,7 @@ InventoryState::InventoryState(
 //	_btnNext->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
 //	_btnNext->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
-	_btnUnload->onMouseClick(
-					(ActionHandler)& InventoryState::btnUnloadClick,
-					SDL_BUTTON_LEFT);
+	_btnUnload->onMouseClick((ActionHandler)& InventoryState::btnUnloadClick);
 	_btnUnload->onMouseClick(
 					(ActionHandler)& InventoryState::btnSaveLayouts,
 					SDL_BUTTON_RIGHT);
@@ -362,7 +360,7 @@ InventoryState::InventoryState(
 //	_inventoryPanel->setSelectedUnitInventory(_battleSave->getSelectedUnit());
 	_inventoryPanel->drawGrids();
 	_inventoryPanel->setTuMode(_tuMode);
-	_inventoryPanel->onMouseClick((ActionHandler)& InventoryState::inClick, 0);
+	_inventoryPanel->onMouseClick((ActionHandler)& InventoryState::inClick, 0u);
 	_inventoryPanel->onMouseOver((ActionHandler)& InventoryState::inMouseOver);
 	_inventoryPanel->onMouseOut((ActionHandler)& InventoryState::inMouseOut);
 

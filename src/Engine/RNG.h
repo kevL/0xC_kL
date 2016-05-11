@@ -42,7 +42,7 @@ uint64_t next_y();
 /// Gets the internal seed in use.
 uint64_t getSeed();
 /// Sets the internal/external seed(s) in use.
-void setSeed(uint64_t seed = 0);
+void setSeed(uint64_t seed = 0u);
 
 /// Generates an integer, inclusive.
 int generate(

@@ -342,7 +342,7 @@ BattlescapeState::BattlescapeState()
 	_map->init();
 	_map->onMouseOver((ActionHandler)& BattlescapeState::mapOver);
 	_map->onMousePress((ActionHandler)& BattlescapeState::mapPress);
-	_map->onMouseClick((ActionHandler)& BattlescapeState::mapClick, 0);
+	_map->onMouseClick((ActionHandler)& BattlescapeState::mapClick, 0u);
 	_map->onMouseIn((ActionHandler)& BattlescapeState::mapIn);
 
 
