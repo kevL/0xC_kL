@@ -264,7 +264,7 @@ private:
 		/// Adds fire to the Tile.
 		bool addFire(int turns);
 		/// Reduces the number of turns the Tile will burn.
-		void decreaseFire();
+		int decreaseFire();
 		/// Gets fire.
 		int getFire() const;	// kL_note: Made this inline, but may result in UB if say BattleUnit->getFire() conflicts.
 //		{ return _fire; }		// So ... don't. ie: change function names, THANKS c++
@@ -273,7 +273,7 @@ private:
 		/// Adds smoke to the Tile.
 		void addSmoke(int turns);
 		/// Reduces the number of turns the Tile will smoke.
-		void decreaseSmoke();
+		int decreaseSmoke();
 		/// Gets smoke.
 		int getSmoke() const; // kL_note: Made this inline, but may result in UB if say BattleUnit->getFire() conflicts. So ... don't.
 //		{ return _smoke; }

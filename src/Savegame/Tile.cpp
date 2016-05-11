@@ -862,19 +862,19 @@ int Tile::getFuel(MapDataType partType) const
  * Silacoids and fire spreading @ turnovers and by TileEngine::detonateTile()
  * after HE explosions.
  * @param power - rough chance to get things going
- * @return, true if tile catches fire
+ * @return, true if tile catches fire or even gets smoke
  */
 bool Tile::ignite(int power)
 {
 	if (power != 0 && allowSmoke() == true)
 	{
-		const int fuel (getFuel());
-		if (fuel != 0)
+		const int burn (getFlammability());
+		if (burn != 0)
 		{
-			const int burn (getFlammability());
-			if (burn != 0)
+			const int fuel (getFuel());
+			if (fuel != 0)
 			{
-				power = ((((power + 4) / 5) + ((burn + 7) / 8) + (fuel * 3) + 6) / 7);
+				power = ((power + 4) / 5) + ((burn + 7) / 8) + (((fuel * 3) + 6) / 7);
 				if (RNG::percent(power) == true)
 				{
 					addSmoke((burn + 15) / 16);
@@ -917,8 +917,9 @@ bool Tile::addFire(int turns)
 
 /**
  * Reduces the number of turns this Tile will burn.
+ * @return, fire after decrease
  */
-void Tile::decreaseFire()
+int Tile::decreaseFire()
 {
 	if (--_fire < 1)
 	{
@@ -926,6 +927,7 @@ void Tile::decreaseFire()
 		if (_smoke == 0)
 			_animOffset = 0;
 	}
+	return _fire;
 }
 
 /**
@@ -955,8 +957,9 @@ void Tile::addSmoke(int turns)
 
 /**
  * Reduces the number of turns this Tile will smoke for.
+ * @return, smoke after decrease
  */
-void Tile::decreaseSmoke()
+int Tile::decreaseSmoke()
 {
 	if (_fire != 0) // don't let smoke deplete faster than fire depletes.
 		--_smoke;
@@ -969,6 +972,7 @@ void Tile::decreaseSmoke()
 		if (_fire == 0)
 			_animOffset = 0;
 	}
+	return _smoke;
 }
 
 /**

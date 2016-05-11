@@ -2084,7 +2084,7 @@ bool Map::checkNorth( // private.
 
 	ret = ret
 		|| ((tile0->getMapData(O_OBJECT) == nullptr
-				|| tile0->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST) );
+				|| tile0->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST));
 //			&& (tile1 == nullptr
 //				|| ((tile1->getMapData(O_WESTWALL) == nullptr
 //						|| tile1->getMapData(O_WESTWALL)->getTuCostPart(MT_WALK) == 0 // <- darn those UFO-westwall-struts.

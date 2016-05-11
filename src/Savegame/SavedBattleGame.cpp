@@ -2050,24 +2050,23 @@ void SavedBattleGame::tileVolatiles()
 	}
 
 	int var;
-	for (std::vector<Tile*>::const_iterator
+	for (std::vector<Tile*>::const_iterator // TODO: Fires spread upward similar to smoke below_
 			i = tilesFired.begin();
 			i != tilesFired.end();
 			++i)
 	{
-		(*i)->decreaseFire();
-
-		if ((var = (*i)->getFire() << 4u) != 0)
+		if ((*i)->decreaseFire() != 0)
 		{
+			var = (*i)->getFire() << 4u;
 			for (int
 					dir = 0;
 					dir != 8;
 					dir += 2)
 			{
-				Position spreadPos;
-				Pathfinding::directionToVector(dir, &spreadPos);
+				Position pos;
+				Pathfinding::directionToVector(dir, &pos);
 
-				if ((tile = getTile((*i)->getPosition() + spreadPos)) != nullptr
+				if ((tile = getTile((*i)->getPosition() + pos)) != nullptr
 					&& _te->horizontalBlockage(*i, tile, DT_IN) == 0)
 				{
 					tile->ignite(var);
@@ -2102,11 +2101,10 @@ void SavedBattleGame::tileVolatiles()
 			i != tilesSmoked.end();
 			++i)
 	{
-		(*i)->decreaseSmoke();
-
-		if ((var = (*i)->getSmoke() >> 1u) > 1)
+		if ((*i)->decreaseSmoke() > 1)
 		{
-			if ((tile = getTile((*i)->getPosition() + Position(0,0,1))) != nullptr
+			if ((var = (*i)->getSmoke() >> 1u) > 2
+				&& (tile = getTile((*i)->getPosition() + Position(0,0,1))) != nullptr
 				&& tile->hasNoFloor(*i) == true) // TODO: Use verticalBlockage() instead.
 			{
 				tile->addSmoke(var / 3);
@@ -2119,10 +2117,10 @@ void SavedBattleGame::tileVolatiles()
 			{
 				if (RNG::percent(var << 3u) == true)
 				{
-					Position posSpread;
-					Pathfinding::directionToVector(dir, &posSpread);
+					Position pos;
+					Pathfinding::directionToVector(dir, &pos);
 
-					if ((tile = getTile((*i)->getPosition() + posSpread)) != nullptr
+					if ((tile = getTile((*i)->getPosition() + pos)) != nullptr
 						&& _te->horizontalBlockage(*i, tile, DT_SMOKE) == 0)
 					{
 						tile->addSmoke(var >> 1u);
