@@ -338,7 +338,7 @@ protected:
 		/// Gets the rules for a specific AlienMission.
 		const RuleAlienMission* getAlienMission(const std::string& id) const;
 		/// Gets the rules for a random AlienMission.
-		const RuleAlienMission* getRandomMission(
+		const RuleAlienMission* getMissionRand(
 				MissionObjective objective,
 				size_t monthsPassed) const;
 		/// Gets a list of all AlienMissions.

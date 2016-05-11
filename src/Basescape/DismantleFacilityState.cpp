@@ -19,6 +19,8 @@
 
 #include "DismantleFacilityState.h"
 
+#include "../fmath.h"
+
 #include "../Basescape/BaseView.h"
 
 #include "../Engine/Game.h"
@@ -32,10 +34,12 @@
 #include "../Resource/ResourcePack.h"
 
 #include "../Ruleset/RuleBaseFacility.h"
+#include "../Ruleset/UfoTrajectory.h"
 
 #include "../Savegame/Base.h"
 #include "../Savegame/BaseFacility.h"
 #include "../Savegame/SavedGame.h"
+#include "../Savegame/Ufo.h"
 
 
 namespace OpenXcom
@@ -185,10 +189,23 @@ void DismantleFacilityState::btnCancelClick(Action*)
 
 /**
  * Calculates the refund value.
- * TODO: Zero refund if Base is currently targeted by a UFO Retaliation run.
  */
 void DismantleFacilityState::calcRefund() // private.
 {
+	for (std::vector<Ufo*>::const_iterator
+			i = _game->getSavedGame()->getUfos()->begin();
+			i != _game->getSavedGame()->getUfos()->end();
+			++i)
+	{
+		if ((*i)->getTrajectory().getId() == UfoTrajectory::RETALIATION_ASSAULT_RUN
+			&& AreSame((*i)->getDestination()->getLongitude(), _base->getLongitude())
+			&& AreSame((*i)->getDestination()->getLatitude(), _base->getLatitude()))
+		{
+			_refund = 0;
+			return;
+		}
+	}
+
 	const int buildCost (_fac->getRules()->getBuildCost());
 	if (_fac->buildFinished() == false)
 	{

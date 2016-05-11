@@ -853,10 +853,7 @@ void DogfightState::updateDogfight()
 							 12 + accel);	// If UFOs ever fire anything but beams those positions need to be adjusted here though.
 
 		_dist += delta;
-
-		std::wostringstream woststr;
-		woststr << _dist;
-		_txtDistance->setText(woststr.str());
+		_txtDistance->setText(Text::intWide(_dist));
 
 		for (std::vector<CraftWeaponProjectile*>::const_iterator // Move projectiles and check for hits.
 				i = _projectiles.begin();
@@ -877,7 +874,7 @@ void DogfightState::updateDogfight()
 						&& _ufo->isCrashed() == false
 						&& (*i)->getMissed() == false)
 					{
-						hitprob = (*i)->getAccuracy(); // Could include UFO speed here ...
+						hitprob = (*i)->getAccuracy(); // NOTE: Could include UFO speed here ... and/or acceleration-delta.
 						hitprob += _ufoSize * 3;
 						hitprob -= _diff * 5;
 						hitprob += _craft->getKills() << 1u;
@@ -963,7 +960,7 @@ void DogfightState::updateDogfight()
 						{
 							power = RNG::generate(
 											(_ufo->getRules()->getWeaponPower() + 9) / 10, // Round up.
-											_ufo->getRules()->getWeaponPower());
+											 _ufo->getRules()->getWeaponPower());
 							if (power != 0)
 							{
 								_craft->setCraftDamage(_craft->getCraftDamage() + power);
@@ -1211,9 +1208,9 @@ void DogfightState::updateDogfight()
 					// Difference from original: No retaliation until final UFO lands (Original: Is spawned).
 					if (_game->getSavedGame()->findAlienMission(targetRegion, alm_RETAL) == false)
 					{
-						const RuleAlienMission& missionRule (*_game->getRuleset()->getRandomMission(
-																								alm_RETAL,
-																								_game->getSavedGame()->getMonthsPassed()));
+						const RuleAlienMission& missionRule (*_game->getRuleset()->getMissionRand(
+																							alm_RETAL,
+																							_game->getSavedGame()->getMonthsPassed()));
 						AlienMission* const mission (new AlienMission(missionRule, *_gameSave));
 						mission->setId(_gameSave->getCanonicalId("ALIEN_MISSIONS"));
 						mission->setRegion(

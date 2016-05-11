@@ -129,16 +129,16 @@ void RuleAlienMission::load(const YAML::Node& node)
 				i != weights.end();
 				++i)
 		{
-			const size_t month (i->first.as<size_t>());
+			const size_t monthsPassed (i->first.as<size_t>());
 
-			Associative::const_iterator existing (assoc.find(month));
+			Associative::const_iterator existing (assoc.find(monthsPassed));
 			if (assoc.end() == existing) // new entry, load and add it.
 			{
 				std::auto_ptr<WeightedOptions> weight (new WeightedOptions); // init.
 				weight->load(i->second);
 
 				assoc.insert(std::make_pair(
-										month,
+										monthsPassed,
 										weight.release()));
 			}
 			else
@@ -169,11 +169,11 @@ void RuleAlienMission::load(const YAML::Node& node)
  */
 std::string RuleAlienMission::generateRace(size_t monthsPassed) const
 {
-	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator i (_raceDistribution.rbegin());
-	while (monthsPassed < i->first)
-		++i;
+	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator rit (_raceDistribution.rbegin());
+	while (monthsPassed < rit->first)
+		++rit;
 
-	return i->second->getOptionResult();
+	return rit->second->getOptionResult();
 }
 
 /**

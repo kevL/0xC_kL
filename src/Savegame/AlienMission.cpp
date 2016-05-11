@@ -602,14 +602,13 @@ class MatchBaseCoordinates
 	:
 		public std::unary_function<const Base*, bool>
 {
-
 private:
 	double
 		_lon,
 		_lat;
 
 	public:
-		/// Remember the query coordinates.
+		///
 		MatchBaseCoordinates(
 				double lon,
 				double lat)
@@ -618,7 +617,7 @@ private:
 				_lat(lat)
 		{}
 
-		/// Match with base's coordinates.
+		///
 		bool operator() (const Base* const base) const
 		{
 			return AreSame(base->getLongitude(), _lon)

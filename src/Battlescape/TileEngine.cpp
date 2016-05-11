@@ -6477,7 +6477,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 							}
 							break;
 
-//							case FACTION_NEUTRAL:
+//						case FACTION_NEUTRAL:
 						case FACTION_PLAYER:
 							switch (victim->getOriginalFaction())
 							{
@@ -6619,18 +6619,18 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 
 	if (unit != nullptr)
 	{
-		const int armorSize (unit->getArmor()->getSize());
+		const int unitSize (unit->getArmor()->getSize());
 		while (posBelow.z > 0)
 		{
 			bool canFall (true);
 			for (int
 					y = 0;
-					y != armorSize && canFall == true;
+					y != unitSize && canFall == true;
 					++y)
 			{
 				for (int
 						x = 0;
-						x != armorSize && canFall == true;
+						x != unitSize && canFall == true;
 						++x)
 				{
 					deltaTile = _battleSave->getTile(Position(
@@ -6657,12 +6657,12 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 			if (unit->isOut_t(OUT_STAT) == true)
 			{
 				for (int
-						y = armorSize - 1;
+						y = unitSize - 1;
 						y != -1;
 						--y)
 				{
 					for (int
-							x = armorSize - 1;
+							x = unitSize - 1;
 							x != -1;
 							--x)
 					{

@@ -3105,9 +3105,9 @@ void GeoscapeState::time1Day()
 
 
 
-	const RuleAlienMission* const missionRule (_rules->getRandomMission( // handle regional and country points for alien bases
-																	alm_BASE,
-																	_gameSave->getMonthsPassed()));
+	const RuleAlienMission* const missionRule (_rules->getMissionRand( // handle regional and country points for aLien-bases
+																alm_BASE,
+																_gameSave->getMonthsPassed()));
 	const int aLienPts ((missionRule->getPoints() * (static_cast<int>(_gameSave->getDifficulty()) + 1)) / 100);
 	if (aLienPts != 0)
 	{
@@ -3125,26 +3125,26 @@ void GeoscapeState::time1Day()
 	}
 
 
-	std::for_each( // handle supply of aLien bases.
+	std::for_each( // handle supply of aLien-bases
 			_gameSave->getAlienBases()->begin(),
 			_gameSave->getAlienBases()->end(),
 			GenerateSupplyMission(*_rules, *_gameSave));
 
-	// Autosave 3 times a month. kL_note: every day.
-//	int day = _gameSave->getTime()->getDay();
-//	if (day == 10 || day == 20)
-//	{
-	if (_gameSave->isIronman() == true)
-		popup(new SaveGameState(
-							OPT_GEOSCAPE,
-							SAVE_IRONMAN,
-							_palette));
-	else if (Options::autosave == true) // NOTE: Auto-save points are fucked; they should be done *before* important events, not after.
-		popup(new SaveGameState(
-							OPT_GEOSCAPE,
-							SAVE_AUTO_GEOSCAPE,
-							_palette));
-//	}
+
+	const int day (_gameSave->getTime()->getDay()); // Autosave 3 times a month.
+	if (day == 10 || day == 20)
+	{
+		if (_gameSave->isIronman() == true)
+			popup(new SaveGameState(
+								OPT_GEOSCAPE,
+								SAVE_IRONMAN,
+								_palette));
+		else if (Options::autosave == true) // NOTE: Auto-save points are fucked; they should be done *before* important events, not after.
+			popup(new SaveGameState(
+								OPT_GEOSCAPE,
+								SAVE_AUTO_GEOSCAPE,
+								_palette));
+	}
 	//Log(LOG_INFO) << "GeoscapeState::time1Day() EXIT";
 }
 
@@ -3251,9 +3251,9 @@ void GeoscapeState::time1Month()
 												(*j)->getRules()->getType(),
 												alm_RETAL) == false)
 					{
-						const RuleAlienMission& missionRule = *_rules->getRandomMission(
-																					alm_RETAL,
-																					_gameSave->getMonthsPassed());
+						const RuleAlienMission& missionRule = *_rules->getMissionRand(
+																				alm_RETAL,
+																				_gameSave->getMonthsPassed());
 						AlienMission* const mission = new AlienMission(
 																	missionRule,
 																	*_gameSave);
@@ -4437,9 +4437,9 @@ void GeoscapeState::determineAlienMissions(bool atGameStart) // private.
  *
 void GeoscapeState::setupLandMission() // private.
 {
-	const RuleAlienMission& missionRule = *_rules->getRandomMission(
-																alm_SITE,
-																_gameSave->getMonthsPassed());
+	const RuleAlienMission& missionRule = *_rules->getMissionRand(
+															alm_SITE,
+															_gameSave->getMonthsPassed());
 
 	// Determine a random region with a valid mission zone and no mission already running.
 	const RuleRegion* regRule = nullptr; // avoid VC++ linker warning.

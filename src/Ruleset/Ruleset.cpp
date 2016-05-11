@@ -1881,7 +1881,7 @@ const RuleAlienMission* Ruleset::getAlienMission(const std::string& id) const
  * @param monthsPassed	- the number of months since game start
  * @return, pointer to RuleAlienMission
  */
-const RuleAlienMission* Ruleset::getRandomMission(
+const RuleAlienMission* Ruleset::getMissionRand(
 		MissionObjective objective,
 		size_t monthsPassed) const
 {

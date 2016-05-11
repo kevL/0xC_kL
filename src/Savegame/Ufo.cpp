@@ -178,7 +178,7 @@ void Ufo::load(
 	{
 		if (_damage >= _ufoRule->getMaxDamage())
 			_status = DESTROYED;
-		else if (_damage >= _ufoRule->getMaxDamage() / 2)
+		else if (_damage >= (_ufoRule->getMaxDamage() >> 1u))
 			_status = CRASHED;
 		else if (_altitude == "STR_GROUND")
 			_status = LANDED;
