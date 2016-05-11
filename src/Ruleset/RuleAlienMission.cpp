@@ -134,7 +134,7 @@ void RuleAlienMission::load(const YAML::Node& node)
 			Associative::const_iterator existing (assoc.find(monthsPassed));
 			if (assoc.end() == existing) // new entry, load and add it.
 			{
-				std::auto_ptr<WeightedOptions> weight (new WeightedOptions); // init.
+				std::auto_ptr<WeightedOptions> weight (new WeightedOptions);
 				weight->load(i->second);
 
 				assoc.insert(std::make_pair(
@@ -153,7 +153,7 @@ void RuleAlienMission::load(const YAML::Node& node)
 				i != assoc.end();
 				++i)
 		{
-			if (i->second->hasNoWeight() == true) // don't keep empty lists.
+			if (i->second->hasNoWeight() == true) // don't keep empty entries.
 				delete i->second;
 			else
 				_raceDistribution.push_back(*i); // place it

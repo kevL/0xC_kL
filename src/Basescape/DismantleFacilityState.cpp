@@ -192,9 +192,10 @@ void DismantleFacilityState::btnCancelClick(Action*)
  */
 void DismantleFacilityState::calcRefund() // private.
 {
+	std::vector<Ufo*>* ufoList (_game->getSavedGame()->getUfos());
 	for (std::vector<Ufo*>::const_iterator
-			i = _game->getSavedGame()->getUfos()->begin();
-			i != _game->getSavedGame()->getUfos()->end();
+			i = ufoList->begin();
+			i != ufoList->end();
 			++i)
 	{
 		if ((*i)->getTrajectory().getId() == UfoTrajectory::RETALIATION_ASSAULT_RUN

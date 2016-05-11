@@ -2069,8 +2069,8 @@ bool Map::checkWest( // private.
  */
 bool Map::checkNorth( // private.
 		const Tile* const tile0,
-		const Tile* const tile1,
-		const BattleUnit* unit) const
+		const Tile* const tile1,		// wait a sec, shouldn't have to check any tiles-eastward since
+		const BattleUnit* unit) const	// they draw after the whole unit.
 {
 	bool ret;
 
@@ -2084,13 +2084,13 @@ bool Map::checkNorth( // private.
 
 	ret = ret
 		|| ((tile0->getMapData(O_OBJECT) == nullptr
-				|| tile0->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST)
-			&& (tile1 == nullptr
-				|| ((tile1->getMapData(O_WESTWALL) == nullptr
-						|| tile1->getMapData(O_WESTWALL)->getTuCostPart(MT_WALK) == 0 // <- darn those UFO-westwall-struts.
-						|| tile1->isUfoDoorOpen(O_WESTWALL) == true)
-					&& (tile1->getMapData(O_OBJECT) == nullptr
-						|| (tile1->getMapData(O_OBJECT)->getBigwall() & 0xb) == 0)))); // Block/NeSw/West.
+				|| tile0->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST) );
+//			&& (tile1 == nullptr
+//				|| ((tile1->getMapData(O_WESTWALL) == nullptr
+//						|| tile1->getMapData(O_WESTWALL)->getTuCostPart(MT_WALK) == 0 // <- darn those UFO-westwall-struts.
+//						|| tile1->isUfoDoorOpen(O_WESTWALL) == true)
+//					&& (tile1->getMapData(O_OBJECT) == nullptr
+//						|| (tile1->getMapData(O_OBJECT)->getBigwall() & 0xb) == 0)))); // Block/NeSw/West.
 
 	if (ret == false) // unit might actually be too far away from wall to clip despite above conditions - now don't let the floor clip it
 	{
