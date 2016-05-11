@@ -35,7 +35,7 @@ class CatFile
 {
 
 private:
-	unsigned int
+	unsigned
 		_amount,
 		* _offset,
 		* _size;
@@ -55,12 +55,12 @@ private:
 		{ return _amount; }
 
 		/// Get object size.
-		unsigned int getObjectSize(unsigned int i) const
-		{ return (i < _amount) ? _size[i] : 0; }
+		unsigned getObjectSize(unsigned i) const
+		{ return (i < _amount) ? _size[i] : 0u; }
 
 		/// Load an object into memory.
 		char* load(
-				unsigned int i,
+				unsigned i,
 				bool name = false);
 };
 

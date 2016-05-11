@@ -30,7 +30,7 @@ namespace OpenXcom
 
 std::wstring Font::_index;
 
-SDL_Color Font::_palette[6]
+SDL_Color Font::_palette[6u]
 {
 	{  0,   0,   0,   0},
 	{255, 255, 255, 255},
@@ -40,7 +40,7 @@ SDL_Color Font::_palette[6]
 	{ 63,  63,  63, 255}
 };
 
-SDL_Color Font::_terminal[2]
+SDL_Color Font::_terminal[2u]
 {
 	{  0,   0,   0,   0},
 	{192, 192, 192, 255}
@@ -51,7 +51,7 @@ SDL_Color Font::_terminal[2]
  */
 Font::Font()
 	:
-		_surface(0),
+		_surface(nullptr),
 		_width(0),
 		_height(0),
 		_spacing(0),
@@ -148,7 +148,7 @@ void Font::init()
 	if (_monospace == true)
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _index.length();
 				++i)
 		{
@@ -168,7 +168,7 @@ void Font::init()
 	else
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _index.length();
 				++i)
 		{
@@ -177,7 +177,7 @@ void Font::init()
 				startX (static_cast<int>(i) % len * _width),
 				startY (static_cast<int>(i) / len * _height);
 			int
-				left (-1),
+				left  (-1),
 				right (-1);
 
 			for (int
@@ -290,9 +290,9 @@ SDL_Rect Font::getCharSize(wchar_t fontChar)
 		if (_monospace == true)
 			charSize.w = static_cast<Uint16>(_width + _spacing);
 		else if (isNonBreakableSpace(fontChar) == true)
-			charSize.w = static_cast<Uint16>(_width / 4);
+			charSize.w = static_cast<Uint16>(_width >> 2u);
 		else
-			charSize.w = static_cast<Uint16>(_width / 2);
+			charSize.w = static_cast<Uint16>(_width >> 1u);
 
 		charSize.h = static_cast<Uint16>(_height + _spacing);
 	}

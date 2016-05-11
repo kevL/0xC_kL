@@ -29,10 +29,10 @@ namespace OpenXcom
 
 static inline unsigned read_uint32_le (const unsigned char* p)
 {
-	return static_cast<unsigned>(p[0])
-		+ (static_cast<unsigned>(p[1]) << 8)
-		+ (static_cast<unsigned>(p[2]) << 16)
-		+ (static_cast<unsigned>(p[3]) << 24);
+	return static_cast<unsigned>(p[0u])
+		+ (static_cast<unsigned>(p[1u]) <<  8u)
+		+ (static_cast<unsigned>(p[2u]) << 16u)
+		+ (static_cast<unsigned>(p[3u]) << 24u);
 }
 
 
@@ -58,8 +58,8 @@ struct gmstream
 		nsubs,
 		ntracks;
 
-	struct seq subs[256];
-	struct track tracks[256];
+	struct seq subs[256u];
+	struct track tracks[256u];
 };
 
 

@@ -216,7 +216,44 @@
 
 
 
+// 0xC ./Engine includes
+// subdirs Adlib and Scalers not included.
+#include "./Engine/Action.h"
+//#include "./Engine/AdlibMusic.h" // not used atm.
+#include "./Engine/CatFile.h"
+#include "./Engine/CrossPlatform.h"
+//#include "./Engine/DosFont.h" // handled via Font.h
+#include "./Engine/Exception.h"
+#include "./Engine/FastLineClip.h"
+#include "./Engine/FlcPlayer.h"
+#include "./Engine/Font.h"
+//#include "./Engine/GMCat.h" // not used atm.
+#include "./Engine/Game.h"
+//#include "./Engine/GraphSubset.h" // handled via ShaderDrawHelper.h
+#include "./Engine/InteractiveSurface.h"
+#include "./Engine/Language.h"
+#include "./Engine/LanguagePlurality.h"
+#include "./Engine/LocalizedText.h"
 #include "./Engine/Logger.h" // For debug assistance.
+#include "./Engine/Music.h"
+#include "./Engine/OpenGL.h"
+#include "./Engine/OptionInfo.h"
+#include "./Engine/Options.h"
+//#include "./Engine/Options.inc.h" // handled via Options.h & .cpp
+#include "./Engine/Palette.h"
+#include "./Engine/RNG.h"
+#include "./Engine/Screen.h"
+//#include "./Engine/ShaderDraw.h" // handled via ShaderMove.h, ShaderRepeat.h, Surface.h
+//#include "./Engine/ShaderDrawHelper.h" // handled via ShaderDraw.h
+#include "./Engine/ShaderMove.h"
+#include "./Engine/ShaderRepeat.h"
+#include "./Engine/Sound.h"
+#include "./Engine/SoundSet.h"
+#include "./Engine/State.h"
+#include "./Engine/Surface.h"
+#include "./Engine/SurfaceSet.h"
+#include "./Engine/Timer.h"
+#include "./Engine/Zoom.h"
 
 
 #endif

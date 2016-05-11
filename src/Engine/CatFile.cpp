@@ -36,25 +36,23 @@ CatFile::CatFile(const char* path)
 		std::ifstream(
 					path,
 					std::ios::in | std::ios::binary),
-		_amount(0),
-		_offset(0),
-		_size(0)
+		_amount(0u),
+		_offset(nullptr),
+		_size(nullptr)
 {
 	// Get amount of files
 	std::ifstream::read(
-					(char*)&_amount,
+					reinterpret_cast<char*>(&_amount),
 					sizeof(_amount));
 
 	_amount = static_cast<unsigned>(SDL_SwapLE32(_amount));
 	_amount /= 2 * sizeof(_amount);
 
 	// Get object offsets
-	std::ifstream::seekg(
-					0,
-					std::ios::beg);
+	std::ifstream::seekg(0, std::ios::beg);
 
-	_offset = new unsigned int[_amount];
-	_size = new unsigned int[_amount];
+	_offset = new unsigned[_amount];
+	_size = new unsigned[_amount];
 
 	for (unsigned
 			i = 0;
@@ -62,12 +60,12 @@ CatFile::CatFile(const char* path)
 			++i)
 	{
 		std::ifstream::read(
-						(char*)&_offset[i],
+						reinterpret_cast<char*>(&_offset[i]),
 						sizeof(*_offset));
 		_offset[i] = static_cast<unsigned>(SDL_SwapLE32(_offset[i]));
 
 		std::ifstream::read(
-						(char*)&_size[i],
+						reinterpret_cast<char*>(&_size[i]),
 						sizeof(*_size));
 		_size[i] = static_cast<unsigned>(SDL_SwapLE32(_size[i]));
 	}
@@ -94,15 +92,11 @@ char* CatFile::load(
 		unsigned i,
 		bool name)
 {
-	if (i >= _amount)
-		return 0;
+	if (i >= _amount) return nullptr;
 
-	std::ifstream::seekg(
-					_offset[i],
-					std::ios::beg);
+	std::ifstream::seekg(_offset[i], std::ios::beg);
 
-	unsigned char namesize = static_cast<unsigned char>(peek());
-
+	unsigned char namesize (static_cast<unsigned char>(peek()));
 	if (namesize <= 56)
 	{
 		if (name == false)
@@ -115,11 +109,8 @@ char* CatFile::load(
 			_size[i] += namesize + 1;
 	}
 
-	char* const object = new char[_size[i]];
-	std::ifstream::read(
-					object,
-					_size[i]);
-
+	char* const object (new char[_size[i]]);
+	std::ifstream::read(object, _size[i]);
 	return object;
 }
 
