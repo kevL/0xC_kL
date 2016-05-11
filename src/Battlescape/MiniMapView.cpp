@@ -368,6 +368,21 @@ int MiniMapView::down()
 }
 
 /**
+ * Centers on the currently selected BattleUnit if any.
+ */
+void MiniMapView::centerUnit()
+{
+	const BattleUnit* const unit (_battleSave->getSelectedUnit());
+	if (unit != nullptr)
+	{
+		_camera->centerOnPosition(
+								unit->getPosition(),
+								false);
+		_redraw = true;
+	}
+}
+
+/**
  * Handles mouse presses on the MiniMap.
  * @note Enters mouse-moving mode when the drag-scroll button is used.
  * @param action	- pointer to an Action

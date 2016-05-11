@@ -50,6 +50,7 @@ private:
 		CYCLE		=  2,
 		RED			=  3,
 		YELLOW		= 10;
+
 	static const Uint8 WHITE = 1u;
 
 	static const Uint32 SCROLL_INTERVAL	= 63u;
@@ -120,6 +121,9 @@ private:
 		int up();
 		/// Changes the displayed MiniMap level.
 		int down();
+
+		/// Centers on the currently selected BattleUnit if any.
+		void centerUnit();
 
 		/// Animates the MiniMap.
 		void animate();

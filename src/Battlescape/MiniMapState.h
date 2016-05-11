@@ -71,6 +71,9 @@ private:
 		void btnLevelUpClick(Action* action);
 		/// Handler for the one level down button.
 		void btnLevelDownClick(Action* action);
+		/// Handler for centering on the selected unit.
+		void keyCenterUnitPress(Action* action);
+
 		/// Handler for right-clicking anything.
 		void handle(Action* action) override;
 

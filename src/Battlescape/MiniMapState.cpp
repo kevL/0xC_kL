@@ -156,6 +156,13 @@ MiniMapState::MiniMapState(
 					(ActionHandler)& MiniMapState::btnLevelDownClick,
 					Options::keyBattleLevelDown);
 
+	_miniView->onKeyboardPress(
+					(ActionHandler)& MiniMapState::keyCenterUnitPress,
+					Options::keyBattleCenterUnit);
+	_miniView->onKeyboardPress(
+					(ActionHandler)& MiniMapState::keyCenterUnitPress,
+					SDLK_KP5);
+
 	_timerAnimate = new Timer(125u);
 	_timerAnimate->onTimer((StateHandler)& MiniMapState::animate);
 	_timerAnimate->start();
@@ -242,6 +249,15 @@ void MiniMapState::btnLevelDownClick(Action* action)
 	_txtLevel->setText(Text::intWide((_miniView->down() + 1) /*% 10*/));
 
 	action->getDetails()->type = SDL_NOEVENT; // consume the event
+}
+
+/**
+ * Centers the MiniMapView on the currently selected BattleUnit if any w/ key-press.
+ * @param action - pointer to an Action
+ */
+void MiniMapState::keyCenterUnitPress(Action*)
+{
+	_miniView->centerUnit();
 }
 
 /**
