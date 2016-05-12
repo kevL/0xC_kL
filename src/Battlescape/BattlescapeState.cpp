@@ -4720,7 +4720,15 @@ void BattlescapeState::saveVoxelView()
 		angleX,
 		angleY,
 		dist (0.),
-		dir (static_cast<double>(selUnit->getUnitDirection() + 4) / 4. * M_PI);
+		dir;
+
+	if (selUnit->getTurretType() != TRT_NONE
+		&& Options::battleStrafe == true)
+	{
+		dir = static_cast<double>(selUnit->getTurretDirection() + 4) / 4. * M_PI;
+	}
+	else
+		dir = static_cast<double>(selUnit->getUnitDirection() + 4) / 4. * M_PI;
 
 	std::vector<unsigned char> pic;
 	std::vector<Position> trj;

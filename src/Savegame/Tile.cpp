@@ -874,7 +874,7 @@ bool Tile::ignite(int power)
 			const int fuel (getFuel());
 			if (fuel != 0)
 			{
-				power = ((power + 4) / 5) + ((burn + 7) / 8) + (((fuel * 3) + 6) / 7);
+				power = ((power + 4) / 5) + ((burn + 7) / 8) + (((fuel << 1u) + 6) / 7);
 				if (RNG::percent(power) == true)
 				{
 					addSmoke((burn + 15) / 16);
