@@ -675,11 +675,13 @@ bool Pathfinding::aStarPath( // private.
 				&& _unit->getUnitRules() != nullptr
 				&& _unit->getUnitRules()->isMechanical() == true)
 			{
-				const int delta (std::abs((_path.back() + 4) % 8u - _unit->getUnitDirection()));
-				if (delta > 1 && delta < 7)
+				const int delta (std::abs((_path.back() + 4) % 8 - _unit->getUnitDirection())); // no u.
+				if (delta > 1)
 				{
+					_path.clear(); // safety.
+
 					_strafe =
-					_pathAction->strafe = false;
+					_pathAction->strafe = false; // illegal direction for tank-strafe.
 					return false;
 				}
 			}
@@ -1121,7 +1123,7 @@ int Pathfinding::getTuCostPf(
 				// Extra TU for strafe-moves ->	1 0 1
 				//								2 ^ 2
 				//								3 2 3
-				int delta (std::abs((dir + 4) % 8u - _unit->getUnitDirection()));
+				int delta (std::abs((dir + 4) % 8 - _unit->getUnitDirection())); // no u.
 
 				if (delta > 1 && delta < 7
 					&& _unit->getUnitRules() != nullptr
