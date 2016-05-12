@@ -2003,7 +2003,8 @@ bool Map::checkWest( // private.
 				|| tile6->getMapData(O_OBJECT)->getBigwall() != BIGWALL_SOUTH)
 			&& (tile5 == nullptr
 				|| ((tile5->getMapData(O_NORTHWALL) == nullptr
-						|| tile5->getMapData(O_NORTHWALL)->getTuCostPart(MT_WALK) != 255
+						|| (tile5->getMapData(O_NORTHWALL)->getTuCostPart(MT_WALK) != 255
+							&& tile5->getMapData(O_NORTHWALL)->isUfoDoor() == false)
 						|| tile5->isUfoDoorOpen(O_NORTHWALL) == true)
 					&& (tile5->getMapData(O_OBJECT) == nullptr
 						|| (tile5->getMapData(O_OBJECT)->getBigwall() & 0x33) == 0)))); // Block/NeSw/North/East.
