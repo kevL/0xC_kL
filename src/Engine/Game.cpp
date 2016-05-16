@@ -328,7 +328,6 @@ void Game::run()
 						_screen->handle(&action);
 						_cursor->handle(&action);
 						_fpsCounter->handle(&action);
-						_states.back()->handle(&action);
 
 						if (action.getDetails()->type == SDL_KEYDOWN
 							&& (SDL_GetModState() & KMOD_CTRL) != 0)
@@ -382,6 +381,8 @@ void Game::run()
 									}
 							}
 						}
+
+						_states.back()->handle(&action);
 				} // end event-type switch.
 			} // end polling loop.
 
@@ -566,7 +567,6 @@ void Game::run()
 						_screen->handle(&action);
 						_cursor->handle(&action);
 						_fpsCounter->handle(&action);
-						_states.back()->handle(&action);
 
 						if (action.getDetails()->type == SDL_KEYDOWN
 							&& (SDL_GetModState() & KMOD_CTRL) != 0)
@@ -630,6 +630,8 @@ void Game::run()
 									}
 							}
 						}
+
+						_states.back()->handle(&action);
 				} // end event-type switch.
 			} // end polling loop.
 
