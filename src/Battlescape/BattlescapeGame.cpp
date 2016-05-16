@@ -2784,99 +2784,95 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				statePushFront(new UnitTurnBState(this, _tacAction));
 		}
 	}
-	else // (action.actor = null) OR (action.targeting = false)
+	else if (targetUnit != nullptr && targetUnit != _tacAction.actor
+		&& (targetUnit->getUnitVisible() == true || _debugPlay == true))
 	{
-		if (targetUnit != nullptr
-			&& targetUnit != _tacAction.actor
-			&& (targetUnit->getUnitVisible() == true || _debugPlay == true))
+		if (targetUnit->getFaction() == _battleSave->getSide())
 		{
-			if (targetUnit->getFaction() == _battleSave->getSide())
-			{
-				_battleSave->setSelectedUnit(targetUnit);
-				_parentState->updateSoldierInfo(false); // try no calcFov()
+			_battleSave->setSelectedUnit(targetUnit);
+			_parentState->updateSoldierInfo(false); // try no calcFov()
 
-				cancelTacticalAction();
-				_tacAction.actor = targetUnit;
+			cancelTacticalAction();
+			_tacAction.actor = targetUnit;
 
-				setupSelector();
-			}
+			setupSelector();
 		}
-		else if (playableUnitSelected() == true)
+	}
+	else if (playableUnitSelected() == true)
+	{
+		bool allowPreview (Options::battlePreviewPath != PATH_NONE);
+
+		Pathfinding* const pf (_battleSave->getPathfinding());
+		pf->setPathingUnit(_tacAction.actor);
+
+		const bool ctrl ((SDL_GetModState() & KMOD_CTRL) != 0);
+
+		bool zPath;
+		const Uint8* const keystate (SDL_GetKeyState(nullptr));
+		if (keystate[SDLK_z] != 0)
+			zPath = true;
+		else
+			zPath = false;
+
+		if (ctrl == true
+			&& targetUnit != nullptr
+			&& targetUnit == _tacAction.actor
+			&& _tacAction.actor->getArmor()->getSize() == 1)
 		{
-			bool allowPreview (Options::battlePreviewPath != PATH_NONE);
+			if (allowPreview == true)
+				pf->clearPreview();
 
-			Pathfinding* const pf (_battleSave->getPathfinding());
-			pf->setPathingUnit(_tacAction.actor);
+			Position
+				pxScreen,
+				pxPointer;
 
-			const bool
-				ctrl ((SDL_GetModState() & KMOD_CTRL) != 0),
-				alt  ((SDL_GetModState() & KMOD_ALT)  != 0);
+			getMap()->getCamera()->convertMapToScreen(pos, &pxScreen);
+			pxScreen += getMap()->getCamera()->getMapOffset();
 
-			bool zPath;
-			const Uint8* const keystate (SDL_GetKeyState(nullptr));
-			if (keystate[SDLK_z] != 0)
-				zPath = true;
+			getMap()->findMousePointer(pxPointer);
+
+			if (pxPointer.x > pxScreen.x + 16)
+				_tacAction.actor->setTurnDirection(-1);
 			else
-				zPath = false;
+				_tacAction.actor->setTurnDirection(+1);
 
-			if (ctrl == true
-				&& targetUnit != nullptr
-				&& targetUnit == _tacAction.actor
-				&& _tacAction.actor->getArmor()->getSize() == 1)
+			_tacAction.value = (_tacAction.actor->getUnitDirection() + 4) % 8;
+
+			statePushBack(new UnitTurnBState(this, _tacAction));
+		}
+		else
+		{
+			const bool alt ((SDL_GetModState() & KMOD_ALT)  != 0);
+
+			if (allowPreview == true
+				&& (_tacAction.posTarget != pos
+					|| pf->isModCtrl() != ctrl
+					|| pf->isModAlt() != alt
+					|| pf->isZPath() != zPath))
 			{
-				if (allowPreview == true)
-					pf->clearPreview();
-
-				Position
-					pxScreen,
-					pxPointer;
-
-				getMap()->getCamera()->convertMapToScreen(pos, &pxScreen);
-				pxScreen += getMap()->getCamera()->getMapOffset();
-
-				getMap()->findMousePointer(pxPointer);
-
-				if (pxPointer.x > pxScreen.x + 16)
-					_tacAction.actor->setTurnDirection(-1);
-				else
-					_tacAction.actor->setTurnDirection(+1);
-
-				_tacAction.value = (_tacAction.actor->getUnitDirection() + 4) % 8;
-
-				statePushBack(new UnitTurnBState(this, _tacAction));
+				pf->clearPreview();
 			}
-			else
+
+			_tacAction.posTarget = pos;
+			pf->calculatePath(
+						_tacAction.actor,
+						_tacAction.posTarget);
+
+			if (pf->getStartDirection() != -1)
 			{
 				if (allowPreview == true
-					&& (_tacAction.posTarget != pos
-						|| pf->isModCtrl() != ctrl
-						|| pf->isModAlt() != alt
-						|| pf->isZPath() != zPath))
+					&& pf->previewPath() == false)
 				{
 					pf->clearPreview();
+					allowPreview = false;
 				}
 
-				_tacAction.posTarget = pos;
-				pf->calculatePath(
-							_tacAction.actor,
-							_tacAction.posTarget);
-
-				if (pf->getStartDirection() != -1)
+				if (allowPreview == false)
 				{
-					if (allowPreview == true
-						&& pf->previewPath() == false)
-					{
-						pf->clearPreview();
-						allowPreview = false;
-					}
+					getMap()->setSelectorType(CT_NONE);
+					_parentState->getGame()->getCursor()->setHidden();
 
-					if (allowPreview == false)
-					{
-						getMap()->setSelectorType(CT_NONE);
-						_parentState->getGame()->getCursor()->setHidden();
-
-						statePushBack(new UnitWalkBState(this, _tacAction));
-					}
+					statePushBack(new UnitWalkBState(this, _tacAction));
 				}
 			}
 		}

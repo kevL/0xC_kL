@@ -261,10 +261,13 @@ void Pathfinding::calculatePath(
 
 	if (_mType != MT_FLY)
 	{
+		//Log(LOG_INFO) << ". drop tileStop " << tileStop->getPosition();
 		while (canFallDown(tileStop, unitSize))
 		{
 			--posStop.z;
 			tileStop = _battleSave->getTile(posStop);
+
+			//Log(LOG_INFO) << ". . drop to " << tileStop->getPosition();
 		}
 	}
 
@@ -411,6 +414,15 @@ void Pathfinding::calculatePath(
 			}
 		}
 	}
+
+	// TEST:
+//	for (std::vector<int>::const_reverse_iterator
+//			rit = _path.rbegin();
+//			rit != _path.rend();
+//			++rit)
+//	{
+//		Log(LOG_INFO) << ". dir= " << *rit;
+//	}
 }
 
 /**
@@ -920,14 +932,12 @@ int Pathfinding::getTuCostPf(
 				else
 				{
 					tileStartBelow = _battleSave->getTile(posStart + posOffset + Position(0,0,-1));
-					if (tileStart->hasNoFloor(tileStartBelow) == true)
+					if (tileStart->hasNoFloor(tileStartBelow) == true
+						&& ++partsOnAir == quadrants)
 					{
-						if (++partsOnAir == quadrants)
-						{
-							if (dir != DIR_DOWN) return FAIL;
+						if (dir != DIR_DOWN) return FAIL;
 
-							fall = true;
-						}
+						fall = true;
 					}
 				}
 			}
@@ -1003,7 +1013,7 @@ int Pathfinding::getTuCostPf(
 			{
 				case DIR_UP:
 				case DIR_DOWN:
-					if (fall == false)
+					if (fall == false || _alt == true)
 					{
 						switch (validateUpDown(
 											posStart + posOffset,
@@ -2013,7 +2023,7 @@ bool Pathfinding::previewPath(bool discard)
 			hathStood (false),
 			gravLift,
 			reserveOk,
-			falling;
+			fall;
 		Uint8 color;
 
 		Position
@@ -2044,12 +2054,12 @@ bool Pathfinding::previewPath(bool discard)
 
 			energyLimit = unitEn;
 
-			falling = _mType != MT_FLY
-				   && canFallDown(
+			fall = _mType != MT_FLY
+				&& canFallDown(
 							_battleSave->getTile(posStart),
 							unitSize);
-			//Log(LOG_INFO) << ". falling= " << (int)falling;
-			if (falling == false)
+			//Log(LOG_INFO) << ". fall= " << (int)fall;
+			if (fall == false)
 			{
 				gravLift = dir >= DIR_UP
 						&& _battleSave->getTile(posStart)->getMapData(O_FLOOR) != nullptr
