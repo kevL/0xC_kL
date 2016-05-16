@@ -348,9 +348,9 @@ void Screen::resetDisplay(bool resetVideo)
 		if (!(oldFlags & SDL_OPENGL) && (_flags & SDL_OPENGL)) // Workaround for segfault when switching to OpenGL.
 		{
 			Uint8 cursor (0);
-			char* _oldtitle (0);
-			SDL_WM_GetCaption(&_oldtitle, nullptr);
-			std::string title(_oldtitle);
+			char* oldtitle (nullptr);
+			SDL_WM_GetCaption(&oldtitle, nullptr);
+			std::string title(oldtitle);
 			SDL_QuitSubSystem(SDL_INIT_VIDEO);
 			SDL_InitSubSystem(SDL_INIT_VIDEO);
 			SDL_ShowCursor(SDL_ENABLE);
