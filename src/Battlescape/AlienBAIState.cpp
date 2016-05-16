@@ -63,7 +63,7 @@ AlienBAIState::AlienBAIState(
 		_rifle(false), // TODO: enum AIWeaponType ...
 		_melee(false),
 		_blaster(false),
-//		_grenade(false),
+		_grenade(false),
 		_hasPsiBeenSet(false),
 		_distClosest(1000),
 		_reserve(BA_NONE)
@@ -143,9 +143,9 @@ void AlienBAIState::think(BattleAction* const action)
 //	_wasHitBy.clear();
 
 	_blaster =
-	_rifle = false;
+	_rifle =
+	_grenade = false;
 	_melee = (_unit->getMeleeWeapon() != nullptr);
-//	_grenade = false;
 
 	action->weapon = _unit->getMainHandWeapon(); // will get Rifle OR Melee
 //	if (action->weapon == nullptr)
@@ -210,7 +210,7 @@ void AlienBAIState::think(BattleAction* const action)
 
 //			case BT_GRENADE:
 //				Log(LOG_INFO) << ". . grenade TRUE";
-//				_grenade = true; // <- this is no longer useful since getMainHandWeapon() does not return grenades.
+//				_grenade = true; // <- getMainHandWeapon() does not return grenades.
 		}
 	}
 	else if (_traceAI) Log(LOG_INFO) << ". weapon is NULL";
@@ -1046,9 +1046,7 @@ void AlienBAIState::evaluateAiMode() // private.
 		{
 			ambushOdds = 0.f;
 			if (_melee == true)
-			{
 				combatOdds *= 1.2f;
-			}
 		}
 
 		if (_targetsExposed != 0)
@@ -1124,7 +1122,7 @@ void AlienBAIState::evaluateAiMode() // private.
 		}
 
 		if (_AIMode == AI_COMBAT)
-			ambushOdds *= 1.5f;
+			ambushOdds *= 1.3f;
 
 		if (_spottersOrigin != 0)
 		{
@@ -1151,6 +1149,15 @@ void AlienBAIState::evaluateAiMode() // private.
 		{
 			escapeOdds *= 0.8f;
 			ambushOdds *= 0.5f;
+		}
+
+		if (   _melee == false
+			&& _rifle == false
+			&& _blaster == false
+			&& _grenade == false)
+		{
+			combatOdds =
+			ambushOdds = 0.f;
 		}
 
 		if (_traceAI)
@@ -1995,6 +2002,7 @@ bool AlienBAIState::grenadeAction() // private.
 
 					_rifle =
 					_melee = false;
+					_grenade = true;
 					return true;
 				}
 			}

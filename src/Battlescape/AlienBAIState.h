@@ -47,7 +47,7 @@ private:
 
 	bool
 		_blaster,
-//		_grenade,
+		_grenade,
 		_hasPsiBeenSet,
 		_melee,
 		_rifle;
