@@ -567,16 +567,22 @@ void BattlescapeGame::popState()
 		}
 
 
-		if (_battleSave->getSelectedUnit() == nullptr)
+		if (_battleSave->getSelectedUnit() == nullptr
+			|| _battleSave->getSelectedUnit()->isOut_t() == true)
 		{
-			//Log(LOG_INFO) << ". selUnit invalid: cancelAction";
+			//Log(LOG_INFO) << ". selUnit invalid OR incapacitated: cancelAction";
 			cancelTacticalAction();
-		}
-		else if (_battleSave->getSelectedUnit()->isOut_t() == true)
-		{
-			//Log(LOG_INFO) << ". selUnit incapacitated: cancelAction & deSelect";
-			cancelTacticalAction();
-			_battleSave->setSelectedUnit();
+
+			switch (_battleSave->getSide())
+			{
+				case FACTION_PLAYER:
+					_battleSave->setSelectedUnit();
+					break;
+
+				case FACTION_HOSTILE:
+				case FACTION_NEUTRAL:
+					_battleSave->selectNextFactionUnit(true, true);
+			}
 		}
 
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
@@ -603,7 +609,7 @@ void BattlescapeGame::popState()
 		{
 			//Log(LOG_INFO) << ". states Empty, re-enable cursor";
 			_parentState->getGame()->getCursor()->setHidden(false);
-			_parentState->refreshMousePosition(); // update tile data on the HUD
+			_parentState->refreshMousePosition(); // update tile-data on the HUD
 			setupSelector();
 		}
 	}
