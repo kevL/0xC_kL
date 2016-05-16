@@ -467,6 +467,9 @@ void BattlescapeGenerator::nextStage()
 				++aliensAlive;
 			}
 			(*i)->setUnitStatus(STATUS_LATENT);
+
+			if ((*i)->getAIState() != nullptr)
+				(*i)->setAIState();
 		}
 
 		if ((*i)->getTile() != nullptr) // break Tiles' link to unit.

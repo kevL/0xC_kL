@@ -312,7 +312,7 @@ void SavedBattleGame::load(
 	}
 
 
-	const int selectedUnit (node["selectedUnit"].as<int>());
+	const int selUnitId (node["selectedUnit"].as<int>());
 
 	int id;
 
@@ -360,28 +360,42 @@ void SavedBattleGame::load(
 			unit->load(*i);
 			_units.push_back(unit);
 
-			if (faction == FACTION_PLAYER)
+			switch (faction)
 			{
-				if (unit->getId() == selectedUnit
-					|| (_selectedUnit == nullptr && unit->isOut_t(OUT_STAT) == false))
-				{
-					_selectedUnit = unit;
-				}
-			}
-			else if (unit->getUnitStatus() != STATUS_DEAD)
-			{
-				if (const YAML::Node& ai = (*i)["AI"])
-				{
-					BattleAIState* aiState;
+				case FACTION_PLAYER:
+					if (unit->getId() == selUnitId
+						|| (_selectedUnit == nullptr && unit->isOut_t(OUT_STAT) == false))
+					{
+						_selectedUnit = unit;
+					}
+					break;
 
-					if (faction == FACTION_HOSTILE)
-						aiState = new AlienBAIState(this, unit);
-					else
-						aiState = new CivilianBAIState(this, unit);
+				case FACTION_HOSTILE:
+				case FACTION_NEUTRAL:
+					switch (unit->getUnitStatus())
+					{
+						case STATUS_DEAD:
+						case STATUS_LATENT:
+							break;
 
-					aiState->load(ai);
-					unit->setAIState(aiState);
-				}
+						default:
+							if (const YAML::Node& ai = (*i)["AI"])
+							{
+								BattleAIState* aiState;
+
+								switch (faction)
+								{
+									case FACTION_HOSTILE:
+										aiState = new AlienBAIState(this, unit);
+										break;
+									case FACTION_NEUTRAL:
+										aiState = new CivilianBAIState(this, unit);
+								}
+
+								aiState->load(ai);
+								unit->setAIState(aiState);
+							}
+					}
 			}
 		}
 	}

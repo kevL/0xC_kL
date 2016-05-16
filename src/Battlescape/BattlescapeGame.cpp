@@ -718,10 +718,14 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 	if (unit->getAIState() == nullptr)
 	{
-		if (unit->getFaction() == FACTION_HOSTILE)
-			unit->setAIState(new AlienBAIState(_battleSave, unit, nullptr));
-		else
-			unit->setAIState(new CivilianBAIState(_battleSave, unit, nullptr));
+		switch (unit->getFaction())
+		{
+			case FACTION_HOSTILE:
+				unit->setAIState(new AlienBAIState(_battleSave, unit, nullptr));
+				break;
+			case FACTION_NEUTRAL:
+				unit->setAIState(new CivilianBAIState(_battleSave, unit, nullptr));
+		}
 	}
 
 	if (++_AIActionCounter == 1)

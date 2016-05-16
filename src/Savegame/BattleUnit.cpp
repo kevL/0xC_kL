@@ -2655,8 +2655,8 @@ void BattleUnit::think(BattleAction* const action)
 }
 
 /**
- * Sets this BattleUnit's current AI state.
- * @param aiState - pointer to AI state (default nullptr)
+ * Sets this BattleUnit's current AI-state.
+ * @param aiState - pointer to AI-state (default nullptr)
  */
 void BattleUnit::setAIState(BattleAIState* const aiState)
 {
@@ -2671,8 +2671,8 @@ void BattleUnit::setAIState(BattleAIState* const aiState)
 }
 
 /**
- * Gets the current AI-state.
- * @return, pointer to this BattleUnit's AI state
+ * Gets this BattleUnit's current AI-state.
+ * @return, pointer to AI-state
  */
 BattleAIState* BattleUnit::getAIState() const
 {
