@@ -198,7 +198,7 @@ private:
 				const BattleUnit* const unit = nullptr);
 //				const BattleActionType reserved = BA_NONE);
 		/// Opens a door without checks.
-		void openDoorAuto(const MapDataType partType);
+		void openAdjacentDoor(const MapDataType partType);
 		/**
 		 * Checks if a ufo-door is open or opening.
 		 * @note Used for visibility/light blocking checks. This function
@@ -207,12 +207,12 @@ private:
 		 * @param partType - the tile-part to consider
 		 * @return, true if ufo-door is valid and not closed
 		 */
-		bool isUfoDoorOpen(MapDataType partType) const
+		bool isSlideDoorOpen(MapDataType partType) const
 		{	return _parts[partType] != nullptr
-				&& _parts[partType]->isUfoDoor() == true
+				&& _parts[partType]->isSlideDoor() == true
 				&& _curFrame[partType] != 0; }
 		/// Closes a ufo-door.
-		bool closeUfoDoor();
+		bool closeSlideDoor();
 
 		/// Sets the black fog-of-war status of a tile-section.
 		void setRevealed(

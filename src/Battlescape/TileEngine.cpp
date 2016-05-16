@@ -3805,7 +3805,7 @@ int TileEngine::blockage( // private.
 
 	const MapData* const part (tile->getMapData(partType));
 
-	if (part != nullptr && tile->isUfoDoorOpen(partType) == false)
+	if (part != nullptr && tile->isSlideDoorOpen(partType) == false)
 	{
 		if (dType == DT_STUN) dType = DT_SMOKE; // TODO: Workaround until get MapData/MapDataSets are sorted out properly.
 
@@ -4257,7 +4257,7 @@ int TileEngine::blockage( // private.
 					 || dType == DT_STUN
 					 || dType == DT_IN);
 
-	if (tile == nullptr || tile->isUfoDoorOpen(partType) == true)	// probably outside the map here
+	if (tile == nullptr || tile->isSlideDoorOpen(partType) == true)	// probably outside the map here
 	{																// open ufo doors are actually still closed behind the scenes
 		//if (_debug) Log(LOG_INFO) << "TileEngine::blockage() EXIT, ret ( no tile OR ufo-door open )"; // lag to file
 		return 0;
@@ -4821,15 +4821,15 @@ DoorResult TileEngine::unitOpensDoor(
 	else
 		z = 0;
 
-	const int armorSize (unit->getArmor()->getSize());
+	const int unitSize (unit->getArmor()->getSize());
 	for (int
 			x = 0;
-			x != armorSize && ret == DR_NONE;
+			x != unitSize && ret == DR_NONE;
 			++x)
 	{
 		for (int
 				y = 0;
-				y != armorSize && ret == DR_NONE;
+				y != unitSize && ret == DR_NONE;
 				++y)
 		{
 			pos = unit->getPosition() + Position(x,y,z);
@@ -5110,7 +5110,7 @@ bool TileEngine::testAdjacentDoor(
 	const Tile* const tile (_battleSave->getTile(pos + offset));
 	if (tile != nullptr
 		&& tile->getMapData(part) != nullptr
-		&& tile->getMapData(part)->isUfoDoor() == true)
+		&& tile->getMapData(part)->isSlideDoor() == true)
 	{
 		return true;
 	}
@@ -5140,9 +5140,9 @@ void TileEngine::openAdjacentDoors( // private.
 		offset = (westSide == true) ? Position(0,i,0) : Position(i,0,0);
 		if ((tile = _battleSave->getTile(pos + offset)) != nullptr
 			&& tile->getMapData(partType) != nullptr
-			&& tile->getMapData(partType)->isUfoDoor() == true)
+			&& tile->getMapData(partType)->isSlideDoor() == true)
 		{
-			tile->openDoorAuto(partType);
+			tile->openAdjacentDoor(partType);
 		}
 		else
 			break;
@@ -5156,9 +5156,9 @@ void TileEngine::openAdjacentDoors( // private.
 		offset = (westSide == true) ? Position(0,i,0) : Position(i,0,0);
 		if ((tile = _battleSave->getTile(pos + offset)) != nullptr
 			&& tile->getMapData(partType) != nullptr
-			&& tile->getMapData(partType)->isUfoDoor() == true)
+			&& tile->getMapData(partType)->isSlideDoor() == true)
 		{
-			tile->openDoorAuto(partType);
+			tile->openAdjacentDoor(partType);
 		}
 		else
 			break;
@@ -5169,7 +5169,7 @@ void TileEngine::openAdjacentDoors( // private.
  * Closes ufo-doors.
  * @return, true if a door closed
  */
-bool TileEngine::closeUfoDoors() const
+bool TileEngine::closeSlideDoors() const
 {
 	int ret (false);
 	Tile* tile;
@@ -5188,16 +5188,16 @@ bool TileEngine::closeUfoDoors() const
 		if ((unit = tile->getTileUnit()) != nullptr
 			&& unit->getArmor()->getSize() == 2)
 		{
-			if (tile->isUfoDoorOpen(O_NORTHWALL) == true
-				&& (tileNorth = _battleSave->getTile(tile->getPosition() + Position( 0,-1,0))) != nullptr
+			if (tile->isSlideDoorOpen(O_NORTHWALL) == true
+				&& (tileNorth = _battleSave->getTile(tile->getPosition() + Position(0,-1,0))) != nullptr
 				&& tileNorth->getTileUnit() != nullptr
 				&& tileNorth->getTileUnit() == unit)
 			{
 				continue;
 			}
 
-			if (tile->isUfoDoorOpen(O_WESTWALL) == true
-				&& (tileWest = _battleSave->getTile(tile->getPosition() + Position(-1, 0,0))) != nullptr
+			if (tile->isSlideDoorOpen(O_WESTWALL) == true
+				&& (tileWest = _battleSave->getTile(tile->getPosition() + Position(-1,0,0))) != nullptr
 				&& tileWest->getTileUnit() != nullptr
 				&& tileWest->getTileUnit() == unit)
 			{
@@ -5205,7 +5205,7 @@ bool TileEngine::closeUfoDoors() const
 			}
 		}
 
-		ret |= tile->closeUfoDoor();
+		ret |= tile->closeSlideDoor();
 	}
 	return ret;
 }
@@ -6233,7 +6233,7 @@ VoxelType TileEngine::detVoxelType(
 			i != Tile::PARTS_TILE;
 			++i)
 	{
-		if (tile->isUfoDoorOpen(partType = static_cast<MapDataType>(i)) == false
+		if (tile->isSlideDoorOpen(partType = static_cast<MapDataType>(i)) == false
 			&& (partData = tile->getMapData(partType)) != nullptr
 			&& (loftId = (partData->getLoftId(layer) << 4u) + y) < _voxelData->size() // davide, http://openxcom.org/forum/index.php?topic=2934.msg32146#msg32146 (x2 _below)
 			&& (_voxelData->at(loftId) & (1u << x))) // if the voxelData at loftId is "1" solid:

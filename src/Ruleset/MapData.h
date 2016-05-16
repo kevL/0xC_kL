@@ -110,8 +110,9 @@ private:
 		_blockSmoke,
 		_isDoor,
 		_isGravLift,
+		_isHingeDoor,
 		_isNoFloor,
-		_isUfoDoor,
+		_isSlideDoor,
 		_stopLOS;
 	int
 		_armor,
@@ -166,16 +167,18 @@ private:
 				size_t aniFrame,
 				int id);
 
+		/// Gets if this tile-part is either a normal door or a ufo-door.
+		bool isDoor() const;
+		/// Gets whether the part is a normal door.
+		bool isHingeDoor() const;
 		/// Gets whether the part is an animated ufo-door.
-		bool isUfoDoor() const;
+		bool isSlideDoor() const;
 		/// Gets whether the part stops LoS.
 		bool stopLOS() const;
 		/// Gets whether the part is considered a solid floor.
 		bool isNoFloor() const;
 		/// Gets whether the part is a BigWall.
 		BigwallType getBigwall() const;
-		/// Gets whether the part is a normal door.
-		bool isDoor() const;
 		/// Gets whether the part is a grav-lift.
 		bool isGravLift() const;
 		/// Gets whether the part blocks smoke.

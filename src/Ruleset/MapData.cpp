@@ -36,11 +36,12 @@ MapData::MapData(MapDataSet* const dataSet)
 	:
 		_dataSet(dataSet),
 		_specialType(TILE),
-		_isUfoDoor(false),
+		_isDoor(false),
+		_isHingeDoor(false),
+		_isSlideDoor(false),
 		_stopLOS(false),
 		_isNoFloor(false),
 		_isGravLift(false),
-		_isDoor(false),
 		_blockFire(false),
 		_blockSmoke(false),
 		_baseObject(false),
@@ -64,9 +65,9 @@ MapData::MapData(MapDataSet* const dataSet)
 		_isPsychedelic(0)
 {
 	//Log(LOG_INFO) << "MapData cTor dataSet = " << _dataSet->getType();
-	std::fill_n(_sprite,  8,0);
-	std::fill_n(_block,   6,0);
-	std::fill_n(_loftId, 12,0);
+	std::fill_n(_sprite,  8u,0u);
+	std::fill_n(_block,   6u,0u);
+	std::fill_n(_loftId, 12u,0u);
 }
 
 /**
@@ -109,12 +110,30 @@ void MapData::setSprite(
 }
 
 /**
- * Gets whether this tile-part is an animated ufo door.
- * @return, true if an animated ufo door
+ * Gets if this tile-part is either a normal door or a ufo-door.
+ * @return, true if door
  */
-bool MapData::isUfoDoor() const
+bool MapData::isDoor() const
 {
-	return _isUfoDoor;
+	return _isDoor;
+}
+
+/**
+ * Gets whether this tile-part is a normal door.
+ * @return, true if normal door
+ */
+bool MapData::isHingeDoor() const
+{
+	return _isHingeDoor;
+}
+
+/**
+ * Gets whether this tile-part is an animated ufo-door.
+ * @return, true if ufo-door
+ */
+bool MapData::isSlideDoor() const
+{
+	return _isSlideDoor;
 }
 
 /**
@@ -157,15 +176,6 @@ BigwallType MapData::getBigwall() const
 }
 
 /**
- * Gets whether this tile-part is a normal door.
- * @return, true if a normal door
- */
-bool MapData::isDoor() const
-{
-	return _isDoor;
-}
-
-/**
  * Gets whether this tile-part is a grav lift.
  * @return, true if a grav lift
  */
@@ -199,7 +209,7 @@ bool MapData::blockFire() const
 void MapData::setStopLOS(bool stopLOS)
 {
 	_stopLOS = stopLOS;
-	_block[1] = stopLOS ? 100 : 0;
+	_block[1u] = stopLOS ? 100 : 0;
 }
 
 /**
@@ -225,15 +235,17 @@ void MapData::setFlags(
 		bool blockSmoke,
 		bool baseObject)
 {
-	_isUfoDoor	= isUfoDoor;
-	_stopLOS	= stopLOS;
-	_isNoFloor	= isNoFloor;
-	_bigWall	= static_cast<BigwallType>(bigWall);
-	_isGravLift	= isGravLift;
-	_isDoor		= isDoor;
-	_blockFire	= blockFire;
-	_blockSmoke	= blockSmoke;
-	_baseObject	= baseObject;
+	_isSlideDoor	= isUfoDoor;
+	_stopLOS		= stopLOS;
+	_isNoFloor		= isNoFloor;
+	_bigWall		= static_cast<BigwallType>(bigWall);
+	_isGravLift		= isGravLift;
+	_isHingeDoor	= isDoor;
+	_blockFire		= blockFire;
+	_blockSmoke		= blockSmoke;
+	_baseObject		= baseObject;
+
+	_isDoor = _isHingeDoor || _isSlideDoor;
 }
 
 /**
@@ -251,11 +263,11 @@ int MapData::getBlock(DamageType dType) const
 //		case DT_IN:		return _block[4];
 //		case DT_STUN:	return _block[5];
 											// see setBlock() below_
-		case DT_NONE:	return _block[1];	// stop LoS: [0 or 100], was [0 or 255]
+		case DT_NONE:	return _block[1u];	// stop LoS: [0 or 100], was [0 or 255]
 		case DT_HE:
 		case DT_IN:
-		case DT_STUN:	return _block[2];	// HE block [int]
-		case DT_SMOKE:	return _block[3];	// block smoke: try (bool), was [0 or 256]
+		case DT_STUN:	return _block[2u];	// HE block [int]
+		case DT_SMOKE:	return _block[3u];	// block smoke: try (bool), was [0 or 256]
 	}
 	return 0;
 }
@@ -284,10 +296,10 @@ void MapData::setBlock(
 	_block[4] = fireBlock == 1? 255: 0;
 	_block[5] = gasBlock == 1? 255: 0; */
 
-	_block[0] = lightBlock; // not used
-//	_block[1] = visionBlock; // kL
-//	_block[1] = visionBlock == 1 ? 255 : 0; // <- why? kL_note. haha
-	_block[1] = visionBlock == 1 ? 100 : 0; // kL
+	_block[0u] = lightBlock; // not used
+//	_block[1u] = visionBlock; // kL
+//	_block[1u] = visionBlock == 1 ? 255 : 0; // <- why? kL_note. haha
+	_block[1u] = visionBlock == 1 ? 100 : 0; // kL
 		// stopLoS==true needs to be a significantly large integer (only about 10+ really)
 		// so that if a directionally opposite Field of View check includes a "-1",
 		// meaning block by bigWall or other content-object, the result is not reduced
@@ -295,11 +307,11 @@ void MapData::setBlock(
 		//
 		// It would be unnecessary to use that jigger-pokery if TileEngine::
 		// horizontalBlockage() & blockage() were coded differently [verticalBlockage() too, perhaps]
-	_block[2] = heBlock;
-//	_block[3] = smokeBlock == 1? 256: 0; // <- why? kL_note. I basically use visionBlock for smoke ....
-	_block[3] = smokeBlock;
-	_block[4] = fireBlock; // this is Flammable, NOT Block_Fire.
-	_block[5] = gasBlock;
+	_block[2u] = heBlock;
+//	_block[3u] = smokeBlock == 1? 256: 0; // <- why? kL_note. I basically use visionBlock for smoke ....
+	_block[3u] = smokeBlock;
+	_block[4u] = fireBlock; // this is Flammable, NOT Block_Fire.
+	_block[5u] = gasBlock;
 }
 
 /**

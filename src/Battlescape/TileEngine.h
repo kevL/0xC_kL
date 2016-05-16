@@ -268,7 +268,7 @@ private:
 				int part,
 				int dir); */
 		/// Closes ufo doors.
-		bool closeUfoDoors() const;
+		bool closeSlideDoors() const;
 
 		/// Calculates a line trajectory.
 		VoxelType plotLine(

@@ -221,9 +221,9 @@ YAML::Node Tile::save() const
 		}
 	}
 
-	if (isUfoDoorOpen(O_WESTWALL) == true)
+	if (isSlideDoorOpen(O_WESTWALL) == true)
 		node["openDoorWest"] = true;
-	if (isUfoDoorOpen(O_NORTHWALL) == true)
+	if (isSlideDoorOpen(O_NORTHWALL) == true)
 		node["openDoorNorth"] = true;
 
 	return node;
@@ -251,8 +251,8 @@ void Tile::saveBinary(Uint8** buffer) const
 
 	int boolFields ((_revealed[ST_WEST] ? 0x01 : 0x0) + (_revealed[ST_NORTH] ? 0x02 : 0x0) + (_revealed[ST_CONTENT] ? 0x04 : 0x0));
 
-	boolFields |= isUfoDoorOpen(O_WESTWALL)  ? 0x08 : 0x0;
-	boolFields |= isUfoDoorOpen(O_NORTHWALL) ? 0x10 : 0x0;
+	boolFields |= isSlideDoorOpen(O_WESTWALL)  ? 0x08 : 0x0;
+	boolFields |= isSlideDoorOpen(O_NORTHWALL) ? 0x10 : 0x0;
 
 	serializeInt(
 				buffer,
@@ -329,7 +329,7 @@ int Tile::getTuCostTile(
 		MoveType type) const
 {
 	if (_parts[partType] != nullptr
-		&& (_parts[partType]->isUfoDoor() == false
+		&& (_parts[partType]->isSlideDoor() == false
 			|| _curFrame[partType] < 2))
 	{
 		switch (partType)
@@ -441,6 +441,7 @@ int Tile::getFootstepSound(const Tile* const tileBelow) const
 
 /**
  * Opens a door on this Tile.
+ * @note It's inadvisable to set an MCD-entry as both a door and a ufo-door.
  * @param partType		- a tile-part type (MapData.h)
  * @param unit			- pointer to a BattleUnit (default nullptr)
 // * @param reserved	- BattleActionType (BattlescapeGame.h) (default BA_NONE)
@@ -458,7 +459,7 @@ DoorResult Tile::openDoor(
 {
 	if (_parts[partType] != nullptr)
 	{
-		if (_parts[partType]->isDoor() == true)
+		if (_parts[partType]->isHingeDoor() == true)
 		{
 			if (_unit != nullptr
 				&& _unit != unit
@@ -479,13 +480,12 @@ DoorResult Tile::openDoor(
 					_parts[partType]->getAltMCD(),
 					_partSetId[partType],
 					_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD())->getPartType());
-
 			setMapData(nullptr,-1,-1, partType);
 
 			return DR_WOOD_OPEN;
 		}
 
-		if (_parts[partType]->isUfoDoor() == true)
+		if (_parts[partType]->isSlideDoor() == true)
 		{
 			if (_curFrame[partType] == 0) // ufo door part 0 - door is closed
 			{
@@ -508,31 +508,19 @@ DoorResult Tile::openDoor(
 }
 
 /**
- * Opens a door without checks.
+ * Opens a ufo-door without checks.
  * @param partType - a tile-part type (MapData.h)
  */
-void Tile::openDoorAuto(const MapDataType partType)
+void Tile::openAdjacentDoor(const MapDataType partType)
 {
-//	if (_parts[partType]->isDoor() == true)
-//	{
-//		setMapData(
-//				_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD()),
-//				_parts[partType]->getAltMCD(),
-//				_partSetId[partType],
-//				_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD())->getPartType());
-//
-//		setMapData(nullptr,-1,-1, partType);
-//	}
-//	else if (_parts[partType]->isUfoDoor() == true)
-
-	_curFrame[partType] = 1; // start opening door
+	_curFrame[partType] = 1;
 }
 
 /**
  * Closes a ufo-door on this Tile.
  * @return, true if a door closed
  */
-bool Tile::closeUfoDoor()
+bool Tile::closeSlideDoor()
 {
 	int ret (false);
 	for (size_t
@@ -540,7 +528,7 @@ bool Tile::closeUfoDoor()
 			i != PARTS_TILE;
 			++i)
 	{
-		if (isUfoDoorOpen(static_cast<MapDataType>(i)) == true)
+		if (isSlideDoorOpen(static_cast<MapDataType>(i)) == true)
 		{
 			_curFrame[i] = 0;
 			ret = true;
@@ -1186,13 +1174,13 @@ void Tile::animateTile()
 			{
 				default:
 				case 0:
-					if (_parts[i]->isUfoDoor() == false
+					if (_parts[i]->isSlideDoor() == false
 						|| (_curFrame[i] != 0
 							&& _curFrame[i] != 7)) // ufo-door is currently static
 					{
 						nextFrame = _curFrame[i] + 1;
 
-						if (_parts[i]->isUfoDoor() == true // special handling for Avenger & Lightning doors
+						if (_parts[i]->isSlideDoor() == true // special handling for Avenger & Lightning doors
 							&& _parts[i]->getSpecialType() == START_POINT
 							&& nextFrame == 3)
 						{

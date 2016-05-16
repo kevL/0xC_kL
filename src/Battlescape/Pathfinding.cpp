@@ -316,9 +316,9 @@ void Pathfinding::calculatePath(
 						tileTest = _battleSave->getTile(posStop + Position(x,y,0));
 						if (x != 0 && y != 0
 							&& ((tileTest->getMapData(O_NORTHWALL) != nullptr
-									&& tileTest->getMapData(O_NORTHWALL)->isDoor() == true)
+									&& tileTest->getMapData(O_NORTHWALL)->isHingeDoor() == true)
 								|| (tileTest->getMapData(O_WESTWALL) != nullptr
-									&& tileTest->getMapData(O_WESTWALL)->isDoor() == true)))
+									&& tileTest->getMapData(O_WESTWALL)->isHingeDoor() == true)))
 						{
 							return;
 						}
@@ -944,9 +944,9 @@ int Pathfinding::getTuCostPf(
 
 			if (x != 0 && y != 0 // don't let large units phase through doors
 				&& ((tileStop->getMapData(O_NORTHWALL) != nullptr
-						&& tileStop->getMapData(O_NORTHWALL)->isDoor() == true)
+						&& tileStop->getMapData(O_NORTHWALL)->isHingeDoor() == true)
 					|| (tileStop->getMapData(O_WESTWALL) != nullptr
-						&& tileStop->getMapData(O_WESTWALL)->isDoor() == true)))
+						&& tileStop->getMapData(O_WESTWALL)->isHingeDoor() == true)))
 			{
 				return FAIL;
 			}
@@ -1246,11 +1246,8 @@ int Pathfinding::getWallTuCost( // private.
 				{
 					tuTotal += partCost;
 
-					if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
-						|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost; // don't let large unit parts reset _doorCost prematurely.
-					}
 				}
 			}
 			break;
@@ -1264,11 +1261,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
-						|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				tile = _battleSave->getTile(tileStart->getPosition() + Position(1,0,0)); // tileEast
@@ -1277,11 +1271,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
-						|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
@@ -1289,11 +1280,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_WESTWALL)->isDoor() == true
-						|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				tile = tileStop; //_battleSave->getTile(tileStart->getPosition() + Position(1,-1,0)); // tileNorthEast
@@ -1302,11 +1290,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_WESTWALL)->isDoor() == true
-						|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				if (walls != 0) // && _doorCost == 0
@@ -1327,11 +1312,8 @@ int Pathfinding::getWallTuCost( // private.
 				{
 					tuTotal += partCost;
 
-					if (   tile->getMapData(O_WESTWALL)->isDoor() == true
-						|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 			}
 			break;
@@ -1345,11 +1327,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_WESTWALL)->isDoor() == true
-						|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				tile = tileStop; //_battleSave->getTile(tileStart->getPosition() + Position(1,1,0)); // tileSouthEast
@@ -1358,11 +1337,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_WESTWALL)->isDoor() == true
-						|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
@@ -1370,11 +1346,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
-						|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				tile = _battleSave->getTile(tileStart->getPosition() + Position(0,1,0)); // tileSouth
@@ -1383,11 +1356,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
-						|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				if (walls != 0)
@@ -1408,11 +1378,8 @@ int Pathfinding::getWallTuCost( // private.
 				{
 					tuTotal += partCost;
 
-					if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
-						|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 			}
 			break;
@@ -1426,11 +1393,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_WESTWALL)->isDoor() == true
-						|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				tile = _battleSave->getTile(tileStart->getPosition() + Position(0,1,0)); // tileSouth
@@ -1439,11 +1403,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_WESTWALL)->isDoor() == true
-						|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
@@ -1451,11 +1412,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
-						|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				tile = tileStop; //_battleSave->getTile(tileStart->getPosition() + Position(-1,1,0)); // tileSouthWest
@@ -1464,11 +1422,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
-						|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				if (walls != 0)
@@ -1489,11 +1444,8 @@ int Pathfinding::getWallTuCost( // private.
 				{
 					tuTotal += partCost;
 
-					if (   tile->getMapData(O_WESTWALL)->isDoor() == true
-						|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 			}
 			break;
@@ -1507,11 +1459,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_WESTWALL)->isDoor() == true
-						|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
@@ -1519,11 +1468,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
-						|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				tile = _battleSave->getTile(tileStart->getPosition() + Position(-1,0,0)); // tileWest
@@ -1532,11 +1478,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_NORTHWALL)->isDoor() == true
-						|| tile->getMapData(O_NORTHWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				tile = _battleSave->getTile(tileStart->getPosition() + Position(0,-1,0)); // tileNorth
@@ -1545,11 +1488,8 @@ int Pathfinding::getWallTuCost( // private.
 					tuTotal += partCost;
 					++walls;
 
-					if (   tile->getMapData(O_WESTWALL)->isDoor() == true
-						|| tile->getMapData(O_WESTWALL)->isUfoDoor() == true)
-					{
+					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
 						if (partCost > _doorCost) _doorCost = partCost;
-					}
 				}
 
 				if (walls != 0)
@@ -1815,9 +1755,9 @@ bool Pathfinding::isBlocked( // private.
 			//Log(LOG_INFO) << ". part is Westwall";
 			if (launchTarget != nullptr								// missiles can't pathfind through closed doors.
 				&& (part = tile->getMapData(O_WESTWALL)) != nullptr	// ... neither can proxy mines.
-				&& (part->isDoor() == true
-					|| (part->isUfoDoor() == true
-						&& tile->isUfoDoorOpen(O_WESTWALL) == false)))
+				&& (part->isHingeDoor() == true
+					|| (part->isSlideDoor() == true
+						&& tile->isSlideDoorOpen(O_WESTWALL) == false)))
 			{
 				return true;
 			}
@@ -1853,9 +1793,9 @@ bool Pathfinding::isBlocked( // private.
 			//Log(LOG_INFO) << ". part is Northwall";
 			if (launchTarget != nullptr									// missiles can't pathfind through closed doors.
 				&& (part = tile->getMapData(O_NORTHWALL)) != nullptr	// ... neither can proxy mines.
-				&& (part->isDoor() == true
-					|| (part->isUfoDoor() == true
-						&& tile->isUfoDoorOpen(O_NORTHWALL) == false)))
+				&& (part->isHingeDoor() == true
+					|| (part->isSlideDoor() == true
+						&& tile->isSlideDoorOpen(O_NORTHWALL) == false)))
 			{
 				return true;
 			}
