@@ -2401,6 +2401,9 @@ int BattleUnit::getInitiative(const int tuSpent) const
  */
 void BattleUnit::prepUnit(bool full)
 {
+	//Log(LOG_INFO) << "BattleUnit::prepUnit() id-" << _id;
+//	bool debug = _id == 257;
+
 	_hostileUnitsThisTurn.clear();
 	_dontReselect = false;
 	_motionPoints = 0;
@@ -2417,6 +2420,7 @@ void BattleUnit::prepUnit(bool full)
 	}
 	else
 		reverted = false;
+	//Log(LOG_INFO) << ". reverted= " << (int)reverted;
 
 	bool hasPanicked (false);
 	if (full == true) // don't do damage or panic when transitioning between stages

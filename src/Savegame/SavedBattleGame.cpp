@@ -1130,7 +1130,7 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
 
 	std::vector<BattleUnit*>* units;
 	if (_shuffleUnits.empty() == true // < needed for Base/craft Equip.
-		|| _shuffleUnits[0] == nullptr)
+		|| _shuffleUnits[0u] == nullptr)
 	{
 		units = &_units;
 	}
@@ -1328,7 +1328,7 @@ void SavedBattleGame::prepPlayerTurn() // private.
  */
 bool SavedBattleGame::endFactionTurn()
 {
-	//Log(LOG_INFO) << "sbg:endFactionTurn()";
+	//Log(LOG_INFO) << "SavedBattleGame::endFactionTurn()";
 	int
 		alienIntel (0),
 		alienIntelTest;
@@ -1345,18 +1345,18 @@ bool SavedBattleGame::endFactionTurn()
 				(*i)->dontReselect();
 		}
 
-		switch ((*i)->getUnitStatus())	// set non-aLien units not-Exposed if their current
-		{								// exposure exceeds aLien's max-intel. See below_
-			case STATUS_DEAD:
-			case STATUS_LATENT:
-				break;					// NOTE: Status_Unconscious does not break exposure. psycho aLiens!
+		if (_side != FACTION_PLAYER && (*i)->getOriginalFaction() == FACTION_HOSTILE)
+		{
+			switch ((*i)->getUnitStatus())	// set non-aLien units not-Exposed if their current
+			{								// exposure exceeds aLien's max-intel. See below_
+				case STATUS_DEAD:
+				case STATUS_LATENT:
+					break;					// NOTE: Status_Unconscious does not break exposure. psycho aLiens!
 
-			default:
-				if ((*i)->getOriginalFaction() == FACTION_HOSTILE
-					&& (alienIntelTest = (*i)->getIntelligence()) > alienIntel)
-				{
-					alienIntel = alienIntelTest;
-				}
+				default:
+					if ((alienIntelTest = (*i)->getIntelligence()) > alienIntel)
+						alienIntel = alienIntelTest;
+			}
 		}
 	}
 
@@ -1469,8 +1469,7 @@ bool SavedBattleGame::endFactionTurn()
 					}
 				}
 
-				if ((*i)->getFaction() != FACTION_PLAYER)
-					(*i)->setUnitVisible(false);
+				(*i)->setUnitVisible((*i)->getFaction() == FACTION_PLAYER);
 			}
 			else if ((*i)->getFaction() == _side
 				&& (*i)->getFireUnit() != 0)
@@ -2215,9 +2214,9 @@ void SavedBattleGame::reviveUnit(
 					break;
 
 				case FACTION_PLAYER:
+					unit->setUnitVisible();
 					if (unit->getGeoscapeSoldier() != nullptr)
-						unit->kneelUnit(true);
-					unit->setUnitVisible(); // no break;
+						unit->kneelUnit(true); // no break;
 				case FACTION_NEUTRAL:
 					unit->setExposed(-1);
 			}

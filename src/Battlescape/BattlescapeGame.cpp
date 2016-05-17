@@ -1002,7 +1002,7 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 }
 
 /**
- * Ends the AI turn.
+ * Ends the AI-turn.
  */
 void BattlescapeGame::endAiTurn()
 {
@@ -1425,8 +1425,7 @@ void BattlescapeGame::endTurn() // private.
 		getResourcePack()->getSound("BATTLE.CAT", ResourcePack::SLIDING_DOOR_CLOSE)->play();
 //	}
 
-	tile = _battleSave->getTileEngine()->checkForTerrainExplosions();
-	if (tile != nullptr)
+	if ((tile = _battleSave->getTileEngine()->checkForTerrainExplosions()) != nullptr)
 	{
 		pos = Position::toVoxelSpaceCentered(tile->getPosition(), 10);
 		// kL_note: This seems to be screwing up.
