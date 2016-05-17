@@ -1101,9 +1101,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 					if (hasUnit == true)
 					{
 						bool
-							halfRight (false),
-							halfLeft  (false),
-							draw      (true);
+							halfRight		(false),
+							halfLeft		(false),
+							redrawEastwall	(false),
+							draw			(true);
 
 						switch (_unit->getUnitStatus()) // don't clip through north/northwest/west UFO hulls etc.
 						{
@@ -1119,38 +1120,31 @@ void Map::drawTerrain(Surface* const surface) // private.
 									{
 										case 0:
 										case 4:
-										{
-											const Tile
-												* const tileNorth (_battleSave->getTile(posField + Position(0,-1,0)));
-//												* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0)));
-											draw = checkNorth(tileNorth, /*tileNorthEast,*/ nullptr, &halfLeft);
+											redrawEastwall =
+											draw = checkNorth(
+															_battleSave->getTile(posField + Position(0,-1,0)),	// tileNorth
+//															_battleSave->getTile(posField + Position(1,-1,0)),	// tileNorthEast
+															nullptr,
+															&halfLeft);
 											break;
-										}
 
 										case 2:
 										case 6:
-										{
-											const Tile
-												* const tileWest (_battleSave->getTile(posField + Position(-1,0,0))),
-												* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0)));
-											draw = checkWest(tileWest, tileSouthWest, nullptr, &halfRight);
+											draw = checkWest(
+															_battleSave->getTile(posField + Position(-1,0,0)),	// tileWest
+															_battleSave->getTile(posField + Position(-1,1,0)),	// tileSouthWest
+															nullptr,
+															&halfRight);
 											break;
-										}
 
 										case 1:
 										case 5:
-										{
-											const Tile
-												* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0))),
-												* const tileSouthSouthWest (_battleSave->getTile(posField + Position(-1,2,0)));
-											draw = checkWest(tileSouthWest, tileSouthSouthWest);
-
-											const Tile
-												* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0)));
-//												* const tileNorthNorthEast (_battleSave->getTile(posField + Position(1,-2,0)));
-											draw = draw
-												&& checkNorth(tileNorthEast/*, tileNorthNorthEast*/);
-										}
+											draw = checkWest(
+															_battleSave->getTile(posField + Position(-1,1,0)),	// tileSouthWest
+															_battleSave->getTile(posField + Position(-1,2,0)));	// tileSouthSouthWest
+											draw &= checkNorth(
+															_battleSave->getTile(posField + Position(1,-1,0)));	// tileNorthEast
+//															_battleSave->getTile(posField + Position(1,-2,0)));	// tileNorthNorthEast
 									}
 								}
 							}
@@ -1186,6 +1180,22 @@ void Map::drawTerrain(Surface* const surface) // private.
 												posScreen.y + walkOffset.y,
 												0, halfRight,
 												0, halfLeft);
+								}
+
+								if (redrawEastwall == true)
+								{
+									const Tile* const tileNorth (_battleSave->getTile(posField + Position(0,-1,0)));
+									if (tileNorth != nullptr // safety. perhaps
+										&& tileNorth->getMapData(O_OBJECT) != nullptr
+										&& tileNorth->getMapData(O_OBJECT)->getBigwall() == BIGWALL_EAST)
+									{
+										sprite = tileNorth->getSprite(O_OBJECT);
+										sprite->blitNShade(
+												surface,
+												posScreen.x + 16,
+												posScreen.y -  8 - tileNorth->getMapData(O_OBJECT)->getYOffset(),
+												tileNorth->getShade());
+									}
 								}
 
 								// kL_begin #3 of 3:
@@ -2034,6 +2044,8 @@ bool Map::checkWest( // private.
 					// All that causes clipping when the large unit moves out eastward from along the northern side
 					// of an EW barrier but it's better than leaving a big hole in the 3rd quadrant as it moves out.
 					// And anything is better than re-drawing tile-parts.
+					//
+					// oh God i redrew an eastwall up there ...
 				{
 					*halfRight = true; // but only if a wall is directly south
 				}
@@ -2100,43 +2112,15 @@ bool Map::checkNorth( // private.
 			case 5: ret = unit->getPosition() == unit->getStopPosition();
 		}
 
-		if (halfLeft != nullptr && unit->getArmor()->getSize() == 2)
+		if (ret == false
+			&& halfLeft != nullptr && unit->getArmor()->getSize() == 2)
 		{
-/*			if (ret == true)
+			switch (unit->getUnitDirection())
 			{
-//				if (dir != 2) *halfRight = true; // could allow this. Maybe !=1 also ...
-
-				const Position pos (tile6->getPosition() + Position(1,0,0));
-				const Tile
-					* const tile (_battleSave->getTile(pos)),
-					* const tileSouth (_battleSave->getTile(pos + Position(0,1,0)));
-				if (!
-					((tile->getMapData(O_OBJECT) == nullptr
-						|| tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_SOUTH)
-					&& (tileSouth == nullptr
-						|| ((tileSouth->getMapData(O_NORTHWALL) == nullptr
-								|| tileSouth->isSlideDoorOpen(O_NORTHWALL) == true
-								|| (tileSouth->getMapData(O_NORTHWALL)->getTuCostPart(MT_WALK) != 255
-									&& tileSouth->getMapData(O_NORTHWALL)->isSlideDoor() == false))
-							&& (tileSouth->getMapData(O_OBJECT) == nullptr
-								|| (tileSouth->getMapData(O_OBJECT)->getBigwall() & 0x3) == 0))))) // Block/NeSw.
-					// All that causes clipping when the large unit moves out eastward from along the northern side
-					// of an EW barrier but it's better than leaving a big hole in the 3rd quadrant as it moves out.
-					// And anything is better than re-drawing tile-parts.
-				{
-					*halfRight = true; // but only if a wall is directly south
-				}
-			}
-			else */
-			if (ret == false)
-			{
-				switch (unit->getUnitDirection())
-				{
-					case 4: // NOTE: Only dir= 4 (and dir= 0) have the half-ptr ...
-					case 5:
-						*halfLeft =
-						ret = true;
-				}
+				case 4: // NOTE: Only dir= 4 (and dir= 0) have the half-ptr ...
+				case 5:
+					*halfLeft =
+					ret = true;
 			}
 		}
 	}

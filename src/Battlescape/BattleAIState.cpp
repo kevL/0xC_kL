@@ -19,6 +19,7 @@
 
 #include "BattleAIState.h"
 
+#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 
 
