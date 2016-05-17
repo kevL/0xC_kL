@@ -2428,8 +2428,7 @@ void BattleUnit::prepUnit(bool full)
 		if (_fire != 0)
 			--_fire;
 
-		_health -= getFatalWounds(); // suffer from fatal wounds
-		if (_health < 1)
+		if ((_health -= getFatalWounds()) < 1) // suffer from fatal wounds
 		{
 			_health = 0;
 			setAIState(); // if unit is dead AI state disappears
@@ -2492,7 +2491,7 @@ void BattleUnit::prepTu(
 			_tu -= overBurden;
 
 		if (_geoscapeSoldier != nullptr) // Each fatal wound to the left or right leg reduces a Soldier's TUs by 10%.
-			_tu -= (_tu * (getFatalWound(BODYPART_LEFTLEG) + getFatalWound(BODYPART_RIGHTLEG) * 10)) / 100;
+			_tu -= _tu * (getFatalWound(BODYPART_LEFTLEG) + getFatalWound(BODYPART_RIGHTLEG)) / 10;
 
 		if (hasPanicked == true)
 		{
@@ -2526,7 +2525,7 @@ void BattleUnit::prepTu(
 			// energy recovery by 10% of his/her current energy.
 			// note: only xCom Soldiers get fatal wounds, atm
 			if (_geoscapeSoldier != nullptr)
-				energy -= _energy * getFatalWound(BODYPART_TORSO) * 10 / 100;
+				energy -= _energy * getFatalWound(BODYPART_TORSO) / 10;
 
 			energy += _energy;
 			setEnergy(std::max(12, energy));
