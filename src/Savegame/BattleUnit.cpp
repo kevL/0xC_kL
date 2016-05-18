@@ -206,7 +206,7 @@ BattleUnit::BattleUnit(
 	deriveRank(); // -> '_rankInt'
 
 	const int look ((static_cast<int>(sol->getLook()) << 1u)
-				  + sol->getGender());
+				   + static_cast<int>(sol->getGender()));
 	setRecolor(
 			look,
 			look,
@@ -346,9 +346,9 @@ BattleUnit::BattleUnit(
 			_turnsExposed = -1;
 	}
 
-	_tu = _stats.tu;
-	_energy = _stats.stamina;
-	_health = _stats.health;
+	_tu		= _stats.tu;
+	_energy	= _stats.stamina;
+	_health	= _stats.health;
 
 	if (unitRule->isFemale() == true)
 		_gender = GENDER_FEMALE;

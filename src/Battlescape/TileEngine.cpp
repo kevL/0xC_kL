@@ -6676,14 +6676,14 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 				switch (unit->getMoveTypeUnit())
 				{
 					case MT_FLY:
+						if (unit->isKneeled() == true)
+							unit->flagCache();
+
 						unit->startWalking(							// move to the position you're already in.
 										unit->getUnitDirection(),	// this will unset the kneeling flag, set the floating flag, etc.
 										unit->getPosition(),
 										_battleSave->getTile(unit->getPosition() + Position(0,0,-1)));
 						unit->setUnitStatus(STATUS_STANDING);		// and set Status_Standing rather than _Walking or _Flying to avoid weirdness.
-
-						if (unit->isKneeled() == true)
-							unit->flagCache();
 						break;
 
 					case MT_WALK:
