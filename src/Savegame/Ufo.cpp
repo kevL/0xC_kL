@@ -63,7 +63,7 @@ Ufo::Ufo(const RuleUfo* const ufoRule)
 		_tactical(false),
 		_mission(nullptr),
 		_trajectory(nullptr),
-		_trajectoryPoint(0),
+		_trajectoryPoint(0u),
 		_detected(false),
 		_hyperDetected(false),
 		_shootingAt(0),
@@ -110,6 +110,7 @@ Ufo::~Ufo()
 
 
 /**
+ ** FUNCTOR ***
  * Match AlienMission based on the unique-ID.
  */
 class matchMissionID
@@ -185,12 +186,15 @@ void Ufo::load(
 		else
 			_status = FLYING; // <- already done in cTor init.
 	}
+
 	switch (_status) // safety. Although this should never show up as Destroyed ....
 	{
 		case FLYING:
 		case LANDED:
 		case CRASHED:
-		case DESTROYED: break;
+		case DESTROYED:
+			break;
+
 		default:
 			_status = FLYING;
 	}

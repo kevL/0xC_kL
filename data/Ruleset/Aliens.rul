@@ -2290,6 +2290,7 @@ armors:
     rearArmor: 19
     underArmor: 16
     drawRoutine: 6
+    movementType: 2
     damageModifier:
       - 1.0 #none
       - 1.1 #ap
@@ -2311,6 +2312,7 @@ armors:
     rearArmor: 20
     underArmor: 17
     drawRoutine: 6
+    movementType: 2
     damageModifier:
       - 1.0 #none
       - 1.1 #ap
@@ -2332,6 +2334,7 @@ armors:
     rearArmor: 20
     underArmor: 18
     drawRoutine: 6
+    movementType: 2
     damageModifier:
       - 1.0 #none
       - 1.1 #ap
@@ -2353,6 +2356,7 @@ armors:
     rearArmor: 24
     underArmor: 22
     drawRoutine: 6
+    movementType: 2
     damageModifier:
       - 1.0 #none
       - 1.1 #ap
@@ -2374,6 +2378,7 @@ armors:
     rearArmor: 28
     underArmor: 23
     drawRoutine: 6
+    movementType: 2
     damageModifier:
       - 1.0 #none
       - 1.1 #ap
@@ -2571,6 +2576,7 @@ armors:
     underArmor: 32
     drawRoutine: 8
     constantAnimation: true
+    movementType: 2
     damageModifier:
       - 1.0 #none
       - 0.9 #ap

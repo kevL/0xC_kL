@@ -58,7 +58,7 @@ class AlienMission
 private:
 	bool _success;	// Prevents infiltration missions taking multiple success points
 					// and creating multiple bases on the final 2xBattleship wave.
-	int _uniqueID;
+	int _id;
 	size_t
 		_liveUfos,
 		_ufoCount,

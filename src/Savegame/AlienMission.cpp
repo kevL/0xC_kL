@@ -55,7 +55,7 @@ namespace OpenXcom
 {
 
 /**
- * Creates an AlienMission.
+ * Creates the AlienMission.
  * @param missionRule	- reference to RuleAlienMission
  * @param gameSave		- reference the SavedGame
  */
@@ -65,11 +65,11 @@ AlienMission::AlienMission(
 	:
 		_missionRule(missionRule),
 		_gameSave(gameSave),
-		_waveCount(0),
-		_ufoCount(0),
-		_spawnTime(0),
-		_liveUfos(0),
-		_uniqueID(0),
+		_waveCount(0u),
+		_ufoCount(0u),
+		_spawnTime(0u),
+		_liveUfos(0u),
+		_id(0),
 		_aBase(nullptr),
 		_success(false),
 		_siteZone(std::numeric_limits<size_t>::max())
@@ -82,6 +82,9 @@ AlienMission::~AlienMission()
 {}
 
 
+/**
+ ** FUNCTOR ***
+ */
 class matchById
 	:
 		public std::unary_function<const AlienBase*, bool>
@@ -106,20 +109,20 @@ private:
 
 
 /**
- * Loads the alien mission from a YAML file.
+ * Loads this AlienMission from a YAML file.
  * @param node - reference the YAML node containing data
  */
 void AlienMission::load(const YAML::Node& node)
 {
+	_id			= node["id"]		.as<int>(_id);
 	_region		= node["region"]	.as<std::string>(_region);
 	_race		= node["race"]		.as<std::string>(_race);
 	_waveCount	= node["waveCount"]	.as<size_t>(_waveCount);
 	_ufoCount	= node["ufoCount"]	.as<size_t>(_ufoCount);
 	_spawnTime	= node["spawnTime"]	.as<size_t>(_spawnTime);
 	_liveUfos	= node["liveUfos"]	.as<size_t>(_liveUfos);
-	_uniqueID	= node["uniqueID"]	.as<int>(_uniqueID);
-	_success	= node["success"]	.as<bool>(_success);
 	_siteZone	= node["siteZone"]	.as<size_t>(_siteZone);
+	_success	= node["success"]	.as<bool>(_success);
 
 	if (const YAML::Node& baseId = node["alienBase"])
 	{
@@ -137,7 +140,7 @@ void AlienMission::load(const YAML::Node& node)
 }
 
 /**
- * Saves the alien mission to a YAML file.
+ * Saves this AlienMission to a YAML file.
  * @return, YAML node
  */
 YAML::Node AlienMission::save() const
@@ -145,13 +148,13 @@ YAML::Node AlienMission::save() const
 	YAML::Node node;
 
 	node["type"]		= _missionRule.getType();
+	node["id"]			= _id;
 	node["region"]		= _region;
 	node["race"]		= _race;
 	node["waveCount"]	= _waveCount;
 	node["ufoCount"]	= _ufoCount;
 	node["spawnTime"]	= _spawnTime;
 	node["liveUfos"]	= _liveUfos;
-	node["uniqueID"]	= _uniqueID;
 
 	if (_siteZone != std::numeric_limits<size_t>::max())
 		node["siteZone"] = _siteZone;
@@ -166,28 +169,28 @@ YAML::Node AlienMission::save() const
 }
 
 /**
- * Assigns a unique ID to this mission.
+ * Assigns a unique-ID to this AlienMission.
  * @note It is an error to assign two IDs to the same mission.
  * @param id - the ID to assign
  */
 void AlienMission::setId(int id)
 {
-	assert(_uniqueID == 0 && "Reassigning ID!");
-	_uniqueID = id;
+	assert(_id == 0 && "Reassigning ID!");
+	_id = id;
 }
 
 /**
- * Gets the unique ID of this mission.
+ * Gets the unique-ID of this AlienMission.
  * @return, the unique ID assigned to this mission
  */
 int AlienMission::getId() const
 {
-	assert(_uniqueID != 0 && "Uninitialized mission!");
-	return _uniqueID;
+	assert(_id != 0 && "Uninitialized mission!");
+	return _id;
 }
 
 /**
- * Sets the mission's region.
+ * Sets this AlienMission's Region.
  * @note If the region is incompatible with actually carrying out an attack use
  * the fallback region as defined in the ruleset. This is a slight difference
  * from the original which just defaulted to zone[0] North America.
@@ -205,6 +208,7 @@ void AlienMission::setRegion(
 }
 
 /**
+ *
  * @note The new time must be a multiple of 30 minutes and more than 0. Calling
  * this on a finished mission has no effect.
  * @param minutes - the minutes until the next UFO wave will spawn
@@ -218,8 +222,8 @@ void AlienMission::setWaveCountdown(size_t minutes)
 }
 
 /**
- * Checks if a mission is over and can be safely removed from the game.
- * @note A mission is over if it will spawn no more UFOs and it has no UFOs
+ * Checks if this AlienMission is over and can be safely removed.
+ * @note The mission is over if it will spawn no more UFOs and it has no UFOs
  * still in the game.
  * @return, true if this AlienMission can be deleted
  */
@@ -374,7 +378,7 @@ void AlienMission::think(
 	} // moved to ufoLifting() */
 
 /**
- * Calculates time remaining until the next wave spawns.
+ * Calculates time remaining until the next wave of this AlienMission spawns.
  * @note These come in increments of 30sec (or min?) apiece.
  * @param nextWave - the wave to check
  */
@@ -389,6 +393,7 @@ void AlienMission::calcSpawnTime(size_t nextWave) // private.
 
 
 /**
+ ** FUNCTOR ***
  * Finds an XCOM base in this region that is marked for retaliation.
  * @note Helper for spawnUfo().
  */
@@ -419,7 +424,7 @@ private:
 
 
 /**
- * This function will spawn a UFO according the mission rules.
+ * Spawns a UFO according this AlienMission's rules.
  * @note Some code is duplicated between cases but that's ok for now. It's on
  * different code paths and the function is MUCH easier to read written this way.
  * @param rules			- reference the ruleset
@@ -594,6 +599,7 @@ Ufo* AlienMission::spawnUfo( // private.
 
 
 /**
+ ** FUNCTOR ***
  * @brief Match a base from its coordinates.
  * @note This function object uses coordinates to match a base. Helper for
  * ufoReachedWaypoint().
@@ -627,8 +633,7 @@ private:
 
 
 /**
- * This function is called when one of the mission's UFOs arrives at its current
- * destination.
+ * One of this AlienMission's UFOs arrived at its current destination.
  * @note It takes care of sending the UFO to the next waypoint, landing
  * UFOs and marking them for removal as required. It must set the game data in a
  * way that the rest of the code understands what to do.
@@ -824,7 +829,7 @@ void AlienMission::spawnAlienBase( // private.
 }
 
 /**
- * Sets the aLien-base associated with this mission.
+ * Sets the AlienBase associated with this AlienMission.
  * @note Only aLien supply-missions care about this.
  * @param base - pointer to an AlienBase
  */
@@ -834,7 +839,7 @@ void AlienMission::setAlienBase(const AlienBase* const base)
 }
 
 /**
- * Gets the aLien-base associated with this mission.
+ * Gets the AlienBase associated with this AlienMission.
  * @note Only aLien supply-missions ever have a valid pointer.
  * @return, pointer to the AlienBase for this mission (possibly nullptr)
  */
@@ -844,8 +849,7 @@ const AlienBase* AlienMission::getAlienBase() const
 }
 
 /**
- * This function is called when one of the mission's UFOs has finished its time
- * on the ground.
+ * One of this AlienMission's UFOs has finished its time on the ground.
  * @note It takes care of sending the UFO to the next waypoint and marking it
  * for removal as required. It must set the game data in a way that the rest of
  * the code understands what to do.
@@ -961,8 +965,7 @@ void AlienMission::ufoLifting(
 }
 
 /**
- * This function is called when one of the mission's UFOs is shot down -
- * crashed or destroyed.
+ * One of this AlienMission's UFOs is shot down - crashed or destroyed.
  * @note Currently the only thing that happens is delaying the next UFO in the
  * mission sequence.
  * @param ufo - reference the Ufo that was shot down
@@ -1024,7 +1027,7 @@ std::pair<double, double> AlienMission::getWaypoint(
 }
 
 /**
- * Gets a random point inside the given region zone.
+ * Gets a random point inside a specified Region zone.
  * @note The point will be used to land a UFO so it *has to be on land*.
  * @param globe		- reference the Globe
  * @param region	- reference RuleRegion
@@ -1060,7 +1063,7 @@ std::pair<double, double> AlienMission::getLandPoint(
 }
 
 /**
- * Adds alien points to the country and region at the specified coordinates.
+ * Adds aLien-points to the Country and Region at specified coordinates.
  * @param lon - longitudinal coordinate to check
  * @param lat - latitudinal coordinate to check
  */
@@ -1096,9 +1099,8 @@ void AlienMission::addScore( // private.
 }
 
 /**
- * Tells the mission which entry in the zone array is getting targeted for
- * missionSite payload.
- * @param zone - number of the zone to target; always a City-type zone (probably)
+ * Tells this AlienMission which entry in the zone-array is targeted.
+ * @param zone - entry of the zone to target; always a City-type zone (probably)
  */
 void AlienMission::setMissionSiteZone(size_t zone)
 {

@@ -64,7 +64,6 @@ armors:
     sideArmor: 4
     rearArmor: 3
     underArmor: 2
-    movementType: 0
     drawRoutine: 4
     damageModifier:
       - 1.0  #none

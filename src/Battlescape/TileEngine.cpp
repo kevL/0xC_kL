@@ -6671,26 +6671,29 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 				}
 				unit->setPosition(posBelow);
 			}
-			else // if (!unit->isOut(true, true))
+			else
 			{
-				if (unit->getMoveTypeUnit() == MT_FLY)
+				switch (unit->getMoveTypeUnit())
 				{
-					// move to the position you're already in. this will unset the kneeling flag, set the floating flag, etc.
-					unit->startWalking(
-									unit->getUnitDirection(),
-									unit->getPosition(),
-									_battleSave->getTile(unit->getPosition() + Position(0,0,-1)));
-					// and set our status to standing (rather than walking or flying) to avoid weirdness.
-					unit->setUnitStatus(STATUS_STANDING);
-				}
-				else
-				{
-					unit->startWalking(
-									Pathfinding::DIR_DOWN,
-									unit->getPosition() + Position(0,0,-1),
-									_battleSave->getTile(unit->getPosition() + Position(0,0,-1)));
-					//Log(LOG_INFO) << "TileEngine::applyGravity(), addFallingUnit() ID " << unit->getId();
-					_battleSave->addFallingUnit(unit);
+					case MT_FLY:
+						unit->startWalking(							// move to the position you're already in.
+										unit->getUnitDirection(),	// this will unset the kneeling flag, set the floating flag, etc.
+										unit->getPosition(),
+										_battleSave->getTile(unit->getPosition() + Position(0,0,-1)));
+						unit->setUnitStatus(STATUS_STANDING);		// and set Status_Standing rather than _Walking or _Flying to avoid weirdness.
+
+						if (unit->isKneeled() == true)
+							unit->flagCache();
+						break;
+
+					case MT_WALK:
+					case MT_SLIDE:
+						unit->startWalking(
+										Pathfinding::DIR_DOWN,
+										unit->getPosition() + Position(0,0,-1),
+										_battleSave->getTile(unit->getPosition() + Position(0,0,-1)));
+						//Log(LOG_INFO) << "TileEngine::applyGravity(), addFallingUnit() ID " << unit->getId();
+						_battleSave->addFallingUnit(unit);
 				}
 			}
 		}

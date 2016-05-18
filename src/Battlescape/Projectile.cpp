@@ -350,10 +350,10 @@ void Projectile::applyAccuracy( // private.
 		double accuracy,
 		const Tile* const tileTarget)
 {
-	//Log(LOG_INFO) << "Projectile::applyAccuracy() accu = " << accuracy;
-	//Log(LOG_INFO) << ". x = " << targetVoxel->x;
-	//Log(LOG_INFO) << ". y = " << targetVoxel->y;
-	//Log(LOG_INFO) << ". z = " << targetVoxel->z;
+	//Log(LOG_INFO) << "Projectile::applyAccuracy() id-" << _action.actor->getId() << " acu= " << accuracy;
+	//Log(LOG_INFO) << ". in x= " << targetVoxel->x;
+	//Log(LOG_INFO) << ". in y= " << targetVoxel->y;
+	//Log(LOG_INFO) << ". in z= " << targetVoxel->z;
 
 	//Log(LOG_INFO) << "input Target = " << (*targetVoxel);
 	static const double ACU_MIN (0.01);
@@ -386,7 +386,7 @@ void Projectile::applyAccuracy( // private.
 								tileTarget);
 
 			accuracy = std::max(ACU_MIN, accuracy);
-			//Log(LOG_INFO) << "accu = " << accuracy;
+			//Log(LOG_INFO) << "acu= " << accuracy;
 		}
 		else // 2nd+ shot of burst
 		{
@@ -404,8 +404,7 @@ void Projectile::applyAccuracy( // private.
 		if (_action.autoShotCount == 1)
 		{
 //			const int autoHit (static_cast<int>(std::ceil(accuracy * 21.))); // chance for Bulls-eye.
-//			if (false) // TEST do AutoHit.
-//			if (RNG::percent(autoHit) == false) // TODO: If autoHit divide deviation by 10.
+//			if (RNG::percent(autoHit) == false)
 //			{
 				//Log(LOG_INFO) << ". NOT autoHit";
 			double deviation;
@@ -416,12 +415,14 @@ void Projectile::applyAccuracy( // private.
 				deviation = 0.21;	// for Player & civies.
 
 			deviation /= accuracy + 0.16;
+
 			const int autoHit (static_cast<int>(std::ceil(accuracy * 21.))); // chance for Bulls-eye.
+			//Log(LOG_INFO) << ". calc bulls-eye x= " << RNG::getSeed();
 			if (RNG::percent(autoHit) == true)
 				deviation /= 10.;
 
 			deviation = std::max(ACU_MIN, deviation);
-			//Log(LOG_INFO) << ". deviation = " << deviation;
+			//Log(LOG_INFO) << ". deviation= " << deviation;
 
 			// The angle deviations are spread using a normal distribution:
 			deltaHori = RNG::boxMuller(0., deviation / div_HORI); // horizontal miss in radians
@@ -443,8 +444,8 @@ void Projectile::applyAccuracy( // private.
 			deltaHori = RNG::boxMuller(0., kick / div_HORI); // horizontal miss in radians
 			deltaVert = RNG::boxMuller(0., kick / div_VERT); // vertical miss in radians
 		}
-		//Log(LOG_INFO) << "deltaHori = " << deltaHori;
-		//Log(LOG_INFO) << "deltaVert = " << deltaVert;
+		//Log(LOG_INFO) << "deltaHori= " << deltaHori;
+		//Log(LOG_INFO) << "deltaVert= " << deltaVert;
 
 		double
 			te,fi,
@@ -493,6 +494,10 @@ void Projectile::applyAccuracy( // private.
 		if (calcVert == true)
 			targetVoxel->z = static_cast<int>(Round(static_cast<double>(originVoxel.z)
 						   + OUTER_LIMIT * std::sin(fi)));
+
+		//Log(LOG_INFO) << ". out x= " << targetVoxel->x;
+		//Log(LOG_INFO) << ". out y= " << targetVoxel->y;
+		//Log(LOG_INFO) << ". out z= " << targetVoxel->z;
 	}
 	else // *** This is for Throwing /*and AcidSpitt*/ only ***
 	{

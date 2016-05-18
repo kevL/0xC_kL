@@ -453,7 +453,7 @@ void SavedBattleGame::load(
 			st = (*j)["type"].as<std::string>();
 			if (rules->getItemRule(st) != nullptr)
 			{
-				id = (*j)["id"].as<int>(-1); // note: 'id' should always be valid here.
+				id = (*j)["id"].as<int>(-1); // NOTE: 'id' should always be valid here.
 				item = new BattleItem(
 									rules->getItemRule(st),
 									nullptr,
@@ -463,8 +463,8 @@ void SavedBattleGame::load(
 
 				if ((*j)["section"])
 				{
-					st = (*j)["section"].as<std::string>(); // note: the given 'section' should always be valid. Unless it's a loaded Ammo-item.
-//					if (st.empty() == false) //!= "NONE") // cf. BattleItem::save()
+					st = (*j)["section"].as<std::string>();	// NOTE: the given 'section' should always be valid. Unless it's a loaded Ammo-item.
+//					if (st.empty() == false) //!= "NONE")	// cf. BattleItem::save()
 					item->setInventorySection(rules->getInventory(st));
 				}
 
@@ -550,7 +550,7 @@ void SavedBattleGame::load(
 		st = (*i)["type"].as<std::string>();
 		if (rules->getItemRule(st) != nullptr)
 		{
-			id = (*i)["id"].as<int>(-1); // note: 'id' should always be valid here.
+			id = (*i)["id"].as<int>(-1); // NOTE: 'id' should always be valid here.
 			item = new BattleItem(
 								rules->getItemRule(st),
 								nullptr,

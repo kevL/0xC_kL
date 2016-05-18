@@ -169,7 +169,7 @@ BattleUnit::BattleUnit(
 		case RANK_COMMANDER:	rankValue =	50;	break; // was 10
 
 		default:
-			rankValue =	 0;
+			rankValue = 0;
 	}
 
 	_value = 20 + ((sol->getMissions() + rankValue) * (diff + 1));
@@ -185,7 +185,7 @@ BattleUnit::BattleUnit(
 	_armorHp[SIDE_UNDER]	= _armor->getUnderArmor();
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != PARTS_ARMOR;
 			++i)
 	{
@@ -193,7 +193,7 @@ BattleUnit::BattleUnit(
 	}
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != PARTS_BODY;
 			++i)
 	{
@@ -205,7 +205,7 @@ BattleUnit::BattleUnit(
 
 	deriveRank(); // -> '_rankInt'
 
-	const int look (sol->getLook() * 2
+	const int look ((static_cast<int>(sol->getLook()) << 1u)
 				  + sol->getGender());
 	setRecolor(
 			look,
@@ -334,13 +334,17 @@ BattleUnit::BattleUnit(
 
 	_isZombie = (_race == "STR_ZOMBIE");
 
-	if (faction == FACTION_HOSTILE)
+	switch (faction)
 	{
-		_turnsExposed = 0;
-		adjustStats(diff, month);
+		case FACTION_HOSTILE:
+			_turnsExposed = 0;
+			adjustStats(diff, month);
+			break;
+
+		case FACTION_PLAYER:
+		case FACTION_NEUTRAL:
+			_turnsExposed = -1;
 	}
-	else
-		_turnsExposed = -1;
 
 	_tu = _stats.tu;
 	_energy = _stats.stamina;
@@ -358,7 +362,7 @@ BattleUnit::BattleUnit(
 	_armorHp[SIDE_UNDER]	= _armor->getUnderArmor();
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != PARTS_ARMOR;
 			++i)
 	{
@@ -366,7 +370,7 @@ BattleUnit::BattleUnit(
 	}
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != PARTS_BODY;
 			++i)
 	{
@@ -1086,6 +1090,8 @@ void BattleUnit::startWalking(
 	_posStart = _pos;
 	_posStop = posStop;
 
+	_kneeled = false;
+
 	switch (dir)
 	{
 		case Pathfinding::DIR_UP:
@@ -1102,13 +1108,11 @@ void BattleUnit::startWalking(
 			{
 				_status = STATUS_FLYING;
 				_floating = true;
-				_kneeled = false;
 			}
 			else
 			{
 				_status = STATUS_WALKING;
-				_floating =
-				_kneeled = false;
+				_floating = false;
 			}
 	}
 	cacheWalkPhases();
@@ -2713,7 +2717,7 @@ void BattleUnit::setTile(
 				}
 				break;
 
-			case STATUS_UNCONSCIOUS:
+			case STATUS_UNCONSCIOUS: // revived.
 				_floating = _mType == MT_FLY
 						 && _tile->hasNoFloor(tileBelow) == true;
 		}

@@ -453,7 +453,6 @@ armors:
     sideArmor: 82
     rearArmor: 74
     underArmor: 62
-    movementType: 0
     damageModifier:
       - 1.0 #none
       - 0.93 #ap
@@ -482,7 +481,6 @@ armors:
     sideArmor: 82
     rearArmor: 74
     underArmor: 62
-    movementType: 0
     damageModifier:
       - 1.0 #none
       - 0.93 #ap
@@ -511,7 +509,6 @@ armors:
     sideArmor: 82
     rearArmor: 74
     underArmor: 62
-    movementType: 0
     damageModifier:
       - 1.0 #none
       - 0.93 #ap
@@ -540,7 +537,6 @@ armors:
     sideArmor: 82
     rearArmor: 74
     underArmor: 62
-    movementType: 0
     damageModifier:
       - 1.0 #none
       - 0.93 #ap
@@ -569,7 +565,6 @@ armors:
     sideArmor: 82
     rearArmor: 74
     underArmor: 62
-    movementType: 0
     damageModifier:
       - 1.0 #none
       - 0.93 #ap
@@ -598,7 +593,6 @@ armors:
     sideArmor: 82
     rearArmor: 74
     underArmor: 62
-    movementType: 0
     damageModifier:
       - 1.0 #none
       - 0.93 #ap
@@ -627,7 +621,6 @@ armors:
     sideArmor: 82
     rearArmor: 74
     underArmor: 62
-    movementType: 0
     damageModifier:
       - 1.0 #none
       - 0.93 #ap

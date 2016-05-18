@@ -4389,10 +4389,15 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 			}
 			else if (tuCost == 0)
 			{
-				if (mType == MT_FLY || mType == MT_FLOAT)
-					tuCost = 4;
-				else
-					tuCost = 255;
+				switch (mType)
+				{
+					case MT_FLOAT: // wft.
+					case MT_FLY: tuCost = 4;
+						break;
+
+					case MT_WALK:
+					case MT_SLIDE: tuCost = 255;
+				}
 			}
 		}
 

@@ -426,9 +426,13 @@ void SavedGame::load(
 		&& (Options::reSeedOnLoad == false || _ironman == true))
 	{
 		RNG::setSeed(doc["rng"].as<uint64_t>());
+		//Log(LOG_INFO) << ". seed x= " << RNG::getSeed();
 	}
 	else
+	{
 		RNG::setSeed(0u);
+		//Log(LOG_INFO) << ". reSeed x= " << RNG::getSeed();
+	}
 
 	int diff (doc["difficulty"].as<int>(_difficulty));
 	if (diff < 0) // safety.

@@ -67,15 +67,15 @@ RuleArmor::RuleArmor(const std::string& type)
 	_stats.melee		= 0;
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != DAMAGE_TYPES;
 			++i)
 	{
 		_damageModifier[i] = 1.f;
 	}
 
-	_colorFace.resize((static_cast<size_t>(LOOK_AFRICAN) + 1) * 2);
-	_colorHair.resize((static_cast<size_t>(LOOK_AFRICAN) + 1) * 2);
+	_colorFace.resize((static_cast<size_t>(LOOK_AFRICAN) + 1u) << 1u);
+	_colorHair.resize((static_cast<size_t>(LOOK_AFRICAN) + 1u) << 1u);
 }
 
 /**
@@ -98,11 +98,11 @@ void RuleArmor::load(const YAML::Node& node)
 	if (node["corpseBattle"])
 	{
 		_corpseBattle	= node["corpseBattle"]	.as<std::vector<std::string>>();
-		_corpseGeo		= _corpseBattle[0];
+		_corpseGeo		= _corpseBattle[0u];
 	}
 	_corpseGeo		= node["corpseGeo"]			.as<std::string>(_corpseGeo);
 
-	_mType			= static_cast<MoveType>(node["movementType"].as<int>(_mType));
+	_mType			= static_cast<MoveType>(node["movementType"].as<int>(0));
 //	_specWeapon		= node["specialWeapon"]	.as<std::string>(_specWeapon);
 	_frontArmor		= node["frontArmor"]	.as<int>(_frontArmor);
 	_sideArmor		= node["sideArmor"]		.as<int>(_sideArmor);
@@ -124,11 +124,11 @@ void RuleArmor::load(const YAML::Node& node)
 	if (const YAML::Node& vuln = node["damageModifier"])
 	{
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != vuln.size() && i != DAMAGE_TYPES;
 				++i)
 		{
-			_damageModifier[i] = vuln[i].as<float>();
+			_damageModifier[i] = vuln[i].as<float>(1.f);
 		}
 	}
 
@@ -294,7 +294,7 @@ float RuleArmor::getDamageModifier(DamageType dType) const
 }
 
 /**
- * Gets the Line Of Fire Template set.
+ * Gets the Line of Fire Template set.
  * @return, reference to the loftSet as a vector of templates
  */
 const std::vector<size_t>& RuleArmor::getLoftSet() const
