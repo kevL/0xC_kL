@@ -75,7 +75,7 @@ size_t pick(size_t valSize);
 /// Picks an entry from a vector using the external generator.
 size_t pick(
 		size_t valSize,
-		bool);
+		bool external);
 
 
 /**

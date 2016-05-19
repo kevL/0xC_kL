@@ -1575,44 +1575,44 @@ int BattleUnit::takeDamage(
 								&& _isZombie == false));
 		int wounds = 0;
 
-		if (dType == DT_STUN)
+		switch (dType)
 		{
-			if (selfAware == true) _stunLevel += power;
-		}
-		else
-		{
-			_health -= power; // health damage
-			if (_health < 1)
-			{
-				_health = 0;
+			case DT_STUN:
+				if (selfAware == true) _stunLevel += power;
+				break;
 
-				if (dType == DT_IN)
+			default: // health damage
+				if ((_health -= power) < 1)
 				{
-					_diedByFire = true;
-					_spawnType.clear();
+					_health = 0;
 
-					if (_isZombie == true)
-						_specab = SPECAB_EXPLODE;
-					else
-						_specab = SPECAB_NONE;
+					if (dType == DT_IN)
+					{
+						_diedByFire = true;
+						_spawnType.clear();
+
+						if (_isZombie == true)
+							_specab = SPECAB_EXPLODE;
+						else
+							_specab = SPECAB_NONE;
+					}
 				}
-			}
-			else
-			{
-				if (selfAware == true)
-					_stunLevel += RNG::generate(0, power / 3);
-
-				wounds = RNG::generate(1,3);
-
-				if (ignoreArmor == false // Only wearers of armors-that-are-resistant-to-damage-type can take fatal wounds.
-					&& woundable == true // fatal wounds
-					&& RNG::generate(0,10) < power) // kL: refactor this.
+				else
 				{
-					_fatalWounds[bodyPart] += wounds;
-				}
+					if (selfAware == true)
+						_stunLevel += RNG::generate(0, power / 3);
 
-				if (dType == DT_IN) wounds = power; // for Morale loss by fire.
-			}
+					wounds = RNG::generate(1,3);
+
+					if (ignoreArmor == false // Only wearers of armors-that-are-resistant-to-damage-type can take fatal wounds.
+						&& woundable == true // fatal wounds
+						&& RNG::generate(0,10) < power) // kL: refactor this.
+					{
+						_fatalWounds[bodyPart] += wounds;
+					}
+
+					if (dType == DT_IN) wounds = power; // for Morale loss by fire.
+				}
 		}
 
 		if (isOut_t(OUT_HEALTH) == false && selfAware == true)
@@ -1679,16 +1679,16 @@ void BattleUnit::playDeathSound(bool fleshWound) const
 				default:
 				case GENDER_MALE:
 					if (fleshWound == true)
-						soundId = RNG::generate(141,151);
+						soundId = RNG::seedless(141,151);
 					else
-						soundId = RNG::generate(111,116);
+						soundId = RNG::seedless(111,116);
 					break;
 
 				case GENDER_FEMALE:
 					if (fleshWound == true)
-						soundId = RNG::generate(121,135);
+						soundId = RNG::seedless(121,135);
 					else
-						soundId = RNG::generate(101,103);
+						soundId = RNG::seedless(101,103);
 			}
 		}
 		else if (_unitRule->getRace() == "STR_CIVILIAN")
@@ -1697,11 +1697,11 @@ void BattleUnit::playDeathSound(bool fleshWound) const
 			{
 				default:
 				case GENDER_MALE:
-					soundId = static_cast<int>(ResourcePack::MALE_SCREAM[static_cast<size_t>(RNG::generate(0,2))]);
+					soundId = static_cast<int>(ResourcePack::MALE_SCREAM[static_cast<size_t>(RNG::seedless(0,2))]);
 					break;
 
 				case GENDER_FEMALE:
-					soundId = static_cast<int>(ResourcePack::FEMALE_SCREAM[static_cast<size_t>(RNG::generate(0,2))]);
+					soundId = static_cast<int>(ResourcePack::FEMALE_SCREAM[static_cast<size_t>(RNG::seedless(0,2))]);
 			}
 		}
 		else

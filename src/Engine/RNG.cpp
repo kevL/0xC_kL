@@ -275,8 +275,8 @@ size_t pick(size_t valSize)
 /**
  * Picks an entry from a vector using the seedless generator.
  * @note Don't try shoving an empty vector into here.
- * @param val			- size of the vector
- * @param useSeedless	- true/false to use the seedless (external) generator
+ * @param val		- size of the vector
+ * @param external	- true OR false to use the seedless (external) generator
  * @return, picked id
  */
 size_t pick(
