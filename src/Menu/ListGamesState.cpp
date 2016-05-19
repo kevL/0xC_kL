@@ -46,7 +46,7 @@ namespace OpenXcom
 {
 
 /**
- *
+ * Compares entries in the List by name.
  */
 struct compareSaveName
 	:
@@ -75,7 +75,7 @@ struct compareSaveName
 };
 
 /**
- *
+ * Compares entries in the List by date.
  */
 struct compareSaveTimestamp
 	:
@@ -103,7 +103,7 @@ struct compareSaveTimestamp
 
 
 /**
- * Initializes all the elements in the Saved Game screen.
+ * Initializes all the elements in the ListGames screen.
  * @param origin		- game section that originated this state
  * @param firstValid	- first row containing saves
  * @param autoquick		- true to show auto/quick saved games
@@ -199,7 +199,7 @@ ListGamesState::~ListGamesState() // virtual.
 {}
 
 /**
- * Refreshes the saves list.
+ * Refreshes the List.
  */
 void ListGamesState::init()
 {
@@ -256,7 +256,7 @@ void ListGamesState::think()
 }
 
 /**
- * Updates the sorting arrows based on the current setting.
+ * Updates the sorting arrows per the current setting.
  */
 void ListGamesState::updateArrows() // protected.
 {
@@ -280,7 +280,7 @@ void ListGamesState::updateArrows() // protected.
 }
 
 /**
- * Sorts the save game list.
+ * Sorts the List.
  * @param order - order to sort the games in
  */
 void ListGamesState::sortList(SaveSort order)
@@ -315,7 +315,7 @@ void ListGamesState::sortList(SaveSort order)
 }
 
 /**
- * Updates the save game list with a current list of available savegames.
+ * Updates the List with available saved-games.
  */
 void ListGamesState::updateList() // virtual.
 {
@@ -350,7 +350,7 @@ void ListGamesState::btnCancelClick(Action*)
 }
 
 /**
- * Reverts text edit or returns to the previous screen.
+ * Reverts text-edit or returns to the previous screen.
  * @param action - pointer to an Action
  */
 void ListGamesState::btnCancelKeypress(Action*)
@@ -362,7 +362,7 @@ void ListGamesState::btnCancelKeypress(Action*)
 }
 
 /**
- * Shows the details of the currently hovered save.
+ * Shows the details of the currently hovered entry.
  * @param action - pointer to an Action
  */
 void ListGamesState::lstSavesMouseOver(Action*)
@@ -379,7 +379,7 @@ void ListGamesState::lstSavesMouseOver(Action*)
 }
 
 /**
- * Hides details of saves.
+ * Hides details of hovered entry.
  */
 void ListGamesState::lstSavesMouseOut(Action*)
 {
@@ -388,7 +388,7 @@ void ListGamesState::lstSavesMouseOut(Action*)
 }
 
 /**
- * Deletes the selected save.
+ * Asks to confirm deletion of the pressed entry.
  * @param action - pointer to an Action
  */
 void ListGamesState::lstSavesPress(Action* action) // virtual.
@@ -404,7 +404,7 @@ void ListGamesState::lstSavesPress(Action* action) // virtual.
 }
 
 /**
- * Sorts the saves by name.
+ * Sorts the List entries by name.
  * @param action - pointer to an Action
  */
 void ListGamesState::sortNameClick(Action*)
@@ -427,7 +427,7 @@ void ListGamesState::sortNameClick(Action*)
 }
 
 /**
- * Sorts the saves by date.
+ * Sorts the List entries by date.
  * @param action - pointer to an Action
  */
 void ListGamesState::sortDateClick(Action*)

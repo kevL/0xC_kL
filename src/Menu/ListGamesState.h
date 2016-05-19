@@ -42,7 +42,8 @@ class Window;
 
 
 /**
- * Base class for saved game screens which provides the common layout and listing.
+ * A base-class for saved-game screens which provides a common layout and
+ * listings.
  */
 class ListGamesState
 	:
@@ -74,30 +75,30 @@ protected:
 
 	std::vector<SaveInfo> _saves;
 
-	/// Updates the list-order arrows.
+	/// Updates the listorder arrows.
 	void updateArrows();
 	/// Disables the sort buttons.
 	void disableSort();
 
 
 	public:
-		/// Creates the Saved Game state.
+		/// Creates a ListGames state.
 		ListGamesState(
 				OptionsOrigin origin,
 				size_t firstValid,
 				bool autoquick);
-		/// Cleans up the Saved Game state.
+		/// Cleans up the ListGames state.
 		virtual ~ListGamesState();
 
-		/// Sets up the saves list.
+		/// Sets up the List.
 		void init() override;
 		/// Checks when popup is done.
 		void think() override;
 
-		/// Sorts the savegame list.
+		/// Sorts the List.
 		void sortList(SaveSort order);
 
-		/// Updates the savegame list.
+		/// Updates the List.
 		virtual void updateList();
 
 		/// Handler for clicking the Cancel button.
@@ -105,16 +106,16 @@ protected:
 		/// Handler for pressing the Escape key.
 		void btnCancelKeypress(Action* action);
 
-		/// Handler for moving the mouse over a list item.
+		/// Handler for moving the mouse over a List item.
 		void lstSavesMouseOver(Action* action);
-		/// Handler for moving the mouse outside the list borders.
+		/// Handler for moving the mouse outside the List borders.
 		void lstSavesMouseOut(Action* action);
-		/// Handler for clicking the Saves list.
+		/// Handler for clicking the List.
 		virtual void lstSavesPress(Action* action);
 
-		/// Handler for clicking the Name arrow.
+		/// Handler for clicking the arrow that orders the List by name.
 		void sortNameClick(Action* action);
-		/// Handler for clicking the Date arrow.
+		/// Handler for clicking the arrow that orders the List by date.
 		void sortDateClick(Action* action);
 };
 

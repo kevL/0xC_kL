@@ -20,13 +20,13 @@
 #ifndef OPENXCOM__LOADGAMESTATE
 #define OPENXCOM__LOADGAMESTATE
 
+#include "../Engine/State.h"
+
 //#include <string>
 
 //#include <SDL.h>
 
 #include "OptionsBaseState.h"
-
-#include "../Engine/State.h"
 
 #include "../Savegame/SavedGame.h"
 
@@ -34,6 +34,7 @@
 namespace OpenXcom
 {
 
+class ListLoadState;
 class Text;
 
 
@@ -51,6 +52,8 @@ private:
 
 	Text* _txtStatus;
 
+	ListLoadState* _parent;
+
 	OptionsOrigin _origin;
 
 
@@ -59,7 +62,8 @@ private:
 		LoadGameState(
 				OptionsOrigin origin,
 				const std::string& file,
-				SDL_Color* const palette);
+				SDL_Color* const palette,
+				ListLoadState* const parent);
 		LoadGameState(
 				OptionsOrigin origin,
 				SaveType type,
@@ -72,9 +76,9 @@ private:
 				SDL_Color* const palette,
 				bool dropText = false);
 
-		/// Validates the game.
+		/// Validates the save.
 		void init() override;
-		/// Loads the game.
+		/// Loads the save.
 		void think() override;
 };
 

@@ -38,7 +38,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Save Game screen.
+ * Initializes all the elements in the ListSave screen.
  * @param origin - game section that originated this state
  */
 ListSaveState::ListSaveState(OptionsOrigin origin)
@@ -82,7 +82,7 @@ ListSaveState::~ListSaveState()
 {}
 
 /**
- * Updates the save game list with the current list of available savedgames.
+ * Updates the saved-game list with the current list available.
  */
 void ListSaveState::updateList()
 {
@@ -95,7 +95,7 @@ void ListSaveState::updateList()
 }
 
 /**
- * Names the selected save.
+ * Edits the selected entry.
  * @param action - pointer to an Action
  */
 void ListSaveState::lstSavesPress(Action* action)
@@ -159,7 +159,7 @@ void ListSaveState::lstSavesPress(Action* action)
 }
 
 /**
- * Saves the selected slot or cancels it.
+ * Saves the focused entry or cancels edit.
  * @param action - pointer to an Action
  */
 void ListSaveState::keySavePress(Action* action)
@@ -189,7 +189,7 @@ void ListSaveState::keySavePress(Action* action)
 }
 
 /**
- * Saves the selected slot.
+ * Saves the focused entry.
  * @param action - pointer to an Action
  */
 void ListSaveState::btnSaveClick(Action*)
@@ -199,7 +199,8 @@ void ListSaveState::btnSaveClick(Action*)
 }
 
 /**
- * Saves the selected slot.
+ * Saves the focused entry.
+ * @note Helper for btnSaveClick().
  */
 void ListSaveState::saveGame()
 {
@@ -217,7 +218,7 @@ void ListSaveState::saveGame()
 
 	if (_selected > 0)
 	{
-		if ((fileOld = _saves[_selected - 1].file) != file + SavedGame::SAVE_EXT)
+		if ((fileOld = _saves[static_cast<size_t>(_selected - 1)].file) != file + SavedGame::SAVE_EXT)
 		{
 			while (CrossPlatform::fileExists(Options::getUserFolder() + file + SavedGame::SAVE_EXT) == true)
 				file += "_";

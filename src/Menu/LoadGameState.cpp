@@ -22,6 +22,8 @@
 //#include <sstream>
 
 #include "ErrorMessageState.h"
+#include "ListLoadState.h"
+#include "StatisticsState.h"
 
 #include "../Battlescape/BattlescapeState.h"
 
@@ -38,8 +40,6 @@
 #include "../Interface/Cursor.h"
 #include "../Interface/Text.h"
 
-#include "../Menu/StatisticsState.h"
-
 #include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/Ruleset.h"
 
@@ -50,28 +50,31 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Load Game screen.
- * @param origin	- game section that originated this state
- * @param file		- reference the name of the save file without extension
- * @param palette	- pointer to parent state palette
+ * Initializes all the elements in the LoadGame screen.
+ * @param origin	- section that originated this state
+ * @param file		- reference the name of the save-file without extension
+ * @param palette	- pointer to parent-state palette
+ * @param parent	- pointer to parent ListLoadState to hide its elements
  */
 LoadGameState::LoadGameState(
 		OptionsOrigin origin,
 		const std::string& file,
-		SDL_Color* const palette)
+		SDL_Color* const palette,
+		ListLoadState* const parent)
 	:
 		_origin(origin),
 		_file(file),
+		_parent(parent),
 		_firstRun(0)
 {
 	buildUi(palette);
 }
 
 /**
- * Initializes all the elements in the Load Game screen.
- * @param origin	- game section that originated this state
- * @param type		- type of auto-load being used
- * @param palette	- pointer to parent state palette
+ * Initializes all the elements in the LoadGame screen.
+ * @param origin	- section that originated this state
+ * @param type		- type of quick-load being used
+ * @param palette	- pointer to parent-state palette
  */
 LoadGameState::LoadGameState(
 		OptionsOrigin origin,
@@ -109,16 +112,16 @@ LoadGameState::~LoadGameState()
 
 /**
  * Builds the interface.
- * @param palette	- pointer to parent state palette
+ * @param palette	- pointer to parent-state palette
  * @param dropText	- true if loading without a window (eg. quickload)
  */
 void LoadGameState::buildUi(
 		SDL_Color* const palette,
 		bool dropText)
 {
-#ifdef _WIN32
+//#ifdef _WIN32
 //	MessageBeep(MB_OK); // <- done in BattlescapeState::handle() for Fkeys
-#endif
+//#endif
 	_fullScreen = false;
 
 	int y;
@@ -130,13 +133,17 @@ void LoadGameState::buildUi(
 
 	setPalette(palette);
 
-	if (_origin == OPT_BATTLESCAPE)
+	switch (_origin)
 	{
-		add(_txtStatus, "textLoad", "battlescape");
-		_txtStatus->setHighContrast();
+		case OPT_BATTLESCAPE:
+			add(_txtStatus, "textLoad", "battlescape");
+			_txtStatus->setHighContrast();
+			break;
+
+		case OPT_GEOSCAPE:
+		case OPT_MENU:
+			add(_txtStatus, "textLoad", "geoscape");
 	}
-	else
-		add(_txtStatus, "textLoad", "geoscape");
 
 	centerAllSurfaces();
 
@@ -149,7 +156,7 @@ void LoadGameState::buildUi(
 }
 
 /**
- * Ignore quick loads without a save available.
+ * Ignores quick-loads without a save available.
  */
 void LoadGameState::init()
 {
@@ -164,7 +171,7 @@ void LoadGameState::init()
 }
 
 /**
- * Loads the specified save.
+ * Loads the specified entry.
  */
 void LoadGameState::think()
 {
@@ -181,44 +188,49 @@ void LoadGameState::think()
 		try
 		{
 			Log(LOG_INFO) << "LoadGameState: loading";
+			_parent->hideElements();
+
 			gameSave->load(_file, _game->getRuleset());
 			_game->setSavedGame(gameSave);
 
-			if (_game->getSavedGame()->getEnding() != END_NONE)
+			switch (_game->getSavedGame()->getEnding())
 			{
-				Options::baseXResolution = Screen::ORIGINAL_WIDTH;
-				Options::baseYResolution = Screen::ORIGINAL_HEIGHT;
-				_game->getScreen()->resetDisplay(false);
-
-				_game->setState(new StatisticsState); // TODO: A way of saving non-Ironman saves for re-viewing post-game statistics.
-			}
-			else
-			{
-				Options::baseXResolution = Options::baseXGeoscape;
-				Options::baseYResolution = Options::baseYGeoscape;
-				_game->getScreen()->resetDisplay(false);
-
-				_game->setState(new GeoscapeState());
-
-				if (gameSave->getBattleSave() != nullptr)
-				{
-					Log(LOG_INFO) << "LoadGameState: loading battlescape map";
-					_game->getSavedGame()->getBattleSave()->loadMapResources(_game);
-
-					Options::baseXResolution = Options::baseXBattlescape;
-					Options::baseYResolution = Options::baseYBattlescape;
+				case END_WIN:
+				case END_LOSE:
+					Options::baseXResolution = Screen::ORIGINAL_WIDTH;
+					Options::baseYResolution = Screen::ORIGINAL_HEIGHT;
 					_game->getScreen()->resetDisplay(false);
 
-					BattlescapeState* const battleState (new BattlescapeState());
-					_game->pushState(battleState);
-					gameSave->getBattleSave()->setBattleState(battleState);
-				}
+					_game->setState(new StatisticsState); // TODO: A way of saving non-Ironman saves for re-viewing post-game statistics.
+					break;
+
+				case END_NONE:
+					Options::baseXResolution = Options::baseXGeoscape;
+					Options::baseYResolution = Options::baseYGeoscape;
+					_game->getScreen()->resetDisplay(false);
+
+					_game->setState(new GeoscapeState());
+
+					if (gameSave->getBattleSave() != nullptr)
+					{
+						Log(LOG_INFO) << "LoadGameState: loading battlescape map";
+						_game->getSavedGame()->getBattleSave()->loadMapResources(_game);
+
+						Options::baseXResolution = Options::baseXBattlescape;
+						Options::baseYResolution = Options::baseYBattlescape;
+						_game->getScreen()->resetDisplay(false);
+
+						BattlescapeState* const battleState (new BattlescapeState());
+						_game->pushState(battleState);
+						gameSave->getBattleSave()->setBattleState(battleState);
+					}
 			}
 		}
 		catch (Exception& e)
 		{
-			// TODO: Show the ListGamesState elements again ....
 			Log(LOG_INFO) << "LoadGame error";
+			_parent->hideElements(true);
+
 			Log(LOG_ERROR) << e.what();
 			std::wostringstream error;
 			error << tr("STR_LOAD_UNSUCCESSFUL") << L'\x02' << Language::fsToWstr(e.what());
@@ -244,8 +256,9 @@ void LoadGameState::think()
 		}
 		catch (YAML::Exception& e)
 		{
-			// TODO: Show the ListGamesState elements again ....
 			Log(LOG_INFO) << "LoadGame error YAML";
+			_parent->hideElements(true);
+
 			Log(LOG_ERROR) << e.what();
 			std::wostringstream error;
 			error << tr("STR_LOAD_UNSUCCESSFUL") << L'\x02' << Language::fsToWstr(e.what());

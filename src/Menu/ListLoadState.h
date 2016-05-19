@@ -27,23 +27,23 @@ namespace OpenXcom
 {
 
 /**
- * Load Game screen for listing info on available saved games and loading them.
+ * Load Game screen for listing info on available saved-games and loading them.
  */
 class ListLoadState
 	:
 		public ListGamesState
 {
 	public:
-		/// Creates the Load Game state.
+		/// Creates a ListGames state.
 		explicit ListLoadState(OptionsOrigin origin);
-		/// Cleans up the Load Game state.
+		/// Cleans up the ListGames state.
 		~ListLoadState();
 
-		/// Handler for clicking the Saves list.
+		/// Handler for clicking the List.
 		void lstSavesPress(Action* action) override;
 
-		/// Hides textlike elements of this state.
-		void hideElements();
+		/// Hides textual elements of this state.
+		void hideElements(bool vis = false);
 };
 
 }

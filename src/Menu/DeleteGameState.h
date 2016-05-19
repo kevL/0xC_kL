@@ -35,7 +35,7 @@ class Window;
 
 
 /**
- * Window used to confirm save game deletion.
+ * Window used to confirm saved-game deletion.
  */
 class DeleteGameState
 	:
@@ -54,11 +54,11 @@ private:
 
 
 	public:
-		/// Creates the Confirm state.
+		/// Creates a DeleteGame state.
 		DeleteGameState(
 				OptionsOrigin origin,
 				const std::string& file);
-		/// Cleans up the Confirm state.
+		/// Cleans up the DeleteGame state.
 		~DeleteGameState();
 
 		/// Handler for clicking the confirm button.

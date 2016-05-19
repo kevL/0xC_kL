@@ -56,17 +56,17 @@ private:
 
 
 	public:
-		/// Creates the Save Game state.
+		/// Creates a SaveGame state.
 		SaveGameState(
 				OptionsOrigin origin,
 				const std::string& file,
 				SDL_Color* const palette);
-		/// Creates the Save Game state.
+		/// Creates a SaveGame state.
 		SaveGameState(
 				OptionsOrigin origin,
 				SaveType type,
 				SDL_Color* const palette);
-		/// Cleans up the Save Game state.
+		/// Cleans up the SaveGame state.
 		~SaveGameState();
 
 		/// Creates the interface.

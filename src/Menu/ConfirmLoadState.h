@@ -22,14 +22,15 @@
 
 //#include <string>
 
-#include "ListLoadState.h"
-#include "OptionsBaseState.h"
-
 #include "../Engine/State.h"
+
+#include "OptionsBaseState.h"
 
 
 namespace OpenXcom
 {
+
+class ListLoadState;
 
 class Text;
 class TextButton;
@@ -58,12 +59,12 @@ private:
 
 
 	public:
-		/// Creates a new confirmation state.
+		/// Creates a ConfirmLoad state.
 		ConfirmLoadState(
 				OptionsOrigin origin,
 				const std::string& fileName,
-				ListLoadState* parent);
-		/// Cleans up the confirmation state.
+				ListLoadState* const parent);
+		/// Cleans up the ConfirmLoad state.
 		virtual ~ConfirmLoadState();
 
 		/// Handler for clicking the Yes button.

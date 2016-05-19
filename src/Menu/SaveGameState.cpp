@@ -56,7 +56,7 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the SaveGame screen.
- * @param origin	- game section that originated this state
+ * @param origin	- section that originated this state
  * @param file		- reference to name of the save-file without extension
  * @param palette	- pointer to parent-state palette
  */
@@ -75,8 +75,8 @@ SaveGameState::SaveGameState(
 
 /**
  * Initializes all the elements in the SaveGame screen.
- * @param origin	- game section that originated this state
- * @param type		- type of auto-save being used
+ * @param origin	- section that originated this state
+ * @param type		- type of quick-save being used
  * @param palette	- pointer to parent-state palette
  */
 SaveGameState::SaveGameState(
@@ -129,9 +129,9 @@ void SaveGameState::buildUi(
 		SDL_Color* const palette,
 		bool dropText)
 {
-#ifdef _WIN32
+//#ifdef _WIN32
 //	MessageBeep(MB_OK); // <- done in BattlescapeState::handle() for Fkeys
-#endif
+//#endif
 	_fullScreen = false;
 
 	int y;
@@ -167,7 +167,7 @@ void SaveGameState::buildUi(
 }
 
 /**
- * Saves the current save.
+ * Saves the current game.
  */
 void SaveGameState::think()
 {

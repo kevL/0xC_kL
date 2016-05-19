@@ -19,6 +19,7 @@
 
 #include "ConfirmLoadState.h"
 
+#include "ListLoadState.h"
 #include "LoadGameState.h"
 
 #include "../Engine/Game.h"
@@ -34,16 +35,17 @@
 
 namespace OpenXcom
 {
+
 /**
- * Initializes all the elements in the Confirm Load screen.
+ * Initializes all the elements in the ConfirmLoad screen.
  * @param origin	- game section that originated this state
  * @param fileName	- reference the name of the save file without extension
- * @param parent	- pointer to parent ListLoadState to hide its elements
+ * @param parent	- pointer to parent ListLoadState
  */
 ConfirmLoadState::ConfirmLoadState(
 		OptionsOrigin origin,
 		const std::string& fileName,
-		ListLoadState* parent)
+		ListLoadState* const parent)
 	:
 		_origin(origin),
 		_fileName(fileName),
@@ -77,6 +79,9 @@ ConfirmLoadState::ConfirmLoadState(
 	_btnYes->onKeyboardPress(
 					(ActionHandler)& ConfirmLoadState::btnYesClick,
 					Options::keyOk);
+	_btnYes->onKeyboardPress(
+					(ActionHandler)& ConfirmLoadState::btnYesClick,
+					Options::keyOkKeypad);
 
 	_btnNo->setText(tr("STR_NO"));
 	_btnNo->onMouseClick((ActionHandler)& ConfirmLoadState::btnNoClick);
@@ -94,7 +99,7 @@ ConfirmLoadState::ConfirmLoadState(
 }
 
 /**
- * Cleans up the confirmation state.
+ * Cleans up this ConfirmLoad state.
  */
 ConfirmLoadState::~ConfirmLoadState()
 {}
@@ -105,17 +110,16 @@ ConfirmLoadState::~ConfirmLoadState()
  */
 void ConfirmLoadState::btnYesClick(Action*)
 {
-	_parent->hideElements();
-
 	_game->popState();
 	_game->pushState(new LoadGameState(
 									_origin,
 									_fileName,
-									_palette));
+									_palette,
+									_parent));
 }
 
 /**
- * Abort loading and return to save list.
+ * Abort loading and return to save-list.
  * @param action - pointer to an Action
  */
 void ConfirmLoadState::btnNoClick(Action*)

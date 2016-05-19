@@ -44,8 +44,8 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Load Game screen.
- * @param origin - game section that originated this state
+ * Initializes all the elements in the ListGames screen.
+ * @param origin - section that originated this state
  */
 ListLoadState::ListLoadState(OptionsOrigin origin)
 	:
@@ -63,7 +63,7 @@ ListLoadState::~ListLoadState()
 {}
 
 /**
- * Loads the selected save.
+ * Loads the pressed entry.
  * @param action - pointer to an Action
  */
 void ListLoadState::lstSavesPress(Action* action)
@@ -115,13 +115,11 @@ void ListLoadState::lstSavesPress(Action* action)
 			}
 
 			if (confirmLoad == false)
-			{
-				hideElements();
 				_game->pushState(new LoadGameState(
 												_origin,
 												_saves[_lstSaves->getSelectedRow()].file,
-												_palette));
-			}
+												_palette,
+												this));
 			else
 				_game->pushState(new ConfirmLoadState(
 												_origin,
@@ -136,19 +134,21 @@ void ListLoadState::lstSavesPress(Action* action)
 }
 
 /**
- * Hides textlike elements of this state.
+ * Hides textual elements of this state.
+ * @note Called from LoadGameState, possibly through ConfirmLoadState.
+ * @param vis - true to show elements (default false)
  */
-void ListLoadState::hideElements()
+void ListLoadState::hideElements(bool vis)
 {
-	_txtTitle->setVisible(false);
-	_txtDelete->setVisible(false);
-	_txtName->setVisible(false);
-	_txtDate->setVisible(false);
-	_sortName->setVisible(false);
-	_sortDate->setVisible(false);
-	_lstSaves->setVisible(false);
-	_txtDetails->setVisible(false);
-	_btnCancel->setVisible(false);
+	_txtTitle->setVisible(vis);
+	_txtDelete->setVisible(vis);
+	_txtName->setVisible(vis);
+	_txtDate->setVisible(vis);
+	_sortName->setVisible(vis);
+	_sortDate->setVisible(vis);
+	_lstSaves->setVisible(vis);
+	_txtDetails->setVisible(vis);
+	_btnCancel->setVisible(vis);
 }
 
 }

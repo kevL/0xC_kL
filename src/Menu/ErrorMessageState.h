@@ -40,6 +40,7 @@ class ErrorMessageState
 	:
 		public State
 {
+
 private:
 	bool _quit;
 
@@ -56,7 +57,7 @@ private:
 			int bgColor);
 
 	public:
-		/// Creates the Error state.
+		/// Creates an ErrorMessage state.
 		ErrorMessageState(
 				const std::string& st,
 				SDL_Color* palette,
@@ -64,7 +65,7 @@ private:
 				const std::string& bg,
 				int bgColor,
 				bool quit = false);
-		/// Creates the Error state.
+		/// Creates an ErrorMessage state.
 		ErrorMessageState(
 				const std::wstring& wst,
 				SDL_Color* palette,
@@ -72,7 +73,7 @@ private:
 				const std::string& bg,
 				int bgColor,
 				bool quit = false);
-		/// Cleans up the Error state.
+		/// Cleans up the ErrorMessage state.
 		~ErrorMessageState();
 
 		/// Handler for clicking the OK button.

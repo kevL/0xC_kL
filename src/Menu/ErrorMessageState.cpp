@@ -35,7 +35,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in an error window.
+ * Initializes all the elements in the ErrorMessage window.
  * @param st		- reference to the string-ID to be displayed
  * @param palette	- pointer to the parent state palette
  * @param color		- color of the UI controls
@@ -63,10 +63,10 @@ ErrorMessageState::ErrorMessageState(
 }
 
 /**
- * Initializes all the elements in an error window.
+ * Initializes all the elements in the ErrorMessage window.
  * @param wst		- reference to the LocalizedText (wide-string) to be displayed
- * @param palette	- pointer to the parent state palette
- * @param color		- color of the UI controls
+ * @param palette	- pointer to the parent-state palette
+ * @param color		- color of the UI-controls
  * @param bg		- reference to the background image-string
  * @param bgColor	- background color (-1 for Battlescape)
  * @param quit		- true to quit on close (default false)
@@ -97,11 +97,11 @@ ErrorMessageState::~ErrorMessageState()
 {}
 
 /**
- * Creates the elements in an error window.
- * @param st		- reference the language ID for the message to display
- * @param wst		- reference the text string for the message to display
- * @param palette	- pointer to the parent state palette
- * @param color		- color of the UI controls
+ * Creates the elements in this ErrorMessage window.
+ * @param st		- reference the language-ID for the message to display
+ * @param wst		- reference the text-string for the message to display
+ * @param palette	- pointer to the parent-state palette
+ * @param color		- color of the UI-controls
  * @param bg		- background image
  * @param bgColor	- background color (-1 for Battlescape)
  */

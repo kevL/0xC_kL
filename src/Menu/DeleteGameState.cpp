@@ -40,7 +40,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Confirmation screen.
+ * Initializes all the elements in the DeleteGame screen.
  * @param origin	- game section that originated this state
  * @param file		- name of the save file to delete
  */
@@ -81,6 +81,9 @@ DeleteGameState::DeleteGameState(
 	_btnYes->onKeyboardPress(
 					(ActionHandler)& DeleteGameState::btnYesClick,
 					Options::keyOk);
+	_btnYes->onKeyboardPress(
+					(ActionHandler)& DeleteGameState::btnYesClick,
+					Options::keyOkKeypad);
 
 	_btnNo->setText(tr("STR_NO"));
 	_btnNo->onMouseClick((ActionHandler)& DeleteGameState::btnNoClick);
@@ -104,7 +107,7 @@ DeleteGameState::~DeleteGameState()
 {}
 
 /**
- *
+ * Cancels this state.
  */
 void DeleteGameState::btnNoClick(Action*)
 {
@@ -112,7 +115,7 @@ void DeleteGameState::btnNoClick(Action*)
 }
 
 /**
- *
+ * Cancels this state and attempts to delete the focused entry.
  */
 void DeleteGameState::btnYesClick(Action*)
 {

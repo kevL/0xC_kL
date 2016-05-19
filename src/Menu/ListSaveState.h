@@ -53,22 +53,22 @@ private:
 
 
 	public:
-		/// Creates the Save Game state.
+		/// Creates the ListSave state.
 		explicit ListSaveState(OptionsOrigin origin);
-		/// Cleans up the Save Game state.
+		/// Cleans up the ListSave state.
 		~ListSaveState();
 
-		/// Updates the savegame list.
+		/// Updates the List.
 		void updateList() override;
 
-		/// Handler for pressing a key on the Save edit.
+		/// Handler for pressing a key on the edit.
 		void keySavePress(Action* action);
-		/// Handler for clicking on the Save button.
+		/// Handler for clicking on the save-button.
 		void btnSaveClick(Action *action);
-		/// Handler for clicking the Saves list.
+		/// Handler for pressing the List.
 		void lstSavesPress(Action* action) override;
 
-		/// Saves game.
+		/// Saves the current game.
 		void saveGame();
 };
 
