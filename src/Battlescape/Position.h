@@ -228,15 +228,12 @@ struct convert<OpenXcom::Position>
 			const Node& node,
 			OpenXcom::Position& rhs)
 	{
-		if (node.IsSequence() == false
-			|| node.size() != 3)
-		{
+		if (node.IsSequence() == false || node.size() != 3u)
 			return false;
-		}
 
-		rhs.x = node[0].as<int>();
-		rhs.y = node[1].as<int>();
-		rhs.z = node[2].as<int>();
+		rhs.x = node[0u].as<int>();
+		rhs.y = node[1u].as<int>();
+		rhs.z = node[2u].as<int>();
 
 		return true;
 	}

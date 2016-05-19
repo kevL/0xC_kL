@@ -545,24 +545,24 @@ void Projectile::applyAccuracy( // private.
 		//Log(LOG_INFO) << "Proj: applyAccuracy target[2] " << *targetVoxel;
 
 		targetVoxel->x = std::max(0,
-								  std::min((_battleSave->getMapSizeX() << 4u) + 15,
-											targetVoxel->x));
+								  std::min(((_battleSave->getMapSizeX() - 1) << 4u) + 15,
+											 targetVoxel->x));
 		targetVoxel->y = std::max(0,
-								  std::min((_battleSave->getMapSizeY() << 4u) + 15,
-											targetVoxel->y));
+								  std::min(((_battleSave->getMapSizeY() - 1) << 4u) + 15,
+											 targetVoxel->y));
 		targetVoxel->z = std::max(0,
-								  std::min(_battleSave->getMapSizeZ() * 24 + 23,
-											targetVoxel->z));
+								  std::min(((_battleSave->getMapSizeZ() - 1)  * 24) + 23,
+											 targetVoxel->z));
 
-		if (_action.type == BA_THROW)
+		if (_action.type == BA_THROW) // center end-point graphically on the tile it's headed for.
 		{
-			//Log(LOG_INFO) << ". targetVoxel " << *targetVoxel;
-			//Log(LOG_INFO) << ". targetTile " << Position::toTileSpace(*targetVoxel);
-
 			const Tile* const tile (_battleSave->getTile(Position::toTileSpace(*targetVoxel)));
+			const int lift (std::max(2,
+									 -tile->getTerrainLevel()));
+
 			targetVoxel->x = (targetVoxel->x & 0xfff0) + 8;
 			targetVoxel->y = (targetVoxel->y & 0xfff0) + 8;
-			targetVoxel->z = (targetVoxel->z / 24 * 24) - tile->getTerrainLevel();
+			targetVoxel->z = (targetVoxel->z / 24 * 24) + lift;
 		}
 		//Log(LOG_INFO) << "Proj: applyAccuracy target[3] " << *targetVoxel;
 	}
