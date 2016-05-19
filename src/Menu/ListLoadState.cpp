@@ -115,11 +115,14 @@ void ListLoadState::lstSavesPress(Action* action)
 			}
 
 			if (confirmLoad == false)
+			{
+				hideElements();
 				_game->pushState(new LoadGameState(
 												_origin,
 												_saves[_lstSaves->getSelectedRow()].file,
 												_palette,
 												this));
+			}
 			else
 				_game->pushState(new ConfirmLoadState(
 												_origin,

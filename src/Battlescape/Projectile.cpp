@@ -556,6 +556,9 @@ void Projectile::applyAccuracy( // private.
 
 		if (_action.type == BA_THROW)
 		{
+			//Log(LOG_INFO) << ". targetVoxel " << *targetVoxel;
+			//Log(LOG_INFO) << ". targetTile " << Position::toTileSpace(*targetVoxel);
+
 			const Tile* const tile (_battleSave->getTile(Position::toTileSpace(*targetVoxel)));
 			targetVoxel->x = (targetVoxel->x & 0xfff0) + 8;
 			targetVoxel->y = (targetVoxel->y & 0xfff0) + 8;

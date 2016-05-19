@@ -188,8 +188,6 @@ void LoadGameState::think()
 		try
 		{
 			Log(LOG_INFO) << "LoadGameState: loading";
-			_parent->hideElements();
-
 			gameSave->load(_file, _game->getRuleset());
 			_game->setSavedGame(gameSave);
 
