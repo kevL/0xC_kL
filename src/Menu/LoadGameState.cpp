@@ -229,7 +229,7 @@ void LoadGameState::think()
 		catch (Exception& e)
 		{
 			Log(LOG_INFO) << "LoadGame error";
-			_parent->hideElements(true);
+			_parent->hideElements(false);
 
 			Log(LOG_ERROR) << e.what();
 			std::wostringstream error;
@@ -257,7 +257,7 @@ void LoadGameState::think()
 		catch (YAML::Exception& e)
 		{
 			Log(LOG_INFO) << "LoadGame error YAML";
-			_parent->hideElements(true);
+			_parent->hideElements(false);
 
 			Log(LOG_ERROR) << e.what();
 			std::wostringstream error;

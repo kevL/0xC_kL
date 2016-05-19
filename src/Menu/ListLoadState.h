@@ -43,7 +43,7 @@ class ListLoadState
 		void lstSavesPress(Action* action) override;
 
 		/// Hides textual elements of this state.
-		void hideElements(bool vis = false);
+		void hideElements(bool hide = true);
 };
 
 }

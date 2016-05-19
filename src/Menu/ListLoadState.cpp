@@ -136,10 +136,12 @@ void ListLoadState::lstSavesPress(Action* action)
 /**
  * Hides textual elements of this state.
  * @note Called from LoadGameState, possibly through ConfirmLoadState.
- * @param vis - true to show elements (default false)
+ * @param hide - true to hide elements (default true)
  */
-void ListLoadState::hideElements(bool vis)
+void ListLoadState::hideElements(bool hide)
 {
+	const bool vis (!hide);
+
 	_txtTitle->setVisible(vis);
 	_txtDelete->setVisible(vis);
 	_txtName->setVisible(vis);

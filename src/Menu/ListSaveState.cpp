@@ -200,9 +200,9 @@ void ListSaveState::btnSaveClick(Action*)
 
 /**
  * Saves the focused entry.
- * @note Helper for btnSaveClick().
+ * @note Helper for btnSaveClick() and keySavePress().
  */
-void ListSaveState::saveGame()
+void ListSaveState::saveGame() // private.
 {
 //	_editMode = false;					// safeties. Should not need these three <- ie.
 //	_btnSaveGame->setVisible(false);	// SaveGameState() below_ pops current state(s) all the way back to play.

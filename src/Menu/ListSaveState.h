@@ -48,6 +48,8 @@ private:
 	TextButton* _btnSaveGame;
 	TextEdit* _edtSave;
 
+	/// Saves the current game.
+	void saveGame();
 	/// Hides textual elements of this state.
 	void hideElements();
 
@@ -67,9 +69,6 @@ private:
 		void btnSaveClick(Action *action);
 		/// Handler for pressing the List.
 		void lstSavesPress(Action* action) override;
-
-		/// Saves the current game.
-		void saveGame();
 };
 
 }
