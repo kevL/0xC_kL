@@ -382,9 +382,10 @@ void ExplosionBState::init()
 
 /**
  * Animates explosion sprites.
- * @note If their animation is finished remove them from the list. If the list
- * is empty this state is finished and the actual calculations take place.
- * kL_rewrite: Allow a few extra cycles for explosion animations to dissipate.
+ * @note An ExplosionBState has multiple Explosion-objects. If an animation is
+ * finished remove it from the list. If the list is empty this state is finished
+ * and the actual calculations take place in explode() and TileEngine.
+// * kL_rewrite: Allow a few extra cycles for explosion animations to dissipate.
  */
 void ExplosionBState::think()
 {
@@ -407,36 +408,32 @@ void ExplosionBState::think()
 //	if (_extend < 1)
 //		explode();
 
-	//Log(LOG_INFO) << ". think()";
+	//Log(LOG_INFO) << "ExplosionBState::think()";
 	if (_parent->getMap()->getBlastFlash() == false)
 	{
-		if (_parent->getMap()->getExplosions()->empty() == true)
-		{
-			//Log(LOG_INFO) << ". . empty";
-			explode();
-		}
+		std::list<Explosion*>* const explList (_parent->getMap()->getExplosions());
+		//Log(LOG_INFO) << ". expl qty= " << explList->size();
 
 		for (std::list<Explosion*>::const_iterator
-				i = _parent->getMap()->getExplosions()->begin();
-				i != _parent->getMap()->getExplosions()->end();
+				i = explList->begin();
+				i != explList->end();
 				)
 		{
 			//Log(LOG_INFO) << ". . iterate";
-			if ((*i)->animate() == false) // done.
+			if ((*i)->animate() == false) // done gFx.
 			{
-				//Log(LOG_INFO) << ". . . done";
+				//Log(LOG_INFO) << ". . . Done";
 				delete *i;
-				i = _parent->getMap()->getExplosions()->erase(i);
-
-				if (_parent->getMap()->getExplosions()->empty() == true)
-				{
-					//Log(LOG_INFO) << ". . . . final empty";
-					explode();
-					return;
-				}
+				i = explList->erase(i);
 			}
 			else
 				++i;
+		}
+
+		if (explList->empty() == true)
+		{
+			//Log(LOG_INFO) << ". . final explode()";
+			explode();
 		}
 	}
 }
@@ -471,57 +468,59 @@ void ExplosionBState::explode() // private.
 	else
 		itRule = nullptr;
 
-	// NOTE: melee Hit success/failure, and hit/miss sound-FX, are determined in ProjectileFlyBState.
-
-	if (_melee == true)
-	{
-		_parent->getTacticalAction()->type = BA_NONE;
-
-		if (_unit != nullptr)
-		{
-			if (_unit->isOut_t() == false)
-			{
-				_unit->aim(false);
-//				_unit->flagCache();
-			}
-
-			if (_unit->getGeoscapeSoldier() != nullptr
-				&& _unit->isMindControlled() == false)
-			{
-				const BattleUnit* const targetUnit (_battleSave->getTile(Position::toTileSpace(_centerVoxel))->getTileUnit());
-				if (targetUnit != nullptr) // safety.
-				{
-					switch (targetUnit->getFaction())
-					{
-						case FACTION_HOSTILE:
-							if (_meleeSuccess == true)
-								_unit->addMeleeExp(2);
-							else
-								_unit->addMeleeExp(1);
-							break;
-
-						case FACTION_PLAYER:
-						case FACTION_NEUTRAL:
-							if (_meleeSuccess == true)
-								_unit->addMeleeExp(1);
-					}
-				}
-			}
-		}
-
-		if (_meleeSuccess == false) // MISS.
-		{
-			_parent->checkExposedByMelee(_unit); // determine whether playerFaction-attacker gets exposed.
-			_parent->getMap()->cacheUnits();
-			_parent->popState();
-			return;
-		}
-	}
-
 	TileEngine* const te (_battleSave->getTileEngine());
+	bool isTerrain;
 
 	if (itRule != nullptr)
 	{
+		isTerrain = false;
+
+		// NOTE: melee Hit success/failure, and hit/miss sound-FX, are determined in ProjectileFlyBState.
+		if (_melee == true)
+		{
+			_parent->getTacticalAction()->type = BA_NONE;
+
+			if (_unit != nullptr)
+			{
+				if (_unit->isOut_t() == false)
+				{
+					_unit->aim(false);
+//					_unit->flagCache();
+				}
+
+				if (_unit->getGeoscapeSoldier() != nullptr
+					&& _unit->isMindControlled() == false)
+				{
+					const BattleUnit* const targetUnit (_battleSave->getTile(Position::toTileSpace(_centerVoxel))->getTileUnit());
+					if (targetUnit != nullptr) // safety.
+					{
+						switch (targetUnit->getFaction())
+						{
+							case FACTION_HOSTILE:
+								if (_meleeSuccess == true)
+									_unit->addMeleeExp(2);
+								else
+									_unit->addMeleeExp(1);
+								break;
+
+							case FACTION_PLAYER:
+							case FACTION_NEUTRAL:
+								if (_meleeSuccess == true)
+									_unit->addMeleeExp(1);
+						}
+					}
+				}
+			}
+
+			if (_meleeSuccess == false) // MISS.
+			{
+				_parent->checkExposedByMelee(_unit); // determine whether playerFaction-attacker gets exposed.
+				_parent->getMap()->cacheUnits();
+				_parent->popState();
+				return;
+			}
+		}
+
 		if (_unit == nullptr && _item->getPriorOwner() != nullptr)
 			_unit = _item->getPriorOwner();
 
@@ -558,12 +557,9 @@ void ExplosionBState::explode() // private.
 					itRule->getZombieUnit());
 		}
 	}
-
-
-	bool terrain;
-	if (_tile != nullptr)
+	else if (_tile != nullptr)
 	{
-		terrain = true;
+		isTerrain = true;
 		const DamageType dType (_tile->getExplosiveType());
 		if (dType != DT_HE)
 			_tile->setExplosive(0, DT_NONE, true);
@@ -574,9 +570,9 @@ void ExplosionBState::explode() // private.
 				dType,
 				_power / 10);
 	}
-	else if (itRule == nullptr) // explosion not caused by terrain or an item - must be a cyberdisc
+	else // explosion not caused by terrain or an item - must be a cyberdisc or burning zombie.
 	{
-		terrain = true;
+		isTerrain = true;
 		int radius;
 		if (_unit != nullptr && _unit->getSpecialAbility() == SPECAB_EXPLODE)
 			radius = _parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseGeoscape())->getExplosionRadius();
@@ -589,12 +585,9 @@ void ExplosionBState::explode() // private.
 				DT_HE,
 				radius);
 	}
-	else
-		terrain = false;
-
 
 	//Log(LOG_INFO) << "ExplosionBState::explode() CALL bg::checkCasualties()";
-	_parent->checkCasualties(_item, _unit, false, terrain);
+	_parent->checkCasualties(_item, _unit, false, isTerrain);
 
 	if (itRule != nullptr && itRule->getShotgunPellets() != 0)
 	{
@@ -608,7 +601,6 @@ void ExplosionBState::explode() // private.
 		}
 	}
 
-
 	if (_lowerWeapon == true // if this hit/explosion was caused by a unit put the weapon down
 		&& _unit != nullptr
 		&& _unit->isOut_t(OUT_STAT) == false)
@@ -620,7 +612,6 @@ void ExplosionBState::explode() // private.
 	_parent->getMap()->cacheUnits();
 	_parent->popState();
 	//Log(LOG_INFO) << ". . pop";
-
 
 	if (itRule != nullptr && itRule->isGrenade() == true)
 	{
