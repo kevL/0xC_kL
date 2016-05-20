@@ -405,8 +405,7 @@ void ExplosionBState::think()
 //	if (_parent->getMap()->getExplosions()->empty() == true)
 //		--_extend; // not working as intended; needs to go to Explosion class so that explosions-vector doesn't 'empty' so fast.
 //
-//	if (_extend < 1)
-//		explode();
+//	if (_extend < 1) explode();
 
 	//Log(LOG_INFO) << "ExplosionBState::think()";
 	if (_parent->getMap()->getBlastFlash() == false)

@@ -3635,7 +3635,7 @@ void BattlescapeState::hotSqrsCycle(BattleUnit* const selUnit) // private.
  */
 void BattlescapeState::hostileTargeter() // private.
 {
-	static const int cursorFrames[TARGET_FRAMES] {0,1,2,3,4,0}; // note: does not show the last frame.
+	static const int cursorFrames[TARGET_FRAMES] {0,1,2,3,4,0}; // NOTE: Does not show the last frame.
 
 	Surface* const targetCursor (_game->getResourcePack()->getSurfaceSet("Targeter")->getFrame(cursorFrames[_targeterFrame]));
 	targetCursor->blit(_srfTargeter);
@@ -3649,31 +3649,29 @@ void BattlescapeState::hostileTargeter() // private.
  */
 void BattlescapeState::liquidationExplosion() // private.
 {
+	std::list<Explosion*>* const explList (_map->getExplosions());
+
 	for (std::list<Explosion*>::const_iterator
-			i = _map->getExplosions()->begin();
-			i != _map->getExplosions()->end();
+			i = explList->begin();
+			i != explList->end();
 			)
 	{
 		if ((*i)->animate() == false) // done.
 		{
 			delete *i;
-			i = _map->getExplosions()->erase(i);
-
-			if (_map->getExplosions()->empty() == true)
-			{
-				_battleGame->endLiquidate();
-
-				BattleUnit* const selUnit (_battleSave->getSelectedUnit());
-				selUnit->aim(false);
-//				selUnit->flagCache();
-//				_map->cacheUnits();
-				_map->cacheUnit(selUnit);
-
-				return;
-			}
+			i = explList->erase(i);
 		}
 		else
 			++i;
+	}
+
+	if (explList->empty() == true)
+	{
+		_battleGame->endLiquidate();
+
+		BattleUnit* const selUnit (_battleSave->getSelectedUnit());
+		selUnit->aim(false);
+		_map->cacheUnit(selUnit);
 	}
 }
 
@@ -3682,22 +3680,24 @@ void BattlescapeState::liquidationExplosion() // private.
  */
 void BattlescapeState::shotgunExplosion() // private.
 {
+	std::list<Explosion*>* const explList (_map->getExplosions());
+
 	for (std::list<Explosion*>::const_iterator
-			i = _map->getExplosions()->begin();
-			i != _map->getExplosions()->end();
+			i = explList->begin();
+			i != explList->end();
 			)
 	{
 		if ((*i)->animate() == false) // done.
 		{
 			delete *i;
-			i = _map->getExplosions()->erase(i);
-
-			if (_map->getExplosions()->empty() == true)
-				_battleGame->setShotgun(false);
+			i = explList->erase(i);
 		}
 		else
 			++i;
 	}
+
+	if (explList->empty() == true)
+		_battleGame->setShotgun(false);
 }
 
 /**

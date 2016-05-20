@@ -2963,11 +2963,11 @@ void TileEngine::explode(
 
 	if (dType == DT_HE) // detonate tiles affected with HE
 	{
-		if (_trueTile != nullptr)	// special case for when a diagonal bigwall is directly targetted.
-		{							// The explosion is moved out a tile so give a full-power hit to the true target-tile.
+		if (_trueTile != nullptr)		// special case for when a diagonal bigwall is directly targetted.
+		{								// The explosion is moved out a tile so give a full-power hit to the true target-tile.
 			_trueTile->setExplosive(power, DT_HE);
 			detonateTile(_trueTile);	// I doubt this needs any *further* consideration ...
-		}							// although it would be nice to have the explosion 'kick in' a bit.
+		}								// although it would be nice to have the explosion 'kick in' a bit.
 
 		//Log(LOG_INFO) << ". explode Tiles, size = " << tilesAffected.size();
 		for (std::set<Tile*>::const_iterator
