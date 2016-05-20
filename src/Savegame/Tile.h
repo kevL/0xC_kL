@@ -83,7 +83,7 @@ private:
 		_revealed[SECTIONS],
 		_visible;
 	int
-		_animOffset,
+		_aniOffset,
 		_curFrame[PARTS_TILE],
 		_explosive,
 		_fire,
@@ -122,7 +122,7 @@ private:
 			Uint8 _partId;
 			Uint8 _smoke;
 			Uint8 _fire;
-			Uint8 _animOffset;
+			Uint8 _aniOffset;
 			Uint8 boolFields;
 			Uint32 totalBytes; // per structure including any data not mentioned here and accounting for all array members
 		} serializationKey;

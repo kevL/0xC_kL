@@ -135,7 +135,7 @@ BattleUnit::BattleUnit(
 		_specab(SPECAB_NONE),
 		_morale(100),
 		_stunLevel(0),
-		_aboutToFall(false),
+		_aboutToCollapse(false),
 		_type("SOLDIER"),
 //		_race("STR_HUMAN"), // not used.
 		_activeHand(AH_NONE),
@@ -294,7 +294,7 @@ BattleUnit::BattleUnit(
 
 		_morale(100),
 		_stunLevel(0),
-		_aboutToFall(false),
+		_aboutToCollapse(false),
 		_activeHand(AH_NONE),
 		_diedByFire(false),
 		_dirTurn(0),
@@ -1573,7 +1573,7 @@ int BattleUnit::takeDamage(
 		const bool selfAware (_geoscapeSoldier != nullptr
 						  || (_unitRule->isMechanical() == false
 								&& _isZombie == false));
-		int wounds = 0;
+		int wounds (0);
 
 		switch (dType)
 		{
@@ -1641,13 +1641,13 @@ int BattleUnit::takeDamage(
 			}
 		}
 
-		if (isOut_t(OUT_HLTH_STUN) == true)
-			_aboutToFall = true;
+		if (_status != STATUS_UNCONSCIOUS && isOut_t(OUT_HLTH_STUN) == true) // if not already collapsed but about to be.
+			_aboutToCollapse = true;
 	}
 
 	// TODO: give a short "ugh" if hit causes no damage or perhaps stuns ( power must be > 0 though );
 	// a longer "uuuhghghgh" if hit causes damage ... and let DieBState handle deathscreams.
-	if (_aboutToFall == false //&& _visible == true && _health > 0 && _health > _stunLevel
+	if (_aboutToCollapse == false //&& _visible == true && _health > 0 && _health > _stunLevel
 		&& _hasCried == false
 		&& _status != STATUS_UNCONSCIOUS
 		&& dType != DT_STUN
@@ -4038,7 +4038,7 @@ bool BattleUnit::hasFirstTakedown() const
  */
 bool BattleUnit::getAboutToCollapse() const
 {
-	return _aboutToFall;
+	return _aboutToCollapse;
 }
 
 /**
@@ -4075,7 +4075,7 @@ void BattleUnit::putDown()
 	_energy = 0;
 
 	_kneeled = // don't get hunkerdown bonus against HE detonations
-	_aboutToFall =
+	_aboutToCollapse =
 	_hasCried = false;
 
 	_hostileUnits.clear();

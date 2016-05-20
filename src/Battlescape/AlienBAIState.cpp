@@ -68,7 +68,7 @@ AlienBAIState::AlienBAIState(
 		_distClosest(1000),
 		_reserve(BA_NONE)
 {
-	if (_unit->getId() != 399) _traceAI = 0;
+//	if (_unit->getId() != 399) _traceAI = 0;
 
 	//Log(LOG_INFO) << "Create AlienBAIState traceAI= " << _traceAI;
 

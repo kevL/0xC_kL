@@ -4743,8 +4743,8 @@ void TileEngine::detonateTile(Tile* const tile) const
 	{
 		Tile* const tileAbove (_battleSave->getTile(tile->getPosition() + Position(0,0,1)));
 		if (tileAbove != nullptr
-			&& tileAbove->hasNoFloor(tile) == true // TODO: use verticalBlockage() instead
-			&& RNG::percent(tile->getSmoke() << 3u) == true)
+			&& tileAbove->hasNoFloor(tile) == true) // TODO: use verticalBlockage() instead
+//			&& RNG::percent(tile->getSmoke() << 3u) == true) // unfortunately the state-machine causes an unpredictable quantity of calls to this ... via ExplosionBState::think().
 		{
 			tileAbove->addSmoke(tile->getSmoke() / 3);
 		}

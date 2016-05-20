@@ -67,7 +67,8 @@ uint64_t next_x()
 	x ^= x >> 27u; // c
 
 	//Log(LOG_INFO) << "RNG x = " << x;
-	//if (x == 10741543760283835424) Log(LOG_INFO) << "stop";
+	// uLL = 18446744073709551615 Max
+	//if (x == 3627948914271010329uLL) Log(LOG_INFO) << "stop";
 
 	return x * 2685821657736338717uLL;
 }
@@ -104,8 +105,8 @@ void setSeed(uint64_t seed)
 {
 	y = static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count());
 
-	if (seed == 0u)
-		x = y + 1uLL;
+	if (seed == 0uLL)
+		x = y + 1uLL; // nudge x so it's out of sync w/ y.
 	else
 		x = seed;
 
@@ -192,7 +193,7 @@ int seedless(
 	if (valMin > valMax)
 		std::swap(valMin, valMax);
 
-	return (next_y() % (valMax - valMin + 1) + valMin);
+	return (static_cast<int>(next_y() % (valMax - valMin + 1)) + valMin);
 }
 
 /*

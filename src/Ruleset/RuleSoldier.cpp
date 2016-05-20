@@ -44,14 +44,11 @@ struct convert<OpenXcom::RuleGender>
 			const Node& node,
 			OpenXcom::RuleGender& rhs)
 	{
-		if (node.IsSequence() == false
-			|| node.size() != 2)
-		{
+		if (node.IsSequence() == false || node.size() != 2u)
 			return false;
-		}
 
-		rhs.male	= node[0].as<int>();
-		rhs.female	= node[1].as<int>();
+		rhs.male	= node[0u].as<int>();
+		rhs.female	= node[1u].as<int>();
 
 		return true;
 	}
@@ -126,7 +123,7 @@ const std::string& RuleSoldier::getType() const
 
 /**
  * Gets the list of research required to acquire this type of Soldier.
- * @return, reference to the list of research IDs
+ * @return, reference to the list of research-IDs
  */
 const std::vector<std::string>& RuleSoldier::getRequirements() const
 {
@@ -223,7 +220,7 @@ const RuleGender* RuleSoldier::getGenderRatio() const
 	return &_genderRatio;
 }
 
-/*
+/**
  * Gets the female appearance ratio.
  * @return, percent chance of a female soldier getting generated
  *

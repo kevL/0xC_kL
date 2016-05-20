@@ -135,7 +135,8 @@ void UnitWalkBState::init()
  */
 void UnitWalkBState::think()
 {
-	//Log(LOG_INFO) << "\n***** UnitWalkBState::think() : " << _unit->getId();
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "***** UnitWalkBState::think() id-" << _unit->getId() << " pos" << _unit->getPosition() << " dest" << _unit->getStopPosition();
 	if (_unit->isOut_t() == true)
 	{
 		//Log(LOG_INFO) << ". . isOut() abort.";
@@ -150,129 +151,131 @@ void UnitWalkBState::think()
 
 /* _oO **** STATUS WALKING **** Oo_ */// #2
 
-	if (_unit->getUnitStatus() == STATUS_WALKING
-		|| _unit->getUnitStatus() == STATUS_FLYING)
+	switch (_unit->getUnitStatus())
 	{
-		//Log(LOG_INFO) << "STATUS_WALKING or FLYING : " << _unit->getId();
-/*		if (_isVisible == true)
-		{
-			const int stopZ = _unit->getStopPosition().z;
-			if (_walkCam->isOnScreen(_unit->getPosition()) == true
-				&& _walkCam->getViewLevel() < stopZ)
+		case STATUS_WALKING:
+		case STATUS_FLYING:
+			//Log(LOG_INFO) << "STATUS_WALKING or FLYING : " << _unit->getId();
+/*			if (_isVisible == true)
 			{
-				_walkCam->setViewLevel(stopZ);
-			}
-		} */
+				const int stopZ = _unit->getStopPosition().z;
+				if (_walkCam->isOnScreen(_unit->getPosition()) == true
+					&& _walkCam->getViewLevel() < stopZ)
+				{
+					_walkCam->setViewLevel(stopZ);
+				}
+			} */
 
-		if (doStatusWalk() == false)
-		{
-			//Log(LOG_INFO) << ". . doStatusWalk() FALSE return";
-			return;
-		}
+			if (doStatusWalk() == false)
+			{
+				//Log(LOG_INFO) << ". . doStatusWalk() FALSE return";
+				return;
+			}
 
 
 /* _oO **** STATUS STANDING end **** Oo_ */// #3
 
-		// walkPhase reset as the unit completes its transition to the next tile
-		if (_unit->getUnitStatus() == STATUS_STANDING)
-		{
-			//Log(LOG_INFO) << "STATUS_STANDING_end in UnitWalkBState _WALKING or _FLYING !!!" ;
-			clearTilesLink(true);
+			// walkPhase reset as the unit completes its transition to the next tile
+			if (_unit->getUnitStatus() == STATUS_STANDING)
+			{
+				//Log(LOG_INFO) << "STATUS_STANDING_end in UnitWalkBState _WALKING or _FLYING !!!" ;
+				clearTilesLink(true);
 
+/*				if (_isVisible == true)
+				{
+					const Position pos = _unit->getPosition();
+
+					if (_unit->getFaction() != FACTION_PLAYER
+						&& _walkCam->isOnScreen(pos) == false)
+					{
+						_walkCam->centerOnPosition(pos);
+						_walkCam->setViewLevel(_unit->getStopPosition().z);
+					}
+					else if (_walkCam->isOnScreen(pos) == true)
+					{
+						const int stopZ = _unit->getStopPosition().z;
+						if (_walkCam->getViewLevel() > stopZ
+							&& (_pf->getPath().size() == 0 || _pf->getPath().back() != Pathfinding::DIR_UP))
+						{
+							_walkCam->setViewLevel(stopZ);
+						}
+					}
+				} */
+
+				if (doStatusStand_end() == false)
+				{
+					//Log(LOG_INFO) << ". . doStatusStand_end() FALSE return";
+					return;
+				}
+
+				if (_parent->getBattleSave()->getSide() == FACTION_PLAYER
+					&& _parent->playerPanicHandled() == true)
+				{
+					_parent->getBattlescapeState()->hotSqrsClear();
+					_parent->getBattlescapeState()->hotSqrsUpdate();
+				}
+			}
+			else if (_isVisible == true) // keep walking ... make sure the unit sprites are up to date
+			{
+				//Log(LOG_INFO) << ". _isVisible : still walking ...";
+//				if (_pf->getStrafeMove() == true) // NOTE: This could be trimmed, because I had to make tanks use getFaceDirection() in UnitSprite::drawRoutine2() anyway ...
+				if (_action.strafe == true)
+				{
+					//Log(LOG_INFO) << ". WALKING strafe, unitDir = " << _unit->getUnitDirection();
+					//Log(LOG_INFO) << ". WALKING strafe, faceDir = " << _unit->getFaceDirection();
+					const int dirStrafe (_unit->getUnitDirection()); // direction of travel
+					_unit->setUnitDirection(
+										_unit->getFaceDirection(),
+										false);
+
+//					_unit->flagCache(); // might play around with Strafe anim's ......
+					_parent->getMap()->cacheUnit(_unit);
+					_unit->setUnitDirection(dirStrafe, false);
+				}
+				else
+				{
+					//Log(LOG_INFO) << ". WALKING no strafe, cacheUnit()";
+					_unit->flagCache(); // might play around with non-Strafe anim's ......
+					_parent->getMap()->cacheUnit(_unit);
+				}
+			}
+	}
+
+
+/* _oO **** STATUS STANDING **** Oo_ */// #1 & #4
+
+	switch (_unit->getUnitStatus())
+	{
+		case STATUS_STANDING:
+		case STATUS_PANICKING:
+			//Log(LOG_INFO) << "STATUS_STANDING or PANICKING : " << _unit->getId();
+			if (doStatusStand() == false)
+			{
+				//Log(LOG_INFO) << ". . doStatusStand() FALSE return";
+				return;
+			}
+
+			// Destination is not valid until *after* doStatusStand() runs.
 /*			if (_isVisible == true)
 			{
+				//Log(LOG_INFO) << ". onScreen";
 				const Position pos = _unit->getPosition();
 
 				if (_unit->getFaction() != FACTION_PLAYER
 					&& _walkCam->isOnScreen(pos) == false)
 				{
 					_walkCam->centerOnPosition(pos);
-					_walkCam->setViewLevel(_unit->getStopPosition().z);
+					_walkCam->setViewLevel(pos.z);
 				}
-				else if (_walkCam->isOnScreen(pos) == true)
+				else if (_walkCam->isOnScreen(pos) == true) // is Faction_Player
 				{
 					const int stopZ = _unit->getStopPosition().z;
-					if (_walkCam->getViewLevel() > stopZ
-						&& (_pf->getPath().size() == 0 || _pf->getPath().back() != Pathfinding::DIR_UP))
+					if (pos.z == stopZ || (pos.z < stopZ && _walkCam->getViewLevel() < stopZ))
 					{
-						_walkCam->setViewLevel(stopZ);
+						_walkCam->setViewLevel(pos.z);
 					}
 				}
 			} */
-
-			if (doStatusStand_end() == false)
-			{
-				//Log(LOG_INFO) << ". . doStatusStand_end() FALSE return";
-				return;
-			}
-
-			if (_parent->getBattleSave()->getSide() == FACTION_PLAYER
-				&& _parent->playerPanicHandled() == true)
-			{
-				_parent->getBattlescapeState()->hotSqrsClear();
-				_parent->getBattlescapeState()->hotSqrsUpdate();
-			}
-		}
-		else if (_isVisible == true) // keep walking ... make sure the unit sprites are up to date
-		{
-			//Log(LOG_INFO) << ". _isVisible : still walking ...";
-//			if (_pf->getStrafeMove() == true) // NOTE: This could be trimmed, because I had to make tanks use getFaceDirection() in UnitSprite::drawRoutine2() anyway ...
-			if (_action.strafe == true)
-			{
-				//Log(LOG_INFO) << ". WALKING strafe, unitDir = " << _unit->getUnitDirection();
-				//Log(LOG_INFO) << ". WALKING strafe, faceDir = " << _unit->getFaceDirection();
-				const int dirStrafe (_unit->getUnitDirection()); // direction of travel
-				_unit->setUnitDirection(
-									_unit->getFaceDirection(),
-									false);
-
-//				_unit->flagCache(); // might play around with Strafe anim's ......
-				_parent->getMap()->cacheUnit(_unit);
-				_unit->setUnitDirection(dirStrafe, false);
-			}
-			else
-			{
-				//Log(LOG_INFO) << ". WALKING no strafe, cacheUnit()";
-				_unit->flagCache(); // might play around with non-Strafe anim's ......
-				_parent->getMap()->cacheUnit(_unit);
-			}
-		}
-	}
-
-
-/* _oO **** STATUS STANDING **** Oo_ */// #1 & #4
-
-	if (_unit->getUnitStatus() == STATUS_STANDING
-		|| _unit->getUnitStatus() == STATUS_PANICKING)
-	{
-		//Log(LOG_INFO) << "STATUS_STANDING or PANICKING : " << _unit->getId();
-		if (doStatusStand() == false)
-		{
-			//Log(LOG_INFO) << ". . doStatusStand() FALSE return";
-			return;
-		}
-
-		// Destination is not valid until *after* doStatusStand() runs.
-/*		if (_isVisible == true)
-		{
-			//Log(LOG_INFO) << ". onScreen";
-			const Position pos = _unit->getPosition();
-
-			if (_unit->getFaction() != FACTION_PLAYER
-				&& _walkCam->isOnScreen(pos) == false)
-			{
-				_walkCam->centerOnPosition(pos);
-				_walkCam->setViewLevel(pos.z);
-			}
-			else if (_walkCam->isOnScreen(pos) == true) // is Faction_Player
-			{
-				const int stopZ = _unit->getStopPosition().z;
-				if (pos.z == stopZ || (pos.z < stopZ && _walkCam->getViewLevel() < stopZ))
-				{
-					_walkCam->setViewLevel(pos.z);
-				}
-			}
-		} */
 	}
 
 
@@ -518,7 +521,7 @@ bool UnitWalkBState::doStatusStand() // private.
 		&& _parent->checkReservedTu(_unit, tuCost) == false)				// Only player's units will *bypass* abortPath() due to panicking ....
 	{																		// Tbh, other code should have rendered the playerPanicHandled() redundant.
 		//Log(LOG_INFO) << ". . checkReservedTu(_unit, tuCost) == false";	// That is to say this should kick in *only* when player has actively
-		_unit->flagCache();												// clicked to move but tries to go further than TUs allow; because
+		_unit->flagCache();													// clicked to move but tries to go further than TUs allow; because
 		_parent->getMap()->cacheUnit(_unit);								// either the AI or the panic-code should not try to
 		_pf->abortPath();													// move a unit farther than its [reserved] TUs would allow
 		return false;
@@ -696,14 +699,14 @@ bool UnitWalkBState::doStatusWalk() // private.
 
 		Tile* tile;
 		const Tile* tileBelow;
-		const int armorSize (_unit->getArmor()->getSize() - 1);
+		const int unitSize (_unit->getArmor()->getSize() - 1);
 		for (int
-				x = armorSize;
+				x = unitSize;
 				x != -1;
 				--x)
 		{
 			for (int
-					y = armorSize;
+					y = unitSize;
 					y != -1;
 					--y)
 			{
@@ -716,12 +719,12 @@ bool UnitWalkBState::doStatusWalk() // private.
 
 		bool doFallCheck (true);
 		for (int
-				x = armorSize;
+				x = unitSize;
 				x != -1;
 				--x)
 		{
 			for (int
-					y = armorSize;
+					y = unitSize;
 					y != -1;
 					--y)
 			{
@@ -746,12 +749,12 @@ bool UnitWalkBState::doStatusWalk() // private.
 		{
 			//Log(LOG_INFO) << ". falling";
 			for (int
-					x = armorSize;
+					x = unitSize;
 					x != -1;
 					--x)
 			{
 				for (int
-						y = armorSize;
+						y = unitSize;
 						y != -1;
 						--y)
 				{
@@ -982,114 +985,121 @@ void UnitWalkBState::postPathProcedures() // private.
 	//Log(LOG_INFO) << "UnitWalkBState::postPathProcedures(), unit = " << _unit->getId();
 	_action.TU = 0;
 
-	if (_unit->getFaction() != FACTION_PLAYER)
+	switch (_unit->getFaction())
 	{
-		int dir;
-
-		if (_action.finalAction == true) // set by AlienBAI Ambush/Escape.
-			_unit->dontReselect();
-
-		if (_unit->getChargeTarget() != nullptr)
+		case FACTION_HOSTILE:
+		case FACTION_NEUTRAL:
 		{
-			//Log(LOG_INFO) << ". . charging = TRUE";
-			const Position posTarget (_unit->getChargeTarget()->getPosition());
-			dir = TileEngine::getDirectionTo(_unit->getPosition(), posTarget);
-			// kL_notes (pre-above):
-			// put an appropriate facing direction here
-			// don't stare at a wall. Get if aggro, face closest xCom op <- might be done somewhere already.
-			// Cheat: face closest xCom op based on a percentage (perhaps alien 'value' or rank)
-			// cf. void AggroBAIState::setAggroTarget(BattleUnit* unit)
-			// and bool TileEngine::calcFov(BattleUnit* unit)
+			if (_action.finalAction == true) // set by AlienBAI Ambush/Escape.
+				_unit->dontReselect();
 
-			if (_te->validMeleeRange(
-								_unit, dir,
-								_unit->getChargeTarget()) == true)
+			int dir;
+
+			if (_unit->getChargeTarget() != nullptr)
 			{
-				_unit->setChargeTarget();
+				//Log(LOG_INFO) << ". . charging = TRUE";
+				const Position posTarget (_unit->getChargeTarget()->getPosition());
+				dir = TileEngine::getDirectionTo(_unit->getPosition(), posTarget);
+				// kL_notes (pre-above):
+				// put an appropriate facing direction here
+				// don't stare at a wall. Get if aggro, face closest xCom op <- might be done somewhere already.
+				// Cheat: face closest xCom op based on a percentage (perhaps alien 'value' or rank)
+				// cf. void AggroBAIState::setAggroTarget(BattleUnit* unit)
+				// and bool TileEngine::calcFov(BattleUnit* unit)
 
-				BattleAction action;
-				action.actor = _unit;
-				action.posTarget = posTarget;
-				action.targeting = true;
-				action.type = BA_MELEE;
-				action.weapon = _unit->getMeleeWeapon(); // will get Melee OR Fist
-
-//				if (action.weapon == nullptr)
-//				{
-/*				const std::string meleeWeapon = _unit->getMeleeWeapon();
-				bool instaWeapon = false;
-
-				if (meleeWeapon == "STR_FIST")
-					action.weapon = _parent->getFist();
-				else if (meleeWeapon.empty() == false)
+				if (_te->validMeleeRange(
+									_unit, dir,
+									_unit->getChargeTarget()) == true)
 				{
-					bool found = false;
+					_unit->setChargeTarget();
 
-					for (std::vector<BattleItem*>::const_iterator
-							i = _unit->getInventory()->begin();
-							i != _unit->getInventory()->end();
-							++i)
+					BattleAction action;
+					action.actor = _unit;
+					action.posTarget = posTarget;
+					action.targeting = true;
+					action.type = BA_MELEE;
+					action.weapon = _unit->getMeleeWeapon(); // will get Melee OR Fist
+
+//					if (action.weapon == nullptr)
+//					{
+/*					const std::string meleeWeapon = _unit->getMeleeWeapon();
+					bool instaWeapon = false;
+
+					if (meleeWeapon == "STR_FIST")
+						action.weapon = _parent->getFist();
+					else if (meleeWeapon.empty() == false)
 					{
-						if ((*i)->getRules()->getType() == meleeWeapon)
+						bool found = false;
+
+						for (std::vector<BattleItem*>::const_iterator
+								i = _unit->getInventory()->begin();
+								i != _unit->getInventory()->end();
+								++i)
 						{
-							// note this ought be conformed w/ bgen.addAlien equipped items to
-							// ensure radical (or standard) BT_MELEE weapons get equipped in hand;
-							// but for now just grab the meleeItem wherever it was equipped ...
-							found = true;
-							action.weapon = *i;
-							break;
+							if ((*i)->getRules()->getType() == meleeWeapon)
+							{
+								// note this ought be conformed w/ bgen.addAlien equipped items to
+								// ensure radical (or standard) BT_MELEE weapons get equipped in hand;
+								// but for now just grab the meleeItem wherever it was equipped ...
+								found = true;
+								action.weapon = *i;
+								break;
+							}
+						}
+
+						if (found == false)
+						{
+							instaWeapon = true;
+							action.weapon = new BattleItem(
+														_parent->getRuleset()->getItemRule(meleeWeapon),
+														_battleSave->getCanonicalBattleId());
+							action.weapon->setOwner(_unit);
 						}
 					}
-
-					if (found == false)
+					else if (action.weapon != nullptr
+						&& action.weapon->getRules()->getBattleType() != BT_MELEE
+						&& action.weapon->getRules()->getBattleType() != BT_FIREARM) // probly shouldn't be here <-
 					{
-						instaWeapon = true;
-						action.weapon = new BattleItem(
-													_parent->getRuleset()->getItemRule(meleeWeapon),
-													_battleSave->getCanonicalBattleId());
-						action.weapon->setOwner(_unit);
+						action.weapon = nullptr;
+					} */
+
+					if (action.weapon != nullptr) // also checked in getActionTu() & ProjectileFlyBState::init()
+					{
+						action.TU = _unit->getActionTu(action.type, action.weapon);
+						_parent->statePushBack(new ProjectileFlyBState(_parent, action));
+
+//						if (instaWeapon == true)
+//							_battleSave->toDeleteItem(action.weapon);
 					}
 				}
-				else if (action.weapon != nullptr
-					&& action.weapon->getRules()->getBattleType() != BT_MELEE
-					&& action.weapon->getRules()->getBattleType() != BT_FIREARM) // probly shouldn't be here <-
-				{
-					action.weapon = nullptr;
-				} */
+			}
+			else if (_unit->isHiding() == true) // set by AI_ESCAPE Mode.
+			{
+				_unit->setHiding(false);
+				_unit->dontReselect();
+				dir = RNG::generate(0,7);
+//				dir = (_unit->getUnitDirection() + 4) % 8u;
+			}
+			else if ((dir = _action.finalFacing) == -1) // set by AlienBAIState::setupAmbush() & findFirePosition()
+				dir = getFinalDirection();
 
-				if (action.weapon != nullptr) // also checked in getActionTu() & ProjectileFlyBState::init()
+			if (dir != -1)
+			{
+				_unit->setDirectionTo(dir);
+				while (_unit->getUnitStatus() == STATUS_TURNING)
 				{
-					action.TU = _unit->getActionTu(action.type, action.weapon);
-					_parent->statePushBack(new ProjectileFlyBState(_parent, action));
-
-//					if (instaWeapon == true)
-//						_battleSave->toDeleteItem(action.weapon);
+					_unit->turn();
+					_te->calcFov(_unit);
+					// might need newVis/newUnitSpotted -> abort
 				}
 			}
+			break;
 		}
-		else if (_unit->isHiding() == true) // set by AI_ESCAPE Mode.
-		{
-			_unit->setHiding(false);
-			_unit->dontReselect();
-			dir = RNG::generate(0,7);
-//			dir = (_unit->getUnitDirection() + 4) % 8u;
-		}
-		else if ((dir = _action.finalFacing) == -1) // set by AlienBAIState::setupAmbush() & findFirePosition()
-			dir = getFinalDirection();
 
-		if (dir != -1)
-		{
-			_unit->setDirectionTo(dir);
-			while (_unit->getUnitStatus() == STATUS_TURNING)
-			{
-				_unit->turn();
-				_te->calcFov(_unit);
-				// might need newVis/newUnitSpotted -> abort
-			}
-		}
+		case FACTION_PLAYER:
+			if (_parent->playerPanicHandled() == false) // is Faction_Player
+				_unit->setTimeUnits(0);
 	}
-	else if (_parent->playerPanicHandled() == false) // is Faction_Player
-		_unit->setTimeUnits(0);
 
 
 	_te->calculateUnitLighting();
@@ -1191,9 +1201,9 @@ void UnitWalkBState::setWalkSpeed(bool gravLift) const // private.
 				interval = _parent->getBattlescapeState()->STATE_INTERVAL_XCOM;
 			break;
 
-		default:
 		case FACTION_HOSTILE:
 		case FACTION_NEUTRAL:
+		default:
 			interval = _parent->getBattlescapeState()->STATE_INTERVAL_ALIEN;
 	}
 
@@ -1210,80 +1220,77 @@ void UnitWalkBState::setWalkSpeed(bool gravLift) const // private.
 void UnitWalkBState::playMoveSound() // private.
 {
 	const int walkPhase (_unit->getWalkPhase());
-	int soundId (-1);
+	int soundId (_unit->getMoveSound());
 
-	if (_unit->getMoveSound() != -1)
+	switch (soundId)
 	{
-		if (walkPhase == 0)
-		{
-			if (_unit->getUnitStatus() == STATUS_FLYING
+		case -1:
+			switch (_unit->getUnitStatus())
+			{
+				case STATUS_WALKING:
+					_playFly = true;
+					switch (walkPhase)
+					{
+						case 3:
+						case 7:
+						{
+							const Tile
+								* const tile (_unit->getTile()),
+								* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
+							const int stepSound (tile->getFootstepSound(tileBelow));
+							if (stepSound != 0)
+							{
+								switch (walkPhase)
+								{
+									case 3:
+										soundId = (stepSound << 1u) + ResourcePack::WALK_OFFSET + 1;
+										break;
+									case 7:
+										soundId = (stepSound << 1u) + ResourcePack::WALK_OFFSET;
+								}
+							}
+						}
+					}
+					break;
+
+				case STATUS_FLYING:
+					if (walkPhase == 0 || _playFly == true)
+					{
+						_playFly = false;
+						if (_falling == false)
+						{
+							if (_unit->isFloating() == false) // GravLift note: isFloating() might be redundant w/ (_falling=false). See above^
+								soundId = ResourcePack::GRAVLIFT_SOUND;
+							else
+							{
+								if (_unit->getUnitRules() != nullptr
+									&& _unit->getUnitRules()->isMechanical() == true)
+								{
+									soundId = ResourcePack::FLYING_SOUND;		// hoverSound flutter
+								}
+								else
+									soundId = ResourcePack::FLYING_SOUND_HQ;	// HQ hoverSound
+							}
+						}
+					}
+					else if (walkPhase == 7
+						&& groundCheck() == true
+						&& (_falling == true
+							|| (_unit->isFloating() == true && _pf->getMoveTypePf() == MT_WALK)))
+					{
+						soundId = ResourcePack::ITEM_DROP; // *thunk*
+					}
+			}
+			break;
+
+		default:
+			if (walkPhase == 0
+				&& _unit->getUnitStatus() == STATUS_FLYING
 				&& _unit->isFloating() == false
 				&& _falling == false)
 			{
-				soundId = ResourcePack::GRAVLIFT_SOUND; // GravLift note: isFloating() might be redundant w/ (_falling=false). See below_
+				soundId = ResourcePack::GRAVLIFT_SOUND; // GravLift note: isFloating() might be redundant w/ (_falling=false). See above^
 			}
-			else
-				soundId = _unit->getMoveSound();
-		}
-	}
-	else
-	{
-		switch (_unit->getUnitStatus())
-		{
-			case STATUS_WALKING:
-				_playFly = true;
-				switch (walkPhase)
-				{
-					case 3:
-					case 7:
-					{
-						const Tile
-							* const tile (_unit->getTile()),
-							* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
-						const int stepSound (tile->getFootstepSound(tileBelow));
-						if (stepSound != 0)
-						{
-							switch (walkPhase)
-							{
-								case 3:
-									soundId = (stepSound << 1u) + ResourcePack::WALK_OFFSET + 1;
-									break;
-								case 7:
-									soundId = (stepSound << 1u) + ResourcePack::WALK_OFFSET;
-							}
-						}
-					}
-				}
-				break;
-
-			case STATUS_FLYING:
-				if (walkPhase == 0 || _playFly == true)
-				{
-					_playFly = false;
-					if (_falling == false)
-					{
-						if (_unit->isFloating() == false) // GravLift note: isFloating() might be redundant w/ (_falling=false). See above^
-							soundId = ResourcePack::GRAVLIFT_SOUND;
-						else
-						{
-							if (_unit->getUnitRules() != nullptr
-								&& _unit->getUnitRules()->isMechanical() == true)
-							{
-								soundId = ResourcePack::FLYING_SOUND;		// hoverSound flutter
-							}
-							else
-								soundId = ResourcePack::FLYING_SOUND_HQ;	// HQ hoverSound
-						}
-					}
-				}
-				else if (walkPhase == 7
-					&& groundCheck() == true
-					&& (_falling == true
-						|| (_unit->isFloating() == true && _pf->getMoveTypePf() == MT_WALK)))
-				{
-					soundId = ResourcePack::ITEM_DROP; // *thunk*
-				}
-		}
 	}
 
 	if (soundId != -1)
@@ -1318,14 +1325,14 @@ bool UnitWalkBState::groundCheck() const // private.
 	const Tile* tileBelow;
 	Position pos;
 
-	const int armorSize (_unit->getArmor()->getSize() - 1);
+	const int unitSize (_unit->getArmor()->getSize() - 1);
 	for (int
-			x = armorSize;
+			x = unitSize;
 			x != -1;
 			--x)
 	{
 		for (int
-				y = armorSize;
+				y = unitSize;
 				y != -1;
 				--y)
 		{
@@ -1344,14 +1351,14 @@ bool UnitWalkBState::groundCheck() const // private.
 void UnitWalkBState::establishTilesLink() const // private.
 {
 	//Log(LOG_INFO) << "UnitWalkBState::establishTilesLink()";
-	const int armorSize (_unit->getArmor()->getSize() - 1);
+	const int unitSize (_unit->getArmor()->getSize() - 1);
 	for (int
-			x = armorSize;
+			x = unitSize;
 			x != -1;
 			--x)
 	{
 		for (int
-				y = armorSize;
+				y = unitSize;
 				y != -1;
 				--y)
 		{
@@ -1369,17 +1376,17 @@ void UnitWalkBState::clearTilesLink(bool origin) const // private.
 	//Log(LOG_INFO) << "UnitWalkBState::clearTilesLink()";
 	std::vector<Position> posCurrent;
 	Position
-		pos = _unit->getPosition(),
+		pos (_unit->getPosition()),
 		posTest;
 
-	const int armorSize (_unit->getArmor()->getSize() - 1);
+	const int unitSize (_unit->getArmor()->getSize() - 1);
 	for (int
-			x = armorSize;
+			x = unitSize;
 			x != -1;
 			--x)
 	{
 		for (int
-				y = armorSize;
+				y = unitSize;
 				y != -1;
 				--y)
 		{
@@ -1393,12 +1400,12 @@ void UnitWalkBState::clearTilesLink(bool origin) const // private.
 		pos = _unit->getStopPosition();
 
 	for (int
-			x = armorSize;
+			x = unitSize;
 			x != -1;
 			--x)
 	{
 		for (int
-				y = armorSize;
+				y = unitSize;
 				y != -1;
 				--y)
 		{

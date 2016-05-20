@@ -135,7 +135,7 @@ private:
 //	static const int SPEC_WEAPON_MAX = 3;
 
 	bool
-		_aboutToFall,
+		_aboutToCollapse,
 		_cacheInvalid,
 		_dashing,
 		_diedByFire,

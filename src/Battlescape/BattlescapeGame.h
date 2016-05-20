@@ -340,7 +340,7 @@ private:
 		/// Checks if a BattleUnit gets exposed after making a melee-attack.
 		void checkExposedByMelee(BattleUnit* const unit) const;
 
-		/// Checks reserved-TU.
+		/// Checks against reserved-TU.
 		bool checkReservedTu(
 				BattleUnit* const unit,
 				int tu) const;

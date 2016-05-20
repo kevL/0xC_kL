@@ -137,7 +137,7 @@ void Craft::load(
 
 	std::string type;
 
-	size_t j (0);
+	size_t j (0u);
 	for (YAML::const_iterator
 			i = node["weapons"].begin();
 			i != node["weapons"].end();

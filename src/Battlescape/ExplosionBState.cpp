@@ -388,24 +388,24 @@ void ExplosionBState::init()
  */
 void ExplosionBState::think()
 {
-/*	for (std::list<Explosion*>::const_iterator
-			i = _parent->getMap()->getExplosions()->begin();
-			i != _parent->getMap()->getExplosions()->end();
-			)
-	{
-		if ((*i)->animate() == false)
-		{
-			delete *i;
-			i = _parent->getMap()->getExplosions()->erase(i);
-		}
-		else ++i;
-	}
-
-	if (_parent->getMap()->getExplosions()->empty() == true)
-		--_extend; // not working as intended; needs to go to Explosion class so that explosions-vector doesn't 'empty' so fast.
-
-	if (_extend < 1)
-		explode(); */
+//	for (std::list<Explosion*>::const_iterator
+//			i = _parent->getMap()->getExplosions()->begin();
+//			i != _parent->getMap()->getExplosions()->end();
+//			)
+//	{
+//		if ((*i)->animate() == false)
+//		{
+//			delete *i;
+//			i = _parent->getMap()->getExplosions()->erase(i);
+//		}
+//		else ++i;
+//	}
+//
+//	if (_parent->getMap()->getExplosions()->empty() == true)
+//		--_extend; // not working as intended; needs to go to Explosion class so that explosions-vector doesn't 'empty' so fast.
+//
+//	if (_extend < 1)
+//		explode();
 
 	//Log(LOG_INFO) << ". think()";
 	if (_parent->getMap()->getBlastFlash() == false)

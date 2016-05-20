@@ -48,7 +48,7 @@ Tile::SerializationKey Tile::serializationKey
 	2, // _partId, four of these
 	1, // _fire
 	1, // _smoke
-	1, // _animOffset
+	1, // _aniOffset
 	1, // one 8-bit bool field
 	4 + (2 * 4) + (2 * 4) + 1 + 1 + 1 + 1 // total bytes to save one tile
 };
@@ -66,7 +66,7 @@ Tile::Tile(const Position& pos)
 		_explosive(0),
 		_explosiveType(DT_NONE),
 		_unit(nullptr),
-		_animOffset(0),
+		_aniOffset(0),
 		_visible(false),
 		_previewColor(0u),
 		_previewDir(-1),
@@ -127,7 +127,7 @@ void Tile::load(const YAML::Node& node)
 
 	_fire		= node["fire"]		.as<int>(_fire);
 	_smoke		= node["smoke"]		.as<int>(_smoke);
-	_animOffset	= node["animOffset"].as<int>(_animOffset);
+	_aniOffset	= node["aniOffset"]	.as<int>(_aniOffset);
 
 	if (node["discovered"])
 	{
@@ -168,7 +168,7 @@ void Tile::loadBinary(
 
 	_smoke		= unserializeInt(&buffer, serKey._smoke);
 	_fire		= unserializeInt(&buffer, serKey._fire);
-	_animOffset	= unserializeInt(&buffer, serKey._animOffset);
+	_aniOffset	= unserializeInt(&buffer, serKey._aniOffset);
 
 	const int boolFields (unserializeInt(
 									&buffer,
@@ -206,7 +206,7 @@ YAML::Node Tile::save() const
 
 	if (_smoke != 0)		node["smoke"]		= _smoke;
 	if (_fire != 0)			node["fire"]		= _fire;
-	if (_animOffset != 0)	node["animOffset"]	= _animOffset;
+	if (_aniOffset != 0)	node["aniOffset"]	= _aniOffset;
 
 	if (   _revealed[ST_WEST]		== true
 		|| _revealed[ST_NORTH]		== true
@@ -247,7 +247,7 @@ void Tile::saveBinary(Uint8** buffer) const
 
 	serializeInt(buffer, serializationKey._smoke,		_smoke);
 	serializeInt(buffer, serializationKey._fire,		_fire);
-	serializeInt(buffer, serializationKey._animOffset,	_animOffset);
+	serializeInt(buffer, serializationKey._aniOffset,	_aniOffset);
 
 	int boolFields ((_revealed[ST_WEST] ? 0x01 : 0x0) + (_revealed[ST_NORTH] ? 0x02 : 0x0) + (_revealed[ST_CONTENT] ? 0x04 : 0x0));
 
@@ -863,7 +863,7 @@ bool Tile::ignite(int power)
 			if (fuel != 0)
 			{
 				power = ((power + 4) / 5) + ((burn + 7) / 8) + (((fuel << 1u) + 6) / 7);
-				if (RNG::percent(power) == true)
+//				if (RNG::percent(power) == true) // unfortunately the state-machine causes an unpredictable quantity of calls to this ... via ExplosionBState::think().
 				{
 					addSmoke((burn + 15) / 16);
 
@@ -889,7 +889,7 @@ bool Tile::addFire(int turns)
 	if (turns != 0 && allowFire() == true)
 	{
 		if (_smoke == 0 && _fire == 0)
-			_animOffset = RNG::seedless(0,3);
+			_aniOffset = RNG::seedless(0,3);
 
 		_fire += turns;
 
@@ -913,7 +913,7 @@ int Tile::decreaseFire()
 	{
 		_fire = 0;
 		if (_smoke == 0)
-			_animOffset = 0;
+			_aniOffset = 0;
 	}
 	return _fire;
 }
@@ -936,7 +936,7 @@ void Tile::addSmoke(int turns)
 	if (turns != 0 && allowSmoke() == true)
 	{
 		if (_smoke == 0 && _fire == 0)
-			_animOffset = RNG::seedless(0,3);
+			_aniOffset = RNG::seedless(0,3);
 
 		if ((_smoke += turns) > 17)
 			_smoke = 17;
@@ -958,7 +958,7 @@ int Tile::decreaseSmoke()
 	{
 		_smoke = 0;
 		if (_fire == 0)
-			_animOffset = 0;
+			_aniOffset = 0;
 	}
 	return _smoke;
 }
@@ -1215,7 +1215,7 @@ void Tile::animateTile()
  */
 int Tile::getAnimationOffset() const
 {
-	return _animOffset;
+	return _aniOffset;
 }
 
 /**

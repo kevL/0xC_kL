@@ -696,8 +696,16 @@ void BattlescapeGame::centerOnUnit( // private.
  */
 void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 {
-	bool debug (Options::traceAI);
-	if (debug > 1) resetTraceTiles();
+	const int debug (Options::traceAI);
+	switch (debug)
+	{
+		case 2:
+			resetTraceTiles();
+			// no break;
+//		case 1:
+			//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() id-" << unit->getId();
+			//Log(LOG_INFO) << ". x= " << RNG::getSeed();
+	}
 
 	if (unit != _battleSave->getWalkUnit())
 		centerOnUnit(unit); // if you're going to reveal the map at least center the first aLien.
@@ -795,7 +803,9 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 	std::wstring wst (Language::fsToWstr(BattleAIState::debugAiMode(unit->getAIState()->getAIMode())));
 	_parentState->printDebug(wst + L"> " + Text::intWide(unit->getId()));
-	if (debug) Log(LOG_INFO)
+	if (debug)
+	{
+		Log(LOG_INFO)
 			<< "\n"
 			<< "type = "			<< BattleAction::debugBat(action.type) << "\n"
 			<< "actor = "			<< (action.actor ? std::to_string(action.actor->getId()) : "NONE") << "\n"
@@ -817,6 +827,8 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 			<< "AIcount = "			<< action.AIcount << "\n"
 			<< "takenXp = "			<< action.takenXp << "\n"
 			<< "waypoints = "		<< action.waypoints.size();
+		//Log(LOG_INFO) << ". x= " << RNG::getSeed();
+	}
 
 	switch (action.type)
 	{
@@ -899,6 +911,8 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 		case BA_THINK:
 			selectNextAiUnit(unit);
 	}
+
+	//if (debug) Log(LOG_INFO) << ". EXIT x= " << RNG::getSeed();
 }
 					// NOTE: See above^ for (action.type == BA_MELEE).
 /*					if (action.type == BA_MELEE)
@@ -2146,7 +2160,7 @@ void BattlescapeGame::showInfoBoxQueue() // private.
 }
 
 /**
- * Checks against reserved time units.
+ * Checks against reserved-TU.
  * @param unit	- pointer to a unit
  * @param tu	- TU to check against
  * @return, true if unit has enough time units - go!
@@ -2174,21 +2188,21 @@ bool BattlescapeGame::checkReservedTu(
 									// guess it could-maybe-but-unlikely be a CivilianBAIState here in checkReservedTu()).
 
 		// This could use some tweaking, for the poor aLiens:
-		const int extraReserve (RNG::generate(0,13));
+//		const int extraReserve (RNG::generate(0,13)); // unfortunately the state-machine causes an unpredictable quantity of calls to this ... via UnitWalkBState::think().
 		int tuReserve;
 
 		switch (batReserved) // aLiens reserve TUs as a percentage rather than just enough for a single action.
 		{
 			case BA_SNAPSHOT:
-				tuReserve = unit->getBattleStats()->tu / 3 + extraReserve;		// 33%
+				tuReserve = unit->getBattleStats()->tu / 3;// + extraReserve;			// 33%
 				break;
 
 			case BA_AUTOSHOT:
-				tuReserve = unit->getBattleStats()->tu * 2 / 5 + extraReserve;	// 40%
+				tuReserve = (unit->getBattleStats()->tu << 1u) / 5;// + extraReserve;	// 40%
 				break;
 
 			case BA_AIMEDSHOT:
-				tuReserve = unit->getBattleStats()->tu / 2 + extraReserve;		// 50%
+				tuReserve = (unit->getBattleStats()->tu >> 1u);// + extraReserve;		// 50%
 				break;
 
 			default:
