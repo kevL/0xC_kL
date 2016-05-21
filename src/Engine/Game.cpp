@@ -859,11 +859,11 @@ void Game::initAudio()
 	else
 	{
 		Mix_AllocateChannels(16);
-//		Mix_ReserveChannels(4);	// 4th channel (#3) is for ambient-sFx, not channel-grouped, not even by
-		Mix_GroupChannels(		// default channel-group #-1; #3-channel must be specified explicitly to be used.
-						0,		// low-channel
-						2,		// high-channel
-						0);		// channel-group
+		Mix_ReserveChannels(3); // reserve channels 0..2 for UI
+		Mix_GroupChannels(
+						0,	// low-channel
+						2,	// high-channel
+						0);	// channel-group for UI
 
 		setVolume(
 				Options::musicVolume,
@@ -897,8 +897,7 @@ void Game::setVolume(
 		if (sound != -1)
 		{
 			sound = static_cast<int>(volExp(sound) * static_cast<double>(SDL_MIX_MAXVOLUME));
-			Mix_Volume(-1, sound);		// sets volume on *all channels*
-//			Mix_Volume(3, sound / 2);	// channel 3: reserved for ambient sound-effect (not used in UFO).
+			Mix_Volume(-1, sound); // sets volume on *all channels*
 		}
 
 		if (ui != -1)

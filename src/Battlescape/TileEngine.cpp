@@ -2537,7 +2537,7 @@ void TileEngine::explode(
 				tilePair = tilesAffected.insert(tileStop);	// check if this tile was hit already
 				if (tilePair.second == true)				// true if a new tile was inserted.
 				{
-					Log(LOG_INFO) << ". > tile TRUE : tileStart " << tileStart->getPosition() << " tileStop " << tileStop->getPosition() << " _powerE = " << _powerE << " r = " << r;
+					//Log(LOG_INFO) << ". > tile TRUE : tileStart " << tileStart->getPosition() << " tileStop " << tileStop->getPosition() << " _powerE = " << _powerE << " r = " << r;
 					//Log(LOG_INFO) << ". > _powerE = " << _powerE;
 
 					if ((targetUnit = tileStop->getTileUnit()) != nullptr
