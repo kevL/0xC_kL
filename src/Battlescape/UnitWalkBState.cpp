@@ -52,7 +52,7 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a UnitWalkBState.
+ * Sets up the UnitWalkBState.
  * @param parent - pointer to the BattlescapeGame
  * @param action - the BattleAction struct (BattlescapeGame.h)
  */
@@ -80,7 +80,7 @@ UnitWalkBState::UnitWalkBState(
 }
 
 /**
- * Deletes the UnitWalkBState.
+ * Deletes this UnitWalkBState.
  */
 UnitWalkBState::~UnitWalkBState()
 {
@@ -88,7 +88,16 @@ UnitWalkBState::~UnitWalkBState()
 }
 
 /**
- * Initializes the state.
+ * Gets the name of this BattleState.
+ * @return, label of the substate
+ */
+std::string UnitWalkBState::getBattleStateLabel() const
+{
+	return "UnitWalkBState";
+}
+
+/**
+ * Initializes this BattleState.
  */
 void UnitWalkBState::init()
 {
@@ -131,7 +140,7 @@ void UnitWalkBState::init()
 }
 
 /**
- * Runs state functionality every cycle.
+ * Runs BattleState functionality every cycle.
  */
 void UnitWalkBState::think()
 {
@@ -961,7 +970,7 @@ void UnitWalkBState::doStatusTurn() // private.
 }
 
 /**
- * Resets the unit-cache, aborts the path and this State.
+ * Resets the unit-cache, aborts the path and this BattleState.
  * @param recache - true to re-cache the unit-sprite (default true)
  */
 void UnitWalkBState::abortState(bool recache) // private.

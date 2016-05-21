@@ -54,7 +54,7 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a ProjectileFlyBState.
+ * Sets up the ProjectileFlyBState.
  * @param parent	- pointer to the BattlescapeGame
  * @param action	- the current BattleAction (BattlescapeGame.h)
  * @param posOrigin	- origin in tile-space (default Position(0,0,-1))
@@ -84,10 +84,19 @@ ProjectileFlyBState::ProjectileFlyBState(
 }
 
 /**
- * Deletes the ProjectileFlyBState.
+ * Deletes this ProjectileFlyBState.
  */
 ProjectileFlyBState::~ProjectileFlyBState()
 {}
+
+/**
+ * Gets the name of this BattleState.
+ * @return, label of the substate
+ */
+std::string ProjectileFlyBState::getBattleStateLabel() const
+{
+	return "ProjectileFlyBState";
+}
 
 /**
  * Initializes the sequence:
@@ -96,6 +105,7 @@ ProjectileFlyBState::~ProjectileFlyBState()
  */
 void ProjectileFlyBState::init()
 {
+	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "ProjectileFlyBState::init()";
 	if (_initialized == true) return;
 
@@ -207,7 +217,7 @@ void ProjectileFlyBState::init()
 
 		case BA_THROW:
 		{
-			//Log(LOG_INFO) << ". . BA_THROW panic = " << (int)(_parent->playerPanicHandled() == false);
+			//Log(LOG_INFO) << ". . BA_THROW " << _action.posTarget << " panic= " << (int)(_parent->playerPanicHandled() == false);
 			const Tile* const tileTarget (_battleSave->getTile(_action.posTarget)); // always Valid.
 			if (TileEngine::validThrowRange(
 										&_action,
@@ -481,10 +491,10 @@ bool ProjectileFlyBState::createProjectile() // private.
 
 	if (_action.type == BA_THROW)
 	{
-		//Log(LOG_INFO) << ". call Projectile::calculateThrow()";
+		//Log(LOG_INFO) << ". call Projectile::calculateThrow() to " << _targetVoxel;
 		//Log(LOG_INFO) << "";
 		_prjImpact = prj->calculateThrow(_unit->getAccuracy(_action)); // this should probly be TE:validateThrow() - cf. else(error) below_
-		//Log(LOG_INFO) << ". BA_THROW, part = " << MapData::debugVoxelType(_prjImpact);
+		//Log(LOG_INFO) << ". BA_THROW dest " << _targetVoxel << " part= " << MapData::debugVoxelType(_prjImpact);
 
 		switch (_prjImpact)
 		{

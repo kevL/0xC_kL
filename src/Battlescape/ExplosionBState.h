@@ -68,7 +68,7 @@ private:
 
 
 	public:
-		/// Creates a new ExplosionBState class.
+		/// Creates an ExplosionBState object.
 		ExplosionBState(
 				BattlescapeGame* const parent,
 				const Position centerVoxel,
@@ -82,9 +82,12 @@ private:
 		/// Cleans up the ExplosionBState.
 		~ExplosionBState();
 
-		/// Initializes the state.
+		/// Gets the name of the BattleState.
+		std::string getBattleStateLabel() const override;
+
+		/// Initializes the BattleState.
 		void init() override;
-		/// Runs state functionality every cycle.
+		/// Runs BattleState functionality every cycle.
 		void think() override;
 		/// Handles a cancel request.
 //		void cancel();

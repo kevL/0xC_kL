@@ -73,6 +73,9 @@ protected:
 		/// Cleans up the State.
 		virtual ~State();
 
+		/// Gets the name of the State.
+//		virtual std::string getStateLabel() const;
+
 		/// Sets the Interface rule.
 		void setInterface(
 				const std::string& category,

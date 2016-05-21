@@ -57,9 +57,12 @@ private:
 		/// Cleans up the UnitWalkBState.
 		~UnitFallBState();
 
-		/// Initializes the state.
+		/// Gets the name of the BattleState.
+		std::string getBattleStateLabel() const override;
+
+		/// Initializes the BattleState.
 		void init() override;
-		/// Runs state functionality every cycle. Returns when finished.
+		/// Runs BattleState functionality every cycle. Returns when finished.
 		void think() override;
 };
 

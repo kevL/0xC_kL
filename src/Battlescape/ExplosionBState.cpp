@@ -87,7 +87,7 @@ ExplosionBState::ExplosionBState(
 }
 
 /**
- * Deletes the ExplosionBState.
+ * Deletes this ExplosionBState.
  */
 ExplosionBState::~ExplosionBState()
 {
@@ -95,7 +95,16 @@ ExplosionBState::~ExplosionBState()
 }
 
 /**
- * Initializes the explosion.
+ * Gets the name of this BattleState.
+ * @return, label of the substate
+ */
+std::string ExplosionBState::getBattleStateLabel() const
+{
+	return "ExplosionBState";
+}
+
+/**
+ * Initializes this ExplosionBState.
  * @note The animation and sound starts here. If the animation is finished the
  * actual effect takes place.
  */
@@ -381,8 +390,8 @@ void ExplosionBState::init()
 }
 
 /**
- * Animates explosion sprites.
- * @note An ExplosionBState has multiple Explosion-objects. If an animation is
+ * Animates this ExplosionBState's battlefield sprites.
+ * @note The ExplosionBState has multiple Explosion-objects. If an animation is
  * finished remove it from the list. If the list is empty this state is finished
  * and the actual calculations take place in explode() and TileEngine.
 // * kL_rewrite: Allow a few extra cycles for explosion animations to dissipate.
@@ -443,7 +452,7 @@ void ExplosionBState::think()
 //void ExplosionBState::cancel(){}
 
 /**
- * Calculates the effects of an attack.
+ * Calculates the effects of an attack by this ExplosionBState.
  * @note After the animation is done the real explosion/hit takes place here!
  * @note This function passes to TileEngine::explode() or TileEngine::hit()
  * depending on if it came from a bullet/psi/melee/spit or an actual explosion;

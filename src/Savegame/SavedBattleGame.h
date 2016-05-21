@@ -123,6 +123,8 @@ private:
 
 	std::list<BattleUnit*> _fallingUnits;
 
+//	std::set<Tile*> _detonationTiles;
+
 	std::vector<BattleItem*>
 		_toDelete,
 		_items,
@@ -494,6 +496,9 @@ private:
 
 		/// Sets the turn for the AI to start the cheating aLiens.
 		void setCheatTurn(int turn);
+
+		/// Access to the set of detonation-tiles.
+//		std::set<Tile*>& detonationTiles();
 
 		/// Checks if tactical has yet to start.
 //		bool preBattle() const;

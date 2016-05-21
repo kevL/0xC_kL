@@ -178,11 +178,11 @@ void BattlescapeGame::init()
 	{
 		_init = false;
 																	// done in one of
-//		_battleSave->getTileEngine()->calculateSunShading();		// (a) BattlescapeGenerator::run()
-//		_battleSave->getTileEngine()->calculateTerrainLighting();	// (b) BattlescapeGenerator::nextStage()
-//		_battleSave->getTileEngine()->calculateUnitLighting();		// (c) SavedBattleGame::loadMapResources()
+//		getTileEngine()->calculateSunShading();		// (a) BattlescapeGenerator::run()
+//		getTileEngine()->calculateTerrainLighting();	// (b) BattlescapeGenerator::nextStage()
+//		getTileEngine()->calculateUnitLighting();		// (c) SavedBattleGame::loadMapResources()
 
-		_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGenerator::run() & nextStage(). done & done.
+		getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGenerator::run() & nextStage(). done & done.
 	}
 }
 
@@ -213,7 +213,7 @@ void BattlescapeGame::think()
 					if ((_playerPanicHandled = handlePanickingPlayer()) == true)
 					{
 						//Log(LOG_INFO) << "bg:think() . panic Handled TRUE";
-						_battleSave->getTileEngine()->calcFovAll();
+						getTileEngine()->calcFovAll();
 						_battleSave->getBattleState()->updateSoldierInfo(false);
 					}
 				}
@@ -339,12 +339,38 @@ void BattlescapeGame::statePushBack(BattleState* const battleState)
 void BattlescapeGame::popState()
 {
 	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "BattlescapeGame::popState() qtyStates = " << (int)_battleStates.size();
+	//Log(LOG_INFO) << "BattlescapeGame::popState() qtyStates= " << _battleStates.size();
+
+	//for (std::list<BattleState*>::const_iterator
+	//		i = _battleStates.begin();
+	//		i != _battleStates.end();
+	//		++i)
+	//{
+	//	Log(LOG_INFO) << ". . " << (*i)->getBattleStateLabel();
+	//}
+
 //	if (Options::traceAI)
 //		Log(LOG_INFO) << "BattlescapeGame::popState() "
 //					  << "id-" << (_tacAction.actor ? std::to_string(_tacAction.actor->getId()) : " Actor NONE")
 //					  << " AIActionCounter = " << _AIActionCounter
 //					  << " tuSelected = " << (_battleSave->getSelectedUnit() ? std::to_string(_battleSave->getSelectedUnit()->getTimeUnits()) : "selUnit NONE");
+
+//	std::set<Tile*>& tilesToDetonate (_battleSave->detonationTiles()); // detonate tiles affected with HE
+//	Log(LOG_INFO) << ". explode Tiles qty= " << tilesToDetonate.size();
+//	for (std::set<Tile*>::const_iterator
+//			i = tilesToDetonate.begin();
+//			i != tilesToDetonate.end();
+//			++i)
+//	{
+//		getTileEngine()->detonateTile(*i);
+//
+//		getTileEngine()->applyGravity(*i);
+//		Tile* const tileAbove (_battleSave->getTile((*i)->getPosition() + Position(0,0,1)));
+//		if (tileAbove != nullptr)
+//			getTileEngine()->applyGravity(tileAbove);
+//	}
+//	tilesToDetonate.clear();
+//	Log(LOG_INFO) << ". explode Tiles DONE";
 
 	if (getMap()->getExplosions()->empty() == true) // Explosions need to run fast after popping ProjectileFlyBState etc etc.
 	{
@@ -595,7 +621,7 @@ void BattlescapeGame::popState()
 
 	if (_battleStates.empty() == true)
 	{
-		_battleSave->getTileEngine()->getRfShooterPositions()->clear();
+		getTileEngine()->getRfShooterPositions()->clear();
 
 		if (_battleSave->getRfTriggerPosition().z != -1) // refocus the Camera back onto RF trigger-unit after a brief delay
 		{
@@ -722,7 +748,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 	unit->setUnitVisible(false);
 
-	_battleSave->getTileEngine()->calcFovPos(unit->getPosition());
+	getTileEngine()->calcFovPos(unit->getPosition());
 
 	if (unit->getAIState() == nullptr)
 	{
@@ -884,7 +910,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 			{
 				case BA_PSIPANIC:
 				case BA_PSICONTROL:
-					if (_battleSave->getTileEngine()->psiAttack(&action) == true)
+					if (getTileEngine()->psiAttack(&action) == true)
 					{
 						const BattleUnit* const psiVictim (_battleSave->getTile(action.posTarget)->getTileUnit());
 						Language* const lang (_parentState->getGame()->getLanguage());
@@ -1435,11 +1461,11 @@ void BattlescapeGame::endTurn() // private.
 		}
 	}
 
-	if (_battleSave->getTileEngine()->closeSlideDoors() == true) // close doors between grenade & terrain explosions
+	if (getTileEngine()->closeSlideDoors() == true) // close doors between grenade & terrain explosions
 		getResourcePack()->getSound("BATTLE.CAT", ResourcePack::SLIDING_DOOR_CLOSE)->play();
 //	}
 
-	if ((tile = _battleSave->getTileEngine()->checkForTerrainExplosions()) != nullptr)
+	if ((tile = getTileEngine()->checkForTerrainExplosions()) != nullptr)
 	{
 		pos = Position::toVoxelSpaceCentered(tile->getPosition(), 10);
 		// kL_note: This seems to be screwing up.
@@ -1453,7 +1479,7 @@ void BattlescapeGame::endTurn() // private.
 										nullptr,
 										tile));
 
-//		tile = _battleSave->getTileEngine()->checkForTerrainExplosions();
+//		tile = getTileEngine()->checkForTerrainExplosions();
 
 		statePushBack();	// this will repeatedly call another endTurn() so there's
 		return;				// no need to continue this one till all explosions are done.
@@ -1531,7 +1557,7 @@ void BattlescapeGame::endTurn() // private.
 	// ... done it in NextTurnState.
 
 		// check AGAIN for terrain explosions
-/*		tile = _battleSave->getTileEngine()->checkForTerrainExplosions();
+/*		tile = getTileEngine()->checkForTerrainExplosions();
 		if (tile != nullptr)
 		{
 			pos = Position(
@@ -2188,7 +2214,7 @@ bool BattlescapeGame::checkReservedTu(
 									// guess it could-maybe-but-unlikely be a CivilianBAIState here in checkReservedTu()).
 
 		// This could use some tweaking, for the poor aLiens:
-//		const int extraReserve (RNG::generate(0,13)); // unfortunately the state-machine causes an unpredictable quantity of calls to this ... via UnitWalkBState::think().
+//		const int extraReserve (RNG::generate(0,13)); // unfortunately the state-machine may cause an unpredictable quantity of calls to this ... via UnitWalkBState::think().
 		int tuReserve;
 
 		switch (batReserved) // aLiens reserve TUs as a percentage rather than just enough for a single action.
@@ -2208,7 +2234,6 @@ bool BattlescapeGame::checkReservedTu(
 			default:
 				tuReserve = 0;
 		}
-
 		return (tu + tuReserve <= unit->getTimeUnits());
 	}
 
@@ -2533,15 +2558,15 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 										statePushBack(new UnitTurnBState(this, action, false));
 
 										const Position
-											originVoxel (_battleSave->getTileEngine()->getOriginVoxel(action)),
+											originVoxel (getTileEngine()->getOriginVoxel(action)),
 											targetVoxel (Position::toVoxelSpaceCentered(
 																					action.posTarget, // LoFT of floor is typically 2 voxels thick.
 																					2 - _battleSave->getTile(action.posTarget)->getTerrainLevel()));
 
-										if (_battleSave->getTileEngine()->validateThrow(
-																					action,
-																					originVoxel,
-																					targetVoxel) == true)
+										if (getTileEngine()->validateThrow(
+																		action,
+																		originVoxel,
+																		targetVoxel) == true)
 										{
 											action.type = BA_THROW;
 											action.posCamera = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();

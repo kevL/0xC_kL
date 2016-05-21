@@ -2331,6 +2331,7 @@ void TileEngine::explode(
 	BattleUnit* targetUnit (nullptr);
 
 	std::set<Tile*> tilesAffected;
+//	std::set<Tile*>& tilesToDetonate (_battleSave->detonationTiles());
 	std::pair<std::set<Tile*>::const_iterator, bool> tilePair;
 
 	int z_Dec;
@@ -2525,6 +2526,7 @@ void TileEngine::explode(
 					//Log(LOG_INFO) << ". setExplosive() _powerE = " << _powerE;
 					tileStop->setExplosive(_powerE, DT_HE);	// try powerT to prevent smoke/fire appearing behind intact walls etc.
 															// although that might gimp true damage vs parts calculations .... NOPE.
+//					tilesToDetonate.insert(tileStop);
 				}
 
 				_powerE = _powerT; // note: These two are becoming increasingly redundant !!!
@@ -2535,13 +2537,13 @@ void TileEngine::explode(
 				tilePair = tilesAffected.insert(tileStop);	// check if this tile was hit already
 				if (tilePair.second == true)				// true if a new tile was inserted.
 				{
-					//Log(LOG_INFO) << ". > tile TRUE : tileStart " << tileStart->getPosition() << " tileStop " << tileStop->getPosition() << " _powerE = " << _powerE << " r = " << r;
+					Log(LOG_INFO) << ". > tile TRUE : tileStart " << tileStart->getPosition() << " tileStop " << tileStop->getPosition() << " _powerE = " << _powerE << " r = " << r;
 					//Log(LOG_INFO) << ". > _powerE = " << _powerE;
 
 					if ((targetUnit = tileStop->getTileUnit()) != nullptr
 						&& targetUnit->getTakenExpl() == true) // hit large units only once ... stop experience exploitation near the end of this loop, also. Lulz
 					{
-						//Log(LOG_INFO) << ". . targetUnit ID " << targetUnit->getId() << ", set Unit = nullptr";
+						//Log(LOG_INFO) << ". . targetUnit id-" << targetUnit->getId() << " set Unit NULL";
 						targetUnit = nullptr;
 					}
 
@@ -2987,6 +2989,16 @@ void TileEngine::explode(
 		//Log(LOG_INFO) << ". explode Tiles DONE";
 	}
 	_trueTile = nullptr;
+
+//	if (_trueTile != nullptr)
+//	{
+//		if (dType == DT_HE)	// special case for when a diagonal bigwall is directly targetted.
+//		{					// The explosion is moved out a tile so give a full-power hit to the true target-tile.
+//			_trueTile->setExplosive(power, DT_HE);
+//			tilesToDetonate.insert(_trueTile);
+//		}
+//		_trueTile = nullptr;
+//	}
 
 
 	if (defusePulse == true)
@@ -4743,8 +4755,8 @@ void TileEngine::detonateTile(Tile* const tile) const
 	{
 		Tile* const tileAbove (_battleSave->getTile(tile->getPosition() + Position(0,0,1)));
 		if (tileAbove != nullptr
-			&& tileAbove->hasNoFloor(tile) == true) // TODO: use verticalBlockage() instead
-//			&& RNG::percent(tile->getSmoke() << 3u) == true) // unfortunately the state-machine causes an unpredictable quantity of calls to this ... via ExplosionBState::think().
+			&& tileAbove->hasNoFloor(tile) == true // TODO: use verticalBlockage() instead
+			&& RNG::percent(tile->getSmoke() << 3u) == true) // unfortunately the state-machine may cause an unpredictable quantity of calls to this ... via ExplosionBState::think().
 		{
 			tileAbove->addSmoke(tile->getSmoke() / 3);
 		}

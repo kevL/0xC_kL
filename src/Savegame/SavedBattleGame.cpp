@@ -3050,6 +3050,17 @@ void SavedBattleGame::setCheatTurn(int turn)
 }
 
 /**
+ * Access to the set of detonation-tiles.
+ * @note The detonation-tiles are stored here instead of in BattlescapeGame
+ * because during pre-battle powersource explosions the latter is invalid.
+ * @return, reference to the set of detonation-tiles
+ *
+std::set<Tile*>& SavedBattleGame::detonationTiles()
+{
+	return _detonationTiles;
+} */
+
+/**
  * Checks if tactical has yet to start.
  * @return, true if pre-battle
  *

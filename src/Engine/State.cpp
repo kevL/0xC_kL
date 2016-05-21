@@ -84,6 +84,15 @@ State::~State()
 }
 
 /**
+ * Gets the name of this State.
+ * @return, label of the substate if any else "parent State"
+ *
+std::string State::getStateLabel() const // virtual.
+{
+	return "parent State";
+} */
+
+/**
  * Sets the User Interface data from a ruleset.
  * @note Also sets the Palette for the State.
  * @param category		- reference the category of the interface from an Interfaces ruleset
@@ -250,7 +259,7 @@ void State::toggleScreen()
  * There's a stack of states so they can be created once but then repeatedly
  * switched in and out of focus.
  */
-void State::init() // virtual
+void State::init() // virtual.
 {
 	_game->getScreen()->setPalette(_palette);
 
@@ -280,7 +289,7 @@ void State::init() // virtual
  * Runs any code this State needs to keep updating every game-cycle like Timers
  * and other real-time elements.
  */
-void State::think() // virtual
+void State::think() // virtual.
 {
 	for (std::vector<Surface*>::const_iterator
 			i = _surfaces.begin();
@@ -295,7 +304,7 @@ void State::think() // virtual
  * Blits all the visible Surface child-elements onto the display-screen by order
  * of addition.
  */
-void State::blit() // virtual
+void State::blit() // virtual.
 {
 	for (std::vector<Surface*>::const_iterator
 			i = _surfaces.begin();
@@ -311,7 +320,7 @@ void State::blit() // virtual
  * InteractiveSurface child-elements.
  * @param action - pointer to an Action
  */
-void State::handle(Action* action) // virtual
+void State::handle(Action* action) // virtual.
 {
 	if (_modal == nullptr)
 	{

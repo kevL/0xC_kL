@@ -58,7 +58,16 @@ UnitFallBState::~UnitFallBState()
 {}
 
 /**
- * Initializes the state.
+ * Gets the name of this BattleState.
+ * @return, label of the substate
+ */
+std::string UnitFallBState::getBattleStateLabel() const
+{
+	return "UnitFallBState";
+}
+
+/**
+ * Initializes this BattleState.
  */
 void UnitFallBState::init()
 {
@@ -73,7 +82,7 @@ void UnitFallBState::init()
 }
 
 /**
- * Runs state functionality every cycle.
+ * Runs BattleState functionality every cycle.
  * @note Progresses the fall and updates the battlescape etc.
  */
 void UnitFallBState::think()

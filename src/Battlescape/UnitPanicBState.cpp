@@ -29,7 +29,7 @@ namespace OpenXcom
 {
 
 /**
- * Sets up an UnitPanicBState.
+ * Sets up the UnitPanicBState.
  * @param parent	- pointer to the BattlescapeGame
  * @param unit		- pointer to a panicking BattleUnit
  */
@@ -42,10 +42,19 @@ UnitPanicBState::UnitPanicBState(
 {}
 
 /**
- * Deletes the UnitPanicBState.
+ * Deletes this UnitPanicBState.
  */
 UnitPanicBState::~UnitPanicBState()
 {}
+
+/**
+ * Gets the name of this BattleState.
+ * @return, label of the substate
+ */
+std::string UnitPanicBState::getBattleStateLabel() const
+{
+	return "UnitPanicBState";
+}
 
 /**
  *
@@ -53,7 +62,7 @@ UnitPanicBState::~UnitPanicBState()
 //void UnitPanicBState::init(){}
 
 /**
- * Runs state functionality every cycle.
+ * Runs BattleState functionality every cycle.
  * @note Ends panicking for '_unit'.
  */
 void UnitPanicBState::think()

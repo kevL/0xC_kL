@@ -37,7 +37,7 @@ namespace OpenXcom
 {
 
 /**
- * Sets up an UnitTurnBState.
+ * Sets up the UnitTurnBState.
  * @param parent	- pointer to BattlescapeGame
  * @param action	- the current BattleAction
  * @param chargeTu	- true if there is TU cost, false for reaction fire and panic (default true)
@@ -55,13 +55,22 @@ UnitTurnBState::UnitTurnBState(
 {}
 
 /**
- * Deletes the UnitTurnBState.
+ * Deletes this UnitTurnBState.
  */
 UnitTurnBState::~UnitTurnBState()
 {}
 
 /**
- * Initializes the state.
+ * Gets the name of this BattleState.
+ * @return, label of the substate
+ */
+std::string UnitTurnBState::getBattleStateLabel() const
+{
+	return "UnitTurnBState";
+}
+
+/**
+ * Initializes this BattleState.
  */
 void UnitTurnBState::init()
 {
@@ -158,7 +167,7 @@ void UnitTurnBState::init()
 }
 
 /**
- * Runs state functionality every cycle.
+ * Runs BattleState functionality every cycle.
  */
 void UnitTurnBState::think()
 {

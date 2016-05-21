@@ -134,12 +134,21 @@ UnitDieBState::~UnitDieBState()
 {}
 
 /**
+ * Gets the name of this BattleState.
+ * @return, label of the substate
+ */
+std::string UnitDieBState::getBattleStateLabel() const
+{
+	return "UnitDieBState";
+}
+
+/**
  * Initializes this state.
  */
 //void UnitDieBState::init(){}
 
 /**
- * Runs state functionality every cycle.
+ * Runs BattleState functionality every cycle.
  * @note Progresses the death sequence, displays any messages, checks if the
  * mission is over, etc. This routine gets an award for the klunkiest ever
  * written. TODO: Fix that.

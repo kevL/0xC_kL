@@ -66,9 +66,10 @@ uint64_t next_x()
 	x ^= x << 25u; // b
 	x ^= x >> 27u; // c
 
+	//uLL = 18446744073709551615 Max
 	//Log(LOG_INFO) << "RNG x = " << x;
-	// uLL = 18446744073709551615 Max
-	//if (x == 3627948914271010329uLL) Log(LOG_INFO) << "stop";
+	//if (x == 16029208282934479754uLL)
+	//	Log(LOG_INFO) << "stop";
 
 	return x * 2685821657736338717uLL;
 }
@@ -214,12 +215,29 @@ double boxMuller(
 		double mean,
 		double deviation)
 {
-	static bool use_last;
+	// kL_note: Do not store the static vars because when reloading they throw
+	// off the predictability of the RNG. Regenerate a fresh return value from
+	// scratch every time instead.
+	double
+		x1,x2,
+		w;
+	do
+	{
+		x1 = (generate(0.,1.) * 2.) - 1.;
+		x2 = (generate(0.,1.) * 2.) - 1.;
+		w  = (x1 * x1) + (x2 * x2);
+	}
+	while (w >= 1.);
 
+	w = std::sqrt(-2. * std::log(w) / w);
+
+	return (mean + (x1 * w * deviation));
+}
+/*	static bool use_last;
 	static double y2;
 	double y1;
 
-	if (use_last) // use value from the previous call
+ if (use_last == true) // use value from the previous call
 	{
 		use_last = false;
 		y1 = y2;
@@ -242,9 +260,7 @@ double boxMuller(
 		y1 = x1 * w;
 		y2 = x2 * w;
 	}
-
-	return (mean + (y1 * deviation));
-}
+	return (mean + (y1 * deviation)); */
 
 /**
  * Decides whether a percentage chance happens successfully.

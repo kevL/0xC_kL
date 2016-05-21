@@ -46,7 +46,10 @@ protected:
 		/// Cleans up the BattleState.
 		virtual ~BattleState();
 
-		/// Initializes the state.
+		/// Gets the name of the BattleState.
+		virtual std::string getBattleStateLabel() const;
+
+		/// Initializes the BattleState.
 		virtual void init();
 		/// Handles a cancel request.
 		virtual void cancel();
