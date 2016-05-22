@@ -181,8 +181,7 @@ void Tile::loadBinary(
 	_curFrame[O_WESTWALL]	= (boolFields & 0x08) ? 7 : 0;
 	_curFrame[O_NORTHWALL]	= (boolFields & 0x10) ? 7 : 0;
 
-//	if (_fire || _smoke)
-//		_animationOffset = std::rand() % 4;
+//	if (_fire || _smoke) _animationOffset = std::rand() % 4;
 }
 
 /**
@@ -273,9 +272,9 @@ void Tile::setMapData(
 		const int partSetId,
 		const MapDataType partType)
 {
-	_parts[partType] = part;
-	_partId[partType] = partId;
-	_partSetId[partType] = partSetId;
+	_parts[partType]		= part;
+	_partId[partType]		= partId;
+	_partSetId[partType]	= partSetId;
 }
 
 /**
@@ -289,8 +288,8 @@ void Tile::getMapData(
 		int* partSetId,
 		MapDataType partType) const
 {
-	*partId = _partId[partType];
-	*partSetId = _partSetId[partType];
+	*partId		= _partId[partType];
+	*partSetId	= _partSetId[partType];
 }
 
 /**
@@ -304,10 +303,10 @@ bool Tile::isVoid(
 		const bool testInventory,
 		const bool testVolatiles) const
 {
-	bool ret (_parts[O_FLOOR] == nullptr
-		   && _parts[O_WESTWALL] == nullptr
-		   && _parts[O_NORTHWALL] == nullptr
-		   && _parts[O_OBJECT] == nullptr);
+	bool ret (_parts[O_FLOOR]		== nullptr
+		   && _parts[O_WESTWALL]	== nullptr
+		   && _parts[O_NORTHWALL]	== nullptr
+		   && _parts[O_OBJECT]		== nullptr);
 
 	if (testInventory == true)
 		ret &= (_inventory.empty() == true);
@@ -334,6 +333,11 @@ int Tile::getTuCostTile(
 	{
 		switch (partType)
 		{
+			case O_FLOOR:
+			case O_WESTWALL:
+			case O_NORTHWALL:
+				return _parts[partType]->getTuCostPart(type);
+
 			case O_OBJECT:
 				switch (_parts[O_OBJECT]->getBigwall())
 				{
@@ -341,12 +345,8 @@ int Tile::getTuCostTile(
 					case BIGWALL_BLOCK:
 					case BIGWALL_NESW:
 					case BIGWALL_NWSE:
-						return _parts[partType]->getTuCostPart(type); // question: Why do side-bigwalls return 0.
+						return _parts[partType]->getTuCostPart(type);
 				}
-				break;
-
-			default:
-				return _parts[partType]->getTuCostPart(type);
 		}
 	}
 	return 0;
@@ -517,7 +517,7 @@ void Tile::openAdjacentDoor(const MapDataType partType)
 }
 
 /**
- * Closes a ufo-door on this Tile.
+ * Closes ufo-door(s) on this Tile.
  * @return, true if a door closed
  */
 bool Tile::closeSlideDoor()
@@ -554,10 +554,10 @@ void Tile::setRevealed(
 	{
 		_revealed[section] = revealed;
 
-		if (revealed == true && section == ST_CONTENT) // NOTE: Try no-reveal (walls) if content is diag BigWall.
+		if (revealed == true && section == ST_CONTENT)
 		{
 			if (_parts[O_OBJECT] == nullptr
-				|| (_parts[O_OBJECT]->getBigwall() & 0x6) == 0) // NeSw, NwSe
+				|| (_parts[O_OBJECT]->getBigwall() & 0x6) == 0) // NeSw, NwSe: Try no-reveal (walls) if content is diag BigWall.
 			{
 				_revealed[ST_WEST] = // if object+floor is revealed set west- & north-walls revealed also.
 				_revealed[ST_NORTH] = true;
@@ -688,7 +688,6 @@ void Tile::destroyTilepart(
 		if (_parts[O_OBJECT] != nullptr // destroy object-part if the floor-part is gone.
 			&& _parts[O_OBJECT]->getBigwall() == BIGWALL_NONE)
 		{
-
 			destroyTilepart(O_OBJECT, battleSave, true); // stop floating haybales.
 		}
 	}
@@ -730,18 +729,25 @@ void Tile::hitTile(
  * TileEngine::explode().
  * @param power		- how big the BOOM will be / how much tile-destruction
  * @param explType	- the type of this Tile's explosion (set in MCD) (RuleItem.h)
- * @param force		- forces value even if lower (default false)
  */
 void Tile::setExplosive(
 		int power,
-		DamageType explType,
-		bool force)
+		DamageType explType)
 {
-	if (force == true || _explosive < power)
+	if (_explosive < power)
 	{
 		_explosive = power;
 		_explosiveType = explType;
 	}
+}
+
+/**
+ * Resets this Tile's explosive to zero.
+ */
+void Tile::clearExplosive()
+{
+	_explosive = 0;
+	_explosiveType = DT_NONE;
 }
 
 /**
@@ -812,7 +818,6 @@ int Tile::convertBurnToPct(int burn) const // private.
 					std::min(100,
 							 static_cast<int>(std::ceil(
 							 static_cast<double>(burn) / 255. * 100.))));
-
 	return burn;
 }
 
@@ -846,13 +851,15 @@ int Tile::getFuel(MapDataType partType) const
 
 /**
  * Tries to start fire on this Tile.
- * @note If true it will add its fuel as turns-to-burn. Called by floor-burning
- * Silacoids and fire spreading @ turnovers and by TileEngine::detonateTile()
- * after HE explosions.
+ * @note If true it will add its fuel as turns-to-burn if tile is burning at a
+ * lesser intensity. Called by floor-burning Silacoids and fire spreading @
+ * turnovers and by TileEngine::detonateTile() after HE explosions. The tile
+ * needs to both be flammable and have internal
+ * fuel or else it won't even attempt to catch fire.
  * @param power - rough chance to get things going
  * @return, true if tile catches fire or even gets smoke
  */
-bool Tile::ignite(int power)
+bool Tile::igniteTile(int power)
 {
 	if (power != 0 && allowSmoke() == true)
 	{
@@ -868,7 +875,7 @@ bool Tile::ignite(int power)
 					addSmoke((burn + 15) >> 4u);
 
 					// TODO: pass in tileBelow and check its terrainLevel for -24; drop fire through to any tileBelow ...
-					if (allowFire() == true)
+					if (allowFire() == true && _fire < fuel + 1)
 						addFire(fuel + 1);
 
 					return true;

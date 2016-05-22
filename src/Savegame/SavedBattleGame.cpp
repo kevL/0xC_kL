@@ -2063,7 +2063,7 @@ void SavedBattleGame::tileVolatiles()
 	}
 
 	int var;
-	for (std::vector<Tile*>::const_iterator // TODO: Fires spread upward similar to smoke below_
+	for (std::vector<Tile*>::const_iterator // TODO: Spread fires upward similar to smoke below_
 			i = tilesFired.begin();
 			i != tilesFired.end();
 			++i)
@@ -2082,7 +2082,7 @@ void SavedBattleGame::tileVolatiles()
 				if ((tile = getTile((*i)->getPosition() + pos)) != nullptr
 					&& _te->horizontalBlockage(*i, tile, DT_IN) == 0)
 				{
-					tile->ignite(var);
+					tile->igniteTile(var);
 				}
 			}
 		}

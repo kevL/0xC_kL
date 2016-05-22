@@ -1071,7 +1071,7 @@ int BattleUnit::getWalkPhaseTrue() const
  */
 int BattleUnit::getWalkPhase() const
 {
-	return _walkPhase % 8u;
+	return _walkPhase % 8;
 }
 
 /**
@@ -4844,6 +4844,32 @@ bool BattleUnit::beenStunned() const
 Position BattleUnit::getLastCover() const
 {
 	return _lastCover;
+}
+
+/**
+ * Tries to burn a Tile if this BattleUnit is capable of doing so.
+ * @note A check for SPECAB_BURN ought be done before call here.
+ * @param tile - pointer to a tile to start on fire
+ */
+void BattleUnit::burnTile(Tile* const tile)
+{
+	if (_unitRule != nullptr) // safety.
+	{
+		const int power (_unitRule->getSpecabPower());
+		tile->igniteTile(power / 10);
+
+		if (_battleGame != nullptr) // safety.
+		{
+			const Position targetVoxel (Position::toVoxelSpaceCentered(
+																	tile->getPosition(),
+																	-tile->getTerrainLevel()));
+			_battleGame->getTileEngine()->hit(
+											targetVoxel,
+											power,
+											DT_IN,
+											this);
+		}
+	}
 }
 
 }

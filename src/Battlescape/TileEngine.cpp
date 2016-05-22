@@ -2790,40 +2790,39 @@ void TileEngine::explode(
 							}
 
 							Tile // NOTE: Should check if tileBelow's have already had napalm drop on them from this explosion ....
-								* fireTile (tileStop),
-								* tileBelow (_battleSave->getTile(fireTile->getPosition() + Position(0,0,-1)));
+								* tileFire (tileStop),
+								* tileBelow (_battleSave->getTile(tileFire->getPosition() + Position(0,0,-1)));
 
-							while (fireTile != nullptr				// safety.
-								&& fireTile->getPosition().z > 0	// safety.
-//								&& fireTile->getMapData(O_OBJECT) == nullptr
-//								&& fireTile->getMapData(O_FLOOR) == nullptr
-								&& fireTile->hasNoFloor(tileBelow) == true)
+							while (tileFire != nullptr				// safety.
+								&& tileFire->getPosition().z > 0	// safety.
+//								&& tileFire->getMapData(O_OBJECT) == nullptr
+//								&& tileFire->getMapData(O_FLOOR) == nullptr
+								&& tileFire->hasNoFloor(tileBelow) == true)
 							{
-								fireTile = tileBelow;
-								tileBelow = _battleSave->getTile(fireTile->getPosition() + Position(0,0,-1));
+								tileFire = tileBelow;
+								tileBelow = _battleSave->getTile(tileFire->getPosition() + Position(0,0,-1));
 							}
 
-//							if (fireTile->isVoid() == false)
+//							if (tileFire->isVoid() == false)
 //							{
 								// kL_note: So, this just sets a tile on fire/smoking regardless of its content.
-								// cf. Tile::ignite() -> well, not regardless, but automatically. That is,
-								// ignite() checks for Flammability first: if (getFlammability() == 255) don't do it.
-								// So this is, like, napalm from an incendiary round, while ignite() is for parts
+								// cf. Tile::igniteTile() -> well, not regardless, but automatically. That is,
+								// igniteTile() checks for Flammability first: if (getFlammability() == 255) don't do it.
+								// So this is, like, napalm from an incendiary round, while igniteTile() is for parts
 								// of the tile itself self-igniting.
 
-							if (fireTile != nullptr) // safety.
+							if (tileFire != nullptr) // safety.
 							{
 								const int fire (std::max(1,
 														 static_cast<int>(std::ceil(
 														(static_cast<float>(_powerE) / static_cast<float>(power)) * 10.))));
-								fireTile->addFire(fire + fireTile->getFuel() + 2 / 3);
-								fireTile->addSmoke(std::max(
-														fire + fireTile->getFuel(),
-														fire + ((fireTile->getFlammability() + 9) / 10)));
+								if (tileFire->addFire(fire + tileFire->getFuel() + 2 / 3) == false)
+									tileFire->addSmoke(std::max(tileFire->getFuel() + fire,
+															  ((tileFire->getFlammability() + 9) / 10) + fire));
 							}
 //							}
 
-							if ((targetUnit = fireTile->getTileUnit()) != nullptr
+							if ((targetUnit = tileFire->getTileUnit()) != nullptr
 								&& targetUnit->getTakenExpl() == false)
 							{
 								power_OnUnit = RNG::generate( // 25% - 75%
@@ -2848,8 +2847,8 @@ void TileEngine::explode(
 							while (done == false && tileStop->getInventory()->empty() == false)
 							{
 								for (std::vector<BattleItem*>::const_iterator
-										i = fireTile->getInventory()->begin();
-										i != fireTile->getInventory()->end();
+										i = tileFire->getInventory()->begin();
+										i != tileFire->getInventory()->end();
 										)
 								{
 									if ((bu = (*i)->getUnit()) != nullptr
@@ -4568,7 +4567,7 @@ void TileEngine::detonateTile(Tile* const tile) const
 	//bool debug (tile->getPosition() == Position(20,30,3));
 	//Log(LOG_INFO) << "";
 	//if (debug) Log(LOG_INFO) << "TileEngine::detonateTile() " << tile->getPosition() << " power = " << power;
-	tile->setExplosive(0, DT_NONE, true); // reset Tile's '_explosive' value to 0
+	tile->clearExplosive(); // reset Tile's '_explosive' value to 0
 
 
 	const Position pos (tile->getPosition());
@@ -4748,7 +4747,7 @@ void TileEngine::detonateTile(Tile* const tile) const
 
 	power = (power + 29) / 30;
 
-	if (tile->ignite((power + 1) >> 1u) == false)
+	if (tile->igniteTile((power + 1) >> 1u) == false)
 		tile->addSmoke((power + density + 1) >> 1u);
 
 	if (tile->getSmoke() != 0) // add smoke to tiles above

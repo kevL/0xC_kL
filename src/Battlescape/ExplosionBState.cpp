@@ -570,7 +570,7 @@ void ExplosionBState::explode() // private.
 		isTerrain = true;
 		const DamageType dType (_tile->getExplosiveType());
 		if (dType != DT_HE)
-			_tile->setExplosive(0, DT_NONE, true);
+			_tile->clearExplosive();
 
 		te->explode(
 				_centerVoxel,

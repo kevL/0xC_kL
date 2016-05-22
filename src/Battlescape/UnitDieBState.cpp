@@ -366,10 +366,9 @@ void UnitDieBState::convertToBody() // private.
 					if (tileExpl != nullptr // safety.
 						&& tileExpl->getFire() == 0)
 					{
-						calcLights = tileExpl->addFire(tileExpl->getFuel() + RNG::generate(1,2));
-						tileExpl->addSmoke(std::max(1,
-													std::min(6,
-															 tileExpl->getFlammability() / 10)));
+						if ((calcLights = tileExpl->addFire(tileExpl->getFuel() + RNG::generate(1,2))) == false)
+							tileExpl->addSmoke(std::max(tileExpl->getFuel() + 1,
+													  ((tileExpl->getFlammability() + 9) / 10) + 1));
 
 						if (playSound == true)
 						{

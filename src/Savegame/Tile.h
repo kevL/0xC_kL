@@ -244,8 +244,9 @@ private:
 		/// Sets a virtual explosive on the Tile to detonate later.
 		void setExplosive(
 				int power,
-				DamageType explType,
-				bool force = false);
+				DamageType explType);
+		/// Resets the Tile's explosive to zero.
+		void clearExplosive();
 		/// Gets explosive power of the Tile.
 		int getExplosive() const;
 		/// Gets explosive type of the Tile.
@@ -260,7 +261,7 @@ private:
 		int getFuel(MapDataType partType = O_NULPART) const;
 
 		/// Tries to start fire on the Tile.
-		bool ignite(int power);
+		bool igniteTile(int power);
 		/// Adds fire to the Tile.
 		bool addFire(int turns);
 		/// Reduces the number of turns the Tile will burn.

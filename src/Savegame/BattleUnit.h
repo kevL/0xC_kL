@@ -898,6 +898,9 @@ private:
 
 		/// Gets the BattleUnit's last-cover Position.
 		Position getLastCover() const;
+
+		/// Tries to burn a Tile if this BattleUnit is capable of doing so.
+		void burnTile(Tile* const tile);
 };
 
 }

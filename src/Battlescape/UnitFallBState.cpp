@@ -401,17 +401,19 @@ void UnitFallBState::think()
 				//Log(LOG_INFO) << ". . burnFloors, checkProxies, Erase.i";
 				if ((*i)->getSpecialAbility() == SPECAB_BURN) // if the unit burns floortiles, burn floortiles
 				{
-					// kL_add: Put burnedBySilacoid() here! etc
-					const int power ((*i)->getUnitRules()->getSpecabPower());
-					(*i)->getTile()->ignite(power / 10);
-					const Position targetVoxel (Position::toVoxelSpaceCentered(
-																		(*i)->getPosition(),
-																		-(*i)->getTile()->getTerrainLevel()));
-					_parent->getTileEngine()->hit(
-												targetVoxel,
-												power,
-												DT_IN,
-												*i);
+					// Put burnedBySilacoid() here! etc
+					(*i)->burnTile((*i)->getTile());
+
+//					const int power ((*i)->getUnitRules()->getSpecabPower());
+//					(*i)->getTile()->igniteTile(power / 10);
+//					const Position targetVoxel (Position::toVoxelSpaceCentered(
+//																		(*i)->getPosition(),
+//																		-(*i)->getTile()->getTerrainLevel()));
+//					_parent->getTileEngine()->hit(
+//												targetVoxel,
+//												power,
+//												DT_IN,
+//												*i);
 				}
 
 				_terrain->calculateUnitLighting();
