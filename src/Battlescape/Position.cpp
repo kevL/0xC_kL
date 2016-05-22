@@ -58,7 +58,7 @@ Position Position::toVoxelSpaceCentered(
 		int lift,
 		int unitSize)
 {
-	const int voxelOffset (unitSize * 8);
+	const int voxelOffset (unitSize << 3u);
 	return Position(
 				(pos.x << 4u) + voxelOffset,
 				(pos.y << 4u) + voxelOffset,

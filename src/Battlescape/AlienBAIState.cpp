@@ -2194,7 +2194,7 @@ bool AlienBAIState::psiAction() // private.
 					defense = (*i)->getBattleStats()->psiStrength; // stupid aLiens don't know soldier's psiSkill tho
 					dist = TileEngine::distance(
 										(*i)->getPosition(),
-										_unit->getPosition()) * 2;
+										_unit->getPosition()) << 1u;
 					originVoxel = _battleSave->getTileEngine()->getSightOriginVoxel(_unit);
 					losTest = static_cast<int>(_battleSave->getTileEngine()->canTargetUnit(
 																						&originVoxel,

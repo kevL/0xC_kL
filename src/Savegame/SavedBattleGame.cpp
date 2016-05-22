@@ -1329,10 +1329,6 @@ void SavedBattleGame::prepPlayerTurn() // private.
 bool SavedBattleGame::endFactionTurn()
 {
 	//Log(LOG_INFO) << "SavedBattleGame::endFactionTurn()";
-	int
-		alienIntel (0),
-		alienIntelTest;
-
 	for (std::vector<BattleUnit*>::const_iterator // -> would it be safe to exclude Dead & Unconscious units
 			i = _units.begin();
 			i != _units.end();
@@ -1343,20 +1339,6 @@ bool SavedBattleGame::endFactionTurn()
 			(*i)->setRevived(false);
 			if (_side == FACTION_PLAYER)
 				(*i)->dontReselect();
-		}
-
-		if (_side != FACTION_PLAYER && (*i)->getOriginalFaction() == FACTION_HOSTILE)
-		{
-			switch ((*i)->getUnitStatus())	// set non-aLien units not-Exposed if their current
-			{								// exposure exceeds aLien's max-intel. See below_
-				case STATUS_DEAD:
-				case STATUS_LATENT:
-					break;					// NOTE: Status_Unconscious does not break exposure. psycho aLiens!
-
-				default:
-					if ((alienIntelTest = (*i)->getIntelligence()) > alienIntel)
-						alienIntel = alienIntelTest;
-			}
 		}
 	}
 
@@ -1394,8 +1376,29 @@ bool SavedBattleGame::endFactionTurn()
 			playerTurn = true;
 	}
 
+	int aLienIntel (0);
 	if (playerTurn == true)
+	{
 		prepPlayerTurn();
+
+		int aLienIntelTest;
+		for (std::vector<BattleUnit*>::const_iterator
+				i = _units.begin();
+				i != _units.end();
+				++i)
+		{
+			if ((*i)->getOriginalFaction() == FACTION_HOSTILE)
+			{
+				switch ((*i)->getUnitStatus())	// set non-aLien units not-Exposed if their current
+				{								// exposure exceeds aLien's max-intel. See below_
+					case STATUS_STANDING:
+					case STATUS_UNCONSCIOUS:	// NOTE: Status_Unconscious does not break exposure. psycho aLiens!
+						if ((aLienIntelTest = (*i)->getIntelligence()) > aLienIntel)
+							aLienIntel = aLienIntelTest;
+				}
+			}
+		}
+	}
 
 	// ** _side HAS ADVANCED to next faction after here!!! ** //
 
@@ -1459,13 +1462,13 @@ bool SavedBattleGame::endFactionTurn()
 				}
 				else if (_side == FACTION_PLAYER)
 				{
-					const int exposure ((*i)->getExposed());
-					if (exposure != -1)
+					int exposure ((*i)->getExposed());
+					if (exposure++ != -1)
 					{
-						if (exposure > alienIntel)
+						if (exposure > aLienIntel)
 							(*i)->setExposed(-1);
 						else
-							(*i)->setExposed(exposure + 1);
+							(*i)->setExposed(exposure);
 					}
 				}
 
