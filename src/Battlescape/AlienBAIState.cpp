@@ -64,6 +64,7 @@ AlienBAIState::AlienBAIState(
 		_melee(false),
 		_blaster(false),
 		_grenade(false),
+		_psi(false),
 		_hasPsiBeenSet(false),
 		_distClosest(1000),
 		_reserve(BA_NONE)
@@ -143,7 +144,8 @@ void AlienBAIState::think(BattleAction* const action)
 
 	_blaster =
 	_rifle =
-	_grenade = false;
+	_grenade =
+	_psi = false;
 	_melee = (_unit->getMeleeWeapon() != nullptr);
 
 	action->weapon = _unit->getMainHandWeapon(); // will get Rifle OR Melee
@@ -300,7 +302,8 @@ void AlienBAIState::think(BattleAction* const action)
 		|| (_spottersOrigin > 1
 			|| _unit->getHealth() < (_unit->getBattleStats()->health << 1u) / 3
 			|| (_unitAggro != nullptr
-				&& _unitAggro->getExposed() > _unit->getIntelligence())
+				&& (_unitAggro->getExposed() == -1
+					|| _unitAggro->getExposed() > _unit->getIntelligence()))
 			|| (_battleSave->isCheating() == true
 				&& _AIMode != AI_COMBAT)));
 	{
@@ -321,10 +324,10 @@ void AlienBAIState::think(BattleAction* const action)
 			{
 				switch (_aggression)
 				{
-					case 0: _reserve = BA_AIMEDSHOT;	break;
-					case 1: _reserve = BA_AUTOSHOT;		break;
-					default:
-					case 2: _reserve = BA_SNAPSHOT;
+					case 0:		_reserve = BA_AIMEDSHOT;	break;
+					case 1:		_reserve = BA_AUTOSHOT;		break;
+					case 2:
+					default:	_reserve = BA_SNAPSHOT;
 				}
 			}
 
@@ -572,13 +575,12 @@ void AlienBAIState::setupAttack() // private.
 	if (_targetsExposed != 0 && RNG::percent(PSI_OR_BLASTER_PCT) == true)
 	{
 		if (_traceAI) Log(LOG_INFO) << ". . Run psiAction() OR wayPointAction()";
-		const bool psi (psiAction());
-		if (psi == true
+		if ((_psi = psiAction()) == true
 			|| (_blaster == true && wayPointAction() == true))
 		{
 			if (_traceAI)
 			{
-				if (psi) Log(LOG_INFO) << ". . . psi action";
+				if (_psi) Log(LOG_INFO) << ". . . psi action";
 				else Log(LOG_INFO) << ". . . blaster action";
 			}
 			return;
@@ -720,9 +722,9 @@ void AlienBAIState::setupAmbush() // private.
 					tile->setPreviewTu(485); // "4m8u5h"
 				}
 
-				int debugSpotters = tallySpotters(pos);
-				//Log(LOG_INFO) << ". . . spotters = " << debugSpotters;
-				if (debugSpotters /*tallySpotters(pos)*/ == 0
+				const int spotters (tallySpotters(pos));
+				//Log(LOG_INFO) << ". . . spotters = " << spotters;
+				if (spotters /*tallySpotters(pos)*/ == 0
 					&& _te->canTargetUnit(
 									&originVoxel,
 									tile,
@@ -1069,17 +1071,10 @@ void AlienBAIState::evaluateAiMode() // private.
 
 		switch (_AIMode)
 		{
-			case AI_PATROL:
-				patrolOdds *= 1.2f;
-				break;
-			case AI_AMBUSH:
-				ambushOdds *= 1.2f;
-				break;
-			case AI_COMBAT:
-				combatOdds *= 1.2f;
-				break;
-			case AI_ESCAPE:
-				escapeOdds *= 1.2f;
+			case AI_PATROL: patrolOdds *= 1.2f; break;
+			case AI_AMBUSH: ambushOdds *= 1.2f; break;
+			case AI_COMBAT: combatOdds *= 1.2f; break;
+			case AI_ESCAPE: escapeOdds *= 1.2f;
 		}
 
 		if (_unit->getHealth() < _unit->getBattleStats()->health / 3)
@@ -1153,7 +1148,8 @@ void AlienBAIState::evaluateAiMode() // private.
 		if (   _melee == false
 			&& _rifle == false
 			&& _blaster == false
-			&& _grenade == false)
+			&& _grenade == false
+			&& _psi == false)
 		{
 			combatOdds =
 			ambushOdds = 0.f;
@@ -1440,7 +1436,7 @@ bool AlienBAIState::selectTarget() // private.
 	{
 		if (validTarget(*i, true, true) == true)
 		{
-			distTest = RNG::generate(0,400);
+			distTest = RNG::generate(0, TileEngine::SIGHTDIST_TSp_Sqr);
 			distTest -= TileEngine::distSqr(
 										_unit->getPosition(),
 										(*i)->getPosition());

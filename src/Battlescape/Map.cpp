@@ -510,9 +510,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 				if (offScreen_final == true
 					|| ((_projectile->getThrowItem() != nullptr
 							|| action->weapon->getRules()->isArcingShot() == true)
-						&& TileEngine::distance(
+						&& TileEngine::distSqr(
 											action->actor->getPosition(),
-											posFinal) > DIST_ARC_SMOOTH)) // no smoothing unless throw > ~8 tiles
+											posFinal) > DIST_ARC_SMOOTH_Sqr)) // no smoothing unless throw > ~8 tiles
 				{
 					_smoothingEngaged = true;
 					_camera->setPauseAfterShot();

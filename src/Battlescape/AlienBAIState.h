@@ -50,6 +50,7 @@ private:
 		_grenade,
 		_hasPsiBeenSet,
 		_melee,
+		_psi,
 		_rifle;
 	int
 		_aggression,

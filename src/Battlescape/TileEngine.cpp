@@ -69,9 +69,9 @@ const int TileEngine::scanOffsetZ[11u] // static.
 
 
 /**
- * Sets up a TileEngine.
- * @param battleSave	- pointer to SavedBattleGame object
- * @param voxelData		- pointer to a vector of voxel data
+ * Sets up the TileEngine.
+ * @param battleSave	- pointer to SavedBattleGame
+ * @param voxelData		- pointer to a vector of voxel-data
  */
 TileEngine::TileEngine(
 		SavedBattleGame* const battleSave,
@@ -415,7 +415,7 @@ bool TileEngine::calcFov(
 							//	Log(LOG_INFO) << ". . distSqr= " << distSqr(posSelf, posOther, false);
 							//}
 
-							if (distSqr(posSelf, posOther, false) <= SIGHTDIST_TSp_Sqr)
+							if (distSqr(posSelf, posOther) <= SIGHTDIST_TSp_Sqr)
 							{
 								//if (debug) Log(LOG_INFO) << ". . . in Range";
 								const int unitSize ((*i)->getArmor()->getSize());
@@ -476,7 +476,7 @@ bool TileEngine::calcFov(
 							//}
 
 
-							if (distSqr(posSelf, posOther, false) <= SIGHTDIST_TSp_Sqr)
+							if (distSqr(posSelf, posOther) <= SIGHTDIST_TSp_Sqr)
 							{
 								//if (debug) Log(LOG_INFO) << ". . . in Range";
 								const int unitSize ((*i)->getArmor()->getSize());
@@ -887,7 +887,7 @@ void TileEngine::calcFovPos(
 			++i)
 	{
 		if ((*i)->getTile() != nullptr // the BattleUnit must be conscious.
-			&& distSqr(pos, (*i)->getPosition(), false) <= SIGHTDIST_TSp_Sqr) // +1 for ...
+			&& distSqr(pos, (*i)->getPosition()) <= SIGHTDIST_TSp_Sqr)
 		{
 			calcFov(*i, revealTiles);
 		}
@@ -938,7 +938,7 @@ bool TileEngine::visible(
 		const BattleUnit* const targetUnit (tile->getTileUnit());
 		if (targetUnit != nullptr && targetUnit->isOut_t() == false)
 		{
-			//Log(LOG_INFO) << ". try spot vs. id-" << targetUnit->getId();
+			//Log(LOG_INFO) << ". try to sight id-" << targetUnit->getId();
 
 			if (unit->getFaction() == targetUnit->getFaction())
 			{
@@ -954,53 +954,61 @@ bool TileEngine::visible(
 			if (sqrDist <= SIGHTDIST_TSp_Sqr)
 			{
 				//if (debug) Log(LOG_INFO) << ". passed SIGHTDIST_TSp_Sqr";
-
-				if (unit->getFaction() == FACTION_HOSTILE
-					|| tile->getShade() <= MAX_SHADE_TO_SEE_UNITS
-					|| sqrDist <= SIGHTDIST_TSp_Sqr + 9 - (_battleSave->getTacticalShade() * _battleSave->getTacticalShade()))
+				switch (unit->getFaction())
 				{
-					//if (debug) Log(LOG_INFO) << ". passed SIGHTDIST_TSp_Sqr + 9 - shade^2";
-
-					const Position originVoxel (getSightOriginVoxel(unit));
-					Position scanVoxel;
-					if (canTargetUnit(
-									&originVoxel,
-									tile,
-									&scanVoxel,
-									unit) == true)
-					{
-						//if (debug) Log(LOG_INFO) << ". . CanTargetUnit() TRUE";
-
-						std::vector<Position> trj;
-						plotLine(
-								originVoxel,
-								scanVoxel,
-								true,
-								&trj,
-								unit);
-
-						float distLimit (static_cast<float>(trj.size()));
-						const Tile* scanTile (_battleSave->getTile(unit->getPosition()));
-
-						for (size_t
-								i = 0u;
-								i != trj.size();
-								++i)
+					case FACTION_PLAYER:
+					case FACTION_NEUTRAL:
+						if (tile->getShade() > MAX_SHADE_TO_SEE_UNITS)
 						{
-							scanTile = _battleSave->getTile(Position::toTileSpace(trj.at(i)));
-
-							distLimit += static_cast<float>(scanTile->getSmoke() + scanTile->getFire()) / 3.f;
-							if (static_cast<int>(std::ceil(distLimit * distLimit)) > SIGHTDIST_VSp_Sqr)
-							{
-								//if (debug) Log(LOG_INFO) << ". . . failed SIGHTDIST_VSp_Sqr - ret FALSE";
-								return false;
-							}
+							const int shade (_battleSave->getTacticalShade());
+							if (sqrDist > SIGHTDIST_TSp_Sqr + 9 - (shade * shade))
+								break;
 						}
+						//if (debug) Log(LOG_INFO) << ". passed SIGHTDIST_TSp_Sqr + 9 - shade^2";
+						// no break;
 
-						if (scanTile->getTileUnit() == getTargetUnit(tile))
+					case FACTION_HOSTILE:
+					{
+						const Position originVoxel (getSightOriginVoxel(unit));
+						Position scanVoxel;
+						if (canTargetUnit(
+										&originVoxel,
+										tile,
+										&scanVoxel,
+										unit) == true)
 						{
-							//if (debug) Log(LOG_INFO) << ". . Tile has targetUnit - ret TRUE";
-							return true;
+							//if (debug) Log(LOG_INFO) << ". . CanTargetUnit() TRUE";
+							std::vector<Position> trj;
+							plotLine(
+									originVoxel,
+									scanVoxel,
+									true,
+									&trj,
+									unit);
+
+							float distLimit (static_cast<float>(trj.size()));
+							const Tile* tileScan (_battleSave->getTile(unit->getPosition()));
+
+							for (size_t
+									i = 0u;
+									i != trj.size();
+									++i)
+							{
+								tileScan = _battleSave->getTile(Position::toTileSpace(trj.at(i)));
+
+								distLimit += static_cast<float>(tileScan->getSmoke() + tileScan->getFire()) / 3.f;
+								if (static_cast<int>(std::ceil(distLimit * distLimit)) > SIGHTDIST_VSp_Sqr)
+								{
+									//if (debug) Log(LOG_INFO) << ". . . failed SIGHTDIST_VSp_Sqr - ret FALSE";
+									return false;
+								}
+							}
+
+							if (tileScan->getTileUnit() == getTargetUnit(tile))
+							{
+								//if (debug) Log(LOG_INFO) << ". . Tile has targetUnit - ret TRUE";
+								return true;
+							}
 						}
 					}
 				}
@@ -6916,10 +6924,22 @@ void TileEngine::setDangerZone(
  * Calculates the distance between 2 points rounded to nearest integer.
  * @param pos1 - reference to the first Position
  * @param pos2 - reference to the second Position
- * @param considerZ	- true to consider the z coordinate (default true)
+// * @param considerZ	- true to consider the z coordinate (default true)
  * @return, distance
  */
 int TileEngine::distance( // static.
+		const Position& pos1,
+		const Position& pos2)
+{
+	const int
+		x (pos1.x - pos2.x),
+		y (pos1.y - pos2.y),
+		z (pos1.z - pos2.z);
+
+	return static_cast<int>(Round(
+		   std::sqrt(static_cast<double>(x * x + y * y + z * z))));
+}
+/* int TileEngine::distance( // static.
 		const Position& pos1,
 		const Position& pos2,
 		const bool considerZ)
@@ -6936,7 +6956,7 @@ int TileEngine::distance( // static.
 
 	return static_cast<int>(Round(
 		   std::sqrt(static_cast<double>(x * x + y * y + z * z))));
-}
+} */
 
 /**
  * Calculates the distance squared between 2 points.
@@ -6944,10 +6964,21 @@ int TileEngine::distance( // static.
  * really needed.
  * @param pos1		- to reference the first Position
  * @param pos2		- to reference the second Position
- * @param considerZ	- true to consider the z coordinate (default true)
+// * @param considerZ	- true to consider the z coordinate (default true)
  * @return, distance
  */
 int TileEngine::distSqr( // static.
+		const Position& pos1,
+		const Position& pos2)
+{
+	const int
+		x (pos1.x - pos2.x),
+		y (pos1.y - pos2.y),
+		z (pos1.z - pos2.z);
+
+	return x * x + y * y + z * z;
+}
+/* int TileEngine::distSqr( // static.
 		const Position& pos1,
 		const Position& pos2,
 		const bool considerZ)
@@ -6963,7 +6994,7 @@ int TileEngine::distSqr( // static.
 		z = 0;
 
 	return x * x + y * y + z * z;
-}
+} */
 
 /**
  * Calculates the distance between 2 points as a floating-point value.

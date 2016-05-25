@@ -67,7 +67,8 @@ private:
 	static const int
 		BULLET_SPRITES	= 35,
 		SHADE_BLACK		= 16,
-		DIST_ARC_SMOOTH	=  8,
+
+		DIST_ARC_SMOOTH_Sqr = 64,
 
 		WHITE = 1,
 		RED   = 3;
