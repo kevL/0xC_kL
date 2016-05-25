@@ -65,7 +65,7 @@ UnitWalkBState::UnitWalkBState(
 		_pf(parent->getPathfinding()),
 		_te(parent->getTileEngine()),
 		_battleSave(parent->getBattleSave()),
-		_falling(false),
+		_fall(false),
 		_preStepTurn(false),
 //		_antecedentOpponents(0),
 		_preStepCost(0),
@@ -395,10 +395,10 @@ bool UnitWalkBState::doStatusStand() // private.
 	_tileSwitchDone = false;
 
 	//Log(LOG_INFO) << ". getStartDirection() dir = " << dir;
-	if (_falling == true)
+	if (_fall == true)
 	{
 		dir = Pathfinding::DIR_DOWN;
-		//Log(LOG_INFO) << ". . _falling, dir = " << dir;
+		//Log(LOG_INFO) << ". . _fall, dir = " << dir;
 	}
 
 	if (dir == -1)
@@ -462,7 +462,7 @@ bool UnitWalkBState::doStatusStand() // private.
 		tuCost -= Pathfinding::TU_FIRE_AVOID;
 	}
 
-	if (_falling == true)
+	if (_fall == true)
 	{
 		//Log(LOG_INFO) << ". . falling, set tuCost 0";
 		tuCost =
@@ -609,7 +609,7 @@ bool UnitWalkBState::doStatusStand() // private.
 				unitBlockBelow = nullptr;
 
 			// can't walk into units in this tile or on top of other units sticking their head into this tile
-			if (_falling == false
+			if (_fall == false
 				&& ((unitBlock != nullptr
 						&& unitBlock != _unit)
 					|| (unitBlockBelow != nullptr
@@ -627,7 +627,7 @@ bool UnitWalkBState::doStatusStand() // private.
 	dir = _pf->dequeuePath();
 	//Log(LOG_INFO) << ". dequeuePath() dir[0] = " << dir;
 
-	if (_falling == true)
+	if (_fall == true)
 	{
 		//Log(LOG_INFO) << ". . falling, _pf->DIR_DOWN";
 		dir = Pathfinding::DIR_DOWN;
@@ -686,7 +686,7 @@ bool UnitWalkBState::doStatusWalk() // private.
 						_battleSave->getTile(_unit->getPosition() + Position(0,0,-1)),
 						_isVisible == true);
 	}
-	else if (_falling == false) // walked into an unseen unit
+	else if (_fall == false) // walked into an unseen unit
 	{
 		//Log(LOG_INFO) << ". WalkBState, !falling Abort path; another unit is blocking path";
 		clearTilesLink(false);
@@ -750,11 +750,11 @@ bool UnitWalkBState::doStatusWalk() // private.
 			}
 		}
 
-		_falling = doFallCheck == true
-				&& _pf->getMoveTypePf() != MT_FLY
-				&& _unit->getPosition().z != 0;
+		_fall = doFallCheck == true
+			 && _pf->getMoveTypePf() != MT_FLY
+			 && _unit->getPosition().z != 0;
 
-		if (_falling == true)
+		if (_fall == true)
 		{
 			//Log(LOG_INFO) << ". falling";
 			for (int
@@ -775,7 +775,7 @@ bool UnitWalkBState::doStatusWalk() // private.
 						//Log(LOG_INFO) << ". . . another unit already occupies lower tile";
 						clearTilesLink(true);
 
-						_falling = false;
+						_fall = false;
 
 						_pf->dequeuePath();
 						_battleSave->addFallingUnit(_unit);
@@ -823,7 +823,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 
 	const Position pos (_unit->getPosition());
 
-	if (_falling == false
+	if (_fall == false
 		&& _unit->getSpecialAbility() == SPECAB_BURN) // if the unit burns floortiles, burn floortiles
 	{
 		// Put burnedBySilacoid() here! etc
@@ -911,7 +911,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		return false;
 	}
 
-	if (_falling == false) // check for reaction fire
+	if (_fall == false) // check for reaction fire
 	{
 		//Log(LOG_INFO) << ". . WalkBState: NOT falling, checkReactionFire()";
 		if (_te->checkReactionFire(_unit) == true) // unit got fired upon - stop walking
@@ -1119,7 +1119,7 @@ void UnitWalkBState::postPathProcedures() // private.
 	_unit->flagCache();
 	_parent->getMap()->cacheUnit(_unit);
 
-	if (_falling == false)
+	if (_fall == false)
 		_parent->popState();
 }
 
@@ -1173,7 +1173,7 @@ int UnitWalkBState::getFinalDirection() const // private.
  */
 bool UnitWalkBState::visForUnits() const // private.
 {
-	if (_falling == true
+	if (_fall == true
 		|| _parent->playerPanicHandled() == false)	// NOTE: _playerPanicHandled can be false only on Player's
 	{												// turn so if expression== TRUE then it's a player's turn.
 		return false;
@@ -1267,9 +1267,9 @@ void UnitWalkBState::playMoveSound() // private.
 				if (walkPhase == 0 || _playFly == true)
 				{
 					_playFly = false;
-					if (_falling == false)
+					if (_fall == false)
 					{
-						if (_unit->isFloating() == false) // GravLift note: isFloating() might be redundant w/ (_falling=false). See above^
+						if (_unit->isFloating() == false) // GravLift note: isFloating() might be redundant w/ (_fall=false). See above^
 							soundId = ResourcePack::GRAVLIFT_SOUND;
 						else
 						{
@@ -1285,7 +1285,7 @@ void UnitWalkBState::playMoveSound() // private.
 				}
 				else if (walkPhase == 7
 					&& groundCheck() == true
-					&& (_falling == true
+					&& (_fall == true
 						|| (_unit->isFloating() == true && _pf->getMoveTypePf() == MT_WALK)))
 				{
 					soundId = ResourcePack::ITEM_DROP; // *thunk*
@@ -1297,9 +1297,9 @@ void UnitWalkBState::playMoveSound() // private.
 	{
 		if (_unit->getUnitStatus() == STATUS_FLYING
 			&& _unit->isFloating() == false
-			&& _falling == false)
+			&& _fall == false)
 		{
-			soundId = ResourcePack::GRAVLIFT_SOUND; // GravLift note: isFloating() might be redundant w/ (_falling=false). See above^
+			soundId = ResourcePack::GRAVLIFT_SOUND; // GravLift note: isFloating() might be redundant w/ (_fall=false). See above^
 		}
 		else
 			soundId = _unit->getMoveSound();
@@ -1313,7 +1313,7 @@ void UnitWalkBState::playMoveSound() // private.
 
 /**
  * For determining if a flying unit turns flight off at start of movement.
- * @note '_falling' should always be false when this is called in init().
+ * @note '_fall' should always be false when this is called in init().
  * @note And unit must be capable of flight for this to be relevant.
  * @note This could get problematic if/when falling onto nonFloors like water
  * and/or if there is another unit on tileBelow.
@@ -1324,7 +1324,7 @@ void UnitWalkBState::doFallCheck() // private.
 		&& _unit->getPosition().z != 0
 		&& groundCheck() == false)
 	{
-		_falling = true;
+		_fall = true;
 	}
 }
 

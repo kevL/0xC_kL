@@ -357,7 +357,8 @@ bool TileEngine::calcFov(
 		BattleUnit* const unit,
 		bool revealTiles) const
 {
-	//Log(LOG_INFO) << "calcFoV id-" << unit->getId();
+	//const bool debug (unit->getId() == 167 || unit->getId() == 1000020);
+	//if (debug) Log(LOG_INFO) << "calcFoV id-" << unit->getId();
 //	return false; // TEST.
 	unit->clearHostileUnits();
 //	unit->clearVisibleTiles();
@@ -398,6 +399,7 @@ bool TileEngine::calcFov(
 		{
 			if ((*i)->isOut_t() == false)
 			{
+				//if (debug) Log(LOG_INFO) << ". try spot vs id-" << (*i)->getId();
 				switch (unit->getFaction())
 				{
 					case FACTION_NEUTRAL:
@@ -407,9 +409,15 @@ bool TileEngine::calcFov(
 						if ((*i)->getFaction() != FACTION_PLAYER)
 						{
 							const Position posOther ((*i)->getPosition());
+							//if (debug)
+							//{
+							//	Log(LOG_INFO) << ". . spot vs pos " << posOther;
+							//	Log(LOG_INFO) << ". . distSqr= " << distSqr(posSelf, posOther, false);
+							//}
 
 							if (distSqr(posSelf, posOther, false) <= SIGHTDIST_TSp_Sqr)
 							{
+								//if (debug) Log(LOG_INFO) << ". . . in Range";
 								const int unitSize ((*i)->getArmor()->getSize());
 								for (int
 										x = 0;
@@ -425,8 +433,10 @@ bool TileEngine::calcFov(
 										if (unit->checkViewSector(pos) == true
 											&& visible(unit, _battleSave->getTile(pos)) == true)
 										{
+											//if (debug) Log(LOG_INFO) << ". . . . visible TRUE";
 											if ((*i)->getUnitVisible() == false)
 											{
+												//if (debug) Log(LOG_INFO) << ". . . . . set Visible";
 												spotByPlayer = true; // NOTE: This will halt a player's moving-unit when spotting a new Civie even.
 												(*i)->setUnitVisible();
 											}
@@ -459,9 +469,16 @@ bool TileEngine::calcFov(
 						if ((*i)->getFaction() != FACTION_HOSTILE)
 						{
 							const Position posOther ((*i)->getPosition());
+							//if (debug)
+							//{
+							//	Log(LOG_INFO) << ". . spot vs pos " << posOther;
+							//	Log(LOG_INFO) << ". . distSqr= " << distSqr(posSelf, posOther, false);
+							//}
+
 
 							if (distSqr(posSelf, posOther, false) <= SIGHTDIST_TSp_Sqr)
 							{
+								//if (debug) Log(LOG_INFO) << ". . . in Range";
 								const int unitSize ((*i)->getArmor()->getSize());
 								for (int
 										x = 0;
@@ -477,6 +494,7 @@ bool TileEngine::calcFov(
 										if (unit->checkViewSector(pos) == true
 											&& visible(unit, _battleSave->getTile(pos)) == true)
 										{
+											//if (debug) Log(LOG_INFO) << ". . . . visible TRUE - add to HostileUnits vector";
 											spotByHostile = unit->addToHostileUnits(*i); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
 
 											if (_battleSave->getSide() == FACTION_HOSTILE)
@@ -911,68 +929,85 @@ bool TileEngine::visible(
 		const BattleUnit* const unit,
 		const Tile* const tile) const
 {
-	if (tile == nullptr)
-		return false;
-
-	const BattleUnit* const targetUnit (tile->getTileUnit());
-	if (targetUnit == nullptr || targetUnit->isOut_t() == true)
-		return false;
-
-	if (unit->getFaction() == targetUnit->getFaction())
-		return true;
-
-
-	const int dist (distance(
-						unit->getPosition(),
-						targetUnit->getPosition()));
-//	if (dist * dist > SIGHTDIST_TSp_Sqr)
-	if (dist > SIGHTDIST_TSp)
-		return false;
-
-	if (unit->getFaction() == FACTION_PLAYER
-		&& tile->getShade() > MAX_SHADE_TO_SEE_UNITS
-		&& dist > SIGHTDIST_TSp + 3 - _battleSave->getTacticalShade())
+	//bool debug (false);
+	if (tile != nullptr)
 	{
-		return false;
-	}
+		//debug = unit->getId() == 1000020 || unit->getId() == 167;
+		//if (debug) Log(LOG_INFO) << "TileEngine::visible() id-" << unit->getId();
 
-
-	const Position originVoxel (getSightOriginVoxel(unit));
-	Position scanVoxel;
-	if (canTargetUnit(
-					&originVoxel,
-					tile,
-					&scanVoxel,
-					unit) == true)
-	{
-		std::vector<Position> trj;
-		plotLine(
-				originVoxel,
-				scanVoxel,
-				true,
-				&trj,
-				unit);
-
-		float obscured (static_cast<float>(trj.size()));
-		const Tile* scanTile (_battleSave->getTile(unit->getPosition()));
-
-		for (size_t
-				i = 0u;
-				i != trj.size();
-				++i)
+		const BattleUnit* const targetUnit (tile->getTileUnit());
+		if (targetUnit != nullptr && targetUnit->isOut_t() == false)
 		{
-			scanTile = _battleSave->getTile(Position::toTileSpace(trj.at(i)));
+			//Log(LOG_INFO) << ". try spot vs. id-" << targetUnit->getId();
 
-			obscured += static_cast<float>(scanTile->getSmoke() + scanTile->getFire()) / 3.f;
-//			if (static_cast<int>(std::ceil(obscured * obscured)) > SIGHTDIST_VSp_Sqr)
-			if (static_cast<int>(std::ceil(obscured)) > SIGHTDIST_VSp)
-				return false;
+			if (unit->getFaction() == targetUnit->getFaction())
+			{
+				//Log(LOG_INFO) << ". . faction - ret TRUE";
+				return true;
+			}
+
+			const int sqrDist (distSqr(
+									unit->getPosition(),
+									targetUnit->getPosition()));
+			//if (debug) Log(LOG_INFO) << ". distSqr= " << sqrDist;
+
+			if (sqrDist <= SIGHTDIST_TSp_Sqr)
+			{
+				//if (debug) Log(LOG_INFO) << ". passed SIGHTDIST_TSp_Sqr";
+
+				if (unit->getFaction() == FACTION_HOSTILE
+					|| tile->getShade() <= MAX_SHADE_TO_SEE_UNITS
+					|| sqrDist <= SIGHTDIST_TSp_Sqr + 9 - (_battleSave->getTacticalShade() * _battleSave->getTacticalShade()))
+				{
+					//if (debug) Log(LOG_INFO) << ". passed SIGHTDIST_TSp_Sqr + 9 - shade^2";
+
+					const Position originVoxel (getSightOriginVoxel(unit));
+					Position scanVoxel;
+					if (canTargetUnit(
+									&originVoxel,
+									tile,
+									&scanVoxel,
+									unit) == true)
+					{
+						//if (debug) Log(LOG_INFO) << ". . CanTargetUnit() TRUE";
+
+						std::vector<Position> trj;
+						plotLine(
+								originVoxel,
+								scanVoxel,
+								true,
+								&trj,
+								unit);
+
+						float distLimit (static_cast<float>(trj.size()));
+						const Tile* scanTile (_battleSave->getTile(unit->getPosition()));
+
+						for (size_t
+								i = 0u;
+								i != trj.size();
+								++i)
+						{
+							scanTile = _battleSave->getTile(Position::toTileSpace(trj.at(i)));
+
+							distLimit += static_cast<float>(scanTile->getSmoke() + scanTile->getFire()) / 3.f;
+							if (static_cast<int>(std::ceil(distLimit * distLimit)) > SIGHTDIST_VSp_Sqr)
+							{
+								//if (debug) Log(LOG_INFO) << ". . . failed SIGHTDIST_VSp_Sqr - ret FALSE";
+								return false;
+							}
+						}
+
+						if (scanTile->getTileUnit() == getTargetUnit(tile))
+						{
+							//if (debug) Log(LOG_INFO) << ". . Tile has targetUnit - ret TRUE";
+							return true;
+						}
+					}
+				}
+			}
 		}
-
-		if (scanTile->getTileUnit() == getTargetUnit(tile))
-			return true;
 	}
-
+	//if (debug) Log(LOG_INFO) << ". ret FALSE";
 	return false;
 }
 
@@ -1608,9 +1643,9 @@ int TileEngine::checkVoxelExposure(
  * @note The tuSpent parameter is needed because popState() doesn't subtract TU
  * until after the Initiative has been calculated or called from
  * ProjectileFlyBState.
- * @param triggerUnit	- pointer to a unit to check reaction fire against
- * @param tuSpent		- the unit's triggering expenditure of TU if firing or throwing
- * @param autoSpot		- true if RF was not triggered by a Melee atk (default true)
+ * @param triggerUnit	- pointer to a unit to check RF against
+ * @param tuSpent		- the unit's triggering expenditure of TU if firing or throwing (default 0)
+ * @param autoSpot		- true if RF was not triggered by a melee atk (default true)
  * @return, true if reaction fire took place
  */
 bool TileEngine::checkReactionFire(
@@ -1657,7 +1692,7 @@ bool TileEngine::checkReactionFire(
 			if (reactionShot(reactorUnit, triggerUnit) == false)
 			{
 				//Log(LOG_INFO) << ". . no Snap by id-" << reactorUnit->getId();
-				// can't make a reaction snapshot for whatever reason then boot this guy from the vector.
+				// can't make a reaction shot for whatever reason then boot this guy from the vector.
 				for (std::vector<BattleUnit*>::const_iterator
 						i = spotters.begin();
 						i != spotters.end();
@@ -1672,15 +1707,15 @@ bool TileEngine::checkReactionFire(
 			}
 			else
 			{
+				//Log(LOG_INFO) << ". . Snap by id-" << reactorUnit->getId();
+				ret = true;
+
 				if (reactorUnit->getGeoscapeSoldier() != nullptr
 					&& reactorUnit->isMindControlled() == false)
 				{
 					//Log(LOG_INFO) << ". . reactionXP to " << reactorUnit->getId();
 					reactorUnit->addReactionExp();
 				}
-
-				//Log(LOG_INFO) << ". . Snap by id-" << reactorUnit->getId();
-				ret = true;
 			}
 
 			reactorUnit = getReactor( // nice shot.
@@ -1700,7 +1735,7 @@ bool TileEngine::checkReactionFire(
 /**
  * Creates a vector of BattleUnits that can spot @a unit.
  * @param unit - pointer to a BattleUnit to spot
- * @return, vector of pointers to BattleUnits that can see the triggering unit
+ * @return, vector of pointers to BattleUnits that can see the trigger-unit
  */
 std::vector<BattleUnit*> TileEngine::getSpottingUnits(const BattleUnit* const unit)
 {
@@ -1713,7 +1748,7 @@ std::vector<BattleUnit*> TileEngine::getSpottingUnits(const BattleUnit* const un
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		//Log(LOG_INFO) << ". spotCheck id-" << (*i)->getId();
+		//Log(LOG_INFO) << ". check id-" << (*i)->getId();
 		if ((*i)->getFaction() != _battleSave->getSide()
 			&& (*i)->getFaction() != FACTION_NEUTRAL
 			&& (*i)->getTimeUnits() != 0
@@ -1728,8 +1763,8 @@ std::vector<BattleUnit*> TileEngine::getSpottingUnits(const BattleUnit* const un
 						&& (*i)->checkViewSector(unit->getPosition()) == true))	// but xCom & zombies must checkViewSector() even when MC'd
 				&& visible(*i, tile) == true)
 			{
-				//Log(LOG_INFO) << ". . Add spotter " << (*i)->getPosition();
-				//Log(LOG_INFO) << ". . distance = " << distance(unit->getPosition(), (*i)->getPosition());
+				//Log(LOG_INFO) << ". . add spotter " << (*i)->getPosition();
+				//Log(LOG_INFO) << ". . distSqr= " << distSqr(unit->getPosition(), (*i)->getPosition());
 				spotters.push_back(*i);
 			}
 		}

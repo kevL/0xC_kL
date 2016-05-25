@@ -2429,8 +2429,7 @@ void BattleUnit::prepUnit(bool full)
 	bool hasPanicked (false);
 	if (full == true) // don't do damage or panic when transitioning between stages
 	{
-		if (_fire != 0)
-			--_fire;
+		if (_fire != 0) --_fire;
 
 		if ((_health -= getFatalWounds()) < 1) // suffer from fatal wounds
 		{

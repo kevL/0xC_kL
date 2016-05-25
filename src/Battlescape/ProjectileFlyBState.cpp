@@ -805,10 +805,10 @@ void ProjectileFlyBState::think()
 					if (_unit->getFaction() == _battleSave->getSide()
 						&& _battleSave->getUnitsFalling() == false)
 					{
-						//Log(LOG_INFO) << "ProjectileFlyBState::think() CALL te::checkReactionFire()";
-						//	<< " id-" << _unit->getId()
-						//	<< " action.type = " << _action.type
-						//	<< " action.TU = " << _action.TU;
+						//Log(LOG_INFO) << "ProjectileFlyBState::think() CALL te::checkReactionFire()"
+						//			  << " id-" << _unit->getId()
+						//			  << " action.type= " << BattleAction::debugBat(_action.type)
+						//			  << " action.TU= " << _action.TU;
 						_parent->getTileEngine()->checkReactionFire(		// note: I don't believe that smoke obscuration gets accounted
 																_unit,		// for by this call if the current projectile caused cloud.
 																_action.TU,	// But that's kinda ok.
@@ -1174,12 +1174,12 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 	else
 		success = false;
 
-	const int soundId (_action.weapon->getRules()->getMeleeSound());
-	if (soundId != -1
-		&& (success == false || _action.weapon->getRules()->getMeleeHitSound() == -1))
+	if (success == false || _action.weapon->getRules()->getMeleeHitSound() == -1)
 	{
-		_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
-									->play(-1, _parent->getMap()->getSoundAngle(_action.posTarget));
+		const int soundId (_action.weapon->getRules()->getMeleeSound());
+		if (soundId != -1)
+			_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
+										->play(-1, _parent->getMap()->getSoundAngle(_action.posTarget));
 	}
 
 	if (_unit->getSpecialAbility() == SPECAB_BURN)

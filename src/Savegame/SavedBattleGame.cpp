@@ -1474,11 +1474,8 @@ bool SavedBattleGame::endFactionTurn()
 
 				(*i)->setUnitVisible((*i)->getFaction() == FACTION_PLAYER);
 			}
-			else if ((*i)->getFaction() == _side
-				&& (*i)->getFireUnit() != 0)
-			{
+			else if ((*i)->getFaction() == _side && (*i)->getFireUnit() != 0)
 				(*i)->setFireUnit((*i)->getFireUnit() - 1); // dead burning bodies eventually go out.
-			}
 		}
 	}
 

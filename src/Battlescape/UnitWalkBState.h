@@ -46,7 +46,7 @@ class UnitWalkBState
 
 private:
 	bool
-		_falling,
+		_fall,
 		_kneelCheck,
 		_isVisible,
 		_playFly,

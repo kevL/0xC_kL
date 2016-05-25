@@ -1348,7 +1348,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								sprite->blitNShade(
 										surface,
 										posScreen.x,
-										posScreen.y + _tile->getTerrainLevel(),
+										posScreen.y, //+ _tile->getTerrainLevel(),
 										shade);
 						}
 					}// end Smoke & Fire
