@@ -1623,7 +1623,7 @@ items:
 # Special Psi Weapon for Aliens. Usage of this is hard-coded.
 # DO NOT DELETE!
   - type: ALIEN_PSI_WEAPON
-    meleeSoundHit: 36
+    meleeSoundHit: 75 #was 36
     meleeAniHit: 0
     battleType: 9
     tuUse: 35 # kL: was 25
