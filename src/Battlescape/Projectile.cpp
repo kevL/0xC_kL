@@ -87,20 +87,24 @@ Projectile::Projectile(
 
 	if (_action.weapon != nullptr)
 	{
-		switch (_action.type)
+		//Log(LOG_INFO) << "Create Projectile -> " << BattleAction::debugBat(_action.type);
+		switch (_action.type) // NOTE: Melee and Psi attacks won't get this far.
 		{
 			case BA_THROW:
-				//Log(LOG_INFO) << "Create Projectile -> BA_THROW";
 				_throwSprite = res->getSurfaceSet("FLOOROB.PCK")->getFrame(_action.weapon->getRules()->getFloorSprite());
 				_speed /= 5;
+				break;
 
-			default: // ba_SHOOT!! or hit, or spit
-			{
-				//Log(LOG_INFO) << "Create Projectile -> not BA_THROW";
+//			default: // ba_SHOOT!! or hit, or spit
+			case BA_SNAPSHOT:
+			case BA_AUTOSHOT:
+			case BA_AIMEDSHOT:
 				if (_action.weapon->getRules()->isArcingShot() == true)
 					_speed >>= 1u;
-
-				const BattleItem* const bullet (_action.weapon->getAmmoItem()); // the weapon itself if not-req'd. eg, lasers/melee
+				// no break;
+			case BA_LAUNCH:
+			{
+				const BattleItem* const bullet (_action.weapon->getAmmoItem()); // the weapon itself if not-req'd. eg, lasers
 				if (bullet != nullptr) // try to get the required info from the bullet
 				{
 					_bulletSprite = bullet->getRules()->getBulletSprite();
