@@ -46,12 +46,12 @@ private:
 		PSI_OR_BLASTER_PCT	= 88;
 
 	bool
-		_blaster,
-		_grenade,
-		_hasPsiBeenSet,
-		_melee,
-		_psi,
-		_rifle;
+		_hasBlaster,
+		_hasMelee,
+		_hasRifle,
+		_doGrenade,
+		_doPsi,
+		_hasPsiBeenSet;
 	int
 		_aggression,
 		_distClosest,
