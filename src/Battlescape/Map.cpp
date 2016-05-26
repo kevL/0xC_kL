@@ -498,25 +498,39 @@ void Map::drawTerrain(Surface* const surface) // private.
 				}
 
 				const bool offScreen_final (_camera->isOnScreen(posFinal) == false);
-				if (offScreen_final == true										// moved here from TileEngine::reactionShot() because this is the
-					&& action->actor->getFaction() != _battleSave->getSide())	// accurate position of the bullet-shot-actor's Camera mapOffset.
-				{
-					std::map<int, Position>* const rfShotPos (_battleSave->getTileEngine()->getRfShooterPositions());
-					rfShotPos->insert(std::pair<int, Position>(
-															action->actor->getId(),
-															_camera->getMapOffset()));
-				}
-
-				if (offScreen_final == true
-					|| ((_projectile->getThrowItem() != nullptr
-							|| action->weapon->getRules()->isArcingShot() == true)
-						&& TileEngine::distSqr(
-											action->actor->getPosition(),
-											posFinal) > DIST_ARC_SMOOTH_Sqr)) // no smoothing unless throw > ~8 tiles
+				if (offScreen_final == true)
 				{
 					_smoothingEngaged = true;
 					_camera->setPauseAfterShot();
+
+					if (action->actor->getFaction() != _battleSave->getSide())	// moved here from TileEngine::reactionShot() because this is the
+					{															// accurate position of the bullet-shot-actor's Camera mapOffset.
+						std::map<int, Position>* const rfShotPos (_battleSave->getTileEngine()->getRfShooterPositions());
+						rfShotPos->insert(std::pair<int, Position>(
+																action->actor->getId(),
+																_camera->getMapOffset()));
+					}
 				}
+//				const bool offScreen_final (_camera->isOnScreen(posFinal) == false);
+//				if (offScreen_final == true										// moved here from TileEngine::reactionShot() because this is the
+//					&& action->actor->getFaction() != _battleSave->getSide())	// accurate position of the bullet-shot-actor's Camera mapOffset.
+//				{
+//					std::map<int, Position>* const rfShotPos (_battleSave->getTileEngine()->getRfShooterPositions());
+//					rfShotPos->insert(std::pair<int, Position>(
+//															action->actor->getId(),
+//															_camera->getMapOffset()));
+//				}
+//
+//				if (offScreen_final == true)
+//					|| ((_projectile->getThrowItem() != nullptr
+//							|| action->weapon->getRules()->isArcingShot() == true)
+//						&& TileEngine::distSqr(
+//											action->actor->getPosition(),
+//											posFinal) > DIST_ARC_SMOOTH_Sqr)) // no smoothing unless throw > ~8 tiles
+//				{
+//					_smoothingEngaged = true;
+//					_camera->setPauseAfterShot();
+//				}
 			}
 			else if (_smoothingEngaged == true)
 				_camera->jumpXY(

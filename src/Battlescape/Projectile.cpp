@@ -83,51 +83,51 @@ Projectile::Projectile(
 	//Log(LOG_INFO) << ". action.weapon = " << _action.weapon->getRules()->getType();
 	//Log(LOG_INFO) << ". bullet = " << _action.weapon->getAmmoItem()->getRules()->getType();
 
-	_speed = Options::battleFireSpeed; // this is the number of pixels the sprite will move between frames
+	_speed = Options::battleFireSpeed; // this is the distance in pixels that the sprite will move between frames
 
 	if (_action.weapon != nullptr)
 	{
-		if (_action.type == BA_THROW)
+		switch (_action.type)
 		{
-			//Log(LOG_INFO) << "Create Projectile -> BA_THROW";
-			_throwSprite = res->getSurfaceSet("FLOOROB.PCK")->getFrame(_action.weapon->getRules()->getFloorSprite());
-			_speed >>= 1u;
-		}
-		else // ba_SHOOT!! or hit, or spit
-		{
-			//Log(LOG_INFO) << "Create Projectile -> not BA_THROW";
-			if (_action.weapon->getRules()->isArcingShot() == true)
-				_speed >>= 1u;
+			case BA_THROW:
+				//Log(LOG_INFO) << "Create Projectile -> BA_THROW";
+				_throwSprite = res->getSurfaceSet("FLOOROB.PCK")->getFrame(_action.weapon->getRules()->getFloorSprite());
+				_speed /= 5;
 
-			const BattleItem* const bullet (_action.weapon->getAmmoItem()); // the weapon itself if not-req'd. eg, lasers/melee
-			if (bullet != nullptr) // try to get the required info from the bullet
+			default: // ba_SHOOT!! or hit, or spit
 			{
-				_bulletSprite = bullet->getRules()->getBulletSprite();
-				_speed += bullet->getRules()->getBulletSpeed();
-			}
+				//Log(LOG_INFO) << "Create Projectile -> not BA_THROW";
+				if (_action.weapon->getRules()->isArcingShot() == true)
+					_speed >>= 1u;
 
-			// if no bullet or the bullet doesn't contain the required info see what the weapon has to offer.
-			if (_bulletSprite == -1)
-				_bulletSprite = _action.weapon->getRules()->getBulletSprite();
-
-			if (_speed == Options::battleFireSpeed)
-				_speed += _action.weapon->getRules()->getBulletSpeed();
-
-//			if (_action.type == BA_AUTOSHOT) _speed *= 3;
-
-/*			if (_bulletSprite == -1) // shotguns don't have bullet-sprites ...
-			{
-				std::ostringstream oststr;
-				oststr << "Missing bullet sprite";
-				if (_action.weapon != nullptr)
-					oststr << " for " << _action.weapon->getRules()->getType().c_str();
-				if (_action.weapon->getAmmoItem() != nullptr
-					&& _action.weapon->getAmmoItem() != _action.weapon)
+				const BattleItem* const bullet (_action.weapon->getAmmoItem()); // the weapon itself if not-req'd. eg, lasers/melee
+				if (bullet != nullptr) // try to get the required info from the bullet
 				{
-					oststr << " w/ " << _action.weapon->getAmmoItem()->getRules()->getType().c_str();
+					_bulletSprite = bullet->getRules()->getBulletSprite();
+					_speed += bullet->getRules()->getBulletSpeed();
 				}
-				Log(LOG_WARNING) << oststr.str();
-			} */
+
+				// if no bullet or the bullet doesn't contain the required info see what the weapon has to offer.
+				if (_bulletSprite == -1)
+					_bulletSprite = _action.weapon->getRules()->getBulletSprite();
+
+				if (_speed == Options::battleFireSpeed)
+					_speed += _action.weapon->getRules()->getBulletSpeed();
+
+//				if (_action.type == BA_AUTOSHOT) _speed *= 3;
+
+//				if (_bulletSprite == -1) // shotguns don't have bullet-sprites ...
+//				{
+//					std::ostringstream oststr;
+//					oststr << "Missing bullet sprite for " << _action.weapon->getRules()->getType();
+//					if (_action.weapon->getAmmoItem() != nullptr
+//						&& _action.weapon->getAmmoItem() != _action.weapon)
+//					{
+//						oststr << " w/ " << _action.weapon->getAmmoItem()->getRules()->getType();
+//					}
+//					Log(LOG_WARNING) << oststr.str();
+//				}
+			}
 		}
 	}
 

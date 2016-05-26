@@ -68,7 +68,7 @@ private:
 		BULLET_SPRITES	= 35,
 		SHADE_BLACK		= 16,
 
-		DIST_ARC_SMOOTH_Sqr = 64,
+//		DIST_ARC_SMOOTH_Sqr = 64,
 
 		WHITE = 1,
 		RED   = 3;
@@ -84,6 +84,7 @@ private:
 		ACU_ORANGE	= 18u,
 		ACU_RED		= 35u,
 		ACU_GREEN	= 51u;
+
 	static const Uint32
 		SCROLL_INTERVAL	= 15u,
 
