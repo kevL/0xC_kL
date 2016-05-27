@@ -320,14 +320,14 @@ void MapData::setBlock(
  */
 void MapData::setHEBlock(int heBlock)
 {
-	_block[2] = heBlock;
+	_block[2u] = heBlock;
 }
 
 /**
- * Gets the Y offset for drawing this tile-part.
+ * Gets the offset on the y-axis for drawing this tile-part.
  * @return, the offset in pixels
  */
-int MapData::getYOffset() const
+int MapData::getOffsetY() const
 {
 	return _yOffset;
 }
@@ -336,7 +336,7 @@ int MapData::getYOffset() const
  * Sets the offset on the y-axis for drawing this tile-part.
  * @param offset - the offset in pixels
  */
-void MapData::setYOffset(int offset)
+void MapData::setOffsetY(int offset)
 {
 	_yOffset = offset;
 }

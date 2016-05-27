@@ -1236,7 +1236,8 @@ void BattlescapeState::mapOver(Action* action)
 
 		_game->getCursor()->handle(action);
 	}
-	else if (_mouseOverIcons == false && allowButtons() == true)
+	else if (_mouseOverIcons == false && allowButtons() == true
+		&& _game->getCursor()->getHidden() == false)
 	{
 		Position pos;
 		_map->getSelectorPosition(&pos);

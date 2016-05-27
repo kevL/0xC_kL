@@ -718,14 +718,13 @@ void Map::drawTerrain(Surface* const surface) // private.
 					hasObject = false;
 
 // Draw Floor
-					sprite = _tile->getSprite(O_FLOOR);
-					if (sprite != nullptr)
+					if ((sprite = _tile->getSprite(O_FLOOR)) != nullptr)
 					{
 						hasFloor = true;
 						sprite->blitNShade(
 								surface,
 								posScreen.x,
-								posScreen.y - _tile->getMapData(O_FLOOR)->getYOffset(),
+								posScreen.y - _tile->getMapData(O_FLOOR)->getOffsetY(),
 								tileShade);
 
 						// kL_begin #1 of 3:
@@ -908,7 +907,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							sprite->blitNShade(
 									surface,
 									posScreen.x,
-									posScreen.y - _tile->getMapData(O_WESTWALL)->getYOffset(),
+									posScreen.y - _tile->getMapData(O_WESTWALL)->getOffsetY(),
 									shade);
 						}
 
@@ -926,7 +925,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							sprite->blitNShade(
 									surface,
 									posScreen.x,
-									posScreen.y - _tile->getMapData(O_NORTHWALL)->getYOffset(),
+									posScreen.y - _tile->getMapData(O_NORTHWALL)->getOffsetY(),
 									shade,
 									(_tile->getMapData(O_WESTWALL) != nullptr));
 						}
@@ -947,7 +946,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									sprite->blitNShade(
 											surface,
 											posScreen.x,
-											posScreen.y - _tile->getMapData(O_OBJECT)->getYOffset(),
+											posScreen.y - _tile->getMapData(O_OBJECT)->getOffsetY(),
 											tileShade);
 							}
 						}
@@ -1118,6 +1117,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							halfRight		(false),
 							halfLeft		(false),
 							redrawEastwall	(false),
+							redrawSouthwall	(false),
 							draw			(true);
 
 						switch (_unit->getUnitStatus()) // don't clip through north/northwest/west UFO hulls etc.
@@ -1144,6 +1144,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 										case 2:
 										case 6:
+											redrawSouthwall =
 											draw = checkWest(
 															_battleSave->getTile(posField + Position(-1,0,0)),	// tileWest
 															_battleSave->getTile(posField + Position(-1,1,0)),	// tileSouthWest
@@ -1196,7 +1197,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 												0, halfLeft);
 								}
 
-								if (redrawEastwall == true)
+								if (redrawEastwall == true
+									&& (_tile->getMapData(O_OBJECT) == nullptr
+										|| _tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST))
 								{
 									const Tile* const tileNorth (_battleSave->getTile(posField + Position(0,-1,0)));
 									if (tileNorth != nullptr // safety. perhaps
@@ -1207,8 +1210,25 @@ void Map::drawTerrain(Surface* const surface) // private.
 										sprite->blitNShade(
 												surface,
 												posScreen.x + 16,
-												posScreen.y -  8 - tileNorth->getMapData(O_OBJECT)->getYOffset(),
+												posScreen.y -  8 - tileNorth->getMapData(O_OBJECT)->getOffsetY(),
 												tileNorth->getShade());
+									}
+								}
+								else if (redrawSouthwall == true
+									&& (_tile->getMapData(O_OBJECT) == nullptr
+										|| _tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_SOUTH))
+								{
+									const Tile* const tileWest (_battleSave->getTile(posField + Position(-1,0,0)));
+									if (tileWest != nullptr
+										&& tileWest->getMapData(O_OBJECT) != nullptr
+										&& tileWest->getMapData(O_OBJECT)->getBigwall() == BIGWALL_SOUTH)
+									{
+										sprite = tileWest->getSprite(O_OBJECT);
+										sprite->blitNShade(
+												surface,
+												posScreen.x - 16,
+												posScreen.y -  8 - tileWest->getMapData(O_OBJECT)->getOffsetY(),
+												tileWest->getShade());
 									}
 								}
 
@@ -1405,7 +1425,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								sprite->blitNShade(
 										surface,
 										posScreen.x,
-										posScreen.y - _tile->getMapData(O_OBJECT)->getYOffset(),
+										posScreen.y - _tile->getMapData(O_OBJECT)->getOffsetY(),
 										tileShade);
 						}
 					}

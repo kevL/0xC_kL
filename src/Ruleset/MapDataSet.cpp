@@ -207,7 +207,7 @@ void MapDataSet::loadData()
 
 		to->setPartType(static_cast<MapDataType>(mcd.Tile_Type));
 		to->setSpecialType(static_cast<SpecialTileType>(mcd.Target_Type));
-		to->setYOffset((int)mcd.P_Level);
+		to->setOffsetY((int)mcd.P_Level);
 		to->setTUCosts(
 				(int)mcd.TU_Walk,
 				(int)mcd.TU_Fly,

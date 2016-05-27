@@ -215,9 +215,9 @@ private:
 		void setHEBlock(int heBlock);
 
 		/// Gets the offset on the y-axis when drawing the part.
-		int getYOffset() const;
+		int getOffsetY() const;
 		/// Sets the offset on the y-axis for drawing the part.
-		void setYOffset(int offset);
+		void setOffsetY(int offset);
 
 		/// Gets the type of the part.
 		MapDataType getPartType() const;
