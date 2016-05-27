@@ -157,7 +157,7 @@ AlienDeployment::AlienDeployment(const std::string& type)
 		_pointsPer30(0),
 		_turnLimit(0),
 		_chronoResult(FORCE_LOSE),
-		_cheatTurn(20),
+		_cheatTurn(CHEAT_TURN_DEFAULT),
 		_markerType("STR_TERROR_SITE"),
 		_alert("STR_ALIENS_TERRORISE"),
 		_alertBg("BACK03.SCR")

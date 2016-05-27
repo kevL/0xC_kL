@@ -1810,7 +1810,7 @@ BattleUnit* TileEngine::getReactor(
 			i != spotters.end();
 			++i)
 	{
-		//Log(LOG_INFO) << ". . check nextReactor id-" << (*i)->getId();
+		//Log(LOG_INFO) << ". . test spotter id-" << (*i)->getId() << " initi= " << (*i)->getInitiative();
 		if ((*i)->isOut_t() == false
 			&& (initTest = (*i)->getInitiative()) > init)
 		{
@@ -1819,7 +1819,7 @@ BattleUnit* TileEngine::getReactor(
 		}
 	}
 
-	//Log(LOG_INFO) << ". id-" << defender->getId() << " initi = " << defender->getInitiative(tuSpent);
+	//Log(LOG_INFO) << ". trigger id-" << defender->getId() << " initi= " << defender->getInitiative(tuSpent);
 
 	// nextReactor has to *best* defender.Init to get initiative
 	// Analysis: It appears that defender's tu for firing/throwing

@@ -91,6 +91,8 @@ enum ChronoResult
 	FORCE_ABORT	// 2
 };
 
+static const int CHEAT_TURN_DEFAULT = 20;
+
 
 class Ruleset;
 class RuleTerrain;

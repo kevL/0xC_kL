@@ -99,7 +99,7 @@ SavedBattleGame::SavedBattleGame(
 		_walkUnit(nullptr),
 		_turnLimit(0),
 		_chronoResult(FORCE_LOSE),
-		_cheatTurn(CHEAT_DEFAULT)
+		_cheatTurn(CHEAT_TURN_DEFAULT)
 //		_preBattle(true)
 //		_dragInvert(false),
 //		_dragTimeTolerance(0),
@@ -569,8 +569,9 @@ void SavedBattleGame::load(
 	_turnLimit = node["turnLimit"].as<int>(_turnLimit);
 	_chronoResult = static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
 
-	_cheatTurn = node["cheatTurn"].as<int>(_cheatTurn);
-	_alienRace = node["alienRace"].as<std::string>(_alienRace);
+	_cheatAI	= node["cheatAI"]	.as<bool>(_cheatAI);
+	_cheatTurn	= node["cheatTurn"]	.as<int>(_cheatTurn);
+	_alienRace	= node["alienRace"]	.as<std::string>(_alienRace);
 //	_kneelReserved = node["kneelReserved"].as<bool>(_kneelReserved);
 
 //	_batReserved = static_cast<BattleActionType>(node["batReserved"].as<int>(_batReserved));
@@ -802,7 +803,10 @@ YAML::Node SavedBattleGame::save() const
 		node["chronoResult"] = static_cast<int>(_chronoResult);
 	}
 
-	if (_cheatTurn != CHEAT_DEFAULT)
+	if (_cheatAI == true)
+		node["cheatAI"] = _cheatAI;
+
+	if (_cheatTurn != CHEAT_TURN_DEFAULT)
 		node["cheatTurn"] = _cheatTurn;
 
 	return node;
@@ -1413,7 +1417,7 @@ bool SavedBattleGame::endFactionTurn()
 				++i)
 		{
 			if ((*i)->isOut_t(OUT_STAT) == false // a conscious non-MC'd aLien ...
-				&& (*i)->getFaction() == FACTION_HOSTILE
+				&& (*i)->getOriginalFaction() == FACTION_HOSTILE
 				&& (*i)->isMindControlled() == false)
 			{
 				const int r (RNG::generate(0,5));
