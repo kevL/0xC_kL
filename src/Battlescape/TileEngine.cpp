@@ -5849,7 +5849,7 @@ bool TileEngine::validateThrow(
 
 		// use the average of upper & lower limits:
 		// Lessens chance of bouncing a thrown item back off a wall by barely skimming overtop once accuracy is applied.
-		*arc = (parabolicCoefficient_Low + parabolicCoefficient_High) / 2.;
+		*arc = (parabolicCoefficient_Low + parabolicCoefficient_High - ARC_DELTA) / 2.; // back off from the upper limit
 	}
 
 	//if (arc != nullptr) Log(LOG_INFO) << ". vT() ret TRUE arc = " << *arc;
