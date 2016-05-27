@@ -81,6 +81,7 @@ private:
 
 		LOFT_LAYERS = 12u;
 
+	static bool _debug;
 	bool
 		_spotSound,
 		_unitLighting;
@@ -338,12 +339,12 @@ private:
 				const BattleUnit* const unit) const;
 
 		/// Calculates the z-voxel for shadows.
-		int castShadow(const Position& voxel) const;
+		int castShadow(const Position& originVoxel) const;
 
 		/// Checks the visibility of a given voxel.
 //		bool isVoxelVisible(const Position& voxel) const;
 		/// Checks what type of voxel occupies a specified voxel.
-		VoxelType detVoxelType(
+		VoxelType voxelCheck(
 				const Position& targetVoxel,
 				const BattleUnit* const excludeUnit = nullptr,
 				const bool excludeAllUnits = false,

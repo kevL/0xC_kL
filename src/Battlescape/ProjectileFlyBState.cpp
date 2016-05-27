@@ -280,10 +280,14 @@ void ProjectileFlyBState::init()
 		_targetVoxel.x += 8;
 		_targetVoxel.y += 8;
 
-		if (_action.type == BA_THROW)
-			_targetVoxel.z += 2 - tileTarget->getTerrainLevel(); // LoFT of floor is typically 2 voxels thick.
-		else if (_targetFloor == false)
-			_targetVoxel.z += 16;
+		switch (_action.type)
+		{
+			case BA_THROW:
+				_targetVoxel.z += 2 - tileTarget->getTerrainLevel(); // LoFT of floor is typically 2 voxels thick.
+				break;
+			case BA_LAUNCH:
+				if (_targetFloor == false) _targetVoxel.z += 16;
+		}
 	}
 	else if ((_unit->getFaction() == FACTION_PLAYER	// force fire at center of Tile by pressing [CTRL] but *not* SHIFT
 			&& (SDL_GetModState() & KMOD_CTRL) != 0	// force fire at Floor w/ [CTRL+ALT]

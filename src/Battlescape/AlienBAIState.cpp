@@ -2064,6 +2064,8 @@ bool AlienBAIState::explosiveEfficacy(
 
 		const BattleUnit* const targetUnit (_battleSave->getTile(pos)->getTileUnit());
 
+		VoxelType voxelTest;
+
 		//Log(LOG_INFO) << "attacker = " << attacker->getId();
 		//Log(LOG_INFO) << "pos = " << pos;
 		for (std::vector<BattleUnit*>::const_iterator
@@ -2098,19 +2100,19 @@ bool AlienBAIState::explosiveEfficacy(
 						voxelPosA (Position::toVoxelSpaceCentered(pos, 12)),
 						voxelPosB (Position::toVoxelSpaceCentered((*i)->getPosition(), 12));
 
-					std::vector<Position> trajectory;
-					const VoxelType impact (_battleSave->getTileEngine()->plotLine(
-																				voxelPosA,
-																				voxelPosB,
-																				false,
-																				&trajectory,
-																				targetUnit,
-																				true,
-																				false,
-																				*i));
-					//Log(LOG_INFO) << "trajSize = " << (int)trajectory.size() << "; impact = " << impact;
-					if (impact == VOXEL_UNIT
-						&& (*i)->getPosition() == Position::toTileSpace(trajectory.front()))
+					std::vector<Position> trj;
+					voxelTest = _battleSave->getTileEngine()->plotLine(
+																	voxelPosA,
+																	voxelPosB,
+																	false,
+																	&trj,
+																	targetUnit,
+																	true,
+																	false,
+																	*i);
+					//Log(LOG_INFO) << "trajSize = " << (int)trj.size() << "; impact = " << impact;
+					if (voxelTest == VOXEL_UNIT
+						&& (*i)->getPosition() == Position::toTileSpace(trj.front()))
 					{
 						//Log(LOG_INFO) << "trajFront " << (trajectory.front() / Position(16,16,24));
 						if ((*i)->getFaction() != FACTION_HOSTILE)
@@ -2144,9 +2146,9 @@ bool AlienBAIState::psiAction() // private.
 		Log(LOG_INFO) << "";
 		Log(LOG_INFO) << "AlienBAIState::psiAction() id-" << _unit->getId();
 	}
-	if (_unit->getBattleStats()->psiSkill != 0
-		&& _hasPsiBeenSet == false
-		&& _unit->isMindControlled() == false)
+	if (_hasPsiBeenSet == false
+		&& _unit->getOriginalFaction() == FACTION_HOSTILE
+		&& _unit->getBattleStats()->psiSkill != 0)
 	{
 		const RuleItem* const itRule (_battleSave->getBattleGame()->getAlienPsi()->getRules());
 

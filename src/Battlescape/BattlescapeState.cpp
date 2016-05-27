@@ -1764,11 +1764,11 @@ void BattlescapeState::btnUnitUpPress(Action*)
 									Pathfinding::DIR_UP))
 			{
 				case FLY_CANT:
-					warning("STR_ACTION_NOT_ALLOWED_NOFLY");
+					warning(BattlescapeGame::PLAYER_ERROR[12]);
 					break;
 
 				case FLY_BLOCKED:
-					warning("STR_ACTION_NOT_ALLOWED_ROOF");
+					warning(BattlescapeGame::PLAYER_ERROR[13]);
 					break;
 
 				case FLY_GRAVLIFT:
@@ -1781,7 +1781,7 @@ void BattlescapeState::btnUnitUpPress(Action*)
 			}
 		}
 		else
-			warning("STR_ACTION_NOT_ALLOWED_NOFLY");
+			warning(BattlescapeGame::PLAYER_ERROR[12]);
 	}
 }
 
@@ -1812,7 +1812,7 @@ void BattlescapeState::btnUnitDownPress(Action*)
 		{
 			case FLY_CANT:
 			case FLY_BLOCKED:
-				warning("STR_ACTION_NOT_ALLOWED_FLOOR");
+				warning(BattlescapeGame::PLAYER_ERROR[14]);
 				break;
 
 			case FLY_GRAVLIFT:
@@ -4993,7 +4993,7 @@ void BattlescapeState::saveVoxelMap()
 					x < (_battleSave->getMapSizeX() << 4u);
 					++x)
 			{
-				int voxelTest (static_cast<int>(_battleSave->getTileEngine()->detVoxelType(Position(x,y,z << 1u))) + 1);
+				int voxelTest (static_cast<int>(_battleSave->getTileEngine()->voxelCheck(Position(x,y,z << 1u))) + 1);
 				float dist (1.f);
 
 				if (x % 16 == 15)

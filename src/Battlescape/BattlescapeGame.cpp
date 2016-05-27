@@ -76,7 +76,7 @@ namespace OpenXcom
 
 bool BattlescapeGame::_debugPlay; // static.
 
-const char* const BattlescapeGame::PLAYER_ERROR[11u] // static.
+const char* const BattlescapeGame::PLAYER_ERROR[15u] // static.
 {
 	"STR_NOT_ENOUGH_TIME_UNITS",			//  0
 	"STR_NOT_ENOUGH_ENERGY",				//  1
@@ -88,7 +88,11 @@ const char* const BattlescapeGame::PLAYER_ERROR[11u] // static.
 	"STR_THERE_IS_NO_ONE_THERE",			//  7
 	"STR_WEAPON_IS_ALREADY_LOADED",			//  8
 	"STR_WRONG_AMMUNITION_FOR_THIS_WEAPON",	//  9
-	"STR_BOTH_HANDS_MUST_BE_EMPTY"			// 10
+	"STR_BOTH_HANDS_MUST_BE_EMPTY",			// 10
+	"STR_ACTION_NOT_ALLOWED_PSIONIC",		// 11
+	"STR_ACTION_NOT_ALLOWED_NOFLY",			// 12
+	"STR_ACTION_NOT_ALLOWED_ROOF",			// 13
+	"STR_ACTION_NOT_ALLOWED_FLOOR"			// 14
 //	"STR_TUS_RESERVED"
 //	"STR_NO_ROUNDS_LEFT"
 };

@@ -57,6 +57,8 @@
 namespace OpenXcom
 {
 
+bool TileEngine::_debug = false;
+
 const int TileEngine::scanOffsetZ[11u] // static.
 {
 		  0,
@@ -696,7 +698,6 @@ bool TileEngine::calcFov(
 										++dY)
 								{
 									trj.clear();
-
 									blockType = plotLine(
 														posUnit + Position(dX,dY, 0),
 														posTest,
@@ -704,7 +705,6 @@ bool TileEngine::calcFov(
 														&trj,
 														unit,
 														false);
-
 									trjLength = trj.size();
 
 //									if (blockType > 127)	// last tile is blocked thus must be cropped.
@@ -1239,6 +1239,8 @@ bool TileEngine::canTargetUnit(
 		targetable_y,
 		targetable_z;
 
+	VoxelType voxelTest;
+
 	for (size_t // scan from a horizontal center-line up and down using scanOffsetZ[]
 			i = 0u;
 			i != static_cast<size_t>(height);
@@ -1267,20 +1269,19 @@ bool TileEngine::canTargetUnit(
 				} */
 
 				trj.clear();
-
-				const VoxelType testVoxel (plotLine(
-												*originVoxel,
-												*scanVoxel,
-												false,
-												&trj,
-												excludeUnit));
+				voxelTest = plotLine(
+									*originVoxel,
+									*scanVoxel,
+									false,
+									&trj,
+									excludeUnit);
 /*				if (debug)
 				{
 					if (trj.empty() == false) Log(LOG_INFO) << ". . . . impact " << trj.at(0u) << " ts " << (trj.at(0u) / Position(16,16,24));
-					Log(LOG_INFO) << ". . . . impactType= " << MapData::debugVoxelType(testVoxel);
+					Log(LOG_INFO) << ". . . . impactType= " << MapData::debugVoxelType(voxelTest);
 				} */
 
-				switch (testVoxel)
+				switch (voxelTest)
 				{
 					case VOXEL_UNIT:
 //						for (int // voxel of hit must be inside of scanned tileTarget(s)
@@ -1443,7 +1444,7 @@ bool TileEngine::canTargetTilepart(
 				tX (spiral[i * 2u]),
 				tY (spiral[i * 2u + 1u]);
 
-			if (detVoxelType(
+			if (voxelCheck(
 						Position(
 								targetVoxel.x + tX,
 								targetVoxel.y + tY,
@@ -1475,7 +1476,7 @@ bool TileEngine::canTargetTilepart(
 				tX (spiral[i * 2u]),
 				tY (spiral[i * 2u + 1u]);
 
-			if (detVoxelType(
+			if (voxelCheck(
 						Position(
 								targetVoxel.x + tX,
 								targetVoxel.y + tY,
@@ -1498,6 +1499,8 @@ bool TileEngine::canTargetTilepart(
 														  zMax - zMin + 1)));
 		const int zCenter ((zMax + zMin) / 2);
 
+		VoxelType voxelTest;
+
 		for (size_t
 				j = 0u;
 				j != zRange;
@@ -1516,12 +1519,12 @@ bool TileEngine::canTargetTilepart(
 				scanVoxel->y = targetVoxel.y + spiral[i * 2u + 1u];
 
 				trj.clear();
-				const VoxelType voxelTest (plotLine(
-												*originVoxel,
-												*scanVoxel,
-												false,
-												&trj,
-												excludeUnit));
+				voxelTest = plotLine(
+									*originVoxel,
+									*scanVoxel,
+									false,
+									&trj,
+									excludeUnit);
 				if (voxelTest == static_cast<VoxelType>(tilePart)								// bingo. MapDataType & VoxelType correspond
 					&& Position::toTileSpace(trj.at(0u)) == Position::toTileSpace(*scanVoxel))	// so do Tiles.
 				{
@@ -2111,7 +2114,7 @@ void TileEngine::hit(
 	if (melee == true)
 		voxelType = VOXEL_UNIT;
 	else
-		voxelType = detVoxelType(targetVoxel, attacker);
+		voxelType = voxelCheck(targetVoxel, attacker);
 
 	switch (voxelType)
 	{
@@ -5300,8 +5303,8 @@ VoxelType TileEngine::plotLine(
 		const bool onlyVisible,
 		const BattleUnit* const excludeAllBut) const
 {
-	//Log(LOG_INFO) << " ";
-	VoxelType impactType;
+	//if (_debug) Log(LOG_INFO) << "TileEngine::plotLine()";
+	VoxelType voxelTest;
 	bool
 		swap_xy,
 		swap_xz;
@@ -5368,24 +5371,27 @@ VoxelType TileEngine::plotLine(
 		if (swap_xz == true) std::swap(cx,cz); // unswap (in reverse)
 		if (swap_xy == true) std::swap(cx,cy);
 
-		if (storeTrj == true && trj != nullptr)
+		if (storeTrj == true) // && trj != nullptr)
 			trj->push_back(Position(cx,cy,cz));
 
 		if (doVoxelCheck == true) // passes through this voxel, for Unit visibility & LoS/LoF
 		{
-			impactType = detVoxelType(
+			voxelTest = voxelCheck(
 								Position(cx,cy,cz),
 								excludeUnit,
 								false,
 								onlyVisible,
 								excludeAllBut);
 
-			if (impactType != VOXEL_EMPTY) // hit.
+			if (voxelTest != VOXEL_EMPTY) // hit.
 			{
-				if (trj != nullptr) // store the position of impact
-					trj->push_back(Position(cx,cy,cz));
+				//if (_debug) Log(LOG_INFO) << "pL() ret[1] " << MapData::debugVoxelType(voxelTest) << " vs"
+				//						  << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
 
-				return impactType;
+//				if (trj != nullptr)					// store the position of impact
+				trj->push_back(Position(cx,cy,cz));	// NOTE: This stores the final position twice if storeTrj=TRUE.
+													// Cf. plotParabola() where that is explicitly not done.
+				return voxelTest;
 			}
 		}
 		else // for Terrain visibility, ie. FoV / Fog of War.
@@ -5458,19 +5464,22 @@ VoxelType TileEngine::plotLine(
 				if (swap_xz == true) std::swap(cx,cz);
 				if (swap_xy == true) std::swap(cx,cy);
 
-				impactType = detVoxelType(
+				voxelTest = voxelCheck(
 									Position(cx,cy,cz),
 									excludeUnit,
 									false,
 									onlyVisible,
 									excludeAllBut);
 
-				if (impactType != VOXEL_EMPTY)
+				if (voxelTest != VOXEL_EMPTY)
 				{
-					if (trj != nullptr)
-						trj->push_back(Position(cx,cy,cz)); // store the position of impact
+					//if (_debug) Log(LOG_INFO) << "pL() ret[2] " << MapData::debugVoxelType(voxelTest) << " vs"
+					//						  << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
 
-					return impactType;
+//					if (trj != nullptr)
+					trj->push_back(Position(cx,cy,cz)); // store the position of impact
+
+					return voxelTest;
 				}
 			}
 		}
@@ -5486,19 +5495,22 @@ VoxelType TileEngine::plotLine(
 				if (swap_xz == true) std::swap(cx,cz);
 				if (swap_xy == true) std::swap(cx,cy);
 
-				impactType = detVoxelType(
+				voxelTest = voxelCheck(
 									Position(cx,cy,cz),
 									excludeUnit,
 									false,
 									onlyVisible,
 									excludeAllBut);
 
-				if (impactType != VOXEL_EMPTY)
+				if (voxelTest != VOXEL_EMPTY)
 				{
-					if (trj != nullptr) // store the position of impact
-						trj->push_back(Position(cx,cy,cz));
+					//if (_debug) Log(LOG_INFO) << "pL() ret[3] " << MapData::debugVoxelType(voxelTest) << " vs"
+					//						  << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
 
-					return impactType;
+//					if (trj != nullptr)
+					trj->push_back(Position(cx,cy,cz));	// store the position of impact
+
+					return voxelTest;
 				}
 			}
 		}
@@ -5541,7 +5553,8 @@ VoxelType TileEngine::plotParabola(
 		const bool allowCeil,
 		const Position& deltaVoxel) const
 {
-	//Log(LOG_INFO) << "TileEngine::plotParabola()";
+	//if (_debug) Log(LOG_INFO) << "TileEngine::plotParabola()";
+
 	const double ro (std::sqrt(static_cast<double>(
 					(targetVoxel.x - originVoxel.x) * (targetVoxel.x - originVoxel.x)
 				  + (targetVoxel.y - originVoxel.y) * (targetVoxel.y - originVoxel.y)
@@ -5572,7 +5585,14 @@ VoxelType TileEngine::plotParabola(
 	Position
 		startVoxel (Position(x,y,z)),
 		stopVoxel,
-		posTarget (Position::toTileSpace(targetVoxel));
+		stopPlotLine;
+
+	const Position posTarget (Position::toTileSpace(targetVoxel));
+	const int posVoxelZ (posTarget.z * 24 + 2);
+
+	VoxelType voxelTest;
+
+	std::vector<Position> trjPlotLine;
 
 	while (z > -1) // while airborne ->
 	{
@@ -5581,33 +5601,58 @@ VoxelType TileEngine::plotParabola(
 		z = static_cast<int>(static_cast<double>(originVoxel.z) + d * std::cos(fi)
 			- zK * (d - ro / 2.) * (d - ro / 2.)
 			+ zA);
+
 		stopVoxel = Position(x,y,z);
+		//if (_debug) Log(LOG_INFO) << "pP() stopVoxel " << stopVoxel;
 
 		if (storeTrj == true) trj->push_back(stopVoxel); // add current voxel.
 
-		VoxelType impactType (plotLine(
-									startVoxel,
-									stopVoxel,
-									false,
-									nullptr,
-									excludeUnit));
-		if (impactType != VOXEL_EMPTY
-			|| (   stopVoxel.z < startVoxel.z
-				&& stopVoxel.z < posTarget.z * 24 + 2
-				&& Position::toTileSpace(stopVoxel) == posTarget))
+		trjPlotLine.clear();
+		//if (_debug) Log(LOG_INFO) << "pP() do plotLine";
+		voxelTest = plotLine(
+							startVoxel,
+							stopVoxel,
+							false,
+							&trjPlotLine, //nullptr,
+							excludeUnit);
+		//if (_debug) Log(LOG_INFO) << "pP() plotLine DONE";
+
+//		if (voxelTest != VOXEL_EMPTY
+//			|| (   stopVoxel.z < startVoxel.z
+//				&& stopVoxel.z < posVoxelZ
+//				&& Position::toTileSpace(stopVoxel) == posTarget))
+		if (trjPlotLine.empty() == false)
+			stopPlotLine = trjPlotLine.at(0u);
+		else
+			stopPlotLine = stopVoxel;
+
+		//if (_debug) Log(LOG_INFO) << "pP() stopPlotLine set";
+
+		if (voxelTest != VOXEL_EMPTY
+			|| (   stopPlotLine.z < startVoxel.z
+				&& stopPlotLine.z < posVoxelZ
+				&& Position::toTileSpace(stopPlotLine) == posTarget))
 		{
+//			if (_debug)
+//			{
+//				Log(LOG_INFO) << "pP() (voxelTest != VOXEL_EMPTY) = " << (voxelTest != VOXEL_EMPTY);
+//				Log(LOG_INFO) << "pP() (stopVoxel.z < startVoxel.z) = " << (stopPlotLine.z < startVoxel.z);
+//				Log(LOG_INFO) << "pP() (stopVoxel.z < posVoxelZ) = " << (stopPlotLine.z < posVoxelZ);
+//				Log(LOG_INFO) << "pP() (Position::toTileSpace(stopVoxel) == posTarget) = " << (Position::toTileSpace(stopPlotLine) == posTarget);
+//			}
+
 			if (allowCeil == false
-				&& startVoxel.z < stopVoxel.z)
+				&& startVoxel.z < stopPlotLine.z)
 			{
-				//Log(LOG_INFO) << "plot: hit Ceiling set impactType VOXEL_OUTOFBOUNDS " << Position::toTileSpace(stopVoxel);
-				impactType = VOXEL_OUTOFBOUNDS; // <- do not stick to ceilings ....
+				//if (_debug) Log(LOG_INFO) << "pP() hit Ceiling set voxelTest VOXEL_OUTOFBOUNDS " << Position::toTileSpace(stopPlotLine);
+				voxelTest = VOXEL_OUTOFBOUNDS; // <- do not stick to ceilings ....
 			}
 
-			if (storeTrj == false) trj->push_back(stopVoxel); // final voxel only.
+			if (storeTrj == false) trj->push_back(stopPlotLine); // final voxel only.
 
-			//Log(LOG_INFO) << "plot: ret[1] = " << MapData::debugVoxelType(impactType) << " " << Position::toTileSpace(stopVoxel);
-			//Log(LOG_INFO) << "";
-			return impactType;
+			//if (_debug) Log(LOG_INFO) << "pP() ret " << MapData::debugVoxelType(voxelTest) << " vs"
+			//						  << stopPlotLine << " ts" << Position::toTileSpace(stopPlotLine);
+			return voxelTest;
 		}
 
 		startVoxel = stopVoxel;
@@ -5616,8 +5661,7 @@ VoxelType TileEngine::plotParabola(
 
 	if (storeTrj == false) trj->push_back(Position(x,y,z)); // final voxel only.
 
-	//Log(LOG_INFO) << "plot: ret VOXEL_EMPTY " << Position::toTileSpace(Position(x,y,z));
-	//Log(LOG_INFO) << "";
+	//if (_debug) Log(LOG_INFO) << "pP() EXIT - ret VOXEL_EMPTY " << Position::toTileSpace(Position(x,y,z));
 	return VOXEL_EMPTY;
 }
 
@@ -5639,14 +5683,24 @@ bool TileEngine::validateThrow(
 		double* const arc,
 		VoxelType* const impactType) const
 {
-	//Log(LOG_INFO) << "TileEngine::validateThrow()";
+//	if (_debug == true) _debug = false;
+//	else if (Position::toTileSpace(targetVoxel) == Position(41,22,2)) _debug = true;
+//	else _debug = false;
+//	_debug = true;
+
+//	if (_debug)
+//	{
+//		Log(LOG_INFO) << "";
+//		Log(LOG_INFO) << "TileEngine::validateThrow() to vs" << targetVoxel << " ts" << Position::toTileSpace(targetVoxel);
+//	}
+
 	if (action.type == BA_THROW) // ie. Do not check the following for acid-spit, grenade-launcher, etc.
 	{
 		const Tile* const tile (_battleSave->getTile(action.posTarget)); // safety Off.
 
 		if (validThrowRange(&action, originVoxel, tile) == false)
 		{
-			//Log(LOG_INFO) << ". vT() ret FALSE, ThrowRange not valid";
+			//if (_debug) Log(LOG_INFO) << ". range not valid - ret FALSE";
 			return false;
 		}
 
@@ -5660,7 +5714,7 @@ bool TileEngine::validateThrow(
 			{
 				case BIGWALL_NESW:
 				case BIGWALL_NWSE:
-					//Log(LOG_INFO) << ". vT() ret FALSE, no diag BigWalls";
+					//if (_debug) Log(LOG_INFO) << ". diag BigWalls not allowed - ret FALSE";
 					return false;
 			}
 		}
@@ -5669,7 +5723,7 @@ bool TileEngine::validateThrow(
 		// out that an item *can* be throw onto the upper tile of a gravLift if
 		// there is a BattleUnit standing on it ... interesting quirk that.
 		if (tile->getPosition().z != 0
-			&& tile->getTileUnit() == nullptr
+			&& tile->getTileUnit() == nullptr // <---||
 			&& tile->getMapData(O_FLOOR) != nullptr
 			&& tile->getMapData(O_FLOOR)->isGravLift() == true)
 		{
@@ -5678,6 +5732,7 @@ bool TileEngine::validateThrow(
 				&& tileBelow->getMapData(O_FLOOR) != nullptr
 				&& tileBelow->getMapData(O_FLOOR)->isGravLift() == true)
 			{
+				//if (_debug) Log(LOG_INFO) << ". upper GravLift floor not allowed - ret FALSE";
 				return false;
 			}
 		}
@@ -5702,15 +5757,19 @@ bool TileEngine::validateThrow(
 
 
 	// check for voxelTest up from the lowest arc
-	VoxelType impactTest;
+	VoxelType voxelTest;
 	std::vector<Position> trj;
 
-	bool impact = false;
-	while (impact == false && parabolicCoefficient_Low < 10.) // find an 'arc' to destination
+	bool arcGood (false);
+	while (arcGood == false && parabolicCoefficient_Low < 10.) // find an 'arc' to destination
 	{
-		//Log(LOG_INFO) << ". . arc[1] = " << parabolicCoefficient_Low;
+//		if (_debug)
+//		{
+//			Log(LOG_INFO) << "";
+//			Log(LOG_INFO) << "vT() arc[1] = " << parabolicCoefficient_Low;
+//		}
 		trj.clear();
-		impactTest = plotParabola(
+		voxelTest = plotParabola(
 							originVoxel,
 							targetVoxel,
 							false,
@@ -5718,25 +5777,32 @@ bool TileEngine::validateThrow(
 							action.actor,
 							parabolicCoefficient_Low,
 							action.type != BA_THROW);
-		//Log(LOG_INFO) << ". . plotParabola()[1] = " << MapData::debugVoxelType(impactTest);
+		//if (_debug) Log(LOG_INFO) << "vT() plotParabola()[1] = " << MapData::debugVoxelType(voxelTest);
 
-		if (   impactTest != VOXEL_OUTOFBOUNDS
-			&& impactTest != VOXEL_WESTWALL
-			&& impactTest != VOXEL_NORTHWALL
-			&& Position::toTileSpace(trj.at(0)) == posTarget)
+		switch (voxelTest)
 		{
-			//Log(LOG_INFO) << ". . . stop[1] TRUE";
-			if (impactType != nullptr) *impactType = impactTest;
-
-			break;
+			case VOXEL_EMPTY:
+			case VOXEL_FLOOR:
+			case VOXEL_OBJECT:
+			case VOXEL_UNIT:
+				if (Position::toTileSpace(trj.at(0u)) == posTarget)
+				{
+					//if (_debug) Log(LOG_INFO) << "vT() stop[1] pos" << Position::toTileSpace(trj.at(0u));
+					arcGood = true;
+					if (impactType != nullptr) *impactType = voxelTest;
+					break;
+				}
+				// no break;
+			case VOXEL_WESTWALL:
+			case VOXEL_NORTHWALL:
+			case VOXEL_OUTOFBOUNDS:
+				parabolicCoefficient_Low += ARC_DELTA;
 		}
-		else
-			parabolicCoefficient_Low += ARC_DELTA;
 	}
 
 	if (parabolicCoefficient_Low >= 10.)
 	{
-		//Log(LOG_INFO) << ". vT() ret FALSE, arc > 10";
+		//if (_debug) Log(LOG_INFO) << ". arc > 10 - ret FALSE";
 		return false;
 	}
 
@@ -5744,12 +5810,12 @@ bool TileEngine::validateThrow(
 	{
 		// arc continues rising to find upper limit
 		double parabolicCoefficient_High (parabolicCoefficient_Low + ARC_DELTA);
-//		impact = true;
-		while (impact == true && parabolicCoefficient_High < 10.)	// TODO: should use (pC2 < pC+2.0) or so; this just needs to get
+		arcGood = true;
+		while (arcGood == true && parabolicCoefficient_High < 10.)	// TODO: should use (pC2 < pC+2.0) or so; this just needs to get
 		{															// over the lower limit with some leeway - not 'to the moon'.
-			//Log(LOG_INFO) << ". . arc[2] = " << parabolicCoefficient_High;
+			//if (_debug) Log(LOG_INFO) << ". . arc[2] = " << parabolicCoefficient_High;
 			trj.clear();
-			impactTest = plotParabola(
+			voxelTest = plotParabola(
 								originVoxel,
 								targetVoxel,
 								false,
@@ -5757,28 +5823,38 @@ bool TileEngine::validateThrow(
 								action.actor,
 								parabolicCoefficient_High,
 								action.type != BA_THROW);
-			//Log(LOG_INFO) << ". . plotParabola()[2] = " << MapData::debugVoxelType(impactTest);
+			//if (_debug) Log(LOG_INFO) << ". . plotParabola()[2] = " << MapData::debugVoxelType(voxelTest);
 
-			if (   impactTest == VOXEL_OUTOFBOUNDS
-				|| impactTest == VOXEL_WESTWALL
-				|| impactTest == VOXEL_NORTHWALL
-				|| Position::toTileSpace(trj.at(0u)) != posTarget)
+			switch (voxelTest)
 			{
-				//Log(LOG_INFO) << ". . . stop[2] TRUE";
-				break;
+				case VOXEL_WESTWALL:
+				case VOXEL_NORTHWALL:
+				case VOXEL_OUTOFBOUNDS:
+					arcGood = false;
+					break;
+
+				case VOXEL_EMPTY:
+				case VOXEL_FLOOR:
+				case VOXEL_OBJECT:
+				case VOXEL_UNIT:
+					if (Position::toTileSpace(trj.at(0u)) != posTarget)
+					{
+						//if (_debug) Log(LOG_INFO) << ". . . stop[2] pos" << Position::toTileSpace(trj.at(0u));
+						arcGood = false;
+					}
+					else
+						parabolicCoefficient_High += ARC_DELTA;
 			}
-			else
-				parabolicCoefficient_High += ARC_DELTA;
 		}
 
 		// use the average of upper & lower limits:
 		// Lessens chance of bouncing a thrown item back off a wall by barely skimming overtop once accuracy is applied.
-		*arc = (parabolicCoefficient_Low + parabolicCoefficient_High - ARC_DELTA) / 2.; // back off from the upper limit
+		*arc = (parabolicCoefficient_Low + parabolicCoefficient_High) / 2.;
 	}
 
 	//if (arc != nullptr) Log(LOG_INFO) << ". vT() ret TRUE arc = " << *arc;
 	//else Log(LOG_INFO) << ". vT() ret TRUE no arc requested";
-	//Log(LOG_INFO) << "";
+	//if (_debug) Log(LOG_INFO) << "vT() EXIT - ret TRUE";
 	return true;
 }
 
@@ -6131,33 +6207,35 @@ Tile* TileEngine::getVerticalTile( // private.
 }
 
 /**
- * Calculates 'ground' z-value for a particular voxel - used for projectile shadow.
- * @param voxel - reference the voxel to trace down
- * @return, z-coord of 'ground'
+ * Calculates 'ground' z-value beneath a particular voxel - used for casting
+ * projectile shadow.
+ * @param originVoxel - reference to the voxel-position to trace down
+ * @return, z-position of 'ground'
  */
-int TileEngine::castShadow(const Position& voxel) const
+int TileEngine::castShadow(const Position& originVoxel) const
 {
-	int ret (voxel.z);
+	int ret (originVoxel.z);
 
-	Position posTile (Position::toTileSpace(voxel));
+	Position posTile (Position::toTileSpace(originVoxel));
 	const Tile* tile (_battleSave->getTile(posTile));
 	while (tile != nullptr
 		&& tile->isVoid(false, false) == true
 		&& tile->getTileUnit() == nullptr)
 	{
 		ret = (posTile.z + 1) * 24;
+
 		--posTile.z;
 		tile = _battleSave->getTile(posTile);
 	}
 
-	Position voxelTest (voxel);
+	Position targetVoxel (originVoxel);
 	for (
 			;
 			ret != 0;
 			--ret)
 	{
-		voxelTest.z = ret;
-		if (detVoxelType(voxelTest) != VOXEL_EMPTY)
+		targetVoxel.z = ret;
+		if (voxelCheck(targetVoxel) != VOXEL_EMPTY)
 			break;
 	}
 	return ret;
@@ -6165,7 +6243,7 @@ int TileEngine::castShadow(const Position& voxel) const
 
 /**
  * Traces voxel visibility.
- * @param voxel - reference the voxel coordinates
+ * @param voxel - reference to the voxel-position
  * @return, true if visible
  *
 bool TileEngine::isVoxelVisible(const Position& voxel) const
@@ -6183,15 +6261,15 @@ bool TileEngine::isVoxelVisible(const Position& voxel) const
 			++z)
 	{
 		testVoxel.z = z;
-		if (detVoxelType(testVoxel, nullptr) == VOXEL_OBJECT)
+		if (voxelCheck(testVoxel, nullptr) == VOXEL_OBJECT)
 			return false;
 
 		++testVoxel.x;
-		if (detVoxelType(testVoxel, nullptr) == VOXEL_OBJECT)
+		if (voxelCheck(testVoxel, nullptr) == VOXEL_OBJECT)
 			return false;
 
 		++testVoxel.y;
-		if (detVoxelType(testVoxel, nullptr) == VOXEL_OBJECT)
+		if (voxelCheck(testVoxel, nullptr) == VOXEL_OBJECT)
 			return false;
 	}
 
@@ -6218,7 +6296,7 @@ bool TileEngine::isVoxelVisible(const Position& voxel) const
  * VOXEL_UNIT			//  4
  * VOXEL_OUTOFBOUNDS	//  5
  */
-VoxelType TileEngine::detVoxelType(
+VoxelType TileEngine::voxelCheck(
 		const Position& targetVoxel,
 		const BattleUnit* const excludeUnit,
 		const bool excludeAllUnits,
@@ -6233,7 +6311,7 @@ VoxelType TileEngine::detVoxelType(
 								// TODO: Trace that because this function gets called 50-bazillion times a second.
 								// And if any voxel-checks *are* being done during pre-battle, stop it back there.
 
-	//Log(LOG_INFO) << "TileEngine::detVoxelType()"; // massive lag-to-file, Do not use.
+	//Log(LOG_INFO) << "TileEngine::voxelCheck()"; // massive lag-to-file, Do not use.
 	const Tile
 		* const tile (_battleSave->getTile(Position::toTileSpace(targetVoxel))),
 		* tileBelow;
@@ -6261,7 +6339,7 @@ VoxelType TileEngine::detVoxelType(
 		&& tile->getMapData(O_FLOOR) != nullptr
 		&& tile->getMapData(O_FLOOR)->isGravLift() == true)
 	{
-		//Log(LOG_INFO) << "detVoxelType() isGravLift";
+		//Log(LOG_INFO) << "voxelCheck() isGravLift";
 		//Log(LOG_INFO) << ". level = " << tile->getPosition().z;
 		if (tile->getPosition().z == 0
 			|| ((tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1))) != nullptr
@@ -6278,9 +6356,9 @@ VoxelType TileEngine::detVoxelType(
 	const MapData* partData;
 	size_t
 		loftId,
-		layer ((static_cast<size_t>(targetVoxel.z) % 24u) >> 1u),
-		x (15u - static_cast<size_t>(targetVoxel.x) % 16u);		// x-axis is reversed for tileParts, standard for battleUnit.
-	const size_t y (static_cast<size_t>(targetVoxel.y) % 16u);	// y-axis is standard
+		layer ((static_cast<size_t>(targetVoxel.z) % 24) >> 1u),
+		x (15u - static_cast<size_t>(targetVoxel.x) % 16);		// x-axis is reversed for tileParts, standard for battleUnit.
+	const size_t y (static_cast<size_t>(targetVoxel.y) % 16);	// y-axis is standard
 
 	for (size_t
 			i = 0u; // terrain parts [0=floor, 1/2=walls, 3=content-object]
@@ -6290,9 +6368,16 @@ VoxelType TileEngine::detVoxelType(
 		if (tile->isSlideDoorOpen(partType = static_cast<MapDataType>(i)) == false
 			&& (partData = tile->getMapData(partType)) != nullptr
 			&& (loftId = (partData->getLoftId(layer) << 4u) + y) < _voxelData->size() // davide, http://openxcom.org/forum/index.php?topic=2934.msg32146#msg32146 (x2 _below)
-			&& (_voxelData->at(loftId) & (1u << x))) // if the voxelData at loftId is "1" solid:
+			&& (_voxelData->at(loftId) & (1 << x))) // if the voxelData at loftId is "1" solid:
 		{
-			//Log(LOG_INFO) << ". vC() ret = " << i;
+//			if (_debug)
+//			{
+//				Log(LOG_INFO) << "vC() ret " << i;
+//				Log(LOG_INFO) << "vC() targetTile " << Position::toTileSpace(targetVoxel);
+//				Log(LOG_INFO) << "vC() targetVoxel.x " << targetVoxel.x % 16;
+//				Log(LOG_INFO) << "vC() targetVoxel.y " << targetVoxel.y % 16;
+//				Log(LOG_INFO) << "vC() targetVoxel.z " << targetVoxel.z % 24;
+//			}
 			return static_cast<VoxelType>(partType); // NOTE: MapDataType & VoxelType correspond.
 		}
 	}
@@ -6341,13 +6426,13 @@ VoxelType TileEngine::detVoxelType(
 
 				//Log(LOG_INFO) << "loftId = " << loftId << " vD-size = " << (int)_voxelData->size();
 				if ((loftId = (targetUnit->getLoft(layer) << 4u) + y) < _voxelData->size() // davide, http://openxcom.org/forum/index.php?topic=2934.msg32146#msg32146 (x2 ^above)
-					&& (_voxelData->at(loftId) & (1u << x))) // if the voxelData at loftId is "1" solid:
+					&& (_voxelData->at(loftId) & (1 << x))) // if the voxelData at loftId is "1" solid:
 				{
 					//Log(LOG_INFO) << ". vC() ret VOXEL_UNIT";
 					return VOXEL_UNIT;
 				}
 //				}
-//				else Log(LOG_INFO) << "ERROR TileEngine::detVoxelType() LoFT entry = " << layer;
+//				else Log(LOG_INFO) << "ERROR TileEngine::voxelCheck() LoFT entry = " << layer;
 			}
 		}
 	}
@@ -6638,7 +6723,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 		}
 	}
 	else if (action->actor->getFaction() == FACTION_PLAYER)
-		_battleSave->getBattleState()->warning("STR_ACTION_NOT_ALLOWED_PSIONIC");
+		_battleSave->getBattleState()->warning(BattlescapeGame::PLAYER_ERROR[11]);
 
 	//Log(LOG_INFO) << "TileEngine::psiAttack() ret FALSE";
 	return false;
@@ -6889,7 +6974,7 @@ void TileEngine::setDangerZone(
 							targetVoxel = Position::toVoxelSpaceCentered(
 																	posTest,
 																	12 - tile->getTerrainLevel()); // what.
-							std::vector<Position> trajectory;
+							std::vector<Position> trj;
 							// trace a line here ignoring all units to check if the
 							// explosion will reach this point; granted this won't
 							// properly account for explosions tearing through walls,
@@ -6900,14 +6985,14 @@ void TileEngine::setDangerZone(
 										originVoxel,
 										targetVoxel,
 										false,
-										&trajectory,
+										&trj,
 										unit,
 										true,
 										false,
 										unit) == VOXEL_EMPTY)
 							{
-								if (trajectory.size() != 0u
-									&& Position::toTileSpace(trajectory.back()) == posTest)
+								if (trj.size() != 0u
+									&& Position::toTileSpace(trj.back()) == posTest)
 								{
 									tile->setDangerous();
 								}
