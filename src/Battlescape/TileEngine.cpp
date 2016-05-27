@@ -57,7 +57,7 @@
 namespace OpenXcom
 {
 
-bool TileEngine::_debug = false;
+//bool TileEngine::_debug = false;
 
 const int TileEngine::scanOffsetZ[11u] // static.
 {

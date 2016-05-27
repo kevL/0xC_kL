@@ -81,7 +81,7 @@ private:
 
 		LOFT_LAYERS = 12u;
 
-	static bool _debug;
+//	static bool _debug;
 	bool
 		_spotSound,
 		_unitLighting;
