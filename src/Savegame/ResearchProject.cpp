@@ -34,16 +34,13 @@ const float
 
 /**
  * Constructs a ResearchProject at a Base.
- * @param resRule	- pointer to RuleResearch
- * @param cost		- the cost to complete the project in man-days (default 0)
+ * @param resRule - pointer to RuleResearch
  */
-ResearchProject::ResearchProject(
-		const RuleResearch* const resRule,
-		int cost)
+ResearchProject::ResearchProject(const RuleResearch* const resRule)
 	:
 		_resRule(resRule),
-		_cost(cost),
 		_assigned(0),
+		_cost(0),
 		_spent(0),
 		_offline(false)
 {}
@@ -55,15 +52,33 @@ ResearchProject::~ResearchProject()
 {}
 
 /**
- * Called every day to compute time spent on this ResearchProject.
- * @return, true if project finishes
+ * Loads this ResearchProject from a YAML file.
+ * @param node - reference a YAML node
  */
-bool ResearchProject::stepProject()
+void ResearchProject::load(const YAML::Node& node)
 {
-	if ((_spent += _assigned) >= _cost)
-		return true;
+	_assigned	= node["assigned"]	.as<int>(_assigned);
+	_cost		= node["cost"]		.as<int>(_cost);
+	_spent		= node["spent"]		.as<int>(_spent);
+	_offline	= node["offline"]	.as<bool>(_offline);
+}
 
-	return false;
+/**
+ * Saves this ResearchProject to a YAML file.
+ * @return, YAML node
+ */
+YAML::Node ResearchProject::save() const
+{
+	YAML::Node node;
+
+	node["project"] = _resRule->getType();
+
+	if (_assigned != 0)		node["assigned"]	= _assigned;
+	if (_cost != 0)			node["cost"]		= _cost;
+	if (_spent != 0)		node["spent"]		= _spent;
+	if (_offline != false)	node["offline"]		= _offline;
+
+	return node;
 }
 
 /**
@@ -73,6 +88,18 @@ bool ResearchProject::stepProject()
 const RuleResearch* ResearchProject::getRules() const
 {
 	return _resRule;
+}
+
+/**
+ * Called every day to compute time spent on this ResearchProject.
+ * @return, true if project finishes
+ */
+bool ResearchProject::stepProject()
+{
+	if ((_spent += _assigned) >= _cost)
+		return true;
+
+	return false;
 }
 
 /**
@@ -147,35 +174,6 @@ void ResearchProject::setOffline(const bool offline)
 bool ResearchProject::getOffline() const
 {
 	return _offline;
-}
-
-/**
- * Loads this ResearchProject from a YAML file.
- * @param node - reference a YAML node
- */
-void ResearchProject::load(const YAML::Node& node)
-{
-	_assigned	= node["assigned"]	.as<int>(_assigned);
-	_spent		= node["spent"]		.as<int>(_spent);
-	_cost		= node["cost"]		.as<int>(_cost);
-	_offline	= node["offline"]	.as<bool>(_offline);
-}
-
-/**
- * Saves this ResearchProject to a YAML file.
- * @return, YAML node
- */
-YAML::Node ResearchProject::save() const
-{
-	YAML::Node node;
-
-	node["project"]		= _resRule->getType();
-	node["assigned"]	= _assigned;
-	node["spent"]		= _spent;
-	node["cost"]		= _cost;
-	node["offline"]		= _offline;
-
-	return node;
 }
 
 /**

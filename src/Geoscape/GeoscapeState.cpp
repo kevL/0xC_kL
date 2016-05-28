@@ -2877,23 +2877,23 @@ void GeoscapeState::time1Day()
 			}
 		}
 
-		std::vector<ResearchProject*> researchComplete; // handle science projects - Research.
+		std::vector<ResearchProject*> researchFinished; // handle science projects - Research.
 		for (std::vector<ResearchProject*>::const_iterator
 				j = (*i)->getResearch().begin();
 				j != (*i)->getResearch().end();
 				++j)
 		{
 			if ((*j)->stepProject() == true)
-				researchComplete.push_back(*j);
+				researchFinished.push_back(*j);
 		}
 
-		if (researchComplete.empty() == false)
+		if (researchFinished.empty() == false)
 			resetTimer();
 
 
 		for (std::vector<ResearchProject*>::const_iterator
-				j = researchComplete.begin();
-				j != researchComplete.end();
+				j = researchFinished.begin();
+				j != researchFinished.end();
 				++j)
 		{
 			const RuleResearch* const resRule ((*j)->getRules());
@@ -3048,8 +3048,6 @@ void GeoscapeState::time1Day()
 					}
 				}
 			}
-
-			delete *j;
 		} // DONE Research.
 	}
 
@@ -3061,50 +3059,50 @@ void GeoscapeState::time1Day()
 
 	// show events
 	for (std::vector<ProductionCompleteInfo>::const_iterator
-			j = prodEvents.begin();
-			j != prodEvents.end();
+			i = prodEvents.begin();
+			i != prodEvents.end();
 			)
 	{
 		popup(new ProductionCompleteState(
-									j->base,
-									j->item,
+									i->base,
+									i->item,
 									this,
-									j->gotoBaseBtn,
-									j->endType));
-		j = prodEvents.erase(j);
+									i->gotoBaseBtn,
+									i->endType));
+		i = prodEvents.erase(i);
 	}
 
 	for (std::vector<State*>::const_iterator
-			j = resEvents.begin();
-			j != resEvents.end();
+			i = resEvents.begin();
+			i != resEvents.end();
 			)
 	{
-		popup(*j);
-		j = resEvents.erase(j);
+		popup(*i);
+		i = resEvents.erase(i);
 	}
 
 	for (std::vector<NewPossibleResearchInfo>::const_iterator
-			j = newResEvents.begin();
-			j != newResEvents.end();
+			i = newResEvents.begin();
+			i != newResEvents.end();
 			)
 	{
 		popup(new NewPossibleResearchState(
-									j->base,
-									j->newPossibleResearch,
-									j->showResearchButton));
-		j = newResEvents.erase(j);
+									i->base,
+									i->newPossibleResearch,
+									i->showResearchButton));
+		i = newResEvents.erase(i);
 	}
 
 	for (std::vector<NewPossibleManufactureInfo>::const_iterator
-			j = newProdEvents.begin();
-			j != newProdEvents.end();
+			i = newProdEvents.begin();
+			i != newProdEvents.end();
 			)
 	{
 		popup(new NewPossibleManufactureState(
-										j->base,
-										j->newPossibleManufacture,
-										j->showManufactureButton));
-		j = newProdEvents.erase(j);
+										i->base,
+										i->newPossibleManufacture,
+										i->showManufactureButton));
+		i = newProdEvents.erase(i);
 	}
 
 

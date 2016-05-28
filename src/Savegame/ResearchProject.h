@@ -49,42 +49,40 @@ private:
 
 	public:
 		/// Constructor.
-		ResearchProject(
-				const RuleResearch* const resRule,
-				int cost = 0);
+		explicit ResearchProject(const RuleResearch* const resRule);
 		/// dTor.
 		~ResearchProject();
-
-		/// Called every new day to compute time spent.
-		bool stepProject();
-
-		/// Gets the ResearchProject Ruleset.
-		const RuleResearch* getRules() const;
-
-		/// Sets the number of scientists assigned to this ResearchProject.
-		void setAssignedScientists(const int qty);
-		/// Gets the number of scientist assigned to this ResearchProject.
-		int getAssignedScientists() const;
-
-		/// Sets time already spent on this ResearchProject.
-		void setSpent(const int spent);
-		/// Gets time already spent on this ResearchProject.
-		int getSpent() const;
-
-		/// Sets time cost of this ResearchProject.
-		void setCost(const int cost);
-		/// Gets time cost of this ResearchProject.
-		int getCost() const;
-
-		/// Sets the project offline.
-		void setOffline(const bool offline = true);
-		/// Gets whether the project is offline or not.
-		bool getOffline() const;
 
 		/// Loads the ResearchProject from YAML.
 		void load(const YAML::Node& node);
 		/// Saves the ResearchProject to YAML.
 		YAML::Node save() const;
+
+		/// Gets the ResearchProject rules.
+		const RuleResearch* getRules() const;
+
+		/// Called daily.
+		bool stepProject();
+
+		/// Sets the quantity of scientists assigned to the ResearchProject.
+		void setAssignedScientists(const int qty);
+		/// Gets the quantity of scientists assigned to the ResearchProject.
+		int getAssignedScientists() const;
+
+		/// Sets time already spent on the ResearchProject.
+		void setSpent(const int spent);
+		/// Gets time already spent on the ResearchProject.
+		int getSpent() const;
+
+		/// Sets time-cost of the ResearchProject.
+		void setCost(const int cost);
+		/// Gets time-cost of the ResearchProject.
+		int getCost() const;
+
+		/// Sets the ResearchProject offline.
+		void setOffline(const bool offline = true);
+		/// Gets whether the ResearchProject is offline or not.
+		bool getOffline() const;
 
 		/// Gets a string describing current progress.
 		std::string getResearchProgress() const;

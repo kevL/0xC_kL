@@ -1230,7 +1230,7 @@ const std::vector<ResearchProject*>& Base::getResearch() const
 }
 
 /**
- * Adds a new ResearchProject to this Base.
+ * Adds a fresh ResearchProject to this Base.
  * @param project - project to add
  */
 void Base::addResearch(ResearchProject* const project)

@@ -49,7 +49,7 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the ResearchProject screen.
  * @param base		- pointer to the Base to get info from
- * @param resRule	- pointer to a RuleResearch which will be used to create a new ResearchProject
+ * @param resRule	- pointer to a RuleResearch which will be used to create a fresh ResearchProject
  */
 ResearchInfoState::ResearchInfoState(
 		Base* const base,
@@ -57,9 +57,7 @@ ResearchInfoState::ResearchInfoState(
 	:
 		_base(base),
 		_resRule(resRule),
-		_project(new ResearchProject( // time = 65 to 130%
-								resRule,
-								(resRule->getCost() * RNG::generate(65,130)) / 100))
+		_project(new ResearchProject(resRule))
 {
 	//Log(LOG_INFO) << "ResearchInfoState cTor w/ resRule " << resRule->getType();
 	buildUi();
@@ -180,12 +178,10 @@ void ResearchInfoState::buildUi()
 	else
 		wst = tr("STR_CANCEL_PROJECT");
 	_btnStartStop->setText(wst);
-
 	_btnStartStop->onMouseClick((ActionHandler)& ResearchInfoState::btnStartStopClick);
 	_btnStartStop->onKeyboardPress(
 					(ActionHandler)& ResearchInfoState::btnStartStopClick,
 					Options::keyOk);
-	_btnStartStop->onMouseClick((ActionHandler)& ResearchInfoState::btnStartStopClick);
 	_btnStartStop->onKeyboardPress(
 					(ActionHandler)& ResearchInfoState::btnStartStopClick,
 					Options::keyOkKeypad);
@@ -212,6 +208,8 @@ void ResearchInfoState::btnStartStopClick(Action*)
 {
 	if (_resRule != nullptr)					// start a new project
 	{
+		_project->setCost(_resRule->getCost() * RNG::generate(65,130) / 100);
+
 		_base->addResearch(_project);
 		if (_resRule->needsItem() == true)
 			_base->getStorageItems()->removeItem(_resRule->getType());

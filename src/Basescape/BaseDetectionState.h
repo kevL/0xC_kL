@@ -43,9 +43,9 @@ class BaseDetectionState
 
 private:
 	static const Uint8
-		RED		=  32,
-		YELLOW	= 144,
-		PURPLE	= 246;
+		RED		=  32u,
+		YELLOW	= 144u,
+		PURPLE	= 246u;
 
 	const Base* _base;
 	Text // TODO: add base defenses
@@ -66,7 +66,7 @@ private:
 
 
 	public:
-		/// Creates the BaseDetection state.
+		/// Creates a BaseDetection state.
 		explicit BaseDetectionState(const Base* const base);
 		/// Cleans up the BaseDetection state.
 		~BaseDetectionState();

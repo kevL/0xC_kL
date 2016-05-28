@@ -251,7 +251,7 @@ private:
 
 		/// Gets the list of the Base's ResearchProject.
 		const std::vector<ResearchProject*>& getResearch() const;
-		/// Adds a new ResearchProject to the Base.
+		/// Adds a fresh ResearchProject to the Base.
 		void addResearch(ResearchProject* const project);
 		/// Removes a ResearchProject from the Base.
 		void removeResearch(
