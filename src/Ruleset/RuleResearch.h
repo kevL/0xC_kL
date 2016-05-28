@@ -51,6 +51,7 @@ private:
 		_uPed,
 		_type;
 	bool
+		_destroyItem,
 		_markSeen,
 		_needsItem;
 	int
@@ -102,6 +103,8 @@ private:
 
 		/// Checks if this RuleResearch needs a corresponding Item for research.
 		bool needsItem() const;
+		/// Checks if this RuleResearch consumes its corresponding Item when research completes.
+		bool destroyItem() const;
 
 		/// Gets if this RuleResearch should be flagged as seen by default.
 		bool getMarkSeen() const;

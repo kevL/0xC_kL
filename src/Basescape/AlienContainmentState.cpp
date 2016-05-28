@@ -199,7 +199,7 @@ AlienContainmentState::AlienContainmentState(
 		itRule = _game->getRuleset()->getItemRule(*i);
 		if (itRule->isLiveAlien() == true)
 		{
-			if ((qtyAliens = _base->getStorageItems()->getItemQuantity(*i)) != 0) // get Qty of each aLien-type at this base
+			if ((qtyAliens = _base->getStorageItems()->getItemQuantity(*i)) != 0) // get Qty of each aLien-type in this Base's stores.
 			{
 				_qty.push_back(0);		// put it in the _qty <vector> as (int)
 				_aliens.push_back(*i);	// put its name in the _aliens <vector> as (string)

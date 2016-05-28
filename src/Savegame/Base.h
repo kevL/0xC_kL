@@ -97,7 +97,7 @@ private:
 		_facilities;
 	std::vector<Craft*> _crafts;
 	std::vector<Production*> _productions;
-	std::vector<ResearchProject*> _research;
+	std::vector<ResearchProject*> _researchProjects;
 	std::vector<Soldier*> _soldiers;
 	std::vector<Transfer*> _transfers;
 
@@ -123,8 +123,8 @@ private:
 
 	public:
 		static const size_t
-			MAX_BASES = 8,
-			BASE_SIZE = 6;
+			MAX_BASES = 8u,
+			BASE_SIZE = 6u;
 
 		/// Creates a Base.
 		explicit Base(const Ruleset* const rules);
@@ -256,7 +256,7 @@ private:
 		/// Removes a ResearchProject from the Base.
 		void removeResearch(
 				ResearchProject* const project,
-				bool grantHelp = true,
+				bool grantHelp = false,
 				bool goOffline = false);
 		/// Research Help ala XcomUtil.
 		void researchHelp(const std::string& aLien);

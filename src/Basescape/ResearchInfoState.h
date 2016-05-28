@@ -62,22 +62,21 @@ private:
 		* _txtTitle;
 	TextButton
 		* _btnCancel,
-		* _btnOk;
+		* _btnStartStop;
 	Timer
 		* _timerLess,
 		* _timerMore;
 	Window* _window;
 
-	///
+	/// Builds dialog.
 	void buildUi();
+	/// Updates counts of assigned/free scientists and available lab-space.
+	void updateInfo();
 
 	/// Handler for clicking the OK button.
-	void btnOkClick(Action* action);
+	void btnStartStopClick(Action* action);
 	/// Handler for clicking the Cancel button.
 	void btnCancelClick(Action* action);
-
-	///
-	void updateInfo();
 
 	/// Handler for using the mouse wheel.
 //	void handleWheel(Action* action);

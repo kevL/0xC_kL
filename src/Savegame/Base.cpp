@@ -122,8 +122,8 @@ Base::~Base()
 		delete *i;
 
 	for (std::vector<ResearchProject*>::const_iterator
-			i = _research.begin();
-			i != _research.end();
+			i = _researchProjects.begin();
+			i != _researchProjects.end();
 			++i)
 		delete *i;
 
@@ -268,7 +268,7 @@ void Base::load(
 		{
 			ResearchProject* const research (new ResearchProject(_rules->getResearch(type)));
 			research->load(*i);
-			_research.push_back(research);
+			_researchProjects.push_back(research);
 		}
 		else
 		{
@@ -348,8 +348,8 @@ YAML::Node Base::save() const
 		node["transfers"].push_back((*i)->save());
 
 	for (std::vector<ResearchProject*>::const_iterator
-			i = _research.begin();
-			i != _research.end();
+			i = _researchProjects.begin();
+			i != _researchProjects.end();
 			++i)
 		node["research"].push_back((*i)->save());
 
@@ -1044,8 +1044,8 @@ int Base::getInterrogatedAliens() const
 	int total (0);
 	const RuleResearch* resRule;
 	for (std::vector<ResearchProject*>::const_iterator
-			i = _research.begin();
-			i != _research.end();
+			i = _researchProjects.begin();
+			i != _researchProjects.end();
 			++i)
 	{
 		resRule = (*i)->getRules();
@@ -1222,11 +1222,11 @@ const std::vector<Production*>& Base::getProductions() const
 
 /**
  * Returns the list of all this Base's ResearchProjects.
- * @return, list of base's ResearchProject
+ * @return, list of base's ResearchProjects
  */
 const std::vector<ResearchProject*>& Base::getResearch() const
 {
-	return _research;
+	return _researchProjects;
 }
 
 /**
@@ -1235,13 +1235,15 @@ const std::vector<ResearchProject*>& Base::getResearch() const
  */
 void Base::addResearch(ResearchProject* const project)
 {
-	_research.push_back(project);
+	_researchProjects.push_back(project);
 }
 
 /**
  * Removes a ResearchProject from this base.
+ * @note Live Alien research never goes offline; they are returned to Containment
+ * and the project is cancelled.
  * @param project	- pointer to a ResearchProject for removal
- * @param grantHelp	- true to apply researchHelp() (default true)
+ * @param grantHelp	- true to apply researchHelp() (default false)
  * @param goOffline	- true to hide project but not remove it from base's ResearchProjects (default false)
  */
 void Base::removeResearch(
@@ -1252,22 +1254,23 @@ void Base::removeResearch(
 	_scientists += project->getAssignedScientists();
 
 	std::vector<ResearchProject*>::const_iterator i (std::find(
-															_research.begin(),
-															_research.end(),
+															_researchProjects.begin(),
+															_researchProjects.end(),
 															project));
-	if (i != _research.end())
+	if (i != _researchProjects.end())
 	{
 		if (goOffline == true)
 		{
 			project->setAssignedScientists(0);
-			project->setOffline();
+			project->setOffline(); // NOTE: Does *not* return a/the neededItem to base-stores.
 		}
 		else
 		{
 			if (grantHelp == true)
 				researchHelp(project->getRules()->getType());
 
-			_research.erase(i);
+			delete *i;
+			_researchProjects.erase(i);
 		}
 	}
 }
@@ -1282,8 +1285,8 @@ void Base::researchHelp(const std::string& aLien)
 	double coef;
 
 	for (std::vector<ResearchProject*>::const_iterator
-			i = _research.begin();
-			i != _research.end();
+			i = _researchProjects.begin();
+			i != _researchProjects.end();
 			++i)
 	{
 		if ((*i)->getOffline() == false)
@@ -2450,22 +2453,22 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 		if (getTotalLaboratories() - destroyed == 0)
 		{
 			for (std::vector<ResearchProject*>::const_iterator
-					i = _research.begin();
-					i != _research.end();
+					i = _researchProjects.begin();
+					i != _researchProjects.end();
 					++i)
 			{
 				_scientists += (*i)->getAssignedScientists();
 				delete *i;
 			}
-			_research.clear();
+			_researchProjects.clear();
 		}
 		else
 		{
 			del = destroyed - getFreeLaboratories();
 			// TODO: Reverse iteration.
 			for (std::vector<ResearchProject*>::const_iterator
-					i = _research.begin();
-					i != _research.end() && del > 0;
+					i = _researchProjects.begin();
+					i != _researchProjects.end() && del > 0;
 					++i)
 			{
 				personel = (*i)->getAssignedScientists();

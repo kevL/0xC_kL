@@ -33,6 +33,7 @@ RuleResearch::RuleResearch(const std::string& type)
 		_cost(0),
 		_points(0),
 		_needsItem(false),
+		_destroyItem(false),
 		_markSeen(false),
 		_listOrder(0)
 {}
@@ -61,6 +62,7 @@ void RuleResearch::load(
 	_getOneFree		= node["getOneFree"]	.as<std::vector<std::string>>(_getOneFree);
 	_required		= node["required"]		.as<std::vector<std::string>>(_required);
 	_needsItem		= node["needsItem"]		.as<bool>(_needsItem);
+	_destroyItem	= node["destroyItem"]	.as<bool>(_destroyItem);
 	_markSeen		= node["markSeen"]		.as<bool>(_markSeen);
 	_listOrder		= node["listOrder"]		.as<int>(_listOrder);
 
@@ -150,6 +152,15 @@ const std::string& RuleResearch::getUfopaediaEntry() const
 bool RuleResearch::needsItem() const
 {
 	return _needsItem;
+}
+
+/**
+ * Checks if this RuleResearch consumes its corresponding Item when research completes.
+ * @return, true if item is consumed
+ */
+bool RuleResearch::destroyItem() const
+{
+	return _destroyItem;
 }
 
 /**

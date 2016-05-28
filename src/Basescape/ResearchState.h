@@ -70,7 +70,7 @@ private:
 
 
 	public:
-		/// Creates the Research state.
+		/// Creates a Research state.
 		ResearchState(
 				Base* const base,
 				BasescapeState* const state = nullptr);

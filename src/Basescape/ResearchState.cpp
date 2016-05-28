@@ -111,7 +111,7 @@ ResearchState::ResearchState(
 	_mini->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
 	_mini->setBases(_baseList);
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _baseList->size();
 			++i)
 	{
@@ -188,30 +188,30 @@ void ResearchState::init()
 			++i)
 	{
 		if ((*i)->getOffline() == true)
-		{
 			_online.push_back(false);
-			continue;
-		}
-		_online.push_back(true);
-
-		std::wstring daysLeft;
-		const int assigned ((*i)->getAssignedScientists());
-		if (assigned != 0)
-		{
-			const int days (static_cast<int>(std::ceil(
-						   (static_cast<double>((*i)->getCost() - (*i)->getSpent()))
-						  / static_cast<double>(assigned))));
-			daysLeft = Text::intWide(days);
-		}
 		else
-			daysLeft = L"-";
+		{
+			_online.push_back(true);
 
-		_lstResearch->addRow(
-						4,
-						tr((*i)->getRules()->getType()).c_str(),
-						Text::intWide(assigned).c_str(),
-						tr((*i)->getResearchProgress()).c_str(),
-						daysLeft.c_str());
+			std::wstring daysLeft;
+			const int assigned ((*i)->getAssignedScientists());
+			if (assigned != 0)
+			{
+				const int days (static_cast<int>(std::ceil(
+							   (static_cast<double>((*i)->getCost() - (*i)->getSpent()))
+							  / static_cast<double>(assigned))));
+				daysLeft = Text::intWide(days);
+			}
+			else
+				daysLeft = L"-";
+
+			_lstResearch->addRow(
+							4,
+							tr((*i)->getRules()->getType()).c_str(),
+							Text::intWide(assigned).c_str(),
+							tr((*i)->getResearchProgress()).c_str(),
+							daysLeft.c_str());
+		}
 	}
 
 	_txtAvailable->setText(tr("STR_SCIENTISTS_AVAILABLE_")
@@ -259,7 +259,7 @@ void ResearchState::onSelectProject(Action*)
 {
 	size_t
 		sel (_lstResearch->getSelectedRow()),
-		j (0);
+		j (0u);
 
 	for (std::vector<bool>::const_iterator
 			i = _online.begin();

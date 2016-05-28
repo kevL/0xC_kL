@@ -2899,35 +2899,34 @@ void GeoscapeState::time1Day()
 			const RuleResearch* const resRule ((*j)->getRules());
 			const std::string& resType (resRule->getType());
 
-			const bool liveAlien (_rules->getUnitRule(resType) != nullptr);
-			(*i)->removeResearch(*j, liveAlien == true); // interrogation of aLien-unit complete.
-
-			if (liveAlien == true // if the live aLien is "researched" its corpse is sent to stores.
-				&& resRule->needsItem() == true
-				&& Options::spendResearchedItems == true)
-			{
-				(*i)->getStorageItems()->addItem(_rules->getArmor(_rules->getUnitRule(resType)->getArmorType())->getCorpseGeoscape());
-				// ;) <- kL_note: heh i noticed that.
-			}
+			const bool isLiveAlien (_rules->getUnitRule(resType) != nullptr);
+			(*i)->removeResearch(*j, isLiveAlien == true);
 
 			bool
 				gofCrack,
 				forcesCrack;	// TODO: that. The issue is that the 'forces' are not an independent vector, but instead are
 								// redetermined on-the-fly from the player's 'discovered' vector every time they're examined.
-			if (liveAlien == true)
+			if (isLiveAlien == true)
+			{
+				if (Options::retainCorpses == true) // NOTE: Assumes needItem=TRUE & destroyItem=TRUE.
+					(*i)->getStorageItems()->addItem(_rules->getArmor(_rules->getUnitRule(resType)->getArmorType())->getCorpseGeoscape());
+
 				getAlienCracks(
 							resType,
 							gofCrack,
 							forcesCrack);
+			}
 			else
 			{
+				if (resRule->needsItem() == true && resRule->destroyItem() == false)
+					(*i)->getStorageItems()->addItem(resType);
+
 				gofCrack =
-				forcesCrack = true; // <- not implemented yet.
+				forcesCrack = true; // <- not implemented yet. See above^
 			}
 
 			const RuleResearch* gofRule (nullptr);
-			if (gofCrack == true
-				&& resRule->getGetOneFree().empty() == false)
+			if (gofCrack == true && resRule->getGetOneFree().empty() == false)
 			{
 				std::vector<std::string> gofList;
 				for (std::vector<std::string>::const_iterator
@@ -3026,21 +3025,26 @@ void GeoscapeState::time1Day()
 				newProdEvents.push_back(NewPossibleManufactureInfo(*i, popupManufacture, true));
 			}
 
-			for (std::vector<Base*>::const_iterator		// iterate through all the bases and remove this completed project from their labs
-					k = _gameSave->getBases()->begin();	// unless it's an alien interrogation ...
-					k != _gameSave->getBases()->end();	// TODO: remove gof's too
-					++k)
+			if (isLiveAlien == false)
 			{
-				for (std::vector<ResearchProject*>::const_iterator
-						l = (*k)->getResearch().begin();
-						l != (*k)->getResearch().end();
-						++l)
+				for (std::vector<Base*>::const_iterator		// iterate through all the bases and remove this completed project from their labs
+						k = _gameSave->getBases()->begin();	// unless it's an alien interrogation ...
+						k != _gameSave->getBases()->end();	// TODO: remove GoF's that might be underway at other Bases, too
+						++k)
 				{
-					if ((*l)->getRules()->getType() == resType
-						&& _rules->getUnitRule((*l)->getRules()->getType()) == nullptr)
+					for (std::vector<ResearchProject*>::const_iterator
+							l = (*k)->getResearch().begin();
+							l != (*k)->getResearch().end();
+							++l)
 					{
-						(*k)->removeResearch(*l, false);
-						break;
+						if ((*l)->getRules() == resRule)
+						{
+							(*k)->removeResearch(*l);
+							if (resRule->needsItem() == true)
+								(*k)->getStorageItems()->addItem(resType);
+
+							break;
+						}
 					}
 				}
 			}

@@ -114,7 +114,7 @@ void ResearchInfoState::buildUi()
 	_btnLess				= new ArrowButton(ARROW_BIG_DOWN, 120, 16, 100, 120);
 
 	_btnCancel				= new TextButton(95, 16,  61, 144);
-	_btnOk					= new TextButton(95, 16, 164, 144);
+	_btnStartStop			= new TextButton(95, 16, 164, 144);
 
 //	_srfScientists			= new InteractiveSurface(230, 140, 45, 30);
 
@@ -130,18 +130,20 @@ void ResearchInfoState::buildUi()
 	add(_btnMore,				"button1",	"allocateResearch");
 	add(_btnLess,				"button1",	"allocateResearch");
 	add(_btnCancel,				"button2",	"allocateResearch");
-	add(_btnOk,					"button2",	"allocateResearch");
+	add(_btnStartStop,			"button2",	"allocateResearch");
 
 	centerAllSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));
 
-	_txtTitle->setBig();
+	std::wstring wst;
 	if (_resRule != nullptr)
-		_txtTitle->setText(tr(_resRule->getType()));
+		wst = tr(_resRule->getType());
 	else
-		_txtTitle->setText(tr(_project->getRules()->getType()));
+		wst = tr(_project->getRules()->getType());
+	_txtTitle->setText(wst);
+	_txtTitle->setBig();
 
 	_txtAllocatedScientist->setBig();
 
@@ -150,18 +152,6 @@ void ResearchInfoState::buildUi()
 
 //	_txtLess->setText(tr("STR_DECREASE"));
 //	_txtLess->setBig();
-
-	if (_resRule != nullptr)
-	{
-		_base->addResearch(_project);
-
-		if (_resRule->needsItem() == true
-			&& (Options::spendResearchedItems == true
-				|| _game->getRuleset()->getUnitRule(_resRule->getType()) != nullptr))
-		{
-			_base->getStorageItems()->removeItem(_resRule->getType());
-		}
-	}
 
 	updateInfo();
 
@@ -179,77 +169,30 @@ void ResearchInfoState::buildUi()
 	_timerLess = new Timer(Timer::SCROLL_SLOW);
 	_timerLess->onTimer((StateHandler)& ResearchInfoState::lessSci);
 
-	if (_resRule != nullptr)
-	{
-		_btnCancel->setText(tr("STR_CANCEL_UC"));
-		_btnCancel->onKeyboardPress(
-						(ActionHandler)& ResearchInfoState::btnCancelClick,
-						Options::keyCancel);
-
-		_btnOk->setText(tr("STR_START_PROJECT"));
-	}
-	else
-	{
-		_btnCancel->setText(tr("STR_CANCEL_PROJECT"));
-
-		_btnOk->setText(tr("STR_OK"));
-		_btnOk->onKeyboardPress(
-						(ActionHandler)& ResearchInfoState::btnOkClick,
-						Options::keyCancel);
-	}
+	_btnCancel->setText(tr("STR_CANCEL_UC"));
 	_btnCancel->onMouseClick((ActionHandler)& ResearchInfoState::btnCancelClick);
+	_btnCancel->onKeyboardPress(
+					(ActionHandler)& ResearchInfoState::btnCancelClick,
+					Options::keyCancel);
 
-	_btnOk->onMouseClick((ActionHandler)& ResearchInfoState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ResearchInfoState::btnOkClick,
+	if (_resRule != nullptr || _project->getOffline() == true)
+		wst = tr("STR_START_PROJECT");
+	else
+		wst = tr("STR_CANCEL_PROJECT");
+	_btnStartStop->setText(wst);
+
+	_btnStartStop->onMouseClick((ActionHandler)& ResearchInfoState::btnStartStopClick);
+	_btnStartStop->onKeyboardPress(
+					(ActionHandler)& ResearchInfoState::btnStartStopClick,
 					Options::keyOk);
-	_btnOk->onMouseClick((ActionHandler)& ResearchInfoState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ResearchInfoState::btnOkClick,
+	_btnStartStop->onMouseClick((ActionHandler)& ResearchInfoState::btnStartStopClick);
+	_btnStartStop->onKeyboardPress(
+					(ActionHandler)& ResearchInfoState::btnStartStopClick,
 					Options::keyOkKeypad);
 }
 
 /**
- * Returns to the previous screen.
- * @param action - pointer to an Action
- */
-void ResearchInfoState::btnOkClick(Action*)
-{
-	_project->setOffline(false);
-	_game->popState();
-}
-
-/**
- * Returns to the previous screen and removes the current project from the active
- * research list.
- * @param action - pointer to an Action
- */
-void ResearchInfoState::btnCancelClick(Action*)
-{
-	const RuleResearch* resRule;
-	if (_resRule != nullptr)
-		resRule = _resRule;
-	else
-		resRule = _project->getRules();
-
-	const bool liveAlien (_game->getRuleset()->getUnitRule(resRule->getType()) != nullptr);
-
-	if (resRule->needsItem() == true
-		&& (Options::spendResearchedItems == true || liveAlien == true))
-	{
-		_base->getStorageItems()->addItem(resRule->getType());
-	}
-
-	_base->removeResearch(
-					_project,
-					false,
-					_resRule == nullptr && liveAlien == false);
-
-	_game->popState();
-}
-
-/**
- * Updates count of assigned/free scientists and available lab space.
+ * Updates counts of assigned/free scientists and available lab-space.
  */
 void ResearchInfoState::updateInfo()
 {
@@ -259,6 +202,48 @@ void ResearchInfoState::updateInfo()
 									.arg(_base->getFreeLaboratories()));
 	_txtAllocatedScientist->setText(tr("STR_SCIENTISTS_ALLOCATED_")
 									.arg(_project->getAssignedScientists()));
+}
+
+/**
+ * Returns to the previous screen and either starts or stops a project.
+ * @param action - pointer to an Action
+ */
+void ResearchInfoState::btnStartStopClick(Action*)
+{
+	if (_resRule != nullptr)					// start a new project
+	{
+		_base->addResearch(_project);
+		if (_resRule->needsItem() == true)
+			_base->getStorageItems()->removeItem(_resRule->getType());
+	}
+	else if (_project->getOffline() == true)	// re-activate an offline project
+		_project->setOffline(false);
+	else										// de-activate an active project
+	{											// - live alien projects are cancelled
+		_resRule = _project->getRules();		// - other projects go offline.
+
+		const bool isLiveAlien (_game->getRuleset()->getUnitRule(_resRule->getType()) != nullptr);
+		_base->removeResearch(
+						_project,
+						false,
+						isLiveAlien == false);
+
+		if (isLiveAlien == true && _resRule->needsItem() == true)
+			_base->getStorageItems()->addItem(_resRule->getType());
+	}
+
+	_game->popState();
+}
+
+/**
+ * Returns to the previous screen.
+ * @param action - pointer to an Action
+ */
+void ResearchInfoState::btnCancelClick(Action*)
+{
+	if (_resRule != nullptr) delete _project;
+
+	_game->popState();
 }
 
 /**
@@ -303,10 +288,14 @@ void ResearchInfoState::moreRelease(Action* action)
  */
 void ResearchInfoState::moreClick(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		moreByValue(std::numeric_limits<int>::max());
-	else if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-		moreByValue(getQty());
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_RIGHT:
+			moreByValue(std::numeric_limits<int>::max());
+			break;
+		case SDL_BUTTON_LEFT:
+			moreByValue(getQty());
+	}
 }
 
 /**
@@ -339,10 +328,14 @@ void ResearchInfoState::lessRelease(Action* action)
  */
 void ResearchInfoState::lessClick(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		lessByValue(std::numeric_limits<int>::max());
-	else if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-		lessByValue(getQty());
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_RIGHT:
+			lessByValue(std::numeric_limits<int>::max());
+			break;
+		case SDL_BUTTON_LEFT:
+			lessByValue(getQty());
+	}
 }
 
 /**
@@ -363,17 +356,14 @@ void ResearchInfoState::moreByValue(int change)
 	if (change > 0)
 	{
 		const int
-			freeScientists = _base->getScientists(),
-			freeSpaceLab = _base->getFreeLaboratories();
+			freeScientists (_base->getScientists()),
+			freeSpaceLab (_base->getFreeLaboratories());
 
-		if (freeScientists > 0
-			&& freeSpaceLab > 0)
+		if (freeScientists != 0 && freeSpaceLab != 0)
 		{
-			change = std::min(
-							change,
-							std::min(
-									freeScientists,
-									freeSpaceLab));
+			change = std::min(change,
+							  std::min(freeScientists,
+									   freeSpaceLab));
 			_project->setAssignedScientists(_project->getAssignedScientists() + change);
 			_base->setScientists(_base->getScientists() - change);
 
@@ -399,12 +389,11 @@ void ResearchInfoState::lessByValue(int change)
 {
 	if (change > 0)
 	{
-		const int assigned = _project->getAssignedScientists();
-		if (assigned > 0)
+		const int assigned (_project->getAssignedScientists());
+		if (assigned != 0)
 		{
-			change = std::min(
-							change,
-							assigned);
+			change = std::min(change,
+							  assigned);
 			_project->setAssignedScientists(assigned - change);
 			_base->setScientists(_base->getScientists() + change);
 

@@ -131,8 +131,9 @@ int ResearchProject::getCost() const
 
 /**
  * Sets this ResearchProject offline.
- * Used to remove the project from lists while preserving the cost & spent values.
- * @param offline - true to set project offline
+ * @note Used to remove the project from lists while preserving the cost & spent
+ * values.
+ * @param offline - true to set project offline (default true)
  */
 void ResearchProject::setOffline(const bool offline)
 {
@@ -202,8 +203,8 @@ std::string ResearchProject::getResearchProgress() const
 	if (static_cast<float>(_spent) / static_cast<float>(_cost) < PROGRESS_LIMIT_UNKNOWN)
 		return "STR_UNKNOWN";
 
-	const float rating = static_cast<float>(_assigned)
-					   / static_cast<float>(_resRule->getCost());
+	const float rating (static_cast<float>(_assigned)
+					  / static_cast<float>(_resRule->getCost()));
 
 	if (rating < PROGRESS_LIMIT_POOR)
 		return "STR_POOR";

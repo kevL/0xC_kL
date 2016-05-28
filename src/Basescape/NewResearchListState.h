@@ -55,7 +55,7 @@ private:
 	TextList* _lstResearch;
 	Window* _window;
 
-	std::vector<ResearchProject*> _offlines;
+	std::vector<ResearchProject*> _offlineProjects;
 	std::vector<const RuleResearch*> _resRules;
 
 	///

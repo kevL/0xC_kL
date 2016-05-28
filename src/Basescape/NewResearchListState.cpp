@@ -52,7 +52,7 @@ NewResearchListState::NewResearchListState(
 	:
 		_base(base),
 		_cutoff(-1),
-		_scroll(0)
+		_scroll(0u)
 {
 	_fullScreen = false;
 
@@ -130,14 +130,14 @@ void NewResearchListState::onSelectProject(Action*) // private.
 {
 	_scroll = _lstResearch->getScroll();
 
-	if (static_cast<int>(_lstResearch->getSelectedRow()) > _cutoff)
-		_game->pushState(new ResearchInfoState( // brand new project
+	if (static_cast<int>(_lstResearch->getSelectedRow()) > _cutoff)	// new project
+		_game->pushState(new ResearchInfoState(
 											_base,
 											_resRules[static_cast<size_t>(static_cast<int>(_lstResearch->getSelectedRow()) - (_cutoff + 1))]));
 	else
-		_game->pushState(new ResearchInfoState( // offline project reactivation.
+		_game->pushState(new ResearchInfoState(						// offline project reactivation.
 											_base,
-											_offlines[_lstResearch->getSelectedRow()]));
+											_offlineProjects[_lstResearch->getSelectedRow()]));
 //	_game->popState();
 }
 
@@ -147,11 +147,11 @@ void NewResearchListState::onSelectProject(Action*) // private.
 void NewResearchListState::fillProjectList() // private.
 {
 	_cutoff = -1;
-	_offlines.clear();
+	_offlineProjects.clear();
 	_resRules.clear();
 	_lstResearch->clearList();
 
-	size_t row (0);
+	size_t row (0u);
 	const Uint8 color (_lstResearch->getSecondaryColor());
 
 	const std::vector<ResearchProject*>& currentProjects (_base->getResearch());
@@ -166,14 +166,14 @@ void NewResearchListState::fillProjectList() // private.
 		// can't exploit the system by forcing a recalculation of totalCost ....
 		if ((*i)->getOffline() == true)
 		{
-			std::wstring wst = tr((*i)->getRules()->getType());
+			std::wstring wst (tr((*i)->getRules()->getType()));
 			if ((*i)->getSpent() != 0)
 				wst += L" (" + Text::intWide((*i)->getSpent()) + L")";
 
 			_lstResearch->addRow(1, wst.c_str());
 			_lstResearch->setRowColor(row++, color, true);
 
-			_offlines.push_back(*i);
+			_offlineProjects.push_back(*i);
 			++_cutoff;
 		}
 	}
