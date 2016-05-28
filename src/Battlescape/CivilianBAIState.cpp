@@ -216,11 +216,11 @@ void CivilianBAIState::setupEscape() // private.
 	std::vector<Position> tileSearch (_battleSave->getTileSearch());
 	RNG::shuffle(tileSearch.begin(), tileSearch.end());
 
-	const int tuHalf (_unit->getTimeUnits() / 2);
+	const int tuHalf (_unit->getTimeUnits() >> 1u);
 	_reachable = _pf->findReachable(_unit, tuHalf);
 
 //	bool coverFound (false);
-	size_t i (0);
+	size_t i (0u);
 	while (/*coverFound == false &&*/ i <= SavedBattleGame::SEARCH_SIZE)
 	{
 		_escapeAction->posTarget = _unit->getPosition();

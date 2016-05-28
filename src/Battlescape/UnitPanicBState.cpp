@@ -72,8 +72,6 @@ void UnitPanicBState::think()
 	{
 		_unit->setUnitStatus(STATUS_STANDING);
 		_unit->moraleChange(10 + RNG::generate(0,10));
-
-		_parent->getTileEngine()->calcFov(_unit, true); // NOTE: Probly should be done only for player's units.
 	}
 
 	_unit->setTimeUnits(0);

@@ -2122,12 +2122,13 @@ bool BattleUnit::getUnitVisible() const
 }
 
 /**
- * Adds a unit to this BattleUnit's visible and/or recently spotted hostile units.
+ * Adds a unit to this BattleUnit's vectors of currently spotted and/or recently
+ * spotted hostile units.
  * @note For aliens these are xCom and civies; for xCom these are aliens only.
- * '_hostileUnits' are currently seen - '_hostileUnitsThisTurn' are just that;
- * don't confuse either of these with the '_visible' to Player flag.
+ * '_hostileUnits' are currently spotted; '_hostileUnitsThisTurn' are just that
+ * - don't confuse either of these with the '_visible' to Player flag.
  * @note Called from TileEngine::calcFov().
- * @param unit - pointer to a seen BattleUnit
+ * @param unit - pointer to a BattleUnit
  * @return, true if a hostile unit is freshly spotted on the current turn
  */
 bool BattleUnit::addToHostileUnits(BattleUnit* const unit)
@@ -2153,8 +2154,8 @@ bool BattleUnit::addToHostileUnits(BattleUnit* const unit)
 }
 
 /**
- * Gets this BattleUnit's list of visible hostile units.
- * @return, pointer to a vector of pointers to visible hostile BattleUnits
+ * Gets this BattleUnit's vector of currently spotted hostile units.
+ * @return, pointer to a vector of pointers to BattleUnits
  */
 std::vector<BattleUnit*>& BattleUnit::getHostileUnits()
 {
@@ -2162,7 +2163,7 @@ std::vector<BattleUnit*>& BattleUnit::getHostileUnits()
 }
 
 /**
- * Clears visible hostile units.
+ * Clears currently spotted hostile units.
  */
 void BattleUnit::clearHostileUnits()
 {
@@ -2170,9 +2171,9 @@ void BattleUnit::clearHostileUnits()
 }
 
 /**
- * Gets this BattleUnit's list of hostile units that have been spotted during
+ * Gets this BattleUnit's vector of hostile units that have been spotted during
  * the current turn.
- * @return, reference to a vector of pointers to known hostile BattleUnits
+ * @return, reference to a vector of pointers to BattleUnits
  */
 std::vector<BattleUnit*>& BattleUnit::getHostileUnitsThisTurn()
 {
@@ -2180,7 +2181,7 @@ std::vector<BattleUnit*>& BattleUnit::getHostileUnitsThisTurn()
 }
 
 /**
- * Clears hostile units spotted during the current turn.
+ * Clears recently spotted hostile units.
  *
 void BattleUnit::clearHostileUnitsThisTurn()
 {

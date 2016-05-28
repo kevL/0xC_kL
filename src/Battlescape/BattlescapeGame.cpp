@@ -217,7 +217,7 @@ void BattlescapeGame::think()
 					if ((_playerPanicHandled = handlePanickingPlayer()) == true)
 					{
 						//Log(LOG_INFO) << "bg:think() . panic Handled TRUE";
-						getTileEngine()->calcFovAll();
+						getTileEngine()->calcFovAll(false, true);
 						_battleSave->getBattleState()->updateSoldierInfo(false);
 					}
 				}

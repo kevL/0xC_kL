@@ -365,8 +365,11 @@ bool TileEngine::calcFov(
 	unit->clearHostileUnits();
 //	unit->clearVisibleTiles();
 
-	if (unit->isOut_t(OUT_STAT) == true)
+	if (unit->getFaction() == FACTION_NEUTRAL // duh. help me ... BOOM!
+		|| unit->isOut_t(OUT_STAT) == true)
+	{
 		return false;
+	}
 
 //	if (unit->getFaction() == FACTION_PLAYER)
 //	{
@@ -404,8 +407,8 @@ bool TileEngine::calcFov(
 				//if (debug) Log(LOG_INFO) << ". try spot vs id-" << (*i)->getId();
 				switch (unit->getFaction())
 				{
-					case FACTION_NEUTRAL:
-						break;
+//					case FACTION_NEUTRAL:
+//						break;
 
 					case FACTION_PLAYER:
 						if ((*i)->getFaction() != FACTION_PLAYER)
@@ -744,7 +747,7 @@ bool TileEngine::calcFov(
 										//		#1 - westwall
 										//		#2 - northwall
 										//		#3 - object
-										// revealed:
+										// revealable sections:
 										//		#0 - westwall
 										//		#1 - northwall
 										//		#2 - floor + content (reveals both walls also)
@@ -900,7 +903,7 @@ void TileEngine::calcFovPos(
  * @note Spotsound triggers:
  * - drop an item
  * - explosion changes unit/terrain
- * @param spotSound - true to play aggro sound (default false)
+ * @param spotSound		- true to play aggro sound (default false)
  * @param revealTiles	- true to reveal Tiles (default false)
  */
 void TileEngine::calcFovAll(

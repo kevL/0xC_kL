@@ -498,15 +498,16 @@ private:
 		void setUnitVisible(bool flag = true);
 		/// Gets whether the BattleUnit is visible.
 		bool getUnitVisible() const;
-		/// Adds a unit to the BattleUnit's visible and/or recently spotted hostile units.
+
+		/// Adds a unit to the BattleUnit's vectors of spotted hostile units.
 		bool addToHostileUnits(BattleUnit* const unit);
-		/// Gets the BattleUnit's list of visible hostile units.
+		/// Gets the BattleUnit's vector of currently spotted hostile units.
 		std::vector<BattleUnit*>& getHostileUnits();
-		/// Clears visible hostile units.
+		/// Clears currently spotted hostile units.
 		void clearHostileUnits();
-		/// Gets the BattleUnit's list of hostile units that have been spotted during the current turn.
+		/// Gets the BattleUnit's vector of recently spotted hostile units.
 		std::vector<BattleUnit*>& getHostileUnitsThisTurn();
-		/// Clears hostile units spotted during the current turn.
+		/// Clears recently spotted hostile units.
 //		void clearHostileUnitsThisTurn();
 
 		/// Adds tile to visible tiles.
