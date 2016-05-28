@@ -581,6 +581,8 @@ void SavedBattleGame::load(
 
 	_music = node["music"].as<std::string>(_music);
 
+	if (node["scanDots"]) _scanDots = node["scanDots"].as<std::vector<std::pair<int,int>>>();
+
 	Log(LOG_INFO) << ". set item ID";
 	setCanonicalBattleId();
 	//Log(LOG_INFO) << "SavedBattleGame::load() EXIT";
@@ -808,6 +810,9 @@ YAML::Node SavedBattleGame::save() const
 
 	if (_cheatTurn != CHEAT_TURN_DEFAULT)
 		node["cheatTurn"] = _cheatTurn;
+
+	if (_scanDots.empty() == false)
+		node["scanDots"] = _scanDots;
 
 	return node;
 }
@@ -2963,13 +2968,18 @@ const Position& SavedBattleGame::getRfTriggerPosition() const
 }
 
 /**
- * Gets a ref to the scanner dots vector.
- * @return, reference to a vector of pairs of ints which are positions of current Turn's scanner dots.
+ * Gets a ref to the scanner-dots vector.
+ * @return, reference to a vector of pairs of ints which are positions of the current Turn's scanner-dots.
  */
 std::vector<std::pair<int,int>>& SavedBattleGame::scannerDots()
 {
 	return _scanDots;
 }
+
+/**
+ * Gets a read-only ref to the scanner-dots vector.
+ * @return, reference to a vector of pairs of ints which are positions of the current Turn's scanner-dots.
+ */
 const std::vector<std::pair<int,int>>& SavedBattleGame::scannerDots() const
 {
 	return _scanDots;

@@ -472,8 +472,9 @@ private:
 		/// Gets the camera-position where the last RF-trigger happened.
 		const Position& getRfTriggerPosition() const;
 
-		/// Gets a ref to the scanner dots vector.
+		/// Gets a ref to the scanner-dots vector.
 		std::vector<std::pair<int,int>>& scannerDots();
+		/// Gets a read-only ref to the scanner-dots vector.
 		const std::vector<std::pair<int,int>>& scannerDots() const;
 
 		/// Gets the minimum TU that a unit has at start of its turn.
