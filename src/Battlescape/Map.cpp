@@ -1120,46 +1120,49 @@ void Map::drawTerrain(Surface* const surface) // private.
 							redrawSouthwall	(false),
 							draw			(true);
 
-						switch (_unit->getUnitStatus()) // don't clip through north/northwest/west UFO hulls etc.
+						if (_unit->getVerticalDirection() == Pathfinding::DIR_VERT_NONE)
 						{
-							case STATUS_WALKING:
-							case STATUS_FLYING:
+							switch (_unit->getUnitStatus()) // don't clip through north/northwest/west UFO hulls etc.
 							{
-								if (_unit->getWalkPhase() != 0
-									|| _unit->getUnitDirection() == 4
-									|| _unit->getUnitDirection() == 1
-									|| _unit->getUnitDirection() == 2) // weird.
+								case STATUS_WALKING:
+								case STATUS_FLYING:
 								{
-									switch (_unit->getUnitDirection())
+									if (_unit->getWalkPhase() != 0
+										|| _unit->getUnitDirection() == 4
+										|| _unit->getUnitDirection() == 1
+										|| _unit->getUnitDirection() == 2) // weird.
 									{
-										case 0:
-										case 4:
-											redrawEastwall =
-											draw = checkNorth(
-															_battleSave->getTile(posField + Position(0,-1,0)),	// tileNorth
-//															_battleSave->getTile(posField + Position(1,-1,0)),	// tileNorthEast
-															nullptr,
-															&halfLeft);
-											break;
+										switch (_unit->getUnitDirection())
+										{
+											case 0:
+											case 4:
+												redrawEastwall =
+												draw = checkNorth(
+																_battleSave->getTile(posField + Position(0,-1,0)),	// tileNorth
+//																_battleSave->getTile(posField + Position(1,-1,0)),	// tileNorthEast
+																nullptr,
+																&halfLeft);
+												break;
 
-										case 2:
-										case 6:
-											redrawSouthwall =
-											draw = checkWest(
-															_battleSave->getTile(posField + Position(-1,0,0)),	// tileWest
-															_battleSave->getTile(posField + Position(-1,1,0)),	// tileSouthWest
-															nullptr,
-															&halfRight);
-											break;
+											case 2:
+											case 6:
+												redrawSouthwall =
+												draw = checkWest(
+																_battleSave->getTile(posField + Position(-1,0,0)),	// tileWest
+																_battleSave->getTile(posField + Position(-1,1,0)),	// tileSouthWest
+																nullptr,
+																&halfRight);
+												break;
 
-										case 1:
-										case 5:
-											draw = checkWest(
-															_battleSave->getTile(posField + Position(-1,1,0)),	// tileSouthWest
-															_battleSave->getTile(posField + Position(-1,2,0)));	// tileSouthSouthWest
-											draw &= checkNorth(
-															_battleSave->getTile(posField + Position(1,-1,0)));	// tileNorthEast
-//															_battleSave->getTile(posField + Position(1,-2,0)));	// tileNorthNorthEast
+											case 1:
+											case 5:
+												draw = checkWest(
+																_battleSave->getTile(posField + Position(-1,1,0)),	// tileSouthWest
+																_battleSave->getTile(posField + Position(-1,2,0)));	// tileSouthSouthWest
+												draw &= checkNorth(
+																_battleSave->getTile(posField + Position(1,-1,0)));	// tileNorthEast
+//																_battleSave->getTile(posField + Position(1,-2,0)));	// tileNorthNorthEast
+										}
 									}
 								}
 							}
