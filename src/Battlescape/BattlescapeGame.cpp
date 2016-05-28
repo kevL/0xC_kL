@@ -2384,13 +2384,13 @@ bool BattlescapeGame::handlePanickingPlayer() // private.
 }
 
 /**
- * Handles panicking units.
+ * Handles a panicking BattleUnit.
  * @note Called from BattlescapeGame::think() at start of non-player turn.
  * @return, true if unit is panicking
  */
 bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 {
-	//Log(LOG_INFO) << "bg::handlePanickingUnit() - " << unit->getId();
+	//Log(LOG_INFO) << "bg::handlePanickingUnit() id-" << unit->getId();
 	const UnitStatus status (unit->getUnitStatus());
 	switch (status)
 	{

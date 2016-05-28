@@ -20,6 +20,7 @@
 #include "UnitPanicBState.h"
 
 #include "../Engine/RNG.h"
+#include "../Battlescape/TileEngine.h"
 
 #include "../Savegame/BattleUnit.h"
 #include "../Savegame/SavedBattleGame.h"
@@ -63,7 +64,7 @@ std::string UnitPanicBState::getBattleStateLabel() const
 
 /**
  * Runs BattleState functionality every cycle.
- * @note Ends panicking for '_unit'.
+ * @note Ends panicking for the BattleUnit.
  */
 void UnitPanicBState::think()
 {
@@ -71,6 +72,8 @@ void UnitPanicBState::think()
 	{
 		_unit->setUnitStatus(STATUS_STANDING);
 		_unit->moraleChange(10 + RNG::generate(0,10));
+
+		_parent->getTileEngine()->calcFov(_unit, true); // NOTE: Probly should be done only for player's units.
 	}
 
 	_unit->setTimeUnits(0);

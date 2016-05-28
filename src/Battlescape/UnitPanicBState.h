@@ -41,7 +41,7 @@ private:
 
 
 	public:
-		/// Creates a new UnitPanicBState class.
+		/// Creates a UnitPanicBState class.
 		UnitPanicBState(
 				BattlescapeGame* const parent,
 				BattleUnit* const unit);
