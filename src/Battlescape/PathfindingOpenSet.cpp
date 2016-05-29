@@ -58,8 +58,8 @@ void PathfindingOpenSet::removeDiscarded()
 
 /**
  * Gets the node with the least cost.
- * @note After this call the node is no longer in the set.
- * @note It is an error to call this when the set is empty.
+ * @note After this call the node is no longer in the set. It is an error to
+ * call this when the set is empty.
  * @return, pointer to the node which had the least cost
  */
 PathfindingNode* PathfindingOpenSet::getNode()
@@ -80,8 +80,8 @@ PathfindingNode* PathfindingOpenSet::getNode()
 
 /**
  * Places the node in the set.
- * @note If the node was already in the set the previous entry is discarded.
- * @note It is the caller's responsibility to never re-add a node with a worse cost.
+ * @note If the node was already in the set the previous entry is discarded. It
+ * is the caller's responsibility to never re-add a node with a higher cost.
  * @param node - pointer to the node to add
  */
 void PathfindingOpenSet::addNode(PathfindingNode* const node)

@@ -19,7 +19,7 @@
 
 #include "PathfindingNode.h"
 
-//#include <cmath>
+//#include <cmath> // std::sqrt()
 
 
 namespace OpenXcom
@@ -34,7 +34,7 @@ PathfindingNode::PathfindingNode(Position pos)
 		_pos(pos),
 		_checked(false),
 		_tuCost(0),
-		_tuGuess(0),
+		_tuGuess(0.f),
 		_prevNode(nullptr),
 		_prevDir(0),
 		_openSetEntry(nullptr)
@@ -110,9 +110,9 @@ int PathfindingNode::getPrevDir() const
  * @a target and update Pathfinding information.
  * @param tuCost	- the total cost of the path so far
  * @param prevNode	- pointer to the previous node along the path
- * @param prevDir	- the direction FROM the previous node
- * @param target	- reference of the target position (used to update the '_tuGuess' cost)
-*/
+ * @param prevDir	- the direction to this node FROM the previous node
+ * @param target	- reference to the target-position (used to update the '_tuGuess' cost)
+ */
 void PathfindingNode::linkNode(
 		int tuCost,
 		PathfindingNode* const prevNode,
@@ -127,8 +127,7 @@ void PathfindingNode::linkNode(
 	{
 		Position pos (target - _pos);
 		pos *= pos;
-		_tuGuess = (static_cast<int>(std::ceil(std::sqrt(
-					static_cast<double>(pos.x + pos.y + pos.z))))) << 2u;
+		_tuGuess = std::sqrt(static_cast<float>(pos.x + pos.y + pos.z)) * 4.f;
 	}
 }
 
@@ -137,8 +136,8 @@ void PathfindingNode::linkNode(
  * @note This will connect the Node to the previous Node along the path.
  * @param tuCost	- the total cost of the path so far
  * @param prevNode	- pointer to the previous node along the path
- * @param prevDir	- the direction FROM the previous node
-*/
+ * @param prevDir	- the direction to this node FROM the previous node
+ */
 void PathfindingNode::linkNode(
 		int tuCost,
 		PathfindingNode* const prevNode,
@@ -147,7 +146,7 @@ void PathfindingNode::linkNode(
 	_tuCost = tuCost;
 	_prevNode = prevNode;
 	_prevDir = prevDir;
-	_tuGuess = 0;
+	_tuGuess = 0.f;
 }
 
 }

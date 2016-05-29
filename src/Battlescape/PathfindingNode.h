@@ -43,8 +43,8 @@ private:
 	bool _checked;
 	int
 		_prevDir,
-		_tuCost,
-		_tuGuess; // approximate cost to reach goal position
+		_tuCost;
+	float _tuGuess; // approximate cost to reach goal position
 
 	OpenSetEntry* _openSetEntry; // invasive field needed by PathfindingOpenSet
 	PathfindingNode* _prevNode;
@@ -74,7 +74,7 @@ private:
 		int getTuCostNode(bool missile = false) const;
 		/// Gets the approximate cost to reach the target-position.
 		int getTuGuess() const
-		{ return _tuGuess; }
+		{ return static_cast<int>(_tuGuess); }
 
 		/// Gets the Node's previous Node.
 		PathfindingNode* getPrevNode() const;
