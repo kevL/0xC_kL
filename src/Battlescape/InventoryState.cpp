@@ -124,6 +124,7 @@ InventoryState::InventoryState(
 	_wndLeftArm		= new NumberText(7, 5, 117,  80);
 	_wndRightLeg	= new NumberText(7, 5,  40, 120);
 	_wndLeftLeg		= new NumberText(7, 5, 117, 120);
+	_wndFire		= new NumberText(7, 5, 154,  43);
 
 	_txtItem	= new Text(160, 9, 128, 140);
 
@@ -136,9 +137,9 @@ InventoryState::InventoryState(
 	_btnGroundL	= new BattlescapeButton(32, 15,   0, 137);
 	_btnGroundR	= new BattlescapeButton(32, 15, 288, 137);
 
-//	_btnCreateTemplate = new BattlescapeButton(32,22, _templateBtnX, _createTemplateBtnY);
-//	_btnApplyTemplate = new BattlescapeButton(32,22, _templateBtnX, _applyTemplateBtnY);
-//	_btnClearInventory = new BattlescapeButton(32,22, _templateBtnX, _clearInventoryBtnY);
+//	_btnCreateTemplate	= new BattlescapeButton(32,22, _templateBtnX, _createTemplateBtnY);
+//	_btnApplyTemplate	= new BattlescapeButton(32,22, _templateBtnX, _applyTemplateBtnY);
+//	_btnClearInventory	= new BattlescapeButton(32,22, _templateBtnX, _clearInventoryBtnY);
 
 	_txtAmmo = new Text(40, 24, 288, 64);
 	_srfAmmo = new Surface(
@@ -197,6 +198,7 @@ InventoryState::InventoryState(
 	add(_wndLeftArm);
 	add(_wndRightLeg);
 	add(_wndLeftLeg);
+	add(_wndFire);
 
 	add(_srfAmmo);
 	add(_inventoryPanel);
@@ -237,6 +239,8 @@ InventoryState::InventoryState(
 	_wndRightLeg->setVisible(false);
 	_wndLeftLeg->setColor(RED);
 	_wndLeftLeg->setVisible(false);
+	_wndFire->setColor(RED);
+	_wndFire->setVisible(false);
 
 	_txtItem->setHighContrast();
 
@@ -677,9 +681,17 @@ void InventoryState::updateStats() // private.
 void InventoryState::updateWounds() // private.
 {
 	const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
-	UnitBodyPart bodyPart;
-	unsigned wound;
 
+	unsigned wound (static_cast<unsigned>(selUnit->getFireUnit()));
+	if (wound != 0u)
+	{
+		_wndFire->setValue(wound);
+		_wndFire->setVisible();
+	}
+	else
+		_wndFire->setVisible(false);
+
+	UnitBodyPart bodyPart;
 	for (size_t
 			i = 0u;
 			i != BattleUnit::PARTS_BODY;

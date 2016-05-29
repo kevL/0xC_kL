@@ -1361,11 +1361,12 @@ void Map::drawTerrain(Surface* const surface) // private.
 						std::string st;
 						if (_tile->getFire() != 0) // check & draw fire first.
 						{
-							st = "SMOKE.PCK";
+							st = "SMOKE.PCK"; // TODO: Breakout fire-sprites to their own SurfaceSet.
 							spriteId =
 							shade = 0;
 						}
-						else if (_tile->getSmoke() != 0)
+						else if (_tile->getSmoke() != 0
+							&& (hasUnit == false || _unit->getFireUnit() == 0))
 						{
 							st = "SmokeCloud";
 							spriteId = _tile->getSmoke() >> 1u; //+ ResourcePack::SMOKE_OFFSET

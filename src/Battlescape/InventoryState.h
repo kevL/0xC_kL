@@ -77,7 +77,8 @@ private:
 		* _wndRightArm,
 		* _wndLeftArm,
 		* _wndRightLeg,
-		* _wndLeftLeg;
+		* _wndLeftLeg,
+		* _wndFire;
 	SavedBattleGame* _battleSave;
 	Surface
 		* _bg,

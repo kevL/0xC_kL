@@ -800,26 +800,35 @@ bool UnitWalkBState::doStatusWalk() // private.
 bool UnitWalkBState::doStatusStand_end() // private.
 {
 	//Log(LOG_INFO) << "***** UnitWalkBState::doStatusStand_end() : " << _unit->getId();
-	if (_unit->getFaction() != FACTION_PLAYER)
-		_unit->setUnitVisible(false);
-
-	if (_unit->getFaction() == FACTION_PLAYER
-		|| _battleSave->getDebugTac() == true)
+	switch (_unit->getFaction())
 	{
-		const BattlescapeState* const battleState (_battleSave->getBattleState());
+		case FACTION_HOSTILE:
+		case FACTION_NEUTRAL:
+			_unit->setUnitVisible(false);
+			if (_battleSave->getDebugTac() == false) break;
+			// no break;
 
-		double stat (static_cast<double>(_unit->getBattleStats()->tu));
-		const int tu (_unit->getTimeUnits());
-		battleState->getTuField()->setValue(static_cast<unsigned>(tu));
-		battleState->getTuBar()->setValue(std::ceil(
-											static_cast<double>(tu) / stat * 100.));
+		case FACTION_PLAYER:
+		{
+			const BattlescapeState* const battleState (_battleSave->getBattleState());
 
-		stat = static_cast<double>(_unit->getBattleStats()->stamina);
-		const int energy (_unit->getEnergy());
-		battleState->getEnergyField()->setValue(static_cast<unsigned>(energy));
-		battleState->getEnergyBar()->setValue(std::ceil(
-											static_cast<double>(energy) / stat * 100.));
+			double stat (static_cast<double>(_unit->getBattleStats()->tu));
+			const int tu (_unit->getTimeUnits());
+			battleState->getTuField()->setValue(static_cast<unsigned>(tu));
+			battleState->getTuBar()->setValue(std::ceil(
+												static_cast<double>(tu) / stat * 100.));
+
+			stat = static_cast<double>(_unit->getBattleStats()->stamina);
+			const int energy (_unit->getEnergy());
+			battleState->getEnergyField()->setValue(static_cast<unsigned>(energy));
+			battleState->getEnergyBar()->setValue(std::ceil(
+												static_cast<double>(energy) / stat * 100.));
+		}
 	}
+
+	if (_unit->getFireUnit() != 0) // TODO: Also add to falling and/or all quadrants of large units.
+		_unit->getTile()->addSmoke(1); //(_unit->getFireUnit() + 1) >> 1u);
+
 
 	const Position pos (_unit->getPosition());
 
