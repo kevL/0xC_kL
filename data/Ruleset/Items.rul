@@ -652,9 +652,9 @@ items:
     battleType: 6
     invWidth: 1
     invHeight: 2
-    painKiller: 10
-    heal: 10
-    stimulant: 10
+    painKiller: 9
+    heal: 9
+    stimulant: 9
     woundRecovery: 1
     healthRecovery: 3
     stunRecovery: 5

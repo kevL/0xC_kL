@@ -95,7 +95,7 @@ MediTargetState::MediTargetState(BattleAction* const action)
 	_txtEnergy->setText(L"sta"); // STR_STAMINA
 	_txtEnergy->setHighContrast();
 
-	_txtMorale->setText(L"rl"); // STR_MORALE
+	_txtMorale->setText(L"mrl"); // STR_MORALE
 	_txtMorale->setHighContrast();
 
 	_lstTarget->setColumns(5, 108,18,47,37,18);

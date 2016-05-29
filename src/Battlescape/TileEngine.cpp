@@ -2211,15 +2211,15 @@ void TileEngine::hit(
 					if (vulnr > 0.f)
 					{
 						int fire (attacker->getUnitRules()->getSpecabPower());
-						fire = RNG::generate(
+						fire = RNG::generate( // 12.5% to 37.5%
 										(fire	   >> 3u),
 										(fire * 3) >> 3u);
-						const int burn (RNG::generate(0, static_cast<int>(Round(vulnr * 5.f))));
-
 						targetUnit->takeDamage(
 											Position(0,0,0),
 											fire, DT_IN, true);
 
+						const int burn (RNG::generate(0,
+													  static_cast<int>(Round(vulnr * 5.f))));
 						if (targetUnit->getFireUnit() < burn)
 							targetUnit->setFireUnit(burn); // catch fire and burn
 					}
