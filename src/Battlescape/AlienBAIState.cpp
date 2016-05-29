@@ -2205,7 +2205,7 @@ bool AlienBAIState::psiAction() // private.
 					//Log(LOG_INFO) << ". . . currentMood = " << currentMood;
 					//Log(LOG_INFO) << ". . . hasSight = " << hasSight;
 
-					weightTest = attack // Note that this is NOT a true calculation of Success.
+					weightTest = attack // NOTE: This is NOT a true calculation of Success.
 							   - defense
 							   - dist
 							   + losTest
@@ -2237,23 +2237,23 @@ bool AlienBAIState::psiAction() // private.
 				_unitAggro = unitTarget;
 				_psiAction->posTarget = unitTarget->getPosition();
 
-				const int morale (unitTarget->getMorale());
-				if (morale > 0) //&& weight < 30 // panicAtk is valid since target has morale to chew away esp. if aLien atkStr is low
+				int moraleCheck (unitTarget->getMorale());
+				if (moraleCheck > 0) //&& weight < 30 // panicAtk is valid since target has morale to chew away esp. if aLien atkStr is low
 				{
-					//Log(LOG_INFO) << ". . test if MC or Panic";
+					//Log(LOG_INFO) << ". . test if MC or Panic - attack= " << attack;
 					const int bravery (unitTarget->getBattleStats()->bravery);
-					int panicOdds (110 - bravery); // ie, moraleHit
-					const int moraleResult (morale - panicOdds);
-					//Log(LOG_INFO) << ". . panicOdds_1 = " << panicOdds;
+					int panicChance (110 - bravery);
+					moraleCheck -= panicChance;
+					//Log(LOG_INFO) << ". . panicOdds_1 = " << panicChance;
 
-					if		(moraleResult <  0)	panicOdds -= bravery >> 1u;
-					else if	(moraleResult < 50)	panicOdds -= bravery;
-					else						panicOdds -= bravery << 1u;
+					if		(moraleCheck <  0)	panicChance -= bravery >> 1u;
+					else if	(moraleCheck < 50)	panicChance -= bravery;
+					else						panicChance -= bravery << 1u;
 
-					//Log(LOG_INFO) << ". . panicOdds_2 = " << panicOdds;
-					panicOdds += (RNG::generate(51,100) - (attack / 5));
-					//Log(LOG_INFO) << ". . panicOdds_3 = " << panicOdds;
-					if (RNG::percent(panicOdds) == true)
+					//Log(LOG_INFO) << ". . panicOdds_2 = " << panicChance;
+					panicChance += (RNG::generate(51,100) - (attack >> 1u));
+					//Log(LOG_INFO) << ". . panicOdds_3 = " << panicChance;
+					if (RNG::percent(panicChance) == true)
 					{
 						//Log(LOG_INFO) << "AlienBAIState::psiAction() EXIT . do Panic vs " << unitTarget->getId();
 						_psiAction->type = BA_PSIPANIC;
