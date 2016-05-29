@@ -1411,19 +1411,18 @@ bool SavedBattleGame::endFactionTurn()
 
 	// ** _side HAS ADVANCED to next faction after here!!! ** //
 
-
 	if (_cheatAI == false // pseudo the Turn-20 / less-than-3-aliens-left Reveal rule.
 		&& _side == FACTION_HOSTILE
 		&& _turn > (_cheatTurn >> 2u))
 	{
-		for (std::vector<BattleUnit*>::const_iterator
+		for (std::vector<BattleUnit*>::const_iterator // find a conscious non-MC'd aLien ...
 				i = _units.begin();
 				i != _units.end();
 				++i)
 		{
-			if ((*i)->isOut_t(OUT_STAT) == false // a conscious non-MC'd aLien ...
-				&& (*i)->getOriginalFaction() == FACTION_HOSTILE
-				&& (*i)->isMindControlled() == false)
+			if ((*i)->getOriginalFaction() == FACTION_HOSTILE
+				&& (*i)->isMindControlled() == false
+				&& (*i)->isOut_t(OUT_STAT) == false)
 			{
 				const int r (RNG::generate(0,5));
 				if (_turn > _cheatTurn - 3 + r

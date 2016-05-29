@@ -1130,40 +1130,74 @@ void UnitWalkBState::postPathProcedures() // private.
  */
 int UnitWalkBState::getFinalDirection() const // private.
 {
-	const int diff (static_cast<int>(_parent->getBattlescapeState()->getSavedGame()->getDifficulty()));
-	if (RNG::percent((diff + 1) * 20 - _unit->getRankInt() * 5) == true)
-	{
-		const BattleUnit* unitFaced (nullptr);
-		int
-			dist (100000),
-			distTest;
+	const BattleUnit* unitFaced (nullptr);
+	int
+		dist (100000),
+		distTest;
 
+	const Position pos (_unit->getPosition());
+
+	std::vector<BattleUnit*> hostileList (_unit->getHostileUnits()); // firstly check currently spotted hostiles
+	for (std::vector<BattleUnit*>::const_iterator
+			i = hostileList.begin();
+			i != hostileList.end();
+			++i)
+	{
+		if ((distTest = TileEngine::distSqr(pos, (*i)->getPosition())) < dist)
+		{
+			dist = distTest;
+			unitFaced = *i;
+		}
+	}
+
+	if (unitFaced == nullptr)
+	{
+		dist = 100000;
+
+		hostileList = _unit->getHostileUnitsThisTurn(); // secondly check recently spotted hostiles
 		for (std::vector<BattleUnit*>::const_iterator
-				i = _battleSave->getUnits()->begin();
-				i != _battleSave->getUnits()->end();
+				i = hostileList.begin();
+				i != hostileList.end();
 				++i)
 		{
-			if ((*i)->getFaction() == FACTION_PLAYER
-				&& (*i)->isOut_t(OUT_STAT) == false
-				&& (*i)->getExposed() != -1
-				&& (*i)->getExposed() <= _unit->getIntelligence())
+			if ((distTest = TileEngine::distSqr(pos, (*i)->getPosition())) < dist)
 			{
-				distTest = TileEngine::distSqr(
-											_unit->getPosition(),
-											(*i)->getPosition());
-				if (distTest < dist)
+				dist = distTest;
+				unitFaced = *i;
+			}
+		}
+	}
+
+	if (unitFaced == nullptr)
+	{
+		const int diff (static_cast<int>(_parent->getBattlescapeState()->getSavedGame()->getDifficulty()));
+		if (RNG::percent((diff + 1) * 20 - _unit->getRankInt() * 5) == true)
+		{
+			dist = 100000;
+
+			for (std::vector<BattleUnit*>::const_iterator // thirdly check for exposed player-units
+					i = _battleSave->getUnits()->begin();
+					i != _battleSave->getUnits()->end();
+					++i)
+			{
+				if ((*i)->getFaction() == FACTION_PLAYER
+					&& (*i)->isOut_t(OUT_STAT) == false
+					&& (*i)->getExposed() != -1
+					&& (*i)->getExposed() <= _unit->getIntelligence())
 				{
-					dist = distTest;
-					unitFaced = *i;
+					if ((distTest = TileEngine::distSqr(pos, (*i)->getPosition())) < dist)
+					{
+						dist = distTest;
+						unitFaced = *i;
+					}
 				}
 			}
 		}
-
-		if (unitFaced != nullptr)
-			return TileEngine::getDirectionTo(
-										_unit->getPosition(),
-										unitFaced->getPosition());
 	}
+
+	if (unitFaced != nullptr)
+		return TileEngine::getDirectionTo(pos, unitFaced->getPosition());
+
 	return -1;
 }
 
