@@ -6527,17 +6527,16 @@ bool TileEngine::psiAttack(BattleAction* const action)
 				attack -= defense;
 				switch (action->type)
 				{
-					default:
+					case BA_PSICONFUSE:
+						attack += 60.f;
+						break;
+
 					case BA_PSIPANIC:
 						attack += 45.f;
 						break;
 
 					case BA_PSICONTROL:
 						attack += 15.f;
-						break;
-
-					case BA_PSICONFUSE:
-						attack += 55.f;
 				}
 				attack *= 100.f;
 				attack /= 56.f;

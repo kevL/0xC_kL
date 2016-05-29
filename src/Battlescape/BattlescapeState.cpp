@@ -1546,9 +1546,10 @@ void BattlescapeState::mapClick(Action* action)
 //			if (_battleSave->getTile(pos)->getMapData(O_OBJECT) != nullptr)
 //				woststr << (int)(_battleSave->getTile(pos)->getMapData(O_OBJECT)->getBigwall()) << L" ";
 
-			if (_battleSave->getTile(pos)->getTileUnit() != nullptr)
+			const BattleUnit* const unit (_battleSave->getTile(pos)->getTileUnit());
+			if (unit != nullptr && unit->getUnitVisible() == true)
 				woststr	<< L"unit "
-						<< _battleSave->getTile(pos)->getTileUnit()->getId()
+						<< unit->getId()
 						<< L" ";
 
 			woststr << L"pos " << pos;
