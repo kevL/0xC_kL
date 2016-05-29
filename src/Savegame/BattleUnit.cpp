@@ -2082,7 +2082,7 @@ bool BattleUnit::spendEnergy(int energy)
 
 /**
  * Sets a specific number of TUs.
- * @note This must be allowed to go above the unit's capacity to allow for
+ * @note This must be allowed to go above the unit's Tu-cap to allow for
  * accurate action-cancellations in or about BattlescapeGame::popState().
  * @param tu - the TU to set for this unit
  */

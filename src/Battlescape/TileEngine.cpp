@@ -6453,280 +6453,282 @@ bool TileEngine::psiAttack(BattleAction* const action)
 {
 	//Log(LOG_INFO) << "\nTileEngine::psiAttack() attackerID " << action->actor->getId();
 	const Tile* const tile (_battleSave->getTile(action->posTarget));
-	if (tile == nullptr) return false;
-	//Log(LOG_INFO) << ". . target(pos) " << action->target;
-
-	BattleUnit* const victim (tile->getTileUnit());
-	if (victim == nullptr) return false;
-	//Log(LOG_INFO) << "psiAttack: vs ID " << victim->getId();
-
-	if (victim->psiBlock() == false)
+	if (tile != nullptr)
 	{
-		if (action->type == BA_PSICOURAGE)
+		//Log(LOG_INFO) << ". . target(pos) " << action->target;
+		BattleUnit* const victim (tile->getTileUnit());
+		if (victim != nullptr)
 		{
-			const int morale (10 + RNG::generate(0,20) + (action->actor->getBattleStats()->psiSkill / 10));
-			action->value = morale;
-			victim->moraleChange(morale);
-			return true;
-		}
-
-		if (action->actor->getOriginalFaction() == FACTION_PLAYER)
-			action->actor->addPsiSkillExp();
-		else if (victim->getOriginalFaction() == FACTION_PLAYER) //&& Options::allowPsiStrengthImprovement
-			victim->addPsiStrengthExp();
-
-		if (action->type == BA_PSICONTROL
-			&& victim->getOriginalFaction() == FACTION_HOSTILE // aLiens should be reduced to 50- Morale before MC.
-			&& RNG::percent(victim->getMorale() - 50) == true)
-		{
-			//Log(LOG_INFO) << ". . . . RESIST vs " << (victim->getMorale() - 50);
-			_battleSave->getBattleState()->warning("STR_PSI_RESIST");
-			return false;
-		}
-
-		const UnitStats
-			* const statsActor (action->actor->getBattleStats()),
-			* const statsVictim (victim->getBattleStats());
-
-		int
-			psiStrength,
-			psiSkill (0);
-
-		if (victim->getFaction() == FACTION_HOSTILE
-			&& victim->isMindControlled() == true)
-		{
-			victim->hostileMcValues(psiStrength, psiSkill);
-		}
-		else
-		{
-			psiStrength = statsVictim->psiStrength;
-			psiSkill = statsVictim->psiSkill;
-		}
-
-		const float
-			defense (static_cast<float>(psiStrength) + (static_cast<float>(psiSkill) / 5.f)),
-			dist (static_cast<float>(distance(
-											action->actor->getPosition(),
-											action->posTarget)));
-
-		int bonusSkill; // add to psiSkill when using aLien to Panic another aLien ....
-		if (action->actor->getFaction() == FACTION_PLAYER
-			&& action->actor->isMindControlled() == true)
-		{
-			bonusSkill = 21; // ... arbitrary kL
-		}
-		else
-			bonusSkill = 0;
-
-		float attack (static_cast<float>(statsActor->psiStrength * (statsActor->psiSkill + bonusSkill)) / 50.f);
-		//Log(LOG_INFO) << ". . . defense = " << (int)defense;
-		//Log(LOG_INFO) << ". . . attack = " << (int)attack;
-		//Log(LOG_INFO) << ". . . dist = " << (int)dist;
-
-		attack -= dist * 2.f;
-		attack -= defense;
-		switch (action->type)
-		{
-			default:
-			case BA_PSIPANIC:
-				attack += 45.f;
-				break;
-
-			case BA_PSICONTROL:
-				attack += 15.f;
-				break;
-
-			case BA_PSICONFUSE:
-				attack += 55.f;
-		}
-		attack *= 100.f;
-		attack /= 56.f;
-
-		const int success (static_cast<int>(attack));
-		action->value = success;
-
-		//Log(LOG_INFO) << ". . . attack Success @ " << success;
-		if (RNG::percent(success) == true)
-		{
-			//Log(LOG_INFO) << ". . Success";
-			if (action->actor->getOriginalFaction() == FACTION_PLAYER)
+			//Log(LOG_INFO) << "psiAttack: vs ID " << victim->getId();
+			if (victim->psiBlock() == false)
 			{
-				int xp;
+				if (action->type == BA_PSICOURAGE)
+				{
+					const int morale (10 + RNG::generate(0,20) + ((action->actor->getBattleStats()->psiSkill + 9) / 10)); // round up.
+					action->value = morale;
+					victim->moraleChange(morale);
+					return true;
+				}
+
+				if (action->actor->getOriginalFaction() == FACTION_PLAYER) // NOTE: No exp for Psicourage.
+					action->actor->addPsiSkillExp();
+				else if (victim->getOriginalFaction() == FACTION_PLAYER) //&& Options::allowPsiStrengthImprovement
+					victim->addPsiStrengthExp();
+
+				if (action->type == BA_PSICONTROL
+					&& victim->getOriginalFaction() == FACTION_HOSTILE // aLiens should be reduced to 50- Morale before MC.
+					&& RNG::percent(victim->getMorale() - 50) == true)
+				{
+					//Log(LOG_INFO) << ". . . . RESIST vs " << (victim->getMorale() - 50);
+					_battleSave->getBattleState()->warning("STR_PSI_RESIST");
+					return false;
+				}
+
+				const UnitStats
+					* const statsActor (action->actor->getBattleStats()),
+					* const statsVictim (victim->getBattleStats());
+
+				int
+					psiStrength,
+					psiSkill (0);
+
+				if (victim->getFaction() == FACTION_HOSTILE
+					&& victim->isMindControlled() == true)
+				{
+					victim->hostileMcValues(psiStrength, psiSkill);
+				}
+				else
+				{
+					psiStrength = statsVictim->psiStrength;
+					psiSkill = statsVictim->psiSkill;
+				}
+
+				const float
+					defense (static_cast<float>(psiStrength) + (static_cast<float>(psiSkill) / 5.f)),
+					dist (static_cast<float>(distance(
+													action->actor->getPosition(),
+													action->posTarget)));
+
+				int bonusSkill; // add to psiSkill when using aLien to Panic another aLien/civie ....
+				if (action->actor->getFaction() == FACTION_PLAYER
+					&& action->actor->isMindControlled() == true)
+				{
+					bonusSkill = 21; // ... arbitrary
+				}
+				else
+					bonusSkill = 0;
+
+				float attack (static_cast<float>(statsActor->psiStrength * (statsActor->psiSkill + bonusSkill)) / 50.f);
+				//Log(LOG_INFO) << ". . . defense = " << (int)defense;
+				//Log(LOG_INFO) << ". . . attack = " << (int)attack;
+				//Log(LOG_INFO) << ". . . dist = " << (int)dist;
+
+				attack -= dist * 2.f;
+				attack -= defense;
 				switch (action->type)
 				{
 					default:
-					case BA_PSIPANIC: xp = 1;
+					case BA_PSIPANIC:
+						attack += 45.f;
 						break;
 
 					case BA_PSICONTROL:
-						switch (victim->getOriginalFaction())
-						{
-							default:
-							case FACTION_HOSTILE:	xp = 2; break;
-							case FACTION_NEUTRAL:	xp = 1; break;
-							case FACTION_PLAYER:	xp = 0;
-						}
+						attack += 15.f;
 						break;
 
-					case BA_PSICONFUSE: xp = 0;
+					case BA_PSICONFUSE:
+						attack += 55.f;
 				}
-				action->actor->addPsiSkillExp(xp);
-			}
+				attack *= 100.f;
+				attack /= 56.f;
 
-			//Log(LOG_INFO) << ". . victim morale[0] = " << victim->getMorale();
-			switch (action->type)
-			{
-				default:
-				case BA_PSIPANIC:
+				const int success (static_cast<int>(attack));
+				action->value = success;
+
+				//Log(LOG_INFO) << ". . . attack Success @ " << success;
+				if (RNG::percent(success) == true)
 				{
-					//Log(LOG_INFO) << ". . . action->type == BA_PSIPANIC";
-					int morale (100);
-					switch (action->actor->getOriginalFaction())
+					//Log(LOG_INFO) << ". . Success";
+					if (action->actor->getOriginalFaction() == FACTION_PLAYER)
 					{
-						default:
-						case FACTION_HOSTILE:
-						case FACTION_NEUTRAL:
-							morale += statsActor->psiStrength >> 1u;		// 50% effect on non-Player units.
-							break;
+						int xp;
+						switch (action->type)
+						{
+							default:
+							case BA_PSIPANIC: xp = 1;
+								break;
 
-						case FACTION_PLAYER:
-							morale += (statsActor->psiStrength << 1u) / 3;	// 66% effect on Player's units.
+							case BA_PSICONTROL:
+								switch (victim->getOriginalFaction())
+								{
+									default:
+									case FACTION_HOSTILE:	xp = 2; break;
+									case FACTION_NEUTRAL:	xp = 1; break;
+									case FACTION_PLAYER:	xp = 0;
+								}
+								break;
+
+							case BA_PSICONFUSE: xp = 0;
+						}
+						action->actor->addPsiSkillExp(xp);
 					}
-					morale -= (statsVictim->bravery * 3) >> 1u;
-					//Log(LOG_INFO) << ". . . morale reduction = " << morale;
-					if (morale > 0)
-						victim->moraleChange(-morale);
-					//Log(LOG_INFO) << ". . . victim morale[1] = " << victim->getMorale();
-					break;
-				}
 
-				case BA_PSICONTROL:
-				{
-					//Log(LOG_INFO) << ". . . action->type == BA_PSICONTROL";
-					int morale (statsVictim->bravery);
-					switch (action->actor->getFaction())
+					//Log(LOG_INFO) << ". . victim morale[0] = " << victim->getMorale();
+					switch (action->type)
 					{
 						default:
-						case FACTION_HOSTILE:
-							{
-								morale = std::min(0,
-												 (_battleSave->getMoraleModifier() / 10) + (morale >> 1u) - 110);
-
-								int // store a representation of the aLien's psyche in its victim.
-									str (statsActor->psiStrength),
-									skl (statsActor->psiSkill);
-								victim->hostileMcValues(str, skl);
-							}
-							break;
-
-//						case FACTION_NEUTRAL:
-						case FACTION_PLAYER:
-							switch (victim->getOriginalFaction())
+						case BA_PSIPANIC:
+						{
+							//Log(LOG_INFO) << ". . . action->type == BA_PSIPANIC";
+							int morale (100);
+							switch (action->actor->getOriginalFaction())
 							{
 								default:
-								case FACTION_HOSTILE: // aLien Morale loss for getting Mc'd by Player.
-									morale = std::min(0,
-													 (_battleSave->getMoraleModifier(nullptr, false) / 10) + ((morale * 3) >> 2u) - 110);
+								case FACTION_HOSTILE:
+								case FACTION_NEUTRAL:
+									morale += statsActor->psiStrength * 9 / 20;		// +45% effect for non-Player actors.
 									break;
 
-								case FACTION_NEUTRAL: // Morale change for civies (-10) unless already Mc'd by aLiens.
-									if (victim->isMindControlled() == false)
-									{
-										morale = -10;
-										break;
-									} // no break;
-								case FACTION_PLAYER: // xCom and civies' Morale gain for getting Mc'd back to xCom.
-								{
-									morale >>= 1u;
-									victim->setExposed(-1);	// bonus Exposure removal.
-								}
+								case FACTION_PLAYER:
+									morale += (statsActor->psiStrength * 3) >> 2u;	// +75% effect for Player's actors.
 							}
+							morale -= (statsVictim->bravery * 3) >> 1u;				// -150% of the victim's Bravery.
+							//Log(LOG_INFO) << ". . . morale reduction = " << morale;
+							if (morale > 0)
+								victim->moraleChange(-morale);
+							//Log(LOG_INFO) << ". . . victim morale[1] = " << victim->getMorale();
+							break;
+						}
+
+						case BA_PSICONTROL:
+						{
+							//Log(LOG_INFO) << ". . . action->type == BA_PSICONTROL";
+							int morale (statsVictim->bravery);
+							switch (action->actor->getFaction())
+							{
+								default:
+								case FACTION_HOSTILE:
+									{
+										morale = std::min(0,
+														 (_battleSave->getMoraleModifier() / 10) + (morale >> 1u) - 110);
+
+										int // store a representation of the aLien's psyche in its victim.
+											str (statsActor->psiStrength),
+											skl (statsActor->psiSkill);
+										victim->hostileMcValues(str, skl);
+									}
+									break;
+
+//								case FACTION_NEUTRAL:
+								case FACTION_PLAYER:
+									switch (victim->getOriginalFaction())
+									{
+										default:
+										case FACTION_HOSTILE: // aLien Morale loss for getting Mc'd by Player.
+											morale = std::min(0,
+															 (_battleSave->getMoraleModifier(nullptr, false) / 10) + ((morale * 3) >> 2u) - 110);
+											break;
+
+										case FACTION_NEUTRAL: // Morale change for civies (-10) unless already Mc'd by aLiens.
+											if (victim->isMindControlled() == false)
+											{
+												morale = -10;
+												break;
+											} // no break;
+										case FACTION_PLAYER: // xCom and civies' Morale gain for getting Mc'd back to xCom.
+										{
+											morale >>= 1u;
+											victim->setExposed(-1);	// bonus Exposure removal.
+										}
+									}
+							}
+							victim->moraleChange(morale);
+							//Log(LOG_INFO) << ". . . victim morale[2] = " << victim->getMorale();
+
+							if (victim->getAIState() != nullptr)
+							{
+								if (victim->getOriginalFaction() == FACTION_PLAYER)
+									victim->setAIState();
+								else
+									victim->getAIState()->resetAI();
+							}
+
+							victim->setFaction(action->actor->getFaction());
+							victim->prepTu();
+							victim->allowReselect();
+							victim->setUnitStatus(STATUS_STANDING);
+
+							calculateUnitLighting();
+							calcFovPos(
+									victim->getPosition(),
+									true, true);
+
+							// if all units from either faction are mind controlled - auto-end the mission.
+//							if (Options::battleAllowPsionicCapture == true && Options::battleAutoEnd == true && _battleSave->getSide() == FACTION_PLAYER)
+//							{
+//								//Log(LOG_INFO) << ". . . . inside tallyUnits";
+//								int liveHostile, livePlayer;
+//								_battleSave->getBattleGame()->tallyUnits(liveHostile, livePlayer);
+//								if (liveHostile == 0 || livePlayer == 0)
+//								{
+//									_battleSave->setSelectedUnit();
+//									_battleSave->getBattleGame()->cancelTacticalAction(true);
+//									_battleSave->getBattleGame()->requestEndTurn();
+//								}
+//							}
+							//Log(LOG_INFO) << ". . . tallyUnits DONE";
+							break;
+						}
+
+						case BA_PSICONFUSE:
+						{
+							//Log(LOG_INFO) << ". . . action->type == BA_PSICONFUSE";
+							const int tuLoss ((statsActor->psiSkill + 2) / 3);
+							//Log(LOG_INFO) << ". . . tuLoss = " << tuLoss;
+//							if (tuLoss != 0) // safety.
+							victim->setTimeUnits(victim->getTimeUnits() - tuLoss);
+						}
 					}
-					victim->moraleChange(morale);
-					//Log(LOG_INFO) << ". . . victim morale[2] = " << victim->getMorale();
 
-					if (victim->getAIState() != nullptr)
-					{
-						if (victim->getOriginalFaction() == FACTION_PLAYER)
-							victim->setAIState();
-						else
-							victim->getAIState()->resetAI();
-					}
-
-					victim->setFaction(action->actor->getFaction());
-					victim->prepTu();
-					victim->allowReselect();
-					victim->setUnitStatus(STATUS_STANDING);
-
-					calculateUnitLighting();
-					calcFovPos(
-							victim->getPosition(),
-							true, true);
-
-					// if all units from either faction are mind controlled - auto-end the mission.
-//					if (Options::battleAllowPsionicCapture == true && Options::battleAutoEnd == true && _battleSave->getSide() == FACTION_PLAYER)
-//					{
-//						//Log(LOG_INFO) << ". . . . inside tallyUnits";
-//						int liveHostile, livePlayer;
-//						_battleSave->getBattleGame()->tallyUnits(liveHostile, livePlayer);
-//						if (liveHostile == 0 || livePlayer == 0)
-//						{
-//							_battleSave->setSelectedUnit();
-//							_battleSave->getBattleGame()->cancelTacticalAction(true);
-//							_battleSave->getBattleGame()->requestEndTurn();
-//						}
-//					}
-					//Log(LOG_INFO) << ". . . tallyUnits DONE";
-					break;
+					//Log(LOG_INFO) << "TileEngine::psiAttack() ret TRUE";
+					return true;
 				}
 
-				case BA_PSICONFUSE:
+				std::string info; // psi Fail. ->
+				switch (action->type)
 				{
-					//Log(LOG_INFO) << ". . . action->type == BA_PSICONFUSE";
-					const int tuLoss ((statsActor->psiSkill + 2) / 3);
-					//Log(LOG_INFO) << ". . . tuLoss = " << tuLoss;
-					if (tuLoss != 0)
-						victim->setTimeUnits(victim->getTimeUnits() - tuLoss);
+					default:
+					case BA_PSIPANIC:
+						info = "STR_PANIC_";
+						break;
+
+					case BA_PSICONFUSE:
+						info = "STR_CONFUSE_";
+						break;
+
+					case BA_PSICONTROL:
+						info = "STR_CONTROL_";
+				}
+				//Log(LOG_INFO) << "te:psiAttack() success = " << success;
+				_battleSave->getBattleState()->warning(info, success);
+
+				if (victim->getOriginalFaction() == FACTION_PLAYER)
+				{
+					switch (action->actor->getFaction())
+					{
+						case FACTION_HOSTILE:
+							victim->addPsiStrengthExp(2); // xCom resisted an aLien
+							break;
+
+						case FACTION_PLAYER:
+							victim->addPsiStrengthExp(1); // xCom resisted an xCom attempt
+					}
 				}
 			}
-
-			//Log(LOG_INFO) << "TileEngine::psiAttack() ret TRUE";
-			return true;
-		}
-
-		std::string info;  // psi Fail. ->
-		switch (action->type)
-		{
-			default:
-			case BA_PSIPANIC:
-				info = "STR_PANIC_";
-				break;
-
-			case BA_PSICONFUSE:
-				info = "STR_CONFUSE_";
-				break;
-
-			case BA_PSICONTROL:
-				info = "STR_CONTROL_";
-		}
-		//Log(LOG_INFO) << "te:psiAttack() success = " << success;
-		_battleSave->getBattleState()->warning(info, success);
-
-		if (victim->getOriginalFaction() == FACTION_PLAYER)
-		{
-			switch (action->actor->getFaction())
-			{
-				case FACTION_HOSTILE:
-					victim->addPsiStrengthExp(2); // xCom resisted an aLien
-					break;
-
-				case FACTION_PLAYER:
-					victim->addPsiStrengthExp(1); // xCom resisted an xCom attempt
-			}
+			else if (action->actor->getFaction() == FACTION_PLAYER)
+				_battleSave->getBattleState()->warning(BattlescapeGame::PLAYER_ERROR[11]);
 		}
 	}
-	else if (action->actor->getFaction() == FACTION_PLAYER)
-		_battleSave->getBattleState()->warning(BattlescapeGame::PLAYER_ERROR[11]);
 
 	//Log(LOG_INFO) << "TileEngine::psiAttack() ret FALSE";
 	return false;
