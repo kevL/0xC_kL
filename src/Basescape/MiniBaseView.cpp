@@ -273,8 +273,8 @@ void MiniBaseView::draw()
 									y,
 									color);
 
-						if (craftRule->getWeapons() != 0
-							&& craftRule->getWeapons() == (*j)->getQtyWeapons())
+						if (craftRule->getWeaponCapacity() != 0
+							&& craftRule->getWeaponCapacity() == (*j)->getQtyWeapons())
 						{
 							setPixelColor(
 										x + 10,
@@ -282,13 +282,13 @@ void MiniBaseView::draw()
 										BLUE);
 						}
 
-						if (craftRule->getSoldiers() != 0)
+						if (craftRule->getSoldierCapacity() != 0)
 							setPixelColor(
 										x + 8,
 										y,
 										BROWN);
 
-						if (craftRule->getVehicles() != 0)
+						if (craftRule->getVehicleCapacity() != 0)
 							setPixelColor(
 										x + 6,
 										y,
@@ -417,8 +417,8 @@ void MiniBaseView::blink()
 				}
 
 				craftRule = (*j)->getRules();
-				if (craftRule->getWeapons() != 0 // craft needs Weapons mounted.
-					&& craftRule->getWeapons() != (*j)->getQtyWeapons())
+				if (craftRule->getWeaponCapacity() != 0 // craft needs Weapons mounted.
+					&& craftRule->getWeaponCapacity() != (*j)->getQtyWeapons())
 				{
 					if (_blink == true)
 						color = BLUE;

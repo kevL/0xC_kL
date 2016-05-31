@@ -199,7 +199,7 @@ int RuleCraft::getAcceleration() const
  * Gets the maximum number of weapons that can be equipped onto the Craft.
  * @return, the weapon capacity
  */
-int RuleCraft::getWeapons() const
+int RuleCraft::getWeaponCapacity() const
 {
 	return _weapons;
 }
@@ -208,7 +208,7 @@ int RuleCraft::getWeapons() const
  * Gets the maximum number of soldiers that the Craft can carry.
  * @return, the soldier capacity
  */
-int RuleCraft::getSoldiers() const
+int RuleCraft::getSoldierCapacity() const
 {
 	return _soldiers;
 }
@@ -217,7 +217,7 @@ int RuleCraft::getSoldiers() const
  * Gets the maximum number of vehicles that the Craft can carry.
  * @return, the vehicle capacity
  */
-int RuleCraft::getVehicles() const
+int RuleCraft::getVehicleCapacity() const
 {
 	return _vehicles;
 }
@@ -226,7 +226,7 @@ int RuleCraft::getVehicles() const
  * Gets the maximum amount of items this craft can carry/store.
  * @return, quantity of items
  */
-int RuleCraft::getItems() const
+int RuleCraft::getItemCapacity() const
 {
 	return _items;
 }

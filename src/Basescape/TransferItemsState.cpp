@@ -375,7 +375,7 @@ void TransferItemsState::init()
 					j != _baseTarget->getCrafts()->end();
 					++j)
 			{
-				if ((*j)->getRules()->getSoldiers() != 0) // is transport craft
+				if ((*j)->getRules()->getSoldierCapacity() != 0) // is transport craft
 				{
 					for (std::map<std::string, int>::const_iterator // add items on craft
 							k = (*j)->getCraftItems()->getContents()->begin();
@@ -387,7 +387,7 @@ void TransferItemsState::init()
 					}
 				}
 
-				if ((*j)->getRules()->getVehicles() != 0) // is transport craft capable of vehicles
+				if ((*j)->getRules()->getVehicleCapacity() != 0) // is transport craft capable of vehicles
 				{
 					for (std::vector<Vehicle*>::const_iterator // add vehicles & vehicle ammo on craft
 							k = (*j)->getVehicles()->begin();

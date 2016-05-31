@@ -2872,7 +2872,7 @@ int Base::supportExpense(
  */
 int Base::craftExpense(const Craft* const craft)
 {
-	const int cost (craft->getRules()->getSoldiers() * 1000);
+	const int cost (craft->getRules()->getSoldierCapacity() * 1000);
 	_cashSpent += cost;
 
 	return cost;

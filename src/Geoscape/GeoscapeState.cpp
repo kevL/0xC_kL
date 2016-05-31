@@ -1613,7 +1613,7 @@ void GeoscapeState::time5Seconds()
 								(*j)->getRules()->getScore(),
 								true);
 
-				if ((*j)->getRules()->getSoldiers() != 0) // if a transport craft has been shot down all soldiers aboard are dead.
+				if ((*j)->getRules()->getSoldierCapacity() != 0) // if a transport craft has been shot down all soldiers aboard are dead.
 				{
 					for (std::vector<Soldier*>::const_iterator
 							k = (*i)->getSoldiers()->begin();

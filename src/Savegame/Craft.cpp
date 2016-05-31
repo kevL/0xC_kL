@@ -85,14 +85,14 @@ Craft::Craft(
 
 	for (int
 			i = 0;
-			i != _crRule->getWeapons();
+			i != _crRule->getWeaponCapacity();
 			++i)
 		_weapons.push_back(nullptr);
 
 	if (_base != nullptr)
 		setBase(_base);
 
-	_loadCap = _crRule->getItems() + _crRule->getSoldiers() * 10;
+	_loadCap = _crRule->getItemCapacity() + _crRule->getSoldierCapacity() * 10;
 }
 
 /**
@@ -142,7 +142,7 @@ void Craft::load(
 			i != node["weapons"].end();
 			++i)
 	{
-		if (_crRule->getWeapons() > static_cast<int>(j))
+		if (_crRule->getWeaponCapacity() > static_cast<int>(j))
 		{
 			type = (*i)["type"].as<std::string>();
 			if (type != "0"
@@ -395,7 +395,7 @@ void Craft::changeRules(RuleCraft* const crRule)
 
 	for (int
 			i = 0;
-			i != _crRule->getWeapons();
+			i != _crRule->getWeaponCapacity();
 			++i)
 		_weapons.push_back(nullptr);
 }
@@ -555,7 +555,7 @@ void Craft::setDestination(Target* const dest)
  */
 int Craft::getQtyWeapons() const
 {
-	if (_crRule->getWeapons() != 0)
+	if (_crRule->getWeaponCapacity() != 0)
 	{
 		int ret (0);
 		for (std::vector<CraftWeapon*>::const_iterator
@@ -577,7 +577,7 @@ int Craft::getQtyWeapons() const
  */
 int Craft::getQtySoldiers() const
 {
-	if (_crRule->getSoldiers() != 0)
+	if (_crRule->getSoldierCapacity() != 0)
 	{
 		int ret (0);
 		for (std::vector<Soldier*>::const_iterator
@@ -599,7 +599,7 @@ int Craft::getQtySoldiers() const
  */
 int Craft::getQtyEquipment() const
 {
-	if (_crRule->getItems() != 0)
+	if (_crRule->getItemCapacity() != 0)
 		return _items->getTotalQuantity();
 
 	return 0;
@@ -612,7 +612,7 @@ int Craft::getQtyEquipment() const
  */
 int Craft::getQtyVehicles(bool tiles) const
 {
-	if (_crRule->getVehicles() != 0)
+	if (_crRule->getVehicleCapacity() != 0)
 	{
 		if (tiles == true)
 		{
@@ -1087,7 +1087,7 @@ bool Craft::isDestroyed() const
  */
 int Craft::getSpaceAvailable() const
 {
-	return _crRule->getSoldiers() - getSpaceUsed();
+	return _crRule->getSoldierCapacity() - getSpaceUsed();
 }
 
 /**
@@ -1159,7 +1159,7 @@ int Craft::getLoadCapacity() const
  */
 int Craft::calcLoadCurrent()
 {
-	return (getQtyEquipment() + getSpaceUsed() * 10);
+	return getQtyEquipment() + getSpaceUsed() * 10;
 }
 
 /**
@@ -1342,7 +1342,7 @@ void Craft::unloadCraft(
 		const Ruleset* const rules,
 		bool updateCraft)
 {
-	if (_crRule->getSoldiers() != 0)
+	if (_crRule->getSoldierCapacity() != 0)
 	{
 		for (std::vector<Soldier*>::const_iterator
 				i = _base->getSoldiers()->begin();
@@ -1354,7 +1354,7 @@ void Craft::unloadCraft(
 		}
 	}
 
-	if (_crRule->getVehicles() != 0)
+	if (_crRule->getVehicleCapacity() != 0)
 	{
 		const RuleItem* itRule;
 		for (std::vector<Vehicle*>::const_iterator
@@ -1379,7 +1379,7 @@ void Craft::unloadCraft(
 		}
 	}
 
-	if (_crRule->getItems() != 0)
+	if (_crRule->getItemCapacity() != 0)
 	{
 		for (std::map<std::string, int>::const_iterator
 				i = _items->getContents()->begin();
@@ -1393,7 +1393,7 @@ void Craft::unloadCraft(
 		}
 	}
 
-	if (updateCraft == false && _crRule->getWeapons() != 0)
+	if (updateCraft == false && _crRule->getWeaponCapacity() != 0)
 	{
 		for (std::vector<CraftWeapon*>::const_iterator
 				i = _weapons.begin();

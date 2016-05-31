@@ -1734,7 +1734,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 	// First account for all craft-vehicles and delete each. Then re-add as many
 	// as possible while redistributing all available ammunition. Note that the
 	// Vehicles and their ammunition have already been sent to Base-storage.
-	if (craft->getRules()->getVehicles() != 0)
+	if (craft->getRules()->getVehicleCapacity() != 0)
 	{
 		ItemContainer craftVehicles;
 		for (std::vector<Vehicle*>::const_iterator

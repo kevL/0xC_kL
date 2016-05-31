@@ -373,7 +373,7 @@ DogfightState::DogfightState(
 
 	for (size_t
 			i = 0u;
-			i != static_cast<size_t>(_craft->getRules()->getWeapons());
+			i != static_cast<size_t>(_craft->getRules()->getWeaponCapacity());
 			++i)
 	{
 		if ((cw = _craft->getWeapons()->at(i)) != nullptr)
@@ -473,7 +473,7 @@ DogfightState::DogfightState(
 		_ufo->setEscapeCountdown(escape);
 	}
 
-	if (_craft->getRules()->getWeapons() > 0
+	if (_craft->getRules()->getWeaponCapacity() > 0
 		&& _craft->getWeapons()->at(0u) != nullptr)
 	{
 		_w1FireInterval = _craft->getWeapons()->at(0u)->getRules()->getStandardReload();
@@ -486,7 +486,7 @@ DogfightState::DogfightState(
 		_txtAmmo1->setVisible(false);
 	}
 
-	if (_craft->getRules()->getWeapons() > 1
+	if (_craft->getRules()->getWeaponCapacity() > 1
 		&& _craft->getWeapons()->at(1u) != nullptr)
 	{
 		_w2FireInterval = _craft->getWeapons()->at(1u)->getRules()->getStandardReload();
@@ -1018,7 +1018,7 @@ void DogfightState::updateDogfight()
 		const CraftWeapon* cw;
 		for (size_t // Handle weapons and craft distance.
 				i = 0u;
-				i != static_cast<size_t>(_craft->getRules()->getWeapons());
+				i != static_cast<size_t>(_craft->getRules()->getWeaponCapacity());
 				++i)
 		{
 			if ((cw = _craft->getWeapons()->at(i)) != nullptr)
@@ -1521,13 +1521,13 @@ void DogfightState::btnCautiousClick(Action*)
 		_end = false;
 		resetStatus("STR_CAUTIOUS_ATTACK");
 
-		if (_craft->getRules()->getWeapons() > 0
+		if (_craft->getRules()->getWeaponCapacity() > 0
 			&& _craft->getWeapons()->at(0u) != nullptr)
 		{
 			_w1FireInterval = _craft->getWeapons()->at(0u)->getRules()->getCautiousReload();
 		}
 
-		if (_craft->getRules()->getWeapons() > 1
+		if (_craft->getRules()->getWeaponCapacity() > 1
 			&& _craft->getWeapons()->at(1u) != nullptr)
 		{
 			_w2FireInterval = _craft->getWeapons()->at(1u)->getRules()->getCautiousReload();
@@ -1550,13 +1550,13 @@ void DogfightState::btnStandardClick(Action*)
 		_end = false;
 		resetStatus("STR_STANDARD_ATTACK");
 
-		if (_craft->getRules()->getWeapons() > 0
+		if (_craft->getRules()->getWeaponCapacity() > 0
 			&& _craft->getWeapons()->at(0u) != nullptr)
 		{
 			_w1FireInterval = _craft->getWeapons()->at(0u)->getRules()->getStandardReload();
 		}
 
-		if (_craft->getRules()->getWeapons() > 1
+		if (_craft->getRules()->getWeaponCapacity() > 1
 			&& _craft->getWeapons()->at(1u) != nullptr)
 		{
 			_w2FireInterval = _craft->getWeapons()->at(1u)->getRules()->getStandardReload();
@@ -1579,13 +1579,13 @@ void DogfightState::btnAggressiveClick(Action*)
 		_end = false;
 		resetStatus("STR_AGGRESSIVE_ATTACK");
 
-		if (_craft->getRules()->getWeapons() > 0
+		if (_craft->getRules()->getWeaponCapacity() > 0
 			&& _craft->getWeapons()->at(0u) != nullptr)
 		{
 			_w1FireInterval = _craft->getWeapons()->at(0u)->getRules()->getAggressiveReload();
 		}
 
-		if (_craft->getRules()->getWeapons() > 1
+		if (_craft->getRules()->getWeaponCapacity() > 1
 			&& _craft->getWeapons()->at(1u) != nullptr)
 		{
 			_w2FireInterval = _craft->getWeapons()->at(1u)->getRules()->getAggressiveReload();

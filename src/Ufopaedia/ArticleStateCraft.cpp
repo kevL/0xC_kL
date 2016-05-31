@@ -99,12 +99,12 @@ ArticleStateCraft::ArticleStateCraft(const ArticleDefinitionCraft* const defs)
 			<< tr("STR_FUEL_CAPACITY")		.arg(range) << L'\n'
 			<< tr("STR_DAMAGE_CAPACITY_UC")	.arg(craftRule->getMaxDamage());
 
-	if (craftRule->getWeapons() != 0)
-		woststr << L'\n' << tr("STR_WEAPON_PODS").arg(craftRule->getWeapons());
-	if (craftRule->getSoldiers() != 0)
-		woststr << L'\n' << tr("STR_CARGO_SPACE").arg(craftRule->getSoldiers());
-	if (craftRule->getVehicles() != 0)
-		woststr << L'\n' << tr("STR_HWP_CAPACITY").arg(craftRule->getVehicles());
+	if (craftRule->getWeaponCapacity() != 0)
+		woststr << L'\n' << tr("STR_WEAPON_PODS").arg(craftRule->getWeaponCapacity());
+	if (craftRule->getSoldierCapacity() != 0)
+		woststr << L'\n' << tr("STR_CARGO_SPACE").arg(craftRule->getSoldierCapacity());
+	if (craftRule->getVehicleCapacity() != 0)
+		woststr << L'\n' << tr("STR_HWP_CAPACITY").arg(craftRule->getVehicleCapacity());
 	_txtStats->setText(woststr.str());
 
 	centerAllSurfaces();

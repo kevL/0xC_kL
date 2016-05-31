@@ -386,7 +386,7 @@ PurchaseState::PurchaseState(Base* const base)
 					j != _base->getCrafts()->end();
 					++j)
 			{
-				if ((*j)->getRules()->getSoldiers() != 0) // is transport craft
+				if ((*j)->getRules()->getSoldierCapacity() != 0) // is transport craft
 				{
 					for (std::map<std::string, int>::const_iterator
 							k = (*j)->getCraftItems()->getContents()->begin();
@@ -398,7 +398,7 @@ PurchaseState::PurchaseState(Base* const base)
 					}
 				}
 
-				if ((*j)->getRules()->getVehicles() != 0) // is transport-craft capable of vehicles
+				if ((*j)->getRules()->getVehicleCapacity() != 0) // is transport-craft capable of vehicles
 				{
 					for (std::vector<Vehicle*>::const_iterator
 							k = (*j)->getVehicles()->begin();

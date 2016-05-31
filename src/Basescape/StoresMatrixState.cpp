@@ -342,7 +342,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 					k != (*j)->getCrafts()->end();
 					++k)
 			{
-				if ((*k)->getRules()->getSoldiers() != 0) // is transport craft
+				if ((*k)->getRules()->getSoldierCapacity() != 0) // is transport craft
 				{
 					for (std::map<std::string, int>::const_iterator
 							l = (*k)->getCraftItems()->getContents()->begin();
@@ -354,7 +354,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 					}
 				}
 
-				if ((*k)->getRules()->getVehicles() != 0) // is transport craft capable of vehicles
+				if ((*k)->getRules()->getVehicleCapacity() != 0) // is transport craft capable of vehicles
 				{
 					for (std::vector<Vehicle*>::const_iterator
 							l = (*k)->getVehicles()->begin();

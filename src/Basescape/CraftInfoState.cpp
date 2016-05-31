@@ -338,7 +338,7 @@ void CraftInfoState::init()
 	Surface* bit;
 	const int icon_width (10);
 
-	if (crRule->getSoldiers() != 0)
+	if (crRule->getSoldierCapacity() != 0)
 	{
 		int x (0);
 		for (std::vector<Soldier*>::const_iterator // soldier graphic
@@ -412,7 +412,7 @@ void CraftInfoState::init()
 	const RuleCraftWeapon* cwRule;
 	const CraftWeapon* cw;
 
-	if (crRule->getWeapons() > 0)
+	if (crRule->getWeaponCapacity() > 0)
 	{
 		cw = _craft->getWeapons()->at(0u);
 		if (cw != nullptr)
@@ -459,7 +459,7 @@ void CraftInfoState::init()
 		_txtW1Ammo->setVisible(false);
 	}
 
-	if (crRule->getWeapons() > 1)
+	if (crRule->getWeaponCapacity() > 1)
 	{
 		cw = _craft->getWeapons()->at(1u);
 		if (cw != nullptr)
@@ -625,7 +625,7 @@ void CraftInfoState::edtCraftChange(Action*)
 void CraftInfoState::calculateTacticalCost() // private.
 {
 	const int cost (_base->calcSoldierBonuses(_craft)
-				  + _craft->getRules()->getSoldiers() * 1000);
+				  + _craft->getRules()->getSoldierCapacity() * 1000);
 	_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(cost)));
 }
 

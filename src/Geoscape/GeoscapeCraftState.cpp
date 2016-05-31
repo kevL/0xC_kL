@@ -202,7 +202,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	_txtTitle->setText(_craft->getName(_game->getLanguage()));
 	_txtTitle->setBig();
 
-	if (_craft->getRules()->getWeapons() != 0)
+	if (_craft->getRules()->getWeaponCapacity() != 0)
 	{
 		_txtKills->setText(tr("STR_KILLS_LC_").arg(_craft->getKills()));
 		_txtKills->setAlign(ALIGN_RIGHT);
@@ -273,27 +273,27 @@ GeoscapeCraftState::GeoscapeCraftState(
 
 	std::wostringstream woststr;
 
-	if (_craft->getRules()->getSoldiers() != 0)
+	if (_craft->getRules()->getSoldierCapacity() != 0)
 	{
 		woststr << tr("STR_SOLDIERS") << L" " << L'\x01' << _craft->getQtySoldiers()
-				<< L" (" << _craft->getRules()->getSoldiers() << L")";
+				<< L" (" << _craft->getRules()->getSoldierCapacity() << L")";
 		_txtSoldier->setText(woststr.str());
 	}
 	else
 		_txtSoldier->setVisible(false);
 
-	if (_craft->getRules()->getVehicles() != 0)
+	if (_craft->getRules()->getVehicleCapacity() != 0)
 	{
 		woststr.str(L"");
 		woststr << tr("STR_HWPS") << L" " << L'\x01' << _craft->getQtyVehicles()
-				<< L" (" << _craft->getRules()->getVehicles() << L")";
+				<< L" (" << _craft->getRules()->getVehicleCapacity() << L")";
 		_txtHWP->setText(woststr.str());
 	}
 	else
 		_txtHWP->setVisible(false);
 
 
-	if (_craft->getRules()->getWeapons() != 0
+	if (_craft->getRules()->getWeaponCapacity() != 0
 		&& _craft->getWeapons()->at(0) != nullptr)
 	{
 		const CraftWeapon* const w1 (_craft->getWeapons()->at(0));
@@ -310,7 +310,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 		_txtW1Ammo->setVisible(false);
 	}
 
-	if (_craft->getRules()->getWeapons() > 1
+	if (_craft->getRules()->getWeaponCapacity() > 1
 		&& _craft->getWeapons()->at(1) != nullptr)
 	{
 		const CraftWeapon* const w2 (_craft->getWeapons()->at(1));

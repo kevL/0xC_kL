@@ -167,17 +167,17 @@ InterceptState::InterceptState(
 
 				crRule = (*j)->getRules();
 
-				if (crRule->getWeapons() > 0)
-					woststr1 << (*j)->getQtyWeapons() << L"/" << crRule->getWeapons();
+				if (crRule->getWeaponCapacity() > 0)
+					woststr1 << (*j)->getQtyWeapons() << L"/" << crRule->getWeaponCapacity();
 				else
 					woststr1 << L"-";
 
-				if (crRule->getSoldiers() > 0)
+				if (crRule->getSoldierCapacity() > 0)
 					woststr2 << (*j)->getQtySoldiers();
 				else
 					woststr2 << L"-";
 
-				if (crRule->getVehicles() > 0)
+				if (crRule->getVehicleCapacity() > 0)
 					woststr3 << (*j)->getQtyVehicles();
 				else
 					woststr3 << L"-";

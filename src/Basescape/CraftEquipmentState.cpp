@@ -457,7 +457,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 			const RuleItem* const itRule (_rules->getItemRule(_items[_sel]));
 			if (itRule->isFixed() == true) // load vehicle, convert item to a vehicle
 			{
-				const int vhclCap (_craft->getRules()->getVehicles());
+				const int vhclCap (_craft->getRules()->getVehicleCapacity());
 				if (vhclCap != 0)
 				{
 					int quadrants (_rules->getArmor(_rules->getUnitRule(_items[_sel])->getArmorType())->getSize());
@@ -552,7 +552,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 														COLOR_ERROR_BG));
 				}
 			}
-			else if (_craft->getRules()->getItems() != 0) // load items
+			else if (_craft->getRules()->getItemCapacity() != 0) // load items
 			{
 				const int loadCur (_craft->calcLoadCurrent());
 				if (loadCur + qtyDelta > _craft->getLoadCapacity())
@@ -695,7 +695,7 @@ void CraftEquipmentState::btnInventoryClick(Action*)
 void CraftEquipmentState::calculateTacticalCost() // private.
 {
 	const int cost (_base->calcSoldierBonuses(_craft)
-				  + _craft->getRules()->getSoldiers() * 1000);
+				  + _craft->getRules()->getSoldierCapacity() * 1000);
 	_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(cost)));
 }
 

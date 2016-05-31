@@ -480,7 +480,7 @@ void CraftSoldiersState::btnInventoryClick(Action*)
 void CraftSoldiersState::calculateTacticalCost() // private.
 {
 	const int cost (_base->calcSoldierBonuses(_craft)
-				  + _craft->getRules()->getSoldiers() * 1000);
+				  + _craft->getRules()->getSoldierCapacity() * 1000);
 	_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(cost)));
 }
 

@@ -43,7 +43,7 @@ class RuleTerrain;
 
 
 /**
- * Represents a specific type of craft.
+ * Represents a specific type of Craft.
  * @note Contains constant info about a craft like costs speed capacities
  * consumptions etc.
  * @sa Craft
@@ -88,12 +88,12 @@ private:
 
 
 	public:
-		/// Creates a blank Craft ruleset.
+		/// Creates a Craft ruleset.
 		explicit RuleCraft(const std::string& type);
-		/// Cleans up a Craft ruleset.
+		/// Cleans up the Craft ruleset.
 		~RuleCraft();
 
-		/// Loads Craft data from YAML.
+		/// Loads Craft ruleset-data from YAML.
 		void load(
 				const YAML::Node& node,
 				Ruleset* const rules,
@@ -121,13 +121,13 @@ private:
 		int getAcceleration() const;
 
 		/// Gets a Craft's weapon capacity.
-		int getWeapons() const;
+		int getWeaponCapacity() const;
 		/// Gets a Craft's soldier capacity.
-		int getSoldiers() const;
+		int getSoldierCapacity() const;
 		/// Gets a Craft's vehicle capacity.
-		int getVehicles() const;
+		int getVehicleCapacity() const;
 		/// Gets a Craft's item capacity.
-		int getItems() const;
+		int getItemCapacity() const;
 
 		/// Gets a Craft's cost.
 		int getBuyCost() const;

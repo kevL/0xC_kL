@@ -176,7 +176,7 @@ NewBattleState::NewBattleState()
 			i != allCraft.end();
 			++i)
 	{
-		if (_rules->getCraft(*i)->getSoldiers() != 0)
+		if (_rules->getCraft(*i)->getSoldierCapacity() != 0)
 			_crafts.push_back(*i);
 	}
 	_cbxCraft->setOptions(_crafts);
@@ -812,7 +812,7 @@ void NewBattleState::cbxCraftChange(Action*)
 {
 	_craft->changeRules(_rules->getCraft(_crafts[_cbxCraft->getSelected()]));
 
-	const int maxSoldiers (_craft->getRules()->getSoldiers());
+	const int maxSoldiers (_craft->getRules()->getSoldierCapacity());
 	int curSoldiers (_craft->getQtySoldiers());
 	if (curSoldiers > maxSoldiers)
 	{
