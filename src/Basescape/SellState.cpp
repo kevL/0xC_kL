@@ -507,7 +507,7 @@ void SellState::lstLeftArrowClick(Action* action)
 				changeByValue(1,1);
 
 			_timerInc->setInterval(Timer::SCROLL_SLOW);
-			_timerDec->setInterval(Timer::SCROLL_SLOW);
+//			_timerDec->setInterval(Timer::SCROLL_SLOW);
 	}
 }
 
@@ -554,7 +554,7 @@ void SellState::lstRightArrowClick(Action* action)
 			else
 				changeByValue(1,-1);
 
-			_timerInc->setInterval(Timer::SCROLL_SLOW);
+//			_timerInc->setInterval(Timer::SCROLL_SLOW);
 			_timerDec->setInterval(Timer::SCROLL_SLOW);
 	}
 }
@@ -605,8 +605,8 @@ int SellState::getBaseQuantity() const // private.
  */
 void SellState::increase()
 {
-	_timerDec->setInterval(Timer::SCROLL_FAST);
 	_timerInc->setInterval(Timer::SCROLL_FAST);
+//	_timerDec->setInterval(Timer::SCROLL_FAST);
 
 	if ((SDL_GetModState() & KMOD_CTRL) != 0)
 		changeByValue(10,1);
@@ -619,7 +619,7 @@ void SellState::increase()
  */
 void SellState::decrease()
 {
-	_timerInc->setInterval(Timer::SCROLL_FAST);
+//	_timerInc->setInterval(Timer::SCROLL_FAST);
 	_timerDec->setInterval(Timer::SCROLL_FAST);
 
 	if ((SDL_GetModState() & KMOD_CTRL) != 0)
@@ -637,69 +637,70 @@ void SellState::changeByValue(
 		int qtyDelta,
 		int dir)
 {
-	if (qtyDelta < 1)
-		return;
-
-	if (dir > 0)
+	if (qtyDelta > 0)
 	{
-		if (_sellQty[_sel] >= getBaseQuantity())
-			return;
-
-		qtyDelta = std::min(qtyDelta,
-							getBaseQuantity() - _sellQty[_sel]);
-	}
-	else
-	{
-		if (_sellQty[_sel] < 1)
-			return;
-
-		qtyDelta = std::min(qtyDelta,
-							_sellQty[_sel]);
-	}
-
-	_sellQty[_sel] += qtyDelta * dir;
-	_costTotal += getPrice() * qtyDelta * dir;
-
-	const RuleItem* itRule;
-	switch (getSellType(_sel)) // Calculate the change in storage space.
-	{
-		case PST_SOLDIER:
-			if (_soldiers[_sel]->getArmor()->isBasic() == false)
-			{
-				itRule = _game->getRuleset()->getItemRule(_soldiers[_sel]->getArmor()->getStoreItem());
-				_storeSize += static_cast<double>(dir) * itRule->getStoreSize();
-			}
-			break;
-
-		case PST_CRAFT:
+		switch (dir)
 		{
-			double storesReq (0.);
-			Craft* const craft (_crafts[getCraftIndex(_sel)]);
-			for (std::vector<CraftWeapon*>::const_iterator
-					i = craft->getWeapons()->begin();
-					i != craft->getWeapons()->end();
-					++i)
-			{
-				if (*i != nullptr)
-				{
-					itRule = _game->getRuleset()->getItemRule((*i)->getRules()->getLauncherType());
-					storesReq += itRule->getStoreSize();
+			case 1:
+				if (_sellQty[_sel] >= getBaseQuantity())
+					return;
 
-					itRule = _game->getRuleset()->getItemRule((*i)->getRules()->getClipType());
-					if (itRule != nullptr)
-						storesReq += static_cast<double>((*i)->getClipsLoaded(_game->getRuleset())) * itRule->getStoreSize();
-				}
-			}
-			_storeSize += static_cast<double>(dir) * storesReq;
-			break;
+				qtyDelta = std::min(qtyDelta,
+									getBaseQuantity() - _sellQty[_sel]);
+				break;
+
+			case -1:
+				if (_sellQty[_sel] < 1)
+					return;
+
+				qtyDelta = std::min(qtyDelta,
+									_sellQty[_sel]);
 		}
 
-		case PST_ITEM:
-			itRule = _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]);
-			_storeSize -= static_cast<double>(dir * qtyDelta) * itRule->getStoreSize();
-	}
+		_sellQty[_sel] += qtyDelta * dir;
+		_costTotal += getPrice() * qtyDelta * dir;
 
-	update();
+		const RuleItem* itRule;
+		switch (getSellType(_sel)) // Calculate the change in storage space.
+		{
+			case PST_SOLDIER:
+				if (_soldiers[_sel]->getArmor()->isBasic() == false)
+				{
+					itRule = _game->getRuleset()->getItemRule(_soldiers[_sel]->getArmor()->getStoreItem());
+					_storeSize += static_cast<double>(dir) * itRule->getStoreSize();
+				}
+				break;
+
+			case PST_CRAFT:
+			{
+				double storesReq (0.);
+				Craft* const craft (_crafts[getCraftIndex(_sel)]);
+				for (std::vector<CraftWeapon*>::const_iterator
+						i = craft->getWeapons()->begin();
+						i != craft->getWeapons()->end();
+						++i)
+				{
+					if (*i != nullptr)
+					{
+						itRule = _game->getRuleset()->getItemRule((*i)->getRules()->getLauncherType());
+						storesReq += itRule->getStoreSize();
+
+						itRule = _game->getRuleset()->getItemRule((*i)->getRules()->getClipType());
+						if (itRule != nullptr)
+							storesReq += static_cast<double>((*i)->getClipsLoaded(_game->getRuleset())) * itRule->getStoreSize();
+					}
+				}
+				_storeSize += static_cast<double>(dir) * storesReq;
+				break;
+			}
+
+			case PST_ITEM:
+				itRule = _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]);
+				_storeSize -= static_cast<double>(dir * qtyDelta) * itRule->getStoreSize();
+		}
+
+		update();
+	}
 }
 
 /**
@@ -707,8 +708,8 @@ void SellState::changeByValue(
  */
 void SellState::update() // private.
 {
-	_lstItems->setCellText(_sel, 1, Text::intWide(getBaseQuantity() - _sellQty[_sel]));
-	_lstItems->setCellText(_sel, 2, Text::intWide(_sellQty[_sel]));
+	_lstItems->setCellText(_sel, 1u, Text::intWide(getBaseQuantity() - _sellQty[_sel]));
+	_lstItems->setCellText(_sel, 2u, Text::intWide(_sellQty[_sel]));
 
 	_txtSales->setText(tr("STR_VALUE_OF_SALES").arg(Text::formatCurrency(_costTotal)));
 
@@ -766,7 +767,6 @@ void SellState::update() // private.
 
 
 	bool showOk (false);
-
 	switch (_costTotal)
 	{
 		default:
@@ -814,7 +814,7 @@ void SellState::update() // private.
  */
 PurchaseSellTransferType SellState::getSellType(size_t sel) const // private.
 {
-	size_t rowCutoff = _soldiers.size();
+	size_t rowCutoff (_soldiers.size());
 
 	if (sel < rowCutoff)
 		return PST_SOLDIER;

@@ -624,7 +624,7 @@ void PurchaseState::lstLeftArrowClick(Action* action)
 				increaseByValue(1);
 
 			_timerInc->setInterval(Timer::SCROLL_SLOW);
-			_timerDec->setInterval(Timer::SCROLL_SLOW);
+//			_timerDec->setInterval(Timer::SCROLL_SLOW);
 	}
 }
 
@@ -671,7 +671,7 @@ void PurchaseState::lstRightArrowClick(Action* action)
 			else
 				decreaseByValue(1);
 
-			_timerInc->setInterval(Timer::SCROLL_SLOW);
+//			_timerInc->setInterval(Timer::SCROLL_SLOW);
 			_timerDec->setInterval(Timer::SCROLL_SLOW);
 	}
 }
@@ -707,8 +707,8 @@ int PurchaseState::getPrice() // private.
  */
 void PurchaseState::increase()
 {
-	_timerDec->setInterval(Timer::SCROLL_FAST);
 	_timerInc->setInterval(Timer::SCROLL_FAST);
+//	_timerDec->setInterval(Timer::SCROLL_FAST);
 
 	if ((SDL_GetModState() & KMOD_CTRL) != 0)
 		increaseByValue(10);
@@ -722,89 +722,90 @@ void PurchaseState::increase()
  */
 void PurchaseState::increaseByValue(int qtyDelta)
 {
-	if (qtyDelta < 1) return;
-
-	std::wstring error;
-
-	if (_costTotal + getPrice() > _game->getSavedGame()->getFunds())
-		error = tr("STR_NOT_ENOUGH_MONEY");
-	else
+	if (qtyDelta > 0)
 	{
-		switch (getPurchaseType(_sel))
+		std::wstring error;
+
+		if (_costTotal + getPrice() > _game->getSavedGame()->getFunds())
+			error = tr("STR_NOT_ENOUGH_MONEY");
+		else
 		{
-			case PST_SOLDIER:
-			case PST_SCIENTIST:
-			case PST_ENGINEER:
-				if (_qtyPersonnel + 1 > _base->getFreeQuarters())
-					error = tr("STR_NOT_ENOUGH_LIVING_SPACE");
-				break;
-
-			case PST_CRAFT:
-				if (_qtyCraft + 1 > _base->getFreeHangars())
-					error = tr("STR_NO_FREE_HANGARS_FOR_PURCHASE");
-				break;
-
-			case PST_ITEM:
-				if (_storeSize + _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize()
-						> static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() + 0.05)
-				{
-					error = tr("STR_NOT_ENOUGH_STORE_SPACE");
-				}
-		}
-	}
-
-	if (error.empty() == false)
-	{
-		_timerInc->stop();
-		const RuleInterface* const uiRule (_game->getRuleset()->getInterface("buyMenu"));
-		_game->pushState(new ErrorMessageState(
-											error,
-											_palette,
-											uiRule->getElement("errorMessage")->color,
-											"BACK13.SCR",
-											uiRule->getElement("errorPalette")->color));
-	}
-	else
-	{
-		qtyDelta = std::min(qtyDelta,
-						   (static_cast<int>(_game->getSavedGame()->getFunds()) - _costTotal) / getPrice()); // NOTE: (int)cast renders int64_t useless.
-
-		switch (getPurchaseType(_sel))
-		{
-			case PST_SOLDIER:
-			case PST_SCIENTIST:
-			case PST_ENGINEER:
-				qtyDelta = std::min(qtyDelta,
-									_base->getFreeQuarters() - _qtyPersonnel);
-				_qtyPersonnel += qtyDelta;
-				break;
-
-			case PST_CRAFT:
-				qtyDelta = std::min(qtyDelta,
-									_base->getFreeHangars() - _qtyCraft);
-				_qtyCraft += qtyDelta;
-				break;
-
-			case PST_ITEM:
+			switch (getPurchaseType(_sel))
 			{
-				const double storeSizePer (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize());
-				double allowed;
+				case PST_SOLDIER:
+				case PST_SCIENTIST:
+				case PST_ENGINEER:
+					if (_qtyPersonnel + 1 > _base->getFreeQuarters())
+						error = tr("STR_NOT_ENOUGH_LIVING_SPACE");
+					break;
 
-				if (AreSame(storeSizePer, 0.) == false)
-					allowed = (static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() - _storeSize + 0.05) / storeSizePer;
-				else
-					allowed = std::numeric_limits<double>::max();
+				case PST_CRAFT:
+					if (_qtyCraft + 1 > _base->getFreeHangars())
+						error = tr("STR_NO_FREE_HANGARS_FOR_PURCHASE");
+					break;
 
-				qtyDelta = std::min(qtyDelta,
-									static_cast<int>(allowed));
-				_storeSize += static_cast<double>(qtyDelta) * storeSizePer;
+				case PST_ITEM:
+					if (_storeSize + _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize()
+							> static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() + 0.05)
+					{
+						error = tr("STR_NOT_ENOUGH_STORE_SPACE");
+					}
 			}
 		}
 
-		_orderQty[_sel] += qtyDelta;
-		_costTotal += getPrice() * qtyDelta;
+		if (error.empty() == false)
+		{
+			_timerInc->stop();
+			const RuleInterface* const uiRule (_game->getRuleset()->getInterface("buyMenu"));
+			_game->pushState(new ErrorMessageState(
+												error,
+												_palette,
+												uiRule->getElement("errorMessage")->color,
+												"BACK13.SCR",
+												uiRule->getElement("errorPalette")->color));
+		}
+		else
+		{
+			qtyDelta = std::min(qtyDelta,
+							   (static_cast<int>(_game->getSavedGame()->getFunds()) - _costTotal) / getPrice()); // NOTE: (int)cast renders int64_t useless.
 
-		update();
+			switch (getPurchaseType(_sel))
+			{
+				case PST_SOLDIER:
+				case PST_SCIENTIST:
+				case PST_ENGINEER:
+					qtyDelta = std::min(qtyDelta,
+										_base->getFreeQuarters() - _qtyPersonnel);
+					_qtyPersonnel += qtyDelta;
+					break;
+
+				case PST_CRAFT:
+					qtyDelta = std::min(qtyDelta,
+										_base->getFreeHangars() - _qtyCraft);
+					_qtyCraft += qtyDelta;
+					break;
+
+				case PST_ITEM:
+				{
+					const double storeSizePer (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize());
+					double allowed;
+
+					if (AreSame(storeSizePer, 0.) == false)
+						allowed = (static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() - _storeSize + 0.05) / storeSizePer;
+					else
+						allowed = std::numeric_limits<double>::max();
+
+					qtyDelta = std::min(qtyDelta,
+										static_cast<int>(allowed));
+					_storeSize += static_cast<double>(qtyDelta) * storeSizePer;
+				}
+			}
+
+			_orderQty[_sel] += qtyDelta;
+			_costTotal += getPrice() * qtyDelta;
+
+			update();
+		}
 	}
 }
 
@@ -813,8 +814,8 @@ void PurchaseState::increaseByValue(int qtyDelta)
  */
 void PurchaseState::decrease()
 {
+//	_timerInc->setInterval(Timer::SCROLL_FAST);
 	_timerDec->setInterval(Timer::SCROLL_FAST);
-	_timerInc->setInterval(Timer::SCROLL_FAST);
 
 	if ((SDL_GetModState() & KMOD_CTRL) != 0)
 		decreaseByValue(10);
@@ -828,31 +829,31 @@ void PurchaseState::decrease()
  */
 void PurchaseState::decreaseByValue(int qtyDelta)
 {
-	if (qtyDelta < 1 || _orderQty[_sel] < 1)
-		return;
-
-	qtyDelta = std::min(qtyDelta, _orderQty[_sel]);
-
-	switch (getPurchaseType(_sel))
+	if (qtyDelta > 0 && _orderQty[_sel] > 0)
 	{
-		case PST_SOLDIER:
-		case PST_SCIENTIST:
-		case PST_ENGINEER:
-			_qtyPersonnel -= qtyDelta;
-			break;
+		qtyDelta = std::min(qtyDelta, _orderQty[_sel]);
 
-		case PST_CRAFT:
-			_qtyCraft -= qtyDelta;
-			break;
+		switch (getPurchaseType(_sel))
+		{
+			case PST_SOLDIER:
+			case PST_SCIENTIST:
+			case PST_ENGINEER:
+				_qtyPersonnel -= qtyDelta;
+				break;
 
-		case PST_ITEM:
-			_storeSize -= _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize() * static_cast<double>(qtyDelta);
+			case PST_CRAFT:
+				_qtyCraft -= qtyDelta;
+				break;
+
+			case PST_ITEM:
+				_storeSize -= _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize() * static_cast<double>(qtyDelta);
+		}
+
+		_orderQty[_sel] -= qtyDelta;
+		_costTotal -= getPrice() * qtyDelta;
+
+		update();
 	}
-
-	_orderQty[_sel] -= qtyDelta;
-	_costTotal -= getPrice() * qtyDelta;
-
-	update();
 }
 
 /**

@@ -661,7 +661,7 @@ void TransferItemsState::lstLeftArrowClick(Action* action)
 				increaseByValue(1);
 
 			_timerInc->setInterval(Timer::SCROLL_SLOW);
-			_timerDec->setInterval(Timer::SCROLL_SLOW);
+//			_timerDec->setInterval(Timer::SCROLL_SLOW);
 	}
 }
 
@@ -708,7 +708,7 @@ void TransferItemsState::lstRightArrowClick(Action* action)
 			else
 				decreaseByValue(1);
 
-			_timerInc->setInterval(Timer::SCROLL_SLOW);
+//			_timerInc->setInterval(Timer::SCROLL_SLOW);
 			_timerDec->setInterval(Timer::SCROLL_SLOW);
 	}
 }
@@ -766,8 +766,8 @@ int TransferItemsState::getSourceQuantity() const // private.
  */
 void TransferItemsState::increase()
 {
-	_timerDec->setInterval(Timer::SCROLL_FAST);
 	_timerInc->setInterval(Timer::SCROLL_FAST);
+//	_timerDec->setInterval(Timer::SCROLL_FAST);
 
 	if ((SDL_GetModState() & KMOD_CTRL) != 0)
 		increaseByValue(10);
@@ -781,108 +781,106 @@ void TransferItemsState::increase()
  */
 void TransferItemsState::increaseByValue(int qtyDelta)
 {
-	if (qtyDelta < 1 || _transferQty[_sel] >= getSourceQuantity())
-		return;
-
-	std::wstring wstError;
-	const RuleItem* itRule;
-
-	switch (getTransferType(_sel))
+	if (qtyDelta > 0 && _transferQty[_sel] < getSourceQuantity())
 	{
-		case PST_ITEM:
-			itRule = _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]);
+		std::wstring error;
+		const RuleItem* itRule;
 
-			if (itRule->isLiveAlien() == false)
-			{
-				if (_baseTarget->storesOverfull(itRule->getStoreSize() + _storeSize - 0.05))
-					wstError = tr("STR_NOT_ENOUGH_STORE_SPACE");
-				else
+		switch (getTransferType(_sel))
+		{
+			case PST_ITEM:
+				itRule = _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]);
+
+				if (itRule->isLiveAlien() == false)
 				{
-					const double storesPerItem (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize());
-					double qtyAllowed;
-
-					if (AreSame(storesPerItem, 0.) == false)
-						qtyAllowed = (static_cast<double>(_baseTarget->getTotalStores()) - _baseTarget->getUsedStores() - _storeSize + 0.05)
-									/ storesPerItem;
+					if (_baseTarget->storesOverfull(itRule->getStoreSize() + _storeSize - 0.05))
+						error = tr("STR_NOT_ENOUGH_STORE_SPACE");
 					else
-						qtyAllowed = std::numeric_limits<double>::max();
+					{
+						const double storeSizePer (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize());
+						double allowed;
 
-					qtyDelta = std::min(qtyDelta,
-										std::min(static_cast<int>(qtyAllowed),
-												 getSourceQuantity() - _transferQty[_sel]));
-					_storeSize += static_cast<double>(qtyDelta) * storesPerItem;
-					_baseQty[_sel] -= qtyDelta;
-					_destQty[_sel] += qtyDelta;
-					_transferQty[_sel] += qtyDelta;
-					_costTotal += getCost() * qtyDelta;
+						if (AreSame(storeSizePer, 0.) == false)
+							allowed = (static_cast<double>(_baseTarget->getTotalStores()) - _baseTarget->getUsedStores() - _storeSize + 0.05)
+										/ storeSizePer;
+						else
+							allowed = std::numeric_limits<double>::max();
+
+						qtyDelta = std::min(qtyDelta,
+											std::min(static_cast<int>(allowed),
+													 getSourceQuantity() - _transferQty[_sel]));
+						_storeSize += static_cast<double>(qtyDelta) * storeSizePer;
+						_baseQty[_sel] -= qtyDelta;
+						_destQty[_sel] += qtyDelta;
+						_transferQty[_sel] += qtyDelta;
+						_costTotal += getCost() * qtyDelta;
+					}
 				}
-			}
-			else // aLien.
-			{
-				if (_baseTarget->hasContainment() == false
-					|| _qtyAlien + 1 > _baseTarget->getFreeContainment())
+				else // aLien.
 				{
-					wstError = tr("STR_NO_ALIEN_CONTAINMENT_FOR_TRANSFER");
+					if (_baseTarget->hasContainment() == false
+						|| _qtyAlien + 1 > _baseTarget->getFreeContainment())
+					{
+						error = tr("STR_NO_ALIEN_CONTAINMENT_FOR_TRANSFER");
+					}
+					else
+					{
+						qtyDelta = std::min(qtyDelta,
+											std::min(_baseTarget->getFreeContainment() - _qtyAlien,
+													 getSourceQuantity() - _transferQty[_sel]));
+						_qtyAlien += qtyDelta;
+						_baseQty[_sel] -= qtyDelta;
+						_destQty[_sel] += qtyDelta;
+						_transferQty[_sel] += qtyDelta;
+						_costTotal += getCost() * qtyDelta;
+					}
 				}
+				break;
+
+			case PST_CRAFT:
+				if (_qtyCraft + 1 > _baseTarget->getFreeHangars())
+					error = tr("STR_NO_FREE_HANGARS_FOR_TRANSFER");
+				else
+				{
+					++_qtyCraft;
+					--_baseQty[_sel];
+					++_destQty[_sel];
+					++_transferQty[_sel];
+					_costTotal += getCost();
+				}
+				break;
+
+			default: // soldier, scientist, engineer
+				if (_qtyPersonnel + 1 > _baseTarget->getFreeQuarters())
+					error = tr("STR_NO_FREE_ACCOMMODATION");
 				else
 				{
 					qtyDelta = std::min(qtyDelta,
-										std::min(
-												_baseTarget->getFreeContainment() - _qtyAlien,
-												getSourceQuantity() - _transferQty[_sel]));
-					_qtyAlien += qtyDelta;
+										std::min(_baseTarget->getFreeQuarters() - _qtyPersonnel,
+												 getSourceQuantity() - _transferQty[_sel]));
+					_qtyPersonnel += qtyDelta;
 					_baseQty[_sel] -= qtyDelta;
 					_destQty[_sel] += qtyDelta;
 					_transferQty[_sel] += qtyDelta;
 					_costTotal += getCost() * qtyDelta;
 				}
-			}
-			break;
+		}
 
-		case PST_CRAFT:
-			if (_qtyCraft + 1 > _baseTarget->getFreeHangars())
-				wstError = tr("STR_NO_FREE_HANGARS_FOR_TRANSFER");
-			else
-			{
-				++_qtyCraft;
-				--_baseQty[_sel];
-				++_destQty[_sel];
-				++_transferQty[_sel];
-				_costTotal += getCost();
-			}
-			break;
+		if (error.empty() == false)
+		{
+			_resetAll = false;
 
-		default: // soldier, scientist, engineer
-			if (_qtyPersonnel + 1 > _baseTarget->getFreeQuarters())
-				wstError = tr("STR_NO_FREE_ACCOMMODATION");
-			else
-			{
-				qtyDelta = std::min(qtyDelta,
-									std::min(
-											_baseTarget->getFreeQuarters() - _qtyPersonnel,
-											getSourceQuantity() - _transferQty[_sel]));
-				_qtyPersonnel += qtyDelta;
-				_baseQty[_sel] -= qtyDelta;
-				_destQty[_sel] += qtyDelta;
-				_transferQty[_sel] += qtyDelta;
-				_costTotal += getCost() * qtyDelta;
-			}
+			const RuleInterface* const uiRule (_game->getRuleset()->getInterface("transferMenu"));
+			_game->pushState(new ErrorMessageState(
+												error,
+												_palette,
+												uiRule->getElement("errorMessage")->color,
+												"BACK13.SCR",
+												uiRule->getElement("errorPalette")->color));
+		}
+		else
+			update();
 	}
-
-	if (wstError.empty() == false)
-	{
-		_resetAll = false;
-
-		const RuleInterface* const uiRule (_game->getRuleset()->getInterface("transferMenu"));
-		_game->pushState(new ErrorMessageState(
-											wstError,
-											_palette,
-											uiRule->getElement("errorMessage")->color,
-											"BACK13.SCR",
-											uiRule->getElement("errorPalette")->color));
-	}
-	else
-		update();
 }
 
 /**
@@ -890,7 +888,7 @@ void TransferItemsState::increaseByValue(int qtyDelta)
  */
 void TransferItemsState::decrease()
 {
-	_timerInc->setInterval(Timer::SCROLL_FAST);
+//	_timerInc->setInterval(Timer::SCROLL_FAST);
 	_timerDec->setInterval(Timer::SCROLL_FAST);
 
 	if ((SDL_GetModState() & KMOD_CTRL) != 0)
@@ -905,38 +903,38 @@ void TransferItemsState::decrease()
  */
 void TransferItemsState::decreaseByValue(int qtyDelta)
 {
-	if (qtyDelta < 1 || _transferQty[_sel] < 1)
-		return;
-
-	qtyDelta = std::min(qtyDelta,
-						_transferQty[_sel]);
-
-	switch (getTransferType(_sel))
+	if (qtyDelta > 0 && _transferQty[_sel] > 0)
 	{
-		case PST_ITEM:
+		qtyDelta = std::min(qtyDelta,
+							_transferQty[_sel]);
+
+		switch (getTransferType(_sel))
 		{
-			const RuleItem* const itRule (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]));
-			if (itRule->isLiveAlien() == false)
-				_storeSize -= itRule->getStoreSize() * static_cast<double>(qtyDelta);
-			else
-				_qtyAlien -= qtyDelta;
-			break;
+			case PST_ITEM:
+			{
+				const RuleItem* const itRule (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]));
+				if (itRule->isLiveAlien() == false)
+					_storeSize -= itRule->getStoreSize() * static_cast<double>(qtyDelta);
+				else
+					_qtyAlien -= qtyDelta;
+				break;
+			}
+
+			case PST_CRAFT:
+				--_qtyCraft;
+				break;
+
+			default: // soldier, scientist, engineer
+				_qtyPersonnel -= qtyDelta;
 		}
 
-		case PST_CRAFT:
-			--_qtyCraft;
-			break;
+		_baseQty[_sel] += qtyDelta;
+		_destQty[_sel] -= qtyDelta;
+		_transferQty[_sel] -= qtyDelta;
+		_costTotal -= getCost() * qtyDelta;
 
-		default: // soldier, scientist, engineer
-			_qtyPersonnel -= qtyDelta;
+		update();
 	}
-
-	_baseQty[_sel] += qtyDelta;
-	_destQty[_sel] -= qtyDelta;
-	_transferQty[_sel] -= qtyDelta;
-	_costTotal -= getCost() * qtyDelta;
-
-	update();
 }
 
 /**
