@@ -200,7 +200,7 @@ void DebriefExtraState::lstLeftArrowPress(Action* action) // private.
 			break;
 
 		case SDL_BUTTON_LEFT:
-			if (_timerInc->isRunning() == false)
+//			if (_timerInc->isRunning() == false)
 			{
 				if ((SDL_GetModState() & KMOD_CTRL) != 0)
 					increaseByValue(10);
@@ -245,7 +245,7 @@ void DebriefExtraState::lstRightArrowPress(Action* action) // private.
 			break;
 
 		case SDL_BUTTON_LEFT:
-			if (_timerDec->isRunning() == false)
+//			if (_timerDec->isRunning() == false)
 			{
 				if ((SDL_GetModState() & KMOD_CTRL) != 0)
 					decreaseByValue(10);

@@ -630,7 +630,7 @@ void TransferItemsState::lstLeftArrowPress(Action* action)
 			break;
 
 		case SDL_BUTTON_LEFT:
-			if (_timerInc->isRunning() == false)
+//			if (_timerInc->isRunning() == false)
 			{
 				if ((SDL_GetModState() & KMOD_CTRL) != 0)
 					increaseByValue(10);
@@ -668,7 +668,7 @@ void TransferItemsState::lstRightArrowPress(Action* action)
 			break;
 
 		case SDL_BUTTON_LEFT:
-			if (_timerDec->isRunning() == false)
+//			if (_timerDec->isRunning() == false)
 			{
 				if ((SDL_GetModState() & KMOD_CTRL) != 0)
 					decreaseByValue(10);
