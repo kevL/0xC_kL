@@ -872,6 +872,7 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 	if (wstError.empty() == false)
 	{
 		_resetAll = false;
+
 		const RuleInterface* const uiRule (_game->getRuleset()->getInterface("transferMenu"));
 		_game->pushState(new ErrorMessageState(
 											wstError,

@@ -88,6 +88,7 @@ private:
 		* _isfUfoRegion,
 		* _isfXcomCountry,
 		* _isfXcomRegion;
+	RuleInterface* _uiGraphs;
 	Text
 		* _txtScore,
 		* _txtFactor,

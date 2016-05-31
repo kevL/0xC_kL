@@ -116,8 +116,9 @@ Inventory::Inventory(
 					_game->getResourcePack()->getFont("FONT_BIG"),
 					_game->getResourcePack()->getFont("FONT_SMALL"),
 					_game->getLanguage());
-	_warning->setTextColor(static_cast<Uint8>(_game->getRuleset()->getInterface("battlescape")->getElement("warning")->color));
-	_warning->setColor(static_cast<Uint8>(_game->getRuleset()->getInterface("battlescape")->getElement("warning")->color2));
+	const RuleInterface* const uiRule (_game->getRuleset()->getInterface("battlescape"));
+	_warning->setTextColor(static_cast<Uint8>(uiRule->getElement("warning")->color));
+	_warning->setColor(static_cast<Uint8>(uiRule->getElement("warning")->color2));
 
 	_numStack->setBordered();
 

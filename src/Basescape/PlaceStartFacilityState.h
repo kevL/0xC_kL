@@ -42,16 +42,16 @@ private:
 
 
 	public:
-		/// Creates the Place Facility state.
+		/// Creates a PlaceStartFacility state.
 		PlaceStartFacilityState(
 				Base* const base,
 				SelectStartFacilityState* const select,
 				const RuleBaseFacility* const facRule);
-		/// Cleans up the Place Facility state.
+		/// Cleans up the PlaceStartFacility state.
 		~PlaceStartFacilityState();
 
-		/// Handler for clicking the base view.
-		void viewClick(Action* action);
+		/// Handler for clicking the BaseView grid.
+		void viewClick(Action* action) override;
 };
 
 }

@@ -94,7 +94,7 @@ DeleteGameState::DeleteGameState(
 	_txtMessage->setAlign(ALIGN_CENTER);
 	_txtMessage->setBig();
 	_txtMessage->setWordWrap();
-	_txtMessage->setText(tr("STR_IS_IT_OK_TO_DELETE_THE_SAVED_GAME"));
+	_txtMessage->setText(tr("STR_CONFIRM_DELETE_THE_SAVED_GAME"));
 
 	if (_origin == OPT_BATTLESCAPE)
 		applyBattlescapeTheme();
@@ -123,22 +123,23 @@ void DeleteGameState::btnYesClick(Action*)
 
 	if (CrossPlatform::deleteFile(_file) == false)
 	{
-		std::wstring error = tr("STR_DELETE_UNSUCCESSFUL");
+		std::wstring error (tr("STR_DELETE_UNSUCCESSFUL"));
 
+		const RuleInterface* const uiRule (_game->getRuleset()->getInterface("errorMessages"));
 		if (_origin != OPT_BATTLESCAPE)
 			_game->pushState(new ErrorMessageState(
 												error,
 												_palette,
-												_game->getRuleset()->getInterface("errorMessages")->getElement("geoscapeColor")->color,
+												uiRule->getElement("geoscapeColor")->color,
 												"BACK01.SCR",
-												_game->getRuleset()->getInterface("errorMessages")->getElement("geoscapePalette")->color));
+												uiRule->getElement("geoscapePalette")->color));
 		else
 			_game->pushState(new ErrorMessageState(
 												error,
 												_palette,
-												_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapeColor")->color,
+												uiRule->getElement("battlescapeColor")->color,
 												"Diehard",
-												_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapePalette")->color));
+												uiRule->getElement("battlescapePalette")->color));
 	}
 }
 

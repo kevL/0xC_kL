@@ -104,6 +104,12 @@ PlaceFacilityState::PlaceFacilityState(
 	_btnCancel->onKeyboardPress(
 					(ActionHandler)& PlaceFacilityState::btnCancelClick,
 					Options::keyCancel);
+	_btnCancel->onKeyboardPress(
+					(ActionHandler)& PlaceFacilityState::btnCancelClick,
+					Options::keyOk);
+	_btnCancel->onKeyboardPress(
+					(ActionHandler)& PlaceFacilityState::btnCancelClick,
+					Options::keyOkKeypad);
 
 	_txtFacility->setText(tr(_facRule->getType()));
 
@@ -142,31 +148,35 @@ void PlaceFacilityState::btnCancelClick(Action*)
  * Processes clicking on facilities.
  * @param action - pointer to an Action
  */
-void PlaceFacilityState::viewClick(Action*)
+void PlaceFacilityState::viewClick(Action*) // virtual.
 {
 	if (_view->isPlaceable(_facRule) == false)
 	{
 		_game->popState();
+
+		const RuleInterface* const uiRule (_game->getRuleset()->getInterface("placeFacility"));
 		_game->pushState(new ErrorMessageState(
 											tr("STR_CANNOT_BUILD_HERE"),
 											_palette,
-											_game->getRuleset()->getInterface("placeFacility")->getElement("errorMessage")->color,
+											uiRule->getElement("errorMessage")->color,
 											"BACK01.SCR",
-											_game->getRuleset()->getInterface("placeFacility")->getElement("errorPalette")->color));
+											uiRule->getElement("errorPalette")->color));
 	}
 	else if (_game->getSavedGame()->getFunds() < _facRule->getBuildCost())
 	{
 		_game->popState();
+
+		const RuleInterface* const uiRule (_game->getRuleset()->getInterface("placeFacility"));
 		_game->pushState(new ErrorMessageState(
 											tr("STR_NOT_ENOUGH_MONEY"),
 											_palette,
-											_game->getRuleset()->getInterface("placeFacility")->getElement("errorMessage")->color,
+											uiRule->getElement("errorMessage")->color,
 											"BACK01.SCR",
-											_game->getRuleset()->getInterface("placeFacility")->getElement("errorPalette")->color));
+											uiRule->getElement("errorPalette")->color));
 	}
 	else
 	{
-		BaseFacility* const fac = new BaseFacility(_facRule, _base);
+		BaseFacility* const fac (new BaseFacility(_facRule, _base));
 		fac->setX(_view->getGridX());
 		fac->setY(_view->getGridY());
 		fac->setBuildTime(_facRule->getBuildTime());
@@ -181,7 +191,7 @@ void PlaceFacilityState::viewClick(Action*)
 			_view->reCalcQueuedBuildings();
 		}
 
-		const int cost = _facRule->getBuildCost();
+		const int cost (_facRule->getBuildCost());
 		_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() - static_cast<int64_t>(cost));
 		_base->addCashSpent(cost);
 

@@ -45,7 +45,7 @@ class BuildFacilitiesState
 {
 
 protected:
-	static const Uint8 YELLOW = 213;
+	static const Uint8 YELLOW = 213u;
 
 	Base* _base;
 	State* _state;
@@ -58,21 +58,21 @@ protected:
 
 
 	public:
-		/// Creates the Build Facilities state.
+		/// Creates a BuildFacilities state.
 		BuildFacilitiesState(
 				Base* const base,
 				State* const state);
-		/// Cleans up the Build Facilities state.
+		/// Cleans up the BuildFacilities state.
 		~BuildFacilitiesState();
 
-		/// Populates the build option list.
-		virtual void PopulateBuildList();
+		/// Populates the build-option list.
+		virtual void populateBuildList();
 
-		/// Updates the base stats.
+		/// Updates the base-stats.
 		void init() override;
 
 		/// Handler for clicking the OK button.
-		void btnOkClick(Action* action);
+		virtual void btnOkClick(Action* action);
 		/// Handler for clicking the Facilities list.
 		virtual void lstFacilitiesClick(Action* action);
 };

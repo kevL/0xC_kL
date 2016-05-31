@@ -43,10 +43,10 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Place Lift screen.
+ * Initializes all the elements in the PlaceLift screen.
  * @param base		- pointer to the Base to get info from
  * @param globe		- pointer to the geoscape Globe
- * @param firstBase	- true if this a custom starting base
+ * @param firstBase	- true if this is a custom start base
  */
 PlaceLiftState::PlaceLiftState(
 		Base* const base,
@@ -70,14 +70,18 @@ PlaceLiftState::PlaceLiftState(
 
 	_view->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
 	_view->setBase(_base);
+
+	const RuleBaseFacility* facRule;
+	const std::vector<std::string> allFacs (_game->getRuleset()->getBaseFacilitiesList());
 	for (std::vector<std::string>::const_iterator
-			i = _game->getRuleset()->getBaseFacilitiesList().begin();
-			i != _game->getRuleset()->getBaseFacilitiesList().end();
+			i = allFacs.begin();
+			i != allFacs.end();
 			++i)
 	{
-		if (_game->getRuleset()->getBaseFacility(*i)->isLift() == true)
+		facRule = _game->getRuleset()->getBaseFacility(*i);
+		if (facRule->isLift() == true)
 		{
-			_lift = _game->getRuleset()->getBaseFacility(*i);
+			_lift = facRule;
 			break;
 		}
 	}
@@ -94,12 +98,12 @@ PlaceLiftState::~PlaceLiftState()
 {}
 
 /**
- * Processes clicking on facilities.
+ * Processes clicking on Facilities.
  * @param action - pointer to an Action
  */
 void PlaceLiftState::viewClick(Action*)
 {
-	BaseFacility* const fac = new BaseFacility(_lift, _base);
+	BaseFacility* const fac (new BaseFacility(_lift, _base));
 	fac->setX(_view->getGridX());
 	fac->setY(_view->getGridY());
 
@@ -107,7 +111,8 @@ void PlaceLiftState::viewClick(Action*)
 	_base->setBasePlaced();
 
 	_game->popState();
-	BasescapeState* const baseState = new BasescapeState(_base, _globe);
+
+	BasescapeState* const baseState (new BasescapeState(_base, _globe));
 //	_game->getSavedGame()->setRecallBase(_game->getSavedGame()->getBases()->size() - 1);
 
 	_game->pushState(baseState);

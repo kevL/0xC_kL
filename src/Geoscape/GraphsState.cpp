@@ -114,7 +114,8 @@ GraphsState::GraphsState()
 		_btnCountryOffset(0),
 		_init(true),
 		_reset(false),
-		_forceVis(true)
+		_forceVis(true),
+		_uiGraphs(_game->getRuleset()->getInterface("graphs"))
 {
 	const int offsetX ((Options::baseXResolution - 320) / 2);
 	SCREEN_OFFSET_y  = (Options::baseYResolution - 200) / 2;
@@ -337,8 +338,7 @@ GraphsState::GraphsState()
 										0,
 										btnTotal_y * 10);
 
-	color = static_cast<Uint8>(
-			_game->getRuleset()->getInterface("graphs")->getElement("regionTotal")->color);
+	color = static_cast<Uint8>(_uiGraphs->getElement("regionTotal")->color);
 
 	_regionToggles.push_back(new GraphBtnInfo( // TOTAL btn is the last button in the vector.
 											tr("STR_TOTAL_UC"),
@@ -443,8 +443,7 @@ GraphsState::GraphsState()
 										0,
 										btnTotal_y * 10);
 
-	color = static_cast<Uint8>(
-			_game->getRuleset()->getInterface("graphs")->getElement("countryTotal")->color);
+	color = static_cast<Uint8>(_uiGraphs->getElement("countryTotal")->color);
 
 	_countryToggles.push_back(new GraphBtnInfo( // TOTAL btn is the last button in the vector.
 											tr("STR_TOTAL_UC"),
@@ -613,8 +612,7 @@ GraphsState::GraphsState()
 	icons->setY(SCREEN_OFFSET_y);
 	icons->blit(_bg);
 
-	const Uint8 colorGrid (static_cast<Uint8>(
-						  _game->getRuleset()->getInterface("graphs")->getElement("graph")->color));
+	const Uint8 colorGrid (static_cast<Uint8>(_uiGraphs->getElement("graph")->color));
 
 	_bg->drawRect( // set up the grid
 				offsetX + 125,
@@ -1737,8 +1735,7 @@ void GraphsState::drawRegionLines() // private.
 	else
 		_xcomRegionLines.back()->clear();
 
-	Uint8 color (static_cast<Uint8>(
-				_game->getRuleset()->getInterface("graphs")->getElement("regionTotal")->color2));
+	Uint8 color (static_cast<Uint8>(_uiGraphs->getElement("regionTotal")->color2));
 	lineVector.clear();
 
 	for (size_t
@@ -2010,8 +2007,7 @@ void GraphsState::drawCountryLines() // private.
 	else
 		_xcomCountryLines.back()->clear();
 
-	Uint8 color (static_cast<Uint8>(
-				_game->getRuleset()->getInterface("graphs")->getElement("countryTotal")->color2));
+	Uint8 color (static_cast<Uint8>(_uiGraphs->getElement("countryTotal")->color2));
 	lineVector.clear();
 
 	for (size_t

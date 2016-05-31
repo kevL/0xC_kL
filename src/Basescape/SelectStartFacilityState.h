@@ -42,19 +42,19 @@ private:
 
 
 	public:
-		/// Creates the Build Facilities state.
+		/// Creates a SelectStartFacility state.
 		SelectStartFacilityState(
 				Base* const base,
 				State* const state,
 				Globe* const globe);
-		/// Cleans up the Build Facilities state.
+		/// Cleans up the SelectStartFacility state.
 		~SelectStartFacilityState();
 
-		/// Populates the build option list.
-		virtual void populateBuildList();
+		/// Populates the build-option list.
+		void populateBuildList() override;
 
 		/// Handler for clicking the Reset button.
-		void btnOkClick(Action* action);
+		void btnOkClick(Action* action) override;
 		/// Handler for clicking the Facilities list.
 		void lstFacilitiesClick(Action* action) override;
 

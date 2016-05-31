@@ -624,12 +624,11 @@ void InventoryState::updateStats() // private.
 		strength (selUnit->getStrength());
 
 	_txtWeight->setText(tr("STR_WEIGHT").arg(weight).arg(strength));
+	const RuleInterface* const uiRule (_game->getRuleset()->getInterface("inventory"));
 	if (weight > strength)
-		_txtWeight->setSecondaryColor(static_cast<Uint8>(
-					_game->getRuleset()->getInterface("inventory")->getElement("weight")->color2));
+		_txtWeight->setSecondaryColor(static_cast<Uint8>(uiRule->getElement("weight")->color2));
 	else
-		_txtWeight->setSecondaryColor(static_cast<Uint8>(
-					_game->getRuleset()->getInterface("inventory")->getElement("weight")->color));
+		_txtWeight->setSecondaryColor(static_cast<Uint8>(uiRule->getElement("weight")->color));
 
 	const int psiSkill (selUnit->getBattleStats()->psiSkill);
 
@@ -1111,7 +1110,8 @@ void InventoryState::inClick(Action*)
 						rect.h = static_cast<Sint16>(RuleInventory::HAND_H * RuleInventory::SLOT_H);
 						_srfAmmo->drawRect(
 										&rect,
-										static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")->getElement("grid")->color));
+										static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")
+											->getElement("grid")->color));
 
 						++rect.x;
 						++rect.y;
@@ -1193,7 +1193,10 @@ void InventoryState::inMouseOver(Action*)
 							rect.y = 0;
 							rect.w = RuleInventory::HAND_W * RuleInventory::SLOT_W;
 							rect.h = RuleInventory::HAND_H * RuleInventory::SLOT_H;
-							_srfAmmo->drawRect(&rect, static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")->getElement("grid")->color));
+							_srfAmmo->drawRect(
+											&rect,
+											static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")
+												->getElement("grid")->color));
 
 							++rect.x;
 							++rect.y;

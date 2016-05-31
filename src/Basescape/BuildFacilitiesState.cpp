@@ -81,19 +81,25 @@ BuildFacilitiesState::BuildFacilitiesState(
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& BuildFacilitiesState::btnOkClick,
 					Options::keyCancel);
+	_btnOk->onKeyboardPress(
+					(ActionHandler)& BuildFacilitiesState::btnOkClick,
+					Options::keyOk);
+	_btnOk->onKeyboardPress(
+					(ActionHandler)& BuildFacilitiesState::btnOkClick,
+					Options::keyOkKeypad);
 
-	_txtTitle->setBig();
-	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setText(tr("STR_INSTALLATION"));
+	_txtTitle->setAlign(ALIGN_CENTER);
+	_txtTitle->setBig();
 
-	_lstFacilities->setArrowColor(YELLOW);
 	_lstFacilities->setColumns(1, 99);
+	_lstFacilities->setArrowColor(YELLOW);
 	_lstFacilities->setBackground(_window);
 	_lstFacilities->setSelectable();
 	_lstFacilities->setMargin(2);
 	_lstFacilities->onMouseClick((ActionHandler)& BuildFacilitiesState::lstFacilitiesClick);
 
-	PopulateBuildList();
+	populateBuildList();
 }
 
 /**
@@ -105,15 +111,16 @@ BuildFacilitiesState::~BuildFacilitiesState()
 /**
  * Populates the build list from the current "available" facilities.
  */
-void BuildFacilitiesState::PopulateBuildList() // virtual. Cf, SelectStartFacilityState::populateBuildList()
+void BuildFacilitiesState::populateBuildList() // virtual. Cf, SelectStartFacilityState::populateBuildList()
 {
-	const std::vector<std::string>& facilities = _game->getRuleset()->getBaseFacilitiesList();
+	RuleBaseFacility* facRule;
+	const std::vector<std::string>& allFacs (_game->getRuleset()->getBaseFacilitiesList());
 	for (std::vector<std::string>::const_iterator
-			i = facilities.begin();
-			i != facilities.end();
+			i = allFacs.begin();
+			i != allFacs.end();
 			++i)
 	{
-		RuleBaseFacility* const facRule = _game->getRuleset()->getBaseFacility(*i);
+		facRule = _game->getRuleset()->getBaseFacility(*i);
 		if (_game->getSavedGame()->isResearched(facRule->getRequirements()) == true
 			&& facRule->isLift() == false)
 		{
@@ -143,7 +150,7 @@ void BuildFacilitiesState::init()
  * Returns to the previous screen.
  * @param action - pointer to an Action
  */
-void BuildFacilitiesState::btnOkClick(Action*)
+void BuildFacilitiesState::btnOkClick(Action*) // virtual.
 {
 	_game->popState();
 }

@@ -972,7 +972,7 @@ en-US:
   STR_DELETE: "DELETE"
   STR_DELETE_UNSUCCESSFUL: "deleteFail"
   STR_PREVIOUS_X_COM_SAVED_GAME_DETECTED: "previous xCom saveGame detected"
-  STR_IS_IT_OK_TO_DELETE_THE_SAVED_GAME: "Be sure you want to delete ..."
+  STR_CONFIRM_DELETE_THE_SAVED_GAME: "Be sure you want to delete ..."
   STR_LOADING: "Loading ..."
   STR_UNIT: "UNIT> {0}"
   STR_ENERGY: "stamina"

@@ -59,17 +59,17 @@ protected:
 
 
 	public:
-		/// Creates the Place Facility state.
+		/// Creates a PlaceFacility state.
 		PlaceFacilityState(
 				Base* const base,
 				const RuleBaseFacility* const facRule);
-		/// Cleans up the Place Facility state.
+		/// Cleans up the PlaceFacility state.
 		~PlaceFacilityState();
 
 		/// Handler for clicking the Cancel button.
 		void btnCancelClick(Action* action);
-		/// Handler for clicking the base view.
-		void viewClick(Action* action);
+		/// Handler for clicking the BaseView grid.
+		virtual void viewClick(Action* action);
 };
 
 }

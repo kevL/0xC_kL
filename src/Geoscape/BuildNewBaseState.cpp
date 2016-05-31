@@ -282,12 +282,15 @@ void BuildNewBaseState::globeClick(Action* action)
 				_game->pushState(new ConfirmNewBaseState(_base, _globe));
 		}
 		else
+		{
+			const RuleInterface* const uiRule (_game->getRuleset()->getInterface("geoscape"));
 			_game->pushState(new ErrorMessageState(
 											tr("STR_XCOM_BASE_CANNOT_BE_BUILT"),
 											_palette,
-											_game->getRuleset()->getInterface("geoscape")->getElement("genericWindow")->color,
+											uiRule->getElement("genericWindow")->color,
 											_game->getResourcePack()->getBackgroundRand(),
-											_game->getRuleset()->getInterface("geoscape")->getElement("backpal")->color));
+											uiRule->getElement("backpal")->color));
+		}
 //		}
 	}
 }

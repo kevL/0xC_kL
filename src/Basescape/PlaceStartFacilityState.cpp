@@ -74,7 +74,7 @@ void PlaceStartFacilityState::viewClick(Action*)
 {
 	if (_view->isPlaceable(_facRule) == true)
 	{
-		BaseFacility* const fac = new BaseFacility(_facRule, _base);
+		BaseFacility* const fac (new BaseFacility(_facRule, _base));
 		fac->setX(_view->getGridX());
 		fac->setY(_view->getGridY());
 
@@ -85,12 +85,13 @@ void PlaceStartFacilityState::viewClick(Action*)
 	else
 	{
 		_game->popState();
+		const RuleInterface* const uiRule (_game->getRuleset()->getInterface("basescape"));
 		_game->pushState(new ErrorMessageState(
 											tr("STR_CANNOT_BUILD_HERE"),
 											_palette,
-											_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
+											uiRule->getElement("errorMessage")->color,
 											"BACK01.SCR",
-											_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
+											uiRule->getElement("errorPalette")->color));
 	}
 }
 

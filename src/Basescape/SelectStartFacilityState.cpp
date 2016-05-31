@@ -74,10 +74,10 @@ SelectStartFacilityState::~SelectStartFacilityState()
 /**
  * Populates the build list from the currently available facilities.
  */
-void SelectStartFacilityState::populateBuildList() // virtual. Cf, BuildFacilitiesState::PopulateBuildList()
+void SelectStartFacilityState::populateBuildList() // virtual. Cf, BuildFacilitiesState::populateBuildList()
 {
 	_lstFacilities->clearList();
-	for (std::vector<RuleBaseFacility*>::iterator
+	for (std::vector<RuleBaseFacility*>::const_iterator
 			i = _facilities.begin();
 			i != _facilities.end();
 			++i)
@@ -92,7 +92,7 @@ void SelectStartFacilityState::populateBuildList() // virtual. Cf, BuildFaciliti
  */
 void SelectStartFacilityState::btnOkClick(Action*)
 {
-	for (std::vector<BaseFacility*>::iterator
+	for (std::vector<BaseFacility*>::const_iterator
 			i = _base->getFacilities()->begin();
 			i != _base->getFacilities()->end();
 			++i)
@@ -132,8 +132,8 @@ void SelectStartFacilityState::facilityBuilt()
 		_game->popState();
 		_game->popState();
 
-		BasescapeState* const basescape = dynamic_cast<BasescapeState*>(_state);
-		basescape->resetStoresWarning();
+		BasescapeState* const baseState (dynamic_cast<BasescapeState*>(_state));
+		baseState->resetStoresWarning();
 	}
 	else
 		populateBuildList();

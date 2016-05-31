@@ -88,21 +88,23 @@ MedikitView::MedikitView(
  */
 void MedikitView::draw()
 {
-	SurfaceSet* const srt = _game->getResourcePack()->getSurfaceSet("MEDIBITS.DAT");
+	SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet("MEDIBITS.DAT"));
+	Surface* srf;
 	int color;
 
 	this->lock();
+	const Element* const el (_game->getRuleset()->getInterface("medikit")->getElement("body"));
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != BattleUnit::PARTS_BODY;
 			++i)
 	{
 		if (_unit->getFatalWound(static_cast<UnitBodyPart>(i)) != 0)
-			color = _game->getRuleset()->getInterface("medikit")->getElement("body")->color2;
+			color = el->color2;
 		else
-			color = _game->getRuleset()->getInterface("medikit")->getElement("body")->color;
+			color = el->color;
 
-		Surface* const srf = srt->getFrame(static_cast<int>(i));
+		srf = srt->getFrame(static_cast<int>(i));
 		srf->blitNShade(
 					this,
 					Surface::getX(),
@@ -132,15 +134,15 @@ void MedikitView::draw()
  */
 void MedikitView::mouseClick(Action* action, State*)
 {
-	SurfaceSet* const srt = _game->getResourcePack()->getSurfaceSet("MEDIBITS.DAT");
+	SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet("MEDIBITS.DAT"));
 	const Surface* srf;
 
 	const int
-		x = static_cast<int>(action->getRelativeMouseX() / action->getScaleX()),
-		y = static_cast<int>(action->getRelativeMouseY() / action->getScaleY());
+		x (static_cast<int>(action->getRelativeMouseX() / action->getScaleX())),
+		y (static_cast<int>(action->getRelativeMouseY() / action->getScaleY()));
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != BattleUnit::PARTS_BODY;
 			++i)
 	{
@@ -149,7 +151,6 @@ void MedikitView::mouseClick(Action* action, State*)
 		{
 			_selectedPart = static_cast<UnitBodyPart>(i);
 			_redraw = true;
-
 			break;
 		}
 	}
@@ -170,7 +171,7 @@ UnitBodyPart MedikitView::getSelectedPart() const
 void MedikitView::autoSelectPart()
 {
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != BattleUnit::PARTS_BODY;
 			++i)
 	{
@@ -180,7 +181,6 @@ void MedikitView::autoSelectPart()
 			return;
 		}
 	}
-
 	_txtPart->setVisible(false);
 	_txtWound->setVisible(false);
 }

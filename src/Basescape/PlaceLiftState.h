@@ -34,7 +34,7 @@ class Text;
 
 
 /**
- * Screen shown when the player has to place the access lift of a base.
+ * Screen shown when the player has to place the access lift for a Base.
  */
 class PlaceLiftState
 	:
@@ -47,20 +47,20 @@ private:
 	Base* _base;
 	BaseView* _view;
 	Globe* _globe;
-	RuleBaseFacility* _lift;
+	const RuleBaseFacility* _lift;
 	Text* _txtTitle;
 
 
 	public:
-		/// Creates the Place Lift state.
+		/// Creates a PlaceLift state.
 		PlaceLiftState(
 				Base* const base,
 				Globe* const globe,
 				bool firstBase);
-		/// Cleans up the Place Lift state.
+		/// Cleans up the PlaceLift state.
 		~PlaceLiftState();
 
-		/// Handler for clicking the base view.
+		/// Handler for clicking the BaseView grid.
 		void viewClick(Action* action);
 };
 

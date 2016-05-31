@@ -89,14 +89,14 @@ PrimeGrenadeState::PrimeGrenadeState(
 
 	setPalette(PAL_BATTLESCAPE);
 
-	const Element* const bgElem (_game->getRuleset()->getInterface("battlescape")->getElement("grenadeBackground"));
+	const Element* const el (_game->getRuleset()->getInterface("battlescape")->getElement("grenadeBackground"));
 
 	add(_srfBG);
 	_srfBG->drawRect(
 					0,0,
 					static_cast<Sint16>(_srfBG->getWidth()),
 					static_cast<Sint16>(_srfBG->getHeight()),
-					static_cast<Uint8>(bgElem->color));
+					static_cast<Uint8>(el->color));
 
 	add(_fraTop, "grenadeMenu", "battlescape");
 	_fraTop->setSecondaryColor(BLUE);
@@ -152,7 +152,7 @@ PrimeGrenadeState::PrimeGrenadeState(
 		rect.h = static_cast<Uint16>(_isfBtn[i]->getHeight());
 		_isfBtn[i]->drawRect(
 						&rect,
-						static_cast<Uint8>(bgElem->border));
+						static_cast<Uint8>(el->border));
 
 		++rect.x; // inside fill
 		++rect.y;
@@ -160,7 +160,7 @@ PrimeGrenadeState::PrimeGrenadeState(
 		rect.h -= 2u;
 		_isfBtn[i]->drawRect(
 						&rect,
-						static_cast<Uint8>(bgElem->color2));
+						static_cast<Uint8>(el->color2));
 
 		add(_txtTurn[i], "grenadeMenu", "battlescape");
 		_txtTurn[i]->setText(Text::intWide(static_cast<int>(i) + 1));

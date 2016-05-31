@@ -235,20 +235,22 @@ void SaveGameState::think()
 			Log(LOG_ERROR) << e.what();
 			std::wostringstream error;
 			error << tr("STR_SAVE_UNSUCCESSFUL") << L'\x02' << Language::fsToWstr(e.what());
+
+			const RuleInterface* const uiRule (_game->getRuleset()->getInterface("errorMessages"));
 			if (_origin != OPT_BATTLESCAPE)
 				_game->pushState(new ErrorMessageState(
 													error.str(),
 													_palette,
-													_game->getRuleset()->getInterface("errorMessages")->getElement("geoscapeColor")->color,
+													uiRule->getElement("geoscapeColor")->color,
 													"BACK01.SCR",
-													_game->getRuleset()->getInterface("errorMessages")->getElement("geoscapePalette")->color));
+													uiRule->getElement("geoscapePalette")->color));
 			else
 				_game->pushState(new ErrorMessageState(
 													error.str(),
 													_palette,
-													_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapeColor")->color,
+													uiRule->getElement("battlescapeColor")->color,
 													"Diehard",
-													_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapePalette")->color));
+													uiRule->getElement("battlescapePalette")->color));
 		}
 		catch (YAML::Exception& e)
 		{
@@ -256,20 +258,22 @@ void SaveGameState::think()
 			Log(LOG_ERROR) << e.what();
 			std::wostringstream error;
 			error << tr("STR_SAVE_UNSUCCESSFUL") << L'\x02' << Language::fsToWstr(e.what());
+
+			const RuleInterface* const uiRule (_game->getRuleset()->getInterface("errorMessages"));
 			if (_origin != OPT_BATTLESCAPE)
 				_game->pushState(new ErrorMessageState(
 													error.str(),
 													_palette,
-													_game->getRuleset()->getInterface("errorMessages")->getElement("geoscapeColor")->color,
+													uiRule->getElement("geoscapeColor")->color,
 													"BACK01.SCR",
-													_game->getRuleset()->getInterface("errorMessages")->getElement("geoscapePalette")->color));
+													uiRule->getElement("geoscapePalette")->color));
 			else
 				_game->pushState(new ErrorMessageState(
 													error.str(),
 													_palette,
-													_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapeColor")->color,
+													uiRule->getElement("battlescapeColor")->color,
 													"Diehard",
-													_game->getRuleset()->getInterface("errorMessages")->getElement("battlescapePalette")->color));
+													uiRule->getElement("battlescapePalette")->color));
 		}
 	}
 }

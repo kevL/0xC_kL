@@ -624,12 +624,14 @@ void ManufactureInfoState::moreUnit(int change) // private.
 			&& _base->getFreeHangars() < 1)
 		{
 			_timerMoreUnit->stop();
+
+			const RuleInterface* const uiRule (_game->getRuleset()->getInterface("basescape"));
 			_game->pushState(new ErrorMessageState(
 												tr("STR_NO_FREE_HANGARS_FOR_CRAFT_PRODUCTION"),
 												_palette,
-												_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
+												uiRule->getElement("errorMessage")->color,
 												"BACK17.SCR",
-												_game->getRuleset()->getInterface("basescape")->getElement("errorPalette")->color));
+												uiRule->getElement("errorPalette")->color));
 		}
 		else
 		{

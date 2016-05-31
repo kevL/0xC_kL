@@ -302,9 +302,10 @@ UnitInfoState::UnitInfoState(
 					(ActionHandler)& UnitInfoState::exitPress,
 					Options::keyBattleStats);
 
+	const Element* const el (_game->getRuleset()->getInterface("stats")->getElement("text"));
 	Uint8
-		color  (static_cast<Uint8>(_game->getRuleset()->getInterface("stats")->getElement("text")->color)),
-		color2 (static_cast<Uint8>(_game->getRuleset()->getInterface("stats")->getElement("text")->color2));
+		color  (static_cast<Uint8>(el->color)),
+		color2 (static_cast<Uint8>(el->color2));
 
 	_txtName->setAlign(ALIGN_CENTER);
 	_txtName->setBig();

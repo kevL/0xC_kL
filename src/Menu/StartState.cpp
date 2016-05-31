@@ -250,12 +250,14 @@ void StartState::think()
 					}
 
 					Options::badMods.clear();
+
+					const RuleInterface* const uiRule (_game->getRuleset()->getInterface("errorMessages"));
 					_game->pushState(new ErrorMessageState(
 														error.str(),
 														state->getPalette(),
-														_game->getRuleset()->getInterface("errorMessages")->getElement("geoscapeColor")->color,
+														uiRule->getElement("geoscapeColor")->color,
 														"BACK01.SCR",
-														_game->getRuleset()->getInterface("errorMessages")->getElement("geoscapePalette")->color));
+														uiRule->getElement("geoscapePalette")->color));
 				}
 				Options::reload = false;
 			}

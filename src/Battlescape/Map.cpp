@@ -125,16 +125,18 @@ Map::Map(
 		_tile(nullptr),
 		_unit(nullptr)
 {
-	_iconWidth  = _game->getRuleset()->getInterface("battlescape")->getElement("icons")->w;
-	_iconHeight = _game->getRuleset()->getInterface("battlescape")->getElement("icons")->h;
+	const RuleInterface* const uiRule (_game->getRuleset()->getInterface("battlescape"));
+	_iconWidth  = uiRule->getElement("icons")->w;
+	_iconHeight = uiRule->getElement("icons")->h;
 
 	if (Options::traceAI != 0) // turn everything on to see the markers.
 		_previewSetting = PATH_FULL;
 	else
 		_previewSetting	= Options::battlePreviewPath;
 
-	_spriteWidth  = _res->getSurfaceSet("BLANKS.PCK")->getFrame(0)->getWidth();
-	_spriteHeight = _res->getSurfaceSet("BLANKS.PCK")->getFrame(0)->getHeight();
+	const Surface* const srf (_res->getSurfaceSet("BLANKS.PCK")->getFrame(0));
+	_spriteWidth  = srf->getWidth();
+	_spriteHeight = srf->getHeight();
 	_spriteWidth_2 = _spriteWidth >> 1u;
 
 	_camera = new Camera(
@@ -154,7 +156,7 @@ Map::Map(
 	_hiddenScreen = new BattlescapeMessage(320, hiddenHeight); // "Hidden Movement..." screen
 	_hiddenScreen->setX(_game->getScreen()->getDX());
 	_hiddenScreen->setY(_game->getScreen()->getDY());
-	_hiddenScreen->setTextColor(static_cast<Uint8>(_game->getRuleset()->getInterface("battlescape")->getElement("messageWindows")->color));
+	_hiddenScreen->setTextColor(static_cast<Uint8>(uiRule->getElement("messageWindows")->color));
 
 	_scrollMouseTimer = new Timer(SCROLL_INTERVAL);
 	_scrollMouseTimer->onTimer((SurfaceHandler)& Map::scrollMouse);
