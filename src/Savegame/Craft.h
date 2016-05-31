@@ -70,7 +70,6 @@ private:
 		_warned;
 	int
 		_loadCap,
-		_loadCur,
 		_damage,
 		_fuel,
 		_id,
@@ -160,7 +159,7 @@ private:
 		/// Gets the Craft's amount of equipment.
 		int getQtyEquipment() const;
 		/// Gets the Craft's amount of vehicles.
-		int getQtyVehicles(bool quadrants = false) const;
+		int getQtyVehicles(bool tiles = false) const;
 
 		/// Gets the Craft's weapons.
 		std::vector<CraftWeapon*>* getWeapons();
@@ -239,12 +238,8 @@ private:
 		/// Gets if the Craft is in a dogfight.
 		bool inDogfight() const;
 
-		/// Sets the Craft's capacity load.
-		void setLoadCapacity(const int load);
 		/// Gets the Craft's capacity load.
 		int getLoadCapacity() const;
-		/// Sets the Craft's current load.
-//		void setLoadCurrent(const int load);
 		/// Gets the Craft's current load.
 		int calcLoadCurrent();
 
@@ -255,7 +250,7 @@ private:
 		/// Gets whether a warning has been issued for this Craft.
 		bool getWarned() const;
 		/// Sets whether a warning has been issued for this Craft.
-		void setWarned(const bool warned = true);
+		void setWarned(bool warned = true);
 
 		/// Gets the amount of time this Craft will be repairing/rearming/refueling.
 		int getDowntime(bool& isDelayed);

@@ -1372,8 +1372,9 @@ en-US:
   STR_UNLOAD_WEAPON: "Unload weapon"
   STR_ALL_ITEMS: "-"
   STR_NO_MORE_EQUIPMENT_ALLOWED:
-    one: "NO MORE EQUIPMENT ALLOWED ON BOARD!{NEWLINE}{SMALLLINE}Capacity> {N} item{NEWLINE}(Soldiers and Vehicles cost 10 per tile)"
-    other: "NO MORE EQUIPMENT ALLOWED ON BOARD!{NEWLINE}{SMALLLINE}Capacity> {N} items{NEWLINE}(Soldiers and Vehicles cost 10 per tile)"
+    one: "NO MORE EQUIPMENT ALLOWED ON BOARD!{NEWLINE}{SMALLLINE}Capacity> {N} item{NEWLINE}(Soldiers and Supports cost 10 per tile)"
+    other: "NO MORE EQUIPMENT ALLOWED ON BOARD!{NEWLINE}{SMALLLINE}Capacity> {N} items{NEWLINE}(Soldiers and Supports cost 10 per tile)"
+  STR_NO_SUPPORT_UNITS_ALLOWED: "Craft cannot load support units."
   STR_XCOM_BASE_CANNOT_BE_BUILT: "Base cannot be built on water."
   STR_AVERAGE_MONTHLY_RATING: "average monthly rating"
   STR_TOTAL_INCOME: "total Income"

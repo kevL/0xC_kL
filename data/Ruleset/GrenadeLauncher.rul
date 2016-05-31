@@ -124,7 +124,7 @@ extraStrings:
       STR_LAUNCHER_FRAG: "gl-HE"
       STR_LAUNCHER_INC: "gl-IN"
       STR_LAUNCHER_SMOKE: "gl-SM"
-      STR_GRENADE_LAUNCHER_UFOPEDIA: "The M-79 Grenade launcher has a variety of different munition types at its disposal, contributing to its effectiveness in a wide range of situations."
+      STR_GRENADE_LAUNCHER_UFOPEDIA: "The Grenade launcher has a variety of different munition types at its disposal, contributing to its effectiveness in a wide range of situations."
   - type: en-GB
     strings:
       STR_GRENADE_LAUNCHER: Grenade Launcher

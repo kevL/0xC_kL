@@ -53,6 +53,7 @@ private:
 		COLOR_ERROR		= 241,
 		COLOR_ERROR_BG	= 2;
 
+	bool _isQuickBattle;
 	size_t
 		_sel,
 		_selUnitId;
@@ -81,6 +82,8 @@ private:
 		* _timerRight;
 	Window* _window;
 
+	std::wstring _error;
+
 	std::vector<std::string> _items;
 
 	/// Updates quantities of item.
@@ -107,19 +110,16 @@ private:
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
 		/// Handler for pressing a Move Left arrow in the list.
-		void lstEquipmentLeftArrowPress(Action* action);
+		void lstLeftArrowPress(Action* action);
 		/// Handler for releasing a Move Left arrow in the list.
-		void lstEquipmentLeftArrowRelease(Action* action);
-		/// Handler for clicking a Move Left arrow in the list.
-		void lstEquipmentLeftArrowClick(Action* action);
+		void lstLeftArrowRelease(Action* action);
 		/// Handler for pressing a Move Right arrow in the list.
-		void lstEquipmentRightArrowPress(Action* action);
+		void lstRightArrowPress(Action* action);
 		/// Handler for releasing a Move Right arrow in the list.
-		void lstEquipmentRightArrowRelease(Action* action);
-		/// Handler for clicking a Move Right arrow in the list.
-		void lstEquipmentRightArrowClick(Action* action);
+		void lstRightArrowRelease(Action* action);
+
 		/// Handler for pressing-down a mouse-button in the list.
-//		void lstEquipmentMousePress(Action* action);
+//		void lstMousePress(Action* action);
 
 		/// Moves an item to the Craft.
 		void moveRight();

@@ -196,20 +196,23 @@ void DebriefExtraState::lstLeftArrowPress(Action* action) // private.
 	switch (action->getDetails()->button.button)
 	{
 		case SDL_BUTTON_RIGHT:
+			_error.clear();
 			increaseByValue(std::numeric_limits<int>::max());
 			break;
 
 		case SDL_BUTTON_LEFT:
 //			if (_timerInc->isRunning() == false)
-			{
-				if ((SDL_GetModState() & KMOD_CTRL) != 0)
-					increaseByValue(10);
-				else
-					increaseByValue(1);
+//			{
+			_error.clear();
 
-				_timerInc->setInterval(Timer::SCROLL_SLOW);
-				_timerInc->start();
-			}
+			if ((SDL_GetModState() & KMOD_CTRL) != 0)
+				increaseByValue(10);
+			else
+				increaseByValue(1);
+
+			_timerInc->setInterval(Timer::SCROLL_SLOW);
+			_timerInc->start();
+//			}
 	}
 }
 
@@ -246,15 +249,15 @@ void DebriefExtraState::lstRightArrowPress(Action* action) // private.
 
 		case SDL_BUTTON_LEFT:
 //			if (_timerDec->isRunning() == false)
-			{
-				if ((SDL_GetModState() & KMOD_CTRL) != 0)
-					decreaseByValue(10);
-				else
-					decreaseByValue(1);
+//			{
+			if ((SDL_GetModState() & KMOD_CTRL) != 0)
+				decreaseByValue(10);
+			else
+				decreaseByValue(1);
 
-				_timerDec->setInterval(Timer::SCROLL_SLOW);
-				_timerDec->start();
-			}
+			_timerDec->setInterval(Timer::SCROLL_SLOW);
+			_timerDec->start();
+//			}
 	}
 }
 
@@ -287,83 +290,83 @@ void DebriefExtraState::increase() // private.
  */
 void DebriefExtraState::increaseByValue(int qtyDelta) // private.
 {
-	if (qtyDelta > 0)
+//	if (qtyDelta > 0)
+//	{
+	switch (_curScreen)
 	{
-		switch (_curScreen)
+		case DES_LOOT_GAINED:
 		{
-			case DES_LOOT_GAINED:
+			const RuleItem* const itRule (getRule(_itemsGained));
+			if (itRule != nullptr && itRule->getSellCost() != 0 && itRule->isLiveAlien() == false
+				&& _qtysSell[_sel] < _itemsGained[itRule])
 			{
-				const RuleItem* const itRule (getRule(_itemsGained));
-				if (itRule != nullptr && itRule->getSellCost() != 0 && itRule->isLiveAlien() == false
-					&& _qtysSell[_sel] < _itemsGained[itRule])
-				{
-					qtyDelta = std::min(qtyDelta,
-										_itemsGained[itRule] - _qtysSell[_sel]);
+				qtyDelta = std::min(qtyDelta,
+									_itemsGained[itRule] - _qtysSell[_sel]);
 
-					_qtysSell[_sel] += qtyDelta;
-					_costTotal += itRule->getSellCost() * qtyDelta;
+				_qtysSell[_sel] += qtyDelta;
+				_costTotal += itRule->getSellCost() * qtyDelta;
 
-					update();
-				}
-				break;
+				update();
 			}
+			break;
+		}
 
-			case DES_LOOT_LOST:
+		case DES_LOOT_LOST:
+		{
+			if (_error.empty() == false)
+				_error.clear();
+			else
 			{
-				if (_error.empty() == false)
-					_error.clear();
-				else
+				const RuleItem* const itRule (getRule(_itemsLost));
+				if (itRule != nullptr && itRule->getBuyCost() != 0)
 				{
-					const RuleItem* const itRule (getRule(_itemsLost));
-					if (itRule != nullptr && itRule->getBuyCost() != 0)
+					if (_costTotal + itRule->getBuyCost() > _game->getSavedGame()->getFunds())
+						_error = tr("STR_NOT_ENOUGH_MONEY");
+					else if (_storeSize + itRule->getStoreSize()
+							> static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() + 0.05)
 					{
-						if (_costTotal + itRule->getBuyCost() > _game->getSavedGame()->getFunds())
-							_error = tr("STR_NOT_ENOUGH_MONEY");
-						else if (_storeSize + itRule->getStoreSize()
-								> static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() + 0.05)
-						{
-							_error = tr("STR_NOT_ENOUGH_STORE_SPACE");
-						}
+						_error = tr("STR_NOT_ENOUGH_STORE_SPACE");
+					}
 
-						if (_error.empty() == false)
-						{
-							_timerInc->stop();
+					if (_error.empty() == false)
+					{
+						_timerInc->stop();
 
-							const RuleInterface* const uiRule (_game->getRuleset()->getInterface("debriefing"));
-							_game->pushState(new ErrorMessageState(
-																_error,
-																_palette,
-																uiRule->getElement("errorMessage")->color,
-																"BACK13.SCR",
-																uiRule->getElement("errorPalette")->color));
-						}
+						const RuleInterface* const uiRule (_game->getRuleset()->getInterface("debriefing"));
+						_game->pushState(new ErrorMessageState(
+															_error,
+															_palette,
+															uiRule->getElement("errorMessage")->color,
+															"BACK13.SCR",
+															uiRule->getElement("errorPalette")->color));
+					}
+					else
+					{
+						qtyDelta = std::min(qtyDelta,
+										   (static_cast<int>(_game->getSavedGame()->getFunds()) - _costTotal) / itRule->getBuyCost()); // NOTE: (int)cast renders int64_t useless.
+
+						const double storeSizePer (itRule->getStoreSize());
+						double allowed;
+
+						if (AreSame(storeSizePer, 0.) == false)
+							allowed = (static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() - _storeSize + 0.05) / storeSizePer;
 						else
-						{
-							qtyDelta = std::min(qtyDelta,
-											   (static_cast<int>(_game->getSavedGame()->getFunds()) - _costTotal) / itRule->getBuyCost()); // NOTE: (int)cast renders int64_t useless.
+							allowed = std::numeric_limits<double>::max();
 
-							const double storeSizePer (itRule->getStoreSize());
-							double allowed;
+						qtyDelta = std::min(qtyDelta,
+											static_cast<int>(allowed));
+						_storeSize += static_cast<double>(qtyDelta) * storeSizePer;
 
-							if (AreSame(storeSizePer, 0.) == false)
-								allowed = (static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() - _storeSize + 0.05) / storeSizePer;
-							else
-								allowed = std::numeric_limits<double>::max();
+						_qtysBuy[_sel] += qtyDelta;
+						_costTotal += itRule->getBuyCost() * qtyDelta;
 
-							qtyDelta = std::min(qtyDelta,
-												static_cast<int>(allowed));
-							_storeSize += static_cast<double>(qtyDelta) * storeSizePer;
-
-							_qtysBuy[_sel] += qtyDelta;
-							_costTotal += itRule->getBuyCost() * qtyDelta;
-
-							update();
-						}
+						update();
 					}
 				}
 			}
 		}
 	}
+//	}
 }
 
 /**
@@ -385,48 +388,48 @@ void DebriefExtraState::decrease() // private.
  */
 void DebriefExtraState::decreaseByValue(int qtyDelta) // private.
 {
-	if (qtyDelta > 0)
+//	if (qtyDelta > 0)
+//	{
+	switch (_curScreen)
 	{
-		switch (_curScreen)
+		case DES_LOOT_GAINED:
 		{
-			case DES_LOOT_GAINED:
+			if (_qtysSell[_sel] > 0)
 			{
-				if (_qtysSell[_sel] > 0)
+				const RuleItem* const itRule (getRule(_itemsGained));
+				if (itRule != nullptr) // safety.
 				{
-					const RuleItem* const itRule (getRule(_itemsGained));
-					if (itRule != nullptr) // safety.
-					{
-						qtyDelta = std::min(qtyDelta, _qtysSell[_sel]);
+					qtyDelta = std::min(qtyDelta, _qtysSell[_sel]);
 
-						_qtysSell[_sel] -= qtyDelta;
-						_costTotal -= itRule->getSellCost() * qtyDelta;
+					_qtysSell[_sel] -= qtyDelta;
+					_costTotal -= itRule->getSellCost() * qtyDelta;
 
-						update();
-					}
+					update();
 				}
-				break;
 			}
+			break;
+		}
 
-			case DES_LOOT_LOST:
+		case DES_LOOT_LOST:
+		{
+			if (_qtysBuy[_sel] > 0)
 			{
-				if (_qtysBuy[_sel] > 0)
+				const RuleItem* const itRule (getRule(_itemsLost));
+				if (itRule != nullptr) // safety.
 				{
-					const RuleItem* const itRule (getRule(_itemsLost));
-					if (itRule != nullptr) // safety.
-					{
-						qtyDelta = std::min(qtyDelta, _qtysBuy[_sel]);
+					qtyDelta = std::min(qtyDelta, _qtysBuy[_sel]);
 
-						_storeSize -= itRule->getStoreSize() * static_cast<double>(qtyDelta);
+					_storeSize -= itRule->getStoreSize() * static_cast<double>(qtyDelta);
 
-						_qtysBuy[_sel] -= qtyDelta;
-						_costTotal -= itRule->getBuyCost() * qtyDelta;
+					_qtysBuy[_sel] -= qtyDelta;
+					_costTotal -= itRule->getBuyCost() * qtyDelta;
 
-						update();
-					}
+					update();
 				}
 			}
 		}
 	}
+//	}
 }
 
 /**

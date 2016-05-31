@@ -76,7 +76,6 @@ Craft::Craft(
 		_tacticalDone(false),
 		_tactical(false),
 		_inDogfight(false),
-		_loadCur(0),
 		_warning(CW_NONE),
 		_warned(false), // do not save-to-file; ie, re-warn player if reloading
 		_kills(0),
@@ -277,8 +276,6 @@ void Craft::load(
 	_tactical	= node["tactical"]	.as<bool>(_tactical);
 	if (_tactical == true)
 		setSpeed(0);
-
-	_loadCur = getQtyEquipment() + (getQtySoldiers() + getQtyVehicles(true) * 10); // note: 10 is the 'load' that a single 'space' uses.
 }
 
 /**
@@ -610,24 +607,24 @@ int Craft::getQtyEquipment() const
 
 /**
  * Gets the quantity of Vehicles that are currently loaded onto this Craft.
- * @param quadrants - true to return tile-spaces in a transport (default false)
+ * @param tiles - true to return tile-area in a transport (default false)
  * @return, either quantity of Vehicles or tile-space used
  */
-int Craft::getQtyVehicles(bool quadrants) const
+int Craft::getQtyVehicles(bool tiles) const
 {
 	if (_crRule->getVehicles() != 0)
 	{
-		if (quadrants == true)
+		if (tiles == true)
 		{
-			int ret (0);
+			int area (0);
 			for (std::vector<Vehicle*>::const_iterator
 					i = _vehicles.begin();
 					i != _vehicles.end();
 					++i)
 			{
-				ret += (*i)->getQuads();
+				area += (*i)->getQuads();
 			}
-			return ret;
+			return area;
 		}
 		return static_cast<int>(_vehicles.size());
 	}
@@ -1148,15 +1145,6 @@ void Craft::inDogfight(bool dogfight)
 }
 
 /**
- * Sets capacity load.
- * @param load - capacity load
- */
-void Craft::setLoadCapacity(const int load)
-{
-	_loadCap = load;
-}
-
-/**
  * Gets capacity load.
  * @return, capacity load
  */
@@ -1166,22 +1154,12 @@ int Craft::getLoadCapacity() const
 }
 
 /**
- * Sets current load.
- * @param load - current load
- *
-void Craft::setLoadCurrent(const int load)
-{
-	_loadCur = load;
-} */
-
-/**
  * Gets current load.
- * @note Also recalculates '_loadCur' value.
  * @return, current load
  */
 int Craft::calcLoadCurrent()
 {
-	return (_loadCur = (getQtyEquipment() + getSpaceUsed() * 10));
+	return (getQtyEquipment() + getSpaceUsed() * 10);
 }
 
 /**
@@ -1215,7 +1193,7 @@ bool Craft::getWarned() const
  * Sets whether a CraftWarning has been issued for this Craft.
  * @param warned - true if player has been warned about low resources (default true)
  */
-void Craft::setWarned(const bool warned)
+void Craft::setWarned(bool warned)
 {
 	if ((_warned = warned) == false)
 		_warning = CW_NONE;

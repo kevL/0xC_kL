@@ -214,8 +214,7 @@ SellState::SellState(Base* const base)
 		}
 	}
 
-	val = _base->getScientists();
-	if (val != 0)
+	if ((val = _base->getScientists()) != 0)
 	{
 		_hasSci = 1u;
 		_sellQty.push_back(0);
@@ -227,8 +226,7 @@ SellState::SellState(Base* const base)
 //						Text::formatCurrency(0).c_str());
 	}
 
-	val = _base->getEngineers();
-	if (val != 0)
+	if ((val = _base->getEngineers()) != 0)
 	{
 		_hasEng = 1u;
 		_sellQty.push_back(0);
@@ -477,15 +475,15 @@ void SellState::lstLeftArrowPress(Action* action)
 
 		case SDL_BUTTON_LEFT:
 //			if (_timerInc->isRunning() == false)
-			{
-				if ((SDL_GetModState() & KMOD_CTRL) != 0)
-					changeByValue(10,1);
-				else
-					changeByValue(1,1);
+//			{
+			if ((SDL_GetModState() & KMOD_CTRL) != 0)
+				changeByValue(10,1);
+			else
+				changeByValue(1,1);
 
-				_timerInc->setInterval(Timer::SCROLL_SLOW);
-				_timerInc->start();
-			}
+			_timerInc->setInterval(Timer::SCROLL_SLOW);
+			_timerInc->start();
+//			}
 	}
 }
 
@@ -515,15 +513,15 @@ void SellState::lstRightArrowPress(Action* action)
 
 		case SDL_BUTTON_LEFT:
 //			if (_timerDec->isRunning() == false)
-			{
-				if ((SDL_GetModState() & KMOD_CTRL) != 0)
-					changeByValue(10,-1);
-				else
-					changeByValue(1,-1);
+//			{
+			if ((SDL_GetModState() & KMOD_CTRL) != 0)
+				changeByValue(10,-1);
+			else
+				changeByValue(1,-1);
 
-				_timerDec->setInterval(Timer::SCROLL_SLOW);
-				_timerDec->start();
-			}
+			_timerDec->setInterval(Timer::SCROLL_SLOW);
+			_timerDec->start();
+//			}
 	}
 }
 
@@ -613,70 +611,70 @@ void SellState::changeByValue(
 		int qtyDelta,
 		int dir)
 {
-	if (qtyDelta > 0)
+//	if (qtyDelta > 0)
+//	{
+	switch (dir)
 	{
-		switch (dir)
-		{
-			case 1:
-				if (_sellQty[_sel] >= getBaseQuantity())
-					return;
+		case 1:
+			if (_sellQty[_sel] >= getBaseQuantity())
+				return;
 
-				qtyDelta = std::min(qtyDelta,
-									getBaseQuantity() - _sellQty[_sel]);
-				break;
+			qtyDelta = std::min(qtyDelta,
+								getBaseQuantity() - _sellQty[_sel]);
+			break;
 
-			case -1:
-				if (_sellQty[_sel] < 1)
-					return;
+		case -1:
+			if (_sellQty[_sel] < 1)
+				return;
 
-				qtyDelta = std::min(qtyDelta,
-									_sellQty[_sel]);
-		}
-
-		_sellQty[_sel] += qtyDelta * dir;
-		_costTotal += getPrice() * qtyDelta * dir;
-
-		const RuleItem* itRule;
-		switch (getSellType(_sel)) // Calculate the change in storage space.
-		{
-			case PST_SOLDIER:
-				if (_soldiers[_sel]->getArmor()->isBasic() == false)
-				{
-					itRule = _game->getRuleset()->getItemRule(_soldiers[_sel]->getArmor()->getStoreItem());
-					_storeSize += static_cast<double>(dir) * itRule->getStoreSize();
-				}
-				break;
-
-			case PST_CRAFT:
-			{
-				double storesReq (0.);
-				Craft* const craft (_crafts[getCraftIndex(_sel)]);
-				for (std::vector<CraftWeapon*>::const_iterator
-						i = craft->getWeapons()->begin();
-						i != craft->getWeapons()->end();
-						++i)
-				{
-					if (*i != nullptr)
-					{
-						itRule = _game->getRuleset()->getItemRule((*i)->getRules()->getLauncherType());
-						storesReq += itRule->getStoreSize();
-
-						itRule = _game->getRuleset()->getItemRule((*i)->getRules()->getClipType());
-						if (itRule != nullptr)
-							storesReq += static_cast<double>((*i)->getClipsLoaded(_game->getRuleset())) * itRule->getStoreSize();
-					}
-				}
-				_storeSize += static_cast<double>(dir) * storesReq;
-				break;
-			}
-
-			case PST_ITEM:
-				itRule = _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]);
-				_storeSize -= static_cast<double>(dir * qtyDelta) * itRule->getStoreSize();
-		}
-
-		update();
+			qtyDelta = std::min(qtyDelta,
+								_sellQty[_sel]);
 	}
+
+	_sellQty[_sel] += qtyDelta * dir;
+	_costTotal += getPrice() * qtyDelta * dir;
+
+	const RuleItem* itRule;
+	switch (getSellType(_sel)) // Calculate the change in storage space.
+	{
+		case PST_SOLDIER:
+			if (_soldiers[_sel]->getArmor()->isBasic() == false)
+			{
+				itRule = _game->getRuleset()->getItemRule(_soldiers[_sel]->getArmor()->getStoreItem());
+				_storeSize += static_cast<double>(dir) * itRule->getStoreSize();
+			}
+			break;
+
+		case PST_CRAFT:
+		{
+			double storesReq (0.);
+			Craft* const craft (_crafts[getCraftIndex(_sel)]);
+			for (std::vector<CraftWeapon*>::const_iterator
+					i = craft->getWeapons()->begin();
+					i != craft->getWeapons()->end();
+					++i)
+			{
+				if (*i != nullptr)
+				{
+					itRule = _game->getRuleset()->getItemRule((*i)->getRules()->getLauncherType());
+					storesReq += itRule->getStoreSize();
+
+					itRule = _game->getRuleset()->getItemRule((*i)->getRules()->getClipType());
+					if (itRule != nullptr)
+						storesReq += static_cast<double>((*i)->getClipsLoaded(_game->getRuleset())) * itRule->getStoreSize();
+				}
+			}
+			_storeSize += static_cast<double>(dir) * storesReq;
+			break;
+		}
+
+		case PST_ITEM:
+			itRule = _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]);
+			_storeSize -= static_cast<double>(dir * qtyDelta) * itRule->getStoreSize();
+	}
+
+	update();
+//	}
 }
 
 /**
