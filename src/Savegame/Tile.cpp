@@ -1038,9 +1038,9 @@ bool Tile::allowFire() const // private.
  * smoke/fire spreads to them; this is so that units would have to end their
  * turn on a tile before smoke/fire damages them. That is they get a chance to
  * get off the tile during their turn.
- * @param battleSave - pointer to the current SavedBattleGame (default nullptr= hits units)
+ * @param battleSave - pointer to the current SavedBattleGame (default nullptr hits units)
  */
-void Tile::hitTileInventory(SavedBattleGame* const battleSave)
+void Tile::hitTileContent(SavedBattleGame* const battleSave)
 {
 	int
 		powerSmoke,

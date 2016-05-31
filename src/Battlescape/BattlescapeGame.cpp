@@ -1437,7 +1437,7 @@ void BattlescapeGame::endTurn() // private.
 
 //	if (_endTurnProcessed == false)
 //	{
-	for (size_t // check for hot grenades on the ground
+	for (size_t // check for hot potatos on the ground
 			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
@@ -1525,7 +1525,7 @@ void BattlescapeGame::endTurn() // private.
 			if ((tile = (*i)->getTile()) != nullptr
 				&& (tile->getSmoke() != 0 || tile->getFire() != 0))
 			{
-				tile->hitTileInventory(); // Damage tile's unit w/ Smoke & Fire at end of unit's faction's Turn-phase.
+				tile->hitTileContent(); // hit the tile's unit w/ Smoke & Fire at end of unit's faction's Turn-phase.
 			}
 		}
 	}
@@ -1542,7 +1542,7 @@ void BattlescapeGame::endTurn() // private.
 			if (tile->getInventory()->empty() == false
 				&& (tile->getSmoke() != 0 || tile->getFire() != 0))
 			{
-				tile->hitTileInventory(_battleSave); // Damage tile's items w/ Fire at beginning of each full-turn.
+				tile->hitTileContent(_battleSave); // hit the tile's inventory w/ Fire at beginning of each full-turn.
 			}
 		}
 
