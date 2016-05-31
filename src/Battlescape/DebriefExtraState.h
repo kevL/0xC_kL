@@ -68,9 +68,6 @@ private:
 
 	std::wstring _error;
 
-	std::vector<std::string>
-		_typesGained,
-		_typesLost;
 	std::vector<int>
 		_qtysBuy,
 		_qtysSell;
@@ -116,6 +113,9 @@ private:
 
 	/// Updates the buy/sell quantities.
 	void update();
+
+	/// Gets the rule for the currently selected item.
+	const RuleItem* getRule(const std::map<const RuleItem*, int>& list) const;
 
 	/// Runs the timers.
 	void think() override;

@@ -288,20 +288,7 @@ void DebriefExtraState::increaseByValue(int qtyDelta) // private.
 		{
 			case DES_LOOT_GAINED:
 			{
-				const RuleItem* itRule (nullptr);
-				size_t j (0u);
-				for (std::map<const RuleItem*, int>::const_iterator
-						i = _itemsGained.begin();
-						i != _itemsGained.end();
-						++i, ++j)
-				{
-					if (j == _sel)
-					{
-						itRule = i->first;
-						break;
-					}
-				}
-
+				const RuleItem* const itRule (getRule(_itemsGained));
 				if (itRule != nullptr && itRule->getSellCost() != 0
 					&& _qtysSell[_sel] < _itemsGained[itRule])
 				{
@@ -322,20 +309,7 @@ void DebriefExtraState::increaseByValue(int qtyDelta) // private.
 					_error.clear();
 				else
 				{
-					const RuleItem* itRule (nullptr);
-					size_t j (0u);
-					for (std::map<const RuleItem*, int>::const_iterator
-							i = _itemsLost.begin();
-							i != _itemsLost.end();
-							++i, ++j)
-					{
-						if (j == _sel)
-						{
-							itRule = i->first;
-							break;
-						}
-					}
-
+					const RuleItem* const itRule (getRule(_itemsLost));
 					if (itRule != nullptr && itRule->getBuyCost() != 0)
 					{
 						if (_costTotal + itRule->getBuyCost() > _game->getSavedGame()->getFunds())
@@ -414,20 +388,7 @@ void DebriefExtraState::decreaseByValue(int qtyDelta) // private.
 			{
 				if (_qtysSell[_sel] > 0)
 				{
-					const RuleItem* itRule (nullptr);
-					size_t j (0u);
-					for (std::map<const RuleItem*, int>::const_iterator
-							i = _itemsGained.begin();
-							i != _itemsGained.end();
-							++i, ++j)
-					{
-						if (j == _sel)
-						{
-							itRule = i->first;
-							break;
-						}
-					}
-
+					const RuleItem* const itRule (getRule(_itemsGained));
 					if (itRule != nullptr) // safety.
 					{
 						qtyDelta = std::min(qtyDelta, _qtysSell[_sel]);
@@ -445,20 +406,7 @@ void DebriefExtraState::decreaseByValue(int qtyDelta) // private.
 			{
 				if (_qtysBuy[_sel] > 0)
 				{
-					const RuleItem* itRule (nullptr);
-					size_t j (0u);
-					for (std::map<const RuleItem*, int>::const_iterator
-							i = _itemsLost.begin();
-							i != _itemsLost.end();
-							++i, ++j)
-					{
-						if (j == _sel)
-						{
-							itRule = i->first;
-							break;
-						}
-					}
-
+					const RuleItem* const itRule (getRule(_itemsLost));
 					if (itRule != nullptr) // safety.
 					{
 						qtyDelta = std::min(qtyDelta, _qtysBuy[_sel]);
@@ -490,6 +438,24 @@ void DebriefExtraState::update() // private.
 		case DES_LOOT_LOST:
 			_lstLost->setCellText(_sel, 2u, Text::intWide(_qtysBuy[_sel]));
 	}
+}
+
+/**
+ * Gets the rule for the currently selected item.
+ * @param list - reference to the list for the current screen
+ * @return, pointer to the RuleItem for the selected row
+ */
+const RuleItem* DebriefExtraState::getRule(const std::map<const RuleItem*, int>& list) const // private.
+{
+	size_t j (0u);
+	for (std::map<const RuleItem*, int>::const_iterator
+			i = list.begin();
+			i != list.end();
+			++i, ++j)
+	{
+		if (j == _sel) return i->first;
+	}
+	return nullptr;
 }
 
 /**
@@ -607,15 +573,9 @@ void DebriefExtraState::styleList( // private.
 		type = i->first->getType();
 
 		if (list == _lstGained)
-		{
-			_typesGained.push_back(type);
 			_qtysSell.push_back(0);
-		}
 		else
-		{
-			_typesLost.push_back(type);
 			_qtysBuy.push_back(0);
-		}
 
 
 		wst1 = tr(type);

@@ -1877,7 +1877,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 							itRule->getRecoveryPoints());
 					}
 
-					switch (bType) // put items back in the Base
+					switch (bType) // shuttle all times instantly to the Base
 					{
 						case BT_CORPSE:
 						{
