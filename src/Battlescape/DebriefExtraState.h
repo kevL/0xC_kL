@@ -35,6 +35,7 @@ class RuleItem;
 class Text;
 class TextButton;
 class TextList;
+class Timer;
 class Window;
 
 
@@ -55,26 +56,69 @@ private:
 	} _curScreen;
 
 	static const Uint8
-		YELLOW	= 138,
-		BROWN	= 143,
-		GRAY	= 159,
-		GREEN	= 239;
+		YELLOW	= 138u,
+		BROWN	= 143u,
+		GRAY	= 159u,
+		GREEN	= 239u;
+
+	int _costTotal;
+	size_t _sel;
+
+	double _storeSize;
+
+	std::wstring _error;
+
+	std::vector<std::string>
+		_typesGained,
+		_typesLost;
+	std::vector<int>
+		_qtysBuy,
+		_qtysSell;
 
 	std::map<const RuleItem*, int>
 		_itemsGained,
 		_itemsLost;
-	std::map<std::wstring, std::vector<int>> _soldierStatInc;
+	std::map<std::wstring, std::vector<int>> _solStatDeltas;
 
 	Text
 		* _txtBaseLabel,
-		* _txtGainLoss,
+		* _txtScreen,
 		* _txtTitle;
 	TextButton* _btnOk;
 	TextList
 		* _lstLost,
 		* _lstGained,
 		* _lstSolStats;
+	Timer
+		* _timerDec,
+		* _timerInc;
 	Window* _window;
+
+	Base* _base;
+
+	/// Handler for pressing an increase-arrow in the list.
+	void lstLeftArrowPress(Action* action);
+	/// Handler for releasing an increase-arrow in the list.
+	void lstLeftArrowRelease(Action* action);
+	/// Handler for pressing a decrease-arrow in the list.
+	void lstRightArrowPress(Action* action);
+	/// Handler for releasing a decrease-arrow in the list.
+	void lstRightArrowRelease(Action* action);
+
+	/// Increases the quantity of an item by one.
+	void increase();
+	/// Increases the quantity of an item by the given value.
+	void increaseByValue(int qtyDelta);
+	/// Decreases the quantity of an item by one.
+	void decrease();
+	/// Decreases the quantity of an item by the given value.
+	void decreaseByValue(int qtyDelta);
+
+	/// Updates the buy/sell quantities.
+	void update();
+
+	/// Runs the timers.
+	void think() override;
 
 	/// Builds the soldier-stat-changes screen.
 	void buildSoldierStats();
@@ -88,11 +132,11 @@ private:
 	public:
 		/// Creates a DebriefExtra state.
 		DebriefExtraState(
-				const Base* const base,
+				Base* const base,
 				std::wstring operation,
 				std::map<const RuleItem*, int> itemsLost,
 				std::map<const RuleItem*, int> itemsGained,
-				std::map<std::wstring, std::vector<int>> soldierStatInc);
+				std::map<std::wstring, std::vector<int>> solStatDeltas);
 		/// Cleans up the DebriefExtra state.
 		~DebriefExtraState();
 

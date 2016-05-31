@@ -154,23 +154,26 @@ PurchaseState::PurchaseState(Base* const base)
 	_txtStorage->setColor(WHITE);
 
 	_txtCost->setText(tr("STR_COST_PER_UNIT_UC"));
-
 	_txtQuantity->setText(tr("STR_QUANTITY_UC"));
 
-	_lstItems->setArrowColumn(227, ARROW_VERTICAL);
 	_lstItems->setColumns(4, 142,55,46,32);
 	_lstItems->setSelectable();
 	_lstItems->setBackground(_window);
+	_lstItems->setArrowColumn(227, ARROW_VERTICAL);
+
+	_lstItems->onLeftArrowPress(	(ActionHandler)& PurchaseState::lstLeftArrowPress);
+	_lstItems->onLeftArrowRelease(	(ActionHandler)& PurchaseState::lstLeftArrowRelease);
+	_lstItems->onLeftArrowClick(	(ActionHandler)& PurchaseState::lstLeftArrowClick);
+
+	_lstItems->onRightArrowPress(	(ActionHandler)& PurchaseState::lstRightArrowPress);
+	_lstItems->onRightArrowRelease(	(ActionHandler)& PurchaseState::lstRightArrowRelease);
+	_lstItems->onRightArrowClick(	(ActionHandler)& PurchaseState::lstRightArrowClick);
+
 //	_lstItems->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);
-//	_lstItems->onMousePress((ActionHandler)& PurchaseState::lstItemsMousePress); // mousewheel
-	_lstItems->onLeftArrowPress((ActionHandler)& PurchaseState::lstItemsLeftArrowPress);
-	_lstItems->onLeftArrowRelease((ActionHandler)& PurchaseState::lstItemsLeftArrowRelease);
-	_lstItems->onLeftArrowClick((ActionHandler)& PurchaseState::lstItemsLeftArrowClick);
-	_lstItems->onRightArrowPress((ActionHandler)& PurchaseState::lstItemsRightArrowPress);
-	_lstItems->onRightArrowRelease((ActionHandler)& PurchaseState::lstItemsRightArrowRelease);
-	_lstItems->onRightArrowClick((ActionHandler)& PurchaseState::lstItemsRightArrowClick);
+//	_lstItems->onMousePress((ActionHandler)& PurchaseState::lstMousePress); // mousewheel
 
 
+	// Add soldier-types to purchase-list.
 	const RuleSoldier* solRule;
 	const std::vector<std::string>& soldierTypes (rules->getSoldiersList());
 	for (std::vector<std::string>::const_iterator
@@ -210,7 +213,7 @@ PurchaseState::PurchaseState(Base* const base)
 				L"0");
 
 
-	// Add craft-types to purchase list.
+	// Add craft-types to purchase-list.
 	const RuleCraft* crfRule;
 	const std::vector<std::string>& craftList (rules->getCraftsList());
 	for (std::vector<std::string>::const_iterator
@@ -248,7 +251,7 @@ PurchaseState::PurchaseState(Base* const base)
 		baseQty,
 		clip;
 
-	// Add craft Weapon-types to purchase list.
+	// Add craft-weapon-types to purchase-list.
 	const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
 	for (std::vector<std::string>::const_iterator
 			i = cwList.begin();
@@ -302,7 +305,7 @@ PurchaseState::PurchaseState(Base* const base)
 			}
 		}
 
-		// Handle craft weapon ammo.
+		// Add craft-weapon-load-types to purchase-list.
 		clRule = rules->getItemRule(cwRule->getClipType());
 		type = clRule->getType();
 
@@ -353,7 +356,8 @@ PurchaseState::PurchaseState(Base* const base)
 	}
 
 
-	for (std::vector<std::string>::const_iterator // add items to purchase list.
+	// Add items to purchase-list.
+	for (std::vector<std::string>::const_iterator
 			i = purchaseList.begin();
 			i != purchaseList.end();
 			++i)
@@ -379,7 +383,7 @@ PurchaseState::PurchaseState(Base* const base)
 					baseQty += (*j)->getQuantity();
 			}
 
-			for (std::vector<Craft*>::const_iterator // add craft items & vehicles & vehicle ammo
+			for (std::vector<Craft*>::const_iterator // add craft items & vehicles & vehicle-loads
 					j = _base->getCrafts()->begin();
 					j != _base->getCrafts()->end();
 					++j)
@@ -396,7 +400,7 @@ PurchaseState::PurchaseState(Base* const base)
 					}
 				}
 
-				if ((*j)->getRules()->getVehicles() != 0) // is transport craft capable of vehicles
+				if ((*j)->getRules()->getVehicles() != 0) // is transport-craft capable of vehicles
 				{
 					for (std::vector<Vehicle*>::const_iterator
 							k = (*j)->getVehicles()->begin();
@@ -417,9 +421,9 @@ PurchaseState::PurchaseState(Base* const base)
 			item = tr(*i);
 
 			bool doColor (false);
-			if (itRule->getBattleType() == BT_AMMO)			// weapon clips & HWP rounds
-//					|| (itRule->getBattleType() == BT_NONE	// craft weapon rounds - ^HANDLED ABOVE^^
-//						&& itRule->getClipSize() != 0))
+			if (itRule->getBattleType() == BT_AMMO)		// weapon clips & HWP rounds
+//				|| (itRule->getBattleType() == BT_NONE	// craft weapon rounds - ^HANDLED ABOVE^^
+//					&& itRule->getClipSize() != 0))
 			{
 				doColor = true;
 				item.insert(0u, L"  ");
@@ -580,7 +584,7 @@ void PurchaseState::btnCancelClick(Action*)
  * Starts increasing the item.
  * @param action - pointer to an Action
  */
-void PurchaseState::lstItemsLeftArrowPress(Action* action)
+void PurchaseState::lstLeftArrowPress(Action* action)
 {
 	_sel = _lstItems->getSelectedRow();
 
@@ -595,7 +599,7 @@ void PurchaseState::lstItemsLeftArrowPress(Action* action)
  * Stops increasing the item.
  * @param action - pointer to an Action
  */
-void PurchaseState::lstItemsLeftArrowRelease(Action* action)
+void PurchaseState::lstLeftArrowRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerInc->stop();
@@ -605,7 +609,7 @@ void PurchaseState::lstItemsLeftArrowRelease(Action* action)
  * Increases the item by one on left-click - to max on right-click.
  * @param action - pointer to an Action
  */
-void PurchaseState::lstItemsLeftArrowClick(Action* action)
+void PurchaseState::lstLeftArrowClick(Action* action)
 {
 	switch (action->getDetails()->button.button)
 	{
@@ -628,7 +632,7 @@ void PurchaseState::lstItemsLeftArrowClick(Action* action)
  * Starts decreasing the item.
  * @param action - pointer to an Action
  */
-void PurchaseState::lstItemsRightArrowPress(Action* action)
+void PurchaseState::lstRightArrowPress(Action* action)
 {
 	_sel = _lstItems->getSelectedRow();
 
@@ -643,7 +647,7 @@ void PurchaseState::lstItemsRightArrowPress(Action* action)
  * Stops decreasing the item.
  * @param action - pointer to an Action
  */
-void PurchaseState::lstItemsRightArrowRelease(Action* action)
+void PurchaseState::lstRightArrowRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerDec->stop();
@@ -653,7 +657,7 @@ void PurchaseState::lstItemsRightArrowRelease(Action* action)
  * Decreases the item by one on left-click - to 0 on right-click.
  * @param action - pointer to an Action
  */
-void PurchaseState::lstItemsRightArrowClick(Action* action)
+void PurchaseState::lstRightArrowClick(Action* action)
 {
 	switch (action->getDetails()->button.button)
 	{
@@ -684,10 +688,10 @@ int PurchaseState::getPrice() // private.
 			return _game->getRuleset()->getSoldier(_soldiers[_sel])->getBuyCost();
 
 		case PST_SCIENTIST:
-			return _game->getRuleset()->getScientistCost() * 2;
+			return _game->getRuleset()->getScientistCost() << 1u;
 
 		case PST_ENGINEER:
-			return _game->getRuleset()->getEngineerCost() * 2;
+			return _game->getRuleset()->getEngineerCost() << 1u;
 
 		case PST_CRAFT:
 			return _game->getRuleset()->getCraft(_crafts[getCraftIndex(_sel)])->getBuyCost();
@@ -763,7 +767,7 @@ void PurchaseState::increaseByValue(int qtyDelta)
 	else
 	{
 		qtyDelta = std::min(qtyDelta,
-						   (static_cast<int>(_game->getSavedGame()->getFunds()) - _costTotal) / getPrice()); // note: (int)cast renders int64_t useless.
+						   (static_cast<int>(_game->getSavedGame()->getFunds()) - _costTotal) / getPrice()); // NOTE: (int)cast renders int64_t useless.
 
 		switch (getPurchaseType(_sel))
 		{
@@ -783,17 +787,17 @@ void PurchaseState::increaseByValue(int qtyDelta)
 
 			case PST_ITEM:
 			{
-				const double storesPerItem (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize());
-				double qtyAllowed;
+				const double storeSizePer (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize());
+				double allowed;
 
-				if (AreSame(storesPerItem, 0.) == false)
-					qtyAllowed = (static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() - _storeSize + 0.05) / storesPerItem;
+				if (AreSame(storeSizePer, 0.) == false)
+					allowed = (static_cast<double>(_base->getTotalStores()) - _base->getUsedStores() - _storeSize + 0.05) / storeSizePer;
 				else
-					qtyAllowed = std::numeric_limits<double>::max();
+					allowed = std::numeric_limits<double>::max();
 
 				qtyDelta = std::min(qtyDelta,
-									static_cast<int>(qtyAllowed));
-				_storeSize += static_cast<double>(qtyDelta) * storesPerItem;
+									static_cast<int>(allowed));
+				_storeSize += static_cast<double>(qtyDelta) * storeSizePer;
 			}
 		}
 
@@ -941,7 +945,7 @@ size_t PurchaseState::getCraftIndex(size_t sel) const // private.
  * Handles the mouse-wheels on the arrow-buttons.
  * @param action - pointer to an Action
  *
-void PurchaseState::lstItemsMousePress(Action* action)
+void PurchaseState::lstMousePress(Action* action)
 {
 	if (Options::changeValueByMouseWheel < 1)
 		return;

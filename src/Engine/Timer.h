@@ -55,39 +55,39 @@ private:
 	public:
 		static Uint32 coreInterval;
 		static const Uint32
-			SCROLL_SLOW = 250,
-			SCROLL_FAST =  80;
+			SCROLL_SLOW = 250u,
+			SCROLL_FAST =  80u;
 
-		/// Creates a stopped timer.
+		/// Creates a stopped Timer.
 		Timer(Uint32 interval);
-		/// Cleans up the timer.
+		/// Cleans up the Timer.
 		~Timer();
 
-		/// Starts the timer.
+		/// Starts the Timer.
 		void start();
-		/// Stops the timer.
+		/// Stops the Timer.
 		void stop();
 
 		/// Gets the current time interval.
 		Uint32 getTimerElapsed() const;
 
-		/// Gets if the timer is running.
+		/// Gets if the Timer is running.
 		bool isRunning() const;
 
-		/// Advances the timer.
+		/// Advances the Timer.
 		void think(
 				State* const state,
 				Surface* const surface);
 
-		/// Sets the timer's interval.
+		/// Sets the Timer's interval.
 		void setInterval(Uint32 interval);
 
-		/// Hooks a state action handler to the timer interval.
+		/// Hooks a state action handler to the Timer interval.
 		void onTimer(StateHandler handler);
-		/// Hooks a surface action handler to the timer interval.
+		/// Hooks a surface action handler to the Timer interval.
 		void onTimer(SurfaceHandler handler);
 
-		/// Debugs.
+		/// Debugs the Timer.
 		void debug(const std::string& info);
 };
 

@@ -254,18 +254,18 @@ private:
 				int pos,
 				ArrowOrientation type);
 
-		/// Hooks an action handler to a mouse-click on the left arrows.
-		void onLeftArrowClick(ActionHandler handler);
 		/// Hooks an action handler to a mouse-press over the left arrows.
 		void onLeftArrowPress(ActionHandler handler);
 		/// Hooks an action handler to a mouse-release over the left arrows.
 		void onLeftArrowRelease(ActionHandler handler);
-		/// Hooks an action handler to a mouse-click on the right arrows.
-		void onRightArrowClick(ActionHandler handler);
+		/// Hooks an action handler to a mouse-click on the left arrows.
+		void onLeftArrowClick(ActionHandler handler);
 		/// Hooks an action handler to a mouse-press over the right arrows.
 		void onRightArrowPress(ActionHandler handler);
 		/// Hooks an action handler to a mouse-release over the right arrows.
 		void onRightArrowRelease(ActionHandler handler);
+		/// Hooks an action handler to a mouse-click on the right arrows.
+		void onRightArrowClick(ActionHandler handler);
 
 		/// Clears the TextList.
 		void clearList();

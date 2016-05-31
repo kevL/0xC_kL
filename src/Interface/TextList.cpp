@@ -881,7 +881,7 @@ void TextList::setArrowColor(Uint8 color)
 
 /**
  * Sets the position of the column of arrow-buttons in the TextList.
- * @param pos	- X in pixels (-1 to disable)
+ * @param pos	- x-position in pixels (-1 to disable)
  * @param type	- arrow orientation type
  */
 void TextList::setArrowColumn(
@@ -895,22 +895,8 @@ void TextList::setArrowColumn(
 }
 
 /**
- * Sets a function to be called every time the left arrows are mouse clicked.
- * @param handler - action handler
- */
-void TextList::onLeftArrowClick(ActionHandler handler)
-{
-	_leftClick = handler;
-	for (std::vector<ArrowButton*>::const_iterator
-			i = _arrowLeft.begin();
-			i != _arrowLeft.end();
-			++i)
-		(*i)->onMouseClick(handler, 0u);
-}
-
-/**
- * Sets a function to be called every time the left arrows are mouse pressed.
- * @param handler - action handler
+ * Sets a function to be called every time the left-arrows are mouse-pressed.
+ * @param handler - ActionHandler
  */
 void TextList::onLeftArrowPress(ActionHandler handler)
 {
@@ -923,8 +909,8 @@ void TextList::onLeftArrowPress(ActionHandler handler)
 }
 
 /**
- * Sets a function to be called every time the left arrows are mouse released.
- * @param handler - action handler
+ * Sets a function to be called every time the left-arrows are mouse-released.
+ * @param handler - ActionHandler
  */
 void TextList::onLeftArrowRelease(ActionHandler handler)
 {
@@ -937,22 +923,22 @@ void TextList::onLeftArrowRelease(ActionHandler handler)
 }
 
 /**
- * Sets a function to be called every time the right arrows are mouse clicked.
- * @param handler - action handler
+ * Sets a function to be called every time the left-arrows are mouse-clicked.
+ * @param handler - ActionHandler
  */
-void TextList::onRightArrowClick(ActionHandler handler)
+void TextList::onLeftArrowClick(ActionHandler handler)
 {
-	_rightClick = handler;
+	_leftClick = handler;
 	for (std::vector<ArrowButton*>::const_iterator
-			i = _arrowRight.begin();
-			i != _arrowRight.end();
+			i = _arrowLeft.begin();
+			i != _arrowLeft.end();
 			++i)
 		(*i)->onMouseClick(handler, 0u);
 }
 
 /**
- * Sets a function to be called every time the right arrows are mouse pressed.
- * @param handler - action handler
+ * Sets a function to be called every time the right-arrows are mouse-pressed.
+ * @param handler - ActionHandler
  */
 void TextList::onRightArrowPress(ActionHandler handler)
 {
@@ -965,8 +951,8 @@ void TextList::onRightArrowPress(ActionHandler handler)
 }
 
 /**
- * Sets a function to be called every time the right arrows are mouse released.
- * @param handler - action handler
+ * Sets a function to be called every time the right-arrows are mouse-released.
+ * @param handler - ActionHandler
  */
 void TextList::onRightArrowRelease(ActionHandler handler)
 {
@@ -976,6 +962,20 @@ void TextList::onRightArrowRelease(ActionHandler handler)
 			i != _arrowRight.end();
 			++i)
 		(*i)->onMouseRelease(handler);
+}
+
+/**
+ * Sets a function to be called every time the right-arrows are mouse-clicked.
+ * @param handler - ActionHandler
+ */
+void TextList::onRightArrowClick(ActionHandler handler)
+{
+	_rightClick = handler;
+	for (std::vector<ArrowButton*>::const_iterator
+			i = _arrowRight.begin();
+			i != _arrowRight.end();
+			++i)
+		(*i)->onMouseClick(handler, 0u);
 }
 
 /**
@@ -1188,12 +1188,11 @@ void TextList::draw()
 void TextList::blit(const Surface* const srf)
 {
 	if (_visible == true && _hidden == false)
+	{
 		_selector->blit(srf);
 
-	Surface::blit(srf);
+		Surface::blit(srf); // NOTE: Also checks visible and hidden vars (redundant).
 
-	if (_visible == true && _hidden == false)
-	{
 		if (_arrowPos != -1 && _rows.empty() == false)
 		{
 			int y (getY());
@@ -1240,39 +1239,42 @@ void TextList::blit(const Surface* const srf)
  */
 void TextList::handle(Action* action, State* state)
 {
-	InteractiveSurface::handle(action, state);
-
-	_up->handle(action, state);
-	_down->handle(action, state);
-	_scrollbar->handle(action, state);
-
-	if (_arrowPos != -1 && _rows.empty() == false)
+	if (_visible == true && _hidden == false)
 	{
-		size_t startId (_rows[_scroll]);
-		if (_scroll > 0u && _rows[_scroll] == _rows[_scroll - 1u])
-			++startId; // arrows for first partly-visible line of text are offscreen - so don't process them
+		InteractiveSurface::handle(action, state); // NOTE: Also checks visible and hidden vars (redundant).
 
-		size_t
-			endId (_rows[_scroll] + 1u),
-			endRow (std::min(_rows.size(),
-							 _scroll + _visibleRows));
+		_up->handle(action, state);
+		_down->handle(action, state);
+		_scrollbar->handle(action, state);
 
-		for (size_t
-				i = _scroll + 1u;
-				i != endRow;
-				++i)
+		if (_arrowPos != -1 && _rows.empty() == false)
 		{
-			if (_rows[i] != _rows[i - 1u])
-				++endId;
-		}
+			size_t startId (_rows[_scroll]);
+			if (_scroll > 0u && _rows[_scroll] == _rows[_scroll - 1u])
+				++startId; // arrows for first partly-visible line of text are offscreen - so don't process them
 
-		for (size_t
-				i = startId;
-				i != endId;
-				++i)
-		{
-			_arrowLeft[i]->handle(action, state);
-			_arrowRight[i]->handle(action, state);
+			size_t
+				endId (_rows[_scroll] + 1u),
+				endRow (std::min(_rows.size(),
+								 _scroll + _visibleRows));
+
+			for (size_t
+					i = _scroll + 1u;
+					i != endRow;
+					++i)
+			{
+				if (_rows[i] != _rows[i - 1u])
+					++endId;
+			}
+
+			for (size_t
+					i = startId;
+					i != endId;
+					++i)
+			{
+				_arrowLeft[i]->handle(action, state);
+				_arrowRight[i]->handle(action, state);
+			}
 		}
 	}
 }

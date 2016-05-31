@@ -125,18 +125,19 @@ private:
 			/// Processes a keyboard-release event.
 			virtual void keyboardRelease(Action* action, State* state);
 
+			/// Hooks an ActionHandler to a mouse-press on the Surface.
+			void onMousePress(
+					ActionHandler handler,
+					Uint8 btn = 0u);
+			/// Hooks an ActionHandler to a mouse-release on the Surface.
+			void onMouseRelease(
+					ActionHandler handler,
+					Uint8 btn = 0u);
 			/// Hooks an ActionHandler to a mouse-click on the Surface.
 			void onMouseClick(
 					ActionHandler handler,
 					Uint8 btn = SDL_BUTTON_LEFT);
-			/// Hooks an ActionHandler to a mouse-press over the Surface.
-			void onMousePress(
-					ActionHandler handler,
-					Uint8 btn = 0u);
-			/// Hooks an ActionHandler to a mouse-release over the Surface.
-			void onMouseRelease(
-					ActionHandler handler,
-					Uint8 btn = 0u);
+
 			/// Hooks an ActionHandler to moving the mouse into the Surface.
 			void onMouseIn(ActionHandler handler);
 			/// Hooks an ActionHandler to moving the mouse over the Surface.

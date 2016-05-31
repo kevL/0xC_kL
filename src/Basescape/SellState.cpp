@@ -68,10 +68,10 @@ SellState::SellState(Base* const base)
 	:
 		_base(base),
 //		_origin(origin),
-		_sel(0),
+		_sel(0u),
 		_totalCost(0),
-		_hasSci(0),
-		_hasEng(0),
+		_hasSci(0u),
+		_hasEng(0u),
 		_storeSize(0.)
 {
 	_window			= new Window(this, 320, 200);
@@ -157,18 +157,22 @@ SellState::SellState(Base* const base)
 	_txtSell->setText(tr("STR_SELL_SACK"));
 	_txtValue->setText(tr("STR_VALUE"));
 
-	_lstItems->setBackground(_window);
-	_lstItems->setArrowColumn(182, ARROW_VERTICAL);
 	_lstItems->setColumns(4, 142,60,22,53);
+	_lstItems->setBackground(_window);
 	_lstItems->setSelectable();
+	_lstItems->setArrowColumn(182, ARROW_VERTICAL);
+
+	_lstItems->onLeftArrowPress(	(ActionHandler)& SellState::lstLeftArrowPress);
+	_lstItems->onLeftArrowRelease(	(ActionHandler)& SellState::lstLeftArrowRelease);
+	_lstItems->onLeftArrowClick(	(ActionHandler)& SellState::lstLeftArrowClick);
+
+	_lstItems->onRightArrowPress(	(ActionHandler)& SellState::lstRightArrowPress);
+	_lstItems->onRightArrowRelease(	(ActionHandler)& SellState::lstRightArrowRelease);
+	_lstItems->onRightArrowClick(	(ActionHandler)& SellState::lstRightArrowClick);
+
 //	_lstItems->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);
-//	_lstItems->onMousePress((ActionHandler)& SellState::lstItemsMousePress);
-	_lstItems->onLeftArrowPress((ActionHandler)& SellState::lstItemsLeftArrowPress);
-	_lstItems->onLeftArrowRelease((ActionHandler)& SellState::lstItemsLeftArrowRelease);
-	_lstItems->onLeftArrowClick((ActionHandler)& SellState::lstItemsLeftArrowClick);
-	_lstItems->onRightArrowPress((ActionHandler)& SellState::lstItemsRightArrowPress);
-	_lstItems->onRightArrowRelease((ActionHandler)& SellState::lstItemsRightArrowRelease);
-	_lstItems->onRightArrowClick((ActionHandler)& SellState::lstItemsRightArrowClick);
+//	_lstItems->onMousePress((ActionHandler)& SellState::lstMousePress);
+
 
 	for (std::vector<Soldier*>::const_iterator
 			i = _base->getSoldiers()->begin();
@@ -215,7 +219,7 @@ SellState::SellState(Base* const base)
 	val = _base->getScientists();
 	if (val != 0)
 	{
-		_hasSci = 1;
+		_hasSci = 1u;
 		_sellQty.push_back(0);
 		_lstItems->addRow(
 						4,
@@ -228,7 +232,7 @@ SellState::SellState(Base* const base)
 	val = _base->getEngineers();
 	if (val != 0)
 	{
-		_hasEng = 1;
+		_hasEng = 1u;
 		_sellQty.push_back(0);
 		_lstItems->addRow(
 						4,
@@ -383,7 +387,7 @@ void SellState::btnOkClick(Action*)
 	}
 
 	for (size_t
-			sel = 0;
+			sel = 0u;
 			sel != _sellQty.size();
 			++sel)
 	{
@@ -463,7 +467,7 @@ void SellState::btnCancelClick(Action*)
  * Starts increasing the item.
  * @param action - pointer to an Action
  */
-void SellState::lstItemsLeftArrowPress(Action* action)
+void SellState::lstLeftArrowPress(Action* action)
 {
 	_sel = _lstItems->getSelectedRow();
 
@@ -478,7 +482,7 @@ void SellState::lstItemsLeftArrowPress(Action* action)
  * Stops increasing the item.
  * @param action - pointer to an Action
  */
-void SellState::lstItemsLeftArrowRelease(Action* action)
+void SellState::lstLeftArrowRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerInc->stop();
@@ -488,19 +492,22 @@ void SellState::lstItemsLeftArrowRelease(Action* action)
  * Increases the selected item; by one on left-click, to max on right-click.
  * @param action - pointer to an Action
  */
-void SellState::lstItemsLeftArrowClick(Action* action)
+void SellState::lstLeftArrowClick(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		changeByValue(std::numeric_limits<int>::max(), 1);
-	else if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		if ((SDL_GetModState() & KMOD_CTRL) != 0)
-			changeByValue(10,1);
-		else
-			changeByValue(1,1);
+		case SDL_BUTTON_RIGHT:
+			changeByValue(std::numeric_limits<int>::max(), 1);
+			break;
 
-		_timerInc->setInterval(Timer::SCROLL_SLOW);
-		_timerDec->setInterval(Timer::SCROLL_SLOW);
+		case SDL_BUTTON_LEFT:
+			if ((SDL_GetModState() & KMOD_CTRL) != 0)
+				changeByValue(10,1);
+			else
+				changeByValue(1,1);
+
+			_timerInc->setInterval(Timer::SCROLL_SLOW);
+			_timerDec->setInterval(Timer::SCROLL_SLOW);
 	}
 }
 
@@ -508,7 +515,7 @@ void SellState::lstItemsLeftArrowClick(Action* action)
  * Starts decreasing the item.
  * @param action - pointer to an Action
  */
-void SellState::lstItemsRightArrowPress(Action* action)
+void SellState::lstRightArrowPress(Action* action)
 {
 	_sel = _lstItems->getSelectedRow();
 
@@ -523,7 +530,7 @@ void SellState::lstItemsRightArrowPress(Action* action)
  * Stops decreasing the item.
  * @param action - pointer to an Action
  */
-void SellState::lstItemsRightArrowRelease(Action* action)
+void SellState::lstRightArrowRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerDec->stop();
@@ -533,19 +540,22 @@ void SellState::lstItemsRightArrowRelease(Action* action)
  * Decreases the selected item; by one on left-click, to 0 on right-click.
  * @param action - pointer to an Action
  */
-void SellState::lstItemsRightArrowClick(Action* action)
+void SellState::lstRightArrowClick(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		changeByValue(std::numeric_limits<int>::max(), -1);
-	else if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		if ((SDL_GetModState() & KMOD_CTRL) != 0)
-			changeByValue(10,-1);
-		else
-			changeByValue(1,-1);
+		case SDL_BUTTON_RIGHT:
+			changeByValue(std::numeric_limits<int>::max(), -1);
+			break;
 
-		_timerInc->setInterval(Timer::SCROLL_SLOW);
-		_timerDec->setInterval(Timer::SCROLL_SLOW);
+		case SDL_BUTTON_LEFT:
+			if ((SDL_GetModState() & KMOD_CTRL) != 0)
+				changeByValue(10,-1);
+			else
+				changeByValue(1,-1);
+
+			_timerInc->setInterval(Timer::SCROLL_SLOW);
+			_timerDec->setInterval(Timer::SCROLL_SLOW);
 	}
 }
 
@@ -563,7 +573,6 @@ int SellState::getPrice() const // private.
 		case PST_CRAFT:
 			return _crafts[getCraftIndex(_sel)]->getRules()->getSellCost();
 	}
-
 	return 0; // soldier, scientist, engineer
 }
 
@@ -588,7 +597,6 @@ int SellState::getBaseQuantity() const // private.
 		case PST_ITEM:
 			return _base->getStorageItems()->getItemQuantity(_items[getItemIndex(_sel)]);
 	}
-
 	return 0;
 }
 
@@ -759,27 +767,30 @@ void SellState::update() // private.
 
 	bool showOk (false);
 
-	if (_totalCost != 0)
-		showOk = true;
-	else
+	switch (_totalCost)
 	{
-		for (size_t
-				sel = 0;
-				sel != _sellQty.size() && showOk == false;
-				++sel)
-		{
-			if (_sellQty[sel] != 0)
+		default:
+			showOk = true;
+			break;
+
+		case 0:
+			for (size_t
+					sel = 0u;
+					sel != _sellQty.size() && showOk == false;
+					++sel)
 			{
-				switch (getSellType(sel))
+				if (_sellQty[sel] != 0)
 				{
-					case PST_CRAFT:
-					case PST_SOLDIER:
-					case PST_SCIENTIST:
-					case PST_ENGINEER:
-						showOk = true;
+					switch (getSellType(sel))
+					{
+						case PST_CRAFT:
+						case PST_SOLDIER:
+						case PST_SCIENTIST:
+						case PST_ENGINEER:
+							showOk = true;
+					}
 				}
 			}
-		}
 	}
 
 	std::wostringstream woststr;
@@ -844,11 +855,11 @@ size_t SellState::getCraftIndex(size_t sel) const // private.
 	return sel - _soldiers.size();
 }
 
-/*
+/**
  * Handles the mouse-wheels on the arrow-buttons.
  * @param action - pointer to an Action
  *
-void SellState::lstItemsMousePress(Action* action)
+void SellState::lstMousePress(Action* action)
 {
 	if (Options::changeValueByMouseWheel < 1)
 		return;

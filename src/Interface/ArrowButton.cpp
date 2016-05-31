@@ -55,7 +55,7 @@ ArrowButton::ArrowButton(
 }
 
 /**
- * Deletes timers.
+ * Deletes the Timer.
  */
 ArrowButton::~ArrowButton()
 {

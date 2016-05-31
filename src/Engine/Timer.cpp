@@ -26,10 +26,13 @@
 namespace OpenXcom
 {
 
+Uint32 Timer::coreInterval = 1u;
+
+
 namespace
 {
 
-const Uint32 ACCURATE = 4;
+const Uint32 ACCURATE = 4u;
 
 Uint32 slowTick()
 {
@@ -47,16 +50,14 @@ Uint32 slowTick()
 
 }
 
-Uint32 Timer::coreInterval = 1;
-
 
 /**
- * Initializes a new timer with a set interval.
+ * Initializes the Timer with a specific interval.
  * @param interval - time interval in milliseconds
  */
 Timer::Timer(Uint32 interval)
 	:
-		_startTick(0),
+		_startTick(0u),
 		_interval(interval),
 		_running(false),
 		_state(nullptr),
@@ -71,7 +72,7 @@ Timer::~Timer()
 {}
 
 /**
- * Starts the timer running and counting time.
+ * Starts this Timer running and counting time.
  */
 void Timer::start()
 {
@@ -81,17 +82,17 @@ void Timer::start()
 }
 
 /**
- * Stops the timer from running.
+ * Stops this Timer from running.
  */
 void Timer::stop()
 {
 	//if (_debug) Log(LOG_INFO) << "Timer: stop() [" << _stDebugObject << "]";
-	_startTick = 0;
+	_startTick = 0u;
 	_running = false;
 }
 
 /**
- * Returns the time passed since the last interval.
+ * Gets the time elapsed since the last interval.
  * @note Used only for the FPS counter.
  * @return, time in milliseconds
  */
@@ -100,11 +101,11 @@ Uint32 Timer::getTimerElapsed() const
 	if (_running == true)
 		return slowTick() - _startTick; // WARNING: this will give a single erroneous reading @ ~49 days RT.
 
-	return 0;
+	return 0u;
 }
 
 /**
- * Returns if the timer has been started.
+ * Checks if this Timer has been started and is currently running.
  * @return, true if running state
  */
 bool Timer::isRunning() const
@@ -149,7 +150,7 @@ void Timer::think(
 }
 
 /**
- * Changes the timer's interval to a new value.
+ * Changes this Timer's interval to a different value.
  * @param interval - interval in milliseconds
  */
 void Timer::setInterval(Uint32 interval)
@@ -158,7 +159,7 @@ void Timer::setInterval(Uint32 interval)
 }
 
 /**
- * Sets a state function for the timer to call every interval.
+ * Sets a state-function for this Timer to call every interval.
  * @param handler - event handler
  */
 void Timer::onTimer(StateHandler handler)
@@ -167,7 +168,7 @@ void Timer::onTimer(StateHandler handler)
 }
 
 /**
- * Sets a surface function for the timer to call every interval.
+ * Sets a surface-function for this Timer to call every interval.
  * @param handler - event handler
  */
 void Timer::onTimer(SurfaceHandler handler)
@@ -176,7 +177,7 @@ void Timer::onTimer(SurfaceHandler handler)
 }
 
 /**
- * Debugs.
+ * Debugs this Timer.
  */
 void Timer::debug(const std::string& info)
 {

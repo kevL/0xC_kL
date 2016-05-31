@@ -44,7 +44,7 @@ class Window;
 
 
 /**
- * Sell/Sack screen that lets the player sell any items in a particular base.
+ * Sell/Sack screen that lets the player sell any items at a particular Base.
  */
 class SellState
 	:
@@ -53,8 +53,8 @@ class SellState
 
 private:
 	static const Uint8
-		WHITE	= 208,
-		YELLOW	= 213;
+		WHITE	= 208u,
+		YELLOW	= 213u;
 
 	int _totalCost;
 	size_t
@@ -96,7 +96,7 @@ private:
 	/// Gets selected quantity.
 	int getBaseQuantity() const;
 
-	/// Gets the Type of the selected item.
+	/// Gets the type of the selected item.
 	PurchaseSellTransferType getSellType(size_t sel) const;
 
 	/// Gets the index of selected item.
@@ -122,20 +122,21 @@ private:
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Cancel button.
 		void btnCancelClick(Action* action);
-		/// Handler for pressing an Increase arrow in the list.
-		void lstItemsLeftArrowPress(Action* action);
-		/// Handler for releasing an Increase arrow in the list.
-		void lstItemsLeftArrowRelease(Action* action);
-		/// Handler for clicking an Increase arrow in the list.
-		void lstItemsLeftArrowClick(Action* action);
-		/// Handler for pressing a Decrease arrow in the list.
-		void lstItemsRightArrowPress(Action *action);
-		/// Handler for releasing a Decrease arrow in the list.
-		void lstItemsRightArrowRelease(Action* action);
-		/// Handler for clicking a Decrease arrow in the list.
-		void lstItemsRightArrowClick(Action* action);
-		/// Handler for pressing-down a mouse-button in the list.
-//		void lstItemsMousePress(Action* action);
+
+		/// Handler for pressing an increase-arrow in the list.
+		void lstLeftArrowPress(Action* action);
+		/// Handler for releasing an increase-arrow in the list.
+		void lstLeftArrowRelease(Action* action);
+		/// Handler for clicking an increase-arrow in the list.
+		void lstLeftArrowClick(Action* action);
+		/// Handler for pressing a decrease-arrow in the list.
+		void lstRightArrowPress(Action *action);
+		/// Handler for releasing a decrease-arrow in the list.
+		void lstRightArrowRelease(Action* action);
+		/// Handler for clicking a decrease-arrow in the list.
+		void lstRightArrowClick(Action* action);
+		/// Handler for pressing a mouse-button in the list.
+//		void lstMousePress(Action* action);
 
 		/// Increases the quantity of an item by one.
 		void increase();

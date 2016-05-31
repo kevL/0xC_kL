@@ -1836,6 +1836,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) // private.
 {
 	const RuleItem* itRule;
+	BattleType bType;
 	std::string type;
 
 	for (std::vector<BattleItem*>::const_iterator
@@ -1847,35 +1848,38 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 
 		if (itRule->isFixed() == false)
 		{
-			if (itRule->getBattleType() == BT_FUEL)
-			{
-				if (itRule->isRecoverable() == true)
-				{
-					_itemsGained[itRule] += _rules->getAlienFuelQuantity();
-					addStat(
-						_rules->getAlienFuelType(),
-						itRule->getRecoveryPoints(),
-						_rules->getAlienFuelQuantity());
-				}
-			}
-			else
-			{
-				type = itRule->getType();
+			bType = itRule->getBattleType();
 
-				if (itRule->isRecoverable() == true // add pts. for unresearched items only
-					&& itRule->getRecoveryPoints() != 0
-					&& itRule->getBattleType() != BT_CORPSE
-					&& _gameSave->isResearched(type) == false)
-				{
-					//Log(LOG_INFO) << ". . artefact = " << type;
-					addStat(
-						"STR_ALIEN_ARTIFACTS_RECOVERED",
-						itRule->getRecoveryPoints());
-				}
+			switch (bType)
+			{
+				case BT_FUEL:
+					if (itRule->isRecoverable() == true)
+					{
+						_itemsGained[itRule] += _rules->getAlienFuelQuantity();
+						addStat(
+							_rules->getAlienFuelType(),
+							itRule->getRecoveryPoints(),
+							_rules->getAlienFuelQuantity());
+					}
+					break;
 
-				switch (itRule->getBattleType()) // put items back in the Base
-				{
-					case BT_CORPSE:
+				default:
+					type = itRule->getType();
+
+					if (itRule->isRecoverable() == true // add pts. for unresearched items only
+						&& itRule->getRecoveryPoints() != 0
+						&& bType != BT_CORPSE
+						&& _gameSave->isResearched(type) == false)
+					{
+						//Log(LOG_INFO) << ". . artefact = " << type;
+						addStat(
+							"STR_ALIEN_ARTIFACTS_RECOVERED",
+							itRule->getRecoveryPoints());
+					}
+
+					switch (bType) // put items back in the Base
+					{
+						case BT_CORPSE:
 						{
 							BattleUnit* const unit ((*i)->getUnit());
 							if (unit != nullptr)
@@ -1894,7 +1898,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 									if (corpse.empty() == false) // safety.
 									{
 										_base->getStorageItems()->addItem(corpse);
-										++_itemsGained[itRule];
+										++_itemsGained[_rules->getItemRule(corpse)];
 									}
 								}
 								else if (unit->getUnitStatus() == STATUS_UNCONSCIOUS
@@ -1919,39 +1923,39 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 									}
 								}
 							}
+							break;
 						}
-						break;
 
-					case BT_AMMO:
-						if (itRule->isRecoverable() == true)
-						{
-							_clips[itRule] += (*i)->getAmmoQuantity();
-							if ((*i)->getProperty() == true)
-								_clipsProperty[itRule] += (*i)->getAmmoQuantity();
-						}
-						break;
-
-					case BT_FIREARM:
-						if (itRule->isRecoverable() == true
-							&& (*i)->selfPowered() == false)
-						{
-							const BattleItem* const clip ((*i)->getAmmoItem());
-							if (clip != nullptr) //&& clip->getRules()->getFullClip() != 0) // <- nobody be stupid and make a clip with 0 ammo-capacity.
+						case BT_AMMO:
+							if (itRule->isRecoverable() == true)
 							{
-								_clips[clip->getRules()] += clip->getAmmoQuantity();
+								_clips[itRule] += (*i)->getAmmoQuantity();
 								if ((*i)->getProperty() == true)
-									_clipsProperty[clip->getRules()] += clip->getAmmoQuantity();
+									_clipsProperty[itRule] += (*i)->getAmmoQuantity();
 							}
-						} // no break;
+							break;
 
-					default:
-						if (itRule->isRecoverable() == true)
-						{
-							_base->getStorageItems()->addItem(type);
-							if ((*i)->getProperty() == false)
-								++_itemsGained[itRule];
-						}
-				}
+						case BT_FIREARM:
+							if (itRule->isRecoverable() == true
+								&& (*i)->selfPowered() == false)
+							{
+								const BattleItem* const clip ((*i)->getAmmoItem());
+								if (clip != nullptr) //&& clip->getRules()->getFullClip() != 0) // <- nobody be stupid and make a clip with 0 ammo-capacity.
+								{
+									_clips[clip->getRules()] += clip->getAmmoQuantity();
+									if ((*i)->getProperty() == true)
+										_clipsProperty[clip->getRules()] += clip->getAmmoQuantity();
+								}
+							} // no break;
+
+						default:
+							if (itRule->isRecoverable() == true)
+							{
+								_base->getStorageItems()->addItem(type);
+								if ((*i)->getProperty() == false)
+									++_itemsGained[itRule];
+							}
+					}
 			}
 		}
 	}
@@ -2017,11 +2021,11 @@ void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
 //		if (corpseItem.empty() == false) // safety.
 //			_base->getStorageItems()->addItem(corpseItem);
 
-		std::string aLienCorpse (unit->getArmor()->getCorpseGeoscape());
-		if (aLienCorpse.empty() == false) // safety. [Or error-out if there isn't one.]
+		std::string corpse (unit->getArmor()->getCorpseGeoscape());
+		if (corpse.empty() == false) // safety. [Or error-out if there isn't one.]
 		{
-			_base->getStorageItems()->addItem(aLienCorpse);
-			++_itemsGained[_rules->getItemRule(aLienCorpse)];
+			_base->getStorageItems()->addItem(corpse);
+			++_itemsGained[_rules->getItemRule(corpse)];
 		}
 	}
 }

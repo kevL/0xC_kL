@@ -89,11 +89,11 @@ protected:
 		/// Draws the arrow button.
 		void draw() override;
 
-		/// Special handling for mouse presses.
+		/// Special handling for mouse-presses.
 		void mousePress(Action* action, State* state) override;
-		/// Special handling for mouse releases.
+		/// Special handling for mouse-releases.
 		void mouseRelease(Action* action, State* state) override;
-		/// Special handling for mouse clicks.
+		/// Special handling for mouse-clicks.
 		void mouseClick(Action* action, State* state) override;
 };
 

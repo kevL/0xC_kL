@@ -453,21 +453,6 @@ void InteractiveSurface::keyboardRelease(Action* action, State* state) // virtua
 }
 
 /**
- * Sets a function to be called every time this Surface is mouse-clicked.
- * @param handler	- ActionHandler
- * @param btn		- mouse-button to check for, set to 0 for any button (default SDL_BUTTON_LEFT=1)
- */
-void InteractiveSurface::onMouseClick(
-		ActionHandler handler,
-		Uint8 btn)
-{
-	if (handler != nullptr)
-		_click[btn] = handler;
-	else
-		_click.erase(btn);
-}
-
-/**
  * Sets a function to be called every time this Surface is mouse-pressed.
  * @param handler	- ActionHandler
  * @param btn		- mouse-button to check for, set to 0 for any button (default 0)
@@ -495,6 +480,21 @@ void InteractiveSurface::onMouseRelease(
 		_release[btn] = handler;
 	else
 		_release.erase(btn);
+}
+
+/**
+ * Sets a function to be called every time this Surface is mouse-clicked.
+ * @param handler	- ActionHandler
+ * @param btn		- mouse-button to check for, set to 0 for any button (default SDL_BUTTON_LEFT=1)
+ */
+void InteractiveSurface::onMouseClick(
+		ActionHandler handler,
+		Uint8 btn)
+{
+	if (handler != nullptr)
+		_click[btn] = handler;
+	else
+		_click.erase(btn);
 }
 
 /**
