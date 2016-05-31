@@ -2661,7 +2661,7 @@ void GeoscapeState::time1Hour()
 		{
 			resetTimer();
 			popup(new ErrorMessageState(
-								tr("STR_STORAGE_EXCEEDED").arg((*i)->getName(nullptr)),
+								tr("STR_STORAGE_EXCEEDED").arg((*i)->getName()),
 								_palette,
 								_rules->getInterface("geoscape")->getElement("errorMessage")->color,
 								"BACK12.SCR", // "BACK13.SCR"

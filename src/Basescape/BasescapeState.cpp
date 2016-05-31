@@ -374,7 +374,7 @@ void BasescapeState::init()
 		_allowStoresWarning = false;
 //		_game->pushState(new SellState(_base));
 		_game->pushState(new ErrorMessageState(
-										tr("STR_STORAGE_EXCEEDED").arg(_base->getName(nullptr)).c_str(),
+										tr("STR_STORAGE_EXCEEDED").arg(_base->getName()).c_str(),
 										_palette,
 										_game->getRuleset()->getInterface("basescape")->getElement("errorMessage")->color,
 										_game->getResourcePack()->getBackgroundRand(),

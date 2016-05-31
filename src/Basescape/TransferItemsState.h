@@ -138,19 +138,19 @@ private:
 		void completeTransfer();
 
 		/// Handler for pressing an Increase arrow in the list.
-		void lstItemsLeftArrowPress(Action* action);
+		void lstLeftArrowPress(Action* action);
 		/// Handler for releasing an Increase arrow in the list.
-		void lstItemsLeftArrowRelease(Action* action);
+		void lstLeftArrowRelease(Action* action);
 		/// Handler for clicking an Increase arrow in the list.
-		void lstItemsLeftArrowClick(Action* action);
+		void lstLeftArrowClick(Action* action);
 		/// Handler for pressing a Decrease arrow in the list.
-		void lstItemsRightArrowPress(Action* action);
+		void lstRightArrowPress(Action* action);
 		/// Handler for releasing a Decrease arrow in the list.
-		void lstItemsRightArrowRelease(Action* action);
+		void lstRightArrowRelease(Action* action);
 		/// Handler for clicking a Decrease arrow in the list.
-		void lstItemsRightArrowClick(Action* action);
+		void lstRightArrowClick(Action* action);
 		/// Handler for pressing-down a mouse-button in the list.
-//		void lstItemsMousePress(Action* action);
+//		void lstMousePress(Action* action);
 
 		/// Increases the quantity of an item by one.
 		void increase();

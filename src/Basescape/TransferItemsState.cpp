@@ -151,8 +151,8 @@ TransferItemsState::TransferItemsState(
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setText(tr("STR_TRANSFER"));
 
-	_txtBaseSource->setText(_baseSource->getName(nullptr));
-	_txtBaseTarget->setText(_baseTarget->getName(nullptr));
+	_txtBaseSource->setText(_baseSource->getName());
+	_txtBaseTarget->setText(_baseTarget->getName());
 	_txtBaseTarget->setAlign(ALIGN_RIGHT);
 
 	_txtSpaceSource->setAlign(ALIGN_RIGHT);
@@ -166,18 +166,21 @@ TransferItemsState::TransferItemsState(
 //	_txtTransferQty->setText(tr("STR_AMOUNT_TO_TRANSFER"));
 	_txtQtyTarget->setText(tr("STR_AMOUNT_AT_DESTINATION"));
 
-	_lstItems->setBackground(_window);
-	_lstItems->setArrowColumn(172, ARROW_VERTICAL);
 	_lstItems->setColumns(4, 136,56,31,20);
+	_lstItems->setBackground(_window);
 	_lstItems->setSelectable();
+	_lstItems->setArrowColumn(172, ARROW_VERTICAL);
+
+	_lstItems->onLeftArrowPress(	(ActionHandler)& TransferItemsState::lstLeftArrowPress);
+	_lstItems->onLeftArrowRelease(	(ActionHandler)& TransferItemsState::lstLeftArrowRelease);
+	_lstItems->onLeftArrowClick(	(ActionHandler)& TransferItemsState::lstLeftArrowClick);
+
+	_lstItems->onRightArrowPress(	(ActionHandler)& TransferItemsState::lstRightArrowPress);
+	_lstItems->onRightArrowRelease(	(ActionHandler)& TransferItemsState::lstRightArrowRelease);
+	_lstItems->onRightArrowClick(	(ActionHandler)& TransferItemsState::lstRightArrowClick);
+
 //	_lstItems->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);
-//	_lstItems->onMousePress((ActionHandler)& TransferItemsState::lstItemsMousePress);
-	_lstItems->onLeftArrowPress((ActionHandler)& TransferItemsState::lstItemsLeftArrowPress);
-	_lstItems->onLeftArrowRelease((ActionHandler)& TransferItemsState::lstItemsLeftArrowRelease);
-	_lstItems->onLeftArrowClick((ActionHandler)& TransferItemsState::lstItemsLeftArrowClick);
-	_lstItems->onRightArrowPress((ActionHandler)& TransferItemsState::lstItemsRightArrowPress);
-	_lstItems->onRightArrowRelease((ActionHandler)& TransferItemsState::lstItemsRightArrowRelease);
-	_lstItems->onRightArrowClick((ActionHandler)& TransferItemsState::lstItemsRightArrowClick);
+//	_lstItems->onMousePress((ActionHandler)& TransferItemsState::lstMousePress);
 
 	_distance = getDistance();
 
@@ -349,8 +352,7 @@ void TransferItemsState::init()
 			i != allItems.end();
 			++i)
 	{
-		baseQty = _baseSource->getStorageItems()->getItemQuantity(*i);
-		if (baseQty != 0)
+		if ((baseQty = _baseSource->getStorageItems()->getItemQuantity(*i)) != 0)
 		{
 			_transferQty.push_back(0);
 			_baseQty.push_back(baseQty);
@@ -619,7 +621,7 @@ void TransferItemsState::completeTransfer()
  * Starts increasing the item.
  * @param action - pointer to an Action
  */
-void TransferItemsState::lstItemsLeftArrowPress(Action* action)
+void TransferItemsState::lstLeftArrowPress(Action* action)
 {
 	_sel = _lstItems->getSelectedRow();
 
@@ -634,7 +636,7 @@ void TransferItemsState::lstItemsLeftArrowPress(Action* action)
  * Stops increasing the item.
  * @param action - pointer to an Action
  */
-void TransferItemsState::lstItemsLeftArrowRelease(Action* action)
+void TransferItemsState::lstLeftArrowRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerInc->stop();
@@ -644,7 +646,7 @@ void TransferItemsState::lstItemsLeftArrowRelease(Action* action)
  * Increases the selected item; by one on left-click; to max on right-click.
  * @param action - pointer to an Action
  */
-void TransferItemsState::lstItemsLeftArrowClick(Action* action)
+void TransferItemsState::lstLeftArrowClick(Action* action)
 {
 	switch (action->getDetails()->button.button)
 	{
@@ -667,7 +669,7 @@ void TransferItemsState::lstItemsLeftArrowClick(Action* action)
  * Starts decreasing the item.
  * @param action - pointer to an Action
  */
-void TransferItemsState::lstItemsRightArrowPress(Action* action)
+void TransferItemsState::lstRightArrowPress(Action* action)
 {
 	_sel = _lstItems->getSelectedRow();
 
@@ -682,7 +684,7 @@ void TransferItemsState::lstItemsRightArrowPress(Action* action)
  * Stops decreasing the item.
  * @param action - pointer to an Action
  */
-void TransferItemsState::lstItemsRightArrowRelease(Action* action)
+void TransferItemsState::lstRightArrowRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerDec->stop();
@@ -692,7 +694,7 @@ void TransferItemsState::lstItemsRightArrowRelease(Action* action)
  * Decreases the selected item; by one on left-click; to 0 on right-click.
  * @param action - pointer to an Action
  */
-void TransferItemsState::lstItemsRightArrowClick(Action* action)
+void TransferItemsState::lstRightArrowClick(Action* action)
 {
 	switch (action->getDetails()->button.button)
 	{
@@ -1113,7 +1115,7 @@ size_t TransferItemsState::getCraftIndex(size_t sel) const // private.
  * Handles the mouse-wheels on the arrow-buttons.
  * @param action - pointer to an Action
  *
-void TransferItemsState::lstItemsMousePress(Action* action)
+void TransferItemsState::lstMousePress(Action* action)
 {
 	if (Options::changeValueByMouseWheel < 1)
 		return;

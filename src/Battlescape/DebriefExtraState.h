@@ -40,7 +40,7 @@ class Window;
 
 
 /**
- * Extra detail during Debriefings.
+ * Extra detail after Debriefings.
  */
 class DebriefExtraState
 	:
@@ -71,6 +71,10 @@ private:
 	std::vector<int>
 		_qtysBuy,
 		_qtysSell;
+
+	std::vector<std::string>
+		_typesBuy,
+		_typesSell;
 
 	std::map<const RuleItem*, int>
 		_itemsGained,
@@ -116,6 +120,8 @@ private:
 
 	/// Gets the rule for the currently selected item.
 	const RuleItem* getRule(const std::map<const RuleItem*, int>& list) const;
+	/// Gets the rule for a specified item-type in the Lost list.
+	const RuleItem* getRule(const std::string& type) const;
 
 	/// Runs the timers.
 	void think() override;

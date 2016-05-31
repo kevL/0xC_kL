@@ -56,7 +56,7 @@ private:
 		WHITE	= 208u,
 		YELLOW	= 213u;
 
-	int _totalCost;
+	int _costTotal;
 	size_t
 		_hasSci,
 		_hasEng,

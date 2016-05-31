@@ -69,7 +69,7 @@ SellState::SellState(Base* const base)
 		_base(base),
 //		_origin(origin),
 		_sel(0u),
-		_totalCost(0),
+		_costTotal(0),
 		_hasSci(0u),
 		_hasEng(0u),
 		_storeSize(0.)
@@ -142,7 +142,7 @@ SellState::SellState(Base* const base)
 
 	_txtBaseLabel->setText(_base->getName());
 	_txtSales->setText(tr("STR_VALUE_OF_SALES")
-						.arg(Text::formatCurrency(_totalCost)));
+						.arg(Text::formatCurrency(_costTotal)));
 	_txtFunds->setText(tr("STR_FUNDS")
 						.arg(Text::formatCurrency(_game->getSavedGame()->getFunds())));
 	_txtItem->setText(tr("STR_ITEM"));
@@ -380,10 +380,10 @@ void SellState::btnOkClick(Action*)
 {
 	_base->setRecallRow(REC_SELL, _lstItems->getScroll());
 
-	if (_totalCost != 0)
+	if (_costTotal != 0)
 	{
-		_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() + _totalCost);
-		_base->addCashIncome(_totalCost);
+		_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() + _costTotal);
+		_base->addCashIncome(_costTotal);
 	}
 
 	for (size_t
@@ -658,7 +658,7 @@ void SellState::changeByValue(
 	}
 
 	_sellQty[_sel] += qtyDelta * dir;
-	_totalCost += getPrice() * qtyDelta * dir;
+	_costTotal += getPrice() * qtyDelta * dir;
 
 	const RuleItem* itRule;
 	switch (getSellType(_sel)) // Calculate the change in storage space.
@@ -710,7 +710,7 @@ void SellState::update() // private.
 	_lstItems->setCellText(_sel, 1, Text::intWide(getBaseQuantity() - _sellQty[_sel]));
 	_lstItems->setCellText(_sel, 2, Text::intWide(_sellQty[_sel]));
 
-	_txtSales->setText(tr("STR_VALUE_OF_SALES").arg(Text::formatCurrency(_totalCost)));
+	_txtSales->setText(tr("STR_VALUE_OF_SALES").arg(Text::formatCurrency(_costTotal)));
 
 	Uint8 color;
 
@@ -767,7 +767,7 @@ void SellState::update() // private.
 
 	bool showOk (false);
 
-	switch (_totalCost)
+	switch (_costTotal)
 	{
 		default:
 			showOk = true;

@@ -503,7 +503,7 @@ void DebriefingState::btnOkClick(Action*)
 			{
 //				_game->pushState(new SellState(_base, OPT_BATTLESCAPE));
 				_game->pushState(new ErrorMessageState(
-												tr("STR_STORAGE_EXCEEDED").arg(_base->getName(nullptr)),
+												tr("STR_STORAGE_EXCEEDED").arg(_base->getName()),
 												_palette,
 												_rules->getInterface("debriefing")->getElement("errorMessage")->color,
 												_game->getResourcePack()->getBackgroundRand(),
@@ -546,7 +546,7 @@ void DebriefingState::btnOkClick(Action*)
 			{
 				_game->pushState(new AlienContainmentState(_base, OPT_BATTLESCAPE));
 				_game->pushState(new ErrorMessageState(
-												tr("STR_CONTAINMENT_EXCEEDED").arg(_base->getName(nullptr)),
+												tr("STR_CONTAINMENT_EXCEEDED").arg(_base->getName()),
 												_palette,
 												_rules->getInterface("debriefing")->getElement("errorMessage")->color,
 												"BACK04.SCR",
@@ -917,7 +917,7 @@ void DebriefingState::prepareDebriefing() // private.
 		if ((*i)->getTactical() == true) // in case this DON'T have a Craft, ie. BaseDefense
 		{
 			_base = *i;
-			_txtBaseLabel->setText(_base->getName(_game->getLanguage()));
+			_txtBaseLabel->setText(_base->getName());
 
 			lon = _base->getLongitude();
 			lat = _base->getLatitude();

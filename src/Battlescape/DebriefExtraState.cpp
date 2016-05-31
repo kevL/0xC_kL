@@ -41,7 +41,9 @@
 #include "../Ruleset/Ruleset.h"
 
 #include "../SaveGame/Base.h"
+#include "../Savegame/ItemContainer.h"
 #include "../SaveGame/SavedGame.h"
+#include "../Savegame/Transfer.h"
 
 
 namespace OpenXcom
@@ -289,7 +291,7 @@ void DebriefExtraState::increaseByValue(int qtyDelta) // private.
 			case DES_LOOT_GAINED:
 			{
 				const RuleItem* const itRule (getRule(_itemsGained));
-				if (itRule != nullptr && itRule->getSellCost() != 0
+				if (itRule != nullptr && itRule->getSellCost() != 0 && itRule->isLiveAlien() == false
 					&& _qtysSell[_sel] < _itemsGained[itRule])
 				{
 					qtyDelta = std::min(qtyDelta,
@@ -459,6 +461,23 @@ const RuleItem* DebriefExtraState::getRule(const std::map<const RuleItem*, int>&
 }
 
 /**
+ * Gets the rule for a specified item-type in the Lost list.
+ * @param type - reference to the type
+ * @return, pointer to the RuleItem
+ */
+const RuleItem* DebriefExtraState::getRule(const std::string& type) const // private.
+{
+	for (std::map<const RuleItem*, int>::const_iterator
+			i = _itemsLost.begin();
+			i != _itemsLost.end();
+			++i)
+	{
+		if (i->first->getType() == type) return i->first;
+	}
+	return nullptr;
+}
+
+/**
  * Runs the arrow timers.
  */
 void DebriefExtraState::think() // private.
@@ -479,6 +498,7 @@ void DebriefExtraState::btnOkClick(Action*)
 	{
 		case DES_SOL_STATS:
 			_lstSolStats->setVisible(false);
+
 			if (_itemsGained.empty() == false)
 			{
 				_curScreen = DES_LOOT_GAINED;
@@ -490,6 +510,25 @@ void DebriefExtraState::btnOkClick(Action*)
 
 		case DES_LOOT_GAINED:
 			_lstGained->setVisible(false);
+
+			if (_costTotal != 0)
+			{
+				_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() + _costTotal);
+				_base->addCashIncome(_costTotal);
+				_costTotal = 0;
+
+				for (size_t // TODO: Allow selling/discarding items that have zero cost.
+						i = 0u;
+						i != _qtysSell.size();
+						++i)
+				{
+					if (_qtysSell[i] != 0)
+						_base->getStorageItems()->removeItem(
+														_typesSell[i],
+														_qtysSell[i]);
+				}
+			}
+
 			if (_itemsLost.empty() == false)
 			{
 				_curScreen = DES_LOOT_LOST;
@@ -500,6 +539,27 @@ void DebriefExtraState::btnOkClick(Action*)
 			} // no break;
 
 		case DES_LOOT_LOST:
+			if (_costTotal != 0)
+			{
+				_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() - _costTotal);
+				_base->addCashSpent(_costTotal);
+
+				for (size_t // TODO: Allow buying items that have zero cost. IE, set not-purchasable to -1 and use cost=0 for no-cost items.
+						i = 0u;
+						i != _qtysBuy.size();
+						++i)
+				{
+					if (_qtysBuy[i] != 0)
+					{
+						Transfer* const transfer (new Transfer(getRule(_typesBuy[i])->getTransferTime()));
+						transfer->setTransferItems(
+											_typesBuy[i],
+											_qtysBuy[i]);
+						_base->getTransfers()->push_back(transfer);
+					}
+				}
+			}
+
 			_game->popState();
 	}
 }
@@ -573,9 +633,15 @@ void DebriefExtraState::styleList( // private.
 		type = i->first->getType();
 
 		if (list == _lstGained)
+		{
 			_qtysSell.push_back(0);
+			_typesSell.push_back(type);
+		}
 		else
+		{
 			_qtysBuy.push_back(0);
+			_typesBuy.push_back(type);
+		}
 
 
 		wst1 = tr(type);
@@ -607,8 +673,10 @@ void DebriefExtraState::styleList( // private.
 			contrast = false;
 		}
 
-		if ((list == _lstGained && i->first->getSellCost() != 0)
-			|| (list == _lstLost && i->first->getBuyCost() != 0))
+		if ((list == _lstGained
+				&& i->first->getSellCost() != 0 && i->first->isLiveAlien() == false)	// NOTE: Selling live aLiens here can conflict with a/the upcoming
+			|| (list == _lstLost														// containment-management screen if containment needs management also.
+				&& i->first->getBuyCost() != 0))										// So for now simply disallow live-aLien-sales from this State.
 		{
 			wst2 = Text::intWide(0);
 		}
