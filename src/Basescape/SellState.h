@@ -127,14 +127,11 @@ private:
 		void lstLeftArrowPress(Action* action);
 		/// Handler for releasing an increase-arrow in the list.
 		void lstLeftArrowRelease(Action* action);
-		/// Handler for clicking an increase-arrow in the list.
-		void lstLeftArrowClick(Action* action);
 		/// Handler for pressing a decrease-arrow in the list.
 		void lstRightArrowPress(Action *action);
 		/// Handler for releasing a decrease-arrow in the list.
 		void lstRightArrowRelease(Action* action);
-		/// Handler for clicking a decrease-arrow in the list.
-		void lstRightArrowClick(Action* action);
+
 		/// Handler for pressing a mouse-button in the list.
 //		void lstMousePress(Action* action);
 

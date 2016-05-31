@@ -245,13 +245,16 @@ void DebriefExtraState::lstRightArrowPress(Action* action) // private.
 			break;
 
 		case SDL_BUTTON_LEFT:
-			if ((SDL_GetModState() & KMOD_CTRL) != 0)
-				decreaseByValue(10);
-			else
-				decreaseByValue(1);
+			if (_timerDec->isRunning() == false)
+			{
+				if ((SDL_GetModState() & KMOD_CTRL) != 0)
+					decreaseByValue(10);
+				else
+					decreaseByValue(1);
 
-			_timerDec->setInterval(Timer::SCROLL_SLOW);
-			_timerDec->start();
+				_timerDec->setInterval(Timer::SCROLL_SLOW);
+				_timerDec->start();
+			}
 	}
 }
 

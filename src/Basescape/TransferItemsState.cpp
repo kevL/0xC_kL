@@ -173,11 +173,9 @@ TransferItemsState::TransferItemsState(
 
 	_lstItems->onLeftArrowPress(	(ActionHandler)& TransferItemsState::lstLeftArrowPress);
 	_lstItems->onLeftArrowRelease(	(ActionHandler)& TransferItemsState::lstLeftArrowRelease);
-	_lstItems->onLeftArrowClick(	(ActionHandler)& TransferItemsState::lstLeftArrowClick);
 
 	_lstItems->onRightArrowPress(	(ActionHandler)& TransferItemsState::lstRightArrowPress);
 	_lstItems->onRightArrowRelease(	(ActionHandler)& TransferItemsState::lstRightArrowRelease);
-	_lstItems->onRightArrowClick(	(ActionHandler)& TransferItemsState::lstRightArrowClick);
 
 //	_lstItems->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);
 //	_lstItems->onMousePress((ActionHandler)& TransferItemsState::lstMousePress);
@@ -625,10 +623,23 @@ void TransferItemsState::lstLeftArrowPress(Action* action)
 {
 	_sel = _lstItems->getSelectedRow();
 
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		&& _timerInc->isRunning() == false)
+	switch (action->getDetails()->button.button)
 	{
-		_timerInc->start();
+		case SDL_BUTTON_RIGHT:
+			increaseByValue(std::numeric_limits<int>::max());
+			break;
+
+		case SDL_BUTTON_LEFT:
+			if (_timerInc->isRunning() == false)
+			{
+				if ((SDL_GetModState() & KMOD_CTRL) != 0)
+					increaseByValue(10);
+				else
+					increaseByValue(1);
+
+				_timerInc->setInterval(Timer::SCROLL_SLOW);
+				_timerInc->start();
+			}
 	}
 }
 
@@ -643,29 +654,6 @@ void TransferItemsState::lstLeftArrowRelease(Action* action)
 }
 
 /**
- * Increases the selected item; by one on left-click; to max on right-click.
- * @param action - pointer to an Action
- */
-void TransferItemsState::lstLeftArrowClick(Action* action)
-{
-	switch (action->getDetails()->button.button)
-	{
-		case SDL_BUTTON_RIGHT:
-			increaseByValue(std::numeric_limits<int>::max());
-			break;
-
-		case SDL_BUTTON_LEFT:
-			if ((SDL_GetModState() & KMOD_CTRL) != 0)
-				increaseByValue(10);
-			else
-				increaseByValue(1);
-
-			_timerInc->setInterval(Timer::SCROLL_SLOW);
-//			_timerDec->setInterval(Timer::SCROLL_SLOW);
-	}
-}
-
-/**
  * Starts decreasing the item.
  * @param action - pointer to an Action
  */
@@ -673,10 +661,23 @@ void TransferItemsState::lstRightArrowPress(Action* action)
 {
 	_sel = _lstItems->getSelectedRow();
 
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		&& _timerDec->isRunning() == false)
+	switch (action->getDetails()->button.button)
 	{
-		_timerDec->start();
+		case SDL_BUTTON_RIGHT:
+			decreaseByValue(std::numeric_limits<int>::max());
+			break;
+
+		case SDL_BUTTON_LEFT:
+			if (_timerDec->isRunning() == false)
+			{
+				if ((SDL_GetModState() & KMOD_CTRL) != 0)
+					decreaseByValue(10);
+				else
+					decreaseByValue(1);
+
+				_timerDec->setInterval(Timer::SCROLL_SLOW);
+				_timerDec->start();
+			}
 	}
 }
 
@@ -688,29 +689,6 @@ void TransferItemsState::lstRightArrowRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerDec->stop();
-}
-
-/**
- * Decreases the selected item; by one on left-click; to 0 on right-click.
- * @param action - pointer to an Action
- */
-void TransferItemsState::lstRightArrowClick(Action* action)
-{
-	switch (action->getDetails()->button.button)
-	{
-		case SDL_BUTTON_RIGHT:
-			decreaseByValue(std::numeric_limits<int>::max());
-			break;
-
-		case SDL_BUTTON_LEFT:
-			if ((SDL_GetModState() & KMOD_CTRL) != 0)
-				decreaseByValue(10);
-			else
-				decreaseByValue(1);
-
-//			_timerInc->setInterval(Timer::SCROLL_SLOW);
-			_timerDec->setInterval(Timer::SCROLL_SLOW);
-	}
 }
 
 /**
@@ -767,7 +745,6 @@ int TransferItemsState::getSourceQuantity() const // private.
 void TransferItemsState::increase()
 {
 	_timerInc->setInterval(Timer::SCROLL_FAST);
-//	_timerDec->setInterval(Timer::SCROLL_FAST);
 
 	if ((SDL_GetModState() & KMOD_CTRL) != 0)
 		increaseByValue(10);
@@ -783,103 +760,107 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 {
 	if (qtyDelta > 0 && _transferQty[_sel] < getSourceQuantity())
 	{
-		std::wstring error;
-		const RuleItem* itRule;
-
-		switch (getTransferType(_sel))
-		{
-			case PST_ITEM:
-				itRule = _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]);
-
-				if (itRule->isLiveAlien() == false)
-				{
-					if (_baseTarget->storesOverfull(itRule->getStoreSize() + _storeSize - 0.05))
-						error = tr("STR_NOT_ENOUGH_STORE_SPACE");
-					else
-					{
-						const double storeSizePer (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize());
-						double allowed;
-
-						if (AreSame(storeSizePer, 0.) == false)
-							allowed = (static_cast<double>(_baseTarget->getTotalStores()) - _baseTarget->getUsedStores() - _storeSize + 0.05)
-										/ storeSizePer;
-						else
-							allowed = std::numeric_limits<double>::max();
-
-						qtyDelta = std::min(qtyDelta,
-											std::min(static_cast<int>(allowed),
-													 getSourceQuantity() - _transferQty[_sel]));
-						_storeSize += static_cast<double>(qtyDelta) * storeSizePer;
-						_baseQty[_sel] -= qtyDelta;
-						_destQty[_sel] += qtyDelta;
-						_transferQty[_sel] += qtyDelta;
-						_costTotal += getCost() * qtyDelta;
-					}
-				}
-				else // aLien.
-				{
-					if (_baseTarget->hasContainment() == false
-						|| _qtyAlien + 1 > _baseTarget->getFreeContainment())
-					{
-						error = tr("STR_NO_ALIEN_CONTAINMENT_FOR_TRANSFER");
-					}
-					else
-					{
-						qtyDelta = std::min(qtyDelta,
-											std::min(_baseTarget->getFreeContainment() - _qtyAlien,
-													 getSourceQuantity() - _transferQty[_sel]));
-						_qtyAlien += qtyDelta;
-						_baseQty[_sel] -= qtyDelta;
-						_destQty[_sel] += qtyDelta;
-						_transferQty[_sel] += qtyDelta;
-						_costTotal += getCost() * qtyDelta;
-					}
-				}
-				break;
-
-			case PST_CRAFT:
-				if (_qtyCraft + 1 > _baseTarget->getFreeHangars())
-					error = tr("STR_NO_FREE_HANGARS_FOR_TRANSFER");
-				else
-				{
-					++_qtyCraft;
-					--_baseQty[_sel];
-					++_destQty[_sel];
-					++_transferQty[_sel];
-					_costTotal += getCost();
-				}
-				break;
-
-			default: // soldier, scientist, engineer
-				if (_qtyPersonnel + 1 > _baseTarget->getFreeQuarters())
-					error = tr("STR_NO_FREE_ACCOMMODATION");
-				else
-				{
-					qtyDelta = std::min(qtyDelta,
-										std::min(_baseTarget->getFreeQuarters() - _qtyPersonnel,
-												 getSourceQuantity() - _transferQty[_sel]));
-					_qtyPersonnel += qtyDelta;
-					_baseQty[_sel] -= qtyDelta;
-					_destQty[_sel] += qtyDelta;
-					_transferQty[_sel] += qtyDelta;
-					_costTotal += getCost() * qtyDelta;
-				}
-		}
-
-		if (error.empty() == false)
-		{
-			_resetAll = false;
-
-			const RuleInterface* const uiRule (_game->getRuleset()->getInterface("transferMenu"));
-			_game->pushState(new ErrorMessageState(
-												error,
-												_palette,
-												uiRule->getElement("errorMessage")->color,
-												"BACK13.SCR",
-												uiRule->getElement("errorPalette")->color));
-		}
+		if (_error.empty() == false)
+			_error.clear();
 		else
-			update();
+		{
+			const RuleItem* itRule;
+
+			switch (getTransferType(_sel))
+			{
+				case PST_ITEM:
+					itRule = _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]);
+
+					if (itRule->isLiveAlien() == false)
+					{
+						if (_baseTarget->storesOverfull(itRule->getStoreSize() + _storeSize - 0.05))
+							_error = tr("STR_NOT_ENOUGH_STORE_SPACE");
+						else
+						{
+							const double storeSizePer (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize());
+							double allowed;
+
+							if (AreSame(storeSizePer, 0.) == false)
+								allowed = (static_cast<double>(_baseTarget->getTotalStores()) - _baseTarget->getUsedStores() - _storeSize + 0.05)
+											/ storeSizePer;
+							else
+								allowed = std::numeric_limits<double>::max();
+
+							qtyDelta = std::min(qtyDelta,
+												std::min(static_cast<int>(allowed),
+														 getSourceQuantity() - _transferQty[_sel]));
+							_storeSize += static_cast<double>(qtyDelta) * storeSizePer;
+							_baseQty[_sel] -= qtyDelta;
+							_destQty[_sel] += qtyDelta;
+							_transferQty[_sel] += qtyDelta;
+							_costTotal += getCost() * qtyDelta;
+						}
+					}
+					else // aLien.
+					{
+						if (_baseTarget->hasContainment() == false
+							|| _qtyAlien + 1 > _baseTarget->getFreeContainment())
+						{
+							_error = tr("STR_NO_ALIEN_CONTAINMENT_FOR_TRANSFER");
+						}
+						else
+						{
+							qtyDelta = std::min(qtyDelta,
+												std::min(_baseTarget->getFreeContainment() - _qtyAlien,
+														 getSourceQuantity() - _transferQty[_sel]));
+							_qtyAlien += qtyDelta;
+							_baseQty[_sel] -= qtyDelta;
+							_destQty[_sel] += qtyDelta;
+							_transferQty[_sel] += qtyDelta;
+							_costTotal += getCost() * qtyDelta;
+						}
+					}
+					break;
+
+				case PST_CRAFT:
+					if (_qtyCraft + 1 > _baseTarget->getFreeHangars())
+						_error = tr("STR_NO_FREE_HANGARS_FOR_TRANSFER");
+					else
+					{
+						++_qtyCraft;
+						--_baseQty[_sel];
+						++_destQty[_sel];
+						++_transferQty[_sel];
+						_costTotal += getCost();
+					}
+					break;
+
+				default: // soldier, scientist, engineer
+					if (_qtyPersonnel + 1 > _baseTarget->getFreeQuarters())
+						_error = tr("STR_NO_FREE_ACCOMMODATION");
+					else
+					{
+						qtyDelta = std::min(qtyDelta,
+											std::min(_baseTarget->getFreeQuarters() - _qtyPersonnel,
+													 getSourceQuantity() - _transferQty[_sel]));
+						_qtyPersonnel += qtyDelta;
+						_baseQty[_sel] -= qtyDelta;
+						_destQty[_sel] += qtyDelta;
+						_transferQty[_sel] += qtyDelta;
+						_costTotal += getCost() * qtyDelta;
+					}
+			}
+
+			if (_error.empty() == false)
+			{
+				_resetAll = false;
+
+				const RuleInterface* const uiRule (_game->getRuleset()->getInterface("transferMenu"));
+				_game->pushState(new ErrorMessageState(
+													_error,
+													_palette,
+													uiRule->getElement("errorMessage")->color,
+													"BACK13.SCR",
+													uiRule->getElement("errorPalette")->color));
+			}
+			else
+				update();
+		}
 	}
 }
 
@@ -888,7 +869,6 @@ void TransferItemsState::increaseByValue(int qtyDelta)
  */
 void TransferItemsState::decrease()
 {
-//	_timerInc->setInterval(Timer::SCROLL_FAST);
 	_timerDec->setInterval(Timer::SCROLL_FAST);
 
 	if ((SDL_GetModState() & KMOD_CTRL) != 0)

@@ -164,11 +164,9 @@ SellState::SellState(Base* const base)
 
 	_lstItems->onLeftArrowPress(	(ActionHandler)& SellState::lstLeftArrowPress);
 	_lstItems->onLeftArrowRelease(	(ActionHandler)& SellState::lstLeftArrowRelease);
-	_lstItems->onLeftArrowClick(	(ActionHandler)& SellState::lstLeftArrowClick);
 
 	_lstItems->onRightArrowPress(	(ActionHandler)& SellState::lstRightArrowPress);
 	_lstItems->onRightArrowRelease(	(ActionHandler)& SellState::lstRightArrowRelease);
-	_lstItems->onRightArrowClick(	(ActionHandler)& SellState::lstRightArrowClick);
 
 //	_lstItems->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);
 //	_lstItems->onMousePress((ActionHandler)& SellState::lstMousePress);
@@ -471,10 +469,23 @@ void SellState::lstLeftArrowPress(Action* action)
 {
 	_sel = _lstItems->getSelectedRow();
 
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		&& _timerInc->isRunning() == false)
+	switch (action->getDetails()->button.button)
 	{
-		_timerInc->start();
+		case SDL_BUTTON_RIGHT:
+			changeByValue(std::numeric_limits<int>::max(), 1);
+			break;
+
+		case SDL_BUTTON_LEFT:
+			if (_timerInc->isRunning() == false)
+			{
+				if ((SDL_GetModState() & KMOD_CTRL) != 0)
+					changeByValue(10,1);
+				else
+					changeByValue(1,1);
+
+				_timerInc->setInterval(Timer::SCROLL_SLOW);
+				_timerInc->start();
+			}
 	}
 }
 
@@ -489,29 +500,6 @@ void SellState::lstLeftArrowRelease(Action* action)
 }
 
 /**
- * Increases the selected item; by one on left-click, to max on right-click.
- * @param action - pointer to an Action
- */
-void SellState::lstLeftArrowClick(Action* action)
-{
-	switch (action->getDetails()->button.button)
-	{
-		case SDL_BUTTON_RIGHT:
-			changeByValue(std::numeric_limits<int>::max(), 1);
-			break;
-
-		case SDL_BUTTON_LEFT:
-			if ((SDL_GetModState() & KMOD_CTRL) != 0)
-				changeByValue(10,1);
-			else
-				changeByValue(1,1);
-
-			_timerInc->setInterval(Timer::SCROLL_SLOW);
-//			_timerDec->setInterval(Timer::SCROLL_SLOW);
-	}
-}
-
-/**
  * Starts decreasing the item.
  * @param action - pointer to an Action
  */
@@ -519,10 +507,23 @@ void SellState::lstRightArrowPress(Action* action)
 {
 	_sel = _lstItems->getSelectedRow();
 
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		&& _timerDec->isRunning() == false)
+	switch (action->getDetails()->button.button)
 	{
-		_timerDec->start();
+		case SDL_BUTTON_RIGHT:
+			changeByValue(std::numeric_limits<int>::max(), -1);
+			break;
+
+		case SDL_BUTTON_LEFT:
+			if (_timerDec->isRunning() == false)
+			{
+				if ((SDL_GetModState() & KMOD_CTRL) != 0)
+					changeByValue(10,-1);
+				else
+					changeByValue(1,-1);
+
+				_timerDec->setInterval(Timer::SCROLL_SLOW);
+				_timerDec->start();
+			}
 	}
 }
 
@@ -534,29 +535,6 @@ void SellState::lstRightArrowRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerDec->stop();
-}
-
-/**
- * Decreases the selected item; by one on left-click, to 0 on right-click.
- * @param action - pointer to an Action
- */
-void SellState::lstRightArrowClick(Action* action)
-{
-	switch (action->getDetails()->button.button)
-	{
-		case SDL_BUTTON_RIGHT:
-			changeByValue(std::numeric_limits<int>::max(), -1);
-			break;
-
-		case SDL_BUTTON_LEFT:
-			if ((SDL_GetModState() & KMOD_CTRL) != 0)
-				changeByValue(10,-1);
-			else
-				changeByValue(1,-1);
-
-//			_timerInc->setInterval(Timer::SCROLL_SLOW);
-			_timerDec->setInterval(Timer::SCROLL_SLOW);
-	}
 }
 
 /**
@@ -606,7 +584,6 @@ int SellState::getBaseQuantity() const // private.
 void SellState::increase()
 {
 	_timerInc->setInterval(Timer::SCROLL_FAST);
-//	_timerDec->setInterval(Timer::SCROLL_FAST);
 
 	if ((SDL_GetModState() & KMOD_CTRL) != 0)
 		changeByValue(10,1);
@@ -619,7 +596,6 @@ void SellState::increase()
  */
 void SellState::decrease()
 {
-//	_timerInc->setInterval(Timer::SCROLL_FAST);
 	_timerDec->setInterval(Timer::SCROLL_FAST);
 
 	if ((SDL_GetModState() & KMOD_CTRL) != 0)
