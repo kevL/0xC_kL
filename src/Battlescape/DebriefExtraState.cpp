@@ -179,7 +179,7 @@ DebriefExtraState::~DebriefExtraState()
 }
 
 /**
- * Starts increasing the item.
+ * Starts increasing the quantity to buy/sell of a selected item.
  * @param action - pointer to an Action
  */
 void DebriefExtraState::lstLeftArrowPress(Action* action) // private.
@@ -217,7 +217,7 @@ void DebriefExtraState::lstLeftArrowPress(Action* action) // private.
 }
 
 /**
- * Stops increasing the item.
+ * Stops increasing the quantity to buy/sell of a selected item.
  * @param action - pointer to an Action
  */
 void DebriefExtraState::lstLeftArrowRelease(Action* action) // private.
@@ -227,7 +227,7 @@ void DebriefExtraState::lstLeftArrowRelease(Action* action) // private.
 }
 
 /**
- * Starts decreasing the item.
+ * Starts decreasing the quantity to buy/sell of a selected item.
  * @param action - pointer to an Action
  */
 void DebriefExtraState::lstRightArrowPress(Action* action) // private.
@@ -262,7 +262,7 @@ void DebriefExtraState::lstRightArrowPress(Action* action) // private.
 }
 
 /**
- * Stops decreasing the item.
+ * Stops decreasing the quantity to buy/sell of a selected item.
  * @param action - pointer to an Action
  */
 void DebriefExtraState::lstRightArrowRelease(Action* action) // private.
@@ -272,7 +272,7 @@ void DebriefExtraState::lstRightArrowRelease(Action* action) // private.
 }
 
 /**
- * Increases the quantity of the selected item to buy by one.
+ * Increases the quantity of the selected item to buy/sell.
  */
 void DebriefExtraState::increase() // private.
 {
@@ -285,8 +285,8 @@ void DebriefExtraState::increase() // private.
 }
 
 /**
- * Increases the quantity of the selected item to buy.
- * @param qtyDelta - how many to add
+ * Increases the quantity of the selected item to buy/sell by a specified value.
+ * @param qtyDelta - quantity to add
  */
 void DebriefExtraState::increaseByValue(int qtyDelta) // private.
 {
@@ -370,7 +370,7 @@ void DebriefExtraState::increaseByValue(int qtyDelta) // private.
 }
 
 /**
- * Decreases the quantity of the selected item to buy by one.
+ * Decreases the quantity of the selected item to buy/sell.
  */
 void DebriefExtraState::decrease() // private.
 {
@@ -383,8 +383,8 @@ void DebriefExtraState::decrease() // private.
 }
 
 /**
- * Decreases the quantity of the selected item to buy.
- * @param qtyDelta - how many to subtract
+ * Decreases the quantity of the selected item to buy/sell by a specified value.
+ * @param qtyDelta - quantity to subtract
  */
 void DebriefExtraState::decreaseByValue(int qtyDelta) // private.
 {
@@ -433,7 +433,7 @@ void DebriefExtraState::decreaseByValue(int qtyDelta) // private.
 }
 
 /**
- * Updates the buy/sell quantities.
+ * Updates the buy/sell quantities on-screen.
  */
 void DebriefExtraState::update() // private.
 {
@@ -484,7 +484,7 @@ const RuleItem* DebriefExtraState::getRule(const std::string& type) const // pri
 }
 
 /**
- * Runs the arrow timers.
+ * Runs the list-arrows' Timers.
  */
 void DebriefExtraState::think() // private.
 {
@@ -495,7 +495,8 @@ void DebriefExtraState::think() // private.
 }
 
 /**
- * Returns to the previous screen.
+ * Advances to the next screen if applicable, handles buying/selling orders,
+ * and/or dismisses this State.
  * @param action - pointer to an Action
  */
 void DebriefExtraState::btnOkClick(Action*)
@@ -571,7 +572,7 @@ void DebriefExtraState::btnOkClick(Action*)
 }
 
 /**
- * Builds the soldier-stat-changes screen.
+ * Builds the soldier-stat screen.
  */
 void DebriefExtraState::buildSoldierStats() // private.
 {
