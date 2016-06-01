@@ -43,7 +43,7 @@ enum MiniBaseViewType
 
 
 /**
- * Mini view of a base.
+ * MiniView that shows all of the player's Bases.
  * @note Takes all the bases and displays their layouts and allows the player to
  * switch between them.
  */
@@ -82,39 +82,39 @@ private:
 
 
 	public:
-		/// Creates a new mini base view at the specified position and size.
+		/// Creates a MiniBaseView at the specified position and size.
 		MiniBaseView(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0,
 				MiniBaseViewType mode = MBV_STANDARD);
-		/// Cleans up the mini base view.
+		/// Cleans up the MiniBaseView.
 		~MiniBaseView();
 
-		/// Sets the base list to display.
+		/// Sets the base-list to display.
 		void setBases(std::vector<Base*>* bases);
 
-		/// Sets the texture for the mini base view.
+		/// Sets the texture-set for the MiniBaseView.
 		void setTexture(SurfaceSet* texture);
 
-		/// Gets the base the mouse is over.
+		/// Gets the Base the mouse is over.
 		size_t getHoveredBase() const;
 
-		/// Sets the selected base for the mini base view.
+		/// Sets the selected Base for the MiniBaseView.
 		void setSelectedBase(size_t baseId);
 
-		/// Draws the mini base view.
+		/// Draws the MiniBaseView.
 		void draw() override;
 
-		/// Special handling for mouse hovers.
+		/// Special handling for mouse-overs.
 		void mouseOver(Action* action, State* state) override;
-		/// Special handling for mouse hovering out.
+		/// Special handling for mouse-outs.
 		void mouseOut(Action* action, State* state) override;
 
-		/// Handles timer.
+		/// Handles the Timer.
 		void think() override;
-		/// Blinks the craft status indicators.
+		/// Blinks the craft-status indicators.
 		void blink();
 };
 

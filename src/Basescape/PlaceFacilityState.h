@@ -35,7 +35,7 @@ class Window;
 
 
 /**
- * Window shown when the player tries to build a facility.
+ * Window shown when the player tries to build a Facility.
  */
 class PlaceFacilityState
 	:
@@ -44,16 +44,16 @@ class PlaceFacilityState
 
 protected:
 	Base* _base;
-	BaseView* _view;
+	BaseView* _baseLayout;
 	const RuleBaseFacility* _facRule;
 	Text
 		* _txtFacility,
 		* _txtCost,
-		* _numCost,
+		* _txtCostAmount,
 		* _txtTime,
-		* _numTime,
+		* _txtTimeAmount,
 		* _txtMaintenance,
-		* _numMaintenance;
+		* _txtMaintAmount;
 	TextButton* _btnCancel;
 	Window* _window;
 
@@ -69,7 +69,7 @@ protected:
 		/// Handler for clicking the Cancel button.
 		void btnCancelClick(Action* action);
 		/// Handler for clicking the BaseView grid.
-		virtual void viewClick(Action* action);
+		virtual void baseLayoutClick(Action* action);
 };
 
 }

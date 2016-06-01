@@ -53,21 +53,21 @@ namespace OpenXcom
  * Creates the DebriefExtra state.
  * @param base			- pointer to the Base that was in tactical
  * @param operation		- the operation title
- * @param itemsLost		- a map of pointers to RuleItems & ints for lost items
  * @param itemsGained	- a map of pointers to RuleItems & ints for gained items
+ * @param itemsLost		- a map of pointers to RuleItems & ints for lost items
+ * @param solStatDeltas	- a map of wide-strings & vectors of ints
  */
 DebriefExtraState::DebriefExtraState(
 		Base* const base,
 		std::wstring operation,
-		std::map<const RuleItem*, int> itemsLost,
 		std::map<const RuleItem*, int> itemsGained,
+		std::map<const RuleItem*, int> itemsLost,
 		std::map<std::wstring, std::vector<int>> solStatDeltas)
 	:
 		_base(base),
-		_itemsLost(itemsLost),
 		_itemsGained(itemsGained),
+		_itemsLost(itemsLost),
 		_solStatDeltas(solStatDeltas),
-		_curScreen(DES_SOL_STATS),
 		_sel(0u),
 		_costTotal(0),
 		_storeSize(0.)
@@ -78,9 +78,9 @@ DebriefExtraState::DebriefExtraState(
 	_txtBaseLabel	= new Text( 80,  9,  16, 8);
 	_txtScreen		= new Text( 80,  9, 224, 8);
 
-	_lstSolStats	= new TextList(285, 145, 16, 32);
 	_lstGained		= new TextList(285, 145, 16, 32);
 	_lstLost		= new TextList(285, 145, 16, 32);
+	_lstSolStats	= new TextList(285, 145, 16, 32);
 
 	_btnOk			= new TextButton(136, 16, 92, 177);
 
@@ -90,9 +90,9 @@ DebriefExtraState::DebriefExtraState(
 	add(_txtTitle,		"heading",	"debriefing");
 	add(_txtBaseLabel,	"text",		"debriefing");
 	add(_txtScreen,		"text",		"debriefing");
-	add(_lstSolStats,	"list",		"debriefing");
 	add(_lstGained,		"list",		"debriefing");
 	add(_lstLost,		"list",		"debriefing");
+	add(_lstSolStats,	"list",		"debriefing");
 	add(_btnOk,			"button",	"debriefing");
 
 	centerAllSurfaces();
@@ -118,48 +118,70 @@ DebriefExtraState::DebriefExtraState(
 
 	_txtBaseLabel->setText(_base->getName());
 
-	_txtScreen->setText(L"stats");
+
 	_txtScreen->setAlign(ALIGN_RIGHT);
+
+	if (_itemsGained.empty() == false)
+	{
+		_txtScreen->setText(L"loot");
+		_curScreen = DES_LOOT_GAINED;
+
+		_lstGained->setColumns(3, 189,54,32);
+		_lstGained->setBackground(_window);
+		_lstGained->setSelectable();
+
+		_lstGained->setArrowColumn(220, ARROW_VERTICAL);
+
+		_lstGained->onLeftArrowPress(	(ActionHandler)& DebriefExtraState::lstLeftArrowPress);
+		_lstGained->onLeftArrowRelease(	(ActionHandler)& DebriefExtraState::lstLeftArrowRelease);
+
+		_lstGained->onRightArrowPress(	(ActionHandler)& DebriefExtraState::lstRightArrowPress);
+		_lstGained->onRightArrowRelease((ActionHandler)& DebriefExtraState::lstRightArrowRelease);
+
+		styleList(_itemsGained, _lstGained);
+	}
+	else
+	{
+		_txtScreen->setText(L"lost");
+		_curScreen = DES_LOOT_LOST;
+	}
+
+
+	if (_itemsLost.empty() == false)
+	{
+		_lstLost->setColumns(3, 189,54,32);
+		_lstLost->setBackground(_window);
+		_lstLost->setSelectable();
+
+		_lstLost->setArrowColumn(220, ARROW_VERTICAL);
+
+		_lstLost->onLeftArrowPress(		(ActionHandler)& DebriefExtraState::lstLeftArrowPress);
+		_lstLost->onLeftArrowRelease(	(ActionHandler)& DebriefExtraState::lstLeftArrowRelease);
+
+		_lstLost->onRightArrowPress(	(ActionHandler)& DebriefExtraState::lstRightArrowPress);
+		_lstLost->onRightArrowRelease(	(ActionHandler)& DebriefExtraState::lstRightArrowRelease);
+
+		styleList(_itemsLost, _lstLost);
+	}
+	else if (_itemsGained.empty() == true)
+	{
+		_txtScreen->setText(L"stats");
+		_curScreen = DES_SOL_STATS;
+	}
+
 
 	_lstSolStats->setColumns(12, 90,17,17,17,17,17,17,17,17,17,17,17);
 	_lstSolStats->setBackground(_window);
 	_lstSolStats->setSelectable();
+	_lstSolStats->setVisible(false);
 
 	buildSoldierStats();
 
 
-	_lstGained->setColumns(3, 192,54,30);
-	_lstGained->setBackground(_window);
-	_lstGained->setSelectable();
-	_lstGained->setVisible(false);
+	_lstGained	->setVisible(_curScreen == DES_LOOT_GAINED);
+	_lstLost	->setVisible(_curScreen == DES_LOOT_LOST);
+	_lstSolStats->setVisible(_curScreen == DES_SOL_STATS);
 
-	_lstGained->setArrowColumn(220, ARROW_VERTICAL);
-
-	_lstGained->onLeftArrowPress(	(ActionHandler)& DebriefExtraState::lstLeftArrowPress);
-	_lstGained->onLeftArrowRelease(	(ActionHandler)& DebriefExtraState::lstLeftArrowRelease);
-
-	_lstGained->onRightArrowPress(	(ActionHandler)& DebriefExtraState::lstRightArrowPress);
-	_lstGained->onRightArrowRelease((ActionHandler)& DebriefExtraState::lstRightArrowRelease);
-
-	if (_itemsGained.empty() == false)
-		styleList(_itemsGained, _lstGained);
-
-
-	_lstLost->setColumns(3, 192,54,30);
-	_lstLost->setBackground(_window);
-	_lstLost->setSelectable();
-	_lstLost->setVisible(false);
-
-	_lstLost->setArrowColumn(220, ARROW_VERTICAL);
-
-	_lstLost->onLeftArrowPress(		(ActionHandler)& DebriefExtraState::lstLeftArrowPress);
-	_lstLost->onLeftArrowRelease(	(ActionHandler)& DebriefExtraState::lstLeftArrowRelease);
-
-	_lstLost->onRightArrowPress(	(ActionHandler)& DebriefExtraState::lstRightArrowPress);
-	_lstLost->onRightArrowRelease(	(ActionHandler)& DebriefExtraState::lstRightArrowRelease);
-
-	if (_itemsLost.empty() == false)
-		styleList(_itemsLost, _lstLost);
 
 
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
@@ -503,18 +525,6 @@ void DebriefExtraState::btnOkClick(Action*)
 {
 	switch (_curScreen)
 	{
-		case DES_SOL_STATS:
-			_lstSolStats->setVisible(false);
-
-			if (_itemsGained.empty() == false)
-			{
-				_curScreen = DES_LOOT_GAINED;
-				_txtScreen->setText(L"loot");
-//				_lstGained->scrollTo();
-				_lstGained->setVisible();
-				break;
-			} // no break;
-
 		case DES_LOOT_GAINED:
 			_lstGained->setVisible(false);
 
@@ -540,12 +550,13 @@ void DebriefExtraState::btnOkClick(Action*)
 			{
 				_curScreen = DES_LOOT_LOST;
 				_txtScreen->setText(L"lost");
-//				_lstLost->scrollTo();
 				_lstLost->setVisible();
 				break;
 			} // no break;
 
 		case DES_LOOT_LOST:
+			_lstLost->setVisible(false);
+
 			if (_costTotal != 0)
 			{
 				_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() - _costTotal);
@@ -567,6 +578,12 @@ void DebriefExtraState::btnOkClick(Action*)
 				}
 			}
 
+			_curScreen = DES_SOL_STATS;
+			_txtScreen->setText(L"stats");
+			_lstSolStats->setVisible();
+			break;
+
+		case DES_SOL_STATS:
 			_game->popState();
 	}
 }

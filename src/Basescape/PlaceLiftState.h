@@ -45,7 +45,7 @@ private:
 	bool _firstBase;
 
 	Base* _base;
-	BaseView* _view;
+	BaseView* _baseLayout;
 	Globe* _globe;
 	const RuleBaseFacility* _lift;
 	Text* _txtTitle;
@@ -61,7 +61,7 @@ private:
 		~PlaceLiftState();
 
 		/// Handler for clicking the BaseView grid.
-		void viewClick(Action* action);
+		void baseLayoutClick(Action* action);
 };
 
 }

@@ -42,7 +42,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Build Facilities window.
+ * Initializes all the elements in the BuildFacilities window.
  * @param base	- pointer to the Base to get info from
  * @param state	- pointer to the base State to refresh
  */
@@ -60,7 +60,7 @@ BuildFacilitiesState::BuildFacilitiesState(
 								128,165,
 								192,33,
 								POPUP_VERTICAL);
-	_txtTitle		= new Text(118, 17, 197, 41);
+	_txtTitle		= new Text(118, 16, 197, 41);
 	_lstFacilities	= new TextList(101, 113, 200, 57);
 	_btnOk			= new TextButton(112, 16, 200, 176);
 
@@ -138,7 +138,7 @@ void BuildFacilitiesState::populateBuildList() // virtual. Cf, SelectStartFacili
 }
 
 /**
- * The player can change the selected base or change info on other screens.
+ * The player can change the selected Base or change info on other screens.
  */
 void BuildFacilitiesState::init()
 {
@@ -156,7 +156,7 @@ void BuildFacilitiesState::btnOkClick(Action*) // virtual.
 }
 
 /**
- * Places the selected facility.
+ * Places the selected Facility.
  * @param action - pointer to an Action
  */
 void BuildFacilitiesState::lstFacilitiesClick(Action*) // virtual.

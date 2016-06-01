@@ -996,7 +996,7 @@ std::vector<Target*> Globe::getTargets(
 				i != _game->getSavedGame()->getBases()->end();
 				++i)
 		{
-			if ((*i)->getBasePlaced() == true)
+			if ((*i)->isBasePlaced() == true)
 			{
 				if (targetNear(*i, x,y))
 					targets.push_back(*i);
@@ -1578,7 +1578,7 @@ void Globe::drawRadars()
 				i != _game->getSavedGame()->getBases()->end();
 				++i)
 		{
-			if ((*i)->getBasePlaced() == true)
+			if ((*i)->isBasePlaced() == true)
 			{
 				if (_radarDetail > 1)
 				{

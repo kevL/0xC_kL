@@ -499,17 +499,6 @@ void DebriefingState::btnOkClick(Action*)
 			if (_missingItems.empty() == false)
 				_game->pushState(new CannotReequipState(_missingItems));
 
-			if (_base->storesOverfull() == true)
-			{
-//				_game->pushState(new SellState(_base, OPT_BATTLESCAPE));
-				_game->pushState(new ErrorMessageState(
-												tr("STR_STORAGE_EXCEEDED").arg(_base->getName()),
-												_palette,
-												_rules->getInterface("debriefing")->getElement("errorMessage")->color,
-												_game->getResourcePack()->getBackgroundRand(),
-												_rules->getInterface("debriefing")->getElement("errorPalette")->color));
-			}
-
 			if (_soldiersLost.empty() == false)
 			{
 				playAwardMusic = true;
@@ -556,9 +545,20 @@ void DebriefingState::btnOkClick(Action*)
 			_game->pushState(new DebriefExtraState(
 												_base,
 												battleSave->getOperation(),
-												_itemsLostProperty,
 												_itemsGained,
+												_itemsLostProperty,
 												_soldierStatInc));
+
+			if (_base->storesOverfull() == true) // TODO: Do not show overfull error if player sold enough stuff in DebriefExtraState.
+			{
+//				_game->pushState(new SellState(_base, OPT_BATTLESCAPE));
+				_game->pushState(new ErrorMessageState(
+												tr("STR_STORAGE_EXCEEDED").arg(_base->getName()),
+												_palette,
+												_rules->getInterface("debriefing")->getElement("errorMessage")->color,
+												_game->getResourcePack()->getBackgroundRand(),
+												_rules->getInterface("debriefing")->getElement("errorPalette")->color));
+			}
 
 			if (playAwardMusic == true)
 				_game->getResourcePack()->playMusic(
@@ -1493,7 +1493,7 @@ void DebriefingState::prepareDebriefing() // private.
 			int qtyRuinedAlloys (0);
 
 			for (size_t
-					i = 0;
+					i = 0u;
 					i != battleSave->getMapSizeXYZ();
 					++i)
 			{
@@ -1539,25 +1539,25 @@ void DebriefingState::prepareDebriefing() // private.
 							alloyDivisor = 150;
 							break;
 						default:
-							alloyDivisor = 15;
+							alloyDivisor = 1; //15; TEST.
 					}
 
 //					(*i)->qty /= alloyDivisor;
 //					(*i)->score /= alloyDivisor;
-					(*i)->qty = ((*i)->qty + qtyRuinedAlloys / 2) / alloyDivisor;
-					(*i)->score = ((*i)->score + qtyRuinedAlloys * _specialTypes[DEAD_TILE]->value / 2) / alloyDivisor;
+					(*i)->qty = ((*i)->qty + (qtyRuinedAlloys >> 1u)) / alloyDivisor;
+					(*i)->score = ((*i)->score + ((qtyRuinedAlloys * _specialTypes[DEAD_TILE]->value) >> 1u)) / alloyDivisor;
 
 					_itemsGained[_rules->getItemRule((*i)->type)] = (*i)->qty; // NOTE: Elerium is handled in recoverItems().
 				}
 
-				if ((*i)->recover == true && (*i)->qty != 0)
+				if ((*i)->qty != 0 && (*i)->recover == true)
 					_base->getStorageItems()->addItem((*i)->type, (*i)->qty);
 			}
 		}
 		else if (_destroyPlayerBase == false)
 		{
 			for (size_t
-					i = 0;
+					i = 0u;
 					i != battleSave->getMapSizeXYZ();
 					++i)
 			{

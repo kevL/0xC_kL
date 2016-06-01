@@ -280,12 +280,13 @@ void ResearchState::onSelectProject(Action*)
 }
 
 /**
- * Selects a new base to display.
+ * Selects a different Base to display.
+ * TODO: Implement key-presses to switch bases.
  * @param action - pointer to an Action
  */
 void ResearchState::miniClick(Action*)
 {
-	if (_state != nullptr) // cannot switch bases if coming from geoscape.
+	if (_state != nullptr) // cannot switch bases if origin is Geoscape.
 	{
 		const size_t baseId (_mini->getHoveredBase());
 		if (baseId < _baseList->size())

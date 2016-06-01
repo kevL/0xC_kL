@@ -63,29 +63,29 @@ PlaceFacilityState::PlaceFacilityState(
 
 	_window			= new Window(this, 128, 160, 192, 38);
 
-	_view			= new BaseView(192, 192, 0, 8);
+	_baseLayout		= new BaseView(192, 192, 0, 8);
 
 	_txtFacility	= new Text(110,  9, 202,  48);
 	_txtCost		= new Text(110,  9, 202,  60);
-	_numCost		= new Text(110, 17, 202,  68);
+	_txtCostAmount	= new Text(110, 16, 202,  68);
 	_txtTime		= new Text(110,  9, 202,  88);
-	_numTime		= new Text(110, 17, 202,  96);
+	_txtTimeAmount	= new Text(110, 16, 202,  96);
 	_txtMaintenance	= new Text(110,  9, 202, 116);
-	_numMaintenance	= new Text(110, 17, 202, 124);
+	_txtMaintAmount	= new Text(110, 16, 202, 124);
 
 	_btnCancel		= new TextButton(112, 16, 200, 176);
 
 	setInterface("placeFacility");
 
 	add(_window,			"window",	"placeFacility");
-	add(_view,				"baseView",	"basescape");
+	add(_baseLayout,		"baseView",	"basescape");
 	add(_txtFacility,		"text",		"placeFacility");
 	add(_txtCost,			"text",		"placeFacility");
-	add(_numCost,			"numbers",	"placeFacility");
+	add(_txtCostAmount,		"numbers",	"placeFacility");
 	add(_txtTime,			"text",		"placeFacility");
-	add(_numTime,			"numbers",	"placeFacility");
+	add(_txtTimeAmount,		"numbers",	"placeFacility");
 	add(_txtMaintenance,	"text",		"placeFacility");
-	add(_numMaintenance,	"numbers",	"placeFacility");
+	add(_txtMaintAmount,	"numbers",	"placeFacility");
 	add(_btnCancel,			"button",	"placeFacility");
 
 	centerAllSurfaces();
@@ -93,11 +93,11 @@ PlaceFacilityState::PlaceFacilityState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
-	_view->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
-	_view->setDog(_game->getResourcePack()->getSurface("BASEDOG"));
-	_view->setBase(_base);
-	_view->setSelectable(_facRule->getSize());
-	_view->onMouseClick((ActionHandler)& PlaceFacilityState::viewClick);
+	_baseLayout->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
+	_baseLayout->setDog(_game->getResourcePack()->getSurface("BASEDOG"));
+	_baseLayout->setBase(_base);
+	_baseLayout->setSelectable(_facRule->getSize());
+	_baseLayout->onMouseClick((ActionHandler)& PlaceFacilityState::baseLayoutClick);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
 	_btnCancel->onMouseClick((ActionHandler)& PlaceFacilityState::btnCancelClick);
@@ -115,18 +115,18 @@ PlaceFacilityState::PlaceFacilityState(
 
 	_txtCost->setText(tr("STR_COST_UC"));
 
-	_numCost->setBig();
-	_numCost->setText(Text::formatCurrency(_facRule->getBuildCost()));
+	_txtCostAmount->setBig();
+	_txtCostAmount->setText(Text::formatCurrency(_facRule->getBuildCost()));
 
 	_txtTime->setText(tr("STR_CONSTRUCTION_TIME_UC"));
 
-	_numTime->setBig();
-	_numTime->setText(tr("STR_DAY", _facRule->getBuildTime()));
+	_txtTimeAmount->setBig();
+	_txtTimeAmount->setText(tr("STR_DAY", _facRule->getBuildTime()));
 
 	_txtMaintenance->setText(tr("STR_MAINTENANCE_UC"));
 
-	_numMaintenance->setBig();
-	_numMaintenance->setText(Text::formatCurrency(_facRule->getMonthlyCost()));
+	_txtMaintAmount->setBig();
+	_txtMaintAmount->setText(Text::formatCurrency(_facRule->getMonthlyCost()));
 }
 
 /**
@@ -148,9 +148,9 @@ void PlaceFacilityState::btnCancelClick(Action*)
  * Processes clicking on facilities.
  * @param action - pointer to an Action
  */
-void PlaceFacilityState::viewClick(Action*) // virtual.
+void PlaceFacilityState::baseLayoutClick(Action*) // virtual.
 {
-	if (_view->isPlaceable(_facRule) == false)
+	if (_baseLayout->isPlaceable(_facRule) == false)
 	{
 		_game->popState();
 
@@ -177,18 +177,18 @@ void PlaceFacilityState::viewClick(Action*) // virtual.
 	else
 	{
 		BaseFacility* const fac (new BaseFacility(_facRule, _base));
-		fac->setX(_view->getGridX());
-		fac->setY(_view->getGridY());
+		fac->setX(_baseLayout->getGridX());
+		fac->setY(_baseLayout->getGridY());
 		fac->setBuildTime(_facRule->getBuildTime());
 
 		_base->getFacilities()->push_back(fac);
 
 		if (Options::allowBuildingQueue == true)
 		{
-			if (_view->isQueuedBuilding(_facRule) == true)
+			if (_baseLayout->isQueuedBuilding(_facRule) == true)
 				fac->setBuildTime(std::numeric_limits<int>::max());
 
-			_view->reCalcQueuedBuildings();
+			_baseLayout->reCalcQueuedBuildings();
 		}
 
 		const int cost (_facRule->getBuildCost());

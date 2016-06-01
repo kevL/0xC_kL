@@ -30,7 +30,7 @@ class Globe;
 
 
 /**
- * Window shown with all the facilities available to build.
+ * Window shown with all the start-facilities available to build.
  */
 class SelectStartFacilityState final
 	:
@@ -58,7 +58,7 @@ private:
 		/// Handler for clicking the Facilities list.
 		void lstFacilitiesClick(Action* action) override;
 
-		/// Handler for when the facility is actually built.
+		/// Handler for when the Facility is actually built.
 		void facilityBuilt();
 };
 

@@ -756,11 +756,7 @@ int Base::getTotalStores() const
  */
 bool Base::storesOverfull(double offset) const
 {
-	const double
-		total (static_cast<double>(getTotalStores())),
-		used (getUsedStores() + offset);
-
-	return (used > total + 0.05);
+	return getUsedStores() + offset > static_cast<double>(getTotalStores()) + 0.05;
 }
 
 /**
@@ -1667,18 +1663,18 @@ bool Base::getBaseExposed() const
 }
 
 /**
- * Sets this Base as placed and in operation.
+ * Flags this Base as placed and in operation.
  */
-void Base::setBasePlaced()
+void Base::placeBase()
 {
 	_placed = true;
 }
 
 /**
- * Gets if this Base has been placed and is in operation.
+ * Checks if this Base has been placed and is in operation.
  * @return, true if placed
  */
-bool Base::getBasePlaced() const
+bool Base::isBasePlaced() const
 {
 	return _placed;
 }

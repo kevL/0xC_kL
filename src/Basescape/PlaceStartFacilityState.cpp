@@ -41,7 +41,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Place Start Facility window.
+ * Initializes all the elements in the PlaceStartFacility state.
  * @param base		- pointer to the base to get info from
  * @param select	- pointer to the selection state
  * @param facRule	- pointer to the facility ruleset to build
@@ -54,10 +54,10 @@ PlaceStartFacilityState::PlaceStartFacilityState(
 		PlaceFacilityState(base, facRule),
 		_select(select)
 {
-	_view->onMouseClick((ActionHandler)& PlaceStartFacilityState::viewClick);
+	_baseLayout->onMouseClick((ActionHandler)& PlaceStartFacilityState::baseLayoutClick);
 
-	_numCost->setText(tr("STR_NONE"));
-	_numTime->setText(tr("STR_NONE"));
+	_txtCostAmount->setText(tr("STR_NONE"));
+	_txtTimeAmount->setText(tr("STR_NONE"));
 }
 
 /**
@@ -67,16 +67,16 @@ PlaceStartFacilityState::~PlaceStartFacilityState()
 {}
 
 /**
- * Processes clicking on facilities.
+ * Processes clicking on Facilities.
  * @param action - pointer to an Action
  */
-void PlaceStartFacilityState::viewClick(Action*)
+void PlaceStartFacilityState::baseLayoutClick(Action*)
 {
-	if (_view->isPlaceable(_facRule) == true)
+	if (_baseLayout->isPlaceable(_facRule) == true)
 	{
 		BaseFacility* const fac (new BaseFacility(_facRule, _base));
-		fac->setX(_view->getGridX());
-		fac->setY(_view->getGridY());
+		fac->setX(_baseLayout->getGridX());
+		fac->setY(_baseLayout->getGridY());
 
 		_base->getFacilities()->push_back(fac);
 		_game->popState();

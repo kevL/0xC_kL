@@ -41,7 +41,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Select Start Facility window.
+ * Initializes all the elements in the SelectStartFacility state.
  * @param base	- pointer to the Base to get info from
  * @param state	- pointer to the base State to refresh
  * @param globe	- pointer to the Globe to refresh
@@ -72,7 +72,7 @@ SelectStartFacilityState::~SelectStartFacilityState()
 {}
 
 /**
- * Populates the build list from the currently available facilities.
+ * Populates the build-list from the currently available Facilities.
  */
 void SelectStartFacilityState::populateBuildList() // virtual. Cf, BuildFacilitiesState::populateBuildList()
 {
@@ -109,7 +109,7 @@ void SelectStartFacilityState::btnOkClick(Action*)
 }
 
 /**
- * Places the selected facility.
+ * Places the selected Facility.
  * @param action - pointer to an Action
  */
 void SelectStartFacilityState::lstFacilitiesClick(Action*)
@@ -121,22 +121,19 @@ void SelectStartFacilityState::lstFacilitiesClick(Action*)
 
 /**
  * Callback from PlaceStartFacilityState.
- * @note Removes placed facility from the list.
+ * @note Erases a placed Facility from the list available for building.
  */
 void SelectStartFacilityState::facilityBuilt()
 {
 	_facilities.erase(_facilities.begin() + _lstFacilities->getSelectedRow());
 
-	if (_facilities.empty() == true) // return to geoscape, force timer to start.
-	{
-		_game->popState();
-		_game->popState();
-
-		BasescapeState* const baseState (dynamic_cast<BasescapeState*>(_state));
-		baseState->resetStoresWarning();
-	}
-	else
+	if (_facilities.empty() == false)
 		populateBuildList();
+	else // return to Geoscape, force time-compression to start.
+	{
+		_game->popState(); // this
+		_game->popState(); // PlaceLiftState
+	}
 }
 
 }

@@ -87,10 +87,10 @@ BasescapeState::BasescapeState(
 		_base(base),
 		_globe(globe),
 		_baseList(_game->getSavedGame()->getBases()),
-		_allowStoresWarning(false) // stop warning from popping-up when building 1st Base.
+		_allowStoresWarning(true)
 {
-	_view			= new BaseView(192, 192, 0, 8);
-	_mini			= new MiniBaseView(128, 22, 192, 33);
+	_baseLayout		= new BaseView(192, 192, 0, 8);
+	_miniBases		= new MiniBaseView(128, 22, 192, 33);
 
 	_txtFacility	= new Text(192, 9);
 
@@ -117,8 +117,8 @@ BasescapeState::BasescapeState(
 
 	setInterface("basescape");
 
-	add(_view,				"baseView",		"basescape");
-	add(_mini,				"miniBase",		"basescape");
+	add(_baseLayout,		"baseView",		"basescape");
+	add(_miniBases,			"miniBase",		"basescape");
 
 	add(_txtFacility,		"textTooltip",	"basescape");
 
@@ -146,28 +146,28 @@ BasescapeState::BasescapeState(
 	centerAllSurfaces();
 
 
-	_view->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
-	_view->setDog(_game->getResourcePack()->getSurface("BASEDOG"));
-	_view->onMouseClick(
-					(ActionHandler)& BasescapeState::viewLeftClick,
+	_baseLayout->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
+	_baseLayout->setDog(_game->getResourcePack()->getSurface("BASEDOG"));
+	_baseLayout->onMouseClick(
+					(ActionHandler)& BasescapeState::layoutLeftClick,
 					SDL_BUTTON_LEFT);
-	_view->onMouseClick(
-					(ActionHandler)& BasescapeState::viewRightClick,
+	_baseLayout->onMouseClick(
+					(ActionHandler)& BasescapeState::layoutRightClick,
 					SDL_BUTTON_RIGHT);
-	_view->onMouseOver((ActionHandler)& BasescapeState::viewMouseOver);
-	_view->onMouseOut((ActionHandler)& BasescapeState::viewMouseOut);
+	_baseLayout->onMouseOver((ActionHandler)& BasescapeState::layoutMouseOver);
+	_baseLayout->onMouseOut((ActionHandler)& BasescapeState::layoutMouseOut);
 
-	_mini->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
-	_mini->setBases(_baseList);
-	_mini->onMouseClick(
-					(ActionHandler)& BasescapeState::miniLeftClick,
+	_miniBases->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
+	_miniBases->setBases(_baseList);
+	_miniBases->onMouseClick(
+					(ActionHandler)& BasescapeState::basesLeftClick,
 					SDL_BUTTON_LEFT);
-	_mini->onMouseClick(
-					(ActionHandler)& BasescapeState::miniRightClick,
+	_miniBases->onMouseClick(
+					(ActionHandler)& BasescapeState::basesRightClick,
 					SDL_BUTTON_RIGHT);
-	_mini->onKeyboardPress((ActionHandler)& BasescapeState::handleKeyPress);
-	_mini->onMouseOver((ActionHandler)& BasescapeState::viewMouseOver);
-	_mini->onMouseOut((ActionHandler)& BasescapeState::viewMouseOut);
+	_miniBases->onKeyboardPress((ActionHandler)& BasescapeState::handleKeyPress);
+	_miniBases->onMouseOver((ActionHandler)& BasescapeState::layoutMouseOver);
+	_miniBases->onMouseOut((ActionHandler)& BasescapeState::layoutMouseOut);
 
 	_edtBase->setBig();
 	_edtBase->onTextChange((ActionHandler)& BasescapeState::edtLabelChange);
@@ -257,8 +257,8 @@ void BasescapeState::init()
 
 	setBase(_base);
 
-	_view->setBase(_base);
-	_mini->draw();
+	_baseLayout->setBase(_base);
+	_miniBases->draw();
 	_edtBase->setText(_base->getName());
 
 	for (std::vector<Region*>::const_iterator
@@ -398,12 +398,12 @@ void BasescapeState::setBase(Base* const base)
 		if (_baseList->at(i) == base)
 		{
 			_base = base;
-			_mini->setSelectedBase(i);
+			_miniBases->setSelectedBase(i);
 			return;
 		}
 	}
 	_base = _baseList->front();
-	_mini->setSelectedBase(0u);
+	_miniBases->setSelectedBase(0u);
 }
 
 /**
@@ -578,11 +578,11 @@ void BasescapeState::btnGeoscapeClick(Action*)
  * Processes left clicking on facilities.
  * @param action - pointer to an Action
  */
-void BasescapeState::viewLeftClick(Action*)
+void BasescapeState::layoutLeftClick(Action*)
 {
 	if (_edtBase->isFocused() == false)
 	{
-		const BaseFacility* const fac (_view->getSelectedFacility());
+		const BaseFacility* const fac (_baseLayout->getSelectedFacility());
 		bool bPop (false);
 
 		if (fac == nullptr) // dirt.
@@ -676,11 +676,11 @@ void BasescapeState::viewLeftClick(Action*)
  * Processes right clicking on facilities.
  * @param action - pointer to an Action
  */
-void BasescapeState::viewRightClick(Action*)
+void BasescapeState::layoutRightClick(Action*)
 {
 	if (_edtBase->isFocused() == false)
 	{
-		const BaseFacility* const fac (_view->getSelectedFacility());
+		const BaseFacility* const fac (_baseLayout->getSelectedFacility());
 		if (fac != nullptr)
 		{
 			if (fac->inUse() == true)
@@ -704,7 +704,7 @@ void BasescapeState::viewRightClick(Action*)
 												uiRule->getElement("errorPalette")->color));
 			}
 			else
-				_game->pushState(new DismantleFacilityState(_base, _view, fac));
+				_game->pushState(new DismantleFacilityState(_base, _baseLayout, fac));
 		}
 	}
 }
@@ -714,13 +714,13 @@ void BasescapeState::viewRightClick(Action*)
  * Base the mouse is over.
  * @param action - pointer to an Action
  */
-void BasescapeState::viewMouseOver(Action*)
+void BasescapeState::layoutMouseOver(Action*)
 {
 	if (_edtBase->isFocused() == false)
 	{
 		std::wostringstream woststr;
 
-		const BaseFacility* const fac (_view->getSelectedFacility());
+		const BaseFacility* const fac (_baseLayout->getSelectedFacility());
 		if (fac != nullptr)
 		{
 			_txtFacility->setAlign(ALIGN_LEFT);
@@ -732,15 +732,21 @@ void BasescapeState::viewMouseOver(Action*)
 		}
 		else
 		{
-			const size_t baseId (_mini->getHoveredBase());
-			if (baseId < _baseList->size()
-				&& _base != _baseList->at(baseId))
+			const size_t baseId (_miniBases->getHoveredBase());
+			if (baseId < _baseList->size())
+			{
+				if (_base != _baseList->at(baseId))
+				{
+					_txtFacility->setAlign(ALIGN_RIGHT);
+					woststr << _baseList->at(baseId)->getName().c_str();
+				}
+			}
+			else if (baseId == _baseList->size() && baseId < Base::MAX_BASES)
 			{
 				_txtFacility->setAlign(ALIGN_RIGHT);
-				woststr << _baseList->at(baseId)->getName().c_str();
+				woststr << tr("STR_BUILD_NEW_BASE");
 			}
 		}
-
 		_txtFacility->setText(woststr.str());
 	}
 }
@@ -749,7 +755,7 @@ void BasescapeState::viewMouseOver(Action*)
  * Clears the Facility or other Base's name.
  * @param action - pointer to an Action
  */
-void BasescapeState::viewMouseOut(Action*)
+void BasescapeState::layoutMouseOut(Action*)
 {
 	_txtFacility->setText(L"");
 }
@@ -758,21 +764,22 @@ void BasescapeState::viewMouseOut(Action*)
  * Selects a different Base to display. Also builds a new Base on the globe.
  * @param action - pointer to an Action
  */
-void BasescapeState::miniLeftClick(Action*)
+void BasescapeState::basesLeftClick(Action*)
 {
 	if (_edtBase->isFocused() == false)
 	{
-		const size_t baseId (_mini->getHoveredBase());
-		if (baseId < _baseList->size()
-			&& _base != _baseList->at(baseId))
+		const size_t baseId (_miniBases->getHoveredBase());
+		if (baseId < _baseList->size())
 		{
-			_allowStoresWarning = true;
-			_txtFacility->setText(L"");
-			_base = _baseList->at(baseId);
-			init();
+			if (_base != _baseList->at(baseId))
+			{
+				_allowStoresWarning = true;
+				_txtFacility->setText(L"");
+				_base = _baseList->at(baseId);
+				init();
+			}
 		}
-		else if (baseId == _baseList->size()
-			&& baseId < Base::MAX_BASES - 1u)
+		else if (baseId == _baseList->size() && baseId < Base::MAX_BASES)
 		{
 			kL_geoMusicPlaying = false;
 			kL_geoMusicReturnState = true;
@@ -789,11 +796,11 @@ void BasescapeState::miniLeftClick(Action*)
  * Pops to globe with selected Base centered.
  * @param action - pointer to an Action
  */
-void BasescapeState::miniRightClick(Action*)
+void BasescapeState::basesRightClick(Action*)
 {
 	if (_edtBase->isFocused() == false)
 	{
-		const size_t baseId (_mini->getHoveredBase());
+		const size_t baseId (_miniBases->getHoveredBase());
 		if (baseId < _baseList->size())
 		{
 			const Base* const base (_baseList->at(baseId));
@@ -862,8 +869,7 @@ size_t BasescapeState::getKeyedBaseId(SDLKey keyId) const
 			break;
 		}
 	}
-
-	return Base::MAX_BASES;
+	return Base::MAX_BASES; // invalid.
 }
 
 /**

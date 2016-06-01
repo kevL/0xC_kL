@@ -48,7 +48,11 @@ struct DebriefingStat
 		score;
 	std::string type;
 
-	/// cTor.
+	/**
+	 * cTor.
+	 * @param typeId	- reference to a type of stuff
+	 * @param recovery	- true to recover the stuff and send it to base-stores
+	 */
 	DebriefingStat(
 			const std::string& typeId,
 			bool recovery = false)

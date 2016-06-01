@@ -30,7 +30,7 @@ class SelectStartFacilityState;
 
 
 /**
- * Window shown when the player tries to build a facility.
+ * Window shown when the player tries to build a start-facility.
  */
 class PlaceStartFacilityState
 	:
@@ -51,7 +51,7 @@ private:
 		~PlaceStartFacilityState();
 
 		/// Handler for clicking the BaseView grid.
-		void viewClick(Action* action) override;
+		void baseLayoutClick(Action* action) override;
 };
 
 }

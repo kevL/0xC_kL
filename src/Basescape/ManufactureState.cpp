@@ -117,7 +117,7 @@ ManufactureState::ManufactureState(
 	_mini->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
 	_mini->setBases(_baseList);
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _baseList->size();
 			++i)
 	{
@@ -172,11 +172,11 @@ ManufactureState::ManufactureState(
 	_lstResources->setMargin(4);
 	std::string st;
 	for (size_t
-			i = 0;
-			i != 2;
+			i = 0u;
+			i != 2u;
 			++i)
 	{
-		if (i == 0)
+		if (i == 0u)
 			st = "STR_ALIEN_ALLOYS";
 		else
 			st = "STR_ELERIUM_115";
@@ -186,8 +186,8 @@ ManufactureState::ManufactureState(
 							L"",
 							tr("STR_TOTAL").c_str(),
 							L"");
-		_lstResources->setCellColor(i, 1, 208); // white: text1->color2
-		_lstResources->setCellColor(i, 3, 208);
+		_lstResources->setCellColor(i, 1u, 208u); // white: text1->color2
+		_lstResources->setCellColor(i, 3u, 208u);
 	}
 }
 
@@ -317,22 +317,20 @@ void ManufactureState::fillProductionList()
 			{
 				ally = (*j)->getQuantity();
 				totalA += ally;
-				if (*i == _base)
-					qtyA += ally;
+				if (*i == _base) qtyA += ally;
 			}
 			else if ((*j)->getTransferItems() == "STR_ELERIUM_115")
 			{
 				eler = (*j)->getQuantity();
 				totalA += eler;
-				if (*i == _base)
-					qtyE += eler;
+				if (*i == _base) qtyE += eler;
 			}
 		}
 	}
-	_lstResources->setCellText(0,1, Text::intWide(qtyA));
-	_lstResources->setCellText(1,1, Text::intWide(qtyE));
-	_lstResources->setCellText(0,3, Text::intWide(totalA));
-	_lstResources->setCellText(1,3, Text::intWide(totalE));
+	_lstResources->setCellText(0u,1u, Text::intWide(qtyA));
+	_lstResources->setCellText(1u,1u, Text::intWide(qtyE));
+	_lstResources->setCellText(0u,3u, Text::intWide(totalA));
+	_lstResources->setCellText(1u,3u, Text::intWide(totalE));
 }
 
 /**
@@ -348,12 +346,13 @@ void ManufactureState::lstManufactureClick(Action*)
 }
 
 /**
- * Selects a new base to display.
+ * Selects a different Base to display.
+ * TODO: Implement key-presses to switch bases.
  * @param action - pointer to an Action
  */
 void ManufactureState::miniClick(Action*)
 {
-	if (_state != nullptr) // cannot switch bases if coming from geoscape.
+	if (_state != nullptr) // cannot switch bases if origin is Geoscape.
 	{
 		const size_t baseId (_mini->getHoveredBase());
 		if (baseId < _baseList->size())

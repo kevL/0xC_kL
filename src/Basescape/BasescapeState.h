@@ -48,9 +48,9 @@ private:
 	bool _allowStoresWarning;
 
 	Base* _base;
-	BaseView* _view;
+	BaseView* _baseLayout;
 	Globe* _globe;
-	MiniBaseView* _mini;
+	MiniBaseView* _miniBases;
 	Text
 		* _txtFacility,
 		* _txtFunds,
@@ -124,17 +124,17 @@ private:
 //		void btnNewBaseClick(Action* action);
 
 		/// Handler for left-clicking the BaseView.
-		void viewLeftClick(Action* action);
+		void layoutLeftClick(Action* action);
 		/// Handler for right-clicking the BaseView.
-		void viewRightClick(Action* action);
+		void layoutRightClick(Action* action);
 		/// Handler for hovering the BaseView & MiniBaseView.
-		void viewMouseOver(Action* action);
+		void layoutMouseOver(Action* action);
 		/// Handler for hovering out of the BaseView & MiniBaseView.
-		void viewMouseOut(Action* action);
+		void layoutMouseOut(Action* action);
 		/// Handler for left-clicking the MiniBaseView.
-		void miniLeftClick(Action* action);
+		void basesLeftClick(Action* action);
 		/// Handler for right-clicking the MiniBaseView.
-		void miniRightClick(Action* action);
+		void basesRightClick(Action* action);
 		/// Handler for pressing a Base selection hotkey.
 		void handleKeyPress(Action* action);
 		/// Returns the baseId for a keypress.

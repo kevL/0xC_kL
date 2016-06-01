@@ -278,10 +278,10 @@ private:
 		/// Gets if the Base is eligible for alien retaliation.
 		bool getBaseExposed() const;
 
-		/// Sets the Base as placed and in operation.
-		void setBasePlaced();
-		/// Gets if the Base has been placed on the Globe.
-		bool getBasePlaced() const;
+		/// Flags the Base as placed and in operation.
+		void placeBase();
+		/// Checks if the Base has been placed on the Globe.
+		bool isBasePlaced() const;
 
 		/// Checks if the Base is hyper-wave equipped.
 		bool getHyperDetection() const;

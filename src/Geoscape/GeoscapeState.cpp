@@ -1150,7 +1150,7 @@ void GeoscapeState::init()
 
 	if (_gameSave->getMonthsPassed() == -1							// run once
 		&& _gameSave->getBases()->empty() == false					// as long as there's a base
-		&& _gameSave->getBases()->front()->getBasePlaced() == true)	// THIS prevents missions running prior to the first base being placed.
+		&& _gameSave->getBases()->front()->isBasePlaced() == true)	// THIS prevents missions running prior to the first base being placed.
 	{
 		_gameSave->addMonth();
 		determineAlienMissions();

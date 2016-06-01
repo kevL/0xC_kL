@@ -165,10 +165,8 @@ void MiniBaseView::draw()
 		{
 			base = _baseList->at(i);
 
-			if ((_mode == MBV_RESEARCH
-					&& base->hasResearch() == false)
-				|| (_mode == MBV_PRODUCTION
-					&& base->hasProduction() == false))
+			if (   (_mode == MBV_RESEARCH   && base->hasResearch()   == false)
+				|| (_mode == MBV_PRODUCTION && base->hasProduction() == false))
 			{
 				continue;
 			}
@@ -239,16 +237,16 @@ void MiniBaseView::draw()
 							j != base->getCrafts()->end();
 							++j)
 					{
-						if ((*j)->getWarning() != CW_NONE)
+						if ((*j)->getWarning() != CW_NONE) // Craft needs materiels
 						{
-							if ((*j)->getWarning() == CW_CANTREFUEL)
-								color = ORANGE_L;
-							else if ((*j)->getWarning() == CW_CANTREARM)
-								color = ORANGE_D;
-							else //if ((*j)->getWarning() == CW_CANTREPAIR) // should not happen without a repair mechanic!
-								color = RED_D;
-
-							setPixelColor( // Craft needs materiels
+							switch ((*j)->getWarning())
+							{
+								default:			color = 0u;			break;	// avoid g++ compiler warning.
+								case CW_CANTREFUEL:	color = ORANGE_L;	break;
+								case CW_CANTREARM:	color = ORANGE_D;	break;
+								case CW_CANTREPAIR:	color = RED_D;				// <- should not happen without a repair mechanic!
+							}
+							setPixelColor(
 										x + 2,
 										19,
 										color);
@@ -303,7 +301,7 @@ void MiniBaseView::draw()
 }
 
 /**
- * Selects the base the mouse is hovered over.
+ * Selects the Base the mouse is hovered over.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -319,7 +317,7 @@ void MiniBaseView::mouseOver(Action* action, State* state)
 }
 
 /**
- * Deselects the base the mouse was hovered over.
+ * Deselects the Base the mouse was hovered over.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -339,7 +337,7 @@ void MiniBaseView::think()
 }
 
 /**
- * Blinks the craft status indicators.
+ * Blinks the craft-status indicators.
  */
 void MiniBaseView::blink()
 {
@@ -394,17 +392,10 @@ void MiniBaseView::blink()
 						switch (stat)
 						{
 							default:
-							case CS_OUT:
-								color = GREEN;
-								break;
-							case CS_REFUELLING:
-								color = ORANGE_L;
-								break;
-							case CS_REARMING:
-								color = ORANGE_D;
-								break;
-							case CS_REPAIRS:
-								color = RED_D;
+							case CS_OUT:		color = GREEN;		break;
+							case CS_REFUELLING:	color = ORANGE_L;	break;
+							case CS_REARMING:	color = ORANGE_D;	break;
+							case CS_REPAIRS:	color = RED_D;
 						}
 					}
 					else

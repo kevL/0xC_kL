@@ -57,19 +57,19 @@ PlaceLiftState::PlaceLiftState(
 		_globe(globe),
 		_firstBase(firstBase)
 {
-	_view		= new BaseView(192, 192, 0, 8);
+	_baseLayout	= new BaseView(192, 192, 0, 8);
 	_txtTitle	= new Text(320, 9);
 
 	setInterface("placeFacility");
 
-	add(_view,		"baseView",	"basescape");
-	add(_txtTitle,	"text",		"placeFacility");
+	add(_baseLayout,	"baseView",	"basescape");
+	add(_txtTitle,		"text",		"placeFacility");
 
 	centerAllSurfaces();
 
 
-	_view->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
-	_view->setBase(_base);
+	_baseLayout->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
+	_baseLayout->setBase(_base);
 
 	const RuleBaseFacility* facRule;
 	const std::vector<std::string> allFacs (_game->getRuleset()->getBaseFacilitiesList());
@@ -85,8 +85,8 @@ PlaceLiftState::PlaceLiftState(
 			break;
 		}
 	}
-	_view->setSelectable(_lift->getSize());
-	_view->onMouseClick((ActionHandler)& PlaceLiftState::viewClick);
+	_baseLayout->setSelectable(_lift->getSize());
+	_baseLayout->onMouseClick((ActionHandler)& PlaceLiftState::baseLayoutClick);
 
 	_txtTitle->setText(tr("STR_SELECT_POSITION_FOR_ACCESS_LIFT"));
 }
@@ -101,14 +101,14 @@ PlaceLiftState::~PlaceLiftState()
  * Processes clicking on Facilities.
  * @param action - pointer to an Action
  */
-void PlaceLiftState::viewClick(Action*)
+void PlaceLiftState::baseLayoutClick(Action*)
 {
 	BaseFacility* const fac (new BaseFacility(_lift, _base));
-	fac->setX(_view->getGridX());
-	fac->setY(_view->getGridY());
+	fac->setX(_baseLayout->getGridX());
+	fac->setY(_baseLayout->getGridY());
 
 	_base->getFacilities()->push_back(fac);
-	_base->setBasePlaced();
+	_base->placeBase();
 
 	_game->popState();
 

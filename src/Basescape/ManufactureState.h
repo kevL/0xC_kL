@@ -85,7 +85,7 @@ private:
 		/// Updates the production list.
 		void init() override;
 
-		/// Fills the list of base productions.
+		/// Fills the list of base-productions.
 		void fillProductionList();
 
 		/// Handler for clicking the OK button.
@@ -93,11 +93,11 @@ private:
 		/// Handler for the New Production button.
 		void btnNewProductionClick(Action* action);
 
-		/// Handler for clicking the MiniBase view.
+		/// Handler for clicking the MiniBaseView.
 		void miniClick(Action* action);
-		/// Handler for hovering the MiniBase view.
+		/// Handler for hovering the MiniBaseView.
 		void viewMouseOver(Action* action);
-		/// Handler for hovering out of the MiniBase view.
+		/// Handler for hovering out of the MiniBaseView.
 		void viewMouseOut(Action* action);
 };
 
