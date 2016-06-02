@@ -169,7 +169,7 @@ TransferItemsState::TransferItemsState(
 	_lstItems->setColumns(4, 136,56,31,20);
 	_lstItems->setBackground(_window);
 	_lstItems->setSelectable();
-	_lstItems->setArrowColumn(172, ARROW_VERTICAL);
+	_lstItems->setArrow(172, ARROW_VERTICAL);
 
 	_lstItems->onLeftArrowPress(	(ActionHandler)& TransferItemsState::lstLeftArrowPress);
 	_lstItems->onLeftArrowRelease(	(ActionHandler)& TransferItemsState::lstLeftArrowRelease);

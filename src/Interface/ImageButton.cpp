@@ -26,7 +26,7 @@ namespace OpenXcom
 {
 
 /**
- * Sets up an image button with the specified size and position.
+ * Sets up the ImageButton with the specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
  * @param x			- x-position in pixels (default 0)
@@ -54,7 +54,7 @@ ImageButton::~ImageButton()
 {}
 
 /**
- * Changes the color for the image button.
+ * Changes the color for this ImageButton.
  * @param color - color value
  */
 void ImageButton::setColor(Uint8 color)
@@ -63,7 +63,7 @@ void ImageButton::setColor(Uint8 color)
 }
 
 /**
- * Returns the color for the image button.
+ * Returns the color for this ImageButton.
  * @return, color value
  */
 Uint8 ImageButton::getColor() const
@@ -72,7 +72,7 @@ Uint8 ImageButton::getColor() const
 }
 
 /**
- * Changes the button group this image button belongs to.
+ * Changes the button-group this ImageButton belongs to.
  * @param group - pointer to the pressed button pointer in the group;
  *				  nullptr makes it a regular button
  */
@@ -85,8 +85,8 @@ void ImageButton::setGroup(ImageButton** group)
 }
 
 /**
- * Sets the button as the pressed button if it's part of a group and inverts the
- * colors when pressed.
+ * Sets this ImageButton as the pressed button if it's part of a group and
+ * inverts the colors when pressed.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -113,7 +113,7 @@ void ImageButton::mousePress(Action* action, State* state)
 }
 
 /**
- * Sets the button as the released button if it's part of a group.
+ * Sets this ImageButton as the released button if it's part of a group.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -130,8 +130,8 @@ void ImageButton::mouseRelease(Action* action, State* state)
 }
 
 /**
- * Inverts a button explicitly either ON or OFF and keeps track of the state
- * using internal variables.
+ * Inverts this ImageButton explicitly either ON or OFF and keeps track of the
+ * state using internal variables.
  * @param press - true to set this button as pressed
  */
 void ImageButton::toggle(bool press)

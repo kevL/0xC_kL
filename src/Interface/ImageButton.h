@@ -30,7 +30,8 @@ namespace OpenXcom
  * Regular image that works like a button.
  * @note Unlike the TextButton this button doesn't draw anything on its own. It
  * takes an existing graphic and treats it as a button, inverting colors when
- * necessary. This is necessary for special buttons like in the Geoscape.
+ * necessary. This is used for special buttons like the Geoscape's
+ * time-compression and list-scroll arrows.
  */
 class ImageButton
 	:
@@ -45,25 +46,25 @@ protected:
 
 
 	public:
-		/// Creates a new image button with the specified size and position.
+		/// Creates an ImageButton with the specified size and position.
 		ImageButton(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the image button.
+		/// Cleans up the ImageButton.
 		virtual ~ImageButton();
 
-		/// Sets the image button's color.
+		/// Sets the ImageButton's color.
 		void setColor(Uint8 color) override;
-		/// Gets the image button's color.
+		/// Gets the ImageButton's color.
 		Uint8 getColor() const;
 
-		/// Sets the image button's group.
+		/// Sets the ImageButton's group.
 		void setGroup(ImageButton** group);
-		/// Special handling for mouse presses.
+		/// Special handling for mouse-presses.
 		void mousePress(Action* action, State* state) override;
-		/// Special handling for mouse releases.
+		/// Special handling for mouse-releases.
 		void mouseRelease(Action* action, State* state) override;
 
 		/// Invert a button explicitly either ON or OFF.

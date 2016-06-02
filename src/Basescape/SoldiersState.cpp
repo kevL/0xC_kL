@@ -152,7 +152,7 @@ SoldiersState::SoldiersState(Base* base)
 	_txtCraft->setText(tr("STR_CRAFT"));
 
 	_lstSoldiers->setColumns(3, 117,93,71);
-	_lstSoldiers->setArrowColumn(193, ARROW_VERTICAL);
+	_lstSoldiers->setArrow(193, ARROW_VERTICAL);
 	_lstSoldiers->setBackground(_window);
 	_lstSoldiers->setSelectable();
 	_lstSoldiers->onMousePress((ActionHandler)& SoldiersState::lstSoldiersPress);

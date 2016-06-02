@@ -41,9 +41,11 @@
 #include "../Ruleset/Ruleset.h"
 
 #include "../SaveGame/Base.h"
+#include "../SaveGame/Craft.h"
 #include "../Savegame/ItemContainer.h"
 #include "../SaveGame/SavedGame.h"
 #include "../Savegame/Transfer.h"
+#include "../Savegame/Vehicle.h"
 
 
 namespace OpenXcom
@@ -74,7 +76,7 @@ DebriefExtraState::DebriefExtraState(
 {
 	_window			= new Window(this, 320, 200);
 
-	_txtTitle		= new Text(280, 16,  16, 8);
+	_txtTitle		= new Text(288, 16,  16, 8);
 	_txtBaseLabel	= new Text( 80,  9,  16, 8);
 	_txtScreen		= new Text( 80,  9, 224, 8);
 
@@ -126,11 +128,11 @@ DebriefExtraState::DebriefExtraState(
 		_txtScreen->setText(L"loot");
 		_curScreen = DES_LOOT_GAINED;
 
-		_lstGained->setColumns(3, 189,54,32);
+		_lstGained->setColumns(4, 170,55,30,20);
 		_lstGained->setBackground(_window);
 		_lstGained->setSelectable();
 
-		_lstGained->setArrowColumn(220, ARROW_VERTICAL);
+		_lstGained->setArrow(200, ARROW_VERTICAL);
 
 		_lstGained->onLeftArrowPress(	(ActionHandler)& DebriefExtraState::lstLeftArrowPress);
 		_lstGained->onLeftArrowRelease(	(ActionHandler)& DebriefExtraState::lstLeftArrowRelease);
@@ -149,11 +151,11 @@ DebriefExtraState::DebriefExtraState(
 
 	if (_itemsLost.empty() == false)
 	{
-		_lstLost->setColumns(3, 189,54,32);
+		_lstLost->setColumns(4, 170,55,30,20);
 		_lstLost->setBackground(_window);
 		_lstLost->setSelectable();
 
-		_lstLost->setArrowColumn(220, ARROW_VERTICAL);
+		_lstLost->setArrow(200, ARROW_VERTICAL);
 
 		_lstLost->onLeftArrowPress(		(ActionHandler)& DebriefExtraState::lstLeftArrowPress);
 		_lstLost->onLeftArrowRelease(	(ActionHandler)& DebriefExtraState::lstLeftArrowRelease);
@@ -707,11 +709,60 @@ void DebriefExtraState::styleList( // private.
 		else
 			wst2 = L"-";
 
+
+		int baseQty (_base->getStorageItems()->getItemQuantity(type));	// items of 'type' in base-stores
+
+		for (std::vector<Transfer*>::const_iterator						// add transfer-items
+				j = _base->getTransfers()->begin();
+				j != _base->getTransfers()->end();
+				++j)
+		{
+			if ((*j)->getTransferItems() == type)
+				baseQty += (*j)->getQuantity();
+		}
+
+		for (std::vector<Craft*>::const_iterator						// add craft-items & vehicles & vehicle-loads
+				j = _base->getCrafts()->begin();
+				j != _base->getCrafts()->end();
+				++j)
+		{
+			if ((*j)->getRules()->getSoldierCapacity() != 0)			// is transport-craft
+			{
+				for (std::map<std::string, int>::const_iterator
+						k = (*j)->getCraftItems()->getContents()->begin();
+						k != (*j)->getCraftItems()->getContents()->end();
+						++k)
+				{
+					if (k->first == type)
+						baseQty += k->second;
+				}
+			}
+
+			if ((*j)->getRules()->getVehicleCapacity() != 0)			// is transport-craft capable of vehicles
+			{
+				for (std::vector<Vehicle*>::const_iterator
+						k = (*j)->getVehicles()->begin();
+						k != (*j)->getVehicles()->end();
+						++k)
+				{
+					if ((*k)->getRules()->getType() == type)
+						++baseQty;
+					else if ((*k)->getLoad() > 0
+						&& (*k)->getRules()->getCompatibleAmmo()->front() == type)
+					{
+						baseQty += (*k)->getLoad();
+					}
+				}
+			}
+		}
+
+
 		list->addRow(
-				3,
+				4,
 				wst1.c_str(),
 				Text::intWide(i->second).c_str(),
-				wst2.c_str());
+				wst2.c_str(),
+				Text::intWide(baseQty).c_str());
 		list->setRowColor(row, color, contrast);
 	}
 }

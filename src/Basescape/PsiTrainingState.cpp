@@ -118,7 +118,7 @@ PsiTrainingState::PsiTrainingState(Base* const base)
 	_txtTraining->setText(tr("STR_IN_TRAINING"));
 
 	_lstSoldiers->setColumns(4, 118,48,78,34);
-	_lstSoldiers->setArrowColumn(193, ARROW_VERTICAL);
+	_lstSoldiers->setArrow(193, ARROW_VERTICAL);
 	_lstSoldiers->setBackground(_window);
 	_lstSoldiers->setSelectable();
 	_lstSoldiers->onMousePress((ActionHandler)& PsiTrainingState::lstSoldiersPress);

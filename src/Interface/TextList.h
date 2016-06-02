@@ -250,7 +250,7 @@ private:
 		/// Sets the arrow-color of the TextList.
 		void setArrowColor(Uint8 color);
 		/// Sets the arrow-column of the TextList.
-		void setArrowColumn(
+		void setArrow(
 				int pos,
 				ArrowOrientation type);
 

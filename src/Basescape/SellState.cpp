@@ -160,7 +160,7 @@ SellState::SellState(Base* const base)
 	_lstItems->setColumns(4, 142,60,22,53);
 	_lstItems->setBackground(_window);
 	_lstItems->setSelectable();
-	_lstItems->setArrowColumn(182, ARROW_VERTICAL);
+	_lstItems->setArrow(182, ARROW_VERTICAL);
 
 	_lstItems->onLeftArrowPress(	(ActionHandler)& SellState::lstLeftArrowPress);
 	_lstItems->onLeftArrowRelease(	(ActionHandler)& SellState::lstLeftArrowRelease);

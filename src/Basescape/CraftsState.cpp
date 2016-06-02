@@ -116,7 +116,7 @@ CraftsState::CraftsState(Base* base)
 //	_txtHwp->setText(tr("STR_HWPS"));
 
 	_lstCrafts->setColumns(5, 91,120,25,15,14);
-	_lstCrafts->setArrowColumn(274, ARROW_VERTICAL);
+	_lstCrafts->setArrow(274, ARROW_VERTICAL);
 	_lstCrafts->setBackground(_window);
 	_lstCrafts->setSelectable();
 	_lstCrafts->onMousePress((ActionHandler)& CraftsState::lstCraftsPress);

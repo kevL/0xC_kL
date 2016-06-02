@@ -29,8 +29,8 @@ namespace OpenXcom
 {
 
 /**
- * Sets up an arrow button with the specified size and position.
- * @param shape		- shape of the arrow
+ * Sets up the ArrowButton with the specified size and position.
+ * @param shape		- shape of the arrow (ArrowButton.h)
  * @param width		- width in pixels
  * @param height	- height in pixels
  * @param x			- x-position in pixels (default 0)
@@ -63,7 +63,7 @@ ArrowButton::~ArrowButton()
 }
 
 /**
- * Checks if the specified button has been handled.
+ * Checks if the specified mouse-button has been handled.
  * @param btn - an SDL-button identifier (default 0)
  */
 bool ArrowButton::isButtonHandled(Uint8 btn)
@@ -85,8 +85,8 @@ bool ArrowButton::isButtonHandled(Uint8 btn)
 }
 
 /**
- * Changes the color for the image button.
- * @param color Color value.
+ * Changes the color for this ImageButton.
+ * @param color - color value
  */
 void ArrowButton::setColor(Uint8 color)
 {
@@ -95,8 +95,8 @@ void ArrowButton::setColor(Uint8 color)
 }
 
 /**
- * Changes the shape for the arrow button.
- * @param shape Shape of the arrow.
+ * Changes the shape for this ArrowButton.
+ * @param shape - shape of the arrow (ArrowButton.h)
  */
 void ArrowButton::setShape(ArrowShape shape)
 {
@@ -105,8 +105,8 @@ void ArrowButton::setShape(ArrowShape shape)
 }
 
 /**
- * Changes the list associated with the arrow button.
- * This makes the button scroll that list.
+ * Changes the list associated with this ArrowButton.
+ * @note This makes the button scroll that list.
  * @param textList - pointer to TextList
  */
 void ArrowButton::setTextList(TextList* const textList)
@@ -115,7 +115,7 @@ void ArrowButton::setTextList(TextList* const textList)
 }
 
 /**
- * Draws the button with the specified arrow shape.
+ * Draws this ArrowButton with the specified arrow-shape.
  */
 void ArrowButton::draw()
 {
@@ -127,7 +127,7 @@ void ArrowButton::draw()
 
 	rect.x =
 	rect.y = 0;
-	rect.w = static_cast<Uint16>(getWidth() - 1);
+	rect.w = static_cast<Uint16>(getWidth()  - 1);
 	rect.h = static_cast<Uint16>(getHeight() - 1);
 
 	drawRect(&rect, color);
@@ -355,7 +355,7 @@ void ArrowButton::draw()
 }
 
 /**
- * Keeps the scrolling timers running.
+ * Keeps the scrolling Timers running.
  */
 void ArrowButton::think()
 {

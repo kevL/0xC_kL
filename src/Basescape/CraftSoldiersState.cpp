@@ -121,7 +121,7 @@ CraftSoldiersState::CraftSoldiersState(
 	_txtCraft->setText(tr("STR_CRAFT"));
 
 	_lstSoldiers->setColumns(3, 116,85,71);
-	_lstSoldiers->setArrowColumn(180, ARROW_VERTICAL);
+	_lstSoldiers->setArrow(180, ARROW_VERTICAL);
 	_lstSoldiers->setBackground(_window);
 	_lstSoldiers->setSelectable();
 	_lstSoldiers->onMousePress((ActionHandler)& CraftSoldiersState::lstSoldiersPress);

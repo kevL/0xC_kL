@@ -118,7 +118,7 @@ CraftArmorState::CraftArmorState(
 	_txtCraft->setText(tr("STR_CRAFT"));
 	_txtArmor->setText(tr("STR_ARMOR"));
 
-	_lstSoldiers->setArrowColumn(193, ARROW_VERTICAL);
+	_lstSoldiers->setArrow(193, ARROW_VERTICAL);
 	_lstSoldiers->setColumns(3, 90,120,73);
 	_lstSoldiers->setBackground(_window);
 	_lstSoldiers->setSelectable();

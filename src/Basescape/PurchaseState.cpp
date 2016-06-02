@@ -159,7 +159,7 @@ PurchaseState::PurchaseState(Base* const base)
 	_lstItems->setColumns(4, 142,55,46,32);
 	_lstItems->setSelectable();
 	_lstItems->setBackground(_window);
-	_lstItems->setArrowColumn(227, ARROW_VERTICAL);
+	_lstItems->setArrow(227, ARROW_VERTICAL);
 
 	_lstItems->onLeftArrowPress(	(ActionHandler)& PurchaseState::lstLeftArrowPress);
 	_lstItems->onLeftArrowRelease(	(ActionHandler)& PurchaseState::lstLeftArrowRelease);

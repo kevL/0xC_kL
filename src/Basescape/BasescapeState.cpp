@@ -882,7 +882,7 @@ void BasescapeState::edtLabelChange(Action*)
 }
 
 /**
- * Resets the '_allowStoresWarning' flag.
+ * Allows the storage-overfull warning to be displayed to the player.
  */
 void BasescapeState::resetStoresWarning()
 {

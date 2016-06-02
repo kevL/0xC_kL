@@ -155,7 +155,7 @@ AlienContainmentState::AlienContainmentState(
 	_txtInResearch->setText(tr("STR_RESEARCH"));
 
 	_lstAliens->setColumns(4, 130,50,50,47);
-	_lstAliens->setArrowColumn(158, ARROW_HORIZONTAL);
+	_lstAliens->setArrow(158, ARROW_HORIZONTAL);
 	_lstAliens->setBackground(_window);
 	_lstAliens->setSelectable();
 //	_lstAliens->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);

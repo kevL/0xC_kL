@@ -882,16 +882,17 @@ void TextList::setArrowColor(Uint8 color)
 /**
  * Sets the position of the column of arrow-buttons in the TextList.
  * @param pos	- x-position in pixels (-1 to disable)
- * @param type	- arrow orientation type
+ * @param type	- arrow orientation type (TextList.h)
  */
-void TextList::setArrowColumn(
+void TextList::setArrow(
 		int pos,
 		ArrowOrientation type)
 {
-	_arrowPos = pos;
 	_arrowType = type;
+
+	_arrowPos = pos;
 	_arrowsLeftEdge = getX() + _arrowPos;
-	_arrowsRightEdge = _arrowsLeftEdge + 12 + 11;
+	_arrowsRightEdge = _arrowsLeftEdge + _up->getWidth() + _down->getWidth() - 1;
 }
 
 /**

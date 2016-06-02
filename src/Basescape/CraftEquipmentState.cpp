@@ -165,7 +165,7 @@ CraftEquipmentState::CraftEquipmentState(
 	_lstEquipment->setColumns(3, 147,85,41);
 	_lstEquipment->setBackground(_window);
 	_lstEquipment->setSelectable();
-	_lstEquipment->setArrowColumn(189, ARROW_HORIZONTAL);
+	_lstEquipment->setArrow(189, ARROW_HORIZONTAL);
 
 	_lstEquipment->onLeftArrowPress(	(ActionHandler)& CraftEquipmentState::lstLeftArrowPress);
 	_lstEquipment->onLeftArrowRelease(	(ActionHandler)& CraftEquipmentState::lstLeftArrowRelease);

@@ -143,7 +143,7 @@ private:
 		/// Handler for changing the text in the base-name editor.
 		void edtLabelChange(Action* action);
 
-		/// Resets the '_allowStoresWarning' flag.
+		/// Allows the storage-overfull warning to be displayed to the player.
 		void resetStoresWarning();
 };
 

@@ -1539,7 +1539,7 @@ void DebriefingState::prepareDebriefing() // private.
 							alloyDivisor = 150;
 							break;
 						default:
-							alloyDivisor = 1; //15; TEST.
+							alloyDivisor = 15;
 					}
 
 //					(*i)->qty /= alloyDivisor;
