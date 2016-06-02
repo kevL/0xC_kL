@@ -2096,14 +2096,14 @@ int BattlescapeGenerator::loadMAP( // private.
 	std::ostringstream oststr;
 	if (size_z > _battleSave->getMapSizeZ())
 	{
-		oststr << "Height of map " + file.str() + " too big for this mission, block is "
-			   << size_z << ", expected: " << _battleSave->getMapSizeZ();
+		oststr << "Height of " + file.str() + " is too big for the mission. Block is "
+			   << size_z << " expected: " << _battleSave->getMapSizeZ();
 		throw Exception(oststr.str());
 	}
 	else if (size_x != block->getSizeX() || size_y != block->getSizeY())
 	{
-		oststr << "Map block is not of the size specified " + file.str() + " is "
-			   << size_x << "x" << size_y << " , expected: " << block->getSizeX() << "x" << block->getSizeY();
+		oststr << "Map block is not of the size specified. " + file.str() + " is "
+			   << size_x << "x" << size_y << " expected: " << block->getSizeX() << "x" << block->getSizeY();
 		throw Exception(oststr.str());
 	}
 

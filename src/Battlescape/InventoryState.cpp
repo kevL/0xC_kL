@@ -977,8 +977,7 @@ void InventoryState::btnClearGroundClick(Action*)
 
 		if (craft != nullptr) // ie, not base-equip screen.
 		{
-			BattleUnit* const unit (_battleSave->getSelectedUnit());
-			Tile* const tile (unit->getTile());
+			Tile* const tile (_battleSave->getSelectedUnit()->getTile());
 			std::vector<BattleItem*>* const grdList (tile->getInventory());
 			if (grdList->empty() == false)
 			{

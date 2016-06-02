@@ -542,7 +542,7 @@ void Craft::setDestination(Target* const dest)
 		setSpeed(_crRule->getMaxSpeed() / 10);
 	}
 	else if (dest == nullptr)
-		setSpeed(_crRule->getMaxSpeed() / 2);
+		setSpeed(_crRule->getMaxSpeed() >> 1u);
 	else
 		setSpeed(_crRule->getMaxSpeed());
 

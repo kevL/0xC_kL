@@ -42,15 +42,26 @@ Target::Target()
  */
 Target::~Target() // virtual.
 {
+	std::vector<Craft*> baseCrafts;
+
+	Craft* craft;
 	for (size_t
 			i = 0u;
 			i != _followers.size();
 			++i)
 	{
-		Craft* const craft (dynamic_cast<Craft*>(_followers[i]));
-		if (craft != nullptr)
-			craft->returnToBase();
-	}
+		if ((craft = dynamic_cast<Craft*>(_followers[i])) != nullptr)
+		{
+			baseCrafts.push_back(craft);
+//			craft->returnToBase();	// NOTE: This erases *Craft from its current destination (this)
+		}							// creating a ... problem. The returnToBase() call should be done
+	}								// before here. ... Or after -->
+
+	for (std::vector<Craft*>::const_iterator
+			i = baseCrafts.begin();
+			i != baseCrafts.end();
+			++i)
+		(*i)->returnToBase();
 }
 
 /**
