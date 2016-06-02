@@ -43,7 +43,7 @@ protected:
 		_lat,
 		_lon;
 
-	std::vector<Target*> _followers;
+	std::vector<Target*> _targeters;
 
 	/// Creates a Target.
 	Target();
@@ -75,8 +75,8 @@ protected:
 		/// Gets the Target's marker.
 		virtual int getMarker() const = 0;
 
-		/// Gets the Target's followers.
-		std::vector<Target*>* getFollowers();
+		/// Gets the Target's targeters.
+		std::vector<Target*>* getTargeters();
 
 		/// Gets the distance to another Target.
 		double getDistance(const Target* const target) const;

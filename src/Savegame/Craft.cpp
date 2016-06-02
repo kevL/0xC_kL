@@ -765,7 +765,7 @@ int Craft::getFuelConsumption() const
 
 /**
  * Gets the minimum required fuel for this Craft to get back to Base.
- * @note This now assumes that Craft cannot be transferred during mid-flight.
+ * @note This now assumes that Craft cannot be transfered during mid-flight.
  * @return, fuel amount
  */
 int Craft::getFuelLimit() const

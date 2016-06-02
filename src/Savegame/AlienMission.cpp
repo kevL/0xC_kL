@@ -712,15 +712,15 @@ void AlienMission::ufoReachedWaypoint(
 					_gameSave.getMissionSites()->push_back(site);
 
 					for (std::vector<Target*>::const_iterator
-							i = ufo.getFollowers()->begin();
-							i != ufo.getFollowers()->end();
+							i = ufo.getTargeters()->begin();
+							i != ufo.getTargeters()->end();
 							)
 					{
 						Craft* const craft (dynamic_cast<Craft*>(*i));
 						if (craft != nullptr)
 						{
 							craft->setDestination(site);
-							i = ufo.getFollowers()->begin();
+							i = ufo.getTargeters()->begin();
 						}
 						else
 							++i;

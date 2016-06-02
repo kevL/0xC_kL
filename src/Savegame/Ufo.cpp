@@ -79,16 +79,16 @@ Ufo::Ufo(const RuleUfo* const ufoRule)
  */
 Ufo::~Ufo()
 {
-	for (std::vector<Target*>::const_iterator
-			i = _followers.begin();
-			i != _followers.end();
+	Craft* craft;
+	for (size_t
+			i = 0u;
+			i != _targeters.size();
 			)
 	{
-		Craft* const craft (dynamic_cast<Craft*>(*i));
-		if (craft != nullptr)
+		if ((craft = dynamic_cast<Craft*>(_targeters[i])) != nullptr)
 		{
 			craft->returnToBase();
-			i = _followers.begin();
+			i = 0u;
 		}
 		else
 			++i;

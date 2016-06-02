@@ -1101,13 +1101,18 @@ void DebriefingState::prepareDebriefing() // private.
 							ClearAlienBase(*i));
 
 					for (std::vector<Target*>::const_iterator
-							j = (*i)->getFollowers()->begin();
-							j != (*i)->getFollowers()->end();
-							++j)
+							j = (*i)->getTargeters()->begin();
+							j != (*i)->getTargeters()->end();
+							)
 					{
 						Craft* const craft (dynamic_cast<Craft*>(*j));
 						if (craft != nullptr)
+						{
 							craft->returnToBase();
+							j = (*i)->getTargeters()->begin();
+						}
+						else
+							++j;
 					}
 
 					delete *i;

@@ -46,20 +46,20 @@ MovingTarget::MovingTarget()
 
 /**
  * dTor.
- * @note Make sure to cleanup this MovingTarget's followers.
+ * @note Clears this MovingTarget from its destination's targeters.
  */
 MovingTarget::~MovingTarget() // virtual.
 {
 	if (_dest != nullptr)
 	{
 		for (std::vector<Target*>::const_iterator
-				i = _dest->getFollowers()->begin();
-				i != _dest->getFollowers()->end();
+				i = _dest->getTargeters()->begin();
+				i != _dest->getTargeters()->end();
 				++i)
 		{
 			if (*i == this)
 			{
-				_dest->getFollowers()->erase(i);
+				_dest->getTargeters()->erase(i);
 				break;
 			}
 		}
@@ -107,20 +107,20 @@ void MovingTarget::setDestination(Target* const dest) // virtual.
 	if (_dest != nullptr)
 	{
 		for (std::vector<Target*>::const_iterator
-				i = _dest->getFollowers()->begin();
-				i != _dest->getFollowers()->end();
+				i = _dest->getTargeters()->begin();
+				i != _dest->getTargeters()->end();
 				++i)
 		{
 			if (*i == this)
 			{
-				_dest->getFollowers()->erase(i);
+				_dest->getTargeters()->erase(i);
 				break;
 			}
 		}
 	}
 
 	if ((_dest = dest) != nullptr)
-		_dest->getFollowers()->push_back(this);
+		_dest->getTargeters()->push_back(this);
 
 	calculateSpeed();
 }

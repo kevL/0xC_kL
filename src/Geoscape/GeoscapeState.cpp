@@ -1521,7 +1521,7 @@ void GeoscapeState::time5Seconds()
 						}
 
 						if (detected != (*i)->getDetected()
-							&& (*i)->getFollowers()->empty() == false
+							&& (*i)->getTargeters()->empty() == false
 							&& !
 								((*i)->getTrajectory().getId() == UfoTrajectory::RETALIATION_ASSAULT_RUN
 									&& (*i)->getUfoStatus() == Ufo::LANDED))
@@ -1572,7 +1572,7 @@ void GeoscapeState::time5Seconds()
 					mission->ufoLifting(**i, *_rules, *_globe);
 
 					if (detected != (*i)->getDetected()
-						&& (*i)->getFollowers()->empty() == false)
+						&& (*i)->getTargeters()->empty() == false)
 					{
 						resetTimer();
 						popup(new UfoLostState((*i)->getName(_game->getLanguage())));
@@ -1805,7 +1805,7 @@ void GeoscapeState::time5Seconds()
 		switch ((*i)->getUfoStatus())
 		{
 			case Ufo::DESTROYED:
-				if ((*i)->getFollowers()->empty() == false)
+				if ((*i)->getTargeters()->empty() == false)
 				{
 					for (std::list<DogfightState*>::const_iterator // Remove all dogfights with this UFO.
 							j = _dogfights.begin();
@@ -1839,7 +1839,7 @@ void GeoscapeState::time5Seconds()
 			i != _gameSave->getWaypoints()->end();
 			)
 	{
-		if ((*i)->getFollowers()->empty() == true)
+		if ((*i)->getTargeters()->empty() == true)
 		{
 			delete *i;
 			i = _gameSave->getWaypoints()->erase(i);
@@ -2217,7 +2217,7 @@ void GeoscapeState::time10Minutes()
 				}
 
 				if (contact == false
-					&& (*i)->getFollowers()->empty() == false)
+					&& (*i)->getTargeters()->empty() == false)
 				{
 					resetTimer();
 					popup(new UfoLostState((*i)->getName(_game->getLanguage())));

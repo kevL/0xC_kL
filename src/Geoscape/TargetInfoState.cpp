@@ -126,8 +126,8 @@ TargetInfoState::TargetInfoState(
 	_txtFollowers->setAlign(ALIGN_CENTER);
 	woststr.str(L"");
 	for (std::vector<Target*>::const_iterator
-			i = _target->getFollowers()->begin();
-			i != _target->getFollowers()->end();
+			i = _target->getTargeters()->begin();
+			i != _target->getTargeters()->end();
 			++i)
 	{
 		woststr << (*i)->getName(_game->getLanguage()) << L'\n';
