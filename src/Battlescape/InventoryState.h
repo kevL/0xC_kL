@@ -54,8 +54,6 @@ private:
 /*	std::string _currentTooltip; */
 	const bool _tuMode;
 
-//	int _flarePower;
-
 	BattlescapeButton
 		* _btnGroundL,
 		* _btnGroundR,
@@ -72,13 +70,13 @@ private:
 	NumberText
 		* _numOrder,
 		* _numTuCost,
-		* _wndHead,
-		* _wndTorso,
-		* _wndRightArm,
-		* _wndLeftArm,
-		* _wndRightLeg,
-		* _wndLeftLeg,
-		* _wndFire;
+		* _numHead,
+		* _numTorso,
+		* _numRightArm,
+		* _numLeftArm,
+		* _numRightLeg,
+		* _numLeftLeg,
+		* _numFire;
 	SavedBattleGame* _battleSave;
 	Surface
 		* _bg,
@@ -148,7 +146,7 @@ private:
 		void btnNextClick(Action* action);
 
 		/// Handler for clicking the Unload button.
-		void btnUnloadClick(Action* action);
+		void btnLoadIconClick(Action* action);
 		/// Handler for right-clicking the Unload button.
 		void btnSaveLayouts(Action* action);
 
@@ -156,8 +154,10 @@ private:
 		void btnGroundPress(Action* action);
 		/// Handler for left-clicking either Ground button.
 		void btnGroundClick(Action* action);
-		/// Handler for right-clicking either Ground button.
-		void btnUnequipUnitClick(Action* action);
+		/// Handler for right-clicking the rightside Ground button.
+		void btnClearUnitClick(Action* action);
+		/// Handler for right-clicking the leftside Ground button.
+		void btnClearGroundClick(Action* action);
 
 		/// Handler for clicking the Rank button.
 		void btnRankClick(Action* action);

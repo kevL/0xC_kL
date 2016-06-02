@@ -51,8 +51,11 @@
 #include "../Ruleset/Ruleset.h"
 #include "../Ruleset/RuleSoldier.h"
 
+#include "../Savegame/Base.h"
 #include "../Savegame/BattleItem.h"
 #include "../Savegame/BattleUnit.h"
+#include "../Savegame/Craft.h"
+#include "../Savegame/ItemContainer.h"
 #include "../Savegame/SoldierLayout.h"
 #include "../Savegame/SavedBattleGame.h"
 
@@ -68,7 +71,7 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the Inventory screen.
- * @param tuMode - true if in battle when inventory usage costs time units (default false)
+ * @param tuMode - true if in battle when inventory usage costs TU (default false)
  * @param parent - pointer to parent BattlescapeState (default nullptr)
  */
 InventoryState::InventoryState(
@@ -77,7 +80,6 @@ InventoryState::InventoryState(
 	:
 		_tuMode(tuMode),
 		_parent(parent)
-//		_flarePower(0)
 {
 	_battleSave = _game->getSavedGame()->getBattleSave();
 
@@ -118,13 +120,13 @@ InventoryState::InventoryState(
 	_numOrder	= new NumberText(7, 5, 228,  4);
 	_numTuCost	= new NumberText(7, 5, 310, 60);
 
-	_wndHead		= new NumberText(7, 5,  79,  31);
-	_wndTorso		= new NumberText(7, 5,  79, 144);
-	_wndRightArm	= new NumberText(7, 5,  40,  80);
-	_wndLeftArm		= new NumberText(7, 5, 117,  80);
-	_wndRightLeg	= new NumberText(7, 5,  40, 120);
-	_wndLeftLeg		= new NumberText(7, 5, 117, 120);
-	_wndFire		= new NumberText(7, 5, 154,  43);
+	_numHead		= new NumberText(7, 5,  79,  31);
+	_numTorso		= new NumberText(7, 5,  79, 144);
+	_numRightArm	= new NumberText(7, 5,  40,  80);
+	_numLeftArm		= new NumberText(7, 5, 117,  80);
+	_numRightLeg	= new NumberText(7, 5,  40, 120);
+	_numLeftLeg		= new NumberText(7, 5, 117, 120);
+	_numFire		= new NumberText(7, 5, 154,  43);
 
 	_txtItem	= new Text(160, 9, 128, 140);
 
@@ -192,13 +194,13 @@ InventoryState::InventoryState(
 	add(_txtThrowTU,	"textTUs",			"inventory", _bg);
 	add(_txtPsiTU,		"textTUs",			"inventory", _bg);
 
-	add(_wndHead);
-	add(_wndTorso);
-	add(_wndRightArm);
-	add(_wndLeftArm);
-	add(_wndRightLeg);
-	add(_wndLeftLeg);
-	add(_wndFire);
+	add(_numHead);
+	add(_numTorso);
+	add(_numRightArm);
+	add(_numLeftArm);
+	add(_numRightLeg);
+	add(_numLeftLeg);
+	add(_numFire);
 
 	add(_srfAmmo);
 	add(_inventoryPanel);
@@ -227,20 +229,20 @@ InventoryState::InventoryState(
 	_numTuCost->setColor(WHITE);
 	_numTuCost->setVisible(false);
 
-	_wndHead->setColor(RED);
-	_wndHead->setVisible(false);
-	_wndTorso->setColor(RED);
-	_wndTorso->setVisible(false);
-	_wndRightArm->setColor(RED);
-	_wndRightArm->setVisible(false);
-	_wndLeftArm->setColor(RED);
-	_wndLeftArm->setVisible(false);
-	_wndRightLeg->setColor(RED);
-	_wndRightLeg->setVisible(false);
-	_wndLeftLeg->setColor(RED);
-	_wndLeftLeg->setVisible(false);
-	_wndFire->setColor(RED);
-	_wndFire->setVisible(false);
+	_numHead->setColor(RED);
+	_numHead->setVisible(false);
+	_numTorso->setColor(RED);
+	_numTorso->setVisible(false);
+	_numRightArm->setColor(RED);
+	_numRightArm->setVisible(false);
+	_numLeftArm->setColor(RED);
+	_numLeftArm->setVisible(false);
+	_numRightLeg->setColor(RED);
+	_numRightLeg->setVisible(false);
+	_numLeftLeg->setColor(RED);
+	_numLeftLeg->setVisible(false);
+	_numFire->setColor(RED);
+	_numFire->setVisible(false);
 
 	_txtItem->setHighContrast();
 
@@ -292,11 +294,11 @@ InventoryState::InventoryState(
 //	_btnNext->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
 //	_btnNext->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
-	_btnUnload->onMouseClick((ActionHandler)& InventoryState::btnUnloadClick);
+	_btnUnload->onMouseClick((ActionHandler)& InventoryState::btnLoadIconClick);
 	_btnUnload->onMouseClick(
 					(ActionHandler)& InventoryState::btnSaveLayouts,
 					SDL_BUTTON_RIGHT);
-//	_btnUnload->onMouseClick((ActionHandler)& InventoryState::btnUnloadClick);
+//	_btnUnload->onMouseClick((ActionHandler)& InventoryState::btnLoadIconClick);
 //	_btnUnload->setTooltip("STR_UNLOAD_WEAPON");
 //	_btnUnload->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
 //	_btnUnload->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
@@ -305,16 +307,15 @@ InventoryState::InventoryState(
 
 	_btnGroundL->onMouseClick((ActionHandler)& InventoryState::btnGroundClick);
 	_btnGroundL->onMouseClick(
-					(ActionHandler)& InventoryState::btnUnequipUnitClick,
+					(ActionHandler)& InventoryState::btnClearGroundClick,
 					SDL_BUTTON_RIGHT);
 
 	_btnGroundR->onMouseClick((ActionHandler)& InventoryState::btnGroundClick);
 	_btnGroundR->onMouseClick(
-					(ActionHandler)& InventoryState::btnUnequipUnitClick,
+					(ActionHandler)& InventoryState::btnClearUnitClick,
 					SDL_BUTTON_RIGHT);
-
 	_btnGroundR->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnUnequipUnitClick,
+					(ActionHandler)& InventoryState::btnClearUnitClick,
 					Options::keyInvClear);
 //	_btnGroundR->setTooltip("STR_SCROLL_RIGHT");
 //	_btnGroundR->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
@@ -342,9 +343,9 @@ InventoryState::InventoryState(
 //	_btnApplyTemplate->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
 //	_btnApplyTemplate->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
-/*	_btnClearInventory->onMouseClick((ActionHandler)& InventoryState::btnUnequipUnitClick);
+/*	_btnClearInventory->onMouseClick((ActionHandler)& InventoryState::btnClearUnitClick);
 	_btnClearInventory->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnUnequipUnitClick,
+					(ActionHandler)& InventoryState::btnClearUnitClick,
 					Options::keyInvClear); */
 //	_btnClearInventory->setTooltip("STR_CLEAR_INVENTORY");
 //	_btnClearInventory->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
@@ -404,28 +405,11 @@ InventoryState::~InventoryState()
 	{
 		Tile* const tile (_battleSave->getSelectedUnit()->getTile());
 
-//		int flarePower (0);
-//		for (std::vector<BattleItem*>::const_iterator
-//				i = tile->getInventory()->begin();
-//				i != tile->getInventory()->end();
-//				++i)
-//		{
-//			if ((*i)->getRules()->getBattleType() == BT_FLARE
-//				&& (*i)->getFuse() != -1
-//				&& (*i)->getRules()->getPower() > flarePower)
-//			{
-//				flarePower = (*i)->getRules()->getPower();
-//			}
-//		}
-
 		TileEngine* const te (_battleSave->getTileEngine());
 		te->applyGravity(tile);
 
-//		if (flarePower > _flarePower)
-//		{
 		te->calculateTerrainLighting();
 		te->calcFovAll(true);
-//		}
 
 		_battleSave->getBattleGame()->getMap()->setNoDraw(false);
 	}
@@ -444,12 +428,6 @@ InventoryState::~InventoryState()
 //							true);
 //			_game->getScreen()->resetDisplay(false);
 //		}
-
-//kL	Tile* tile = _battleSave->getSelectedUnit()->getTile();
-//kL	_battleSave->getTileEngine()->applyGravity(tile);
-//kL	_battleSave->getTileEngine()->calculateTerrainLighting(); // dropping/picking up flares
-//kL	_battleSave->getTileEngine()->calcFovAll();
-
 //	}
 //	else
 //	{
@@ -463,7 +441,7 @@ InventoryState::~InventoryState()
 //	}
 
 /**
- * Hits the think timer.
+ * Hits the think Timer.
  *
 void InventoryState::think()
 {
@@ -530,21 +508,6 @@ void InventoryState::init()
 	_txtName->setText(unit->getName(_game->getLanguage()));
 
 	_inventoryPanel->setSelectedUnitInventory(unit);
-
-//	_flarePower = 0;										// unfortunately this can screw up when accessing the UfoPaedia
-//	for (std::vector<BattleItem*>::const_iterator			// or when picking up a flare-item, so just go ahead and run
-//			i = unit->getTile()->getInventory()->begin();	// both calcLight/Fov in the dTor regardless.
-//			i != unit->getTile()->getInventory()->end();
-//			++i)
-//	{
-//		if ((*i)->getRules()->getBattleType() == BT_FLARE
-//			&& (*i)->getFuse() != -1
-//			&& (*i)->getRules()->getPower() > _flarePower)
-//		{
-//			_flarePower = (*i)->getRules()->getPower();
-//		}
-//	}
-
 
 	const Soldier* const sol (unit->getGeoscapeSoldier());
 	if (sol != nullptr)
@@ -634,25 +597,33 @@ void InventoryState::updateStats() // private.
 
 	if (_tuMode == true)
 	{
-		if (selUnit->getBattleStats()->throwing != 0)
+		switch (selUnit->getBattleStats()->throwing)
 		{
-			_txtThrowTU->setVisible();
-			_txtThrowTU->setText(tr("STR_THROW_").arg(selUnit->getActionTu(BA_THROW)));
-		}
-		else
-			_txtThrowTU->setVisible(false);
+			case 0:
+				_txtThrowTU->setVisible(false);
+				break;
 
-		if (selUnit->getOriginalFaction() == FACTION_HOSTILE
-			&& psiSkill != 0)
-		{
-			_txtPsiTU->setVisible();
-			_txtPsiTU->setText(tr("STR_PSI_")
-						.arg(selUnit->getActionTu(
-											BA_PSIPANIC,
-											_parent->getBattleGame()->getAlienPsi())));
+			default:
+				_txtThrowTU->setVisible();
+				_txtThrowTU->setText(tr("STR_THROW_").arg(selUnit->getActionTu(BA_THROW)));
 		}
-		else
-			_txtPsiTU->setVisible(false);
+
+		switch (psiSkill)
+		{
+			case 0:
+				_txtPsiTU->setVisible(false);
+				break;
+
+			default:
+				if (selUnit->getOriginalFaction() == FACTION_HOSTILE)
+				{
+					_txtPsiTU->setVisible();
+					_txtPsiTU->setText(tr("STR_PSI_")
+								.arg(selUnit->getActionTu(
+													BA_PSIPANIC,
+													_parent->getBattleGame()->getAlienPsi())));
+				}
+		}
 	}
 	else
 	{
@@ -661,15 +632,16 @@ void InventoryState::updateStats() // private.
 		_txtThrow->setText(tr("STR_THROWACC_SHORT").arg(selUnit->getBattleStats()->throwing));
 		_txtMelee->setText(tr("STR_MELEEACC_SHORT").arg(selUnit->getBattleStats()->melee));
 
-		if (psiSkill != 0)
+		switch (psiSkill)
 		{
-			_txtPStr->setText(tr("STR_PSIONIC_STRENGTH_SHORT").arg(selUnit->getBattleStats()->psiStrength));
-			_txtPSkill->setText(tr("STR_PSIONIC_SKILL_SHORT").arg(psiSkill));
-		}
-		else
-		{
-			_txtPStr->setText(L"");
-			_txtPSkill->setText(L"");
+			case 0:
+				_txtPStr->setText(L"");
+				_txtPSkill->setText(L"");
+				break;
+
+			default:
+				_txtPStr->setText(tr("STR_PSIONIC_STRENGTH_SHORT").arg(selUnit->getBattleStats()->psiStrength));
+				_txtPSkill->setText(tr("STR_PSIONIC_SKILL_SHORT").arg(psiSkill));
 		}
 	}
 }
@@ -682,13 +654,8 @@ void InventoryState::updateWounds() // private.
 	const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 
 	unsigned wound (static_cast<unsigned>(selUnit->getFireUnit()));
-	if (wound != 0u)
-	{
-		_wndFire->setValue(wound);
-		_wndFire->setVisible();
-	}
-	else
-		_wndFire->setVisible(false);
+	_numFire->setValue(wound);
+	_numFire->setVisible(wound != 0u);
 
 	UnitBodyPart bodyPart;
 	for (size_t
@@ -702,63 +669,33 @@ void InventoryState::updateWounds() // private.
 		switch (bodyPart)
 		{
 			case BODYPART_HEAD:
-				if (wound != 0u)
-				{
-					_wndHead->setValue(wound);
-					_wndHead->setVisible();
-				}
-				else
-					_wndHead->setVisible(false);
+				_numHead->setValue(wound);
+				_numHead->setVisible(wound != 0u);
 				break;
 
 			case BODYPART_TORSO:
-				if (wound != 0u)
-				{
-					_wndTorso->setValue(wound);
-					_wndTorso->setVisible();
-				}
-				else
-					_wndTorso->setVisible(false);
+				_numTorso->setValue(wound);
+				_numTorso->setVisible(wound != 0u);
 				break;
 
 			case BODYPART_RIGHTARM:
-				if (wound != 0u)
-				{
-					_wndRightArm->setValue(wound);
-					_wndRightArm->setVisible();
-				}
-				else
-					_wndRightArm->setVisible(false);
+				_numRightArm->setValue(wound);
+				_numRightArm->setVisible(wound != 0u);
 				break;
 
 			case BODYPART_LEFTARM:
-				if (wound != 0u)
-				{
-					_wndLeftArm->setValue(wound);
-					_wndLeftArm->setVisible();
-				}
-				else
-					_wndLeftArm->setVisible(false);
+				_numLeftArm->setValue(wound);
+				_numLeftArm->setVisible(wound != 0u);
 				break;
 
 			case BODYPART_RIGHTLEG:
-				if (wound != 0u)
-				{
-					_wndRightLeg->setValue(wound);
-					_wndRightLeg->setVisible();
-				}
-				else
-					_wndRightLeg->setVisible(false);
+				_numRightLeg->setValue(wound);
+				_numRightLeg->setVisible(wound != 0u);
 				break;
 
 			case BODYPART_LEFTLEG:
-				if (wound != 0u)
-				{
-					_wndLeftLeg->setValue(wound);
-					_wndLeftLeg->setVisible();
-				}
-				else
-					_wndLeftLeg->setVisible(false);
+				_numLeftLeg->setValue(wound);
+				_numLeftLeg->setVisible(wound != 0u);
 		}
 	}
 }
@@ -839,7 +776,7 @@ void InventoryState::btnNextClick(Action*)
  * Unloads the selected weapon or saves a Soldier's equipment-layout.
  * @param action - pointer to an Action
  */
-void InventoryState::btnUnloadClick(Action*)
+void InventoryState::btnLoadIconClick(Action*)
 {
 	if (_inventoryPanel->unload() == true)
 	{
@@ -894,8 +831,8 @@ bool InventoryState::saveAllLayouts() const // private.
 }
 
 /**
- * Saves a Soldier's equipment layout.
- * @note Called from btnUnloadClick() if in pre-battle.
+ * Saves a Soldier's equipment-layout.
+ * @note Called from btnLoadIconClick() if in pre-battle.
  * @param unit - pointer to a BattleUnit
  * @return, true if layout saved
  */
@@ -916,7 +853,7 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 			layoutItems->clear();
 		}
 
-		// Note when using getInventory() the loaded ammos are skipped because
+		// NOTE: When using getInventory() the loaded ammos are skipped because
 		// they're not owned by the unit; ammo is handled separately by the weapon.
 		for (std::vector<BattleItem*>::const_iterator // save Soldier's items
 				i = unit->getInventory()->begin();
@@ -975,22 +912,22 @@ void InventoryState::btnGroundClick(Action* action)
  * Clears the current unit's inventory and places all items on the ground.
  * @param action - pointer to an Action
  */
-void InventoryState::btnUnequipUnitClick(Action*)
+void InventoryState::btnClearUnitClick(Action*)
 {
 	if (_tuMode == false									// don't accept clicks in battlescape because this doesn't cost TU.
 		&& _inventoryPanel->getSelectedItem() == nullptr)	// or if mouse is holding an item
 	{
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
-		std::vector<BattleItem*>* const equipt (unit->getInventory());
-		if (equipt->empty() == false)
+		std::vector<BattleItem*>* const equiptList (unit->getInventory());
+		if (equiptList->empty() == false)
 		{
 			_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)->play();
 
 			const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
 			Tile* const tile (unit->getTile());
 			for (std::vector<BattleItem*>::const_iterator
-					i = equipt->begin();
-					i != equipt->end();
+					i = equiptList->begin();
+					i != equiptList->end();
 					++i)
 			{
 				(*i)->setFuse(-1);
@@ -998,7 +935,7 @@ void InventoryState::btnUnequipUnitClick(Action*)
 				(*i)->setInventorySection(grdRule);
 				tile->addItem(*i);
 			}
-			equipt->clear();
+			equiptList->clear();
 
 			_inventoryPanel->arrangeGround();
 			_inventoryPanel->drawItems();
@@ -1008,45 +945,85 @@ void InventoryState::btnUnequipUnitClick(Action*)
 		}
 	}
 }
-/* void InventoryState::btnUnequipUnitClick(Action*)
-{
-	if (_tuMode == true										// don't accept clicks in battlescape
-		&& _inventoryPanel->getSelectedItem() == nullptr)	// or when moving items
-	{
-		BattleUnit* const unit = _battleSave->getSelectedUnit();
-		std::vector<BattleItem*>* const unitInv = unit->getInventory();
-		Tile* const groundTile = unit->getTile();
-		clearInventory(_game, unitInv, groundTile);
-		_inventoryPanel->arrangeGround(); // refresh ui
-		updateStats();
-		refreshMouse();
-
-		_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)->play();
-	}
-} */
-/*
- * Clears unit's inventory - move everything to the ground.
- * @note Helper for btnUnequipUnitClick().
- * @param game			- pointer to the core Game to get the Ruleset
- * @param unitInv		- pointer to a vector of pointers to BattleItems
- * @param groundTile	- pointer to the ground Tile
- *
-void InventoryState::clearInventory( // private.
-		Game* game,
-		std::vector<BattleItem*>* unitInv,
-		Tile* groundTile)
-{
-	RuleInventory* const groundRule = game->getRuleset()->getInventory("STR_GROUND");
-	for (std::vector<BattleItem*>::const_iterator i = unitInv->begin(); i != unitInv->end();)
-	{
-		(*i)->setOwner();
-		groundTile->addItem(*i, groundRule);
-		i = unitInv->erase(i);
-	}
-} */
 
 /**
- * Shows the unit info screen.
+ * Clears the ground-tile inventory and returns the items to base-stores.
+ * @param action - pointer to an Action
+ */
+void InventoryState::btnClearGroundClick(Action*)
+{
+	if (_parent == nullptr									// don't accept clicks during tactical or pre-tactical
+		&& _inventoryPanel->getSelectedItem() == nullptr)	// or if mouse-grab has an item
+	{
+		Craft* craft (nullptr); // find the Craft and later its Base
+
+		const std::vector<Base*>* const baseList (_battleSave->getSavedGame()->getBases());
+		for (std::vector<Base*>::const_iterator
+				i = baseList->begin();
+				i != baseList->end() && craft == nullptr;
+				++i)
+		{
+			if ((*i)->getTactical() == true) return; // if Base is in tactical then any Craft isn't.
+
+			for (std::vector<Craft*>::const_iterator
+					j = (*i)->getCrafts()->begin();
+					j != (*i)->getCrafts()->end() && craft == nullptr;
+					++j)
+			{
+				if ((*j)->getTactical() == true)
+					craft = *j;
+			}
+		}
+
+		if (craft != nullptr) // ie, not base-equip screen.
+		{
+			BattleUnit* const unit (_battleSave->getSelectedUnit());
+			Tile* const tile (unit->getTile());
+			std::vector<BattleItem*>* const grdList (tile->getInventory());
+			if (grdList->empty() == false)
+			{
+				_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)->play();
+
+				Base* const base (craft->getBase());
+				const bool isQuickBattle (_game->getSavedGame()->getMonthsPassed() != -1);
+
+				BattleItem* load;
+
+				std::string type;
+				for (std::vector<BattleItem*>::const_iterator
+						i = grdList->begin();
+						i != grdList->end();
+						++i)
+				{
+					if ((*i)->selfPowered() == false
+						&& (load = (*i)->getAmmoItem()) != nullptr)
+					{
+						type = load->getRules()->getType();
+						craft->getCraftItems()->removeItem(type);
+
+						if (isQuickBattle == false)
+							base->getStorageItems()->addItem(type);
+					}
+
+					type = (*i)->getRules()->getType();
+					craft->getCraftItems()->removeItem(type);
+
+					if (isQuickBattle == false)
+						base->getStorageItems()->addItem(type);
+				}
+				grdList->clear();
+				// NOTE: There's no need to adjust variables on those BattleItems.
+				// The SavedBattleGame itself is about to go ~poof~
+
+				_inventoryPanel->arrangeGround();
+				_inventoryPanel->drawItems();
+			}
+		}
+	}
+}
+
+/**
+ * Shows the unit-info screen.
  * @param action - pointer to an Action
  */
 void InventoryState::btnRankClick(Action*)
@@ -1601,8 +1578,4 @@ void InventoryState::btnApplyTemplateClick(Action*)
 	_inventoryPanel->arrangeGround(); // refresh ui
 	updateStats();
 	refreshMouse();
-
-	_game->getResourcePack()->getSoundByDepth(
-											_battleSave->getDepth(),
-											ResourcePack::ITEM_DROP)->play();
 } */

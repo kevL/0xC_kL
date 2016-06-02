@@ -34,7 +34,6 @@ class BattleUnit;
 class Game;
 class NumberText;
 class RuleInventory;
-//class Surface;
 class SurfaceSet;
 class Timer;
 class WarningMessage;

@@ -659,7 +659,7 @@ void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 }
 
 /**
- * Empties the contents of the Craft - moves all the items back to the Base.
+ * Empties the contents of the Craft - moves all the items back to base-stores.
  * @param action - pointer to an Action
  */
 void CraftEquipmentState::btnUnloadCraftClick(Action*)

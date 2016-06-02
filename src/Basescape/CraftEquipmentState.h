@@ -130,7 +130,7 @@ private:
 		/// Moves the given number of items to the Base.
 		void moveLeftByValue(int qtyDelta);
 
-		/// Empties the contents of the Craft, moving all of the items back to the Base.
+		/// Handler for clicking the unload-craft button.
 		void btnUnloadCraftClick(Action* action);
 		/// Handler for clicking the Inventory button.
 		void btnInventoryClick(Action* action);
