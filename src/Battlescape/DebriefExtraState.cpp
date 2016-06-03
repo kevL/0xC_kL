@@ -34,7 +34,7 @@
 
 #include "../Menu/ErrorMessageState.h"
 
-#include "../Resource/ResourcePack.h"
+#include "../Resource/XcomResourcePack.h"
 
 #include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/RuleItem.h"
@@ -80,9 +80,13 @@ DebriefExtraState::DebriefExtraState(
 	_txtBaseLabel	= new Text( 80,  9,  16, 8);
 	_txtScreen		= new Text( 80,  9, 224, 8);
 
-	_lstGained		= new TextList(285, 145, 16, 32);
-	_lstLost		= new TextList(285, 145, 16, 32);
-	_lstSolStats	= new TextList(285, 145, 16, 32);
+	_txtQtyItems	= new Text(55, 9, 186, 26);
+	_txtBuyOrSell	= new Text(30, 9, 241, 26);
+	_txtQtyAtBase	= new Text(20, 9, 271, 26);
+
+	_lstGained		= new TextList(285, 137, 16, 36);
+	_lstLost		= new TextList(285, 137, 16, 36);
+	_lstSolStats	= new TextList(285, 145, 16, 30);
 
 	_btnOk			= new TextButton(136, 16, 92, 177);
 
@@ -92,6 +96,9 @@ DebriefExtraState::DebriefExtraState(
 	add(_txtTitle,		"heading",	"debriefing");
 	add(_txtBaseLabel,	"text",		"debriefing");
 	add(_txtScreen,		"text",		"debriefing");
+	add(_txtQtyItems,	"text",		"debriefing");
+	add(_txtBuyOrSell,	"text",		"debriefing");
+	add(_txtQtyAtBase,	"text",		"debriefing");
 	add(_lstGained,		"list",		"debriefing");
 	add(_lstLost,		"list",		"debriefing");
 	add(_lstSolStats,	"list",		"debriefing");
@@ -119,20 +126,24 @@ DebriefExtraState::DebriefExtraState(
 	_txtTitle->setBig();
 
 	_txtBaseLabel->setText(_base->getName());
+	_txtQtyAtBase->setText(L"base");
 
 
 	_txtScreen->setAlign(ALIGN_RIGHT);
 
 	if (_itemsGained.empty() == false)
 	{
-		_txtScreen->setText(L"loot");
+		_txtScreen->setText(L"Sell");
+		_txtQtyItems->setText(L"loot");
+		_txtBuyOrSell->setText(L"sell");
+
 		_curScreen = DES_LOOT_GAINED;
 
-		_lstGained->setColumns(4, 170,55,30,20);
+		_lstGained->setColumns(4, 162,55,30,20);
 		_lstGained->setBackground(_window);
 		_lstGained->setSelectable();
 
-		_lstGained->setArrow(200, ARROW_VERTICAL);
+		_lstGained->setArrow(192, ARROW_VERTICAL);
 
 		_lstGained->onLeftArrowPress(	(ActionHandler)& DebriefExtraState::lstLeftArrowPress);
 		_lstGained->onLeftArrowRelease(	(ActionHandler)& DebriefExtraState::lstLeftArrowRelease);
@@ -144,18 +155,21 @@ DebriefExtraState::DebriefExtraState(
 	}
 	else
 	{
-		_txtScreen->setText(L"lost");
+		_txtScreen->setText(L"Buy");
+		_txtQtyItems->setText(L"lost");
+		_txtBuyOrSell->setText(L"buy");
+
 		_curScreen = DES_LOOT_LOST;
 	}
 
 
 	if (_itemsLost.empty() == false)
 	{
-		_lstLost->setColumns(4, 170,55,30,20);
+		_lstLost->setColumns(4, 162,55,30,20);
 		_lstLost->setBackground(_window);
 		_lstLost->setSelectable();
 
-		_lstLost->setArrow(200, ARROW_VERTICAL);
+		_lstLost->setArrow(192, ARROW_VERTICAL);
 
 		_lstLost->onLeftArrowPress(		(ActionHandler)& DebriefExtraState::lstLeftArrowPress);
 		_lstLost->onLeftArrowRelease(	(ActionHandler)& DebriefExtraState::lstLeftArrowRelease);
@@ -167,14 +181,19 @@ DebriefExtraState::DebriefExtraState(
 	}
 	else if (_itemsGained.empty() == true)
 	{
-		_txtScreen->setText(L"stats");
+		_txtQtyItems->setVisible(false);
+		_txtBuyOrSell->setVisible(false);
+		_txtQtyAtBase->setVisible(false);
+
+		_txtScreen->setText(L"Stats");
 		_curScreen = DES_SOL_STATS;
 	}
 
 
-	_lstSolStats->setColumns(12, 90,17,17,17,17,17,17,17,17,17,17,17);
+	_lstSolStats->setColumns(12, 98,17,17,17,17,17,17,17,17,17,17,17);
 	_lstSolStats->setBackground(_window);
 	_lstSolStats->setSelectable();
+	_lstSolStats->setMargin();
 	_lstSolStats->setVisible(false);
 
 	buildSoldierStats();
@@ -551,7 +570,9 @@ void DebriefExtraState::btnOkClick(Action*)
 			if (_itemsLost.empty() == false)
 			{
 				_curScreen = DES_LOOT_LOST;
-				_txtScreen->setText(L"lost");
+				_txtScreen->setText(L"Buy");
+				_txtQtyItems->setText(L"lost");
+				_txtBuyOrSell->setText(L"buy");
 				_lstLost->setVisible();
 				break;
 			} // no break;
@@ -580,12 +601,22 @@ void DebriefExtraState::btnOkClick(Action*)
 				}
 			}
 
+			_txtQtyItems->setVisible(false);
+			_txtBuyOrSell->setVisible(false);
+			_txtQtyAtBase->setVisible(false);
+
 			_curScreen = DES_SOL_STATS;
-			_txtScreen->setText(L"stats");
+			_txtScreen->setText(L"Stats");
 			_lstSolStats->setVisible();
 			break;
 
 		case DES_SOL_STATS:
+			if (_game->getQtyStates() == 2 // ie: (1) this, (2) Geoscape
+				&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_TAC_AWARDS))
+			{
+				_game->getResourcePack()->fadeMusic(_game, 863);
+//				_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
+			}
 			_game->popState();
 	}
 }

@@ -84,7 +84,10 @@ private:
 	Text
 		* _txtBaseLabel,
 		* _txtScreen,
-		* _txtTitle;
+		* _txtTitle,
+		* _txtQtyItems,
+		* _txtBuyOrSell,
+		* _txtQtyAtBase;
 	TextButton* _btnOk;
 	TextList
 		* _lstLost,

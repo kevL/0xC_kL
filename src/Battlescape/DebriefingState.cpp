@@ -552,7 +552,7 @@ void DebriefingState::btnOkClick(Action*)
 												_itemsLostProperty,
 												_soldierStatInc));
 
-			if (_base->storesOverfull() == true) // TODO: Do not show overfull error if player sold enough stuff in DebriefExtraState.
+			if (_base->storesOverfull() == true)
 			{
 //				_game->pushState(new SellState(_base, OPT_BATTLESCAPE));
 				_game->pushState(new ErrorMessageState(

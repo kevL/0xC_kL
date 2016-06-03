@@ -258,10 +258,11 @@ CeremonyDeadState::~CeremonyDeadState()
  */
 void CeremonyDeadState::btnOkClick(Action*)
 {
-	if (_game->getQtyStates() == 2) // ie: (1) this, (2) Geoscape
+	if (_game->getQtyStates() == 2 // ie: (1) this, (2) Geoscape
+		&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_TAC_AWARDS))
 	{
 		_game->getResourcePack()->fadeMusic(_game, 863);
-		_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
+//		_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
 	}
 	_game->popState();
 }

@@ -31,7 +31,7 @@ namespace OpenXcom
 class CatFile;
 class ExtraSounds;
 class ExtraSprites;
-class GMCatFile;
+//class GMCatFile;
 class Music;
 class Palette;
 class Ruleset;

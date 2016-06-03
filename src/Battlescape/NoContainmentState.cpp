@@ -27,7 +27,7 @@
 #include "../Interface/TextButton.h"
 #include "../Interface/Window.h"
 
-#include "../Resource/ResourcePack.h"
+#include "../Resource/XcomResourcePack.h"
 
 
 namespace OpenXcom
@@ -86,6 +86,12 @@ NoContainmentState::~NoContainmentState()
  */
 void NoContainmentState::btnOkClick(Action*)
 {
+	if (_game->getQtyStates() == 2 // ie: (1) this, (2) Geoscape
+		&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_TAC_AWARDS))
+	{
+		_game->getResourcePack()->fadeMusic(_game, 863);
+//		_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
+	}
 	_game->popState();
 }
 

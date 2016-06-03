@@ -36,7 +36,7 @@
 #include "../Interface/TextList.h"
 #include "../Interface/Window.h"
 
-#include "../Resource/ResourcePack.h"
+#include "../Resource/XcomResourcePack.h"
 
 #include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleItem.h"
@@ -293,6 +293,13 @@ void AlienContainmentState::btnOkClick(Action*)
 										_game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(_aliens[i])->getArmorType())->getCorpseGeoscape(),
 										_qty[i]);
 		}
+	}
+
+	if (_game->getQtyStates() == 2 // ie: (1) this, (2) Geoscape
+		&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_TAC_AWARDS))
+	{
+		_game->getResourcePack()->fadeMusic(_game, 863);
+//		_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
 	}
 	_game->popState();
 }
