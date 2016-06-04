@@ -27,6 +27,7 @@
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
 #include "../Engine/Options.h"
+#include "../Engine/Timer.h"
 
 #include "../Interface/Text.h"
 #include "../Interface/TextButton.h"
@@ -51,7 +52,7 @@ namespace OpenXcom
  * Initializes all the elements in the Stores window.
  * @param base - pointer to the Base to get info from
  */
-StoresState::StoresState(Base* base)
+StoresState::StoresState(Base* const base)
 	:
 		_base(base)
 {
@@ -104,15 +105,11 @@ StoresState::StoresState(Base* base)
 					Options::keyOkKeypad);
 	_btnTransfers->setVisible(_base->getTransfers()->empty() == false);
 
-	_txtTitle->setBig();
 	_txtTitle->setText(tr("STR_STORES"));
+	_txtTitle->setBig();
 
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
 	_txtBaseLabel->setText(_base->getName());
-
-	_txtTotal->setText(tr("STR_QUANTITY_UC"));
-	_txtTotal->setColor(208); // white
-	_txtTotal->setAlign(ALIGN_RIGHT);
 
 	_txtItem->setText(tr("STR_ITEM"));
 
@@ -219,26 +216,26 @@ StoresState::StoresState(Base* base)
 								woststr.str().c_str());
 				_lstStores->setRowColor(row++, color);
 
-/*				std::wostringstream woststr1;
-				woststr1 << baseQty;
-				if (rules->getItemRule(*i)->isLiveAlien() == true)
-				{
-					_lstStores->addRow(
-									3,
-									item.c_str(),
-									woststr1.str().c_str(),
-									L"-");
-				}
-				else
-				{
-					std::wostringstream woststr2;
-					woststr2 << std::fixed << std::setprecision(1) << (static_cast<double>(baseQty) * itRule->getSize());
-					_lstStores->addRow(
-									3,
-									item.c_str(),
-									woststr1.str().c_str(),
-									woststr2.str().c_str());
-				} */
+//				std::wostringstream woststr1;
+//				woststr1 << baseQty;
+//				if (rules->getItemRule(*i)->isLiveAlien() == true)
+//				{
+//					_lstStores->addRow(
+//									3,
+//									item.c_str(),
+//									woststr1.str().c_str(),
+//									L"-");
+//				}
+//				else
+//				{
+//					std::wostringstream woststr2;
+//					woststr2 << std::fixed << std::setprecision(1) << (static_cast<double>(baseQty) * itRule->getSize());
+//					_lstStores->addRow(
+//									3,
+//									item.c_str(),
+//									woststr1.str().c_str(),
+//									woststr2.str().c_str());
+//				}
 			}
 		}
 	}
@@ -246,6 +243,20 @@ StoresState::StoresState(Base* base)
 	std::wostringstream woststr;
 	woststr << _base->getTotalStores() << ":" << std::fixed << std::setprecision(1) << _base->getUsedStores();
 	_txtTotal->setText(woststr.str());
+	_txtTotal->setAlign(ALIGN_RIGHT);
+
+	if (_base->storesOverfull() == true)
+	{
+		_blinkTimer = new Timer(325u);
+		_blinkTimer->onTimer((StateHandler)& StoresState::blink);
+		_blinkTimer->start();
+
+		_txtTotal->setColor(RED);
+		_txtTotal->setHighContrast();
+		_txtTotal->setVisible(false); // wait for blink.
+	}
+	else
+		_txtTotal->setColor(WHITE);
 }
 
 /**
@@ -253,6 +264,23 @@ StoresState::StoresState(Base* base)
  */
 StoresState::~StoresState()
 {}
+
+/**
+ * Runs the blink Timer.
+ */
+void StoresState::think()
+{
+	if (_txtTotal->getColor() == RED)
+		_blinkTimer->think(this, nullptr);
+}
+
+/**
+ * Blinks the Text.
+ */
+void StoresState::blink()
+{
+	_txtTotal->setVisible(!_txtTotal->getVisible());
+}
 
 /**
  * Returns to the previous screen.

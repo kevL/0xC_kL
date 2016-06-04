@@ -62,14 +62,16 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the ConfirmLanding window.
- * @param craft 	- pointer to the Craft to confirm
- * @param texRule	- pointer to the RuleTexture of the landing site (default nullptr)
- * @param shade		- shade of the landing site (default -1)
+ * @param craft			- pointer to the Craft to confirm
+ * @param texRule		- pointer to the RuleTexture of the landing site (default nullptr)
+ * @param shade			- shade of the landing site (default -1)
+ * @param allowTactical	- true to show the Yes btn (default true)
  */
 ConfirmLandingState::ConfirmLandingState(
 		Craft* const craft,
 		const RuleTexture* const texRule, // passes in the vector of eligible Globe Terrains for the land-poly's textureInt.
-		const int shade)
+		const int shade,
+		const bool allowTactical)
 	:
 		_craft(craft),
 //		_texRule(texRule),
@@ -310,16 +312,30 @@ ConfirmLandingState::ConfirmLandingState(
 	_txtBegin->setAlign(ALIGN_CENTER);
 	_txtBegin->setBig();
 
-	_btnYes->setText(tr("STR_YES"));
-	_btnYes->onMouseClick((ActionHandler)& ConfirmLandingState::btnYesClick);
-	_btnYes->onKeyboardPress(
-					(ActionHandler)& ConfirmLandingState::btnYesClick,
-					Options::keyOk);
-	_btnYes->onKeyboardPress(
-					(ActionHandler)& ConfirmLandingState::btnYesClick,
-					Options::keyOkKeypad);
+	if (allowTactical == true)
+	{
+		_btnYes->setText(tr("STR_YES"));
+		_btnYes->onMouseClick((ActionHandler)& ConfirmLandingState::btnYesClick);
+		_btnYes->onKeyboardPress(
+						(ActionHandler)& ConfirmLandingState::btnYesClick,
+						Options::keyOk);
+		_btnYes->onKeyboardPress(
+						(ActionHandler)& ConfirmLandingState::btnYesClick,
+						Options::keyOkKeypad);
+	}
+	else if (ufo != nullptr)
+	{
+		_btnYes->setText(tr("STR_INTERCEPT"));
+		_btnYes->onMouseClick((ActionHandler)& ConfirmLandingState::btnInterceptClick);
+		_btnYes->onKeyboardPress(
+						(ActionHandler)& ConfirmLandingState::btnInterceptClick,
+						Options::keyOk);
+		_btnYes->onKeyboardPress(
+						(ActionHandler)& ConfirmLandingState::btnInterceptClick,
+						Options::keyOkKeypad);
+	}
 
-	_btnNo->setText(tr("STR_NO"));
+	_btnNo->setText(tr("STR_PATROL"));
 	_btnNo->onMouseClick((ActionHandler)& ConfirmLandingState::btnNoClick);
 	_btnNo->onKeyboardPress(
 					(ActionHandler)& ConfirmLandingState::btnNoClick,
@@ -333,20 +349,15 @@ ConfirmLandingState::~ConfirmLandingState()
 {}
 
 /**
- * Make sure Craft isn't simply returning to base.
+ * Initializes state.
  */
 void ConfirmLandingState::init()
 {
 	State::init();
-
-//	- note that UFOs arriving at an xCom Base do not invoke this state, see GeoscapeState::time5Seconds()
-//	const Base* const base (dynamic_cast<Base*>(_craft->getDestination()));
-//	if (base == _craft->getBase())
-//		_game->popState();
 }
 
 /**
- * Enters tactical.
+ * Enters tactical battle.
  * @param action - pointer to an Action
  */
 void ConfirmLandingState::btnYesClick(Action*)
@@ -368,10 +379,14 @@ void ConfirmLandingState::btnYesClick(Action*)
 
 	if (ufo != nullptr)
 	{
-		if (ufo->getUfoStatus() == Ufo::CRASHED)
-			battleSave->setTacticalType("STR_UFO_CRASH_RECOVERY");
-		else
-			battleSave->setTacticalType("STR_UFO_GROUND_ASSAULT");
+		switch (ufo->getUfoStatus())
+		{
+			case Ufo::CRASHED:
+				battleSave->setTacticalType("STR_UFO_CRASH_RECOVERY");
+				break;
+			case Ufo::LANDED:
+				battleSave->setTacticalType("STR_UFO_GROUND_ASSAULT");
+		}
 
 		bGen.setUfo(ufo);
 		bGen.setAlienRace(ufo->getAlienRace());
@@ -409,12 +424,20 @@ void ConfirmLandingState::btnYesClick(Action*)
 }
 
 /**
- * Returns the craft to base and closes the window.
+ * The Craft stays targeted on a UFO if there are no Soldiers onboard.
+ * @param action - pointer to an Action
+ */
+void ConfirmLandingState::btnInterceptClick(Action*)
+{
+	_game->popState();
+}
+
+/**
+ * Sets the Craft to patrol and exits to the previous state.
  * @param action - pointer to an Action
  */
 void ConfirmLandingState::btnNoClick(Action*)
 {
-//	_craft->returnToBase();
 	_craft->setDestination();
 	_game->popState();
 }

@@ -806,9 +806,9 @@ PurchaseSellTransferType SellState::getSellType(size_t sel) const // private.
 }
 
 /**
- * Gets the index of selected item.
+ * Gets the index of the selected Item.
  * @param sel - currently selected item
- * @return, index of the selected item
+ * @return, index of selected item
  */
 size_t SellState::getItemIndex(size_t sel) const // private.
 {
@@ -820,9 +820,9 @@ size_t SellState::getItemIndex(size_t sel) const // private.
 }
 
 /**
- * Gets the index of selected craft.
+ * Gets the index of the selected Craft.
  * @param sel - selected craft
- * @return, index of the selected craft
+ * @return, index of selected craft
  */
 size_t SellState::getCraftIndex(size_t sel) const // private.
 {

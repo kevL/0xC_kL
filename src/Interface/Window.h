@@ -91,7 +91,7 @@ private:
 		static Sound* soundPopup[3u];
 
 		/// Creates a Window with the specified size and position.
-		Window(State* state,
+		Window(State* const state,
 				int width,
 				int height,
 				int x = 0,

@@ -69,7 +69,8 @@ private:
 		ConfirmLandingState(
 				Craft* const craft,
 				const RuleTexture* const texRule = nullptr,
-				const int shade = -1);
+				const int shade = -1,
+				const bool allowTactical = true);
 		/// Cleans up the ConfirmLanding state.
 		~ConfirmLandingState();
 
@@ -78,8 +79,11 @@ private:
 
 		/// Handler for clicking the Yes button.
 		void btnYesClick(Action* action);
-		/// Handler for clicking the No button.
+		/// Handler for clicking the No/Patrol button.
 		void btnNoClick(Action* action);
+
+		/// Handler for clicking the Intercept button.
+		void btnInterceptClick(Action* action);
 
 		/// Selects a terrain-type for crashed or landed UFOs.
 //		RuleTerrain* selectTerrain(const double lat);

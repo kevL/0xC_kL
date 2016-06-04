@@ -21,6 +21,7 @@
 
 //#include <SDL.h>
 //#include <SDL_mixer.h>
+
 //#include "../fmath.h"
 
 #include "../Engine/RNG.h"
@@ -50,7 +51,7 @@ Sound* Window::soundPopup[3u] = {0,0,0}; // static.
  * @param toggle	- true to toggle screen before & after popup (default true)
  */
 Window::Window(
-		State* state,
+		State* const state,
 		int width,
 		int height,
 		int x,

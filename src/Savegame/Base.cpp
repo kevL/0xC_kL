@@ -402,7 +402,7 @@ void Base::setName(const std::wstring& wst)
 }
 
 /**
- * Returns the globe marker for this Base.
+ * Returns the globe-marker for this Base.
  * @return, marker sprite #0 (-1 if none)
  */
 int Base::getMarker() const
@@ -414,8 +414,8 @@ int Base::getMarker() const
 }
 
 /**
- * Returns the list of facilities in this Base.
- * @return, pointer to a vector of pointers to BaseFacilities at this base
+ * Returns the list of BaseFacilities in this Base.
+ * @return, pointer to a vector of pointers to facilities at this base
  */
 std::vector<BaseFacility*>* Base::getFacilities()
 {
@@ -423,8 +423,8 @@ std::vector<BaseFacility*>* Base::getFacilities()
 }
 
 /**
- * Returns the list of soldiers in this Base.
- * @return, pointer to a vector of pointers to Soldiers at this base
+ * Returns the list of Soldiers in this Base.
+ * @return, pointer to a vector of pointers to soldiers at this base
  */
 std::vector<Soldier*>* Base::getSoldiers()
 {
@@ -432,8 +432,8 @@ std::vector<Soldier*>* Base::getSoldiers()
 }
 
 /**
- * Returns the list of crafts in this Base.
- * @return, pointer to a vector of pointers to Crafts at this base
+ * Returns the list of Crafts in this Base.
+ * @return, pointer to a vector of pointers to crafts at this base
  */
 std::vector<Craft*>* Base::getCrafts()
 {
@@ -441,8 +441,8 @@ std::vector<Craft*>* Base::getCrafts()
 }
 
 /**
- * Returns the list of transfers destined to this Base.
- * @return, pointer to a vector of pointers to Transfers to this base
+ * Returns the list of Transfers destined to this Base.
+ * @return, pointer to a vector of pointers to transfers to this base
  */
 std::vector<Transfer*>* Base::getTransfers()
 {

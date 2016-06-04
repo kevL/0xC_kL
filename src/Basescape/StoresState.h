@@ -30,11 +30,12 @@ class Base;
 class Text;
 class TextButton;
 class TextList;
+class Timer;
 class Window;
 
 
 /**
- * Stores window that displays all the items currently stored at a base.
+ * Stores window that displays all the items currently stored at a Base.
  */
 class StoresState
 	:
@@ -43,9 +44,11 @@ class StoresState
 
 private:
 	static const Uint8
-		YELLOW	= 213,
-		BLUE	= 218,
-		PURPLE	= 246;
+		RED		=  32u,
+		WHITE	= 208u,
+		YELLOW	= 213u,
+		BLUE	= 218u,
+		PURPLE	= 246u;
 
 	Base* _base;
 	Text
@@ -59,14 +62,20 @@ private:
 		* _btnOk,
 		* _btnTransfers;
 	TextList* _lstStores;
+	Timer* _blinkTimer;
 	Window* _window;
 
 
 	public:
-		/// Creates the Stores state.
-		explicit StoresState(Base* base);
+		/// Creates a Stores state.
+		explicit StoresState(Base* const base);
 		/// Cleans up the Stores state.
 		~StoresState();
+
+		/// Runs the blink Timer.
+		void think() override;
+		/// Blinks the message text.
+		void blink();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

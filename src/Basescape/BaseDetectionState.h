@@ -71,7 +71,7 @@ private:
 		/// Cleans up the BaseDetection state.
 		~BaseDetectionState();
 
-		/// Runs the blink timer.
+		/// Runs the blink Timer.
 		void think() override;
 		/// Blinks the message text.
 		void blink();

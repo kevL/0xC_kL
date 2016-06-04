@@ -188,7 +188,7 @@ BaseDetectionState::~BaseDetectionState()
 }
 
 /**
- * Runs the blink timer.
+ * Runs the blink Timer.
  */
 void BaseDetectionState::think()
 {
@@ -199,7 +199,7 @@ void BaseDetectionState::think()
 }
 
 /**
- * Blinks the message text.
+ * Blinks the message Text.
  */
 void BaseDetectionState::blink()
 {

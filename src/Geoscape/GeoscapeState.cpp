@@ -1672,18 +1672,19 @@ void GeoscapeState::time5Seconds()
 								}
 							}
 						}
-						else
-						{
-							switch (ufo->getUfoStatus())
-							{
-								case Ufo::CRASHED:
-									if ((*j)->getQtySoldiers() != 0) break;
+						else if (ufo->getUfoStatus() == Ufo::DESTROYED)
+							(*j)->returnToBase();
+//						{
+//							switch (ufo->getUfoStatus())
+//							{
+//								case Ufo::CRASHED:
+//									if ((*j)->getQtySoldiers() != 0) break;
 //									if ((*j)->getQtyVehicles() != 0) break;
-									// no break;
-								case Ufo::DESTROYED:
-									(*j)->returnToBase();	// TODO: Should set this once-only on the UFO-crash event so
-							}								// that crashed-UFOs can still be used as a destination-target.
-						}
+//									// no break;
+//								case Ufo::DESTROYED:
+//									(*j)->returnToBase();
+//							}
+//						}
 					}
 					else
 						(*j)->inDogfight(false); // safety.
@@ -1710,7 +1711,7 @@ void GeoscapeState::time5Seconds()
 								if (_dogfights.size() + _dogfightsToStart.size() < 4u) // Not more than 4 interceptions at a time. _note: I thought orig could do up to 6.
 								{
 									if ((*j)->inDogfight() == false
-										&& AreSame((*j)->getDistance(ufo), 0.)) // craft ran into a UFO
+										&& AreSame((*j)->getDistance(ufo), 0.)) // Craft ran into a UFO.
 									{
 										_dogfightsToStart.push_back(new DogfightState(_globe, *j, ufo, this));
 										if (_dfStartTimer->isRunning() == false)
@@ -1738,37 +1739,60 @@ void GeoscapeState::time5Seconds()
 								}
 								break;
 
-							case Ufo::LANDED:		// setSpeed 1/2 (need to speed up to full if UFO takes off)
-							case Ufo::CRASHED:		// setSpeed 1/2 (need to speed back up when setting a new destination)
-							case Ufo::DESTROYED:	// just before expiration
-								if ((*j)->getQtySoldiers() != 0)
+							case Ufo::LANDED:	// TODO: setSpeed 1/2 (need to speed up to full if UFO takes off)
+							case Ufo::CRASHED:	// TODO: setSpeed 1/2 (need to speed back up when setting a new destination)
+								if ((*j)->inDogfight() == false) // NOTE: Allows non-transport Craft to case the joint.
 								{
-									if ((*j)->inDogfight() == false)
-									{
-										resetTimer();
-										int // look up polygon's texId + shade
-											texId,
-											shade;
-										_globe->getPolygonTextureAndShade(
-																		ufo->getLongitude(),
-																		ufo->getLatitude(),
-																		&texId, &shade);
-										popup(new ConfirmLandingState(
-																*j, // countryside Texture; choice of Terrain made in ConfirmLandingState
-																_rules->getGlobe()->getTextureRule(texId),
-																shade));
-									}
+									resetTimer();
+
+									int // look up polygon's texId + shade
+										texId,
+										shade;
+									_globe->getPolygonTextureAndShade(
+																	ufo->getLongitude(),
+																	ufo->getLatitude(),
+																	&texId, &shade);
+									popup(new ConfirmLandingState(
+															*j, // countryside Texture; choice of Terrain made in ConfirmLandingState
+															_rules->getGlobe()->getTextureRule(texId),
+															shade,
+															(*j)->getQtySoldiers() != 0));
 								}
-								else if (ufo->getUfoStatus() != Ufo::LANDED)
-								{
+								break;
+
+							case Ufo::DESTROYED: // just before expiration
 									popup(new CraftPatrolState(*j, this));
 									(*j)->setDestination();
-								}
+
+//								if ((*j)->getQtySoldiers() != 0)
+//								{
+//									if ((*j)->inDogfight() == false)
+//									{
+//										resetTimer();
+//										int // look up polygon's texId + shade
+//											texId,
+//											shade;
+//										_globe->getPolygonTextureAndShade(
+//																		ufo->getLongitude(),
+//																		ufo->getLatitude(),
+//																		&texId, &shade);
+//										popup(new ConfirmLandingState(
+//																*j, // countryside Texture; choice of Terrain made in ConfirmLandingState
+//																_rules->getGlobe()->getTextureRule(texId),
+//																shade));
+//									}
+//								}
+//								else if (ufo->getUfoStatus() != Ufo::LANDED)
+//								{
+//									popup(new CraftPatrolState(*j, this));
+//									(*j)->setDestination();
+//								}
 						}
 					}
-					else if (wp == nullptr && (*j)->getQtySoldiers() != 0) // site OR aLienBase
+					else if (wp == nullptr) //&& (*j)->getQtySoldiers() != 0) // site OR aLienBase
 					{
 						resetTimer();
+
 						if (site != nullptr)
 						{
 							const int texId (site->getSiteTextureId());
@@ -1780,18 +1804,22 @@ void GeoscapeState::time5Seconds()
 							popup(new ConfirmLandingState( // preset missionSite Texture; choice of Terrain made via texture-deployment in ConfirmLandingState
 													*j,
 													_rules->getGlobe()->getTextureRule(texId),
-													shade));
+													shade,
+													(*j)->getQtySoldiers() != 0));
 						}
 						else // aLien Base.
-							popup(new ConfirmLandingState(*j)); // choice of Terrain made in BattlescapeGenerator.
+							popup(new ConfirmLandingState( // choice of Terrain made in BattlescapeGenerator.
+													*j,
+													nullptr,
+													-1,
+													(*j)->getQtySoldiers() != 0));
 					}
-					else // do Patrol at waypoint.
+					else // do Patrol at waypoint. NOTE: This will also handle target-UFOs that just vanished.
 					{
 						popup(new CraftPatrolState(*j, this));
 						(*j)->setDestination();
 					}
 				}
-
 				++j;
 			}
 		}
@@ -2904,12 +2932,16 @@ void GeoscapeState::time1Day()
 
 			bool
 				gofCrack,
-				forcesCrack;	// TODO: that. The issue is that the 'forces' are not an independent vector, but instead are
+				forcesCrack;	// TODO: that <- The issue is that the 'forces' are not an independent vector, but instead are
 								// redetermined on-the-fly from the player's 'discovered' vector every time they're examined.
 			if (isLiveAlien == true)
 			{
-				if (Options::retainCorpses == true) // NOTE: Assumes needItem=TRUE & destroyItem=TRUE.
+				if (resRule->needsItem() == true
+					&& resRule->destroyItem() == true
+					&& Options::retainCorpses == true)
+				{
 					(*i)->getStorageItems()->addItem(_rules->getArmor(_rules->getUnitRule(resType)->getArmorType())->getCorpseGeoscape());
+				}
 
 				getAlienCracks(
 							resType,
