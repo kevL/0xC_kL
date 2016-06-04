@@ -142,7 +142,7 @@ const double
 
 
 // UFO blobs graphics ...
-const int GeoscapeState::_ufoBlobs[8u][BLOBSIZE][BLOBSIZE] =
+const int GeoscapeState::_ufoBlobs[8u][BLOBSIZE][BLOBSIZE]
 {
 	{
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 0 - STR_VERY_SMALL
@@ -4567,8 +4567,8 @@ void GeoscapeState::btnPauseClick(Action*) // private.
 }
 
 /**
- * LMB Centers on the UFO corresponding to this button.
- * RMB Opens info.
+ * LMB Opens info.
+ * RMB Centers on the UFO corresponding to a button.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnUfoBlobPress(Action* action) // private.
@@ -4583,17 +4583,17 @@ void GeoscapeState::btnUfoBlobPress(Action* action) // private.
 			switch (action->getDetails()->button.button)
 			{
 				case SDL_BUTTON_LEFT:
-					_globe->center(
-								_hostileUfos[i]->getLongitude(),
-								_hostileUfos[i]->getLatitude());
-					break;
-
-				case SDL_BUTTON_RIGHT:
 					_game->pushState(new UfoDetectedState(
 													_hostileUfos[i],
 													this,
 													false,
 													_hostileUfos[i]->getHyperDetected()));
+					break;
+
+				case SDL_BUTTON_RIGHT:
+					_globe->center(
+								_hostileUfos[i]->getLongitude(),
+								_hostileUfos[i]->getLatitude());
 			}
 			break;
 		}
