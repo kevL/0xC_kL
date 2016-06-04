@@ -247,13 +247,13 @@ StoresState::StoresState(Base* const base)
 
 	if (_base->storesOverfull() == true)
 	{
-		_blinkTimer = new Timer(325u);
-		_blinkTimer->onTimer((StateHandler)& StoresState::blink);
-		_blinkTimer->start();
-
 		_txtTotal->setColor(RED);
 		_txtTotal->setHighContrast();
 		_txtTotal->setVisible(false); // wait for blink.
+
+		_blinkTimer = new Timer(325u);
+		_blinkTimer->onTimer((StateHandler)& StoresState::blink);
+		_blinkTimer->start();
 	}
 	else
 		_txtTotal->setColor(WHITE);
@@ -263,7 +263,10 @@ StoresState::StoresState(Base* const base)
  * dTor.
  */
 StoresState::~StoresState()
-{}
+{
+	if (_txtTotal->getColor() == RED)
+		delete _blinkTimer;
+}
 
 /**
  * Runs the blink Timer.

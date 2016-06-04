@@ -74,7 +74,7 @@ private:
 
 		/// Runs the blink Timer.
 		void think() override;
-		/// Blinks the message text.
+		/// Blinks the message Text.
 		void blink();
 
 		/// Handler for clicking the OK button.
