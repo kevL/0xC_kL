@@ -346,8 +346,8 @@ void Pathfinding::calculatePath(
 		_pathAction->strafe =
 		_strafe = strafeRejected == false
 			   && Options::battleStrafe == true
-			   && ((_ctrl == true && isMech == false)
-					|| (_alt == true && isMech == true))
+			   && (    (_ctrl == true && isMech == false)
+					|| (_alt == true  && isMech == true))
 			   && (std::abs(
 						(_battleSave->getTile(posStop)->getTerrainLevel()  - posStop.z  * 24)
 					  - (_battleSave->getTile(posStart)->getTerrainLevel() - posStart.z * 24)) < 9)
@@ -688,7 +688,7 @@ bool Pathfinding::aStarPath( // private.
 				&& _unit->getUnitRules()->isMechanical() == true)
 			{
 				const int delta (std::abs((_path.back() + 4) % 8 - _unit->getUnitDirection())); // no u.
-				if (delta > 1)
+				if (delta > 1 && delta != 7)
 				{
 					_path.clear(); // safety.
 
