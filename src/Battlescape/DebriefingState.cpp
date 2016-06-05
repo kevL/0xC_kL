@@ -1599,7 +1599,8 @@ void DebriefingState::prepareDebriefing() // private.
 					(*i)->qty = ((*i)->qty + (qtyRuinedAlloys >> 1u)) / alloyDivisor;
 					(*i)->score = ((*i)->score + ((qtyRuinedAlloys * _specialTypes[DEAD_TILE]->value) >> 1u)) / alloyDivisor;
 
-					_itemsGained[_rules->getItemRule((*i)->type)] = (*i)->qty; // NOTE: Elerium is handled in recoverItems().
+					if ((*i)->qty != 0 && (*i)->recover == true)
+						_itemsGained[_rules->getItemRule((*i)->type)] = (*i)->qty; // NOTE: Elerium is handled in recoverItems().
 				}
 
 				if ((*i)->qty != 0 && (*i)->recover == true)
