@@ -173,8 +173,8 @@ private:
 	void startDogfight();
 
 	/// Handle alien mission generation.
-	void determineAlienMissions();
-//	void determineAlienMissions(bool atGameStart = false);
+	void deterAlienMissions();
+//	void deterAlienMissions(bool atGameStart = false);
 //	/// Handle land mission generation.
 //	void setupLandMission();
 	/// Process each individual mission script command.
@@ -322,8 +322,8 @@ private:
 		/// Gets the dogfights.
 		std::list<DogfightState*>& getDogfights();
 
-		/// Handles base defense
-		void startBaseDefenseTactical(
+		/// Starts base-defense tactical.
+		void baseDefenseTactical(
 				Base* const base,
 				Ufo* const ufo);
 

@@ -94,7 +94,7 @@ std::string WeightedOptions::getOptionResult() const
 /*
  * Selects the most likely option.
  * @note This MUST be called on non-empty objects. Currently used only to
- * determine race of initial alien mission -> GeoscapeState::determineAlienMissions(atGameStart=true)
+ * determine race of initial alien mission -> GeoscapeState::deterAlienMissions(atGameStart=true)
  * @note kL rewrite
  * @return, the key of the selected choice
  *

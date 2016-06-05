@@ -117,7 +117,7 @@ BaseDefenseState::BaseDefenseState(
 	_txtDestroyed->setAlign(ALIGN_CENTER);
 
 	_timer = new Timer(TI_FAST);
-	_timer->onTimer((StateHandler)& BaseDefenseState::nextStep);
+	_timer->onTimer((StateHandler)& BaseDefenseState::next);
 	_timer->start();
 
 
@@ -151,7 +151,7 @@ void BaseDefenseState::think()
 /**
  * Advances the state of the State by doing this.
  */
-void BaseDefenseState::nextStep() // private.
+void BaseDefenseState::next() // private.
 {
 	if (_thinkCycles != -1)
 	{
@@ -312,7 +312,7 @@ void BaseDefenseState::nextStep() // private.
 }
 
 /**
- * Returns to the previous screen.
+ * Starts tactical or exits to Geoscape.
  * @param action - pointer to an Action
  */
 void BaseDefenseState::btnOkClick(Action*)
@@ -322,14 +322,18 @@ void BaseDefenseState::btnOkClick(Action*)
 
 	_base->clearBaseDefense();
 
-	// TODO: if Status_Crashed, set up Battleship crash-site near the xCom Base.
-	if (_ufo->getUfoStatus() != Ufo::DESTROYED)
+	switch (_ufo->getUfoStatus()) // TODO: if Status_Crashed, set up Battleship crash-site near the xCom Base.
 	{
-		_base->setDefenseResult(_ufo->getUfoDamagePct());
-		_state->startBaseDefenseTactical(_base, _ufo);
+		case Ufo::FLYING:
+		case Ufo::LANDED:
+		case Ufo::CRASHED:
+			_base->setDefenseResult(_ufo->getUfoDamagePct());
+			_state->baseDefenseTactical(_base, _ufo);
+			break;
+
+		case Ufo::DESTROYED:
+			_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
 	}
-	else
-		_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
 }
 
 }

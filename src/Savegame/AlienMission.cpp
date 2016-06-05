@@ -57,7 +57,7 @@ namespace OpenXcom
 /**
  * Creates the AlienMission.
  * @param missionRule	- reference to RuleAlienMission
- * @param gameSave		- reference the SavedGame
+ * @param gameSave		- reference to the SavedGame
  */
 AlienMission::AlienMission(
 		const RuleAlienMission& missionRule,
@@ -110,7 +110,7 @@ private:
 
 /**
  * Loads this AlienMission from a YAML file.
- * @param node - reference the YAML node containing data
+ * @param node - reference to a YAML node
  */
 void AlienMission::load(const YAML::Node& node)
 {
@@ -194,8 +194,8 @@ int AlienMission::getId() const
  * @note If the region is incompatible with actually carrying out an attack use
  * the fallback region as defined in the ruleset. This is a slight difference
  * from the original which just defaulted to zone[0] North America.
- * @param region	- reference the region to try to set the mission to
- * @param rules		- reference the ruleset in case the region needs to be swapped out
+ * @param region	- reference to the region to try to set the mission to
+ * @param rules		- reference to the ruleset in case the region needs to be swapped out
  */
 void AlienMission::setRegion(
 		const std::string& region,
@@ -427,10 +427,10 @@ private:
  * Spawns a UFO according this AlienMission's rules.
  * @note Some code is duplicated between cases but that's ok for now. It's on
  * different code paths and the function is MUCH easier to read written this way.
- * @param rules			- reference the ruleset
- * @param globe			- reference the globe for land checks
- * @param wave			- reference the wave for the desired UFO
- * @param trajectory	- reference the rule for the desired trajectory
+ * @param rules			- reference to the ruleset
+ * @param globe			- reference to the globe for land checks
+ * @param wave			- reference to the wave for the desired UFO
+ * @param trajectory	- reference to the rule for the desired trajectory
  * @return, pointer to the spawned UFO; if the mission does not spawn a UFO return nullptr
  */
 Ufo* AlienMission::createUfo( // private.
@@ -637,9 +637,9 @@ private:
  * @note It takes care of sending the UFO to the next waypoint, landing
  * UFOs and marking them for removal as required. It must set the game data in a
  * way that the rest of the code understands what to do.
- * @param ufo	- reference the Ufo that reached its waypoint
- * @param rules	- reference the Ruleset
- * @param globe	- reference the earth globe required to get access to land checks
+ * @param ufo	- reference to the Ufo that reached its waypoint
+ * @param rules	- reference to the Ruleset
+ * @param globe	- reference to the earth globe required to get access to land checks
  */
 void AlienMission::ufoReachedWaypoint(
 		Ufo& ufo,
@@ -798,8 +798,8 @@ TerrorSite* AlienMission::createTerror( // private.
 
 /**
  * Spawns an AlienBase.
- * @param globe	- reference the Globe, required to get access to land checks
- * @param rules	- reference the Ruleset
+ * @param globe	- reference to the Globe, required to get access to land checks
+ * @param rules	- reference to the Ruleset
  * @param zone	- the mission zone required for determining the base coordinates
  */
 void AlienMission::createAlienBase( // private.
@@ -853,9 +853,9 @@ const AlienBase* AlienMission::getAlienBase() const
  * @note It takes care of sending the UFO to the next waypoint and marking it
  * for removal as required. It must set the game data in a way that the rest of
  * the code understands what to do.
- * @param ufo	- reference the Ufo that is lifting off
- * @param rules	- reference the Ruleset
- * @param globe	- reference the Globe
+ * @param ufo	- reference to the Ufo that is lifting off
+ * @param rules	- reference to the Ruleset
+ * @param globe	- reference to the Globe
  */
 void AlienMission::ufoLifting(
 		Ufo& ufo,
@@ -968,7 +968,7 @@ void AlienMission::ufoLifting(
  * One of this AlienMission's UFOs is shot down - crashed or destroyed.
  * @note Currently the only thing that happens is delaying the next UFO in the
  * mission sequence.
- * @param ufo - reference the Ufo that was shot down
+ * @param ufo - reference to the Ufo that was shot down
  */
 void AlienMission::ufoShotDown(const Ufo& ufo)
 {
@@ -1029,7 +1029,7 @@ std::pair<double, double> AlienMission::getWaypoint(
 /**
  * Gets a random point inside a specified Region zone.
  * @note The point will be used to land a UFO so it *has to be on land*.
- * @param globe		- reference the Globe
+ * @param globe		- reference to the Globe
  * @param region	- reference RuleRegion
  * @param zone		- zone number in the region
  * @return, a pair of doubles (lon & lat)

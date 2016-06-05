@@ -47,7 +47,7 @@ enum BaseDefenseActionType
 
 
 /**
- * Base Defense Screen for when ufos try to attack.
+ * BaseDefense screen for when UFOs attack.
  */
 class BaseDefenseState
 	:
@@ -56,9 +56,9 @@ class BaseDefenseState
 
 private:
 	static const Uint32
-		TI_SLOW		= 973, // Time Intervals
-		TI_MEDIUM	= 269,
-		TI_FAST		=  76;
+		TI_SLOW		= 973u, // Time Intervals
+		TI_MEDIUM	= 269u,
+		TI_FAST		=  76u;
 
 	int
 		_thinkCycles;
@@ -92,20 +92,20 @@ private:
 	Ufo* _ufo;
 	Window* _window;
 
-	/// Advances the base-defense.
-	void nextStep();
+	/// Advances the defense-state.
+	void next();
 
 
 	public:
-		/// Creates the Base Defense state.
+		/// Creates a BaseDefense state.
 		BaseDefenseState(
 				Base* const base,
 				Ufo* const ufo,
 				GeoscapeState* const state);
-		/// Cleans up the Base Defense state.
+		/// Cleans up the BaseDefense state.
 		~BaseDefenseState();
 
-		/// Handle the Timer.
+		/// Handles the Timer.
 		void think() override;
 
 		/// Handler for clicking the OK button.

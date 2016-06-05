@@ -1153,7 +1153,7 @@ void GeoscapeState::init()
 		&& _gameSave->getBases()->front()->isBasePlaced() == true)	// THIS prevents missions running prior to the first base being placed.
 	{
 		_gameSave->addMonth();
-		determineAlienMissions();
+		deterAlienMissions();
 		_gameSave->setFunds(_gameSave->getFunds() - static_cast<int64_t>(_gameSave->getBases()->front()->getMonthlyMaintenace()));
 	}
 }
@@ -1554,7 +1554,7 @@ void GeoscapeState::time5Seconds()
 								// should/could this Return;
 							else
 							{
-								startBaseDefenseTactical(base, *i);
+								baseDefenseTactical(base, *i);
 								return;
 							}
 						}
@@ -3246,12 +3246,12 @@ void GeoscapeState::time1Month()
 	resetTimer();
 	_gameSave->addMonth();
 
-	determineAlienMissions(); // determine alien mission for this month.
+	deterAlienMissions(); // determine alien mission for this month.
 
 /*	const int monthsPassed = _gameSave->getMonthsPassed();
 //	if (monthsPassed > 5)
 	if (RNG::percent(monthsPassed * 2) == true)
-		determineAlienMissions(); // kL_note: determine another one, I guess.
+		deterAlienMissions(); // kL_note: determine another one, I guess.
 
 	setupLandMission(); // always add a Mission, eg. TerrorMission, to the regular mission(s) <-
 
@@ -3964,11 +3964,11 @@ std::list<DogfightState*>& GeoscapeState::getDogfights()
 }
 
 /**
- * Handle base defense.
+ * Starts base-defense tactical.
  * @param base	- pointer to Base to defend
  * @param ufo	- pointer to the attacking Ufo
  */
-void GeoscapeState::startBaseDefenseTactical(
+void GeoscapeState::baseDefenseTactical(
 		Base* const base,
 		Ufo* const ufo)
 {
@@ -3993,9 +3993,9 @@ void GeoscapeState::startBaseDefenseTactical(
 }
 
 /**
- * Determine the alien missions to start this month.
+ * Determines the AlienMissions to start this month.
  */
-void GeoscapeState::determineAlienMissions() // private.
+void GeoscapeState::deterAlienMissions() // private.
 {
 	AlienStrategy& strategy (_gameSave->getAlienStrategy());
 	const int month (_gameSave->getMonthsPassed());
@@ -4402,7 +4402,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
  * player's first Base.
  * @param atGameStart - true if called at start (default false)
  *
-void GeoscapeState::determineAlienMissions(bool atGameStart) // private.
+void GeoscapeState::deterAlienMissions(bool atGameStart) // private.
 {
 	if (atGameStart == false)
 	{
