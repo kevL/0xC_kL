@@ -476,7 +476,7 @@ void SavedGame::load(
 			country->load(*i);
 			_countries.push_back(country);
 		}
-		else Log(LOG_ERROR) << "Failed to load country " << type;
+		else Log(LOG_ERROR) << "Failed to load country: Type [" << type << "]";
 	}
 
 	Log(LOG_INFO) << ". load regions";
@@ -492,7 +492,7 @@ void SavedGame::load(
 			region->load(*i);
 			_regions.push_back(region);
 		}
-		else Log(LOG_ERROR) << "Failed to load region " << type;
+		else Log(LOG_ERROR) << "Failed to load region: Type [" << type << "]";
 	}
 
 	Log(LOG_INFO) << ". load alien bases"; // AlienBases must be loaded before AlienMissions.
@@ -521,7 +521,7 @@ void SavedGame::load(
 			mission->load(*i);
 			_activeMissions.push_back(mission.release());
 		}
-		else Log(LOG_ERROR) << "Failed to load mission " << type;
+		else Log(LOG_ERROR) << "Failed to load mission: Type [" << type << "]";
 	}
 
 	Log(LOG_INFO) << ". load ufos"; // Ufos must be loaded after AlienMissions.
@@ -537,7 +537,7 @@ void SavedGame::load(
 			ufo->load(*i, *_rules, *this);
 			_ufos.push_back(ufo);
 		}
-		else Log(LOG_ERROR) << "Failed to load UFO " << type;
+		else Log(LOG_ERROR) << "Failed to load UFO: Type [" << type << "]";
 	}
 
 	Log(LOG_INFO) << ". load waypoints";
@@ -551,7 +551,7 @@ void SavedGame::load(
 		_waypoints.push_back(wp);
 	}
 
-	Log(LOG_INFO) << ". load mission sites";
+	Log(LOG_INFO) << ". load terror sites";
 	for (YAML::const_iterator
 			i = doc["terrorSites"].begin();
 			i != doc["terrorSites"].end();
@@ -567,7 +567,7 @@ void SavedGame::load(
 			site->load(*i);
 			_terrorSites.push_back(site);
 		}
-		else Log(LOG_ERROR) << "Failed to load mission " << type << " deployment " << deployment;
+		else Log(LOG_ERROR) << "Failed to load terror-site: Type [" << type << "] Deployment [" << deployment << "]";
 	}
 
 	Log(LOG_INFO) << ". load research generals";
@@ -585,7 +585,7 @@ void SavedGame::load(
 			resGen->load(*i);
 			_research.push_back(resGen);
 		}
-		else Log(LOG_ERROR) << "Failed to load research " << type;
+		else Log(LOG_ERROR) << "Failed to load research: Type [" << type << "]";
 	}
 
 	Log(LOG_INFO) << ". load xcom bases";

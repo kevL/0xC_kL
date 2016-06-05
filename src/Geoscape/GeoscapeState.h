@@ -327,7 +327,7 @@ private:
 				Base* const base,
 				Ufo* const ufo);
 
-		/// Processes a mission site.
+		/// Processes a TerrorSite.
 		bool processTerrorSite(TerrorSite* const site) const; // OoO
 
 		/// Update the resolution settings - the window was resized.

@@ -250,7 +250,7 @@ void AlienMission::start(size_t countdown)
 	_liveUfos = 0;
 
 	if (countdown == 0)
-		calcSpawnTime(0);
+		calcGeneration(0);
 	else
 		_spawnTime = countdown;
 }
@@ -274,7 +274,7 @@ void AlienMission::think(
 			const MissionWave& wave (_missionRule.getWave(_waveCount));
 			const UfoTrajectory& trajectory (*rules.getUfoTrajectory(wave.trajectory));
 
-			Ufo* const ufo (spawnUfo(
+			Ufo* const ufo (createUfo(
 									rules,
 									globe,
 									wave,
@@ -282,7 +282,7 @@ void AlienMission::think(
 
 			if (ufo != nullptr) // a UFO hath spawned!
 				_gameSave.getUfos()->push_back(ufo);
-			else if ((rules.getUfo(wave.ufoType) == nullptr // a mission site to spawn directly
+			else if ((rules.getUfo(wave.ufoType) == nullptr // a terror-site to spawn directly
 					&& rules.getDeployment(wave.ufoType) != nullptr
 					&& rules.getDeployment(wave.ufoType)->getMarkerType().empty() == false)
 				|| (_missionRule.getObjective() == alm_SITE // or spawn one at random according to the terrain
@@ -310,7 +310,7 @@ void AlienMission::think(
 				else
 					ruleDeploy = rules.getDeployment(texture->getTextureDeployment());
 
-				spawnTerrorSite(ruleDeploy, area);
+				createTerror(ruleDeploy, area);
 			}
 
 			++_ufoCount;
@@ -321,7 +321,7 @@ void AlienMission::think(
 			}
 
 			if (_waveCount != _missionRule.getWaveTotal())
-				calcSpawnTime(_waveCount);
+				calcGeneration(_waveCount);
 			else if (_missionRule.getObjective() == alm_INFILT)	// Infiltrations loop for ever.
 				_waveCount = 0;
 		}
@@ -335,7 +335,7 @@ void AlienMission::think(
 		if (object == alm_BASE
 			|| object == alm_INFILT)
 		{
-			spawnAlienBase( // adds alienPts.
+			createAlienBase( // adds alienPts.
 						globe,
 						rules,
 						_missionRule.getSpawnZone());
@@ -382,7 +382,7 @@ void AlienMission::think(
  * @note These come in increments of 30sec (or min?) apiece.
  * @param nextWave - the wave to check
  */
-void AlienMission::calcSpawnTime(size_t nextWave) // private.
+void AlienMission::calcGeneration(size_t nextWave) // private.
 {
 	int countdown (static_cast<int>(_missionRule.getWave(nextWave).spawnTimer));
 	countdown /= 30;
@@ -395,7 +395,7 @@ void AlienMission::calcSpawnTime(size_t nextWave) // private.
 /**
  ** FUNCTOR ***
  * Finds an XCOM base in this region that is marked for retaliation.
- * @note Helper for spawnUfo().
+ * @note Helper for createUfo().
  */
 /* class FindExposedXCOMBase
 	:
@@ -433,7 +433,7 @@ private:
  * @param trajectory	- reference the rule for the desired trajectory
  * @return, pointer to the spawned UFO; if the mission does not spawn a UFO return nullptr
  */
-Ufo* AlienMission::spawnUfo( // private.
+Ufo* AlienMission::createUfo( // private.
 		const Ruleset& rules,
 		const Globe& globe,
 		const MissionWave& wave,
@@ -706,7 +706,7 @@ void AlienMission::ufoReachedWaypoint(
 					ruleDeploy = rules.getDeployment(texture->getTextureDeployment());
 				}
 
-				TerrorSite* const site (spawnTerrorSite(ruleDeploy, area));
+				TerrorSite* const site (createTerror(ruleDeploy, area));
 				if (site != nullptr)
 				{
 					_gameSave.getTerrorSites()->push_back(site);
@@ -772,7 +772,7 @@ void AlienMission::ufoReachedWaypoint(
  * @param area			- reference an area of the globe
  * @return, pointer to the site
  */
-TerrorSite* AlienMission::spawnTerrorSite( // private.
+TerrorSite* AlienMission::createTerror( // private.
 		const AlienDeployment* const ruleDeploy,
 		const MissionArea& area)
 {
@@ -802,7 +802,7 @@ TerrorSite* AlienMission::spawnTerrorSite( // private.
  * @param rules	- reference the Ruleset
  * @param zone	- the mission zone required for determining the base coordinates
  */
-void AlienMission::spawnAlienBase( // private.
+void AlienMission::createAlienBase( // private.
 		const Globe& globe,
 		const Ruleset& rules,
 		const size_t zone)
@@ -880,7 +880,7 @@ void AlienMission::ufoLifting(
 						if (_success == false)
 						{
 							_success = true; // only the first Battleship needs to lift successfully - note this means that only one of the Battleships needs to be successful.
-							spawnAlienBase( // adds alienPts.
+							createAlienBase( // adds alienPts.
 										globe,
 										rules,
 										_missionRule.getSpawnZone());
@@ -916,7 +916,7 @@ void AlienMission::ufoLifting(
 						break;
 
 					case alm_BASE:
-						spawnAlienBase( // adds alienPts.
+						createAlienBase( // adds alienPts.
 									globe,
 									rules,
 									_missionRule.getSpawnZone());
@@ -987,12 +987,12 @@ void AlienMission::ufoShotDown(const Ufo& ufo)
 }
 
 /**
- * Selects a destination based on the criteria of the trajectory and desired
- * waypoint.
- * @param trajectory	- reference the trajectory in question
+ * Selects a destination based on the criteria of a specified trajectory and a
+ * specified waypoint.
+ * @param trajectory	- reference to the trajectory in question
  * @param nextWaypoint	- the next logical waypoint in sequence (0 for newly spawned UFOs)
- * @param globe			- reference the Globe
- * @param region		- reference the ruleset for the region of this mission
+ * @param globe			- reference to the Globe
+ * @param region		- reference to the ruleset for the region of this mission
  * @return, pair of lon and lat coordinates based on the criteria of the trajectory
  */
 std::pair<double, double> AlienMission::getWaypoint(

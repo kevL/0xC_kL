@@ -158,8 +158,7 @@ void BaseDestroyedState::finish()
 {
 	_game->popState();
 
-//	pts = (_game->getRuleset()->getAlienMission("STR_ALIEN_TERROR")->getPoints() * 50) + (diff * 200);
-	_game->getSavedGame()->scorePoints(
+	_game->getSavedGame()->scorePoints( // TODO: Put points in ruleset.
 								_base->getLongitude(),
 								_base->getLatitude(),
 								(static_cast<int>(_game->getSavedGame()->getDifficulty()) + 1) * 200,
@@ -176,10 +175,10 @@ void BaseDestroyedState::finish()
 			delete *i;
 			baseList->erase(i);
 			break;
-			// SHOULD PUT IN A SECTION FOR TRANSFERRING AIRBORNE CRAFT TO ANOTHER BASE/S
+			// SHOULD PUT IN A SECTION FOR TRANSFERING AIRBORNE CRAFT TO ANOTHER BASE/S
 			// if Option:: transfer airborne craft == true
-			// & stores available (else sell)
-			// & living quarters available (if soldiers true) else Sack.
+			// & hangar and stores available (else sell)
+			// & living quarters available (if soldiers) else Sack.
 		}
 	}
 }

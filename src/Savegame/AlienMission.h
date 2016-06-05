@@ -74,23 +74,25 @@ private:
 	const RuleAlienMission& _missionRule;
 	SavedGame& _gameSave;
 
-	/// Calculates time remaining until the next wave spawns.
-	void calcSpawnTime(size_t nextWave);
-	/// Spawns a UFO based on mission rules.
-	Ufo* spawnUfo(
+	/// Calculates time remaining until the next wave generates.
+	void calcGeneration(size_t nextWave);
+
+	/// Spawns a UFO based on the mission rules.
+	Ufo* createUfo(
 			const Ruleset& rules,
 			const Globe& globe,
 			const MissionWave& wave,
 			const UfoTrajectory& trajectory);
 	/// Spawns a TerrorSite at a specific location.
-	TerrorSite* spawnTerrorSite(
+	TerrorSite* createTerror(
 			const AlienDeployment* const deployment,
 			const MissionArea& area);
-	/// Spawns an alien base
-	void spawnAlienBase(
+	/// Spawns an AlienBase
+	void createAlienBase(
 			const Globe& globe,
 			const Ruleset& rules,
 			const size_t zone);
+
 	/// Handles Points for mission successes.
 	void addScore(
 			const double lon,
@@ -98,39 +100,39 @@ private:
 
 
 	public:
-		/// Creates a mission of the specified type.
+		/// Creates an AlienMission of the specified type.
 		AlienMission(
 				const RuleAlienMission& missionRule,
 				SavedGame& gameSave);
-		/// Cleans up the mission info.
+		/// Cleans up the AlienMission.
 		~AlienMission();
 
-		/// Loads the mission from YAML.
+		/// Loads the AlienMission from YAML.
 		void load(const YAML::Node& node);
-		/// Saves the mission to YAML.
+		/// Saves the AlienMission to YAML.
 		YAML::Node save() const;
 
-		/// Gets the mission's ruleset.
+		/// Gets the AlienMission's ruleset.
 		const RuleAlienMission& getRules() const
 		{ return _missionRule; }
 
-		/// Sets the unique ID for this mission.
+		/// Sets the unique ID for the AlienMission.
 		void setId(int id);
-		/// Gets the unique ID for this mission.
+		/// Gets the unique ID for the AlienMission.
 		int getId() const;
 
-		/// Gets the mission's region.
+		/// Gets the AlienMission's Region.
 		const std::string& getRegion() const
 		{ return _region; }
-		/// Sets the mission's region.
+		/// Sets the AlienMission's Region.
 		void setRegion(
 				const std::string& region,
 				const Ruleset& rules);
 
-		/// Gets the mission's race.
+		/// Gets the AlienMission's AlienRace type.
 		const std::string& getRace() const
 		{ return _race; }
-		/// Sets the mission's race.
+		/// Sets the AlienMission's AlienRace type.
 		void setRace(const std::string& race)
 		{ _race = race; }
 
@@ -140,58 +142,58 @@ private:
 		/// Sets the minutes until next wave spawns.
 		void setWaveCountdown(size_t minutes);
 
-		/// Increases number of live UFOs.
+		/// Increases the quantity of live UFOs.
 		void increaseLiveUfos()
 		{ ++_liveUfos; }
-		/// Decreases number of live UFOs.
+		/// Decreases the quantity of live UFOs.
 		void decreaseLiveUfos()
 		{ --_liveUfos; }
 
-		/// Gets if this mission over.
+		/// Gets if the AlienMission over.
 		bool isOver() const;
-		/// Initializes with values from rules.
+		/// Initializes the AlienMission with rule-data.
 		void start(size_t countdown = 0u);
 
-		/// Handles UFO spawning for the mission.
+		/// Handles UFO spawning for the AlienMission.
 		void think(
 				const Game& game,
 				const Globe& globe);
 
-		/// Handles UFO reaching a waypoint.
+		/// Handles a UFO reaching a waypoint.
 		void ufoReachedWaypoint(
 				Ufo& ufo,
 				const Ruleset& rules,
 				const Globe& globe);
 
-		/// Gets the aLien-base for this mission.
+		/// Gets the AlienBase for the AlienMission.
 		const AlienBase* getAlienBase() const;
-		/// Sets the aLien-base for this mission.
+		/// Sets the AlienBase for the AlienMission.
 		void setAlienBase(const AlienBase* const base);
 
-		/// Handles UFO lifting from the ground.
+		/// Handles a UFO lifting from the ground.
 		void ufoLifting(
 				Ufo& ufo,
 				Ruleset& rules,
 				const Globe& globe);
-		/// Handles UFO shot down.
+		/// Handles a UFO that was shot down.
 		void ufoShotDown(const Ufo& ufo);
 
-		/// Selects a destination (lon/lat) based on the criteria of the trajectory and desired waypoint.
+		/// Selects a destination (lon/lat).
 		std::pair<double, double> getWaypoint(
 				const UfoTrajectory& trajectory,
 				const size_t nextWaypoint,
 				const Globe& globe,
 				const RuleRegion& region);
-		/// Gets a random landing point inside the given region zone.
+		/// Gets a random landing-point inside a specified Region and zone.
 		std::pair<double, double> getLandPoint(
 				const Globe& globe,
 				const RuleRegion& region,
 				const size_t zone);
 
-		/// Tracks the target site.
+		/// Flags tracking of the target-site.
 		void setTerrorSiteZone(size_t zone);
 
-		/// Gets the wave of a/the UFO in the total scheme of this Mission.
+		/// Gets the wave of a UFO in the agenda of the AlienMission.
 		size_t getWaveCount()
 		{ return _waveCount; }
 };

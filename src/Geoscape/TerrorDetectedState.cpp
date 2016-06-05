@@ -43,7 +43,7 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the TerrorDetected window.
- * @param site	- pointer to the respective Mission Site
+ * @param site	- pointer to the respective TerrorSite
  * @param geo	- pointer to GeoscapeState
  */
 TerrorDetectedState::TerrorDetectedState(
@@ -121,7 +121,7 @@ TerrorDetectedState::~TerrorDetectedState()
 {}
 
 /**
- * Picks a craft to intercept the mission site.
+ * Picks a craft to intercept the terror-site.
  * @param action - pointer to an Action
  */
 void TerrorDetectedState::btnInterceptClick(Action*)
@@ -131,7 +131,7 @@ void TerrorDetectedState::btnInterceptClick(Action*)
 }
 
 /**
- * Centers on the mission site and returns to the previous screen.
+ * Centers on the terror-site and returns to the previous screen.
  * @param action - pointer to an Action
  */
 void TerrorDetectedState::btnCenterClick(Action*)

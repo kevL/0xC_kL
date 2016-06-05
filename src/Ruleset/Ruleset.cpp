@@ -414,7 +414,7 @@ void Ruleset::validateMissions() const
 	// going to be before they are formulated, and there's a heirarchical
 	// structure to the order in which variables are determined for a mission,
 	// and the order is DIFFERENT for regular missions vs missions that spawn a
-	// mission site. where normally we pick a region, then a mission based on
+	// terror site. where normally we pick a region, then a mission based on
 	// the weights for that region. a terror-type mission picks a mission type
 	// FIRST, then a region based on the criteria defined by the mission. there
 	// is no way i can conceive of to reconcile this difference to allow mixing

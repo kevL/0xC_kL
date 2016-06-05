@@ -59,20 +59,20 @@ private:
 
 
 	public:
-		/// Creates a blank alien race ruleset.
+		/// Creates rules for an AlienRace.
 		explicit AlienRace(const std::string& type);
-		/// Cleans up the alien race ruleset.
+		/// Cleans up the rules for an AlienRace.
 		~AlienRace();
 
-		/// Loads alien race data from YAML.
+		/// Loads the AlienRace rules-data from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets the alien race's id.
+		/// Gets the AlienRace's type.
 //		std::string getAlienType() const;
-		/// Gets a certain member of this alien race family.
+		/// Gets a certain member of the AlienRace family.
 		std::string getMember(int rankId) const;
 
-		/// Gets if the race can retaliate.
+		/// Gets if the AlienRace can retaliate.
 		bool canRetaliate() const;
 };
 

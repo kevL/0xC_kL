@@ -621,7 +621,7 @@ void NewBattleState::btnOkClick(Action*)
 
 		_game->getSavedGame()->getUfos()->push_back(ufo);
 	}
-	else // mission site
+	else // terror-site
 	{
 		base = nullptr;
 

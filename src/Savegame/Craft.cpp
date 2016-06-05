@@ -210,8 +210,7 @@ void Craft::load(
 	{
 		int id (dest["id"].as<int>());
 
-		type = dest["type"].as<std::string>();
-		if (type == "STR_BASE")
+		if ((type = dest["type"].as<std::string>()) == "STR_BASE")
 			returnToBase();
 		else if (type == "STR_UFO")
 		{
@@ -255,7 +254,7 @@ void Craft::load(
 				}
 			}
 		}
-		else // type = "STR_TERROR_SITE" (was "STR_ALIEN_TERROR")
+		else // type = "STR_TERROR_SITE"
 		{
 			for (std::vector<TerrorSite*>::iterator
 					i = gameSave->getTerrorSites()->begin();

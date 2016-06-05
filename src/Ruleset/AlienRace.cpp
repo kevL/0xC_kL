@@ -24,7 +24,7 @@ namespace OpenXcom
 {
 
 /**
- * Creates a blank alien race.
+ * Creates the rules for an AlienRace.
  * @param type - reference the defining type
  */
 AlienRace::AlienRace(const std::string& type)
@@ -40,7 +40,7 @@ AlienRace::~AlienRace()
 {}
 
 /**
- * Loads the alien race from a YAML file.
+ * Loads these rules for an AlienRace from a YAML file.
  * @param node - reference a YAML node
  */
 void AlienRace::load(const YAML::Node& node)
