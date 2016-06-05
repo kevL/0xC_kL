@@ -54,6 +54,9 @@ private:
 		* _txtMessage;
 	Window* _window;
 
+	/// Does turn-start stuff.
+	void nextTurn();
+
 
 	public:
 		/// Creates a NextTurn state.
@@ -66,9 +69,6 @@ private:
 
 		/// Handler for clicking anything.
 		void handle(Action* action) override;
-
-		/// Closes the window.
-		void nextTurn();
 
 		///
 //		void resize(int& dX, int& dY);

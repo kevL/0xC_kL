@@ -1586,6 +1586,7 @@ void BattlescapeGame::endTurn() // private.
 
 	checkCasualties();
 
+
 	int // if all units from either faction are killed - the mission is over.
 		liveHostile,
 		livePlayer;
@@ -1609,7 +1610,6 @@ void BattlescapeGame::endTurn() // private.
 					_parentState->finishBattle(false, livePlayer);
 					break;
 
-				default:
 				case FORCE_LOSE:
 					_battleSave->setAborted();
 					_parentState->finishBattle(true, 0);
@@ -1652,14 +1652,19 @@ void BattlescapeGame::endTurn() // private.
 		if (_endTurnRequested == true)
 		{
 			_endTurnRequested = false;
-			if (_battleSave->getSide() != FACTION_NEUTRAL
-				|| battleComplete == true)
+
+			switch (_battleSave->getSide())
 			{
-				_parentState->getGame()->delayBlit();
-				_parentState->getGame()->pushState(new NextTurnState(
-																_battleSave,
-																_parentState,
-																pacified));
+				case FACTION_NEUTRAL:
+					if (battleComplete == false) break;
+					// no break;
+				case FACTION_HOSTILE:
+				case FACTION_PLAYER:
+					_parentState->getGame()->delayBlit();
+					_parentState->getGame()->pushState(new NextTurnState(
+																	_battleSave,
+																	_parentState,
+																	pacified));
 			}
 		}
 	}

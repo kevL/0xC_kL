@@ -51,7 +51,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Next Turn screen.
+ * Initializes all the elements in the NextTurn screen.
  * @param battleSave		- pointer to the SavedBattleGame
  * @param state				- pointer to the BattlescapeState
  * @param aliensPacified	- true if all remaining aliens are mind-controlled (default false)
@@ -136,7 +136,6 @@ NextTurnState::NextTurnState(
 				_txtTurn->setColor(_game->getRuleset()->getInterface("inventory")->getElement("weight")->color2); // borrow 'overweight' color ...
 		}
 		_txtTurn->setText(woststr.str());
-//		_txtTurn->setText(tr("STR_TURN").arg(_battleSave->getTurn()));
 
 		_txtSide->setBig();
 		_txtSide->setAlign(ALIGN_CENTER);
@@ -157,6 +156,13 @@ NextTurnState::NextTurnState(
 	_txtMessage->setBig();
 
 	_state->clearMouseScrollingState();
+
+
+	if (_battleSave->getSide() != FACTION_PLAYER
+		&& _battleSave->getDebugTac() == false)
+	{
+		_game->getCursor()->setVisible(false);
+	}
 }
 
 /**
@@ -183,9 +189,9 @@ void NextTurnState::handle(Action* action)
 }
 
 /**
- * Closes the window.
+ * Does turn-start stuff.
  */
-void NextTurnState::nextTurn()
+void NextTurnState::nextTurn() // private.
 {
 	static bool switchMusic (true);
 
@@ -210,59 +216,60 @@ void NextTurnState::nextTurn()
 	{
 		_state->btnCenterPress(nullptr);
 
-		if (_battleSave->getSide() == FACTION_PLAYER)
+		switch (_battleSave->getSide())
 		{
-			_state->getBattleGame()->setupSelector();
-			_game->getCursor()->setVisible();
-
-			const int turn (_battleSave->getTurn());
-			if (_battleSave->getSide() == FACTION_PLAYER
-				&& (turn == 1 || (turn % Options::autosaveFrequency) == 0))
+			case FACTION_PLAYER: // start Player turn.
 			{
-				_state->autosave(); // NOTE: Auto-save points are fucked; they should be done *before* important events, not after.
+				_state->getBattleGame()->setupSelector();
+				_game->getCursor()->setVisible();
+
+				const int turn (_battleSave->getTurn());
+				if (_battleSave->getSide() == FACTION_PLAYER
+					&& (turn == 1 || (turn % Options::autosaveFrequency) == 0))
+				{
+					_state->autosave(); // NOTE: Auto-save points are fucked; they should be done *before* important events, not after.
+				}
+
+				if (turn != 1)
+					_battleSave->getBattleGame()->setPlayerPanic();
+
+				if (turn != 1 && switchMusic == true)
+				{
+					_game->getResourcePack()->fadeMusic(_game, 473);
+
+					std::string
+						trackType,
+						terrainType;
+					_battleSave->calibrateMusic(trackType, terrainType);
+					_game->getResourcePack()->playMusic(trackType, terrainType);
+				}
+				else
+					switchMusic = true;
+
+
+				Tile* const tile (_battleSave->getTileEngine()->checkForTerrainExplosions());
+				if (tile != nullptr)
+				{
+					const Position pos (Position::toVoxelSpaceCentered(tile->getPosition(), 10));
+					_battleSave->getBattleGame()->statePushBack(new ExplosionBState(
+																				_battleSave->getBattleGame(),
+																				pos,
+																				nullptr, nullptr,
+																				tile,
+																				false, false, true));
+				}
+				break;
 			}
 
-			if (turn != 1)
-				_battleSave->getBattleGame()->setPlayerPanic();
-
-			if (turn != 1 && switchMusic == true)
-			{
-				_game->getResourcePack()->fadeMusic(_game, 473);
-
-				std::string
-					trackType,
-					terrainType;
-				_battleSave->calibrateMusic(trackType, terrainType);
-				_game->getResourcePack()->playMusic(trackType, terrainType);
-			}
-			else
-				switchMusic = true;
-
-
-			Tile* const tile (_battleSave->getTileEngine()->checkForTerrainExplosions());
-			if (tile != nullptr)
-			{
-				const Position pos (Position::toVoxelSpaceCentered(tile->getPosition(), 10));
-				_battleSave->getBattleGame()->statePushBack(new ExplosionBState(
-																			_battleSave->getBattleGame(),
-																			pos,
-																			nullptr, nullptr,
-																			tile,
-																			false, false, true));
-			}
-		}
-		else // start non-Player turn
-		{
-			if (_aliensPacified == false)
-			{
-				_game->getResourcePack()->fadeMusic(_game, 473);
-				_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_TAC_BATTLE_ALIENTURN);
-			}
-			else
-				switchMusic = false;
-
-			if (_battleSave->getDebugTac() == false)
-				_game->getCursor()->setVisible(false);
+			case FACTION_HOSTILE: // start non-Player turn.
+			case FACTION_NEUTRAL:
+				if (_aliensPacified == false)
+				{
+					_game->getResourcePack()->fadeMusic(_game, 473);
+					_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_TAC_BATTLE_ALIENTURN);
+				}
+				else
+					switchMusic = false;
 		}
 	}
 }

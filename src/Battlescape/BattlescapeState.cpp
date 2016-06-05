@@ -4164,7 +4164,7 @@ void BattlescapeState::resize(
 }
 
 /**
- * Updates the turn text.
+ * Updates the turn-text.
  */
 void BattlescapeState::updateTurn()
 {
