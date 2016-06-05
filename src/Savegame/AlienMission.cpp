@@ -26,9 +26,9 @@
 #include "Base.h"
 #include "Country.h"
 #include "Craft.h"
-#include "TerrorSite.h"
 #include "Region.h"
 #include "SavedGame.h"
+#include "TerrorSite.h"
 #include "Ufo.h"
 #include "Waypoint.h"
 

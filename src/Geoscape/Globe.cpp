@@ -58,10 +58,10 @@
 #include "../Savegame/Country.h"
 #include "../Savegame/Craft.h"
 #include "../Savegame/GameTime.h"
-#include "../Savegame/TerrorSite.h"
 #include "../Savegame/Region.h"
 #include "../Savegame/SavedGame.h"
 #include "../Savegame/Target.h"
+#include "../Savegame/TerrorSite.h"
 #include "../Savegame/Ufo.h"
 #include "../Savegame/Waypoint.h"
 

@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MissionDetectedState.h"
+#include "TerrorDetectedState.h"
 
 #include "GeoscapeState.h"
 #include "Globe.h"
@@ -42,11 +42,11 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Mission Detected window.
+ * Initializes all the elements in the TerrorDetected window.
  * @param site	- pointer to the respective Mission Site
  * @param geo	- pointer to GeoscapeState
  */
-MissionDetectedState::MissionDetectedState(
+TerrorDetectedState::TerrorDetectedState(
 		const TerrorSite* const site,
 		GeoscapeState* const geo)
 	:
@@ -79,31 +79,31 @@ MissionDetectedState::MissionDetectedState(
 	_window->setBackground(_game->getResourcePack()->getSurface(_site->getSiteDeployment()->getAlertBackground()));
 
 	_btnIntercept->setText(tr("STR_INTERCEPT"));
-	_btnIntercept->onMouseClick((ActionHandler)& MissionDetectedState::btnInterceptClick);
+	_btnIntercept->onMouseClick((ActionHandler)& TerrorDetectedState::btnInterceptClick);
 
 	_btnCenter->setText(tr("STR_CENTER_ON_SITE_TIME_5_SECONDS"));
-	_btnCenter->onMouseClick((ActionHandler)& MissionDetectedState::btnCenterClick);
+	_btnCenter->onMouseClick((ActionHandler)& TerrorDetectedState::btnCenterClick);
 	_btnCenter->onKeyboardPress(
-					(ActionHandler)& MissionDetectedState::btnCenterClick,
+					(ActionHandler)& TerrorDetectedState::btnCenterClick,
 					Options::keyOk);
 	_btnCenter->onKeyboardPress(
-					(ActionHandler)& MissionDetectedState::btnCenterClick,
+					(ActionHandler)& TerrorDetectedState::btnCenterClick,
 					Options::keyOkKeypad);
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& MissionDetectedState::btnCancelClick);
+	_btnCancel->onMouseClick((ActionHandler)& TerrorDetectedState::btnCancelClick);
 	_btnCancel->onKeyboardPress(
-					(ActionHandler)& MissionDetectedState::btnCancelClick,
+					(ActionHandler)& TerrorDetectedState::btnCancelClick,
 					Options::keyCancel);
 
+	_txtTitle->setText(tr(_site->getSiteDeployment()->getAlertMessage()));
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setWordWrap();
-	_txtTitle->setText(tr(_site->getSiteDeployment()->getAlertMessage()));
 
+	_txtCity->setText(tr(_site->getCity()));
 	_txtCity->setBig();
 	_txtCity->setAlign(ALIGN_CENTER);
-	_txtCity->setText(tr(_site->getCity()));
 
 	_geo->resetTimer();
 
@@ -117,14 +117,14 @@ MissionDetectedState::MissionDetectedState(
 /**
  * dTor.
  */
-MissionDetectedState::~MissionDetectedState()
+TerrorDetectedState::~TerrorDetectedState()
 {}
 
 /**
  * Picks a craft to intercept the mission site.
  * @param action - pointer to an Action
  */
-void MissionDetectedState::btnInterceptClick(Action*)
+void TerrorDetectedState::btnInterceptClick(Action*)
 {
 	_game->popState();
 	_game->pushState(new InterceptState(nullptr, _geo));
@@ -134,7 +134,7 @@ void MissionDetectedState::btnInterceptClick(Action*)
  * Centers on the mission site and returns to the previous screen.
  * @param action - pointer to an Action
  */
-void MissionDetectedState::btnCenterClick(Action*)
+void TerrorDetectedState::btnCenterClick(Action*)
 {
 	_geo->getGlobe()->center(
 						_site->getLongitude(),
@@ -146,7 +146,7 @@ void MissionDetectedState::btnCenterClick(Action*)
  * Returns to the previous screen.
  * @param action - pointer to an Action
  */
-void MissionDetectedState::btnCancelClick(Action*)
+void TerrorDetectedState::btnCancelClick(Action*)
 {
 	_game->popState();
 }

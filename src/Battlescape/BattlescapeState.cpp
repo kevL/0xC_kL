@@ -92,11 +92,11 @@
 #include "../Savegame/BattleUnitStatistics.h"
 #include "../Savegame/Country.h"
 #include "../Savegame/Craft.h"
-#include "../Savegame/TerrorSite.h"
 #include "../Savegame/Region.h"
 #include "../Savegame/SavedGame.h"
 #include "../Savegame/SavedBattleGame.h"
 #include "../Savegame/Soldier.h"
+#include "../Savegame/TerrorSite.h"
 #include "../Savegame/Tile.h"
 #include "../Savegame/Ufo.h"
 

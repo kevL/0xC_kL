@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_MISSIONDETECTEDSTATE_H
-#define OPENXCOM_MISSIONDETECTEDSTATE_H
+#ifndef OPENXCOM_TERRORDETECTEDSTATE_H
+#define OPENXCOM_TERRORDETECTEDSTATE_H
 
 #include "../Engine/State.h"
 
@@ -34,9 +34,9 @@ class Window;
 
 
 /**
- * Displays info on a detected mission site.
+ * Displays info on a detected terror-site.
  */
-class MissionDetectedState
+class TerrorDetectedState
 	:
 		public State
 {
@@ -57,12 +57,12 @@ private:
 
 	public:
 
-		/// Creates the Mission Detected state.
-		MissionDetectedState(
+		/// Creates a TerrorDetected state.
+		TerrorDetectedState(
 				const TerrorSite* const site,
 				GeoscapeState* const geo);
-		/// Cleans up the Mission Detected state.
-		~MissionDetectedState();
+		/// Cleans up the TerrorDetected state.
+		~TerrorDetectedState();
 
 		/// Handler for clicking the Intercept button.
 		void btnInterceptClick(Action* action);

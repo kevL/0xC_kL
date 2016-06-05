@@ -52,8 +52,8 @@
 #include "../Savegame/Region.h"
 #include "../Savegame/SavedBattleGame.h"
 #include "../Savegame/SavedGame.h"
-#include "../Savegame/TerrorSite.h"
 #include "../Savegame/Target.h"
+#include "../Savegame/TerrorSite.h"
 #include "../Savegame/Ufo.h"
 
 

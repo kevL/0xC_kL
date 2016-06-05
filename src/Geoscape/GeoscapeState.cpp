@@ -42,7 +42,6 @@
 #include "InterceptState.h"
 #include "ItemsArrivingState.h"
 #include "LowFuelState.h"
-#include "MissionDetectedState.h"
 #include "MonthlyReportState.h"
 #include "MultipleTargetsState.h"
 #include "NewPossibleManufactureState.h"
@@ -51,6 +50,7 @@
 #include "ResearchCompleteState.h"
 #include "ResearchRequiredState.h"
 #include "SoldierDiedState.h"
+#include "TerrorDetectedState.h"
 #include "UfoDetectedState.h"
 #include "UfoLostState.h"
 
@@ -109,7 +109,6 @@
 #include "../Savegame/Craft.h"
 #include "../Savegame/GameTime.h"
 #include "../Savegame/ItemContainer.h"
-#include "../Savegame/TerrorSite.h"
 #include "../Savegame/MissionStatistics.h"
 #include "../Savegame/Production.h"
 #include "../Savegame/Region.h"
@@ -120,6 +119,7 @@
 #include "../Savegame/SoldierDead.h"
 #include "../Savegame/SoldierDeath.h"
 #include "../Savegame/SoldierDiary.h"
+#include "../Savegame/TerrorSite.h"
 #include "../Savegame/Transfer.h"
 #include "../Savegame/Ufo.h"
 #include "../Savegame/Waypoint.h"
@@ -1535,7 +1535,7 @@ void GeoscapeState::time5Seconds()
 							TerrorSite* const site (_gameSave->getTerrorSites()->back());
 							site->setDetected();
 
-							popup(new MissionDetectedState(site, this));
+							popup(new TerrorDetectedState(site, this));
 						}
 
 						if ((*i)->getUfoStatus() == Ufo::DESTROYED) // if UFO was destroyed don't spawn missions
@@ -2725,7 +2725,7 @@ void GeoscapeState::time1Hour()
 		if ((*i)->getDetected() == false)
 		{
 			(*i)->setDetected();
-			popup(new MissionDetectedState(*i, this));
+			popup(new TerrorDetectedState(*i, this));
 			break;
 		}
 	}
