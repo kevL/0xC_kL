@@ -36,7 +36,7 @@ class BattleItem;
 class BattleUnit;
 class Craft;
 class Game;
-class MissionSite;
+class TerrorSite;
 class ResourcePack;
 class RuleItem;
 class Ruleset;
@@ -87,7 +87,7 @@ private:
 	Craft* _craft;
 	Game* _game;
 	MapBlock* _testBlock;
-	MissionSite* _site;
+	TerrorSite* _site;
 	ResourcePack* _res;
 	Ruleset* _rules;
 	RuleTerrain* _terrainRule;
@@ -220,8 +220,8 @@ private:
 		void setUfo(Ufo* const ufo);
 		/// Sets the xCom Base.
 		void setBase(Base* const base);
-		/// Sets the aLien MissionSite.
-		void setMissionSite(MissionSite* const site);
+		/// Sets the aLien TerrorSite.
+		void setTerrorSite(TerrorSite* const site);
 		/// Sets the AlienBase.
 		void setAlienBase(AlienBase* const base);
 		/// Sets the terrain-rule.

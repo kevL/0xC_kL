@@ -44,7 +44,7 @@ class DogfightState;
 class Globe;
 class ImageButton;
 class InteractiveSurface;
-class MissionSite;
+class TerrorSite;
 class NumberText;
 class RuleMissionScript;
 class Ruleset;
@@ -328,7 +328,7 @@ private:
 				Ufo* const ufo);
 
 		/// Processes a mission site.
-		bool processMissionSite(MissionSite* const site) const; // OoO
+		bool processTerrorSite(TerrorSite* const site) const; // OoO
 
 		/// Update the resolution settings - the window was resized.
 		void resize(

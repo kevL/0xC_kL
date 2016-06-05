@@ -917,7 +917,7 @@ void SavedBattleGame::setTacType(const std::string& type) // private.
 	else if (type.compare("STR_TERROR_MISSION") == 0
 		|| type.compare("STR_PORT_ATTACK") == 0)
 	{
-		_tacType = TCT_MISSIONSITE;
+		_tacType = TCT_TERRORSITE;
 	}
 	else if (type.compare("STR_MARS_CYDONIA_LANDING") == 0)
 		_tacType = TCT_MARS1;
@@ -2633,7 +2633,7 @@ int SavedBattleGame::getMoraleModifier( // note: Add bonus to aLiens for Cydonia
 
 			switch (_tacType)
 			{
-				case TCT_MISSIONSITE:	// "STR_TERROR_MISSION"
+				case TCT_TERRORSITE:	// "STR_TERROR_MISSION"
 				case TCT_BASEASSAULT:	// "STR_ALIEN_BASE_ASSAULT"
 				case TCT_BASEDEFENSE:	// "STR_BASE_DEFENSE"
 					ret += 50;			// higher morale.
@@ -2910,7 +2910,7 @@ void SavedBattleGame::calibrateMusic(
 			case TCT_BASEDEFENSE:	// 3 - STR_BASE_DEFENSE
 				music = OpenXcom::res_MUSIC_TAC_BATTLE_BASEDEFENSE;
 				break;
-			case TCT_MISSIONSITE:	// 4 - STR_TERROR_MISSION and STR_PORT_ATTACK, see setTacType()
+			case TCT_TERRORSITE:	// 4 - STR_TERROR_MISSION and STR_PORT_ATTACK, see setTacType()
 				music = OpenXcom::res_MUSIC_TAC_BATTLE_TERRORSITE;
 				break;
 			case TCT_MARS1:			// 5 - STR_MARS_CYDONIA_LANDING

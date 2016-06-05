@@ -23,7 +23,7 @@
 namespace
 {
 
-const char* stAltitude[] =
+const char* stAltitude[]
 {
 	"STR_GROUND",
 	"STR_VERY_LOW",
@@ -58,15 +58,12 @@ struct convert<OpenXcom::TrajectoryWaypoint>
 			const Node& node,
 			OpenXcom::TrajectoryWaypoint& rhs)
 	{
-		if (node.IsSequence() == false
-			|| node.size() != 3)
-		{
+		if (node.IsSequence() == false || node.size() != 3u)
 			return false;
-		}
 
-		rhs.zone		= node[0].as<int>();
-		rhs.altitude	= node[1].as<int>();
-		rhs.speed		= node[2].as<int>();
+		rhs.zone		= node[0u].as<int>();
+		rhs.altitude	= node[1u].as<int>();
+		rhs.speed		= node[2u].as<int>();
 
 		return true;
 	}
@@ -82,19 +79,19 @@ const std::string UfoTrajectory::RETALIATION_ASSAULT_RUN = "__RETALIATION_ASSAUL
 
 
 /**
- * Creates a UfoTrajectory.
+ * Creates rules for a UfoTrajectory.
  * @param id - reference the ID string (eg. 'P0')
  */
 UfoTrajectory::UfoTrajectory(const std::string& id)
 	:
 		_id(id),
-		_groundTimer(5)
+		_groundTimer(5u)
 {}
 
 /**
- * Overwrites trajectory data with the data stored in @a node.
+ * Overwrites the rule's trajectory-data with data stored in @a node.
  * @note Only the fields contained in the node will be overwritten.
- * @param node - reference the node containing new values
+ * @param node - reference a YAML node
  */
 void UfoTrajectory::load(const YAML::Node& node)
 {
@@ -104,9 +101,9 @@ void UfoTrajectory::load(const YAML::Node& node)
 }
 
 /**
- * Gets the altitude at a waypoint.
- * @param pt - the waypoint ID
- * @return, altitude string
+ * Gets the rule's altitude at a specific waypoint.
+ * @param pt - the waypoint-ID
+ * @return, altitude
  */
 const std::string UfoTrajectory::getAltitude(size_t pt) const // does not like return &ref
 {

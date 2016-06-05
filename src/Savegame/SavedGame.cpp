@@ -37,7 +37,7 @@
 #include "Craft.h"
 #include "GameTime.h"
 #include "ItemContainer.h"
-#include "MissionSite.h"
+#include "TerrorSite.h"
 #include "MissionStatistics.h"
 #include "Production.h"
 #include "Region.h"
@@ -192,9 +192,9 @@ SavedGame::~SavedGame()
 			++i)
 		delete *i;
 
-	for (std::vector<MissionSite*>::const_iterator
-			i = _missionSites.begin();
-			i != _missionSites.end();
+	for (std::vector<TerrorSite*>::const_iterator
+			i = _terrorSites.begin();
+			i != _terrorSites.end();
 			++i)
 		delete *i;
 
@@ -553,19 +553,19 @@ void SavedGame::load(
 
 	Log(LOG_INFO) << ". load mission sites";
 	for (YAML::const_iterator
-			i = doc["missionSites"].begin();
-			i != doc["missionSites"].end();
+			i = doc["terrorSites"].begin();
+			i != doc["terrorSites"].end();
 			++i)
 	{
 		type = (*i)["type"].as<std::string>();
 		const std::string deployment ((*i)["deployment"].as<std::string>("STR_TERROR_MISSION"));
 		if (_rules->getAlienMission(type) && _rules->getDeployment(deployment))
 		{
-			MissionSite* const site (new MissionSite(
+			TerrorSite* const site (new TerrorSite(
 											_rules->getAlienMission(type),
 											_rules->getDeployment(deployment)));
 			site->load(*i);
-			_missionSites.push_back(site);
+			_terrorSites.push_back(site);
 		}
 		else Log(LOG_ERROR) << "Failed to load mission " << type << " deployment " << deployment;
 	}
@@ -734,11 +734,11 @@ void SavedGame::save(const std::string& file) const
 			++i)
 		node["waypoints"].push_back((*i)->save());
 
-	for (std::vector<MissionSite*>::const_iterator
-			i = _missionSites.begin();
-			i != _missionSites.end();
+	for (std::vector<TerrorSite*>::const_iterator
+			i = _terrorSites.begin();
+			i != _terrorSites.end();
 			++i)
-		node["missionSites"].push_back((*i)->save());
+		node["terrorSites"].push_back((*i)->save());
 
 	for (std::vector<AlienBase*>::const_iterator // AlienBases must be saved before AlienMissions.
 			i = _alienBases.begin();
@@ -1215,12 +1215,12 @@ std::vector<Waypoint*>* SavedGame::getWaypoints()
 }
 
 /**
- * Gets the list of current MissionSites.
+ * Gets the list of current TerrorSites.
  * @return, pointer to a vector of pointers to all mission-sites
  */
-std::vector<MissionSite*>* SavedGame::getMissionSites()
+std::vector<TerrorSite*>* SavedGame::getTerrorSites()
 {
-	return &_missionSites;
+	return &_terrorSites;
 }
 
 /**

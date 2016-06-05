@@ -58,7 +58,7 @@
 #include "../Savegame/Country.h"
 #include "../Savegame/Craft.h"
 #include "../Savegame/GameTime.h"
-#include "../Savegame/MissionSite.h"
+#include "../Savegame/TerrorSite.h"
 #include "../Savegame/Region.h"
 #include "../Savegame/SavedGame.h"
 #include "../Savegame/Target.h"
@@ -1038,9 +1038,9 @@ std::vector<Target*> Globe::getTargets(
 			targets.push_back(*i);
 	}
 
-	for (std::vector<MissionSite*>::const_iterator
-			i = _game->getSavedGame()->getMissionSites()->begin();
-			i != _game->getSavedGame()->getMissionSites()->end();
+	for (std::vector<TerrorSite*>::const_iterator
+			i = _game->getSavedGame()->getTerrorSites()->begin();
+			i != _game->getSavedGame()->getTerrorSites()->end();
 			++i)
 	{
 		if (targetNear(*i, x,y) == true)
@@ -2396,9 +2396,9 @@ void Globe::drawMarkers()
 			++i)
 		drawTarget(*i, _markers);
 
-	for (std::vector<MissionSite*>::const_iterator	// Draw the MissionSite markers
-			i = _game->getSavedGame()->getMissionSites()->begin();
-			i != _game->getSavedGame()->getMissionSites()->end();
+	for (std::vector<TerrorSite*>::const_iterator	// Draw the TerrorSite markers
+			i = _game->getSavedGame()->getTerrorSites()->begin();
+			i != _game->getSavedGame()->getTerrorSites()->end();
 			++i)
 		drawTarget(*i, _markers);
 

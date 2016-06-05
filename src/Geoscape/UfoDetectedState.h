@@ -71,13 +71,13 @@ private:
 	Window* _window;
 	Ufo* _ufo;
 
-	/// Hides various screen-elements to reveal the globe & UFO.
+	/// Hides various screen-elements to reveal the Globe & UFO.
 	void transposeWindow();
 
 
 	public:
 
-		/// Creates the Ufo Detected state.
+		/// Creates a UfoDetected state.
 		UfoDetectedState(
 				Ufo* const ufo,
 				GeoscapeState* const state,
@@ -85,7 +85,7 @@ private:
 				bool hyperDetected,
 				bool contact = true,
 				std::vector<Base*>* hyperBases = nullptr);
-		/// Cleans up the Ufo Detected state.
+		/// Cleans up the UfoDetected state.
 		~UfoDetectedState();
 
 		/// Initializes the state.

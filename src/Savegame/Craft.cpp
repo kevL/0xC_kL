@@ -25,7 +25,7 @@
 #include "Base.h"
 #include "CraftWeapon.h"
 #include "ItemContainer.h"
-#include "MissionSite.h"
+#include "TerrorSite.h"
 #include "Soldier.h"
 #include "Ufo.h"
 #include "Vehicle.h"
@@ -257,9 +257,9 @@ void Craft::load(
 		}
 		else // type = "STR_TERROR_SITE" (was "STR_ALIEN_TERROR")
 		{
-			for (std::vector<MissionSite*>::iterator
-					i = gameSave->getMissionSites()->begin();
-					i != gameSave->getMissionSites()->end();
+			for (std::vector<TerrorSite*>::iterator
+					i = gameSave->getTerrorSites()->begin();
+					i != gameSave->getTerrorSites()->end();
 					++i)
 			{
 				if ((*i)->getId() == id

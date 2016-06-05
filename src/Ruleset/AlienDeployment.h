@@ -154,7 +154,7 @@ private:
 	SpecialTileType _objectiveType;
 
 	public:
-		/// Creates a blank AlienDeployment ruleset.
+		/// Creates an AlienDeployment ruleset.
 		explicit AlienDeployment(const std::string& type);
 		/// Cleans up the AlienDeployment ruleset.
 		~AlienDeployment();

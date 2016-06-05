@@ -133,7 +133,7 @@ private:
 		/// Gets the basic odds of this mission spawning a retaliation mission.
 		int getRetaliation() const;
 
-		/// The type of missionSite to spawn if any.
+		/// The type of terrorSite to spawn if any.
 		const std::string& getSiteType() const
 		{ return _siteType; }
 };

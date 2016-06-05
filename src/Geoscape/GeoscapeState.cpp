@@ -109,7 +109,7 @@
 #include "../Savegame/Craft.h"
 #include "../Savegame/GameTime.h"
 #include "../Savegame/ItemContainer.h"
-#include "../Savegame/MissionSite.h"
+#include "../Savegame/TerrorSite.h"
 #include "../Savegame/MissionStatistics.h"
 #include "../Savegame/Production.h"
 #include "../Savegame/Region.h"
@@ -1498,7 +1498,7 @@ void GeoscapeState::time5Seconds()
 
 					if ((*i)->reachedDestination() == true)
 					{
-						const size_t qtySites (_gameSave->getMissionSites()->size());
+						const size_t qtySites (_gameSave->getTerrorSites()->size());
 						const bool detected ((*i)->getDetected());
 
 						AlienMission* const mission ((*i)->getAlienMission());
@@ -1530,9 +1530,9 @@ void GeoscapeState::time5Seconds()
 							popup(new UfoLostState((*i)->getName(_game->getLanguage())));
 						}
 
-						if (qtySites < _gameSave->getMissionSites()->size()) // new MissionSite appeared when UFO reached waypoint, above^
+						if (qtySites < _gameSave->getTerrorSites()->size()) // new TerrorSite appeared when UFO reached waypoint, above^
 						{
-							MissionSite* const site (_gameSave->getMissionSites()->back());
+							TerrorSite* const site (_gameSave->getTerrorSites()->back());
 							site->setDetected();
 
 							popup(new MissionDetectedState(site, this));
@@ -1700,7 +1700,7 @@ void GeoscapeState::time5Seconds()
 				{
 					Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getDestination()));
 					const Waypoint* const wp (dynamic_cast<Waypoint*>((*j)->getDestination()));
-					const MissionSite* const site (dynamic_cast<MissionSite*>((*j)->getDestination()));
+					const TerrorSite* const site (dynamic_cast<TerrorSite*>((*j)->getDestination()));
 //					const AlienBase* const aBase (dynamic_cast<AlienBase*>((*j)->getDestination()));
 
 					if (ufo != nullptr)
@@ -1801,7 +1801,7 @@ void GeoscapeState::time5Seconds()
 												site->getLongitude(),
 												site->getLatitude(),
 												&shade);
-							popup(new ConfirmLandingState( // preset missionSite Texture; choice of Terrain made via texture-deployment in ConfirmLandingState
+							popup(new ConfirmLandingState( // preset terrorSite Texture; choice of Terrain made via texture-deployment in ConfirmLandingState
 													*j,
 													_rules->getGlobe()->getTextureRule(texId),
 													shade,
@@ -2299,13 +2299,13 @@ private:
 
 /**
  * *** FUNCTOR ***
- * @brief Process a MissionSite.
- * This function object will count down towards expiring a MissionSite and
- * handle expired MissionSites.
- * @param site - pointer to a MissionSite
+ * @brief Process a TerrorSite.
+ * This function object will count down towards expiring a TerrorSite and
+ * handle expired TerrorSites.
+ * @param site - pointer to a TerrorSite
  * @return, true if mission is finished (w/out xCom mission success)
  */
-bool GeoscapeState::processMissionSite(MissionSite* const site) const
+bool GeoscapeState::processTerrorSite(TerrorSite* const site) const
 {
 	bool expired;
 
@@ -2530,13 +2530,13 @@ void GeoscapeState::time30Minutes()
 	}
 
 
-	for (std::vector<MissionSite*>::const_iterator
-			i = _gameSave->getMissionSites()->begin();
-			i != _gameSave->getMissionSites()->end();
+	for (std::vector<TerrorSite*>::const_iterator
+			i = _gameSave->getTerrorSites()->begin();
+			i != _gameSave->getTerrorSites()->end();
 			)
 	{
-		if (processMissionSite(*i))
-			i = _gameSave->getMissionSites()->erase(i);
+		if (processTerrorSite(*i))
+			i = _gameSave->getTerrorSites()->erase(i);
 		else
 			++i;
 	}
@@ -2716,10 +2716,10 @@ void GeoscapeState::time1Hour()
 		popup(new ItemsArrivingState(this));
 
 
-	// TFTD stuff: 'detected' see MissionSite class
-	for (std::vector<MissionSite*>::const_iterator
-			i = _gameSave->getMissionSites()->begin();
-			i != _gameSave->getMissionSites()->end();
+	// TFTD stuff: 'detected' see TerrorSite class
+	for (std::vector<TerrorSite*>::const_iterator
+			i = _gameSave->getTerrorSites()->begin();
+			i != _gameSave->getTerrorSites()->end();
 			++i)
 	{
 		if ((*i)->getDetected() == false)
@@ -4381,7 +4381,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 	mission->setRace(raceType);
 	mission->setId(_gameSave->getCanonicalId("ALIEN_MISSIONS"));
 	mission->setRegion(targetRegion, *_rules);
-	mission->setMissionSiteZone(targetZone);
+	mission->setTerrorSiteZone(targetZone);
 	strategy.addMissionRun(directive->getVarType());
 	mission->start(directive->getDelay());
 

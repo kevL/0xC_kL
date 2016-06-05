@@ -62,8 +62,8 @@ TargetInfoState::TargetInfoState(
 
 	_edtTarget		= new TextEdit(this, 50, 9, 38, 46);
 
-	_txtTargetted	= new Text(182,  9, 37, 71);
-	_txtFollowers	= new Text(182, 40, 37, 82);
+	_txtTargeted	= new Text(182,  9, 37, 71);
+	_txtTargeters	= new Text(182, 40, 37, 82);
 
 	_btnIntercept	= new TextButton(160, 16, 48, 119);
 	_btnOk			= new TextButton(160, 16, 48, 137);
@@ -73,8 +73,8 @@ TargetInfoState::TargetInfoState(
 	add(_window,		"window",	"targetInfo");
 	add(_txtTitle,		"text",		"targetInfo");
 	add(_edtTarget,		"text",		"targetInfo");
-	add(_txtTargetted,	"text",		"targetInfo");
-	add(_txtFollowers,	"text",		"targetInfo");
+	add(_txtTargeted,	"text",		"targetInfo");
+	add(_txtTargeters,	"text",		"targetInfo");
 	add(_btnIntercept,	"button",	"targetInfo");
 	add(_btnOk,			"button",	"targetInfo");
 
@@ -123,7 +123,7 @@ TargetInfoState::TargetInfoState(
 
 	bool targeted (false);
 
-	_txtFollowers->setAlign(ALIGN_CENTER);
+	_txtTargeters->setAlign(ALIGN_CENTER);
 	woststr.str(L"");
 	for (std::vector<Target*>::const_iterator
 			i = _target->getTargeters()->begin();
@@ -135,14 +135,14 @@ TargetInfoState::TargetInfoState(
 		if (targeted == false)
 		{
 			targeted = true;
-			_txtTargetted->setAlign(ALIGN_CENTER);
-			_txtTargetted->setText(tr("STR_TARGETTED_BY"));
+			_txtTargeted->setText(tr("STR_TARGETTED_BY"));
+			_txtTargeted->setAlign(ALIGN_CENTER);
 		}
 	}
-	_txtFollowers->setText(woststr.str());
+	_txtTargeters->setText(woststr.str());
 
 	if (targeted == false)
-		_txtTargetted->setVisible(false);
+		_txtTargeted->setVisible(false);
 }
 
 /**

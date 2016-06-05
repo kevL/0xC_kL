@@ -59,7 +59,7 @@
 #include "../Savegame/Base.h"
 #include "../Savegame/Craft.h"
 #include "../Savegame/ItemContainer.h"
-#include "../Savegame/MissionSite.h"
+#include "../Savegame/TerrorSite.h"
 #include "../Savegame/SavedBattleGame.h"
 #include "../Savegame/SavedGame.h"
 #include "../Savegame/Soldier.h"
@@ -627,16 +627,16 @@ void NewBattleState::btnOkClick(Action*)
 
 		const AlienDeployment* const deployment (_rules->getDeployment(battleSave->getTacticalType()));
 		const RuleAlienMission* const mission (_rules->getAlienMission(_rules->getAlienMissionList().front())); // doesn't matter
-		MissionSite* const missionSite (new MissionSite(
+		TerrorSite* const terrorSite (new TerrorSite(
 													mission,
 													deployment));
-		missionSite->setId(1);
-		missionSite->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
+		terrorSite->setId(1);
+		terrorSite->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
 
-		_craft->setDestination(missionSite);
+		_craft->setDestination(terrorSite);
 
-		bGen.setMissionSite(missionSite);
-		_game->getSavedGame()->getMissionSites()->push_back(missionSite);
+		bGen.setTerrorSite(terrorSite);
+		_game->getSavedGame()->getTerrorSites()->push_back(terrorSite);
 	}
 
 	if (_craft != nullptr)

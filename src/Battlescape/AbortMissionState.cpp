@@ -89,7 +89,7 @@ AbortMissionState::AbortMissionState(
 	{
 		case TCT_BASEASSAULT: // no check for next-stage if Ufo_Crashed or _Landed.
 		case TCT_BASEDEFENSE:
-		case TCT_MISSIONSITE:
+		case TCT_TERRORSITE:
 		case TCT_MARS1:
 //		case TCT_MARS2:
 			nextStage = _game->getRuleset()->getDeployment(_battleSave->getTacticalType())->getNextStage();

@@ -30,7 +30,7 @@ namespace OpenXcom
 {
 
 /**
- * Information for points on a UFO trajectory.
+ * Information for points of a UFO trajectory.
  */
 struct TrajectoryWaypoint
 {
@@ -72,27 +72,27 @@ private:
 		/// cTor.
 		explicit UfoTrajectory(const std::string& id);
 
-		/// Loads trajectory data from YAML.
+		/// Loads trajectory-data from YAML.
 		void load(const YAML::Node &node);
 
 		/**
 		 * Gets the trajectory's ID.
-		 * @return, the trajectory's ID
+		 * @return, the type-ID
 		 */
 		const std::string& getId() const
 		{ return _id; }
 
 		/**
-		 * Gets the number of waypoints in this trajectory.
+		 * Gets the number of waypoints in the rule's trajectory.
 		 * @return, the number of waypoints
 		 */
 		size_t getWaypointTotal() const
 		{ return _waypoints.size(); }
 
 		/**
-		 * Gets the zone index at a waypoint.
-		 * @param pt - the waypoint index
-		 * @return, the zone index
+		 * Gets the zone-ID at a waypoint.
+		 * @param pt - the waypoint-ID
+		 * @return, the zone-ID
 		 */
 		size_t getZone(size_t pt) const
 		{ return _waypoints[pt].zone; }
@@ -101,16 +101,16 @@ private:
 		const std::string getAltitude(size_t pt) const; // does not like return &ref
 
 		/**
-		 * Gets the speed percentage at a waypoint.
-		 * @param pt - the waypoint index
-		 * @return, the speed as a percentage
+		 * Gets the speed-percentage at a waypoint.
+		 * @param pt - the waypoint-ID
+		 * @return, the speed percent
 		 */
 		float getSpeedPct(size_t pt) const
 		{ return static_cast<float>(_waypoints[pt].speed) / 100.f; }
 
 		/**
-		 * Gets the number of seconds UFOs should spend on the ground.
-		 * @return, the number of seconds
+		 * Gets the number of seconds that a UFO should spend on the ground.
+		 * @return, seconds
 		 */
 		size_t groundTimer() const
 		{ return _groundTimer; }

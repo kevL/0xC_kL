@@ -34,7 +34,7 @@ class AlienBase;
 class AlienDeployment;
 class Game;
 class Globe;
-class MissionSite;
+class TerrorSite;
 class RuleAlienMission;
 class RuleRegion;
 class Ruleset;
@@ -48,8 +48,8 @@ struct MissionWave;
 
 /**
  * Represents an ongoing AlienMission.
- * @note Contains variable info about the mission such as spawn counter and
- * target region and current wave.
+ * @note Contains variable info about the mission such as spawn-counter and
+ * target-region and current-wave.
  * @sa RuleAlienMission
  */
 class AlienMission
@@ -82,8 +82,8 @@ private:
 			const Globe& globe,
 			const MissionWave& wave,
 			const UfoTrajectory& trajectory);
-	/// Spawns a MissionSite at a specific location.
-	MissionSite* spawnMissionSite(
+	/// Spawns a TerrorSite at a specific location.
+	TerrorSite* spawnTerrorSite(
 			const AlienDeployment* const deployment,
 			const MissionArea& area);
 	/// Spawns an alien base
@@ -189,7 +189,7 @@ private:
 				const size_t zone);
 
 		/// Tracks the target site.
-		void setMissionSiteZone(size_t zone);
+		void setTerrorSiteZone(size_t zone);
 
 		/// Gets the wave of a/the UFO in the total scheme of this Mission.
 		size_t getWaveCount()

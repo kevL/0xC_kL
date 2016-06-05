@@ -17,11 +17,11 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MissionSite.h"
+#include "TerrorSite.h"
 
 #include "../Engine/Language.h"
 
-#include "../Geoscape/Globe.h" // Globe::GLM_MISSIONSITE
+#include "../Geoscape/Globe.h" // Globe::GLM_TERRORSITE
 
 #include "../Ruleset/AlienDeployment.h"
 #include "../Ruleset/RuleAlienMission.h"
@@ -31,9 +31,9 @@ namespace OpenXcom
 {
 
 /**
- * Creates the MissionSite.
+ * Creates the TerrorSite.
  */
-MissionSite::MissionSite(
+TerrorSite::TerrorSite(
 		const RuleAlienMission* const missionRule,
 		const AlienDeployment* const ruleDeploy)
 	:
@@ -50,14 +50,14 @@ MissionSite::MissionSite(
 /**
  * dTor.
  */
-MissionSite::~MissionSite()
+TerrorSite::~TerrorSite()
 {}
 
 /**
- * Loads this MissionSite from a YAML file.
+ * Loads this TerrorSite from a YAML file.
  * @param node - reference a YAML node
  */
-void MissionSite::load(const YAML::Node& node)
+void TerrorSite::load(const YAML::Node& node)
 {
 	Target::load(node);
 
@@ -72,10 +72,10 @@ void MissionSite::load(const YAML::Node& node)
 }
 
 /**
- * Saves this MissionSite to a YAML file.
+ * Saves this TerrorSite to a YAML file.
  * @return, YAML node
  */
-YAML::Node MissionSite::save() const
+YAML::Node TerrorSite::save() const
 {
 	YAML::Node node = Target::save();
 
@@ -93,10 +93,10 @@ YAML::Node MissionSite::save() const
 }
 
 /**
- * Saves this MissionSite's unique identifiers to a YAML file.
+ * Saves this TerrorSite's unique identifiers to a YAML file.
  * @return, YAML node
  */
-YAML::Node MissionSite::saveId() const
+YAML::Node TerrorSite::saveId() const
 {
 	YAML::Node node (Target::saveId());
 
@@ -107,190 +107,190 @@ YAML::Node MissionSite::saveId() const
 }
 
 /**
- * Gets the rule for this MissionSite's type.
+ * Gets the rule for this TerrorSite's type.
  * @return, pointer to RuleAlienMission
  */
-const RuleAlienMission* MissionSite::getRules() const
+const RuleAlienMission* TerrorSite::getRules() const
 {
 	return _missionRule;
 }
 
 /**
- * Gets the rule for this MissionSite's deployment.
+ * Gets the rule for this TerrorSite's deployment.
  * @return, pointer to AlienDeployment rule
  */
-const AlienDeployment* MissionSite::getSiteDeployment() const
+const AlienDeployment* TerrorSite::getSiteDeployment() const
 {
 	return _ruleDeploy;
 }
 
 /**
- * Gets this MissionSite's unique-ID.
+ * Gets this TerrorSite's unique-ID.
  * @return, unique-ID
  */
-int MissionSite::getId() const
+int TerrorSite::getId() const
 {
 	return _id;
 }
 
 /**
- * Sets this MissionSite's unique-ID.
+ * Sets this TerrorSite's unique-ID.
  * @param id - unique-ID
  */
-void MissionSite::setId(const int id)
+void TerrorSite::setId(const int id)
 {
 	_id = id;
 }
 
 /**
- * Gets this MissionSite's unique identifying name.
+ * Gets this TerrorSite's unique identifying name.
  * @param lang - pointer to Language to get strings from
  * @return, full name
  */
-std::wstring MissionSite::getName(const Language* const lang) const
+std::wstring TerrorSite::getName(const Language* const lang) const
 {
 	return lang->getString(_ruleDeploy->getMarkerType()).arg(_id);
 }
 
 /**
- * Gets the globe marker for this MissionSite (default 5 if no marker is specified).
+ * Gets the globe marker for this TerrorSite (default 5 if no marker is specified).
  * @return, marker sprite #5 (or special Deployment icon)
  */
-int MissionSite::getMarker() const
+int TerrorSite::getMarker() const
 {
 	if (_detected == true)
 	{
 		const int ret (_ruleDeploy->getMarkerIcon());
 		if (ret != -1) return ret; // for a custom marker.
 
-		return Globe::GLM_MISSIONSITE;
+		return Globe::GLM_TERRORSITE;
 	}
 	return -1;
 }
 
 /**
- * Gets the number of seconds remaining before this MissionSite expires.
+ * Gets the number of seconds remaining before this TerrorSite expires.
  * @return, seconds remaining
  */
-int MissionSite::getSecondsLeft() const
+int TerrorSite::getSecondsLeft() const
 {
 	return _secondsLeft;
 }
 
 /**
- * Sets the number of seconds before this MissionSite expires.
+ * Sets the number of seconds before this TerrorSite expires.
  * @param sec - time in seconds
  */
-void MissionSite::setSecondsLeft(int sec)
+void TerrorSite::setSecondsLeft(int sec)
 {
 	_secondsLeft = std::max(0, sec);
 }
 
 /**
- * Gets this MissionSite's battlescape status.
+ * Gets this TerrorSite's battlescape status.
  * @return, true if in the battlescape
  */
-bool MissionSite::getTactical() const
+bool TerrorSite::getTactical() const
 {
 	return _tactical;
 }
 
 /**
- * Sets this MissionSite's battlescape status.
+ * Sets this TerrorSite's battlescape status.
  * @param tactical - true if in the battlescape (default true)
  */
-void MissionSite::setTactical(bool tactical)
+void TerrorSite::setTactical(bool tactical)
 {
 	_tactical = tactical;
 }
 
 /**
- * Gets the alien-race currently residing in this MissionSite.
+ * Gets the alien-race currently residing in this TerrorSite.
  * @return, alien-race
  */
-std::string MissionSite::getAlienRace() const
+std::string TerrorSite::getAlienRace() const
 {
 	return _race;
 }
 
 /**
- * Sets the alien-race currently residing in this MissionSite.
+ * Sets the alien-race currently residing in this TerrorSite.
  * @param race - reference to the alien-race-string
  */
-void MissionSite::setAlienRace(const std::string& race)
+void TerrorSite::setAlienRace(const std::string& race)
 {
 	_race = race;
 }
 
 /**
- * Gets this MissionSite's terrain-type.
+ * Gets this TerrorSite's terrain-type.
  * @return, terrain-type-string
  */
-std::string MissionSite::getSiteTerrainType() const
+std::string TerrorSite::getSiteTerrainType() const
 {
 	return _terrain;
 }
 
 /**
- * Sets this MissionSite's terrain-type.
+ * Sets this TerrorSite's terrain-type.
  * @param terrain - reference to the terrain-type-string
  */
-void MissionSite::setSiteTerrainType(const std::string& terrain)
+void TerrorSite::setSiteTerrainType(const std::string& terrain)
 {
 	_terrain = terrain;
 }
 
 /**
- * Gets this MissionSite's associated texture.
+ * Gets this TerrorSite's associated texture.
  * @return, the texture-ID
  */
-int MissionSite::getSiteTextureId() const
+int TerrorSite::getSiteTextureId() const
 {
 	return _texture;
 }
 
 /**
- * Sets this MissionSite's associated texture.
+ * Sets this TerrorSite's associated texture.
  * @param texture - the texture-ID
  */
-void MissionSite::setSiteTextureId(int texture)
+void TerrorSite::setSiteTextureId(int texture)
 {
 	_texture = texture;
 }
 
 /**
- * Gets this MissionSite's associated City if any.
+ * Gets this TerrorSite's associated City if any.
  * @return, string-ID for the city, "" if none
  */
-std::string MissionSite::getCity() const
+std::string TerrorSite::getCity() const
 {
 	return _city;
 }
 
 /**
- * Sets this MissionSite's associated City if any.
+ * Sets this TerrorSite's associated City if any.
  * @param city - reference to the string-ID for a city, "" if none
  */
-void MissionSite::setCity(const std::string& city)
+void TerrorSite::setCity(const std::string& city)
 {
 	_city = city;
 }
 
 /**
- * Gets the detection state for this MissionSite.
+ * Gets the detection state for this TerrorSite.
  * @note Used for popups of sites spawned directly rather than by UFOs.
  * @return, true if this site has been detected
  */
-bool MissionSite::getDetected() const
+bool TerrorSite::getDetected() const
 {
 	return _detected;
 }
 
 /**
- * Sets the detection state for this MissionSite.
+ * Sets the detection state for this TerrorSite.
  * @param detected - true to show on the geoscape (default true)
  */
-void MissionSite::setDetected(bool detected)
+void TerrorSite::setDetected(bool detected)
 {
 	_detected = detected;
 }

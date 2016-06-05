@@ -372,7 +372,7 @@ BriefingData AlienDeployment::getBriefingData() const
 
 /**
  * Returns the globe-marker-type for this AlienDeployment.
- * @return, ID for marker type
+ * @return, marker-type
  */
 const std::string& AlienDeployment::getMarkerType() const
 {
@@ -381,7 +381,7 @@ const std::string& AlienDeployment::getMarkerType() const
 
 /**
  * Returns the globe-marker-icon for this AlienDeployment.
- * @return, marker sprite (-1 if not set)
+ * @return, marker-sprite (-1 if not set)
  */
 int AlienDeployment::getMarkerIcon() const
 {

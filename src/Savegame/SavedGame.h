@@ -43,7 +43,7 @@ class Country;
 class Craft;
 class GameTime;
 class Language;
-class MissionSite;
+class TerrorSite;
 class Region;
 class ResearchGeneral;
 class ResearchProject;
@@ -199,7 +199,7 @@ private:
 	std::vector<AlienMission*> _activeMissions;
 	std::vector<Base*> _bases;
 	std::vector<Country*> _countries;
-	std::vector<MissionSite*> _missionSites;
+	std::vector<TerrorSite*> _terrorSites;
 	std::vector<MissionStatistics*> _missionStatistics;
 	std::vector<Region*> _regions;
 	std::vector<ResearchGeneral*> _research;
@@ -343,7 +343,7 @@ private:
 		/// Gets the list of current waypoints.
 		std::vector<Waypoint*>* getWaypoints();
 		/// Gets the list of current mission-sites.
-		std::vector<MissionSite*>* getMissionSites();
+		std::vector<TerrorSite*>* getTerrorSites();
 
 		/// Gets the current SavedBattleGame.
 		SavedBattleGame* getBattleSave();

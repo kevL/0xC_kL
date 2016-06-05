@@ -67,7 +67,7 @@
 #include "../Savegame/Country.h"
 #include "../Savegame/Craft.h"
 #include "../Savegame/ItemContainer.h"
-#include "../Savegame/MissionSite.h"
+#include "../Savegame/TerrorSite.h"
 #include "../Savegame/Region.h"
 #include "../Savegame/SavedBattleGame.h"
 //#include "../Savegame/SavedGame.h"
@@ -957,7 +957,7 @@ void DebriefingState::prepareDebriefing() // private.
 						(*j)->returnToBase();
 				}
 
-				const MissionSite* const site (dynamic_cast<MissionSite*>((*j)->getDestination()));
+				const TerrorSite* const site (dynamic_cast<TerrorSite*>((*j)->getDestination()));
 				if (site != nullptr && site->getTactical() == true)
 					(*j)->returnToBase();
 			}
@@ -1058,16 +1058,16 @@ void DebriefingState::prepareDebriefing() // private.
 
 	if (found == false)
 	{
-		for (std::vector<MissionSite*>::const_iterator // Second - search for MissionSite.
-				i = _gameSave->getMissionSites()->begin();
-				i != _gameSave->getMissionSites()->end();
+		for (std::vector<TerrorSite*>::const_iterator // Second - search for TerrorSite.
+				i = _gameSave->getTerrorSites()->begin();
+				i != _gameSave->getTerrorSites()->end();
 				++i)
 		{
 			if ((*i)->getTactical() == true)
 			{
 				found = true;
 				delete *i;
-				_gameSave->getMissionSites()->erase(i);
+				_gameSave->getTerrorSites()->erase(i);
 				break;
 			}
 		}
@@ -1475,7 +1475,7 @@ void DebriefingState::prepareDebriefing() // private.
 				tacResult = "STR_BASE_IS_SAVED";
 				break;
 
-			case TCT_MISSIONSITE:
+			case TCT_TERRORSITE:
 				tacResult = "STR_ALIENS_DEFEATED";
 				break;
 
@@ -1509,7 +1509,7 @@ void DebriefingState::prepareDebriefing() // private.
 				tacResult = "STR_BASE_IS_LOST";
 				break;
 
-			case TCT_MISSIONSITE:
+			case TCT_TERRORSITE:
 				tacResult = "STR_TERROR_CONTINUES";
 				break;
 

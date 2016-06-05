@@ -26,7 +26,7 @@
 #include "Base.h"
 #include "Country.h"
 #include "Craft.h"
-#include "MissionSite.h"
+#include "TerrorSite.h"
 #include "Region.h"
 #include "SavedGame.h"
 #include "Ufo.h"
@@ -310,7 +310,7 @@ void AlienMission::think(
 				else
 					ruleDeploy = rules.getDeployment(texture->getTextureDeployment());
 
-				spawnMissionSite(ruleDeploy, area);
+				spawnTerrorSite(ruleDeploy, area);
 			}
 
 			++_ufoCount;
@@ -684,7 +684,7 @@ void AlienMission::ufoReachedWaypoint(
 				wave = _missionRule.getWaveTotal() - 1;
 			// note, 'wave' has to be reduced by one because think() has already advanced it past current, I suppose.
 
-			if (_missionRule.getWave(wave).objective == true // destroy UFO & replace with MissionSite.
+			if (_missionRule.getWave(wave).objective == true // destroy UFO & replace with TerrorSite.
 				&& trajectory.getZone(pt) == _missionRule.getSpawnZone()) // note Supply bypasses this although it has (objective==true) because it does not have a 'specialZone'
 			{
 				addScore( // alm_SITE
@@ -706,10 +706,10 @@ void AlienMission::ufoReachedWaypoint(
 					ruleDeploy = rules.getDeployment(texture->getTextureDeployment());
 				}
 
-				MissionSite* const site (spawnMissionSite(ruleDeploy, area));
+				TerrorSite* const site (spawnTerrorSite(ruleDeploy, area));
 				if (site != nullptr)
 				{
-					_gameSave.getMissionSites()->push_back(site);
+					_gameSave.getTerrorSites()->push_back(site);
 
 					for (std::vector<Target*>::const_iterator
 							i = ufo.getTargeters()->begin();
@@ -767,18 +767,18 @@ void AlienMission::ufoReachedWaypoint(
 }
 
 /**
- * Attempts to spawn a Mission Site at a given location.
+ * Attempts to spawn a Terror Site at a given location.
  * @param ruleDeploy	- pointer to the AlienDeployment
  * @param area			- reference an area of the globe
  * @return, pointer to the site
  */
-MissionSite* AlienMission::spawnMissionSite( // private.
+TerrorSite* AlienMission::spawnTerrorSite( // private.
 		const AlienDeployment* const ruleDeploy,
 		const MissionArea& area)
 {
 	if (ruleDeploy != nullptr)
 	{
-		MissionSite* const site (new MissionSite(
+		TerrorSite* const site (new TerrorSite(
 											&_missionRule,
 											ruleDeploy));
 		site->setLongitude(RNG::generate(area.lonMin, area.lonMax));
@@ -1102,7 +1102,7 @@ void AlienMission::addScore( // private.
  * Tells this AlienMission which entry in the zone-array is targeted.
  * @param zone - entry of the zone to target; always a City-type zone (probably)
  */
-void AlienMission::setMissionSiteZone(size_t zone)
+void AlienMission::setTerrorSiteZone(size_t zone)
 {
 	_siteZone = zone;
 }

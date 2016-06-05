@@ -92,7 +92,7 @@
 #include "../Savegame/BattleUnitStatistics.h"
 #include "../Savegame/Country.h"
 #include "../Savegame/Craft.h"
-#include "../Savegame/MissionSite.h"
+#include "../Savegame/TerrorSite.h"
 #include "../Savegame/Region.h"
 #include "../Savegame/SavedGame.h"
 #include "../Savegame/SavedBattleGame.h"
@@ -574,9 +574,9 @@ BattlescapeState::BattlescapeState()
 			}
 		}
 
-		for (std::vector<MissionSite*>::const_iterator
-				i = _gameSave->getMissionSites()->begin();
-				i != _gameSave->getMissionSites()->end() && woststr.str().empty() == true;
+		for (std::vector<TerrorSite*>::const_iterator
+				i = _gameSave->getTerrorSites()->begin();
+				i != _gameSave->getTerrorSites()->end() && woststr.str().empty() == true;
 				++i)
 		{
 			if ((*i)->getTactical() == true)
@@ -3857,7 +3857,7 @@ void BattlescapeState::finishBattle(
 		{
 			case TCT_BASEASSAULT: // no check for next-stage if Ufo_Crashed or _Landed.
 			case TCT_BASEDEFENSE:
-			case TCT_MISSIONSITE:
+			case TCT_TERRORSITE:
 			case TCT_MARS1:
 //			case TCT_MARS2:
 				nextStage = ruleDeploy->getNextStage();

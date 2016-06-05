@@ -27,7 +27,7 @@ namespace OpenXcom
 {
 
 class GeoscapeState;
-class MissionSite;
+class TerrorSite;
 class Text;
 class TextButton;
 class Window;
@@ -44,7 +44,7 @@ class MissionDetectedState
 private:
 
 	GeoscapeState* _geo;
-	const MissionSite* _site;
+	const TerrorSite* _site;
 	TextButton
 		* _btnCancel,
 		* _btnCenter,
@@ -59,7 +59,7 @@ private:
 
 		/// Creates the Mission Detected state.
 		MissionDetectedState(
-				const MissionSite* const site,
+				const TerrorSite* const site,
 				GeoscapeState* const geo);
 		/// Cleans up the Mission Detected state.
 		~MissionDetectedState();

@@ -35,7 +35,7 @@
 
 #include "../Ruleset/AlienDeployment.h"
 
-#include "../Savegame/MissionSite.h"
+#include "../Savegame/TerrorSite.h"
 
 
 namespace OpenXcom
@@ -47,7 +47,7 @@ namespace OpenXcom
  * @param geo	- pointer to GeoscapeState
  */
 MissionDetectedState::MissionDetectedState(
-		const MissionSite* const site,
+		const TerrorSite* const site,
 		GeoscapeState* const geo)
 	:
 		_site(site),

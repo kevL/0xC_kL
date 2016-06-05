@@ -49,8 +49,8 @@ private:
 	Target* _target;
 	Text
 		* _txtTitle,
-		* _txtTargetted,
-		* _txtFollowers;
+		* _txtTargeted,
+		* _txtTargeters;
 	TextButton
 		* _btnIntercept,
 		* _btnOk;

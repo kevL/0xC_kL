@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_MISSIONSITE_H
-#define OPENXCOM_MISSIONSITE_H
+#ifndef OPENXCOM_TERRORSITE_H
+#define OPENXCOM_TERRORSITE_H
 
 //#include <string>
 //#include <yaml-cpp/yaml.h>
@@ -34,9 +34,9 @@ class RuleAlienMission;
 
 
 /**
- * Represents an alien MissionSite in the world.
+ * Represents an alien TerrorSite in the world.
  */
-class MissionSite final
+class TerrorSite final
 	:
 		public Target
 {
@@ -59,69 +59,69 @@ private:
 
 
 	public:
-		/// Creates a MissionSite.
-		MissionSite(
+		/// Creates a TerrorSite.
+		TerrorSite(
 				const RuleAlienMission* const missionRule,
 				const AlienDeployment* const ruleDeploy);
-		/// Cleans up the MissionSite.
-		~MissionSite();
+		/// Cleans up the TerrorSite.
+		~TerrorSite();
 
-		/// Loads the MissionSite from YAML.
+		/// Loads the TerrorSite from YAML.
 		void load(const YAML::Node& node) override;
-		/// Saves the MissionSite to YAML.
+		/// Saves the TerrorSite to YAML.
 		YAML::Node save() const override;
-		/// Saves the MissionSite's unique-ID to YAML.
+		/// Saves the TerrorSite's unique-ID to YAML.
 		YAML::Node saveId() const override;
 
-		/// Gets the MissionSite's ruleset.
+		/// Gets the TerrorSite's ruleset.
 		const RuleAlienMission* getRules() const;
-		/// Gets the MissionSite's deployment.
+		/// Gets the TerrorSite's deployment.
 		const AlienDeployment* getSiteDeployment() const;
 
-		/// Gets the MissionSite's ID.
+		/// Gets the TerrorSite's ID.
 		int getId() const;
-		/// Sets the MissionSite's ID.
+		/// Sets the TerrorSite's ID.
 		void setId(const int id);
 
-		/// Gets the MissionSite's name.
+		/// Gets the TerrorSite's name.
 		std::wstring getName(const Language* const lang) const override;
 
-		/// Gets the MissionSite site's marker.
+		/// Gets the TerrorSite site's marker.
 		int getMarker() const override;
 
-		/// Gets the seconds until the MissionSite expires.
+		/// Gets the seconds until the TerrorSite expires.
 		int getSecondsLeft() const;
-		/// Sets the seconds until the MissionSite expires.
+		/// Sets the seconds until the TerrorSite expires.
 		void setSecondsLeft(int sec);
 
-		/// Sets the MissionSite's battlescape status.
+		/// Sets the TerrorSite's battlescape status.
 		void setTactical(bool tactical = true);
-		/// Gets if the MissionSite is in battlescape.
+		/// Gets if the TerrorSite is in battlescape.
 		bool getTactical() const;
 
-		/// Gets the MissionSite's alien race.
+		/// Gets the TerrorSite's alien race.
 		std::string getAlienRace() const;
-		/// Sets the MissionSite's alien race.
+		/// Sets the TerrorSite's alien race.
 		void setAlienRace(const std::string& race);
 
-		/// Gets the MissionSite's terrainType.
+		/// Gets the TerrorSite's terrainType.
 		std::string getSiteTerrainType() const;
-		/// Sets the MissionSite's terrainType.
+		/// Sets the TerrorSite's terrainType.
 		void setSiteTerrainType(const std::string& terrain);
 
-		/// Gets the MissionSite's texture.
+		/// Gets the TerrorSite's texture.
 		int getSiteTextureId() const;
-		/// Sets the MissionSite's texture.
+		/// Sets the TerrorSite's texture.
 		void setSiteTextureId(int texture);
 
-		/// Gets the MissionSite's city.
+		/// Gets the TerrorSite's city.
 		std::string getCity() const;
-		/// Sets the MissionSite's city.
+		/// Sets the TerrorSite's city.
 		void setCity(const std::string& city);
 
-		/// Gets the MissionSite's detected state.
+		/// Gets the TerrorSite's detected state.
 		bool getDetected() const;
-		/// Sets the MissionSite's detected state.
+		/// Sets the TerrorSite's detected state.
 		void setDetected(bool detected = true);
 };
 

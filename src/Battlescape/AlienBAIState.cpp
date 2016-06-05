@@ -2056,7 +2056,7 @@ bool AlienBAIState::explosiveEfficacy(
 				pct -= 23;
 				break;
 			case TCT_BASEDEFENSE:
-			case TCT_MISSIONSITE:
+			case TCT_TERRORSITE:
 				pct += 56;
 		}
 

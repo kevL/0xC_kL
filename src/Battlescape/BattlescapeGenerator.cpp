@@ -63,7 +63,7 @@
 #include "../Savegame/Craft.h"
 #include "../Savegame/SoldierLayout.h"
 #include "../Savegame/ItemContainer.h"
-#include "../Savegame/MissionSite.h"
+#include "../Savegame/TerrorSite.h"
 #include "../Savegame/Node.h"
 #include "../Savegame/SavedBattleGame.h"
 #include "../Savegame/SavedGame.h"
@@ -179,10 +179,10 @@ void BattlescapeGenerator::setBase(Base* const base)
 }
 
 /**
- * Sets the aLien MissionSite involved in the battle.
- * @param site - pointer to MissionSite
+ * Sets the aLien TerrorSite involved in the battle.
+ * @param site - pointer to TerrorSite
  */
-void BattlescapeGenerator::setMissionSite(MissionSite* const site)
+void BattlescapeGenerator::setTerrorSite(TerrorSite* const site)
 {
 	_site = site;
 	_site->setTactical();
@@ -266,7 +266,7 @@ void BattlescapeGenerator::run()
 						&_mapsize_y,
 						&_mapsize_z);
 
-	if (_terrainRule == nullptr) // '_terrainRule' NOT set for Cydonia, Base assault/defense. Already set for NewBattleState ...... & UFO, & missionSite.
+	if (_terrainRule == nullptr) // '_terrainRule' NOT set for Cydonia, Base assault/defense. Already set for NewBattleState ...... & UFO, & terrorSite.
 	{
 		_terrainRule = _rules->getTerrain(ruleDeploy->getDeployTerrains().at(RNG::pick(ruleDeploy->getDeployTerrains().size())));
 		if (_terrainRule == nullptr)
@@ -287,7 +287,7 @@ void BattlescapeGenerator::run()
 			size_t pick = RNG::generate(0, ruleDeploy->getDeployTerrains().size() - 1);
 			_terrainRule = _rules->getTerrain(ruleDeploy->getDeployTerrains().at(pick));
 		}
-		else // UFO crashed/landed or MissionSite
+		else // UFO crashed/landed or TerrorSite
 		{
 			const Target* target;
 			if (_site != nullptr) target = _site;
@@ -737,9 +737,9 @@ void BattlescapeGenerator::nextStage()
 	_alienRace = ruleDeploy->getRace();
 	if (_alienRace.empty() == true)
 	{
-		for (std::vector<MissionSite*>::const_iterator
-				i = _gameSave->getMissionSites()->begin();
-				i != _gameSave->getMissionSites()->end();
+		for (std::vector<TerrorSite*>::const_iterator
+				i = _gameSave->getTerrorSites()->begin();
+				i != _gameSave->getTerrorSites()->end();
 				++i)
 		{
 			if ((*i)->getTactical() == true)

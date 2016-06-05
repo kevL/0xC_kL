@@ -456,9 +456,7 @@ int Ufo::getSecondsLeft() const
  */
 void Ufo::setAltitude(const std::string& altitude)
 {
-	_altitude = altitude;
-
-	if (_altitude != "STR_GROUND")
+	if ((_altitude = altitude) != "STR_GROUND")
 		_status = FLYING;
 	else if (isCrashed() == true)
 		_status = CRASHED;
@@ -741,8 +739,8 @@ void Ufo::setUfoMissionInfo(
 
 /**
  * Gets the mission-type of this Ufo.
- * @note Used only for hyperwave decoder info and has been superceded by
- * getAlienMission()->getRules().getObjective().
+ * @note Used only for hyperwave decoder info and has been superceded elsewhere
+ * by getAlienMission()->getRules().getObjective().
  * @return, reference to the type
  */
 const std::string& Ufo::getUfoMissionType() const
