@@ -1798,7 +1798,7 @@ alienMissions:
         timer: 60
   - type: STR_ALIEN_INFILTRATION
     points: 100
-    objective: 1
+    objectiveType: 1
     specialZone: 4 #Mission zone for alien bases
     raceWeights:
       0:
@@ -1864,7 +1864,7 @@ alienMissions:
         timer: 60
   - type: STR_ALIEN_BASE
     points: 300
-    objective: 2
+    objectiveType: 2
     specialZone: 4 #Mission zone for alien bases
     raceWeights:
       0:
@@ -1918,7 +1918,7 @@ alienMissions:
         timer: 60
   - type: STR_ALIEN_TERROR
     points: 200
-    objective: 3
+    objectiveType: 3
     specialZone: 3 # Mission zone for terror missions
 #    specialUfo: STR_TERROR_SHIP
 #    deployment: STR_TERROR_MISSION
@@ -1966,10 +1966,10 @@ alienMissions:
         count: 1
         trajectory: P7
         timer: 9000
-        objective: true
+        isObjective: true
   - type: STR_ALIEN_RETALIATION
     points: 0
-    objective: 4
+    objectiveType: 4
     specialUfo: STR_BATTLESHIP #Spawned for the final retaliation run
     raceWeights: # In the case of a shootdown, race comes from the UFO that triggered the mission.
       0:
@@ -1998,7 +1998,7 @@ alienMissions:
         timer: 3000
   - type: STR_ALIEN_SUPPLY
     points: 25
-    objective: 5
+    objectiveType: 5
 #    specialUfo: STR_SUPPLY_SHIP
     raceWeights: {} #Special case, race comes from base.
     waves:
@@ -2006,7 +2006,7 @@ alienMissions:
         count: 1
         trajectory: P9
         timer: 6000
-        objective: true
+        isObjective: true
 alienRaces: #new order: sectoid,snakemen,ethereal,muton,floater
   - type: STR_SECTOID
     members:
@@ -2234,7 +2234,7 @@ armors:
       - 0.7 #melee
       - 1.0 #acid
       - 0.0 #smoke
-    loftSet: [92, 89, 90, 91]
+    loftSet: [92,89,90,91]
   - type: REAPER_ARMOR
     spriteSheet: X_REAP.PCK
     allowInv: false
@@ -2261,7 +2261,7 @@ armors:
       - 0.9
       - 1.1
       - 1.0
-    loftSet: [92, 89, 90, 91]
+    loftSet: [92,89,90,91]
   - type: SECTOPOD_ARMOR
     spriteSheet: X_ROB.PCK
     allowInv: false
@@ -2288,7 +2288,7 @@ armors:
       - 0.7 #melee
       - 1.0 #acid
       - 0.0 #smoke
-    loftSet: [92, 89, 90, 91]
+    loftSet: [92,89,90,91]
   - type: SNAKEMAN_ARMOR0 #soldier
     spriteSheet: SNAKEMAN.PCK
     corpseBattle:
@@ -2708,7 +2708,7 @@ ufoTrajectories:
       - [0, 1, 42]
       - [2, 1, 56]
       - [5, 4, 100]
-  - id: P9
+  - id: P9 #alien base supply mission
     groundTimer: 2000
     waypoints:
       - [5, 4, 80]

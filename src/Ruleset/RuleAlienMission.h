@@ -47,7 +47,7 @@ struct MissionWave
 							// Trajectories control the way UFOs fly around the Geoscape.
 	int spawnTimer;			// Number of minutes between UFOs in the wave. Or seconds.
 							// The actual value used is (spawnTimer*1/4) or (spawnTimer*3/4.)
-	bool objective;			// This wave performs the mission objective.
+	bool isObjective;		// This wave performs the mission-objective.
 							// The UFO executes a special action based on its MissionObjective.
 };
 
@@ -85,7 +85,7 @@ private:
 	std::vector<std::pair<size_t, WeightedOptions*>> _raceDistribution;	// The race distribution over game-time.
 	std::map<size_t, int> _weights;										// The mission's weights.
 
-	MissionObjective _objective; // The mission's objective type.
+	MissionObjective _objectiveType; // The mission's objective type.
 
 
 	public:
@@ -118,7 +118,7 @@ private:
 
 		/// Gets the objective for this mission.
 		MissionObjective getObjective() const
-		{ return _objective; }
+		{ return _objectiveType; }
 
 		/// Gets the UFO type for special spawns.
 		const std::string& getSpawnUfo() const

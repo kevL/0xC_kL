@@ -184,7 +184,7 @@ private:
 		/// Selects a destination (lon/lat).
 		std::pair<double, double> getWaypoint(
 				const UfoTrajectory& trajectory,
-				const size_t nextWp,
+				const size_t wpId_next,
 				const Globe& globe,
 				const RuleRegion& region);
 		/// Gets a random landing-point inside a specified Region and zone.

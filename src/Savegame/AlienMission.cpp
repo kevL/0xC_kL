@@ -290,7 +290,7 @@ void AlienMission::think(
 					&& rules.getDeployment(wave.ufoType) != nullptr
 					&& rules.getDeployment(wave.ufoType)->getMarkerType().empty() == false)
 				|| (_missionRule.getObjective() == alm_SITE	// or spawn a site at random according to the terrain
-					&& wave.objective == true))
+					&& wave.isObjective == true))
 			{
 				size_t zone;
 				if (_missionRule.getSpawnZone() == std::numeric_limits<size_t>::max())
@@ -518,7 +518,7 @@ Ufo* AlienMission::createUfo( // private.
 
 		case alm_SUPPLY: // check for base to supply.
 			if (ufoRule != nullptr
-				&& (_aBase != nullptr || wave.objective == false))
+				&& (_aBase != nullptr || wave.isObjective == false))
 			{
 				ufo = new Ufo(ufoRule);
 				ufo->setUfoMissionInfo( // destination is always an alien base.
@@ -542,7 +542,7 @@ Ufo* AlienMission::createUfo( // private.
 
 				if (trajectory.getAltitude(1u) == UfoTrajectory::stAltitude[0u])
 				{
-					if (wave.objective == true) // Supply ships on supply missions land on bases, ignore trajectory zone.
+					if (wave.isObjective == true) // Supply ships on supply missions land on bases, ignore trajectory zone.
 					{
 						coord.first = _aBase->getLongitude();
 						coord.second = _aBase->getLatitude();
@@ -684,17 +684,7 @@ void AlienMission::ufoReachedWaypoint(
 		wayPoint->setLatitude(coord.second);
 		ufo.setDestination(wayPoint);
 
-		if (ufo.getAltitude() != UfoTrajectory::stAltitude[0u])
-		{
-			ufo.setLandId(0);
-
-			float speedPct (RNG::generate(
-									trajectory.getSpeedPct(wpId),
-									trajectory.getSpeedPct(wpId_next)));
-			ufo.setSpeed(static_cast<int>(std::ceil(
-						 speedPct * static_cast<float>(ufo.getRules()->getMaxSpeed()))));
-		}
-		else // UFO landed.
+		if (ufo.getAltitude() == UfoTrajectory::stAltitude[0u]) // UFO landed.
 		{
 			size_t wave;
 			switch (_waveCount)
@@ -707,7 +697,7 @@ void AlienMission::ufoReachedWaypoint(
 			}
 			// NOTE: 'wave' has to be reduced by one because think() has already advanced it past current, I suppose.
 
-			if (_missionRule.getWave(wave).objective == true // destroy UFO & replace with TerrorSite.
+			if (_missionRule.getWave(wave).isObjective == true // destroy UFO & replace with TerrorSite.
 				&& trajectory.getZone(wpId) == _missionRule.getSpawnZone()) // note Supply bypasses this although it has (objective==true) because it does not have a 'specialZone'
 			{
 				addScore( // alm_SITE
@@ -759,12 +749,10 @@ void AlienMission::ufoReachedWaypoint(
 																	MatchBaseCoordinates(
 																					ufo.getLongitude(),
 																					ufo.getLatitude())));
-				if (i == _gameSave.getBases()->end())
-				{
+				if (i != _gameSave.getBases()->end())
+					ufo.setDestination(*i);
+				else
 					ufo.setUfoStatus(Ufo::DESTROYED);
-					return;
-				}
-				ufo.setDestination(*i);
 			}
 			else // Set timer for UFO on the ground.
 			{
@@ -780,6 +768,16 @@ void AlienMission::ufoReachedWaypoint(
 				else // there's nothing to land on
 					ufo.setSecondsLeft(5);
 			}
+		}
+		else // UFO is Flying.
+		{
+			ufo.setLandId(0);
+
+			float speedPct (RNG::generate(
+									trajectory.getSpeedPct(wpId),
+									trajectory.getSpeedPct(wpId_next)));
+			ufo.setSpeed(static_cast<int>(std::ceil(
+						 speedPct * static_cast<float>(ufo.getRules()->getMaxSpeed()))));
 		}
 	}
 	else // UFO left earth's atmosphere.
@@ -1025,47 +1023,49 @@ void AlienMission::ufoShotDown(const Ufo& ufo)
  * Selects a destination based on the criteria of a specified trajectory and a
  * specified waypoint.
  * @param trajectory	- reference to the trajectory in question
- * @param nextWp		- the next logical waypoint in sequence (0 for newly spawned UFOs)
+ * @param wpId_next		- the next logical waypoint in sequence (0 for newly spawned UFOs)
  * @param globe			- reference to the Globe
  * @param region		- reference to the ruleset for the region of this mission
  * @return, pair of lon and lat coordinates based on the criteria of the trajectory
  */
 std::pair<double, double> AlienMission::getWaypoint(
 		const UfoTrajectory& trajectory,
-		const size_t nextWp,
+		const size_t wpId_next,
 		const Globe& globe,
 		const RuleRegion& region)
 {
-	size_t wave;
-	switch (_waveCount)
-	{
-		case 0u: // restart AlienMission -> if (RNG::percent(static_cast<int>(_gameSave.getDifficulty()) * 20) == false)
-			wave = _missionRule.getWaveTotal() - 1u;
-			break;
-		default:
-			wave = _waveCount - 1u;
-	}
-	// NOTE: 'wave' has to be reduced by one because think() has already advanced it past current, I suppose.
-
 	if (_siteZone != std::numeric_limits<size_t>::max()
-		&& _missionRule.getWave(wave).objective == true
-		&& trajectory.getZone(nextWp) == _missionRule.getSpawnZone())
+		&& trajectory.getZone(wpId_next) == _missionRule.getSpawnZone())
 	{
-		const MissionArea* const area (&region.getMissionZones().at(_missionRule.getObjective()).areas.at(_siteZone));
-		return std::make_pair(
-							area->lonMin,
-							area->latMin);
+		size_t wave;
+		switch (_waveCount)
+		{
+			case 0u: // restart AlienMission -> if (RNG::percent(static_cast<int>(_gameSave.getDifficulty()) * 20) == false)
+				wave = _missionRule.getWaveTotal() - 1u;
+				break;
+			default:
+				wave = _waveCount - 1u;
+		}
+		// NOTE: 'wave' has to be reduced by one because think() has already advanced it past current, I suppose.
+
+		if (_missionRule.getWave(wave).isObjective == true)
+		{
+			const MissionArea* const area (&region.getMissionZones().at(_missionRule.getObjective()).areas.at(_siteZone));
+			return std::make_pair(
+								area->lonMin,
+								area->latMin);
+		}
 	}
 
-	if (trajectory.getWaypointTotal() > nextWp + 1u
-		&& trajectory.getAltitude(nextWp + 1u) == UfoTrajectory::stAltitude[0u])
+	if (trajectory.getWaypointTotal() > wpId_next + 1u
+		&& trajectory.getAltitude(wpId_next + 1u) == UfoTrajectory::stAltitude[0u])
  	{
  		return getLandPoint(
 						globe, region,
-						trajectory.getZone(nextWp));
+						trajectory.getZone(wpId_next));
  	}
 
-	return region.getRandomPoint(trajectory.getZone(nextWp));
+	return region.getRandomPoint(trajectory.getZone(wpId_next));
 }
 
 /**
