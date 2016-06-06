@@ -22,8 +22,6 @@
 
 //#include <string>
 
-#include "../fmath.h"
-
 #include <yaml-cpp/yaml.h>
 
 
@@ -58,13 +56,14 @@ class AlienMission
 private:
 	bool _success;	// Prevents infiltration missions taking multiple success points
 					// and creating multiple bases on the final 2xBattleship wave.
-	int _id;
-	size_t
+	int
+		_id,
 		_liveUfos,
-		_ufoCount,
+		_spawnTime,
+		_ufoCount;
+	size_t
 		_waveCount,
-		_siteZone,
-		_spawnTime;
+		_siteZone;
 
 	std::string
 		_race,
@@ -75,7 +74,7 @@ private:
 	SavedGame& _gameSave;
 
 	/// Calculates time remaining until the next wave generates.
-	void calcGeneration(size_t nextWave);
+	void calcGeneration(size_t waveId);
 
 	/// Spawns a UFO based on the mission rules.
 	Ufo* createUfo(
@@ -93,7 +92,7 @@ private:
 			const Ruleset& rules,
 			const size_t zone);
 
-	/// Handles Points for mission successes.
+	/// Handles Points for mission success.
 	void addScore(
 			const double lon,
 			const double lat) const;
@@ -137,10 +136,14 @@ private:
 		{ _race = race; }
 
 		/// Gets the minutes until next wave spawns.
-		size_t getWaveCountdown() const
-		{ return _spawnTime; }
+//		size_t getWaveCountdown() const
+//		{ return _spawnTime; }
 		/// Sets the minutes until next wave spawns.
-		void setWaveCountdown(size_t minutes);
+		void setWaveCountdown(int minutes);
+
+		/// Gets the wave of a UFO in the agenda of the AlienMission.
+		size_t getWaveCount()
+		{ return _waveCount; }
 
 		/// Increases the quantity of live UFOs.
 		void increaseLiveUfos()
@@ -152,7 +155,7 @@ private:
 		/// Gets if the AlienMission over.
 		bool isOver() const;
 		/// Initializes the AlienMission with rule-data.
-		void start(size_t countdown = 0u);
+		void start(int countdown = 0);
 
 		/// Handles UFO spawning for the AlienMission.
 		void think(
@@ -181,7 +184,7 @@ private:
 		/// Selects a destination (lon/lat).
 		std::pair<double, double> getWaypoint(
 				const UfoTrajectory& trajectory,
-				const size_t nextWaypoint,
+				const size_t nextWp,
 				const Globe& globe,
 				const RuleRegion& region);
 		/// Gets a random landing-point inside a specified Region and zone.
@@ -191,11 +194,7 @@ private:
 				const size_t zone);
 
 		/// Flags tracking of the target-site.
-		void setTerrorSiteZone(size_t zone);
-
-		/// Gets the wave of a UFO in the agenda of the AlienMission.
-		size_t getWaveCount()
-		{ return _waveCount; }
+		void setTerrorSiteZone(size_t zoneId);
 };
 
 }

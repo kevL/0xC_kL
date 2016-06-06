@@ -45,7 +45,7 @@ namespace OpenXcom
 {
 
 /**
- * Creates the Ufo from a specified ufo-rule.
+ * Creates the Ufo from a specified RuleUfo.
  * @param ufoRule - pointer to RuleUfo
  */
 Ufo::Ufo(const RuleUfo* const ufoRule)
@@ -57,13 +57,13 @@ Ufo::Ufo(const RuleUfo* const ufoRule)
 		_idLanded(0),
 		_damage(0),
 		_direction("STR_NORTH"),
-		_altitude("STR_HIGH_UC"),
+		_altitude(UfoTrajectory::stAltitude[3u]),
 		_status(FLYING),
 		_secondsLeft(0),
 		_tactical(false),
 		_mission(nullptr),
 		_trajectory(nullptr),
-		_trajectoryPoint(0u),
+		_trajectoryWp(0u),
 		_detected(false),
 		_hyperDetected(false),
 		_shootingAt(0),
@@ -128,7 +128,7 @@ private:
 		{}
 
 		/// Match with stored ID.
-		bool operator() (const AlienMission* am) const
+		bool operator() (const AlienMission* const am) const
 		{
 			return am->getId() == _id;
 		}
@@ -181,7 +181,7 @@ void Ufo::load(
 			_status = DESTROYED;
 		else if (_damage >= (_ufoRule->getMaxDamage() >> 1u))
 			_status = CRASHED;
-		else if (_altitude == "STR_GROUND")
+		else if (_altitude == UfoTrajectory::stAltitude[0u])
 			_status = LANDED;
 		else
 			_status = FLYING; // <- already done in cTor init.
@@ -214,7 +214,7 @@ void Ufo::load(
 
 		const std::string trjType (node["trajectory"].as<std::string>()); // TODO: Don't save trajectory-info if UFO has been shot down.
 		_trajectory = rules.getUfoTrajectory(trjType);
-		_trajectoryPoint = node["trajectoryPoint"].as<size_t>(_trajectoryPoint);
+		_trajectoryWp = node["trajectoryPoint"].as<size_t>(_trajectoryWp);
 	}
 
 	_fireCountdown		= node["fireCountdown"]		.as<int>(_fireCountdown);
@@ -226,9 +226,10 @@ void Ufo::load(
 
 /**
  * Saves the UFO to a YAML file.
+ * @param isQuickBattle - true if saving a quick-battle
  * @return, YAML node
  */
-YAML::Node Ufo::save(bool skirmish) const
+YAML::Node Ufo::save(bool isQuickBattle) const
 {
 	YAML::Node node (MovingTarget::save());
 
@@ -250,11 +251,11 @@ YAML::Node Ufo::save(bool skirmish) const
 	if (_secondsLeft != 0)		node["secondsLeft"]		= _secondsLeft;
 	if (_tactical == true)		node["tactical"]		= _tactical;
 
-	if (skirmish == false)
+	if (isQuickBattle == false)
 	{
 		node["mission"]			= _mission->getId();
 		node["trajectory"]		= _trajectory->getId();
-		node["trajectoryPoint"]	= _trajectoryPoint;
+		node["trajectoryPoint"]	= _trajectoryWp;
 	}
 
 	if (_fireCountdown != 0)	node["fireCountdown"]	= _fireCountdown;
@@ -456,7 +457,7 @@ int Ufo::getSecondsLeft() const
  */
 void Ufo::setAltitude(const std::string& altitude)
 {
-	if ((_altitude = altitude) != "STR_GROUND")
+	if ((_altitude = altitude) != UfoTrajectory::stAltitude[0u])
 		_status = FLYING;
 	else if (isCrashed() == true)
 		_status = CRASHED;
@@ -646,7 +647,6 @@ int Ufo::getVictoryPoints() const
 
 	switch (_ufoRule->getSizeType())
 	{
-		default:
 		case UFO_VERYSMALL:	ret += 0; break;
 		case UFO_SMALL:		ret += 1; break;
 		case UFO_MEDIUM:	ret += 2; break;
@@ -654,11 +654,11 @@ int Ufo::getVictoryPoints() const
 		case UFO_VERYLARGE:	ret += 5;
 	}
 
-	if		(_altitude == "STR_GROUND")		ret += 0; // Status _LANDED or _CRASHED included above.
-	else if	(_altitude == "STR_VERY_LOW")	ret += 3;
-	else if	(_altitude == "STR_LOW_UC")		ret += 2;
-	else if	(_altitude == "STR_HIGH_UC")	ret += 1;
-	else if	(_altitude == "STR_VERY_HIGH")	ret += 0;
+	if		(_altitude == UfoTrajectory::stAltitude[0u]) ret += 0; // Status _LANDED or _CRASHED included above.
+	else if	(_altitude == UfoTrajectory::stAltitude[1u]) ret += 3;
+	else if	(_altitude == UfoTrajectory::stAltitude[2u]) ret += 2;
+	else if	(_altitude == UfoTrajectory::stAltitude[3u]) ret += 1;
+	else if	(_altitude == UfoTrajectory::stAltitude[4u]) ret += 0;
 
 	return ret;
 }
@@ -673,7 +673,6 @@ int Ufo::getVisibility() const
 	int ret (0);
 	switch (_ufoRule->getSizeType())
 	{
-		default:
 		case UFO_VERYSMALL:	ret -= 30; break;
 		case UFO_SMALL:		ret -= 15; break;
 		case UFO_MEDIUM:	ret -=  0; break;
@@ -681,11 +680,11 @@ int Ufo::getVisibility() const
 		case UFO_VERYLARGE:	ret += 30;
 	}
 
-	if		(_altitude == "STR_GROUND")		ret -= 50;
-	else if	(_altitude == "STR_VERY_LOW")	ret -= 20;
-	else if	(_altitude == "STR_LOW_UC")		ret -= 10;
-	else if	(_altitude == "STR_HIGH_UC")	ret -=  0;
-	else if	(_altitude == "STR_VERY_HIGH")	ret -= 10;
+	if		(_altitude == UfoTrajectory::stAltitude[0u]) ret -= 50;
+	else if	(_altitude == UfoTrajectory::stAltitude[1u]) ret -= 20;
+	else if	(_altitude == UfoTrajectory::stAltitude[2u]) ret -= 10;
+	else if	(_altitude == UfoTrajectory::stAltitude[3u]) ret -=  0;
+	else if	(_altitude == UfoTrajectory::stAltitude[4u]) ret -= 10;
 
 	return ret;
 }
@@ -699,7 +698,6 @@ int Ufo::getDetectors() const
 	int ret (0);
 	switch (_ufoRule->getSizeType())
 	{
-		default:
 		case UFO_VERYSMALL:	ret -= 12; break;
 		case UFO_SMALL:		ret -=  8; break;
 		case UFO_MEDIUM:	ret -=  5; break;
@@ -707,20 +705,20 @@ int Ufo::getDetectors() const
 		case UFO_VERYLARGE:	ret -=  0;
 	}
 
-	if		(_altitude == "STR_GROUND")		ret -= 32;
-	else if	(_altitude == "STR_VERY_LOW")	ret += 18;
-	else if	(_altitude == "STR_LOW_UC")		ret +=  6;
-	else if	(_altitude == "STR_HIGH_UC")	ret -=  9;
-	else if	(_altitude == "STR_VERY_HIGH")	ret -= 19;
+	if		(_altitude == UfoTrajectory::stAltitude[0u]) ret -= 32;
+	else if	(_altitude == UfoTrajectory::stAltitude[1u]) ret += 18;
+	else if	(_altitude == UfoTrajectory::stAltitude[2u]) ret +=  6;
+	else if	(_altitude == UfoTrajectory::stAltitude[3u]) ret -=  9;
+	else if	(_altitude == UfoTrajectory::stAltitude[4u]) ret -= 19;
 
 	return ret;
 }
 
 /**
  * Sets the mission-information of this Ufo.
- * @note The UFO will start at the first point of the trajectory. The actual
- * information is not changed here; this only sets the information on
- * behalf of the mission.
+ * @note The UFO will start at the first point of its trajectory. The actual
+ * information is not changed here; this only sets the information on behalf of
+ * the mission.
  * @param mission		- pointer to the actual mission-object
  * @param trajectory	- pointer to the actual mission-trajectory
  */
@@ -733,8 +731,8 @@ void Ufo::setUfoMissionInfo(
 	_mission = mission;
 	_mission->increaseLiveUfos();
 
-	_trajectoryPoint = 0;
 	_trajectory = trajectory;
+	_trajectoryWp = 0u;
 }
 
 /**

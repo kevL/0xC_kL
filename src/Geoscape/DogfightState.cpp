@@ -1217,7 +1217,7 @@ void DogfightState::updateDogfight()
 										targetRegion,
 										*_game->getRuleset());
 						mission->setRace(_ufo->getAlienRace());
-						mission->start(mission->getRules().getWave(0).spawnTimer); // delay for first wave/scout
+						mission->start(mission->getRules().getWave(0u).spawnTimer); // delay for first wave/scout
 
 						_gameSave->getAlienMissions().push_back(mission);
 					}

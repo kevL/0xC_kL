@@ -337,7 +337,7 @@ std::string findConfigFolder()
 	char const* home (getHome());
 	char path[MAXPATHLEN];
 
-	if (char const* const xdg_config_home = getenv("XDG_CONFIG_HOME")) // get config-folders
+	if (char const* const xdg_config_home = getenv("XDG_CONFIG_HOME")) // get config-folders on Linux
 	{
 		snprintf(path, MAXPATHLEN, "%s/openxcom/", xdg_config_home);
 		return path;

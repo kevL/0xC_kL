@@ -51,9 +51,9 @@ struct convert<OpenXcom::MissionWave>
 			return false;
 
 		rhs.ufoType		= node["ufo"]		.as<std::string>();
-		rhs.ufoTotal	= node["count"]		.as<size_t>();
+		rhs.ufoTotal	= node["count"]		.as<int>();
 		rhs.trajectory	= node["trajectory"].as<std::string>();
-		rhs.spawnTimer	= node["timer"]		.as<size_t>();
+		rhs.spawnTimer	= node["timer"]		.as<int>();
 		rhs.objective	= node["objective"]	.as<bool>(false);
 
 		return true;

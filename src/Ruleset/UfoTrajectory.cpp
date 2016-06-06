@@ -20,21 +20,6 @@
 #include "UfoTrajectory.h"
 
 
-namespace
-{
-
-const char* stAltitude[]
-{
-	"STR_GROUND",
-	"STR_VERY_LOW",
-	"STR_LOW_UC",
-	"STR_HIGH_UC",
-	"STR_VERY_HIGH"
-};
-
-}
-
-
 namespace YAML
 {
 
@@ -75,7 +60,16 @@ struct convert<OpenXcom::TrajectoryWaypoint>
 namespace OpenXcom
 {
 
-const std::string UfoTrajectory::RETALIATION_ASSAULT_RUN = "__RETALIATION_ASSAULT_RUN";
+const std::string UfoTrajectory::RETALIATION_ASSAULT_RUN = "__RETALIATION_ASSAULT_RUN"; // static.
+
+const char* UfoTrajectory::stAltitude[5u] // static.
+{
+	"STR_GROUND",	// 0
+	"STR_VERY_LOW",	// 1
+	"STR_LOW_UC",	// 2
+	"STR_HIGH_UC",	// 3
+	"STR_VERY_HIGH"	// 4
+};
 
 
 /**
@@ -102,12 +96,12 @@ void UfoTrajectory::load(const YAML::Node& node)
 
 /**
  * Gets the rule's altitude at a specific waypoint.
- * @param pt - the waypoint-ID
+ * @param wpId - the waypoint-ID
  * @return, altitude
  */
-const std::string UfoTrajectory::getAltitude(size_t pt) const // does not like return &ref
+const std::string UfoTrajectory::getAltitude(size_t wpId) const // does not like return &ref
 {
-	return stAltitude[_waypoints[pt].altitude];
+	return stAltitude[_waypoints[wpId].altitude];
 }
 
 }

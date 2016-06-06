@@ -72,7 +72,7 @@ private:
 		_idLanded,
 		_secondsLeft,
 		_shootingAt;
-	size_t _trajectoryPoint;
+	size_t _trajectoryWp;
 
 	AlienMission* _mission;
 	const RuleUfo* _ufoRule;
@@ -105,7 +105,7 @@ private:
 				SavedGame& game);
 		/// Saves the Ufo to YAML.
 		using MovingTarget::save;
-		YAML::Node save(bool skirmish) const;
+		YAML::Node save(bool isQuickBattle) const;
 		/// Saves the Ufo's unique-ID to YAML.
 		YAML::Node saveId() const override;
 
@@ -198,12 +198,12 @@ private:
 		AlienMission* getAlienMission() const
 		{ return _mission; }
 
-		/// Gets the Ufo's progress on the trajectory track.
+		/// Gets the Ufo's progress on its trajectory.
 		size_t getTrajectoryPoint() const
-		{ return _trajectoryPoint; }
-		/// Sets the Ufo's progress on the trajectory track.
-		void setTrajectoryPoint(size_t pt)
-		{ _trajectoryPoint = pt; }
+		{ return _trajectoryWp; }
+		/// Sets the Ufo's progress on its trajectory.
+		void setTrajectoryPoint(size_t wpId)
+		{ _trajectoryWp = wpId; }
 		/// Gets the Ufo's trajectory.
 		const UfoTrajectory& getTrajectory() const
 		{ return *_trajectory; }

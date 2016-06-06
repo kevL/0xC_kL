@@ -68,6 +68,7 @@ private:
 	public:
 		static const std::string RETALIATION_ASSAULT_RUN;
 
+		static const char* stAltitude[5u];
 
 		/// cTor.
 		explicit UfoTrajectory(const std::string& id);
@@ -91,22 +92,22 @@ private:
 
 		/**
 		 * Gets the zone-ID at a waypoint.
-		 * @param pt - the waypoint-ID
+		 * @param wpId - the waypoint-ID
 		 * @return, the zone-ID
 		 */
-		size_t getZone(size_t pt) const
-		{ return _waypoints[pt].zone; }
+		size_t getZone(size_t wpId) const
+		{ return _waypoints[wpId].zone; }
 
 		/// Gets the altitude at a waypoint.
-		const std::string getAltitude(size_t pt) const; // does not like return &ref
+		const std::string getAltitude(size_t wpId) const; // does not like return &ref
 
 		/**
 		 * Gets the speed-percentage at a waypoint.
-		 * @param pt - the waypoint-ID
+		 * @param wpId - the waypoint-ID
 		 * @return, the speed percent
 		 */
-		float getSpeedPct(size_t pt) const
-		{ return static_cast<float>(_waypoints[pt].speed) / 100.f; }
+		float getSpeedPct(size_t wpId) const
+		{ return static_cast<float>(_waypoints[wpId].speed) / 100.f; }
 
 		/**
 		 * Gets the number of seconds that a UFO should spend on the ground.

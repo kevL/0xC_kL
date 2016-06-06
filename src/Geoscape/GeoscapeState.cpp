@@ -1546,7 +1546,7 @@ void GeoscapeState::time5Seconds()
 						{
 							resetTimer();
 
-							mission->setWaveCountdown(30 * (RNG::generate(0,48) + 400));
+							mission->setWaveCountdown((RNG::generate(0,48) + 400) * 30);
 							(*i)->setDestination();
 
 							if (base->setupBaseDefense() == true)
@@ -1932,72 +1932,41 @@ private:
  */
 bool DetectXCOMBase::operator() (const Ufo* ufo) const
 {
-	//Log(LOG_INFO) << "DetectXCOMBase(), ufoID " << ufo->getId();
-	if (ufo->isCrashed() == true)
+	if (ufo->isCrashed() == false
+//		&& ufo->getTrajectoryPoint() > 1u
+		&& ufo->getTrajectory().getZone(ufo->getTrajectoryPoint()) != 5u
+		&& ufo->getTrajectory().getId() != UfoTrajectory::RETALIATION_ASSAULT_RUN
+		&& (ufo->getAlienMission()->getRules().getObjective() == alm_RETAL
+			|| Options::aggressiveRetaliation == true))
 	{
-		//Log(LOG_INFO) << ". . Crashed UFOs can't detect!";
-		return false;
+		const double
+			range (static_cast<double>(ufo->getRules()->getReconRange()) * greatCircleConversionFactor),
+			dist (_base.getDistance(ufo) * earthRadius);
+
+		if (dist <= range)
+		{
+			const double inverseFactor (dist * 12. / range); // TODO: Use log() ....
+			int pct (static_cast<int>(Round(
+					 static_cast<double>(_base.getDetectionChance(_diff) + ufo->getDetectors()) / inverseFactor)));
+
+			if (ufo->getAlienMission()->getRules().getObjective() == alm_RETAL
+				&& Options::aggressiveRetaliation == true) // Player wants *aggressive* retaliation search.
+			{
+				pct += 3 + _diff;
+			}
+
+			return RNG::percent(pct);
+		}
 	}
-
-	if (ufo->getTrajectoryPoint() < 2)
-	{
-		//Log(LOG_INFO) << ". . UFO just entered atmosphere - can't detect!";
-		return false;
-	}
-
-	if (ufo->getTrajectory().getZone(ufo->getTrajectoryPoint()) == 5)
-	{
-		//Log(LOG_INFO) << ". . UFO about to leave atmosphere - can't detect!";
-		return false;
-	}
-
-	if (ufo->getTrajectory().getId() == UfoTrajectory::RETALIATION_ASSAULT_RUN)
-	{
-		//Log(LOG_INFO) << ". uFo's attacking a base don't bother with this!";
-		return false;
-	}
-
-	if (ufo->getAlienMission()->getRules().getObjective() != alm_RETAL
-		&& Options::aggressiveRetaliation == false)
-	{
-		//Log(LOG_INFO) << ". . Only uFo's on retaliation missions scan for bases unless 'aggressiveRetaliation' option is TRUE";
-		return false;
-	}
-
-
-	const double
-		range (static_cast<double>(ufo->getRules()->getReconRange()) * greatCircleConversionFactor),
-		dist (_base.getDistance(ufo) * earthRadius);
-	//Log(LOG_INFO) << ". . range = " << (int)range;
-	//Log(LOG_INFO) << ". . dist = " << (int)dist;
-
-	if (dist > range)
-	{
-		//Log(LOG_INFO) << ". . uFo's have a detection range of " << (int)range << " nautical miles.";
-		return false;
-	}
-
-
-	const double inverseFactor (dist * 12. / range); // should use log() ...
-	int pct (static_cast<int>(Round(
-			 static_cast<double>(_base.getDetectionChance(_diff) + ufo->getDetectors()) / inverseFactor)));
-	if (ufo->getAlienMission()->getRules().getObjective() == alm_RETAL
-		&& Options::aggressiveRetaliation == true)
-	{
-		//Log(LOG_INFO) << ". . uFo's on retaliation missions scan for bases 'aggressively'";
-		pct += 3 + _diff;
-	}
-	//Log(LOG_INFO) << ". . . pct = " << pct;
-
-	return RNG::percent(pct);
+	return false;
 }
 
 
 /**
  * *** FUNCTOR ***
  * Functor that marks an XCOM base for retaliation.
- * @note This is required because of the iterator type.
- * @note Only used if Aggressive Retaliation option is false.
+ * @note This is required because of the iterator type. Only used if Aggressive
+ * Retaliation option is false.
  */
 struct SetRetaliationStatus
 	:
