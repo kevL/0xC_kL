@@ -44,8 +44,8 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Craft Patrol window.
- * @param craft	- pointer to a Craft
+ * Initializes all the elements in the CraftPatrol window.
+ * @param craft		- pointer to a Craft
  * @param geoState	- pointer to the GeoscapeState
  */
 CraftPatrolState::CraftPatrolState(

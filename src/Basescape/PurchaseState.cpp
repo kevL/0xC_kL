@@ -545,6 +545,7 @@ void PurchaseState::btnOkClick(Action*)
 						Craft* const craft (new Craft(
 													crftRule,
 													_base,
+													_game->getSavedGame(),
 													_game->getSavedGame()->getCanonicalId(_crafts[getCraftIndex(sel)])));
 						craft->setCraftStatus(CS_REFUELLING);
 						transfer->setCraft(craft);

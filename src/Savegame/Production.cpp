@@ -253,6 +253,7 @@ ProductionProgress Production::step(
 					Craft* const craft (new Craft(
 												rules->getCraft(i->first),
 												base,
+												gameSave,
 												gameSave->getCanonicalId(i->first)));
 					craft->setCraftStatus(CS_REFUELLING);
 					base->getCrafts()->push_back(craft);

@@ -45,7 +45,7 @@ class ConfirmDestinationState
 private:
 	Craft* _craft;
 	Target* _target;
-	Waypoint* _waypoint0;
+	Waypoint* _waypoint;
 
 	Text* _txtTarget;
 	TextButton

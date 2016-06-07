@@ -135,7 +135,7 @@ MultipleTargetsState::~MultipleTargetsState()
  */
 void MultipleTargetsState::init()
 {
-	if (_targets.size() == 1)
+	if (_targets.size() == 1u)
 		popupTarget(*_targets.begin());
 	else
 		State::init();
@@ -188,7 +188,7 @@ void MultipleTargetsState::btnCancelClick(Action*)
 void MultipleTargetsState::btnTargetClick(Action* action)
 {
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _btnTargets.size();
 			++i)
 	{

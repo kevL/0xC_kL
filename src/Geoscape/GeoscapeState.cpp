@@ -1863,20 +1863,6 @@ void GeoscapeState::time5Seconds()
 		}
 	}
 
-	for (std::vector<Waypoint*>::const_iterator // Clean up unused waypoints.
-			i = _gameSave->getWaypoints()->begin();
-			i != _gameSave->getWaypoints()->end();
-			)
-	{
-		if ((*i)->getTargeters()->empty() == true)
-		{
-			delete *i;
-			i = _gameSave->getWaypoints()->erase(i);
-		}
-		else
-			++i;
-	}
-
 	drawUfoBlobs();
 
 

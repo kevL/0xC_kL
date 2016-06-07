@@ -486,7 +486,9 @@ Ufo* AlienMission::createUfo( // private.
 				const UfoTrajectory& trjBattleship (*rules.getUfoTrajectory(UfoTrajectory::RETALIATION_ASSAULT_RUN));
 				const RuleRegion& regionRule (*rules.getRegion(_region));
 
-				ufo = new Ufo(&battleshipRule);
+				ufo = new Ufo(
+							&battleshipRule,
+							&_gameSave);
 				ufo->setUfoMissionInfo(
 									this,
 									&trjBattleship);
@@ -499,11 +501,12 @@ Ufo* AlienMission::createUfo( // private.
 				else
 					coord = regionRule.getRandomPoint(trajectory.getZone(0u));
 
+				ufo->setLongitude(coord.first);
+				ufo->setLatitude(coord.second);
+
 				ufo->setAltitude(trjBattleship.getAltitude(0u));
 				ufo->setSpeed(static_cast<int>(std::ceil(
 							  trjBattleship.getSpeedPct(0u) * static_cast<float>(battleshipRule.getMaxSpeed()))));
-				ufo->setLongitude(coord.first);
-				ufo->setLatitude(coord.second);
 
 				wp = new Waypoint();
 				const size_t pick (RNG::pick(baseTargets.size()));
@@ -520,7 +523,9 @@ Ufo* AlienMission::createUfo( // private.
 			if (ufoRule != nullptr
 				&& (_aBase != nullptr || wave.isObjective == false))
 			{
-				ufo = new Ufo(ufoRule);
+				ufo = new Ufo(
+							ufoRule,
+							&_gameSave);
 				ufo->setUfoMissionInfo( // destination is always an alien base.
 									this,
 									&trajectory);
@@ -534,11 +539,12 @@ Ufo* AlienMission::createUfo( // private.
 				else
 					coord = regionRule.getRandomPoint(trajectory.getZone(0u));
 
+				ufo->setLongitude(coord.first);
+				ufo->setLatitude(coord.second);
+
 				ufo->setAltitude(trajectory.getAltitude(0u));
 				ufo->setSpeed(static_cast<int>(std::ceil(
 							  trajectory.getSpeedPct(0u) * static_cast<float>(ufoRule->getMaxSpeed()))));
-				ufo->setLongitude(coord.first);
-				ufo->setLatitude(coord.second);
 
 				if (trajectory.getAltitude(1u) == MovingTarget::stAltitude[0u])
 				{
@@ -566,9 +572,11 @@ Ufo* AlienMission::createUfo( // private.
 			return nullptr; // No base to supply!
 	}
 
-	if (ufoRule != nullptr)
+	if (ufoRule != nullptr) // else Spawn UFO according to sequence
 	{
-		ufo = new Ufo(ufoRule); // else Spawn according to sequence
+		ufo = new Ufo(
+					ufoRule,
+					&_gameSave);
 		ufo->setUfoMissionInfo(
 							this,
 							&trajectory);
@@ -578,6 +586,8 @@ Ufo* AlienMission::createUfo( // private.
 						0u,
 						globe,
 						regionRule);
+		ufo->setLongitude(coord.first);
+		ufo->setLatitude(coord.second);
 
 		ufo->setAltitude(trajectory.getAltitude(0));
 		if (trajectory.getAltitude(0u) == MovingTarget::stAltitude[0u])
@@ -594,15 +604,11 @@ Ufo* AlienMission::createUfo( // private.
 		ufo->setSpeed(static_cast<int>(std::ceil(
 					  speedPct * static_cast<float>(ufoRule->getMaxSpeed()))));
 
-		ufo->setLongitude(coord.first);
-		ufo->setLatitude(coord.second);
-
 		coord = coordsWaypoint(
-						trajectory,
-						1u,
-						globe,
-						regionRule);
-
+							trajectory,
+							1u,
+							globe,
+							regionRule);
 		wp = new Waypoint();
 		wp->setLongitude(coord.first);
 		wp->setLatitude(coord.second);
@@ -643,7 +649,7 @@ private:
 		bool operator() (const Base* const base) const
 		{
 			return AreSame(base->getLongitude(), _lon)
-				&& AreSame(base->getLatitude(), _lat);
+				&& AreSame(base->getLatitude(),  _lat);
 		}
 };
 
@@ -673,13 +679,13 @@ void AlienMission::ufoReachedWaypoint(
 		ufo.setTrajectoryPoint(wpId_next);
 
 		const RuleRegion& regionRule (*rules.getRegion(_region));
+
+		Waypoint* const wp (new Waypoint());
 		const std::pair<double, double> coord (coordsWaypoint(
 														trajectory,
 														wpId_next,
 														globe,
 														regionRule));
-
-		Waypoint* const wp (new Waypoint());
 		wp->setLongitude(coord.first);
 		wp->setLatitude(coord.second);
 		ufo.setDestination(wp);
@@ -834,9 +840,9 @@ void AlienMission::createAlienBase( // private.
 	// Once the last UFO is spawned the aliens build their base. TODO: <- change that!
 	const RuleRegion& regionRule (*rules.getRegion(_region));
 	const std::pair<double, double> pos (coordsLand(
-													globe,
-													regionRule,
-													zone));
+												globe,
+												regionRule,
+												zone));
 
 	AlienBase* const aBase (new AlienBase());
 	aBase->setAlienRace(_race);
@@ -1063,7 +1069,8 @@ std::pair<double, double> AlienMission::coordsWaypoint( // private.
 		&& trajectory.getAltitude(wpId + 1u) == MovingTarget::stAltitude[0u])
  	{
  		return coordsLand(
-						globe, region,
+						globe,
+						region,
 						trajectory.getZone(wpId));
  	}
 

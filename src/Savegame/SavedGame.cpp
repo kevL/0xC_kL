@@ -533,7 +533,9 @@ void SavedGame::load(
 		type = (*i)["type"].as<std::string>();
 		if (_rules->getUfo(type) != nullptr)
 		{
-			Ufo* const ufo (new Ufo(_rules->getUfo(type)));
+			Ufo* const ufo (new Ufo(
+								_rules->getUfo(type),
+								this));
 			ufo->load(*i, *_rules, *this);
 			_ufos.push_back(ufo);
 		}

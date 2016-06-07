@@ -186,7 +186,8 @@ void Base::load(
 		{
 			Craft* const craft (new Craft(
 									_rules->getCraft(type),
-									this));
+									this,
+									gameSave));
 			craft->load(*i, _rules, gameSave);
 			_crafts.push_back(craft);
 		}

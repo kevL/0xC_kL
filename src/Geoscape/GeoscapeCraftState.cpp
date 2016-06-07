@@ -167,7 +167,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 					(ActionHandler)& GeoscapeCraftState::btnPatrolClick,
 					SDLK_p);
 
-	_btnCancel->onMouseClick((ActionHandler)& GeoscapeCraftState::btnCancelClick); // NOTE: This doubles as the Redirect btn.
+	_btnCancel->onMouseClick((ActionHandler)& GeoscapeCraftState::btnCancelOrRedirectClick);
 	if (_waypoint != nullptr) // can Redirect
 	{
 		_txtRedirect->setText(tr("STR_REDIRECT_CRAFT"));
@@ -180,7 +180,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 
 		_btnCancel->setText(tr("STR_GO_TO_LAST_KNOWN_UFO_POSITION"));
 		_btnCancel->onKeyboardPress(
-						(ActionHandler)& GeoscapeCraftState::btnCancelClick,
+						(ActionHandler)& GeoscapeCraftState::btnCancelOrRedirectClick,
 						SDLK_r);
 	}
 	else
@@ -189,14 +189,14 @@ GeoscapeCraftState::GeoscapeCraftState(
 
 		_btnCancel->setText(tr("STR_CANCEL_UC"));
 		_btnCancel->onKeyboardPress(
-						(ActionHandler)& GeoscapeCraftState::btnCancelClick,
+						(ActionHandler)& GeoscapeCraftState::btnCancelOrRedirectClick,
 						Options::keyCancel);
 	}
 	_btnCancel->onKeyboardPress( // if (can Redirect) redirect; else Cancel.
-					(ActionHandler)& GeoscapeCraftState::btnCancelClick,
+					(ActionHandler)& GeoscapeCraftState::btnCancelOrRedirectClick,
 					Options::keyOk);
 	_btnCancel->onKeyboardPress(
-					(ActionHandler)& GeoscapeCraftState::btnCancelClick,
+					(ActionHandler)& GeoscapeCraftState::btnCancelOrRedirectClick,
 					Options::keyOkKeypad);
 
 	_txtTitle->setText(_craft->getName(_game->getLanguage()));
@@ -473,7 +473,7 @@ void GeoscapeCraftState::btnPatrolClick(Action*)
  * @note The button doubles as the redirect-craft btn.
  * @param action - pointer to an Action
  */
-void GeoscapeCraftState::btnCancelClick(Action*)
+void GeoscapeCraftState::btnCancelOrRedirectClick(Action*)
 {
 	if (_waypoint != nullptr) // Go to the last-known UFO position
 	{

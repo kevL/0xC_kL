@@ -30,6 +30,8 @@ namespace OpenXcom
 
 typedef std::pair<std::string, int> CraftId;
 
+class SavedGame;
+
 
 /**
  * Base class for moving targets on the globe with a certain speed and destination.
@@ -48,6 +50,7 @@ protected:
 		_speedLon,
 		_speedRadian;
 
+	SavedGame* _gameSave;
 	Target* _dest;
 
 	/// Checks the MovingTarget's current destination for safe deletion.
@@ -59,7 +62,7 @@ protected:
 	void calculateMeetPoint();
 
 	/// Creates a MovingTarget.
-	MovingTarget();
+	explicit MovingTarget(SavedGame* const gameSave);
 
 
 	public:

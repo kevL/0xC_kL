@@ -38,7 +38,7 @@ class Soldier;
 
 
 /**
- * Represents an item transfer.
+ * Represents a Transfer whether purchased or from Base to Base.
  * @note Items are placed in transit whenever they are purchased or transfered
  * between bases.
  */
@@ -60,50 +60,50 @@ private:
 
 
 	public:
-		/// Creates a new transfer.
+		/// Creates a Transfer.
 		explicit Transfer(int hours);
-		/// Cleans up the transfer.
+		/// Cleans up the Transfer.
 		~Transfer();
 
-		/// Loads the transfer from YAML.
+		/// Loads the Transfer from YAML.
 		bool load(
 				const YAML::Node& node,
 				Base* const base,
 				const Ruleset* const rule);
-		/// Saves the transfer to YAML.
+		/// Saves the Transfer to YAML.
 		YAML::Node save() const;
 
-		/// Gets the soldier being transfered.
+		/// Gets the Soldier of the Transfer.
 		Soldier* getSoldier() const;
-		/// Sets the soldier of the transfer.
+		/// Sets the Soldier of the Transfer.
 		void setSoldier(Soldier* const soldier);
-		/// Sets the scientists of the transfer.
+		/// Sets the scientists of the Transfer.
 		void setScientists(int scientists);
-		/// Sets the engineers of the transfer.
+		/// Sets the engineers of the Transfer.
 		void setEngineers(int engineers);
-		/// Sets the craft of the transfer.
+		/// Sets the Craft of the Transfer.
 		void setCraft(Craft* const craft);
-		/// Gets the craft of the transfer.
+		/// Gets the Craft of the Transfer.
 		Craft* getCraft() const;
 
-		/// Gets the item-types of the transfer.
+		/// Gets the item-types of the Transfer.
 		std::string getTransferItems() const;
-		/// Sets the item-types of the transfer.
+		/// Sets the item-types of the Transfer.
 		void setTransferItems(
 				const std::string& id,
 				int qty = 1);
 
-		/// Gets the name of the transfer.
+		/// Gets the name of the Transfer.
 		std::wstring getName(const Language* const lang) const;
 
-		/// Gets the hours remaining of the transfer.
+		/// Gets the hours remaining of the Transfer.
 		int getHours() const;
-		/// Gets the quantity of the transfer.
+		/// Gets the quantity of the Transfer.
 		int getQuantity() const;
-		/// Gets the type of the transfer.
+		/// Gets the type of the Transfer.
 		PurchaseSellTransferType getTransferType() const;
 
-		/// Advances the transfer.
+		/// Advances the Transfer.
 		void advance(Base* const base);
 };
 

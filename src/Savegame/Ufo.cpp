@@ -46,11 +46,14 @@ namespace OpenXcom
 
 /**
  * Creates the Ufo from a specified RuleUfo.
- * @param ufoRule - pointer to RuleUfo
+ * @param ufoRule	- pointer to RuleUfo
+ * @param gameSave	- pointer to the SavedGame
  */
-Ufo::Ufo(const RuleUfo* const ufoRule)
+Ufo::Ufo(
+		const RuleUfo* const ufoRule,
+		SavedGame* const gameSave)
 	:
-		MovingTarget(),
+		MovingTarget(gameSave),
 		_ufoRule(ufoRule),
 		_id(0),
 		_idCrashed(0),

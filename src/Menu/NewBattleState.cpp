@@ -335,6 +335,7 @@ void NewBattleState::load(const std::string& file)
 					_craft = new Craft(
 									_rules->getCraft(craftType),
 									base,
+									gameSave,
 									gameSave->getCanonicalId(craftType));
 					base->getCrafts()->push_back(_craft);
 				}
@@ -439,7 +440,9 @@ void NewBattleState::initPlay()
 
 	_craft = new Craft(
 					_rules->getCraft(_crafts[_cbxCraft->getSelected()]),
-					base, 1);
+					base,
+					gameSave,
+					1);
 	base->getCrafts()->push_back(_craft);
 
 	// Generate soldiers
@@ -609,7 +612,9 @@ void NewBattleState::btnOkClick(Action*)
 	{
 		base = nullptr;
 
-		Ufo* const ufo (new Ufo(_rules->getUfo(_missionTypes[_cbxMission->getSelected()])));
+		Ufo* const ufo (new Ufo(
+							_rules->getUfo(_missionTypes[_cbxMission->getSelected()]),
+							_game->getSavedGame()));
 		ufo->setQuickBattle();
 		ufo->setId(1);
 		_craft->setDestination(ufo);

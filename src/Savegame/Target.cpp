@@ -38,7 +38,7 @@ Target::Target()
 {}
 
 /**
- * Make sure no Craft are chasing this Target.
+ * Make sure no Craft are left targeting this Target.
  */
 Target::~Target() // virtual.
 {

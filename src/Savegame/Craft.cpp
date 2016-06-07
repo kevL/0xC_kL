@@ -57,14 +57,16 @@ namespace OpenXcom
  * available.
  * @param crRule	- pointer to RuleCraft
  * @param base		- pointer to the Base of origin
+ * @param gameSave	- pointer to the SavedGame
  * @param id		- ID to assign to the Craft; 0 for no ID (default 0)
  */
 Craft::Craft(
 		RuleCraft* const crRule,
 		Base* const base,
+		SavedGame* const gameSave,
 		int id)
 	:
-		MovingTarget(),
+		MovingTarget(gameSave),
 		_crRule(crRule),
 		_base(base),
 		_id(id),

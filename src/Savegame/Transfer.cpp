@@ -23,6 +23,7 @@
 #include "ItemContainer.h"
 #include "Soldier.h"
 
+#include "../Engine/Game.h"
 #include "../Engine/Language.h"
 #include "../Engine/Logger.h"
 
@@ -64,7 +65,7 @@ Transfer::~Transfer()
  * @param node	- reference a YAML node
  * @param base	- pointer to a destination Base
  * @param rules	- pointer to the game's Ruleset
- * @return, true if the transfer content is valid
+ * @return, true if the content is valid
  */
 bool Transfer::load(
 		const YAML::Node& node,
@@ -98,7 +99,8 @@ bool Transfer::load(
 		{
 			_craft = new Craft(
 							rules->getCraft(craft["type"].as<std::string>()),
-							base);
+							base,
+							rules->getGame()->getSavedGame());
 			_craft->load(craft, rules, nullptr);
 		}
 		else

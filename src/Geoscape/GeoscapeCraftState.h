@@ -104,7 +104,7 @@ private:
 		/// Handler for clicking the Patrol button.
 		void btnPatrolClick(Action* action);
 		/// Handler for clicking the Cancel button.
-		void btnCancelClick(Action* action);
+		void btnCancelOrRedirectClick(Action* action);
 };
 
 }

@@ -21,6 +21,7 @@
 
 #include "../fmath.h"
 
+#include "SavedGame.h"
 #include "SerializationHelper.h"
 #include "Waypoint.h"
 
@@ -43,7 +44,7 @@ const char* MovingTarget::stAltitude[5u] // static.
 /**
  * Initializes the MovingTarget with blank coordinates.
  */
-MovingTarget::MovingTarget()
+MovingTarget::MovingTarget(SavedGame* const gameSave)
 	:
 		Target(),
 		_dest(nullptr),
@@ -52,7 +53,8 @@ MovingTarget::MovingTarget()
 		_speedRadian(0.),
 		_speed(0),
 		_meetPointLon(0.),
-		_meetPointLat(0.)
+		_meetPointLat(0.),
+		_gameSave(gameSave)
 {}
 
 /**
@@ -162,7 +164,21 @@ void MovingTarget::checkOtherTargeters() // protected.
 		{
 			const Waypoint* const wpPre (dynamic_cast<Waypoint*>(_dest));
 			if (wpPre != nullptr)
+			{
 				delete wpPre;
+
+				for (std::vector<Waypoint*>::const_iterator
+						i = _gameSave->getWaypoints()->begin();
+						i != _gameSave->getWaypoints()->end();
+						++i)
+				{
+					if (*i == wpPre)
+					{
+						_gameSave->getWaypoints()->erase(i);
+						break;
+					}
+				}
+			}
 		}
 	}
 }

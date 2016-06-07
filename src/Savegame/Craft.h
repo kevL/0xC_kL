@@ -98,6 +98,7 @@ private:
 		Craft(
 				RuleCraft* const crRule,
 				Base* const base,
+				SavedGame* const gameSave,
 				int id = 0);
 		/// Cleans up the Craft.
 		~Craft() final;
