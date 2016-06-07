@@ -83,20 +83,6 @@ YAML::Node Target::save() const // virtual.
 }
 
 /**
- * Saves this Target's unique identifiers to a YAML file.
- * @return, YAML node
- */
-YAML::Node Target::saveId() const // virtual.
-{
-	YAML::Node node;
-
-	node["lon"] = serializeDouble(_lon);
-	node["lat"] = serializeDouble(_lat);
-
-	return node;
-}
-
-/**
  * Returns the longitude coordinate of this Target.
  * @return, longitude in radians
  */

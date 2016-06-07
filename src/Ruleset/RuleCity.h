@@ -33,7 +33,7 @@ class Language;
 
 /**
  * Represents a city of the world.
- * @note Aliens target cities for certain missions.
+ * @note Aliens target cities for terror-missions.
  */
 class RuleCity final
 	:
@@ -49,40 +49,37 @@ private:
 
 
 	public:
-		/// Creates a new City.
+		/// Creates a rule for a City.
 		RuleCity();
-/*		/// Creates a new City at coordinates.
-		RuleCity(
-				const std::string& name,
-				double lon,
-				double lat); */
-		/// Cleans up the City.
+		/// Cleans up the rule.
 		~RuleCity();
 
-		/// Loads the City from YAML.
+		/// Loads the rule from YAML.
 		void load(const YAML::Node& node) override;
 
-		/// Gets the city's name.
+		/// Gets a City's name.
 		std::wstring getName(const Language* const lang) const override;
-		/// Gets the city's name as a raw string.
+		/// Gets a City's name as a raw string.
 		const std::string& getName() const;
 
-		/// Gets the City's latitude.
-//		double getLatitude() const;
-		/// Gets the City's longitude.
-//		double getLongitude() const;
-
-		/// Gets the city's marker.
+		/// Gets a City's marker.
 		int getMarker() const override;
 
-		/// Gets the level of zoom that shows City's name.
+		/// Gets the level of zoom that shows a City's name.
 		size_t getZoomLevel() const;
 
-		/// Gets if City's label is above or below its marker.
+		/// Gets if a City's label is above or below its marker.
 		bool getLabelTop() const;
 
-		/// Gets the texture of this City for the battlescape.
+		/// Gets the texture of a City for tactical.
 		int getTextureId() const;
+
+		/// Blanked function to stop C++ complaints.
+		YAML::Node saveId() const override
+		{
+			YAML::Node node;
+			return node;
+		}
 };
 
 }

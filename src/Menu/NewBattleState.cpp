@@ -610,6 +610,7 @@ void NewBattleState::btnOkClick(Action*)
 		base = nullptr;
 
 		Ufo* const ufo (new Ufo(_rules->getUfo(_missionTypes[_cbxMission->getSelected()])));
+		ufo->setQuickBattle();
 		ufo->setId(1);
 		_craft->setDestination(ufo);
 		bGen.setUfo(ufo);

@@ -90,7 +90,7 @@ private:
 
 
 	public:
-		/// Creates the NewBattle state.
+		/// Creates a NewBattle state.
 		NewBattleState();
 		/// Cleans up the NewBattle state.
 		~NewBattleState();

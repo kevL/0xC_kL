@@ -313,9 +313,9 @@ UnitStats* Soldier::getCurrentStats()
 }
 
 /**
- * Gets this Soldier's unique ID.
+ * Gets this Soldier's unique-ID.
  * @note Each soldier is uniquely identified by its ID.
- * @return, unique ID
+ * @return, unique-ID
  */
 int Soldier::getId() const
 {

@@ -339,13 +339,13 @@ CraftId Craft::loadId(const YAML::Node& node) // static.
 }
 
 /**
- * Saves this Craft's unique identifiers to a YAML file.
+ * Saves this Craft's unique-ID to a YAML file.
  * @return, YAML node
  */
 YAML::Node Craft::saveId() const
 {
-	YAML::Node node; //(MovingTarget::saveId());	// don't need to save Craft's lon/lat
-													// to simply load Soldiers ...
+	YAML::Node node;
+
 	node["type"] = _crRule->getType();
 	node["id"]   = _id;
 
@@ -366,7 +366,7 @@ CraftId Craft::getUniqueId() const
 /**
  * Gets this Craft's ID.
  * @note Each craft can be identified by its type and ID.
- * @return, unique ID
+ * @return, unique-ID
  */
 int Craft::getId() const
 {

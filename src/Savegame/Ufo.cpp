@@ -61,6 +61,7 @@ Ufo::Ufo(const RuleUfo* const ufoRule)
 		_status(FLYING),
 		_secondsLeft(0),
 		_tactical(false),
+		_quickBattle(false), // TODO: Might be able to use id=-1 for this.
 		_mission(nullptr),
 		_trajectory(nullptr),
 		_trajectoryWp(0u),
@@ -136,7 +137,7 @@ private:
 
 
 /**
- * Loads the UFO from a YAML file.
+ * Loads this UFO from a YAML file.
  * @param node	- reference a YAML node
  * @param rules	- reference the Ruleset (used to access trajectory data)
  * @param game	- reference the SavedGame (used to get the UFO's mission)
@@ -159,6 +160,7 @@ void Ufo::load(
 	_secondsLeft	= node["secondsLeft"]	.as<int>(_secondsLeft);
 	_tactical		= node["tactical"]		.as<bool>(_tactical);
 	_terrain		= node["terrain"]		.as<std::string>(_terrain);
+	_quickBattle	= node["quickBattle"]	.as<bool>(_quickBattle);
 
 	double
 		lon,lat;
@@ -216,7 +218,7 @@ void Ufo::load(
 		}
 		_mission = *mission;
 
-		const std::string trjType (node["trajectory"].as<std::string>()); // TODO: Don't save trajectory-info if UFO has been shot down.
+		const std::string trjType (node["trajectory"].as<std::string>());
 		_trajectory = rules.getUfoTrajectory(trjType);
 		_trajectoryWp = node["trajectoryWp"].as<size_t>(_trajectoryWp);
 	}
@@ -229,11 +231,10 @@ void Ufo::load(
 }
 
 /**
- * Saves the UFO to a YAML file.
- * @param isQuickBattle - true if saving a quick-battle
+ * Saves this UFO to a YAML file.
  * @return, YAML node
  */
-YAML::Node Ufo::save(bool isQuickBattle) const
+YAML::Node Ufo::save() const
 {
 	YAML::Node node (MovingTarget::save());
 
@@ -255,12 +256,14 @@ YAML::Node Ufo::save(bool isQuickBattle) const
 	if (_secondsLeft != 0)			node["secondsLeft"]		= _secondsLeft;
 	if (_tactical != false)			node["tactical"]		= _tactical;
 
-	if (isQuickBattle == false)
+	if (_quickBattle == false) // TODO: Do not save trajectory-info if UFO was shot down.
 	{
 		node["mission"]			= _mission->getId();
 		node["trajectory"]		= _trajectory->getId();
 		node["trajectoryWp"]	= _trajectoryWp;
 	}
+	else
+		node["quickBattle"]		= _quickBattle;
 
 	switch (_status)
 	{
@@ -274,12 +277,12 @@ YAML::Node Ufo::save(bool isQuickBattle) const
 }
 
 /**
- * Saves the UFO's unique identifiers to a YAML file.
+ * Saves this UFO's unique-ID to a YAML file.
  * @return, YAML node
  */
 YAML::Node Ufo::saveId() const
 {
-	YAML::Node node (MovingTarget::saveId());
+	YAML::Node node (Target::save());
 
 	node["type"] = "STR_UFO";
 	node["id"]   = _id;
@@ -288,7 +291,7 @@ YAML::Node Ufo::saveId() const
 }
 
 /**
- * Gets the ruleset for the UFO's type.
+ * Gets the ruleset for this UFO's type.
  * @return, pointer to RuleUfo
  */
 const RuleUfo* Ufo::getRules() const
@@ -297,7 +300,7 @@ const RuleUfo* Ufo::getRules() const
 }
 
 /**
- * Changes the rule for the UFO's type.
+ * Changes the rule for this UFO's type.
  * @warning ONLY FOR NEW BATTLE USE!
  * @param ufoRule - pointer to RuleUfo
  */
@@ -307,7 +310,7 @@ void Ufo::changeRules(const RuleUfo* const ufoRule)
 }
 
 /**
- * Sets the UFO's unique-ID.
+ * Sets this UFO's unique-ID.
  * @param id - unique-ID
  */
 void Ufo::setId(int id)
@@ -316,9 +319,9 @@ void Ufo::setId(int id)
 }
 
 /**
- * Gets the UFO's unique-ID.
+ * Gets this UFO's unique-ID.
  * @note If it's 0 this UFO has never been detected.
- * @return, unique ID
+ * @return, unique-ID
  */
 int Ufo::getId() const
 {
@@ -326,7 +329,7 @@ int Ufo::getId() const
 }
 
 /**
- * Gets the UFO's unique identifier.
+ * Gets this UFO's unique identifier.
  * @param lang - pointer to Language to get strings from
  * @return, label
  */
@@ -348,7 +351,7 @@ std::wstring Ufo::getName(const Language* const lang) const
 }
 
 /**
- * Gets the globe-marker for the UFO.
+ * Gets the globe-marker for this UFO.
  * @return, marker sprite #2,3,4 (-1 if not detected)
  */
 int Ufo::getMarker() const
@@ -439,7 +442,7 @@ bool Ufo::getHyperDetected() const
 }
 
 /**
- * Sets the amount of remaining seconds the UFO has left on the ground.
+ * Sets the amount of remaining seconds this UFO has left on the ground.
  * @note After this many seconds this Ufo will take off if landed or disappear
  * if crashed.
  * @param sec - time in seconds
@@ -450,7 +453,7 @@ void Ufo::setSecondsLeft(int sec)
 }
 
 /**
- * Gets the amount of remaining seconds the UFO has left on the ground.
+ * Gets the amount of remaining seconds this UFO has left on the ground.
  * @note After this many seconds this Ufo will take off if landed or disappear
  * if crashed.
  * @return, amount of seconds
@@ -461,7 +464,7 @@ int Ufo::getSecondsLeft() const
 }
 
 /**
- * Sets the current altitude and status of the UFO.
+ * Sets the current altitude and status of this UFO.
  * @param altitude - altitude
  */
 void Ufo::setAltitude(const std::string& altitude)
@@ -475,7 +478,7 @@ void Ufo::setAltitude(const std::string& altitude)
 }
 
 /**
- * Gets the current altitude of the UFO.
+ * Gets the current altitude of this UFO.
  * @return, altitude
  */
 std::string Ufo::getAltitude() const
@@ -484,7 +487,7 @@ std::string Ufo::getAltitude() const
 }
 
 /**
- * Gets the current direction the UFO is headed.
+ * Gets the current direction this UFO is headed.
  * @return, direction
  */
 std::string Ufo::getDirection() const
@@ -612,7 +615,15 @@ bool Ufo::getTactical() const
 }
 
 /**
- * Gets the alien race currently residing in the UFO.
+ * Sets the UFO as the UFO in a quick-battle.
+ */
+void Ufo::setQuickBattle()
+{
+	_quickBattle = true;
+}
+
+/**
+ * Gets the alien race currently residing in this UFO.
  * @return, address of aLien race
  */
 const std::string& Ufo::getAlienRace() const

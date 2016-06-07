@@ -67,12 +67,12 @@ YAML::Node Waypoint::save() const
 }
 
 /**
- * Saves this Waypoint's unique identifiers to a YAML file.
+ * Saves this Waypoint's unique-ID to a YAML file.
  * @return, YAML node
  */
 YAML::Node Waypoint::saveId() const
 {
-	YAML::Node node (Target::saveId());
+	YAML::Node node (Target::save());
 
 	node["type"] = "STR_WAYPOINT";
 	node["id"]   = _id;
@@ -82,7 +82,7 @@ YAML::Node Waypoint::saveId() const
 
 /**
  * Returns this Waypoint's ID.
- * @return, unique ID
+ * @return, unique-ID
  */
 int Waypoint::getId() const
 {
@@ -90,8 +90,8 @@ int Waypoint::getId() const
 }
 
 /**
- * Changes this Waypoint's unique ID.
- * @param id - unique ID
+ * Changes this Waypoint's unique-ID.
+ * @param id - unique-ID
  */
 void Waypoint::setId(int id)
 {

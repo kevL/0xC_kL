@@ -30,41 +30,17 @@ namespace OpenXcom
 {
 
 /**
- * Instantiates a City.
+ * Instantiates a rule for a City.
  * @note A City is a 1-pixel MissionArea within a MissionZone as defined in
  * RuleRegion.
  */
 RuleCity::RuleCity()
 	:
 		Target(),
-		_zoomLevel(4),
-		_labelTop(false),
-		_texture(-1)
-{
-//	_lon = _lat = 0.;
-}
-
-/*
- * Alternate cTor for Cities.
- * @note Used by TFTD-style rulesets.
- * @param name	- name of the city
- * @param lon	- longitude of the city
- * @param lat	- latitude of the city
- *
-RuleCity::RuleCity(
-		const std::string& name,
-		double lon,
-		double lat)
-	:
-		Target(),
-		_name(name),
-		_zoomLevel(4),
-		_labelTop(false),
-		_texture(-1)
-{
-	_lon = lon;
-	_lat = lat;
-} */
+		_texture(-1),
+		_zoomLevel(4u),
+		_labelTop(false)
+{}
 
 /**
  * dTor.
@@ -73,26 +49,26 @@ RuleCity::~RuleCity()
 {}
 
 /**
- * Loads the region type from a YAML file.
+ * Loads the rule from a YAML file.
  * @param node - reference a YAML node
  */
 void RuleCity::load(const YAML::Node& node)
 {
 	_lon		= node["lon"]		.as<double>(_lon) * M_PI / 180.; // radians
 	_lat		= node["lat"]		.as<double>(_lat) * M_PI / 180.;
+	_texture	= node["texture"]	.as<int>(_texture);
 	_name		= node["name"]		.as<std::string>(_name);
 	_zoomLevel	= node["zoomLevel"]	.as<size_t>(_zoomLevel);
 	_labelTop	= node["labelTop"]	.as<bool>(_labelTop);
-	_texture	= node["texture"]	.as<int>(_texture);
 
 	// iDea: _hidden, marker -1 etc.
 	// add _zoneType (to specify the missionZone category 0..5+ that City is part of)
 }
 
 /**
- * Returns this City's name as seen on the Globe.
+ * Returns this RuleCity's name as seen on the Globe.
  * @param lang - pointer to Language to get strings from
- * @return, the city's IG name
+ * @return, a city's IG name
  */
 std::wstring RuleCity::getName(const Language* const lang) const
 {
@@ -100,35 +76,17 @@ std::wstring RuleCity::getName(const Language* const lang) const
 }
 
 /**
- * Returns this City's name as a raw string.
- * @return, the city's ID string
+ * Returns this RuleCity's name as a raw string.
+ * @return, a city's ID string
  */
 const std::string& RuleCity::getName() const
 {
 	return _name;
 }
 
-/*
- * Returns the latitude coordinate of this City.
- * @return, the city's latitude in radians
- *
-double RuleCity::getLatitude() const
-{
-	return _lat;
-} */
-
-/*
- * Returns the longitude coordinate of this City.
- * @return, the city's longitude in radians
- *
-double RuleCity::getLongitude() const
-{
-	return _lon;
-} */
-
 /**
- * Returns the globe marker for this City.
- * @return, marker sprite #8
+ * Returns the globe-marker for this RuleCity.
+ * @return, marker-sprite #8
  */
 int RuleCity::getMarker() const
 {
@@ -136,8 +94,8 @@ int RuleCity::getMarker() const
 }
 
 /**
- * Returns the the minimal zoom level that is required to show name of this City.
- * @return, required zoom level
+ * Returns the minimal zoom-level that is required to show name of this RuleCity.
+ * @return, minimum zoom-level
  */
 size_t RuleCity::getZoomLevel() const
 {
@@ -145,7 +103,7 @@ size_t RuleCity::getZoomLevel() const
 }
 
 /**
- * Gets if this City's label is to be positioned above or below its marker.
+ * Gets if this RuleCity's label is to be positioned above or below its marker.
  * @return, true if label goes on top
  */
 bool RuleCity::getLabelTop() const
@@ -154,8 +112,8 @@ bool RuleCity::getLabelTop() const
 }
 
 /**
- * Gets the texture of this City for the battlescape.
- * @return, texture ID
+ * Gets the texture of this RuleCity for tactical.
+ * @return, texture-ID
  */
 int RuleCity::getTextureId() const
 {

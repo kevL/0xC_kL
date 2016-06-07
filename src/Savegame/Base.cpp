@@ -368,12 +368,12 @@ YAML::Node Base::save() const
 }
 
 /**
- * Saves this Base's unique identifiers to a YAML file.
+ * Saves this Base's unique-ID to a YAML file.
  * @return, YAML node
  */
 YAML::Node Base::saveId() const
 {
-	YAML::Node node (Target::saveId());
+	YAML::Node node (Target::save());
 
 	node["type"] = "STR_BASE";
 	node["id"]   = 0;

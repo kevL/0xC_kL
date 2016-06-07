@@ -756,7 +756,7 @@ void SavedGame::save(const std::string& file) const
 			i = _ufos.begin();
 			i != _ufos.end();
 			++i)
-		node["ufos"].push_back((*i)->save(getMonthsPassed() == -1));
+		node["ufos"].push_back((*i)->save());
 
 	for (std::vector<ResearchGeneral*>::const_iterator
 			i = _research.begin();

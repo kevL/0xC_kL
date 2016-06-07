@@ -115,9 +115,9 @@ private:
 		const RuleAlienMission& getRules() const
 		{ return _missionRule; }
 
-		/// Sets the unique ID for the AlienMission.
+		/// Sets the unique-ID for the AlienMission.
 		void setId(int id);
-		/// Gets the unique ID for the AlienMission.
+		/// Gets the unique-ID for the AlienMission.
 		int getId() const;
 
 		/// Gets the AlienMission's Region.

@@ -58,7 +58,7 @@ protected:
 		/// Saves the Target to YAML.
 		virtual YAML::Node save() const;
 		/// Saves the Target's unique-ID to YAML.
-		virtual YAML::Node saveId() const;
+		virtual YAML::Node saveId() const = 0;
 
 		/// Gets the Target's longitude.
 		double getLongitude() const;

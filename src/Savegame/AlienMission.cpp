@@ -181,7 +181,7 @@ void AlienMission::setId(int id)
 
 /**
  * Gets the unique-ID of this AlienMission.
- * @return, the unique ID assigned to this mission
+ * @return, the unique-ID assigned to this mission
  */
 int AlienMission::getId() const
 {

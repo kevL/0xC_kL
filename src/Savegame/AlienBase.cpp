@@ -78,12 +78,12 @@ YAML::Node AlienBase::save() const
 }
 
 /**
- * Saves this AlienBase's unique identifiers to a YAML file.
+ * Saves this AlienBase's unique-ID to a YAML file.
  * @return, YAML node
  */
 YAML::Node AlienBase::saveId() const
 {
-	YAML::Node node (Target::saveId());
+	YAML::Node node (Target::save());
 
 	node["type"] = "STR_ALIEN_BASE";
 	node["id"]   = _id;
@@ -92,8 +92,8 @@ YAML::Node AlienBase::saveId() const
 }
 
 /**
- * Returns this AlienBase's unique ID.
- * @return, unique ID
+ * Returns this AlienBase's unique-ID.
+ * @return, unique-ID
  */
 int AlienBase::getId() const
 {
@@ -101,8 +101,8 @@ int AlienBase::getId() const
 }
 
 /**
- * Changes this AlienBase's unique ID.
- * @param id - unique ID
+ * Changes this AlienBase's unique-ID.
+ * @param id - unique-ID
  */
 void AlienBase::setId(int id)
 {

@@ -61,6 +61,7 @@ private:
 		_detected,
 		_hyperDetected,
 		_processedIntercept,
+		_quickBattle,
 		_tactical;
 	int
 		_damage,
@@ -104,8 +105,7 @@ private:
 				const Ruleset& rules,
 				SavedGame& game);
 		/// Saves the Ufo to YAML.
-		using MovingTarget::save;
-		YAML::Node save(bool isQuickBattle) const;
+		YAML::Node save() const override;
 		/// Saves the Ufo's unique-ID to YAML.
 		YAML::Node saveId() const override;
 
@@ -171,6 +171,9 @@ private:
 		void setTactical(bool tactical = true);
 		/// Gets if the Ufo is in battlescape.
 		bool getTactical() const;
+
+		/// Sets the UFO as the UFO in a quick-battle.
+		void setQuickBattle();
 
 		/// Gets the Ufo's alien-race.
 		const std::string& getAlienRace() const;

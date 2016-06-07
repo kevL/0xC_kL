@@ -220,7 +220,7 @@ BattleUnit::BattleUnit(
  * Creates the BattleUnit from a (non-Soldier) Unit-rule object.
  * @param unitRule		- pointer to RuleUnit
  * @param faction		- faction the unit belongs to
- * @param id			- the unit's unique ID
+ * @param id			- the unit's unique-ID
  * @param armor			- pointer to unit's armor
  * @param diff			- the current game's difficulty setting (for aLien stat adjustment) (default DIFF_BEGINNER)
  * @param month			- the current month (default 0)
@@ -749,7 +749,7 @@ void BattleUnit::setRecolor(
 
 /**
  * Gets this BattleUnit's unique-ID.
- * @return, the unique ID
+ * @return, the unique-ID
  */
 int BattleUnit::getId() const
 {

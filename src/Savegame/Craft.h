@@ -114,6 +114,7 @@ private:
 		YAML::Node saveId() const override;
 		/// Loads the Craft's ID from YAML.
 		static CraftId loadId(const YAML::Node& node);
+
 		/// Gets the Craft's unique-ID.
 		CraftId getUniqueId() const;
 		/// Gets the Craft's ID.

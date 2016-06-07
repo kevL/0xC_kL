@@ -93,12 +93,12 @@ YAML::Node TerrorSite::save() const
 }
 
 /**
- * Saves this TerrorSite's unique identifiers to a YAML file.
+ * Saves this TerrorSite's unique-ID to a YAML file.
  * @return, YAML node
  */
 YAML::Node TerrorSite::saveId() const
 {
-	YAML::Node node (Target::saveId());
+	YAML::Node node (Target::save());
 
 	node["type"] = _ruleDeploy->getMarkerType();
 	node["id"]   = _id;
