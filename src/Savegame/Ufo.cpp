@@ -748,7 +748,7 @@ void Ufo::setUfoMissionInfo(
 /**
  * Gets the mission-type of this Ufo.
  * @note Used only for hyperwave decoder info and has been superceded elsewhere
- * by getAlienMission()->getRules().getObjective().
+ * by getAlienMission()->getRules().getObjectiveType().
  * @return, reference to the type
  */
 const std::string& Ufo::getUfoMissionType() const

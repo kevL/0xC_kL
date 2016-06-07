@@ -2077,7 +2077,7 @@ private:
 		bool operator() (const AlienMission* const mission) const
 		{
 			return mission->getRegion() == _region
-				&& mission->getRules().getObjective() == _objective;
+				&& mission->getRules().getObjectiveType() == _objective;
 		}
 };
 

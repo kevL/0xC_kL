@@ -231,7 +231,7 @@ bool AlienMission::isOver() const
 {
 	if (_liveUfos == 0
 		&& _waveCount == _missionRule.getWaveTotal()
-		&& _missionRule.getObjective() != alm_INFILT) // Infiltrations continue for ever. Almost.
+		&& _missionRule.getObjectiveType() != alm_INFILT) // Infiltrations continue for ever. Almost.
 // ->		|| RNG::percent(static_cast<int>(_gameSave.getDifficulty()) * 20) == false))
 	{
 		return true;
@@ -289,7 +289,7 @@ void AlienMission::think(
 			else if ((rules.getUfo(wave.ufoType) == nullptr	// a terror-site to spawn directly
 					&& rules.getDeployment(wave.ufoType) != nullptr
 					&& rules.getDeployment(wave.ufoType)->getMarkerType().empty() == false)
-				|| (_missionRule.getObjective() == alm_SITE	// or spawn a site at random according to the terrain
+				|| (_missionRule.getObjectiveType() == alm_SITE	// or spawn a site at random according to the terrain
 					&& wave.isObjective == true))
 			{
 				size_t zone;
@@ -322,7 +322,7 @@ void AlienMission::think(
 				++_waveCount;
 			}
 
-			switch (_missionRule.getObjective())
+			switch (_missionRule.getObjectiveType())
 			{
 				case alm_INFILT: // Infiltrations loop for ever.
 					_waveCount = 0u;
@@ -342,7 +342,7 @@ void AlienMission::think(
 /*	// don't do these onSpawn; do them on ufoLifting() below_
 	if (_waveCount == _missionRule.getWaveTotal())
 	{
-		const MissionObjective object = _missionRule.getObjective();
+		const MissionObjective object = _missionRule.getObjectiveType();
 
 		if (object == alm_BASE
 			|| object == alm_INFILT)
@@ -437,8 +437,8 @@ private:
  * different code paths and the function is MUCH easier to read written this way.
  * @param rules			- reference to the ruleset
  * @param globe			- reference to the globe for land checks
- * @param wave			- reference to the wave for the desired UFO
- * @param trajectory	- reference to the rule for the desired trajectory
+ * @param wave			- reference to the wave for the desired UFO type
+ * @param trajectory	- reference to the rule for the desired UFO trajectory
  * @return, pointer to the spawned UFO; if the mission does not spawn a UFO return nullptr
  */
 Ufo* AlienMission::createUfo( // private.
@@ -453,7 +453,7 @@ Ufo* AlienMission::createUfo( // private.
 	Waypoint* wp;
 	Ufo* ufo;
 
-	switch (_missionRule.getObjective())
+	switch (_missionRule.getObjectiveType())
 	{
 		case alm_RETAL:
 		{
@@ -492,7 +492,7 @@ Ufo* AlienMission::createUfo( // private.
 									&trjBattleship);
 
 				if (trajectory.getAltitude(0u) == MovingTarget::stAltitude[0u])
-					coord = getLandPoint(
+					coord = coordsLand(
 									globe,
 									regionRule,
 									trajectory.getZone(0u));
@@ -527,7 +527,7 @@ Ufo* AlienMission::createUfo( // private.
 				const RuleRegion& regionRule (*rules.getRegion(_region));
 
 				if (trajectory.getAltitude(0u) == MovingTarget::stAltitude[0u])
-					coord = getLandPoint(
+					coord = coordsLand(
 									globe,
 									regionRule,
 									trajectory.getZone(0u));
@@ -548,7 +548,7 @@ Ufo* AlienMission::createUfo( // private.
 						coord.second = _aBase->getLatitude();
 					}
 					else
-						coord = getLandPoint( // Other ships can land where they want.
+						coord = coordsLand( // Other ships can land where they want.
 										globe,
 										regionRule,
 										trajectory.getZone(1u));
@@ -573,7 +573,7 @@ Ufo* AlienMission::createUfo( // private.
 							this,
 							&trajectory);
 		const RuleRegion& regionRule (*rules.getRegion(_region));
-		coord = getWaypoint(
+		coord = coordsWaypoint(
 						trajectory,
 						0u,
 						globe,
@@ -597,7 +597,7 @@ Ufo* AlienMission::createUfo( // private.
 		ufo->setLongitude(coord.first);
 		ufo->setLatitude(coord.second);
 
-		coord = getWaypoint(
+		coord = coordsWaypoint(
 						trajectory,
 						1u,
 						globe,
@@ -673,7 +673,7 @@ void AlienMission::ufoReachedWaypoint(
 		ufo.setTrajectoryPoint(wpId_next);
 
 		const RuleRegion& regionRule (*rules.getRegion(_region));
-		const std::pair<double, double> coord (getWaypoint(
+		const std::pair<double, double> coord (coordsWaypoint(
 														trajectory,
 														wpId_next,
 														globe,
@@ -833,7 +833,7 @@ void AlienMission::createAlienBase( // private.
 
 	// Once the last UFO is spawned the aliens build their base. TODO: <- change that!
 	const RuleRegion& regionRule (*rules.getRegion(_region));
-	const std::pair<double, double> pos (getLandPoint(
+	const std::pair<double, double> pos (coordsLand(
 													globe,
 													regionRule,
 													zone));
@@ -896,7 +896,7 @@ void AlienMission::ufoLifting(
 			//Log(LOG_INFO) << ". mission complete, addScore + liftOff";
 			if (ufo.getRules()->getType() == "STR_BATTLESHIP") // or could add and test for (objective=true) on the Battleship-wave rule.
 			{
-				switch (_missionRule.getObjective())
+				switch (_missionRule.getObjectiveType())
 				{
 					case alm_INFILT:
 						if (_success == false)
@@ -955,7 +955,7 @@ void AlienMission::ufoLifting(
 			}
 			else
 			{
-				switch (_missionRule.getObjective())
+				switch (_missionRule.getObjectiveType())
 				{
 					case alm_SCORE:
 					case alm_INFILT:	// handled above. But let's let the littler UFOs rack up pts. also
@@ -1020,22 +1020,22 @@ void AlienMission::ufoShotDown(const Ufo& ufo)
 }
 
 /**
- * Selects a destination based on the criteria of a specified trajectory and a
- * specified waypoint.
+ * Generates destination-coordinates based on a specified trajectory and a
+ * specified waypoint-ID.
  * @param trajectory	- reference to the trajectory in question
- * @param wpId_next		- the next logical waypoint in sequence (0 for newly spawned UFOs)
+ * @param wpId			- the next logical waypoint in sequence (0 for newly spawned UFOs)
  * @param globe			- reference to the Globe
  * @param region		- reference to the ruleset for the region of this mission
  * @return, pair of lon and lat coordinates based on the criteria of the trajectory
  */
-std::pair<double, double> AlienMission::getWaypoint(
+std::pair<double, double> AlienMission::coordsWaypoint( // private.
 		const UfoTrajectory& trajectory,
-		const size_t wpId_next,
+		const size_t wpId,
 		const Globe& globe,
 		const RuleRegion& region)
 {
 	if (_siteZone != std::numeric_limits<size_t>::max()
-		&& trajectory.getZone(wpId_next) == _missionRule.getSpawnZone())
+		&& trajectory.getZone(wpId) == _missionRule.getSpawnZone())
 	{
 		size_t wave;
 		switch (_waveCount)
@@ -1050,39 +1050,42 @@ std::pair<double, double> AlienMission::getWaypoint(
 
 		if (_missionRule.getWave(wave).isObjective == true)
 		{
-			const MissionArea* const area (&region.getMissionZones().at(_missionRule.getObjective()).areas.at(_siteZone));
+			const MissionArea* const area (&region.getMissionZones()
+														.at(_missionRule.getObjectiveType()).areas
+														.at(_siteZone));
 			return std::make_pair(
 								area->lonMin,
 								area->latMin);
 		}
 	}
 
-	if (trajectory.getWaypointTotal() > wpId_next + 1u
-		&& trajectory.getAltitude(wpId_next + 1u) == MovingTarget::stAltitude[0u])
+	if (trajectory.getWaypointTotal() > wpId + 1u
+		&& trajectory.getAltitude(wpId + 1u) == MovingTarget::stAltitude[0u])
  	{
- 		return getLandPoint(
+ 		return coordsLand(
 						globe, region,
-						trajectory.getZone(wpId_next));
+						trajectory.getZone(wpId));
  	}
 
-	return region.getRandomPoint(trajectory.getZone(wpId_next));
+	return region.getRandomPoint(trajectory.getZone(wpId));
 }
 
 /**
- * Gets a random point inside a specified Region zone.
+ * Generates destination-coordinates inside a specified Region and zone.
  * @note The point will be used to land a UFO so it *has to be on land*.
  * @param globe		- reference to the Globe
  * @param region	- reference RuleRegion
  * @param zone		- zone number in the region
  * @return, a pair of doubles (lon & lat)
  */
-std::pair<double, double> AlienMission::getLandPoint(
+std::pair<double, double> AlienMission::coordsLand( // private.
 		const Globe& globe,
 		const RuleRegion& region,
 		const size_t zone)
 {
-	int t (0);
 	std::pair<double, double> coord;
+
+	int t (0);
 	do
 	{
 		++t;
@@ -1116,7 +1119,7 @@ void AlienMission::addScore( // private.
 	int aLienPts (_missionRule.getPoints());
 	if (aLienPts != 0)
 	{
-		switch (_missionRule.getObjective())
+		switch (_missionRule.getObjectiveType())
 		{
 //			case alm_SITE: break;	// use default pt-value
 //			case alm_RETAL: break;	// use default pt-value <- has 0 pts.

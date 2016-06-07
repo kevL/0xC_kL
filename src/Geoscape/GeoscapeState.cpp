@@ -1937,7 +1937,7 @@ bool DetectXCOMBase::operator() (const Ufo* ufo) const
 //		&& ufo->getTrajectoryPoint() > 1u
 		&& ufo->getTrajectory().getZone(ufo->getTrajectoryPoint()) != 5u
 		&& ufo->getTrajectory().getId() != UfoTrajectory::RETALIATION_ASSAULT_RUN
-		&& (ufo->getAlienMission()->getRules().getObjective() == alm_RETAL
+		&& (ufo->getAlienMission()->getRules().getObjectiveType() == alm_RETAL
 			|| Options::aggressiveRetaliation == true))
 	{
 		const double
@@ -1950,7 +1950,7 @@ bool DetectXCOMBase::operator() (const Ufo* ufo) const
 			int pct (static_cast<int>(Round(
 					 static_cast<double>(_base.getDetectionChance(_diff) + ufo->getDetectors()) / inverseFactor)));
 
-			if (ufo->getAlienMission()->getRules().getObjective() == alm_RETAL
+			if (ufo->getAlienMission()->getRules().getObjectiveType() == alm_RETAL
 				&& Options::aggressiveRetaliation == true) // Player wants *aggressive* retaliation search.
 			{
 				pct += 3 + _diff;

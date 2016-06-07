@@ -30,8 +30,8 @@ namespace OpenXcom
 {
 
 /**
- * Creates a blank ruleset for a certain RuleRegion.
- * @param type - reference the string defining the type
+ * Creates a rule for a specified type of RuleRegion.
+ * @param type - reference to a string defining the type
  */
 RuleRegion::RuleRegion(const std::string& type)
 	:
@@ -41,7 +41,7 @@ RuleRegion::RuleRegion(const std::string& type)
 {}
 
 /**
- * Deletes the RuleRegion from memory.
+ * Deletes this RuleRegion from memory.
  */
 RuleRegion::~RuleRegion()
 {
@@ -53,7 +53,7 @@ RuleRegion::~RuleRegion()
 }
 
 /**
- * Loads the RuleRegion type from a YAML file.
+ * Loads this RuleRegion type from a YAML file.
  * @param node - reference a YAML node
  */
 void RuleRegion::load(const YAML::Node& node)
@@ -134,7 +134,7 @@ void RuleRegion::load(const YAML::Node& node)
 /**
  * Gets the language string that names this RuleRegion.
  * @note Each region-type has a unique name.
- * @return, the region-type
+ * @return, a reference to the region-type
  */
 const std::string& RuleRegion::getType() const
 {
@@ -142,7 +142,7 @@ const std::string& RuleRegion::getType() const
 }
 
 /**
- * Gets the cost of building a base inside the RuleRegion.
+ * Gets the cost of building a base inside this RuleRegion.
  * @return, the construction cost
  */
 int RuleRegion::getBaseCost() const
@@ -151,7 +151,7 @@ int RuleRegion::getBaseCost() const
 }
 
 /**
- * Checks if a point is inside the RuleRegion.
+ * Checks if a point is inside this RuleRegion.
  * @param lon - longitude in radians
  * @param lat - latitude in radians
  * @return, true if point is inside the region
@@ -171,25 +171,22 @@ bool RuleRegion::insideRegion(
 
 		if (_lonMin[i] <= _lonMax[i])
 			inLon = (lon >= _lonMin[i]
-				  && lon < _lonMax[i]);
+				  && lon <  _lonMax[i]);
 		else
-			inLon = ((lon >= _lonMin[i]
-						&& lon < M_PI * 2.)
-				  || (lon >= 0.
-						&& lon < _lonMax[i]));
+			inLon = ((lon >= _lonMin[i] && lon <  M_PI * 2.)
+				  || (lon <  _lonMax[i] && lon >= 0.));
 
 		inLat = (lat >= _latMin[i]
-			  && lat < _latMax[i]);
+			  && lat <  _latMax[i]);
 
 		if (inLon == true && inLat == true)
 			return true;
 	}
-
 	return false;
 }
 
 /**
- * Gets the list of cities contained in the RuleRegion.
+ * Gets the list of cities contained in this RuleRegion.
  * @note Build & cache a vector of all MissionAreas that are Cities.
  * @return, pointer to a vector of pointers to Cities
  */
@@ -213,7 +210,7 @@ std::vector<RuleCity*>* RuleRegion::getCities()
 }
 
 /**
- * Gets the weight of the RuleRegion for aLien-mission-selection.
+ * Gets the weight of this RuleRegion for aLien-mission-selection.
  * @note This is only used when creating a new game since these weights change
  * in the course of the game.
  * @return, the initial weight
@@ -224,7 +221,7 @@ size_t RuleRegion::getWeight() const
 }
 
 /**
- * Gets a list of all MissionZones in the RuleRegion.
+ * Gets a list of all MissionZones in this RuleRegion.
  * @return, reference to a vector of MissionZones
  */
 const std::vector<MissionZone>& RuleRegion::getMissionZones() const
@@ -241,24 +238,24 @@ std::pair<double, double> RuleRegion::getRandomPoint(size_t zone) const
 {
 	if (zone < _missionZones.size())
 	{
-/*		double
-			lonMin = _missionZones[zone].areas[pick].lonMin,
-			lonMax = _missionZones[zone].areas[pick].lonMax,
-			latMin = _missionZones[zone].areas[pick].latMin,
-			latMax = _missionZones[zone].areas[pick].latMax;
-		if (lonMin > lonMax) // safeties.
-		{
-			lonMin = _missionZones[zone].areas[pick].lonMax;
-			lonMax = _missionZones[zone].areas[pick].lonMin;
-		}
-		if (latMin > latMax)
-		{
-			latMin = _missionZones[zone].areas[pick].latMax;
-			latMax = _missionZones[zone].areas[pick].latMin;
-		}
-		const double
-			lon = RNG::generate(lonMin, lonMax),
-			lat = RNG::generate(latMin, latMax); */
+//		double
+//			lonMin = _missionZones[zone].areas[pick].lonMin,
+//			lonMax = _missionZones[zone].areas[pick].lonMax,
+//			latMin = _missionZones[zone].areas[pick].latMin,
+//			latMax = _missionZones[zone].areas[pick].latMax;
+//		if (lonMin > lonMax) // safeties.
+//		{
+//			lonMin = _missionZones[zone].areas[pick].lonMax;
+//			lonMax = _missionZones[zone].areas[pick].lonMin;
+//		}
+//		if (latMin > latMax)
+//		{
+//			latMin = _missionZones[zone].areas[pick].latMax;
+//			latMax = _missionZones[zone].areas[pick].latMin;
+//		}
+//		const double
+//			lon = RNG::generate(lonMin, lonMax),
+//			lat = RNG::generate(latMin, latMax);
 
 		const size_t pick (RNG::pick(_missionZones[zone].areas.size()));
 		const double
@@ -295,7 +292,7 @@ MissionArea RuleRegion::getMissionPoint(
 		{
 			if (i->isPoint() == true
 				&& AreSame(target->getLongitude(), i->lonMin)
-				&& AreSame(target->getLatitude(), i->latMin))
+				&& AreSame(target->getLatitude(),  i->latMin))
 			{
 				return *i;
 			}
@@ -309,7 +306,7 @@ MissionArea RuleRegion::getMissionPoint(
 }
 
 /**
- * Gets the area-data for the random mission-point in the RuleRegion.
+ * Gets the area-data for the random mission-point in this RuleRegion.
  * @return, a MissionArea from which to extract coordinates, textures, or any other pertinent information
  *
 MissionArea RuleRegion::getRandomMissionPoint(size_t zone) const

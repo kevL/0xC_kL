@@ -92,6 +92,18 @@ private:
 			const Ruleset& rules,
 			const size_t zone);
 
+	/// Generates destination-coordinates for a Waypoint.
+	std::pair<double, double> coordsWaypoint(
+			const UfoTrajectory& trajectory,
+			const size_t wpId,
+			const Globe& globe,
+			const RuleRegion& region);
+	/// Generates destination-coordinates inside a specified Region and zone.
+	std::pair<double, double> coordsLand(
+			const Globe& globe,
+			const RuleRegion& region,
+			const size_t zone);
+
 	/// Handles Points for mission success.
 	void addScore(
 			const double lon,
@@ -180,18 +192,6 @@ private:
 				const Globe& globe);
 		/// Handles a UFO that was shot down.
 		void ufoShotDown(const Ufo& ufo);
-
-		/// Selects a destination (lon/lat).
-		std::pair<double, double> getWaypoint(
-				const UfoTrajectory& trajectory,
-				const size_t wpId_next,
-				const Globe& globe,
-				const RuleRegion& region);
-		/// Gets a random landing-point inside a specified Region and zone.
-		std::pair<double, double> getLandPoint(
-				const Globe& globe,
-				const RuleRegion& region,
-				const size_t zone);
 
 		/// Flags tracking of the target-site.
 		void setTerrorSiteZone(size_t zoneId);

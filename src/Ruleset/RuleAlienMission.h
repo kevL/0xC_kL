@@ -117,7 +117,7 @@ private:
 		int getPoints() const;
 
 		/// Gets the objective for this mission.
-		MissionObjective getObjective() const
+		MissionObjective getObjectiveType() const
 		{ return _objectiveType; }
 
 		/// Gets the UFO type for special spawns.

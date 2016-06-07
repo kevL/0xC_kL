@@ -440,7 +440,7 @@ void Ruleset::validateMissions() const
 					+ "so sayeth the wise Alfonso.");
 			}
 
-			const bool isSite (getAlienMission(*j)->getObjective() == alm_SITE);
+			const bool isSite (getAlienMission(*j)->getObjectiveType() == alm_SITE);
 			scriptRule->setSiteType(isSite);
 
 			for (
@@ -449,7 +449,7 @@ void Ruleset::validateMissions() const
 					++j)
 			{
 				if (getAlienMission(*j) != nullptr
-					&& (getAlienMission(*j)->getObjective() == alm_SITE) != isSite)
+					&& (getAlienMission(*j)->getObjectiveType() == alm_SITE) != isSite)
 				{
 					throw Exception("ERROR with MissionScript: " + (*i).first
 						+ ": cannot mix Terror/non-Terror missions in one directive, "
@@ -480,7 +480,7 @@ void Ruleset::validateMissions() const
 				j != types.end();
 				++j)
 		{
-			if (getAlienMission(*j)->getObjective() == alm_SITE)
+			if (getAlienMission(*j)->getObjectiveType() == alm_SITE)
 			{
 				throw Exception("ERROR with MissionWeights: Region: " + (*i).first
 					+ ": has " + *j + " listed. "
@@ -1893,7 +1893,7 @@ const RuleAlienMission* Ruleset::getMissionRand(
 			i != _alienMissions.end();
 			++i)
 	{
-		if (i->second->getObjective() == objective
+		if (i->second->getObjectiveType() == objective
 			&& i->second->getWeight(monthsPassed) > 0)
 		{
 			totalWeight += i->second->getWeight(monthsPassed);
