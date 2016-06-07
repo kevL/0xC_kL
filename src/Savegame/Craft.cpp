@@ -119,14 +119,12 @@ Craft::~Craft()
 
 /**
  * Loads this Craft from a YAML file.
- * @param node		- reference a YAML node
- * @param rules		- pointer to the Ruleset
- * @param gameSave	- pointer to the SavedGame
+ * @param node	- reference a YAML node
+ * @param rules	- pointer to the Ruleset
  */
-void Craft::load(
+void Craft::loadCraft(
 		const YAML::Node& node,
-		const Ruleset* const rules,
-		SavedGame* const gameSave)
+		const Ruleset* const rules)
 {
 	MovingTarget::load(node);
 
@@ -216,9 +214,10 @@ void Craft::load(
 			returnToBase();
 		else if (type == "STR_UFO")
 		{
+			const std::vector<Ufo*>* const ufoList (rules->getGame()->getSavedGame()->getUfos());
 			for (std::vector<Ufo*>::const_iterator
-					i = gameSave->getUfos()->begin();
-					i != gameSave->getUfos()->end();
+					i = ufoList->begin();
+					i != ufoList->end();
 					++i)
 			{
 				if ((*i)->getId() == id)
@@ -230,9 +229,10 @@ void Craft::load(
 		}
 		else if (type == "STR_WAYPOINT")
 		{
+			const std::vector<Waypoint*>* const wpList (rules->getGame()->getSavedGame()->getWaypoints());
 			for (std::vector<Waypoint*>::const_iterator
-					i = gameSave->getWaypoints()->begin();
-					i != gameSave->getWaypoints()->end();
+					i = wpList->begin();
+					i != wpList->end();
 					++i)
 			{
 				if ((*i)->getId() == id)
@@ -244,9 +244,10 @@ void Craft::load(
 		}
 		else if (type == "STR_ALIEN_BASE")
 		{
+			const std::vector<AlienBase*>* const abList (rules->getGame()->getSavedGame()->getAlienBases());
 			for (std::vector<AlienBase*>::const_iterator
-					i = gameSave->getAlienBases()->begin();
-					i != gameSave->getAlienBases()->end();
+					i = abList->begin();
+					i != abList->end();
 					++i)
 			{
 				if ((*i)->getId() == id)
@@ -258,9 +259,10 @@ void Craft::load(
 		}
 		else // type = "STR_TERROR_SITE"
 		{
-			for (std::vector<TerrorSite*>::iterator
-					i = gameSave->getTerrorSites()->begin();
-					i != gameSave->getTerrorSites()->end();
+			const std::vector<TerrorSite*>* const terrorList (rules->getGame()->getSavedGame()->getTerrorSites());
+			for (std::vector<TerrorSite*>::const_iterator
+					i = terrorList->begin();
+					i != terrorList->end();
 					++i)
 			{
 				if ((*i)->getId() == id

@@ -188,7 +188,7 @@ void Base::load(
 									_rules->getCraft(type),
 									this,
 									gameSave));
-			craft->load(*i, _rules, gameSave);
+			craft->loadCraft(*i, _rules);
 			_crafts.push_back(craft);
 		}
 		else Log(LOG_ERROR) << "Failed to load craft " << type;

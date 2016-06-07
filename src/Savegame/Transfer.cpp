@@ -101,7 +101,7 @@ bool Transfer::load(
 							rules->getCraft(craft["type"].as<std::string>()),
 							base,
 							rules->getGame()->getSavedGame());
-			_craft->load(craft, rules, nullptr);
+			_craft->loadCraft(craft, rules);
 		}
 		else
 		{

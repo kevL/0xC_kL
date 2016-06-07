@@ -104,11 +104,9 @@ private:
 		~Craft() final;
 
 		/// Loads the Craft from YAML.
-		using MovingTarget::load;
-		void load(
+		void loadCraft(
 				const YAML::Node& node,
-				const Ruleset* const rules,
-				SavedGame* const gameSave);
+				const Ruleset* const rules);
 		/// Saves the Craft to YAML.
 		YAML::Node save() const override;
 		/// Saves the Craft's ID to YAML.

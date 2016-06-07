@@ -132,13 +132,11 @@ private:
 /**
  * Loads this UFO from a YAML file.
  * @param node	- reference a YAML node
- * @param rules	- reference the Ruleset (used to access trajectory data)
- * @param game	- reference the SavedGame (used to get the UFO's mission)
+ * @param rules	- reference to the Ruleset
  */
-void Ufo::load(
+void Ufo::loadUfo(
 		const YAML::Node& node,
-		const Ruleset& rules,
-		SavedGame& game)
+		const Ruleset& rules)
 {
 	MovingTarget::load(node);
 
@@ -198,14 +196,15 @@ void Ufo::load(
 			_status = FLYING;
 	}
 
-	if (game.getMonthsPassed() != -1)
+	const SavedGame* const gameSave (rules.getGame()->getSavedGame());
+	if (gameSave->getMonthsPassed() != -1)
 	{
 		const int missionId (node["mission"].as<int>());
 		std::vector<AlienMission*>::const_iterator mission (std::find_if(
-																	game.getAlienMissions().begin(),
-																	game.getAlienMissions().end(),
+																	gameSave->getAlienMissions().begin(),
+																	gameSave->getAlienMissions().end(),
 																	matchMissionID(missionId)));
-		if (mission == game.getAlienMissions().end())
+		if (mission == gameSave->getAlienMissions().end())
 		{
 			throw Exception("Unknown mission, save file is corrupt.");
 		}

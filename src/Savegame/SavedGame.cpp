@@ -536,7 +536,7 @@ void SavedGame::load(
 			Ufo* const ufo (new Ufo(
 								_rules->getUfo(type),
 								this));
-			ufo->load(*i, *_rules, *this);
+			ufo->loadUfo(*i, *_rules);
 			_ufos.push_back(ufo);
 		}
 		else Log(LOG_ERROR) << "Failed to load UFO: Type [" << type << "]";

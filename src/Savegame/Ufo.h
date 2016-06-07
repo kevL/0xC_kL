@@ -101,11 +101,9 @@ private:
 		~Ufo();
 
 		/// Loads the Ufo from YAML.
-		using MovingTarget::load;
-		void load(
+		void loadUfo(
 				const YAML::Node& node,
-				const Ruleset& rules,
-				SavedGame& game);
+				const Ruleset& rules);
 		/// Saves the Ufo to YAML.
 		YAML::Node save() const override;
 		/// Saves the Ufo's unique-ID to YAML.
