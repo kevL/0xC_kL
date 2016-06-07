@@ -679,10 +679,10 @@ void AlienMission::ufoReachedWaypoint(
 														globe,
 														regionRule));
 
-		Waypoint* const wayPoint (new Waypoint());
-		wayPoint->setLongitude(coord.first);
-		wayPoint->setLatitude(coord.second);
-		ufo.setDestination(wayPoint);
+		Waypoint* const wp (new Waypoint());
+		wp->setLongitude(coord.first);
+		wp->setLatitude(coord.second);
+		ufo.setDestination(wp);
 
 		if (ufo.getAltitude() == UfoTrajectory::stAltitude[0u]) // UFO landed.
 		{

@@ -848,9 +848,7 @@ void Craft::think()
 {
 	if (_takeOff != 0)
 	{
-		--_takeOff;
-
-		if (_takeOff == 0)
+		if (--_takeOff == 0)
 			setSpeed(_crRule->getMaxSpeed());
 	}
 	else

@@ -97,16 +97,6 @@ Ufo::~Ufo()
 
 	if (_mission != nullptr)
 		_mission->decreaseLiveUfos();
-
-	if (_dest != nullptr)
-	{
-		const Waypoint* const wp (dynamic_cast<Waypoint*>(_dest));
-		if (wp != nullptr)
-		{
-			delete _dest;
-			_dest = nullptr;
-		}
-	}
 }
 
 
@@ -764,18 +754,6 @@ void Ufo::setUfoMissionInfo(
 const std::string& Ufo::getUfoMissionType() const
 {
 	return _mission->getRules().getType();
-}
-
-/**
- * Handles destination changes and deletes old Waypoint destinations.
- * @param dest - pointer to a new destination (default nullptr)
- */
-void Ufo::setDestination(Target* const dest)
-{
-	const Waypoint* const old (dynamic_cast<Waypoint*>(_dest));
-	MovingTarget::setDestination(dest);
-
-	delete old;
 }
 
 /**

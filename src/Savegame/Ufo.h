@@ -211,9 +211,6 @@ private:
 		const UfoTrajectory& getTrajectory() const
 		{ return *_trajectory; }
 
-		/// Sets the Ufo's destination.
-		void setDestination(Target* const dest = nullptr) override;
-
 		/// Sets the interceptor engaging the Ufo.
 		void setShootingAt(const size_t target);
 		/// Gets the interceptor engaging the Ufo.

@@ -22,6 +22,7 @@
 #include "../fmath.h"
 
 #include "SerializationHelper.h"
+#include "Waypoint.h"
 
 #include "../Geoscape/GeoscapeState.h"
 
@@ -50,20 +51,7 @@ MovingTarget::MovingTarget()
  */
 MovingTarget::~MovingTarget() // virtual.
 {
-	if (_dest != nullptr)
-	{
-		for (std::vector<Target*>::const_iterator
-				i = _dest->getTargeters()->begin();
-				i != _dest->getTargeters()->end();
-				++i)
-		{
-			if (*i == this)
-			{
-				_dest->getTargeters()->erase(i);
-				break;
-			}
-		}
-	}
+	checkOtherTargeters();
 }
 
 /**
@@ -76,10 +64,13 @@ YAML::Node MovingTarget::save() const // virtual.
 
 	if (_dest != nullptr) node["dest"] = _dest->saveId();
 
-	node["speedLon"]	= serializeDouble(_speedLon);
-	node["speedLat"]	= serializeDouble(_speedLat);
-	node["speedRadian"]	= serializeDouble(_speedRadian);
-	node["speed"]		= _speed;
+	if (_speed != 0)
+	{
+		node["speed"]		= _speed;
+		node["speedRadian"]	= serializeDouble(_speedRadian);
+		node["speedLon"]	= serializeDouble(_speedLon);
+		node["speedLat"]	= serializeDouble(_speedLat);
+	}
 
 	return node;
 }
@@ -104,20 +95,7 @@ void MovingTarget::load(const YAML::Node& node) // virtual.
  */
 void MovingTarget::setDestination(Target* const dest) // virtual.
 {
-	if (_dest != nullptr)
-	{
-		for (std::vector<Target*>::const_iterator
-				i = _dest->getTargeters()->begin();
-				i != _dest->getTargeters()->end();
-				++i)
-		{
-			if (*i == this)
-			{
-				_dest->getTargeters()->erase(i);
-				break;
-			}
-		}
-	}
+	checkOtherTargeters();
 
 	if ((_dest = dest) != nullptr)
 		_dest->getTargeters()->push_back(this);
@@ -132,6 +110,49 @@ void MovingTarget::setDestination(Target* const dest) // virtual.
 Target* MovingTarget::getDestination() const
 {
 	return _dest;
+}
+
+/**
+ * Checks if this MovingTarget has reached its destination.
+ * @return, true if it has
+ */
+bool MovingTarget::reachedDestination() const
+{
+	if (_dest != nullptr)
+		return AreSame(_lon, _dest->getLongitude())
+			&& AreSame(_lat, _dest->getLatitude());
+
+	return false;
+}
+
+/**
+ * Checks this MovingTarget's current destination for other targeters and if
+ * none are found deletes the Waypoint.
+ */
+void MovingTarget::checkOtherTargeters() // protected.
+{
+	if (_dest != nullptr)
+	{
+		bool destTargeter (false);
+
+		for (std::vector<Target*>::const_iterator
+				i = _dest->getTargeters()->begin();
+				i != _dest->getTargeters()->end();
+				++i)
+		{
+			if (*i == this)
+				_dest->getTargeters()->erase(i);
+			else
+				destTargeter = true;
+		}
+
+		if (destTargeter == false)
+		{
+			const Waypoint* const wpPre (dynamic_cast<Waypoint*>(_dest));
+			if (wpPre != nullptr)
+				delete wpPre;
+		}
+	}
 }
 
 /**
@@ -291,19 +312,6 @@ void MovingTarget::calculateMeetPoint() // protected.
 			_meetPointLon -= std::copysign(M_PI, _meetPointLon);
 		}
 	}
-}
-
-/**
- * Checks if this MovingTarget has reached its destination.
- * @return, true if it has
- */
-bool MovingTarget::reachedDestination() const
-{
-	if (_dest != nullptr)
-		return AreSame(_lon, _dest->getLongitude())
-			&& AreSame(_lat, _dest->getLatitude());
-
-	return false;
 }
 
 /**

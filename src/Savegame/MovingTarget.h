@@ -40,8 +40,6 @@ class MovingTarget
 {
 
 protected:
-//	static const double GLOBE_RADIUS;
-
 	int _speed;
 	double
 		_meetPointLon,
@@ -51,6 +49,9 @@ protected:
 		_speedRadian;
 
 	Target* _dest;
+
+	/// Checks the MovingTarget's current destination for safe deletion.
+	void checkOtherTargeters();
 
 	/// Calculates a new speed-vector to a destination.
 	virtual void calculateSpeed();
@@ -75,6 +76,9 @@ protected:
 		/// Gets the MovingTarget's destination.
 		Target* getDestination() const;
 
+		/// Checks if the MovingTarget has reached its destination.
+		bool reachedDestination() const;
+
 		/// Sets the MovingTarget's speed.
 		void setSpeed(const int speed);
 		/// Gets the MovingTarget's speed.
@@ -82,9 +86,6 @@ protected:
 
 		/// Moves toward the destination.
 		void stepTarget();
-
-		/// Checks if the MovingTarget has reached its destination.
-		bool reachedDestination() const;
 
 		/// Returns the latitude of a meet-point.
 		double getMeetLatitude() const;

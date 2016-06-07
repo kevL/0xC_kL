@@ -1153,8 +1153,9 @@ void GeoscapeState::init()
 		&& _gameSave->getBases()->front()->isBasePlaced() == true)	// THIS prevents missions running prior to the first base being placed.
 	{
 		_gameSave->addMonth();
-		deterAlienMissions();
 		_gameSave->setFunds(_gameSave->getFunds() - static_cast<int64_t>(_gameSave->getBases()->front()->getMonthlyMaintenace()));
+
+		deterAlienMissions();
 	}
 }
 
