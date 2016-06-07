@@ -73,6 +73,8 @@ private:
 
 
 	public:
+		static const char* stSize[5u];
+
 		/// Creates a blank UFO ruleset.
 		explicit RuleUfo(const std::string& type);
 		/// Cleans up the UFO ruleset.

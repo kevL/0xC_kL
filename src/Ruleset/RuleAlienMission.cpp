@@ -92,7 +92,7 @@ RuleAlienMission::~RuleAlienMission()
 }
 
 /**
- * Loads the mission data from a YAML node.
+ * Loads the mission-data from a YAML node.
  * @param node - YAML node
  */
 void RuleAlienMission::load(const YAML::Node& node)

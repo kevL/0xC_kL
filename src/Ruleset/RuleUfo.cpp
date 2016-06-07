@@ -25,14 +25,24 @@
 namespace OpenXcom
 {
 
+const char* RuleUfo::stSize[5u] // static.
+{
+	"STR_VERY_SMALL",	// 0
+	"STR_SMALL",		// 1
+	"STR_MEDIUM_UC",	// 2
+	"STR_LARGE",		// 3
+	"STR_VERY_LARGE"	// 4
+};
+
+
 /**
- * Creates a blank ruleset for a certain type of UFO.
- * @param type - reference string defining the type
+ * Creates a blank ruleset for a specified type of UFO.
+ * @param type - reference to the type
  */
 RuleUfo::RuleUfo(const std::string& type)
 	:
 		_type(type),
-		_size("STR_VERY_SMALL"),
+		_size(stSize[0u]),
 		_sizeType(UFO_VERYSMALL),
 		_sprite(-1),
 		_marker(-1),
@@ -80,11 +90,11 @@ void RuleUfo::load(
 	_reconRange		= node["reconRange"].as<int>(_reconRange);
 	_modSprite		= node["modSprite"]	.as<std::string>(_modSprite);
 
-	if (_size == "STR_VERY_SMALL")	_sizeType = UFO_VERYSMALL;
-	if (_size == "STR_SMALL")		_sizeType = UFO_SMALL;
-	if (_size == "STR_MEDIUM_UC")	_sizeType = UFO_MEDIUM;
-	if (_size == "STR_LARGE")		_sizeType = UFO_LARGE;
-	if (_size == "STR_VERY_LARGE")	_sizeType = UFO_VERYLARGE;
+	if		(_size == stSize[0u]) _sizeType = UFO_VERYSMALL;
+	else if	(_size == stSize[1u]) _sizeType = UFO_SMALL;
+	else if	(_size == stSize[2u]) _sizeType = UFO_MEDIUM;
+	else if	(_size == stSize[3u]) _sizeType = UFO_LARGE;
+	else if	(_size == stSize[4u]) _sizeType = UFO_VERYLARGE;
 
 	if (const YAML::Node& terrain = node["battlescapeTerrainData"])
 	{
@@ -130,15 +140,15 @@ UfoSizeType RuleUfo::getSizeType() const
  */
 size_t RuleUfo::getRadius() const
 {
-	switch (_sizeType)
-	{
-		default:
-		case UFO_VERYSMALL:	return 0u;
-		case UFO_SMALL:		return 1u;
-		case UFO_MEDIUM:	return 2u;
-		case UFO_LARGE:		return 3u;
-		case UFO_VERYLARGE:	return 4u;
-	}
+	return static_cast<size_t>(_sizeType);
+//	switch (_sizeType)
+//	{
+//		case UFO_VERYSMALL:	return 0u;
+//		case UFO_SMALL:		return 1u;
+//		case UFO_MEDIUM:	return 2u;
+//		case UFO_LARGE:		return 3u;
+//		case UFO_VERYLARGE:	return 4u;
+//	}
 }
 
 /**

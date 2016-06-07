@@ -161,12 +161,16 @@ void Ufo::load(
 	_terrain		= node["terrain"]		.as<std::string>(_terrain);
 
 	double
-		lon (_lon),
-		lat (_lat);
+		lon,lat;
 	if (const YAML::Node& dest = node["dest"])
 	{
 		lon = dest["lon"].as<double>();
 		lat = dest["lat"].as<double>();
+	}
+	else
+	{
+		lon = _lon;
+		lat = _lat;
 	}
 
 	_dest = new Waypoint();
@@ -187,7 +191,7 @@ void Ufo::load(
 			_status = FLYING; // <- already done in cTor init.
 	}
 
-	switch (_status) // safety. Although this should never show up as Destroyed ....
+	switch (_status) // safety. Ensure a status is set. Although this should never show up as Destroyed ....
 	{
 		case FLYING:
 		case LANDED:
@@ -214,7 +218,7 @@ void Ufo::load(
 
 		const std::string trjType (node["trajectory"].as<std::string>()); // TODO: Don't save trajectory-info if UFO has been shot down.
 		_trajectory = rules.getUfoTrajectory(trjType);
-		_trajectoryWp = node["trajectoryPoint"].as<size_t>(_trajectoryWp);
+		_trajectoryWp = node["trajectoryWp"].as<size_t>(_trajectoryWp);
 	}
 
 	_fireCountdown		= node["fireCountdown"]		.as<int>(_fireCountdown);
@@ -236,30 +240,35 @@ YAML::Node Ufo::save(bool isQuickBattle) const
 	node["type"]	= _ufoRule->getType();
 	node["id"]		= _id;
 
-	if (_terrain.empty() == false) node["terrain"] = _terrain;
-
 	if		(_idCrashed != 0) node["idCrashed"]	= _idCrashed;
 	else if	(_idLanded  != 0) node["idLanded"]	= _idLanded;
+
+	if (_terrain.empty() == false) node["terrain"] = _terrain;
 
 	node["altitude"]	= _altitude;
 	node["direction"]	= _direction;
 	node["status"]		= static_cast<int>(_status);
 
-	if (_damage != 0)			node["damage"]			= _damage;
-	if (_detected == true)		node["detected"]		= _detected;
-	if (_hyperDetected == true)	node["hyperDetected"]	= _hyperDetected;
-	if (_secondsLeft != 0)		node["secondsLeft"]		= _secondsLeft;
-	if (_tactical == true)		node["tactical"]		= _tactical;
+	if (_damage != 0)				node["damage"]			= _damage;
+	if (_detected != false)			node["detected"]		= _detected;
+	if (_hyperDetected != false)	node["hyperDetected"]	= _hyperDetected;
+	if (_secondsLeft != 0)			node["secondsLeft"]		= _secondsLeft;
+	if (_tactical != false)			node["tactical"]		= _tactical;
 
 	if (isQuickBattle == false)
 	{
 		node["mission"]			= _mission->getId();
 		node["trajectory"]		= _trajectory->getId();
-		node["trajectoryPoint"]	= _trajectoryWp;
+		node["trajectoryWp"]	= _trajectoryWp;
 	}
 
-	if (_fireCountdown != 0)	node["fireCountdown"]	= _fireCountdown;
-	if (_escapeCountdown != 0)	node["escapeCountdown"]	= _escapeCountdown;
+	switch (_status)
+	{
+		case FLYING:
+		case LANDED:
+			if (_fireCountdown != 0)	node["fireCountdown"]	= _fireCountdown;
+			if (_escapeCountdown != 0)	node["escapeCountdown"]	= _escapeCountdown;
+	}
 
 	return node;
 }
