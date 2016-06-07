@@ -127,23 +127,25 @@ bool MovingTarget::reachedDestination() const
 
 /**
  * Checks this MovingTarget's current destination for other targeters and if
- * none are found deletes the Waypoint.
+ * none are found deletes its Waypoint if applicable.
  */
 void MovingTarget::checkOtherTargeters() // protected.
 {
 	if (_dest != nullptr)
 	{
 		bool destTargeter (false);
-
 		for (std::vector<Target*>::const_iterator
 				i = _dest->getTargeters()->begin();
 				i != _dest->getTargeters()->end();
-				++i)
+				)
 		{
 			if (*i == this)
-				_dest->getTargeters()->erase(i);
+				i = _dest->getTargeters()->erase(i);
 			else
+			{
 				destTargeter = true;
+				++i;
+			}
 		}
 
 		if (destTargeter == false)
