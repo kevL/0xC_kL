@@ -63,6 +63,8 @@ protected:
 
 
 	public:
+		static const char* stAltitude[5u];
+
 		/// Cleans up the MovingTarget.
 		virtual ~MovingTarget();
 

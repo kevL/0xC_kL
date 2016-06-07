@@ -30,6 +30,16 @@
 namespace OpenXcom
 {
 
+const char* MovingTarget::stAltitude[5u] // static.
+{
+	"STR_GROUND",	// 0
+	"STR_VERY_LOW",	// 1
+	"STR_LOW_UC",	// 2
+	"STR_HIGH_UC",	// 3
+	"STR_VERY_HIGH"	// 4
+};
+
+
 /**
  * Initializes the MovingTarget with blank coordinates.
  */

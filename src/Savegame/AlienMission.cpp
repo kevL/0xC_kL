@@ -491,7 +491,7 @@ Ufo* AlienMission::createUfo( // private.
 									this,
 									&trjBattleship);
 
-				if (trajectory.getAltitude(0u) == UfoTrajectory::stAltitude[0u])
+				if (trajectory.getAltitude(0u) == MovingTarget::stAltitude[0u])
 					coord = getLandPoint(
 									globe,
 									regionRule,
@@ -526,7 +526,7 @@ Ufo* AlienMission::createUfo( // private.
 									&trajectory);
 				const RuleRegion& regionRule (*rules.getRegion(_region));
 
-				if (trajectory.getAltitude(0u) == UfoTrajectory::stAltitude[0u])
+				if (trajectory.getAltitude(0u) == MovingTarget::stAltitude[0u])
 					coord = getLandPoint(
 									globe,
 									regionRule,
@@ -540,7 +540,7 @@ Ufo* AlienMission::createUfo( // private.
 				ufo->setLongitude(coord.first);
 				ufo->setLatitude(coord.second);
 
-				if (trajectory.getAltitude(1u) == UfoTrajectory::stAltitude[0u])
+				if (trajectory.getAltitude(1u) == MovingTarget::stAltitude[0u])
 				{
 					if (wave.isObjective == true) // Supply ships on supply missions land on bases, ignore trajectory zone.
 					{
@@ -580,7 +580,7 @@ Ufo* AlienMission::createUfo( // private.
 						regionRule);
 
 		ufo->setAltitude(trajectory.getAltitude(0));
-		if (trajectory.getAltitude(0u) == UfoTrajectory::stAltitude[0u])
+		if (trajectory.getAltitude(0u) == MovingTarget::stAltitude[0u])
 			ufo->setSecondsLeft(trajectory.groundTimer() * 5);
 
 		float speedPct;
@@ -684,7 +684,7 @@ void AlienMission::ufoReachedWaypoint(
 		wp->setLatitude(coord.second);
 		ufo.setDestination(wp);
 
-		if (ufo.getAltitude() == UfoTrajectory::stAltitude[0u]) // UFO landed.
+		if (ufo.getAltitude() == MovingTarget::stAltitude[0u]) // UFO landed.
 		{
 			size_t wave;
 			switch (_waveCount)
@@ -970,7 +970,7 @@ void AlienMission::ufoLifting(
 			}
 
 			ufo.setUfoTerrainType();
-			ufo.setAltitude(UfoTrajectory::stAltitude[1u]);
+			ufo.setAltitude(MovingTarget::stAltitude[1u]);
 
 			float speedPct;
 			const size_t wpId (ufo.getTrajectoryPoint());
@@ -1058,7 +1058,7 @@ std::pair<double, double> AlienMission::getWaypoint(
 	}
 
 	if (trajectory.getWaypointTotal() > wpId_next + 1u
-		&& trajectory.getAltitude(wpId_next + 1u) == UfoTrajectory::stAltitude[0u])
+		&& trajectory.getAltitude(wpId_next + 1u) == MovingTarget::stAltitude[0u])
  	{
  		return getLandPoint(
 						globe, region,

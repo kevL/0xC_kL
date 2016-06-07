@@ -68,8 +68,6 @@ private:
 	public:
 		static const std::string RETALIATION_ASSAULT_RUN;
 
-		static const char* stAltitude[5u];
-
 		/// cTor.
 		explicit UfoTrajectory(const std::string& id);
 

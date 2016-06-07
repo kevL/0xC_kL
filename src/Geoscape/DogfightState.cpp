@@ -1258,7 +1258,7 @@ void DogfightState::updateDogfight()
 					_ufo->setCrashId(_gameSave->getCanonicalId("STR_CRASH_SITE"));
 
 					_ufo->setSecondsLeft(RNG::generate(24,96) * 3600); // TODO: Put min/max in UFO-rules per UFO-type.
-					_ufo->setAltitude("STR_GROUND");
+					_ufo->setAltitude(MovingTarget::stAltitude[0u]);
 				}
 			}
 

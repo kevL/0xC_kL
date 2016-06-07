@@ -507,26 +507,17 @@ std::string Craft::getCraftStatusString() const
 std::string Craft::getAltitude() const
 {
 	if (_dest == nullptr)
-		return "STR_LOW_UC";
+		return MovingTarget::stAltitude[2u];
 
 	const Ufo* const ufo (dynamic_cast<Ufo*>(_dest));
 	if (ufo != nullptr)
 	{
-		if (ufo->getAltitude() == "STR_GROUND")
-			return "STR_VERY_LOW";
+		if (ufo->getAltitude() == MovingTarget::stAltitude[0u])
+			return MovingTarget::stAltitude[1u];
 
 		return ufo->getAltitude();
 	}
-	return "STR_HIGH_UC";
-
-//	switch (RNG::generate(0,3))
-//	{
-//		default: // avoid vc++ linker warnings.
-//		case 0:
-//		case 1: return "STR_LOW_UC";
-//		case 2: return "STR_HIGH_UC";
-//		case 3: return "STR_VERY_HIGH";
-//	}
+	return MovingTarget::stAltitude[3u];
 }
 
 /**

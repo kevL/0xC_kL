@@ -1505,7 +1505,7 @@ void GeoscapeState::time5Seconds()
 						AlienMission* const mission ((*i)->getAlienMission());
 						mission->ufoReachedWaypoint(**i, *_rules, *_globe); // recomputes 'qtySites' & 'detected'; also sets ufo Status
 
-						if ((*i)->getAltitude() == "STR_GROUND")
+						if ((*i)->getAltitude() == MovingTarget::stAltitude[0u])
 						{
 							_dfZoomOut = false;
 							for (std::list<DogfightState*>::const_iterator

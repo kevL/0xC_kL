@@ -57,7 +57,7 @@ Ufo::Ufo(const RuleUfo* const ufoRule)
 		_idLanded(0),
 		_damage(0),
 		_direction("STR_NORTH"),
-		_altitude(UfoTrajectory::stAltitude[3u]),
+		_altitude(MovingTarget::stAltitude[3u]),
 		_status(FLYING),
 		_secondsLeft(0),
 		_tactical(false),
@@ -177,7 +177,7 @@ void Ufo::load(
 			_status = DESTROYED;
 		else if (_damage >= (_ufoRule->getMaxDamage() >> 1u))
 			_status = CRASHED;
-		else if (_altitude == UfoTrajectory::stAltitude[0u])
+		else if (_altitude == MovingTarget::stAltitude[0u])
 			_status = LANDED;
 		else
 			_status = FLYING; // <- already done in cTor init.
@@ -459,7 +459,7 @@ int Ufo::getSecondsLeft() const
  */
 void Ufo::setAltitude(const std::string& altitude)
 {
-	if ((_altitude = altitude) != UfoTrajectory::stAltitude[0u])
+	if ((_altitude = altitude) != MovingTarget::stAltitude[0u])
 		_status = FLYING;
 	else if (isCrashed() == true)
 		_status = CRASHED;
@@ -664,11 +664,11 @@ int Ufo::getVictoryPoints() const
 		case UFO_VERYLARGE:	ret += 5;
 	}
 
-	if		(_altitude == UfoTrajectory::stAltitude[0u]) ret += 0; // Status _LANDED or _CRASHED included above.
-	else if	(_altitude == UfoTrajectory::stAltitude[1u]) ret += 3;
-	else if	(_altitude == UfoTrajectory::stAltitude[2u]) ret += 2;
-	else if	(_altitude == UfoTrajectory::stAltitude[3u]) ret += 1;
-	else if	(_altitude == UfoTrajectory::stAltitude[4u]) ret += 0;
+	if		(_altitude == MovingTarget::stAltitude[0u]) ret += 0; // Status _LANDED or _CRASHED included above.
+	else if	(_altitude == MovingTarget::stAltitude[1u]) ret += 3;
+	else if	(_altitude == MovingTarget::stAltitude[2u]) ret += 2;
+	else if	(_altitude == MovingTarget::stAltitude[3u]) ret += 1;
+	else if	(_altitude == MovingTarget::stAltitude[4u]) ret += 0;
 
 	return ret;
 }
@@ -690,11 +690,11 @@ int Ufo::getVisibility() const
 		case UFO_VERYLARGE:	ret += 30;
 	}
 
-	if		(_altitude == UfoTrajectory::stAltitude[0u]) ret -= 50;
-	else if	(_altitude == UfoTrajectory::stAltitude[1u]) ret -= 20;
-	else if	(_altitude == UfoTrajectory::stAltitude[2u]) ret -= 10;
-	else if	(_altitude == UfoTrajectory::stAltitude[3u]) ret -=  0;
-	else if	(_altitude == UfoTrajectory::stAltitude[4u]) ret -= 10;
+	if		(_altitude == MovingTarget::stAltitude[0u]) ret -= 50;
+	else if	(_altitude == MovingTarget::stAltitude[1u]) ret -= 20;
+	else if	(_altitude == MovingTarget::stAltitude[2u]) ret -= 10;
+	else if	(_altitude == MovingTarget::stAltitude[3u]) ret -=  0;
+	else if	(_altitude == MovingTarget::stAltitude[4u]) ret -= 10;
 
 	return ret;
 }
@@ -715,11 +715,11 @@ int Ufo::getDetectors() const
 		case UFO_VERYLARGE:	ret -=  0;
 	}
 
-	if		(_altitude == UfoTrajectory::stAltitude[0u]) ret -= 32;
-	else if	(_altitude == UfoTrajectory::stAltitude[1u]) ret += 18;
-	else if	(_altitude == UfoTrajectory::stAltitude[2u]) ret +=  6;
-	else if	(_altitude == UfoTrajectory::stAltitude[3u]) ret -=  9;
-	else if	(_altitude == UfoTrajectory::stAltitude[4u]) ret -= 19;
+	if		(_altitude == MovingTarget::stAltitude[0u]) ret -= 32;
+	else if	(_altitude == MovingTarget::stAltitude[1u]) ret += 18;
+	else if	(_altitude == MovingTarget::stAltitude[2u]) ret +=  6;
+	else if	(_altitude == MovingTarget::stAltitude[3u]) ret -=  9;
+	else if	(_altitude == MovingTarget::stAltitude[4u]) ret -= 19;
 
 	return ret;
 }

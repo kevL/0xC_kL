@@ -263,7 +263,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 			break;
 
 		default:
-			alt = "STR_GROUND";
+			alt = MovingTarget::stAltitude[0u];
 	}
 
 	_txtAltitude->setText(tr("STR_ALTITUDE_").arg(tr(alt)));
