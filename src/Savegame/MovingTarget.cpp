@@ -142,7 +142,7 @@ bool MovingTarget::reachedDestination() const
  * Checks this MovingTarget's current destination for other targeters and if
  * none are found deletes its Waypoint if applicable.
  */
-void MovingTarget::checkOtherTargeters() // protected.
+void MovingTarget::checkOtherTargeters() // private.
 {
 	if (_dest != nullptr)
 	{
@@ -220,12 +220,12 @@ void MovingTarget::stepTarget()
 		if (getDistance(_dest) > _speedRadian)
 		{
 			setLongitude(_lon + _speedLon);
-			setLatitude(_lat + _speedLat);
+			setLatitude( _lat + _speedLat);
 		}
 		else
 		{
 			setLongitude(_dest->getLongitude());
-			setLatitude(_dest->getLatitude());
+			setLatitude( _dest->getLatitude());
 		}
 	}
 }
@@ -269,10 +269,10 @@ void MovingTarget::calculateSpeed() // protected/virtual.
 /**
  * Calculates the meet-point with a destination-target.
  */
-void MovingTarget::calculateMeetPoint() // protected.
+void MovingTarget::calculateMeetPoint() // private.
 {
-	_meetPointLat = _dest->getLatitude();
 	_meetPointLon = _dest->getLongitude();
+	_meetPointLat = _dest->getLatitude();
 
 	MovingTarget* const ufo (dynamic_cast<MovingTarget*>(_dest));
 	if (ufo != nullptr
@@ -330,37 +330,37 @@ void MovingTarget::calculateMeetPoint() // protected.
 		while (path < M_PI && new_pdist > 0. && old_pdist > new_pdist);
 
 		while (std::fabs(_meetPointLon) > M_PI)
-			_meetPointLon -= std::copysign(M_PI * 2, _meetPointLon);
+			_meetPointLon -= std::copysign(M_PI * 2., _meetPointLon);
 
 		while (std::fabs(_meetPointLat) > M_PI)
-			_meetPointLat -= std::copysign(M_PI * 2, _meetPointLat);
+			_meetPointLat -= std::copysign(M_PI * 2., _meetPointLat);
 
 		if (std::fabs(_meetPointLat) > M_PI_2)
 		{
-			_meetPointLat  = std::copysign(M_PI * 2 - std::fabs(_meetPointLat), _meetPointLat);
 			_meetPointLon -= std::copysign(M_PI, _meetPointLon);
+			_meetPointLat  = std::copysign(M_PI * 2. - std::fabs(_meetPointLat), _meetPointLat);
 		}
 	}
 }
 
 /**
- * Gets the latitude of the meet-point.
- * @note Used in GeoscapeState::time5Seconds().
- * @return, angle in radians
- */
-double MovingTarget::getMeetLatitude() const
-{
-	return _meetPointLat;
-}
-
-/**
  * Gets the longitude of the meet-point.
  * @note Used in GeoscapeState::time5Seconds().
- * @return, angle in radians
+ * @return, globe-angle in radians
  */
 double MovingTarget::getMeetLongitude() const
 {
 	return _meetPointLon;
+}
+
+/**
+ * Gets the latitude of the meet-point.
+ * @note Used in GeoscapeState::time5Seconds().
+ * @return, globe-angle in radians
+ */
+double MovingTarget::getMeetLatitude() const
+{
+	return _meetPointLat;
 }
 
 }

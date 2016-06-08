@@ -41,61 +41,65 @@ class MovingTarget
 		public Target
 {
 
-protected:
-	int _speed;
-	double
-		_meetPointLon,
-		_meetPointLat,
-		_speedLat,
-		_speedLon,
-		_speedRadian;
-
+private:
 	SavedGame* _gameSave;
-	Target* _dest;
 
 	/// Checks the MovingTarget's current destination for safe deletion.
 	void checkOtherTargeters();
 
-	/// Calculates a new speed-vector to a destination.
-	virtual void calculateSpeed();
 	/// Calculates a meet-point with a destination-target.
 	void calculateMeetPoint();
 
-	/// Creates a MovingTarget.
-	explicit MovingTarget(SavedGame* const gameSave);
+
+	protected:
+		int _speed;
+		double
+			_meetPointLon,
+			_meetPointLat,
+			_speedLat,
+			_speedLon,
+			_speedRadian;
+
+		Target* _dest;
+
+		/// Calculates a new speed-vector to a destination.
+		virtual void calculateSpeed();
+
+		/// Creates a MovingTarget.
+		explicit MovingTarget(SavedGame* const gameSave);
 
 
-	public:
-		static const char* stAltitude[5u];
+		public:
+			static const char* stAltitude[5u];
 
-		/// Cleans up the MovingTarget.
-		virtual ~MovingTarget();
+			/// Cleans up the MovingTarget.
+			virtual ~MovingTarget();
 
-		/// Saves the MovingTarget to YAML.
-		virtual YAML::Node save() const override;
-		/// Loads the MovingTarget from YAML.
-		virtual void load(const YAML::Node& node) override;
+			/// Saves the MovingTarget to YAML.
+			virtual YAML::Node save() const override;
+			/// Loads the MovingTarget from YAML.
+			virtual void load(const YAML::Node& node) override;
 
-		/// Sets the MovingTarget's destination.
-		virtual void setDestination(Target* const dest = nullptr);
-		/// Gets the MovingTarget's destination.
-		Target* getDestination() const;
+			/// Sets the MovingTarget's destination.
+			virtual void setDestination(Target* const dest = nullptr);
+			/// Gets the MovingTarget's destination.
+			Target* getDestination() const;
 
-		/// Checks if the MovingTarget has reached its destination.
-		bool reachedDestination() const;
+			/// Checks if the MovingTarget has reached its destination.
+			bool reachedDestination() const;
 
-		/// Sets the MovingTarget's speed.
-		void setSpeed(const int speed);
-		/// Gets the MovingTarget's speed.
-		int getSpeed() const;
+			/// Sets the MovingTarget's speed.
+			void setSpeed(const int speed);
+			/// Gets the MovingTarget's speed.
+			int getSpeed() const;
 
-		/// Moves toward the destination.
-		void stepTarget();
+			/// Moves toward the destination.
+			void stepTarget();
 
-		/// Returns the latitude of a meet-point.
-		double getMeetLatitude() const;
-		/// Returns the longitude of a meet-point.
-		double getMeetLongitude() const;
+			/// Returns the longitude of a meet-point.
+			double getMeetLongitude() const;
+			/// Returns the latitude of a meet-point.
+			double getMeetLatitude() const;
 };
 
 }

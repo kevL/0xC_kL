@@ -154,21 +154,22 @@ void Ufo::loadUfo(
 	_quickBattle	= node["quickBattle"]	.as<bool>(_quickBattle);
 
 	double
-		lon,lat;
+		destLon,
+		destLat;
 	if (const YAML::Node& dest = node["dest"])
 	{
-		lon = dest["lon"].as<double>();
-		lat = dest["lat"].as<double>();
+		destLon = dest["lon"].as<double>();
+		destLat = dest["lat"].as<double>();
 	}
 	else
 	{
-		lon = _lon;
-		lat = _lat;
+		destLon = _lon;
+		destLat = _lat;
 	}
 
 	_dest = new Waypoint();
-	_dest->setLongitude(lon);
-	_dest->setLatitude(lat);
+	_dest->setLongitude(destLon);
+	_dest->setLatitude(destLat);
 
 	if (const YAML::Node& status = node["status"])
 		_status = static_cast<UfoStatus>(status.as<int>());
