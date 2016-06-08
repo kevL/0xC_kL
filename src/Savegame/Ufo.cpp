@@ -173,29 +173,14 @@ void Ufo::loadUfo(
 
 	if (const YAML::Node& status = node["status"])
 		_status = static_cast<UfoStatus>(status.as<int>());
+	else if (_damage >= _ufoRule->getMaxDamage())
+		_status = DESTROYED;
+	else if (_damage >= (_ufoRule->getMaxDamage() >> 1u))
+		_status = CRASHED;
+	else if (_altitude == MovingTarget::stAltitude[0u])
+		_status = LANDED;
 	else
-	{
-		if (_damage >= _ufoRule->getMaxDamage())
-			_status = DESTROYED;
-		else if (_damage >= (_ufoRule->getMaxDamage() >> 1u))
-			_status = CRASHED;
-		else if (_altitude == MovingTarget::stAltitude[0u])
-			_status = LANDED;
-		else
-			_status = FLYING; // <- already done in cTor init.
-	}
-
-	switch (_status) // safety. Ensure a status is set. Although this should never show up as Destroyed ....
-	{
-		case FLYING:
-		case LANDED:
-		case CRASHED:
-		case DESTROYED:
-			break;
-
-		default:
-			_status = FLYING;
-	}
+		_status = FLYING; // <- already done in cTor init.
 
 	const SavedGame* const gameSave (rules.getGame()->getSavedGame());
 	if (gameSave->getMonthsPassed() != -1)
