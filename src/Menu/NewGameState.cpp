@@ -130,7 +130,7 @@ NewGameState::~NewGameState()
 {}
 
 /**
- * Sets up a new SavedGame and jumps to the Geoscape.
+ * Sets up a SavedGame and jumps to the Geoscape.
  * @param action - pointer to an Action
  */
 void NewGameState::btnOkClick(Action*)
@@ -148,10 +148,9 @@ void NewGameState::btnOkClick(Action*)
 	else // _btnBeginner
 		diff = DIFF_BEGINNER;
 
-	SavedGame* const gameSave (_game->getRuleset()->createSave());
+	SavedGame* const gameSave (_game->getRuleset()->createSave(_game));
 	gameSave->setDifficulty(diff);
 	gameSave->setIronman(_btnIronman->getPressed() == true);
-	_game->setSavedGame(gameSave);
 
 	GeoscapeState* const geo (new GeoscapeState());
 	_game->setState(geo);

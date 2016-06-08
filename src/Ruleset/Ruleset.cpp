@@ -1108,14 +1108,16 @@ T* Ruleset::loadRule( // protected.
 
 /**
  * Generates a SavedGame with starting data.
+ * @param game - pointer to the current Game (used to obviate const of member-variable '_game')
  * @return, pointer to the SavedGame
  */
-SavedGame* Ruleset::createSave() const
+SavedGame* Ruleset::createSave(Game* const game) const
 {
 	//Log(LOG_INFO) << "Ruleset::createSave()";
 	RNG::setSeed(0u);
 
 	SavedGame* const gameSave (new SavedGame(this));
+	game->setSavedGame(gameSave);
 
 	for (std::vector<std::string>::const_iterator // setup ResearchGenerals.
 			i = _researchIndex.begin();
@@ -2518,7 +2520,7 @@ const std::string& Ruleset::getFinalResearch() const
 }
 
 /**
- * Gets the current Game-object.
+ * Gets the pointer to the current Game-object.
  * @return, pointer to GAME
  */
 const Game* Ruleset::getGame() const

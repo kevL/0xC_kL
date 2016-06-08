@@ -292,6 +292,7 @@ void NewBattleState::load(const std::string& file)
 			if (doc["base"])
 			{
 				SavedGame* const gameSave (new SavedGame(_rules));
+				_game->setSavedGame(gameSave);
 
 				Base* const base (new Base(_rules));
 				base->load(
@@ -351,8 +352,6 @@ void NewBattleState::load(const std::string& file)
 							i->second = 0;
 					}
 				}
-
-				_game->setSavedGame(gameSave);
 			}
 			else
 				initPlay();
@@ -404,7 +403,9 @@ void NewBattleState::initPlay()
 {
 	RNG::setSeed(0u);
 
-	SavedGame* const gameSave (new SavedGame(_rules)); // uh do these get deleted anywhere
+	SavedGame* const gameSave (new SavedGame(_rules));
+	_game->setSavedGame(gameSave);
+
 	Base* const base (new Base(_rules));
 
 	const YAML::Node& node (_rules->getStartingBase());
@@ -558,7 +559,6 @@ void NewBattleState::initPlay()
 																true));
 	}
 
-	_game->setSavedGame(gameSave);
 	cbxMissionChange(nullptr);
 }
 

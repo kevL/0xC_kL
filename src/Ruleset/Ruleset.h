@@ -222,7 +222,7 @@ protected:
 		void load(const std::string& src);
 
 		/// Generates a starting SavedGame.
-		SavedGame* createSave() const;
+		SavedGame* createSave(Game* const game) const;
 
 		/// Gets the pool list for Soldier names.
 //		const std::vector<SoldierNamePool*>& getPools() const;
@@ -423,7 +423,7 @@ protected:
 		/// Gets the final-research-type.
 		const std::string& getFinalResearch() const;
 
-		/// Gets a pointer to the current Game.
+		/// Gets the current Game-ptr.
 		const Game* getGame() const;
 };
 
