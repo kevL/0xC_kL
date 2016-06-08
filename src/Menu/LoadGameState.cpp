@@ -177,7 +177,7 @@ void LoadGameState::think()
 {
 	State::think();
 
-	if (_firstRun < 10) // pause to Ensure this gets drawn properly
+	if (_firstRun < 7) // pause a bit to Ensure this gets drawn properly
 		++_firstRun;
 	else
 	{
@@ -188,8 +188,8 @@ void LoadGameState::think()
 		try
 		{
 			Log(LOG_INFO) << "LoadGameState: loading";
-			gameSave->load(_file, _game->getRuleset());
 			_game->setSavedGame(gameSave);
+			gameSave->load(_file, _game->getRuleset());
 
 			switch (_game->getSavedGame()->getEnding())
 			{

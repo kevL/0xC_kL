@@ -37,8 +37,7 @@ class UfoTrajectory;
 
 
 /**
- * Represents an alien UFO on the map.
- * @note Contains variable info about a UFO.
+ * Represents an aLien UFO on the Globe.
  * @sa RuleUfo
  */
 class Ufo final

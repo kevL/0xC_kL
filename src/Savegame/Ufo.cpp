@@ -29,6 +29,7 @@
 #include "SavedGame.h"
 #include "Waypoint.h"
 
+#include "../Engine/Game.h"
 #include "../Engine/Exception.h"
 #include "../Engine/Language.h"
 //#include "../Engine/Logger.h"
@@ -78,8 +79,9 @@ Ufo::Ufo(
 {}
 
 /**
- * Make sure the AlienMission forgets this UFO and delete only owned-Targets, ie.
- * Waypoints.
+ * Clears any Craft that were targeting this UFO and decrements the quantity of
+ * UFOs that are involved in this UFO's AlienMission.
+ * @note The dTor for MovingTarget handles all the Waypoint-jiggery stuff.
  */
 Ufo::~Ufo()
 {
@@ -166,7 +168,6 @@ void Ufo::loadUfo(
 		destLon = _lon;
 		destLat = _lat;
 	}
-
 	_dest = new Waypoint();
 	_dest->setLongitude(destLon);
 	_dest->setLatitude(destLat);

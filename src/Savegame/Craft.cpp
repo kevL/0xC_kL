@@ -31,6 +31,7 @@
 #include "Vehicle.h"
 #include "Waypoint.h"
 
+#include "../Engine/Game.h"
 #include "../Engine/Language.h"
 #include "../Engine/Logger.h"
 

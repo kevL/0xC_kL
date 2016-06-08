@@ -85,28 +85,26 @@ AlienMission::~AlienMission()
 /**
  ** FUNCTOR ***
  */
-class matchById
+class MatchById
 	:
 		public std::unary_function<const AlienBase*, bool>
 {
-
 private:
 	int _id;
 
 	public:
-		/// Remember ID.
-		explicit matchById(int id)
+		/// Cache the ID.
+		explicit MatchById(int id)
 			:
 				_id(id)
 		{}
 
-		/// Match with stored ID.
-		bool operator() (const AlienBase* ab) const
+		/// Match with cached ID.
+		bool operator() (const AlienBase* const ab) const
 		{
 			return ab->getId() == _id;
 		}
 };
-
 
 /**
  * Loads this AlienMission from a YAML file.
@@ -127,15 +125,15 @@ void AlienMission::load(const YAML::Node& node)
 	if (const YAML::Node& baseId = node["alienBase"])
 	{
 		const int id (baseId.as<int>());
-		const std::vector<AlienBase*>::const_iterator alienBase (std::find_if(
-																		_gameSave.getAlienBases()->begin(),
-																		_gameSave.getAlienBases()->end(),
-																		matchById(id)));
-		if (alienBase == _gameSave.getAlienBases()->end())
+		const std::vector<AlienBase*>::const_iterator aBase (std::find_if(
+																	_gameSave.getAlienBases()->begin(),
+																	_gameSave.getAlienBases()->end(),
+																	MatchById(id)));
+		if (aBase == _gameSave.getAlienBases()->end())
 		{
-			throw Exception("Corrupted save: Invalid base for mission.");
+			throw Exception("Corrupted save: Invalid aLien Base for AlienMission.");
 		}
-		_aBase = *alienBase;
+		_aBase = *aBase;
 	}
 }
 
