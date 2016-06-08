@@ -28,6 +28,18 @@
 namespace OpenXcom
 {
 
+const char* Target::stTarget[7u] // NOTE: A search for getCanonicalId() finds further possibilities.
+{
+	"STR_UFO",			// 0
+	"STR_BASE",			// 1
+	"STR_ALIEN_BASE",	// 2
+	"STR_TERROR_SITE",	// 3
+	"STR_WAYPOINT",		// 4
+	"STR_LANDING_SITE",	// 5
+	"STR_CRASH_SITE"	// 6
+};
+
+
 /**
  * Initializes a Target with blank coordinates.
  */

@@ -92,7 +92,7 @@ AlienBaseDetectedState::AlienBaseDetectedState(
 
 
 	_aBase->setDetected();
-	_aBase->setId(_game->getSavedGame()->getCanonicalId("STR_ALIEN_BASE"));
+	_aBase->setId(_game->getSavedGame()->getCanonicalId(Target::stTarget[2u]));
 
 
 	const double

@@ -595,7 +595,6 @@ void NewBattleState::btnOkClick(Action*)
 		_craft = nullptr; // kL_note: may need to remove this for .. some reason.
 	}
 	else if (_missionTypes[_cbxMission->getSelected()] == "STR_ALIEN_BASE_ASSAULT") // alien base
-	//_missionTypes[_cbxMission->getSelected()].find("STR_ALIEN_BASE") != std::string::npos
 	{
 		base = nullptr;
 

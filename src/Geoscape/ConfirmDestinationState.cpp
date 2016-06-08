@@ -115,7 +115,7 @@ void ConfirmDestinationState::btnOkClick(Action*)
 {
 	if (_waypoint != nullptr)
 	{
-		_waypoint->setId(_game->getSavedGame()->getCanonicalId("STR_WAYPOINT"));
+		_waypoint->setId(_game->getSavedGame()->getCanonicalId(Target::stTarget[4u]));
 		_game->getSavedGame()->getWaypoints()->push_back(_waypoint);
 	}
 

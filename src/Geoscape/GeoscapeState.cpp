@@ -2732,7 +2732,7 @@ void GenerateSupplyMission::operator() (const AlienBase* const base) const
 		mission->setRegion(
 					_gameSave.locateRegion(*base)->getRules()->getType(),
 					_rules);
-		mission->setId(_gameSave.getCanonicalId("ALIEN_MISSIONS"));
+		mission->setId(_gameSave.getCanonicalId("STR_ALIEN_MISSION"));
 		mission->setRace(base->getAlienRace());
 		mission->setAlienBase(base);
 		mission->start();
@@ -3247,7 +3247,7 @@ void GeoscapeState::time1Month()
 						AlienMission* const mission = new AlienMission(
 																	missionRule,
 																	*_gameSave);
-						mission->setId(_gameSave->getId("ALIEN_MISSIONS"));
+						mission->setId(_gameSave->getId("STR_ALIEN_MISSION"));
 						mission->setRegion(
 										(*j)->getRules()->getType(),
 										*_rules);
@@ -4335,7 +4335,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 												*missionRule,
 												*_gameSave));
 	mission->setRace(raceType);
-	mission->setId(_gameSave->getCanonicalId("ALIEN_MISSIONS"));
+	mission->setId(_gameSave->getCanonicalId("STR_ALIEN_MISSION"));
 	mission->setRegion(targetRegion, *_rules);
 	mission->setTerrorSiteZone(targetZone);
 	strategy.addMissionRun(directive->getVarType());
@@ -4376,7 +4376,7 @@ void GeoscapeState::deterAlienMissions(bool atGameStart) // private.
 		AlienMission* const alienMission = new AlienMission(
 														missionRule,
 														*_gameSave);
-		alienMission->setId(_gameSave->getId("ALIEN_MISSIONS"));
+		alienMission->setId(_gameSave->getId("STR_ALIEN_MISSION"));
 		alienMission->setRegion(
 							region,
 							*_rules);
@@ -4405,7 +4405,7 @@ void GeoscapeState::deterAlienMissions(bool atGameStart) // private.
 		AlienMission* const alienMission = new AlienMission(
 														missionRule,
 														*_gameSave);
-		alienMission->setId(_gameSave->getId("ALIEN_MISSIONS"));
+		alienMission->setId(_gameSave->getId("STR_ALIEN_MISSION"));
 		alienMission->setRegion(
 							region,
 							*_rules);
@@ -4470,7 +4470,7 @@ void GeoscapeState::setupLandMission() // private.
 		AlienMission* const mission = new AlienMission(
 													missionRule,
 													*_gameSave);
-		mission->setId(_gameSave->getId("ALIEN_MISSIONS"));
+		mission->setId(_gameSave->getId("STR_ALIEN_MISSION"));
 		mission->setRegion(
 						regRule->getType(),
 						*_rules);

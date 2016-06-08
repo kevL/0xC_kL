@@ -19,6 +19,8 @@
 
 #include "AlienDeployment.h"
 
+#include "../Savegame/Target.h"
+
 
 namespace YAML
 {
@@ -158,7 +160,7 @@ AlienDeployment::AlienDeployment(const std::string& type)
 		_turnLimit(0),
 		_chronoResult(FORCE_LOSE),
 		_cheatTurn(CHEAT_TURN_DEFAULT),
-		_markerType("STR_TERROR_SITE"),
+		_markerType(Target::stTarget[3u]),
 		_alert("STR_ALIENS_TERRORISE"),
 		_alertBg("BACK03.SCR")
 {}

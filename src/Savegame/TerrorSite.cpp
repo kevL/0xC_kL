@@ -100,7 +100,7 @@ YAML::Node TerrorSite::saveId() const
 {
 	YAML::Node node (Target::save());
 
-	node["type"] = _ruleDeploy->getMarkerType();
+	node["type"] = _ruleDeploy->getMarkerType(); // Target::stTarget[3u]
 	node["id"]   = _id;
 
 	return node;

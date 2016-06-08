@@ -50,6 +50,8 @@ protected:
 
 
 	public:
+		static const char* stTarget[7u];
+
 		/// Cleans up the Target.
 		virtual ~Target();
 

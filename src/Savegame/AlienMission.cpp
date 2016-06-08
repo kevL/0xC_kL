@@ -769,7 +769,7 @@ void AlienMission::ufoReachedWaypoint(
 					ufo.setSecondsLeft(trajectory.groundTimer() * 5);
 
 					if (ufo.getDetected() == true && ufo.getLandId() == 0)
-						ufo.setLandId(_gameSave.getCanonicalId("STR_LANDING_SITE"));
+						ufo.setLandId(_gameSave.getCanonicalId(Target::stTarget[5u]));
 				}
 				else // there's nothing to land on
 					ufo.setSecondsLeft(5);

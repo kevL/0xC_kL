@@ -1212,7 +1212,7 @@ void DogfightState::updateDogfight()
 																							alm_RETAL,
 																							_game->getSavedGame()->getMonthsPassed()));
 						AlienMission* const mission (new AlienMission(missionRule, *_gameSave));
-						mission->setId(_gameSave->getCanonicalId("ALIEN_MISSIONS"));
+						mission->setId(_gameSave->getCanonicalId("STR_ALIEN_MISSION"));
 						mission->setRegion(
 										targetRegion,
 										*_game->getRuleset());
@@ -1255,7 +1255,7 @@ void DogfightState::updateDogfight()
 				else if (_ufo->getCrashId() == 0) // Set up Crash site.
 				{
 					_ufo->setDestination();
-					_ufo->setCrashId(_gameSave->getCanonicalId("STR_CRASH_SITE"));
+					_ufo->setCrashId(_gameSave->getCanonicalId(Target::stTarget[6u]));
 
 					_ufo->setSecondsLeft(RNG::generate(24,96) * 3600); // TODO: Put min/max in UFO-rules per UFO-type.
 					_ufo->setAltitude(MovingTarget::stAltitude[0u]);

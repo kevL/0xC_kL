@@ -210,9 +210,9 @@ void Craft::loadCraft(
 	{
 		int id (dest["id"].as<int>());
 
-		if ((type = dest["type"].as<std::string>()) == "STR_BASE")
+		if ((type = dest["type"].as<std::string>()) == Target::stTarget[1u])
 			returnToBase();
-		else if (type == "STR_UFO")
+		else if (type == Target::stTarget[0u])
 		{
 			const std::vector<Ufo*>* const ufoList (rules->getGame()->getSavedGame()->getUfos());
 			for (std::vector<Ufo*>::const_iterator
@@ -227,7 +227,7 @@ void Craft::loadCraft(
 				}
 			}
 		}
-		else if (type == "STR_WAYPOINT")
+		else if (type == Target::stTarget[4u])
 		{
 			const std::vector<Waypoint*>* const wpList (rules->getGame()->getSavedGame()->getWaypoints());
 			for (std::vector<Waypoint*>::const_iterator
@@ -242,7 +242,7 @@ void Craft::loadCraft(
 				}
 			}
 		}
-		else if (type == "STR_ALIEN_BASE")
+		else if (type == Target::stTarget[2u])
 		{
 			const std::vector<AlienBase*>* const abList (rules->getGame()->getSavedGame()->getAlienBases());
 			for (std::vector<AlienBase*>::const_iterator
@@ -257,7 +257,7 @@ void Craft::loadCraft(
 				}
 			}
 		}
-		else // type = "STR_TERROR_SITE"
+		else if (type == Target::stTarget[3u])
 		{
 			const std::vector<TerrorSite*>* const terrorList (rules->getGame()->getSavedGame()->getTerrorSites());
 			for (std::vector<TerrorSite*>::const_iterator

@@ -276,7 +276,7 @@ YAML::Node Ufo::saveId() const
 {
 	YAML::Node node (Target::save());
 
-	node["type"] = "STR_UFO";
+	node["type"] = Target::stTarget[0u];
 	node["id"]   = _id;
 
 	return node;

@@ -376,7 +376,7 @@ YAML::Node Base::saveId() const
 {
 	YAML::Node node (Target::save());
 
-	node["type"] = "STR_BASE";
+	node["type"] = Target::stTarget[1u];
 	node["id"]   = 0;
 
 	return node;
