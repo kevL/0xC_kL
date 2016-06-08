@@ -42,6 +42,11 @@ class MovingTarget
 {
 
 private:
+	double
+		_meetPointLon,
+		_meetPointLat,
+		_speedRadian;
+
 	SavedGame* _gameSave;
 
 	/// Checks the MovingTarget's current destination for safe deletion.
@@ -54,11 +59,8 @@ private:
 	protected:
 		int _speed;
 		double
-			_meetPointLon,
-			_meetPointLat,
 			_speedLat,
-			_speedLon,
-			_speedRadian;
+			_speedLon;
 
 		Target* _dest;
 
