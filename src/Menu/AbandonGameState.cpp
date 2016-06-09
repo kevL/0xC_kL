@@ -123,6 +123,7 @@ AbandonGameState::~AbandonGameState()
 void AbandonGameState::btnYesClick(Action*)
 {
 	_game->getResourcePack()->fadeMusic(_game, 863);
+	_game->getScreen()->fadeScreen();
 
 	if (_game->getSavedGame()->isIronman() == true)
 		_game->pushState(new SaveGameState(

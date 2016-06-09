@@ -66,7 +66,7 @@ class GeoscapeState final
 {
 
 private:
-	static const int FAST_GEO_INTERVAL = 20;
+	static const Uint32 FAST_GEO_INTERVAL = 20u;
 	static const size_t
 		UFO_HOTBLOBS = 16u,
 		BLOBSIZE	 = 13u;

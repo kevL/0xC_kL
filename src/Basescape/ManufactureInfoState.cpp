@@ -327,7 +327,7 @@ void ManufactureInfoState::btnSellRelease(Action* action) // private.
 }
 
 /**
- * Updates display of assigned/available engineers/workshop space and calculates
+ * Updates display of assigned/available engineers/workshop-space and calculates
  * expenses/profits.
  */
 void ManufactureInfoState::assignEngineers() // private.
@@ -731,11 +731,12 @@ void ManufactureInfoState::decUnitsClick(Action* action) // private.
 	{
 		case SDL_BUTTON_LEFT:
 		case SDL_BUTTON_RIGHT:
-			const int qtyProduced (_production->getProducedQuantity());
-			if (_production->getProductionTotal() <= qtyProduced)
+		{
+			const int produced (_production->getProducedQuantity());
+			if (_production->getProductionTotal() <= produced)
 			{
 				_production->setInfinite(false);
-				_production->setProductionTotal(qtyProduced + 1);
+				_production->setProductionTotal(produced + 1);
 				assignEngineers();
 			}
 			else
@@ -752,10 +753,11 @@ void ManufactureInfoState::decUnitsClick(Action* action) // private.
 
 					case SDL_BUTTON_RIGHT:
 						_production->setInfinite(false);
-						_production->setProductionTotal(qtyProduced + 1);
+						_production->setProductionTotal(produced + 1);
 						assignEngineers();
 				}
 			}
+		}
 	}
 }
 

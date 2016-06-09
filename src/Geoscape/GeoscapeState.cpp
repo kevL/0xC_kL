@@ -463,7 +463,8 @@ GeoscapeState::GeoscapeState()
 
 	_timeComp = _btn5Secs;
 
-	_geoTimer		= new Timer(static_cast<Uint32>(FAST_GEO_INTERVAL)); // Volutar_smoothGlobe shadows.
+	_geoTimer		= new Timer(FAST_GEO_INTERVAL); // Volutar_smoothGlobe shadows.
+
 	_dfZoomInTimer	= new Timer(static_cast<Uint32>(Options::geoClockSpeed));
 	_dfZoomOutTimer	= new Timer(static_cast<Uint32>(Options::geoClockSpeed));
 	_dfStartTimer	= new Timer(static_cast<Uint32>(Options::dogfightSpeed));
@@ -3431,6 +3432,8 @@ void GeoscapeState::btnInterceptClick(Action*)
 void GeoscapeState::btnBasesClick(Action*)
 {
 	kL_soundPop->play(Mix_GroupAvailable(0));
+	_game->getScreen()->fadeScreen();
+
 	resetTimer();
 
 	if (_gameSave->getBases()->empty() == false)
@@ -3458,6 +3461,7 @@ void GeoscapeState::btnBasesClick(Action*)
 void GeoscapeState::btnGraphsClick(Action*)
 {
 	kL_soundPop->play(Mix_GroupAvailable(0));
+	_game->getScreen()->fadeScreen();
 
 	resetTimer();
 	_game->pushState(new GraphsState());
