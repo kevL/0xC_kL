@@ -1594,7 +1594,7 @@ void BattlescapeGame::endTurn() // private.
 								liveHostile,
 								livePlayer));
 
-	if (_battleSave->getObjectiveType() == MUST_DESTROY // brain death, end Final Mission.
+	if (_battleSave->getObjectiveTileType() == MUST_DESTROY // brain death, end Final Mission.
 		&& _battleSave->allObjectivesDestroyed() == true)
 	{
 		_parentState->finishBattle(false, livePlayer);
@@ -1622,7 +1622,7 @@ void BattlescapeGame::endTurn() // private.
 			return;
 		}
 
-		const bool battleComplete ((liveHostile == 0 && _battleSave->getObjectiveType() != MUST_DESTROY)
+		const bool battleComplete ((liveHostile == 0 && _battleSave->getObjectiveTileType() != MUST_DESTROY)
 								 || livePlayer  == 0);
 
 		if (battleComplete == false)
@@ -1878,7 +1878,7 @@ void BattlescapeGame::checkCasualties(
 //					++i)
 //			{
 //				if (_battleSave->getTiles()[i]->getMapData(O_OBJECT) != nullptr
-//					&& _battleSave->getTiles()[i]->getMapData(O_OBJECT)->getSpecialType() == UFO_NAVIGATION)
+//					&& _battleSave->getTiles()[i]->getMapData(O_OBJECT)->getTileType() == UFO_NAVIGATION)
 //				{
 //					controlDestroyed = false;
 //					break;

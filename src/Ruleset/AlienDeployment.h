@@ -151,7 +151,7 @@ private:
 
 	BriefingData _briefingData;
 	ChronoResult _chronoResult;
-	SpecialTileType _objectiveType;
+	TileType _objectiveType;
 
 	public:
 		/// Creates an AlienDeployment ruleset.
@@ -216,32 +216,32 @@ private:
 		/// Gets the maximum duration for the AlienDeployment.
 		int getDurationMax() const;
 
-		/// Gets the list of music to pick from.
+		/// Gets the list of music-tracks to pick from.
 		const std::vector<std::string>& getDeploymentMusics() const;
 
-		/// Gets the objective-type for the AlienDeployment.
-		SpecialTileType getObjectiveType() const;
-		/// Gets a fixed number of objectives required if any.
+		/// Gets the objective-tiletype for the AlienDeployment.
+		TileType getPlayerObjective() const;
+		/// Gets a fixed number of objective-tiles required if any.
 		int getObjectivesRequired() const;
-		/// Gets the string to pop up when the mission-objectives are complete.
+		/// Gets the string to pop up when enough objective-tiles are destroyed.
 		const std::string& getObjectivePopup() const;
-		/// Fills out the objective-complete info.
+		/// Gets the objective-complete info.
 		bool getObjectiveCompleteInfo(
 				std::string& text,
 				int& score) const;
-		/// Fills out the objective-failed info.
+		/// Gets the objective-failed info.
 		bool getObjectiveFailedInfo(
 				std::string& text,
 				int& score) const;
 
-		/// Gets the score penalty xCom receives for ignoring a site.
+		/// Gets the score-penalty xCom receives for ignoring a site.
 		int getDespawnPenalty() const;
-		/// Gets the half-hourly score penalty xCom receives for a site existing.
+		/// Gets the half-hourly score-penalty xCom receives for a site existing.
 		int getPointsPer30() const;
 
 		/// Gets the turn-limit for the AlienDeployment.
 		int getTurnLimit() const;
-		/// Gets the result when the turn-timer runs out.
+		/// Gets the result to force when the turn-limit is reached.
 		ChronoResult getChronoResult() const;
 
 		/// Gets which turn the aLiens start cheating on.

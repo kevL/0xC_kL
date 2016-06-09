@@ -205,7 +205,7 @@ void AlienDeployment::load(const YAML::Node& node)
 
 	_musics = node["music"].as<std::vector<std::string>>(_musics); // NOTE: might not be compatible w/ sza_MusicRules.
 
-	_objectiveType = static_cast<SpecialTileType>(node["objectiveType"].as<int>(_objectiveType));
+	_objectiveType = static_cast<TileType>(node["objectiveType"].as<int>(_objectiveType));
 	_objectivesReqd	= node["objectivesReqd"].as<int>(_objectivesReqd);
 	_objectivePopup	= node["objectivePopup"].as<std::string>(_objectivePopup);
 
@@ -418,17 +418,17 @@ const std::vector<std::string>& AlienDeployment::getDeploymentMusics() const
 }
 
 /**
- * Gets the objective type for this AlienDeployment (eg alien-control-consoles).
- * @return, objective type (RuleItem.h)
+ * Gets the objective-tiletype for this AlienDeployment (eg alien-control-consoles).
+ * @return, objective-tiletype (RuleItem.h)
  */
-SpecialTileType AlienDeployment::getObjectiveType() const
+TileType AlienDeployment::getPlayerObjective() const
 {
 	return _objectiveType;
 }
 
 /**
- * Gets the number of objectives required by this AlienDeployment.
- * @return, number of objectives
+ * Gets the quantity of objective-tiles required by this AlienDeployment.
+ * @return, quantity of objective-tiles
  */
 int AlienDeployment::getObjectivesRequired() const
 {
@@ -497,8 +497,8 @@ int AlienDeployment::getPointsPer30() const
 }
 
 /**
- * Gets the maximum number of turns before the mission ends.
- * @return, the turn limit
+ * Gets the maximum turns before forcing a battle to end.
+ * @return, the turn-limit
  */
 int AlienDeployment::getTurnLimit() const
 {
@@ -506,7 +506,7 @@ int AlienDeployment::getTurnLimit() const
 }
 
 /**
- * Gets the result to perform when the turn-timer runs out.
+ * Gets the result to perform when the turn-limit is reached.
  * @return, the ChronoResult (AlienDeployment.h)
  */
 ChronoResult AlienDeployment::getChronoResult() const

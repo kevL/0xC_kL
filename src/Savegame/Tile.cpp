@@ -652,7 +652,7 @@ void Tile::destroyTilepart(
 			return;
 		}
 
-		if (data->getSpecialType() == battleSave->getObjectiveType())
+		if (data->getTileType() == battleSave->getObjectiveTileType())
 			battleSave->addDestroyedObjective();
 
 		if (partType == O_OBJECT)
@@ -1188,7 +1188,7 @@ void Tile::animateTile()
 						nextFrame = _curFrame[i] + 1;
 
 						if (_parts[i]->isSlideDoor() == true // special handling for Avenger & Lightning doors
-							&& _parts[i]->getSpecialType() == START_POINT
+							&& _parts[i]->getTileType() == START_POINT
 							&& nextFrame == 3)
 						{
 							nextFrame = 7;

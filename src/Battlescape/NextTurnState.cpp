@@ -207,7 +207,7 @@ void NextTurnState::nextTurn() // private.
 									livePlayer);
 	if (livePlayer < 1
 		|| (liveHostile == 0
-			&& _battleSave->getObjectiveType() != MUST_DESTROY))	// <- not the final mission
+			&& _battleSave->getObjectiveTileType() != MUST_DESTROY))	// <- not the final mission
 	{																// final tactical determination done in BattlescapeGame::endTurn() -> finishBattle()
 		switchMusic = true;											// or AbortMissionState::btnOkClick() -> finishBattle().
 		_state->finishBattle(false, livePlayer);

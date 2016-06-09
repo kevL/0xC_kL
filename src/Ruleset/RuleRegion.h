@@ -82,7 +82,6 @@ struct MissionZone
 class RuleCity;
 class Target;
 
-
 /**
  * Represents a specific region of the world.
  * @note Contains constant info about a region like area covered and base
@@ -104,13 +103,13 @@ private:
 	std::vector<RuleCity*> _cities;
 
 	WeightedOptions _missionWeights;		// Weighted list of the different mission types for this region.
-	size_t _regionWeight;					// Weight of this region when selecting regions for alien missions.
+	size_t _regionWeight;					// Weight of this region when selecting regions for AlienMissions.
 	std::vector<MissionZone> _missionZones;	// All the mission zones in this region.
 	std::string _missionRegion;				// Do missions in the region defined by this string instead.
 
 
 	public:
-		static const int MZ_CITY = 3;
+		static const size_t MZ_CITY = 3u;
 
 
 		/// Creates a blank RuleRegion.
@@ -149,7 +148,7 @@ private:
 		const std::vector<MissionZone>& getMissionZones() const;
 
 		/// Gets a random point inside a MissionZone.
-		std::pair<double, double> getRandomPoint(size_t zone) const;
+		std::pair<double, double> getZonePoint(size_t zone) const;
 		/// Gets the MissionArea for a corresponding zone and target.
 		MissionArea getMissionPoint(
 				size_t zone,
@@ -193,11 +192,8 @@ struct convert<OpenXcom::MissionArea>
 			const Node& node,
 			OpenXcom::MissionArea& rhs)
 	{
-		if (node.IsSequence() == false
-			|| node.size() < 4)
-		{
+		if (node.IsSequence() == false || node.size() < 4)
 			return false;
-		}
 
 		rhs.lonMin = node[0u].as<double>() * M_PI / 180.;
 		rhs.lonMax = node[1u].as<double>() * M_PI / 180.;
@@ -205,18 +201,13 @@ struct convert<OpenXcom::MissionArea>
 		rhs.latMax = node[3u].as<double>() * M_PI / 180.;
 
 		// safeties ->
-//		if (rhs.lonMin > rhs.lonMax)
-//			std::swap(rhs.lonMin, rhs.lonMax);
-//		if (rhs.latMin > rhs.latMax)
-//			std::swap(rhs.latMin, rhs.latMax);
+//		if (rhs.lonMin > rhs.lonMax) std::swap(rhs.lonMin, rhs.lonMax);
+//		if (rhs.latMin > rhs.latMax) std::swap(rhs.latMin, rhs.latMax);
 
-		if (node.size() > 4u)
-			rhs.texture	= node[4u].as<int>();
-		if (node.size() > 5u)
-			rhs.site	= node[5u].as<std::string>();
+		if (node.size() > 4u) rhs.texture = node[4u].as<int>();
+		if (node.size() > 5u) rhs.site    = node[5u].as<std::string>();
 
 		// TODO: needs entries #7, #8; labelTop & showNameAtZoomLevel
-
 		return true;
 	}
 };

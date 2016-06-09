@@ -3239,11 +3239,11 @@ bool BattleUnit::checkReload()
  * @param tileType - type of exit-tile to check for (RuleItem.h) (default START_POINT)
  * @return, true if unit is in a designated exit-area
  */
-bool BattleUnit::isInExitArea(SpecialTileType tileType) const
+bool BattleUnit::isInExitArea(TileType tileType) const
 {
 	return _tile != nullptr
 		&& _tile->getMapData(O_FLOOR) != nullptr
-		&& _tile->getMapData(O_FLOOR)->getSpecialType() == tileType;
+		&& _tile->getMapData(O_FLOOR)->getTileType() == tileType;
 }
 
 /**

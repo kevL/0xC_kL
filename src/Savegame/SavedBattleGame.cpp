@@ -83,7 +83,7 @@ SavedBattleGame::SavedBattleGame(
 		_itemId(0),
 		_objectiveType(TILE),
 		_objectivesDestroyed(0),
-		_objectivesNeeded(0),
+		_objectivesReq(0),
 		_unitsFalling(false),
 		_cheatAI(false),
 //		_batReserved(BA_NONE),
@@ -562,9 +562,9 @@ void SavedBattleGame::load(
 
 	Log(LOG_INFO) << ". set some vars";
 
-	_objectiveType = static_cast<SpecialTileType>(node["objectiveType"].as<int>(_objectiveType));
+	_objectiveType = static_cast<TileType>(node["objectiveType"].as<int>(_objectiveType));
+	_objectivesReq			= node["objectivesReq"]			.as<int>(_objectivesReq);
 	_objectivesDestroyed	= node["objectivesDestroyed"]	.as<int>(_objectivesDestroyed);
-	_objectivesNeeded		= node["objectivesNeeded"]		.as<int>(_objectivesNeeded);
 
 	_turnLimit = node["turnLimit"].as<int>(_turnLimit);
 	_chronoResult = static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
@@ -657,11 +657,11 @@ YAML::Node SavedBattleGame::save() const
 {
 	YAML::Node node;
 
-	if (_objectivesNeeded != 0)
+	if (_objectivesReq != 0)
 	{
 		node["objectiveType"]		= static_cast<int>(_objectiveType);
+		node["objectivesReq"]		= _objectivesReq;
 		node["objectivesDestroyed"]	= _objectivesDestroyed;
-		node["objectivesNeeded"]	= _objectivesNeeded;
 	}
 
 	node["width"]			= _mapsize_x;
@@ -1734,7 +1734,7 @@ void SavedBattleGame::setAborted(bool abort)
 }
 
 /**
- * Returns whether the mission was aborted or successful.
+ * Checks whether the mission was aborted or not.
  * @return, true if the mission was aborted, or false if the mission was successful
  */
 bool SavedBattleGame::isAborted() const
@@ -1743,39 +1743,40 @@ bool SavedBattleGame::isAborted() const
 }
 
 /**
- * Sets the objective type for the current battle.
- * @param type - the objective type (RuleItem.h)
+ * Sets the objective-tiletype for the current battle.
+ * @param type - objective-tiletype (RuleItem.h)
  */
-void SavedBattleGame::setObjectiveType(SpecialTileType type)
+void SavedBattleGame::setObjectiveTileType(TileType type)
 {
 	_objectiveType = type;
 }
 
 /**
- * Gets the objective type for the current battle.
- * @return, the objective type (RuleItem.h)
+ * Gets the objective-tiletype for the current battle.
+ * @return, objective-tiletype (RuleItem.h)
  */
-SpecialTileType SavedBattleGame::getObjectiveType() const
+TileType SavedBattleGame::getObjectiveTileType() const
 {
 	return _objectiveType;
 }
 
 /**
- * Initializes the objectives-needed count.
- * @note Used only to initialize the objective counter; cf addDestroyedObjective() below.
- * @note Objectives were tile-parts marked w/ MUST_DESTROY in their MCD but now
- * can be any specially marked tile. See elsewhere.
- * @param qty - quantity of objective-tileparts that need to be destroyed
+ * Initializes the objective-tiles needed quantity.
+ * @note Used only to initialize the objective counter; cf addDestroyedObjective()
+ * below. Objectives were tile-parts marked w/ MUST_DESTROY in their MCD but now
+ * can be any specially marked tile. See elsewhere ha.
+ * @param qty - quantity of objective-tiletype tile-parts that need to be
+ *				destroyed for a/the tactical-objective to be achieved
  */
 void SavedBattleGame::setObjectiveTotal(int qty)
 {
-	_objectivesNeeded = qty;
+	_objectivesReq = qty;
 	_objectivesDestroyed = 0;
 }
 
 /**
- * Increments the objectives-destroyed count and checks whether the necessary
- * quantity of objectives have been destroyed.
+ * Increments the objective-tiles destroyed and checks if the necessary quantity
+ * has been destroyed.
  */
 void SavedBattleGame::addDestroyedObjective()
 {
@@ -1791,13 +1792,13 @@ void SavedBattleGame::addDestroyedObjective()
 }
 
 /**
- * Returns whether or not enough objectives have been destroyed.
- * @return, true if the objectives are destroyed
+ * Checks if enough objective-tiles have been destroyed.
+ * @return, true if enough for a win-condition
  */
 bool SavedBattleGame::allObjectivesDestroyed() const
 {
-	return _objectivesNeeded != 0
-		&& _objectivesNeeded <= _objectivesDestroyed;
+	return _objectivesReq != 0
+		&& _objectivesReq <= _objectivesDestroyed;
 }
 
 /**

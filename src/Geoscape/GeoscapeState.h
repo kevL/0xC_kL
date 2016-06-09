@@ -172,12 +172,12 @@ private:
 	/// Starts a new dogfight.
 	void startDogfight();
 
-	/// Handle alien mission generation.
+	/// Handle AlienMission generation.
 	void deterAlienMissions();
 //	void deterAlienMissions(bool atGameStart = false);
-//	/// Handle land mission generation.
+//	/// Handle land-mission generation.
 //	void setupLandMission();
-	/// Process each individual mission script command.
+	/// Process each individual MissionScript directive.
 	bool processDirective(RuleMissionScript* const directive);
 
 	/// Handler for hot-keying time-compression.

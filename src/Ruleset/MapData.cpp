@@ -35,7 +35,7 @@ namespace OpenXcom
 MapData::MapData(MapDataSet* const dataSet)
 	:
 		_dataSet(dataSet),
-		_specialType(TILE),
+		_tileType(TILE),
 		_isDoor(false),
 		_isHingeDoor(false),
 		_isSlideDoor(false),
@@ -360,21 +360,21 @@ void MapData::setPartType(MapDataType type)
 }
 
 /**
- * Gets this tile-part's SpecialTileType.
- * @return, the SpecialTileType (MapData.h)
+ * Gets this tile-part's TileType.
+ * @return, the TileType (MapData.h)
  */
-SpecialTileType MapData::getSpecialType() const
+TileType MapData::getTileType() const
 {
-	return _specialType;
+	return _tileType;
 }
 
 /**
- * Sets this tile-part's SpecialTileType.
- * @param value	- SpecialTileType (MapData.h)
+ * Sets this tile-part's TileType.
+ * @param value	- a TileType (MapData.h)
  */
-void MapData::setSpecialType(SpecialTileType type)
+void MapData::setTileType(TileType type)
 {
-	_specialType = type;
+	_tileType = type;
 }
 
 /**

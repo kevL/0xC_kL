@@ -68,7 +68,7 @@ namespace OpenXcom
 
 /**
  * Creates an AlienMission rule.
- * @param type - reference the mission type
+ * @param type - reference to the mission type
  */
 RuleAlienMission::RuleAlienMission(const std::string& type)
 	:
@@ -162,7 +162,7 @@ void RuleAlienMission::load(const YAML::Node& node)
 }
 
 /**
- * Chooses one of the available races for this mission.
+ * Chooses one of the available races for this AlienMission rule.
  * @note The racial distribution may vary based on the current game date.
  * @param monthsPassed - the number of months that have passed
  * @return, the string ID of the race
@@ -177,24 +177,7 @@ std::string RuleAlienMission::generateRace(size_t monthsPassed) const
 }
 
 /**
- * Chooses the most likely race for this mission.
- * @note The racial distribution may vary based on the current game date.
- * @param monthsPassed - the number of months that have passed in the game world
- * @return, the string-ID of the race
- *
-std::string RuleAlienMission::getTopRace(size_t monthsPassed) const
-{
-	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator race = _raceDistribution.rbegin();
-	while (monthsPassed < race->first)
-		++race;
-
-	return race->second->topChoice();
-//	std::vector<std::pair<size_t, WeightedOptions*>>::const_iterator race = _raceDistribution.begin();
-//	return race->second->topChoice();
-} */
-
-/**
- * Gets the alien-score for this mission.
+ * Gets the alien-score of this AlienMission rule.
  * @return, amount of points
  */
 int RuleAlienMission::getPoints() const

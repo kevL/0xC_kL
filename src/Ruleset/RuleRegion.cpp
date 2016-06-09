@@ -53,7 +53,7 @@ RuleRegion::~RuleRegion()
 }
 
 /**
- * Loads this RuleRegion type from a YAML file.
+ * Loads this RuleRegion from a YAML file.
  * @param node - reference a YAML node
  */
 void RuleRegion::load(const YAML::Node& node)
@@ -73,10 +73,8 @@ void RuleRegion::load(const YAML::Node& node)
 		_latMax.push_back(areas[i][3u] * M_PI / 180.);
 
 		// safeties ->
-//		if (_lonMin.back() > _lonMax.back())
-//			std::swap(_lonMin.back(), _lonMax.back());
-//		if (_latMin.back() > _latMax.back())
-//			std::swap(_latMin.back(), _latMax.back());
+//		if (_lonMin.back() > _lonMax.back()) std::swap(_lonMin.back(), _lonMax.back());
+//		if (_latMin.back() > _latMax.back()) std::swap(_latMin.back(), _latMax.back());
 	}
 
 	// TODO: if ["delete"] delete previous mission zones.
@@ -132,8 +130,8 @@ void RuleRegion::load(const YAML::Node& node)
 }
 
 /**
- * Gets the language string that names this RuleRegion.
- * @note Each region-type has a unique name.
+ * Gets the string that types this RuleRegion.
+ * @note Each region-type has a unique label.
  * @return, a reference to the region-type
  */
 const std::string& RuleRegion::getType() const
@@ -210,7 +208,7 @@ std::vector<RuleCity*>* RuleRegion::getCities()
 }
 
 /**
- * Gets the weight of this RuleRegion for aLien-mission-selection.
+ * Gets the weight of this RuleRegion for AlienMission selection.
  * @note This is only used when creating a new game since these weights change
  * in the course of the game.
  * @return, the initial weight
@@ -234,7 +232,7 @@ const std::vector<MissionZone>& RuleRegion::getMissionZones() const
  * @param zone - the target-zone
  * @return, a pair of longitude and latitude
  */
-std::pair<double, double> RuleRegion::getRandomPoint(size_t zone) const
+std::pair<double, double> RuleRegion::getZonePoint(size_t zone) const
 {
 	if (zone < _missionZones.size())
 	{

@@ -396,7 +396,7 @@ void BattlescapeGenerator::run()
 		for (int i = 0; i < _battleSave->getMapSizeXYZ(); ++i)
 		{
 			if (_battleSave->getTiles()[i]->getMapData(O_FLOOR)
-				&& (_battleSave->getTiles()[i]->getMapData(O_FLOOR)->getSpecialType() == START_POINT
+				&& (_battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_POINT
 					|| (_battleSave->getTiles()[i]->getPosition().z == 1
 						&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->isGravLift()
 						&& _battleSave->getTiles()[i]->getMapData(O_OBJECT))))
@@ -410,7 +410,7 @@ void BattlescapeGenerator::run()
 		for (int i = 0; i < _battleSave->getMapSizeXYZ(); ++i)
 		{
 			if (_battleSave->getTiles()[i]->getMapData(O_FLOOR) != nullptr
-				&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->getSpecialType() == START_POINT)
+				&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_POINT)
 //					|| (_battleSave->getTiles()[i]->getPosition().z == _mapsize_z - 1
 //						&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->isGravLift()
 //						&& _battleSave->getTiles()[i]->getMapData(O_OBJECT))
@@ -546,12 +546,12 @@ void BattlescapeGenerator::nextStage()
 					if (tile != nullptr)
 					{
 						if (tile->getMapData(O_FLOOR) != nullptr
-							&& tile->getMapData(O_FLOOR)->getSpecialType() == START_POINT)
+							&& tile->getMapData(O_FLOOR)->getTileType() == START_POINT)
 						{
 							toContainer = itemsGuaranteed;
 						}
 						else if (tile->getMapData(O_FLOOR) != nullptr
-							&& tile->getMapData(O_FLOOR)->getSpecialType() == END_POINT)
+							&& tile->getMapData(O_FLOOR)->getTileType() == END_POINT)
 						{
 							toContainer = &passToNextStage;
 						}
@@ -788,7 +788,7 @@ void BattlescapeGenerator::nextStage()
 	for (int i = 0; i < _battleSave->getMapSizeXYZ(); ++i)
 	{
 		if (_battleSave->getTiles()[i]->getMapData(O_FLOOR) != nullptr
-			&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->getSpecialType() == START_POINT)
+			&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_POINT)
 //				|| (_battleSave->getTiles()[i]->getPosition().z == 1
 //					&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->isGravLift()
 //					&& _battleSave->getTiles()[i]->getMapData(O_OBJECT))
@@ -1408,7 +1408,7 @@ bool BattlescapeGenerator::canPlacePlayerUnit(Tile* const tile) // private.
 {
 	if (tile != nullptr													// is a tile
 		&& tile->getMapData(O_FLOOR) != nullptr							// has a floor
-		&& tile->getMapData(O_FLOOR)->getSpecialType() == START_POINT	// is a 'start point', ie. cargo tile
+		&& tile->getMapData(O_FLOOR)->getTileType() == START_POINT	// is a 'start point', ie. cargo tile
 		&& tile->getMapData(O_OBJECT) == nullptr						// no object content
 		&& tile->getMapData(O_FLOOR)->getTuCostPart(MT_WALK) < 255		// is walkable.
 		&& tile->getTileUnit() == nullptr)								// and no unit on Tile.
@@ -2400,7 +2400,7 @@ void BattlescapeGenerator::fuelPowerSources() // private.
 	{
 		tile = _battleSave->getTiles()[i];
 		if (tile->getMapData(O_OBJECT)
-			&& tile->getMapData(O_OBJECT)->getSpecialType() == UFO_POWER_SOURCE)
+			&& tile->getMapData(O_OBJECT)->getTileType() == UFO_POWER_SOURCE)
 		{
 			alienFuel = new BattleItem(
 									_rules->getItemRule(_rules->getAlienFuelType()),
@@ -2427,7 +2427,7 @@ void BattlescapeGenerator::explodePowerSources() // private.
 	{
 		tile = _battleSave->getTiles()[i];
 		if (tile->getMapData(O_OBJECT) != nullptr
-			&& tile->getMapData(O_OBJECT)->getSpecialType() == UFO_POWER_SOURCE
+			&& tile->getMapData(O_OBJECT)->getTileType() == UFO_POWER_SOURCE
 			&& RNG::percent(80) == true)
 		{
 			voxel = Position::toVoxelSpaceCentered(
@@ -2508,7 +2508,7 @@ void BattlescapeGenerator::runInventory(
 					data,
 					0,0,
 					O_FLOOR);
-		tile->getMapData(O_FLOOR)->setSpecialType(START_POINT);
+		tile->getMapData(O_FLOOR)->setTileType(START_POINT);
 		tile->getMapData(O_FLOOR)->setTUWalk(0);
 		tile->getMapData(O_FLOOR)->setFlags(
 										false,
@@ -4044,35 +4044,35 @@ bool BattlescapeGenerator::removeBlocks(const MapScript* const directive) // pri
 }
 
 /**
- * Sets up the objectives for the Map.
- * @param ruleDeploy - deployment data from which to fetch data
+ * Sets up the Player's objectives for the battle.
+ * @param ruleDeploy - deployment-data from which to fetch relevant data
  */
 void BattlescapeGenerator::setupObjectives(const AlienDeployment* const ruleDeploy)
 {
-	const SpecialTileType tileType (ruleDeploy->getObjectiveType());
+	const TileType tileType (ruleDeploy->getPlayerObjective());
 	if (tileType != TILE)
 	{
 		int
 			req (ruleDeploy->getObjectivesRequired()),
 			inSitu (0);
-		const int parts (static_cast<int>(Tile::PARTS_TILE));
 		MapDataType partType;
 		const Tile* tile;
 
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _battleSave->getMapSizeXYZ();
 				++i)
 		{
-			for (int
-					j = 0;
-					j != parts;
+			for (size_t
+					j = 0u;
+					j != Tile::PARTS_TILE;
 					++j)
 			{
-				tile = _battleSave->getTiles()[i];
 				partType = static_cast<MapDataType>(j);
+
+				tile = _battleSave->getTiles()[i];
 				if (tile->getMapData(partType) != nullptr
-					&& tile->getMapData(partType)->getSpecialType() == tileType)
+					&& tile->getMapData(partType)->getTileType() == tileType)
 				{
 					++inSitu;
 				}
@@ -4081,7 +4081,7 @@ void BattlescapeGenerator::setupObjectives(const AlienDeployment* const ruleDepl
 
 		if (inSitu != 0)
 		{
-			_battleSave->setObjectiveType(tileType);
+			_battleSave->setObjectiveTileType(tileType);
 
 			if (req == 0 || inSitu < req)
 				req = inSitu;

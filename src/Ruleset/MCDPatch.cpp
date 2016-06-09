@@ -191,7 +191,7 @@ void MCDPatch::load(const YAML::Node& node) // TODO: fill this out with more dat
 
 		if ((*i)["specialType"])
 		{
-			const SpecialTileType specialType (static_cast<SpecialTileType>((*i)["specialType"].as<int>()));
+			const TileType specialType (static_cast<TileType>((*i)["specialType"].as<int>()));
 			_specialTypes.push_back(std::make_pair(
 												mcdIndex,
 												specialType));
@@ -375,12 +375,12 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 		dataSet->getRecords()->at(i->first)->setPartType(static_cast<MapDataType>(i->second));
 	}
 
-	for (std::vector<std::pair<size_t, SpecialTileType>>::const_iterator
+	for (std::vector<std::pair<size_t, TileType>>::const_iterator
 			i = _specialTypes.begin();
 			i != _specialTypes.end();
 			++i)
 	{
-		dataSet->getRecords()->at(i->first)->setSpecialType(static_cast<SpecialTileType>(i->second));
+		dataSet->getRecords()->at(i->first)->setTileType(static_cast<TileType>(i->second));
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator

@@ -97,10 +97,8 @@ private:
 		/// Loads AlienMission data from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets a race based on the game-time and the racial distribution.
+		/// Gets an aLien race-type based on the game-time and the racial distribution.
 		std::string generateRace(size_t monthsPassed) const;
-		/// Gets the most likely race based on the game-time and the racial distribution.
-//		std::string getTopRace(size_t monthsPassed) const;
 
 		/// Gets the mission's type-ID.
 		const std::string& getType() const
@@ -113,18 +111,18 @@ private:
 		const MissionWave& getWave(size_t index) const
 		{ return _waves[index]; }
 
-		/// Gets the score for this mission.
+		/// Gets the score of the AlienMission rule.
 		int getPoints() const;
 
-		/// Gets the objective for this mission.
+		/// Gets the objective-type of the AlienMission rule.
 		MissionObjective getObjectiveType() const
 		{ return _objectiveType; }
 
 		/// Gets the UFO type for special spawns.
-		const std::string& getSpawnUfo() const
+		const std::string& getSpecialUfo() const
 		{ return _specialUfo; }
 		/// Gets the zone for spawning a site or base.
-		size_t getSpawnZone() const
+		size_t getSpecialZone() const
 		{ return _specialZone; }
 
 		/// Gets the chances of this mission based on the game-time.
@@ -133,7 +131,7 @@ private:
 		/// Gets the basic odds of this mission spawning a retaliation mission.
 		int getRetaliation() const;
 
-		/// The type of terrorSite to spawn if any.
+		/// The type of TerrorSite to spawn if any.
 		const std::string& getSiteType() const
 		{ return _siteType; }
 };

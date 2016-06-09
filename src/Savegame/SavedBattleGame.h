@@ -89,7 +89,7 @@ private:
 		_mapsize_y,
 		_mapsize_z,
 		_objectivesDestroyed,
-		_objectivesNeeded,
+		_objectivesReq,
 		_tacticalShade,
 		_turn,
 		_turnLimit;
@@ -98,7 +98,7 @@ private:
 //	BattleActionType _batReserved;
 	ChronoResult _chronoResult;
 	Position _rfTriggerPosition;
-	SpecialTileType _objectiveType;
+	TileType _objectiveType;
 	TacticalType _tacType;
 	UnitFaction _side;
 
@@ -326,25 +326,25 @@ private:
 		/// Moves all the leftover items to random locations in the storage-tiles vector.
 		void distributeEquipment(Tile* const tile);
 
-		/// Removes an item from the battlefield.
+		/// Removes a BattleItem from the battlefield.
 		std::vector<BattleItem*>::const_iterator toDeleteItem(BattleItem* const item);
 		/// Gives read-only access to the deleted-items vector.
 		const std::vector<BattleItem*>& getDeletedItems() const;
 
-		/// Sets whether the mission was aborted.
+		/// Sets if the mission was aborted or not.
 		void setAborted(bool abort = true);
 		/// Checks if the mission was aborted.
 		bool isAborted() const;
 
-		/// Sets the objective type for this mission.
-		void setObjectiveType(SpecialTileType type);
-		/// Gets the objective type of this mission.
-		SpecialTileType getObjectiveType() const;
-		/// Sets how many objectives need to be destroyed.
+		/// Sets the objective-tiletype for this mission.
+		void setObjectiveTileType(TileType type);
+		/// Gets the objective-tiletype of this mission.
+		TileType getObjectiveTileType() const;
+		/// Sets how many objective-tiles need to be destroyed.
 		void setObjectiveTotal(int qty);
-		/// Increments the objectives-destroyed counter.
+		/// Increments the objective-tiles destroyed counter.
 		void addDestroyedObjective();
-		/// Checks if all the objectives are destroyed.
+		/// Checks if enough objective-tiles are destroyed.
 		bool allObjectivesDestroyed() const;
 
 		/// Sets the next available item-ID value.

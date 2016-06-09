@@ -147,7 +147,7 @@ private:
 
 	MissionStatistics* _tactical;
 
-	std::map<SpecialTileType, SpecialType*> _specialTypes;
+	std::map<TileType, SpecialType*> _specialTypes;
 	std::map<const RuleItem*, int>
 		_clips,
 		_clipsProperty,

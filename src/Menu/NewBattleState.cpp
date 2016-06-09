@@ -417,7 +417,7 @@ void NewBattleState::initPlay()
 	gameSave->getBases()->push_back(base);
 	base->setName(L"tactical");
 
-	// delete Soldiers & Craft in this base
+	// Delete Soldiers & Craft at the Base.
 	for (std::vector<Soldier*>::const_iterator
 			i = base->getSoldiers()->begin();
 			i != base->getSoldiers()->end();
@@ -436,7 +436,7 @@ void NewBattleState::initPlay()
 	}
 	base->getCrafts()->clear();
 
-	// clear the Stores too.
+	// Clear the stores too.
 	base->getStorageItems()->getContents()->clear();
 
 	_craft = new Craft(
@@ -446,7 +446,7 @@ void NewBattleState::initPlay()
 					1);
 	base->getCrafts()->push_back(_craft);
 
-	// Generate soldiers
+	// Generate Soldiers.
 	// TODO: re-generate Soldiers btn.
 	const UnitStats statCaps (_rules->getSoldier("STR_SOLDIER")->getStatCaps());
 	UnitStats* stats;
@@ -525,7 +525,7 @@ void NewBattleState::initPlay()
 	}
 	base->sortSoldiers();
 
-	// Generate items
+	// Generate items.
 	const RuleItem* itRule;
 	const std::vector<std::string>& allItems (_rules->getItemsList());
 	for (std::vector<std::string>::const_iterator
@@ -547,7 +547,7 @@ void NewBattleState::initPlay()
 		}
 	}
 
-	// Add research - setup research generals.
+	// Add research - setup ResearchGenerals.
 	const std::vector<std::string>& resList (_rules->getResearchList());
 	for (std::vector<std::string>::const_iterator
 			i = resList.begin();

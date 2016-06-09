@@ -72,7 +72,7 @@ enum TurretType
 	TRT_BLASTER		//  4
 };
 
-enum SpecialTileType
+enum TileType
 {
 	TILE,					//  0
 	START_POINT,			//  1
@@ -196,7 +196,7 @@ private:
 
 	BattleType _battleType;
 	DamageType _dType;
-	SpecialTileType _specialType;
+	TileType _specialType;
 	TurretType _turretType;
 
 	std::vector<std::string>
@@ -420,7 +420,7 @@ private:
 		bool isLosRequired() const;
 
 		/// Gets the associated special type of this item.
-		SpecialTileType getSpecialType() const;
+		TileType getTileType() const;
 
 		/// Gets the item's default BattleAction.
 		BattleActionType getDefaultAction(bool isPrimed = false) const;

@@ -4059,37 +4059,37 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 	const int month (_gameSave->getMonthsPassed());
 	const RuleAlienMission* missionRule;
 	std::string
-		targetRegion,
-		missionType,
-		raceType;
-	size_t targetZone (std::numeric_limits<size_t>::max()); // darn vc++ linker warning ...
+		typeRegion,
+		typeMission,
+		typeRace;
+	size_t siteZone (std::numeric_limits<size_t>::max()); // darn vc++ linker warning ...
 
 	if (directive->getSiteType() == true)
 	{
-		missionType = directive->genDataType(month, GT_MISSION);
-		const std::vector<std::string> missions (directive->getMissionTypes(month));
+		typeMission = directive->genDataType(month, GT_MISSION);
+		const std::vector<std::string> missionTypes (directive->getMissionTypes(month));
 		size_t
-			missionsTotal (missions.size()),
-			testMission (0u);
+			missionsTotal (missionTypes.size()),
+			missionsTest (0u);
 
 		for (
 				;
-				testMission != missionsTotal;
-				++testMission)
+				missionsTest != missionsTotal;
+				++missionsTest)
 		{
-			if (missions[testMission] == missionType)
+			if (missionTypes[missionsTest] == typeMission)
 				break;
 		}
 
-		std::vector<std::pair<std::string, size_t>> validAreas;
+		std::vector<std::pair<std::string, size_t>> validSiteZones;
 
 		for (size_t
 				i = 0u;
 				i != missionsTotal;
 				++i)
 		{
-			missionRule = _rules->getAlienMission(missionType);
-			targetZone = missionRule->getSpawnZone();
+			missionRule = _rules->getAlienMission(typeMission);
+			siteZone = missionRule->getSpecialZone();
 
 			std::vector<std::string> regions;
 			if (directive->hasRegionWeights() == true)
@@ -4102,7 +4102,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 					j != regions.end();
 					)
 			{
-				bool processThisRegion (true);
+				bool go (true);
 				for (std::vector<AlienMission*>::const_iterator
 						k = _gameSave->getAlienMissions().begin();
 						k != _gameSave->getAlienMissions().end();
@@ -4111,34 +4111,33 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 					if ((*k)->getRules().getType() == missionRule->getType()
 						&& (*k)->getRegion() == *j)
 					{
-						processThisRegion = false;
+						go = false;
 						break;
 					}
 				}
 
-				if (processThisRegion == true)
+				if (go == true)
 				{
 					const RuleRegion* const regionRule (_rules->getRegion(*j));
-					if (regionRule->getMissionZones().size() > targetZone)
+					if (regionRule->getMissionZones().size() > siteZone)
 					{
-						size_t testZone (0u);
-						const std::vector<MissionArea> areas (regionRule->getMissionZones()[targetZone].areas);
+						size_t siteZoneTest (0u);
+						const std::vector<MissionArea> areas (regionRule->getMissionZones()[siteZone].areas);
 						for (std::vector<MissionArea>::const_iterator
 								k = areas.begin();
 								k != areas.end();
-								++k)
+								++k, ++siteZoneTest)
 						{
 							if ((*k).isPoint() == true
 								&& strategy.validateMissionLocation(
 																directive->getVarType(),
 																regionRule->getType(),
-																testZone) == true)
+																siteZoneTest) == true)
 							{
-								validAreas.push_back(std::make_pair(
-																regionRule->getType(),
-																testZone));
+								validSiteZones.push_back(std::make_pair(
+																	regionRule->getType(),
+																	siteZoneTest));
 							}
-							++testZone;
 						}
 					}
 					++j;
@@ -4147,40 +4146,40 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 					j = regions.erase(j);
 			}
 
-			if (validAreas.empty() == true)
+			if (validSiteZones.empty() == true)
 			{
-				if (missionsTotal > 1u && ++testMission == missionsTotal)
-					testMission = 0u;
+				if (missionsTotal > 1u && ++missionsTest == missionsTotal)
+					missionsTest = 0u;
 
-				missionType = missions[testMission];
+				typeMission = missionTypes[missionsTest];
 			}
 			else
 				break;
 		}
 
-		if (validAreas.empty() == true)
+		if (validSiteZones.empty() == true)
 			return false;
 
 
-		targetZone = std::numeric_limits<size_t>::max();
-		while (targetZone == std::numeric_limits<size_t>::max())
+		siteZone = std::numeric_limits<size_t>::max();
+		while (siteZone == std::numeric_limits<size_t>::max())
 		{
 			if (directive->hasRegionWeights() == true)
-				targetRegion = directive->genDataType(month, GT_REGION);
+				typeRegion = directive->genDataType(month, GT_REGION);
 			else
-				targetRegion = _rules->getRegionsList().at(RNG::pick(_rules->getRegionsList().size()));
+				typeRegion = _rules->getRegionsList().at(RNG::pick(_rules->getRegionsList().size()));
 
 			int
-				low (-1),
-				high (-1), // avoid vc++ linker warning.
-				testArea (0);
+				low		 (-1),
+				high	 (-1), // avoid vc++ linker warning.
+				testArea ( 0);
 
 			for (std::vector<std::pair<std::string, size_t>>::const_iterator
-					i = validAreas.begin();
-					i != validAreas.end();
+					i = validSiteZones.begin();
+					i != validSiteZones.end();
 					++i)
 			{
-				if ((*i).first == targetRegion)
+				if ((*i).first == typeRegion)
 				{
 					if (low == -1) low = testArea;
 					high = testArea;
@@ -4192,141 +4191,139 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 			}
 
 			if (low != -1)
-				targetZone = validAreas[static_cast<size_t>(RNG::generate(low, high))].second;
+				siteZone = validSiteZones[static_cast<size_t>(RNG::generate(low, high))].second;
 		}
 
 		strategy.addMissionLocation(
 								directive->getVarType(),
-								targetRegion,
-								targetZone,
+								typeRegion,
+								siteZone,
 								directive->getRepeatAvoidance());
 	}
 	else if (RNG::percent(directive->getTargetBaseOdds()) == true)
 	{
-		std::vector<std::string> regionsMaster;
+		std::vector<std::string> regionsPlayerBases;
 		for (std::vector<Base*>::const_iterator
 				i = _gameSave->getBases()->begin();
 				i != _gameSave->getBases()->end();
 				++i)
 		{
-			regionsMaster.push_back(_gameSave->locateRegion(**i)->getRules()->getType());
+			regionsPlayerBases.push_back(_gameSave->locateRegion(**i)->getRules()->getType());
 		}
 
-		std::vector<std::string> types (directive->getMissionTypes(month));
-		if (types.empty() == true)
+		std::vector<std::string> missionTypes (directive->getMissionTypes(month));
+		if (missionTypes.empty() == false)
 		{
-			for (std::vector<std::string>::const_iterator
-					i = regionsMaster.begin();
-					i != regionsMaster.end();
-					)
-			{
-				if (strategy.validateMissionRegion(*i) == true)
-					++i;
-				else
-					i = regionsMaster.erase(i);
-			}
-
-			if (regionsMaster.empty() == true)
-				return false;
-
-
-			targetRegion = regionsMaster[RNG::pick(regionsMaster.size())];
-		}
-		else
-		{
-			std::vector<std::string> regions;
-			size_t
-				typesTotal (types.size()),
-				id (RNG::pick(typesTotal));
+			std::vector<std::string> regionTypes;
+			const size_t missionTypesTotal (missionTypes.size());
+			size_t id (RNG::pick(missionTypesTotal));
 
 			for (size_t
 					i = 0u;
-					i != typesTotal;
+					i != missionTypesTotal;
 					++i)
 			{
-				regions = regionsMaster;
+				regionTypes = regionsPlayerBases;
 
 				for (std::vector<AlienMission*>::const_iterator
 						j = _gameSave->getAlienMissions().begin();
 						j != _gameSave->getAlienMissions().end();
 						++j)
 				{
-					if (types[id] == (*j)->getRules().getType())
+					if (missionTypes[id] == (*j)->getRules().getType())
 					{
 						for (std::vector<std::string>::const_iterator
-								k = regions.begin();
-								k != regions.end();
+								k = regionTypes.begin();
+								k != regionTypes.end();
 								)
 						{
-							if (*k != (*j)->getRegion())
-								++k;
+							if (*k == (*j)->getRegion())
+								k = regionTypes.erase(k);
 							else
-								k = regions.erase(k);
+								++k;
 						}
 					}
 				}
 
-				if (regions.empty() == false)
+				if (regionTypes.empty() == false)
 				{
-					missionType = types[id];
-					targetRegion = regions[RNG::pick(regions.size())];
+					typeMission = missionTypes[id];
+					typeRegion = regionTypes[RNG::pick(regionTypes.size())];
 					break;
 				}
 
-				if (typesTotal > 1u && ++id == typesTotal)
+				if (missionTypesTotal > 1u && ++id == missionTypesTotal)
 					id = 0u;
 			}
 		}
-	}
-	else if (directive->hasRegionWeights() == false)
-		targetRegion = strategy.chooseRegion(_rules);
-	else
-		targetRegion = directive->genDataType(month, GT_REGION);
+		else
+		{
+			for (std::vector<std::string>::const_iterator
+					i = regionsPlayerBases.begin();
+					i != regionsPlayerBases.end();
+					)
+			{
+				if (strategy.validateMissionRegion(*i) == true)
+					++i;
+				else
+					i = regionsPlayerBases.erase(i);
+			}
 
-	if (targetRegion.empty() == true)
+			if (regionsPlayerBases.empty() == true)
+				return false;
+
+			typeRegion = regionsPlayerBases[RNG::pick(regionsPlayerBases.size())];
+		}
+	}
+	else if (directive->hasRegionWeights() == true)
+		typeRegion = directive->genDataType(month, GT_REGION);
+	else
+		typeRegion = strategy.chooseRegion(_rules);
+
+	if (typeRegion.empty() == true)
 		return false;
 
 
-	if (_rules->getRegion(targetRegion) == nullptr)
+	if (_rules->getRegion(typeRegion) == nullptr)
 	{
 		throw Exception("Error proccessing mission script named: "
 						+ directive->getType()
-						+ ", region named: " + targetRegion
+						+ ", region named: " + typeRegion
 						+ " is not defined");
 	}
 
-	if (missionType.empty() == true)
+	if (typeMission.empty() == true)
 	{
 		if (directive->hasMissionWeights() == false)
-			missionType = strategy.chooseMission(targetRegion);
+			typeMission = strategy.chooseMission(typeRegion);
 		else
-			missionType = directive->genDataType(month, GT_MISSION);
+			typeMission = directive->genDataType(month, GT_MISSION);
 	}
 
-	if (missionType.empty() == true)
+	if (typeMission.empty() == true)
 		return false;
 
 
-	missionRule = _rules->getAlienMission(missionType);
+	missionRule = _rules->getAlienMission(typeMission);
 
 	if (missionRule == nullptr)
 	{
 		throw Exception("Error proccessing mission script named: "
 						+ directive->getType()
-						+ ", mission type: " + missionType +
+						+ ", mission type: " + typeMission +
 						" is not defined");
 	}
 
 	if (directive->hasRaceWeights() == false)
-		raceType = missionRule->generateRace(month);
+		typeRace = missionRule->generateRace(month);
 	else
-		raceType = directive->genDataType(month, GT_RACE);
+		typeRace = directive->genDataType(month, GT_RACE);
 
-	if (_rules->getAlienRace(raceType) == nullptr)
+	if (_rules->getAlienRace(typeRace) == nullptr)
 	{
 		throw Exception("Error proccessing mission script named: "
 						+ directive->getType()
-						+ ", race: " + raceType
+						+ ", race: " + typeRace
 						+ " is not defined");
 	}
 
@@ -4334,10 +4331,10 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 	AlienMission* const mission (new AlienMission(
 												*missionRule,
 												*_gameSave));
-	mission->setRace(raceType);
+	mission->setRace(typeRace);
 	mission->setId(_gameSave->getCanonicalId("STR_ALIEN_MISSION"));
-	mission->setRegion(targetRegion, *_rules);
-	mission->setTerrorSiteZone(targetZone);
+	mission->setRegion(typeRegion, *_rules);
+	mission->setTerrorSiteZone(siteZone);
 	strategy.addMissionRun(directive->getVarType());
 	mission->start(directive->getDelay());
 
@@ -4345,8 +4342,8 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 
 	if (directive->usesTable() == true)
 		strategy.clearRegion(
-							targetRegion,
-							missionType);
+						typeRegion,
+						typeMission);
 
 	return true;
 }
@@ -4439,23 +4436,20 @@ void GeoscapeState::setupLandMission() // private.
 	// Try 40 times to pick a valid zone for a land mission.
 	for (int
 			i = 0;
-			i != 40
-				&& picked == false;
+			i != 40 && picked == false;
 			++i)
 	{
-		regRule = _rules->getRegion(regionsList[static_cast<size_t>(RNG::generate(
-																			0,
-																			static_cast<int>(regionsList.size()) - 1))]);
-		if (regRule->getMissionZones().size() > missionRule.getSpawnZone()
+		regRule = _rules->getRegion(regionsList[static_cast<size_t>(RNG::generate(0,
+																				  static_cast<int>(regionsList.size()) - 1))]);
+		if (regRule->getMissionZones().size() > missionRule.getSpecialZone()
 			&& _gameSave->findAlienMission(
-													regRule->getType(),
-													alm_SITE) == nullptr)
+										regRule->getType(),
+										alm_SITE) == nullptr)
 		{
-			const MissionZone& zone = regRule->getMissionZones().at(missionRule.getSpawnZone());
+			const MissionZone& zone = regRule->getMissionZones().at(missionRule.getSpecialZone());
 			for (std::vector<MissionArea>::const_iterator
 					j = zone.areas.begin();
-					j != zone.areas.end()
-						&& picked == false;
+					j != zone.areas.end() && picked == false;
 					++j)
 			{
 				if (j->isPoint() == true)

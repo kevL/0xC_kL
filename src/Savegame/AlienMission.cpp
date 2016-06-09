@@ -291,10 +291,10 @@ void AlienMission::think(
 					&& wave.isObjective == true))
 			{
 				size_t zone;
-				if (_missionRule.getSpawnZone() == std::numeric_limits<size_t>::max())
+				if (_missionRule.getSpecialZone() == std::numeric_limits<size_t>::max())
 					zone = trajectory.getZone(0u);
 				else
-					zone = _missionRule.getSpawnZone();
+					zone = _missionRule.getSpecialZone();
 				const std::vector<MissionArea> areas (rules.getRegion(_region)->getMissionZones().at(zone).areas);
 
 				if (_siteZone == std::numeric_limits<size_t>::max())
@@ -348,7 +348,7 @@ void AlienMission::think(
 			createAlienBase( // adds alienPts.
 						globe,
 						rules,
-						_missionRule.getSpawnZone());
+						_missionRule.getSpecialZone());
 
 			if (object == alm_INFILT)
 			{
@@ -480,7 +480,7 @@ Ufo* AlienMission::createUfo( // private.
 			if (baseTargets.empty() == false)
 			{
 				// Spawn a battleship straight for the XCOM Base.
-				const RuleUfo& battleshipRule (*rules.getUfo(_missionRule.getSpawnUfo()));
+				const RuleUfo& battleshipRule (*rules.getUfo(_missionRule.getSpecialUfo()));
 				const UfoTrajectory& trjBattleship (*rules.getUfoTrajectory(UfoTrajectory::RETALIATION_ASSAULT_RUN));
 				const RuleRegion& regionRule (*rules.getRegion(_region));
 
@@ -497,7 +497,7 @@ Ufo* AlienMission::createUfo( // private.
 									regionRule,
 									trajectory.getZone(0u));
 				else
-					coord = regionRule.getRandomPoint(trajectory.getZone(0u));
+					coord = regionRule.getZonePoint(trajectory.getZone(0u));
 
 				ufo->setLongitude(coord.first);
 				ufo->setLatitude(coord.second);
@@ -535,7 +535,7 @@ Ufo* AlienMission::createUfo( // private.
 									regionRule,
 									trajectory.getZone(0u));
 				else
-					coord = regionRule.getRandomPoint(trajectory.getZone(0u));
+					coord = regionRule.getZonePoint(trajectory.getZone(0u));
 
 				ufo->setLongitude(coord.first);
 				ufo->setLatitude(coord.second);
@@ -558,7 +558,7 @@ Ufo* AlienMission::createUfo( // private.
 										trajectory.getZone(1u));
 				}
 				else
-					coord = regionRule.getRandomPoint(trajectory.getZone(1u));
+					coord = regionRule.getZonePoint(trajectory.getZone(1u));
 
 				wp = new Waypoint();
 				wp->setLongitude(coord.first);
@@ -702,7 +702,7 @@ void AlienMission::ufoReachedWaypoint(
 			// NOTE: 'wave' has to be reduced by one because think() has already advanced it past current, I suppose.
 
 			if (_missionRule.getWave(wave).isObjective == true // destroy UFO & replace with TerrorSite.
-				&& trajectory.getZone(wpId) == _missionRule.getSpawnZone()) // note Supply bypasses this although it has (objective==true) because it does not have a 'specialZone'
+				&& trajectory.getZone(wpId) == _missionRule.getSpecialZone()) // note Supply bypasses this although it has (objective==true) because it does not have a 'specialZone'
 			{
 				addScore( // alm_SITE
 					ufo.getLongitude(),
@@ -909,7 +909,7 @@ void AlienMission::ufoLifting(
 							createAlienBase( // adds alienPts.
 										globe,
 										rules,
-										_missionRule.getSpawnZone());
+										_missionRule.getSpecialZone());
 
 							std::vector<Country*> suspectCountries;
 							for (std::vector<Country*>::const_iterator
@@ -945,7 +945,7 @@ void AlienMission::ufoLifting(
 						createAlienBase( // adds alienPts.
 									globe,
 									rules,
-									_missionRule.getSpawnZone());
+									_missionRule.getSpecialZone());
 						break;
 
 					case alm_SCORE:
@@ -1039,7 +1039,7 @@ std::pair<double, double> AlienMission::coordsWaypoint( // private.
 		const RuleRegion& region)
 {
 	if (_siteZone != std::numeric_limits<size_t>::max()
-		&& trajectory.getZone(wpId) == _missionRule.getSpawnZone())
+		&& trajectory.getZone(wpId) == _missionRule.getSpecialZone())
 	{
 		size_t wave;
 		switch (_waveCount)
@@ -1072,7 +1072,7 @@ std::pair<double, double> AlienMission::coordsWaypoint( // private.
 						trajectory.getZone(wpId));
  	}
 
-	return region.getRandomPoint(trajectory.getZone(wpId));
+	return region.getZonePoint(trajectory.getZone(wpId));
 }
 
 /**
@@ -1094,7 +1094,7 @@ std::pair<double, double> AlienMission::coordsLand( // private.
 	do
 	{
 		++t;
-		coord = region.getRandomPoint(zone);
+		coord = region.getZonePoint(zone);
 	}
 	while (t < 100
 		&& (globe.insideLand(
@@ -1150,11 +1150,11 @@ void AlienMission::addScore( // private.
 
 /**
  * Tells this AlienMission which entry in the zone-array is targeted.
- * @param zoneId - entry of the zone to target; always a City-type zone (probably)
+ * @param zone - entry of the zone to target; always a City-type zone (probably)
  */
-void AlienMission::setTerrorSiteZone(size_t zoneId)
+void AlienMission::setTerrorSiteZone(size_t zone)
 {
-	_siteZone = zoneId;
+	_siteZone = zone;
 }
 
 }

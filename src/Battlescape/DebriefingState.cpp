@@ -464,7 +464,7 @@ DebriefingState::~DebriefingState()
 			++i)
 		delete *i;
 
-	for (std::map<SpecialTileType, SpecialType*>::const_iterator
+	for (std::map<TileType, SpecialType*>::const_iterator
 			i = _specialTypes.begin();
 			i != _specialTypes.end();
 			++i)
@@ -662,7 +662,7 @@ void DebriefingState::prepareDebriefing() // private.
 			++i)
 	{
 		itRule = _rules->getItemRule(*i);
-		const SpecialTileType tileType (itRule->getSpecialType());
+		const TileType tileType (itRule->getTileType());
 //		if (tileType > 1)
 		switch (tileType)
 		{
@@ -681,13 +681,13 @@ void DebriefingState::prepareDebriefing() // private.
 			case DEAD_TILE:				// 12 -> give half-Alloy value for ruined alloy-tiles.
 //			case END_POINT:
 //			case MUST_DESTROY:
-				{
-					SpecialType* const specialType (new SpecialType());
-					specialType->type = *i;
-					specialType->value = itRule->getRecoveryPoints();
+			{
+				SpecialType* const specialType (new SpecialType());
+				specialType->type = *i;
+				specialType->value = itRule->getRecoveryPoints();
 
-					_specialTypes[tileType] = specialType;
-				}
+				_specialTypes[tileType] = specialType;
+			}
 		}
 	}
 
@@ -731,7 +731,7 @@ void DebriefingState::prepareDebriefing() // private.
 	_statList.push_back(new DebriefingStat("STR_TANKS_DESTROYED"));
 	_statList.push_back(new DebriefingStat("STR_XCOM_CRAFT_LOST"));
 
-	for (std::map<SpecialTileType, SpecialType*>::const_iterator
+	for (std::map<TileType, SpecialType*>::const_iterator
 			i = _specialTypes.begin();
 			i != _specialTypes.end();
 			++i)
@@ -1559,7 +1559,7 @@ void DebriefingState::prepareDebriefing() // private.
 					partType = static_cast<MapDataType>(j);
 					if (battleSave->getTiles()[i]->getMapData(partType) != nullptr)
 					{
-						const SpecialTileType tileType (battleSave->getTiles()[i]->getMapData(partType)->getSpecialType());
+						const TileType tileType (battleSave->getTiles()[i]->getMapData(partType)->getTileType());
 
 						switch (tileType)
 						{
@@ -1615,7 +1615,7 @@ void DebriefingState::prepareDebriefing() // private.
 					++i)
 			{
 				if (battleSave->getTiles()[i]->getMapData(O_FLOOR) != nullptr
-					&& battleSave->getTiles()[i]->getMapData(O_FLOOR)->getSpecialType() == START_POINT)
+					&& battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_POINT)
 				{
 					recoverItems(battleSave->getTiles()[i]->getInventory());
 				}

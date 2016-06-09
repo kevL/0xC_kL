@@ -619,7 +619,7 @@ private:
 		bool checkReload();
 
 		/// Checks if the BattleUnit is in an exit-area.
-		bool isInExitArea(SpecialTileType tileType = START_POINT) const;
+		bool isInExitArea(TileType tileType = START_POINT) const;
 
 		/// Gets the BattleUnit's height taking into account kneeling/standing.
 		int getHeight(bool floating = false) const;

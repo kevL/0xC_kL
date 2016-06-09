@@ -244,7 +244,7 @@ private:
 				Base* const base = nullptr,
 				size_t selUnitId = 0u);
 
-		/// Sets up the objectives for the map.
+		/// Sets up the Player's objectives for the battle.
 		void setupObjectives(const AlienDeployment* const ruleDeploy);
 };
 

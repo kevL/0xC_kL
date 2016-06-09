@@ -194,7 +194,7 @@ private:
 		void ufoShotDown(const Ufo& ufo);
 
 		/// Flags tracking of the target-site.
-		void setTerrorSiteZone(size_t zoneId);
+		void setTerrorSiteZone(size_t zone);
 };
 
 }
