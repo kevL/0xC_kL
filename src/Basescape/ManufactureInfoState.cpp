@@ -726,38 +726,20 @@ void ManufactureInfoState::decUnitsRelease(Action* action) // private.
  */
 void ManufactureInfoState::decUnitsClick(Action* action) // private.
 {
-	const int btnId (action->getDetails()->button.button);
-	switch (btnId)
+	switch (action->getDetails()->button.button)
 	{
 		case SDL_BUTTON_LEFT:
-		case SDL_BUTTON_RIGHT:
-		{
-			const int produced (_production->getProducedQuantity());
-			if (_production->getProductionTotal() <= produced)
+			if (_production->getInfinite() == false)
 			{
-				_production->setInfinite(false);
-				_production->setProductionTotal(produced + 1);
-				assignEngineers();
+				decUnits(stepDelta());
+				break;
 			}
-			else
-			{
-				switch (btnId)
-				{
-					case SDL_BUTTON_LEFT:
-						if (_production->getInfinite() == false)
-						{
-							decUnits(stepDelta());
-							break;
-						}
-						// no break;
+			// no break;
 
-					case SDL_BUTTON_RIGHT:
-						_production->setInfinite(false);
-						_production->setProductionTotal(produced + 1);
-						assignEngineers();
-				}
-			}
-		}
+		case SDL_BUTTON_RIGHT:
+			_production->setInfinite(false);
+			_production->setProductionTotal(_production->getProducedQuantity() + 1);
+			assignEngineers();
 	}
 }
 
