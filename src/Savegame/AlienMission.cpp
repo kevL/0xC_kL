@@ -702,8 +702,8 @@ void AlienMission::ufoReachedWaypoint(
 			// NOTE: 'wave' has to be reduced by one because think() has already advanced it past current, I suppose.
 
 			if (_missionRule.getWave(wave).isObjective == true // destroy UFO & replace with TerrorSite.
-				&& trajectory.getZone(wpId) == _missionRule.getSpecialZone()) // note Supply bypasses this although it has (objective==true) because it does not have a 'specialZone'
-			{
+				&& trajectory.getZone(wpId) == _missionRule.getSpecialZone())	// NOTE: Supply-missions bypasses this although it has (objective=true)
+			{																	// because it does not have a 'specialZone' set in its rule.
 				addScore( // alm_SITE
 					ufo.getLongitude(),
 					ufo.getLatitude());

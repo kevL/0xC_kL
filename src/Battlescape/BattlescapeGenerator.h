@@ -207,6 +207,9 @@ private:
 	/// Clears all modules in a rect from a command.
 	bool removeBlocks(const MapScript* const directive);
 
+	/// Sets up the Player's objectives for the battle.
+	void setupObjectives(const AlienDeployment* const ruleDeploy);
+
 
 	public:
 		/// Creates a BattlescapeGenerator class.
@@ -243,9 +246,6 @@ private:
 				Craft* const craft,
 				Base* const base = nullptr,
 				size_t selUnitId = 0u);
-
-		/// Sets up the Player's objectives for the battle.
-		void setupObjectives(const AlienDeployment* const ruleDeploy);
 };
 
 }

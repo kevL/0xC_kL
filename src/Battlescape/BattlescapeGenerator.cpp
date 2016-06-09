@@ -657,7 +657,7 @@ void BattlescapeGenerator::nextStage()
 		throw Exception("Map generator encountered an error: no script found. See log for detail.");
 	}
 
-	generateMap(directives);							// <--|| BATTLE MAP GENERATION. <--|||
+	generateMap(directives);							// <--|| BATTLEF GENERATION. <--|||
 	setupObjectives(ruleDeploy);
 
 	setShade(ruleDeploy->getShade()); // NOTE: 2nd stage must have deployment-shade set, else 0 (bright).
@@ -4045,9 +4045,9 @@ bool BattlescapeGenerator::removeBlocks(const MapScript* const directive) // pri
 
 /**
  * Sets up the Player's objectives for the battle.
- * @param ruleDeploy - deployment-data from which to fetch relevant data
+ * @param ruleDeploy - deployment-rule from which to fetch relevant data
  */
-void BattlescapeGenerator::setupObjectives(const AlienDeployment* const ruleDeploy)
+void BattlescapeGenerator::setupObjectives(const AlienDeployment* const ruleDeploy) // private.
 {
 	const TileType tileType (ruleDeploy->getPlayerObjective());
 	if (tileType != TILE)
