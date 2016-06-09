@@ -657,7 +657,7 @@ void BattlescapeGenerator::nextStage()
 		throw Exception("Map generator encountered an error: no script found. See log for detail.");
 	}
 
-	generateMap(directives);							// <--|| BATTLEF GENERATION. <--|||
+	generateMap(directives);							// <--|| BATTLEFIELD GENERATION. <--|||
 	setupObjectives(ruleDeploy);
 
 	setShade(ruleDeploy->getShade()); // NOTE: 2nd stage must have deployment-shade set, else 0 (bright).

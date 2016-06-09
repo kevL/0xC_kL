@@ -39,7 +39,7 @@ class Window;
 
 
 /**
- * Screen that allows changing of Production settings.
+ * Screen that allows changing of Manufacture settings.
 */
 class ManufactureInfoState
 	:
@@ -47,6 +47,8 @@ class ManufactureInfoState
 {
 
 private:
+	int _producedValue;
+
 	ArrowButton
 		* _btnEngineerDown,
 		* _btnEngineerUp,
@@ -59,113 +61,111 @@ private:
 	Production* _production;
 	const RuleManufacture* _manfRule;
 	Text
-		* _txtAllocated,
-		* _txtAllocatedEngineer,
-		* _txtAvailableEngineer,
-		* _txtAvailableSpace,
+		* _txtFreeEngineer,
+		* _txtFreeSpace,
+		* _txtEngineers,
+		* _txtEngineersDesc,
 //		* _txtEngineerDown,
 //		* _txtEngineerUp,
-		* _txtMonthlyProfit,
-		* _txtTimeDescr,
-		* _txtTimeTotal,
+		* _txtProfit,
+		* _txtTimeDesc,
+		* _txtTimeLeft,
 		* _txtTitle,
-		* _txtTodo,
+		* _txtTotal,
+		* _txtTotalDesc;
 //		* _txtUnitDown,
-		* _txtUnitToProduce;
 //		* _txtUnitUp;
 	TextButton
 		* _btnOk,
 		* _btnStop;
 	Timer
-		* _timerLessEngineer,
-		* _timerLessUnit,
-		* _timerMoreEngineer,
-		* _timerMoreUnit;
+		* _timerDecEngineers,
+		* _timerDecUnits,
+		* _timerIncEngineers,
+		* _timerIncUnits;
 	ToggleTextButton* _btnSell;
 	Window* _window;
 
-	int _producedItemsValue;
-
-	/// Caches static data for monthly profit calculations
+	/// Builds the User Interface.
+	void buildUi();
+	/// Caches production-value for profit calculations.
 	void initProfit();
-	/// Calculates the monthly change in funds due to the job
-	int calcProfit();
-
-	/// Handler for the Sell button.
-//	void btnSellClick(Action* action);
-	/// Handler for releasing the Sell button.
-	void btnSellRelease(Action* action);
 
 	/// Handler for the Stop button.
 	void btnStopClick(Action* action);
 	/// Handler for the OK button.
 	void btnOkClick(Action* action);
+	/// Helper to exit the State.
+	void exitState();
 
-	/// Adds given number of engineers to the project if possible.
-	void moreEngineer(int change);
-	/// Handler for pressing the more engineer button.
-	void moreEngineerPress(Action* action);
-	/// Handler for releasing the more engineer button.
-	void moreEngineerRelease(Action* action);
-	/// Handler for clicking the more engineer button.
-	void moreEngineerClick(Action* action);
-
-	/// Adds given number of units to produce to the project if possible.
-	void moreUnit(int change);
-	/// Handler for pressing the more unit button.
-	void moreUnitPress(Action* action);
-	/// Handler for releasing the more unit button.
-	void moreUnitRelease(Action* action);
-	/// Handler for clicking the more unit button.
-	void moreUnitClick(Action* action);
-
-	/// Removes the given number of engineers from the project if possible.
-	void lessEngineer(int change);
-	/// Handler for pressing the less engineer button.
-	void lessEngineerPress(Action* action);
-	/// Handler for releasing the less engineer button.
-	void lessEngineerRelease(Action* action);
-	/// Handler for clicking the less engineer button.
-	void lessEngineerClick(Action* action);
-
-	/// Removes the given number of units to produce from the project if possible.
-	void lessUnit(int change);
-	/// Handler for pressing the less unit button.
-	void lessUnitPress(Action* action);
-	/// Handler for releasing the less unit button.
-	void lessUnitRelease(Action* action);
-	/// Handler for clicking the less unit button.
-	void lessUnitClick(Action* action);
-
-	/// Adds one engineer to the production (if possible).
-	void onMoreEngineer();
-	/// Removes one engineer from the production (if possible).
-	void onLessEngineer();
-	/// Handler for using the mouse wheel on the Engineer-part of the screen.
-//	void handleWheelEngineer(Action* action);
-
-	/// Increases count of number of units to make.
-	void onMoreUnit();
-	/// Decreases count of number of units to make (if possible).
-	void onLessUnit();
-
-	/// Gets quantity to change by.
-	int stepDelta() const;
-
-	/// Handler for using the mouse wheel on the Unit-part of the screen.
-//	void handleWheelUnit(Action* action);
+	/// Handler for releasing the Sell button.
+	void btnSellRelease(Action* action);
 
 	/// Updates display of assigned/available engineers and workshop space.
-	void setAssignedEngineer();
-	/// Updates the total time to complete the project.
-	void updateTimeTotal();
+	void assignEngineers();
+	/// Calculates the monthly change in funds due to profit/expenses.
+	int calcProfit();
+	/// Formats the profit-value.
+	bool formatProfit(
+			int profit,
+			std::wostringstream& woststr);
+
+	/// Adds given number of engineers to the project if possible.
+	void incEngineers(int change);
+	/// Handler for pressing the more engineer button.
+	void incEngineersPress(Action* action);
+	/// Handler for releasing the more engineer button.
+	void incEngineersRelease(Action* action);
+	/// Handler for clicking the more engineer button.
+	void incEngineersClick(Action* action);
+
+	/// Removes the given number of engineers from the project if possible.
+	void decEngineers(int change);
+	/// Handler for pressing the less engineer button.
+	void decEngineersPress(Action* action);
+	/// Handler for releasing the less engineer button.
+	void decEngineersRelease(Action* action);
+	/// Handler for clicking the less engineer button.
+	void decEngineersClick(Action* action);
+
+	/// Adds given number of units to produce to the project if possible.
+	void incUnits(int change);
+	/// Handler for pressing the more unit button.
+	void incUnitsPress(Action* action);
+	/// Handler for releasing the more unit button.
+	void incUnitsRelease(Action* action);
+	/// Handler for clicking the more unit button.
+	void incUnitsClick(Action* action);
+
+	/// Removes the given number of units to produce from the project if possible.
+	void decUnits(int change);
+	/// Handler for pressing the less unit button.
+	void decUnitsPress(Action* action);
+	/// Handler for releasing the less unit button.
+	void decUnitsRelease(Action* action);
+	/// Handler for clicking the less unit button.
+	void decUnitsClick(Action* action);
+
+	/// Adds engineers to the production (if possible).
+	void onIncEngineers();
+	/// Removes engineers from the production (if possible).
+	void onDecEngineers();
+
+	/// Increases quantity of units to make.
+	void onIncUnits();
+	/// Decreases quantity of units to make (if possible).
+	void onDecUnits();
+
+	/// Returns the quantity by which to increase/decrease.
+	int stepDelta() const;
 
 	/// Runs state functionality every cycle.
 	void think() override;
-	/// Builds the User Interface.
-	void buildUi();
-	/// Helper to exit the State.
-	void exitState();
+
+	/// Handler for using the mouse wheel on the Engineer-part of the screen.
+//	void handleWheelEngineer(Action* action);
+	/// Handler for using the mouse wheel on the Unit-part of the screen.
+//	void handleWheelUnit(Action* action);
 
 
 	public:

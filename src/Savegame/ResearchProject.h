@@ -40,9 +40,9 @@ class ResearchProject
 private:
 	bool _offline;
 	int
-		_assigned,
-		_cost,
-		_spent;
+		_scientists,
+		_daysCost,
+		_daysSpent;
 
 	const RuleResearch* _resRule;
 

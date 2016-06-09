@@ -53,7 +53,7 @@ private:
 		_infinite,
 		_sell;
 	int
-		_quantity,
+		_total,
 		_engineers,
 		_timeSpent;
 
@@ -69,7 +69,7 @@ private:
 		/// Tracks a Base manufacturing project.
 		Production(
 				const RuleManufacture* const manfRule,
-				int quantity);
+				int total);
 		/// Cleans the Base manufacturing project.
 		~Production();
 
@@ -82,9 +82,9 @@ private:
 		const RuleManufacture* getRules() const;
 
 		/// Gets the total quantity to produce.
-		int getTotalQuantity() const;
+		int getProductionTotal() const;
 		/// Sets the total quantity to produce.
-		void setTotalQuantity(int quantity);
+		void setProductionTotal(int quantity);
 
 		/// Gets if the Production is to produce an infinite quantity.
 		bool getInfinite() const;

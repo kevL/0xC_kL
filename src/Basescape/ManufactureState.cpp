@@ -258,7 +258,7 @@ void ManufactureState::fillProductionList()
 		if ((*i)->getInfinite() == true)
 			woststr2 << L"oo";
 		else
-			woststr2 << (*i)->getTotalQuantity();
+			woststr2 << (*i)->getProductionTotal();
 
 		int
 			days,

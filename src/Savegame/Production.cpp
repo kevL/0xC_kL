@@ -42,14 +42,14 @@ namespace OpenXcom
 /**
  * Tracks a Base manufacturing project.
  * @param manfRule	- pointer to RuleManufacture
- * @param quantity	- quantity to produce
+ * @param total		- quantity to produce
  */
 Production::Production(
 		const RuleManufacture* const manfRule,
-		int quantity)
+		int total)
 	:
 		_manfRule(manfRule),
-		_quantity(quantity),
+		_total(total),
 		_timeSpent(0),
 		_engineers(0),
 		_infinite(false),
@@ -68,9 +68,9 @@ Production::~Production()
  */
 void Production::load(const YAML::Node& node)
 {
-	_engineers	= node["assigned"]	.as<int>(_engineers);
-	_timeSpent	= node["spent"]		.as<int>(_timeSpent);
-	_quantity	= node["quantity"]	.as<int>(_quantity);
+	_engineers	= node["engineers"]	.as<int>(_engineers);
+	_timeSpent	= node["timeSpent"]	.as<int>(_timeSpent);
+	_total		= node["total"]		.as<int>(_total);
 	_infinite	= node["infinite"]	.as<bool>(_infinite);
 	_sell		= node["sell"]		.as<bool>(_sell);
 }
@@ -83,13 +83,13 @@ YAML::Node Production::save() const
 {
 	YAML::Node node;
 
-	node["item"]		= _manfRule->getType();
-	node["spent"]		= _timeSpent;
-	node["quantity"]	= _quantity;
+	node["item"] = _manfRule->getType();
 
-	if (_engineers != 0)	node["assigned"]	= _engineers;
-	if (_infinite == true)	node["infinite"]	= _infinite;
-	if (_sell == true)		node["sell"]		= _sell;
+	if (_timeSpent != 0)	node["timeSpent"]	= _timeSpent;
+	if (_total != 0)		node["total"]		= _total;
+	if (_engineers != 0)	node["engineers"]	= _engineers;
+	if (_infinite != false)	node["infinite"]	= _infinite;
+	if (_sell != false)		node["sell"]		= _sell;
 
 	return node;
 }
@@ -107,18 +107,18 @@ const RuleManufacture* Production::getRules() const
  * Gets the total quantity to produce.
  * @return, total quantity
  */
-int Production::getTotalQuantity() const
+int Production::getProductionTotal() const
 {
-	return _quantity;
+	return _total;
 }
 
 /**
  * Sets the total quantity to produce.
  * @param quantity - total quantity
  */
-void Production::setTotalQuantity(int quantity)
+void Production::setProductionTotal(int quantity)
 {
-	_quantity = quantity;
+	_total = quantity;
 }
 
 /**
@@ -235,9 +235,9 @@ ProductionProgress Production::step(
 	if (qtyDone_pre < qtyDone_total)
 	{
 		int producedQty;
-		if (_infinite == false) // don't overproduce '_quantity'
+		if (_infinite == false) // don't overproduce '_total'
 			producedQty = std::min(qtyDone_total,
-								  _quantity) - qtyDone_pre;
+								  _total) - qtyDone_pre;
 		else
 			producedQty = qtyDone_total - qtyDone_pre;
 
@@ -321,7 +321,7 @@ ProductionProgress Production::step(
 		while (producedQty != 0);
 	}
 
-	if (_infinite == false && qtyDone_total >= _quantity)
+	if (_infinite == false && qtyDone_total >= _total)
 		return PROGRESS_COMPLETE;
 
 	if (qtyDone_pre < qtyDone_total)
@@ -391,18 +391,16 @@ bool Production::tillFinish(
 {
 	if (_engineers != 0)
 	{
-		if (_sell == true || _infinite == true)
-		{
-			hours = (getProducedQuantity() + 1) * _manfRule->getManufactureTime()
-				  - _timeSpent;
-		}
+		int qty;
+		if (_infinite == true) //|| _sell == true
+			qty = getProducedQuantity() + 1;
 		else
-			hours = getTotalQuantity() * _manfRule->getManufactureTime()
-				  - _timeSpent;
+			qty = getProductionTotal();
 
+		hours = qty * _manfRule->getManufactureTime() - _timeSpent;
 		hours = (hours + _engineers - 1) / _engineers;
 
-		days = (hours / 24);
+		days = hours / 24;
 		hours %= 24;
 
 		return true;
@@ -418,7 +416,6 @@ int Production::getTimeSpent() const
 {
 	return _timeSpent;
 } */
-
 /**
  * Sets the time spent on this Production so far.
  * @param spent - time spent

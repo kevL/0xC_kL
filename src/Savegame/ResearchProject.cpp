@@ -39,9 +39,9 @@ const float
 ResearchProject::ResearchProject(const RuleResearch* const resRule)
 	:
 		_resRule(resRule),
-		_assigned(0),
-		_cost(0),
-		_spent(0),
+		_scientists(0),
+		_daysCost(0),
+		_daysSpent(0),
 		_offline(false)
 {}
 
@@ -57,9 +57,9 @@ ResearchProject::~ResearchProject()
  */
 void ResearchProject::load(const YAML::Node& node)
 {
-	_assigned	= node["assigned"]	.as<int>(_assigned);
-	_cost		= node["cost"]		.as<int>(_cost);
-	_spent		= node["spent"]		.as<int>(_spent);
+	_scientists	= node["scientists"].as<int>(_scientists);
+	_daysCost	= node["daysCost"]	.as<int>(_daysCost);
+	_daysSpent	= node["daysSpent"]	.as<int>(_daysSpent);
 	_offline	= node["offline"]	.as<bool>(_offline);
 }
 
@@ -73,9 +73,9 @@ YAML::Node ResearchProject::save() const
 
 	node["project"] = _resRule->getType();
 
-	if (_assigned != 0)		node["assigned"]	= _assigned;
-	if (_cost != 0)			node["cost"]		= _cost;
-	if (_spent != 0)		node["spent"]		= _spent;
+	if (_scientists != 0)	node["scientists"]	= _scientists;
+	if (_daysCost != 0)		node["daysCost"]	= _daysCost;
+	if (_daysSpent != 0)	node["daysSpent"]	= _daysSpent;
 	if (_offline != false)	node["offline"]		= _offline;
 
 	return node;
@@ -96,7 +96,7 @@ const RuleResearch* ResearchProject::getRules() const
  */
 bool ResearchProject::stepProject()
 {
-	if ((_spent += _assigned) >= _cost)
+	if ((_daysSpent += _scientists) >= _daysCost)
 		return true;
 
 	return false;
@@ -108,7 +108,7 @@ bool ResearchProject::stepProject()
  */
 void ResearchProject::setAssignedScientists(const int qty)
 {
-	_assigned = qty;
+	_scientists = qty;
 }
 
 /**
@@ -117,7 +117,7 @@ void ResearchProject::setAssignedScientists(const int qty)
  */
 int ResearchProject::getAssignedScientists() const
 {
-	return _assigned;
+	return _scientists;
 }
 
 /**
@@ -126,7 +126,7 @@ int ResearchProject::getAssignedScientists() const
  */
 void ResearchProject::setSpent(const int spent)
 {
-	_spent = spent;
+	_daysSpent = spent;
 }
 
 /**
@@ -135,7 +135,7 @@ void ResearchProject::setSpent(const int spent)
  */
 int ResearchProject::getSpent() const
 {
-	return _spent;
+	return _daysSpent;
 }
 
 /**
@@ -144,7 +144,7 @@ int ResearchProject::getSpent() const
  */
 void ResearchProject::setCost(const int cost)
 {
-	_cost = cost;
+	_daysCost = cost;
 }
 
 /**
@@ -153,7 +153,7 @@ void ResearchProject::setCost(const int cost)
  */
 int ResearchProject::getCost() const
 {
-	return _cost;
+	return _daysCost;
 }
 
 /**
@@ -182,9 +182,9 @@ bool ResearchProject::getOffline() const
 */
 std::string ResearchProject::getResearchProgress() const
 {
-/*	if (_assigned == 0)
+/*	if (_scientists == 0)
 		return "STR_NONE";
-	const float progress = static_cast<float>(_spent) / static_cast<float>(_cost);
+	const float progress = static_cast<float>(_daysSpent) / static_cast<float>(_daysCost);
 	if (progress < PROGRESS_LIMIT_UNKNOWN)	// < 0.1
 		return "STR_UNKNOWN";
 	if (progress < PROGRESS_LIMIT_POOR)		// < 0.2
@@ -195,13 +195,13 @@ std::string ResearchProject::getResearchProgress() const
 		return "STR_GOOD";
 	return "STR_EXCELLENT"; */
 
-	if (_assigned == 0)
+	if (_scientists == 0)
 		return "STR_NA"; //"STR_NONE"
 
-	if (static_cast<float>(_spent) / static_cast<float>(_cost) < PROGRESS_LIMIT_UNKNOWN)
+	if (static_cast<float>(_daysSpent) / static_cast<float>(_daysCost) < PROGRESS_LIMIT_UNKNOWN)
 		return "STR_UNKNOWN";
 
-	const float rating (static_cast<float>(_assigned)
+	const float rating (static_cast<float>(_scientists)
 					  / static_cast<float>(_resRule->getCost()));
 
 	if (rating < PROGRESS_LIMIT_POOR)
