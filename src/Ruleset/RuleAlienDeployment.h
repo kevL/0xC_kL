@@ -253,7 +253,7 @@ private:
 		/// Gets if the deployment is for an AlienBase (for quick-battles).
 		bool isAlienBase() const;
 		/// Gets the type of AlienMission that an AlienBase can generate.
-		std::string getMissionType() const;
+		const std::string& getMissionType() const;
 		/// Gets the chance of an AlienBase generating an AlienMission.
 		int getMissionPercent() const;
 };

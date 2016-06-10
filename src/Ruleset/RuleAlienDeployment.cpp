@@ -541,16 +541,16 @@ bool RuleAlienDeployment::isAlienBase() const
 /**
  * Gets the type of AlienMission that an AlienBase can generate.
  * @note This is a supply-mission by default.
- * @return, type
+ * @return, reference to type of mission
  */
-std::string RuleAlienDeployment::getMissionType() const
+const std::string& RuleAlienDeployment::getMissionType() const
 {
 	return _genMissionType;
 }
 
 /**
  * Gets the chance of an AlienBase generating an AlienMission.
- * @return, percent
+ * @return, percent chance of mission being generated
  */
 int RuleAlienDeployment::getMissionPercent() const
 {

@@ -389,7 +389,7 @@ Ufo* AlienMission::createUfo( // private.
 				}
 			}
 
-			if (baseTargets.empty() == false) // Spawn a battleship straight for an exposed XCOM Base.
+			if (baseTargets.empty() == false) // Send a battleship straight for an exposed XCOM Base.
 			{
 				const RuleUfo& battleshipRule (*rules.getUfo(_missionRule.getObjectiveUfo()));
 				const UfoTrajectory& trjBattleship (*rules.getUfoTrajectory(UfoTrajectory::RETALIATION_ASSAULT_RUN));

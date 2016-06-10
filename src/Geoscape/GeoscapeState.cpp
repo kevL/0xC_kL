@@ -2750,7 +2750,7 @@ void GenerateSupportMission::operator() (const AlienBase* const aBase) const
 	const RuleAlienMission* const missionRule (_rules.getAlienMission(ruleDeploy->getMissionType()));
 	if (missionRule != nullptr)
 	{
-		if (RNG::percent(ruleDeploy->getMissionPercent()))
+		if (RNG::percent(ruleDeploy->getMissionPercent()) == true)
 		{
 			AlienMission* const mission (new AlienMission(*missionRule, _gameSave));
 			mission->setRegion(
