@@ -936,6 +936,8 @@ void GraphsState::btnGeoscapeClick(Action*)
 {
 	SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
 
+	_game->getScreen()->fadeScreen();
+
 	_game->popState();
 	kL_soundPop->play(Mix_GroupAvailable(0));
 }

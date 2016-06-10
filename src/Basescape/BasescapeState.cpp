@@ -568,6 +568,8 @@ void BasescapeState::btnGeoscapeClick(Action*)
 {
 	if (_edtBase->isFocused() == false)
 	{
+		_game->getScreen()->fadeScreen();
+
 		kL_geoMusicPlaying = false;
 		kL_geoMusicReturnState = true;
 		_game->popState();
@@ -595,7 +597,7 @@ void BasescapeState::layoutLeftClick(Action*)
 			if (fac->getRules()->getCrafts() != 0)
 			{
 				for (size_t
-						i = 0;
+						i = 0u;
 						i != _base->getCrafts()->size();
 						++i)
 				{
@@ -803,13 +805,15 @@ void BasescapeState::basesRightClick(Action*)
 		const size_t baseId (_miniBases->getHoveredBase());
 		if (baseId < _baseList->size())
 		{
-			const Base* const base (_baseList->at(baseId));
-			_game->getSavedGame()->setGlobeLongitude(base->getLongitude());
-			_game->getSavedGame()->setGlobeLatitude(base->getLatitude());
+			_game->getScreen()->fadeScreen();
 
 			kL_geoMusicPlaying = false;
 			kL_geoMusicReturnState =
 			kL_reCenter = true;
+
+			const Base* const base (_baseList->at(baseId));
+			_game->getSavedGame()->setGlobeLongitude(base->getLongitude());
+			_game->getSavedGame()->setGlobeLatitude(base->getLatitude());
 
 			_game->popState();
 			kL_soundPop->play(Mix_GroupAvailable(0));

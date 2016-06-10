@@ -154,17 +154,17 @@ void CraftsState::init()
 
 		craftRule = (*i)->getRules();
 
-		if (craftRule->getWeaponCapacity() > 0)
+		if (craftRule->getWeaponCapacity() != 0)
 			woststr1 << (*i)->getQtyWeapons() << L"/" << craftRule->getWeaponCapacity();
 		else
 			woststr1 << L"-";
 
-		if (craftRule->getSoldierCapacity() > 0)
+		if (craftRule->getSoldierCapacity() != 0)
 			woststr2 << (*i)->getQtySoldiers();
 		else
 			woststr2 << L"-";
 
-		if (craftRule->getVehicleCapacity() > 0)
+		if (craftRule->getVehicleCapacity() != 0)
 			woststr3 << (*i)->getQtyVehicles();
 		else
 			woststr3 << L"-";
@@ -292,6 +292,8 @@ void CraftsState::lstCraftsPress(Action* action)
 
 		case SDL_BUTTON_RIGHT:
 		{
+			_game->getScreen()->fadeScreen();
+
 			const Craft* const craft (_base->getCrafts()->at(_lstCrafts->getSelectedRow()));
 			_game->getSavedGame()->setGlobeLongitude(craft->getLongitude());
 			_game->getSavedGame()->setGlobeLatitude(craft->getLatitude());
