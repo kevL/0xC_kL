@@ -1191,6 +1191,9 @@ alienDeployments:
     briefing:
       music: GEO_BRIEF_BASEASSAULT
       background: BACK01.SCR
+    markerType: STR_ALIEN_BASE
+    markerIcon: 7 #Globe::GLM_ALIENBASE
+    isAlienBase: true #tells quick-battles what to do with this deployment
     objectiveType: 3
     objectiveComplete: [STR_ALIEN_BASE_CONTROL_DESTROYED, 500]
     objectivePopup: STR_ALIEN_BASE_CONTROL_DESTROYED
@@ -1922,7 +1925,7 @@ alienMissions:
     specialZone: 3 #Mission zone for terror missions
 #    specialUfo: STR_TERROR_SHIP
 #    deployment: STR_TERROR_MISSION
-#    markerName: STR_TERROR_SITE
+#    markerType: STR_TERROR_SITE
     raceWeights:
       0:
         STR_SECTOID: 30

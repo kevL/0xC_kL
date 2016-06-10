@@ -173,7 +173,7 @@ YAML::Node AlienMission::save() const
  */
 void AlienMission::setId(int id)
 {
-	assert(_id == 0 && "Reassigning ID!");
+//	assert(_id == 0 && "Reassigning ID!");
 	_id = id;
 }
 
@@ -183,7 +183,7 @@ void AlienMission::setId(int id)
  */
 int AlienMission::getId() const
 {
-	assert(_id != 0 && "Uninitialized mission!");
+//	assert(_id != 0 && "Uninitialized mission!");
 	return _id;
 }
 
@@ -213,8 +213,7 @@ void AlienMission::setRegion(
  */
 void AlienMission::setWaveCountdown(int minutes)
 {
-	assert(minutes != 0 && minutes % 30 == 0);
-
+//	assert(minutes != 0 && minutes % 30 == 0);
 	if (isOver() == false)
 		_spawnTime = minutes;
 }
@@ -287,21 +286,21 @@ void AlienMission::think(
 			else if ((rules.getUfo(wave.ufoType) == nullptr	// a terror-site to spawn directly
 					&& rules.getDeployment(wave.ufoType) != nullptr
 					&& rules.getDeployment(wave.ufoType)->getMarkerType().empty() == false)
-				|| (_missionRule.getObjectiveType() == alm_SITE	// or spawn a site at random according to the terrain
+				|| (_missionRule.getObjectiveType() == alm_TERROR	// or spawn a site at random according to the terrain
 					&& wave.isObjective == true))
 			{
-				size_t zone;
+				size_t id;
 				if (_missionRule.getSpecialZone() == std::numeric_limits<size_t>::max())
-					zone = trajectory.getZone(0u);
+					id = trajectory.getZone(0u);
 				else
-					zone = _missionRule.getSpecialZone();
-				const std::vector<MissionArea> areas (rules.getRegion(_region)->getMissionZones().at(zone).areas);
+					id = _missionRule.getSpecialZone();
+				const std::vector<MissionArea> areas (rules.getRegion(_region)->getMissionZones().at(id).areas);
 
 				if (_siteZone == std::numeric_limits<size_t>::max())
-					zone = RNG::pick(areas.size());
+					id = RNG::pick(areas.size());
 				else
-					zone = _siteZone;
-				const MissionArea area (areas.at(zone));
+					id = _siteZone;
+				const MissionArea area (areas.at(id));
 
 				const RuleTexture* const texture (rules.getGlobe()->getTextureRule(area.texture));
 
@@ -328,7 +327,7 @@ void AlienMission::think(
 
 				case alm_SCORE:
 				case alm_BASE:
-				case alm_SITE:
+				case alm_TERROR:
 				case alm_RETAL:
 				case alm_SUPPLY:
 					if (_waveCount != _missionRule.getWaveTotal())
@@ -704,7 +703,7 @@ void AlienMission::ufoReachedWaypoint(
 			if (_missionRule.getWave(wave).isObjective == true					// destroy UFO & replace with TerrorSite.
 				&& trajectory.getZone(wpId) == _missionRule.getSpecialZone())	// NOTE: Supply-missions bypasses this although it has (objective=true)
 			{																	// because it does not have a 'specialZone' set in its rule.
-				addScore( // alm_SITE
+				addScore( // alm_TERROR
 					ufo.getLongitude(),
 					ufo.getLatitude());
 
@@ -712,9 +711,9 @@ void AlienMission::ufoReachedWaypoint(
 
 				// note: Looks like they're having probls with getting a mission wpId:
 //				MissionArea area (regionRule.getMissionZones().at(trajectory.getZone(wpId)).areas.at(_siteZone));
-				const MissionArea area (regionRule.getTerrorPoint(
-																trajectory.getZone(wpId),
-																dynamic_cast<Target*>(&ufo)));
+				const MissionArea area (regionRule.getTerrorArea(
+															trajectory.getZone(wpId),
+															dynamic_cast<Target*>(&ufo)));
 
 				const RuleAlienDeployment* ruleDeploy (rules.getDeployment(_missionRule.getSiteType()));
 				if (ruleDeploy == nullptr)
@@ -974,8 +973,8 @@ void AlienMission::ufoLifting(
 						break;
 
 					case alm_SCORE:
-//					case alm_SITE:	// doesn't do ufoLifting() at all
-//					case alm_RETAL:	// has 0 pts.
+//					case alm_TERROR:	// doesn't do ufoLifting() at all
+//					case alm_RETAL:		// has 0 pts.
 					case alm_SUPPLY:
 						addScore(
 								ufo.getLongitude(),
@@ -989,7 +988,7 @@ void AlienMission::ufoLifting(
 					case alm_SCORE:
 					case alm_INFILT:	// handled above. But let's let the littler UFOs rack up pts. also
 					case alm_BASE:		// handled above. But let's let the littler UFOs rack up pts. also
-//					case alm_SITE:		// doesn't do ufoLifting() at all
+//					case alm_TERROR:	// doesn't do ufoLifting() at all
 //					case alm_RETAL:		// has 0 pts.
 					case alm_SUPPLY:
 						addScore(
@@ -1188,7 +1187,7 @@ void AlienMission::addScore( // private.
 	{
 		switch (_missionRule.getObjectiveType())
 		{
-//			case alm_SITE: break;	// use default pt-value
+//			case alm_TERROR: break;	// use default pt-value
 //			case alm_RETAL: break;	// use default pt-value <- has 0 pts.
 
 			case alm_INFILT:
@@ -1211,8 +1210,8 @@ void AlienMission::addScore( // private.
 }
 
 /**
- * Tells this AlienMission which entry in the zone-array is targeted.
- * @param zone - entry of the zone to target; always a City-type zone (probably)
+ * Tells this AlienMission which entry in the MissionZone vector is targeted.
+ * @param zone - zone-ID to target, always a City-type zone #3 (probably)
  */
 void AlienMission::setTerrorSiteZone(size_t zone)
 {

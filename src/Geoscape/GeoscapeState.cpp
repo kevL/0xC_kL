@@ -4449,7 +4449,7 @@ void GeoscapeState::deterAlienMissions(bool atGameStart) // private.
 void GeoscapeState::setupLandMission() // private.
 {
 	const RuleAlienMission& missionRule = *_rules->getMissionRand(
-															alm_SITE,
+															alm_TERROR,
 															_gameSave->getMonthsPassed());
 
 	// Determine a random region with a valid mission zone and no mission already running.
@@ -4468,7 +4468,7 @@ void GeoscapeState::setupLandMission() // private.
 		if (regRule->getMissionZones().size() > missionRule.getSpecialZone()
 			&& _gameSave->findAlienMission(
 										regRule->getType(),
-										alm_SITE) == nullptr)
+										alm_TERROR) == nullptr)
 		{
 			const MissionZone& zone = regRule->getMissionZones().at(missionRule.getSpecialZone());
 			for (std::vector<MissionArea>::const_iterator

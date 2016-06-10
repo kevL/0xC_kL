@@ -57,7 +57,7 @@ enum MissionObjective
 	alm_SCORE,	// 0
 	alm_INFILT,	// 1
 	alm_BASE,	// 2
-	alm_SITE,	// 3
+	alm_TERROR,	// 3
 	alm_RETAL,	// 4
 	alm_SUPPLY	// 5
 };

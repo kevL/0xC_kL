@@ -440,7 +440,7 @@ void Ruleset::validateMissions() const
 					+ "so sayeth the wise Alfonso.");
 			}
 
-			const bool isSite (getAlienMission(*j)->getObjectiveType() == alm_SITE);
+			const bool isSite (getAlienMission(*j)->getObjectiveType() == alm_TERROR);
 			scriptRule->setSiteType(isSite);
 
 			for (
@@ -449,7 +449,7 @@ void Ruleset::validateMissions() const
 					++j)
 			{
 				if (getAlienMission(*j) != nullptr
-					&& (getAlienMission(*j)->getObjectiveType() == alm_SITE) != isSite)
+					&& (getAlienMission(*j)->getObjectiveType() == alm_TERROR) != isSite)
 				{
 					throw Exception("ERROR with MissionScript: " + (*i).first
 						+ ": cannot mix Terror/non-Terror missions in one directive, "
@@ -480,7 +480,7 @@ void Ruleset::validateMissions() const
 				j != types.end();
 				++j)
 		{
-			if (getAlienMission(*j)->getObjectiveType() == alm_SITE)
+			if (getAlienMission(*j)->getObjectiveType() == alm_TERROR)
 			{
 				throw Exception("ERROR with MissionWeights: Region: " + (*i).first
 					+ ": has " + *j + " listed. "

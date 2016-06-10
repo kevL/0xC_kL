@@ -108,7 +108,7 @@ private:
 			const RuleRegion& region,
 			const MissionArea& area) const;
 
-	/// Handles Points for mission success.
+	/// Handles points for mission success.
 	void addScore(
 			const double lon,
 			const double lat) const;

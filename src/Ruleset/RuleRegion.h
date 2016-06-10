@@ -148,12 +148,12 @@ private:
 		const std::vector<MissionZone>& getMissionZones() const;
 
 		/// Gets a random point inside a MissionZone.
-		std::pair<double, double> getZonePoint(size_t zone) const;
+		std::pair<double, double> getZonePoint(size_t zoneId) const;
 		/// Gets a random point inside a MissionArea.
 		std::pair<double, double> getAreaPoint(const MissionArea& area) const;
 
 		/// Gets the MissionArea for a corresponding MissionZone and Target.
-		MissionArea getTerrorPoint(
+		MissionArea getTerrorArea(
 				size_t zone,
 				const Target* const target) const;
 		/// Gets a random MissionArea in the RuleRegion.

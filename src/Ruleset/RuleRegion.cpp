@@ -229,41 +229,22 @@ const std::vector<MissionZone>& RuleRegion::getMissionZones() const
 
 /**
  * Gets a random point that is guaranteed to be inside a specified MissionZone.
- * @param zone - the zone-ID
+ * @param zoneId - the zone-ID
  * @return, a pair of longitude and latitude
  */
-std::pair<double, double> RuleRegion::getZonePoint(size_t zone) const
+std::pair<double, double> RuleRegion::getZonePoint(size_t zoneId) const
 {
-	if (zone < _missionZones.size())
+	if (zoneId < _missionZones.size()) // safety.
 	{
-//		double
-//			lonMin = _missionZones[zone].areas[pick].lonMin,
-//			lonMax = _missionZones[zone].areas[pick].lonMax,
-//			latMin = _missionZones[zone].areas[pick].latMin,
-//			latMax = _missionZones[zone].areas[pick].latMax;
-//		if (lonMin > lonMax) // safeties.
-//		{
-//			lonMin = _missionZones[zone].areas[pick].lonMax;
-//			lonMax = _missionZones[zone].areas[pick].lonMin;
-//		}
-//		if (latMin > latMax)
-//		{
-//			latMin = _missionZones[zone].areas[pick].latMax;
-//			latMax = _missionZones[zone].areas[pick].latMin;
-//		}
-//		const double
-//			lon = RNG::generate(lonMin, lonMax),
-//			lat = RNG::generate(latMin, latMax);
-
-		const MissionZone& refZone (_missionZones[zone]);
-		const size_t pick (RNG::pick(refZone.areas.size()));
+		const MissionZone& zone (_missionZones[zoneId]);
+		const size_t pick (RNG::pick(zone.areas.size()));
 		const double
 			lon (RNG::generate(
-							refZone.areas[pick].lonMin,
-							refZone.areas[pick].lonMax)),
+							zone.areas[pick].lonMin,
+							zone.areas[pick].lonMax)),
 			lat (RNG::generate(
-							refZone.areas[pick].latMin,
-							refZone.areas[pick].latMax));
+							zone.areas[pick].latMin,
+							zone.areas[pick].latMax));
 
 		return std::make_pair(lon,lat);
 	}
@@ -295,7 +276,7 @@ std::pair<double, double> RuleRegion::getAreaPoint(const MissionArea& area) cons
  * @param target	- pointer to the Target for coordinates
  * @return, a MissionArea
  */
-MissionArea RuleRegion::getTerrorPoint(
+MissionArea RuleRegion::getTerrorArea(
 		size_t zone,
 		const Target* const target) const
 {
