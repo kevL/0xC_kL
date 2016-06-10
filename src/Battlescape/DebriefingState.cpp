@@ -49,7 +49,7 @@
 
 #include "../Resource/XcomResourcePack.h"
 
-#include "../Ruleset/AlienDeployment.h"
+#include "../Ruleset/RuleAlienDeployment.h"
 #include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleCountry.h"
 //#include "../Ruleset/RuleCraft.h"
@@ -699,7 +699,7 @@ void DebriefingState::prepareDebriefing() // private.
 		objectiveFailedScore (0); // dang vc++ compiler warnings.
 
 	SavedBattleGame* const battleSave (_gameSave->getBattleSave());
-	const AlienDeployment* const ruleDeploy (_rules->getDeployment(battleSave->getTacticalType()));
+	const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(battleSave->getTacticalType()));
 	if (ruleDeploy != nullptr)
 	{
 		if (ruleDeploy->getObjectiveCompleteInfo(

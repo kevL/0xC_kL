@@ -288,9 +288,9 @@ RuleTexture* RuleGlobe::getTextureRule(int id) const
 }
 
 /**
- * Gets a list of all Terrains associated with a specified AlienDeployment type.
+ * Gets a list of all Terrains associated with a specified RuleAlienDeployment type.
  * @note If a blank-string is passed in then terrains that are not associated
- * with any AlienDeployment type are returned.
+ * with any RuleAlienDeployment type are returned.
  * @param deployType - reference to the deployment type (eg. "STR_TERROR_MISSION") (default "")
  * @return, vector of terrain-types as strings
  */

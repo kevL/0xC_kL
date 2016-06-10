@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_ALIENDEPLOYMENT_H
-#define OPENXCOM_ALIENDEPLOYMENT_H
+#ifndef OPENXCOM_RULEALIENDEPLOYMENT_H
+#define OPENXCOM_RULEALIENDEPLOYMENT_H
 
 //#include <string>
 //#include <vector>
@@ -107,7 +107,7 @@ class RuleTerrain;
  *   + to match to a specific unit (=race/rank combination) that should be deployed
  * @sa Node
  */
-class AlienDeployment
+class RuleAlienDeployment
 {
 
 private:
@@ -154,15 +154,15 @@ private:
 	TileType _objectiveType;
 
 	public:
-		/// Creates an AlienDeployment ruleset.
-		explicit AlienDeployment(const std::string& type);
-		/// Cleans up the AlienDeployment ruleset.
-		~AlienDeployment();
+		/// Creates an RuleAlienDeployment ruleset.
+		explicit RuleAlienDeployment(const std::string& type);
+		/// Cleans up the RuleAlienDeployment ruleset.
+		~RuleAlienDeployment();
 
-		/// Loads AlienDeployment data from YAML.
+		/// Loads RuleAlienDeployment data from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets the AlienDeployment's type.
+		/// Gets the RuleAlienDeployment's type.
 		const std::string& getType() const;
 		/// Gets a pointer to the data.
 		const std::vector<DeploymentData>* getDeploymentData() const;
@@ -188,38 +188,38 @@ private:
 		/// Gets the aLien-race.
 		const std::string& getRace() const;
 
-		/// Gets the script-type to use for the AlienDeployment.
+		/// Gets the script-type to use for the RuleAlienDeployment.
 		const std::string& getScriptType() const;
 
-		/// Checks if the AlienDeployment is where to send Craft via the ConfirmCydonia btn.
+		/// Checks if the RuleAlienDeployment is where to send Craft via the ConfirmCydonia btn.
 		bool isFinalDestination() const;
-		/// Checks if aborting or losing the AlienDeployment will lose the game.
+		/// Checks if aborting or losing the RuleAlienDeployment will lose the game.
 		bool isNoRetreat() const;
-		/// Checks if the AlienDeployment finishes the game.
+		/// Checks if the RuleAlienDeployment finishes the game.
 		bool isFinalMission() const;
 
-		/// Gets the alert-message for the AlienDeployment.
+		/// Gets the alert-message for the RuleAlienDeployment.
 		const std::string& getAlertMessage() const;
-		/// Gets the alert-background for the AlienDeployment.
+		/// Gets the alert-background for the RuleAlienDeployment.
 		const std::string& getAlertBackground() const;
 
-		/// Gets the briefing-data for the AlienDeployment.
+		/// Gets the briefing-data for the RuleAlienDeployment.
 		BriefingData getBriefingData() const;
 
-		/// Gets the marker-type for the AlienDeployment.
+		/// Gets the marker-type for the RuleAlienDeployment.
 		const std::string& getMarkerType() const;
-		/// Gets the marker-icon for the AlienDeployment.
+		/// Gets the marker-icon for the RuleAlienDeployment.
 		int getMarkerIcon() const;
 
-		/// Gets the minimum duration for the AlienDeployment.
+		/// Gets the minimum duration for the RuleAlienDeployment.
 		int getDurationMin() const;
-		/// Gets the maximum duration for the AlienDeployment.
+		/// Gets the maximum duration for the RuleAlienDeployment.
 		int getDurationMax() const;
 
 		/// Gets the list of music-tracks to pick from.
 		const std::vector<std::string>& getDeploymentMusics() const;
 
-		/// Gets the objective-tiletype for the AlienDeployment.
+		/// Gets the objective-tiletype for the RuleAlienDeployment.
 		TileType getPlayerObjective() const;
 		/// Gets a fixed number of objective-tiles required if any.
 		int getObjectivesRequired() const;
@@ -239,7 +239,7 @@ private:
 		/// Gets the half-hourly score-penalty xCom receives for a site existing.
 		int getPointsPer30() const;
 
-		/// Gets the turn-limit for the AlienDeployment.
+		/// Gets the turn-limit for the RuleAlienDeployment.
 		int getTurnLimit() const;
 		/// Gets the result to force when the turn-limit is reached.
 		ChronoResult getChronoResult() const;

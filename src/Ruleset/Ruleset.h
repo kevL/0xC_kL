@@ -38,8 +38,8 @@
 namespace OpenXcom
 {
 
-class AlienDeployment;
-class AlienRace;
+class RuleAlienDeployment;
+class RuleAlienRace;
 class ArticleDefinition;
 class Base;
 class ExtraSounds;
@@ -154,15 +154,12 @@ protected:
 //	std::vector<SoldierNamePool*> _names;
 //	std::vector<StatString*> _statStrings;
 
-	std::map<std::string, AlienDeployment*>		_alienDeployments;
-	std::map<std::string, AlienRace*>			_alienRaces;
-	std::map<std::string, RuleArmor*>			_armors;
-	std::map<std::string, ArticleDefinition*>	_ufopaediaArticles;
-	std::map<std::string, ExtraStrings*>		_extraStrings;
-	std::map<std::string, MapDataSet*>			_mapDataSets;
-	std::map<std::string, MCDPatch*>			_MCDPatches;
+	std::map<std::string, RuleAlienDeployment*>	_alienDeployments;
 	std::map<std::string, RuleAlienMission*>	_alienMissions;
+	std::map<std::string, RuleAlienRace*>		_alienRaces;
+	std::map<std::string, RuleArmor*>			_armors;
 	std::map<std::string, RuleAward*>			_awards;
+	std::map<std::string, ExtraStrings*>		_extraStrings;
 	std::map<std::string, RuleBaseFacility*>	_facilities;
 	std::map<std::string, RuleCountry*>			_countries;
 	std::map<std::string, RuleCraft*>			_crafts;
@@ -171,16 +168,19 @@ protected:
 	std::map<std::string, RuleInventory*>		_inventories;
 	std::map<std::string, RuleItem*>			_items;
 	std::map<std::string, RuleManufacture*>		_manufacture;
+	std::map<std::string, MapDataSet*>			_mapDataSets;
+	std::map<std::string, MCDPatch*>			_MCDPatches;
 	std::map<std::string, RuleMissionScript*>	_missionScripts;
 	std::map<std::string, RuleRegion*>			_regions;
 	std::map<std::string, RuleResearch*>		_research;
 	std::map<std::string, RuleSoldier*>			_soldiers;
-	std::map<std::string, RuleTerrain*>			_terrains;
-	std::map<std::string, RuleUfo*>				_ufos;
-	std::map<std::string, RuleVideo*>			_videos;
 //	std::map<std::string, SoundDefinition*>		_soundDefs; // TFTD.
+	std::map<std::string, RuleTerrain*>			_terrains;
+	std::map<std::string, ArticleDefinition*>	_ufopaediaArticles;
+	std::map<std::string, RuleUfo*>				_ufos;
 	std::map<std::string, UfoTrajectory*>		_ufoTrajectories;
 	std::map<std::string, RuleUnit*>			_units;
+	std::map<std::string, RuleVideo*>			_videos;
 
 	std::map<std::string, std::vector<MapScript*>>	_mapScripts;
 
@@ -280,12 +280,12 @@ protected:
 		/// Gets non-Soldier-unit rules.
 		RuleUnit* getUnitRule(const std::string& type) const;
 
-		/// Gets the rules for AlienRace types.
-		AlienRace* getAlienRace(const std::string& type) const;
+		/// Gets the rules for RuleAlienRace types.
+		RuleAlienRace* getAlienRace(const std::string& type) const;
 		/// Gets the available AlienRaces.
 		const std::vector<std::string>& getAlienRacesList() const;
-		/// Gets the rules for AlienDeployment types.
-		AlienDeployment* getDeployment(const std::string& name) const;
+		/// Gets the rules for RuleAlienDeployment types.
+		RuleAlienDeployment* getDeployment(const std::string& type) const;
 		/// Gets the available AlienDeployments.
 		const std::vector<std::string>& getDeploymentsList() const;
 

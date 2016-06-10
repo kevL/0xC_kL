@@ -29,8 +29,8 @@ namespace OpenXcom
 {
 
 class AlienBase;
-class AlienDeployment;
-class AlienRace;
+class RuleAlienDeployment;
+class RuleAlienRace;
 class Base;
 class BattleItem;
 class BattleUnit;
@@ -124,8 +124,8 @@ private:
 			BattleItem* const item,
 			BattleUnit* const unit) const;
 
-	/// Deploys the aLiens according to an AlienDeployment rule.
-	void deployAliens(const AlienDeployment* const ruleDeploy);
+	/// Deploys the aLiens according to an RuleAlienDeployment rule.
+	void deployAliens(const RuleAlienDeployment* const ruleDeploy);
 	/// Adds an aLien to the battlescape.
 	BattleUnit* addAlien(
 			RuleUnit* const unitRule,
@@ -208,7 +208,7 @@ private:
 	bool removeBlocks(const MapScript* const directive);
 
 	/// Sets up the Player's objectives for the battle.
-	void setupObjectives(const AlienDeployment* const ruleDeploy);
+	void setupObjectives(const RuleAlienDeployment* const ruleDeploy);
 
 
 	public:

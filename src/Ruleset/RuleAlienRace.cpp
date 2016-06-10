@@ -17,17 +17,17 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "AlienRace.h"
+#include "RuleAlienRace.h"
 
 
 namespace OpenXcom
 {
 
 /**
- * Creates the rules for an AlienRace.
+ * Creates the rules for an RuleAlienRace.
  * @param type - reference the defining type
  */
-AlienRace::AlienRace(const std::string& type)
+RuleAlienRace::RuleAlienRace(const std::string& type)
 	:
 		_type(type),
 		_retaliation(true)
@@ -36,14 +36,14 @@ AlienRace::AlienRace(const std::string& type)
 /**
  * dTor.
  */
-AlienRace::~AlienRace()
+RuleAlienRace::~RuleAlienRace()
 {}
 
 /**
- * Loads these rules for an AlienRace from a YAML file.
+ * Loads these rules for an RuleAlienRace from a YAML file.
  * @param node - reference a YAML node
  */
-void AlienRace::load(const YAML::Node& node)
+void RuleAlienRace::load(const YAML::Node& node)
 {
 	_type			= node["type"]			.as<std::string>(_type);
 	_members		= node["members"]		.as<std::vector<std::string>>(_members);
@@ -51,29 +51,29 @@ void AlienRace::load(const YAML::Node& node)
 }
 
 /**
- * Returns the language string that names this AlienRace.
+ * Returns the language string that names this RuleAlienRace.
  * @return, race type
  */
-/* std::string AlienRace::getAlienType() const
+/* std::string RuleAlienRace::getAlienType() const
 {
 	return _type;
 } */
 
 /**
- * Gets a certain member of this AlienRace family.
- * @param rankId - AlienRank (AlienRace.h)
+ * Gets a certain member of this RuleAlienRace family.
+ * @param rankId - AlienRank (RuleAlienRace.h)
  * @return, the member's race & rank
  */
-std::string AlienRace::getMember(int rankId) const
+std::string RuleAlienRace::getMember(int rankId) const
 {
 	return _members[static_cast<size_t>(rankId)];
 }
 
 /**
- * Returns if this AlienRace can participate in retaliation missions.
+ * Returns if this RuleAlienRace can participate in retaliation missions.
  * @return, true if race can retaliate
  */
-bool AlienRace::canRetaliate() const
+bool RuleAlienRace::canRetaliate() const
 {
 	return _retaliation;
 }

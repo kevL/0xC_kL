@@ -38,8 +38,8 @@
 #include "../Geoscape/GeoscapeState.h"
 #include "../Geoscape/Globe.h" // Globe::GLM_CRAFT
 
+#include "../Ruleset/RuleAlienDeployment.h"
 #include "../Ruleset/RuleArmor.h"
-#include "../Ruleset/AlienDeployment.h"
 #include "../Ruleset/RuleCraftWeapon.h"
 #include "../Ruleset/RuleItem.h"
 #include "../Ruleset/Ruleset.h"

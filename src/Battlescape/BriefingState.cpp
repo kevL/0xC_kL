@@ -38,7 +38,7 @@
 
 #include "../Resource/XcomResourcePack.h"
 
-#include "../Ruleset/AlienDeployment.h"
+#include "../Ruleset/RuleAlienDeployment.h"
 #include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/Ruleset.h"
 #include "../Ruleset/RuleUfo.h"
@@ -74,7 +74,7 @@ BriefingState::BriefingState(
 
 
 	std::string type (_game->getSavedGame()->getBattleSave()->getTacticalType());
-	const AlienDeployment* ruleDeploy (_game->getRuleset()->getDeployment(type)); // check, Xcom1Ruleset->alienDeployments for a missionType
+	const RuleAlienDeployment* ruleDeploy (_game->getRuleset()->getDeployment(type)); // check, Xcom1Ruleset->alienDeployments for a missionType
 
 	if (ruleDeploy == nullptr // landing site or crash site -> define BG & Music by ufoType instead
 		&& craft != nullptr)
@@ -86,8 +86,8 @@ BriefingState::BriefingState(
 
 	std::string
 		description (type + "_BRIEFING"),
-		track,	// default defined in Ruleset/AlienDeployment.h: OpenXcom::res_MUSIC_GEO_BRIEFING,
-		bg;		// default defined in Ruleset/AlienDeployment.h: "BACK16.SCR",
+		track,	// default defined in Ruleset/RuleAlienDeployment.h: OpenXcom::res_MUSIC_GEO_BRIEFING,
+		bg;		// default defined in Ruleset/RuleAlienDeployment.h: "BACK16.SCR",
 	BackPals backpal;
 
 	if (ruleDeploy == nullptr) // should never happen

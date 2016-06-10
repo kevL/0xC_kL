@@ -39,7 +39,7 @@
 
 #include "../Geoscape/Globe.h"
 
-#include "../Ruleset/AlienDeployment.h"
+#include "../Ruleset/RuleAlienDeployment.h"
 #include "../Ruleset/RuleAlienMission.h"
 #include "../Ruleset/RuleCity.h"
 #include "../Ruleset/RuleCountry.h"
@@ -305,7 +305,7 @@ void AlienMission::think(
 
 				const RuleTexture* const texture (rules.getGlobe()->getTextureRule(area.texture));
 
-				const AlienDeployment* ruleDeploy;
+				const RuleAlienDeployment* ruleDeploy;
 				if (rules.getDeployment(wave.ufoType) != nullptr)
 					ruleDeploy = rules.getDeployment(wave.ufoType);
 				else
@@ -716,7 +716,7 @@ void AlienMission::ufoReachedWaypoint(
 																trajectory.getZone(wpId),
 																dynamic_cast<Target*>(&ufo)));
 
-				const AlienDeployment* ruleDeploy (rules.getDeployment(_missionRule.getSiteType()));
+				const RuleAlienDeployment* ruleDeploy (rules.getDeployment(_missionRule.getSiteType()));
 				if (ruleDeploy == nullptr)
 				{
 					const RuleTexture* const texture (rules.getGlobe()->getTextureRule(area.texture));
@@ -793,12 +793,12 @@ void AlienMission::ufoReachedWaypoint(
 
 /**
  * Attempts to spawn a Terror Site at a given location.
- * @param ruleDeploy	- pointer to the AlienDeployment
+ * @param ruleDeploy	- pointer to the RuleAlienDeployment
  * @param area			- reference an area of the globe
  * @return, pointer to the site
  */
 TerrorSite* AlienMission::createTerror( // private.
-		const AlienDeployment* const ruleDeploy,
+		const RuleAlienDeployment* const ruleDeploy,
 		const MissionArea& area)
 {
 	if (ruleDeploy != nullptr)

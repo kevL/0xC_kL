@@ -39,12 +39,12 @@
 
 //#include "../Resource/XcomResourcePack.h"
 
-#include "../Ruleset/AlienDeployment.h"
-#include "../Ruleset/AlienRace.h"
 #include "../Ruleset/MapBlock.h"
 #include "../Ruleset/MapData.h"
 #include "../Ruleset/MapDataSet.h"
 #include "../Ruleset/MCDPatch.h"
+#include "../Ruleset/RuleAlienDeployment.h"
+#include "../Ruleset/RuleAlienRace.h"
 #include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleBaseFacility.h"
 //#include "../Ruleset/RuleCraft.h"
@@ -251,7 +251,7 @@ void BattlescapeGenerator::run()
 {
 	_unitSequence = BattleUnit::MAX_SOLDIER_ID; // geoscape soldier IDs should stay below this number
 
-	const AlienDeployment* ruleDeploy;
+	const RuleAlienDeployment* ruleDeploy;
 	if (_ufo != nullptr)
 		ruleDeploy = _rules->getDeployment(_ufo->getRules()->getType());
 	else
@@ -615,7 +615,7 @@ void BattlescapeGenerator::nextStage()
 	}
 
 
-	const AlienDeployment* const ruleDeploy (_rules->getDeployment(_battleSave->getTacticalType()));
+	const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(_battleSave->getTacticalType()));
 
 	_battleSave->setTurnLimit(ruleDeploy->getTurnLimit());
 	_battleSave->setChronoResult(ruleDeploy->getChronoResult());
@@ -1707,10 +1707,10 @@ bool BattlescapeGenerator::placeGeneric( // private.
 }
 
 /**
- * Deploys the aLiens according to the AlienDeployment rules.
- * @param ruleDeploy - pointer to the AlienDeployment rule
+ * Deploys the aLiens according to the RuleAlienDeployment rule.
+ * @param ruleDeploy - pointer to the RuleAlienDeployment rule
  */
-void BattlescapeGenerator::deployAliens(const AlienDeployment* const ruleDeploy) // private.
+void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDeploy) // private.
 {
 	int month (_gameSave->getMonthsPassed());
 	if (month != -1)
@@ -1725,7 +1725,7 @@ void BattlescapeGenerator::deployAliens(const AlienDeployment* const ruleDeploy)
 	else
 		month = _alienItemLevel;
 
-	const AlienRace* const raceRule (_game->getRuleset()->getAlienRace(_alienRace));
+	const RuleAlienRace* const raceRule (_game->getRuleset()->getAlienRace(_alienRace));
 	if (raceRule == nullptr)
 	{
 		throw Exception("Map generator encountered an error: Unknown race: ["
@@ -4047,7 +4047,7 @@ bool BattlescapeGenerator::removeBlocks(const MapScript* const directive) // pri
  * Sets up the Player's objectives for the battle.
  * @param ruleDeploy - deployment-rule from which to fetch relevant data
  */
-void BattlescapeGenerator::setupObjectives(const AlienDeployment* const ruleDeploy) // private.
+void BattlescapeGenerator::setupObjectives(const RuleAlienDeployment* const ruleDeploy) // private.
 {
 	const TileType tileType (ruleDeploy->getPlayerObjective());
 	if (tileType != TILE)

@@ -22,8 +22,6 @@
 //#include <algorithm>
 //#include <fstream>
 
-#include "AlienRace.h"
-#include "AlienDeployment.h"
 #include "ArticleDefinition.h"
 //#include "ExtraMusic.h" // sza_ExtraMusic
 #include "ExtraSounds.h"
@@ -33,7 +31,9 @@
 #include "MapScript.h"
 #include "MCDPatch.h"
 #include "OperationPool.h"
+#include "RuleAlienDeployment.h"
 #include "RuleAlienMission.h"
+#include "RuleAlienRace.h"
 #include "RuleArmor.h"
 #include "RuleAward.h"
 #include "RuleBaseFacility.h"
@@ -230,13 +230,13 @@ Ruleset::~Ruleset()
 			++i)
 		delete i->second;
 
-	for (std::map<std::string, AlienRace*>::const_iterator
+	for (std::map<std::string, RuleAlienRace*>::const_iterator
 			i = _alienRaces.begin();
 			i != _alienRaces.end();
 			++i)
 		delete i->second;
 
-	for (std::map<std::string, AlienDeployment*>::const_iterator
+	for (std::map<std::string, RuleAlienDeployment*>::const_iterator
 			i = _alienDeployments.begin();
 			i != _alienDeployments.end();
 			++i)
@@ -679,7 +679,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["alienRaces"].end();
 			++i)
 	{
-		AlienRace* const rule (loadRule(*i, &_alienRaces, &_aliensIndex));
+		RuleAlienRace* const rule (loadRule(*i, &_alienRaces, &_aliensIndex));
 		if (rule != nullptr) rule->load(*i);
 	}
 
@@ -688,7 +688,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["alienDeployments"].end();
 			++i)
 	{
-		AlienDeployment* const rule (loadRule(*i, &_alienDeployments, &_deploymentsIndex));
+		RuleAlienDeployment* const rule (loadRule(*i, &_alienDeployments, &_deploymentsIndex));
 		if (rule != nullptr) rule->load(*i);
 	}
 
@@ -1543,9 +1543,9 @@ RuleUnit* Ruleset::getUnitRule(const std::string& type) const
  * @param type - reference a Race type
  * @return, pointer to the Rule for AlienRaces
  */
-AlienRace* Ruleset::getAlienRace(const std::string& type) const
+RuleAlienRace* Ruleset::getAlienRace(const std::string& type) const
 {
-	std::map<std::string, AlienRace*>::const_iterator i (_alienRaces.find(type));
+	std::map<std::string, RuleAlienRace*>::const_iterator i (_alienRaces.find(type));
 	if (i != _alienRaces.end())
 		return i->second;
 
@@ -1554,7 +1554,7 @@ AlienRace* Ruleset::getAlienRace(const std::string& type) const
 
 /**
  * Returns the list of all alien races provided by the ruleset.
- * @return, reference to the vector of AlienRace types
+ * @return, reference to the vector of RuleAlienRace types
  */
 const std::vector<std::string>& Ruleset::getAlienRacesList() const
 {
@@ -1563,12 +1563,12 @@ const std::vector<std::string>& Ruleset::getAlienRacesList() const
 
 /**
  * Returns the info about a specific deployment.
- * @param name - reference the AlienDeployment type
- * @return, pointer to Rule for the AlienDeployment
+ * @param type - reference the RuleAlienDeployment type
+ * @return, pointer to Rule for the RuleAlienDeployment
  */
-AlienDeployment* Ruleset::getDeployment(const std::string& name) const
+RuleAlienDeployment* Ruleset::getDeployment(const std::string& type) const
 {
-	std::map<std::string, AlienDeployment*>::const_iterator i (_alienDeployments.find(name));
+	std::map<std::string, RuleAlienDeployment*>::const_iterator i (_alienDeployments.find(type));
 	if (i != _alienDeployments.end())
 		return i->second;
 

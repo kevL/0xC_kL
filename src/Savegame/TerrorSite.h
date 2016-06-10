@@ -29,7 +29,7 @@
 namespace OpenXcom
 {
 
-class AlienDeployment;
+class RuleAlienDeployment;
 class RuleAlienMission;
 
 
@@ -54,7 +54,7 @@ private:
 		_race,
 		_terrain;
 
-	const AlienDeployment* _ruleDeploy;
+	const RuleAlienDeployment* _ruleDeploy;
 	const RuleAlienMission* _missionRule;
 
 
@@ -62,7 +62,7 @@ private:
 		/// Creates a TerrorSite.
 		TerrorSite(
 				const RuleAlienMission* const missionRule,
-				const AlienDeployment* const ruleDeploy);
+				const RuleAlienDeployment* const ruleDeploy);
 		/// Cleans up the TerrorSite.
 		~TerrorSite();
 
@@ -76,7 +76,7 @@ private:
 		/// Gets the TerrorSite's ruleset.
 		const RuleAlienMission* getRules() const;
 		/// Gets the TerrorSite's deployment.
-		const AlienDeployment* getSiteDeployment() const;
+		const RuleAlienDeployment* getSiteDeployment() const;
 
 		/// Gets the TerrorSite's ID.
 		int getId() const;

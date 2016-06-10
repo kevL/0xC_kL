@@ -35,7 +35,7 @@
 
 #include "../Resource/ResourcePack.h"
 
-#include "../Ruleset/AlienDeployment.h"
+#include "../Ruleset/RuleAlienDeployment.h"
 #include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/SavedBattleGame.h"

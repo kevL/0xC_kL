@@ -46,7 +46,7 @@
 
 #include "../Resource/XcomResourcePack.h"
 
-#include "../Ruleset/AlienDeployment.h"
+#include "../Ruleset/RuleAlienDeployment.h"
 #include "../Ruleset/RuleAlienMission.h"
 //#include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleGlobe.h"
@@ -630,11 +630,11 @@ void NewBattleState::btnOkClick(Action*)
 	{
 		base = nullptr;
 
-		const AlienDeployment* const deployment (_rules->getDeployment(battleSave->getTacticalType()));
+		const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(battleSave->getTacticalType()));
 		const RuleAlienMission* const mission (_rules->getAlienMission(_rules->getAlienMissionList().front())); // doesn't matter
 		TerrorSite* const terrorSite (new TerrorSite(
 													mission,
-													deployment));
+													ruleDeploy));
 		terrorSite->setId(1);
 		terrorSite->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
 
@@ -722,7 +722,7 @@ void NewBattleState::btnEquipClick(Action*)
 void NewBattleState::cbxMissionChange(Action*)
 {
 	Log(LOG_INFO) << "NewBattleState::cbxMissionChange()";
-	const AlienDeployment* const ruleDeploy (_rules->getDeployment(_missionTypes[_cbxMission->getSelected()]));
+	const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(_missionTypes[_cbxMission->getSelected()]));
 	Log(LOG_INFO) << ". ruleDeploy = " << ruleDeploy->getType();
 
 	std::vector<std::string> // Get terrains associated with this mission

@@ -37,7 +37,7 @@
 
 #include "../Resource/ResourcePack.h"
 
-#include "../Ruleset/AlienDeployment.h"
+#include "../Ruleset/RuleAlienDeployment.h"
 #include "../Ruleset/RuleCity.h"
 #include "../Ruleset/RuleGlobe.h"
 #include "../Ruleset/RuleRegion.h"
@@ -175,7 +175,7 @@ ConfirmLandingState::ConfirmLandingState(
 //				if (_city != nullptr) // terrorSite is at a City.
 				{
 					std::vector<std::string> terrainList;
-					// terrains for Missions can be/are defined in both AlienDeployment AND through RuleGlobe(Textures)
+					// terrains for Missions can be/are defined in both RuleAlienDeployment AND through RuleGlobe(Textures)
 					// Options:
 					// 1. choose from both aspects
 					// 2. choose Deployment preferentially
@@ -194,17 +194,17 @@ ConfirmLandingState::ConfirmLandingState(
 					const RuleTexture* const texRule (globeRule->getTextureRule(_city->getTextureId()));
 					terrainList = globeRule->getGlobeTerrains(texRule->getTextureDeployment());
 
-					// second, check for Terrains in AlienDeployment ...
+					// second, check for Terrains in RuleAlienDeployment ...
 					if (terrainList.empty() == true)
 					{
-						// get a Terrain from AlienDeployment
-						const AlienDeployment* const ruleDeploy (site->getSiteDeployment());
+						// get a Terrain from RuleAlienDeployment
+						const RuleAlienDeployment* const ruleDeploy (site->getSiteDeployment());
 						terrainList = ruleDeploy->getDeployTerrains();
 					} */
 
-					// get a Terrain from AlienDeployment first
-					Log(LOG_INFO) << ". . . finding eligibleTerrain for AlienDeployment";
-					const AlienDeployment* const ruleDeploy (site->getSiteDeployment());
+					// get a Terrain from RuleAlienDeployment first
+					Log(LOG_INFO) << ". . . finding eligibleTerrain for RuleAlienDeployment";
+					const RuleAlienDeployment* const ruleDeploy (site->getSiteDeployment());
 					terrainList = ruleDeploy->getDeployTerrains();
 
 					// second, check for Terrains in Globe-Texture(INT) ...
@@ -502,7 +502,7 @@ RuleTerrain* ConfirmLandingState::selectTerrain(const double lat)
  *
 RuleTerrain* ConfirmLandingState::selectCityTerrain(const double lat)
 {
-	const AlienDeployment* const ruleDeploy = _game->getRuleset()->getDeployment("STR_TERROR_MISSION");
+	const RuleAlienDeployment* const ruleDeploy = _game->getRuleset()->getDeployment("STR_TERROR_MISSION");
 	const size_t pick = static_cast<size_t>(RNG::generate(
 														0,
 														static_cast<int>(ruleDeploy->getDeployTerrains().size()) - 1));

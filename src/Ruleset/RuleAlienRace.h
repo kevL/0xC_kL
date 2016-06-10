@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_ALIENRACE_H
-#define OPENXCOM_ALIENRACE_H
+#ifndef OPENXCOM_RULEALIENRACE_H
+#define OPENXCOM_RULEALIENRACE_H
 
 //#include <string>
 //#include <vector>
@@ -48,7 +48,7 @@ namespace OpenXcom
  * @note Here is defined which ranks it contains and also which accompanying
  * terror units.
  */
-class AlienRace
+class RuleAlienRace
 {
 
 private:
@@ -59,20 +59,20 @@ private:
 
 
 	public:
-		/// Creates rules for an AlienRace.
-		explicit AlienRace(const std::string& type);
-		/// Cleans up the rules for an AlienRace.
-		~AlienRace();
+		/// Creates rules for an RuleAlienRace.
+		explicit RuleAlienRace(const std::string& type);
+		/// Cleans up the rules for an RuleAlienRace.
+		~RuleAlienRace();
 
-		/// Loads the AlienRace rules-data from YAML.
+		/// Loads the RuleAlienRace rules-data from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets the AlienRace's type.
+		/// Gets the RuleAlienRace's type.
 //		std::string getAlienType() const;
-		/// Gets a certain member of the AlienRace family.
+		/// Gets a certain member of the RuleAlienRace family.
 		std::string getMember(int rankId) const;
 
-		/// Gets if the AlienRace can retaliate.
+		/// Gets if the RuleAlienRace can retaliate.
 		bool canRetaliate() const;
 };
 

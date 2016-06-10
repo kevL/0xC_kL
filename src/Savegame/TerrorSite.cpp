@@ -23,7 +23,7 @@
 
 #include "../Geoscape/Globe.h" // Globe::GLM_TERRORSITE
 
-#include "../Ruleset/AlienDeployment.h"
+#include "../Ruleset/RuleAlienDeployment.h"
 #include "../Ruleset/RuleAlienMission.h"
 
 
@@ -35,7 +35,7 @@ namespace OpenXcom
  */
 TerrorSite::TerrorSite(
 		const RuleAlienMission* const missionRule,
-		const AlienDeployment* const ruleDeploy)
+		const RuleAlienDeployment* const ruleDeploy)
 	:
 		Target(),
 		_missionRule(missionRule),
@@ -117,9 +117,9 @@ const RuleAlienMission* TerrorSite::getRules() const
 
 /**
  * Gets the rule for this TerrorSite's deployment.
- * @return, pointer to AlienDeployment rule
+ * @return, pointer to RuleAlienDeployment rule
  */
-const AlienDeployment* TerrorSite::getSiteDeployment() const
+const RuleAlienDeployment* TerrorSite::getSiteDeployment() const
 {
 	return _ruleDeploy;
 }

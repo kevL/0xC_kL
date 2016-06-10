@@ -77,7 +77,7 @@
 
 #include "../Resource/XcomResourcePack.h"
 
-#include "../Ruleset/AlienDeployment.h"
+#include "../Ruleset/RuleAlienDeployment.h"
 #include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleCountry.h"
 #include "../Ruleset/RuleInterface.h"
@@ -3848,7 +3848,7 @@ void BattlescapeState::finishBattle(
 	_game->getCursor()->setVisible();
 	_game->getResourcePack()->fadeMusic(_game, 975);
 
-	const AlienDeployment* const ruleDeploy (_rules->getDeployment(_battleSave->getTacticalType()));
+	const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(_battleSave->getTacticalType()));
 
 	std::string nextStage;
 	if (ruleDeploy != nullptr)

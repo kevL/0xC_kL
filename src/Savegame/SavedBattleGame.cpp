@@ -3038,7 +3038,7 @@ int SavedBattleGame::getTurnLimit() const
 
 /**
  * Sets the result to occur when the turn-timer runs out.
- * @param result - the result to perform (AlienDeployment.h)
+ * @param result - the result to perform (RuleAlienDeployment.h)
  */
 void SavedBattleGame::setChronoResult(ChronoResult result)
 {
@@ -3047,7 +3047,7 @@ void SavedBattleGame::setChronoResult(ChronoResult result)
 
 /**
  * Gets the result to perform when the turn-timer runs out.
- * @return, the result to perform (AlienDeployment.h)
+ * @return, the result to perform (RuleAlienDeployment.h)
  */
 ChronoResult SavedBattleGame::getChronoResult() const
 {

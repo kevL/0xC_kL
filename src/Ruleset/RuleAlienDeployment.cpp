@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "AlienDeployment.h"
+#include "RuleAlienDeployment.h"
 
 #include "../Savegame/Target.h"
 
@@ -137,7 +137,7 @@ namespace OpenXcom
  * Creates a blank ruleset for a certain type of deployment data.
  * @param type - reference a string defining the type of AlienMission
  */
-AlienDeployment::AlienDeployment(const std::string& type)
+RuleAlienDeployment::RuleAlienDeployment(const std::string& type)
 	:
 		_type(type),
 		_width(0),
@@ -168,14 +168,14 @@ AlienDeployment::AlienDeployment(const std::string& type)
 /**
  * dTor.
  */
-AlienDeployment::~AlienDeployment()
+RuleAlienDeployment::~RuleAlienDeployment()
 {}
 
 /**
  * Loads the Deployment from a YAML file.
  * @param node - reference a YAML node
  */
-void AlienDeployment::load(const YAML::Node& node)
+void RuleAlienDeployment::load(const YAML::Node& node)
 {
 	_type				= node["type"]				.as<std::string>(_type);
 	_data				= node["data"]				.as<std::vector<DeploymentData>>(_data);
@@ -234,7 +234,7 @@ void AlienDeployment::load(const YAML::Node& node)
  * @note Each deployment type has a unique name.
  * @return, deployment name
  */
-const std::string& AlienDeployment::getType() const
+const std::string& RuleAlienDeployment::getType() const
 {
 	return _type;
 }
@@ -243,7 +243,7 @@ const std::string& AlienDeployment::getType() const
  * Gets a pointer to the data.
  * @return, pointer to a vector holding the DeploymentData
  */
-const std::vector<DeploymentData>* AlienDeployment::getDeploymentData() const
+const std::vector<DeploymentData>* RuleAlienDeployment::getDeploymentData() const
 {
 	return &_data;
 }
@@ -254,7 +254,7 @@ const std::vector<DeploymentData>* AlienDeployment::getDeploymentData() const
  * @param lenght	- pointer to length
  * @param heigth	- pointer to height
  */
-void AlienDeployment::getDimensions(
+void RuleAlienDeployment::getDimensions(
 		int* width,
 		int* lenght,
 		int* heigth) const
@@ -268,7 +268,7 @@ void AlienDeployment::getDimensions(
  * Gets the number of civilians.
  * @return, the number of civilians
  */
-int AlienDeployment::getCivilians() const
+int RuleAlienDeployment::getCivilians() const
 {
 	return _civilians;
 }
@@ -277,7 +277,7 @@ int AlienDeployment::getCivilians() const
  * Gets eligible terrains for battlescape generation.
  * @return, vector of terrain-type strings
  */
-const std::vector<std::string>& AlienDeployment::getDeployTerrains() const
+const std::vector<std::string>& RuleAlienDeployment::getDeployTerrains() const
 {
 	return _terrains;
 }
@@ -286,16 +286,16 @@ const std::vector<std::string>& AlienDeployment::getDeployTerrains() const
  * Gets the shade-level for Battlescape generation.
  * @return, the shade-level
  */
-int AlienDeployment::getShade() const
+int RuleAlienDeployment::getShade() const
 {
 	return _shade;
 }
 
 /**
- * Gets the next-stage of this AlienDeployment.
+ * Gets the next-stage of this RuleAlienDeployment.
  * @return, the next-stage of the mission
  */
-const std::string& AlienDeployment::getNextStage() const
+const std::string& RuleAlienDeployment::getNextStage() const
 {
 	return _nextStage;
 }
@@ -304,133 +304,133 @@ const std::string& AlienDeployment::getNextStage() const
  * Gets the next-stage's aLien race.
  * @return, the alien race
  */
-const std::string& AlienDeployment::getRace() const
+const std::string& RuleAlienDeployment::getRace() const
 {
 	return _race;
 }
 
 /**
- * Gets the script-type to use to generate a mission for this AlienDeployment.
+ * Gets the script-type to use to generate a mission for this RuleAlienDeployment.
  * @return, the script-type
  */
-const std::string& AlienDeployment::getScriptType() const
+const std::string& RuleAlienDeployment::getScriptType() const
 {
 	return _script;
 }
 
 /**
- * Checks if this AlienDeployment is where to send Craft via the ConfirmCydonia btn.
+ * Checks if this RuleAlienDeployment is where to send Craft via the ConfirmCydonia btn.
  * @return, true if Cydonia
  */
-bool AlienDeployment::isFinalDestination() const
+bool RuleAlienDeployment::isFinalDestination() const
 {
 	return _finalDestination;
 }
 
 /**
- * Checks if aborting or losing this AlienDeployment will lose the game.
+ * Checks if aborting or losing this RuleAlienDeployment will lose the game.
  * @return, true if fail
  */
-bool AlienDeployment::isNoRetreat() const
+bool RuleAlienDeployment::isNoRetreat() const
 {
 	return _noRetreat;
 }
 
 /**
- * Checks if this AlienDeployment finishes the game.
+ * Checks if this RuleAlienDeployment finishes the game.
  * @return, true if final tactical
  */
-bool AlienDeployment::isFinalMission() const
+bool RuleAlienDeployment::isFinalMission() const
 {
 	return _finalMission;
 }
 
 /**
- * Gets the alert-message displayed when this AlienDeployment spawns.
+ * Gets the alert-message displayed when this RuleAlienDeployment spawns.
  * @return, ID for the message
  */
-const std::string& AlienDeployment::getAlertMessage() const
+const std::string& RuleAlienDeployment::getAlertMessage() const
 {
 	return _alert;
 }
 
 /**
- * Gets the alert-background displayed when this AlienDeployment spawns.
+ * Gets the alert-background displayed when this RuleAlienDeployment spawns.
  * @return, ID for the background
  */
-const std::string& AlienDeployment::getAlertBackground() const
+const std::string& RuleAlienDeployment::getAlertBackground() const
 {
 	return _alertBg;
 }
 
 /**
- * Gets the briefing-data for this AlienDeployment.
+ * Gets the briefing-data for this RuleAlienDeployment.
  * @return, data for the briefing window to use
  */
-BriefingData AlienDeployment::getBriefingData() const
+BriefingData RuleAlienDeployment::getBriefingData() const
 {
 	return _briefingData;
 }
 
 /**
- * Returns the globe-marker-type for this AlienDeployment.
+ * Returns the globe-marker-type for this RuleAlienDeployment.
  * @return, marker-type
  */
-const std::string& AlienDeployment::getMarkerType() const
+const std::string& RuleAlienDeployment::getMarkerType() const
 {
 	return _markerType;
 }
 
 /**
- * Returns the globe-marker-icon for this AlienDeployment.
+ * Returns the globe-marker-icon for this RuleAlienDeployment.
  * @return, marker-sprite (-1 if not set)
  */
-int AlienDeployment::getMarkerIcon() const
+int RuleAlienDeployment::getMarkerIcon() const
 {
 	return _markerIcon;
 }
 
 /**
- * Returns the minimum duration for this AlienDeployment to exist on the Globe.
+ * Returns the minimum duration for this RuleAlienDeployment to exist on the Globe.
  * @return, minimum duration in hours
  */
-int AlienDeployment::getDurationMin() const
+int RuleAlienDeployment::getDurationMin() const
 {
 	return _durationMin;
 }
 
 /**
- * Returns the maximum duration for this AlienDeployment to exist on the Globe.
+ * Returns the maximum duration for this RuleAlienDeployment to exist on the Globe.
  * @return, maximum duration in hours
  */
-int AlienDeployment::getDurationMax() const
+int RuleAlienDeployment::getDurationMax() const
 {
 	return _durationMax;
 }
 
 /**
- * Gets the list of musics that this AlienDeployment can choose from.
+ * Gets the list of musics that this RuleAlienDeployment can choose from.
  * @return, list of tracks
  */
-const std::vector<std::string>& AlienDeployment::getDeploymentMusics() const
+const std::vector<std::string>& RuleAlienDeployment::getDeploymentMusics() const
 {
 	return _musics;
 }
 
 /**
- * Gets the objective-tiletype for this AlienDeployment (eg alien-control-consoles).
+ * Gets the objective-tiletype for this RuleAlienDeployment (eg alien-control-consoles).
  * @return, objective-tiletype (RuleItem.h)
  */
-TileType AlienDeployment::getPlayerObjective() const
+TileType RuleAlienDeployment::getPlayerObjective() const
 {
 	return _objectiveType;
 }
 
 /**
- * Gets the quantity of objective-tiles required by this AlienDeployment.
+ * Gets the quantity of objective-tiles required by this RuleAlienDeployment.
  * @return, quantity of objective-tiles
  */
-int AlienDeployment::getObjectivesRequired() const
+int RuleAlienDeployment::getObjectivesRequired() const
 {
 	return _objectivesReqd;
 }
@@ -439,7 +439,7 @@ int AlienDeployment::getObjectivesRequired() const
  * Gets the string for the popup to splash when objective-conditions are met.
  * @return, string to pop
  */
-const std::string& AlienDeployment::getObjectivePopup() const
+const std::string& RuleAlienDeployment::getObjectivePopup() const
 {
 	return _objectivePopup;
 }
@@ -451,7 +451,7 @@ const std::string& AlienDeployment::getObjectivePopup() const
  * @param score	- reference to the score to alter
  * @return, true if anything worthwhile happened
  */
-bool AlienDeployment::getObjectiveCompleteInfo(
+bool RuleAlienDeployment::getObjectiveCompleteInfo(
 		std::string& text,
 		int& score) const
 {
@@ -468,7 +468,7 @@ bool AlienDeployment::getObjectiveCompleteInfo(
  * @param score	- reference to the score to alter
  * @return, true if anything worthwhile happened
  */
-bool AlienDeployment::getObjectiveFailedInfo(
+bool RuleAlienDeployment::getObjectiveFailedInfo(
 		std::string& text,
 		int& score) const
 {
@@ -482,7 +482,7 @@ bool AlienDeployment::getObjectiveFailedInfo(
  * Gets the score penalty XCom receives for letting a mission despawn.
  * @return, penalty
  */
-int AlienDeployment::getDespawnPenalty() const
+int RuleAlienDeployment::getDespawnPenalty() const
 {
 	return _despawnPenalty;
 }
@@ -491,7 +491,7 @@ int AlienDeployment::getDespawnPenalty() const
  * Gets the half-hourly score penalty against XCom for this site existing.
  * @return, points for aLiens per 30 mins
  */
-int AlienDeployment::getPointsPer30() const
+int RuleAlienDeployment::getPointsPer30() const
 {
 	return _pointsPer30;
 }
@@ -500,16 +500,16 @@ int AlienDeployment::getPointsPer30() const
  * Gets the maximum turns before forcing a battle to end.
  * @return, the turn-limit
  */
-int AlienDeployment::getTurnLimit() const
+int RuleAlienDeployment::getTurnLimit() const
 {
 	return _turnLimit;
 }
 
 /**
  * Gets the result to perform when the turn-limit is reached.
- * @return, the ChronoResult (AlienDeployment.h)
+ * @return, the ChronoResult (RuleAlienDeployment.h)
  */
-ChronoResult AlienDeployment::getChronoResult() const
+ChronoResult RuleAlienDeployment::getChronoResult() const
 {
 	return _chronoResult;
 }
@@ -518,7 +518,7 @@ ChronoResult AlienDeployment::getChronoResult() const
  * Gets the turn at which the player's units become exposed to the AI.
  * @return, the turn for the AI to start cheating
  */
-int AlienDeployment::getCheatTurn() const
+int RuleAlienDeployment::getCheatTurn() const
 {
 	return _cheatTurn;
 }

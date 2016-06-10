@@ -84,7 +84,7 @@
 
 #include "../Resource/XcomResourcePack.h"
 
-#include "../Ruleset/AlienDeployment.h"
+#include "../Ruleset/RuleAlienDeployment.h"
 #include "../Ruleset/RuleAlienMission.h"
 #include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleBaseFacility.h"

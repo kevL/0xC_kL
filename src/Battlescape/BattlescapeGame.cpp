@@ -57,7 +57,7 @@
 
 #include "../Resource/ResourcePack.h"
 
-#include "../Ruleset/AlienDeployment.h"
+#include "../Ruleset/RuleAlienDeployment.h"
 #include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleInventory.h"
 #include "../Ruleset/RuleItem.h"
@@ -3906,7 +3906,7 @@ BattleItem* BattlescapeGame::getAlienPsi() const
 void BattlescapeGame::objectiveDone()
 {
 	const Game* const game (_parentState->getGame());
-	const AlienDeployment* const ruleDeploy (game->getRuleset()->getDeployment(_battleSave->getTacticalType()));
+	const RuleAlienDeployment* const ruleDeploy (game->getRuleset()->getDeployment(_battleSave->getTacticalType()));
 	if (ruleDeploy != nullptr)
 	{
 		const std::string messagePop (ruleDeploy->getObjectivePopup());

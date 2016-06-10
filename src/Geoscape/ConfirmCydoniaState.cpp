@@ -35,7 +35,7 @@
 
 #include "../Ruleset/Ruleset.h"
 
-#include "../Ruleset/AlienDeployment.h"
+#include "../Ruleset/RuleAlienDeployment.h"
 
 #include "../Savegame/SavedBattleGame.h"
 #include "../Savegame/SavedGame.h"
@@ -121,7 +121,7 @@ void ConfirmCydoniaState::btnYesClick(Action*)
 			i != _game->getRuleset()->getDeploymentsList().end();
 			++i)
 	{
-		const AlienDeployment* const ruleDeploy (_game->getRuleset()->getDeployment(*i));
+		const RuleAlienDeployment* const ruleDeploy (_game->getRuleset()->getDeployment(*i));
 		if (ruleDeploy->isFinalDestination() == true)
 		{
 			battleSave->setTacticalType(*i);

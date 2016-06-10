@@ -29,7 +29,7 @@ namespace OpenXcom
 {
 
 class AlienBase;
-class AlienDeployment;
+class RuleAlienDeployment;
 class Game;
 class Globe;
 class TerrorSite;
@@ -84,7 +84,7 @@ private:
 			const UfoTrajectory& trajectory);
 	/// Spawns a TerrorSite at a specific location.
 	TerrorSite* createTerror(
-			const AlienDeployment* const deployment,
+			const RuleAlienDeployment* const ruleDeploy,
 			const MissionArea& area);
 	/// Spawns an AlienBase
 	void createAlienBase(
@@ -140,10 +140,10 @@ private:
 				const std::string& region,
 				const Ruleset& rules);
 
-		/// Gets the AlienMission's AlienRace type.
+		/// Gets the AlienMission's RuleAlienRace type.
 		const std::string& getRace() const
 		{ return _race; }
-		/// Sets the AlienMission's AlienRace type.
+		/// Sets the AlienMission's RuleAlienRace type.
 		void setRace(const std::string& race)
 		{ _race = race; }
 

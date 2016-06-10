@@ -86,7 +86,7 @@ private:
 
 		/// Gets a RuleTexture from a specified texture-ID.
 		RuleTexture* getTextureRule(int tex) const;
-		/// Gets the eligible terrains for an AlienDeployment type.
+		/// Gets the eligible terrains for an RuleAlienDeployment type.
 		std::vector<std::string> getGlobeTerrains(const std::string& deployType = "") const;
 };
 

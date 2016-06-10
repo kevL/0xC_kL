@@ -27,7 +27,7 @@
 #include "BattleUnit.h"
 //#include "../Battlescape/BattlescapeGame.h" // BattleActionType (included in BattleUnit.h)
 
-#include "../Ruleset/AlienDeployment.h"
+#include "../Ruleset/RuleAlienDeployment.h"
 
 
 namespace OpenXcom

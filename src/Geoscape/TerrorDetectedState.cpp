@@ -33,7 +33,7 @@
 
 #include "../Resource/ResourcePack.h"
 
-#include "../Ruleset/AlienDeployment.h"
+#include "../Ruleset/RuleAlienDeployment.h"
 
 #include "../Savegame/TerrorSite.h"
 
